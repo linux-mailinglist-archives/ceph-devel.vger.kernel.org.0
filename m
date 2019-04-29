@@ -2,95 +2,114 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07AB1EAC3
-	for <lists+ceph-devel@lfdr.de>; Mon, 29 Apr 2019 21:18:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC2B7EACF
+	for <lists+ceph-devel@lfdr.de>; Mon, 29 Apr 2019 21:25:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729159AbfD2TSI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 29 Apr 2019 15:18:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46834 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728928AbfD2TSH (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 29 Apr 2019 15:18:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BB2B4AE27;
-        Mon, 29 Apr 2019 19:18:06 +0000 (UTC)
+        id S1729221AbfD2TZ5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 29 Apr 2019 15:25:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43136 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729191AbfD2TZ5 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 29 Apr 2019 15:25:57 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D88682067D;
+        Mon, 29 Apr 2019 19:25:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556565956;
+        bh=qva5Gmr0BVvS13tzsQT4dNSKugR0laPHOKSIeKJoyuQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pkedSwLAcSXkjxO7rDqkZUQOFZ+cky0fsY7xW6jdgqxOicYXjMap92hRMh2rMA47j
+         iHZTvCqyfpERSJgOMlYuHpbkJcUUD2qEOM6zRmhNgEwbXOuo8hDGxLnUx52ldzv1t7
+         ARZcYs2W4T9lv0l+7mek65VHZYZTe9YsBdgFU2VE=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     zyan@redhat.com, sage@redhat.com, idryomov@gmail.com
+Cc:     ceph-devel@vger.kernel.org, viro@zeniv.linux.org.uk
+Subject: [PATCH 1/2] ceph: use ceph_mdsc_build_path instead of clone_dentry_name
+Date:   Mon, 29 Apr 2019 15:25:53 -0400
+Message-Id: <20190429192554.30833-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 29 Apr 2019 21:18:06 +0200
-From:   Abhishek <abhishek@suse.com>
-To:     ceph-devel@vger.kernel.org, ceph-users@ceph.com,
-        ceph-maintainers@ceph.com, ceph-announce@ceph.com
-Subject: v14.2.1 Nautilus released
-Message-ID: <cbfed3591a3224536aa02f71ca469714@suse.com>
-X-Sender: abhishek@suse.com
-User-Agent: Roundcube Webmail
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-We're happy to announce the first bug fix release of Ceph Nautilus 
-release series.
-We recommend all nautilus users upgrade to this release. For upgrading 
-from older releases of
-ceph, general guidelines for upgrade to nautilus must be followed
+While it may be slightly more efficient, it's probably not worthwhile to
+optimize for the case that clone_dentry_name handles. We can get the
+same result by just calling ceph_mdsc_build_path when the parent isn't
+locked, with less code duplication.
 
-Notable Changes
----------------
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/mds_client.c | 41 +++--------------------------------------
+ 1 file changed, 3 insertions(+), 38 deletions(-)
 
-* The default value for `mon_crush_min_required_version` has been
-   changed from `firefly` to `hammer`, which means the cluster will
-   issue a health warning if your CRUSH tunables are older than hammer.
-   There is generally a small (but non-zero) amount of data that will
-   move around by making the switch to hammer tunables; for more 
-information,
-   see :ref:`crush-map-tunables`.
-
-   If possible, we recommend that you set the oldest allowed client to 
-`hammer`
-   or later.  You can tell what the current oldest allowed client is 
-with::
-
-     ceph osd dump | min_compat_client
-
-   If the current value is older than hammer, you can tell whether it
-   is safe to make this change by verifying that there are no clients
-   older than hammer current connected to the cluster with::
-
-     ceph features
-
-   The newer `straw2` CRUSH bucket type was introduced in hammer, and
-   ensuring that all clients are hammer or newer allows new features
-   only supported for `straw2` buckets to be used, including the
-   `crush-compat` mode for the :ref:`balancer`.
-
-* Ceph now packages python bindings for python3.6 instead of
-   python3.4, because EPEL7 recently switched from python3.4 to
-   python3.6 as the native python3. see the `announcement 
-<https://lists.fedoraproject.org/archives/list/epel-announce@lists.fedoraproject.org/message/EGUMKAIMPK2UD5VSHXM53BH2MBDGDWMO/>`_
-   for more details on the background of this change.
-
-Known Issues
-------------
-
-* Nautilus-based librbd clients cannot open images stored on 
-pre-Luminous
-   clusters
-
-
-For a detailed changelog please refer to the official release notes
-entry at the ceph blog 
-https://ceph.com/releases/v14-2-1-nautilus-released/
-
-Getting ceph:
-------------
-* Git at git://github.com/ceph/ceph.git
-* Tarball at http://download.ceph.com/tarballs/ceph-14.2.1.tar.gz
-* For packages, see
-http://docs.ceph.com/docs/master/install/get-packages/
-* Release git sha1: d555a9489eb35f84f2e1ef49b77e19da9d113972
-
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 74cb3078ea63..e8245df09691 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2170,55 +2170,20 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
+ 	return path;
+ }
+ 
+-/* Duplicate the dentry->d_name.name safely */
+-static int clone_dentry_name(struct dentry *dentry, const char **ppath,
+-			     int *ppathlen)
+-{
+-	u32 len;
+-	char *name;
+-retry:
+-	len = READ_ONCE(dentry->d_name.len);
+-	name = kmalloc(len + 1, GFP_NOFS);
+-	if (!name)
+-		return -ENOMEM;
+-
+-	spin_lock(&dentry->d_lock);
+-	if (dentry->d_name.len != len) {
+-		spin_unlock(&dentry->d_lock);
+-		kfree(name);
+-		goto retry;
+-	}
+-	memcpy(name, dentry->d_name.name, len);
+-	spin_unlock(&dentry->d_lock);
+-
+-	name[len] = '\0';
+-	*ppath = name;
+-	*ppathlen = len;
+-	return 0;
+-}
+-
+ static int build_dentry_path(struct dentry *dentry, struct inode *dir,
+ 			     const char **ppath, int *ppathlen, u64 *pino,
+ 			     bool *pfreepath, bool parent_locked)
+ {
+-	int ret;
+ 	char *path;
+ 
+ 	rcu_read_lock();
+ 	if (!dir)
+ 		dir = d_inode_rcu(dentry->d_parent);
+-	if (dir && ceph_snap(dir) == CEPH_NOSNAP) {
++	if (dir && parent_locked && ceph_snap(dir) == CEPH_NOSNAP) {
+ 		*pino = ceph_ino(dir);
+ 		rcu_read_unlock();
+-		if (parent_locked) {
+-			*ppath = dentry->d_name.name;
+-			*ppathlen = dentry->d_name.len;
+-		} else {
+-			ret = clone_dentry_name(dentry, ppath, ppathlen);
+-			if (ret)
+-				return ret;
+-			*pfreepath = true;
+-		}
++		*ppath = dentry->d_name.name;
++		*ppathlen = dentry->d_name.len;
+ 		return 0;
+ 	}
+ 	rcu_read_unlock();
+-- 
+2.20.1
 
