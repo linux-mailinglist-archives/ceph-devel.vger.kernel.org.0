@@ -2,75 +2,93 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ABBDF1F9
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 Apr 2019 10:23:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DA1CF279
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Apr 2019 11:10:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbfD3IXf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 30 Apr 2019 04:23:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59880 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbfD3IXe (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 30 Apr 2019 04:23:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NZBXO1ME4yyhNikKDn25Wx/qhHtX/guFa4/8R+Ntg+Y=; b=G3TUd0H0Lh2EYnrNVTvuVyRLB
-        p6pHt9vlLF0QLkapwZMYwuiZGgRG5nqILhQdEldK2Q5ku+eWhOMMsFZuRTthTK8Vaj6yNr9G54AXa
-        VqzBhoWej4S3X7Se06W0n7BRMUS95nn89oFIyVjBt6OBJyEta7tADh+jbNq8OxpzU62PtyLDJZwcg
-        A4qlbpX5xjzGIsu7w2QXJgno6DCXC7RAuuYRUvefMQtf42OsIemUxBmtQ72NTHQnWZ7Dpo5khsmeA
-        vYBLOLAYixvT0RaOkkcLGB3tD4N4zSxUdTDkHqSrgzC1ej0rPOcG4a63mKQBQgyFGZirJJApeJEQf
-        zvEKEnWhw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hLO33-00082Z-LQ; Tue, 30 Apr 2019 08:23:33 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 334EE29D2D6D6; Tue, 30 Apr 2019 10:23:32 +0200 (CEST)
-Date:   Tue, 30 Apr 2019 10:23:32 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH 4/5] ceph: fix improper use of smp_mb__before_atomic()
-Message-ID: <20190430082332.GB2677@hirez.programming.kicks-ass.net>
-References: <1556568902-12464-1-git-send-email-andrea.parri@amarulasolutions.com>
- <1556568902-12464-5-git-send-email-andrea.parri@amarulasolutions.com>
+        id S1726795AbfD3JI5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 30 Apr 2019 05:08:57 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:42838 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726262AbfD3JI4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 30 Apr 2019 05:08:56 -0400
+Received: by mail-qk1-f195.google.com with SMTP id c190so7674263qke.9;
+        Tue, 30 Apr 2019 02:08:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LqvnYPQ4d9M13B73C2lxCghPlB6ymNoLCZdoFF0EvzU=;
+        b=KZcmA2f4niqqeByEknlgvYCwFcNZ9VP/keiX4wNYO4YWPJhWEv5DbpN4SSJDP1ZgkW
+         fC75jxAiWjQ7tuRjtsR8bAl1a3KRebWwST0xV9C744PnN3EApN4vKEhjJB7MmAV4Y06x
+         Cw8GL4ez5HaU+RtoYR0CfNIZLRhZk8GSP1zBXc3W8zCjGSSydlZdoaxc8/Ob/YvW6/n1
+         iE4pAW0LmBkb40Gy+gRyAU34G4RkQ1ZThBZzOc2M7OKDzSKrrwKo8xU5aM4FCI7GzTwg
+         GsyiiOB/21Kt7cwbq4QFavJ5uds8u8VaX1mWTr2Yet7d0VChfLKNiJgkcr230zBACriY
+         pV9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LqvnYPQ4d9M13B73C2lxCghPlB6ymNoLCZdoFF0EvzU=;
+        b=GojE6XBEY2rP8JfG77+XSNKwv+cdxdn/YXKJpoK4pzNVJ558meA1HCCwBid5YETzri
+         EH9pJZY/y76gAs5aYP0Q3ycAbNOJ24oBjettwkB9KWQbVtlHKKMheFZBvCLeFCyJYphs
+         5PEwMrtGuvQAkfKRd0gRx5qLKcZ32xdbGXIuM5ocmEkyJCQ7prCisQX2pOBRzxyMeQHa
+         gQOxc17WqCAkiud/VebWS1lrbabvKJLR48PLYm7x2rZNouUb28Iz5Ue7CSV9giIzvh2o
+         V3GM9/nB8qvbPer1cMvLY7vSrkpUNPChAf9tzf263qJfACFvqZxa7fFJ956XxH87go2z
+         YeCg==
+X-Gm-Message-State: APjAAAX//3WRRaajd52z4H4AkIpVbFVPaXMJov5cFo1v2Xkn+JSxUENH
+        JMQkBxZUxa3DeVxuv5IUus97FytERy1aS7huchT7sEKPYeY=
+X-Google-Smtp-Source: APXvYqwJnFMNmOWp4NCMQ/VWckpj+QMhlMDViEHvtuvWCtTXAo1bj68NZ74qvdtrNtiHaUIPQpel6OBjZat4HvJW7TQ=
+X-Received: by 2002:a37:6557:: with SMTP id z84mr24988121qkb.221.1556615334948;
+ Tue, 30 Apr 2019 02:08:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1556568902-12464-5-git-send-email-andrea.parri@amarulasolutions.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1556568902-12464-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <1556568902-12464-5-git-send-email-andrea.parri@amarulasolutions.com> <20190430082332.GB2677@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190430082332.GB2677@hirez.programming.kicks-ass.net>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Tue, 30 Apr 2019 17:08:43 +0800
+Message-ID: <CAAM7YA=YOM79GJK8b7OOQbzT_-sYRD2UFHYithY7Li1yQt5Hog@mail.gmail.com>
+Subject: Re: [PATCH 4/5] ceph: fix improper use of smp_mb__before_atomic()
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
+        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Apr 29, 2019 at 10:15:00PM +0200, Andrea Parri wrote:
-> This barrier only applies to the read-modify-write operations; in
-> particular, it does not apply to the atomic64_set() primitive.
-> 
-> Replace the barrier with an smp_mb().
-> 
+On Tue, Apr 30, 2019 at 4:26 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Mon, Apr 29, 2019 at 10:15:00PM +0200, Andrea Parri wrote:
+> > This barrier only applies to the read-modify-write operations; in
+> > particular, it does not apply to the atomic64_set() primitive.
+> >
+> > Replace the barrier with an smp_mb().
+> >
+>
+> > @@ -541,7 +541,7 @@ static inline void __ceph_dir_set_complete(struct ceph_inode_info *ci,
+> >                                          long long release_count,
+> >                                          long long ordered_count)
+> >  {
+> > -     smp_mb__before_atomic();
+>
+> same
+>         /*
+>          * XXX: the comment that explain this barrier goes here.
+>          */
+>
 
-> @@ -541,7 +541,7 @@ static inline void __ceph_dir_set_complete(struct ceph_inode_info *ci,
->  					   long long release_count,
->  					   long long ordered_count)
->  {
-> -	smp_mb__before_atomic();
+makes sure operations that setup readdir cache (update page cache and
+i_size) are strongly ordered with following atomic64_set.
 
-same
-	/*
-	 * XXX: the comment that explain this barrier goes here.
-	 */
-
-> +	smp_mb();
-
->  	atomic64_set(&ci->i_complete_seq[0], release_count);
->  	atomic64_set(&ci->i_complete_seq[1], ordered_count);
->  }
-> -- 
-> 2.7.4
-> 
+> > +     smp_mb();
+>
+> >       atomic64_set(&ci->i_complete_seq[0], release_count);
+> >       atomic64_set(&ci->i_complete_seq[1], ordered_count);
+> >  }
+> > --
+> > 2.7.4
+> >
