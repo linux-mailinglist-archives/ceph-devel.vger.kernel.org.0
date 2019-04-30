@@ -2,137 +2,143 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 122E6FE09
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 Apr 2019 18:40:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3110310114
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Apr 2019 22:42:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726081AbfD3Qko (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 30 Apr 2019 12:40:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47042 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726049AbfD3Qko (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 30 Apr 2019 12:40:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 818FEAD14;
-        Tue, 30 Apr 2019 16:40:42 +0000 (UTC)
+        id S1726431AbfD3Umb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 30 Apr 2019 16:42:31 -0400
+Received: from mail-qk1-f179.google.com ([209.85.222.179]:45786 "EHLO
+        mail-qk1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbfD3Umb (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 30 Apr 2019 16:42:31 -0400
+Received: by mail-qk1-f179.google.com with SMTP id d5so9081426qko.12
+        for <ceph-devel@vger.kernel.org>; Tue, 30 Apr 2019 13:42:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=A5AXrysdgBqo5dxmnso1WZw+jBBJnpnS1AfCBnYm9dI=;
+        b=hpSHg3F+xvOSwUSquc8xtn/mvH4JJT1s3BsXq2mUZAPtaCvMQIIO4vixEnRghHsN4F
+         QmasN2Wrskxep+eJgUIbPreleROXKTWRJKkMTCyfQ86Ds7qffTHu//kWfID5xJeowy/V
+         bhchUAKuD/HYdQQXM8ouAgWojkdrJIDzolK1WU7AWDb7jvx1B+pabTzCaFxsKQvVIxiw
+         X+BjggaxCURC9RJNQHZ8AXQ8yhFYqOwbfAC5RWEUzma3AUl5QaVJnHP7w0eWg0DjKdBF
+         UD+XmMQsFX64U2dpceFcwv+OSlCGb0+iAqigjsEBaCcK2Syvh8f4DBvpiVlwNlkB9mOT
+         GKqA==
+X-Gm-Message-State: APjAAAW2S61URS/tkWBruG4CJGwmtLFCo3JMG6iZ1L3RRly+NT9L9wvI
+        uETLuNlv3NmCzw/xNw46QXMAmKu6v28=
+X-Google-Smtp-Source: APXvYqzzmZR1kF1NhHhW+1rdggIETDcLSDvEct2yZIq5VX2kPyZ1SPuoLgTuK4iMsAGWlBOkYsOypQ==
+X-Received: by 2002:ae9:ef17:: with SMTP id d23mr12381534qkg.55.1556656949808;
+        Tue, 30 Apr 2019 13:42:29 -0700 (PDT)
+Received: from [10.17.151.126] ([12.118.3.106])
+        by smtp.gmail.com with ESMTPSA id z38sm22787419qtz.13.2019.04.30.13.42.26
+        for <ceph-devel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Apr 2019 13:42:27 -0700 (PDT)
+To:     The Sacred Order of the Squid Cybernetic 
+        <ceph-devel@vger.kernel.org>
+From:   Casey Bodley <cbodley@redhat.com>
+Subject: rgw: bucket deletion in multisite
+Message-ID: <564241c1-2cf3-2452-cb21-e32ec9cd5211@redhat.com>
+Date:   Tue, 30 Apr 2019 16:42:25 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 30 Apr 2019 18:40:42 +0200
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     "Liu, Changcheng" <changcheng.liu@intel.com>
-Cc:     ceph-devel@vger.kernel.org, ceph-devel-owner@vger.kernel.org
-Subject: Re: Async Messenger RDMA IB ib_uverbs_write return EACCES
-In-Reply-To: <20190419143111.GA3102@jerryopenix>
-References: <20190412104207.GA29167@jerryopenix>
- <30fa5e49d56591fe2ecd6eae1caa98ce@suse.de>
- <20190415122240.GA7819@jerryopenix>
- <484935ae3aeb0ee6a59f93c3c727ba36@suse.de>
- <20190416085820.GA4711@jerryopenix>
- <84005b8af680599e93f8bc3facbc00a3@suse.de>
- <20190416104119.GA6094@jerryopenix>
- <211951a560b75a8d13096c87f7a241c9@suse.de>
- <20190416120710.GA7940@jerryopenix> <20190419100628.GA15957@jerryopenix>
- <20190419143111.GA3102@jerryopenix>
-Message-ID: <7cf7c35992829e4e1b134d833dab1e0b@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2019-04-19 16:31, Liu, Changcheng wrote:
-> Hi Roman,
->   I found that why ceph/msg/async/rdma/iwarp(x722) doesn't work on
-> ceph master branch.
->   The problem is triggered by below commit:
-> 
-> https://github.com/ceph/ceph/pull/20172/commits/fdde016301ae329f76c621337c384ac60aa0d210
-> 
->   Below is the basic program model extracted from
-> ceph/msg/async/rdma/iwarp to show how the problem is triggered:
+Hi rgw folks, this is a rough design for cleanup of deleted buckets in 
+multisite. I would love some review/feedback.
 
-Hi Changcheng,
+Motivation:
+     - Bucket deletion in a multisite configuration does not delete 
+bucket instance metadata, bucket sync status, or bucket index objects on 
+any zone. This allows bucket sync on each zone to finish processing 
+object deletions and (hopefully) converge on empty.
 
-Indeed fork() also changes credentials (see copy_creds() in kernel for 
-details),
-like setuid() does, so there are two known places in ceph, after which 
-uverbs
-calls return -EACESS:
+Requirements:
+     - Remove all objects associated with deleted buckets in a timely 
+manner:
+         - bucket instance metadata, bucket index shards, and bucket 
+sync status
+         - all object data
+     - Does not rely on bucket sync to delete all objects [zone A may 
+delete an empty bucket that hasn't yet synced objects from zone B, so 
+the zones would converge on zone B's objects]
+     - Strategy to clean up already-deleted buckets, ie 'radosgw-admin 
+bucket stale-instances rm' command
 
-   o setuid() (see global_init())
-   o daemon() (see global_init_daemonize())
+Summary:
+     - Add a process for 'deferred bucket deletion', where local bucket 
+instance metadata is removed and the bucket index/data are scheduled for 
+later 'bucket gc'. A new 'bucket gc list' is stored in omap and 
+processed by a worker similar to existing gc.
+     - For metadata sync, the metadata log format needs to be extended 
+to distinguish between normal writes and deletion events on bucket 
+instances. When metadata sync encounters a bucket instance deletion, it 
+runs 'deferred bucket deletion'.
+     - Data sync on the bucket needs to avoid creating new objects while 
+bucket gc is running.
 
-My question is why you daemonize your ceph services and do not rely on 
-systemd,
-which does fork() on its own and runs each service with '-f' flag, which 
-means
-do not daemonize?  So I would not daemonize services and this can be a 
-simple
-solution.
+mdlog:
+     - entries must distinguish between Write, Remove, and Delete (where 
+Delete implies gc of associated data)
+     - a 'bucket rm' Deletes its bucket instance metadata
+     - a 'bucket reshard' Removes the old bucket instance because the 
+new bucket instance still owns the data
 
-With setuid() is not that easy.  The most straightforward way is to move
-mc_bootstrap.get_monmap_and_config() after setuid() call.  At the bottom 
-of
-the email there is a small patch which can fix the problem (I hope does 
-not
-introduce something new). Would be great if you can check it.
+Bucket gc list:
+     - stored in omap in the log pool
+     - sharded over multiple objects
+     - each entry encodes RGWBucketInfo (needed to delete objects after 
+bucket instance is deleted)
 
---
-Roman
+Bucket index:
+     - add REMOVE_ONLY flag to bucket index to prevent object creation 
+from racing with bucket gc
 
+Deferred bucket delete:
+     - flag bucket index shards as REMOVE_ONLY
+     - add to 'bucket gc' list (entry includes encoded RGWBucketInfo) 
+*requires access to existing bucket instance metadata*
+     - delete local bucket instance (add Delete entry to mdlog)
 
-diff --git a/src/global/global_init.cc b/src/global/global_init.cc
-index eb8bbfd1a4db..de647be768bd 100644
---- a/src/global/global_init.cc
-+++ b/src/global/global_init.cc
-@@ -147,18 +147,6 @@ void global_pre_init(
-      cct->_log->start();
-    }
+Metadata sync:
+     - must serialize sync of mdlog entries with the same metadata key, 
+to preserve order of Writes vs Removes/Deletes
+         - can skip Writes if they're followed by Removes/Deletes
+     - on Delete of bucket instance, run deferred bucket delete
+     - backward compatibility: what to do with mdlog entries that don't 
+specify Write/Remove/Delete?
+         - for bucket instance: assume write (because we never deleted 
+them before upgrade), and just try to fetch
+         - for other metadata: use existing strategy to fetch remote 
+metadata, and remove local metadata on 404/ENOENT
 
--  if (!conf->no_mon_config) {
--    // make sure our mini-session gets legacy values
--    conf.apply_changes(nullptr);
--
--    MonClient mc_bootstrap(g_ceph_context);
--    if (mc_bootstrap.get_monmap_and_config() < 0) {
--      cct->_log->flush();
--      cerr << "failed to fetch mon config (--no-mon-config to skip)"
--          << std::endl;
--      _exit(1);
--    }
--  }
-    if (!cct->_log->is_started()) {
-      cct->_log->start();
-    }
-@@ -313,6 +301,28 @@ global_init(const std::map<std::string,std::string> 
-*defaults,
-    }
-  #endif
+Bucket sync:
+     - bucket sync first fetches bucket instance - on ENOENT, exit 
+bucket sync with success
+     - if sync_object() returns REMOVE_ONLY error from bucket index, 
+exit bucket sync with success
+     - read/fetch bucket instance metadata before taking lease to avoid 
+recreating bucket sync status objects
 
-+  //
-+  // Utterly important to run first network connection after setuid().
-+  // In case of rdma transport uverbs kernel module starts returning
-+  // -EACCESS on each operation if credentials has been changed, see
-+  // callers of ib_safe_file_access() for details.
-+  //
-+  // fork() syscall also matters, so daemonization won't work in case
-+  // of rdma.
-+  //
-+  if (!g_conf()->no_mon_config) {
-+    // make sure our mini-session gets legacy values
-+    g_conf().apply_changes(nullptr);
-+
-+    MonClient mc_bootstrap(g_ceph_context);
-+    if (mc_bootstrap.get_monmap_and_config() < 0) {
-+      g_ceph_context->_log->flush();
-+      cerr << "failed to fetch mon config (--no-mon-config to skip)"
-+          << std::endl;
-+      _exit(1);
-+    }
-+  }
-+
+Bucket gc worker:
+     - for each bucket in gc list:
+         - decode RGWBucketInfo
+         - delete each object in bucket [should we GC tail objects or 
+delete inline?]
+         - delete incomplete multiparts
+         - delete bucket index objects
+         - delete bucket sync status objects
 
-
+radosgw-admin bucket stale-instances rm:
+     - run deferred bucket delete on each bucket instance that:
+         - does not have an associated bucket entrypoint
+         - has a bucket id matching its bucket marker? (has not been 
+resharded)
+     - must be safe to run on any zone after upgrade
