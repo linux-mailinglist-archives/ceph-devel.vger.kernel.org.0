@@ -2,117 +2,137 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC5D9FBD2
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 Apr 2019 16:47:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 122E6FE09
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Apr 2019 18:40:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726309AbfD3OrY convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Tue, 30 Apr 2019 10:47:24 -0400
-Received: from mailpro.odiso.net ([89.248.211.110]:34866 "EHLO
-        mailpro.odiso.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbfD3OrY (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 30 Apr 2019 10:47:24 -0400
-X-Greylist: delayed 484 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Apr 2019 10:47:22 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mailpro.odiso.net (Postfix) with ESMTP id 81F0A13879FF;
-        Tue, 30 Apr 2019 16:39:17 +0200 (CEST)
-Received: from mailpro.odiso.net ([127.0.0.1])
-        by localhost (mailpro.odiso.net [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id wTd1fNttHy_d; Tue, 30 Apr 2019 16:39:17 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by mailpro.odiso.net (Postfix) with ESMTP id 6829E1387A00;
-        Tue, 30 Apr 2019 16:39:17 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mailpro.odiso.com
-Received: from mailpro.odiso.net ([127.0.0.1])
-        by localhost (mailpro.odiso.net [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id qLM9BFSTAjme; Tue, 30 Apr 2019 16:39:17 +0200 (CEST)
-Received: from mailpro.odiso.net (mailpro.odiso.net [10.1.31.111])
-        by mailpro.odiso.net (Postfix) with ESMTP id 4EFA613879FF;
-        Tue, 30 Apr 2019 16:39:17 +0200 (CEST)
-Date:   Tue, 30 Apr 2019 16:39:17 +0200 (CEST)
-From:   Alexandre DERUMIER <aderumier@odiso.com>
-To:     Vitaliy Filippov <vitalif@yourcmc.ru>
-Cc:     dillaman <dillaman@redhat.com>,
-        Mark Nelson <mark.a.nelson@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        ceph-devel-owner@vger.kernel.org
-Message-ID: <1073621142.34700.1556635157095.JavaMail.zimbra@odiso.com>
-In-Reply-To: <op.zzrr5qn20ncgu9@localhost>
-References: <6b33c8575b138ce15d80888f11d4c27b@yourcmc.ru> <CA+aFP1Cn9wbPwYcMFNsb7vt-bswqr4FNdLn3VvR+a0EJ0KQtBA@mail.gmail.com> <441F053D-00E0-4DFD-8AC8-E0B2462E7307@yourcmc.ru> <CA+aFP1Ar07WF9Y_D5b499VcfzzeWePq5r5KBnoy3dg-aDm1PtQ@mail.gmail.com> <1820e599886429c9d6400b1b99723881@yourcmc.ru> <700f4982-c8ef-a24a-a963-a2ee80a9f777@gmail.com> <op.zzrr5qn20ncgu9@localhost>
-Subject: Re: librados (librbd) slower than krbd
+        id S1726081AbfD3Qko (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 30 Apr 2019 12:40:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47042 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726049AbfD3Qko (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 30 Apr 2019 12:40:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 818FEAD14;
+        Tue, 30 Apr 2019 16:40:42 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Zimbra 8.8.9_GA_3026 (ZimbraWebClient - GC71 (Linux)/8.8.9_GA_3042)
-Thread-Topic: librados (librbd) slower than krbd
-Thread-Index: sAVcGBHVuzJd1mGOKbonJxWaLuPEvA==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 30 Apr 2019 18:40:42 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     "Liu, Changcheng" <changcheng.liu@intel.com>
+Cc:     ceph-devel@vger.kernel.org, ceph-devel-owner@vger.kernel.org
+Subject: Re: Async Messenger RDMA IB ib_uverbs_write return EACCES
+In-Reply-To: <20190419143111.GA3102@jerryopenix>
+References: <20190412104207.GA29167@jerryopenix>
+ <30fa5e49d56591fe2ecd6eae1caa98ce@suse.de>
+ <20190415122240.GA7819@jerryopenix>
+ <484935ae3aeb0ee6a59f93c3c727ba36@suse.de>
+ <20190416085820.GA4711@jerryopenix>
+ <84005b8af680599e93f8bc3facbc00a3@suse.de>
+ <20190416104119.GA6094@jerryopenix>
+ <211951a560b75a8d13096c87f7a241c9@suse.de>
+ <20190416120710.GA7940@jerryopenix> <20190419100628.GA15957@jerryopenix>
+ <20190419143111.GA3102@jerryopenix>
+Message-ID: <7cf7c35992829e4e1b134d833dab1e0b@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi,
-
->>I can only see two things in valgrind profiles: "self" instruction count  
->>for buffer::list::append and friends are 24% and tcmalloc's are 15%. Crush  
->>calculation, which I had removed by caching it in my test, was taking 5.7%  
->>in that same profile, so... maybe if 5.7% stands for 0.015ms - could 24%  
->>stand for 0.075ms? :).
-
-could be interesting to test fio with jemalloc instead tcmalloc
-
-#export LD_PRELOAD=${JEMALLOC_PATH}/lib/libjemalloc.so.1 
-#fio ....
-
-In past, I had better results (In proxmox, we still use jemalloc in qemu)
-http://lists.ceph.com/pipermail/cbt-ceph.com/2015-May/000019.html
-
-
------ Mail original -----
-De: "Vitaliy Filippov" <vitalif@yourcmc.ru>
-À: "dillaman" <dillaman@redhat.com>, "Mark Nelson" <mark.a.nelson@gmail.com>
-Cc: "ceph-devel" <ceph-devel@vger.kernel.org>, ceph-devel-owner@vger.kernel.org
-Envoyé: Vendredi 5 Avril 2019 12:45:16
-Objet: Re: librados (librbd) slower than krbd
-
-> Another big CPU drain is debug ms = 1. We recently decided to disable 
-> it by default in master since the overhead is so high. You can see that 
-> PR here: 
+On 2019-04-19 16:31, Liu, Changcheng wrote:
+> Hi Roman,
+>   I found that why ceph/msg/async/rdma/iwarp(x722) doesn't work on
+> ceph master branch.
+>   The problem is triggered by below commit:
 > 
-> https://github.com/ceph/ceph/pull/26936 
-
-Okaaay, thanks, after disabling it the latency difference between krbd and 
-librbd slightly dropped, now it is like 0.57ms (krbd) vs 0.63ms (librbd) 
-in my setup. It's becoming not bad overall since I'm approaching 0.5ms 
-latency... :) 
-
-I also tried to make a patch for librados which makes it not recalculate 
-PG OSDs for every operation, it also helps, but only slightly by reducing 
-latency by 0.015ms :) (and probably only usable in small clusters with a 
-small number of PGs). 
-
-I still can't really understand what's making librados so slow... Is it 
-just the C++ code?.. :) 
-
-I can only see two things in valgrind profiles: "self" instruction count 
-for buffer::list::append and friends are 24% and tcmalloc's are 15%. Crush 
-calculation, which I had removed by caching it in my test, was taking 5.7% 
-in that same profile, so... maybe if 5.7% stands for 0.015ms - could 24% 
-stand for 0.075ms? :). 
-
-It seems buffer::list::append is called a lot of times, basically for each 
-field of the output structure. Could it be better to allocate several 
-fields at once and fill them by simple assignments or was I just digging 
-in the wrong direction and most of the overhead originated from the 
-copying of the original buffer (which is invisible in the profile)? 
-
-> and the associated performance data: 
+> https://github.com/ceph/ceph/pull/20172/commits/fdde016301ae329f76c621337c384ac60aa0d210
 > 
-> https://docs.google.com/spreadsheets/d/1Zi3MFtvwLzCFfObL6evQKYtINQVQIjZ0SXczG78AnJM/edit?usp=sharing 
-> 
-> Mark 
+>   Below is the basic program model extracted from
+> ceph/msg/async/rdma/iwarp to show how the problem is triggered:
+
+Hi Changcheng,
+
+Indeed fork() also changes credentials (see copy_creds() in kernel for 
+details),
+like setuid() does, so there are two known places in ceph, after which 
+uverbs
+calls return -EACESS:
+
+   o setuid() (see global_init())
+   o daemon() (see global_init_daemonize())
+
+My question is why you daemonize your ceph services and do not rely on 
+systemd,
+which does fork() on its own and runs each service with '-f' flag, which 
+means
+do not daemonize?  So I would not daemonize services and this can be a 
+simple
+solution.
+
+With setuid() is not that easy.  The most straightforward way is to move
+mc_bootstrap.get_monmap_and_config() after setuid() call.  At the bottom 
+of
+the email there is a small patch which can fix the problem (I hope does 
+not
+introduce something new). Would be great if you can check it.
+
+--
+Roman
 
 
--- 
-With best regards, 
-Vitaliy Filippov 
+diff --git a/src/global/global_init.cc b/src/global/global_init.cc
+index eb8bbfd1a4db..de647be768bd 100644
+--- a/src/global/global_init.cc
++++ b/src/global/global_init.cc
+@@ -147,18 +147,6 @@ void global_pre_init(
+      cct->_log->start();
+    }
+
+-  if (!conf->no_mon_config) {
+-    // make sure our mini-session gets legacy values
+-    conf.apply_changes(nullptr);
+-
+-    MonClient mc_bootstrap(g_ceph_context);
+-    if (mc_bootstrap.get_monmap_and_config() < 0) {
+-      cct->_log->flush();
+-      cerr << "failed to fetch mon config (--no-mon-config to skip)"
+-          << std::endl;
+-      _exit(1);
+-    }
+-  }
+    if (!cct->_log->is_started()) {
+      cct->_log->start();
+    }
+@@ -313,6 +301,28 @@ global_init(const std::map<std::string,std::string> 
+*defaults,
+    }
+  #endif
+
++  //
++  // Utterly important to run first network connection after setuid().
++  // In case of rdma transport uverbs kernel module starts returning
++  // -EACCESS on each operation if credentials has been changed, see
++  // callers of ib_safe_file_access() for details.
++  //
++  // fork() syscall also matters, so daemonization won't work in case
++  // of rdma.
++  //
++  if (!g_conf()->no_mon_config) {
++    // make sure our mini-session gets legacy values
++    g_conf().apply_changes(nullptr);
++
++    MonClient mc_bootstrap(g_ceph_context);
++    if (mc_bootstrap.get_monmap_and_config() < 0) {
++      g_ceph_context->_log->flush();
++      cerr << "failed to fetch mon config (--no-mon-config to skip)"
++          << std::endl;
++      _exit(1);
++    }
++  }
++
+
 
