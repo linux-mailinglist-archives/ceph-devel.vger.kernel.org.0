@@ -2,55 +2,57 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BDECF834
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 Apr 2019 14:06:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C0CEF839
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Apr 2019 14:06:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729087AbfD3MG3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 30 Apr 2019 08:06:29 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33701 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727618AbfD3MG2 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 30 Apr 2019 08:06:28 -0400
-Received: by mail-pf1-f195.google.com with SMTP id z28so1642200pfk.0
-        for <ceph-devel@vger.kernel.org>; Tue, 30 Apr 2019 05:06:27 -0700 (PDT)
+        id S1727964AbfD3MGi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 30 Apr 2019 08:06:38 -0400
+Received: from mail-pg1-f179.google.com ([209.85.215.179]:39001 "EHLO
+        mail-pg1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727109AbfD3MGh (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 30 Apr 2019 08:06:37 -0400
+Received: by mail-pg1-f179.google.com with SMTP id l18so6731956pgj.6
+        for <ceph-devel@vger.kernel.org>; Tue, 30 Apr 2019 05:06:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zrSDURlss5SMobfyElySTw+0NiQq4J30x26jpg0Jj6w=;
-        b=qgELX0kvrUcqMSlun7SMbqnkd79VkvLMHMrCvkeASpbN/fB+euFGIyJ8EawmitfnhZ
-         oTgw/EjpKKQnp2lzX/pVs8h0akwy0DmMnGxBZ6QEhhR8WHh02gb812XNvIN+iDRcQW+T
-         lIZdM8jyirzbfA4ZIU6Age+WpjCxZl5CUpTtN8wFzBFzFjeoNoWIm+Ox0BIxFYiZ2yTl
-         MraAKRPBYV99u0Ijzr/oB5/hNpqTd2iHemH8GrGEoudANEkWNVYSgM84GciBeRmQe4yr
-         SSER0GWmaT0aByjT+Odm+/aOMaD6n2K40D0ygt1X6/OcePrDdbo4R+YS6g5+lIW4MMDM
-         Dx1w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Q6YU1mFCah3apJv071Qu7A9B1KsJE3a/Kqgk8KlAuAE=;
+        b=DbHe2voQGNzO8tywrnAazPqxWLbOSvgMku1l8HWqf0A65mbxR4XDekX7W9/oYbu9ww
+         qrUCd37dzLzLa8Drs7rOGQhQg+i5AMAwSww49A1R3UeWIpJES4ab2BDOJUfRz6mfpTjP
+         MWa6ZOd5TAp+RPCPOZNTI3FsjkiowVBV7sTzGX7V95nFxESt9rgLV+uy1P8HTnjte5NQ
+         1fyvGcYiKDEXNT/PgZ/ZRbNWLEUxAYue3ljFhqVI8v0oM4k3PAJ+9SLT65W0lq0y5fvC
+         RwfUgr6ku/qqXl+VQ6iIKRt5tpGVT//iV/rxvep8P/nwI03lAfzc6qtNbzygCKtA9tti
+         uR9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zrSDURlss5SMobfyElySTw+0NiQq4J30x26jpg0Jj6w=;
-        b=CykVQQfV5vHy6FU7tgPvzJmDk8A/kTl4HLGE9R9JEEkVeyJGw5BVunHB8oqsL/3hRa
-         9WUZK0/4OnQKXBRvd7fWNFHo/UOkrdypXBiuYhxAMecrKm3qOj9jX5PrIuaA1+EpaHGA
-         pTxpulRWMgc3IriJLzAa9xgP3ht36DptgaiJ6lj3PDMnn1OP0iRNtsVT4nUNjQksxZfO
-         kzR7EkIBR2M2Yb2UybSDZiS9aUiGiwu6MldbzVY18Zu+p1dlKSIQR3c3vMy5gRFKC9N+
-         Qs/WP8azuUfxMsAgj0kW7RcOow08P6UPNwwg/RpqFfmxuZwf+otnj9aod4Ez+/OW7gkM
-         K8ow==
-X-Gm-Message-State: APjAAAWE3pBldSGfMBUQoWpa3QawHm+pJ2Wd+UcuxIOfJLYv8CHLu4N3
-        sG1K4oywWPuZawL+nY9SQECjxf0P
-X-Google-Smtp-Source: APXvYqzXdnMj2wIdQ2PpdypUIKZAd2UYvQee0jsJl4vqXiLJEbmhFTm8Av2RSNhcwA8cMk+T3Q92KA==
-X-Received: by 2002:a65:430a:: with SMTP id j10mr14899280pgq.143.1556625986728;
-        Tue, 30 Apr 2019 05:06:26 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Q6YU1mFCah3apJv071Qu7A9B1KsJE3a/Kqgk8KlAuAE=;
+        b=Z1Poe+zCExueghN6wzQpo7XE02amBprorVK4RDR+UboGztlhU0iqhOlGSQ4Y1f0kh7
+         pae+8mw/gvw9Bb3/cQk6gvyqNdA8DaDABEiYVepsTqvExrjtsmzyUh3OV3Mz0S1qfWCq
+         3ynpkAoJYujawfrmJKrW7rHstBASVLol4y+L0dUSjv17XVVJhFCRD33PJGktkeXh8gNn
+         HyQOEPPQ8DjC993ffNNex17dNhjluWINQpEVcrWaSdiZd9QCXbQ8NCWK5WbY5y7+HsM5
+         LuPuA9RhUcpPLNl5leibpHlvkG4VoNJr4pfHgHg92G0pujttnuQzEhNnGyn54wIr8AeA
+         cKpQ==
+X-Gm-Message-State: APjAAAUHwm0bh3PQU9RB+PKjVUuDYvm+TvgPTU9+asa3yLQSBtFY0EU+
+        Q5lvg13k0cCXcTNFzXSdJzgzB1y8
+X-Google-Smtp-Source: APXvYqz3WL1ChYuvu/OWdjDxvfbUOYPjlopGmw/mguV9iaeqH51/WfnqyG9dVcclrt5WG/7VIPT10g==
+X-Received: by 2002:aa7:8ac8:: with SMTP id b8mr26125281pfd.234.1556625996653;
+        Tue, 30 Apr 2019 05:06:36 -0700 (PDT)
 Received: from xxh01v.add.shbt.qihoo.net ([180.163.220.95])
-        by smtp.gmail.com with ESMTPSA id n67sm4005786pfn.22.2019.04.30.05.06.24
+        by smtp.gmail.com with ESMTPSA id n67sm4005786pfn.22.2019.04.30.05.06.34
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Apr 2019 05:06:25 -0700 (PDT)
+        Tue, 30 Apr 2019 05:06:35 -0700 (PDT)
 From:   xxhdx1985126@gmail.com
 To:     ceph-devel@vger.kernel.org, ukernel@gmail.com
 Cc:     Xuehan Xu <xuxuehan@360.cn>
-Subject: [PATCH 1/2] cgroup: add a new group controller for cephfs
-Date:   Tue, 30 Apr 2019 12:05:33 +0000
-Message-Id: <20190430120534.5231-1-xxhdx1985126@gmail.com>
+Subject: [PATCH 2/2] ceph: use cephfs cgroup contoller to limit client ops
+Date:   Tue, 30 Apr 2019 12:05:34 +0000
+Message-Id: <20190430120534.5231-2-xxhdx1985126@gmail.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190430120534.5231-1-xxhdx1985126@gmail.com>
+References: <20190430120534.5231-1-xxhdx1985126@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
@@ -60,527 +62,296 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Xuehan Xu <xuxuehan@360.cn>
 
-this controller is supposed to limit the metadata
-ops or data ops issued to the underlying cluster.
-
 Signed-off-by: Xuehan Xu <xuxuehan@360.cn>
 ---
- include/linux/cgroup_cephfs.h |  57 +++++
- include/linux/cgroup_subsys.h |   4 +
- init/Kconfig                  |   5 +
- kernel/cgroup/Makefile        |   1 +
- kernel/cgroup/cephfs.c        | 398 ++++++++++++++++++++++++++++++++++
- 5 files changed, 465 insertions(+)
- create mode 100644 include/linux/cgroup_cephfs.h
- create mode 100644 kernel/cgroup/cephfs.c
+ fs/ceph/mds_client.c            | 34 +++++++++++++++++++++++++-
+ fs/ceph/mds_client.h            |  9 +++++++
+ fs/ceph/super.c                 |  5 +++-
+ include/linux/ceph/osd_client.h | 11 ++++++++-
+ include/linux/ceph/types.h      |  1 -
+ net/ceph/ceph_common.c          |  2 +-
+ net/ceph/ceph_fs.c              |  1 -
+ net/ceph/osd_client.c           | 42 +++++++++++++++++++++++++++++++++
+ 8 files changed, 99 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/cgroup_cephfs.h b/include/linux/cgroup_cephfs.h
-new file mode 100644
-index 000000000000..91809862b8f8
---- /dev/null
-+++ b/include/linux/cgroup_cephfs.h
-@@ -0,0 +1,57 @@
-+#ifndef _CEPHFS_CGROUP_H
-+#define _CEPHFS_CGROUP_H
-+
-+#include <linux/cgroup.h>
-+
-+#define META_OPS_IOPS_IDX 0
-+#define DATA_OPS_IOPS_IDX 0
-+#define DATA_OPS_BAND_IDX 1
-+#define META_OPS_TB_NUM 1
-+#define DATA_OPS_TB_NUM 2
-+
-+/*
-+ * token bucket throttle
-+ */
-+struct token_bucket {
-+    u64 remain;
-+    u64 max;
-+    u64 target_throughput;
-+};
-+
-+struct token_bucket_throttle {
-+    struct token_bucket* tb;
-+    u64 tick_interval;
-+    int tb_num;
-+    struct list_head reqs_blocked;
-+    struct mutex bucket_lock;
-+    struct delayed_work tick_work;
-+    unsigned long tbt_timeout;
-+};
-+
-+struct queue_item {
-+    struct list_head token_bucket_throttle_item;
-+    u64* tokens_requested;
-+    int tb_item_num;
-+    struct completion throttled;
-+    unsigned long tbt_timeout;
-+};
-+
-+struct cephfscg {
-+    struct cgroup_subsys_state  css;
-+    spinlock_t          lock;
-+
-+    struct token_bucket_throttle meta_ops_throttle;
-+    struct token_bucket_throttle data_ops_throttle;
-+};
-+
-+extern void schedule_token_bucket_throttle_tick(struct token_bucket_throttle* ptbt, u64 tick_interval);
-+
-+extern void token_bucket_throttle_tick(struct work_struct* work);
-+
-+extern int get_token_bucket_throttle(struct token_bucket_throttle* ptbt, struct queue_item* req);
-+
-+extern int queue_item_init(struct queue_item* qitem, struct token_bucket_throttle* ptbt, int tb_item_num);
-+
-+extern int token_bucket_throttle_init(struct token_bucket_throttle* ptbt, int token_bucket_num);
-+
-+#endif /*_CEPHFS_CGROUP_H*/
-diff --git a/include/linux/cgroup_subsys.h b/include/linux/cgroup_subsys.h
-index acb77dcff3b4..577a276570a5 100644
---- a/include/linux/cgroup_subsys.h
-+++ b/include/linux/cgroup_subsys.h
-@@ -61,6 +61,10 @@ SUBSYS(pids)
- SUBSYS(rdma)
- #endif
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 9049c2a3e972..4ba6b4de0f64 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -20,6 +20,10 @@
+ #include <linux/ceph/auth.h>
+ #include <linux/ceph/debugfs.h>
  
-+#if IS_ENABLED(CONFIG_CGROUP_CEPH_FS)
-+SUBSYS(cephfs)
++#ifdef CONFIG_CGROUP_CEPH_FS
++#include <linux/cgroup_cephfs.h>
 +#endif
 +
- /*
-  * The following subsystems are not supported on the default hierarchy.
-  */
-diff --git a/init/Kconfig b/init/Kconfig
-index 4592bf7997c0..e22f3aea9e23 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -867,6 +867,11 @@ config CGROUP_RDMA
- 	  Attaching processes with active RDMA resources to the cgroup
- 	  hierarchy is allowed even if can cross the hierarchy's limit.
+ #define RECONNECT_MAX_SIZE (INT_MAX - PAGE_SIZE)
  
-+config CGROUP_CEPH_FS
-+    bool "cephfs controller"
-+    help
-+        cephfs cgroup controller
+ /*
+@@ -689,6 +693,9 @@ void ceph_mdsc_release_request(struct kref *kref)
+ 	struct ceph_mds_request *req = container_of(kref,
+ 						    struct ceph_mds_request,
+ 						    r_kref);
++#ifdef CONFIG_CGROUP_CEPH_FS
++    kfree(req->qitem.tokens_requested);
++#endif
+ 	destroy_reply_info(&req->r_reply_info);
+ 	if (req->r_request)
+ 		ceph_msg_put(req->r_request);
+@@ -2035,6 +2042,12 @@ ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
+ {
+ 	struct ceph_mds_request *req = kzalloc(sizeof(*req), GFP_NOFS);
+ 	struct timespec64 ts;
++#ifdef CONFIG_CGROUP_CEPH_FS
++    struct task_struct* tsk = current;
++    struct cgroup_subsys_state* css = tsk->cgroups->subsys[cephfs_cgrp_subsys.id];
++    struct cephfscg* cephfscg_p =
++        container_of(css, struct cephfscg, css);
++#endif
+ 
+ 	if (!req)
+ 		return ERR_PTR(-ENOMEM);
+@@ -2058,6 +2071,10 @@ ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
+ 
+ 	req->r_op = op;
+ 	req->r_direct_mode = mode;
 +
- config CGROUP_FREEZER
- 	bool "Freezer controller"
- 	help
-diff --git a/kernel/cgroup/Makefile b/kernel/cgroup/Makefile
-index bfcdae896122..aaf836181f1a 100644
---- a/kernel/cgroup/Makefile
-+++ b/kernel/cgroup/Makefile
-@@ -6,3 +6,4 @@ obj-$(CONFIG_CGROUP_PIDS) += pids.o
- obj-$(CONFIG_CGROUP_RDMA) += rdma.o
- obj-$(CONFIG_CPUSETS) += cpuset.o
- obj-$(CONFIG_CGROUP_DEBUG) += debug.o
-+obj-$(CONFIG_CGROUP_CEPH_FS) += cephfs.o
-diff --git a/kernel/cgroup/cephfs.c b/kernel/cgroup/cephfs.c
-new file mode 100644
-index 000000000000..65b9e9618a5d
---- /dev/null
-+++ b/kernel/cgroup/cephfs.c
-@@ -0,0 +1,398 @@
++#ifdef CONFIG_CGROUP_CEPH_FS
++    queue_item_init(&req->qitem, &cephfscg_p->meta_ops_throttle, META_OPS_TB_NUM);
++#endif
+ 	return req;
+ }
+ 
+@@ -2689,9 +2706,22 @@ int ceph_mdsc_do_request(struct ceph_mds_client *mdsc,
+ 			 struct ceph_mds_request *req)
+ {
+ 	int err;
++#ifdef CONFIG_CGROUP_CEPH_FS
++    struct task_struct* ts = current;
++    struct cgroup_subsys_state* css = ts->cgroups->subsys[cephfs_cgrp_subsys.id];
++    struct cephfscg* cephfscg_p =
++        container_of(css, struct cephfscg, css);
++#endif
+ 
+ 	dout("do_request on %p\n", req);
+ 
++#ifdef CONFIG_CGROUP_CEPH_FS
++    req->qitem.tokens_requested[META_OPS_IOPS_IDX] = 1;
++    err = get_token_bucket_throttle(&cephfscg_p->meta_ops_throttle, &req->qitem);
++    if (err)
++        goto nolock_err;
++#endif
++
+ 	/* take CAP_PIN refs for r_inode, r_parent, r_old_dentry */
+ 	if (req->r_inode)
+ 		ceph_get_cap_refs(ceph_inode(req->r_inode), CEPH_CAP_PIN);
+@@ -2755,6 +2785,7 @@ int ceph_mdsc_do_request(struct ceph_mds_client *mdsc,
+ 
+ out:
+ 	mutex_unlock(&mdsc->mutex);
++nolock_err:
+ 	dout("do_request %p done, result %d\n", req, err);
+ 	return err;
+ }
+@@ -4166,7 +4197,8 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
+ 
+ 	strscpy(mdsc->nodename, utsname()->nodename,
+ 		sizeof(mdsc->nodename));
+-	return 0;
++
++    return 0;
+ }
+ 
+ /*
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index 50385a481fdb..814f0ecca523 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -16,6 +16,10 @@
+ #include <linux/ceph/mdsmap.h>
+ #include <linux/ceph/auth.h>
+ 
++#ifdef CONFIG_CGROUP_CEPH_FS
 +#include <linux/cgroup_cephfs.h>
-+#include <linux/slab.h>
++#endif
 +
-+struct cephfscg cephfscg_root;
+ /* The first 8 bits are reserved for old ceph releases */
+ #define CEPHFS_FEATURE_MIMIC		8
+ #define CEPHFS_FEATURE_REPLY_ENCODING	9
+@@ -284,6 +288,11 @@ struct ceph_mds_request {
+ 	/* unsafe requests that modify the target inode */
+ 	struct list_head r_unsafe_target_item;
+ 
++#ifdef CONFIG_CGROUP_CEPH_FS
++    /* requests that blocked by the token bucket throttle*/
++    struct queue_item qitem;
++#endif
 +
-+static void put_token(struct token_bucket_throttle* ptbt, u64 tick_interval)
-+{
-+    struct token_bucket* ptb = NULL;
-+    u64 tokens_to_put = 0;
-+    int i = 0;
+ 	struct ceph_mds_session *r_session;
+ 
+ 	int               r_attempts;   /* resend attempts */
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 6d5bb2f74612..19d035dfe414 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -1161,7 +1161,10 @@ MODULE_ALIAS_FS("ceph");
+ 
+ static int __init init_ceph(void)
+ {
+-	int ret = init_caches();
++	int ret = 0;
++    pr_info("init_ceph\n");
 +
-+    for (i = 0; i < ptbt->tb_num; i++) {
-+        ptb = &ptbt->tb[i];
-+        
-+        if (!ptb->max)
-+            continue;
++    ret = init_caches();
+ 	if (ret)
+ 		goto out;
+ 
+diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+index 2294f963dab7..31011a1e9573 100644
+--- a/include/linux/ceph/osd_client.h
++++ b/include/linux/ceph/osd_client.h
+@@ -16,6 +16,10 @@
+ #include <linux/ceph/auth.h>
+ #include <linux/ceph/pagelist.h>
+ 
++#ifdef CONFIG_CGROUP_CEPH_FS
++#include <linux/cgroup_cephfs.h>
++#endif
 +
-+        tokens_to_put = ptb->target_throughput * tick_interval / HZ;
+ struct ceph_msg;
+ struct ceph_snap_context;
+ struct ceph_osd_request;
+@@ -193,7 +197,12 @@ struct ceph_osd_request {
+ 
+ 	int               r_result;
+ 
+-	struct ceph_osd_client *r_osdc;
++#ifdef CONFIG_CGROUP_CEPH_FS
++    /* token bucket throttle item*/
++    struct queue_item qitem;
++#endif
 +
-+        if (ptb->remain + tokens_to_put >= ptb->max)
-+            ptb->remain = ptb->max;
-+        else
-+            ptb->remain += tokens_to_put;
-+        pr_debug("%s: put_token: token bucket remain: %lld\n", __func__, ptb->remain);
-+    }
-+}
++    struct ceph_osd_client *r_osdc;
+ 	struct kref       r_kref;
+ 	bool              r_mempool;
+ 	struct completion r_completion;       /* private to osd_client.c */
+diff --git a/include/linux/ceph/types.h b/include/linux/ceph/types.h
+index bd3d532902d7..3b404bdbb28f 100644
+--- a/include/linux/ceph/types.h
++++ b/include/linux/ceph/types.h
+@@ -27,5 +27,4 @@ struct ceph_cap_reservation {
+ 	int used;
+ };
+ 
+-
+ #endif
+diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+index 79eac465ec65..a0087532516b 100644
+--- a/net/ceph/ceph_common.c
++++ b/net/ceph/ceph_common.c
+@@ -503,7 +503,7 @@ ceph_parse_options(char *options, const char *dev_name,
+ 			opt->osd_request_timeout = msecs_to_jiffies(intval * 1000);
+ 			break;
+ 
+-		case Opt_share:
++        case Opt_share:
+ 			opt->flags &= ~CEPH_OPT_NOSHARE;
+ 			break;
+ 		case Opt_noshare:
+diff --git a/net/ceph/ceph_fs.c b/net/ceph/ceph_fs.c
+index 756a2dc10d27..744a6e5c0cba 100644
+--- a/net/ceph/ceph_fs.c
++++ b/net/ceph/ceph_fs.c
+@@ -4,7 +4,6 @@
+  */
+ #include <linux/module.h>
+ #include <linux/ceph/types.h>
+-
+ /*
+  * return true if @layout appears to be valid
+  */
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index fa9530dd876e..27d9fdf88af6 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -22,6 +22,10 @@
+ #include <linux/ceph/pagelist.h>
+ #include <linux/ceph/striper.h>
+ 
++#ifdef CONFIG_CGROUP_CEPH_FS
++#include <linux/cgroup_cephfs.h>
++#endif
 +
-+static bool should_wait(struct token_bucket_throttle* ptbt, struct queue_item* qitem)
-+{
-+    struct token_bucket* ptb = NULL;
-+    int i = 0;
+ #define OSD_OPREPLY_FRONT_LEN	512
+ 
+ static struct kmem_cache	*ceph_osd_request_cache;
+@@ -492,6 +496,10 @@ static void ceph_osdc_release_request(struct kref *kref)
+ 	     req->r_request, req->r_reply);
+ 	request_release_checks(req);
+ 
++#ifdef CONFIG_CGROUP_CEPH_FS
++    kfree(req->qitem.tokens_requested);
++#endif
 +
-+    BUG_ON(ptbt->tb_num != qitem->tb_item_num);
-+    for (i = 0; i < ptbt->tb_num; i++) {
-+        ptb = &ptbt->tb[i];
-+
-+        if (!ptb->max)
-+            continue;
-+
-+        if (ptb->remain < qitem->tokens_requested[i])
-+            return true;
-+    }
-+    return false;
-+}
-+
-+static void get_token(struct token_bucket_throttle* ptbt, struct queue_item* qitem)
-+{
-+    struct token_bucket* ptb = NULL;
-+    int i = 0;
-+    BUG_ON(should_wait(ptbt, qitem));
-+
-+    for (i = 0; i < ptbt->tb_num; i++) {
-+        ptb = &ptbt->tb[i];
-+        if (!ptb->max)
-+            continue;
-+        ptb->remain -= qitem->tokens_requested[i];
-+    }
-+}
-+
-+void schedule_token_bucket_throttle_tick(struct token_bucket_throttle* ptbt, u64 tick_interval)
-+{
-+    if (tick_interval)
-+        schedule_delayed_work(&ptbt->tick_work, tick_interval);
-+}
-+EXPORT_SYMBOL(schedule_token_bucket_throttle_tick);
-+
-+void token_bucket_throttle_tick(struct work_struct* work)
-+{
-+    struct token_bucket_throttle* ptbt = 
-+        container_of(work, struct token_bucket_throttle, tick_work.work);
-+    struct queue_item* req = NULL, *tmp = NULL;
-+    LIST_HEAD(reqs_to_go);
-+    u64 tick_interval = ptbt->tick_interval;
-+
-+    mutex_lock(&ptbt->bucket_lock);
-+    put_token(ptbt, tick_interval);
-+    if (!tick_interval)
-+        pr_debug("%s: tick_interval set to 0, turning off the throttle, item: %p\n", __func__, req);
-+
-+    list_for_each_entry_safe(req, tmp, &ptbt->reqs_blocked, token_bucket_throttle_item) {
-+        pr_debug("%s: waiting item: %p\n", __func__, req);
-+        if (tick_interval) {
-+            if (should_wait(ptbt, req))
-+                break;
-+            get_token(ptbt, req);
-+        }
-+        list_del(&req->token_bucket_throttle_item);
-+        list_add_tail(&req->token_bucket_throttle_item, &reqs_to_go);
-+        pr_debug("%s: tokens got for req: %p\n", __func__, req);
-+    }
-+    mutex_unlock(&ptbt->bucket_lock);
-+
-+    list_for_each_entry_safe(req, tmp, &reqs_to_go, token_bucket_throttle_item) {
-+        pr_debug("%s: notifying req: %p, list head: %p\n", __func__, req, &reqs_to_go);
-+        complete_all(&req->throttled);
-+        list_del(&req->token_bucket_throttle_item);
-+    }
-+
-+    if (tick_interval)
-+        schedule_token_bucket_throttle_tick(ptbt, tick_interval);
-+}
-+EXPORT_SYMBOL(token_bucket_throttle_tick);
-+
-+int get_token_bucket_throttle(struct token_bucket_throttle* ptbt, struct queue_item* req)
-+{
-+    int ret = 0;
-+    long timeleft = 0;
-+
-+    mutex_lock(&ptbt->bucket_lock);
-+    if (should_wait(ptbt, req)) {
-+        pr_debug("%s: wait for tokens, req: %p\n", __func__, req);
-+        list_add_tail(&req->token_bucket_throttle_item, &ptbt->reqs_blocked);
-+        mutex_unlock(&ptbt->bucket_lock);
-+        timeleft = wait_for_completion_killable_timeout(&req->throttled, req->tbt_timeout ?: MAX_SCHEDULE_TIMEOUT);
-+        if (timeleft > 0) 
-+            ret = 0;
-+        else if (!timeleft)
-+            ret = -EIO; /* timed out */
-+        else {
-+            /* killed */
-+            pr_debug("%s: killed, req: %p\n", __func__, req);
-+            mutex_lock(&ptbt->bucket_lock);
-+            list_del(&req->token_bucket_throttle_item);
-+            mutex_unlock(&ptbt->bucket_lock);
-+            ret = timeleft;
-+        }
-+    } else {
-+        pr_debug("%s: no need to wait for tokens, going ahead, req: %p\n", __func__, req);
-+        get_token(ptbt, req);                                                                
-+        mutex_unlock(&ptbt->bucket_lock);
-+    }
-+    return ret;
-+}
-+EXPORT_SYMBOL(get_token_bucket_throttle);
-+
-+int queue_item_init(struct queue_item* qitem, struct token_bucket_throttle* ptbt, int tb_item_num)
-+{
-+    qitem->tokens_requested = kzalloc(sizeof(*qitem->tokens_requested) * tb_item_num, GFP_KERNEL);
-+    if (!qitem->tokens_requested)
-+        return -ENOMEM;
-+
-+    qitem->tb_item_num = tb_item_num;
-+    INIT_LIST_HEAD(&qitem->token_bucket_throttle_item);
-+    init_completion(&qitem->throttled);
-+    qitem->tbt_timeout = ptbt->tbt_timeout;
-+
-+    return 0;
-+}
-+EXPORT_SYMBOL(queue_item_init);
-+
-+int token_bucket_throttle_init(struct token_bucket_throttle* ptbt,
-+        int token_bucket_num)
-+{
-+    int i = 0;
-+
-+    INIT_LIST_HEAD(&ptbt->reqs_blocked);
-+    mutex_init(&ptbt->bucket_lock);
-+    ptbt->tb_num = token_bucket_num;
-+    ptbt->tb = kzalloc(sizeof(*ptbt->tb) * ptbt->tb_num, GFP_KERNEL);
-+    if (!ptbt->tb) {
-+        return -ENOMEM;
-+    }
-+
-+    for (i = 0; i < ptbt->tb_num; i++) {
-+        ptbt->tb[i].target_throughput = 0;
-+        ptbt->tb[i].max = 0;
-+    }
-+    ptbt->tick_interval = 0;
-+    ptbt->tbt_timeout = 0;
-+    INIT_DELAYED_WORK(&ptbt->tick_work, token_bucket_throttle_tick);
-+
-+    return 0;
-+}
-+EXPORT_SYMBOL(token_bucket_throttle_init);
-+
-+static int set_throttle_params(struct token_bucket_throttle* ptbt, char* param_list)
-+{
-+    char* options = strstrip(param_list);
-+    char* val = NULL;
-+    int res = 0;
-+    unsigned long interval = 0, timeout = 0, last_interval = ptbt->tick_interval;
-+
-+    val = strsep(&options, ",");
-+    if (!val)
-+        return -EINVAL;
-+
-+    res = kstrtol(val, 0, &interval);
-+    if (res)
-+        return res;
-+
-+    val = strsep(&options, ",");
-+    if (!val)
-+        return -EINVAL;
-+
-+    res = kstrtol(val, 0, &timeout);
-+    if (res)
-+        return res;
-+
-+    if (last_interval && !interval) {
-+        int i = 0;
-+
-+        for (i = 0; i<ptbt->tb_num; i++) {
-+            if (ptbt->tb[i].max) {
-+                /* all token bucket must be unset
-+                 * before turning off the throttle */
-+                return -EINVAL;
-+            }
-+        }
-+    }
-+    ptbt->tick_interval = msecs_to_jiffies(interval);
-+    ptbt->tbt_timeout = timeout;
-+
-+    if (ptbt->tick_interval && !last_interval) {
-+        schedule_token_bucket_throttle_tick(ptbt, ptbt->tick_interval);
-+    }
-+
-+    return 0;
-+}
-+
-+static int set_tb_params(struct token_bucket_throttle* ptbt, int tb_idx, char* param_list)
-+{
-+    char* options = strstrip(param_list);
-+    char* val = NULL;
-+    int res = 0;
-+    unsigned long throughput = 0, burst = 0;
-+
-+    val = strsep(&options, ",");
-+    if (!val)
-+        return -EINVAL;
-+
-+    res = kstrtol(val, 0, &throughput);
-+    if (res)
-+        return res;
-+
-+    val = strsep(&options, ",");
-+    if (!val)
-+        return -EINVAL;
-+
-+    res = kstrtol(val, 0, &burst);
-+    if (res)
-+        return res;
-+
-+    if (!(throughput && burst) && (throughput || burst)) {
-+        /* either both or none of throughput and burst are set*/
-+        return -EINVAL;
-+    }
-+    if (throughput && !ptbt->tick_interval) {
-+        /* all token bucket must be unset
-+         * before turning off the throttle */
-+        return -EINVAL;
-+    }
-+    ptbt->tb[tb_idx].target_throughput = throughput;
-+    ptbt->tb[tb_idx].max = burst;
-+
-+    return 0;
-+}
-+
-+static ssize_t cephfscg_set_throttle_params(struct kernfs_open_file *of,
-+        char *buf, size_t nbytes, loff_t off)
-+{
-+    const char *throttle_name;
-+    int ret = 0;
+ 	if (req->r_request)
+ 		ceph_msg_put(req->r_request);
+ 	if (req->r_reply)
+@@ -587,6 +595,13 @@ struct ceph_osd_request *ceph_osdc_alloc_request(struct ceph_osd_client *osdc,
+ 					       gfp_t gfp_flags)
+ {
+ 	struct ceph_osd_request *req;
++#ifdef CONFIG_CGROUP_CEPH_FS
++    struct task_struct* ts = current;
++    struct cgroup_subsys_state* css = ts->cgroups->subsys[cephfs_cgrp_subsys.id];
 +    struct cephfscg* cephfscg_p =
-+        container_of(seq_css(of->seq_file), struct cephfscg, css);
-+
-+    throttle_name = of->kn->name;
-+    if (!strcmp(throttle_name, "cephfs.meta_ops")) {
-+        ret = set_throttle_params(&cephfscg_p->meta_ops_throttle, buf);
-+    } else if (!strcmp(throttle_name, "cephfs.data_ops")) {
-+        ret = set_throttle_params(&cephfscg_p->data_ops_throttle, buf);
-+    } else if (!strcmp(throttle_name, "cephfs.meta_ops.iops")) {
-+        ret = set_tb_params(&cephfscg_p->meta_ops_throttle, META_OPS_IOPS_IDX, buf);
-+    } else if (!strcmp(throttle_name, "cephfs.data_ops.iops")) {
-+        ret = set_tb_params(&cephfscg_p->data_ops_throttle, DATA_OPS_IOPS_IDX, buf);
-+    } else if (!strcmp(throttle_name, "cephfs.data_ops.band")) {
-+        ret = set_tb_params(&cephfscg_p->data_ops_throttle, DATA_OPS_BAND_IDX, buf);
-+    }
-+
-+    return ret ?: nbytes;
-+}
-+
-+static int cephfscg_throttle_params_read(struct seq_file *sf, void *v)
-+{
-+    const char *throttle_name;
-+    struct cephfscg* cephfscg_p =
-+        container_of(seq_css(sf), struct cephfscg, css);
-+   
-+    throttle_name = ((struct kernfs_open_file*)sf->private)->kn->name;
-+    if (!strcmp(throttle_name, "cephfs.meta_ops")) {
-+        seq_printf(sf, "%llu,%lu\n",
-+                cephfscg_p->meta_ops_throttle.tick_interval,
-+                cephfscg_p->meta_ops_throttle.tbt_timeout);
-+    } else if (!strcmp(throttle_name, "cephfs.data_ops")) {
-+        seq_printf(sf, "%llu,%lu\n",
-+                cephfscg_p->data_ops_throttle.tick_interval,
-+                cephfscg_p->data_ops_throttle.tbt_timeout);
-+    } else if (!strcmp(throttle_name, "cephfs.data_ops.iops")) {
-+        seq_printf(sf, "%llu,%llu\n",
-+                cephfscg_p->data_ops_throttle.tb[DATA_OPS_IOPS_IDX].target_throughput,
-+                cephfscg_p->data_ops_throttle.tb[DATA_OPS_IOPS_IDX].max);
-+    } else if (!strcmp(throttle_name, "cephfs.data_ops.band")) {
-+        seq_printf(sf, "%llu,%llu\n",
-+                cephfscg_p->data_ops_throttle.tb[DATA_OPS_BAND_IDX].target_throughput,
-+                cephfscg_p->data_ops_throttle.tb[DATA_OPS_BAND_IDX].max);
-+    } else if (!strcmp(throttle_name, "cephfs.meta_ops.iops")) {
-+        seq_printf(sf, "%llu,%llu\n",
-+                cephfscg_p->meta_ops_throttle.tb[META_OPS_IOPS_IDX].target_throughput,
-+                cephfscg_p->meta_ops_throttle.tb[META_OPS_IOPS_IDX].max);
-+    }
-+    
-+    return 0;
-+}
-+
-+static struct cftype cephfscg_files[] = {
-+    {
-+        .name = "meta_ops.iops",
-+        .write = cephfscg_set_throttle_params,
-+        .seq_show = cephfscg_throttle_params_read,
-+    },
-+    {
-+        .name = "meta_ops",
-+        .write = cephfscg_set_throttle_params,
-+        .seq_show = cephfscg_throttle_params_read,
-+    },
-+    {
-+        .name = "data_ops.iops",
-+        .write = cephfscg_set_throttle_params,
-+        .seq_show = cephfscg_throttle_params_read,
-+    },
-+    {
-+        .name = "data_ops.band",
-+        .write = cephfscg_set_throttle_params,
-+        .seq_show = cephfscg_throttle_params_read,
-+    },
-+    {
-+        .name = "data_ops",
-+        .write = cephfscg_set_throttle_params,
-+        .seq_show = cephfscg_throttle_params_read,
-+    },
-+    { }
-+};
-+
-+static struct cgroup_subsys_state *
-+cephfscg_css_alloc(struct cgroup_subsys_state *parent_css) {
-+
-+    struct cephfscg* cephfscg_p = NULL;
-+    struct cgroup_subsys_state *ret = NULL;
++        container_of(css, struct cephfscg, css);
 +    int r = 0;
++#endif
+ 
+ 	if (use_mempool) {
+ 		BUG_ON(num_ops > CEPH_OSD_SLAB_OPS);
+@@ -606,6 +621,11 @@ struct ceph_osd_request *ceph_osdc_alloc_request(struct ceph_osd_client *osdc,
+ 	req->r_num_ops = num_ops;
+ 	req->r_snapid = CEPH_NOSNAP;
+ 	req->r_snapc = ceph_get_snap_context(snapc);
++#ifdef CONFIG_CGROUP_CEPH_FS
++    r = queue_item_init(&req->qitem, &cephfscg_p->data_ops_throttle, DATA_OPS_TB_NUM);
++    if (unlikely(r))
++        return NULL;
++#endif
+ 
+ 	dout("%s req %p\n", __func__, req);
+ 	return req;
+@@ -4463,6 +4483,28 @@ int ceph_osdc_start_request(struct ceph_osd_client *osdc,
+ 			    struct ceph_osd_request *req,
+ 			    bool nofail)
+ {
++#ifdef CONFIG_CGROUP_CEPH_FS
++    struct task_struct* ts = current;
++    struct cgroup_subsys_state* css = ts->cgroups->subsys[cephfs_cgrp_subsys.id];
++    struct cephfscg* cephfscg_p =
++        container_of(css, struct cephfscg, css);
++    int err = 0;
++    int i = 0;
++    u64 len = 0;
 +
-+    if (!parent_css) {
-+        cephfscg_p = &cephfscg_root;
-+    } else {
-+        cephfscg_p = kzalloc(sizeof(*cephfscg_p), GFP_KERNEL);
-+        if (!cephfscg_p) {
-+            ret = ERR_PTR(-ENOMEM);
-+            goto err;
-+        }
++    dout("%s: req: %p, tid: %llu, tokens_requested: %p, tb_item_num: %d\n", __func__, req, req->r_tid, req->qitem.tokens_requested, req->qitem.tb_item_num);
++    req->qitem.tokens_requested[DATA_OPS_IOPS_IDX] = 1;
++    for (i = 0; i < req->r_num_ops; i++) {
++        if (req->r_ops[i].op == CEPH_OSD_OP_READ
++                || req->r_ops[i].op == CEPH_OSD_OP_WRITE)
++            len += req->r_ops[i].extent.length;
 +    }
-+
-+    spin_lock_init(&cephfscg_p->lock);
-+
-+    r = token_bucket_throttle_init(&cephfscg_p->meta_ops_throttle, 1);
-+    if (r) {
-+        ret = ERR_PTR(r);
-+        goto err;
-+    }
-+
-+    r = token_bucket_throttle_init(&cephfscg_p->data_ops_throttle, 2);
-+    if (r) {
-+        ret = ERR_PTR(r);
-+        goto err;
-+    }
-+
-+    return &cephfscg_p->css;
-+err:
-+    return ret;
-+}
-+
-+static void cephfscg_css_free(struct cgroup_subsys_state *css) {
-+    struct cephfscg* cephfscg_p = 
-+        css ? container_of(css, struct cephfscg, css) : NULL;
-+
-+    cancel_delayed_work_sync(&cephfscg_p->meta_ops_throttle.tick_work);
-+    cancel_delayed_work_sync(&cephfscg_p->data_ops_throttle.tick_work);
-+
-+    kfree(cephfscg_p->meta_ops_throttle.tb);
-+    kfree(cephfscg_p->data_ops_throttle.tb);
-+
-+    kfree(cephfscg_p);
-+}
-+
-+struct cgroup_subsys cephfs_cgrp_subsys = {
-+    .css_alloc = cephfscg_css_alloc,
-+    .css_free = cephfscg_css_free,
-+    .dfl_cftypes = cephfscg_files,
-+    .legacy_cftypes = cephfscg_files,
-+};
-+EXPORT_SYMBOL_GPL(cephfs_cgrp_subsys);
++    dout("%s: req: %llu, ops: %d, len: %llu\n", __func__, req->r_tid, req->r_num_ops, len);
++    req->qitem.tokens_requested[DATA_OPS_BAND_IDX] = len;
++    err = get_token_bucket_throttle(&cephfscg_p->data_ops_throttle, &req->qitem);
++    if (err)
++        return err;
++#endif
+ 	down_read(&osdc->lock);
+ 	submit_request(req, false);
+ 	up_read(&osdc->lock);
 -- 
 2.20.1
 
