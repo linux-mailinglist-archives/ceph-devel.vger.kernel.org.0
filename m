@@ -2,110 +2,69 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B7F710813
-	for <lists+ceph-devel@lfdr.de>; Wed,  1 May 2019 14:57:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAF7610A97
+	for <lists+ceph-devel@lfdr.de>; Wed,  1 May 2019 18:07:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726272AbfEAM5w (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 1 May 2019 08:57:52 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:45992 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbfEAM5w (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 May 2019 08:57:52 -0400
-Received: by mail-qk1-f193.google.com with SMTP id d5so10082630qko.12
-        for <ceph-devel@vger.kernel.org>; Wed, 01 May 2019 05:57:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FaMMkKAP5buFkqB1dRjhT5+dGB6W7HCbbUghWuIOXZ0=;
-        b=exhv6G6Ri9nUyv7qZ6jzHLe/dshbwEVETlqJOXe3XzQlt9sSZ8NRaMTIHZFJtwfNPc
-         KEfGaEDwWB5yTLeEbyGww6AUhmO8INgQcZMi2YO5OHUOyXwlHVjyOPxWFlLlB0HxhqqE
-         LV6bcvs/7MwRuncYkv7lqNMBlLuQyijX6LvyuPJp+xawE4yJkkWBjW6dC9gq9cnbJmee
-         iyuODuH0b/A6oWmQTB4ZT6NyCgFJGDc0VLaM0ecE2nra1gXdePsmissk+PLDk+f0B+Uq
-         lN3YIfVLV4bLs8t3B0ZS4Klr7AsPTnF35glPNPuxwofA+Kz5e38GoI+MXP5R3+VpluUX
-         k/YQ==
+        id S1726465AbfEAQHO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 1 May 2019 12:07:14 -0400
+Received: from mail-oi1-f172.google.com ([209.85.167.172]:44597 "EHLO
+        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726388AbfEAQHO (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 May 2019 12:07:14 -0400
+Received: by mail-oi1-f172.google.com with SMTP id t184so11636964oie.11
+        for <ceph-devel@vger.kernel.org>; Wed, 01 May 2019 09:07:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FaMMkKAP5buFkqB1dRjhT5+dGB6W7HCbbUghWuIOXZ0=;
-        b=kviKeJQXoiLlRY5dFJE0k9aUkeMet5toQ501mOI2oieY+fFvUG1fcpQK5QPDxFC+Bk
-         fiva6Tlzqlq2Mkd2AyED2bDAlLm/WNGuoIFsupghY+ngJVsUK/Rmh+74GIcJH8CPllGY
-         6JJhGCzjUaEZflBbS8bH6dJE3j+HieBURMnf2DK4jm8XeWh5qxo29cekIPxh2JuoALA4
-         O8iJJ0Fepj/il+wtZKCq2VjAzpQAXtB5to0lhGKGdcXgWmNpfZ2/bJVg08J53mmIVNkY
-         x7HrVf43WcdPSfcP8sz34lMvkHkpzpt8hHGgHRIjIe3BqZH0Bakb/o+XTo8t/OL2QprN
-         ZHbw==
-X-Gm-Message-State: APjAAAVbzVewIw2Vhg77z4auwzqoMb94bWpVAh5zhHSy/XUWaoogQQUy
-        1Y6rhFTMHnNVAm+XqxD4mQ3OMUN2uI4ENv1R/SQ=
-X-Google-Smtp-Source: APXvYqxclFz9sL5quZzzrmw6DQTLdqrZHDGvABmNkX2++8Dd4XNAoh36q0Kx1q0IUkS86vcy7dm4LGS1a95ILqc8/hk=
-X-Received: by 2002:a37:7b05:: with SMTP id w5mr52842937qkc.354.1556715471003;
- Wed, 01 May 2019 05:57:51 -0700 (PDT)
+         :message-id:subject:to;
+        bh=YY0kFcoA/WTTdlrjREOeH8laYpG+z+7tpV6b60NsS1A=;
+        b=uDFafaJJcY6x+RGQBxoyG0imGIP4DsOsPmnEXmhRC8OeiJ1ISG2f9Jvs/OiJJWe0bl
+         rjGdRrI7SmndZtlrjQwg0ZXc8Vyl95EvtuAWcMFIG9ty7IE40XP25qBz/bDyYLs6tmKF
+         eJQj28LhWK494HG14rVhhCRNm7crVRKMQI4vGzw1Jla5nukQeuBPzGHHcoGdYUvp4thW
+         +izFD2Sl8ksFaDqFVxm2WA/zDdQGd22h8MG2+D8bO/HHSsIV6Ec+sj3TpbXFESNxLS7g
+         +tTnMs4x5+wjq+WpBQ2YCCd4e8MC9IJwy4Mk18mejeVz/O2Ny+IjernBfLm0EPEAilz6
+         5pRw==
+X-Gm-Message-State: APjAAAV0gHVXLPQBHCSzJEjPtppuDpBb1ZundUl2TP6geCrb28k7oIPE
+        4TbM3a/5Dui/66sjNJqIDTBl+M/RPdaLpJvsqOQ4XsI=
+X-Google-Smtp-Source: APXvYqzF+P56oZ52W5xl/t0VIkEBoXE4LEm7zbuuzq8JzpOF4N3kLXCO4h7OzZqTwkQ0X1HuslyuN092mRq0ML0tCGM=
+X-Received: by 2002:aca:f4cf:: with SMTP id s198mr6751750oih.153.1556726833599;
+ Wed, 01 May 2019 09:07:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190430112236.14162-1-jlayton@kernel.org>
-In-Reply-To: <20190430112236.14162-1-jlayton@kernel.org>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Wed, 1 May 2019 20:57:39 +0800
-Message-ID: <CAAM7YAkqDX5oqUncmds2P4bh_Ejvi8ZVFff7XqPR6KVd6OfFDw@mail.gmail.com>
-Subject: Re: [PATCH] ceph: print inode number in __caps_issued_mask debugging messages
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Zheng Yan <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
+References: <20190429150725.4b3sijovqn5hi4ik@jfsuselaptop>
+In-Reply-To: <20190429150725.4b3sijovqn5hi4ik@jfsuselaptop>
+From:   Andrew Schoen <aschoen@redhat.com>
+Date:   Wed, 1 May 2019 11:06:37 -0500
+Message-ID: <CAEPMp+6-h32Rgz9TskHj7dXDESorZo8O3HQDKHWhJfGWQgoS7A@mail.gmail.com>
+Subject: Re: ceph-volume and multi-PV Volume groups
+To:     "Development, Ceph" <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 7:25 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> To make it easier to correlate with MDS logs.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/caps.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index 9e0b464d374f..72f8e1311392 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -892,8 +892,8 @@ int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch)
->         int have = ci->i_snap_caps;
->
->         if ((have & mask) == mask) {
-> -               dout("__ceph_caps_issued_mask %p snap issued %s"
-> -                    " (mask %s)\n", &ci->vfs_inode,
-> +               dout("__ceph_caps_issued_mask ino 0x%lx snap issued %s"
-> +                    " (mask %s)\n", ci->vfs_inode.i_ino,
->                      ceph_cap_string(have),
->                      ceph_cap_string(mask));
->                 return 1;
-> @@ -904,8 +904,8 @@ int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch)
->                 if (!__cap_is_valid(cap))
->                         continue;
->                 if ((cap->issued & mask) == mask) {
-> -                       dout("__ceph_caps_issued_mask %p cap %p issued %s"
-> -                            " (mask %s)\n", &ci->vfs_inode, cap,
-> +                       dout("__ceph_caps_issued_mask ino 0x%lx cap %p issued %s"
-> +                            " (mask %s)\n", ci->vfs_inode.i_ino, cap,
->                              ceph_cap_string(cap->issued),
->                              ceph_cap_string(mask));
->                         if (touch)
-> @@ -916,8 +916,8 @@ int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch)
->                 /* does a combination of caps satisfy mask? */
->                 have |= cap->issued;
->                 if ((have & mask) == mask) {
-> -                       dout("__ceph_caps_issued_mask %p combo issued %s"
-> -                            " (mask %s)\n", &ci->vfs_inode,
-> +                       dout("__ceph_caps_issued_mask ino 0x%lx combo issued %s"
-> +                            " (mask %s)\n", ci->vfs_inode.i_ino,
->                              ceph_cap_string(cap->issued),
->                              ceph_cap_string(mask));
->                         if (touch) {
-> --
+> I'm aware that one could work around this by creating the LVM setup that I want.
+> I think this is a bad approach though since every deployment tool has to
+> implement its own LVM handling code. Imho the right place for this is exactly
+> ceph-volume.
 
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+I've been thinking about porting some of the `batch` lv creation functionality
+to the `create` subcommand. I think it'd be nice to be able to pass a
+raw device to any of the
+available flags in `create` and if that device has already been used
+as a pv and a vg exists then
+that vg would be reused, otherwise a new pv and/or vg would be
+created. This is beneficial because it
+gives the control that users seem to wish `batch` had, like `create`
+already does. Would that solve this problem for you?
 
-> 2.20.1
->
+I'd be hesitant to change `batch` here. Originally we went down the
+path of having one vg per pv for
+db/wal but it added tons of complexity to the code to manage that.
+With fairly simple workarounds existing for
+`batch` plus the availability of the `create` subcommand we felt it
+wasn't worth the potential maintenance and
+complexity burden to put this sort of functionality in `batch`.
+
+Best,
+Andrew
