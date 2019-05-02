@@ -2,76 +2,118 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4786311585
-	for <lists+ceph-devel@lfdr.de>; Thu,  2 May 2019 10:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58F5111999
+	for <lists+ceph-devel@lfdr.de>; Thu,  2 May 2019 14:58:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726159AbfEBIgL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 2 May 2019 04:36:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60924 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725905AbfEBIgL (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 2 May 2019 04:36:11 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EA1B6ABE7;
-        Thu,  2 May 2019 08:36:09 +0000 (UTC)
+        id S1726513AbfEBM6e (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 2 May 2019 08:58:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726334AbfEBM6e (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 2 May 2019 08:58:34 -0400
+Received: from localhost (adsl-173-228-226-134.prtc.net [173.228.226.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8840F20449;
+        Thu,  2 May 2019 12:58:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556801913;
+        bh=X33l/3QpAup0yjpwAv67wcUoPXElvCJQqT97HlqjYiY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OZExUn3962dW9lHir6D89D2tZtdnvp1YzlnoIapmcHVMKHqn2iY5QkDOq3v7MvRII
+         3H+kP8ZwthAFa3xkLK6Vde5FL2jogEXSJok57y9o76UeOHLZGLfAxS0FBba9I9s3Tb
+         hGl40L/e45SH6bOK4jzrtBRvzNnA0X1LZvmDeWac=
+Date:   Thu, 2 May 2019 08:51:45 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH AUTOSEL 5.0 61/98] libceph: fix breakage caused by
+ multipage bvecs
+Message-ID: <20190502125145.GC11584@sasha-vm>
+References: <20190422194205.10404-1-sashal@kernel.org>
+ <20190422194205.10404-61-sashal@kernel.org>
+ <CAOi1vP8Q=bH9uXVi=35PKpE0T=MNpRViaBJWPMYfD6_pfC8xRw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 02 May 2019 10:36:09 +0200
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     "Liu, Changcheng" <changcheng.liu@intel.com>
-Cc:     ceph-devel@vger.kernel.org, ceph-devel-owner@vger.kernel.org
-Subject: Re: Async Messenger RDMA IB ib_uverbs_write return EACCES
-In-Reply-To: <20190502014501.GA23390@jerryopenix>
-References: <20190415122240.GA7819@jerryopenix>
- <484935ae3aeb0ee6a59f93c3c727ba36@suse.de>
- <20190416085820.GA4711@jerryopenix>
- <84005b8af680599e93f8bc3facbc00a3@suse.de>
- <20190416104119.GA6094@jerryopenix>
- <211951a560b75a8d13096c87f7a241c9@suse.de>
- <20190416120710.GA7940@jerryopenix> <20190419100628.GA15957@jerryopenix>
- <20190419143111.GA3102@jerryopenix>
- <7cf7c35992829e4e1b134d833dab1e0b@suse.de>
- <20190502014501.GA23390@jerryopenix>
-Message-ID: <57f21a5c314b743ee1de3196b830be6b@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAOi1vP8Q=bH9uXVi=35PKpE0T=MNpRViaBJWPMYfD6_pfC8xRw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2019-05-02 03:45, Liu, Changcheng wrote:
-> Hi Penyaev,
->     Could you give more info about below point? I don't understand it
-> quiet well.
->      > My question is why you daemonize your ceph services and do not
-> rely on systemd,
->      > which does fork() on its own and runs each service with '-f'
-> flag, which means
->      > do not daemonize?  So I would not daemonize services and this
-> can be a simple solution.
+On Tue, Apr 23, 2019 at 10:28:56AM +0200, Ilya Dryomov wrote:
+>On Mon, Apr 22, 2019 at 9:44 PM Sasha Levin <sashal@kernel.org> wrote:
+>>
+>> From: Ilya Dryomov <idryomov@gmail.com>
+>>
+>> [ Upstream commit 187df76325af5d9e12ae9daec1510307797e54f0 ]
+>>
+>> A bvec can now consist of multiple physically contiguous pages.
+>> This means that bvec_iter_advance() can move to a different page while
+>> staying in the same bvec (i.e. ->bi_bvec_done != 0).
+>>
+>> The messenger works in terms of segments which can now be defined as
+>> the smaller of a bvec and a page.  The "more bytes to process in this
+>> segment" condition holds only if bvec_iter_advance() leaves us in the
+>> same bvec _and_ in the same page.  On next bvec (possibly in the same
+>> page) and on next page (possibly in the same bvec) we may need to set
+>> ->last_piece.
+>>
+>> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+>> Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
+>> ---
+>>  net/ceph/messenger.c | 8 ++++++--
+>>  1 file changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+>> index 7e71b0df1fbc..3083988ce729 100644
+>> --- a/net/ceph/messenger.c
+>> +++ b/net/ceph/messenger.c
+>> @@ -840,6 +840,7 @@ static bool ceph_msg_data_bio_advance(struct ceph_msg_data_cursor *cursor,
+>>                                         size_t bytes)
+>>  {
+>>         struct ceph_bio_iter *it = &cursor->bio_iter;
+>> +       struct page *page = bio_iter_page(it->bio, it->iter);
+>>
+>>         BUG_ON(bytes > cursor->resid);
+>>         BUG_ON(bytes > bio_iter_len(it->bio, it->iter));
+>> @@ -851,7 +852,8 @@ static bool ceph_msg_data_bio_advance(struct ceph_msg_data_cursor *cursor,
+>>                 return false;   /* no more data */
+>>         }
+>>
+>> -       if (!bytes || (it->iter.bi_size && it->iter.bi_bvec_done))
+>> +       if (!bytes || (it->iter.bi_size && it->iter.bi_bvec_done &&
+>> +                      page == bio_iter_page(it->bio, it->iter)))
+>>                 return false;   /* more bytes to process in this segment */
+>>
+>>         if (!it->iter.bi_size) {
+>> @@ -899,6 +901,7 @@ static bool ceph_msg_data_bvecs_advance(struct ceph_msg_data_cursor *cursor,
+>>                                         size_t bytes)
+>>  {
+>>         struct bio_vec *bvecs = cursor->data->bvec_pos.bvecs;
+>> +       struct page *page = bvec_iter_page(bvecs, cursor->bvec_iter);
+>>
+>>         BUG_ON(bytes > cursor->resid);
+>>         BUG_ON(bytes > bvec_iter_len(bvecs, cursor->bvec_iter));
+>> @@ -910,7 +913,8 @@ static bool ceph_msg_data_bvecs_advance(struct ceph_msg_data_cursor *cursor,
+>>                 return false;   /* no more data */
+>>         }
+>>
+>> -       if (!bytes || cursor->bvec_iter.bi_bvec_done)
+>> +       if (!bytes || (cursor->bvec_iter.bi_bvec_done &&
+>> +                      page == bvec_iter_page(bvecs, cursor->bvec_iter)))
+>>                 return false;   /* more bytes to process in this segment */
+>>
+>>         BUG_ON(cursor->last_piece);
+>
+>Same here, shouldn't be needed.
 
-You provided the test, which reproduces the problem with -EACCESS,
-where you explicitly call fork().  According to my code understanding
-ceph services do fork() on early start only in daemon() glibc call
-(which internally does fork()).  If you use systemd daemonization
-is not used, so fork() is not called, so I am a bit confused: what
-exact places in the code you know, where fork() is called?
-
->     Thanks for your patch. I'll verify it when I'm back to office.
->     Is it possible that rdma_cm library supply one API, e.g.
-> rdma_put_devices(), to close the devices in proper status?
->     Then, the child process could re-open the device with
-> rdma_get_devices and query the device's attribute succeed.
-
-That would be a perfect way, but I could not find an easy way to
-destroy Infiniband singleton object (I did some experiments and
-it turned out not so easy, e.g. if you can't deregister memory
-regions in child process or after setuid()).
+Dropped, thanks!
 
 --
-Roman
-
+Thanks,
+Sasha
