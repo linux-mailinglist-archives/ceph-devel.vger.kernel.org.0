@@ -2,181 +2,162 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D86514860
-	for <lists+ceph-devel@lfdr.de>; Mon,  6 May 2019 12:33:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D08B014A2B
+	for <lists+ceph-devel@lfdr.de>; Mon,  6 May 2019 14:48:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726240AbfEFKde (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 6 May 2019 06:33:34 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:36028 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbfEFKde (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 6 May 2019 06:33:34 -0400
-Received: by mail-it1-f194.google.com with SMTP id o190so1968768itc.1
-        for <ceph-devel@vger.kernel.org>; Mon, 06 May 2019 03:33:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hokVy2QgUajKABvnoJdoBS0jvEPhq14AD/Ck/Mjt5cs=;
-        b=XuKqyR44AjQVPxoDwXkEMk90jA+2LJhYohKccls5qWA8o2oJT1oLz1no7KJ41JS/wX
-         jTEINJYr31eVR0wtTlK6MTRZ4snRw7orXmcZASel2K4hidEWeux1dK4FNbP8Z8jZ5wg7
-         RR60/wgWOaAsNuLerzOqgXf2r+zGqHqm1WICVX16S8UyTnFSdcZ97lz7EU7SV2dqlZIg
-         lawnWpaNoT69O3J+yY60jM852wsyd4pvatTnGQ/Dusy2+SnTllNKPiwYhWmWu7HLiTMZ
-         24bcoqWFsVpTnYMOc/XvkvMQTR4hHRLgs3FkQ7Ltrp/dAIJv1nCuAID9ZjFVEjAj/Ao4
-         +dGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hokVy2QgUajKABvnoJdoBS0jvEPhq14AD/Ck/Mjt5cs=;
-        b=B96MbIJED6CbNEdPBKBYzgvcL9nVKdX553/KPgdwsEnlrJTK2q3FfCNNfS0kYiXGaW
-         wEsqHlxEAJfa9oHgrSdTxQt+LaCvkdw0JONnUq5GgBuAM9ZcQtKDW9LHwBxHAbCYcJ4U
-         k8nQUpJnThhL1gG03KvJ43XwaSKxk5omCR4xde79DVoGQvQimZVRX0WjlsRigLNPs9pv
-         bV4VgGkCTuza7Qz49WDjU8o+O2LFdx6REUXi/t/DXGjnAznswj4OtYK0CmzMKq7fFnCT
-         8BlzzbXU+WXT3sitTUasaGpNsmDzQQfbVMPXpa7JhKmojMFf7wa3AgndzXovlx6tYJNN
-         f0zw==
-X-Gm-Message-State: APjAAAVdw+66mla0sma05GawMRsXXedEDOjw4cb/SGGr+vv4LHPobCZx
-        pdx3n1CjyG5aYxKr0uun25O8dmK4/eekSWjmc28=
-X-Google-Smtp-Source: APXvYqz3GNfw+tDGELll+V0/Wx9Lo4cQV5Q8kgxW4XHhK81FH9k5A6BI61Z7XOiJBQshMQoNPIpD0CJ2xQctbeMUpa0=
-X-Received: by 2002:a02:a394:: with SMTP id y20mr17879813jak.96.1557138813383;
- Mon, 06 May 2019 03:33:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190502184638.3614-1-jlayton@kernel.org> <20190502184638.3614-2-jlayton@kernel.org>
-In-Reply-To: <20190502184638.3614-2-jlayton@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 6 May 2019 12:33:40 +0200
-Message-ID: <CAOi1vP-z6zqnQuef1t2h7EjsCsyYjL8-Nb-EG8CZU1WMqTY-NA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] libceph: make ceph_pr_addr take an struct
- ceph_entity_addr pointer
-To:     Jeff Layton <jlayton@kernel.org>
+        id S1726162AbfEFMsM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 6 May 2019 08:48:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34242 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbfEFMsL (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 6 May 2019 08:48:11 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B5FD20830;
+        Mon,  6 May 2019 12:48:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557146890;
+        bh=5TfySQxugl5OZlF9S3r7QDz/Sdd7Jwxo80VKF6CBZXw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=hx8zV4Y4LlX5kHhoQY6UKBUWFlBs1KUA2txFCw0cD6caivUJRc7GH03aFlShR4QVp
+         2eddiAQ5iqM2SNvPvlY67x3hxmBz3nS5oB/e/fv5V3Yy2opHBIpzM8/nbmQ24JigIp
+         kfXDyMMpTA7YZyQab6g2oZ3L9JjpU95DQ805OTyo=
+Message-ID: <36691ddf47c8d18825759e721666560a86ebf98c.camel@kernel.org>
+Subject: Re: [PATCH v2 1/3] libceph: fix unaligned accesses in
+ ceph_entity_addr handling
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Ilya Dryomov <idryomov@gmail.com>
 Cc:     "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
         Ceph Development <ceph-devel@vger.kernel.org>
+Date:   Mon, 06 May 2019 08:48:08 -0400
+In-Reply-To: <CAOi1vP9JPn6B8Ss8TPOPVND=D=YOYHmd15ghfYvhe4dxX9TZ_g@mail.gmail.com>
+References: <20190502184638.3614-1-jlayton@kernel.org>
+         <CAOi1vP9JPn6B8Ss8TPOPVND=D=YOYHmd15ghfYvhe4dxX9TZ_g@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.1 (3.32.1-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, May 2, 2019 at 8:46 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> GCC9 is throwing a lot of warnings about unaligned accesses by
-> callers of ceph_pr_addr. All of the current callers are passing a
-> pointer to the sockaddr inside struct ceph_entity_addr.
->
-> Rename the existing function to ceph_pr_sockaddr, and add a new
-> ceph_pr_addr that takes an ceph_entity_addr instead. We can then
-> have it make a copy of the sockaddr before printing.
+On Mon, 2019-05-06 at 12:32 +0200, Ilya Dryomov wrote:
+> On Thu, May 2, 2019 at 8:46 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > GCC9 is throwing a lot of warnings about unaligned access. This patch
+> > fixes some of them by changing most of the sockaddr handling functions
+> > to take a pointer to struct ceph_entity_addr instead of struct
+> > sockaddr_storage.  The lower functions can then take copies or do
+> > unaligned accesses as needed.
+> 
+> Linus has disabled this warning in 5.1 [1], but these look real to me,
+> at least when sockaddr_storage is coming from ceph_entity_inst.  I'd be
+> happier if we defined non-packed variants of ceph_entity_addr and
+> ceph_entity_inst and used them throughout the code, but that's likely
+> a lot more churn.  I might take a stab at it just to see how it goes...
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6f303d60534c46aa1a239f29c321f95c83dda748
+> 
 
-Looks like a leftover from v1?
+Yeah, they looked like legit problems to me too. I too was going to move
+them over to use a non-packed representation internally, but it did turn
+out to be quite a bit of churn and copying. YMMV of course.
 
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/debugfs.c              |  2 +-
->  fs/ceph/mdsmap.c               |  2 +-
->  include/linux/ceph/messenger.h |  3 ++-
->  net/ceph/cls_lock_client.c     |  2 +-
->  net/ceph/debugfs.c             |  4 +--
->  net/ceph/messenger.c           | 48 +++++++++++++++++-----------------
->  net/ceph/mon_client.c          |  6 ++---
->  net/ceph/osd_client.c          |  2 +-
->  8 files changed, 35 insertions(+), 34 deletions(-)
->
-> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-> index b014fc7d4e3c..b3fc5fe26a1a 100644
-> --- a/fs/ceph/debugfs.c
-> +++ b/fs/ceph/debugfs.c
-> @@ -37,7 +37,7 @@ static int mdsmap_show(struct seq_file *s, void *p)
->                 struct ceph_entity_addr *addr = &mdsmap->m_info[i].addr;
->                 int state = mdsmap->m_info[i].state;
->                 seq_printf(s, "\tmds%d\t%s\t(%s)\n", i,
-> -                              ceph_pr_addr(&addr->in_addr),
-> +                              ceph_pr_addr(addr),
->                                ceph_mds_state_name(state));
->         }
->         return 0;
-> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
-> index 977cacd3825f..45a815c7975e 100644
-> --- a/fs/ceph/mdsmap.c
-> +++ b/fs/ceph/mdsmap.c
-> @@ -205,7 +205,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
->
->                 dout("mdsmap_decode %d/%d %lld mds%d.%d %s %s\n",
->                      i+1, n, global_id, mds, inc,
-> -                    ceph_pr_addr(&addr.in_addr),
-> +                    ceph_pr_addr(&addr),
->                      ceph_mds_state_name(state));
->
->                 if (mds < 0 || state <= 0)
-> diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenger.h
-> index 800a2128d411..23895d178149 100644
-> --- a/include/linux/ceph/messenger.h
-> +++ b/include/linux/ceph/messenger.h
-> @@ -323,7 +323,8 @@ struct ceph_connection {
->  };
->
->
-> -extern const char *ceph_pr_addr(const struct sockaddr_storage *ss);
-> +extern const char *ceph_pr_addr(const struct ceph_entity_addr *addr);
-> +
->  extern int ceph_parse_ips(const char *c, const char *end,
->                           struct ceph_entity_addr *addr,
->                           int max_count, int *count);
-> diff --git a/net/ceph/cls_lock_client.c b/net/ceph/cls_lock_client.c
-> index 2105a6eaa66c..4cc28541281b 100644
-> --- a/net/ceph/cls_lock_client.c
-> +++ b/net/ceph/cls_lock_client.c
-> @@ -271,7 +271,7 @@ static int decode_locker(void **p, void *end, struct ceph_locker *locker)
->
->         dout("%s %s%llu cookie %s addr %s\n", __func__,
->              ENTITY_NAME(locker->id.name), locker->id.cookie,
-> -            ceph_pr_addr(&locker->info.addr.in_addr));
-> +            ceph_pr_addr(&locker->info.addr));
->         return 0;
->  }
->
-> diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
-> index 46f65709a6ff..63aef9915f75 100644
-> --- a/net/ceph/debugfs.c
-> +++ b/net/ceph/debugfs.c
-> @@ -46,7 +46,7 @@ static int monmap_show(struct seq_file *s, void *p)
->
->                 seq_printf(s, "\t%s%lld\t%s\n",
->                            ENTITY_NAME(inst->name),
-> -                          ceph_pr_addr(&inst->addr.in_addr));
-> +                          ceph_pr_addr(&inst->addr));
->         }
->         return 0;
->  }
-> @@ -82,7 +82,7 @@ static int osdmap_show(struct seq_file *s, void *p)
->                 char sb[64];
->
->                 seq_printf(s, "osd%d\t%s\t%3d%%\t(%s)\t%3d%%\n",
-> -                          i, ceph_pr_addr(&addr->in_addr),
-> +                          i, ceph_pr_addr(addr),
->                            ((map->osd_weight[i]*100) >> 16),
->                            ceph_osdmap_state_str(sb, sizeof(sb), state),
->                            ((ceph_get_primary_affinity(map, i)*100) >> 16));
-> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-> index 54713836cac3..a4432c220d02 100644
-> --- a/net/ceph/messenger.c
-> +++ b/net/ceph/messenger.c
-> @@ -186,17 +186,18 @@ static atomic_t addr_str_seq = ATOMIC_INIT(0);
->
->  static struct page *zero_page;         /* used in certain error cases */
->
-> -const char *ceph_pr_addr(const struct sockaddr_storage *ss)
-> +const char *ceph_pr_addr(const struct ceph_entity_addr *addr)
->  {
->         int i;
->         char *s;
-> -       struct sockaddr_in *in4 = (struct sockaddr_in *) ss;
-> -       struct sockaddr_in6 *in6 = (struct sockaddr_in6 *) ss;
-> +       const struct sockaddr_storage ss = addr->in_addr;
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  net/ceph/messenger.c | 77 ++++++++++++++++++++++----------------------
+> >  1 file changed, 38 insertions(+), 39 deletions(-)
+> > 
+> > diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+> > index 3083988ce729..54713836cac3 100644
+> > --- a/net/ceph/messenger.c
+> > +++ b/net/ceph/messenger.c
+> > @@ -449,7 +449,7 @@ static void set_sock_callbacks(struct socket *sock,
+> >   */
+> >  static int ceph_tcp_connect(struct ceph_connection *con)
+> >  {
+> > -       struct sockaddr_storage *paddr = &con->peer_addr.in_addr;
+> > +       struct sockaddr_storage addr = con->peer_addr.in_addr;
+> 
+> Probably worth a comment, even something as short as /* align */.
+> 
 
-Is this const really needed?  I'd add a comment here, same as in
-previous patch.
+Sounds good. I'll add those to the ones below too.
 
-Thanks,
+> >         struct socket *sock;
+> >         unsigned int noio_flag;
+> >         int ret;
+> > @@ -458,7 +458,7 @@ static int ceph_tcp_connect(struct ceph_connection *con)
+> > 
+> >         /* sock_create_kern() allocates with GFP_KERNEL */
+> >         noio_flag = memalloc_noio_save();
+> > -       ret = sock_create_kern(read_pnet(&con->msgr->net), paddr->ss_family,
+> > +       ret = sock_create_kern(read_pnet(&con->msgr->net), addr.ss_family,
+> >                                SOCK_STREAM, IPPROTO_TCP, &sock);
+> >         memalloc_noio_restore(noio_flag);
+> >         if (ret)
+> > @@ -474,7 +474,7 @@ static int ceph_tcp_connect(struct ceph_connection *con)
+> >         dout("connect %s\n", ceph_pr_addr(&con->peer_addr.in_addr));
+> > 
+> >         con_sock_state_connecting(con);
+> > -       ret = sock->ops->connect(sock, (struct sockaddr *)paddr, sizeof(*paddr),
+> > +       ret = sock->ops->connect(sock, (struct sockaddr *)&addr, sizeof(addr),
+> >                                  O_NONBLOCK);
+> >         if (ret == -EINPROGRESS) {
+> >                 dout("connect %s EINPROGRESS sk_state = %u\n",
+> > @@ -1795,12 +1795,13 @@ static int verify_hello(struct ceph_connection *con)
+> >         return 0;
+> >  }
+> > 
+> > -static bool addr_is_blank(struct sockaddr_storage *ss)
+> > +static bool addr_is_blank(struct ceph_entity_addr *ea)
+> >  {
+> > -       struct in_addr *addr = &((struct sockaddr_in *)ss)->sin_addr;
+> > -       struct in6_addr *addr6 = &((struct sockaddr_in6 *)ss)->sin6_addr;
+> > +       struct sockaddr_storage ss = ea->in_addr;
+> 
+> Same here.
+> 
+> > +       struct in_addr *addr = &((struct sockaddr_in *)&ss)->sin_addr;
+> > +       struct in6_addr *addr6 = &((struct sockaddr_in6 *)&ss)->sin6_addr;
+> > 
+> > -       switch (ss->ss_family) {
+> > +       switch (ss.ss_family) {
+> >         case AF_INET:
+> >                 return addr->s_addr == htonl(INADDR_ANY);
+> >         case AF_INET6:
+> > @@ -1810,25 +1811,27 @@ static bool addr_is_blank(struct sockaddr_storage *ss)
+> >         }
+> >  }
+> > 
+> > -static int addr_port(struct sockaddr_storage *ss)
+> > +static int addr_port(struct ceph_entity_addr *ea)
+> >  {
+> > -       switch (ss->ss_family) {
+> > +       struct sockaddr_storage ss = ea->in_addr;
+> > +
+> > +       switch (ss.ss_family) {
+> >         case AF_INET:
+> > -               return ntohs(((struct sockaddr_in *)ss)->sin_port);
+> > +               return ntohs(((struct sockaddr_in *)&ss)->sin_port);
+> >         case AF_INET6:
+> > -               return ntohs(((struct sockaddr_in6 *)ss)->sin6_port);
+> > +               return ntohs(((struct sockaddr_in6 *)&ss)->sin6_port);
+> >         }
+> >         return 0;
+> >  }
+> 
+> Can we do the get_unaligned() dance instead of copying here?
+> 
 
-                Ilya
+I tried that a couple of different ways last week, but we have to take a
+pointer to the sockaddr_storage in order to cast to it to a
+sockaddr_in{6}. Maybe I'm missing something though, so let me know if
+you see a better way to do this.
+
+That said, we only call this from process_banner(), so I don't think the
+copying is likely to harm performance.
+-- 
+Jeff Layton <jlayton@kernel.org>
+
