@@ -2,96 +2,115 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83E7718833
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 May 2019 12:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC0031841D
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 May 2019 05:22:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbfEIKL4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 May 2019 06:11:56 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:44844 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfEIKLz (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 May 2019 06:11:55 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49A47r7151887;
-        Thu, 9 May 2019 10:11:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=neR6KgNTfO3pr9d8gVWPxShCmiFnAFlvpMLhr9CMJKc=;
- b=v4ZKiMpxTD1jLCtxQhxvk07Li/h8O1tL6dXkCkzjkLuXs80ypU2gLp7jKP3M5tC8eFGH
- QnEurOkncfKMMDmqcSDBEeAYZ/vcX6u8b7syn7fw4s8HWxLSRavxi+YdHB/QY9vWQ8J4
- 8PO/Hb+FVnrF4eJwq3EJ/tpVRa8swxelUQJImJWxjv4JwCY4Do/0I4bDX6sbEh05yZdo
- FsyZBhSYr7sRVqQtasoCnVK86KgpgRXyQW6k+t8iw3BlAG5pP3ty1ZKNPi8RDaVvUDUQ
- pbwGawp3DV70baeEU+driTIApmvCpuVPPAK323BfciWonl+aKQ47HwXulAWP0Zzsrrt3 Aw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2s94bg9s8r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 09 May 2019 10:11:36 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x49AB6JC028094;
-        Thu, 9 May 2019 10:11:34 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2schvyr9tg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 09 May 2019 10:11:34 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x49ABWds004114;
-        Thu, 9 May 2019 10:11:32 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 09 May 2019 03:11:32 -0700
-Date:   Thu, 9 May 2019 13:11:25 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     "Yan, Zheng" <zyan@redhat.com>, Jeff Layton <jlayton@kernel.org>
-Cc:     Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        ceph-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] ceph: Silence a checker warning on the error path
-Message-ID: <20190509101125.GC7024@mwanda>
+        id S1726755AbfEIDVt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 8 May 2019 23:21:49 -0400
+Received: from mail-wm1-f45.google.com ([209.85.128.45]:37973 "EHLO
+        mail-wm1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726109AbfEIDVs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 8 May 2019 23:21:48 -0400
+Received: by mail-wm1-f45.google.com with SMTP id f2so1114169wmj.3
+        for <ceph-devel@vger.kernel.org>; Wed, 08 May 2019 20:21:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=7mgZgpR7CkGGl9q/lycxfr8rTF+OLHCvyHTg+PJWU3k=;
+        b=aFKIw5oHVSelwH4lcKxa6bUe0iTmQ6/VJZbrogcOiAzlzHMcNotJkYWMFE8XCnl2Wp
+         PRFobxVIQwqSetsIkwzzhlDNW4DuUh91Dl6ZNiTGG46n0YZYmV9mtOFmkQg7G8RjLi1t
+         ++KnKtssAQA7cEcFNw6NTpAebjM7osug3iruYej01OoBiT2hqe6jXFnZCP5VkkYXUVZh
+         Vlewj9pPe5X5QZYPkBbs79R9SM5Mpxt5vhz6P/355av31TtV3Dpk3SRXrBbKKh6Jv4Nj
+         du8wSJCFwxrwFr58ntxcFkGyMLO6w/7c8GM+eJLlNMMZdES5teMgbYkFfzXxFyM5mwBo
+         tXMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7mgZgpR7CkGGl9q/lycxfr8rTF+OLHCvyHTg+PJWU3k=;
+        b=e11wXTtLxyEaCqURKx4S0uxXi+MDIN3Tkv0QCuRthWTqkQFSCmfB/HSbtMuELEMFbf
+         x87VetVMawSkehXBdn3ynuDN5kv6K9JHwIPvlN5N8GvpxbscTvA0lIW4oO6PHay1pCvP
+         FuUDfHMnZ0bhsFVz2Z3ITn685jdiyMhHlVPWrOC8VLgIjb+FTZ1jeHHySx9jJlwkoQpA
+         xhwJK6Jm2/kGYOIKQHKlnBkYosd2touGrzsi4K8X4HtTp5Io+JjfTA5XcqIfVFwj6lav
+         6ovciVHOK2xd3ckQ9De5d/VvqLbbYAcxJUmhOOg74bcyXsIOh+o20XGbVB5wKrN35ADp
+         V8Yg==
+X-Gm-Message-State: APjAAAX3pX8C3WioNaDD38sJndRO2/K5uF2AKxugTO83pd4zFU3poJ7Y
+        RgadAnofuTca735KzjPjOqp+QyEfGe2xxiu8sxA=
+X-Google-Smtp-Source: APXvYqzLAfZjIISh4ceR0s1R//c5cluLeY+HhJwod9siKsovVrzBcLHvUDHulei+3/Fby3XgcrcYMlz0k2YgA2X3Oio=
+X-Received: by 2002:a1c:1903:: with SMTP id 3mr923305wmz.103.1557372106150;
+ Wed, 08 May 2019 20:21:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9251 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905090062
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9251 signatures=668686
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905090062
+References: <CALi+v1_fTKgpKtMTBDw3ioy4SqtsvP3xkjXLyLX5Gb=_7yoaNg@mail.gmail.com>
+ <CAJ4mKGaRZrA9P6=hZ+CZ7oca5_b9uGXZAV5gNu2YiNajy1q8Qw@mail.gmail.com>
+In-Reply-To: <CAJ4mKGaRZrA9P6=hZ+CZ7oca5_b9uGXZAV5gNu2YiNajy1q8Qw@mail.gmail.com>
+From:   zengran zhang <z13121369189@gmail.com>
+Date:   Thu, 9 May 2019 19:21:16 +0800
+Message-ID: <CALi+v1-qsyB8S8sxPoQe+hpC8C_tz+d7Fz3cmeMoh5sWNQZ8Bg@mail.gmail.com>
+Subject: Re: some questions about fast dispatch peering events
+To:     Gregory Farnum <gfarnum@redhat.com>
+Cc:     Sage Weil <sweil@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The problem is that if ceph_mdsc_build_path() fails then we set "path"
-to NULL and the "pathlen" variable is uninitialized.  The we call
-ceph_mdsc_free_path(path, pathlen) to clean up.  Since "path" is NULL,
-the function is a no-op but Smatch and UBSan still complain that
-"pathlen" is uninitialized.
+Gregory Farnum <gfarnum@redhat.com> =E4=BA=8E2019=E5=B9=B45=E6=9C=889=E6=97=
+=A5=E5=91=A8=E5=9B=9B =E4=B8=8A=E5=8D=885:00=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Wed, May 8, 2019 at 6:12 AM zengran zhang <z13121369189@gmail.com> wro=
+te:
+> >
+> > Hi Sage:
+> >
+> >   I see there are two difference between luminous and upstream after
+> > the patch of *fast dispatch peering events*
+> >
+> > 1. When handle pg query w/o pg, luminous will preject history since
+> > the epoch_send in query and create pg if within the same interval.
+> >     but upstream now will reply empty info or log directly w/o create t=
+he pg.
+> >     My question is : can we do this on luminous?
+>
+> I think you mean "project history" here?
 
-This patch doesn't change run time, it just silence the warnings.
+Sorry, I mean could we reply empty info or log directly in luminous
+cluster w/o create the pg?
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- fs/ceph/debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> In any case, lots of things around PG creation happened since
+> Luminous, as part of the fast dispatch and enabling PG merge. That
+> included changes to the monitor<->OSD interactions that are difficult
+> to do within a release stream since they change the protocol. We
+> typically handle those protocol changes by flagging them on the
+> "min_osd_release" option. We probably can't backport this behavior
+> given that.
+>
+> >
+> > 2. When handle pg notify w/o pg, luminous will preject history since
+> > the epoch_send of notify and give up next creating if not within the
+> > same interval.
+> >     but upstream now will create the pg unconditionally, If it was
+> > stray, auth primary will purge it later.
+> >     Here my question is: is the behavior of upstream a specially
+> > designed improvement?
+>
+> My recollection is that this was just for expediency within the fast
+> dispatch pipeline rather than something we thought made life within
+> the cluster better, but I don't remember with any certainty. It might
+> also have improved resiliency of PG create messages from the monitors
+> since the OSD has the PG and will send notifies to subsequent primary
+> targets?
+> -Greg
 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index b3fc5fe26a1a..a14d64664878 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -52,7 +52,7 @@ static int mdsc_show(struct seq_file *s, void *p)
- 	struct ceph_mds_client *mdsc = fsc->mdsc;
- 	struct ceph_mds_request *req;
- 	struct rb_node *rp;
--	int pathlen;
-+	int pathlen = 0;
- 	u64 pathbase;
- 	char *path;
- 
--- 
-2.18.0
+Got it, Thank you for the clarification.
+
+Now our luminous cluster, we found that the stale notify/query with
+too old epoch
+will cause the dispatch queue under high pressure dur to project history..
+then I see the upstream remove the project history, so I'm curious
+about the same
+circumstance on upstream..
