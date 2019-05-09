@@ -2,110 +2,131 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBA7B193DD
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 May 2019 22:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B8B1958C
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 May 2019 01:02:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfEIUzx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 May 2019 16:55:53 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42591 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726764AbfEIUzx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 May 2019 16:55:53 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l2so4852175wrb.9
-        for <ceph-devel@vger.kernel.org>; Thu, 09 May 2019 13:55:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=twHTP9jiSqEVzBzjTXkpWtvwU3evhPvIng4+VfGd1RY=;
-        b=hcS2DnRb7b9GpzIeWp9sps7ZKr/qpDqKDGAleSMKHctFqO86hli5j5VtrwVZcSCqF/
-         5t/BTlNhBgel9Y6wEBhswVx2ra6finWiwVd3i2yUsm/pZKE9uUXtQaLbbZa0kdgyrQic
-         iFzmcd8HYK1hYAMxkdCFeutTKrVHgb8L1EyoE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=twHTP9jiSqEVzBzjTXkpWtvwU3evhPvIng4+VfGd1RY=;
-        b=NcBQP9h5eEyp3pgqMExXcSgYDcLUvJy6pBpEbe6yacX/s4RpQV3wnaugfzYvaN6x1O
-         q0xeEQl+SPq+xghzImXtsblAdCVWkSUYMirlJGo9mO8dlflnINyyWKAYgvKHFv4ZLHfA
-         IF8LzO3lRiY+GmyB1rwrPHfTkXY66u5Uh8WNavTd81hMk9Pn6kvkH4lX1H03O0ooZK5f
-         6F5w5UFbC44d+xkIelSY81PlmFZzAu0lutWeA7z7+gyxV4AZbfJZESmDA53WPVSbu4QG
-         +Og8MTBo+KBSJKeZEAZWijLlbqcuEwOU6OX/UqzRypATtRZM+HuBZYxsPcSOkMOupCnW
-         SD1A==
-X-Gm-Message-State: APjAAAUeQ5KpwzDm+bDMgDoi3W+2pkKYALLkodeMt894YtaeWoO7k3X6
-        t25RGZso4tsiImvVAj2kHMR1FA==
-X-Google-Smtp-Source: APXvYqzN7SFzTIwb5hv9O+GZqK4L9tXEwI6AK+V0TgCAPdR1WoX7VjIW4L0no+wHcHs+Emtix0fg+A==
-X-Received: by 2002:a5d:4004:: with SMTP id n4mr1549827wrp.240.1557435351265;
-        Thu, 09 May 2019 13:55:51 -0700 (PDT)
-Received: from andrea ([91.252.228.170])
-        by smtp.gmail.com with ESMTPSA id f6sm1944723wmh.13.2019.05.09.13.55.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 May 2019 13:55:50 -0700 (PDT)
-Date:   Thu, 9 May 2019 22:55:43 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     "Yan, Zheng" <ukernel@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 4/5] ceph: fix improper use of smp_mb__before_atomic()
-Message-ID: <20190509205452.GA4359@andrea>
-References: <1556568902-12464-1-git-send-email-andrea.parri@amarulasolutions.com>
- <1556568902-12464-5-git-send-email-andrea.parri@amarulasolutions.com>
- <20190430082332.GB2677@hirez.programming.kicks-ass.net>
- <CAAM7YA=YOM79GJK8b7OOQbzT_-sYRD2UFHYithY7Li1yQt5Hog@mail.gmail.com>
+        id S1726861AbfEIXCb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 9 May 2019 19:02:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:32826 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726809AbfEIXCb (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 9 May 2019 19:02:31 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9083F8110C;
+        Thu,  9 May 2019 23:02:30 +0000 (UTC)
+Received: from ovpn-112-65.rdu2.redhat.com (ovpn-112-65.rdu2.redhat.com [10.10.112.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E3BD460C81;
+        Thu,  9 May 2019 23:02:29 +0000 (UTC)
+Date:   Thu, 9 May 2019 23:02:28 +0000 (UTC)
+From:   Sage Weil <sweil@redhat.com>
+X-X-Sender: sage@piezo.novalocal
+To:     zengran zhang <z13121369189@gmail.com>
+cc:     Gregory Farnum <gfarnum@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Subject: Re: some questions about fast dispatch peering events
+In-Reply-To: <CALi+v1-qsyB8S8sxPoQe+hpC8C_tz+d7Fz3cmeMoh5sWNQZ8Bg@mail.gmail.com>
+Message-ID: <alpine.DEB.2.11.1905092249260.8559@piezo.novalocal>
+References: <CALi+v1_fTKgpKtMTBDw3ioy4SqtsvP3xkjXLyLX5Gb=_7yoaNg@mail.gmail.com> <CAJ4mKGaRZrA9P6=hZ+CZ7oca5_b9uGXZAV5gNu2YiNajy1q8Qw@mail.gmail.com> <CALi+v1-qsyB8S8sxPoQe+hpC8C_tz+d7Fz3cmeMoh5sWNQZ8Bg@mail.gmail.com>
+User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAM7YA=YOM79GJK8b7OOQbzT_-sYRD2UFHYithY7Li1yQt5Hog@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-745421679-1557442950=:8559"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 09 May 2019 23:02:30 +0000 (UTC)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 05:08:43PM +0800, Yan, Zheng wrote:
-> On Tue, Apr 30, 2019 at 4:26 PM Peter Zijlstra <peterz@infradead.org> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-745421679-1557442950=:8559
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+On Thu, 9 May 2019, zengran zhang wrote:
+> Gregory Farnum <gfarnum@redhat.com> 于2019年5月9日周四 上午5:00写道：
 > >
-> > On Mon, Apr 29, 2019 at 10:15:00PM +0200, Andrea Parri wrote:
-> > > This barrier only applies to the read-modify-write operations; in
-> > > particular, it does not apply to the atomic64_set() primitive.
+> > On Wed, May 8, 2019 at 6:12 AM zengran zhang <z13121369189@gmail.com> wrote:
 > > >
-> > > Replace the barrier with an smp_mb().
+> > > Hi Sage:
 > > >
+> > >   I see there are two difference between luminous and upstream after
+> > > the patch of *fast dispatch peering events*
+> > >
+> > > 1. When handle pg query w/o pg, luminous will preject history since
+> > > the epoch_send in query and create pg if within the same interval.
+> > >     but upstream now will reply empty info or log directly w/o create the pg.
+> > >     My question is : can we do this on luminous?
 > >
-> > > @@ -541,7 +541,7 @@ static inline void __ceph_dir_set_complete(struct ceph_inode_info *ci,
-> > >                                          long long release_count,
-> > >                                          long long ordered_count)
-> > >  {
-> > > -     smp_mb__before_atomic();
-> >
-> > same
-> >         /*
-> >          * XXX: the comment that explain this barrier goes here.
-> >          */
-> >
+> > I think you mean "project history" here?
 > 
-> makes sure operations that setup readdir cache (update page cache and
-> i_size) are strongly ordered with following atomic64_set.
+> Sorry, I mean could we reply empty info or log directly in luminous
+> cluster w/o create the pg?
 
-Thanks for the suggestion, Yan.
+I'm looking at handle_pg_query() on luminous and I think that's what it 
+does... if the interval has changed, we drop/ignore the request.  
+Otherwise, we either reply with an empty log or an empty notify. Where do 
+you see it creating the pg due to a query?
 
-To be clear: would you like me to integrate your comment and resend?
-any other suggestions?
-
-Thanx,
-  Andrea
-
-
-> 
-> > > +     smp_mb();
+> > In any case, lots of things around PG creation happened since
+> > Luminous, as part of the fast dispatch and enabling PG merge. That
+> > included changes to the monitor<->OSD interactions that are difficult
+> > to do within a release stream since they change the protocol. We
+> > typically handle those protocol changes by flagging them on the
+> > "min_osd_release" option. We probably can't backport this behavior
+> > given that.
 > >
-> > >       atomic64_set(&ci->i_complete_seq[0], release_count);
-> > >       atomic64_set(&ci->i_complete_seq[1], ordered_count);
-> > >  }
-> > > --
-> > > 2.7.4
 > > >
+> > > 2. When handle pg notify w/o pg, luminous will preject history since
+> > > the epoch_send of notify and give up next creating if not within the
+> > > same interval.
+> > >     but upstream now will create the pg unconditionally, If it was
+> > > stray, auth primary will purge it later.
+> > >     Here my question is: is the behavior of upstream a specially
+> > > designed improvement?
+
+My reading of the latest code is that it will only create the PG if the 
+current OSD is the primary according to the latest/current OSDMap.  In 
+handle_fast_pg_notify, we queue it unconditionally, and in _process, we 
+only process the create_info if 
+
+      } else if (osdmap->is_up_acting_osd_shard(token, osd->whoami)) {
+
+This is maybe not as precise as it could be, since maybe the epoch the 
+message was sent it we were primary, then we weren't, but now currently we 
+are, but in that case we'd still want to create the PG (one way or 
+another).  Am I missing anything?
+
+> > My recollection is that this was just for expediency within the fast
+> > dispatch pipeline rather than something we thought made life within
+> > the cluster better, but I don't remember with any certainty. It might
+> > also have improved resiliency of PG create messages from the monitors
+> > since the OSD has the PG and will send notifies to subsequent primary
+> > targets?
+> > -Greg
+> 
+> Got it, Thank you for the clarification.
+> 
+> Now our luminous cluster, we found that the stale notify/query with
+> too old epoch
+> will cause the dispatch queue under high pressure dur to project history..
+> then I see the upstream remove the project history, so I'm curious
+> about the same
+> circumstance on upstream..
+
+Getting rid of project_pg_history was a big goal of the PG create/delete 
+and queueing/dispatch refactor that happened for nautilus, for exactly 
+that reason.  Post-nautilus, we've also removed the last instance where 
+teh OSD has to iterate over past OSDMaps due to mon pg creation messages 
+(see https://github.com/ceph/ceph/pull/27696), but that only comes up when 
+creating pools (combined with a loady/thrashy cluster).  
+
+In any case, I don't think there is a quick fix for luminous (and I 
+wouldn't want to risk a buggy backport), so my recommendation is to move 
+to nautilus.
+
+sage
+--8323329-745421679-1557442950=:8559--
