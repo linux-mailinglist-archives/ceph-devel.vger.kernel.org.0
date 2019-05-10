@@ -2,87 +2,151 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36FFA19F24
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 May 2019 16:27:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21F5C1A333
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 May 2019 20:58:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727951AbfEJO1P (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 10 May 2019 10:27:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36644 "EHLO mx1.redhat.com"
+        id S1727699AbfEJS6s (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 10 May 2019 14:58:48 -0400
+Received: from hr2.samba.org ([144.76.82.148]:39736 "EHLO hr2.samba.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727896AbfEJO1O (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 10 May 2019 10:27:14 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0779E30821B5;
-        Fri, 10 May 2019 14:27:13 +0000 (UTC)
-Received: from ovpn-112-65.rdu2.redhat.com (ovpn-112-65.rdu2.redhat.com [10.10.112.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8D6005D9D4;
-        Fri, 10 May 2019 14:27:12 +0000 (UTC)
-Date:   Fri, 10 May 2019 14:27:11 +0000 (UTC)
-From:   Sage Weil <sweil@redhat.com>
-X-X-Sender: sage@piezo.novalocal
-To:     ceph-devel@vger.kernel.org, ceph-users@ceph.com
-Subject: RFC: relicence Ceph LGPL-2.1 code as LGPL-2.1 or LGPL-3.0
-Message-ID: <alpine.DEB.2.11.1904221623540.7135@piezo.novalocal>
-User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
+        id S1727535AbfEJS6s (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 10 May 2019 14:58:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42627210; h=Message-ID:Cc:To:From:Date;
+        bh=SXQwq/lxjEyftqRPeFlGKG5dzdIeLJ3dX9ac3uychuw=; b=aVMkA2TDGI6lb+zkbKfxTuNMkd
+        adY+5blc9tXouJo16kXY6cBH51ctAODQWH27kZydJtU/xUrVSDXvcps2yaGz3E3IyHXJdXLkZ1KXz
+        IIoiulSpM1IapH5czFUb1b187WC10CPeR8yrOTK758aT1hPFmUWZVgw9ZLiL4ZkKohsk=;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1hPAjE-0007Tl-JG; Fri, 10 May 2019 18:58:44 +0000
+Date:   Fri, 10 May 2019 11:58:41 -0700
+From:   Jeremy Allison <jra@samba.org>
+To:     David Disseldorp <ddiss@suse.de>
+Cc:     Jeremy Allison via samba-technical 
+        <samba-technical@lists.samba.org>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        jra@samba.org
+Subject: Re: [PATCH] Samba: CephFS Snapshots VFS module
+Message-ID: <20190510185841.GA54524@jra4>
+Reply-To: Jeremy Allison <jra@samba.org>
+References: <20190329184531.0c78e06b@echidna.suse.de>
+ <20190508224740.GA21367@jra4>
+ <20190510151601.798bee61@suse.de>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 10 May 2019 14:27:14 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190510151601.798bee61@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi everyone,
+On Fri, May 10, 2019 at 03:16:01PM +0200, David Disseldorp wrote:
+> On Wed, 8 May 2019 15:47:40 -0700, Jeremy Allison via samba-technical wrote:
+> 
+> > On Fri, Mar 29, 2019 at 06:45:31PM +0100, David Disseldorp via samba-technical wrote:
+> > > 
+> > > The attached patchset adds a new ceph_snapshots Samba VFS module which
+> > > handles snapshot enumeration and timewarp/@GMT token mapping.
+> > > 
+> > > Feedback appreciated.  
+> > 
+> > Mostly looks good - a few comments inline below. Hope you don't think
+> > I'm being too picky, push back if so. I really want this functionality, just
+> > want to make sure I can maintain it going forward.
+> 
+> Thanks for the review, Jeremy. I've attached a V2 patchset with the
+> changes below squashed in...
 
--- What --
+A couple of comments left (sorry) - in:
 
-The Ceph Leadership Team[1] is proposing a change of license from 
-*LGPL-2.1* to *LGPL-2.1 or LGPL-3.0* (dual license). The specific changes 
-are described by this pull request:
++static int ceph_snap_gmt_convert(struct vfs_handle_struct *handle,
++                                    const char *name,
++                                    time_t timestamp,
++                                    char *_converted_buf,
++                                    size_t buflen)
 
-	https://github.com/ceph/ceph/pull/22446
+You have:
 
-If you are a Ceph developer who has contributed code to Ceph and object to 
-this change of license, please let us know, either by replying to this 
-message or by commenting on that pull request.
++       /*
++        * found snapshot via parent. Append the child path component
++        * that was trimmed... +1 for path separator.
++        */
++       if (strlen(_converted_buf) + 1 + strlen(trimmed) >= buflen) {
++               return -EINVAL;
++       }
++       strncat(_converted_buf, "/", buflen);
++       strncat(_converted_buf, trimmed, buflen);
 
-Our plan is to leave the issue open for comment for some period of time 
-and, if no objections are raised that cannot be adequately addressed (via 
-persuasion, code replacement, or whatever) we will move forward with the 
-change.
+strncat is potentially dangerous here as it doesn't zero-terminate
+by default if there's no space. I'd be much happier with strlcat instead.
 
+Having said that, and looking at the arithmetic carefully I *think* it's
+safe as you exit on >= buflen. But I had to think
+about it carefully in the review. I don't want
+other people to have to do that :-).
 
--- Why --
+Can you change the comment to be:
 
-The primary motivation to relicense is a desire to integrate with projects 
-that are licensed under the Apache License version 2.0. Although opinions 
-vary, there are some who argue the the LGPL-2.1 and Apache-2.0 licenses 
-are not fully compatible. We would like to avoid the ambiguity and 
-potential for controversy.
++       /*
++        * found snapshot via parent. Append the child path component
++        * that was trimmed... +1 for path separator + 1 for null termination.
++        */
++       if (strlen(_converted_buf) + 1 + strlen(trimmed) + 1 > buflen) {
++               return -EINVAL;
++       }
 
-Projects we would like to consume that are Apache-2.0 licensed include 
-RocksDB, Seastar, OpenSSL (which is in the process of relicensing to 
-Apache-2.0), and Swagger (swagger.io). Note that some of these are (or 
-could be) dynamically linked or are consumed via a high-level language, 
-and may or may not require a change to LGPL-3.0, but providing the option 
-for LGPL-3.0 will avoid any uncertainty.
+Just to use the expected idion of '>' rather than the rarer
+'>=' when checking string overruns.
 
-A few other source files are already incorporated into Ceph that claim an 
-Apache-2.0 license:
+So the result would be:
 
-   src/common/deleter.h
-   src/common/sstring.h
-   src/include/cpp-btree
++       /*
++        * found snapshot via parent. Append the child path component
++        * that was trimmed... +1 for path separator + 1 for null termination.
++        */
++       if (strlen(_converted_buf) + 1 + strlen(trimmed) + 1 > buflen) {
++               return -EINVAL;
++       }
++       strlcat(_converted_buf, "/", buflen);
++       strlcat(_converted_buf, trimmed, buflen);
 
-The Ceph developers would further like to provide a license option that is 
-more modern than the current LGPL-2.1. LGPL-3.0 includes updated, 
-clarified language around several issues and is widely considered more 
-modern, superior license.
+Second comment - in ceph_snap_gmt_opendir() you do:
 
-Thank you!
++       dir = SMB_VFS_NEXT_OPENDIR(handle, conv_smb_fname, mask, attr);
++       saved_errno = errno;
++       TALLOC_FREE(conv_smb_fname);
++       errno = saved_errno;
++       return dir;
 
+- NB, you're saving errno and restoring over the TALLOC_FREE(conv_smb_fname);
+I think that's the right thing to do (you never know
+if TALLOC_FREE might do a syscall to overwrite errno).
 
-[1] http://docs.ceph.com/docs/master/governance/#ceph-leadership-team
+I think you also need to do this in:
+
+ceph_snap_gmt_unlink()
+ceph_snap_gmt_chmod()
+ceph_snap_gmt_chown()
+ceph_snap_gmt_chdir()
+ceph_snap_gmt_ntimes()
+ceph_snap_gmt_readlink()
+ceph_snap_gmt_mknod()
+ceph_snap_gmt_realpath()
+ceph_snap_gmt_mkdir()
+ceph_snap_gmt_rmdir()
+ceph_snap_gmt_chflags()
+ceph_snap_gmt_getxattr()
+ceph_snap_gmt_listxattr()
+ceph_snap_gmt_removexattr()
+ceph_snap_gmt_setxattr()
+ceph_snap_gmt_disk_free()
+ceph_snap_gmt_get_quota()
+
+for consistency.
+
+Sorry for being picky, but I think we're getting there !
+
+Jeremy.
