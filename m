@@ -2,131 +2,119 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10B8B1958C
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 May 2019 01:02:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7880F19D13
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 May 2019 14:15:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbfEIXCb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 May 2019 19:02:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:32826 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726809AbfEIXCb (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 9 May 2019 19:02:31 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9083F8110C;
-        Thu,  9 May 2019 23:02:30 +0000 (UTC)
-Received: from ovpn-112-65.rdu2.redhat.com (ovpn-112-65.rdu2.redhat.com [10.10.112.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E3BD460C81;
-        Thu,  9 May 2019 23:02:29 +0000 (UTC)
-Date:   Thu, 9 May 2019 23:02:28 +0000 (UTC)
-From:   Sage Weil <sweil@redhat.com>
-X-X-Sender: sage@piezo.novalocal
-To:     zengran zhang <z13121369189@gmail.com>
-cc:     Gregory Farnum <gfarnum@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-Subject: Re: some questions about fast dispatch peering events
-In-Reply-To: <CALi+v1-qsyB8S8sxPoQe+hpC8C_tz+d7Fz3cmeMoh5sWNQZ8Bg@mail.gmail.com>
-Message-ID: <alpine.DEB.2.11.1905092249260.8559@piezo.novalocal>
-References: <CALi+v1_fTKgpKtMTBDw3ioy4SqtsvP3xkjXLyLX5Gb=_7yoaNg@mail.gmail.com> <CAJ4mKGaRZrA9P6=hZ+CZ7oca5_b9uGXZAV5gNu2YiNajy1q8Qw@mail.gmail.com> <CALi+v1-qsyB8S8sxPoQe+hpC8C_tz+d7Fz3cmeMoh5sWNQZ8Bg@mail.gmail.com>
-User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
+        id S1727328AbfEJMP0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 10 May 2019 08:15:26 -0400
+Received: from mx0b-00003501.pphosted.com ([67.231.152.68]:56166 "EHLO
+        mx0b-00003501.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727071AbfEJMPZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 10 May 2019 08:15:25 -0400
+X-Greylist: delayed 1041 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 May 2019 08:15:24 EDT
+Received: from pps.filterd (m0075029.ppops.net [127.0.0.1])
+        by mx0b-00003501.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4ABs8sk035852
+        for <ceph-devel@vger.kernel.org>; Fri, 10 May 2019 07:58:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seagate.com; h=mime-version : from
+ : date : message-id : subject : to : content-type; s=proofpoint;
+ bh=JsSgM1XUmcEfpZYltJS0nTYMqlwAL9V4lQlorPX+/AE=;
+ b=3CCHE9od99Bt6VvAzXLN2lfo96Jp1vs/VJf4PkiUf5WJBfk2YgWf4BukBI1NCDywN58Q
+ rYepHEvOU44dKBLJOVPksRtdfYja4MnVtxcZquC9AwvfGn7wpXgT4/ZzCEFuHubfmT9i
+ DJH+2n55ySy6D3kPn2I1Ploz9GXjHU3B39BeoGquCq4NgDxeJFcL7zEma32vbjS3+r/p
+ 9xH3Kh94TNg+3OrWkMP4vZ39rw1xGW8K1+SezssOpfLom2EU7N8oU3IAAtMHzlVbvxbE
+ VEd6fZOLCJKf71ThEZYOAN9RgBh8MDjZNIgu6Ocge7LoMz/hMjTdyHAN6QLkwpjIDTsT mw== 
+Authentication-Results: seagate.com;
+        dkim=pass header.d=seagate.com header.s=google
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
+        by mx0b-00003501.pphosted.com with ESMTP id 2scb8n8tew-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <ceph-devel@vger.kernel.org>; Fri, 10 May 2019 07:58:03 -0400
+Received: by mail-ed1-f72.google.com with SMTP id c1so3842830edi.20
+        for <ceph-devel@vger.kernel.org>; Fri, 10 May 2019 04:58:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=seagate.com; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=JsSgM1XUmcEfpZYltJS0nTYMqlwAL9V4lQlorPX+/AE=;
+        b=IlZtZsgdZSw892qS0n0Xh3du2ZFGBZGRt8PUG+Lhb8mpgkR3CztaG4KwD1B+KbBYKm
+         Ry8TLuUQCOKJsMM1IXgSmYXG9eZBEtXuz0bvVDH7WnKrK+o2taD+oatFa1p5Xqv3aDkm
+         trl5xB95EJs53TF8wIvQfOaQD+gFkUkmDTYm+tT0m09HS9O/DrzfrWtkU2sbQl9V9vMu
+         fgDpYU1wneiB2NLpWr8WecUsvDO7LS2V0qz16GvvEq1WtgrKhFYQqU8sGFO/GRZyqAuX
+         UjBpzWd2NxGVVXsnZs8IgorYpd5kRxl2rcbC8Edc54CoDrnAMFItp3yqhyHsY1HYjLcY
+         BmPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=JsSgM1XUmcEfpZYltJS0nTYMqlwAL9V4lQlorPX+/AE=;
+        b=myszgmk2tegI93CzHK93i+wIQd0IDOG8SZeyg4/j3UPeYLhLLy9cCdqMXX5EaNA4gn
+         5BOMgbXbek1/mocvopHecwaQApVfDdbOcSh2cbEMhoFERosFL9PB65+eJHfSstXA5C0f
+         mn/vP15pckMuvtqOI53e0tau6FB9jtAX8D+96Dgd03/SGuNK/6Vp7FqBscQgS9MwiPYQ
+         H0iGy0OAiFmk8FKP8rSlqWHgby7SeaNLXf/FrJSs+T31wyNQkhMLvHjWKgIKd1D9SosK
+         wJwWznWhr5GABUJN5pyVh5+48BDDCk/PuyTiuEaRWBEChHOPxng1rTaeFSWKReEqkpdZ
+         /ubA==
+X-Gm-Message-State: APjAAAVDH0H1s4W66hD5Wa/5Jn0vGx3gxJ/A65qqX580/YEn/gpI7cb2
+        RC0aOrrLji/Fifhw7K9Q0jZsS4hPaQlNuPVhcsed7SWpc+rKkhUCvQDl3hVG59AJUw5sEUlcCzO
+        v9Pa1LrY3jOXcLeid0BRqyvc1HpmshZlAqJIOW+p3qc3WHOlNYJJYETWG9bisQZs=
+X-Received: by 2002:a50:bf0c:: with SMTP id f12mr10479103edk.181.1557489481415;
+        Fri, 10 May 2019 04:58:01 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwVLSZ80q1MVB9qseTD8ibGT/HMNQR39Be5E7tQZco3Auww/khmR6mTf48wqbGLwjAnb2a9114w67h3xpXKu/0=
+X-Received: by 2002:a50:bf0c:: with SMTP id f12mr10479088edk.181.1557489481170;
+ Fri, 10 May 2019 04:58:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-745421679-1557442950=:8559"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 09 May 2019 23:02:30 +0000 (UTC)
+From:   Muhammad Ahmad <muhammad.ahmad@seagate.com>
+Date:   Fri, 10 May 2019 07:57:25 -0400
+Message-ID: <CAPNbX4TWbHD-otnugx6tHKQuot5RinzvWsMV7zVK2yPq9b0cZQ@mail.gmail.com>
+Subject: Supporting ATA/SCSI/NVMe pass-through
+To:     ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-PolicyRoute: Outbound
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=961 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905100085
+X-Proofpoint-Spam-Policy: Default Domain Policy
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Folks,
 
---8323329-745421679-1557442950=:8559
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+What library or command line utility does Ceph uses to send raw
+ATA/SCSI/NVMe commands to the physical storage device consumed as an
+OSD? In other words, a library/CLI that uses SG_IO ioctl to send
+SAT/SCSI commands to ATA/SCSI devices and NVME_IOCTL_ADMIN_CMD to send
+NVMe commands?
 
-On Thu, 9 May 2019, zengran zhang wrote:
-> Gregory Farnum <gfarnum@redhat.com> 于2019年5月9日周四 上午5:00写道：
-> >
-> > On Wed, May 8, 2019 at 6:12 AM zengran zhang <z13121369189@gmail.com> wrote:
-> > >
-> > > Hi Sage:
-> > >
-> > >   I see there are two difference between luminous and upstream after
-> > > the patch of *fast dispatch peering events*
-> > >
-> > > 1. When handle pg query w/o pg, luminous will preject history since
-> > > the epoch_send in query and create pg if within the same interval.
-> > >     but upstream now will reply empty info or log directly w/o create the pg.
-> > >     My question is : can we do this on luminous?
-> >
-> > I think you mean "project history" here?
-> 
-> Sorry, I mean could we reply empty info or log directly in luminous
-> cluster w/o create the pg?
+I looked into libstorage but it's seems like a library dealing with
+logical management.
 
-I'm looking at handle_pg_query() on luminous and I think that's what it 
-does... if the interval has changed, we drop/ignore the request.  
-Otherwise, we either reply with an empty log or an empty notify. Where do 
-you see it creating the pg due to a query?
+Some of the use cases such a library that can send ATA/SCSI/NVMe
+commands would be able to handle are:
+- Changing the power mode of devices (e.g. a policy that an
+orchestrator sets for every OSD consumed by it to be always set to
+standby_z)
+- Changing the write cache setting of devices (e.g. a dashboard toggle
+switch to set the OSD write cache on/off)
+- repurpose or erase a physical device using industry standard crypto
+erase supported by all three commands sets.
+- extract telemetry or crash dump from device using standard logs
+available in each command set.
+- much richer device information page on the dashboard, that includes
+physical drive capabilities, settings etc.
 
-> > In any case, lots of things around PG creation happened since
-> > Luminous, as part of the fast dispatch and enabling PG merge. That
-> > included changes to the monitor<->OSD interactions that are difficult
-> > to do within a release stream since they change the protocol. We
-> > typically handle those protocol changes by flagging them on the
-> > "min_osd_release" option. We probably can't backport this behavior
-> > given that.
-> >
-> > >
-> > > 2. When handle pg notify w/o pg, luminous will preject history since
-> > > the epoch_send of notify and give up next creating if not within the
-> > > same interval.
-> > >     but upstream now will create the pg unconditionally, If it was
-> > > stray, auth primary will purge it later.
-> > >     Here my question is: is the behavior of upstream a specially
-> > > designed improvement?
+I can think of a number of other use cases where such a library will be needed.
 
-My reading of the latest code is that it will only create the PG if the 
-current OSD is the primary according to the latest/current OSDMap.  In 
-handle_fast_pg_notify, we queue it unconditionally, and in _process, we 
-only process the create_info if 
+If such capability doesn't exist in Ceph today, may I recommend using
+opensea-api libraries?
+https://github.com/seagate/opensea-api
+There are command line utilities built on top of this library, called
+openSeaChest that do perform the above use cases I described on direct
+attached devices.
+https://github.com/Seagate/openSeaChest
 
-      } else if (osdmap->is_up_acting_osd_shard(token, osd->whoami)) {
-
-This is maybe not as precise as it could be, since maybe the epoch the 
-message was sent it we were primary, then we weren't, but now currently we 
-are, but in that case we'd still want to create the PG (one way or 
-another).  Am I missing anything?
-
-> > My recollection is that this was just for expediency within the fast
-> > dispatch pipeline rather than something we thought made life within
-> > the cluster better, but I don't remember with any certainty. It might
-> > also have improved resiliency of PG create messages from the monitors
-> > since the OSD has the PG and will send notifies to subsequent primary
-> > targets?
-> > -Greg
-> 
-> Got it, Thank you for the clarification.
-> 
-> Now our luminous cluster, we found that the stale notify/query with
-> too old epoch
-> will cause the dispatch queue under high pressure dur to project history..
-> then I see the upstream remove the project history, so I'm curious
-> about the same
-> circumstance on upstream..
-
-Getting rid of project_pg_history was a big goal of the PG create/delete 
-and queueing/dispatch refactor that happened for nautilus, for exactly 
-that reason.  Post-nautilus, we've also removed the last instance where 
-teh OSD has to iterate over past OSDMaps due to mon pg creation messages 
-(see https://github.com/ceph/ceph/pull/27696), but that only comes up when 
-creating pools (combined with a loady/thrashy cluster).  
-
-In any case, I don't think there is a quick fix for luminous (and I 
-wouldn't want to risk a buggy backport), so my recommendation is to move 
-to nautilus.
-
-sage
---8323329-745421679-1557442950=:8559--
+Thanks,
+-Muhammad
