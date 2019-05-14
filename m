@@ -2,57 +2,98 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1F601BFB2
-	for <lists+ceph-devel@lfdr.de>; Tue, 14 May 2019 00:56:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 846261CCD8
+	for <lists+ceph-devel@lfdr.de>; Tue, 14 May 2019 18:21:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbfEMW4y (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 13 May 2019 18:56:54 -0400
-Received: from mail-qt1-f169.google.com ([209.85.160.169]:40366 "EHLO
-        mail-qt1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbfEMW4y (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 13 May 2019 18:56:54 -0400
-Received: by mail-qt1-f169.google.com with SMTP id k24so11856923qtq.7
-        for <ceph-devel@vger.kernel.org>; Mon, 13 May 2019 15:56:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=/5c1qI4ex4xHSQW3MFvxZDCdFSiBwf5qkLvTvUdFTZo=;
-        b=abJ8e43RtSbAkBR4UJ5RYFZFqnAmfIrARx4e/03OPwcjKfltNs0fcMWvi2bK/QD9e6
-         kW1rmklWivmxb9kaR/TV9+UsqKcltWCwNK55GTGhEbQQ81UoifBbba4f2e2+HUY0qHlR
-         vUHvOlK1z9YAXRsyK+Dsx+M8aE4MwS7oeOFGWF3xsVqFwFPwytwJlvEJ7tNhEWVz/ADq
-         ycYHjrokOvscJz4QiTaskndZLus1RXuoN+iYWNgYWUQr0IrhuciM8r4V+eGETYccxR7t
-         QCyRwm9UAjWh7EvT6eSLRzmtoqhpovERbg/dw9oDkgQHzo4lBU9jHO2pwosj+2Ng6HZ5
-         LNYQ==
-X-Gm-Message-State: APjAAAXd7uLRtp3Wi37NnlhlPkqtRtM5nVZef2QDP4gYHFz1Taw/KzW6
-        y2aF8ciDQy9j1Y2b37UMjFy+0IeQ7dUgFmF6jxI2jy5L
-X-Google-Smtp-Source: APXvYqx72r8QWAMI47UWcSw/UlEHXuPhsLHSyNXVPOVJvpwbFbXEDuhrRgxgm1hGtzxmx7arNX3YctkFPKMRHE1pTOU=
-X-Received: by 2002:ac8:27aa:: with SMTP id w39mr27202965qtw.227.1557788212894;
- Mon, 13 May 2019 15:56:52 -0700 (PDT)
-MIME-Version: 1.0
-From:   Alfredo Deza <adeza@redhat.com>
-Date:   Mon, 13 May 2019 18:56:42 -0400
-Message-ID: <CAC-Np1zOhGgBcj3f7BartvhWneY0BNUtyh2hxE_+LXKXe5uEOg@mail.gmail.com>
-Subject: All Jenkins builds halted
+        id S1726416AbfENQVT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 14 May 2019 12:21:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53992 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726394AbfENQVT (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 14 May 2019 12:21:19 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ECF473092678
+        for <ceph-devel@vger.kernel.org>; Tue, 14 May 2019 16:21:18 +0000 (UTC)
+Received: from [10.10.126.35] (ovpn-126-35.rdu2.redhat.com [10.10.126.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BA893608BA
+        for <ceph-devel@vger.kernel.org>; Tue, 14 May 2019 16:21:18 +0000 (UTC)
+Subject: Re: All Jenkins builds halted
 To:     ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <CAC-Np1zOhGgBcj3f7BartvhWneY0BNUtyh2hxE_+LXKXe5uEOg@mail.gmail.com>
+From:   David Galloway <dgallowa@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dgallowa@redhat.com; prefer-encrypt=mutual; keydata=
+ mQENBE60O2sBCADafZy0luRceto63vARvurZ7oepCBc+yBiDHHcFLmdZLs0nugjyYa1V1WW/
+ j/tMPkjmQPGT1IcoXIrhppUXKrwXMkK4JB56GHI3cdximVuRMmHCY45ZbmAL7YnuNXz+5jbs
+ iuzarsc9W3SyovQUx9n1lUymk1lASaPfNVdgzxl0/FHpKMhEqJGo0eQPh8o5M+ybZS9zXKNa
+ QPiXJKLiHuise1hP4529ZTExjCqk+R3x6y7YwySKSFUhEVwY7ksU0rr/Xv5VVEsrLgS4nENe
+ u9UQvJq2hp+RhgBH0ZV9+jLgwoYxjqbifJDlghbDPe7rhAfiD/xvoQFgAy/AOkVPRKHVABEB
+ AAG0JERhdmlkIEdhbGxvd2F5IDxkZ2FsbG93YUByZWRoYXQuY29tPokBNwQTAQgAIQUCVfr6
+ SAIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgAAKCRA4J2vQ1bgO+m5hB/kBOH7I2uhhhvGH
+ BzGFKSh/1C9NO8ECg5N//b7xu9EtQfoVgNODTYqpG0mhH9phV7Cvld5gAlX3YV/m4lgDwJH9
+ 5fcNB2x7M6OEY2kOI20DxBKxVDmamhmQLQzm2ZFqbfHwh/H6zq3jdXWCbp8LQ9uvta5qbsFp
+ rU4sVg2AhKAPrvr2JoO7MLVCdNfRhwdJFwvxlc6ltilateChU5dHpy2/2aSM3794VLZXQZkD
+ Ei5PIc9XrXOKqqpbwMuizlh/tNA0O1a3jY8ccl9rYpCyELa9nfGw1HxXmfj8hMtndf077Bat
+ 7AxNyUoLu8+C9vD2F0oqXGumYCkcXIoSyiDAPY2IuQENBE60O2sBCADlXsFRIss3rM3IW9dK
+ 8084c3kktyOyA0JO4cQtXglGVvmALIaqxLlQ8qabibmRgdozjh5YsYFIQwBasmD+0rZVEi7W
+ OMc1pO/dbwAzlhzfmbAvkvzctB4CS2MP6RLkGR9MquiLAAWdfOiRoKeNkgSup8VlSPrvlXwF
+ qsolEbH14LJGtJBF3uRUrhieyV+dQ5wE/UJCmuN/m1KWlZmcUeDbTefNM/NaWxSdycu27QyL
+ PBMIS9bDHPoPAaPjRKoMr80aYbHLZxiXPXlP3wyfirWiN5jqL2mjcCqGqzAC2IPuWftD4oHr
+ P+3w6cBi1noh1ps76iD37IUsU8tZgTX5sE8RABEBAAGJAR8EGAECAAkFAk60O2sCGwwACgkQ
+ OCdr0NW4Dvq5ywf/ZEVxP1LOUnkab+B8ZDQs6L66bBMMuWaoUKp9ngdpSqKfSy6YnbmshKaE
+ SkNBNlpVpdOweSBPnLx4ss2sksLwDxrQTxW71Zui67mUbdurhlkbsG1pM4c1sAcdqa7xG6nB
+ +fkpwgn9bcvv3qQGuKDwit6fdIVnPRJckM1T8w8d0yG+0uNSzOhwKI6h8E0Za2ESLmTyfkr1
+ FtSVF86xVAGMI8jMiccCzKfOlkP89ND84r5EDzeATa3Imv7xKCgcIlSuMQKk45506NFPQQlP
+ nCTgp61XOM4EWjembxD6lWBXHltcm3K1dXvf3JbAxG7v2BSd0hRhnXfQdZoAzRJwYIHh2Q==
+Message-ID: <3f6341f4-25f5-a8ec-7688-d3bf673bc6ab@redhat.com>
+Date:   Tue, 14 May 2019 12:21:18 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <CAC-Np1zOhGgBcj3f7BartvhWneY0BNUtyh2hxE_+LXKXe5uEOg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 14 May 2019 16:21:19 +0000 (UTC)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi,
 
-Just a quick note on Jenkins, we are undergoing a major outage which
-we are trying to recover from. Our master jenkins was affected with a
-malware, a new instance is being worked on and we expect this to be
-fully operational tomorrow.
+On 5/13/19 6:56 PM, Alfredo Deza wrote:
+> Hi,
+> 
+> Just a quick note on Jenkins, we are undergoing a major outage which
+> we are trying to recover from. Our master jenkins was affected with a
+> malware, a new instance is being worked on and we expect this to be
+> fully operational tomorrow.
+> 
+> This means *new* builds and repos, Github PR checks, and formal Ceph
+> releases are impacted.
+> 
+> Once all systems are fully working, PRs will have to manually
+> re-trigger the jobs (I will follow up on how to do that).
+> 
+> Thanks for your patience while we work on this.
+> 
 
-This means *new* builds and repos, Github PR checks, and formal Ceph
-releases are impacted.
+Hi all,
 
-Once all systems are fully working, PRs will have to manually
-re-trigger the jobs (I will follow up on how to do that).
+The finish line is in sight.
 
-Thanks for your patience while we work on this.
+Both Jenkins masters have been resurrected on new hosts.  There's a lot
+of manual configuration that needs to be done on these even with
+Configuration As Code (ansible, plugins, etc.).
 
--Alfredo
+I will be implementing a monthly CI maintenance to keep Jenkins and its
+plugins up to date to avoid situations like this in the future.
+
+We're still working through a few snags.  I don't think wip branches are
+being built from ceph-ci.git, for example.  We'll send an all clear when
+things are.. all clear.
+
+Thanks for your patience.
