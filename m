@@ -2,63 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F6D51F7EC
-	for <lists+ceph-devel@lfdr.de>; Wed, 15 May 2019 17:45:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EED91F7F0
+	for <lists+ceph-devel@lfdr.de>; Wed, 15 May 2019 17:47:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbfEOPpo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 15 May 2019 11:45:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60964 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726335AbfEOPpo (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 15 May 2019 11:45:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3D7ACAEE1;
-        Wed, 15 May 2019 15:45:43 +0000 (UTC)
-From:   David Disseldorp <ddiss@suse.de>
-To:     ceph-devel@vger.kernel.org
-Cc:     ukernel@gmail.com, Patrick Donnelly <pdonnell@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        David Disseldorp <ddiss@suse.de>
-Subject: [PATCH] ceph: fix "ceph.snap.btime" vxattr value
-Date:   Wed, 15 May 2019 17:45:35 +0200
-Message-Id: <20190515154535.29662-1-ddiss@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190418121549.30128-4-ddiss@suse.de>
-References: <20190418121549.30128-4-ddiss@suse.de>
+        id S1726911AbfEOPrJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 15 May 2019 11:47:09 -0400
+Received: from tragedy.dreamhost.com ([66.33.205.236]:46292 "EHLO
+        tragedy.dreamhost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbfEOPrJ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 May 2019 11:47:09 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by tragedy.dreamhost.com (Postfix) with ESMTPS id 5217615F899;
+        Wed, 15 May 2019 08:47:08 -0700 (PDT)
+Date:   Wed, 15 May 2019 15:47:06 +0000 (UTC)
+From:   Sage Weil <sage@newdream.net>
+X-X-Sender: sage@piezo.novalocal
+To:     David Disseldorp <ddiss@suse.de>
+cc:     ceph-devel@vger.kernel.org, ukernel@gmail.com
+Subject: Re: [PATCH] ceph: fix "ceph.dir.rctime" vxattr value
+In-Reply-To: <20190515145639.5206-1-ddiss@suse.de>
+Message-ID: <alpine.DEB.2.11.1905151546250.24522@piezo.novalocal>
+References: <20190515145639.5206-1-ddiss@suse.de>
+User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-VR-STATUS: OK
+X-VR-SCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddrleekgdekjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucggtfgfnhhsuhgsshgtrhhisggvpdfftffgtefojffquffvnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvufgjkfhffgggtgesthdtredttdervdenucfhrhhomhepufgrghgvucghvghilhcuoehsrghgvgesnhgvfigurhgvrghmrdhnvghtqeenucffohhmrghinheptggvphhhrdgtohhmnecukfhppeduvdejrddtrddtrddunecurfgrrhgrmhepmhhouggvpehsmhhtphdphhgvlhhopehlohgtrghlhhhoshhtpdhinhgvthepuddvjedrtddrtddruddprhgvthhurhhnqdhprghthhepufgrghgvucghvghilhcuoehsrghgvgesnhgvfigurhgvrghmrdhnvghtqedpmhgrihhlfhhrohhmpehsrghgvgesnhgvfigurhgvrghmrdhnvghtpdhnrhgtphhtthhopehukhgvrhhnvghlsehgmhgrihhlrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-This fixes a cut-n-paste error from "ceph.dir.rctime":
-The vxattr value incorrectly places a "09" prefix to the nanoseconds
-field, instead of providing it as a zero-pad width specifier after '%'.
+On Wed, 15 May 2019, David Disseldorp wrote:
+> The vxattr value incorrectly places a "09" prefix to the nanoseconds
+> field, instead of providing it as a zero-pad width specifier after '%'.
+> 
+> Link: https://tracker.ceph.com/issues/39943
+> Fixes: 3489b42a72a4 ("ceph: fix three bugs, two in ceph_vxattrcb_file_layout()")
+> Signed-off-by: David Disseldorp <ddiss@suse.de>
+> ---
+> 
+> @Yan, Zheng: given that the padding has been broken for so long, another
+>              option might be to drop the "09" completely and keep it
+>              variable width.
 
-Link: https://tracker.ceph.com/issues/39705
-Fixes: 7e03e7214470 ("ceph: add ceph.snap.btime vxattr")
-Signed-off-by: David Disseldorp <ddiss@suse.de>
----
-XXX: The erroneous change hasn't gone into mainline yet, so feel free to
-squash this in with 7e03e7214470 in the ceph-client repo.
+Since the old value was just wrong, I'd just make it correct here and not 
+worry about compatibility with a something that wasn't valid anyway.
 
- fs/ceph/xattr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+sage
 
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index 5778acaf5bcf..57350e4b7da0 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -282,7 +282,7 @@ static bool ceph_vxattrcb_snap_btime_exists(struct ceph_inode_info *ci)
- static size_t ceph_vxattrcb_snap_btime(struct ceph_inode_info *ci, char *val,
- 				       size_t size)
- {
--	return snprintf(val, size, "%lld.09%ld", ci->i_snap_btime.tv_sec,
-+	return snprintf(val, size, "%lld.%09ld", ci->i_snap_btime.tv_sec,
- 			ci->i_snap_btime.tv_nsec);
- }
- 
--- 
-2.16.4
 
+>  fs/ceph/xattr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 0cc42c8879e9..aeb8550fb863 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -224,7 +224,7 @@ static size_t ceph_vxattrcb_dir_rbytes(struct ceph_inode_info *ci, char *val,
+>  static size_t ceph_vxattrcb_dir_rctime(struct ceph_inode_info *ci, char *val,
+>  				       size_t size)
+>  {
+> -	return snprintf(val, size, "%lld.09%ld", ci->i_rctime.tv_sec,
+> +	return snprintf(val, size, "%lld.%09ld", ci->i_rctime.tv_sec,
+>  			ci->i_rctime.tv_nsec);
+>  }
+>  
+> -- 
+> 2.16.4
+> 
+> 
+> 
