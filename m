@@ -2,102 +2,76 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 718C91E7FE
-	for <lists+ceph-devel@lfdr.de>; Wed, 15 May 2019 07:40:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 576291E9D0
+	for <lists+ceph-devel@lfdr.de>; Wed, 15 May 2019 10:07:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbfEOFkB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 15 May 2019 01:40:01 -0400
-Received: from mail-pl1-f177.google.com ([209.85.214.177]:45164 "EHLO
-        mail-pl1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbfEOFkB (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 May 2019 01:40:01 -0400
-Received: by mail-pl1-f177.google.com with SMTP id a5so741145pls.12
-        for <ceph-devel@vger.kernel.org>; Tue, 14 May 2019 22:40:00 -0700 (PDT)
+        id S1726260AbfEOIH1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 15 May 2019 04:07:27 -0400
+Received: from mail-pf1-f182.google.com ([209.85.210.182]:45601 "EHLO
+        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbfEOIH0 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 May 2019 04:07:26 -0400
+Received: by mail-pf1-f182.google.com with SMTP id s11so940977pfm.12
+        for <ceph-devel@vger.kernel.org>; Wed, 15 May 2019 01:07:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gaul.org; s=google;
+        h=from:date:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=G1pFqKROGQUAoNA5Dy6n1Kho2vi//nf7z4AYRKye5GI=;
+        b=Jnmjo+P00VS9Wm5zTOq7frKwcabeUw1J5tmf6v1okVDA8psg6i0mTB2i0SqSIrhv5D
+         gjHdVNVHF/eTMTOQtZpmWqpIpp0kHN074vpAqkZFdbz7Km5PQ4VNoU+WXdE9ZaGJ/DcM
+         OraVsEEJVpmNGDIdhhUMrh1sgWWyMfg08bKgoY6EReAjEEJSsuOKnzl5esEsiYdKtKST
+         OTKZfhuE48/KgAzLIdbhHvPjneeTrlenwbBf84CmGp+CeXpwNWwH/KvGWHluJ43sILvZ
+         lZZD0K8NsDeEGeijobozPtLOw2OUFmHjDnvhfaiQMOCBgjh/QB6Ysjnjs/6wbab1SRcs
+         O+cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=fi/Evog88daeHng1VnFIzae06SFVqb+ytkGJieagqOE=;
-        b=lKiU+D8aF2yIrhS5pe0mKckYQ89Ha5JlFbkjx1tqIqZzRXa+LSSNqMXYk4rv9U4mh3
-         EDezBtGF03/sItWV8O1MWnZrqqaGP8lU0V3fJSYd+1FBElvpLSAvb0AzZHHIqNBOTD/G
-         vHfbfmL0GVIM/8TH7xO0ExYvpRstNPxYBC8xcy9f0+YkR1+uf9sd0aL+kO6tg9ZTqMIj
-         XDF1Leozm9U6fUsRRfflJeWZlY9B4fvTXjccbW4Vu7l5fyvHeicTABBdoOaTO+LxdDCE
-         6eOCX1I+hlG8cuBT8n7pbV/Mwkg55TJHYu/9H3YdKWxXOn+rKarTPqI1crL6k+fGWKOV
-         Lltg==
-X-Gm-Message-State: APjAAAU8R3UjC0QMBmZxnAZt5RG6Hg0HyVmuhJYt+JLuWCzNEKLJle9P
-        lq34tudptjOPV8qYacDdq+crJnx8q3Y=
-X-Google-Smtp-Source: APXvYqzhJKFzXrUsnyLvk3W8RnAzf73IFHKm8y1/XV/JiJHt6Bi2HlzqmfMHCYCw34bNK3OLW4lOMQ==
-X-Received: by 2002:a17:902:5acb:: with SMTP id g11mr40836533plm.198.1557898800208;
-        Tue, 14 May 2019 22:40:00 -0700 (PDT)
-Received: from [192.168.1.5] ([122.167.117.229])
-        by smtp.gmail.com with ESMTPSA id t25sm1415433pfq.91.2019.05.14.22.39.59
+        h=x-gm-message-state:from:date:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=G1pFqKROGQUAoNA5Dy6n1Kho2vi//nf7z4AYRKye5GI=;
+        b=K1OxQgcVkE5+012Pq1gBC8qUWn7V3cphCxF+FfVsPCXORlMnoUQE7Q6QUSD/qB5+B7
+         iMHI8DzrbU1WZxx9+ICAxiWAEDltCBRHE9skRqmNRmIlRsDh3Z4/BcboFtfcNQT5HkHT
+         7hOkZxhiJqH7ijZfCeyemGE4Rz9LSRDetdtGWQAZFyVDP1hhE+cf1sEecvl4BnMV3gK6
+         AWx3QrHsChSeQPy5HGJjaKLe4sx7anUEj45BjrC5QE+x2TjeZFUMWDv/Sg/mTHbf6kAu
+         o7bS9eHIKOSLU34IUhZyMW76lPi8LAc7mNZb/jYzOrjh9ylD5SD3BCZE7vdhhCNtJZZ4
+         GcYw==
+X-Gm-Message-State: APjAAAX6lHxJvEMa/AeV56fcyzQIr4qNv2eaOp8zh8O4Ypu+TxeFTRLD
+        JpZOkC0bR9dtjrqNxXqawBlqlyaE8Tr7dg==
+X-Google-Smtp-Source: APXvYqzihYdWcGQlNfzPo98SG5QZkpDW//lqRvdOpEuwbXRSIbFQ3qnjP5ZRHteB1DUOAo1RHmQ1Yg==
+X-Received: by 2002:a63:5c4c:: with SMTP id n12mr42811233pgm.111.1557907645787;
+        Wed, 15 May 2019 01:07:25 -0700 (PDT)
+Received: from sherlock ([117.2.56.17])
+        by smtp.gmail.com with ESMTPSA id d186sm2527847pfd.183.2019.05.15.01.07.23
         for <ceph-devel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2019 22:39:59 -0700 (PDT)
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 15 May 2019 01:07:24 -0700 (PDT)
+From:   Andrew Gaul <gaul@gaul.org>
+X-Google-Original-From: Andrew Gaul <andrew@gaul.org>
+Date:   Wed, 15 May 2019 15:07:16 +0700
 To:     ceph-devel@vger.kernel.org
-From:   Jos Collin <jcollin@redhat.com>
-Subject: =?UTF-8?Q?Proposal_=e2=80=93_DaemonWatchdog?=
-Message-ID: <1e522eba-fc1f-ccd3-97e6-106411b1ddeb@redhat.com>
-Date:   Wed, 15 May 2019 11:09:57 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+Subject: s3-tests development 2019
+Message-ID: <20190515080716.GA11147@sherlock>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi,
+Does s3-tests still merge PRs from non-Ceph developers?  While I have
+contributed to this project in the past, the GitHub repository currently
+has 55 open PRs with 7 opened by me[1], some for almost 5 years.  We
+previously discussed this in 2015[2] and made some progress but have
+stalled again.  I prefer to work with the upstream project but if this
+is not possible please communicate this expectation, preferably in the
+README.  Several S3 implementations such as S3Proxy and swift3 use
+s3-tests and it would be a shame if we could not collaborate.
 
-This is a proposal for DaemonWatchdog improvements based on the bug: 
-http://tracker.ceph.com/issues/11314. Sending it to ceph-devel for 
-getting suggestions.
+[1] https://github.com/ceph/s3-tests/pulls/gaul
+[2] https://marc.info/?l=ceph-devel&m=142500510918349&w=2
 
-Current Functionality
----------------------
-DaemonWatchdog watches the Ceph daemons for failures. If an extended 
-failure is detected (i.e. not intentional), then the watchdog unmount 
-file systems and send SIGTERM to all daemons. The duration of an 
-extended failure is configurable with  watchdog_daemon_timeout. The 
-watchdog_daemon_timeout (default value: 300) is the number of seconds a 
-daemon is allowed to be failed before the watchdog barks (unmounting the 
-mounts and killing all the daemons).
-
-DaemonWatchdog was originally written for watching the mds (and mon) 
-daemons for failures. It unmounts the mounted filesystems and kill the 
-mds (and mon) daemons.
-
-Proposed Improvement
---------------------
-As per John's suggestion here: 
-http://tracker.ceph.com/issues/11314#note-1, it would be better if we 
-extend this functionality to watch the other daemons too like osd, mon, 
-rgw and mgr and do the necessary action or logging (bark) when those 
-daemons crashes. We need to make those improvements in watch() and 
-bark() functions, so that if the daemon crashes unexpectedly, we detect 
-it immediately rather than waiting a long time for a timeout of some 
-kind. The bark() function should have different cases to handle 
-different daemons crashing. The procedure to be executed for ‘mds’ case 
-is present in the bark() function now. But we need to decide the 
-procedures for ‘osd’, ‘mon’, ‘rgw’ and ‘mgr’ cases. I think killing the 
-daemons and throwing/logging errors or maybe just throwing an error 
-would be sufficient.
-
-* At present the class DaemonWatchdog is written in mds_thrash.py, as it 
-is specific for watching mds daemons. It would be better if we move it 
-out of mds_thrash.py to be generic, to a new file 
-qa/tasks/daemonwatchdog.py.
-
-* The current code tries to watch the 'client'? 
-(https://github.com/ceph/ceph/blob/master/qa/tasks/mds_thrash.py#L87). I 
-have dropped this statement, as it is difficult to watch what the client 
-is doing in general.
-
-* There is a suggestion to add the DaemonWatchdog to ceph.py and have it 
-always run whenever Ceph is "started".
-
-Thanks,
-Jos Collin
+-- 
+Andrew Gaul
+http://gaul.org/
