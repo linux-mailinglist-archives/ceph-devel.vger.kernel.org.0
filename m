@@ -2,159 +2,124 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6F8A20B6E
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 May 2019 17:40:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AD9C20D56
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 May 2019 18:49:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727509AbfEPPkT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 16 May 2019 11:40:19 -0400
-Received: from mail-wr1-f41.google.com ([209.85.221.41]:36265 "EHLO
-        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbfEPPkT (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 May 2019 11:40:19 -0400
-Received: by mail-wr1-f41.google.com with SMTP id s17so3966269wru.3;
-        Thu, 16 May 2019 08:40:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5xSbdCo2088ZqCPrSF9g7xEVEzDABY2YcRLKAXfPGSI=;
-        b=d8eJIIagruGv9s64K44RXN03oOtaC1VRjIV+RWUlOr1Kx9ptga/FXxIkPCQJxqLsN1
-         vdX4qqXEz/dwFnmylryABoqw+opB/JhDZu+27N5F1dsg4WuE77dWtxSx3qJtKdkqYuFD
-         JH84BYrUIXCqxgrJsMxmeAzllEGsd8BlpS0FJLGmB4/BDJliSZ7xNBp+nXN2MkHR+UiL
-         6VNPSII+YeSt7H4AmHrKMD9bqCZSYMbURP05mFMLb4CsR7lRGcgVbyjwgMpXUfu7o5QE
-         0LNDsROWXWQjPE08iTUrlpeNEQLQZukIOt+XISWmqdsaPD9/3R1Nm34LSbw5pkdYTKKC
-         ZSgA==
+        id S1728575AbfEPQtF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 16 May 2019 12:49:05 -0400
+Received: from mail-yw1-f47.google.com ([209.85.161.47]:33593 "EHLO
+        mail-yw1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbfEPQtF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 May 2019 12:49:05 -0400
+Received: by mail-yw1-f47.google.com with SMTP id q11so1628388ywb.0
+        for <ceph-devel@vger.kernel.org>; Thu, 16 May 2019 09:49:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5xSbdCo2088ZqCPrSF9g7xEVEzDABY2YcRLKAXfPGSI=;
-        b=fyo0OMvBqKavHAJsuzpAGWSvu0mLo96oAebmoiBjTip8cXNeJHCmYnUUm1wO63jvoL
-         38FvN1fC5F/ibYoh5867AX+O0HP9/m8YBy8S1u0ebuHrJAvOaBSQrmBBMQrPI3Abuz70
-         nUc/EAQw6PynqEc+iwTOCxYyM4b8D72aZfl1almWff2CoOU4/yeHsSXH60F9aya/w8GW
-         oiWieYISHt8iRnm1AHL9KqWr7Eer5kkUmSseJVm5eb74s4LvJ5axMWQs1fESi10dV2hO
-         xrS7KzUd5FHufcyU6uLvHXQikgT8GEZ8HS+BSW+4fbnNwCR+ZjCf85BQR4X+teD2v1Nw
-         ZEJA==
-X-Gm-Message-State: APjAAAUlYV+/+L0upHkHcPHWMW/ggUVaRoyFOPkAiHEhdepxvRRpgrmg
-        Fho6jUJkzj53suNONt+OP+QG0P5L
-X-Google-Smtp-Source: APXvYqzHj0gHAVGWXDe4xZb3o/fP+SYr4nrHJmnNwgjUnI1lnNWjTeWwxAL19PVV2SHDhogCuMRNLA==
-X-Received: by 2002:adf:b612:: with SMTP id f18mr30404470wre.236.1558021217141;
-        Thu, 16 May 2019 08:40:17 -0700 (PDT)
-Received: from kwango.redhat.com (ovpn-brq.redhat.com. [213.175.37.11])
-        by smtp.gmail.com with ESMTPSA id q24sm5887339wmc.18.2019.05.16.08.40.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 16 May 2019 08:40:16 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph updates for 5.2-rc1
-Date:   Thu, 16 May 2019 17:40:05 +0200
-Message-Id: <20190516154005.22583-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
+        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=xqH2PFEzWbYIxZduSq2hB7OPc4iQtOzR9QnvevBHKN8=;
+        b=qZsbC0BL43T4xE9J5Yr76huikOheNnK2wuLVmYa9TstoAoerjiPpU0Vijluh8sGJfZ
+         /zEpwY/98H/3v9PCEMBVY4QT5KRemv5bpuajskctPoW0fPF56rDegiag89BMRtPTWj0O
+         KmlD/RQzOZ/Pm7N95xXkCSwTSuHXA1F4TmWeANFH+vYddVHNRemNFk3d43e5rxF+G9hl
+         Q7xtCKhbEPpXoKca+FVjHytkUn+7FHU2vbXwXBcOHA1VSO/NjAp7uFLkm22bXjeJxsZ+
+         6rB4oCvv0XOcLlXsIUdnVBg3eRadapqJWOyKf7IqJK/YiZhgwVSl5ftIOFzDWQyiMbcj
+         3sAQ==
+X-Gm-Message-State: APjAAAUiC4Bofp2CsTjzWXfrR1MLpW0w2UbijzyFvHFFTe+QaTHNZsoV
+        tr9oPgcilkF69Yg7y+c0mV1r0j3+LZc=
+X-Google-Smtp-Source: APXvYqx8xp6F6LL6uy3nCnYkVJ2vyrlT5KMgCsy+nM5H1+V2XKp87GwnCH1HyRqd2uIBzEHpEIheEg==
+X-Received: by 2002:a81:32d6:: with SMTP id y205mr23225032ywy.108.1558025344439;
+        Thu, 16 May 2019 09:49:04 -0700 (PDT)
+Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-C3D.dyn6.twc.com. [2606:a000:1100:37d::c3d])
+        by smtp.gmail.com with ESMTPSA id n12sm2206445ywn.81.2019.05.16.09.49.03
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 16 May 2019 09:49:03 -0700 (PDT)
+Message-ID: <890c2e19487ac12e1b79e611a15042a2d829598b.camel@redhat.com>
+Subject: Re: CephFS: strange behavior for arm-gcc when runing under cephfs
+From:   Jeff Layton <jlayton@redhat.com>
+To:     Xinying Song <songxinying.ftd@gmail.com>,
+        ceph-devel@vger.kernel.org
+Date:   Thu, 16 May 2019 12:49:03 -0400
+In-Reply-To: <CAMWWNq9gsx8NGap3zUn+Db-WDt1hCLU8SBHwxBBuUHcnjbjZqw@mail.gmail.com>
+References: <CAMWWNq9gsx8NGap3zUn+Db-WDt1hCLU8SBHwxBBuUHcnjbjZqw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
+On Thu, 2019-05-16 at 20:31 +0800, Xinying Song wrote:
+> Hi, cephers:
+> I'm using ceph Luminous. Recently, one of my colleagues put his
+> gcc-tools , a whole binary folder with corresponding lib-files, into
+> cephfs. However, when running arm-gcc command to compile files,
+> arm-gcc always complains about "cc1plus" not found. If the whole
+> binary folder is located under a local filesystem, everything is ok.
+> 
+> Here is some pieces of log with strace when run arm-gcc under cephfs:
+> 
+> open("/tmp/ccIlAAE5.s", O_RDWR|O_CREAT|O_EXCL, 0600) = 3
+> close(3)                                = 0
+> stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/arm-linux-gnueabihf/4.9.2/cc1plus",
+> {st_mode=S_IFREG|0755, st_size=16224744, ...}) = 0
+> stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/arm-linux-gnueabihf/cc1plus",
+> 0xfffe9014) = -1 ENOENT (No such file or directory)
+> stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/cc1plus",
+> 0xfffe9014) = -1 ENOENT (No such file or directory)
+> stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../lib/gcc/arm-linux-gnueabihf/4.9.2/../../../../arm-linux-gnueabihf/bin/arm-linux-gnueabihf/4.9.2/cc1plus",
+> 0xfffe9014) = -1 ENOENT (No such file or directory)
+> stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../lib/gcc/arm-linux-gnueabihf/4.9.2/../../../../arm-linux-gnueabihf/bin/arm-linux-gnueabihf/cc1plus",
+> 0xfffe9014) = -1 ENOENT (No such file or directory)
+> stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../lib/gcc/arm-linux-gnueabihf/4.9.2/../../../../arm-linux-gnueabihf/bin/cc1plus",
+> 0xfffe9014) = -1 ENOENT (No such file or directory)
+> vfork(arm-linux-gnueabihf-g++: error trying to exec 'cc1plus': execvp:
+> No such file or directory
+> )                                 = 8885
+> --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=8885,
+> si_status=255, si_utime=0, si_stime=0} ---
+> waitpid(8885, [{WIFEXITED(s) && WEXITSTATUS(s) == 255}], 0) = 8885
+> stat64("/tmp/ccIlAAE5.s", {st_mode=S_IFREG|0600, st_size=0, ...}) = 0
+> unlink("/tmp/ccIlAAE5.s")               = 0
+> exit_group(1)                           = ?
+> 
+> It shows arm-gcc has indeed found cc1plus, but somehow it continues to
+> search other directories.
+> 
+> Below gives log for running arm-gcc under local filesystem:
+> 
+> open("/tmp/ccU6Mkbg.s", O_RDWR|O_CREAT|O_EXCL, 0600) = 3
+> close(3)                                = 0
+> stat64("/mnt/local/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/arm-linux-gnueabihf/4.9.2/cc1plus",
+> {st_mode=S_IFREG|0755, st_size=16224744, ...}) = 0
+> access("/mnt/local/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/arm-linux-gnueabihf/4.9.2/cc1plus",
+> X_OK) = 0
+> vfork()                                 = 8866
+> waitpid(8866, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0) = 8866
+> --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=8866,
+> si_status=0, si_utime=16, si_stime=5} ---
+> 
+> The main difference is that when using a local filesystem, arm-gcc
+> will not continue to look up in other directories after it has found
+> cc1plus. I'm really confused by this behavior. MDS's log just showed
+> it received some lookup requests and responded each request correctly.
+> 
+> The /mnt/local/CentOS-6.6 is copied from /mnt/cephfs/CentOS-6.6 with
+> `cp -rp` command, so symbol-link or file-mode should keep the same. I
+> tried gcc in this gcc-tool directory, and it worked well under cephfs.
+> Probably there is a bug in arm-gcc, but I can't imagine what code will
+> lead to such strange behavior.
+> 
+> Could anyone give some tips on this? Thanks!
 
-The following changes since commit e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd:
+One possibility is that even though the stat64 call succeeded, some of
+the attributes in the returned struct stat made the program consider it
+unsuitable for some reason.
 
-  Linux 5.1 (2019-05-05 17:42:58 -0700)
+I'd redo those straces with -v, longer -s value, etc., and see whether
+you can discern any major differences between the corresponding stat64
+calls.
+-- 
+Jeff Layton <jlayton@redhat.com>
 
-are available in the Git repository at:
-
-  https://github.com/ceph/ceph-client.git tags/ceph-for-5.2-rc1
-
-for you to fetch changes up to 00abf69dd24f4444d185982379c5cc3bb7b6d1fc:
-
-  ceph: flush dirty inodes before proceeding with remount (2019-05-07 19:43:05 +0200)
-
-----------------------------------------------------------------
-On the filesystem side we have:
-
-- a fix to enforce quotas set above the mount point (Luis Henriques)
-
-- support for exporting snapshots through NFS (Zheng Yan)
-
-- proper statx implementation (Jeff Layton).  statx flags are mapped
-  to MDS caps, with AT_STATX_{DONT,FORCE}_SYNC taken into account.
-
-- some follow-up dentry name handling fixes, in particular elimination
-  of our hand-rolled helper and the switch to __getname() as suggested
-  by Al (Jeff Layton)
-
-- a set of MDS client cleanups in preparation for async MDS requests
-  in the future (Jeff Layton)
-
-- a fix to sync the filesystem before remounting (Jeff Layton)
-
-On the rbd side, work is on-going on object-map and fast-diff image
-features.
-
-----------------------------------------------------------------
-Arnd Bergmann (3):
-      rbd: avoid clang -Wuninitialized warning
-      rbd: convert all rbd_assert(0) to BUG()
-      libceph: fix clang warning for CEPH_DEFINE_OID_ONSTACK
-
-Ilya Dryomov (2):
-      rbd: client_mutex is never nested
-      rbd: don't assert on writes to snapshots
-
-Jeff Layton (20):
-      ceph: remove superfluous inode_lock in ceph_fsync
-      ceph: properly handle granular statx requests
-      ceph: fix NULL pointer deref when debugging is enabled
-      ceph: make iterate_session_caps a public symbol
-      ceph: dump granular cap info in "caps" debugfs file
-      ceph: fix potential use-after-free in ceph_mdsc_build_path
-      ceph: use ceph_mdsc_build_path instead of clone_dentry_name
-      ceph: use __getname/__putname in ceph_mdsc_build_path
-      ceph: use pathlen values returned by set_request_path_attr
-      ceph: after an MDS request, do callback and completions
-      ceph: have ceph_mdsc_do_request call ceph_mdsc_submit_request
-      ceph: move wait for mds request into helper function
-      ceph: fix comment over ceph_drop_caps_for_unlink
-      ceph: simplify arguments and return semantics of try_get_cap_refs
-      ceph: just call get_session in __ceph_lookup_mds_session
-      ceph: print inode number in __caps_issued_mask debugging messages
-      libceph: fix unaligned accesses in ceph_entity_addr handling
-      libceph: make ceph_pr_addr take an struct ceph_entity_addr pointer
-      ceph: fix unaligned access in ceph_send_cap_releases
-      ceph: flush dirty inodes before proceeding with remount
-
-Luis Henriques (2):
-      ceph: factor out ceph_lookup_inode()
-      ceph: quota: fix quota subdir mounts
-
-Yan, Zheng (1):
-      ceph: snapshot nfs re-export
-
-Zhi Zhang (1):
-      ceph: remove duplicated filelock ref increase
-
- drivers/block/rbd.c            |  24 +--
- fs/ceph/caps.c                 |  93 +++++------
- fs/ceph/debugfs.c              |  40 ++++-
- fs/ceph/export.c               | 356 ++++++++++++++++++++++++++++++++++++++---
- fs/ceph/file.c                 |   2 +-
- fs/ceph/inode.c                |  85 ++++++----
- fs/ceph/locks.c                |  13 --
- fs/ceph/mds_client.c           | 205 ++++++++++--------------
- fs/ceph/mds_client.h           |  33 +++-
- fs/ceph/mdsmap.c               |   2 +-
- fs/ceph/quota.c                | 177 ++++++++++++++++++--
- fs/ceph/super.c                |   7 +
- fs/ceph/super.h                |   2 +
- include/linux/ceph/ceph_fs.h   |   6 +
- include/linux/ceph/messenger.h |   3 +-
- include/linux/ceph/osdmap.h    |  13 +-
- net/ceph/cls_lock_client.c     |   2 +-
- net/ceph/debugfs.c             |   4 +-
- net/ceph/messenger.c           | 121 +++++++-------
- net/ceph/mon_client.c          |   6 +-
- net/ceph/osd_client.c          |   2 +-
- 21 files changed, 845 insertions(+), 351 deletions(-)
