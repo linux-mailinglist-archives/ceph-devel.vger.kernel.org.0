@@ -2,108 +2,94 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 683991FCA4
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 May 2019 00:48:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 575591FD2E
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 May 2019 03:48:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726221AbfEOWsC convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Wed, 15 May 2019 18:48:02 -0400
-Received: from mail-it1-f175.google.com ([209.85.166.175]:40565 "EHLO
-        mail-it1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfEOWsC (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 May 2019 18:48:02 -0400
-Received: by mail-it1-f175.google.com with SMTP id g71so2902809ita.5
-        for <ceph-devel@vger.kernel.org>; Wed, 15 May 2019 15:48:01 -0700 (PDT)
+        id S1726875AbfEPBqm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 15 May 2019 21:46:42 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:41332 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726188AbfEPBiH (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 May 2019 21:38:07 -0400
+Received: by mail-qt1-f196.google.com with SMTP id y22so2066165qtn.8
+        for <ceph-devel@vger.kernel.org>; Wed, 15 May 2019 18:38:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0dpdtm12MV8pnfanNa6S7/5Y2GXKSwkRJUuSxkgnoWM=;
+        b=MJuBushxwMraKarIkQ8vfQlTPT5KSJ8qaRS+/tJADztHkq6Y7xagvdR4mXsGq4Km8r
+         vMZW5d2KSjP4x4zDGv+zjAny0n9lmWg/2rdjqghEZqoHO3Q8Ef9XA+rGLp/MSyhygJQg
+         gWsjVHCcLceqEEbNlHGzVTN9tOVrW4P3tGsIZthVLCcbFaxoxnAkHEWGGCJEHuSyAcTI
+         SIoi7iV7xhXNbuNw8bU7LGusEq6Cuod9BGyCqB2kYpG9FnKw16yHZCj8jaBkoyT1tUW2
+         iM2KTtZJTTPqdRt1tPjIHYKjFku+lOEuiC4DVCFOPGq+di3GpKfmJkeg5lWc8XqE0hiL
+         ToBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=HBHT3WRiJ4iIZQVFg+pifSH40e7dddZdbrVh9dqRMkc=;
-        b=EK3pkLM5xLliJ6huAur6QLYZV0sTexsEucXq8HUspfNE2Y7tUDoDaxRV3UNMPkHbj/
-         grU3FfA0FuVBeL07HEhFSKGfDLynAHsMPkyIKjCbw4Hf34Mqdja9ytvQvFdf9G35kLHj
-         92NWMPVjvk+6xoGZ+/Act3e/ZV2xHt9CxpkFU26ZslE2OpcyT0lDoTvtJFLqXGz95fVe
-         CkQwBmvOUovSJPkmbmlYda9noOq3RI3BZOEV9G6HQRExkocxu1yV9cIwuQI1OEhu5ytB
-         I8vHCAsqnNgu1WFW3hiaMhBJ9YgdfoQcgAj40Oob+8lL/peVs23ogm4Yik63/N2KNU3p
-         b/tw==
-X-Gm-Message-State: APjAAAUYhzmNoXsnDqoIGpprAERJv0eRJY6M62E6WoO6LUi8MiZ3FCp+
-        1e/z2x76a0Plb0av1RAaIAXbmALnTgWbnD1+5PWX7jzF
-X-Google-Smtp-Source: APXvYqzKw0MspeAoJaMtEPj7GLpZzSG5JeP1akrn08zzKCx7mbMIu05AYbV7w2RSI+Di/Kptn+cvf4GU+A+kRYw2/zQ=
-X-Received: by 2002:a02:c54f:: with SMTP id g15mr8880139jaj.106.1557960481078;
- Wed, 15 May 2019 15:48:01 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=0dpdtm12MV8pnfanNa6S7/5Y2GXKSwkRJUuSxkgnoWM=;
+        b=EvzfVKAjm6qqZdqU5xdxDyUqTA1m4YWAHVqb7QgsRleyINrJ1crZWdwYzmCVII0nj6
+         qiJJXzq5nfCZ46vbjdUTwqPbb2zDicVoknNRtVt5wliGbCcwJz+yNur2CVHWJGxA4toj
+         yWK+dyHw0NYwh3ieJg/0c9eAzY8QSqp2LYLHgIvdpTIw3sOz6Mji49nVYMMQsMg102OM
+         qD6d+tQK8VG+Sjdu2BHtPaTfARlNtAmGSI2dVd4av9pyEd8YsdB802P23+AOFQxZDcJx
+         6jJ/sUnAwueN07onOrOpdhJ9B9TXxhKf0Qzjcomo4YFUoDnOVmlSCFk+uSRnzrBqcPs1
+         RH0Q==
+X-Gm-Message-State: APjAAAWg99uNNX4YUjj++wxb9PgHQzuanPqyeaoQ+E6j9u/6Njv4P23T
+        OQrhP/5Ll97C6Y0mVNAbfxSeJdSeTQIzNM0QTo7t6Xy8
+X-Google-Smtp-Source: APXvYqzDSz1PPtcVynDLpwLATlln9kjf1bxNnvWDvmVkwH/JeayhTgYMDgFeFnWTIq6rxqk3EIq5KMfETI8GmC04ZDw=
+X-Received: by 2002:ac8:913:: with SMTP id t19mr38097600qth.72.1557970686304;
+ Wed, 15 May 2019 18:38:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <1e522eba-fc1f-ccd3-97e6-106411b1ddeb@redhat.com>
-In-Reply-To: <1e522eba-fc1f-ccd3-97e6-106411b1ddeb@redhat.com>
-From:   Gregory Farnum <gfarnum@redhat.com>
-Date:   Wed, 15 May 2019 15:47:48 -0700
-Message-ID: <CAJ4mKGZ=EjC=_VQkCmRgjGj4AkFnXZbC5YFn1NnOYPQkb2D=zg@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_Proposal_=E2=80=93_DaemonWatchdog?=
-To:     Jos Collin <jcollin@redhat.com>
+References: <20190515145639.5206-1-ddiss@suse.de>
+In-Reply-To: <20190515145639.5206-1-ddiss@suse.de>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Thu, 16 May 2019 09:37:55 +0800
+Message-ID: <CAAM7YAnRUrYRsZPoq_2cj+bdoqs9gLa6nnFHuppiuH1kLAGjJA@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix "ceph.dir.rctime" vxattr value
+To:     David Disseldorp <ddiss@suse.de>
 Cc:     ceph-devel <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-I never really worked out why the FS tests were susceptible to these
-issues but the core RADOS thrashing tasks weren't. If you're planning
-to expand the DaemonWatchdog you probably want to work that out. Maybe
-just because the ceph_manager thrashing does a lot of restarting
-proactively? Or do the MDS thrash tasks just not pay attention to the
-daemon state until the end of the test and the rados thrashing watches
-more carefully in the normal course of doing business?
--Greg
+On Wed, May 15, 2019 at 10:56 PM David Disseldorp <ddiss@suse.de> wrote:
+>
+> The vxattr value incorrectly places a "09" prefix to the nanoseconds
+> field, instead of providing it as a zero-pad width specifier after '%'.
+>
+> Link: https://tracker.ceph.com/issues/39943
+> Fixes: 3489b42a72a4 ("ceph: fix three bugs, two in ceph_vxattrcb_file_layout()")
+> Signed-off-by: David Disseldorp <ddiss@suse.de>
+> ---
+>
+> @Yan, Zheng: given that the padding has been broken for so long, another
+>              option might be to drop the "09" completely and keep it
+>              variable width.
+>
+>  fs/ceph/xattr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 0cc42c8879e9..aeb8550fb863 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -224,7 +224,7 @@ static size_t ceph_vxattrcb_dir_rbytes(struct ceph_inode_info *ci, char *val,
+>  static size_t ceph_vxattrcb_dir_rctime(struct ceph_inode_info *ci, char *val,
+>                                        size_t size)
+>  {
+> -       return snprintf(val, size, "%lld.09%ld", ci->i_rctime.tv_sec,
+> +       return snprintf(val, size, "%lld.%09ld", ci->i_rctime.tv_sec,
+>                         ci->i_rctime.tv_nsec);
+>  }
+>
+> --
+> 2.16.4
+>
 
-On Tue, May 14, 2019 at 10:40 PM Jos Collin <jcollin@redhat.com> wrote:
->
-> Hi,
->
-> This is a proposal for DaemonWatchdog improvements based on the bug:
-> http://tracker.ceph.com/issues/11314. Sending it to ceph-devel for
-> getting suggestions.
->
-> Current Functionality
-> ---------------------
-> DaemonWatchdog watches the Ceph daemons for failures. If an extended
-> failure is detected (i.e. not intentional), then the watchdog unmount
-> file systems and send SIGTERM to all daemons. The duration of an
-> extended failure is configurable with  watchdog_daemon_timeout. The
-> watchdog_daemon_timeout (default value: 300) is the number of seconds a
-> daemon is allowed to be failed before the watchdog barks (unmounting the
-> mounts and killing all the daemons).
->
-> DaemonWatchdog was originally written for watching the mds (and mon)
-> daemons for failures. It unmounts the mounted filesystems and kill the
-> mds (and mon) daemons.
->
-> Proposed Improvement
-> --------------------
-> As per John's suggestion here:
-> http://tracker.ceph.com/issues/11314#note-1, it would be better if we
-> extend this functionality to watch the other daemons too like osd, mon,
-> rgw and mgr and do the necessary action or logging (bark) when those
-> daemons crashes. We need to make those improvements in watch() and
-> bark() functions, so that if the daemon crashes unexpectedly, we detect
-> it immediately rather than waiting a long time for a timeout of some
-> kind. The bark() function should have different cases to handle
-> different daemons crashing. The procedure to be executed for ‘mds’ case
-> is present in the bark() function now. But we need to decide the
-> procedures for ‘osd’, ‘mon’, ‘rgw’ and ‘mgr’ cases. I think killing the
-> daemons and throwing/logging errors or maybe just throwing an error
-> would be sufficient.
->
-> * At present the class DaemonWatchdog is written in mds_thrash.py, as it
-> is specific for watching mds daemons. It would be better if we move it
-> out of mds_thrash.py to be generic, to a new file
-> qa/tasks/daemonwatchdog.py.
->
-> * The current code tries to watch the 'client'?
-> (https://github.com/ceph/ceph/blob/master/qa/tasks/mds_thrash.py#L87). I
-> have dropped this statement, as it is difficult to watch what the client
-> is doing in general.
->
-> * There is a suggestion to add the DaemonWatchdog to ceph.py and have it
-> always run whenever Ceph is "started".
->
-> Thanks,
-> Jos Collin
+Both patches applied.
+
+Thanks
+Yan, Zheng
