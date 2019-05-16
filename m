@@ -2,94 +2,112 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 575591FD2E
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 May 2019 03:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23FF3206F4
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 May 2019 14:31:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfEPBqm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 15 May 2019 21:46:42 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:41332 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726188AbfEPBiH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 May 2019 21:38:07 -0400
-Received: by mail-qt1-f196.google.com with SMTP id y22so2066165qtn.8
-        for <ceph-devel@vger.kernel.org>; Wed, 15 May 2019 18:38:06 -0700 (PDT)
+        id S1727270AbfEPMbg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 16 May 2019 08:31:36 -0400
+Received: from mail-oi1-f174.google.com ([209.85.167.174]:36365 "EHLO
+        mail-oi1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbfEPMbg (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 May 2019 08:31:36 -0400
+Received: by mail-oi1-f174.google.com with SMTP id l203so2374218oia.3
+        for <ceph-devel@vger.kernel.org>; Thu, 16 May 2019 05:31:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0dpdtm12MV8pnfanNa6S7/5Y2GXKSwkRJUuSxkgnoWM=;
-        b=MJuBushxwMraKarIkQ8vfQlTPT5KSJ8qaRS+/tJADztHkq6Y7xagvdR4mXsGq4Km8r
-         vMZW5d2KSjP4x4zDGv+zjAny0n9lmWg/2rdjqghEZqoHO3Q8Ef9XA+rGLp/MSyhygJQg
-         gWsjVHCcLceqEEbNlHGzVTN9tOVrW4P3tGsIZthVLCcbFaxoxnAkHEWGGCJEHuSyAcTI
-         SIoi7iV7xhXNbuNw8bU7LGusEq6Cuod9BGyCqB2kYpG9FnKw16yHZCj8jaBkoyT1tUW2
-         iM2KTtZJTTPqdRt1tPjIHYKjFku+lOEuiC4DVCFOPGq+di3GpKfmJkeg5lWc8XqE0hiL
-         ToBg==
+        h=mime-version:from:date:message-id:subject:to;
+        bh=JniWx40P07TISNgfJY6pmMPuWwCB4Bf2tW3weRu3S6c=;
+        b=aD992qBD7CLl0G3FfhgwipgYLZL2s8yhRhjfGVSb8ucggYW1btg+VZuVF5gOKi/zK5
+         kNL2vliibEN1kEhpfdlWqAlwtGFoKvZDhueykVG6TLPzxGSyirp5stOGJgpethZznAXp
+         4EE7t1lWv2n/A69R90LYKbUAxmudVYg/QHwybDzF8VZoeZxi4TkpW4KbE/N8ueeBakRL
+         r6P69AX/SoTA3UNh6j7b0xPtcVRW71LdF5eSyl+p0jmSHJAn12Dg01OJF85UNQhCJ/gk
+         sn/4G7JjE0MCy9wmBipDDH6RLlj63afyX/1hbzzoulMaz089KMTZlfxU1hFc9IKyvE8s
+         z2LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0dpdtm12MV8pnfanNa6S7/5Y2GXKSwkRJUuSxkgnoWM=;
-        b=EvzfVKAjm6qqZdqU5xdxDyUqTA1m4YWAHVqb7QgsRleyINrJ1crZWdwYzmCVII0nj6
-         qiJJXzq5nfCZ46vbjdUTwqPbb2zDicVoknNRtVt5wliGbCcwJz+yNur2CVHWJGxA4toj
-         yWK+dyHw0NYwh3ieJg/0c9eAzY8QSqp2LYLHgIvdpTIw3sOz6Mji49nVYMMQsMg102OM
-         qD6d+tQK8VG+Sjdu2BHtPaTfARlNtAmGSI2dVd4av9pyEd8YsdB802P23+AOFQxZDcJx
-         6jJ/sUnAwueN07onOrOpdhJ9B9TXxhKf0Qzjcomo4YFUoDnOVmlSCFk+uSRnzrBqcPs1
-         RH0Q==
-X-Gm-Message-State: APjAAAWg99uNNX4YUjj++wxb9PgHQzuanPqyeaoQ+E6j9u/6Njv4P23T
-        OQrhP/5Ll97C6Y0mVNAbfxSeJdSeTQIzNM0QTo7t6Xy8
-X-Google-Smtp-Source: APXvYqzDSz1PPtcVynDLpwLATlln9kjf1bxNnvWDvmVkwH/JeayhTgYMDgFeFnWTIq6rxqk3EIq5KMfETI8GmC04ZDw=
-X-Received: by 2002:ac8:913:: with SMTP id t19mr38097600qth.72.1557970686304;
- Wed, 15 May 2019 18:38:06 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=JniWx40P07TISNgfJY6pmMPuWwCB4Bf2tW3weRu3S6c=;
+        b=pWrUnFLgpnKdHJmro6fDU4rNXzYOEymt0mHB4wyeRZbhFgtuK+87p4GW+p//8wQ2PE
+         oE1b5seNP6dkuSSx7EnDGxL21ugzgSc8V8i4ChL9Zecj7l+Jn4N7dR4UXy1mG/A1rSfa
+         wS4+HDh4i2D6MYM4adYWA2lkVpkkDEYU6xdU4wrSEVJvO4W/ejPQ8KdRi/jbLEdi/NOu
+         lmoJS8mjQ33KS+ZgN6hUkzVOXHBlvsnfiVsccld06Efelyps0evHL7KOGkfMFN1TVwXr
+         nvAkxaqYfOe3UZ+TkGc7Fv+J+7Bmn4MZej0WMowgQg0hBQxdP8WVLzLUMOtibTkzSeji
+         ehJQ==
+X-Gm-Message-State: APjAAAVByiFE8/vf8FygC4p5nveaHvZxJ4+wa6lKggTqLaqy53AUqBGF
+        BhMnDiJZSuZwGI6BjTs+DHqqcuFsk6dzpt49HHUynir8
+X-Google-Smtp-Source: APXvYqxtu2lQynxdDN+vrXqqZCDx//0ze8exyti4qbVREQqIOM+LioMw4mGqrpoEAVmTkzUMd7P88YhoEJpfd0x7UmI=
+X-Received: by 2002:aca:4883:: with SMTP id v125mr10125688oia.76.1558009895260;
+ Thu, 16 May 2019 05:31:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190515145639.5206-1-ddiss@suse.de>
-In-Reply-To: <20190515145639.5206-1-ddiss@suse.de>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Thu, 16 May 2019 09:37:55 +0800
-Message-ID: <CAAM7YAnRUrYRsZPoq_2cj+bdoqs9gLa6nnFHuppiuH1kLAGjJA@mail.gmail.com>
-Subject: Re: [PATCH] ceph: fix "ceph.dir.rctime" vxattr value
-To:     David Disseldorp <ddiss@suse.de>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>
+From:   Xinying Song <songxinying.ftd@gmail.com>
+Date:   Thu, 16 May 2019 20:31:24 +0800
+Message-ID: <CAMWWNq9gsx8NGap3zUn+Db-WDt1hCLU8SBHwxBBuUHcnjbjZqw@mail.gmail.com>
+Subject: CephFS: strange behavior for arm-gcc when runing under cephfs
+To:     ceph-devel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, May 15, 2019 at 10:56 PM David Disseldorp <ddiss@suse.de> wrote:
->
-> The vxattr value incorrectly places a "09" prefix to the nanoseconds
-> field, instead of providing it as a zero-pad width specifier after '%'.
->
-> Link: https://tracker.ceph.com/issues/39943
-> Fixes: 3489b42a72a4 ("ceph: fix three bugs, two in ceph_vxattrcb_file_layout()")
-> Signed-off-by: David Disseldorp <ddiss@suse.de>
-> ---
->
-> @Yan, Zheng: given that the padding has been broken for so long, another
->              option might be to drop the "09" completely and keep it
->              variable width.
->
->  fs/ceph/xattr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index 0cc42c8879e9..aeb8550fb863 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -224,7 +224,7 @@ static size_t ceph_vxattrcb_dir_rbytes(struct ceph_inode_info *ci, char *val,
->  static size_t ceph_vxattrcb_dir_rctime(struct ceph_inode_info *ci, char *val,
->                                        size_t size)
->  {
-> -       return snprintf(val, size, "%lld.09%ld", ci->i_rctime.tv_sec,
-> +       return snprintf(val, size, "%lld.%09ld", ci->i_rctime.tv_sec,
->                         ci->i_rctime.tv_nsec);
->  }
->
-> --
-> 2.16.4
->
+Hi, cephers:
+I'm using ceph Luminous. Recently, one of my colleagues put his
+gcc-tools , a whole binary folder with corresponding lib-files, into
+cephfs. However, when running arm-gcc command to compile files,
+arm-gcc always complains about "cc1plus" not found. If the whole
+binary folder is located under a local filesystem, everything is ok.
 
-Both patches applied.
+Here is some pieces of log with strace when run arm-gcc under cephfs:
 
-Thanks
-Yan, Zheng
+open("/tmp/ccIlAAE5.s", O_RDWR|O_CREAT|O_EXCL, 0600) = 3
+close(3)                                = 0
+stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/arm-linux-gnueabihf/4.9.2/cc1plus",
+{st_mode=S_IFREG|0755, st_size=16224744, ...}) = 0
+stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/arm-linux-gnueabihf/cc1plus",
+0xfffe9014) = -1 ENOENT (No such file or directory)
+stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/cc1plus",
+0xfffe9014) = -1 ENOENT (No such file or directory)
+stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../lib/gcc/arm-linux-gnueabihf/4.9.2/../../../../arm-linux-gnueabihf/bin/arm-linux-gnueabihf/4.9.2/cc1plus",
+0xfffe9014) = -1 ENOENT (No such file or directory)
+stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../lib/gcc/arm-linux-gnueabihf/4.9.2/../../../../arm-linux-gnueabihf/bin/arm-linux-gnueabihf/cc1plus",
+0xfffe9014) = -1 ENOENT (No such file or directory)
+stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../lib/gcc/arm-linux-gnueabihf/4.9.2/../../../../arm-linux-gnueabihf/bin/cc1plus",
+0xfffe9014) = -1 ENOENT (No such file or directory)
+vfork(arm-linux-gnueabihf-g++: error trying to exec 'cc1plus': execvp:
+No such file or directory
+)                                 = 8885
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=8885,
+si_status=255, si_utime=0, si_stime=0} ---
+waitpid(8885, [{WIFEXITED(s) && WEXITSTATUS(s) == 255}], 0) = 8885
+stat64("/tmp/ccIlAAE5.s", {st_mode=S_IFREG|0600, st_size=0, ...}) = 0
+unlink("/tmp/ccIlAAE5.s")               = 0
+exit_group(1)                           = ?
+
+It shows arm-gcc has indeed found cc1plus, but somehow it continues to
+search other directories.
+
+Below gives log for running arm-gcc under local filesystem:
+
+open("/tmp/ccU6Mkbg.s", O_RDWR|O_CREAT|O_EXCL, 0600) = 3
+close(3)                                = 0
+stat64("/mnt/local/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/arm-linux-gnueabihf/4.9.2/cc1plus",
+{st_mode=S_IFREG|0755, st_size=16224744, ...}) = 0
+access("/mnt/local/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/arm-linux-gnueabihf/4.9.2/cc1plus",
+X_OK) = 0
+vfork()                                 = 8866
+waitpid(8866, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0) = 8866
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=8866,
+si_status=0, si_utime=16, si_stime=5} ---
+
+The main difference is that when using a local filesystem, arm-gcc
+will not continue to look up in other directories after it has found
+cc1plus. I'm really confused by this behavior. MDS's log just showed
+it received some lookup requests and responded each request correctly.
+
+The /mnt/local/CentOS-6.6 is copied from /mnt/cephfs/CentOS-6.6 with
+`cp -rp` command, so symbol-link or file-mode should keep the same. I
+tried gcc in this gcc-tool directory, and it worked well under cephfs.
+Probably there is a bug in arm-gcc, but I can't imagine what code will
+lead to such strange behavior.
+
+Could anyone give some tips on this? Thanks!
