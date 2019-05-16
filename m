@@ -2,146 +2,159 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57948209F7
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 May 2019 16:42:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6F8A20B6E
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 May 2019 17:40:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfEPOmV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 16 May 2019 10:42:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46284 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726742AbfEPOmV (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 16 May 2019 10:42:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 593A7AC32;
-        Thu, 16 May 2019 14:42:19 +0000 (UTC)
-From:   Igor Fedotov <ifedotov@suse.de>
-To:     ceph-devel <ceph-devel@vger.kernel.org>,
-        Sage Weil <sweil@redhat.com>
-Subject: Bluestore onode improvements suggestion.
-Message-ID: <796fe4f9-ff11-647c-8da9-e85417052a53@suse.de>
-Date:   Thu, 16 May 2019 17:42:07 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727509AbfEPPkT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 16 May 2019 11:40:19 -0400
+Received: from mail-wr1-f41.google.com ([209.85.221.41]:36265 "EHLO
+        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726977AbfEPPkT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 May 2019 11:40:19 -0400
+Received: by mail-wr1-f41.google.com with SMTP id s17so3966269wru.3;
+        Thu, 16 May 2019 08:40:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5xSbdCo2088ZqCPrSF9g7xEVEzDABY2YcRLKAXfPGSI=;
+        b=d8eJIIagruGv9s64K44RXN03oOtaC1VRjIV+RWUlOr1Kx9ptga/FXxIkPCQJxqLsN1
+         vdX4qqXEz/dwFnmylryABoqw+opB/JhDZu+27N5F1dsg4WuE77dWtxSx3qJtKdkqYuFD
+         JH84BYrUIXCqxgrJsMxmeAzllEGsd8BlpS0FJLGmB4/BDJliSZ7xNBp+nXN2MkHR+UiL
+         6VNPSII+YeSt7H4AmHrKMD9bqCZSYMbURP05mFMLb4CsR7lRGcgVbyjwgMpXUfu7o5QE
+         0LNDsROWXWQjPE08iTUrlpeNEQLQZukIOt+XISWmqdsaPD9/3R1Nm34LSbw5pkdYTKKC
+         ZSgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5xSbdCo2088ZqCPrSF9g7xEVEzDABY2YcRLKAXfPGSI=;
+        b=fyo0OMvBqKavHAJsuzpAGWSvu0mLo96oAebmoiBjTip8cXNeJHCmYnUUm1wO63jvoL
+         38FvN1fC5F/ibYoh5867AX+O0HP9/m8YBy8S1u0ebuHrJAvOaBSQrmBBMQrPI3Abuz70
+         nUc/EAQw6PynqEc+iwTOCxYyM4b8D72aZfl1almWff2CoOU4/yeHsSXH60F9aya/w8GW
+         oiWieYISHt8iRnm1AHL9KqWr7Eer5kkUmSseJVm5eb74s4LvJ5axMWQs1fESi10dV2hO
+         xrS7KzUd5FHufcyU6uLvHXQikgT8GEZ8HS+BSW+4fbnNwCR+ZjCf85BQR4X+teD2v1Nw
+         ZEJA==
+X-Gm-Message-State: APjAAAUlYV+/+L0upHkHcPHWMW/ggUVaRoyFOPkAiHEhdepxvRRpgrmg
+        Fho6jUJkzj53suNONt+OP+QG0P5L
+X-Google-Smtp-Source: APXvYqzHj0gHAVGWXDe4xZb3o/fP+SYr4nrHJmnNwgjUnI1lnNWjTeWwxAL19PVV2SHDhogCuMRNLA==
+X-Received: by 2002:adf:b612:: with SMTP id f18mr30404470wre.236.1558021217141;
+        Thu, 16 May 2019 08:40:17 -0700 (PDT)
+Received: from kwango.redhat.com (ovpn-brq.redhat.com. [213.175.37.11])
+        by smtp.gmail.com with ESMTPSA id q24sm5887339wmc.18.2019.05.16.08.40.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 16 May 2019 08:40:16 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph updates for 5.2-rc1
+Date:   Thu, 16 May 2019 17:40:05 +0200
+Message-Id: <20190516154005.22583-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi cephers!
+Hi Linus,
 
-Let me share some ideas on Bluestore onode extent map format 
-refactoring. The primary drivers for this proposal are some design flaws 
-and complexities in extent map sharding, e.g. one causing 
-https://tracker.ceph.com/issues/38272
+The following changes since commit e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd:
 
-1) I think we can consider an introduction of logical extent size 
-granularity. Let's align it with device block size (usually equal to 4KB).
+  Linux 5.1 (2019-05-05 17:42:58 -0700)
 
-This change will bring some issues in handling small and/or unaligned 
-write and zero ops though:
+are available in the Git repository at:
 
-   - For such writes we'll need to read head and tail extents to build 
-the whole 4K block. Which we currently do for non-shared and 
-non-compressed extents anyway. As a benefit having merged extent 
-pointing to a single disk block might improve subsequent reads.
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.2-rc1
 
-- For small/unaligned zero op handling we'll need to perform actual 
-write rather than updating extent map only. And (without special care) a 
-sequence of such ops wouldn't actually release space allocated by zeroed 
-extents as it might do now.
+for you to fetch changes up to 00abf69dd24f4444d185982379c5cc3bb7b6d1fc:
 
-The major benefit is the significant reduction in amount of extents one 
-can expect within some logical span, see below for details.
+  ceph: flush dirty inodes before proceeding with remount (2019-05-07 19:43:05 +0200)
 
-2) We can prohibit extents/blobs protruding out of 
-bluestore_max_blob_size boundaries (64KB for ssd and 512 KB for HDD by 
-default). Spanning writes to be split if needed.
+----------------------------------------------------------------
+On the filesystem side we have:
 
-As disadvantages one can name potentially less benefit from compression 
-and higher amount of blob entries.
+- a fix to enforce quotas set above the mount point (Luis Henriques)
 
-But as a result we'll have permanently available sharding points - one 
-can always split extent map at known logical offsets and be sure that 
-there are no blobs spanning over several resulting shards.
+- support for exporting snapshots through NFS (Zheng Yan)
 
-The above constraints also reduces maximum amount of extent/shard 
-entries single onode might have. Which probably allows to encode them 
-more efficiently, e.g. using bitmaps.
+- proper statx implementation (Jeff Layton).  statx flags are mapped
+  to MDS caps, with AT_STATX_{DONT,FORCE}_SYNC taken into account.
 
-With byte granularity and 128MB maximum onode size one could have up to 
-128MB entries.
+- some follow-up dentry name handling fixes, in particular elimination
+  of our hand-rolled helper and the switch to __getname() as suggested
+  by Al (Jeff Layton)
 
-In the proposed model this reduces to 32K (=128MB /4KB) for extents and 
-2K (=128MB/64KB(=max_blob_size_ssd)) for shards.
+- a set of MDS client cleanups in preparation for async MDS requests
+  in the future (Jeff Layton)
 
-Maximum amount of extents/blobs per the smallest shard will be 128 (512K 
-/ 4K). This might still produce quite heavily encoded shard - the 
-suggestion is to perform a sort of garbage collection in this case (when 
-shard encoded size reaches some threshold) - collect all (for 
-max_blob_size span) the relevant data (including ones in compressed and 
-shared blobs) and overwrite it to a single resulting blob.
+- a fix to sync the filesystem before remounting (Jeff Layton)
 
-Generally the above changes are probably enough to fix spanning blob 
-issue and simplify sharding. But it might worth to consider the 
-following onode substructures' format changes.
+On the rbd side, work is on-going on object-map and fast-diff image
+features.
 
-3) Refactor shard_info encoding. Currently it takes around 6 bytes per 
-single entry (3-4 bytes for "offset" field and 1-2 bytes  for "bytes" 
-field).
+----------------------------------------------------------------
+Arnd Bergmann (3):
+      rbd: avoid clang -Wuninitialized warning
+      rbd: convert all rbd_assert(0) to BUG()
+      libceph: fix clang warning for CEPH_DEFINE_OID_ONSTACK
 
-3.1) Firstly we don't need "bytes" field any more as we don't need to 
-estimate average extent size to make decisions during resharding. 
-Without "bytes" field we'll need max 8 KB (=2K (max shards) * 4) to keep 
-all possible shard_info entries.
+Ilya Dryomov (2):
+      rbd: client_mutex is never nested
+      rbd: don't assert on writes to snapshots
 
-3.2) Additionally as we have "granular" shard boundaries (64K/512K 
-aligned) we can use bitmap to track them instead. Bit=1 - shard start, 
-bit=0 - shard continuation. For 2K shards one needs 256 bytes (=2048/8)  
-to keep the full map. I.e. this scheme becomes beneficial over current 
-one at 64+ shards. To keep low shard amounts more efficiently we can use 
-mixed scheme that utilizes offset enumeration for low density cases and 
-evolve to bitmap for higher ones.
+Jeff Layton (20):
+      ceph: remove superfluous inode_lock in ceph_fsync
+      ceph: properly handle granular statx requests
+      ceph: fix NULL pointer deref when debugging is enabled
+      ceph: make iterate_session_caps a public symbol
+      ceph: dump granular cap info in "caps" debugfs file
+      ceph: fix potential use-after-free in ceph_mdsc_build_path
+      ceph: use ceph_mdsc_build_path instead of clone_dentry_name
+      ceph: use __getname/__putname in ceph_mdsc_build_path
+      ceph: use pathlen values returned by set_request_path_attr
+      ceph: after an MDS request, do callback and completions
+      ceph: have ceph_mdsc_do_request call ceph_mdsc_submit_request
+      ceph: move wait for mds request into helper function
+      ceph: fix comment over ceph_drop_caps_for_unlink
+      ceph: simplify arguments and return semantics of try_get_cap_refs
+      ceph: just call get_session in __ceph_lookup_mds_session
+      ceph: print inode number in __caps_issued_mask debugging messages
+      libceph: fix unaligned accesses in ceph_entity_addr handling
+      libceph: make ceph_pr_addr take an struct ceph_entity_addr pointer
+      ceph: fix unaligned access in ceph_send_cap_releases
+      ceph: flush dirty inodes before proceeding with remount
 
-4) Replace existing logical extent + blob encoding scheme with a new one:
+Luis Henriques (2):
+      ceph: factor out ceph_lookup_inode()
+      ceph: quota: fix quota subdir mounts
 
-Current  encoding:
+Yan, Zheng (1):
+      ceph: snapshot nfs re-export
 
-(<extent info: offs, len, blob_offs> + (<blob_id> | <full blob>))*
+Zhi Zhang (1):
+      ceph: remove duplicated filelock ref increase
 
-can probably be replaced with:
-
-(<full blob> + <new_extent_info>)*
-
-where new_extent_info is either
-
-= bitmap (bit length = max extents per shard = 128) => 128 / 8 = max 16 
-bytes
-
-or
-
-= (<extent info: offs, len, blob_offs>)*, i.e. set of previous extent 
-infos relevant to this specific blob.
-
-The encoding format choice is made by comparison estimated sizes for 
-both methods. If estimate current average extent_info's size at 8 bytes 
-we can see that bitmap is beneficial for 3+ extents per blob.
-
-This way we cap full set of extents to 16 bytes per blob. Compare to 512 
-bytes (= 8 (avg. extent_info) * 64 (=128/2 max standalone extents per 
-blob) for the original approach. And we're still on par with the 
-original approach when 1-3 extents per blob are present.
-
-
-What do you think?
-
-
-Thanks,
-
-Igor
-
-
+ drivers/block/rbd.c            |  24 +--
+ fs/ceph/caps.c                 |  93 +++++------
+ fs/ceph/debugfs.c              |  40 ++++-
+ fs/ceph/export.c               | 356 ++++++++++++++++++++++++++++++++++++++---
+ fs/ceph/file.c                 |   2 +-
+ fs/ceph/inode.c                |  85 ++++++----
+ fs/ceph/locks.c                |  13 --
+ fs/ceph/mds_client.c           | 205 ++++++++++--------------
+ fs/ceph/mds_client.h           |  33 +++-
+ fs/ceph/mdsmap.c               |   2 +-
+ fs/ceph/quota.c                | 177 ++++++++++++++++++--
+ fs/ceph/super.c                |   7 +
+ fs/ceph/super.h                |   2 +
+ include/linux/ceph/ceph_fs.h   |   6 +
+ include/linux/ceph/messenger.h |   3 +-
+ include/linux/ceph/osdmap.h    |  13 +-
+ net/ceph/cls_lock_client.c     |   2 +-
+ net/ceph/debugfs.c             |   4 +-
+ net/ceph/messenger.c           | 121 +++++++-------
+ net/ceph/mon_client.c          |   6 +-
+ net/ceph/osd_client.c          |   2 +-
+ 21 files changed, 845 insertions(+), 351 deletions(-)
