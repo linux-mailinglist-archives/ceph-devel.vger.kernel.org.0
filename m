@@ -2,112 +2,146 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23FF3206F4
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 May 2019 14:31:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57948209F7
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 May 2019 16:42:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbfEPMbg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 16 May 2019 08:31:36 -0400
-Received: from mail-oi1-f174.google.com ([209.85.167.174]:36365 "EHLO
-        mail-oi1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbfEPMbg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 May 2019 08:31:36 -0400
-Received: by mail-oi1-f174.google.com with SMTP id l203so2374218oia.3
-        for <ceph-devel@vger.kernel.org>; Thu, 16 May 2019 05:31:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=JniWx40P07TISNgfJY6pmMPuWwCB4Bf2tW3weRu3S6c=;
-        b=aD992qBD7CLl0G3FfhgwipgYLZL2s8yhRhjfGVSb8ucggYW1btg+VZuVF5gOKi/zK5
-         kNL2vliibEN1kEhpfdlWqAlwtGFoKvZDhueykVG6TLPzxGSyirp5stOGJgpethZznAXp
-         4EE7t1lWv2n/A69R90LYKbUAxmudVYg/QHwybDzF8VZoeZxi4TkpW4KbE/N8ueeBakRL
-         r6P69AX/SoTA3UNh6j7b0xPtcVRW71LdF5eSyl+p0jmSHJAn12Dg01OJF85UNQhCJ/gk
-         sn/4G7JjE0MCy9wmBipDDH6RLlj63afyX/1hbzzoulMaz089KMTZlfxU1hFc9IKyvE8s
-         z2LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=JniWx40P07TISNgfJY6pmMPuWwCB4Bf2tW3weRu3S6c=;
-        b=pWrUnFLgpnKdHJmro6fDU4rNXzYOEymt0mHB4wyeRZbhFgtuK+87p4GW+p//8wQ2PE
-         oE1b5seNP6dkuSSx7EnDGxL21ugzgSc8V8i4ChL9Zecj7l+Jn4N7dR4UXy1mG/A1rSfa
-         wS4+HDh4i2D6MYM4adYWA2lkVpkkDEYU6xdU4wrSEVJvO4W/ejPQ8KdRi/jbLEdi/NOu
-         lmoJS8mjQ33KS+ZgN6hUkzVOXHBlvsnfiVsccld06Efelyps0evHL7KOGkfMFN1TVwXr
-         nvAkxaqYfOe3UZ+TkGc7Fv+J+7Bmn4MZej0WMowgQg0hBQxdP8WVLzLUMOtibTkzSeji
-         ehJQ==
-X-Gm-Message-State: APjAAAVByiFE8/vf8FygC4p5nveaHvZxJ4+wa6lKggTqLaqy53AUqBGF
-        BhMnDiJZSuZwGI6BjTs+DHqqcuFsk6dzpt49HHUynir8
-X-Google-Smtp-Source: APXvYqxtu2lQynxdDN+vrXqqZCDx//0ze8exyti4qbVREQqIOM+LioMw4mGqrpoEAVmTkzUMd7P88YhoEJpfd0x7UmI=
-X-Received: by 2002:aca:4883:: with SMTP id v125mr10125688oia.76.1558009895260;
- Thu, 16 May 2019 05:31:35 -0700 (PDT)
+        id S1727121AbfEPOmV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 16 May 2019 10:42:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46284 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726742AbfEPOmV (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 16 May 2019 10:42:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 593A7AC32;
+        Thu, 16 May 2019 14:42:19 +0000 (UTC)
+From:   Igor Fedotov <ifedotov@suse.de>
+To:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Sage Weil <sweil@redhat.com>
+Subject: Bluestore onode improvements suggestion.
+Message-ID: <796fe4f9-ff11-647c-8da9-e85417052a53@suse.de>
+Date:   Thu, 16 May 2019 17:42:07 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-From:   Xinying Song <songxinying.ftd@gmail.com>
-Date:   Thu, 16 May 2019 20:31:24 +0800
-Message-ID: <CAMWWNq9gsx8NGap3zUn+Db-WDt1hCLU8SBHwxBBuUHcnjbjZqw@mail.gmail.com>
-Subject: CephFS: strange behavior for arm-gcc when runing under cephfs
-To:     ceph-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi, cephers:
-I'm using ceph Luminous. Recently, one of my colleagues put his
-gcc-tools , a whole binary folder with corresponding lib-files, into
-cephfs. However, when running arm-gcc command to compile files,
-arm-gcc always complains about "cc1plus" not found. If the whole
-binary folder is located under a local filesystem, everything is ok.
+Hi cephers!
 
-Here is some pieces of log with strace when run arm-gcc under cephfs:
+Let me share some ideas on Bluestore onode extent map format 
+refactoring. The primary drivers for this proposal are some design flaws 
+and complexities in extent map sharding, e.g. one causing 
+https://tracker.ceph.com/issues/38272
 
-open("/tmp/ccIlAAE5.s", O_RDWR|O_CREAT|O_EXCL, 0600) = 3
-close(3)                                = 0
-stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/arm-linux-gnueabihf/4.9.2/cc1plus",
-{st_mode=S_IFREG|0755, st_size=16224744, ...}) = 0
-stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/arm-linux-gnueabihf/cc1plus",
-0xfffe9014) = -1 ENOENT (No such file or directory)
-stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/cc1plus",
-0xfffe9014) = -1 ENOENT (No such file or directory)
-stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../lib/gcc/arm-linux-gnueabihf/4.9.2/../../../../arm-linux-gnueabihf/bin/arm-linux-gnueabihf/4.9.2/cc1plus",
-0xfffe9014) = -1 ENOENT (No such file or directory)
-stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../lib/gcc/arm-linux-gnueabihf/4.9.2/../../../../arm-linux-gnueabihf/bin/arm-linux-gnueabihf/cc1plus",
-0xfffe9014) = -1 ENOENT (No such file or directory)
-stat64("/mnt/cephfs/CentOS-6.6/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../lib/gcc/arm-linux-gnueabihf/4.9.2/../../../../arm-linux-gnueabihf/bin/cc1plus",
-0xfffe9014) = -1 ENOENT (No such file or directory)
-vfork(arm-linux-gnueabihf-g++: error trying to exec 'cc1plus': execvp:
-No such file or directory
-)                                 = 8885
---- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=8885,
-si_status=255, si_utime=0, si_stime=0} ---
-waitpid(8885, [{WIFEXITED(s) && WEXITSTATUS(s) == 255}], 0) = 8885
-stat64("/tmp/ccIlAAE5.s", {st_mode=S_IFREG|0600, st_size=0, ...}) = 0
-unlink("/tmp/ccIlAAE5.s")               = 0
-exit_group(1)                           = ?
+1) I think we can consider an introduction of logical extent size 
+granularity. Let's align it with device block size (usually equal to 4KB).
 
-It shows arm-gcc has indeed found cc1plus, but somehow it continues to
-search other directories.
+This change will bring some issues in handling small and/or unaligned 
+write and zero ops though:
 
-Below gives log for running arm-gcc under local filesystem:
+   - For such writes we'll need to read head and tail extents to build 
+the whole 4K block. Which we currently do for non-shared and 
+non-compressed extents anyway. As a benefit having merged extent 
+pointing to a single disk block might improve subsequent reads.
 
-open("/tmp/ccU6Mkbg.s", O_RDWR|O_CREAT|O_EXCL, 0600) = 3
-close(3)                                = 0
-stat64("/mnt/local/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/arm-linux-gnueabihf/4.9.2/cc1plus",
-{st_mode=S_IFREG|0755, st_size=16224744, ...}) = 0
-access("/mnt/local/gcc-linaro-arm-linux-gnueabihf-4.9-2014.09_linux/bin/../libexec/gcc/arm-linux-gnueabihf/4.9.2/cc1plus",
-X_OK) = 0
-vfork()                                 = 8866
-waitpid(8866, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0) = 8866
---- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=8866,
-si_status=0, si_utime=16, si_stime=5} ---
+- For small/unaligned zero op handling we'll need to perform actual 
+write rather than updating extent map only. And (without special care) a 
+sequence of such ops wouldn't actually release space allocated by zeroed 
+extents as it might do now.
 
-The main difference is that when using a local filesystem, arm-gcc
-will not continue to look up in other directories after it has found
-cc1plus. I'm really confused by this behavior. MDS's log just showed
-it received some lookup requests and responded each request correctly.
+The major benefit is the significant reduction in amount of extents one 
+can expect within some logical span, see below for details.
 
-The /mnt/local/CentOS-6.6 is copied from /mnt/cephfs/CentOS-6.6 with
-`cp -rp` command, so symbol-link or file-mode should keep the same. I
-tried gcc in this gcc-tool directory, and it worked well under cephfs.
-Probably there is a bug in arm-gcc, but I can't imagine what code will
-lead to such strange behavior.
+2) We can prohibit extents/blobs protruding out of 
+bluestore_max_blob_size boundaries (64KB for ssd and 512 KB for HDD by 
+default). Spanning writes to be split if needed.
 
-Could anyone give some tips on this? Thanks!
+As disadvantages one can name potentially less benefit from compression 
+and higher amount of blob entries.
+
+But as a result we'll have permanently available sharding points - one 
+can always split extent map at known logical offsets and be sure that 
+there are no blobs spanning over several resulting shards.
+
+The above constraints also reduces maximum amount of extent/shard 
+entries single onode might have. Which probably allows to encode them 
+more efficiently, e.g. using bitmaps.
+
+With byte granularity and 128MB maximum onode size one could have up to 
+128MB entries.
+
+In the proposed model this reduces to 32K (=128MB /4KB) for extents and 
+2K (=128MB/64KB(=max_blob_size_ssd)) for shards.
+
+Maximum amount of extents/blobs per the smallest shard will be 128 (512K 
+/ 4K). This might still produce quite heavily encoded shard - the 
+suggestion is to perform a sort of garbage collection in this case (when 
+shard encoded size reaches some threshold) - collect all (for 
+max_blob_size span) the relevant data (including ones in compressed and 
+shared blobs) and overwrite it to a single resulting blob.
+
+Generally the above changes are probably enough to fix spanning blob 
+issue and simplify sharding. But it might worth to consider the 
+following onode substructures' format changes.
+
+3) Refactor shard_info encoding. Currently it takes around 6 bytes per 
+single entry (3-4 bytes for "offset" field and 1-2 bytes  for "bytes" 
+field).
+
+3.1) Firstly we don't need "bytes" field any more as we don't need to 
+estimate average extent size to make decisions during resharding. 
+Without "bytes" field we'll need max 8 KB (=2K (max shards) * 4) to keep 
+all possible shard_info entries.
+
+3.2) Additionally as we have "granular" shard boundaries (64K/512K 
+aligned) we can use bitmap to track them instead. Bit=1 - shard start, 
+bit=0 - shard continuation. For 2K shards one needs 256 bytes (=2048/8)  
+to keep the full map. I.e. this scheme becomes beneficial over current 
+one at 64+ shards. To keep low shard amounts more efficiently we can use 
+mixed scheme that utilizes offset enumeration for low density cases and 
+evolve to bitmap for higher ones.
+
+4) Replace existing logical extent + blob encoding scheme with a new one:
+
+Current  encoding:
+
+(<extent info: offs, len, blob_offs> + (<blob_id> | <full blob>))*
+
+can probably be replaced with:
+
+(<full blob> + <new_extent_info>)*
+
+where new_extent_info is either
+
+= bitmap (bit length = max extents per shard = 128) => 128 / 8 = max 16 
+bytes
+
+or
+
+= (<extent info: offs, len, blob_offs>)*, i.e. set of previous extent 
+infos relevant to this specific blob.
+
+The encoding format choice is made by comparison estimated sizes for 
+both methods. If estimate current average extent_info's size at 8 bytes 
+we can see that bitmap is beneficial for 3+ extents per blob.
+
+This way we cap full set of extents to 16 bytes per blob. Compare to 512 
+bytes (= 8 (avg. extent_info) * 64 (=128/2 max standalone extents per 
+blob) for the original approach. And we're still on par with the 
+original approach when 1-3 extents per blob are present.
+
+
+What do you think?
+
+
+Thanks,
+
+Igor
+
+
