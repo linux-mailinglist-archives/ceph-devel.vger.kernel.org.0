@@ -2,268 +2,188 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD943247A5
-	for <lists+ceph-devel@lfdr.de>; Tue, 21 May 2019 07:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60C2E24C00
+	for <lists+ceph-devel@lfdr.de>; Tue, 21 May 2019 11:51:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbfEUFxF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 21 May 2019 01:53:05 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:37340 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbfEUFxE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 21 May 2019 01:53:04 -0400
-Received: by mail-yw1-f67.google.com with SMTP id 186so6852429ywo.4;
-        Mon, 20 May 2019 22:53:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uK0emkVrsqGKeKCiH2odgGuk2wkMBSrXqKthY8RV7To=;
-        b=iZ1mSfiSQWFrm2ofUptWw5Ut1AEwOK0wT9dJ+SY1icUbRs1Kw/a2fVQd5m1diS/z3J
-         obXO4vmQrmm4ziVe8AjJYb8VEKlH8RV4aq4TtUKp29Xlvq1cPfgBly+1dBUl2hBe8iQg
-         LPkweMDY3cU7wRyjjmuolWFuf46pH3Vugbv9RUHklIotqaAkYN8dtjj2IM5hMEbJE+b4
-         1fIVnegYI1wksFEmkU0Y85tr1+6JVs6cbiW+80GgYbNuZPBKpJSLlC4jDbeWLm3auiam
-         l+MQOPZU+20sudmcvBoCZUiASSNSxzFAvvFnvSnNUgBoD4I3C5cgxk889NbkuMNEjtIG
-         TV5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uK0emkVrsqGKeKCiH2odgGuk2wkMBSrXqKthY8RV7To=;
-        b=AYfZ3YuPJaGPVXscqntdltJj4ABPLILfJUBk+YFQSdn/xe7tV68tD/JZ0thYzy/jGF
-         R0dAU9TNZlDhnE6XjJ1tpgg0h8+D4hv+crAsdTxfgpFVN3YZE4NvbD/BPZesqMRMRwTP
-         r7EUWcWNg0aZhWOeuQm4/JO0L4nHCVc+cmmeIgJjZqVTnA6Z8OIU6I+lnTLa9re1c6bJ
-         e/d6OCSbjUs+JeZll/IXflIXp/u/uvgXNljte9z5LJRFA17t6lQWL26HL95lQalgFvbk
-         QcvN2yl7F2Vh/tpCXAb5J6V2x31ftI031b0ZdFlCuc6TOFjzdXx62QKqnhNjCvxw1pDB
-         qsRA==
-X-Gm-Message-State: APjAAAXGpEwceRP43Pw8enwDxAe2W0zAu/JKmPy9et1iqaNHm+6TW/AZ
-        Ff7qlIAgAs5W/kW9ETyJW2TTZl2KgU3ZwLb+eoA=
-X-Google-Smtp-Source: APXvYqxBP8n4T+H5UZSoNTkjwpChzWPd5ZPM8sapnzQurKHQZ8lxQHkTjj4jNN/P7vZwXPfz4s4jHh64BZqSFh+XvEw=
-X-Received: by 2002:a81:3344:: with SMTP id z65mr5808059ywz.294.1558417983731;
- Mon, 20 May 2019 22:53:03 -0700 (PDT)
+        id S1726391AbfEUJvm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 21 May 2019 05:51:42 -0400
+Received: from mga03.intel.com ([134.134.136.65]:54379 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726006AbfEUJvm (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 21 May 2019 05:51:42 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 May 2019 02:51:41 -0700
+X-ExtLoop1: 1
+Received: from jerryopenix.sh.intel.com (HELO jerryopenix) ([10.239.158.64])
+  by fmsmga004.fm.intel.com with ESMTP; 21 May 2019 02:51:40 -0700
+Date:   Tue, 21 May 2019 17:50:41 +0800
+From:   "Liu, Changcheng" <changcheng.liu@intel.com>
+To:     ceph-devel@vger.kernel.org
+Subject: msg/async/rdma: out of buffer/memory
+Message-ID: <20190521095041.GA17062@jerryopenix>
 MIME-Version: 1.0
-References: <20181203083416.28978-1-david@fromorbit.com> <20181203083952.GC6311@dastard>
-In-Reply-To: <20181203083952.GC6311@dastard>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 21 May 2019 08:52:52 +0300
-Message-ID: <CAOQ4uxgeMJWBQn-WRUuqb=Dok4tZ8VBCKusGNLU-MYWGedm89A@mail.gmail.com>
-Subject: Re: [PATCH 12/11] man-pages: copy_file_range updates
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        ceph-devel@vger.kernel.org, CIFS <linux-cifs@vger.kernel.org>,
-        linux-api@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 10:40 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> From: Dave Chinner <dchinner@redhat.com>
->
-> Update with all the missing errors the syscall can return, the
-> behaviour the syscall should have w.r.t. to copies within single
-> files, etc.
+Hi all,
+    I'm using msg/async/rdma/iWARP on ceph master branch under vstart.sh environment.
 
-Below are the changes I have made to V2 of this man-page update in accordance to
-agreed change of behavior (i.e. short copy up to EOF).
+    It hit "out of buffer/memory" frequently and hit segmental fault sometimes.
+    Does anyone know are there some configuration need to be tuned to make it work?
 
-This is a heads up before posting to verify my interpretation is correct.
-I still have more testing to do before posting.
+	1. Log:
+         -49> 2019-05-21 17:37:50.729 7f843334a700 -1 Infiniband post_chunks_to_rq WARNING: out of memory. Requested 1 rx buffers. Got 0
+         -48> 2019-05-21 17:37:50.729 7f843334a700 -1 Infiniband can_alloc WARNING: OUT OF RX BUFFERS: allocated: 32768 requested: 4 limit: 32768
+         -47> 2019-05-21 17:37:50.729 7f843334a700 -1 Infiniband post_chunks_to_rq WARNING: out of memory. Requested 1 rx buffers. Got 0
+         -46> 2019-05-21 17:37:50.729 7f84381e5700 -1 Infiniband can_alloc WARNING: OUT OF RX BUFFERS: allocated: 32768 requested: 4 limit: 32768
+         -45> 2019-05-21 17:37:50.729 7f84381e5700 -1 Infiniband post_chunks_to_rq WARNING: out of memory. Requested 3 rx buffers. Got 1
+         -1> 2019-05-21 17:37:53.269 7f84381e5700 -1 /home/nstcc1/ssg_otc/ceph_debian/ceph/src/msg/async/rdma/Infiniband.cc:
+              In function 'int Infiniband::post_chunks_to_rq(int, ibv_qp*)' thread 7f84381e5700 time 2019-05-21 17:37:53.241614
+              /home/nstcc1/ssg_otc/ceph_debian/ceph/src/msg/async/rdma/Infiniband.cc: 1056: FAILED ceph_assert(ret == 0)
+         ceph version v15.0.0-1316-gde22905799 (de2290579985e48fb61f6ab2f4f2245e1a699bf4) octopus (dev)
+         1: (ceph::__ceph_assert_fail(char const*, char const*, int, char const*)+0x1aa) [0x7f843f8dbd2a]
+         2: (()+0x13a1fac) [0x7f843f8dbfac]
+         3: (Infiniband::post_chunks_to_rq(int, ibv_qp*)+0x4b4) [0x7f843fc623e4]
+         4: (RDMADispatcher::post_chunks_to_rq(int, ibv_qp*)+0x62) [0x7f843fc76e6a]
+         5: (RDMAConnectedSocketImpl::update_post_backlog()+0x57) [0x7f843fc6c395]
+         6: (RDMAConnectedSocketImpl::read(char*, unsigned long)+0xc42) [0x7f843fc69564]
+         7: (ConnectedSocket::read(char*, unsigned long)+0x37) [0x7f843fbc1549]
 
-The main thing is adding:
- .BR copy_file_range ()
- will return the number of bytes copied between files.
- This could be less than the length originally requested.
-+If the file offset of
-+.I fd_in
-+is at or past the end of file, no bytes are copied, and
-+.BR copy_file_range ()
-+returns zero.
+    2. ceph config:
+        diff --git a/src/vstart.sh b/src/vstart.sh
+        index eb17208b82..b70c78abfd 100755
+        --- a/src/vstart.sh
+        +++ b/src/vstart.sh
+        @@ -547,6 +547,14 @@ ms bind msgr1 = true
+                osd_crush_chooseleaf_type = 0
+                debug asok assert abort = true
+         $msgr_conf
+        +
+        +;set type & device & protocal iwarp(iWARP/RoCEv2) based on rdma_cm instead of using GID
+        +    ms_type = async+rdma
+        +    ms_async_rdma_device_name = itest0
+        +    ms_async_rdma_type = iwarp
+        +    ms_async_rdma_support_srq = false
+        +    ms_async_rdma_cm = true
+        +
+         $extra_conf
+         EOF
+                if [ "$lockdep" -eq 1 ] ; then
 
-But see also other changes below...
+     3. vstart.sh command:
+       OSD=3 MON=1 MDS=0 RGW=0 MGR=1 ../src/vstart.sh --msgr1 --nodaemon -i 192.0.2.97 -n -X -d 2>&1 | tee check_log
+       #192.0.2.97 is itest0's NIC ip address
+        
+     4. Part of default configuration
+        bin/ceph-conf -D | grep ms_async
+          ms_async_max_op_threads = 5
+          ms_async_op_threads = 3
+          ms_async_rdma_buffer_size = 131072
+          ms_async_rdma_cm = true
+          ms_async_rdma_device_name = itest0
+          ms_async_rdma_dscp = 96
+          ms_async_rdma_enable_hugepage = false
+          ms_async_rdma_local_gid = 
+          ms_async_rdma_polling_us = 1000
+          ms_async_rdma_port_num = 1
+          ms_async_rdma_receive_buffers = 32768
+          ms_async_rdma_receive_queue_len = 4096
+          ms_async_rdma_roce_ver = 1
+          ms_async_rdma_send_buffers = 1024
+          ms_async_rdma_sl = 3
+          ms_async_rdma_support_srq = false
+          ms_async_rdma_type = iwarp
 
->
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> ---
->  man2/copy_file_range.2 | 94 +++++++++++++++++++++++++++++++++++++++++---------
->  1 file changed, 77 insertions(+), 17 deletions(-)
->
-> diff --git a/man2/copy_file_range.2 b/man2/copy_file_range.2
-> index 20374abb21f0..23b00c2f3fea 100644
-> --- a/man2/copy_file_range.2
-> +++ b/man2/copy_file_range.2
-> @@ -42,9 +42,9 @@ without the additional cost of transferring data from the kernel to user space
->  and then back into the kernel.
->  It copies up to
->  .I len
-> -bytes of data from file descriptor
-> +bytes of data from the source file descriptor
->  .I fd_in
-> -to file descriptor
-> +to target file descriptor
->  .IR fd_out ,
->  overwriting any data that exists within the requested range of the target file.
->  .PP
-> @@ -74,6 +74,11 @@ is not changed, but
->  .I off_in
->  is adjusted appropriately.
->  .PP
-> +.I fd_in
-> +and
-> +.I fd_out
-> +can refer to the same file. If they refer to the same file, then the source and
-> +target ranges are not allowed to overlap.
->  .PP
->  The
->  .I flags
-> @@ -93,34 +98,73 @@ is set to indicate the error.
->  .SH ERRORS
->  .TP
->  .B EBADF
-> -One or more file descriptors are not valid; or
-> +One or more file descriptors are not valid.
-> +.TP
-> +.B EBADF
->  .I fd_in
->  is not open for reading; or
->  .I fd_out
-> -is not open for writing; or
-> -the
-> +is not open for writing.
-> +.TP
-> +.B EBADF
-> +The
->  .B O_APPEND
->  flag is set for the open file description referred to by
->  .IR fd_out .
->  .TP
->  .B EFBIG
-> -An attempt was made to write a file that exceeds the implementation-defined
-> -maximum file size or the process's file size limit,
-> -or to write at a position past the maximum allowed offset.
-> +An attempt was made to write at a position past the maximum file offset the
-> +kernel supports.
+     5. itest0 device's attr
+         hca_id: itest0
+             transport:          iWARP (1)
+             fw_ver:             29.0  
+             node_guid:          6805:ca9d:3898:0000
+             sys_image_guid:         6805:ca9d:3898:0000
+             hw_ver:             0x0   
+             board_id:           ITEST Board ID
+             phys_port_cnt:          1     
+             max_mr_size:            0x7fffffff
+             page_size_cap:          0x0   
+             max_qp:             16384 
+             max_qp_wr:          4095  
+             device_cap_flags:       0x00228000
+                             MEM_WINDOW
+                             MEM_MGT_EXTENSIONS
+                             Unknown flags: 0x8000
+             max_sge:            13    
+             max_sge_rd:         13    
+             max_cq:             32768 
+             max_cqe:            1048575
+             max_mr:             4194303
+             max_pd:             262144
+             max_qp_rd_atom:         127   
+             max_ee_rd_atom:         0     
+             max_res_rd_atom:        0     
+             max_qp_init_rd_atom:        127   
+             max_ee_init_rd_atom:        0     
+             atomic_cap:         ATOMIC_NONE (0)
+             max_ee:             0
+             max_rdd:            0
+             max_mw:             4194303
+             max_raw_ipv6_qp:        0
+             max_raw_ethy_qp:        0
+             max_mcast_grp:          16384
+             max_mcast_qp_attach:        8
+             max_total_mcast_qp_attach:  131072
+             max_ah:             65536
+             max_fmr:            0
+             max_srq:            0
+             max_pkeys:          0
+             local_ca_ack_delay:     0
+             general_odp_caps:
+             rc_odp_caps:
+                             NO SUPPORT
+             uc_odp_caps:
+                             NO SUPPORT
+             ud_odp_caps:
+                             NO SUPPORT
+             completion_timestamp_mask not supported
+             core clock not supported
+             device_cap_flags_ex:        0x0
+             tso_caps:
+             max_tso:            0
+             rss_caps:
+                 max_rwq_indirection_tables:         0
+                 max_rwq_indirection_table_size:     0
+                 rx_hash_function:                   0x0
+                 rx_hash_fields_mask:                0x0
+             max_wq_type_rq:         0
+             packet_pacing_caps:
+                 qp_rate_limit_min:  0kbps
+                 qp_rate_limit_max:  0kbps
+             tag matching not supported
+                 port:   1
+                     state:          PORT_ACTIVE (4)
+                     max_mtu:        4096 (5)
+                     active_mtu:     1024 (3)
+                     sm_lid:         0
+                     port_lid:       1
+                     port_lmc:       0x00
+                     link_layer:     Ethernet
+                     max_msg_sz:     0x7fffffff
+                     port_cap_flags:     0x00050000
+                     port_cap_flags2:    0x0000
+                     max_vl_num:     invalid value (0)
+                     bad_pkey_cntr:      0x0
+                     qkey_viol_cntr:     0x0
+                     sm_sl:          0
+                     pkey_tbl_len:       1
+                     gid_tbl_len:        1
+                     subnet_timeout:     0
+                     init_type_reply:    0
 
-Updated to "...attempt made to read or write..."
-
-> +.TP
-> +.B EFBIG
-> +An attempt was made to write a range that exceeds the allowed maximum file size.
-> +The maximum file size differs between filesystem implemenations and can be
-> +different to the maximum allowed file offset.
-> +.TP
-> +.B EFBIG
-> +An attempt was made to write beyond the process's file size resource
-> +limit. This may also result in the process receiving a
-> +.I SIGXFSZ
-> +signal.
->  .TP
->  .B EINVAL
-> -Requested range extends beyond the end of the source file; or the
-
-Removed this.
-
-> -.I flags
-> -argument is not 0.
-> +.I (off_in + len)
-> +spans the end of the source file.
->  .TP
-> -.B EIO
-> -A low-level I/O error occurred while copying.
-> +.B EINVAL
-> +.I fd_in
-> +and
-> +.I fd_out
-> +refer to the same file and the source and target ranges overlap.
-> +.TP
-> +.B EINVAL
-> +.I fd_in
-> +or
-> +.I fd_out
-> +is not a regular file.
->  .TP
->  .B EISDIR
->  .I fd_in
->  or
->  .I fd_out
->  refers to a directory.
-> +.B EINVAL
-> +The
-> +.I flags
-> +argument is not 0.
-> +.TP
-> +.B EINVAL
-> +.I off_in
-> +or
-> +.I (off_in + len)
-> +is beyond the maximum valid file offset.
-
-Removed this. Updated entry for EFBIG with in offset.
-
-> +.TP
-> +.B EOVERFLOW
-> +The requested source or destination range is too large to represent in the
-> +specified data types.
-> +.TP
-> +.B EIO
-> +A low-level I/O error occurred while copying.
->  .TP
->  .B ENOMEM
->  Out of memory.
-> @@ -128,16 +172,32 @@ Out of memory.
->  .B ENOSPC
->  There is not enough space on the target filesystem to complete the copy.
->  .TP
-> -.B EXDEV
-> -The files referred to by
-> -.IR file_in " and " file_out
-
-Kept this one with added "(pre Linux 5.3)"
-
-> -are not on the same mounted filesystem.
-> +.B TXTBSY
-> +.I fd_in
-> +or
-> +.I fd_out
-> +refers to an active swap file.
-> +.TP
-> +.B EPERM
-> +.I fd_out
-> +refers to an immutable file.
-> +.TP
-> +.B EACCES
-> +The user does not have write permissions for the destination file.
->  .SH VERSIONS
->  The
->  .BR copy_file_range ()
->  system call first appeared in Linux 4.5, but glibc 2.27 provides a user-space
->  emulation when it is not available.
->  .\" https://sourceware.org/git/?p=glibc.git;a=commit;f=posix/unistd.h;h=bad7a0c81f501fbbcc79af9eaa4b8254441c4a1f
-> +.PP
-> +A major rework of the kernel implementation occurred in 4.21. Areas of the API
-> +that weren't clearly defined were clarified and the API bounds are much more
-> +strictly checked than on earlier kernels. Applications should target the
-> +behaviour and requirements of 4.21 kernels.
-> +.PP
-> +First support for cross-filesystem copies was introduced in Linux 4.21. Older
-> +kernels will return -EXDEV when cross-filesystem copies are attempted.
->  .SH CONFORMING TO
->  The
->  .BR copy_file_range ()
-
-Updates example loop termination condition to:
-         len \-= ret;
--    } while (len > 0);
-+    } while (len > 0 && ret > 0);
-
-
-WIP is available here:
-https://github.com/amir73il/man-pages/commits/copy_file_range
-
-Thanks,
-Amir.
+B.R.
+Changcheng
