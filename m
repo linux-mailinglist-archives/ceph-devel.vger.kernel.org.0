@@ -2,287 +2,230 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6110A260C3
-	for <lists+ceph-devel@lfdr.de>; Wed, 22 May 2019 11:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 924BA26153
+	for <lists+ceph-devel@lfdr.de>; Wed, 22 May 2019 12:04:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728791AbfEVJx3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 22 May 2019 05:53:29 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:38108 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728424AbfEVJx3 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 22 May 2019 05:53:29 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4M9jjSJ191960;
-        Wed, 22 May 2019 09:53:17 GMT
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2smsk52ks6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 May 2019 09:53:17 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4M9phKV166948;
-        Wed, 22 May 2019 09:53:17 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2smsgurmj8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 May 2019 09:53:16 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4M9rFxi022333;
-        Wed, 22 May 2019 09:53:16 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 22 May 2019 09:53:14 +0000
-Date:   Wed, 22 May 2019 12:53:08 +0300
-From:   kbuild test robot <lkp@intel.com>
-To:     kbuild@01.org, "Yan, Zheng" <zyan@redhat.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>, kbuild-all@01.org,
-        ceph-devel@vger.kernel.org
-Subject: [ceph-client:testing 8/10] fs/ceph/inode.c:1750
- ceph_queue_writeback() warn: test_bit() takes a bit number
-Message-ID: <20190522095308.GL19380@kadam>
+        id S1729127AbfEVKEd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 22 May 2019 06:04:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56866 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728424AbfEVKEc (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 22 May 2019 06:04:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AD690AC43;
+        Wed, 22 May 2019 10:04:29 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9264 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905220071
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9264 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905220071
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 22 May 2019 12:04:29 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     "Liu, Changcheng" <changcheng.liu@intel.com>
+Cc:     ceph-devel@vger.kernel.org, ceph-devel-owner@vger.kernel.org
+Subject: Re: msg/async/rdma: out of buffer/memory
+In-Reply-To: <20190521095041.GA17062@jerryopenix>
+References: <20190521095041.GA17062@jerryopenix>
+Message-ID: <244898c96f522d99a180a7477b75a5bc@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-tree:   https://github.com/ceph/ceph-client.git testing
-head:   a5db6917595a6315a57f7d1aa20973f9ddc2b14f
-commit: 33c573a5cd46325e562e4195d1ff390e4c76cb8b [8/10] ceph: single workqueue for inode related works
+On 2019-05-21 11:50, Liu, Changcheng wrote:
+> Hi all,
+>     I'm using msg/async/rdma/iWARP on ceph master branch under
+> vstart.sh environment.
+> 
+>     It hit "out of buffer/memory" frequently and hit segmental fault 
+> sometimes.
+>     Does anyone know are there some configuration need to be tuned to
+> make it work?
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+I suppose 'ms_async_rdma_receive_buffers = 32768'.
 
-New smatch warnings:
-fs/ceph/inode.c:1750 ceph_queue_writeback() warn: test_bit() takes a bit number
-fs/ceph/inode.c:1769 ceph_queue_invalidate() warn: test_bit() takes a bit number
-fs/ceph/inode.c:1789 ceph_queue_vmtruncate() warn: test_bit() takes a bit number
-fs/ceph/inode.c:1925 ceph_inode_work() warn: test_bit() takes a bit number
+Looks like rx buffers leak, i.e. when read request is completed
+chunk should be posted back to the pool, but seems that does not
+happen.  If you hit that often - can you debug and simply printf()
+the memory manager counter of current allocated chunks from pool?
+I suppose you should see counter growing.
 
-Old smatch warnings:
-fs/ceph/inode.c:1929 ceph_inode_work() warn: test_bit() takes a bit number
-fs/ceph/inode.c:1932 ceph_inode_work() warn: test_bit() takes a bit number
+--
+Roman
 
-# https://github.com/ceph/ceph-client/commit/33c573a5cd46325e562e4195d1ff390e4c76cb8b
-git remote add ceph-client https://github.com/ceph/ceph-client.git
-git remote update ceph-client
-git checkout 33c573a5cd46325e562e4195d1ff390e4c76cb8b
-vim +1750 fs/ceph/inode.c
+> 
+> 	1. Log:
+>          -49> 2019-05-21 17:37:50.729 7f843334a700 -1 Infiniband
+> post_chunks_to_rq WARNING: out of memory. Requested 1 rx buffers. Got
+> 0
+>          -48> 2019-05-21 17:37:50.729 7f843334a700 -1 Infiniband
+> can_alloc WARNING: OUT OF RX BUFFERS: allocated: 32768 requested: 4
+> limit: 32768
+>          -47> 2019-05-21 17:37:50.729 7f843334a700 -1 Infiniband
+> post_chunks_to_rq WARNING: out of memory. Requested 1 rx buffers. Got
+> 0
+>          -46> 2019-05-21 17:37:50.729 7f84381e5700 -1 Infiniband
+> can_alloc WARNING: OUT OF RX BUFFERS: allocated: 32768 requested: 4
+> limit: 32768
+>          -45> 2019-05-21 17:37:50.729 7f84381e5700 -1 Infiniband
+> post_chunks_to_rq WARNING: out of memory. Requested 3 rx buffers. Got
+> 1
+>          -1> 2019-05-21 17:37:53.269 7f84381e5700 -1
+> /home/nstcc1/ssg_otc/ceph_debian/ceph/src/msg/async/rdma/Infiniband.cc:
+>               In function 'int Infiniband::post_chunks_to_rq(int,
+> ibv_qp*)' thread 7f84381e5700 time 2019-05-21 17:37:53.241614
+> 
+> /home/nstcc1/ssg_otc/ceph_debian/ceph/src/msg/async/rdma/Infiniband.cc:
+> 1056: FAILED ceph_assert(ret == 0)
+>          ceph version v15.0.0-1316-gde22905799
+> (de2290579985e48fb61f6ab2f4f2245e1a699bf4) octopus (dev)
+>          1: (ceph::__ceph_assert_fail(char const*, char const*, int,
+> char const*)+0x1aa) [0x7f843f8dbd2a]
+>          2: (()+0x13a1fac) [0x7f843f8dbfac]
+>          3: (Infiniband::post_chunks_to_rq(int, ibv_qp*)+0x4b4) 
+> [0x7f843fc623e4]
+>          4: (RDMADispatcher::post_chunks_to_rq(int, ibv_qp*)+0x62)
+> [0x7f843fc76e6a]
+>          5: (RDMAConnectedSocketImpl::update_post_backlog()+0x57)
+> [0x7f843fc6c395]
+>          6: (RDMAConnectedSocketImpl::read(char*, unsigned
+> long)+0xc42) [0x7f843fc69564]
+>          7: (ConnectedSocket::read(char*, unsigned long)+0x37) 
+> [0x7f843fbc1549]
+> 
+>     2. ceph config:
+>         diff --git a/src/vstart.sh b/src/vstart.sh
+>         index eb17208b82..b70c78abfd 100755
+>         --- a/src/vstart.sh
+>         +++ b/src/vstart.sh
+>         @@ -547,6 +547,14 @@ ms bind msgr1 = true
+>                 osd_crush_chooseleaf_type = 0
+>                 debug asok assert abort = true
+>          $msgr_conf
+>         +
+>         +;set type & device & protocal iwarp(iWARP/RoCEv2) based on
+> rdma_cm instead of using GID
+>         +    ms_type = async+rdma
+>         +    ms_async_rdma_device_name = itest0
+>         +    ms_async_rdma_type = iwarp
+>         +    ms_async_rdma_support_srq = false
+>         +    ms_async_rdma_cm = true
+>         +
+>          $extra_conf
+>          EOF
+>                 if [ "$lockdep" -eq 1 ] ; then
+> 
+>      3. vstart.sh command:
+>        OSD=3 MON=1 MDS=0 RGW=0 MGR=1 ../src/vstart.sh --msgr1
+> --nodaemon -i 192.0.2.97 -n -X -d 2>&1 | tee check_log
+>        #192.0.2.97 is itest0's NIC ip address
+> 
+>      4. Part of default configuration
+>         bin/ceph-conf -D | grep ms_async
+>           ms_async_max_op_threads = 5
+>           ms_async_op_threads = 3
+>           ms_async_rdma_buffer_size = 131072
+>           ms_async_rdma_cm = true
+>           ms_async_rdma_device_name = itest0
+>           ms_async_rdma_dscp = 96
+>           ms_async_rdma_enable_hugepage = false
+>           ms_async_rdma_local_gid =
+>           ms_async_rdma_polling_us = 1000
+>           ms_async_rdma_port_num = 1
+>           ms_async_rdma_receive_buffers = 32768
+>           ms_async_rdma_receive_queue_len = 4096
+>           ms_async_rdma_roce_ver = 1
+>           ms_async_rdma_send_buffers = 1024
+>           ms_async_rdma_sl = 3
+>           ms_async_rdma_support_srq = false
+>           ms_async_rdma_type = iwarp
+> 
+>      5. itest0 device's attr
+>          hca_id: itest0
+>              transport:          iWARP (1)
+>              fw_ver:             29.0
+>              node_guid:          6805:ca9d:3898:0000
+>              sys_image_guid:         6805:ca9d:3898:0000
+>              hw_ver:             0x0
+>              board_id:           ITEST Board ID
+>              phys_port_cnt:          1
+>              max_mr_size:            0x7fffffff
+>              page_size_cap:          0x0
+>              max_qp:             16384
+>              max_qp_wr:          4095
+>              device_cap_flags:       0x00228000
+>                              MEM_WINDOW
+>                              MEM_MGT_EXTENSIONS
+>                              Unknown flags: 0x8000
+>              max_sge:            13
+>              max_sge_rd:         13
+>              max_cq:             32768
+>              max_cqe:            1048575
+>              max_mr:             4194303
+>              max_pd:             262144
+>              max_qp_rd_atom:         127
+>              max_ee_rd_atom:         0
+>              max_res_rd_atom:        0
+>              max_qp_init_rd_atom:        127
+>              max_ee_init_rd_atom:        0
+>              atomic_cap:         ATOMIC_NONE (0)
+>              max_ee:             0
+>              max_rdd:            0
+>              max_mw:             4194303
+>              max_raw_ipv6_qp:        0
+>              max_raw_ethy_qp:        0
+>              max_mcast_grp:          16384
+>              max_mcast_qp_attach:        8
+>              max_total_mcast_qp_attach:  131072
+>              max_ah:             65536
+>              max_fmr:            0
+>              max_srq:            0
+>              max_pkeys:          0
+>              local_ca_ack_delay:     0
+>              general_odp_caps:
+>              rc_odp_caps:
+>                              NO SUPPORT
+>              uc_odp_caps:
+>                              NO SUPPORT
+>              ud_odp_caps:
+>                              NO SUPPORT
+>              completion_timestamp_mask not supported
+>              core clock not supported
+>              device_cap_flags_ex:        0x0
+>              tso_caps:
+>              max_tso:            0
+>              rss_caps:
+>                  max_rwq_indirection_tables:         0
+>                  max_rwq_indirection_table_size:     0
+>                  rx_hash_function:                   0x0
+>                  rx_hash_fields_mask:                0x0
+>              max_wq_type_rq:         0
+>              packet_pacing_caps:
+>                  qp_rate_limit_min:  0kbps
+>                  qp_rate_limit_max:  0kbps
+>              tag matching not supported
+>                  port:   1
+>                      state:          PORT_ACTIVE (4)
+>                      max_mtu:        4096 (5)
+>                      active_mtu:     1024 (3)
+>                      sm_lid:         0
+>                      port_lid:       1
+>                      port_lmc:       0x00
+>                      link_layer:     Ethernet
+>                      max_msg_sz:     0x7fffffff
+>                      port_cap_flags:     0x00050000
+>                      port_cap_flags2:    0x0000
+>                      max_vl_num:     invalid value (0)
+>                      bad_pkey_cntr:      0x0
+>                      qkey_viol_cntr:     0x0
+>                      sm_sl:          0
+>                      pkey_tbl_len:       1
+>                      gid_tbl_len:        1
+>                      subnet_timeout:     0
+>                      init_type_reply:    0
+> 
+> B.R.
+> Changcheng
 
-355da1eb7 Sage Weil           2009-10-06  1743  /*
-355da1eb7 Sage Weil           2009-10-06  1744   * Write back inode data in a worker thread.  (This can't be done
-355da1eb7 Sage Weil           2009-10-06  1745   * in the message handler context.)
-355da1eb7 Sage Weil           2009-10-06  1746   */
-3c6f6b79a Sage Weil           2010-02-09  1747  void ceph_queue_writeback(struct inode *inode)
-3c6f6b79a Sage Weil           2010-02-09  1748  {
-33c573a5c Yan, Zheng          2019-05-18  1749  	struct ceph_inode_info *ci = ceph_inode(inode);
-33c573a5c Yan, Zheng          2019-05-18 @1750  	set_bit(CEPH_I_WORK_WRITEBACK, &ci->i_work_mask);
-                                                                ^^^^^^^^^^^^^^^^^^^^^
-Without looking at the git tree, my guess is that CEPH_I_WORK_WRITEBACK
-is a BIT(something) so it's a double shift bug.
-
-33c573a5c Yan, Zheng          2019-05-18  1751  
-15a2015fb Sage Weil           2011-11-05  1752  	ihold(inode);
-33c573a5c Yan, Zheng          2019-05-18  1753  	if (queue_work(ceph_inode_to_client(inode)->inode_wq,
-33c573a5c Yan, Zheng          2019-05-18  1754  		       &ci->i_work)) {
-2c27c9a57 Sage Weil           2010-02-17  1755  		dout("ceph_queue_writeback %p\n", inode);
-3c6f6b79a Sage Weil           2010-02-09  1756  	} else {
-33c573a5c Yan, Zheng          2019-05-18  1757  		dout("ceph_queue_writeback %p already queued, mask=%lx\n",
-33c573a5c Yan, Zheng          2019-05-18  1758  		     inode, ci->i_work_mask);
-15a2015fb Sage Weil           2011-11-05  1759  		iput(inode);
-3c6f6b79a Sage Weil           2010-02-09  1760  	}
-3c6f6b79a Sage Weil           2010-02-09  1761  }
-3c6f6b79a Sage Weil           2010-02-09  1762  
-355da1eb7 Sage Weil           2009-10-06  1763  /*
-3c6f6b79a Sage Weil           2010-02-09  1764   * queue an async invalidation
-3c6f6b79a Sage Weil           2010-02-09  1765   */
-3c6f6b79a Sage Weil           2010-02-09  1766  void ceph_queue_invalidate(struct inode *inode)
-3c6f6b79a Sage Weil           2010-02-09  1767  {
-33c573a5c Yan, Zheng          2019-05-18  1768  	struct ceph_inode_info *ci = ceph_inode(inode);
-33c573a5c Yan, Zheng          2019-05-18 @1769  	set_bit(CEPH_I_WORK_INVALIDATE_PAGES, &ci->i_work_mask);
-33c573a5c Yan, Zheng          2019-05-18  1770  
-15a2015fb Sage Weil           2011-11-05  1771  	ihold(inode);
-33c573a5c Yan, Zheng          2019-05-18  1772  	if (queue_work(ceph_inode_to_client(inode)->inode_wq,
-33c573a5c Yan, Zheng          2019-05-18  1773  		       &ceph_inode(inode)->i_work)) {
-3c6f6b79a Sage Weil           2010-02-09  1774  		dout("ceph_queue_invalidate %p\n", inode);
-3c6f6b79a Sage Weil           2010-02-09  1775  	} else {
-33c573a5c Yan, Zheng          2019-05-18  1776  		dout("ceph_queue_invalidate %p already queued, mask=%lx\n",
-33c573a5c Yan, Zheng          2019-05-18  1777  		     inode, ci->i_work_mask);
-15a2015fb Sage Weil           2011-11-05  1778  		iput(inode);
-3c6f6b79a Sage Weil           2010-02-09  1779  	}
-3c6f6b79a Sage Weil           2010-02-09  1780  }
-3c6f6b79a Sage Weil           2010-02-09  1781  
-3c6f6b79a Sage Weil           2010-02-09  1782  /*
-33c573a5c Yan, Zheng          2019-05-18  1783   * Queue an async vmtruncate.  If we fail to queue work, we will handle
-33c573a5c Yan, Zheng          2019-05-18  1784   * the truncation the next time we call __ceph_do_pending_vmtruncate.
-355da1eb7 Sage Weil           2009-10-06  1785   */
-33c573a5c Yan, Zheng          2019-05-18  1786  void ceph_queue_vmtruncate(struct inode *inode)
-355da1eb7 Sage Weil           2009-10-06  1787  {
-33c573a5c Yan, Zheng          2019-05-18  1788  	struct ceph_inode_info *ci = ceph_inode(inode);
-33c573a5c Yan, Zheng          2019-05-18 @1789  	set_bit(CEPH_I_WORK_VMTRUNCATE, &ci->i_work_mask);
-33c573a5c Yan, Zheng          2019-05-18  1790  
-33c573a5c Yan, Zheng          2019-05-18  1791  	ihold(inode);
-33c573a5c Yan, Zheng          2019-05-18  1792  	if (queue_work(ceph_inode_to_client(inode)->inode_wq,
-33c573a5c Yan, Zheng          2019-05-18  1793  		       &ci->i_work)) {
-33c573a5c Yan, Zheng          2019-05-18  1794  		dout("ceph_queue_vmtruncate %p\n", inode);
-33c573a5c Yan, Zheng          2019-05-18  1795  	} else {
-33c573a5c Yan, Zheng          2019-05-18  1796  		dout("ceph_queue_vmtruncate %p already queued, mask=%lx\n",
-33c573a5c Yan, Zheng          2019-05-18  1797  		     inode, ci->i_work_mask);
-33c573a5c Yan, Zheng          2019-05-18  1798  		iput(inode);
-33c573a5c Yan, Zheng          2019-05-18  1799  	}
-33c573a5c Yan, Zheng          2019-05-18  1800  }
-33c573a5c Yan, Zheng          2019-05-18  1801  
-33c573a5c Yan, Zheng          2019-05-18  1802  static void ceph_do_invalidate_pages(struct inode *inode)
-33c573a5c Yan, Zheng          2019-05-18  1803  {
-33c573a5c Yan, Zheng          2019-05-18  1804  	struct ceph_inode_info *ci = ceph_inode(inode);
-6c93df5db Yan, Zheng          2016-04-15  1805  	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-355da1eb7 Sage Weil           2009-10-06  1806  	u32 orig_gen;
-355da1eb7 Sage Weil           2009-10-06  1807  	int check = 0;
-355da1eb7 Sage Weil           2009-10-06  1808  
-b0d7c2231 Yan, Zheng          2013-08-12  1809  	mutex_lock(&ci->i_truncate_mutex);
-6c93df5db Yan, Zheng          2016-04-15  1810  
-52953d559 Seraphime Kirkovski 2016-12-26  1811  	if (READ_ONCE(fsc->mount_state) == CEPH_MOUNT_SHUTDOWN) {
-6c93df5db Yan, Zheng          2016-04-15  1812  		pr_warn_ratelimited("invalidate_pages %p %lld forced umount\n",
-6c93df5db Yan, Zheng          2016-04-15  1813  				    inode, ceph_ino(inode));
-6c93df5db Yan, Zheng          2016-04-15  1814  		mapping_set_error(inode->i_mapping, -EIO);
-6c93df5db Yan, Zheng          2016-04-15  1815  		truncate_pagecache(inode, 0);
-6c93df5db Yan, Zheng          2016-04-15  1816  		mutex_unlock(&ci->i_truncate_mutex);
-6c93df5db Yan, Zheng          2016-04-15  1817  		goto out;
-6c93df5db Yan, Zheng          2016-04-15  1818  	}
-6c93df5db Yan, Zheng          2016-04-15  1819  
-be655596b Sage Weil           2011-11-30  1820  	spin_lock(&ci->i_ceph_lock);
-355da1eb7 Sage Weil           2009-10-06  1821  	dout("invalidate_pages %p gen %d revoking %d\n", inode,
-355da1eb7 Sage Weil           2009-10-06  1822  	     ci->i_rdcache_gen, ci->i_rdcache_revoking);
-cd045cb42 Sage Weil           2010-11-04  1823  	if (ci->i_rdcache_revoking != ci->i_rdcache_gen) {
-9563f88c1 Yan, Zheng          2013-11-22  1824  		if (__ceph_caps_revoking_other(ci, NULL, CEPH_CAP_FILE_CACHE))
-9563f88c1 Yan, Zheng          2013-11-22  1825  			check = 1;
-be655596b Sage Weil           2011-11-30  1826  		spin_unlock(&ci->i_ceph_lock);
-b0d7c2231 Yan, Zheng          2013-08-12  1827  		mutex_unlock(&ci->i_truncate_mutex);
-355da1eb7 Sage Weil           2009-10-06  1828  		goto out;
-355da1eb7 Sage Weil           2009-10-06  1829  	}
-355da1eb7 Sage Weil           2009-10-06  1830  	orig_gen = ci->i_rdcache_gen;
-be655596b Sage Weil           2011-11-30  1831  	spin_unlock(&ci->i_ceph_lock);
-355da1eb7 Sage Weil           2009-10-06  1832  
-9abd4db71 Yan, Zheng          2016-05-18  1833  	if (invalidate_inode_pages2(inode->i_mapping) < 0) {
-9abd4db71 Yan, Zheng          2016-05-18  1834  		pr_err("invalidate_pages %p fails\n", inode);
-9abd4db71 Yan, Zheng          2016-05-18  1835  	}
-355da1eb7 Sage Weil           2009-10-06  1836  
-be655596b Sage Weil           2011-11-30  1837  	spin_lock(&ci->i_ceph_lock);
-cd045cb42 Sage Weil           2010-11-04  1838  	if (orig_gen == ci->i_rdcache_gen &&
-cd045cb42 Sage Weil           2010-11-04  1839  	    orig_gen == ci->i_rdcache_revoking) {
-355da1eb7 Sage Weil           2009-10-06  1840  		dout("invalidate_pages %p gen %d successful\n", inode,
-355da1eb7 Sage Weil           2009-10-06  1841  		     ci->i_rdcache_gen);
-cd045cb42 Sage Weil           2010-11-04  1842  		ci->i_rdcache_revoking--;
-355da1eb7 Sage Weil           2009-10-06  1843  		check = 1;
-355da1eb7 Sage Weil           2009-10-06  1844  	} else {
-cd045cb42 Sage Weil           2010-11-04  1845  		dout("invalidate_pages %p gen %d raced, now %d revoking %d\n",
-cd045cb42 Sage Weil           2010-11-04  1846  		     inode, orig_gen, ci->i_rdcache_gen,
-cd045cb42 Sage Weil           2010-11-04  1847  		     ci->i_rdcache_revoking);
-9563f88c1 Yan, Zheng          2013-11-22  1848  		if (__ceph_caps_revoking_other(ci, NULL, CEPH_CAP_FILE_CACHE))
-9563f88c1 Yan, Zheng          2013-11-22  1849  			check = 1;
-355da1eb7 Sage Weil           2009-10-06  1850  	}
-be655596b Sage Weil           2011-11-30  1851  	spin_unlock(&ci->i_ceph_lock);
-b0d7c2231 Yan, Zheng          2013-08-12  1852  	mutex_unlock(&ci->i_truncate_mutex);
-9563f88c1 Yan, Zheng          2013-11-22  1853  out:
-355da1eb7 Sage Weil           2009-10-06  1854  	if (check)
-355da1eb7 Sage Weil           2009-10-06  1855  		ceph_check_caps(ci, 0, NULL);
-3c6f6b79a Sage Weil           2010-02-09  1856  }
-3c6f6b79a Sage Weil           2010-02-09  1857  
-3c6f6b79a Sage Weil           2010-02-09  1858  /*
-355da1eb7 Sage Weil           2009-10-06  1859   * Make sure any pending truncation is applied before doing anything
-355da1eb7 Sage Weil           2009-10-06  1860   * that may depend on it.
-355da1eb7 Sage Weil           2009-10-06  1861   */
-b415bf4f9 Yan, Zheng          2013-07-02  1862  void __ceph_do_pending_vmtruncate(struct inode *inode)
-355da1eb7 Sage Weil           2009-10-06  1863  {
-355da1eb7 Sage Weil           2009-10-06  1864  	struct ceph_inode_info *ci = ceph_inode(inode);
-355da1eb7 Sage Weil           2009-10-06  1865  	u64 to;
-a85f50b6e Yan, Zheng          2012-11-19  1866  	int wrbuffer_refs, finish = 0;
-355da1eb7 Sage Weil           2009-10-06  1867  
-b0d7c2231 Yan, Zheng          2013-08-12  1868  	mutex_lock(&ci->i_truncate_mutex);
-355da1eb7 Sage Weil           2009-10-06  1869  retry:
-be655596b Sage Weil           2011-11-30  1870  	spin_lock(&ci->i_ceph_lock);
-355da1eb7 Sage Weil           2009-10-06  1871  	if (ci->i_truncate_pending == 0) {
-355da1eb7 Sage Weil           2009-10-06  1872  		dout("__do_pending_vmtruncate %p none pending\n", inode);
-be655596b Sage Weil           2011-11-30  1873  		spin_unlock(&ci->i_ceph_lock);
-b0d7c2231 Yan, Zheng          2013-08-12  1874  		mutex_unlock(&ci->i_truncate_mutex);
-355da1eb7 Sage Weil           2009-10-06  1875  		return;
-355da1eb7 Sage Weil           2009-10-06  1876  	}
-355da1eb7 Sage Weil           2009-10-06  1877  
-355da1eb7 Sage Weil           2009-10-06  1878  	/*
-355da1eb7 Sage Weil           2009-10-06  1879  	 * make sure any dirty snapped pages are flushed before we
-355da1eb7 Sage Weil           2009-10-06  1880  	 * possibly truncate them.. so write AND block!
-355da1eb7 Sage Weil           2009-10-06  1881  	 */
-355da1eb7 Sage Weil           2009-10-06  1882  	if (ci->i_wrbuffer_ref_head < ci->i_wrbuffer_ref) {
-c8fd0d37f Yan, Zheng          2017-08-28  1883  		spin_unlock(&ci->i_ceph_lock);
-355da1eb7 Sage Weil           2009-10-06  1884  		dout("__do_pending_vmtruncate %p flushing snaps first\n",
-355da1eb7 Sage Weil           2009-10-06  1885  		     inode);
-355da1eb7 Sage Weil           2009-10-06  1886  		filemap_write_and_wait_range(&inode->i_data, 0,
-355da1eb7 Sage Weil           2009-10-06  1887  					     inode->i_sb->s_maxbytes);
-355da1eb7 Sage Weil           2009-10-06  1888  		goto retry;
-355da1eb7 Sage Weil           2009-10-06  1889  	}
-355da1eb7 Sage Weil           2009-10-06  1890  
-b0d7c2231 Yan, Zheng          2013-08-12  1891  	/* there should be no reader or writer */
-b0d7c2231 Yan, Zheng          2013-08-12  1892  	WARN_ON_ONCE(ci->i_rd_ref || ci->i_wr_ref);
-b0d7c2231 Yan, Zheng          2013-08-12  1893  
-355da1eb7 Sage Weil           2009-10-06  1894  	to = ci->i_truncate_size;
-355da1eb7 Sage Weil           2009-10-06  1895  	wrbuffer_refs = ci->i_wrbuffer_ref;
-355da1eb7 Sage Weil           2009-10-06  1896  	dout("__do_pending_vmtruncate %p (%d) to %lld\n", inode,
-355da1eb7 Sage Weil           2009-10-06  1897  	     ci->i_truncate_pending, to);
-be655596b Sage Weil           2011-11-30  1898  	spin_unlock(&ci->i_ceph_lock);
-355da1eb7 Sage Weil           2009-10-06  1899  
-4e217b5dc Yan, Zheng          2014-06-08  1900  	truncate_pagecache(inode, to);
-355da1eb7 Sage Weil           2009-10-06  1901  
-be655596b Sage Weil           2011-11-30  1902  	spin_lock(&ci->i_ceph_lock);
-a85f50b6e Yan, Zheng          2012-11-19  1903  	if (to == ci->i_truncate_size) {
-a85f50b6e Yan, Zheng          2012-11-19  1904  		ci->i_truncate_pending = 0;
-a85f50b6e Yan, Zheng          2012-11-19  1905  		finish = 1;
-a85f50b6e Yan, Zheng          2012-11-19  1906  	}
-be655596b Sage Weil           2011-11-30  1907  	spin_unlock(&ci->i_ceph_lock);
-a85f50b6e Yan, Zheng          2012-11-19  1908  	if (!finish)
-a85f50b6e Yan, Zheng          2012-11-19  1909  		goto retry;
-355da1eb7 Sage Weil           2009-10-06  1910  
-b0d7c2231 Yan, Zheng          2013-08-12  1911  	mutex_unlock(&ci->i_truncate_mutex);
-b0d7c2231 Yan, Zheng          2013-08-12  1912  
-355da1eb7 Sage Weil           2009-10-06  1913  	if (wrbuffer_refs == 0)
-355da1eb7 Sage Weil           2009-10-06  1914  		ceph_check_caps(ci, CHECK_CAPS_AUTHONLY, NULL);
-a85f50b6e Yan, Zheng          2012-11-19  1915  
-03066f234 Yehuda Sadeh        2010-07-27  1916  	wake_up_all(&ci->i_cap_wq);
-355da1eb7 Sage Weil           2009-10-06  1917  }
-355da1eb7 Sage Weil           2009-10-06  1918  
-33c573a5c Yan, Zheng          2019-05-18  1919  static void ceph_inode_work(struct work_struct *work)
-33c573a5c Yan, Zheng          2019-05-18  1920  {
-33c573a5c Yan, Zheng          2019-05-18  1921  	struct ceph_inode_info *ci = container_of(work, struct ceph_inode_info,
-33c573a5c Yan, Zheng          2019-05-18  1922  						 i_work);
-33c573a5c Yan, Zheng          2019-05-18  1923  	struct inode *inode = &ci->vfs_inode;
-33c573a5c Yan, Zheng          2019-05-18  1924  
-33c573a5c Yan, Zheng          2019-05-18 @1925  	if (test_and_clear_bit(CEPH_I_WORK_WRITEBACK, &ci->i_work_mask)) {
-33c573a5c Yan, Zheng          2019-05-18  1926  		dout("writeback %p\n", inode);
-33c573a5c Yan, Zheng          2019-05-18  1927  		filemap_fdatawrite(&inode->i_data);
-33c573a5c Yan, Zheng          2019-05-18  1928  	}
-33c573a5c Yan, Zheng          2019-05-18  1929  	if (test_and_clear_bit(CEPH_I_WORK_INVALIDATE_PAGES, &ci->i_work_mask))
-33c573a5c Yan, Zheng          2019-05-18  1930  		ceph_do_invalidate_pages(inode);
-33c573a5c Yan, Zheng          2019-05-18  1931  
-33c573a5c Yan, Zheng          2019-05-18  1932  	if (test_and_clear_bit(CEPH_I_WORK_VMTRUNCATE, &ci->i_work_mask))
-33c573a5c Yan, Zheng          2019-05-18  1933  		__ceph_do_pending_vmtruncate(inode);
-33c573a5c Yan, Zheng          2019-05-18  1934  
-33c573a5c Yan, Zheng          2019-05-18  1935  	iput(inode);
-33c573a5c Yan, Zheng          2019-05-18  1936  }
-33c573a5c Yan, Zheng          2019-05-18  1937  
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
