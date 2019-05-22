@@ -2,188 +2,116 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60C2E24C00
-	for <lists+ceph-devel@lfdr.de>; Tue, 21 May 2019 11:51:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A15325B9A
+	for <lists+ceph-devel@lfdr.de>; Wed, 22 May 2019 03:17:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726391AbfEUJvm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 21 May 2019 05:51:42 -0400
-Received: from mga03.intel.com ([134.134.136.65]:54379 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726006AbfEUJvm (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 21 May 2019 05:51:42 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 May 2019 02:51:41 -0700
-X-ExtLoop1: 1
-Received: from jerryopenix.sh.intel.com (HELO jerryopenix) ([10.239.158.64])
-  by fmsmga004.fm.intel.com with ESMTP; 21 May 2019 02:51:40 -0700
-Date:   Tue, 21 May 2019 17:50:41 +0800
-From:   "Liu, Changcheng" <changcheng.liu@intel.com>
-To:     ceph-devel@vger.kernel.org
-Subject: msg/async/rdma: out of buffer/memory
-Message-ID: <20190521095041.GA17062@jerryopenix>
+        id S1727681AbfEVBRF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 21 May 2019 21:17:05 -0400
+Received: from mail-it1-f178.google.com ([209.85.166.178]:36716 "EHLO
+        mail-it1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726466AbfEVBRF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 21 May 2019 21:17:05 -0400
+Received: by mail-it1-f178.google.com with SMTP id e184so511903ite.1
+        for <ceph-devel@vger.kernel.org>; Tue, 21 May 2019 18:17:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=QMVFq2AAueH8ENnNMgyi89v4oXQ/dcA6iYxjWvby7O4=;
+        b=cIcUD0Li9rKkiU3r7nNzRXuQcfweCH10vjrq1iSIFokbRfv7/iW/nuW+qsfACZjlJH
+         +R9HIk6sxEWTzTCKJZ/VAF2FBEK7ml3EKFAT6yYYXIgPt4LfH8EHBJP0yORtIPf/K7DW
+         4BagJBh0vJetRx9Gv6mZ2oR5zqVGzkooHNWIsV7ol/YrbxRwgOEf+TMYsiTWayPW+emL
+         zU4WZdvermHkDDNKy+KGPnRDgdj3U9TBFnLSa61IOGlmKgiolitJ++KApKtnTlfZSDwL
+         Ql/7sGv94fR/ygSBi+RJouS2X4WjJcKwwZXvR6ZFn6USVlOLAhiF9Y/UWKB572iIXGwD
+         oTHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=QMVFq2AAueH8ENnNMgyi89v4oXQ/dcA6iYxjWvby7O4=;
+        b=FhxfBGMbDrQ6VwV6EYbpwCBOiWUVo9hojttj/27GZsUSFohtDOXw/1fWlNchYaQ7ZM
+         S0GPhS89hrSPMfxkpcddmOsvqzHAvBpFpJfqM7gsCkF3TUGXyYiPF3BsGPzQiqNyByxF
+         xXAh0glU1xok/ADzy4O5JVz7iQR6nOAQ8WeufMlsMrOvBMyf1mJ8D0DZ8DeKdwf+TV8Q
+         UWwdA3dfnjgOQNt93T4UoTu3eDMKZwFS4HbHJhk9JHmUogQKorMXyVpwABDVwuNDI/YA
+         du3wmcJjNm9KK0KI5EJlYqrUTLFDtG25+HduuTGis7ee19oeljR1HdRRnNULYhKX/0es
+         qXKA==
+X-Gm-Message-State: APjAAAVmctWW8FY2g/Ge2//Pn05maEA2tYLOp4/yEtMXaymitZ4WJxiR
+        7PR+WkZ9U7ASh52mVGjPEw00kWB+B+U2fmYQkXv5XhA0
+X-Google-Smtp-Source: APXvYqxlqP2xFxSYp6JOAu4lpDQmPXieRSuYpQuKAy/zeaw069c4zEfxGU7wDdFVkdcPsSTvBHHZ8SH8mUKcAV95Exs=
+X-Received: by 2002:a24:5a06:: with SMTP id v6mr7053905ita.160.1558487824551;
+ Tue, 21 May 2019 18:17:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+From:   Xiaoxi Chen <superdebuger@gmail.com>
+Date:   Wed, 22 May 2019 09:16:51 +0800
+Message-ID: <CAEYCsVJ_k_HxRFxts_Vbk8KN8GQ73Kh_JBKf4upE46YrfHGnbA@mail.gmail.com>
+Subject: Multisite sync corruption for large multipart obj
+To:     Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi all,
-    I'm using msg/async/rdma/iWARP on ceph master branch under vstart.sh environment.
+we have a two-zone multi-site setup, zone lvs and zone slc
+respectively. It works fine in general however we got reports from
+customer about data corruption/mismatch between two zone
 
-    It hit "out of buffer/memory" frequently and hit segmental fault sometimes.
-    Does anyone know are there some configuration need to be tuned to make it work?
+root@host:~# s3cmd -c .s3cfg_lvs ls
+s3://ms-nsn-prod-48/01DAT9KVPEDE4QTA6EWFBZJ5KS/index
+2019-05-14 04:30 410444223 s3://ms-nsn-prod-48/01DAT9KVPEDE4QTA6EWFBZJ5KS/index
+root@host-ump:~# s3cmd -c .s3cfg_slc ls
+s3://ms-nsn-prod-48/01DAT9KVPEDE4QTA6EWFBZJ5KS/index
+2019-05-14 04:30 62158776 s3://ms-nsn-prod-48/01DAT9KVPEDE4QTA6EWFBZJ5KS/index
 
-	1. Log:
-         -49> 2019-05-21 17:37:50.729 7f843334a700 -1 Infiniband post_chunks_to_rq WARNING: out of memory. Requested 1 rx buffers. Got 0
-         -48> 2019-05-21 17:37:50.729 7f843334a700 -1 Infiniband can_alloc WARNING: OUT OF RX BUFFERS: allocated: 32768 requested: 4 limit: 32768
-         -47> 2019-05-21 17:37:50.729 7f843334a700 -1 Infiniband post_chunks_to_rq WARNING: out of memory. Requested 1 rx buffers. Got 0
-         -46> 2019-05-21 17:37:50.729 7f84381e5700 -1 Infiniband can_alloc WARNING: OUT OF RX BUFFERS: allocated: 32768 requested: 4 limit: 32768
-         -45> 2019-05-21 17:37:50.729 7f84381e5700 -1 Infiniband post_chunks_to_rq WARNING: out of memory. Requested 3 rx buffers. Got 1
-         -1> 2019-05-21 17:37:53.269 7f84381e5700 -1 /home/nstcc1/ssg_otc/ceph_debian/ceph/src/msg/async/rdma/Infiniband.cc:
-              In function 'int Infiniband::post_chunks_to_rq(int, ibv_qp*)' thread 7f84381e5700 time 2019-05-21 17:37:53.241614
-              /home/nstcc1/ssg_otc/ceph_debian/ceph/src/msg/async/rdma/Infiniband.cc: 1056: FAILED ceph_assert(ret == 0)
-         ceph version v15.0.0-1316-gde22905799 (de2290579985e48fb61f6ab2f4f2245e1a699bf4) octopus (dev)
-         1: (ceph::__ceph_assert_fail(char const*, char const*, int, char const*)+0x1aa) [0x7f843f8dbd2a]
-         2: (()+0x13a1fac) [0x7f843f8dbfac]
-         3: (Infiniband::post_chunks_to_rq(int, ibv_qp*)+0x4b4) [0x7f843fc623e4]
-         4: (RDMADispatcher::post_chunks_to_rq(int, ibv_qp*)+0x62) [0x7f843fc76e6a]
-         5: (RDMAConnectedSocketImpl::update_post_backlog()+0x57) [0x7f843fc6c395]
-         6: (RDMAConnectedSocketImpl::read(char*, unsigned long)+0xc42) [0x7f843fc69564]
-         7: (ConnectedSocket::read(char*, unsigned long)+0x37) [0x7f843fbc1549]
+Object metadata in SLC/LVS can be found in
+https://pastebin.com/a5JNb9vb LVS
+https://pastebin.com/1MuPJ0k1 SLC
 
-    2. ceph config:
-        diff --git a/src/vstart.sh b/src/vstart.sh
-        index eb17208b82..b70c78abfd 100755
-        --- a/src/vstart.sh
-        +++ b/src/vstart.sh
-        @@ -547,6 +547,14 @@ ms bind msgr1 = true
-                osd_crush_chooseleaf_type = 0
-                debug asok assert abort = true
-         $msgr_conf
-        +
-        +;set type & device & protocal iwarp(iWARP/RoCEv2) based on rdma_cm instead of using GID
-        +    ms_type = async+rdma
-        +    ms_async_rdma_device_name = itest0
-        +    ms_async_rdma_type = iwarp
-        +    ms_async_rdma_support_srq = false
-        +    ms_async_rdma_cm = true
-        +
-         $extra_conf
-         EOF
-                if [ "$lockdep" -eq 1 ] ; then
+SLC is a single flat object while LVS is a multi-part object, which
+indicate the object was uploaded by user in LVS and mirrored to
+SLC.The SLC object get truncated after 62158776, the first 62158776
+bytes are right.
 
-     3. vstart.sh command:
-       OSD=3 MON=1 MDS=0 RGW=0 MGR=1 ../src/vstart.sh --msgr1 --nodaemon -i 192.0.2.97 -n -X -d 2>&1 | tee check_log
-       #192.0.2.97 is itest0's NIC ip address
-        
-     4. Part of default configuration
-        bin/ceph-conf -D | grep ms_async
-          ms_async_max_op_threads = 5
-          ms_async_op_threads = 3
-          ms_async_rdma_buffer_size = 131072
-          ms_async_rdma_cm = true
-          ms_async_rdma_device_name = itest0
-          ms_async_rdma_dscp = 96
-          ms_async_rdma_enable_hugepage = false
-          ms_async_rdma_local_gid = 
-          ms_async_rdma_polling_us = 1000
-          ms_async_rdma_port_num = 1
-          ms_async_rdma_receive_buffers = 32768
-          ms_async_rdma_receive_queue_len = 4096
-          ms_async_rdma_roce_ver = 1
-          ms_async_rdma_send_buffers = 1024
-          ms_async_rdma_sl = 3
-          ms_async_rdma_support_srq = false
-          ms_async_rdma_type = iwarp
+root@host:~# cmp -l slc_obj lvs_obj
+cmp: EOF on slc_obj after byte 62158776
 
-     5. itest0 device's attr
-         hca_id: itest0
-             transport:          iWARP (1)
-             fw_ver:             29.0  
-             node_guid:          6805:ca9d:3898:0000
-             sys_image_guid:         6805:ca9d:3898:0000
-             hw_ver:             0x0   
-             board_id:           ITEST Board ID
-             phys_port_cnt:          1     
-             max_mr_size:            0x7fffffff
-             page_size_cap:          0x0   
-             max_qp:             16384 
-             max_qp_wr:          4095  
-             device_cap_flags:       0x00228000
-                             MEM_WINDOW
-                             MEM_MGT_EXTENSIONS
-                             Unknown flags: 0x8000
-             max_sge:            13    
-             max_sge_rd:         13    
-             max_cq:             32768 
-             max_cqe:            1048575
-             max_mr:             4194303
-             max_pd:             262144
-             max_qp_rd_atom:         127   
-             max_ee_rd_atom:         0     
-             max_res_rd_atom:        0     
-             max_qp_init_rd_atom:        127   
-             max_ee_init_rd_atom:        0     
-             atomic_cap:         ATOMIC_NONE (0)
-             max_ee:             0
-             max_rdd:            0
-             max_mw:             4194303
-             max_raw_ipv6_qp:        0
-             max_raw_ethy_qp:        0
-             max_mcast_grp:          16384
-             max_mcast_qp_attach:        8
-             max_total_mcast_qp_attach:  131072
-             max_ah:             65536
-             max_fmr:            0
-             max_srq:            0
-             max_pkeys:          0
-             local_ca_ack_delay:     0
-             general_odp_caps:
-             rc_odp_caps:
-                             NO SUPPORT
-             uc_odp_caps:
-                             NO SUPPORT
-             ud_odp_caps:
-                             NO SUPPORT
-             completion_timestamp_mask not supported
-             core clock not supported
-             device_cap_flags_ex:        0x0
-             tso_caps:
-             max_tso:            0
-             rss_caps:
-                 max_rwq_indirection_tables:         0
-                 max_rwq_indirection_table_size:     0
-                 rx_hash_function:                   0x0
-                 rx_hash_fields_mask:                0x0
-             max_wq_type_rq:         0
-             packet_pacing_caps:
-                 qp_rate_limit_min:  0kbps
-                 qp_rate_limit_max:  0kbps
-             tag matching not supported
-                 port:   1
-                     state:          PORT_ACTIVE (4)
-                     max_mtu:        4096 (5)
-                     active_mtu:     1024 (3)
-                     sm_lid:         0
-                     port_lid:       1
-                     port_lmc:       0x00
-                     link_layer:     Ethernet
-                     max_msg_sz:     0x7fffffff
-                     port_cap_flags:     0x00050000
-                     port_cap_flags2:    0x0000
-                     max_vl_num:     invalid value (0)
-                     bad_pkey_cntr:      0x0
-                     qkey_viol_cntr:     0x0
-                     sm_sl:          0
-                     pkey_tbl_len:       1
-                     gid_tbl_len:        1
-                     subnet_timeout:     0
-                     init_type_reply:    0
+Both bucket sync status and overall sync status shows positive, and
+the obj was created 5 days ago. It sounds more like when pulling the
+object content from source zone(LVS), the transaction was terminated
+somewhere in between and cause an incomplete obj, and seems we dont
+have checksum verification in sync_agent so that the corrupted obj was
+there and be treated as a success sync.
 
-B.R.
-Changcheng
+root@host:~# radosgw-admin --cluster slc_ceph_ump bucket sync status
+--bucket=ms-nsn-prod-48
+realm 2305f95c-9ec9-429b-a455-77265585ef68 (metrics)
+zonegroup 9dad103a-3c3c-4f3b-87a0-a15e17b40dae (ebay)
+zone 6205e53d-6ce4-4e25-a175-9420d6257345 (slc)
+bucket ms-nsn-prod-48[017a0848-cf64-4879-b37d-251f72ff9750.432063.48]
+
+source zone 017a0848-cf64-4879-b37d-251f72ff9750 (lvs)
+                full sync: 0/16 shards
+                incremental sync: 16/16 shards
+                bucket is caught up with source
+
+
+Re-sync on the bucket will not solve the inconsistency
+
+radosgw-admin bucket sync init --source-zone lvs --bucket=ms-nsn-prod-48
+
+root@host:~# radosgw-admin bucket sync status --bucket=ms-nsn-prod-48
+realm 2305f95c-9ec9-429b-a455-77265585ef68 (metrics)
+zonegroup 9dad103a-3c3c-4f3b-87a0-a15e17b40dae (ebay)
+zone 6205e53d-6ce4-4e25-a175-9420d6257345 (slc)
+bucket ms-nsn-prod-48[017a0848-cf64-4879-b37d-251f72ff9750.432063.48]
+
+source zone 017a0848-cf64-4879-b37d-251f72ff9750 (lvs)
+                full sync: 0/16 shards
+                incremental sync: 16/16 shards
+                bucket is caught up with source
+
+root@lvscephmon01-ump:~# s3cmd -c .s3cfg_slc ls
+s3://ms-nsn-prod-48/01DAT9KVPEDE4QTA6EWFBZJ5KS/index
+2019-05-14 04:30 62158776 s3://ms-nsn-prod-48/01DAT9KVPEDE4QTA6EWFBZJ5KS/index
+
+
+A tracker was submitted to
+https://tracker.ceph.com/issues/39992
