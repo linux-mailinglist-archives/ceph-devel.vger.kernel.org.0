@@ -2,401 +2,304 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 048DA277C1
-	for <lists+ceph-devel@lfdr.de>; Thu, 23 May 2019 10:13:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7EE2277C2
+	for <lists+ceph-devel@lfdr.de>; Thu, 23 May 2019 10:14:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729064AbfEWIN5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 23 May 2019 04:13:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38218 "EHLO mx1.redhat.com"
+        id S1729863AbfEWIOA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 23 May 2019 04:14:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38846 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728109AbfEWIN4 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 23 May 2019 04:13:56 -0400
+        id S1729361AbfEWIN7 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 23 May 2019 04:13:59 -0400
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 33ED480F91
-        for <ceph-devel@vger.kernel.org>; Thu, 23 May 2019 08:13:56 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1396A882FB
+        for <ceph-devel@vger.kernel.org>; Thu, 23 May 2019 08:13:59 +0000 (UTC)
 Received: from zhyan-laptop.redhat.com (ovpn-12-163.pek2.redhat.com [10.72.12.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 207A960C44;
-        Thu, 23 May 2019 08:13:53 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DA92762502;
+        Thu, 23 May 2019 08:13:56 +0000 (UTC)
 From:   "Yan, Zheng" <zyan@redhat.com>
 To:     ceph-devel@vger.kernel.org
 Cc:     idryomov@redhat.com, jlayton@redhat.com,
         "Yan, Zheng" <zyan@redhat.com>
-Subject: [PATCH 3/8] ceph: avoid iput_final() while holding mutex or in dispatch thread
-Date:   Thu, 23 May 2019 16:13:40 +0800
-Message-Id: <20190523081345.20410-3-zyan@redhat.com>
+Subject: [PATCH 4/8] ceph: close race between d_name_cmp() and update_dentry_lease()
+Date:   Thu, 23 May 2019 16:13:41 +0800
+Message-Id: <20190523081345.20410-4-zyan@redhat.com>
 In-Reply-To: <20190523081345.20410-1-zyan@redhat.com>
 References: <20190523081345.20410-1-zyan@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 23 May 2019 08:13:56 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 23 May 2019 08:13:59 +0000 (UTC)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-iput_final() may wait for reahahead pages. The wait can cause deadlock.
-For example:
+d_name_cmp() and update_dentry_lease() lock and unlock dentry->d_lock
+respectively. Dentry may get renamed between them. The fix is moving
+the dentry name compare into update_dentry_lease().
 
-Workqueue: ceph-msgr ceph_con_workfn [libceph]
-  Call Trace:
-   schedule+0x36/0x80
-   io_schedule+0x16/0x40
-   __lock_page+0x101/0x140
-   truncate_inode_pages_range+0x556/0x9f0
-   truncate_inode_pages_final+0x4d/0x60
-   evict+0x182/0x1a0
-   iput+0x1d2/0x220
-   iterate_session_caps+0x82/0x230 [ceph]
-   dispatch+0x678/0xa80 [ceph]
-   ceph_con_workfn+0x95b/0x1560 [libceph]
-   process_one_work+0x14d/0x410
-   worker_thread+0x4b/0x460
-   kthread+0x105/0x140
-   ret_from_fork+0x22/0x40
-
-Workqueue: ceph-msgr ceph_con_workfn [libceph]
-  Call Trace:
-   __schedule+0x3d6/0x8b0
-   schedule+0x36/0x80
-   schedule_preempt_disabled+0xe/0x10
-   mutex_lock+0x2f/0x40
-   ceph_check_caps+0x505/0xa80 [ceph]
-   ceph_put_wrbuffer_cap_refs+0x1e5/0x2c0 [ceph]
-   writepages_finish+0x2d3/0x410 [ceph]
-   __complete_request+0x26/0x60 [libceph]
-   handle_reply+0x6c8/0xa10 [libceph]
-   dispatch+0x29a/0xbb0 [libceph]
-   ceph_con_workfn+0x95b/0x1560 [libceph]
-   process_one_work+0x14d/0x410
-   worker_thread+0x4b/0x460
-   kthread+0x105/0x140
-   ret_from_fork+0x22/0x40
-
-In above example, truncate_inode_pages_range() waits for readahead pages
-while holding s_mutex. ceph_check_caps() waits for s_mutex and blocks
-OSD dispatch thread. Later OSD replies (for readahead) can't be handled.
-
-ceph_check_caps() also may lock snap_rwsem for read. So similar deadlock
-can happen if iput_final() is called while holding snap_rwsem.
-
-In general, it's not good to call iput_final() inside MDS/OSD threads or
-while holding any mutex.
-
-The fix is introducing ceph_async_iput(), which calls iput_final() in
-workqueue.
+This patch introduce two version of update_dentry_lease(). One version
+is for the case that parent inode is locked. It does not need to check
+parent/target inode and dentry name. Another version is for the case
+that parent inode is not locked. It checks arent/target inode and dentry
+name after locking dentry->d_lock.
 
 Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
 ---
- fs/ceph/caps.c       | 12 ++++++++----
- fs/ceph/inode.c      | 31 +++++++++++++++++++++++++++----
- fs/ceph/mds_client.c | 28 ++++++++++++++++++----------
- fs/ceph/quota.c      |  9 ++++++---
- fs/ceph/snap.c       | 16 +++++++++++-----
- fs/ceph/super.h      |  2 +-
- 6 files changed, 71 insertions(+), 27 deletions(-)
+ fs/ceph/inode.c | 164 ++++++++++++++++++++++++++----------------------
+ 1 file changed, 88 insertions(+), 76 deletions(-)
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 079d0df9650c..0176241eaea7 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -2992,8 +2992,10 @@ void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int nr,
- 	}
- 	if (complete_capsnap)
- 		wake_up_all(&ci->i_cap_wq);
--	while (put-- > 0)
--		iput(inode);
-+	while (put-- > 0) {
-+		/* avoid calling iput_final() in osd dispatch threads */
-+		ceph_async_iput(inode);
-+	}
- }
- 
- /*
-@@ -3964,8 +3966,9 @@ void ceph_handle_caps(struct ceph_mds_session *session,
- done:
- 	mutex_unlock(&session->s_mutex);
- done_unlocked:
--	iput(inode);
- 	ceph_put_string(extra_info.pool_ns);
-+	/* avoid calling iput_final() in mds dispatch threads */
-+	ceph_async_iput(inode);
- 	return;
- 
- flush_cap_releases:
-@@ -4011,7 +4014,8 @@ void ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
- 		if (inode) {
- 			dout("check_delayed_caps on %p\n", inode);
- 			ceph_check_caps(ci, flags, NULL);
--			iput(inode);
-+			/* avoid calling iput_final() in tick thread */
-+			ceph_async_iput(inode);
- 		}
- 	}
- 	spin_unlock(&mdsc->cap_delay_lock);
 diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index d9ff349821f0..8cfece240ffe 100644
+index 8cfece240ffe..e47a25495be5 100644
 --- a/fs/ceph/inode.c
 +++ b/fs/ceph/inode.c
-@@ -1480,7 +1480,8 @@ static int readdir_prepopulate_inodes_only(struct ceph_mds_request *req,
- 			pr_err("fill_inode badness on %p got %d\n", in, rc);
- 			err = rc;
- 		}
--		iput(in);
-+		/* avoid calling iput_final() in mds dispatch threads */
-+		ceph_async_iput(in);
- 	}
- 
- 	return err;
-@@ -1678,8 +1679,11 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
- 				 &req->r_caps_reservation);
- 		if (ret < 0) {
- 			pr_err("fill_inode badness on %p\n", in);
--			if (d_really_is_negative(dn))
--				iput(in);
-+			if (d_really_is_negative(dn)) {
-+				/* avoid calling iput_final() in mds
-+				 * dispatch threads */
-+				ceph_async_iput(in);
-+			}
- 			d_drop(dn);
- 			err = ret;
- 			goto next_item;
-@@ -1689,7 +1693,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
- 			if (ceph_security_xattr_deadlock(in)) {
- 				dout(" skip splicing dn %p to inode %p"
- 				     " (security xattr deadlock)\n", dn, in);
--				iput(in);
-+				ceph_async_iput(in);
- 				skipped++;
- 				goto next_item;
- 			}
-@@ -1740,6 +1744,25 @@ bool ceph_inode_set_size(struct inode *inode, loff_t size)
- 	return ret;
+@@ -1031,59 +1031,38 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
  }
  
-+/*
-+ * Put reference to inode, but avoid calling iput_final() in current thread.
-+ * iput_final() may wait for reahahead pages. The wait can cause deadlock in
-+ * some contexts.
-+ */
-+void ceph_async_iput(struct inode *inode)
-+{
-+	if (!inode)
+ /*
+- * caller should hold session s_mutex.
++ * caller should hold session s_mutex and dentry->d_lock.
+  */
+-static void update_dentry_lease(struct dentry *dentry,
+-				struct ceph_mds_reply_lease *lease,
+-				struct ceph_mds_session *session,
+-				unsigned long from_time,
+-				struct ceph_vino *tgt_vino,
+-				struct ceph_vino *dir_vino)
++static void __update_dentry_lease(struct inode *dir, struct dentry *dentry,
++				  struct ceph_mds_reply_lease *lease,
++				  struct ceph_mds_session *session,
++				  unsigned long from_time,
++				  struct ceph_mds_session **old_lease_session)
+ {
+ 	struct ceph_dentry_info *di = ceph_dentry(dentry);
+ 	long unsigned duration = le32_to_cpu(lease->duration_ms);
+ 	long unsigned ttl = from_time + (duration * HZ) / 1000;
+ 	long unsigned half_ttl = from_time + (duration * HZ / 2) / 1000;
+-	struct inode *dir;
+-	struct ceph_mds_session *old_lease_session = NULL;
+-
+-	/*
+-	 * Make sure dentry's inode matches tgt_vino. NULL tgt_vino means that
+-	 * we expect a negative dentry.
+-	 */
+-	if (!tgt_vino && d_really_is_positive(dentry))
+-		return;
+-
+-	if (tgt_vino && (d_really_is_negative(dentry) ||
+-			!ceph_ino_compare(d_inode(dentry), tgt_vino)))
+-		return;
+ 
+-	spin_lock(&dentry->d_lock);
+ 	dout("update_dentry_lease %p duration %lu ms ttl %lu\n",
+ 	     dentry, duration, ttl);
+ 
+-	dir = d_inode(dentry->d_parent);
+-
+-	/* make sure parent matches dir_vino */
+-	if (!ceph_ino_compare(dir, dir_vino))
+-		goto out_unlock;
+-
+ 	/* only track leases on regular dentries */
+ 	if (ceph_snap(dir) != CEPH_NOSNAP)
+-		goto out_unlock;
 +		return;
-+	for (;;) {
-+		if (atomic_add_unless(&inode->i_count, -1, 1))
-+			break;
-+		if (queue_work(ceph_inode_to_client(inode)->inode_wq,
-+			       &ceph_inode(inode)->i_work))
-+			break;
-+		/* queue work failed, i_count must be at least 2 */
-+	}
+ 
+ 	di->lease_shared_gen = atomic_read(&ceph_inode(dir)->i_shared_gen);
+ 	if (duration == 0) {
+ 		__ceph_dentry_dir_lease_touch(di);
+-		goto out_unlock;
++		return;
+ 	}
+ 
+ 	if (di->lease_gen == session->s_cap_gen &&
+ 	    time_before(ttl, di->time))
+-		goto out_unlock;  /* we already have a newer lease. */
++		return;  /* we already have a newer lease. */
+ 
+ 	if (di->lease_session && di->lease_session != session) {
+-		old_lease_session = di->lease_session;
++		*old_lease_session = di->lease_session;
+ 		di->lease_session = NULL;
+ 	}
+ 
+@@ -1096,6 +1075,62 @@ static void update_dentry_lease(struct dentry *dentry,
+ 	di->time = ttl;
+ 
+ 	__ceph_dentry_lease_touch(di);
 +}
 +
- /*
-  * Write back inode data in a worker thread.  (This can't be done
-  * in the message handler context.)
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index e979d1d543e4..60e8ddbdfdc5 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -700,11 +700,12 @@ void ceph_mdsc_release_request(struct kref *kref)
- 		ceph_msg_put(req->r_reply);
- 	if (req->r_inode) {
- 		ceph_put_cap_refs(ceph_inode(req->r_inode), CEPH_CAP_PIN);
--		iput(req->r_inode);
-+		/* avoid calling iput_final() in mds dispatch threads */
-+		ceph_async_iput(req->r_inode);
- 	}
- 	if (req->r_parent)
- 		ceph_put_cap_refs(ceph_inode(req->r_parent), CEPH_CAP_PIN);
--	iput(req->r_target_inode);
-+	ceph_async_iput(req->r_target_inode);
- 	if (req->r_dentry)
- 		dput(req->r_dentry);
- 	if (req->r_old_dentry)
-@@ -718,7 +719,7 @@ void ceph_mdsc_release_request(struct kref *kref)
- 		 */
- 		ceph_put_cap_refs(ceph_inode(req->r_old_dentry_dir),
- 				  CEPH_CAP_PIN);
--		iput(req->r_old_dentry_dir);
-+		ceph_async_iput(req->r_old_dentry_dir);
- 	}
- 	kfree(req->r_path1);
- 	kfree(req->r_path2);
-@@ -828,7 +829,8 @@ static void __unregister_request(struct ceph_mds_client *mdsc,
- 	}
- 
- 	if (req->r_unsafe_dir) {
--		iput(req->r_unsafe_dir);
-+		/* avoid calling iput_final() in mds dispatch threads */
-+		ceph_async_iput(req->r_unsafe_dir);
- 		req->r_unsafe_dir = NULL;
- 	}
- 
-@@ -993,7 +995,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
- 		cap = rb_entry(rb_first(&ci->i_caps), struct ceph_cap, ci_node);
- 	if (!cap) {
- 		spin_unlock(&ci->i_ceph_lock);
--		iput(inode);
-+		ceph_async_iput(inode);
- 		goto random;
- 	}
- 	mds = cap->session->s_mds;
-@@ -1002,7 +1004,9 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
- 	     cap == ci->i_auth_cap ? "auth " : "", cap);
- 	spin_unlock(&ci->i_ceph_lock);
- out:
--	iput(inode);
-+	/* avoid calling iput_final() while holding mdsc->mutex or
-+	 * in mds dispatch threads */
-+	ceph_async_iput(inode);
- 	return mds;
- 
- random:
-@@ -1312,7 +1316,9 @@ int ceph_iterate_session_caps(struct ceph_mds_session *session,
- 		spin_unlock(&session->s_cap_lock);
- 
- 		if (last_inode) {
--			iput(last_inode);
-+			/* avoid calling iput_final() while holding
-+			 * s_mutex or in mds dispatch threads */
-+			ceph_async_iput(last_inode);
- 			last_inode = NULL;
- 		}
- 		if (old_cap) {
-@@ -1345,7 +1351,7 @@ int ceph_iterate_session_caps(struct ceph_mds_session *session,
- 	session->s_cap_iterator = NULL;
- 	spin_unlock(&session->s_cap_lock);
- 
--	iput(last_inode);
-+	ceph_async_iput(last_inode);
- 	if (old_cap)
- 		ceph_put_cap(session->s_mdsc, old_cap);
- 
-@@ -1481,7 +1487,8 @@ static void remove_session_caps(struct ceph_mds_session *session)
- 			spin_unlock(&session->s_cap_lock);
- 
- 			inode = ceph_find_inode(sb, vino);
--			iput(inode);
-+			 /* avoid calling iput_final() while holding s_mutex */
-+			ceph_async_iput(inode);
- 
- 			spin_lock(&session->s_cap_lock);
- 		}
-@@ -3923,8 +3930,9 @@ static void handle_lease(struct ceph_mds_client *mdsc,
- 	ceph_con_send(&session->s_con, msg);
- 
- out:
--	iput(inode);
- 	mutex_unlock(&session->s_mutex);
-+	/* avoid calling iput_final() in mds dispatch threads */
-+	ceph_async_iput(inode);
- 	return;
- 
- bad:
-diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-index c4522212872c..d629fc857450 100644
---- a/fs/ceph/quota.c
-+++ b/fs/ceph/quota.c
-@@ -74,7 +74,8 @@ void ceph_handle_quota(struct ceph_mds_client *mdsc,
- 		            le64_to_cpu(h->max_files));
- 	spin_unlock(&ci->i_ceph_lock);
- 
--	iput(inode);
-+	/* avoid calling iput_final() in dispatch thread */
-+	ceph_async_iput(inode);
++static inline void update_dentry_lease(struct inode *dir, struct dentry *dentry,
++					struct ceph_mds_reply_lease *lease,
++					struct ceph_mds_session *session,
++					unsigned long from_time)
++{
++	struct ceph_mds_session *old_lease_session = NULL;
++	spin_lock(&dentry->d_lock);
++	__update_dentry_lease(dir, dentry, lease, session, from_time,
++			      &old_lease_session);
++	spin_unlock(&dentry->d_lock);
++	if (old_lease_session)
++		ceph_put_mds_session(old_lease_session);
++}
++
++/*
++ * update dentry lease without having parent inode locked
++ */
++static void update_dentry_lease_careful(struct dentry *dentry,
++					struct ceph_mds_reply_lease *lease,
++					struct ceph_mds_session *session,
++					unsigned long from_time,
++					char *dname, u32 dname_len,
++					struct ceph_vino *pdvino,
++					struct ceph_vino *ptvino)
++
++{
++	struct inode *dir;
++	struct ceph_mds_session *old_lease_session = NULL;
++
++	spin_lock(&dentry->d_lock);
++	/* make sure dentry's name matches target */
++	if (dentry->d_name.len != dname_len ||
++	    memcmp(dentry->d_name.name, dname, dname_len))
++		goto out_unlock;
++
++	dir = d_inode(dentry->d_parent);
++	/* make sure parent matches dvino */
++	if (!ceph_ino_compare(dir, pdvino))
++		goto out_unlock;
++
++	/* make sure dentry's inode matches target. NULL ptvino means that
++	 * we expect a negative dentry */
++	if (ptvino) {
++		if (d_really_is_negative(dentry))
++			goto out_unlock;
++		if (!ceph_ino_compare(d_inode(dentry), ptvino))
++			goto out_unlock;
++	} else {
++		if (d_really_is_positive(dentry))
++			goto out_unlock;
++	}
++
++	__update_dentry_lease(dir, dentry, lease, session,
++			      from_time, &old_lease_session);
+ out_unlock:
+ 	spin_unlock(&dentry->d_lock);
+ 	if (old_lease_session)
+@@ -1160,19 +1195,6 @@ static int splice_dentry(struct dentry **pdn, struct inode *in)
+ 	return 0;
  }
  
- static struct ceph_quotarealm_inode *
-@@ -235,7 +236,8 @@ static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
- 
- 		ci = ceph_inode(in);
- 		has_quota = __ceph_has_any_quota(ci);
--		iput(in);
-+		/* avoid calling iput_final() while holding mdsc->snap_rwsem */
-+		ceph_async_iput(in);
- 
- 		next = realm->parent;
- 		if (has_quota || !next)
-@@ -372,7 +374,8 @@ static bool check_quota_exceeded(struct inode *inode, enum quota_check_op op,
- 			pr_warn("Invalid quota check op (%d)\n", op);
- 			exceeded = true; /* Just break the loop */
- 		}
--		iput(in);
-+		/* avoid calling iput_final() while holding mdsc->snap_rwsem */
-+		ceph_async_iput(in);
- 
- 		next = realm->parent;
- 		if (exceeded || !next)
-diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-index b26e12cd8ec3..72c6c022f02b 100644
---- a/fs/ceph/snap.c
-+++ b/fs/ceph/snap.c
-@@ -648,13 +648,15 @@ static void queue_realm_cap_snaps(struct ceph_snap_realm *realm)
- 		if (!inode)
- 			continue;
- 		spin_unlock(&realm->inodes_with_caps_lock);
--		iput(lastinode);
-+		/* avoid calling iput_final() while holding
-+		 * mdsc->snap_rwsem or in mds dispatch threads */
-+		ceph_async_iput(lastinode);
- 		lastinode = inode;
- 		ceph_queue_cap_snap(ci);
- 		spin_lock(&realm->inodes_with_caps_lock);
- 	}
- 	spin_unlock(&realm->inodes_with_caps_lock);
--	iput(lastinode);
-+	ceph_async_iput(lastinode);
- 
- 	dout("queue_realm_cap_snaps %p %llx done\n", realm, realm->ino);
- }
-@@ -806,7 +808,9 @@ static void flush_snaps(struct ceph_mds_client *mdsc)
- 		ihold(inode);
- 		spin_unlock(&mdsc->snap_flush_lock);
- 		ceph_flush_snaps(ci, &session);
--		iput(inode);
-+		/* avoid calling iput_final() while holding
-+		 * session->s_mutex or in mds dispatch threads */
-+		ceph_async_iput(inode);
- 		spin_lock(&mdsc->snap_flush_lock);
- 	}
- 	spin_unlock(&mdsc->snap_flush_lock);
-@@ -950,12 +954,14 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
- 			ceph_get_snap_realm(mdsc, realm);
- 			ceph_put_snap_realm(mdsc, oldrealm);
- 
--			iput(inode);
-+			/* avoid calling iput_final() while holding
-+			 * mdsc->snap_rwsem or mds in dispatch threads */
-+			ceph_async_iput(inode);
- 			continue;
- 
- skip_inode:
- 			spin_unlock(&ci->i_ceph_lock);
--			iput(inode);
-+			ceph_async_iput(inode);
- 		}
- 
- 		/* we may have taken some of the old realm's children. */
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 234610ce4155..11aeb540b0cf 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -904,9 +904,9 @@ extern int ceph_inode_holds_cap(struct inode *inode, int mask);
- extern bool ceph_inode_set_size(struct inode *inode, loff_t size);
- extern void __ceph_do_pending_vmtruncate(struct inode *inode);
- extern void ceph_queue_vmtruncate(struct inode *inode);
+-static int d_name_cmp(struct dentry *dentry, const char *name, size_t len)
+-{
+-	int ret;
 -
- extern void ceph_queue_invalidate(struct inode *inode);
- extern void ceph_queue_writeback(struct inode *inode);
-+extern void ceph_async_iput(struct inode *inode);
+-	/* take d_lock to ensure dentry->d_name stability */
+-	spin_lock(&dentry->d_lock);
+-	ret = dentry->d_name.len - len;
+-	if (!ret)
+-		ret = memcmp(dentry->d_name.name, name, len);
+-	spin_unlock(&dentry->d_lock);
+-	return ret;
+-}
+-
+ /*
+  * Incorporate results into the local cache.  This is either just
+  * one inode, or a directory, dentry, and possibly linked-to inode (e.g.,
+@@ -1375,10 +1397,9 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 			} else if (have_lease) {
+ 				if (d_unhashed(dn))
+ 					d_add(dn, NULL);
+-				update_dentry_lease(dn, rinfo->dlease,
+-						    session,
+-						    req->r_request_started,
+-						    NULL, &dvino);
++				update_dentry_lease(dir, dn,
++						    rinfo->dlease, session,
++						    req->r_request_started);
+ 			}
+ 			goto done;
+ 		}
+@@ -1400,11 +1421,9 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 		}
  
- extern int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
- 			     int mask, bool force);
+ 		if (have_lease) {
+-			tvino.ino = le64_to_cpu(rinfo->targeti.in->ino);
+-			tvino.snap = le64_to_cpu(rinfo->targeti.in->snapid);
+-			update_dentry_lease(dn, rinfo->dlease, session,
+-					    req->r_request_started,
+-					    &tvino, &dvino);
++			update_dentry_lease(dir, dn,
++					    rinfo->dlease, session,
++					    req->r_request_started);
+ 		}
+ 		dout(" final dn %p\n", dn);
+ 	} else if ((req->r_op == CEPH_MDS_OP_LOOKUPSNAP ||
+@@ -1422,27 +1441,20 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 		err = splice_dentry(&req->r_dentry, in);
+ 		if (err < 0)
+ 			goto done;
+-	} else if (rinfo->head->is_dentry &&
+-		   !d_name_cmp(req->r_dentry, rinfo->dname, rinfo->dname_len)) {
++	} else if (rinfo->head->is_dentry && req->r_dentry) {
++		/* parent inode is not locked, be carefull */
+ 		struct ceph_vino *ptvino = NULL;
+-
+-		if ((le32_to_cpu(rinfo->diri.in->cap.caps) & CEPH_CAP_FILE_SHARED) ||
+-		    le32_to_cpu(rinfo->dlease->duration_ms)) {
+-			dvino.ino = le64_to_cpu(rinfo->diri.in->ino);
+-			dvino.snap = le64_to_cpu(rinfo->diri.in->snapid);
+-
+-			if (rinfo->head->is_target) {
+-				tvino.ino = le64_to_cpu(rinfo->targeti.in->ino);
+-				tvino.snap = le64_to_cpu(rinfo->targeti.in->snapid);
+-				ptvino = &tvino;
+-			}
+-
+-			update_dentry_lease(req->r_dentry, rinfo->dlease,
+-				session, req->r_request_started, ptvino,
+-				&dvino);
+-		} else {
+-			dout("%s: no dentry lease or dir cap\n", __func__);
++		dvino.ino = le64_to_cpu(rinfo->diri.in->ino);
++		dvino.snap = le64_to_cpu(rinfo->diri.in->snapid);
++		if (rinfo->head->is_target) {
++			tvino.ino = le64_to_cpu(rinfo->targeti.in->ino);
++			tvino.snap = le64_to_cpu(rinfo->targeti.in->snapid);
++			ptvino = &tvino;
+ 		}
++		update_dentry_lease_careful(req->r_dentry, rinfo->dlease,
++					    session, req->r_request_started,
++					    rinfo->dname, rinfo->dname_len,
++					    &dvino, ptvino);
+ 	}
+ done:
+ 	dout("fill_trace done err=%d\n", err);
+@@ -1604,7 +1616,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+ 	/* FIXME: release caps/leases if error occurs */
+ 	for (i = 0; i < rinfo->dir_nr; i++) {
+ 		struct ceph_mds_reply_dir_entry *rde = rinfo->dir_entries + i;
+-		struct ceph_vino tvino, dvino;
++		struct ceph_vino tvino;
+ 
+ 		dname.name = rde->name;
+ 		dname.len = rde->name_len;
+@@ -1705,9 +1717,9 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+ 
+ 		ceph_dentry(dn)->offset = rde->offset;
+ 
+-		dvino = ceph_vino(d_inode(parent));
+-		update_dentry_lease(dn, rde->lease, req->r_session,
+-				    req->r_request_started, &tvino, &dvino);
++		update_dentry_lease(d_inode(parent), dn,
++				    rde->lease, req->r_session,
++				    req->r_request_started);
+ 
+ 		if (err == 0 && skipped == 0 && cache_ctl.index >= 0) {
+ 			ret = fill_readdir_cache(d_inode(parent), dn,
 -- 
 2.17.2
 
