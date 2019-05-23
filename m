@@ -2,241 +2,607 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0BF527550
-	for <lists+ceph-devel@lfdr.de>; Thu, 23 May 2019 07:08:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4322227605
+	for <lists+ceph-devel@lfdr.de>; Thu, 23 May 2019 08:34:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbfEWFII (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 23 May 2019 01:08:08 -0400
-Received: from mga11.intel.com ([192.55.52.93]:1957 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725786AbfEWFIH (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 23 May 2019 01:08:07 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 May 2019 22:08:07 -0700
-X-ExtLoop1: 1
-Received: from jerryopenix.sh.intel.com (HELO jerryopenix) ([10.239.158.171])
-  by fmsmga005.fm.intel.com with ESMTP; 22 May 2019 22:08:04 -0700
-Date:   Thu, 23 May 2019 13:07:00 +0800
-From:   "Liu, Changcheng" <changcheng.liu@intel.com>
-To:     Roman Penyaev <rpenyaev@suse.de>
-Cc:     ceph-devel@vger.kernel.org, ceph-devel-owner@vger.kernel.org
-Subject: Re: msg/async/rdma: out of buffer/memory
-Message-ID: <20190523050700.GA5492@jerryopenix>
-References: <20190521095041.GA17062@jerryopenix>
- <244898c96f522d99a180a7477b75a5bc@suse.de>
+        id S1727032AbfEWGeP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 23 May 2019 02:34:15 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33260 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbfEWGeO (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 23 May 2019 02:34:14 -0400
+Received: by mail-lf1-f65.google.com with SMTP id x132so3536363lfd.0;
+        Wed, 22 May 2019 23:34:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=Swt/tviFVrdldllTFG/toozpt7fqGqxTKnQaLDortqI=;
+        b=lO0JJAIWi1WnPSQPaPIuid2u68WP+WhUJuNyCvZI79YGdtuRiQRPCcf0GktLHTa1kN
+         /dK8euMc1YrZ+zOrqb8JhNfgaH8lUiQG3MhaXxE1ColBWerBKteh71FT5uA9eQ9ZglWs
+         SbzCudHbL1KrQ/HHDR6IgIltiocI+RRWdgCxZXN0hGVndwR1+9FuErrvhUOlYNeDDOPz
+         2yuan168Lv8vQQVfVYg53FZW3lXRuq/4ogJfzLcIA4W93qDXZaexiQxIoXiorqNVkLi+
+         RY+MOY1+B49KX7XO1loYVWXHUFGSAFKxtBLwzgWcWWAr4bTFdB9xIR5TvFHOlDFSUP2Z
+         klJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=Swt/tviFVrdldllTFG/toozpt7fqGqxTKnQaLDortqI=;
+        b=Syn7/gpEv88kh9JDBUBAAP6+1uWEkStvf/ZyvLvCIqLEdl5lPBYKemc/u19/cvtmiq
+         HCRYlXFUBe5aZl5FeD2QHAP+X4qg2AFPIS8/shXrAMS/1cGZI5dXBPt74iS0Aw87bVAK
+         05dG78de3RW2/cyTy/FQ4Ce3kSqx+hUvKgp3f9fYCWrtFxoQOyhpLwBPI/N7cWigI9EP
+         NxauEsPx/J6sVBUvGglBN90balbUXgnSP5EOI1lJL7F4l/WlpIoMKnsh4ds4Irhmg+RP
+         81yRTKmO2008ZAeEI8i41re31xN13/KH8G68X8S4FQuI4hpt+y5uyWQi0/4CQLAPw5fy
+         SZdg==
+X-Gm-Message-State: APjAAAVrcCSPB4lYld3v1XfEnBixCJto2Knhd5jqkTU0v8YTF1DknEQH
+        8xX7xi3YPWx77lCLqcUszustetJhCsDLnaMegL1/0g==
+X-Google-Smtp-Source: APXvYqyzpVdikFV6gbLoyfHsrIB9h6AoHZWikoBMYQd/PJBtmbYKadWdBCKxTKWoZc2Bd1oNs6ZZtf/rI+ew5GtIGlU=
+X-Received: by 2002:ac2:5a1b:: with SMTP id q27mr41334833lfn.63.1558593251773;
+ Wed, 22 May 2019 23:34:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <244898c96f522d99a180a7477b75a5bc@suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190430120534.5231-1-xxhdx1985126@gmail.com>
+In-Reply-To: <20190430120534.5231-1-xxhdx1985126@gmail.com>
+From:   Xuehan Xu <xxhdx1985126@gmail.com>
+Date:   Thu, 23 May 2019 14:33:46 +0800
+Message-ID: <CAJACTuczjByPgDmBb1vgPdX5U0LWhygVNzRS+VPXt3ZSEo+eTQ@mail.gmail.com>
+Subject: Fwd: [PATCH 1/2] cgroup: add a new group controller for cephfs
+To:     ceph-devel <ceph-devel@vger.kernel.org>, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Roman,
-   I'll check it and feedback to you later. (Something wrong with
-   servers, I have to fix it first)
+From: Xuehan Xu <xuxuehan@360.cn>
+cgroup: add a new cgroup controller dedicated to cephfs client ops limiting
 
-B.R.
-Changcheng
+this controller is supposed to limit the metadata
+ops or data ops issued to the underlying cluster.
 
-On 12:04 Wed 22 May, Roman Penyaev wrote:
-> On 2019-05-21 11:50, Liu, Changcheng wrote:
-> > Hi all,
-> >     I'm using msg/async/rdma/iWARP on ceph master branch under
-> > vstart.sh environment.
-> > 
-> >     It hit "out of buffer/memory" frequently and hit segmental fault
-> > sometimes.
-> >     Does anyone know are there some configuration need to be tuned to
-> > make it work?
-> 
-> I suppose 'ms_async_rdma_receive_buffers = 32768'.
-> 
-> Looks like rx buffers leak, i.e. when read request is completed
-> chunk should be posted back to the pool, but seems that does not
-> happen.  If you hit that often - can you debug and simply printf()
-> the memory manager counter of current allocated chunks from pool?
-> I suppose you should see counter growing.
-> 
-> --
-> Roman
-> 
-> > 
-> > 	1. Log:
-> >          -49> 2019-05-21 17:37:50.729 7f843334a700 -1 Infiniband
-> > post_chunks_to_rq WARNING: out of memory. Requested 1 rx buffers. Got
-> > 0
-> >          -48> 2019-05-21 17:37:50.729 7f843334a700 -1 Infiniband
-> > can_alloc WARNING: OUT OF RX BUFFERS: allocated: 32768 requested: 4
-> > limit: 32768
-> >          -47> 2019-05-21 17:37:50.729 7f843334a700 -1 Infiniband
-> > post_chunks_to_rq WARNING: out of memory. Requested 1 rx buffers. Got
-> > 0
-> >          -46> 2019-05-21 17:37:50.729 7f84381e5700 -1 Infiniband
-> > can_alloc WARNING: OUT OF RX BUFFERS: allocated: 32768 requested: 4
-> > limit: 32768
-> >          -45> 2019-05-21 17:37:50.729 7f84381e5700 -1 Infiniband
-> > post_chunks_to_rq WARNING: out of memory. Requested 3 rx buffers. Got
-> > 1
-> >          -1> 2019-05-21 17:37:53.269 7f84381e5700 -1
-> > /home/nstcc1/ssg_otc/ceph_debian/ceph/src/msg/async/rdma/Infiniband.cc:
-> >               In function 'int Infiniband::post_chunks_to_rq(int,
-> > ibv_qp*)' thread 7f84381e5700 time 2019-05-21 17:37:53.241614
-> > 
-> > /home/nstcc1/ssg_otc/ceph_debian/ceph/src/msg/async/rdma/Infiniband.cc:
-> > 1056: FAILED ceph_assert(ret == 0)
-> >          ceph version v15.0.0-1316-gde22905799
-> > (de2290579985e48fb61f6ab2f4f2245e1a699bf4) octopus (dev)
-> >          1: (ceph::__ceph_assert_fail(char const*, char const*, int,
-> > char const*)+0x1aa) [0x7f843f8dbd2a]
-> >          2: (()+0x13a1fac) [0x7f843f8dbfac]
-> >          3: (Infiniband::post_chunks_to_rq(int, ibv_qp*)+0x4b4)
-> > [0x7f843fc623e4]
-> >          4: (RDMADispatcher::post_chunks_to_rq(int, ibv_qp*)+0x62)
-> > [0x7f843fc76e6a]
-> >          5: (RDMAConnectedSocketImpl::update_post_backlog()+0x57)
-> > [0x7f843fc6c395]
-> >          6: (RDMAConnectedSocketImpl::read(char*, unsigned
-> > long)+0xc42) [0x7f843fc69564]
-> >          7: (ConnectedSocket::read(char*, unsigned long)+0x37)
-> > [0x7f843fbc1549]
-> > 
-> >     2. ceph config:
-> >         diff --git a/src/vstart.sh b/src/vstart.sh
-> >         index eb17208b82..b70c78abfd 100755
-> >         --- a/src/vstart.sh
-> >         +++ b/src/vstart.sh
-> >         @@ -547,6 +547,14 @@ ms bind msgr1 = true
-> >                 osd_crush_chooseleaf_type = 0
-> >                 debug asok assert abort = true
-> >          $msgr_conf
-> >         +
-> >         +;set type & device & protocal iwarp(iWARP/RoCEv2) based on
-> > rdma_cm instead of using GID
-> >         +    ms_type = async+rdma
-> >         +    ms_async_rdma_device_name = itest0
-> >         +    ms_async_rdma_type = iwarp
-> >         +    ms_async_rdma_support_srq = false
-> >         +    ms_async_rdma_cm = true
-> >         +
-> >          $extra_conf
-> >          EOF
-> >                 if [ "$lockdep" -eq 1 ] ; then
-> > 
-> >      3. vstart.sh command:
-> >        OSD=3 MON=1 MDS=0 RGW=0 MGR=1 ../src/vstart.sh --msgr1
-> > --nodaemon -i 192.0.2.97 -n -X -d 2>&1 | tee check_log
-> >        #192.0.2.97 is itest0's NIC ip address
-> > 
-> >      4. Part of default configuration
-> >         bin/ceph-conf -D | grep ms_async
-> >           ms_async_max_op_threads = 5
-> >           ms_async_op_threads = 3
-> >           ms_async_rdma_buffer_size = 131072
-> >           ms_async_rdma_cm = true
-> >           ms_async_rdma_device_name = itest0
-> >           ms_async_rdma_dscp = 96
-> >           ms_async_rdma_enable_hugepage = false
-> >           ms_async_rdma_local_gid =
-> >           ms_async_rdma_polling_us = 1000
-> >           ms_async_rdma_port_num = 1
-> >           ms_async_rdma_receive_buffers = 32768
-> >           ms_async_rdma_receive_queue_len = 4096
-> >           ms_async_rdma_roce_ver = 1
-> >           ms_async_rdma_send_buffers = 1024
-> >           ms_async_rdma_sl = 3
-> >           ms_async_rdma_support_srq = false
-> >           ms_async_rdma_type = iwarp
-> > 
-> >      5. itest0 device's attr
-> >          hca_id: itest0
-> >              transport:          iWARP (1)
-> >              fw_ver:             29.0
-> >              node_guid:          6805:ca9d:3898:0000
-> >              sys_image_guid:         6805:ca9d:3898:0000
-> >              hw_ver:             0x0
-> >              board_id:           ITEST Board ID
-> >              phys_port_cnt:          1
-> >              max_mr_size:            0x7fffffff
-> >              page_size_cap:          0x0
-> >              max_qp:             16384
-> >              max_qp_wr:          4095
-> >              device_cap_flags:       0x00228000
-> >                              MEM_WINDOW
-> >                              MEM_MGT_EXTENSIONS
-> >                              Unknown flags: 0x8000
-> >              max_sge:            13
-> >              max_sge_rd:         13
-> >              max_cq:             32768
-> >              max_cqe:            1048575
-> >              max_mr:             4194303
-> >              max_pd:             262144
-> >              max_qp_rd_atom:         127
-> >              max_ee_rd_atom:         0
-> >              max_res_rd_atom:        0
-> >              max_qp_init_rd_atom:        127
-> >              max_ee_init_rd_atom:        0
-> >              atomic_cap:         ATOMIC_NONE (0)
-> >              max_ee:             0
-> >              max_rdd:            0
-> >              max_mw:             4194303
-> >              max_raw_ipv6_qp:        0
-> >              max_raw_ethy_qp:        0
-> >              max_mcast_grp:          16384
-> >              max_mcast_qp_attach:        8
-> >              max_total_mcast_qp_attach:  131072
-> >              max_ah:             65536
-> >              max_fmr:            0
-> >              max_srq:            0
-> >              max_pkeys:          0
-> >              local_ca_ack_delay:     0
-> >              general_odp_caps:
-> >              rc_odp_caps:
-> >                              NO SUPPORT
-> >              uc_odp_caps:
-> >                              NO SUPPORT
-> >              ud_odp_caps:
-> >                              NO SUPPORT
-> >              completion_timestamp_mask not supported
-> >              core clock not supported
-> >              device_cap_flags_ex:        0x0
-> >              tso_caps:
-> >              max_tso:            0
-> >              rss_caps:
-> >                  max_rwq_indirection_tables:         0
-> >                  max_rwq_indirection_table_size:     0
-> >                  rx_hash_function:                   0x0
-> >                  rx_hash_fields_mask:                0x0
-> >              max_wq_type_rq:         0
-> >              packet_pacing_caps:
-> >                  qp_rate_limit_min:  0kbps
-> >                  qp_rate_limit_max:  0kbps
-> >              tag matching not supported
-> >                  port:   1
-> >                      state:          PORT_ACTIVE (4)
-> >                      max_mtu:        4096 (5)
-> >                      active_mtu:     1024 (3)
-> >                      sm_lid:         0
-> >                      port_lid:       1
-> >                      port_lmc:       0x00
-> >                      link_layer:     Ethernet
-> >                      max_msg_sz:     0x7fffffff
-> >                      port_cap_flags:     0x00050000
-> >                      port_cap_flags2:    0x0000
-> >                      max_vl_num:     invalid value (0)
-> >                      bad_pkey_cntr:      0x0
-> >                      qkey_viol_cntr:     0x0
-> >                      sm_sl:          0
-> >                      pkey_tbl_len:       1
-> >                      gid_tbl_len:        1
-> >                      subnet_timeout:     0
-> >                      init_type_reply:    0
-> > 
-> > B.R.
-> > Changcheng
-> 
+Signed-off-by: Xuehan Xu <xuxuehan@360.cn>
+---
+ include/linux/cgroup_cephfs.h |  57 +++++
+ include/linux/cgroup_subsys.h |   4 +
+ init/Kconfig                  |   5 +
+ kernel/cgroup/Makefile        |   1 +
+ kernel/cgroup/cephfs.c        | 398 ++++++++++++++++++++++++++++++++++
+ 5 files changed, 465 insertions(+)
+ create mode 100644 include/linux/cgroup_cephfs.h
+ create mode 100644 kernel/cgroup/cephfs.c
+
+diff --git a/include/linux/cgroup_cephfs.h b/include/linux/cgroup_cephfs.h
+new file mode 100644
+index 000000000000..91809862b8f8
+--- /dev/null
++++ b/include/linux/cgroup_cephfs.h
+@@ -0,0 +1,57 @@
++#ifndef _CEPHFS_CGROUP_H
++#define _CEPHFS_CGROUP_H
++
++#include <linux/cgroup.h>
++
++#define META_OPS_IOPS_IDX 0
++#define DATA_OPS_IOPS_IDX 0
++#define DATA_OPS_BAND_IDX 1
++#define META_OPS_TB_NUM 1
++#define DATA_OPS_TB_NUM 2
++
++/*
++ * token bucket throttle
++ */
++struct token_bucket {
++    u64 remain;
++    u64 max;
++    u64 target_throughput;
++};
++
++struct token_bucket_throttle {
++    struct token_bucket* tb;
++    u64 tick_interval;
++    int tb_num;
++    struct list_head reqs_blocked;
++    struct mutex bucket_lock;
++    struct delayed_work tick_work;
++    unsigned long tbt_timeout;
++};
++
++struct queue_item {
++    struct list_head token_bucket_throttle_item;
++    u64* tokens_requested;
++    int tb_item_num;
++    struct completion throttled;
++    unsigned long tbt_timeout;
++};
++
++struct cephfscg {
++    struct cgroup_subsys_state  css;
++    spinlock_t          lock;
++
++    struct token_bucket_throttle meta_ops_throttle;
++    struct token_bucket_throttle data_ops_throttle;
++};
++
++extern void schedule_token_bucket_throttle_tick(struct
+token_bucket_throttle* ptbt, u64 tick_interval);
++
++extern void token_bucket_throttle_tick(struct work_struct* work);
++
++extern int get_token_bucket_throttle(struct token_bucket_throttle*
+ptbt, struct queue_item* req);
++
++extern int queue_item_init(struct queue_item* qitem, struct
+token_bucket_throttle* ptbt, int tb_item_num);
++
++extern int token_bucket_throttle_init(struct token_bucket_throttle*
+ptbt, int token_bucket_num);
++
++#endif /*_CEPHFS_CGROUP_H*/
+diff --git a/include/linux/cgroup_subsys.h b/include/linux/cgroup_subsys.h
+index acb77dcff3b4..577a276570a5 100644
+--- a/include/linux/cgroup_subsys.h
++++ b/include/linux/cgroup_subsys.h
+@@ -61,6 +61,10 @@ SUBSYS(pids)
+ SUBSYS(rdma)
+ #endif
+
++#if IS_ENABLED(CONFIG_CGROUP_CEPH_FS)
++SUBSYS(cephfs)
++#endif
++
+ /*
+  * The following subsystems are not supported on the default hierarchy.
+  */
+diff --git a/init/Kconfig b/init/Kconfig
+index 4592bf7997c0..e22f3aea9e23 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -867,6 +867,11 @@ config CGROUP_RDMA
+          Attaching processes with active RDMA resources to the cgroup
+          hierarchy is allowed even if can cross the hierarchy's limit.
+
++config CGROUP_CEPH_FS
++    bool "cephfs controller"
++    help
++        cephfs cgroup controller
++
+ config CGROUP_FREEZER
+        bool "Freezer controller"
+        help
+diff --git a/kernel/cgroup/Makefile b/kernel/cgroup/Makefile
+index bfcdae896122..aaf836181f1a 100644
+--- a/kernel/cgroup/Makefile
++++ b/kernel/cgroup/Makefile
+@@ -6,3 +6,4 @@ obj-$(CONFIG_CGROUP_PIDS) += pids.o
+ obj-$(CONFIG_CGROUP_RDMA) += rdma.o
+ obj-$(CONFIG_CPUSETS) += cpuset.o
+ obj-$(CONFIG_CGROUP_DEBUG) += debug.o
++obj-$(CONFIG_CGROUP_CEPH_FS) += cephfs.o
+diff --git a/kernel/cgroup/cephfs.c b/kernel/cgroup/cephfs.c
+new file mode 100644
+index 000000000000..65b9e9618a5d
+--- /dev/null
++++ b/kernel/cgroup/cephfs.c
+@@ -0,0 +1,398 @@
++#include <linux/cgroup_cephfs.h>
++#include <linux/slab.h>
++
++struct cephfscg cephfscg_root;
++
++static void put_token(struct token_bucket_throttle* ptbt, u64 tick_interval)
++{
++    struct token_bucket* ptb = NULL;
++    u64 tokens_to_put = 0;
++    int i = 0;
++
++    for (i = 0; i < ptbt->tb_num; i++) {
++        ptb = &ptbt->tb[i];
++
++        if (!ptb->max)
++            continue;
++
++        tokens_to_put = ptb->target_throughput * tick_interval / HZ;
++
++        if (ptb->remain + tokens_to_put >= ptb->max)
++            ptb->remain = ptb->max;
++        else
++            ptb->remain += tokens_to_put;
++        pr_debug("%s: put_token: token bucket remain: %lld\n",
+__func__, ptb->remain);
++    }
++}
++
++static bool should_wait(struct token_bucket_throttle* ptbt, struct
+queue_item* qitem)
++{
++    struct token_bucket* ptb = NULL;
++    int i = 0;
++
++    BUG_ON(ptbt->tb_num != qitem->tb_item_num);
++    for (i = 0; i < ptbt->tb_num; i++) {
++        ptb = &ptbt->tb[i];
++
++        if (!ptb->max)
++            continue;
++
++        if (ptb->remain < qitem->tokens_requested[i])
++            return true;
++    }
++    return false;
++}
++
++static void get_token(struct token_bucket_throttle* ptbt, struct
+queue_item* qitem)
++{
++    struct token_bucket* ptb = NULL;
++    int i = 0;
++    BUG_ON(should_wait(ptbt, qitem));
++
++    for (i = 0; i < ptbt->tb_num; i++) {
++        ptb = &ptbt->tb[i];
++        if (!ptb->max)
++            continue;
++        ptb->remain -= qitem->tokens_requested[i];
++    }
++}
++
++void schedule_token_bucket_throttle_tick(struct
+token_bucket_throttle* ptbt, u64 tick_interval)
++{
++    if (tick_interval)
++        schedule_delayed_work(&ptbt->tick_work, tick_interval);
++}
++EXPORT_SYMBOL(schedule_token_bucket_throttle_tick);
++
++void token_bucket_throttle_tick(struct work_struct* work)
++{
++    struct token_bucket_throttle* ptbt =
++        container_of(work, struct token_bucket_throttle, tick_work.work);
++    struct queue_item* req = NULL, *tmp = NULL;
++    LIST_HEAD(reqs_to_go);
++    u64 tick_interval = ptbt->tick_interval;
++
++    mutex_lock(&ptbt->bucket_lock);
++    put_token(ptbt, tick_interval);
++    if (!tick_interval)
++        pr_debug("%s: tick_interval set to 0, turning off the
+throttle, item: %p\n", __func__, req);
++
++    list_for_each_entry_safe(req, tmp, &ptbt->reqs_blocked,
+token_bucket_throttle_item) {
++        pr_debug("%s: waiting item: %p\n", __func__, req);
++        if (tick_interval) {
++            if (should_wait(ptbt, req))
++                break;
++            get_token(ptbt, req);
++        }
++        list_del(&req->token_bucket_throttle_item);
++        list_add_tail(&req->token_bucket_throttle_item, &reqs_to_go);
++        pr_debug("%s: tokens got for req: %p\n", __func__, req);
++    }
++    mutex_unlock(&ptbt->bucket_lock);
++
++    list_for_each_entry_safe(req, tmp, &reqs_to_go,
+token_bucket_throttle_item) {
++        pr_debug("%s: notifying req: %p, list head: %p\n", __func__,
+req, &reqs_to_go);
++        complete_all(&req->throttled);
++        list_del(&req->token_bucket_throttle_item);
++    }
++
++    if (tick_interval)
++        schedule_token_bucket_throttle_tick(ptbt, tick_interval);
++}
++EXPORT_SYMBOL(token_bucket_throttle_tick);
++
++int get_token_bucket_throttle(struct token_bucket_throttle* ptbt,
+struct queue_item* req)
++{
++    int ret = 0;
++    long timeleft = 0;
++
++    mutex_lock(&ptbt->bucket_lock);
++    if (should_wait(ptbt, req)) {
++        pr_debug("%s: wait for tokens, req: %p\n", __func__, req);
++        list_add_tail(&req->token_bucket_throttle_item, &ptbt->reqs_blocked);
++        mutex_unlock(&ptbt->bucket_lock);
++        timeleft =
+wait_for_completion_killable_timeout(&req->throttled, req->tbt_timeout
+?: MAX_SCHEDULE_TIMEOUT);
++        if (timeleft > 0)
++            ret = 0;
++        else if (!timeleft)
++            ret = -EIO; /* timed out */
++        else {
++            /* killed */
++            pr_debug("%s: killed, req: %p\n", __func__, req);
++            mutex_lock(&ptbt->bucket_lock);
++            list_del(&req->token_bucket_throttle_item);
++            mutex_unlock(&ptbt->bucket_lock);
++            ret = timeleft;
++        }
++    } else {
++        pr_debug("%s: no need to wait for tokens, going ahead, req:
+%p\n", __func__, req);
++        get_token(ptbt, req);
++        mutex_unlock(&ptbt->bucket_lock);
++    }
++    return ret;
++}
++EXPORT_SYMBOL(get_token_bucket_throttle);
++
++int queue_item_init(struct queue_item* qitem, struct
+token_bucket_throttle* ptbt, int tb_item_num)
++{
++    qitem->tokens_requested =
+kzalloc(sizeof(*qitem->tokens_requested) * tb_item_num, GFP_KERNEL);
++    if (!qitem->tokens_requested)
++        return -ENOMEM;
++
++    qitem->tb_item_num = tb_item_num;
++    INIT_LIST_HEAD(&qitem->token_bucket_throttle_item);
++    init_completion(&qitem->throttled);
++    qitem->tbt_timeout = ptbt->tbt_timeout;
++
++    return 0;
++}
++EXPORT_SYMBOL(queue_item_init);
++
++int token_bucket_throttle_init(struct token_bucket_throttle* ptbt,
++        int token_bucket_num)
++{
++    int i = 0;
++
++    INIT_LIST_HEAD(&ptbt->reqs_blocked);
++    mutex_init(&ptbt->bucket_lock);
++    ptbt->tb_num = token_bucket_num;
++    ptbt->tb = kzalloc(sizeof(*ptbt->tb) * ptbt->tb_num, GFP_KERNEL);
++    if (!ptbt->tb) {
++        return -ENOMEM;
++    }
++
++    for (i = 0; i < ptbt->tb_num; i++) {
++        ptbt->tb[i].target_throughput = 0;
++        ptbt->tb[i].max = 0;
++    }
++    ptbt->tick_interval = 0;
++    ptbt->tbt_timeout = 0;
++    INIT_DELAYED_WORK(&ptbt->tick_work, token_bucket_throttle_tick);
++
++    return 0;
++}
++EXPORT_SYMBOL(token_bucket_throttle_init);
++
++static int set_throttle_params(struct token_bucket_throttle* ptbt,
+char* param_list)
++{
++    char* options = strstrip(param_list);
++    char* val = NULL;
++    int res = 0;
++    unsigned long interval = 0, timeout = 0, last_interval =
+ptbt->tick_interval;
++
++    val = strsep(&options, ",");
++    if (!val)
++        return -EINVAL;
++
++    res = kstrtol(val, 0, &interval);
++    if (res)
++        return res;
++
++    val = strsep(&options, ",");
++    if (!val)
++        return -EINVAL;
++
++    res = kstrtol(val, 0, &timeout);
++    if (res)
++        return res;
++
++    if (last_interval && !interval) {
++        int i = 0;
++
++        for (i = 0; i<ptbt->tb_num; i++) {
++            if (ptbt->tb[i].max) {
++                /* all token bucket must be unset
++                 * before turning off the throttle */
++                return -EINVAL;
++            }
++        }
++    }
++    ptbt->tick_interval = msecs_to_jiffies(interval);
++    ptbt->tbt_timeout = timeout;
++
++    if (ptbt->tick_interval && !last_interval) {
++        schedule_token_bucket_throttle_tick(ptbt, ptbt->tick_interval);
++    }
++
++    return 0;
++}
++
++static int set_tb_params(struct token_bucket_throttle* ptbt, int
+tb_idx, char* param_list)
++{
++    char* options = strstrip(param_list);
++    char* val = NULL;
++    int res = 0;
++    unsigned long throughput = 0, burst = 0;
++
++    val = strsep(&options, ",");
++    if (!val)
++        return -EINVAL;
++
++    res = kstrtol(val, 0, &throughput);
++    if (res)
++        return res;
++
++    val = strsep(&options, ",");
++    if (!val)
++        return -EINVAL;
++
++    res = kstrtol(val, 0, &burst);
++    if (res)
++        return res;
++
++    if (!(throughput && burst) && (throughput || burst)) {
++        /* either both or none of throughput and burst are set*/
++        return -EINVAL;
++    }
++    if (throughput && !ptbt->tick_interval) {
++        /* all token bucket must be unset
++         * before turning off the throttle */
++        return -EINVAL;
++    }
++    ptbt->tb[tb_idx].target_throughput = throughput;
++    ptbt->tb[tb_idx].max = burst;
++
++    return 0;
++}
++
++static ssize_t cephfscg_set_throttle_params(struct kernfs_open_file *of,
++        char *buf, size_t nbytes, loff_t off)
++{
++    const char *throttle_name;
++    int ret = 0;
++    struct cephfscg* cephfscg_p =
++        container_of(seq_css(of->seq_file), struct cephfscg, css);
++
++    throttle_name = of->kn->name;
++    if (!strcmp(throttle_name, "cephfs.meta_ops")) {
++        ret = set_throttle_params(&cephfscg_p->meta_ops_throttle, buf);
++    } else if (!strcmp(throttle_name, "cephfs.data_ops")) {
++        ret = set_throttle_params(&cephfscg_p->data_ops_throttle, buf);
++    } else if (!strcmp(throttle_name, "cephfs.meta_ops.iops")) {
++        ret = set_tb_params(&cephfscg_p->meta_ops_throttle,
+META_OPS_IOPS_IDX, buf);
++    } else if (!strcmp(throttle_name, "cephfs.data_ops.iops")) {
++        ret = set_tb_params(&cephfscg_p->data_ops_throttle,
+DATA_OPS_IOPS_IDX, buf);
++    } else if (!strcmp(throttle_name, "cephfs.data_ops.band")) {
++        ret = set_tb_params(&cephfscg_p->data_ops_throttle,
+DATA_OPS_BAND_IDX, buf);
++    }
++
++    return ret ?: nbytes;
++}
++
++static int cephfscg_throttle_params_read(struct seq_file *sf, void *v)
++{
++    const char *throttle_name;
++    struct cephfscg* cephfscg_p =
++        container_of(seq_css(sf), struct cephfscg, css);
++
++    throttle_name = ((struct kernfs_open_file*)sf->private)->kn->name;
++    if (!strcmp(throttle_name, "cephfs.meta_ops")) {
++        seq_printf(sf, "%llu,%lu\n",
++                cephfscg_p->meta_ops_throttle.tick_interval,
++                cephfscg_p->meta_ops_throttle.tbt_timeout);
++    } else if (!strcmp(throttle_name, "cephfs.data_ops")) {
++        seq_printf(sf, "%llu,%lu\n",
++                cephfscg_p->data_ops_throttle.tick_interval,
++                cephfscg_p->data_ops_throttle.tbt_timeout);
++    } else if (!strcmp(throttle_name, "cephfs.data_ops.iops")) {
++        seq_printf(sf, "%llu,%llu\n",
++
+cephfscg_p->data_ops_throttle.tb[DATA_OPS_IOPS_IDX].target_throughput,
++                cephfscg_p->data_ops_throttle.tb[DATA_OPS_IOPS_IDX].max);
++    } else if (!strcmp(throttle_name, "cephfs.data_ops.band")) {
++        seq_printf(sf, "%llu,%llu\n",
++
+cephfscg_p->data_ops_throttle.tb[DATA_OPS_BAND_IDX].target_throughput,
++                cephfscg_p->data_ops_throttle.tb[DATA_OPS_BAND_IDX].max);
++    } else if (!strcmp(throttle_name, "cephfs.meta_ops.iops")) {
++        seq_printf(sf, "%llu,%llu\n",
++
+cephfscg_p->meta_ops_throttle.tb[META_OPS_IOPS_IDX].target_throughput,
++                cephfscg_p->meta_ops_throttle.tb[META_OPS_IOPS_IDX].max);
++    }
++
++    return 0;
++}
++
++static struct cftype cephfscg_files[] = {
++    {
++        .name = "meta_ops.iops",
++        .write = cephfscg_set_throttle_params,
++        .seq_show = cephfscg_throttle_params_read,
++    },
++    {
++        .name = "meta_ops",
++        .write = cephfscg_set_throttle_params,
++        .seq_show = cephfscg_throttle_params_read,
++    },
++    {
++        .name = "data_ops.iops",
++        .write = cephfscg_set_throttle_params,
++        .seq_show = cephfscg_throttle_params_read,
++    },
++    {
++        .name = "data_ops.band",
++        .write = cephfscg_set_throttle_params,
++        .seq_show = cephfscg_throttle_params_read,
++    },
++    {
++        .name = "data_ops",
++        .write = cephfscg_set_throttle_params,
++        .seq_show = cephfscg_throttle_params_read,
++    },
++    { }
++};
++
++static struct cgroup_subsys_state *
++cephfscg_css_alloc(struct cgroup_subsys_state *parent_css) {
++
++    struct cephfscg* cephfscg_p = NULL;
++    struct cgroup_subsys_state *ret = NULL;
++    int r = 0;
++
++    if (!parent_css) {
++        cephfscg_p = &cephfscg_root;
++    } else {
++        cephfscg_p = kzalloc(sizeof(*cephfscg_p), GFP_KERNEL);
++        if (!cephfscg_p) {
++            ret = ERR_PTR(-ENOMEM);
++            goto err;
++        }
++    }
++
++    spin_lock_init(&cephfscg_p->lock);
++
++    r = token_bucket_throttle_init(&cephfscg_p->meta_ops_throttle, 1);
++    if (r) {
++        ret = ERR_PTR(r);
++        goto err;
++    }
++
++    r = token_bucket_throttle_init(&cephfscg_p->data_ops_throttle, 2);
++    if (r) {
++        ret = ERR_PTR(r);
++        goto err;
++    }
++
++    return &cephfscg_p->css;
++err:
++    return ret;
++}
++
++static void cephfscg_css_free(struct cgroup_subsys_state *css) {
++    struct cephfscg* cephfscg_p =
++        css ? container_of(css, struct cephfscg, css) : NULL;
++
++    cancel_delayed_work_sync(&cephfscg_p->meta_ops_throttle.tick_work);
++    cancel_delayed_work_sync(&cephfscg_p->data_ops_throttle.tick_work);
++
++    kfree(cephfscg_p->meta_ops_throttle.tb);
++    kfree(cephfscg_p->data_ops_throttle.tb);
++
++    kfree(cephfscg_p);
++}
++
++struct cgroup_subsys cephfs_cgrp_subsys = {
++    .css_alloc = cephfscg_css_alloc,
++    .css_free = cephfscg_css_free,
++    .dfl_cftypes = cephfscg_files,
++    .legacy_cftypes = cephfscg_files,
++};
++EXPORT_SYMBOL_GPL(cephfs_cgrp_subsys);
+--
+2.20.1
