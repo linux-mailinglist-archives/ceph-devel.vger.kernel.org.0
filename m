@@ -2,101 +2,80 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C63929E26
-	for <lists+ceph-devel@lfdr.de>; Fri, 24 May 2019 20:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26D482A098
+	for <lists+ceph-devel@lfdr.de>; Fri, 24 May 2019 23:44:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732071AbfEXSe6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 24 May 2019 14:34:58 -0400
-Received: from mail-vs1-f48.google.com ([209.85.217.48]:34589 "EHLO
-        mail-vs1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729552AbfEXSe5 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 24 May 2019 14:34:57 -0400
-Received: by mail-vs1-f48.google.com with SMTP id q64so6496147vsd.1
-        for <ceph-devel@vger.kernel.org>; Fri, 24 May 2019 11:34:57 -0700 (PDT)
+        id S2404317AbfEXVoP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 24 May 2019 17:44:15 -0400
+Received: from mail-vk1-f169.google.com ([209.85.221.169]:38707 "EHLO
+        mail-vk1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404176AbfEXVoP (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 24 May 2019 17:44:15 -0400
+Received: by mail-vk1-f169.google.com with SMTP id p24so2549621vki.5;
+        Fri, 24 May 2019 14:44:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ppYQMWAvPPPHzjUYhTAXcRClz6zmn//kA8Gna2puNdM=;
+        b=iCLh9A/cXLCJu2cYrfO+D02D9JZCWjOPfABYzSpzSnzvw+iM+O0nFXo9bOFy4NoG35
+         6tGwLsX1stvp9Fj1cZi6gDDlt4vQF2vczIeIiQFnLylhzPc0M03zMQ1sks0SjMfDuTkz
+         718ibMT8MzmQYgwSzJosjqZXGmhF1KWLLrjQO1GdHBOP4nUOg4VvJPDcTr51s4LGjXek
+         4wCuKnt1wVE7yNsEE+jaHVwNP7/lz1UcPqN4zRMUKLCPQxHEdfzqgv32V6RhbzGHkC9A
+         +8rorSl29HWTk+xcTrT+17IWJ0FuA7sFzaY0rJzrpFc3FWfcUQ5KRh6mChaNxRiybqz2
+         7NXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=D5Wf2DK0LuaABYDxknoiDAYECfM6giolae5oW6bcPYQ=;
-        b=udhqEy7C/lZENKgjsiFQ9xzVyqv/KwVQlTzdsw4eLqsir09WjqivqHQHiXNLO4zKp6
-         InIaXqa4s7fPyM3ivy1xtmt5Wz+/bkF7foCvCd5tbza8ev2L2a9dxwUHzwk2+/1j2oOR
-         AQfreGHXd22bl9oavNmF+y3Cjj7WsexrdYOAZsBgOua3lQ8Ivmr6JEbLYTcorTFXd9t1
-         6V3wFO1Uvw8ETfWEo7vVPGOSqX8D8yYU0HMtxetbb+Zf6I1oDm+zaScQxuttPvowME2l
-         SlK+1NZ5ny98YHW2wqiA5CMdVT2yWi9uVOTiHzAbD2+bEDPBYJ6mV2kaNHT/ioDrmUeA
-         PJNg==
-X-Gm-Message-State: APjAAAX0ZImcml5oI9ejBH4DT2kbn+12hn+p7MECtwbPKV/Gyp/uOl/M
-        zjhzoEE6qqgCCaZh2RIeUQu7aw==
-X-Google-Smtp-Source: APXvYqw7C+3sRedk6/wcG5znXPfYXrnU943N6vaaTQ052Yz+SrV1RqsCHI6lUx76ikuls2eS7SVvTA==
-X-Received: by 2002:a67:e98e:: with SMTP id b14mr47956038vso.145.1558722896618;
-        Fri, 24 May 2019 11:34:56 -0700 (PDT)
-Received: from [10.17.151.126] ([12.118.3.106])
-        by smtp.gmail.com with ESMTPSA id x19sm1313796vsq.9.2019.05.24.11.34.54
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 11:34:55 -0700 (PDT)
-Subject: Re: 13.2.6 QE Mimic validation status
-To:     Yuri Weinstein <yweinste@redhat.com>, Sage Weil <sweil@redhat.com>,
-        "Durgin, Josh" <jdurgin@redhat.com>,
-        "Dillaman, Jason" <dillaman@redhat.com>,
-        "Sadeh-Weinraub, Yehuda" <yehuda@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        "Development, Ceph" <ceph-devel@vger.kernel.org>,
-        "Lekshmanan, Abhishek" <abhishek.lekshmanan@gmail.com>,
-        Nathan Cutler <ncutler@suse.cz>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        ceph-qe-team <ceph-qe-team@redhat.com>,
-        "Deza, Alfredo" <adeza@redhat.com>,
-        Andrew Schoen <aschoen@redhat.com>, ceph-qa <ceph-qa@ceph.com>,
-        Matt Benjamin <mbenjamin@redhat.com>,
-        Sebastien Han <shan@redhat.com>,
-        Brad Hubbard <bhubbard@redhat.com>,
-        Venky Shankar <vshankar@redhat.com>,
-        Neha Ojha <nojha@redhat.com>,
-        David Galloway <dgallowa@redhat.com>
-References: <CAMMFjmF1SP9JnyeuqCtsS9KJKRO-1R+E+NkzO-kj6+pn=chfzw@mail.gmail.com>
-From:   Casey Bodley <cbodley@redhat.com>
-Message-ID: <cf95feb1-3fce-5634-cdbc-8840c8de954d@redhat.com>
-Date:   Fri, 24 May 2019 14:34:53 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ppYQMWAvPPPHzjUYhTAXcRClz6zmn//kA8Gna2puNdM=;
+        b=UMDYOQtrB/ACHmjOmj4MjmJUylnRQjo3/CpevjC3KwRlwnZPRJRl2K5I4aHyg76UZI
+         a8nPK98tLs5q3pUNExqL3EJh49jr8gVVXWLUItr0j7jAFXsznZBheidvrznxRhvvpYvb
+         SUSB+SaU18yRxlK/UsaW7PMbdXENmRprJeFyKVwSLj5R4UR0cG1EPi2Ng49ZFGshEb+w
+         kDfptoCbvMWnleRSQpRwpJvVwKMh3bpB5Gn0szZAuIK7JXM6urGOFor3p5W0lbguimJr
+         VettBU7FVKxXNmt/BBrRIKJi0NcgtwMwigaQ3rrx+XgQd8rKIKFjSBuNi08wTOyRqsVE
+         nGtA==
+X-Gm-Message-State: APjAAAXHTgljn1fNAwcGp86L/Y13mjYMCNJ/dGQPutmtgaOgzgeOTzQU
+        hWO9WsGPfqBxcfT/VFj/dzs=
+X-Google-Smtp-Source: APXvYqz8Q+5EOwArJXYcxB42iNP/7jC6QHkeqJ960QLp/YsSo4VPosPZyy+KSbDmHVRWANDCqIBz9g==
+X-Received: by 2002:a1f:8ad0:: with SMTP id m199mr8096355vkd.80.1558734254307;
+        Fri, 24 May 2019 14:44:14 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::1:36ab])
+        by smtp.gmail.com with ESMTPSA id v133sm2586461vkv.5.2019.05.24.14.44.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 May 2019 14:44:13 -0700 (PDT)
+Date:   Fri, 24 May 2019 14:44:12 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Xuehan Xu <xxhdx1985126@gmail.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>, cgroups@vger.kernel.org
+Subject: Re: Fwd: [PATCH 1/2] cgroup: add a new group controller for cephfs
+Message-ID: <20190524214412.GH374014@devbig004.ftw2.facebook.com>
+References: <20190430120534.5231-1-xxhdx1985126@gmail.com>
+ <CAJACTuczjByPgDmBb1vgPdX5U0LWhygVNzRS+VPXt3ZSEo+eTQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMMFjmF1SP9JnyeuqCtsS9KJKRO-1R+E+NkzO-kj6+pn=chfzw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJACTuczjByPgDmBb1vgPdX5U0LWhygVNzRS+VPXt3ZSEo+eTQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Hello,
 
-On 5/23/19 4:00 PM, Yuri Weinstein wrote:
-> Details of this release summarized here:
->
-> http://tracker.ceph.com/issues/39718#note-2
->
-> rados - FAILED, known, Neha approved?
-> rgw - Casey approved?
-rgw looks good, thanks Yuri
-> rbd - Jason approved?
-> fs - Patrick, Venky approved?
-> kcephfs - Patrick, Venky approved?
-> multimds - Patrick, Venky approved? (still running)
-> krbd - Ilya, Jason approved?
-> ceph-deploy - Sage, Vasu approved?  See SELinux denials, David pls FYI
-> ceph-disk - PASSED
-> upgrade/client-upgrade-jewel - PASSED
-> upgrade/client-upgrade-luminous - PASSED
-> upgrade/luminous-x (mimic) - PASSED
-> upgrade/mimic-p2p - tests needs fixing
-> powercycle - PASSED, Neha FYI
-> ceph-ansible - PASSED
-> ceph-volume - FAILED, Alfredo pls rerun
->
-> Please review results and reply/comment.
->
-> PS:  Abhishek, Nathan I will back in the office next Tuesday.
->
-> Thx
-> YuriW
+On Thu, May 23, 2019 at 02:33:46PM +0800, Xuehan Xu wrote:
+> From: Xuehan Xu <xuxuehan@360.cn>
+> cgroup: add a new cgroup controller dedicated to cephfs client ops limiting
+> 
+> this controller is supposed to limit the metadata
+> ops or data ops issued to the underlying cluster.
+> 
+> Signed-off-by: Xuehan Xu <xuxuehan@360.cn>
+
+Can you please elaborate why ceph needs its own controller?
+
+Thanks.
+
+-- 
+tejun
