@@ -2,60 +2,58 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78E5929A27
-	for <lists+ceph-devel@lfdr.de>; Fri, 24 May 2019 16:37:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6211729B00
+	for <lists+ceph-devel@lfdr.de>; Fri, 24 May 2019 17:27:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391598AbfEXOhX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 24 May 2019 10:37:23 -0400
-Received: from tragedy.dreamhost.com ([66.33.205.236]:58822 "EHLO
-        tragedy.dreamhost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390885AbfEXOhX (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 24 May 2019 10:37:23 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by tragedy.dreamhost.com (Postfix) with ESMTPS id 5214A15F8AC;
-        Fri, 24 May 2019 07:37:22 -0700 (PDT)
-Date:   Fri, 24 May 2019 14:37:20 +0000 (UTC)
-From:   Sage Weil <sage@newdream.net>
-X-X-Sender: sage@piezo.novalocal
-To:     "Robin H. Johnson" <robbat2@gentoo.org>
-cc:     ceph-devel@vger.kernel.org, ceph-users@ceph.com
-Subject: Re: [ceph-users] RFC: relicence Ceph LGPL-2.1 code as LGPL-2.1 or
- LGPL-3.0
-In-Reply-To: <robbat2-20190510T200848-729932465Z@orbis-terrarum.net>
-Message-ID: <alpine.DEB.2.11.1905162245580.24518@piezo.novalocal>
-References: <alpine.DEB.2.11.1904221623540.7135@piezo.novalocal> <robbat2-20190510T200848-729932465Z@orbis-terrarum.net>
-User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
+        id S2389541AbfEXP1o (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 24 May 2019 11:27:44 -0400
+Received: from mail-vs1-f52.google.com ([209.85.217.52]:40838 "EHLO
+        mail-vs1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389203AbfEXP1n (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 24 May 2019 11:27:43 -0400
+Received: by mail-vs1-f52.google.com with SMTP id c24so6046430vsp.7
+        for <ceph-devel@vger.kernel.org>; Fri, 24 May 2019 08:27:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=9tjVIF3OCsHuYeoEmktgoRXqp8Do026gOpfq6aUbHTM=;
+        b=Jy9Iz5EfcYROhaKzdVcxvn/kiHwIJmY4FlWPzpHzVv+szuVUhDtN95FYDejPEF16ty
+         jR7lrB9mg3DbMC4R36s4tUZSyocKfF1dkYG0+LJEciPix6QcnDFAKd81XmSRAWoK2qxk
+         HDlWsQPDXN+EfOJ2HX3j/9cMJ0LkIyrezhqKGYx8WZvghVwbbW1vHInQtzo7lIK88/hj
+         GhgfNQgOVTfikn8aw5Ek71DzxsidMQqhmailL1/fZspLP9JwK4mumSIXIAEOjoIiW6su
+         yvp2MVnXQHU5nJps1uvWKLgoI4dJ3THgaVu0hpeTWmQcSdietw26uHOUqSVmNgwoa2O3
+         dMcg==
+X-Gm-Message-State: APjAAAW2FLmPF/mOliz8ObUnF2a4QnRNC+UW9WT3iJZGF6JcQy5gw0dd
+        AiZMNnxxUSloBXKISloGINnBcO4Ug0/kYw==
+X-Google-Smtp-Source: APXvYqwE7KmoUQUYICaAI9g+BPGa44rSPrMBFlDg+Dnrnu31VXmRziCfmhPLbaVLIFOM/H5VoEeCBg==
+X-Received: by 2002:a67:2686:: with SMTP id m128mr13669000vsm.130.1558711662597;
+        Fri, 24 May 2019 08:27:42 -0700 (PDT)
+Received: from [10.17.151.126] ([12.118.3.106])
+        by smtp.gmail.com with ESMTPSA id h11sm389933uao.10.2019.05.24.08.27.41
+        for <ceph-devel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 May 2019 08:27:42 -0700 (PDT)
+To:     The Sacred Order of the Squid Cybernetic 
+        <ceph-devel@vger.kernel.org>
+From:   Casey Bodley <cbodley@redhat.com>
+Subject: Code Walkthrough: RGW Multisite Replication
+Message-ID: <8ae71fd6-73ff-3fbc-b2a8-5a7c5a99d178@redhat.com>
+Date:   Fri, 24 May 2019 11:27:41 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-VR-STATUS: OK
-X-VR-SCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddrudduiedgkedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuggftfghnshhusghstghrihgsvgdpffftgfetoffjqffuvfenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvufgjkfhffgggtgesthdtredttdervdenucfhrhhomhepufgrghgvucghvghilhcuoehsrghgvgesnhgvfigurhgvrghmrdhnvghtqeenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeduvdejrddtrddtrddunecurfgrrhgrmhepmhhouggvpehsmhhtphdphhgvlhhopehlohgtrghlhhhoshhtpdhinhgvthepuddvjedrtddrtddruddprhgvthhurhhnqdhprghthhepufgrghgvucghvghilhcuoehsrghgvgesnhgvfigurhgvrghmrdhnvghtqedpmhgrihhlfhhrohhmpehsrghgvgesnhgvfigurhgvrghmrdhnvghtpdhnrhgtphhtthhopegtvghphhdquhhsvghrshestggvphhhrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 10 May 2019, Robin H. Johnson wrote:
-> On Fri, May 10, 2019 at 02:27:11PM +0000, Sage Weil wrote:
-> > If you are a Ceph developer who has contributed code to Ceph and object to 
-> > this change of license, please let us know, either by replying to this 
-> > message or by commenting on that pull request.
-> Am I correct in reading the diff that only a very small number of files
-> did not already have the 'or later' clause of *GPL in effect?
+I did a code walkthrough of multisite replication this morning. Please 
+find the recording at https://bluejeans.com/s/zR8z6/. I'm happy to 
+answer additional questions here.
 
-To the contrary, I think one file (the COPYING file) has one line as a 
-catch-all for everything (that isn't a special case) which is changing 
-from 2.1 to 2.1 or 3.
+Casey
 
-https://github.com/ceph/ceph/pull/22446/files#diff-7116ef0705885343c9e1b2171a06be0eR6
-
-> As a slight tangent, can we get SPDX tags on files rather than this
-> hard-to-parse text?
-
-(/me googles SPDX)
-
-Sure?  The current format is based on the Debian copyright file format, 
-which seemed appropriate at the time.  Happy to take patches that add more 
-appropriate annotations...
-
-sage
