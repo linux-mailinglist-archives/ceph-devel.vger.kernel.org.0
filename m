@@ -2,91 +2,88 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7A9C2A2F4
-	for <lists+ceph-devel@lfdr.de>; Sat, 25 May 2019 07:04:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40C0E2A3A7
+	for <lists+ceph-devel@lfdr.de>; Sat, 25 May 2019 11:16:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726371AbfEYFEK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 25 May 2019 01:04:10 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34963 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725926AbfEYFEK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 25 May 2019 01:04:10 -0400
-Received: by mail-lf1-f66.google.com with SMTP id c17so8567314lfi.2;
-        Fri, 24 May 2019 22:04:09 -0700 (PDT)
+        id S1726645AbfEYJQF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 25 May 2019 05:16:05 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44706 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbfEYJQE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 25 May 2019 05:16:04 -0400
+Received: by mail-pf1-f193.google.com with SMTP id g9so6721057pfo.11;
+        Sat, 25 May 2019 02:16:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KLuXqw8M7m/MzY2X3gY6zpBBVeaivSJFrrSDxtyUN9Y=;
-        b=qxft7CIP/kObu19i+C2b25QKGiEszRgI83UhB7x3Q9qWrgYELV4tgT1qxaODn2iNEo
-         HJBkWFKkVUzdRi7RcwucCGsJsa5msSTOvNMQr/uftP969eFaSNUVBhbxC47TV8HtA406
-         LRS4tuIWiVEnXz1FzVSj6pEkNkeHWoV+VF+pn8jIHeAhXx3VMe3Br+6f9S5xEISgLqhW
-         jtayGie8YBR2AcfgVIeBayxstDuQvgQuaPoWiAUVjj9xX9COTE6p/9kaJ0uJB+419Ei9
-         RWoGsqjKC9/5j+/AcIvE/lKvFDm4qdpJL5lSQozo+oWU0RaS7E0xR0ChjINXfMVhh6wz
-         AepA==
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=0I0iYBrt5xIGBpHNoVr45Rx9KFD668cAF8Ky+1iHTBU=;
+        b=R5hK9LD0MMAcb+MZkIyyc2ZzMnF9IvfB8Gu+uXzqBWyu0LntP//SFOsJBCqDPtmCnj
+         Eocfg87oPsC8FRZRJES3LSbAhggyAtukai81SEdmPGwzhCtazBG5q+/fWCnwNrb3PHUy
+         3eKYGLUnS3ZFvkiFwlMlHN09FDGo2PSS0gdysh96vGCVdabDrwJoV6pMDssm/yUHcrr4
+         xJQoBrKh3VcDCn3Gm9bJTJqL3YmxvMAFYfkeupfqNEwrXuFtKY7zKeKmIAbdy3IVcd/Y
+         XzIZ3u3taCn3/nGFtNsmMSUPiwEV42kEvfzRc4P3DEILbQeaqiQxR5SnuORdx+jw4usW
+         f5pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KLuXqw8M7m/MzY2X3gY6zpBBVeaivSJFrrSDxtyUN9Y=;
-        b=bsbb9lHasAvxm9o5kFgKJfaZ+lPHzWfLk05+qHYeJOHWRTuOkX8uQg32viZisA6YlE
-         AHJbbTNmgd4Nzw0/Inw3e7d3Njrvhn2TLW64Km5DDynzmVMEhZvUxjuQkyb47V/9aNc4
-         Pw/5GMi8DAg0t9jRQBu+s3g1b/4XpKazqr3zc+69hKh0SF2BThG/gzjJFE6tYL+G6wAS
-         Dp11sO/PGPV+8g/NAN3I8xOK5pK8j+W1WC56kcca1cHppi6dhT3EEN/thPLa0xRsZWU5
-         AYehSf4gxKLoMkF+n0KEMguw2u8BUOJjZ/PVi66fyEOe0vfpnUW2AM0Us9FCww1vIvEF
-         DsUg==
-X-Gm-Message-State: APjAAAW5t16sq5Nl5ZVhdar3oHRoGr5xO0ViWvLD1hXQKXY3RUtRWQeL
-        UBAhqfRrQGtaP9bJN5/6nGdVypFtrwdkrqMePUI=
-X-Google-Smtp-Source: APXvYqxx89GxZR03N1HALuZGhhP3i/ERzN5NlHMdIGyBk1OLPEN/DeKgcNY/ksXecN/Nm3ijPQzyCZPQT5Oj0jH73Qg=
-X-Received: by 2002:a19:4c55:: with SMTP id z82mr45052947lfa.68.1558760648319;
- Fri, 24 May 2019 22:04:08 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=0I0iYBrt5xIGBpHNoVr45Rx9KFD668cAF8Ky+1iHTBU=;
+        b=DHsKJJAp3byN+O0Qr2oNlM/Nl09ZcxvAH8IrPNERrBmrT1zaTBHRgzzj4jQ6btLoPt
+         Bgh0VY1Ovgky2Oqa61L5WiHFhda/jEq/UA/Si5CzSrit++hvLQygmJFiaJh/NoO6oKb/
+         TIfgsqLggrKk5x/FUGs9+Lttrc2SajtymBafjLXqg4kqyzOnN01o5Ztay//3aVx+PZ8m
+         KCiyWa7BADPlmB1hjV6YCXFH8XLylmGZzz0bbZTodfT0pNX7J5LN3hou/m/ScXyAVgcd
+         nCae9ZMCAammcPH65dE4rAQudowBvNbkD2juH41nIj7btuz3318YqYFy/sqvHg3NTeFE
+         pdIA==
+X-Gm-Message-State: APjAAAUO5pjeq1wisbGlc8w1u4Mp2Hl75SrsXP+L4+f11W0GY/dj9Oi9
+        gRVu9jlFW34TfTonAG5DJ6Q=
+X-Google-Smtp-Source: APXvYqwr2jegsAlC7mxUQq/vqN/ul8XZcWvpfWBwR9zBd3VpoSGeO3LjAkfWvLDNIBYXpql8JJDiGg==
+X-Received: by 2002:a65:520b:: with SMTP id o11mr56516634pgp.184.1558775764141;
+        Sat, 25 May 2019 02:16:04 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.73])
+        by smtp.gmail.com with ESMTPSA id v66sm11898260pfa.38.2019.05.25.02.16.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 25 May 2019 02:16:03 -0700 (PDT)
+Date:   Sat, 25 May 2019 14:45:59 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ceph: fix  warning PTR_ERR_OR_ZERO can be used
+Message-ID: <20190525091559.GA14633@hari-Inspiron-1545>
 MIME-Version: 1.0
-References: <20190523064412.31498-1-xxhdx1985126@gmail.com> <20190524214855.GJ374014@devbig004.ftw2.facebook.com>
-In-Reply-To: <20190524214855.GJ374014@devbig004.ftw2.facebook.com>
-From:   Xuehan Xu <xxhdx1985126@gmail.com>
-Date:   Sat, 25 May 2019 13:03:56 +0800
-Message-ID: <CAJACTueLKEBkuquf989dveBnd5cOknf7LvB+fg+9PyjDw1VX6g@mail.gmail.com>
-Subject: Re: [PATCH] cgroup: add a new group controller for cephfs
-To:     Tejun Heo <tj@kernel.org>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
-        "Yan, Zheng" <ukernel@gmail.com>, cgroups@vger.kernel.org,
-        Xuehan Xu <xuxuehan@360.cn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sat, 25 May 2019 at 05:48, Tejun Heo <tj@kernel.org> wrote:
->
-> On Thu, May 23, 2019 at 06:44:12AM +0000, xxhdx1985126@gmail.com wrote:
-> > From: Xuehan Xu <xuxuehan@360.cn>
-> >
-> > this controller is supposed to facilitate limiting
-> > the metadata ops or data ops issued to the underlying
-> > cluster.
->
-> Replied on the other post but I'm having a hard time seeing why this
-> is necessary.  Please explain in detail.
+change1: fix below warning  reported by coccicheck
 
-Hi, Tejun, thanks for your review:)
+/fs/ceph/export.c:371:33-39: WARNING: PTR_ERR_OR_ZERO can be used
 
-The reason that we implemented a ceph-specific controller is as follows:
-       We have a need to limit our docker instances' rate of io issued
-to the underlying Cephfs cluster. As the limitation has to be in the
-granularity of docker instance, we think maybe we can leverage the
-cgroup interface. At the time, we thought no existing cgroup
-controller can satisfy our requirement, as we thought the blkio
-controller, the only io related controller, is dedicated to restrain
-the io issued to block devices. So we implemented a new controller.
+change2: typecasted PTR_ERR_OR_ZERO to long as dout expecting long
 
-However, Ilya Dryomov pointed out, in another thread in the mailing
-list ceph-devel, that the blkio controller is supposed to handle any
-io now. We now think maybe we should try to leverage the blkio
-controller to implement the cephfs io limiting mechanism. Am I right
-about this? Thanks:-)
->
-> Thanks.
->
-> --
-> tejun
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+---
+ fs/ceph/export.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+index d3ef7ee42..15ff1b0 100644
+--- a/fs/ceph/export.c
++++ b/fs/ceph/export.c
+@@ -368,7 +368,7 @@ static struct dentry *ceph_get_parent(struct dentry *child)
+ 	}
+ out:
+ 	dout("get_parent %p ino %llx.%llx err=%ld\n",
+-	     child, ceph_vinop(inode), (IS_ERR(dn) ? PTR_ERR(dn) : 0));
++	     child, ceph_vinop(inode), (long)PTR_ERR_OR_ZERO(dn));
+ 	return dn;
+ }
+ 
+-- 
+2.7.4
+
