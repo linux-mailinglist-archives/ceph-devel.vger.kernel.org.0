@@ -2,160 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE02E2A25C
-	for <lists+ceph-devel@lfdr.de>; Sat, 25 May 2019 04:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7A9C2A2F4
+	for <lists+ceph-devel@lfdr.de>; Sat, 25 May 2019 07:04:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbfEYCNd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 24 May 2019 22:13:33 -0400
-Received: from mail-wm1-f48.google.com ([209.85.128.48]:40105 "EHLO
-        mail-wm1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbfEYCNd (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 24 May 2019 22:13:33 -0400
-Received: by mail-wm1-f48.google.com with SMTP id 15so10806462wmg.5
-        for <ceph-devel@vger.kernel.org>; Fri, 24 May 2019 19:13:31 -0700 (PDT)
+        id S1726371AbfEYFEK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 25 May 2019 01:04:10 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34963 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725926AbfEYFEK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 25 May 2019 01:04:10 -0400
+Received: by mail-lf1-f66.google.com with SMTP id c17so8567314lfi.2;
+        Fri, 24 May 2019 22:04:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:subject:to:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=4BJ1PDajeLC9aJNK76BTup5rli0mXkZ8MKNyiMVDOq0=;
-        b=SKhbytVhVUuPmvSHr7MmUpuSORjLsE7cwy21R18IAUWl0ATT7OlXvDQODnLhjjJp4e
-         XX0TvvLZ6dpijUtKtGF5K+y2+cgIADy20hMATyfMiHlO5fcRLeHQHtugyGnAw05z4GQs
-         rWlC34664PaleqELcZIKdQX5tC6satqpE2/umDrV9gF5N710fwdww0ElfDGVuDhu+8J5
-         n1PmB43pDLBsge07l5/1nRJKHHwxkSqvifXJMYUGz+OYSRMboNJ6HwLECKBh1gHAs7nq
-         GBi988eo6+v7GTvicgNfa0TaKeO11eC61A5LucxME+XzxIx53XviE8f1SDcq4RcbXAeJ
-         aMYg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KLuXqw8M7m/MzY2X3gY6zpBBVeaivSJFrrSDxtyUN9Y=;
+        b=qxft7CIP/kObu19i+C2b25QKGiEszRgI83UhB7x3Q9qWrgYELV4tgT1qxaODn2iNEo
+         HJBkWFKkVUzdRi7RcwucCGsJsa5msSTOvNMQr/uftP969eFaSNUVBhbxC47TV8HtA406
+         LRS4tuIWiVEnXz1FzVSj6pEkNkeHWoV+VF+pn8jIHeAhXx3VMe3Br+6f9S5xEISgLqhW
+         jtayGie8YBR2AcfgVIeBayxstDuQvgQuaPoWiAUVjj9xX9COTE6p/9kaJ0uJB+419Ei9
+         RWoGsqjKC9/5j+/AcIvE/lKvFDm4qdpJL5lSQozo+oWU0RaS7E0xR0ChjINXfMVhh6wz
+         AepA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=4BJ1PDajeLC9aJNK76BTup5rli0mXkZ8MKNyiMVDOq0=;
-        b=sMypIjYYsTQ3cDMS7/hXVNxvFC3TX8Mobf4g+5DnCV50tA3LNH9ueeXWOyII7rcBIc
-         +FfVljxUuvOKnbeRNB5r/LlrO5rDZD7xJJDxPuGhYUbFxmTc1A8GDyGAkaaYtSvqESaG
-         WlVYfQZCnhxRxwqg1H2hvDLsdoMHg3GaHy80Mb8GcehouL9NkALXkSnY9dfbwMTOcOCq
-         yZOENIg8Bbhn5aay0Z6PZiR4VBUgakhy0rGHpUrjCwLLYNzMcrlAO86B9mC/BaOmh8Wq
-         Enlc5JdHnQ+Jcq6w7AgPyVzfegnqp6Q+45EPrTYussiYDpB8VvvyoCWX8oS7iYmB9/9x
-         6l1w==
-X-Gm-Message-State: APjAAAWIOZCrjFjT2GfjbgLbyKfIPdA+evqU2K4pCwVqN2RjjAkV8+ZW
-        7sGcXSipNx61mSKRJUWHvRmbVbwb
-X-Google-Smtp-Source: APXvYqyA8Cm05Y6sUSuG6syB3iK+UE7xd+tSId6doLZf/iL95llfrCW0+82nHT7NQTFHSGB+pjQPgg==
-X-Received: by 2002:a05:600c:21d7:: with SMTP id x23mr18426331wmj.105.1558750410204;
-        Fri, 24 May 2019 19:13:30 -0700 (PDT)
-Received: from [192.168.43.20] (ip1f10d9fc.dynamic.kabel-deutschland.de. [31.16.217.252])
-        by smtp.gmail.com with ESMTPSA id p17sm4631928wrq.95.2019.05.24.19.13.28
-        for <ceph-devel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 19:13:29 -0700 (PDT)
-From:   Owen Synge <osynge@googlemail.com>
-Subject: Keynote: What's Planned for Ceph Octopus - Sage Weil -> Feedback on
- cephs Usability
-To:     ceph-devel@vger.kernel.org
-Message-ID: <9607e2ac-ce55-60af-7b84-609783778ee2@googlemail.com>
-Date:   Sat, 25 May 2019 04:13:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KLuXqw8M7m/MzY2X3gY6zpBBVeaivSJFrrSDxtyUN9Y=;
+        b=bsbb9lHasAvxm9o5kFgKJfaZ+lPHzWfLk05+qHYeJOHWRTuOkX8uQg32viZisA6YlE
+         AHJbbTNmgd4Nzw0/Inw3e7d3Njrvhn2TLW64Km5DDynzmVMEhZvUxjuQkyb47V/9aNc4
+         Pw/5GMi8DAg0t9jRQBu+s3g1b/4XpKazqr3zc+69hKh0SF2BThG/gzjJFE6tYL+G6wAS
+         Dp11sO/PGPV+8g/NAN3I8xOK5pK8j+W1WC56kcca1cHppi6dhT3EEN/thPLa0xRsZWU5
+         AYehSf4gxKLoMkF+n0KEMguw2u8BUOJjZ/PVi66fyEOe0vfpnUW2AM0Us9FCww1vIvEF
+         DsUg==
+X-Gm-Message-State: APjAAAW5t16sq5Nl5ZVhdar3oHRoGr5xO0ViWvLD1hXQKXY3RUtRWQeL
+        UBAhqfRrQGtaP9bJN5/6nGdVypFtrwdkrqMePUI=
+X-Google-Smtp-Source: APXvYqxx89GxZR03N1HALuZGhhP3i/ERzN5NlHMdIGyBk1OLPEN/DeKgcNY/ksXecN/Nm3ijPQzyCZPQT5Oj0jH73Qg=
+X-Received: by 2002:a19:4c55:: with SMTP id z82mr45052947lfa.68.1558760648319;
+ Fri, 24 May 2019 22:04:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20190523064412.31498-1-xxhdx1985126@gmail.com> <20190524214855.GJ374014@devbig004.ftw2.facebook.com>
+In-Reply-To: <20190524214855.GJ374014@devbig004.ftw2.facebook.com>
+From:   Xuehan Xu <xxhdx1985126@gmail.com>
+Date:   Sat, 25 May 2019 13:03:56 +0800
+Message-ID: <CAJACTueLKEBkuquf989dveBnd5cOknf7LvB+fg+9PyjDw1VX6g@mail.gmail.com>
+Subject: Re: [PATCH] cgroup: add a new group controller for cephfs
+To:     Tejun Heo <tj@kernel.org>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        "Yan, Zheng" <ukernel@gmail.com>, cgroups@vger.kernel.org,
+        Xuehan Xu <xuxuehan@360.cn>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dear Ceph team,
+On Sat, 25 May 2019 at 05:48, Tejun Heo <tj@kernel.org> wrote:
+>
+> On Thu, May 23, 2019 at 06:44:12AM +0000, xxhdx1985126@gmail.com wrote:
+> > From: Xuehan Xu <xuxuehan@360.cn>
+> >
+> > this controller is supposed to facilitate limiting
+> > the metadata ops or data ops issued to the underlying
+> > cluster.
+>
+> Replied on the other post but I'm having a hard time seeing why this
+> is necessary.  Please explain in detail.
 
-I have been watching Sages 5 these for octopus, and a love the themes, 
-and all of Sages talk.
+Hi, Tejun, thanks for your review:)
 
-Sages talk mentioned cluster usability.
+The reason that we implemented a ceph-specific controller is as follows:
+       We have a need to limit our docker instances' rate of io issued
+to the underlying Cephfs cluster. As the limitation has to be in the
+granularity of docker instance, we think maybe we can leverage the
+cgroup interface. At the time, we thought no existing cgroup
+controller can satisfy our requirement, as we thought the blkio
+controller, the only io related controller, is dedicated to restrain
+the io issued to block devices. So we implemented a new controller.
 
-On 'the orchestrate API' slide, sage slides talk about a "Partial 
-consensus to focus efforts on":
-
-(Option) Rook (which I don't know, but depends on Kubernetes)
-
-(Option) ssh (or maybe some rpc mechanism).
-
-I was sad not to see the option
-
-(Option) Support a common the most popular declarative 
-puppet/chef/cfengine module.
-
-I think option (ssh) exists only because work has been invested in 
-complex salt and ansible implementations, but that never seem to reduce 
-in complexity. I propose we chalk it down to mistakes we made and gain 
-some wisdom why option (ssh) took much more effort than expected, and 
-learn from Option (Rook).
-
-I think option (Rook) is a very good idea, as it works on sounds ideas I 
-have seen work before.
-
-I understand that ceph should not *only* depend on anything as complex 
-as Kubernetes as a deployment dependency, even if it is the best 
-solution. I may not want to run some thing as complex as Kubernetes just 
-to run ceph.
-
-I would have liked to see on the slides:
-
-(Option) Look how to get Rook's benefits without Kubernetes
-
-The rest of the email explains how I think ceph should best be 
-configured without Kubernetes in a ceph like way.
-
-I believe Rook's dependency Kubernetes, provides an architecture based 
-on a declarative configuration and shared service state makes managing 
-clusters easier. In other words Kubernetes is like service version of 
-cephs crushmap which describes how data is distributed in ceph.
-
-To implement (Names can be changed and are purely for illustration)
-"orchestratemapfile" -> desired deployment configfile
-     'orchestratemap' -> compiled with local state orchestratemapfile
-
-     'liborchestrate' -> shares and executes orchestratemap
-
-So any ceph developer can understand, just like the crushmap is 
-declarative and drives data, The "orchestratemap" should be declarative 
-and drive the deployment. The crushmap is shared state across the 
-cluster, the orchestratemap would be a shared state across the cluster. 
-A crushmap is a compiled crushmapfile with state about the cluster. A 
-orchestratemap is compiled from a orchestratemapfile with state about 
-the cluster.
-
-Just like librados can read a crushmap and speak to a mon to get cluster 
-status, and drive data flow, liborchestrate can read a orchestratemap, 
-and drive the stages of ceph deployment, A MVP* would function with 
-minor degradation even without shared cluster state. (ie no orchestratemap).
-
-A good starting point for the orchestratemapfile would be the Kubernetes 
-config for rook, as this is essentially a desired state for the cluster.
-
-If you add the current state locally into the orchestratemap when 
-compiling the orchestratemapfile, All desired possible operations can be 
-calculated by each node using just the orchestratemap and the current 
-local state independently. All the operations that must be delayed due 
-to dependencies in other operations can also be calculated for each 
-node, this avoids, retry, timeouts, and instantly reduces error handling 
-and allows for ceph to potentially, save the user from knowing that more 
-than one deamon is running to provide ceph, staged upgrades,practice 
-self healing at the service level, guide the users deployment with more 
-helpful error messages, and many other potential enhancements.
-
-It may be argued that Option (ssh) is simpler than implementing an 
-"orchestratemap" and liborchestrate that reads it, and I argue Option 
-(ssh) is simpler for a test grade MVP, but for a production grade MVP 
-solution I suspect implementing an "orchestratemap" and liborchestrate 
-is simpler due to simpler synchronization, planning and error handling 
-for management of ceph, just like the crushmap simplifies 
-synchronization, planning and error handling for data in ceph.
-
-Good luck and have fun,
-
-Owen Synge
-
-
-* I once nearly finished an orchestratemapfile to ceph configuration 
-once (no shared cluster state), and the bulk of the work was 
-understanding how each ceph daemon interact with the cluster during 
-boot, and commands to manage the demon. Only the state serialization, 
-comparison and propagation where never completed.
-
+However, Ilya Dryomov pointed out, in another thread in the mailing
+list ceph-devel, that the blkio controller is supposed to handle any
+io now. We now think maybe we should try to leverage the blkio
+controller to implement the cephfs io limiting mechanism. Am I right
+about this? Thanks:-)
+>
+> Thanks.
+>
+> --
+> tejun
