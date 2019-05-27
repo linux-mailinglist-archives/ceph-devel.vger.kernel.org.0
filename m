@@ -2,335 +2,379 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C04E2B2B4
-	for <lists+ceph-devel@lfdr.de>; Mon, 27 May 2019 13:07:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EB812B2B5
+	for <lists+ceph-devel@lfdr.de>; Mon, 27 May 2019 13:07:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbfE0LHI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 27 May 2019 07:07:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44185 "EHLO mx1.redhat.com"
+        id S1726343AbfE0LHO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 27 May 2019 07:07:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51172 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725996AbfE0LHI (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 27 May 2019 07:07:08 -0400
+        id S1725858AbfE0LHO (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 27 May 2019 07:07:14 -0400
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AB13F307D855
-        for <ceph-devel@vger.kernel.org>; Mon, 27 May 2019 11:07:07 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 34C7430842D1
+        for <ceph-devel@vger.kernel.org>; Mon, 27 May 2019 11:07:13 +0000 (UTC)
 Received: from zhyan-laptop.redhat.com (ovpn-12-84.pek2.redhat.com [10.72.12.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C1E9F60BEC;
-        Mon, 27 May 2019 11:07:04 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7628860BEC;
+        Mon, 27 May 2019 11:07:08 +0000 (UTC)
 From:   "Yan, Zheng" <zyan@redhat.com>
 To:     ceph-devel@vger.kernel.org
 Cc:     idryomov@redhat.com, jlayton@redhat.com,
         "Yan, Zheng" <zyan@redhat.com>
-Subject: [PATCH 1/2] ceph: rename struct ceph_acls_info to ceph_acl_sec_ctx
-Date:   Mon, 27 May 2019 19:07:01 +0800
-Message-Id: <20190527110702.3962-1-zyan@redhat.com>
+Subject: [PATCH 2/2] ceph: add selinux support
+Date:   Mon, 27 May 2019 19:07:02 +0800
+Message-Id: <20190527110702.3962-2-zyan@redhat.com>
+In-Reply-To: <20190527110702.3962-1-zyan@redhat.com>
+References: <20190527110702.3962-1-zyan@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 27 May 2019 11:07:07 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 27 May 2019 11:07:13 +0000 (UTC)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-this is preparation for security label support
+When creating new file/directory, uses dentry_init_security() to prepare
+selinux context for the new inode, then sends openc/mkdir request to MDS,
+together with selinux xattr.
 
 Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
 ---
- fs/ceph/acl.c   | 22 +++++++---------------
- fs/ceph/dir.c   | 28 ++++++++++++++--------------
- fs/ceph/file.c  | 18 +++++++++---------
- fs/ceph/super.h | 29 +++++++++++++++--------------
- fs/ceph/xattr.c | 10 ++++++++++
- 5 files changed, 55 insertions(+), 52 deletions(-)
+ fs/ceph/Kconfig |  12 +++++
+ fs/ceph/caps.c  |   1 +
+ fs/ceph/dir.c   |  12 +++++
+ fs/ceph/file.c  |   3 ++
+ fs/ceph/inode.c |   1 +
+ fs/ceph/super.h |  19 +++++++
+ fs/ceph/xattr.c | 141 ++++++++++++++++++++++++++++++++++++++++++------
+ 7 files changed, 172 insertions(+), 17 deletions(-)
 
-diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
-index bc2b89e8fd3f..07c8ab39f6c7 100644
---- a/fs/ceph/acl.c
-+++ b/fs/ceph/acl.c
-@@ -172,7 +172,7 @@ int ceph_set_acl(struct inode *inode, struct posix_acl *acl, int type)
- }
+diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
+index 52095f473464..5a665c126a7c 100644
+--- a/fs/ceph/Kconfig
++++ b/fs/ceph/Kconfig
+@@ -35,3 +35,15 @@ config CEPH_FS_POSIX_ACL
+ 	  groups beyond the owner/group/world scheme.
  
- int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
--		       struct ceph_acls_info *info)
-+		       struct ceph_acl_sec_ctx *as_ctx)
- {
- 	struct posix_acl *acl, *default_acl;
- 	size_t val_size1 = 0, val_size2 = 0;
-@@ -247,9 +247,9 @@ int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
+ 	  If you don't know what Access Control Lists are, say N
++
++config CEPH_FS_SECURITY_LABEL
++	bool "CephFS Security Labels"
++	depends on CEPH_FS && SECURITY
++	help
++	  Security labels support alternative access control models
++	  implemented by security modules like SELinux. This option
++	  enables an extended attribute handler for file security
++	  labels in the Ceph filesystem.
++
++	  If you are not using a security module that requires using
++	  extended attributes for file security labels, say N.
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 7754d7679122..50409d9fdc90 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -3156,6 +3156,7 @@ static void handle_cap_grant(struct inode *inode,
+ 			ci->i_xattrs.blob = ceph_buffer_get(xattr_buf);
+ 			ci->i_xattrs.version = version;
+ 			ceph_forget_all_cached_acls(inode);
++			ceph_security_invalidate_secctx(inode);
+ 		}
+ 	}
  
- 	kfree(tmp_buf);
- 
--	info->acl = acl;
--	info->default_acl = default_acl;
--	info->pagelist = pagelist;
-+	as_ctx->acl = acl;
-+	as_ctx->default_acl = default_acl;
-+	as_ctx->pagelist = pagelist;
- 	return 0;
- 
- out_err:
-@@ -261,18 +261,10 @@ int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
- 	return err;
- }
- 
--void ceph_init_inode_acls(struct inode* inode, struct ceph_acls_info *info)
-+void ceph_init_inode_acls(struct inode* inode, struct ceph_acl_sec_ctx *as_ctx)
- {
- 	if (!inode)
- 		return;
--	ceph_set_cached_acl(inode, ACL_TYPE_ACCESS, info->acl);
--	ceph_set_cached_acl(inode, ACL_TYPE_DEFAULT, info->default_acl);
--}
--
--void ceph_release_acls_info(struct ceph_acls_info *info)
--{
--	posix_acl_release(info->acl);
--	posix_acl_release(info->default_acl);
--	if (info->pagelist)
--		ceph_pagelist_release(info->pagelist);
-+	ceph_set_cached_acl(inode, ACL_TYPE_ACCESS, as_ctx->acl);
-+	ceph_set_cached_acl(inode, ACL_TYPE_DEFAULT, as_ctx->default_acl);
- }
 diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 72efad28857c..14d795e5fa73 100644
+index 14d795e5fa73..b282d076dc9e 100644
 --- a/fs/ceph/dir.c
 +++ b/fs/ceph/dir.c
-@@ -825,7 +825,7 @@ static int ceph_mknod(struct inode *dir, struct dentry *dentry,
+@@ -839,6 +839,9 @@ static int ceph_mknod(struct inode *dir, struct dentry *dentry,
+ 	err = ceph_pre_init_acls(dir, &mode, &as_ctx);
+ 	if (err < 0)
+ 		goto out;
++	err = ceph_security_init_secctx(dentry, mode, &as_ctx);
++	if (err < 0)
++	       goto out;
+ 
+ 	dout("mknod in dir %p dentry %p mode 0%ho rdev %d\n",
+ 	     dir, dentry, mode, rdev);
+@@ -884,6 +887,7 @@ static int ceph_symlink(struct inode *dir, struct dentry *dentry,
  	struct ceph_fs_client *fsc = ceph_sb_to_client(dir->i_sb);
  	struct ceph_mds_client *mdsc = fsc->mdsc;
  	struct ceph_mds_request *req;
--	struct ceph_acls_info acls = {};
 +	struct ceph_acl_sec_ctx as_ctx = {};
  	int err;
  
  	if (ceph_snap(dir) != CEPH_NOSNAP)
-@@ -836,7 +836,7 @@ static int ceph_mknod(struct inode *dir, struct dentry *dentry,
+@@ -894,6 +898,10 @@ static int ceph_symlink(struct inode *dir, struct dentry *dentry,
  		goto out;
  	}
  
--	err = ceph_pre_init_acls(dir, &mode, &acls);
-+	err = ceph_pre_init_acls(dir, &mode, &as_ctx);
- 	if (err < 0)
- 		goto out;
- 
-@@ -855,9 +855,9 @@ static int ceph_mknod(struct inode *dir, struct dentry *dentry,
- 	req->r_args.mknod.rdev = cpu_to_le32(rdev);
- 	req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
- 	req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
--	if (acls.pagelist) {
--		req->r_pagelist = acls.pagelist;
--		acls.pagelist = NULL;
-+	if (as_ctx.pagelist) {
-+		req->r_pagelist = as_ctx.pagelist;
-+		as_ctx.pagelist = NULL;
- 	}
- 	err = ceph_mdsc_do_request(mdsc, dir, req);
- 	if (!err && !req->r_reply_info.head->is_dentry)
-@@ -865,10 +865,10 @@ static int ceph_mknod(struct inode *dir, struct dentry *dentry,
- 	ceph_mdsc_put_request(req);
++	err = ceph_security_init_secctx(dentry, S_IFLNK | S_IRWXUGO, &as_ctx);
++	if (err < 0)
++	       goto out;
++
+ 	dout("symlink in dir %p dentry %p to '%s'\n", dir, dentry, dest);
+ 	req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_SYMLINK, USE_AUTH_MDS);
+ 	if (IS_ERR(req)) {
+@@ -919,6 +927,7 @@ static int ceph_symlink(struct inode *dir, struct dentry *dentry,
  out:
- 	if (!err)
--		ceph_init_inode_acls(d_inode(dentry), &acls);
-+		ceph_init_inode_acls(d_inode(dentry), &as_ctx);
- 	else
+ 	if (err)
  		d_drop(dentry);
--	ceph_release_acls_info(&acls);
 +	ceph_release_acl_sec_ctx(&as_ctx);
  	return err;
  }
  
-@@ -927,7 +927,7 @@ static int ceph_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	struct ceph_fs_client *fsc = ceph_sb_to_client(dir->i_sb);
- 	struct ceph_mds_client *mdsc = fsc->mdsc;
- 	struct ceph_mds_request *req;
--	struct ceph_acls_info acls = {};
-+	struct ceph_acl_sec_ctx as_ctx = {};
- 	int err = -EROFS;
- 	int op;
- 
-@@ -950,7 +950,7 @@ static int ceph_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	}
- 
- 	mode |= S_IFDIR;
--	err = ceph_pre_init_acls(dir, &mode, &acls);
-+	err = ceph_pre_init_acls(dir, &mode, &as_ctx);
+@@ -953,6 +962,9 @@ static int ceph_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	err = ceph_pre_init_acls(dir, &mode, &as_ctx);
  	if (err < 0)
  		goto out;
++	err = ceph_security_init_secctx(dentry, mode, &as_ctx);
++	if (err < 0)
++	       goto out;
  
-@@ -967,9 +967,9 @@ static int ceph_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	req->r_args.mkdir.mode = cpu_to_le32(mode);
- 	req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
- 	req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
--	if (acls.pagelist) {
--		req->r_pagelist = acls.pagelist;
--		acls.pagelist = NULL;
-+	if (as_ctx.pagelist) {
-+		req->r_pagelist = as_ctx.pagelist;
-+		as_ctx.pagelist = NULL;
- 	}
- 	err = ceph_mdsc_do_request(mdsc, dir, req);
- 	if (!err &&
-@@ -979,10 +979,10 @@ static int ceph_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	ceph_mdsc_put_request(req);
- out:
- 	if (!err)
--		ceph_init_inode_acls(d_inode(dentry), &acls);
-+		ceph_init_inode_acls(d_inode(dentry), &as_ctx);
- 	else
- 		d_drop(dentry);
--	ceph_release_acls_info(&acls);
-+	ceph_release_acl_sec_ctx(&as_ctx);
- 	return err;
- }
- 
+ 	req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+ 	if (IS_ERR(req)) {
 diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index b7be02dfb897..5975345753d7 100644
+index 5975345753d7..a7080783fe20 100644
 --- a/fs/ceph/file.c
 +++ b/fs/ceph/file.c
-@@ -436,7 +436,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 	struct ceph_mds_client *mdsc = fsc->mdsc;
- 	struct ceph_mds_request *req;
- 	struct dentry *dn;
--	struct ceph_acls_info acls = {};
-+	struct ceph_acl_sec_ctx as_ctx = {};
- 	int mask;
- 	int err;
- 
-@@ -450,7 +450,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 	if (flags & O_CREAT) {
- 		if (ceph_quota_is_max_files_exceeded(dir))
- 			return -EDQUOT;
--		err = ceph_pre_init_acls(dir, &mode, &acls);
-+		err = ceph_pre_init_acls(dir, &mode, &as_ctx);
+@@ -453,6 +453,9 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+ 		err = ceph_pre_init_acls(dir, &mode, &as_ctx);
  		if (err < 0)
  			return err;
- 	}
-@@ -459,16 +459,16 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 	req = prepare_open_request(dir->i_sb, flags, mode);
- 	if (IS_ERR(req)) {
- 		err = PTR_ERR(req);
--		goto out_acl;
-+		goto out_ctx;
- 	}
- 	req->r_dentry = dget(dentry);
- 	req->r_num_caps = 2;
- 	if (flags & O_CREAT) {
- 		req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
- 		req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
--		if (acls.pagelist) {
--			req->r_pagelist = acls.pagelist;
--			acls.pagelist = NULL;
-+		if (as_ctx.pagelist) {
-+			req->r_pagelist = as_ctx.pagelist;
-+			as_ctx.pagelist = NULL;
- 		}
++		err = ceph_security_init_secctx(dentry, mode, &as_ctx);
++		if (err < 0)
++			goto out_ctx;
  	}
  
-@@ -506,7 +506,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 	} else {
- 		dout("atomic_open finish_open on dn %p\n", dn);
- 		if (req->r_op == CEPH_MDS_OP_CREATE && req->r_reply_info.has_create_ino) {
--			ceph_init_inode_acls(d_inode(dentry), &acls);
-+			ceph_init_inode_acls(d_inode(dentry), &as_ctx);
- 			file->f_mode |= FMODE_CREATED;
- 		}
- 		err = finish_open(file, dentry, ceph_open);
-@@ -515,8 +515,8 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 	if (!req->r_err && req->r_target_inode)
- 		ceph_put_fmode(ceph_inode(req->r_target_inode), req->r_fmode);
- 	ceph_mdsc_put_request(req);
--out_acl:
--	ceph_release_acls_info(&acls);
-+out_ctx:
-+	ceph_release_acl_sec_ctx(&as_ctx);
- 	dout("atomic_open result=%d\n", err);
- 	return err;
- }
+ 	/* do the open */
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 30d0cdc21035..125ac54b5841 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -891,6 +891,7 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
+ 			       iinfo->xattr_data, iinfo->xattr_len);
+ 		ci->i_xattrs.version = le64_to_cpu(info->xattr_version);
+ 		ceph_forget_all_cached_acls(inode);
++		ceph_security_invalidate_secctx(inode);
+ 		xattr_blob = NULL;
+ 	}
+ 
 diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index e74867743e07..d7520ccf27e9 100644
+index d7520ccf27e9..9c82d213a5ab 100644
 --- a/fs/ceph/super.h
 +++ b/fs/ceph/super.h
-@@ -928,6 +928,14 @@ extern void __ceph_build_xattrs_blob(struct ceph_inode_info *ci);
- extern void __ceph_destroy_xattrs(struct ceph_inode_info *ci);
- extern const struct xattr_handler *ceph_xattr_handlers[];
- 
-+struct ceph_acl_sec_ctx {
-+#ifdef CONFIG_CEPH_FS_POSIX_ACL
-+	void *default_acl;
-+	void *acl;
+@@ -932,6 +932,10 @@ struct ceph_acl_sec_ctx {
+ #ifdef CONFIG_CEPH_FS_POSIX_ACL
+ 	void *default_acl;
+ 	void *acl;
 +#endif
-+	struct ceph_pagelist *pagelist;
-+};
-+
- #ifdef CONFIG_SECURITY
- extern bool ceph_security_xattr_deadlock(struct inode *in);
- extern bool ceph_security_xattr_wanted(struct inode *in);
-@@ -942,21 +950,17 @@ static inline bool ceph_security_xattr_wanted(struct inode *in)
++#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
++	void *sec_ctx;
++	u32 sec_ctxlen;
+ #endif
+ 	struct ceph_pagelist *pagelist;
+ };
+@@ -950,6 +954,21 @@ static inline bool ceph_security_xattr_wanted(struct inode *in)
  }
  #endif
  
--/* acl.c */
--struct ceph_acls_info {
--	void *default_acl;
--	void *acl;
--	struct ceph_pagelist *pagelist;
--};
-+void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx);
++#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
++extern int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
++				     struct ceph_acl_sec_ctx *ctx);
++extern void ceph_security_invalidate_secctx(struct inode *inode);
++#else
++static inline int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
++					    struct ceph_acl_sec_ctx *ctx)
++{
++	return 0;
++}
++static inline void ceph_security_invalidate_secctx(struct inode *inode)
++{
++}
++#endif
++
+ void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx);
  
-+/* acl.c */
- #ifdef CONFIG_CEPH_FS_POSIX_ACL
- 
- struct posix_acl *ceph_get_acl(struct inode *, int);
- int ceph_set_acl(struct inode *inode, struct posix_acl *acl, int type);
- int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
--		       struct ceph_acls_info *info);
--void ceph_init_inode_acls(struct inode *inode, struct ceph_acls_info *info);
--void ceph_release_acls_info(struct ceph_acls_info *info);
-+		       struct ceph_acl_sec_ctx *as_ctx);
-+void ceph_init_inode_acls(struct inode *inode,
-+			  struct ceph_acl_sec_ctx *as_ctx);
- 
- static inline void ceph_forget_all_cached_acls(struct inode *inode)
- {
-@@ -969,15 +973,12 @@ static inline void ceph_forget_all_cached_acls(struct inode *inode)
- #define ceph_set_acl NULL
- 
- static inline int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
--				     struct ceph_acls_info *info)
-+				     struct ceph_acl_sec_ctx *as_ctx)
- {
- 	return 0;
- }
- static inline void ceph_init_inode_acls(struct inode *inode,
--					struct ceph_acls_info *info)
--{
--}
--static inline void ceph_release_acls_info(struct ceph_acls_info *info)
-+					struct ceph_acl_sec_ctx *as_ctx)
- {
- }
- static inline int ceph_acl_chmod(struct dentry *dentry, struct inode *inode)
+ /* acl.c */
 diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index 7eff619f7ac8..518a5beed58c 100644
+index 518a5beed58c..fea70696f375 100644
 --- a/fs/ceph/xattr.c
 +++ b/fs/ceph/xattr.c
-@@ -1197,3 +1197,13 @@ bool ceph_security_xattr_deadlock(struct inode *in)
+@@ -8,6 +8,7 @@
+ #include <linux/ceph/decode.h>
+ 
+ #include <linux/xattr.h>
++#include <linux/security.h>
+ #include <linux/posix_acl_xattr.h>
+ #include <linux/slab.h>
+ 
+@@ -17,26 +18,9 @@
+ static int __remove_xattr(struct ceph_inode_info *ci,
+ 			  struct ceph_inode_xattr *xattr);
+ 
+-static const struct xattr_handler ceph_other_xattr_handler;
+-
+-/*
+- * List of handlers for synthetic system.* attributes. Other
+- * attributes are handled directly.
+- */
+-const struct xattr_handler *ceph_xattr_handlers[] = {
+-#ifdef CONFIG_CEPH_FS_POSIX_ACL
+-	&posix_acl_access_xattr_handler,
+-	&posix_acl_default_xattr_handler,
+-#endif
+-	&ceph_other_xattr_handler,
+-	NULL,
+-};
+-
+ static bool ceph_is_valid_xattr(const char *name)
+ {
+ 	return !strncmp(name, XATTR_CEPH_PREFIX, XATTR_CEPH_PREFIX_LEN) ||
+-	       !strncmp(name, XATTR_SECURITY_PREFIX,
+-			XATTR_SECURITY_PREFIX_LEN) ||
+ 	       !strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN) ||
+ 	       !strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN);
+ }
+@@ -1196,6 +1180,110 @@ bool ceph_security_xattr_deadlock(struct inode *in)
+ 	spin_unlock(&ci->i_ceph_lock);
  	return ret;
  }
- #endif
 +
-+void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx)
++#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
++int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
++			   struct ceph_acl_sec_ctx *as_ctx)
 +{
-+#ifdef CONFIG_CEPH_FS_POSIX_ACL
-+	posix_acl_release(as_ctx->acl);
-+	posix_acl_release(as_ctx->default_acl);
-+#endif
-+	if (as_ctx->pagelist)
-+		ceph_pagelist_release(as_ctx->pagelist);
++	struct ceph_pagelist *pagelist = as_ctx->pagelist;
++	const char *name;
++	size_t name_len;
++	int err;
++
++	err = security_dentry_init_security(dentry, mode, &dentry->d_name,
++					    &as_ctx->sec_ctx,
++					    &as_ctx->sec_ctxlen);
++	if (err < 0) {
++		err = 0; /* do nothing */
++		goto out;
++	}
++
++	err = -ENOMEM;
++	if (!pagelist) {
++		pagelist = ceph_pagelist_alloc(GFP_KERNEL);
++		if (!pagelist)
++			goto out;
++		err = ceph_pagelist_reserve(pagelist, PAGE_SIZE);
++		if (err)
++			goto out;
++		ceph_pagelist_encode_32(pagelist, 1);
++	}
++
++	/*
++	 * FIXME: Make security_dentry_init_security() generic. Currently
++	 * It only supports single security module and only selinux has
++	 * dentry_init_security hook.
++	 */
++	name = XATTR_NAME_SELINUX;
++	name_len = strlen(name);
++	err = ceph_pagelist_reserve(pagelist,
++				    4 * 2 + name_len + as_ctx->sec_ctxlen);
++	if (err)
++		goto out;
++
++	if (as_ctx->pagelist) {
++		/* update count of KV pairs */
++		BUG_ON(pagelist->length <= sizeof(__le32));
++		if (list_is_singular(&pagelist->head)) {
++			le32_add_cpu((__le32*)pagelist->mapped_tail, 1);
++		} else {
++			struct page *page = list_first_entry(&pagelist->head,
++							     struct page, lru);
++			void *addr = kmap_atomic(page);
++			le32_add_cpu((__le32*)addr, 1);
++			kunmap_atomic(addr);
++		}
++	} else {
++		as_ctx->pagelist = pagelist;
++	}
++
++	ceph_pagelist_encode_32(pagelist, name_len);
++	ceph_pagelist_append(pagelist, name, name_len);
++
++	ceph_pagelist_encode_32(pagelist, as_ctx->sec_ctxlen);
++	ceph_pagelist_append(pagelist, as_ctx->sec_ctx, as_ctx->sec_ctxlen);
++
++	err = 0;
++out:
++	if (pagelist && !as_ctx->pagelist)
++		ceph_pagelist_release(pagelist);
++	return err;
 +}
++
++void ceph_security_invalidate_secctx(struct inode *inode)
++{
++	security_inode_invalidate_secctx(inode);
++}
++
++static int ceph_xattr_set_security_label(const struct xattr_handler *handler,
++				    struct dentry *unused, struct inode *inode,
++				    const char *key, const void *buf,
++				    size_t buflen, int flags)
++{
++	if (security_ismaclabel(key)) {
++		const char *name = xattr_full_name(handler, key);
++		return __ceph_setxattr(inode, name, buf, buflen, flags);
++	}
++	return  -EOPNOTSUPP;
++}
++
++static int ceph_xattr_get_security_label(const struct xattr_handler *handler,
++				    struct dentry *unused, struct inode *inode,
++				    const char *key, void *buf, size_t buflen)
++{
++        if (security_ismaclabel(key)) {
++		const char *name = xattr_full_name(handler, key);
++		return __ceph_getxattr(inode, name, buf, buflen);
++	}
++	return  -EOPNOTSUPP;
++}
++
++static const struct xattr_handler ceph_security_label_handler = {
++        .prefix = XATTR_SECURITY_PREFIX,
++        .get    = ceph_xattr_get_security_label,
++        .set    = ceph_xattr_set_security_label,
++};
++#endif
+ #endif
+ 
+ void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx)
+@@ -1203,7 +1291,26 @@ void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx)
+ #ifdef CONFIG_CEPH_FS_POSIX_ACL
+ 	posix_acl_release(as_ctx->acl);
+ 	posix_acl_release(as_ctx->default_acl);
++#endif
++#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
++	security_release_secctx(as_ctx->sec_ctx, as_ctx->sec_ctxlen);
+ #endif
+ 	if (as_ctx->pagelist)
+ 		ceph_pagelist_release(as_ctx->pagelist);
+ }
++
++/*
++ * List of handlers for synthetic system.* attributes. Other
++ * attributes are handled directly.
++ */
++const struct xattr_handler *ceph_xattr_handlers[] = {
++#ifdef CONFIG_CEPH_FS_POSIX_ACL
++	&posix_acl_access_xattr_handler,
++	&posix_acl_default_xattr_handler,
++#endif
++#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
++	&ceph_security_label_handler,
++#endif
++	&ceph_other_xattr_handler,
++	NULL,
++};
 -- 
 2.17.2
 
