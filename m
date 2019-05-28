@@ -2,46 +2,46 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B08182C73E
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 May 2019 15:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1F182C76B
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 May 2019 15:09:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbfE1NDH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 28 May 2019 09:03:07 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:44258 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726620AbfE1NDH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 28 May 2019 09:03:07 -0400
-Received: by mail-yw1-f66.google.com with SMTP id e74so7843777ywe.11
-        for <ceph-devel@vger.kernel.org>; Tue, 28 May 2019 06:03:06 -0700 (PDT)
+        id S1727091AbfE1NJs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 28 May 2019 09:09:48 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:45256 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727010AbfE1NJs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 28 May 2019 09:09:48 -0400
+Received: by mail-yw1-f65.google.com with SMTP id w18so7848321ywa.12
+        for <ceph-devel@vger.kernel.org>; Tue, 28 May 2019 06:09:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=qaEOLwVj29F1LjwSd0Q4C+9wkfhvCMHmGYmUHQRqPUE=;
-        b=PlSDFTqeLHCbt/DKcombJBqUcBymwAJ5H7whzSmgser0eJLimdAFKSYEt74XEcDV2l
-         NOd2+ByXYPfg3iQz5RdSEMLdG1buuXk7EgMRzAUM0LXCQaKi9g/G1RP6j2A38uqszJ4l
-         R5pB5zbkGZkp85XYHfRgp8MNNUpPORoso0J8iuhkmkrqlgLABvtNYzBz8ASCAgiD4Jw5
-         KlCjX4FG2QqbWOf1FVgKtr8uHAnbU98cu+psr1xUOHU1JJAL2Rg7YRgKv68mr0Gt+VRv
-         BZT8Joi3pH3UmtGb8Q1R6vaKTdXZpvY+nROjGd91Jbd3VPn2D6c0M+CrFUDIqy1EB7Ij
-         eprA==
-X-Gm-Message-State: APjAAAXZYJ53s+uS78r5x/fhh3jl2ML2OJSTxo7PwIIcDeyfAjVQQMrq
-        ECRHzRxkFliyeU5g4iGgiZuuqw==
-X-Google-Smtp-Source: APXvYqyze87dW8iPddgKyNdq2C7fz12qdRwvkreIrevNBHamYfqb2yKnvhbimJFlR6momWYKp57+zg==
-X-Received: by 2002:a0d:c0c5:: with SMTP id b188mr59898059ywd.83.1559048586364;
-        Tue, 28 May 2019 06:03:06 -0700 (PDT)
+        bh=jp2nQhFJpDay1ElM+K9Jrovfb25wSjWEVHE/M0vVezw=;
+        b=VqIFIEWU4yJdCBZ+I70ofKPIYJcDgHyP7UQ1zI2UiOEkb85x61vIWG0nbA6gL2LaP3
+         ATKmfH1ZbGKKDuUTK/eTnzJFcMJldjueWRT7GYjwtOOzQezJDLL/x25NlgxPwbQHNo6F
+         7UfrQ3ga44Oh8U+VpeX3+yuWxsEd4l8HOOnf2F8LKN5RJCF2Q/KzB2+AnKT9V+p11wWb
+         4PJ0AdKUPwOikBpBTrknMsVkctamKoEEWAl3yved61GwVighaSHmJonMPlddVWZ+3jTe
+         7yICd0Giw7Ru5qQZmvOd1hQnjHOby8NYvN2ttWCEMib86hJNLe2I/L7mrCiZmoIVJhCu
+         rWbg==
+X-Gm-Message-State: APjAAAU82SeR3eKs6KiOeMiFQHGwZqC90fl2nSxQl6UzeMQ3X9TC5ja0
+        jFkDK3q4p9maShdVEXfweJq9Dg==
+X-Google-Smtp-Source: APXvYqy20I3hgDq67C052ZziDLhcATFmYU+u6tzCCKKjhLySdu6pxPk8Qs1slPVdJ7Vtw77HBEgOdg==
+X-Received: by 2002:a0d:c5c4:: with SMTP id h187mr49130935ywd.450.1559048987130;
+        Tue, 28 May 2019 06:09:47 -0700 (PDT)
 Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-4F7.dyn6.twc.com. [2606:a000:1100:37d::4f7])
-        by smtp.gmail.com with ESMTPSA id t203sm3735958ywt.6.2019.05.28.06.03.05
+        by smtp.gmail.com with ESMTPSA id p137sm3617770ywg.51.2019.05.28.06.09.45
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 28 May 2019 06:03:05 -0700 (PDT)
-Message-ID: <31c71e50e2c11e17860a6ef2771d4f8a92c880b8.camel@redhat.com>
-Subject: Re: [PATCH 2/2] ceph: add selinux support
+        Tue, 28 May 2019 06:09:45 -0700 (PDT)
+Message-ID: <9b1dd3fd33777e410c29eb928f13ab7987453ccf.camel@redhat.com>
+Subject: Re: [PATCH 2/8] ceph: single workqueue for inode related works
 From:   Jeff Layton <jlayton@redhat.com>
 To:     "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org
 Cc:     idryomov@redhat.com
-Date:   Tue, 28 May 2019 09:03:03 -0400
-In-Reply-To: <20190527110702.3962-2-zyan@redhat.com>
-References: <20190527110702.3962-1-zyan@redhat.com>
-         <20190527110702.3962-2-zyan@redhat.com>
+Date:   Tue, 28 May 2019 09:09:44 -0400
+In-Reply-To: <20190523081345.20410-2-zyan@redhat.com>
+References: <20190523081345.20410-1-zyan@redhat.com>
+         <20190523081345.20410-2-zyan@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
@@ -51,362 +51,329 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2019-05-27 at 19:07 +0800, Yan, Zheng wrote:
-> When creating new file/directory, uses dentry_init_security() to prepare
-> selinux context for the new inode, then sends openc/mkdir request to MDS,
-> together with selinux xattr.
+On Thu, 2019-05-23 at 16:13 +0800, Yan, Zheng wrote:
+> We have three workqueue for inode works. Later patch will introduce
+> one more work for inode. It's not good to introcuce more workqueue
+> and add more 'struct work_struct' to 'struct ceph_inode_info'.
 > 
 > Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-
-You should probably cc linux-security-module@vger.kernel.org.
-
 > ---
->  fs/ceph/Kconfig |  12 +++++
->  fs/ceph/caps.c  |   1 +
->  fs/ceph/dir.c   |  12 +++++
->  fs/ceph/file.c  |   3 ++
->  fs/ceph/inode.c |   1 +
->  fs/ceph/super.h |  19 +++++++
->  fs/ceph/xattr.c | 141 ++++++++++++++++++++++++++++++++++++++++++------
->  7 files changed, 172 insertions(+), 17 deletions(-)
+>  fs/ceph/file.c  |   2 +-
+>  fs/ceph/inode.c | 124 ++++++++++++++++++++++--------------------------
+>  fs/ceph/super.c |  28 +++--------
+>  fs/ceph/super.h |  17 ++++---
+>  4 files changed, 74 insertions(+), 97 deletions(-)
 > 
-> diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
-> index 52095f473464..5a665c126a7c 100644
-> --- a/fs/ceph/Kconfig
-> +++ b/fs/ceph/Kconfig
-> @@ -35,3 +35,15 @@ config CEPH_FS_POSIX_ACL
->  	  groups beyond the owner/group/world scheme.
->  
->  	  If you don't know what Access Control Lists are, say N
-> +
-> +config CEPH_FS_SECURITY_LABEL
-> +	bool "CephFS Security Labels"
-> +	depends on CEPH_FS && SECURITY
-> +	help
-> +	  Security labels support alternative access control models
-> +	  implemented by security modules like SELinux. This option
-> +	  enables an extended attribute handler for file security
-> +	  labels in the Ceph filesystem.
-> +
-> +	  If you are not using a security module that requires using
-> +	  extended attributes for file security labels, say N.
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index 7754d7679122..50409d9fdc90 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -3156,6 +3156,7 @@ static void handle_cap_grant(struct inode *inode,
->  			ci->i_xattrs.blob = ceph_buffer_get(xattr_buf);
->  			ci->i_xattrs.version = version;
->  			ceph_forget_all_cached_acls(inode);
-> +			ceph_security_invalidate_secctx(inode);
->  		}
->  	}
->  
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index 14d795e5fa73..b282d076dc9e 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -839,6 +839,9 @@ static int ceph_mknod(struct inode *dir, struct dentry *dentry,
->  	err = ceph_pre_init_acls(dir, &mode, &as_ctx);
->  	if (err < 0)
->  		goto out;
-> +	err = ceph_security_init_secctx(dentry, mode, &as_ctx);
-> +	if (err < 0)
-> +	       goto out;
->  
->  	dout("mknod in dir %p dentry %p mode 0%ho rdev %d\n",
->  	     dir, dentry, mode, rdev);
-> @@ -884,6 +887,7 @@ static int ceph_symlink(struct inode *dir, struct dentry *dentry,
->  	struct ceph_fs_client *fsc = ceph_sb_to_client(dir->i_sb);
->  	struct ceph_mds_client *mdsc = fsc->mdsc;
->  	struct ceph_mds_request *req;
-> +	struct ceph_acl_sec_ctx as_ctx = {};
->  	int err;
->  
->  	if (ceph_snap(dir) != CEPH_NOSNAP)
-> @@ -894,6 +898,10 @@ static int ceph_symlink(struct inode *dir, struct dentry *dentry,
->  		goto out;
->  	}
->  
-> +	err = ceph_security_init_secctx(dentry, S_IFLNK | S_IRWXUGO, &as_ctx);
-> +	if (err < 0)
-> +	       goto out;
-> +
->  	dout("symlink in dir %p dentry %p to '%s'\n", dir, dentry, dest);
->  	req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_SYMLINK, USE_AUTH_MDS);
->  	if (IS_ERR(req)) {
-> @@ -919,6 +927,7 @@ static int ceph_symlink(struct inode *dir, struct dentry *dentry,
->  out:
->  	if (err)
->  		d_drop(dentry);
-> +	ceph_release_acl_sec_ctx(&as_ctx);
->  	return err;
->  }
->  
-> @@ -953,6 +962,9 @@ static int ceph_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
->  	err = ceph_pre_init_acls(dir, &mode, &as_ctx);
->  	if (err < 0)
->  		goto out;
-> +	err = ceph_security_init_secctx(dentry, mode, &as_ctx);
-> +	if (err < 0)
-> +	       goto out;
->  
->  	req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
->  	if (IS_ERR(req)) {
 > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 5975345753d7..a7080783fe20 100644
+> index ccc054794542..b7be02dfb897 100644
 > --- a/fs/ceph/file.c
 > +++ b/fs/ceph/file.c
-> @@ -453,6 +453,9 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
->  		err = ceph_pre_init_acls(dir, &mode, &as_ctx);
->  		if (err < 0)
->  			return err;
-> +		err = ceph_security_init_secctx(dentry, mode, &as_ctx);
-> +		if (err < 0)
-> +			goto out_ctx;
->  	}
->  
->  	/* do the open */
+> @@ -790,7 +790,7 @@ static void ceph_aio_complete_req(struct ceph_osd_request *req)
+>  		if (aio_work) {
+>  			INIT_WORK(&aio_work->work, ceph_aio_retry_work);
+>  			aio_work->req = req;
+> -			queue_work(ceph_inode_to_client(inode)->wb_wq,
+> +			queue_work(ceph_inode_to_client(inode)->inode_wq,
+>  				   &aio_work->work);
+>  			return;
+>  		}
 > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 30d0cdc21035..125ac54b5841 100644
+> index 6eabcdb321cb..d9ff349821f0 100644
 > --- a/fs/ceph/inode.c
 > +++ b/fs/ceph/inode.c
-> @@ -891,6 +891,7 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
->  			       iinfo->xattr_data, iinfo->xattr_len);
->  		ci->i_xattrs.version = le64_to_cpu(info->xattr_version);
->  		ceph_forget_all_cached_acls(inode);
-> +		ceph_security_invalidate_secctx(inode);
->  		xattr_blob = NULL;
->  	}
+> @@ -33,9 +33,7 @@
 >  
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index d7520ccf27e9..9c82d213a5ab 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -932,6 +932,10 @@ struct ceph_acl_sec_ctx {
->  #ifdef CONFIG_CEPH_FS_POSIX_ACL
->  	void *default_acl;
->  	void *acl;
-> +#endif
-> +#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
-> +	void *sec_ctx;
-> +	u32 sec_ctxlen;
->  #endif
->  	struct ceph_pagelist *pagelist;
->  };
-> @@ -950,6 +954,21 @@ static inline bool ceph_security_xattr_wanted(struct inode *in)
->  }
->  #endif
+>  static const struct inode_operations ceph_symlink_iops;
 >  
-> +#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
-> +extern int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
-> +				     struct ceph_acl_sec_ctx *ctx);
-> +extern void ceph_security_invalidate_secctx(struct inode *inode);
-> +#else
-> +static inline int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
-> +					    struct ceph_acl_sec_ctx *ctx)
-> +{
-> +	return 0;
-> +}
-> +static inline void ceph_security_invalidate_secctx(struct inode *inode)
-> +{
-> +}
-> +#endif
+> -static void ceph_invalidate_work(struct work_struct *work);
+> -static void ceph_writeback_work(struct work_struct *work);
+> -static void ceph_vmtruncate_work(struct work_struct *work);
+> +static void ceph_inode_work(struct work_struct *work);
+>  
+>  /*
+>   * find or create an inode, given the ceph ino number
+> @@ -509,10 +507,8 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
+>  	INIT_LIST_HEAD(&ci->i_snap_realm_item);
+>  	INIT_LIST_HEAD(&ci->i_snap_flush_item);
+>  
+> -	INIT_WORK(&ci->i_wb_work, ceph_writeback_work);
+> -	INIT_WORK(&ci->i_pg_inv_work, ceph_invalidate_work);
+> -
+> -	INIT_WORK(&ci->i_vmtruncate_work, ceph_vmtruncate_work);
+> +	INIT_WORK(&ci->i_work, ceph_inode_work);
+> +	ci->i_work_mask = 0;
+>  
+>  	ceph_fscache_inode_init(ci);
+>  
+> @@ -1750,51 +1746,62 @@ bool ceph_inode_set_size(struct inode *inode, loff_t size)
+>   */
+>  void ceph_queue_writeback(struct inode *inode)
+>  {
+> +	struct ceph_inode_info *ci = ceph_inode(inode);
+> +	set_bit(CEPH_I_WORK_WRITEBACK, &ci->i_work_mask);
 > +
->  void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx);
+>  	ihold(inode);
+> -	if (queue_work(ceph_inode_to_client(inode)->wb_wq,
+> -		       &ceph_inode(inode)->i_wb_work)) {
+> +	if (queue_work(ceph_inode_to_client(inode)->inode_wq,
+> +		       &ci->i_work)) {
+>  		dout("ceph_queue_writeback %p\n", inode);
+>  	} else {
+> -		dout("ceph_queue_writeback %p failed\n", inode);
+> +		dout("ceph_queue_writeback %p already queued, mask=%lx\n",
+> +		     inode, ci->i_work_mask);
+>  		iput(inode);
+>  	}
+>  }
 >  
->  /* acl.c */
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index 518a5beed58c..fea70696f375 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -8,6 +8,7 @@
->  #include <linux/ceph/decode.h>
+> -static void ceph_writeback_work(struct work_struct *work)
+> -{
+> -	struct ceph_inode_info *ci = container_of(work, struct ceph_inode_info,
+> -						  i_wb_work);
+> -	struct inode *inode = &ci->vfs_inode;
+> -
+> -	dout("writeback %p\n", inode);
+> -	filemap_fdatawrite(&inode->i_data);
+> -	iput(inode);
+> -}
+> -
+>  /*
+>   * queue an async invalidation
+>   */
+>  void ceph_queue_invalidate(struct inode *inode)
+>  {
+> +	struct ceph_inode_info *ci = ceph_inode(inode);
+> +	set_bit(CEPH_I_WORK_INVALIDATE_PAGES, &ci->i_work_mask);
+> +
+>  	ihold(inode);
+> -	if (queue_work(ceph_inode_to_client(inode)->pg_inv_wq,
+> -		       &ceph_inode(inode)->i_pg_inv_work)) {
+> +	if (queue_work(ceph_inode_to_client(inode)->inode_wq,
+> +		       &ceph_inode(inode)->i_work)) {
+>  		dout("ceph_queue_invalidate %p\n", inode);
+>  	} else {
+> -		dout("ceph_queue_invalidate %p failed\n", inode);
+> +		dout("ceph_queue_invalidate %p already queued, mask=%lx\n",
+> +		     inode, ci->i_work_mask);
+>  		iput(inode);
+>  	}
+>  }
 >  
->  #include <linux/xattr.h>
-> +#include <linux/security.h>
->  #include <linux/posix_acl_xattr.h>
->  #include <linux/slab.h>
->  
-> @@ -17,26 +18,9 @@
->  static int __remove_xattr(struct ceph_inode_info *ci,
->  			  struct ceph_inode_xattr *xattr);
->  
-> -static const struct xattr_handler ceph_other_xattr_handler;
+>  /*
+> - * Invalidate inode pages in a worker thread.  (This can't be done
+> - * in the message handler context.)
+> + * Queue an async vmtruncate.  If we fail to queue work, we will handle
+> + * the truncation the next time we call __ceph_do_pending_vmtruncate.
+>   */
+> -static void ceph_invalidate_work(struct work_struct *work)
+> +void ceph_queue_vmtruncate(struct inode *inode)
+>  {
+> -	struct ceph_inode_info *ci = container_of(work, struct ceph_inode_info,
+> -						  i_pg_inv_work);
+> -	struct inode *inode = &ci->vfs_inode;
+> +	struct ceph_inode_info *ci = ceph_inode(inode);
+> +	set_bit(CEPH_I_WORK_VMTRUNCATE, &ci->i_work_mask);
+> +
+> +	ihold(inode);
+> +	if (queue_work(ceph_inode_to_client(inode)->inode_wq,
+> +		       &ci->i_work)) {
+> +		dout("ceph_queue_vmtruncate %p\n", inode);
+> +	} else {
+> +		dout("ceph_queue_vmtruncate %p already queued, mask=%lx\n",
+> +		     inode, ci->i_work_mask);
+> +		iput(inode);
+> +	}
+> +}
+> +
+> +static void ceph_do_invalidate_pages(struct inode *inode)
+> +{
+> +	struct ceph_inode_info *ci = ceph_inode(inode);
+>  	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+>  	u32 orig_gen;
+>  	int check = 0;
+> @@ -1846,44 +1853,6 @@ static void ceph_invalidate_work(struct work_struct *work)
+>  out:
+>  	if (check)
+>  		ceph_check_caps(ci, 0, NULL);
+> -	iput(inode);
+> -}
+> -
 > -
 > -/*
-> - * List of handlers for synthetic system.* attributes. Other
-> - * attributes are handled directly.
+> - * called by trunc_wq;
+> - *
+> - * We also truncate in a separate thread as well.
 > - */
-> -const struct xattr_handler *ceph_xattr_handlers[] = {
-> -#ifdef CONFIG_CEPH_FS_POSIX_ACL
-> -	&posix_acl_access_xattr_handler,
-> -	&posix_acl_default_xattr_handler,
-> -#endif
-> -	&ceph_other_xattr_handler,
-> -	NULL,
-> -};
+> -static void ceph_vmtruncate_work(struct work_struct *work)
+> -{
+> -	struct ceph_inode_info *ci = container_of(work, struct ceph_inode_info,
+> -						  i_vmtruncate_work);
+> -	struct inode *inode = &ci->vfs_inode;
 > -
->  static bool ceph_is_valid_xattr(const char *name)
->  {
->  	return !strncmp(name, XATTR_CEPH_PREFIX, XATTR_CEPH_PREFIX_LEN) ||
-> -	       !strncmp(name, XATTR_SECURITY_PREFIX,
-> -			XATTR_SECURITY_PREFIX_LEN) ||
->  	       !strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN) ||
->  	       !strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN);
+> -	dout("vmtruncate_work %p\n", inode);
+> -	__ceph_do_pending_vmtruncate(inode);
+> -	iput(inode);
+> -}
+> -
+> -/*
+> - * Queue an async vmtruncate.  If we fail to queue work, we will handle
+> - * the truncation the next time we call __ceph_do_pending_vmtruncate.
+> - */
+> -void ceph_queue_vmtruncate(struct inode *inode)
+> -{
+> -	struct ceph_inode_info *ci = ceph_inode(inode);
+> -
+> -	ihold(inode);
+> -
+> -	if (queue_work(ceph_sb_to_client(inode->i_sb)->trunc_wq,
+> -		       &ci->i_vmtruncate_work)) {
+> -		dout("ceph_queue_vmtruncate %p\n", inode);
+> -	} else {
+> -		dout("ceph_queue_vmtruncate %p failed, pending=%d\n",
+> -		     inode, ci->i_truncate_pending);
+> -		iput(inode);
+> -	}
 >  }
-> @@ -1196,6 +1180,110 @@ bool ceph_security_xattr_deadlock(struct inode *in)
->  	spin_unlock(&ci->i_ceph_lock);
->  	return ret;
->  }
-> +
-> +#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
-> +int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
-> +			   struct ceph_acl_sec_ctx *as_ctx)
-> +{
-> +	struct ceph_pagelist *pagelist = as_ctx->pagelist;
-> +	const char *name;
-> +	size_t name_len;
-> +	int err;
-> +
-> +	err = security_dentry_init_security(dentry, mode, &dentry->d_name,
-> +					    &as_ctx->sec_ctx,
-> +					    &as_ctx->sec_ctxlen);
-> +	if (err < 0) {
-> +		err = 0; /* do nothing */
-> +		goto out;
-> +	}
-> +
-
-^^^
-Should we WARN_ONCE if the above happens?
-
-> +	err = -ENOMEM;
-> +	if (!pagelist) {
-> +		pagelist = ceph_pagelist_alloc(GFP_KERNEL);
-> +		if (!pagelist)
-> +			goto out;
-> +		err = ceph_pagelist_reserve(pagelist, PAGE_SIZE);
-> +		if (err)
-> +			goto out;
-> +		ceph_pagelist_encode_32(pagelist, 1);
-> +	}
-> +
-> +	/*
-> +	 * FIXME: Make security_dentry_init_security() generic. Currently
-> +	 * It only supports single security module and only selinux has
-> +	 * dentry_init_security hook.
-> +	 */
-> +	name = XATTR_NAME_SELINUX;
-> +	name_len = strlen(name);
-
-Yuck, but it seems like a reasonable hack for now. I'm not sure what
-else we could reasonably do here. We definitely want to send the info
-alongside the initial create request.
-
-> +	err = ceph_pagelist_reserve(pagelist,
-> +				    4 * 2 + name_len + as_ctx->sec_ctxlen);
-> +	if (err)
-> +		goto out;
-> +
-> +	if (as_ctx->pagelist) {
-> +		/* update count of KV pairs */
-> +		BUG_ON(pagelist->length <= sizeof(__le32));
-> +		if (list_is_singular(&pagelist->head)) {
-> +			le32_add_cpu((__le32*)pagelist->mapped_tail, 1);
-> +		} else {
-> +			struct page *page = list_first_entry(&pagelist->head,
-> +							     struct page, lru);
-> +			void *addr = kmap_atomic(page);
-> +			le32_add_cpu((__le32*)addr, 1);
-> +			kunmap_atomic(addr);
-> +		}
-> +	} else {
-> +		as_ctx->pagelist = pagelist;
-> +	}
-> +
-> +	ceph_pagelist_encode_32(pagelist, name_len);
-> +	ceph_pagelist_append(pagelist, name, name_len);
-> +
-> +	ceph_pagelist_encode_32(pagelist, as_ctx->sec_ctxlen);
-> +	ceph_pagelist_append(pagelist, as_ctx->sec_ctx, as_ctx->sec_ctxlen);
-> +
-> +	err = 0;
-> +out:
-> +	if (pagelist && !as_ctx->pagelist)
-> +		ceph_pagelist_release(pagelist);
-> +	return err;
-> +}
-> +
-> +void ceph_security_invalidate_secctx(struct inode *inode)
-> +{
-> +	security_inode_invalidate_secctx(inode);
-> +}
-> +
-> +static int ceph_xattr_set_security_label(const struct xattr_handler *handler,
-> +				    struct dentry *unused, struct inode *inode,
-> +				    const char *key, const void *buf,
-> +				    size_t buflen, int flags)
-> +{
-> +	if (security_ismaclabel(key)) {
-> +		const char *name = xattr_full_name(handler, key);
-> +		return __ceph_setxattr(inode, name, buf, buflen, flags);
-> +	}
-> +	return  -EOPNOTSUPP;
-> +}
-> +
-> +static int ceph_xattr_get_security_label(const struct xattr_handler *handler,
-> +				    struct dentry *unused, struct inode *inode,
-> +				    const char *key, void *buf, size_t buflen)
-> +{
-> +        if (security_ismaclabel(key)) {
-
-nit: whitespace damage above
-
-> +		const char *name = xattr_full_name(handler, key);
-> +		return __ceph_getxattr(inode, name, buf, buflen);
-> +	}
-> +	return  -EOPNOTSUPP;
-> +}
-> +
-> +static const struct xattr_handler ceph_security_label_handler = {
-> +        .prefix = XATTR_SECURITY_PREFIX,
-> +        .get    = ceph_xattr_get_security_label,
-> +        .set    = ceph_xattr_set_security_label,
-> +};
-> +#endif
->  #endif
 >  
->  void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx)
-> @@ -1203,7 +1291,26 @@ void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx)
->  #ifdef CONFIG_CEPH_FS_POSIX_ACL
->  	posix_acl_release(as_ctx->acl);
->  	posix_acl_release(as_ctx->default_acl);
-> +#endif
-> +#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
-> +	security_release_secctx(as_ctx->sec_ctx, as_ctx->sec_ctxlen);
->  #endif
->  	if (as_ctx->pagelist)
->  		ceph_pagelist_release(as_ctx->pagelist);
+>  /*
+> @@ -1947,6 +1916,25 @@ void __ceph_do_pending_vmtruncate(struct inode *inode)
+>  	wake_up_all(&ci->i_cap_wq);
 >  }
+>  
+> +static void ceph_inode_work(struct work_struct *work)
+> +{
+> +	struct ceph_inode_info *ci = container_of(work, struct ceph_inode_info,
+> +						 i_work);
+> +	struct inode *inode = &ci->vfs_inode;
 > +
-> +/*
-> + * List of handlers for synthetic system.* attributes. Other
-> + * attributes are handled directly.
-> + */
-> +const struct xattr_handler *ceph_xattr_handlers[] = {
-> +#ifdef CONFIG_CEPH_FS_POSIX_ACL
-> +	&posix_acl_access_xattr_handler,
-> +	&posix_acl_default_xattr_handler,
-> +#endif
-> +#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
-> +	&ceph_security_label_handler,
-> +#endif
-> +	&ceph_other_xattr_handler,
-> +	NULL,
-> +};
+> +	if (test_and_clear_bit(CEPH_I_WORK_WRITEBACK, &ci->i_work_mask)) {
+> +		dout("writeback %p\n", inode);
+> +		filemap_fdatawrite(&inode->i_data);
+> +	}
+> +	if (test_and_clear_bit(CEPH_I_WORK_INVALIDATE_PAGES, &ci->i_work_mask))
+> +		ceph_do_invalidate_pages(inode);
+> +
+> +	if (test_and_clear_bit(CEPH_I_WORK_VMTRUNCATE, &ci->i_work_mask))
+> +		__ceph_do_pending_vmtruncate(inode);
+> +
+> +	iput(inode);
+> +}
+> +
 
-Aside from minor nits above:
+I like this overall.
+
+It _probably_ doesn't matter, but the above change means that these
+operations are now serialized for a particular inode, whereas they could
+run parallel before.
+
+>  /*
+>   * symlinks
+>   */
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index afc4c5d008d4..b1ee41372e85 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -671,18 +671,12 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
+>  	 * The number of concurrent works can be high but they don't need
+>  	 * to be processed in parallel, limit concurrency.
+>  	 */
+> -	fsc->wb_wq = alloc_workqueue("ceph-writeback", 0, 1);
+> -	if (!fsc->wb_wq)
+> +	fsc->inode_wq = alloc_workqueue("ceph-inode", WQ_UNBOUND, 0);
+> +	if (!fsc->inode_wq)
+>  		goto fail_client;
+> -	fsc->pg_inv_wq = alloc_workqueue("ceph-pg-invalid", 0, 1);
+> -	if (!fsc->pg_inv_wq)
+> -		goto fail_wb_wq;
+> -	fsc->trunc_wq = alloc_workqueue("ceph-trunc", 0, 1);
+> -	if (!fsc->trunc_wq)
+> -		goto fail_pg_inv_wq;
+>  	fsc->cap_wq = alloc_workqueue("ceph-cap", 0, 1);
+>  	if (!fsc->cap_wq)
+> -		goto fail_trunc_wq;
+> +		goto fail_inode_wq;
+>  
+>  	/* set up mempools */
+>  	err = -ENOMEM;
+> @@ -696,12 +690,8 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
+>  
+>  fail_cap_wq:
+>  	destroy_workqueue(fsc->cap_wq);
+> -fail_trunc_wq:
+> -	destroy_workqueue(fsc->trunc_wq);
+> -fail_pg_inv_wq:
+> -	destroy_workqueue(fsc->pg_inv_wq);
+> -fail_wb_wq:
+> -	destroy_workqueue(fsc->wb_wq);
+> +fail_inode_wq:
+> +	destroy_workqueue(fsc->inode_wq);
+>  fail_client:
+>  	ceph_destroy_client(fsc->client);
+>  fail:
+> @@ -714,9 +704,7 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
+>  
+>  static void flush_fs_workqueues(struct ceph_fs_client *fsc)
+>  {
+> -	flush_workqueue(fsc->wb_wq);
+> -	flush_workqueue(fsc->pg_inv_wq);
+> -	flush_workqueue(fsc->trunc_wq);
+> +	flush_workqueue(fsc->inode_wq);
+>  	flush_workqueue(fsc->cap_wq);
+>  }
+>  
+> @@ -724,9 +712,7 @@ static void destroy_fs_client(struct ceph_fs_client *fsc)
+>  {
+>  	dout("destroy_fs_client %p\n", fsc);
+>  
+> -	destroy_workqueue(fsc->wb_wq);
+> -	destroy_workqueue(fsc->pg_inv_wq);
+> -	destroy_workqueue(fsc->trunc_wq);
+> +	destroy_workqueue(fsc->inode_wq);
+>  	destroy_workqueue(fsc->cap_wq);
+>  
+>  	mempool_destroy(fsc->wb_pagevec_pool);
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index c84135bb72c6..234610ce4155 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -109,9 +109,7 @@ struct ceph_fs_client {
+>  	mempool_t *wb_pagevec_pool;
+>  	atomic_long_t writeback_count;
+>  
+> -	struct workqueue_struct *wb_wq;
+> -	struct workqueue_struct *pg_inv_wq;
+> -	struct workqueue_struct *trunc_wq;
+> +	struct workqueue_struct *inode_wq;
+>  	struct workqueue_struct *cap_wq;
+>  
+>  #ifdef CONFIG_DEBUG_FS
+> @@ -388,10 +386,8 @@ struct ceph_inode_info {
+>  	struct list_head i_snap_flush_item;
+>  	struct timespec64 i_snap_btime;
+>  
+> -	struct work_struct i_wb_work;  /* writeback work */
+> -	struct work_struct i_pg_inv_work;  /* page invalidation work */
+> -
+> -	struct work_struct i_vmtruncate_work;
+> +	struct work_struct i_work;
+> +	unsigned long  i_work_mask;
+>  
+>  #ifdef CONFIG_CEPH_FSCACHE
+>  	struct fscache_cookie *fscache;
+> @@ -513,6 +509,13 @@ static inline struct inode *ceph_find_inode(struct super_block *sb,
+>  #define CEPH_I_ERROR_FILELOCK	(1 << 12) /* have seen file lock errors */
+>  
+>  
+> +/*
+> + * Masks of ceph inode work.
+> + */
+> +#define CEPH_I_WORK_WRITEBACK		0 /* writeback */
+> +#define CEPH_I_WORK_INVALIDATE_PAGES	1 /* invalidate pages */
+> +#define CEPH_I_WORK_VMTRUNCATE		2 /* vmtruncate */
+> +
+>  /*
+>   * We set the ERROR_WRITE bit when we start seeing write errors on an inode
+>   * and then clear it when they start succeeding. Note that we do a lockless
 
 Reviewed-by: Jeff Layton <jlayton@redhat.com>
 
