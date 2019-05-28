@@ -2,356 +2,280 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1DDA2C5FF
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 May 2019 13:59:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE83E2C69C
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 May 2019 14:35:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbfE1L7N (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 28 May 2019 07:59:13 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:43376 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726580AbfE1L7N (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 28 May 2019 07:59:13 -0400
-Received: by mail-yw1-f68.google.com with SMTP id t5so7777097ywf.10
-        for <ceph-devel@vger.kernel.org>; Tue, 28 May 2019 04:59:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=secV5avc5808kShQhrKP+cpoLuZhMMA6qjccO867nNQ=;
-        b=ctoNlB2JzATudyyuklDqwh6JuPYVWOX5ZbekPH7w9VeYklBa4aAHz+wrOIcD7/rHBK
-         LhcmMtE/6M8DFSrQsnkBtaBWBtGKWthL9Rj+FF5VN9eVU/XS6F0m5oPi4AQA/uLt8yep
-         VbBQHv5MIJivt6ktRQpJ74Jce3Pi5+Pvq+iqcussK3g4b07h6ewc6Y04j9WDxZVD8n9q
-         avE8fCgJwvq1zkZeKE9pwacyODb5YhVuS9xa+Jcgzvg1HIdgoMfZpG226vY6xYDHev9/
-         un+A8OfGsEyu9YSmBQ4AHnBvR0gGSN5ciT9BLP6cO0C4AOodnc1qI9QSvGVL98iT/VUL
-         hjtA==
-X-Gm-Message-State: APjAAAXi7xJIGljnLCGo2evDMXMSfNE5yA0UCnH80/ONHQs0ro5duvH8
-        /FcFYpJtHbcm3rQnSlkXyXnaTQ==
-X-Google-Smtp-Source: APXvYqwcyco+oW22sym40EKiRNRA8BOR0mClbNEWRF1go2HAKaYw/ToBs2ZQ2DIkfie7ZahE2TUf7g==
-X-Received: by 2002:a81:638b:: with SMTP id x133mr6045045ywb.82.1559044752113;
-        Tue, 28 May 2019 04:59:12 -0700 (PDT)
-Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-4F7.dyn6.twc.com. [2606:a000:1100:37d::4f7])
-        by smtp.gmail.com with ESMTPSA id k205sm3447926ywc.69.2019.05.28.04.59.11
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 28 May 2019 04:59:11 -0700 (PDT)
-Message-ID: <4d7e7ad4ec52122fdcf806c5787141ddfc5a091d.camel@redhat.com>
-Subject: Re: [PATCH 1/2] ceph: rename struct ceph_acls_info to
- ceph_acl_sec_ctx
-From:   Jeff Layton <jlayton@redhat.com>
-To:     "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org
-Cc:     idryomov@redhat.com
-Date:   Tue, 28 May 2019 07:59:10 -0400
-In-Reply-To: <20190527110702.3962-1-zyan@redhat.com>
-References: <20190527110702.3962-1-zyan@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        id S1727165AbfE1MfC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 28 May 2019 08:35:02 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:40761 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726999AbfE1MfC (ORCPT
+        <rfc822;groupwise-ceph-devel@vger.kernel.org:0:0>);
+        Tue, 28 May 2019 08:35:02 -0400
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 28 May 2019 14:35:00 +0200
+Received: from [192.168.178.28] (nwb-a10-snat.microfocus.com [10.120.13.201])
+        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Tue, 28 May 2019 13:34:39 +0100
+Subject: Re: Keynote: What's Planned for Ceph Octopus - Sage Weil -> Feedback
+ on cephs Usability
+To:     Owen Synge <osynge@googlemail.com>, ceph-devel@vger.kernel.org
+References: <9607e2ac-ce55-60af-7b84-609783778ee2@googlemail.com>
+From:   Sebastian Wagner <swagner@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=swagner@suse.com; prefer-encrypt=mutual; keydata=
+ mQENBFgkpqgBCACl4ZHmEEhiZiofnuiVR3wc4ZH3ty2Y7Fgv/ttDAtyQSM3l5MrwFVEkTUKW
+ zZOaLPsVl8FwBoy1ciK3cS6nOKwgYogStBBqX8mvnlb915kvhtQ84bSPQ9W5206tKfQDKmZ8
+ jWjgEKCwFxH3O2teG2Jc8HFVjNWeUEdF1s9OrL6s6RQmiDf7gkzZL5ew5vS0G1yIWzJBpQzS
+ GJEcjm1TmnZWN1jgkKOENBzbDQcBg/IDiLDnbSpAL4LG7RAaavMMdSyVXMOGpmbgV9vNkpTw
+ 0qpVttsU2t919B02bLTEbYBb3Amsfy8S+ahzQgjg2xiT94xyC7ukLQI4nKEseolN9uERABEB
+ AAG0I1NlYmFzdGlhbiBXYWduZXIgPHN3YWduZXJAc3VzZS5jb20+iQE7BBMBAgAlAhsDBgsJ
+ CAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCWCWwgwIZAQAKCRCNJEKAfml5+CdFB/wPI/8K94em
+ Zi7GvN6FwCy0Ts+CKSYJcJoX7m0Jp6i3PaTgZMjhmH+KGH/mwXAUPE1NB/Pe/iIwrhRR9tnP
+ iJgFcOh4Qe64dsk1DwftVOIk+xEBPYPb6S0FDVLdRkdJUT+2/R+yQirEQACcakHHZvbGru3e
+ kF+P8OPQxX6llR3kK6MUa3RX2ZlrwiLNsw4LABKSInl0wsVlzH10LaQxujaqs/NFELR7kkZx
+ wd2L3uVAmNxu2XAD6h3oEabQCN6Ol9MDPwX+QZNJ6ZTT5Qofba7Vm1zA5Tmj6mMxMK4M62qu
+ 5ekGxgWDRmf5Sx6PPphJ1JZY/N/TqchUlpeNIxyHGGMRuQENBFgkpqgBCAC8AHCom5ZNqJhB
+ Jsftllb+TTVAtGMt/2R5c+5BfRrrd8rsN7st5hG2RECaokswFHrBWsJvxTex1V+v+ctej4SQ
+ 64TII9Z2ffySTzdqGFWssOUrHoJvk+4BRuJ48f+bSRETGlXILqIiAISRAfeYOJIGCbsRmijx
+ fMjRPzMel2TobmCBW3YsSNVLo/3cMzF7sYHDK9IiAeb9fWrG/p5brtItlfJUmsw+1aZ42TaR
+ 94mcjKK0U2tTtj1fGkjhb0bRNTiXMQEWIx0xAyCaR61mGpqMhRE8FJ7eY19mAl9G5zTs604I
+ ToEcJ6Bd518hJ0HXFJrqKJ/TUKL/dKR4iMViFUORABEBAAGJAR8EGAECAAkFAlgkpqgCGwwA
+ CgkQjSRCgH5pefiqQwf/U+POJe0SgWBzX6+69CuRUwE68Uu0qGrNWOfWphaKPksBDx46IhhA
+ UlmBJbEoo9h6E7utwwgDNf92O2Lv6yClR+2D2BA9mHLm0DBsmH04bahHGsicU1qK0rBgujqc
+ GNrrgYPx3z66C7MB/o6/smS26baOChtrs5XeX3r4zE5+1yZCPb9AR8pwitNF+N81FIXE0DXp
+ XhxSviD3KT4QH6Oo6f1PJ3kYnHHX9FmS/3f6hDU2o/kBwOfaP2C0ZWIcbh8VH0ENWdGl6/OK
+ QJO68y6QM2NCeCAvfyISE4GERtb7/oRlvtBwWfq7OBsqLXkrKobW4sdx8Scbwb728fF14Oyn 2A==
+Message-ID: <f43b54ca-6573-bb56-0165-5a76eda0f888@suse.com>
+Date:   Tue, 28 May 2019 14:34:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <9607e2ac-ce55-60af-7b84-609783778ee2@googlemail.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="XRR7zEeeDns85o8UIUgPKzL35MdG1blpg"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2019-05-27 at 19:07 +0800, Yan, Zheng wrote:
-> this is preparation for security label support
-> 
-> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-> ---
->  fs/ceph/acl.c   | 22 +++++++---------------
->  fs/ceph/dir.c   | 28 ++++++++++++++--------------
->  fs/ceph/file.c  | 18 +++++++++---------
->  fs/ceph/super.h | 29 +++++++++++++++--------------
->  fs/ceph/xattr.c | 10 ++++++++++
->  5 files changed, 55 insertions(+), 52 deletions(-)
-> 
-> diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
-> index bc2b89e8fd3f..07c8ab39f6c7 100644
-> --- a/fs/ceph/acl.c
-> +++ b/fs/ceph/acl.c
-> @@ -172,7 +172,7 @@ int ceph_set_acl(struct inode *inode, struct posix_acl *acl, int type)
->  }
->  
->  int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
-> -		       struct ceph_acls_info *info)
-> +		       struct ceph_acl_sec_ctx *as_ctx)
->  {
->  	struct posix_acl *acl, *default_acl;
->  	size_t val_size1 = 0, val_size2 = 0;
-> @@ -247,9 +247,9 @@ int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
->  
->  	kfree(tmp_buf);
->  
-> -	info->acl = acl;
-> -	info->default_acl = default_acl;
-> -	info->pagelist = pagelist;
-> +	as_ctx->acl = acl;
-> +	as_ctx->default_acl = default_acl;
-> +	as_ctx->pagelist = pagelist;
->  	return 0;
->  
->  out_err:
-> @@ -261,18 +261,10 @@ int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
->  	return err;
->  }
->  
-> -void ceph_init_inode_acls(struct inode* inode, struct ceph_acls_info *info)
-> +void ceph_init_inode_acls(struct inode* inode, struct ceph_acl_sec_ctx *as_ctx)
->  {
->  	if (!inode)
->  		return;
-> -	ceph_set_cached_acl(inode, ACL_TYPE_ACCESS, info->acl);
-> -	ceph_set_cached_acl(inode, ACL_TYPE_DEFAULT, info->default_acl);
-> -}
-> -
-> -void ceph_release_acls_info(struct ceph_acls_info *info)
-> -{
-> -	posix_acl_release(info->acl);
-> -	posix_acl_release(info->default_acl);
-> -	if (info->pagelist)
-> -		ceph_pagelist_release(info->pagelist);
-> +	ceph_set_cached_acl(inode, ACL_TYPE_ACCESS, as_ctx->acl);
-> +	ceph_set_cached_acl(inode, ACL_TYPE_DEFAULT, as_ctx->default_acl);
->  }
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index 72efad28857c..14d795e5fa73 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -825,7 +825,7 @@ static int ceph_mknod(struct inode *dir, struct dentry *dentry,
->  	struct ceph_fs_client *fsc = ceph_sb_to_client(dir->i_sb);
->  	struct ceph_mds_client *mdsc = fsc->mdsc;
->  	struct ceph_mds_request *req;
-> -	struct ceph_acls_info acls = {};
-> +	struct ceph_acl_sec_ctx as_ctx = {};
->  	int err;
->  
->  	if (ceph_snap(dir) != CEPH_NOSNAP)
-> @@ -836,7 +836,7 @@ static int ceph_mknod(struct inode *dir, struct dentry *dentry,
->  		goto out;
->  	}
->  
-> -	err = ceph_pre_init_acls(dir, &mode, &acls);
-> +	err = ceph_pre_init_acls(dir, &mode, &as_ctx);
->  	if (err < 0)
->  		goto out;
->  
-> @@ -855,9 +855,9 @@ static int ceph_mknod(struct inode *dir, struct dentry *dentry,
->  	req->r_args.mknod.rdev = cpu_to_le32(rdev);
->  	req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
->  	req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
-> -	if (acls.pagelist) {
-> -		req->r_pagelist = acls.pagelist;
-> -		acls.pagelist = NULL;
-> +	if (as_ctx.pagelist) {
-> +		req->r_pagelist = as_ctx.pagelist;
-> +		as_ctx.pagelist = NULL;
->  	}
->  	err = ceph_mdsc_do_request(mdsc, dir, req);
->  	if (!err && !req->r_reply_info.head->is_dentry)
-> @@ -865,10 +865,10 @@ static int ceph_mknod(struct inode *dir, struct dentry *dentry,
->  	ceph_mdsc_put_request(req);
->  out:
->  	if (!err)
-> -		ceph_init_inode_acls(d_inode(dentry), &acls);
-> +		ceph_init_inode_acls(d_inode(dentry), &as_ctx);
->  	else
->  		d_drop(dentry);
-> -	ceph_release_acls_info(&acls);
-> +	ceph_release_acl_sec_ctx(&as_ctx);
->  	return err;
->  }
->  
-> @@ -927,7 +927,7 @@ static int ceph_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
->  	struct ceph_fs_client *fsc = ceph_sb_to_client(dir->i_sb);
->  	struct ceph_mds_client *mdsc = fsc->mdsc;
->  	struct ceph_mds_request *req;
-> -	struct ceph_acls_info acls = {};
-> +	struct ceph_acl_sec_ctx as_ctx = {};
->  	int err = -EROFS;
->  	int op;
->  
-> @@ -950,7 +950,7 @@ static int ceph_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
->  	}
->  
->  	mode |= S_IFDIR;
-> -	err = ceph_pre_init_acls(dir, &mode, &acls);
-> +	err = ceph_pre_init_acls(dir, &mode, &as_ctx);
->  	if (err < 0)
->  		goto out;
->  
-> @@ -967,9 +967,9 @@ static int ceph_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
->  	req->r_args.mkdir.mode = cpu_to_le32(mode);
->  	req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
->  	req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
-> -	if (acls.pagelist) {
-> -		req->r_pagelist = acls.pagelist;
-> -		acls.pagelist = NULL;
-> +	if (as_ctx.pagelist) {
-> +		req->r_pagelist = as_ctx.pagelist;
-> +		as_ctx.pagelist = NULL;
->  	}
->  	err = ceph_mdsc_do_request(mdsc, dir, req);
->  	if (!err &&
-> @@ -979,10 +979,10 @@ static int ceph_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
->  	ceph_mdsc_put_request(req);
->  out:
->  	if (!err)
-> -		ceph_init_inode_acls(d_inode(dentry), &acls);
-> +		ceph_init_inode_acls(d_inode(dentry), &as_ctx);
->  	else
->  		d_drop(dentry);
-> -	ceph_release_acls_info(&acls);
-> +	ceph_release_acl_sec_ctx(&as_ctx);
->  	return err;
->  }
->  
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index b7be02dfb897..5975345753d7 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -436,7 +436,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
->  	struct ceph_mds_client *mdsc = fsc->mdsc;
->  	struct ceph_mds_request *req;
->  	struct dentry *dn;
-> -	struct ceph_acls_info acls = {};
-> +	struct ceph_acl_sec_ctx as_ctx = {};
->  	int mask;
->  	int err;
->  
-> @@ -450,7 +450,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
->  	if (flags & O_CREAT) {
->  		if (ceph_quota_is_max_files_exceeded(dir))
->  			return -EDQUOT;
-> -		err = ceph_pre_init_acls(dir, &mode, &acls);
-> +		err = ceph_pre_init_acls(dir, &mode, &as_ctx);
->  		if (err < 0)
->  			return err;
->  	}
-> @@ -459,16 +459,16 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
->  	req = prepare_open_request(dir->i_sb, flags, mode);
->  	if (IS_ERR(req)) {
->  		err = PTR_ERR(req);
-> -		goto out_acl;
-> +		goto out_ctx;
->  	}
->  	req->r_dentry = dget(dentry);
->  	req->r_num_caps = 2;
->  	if (flags & O_CREAT) {
->  		req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
->  		req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
-> -		if (acls.pagelist) {
-> -			req->r_pagelist = acls.pagelist;
-> -			acls.pagelist = NULL;
-> +		if (as_ctx.pagelist) {
-> +			req->r_pagelist = as_ctx.pagelist;
-> +			as_ctx.pagelist = NULL;
->  		}
->  	}
->  
-> @@ -506,7 +506,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
->  	} else {
->  		dout("atomic_open finish_open on dn %p\n", dn);
->  		if (req->r_op == CEPH_MDS_OP_CREATE && req->r_reply_info.has_create_ino) {
-> -			ceph_init_inode_acls(d_inode(dentry), &acls);
-> +			ceph_init_inode_acls(d_inode(dentry), &as_ctx);
->  			file->f_mode |= FMODE_CREATED;
->  		}
->  		err = finish_open(file, dentry, ceph_open);
-> @@ -515,8 +515,8 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
->  	if (!req->r_err && req->r_target_inode)
->  		ceph_put_fmode(ceph_inode(req->r_target_inode), req->r_fmode);
->  	ceph_mdsc_put_request(req);
-> -out_acl:
-> -	ceph_release_acls_info(&acls);
-> +out_ctx:
-> +	ceph_release_acl_sec_ctx(&as_ctx);
->  	dout("atomic_open result=%d\n", err);
->  	return err;
->  }
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index e74867743e07..d7520ccf27e9 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -928,6 +928,14 @@ extern void __ceph_build_xattrs_blob(struct ceph_inode_info *ci);
->  extern void __ceph_destroy_xattrs(struct ceph_inode_info *ci);
->  extern const struct xattr_handler *ceph_xattr_handlers[];
->  
-> +struct ceph_acl_sec_ctx {
-> +#ifdef CONFIG_CEPH_FS_POSIX_ACL
-> +	void *default_acl;
-> +	void *acl;
-> +#endif
-> +	struct ceph_pagelist *pagelist;
-> +};
-> +
->  #ifdef CONFIG_SECURITY
->  extern bool ceph_security_xattr_deadlock(struct inode *in);
->  extern bool ceph_security_xattr_wanted(struct inode *in);
-> @@ -942,21 +950,17 @@ static inline bool ceph_security_xattr_wanted(struct inode *in)
->  }
->  #endif
->  
-> -/* acl.c */
-> -struct ceph_acls_info {
-> -	void *default_acl;
-> -	void *acl;
-> -	struct ceph_pagelist *pagelist;
-> -};
-> +void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx);
->  
-> +/* acl.c */
->  #ifdef CONFIG_CEPH_FS_POSIX_ACL
->  
->  struct posix_acl *ceph_get_acl(struct inode *, int);
->  int ceph_set_acl(struct inode *inode, struct posix_acl *acl, int type);
->  int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
-> -		       struct ceph_acls_info *info);
-> -void ceph_init_inode_acls(struct inode *inode, struct ceph_acls_info *info);
-> -void ceph_release_acls_info(struct ceph_acls_info *info);
-> +		       struct ceph_acl_sec_ctx *as_ctx);
-> +void ceph_init_inode_acls(struct inode *inode,
-> +			  struct ceph_acl_sec_ctx *as_ctx);
->  
->  static inline void ceph_forget_all_cached_acls(struct inode *inode)
->  {
-> @@ -969,15 +973,12 @@ static inline void ceph_forget_all_cached_acls(struct inode *inode)
->  #define ceph_set_acl NULL
->  
->  static inline int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
-> -				     struct ceph_acls_info *info)
-> +				     struct ceph_acl_sec_ctx *as_ctx)
->  {
->  	return 0;
->  }
->  static inline void ceph_init_inode_acls(struct inode *inode,
-> -					struct ceph_acls_info *info)
-> -{
-> -}
-> -static inline void ceph_release_acls_info(struct ceph_acls_info *info)
-> +					struct ceph_acl_sec_ctx *as_ctx)
->  {
->  }
->  static inline int ceph_acl_chmod(struct dentry *dentry, struct inode *inode)
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index 7eff619f7ac8..518a5beed58c 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -1197,3 +1197,13 @@ bool ceph_security_xattr_deadlock(struct inode *in)
->  	return ret;
->  }
->  #endif
-> +
-> +void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx)
-> +{
-> +#ifdef CONFIG_CEPH_FS_POSIX_ACL
-> +	posix_acl_release(as_ctx->acl);
-> +	posix_acl_release(as_ctx->default_acl);
-> +#endif
-> +	if (as_ctx->pagelist)
-> +		ceph_pagelist_release(as_ctx->pagelist);
-> +}
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--XRR7zEeeDns85o8UIUgPKzL35MdG1blpg
+Content-Type: multipart/mixed; boundary="T8hhTlOqM9Zn8o4XEExmpPHcraGqkLQZr";
+ protected-headers="v1"
+From: Sebastian Wagner <swagner@suse.com>
+To: Owen Synge <osynge@googlemail.com>, ceph-devel@vger.kernel.org
+Message-ID: <f43b54ca-6573-bb56-0165-5a76eda0f888@suse.com>
+Subject: Re: Keynote: What's Planned for Ceph Octopus - Sage Weil -> Feedback
+ on cephs Usability
+References: <9607e2ac-ce55-60af-7b84-609783778ee2@googlemail.com>
+In-Reply-To: <9607e2ac-ce55-60af-7b84-609783778ee2@googlemail.com>
 
-This is more than just a rename. You're also preparing this struct to
-hold other info besides ACLs, which is fine, but it might be good to
-point that out in the description.
+--T8hhTlOqM9Zn8o4XEExmpPHcraGqkLQZr
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Jeff Layton <jlayton@redhat.com>
+Hey Owen,
 
+thanks for your detailed feedback!
+
+Am 25.05.19 um 04:13 schrieb Owen Synge:
+> Dear Ceph team,
+>=20
+> I have been watching Sages 5 these for octopus, and a love the themes,
+> and all of Sages talk.
+>=20
+> Sages talk mentioned cluster usability.
+>=20
+> On 'the orchestrate API' slide, sage slides talk about a "Partial
+> consensus to focus efforts on":
+>=20
+> (Option) Rook (which I don't know, but depends on Kubernetes)
+>=20
+> (Option) ssh (or maybe some rpc mechanism).
+>=20
+> I was sad not to see the option
+>=20
+> (Option) Support a common the most popular declarative
+> puppet/chef/cfengine module.
+
+It also depends on the amount of upstream contributions we're getting.
+
+>=20
+> I think option (ssh) exists only because work has been invested in
+> complex salt and ansible implementations, but that never seem to reduce=
+
+> in complexity. I propose we chalk it down to mistakes we made and gain
+> some wisdom why option (ssh) took much more effort than expected, and
+> learn from Option (Rook).>
+> I think option (Rook) is a very good idea, as it works on sounds ideas =
+I
+> have seen work before.
+>=20
+> I understand that ceph should not *only* depend on anything as complex
+> as Kubernetes as a deployment dependency, even if it is the best
+> solution. I may not want to run some thing as complex as Kubernetes jus=
+t
+> to run ceph.
+
+Yep, that's one idea behind the SSH orchestrator. We have ceph-deploy
+prominently advertised in the documentation, because we don't have a
+replacement for this use case yet.
+
+>=20
+> I would have liked to see on the slides:
+>=20
+> (Option) Look how to get Rook's benefits without Kubernetes
+
+The reality is: Every external orchestrator (like Rook, DeepSea,
+ceph-ansible) has its very own idea of how things should be defined:
+
+Rook uses a bunch of CustomResources that define the desired state of
+the cluster.
+
+DeepSea uses the policy.cfg to define the desired start.
+
+The SSH orchestrator uses the modules
+s persistent key value store to remember a list of managed hosts.
+
+There is simply no need to invent a new source of truth within the MGR.
+
+Secondly, I simply don't want to maintain a function between the
+orchestratemap and every external orchestrator's configuration.
+Maintaining a set of state changes (orchestrator.py) is enough.
+
+Thus, I'd stick with the source of truth we currently already have.
+
+>=20
+> I believe Rook's dependency Kubernetes, provides an architecture based
+> on a declarative configuration and shared service state makes managing
+> clusters easier.
+
+Yep. Rook's CustomResources like CephCluster are a great way to maintain
+the state of the cluster.
+
+> In other words Kubernetes is like service version of
+> cephs crushmap which describes how data is distributed in ceph.
+>=20
+> To implement (Names can be changed and are purely for illustration)
+> "orchestratemapfile" -> desired deployment configfile
+> =C2=A0=C2=A0=C2=A0 'orchestratemap' -> compiled with local state orches=
+tratemapfile
+>=20
+> =C2=A0=C2=A0=C2=A0 'liborchestrate' -> shares and executes orchestratem=
+ap
+>=20
+> So any ceph developer can understand, just like the crushmap is
+> declarative and drives data, The "orchestratemap" should be declarative=
+
+> and drive the deployment. The crushmap is shared state across the
+> cluster, the orchestratemap would be a shared state across the cluster.=
+
+> A crushmap is a compiled crushmapfile with state about the cluster. A
+> orchestratemap is compiled from a orchestratemapfile with state about
+> the cluster.
+>=20
+> Just like librados can read a crushmap and speak to a mon to get cluste=
+r
+> status, and drive data flow, liborchestrate
+
+Yes, exactly! But instead of liborchestrate, we have a set of commands
+defined to read and write the state of the Ceph cluster, like e.g.
+
+ceph orchestrator service ls
+
+
+> can read a orchestratemap,
+> and drive the stages of ceph deployment, A MVP* would function with
+> minor degradation even without shared cluster state. (ie no
+> orchestratemap).
+
+Do you have the code available? Would be great to have a look at it.
+Which operations did you define? Which parameters? Which data structures?=
+
+
+>=20
+> A good starting point for the orchestratemapfile would be the Kubernete=
+s
+> config for rook, as this is essentially a desired state for the cluster=
+=2E
+>=20
+> If you add the current state locally into the orchestratemap when
+> compiling the orchestratemapfile, All desired possible operations can b=
+e
+> calculated by each node using just the orchestratemap and the current
+> local state independently. All the operations that must be delayed due
+> to dependencies in other operations can also be calculated for each
+> node, this avoids, retry, timeouts, and instantly reduces error handlin=
+g
+> and allows for ceph to potentially, save the user from knowing that mor=
+e
+> than one deamon is running to provide ceph, staged upgrades,practice
+> self healing at the service level, guide the users deployment with more=
+
+> helpful error messages, and many other potential enhancements.
+
+The Rook orchestrator is indeed much simpler, as it just needs to update
+the CustomResources in Kubernetes. The rest is done by K8s and the Rook
+operator (delayed operations, retries, timeouts, error handling).
+
+>=20
+> It may be argued that Option (ssh) is simpler than implementing an
+> "orchestratemap" and liborchestrate that reads it, and I argue Option
+> (ssh) is simpler for a test grade MVP, but for a production grade MVP
+> solution I suspect implementing an "orchestratemap" and liborchestrate
+> is simpler due to simpler synchronization, planning and error handling
+> for management of ceph, just like the crushmap simplifies
+> synchronization, planning and error handling for data in ceph.
+
+The idea of the SSH orchestartor is to be simpler than Rook +
+Kubernetes: Meaning we should not re-implement Kubernetes and Rook
+within the SSH orchestrator.
+
+>=20
+> Good luck and have fun,
+
+Thanks again for your ideas!
+
+Best,
+Sebastian
+
+>=20
+> Owen Synge
+>=20
+>=20
+> * I once nearly finished an orchestratemapfile to ceph configuration
+> once (no shared cluster state), and the bulk of the work was
+> understanding how each ceph daemon interact with the cluster during
+> boot, and commands to manage the demon. Only the state serialization,
+> comparison and propagation where never completed.
+>=20
+>=20
+
+--=20
+SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
+GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah, HRB 21284 (AG N=C3=BC=
+rnberg)
+
+
+--T8hhTlOqM9Zn8o4XEExmpPHcraGqkLQZr--
+
+--XRR7zEeeDns85o8UIUgPKzL35MdG1blpg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEb/VfrKHiO+rLIQ4NjSRCgH5pefgFAlztKtgACgkQjSRCgH5p
+efgr9QgApaV0V8jIsONYC9TPRWS7r/WnGCgpoJafvteBg04GaxnczqtdbKw9jU2j
+YnqxWSJEBDsJUtEPVMTzOqcfg6DiYp5UMv+owgzIFU3E2DxRk6osUZjLJ8qxmEvP
+gw18C5lZ9Y19jsSJdd6OE/9WcRlWNZrHzs2g5APSAcnDUrR52Qt/mUx/E2aFmVJc
+tDIuYotUz/z8PD8Se5zryBQsozRi/daJaAzO+tDZ5nKZrJYbm7Bd9QVwe5Dwybkx
+kupmgLQWgyjQuSmiKFBrUg64y7Hv4gWpwxz9pUUtIOO1om0MM/Z/+DuJFxjzT5/o
+FVTZYLIEhscGLvu6hL+OCNHPzXQCqQ==
+=pQGe
+-----END PGP SIGNATURE-----
+
+--XRR7zEeeDns85o8UIUgPKzL35MdG1blpg--
