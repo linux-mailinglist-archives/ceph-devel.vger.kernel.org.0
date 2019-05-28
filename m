@@ -2,56 +2,104 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A4FE2BCF1
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 May 2019 03:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55AD82C1B2
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 May 2019 10:53:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbfE1BqR convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Mon, 27 May 2019 21:46:17 -0400
-Received: from mga04.intel.com ([192.55.52.120]:56690 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727271AbfE1BqR (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 27 May 2019 21:46:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 May 2019 18:46:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,520,1549958400"; 
-   d="scan'208";a="179051313"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by fmsmga002.fm.intel.com with ESMTP; 27 May 2019 18:46:17 -0700
-Received: from BGSMSX108.gar.corp.intel.com (10.223.4.192) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 27 May 2019 18:46:16 -0700
-Received: from bgsmsx104.gar.corp.intel.com ([169.254.5.115]) by
- BGSMSX108.gar.corp.intel.com ([169.254.8.94]) with mapi id 14.03.0415.000;
- Tue, 28 May 2019 07:16:14 +0530
-From:   "Chamarthy, Mahati" <mahati.chamarthy@intel.com>
-To:     Ceph Development <ceph-devel@vger.kernel.org>
-Subject: ceph/nvml repo
-Thread-Topic: ceph/nvml repo
-Thread-Index: AdUU9xK4FZmy+RnWTumttOCE932aEQ==
-Date:   Tue, 28 May 2019 01:46:13 +0000
-Message-ID: <F2C0AA152775FE42B903C64EA674DD0E2ADE6FC7@BGSMSX104.gar.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.600.7
-dlp-reaction: no-action
-x-originating-ip: [10.223.10.10]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1726691AbfE1IxY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 28 May 2019 04:53:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42388 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726649AbfE1IxY (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 28 May 2019 04:53:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3CFCCAF1C;
+        Tue, 28 May 2019 08:53:22 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-api@vger.kernel.org,
+        Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH v2 6/8] vfs: copy_file_range should update file timestamps
+References: <20190526061100.21761-1-amir73il@gmail.com>
+        <20190526061100.21761-7-amir73il@gmail.com>
+        <20190527143539.GA14980@hermes.olymp>
+        <20190527220513.GB29573@dread.disaster.area>
+Date:   Tue, 28 May 2019 09:53:20 +0100
+In-Reply-To: <20190527220513.GB29573@dread.disaster.area> (Dave Chinner's
+        message of "Tue, 28 May 2019 08:05:13 +1000")
+Message-ID: <875zpvrmdb.fsf@suse.com>
 MIME-Version: 1.0
+Content-Type: text/plain
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi - One of my colleagues (Jianpeng) created this repo - https://github.com/ceph/nvml and he's on a long leave now. We at Intel need this upgraded for the upcoming write-back caching work based on pmem.
+Dave Chinner <david@fromorbit.com> writes:
 
-Could you let me know how to get access to that repo? At the moment I can't update the repo or edit the repo name (it's outdated).
+> On Mon, May 27, 2019 at 03:35:39PM +0100, Luis Henriques wrote:
+>> On Sun, May 26, 2019 at 09:10:57AM +0300, Amir Goldstein wrote:
+>> > From: Dave Chinner <dchinner@redhat.com>
+>> > 
+>> > Timestamps are not updated right now, so programs looking for
+>> > timestamp updates for file modifications (like rsync) will not
+>> > detect that files have changed. We are also accessing the source
+>> > data when doing a copy (but not when cloning) so we need to update
+>> > atime on the source file as well.
+>> > 
+>> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
+>> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>> > ---
+>> >  fs/read_write.c | 10 ++++++++++
+>> >  1 file changed, 10 insertions(+)
+>> > 
+>> > diff --git a/fs/read_write.c b/fs/read_write.c
+>> > index e16bcafc0da2..4b23a86aacd9 100644
+>> > --- a/fs/read_write.c
+>> > +++ b/fs/read_write.c
+>> > @@ -1576,6 +1576,16 @@ int generic_copy_file_range_prep(struct file *file_in, struct file *file_out)
+>> >  
+>> >  	WARN_ON_ONCE(!inode_is_locked(file_inode(file_out)));
+>> >  
+>> > +	/* Update source timestamps, because we are accessing file data */
+>> > +	file_accessed(file_in);
+>> > +
+>> > +	/* Update destination timestamps, since we can alter file contents. */
+>> > +	if (!(file_out->f_mode & FMODE_NOCMTIME)) {
+>> > +		ret = file_update_time(file_out);
+>> > +		if (ret)
+>> > +			return ret;
+>> > +	}
+>> > +
+>> 
+>> Is this the right place for updating the timestamps?  I see that in same
+>> cases we may be updating the timestamp even if there was an error and no
+>> copy was performed.  For example, if file_remove_privs fails.
+>
+> It's the same place we do it for read - file_accessed() is called
+> before we do the IO - and the same place for write -
+> file_update_time() is called before we copy data into the pagecache
+> or do direct IO. As such, it really doesn't matter if it is before
+> or after file_remove_privs() - the IO can still fail for many
+> reasons after we've updated the timestamps and in some of the
+> failure cases (e.g. we failed the sync at the end of an O_DSYNC
+> buffered write) we still want the timestamps to be modified because
+> the data and/or user visible metadata /may/ have been changed.
+>
+> cfr operates under the same constraints as read() and write(), so we
+> need to update the timestamps up front regardless of whether the
+> copy ends up succeeding or not....
 
-Best,
-Mahati 
+Great, thanks for explaining it.  It now makes sense, even for
+consistency, to have this operation here.
+
+Cheers,
+-- 
+Luis
