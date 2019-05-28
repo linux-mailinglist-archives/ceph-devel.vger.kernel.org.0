@@ -2,47 +2,47 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B2BB2CA2B
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 May 2019 17:17:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CC472CA49
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 May 2019 17:22:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbfE1PRe (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 28 May 2019 11:17:34 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:43416 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726362AbfE1PRe (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 28 May 2019 11:17:34 -0400
-Received: by mail-yw1-f66.google.com with SMTP id t5so8037397ywf.10
-        for <ceph-devel@vger.kernel.org>; Tue, 28 May 2019 08:17:34 -0700 (PDT)
+        id S1727800AbfE1PWG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 28 May 2019 11:22:06 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:33179 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726719AbfE1PWF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 28 May 2019 11:22:05 -0400
+Received: by mail-yw1-f68.google.com with SMTP id r200so4151694ywe.0
+        for <ceph-devel@vger.kernel.org>; Tue, 28 May 2019 08:22:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=c9r0JhaU2OvWLDa+5xajbzuMsY5DmsA6OBoqhjdPAtk=;
-        b=GteiCtLLoTeE67eNhibc4NPlDsIMbsKNHC+9bb61A24FGevYhjm7iq+HZpUhcI7HJK
-         BvbXGp7GeBkkN6qt7vnirGleix1XNxSlSyNd++OpKofauanlmGyMx06UnpsLmhmcfvjO
-         i0Uwvmo/dqQMiSkMAG4CM+zD6MG5K7OdsaNcefreK8sMxKjwl1y5EUSIb4j8c1yQguDI
-         XeU3sCeTuGEfTj5xdaGRaEFklr4hbzRyLEyCl3wa7Q9k41g8wG+QU3W/fDQmX5xvFBsn
-         p6/xMzgi8DBtmJc4EWfwZhDbj7Be2DdU4ied6VJ/UPAMh/Hw1rhVkm7V6nAxwqRyZbgP
-         mVKw==
-X-Gm-Message-State: APjAAAWAX95/p/lt+f2vCsM8vRxYJtUjo7clvj8NxEigOhvSzL6onQeC
-        uEzacM9WzO1UHPk7DGVHD5PmM2x/MPY=
-X-Google-Smtp-Source: APXvYqzbrn79CX3EwQi9U7y/Ha/93Uvk063sKyTGjDfCdTczdC1TQeHQjkgywlPw47Yr7ek4f3a+aw==
-X-Received: by 2002:a81:a483:: with SMTP id b125mr26148310ywh.79.1559056653668;
-        Tue, 28 May 2019 08:17:33 -0700 (PDT)
+        bh=RLBUCTDVM1ZnICFfsctjA1DT8LPbiA+zXGsJhKD/TaA=;
+        b=TxxGBkE9+eHBmSN9JBBFOiMHUTglEEigwEUIQQVCx6WCQ2Rw9YUK4jc7eq6HxFMghf
+         Y8Zfkd2PU6nuIvQGUmfdTq6Y5I7U3J9eijU6Oku8EIVuhX1dYTJ2VYQfCo4q1GgRsHE6
+         9To1Mj4SHyCdAtoVvabCkqlnqbw74+B7lwKo3AupUVqHGFR0CIg1duibj5HKR9Yej7H3
+         WagGmcoGtpyuvWSByw20p4PesZ6/gUsoRqjZvKtms8BCCbKlo10YkWdSSaJdGJzSrNJv
+         2SGNA8D+k77Y5C51DulWmz9yp2XlE16Hw/eUAQem23GDf24ZDf+qsWioMljrzmouaQdu
+         6XEQ==
+X-Gm-Message-State: APjAAAW6AQxpbPKteh3mWjnXSWrOj/vrnR/sro4w3ps78907nz04wHSB
+        XZpbk61VGyxGCrxSwWXoHGOynEfmfzg=
+X-Google-Smtp-Source: APXvYqwyeyBBUKHQDZcdQ7/1z/jz1x6dnY4y+OjNWM4sM3yiJKqvTICdaPpD2GByutadArvEzctRmw==
+X-Received: by 2002:a81:8982:: with SMTP id z124mr1928133ywf.322.1559056924556;
+        Tue, 28 May 2019 08:22:04 -0700 (PDT)
 Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-4F7.dyn6.twc.com. [2606:a000:1100:37d::4f7])
-        by smtp.gmail.com with ESMTPSA id j188sm3832666ywj.18.2019.05.28.08.17.32
+        by smtp.gmail.com with ESMTPSA id v144sm3639493ywv.15.2019.05.28.08.22.03
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 28 May 2019 08:17:33 -0700 (PDT)
-Message-ID: <3e8213e52d3b241711692c200df2883548ed48ce.camel@redhat.com>
-Subject: Re: [PATCH 7/8] ceph: ensure d_name/d_parent stability in
- ceph_mdsc_lease_send_msg()
+        Tue, 28 May 2019 08:22:04 -0700 (PDT)
+Message-ID: <561ce5fedaac8be32431221e6bc598b4ecc5ea37.camel@redhat.com>
+Subject: Re: [PATCH 8/8] ceph: hold i_ceph_lock when removing caps for
+ freeing inode
 From:   Jeff Layton <jlayton@redhat.com>
 To:     "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org
 Cc:     idryomov@redhat.com
-Date:   Tue, 28 May 2019 11:17:32 -0400
-In-Reply-To: <20190523081345.20410-7-zyan@redhat.com>
+Date:   Tue, 28 May 2019 11:22:03 -0400
+In-Reply-To: <20190523081345.20410-8-zyan@redhat.com>
 References: <20190523081345.20410-1-zyan@redhat.com>
-         <20190523081345.20410-7-zyan@redhat.com>
+         <20190523081345.20410-8-zyan@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
@@ -53,106 +53,73 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 On Thu, 2019-05-23 at 16:13 +0800, Yan, Zheng wrote:
+> ceph_d_revalidate(, LOOKUP_RCU) may call __ceph_caps_issued_mask()
+> on a freeing inode.
+> 
 > Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
 > ---
->  fs/ceph/dir.c        |  7 +++----
->  fs/ceph/mds_client.c | 24 +++++++++++++-----------
->  fs/ceph/mds_client.h |  1 -
->  3 files changed, 16 insertions(+), 16 deletions(-)
+>  fs/ceph/caps.c  | 10 ++++++----
+>  fs/ceph/inode.c |  2 +-
+>  fs/ceph/super.h |  2 +-
+>  3 files changed, 8 insertions(+), 6 deletions(-)
 > 
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index 1271024a3797..72efad28857c 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -1433,8 +1433,7 @@ static bool __dentry_lease_is_valid(struct ceph_dentry_info *di)
->  	return false;
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 0176241eaea7..7754d7679122 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -1263,20 +1263,22 @@ static int send_cap_msg(struct cap_msg_args *arg)
 >  }
 >  
-> -static int dentry_lease_is_valid(struct dentry *dentry, unsigned int flags,
-> -				 struct inode *dir)
-> +static int dentry_lease_is_valid(struct dentry *dentry, unsigned int flags)
+>  /*
+> - * Queue cap releases when an inode is dropped from our cache.  Since
+> - * inode is about to be destroyed, there is no need for i_ceph_lock.
+> + * Queue cap releases when an inode is dropped from our cache.
+>   */
+> -void __ceph_remove_caps(struct inode *inode)
+> +void __ceph_remove_caps(struct ceph_inode_info *ci)
 >  {
->  	struct ceph_dentry_info *di;
->  	struct ceph_mds_session *session = NULL;
-> @@ -1466,7 +1465,7 @@ static int dentry_lease_is_valid(struct dentry *dentry, unsigned int flags,
->  	spin_unlock(&dentry->d_lock);
+> -	struct ceph_inode_info *ci = ceph_inode(inode);
+>  	struct rb_node *p;
 >  
->  	if (session) {
-> -		ceph_mdsc_lease_send_msg(session, dir, dentry,
-> +		ceph_mdsc_lease_send_msg(session, dentry,
->  					 CEPH_MDS_LEASE_RENEW, seq);
->  		ceph_put_mds_session(session);
+> +	/* lock i_ceph_lock, because ceph_d_revalidate(..., LOOKUP_RCU)
+> +	 * may call __ceph_caps_issued_mask() on a freeing inode. */
+> +	spin_lock(&ci->i_ceph_lock);
+>  	p = rb_first(&ci->i_caps);
+>  	while (p) {
+>  		struct ceph_cap *cap = rb_entry(p, struct ceph_cap, ci_node);
+>  		p = rb_next(p);
+>  		__ceph_remove_cap(cap, true);
 >  	}
-> @@ -1566,7 +1565,7 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
->  		   ceph_snap(d_inode(dentry)) == CEPH_SNAPDIR) {
->  		valid = 1;
->  	} else {
-> -		valid = dentry_lease_is_valid(dentry, flags, dir);
-> +		valid = dentry_lease_is_valid(dentry, flags);
->  		if (valid == -ECHILD)
->  			return valid;
->  		if (valid || dir_lease_is_valid(dir, dentry)) {
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 870754e9d572..98c500dbec3f 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -3941,31 +3941,33 @@ static void handle_lease(struct ceph_mds_client *mdsc,
+> +	spin_unlock(&ci->i_ceph_lock);
 >  }
 >  
->  void ceph_mdsc_lease_send_msg(struct ceph_mds_session *session,
-> -			      struct inode *inode,
->  			      struct dentry *dentry, char action,
->  			      u32 seq)
->  {
->  	struct ceph_msg *msg;
->  	struct ceph_mds_lease *lease;
-> -	int len = sizeof(*lease) + sizeof(u32);
-> -	int dnamelen = 0;
-> +	struct inode *dir;
-> +	int len = sizeof(*lease) + sizeof(u32) + NAME_MAX;
+>  /*
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index e47a25495be5..30d0cdc21035 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -534,7 +534,7 @@ void ceph_destroy_inode(struct inode *inode)
 >  
-> -	dout("lease_send_msg inode %p dentry %p %s to mds%d\n",
-> -	     inode, dentry, ceph_lease_op_name(action), session->s_mds);
-> -	dnamelen = dentry->d_name.len;
-> -	len += dnamelen;
-> +	dout("lease_send_msg identry %p %s to mds%d\n",
-> +	     dentry, ceph_lease_op_name(action), session->s_mds);
+>  	ceph_fscache_unregister_inode_cookie(ci);
 >  
->  	msg = ceph_msg_new(CEPH_MSG_CLIENT_LEASE, len, GFP_NOFS, false);
->  	if (!msg)
->  		return;
->  	lease = msg->front.iov_base;
->  	lease->action = action;
-> -	lease->ino = cpu_to_le64(ceph_vino(inode).ino);
-> -	lease->first = lease->last = cpu_to_le64(ceph_vino(inode).snap);
->  	lease->seq = cpu_to_le32(seq);
-> -	put_unaligned_le32(dnamelen, lease + 1);
-> -	memcpy((void *)(lease + 1) + 4, dentry->d_name.name, dnamelen);
+> -	__ceph_remove_caps(inode);
+> +	__ceph_remove_caps(ci);
 >  
-> +	spin_lock(&dentry->d_lock);
-> +	dir = d_inode(dentry->d_parent);
-> +	lease->ino = cpu_to_le64(ceph_inode(dir)->i_vino.ino);
-> +	lease->first = lease->last = cpu_to_le64(ceph_inode(dir)->i_vino.snap);
-> +
-> +	put_unaligned_le32(dentry->d_name.len, lease + 1);
-> +	memcpy((void *)(lease + 1) + 4,
-> +	       dentry->d_name.name, dentry->d_name.len);
-> +	spin_unlock(&dentry->d_lock);
->  	/*
->  	 * if this is a preemptive lease RELEASE, no need to
->  	 * flush request stream, since the actual request will
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index 9c28b86abcf4..330769ecb601 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -505,7 +505,6 @@ extern char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *base,
->  
->  extern void __ceph_mdsc_drop_dentry_lease(struct dentry *dentry);
->  extern void ceph_mdsc_lease_send_msg(struct ceph_mds_session *session,
-> -				     struct inode *inode,
->  				     struct dentry *dentry, char action,
->  				     u32 seq);
->  
+>  	if (__ceph_has_any_quota(ci))
+>  		ceph_adjust_quota_realms_count(inode, false);
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 11aeb540b0cf..e74867743e07 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -1003,7 +1003,7 @@ extern void ceph_add_cap(struct inode *inode,
+>  			 unsigned cap, unsigned seq, u64 realmino, int flags,
+>  			 struct ceph_cap **new_cap);
+>  extern void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release);
+> -extern void __ceph_remove_caps(struct inode* inode);
+> +extern void __ceph_remove_caps(struct ceph_inode_info *ci);
+>  extern void ceph_put_cap(struct ceph_mds_client *mdsc,
+>  			 struct ceph_cap *cap);
+>  extern int ceph_is_any_caps(struct inode *inode);
 
 Reviewed-by: Jeff Layton <jlayton@redhat.com>
 
