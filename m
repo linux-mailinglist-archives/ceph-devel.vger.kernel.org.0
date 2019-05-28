@@ -2,41 +2,43 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E1632CFDD
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 May 2019 21:59:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ED062D168
+	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 00:20:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbfE1T7H (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 28 May 2019 15:59:07 -0400
-Received: from mail-pl1-f178.google.com ([209.85.214.178]:46356 "EHLO
-        mail-pl1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbfE1T7G (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 28 May 2019 15:59:06 -0400
-Received: by mail-pl1-f178.google.com with SMTP id bb3so1161584plb.13
-        for <ceph-devel@vger.kernel.org>; Tue, 28 May 2019 12:59:06 -0700 (PDT)
+        id S1726714AbfE1WUR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 28 May 2019 18:20:17 -0400
+Received: from mail-ed1-f49.google.com ([209.85.208.49]:40349 "EHLO
+        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbfE1WUR (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 28 May 2019 18:20:17 -0400
+Received: by mail-ed1-f49.google.com with SMTP id s19so320981edq.7
+        for <ceph-devel@vger.kernel.org>; Tue, 28 May 2019 15:20:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=7GBPe47nQtVFzwDMDZv0DY6UlWgCJcUlAJN9tLv8p/Q=;
-        b=hYPJx0AdbwsitBT2HyDHkVWcGv8yd/PdruqqBe6H8lCcojWyDgnEW3W5R1kdOO05ui
-         catOLWU1k+bzQzkzw33a7w5Z/WgPwxyi1UBMMjQm3OGtbPO5ZCa7IVZf5D+pZgHtO6lW
-         aGmMEVVCKxsNcWqvHL8gcssVvkF134BdjxCylNM870s8pidrqb89zGGZTQSPqTBYin4h
-         hWwIQAwV6nzJ4c3GoQvKWH+A/wNpjU3nCbtPg7hoA7qjv8zTr43rX3LkAUvy8fxut5YT
-         w+gXCkiaIYvCDqpEibLbgOXz+bpQj/1506Fqs7m5PSo69vI0NYk8gIyBGpwJyvaqtKvt
-         hjNA==
-X-Gm-Message-State: APjAAAXhyxaiXqYNwRhaO6BlPa6EI4Fq6HCAN1pbEccaIqYmnTSSacL/
-        2YbxmoN7hFGsGMGrtIraSuZ402hd9vbB71ZaLJoqng==
-X-Google-Smtp-Source: APXvYqwUKXks9DNCqLnDwa5eRv0/bAaFg7avTgKdEkBP21NrB7SE/MDk8TffgevkI4Qk8eLiYbNq5DTLjKNZtNzqtYQ=
-X-Received: by 2002:a17:902:9a83:: with SMTP id w3mr11901196plp.184.1559073545875;
- Tue, 28 May 2019 12:59:05 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=YrtqEAQOLojMqu0THoo5QCbSzXDFKXCvlWqwngikjqA=;
+        b=BcjtX7qOgVW+9gMIYCu8a+zrRdxp6l743N7+wtcFiZDB0+qIA+2fzSlJ+XASAIkP9a
+         9WJH1o8YinHNexF3+Eez4EVIV4jjuBcMf3aIGWipqrjy3DasLkMQlXTi7vhZi3LSX+et
+         XXOzHtXp6F/S/BIfLW3Z1e28Q1ZN02+1CzdD8Yy0Ul9DTuqVRfQLbVKgBHL9O9O8q8tv
+         OkIhwxnFH1TXdge5Rr2nuFf5yEsCjqaHMYRfa/mG7taLPnWJGXdeHNuj8Z9cX5UjBe1f
+         /PFj1/+ytPrBIUCaVk4JHCzbWIHOofZHLb77kh88XFG5gRRqlex+HXPi5fytiDQ8+HGL
+         HIRg==
+X-Gm-Message-State: APjAAAW0925b4gKz9Lu7T6/RDHOM4RvHNT+UF/FXngw+8YL5wIwpOc5I
+        0IZdrZdrb2YgPG5zY1a/yrPh4tXa9AkUSFVmP+LkRA==
+X-Google-Smtp-Source: APXvYqzSmuUgmlT7Z6nIHAcRcV2ni4uggxgTtTnJf85RoxK0F+yI5KeMtzRVTUFz4egZ4CbNqM1pD6uHk392ZKN82xQ=
+X-Received: by 2002:a50:bb24:: with SMTP id y33mr131124428ede.116.1559082016188;
+ Tue, 28 May 2019 15:20:16 -0700 (PDT)
 MIME-Version: 1.0
 References: <CAMMFjmF1SP9JnyeuqCtsS9KJKRO-1R+E+NkzO-kj6+pn=chfzw@mail.gmail.com>
 In-Reply-To: <CAMMFjmF1SP9JnyeuqCtsS9KJKRO-1R+E+NkzO-kj6+pn=chfzw@mail.gmail.com>
-From:   Yuri Weinstein <yweinste@redhat.com>
-Date:   Tue, 28 May 2019 12:58:54 -0700
-Message-ID: <CAMMFjmE9RpPLXUAz-ZhiLeoy5UDGxkGjuo2a5ovDO9May6X3kg@mail.gmail.com>
+Reply-To: dillaman@redhat.com
+From:   Jason Dillaman <jdillama@redhat.com>
+Date:   Tue, 28 May 2019 18:20:05 -0400
+Message-ID: <CA+aFP1DuB4Xta2uafT2TRLZOdGZp4-2ORwVf7ThM=uGJsL0yNQ@mail.gmail.com>
 Subject: Re: 13.2.6 QE Mimic validation status
-To:     Sage Weil <sweil@redhat.com>, "Durgin, Josh" <jdurgin@redhat.com>,
+To:     Yuri Weinstein <yweinste@redhat.com>
+Cc:     Sage Weil <sweil@redhat.com>, "Durgin, Josh" <jdurgin@redhat.com>,
         "Dillaman, Jason" <dillaman@redhat.com>,
         "Sadeh-Weinraub, Yehuda" <yehuda@redhat.com>,
         Patrick Donnelly <pdonnell@redhat.com>,
@@ -60,9 +62,7 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Pls review/approve/reply, so we can release 13.2.6 this week!
-
-On Thu, May 23, 2019 at 1:00 PM Yuri Weinstein <yweinste@redhat.com> wrote:
+On Thu, May 23, 2019 at 4:00 PM Yuri Weinstein <yweinste@redhat.com> wrote:
 >
 > Details of this release summarized here:
 >
@@ -71,10 +71,16 @@ On Thu, May 23, 2019 at 1:00 PM Yuri Weinstein <yweinste@redhat.com> wrote:
 > rados - FAILED, known, Neha approved?
 > rgw - Casey approved?
 > rbd - Jason approved?
+
+Approved.
+
 > fs - Patrick, Venky approved?
 > kcephfs - Patrick, Venky approved?
 > multimds - Patrick, Venky approved? (still running)
 > krbd - Ilya, Jason approved?
+
+Defer to Ilya.
+
 > ceph-deploy - Sage, Vasu approved?  See SELinux denials, David pls FYI
 > ceph-disk - PASSED
 > upgrade/client-upgrade-jewel - PASSED
@@ -91,3 +97,8 @@ On Thu, May 23, 2019 at 1:00 PM Yuri Weinstein <yweinste@redhat.com> wrote:
 >
 > Thx
 > YuriW
+
+
+
+-- 
+Jason
