@@ -2,112 +2,105 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 843FB2E56E
-	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 21:35:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D869D2E571
+	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 21:35:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbfE2TfK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 29 May 2019 15:35:10 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:37754 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbfE2TfK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 15:35:10 -0400
-Received: by mail-yb1-f194.google.com with SMTP id l66so1234269ybf.4;
-        Wed, 29 May 2019 12:35:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tw/in4/0sPsFRAIVvFcpom08CNRPJsSaR96xe+JZPYg=;
-        b=blwqqvIRbfuZTPTkrA3m0cr6Agq3a/vrtFTz1ERWN1amDZwfaEgVfuj4iedPvbA42v
-         hXY7I17xk9dGtECbCcLE+DRtUj98OE8VIXOWZZJ89n7uGvl02UTsYXhE2Tlm+z4mA66t
-         Qr8znFizytl1gVs3YRpa4IGe55fBifJAx+P7MdcJf/FGRT796nzUKFAVXwbanSwqeSBc
-         k8eWIS4U+QS7zlkIgMHYRcUm7bM748E8rXkTWsnuTssYg8or9leX64thXDG7KyMg157w
-         Tp8+JrbDJVw6KEYEkcylxraqQi9OpwjfexR0pUjNuzF8ZougS4wBHcQiN5ZQrG1pxq1K
-         5gCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tw/in4/0sPsFRAIVvFcpom08CNRPJsSaR96xe+JZPYg=;
-        b=AtIQoNtUdTm6uy2G0z6dOm1OvcFt62eqBwgTbYzsExMsEPSFl6xh8QNtkFXNAAlZbe
-         Z+E8b9shO+zmrwrIiFIg4r/UbQ/wAjfWpTuYoagS/MdRcTPoqq6spplbu4LBEnH77AFD
-         06IKk4Iae3DOBJLeARc5+RSYhzhdFcOB3qFEOHDAWdEcfy6B2OUMQGaTRlsznycV7BkY
-         pyQtj0qAumETcRIUPhTnOUs8FVI1ynBpTBDqDbLXAuDbMHHNPweOslzwpaRLeD+y/TvD
-         K7S7v9GCYCH5Ol/i3fdkzZ/IgxGuB6eFsqZ8Mjvqt63iXy7TSrHZ9okxy7Ir1B9LrwjA
-         g2Xw==
-X-Gm-Message-State: APjAAAVf8UmA7DZgaWYUH23TqyFN/QwqpT1aSwkna561ug7cNbyQrbGX
-        IE0uexBsmGUoLhRxauXNS6FCSTt1J1S+foi+1eI=
-X-Google-Smtp-Source: APXvYqzDG065k4a6H1IhjpBR3X395x+Om89FnS31oSjmModtDcEA7x7uaPzMucpSI+MEJvCbOm6lpOYCuxvv13R2nzw=
-X-Received: by 2002:a05:6902:4c3:: with SMTP id v3mr318648ybs.144.1559158509227;
- Wed, 29 May 2019 12:35:09 -0700 (PDT)
+        id S1726097AbfE2Tfz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 29 May 2019 15:35:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40174 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725956AbfE2Tfz (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 29 May 2019 15:35:55 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A37F1AB9D
+        for <ceph-devel@vger.kernel.org>; Wed, 29 May 2019 19:35:54 +0000 (UTC)
 MIME-Version: 1.0
-References: <20190529174318.22424-1-amir73il@gmail.com> <20190529174318.22424-13-amir73il@gmail.com>
-In-Reply-To: <20190529174318.22424-13-amir73il@gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 29 May 2019 22:34:58 +0300
-Message-ID: <CAOQ4uxgYM_eM==uqGQuKiGb+f08qs53=E+DONMMzW=N-Ab5YZA@mail.gmail.com>
-Subject: Re: [PATCH v3 12/13] nfs: copy_file_range needs to strip setuid bits
- and update timestamps
-To:     Olga Kornievskaia <olga.kornievskaia@gmail.com>,
-        Anna Schumaker <Anna.Schumaker@netapp.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Luis Henriques <lhenriques@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-api@vger.kernel.org, ceph-devel@vger.kernel.org,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 29 May 2019 21:35:54 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     ceph-devel@vger.kernel.org
+Subject: messenger: performance drop, v2 vs v1
+Message-ID: <e201d78b90c3fa4c794787685520cedd@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Olga,Anna,Trond
+Hi all,
 
-Could we get an ACK on this patch.
-It is a prerequisite for merging the cross-device copy_file_range work.
+I did a quick protocol performance comparison using fio_ceph_messenger
+engine having `37c70bd1a75f ("Merge pull request #28099 from 
+tchaikov/wip-blobhash")`
+as a master.  I use default fio job and config:
 
-It depends on a new helper introduced here:
-https://lore.kernel.org/linux-fsdevel/CAOQ4uxjbcSWX1hUcuXbn8hFH3QYB+5bAC9Z1yCwJdR=T-GGtCg@mail.gmail.com/T/#m1569878c41f39fac3aadb3832a30659c323b582a
+   src/test/fio/ceph-messenger.fio
 
-Thanks,
-Amir,
+      iodepth=128
 
-On Wed, May 29, 2019 at 8:43 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> Like ->write_iter(), we update mtime and strip setuid of dst file before
-> copy and like ->read_iter(), we update atime of src file after copy.
->
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/nfs/nfs42proc.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
-> index 5196bfa7894d..c37a8e5116c6 100644
-> --- a/fs/nfs/nfs42proc.c
-> +++ b/fs/nfs/nfs42proc.c
-> @@ -345,10 +345,13 @@ ssize_t nfs42_proc_copy(struct file *src, loff_t pos_src,
->
->         do {
->                 inode_lock(file_inode(dst));
-> -               err = _nfs42_proc_copy(src, src_lock,
-> -                               dst, dst_lock,
-> -                               &args, &res);
-> +               err = file_modified(dst);
-> +               if (!err)
-> +                       err = _nfs42_proc_copy(src, src_lock,
-> +                                              dst, dst_lock,
-> +                                              &args, &res);
->                 inode_unlock(file_inode(dst));
-> +               file_accessed(src);
->
->                 if (err >= 0)
->                         break;
-> --
-> 2.17.1
->
+   src/test/fio/ceph-messenger.conf
+
+      [global]
+      ms_type=async+posix
+      ms_crc_data=false
+      ms_crc_header=false
+      ms_dispatch_throttle_bytes=0
+      debug_ms=0/0
+
+
+Results:
+
+   protocol v1:
+
+     4k  IOPS=116k, BW=454MiB/s, Lat=1100.75usec
+     8k  IOPS=104k, BW=816MiB/s, Lat=1224.83usec
+    16k  IOPS=93.7k, BW=1463MiB/s, Lat=1366.15usec
+    32k  IOPS=81.5k, BW=2548MiB/s, Lat=1568.80usec
+    64k  IOPS=69.8k, BW=4366MiB/s, Lat=1831.76usec
+   128k  IOPS=47.8k, BW=5973MiB/s, Lat=2677.71usec
+   256k  IOPS=23.7k, BW=5917MiB/s, Lat=5406.42usec
+   512k  IOPS=11.8k, BW=5912MiB/s, Lat=10823.24usec
+     1m  IOPS=5792, BW=5793MiB/s, Lat=22092.82usec
+
+
+   protocol v2:
+
+     4k  IOPS=95.5k, BW=373MiB/s, Lat=1340.09usec
+     8k  IOPS=85.3k, BW=666MiB/s, Lat=1499.54usec
+    16k  IOPS=75.8k, BW=1184MiB/s, Lat=1688.65usec
+    32k  IOPS=61.6k, BW=1924MiB/s, Lat=2078.29usec
+    64k  IOPS=53.6k, BW=3349MiB/s, Lat=2388.17usec
+   128k  IOPS=32.5k, BW=4059MiB/s, Lat=3940.99usec
+   256k  IOPS=17.5k, BW=4376MiB/s, Lat=7310.90usec
+   512k  IOPS=8718, BW=4359MiB/s, Lat=14679.53usec
+     1m  IOPS=3785, BW=3785MiB/s, Lat=33811.59usec
+
+
+    IOPS percentage change:
+
+           v1                v2            % change
+
+     4k  IOPS=116k        IOPS=95.5k         -17%
+     8k  IOPS=104k        IOPS=85.3k         -17%
+    16k  IOPS=93.7k       IOPS=75.8k         -19%
+    32k  IOPS=81.5k       IOPS=61.6k         -24%
+    64k  IOPS=69.8k       IOPS=53.6k         -23%
+   128k  IOPS=47.8k       IOPS=32.5k         -32%
+   256k  IOPS=23.7k       IOPS=17.5k         -26%
+   512k  IOPS=11.8k       IOPS=8718          -25%
+     1m  IOPS=5792        IOPS=3785          -35%
+
+
+Is that expected? Does anyone have similar numbers?
+
+
+PS. Am I mistaken or 'ms_msgr2_encrypt_messages' and
+     'ms_msgr2_sign_messages' options are not used at all?
+
+--
+Roman
+
