@@ -2,112 +2,112 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B86242E542
-	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 21:27:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 843FB2E56E
+	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 21:35:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726033AbfE2T1r (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 29 May 2019 15:27:47 -0400
-Received: from mail-pg1-f176.google.com ([209.85.215.176]:46805 "EHLO
-        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbfE2T1q (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 15:27:46 -0400
-Received: by mail-pg1-f176.google.com with SMTP id v9so450994pgr.13
-        for <ceph-devel@vger.kernel.org>; Wed, 29 May 2019 12:27:46 -0700 (PDT)
+        id S1726301AbfE2TfK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 29 May 2019 15:35:10 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:37754 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfE2TfK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 15:35:10 -0400
+Received: by mail-yb1-f194.google.com with SMTP id l66so1234269ybf.4;
+        Wed, 29 May 2019 12:35:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tw/in4/0sPsFRAIVvFcpom08CNRPJsSaR96xe+JZPYg=;
+        b=blwqqvIRbfuZTPTkrA3m0cr6Agq3a/vrtFTz1ERWN1amDZwfaEgVfuj4iedPvbA42v
+         hXY7I17xk9dGtECbCcLE+DRtUj98OE8VIXOWZZJ89n7uGvl02UTsYXhE2Tlm+z4mA66t
+         Qr8znFizytl1gVs3YRpa4IGe55fBifJAx+P7MdcJf/FGRT796nzUKFAVXwbanSwqeSBc
+         k8eWIS4U+QS7zlkIgMHYRcUm7bM748E8rXkTWsnuTssYg8or9leX64thXDG7KyMg157w
+         Tp8+JrbDJVw6KEYEkcylxraqQi9OpwjfexR0pUjNuzF8ZougS4wBHcQiN5ZQrG1pxq1K
+         5gCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=GgQ+yLKIHYfJY4DRpVex1xXdpbEh+Kao6MvOeZtwBbA=;
-        b=bvUlV55/+Glu4f/PgcObQs8jhkIT+0cUqIWzdxTdrcExDcBkXjeVH9NZr1fp6efa7r
-         4AsJ+XrZacn9yqj7XjY1kyfutIWyII039CtzTEZMMXdq2swH6mdg1JfPqTgEGerGIpPc
-         NEo3qOc1hjSOiQLqGwrXoeoyO20YTHvU1s3JbHOU1ao6TJScAvY2obhZ8k4IWBomauDm
-         Q92bucAzA0ySu7u2DKWNgUMtEGhMIQXbulyn/6fFsV27HjTmyj6aJ4w0zsDR7xLvKePc
-         hX2mSt4PUdXGkk2g0hUyr5JfuG5/6l5vSSOItTZ0EwR1MxHNCJGJYhbhCXk4PUhPYE7G
-         Ac8Q==
-X-Gm-Message-State: APjAAAUyWbbnR1toJvxue398FO75250ApuRYELeWPQrvfO/G7g0Zi18T
-        j84Z/9zVLwRv5Jwpv2GyhVJ31rqygNyoiBvB+Cn65Q==
-X-Google-Smtp-Source: APXvYqwRxZFMMOAlTxACIu90qlHHjLxnCmGRZFGdABVqiuDKNtW2eiPcQhxBxBJhUWmLJgMLt12R9OzV7RcGMT4AG20=
-X-Received: by 2002:a17:90a:cb10:: with SMTP id z16mr14012912pjt.81.1559158064890;
- Wed, 29 May 2019 12:27:44 -0700 (PDT)
+        bh=tw/in4/0sPsFRAIVvFcpom08CNRPJsSaR96xe+JZPYg=;
+        b=AtIQoNtUdTm6uy2G0z6dOm1OvcFt62eqBwgTbYzsExMsEPSFl6xh8QNtkFXNAAlZbe
+         Z+E8b9shO+zmrwrIiFIg4r/UbQ/wAjfWpTuYoagS/MdRcTPoqq6spplbu4LBEnH77AFD
+         06IKk4Iae3DOBJLeARc5+RSYhzhdFcOB3qFEOHDAWdEcfy6B2OUMQGaTRlsznycV7BkY
+         pyQtj0qAumETcRIUPhTnOUs8FVI1ynBpTBDqDbLXAuDbMHHNPweOslzwpaRLeD+y/TvD
+         K7S7v9GCYCH5Ol/i3fdkzZ/IgxGuB6eFsqZ8Mjvqt63iXy7TSrHZ9okxy7Ir1B9LrwjA
+         g2Xw==
+X-Gm-Message-State: APjAAAVf8UmA7DZgaWYUH23TqyFN/QwqpT1aSwkna561ug7cNbyQrbGX
+        IE0uexBsmGUoLhRxauXNS6FCSTt1J1S+foi+1eI=
+X-Google-Smtp-Source: APXvYqzDG065k4a6H1IhjpBR3X395x+Om89FnS31oSjmModtDcEA7x7uaPzMucpSI+MEJvCbOm6lpOYCuxvv13R2nzw=
+X-Received: by 2002:a05:6902:4c3:: with SMTP id v3mr318648ybs.144.1559158509227;
+ Wed, 29 May 2019 12:35:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAMMFjmF1SP9JnyeuqCtsS9KJKRO-1R+E+NkzO-kj6+pn=chfzw@mail.gmail.com>
- <CAC-Np1wR4ik58P=UPLuuBxhqbG_REx1UFp4mDPNdBiNQFW9W_g@mail.gmail.com>
-In-Reply-To: <CAC-Np1wR4ik58P=UPLuuBxhqbG_REx1UFp4mDPNdBiNQFW9W_g@mail.gmail.com>
-From:   Yuri Weinstein <yweinste@redhat.com>
-Date:   Wed, 29 May 2019 12:27:33 -0700
-Message-ID: <CAMMFjmGro96-bhMOe2KGYjZLAu-6RrNKAvOom+wP3ovg_+ss7Q@mail.gmail.com>
-Subject: Re: 13.2.6 QE Mimic validation status
-To:     Alfredo Deza <adeza@redhat.com>
-Cc:     Sage Weil <sweil@redhat.com>, "Durgin, Josh" <jdurgin@redhat.com>,
-        "Dillaman, Jason" <dillaman@redhat.com>,
-        "Sadeh-Weinraub, Yehuda" <yehuda@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        "Development, Ceph" <ceph-devel@vger.kernel.org>,
-        "Lekshmanan, Abhishek" <abhishek.lekshmanan@gmail.com>,
-        Nathan Cutler <ncutler@suse.cz>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        ceph-qe-team <ceph-qe-team@redhat.com>,
-        Andrew Schoen <aschoen@redhat.com>, ceph-qa <ceph-qa@ceph.com>,
-        Matt Benjamin <mbenjamin@redhat.com>,
-        Sebastien Han <shan@redhat.com>,
-        Brad Hubbard <bhubbard@redhat.com>,
-        Venky Shankar <vshankar@redhat.com>,
-        Neha Ojha <nojha@redhat.com>,
-        David Galloway <dgallowa@redhat.com>
+References: <20190529174318.22424-1-amir73il@gmail.com> <20190529174318.22424-13-amir73il@gmail.com>
+In-Reply-To: <20190529174318.22424-13-amir73il@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 29 May 2019 22:34:58 +0300
+Message-ID: <CAOQ4uxgYM_eM==uqGQuKiGb+f08qs53=E+DONMMzW=N-Ab5YZA@mail.gmail.com>
+Subject: Re: [PATCH v3 12/13] nfs: copy_file_range needs to strip setuid bits
+ and update timestamps
+To:     Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Luis Henriques <lhenriques@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-api@vger.kernel.org, ceph-devel@vger.kernel.org,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-See missing approvals http://tracker.ceph.com/issues/39718#note-2
+Hi Olga,Anna,Trond
 
-Venky, Patrick FYI seeking approvals for fs, mulltimds and kcephfs
+Could we get an ACK on this patch.
+It is a prerequisite for merging the cross-device copy_file_range work.
 
-Josh, pls approve rados.
-upgrade/mimic-p2p - tests being fixed
-https://github.com/ceph/ceph/pull/28301, Josh was helping to
-troubleshoot
+It depends on a new helper introduced here:
+https://lore.kernel.org/linux-fsdevel/CAOQ4uxjbcSWX1hUcuXbn8hFH3QYB+5bAC9Z1yCwJdR=T-GGtCg@mail.gmail.com/T/#m1569878c41f39fac3aadb3832a30659c323b582a
 
-(Ilya, missing question mask was my typo, sorry for confusion)
+Thanks,
+Amir,
 
-Thx
-YuriW
-
-On Wed, May 29, 2019 at 5:16 AM Alfredo Deza <adeza@redhat.com> wrote:
+On Wed, May 29, 2019 at 8:43 PM Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> On Thu, May 23, 2019 at 4:00 PM Yuri Weinstein <yweinste@redhat.com> wrote:
-> >
-> > Details of this release summarized here:
-> >
-> > http://tracker.ceph.com/issues/39718#note-2
-> >
-> > rados - FAILED, known, Neha approved?
-> > rgw - Casey approved?
-> > rbd - Jason approved?
-> > fs - Patrick, Venky approved?
-> > kcephfs - Patrick, Venky approved?
-> > multimds - Patrick, Venky approved? (still running)
-> > krbd - Ilya, Jason approved?
-> > ceph-deploy - Sage, Vasu approved?  See SELinux denials, David pls FYI
-> > ceph-disk - PASSED
-> > upgrade/client-upgrade-jewel - PASSED
-> > upgrade/client-upgrade-luminous - PASSED
-> > upgrade/luminous-x (mimic) - PASSED
-> > upgrade/mimic-p2p - tests needs fixing
-> > powercycle - PASSED, Neha FYI
-> > ceph-ansible - PASSED
-> > ceph-volume - FAILED, Alfredo pls rerun
+> Like ->write_iter(), we update mtime and strip setuid of dst file before
+> copy and like ->read_iter(), we update atime of src file after copy.
 >
-> APPROVED. The failures are due to a configuration error, all nightly
-> mimic runs are passing. Filed http://tracker.ceph.com/issues/40062 to
-> fix the config problem.
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/nfs/nfs42proc.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 >
-> >
-> > Please review results and reply/comment.
-> >
-> > PS:  Abhishek, Nathan I will back in the office next Tuesday.
-> >
-> > Thx
-> > YuriW
+> diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
+> index 5196bfa7894d..c37a8e5116c6 100644
+> --- a/fs/nfs/nfs42proc.c
+> +++ b/fs/nfs/nfs42proc.c
+> @@ -345,10 +345,13 @@ ssize_t nfs42_proc_copy(struct file *src, loff_t pos_src,
+>
+>         do {
+>                 inode_lock(file_inode(dst));
+> -               err = _nfs42_proc_copy(src, src_lock,
+> -                               dst, dst_lock,
+> -                               &args, &res);
+> +               err = file_modified(dst);
+> +               if (!err)
+> +                       err = _nfs42_proc_copy(src, src_lock,
+> +                                              dst, dst_lock,
+> +                                              &args, &res);
+>                 inode_unlock(file_inode(dst));
+> +               file_accessed(src);
+>
+>                 if (err >= 0)
+>                         break;
+> --
+> 2.17.1
+>
