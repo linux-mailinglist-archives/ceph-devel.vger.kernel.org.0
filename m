@@ -2,159 +2,175 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C20E2E754
-	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 23:20:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F03C82E783
+	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 23:38:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbfE2VUk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 29 May 2019 17:20:40 -0400
-Received: from mail-ot1-f51.google.com ([209.85.210.51]:45255 "EHLO
-        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726326AbfE2VUj (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 17:20:39 -0400
-Received: by mail-ot1-f51.google.com with SMTP id t24so3514310otl.12
-        for <ceph-devel@vger.kernel.org>; Wed, 29 May 2019 14:20:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NFCq8rW5kHbc7O8GLzFblZ3UfyxKCkLGOshV0n0WVtw=;
-        b=DQNIAjbRt8al31J++eNceKSm0f/VpNb7lAAOs7p84iBt1H5UMSfbtytq8pWvhL+F3g
-         cdRAjA8oz2KA2SFSQJQ/ijTv6PU0Tbk7hPgJpit/7IE751Q4U/OqEDbOOnKVWEwJ1lI/
-         XJk+wYRCXOOOR3QRCMBBbd1FeCWY8paHeIhlcbNaJ6IB9uOvFB2Lca4a+xT5MqpsDqSg
-         VdQ9v3GVS81BfXrqJikgZCo3JnjS5RghkTim036AjfZgfL6QVxZZxjCfmCmnm+y11XBG
-         +8sF6xl0psXl/u2K+w+3FdW382IdPrUZsCKmyKGU+Ing8ZTjl7FgD2RnSAfdg3VWBnRG
-         o38A==
+        id S1726141AbfE2ViC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 29 May 2019 17:38:02 -0400
+Received: from mail-qt1-f172.google.com ([209.85.160.172]:42582 "EHLO
+        mail-qt1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbfE2ViC (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 17:38:02 -0400
+Received: by mail-qt1-f172.google.com with SMTP id s15so4469279qtk.9
+        for <ceph-devel@vger.kernel.org>; Wed, 29 May 2019 14:38:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NFCq8rW5kHbc7O8GLzFblZ3UfyxKCkLGOshV0n0WVtw=;
-        b=I2L6Ou9eqK5oJXMnED5et3cIjs5qULJq64QF5RIfMjvWZbwn11CEswrpVjmRhHNUCG
-         BXQl95uqwNLGsv05RSQx/Hhmm3jjWQuwhs/uGSLEwxtnYbda3T+foskUHGyt7nRKQA0Z
-         S28hLICT+8xOb32h5k3xA9sRFanFZjl+BjMzPxQei2+NVDCVanoNlABe3ZSM3vvBSGFh
-         Aoi+9EzeuCVyLvDUL7mvAfHS/FBM9x6Se9Ocbfu+JCZBxWOIpQuFe+31MIVWrsGKHOCp
-         MtAPpLdtilIKPY49wpeU7hYwxiSfC85O8h1RADUxoaBNa+zgq8bMTcs6PNpK0+C5e1+v
-         3B6w==
-X-Gm-Message-State: APjAAAVdfpu+Frtoc3UV9o+kAUq88u/nGQJBF7YAeEvYb7nywbZ+QgNA
-        W4lgOwRjI7jOM058CptmAIVZ6f9oM2I=
-X-Google-Smtp-Source: APXvYqxwc+zr8OzxI6EzGUkU75Tlw6eyLn3dP0YC6CjHhgc+HpjQQRiXvufpq7yfu1C5rDSYPmDVjA==
-X-Received: by 2002:a9d:6481:: with SMTP id g1mr4420343otl.138.1559164838901;
-        Wed, 29 May 2019 14:20:38 -0700 (PDT)
-Received: from [192.168.50.240] (c-73-94-106-141.hsd1.mn.comcast.net. [73.94.106.141])
-        by smtp.gmail.com with ESMTPSA id f137sm270982oib.27.2019.05.29.14.20.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 14:20:38 -0700 (PDT)
-Subject: Re: messenger: performance drop, v2 vs v1
-To:     Gregory Farnum <gfarnum@redhat.com>,
-        Roman Penyaev <rpenyaev@suse.de>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>
-References: <e201d78b90c3fa4c794787685520cedd@suse.de>
- <CAJ4mKGadbN7ftnMJ5sDHhNt+VzWorL=xL5RCYE8=8CwaBLNSGA@mail.gmail.com>
-From:   Mark Nelson <mark.a.nelson@gmail.com>
-Message-ID: <ba7a92af-64fa-f160-6a16-340aee6164a5@gmail.com>
-Date:   Wed, 29 May 2019 16:20:37 -0500
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=PiiJIeftjihjHHMx8Ga56gUr2H8qZ+gXEIXFsSanD5Y=;
+        b=Tl893kpGqUKXO+AjkzyfPlMmSK0oK5D9A7VnT3zlxrxJEi+6CQpffGCpJDG7rNdd5g
+         udCT0CkIt6KlCsgbxbCy+q/OGrHDvF6nENdm8z/kShsCQ1WuGsYR/MWneuaGlRIspWjy
+         cRbwDunC1+f1Rbw+hwTD1yk6Zqg8P7ZqGvYx1ZHM75/IIWv96Pq5IFEItXCxc7Rgtv3M
+         tVnVJ+z96p8O409mWoWlU6dSXI1sKZbIenkURRjUYtuMTL1ZihNGZoDsCudW8oxNtsEK
+         TEOlhKXJP343K4i8elnaOHAFSUFLl3Etc9OLX3a+feffilQ9CfMK1uColSiENp4mezGX
+         gyyQ==
+X-Gm-Message-State: APjAAAVW/KyK/IjZTAFrp1p8WQGEfGZ0DMOcxzXjZY5aHk4czIlM9BMo
+        KX5KQgfwcimL4bTa6bULPQqM+zChdQI=
+X-Google-Smtp-Source: APXvYqzUEKQqmjvsNV+KMKBSLUCo+ZcRhzur/9EB4iHW2ehWrbhMT57H03htbGTy/rJu9Q10ZqimQg==
+X-Received: by 2002:a0c:c12a:: with SMTP id f39mr191243qvh.217.1559165880794;
+        Wed, 29 May 2019 14:38:00 -0700 (PDT)
+Received: from [10.17.151.126] ([12.118.3.106])
+        by smtp.gmail.com with ESMTPSA id i37sm405404qtb.31.2019.05.29.14.38.00
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 14:38:00 -0700 (PDT)
+Subject: Re: Multisite sync corruption for large multipart obj
+To:     Xiaoxi Chen <superdebuger@gmail.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+References: <CAEYCsVJ_k_HxRFxts_Vbk8KN8GQ73Kh_JBKf4upE46YrfHGnbA@mail.gmail.com>
+ <349539bb-bbf2-e900-2972-bd309f2d4fa1@redhat.com>
+ <CAEYCsVJBdy1RW-67ADZBx3t4G+_+qJYSVAZAYC9ZpGmjfhA5VQ@mail.gmail.com>
+From:   Casey Bodley <cbodley@redhat.com>
+Message-ID: <4c2e18dc-bfd8-6896-3b9c-3e9f26e452e0@redhat.com>
+Date:   Wed, 29 May 2019 17:37:59 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAJ4mKGadbN7ftnMJ5sDHhNt+VzWorL=xL5RCYE8=8CwaBLNSGA@mail.gmail.com>
+In-Reply-To: <CAEYCsVJBdy1RW-67ADZBx3t4G+_+qJYSVAZAYC9ZpGmjfhA5VQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
+On 5/28/19 5:43 AM, Xiaoxi Chen wrote:
+> Hi Casey,
+>      Thanks for the reply.   I couldnt find the log back to that time
+> due to logroate remove anything older than 7 days...sorry for that.
+>
+>      It looks to me like the issue was trigger by restart/failure on
+> src_zone rgw, which cause connection reset in our http client however
+> the error is not popping up to upper layer. Then we finished out the
+> object and adding metadata as-is.  The detecting we are missing in
+> this case is the integrity of src obj.  As we lost the multipart
+> information we cannot use ETAG to check the integrity for fetched obj.
+> Maybe  a simple size check can help us to some extent as the first
+> step (truncate is much more often than corruption as restart of RGW
+> can easily trigger the issue) , very weak but better than none...
 
-On 5/29/19 3:41 PM, Gregory Farnum wrote:
-> On Wed, May 29, 2019 at 12:36 PM Roman Penyaev <rpenyaev@suse.de> wrote:
->>
->> Hi all,
->>
->> I did a quick protocol performance comparison using fio_ceph_messenger
->> engine having `37c70bd1a75f ("Merge pull request #28099 from
->> tchaikov/wip-blobhash")`
->> as a master.  I use default fio job and config:
->>
->>     src/test/fio/ceph-messenger.fio
->>
->>        iodepth=128
->>
->>     src/test/fio/ceph-messenger.conf
->>
->>        [global]
->>        ms_type=async+posix
->>        ms_crc_data=false
->>        ms_crc_header=false
->>        ms_dispatch_throttle_bytes=0
->>        debug_ms=0/0
->>
->>
->> Results:
->>
->>     protocol v1:
->>
->>       4k  IOPS=116k, BW=454MiB/s, Lat=1100.75usec
->>       8k  IOPS=104k, BW=816MiB/s, Lat=1224.83usec
->>      16k  IOPS=93.7k, BW=1463MiB/s, Lat=1366.15usec
->>      32k  IOPS=81.5k, BW=2548MiB/s, Lat=1568.80usec
->>      64k  IOPS=69.8k, BW=4366MiB/s, Lat=1831.76usec
->>     128k  IOPS=47.8k, BW=5973MiB/s, Lat=2677.71usec
->>     256k  IOPS=23.7k, BW=5917MiB/s, Lat=5406.42usec
->>     512k  IOPS=11.8k, BW=5912MiB/s, Lat=10823.24usec
->>       1m  IOPS=5792, BW=5793MiB/s, Lat=22092.82usec
->>
->>
->>     protocol v2:
->>
->>       4k  IOPS=95.5k, BW=373MiB/s, Lat=1340.09usec
->>       8k  IOPS=85.3k, BW=666MiB/s, Lat=1499.54usec
->>      16k  IOPS=75.8k, BW=1184MiB/s, Lat=1688.65usec
->>      32k  IOPS=61.6k, BW=1924MiB/s, Lat=2078.29usec
->>      64k  IOPS=53.6k, BW=3349MiB/s, Lat=2388.17usec
->>     128k  IOPS=32.5k, BW=4059MiB/s, Lat=3940.99usec
->>     256k  IOPS=17.5k, BW=4376MiB/s, Lat=7310.90usec
->>     512k  IOPS=8718, BW=4359MiB/s, Lat=14679.53usec
->>       1m  IOPS=3785, BW=3785MiB/s, Lat=33811.59usec
->>
->>
->>      IOPS percentage change:
->>
->>             v1                v2            % change
->>
->>       4k  IOPS=116k        IOPS=95.5k         -17%
->>       8k  IOPS=104k        IOPS=85.3k         -17%
->>      16k  IOPS=93.7k       IOPS=75.8k         -19%
->>      32k  IOPS=81.5k       IOPS=61.6k         -24%
->>      64k  IOPS=69.8k       IOPS=53.6k         -23%
->>     128k  IOPS=47.8k       IOPS=32.5k         -32%
->>     256k  IOPS=23.7k       IOPS=17.5k         -26%
->>     512k  IOPS=11.8k       IOPS=8718          -25%
->>       1m  IOPS=5792        IOPS=3785          -35%
->>
->>
->> Is that expected? Does anyone have similar numbers?
-> 
-> I don't think it's expected, and it looks like those config options
-> *should* have done as expected, but maybe run with some debug logs and
-> make sure the ProtocolV2 isn't doing CRCs or something after all.
 
-Sage mentioned at Cephalocon he was a bit nervous that we might see some 
-regression but I don't recall what the reasoning was.  A perf or 
-wallclock profile would tell us pretty quick if it's CRC.  The fact that 
-it's worse with large IOs vs small IOs might be a clue.
+I agree that's useful as a short-term solution, yeah. I commented on 
+your pr https://github.com/ceph/ceph/pull/28298 and proposed an 
+alternative in https://github.com/ceph/ceph/pull/28303.
 
-> 
+I'd also really like to figure out why our http wrappers aren't catching 
+this already. I would expect libcurl to get a socket error from a 
+truncated read.
+
+>       The STREAMING-AWS4-HMAC-SHA256-PAYLOAD it seems more for ensuring
+> the data integrity for putObj progress, but we are uploading through
+> rados, not sure how can we get use of this?
+>
+>        Is there any possibility that we expose the multipart
+> information(including part size, checksum of each part, as well as
+> ETAG) from src zone though internal API? so that in
+> RGWRados::fetch_remote_obj we can keep the multipart format and do
+> integrity check?
+>
+> -Xiaoxi
+>
+> Casey Bodley <cbodley@redhat.com> 于2019年5月24日周五 上午4:15写道：
+>
 >>
+>> On 5/21/19 9:16 PM, Xiaoxi Chen wrote:
+>>> we have a two-zone multi-site setup, zone lvs and zone slc
+>>> respectively. It works fine in general however we got reports from
+>>> customer about data corruption/mismatch between two zone
+>>>
+>>> root@host:~# s3cmd -c .s3cfg_lvs ls
+>>> s3://ms-nsn-prod-48/01DAT9KVPEDE4QTA6EWFBZJ5KS/index
+>>> 2019-05-14 04:30 410444223 s3://ms-nsn-prod-48/01DAT9KVPEDE4QTA6EWFBZJ5KS/index
+>>> root@host-ump:~# s3cmd -c .s3cfg_slc ls
+>>> s3://ms-nsn-prod-48/01DAT9KVPEDE4QTA6EWFBZJ5KS/index
+>>> 2019-05-14 04:30 62158776 s3://ms-nsn-prod-48/01DAT9KVPEDE4QTA6EWFBZJ5KS/index
+>>>
+>>> Object metadata in SLC/LVS can be found in
+>>> https://pastebin.com/a5JNb9vb LVS
+>>> https://pastebin.com/1MuPJ0k1 SLC
+>>>
+>>> SLC is a single flat object while LVS is a multi-part object, which
+>>> indicate the object was uploaded by user in LVS and mirrored to
+>>> SLC.The SLC object get truncated after 62158776, the first 62158776
+>>> bytes are right.
+>>>
+>>> root@host:~# cmp -l slc_obj lvs_obj
+>>> cmp: EOF on slc_obj after byte 62158776
+>>>
+>>> Both bucket sync status and overall sync status shows positive, and
+>>> the obj was created 5 days ago. It sounds more like when pulling the
+>>> object content from source zone(LVS), the transaction was terminated
+>>> somewhere in between and cause an incomplete obj, and seems we dont
+>>> have checksum verification in sync_agent so that the corrupted obj was
+>>> there and be treated as a success sync.
+>> It's troubling to see that sync isn't detecting an error from the
+>> transfer. Do you see any errors from the http client in your logs such
+>> as 'WARNING: client->receive_data() returned ret='?
 >>
->> PS. Am I mistaken or 'ms_msgr2_encrypt_messages' and
->>       'ms_msgr2_sign_messages' options are not used at all?
-> 
-> Hmm yeah, those should get removed (...or maybe implemented for this
-> fio stuff). They're replaced by ms_cluster_mode et al when running in
-> a cluster. (The defaults in master are "crc secure" for most stuff
-> communications but "secure crc" for anything involving the monitors.)
-> -Greg
-> 
+>> I agree that we need integrity checking, but we can't rely on ETags
+>> because of the way that multipart objects sync as non-multipart. I think
+>> the right way to address this is to add v4 signature support to the http
+>> client, and rely on STREAMING-AWS4-HMAC-SHA256-PAYLOAD for integrity of
+>> the body chunks
+>> (https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-streaming.html).
+>>
+>>> root@host:~# radosgw-admin --cluster slc_ceph_ump bucket sync status
+>>> --bucket=ms-nsn-prod-48
+>>> realm 2305f95c-9ec9-429b-a455-77265585ef68 (metrics)
+>>> zonegroup 9dad103a-3c3c-4f3b-87a0-a15e17b40dae (ebay)
+>>> zone 6205e53d-6ce4-4e25-a175-9420d6257345 (slc)
+>>> bucket ms-nsn-prod-48[017a0848-cf64-4879-b37d-251f72ff9750.432063.48]
+>>>
+>>> source zone 017a0848-cf64-4879-b37d-251f72ff9750 (lvs)
+>>>                   full sync: 0/16 shards
+>>>                   incremental sync: 16/16 shards
+>>>                   bucket is caught up with source
+>>>
+>>>
+>>> Re-sync on the bucket will not solve the inconsistency
+>> Right. The GET requests that fetch objects use the If-Modified-Since
+>> header to avoid transferring data unless the mtime has changed. In order
+>> to force re-sync, you would have to do something that updates its mtime
+>> - for example, setting an acl.
+>>> radosgw-admin bucket sync init --source-zone lvs --bucket=ms-nsn-prod-48
+>>>
+>>> root@host:~# radosgw-admin bucket sync status --bucket=ms-nsn-prod-48
+>>> realm 2305f95c-9ec9-429b-a455-77265585ef68 (metrics)
+>>> zonegroup 9dad103a-3c3c-4f3b-87a0-a15e17b40dae (ebay)
+>>> zone 6205e53d-6ce4-4e25-a175-9420d6257345 (slc)
+>>> bucket ms-nsn-prod-48[017a0848-cf64-4879-b37d-251f72ff9750.432063.48]
+>>>
+>>> source zone 017a0848-cf64-4879-b37d-251f72ff9750 (lvs)
+>>>                   full sync: 0/16 shards
+>>>                   incremental sync: 16/16 shards
+>>>                   bucket is caught up with source
+>>>
+>>> root@lvscephmon01-ump:~# s3cmd -c .s3cfg_slc ls
+>>> s3://ms-nsn-prod-48/01DAT9KVPEDE4QTA6EWFBZJ5KS/index
+>>> 2019-05-14 04:30 62158776 s3://ms-nsn-prod-48/01DAT9KVPEDE4QTA6EWFBZJ5KS/index
+>>>
+>>>
+>>> A tracker was submitted to
+>>> https://tracker.ceph.com/issues/39992
