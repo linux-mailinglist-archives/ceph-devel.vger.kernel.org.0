@@ -2,77 +2,120 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DC4B2E4D0
-	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 20:52:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 190FF2E50B
+	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 21:09:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726140AbfE2SwH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 29 May 2019 14:52:07 -0400
-Received: from mail-it1-f176.google.com ([209.85.166.176]:35497 "EHLO
-        mail-it1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbfE2SwH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 14:52:07 -0400
-Received: by mail-it1-f176.google.com with SMTP id u186so5336499ith.0
-        for <ceph-devel@vger.kernel.org>; Wed, 29 May 2019 11:52:07 -0700 (PDT)
+        id S1726732AbfE2TI5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 29 May 2019 15:08:57 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:40938 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbfE2TI5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 15:08:57 -0400
+Received: by mail-yb1-f195.google.com with SMTP id g62so1198844ybg.7;
+        Wed, 29 May 2019 12:08:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3OGwXMfFFQztZM039mI0WMSn1MvrOmZGR4oYkysJC3w=;
+        b=SDTngy90DbeR+MzZDVKcRdkaLP1+vir+e/4EefAKUMh01+y3AxKsaTOgp8UXv9u/kE
+         egvD3XMOaKIO6mAc28kewQPQfnR83nClWMseWJaKp6CGzxyo/3PIg6zwwDWixnB/rYvH
+         TcQ4nbmzhMoJhgDROtSC68zFbYomgFQ+GGp/aBW2MLFRaJHBiLgo2XwXk5Fy5cLJxctl
+         MhVPs2nmEpM6VLxLWpNAmlhW6wThw4YTXdQlFp6qXiHtXlnA7i6fuL3Oljw97t2qYByJ
+         q61wR5WFYO+WhuKLMDDSg2TCWuoFvAzc4R6x2qrUWUFk+LqKNw55xJcOPmUqSsmGDzot
+         5dAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5B5nI2uiCAEW6VDoTrNsIrk4yKSKlI1UxAatdWqgq2k=;
-        b=scZuqOr7CEuLOqHe1u/czExadXfCgBI/sH+aRD3tQp3UDS5Dt+3uGUvqJZK2lHv+Bo
-         iA0zfMc0kYhbekchLdlDXRmzvZ8CHs5K4Uam/y4YE7PiFVa8k9+38OJwZhKHbzVdKBs+
-         OUgHTNATftYGnhf4XjpNH3ekP3bL+toxJAiFK86qELMDfJRobmtvpzrMsm5xQ5irzZvL
-         vZqEUKvn9Vkk9sG4H+DRuIgk78qpcjqmmpikzFpOe0xRx84Nd4mEORCNkWHyrSd+XK+w
-         YnBiDLvC4dSXk2PhfGthyNMa2cz5yN5oxGC20eSBmvfZ/eoVj6SfpyAtJp9LwoEOTjj1
-         FPZw==
-X-Gm-Message-State: APjAAAXDrcnsGzJncGukdC0tkPVpc3AB1IRw+DroUqgx+qmIIO+AJsnj
-        ON18Oz3RM2iYzHC4TYFQI7wH3vAmb5/rOqINNJM2zQ==
-X-Google-Smtp-Source: APXvYqxTwKCCNCe2fA5vkRFn/09HRaygOsvbge2AXf4KiwSw+FW6I/KDNYm59zn/TQk0ZogzLITejOpYdB6oZVmu9Xw=
-X-Received: by 2002:a24:104a:: with SMTP id 71mr8588476ity.76.1559155926417;
- Wed, 29 May 2019 11:52:06 -0700 (PDT)
+        bh=3OGwXMfFFQztZM039mI0WMSn1MvrOmZGR4oYkysJC3w=;
+        b=tepq9LwD9Q65AtPHy2K92Beyy2IpUQkMCou9NP4F9Cen5KkIwN9j0c1ZTc4YGtKIUy
+         bC6Wjj+hbq0tXmN6MT+rW0OmTAKf/yltwpGqiPF5s6nK5Zb4/Cy6dUWzQhys1Xy+/xdw
+         uIzgqTSGMvZ7byukaRgM7cyqWEVcHpwvzYnLmiH8z7tC6uehLEYMy9QhLhx4ED8NdCwu
+         ZYqLp5oa8gcBS9avMtk8f6CmIIJEViV4yV//k4PSjyDsNbl1gRfz/oL+1f5tHvMJEfdY
+         peovjMeBBk3B1X4mKw/Q09jd37jc8MeXfjePLJQ/8H/pes4RLwv84STHQ3iwUdM/grGX
+         F44g==
+X-Gm-Message-State: APjAAAWNgHqyv9WAHhwOXBzfGxKbmjAnyL6+jNqXfbeA56iuXQk4tMUg
+        gMhpDbCfOXYOu/SkXOpMWYmFsfSqlbSIoZsGtNQ=
+X-Google-Smtp-Source: APXvYqzloFzwd2llHYpp5ChMwkSfcbQRwyvB23IwdGNr0fVkGV5pXryNtFvsN+98UPJjSgKSdR/vdNglJk06q9T/qDc=
+X-Received: by 2002:a05:6902:4c3:: with SMTP id v3mr247877ybs.144.1559156935937;
+ Wed, 29 May 2019 12:08:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAED=hWDkQngRnF=mO_hiAyPSV5tAeSN7JgwjOQBXbwo-_d-WNw@mail.gmail.com>
-In-Reply-To: <CAED=hWDkQngRnF=mO_hiAyPSV5tAeSN7JgwjOQBXbwo-_d-WNw@mail.gmail.com>
-From:   Gregory Farnum <gfarnum@redhat.com>
-Date:   Wed, 29 May 2019 11:51:27 -0700
-Message-ID: <CAJ4mKGb4+KFYQ1CQAid18u_kaiv=2Ait0mevFVQtyNGPfusOKA@mail.gmail.com>
-Subject: Re: When to use RadosStriper vs. Filer ?
-To:     Milind Changire <mchangir@redhat.com>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>
+References: <20190529174318.22424-1-amir73il@gmail.com> <20190529174318.22424-7-amir73il@gmail.com>
+ <20190529182748.GF5231@magnolia>
+In-Reply-To: <20190529182748.GF5231@magnolia>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 29 May 2019 22:08:44 +0300
+Message-ID: <CAOQ4uxgsMLTPtYaQwwNHo3NrzXz9u=YGc2v6Pg8TSo7-xFrqQQ@mail.gmail.com>
+Subject: Re: [PATCH v3 06/13] vfs: introduce file_modified() helper
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Luis Henriques <lhenriques@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-api@vger.kernel.org, ceph-devel@vger.kernel.org,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, May 17, 2019 at 12:24 AM Milind Changire <mchangir@redhat.com> wrote:
+On Wed, May 29, 2019 at 9:27 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
 >
-> The idea is to use sqlite3 to work around the disk size constraint for
-> individual objects and/or their attributes (key-value pairs) so that
-> the Ceph implementation can manage/stripe the underlying data blocks
-> across OSDs seamlessly.
+> On Wed, May 29, 2019 at 08:43:10PM +0300, Amir Goldstein wrote:
+> > The combination of file_remove_privs() and file_update_mtime() is
+> > quite common in filesystem ->write_iter() methods.
+> >
+> > Modelled after the helper file_accessed(), introduce file_modified()
+> > and use it from generic_remap_file_range_prep().
+> >
+> > Note that the order of calling file_remove_privs() before
+> > file_update_mtime() in the helper was matched to the more common order by
+> > filesystems and not the current order in generic_remap_file_range_prep().
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >  fs/inode.c         | 20 ++++++++++++++++++++
+> >  fs/read_write.c    | 21 +++------------------
+> >  include/linux/fs.h |  2 ++
+> >  3 files changed, 25 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index df6542ec3b88..2885f2f2c7a5 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -1899,6 +1899,26 @@ int file_update_time(struct file *file)
+> >  }
+> >  EXPORT_SYMBOL(file_update_time);
+> >
+> > +/* Caller must hold the file's inode lock */
+> > +int file_modified(struct file *file)
+> > +{
+> > +     int err;
+> > +
+> > +     /*
+> > +      * Clear the security bits if the process is not being run by root.
+> > +      * This keeps people from modifying setuid and setgid binaries.
+> > +      */
+> > +     err = file_remove_privs(file);
+> > +     if (err)
+> > +             return err;
+> > +
+> > +     if (likely(file->f_mode & FMODE_NOCMTIME))
 >
-> The implementation would be an sqlite3 VFS back-end interface to Ceph.
-> eg. metadata server (MDS) could create an sqlite3 database using this
-> new back-end to manage objects spread across OSDs
+> I would not have thought NOCMTIME is likely?
 >
-> So, do I use the RadosStriper or the Filer class for the implementation ?
->
-> Or, do I need to tweak current implementation of some class(es) to get
-> the desired functionality in place to be used in the sqite3 VFS
-> interface implementation.
+> Maybe it is for io requests coming from overlayfs, but for regular uses
+> I don't think that's true.
 
-It's not clear to me exactly what functionality you're looking for to
-plug into the sqlite backend.
+Nope that's a typo. Good spotting.
+Overlayfs doesn't set FMODE_NOCMTIME (yet). Only xfs does from
+XFS_IOC_OPEN_BY_HANDLE, but I think Dave said that is a deprecated
+API. so should have been very_unlikely().
 
-I will say that the Filer, messy though it can be, is used extensively
-by CephFS and by the RBD mirroring functionality, whereas RadosStriper
-was contributed (from CERN?) as part of a specific "lite rados FS"
-concept and is mostly orphaned AFAIK.
-IIRC the RadosStriper may also go to some effort to try and keep the
-striping objects consistent across multiple accessors, whereas the
-Filer assumes a higher layer is dealing with that.
--Greg
-
->
-> --
-> Milind
+Thanks,
+Amir.
