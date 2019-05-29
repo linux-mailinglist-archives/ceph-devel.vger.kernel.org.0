@@ -2,79 +2,77 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ACE62E49D
-	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 20:39:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DC4B2E4D0
+	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 20:52:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726049AbfE2SjY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 29 May 2019 14:39:24 -0400
-Received: from mail-it1-f175.google.com ([209.85.166.175]:36200 "EHLO
-        mail-it1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbfE2SjX (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 14:39:23 -0400
-Received: by mail-it1-f175.google.com with SMTP id e184so5252666ite.1
-        for <ceph-devel@vger.kernel.org>; Wed, 29 May 2019 11:39:23 -0700 (PDT)
+        id S1726140AbfE2SwH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 29 May 2019 14:52:07 -0400
+Received: from mail-it1-f176.google.com ([209.85.166.176]:35497 "EHLO
+        mail-it1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbfE2SwH (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 14:52:07 -0400
+Received: by mail-it1-f176.google.com with SMTP id u186so5336499ith.0
+        for <ceph-devel@vger.kernel.org>; Wed, 29 May 2019 11:52:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=yD4oGFZpaySYuWFuawJG9IVFwVfxUYwsmP0JQroreyA=;
-        b=FCoa7nEJ8Nx8RMtCO3wB9Q4akPt0btsBccsO2hhAfn3MmIuqfOj5v2WMMmyOPhogGy
-         FilureDGt5boRpnq9yUIF+NXChfFH2qZCHtIf0Rz4/VvcCiXJuKha6Ai4c7Th359veLc
-         W1QnEqJ0zQwP+OWwdUtpOsqYom1svh3dOZA7ZVW+57i4M8ual4LLBwERw+F8fQH+0ZsY
-         SCFIT+PvauZdpiCd/jlyJXBf2Tq97zid1Zpchl78RfG5d1Ib2mncNfut6mzA7RDn5Z2F
-         xrHWtYd1J/f9jvqGN051iepe0rUk+V6R09zU6qMbyj0o6lL7cxwLltL0MUjZqMdoI5Uc
-         YfOA==
-X-Gm-Message-State: APjAAAXfOH4r7Dlbq40M0Ytn5vXGyI164s4RxxkIsoSl4HONMHYafX+v
-        191jRsbPIAtHdwasB6qIuZw3qPDKcmC84yXk+O5/OH8T
-X-Google-Smtp-Source: APXvYqzAGXvv53XmONpUg6MGYm5wnW7g7gVxDgJ1Uk1GEiNGm95zGXcP3lY9R1y2svr75lJwP4vGtFoMUpdNhgYML5Y=
-X-Received: by 2002:a24:104a:: with SMTP id 71mr8546966ity.76.1559155162656;
- Wed, 29 May 2019 11:39:22 -0700 (PDT)
+        bh=5B5nI2uiCAEW6VDoTrNsIrk4yKSKlI1UxAatdWqgq2k=;
+        b=scZuqOr7CEuLOqHe1u/czExadXfCgBI/sH+aRD3tQp3UDS5Dt+3uGUvqJZK2lHv+Bo
+         iA0zfMc0kYhbekchLdlDXRmzvZ8CHs5K4Uam/y4YE7PiFVa8k9+38OJwZhKHbzVdKBs+
+         OUgHTNATftYGnhf4XjpNH3ekP3bL+toxJAiFK86qELMDfJRobmtvpzrMsm5xQ5irzZvL
+         vZqEUKvn9Vkk9sG4H+DRuIgk78qpcjqmmpikzFpOe0xRx84Nd4mEORCNkWHyrSd+XK+w
+         YnBiDLvC4dSXk2PhfGthyNMa2cz5yN5oxGC20eSBmvfZ/eoVj6SfpyAtJp9LwoEOTjj1
+         FPZw==
+X-Gm-Message-State: APjAAAXDrcnsGzJncGukdC0tkPVpc3AB1IRw+DroUqgx+qmIIO+AJsnj
+        ON18Oz3RM2iYzHC4TYFQI7wH3vAmb5/rOqINNJM2zQ==
+X-Google-Smtp-Source: APXvYqxTwKCCNCe2fA5vkRFn/09HRaygOsvbge2AXf4KiwSw+FW6I/KDNYm59zn/TQk0ZogzLITejOpYdB6oZVmu9Xw=
+X-Received: by 2002:a24:104a:: with SMTP id 71mr8588476ity.76.1559155926417;
+ Wed, 29 May 2019 11:52:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAE63xUOQPizvSWe4YL_2fiSJ5uYxMdOTz1nqL9QizNGxwyyWQQ@mail.gmail.com>
-In-Reply-To: <CAE63xUOQPizvSWe4YL_2fiSJ5uYxMdOTz1nqL9QizNGxwyyWQQ@mail.gmail.com>
+References: <CAED=hWDkQngRnF=mO_hiAyPSV5tAeSN7JgwjOQBXbwo-_d-WNw@mail.gmail.com>
+In-Reply-To: <CAED=hWDkQngRnF=mO_hiAyPSV5tAeSN7JgwjOQBXbwo-_d-WNw@mail.gmail.com>
 From:   Gregory Farnum <gfarnum@redhat.com>
-Date:   Wed, 29 May 2019 11:38:43 -0700
-Message-ID: <CAJ4mKGZ4bDcJ+TeBSRfcynpTXWjdwuXqo=t6fxmaynbJPC10HA@mail.gmail.com>
-Subject: Re: fully encrypted ceph
-To:     Ugis <ugis22@gmail.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+Date:   Wed, 29 May 2019 11:51:27 -0700
+Message-ID: <CAJ4mKGb4+KFYQ1CQAid18u_kaiv=2Ait0mevFVQtyNGPfusOKA@mail.gmail.com>
+Subject: Re: When to use RadosStriper vs. Filer ?
+To:     Milind Changire <mchangir@redhat.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-If you're running Nautilus you can enable the new messenger encryption
-option. That's marked experimental right now but has been stable in
-testing so that flag will be removed in the next point release or two.
+On Fri, May 17, 2019 at 12:24 AM Milind Changire <mchangir@redhat.com> wrote:
+>
+> The idea is to use sqlite3 to work around the disk size constraint for
+> individual objects and/or their attributes (key-value pairs) so that
+> the Ceph implementation can manage/stripe the underlying data blocks
+> across OSDs seamlessly.
+>
+> The implementation would be an sqlite3 VFS back-end interface to Ceph.
+> eg. metadata server (MDS) could create an sqlite3 database using this
+> new back-end to manage objects spread across OSDs
+>
+> So, do I use the RadosStriper or the Filer class for the implementation ?
+>
+> Or, do I need to tweak current implementation of some class(es) to get
+> the desired functionality in place to be used in the sqite3 VFS
+> interface implementation.
 
-Not sure about setting up Ceph-volume with locally-stored keys; partly
-we just assume your monitors are "farther away" from the OSD drives so
-even if the keys are transmitted unencrypted that's more secure
-against practical attacks...
+It's not clear to me exactly what functionality you're looking for to
+plug into the sqlite backend.
+
+I will say that the Filer, messy though it can be, is used extensively
+by CephFS and by the RBD mirroring functionality, whereas RadosStriper
+was contributed (from CERN?) as part of a specific "lite rados FS"
+concept and is mostly orphaned AFAIK.
+IIRC the RadosStriper may also go to some effort to try and keep the
+striping objects consistent across multiple accessors, whereas the
+Filer assumes a higher layer is dealing with that.
 -Greg
 
-On Wed, May 29, 2019 at 11:28 AM Ugis <ugis22@gmail.com> wrote:
 >
-> Hi,
->
-> What are current options to set up fully encrypted ceph cluster(data
-> encrypted in transit & at rest)?
->
-> From what I have gathered:
-> option: ceph OSDs with dmcrypt and keys stored in monitors - this
-> seems not secure because keys travel from monitors to OSDs unencrypted
-> by default.
->
-> workarounds would be:
-> - best:to use OSDs on luks crypt devices and unlock luks locally but
-> somehow ceph-volume refuses to create OSD on /dev/mapper/..crypt
-> device - why that?
-> - not avaialable: to store OSD dmcrypt keys in TANG server and use
-> clevis to retrieve keys.
-> - viable but unconvenient: create VPN between osds and mons
->
-> What could be other suggestions to set up fully encrypted ceph?
->
-> Best regards,
-> Ugis
+> --
+> Milind
