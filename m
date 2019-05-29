@@ -2,234 +2,127 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 238AB2E5C4
-	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 22:09:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FCA22E65A
+	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 22:42:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726245AbfE2UJy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 29 May 2019 16:09:54 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:43975 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbfE2UJy (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 16:09:54 -0400
-Received: by mail-ua1-f68.google.com with SMTP id u4so1551954uau.10;
-        Wed, 29 May 2019 13:09:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GHwKtqceBBr/yqI+wEQILh1qW4XYhHnsY7m4PVW1xuc=;
-        b=Q7P/Cjl+nLJwsD4scpNBQDlEOutJHhfsga6muCosGdFaJXVYKdZboJuYjgfP3Kh4kG
-         JFOmQBoZR/KLcEiGhHCHuBw2J+TWb+6xz02ui+lTW/tf4+rX0mLlu4cPkT1Tw8XlU8zx
-         xV7bvJvNo8SGWncFaLInHm876sTtgULjXhgM473vqeR0WBWXnxi42xtl3EZS0zwTwEv9
-         fOVrV2bZs7nHAcwjsZpwCPJVDWFPdEL8udi7B3+QeSbmt/E+ECsXRbvr6NY6rTLBkXZv
-         QTaokDDxbEIBsdjIyOAUuxiH7+O/yxn2KJOFdt2JZfafVByf3kPXIzpCCa2lNwrRsfXo
-         H/zA==
+        id S1726173AbfE2Umd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 29 May 2019 16:42:33 -0400
+Received: from mail-lf1-f52.google.com ([209.85.167.52]:46127 "EHLO
+        mail-lf1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfE2Umd (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 16:42:33 -0400
+Received: by mail-lf1-f52.google.com with SMTP id l26so3170353lfh.13
+        for <ceph-devel@vger.kernel.org>; Wed, 29 May 2019 13:42:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=GHwKtqceBBr/yqI+wEQILh1qW4XYhHnsY7m4PVW1xuc=;
-        b=a4EsccLF6VKs0AAE5Z3YOgLPvQPMH3dI68Iroj+Z8IIE+g99Khi6gqUFqONWxSGrvf
-         7PoUmH0VWOk3dYit8vf30ml5Pwh8Yy1kTlL/B7SDa6gWqUWo0aDVhyehYkH7r/xx2dKo
-         DvNdpxfGIvVLfe5H51a6UENAk/6ZAqgFHKkTbRvcj2rB/Bz9MGhUGxyoGtQwApv/sFE/
-         eWwfKGPOQ/q/f7+pNabpfWypu12tzJ1V3IbnXJUbEqBnsRdEST7Vggdl8bRNPX6Q1sks
-         SzkWeV/6kOkQPsjF7XrKyiHHqI0bP11RO2gWo/GYn88g+QUr2HTLYtoUd1LsKFCu0Un2
-         krbw==
-X-Gm-Message-State: APjAAAVVwIE9TdnKT4hyzMowOXLYGYRbnFIvIHmjQS/WCvBN32+C5Cow
-        DCzS/0yik+MF8vbvul+olFBV2NgOzD6yqlBzCC8=
-X-Google-Smtp-Source: APXvYqza33PIhJ9xYE1TchGosrk8iHCvwzRtgxBsjhKjsO3ExedJvKzxiYN98aOpiP7xQFccLo20z8qnElMm9y6L5cQ=
-X-Received: by 2002:a9f:3381:: with SMTP id p1mr9840036uab.40.1559160592432;
- Wed, 29 May 2019 13:09:52 -0700 (PDT)
+        bh=FF3pZ6A2Dws0fsPY+5B36f9C+G2Seh067ifvx6o621Q=;
+        b=f4IiRjGiLM8ycH9frqPmgGmWOrtVHJAAw/whKO5Jpw+rQyGsChgf9MrP0/FxGia+5f
+         cBNNbIZSU7K2enjjzlTYdni5Bw2xWzZ8HSwKpCVt37FnljafDqottKpTe9yiesd2JXrf
+         jIWwsxW9C8e8eleh28/S9b6CCOLkryRky9h+Ze9M2n6rqImh88q2YzmdsLgWFRPAef9b
+         Qm7fXxrRu3DyCn3emXPRYTKNA9PyQJdT2uBrMIfC5pe94/gjLElGJ8qCKVGhgNucHJ8K
+         KNlc2lx4aBANjJwVImUAyRWSASgglk0D7/6rS0zE5sbYOUe9Bqjgrh5CObhlQscaHxmw
+         h1gg==
+X-Gm-Message-State: APjAAAXe7+llaW59S5ErjI1jutBdD880iQnfE00mrRymUo+9M1R67VNk
+        eGzpEY6BVgGjugvIImaKhXx2zMPtPaNNqR9ibzMMgwX6d1g=
+X-Google-Smtp-Source: APXvYqwpzwHOpyt5xFX42PZhNgiVHjefDllUd6Uqz3vs7w1P0/pQXG0VycPHLmr5e6JRFreT/AqCbBQEAq8BBSYO9R4=
+X-Received: by 2002:a19:ee12:: with SMTP id g18mr22075660lfb.58.1559162550698;
+ Wed, 29 May 2019 13:42:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190529174318.22424-1-amir73il@gmail.com> <20190529174318.22424-14-amir73il@gmail.com>
-In-Reply-To: <20190529174318.22424-14-amir73il@gmail.com>
-From:   Olga Kornievskaia <olga.kornievskaia@gmail.com>
-Date:   Wed, 29 May 2019 16:09:41 -0400
-Message-ID: <CAN-5tyF9OnRsF_dgtx8aUGFB5tUUs=JK1wzXvRGo3za8jfpJdQ@mail.gmail.com>
-Subject: Re: [PATCH v3 13/13] vfs: allow copy_file_range to copy across devices
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Luis Henriques <lhenriques@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        ceph-devel@vger.kernel.org, linux-nfs <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Steve French <stfrench@microsoft.com>,
-        Dave Chinner <dchinner@redhat.com>
+References: <e201d78b90c3fa4c794787685520cedd@suse.de>
+In-Reply-To: <e201d78b90c3fa4c794787685520cedd@suse.de>
+From:   Gregory Farnum <gfarnum@redhat.com>
+Date:   Wed, 29 May 2019 13:41:51 -0700
+Message-ID: <CAJ4mKGadbN7ftnMJ5sDHhNt+VzWorL=xL5RCYE8=8CwaBLNSGA@mail.gmail.com>
+Subject: Re: messenger: performance drop, v2 vs v1
+To:     Roman Penyaev <rpenyaev@suse.de>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, May 29, 2019 at 1:43 PM Amir Goldstein <amir73il@gmail.com> wrote:
+On Wed, May 29, 2019 at 12:36 PM Roman Penyaev <rpenyaev@suse.de> wrote:
 >
-> We want to enable cross-filesystem copy_file_range functionality
-> where possible, so push the "same superblock only" checks down to
-> the individual filesystem callouts so they can make their own
-> decisions about cross-superblock copy offload and fallack to
-> generic_copy_file_range() for cross-superblock copy.
+> Hi all,
 >
-> [Amir] We do not call ->remap_file_range() in case the inodes are not
-> on the same sb and do not call ->copy_file_range() in case the inodes
-> are not on the same filesystem type.
+> I did a quick protocol performance comparison using fio_ceph_messenger
+> engine having `37c70bd1a75f ("Merge pull request #28099 from
+> tchaikov/wip-blobhash")`
+> as a master.  I use default fio job and config:
 >
-> This changes behavior of the copy_file_range(2) syscall, which will
-> now allow cross filesystem in-kernel copy.  CIFS already supports
-> cross-superblock copy, between two shares to the same server. This
-> functionality will now be available via the copy_file_range(2) syscall.
+>    src/test/fio/ceph-messenger.fio
 >
-> Cc: Steve French <stfrench@microsoft.com>
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> ---
->  fs/ceph/file.c    |  4 +++-
->  fs/cifs/cifsfs.c  |  2 +-
->  fs/fuse/file.c    |  5 ++++-
->  fs/nfs/nfs4file.c |  5 ++++-
->  fs/read_write.c   | 20 ++++++++++++++------
->  5 files changed, 26 insertions(+), 10 deletions(-)
+>       iodepth=128
 >
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 8a70708e1aca..e9614d686301 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1909,6 +1909,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>    src/test/fio/ceph-messenger.conf
 >
->         if (src_inode == dst_inode)
->                 return -EINVAL;
-> +       if (src_inode->i_sb != dst_inode->i_sb)
-> +               return -EXDEV;
->         if (ceph_snap(dst_inode) != CEPH_NOSNAP)
->                 return -EROFS;
+>       [global]
+>       ms_type=async+posix
+>       ms_crc_data=false
+>       ms_crc_header=false
+>       ms_dispatch_throttle_bytes=0
+>       debug_ms=0/0
 >
-> @@ -2126,7 +2128,7 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
->         ret = __ceph_copy_file_range(src_file, src_off, dst_file, dst_off,
->                                      len, flags);
 >
-> -       if (ret == -EOPNOTSUPP)
-> +       if (ret == -EOPNOTSUPP || ret == -EXDEV)
->                 ret = generic_copy_file_range(src_file, src_off, dst_file,
->                                               dst_off, len, flags);
->         return ret;
-> diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-> index ab6c5c24146d..83956452c108 100644
-> --- a/fs/cifs/cifsfs.c
-> +++ b/fs/cifs/cifsfs.c
-> @@ -1154,7 +1154,7 @@ static ssize_t cifs_copy_file_range(struct file *src_file, loff_t off,
->                                         len, flags);
->         free_xid(xid);
+> Results:
 >
-> -       if (rc == -EOPNOTSUPP)
-> +       if (rc == -EOPNOTSUPP || rc == -EXDEV)
->                 rc = generic_copy_file_range(src_file, off, dst_file,
->                                              destoff, len, flags);
->         return rc;
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 7f33d68f66d9..eab00cd089e8 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -3126,6 +3126,9 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
->         if (fc->no_copy_file_range)
->                 return -EOPNOTSUPP;
+>    protocol v1:
 >
-> +       if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
-> +               return -EXDEV;
-> +
->         inode_lock(inode_out);
+>      4k  IOPS=116k, BW=454MiB/s, Lat=1100.75usec
+>      8k  IOPS=104k, BW=816MiB/s, Lat=1224.83usec
+>     16k  IOPS=93.7k, BW=1463MiB/s, Lat=1366.15usec
+>     32k  IOPS=81.5k, BW=2548MiB/s, Lat=1568.80usec
+>     64k  IOPS=69.8k, BW=4366MiB/s, Lat=1831.76usec
+>    128k  IOPS=47.8k, BW=5973MiB/s, Lat=2677.71usec
+>    256k  IOPS=23.7k, BW=5917MiB/s, Lat=5406.42usec
+>    512k  IOPS=11.8k, BW=5912MiB/s, Lat=10823.24usec
+>      1m  IOPS=5792, BW=5793MiB/s, Lat=22092.82usec
 >
->         err = file_modified(file_out);
-> @@ -3187,7 +3190,7 @@ static ssize_t fuse_copy_file_range(struct file *src_file, loff_t src_off,
->         ret = __fuse_copy_file_range(src_file, src_off, dst_file, dst_off,
->                                      len, flags);
 >
-> -       if (ret == -EOPNOTSUPP)
-> +       if (ret == -EOPNOTSUPP || ret == -EXDEV)
->                 ret = generic_copy_file_range(src_file, src_off, dst_file,
->                                               dst_off, len, flags);
->         return ret;
-> diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
-> index 4842f3ab3161..f4157eb1f69d 100644
-> --- a/fs/nfs/nfs4file.c
-> +++ b/fs/nfs/nfs4file.c
-> @@ -133,6 +133,9 @@ static ssize_t __nfs4_copy_file_range(struct file *file_in, loff_t pos_in,
->                                       struct file *file_out, loff_t pos_out,
->                                       size_t count, unsigned int flags)
->  {
-> +       /* Only offload copy if superblock is the same */
-> +       if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
-> +               return -EXDEV;
->         if (!nfs_server_capable(file_inode(file_out), NFS_CAP_COPY))
->                 return -EOPNOTSUPP;
->         if (file_inode(file_in) == file_inode(file_out))
-> @@ -148,7 +151,7 @@ static ssize_t nfs4_copy_file_range(struct file *file_in, loff_t pos_in,
+>    protocol v2:
 >
->         ret = __nfs4_copy_file_range(file_in, pos_in, file_out, pos_out, count,
->                                      flags);
-> -       if (ret == -EOPNOTSUPP)
-> +       if (ret == -EOPNOTSUPP || ret == -EXDEV)
->                 ret = generic_copy_file_range(file_in, pos_in, file_out,
->                                               pos_out, count, flags);
->         return ret;
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index 706ea5f276a7..d8930bb735cb 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -1618,7 +1618,18 @@ static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
->                                   struct file *file_out, loff_t pos_out,
->                                   size_t len, unsigned int flags)
->  {
-> -       if (file_out->f_op->copy_file_range)
-> +       /*
-> +        * Although we now allow filesystems to handle cross sb copy, passing
-> +        * an inode of the wrong filesystem type to filesystem operation can
-> +        * often result in an attempt to dereference the wrong concrete inode
-> +        * struct, so avoid doing that until we really have a good reason.
-> +        * The incentive for passing inode from different sb to filesystem is
-> +        * NFS cross server copy and for that use case, enforcing same
-> +        * filesystem type is acceptable.
-> +        */
-> +       if (file_out->f_op->copy_file_range &&
-> +           file_inode(file_in)->i_sb->s_type ==
-> +           file_inode(file_out)->i_sb->s_type)
+>      4k  IOPS=95.5k, BW=373MiB/s, Lat=1340.09usec
+>      8k  IOPS=85.3k, BW=666MiB/s, Lat=1499.54usec
+>     16k  IOPS=75.8k, BW=1184MiB/s, Lat=1688.65usec
+>     32k  IOPS=61.6k, BW=1924MiB/s, Lat=2078.29usec
+>     64k  IOPS=53.6k, BW=3349MiB/s, Lat=2388.17usec
+>    128k  IOPS=32.5k, BW=4059MiB/s, Lat=3940.99usec
+>    256k  IOPS=17.5k, BW=4376MiB/s, Lat=7310.90usec
+>    512k  IOPS=8718, BW=4359MiB/s, Lat=14679.53usec
+>      1m  IOPS=3785, BW=3785MiB/s, Lat=33811.59usec
+>
+>
+>     IOPS percentage change:
+>
+>            v1                v2            % change
+>
+>      4k  IOPS=116k        IOPS=95.5k         -17%
+>      8k  IOPS=104k        IOPS=85.3k         -17%
+>     16k  IOPS=93.7k       IOPS=75.8k         -19%
+>     32k  IOPS=81.5k       IOPS=61.6k         -24%
+>     64k  IOPS=69.8k       IOPS=53.6k         -23%
+>    128k  IOPS=47.8k       IOPS=32.5k         -32%
+>    256k  IOPS=23.7k       IOPS=17.5k         -26%
+>    512k  IOPS=11.8k       IOPS=8718          -25%
+>      1m  IOPS=5792        IOPS=3785          -35%
+>
+>
+> Is that expected? Does anyone have similar numbers?
 
-While I'm not sure how much I care (vs wanting at least this much of
-cross device copy available) but in NFS there are several NFS
-file_system_type defined which would disallow a copy between them
-(like nfs4_remote_fs_type, nfs4_remote_referral_fs_type, and good old
-nfs4_fs_type).
+I don't think it's expected, and it looks like those config options
+*should* have done as expected, but maybe run with some debug logs and
+make sure the ProtocolV2 isn't doing CRCs or something after all.
 
-One idea would be to push the check into the filesystems themselves.
+>
+>
+> PS. Am I mistaken or 'ms_msgr2_encrypt_messages' and
+>      'ms_msgr2_sign_messages' options are not used at all?
 
->                 return file_out->f_op->copy_file_range(file_in, pos_in,
->                                                        file_out, pos_out,
->                                                        len, flags);
-> @@ -1641,10 +1652,6 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
->         if (flags != 0)
->                 return -EINVAL;
->
-> -       /* this could be relaxed once a method supports cross-fs copies */
-> -       if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
-> -               return -EXDEV;
-> -
->         ret = generic_copy_file_checks(file_in, pos_in, file_out, pos_out, &len,
->                                        flags);
->         if (unlikely(ret))
-> @@ -1667,7 +1674,8 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
->          * Try cloning first, this is supported by more file systems, and
->          * more efficient if both clone and copy are supported (e.g. NFS).
->          */
-> -       if (file_in->f_op->remap_file_range) {
-> +       if (file_in->f_op->remap_file_range &&
-> +           file_inode(file_in)->i_sb == file_inode(file_out)->i_sb) {
->                 loff_t cloned;
->
->                 cloned = file_in->f_op->remap_file_range(file_in, pos_in,
-> --
-> 2.17.1
->
+Hmm yeah, those should get removed (...or maybe implemented for this
+fio stuff). They're replaced by ms_cluster_mode et al when running in
+a cluster. (The defaults in master are "crc secure" for most stuff
+communications but "secure crc" for anything involving the monitors.)
+-Greg
