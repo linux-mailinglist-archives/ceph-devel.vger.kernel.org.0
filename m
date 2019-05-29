@@ -2,37 +2,40 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6D2E2E85B
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2019 00:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 890E52E96B
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2019 01:32:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbfE2Wfq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 29 May 2019 18:35:46 -0400
-Received: from mail-qk1-f178.google.com ([209.85.222.178]:38141 "EHLO
-        mail-qk1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbfE2Wfq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 18:35:46 -0400
-Received: by mail-qk1-f178.google.com with SMTP id a27so2595183qkk.5
-        for <ceph-devel@vger.kernel.org>; Wed, 29 May 2019 15:35:46 -0700 (PDT)
+        id S1726605AbfE2Xci (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 29 May 2019 19:32:38 -0400
+Received: from mail-qk1-f177.google.com ([209.85.222.177]:45141 "EHLO
+        mail-qk1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbfE2Xci (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 19:32:38 -0400
+Received: by mail-qk1-f177.google.com with SMTP id s22so631541qkj.12
+        for <ceph-devel@vger.kernel.org>; Wed, 29 May 2019 16:32:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=oVbGOacaSjCrjTOEtrEuRh9IpviX4Az1xyxUGdt2p5g=;
-        b=Oga4O9HsH6gTmhgddLa6Q6nIT7E9C7cShrJgld7TtLRrUlwdUfmeU0QOkxX0kPylcA
-         yfdjLJHA+C/JiBtXZuET9OAIZx3D9BsyUj5asIIoeM2L8b2uFXFDxZlYQ1iwooMhwzSi
-         MUDB/9n3pl2H6dGoEvxv93qfyI3TI/klTMJ59FUWJb23VHJdrkQAtDgWJHka50oDg9D5
-         ojWqW4vyUQZHnLzrUUwj9Vy+BPuvqp28/fdZss6UaKBv5RyWDbJd8cqIiTHjWfaaiQJN
-         /n42XVYNwUbzSEitjKlDS9x4LO+m3PXm+8FWKnheLv5mUqYYtVIQMGD9S4pUXM+qL1B3
-         piWA==
-X-Gm-Message-State: APjAAAWHJrFCaT/vVcaP4BfyHKwVqtWbgY6BR0V/OQsiYkcv26uxfLXM
-        Z81lJB0aCVshacLkCDDd6DKqUg2KtGdoYYu5NngB+g==
-X-Google-Smtp-Source: APXvYqxZh6pYddI5y/vWycho/1a5kDSc97CnFuDCsbeWB3I1ZFEQlazqVFnALcvyeSQH2N2/I99NkgphtcP747mlTes=
-X-Received: by 2002:a37:ad0b:: with SMTP id f11mr254182qkm.25.1559169345627;
- Wed, 29 May 2019 15:35:45 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PvapoXnx01ioeCgV4gogc69NPNXKAPH0vutV8gkSol8=;
+        b=FLwVEP6aEYXFGfNxSKUvRJwRvpPiFG9vi/jvdJNjb3ACwt/daGj4TPTp1PIO6vwYY5
+         407GiAdRYvJ8WIMbWUtgwSUG7s8grOZaNl4eWXwxBbJm9hRv4RKF/X7drZw0gVtu7s9T
+         xjwb9VPeqXMV7VMiF5OaBym7vm7529PPR7WlwNKzK7ajw+JIaoKJWMOE5jmBofF/4NrH
+         Z1pelh1ufSO0MsRdyRgi7VaoDthQmmr5oGLDhGc4QNsaPWDwWKiEzvhqgLVeK/+9A3Ng
+         43bQmsBuEDsxpWHMTcTGh4q2XRgjFZdofabOonuIwTdX+34Qa1rXhcYzGzYlwZJWDy5y
+         7UUQ==
+X-Gm-Message-State: APjAAAU6odnVP4Isfz0VUf4gzzVg/yObOMcF9Tx3ILqnV6E5fvcNDzUl
+        rqFZ9w5/AXGSyrROSz8wsewjf1V+9shlBjoOXQKd/w==
+X-Google-Smtp-Source: APXvYqwq4/wFDzabeywdDJPaA+QpuhznFfeuaVDVW9yJn3xvLwvAT7T//Cw8Efv6lTI1TVpnz8Jg2CKzCklzC1m/arw=
+X-Received: by 2002:a37:a743:: with SMTP id q64mr460911qke.236.1559172757000;
+ Wed, 29 May 2019 16:32:37 -0700 (PDT)
 MIME-Version: 1.0
+References: <CA+2bHPYr23dj0y1q7gKjh+WdRiWmJd+zZi4rsPOxDLBAXMFZOw@mail.gmail.com>
+In-Reply-To: <CA+2bHPYr23dj0y1q7gKjh+WdRiWmJd+zZi4rsPOxDLBAXMFZOw@mail.gmail.com>
 From:   Patrick Donnelly <pdonnell@redhat.com>
-Date:   Wed, 29 May 2019 15:35:19 -0700
-Message-ID: <CA+2bHPYr23dj0y1q7gKjh+WdRiWmJd+zZi4rsPOxDLBAXMFZOw@mail.gmail.com>
-Subject: Sunsetting ceph_volume_client.py
+Date:   Wed, 29 May 2019 16:32:10 -0700
+Message-ID: <CA+2bHPa3JXuVBf4owNz302SJY9kigzOPkYmWoZjcNjz39pbOTg@mail.gmail.com>
+Subject: Re: Sunsetting ceph_volume_client.py
 To:     Ramana Venkatesh Raja <rraja@redhat.com>,
         Rishabh Dave <ridave@redhat.com>
 Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
@@ -44,41 +47,33 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Ramana,
+On Wed, May 29, 2019 at 3:35 PM Patrick Donnelly <pdonnell@redhat.com> wrote:
+> So we need an upgrade test in qa/suites/fs/upgrade/ that does this
+> testing. That will mostly be migrating the existing test in
+> fs/basic_functional/tasks/volume-client to an upgrade test. The tricky
+> part is installing luminous on the client machine and then configuring
+> it to talk to the Nautilus/Octopus cluster. Up to now, we normally do
+> testing of old clients by first setting up the cluster with the older
+> version we like to test and then upgrading every node except the
+> clients. This won't work anymore (easily) because we no longer can
+> upgrade directly from Luminous to master/Octopus. So, we need to get a
+> little smarter by simply installing luminous packages on a client node
+> and then installing a ceph.conf to talk to the Nautilus/Octopus
+> cluster. +Josh suggested that we could split out the function setting
+> up the ceph.conf in qa/tasks/ceph.py into a separate task that can be
+> run on the clients. It does need to be made a little smarter so that
+> it installs a ceph.conf that is readable by a luminous client. In
+> particular, it can't dump v2 monitor addresses to the ceph.conf.
 
-With the ceph-mgr volumes plugin becoming the official means to create
-volumes for cephfs, we need to plan to sunset ceph_volume_client.py.
+Adding on to this:
 
-Part of that means turning off testing the ceph_volume_client.py
-library for clients running on master (for Octopus) but still testing
-clients running an older version like Mimic/Luminous/Nautilus. Testing
-ceph_volume_client.py in master is no longer productive as python3
-movements are breaking it continuously and it's to be obsoleted in
-Octopus. Testing ceph_volume_client.py on an older client remains
-important as we're aware of at least one failure caused by `mds dump`
-being obsoleted by Nautilus. Also, we don't want to break current
-use-cases that are not ready to migrate to the new volumes plugin.
+Sage thinks we can just do the install luminous task on all nodes and
+then install.upgrade on everything but one of the clients. Finally,
+run the ceph task on all the nodes but add a few options to only use
+the v1 addresses so that the ceph task doesn't put a ceph.conf with v2
+addresses on the client node. See also rados/thrash-old-clients.
 
-So we need an upgrade test in qa/suites/fs/upgrade/ that does this
-testing. That will mostly be migrating the existing test in
-fs/basic_functional/tasks/volume-client to an upgrade test. The tricky
-part is installing luminous on the client machine and then configuring
-it to talk to the Nautilus/Octopus cluster. Up to now, we normally do
-testing of old clients by first setting up the cluster with the older
-version we like to test and then upgrading every node except the
-clients. This won't work anymore (easily) because we no longer can
-upgrade directly from Luminous to master/Octopus. So, we need to get a
-little smarter by simply installing luminous packages on a client node
-and then installing a ceph.conf to talk to the Nautilus/Octopus
-cluster. +Josh suggested that we could split out the function setting
-up the ceph.conf in qa/tasks/ceph.py into a separate task that can be
-run on the clients. It does need to be made a little smarter so that
-it installs a ceph.conf that is readable by a luminous client. In
-particular, it can't dump v2 monitor addresses to the ceph.conf.
-
-What do you think?
-
---
+-- 
 Patrick Donnelly, Ph.D.
 He / Him / His
 Senior Software Engineer
