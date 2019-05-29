@@ -2,105 +2,123 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D869D2E571
-	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 21:35:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BD3E2E578
+	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 21:36:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726097AbfE2Tfz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 29 May 2019 15:35:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40174 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725956AbfE2Tfz (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 29 May 2019 15:35:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A37F1AB9D
-        for <ceph-devel@vger.kernel.org>; Wed, 29 May 2019 19:35:54 +0000 (UTC)
+        id S1726163AbfE2Tg3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 29 May 2019 15:36:29 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:37792 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfE2Tg3 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 15:36:29 -0400
+Received: by mail-yb1-f193.google.com with SMTP id l66so1235631ybf.4;
+        Wed, 29 May 2019 12:36:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7mEjgHYQ04qmca/Pwc7iF7uxZsyWUtmaIoM2mZ31LQc=;
+        b=ZqWrslUQMdbel0zaoDjEn6UvUaq0aUP7KhexsRNdGhbCvxekatAwIPxf356JrUDnOx
+         C09DY60ki0ngftPh+10L/hTshAMMNzEeRbZR+HR9lh7DDk3HTHAkIZdOKBkMQDFchkqC
+         BSrqcVT3r8KKQ9pwKM0YVXOOU0nv55jbtupzPoHq7qHWUZ6IoTj2y0ca3+6XYBeElMT7
+         03LMn0p0gKX1NG7mSOOfFb0wK616PofkM/rP++cD2mKAQ69vRbC8C1ovkzRcM3uWJlua
+         dHj2GlH4/IxhE8ZSch32KCQIrgmeh0cRM3GjCL1souIZ1RnwBafeARtfAIi0MtidEXfX
+         xSjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7mEjgHYQ04qmca/Pwc7iF7uxZsyWUtmaIoM2mZ31LQc=;
+        b=bLqjKAPDQ+m+OeIe8aXUO6BdnIfRtqeP/Tl1eE1wg0oX6Kl1zsxUX1p0eiXjFDdOcR
+         zvQBwnjT45hR10c1hKPxeX6KG8uc0K+XhT1hDCIg1ZBE2RLSY93p8ljAxh6/yeQYi12Z
+         hs4V7xsbov84hG2XUthASsynA6Ghb6rjd8gOvAgp5WrxoToJsZ2aOkI9oC6dXC/lnyab
+         L/K16enQvbeVgU2Ytgn30NxXSrWkEJLZEFI13+cwL5ZxUehBzC/ugF5ydjtKhXCZiY7z
+         E/6GeFiKM/WSBBM6UFo9Lqy2UhmqP/0em1FyMW/Ch7hyXIcBtINx3NTnbFdBkcZie27F
+         1HZQ==
+X-Gm-Message-State: APjAAAWoJ5eqkodIfdP84n/IserMwvplEBdjUpdKZ6XSD3V2ewbp3qYU
+        oCGI1nD2zQHkGE2p35Va1w4n1OqAnIHuiFvSCzISof9p7zQ=
+X-Google-Smtp-Source: APXvYqxUzf10qrPKNmM4si1Ho/xA9MTy04IyA/D+jDEIvhwOY8vzXt+TC/oPfRRIYXfaYVxTBXtn7CAgMBqV6zkX3Qc=
+X-Received: by 2002:a25:b202:: with SMTP id i2mr26730349ybj.439.1559158588100;
+ Wed, 29 May 2019 12:36:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 29 May 2019 21:35:54 +0200
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     ceph-devel@vger.kernel.org
-Subject: messenger: performance drop, v2 vs v1
-Message-ID: <e201d78b90c3fa4c794787685520cedd@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+References: <20190529174318.22424-1-amir73il@gmail.com> <20190529174318.22424-11-amir73il@gmail.com>
+In-Reply-To: <20190529174318.22424-11-amir73il@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 29 May 2019 22:36:16 +0300
+Message-ID: <CAOQ4uxiTtZTycTMdvcdJ5nR6YNOjRgQ51pKnXC6M-dO+eNMHRA@mail.gmail.com>
+Subject: Re: [PATCH v3 10/13] cifs: copy_file_range needs to strip setuid bits
+ and update timestamps
+To:     Steve French <smfrench@gmail.com>
+Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Luis Henriques <lhenriques@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-api@vger.kernel.org, ceph-devel@vger.kernel.org,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi all,
+Hi Steve,
 
-I did a quick protocol performance comparison using fio_ceph_messenger
-engine having `37c70bd1a75f ("Merge pull request #28099 from 
-tchaikov/wip-blobhash")`
-as a master.  I use default fio job and config:
+Could we get an ACK on this patch.
+It is a prerequisite for merging the cross-device copy_file_range work.
 
-   src/test/fio/ceph-messenger.fio
+It depends on a new helper introduced here:
+https://lore.kernel.org/linux-fsdevel/CAOQ4uxjbcSWX1hUcuXbn8hFH3QYB+5bAC9Z1yCwJdR=T-GGtCg@mail.gmail.com/T/#m1569878c41f39fac3aadb3832a30659c323b582a
 
-      iodepth=128
+Thanks,
+Amir,
 
-   src/test/fio/ceph-messenger.conf
-
-      [global]
-      ms_type=async+posix
-      ms_crc_data=false
-      ms_crc_header=false
-      ms_dispatch_throttle_bytes=0
-      debug_ms=0/0
-
-
-Results:
-
-   protocol v1:
-
-     4k  IOPS=116k, BW=454MiB/s, Lat=1100.75usec
-     8k  IOPS=104k, BW=816MiB/s, Lat=1224.83usec
-    16k  IOPS=93.7k, BW=1463MiB/s, Lat=1366.15usec
-    32k  IOPS=81.5k, BW=2548MiB/s, Lat=1568.80usec
-    64k  IOPS=69.8k, BW=4366MiB/s, Lat=1831.76usec
-   128k  IOPS=47.8k, BW=5973MiB/s, Lat=2677.71usec
-   256k  IOPS=23.7k, BW=5917MiB/s, Lat=5406.42usec
-   512k  IOPS=11.8k, BW=5912MiB/s, Lat=10823.24usec
-     1m  IOPS=5792, BW=5793MiB/s, Lat=22092.82usec
-
-
-   protocol v2:
-
-     4k  IOPS=95.5k, BW=373MiB/s, Lat=1340.09usec
-     8k  IOPS=85.3k, BW=666MiB/s, Lat=1499.54usec
-    16k  IOPS=75.8k, BW=1184MiB/s, Lat=1688.65usec
-    32k  IOPS=61.6k, BW=1924MiB/s, Lat=2078.29usec
-    64k  IOPS=53.6k, BW=3349MiB/s, Lat=2388.17usec
-   128k  IOPS=32.5k, BW=4059MiB/s, Lat=3940.99usec
-   256k  IOPS=17.5k, BW=4376MiB/s, Lat=7310.90usec
-   512k  IOPS=8718, BW=4359MiB/s, Lat=14679.53usec
-     1m  IOPS=3785, BW=3785MiB/s, Lat=33811.59usec
-
-
-    IOPS percentage change:
-
-           v1                v2            % change
-
-     4k  IOPS=116k        IOPS=95.5k         -17%
-     8k  IOPS=104k        IOPS=85.3k         -17%
-    16k  IOPS=93.7k       IOPS=75.8k         -19%
-    32k  IOPS=81.5k       IOPS=61.6k         -24%
-    64k  IOPS=69.8k       IOPS=53.6k         -23%
-   128k  IOPS=47.8k       IOPS=32.5k         -32%
-   256k  IOPS=23.7k       IOPS=17.5k         -26%
-   512k  IOPS=11.8k       IOPS=8718          -25%
-     1m  IOPS=5792        IOPS=3785          -35%
-
-
-Is that expected? Does anyone have similar numbers?
-
-
-PS. Am I mistaken or 'ms_msgr2_encrypt_messages' and
-     'ms_msgr2_sign_messages' options are not used at all?
-
---
-Roman
-
+On Wed, May 29, 2019 at 8:43 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> cifs has both source and destination inodes locked throughout the copy.
+> Like ->write_iter(), we update mtime and strip setuid bits of destination
+> file before copy and like ->read_iter(), we update atime of source file
+> after copy.
+>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/cifs/cifsfs.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+> index c65823270313..ab6c5c24146d 100644
+> --- a/fs/cifs/cifsfs.c
+> +++ b/fs/cifs/cifsfs.c
+> @@ -1096,6 +1096,10 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
+>                 goto out;
+>         }
+>
+> +       rc = -EOPNOTSUPP;
+> +       if (!target_tcon->ses->server->ops->copychunk_range)
+> +               goto out;
+> +
+>         /*
+>          * Note: cifs case is easier than btrfs since server responsible for
+>          * checks for proper open modes and file type and if it wants
+> @@ -1107,11 +1111,12 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
+>         /* should we flush first and last page first */
+>         truncate_inode_pages(&target_inode->i_data, 0);
+>
+> -       if (target_tcon->ses->server->ops->copychunk_range)
+> +       rc = file_modified(dst_file);
+> +       if (!rc)
+>                 rc = target_tcon->ses->server->ops->copychunk_range(xid,
+>                         smb_file_src, smb_file_target, off, len, destoff);
+> -       else
+> -               rc = -EOPNOTSUPP;
+> +
+> +       file_accessed(src_file);
+>
+>         /* force revalidate of size and timestamps of target file now
+>          * that target is updated on the server
+> --
+> 2.17.1
+>
