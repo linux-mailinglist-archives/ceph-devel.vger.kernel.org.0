@@ -2,118 +2,95 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C6182DA12
-	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 12:10:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 130EA2DC88
+	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2019 14:16:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726137AbfE2KKx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 29 May 2019 06:10:53 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:33175 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbfE2KKx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 06:10:53 -0400
-Received: by mail-yb1-f196.google.com with SMTP id w127so584850yba.0
-        for <ceph-devel@vger.kernel.org>; Wed, 29 May 2019 03:10:52 -0700 (PDT)
+        id S1726780AbfE2MQQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 29 May 2019 08:16:16 -0400
+Received: from mail-qt1-f169.google.com ([209.85.160.169]:38274 "EHLO
+        mail-qt1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726101AbfE2MQQ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 May 2019 08:16:16 -0400
+Received: by mail-qt1-f169.google.com with SMTP id l3so2210889qtj.5
+        for <ceph-devel@vger.kernel.org>; Wed, 29 May 2019 05:16:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=fcy50gjziwU0Q6Jj7zHUgDIDRgHRE3zUkxc6fphSGr4=;
-        b=HMdA4Zu683kH6NrsdU/wivbfcDjGhse1ZPJJRHWx5ZEQPJX/YJloakeGIBI5rLj3tm
-         vac+TScrKK34+/vpM9eNtcS+XZFGX/6kLAhKiGTMi9yZliJ7+wjTltGpWfpgNwzbS/eo
-         +XMulEsiPn2P/lNrCSA7evmNs8OYI8YZsKcIL1f6BVCIT9mrx5V/XTxRr9B1c25LQjVY
-         ZsNFi157UZT+wtHv+UGxC86KntzarBTKT6mSxLt5et1w7Ri9pGUg/LAmUIlR+/7+dWjr
-         KB7jN272OMKalLiuk7unVGyHQa74oG5YjJ0MDx2pAvnUGWxztQoRwiBVArVeO0XafJf0
-         /dCA==
-X-Gm-Message-State: APjAAAXQSp5GVrEtN4lMSs53uR3rOUSXZpRN/krI4yAJBZjHyMLprqLY
-        m6aRGTkfKKWKqdB2MXAMp4G+Rg==
-X-Google-Smtp-Source: APXvYqzQnZY02muGjCwielxi2Sl9uwjJS1tP0CvGEBYrJI8beJjU2GIWUiLCk1TtNfaOKqN7NKZF4g==
-X-Received: by 2002:a5b:144:: with SMTP id c4mr13493967ybp.111.1559124652218;
-        Wed, 29 May 2019 03:10:52 -0700 (PDT)
-Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-4F7.dyn6.twc.com. [2606:a000:1100:37d::4f7])
-        by smtp.gmail.com with ESMTPSA id b184sm170331ywa.9.2019.05.29.03.10.51
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 29 May 2019 03:10:51 -0700 (PDT)
-Message-ID: <ac3f3632c1b2473cebe04d5da2ccdf325a7af0e2.camel@redhat.com>
-Subject: Re: [PATCH 6/8] ceph: use READ_ONCE to access d_parent in RCU
- critical section
-From:   Jeff Layton <jlayton@redhat.com>
-To:     "Yan, Zheng" <ukernel@gmail.com>
-Cc:     "Yan, Zheng" <zyan@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>, idryomov@redhat.com
-Date:   Wed, 29 May 2019 06:10:50 -0400
-In-Reply-To: <CAAM7YAkFTM=fkKcPSSdS6SVZZbzLRZ5p9_w_f2gNfgG7FVEQhg@mail.gmail.com>
-References: <20190523081345.20410-1-zyan@redhat.com>
-         <20190523081345.20410-6-zyan@redhat.com>
-         <c16c31b59f33c9d881bdaacfdfeb0e629e682f94.camel@redhat.com>
-         <CAAM7YAkFTM=fkKcPSSdS6SVZZbzLRZ5p9_w_f2gNfgG7FVEQhg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9qyiSNEFlI5j1QHYRdP9dd1izy+WJINDBq0u0WZDhnA=;
+        b=Xp/xeEJR1rYGk0ewd4akY8ZdggETRtz/PFJaYtBjdUGVqX9rbvznOuCoMo7LG4bC95
+         gaPRbedgy363gcuYVDsgPta2A+vmIrJmdPvWhrNFWd2svFhCbpvmhCpDVXbeMmI2rrng
+         pIdhpFnHnDgix4xBIA+DQzLBkwUk9SRl9nLNPM88n7t/NiZFJCyqFdisUGWVUHVDHwz1
+         8yxaiZwr26r5+1XS2LIj91HxzTBXuBA3xLIpnbaFgnTvf9ivds/8qGNwP6NwBSVvNzmF
+         nPdL7Qz8/2d1Y8+I4T2018aY0sYJeJ9LtX/ZA2y4r1xLDRauBw8mFsBDG7XeiMTg/T6J
+         xJAw==
+X-Gm-Message-State: APjAAAWsMSui6HoNx/t7N/QBx6jBpFvo2yhtnrRTnr9299MMOpUJC6tR
+        6X9SPZgL9mEIJ2j79oolHQCG8DJLOXCBcgX4A3D4RA==
+X-Google-Smtp-Source: APXvYqyp8yqZ6EnqbTR+2n8dXO/GsszOF9PTf+Q/OHA/sdF3YYfcAgfFVMqZtrT1DKlpxBg7bkExsvb2+YikDoCw0GQ=
+X-Received: by 2002:a0c:b621:: with SMTP id f33mr69819459qve.199.1559132174062;
+ Wed, 29 May 2019 05:16:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <CAMMFjmF1SP9JnyeuqCtsS9KJKRO-1R+E+NkzO-kj6+pn=chfzw@mail.gmail.com>
+In-Reply-To: <CAMMFjmF1SP9JnyeuqCtsS9KJKRO-1R+E+NkzO-kj6+pn=chfzw@mail.gmail.com>
+From:   Alfredo Deza <adeza@redhat.com>
+Date:   Wed, 29 May 2019 08:16:02 -0400
+Message-ID: <CAC-Np1wR4ik58P=UPLuuBxhqbG_REx1UFp4mDPNdBiNQFW9W_g@mail.gmail.com>
+Subject: Re: 13.2.6 QE Mimic validation status
+To:     Yuri Weinstein <yweinste@redhat.com>
+Cc:     Sage Weil <sweil@redhat.com>, "Durgin, Josh" <jdurgin@redhat.com>,
+        "Dillaman, Jason" <dillaman@redhat.com>,
+        "Sadeh-Weinraub, Yehuda" <yehuda@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        "Development, Ceph" <ceph-devel@vger.kernel.org>,
+        "Lekshmanan, Abhishek" <abhishek.lekshmanan@gmail.com>,
+        Nathan Cutler <ncutler@suse.cz>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        ceph-qe-team <ceph-qe-team@redhat.com>,
+        Andrew Schoen <aschoen@redhat.com>, ceph-qa <ceph-qa@ceph.com>,
+        Matt Benjamin <mbenjamin@redhat.com>,
+        Sebastien Han <shan@redhat.com>,
+        Brad Hubbard <bhubbard@redhat.com>,
+        Venky Shankar <vshankar@redhat.com>,
+        Neha Ojha <nojha@redhat.com>,
+        David Galloway <dgallowa@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2019-05-29 at 10:17 +0800, Yan, Zheng wrote:
-> On Tue, May 28, 2019 at 9:57 PM Jeff Layton <jlayton@redhat.com> wrote:
-> > On Thu, 2019-05-23 at 16:13 +0800, Yan, Zheng wrote:
-> > > Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-> > > ---
-> > >  fs/ceph/mds_client.c | 8 ++++----
-> > >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > > index 60e8ddbdfdc5..870754e9d572 100644
-> > > --- a/fs/ceph/mds_client.c
-> > > +++ b/fs/ceph/mds_client.c
-> > > @@ -913,7 +913,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
-> > >               struct inode *dir;
-> > > 
-> > >               rcu_read_lock();
-> > > -             parent = req->r_dentry->d_parent;
-> > > +             parent = READ_ONCE(req->r_dentry->d_parent);
-> > 
-> > Can we use rcu_dereference() instead?
-> > 
-> 
-> d_parent has no __rcu mark. It will cause sparse warning.
-> 
-> Regards
-> Yan, Zheng
-> 
+On Thu, May 23, 2019 at 4:00 PM Yuri Weinstein <yweinste@redhat.com> wrote:
+>
+> Details of this release summarized here:
+>
+> http://tracker.ceph.com/issues/39718#note-2
+>
+> rados - FAILED, known, Neha approved?
+> rgw - Casey approved?
+> rbd - Jason approved?
+> fs - Patrick, Venky approved?
+> kcephfs - Patrick, Venky approved?
+> multimds - Patrick, Venky approved? (still running)
+> krbd - Ilya, Jason approved?
+> ceph-deploy - Sage, Vasu approved?  See SELinux denials, David pls FYI
+> ceph-disk - PASSED
+> upgrade/client-upgrade-jewel - PASSED
+> upgrade/client-upgrade-luminous - PASSED
+> upgrade/luminous-x (mimic) - PASSED
+> upgrade/mimic-p2p - tests needs fixing
+> powercycle - PASSED, Neha FYI
+> ceph-ansible - PASSED
+> ceph-volume - FAILED, Alfredo pls rerun
 
-Good point.
+APPROVED. The failures are due to a configuration error, all nightly
+mimic runs are passing. Filed http://tracker.ceph.com/issues/40062 to
+fix the config problem.
 
-> > >               dir = req->r_parent ? : d_inode_rcu(parent);
-> > > 
-> > >               if (!dir || dir->i_sb != mdsc->fsc->sb) {
-> > > @@ -2131,8 +2131,8 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
-> > >               if (inode && ceph_snap(inode) == CEPH_SNAPDIR) {
-> > >                       dout("build_path path+%d: %p SNAPDIR\n",
-> > >                            pos, temp);
-> > > -             } else if (stop_on_nosnap && inode && dentry != temp &&
-> > > -                        ceph_snap(inode) == CEPH_NOSNAP) {
-> > > +             } else if (stop_on_nosnap && dentry != temp &&
-> > > +                        inode && ceph_snap(inode) == CEPH_NOSNAP) {
-> > 
-> > ^^^ Unrelated delta?
-> > 
-> > >                       spin_unlock(&temp->d_lock);
-> > >                       pos++; /* get rid of any prepended '/' */
-> > >                       break;
-> > > @@ -2145,7 +2145,7 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
-> > >                       memcpy(path + pos, temp->d_name.name, temp->d_name.len);
-> > >               }
-> > >               spin_unlock(&temp->d_lock);
-> > > -             temp = temp->d_parent;
-> > > +             temp = READ_ONCE(temp->d_parent);
-> > 
-> > Better to use rcu_dereference() here.
-> > 
-> > >               /* Are we at the root? */
-> > >               if (IS_ROOT(temp))
-> > 
-
-Reviewed-by: Jeff Layton <jlayton@redhat.com>
-
+>
+> Please review results and reply/comment.
+>
+> PS:  Abhishek, Nathan I will back in the office next Tuesday.
+>
+> Thx
+> YuriW
