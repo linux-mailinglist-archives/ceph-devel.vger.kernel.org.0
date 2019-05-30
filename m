@@ -2,42 +2,47 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B5F52FC56
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2019 15:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33B9B2FC9A
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2019 15:46:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbfE3N21 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 30 May 2019 09:28:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43286 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726225AbfE3N20 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 30 May 2019 09:28:26 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C85C530C252E
-        for <ceph-devel@vger.kernel.org>; Thu, 30 May 2019 13:28:26 +0000 (UTC)
-Received: from [10.3.117.97] (ovpn-117-97.phx2.redhat.com [10.3.117.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A76924119
-        for <ceph-devel@vger.kernel.org>; Thu, 30 May 2019 13:28:26 +0000 (UTC)
-To:     ceph-devel@vger.kernel.org
-From:   Josh Durgin <jdurgin@redhat.com>
-Subject: 05/30/19 perf meeting is canceled
-Message-ID: <ed1acd62-1ccc-ace6-922e-d9a7277e77b8@redhat.com>
-Date:   Thu, 30 May 2019 06:28:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726686AbfE3Nqn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 30 May 2019 09:46:43 -0400
+Received: from mail-lf1-f41.google.com ([209.85.167.41]:43136 "EHLO
+        mail-lf1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726488AbfE3Nqn (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 May 2019 09:46:43 -0400
+Received: by mail-lf1-f41.google.com with SMTP id u27so5056805lfg.10
+        for <ceph-devel@vger.kernel.org>; Thu, 30 May 2019 06:46:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=r++YujabgPa8NxvMfReRnULuTnG2RjrA974Fkh+pYYU=;
+        b=nBSih/rgl6dblXu0TdLZ0bIj8vT+5AQIoI18se2MhgUMEX9xkanEUeogOE6OvJescy
+         R4sk003mQbqAZdZe5geTyLlD0hvVvUiLRMiksoLAjbNGOUiLNuOf7stRbQd1HMG+Fr/I
+         8FWSZeecKjKHzHAjWA52+zZoVLlw9qLrTsxqrwVDCDXHEIWOdd0SRYJBc0aV2AEIYCTG
+         FWFus8SKTAVO20QP7aObbWeAs4O77y+cgwpkAV/t02T7JEAZi++S29ar2A93cDk3Ar4o
+         dvPxIQ4bTHuPDc6A/tDrLsLAAiyYUFFq4PFGkfbKkl1HYW94YLcNrlscilIAjgGc56vV
+         bELg==
+X-Gm-Message-State: APjAAAWYtQaGCJEgblYip5q1qqG+bxCwKkPVTd249mLqMTBn8alziTLr
+        lBwm3aBydXc7EwHSSmlNjo10CnoicBILN124bzVm2kAl
+X-Google-Smtp-Source: APXvYqwnhnXaUS1lEfBKF9bx+ZEZ38ZK0WliTRTa5e+S7stIHO9MhQj0dnYDcWay5N8KDfHogg1wYs9y5CrO/hFk1P0=
+X-Received: by 2002:ac2:5337:: with SMTP id f23mr2287793lfh.15.1559224001488;
+ Thu, 30 May 2019 06:46:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 30 May 2019 13:28:26 +0000 (UTC)
+From:   Milind Changire <mchangir@redhat.com>
+Date:   Thu, 30 May 2019 19:16:05 +0530
+Message-ID: <CAED=hWDpWZf1Oo-9QEKhW7Hdeg7LHsN3vANKxcCHY50nnO4VQQ@mail.gmail.com>
+Subject: does Filer support caching ?
+To:     ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Mark can't make it today, we'll reconvene next week, when there should
-be more to discuss as well.
+Does class Filer support caching ?
+Or
+Where in the client stack is caching implemented for libcephfs ?
 
-Josh
+-- 
+Milind
