@@ -2,102 +2,112 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F7B5303AF
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2019 22:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A870303B9
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2019 23:02:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbfE3U7e (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 30 May 2019 16:59:34 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43165 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfE3U7d (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 May 2019 16:59:33 -0400
-Received: by mail-qt1-f196.google.com with SMTP id z24so8746941qtj.10;
-        Thu, 30 May 2019 13:59:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TTwhY4W7bsMQU2b95UCtmjTrgQBWgMfaFKcWD6fHn2Y=;
-        b=iAXlbDPirvlihRGO1qbHDrGMPSPT1YVs5ripw25ItuMTE3l/cNb3L41Z8jMWCg9Kob
-         1Z9T5/FwlhmVEd+GpkrkbggNtGCQ4yZpb5ZW4+OgD75tfPYXpL4RYPL4lRmqyyv3wpoR
-         /YxDPx25zmV9Y8SIPhw5YJYATTrp18w1lq/oemoMJWa/0+SBEem0RZtc3urhaBchBnpg
-         56m0B9PA8h1LUgdoQBZfVB/3b0qucgVkWMD8fFf3izjuyl0dvwU89qoFAiGt8hxExONO
-         B9gZYhEAp3xcuF+9PP3Z8pM6A0yWtRxE7BkLBTrJdLxUkW4bIwfeL/VEEJWkIa0hWi50
-         pBAw==
+        id S1726574AbfE3VCV convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Thu, 30 May 2019 17:02:21 -0400
+Received: from mail-it1-f172.google.com ([209.85.166.172]:36677 "EHLO
+        mail-it1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbfE3VCV (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 May 2019 17:02:21 -0400
+Received: by mail-it1-f172.google.com with SMTP id e184so11764099ite.1
+        for <ceph-devel@vger.kernel.org>; Thu, 30 May 2019 14:02:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TTwhY4W7bsMQU2b95UCtmjTrgQBWgMfaFKcWD6fHn2Y=;
-        b=cqJJVWkMLHn1et8/6tnm4D2ceuAk2SbR2nPLbuRKKkRfj9TdJi0+QM7YrDn+n4NpwL
-         9fkZUJWoUiummEWeq62Mi0hR20VNcQmENYqc7Vw1vQAMvy15c9wPcpCqe9C/mn1rdazP
-         GB7lcWQJdRJHspRkIq27BA4V6ufgasZXx4R/UtPK0w9qCEiA35rHyqjNBRpLDqqP0+Du
-         6sW3Vi5rXWzG+FZzwDVQHAMntqDwhU0pnTxu4sxzBbVwRmOZJha7TYWVDFcDGqDdvuvM
-         d7VfWLFUQh+zzu36K3pBWCCVhjW2RoK0QmUFdqx0PGPMCe2w6vTzAtRHKDvD9tk2VZRv
-         q0Iw==
-X-Gm-Message-State: APjAAAWgvtKKx/iPxMPTBPO5uM56PNiBoPZnbbsRSNz6nPZ1hBBk5aDp
-        DKvkxioQylYzXRmBB5ChsHE=
-X-Google-Smtp-Source: APXvYqxrJ3ah20Z+AgJSXVA+GlNjZK8ct2M/F8QOItY6m4FohS5BiGMOctQxVzQP3O9+Tf4jkEP3NQ==
-X-Received: by 2002:ac8:96e:: with SMTP id z43mr3514163qth.55.1559249972808;
-        Thu, 30 May 2019 13:59:32 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::1:658d])
-        by smtp.gmail.com with ESMTPSA id u17sm2342884qtk.0.2019.05.30.13.59.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 13:59:31 -0700 (PDT)
-Date:   Thu, 30 May 2019 13:59:30 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Xuehan Xu <xxhdx1985126@gmail.com>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
-        "Yan, Zheng" <ukernel@gmail.com>, cgroups@vger.kernel.org,
-        Xuehan Xu <xuxuehan@360.cn>
-Subject: Re: [PATCH] cgroup: add a new group controller for cephfs
-Message-ID: <20190530205930.GW374014@devbig004.ftw2.facebook.com>
-References: <20190523064412.31498-1-xxhdx1985126@gmail.com>
- <20190524214855.GJ374014@devbig004.ftw2.facebook.com>
- <CAJACTueLKEBkuquf989dveBnd5cOknf7LvB+fg+9PyjDw1VX6g@mail.gmail.com>
- <20190528185604.GK374014@devbig004.ftw2.facebook.com>
- <CAJACTucnCGLTbRAX0V5GBMmCQh4Dh8T9b0in1TUMCOVysJ0wjw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=El3ozkWJrXMRy4Rmb5iAZURr4e0TH1fE332NzKhIKSg=;
+        b=RF3hzr27McEbH9q5VOloCQ3ChnKwl1UqCLdTJCTLZ9quF4CguTN6XSNeEaWF7Z3Tlg
+         wCtkgyYHZtbwhUMeLEYP/H9B5rRq6sg0shuc7+trY0wSK6i6FdVw5K+WnPC8N8byabSd
+         f2MtOhpGTF9cW+TBf3YcvLg88w5uDKpT50uKLoq2boqge2zRSSXggnfy5xEURrYiKDhv
+         HNJp/Ma9F/9yjCO8kUrOHLqb9715MHaUKCPSkezNPMKh/QRkjNfivrs25QVjs4B7CV6y
+         TRjuFzr+JyxP/L1GoGWoqopibN9Z884S4XCugTN9jkCyGjKvIA/fGf1BB0hI8/OH1MJa
+         Hlqg==
+X-Gm-Message-State: APjAAAVdS8E4GStAe9OWKPfvqkzGUVdxmHqlTehvx6g8ZNrUuuH/1wxT
+        tgikUlxluiK6AQ1aHFO3Ki8YaqWSpeVyENNdQBiE+Q==
+X-Google-Smtp-Source: APXvYqzw5DT9+NDI99XO0YcLA55MOfcqCJ0B9QzX5UlJsHATPWXfb/FFU2BMpVXDJFXArvDyTv2N/OFPPBMxHXpR/vw=
+X-Received: by 2002:a24:7345:: with SMTP id y66mr4331298itb.23.1559250140549;
+ Thu, 30 May 2019 14:02:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJACTucnCGLTbRAX0V5GBMmCQh4Dh8T9b0in1TUMCOVysJ0wjw@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <CAE63xUOQPizvSWe4YL_2fiSJ5uYxMdOTz1nqL9QizNGxwyyWQQ@mail.gmail.com>
+ <CAJ4mKGZ4bDcJ+TeBSRfcynpTXWjdwuXqo=t6fxmaynbJPC10HA@mail.gmail.com> <CAE63xUO0CFY0L0g_DLK7iRVXBNMXp3wBL_SMyo5OJ+efwcKO1g@mail.gmail.com>
+In-Reply-To: <CAE63xUO0CFY0L0g_DLK7iRVXBNMXp3wBL_SMyo5OJ+efwcKO1g@mail.gmail.com>
+From:   Gregory Farnum <gfarnum@redhat.com>
+Date:   Thu, 30 May 2019 14:01:39 -0700
+Message-ID: <CAJ4mKGb2-4YYiJOTDAZCU9=QRXU+_e6X7MHN8tRxjWAsMxrQrA@mail.gmail.com>
+Subject: Re: fully encrypted ceph
+To:     Ugis <ugis22@gmail.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hello,
+On Thu, May 30, 2019 at 8:53 AM Ugis <ugis22@gmail.com> wrote:
+>
+> Thanks for hint about Nautilus messenger v2! Was not aware it is near ready.
+>
+> I'm using Nautilus 14.2.1 - how exactly can I enable "secure mode"?
+> http://docs.ceph.com/docs/nautilus/rados/configuration/msgr2/#bind-configuration-options
+> describes what it is but does not mention how to enable.
 
-On Wed, May 29, 2019 at 10:27:36AM +0800, Xuehan Xu wrote:
-> I think, since we are offering users an interface to control the io
-> reqs issuing rate, we'd better provide the interface through the io
-> controller, is this right?
+The "Connection Modes" section right underneath there discusses the
+options and values you can set.
 
-I'm not entirely sure what the right approach is here.  For most
-controllers, there are concrete resources which are being controlled
-even if it's a virtual resource like pids.  Here, it isn't clear how
-the resource should be defined.  Ideally, it should be defined as
-fractions / weights of whatever backends can do but that might not be
-that easy to define.
+>
+> P.S. If I use dmcrypt for my OSDs I should backup keys. Is it enough
+> to backup monitors like described here(stop daemon + backup DB
+> folder)?
+> https://blog.widodh.nl/2014/03/safely-backing-up-your-ceph-monitors/
+>
+> Would I be able to start cluster in case all mons are lost with such backup?
 
-Another issue is that non-work-conserving limits usually aren't enough
-to serve majority of use cases and it's better to at least consider
-how work-conserving control should look like before settling interface
-decisions.
+Not sure; I haven't played with this. If you lose all the monitors you
+can reconstruct the Ceph data but I think with fully-encrypted OSDs
+that would put you out of luck unless you had all the keys stored
+somewhere else you could provide them from.
+-Greg
 
-> Actually, for now, we are considering implement a ceph-specific
-> "blkcg_policy" which adds new io controller "cf" files to let users
-> modify configurations of the ceph-specific "blkcg_policy" and limit
-> the ceph reqs sent to the underlying cluster all by itself rather than
-> relying on the existing blkcg_policies like io latency or io throttle.
-> Is this the right way to go? Thanks:-)
-
-Can we take a step back and think through what the fundamental
-resources are?  Do these control knobs even belong to the client
-machines?
-
-Thanks.
-
--- 
-tejun
+>
+> Ugis
+>
+> trešd., 2019. g. 29. maijs, plkst. 21:39 — lietotājs Gregory Farnum
+> (<gfarnum@redhat.com>) rakstīja:
+> >
+> > If you're running Nautilus you can enable the new messenger encryption
+> > option. That's marked experimental right now but has been stable in
+> > testing so that flag will be removed in the next point release or two.
+> >
+> > Not sure about setting up Ceph-volume with locally-stored keys; partly
+> > we just assume your monitors are "farther away" from the OSD drives so
+> > even if the keys are transmitted unencrypted that's more secure
+> > against practical attacks...
+> > -Greg
+> >
+> > On Wed, May 29, 2019 at 11:28 AM Ugis <ugis22@gmail.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > What are current options to set up fully encrypted ceph cluster(data
+> > > encrypted in transit & at rest)?
+> > >
+> > > From what I have gathered:
+> > > option: ceph OSDs with dmcrypt and keys stored in monitors - this
+> > > seems not secure because keys travel from monitors to OSDs unencrypted
+> > > by default.
+> > >
+> > > workarounds would be:
+> > > - best:to use OSDs on luks crypt devices and unlock luks locally but
+> > > somehow ceph-volume refuses to create OSD on /dev/mapper/..crypt
+> > > device - why that?
+> > > - not avaialable: to store OSD dmcrypt keys in TANG server and use
+> > > clevis to retrieve keys.
+> > > - viable but unconvenient: create VPN between osds and mons
+> > >
+> > > What could be other suggestions to set up fully encrypted ceph?
+> > >
+> > > Best regards,
+> > > Ugis
