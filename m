@@ -2,101 +2,121 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1036930627
-	for <lists+ceph-devel@lfdr.de>; Fri, 31 May 2019 03:18:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FB603078D
+	for <lists+ceph-devel@lfdr.de>; Fri, 31 May 2019 06:05:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbfEaBSP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 30 May 2019 21:18:15 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:35706 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726693AbfEaBSO (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 May 2019 21:18:14 -0400
-Received: by mail-qk1-f196.google.com with SMTP id l128so5265704qke.2
-        for <ceph-devel@vger.kernel.org>; Thu, 30 May 2019 18:18:14 -0700 (PDT)
+        id S1726327AbfEaEFy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 31 May 2019 00:05:54 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46080 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbfEaEFx (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 31 May 2019 00:05:53 -0400
+Received: by mail-lf1-f68.google.com with SMTP id l26so6721069lfh.13;
+        Thu, 30 May 2019 21:05:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+pfNVkny3ljThzWfAME7L3xUXyuxgcYdb8jm3SJY+q8=;
-        b=Xtw06TJBsZMInxIL+yt3TB61jy2IOHibcFyQpHTtPllynQdl09tl8zvhbx0TdH4tRW
-         v/KHDFveJ68iskWEzZpY4kpTS/QTnE7u5yy/O78wTB7LJdwgLgSGCddVmFVCCPoblmYw
-         sV/2RkQcu7VXkidxzqlJxAFZpJ5j+c1kxSDa1ag7lZoZ6X2W2CFTWw9pVOh8hIDjUJVH
-         OT0U9W3cvrub+cBUdpKfCzMPGfGXs1r5SVZbWpYhbD1u43ilEWENAvcLmrsGL/u7fotJ
-         hmkZQhVjPLoCKufjqzNoDE/K7k32hrR7rTqjheLTWAm8ZGrzOZ/1fhucCEytBzzw5HUd
-         +AAA==
+        bh=2VcjAC4JQMdoF7isS9cdHm7wqc4qunRDCIHNfgNMmAM=;
+        b=FWExfyFr7Erc9jYAYe2rB10EppsXdu9fwCoJgWmHhR85WMldfIQcdUgPIgGGbB3TrV
+         Jxyi/lA3laeoi1PHxuih1T80zGNJ/FrUQa517UXaaAAshRFjr1xcTLfzLcgBjftndW8T
+         odQ+NKC5lMrg2TRQuxIH+9Q6WgPgCTIdvtx8l6rvNRX6G/8DL9obV3KmzltnOLK8c+XI
+         B0hnnE9kPHqPNDdoKXMHTpeh09fyxgVaKp0Tx18rs4XADKG0HI/1KnPZ+lAK9k2K7SQB
+         bJzqynlCYPZt9nC3e5RK7n2YnCcVnX0gS4kfOx9hGWMA1xHn1eVbaXBg94kyeyb3viFv
+         Relw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+pfNVkny3ljThzWfAME7L3xUXyuxgcYdb8jm3SJY+q8=;
-        b=nJVpNxHw6naRmwCW0EoCAjfbPbF37l9A+pxVNJFk7dEh/rNoiXkS8vh76GHfLF+Vi4
-         FyJeU6A6VN6ZZ8mO/o/Ha7xIvcjp/5o+3UDSi2aDKK4ron73wDSSbfnmae2xcMYR5Wfj
-         B8M8yMhg4bXkwGsFeJMzZB4fBEZHBY0hPgycPDON5/o9MvN95L8TdqHhaZe7/ATPzzpR
-         UF46Ju0gLEYPNOVBXn8bL5fIW7j1uxohRwjxziCnRk0HPS3r1kO4JgQyWBO27lBkaRKQ
-         iTtElc4KnyrEbIgXXFdjA2YkyfcXoXstKKdLBAtKOsz/YN/mXa2x7++qHKiYDwZ4Zfl5
-         ij7w==
-X-Gm-Message-State: APjAAAVyRNEJZVpQzStsIKp/rvrA0R7X6ut/9/asOaXCIVRuKZ2gnv6+
-        +/8E9RBJH/sUf81eyFF4Kg4ykeLbW4X+0LUaeGQBIi9hb6w=
-X-Google-Smtp-Source: APXvYqwfiQC5Nl46y+OT3ib5xqbrMU+cjTi9BL1V0bSV1dPdWBNjqAJh/60Mtl8y1leYgJY0VWdCG0tAUSCZvzu6aVQ=
-X-Received: by 2002:a37:a91:: with SMTP id 139mr6183703qkk.301.1559265493804;
- Thu, 30 May 2019 18:18:13 -0700 (PDT)
+        bh=2VcjAC4JQMdoF7isS9cdHm7wqc4qunRDCIHNfgNMmAM=;
+        b=WkVXzUefUkWoe3KYB725qYNE593/jQShc04lWy5YLnaiBFops1+BpFG+fkOyJGcoRO
+         nbkGnsiCNgEDbM2CRsT9dhuqVq1N+yH+llC+vtnTlCsdpRWTK31dtexuQAwuJAxr8nFy
+         w2dSqN3LRhKqDcBhlu0TVQAaJyQA3kCgfQR59nage4ioonZtBkDGDaPh4y7+qCF4fNo1
+         bWZWeUCXfUqIBXQUHee/K9hUBsK//CxXBFANIRW/cQO9kZHevAOq4wSLDAlvbxI+mwyy
+         x8/U+rQYOUmmbFO6ZXQ5aIS2LPHpkteJyhrs1+LKBMkB51/3yu6A9BxipYb2YWrbCJ0d
+         ot1w==
+X-Gm-Message-State: APjAAAU1eMeQxzbugkn8LCuHU3QUGNhmfib7tddVk67ZagaD0u98tQcG
+        EJzcaGWErP/k+LORnEnGiB0BSHMiBuaykJE0AT0=
+X-Google-Smtp-Source: APXvYqz5DfGuXFM3fPfddDGSd3hMqPY36FIDZDY/c/SB+Hm/tRO8es4EncHkWSrtWoCt1ruu4yl0p5F+AvEqm5XGhX4=
+X-Received: by 2002:a19:2791:: with SMTP id n139mr4332391lfn.67.1559275551682;
+ Thu, 30 May 2019 21:05:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <alpine.DEB.2.11.1905301402170.29218@piezo.novalocal>
-In-Reply-To: <alpine.DEB.2.11.1905301402170.29218@piezo.novalocal>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Fri, 31 May 2019 09:18:02 +0800
-Message-ID: <CAAM7YA=PCJ1sfiuKRvuFC_5NBTZT18V0DVsZYYCG3OM91=+ARw@mail.gmail.com>
-Subject: Re: SnapServer::check_osd_map() and is_removed_snap()
-To:     Sage Weil <sweil@redhat.com>
-Cc:     Zheng Yan <zyan@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
+References: <20190523064412.31498-1-xxhdx1985126@gmail.com>
+ <20190524214855.GJ374014@devbig004.ftw2.facebook.com> <CAJACTueLKEBkuquf989dveBnd5cOknf7LvB+fg+9PyjDw1VX6g@mail.gmail.com>
+ <20190528185604.GK374014@devbig004.ftw2.facebook.com> <CAJACTucnCGLTbRAX0V5GBMmCQh4Dh8T9b0in1TUMCOVysJ0wjw@mail.gmail.com>
+ <20190530205930.GW374014@devbig004.ftw2.facebook.com>
+In-Reply-To: <20190530205930.GW374014@devbig004.ftw2.facebook.com>
+From:   Xuehan Xu <xxhdx1985126@gmail.com>
+Date:   Fri, 31 May 2019 12:04:57 +0800
+Message-ID: <CAJACTuc+B+v0yGFY3L7iS1qTdRsw7b6tw5_e9sP43LuR=P1NWA@mail.gmail.com>
+Subject: Re: [PATCH] cgroup: add a new group controller for cephfs
+To:     Tejun Heo <tj@kernel.org>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        "Yan, Zheng" <ukernel@gmail.com>, cgroups@vger.kernel.org,
+        Xuehan Xu <xuxuehan@360.cn>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, May 30, 2019 at 10:13 PM Sage Weil <sweil@redhat.com> wrote:
+On Fri, 31 May 2019 at 04:59, Tejun Heo <tj@kernel.org> wrote:
 >
-> Hi Zheng-
+> Hello,
 >
-> I'm trying to get rid of the removed_snaps member from pg_pool_t as this
-> is a scaling problem for aged clusters with lots of removed snapshots.
-> I'm down to a handful of users: rados cache tiered pools, and
-> SnapServer::check_osd_map().  I'm not entirely following what the
-> code is doing with all_purge vs all_purged.. do you mind taking a look?
+> On Wed, May 29, 2019 at 10:27:36AM +0800, Xuehan Xu wrote:
+> > I think, since we are offering users an interface to control the io
+> > reqs issuing rate, we'd better provide the interface through the io
+> > controller, is this right?
 >
+> I'm not entirely sure what the right approach is here.  For most
+> controllers, there are concrete resources which are being controlled
+> even if it's a virtual resource like pids.  Here, it isn't clear how
+> the resource should be defined.  Ideally, it should be defined as
+> fractions / weights of whatever backends can do but that might not be
+> that easy to define.
+>
+> Another issue is that non-work-conserving limits usually aren't enough
+> to serve majority of use cases and it's better to at least consider
+> how work-conserving control should look like before settling interface
+> decisions.
 
-all_purge are snaps in need_to_purge set , which really need to purge.
-all_purged are snaps in need_to_purge, which have already been purged.
+Hi, Tejun.
 
-> If we can get away with not using the OSDMap's removed_snaps (and by
-> extension is_removed_snap()) at all, that would be ideal.  If the MDS
-> really *does* need to know which snaps have been purged from the
-> rados pool, then we can instead switch to using the new_removed_snaps
-> OSDMap member instead.  The difference is that new_removed_snaps includes
-> the snaps that were removed in the current epoch only, so in order to
-> reliably capture all removed snaps, the MDS would need to examine every
-> OSDMap epoch (not just the latest map).
+The resource that we want to control is the ceph cluster's io
+processing capability usage. And we are planning to control it in
+terms of iops and io bandwidth. We are considering a more
+work-conserving control mechanism that involves server side and are
+more workload self-adaptive. But, for now, as we mostly concern about
+the scenario that a single client use up the whole cluster's io
+capability, we think maybe we should implement a simple client-side io
+throttling first, like the blkio controller's io throttle policy,
+which would be relatively easy. On the other hand, we should provide
+users io throttling capability even if their servers don't support the
+sophisticated QoS mechanism. Am I right about this? Thanks:-)
+
 >
-> It looks to me like the MDS basically needs an ack that it's attempt to
-> remove a snap has succeeded from the mon, and it's doing that by examining
-> the resulting OSDMap.  The mon actually has a durable record for all
-> deleted snaps, though, so I suspect the best fix for this is just
-> to change the mds <-> mon protocol so that MRemoveSnaps gets an ack back
-> after the snap is deleted (or has already been deleted).  Otherwise it
-> will be a real challenge for the MDS to ensure that it finds out about
-> deleted snaps in the fact of MDS restarts and possible gaps in the osdmap
-> history...
+> > Actually, for now, we are considering implement a ceph-specific
+> > "blkcg_policy" which adds new io controller "cf" files to let users
+> > modify configurations of the ceph-specific "blkcg_policy" and limit
+> > the ceph reqs sent to the underlying cluster all by itself rather than
+> > relying on the existing blkcg_policies like io latency or io throttle.
+> > Is this the right way to go? Thanks:-)
 >
-> Does that seem reasonable?
+> Can we take a step back and think through what the fundamental
+> resources are?  Do these control knobs even belong to the client
+> machines?
+
+Since we need to control the cluster's io resource usage in the
+granularity of docker instances, we need the clients to offer control
+group information to the servers even in the scenario that involves
+server-side QoS as only clients know which docker instance the
+requesting process belongs to. So we think, either way, we need some
+kind of cgroup relative functionality on the client side. Is this
+right? Thanks:-)
+
 >
-
-ACK approach should work. MDS just needs to call
-SnapServer::do_server_update() for the ACK.
-
-Regards
-Yan, Zheng
-
-> Thanks!
-> sage
+> Thanks.
+>
+> --
+> tejun
