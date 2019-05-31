@@ -2,121 +2,179 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FB603078D
-	for <lists+ceph-devel@lfdr.de>; Fri, 31 May 2019 06:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71E7030E19
+	for <lists+ceph-devel@lfdr.de>; Fri, 31 May 2019 14:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbfEaEFy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 31 May 2019 00:05:54 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46080 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfEaEFx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 31 May 2019 00:05:53 -0400
-Received: by mail-lf1-f68.google.com with SMTP id l26so6721069lfh.13;
-        Thu, 30 May 2019 21:05:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2VcjAC4JQMdoF7isS9cdHm7wqc4qunRDCIHNfgNMmAM=;
-        b=FWExfyFr7Erc9jYAYe2rB10EppsXdu9fwCoJgWmHhR85WMldfIQcdUgPIgGGbB3TrV
-         Jxyi/lA3laeoi1PHxuih1T80zGNJ/FrUQa517UXaaAAshRFjr1xcTLfzLcgBjftndW8T
-         odQ+NKC5lMrg2TRQuxIH+9Q6WgPgCTIdvtx8l6rvNRX6G/8DL9obV3KmzltnOLK8c+XI
-         B0hnnE9kPHqPNDdoKXMHTpeh09fyxgVaKp0Tx18rs4XADKG0HI/1KnPZ+lAK9k2K7SQB
-         bJzqynlCYPZt9nC3e5RK7n2YnCcVnX0gS4kfOx9hGWMA1xHn1eVbaXBg94kyeyb3viFv
-         Relw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2VcjAC4JQMdoF7isS9cdHm7wqc4qunRDCIHNfgNMmAM=;
-        b=WkVXzUefUkWoe3KYB725qYNE593/jQShc04lWy5YLnaiBFops1+BpFG+fkOyJGcoRO
-         nbkGnsiCNgEDbM2CRsT9dhuqVq1N+yH+llC+vtnTlCsdpRWTK31dtexuQAwuJAxr8nFy
-         w2dSqN3LRhKqDcBhlu0TVQAaJyQA3kCgfQR59nage4ioonZtBkDGDaPh4y7+qCF4fNo1
-         bWZWeUCXfUqIBXQUHee/K9hUBsK//CxXBFANIRW/cQO9kZHevAOq4wSLDAlvbxI+mwyy
-         x8/U+rQYOUmmbFO6ZXQ5aIS2LPHpkteJyhrs1+LKBMkB51/3yu6A9BxipYb2YWrbCJ0d
-         ot1w==
-X-Gm-Message-State: APjAAAU1eMeQxzbugkn8LCuHU3QUGNhmfib7tddVk67ZagaD0u98tQcG
-        EJzcaGWErP/k+LORnEnGiB0BSHMiBuaykJE0AT0=
-X-Google-Smtp-Source: APXvYqz5DfGuXFM3fPfddDGSd3hMqPY36FIDZDY/c/SB+Hm/tRO8es4EncHkWSrtWoCt1ruu4yl0p5F+AvEqm5XGhX4=
-X-Received: by 2002:a19:2791:: with SMTP id n139mr4332391lfn.67.1559275551682;
- Thu, 30 May 2019 21:05:51 -0700 (PDT)
+        id S1727254AbfEaM2R (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 31 May 2019 08:28:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38596 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726403AbfEaM2Q (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 31 May 2019 08:28:16 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 28031C0AEE59;
+        Fri, 31 May 2019 12:28:10 +0000 (UTC)
+Received: from zhyan-laptop.redhat.com (ovpn-12-56.pek2.redhat.com [10.72.12.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 970EF1758B;
+        Fri, 31 May 2019 12:28:04 +0000 (UTC)
+From:   "Yan, Zheng" <zyan@redhat.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@redhat.com, jlayton@redhat.com, lhenriques@suse.com,
+        "Yan, Zheng" <zyan@redhat.com>
+Subject: [PATCH 1/3] libceph: add function that reset client's entity addr
+Date:   Fri, 31 May 2019 20:28:00 +0800
+Message-Id: <20190531122802.12814-1-zyan@redhat.com>
 MIME-Version: 1.0
-References: <20190523064412.31498-1-xxhdx1985126@gmail.com>
- <20190524214855.GJ374014@devbig004.ftw2.facebook.com> <CAJACTueLKEBkuquf989dveBnd5cOknf7LvB+fg+9PyjDw1VX6g@mail.gmail.com>
- <20190528185604.GK374014@devbig004.ftw2.facebook.com> <CAJACTucnCGLTbRAX0V5GBMmCQh4Dh8T9b0in1TUMCOVysJ0wjw@mail.gmail.com>
- <20190530205930.GW374014@devbig004.ftw2.facebook.com>
-In-Reply-To: <20190530205930.GW374014@devbig004.ftw2.facebook.com>
-From:   Xuehan Xu <xxhdx1985126@gmail.com>
-Date:   Fri, 31 May 2019 12:04:57 +0800
-Message-ID: <CAJACTuc+B+v0yGFY3L7iS1qTdRsw7b6tw5_e9sP43LuR=P1NWA@mail.gmail.com>
-Subject: Re: [PATCH] cgroup: add a new group controller for cephfs
-To:     Tejun Heo <tj@kernel.org>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
-        "Yan, Zheng" <ukernel@gmail.com>, cgroups@vger.kernel.org,
-        Xuehan Xu <xuxuehan@360.cn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 31 May 2019 12:28:16 +0000 (UTC)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 31 May 2019 at 04:59, Tejun Heo <tj@kernel.org> wrote:
->
-> Hello,
->
-> On Wed, May 29, 2019 at 10:27:36AM +0800, Xuehan Xu wrote:
-> > I think, since we are offering users an interface to control the io
-> > reqs issuing rate, we'd better provide the interface through the io
-> > controller, is this right?
->
-> I'm not entirely sure what the right approach is here.  For most
-> controllers, there are concrete resources which are being controlled
-> even if it's a virtual resource like pids.  Here, it isn't clear how
-> the resource should be defined.  Ideally, it should be defined as
-> fractions / weights of whatever backends can do but that might not be
-> that easy to define.
->
-> Another issue is that non-work-conserving limits usually aren't enough
-> to serve majority of use cases and it's better to at least consider
-> how work-conserving control should look like before settling interface
-> decisions.
+Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+---
+ include/linux/ceph/libceph.h    |  1 +
+ include/linux/ceph/messenger.h  |  1 +
+ include/linux/ceph/mon_client.h |  1 +
+ include/linux/ceph/osd_client.h |  1 +
+ net/ceph/ceph_common.c          |  8 ++++++++
+ net/ceph/messenger.c            |  5 +++++
+ net/ceph/mon_client.c           |  7 +++++++
+ net/ceph/osd_client.c           | 16 ++++++++++++++++
+ 8 files changed, 40 insertions(+)
 
-Hi, Tejun.
+diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
+index a3cddf5f0e60..f29959eed025 100644
+--- a/include/linux/ceph/libceph.h
++++ b/include/linux/ceph/libceph.h
+@@ -291,6 +291,7 @@ struct ceph_client *ceph_create_client(struct ceph_options *opt, void *private);
+ struct ceph_entity_addr *ceph_client_addr(struct ceph_client *client);
+ u64 ceph_client_gid(struct ceph_client *client);
+ extern void ceph_destroy_client(struct ceph_client *client);
++extern void ceph_reset_client_addr(struct ceph_client *client);
+ extern int __ceph_open_session(struct ceph_client *client,
+ 			       unsigned long started);
+ extern int ceph_open_session(struct ceph_client *client);
+diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenger.h
+index 23895d178149..c4458dc6a757 100644
+--- a/include/linux/ceph/messenger.h
++++ b/include/linux/ceph/messenger.h
+@@ -337,6 +337,7 @@ extern void ceph_msgr_flush(void);
+ extern void ceph_messenger_init(struct ceph_messenger *msgr,
+ 				struct ceph_entity_addr *myaddr);
+ extern void ceph_messenger_fini(struct ceph_messenger *msgr);
++extern void ceph_messenger_reset_nonce(struct ceph_messenger *msgr);
+ 
+ extern void ceph_con_init(struct ceph_connection *con, void *private,
+ 			const struct ceph_connection_operations *ops,
+diff --git a/include/linux/ceph/mon_client.h b/include/linux/ceph/mon_client.h
+index 3a4688af7455..0d8d890c6759 100644
+--- a/include/linux/ceph/mon_client.h
++++ b/include/linux/ceph/mon_client.h
+@@ -110,6 +110,7 @@ extern int ceph_monmap_contains(struct ceph_monmap *m,
+ 
+ extern int ceph_monc_init(struct ceph_mon_client *monc, struct ceph_client *cl);
+ extern void ceph_monc_stop(struct ceph_mon_client *monc);
++extern void ceph_monc_reopen_session(struct ceph_mon_client *monc);
+ 
+ enum {
+ 	CEPH_SUB_MONMAP = 0,
+diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+index 2294f963dab7..a12b7fc9cfd6 100644
+--- a/include/linux/ceph/osd_client.h
++++ b/include/linux/ceph/osd_client.h
+@@ -381,6 +381,7 @@ extern void ceph_osdc_cleanup(void);
+ extern int ceph_osdc_init(struct ceph_osd_client *osdc,
+ 			  struct ceph_client *client);
+ extern void ceph_osdc_stop(struct ceph_osd_client *osdc);
++extern void ceph_osdc_reopen_osds(struct ceph_osd_client *osdc);
+ 
+ extern void ceph_osdc_handle_reply(struct ceph_osd_client *osdc,
+ 				   struct ceph_msg *msg);
+diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+index 79eac465ec65..55210823d1cc 100644
+--- a/net/ceph/ceph_common.c
++++ b/net/ceph/ceph_common.c
+@@ -693,6 +693,14 @@ void ceph_destroy_client(struct ceph_client *client)
+ }
+ EXPORT_SYMBOL(ceph_destroy_client);
+ 
++void ceph_reset_client_addr(struct ceph_client *client)
++{
++	ceph_messenger_reset_nonce(&client->msgr);
++	ceph_monc_reopen_session(&client->monc);
++	ceph_osdc_reopen_osds(&client->osdc);
++}
++EXPORT_SYMBOL(ceph_reset_client_addr);
++
+ /*
+  * true if we have the mon map (and have thus joined the cluster)
+  */
+diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+index 3ee380758ddd..cd03a1cba849 100644
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -3028,6 +3028,11 @@ static void con_fault(struct ceph_connection *con)
+ }
+ 
+ 
++void ceph_messenger_reset_nonce(struct ceph_messenger *msgr)
++{
++	msgr->inst.addr.nonce += 1000000;
++	encode_my_addr(msgr);
++}
+ 
+ /*
+  * initialize a new messenger instance
+diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+index 895679d3529b..6dab6a94e9cc 100644
+--- a/net/ceph/mon_client.c
++++ b/net/ceph/mon_client.c
+@@ -209,6 +209,13 @@ static void reopen_session(struct ceph_mon_client *monc)
+ 	__open_session(monc);
+ }
+ 
++void ceph_monc_reopen_session(struct ceph_mon_client *monc)
++{
++	mutex_lock(&monc->mutex);
++	reopen_session(monc);
++	mutex_unlock(&monc->mutex);
++}
++
+ static void un_backoff(struct ceph_mon_client *monc)
+ {
+ 	monc->hunt_mult /= 2; /* reduce by 50% */
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index e6d31e0f0289..67e9466f27fd 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -5089,6 +5089,22 @@ int ceph_osdc_call(struct ceph_osd_client *osdc,
+ }
+ EXPORT_SYMBOL(ceph_osdc_call);
+ 
++/*
++ * reset all osd connections
++ */
++void ceph_osdc_reopen_osds(struct ceph_osd_client *osdc)
++{
++	struct rb_node *n;
++	down_write(&osdc->lock);
++	for (n = rb_first(&osdc->osds); n; ) {
++		struct ceph_osd *osd = rb_entry(n, struct ceph_osd, o_node);
++		n = rb_next(n);
++		if (!reopen_osd(osd))
++			kick_osd_requests(osd);
++	}
++	up_write(&osdc->lock);
++}
++
+ /*
+  * init, shutdown
+  */
+-- 
+2.17.2
 
-The resource that we want to control is the ceph cluster's io
-processing capability usage. And we are planning to control it in
-terms of iops and io bandwidth. We are considering a more
-work-conserving control mechanism that involves server side and are
-more workload self-adaptive. But, for now, as we mostly concern about
-the scenario that a single client use up the whole cluster's io
-capability, we think maybe we should implement a simple client-side io
-throttling first, like the blkio controller's io throttle policy,
-which would be relatively easy. On the other hand, we should provide
-users io throttling capability even if their servers don't support the
-sophisticated QoS mechanism. Am I right about this? Thanks:-)
-
->
-> > Actually, for now, we are considering implement a ceph-specific
-> > "blkcg_policy" which adds new io controller "cf" files to let users
-> > modify configurations of the ceph-specific "blkcg_policy" and limit
-> > the ceph reqs sent to the underlying cluster all by itself rather than
-> > relying on the existing blkcg_policies like io latency or io throttle.
-> > Is this the right way to go? Thanks:-)
->
-> Can we take a step back and think through what the fundamental
-> resources are?  Do these control knobs even belong to the client
-> machines?
-
-Since we need to control the cluster's io resource usage in the
-granularity of docker instances, we need the clients to offer control
-group information to the servers even in the scenario that involves
-server-side QoS as only clients know which docker instance the
-requesting process belongs to. So we think, either way, we need some
-kind of cgroup relative functionality on the client side. Is this
-right? Thanks:-)
-
->
-> Thanks.
->
-> --
-> tejun
