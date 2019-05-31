@@ -2,88 +2,128 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A7AC31181
-	for <lists+ceph-devel@lfdr.de>; Fri, 31 May 2019 17:45:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BF1A312BB
+	for <lists+ceph-devel@lfdr.de>; Fri, 31 May 2019 18:47:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbfEaPpj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 31 May 2019 11:45:39 -0400
-Received: from ppsw-30.csi.cam.ac.uk ([131.111.8.130]:52184 "EHLO
-        ppsw-30.csi.cam.ac.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbfEaPpj (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 31 May 2019 11:45:39 -0400
-X-Greylist: delayed 1160 seconds by postgrey-1.27 at vger.kernel.org; Fri, 31 May 2019 11:45:39 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cam.ac.uk;
-         s=20180806.ppsw; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=rShHerz3ZYbQOzZFDteLKWZ+7EjCJ/gnPp6G2MN/9Js=; b=saMzG2nMVGwhI+c6hGMSOTiMg6
-        wK7LeY3tUu1hqHXMtXKVyFnNI/oRdy1QoX2hFsegS69h9HvaJX8dWNEitU+edMbewFLi08V5uX1Qe
-        hwIDTzrkytAslxuEZGze/77m783CwCsA8SSg3QXxPOhkqo39vokbmldAuJDXn1MOEytQ=;
-X-Cam-AntiVirus: no malware found
-X-Cam-ScannerInfo: http://help.uis.cam.ac.uk/email-scanner-virus
-Received: from mail.mrc-lmb.cam.ac.uk ([131.111.85.9]:39974 helo=mail.lmb.internal)
-        by ppsw-30.csi.cam.ac.uk (ppsw.cam.ac.uk [131.111.8.136]:25)
-        with esmtp id 1hWjQA-000at4-eW (Exim 4.91)
-        (return-path <jog@mrc-lmb.cam.ac.uk>); Fri, 31 May 2019 16:26:18 +0100
-Received: from pcterm01.lmb.internal ([10.91.192.36])
-        by mail.lmb.internal with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <jog@mrc-lmb.cam.ac.uk>)
-        id 1hWjQA-001AkI-FM; Fri, 31 May 2019 16:26:18 +0100
-Subject: Re: cephfs snapshot mirroring
-To:     Sage Weil <sweil@redhat.com>, ceph-devel@vger.kernel.org
-References: <alpine.DEB.2.11.1905302154350.29593@piezo.novalocal>
-From:   Jake Grimmett <jog@mrc-lmb.cam.ac.uk>
-Message-ID: <0e9f1d96-d988-5a04-59fe-5110181e37de@mrc-lmb.cam.ac.uk>
-Date:   Fri, 31 May 2019 16:26:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.11.1905302154350.29593@piezo.novalocal>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1727011AbfEaQrL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 31 May 2019 12:47:11 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33894 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbfEaQrL (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 31 May 2019 12:47:11 -0400
+Received: by mail-wm1-f67.google.com with SMTP id w9so289813wmd.1;
+        Fri, 31 May 2019 09:47:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=MhsubWC4mV416H7ev/f+wsOGbdjmqcgClTA9LQel2KA=;
+        b=Qja3g2NCZ8pzXs4nnsjUMAmzJ/b2jGOjx5X9orj2Imviax6qoh16l16QajqHedjgfm
+         Od7lQejJVo0S8pQrkGp3WPAw255HfVqTbJ6nWPK2Gwcmv0OGE9Lj22qO3avbr9ewX1Aa
+         8CgWJp1DCvxaXiJ6cHNJNAs3OPkL0o6m9VrwUSRlWACKzwewAVMs3Z2k6PafMDSPZ5IN
+         CH2i7FU+/l6FDh8wBhWuzW2TSRBh+MVyxy8YQbC2pTbGsOhZXg/KtSL6HhTqtEwRAOwF
+         GZSoJHNMUxxrMmJXreiboAfz5dflLQjlLhJQZqd8a0JSFgjILXzCsRv5/4UvxFhhDds5
+         tVBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MhsubWC4mV416H7ev/f+wsOGbdjmqcgClTA9LQel2KA=;
+        b=jv8KtmyqCNqp30o8CFFy9hsYklD+I3MQ75KnaltU/GTZmJiX2ij9XbhO6tY1xWyIMN
+         Ct8Qi6iTfMMht1OaBqw0qvl2PU6b5MnQRUY8AcoXZtot6PXCOczvfSH522/Oyc+Sbe1s
+         IKgji7q8x7MsFJu/crUcJpasJyHFGQVg50JuqASvOLwzIZjcU+6sgHX7ayov8YKygFj8
+         /0TcK468WmPz1ADTCfW94zB9aOY0NolLyHd06YyynnbaWsvrBJvLVOG6xDLxQa3lCTbF
+         YvkaLMn4xw8j6mMM6sCNjuFLF7J7Cv2L8qnSMqFjl69aqL1W5j3cMwTakomFsucQcWVI
+         +qJw==
+X-Gm-Message-State: APjAAAUiZ8RJMwjaBLAw988s5n4qpBOrg7Sdv+156Z3YC5RHzS5ddN+e
+        kk2NEBBHIztSYH9cIa7NhkP7bY1I
+X-Google-Smtp-Source: APXvYqwrWKUHoyIiO6IqzhrXGZ//z2DcvLEE8mmWl2p3KUw9joXPaNuumflzmpwwksiAVuWEwF1a3w==
+X-Received: by 2002:a1c:7c17:: with SMTP id x23mr6265197wmc.45.1559321228837;
+        Fri, 31 May 2019 09:47:08 -0700 (PDT)
+Received: from localhost.localdomain ([5.102.238.208])
+        by smtp.gmail.com with ESMTPSA id n5sm7669593wrj.27.2019.05.31.09.47.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 May 2019 09:47:08 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     "Darrick J . Wong" <darrick.wong@oracle.com>
+Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+        linux-xfs@vger.kernel.org,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Luis Henriques <lhenriques@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org
+Subject: [PATCH v4 0/9] Fixes for major copy_file_range() issues
+Date:   Fri, 31 May 2019 19:46:52 +0300
+Message-Id: <20190531164701.15112-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-As a sysadmin, I'd very much like to give a +1 on this.
+Hi Darrick,
 
-We are currently building a new cephfs cluster, and plan to mirror the
-new cluster to our older cephfs cluster. We would keep 30 days of daily
-snapshots on the old system, and one snapshot on the main system to sync
-from.
+Following is a re-work of Dave Chinner's copy_file_range() patches.
+This v4 patch set includes review tags and excludes the individual
+filesystem fixes that are not related to cross-device copy.
+Those patches will be sent to maintainers seperately once the
+dependency patch is made available on a public branch.
 
-As Sage's notes in Part 4 suggest, we hope to ceph.dir.rctime to
-identify "hot directories" to improve efficiency.
+I did include the FUSE patch in this posting since we got an ACK
+from Miklos. You may take it or leave it.
 
-We would either use plain rsync, or a modified version of parsync
-(http://moo.nac.uci.edu/~hjm/parsync/) to spin up multiple rsync worker
-jobs.
+Thanks,
+Amir.
 
-If someone can modify rsync, so it reads the ceph.dir.rctime, and adds a
-"ignore folders older than epoch" parameter, this would be a great start :)
+Changes since v3:
+- Drop per filesystem patch for file_modified()/file_accessed()
+- Fix wrong likely()
+- Add Reviewed-by tags
 
-all the best, and enjoy your weekend,
+Changes since v2:
+- Re-order generic_remap_checks() fix patch before
+  forking generic_copy_file_checks()
+- Document @req_count helper argument (Darrick)
+- Fold generic_access_check_limits() (Darrick)
+- Added file_modified() helper (Darrick)
+- Added xfs patch to use file_modified() helper
+- Drop generic_copy_file_range_prep() helper
+- Per filesystem patch for file_modified()/file_accessed()
+- Post copy file_remove_privs() for ceph/generic (Darrick)
 
-Jake
+Changes since v1:
+- Short read instead of EINVAL (Christoph)
+- generic_file_rw_checks() helper (Darrick)
+- generic_copy_file_range_prep() helper (Christoph)
+- Not calling ->remap_file_range() with different sb
+- Not calling ->copy_file_range() with different fs type
+- Remove changes to overlayfs
+- Extra fix to clone/dedupe checks
 
+Amir Goldstein (7):
+  vfs: introduce generic_file_rw_checks()
+  vfs: remove redundant checks from generic_remap_checks()
+  vfs: add missing checks to copy_file_range
+  vfs: introduce file_modified() helper
+  xfs: use file_modified() helper
+  vfs: allow copy_file_range to copy across devices
+  fuse: copy_file_range needs to strip setuid bits and update timestamps
 
-On 5/30/19 10:56 PM, Sage Weil wrote:
-> This is on the agenda for CDM next week, but I wrote up some notes here:
-> 
-> 	https://pad.ceph.com/p/cephfs-snap-mirroring
-> 
-> It encompasses a few things besides just mirroring, starting with a set of 
-> comamnds to set up cephfs snapshot schedules and retention/rotation 
-> policy, which we need anyway, and seems related and like something we 
-> should add before doing mirroring.
-> 
-> Thoughts?
-> 
-> sage
-> 
+Dave Chinner (2):
+  vfs: introduce generic_copy_file_range()
+  vfs: no fallback for ->copy_file_range
+
+ fs/ceph/file.c     |  23 +++++++--
+ fs/cifs/cifsfs.c   |   4 ++
+ fs/fuse/file.c     |  29 +++++++++--
+ fs/inode.c         |  20 +++++++
+ fs/nfs/nfs4file.c  |  23 +++++++--
+ fs/read_write.c    | 126 +++++++++++++++++++++++++--------------------
+ fs/xfs/xfs_file.c  |  15 +-----
+ include/linux/fs.h |   9 ++++
+ mm/filemap.c       | 110 +++++++++++++++++++++++++++++++--------
+ 9 files changed, 259 insertions(+), 100 deletions(-)
+
+-- 
+2.17.1
 
