@@ -2,62 +2,70 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7A5231620
-	for <lists+ceph-devel@lfdr.de>; Fri, 31 May 2019 22:27:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B62332269
+	for <lists+ceph-devel@lfdr.de>; Sun,  2 Jun 2019 09:20:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbfEaU1I (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 31 May 2019 16:27:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42668 "EHLO mx1.redhat.com"
+        id S1726649AbfFBHUg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 2 Jun 2019 03:20:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35414 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727287AbfEaU1I (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 31 May 2019 16:27:08 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S1726032AbfFBHUg (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Sun, 2 Jun 2019 03:20:36 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0FC9F2ED2E3;
-        Fri, 31 May 2019 20:27:08 +0000 (UTC)
-Received: from ovpn-112-65.rdu2.redhat.com (ovpn-112-65.rdu2.redhat.com [10.10.112.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2FCC060CAB;
-        Fri, 31 May 2019 20:26:59 +0000 (UTC)
-Date:   Fri, 31 May 2019 20:26:58 +0000 (UTC)
-From:   Sage Weil <sweil@redhat.com>
-X-X-Sender: sage@piezo.novalocal
-To:     Yuri Weinstein <yweinste@redhat.com>
-cc:     Josh Durgin <jdurgin@redhat.com>, Sebastien Han <shan@redhat.com>,
-        Matt Benjamin <mbenjamin@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Alfredo Deza <adeza@redhat.com>,
-        "Sadeh-Weinraub, Yehuda" <yehuda@redhat.com>,
-        ceph-qe-team <ceph-qe-team@redhat.com>,
-        ceph-qa <ceph-qa@ceph.com>,
-        "Development, Ceph" <ceph-devel@vger.kernel.org>,
-        Venky Shankar <vshankar@redhat.com>
-Subject: Re: [Ceph-qa] 13.2.6 QE Mimic validation status
-In-Reply-To: <CAMMFjmFOGru6K3O00D9a+==VwZV4qBZKHHyjHsdCRm+CDi9jQg@mail.gmail.com>
-Message-ID: <alpine.DEB.2.11.1905312026440.29593@piezo.novalocal>
-References: <CAMMFjmF1SP9JnyeuqCtsS9KJKRO-1R+E+NkzO-kj6+pn=chfzw@mail.gmail.com> <CAC-Np1wR4ik58P=UPLuuBxhqbG_REx1UFp4mDPNdBiNQFW9W_g@mail.gmail.com> <CAMMFjmGro96-bhMOe2KGYjZLAu-6RrNKAvOom+wP3ovg_+ss7Q@mail.gmail.com> <fc64e04b-bae8-8e3c-a561-ab3d0d1489a3@redhat.com>
- <CAMMFjmFOGru6K3O00D9a+==VwZV4qBZKHHyjHsdCRm+CDi9jQg@mail.gmail.com>
-User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1D0F9307D854;
+        Sun,  2 Jun 2019 06:43:13 +0000 (UTC)
+Received: from [10.72.12.19] (ovpn-12-19.pek2.redhat.com [10.72.12.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 066975D739;
+        Sun,  2 Jun 2019 06:43:10 +0000 (UTC)
+Subject: Re: [PATCH] ceph: use ceph_evict_inode to cleanup inode's resource
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>, idryomov@redhat.com,
+        jlayton@redhat.com
+References: <20190602022546.16195-1-zyan@redhat.com>
+ <20190602024316.GT17978@ZenIV.linux.org.uk>
+From:   "Yan, Zheng" <zyan@redhat.com>
+Message-ID: <c609c244-723f-7801-9de7-b2343e24c7ed@redhat.com>
+Date:   Sun, 2 Jun 2019 14:43:09 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 31 May 2019 20:27:08 +0000 (UTC)
+In-Reply-To: <20190602024316.GT17978@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Sun, 02 Jun 2019 06:43:13 +0000 (UTC)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 31 May 2019, Yuri Weinstein wrote:
-> All runs were approved.
-> See only ceph-deploy that sees not bad, Sage.
+On 6/2/19 10:43 AM, Al Viro wrote:
+> On Sun, Jun 02, 2019 at 10:25:46AM +0800, Yan, Zheng wrote:
+>> remove_session_caps() relies on __wait_on_freeing_inode(), to wait for
+>> freezing inode to remove its caps. But VFS wakes freeing inode waiters
+>> before calling destroy_inode().
 > 
-> Also note that 3 commits were merged on top (related to upgrade/mimic-p2p fixes)
+> *blink*
 > 
-> I did not rerun all suites on the latest SHA1, so if this is a problem
-> pls speak up.
+> Which tree is that against?
 > 
-> Otherwise, Sage, Abhishek, Nathan, David ready for publishing.
+>> -static void ceph_i_callback(struct rcu_head *head)
+>> -{
+>> -	struct inode *inode = container_of(head, struct inode, i_rcu);
+>> -	struct ceph_inode_info *ci = ceph_inode(inode);
+>> -
+>> -	kfree(ci->i_symlink);
+>> -	kmem_cache_free(ceph_inode_cachep, ci);
+>> -}
+> 
+> ... is gone from mainline, and AFAICS not reintroduced in ceph tree.
+> What am I missing here?
+> 
 
-Sounds good to me!  Let's wait until Monday, though :)
+Sorry, I should send it ceph-devel list
 
-sage
+Yan, Zheng
+
