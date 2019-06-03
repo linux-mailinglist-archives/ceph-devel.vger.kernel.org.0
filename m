@@ -2,97 +2,102 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 618AC33750
-	for <lists+ceph-devel@lfdr.de>; Mon,  3 Jun 2019 19:54:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D2F13377D
+	for <lists+ceph-devel@lfdr.de>; Mon,  3 Jun 2019 20:06:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfFCRyq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 3 Jun 2019 13:54:46 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:51419 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726406AbfFCRyq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 Jun 2019 13:54:46 -0400
-Received: by mail-it1-f193.google.com with SMTP id m3so29009757itl.1
-        for <ceph-devel@vger.kernel.org>; Mon, 03 Jun 2019 10:54:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y6+lZ6POigniyvUQGuxc11zprJBScus2p3XQx3eXLGg=;
-        b=d4y1TL+M5SIVXOJ2PyIomSSwrLjiO4tuTnOEwfm2yPxERo6vKaPfqdrOmR51zDGNDF
-         9QUIxFWPbfi2LvjsbFgoij7Kcuzq99L6W/f0brMWtuMUZZCp8LKhTq8okPx9C5UE06xj
-         fLpbZK3iHi+f28LNtJ3pOzUGB8OiUM7MqhOrkf83QTV3rVzPOoZ144fJ8eYTztL9sUfD
-         SLqErOpwOL4PegBDFhIrkp6jbGzx+tllYMRErxRID+PB5P4matwTAadykgsr0SBJT/+n
-         6sb0E5zC+egha3tKPFhO27cbjUNE08h7vJLEGv0r5+RvWHNEkjbfjuIw1IxIzTJ3tFp4
-         eQvg==
-X-Gm-Message-State: APjAAAVtOkGBHlLwNBRq5o5qMjXsgA0DXzEqiajSMnmuiBXjLgQ9/rDR
-        HeFrjv4NlgOWzsyUUBaMoIwz3WRxAroQG8P3canG1Q==
-X-Google-Smtp-Source: APXvYqx+N4z/dWcZOiRoORfWEhZLFbMXhEguZsHwUVDerranAG4c3C5Q6UpGAcpDRawU3Cy626cPUrMM6UN4kgB8YNc=
-X-Received: by 2002:a02:ad17:: with SMTP id s23mr10057260jan.137.1559584485280;
- Mon, 03 Jun 2019 10:54:45 -0700 (PDT)
+        id S1726211AbfFCSG0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 3 Jun 2019 14:06:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49316 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726055AbfFCSG0 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 3 Jun 2019 14:06:26 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 398BEC0524FB;
+        Mon,  3 Jun 2019 18:06:26 +0000 (UTC)
+Received: from [10.3.118.11] (ovpn-118-11.phx2.redhat.com [10.3.118.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DCE7A5C296;
+        Mon,  3 Jun 2019 18:06:25 +0000 (UTC)
+Subject: Re: ANNOUNCE: moving the ceph-devel list to ceph.io
+To:     Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sweil@redhat.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+References: <alpine.DEB.2.11.1906022104460.3107@piezo.novalocal>
+ <CAOi1vP8kUzBGw2L2XqdOhTM41zeyVxxHutHbSnhr4BG53aN-hQ@mail.gmail.com>
+ <alpine.DEB.2.11.1906031641210.22596@piezo.novalocal>
+ <CAOi1vP-jV8gD7DjkAHf05YAfTc549O1q7mxdVCVdXg=AnPYD1w@mail.gmail.com>
+From:   Mark Nelson <mnelson@redhat.com>
+Message-ID: <1402d595-3139-ba43-2503-f8e339d9c478@redhat.com>
+Date:   Mon, 3 Jun 2019 13:06:25 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190531122802.12814-1-zyan@redhat.com> <20190531122802.12814-2-zyan@redhat.com>
- <CAOi1vP8O6VviiNKrozmwUOtVN+GtvA=-0fEOXcdbg8O+pu1PhQ@mail.gmail.com> <CAAM7YAmY-ky2E_9aPHNSNMmmTp9rC+Aw-eBMN_KP1suY_u+Wmg@mail.gmail.com>
-In-Reply-To: <CAAM7YAmY-ky2E_9aPHNSNMmmTp9rC+Aw-eBMN_KP1suY_u+Wmg@mail.gmail.com>
-From:   Gregory Farnum <gfarnum@redhat.com>
-Date:   Mon, 3 Jun 2019 10:54:01 -0700
-Message-ID: <CAJ4mKGZHm3TqwU8Q=rn1xQtePMhaJNvU4yHGj0jDqR_9oxz2fA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] ceph: add method that forces client to reconnect
- using new entity addr
-To:     "Yan, Zheng" <ukernel@gmail.com>
-Cc:     Ilya Dryomov <idryomov@gmail.com>, "Yan, Zheng" <zyan@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Luis Henriques <lhenriques@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAOi1vP-jV8gD7DjkAHf05YAfTc549O1q7mxdVCVdXg=AnPYD1w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 03 Jun 2019 18:06:26 +0000 (UTC)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Jun 3, 2019 at 6:51 AM Yan, Zheng <ukernel@gmail.com> wrote:
->
-> On Fri, May 31, 2019 at 10:20 PM Ilya Dryomov <idryomov@gmail.com> wrote:
-> >
-> > On Fri, May 31, 2019 at 2:30 PM Yan, Zheng <zyan@redhat.com> wrote:
-> > >
-> > > echo force_reconnect > /sys/kernel/debug/ceph/xxx/control
-> > >
-> > > Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-> >
-> > Hi Zheng,
-> >
-> > There should be an explanation in the commit message of what this is
-> > and why it is needed.
-> >
-> > I'm assuming the use case is recovering a blacklisted mount, but what
-> > is the intended semantics?  What happens to in-flight OSD requests,
-> > MDS requests, open files, etc?  These are things that should really be
-> > written down.
-> >
-> got it
->
-> > Looking at the previous patch, it appears that in-flight OSD requests
-> > are simply retried, as they would be on a regular connection fault.  Is
-> > that safe?
-> >
->
-> It's not safe. I still thinking about how to handle dirty data and
-> in-flight osd requests in the this case.
 
-Can we figure out the consistency-handling story before we start
-adding interfaces for people to mis-use then please?
+On 6/3/19 12:07 PM, Ilya Dryomov wrote:
+> On Mon, Jun 3, 2019 at 6:45 PM Sage Weil <sweil@redhat.com> wrote:
+>> On Mon, 3 Jun 2019, Ilya Dryomov wrote:
+>>> On Mon, Jun 3, 2019 at 4:34 PM Sage Weil <sweil@redhat.com> wrote:
+>>>> Why are we doing this?
+>>>>
+>>>> 1 The new list is mailman and managed by the Ceph community, which means
+>>>>    that when people have problems with subscribe, mails being lost, or any
+>>>>    other list-related problems, we can actually do something about it.
+>>>>    Currently we have no real ability to perform any management-related tasks
+>>>>    on the vger list.
+>>>>
+>>>> 2 The vger majordomo software also has some frustrating
+>>>>    features/limitations, the most notable being that it only accepts
+>>>>    plaintext email; anything with MIME or HTML formatting is rejected.  This
+>>>>    confuses many users.
+>>>>
+>>>> 3 The kernel development and general Ceph development have slightly
+>>>>    different modes of collaboration.  Kernel code review is based on email
+>>>>    patches to the list and reviewing via email, which can be noisy and
+>>>>    verbose for those not involved in kernel development.  The Ceph userspace
+>>>>    code is handled via github pull requests, which capture both proposed
+>>>>    changes and code review.
+>>> I agree on all three points, although at least my recollection is that
+>>> we have had a lot of bouncing issues with ceph-users and no issues with
+>>> ceph-devel besides the plain text-only policy which some might argue is
+>>> actually a good thing ;)
+>>>
+>>> However it seems that two mailing lists with identical names might
+>>> bring new confusion, particularly when searching through past threads.
+>>> Was a different name considered for the new list?
+>> Sigh... we didn't discuss another name, and the confusion with
+>> searching archives in particular didn't occur to me.  :(  If we're going
+>> to use a different name, now is the time to pick one.
+>>
+>> I'm not sure what is better than ceph-devel, though...
+> Perhaps just ceph@ceph.io?  Make it clear in the description that
+> it is a development list and direct users to ceph-users@ceph.io.
 
-It's not pleasant but if the client gets disconnected I'd assume we
-have to just return EIO or something on all outstanding writes and
-toss away our dirty data. There's not really another option that makes
-any sense, is there?
--Greg
+
+Not perfect, but how about ceph-devel2?
+
+
+Mark
+
 
 >
-> Regards
-> Yan, Zheng
+>> Maybe making a new ceph-kernel@vger.kernel.org and aliasing the old
+>> ceph-devel to either ceph-kernel or the (new) ceph-devel would be the
+>> least confusing end state?
+> I think the old list has to stay intact (i.e. continue as ceph-devel)
+> for archive's sake.  vger doesn't provide a unified archive service so
+> it's hard as it is...
 >
-> > Thanks,
-> >
-> >                 Ilya
+> Thanks,
+>
+>                  Ilya
