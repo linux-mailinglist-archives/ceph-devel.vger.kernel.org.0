@@ -2,88 +2,84 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6A4633238
-	for <lists+ceph-devel@lfdr.de>; Mon,  3 Jun 2019 16:34:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C208C333A7
+	for <lists+ceph-devel@lfdr.de>; Mon,  3 Jun 2019 17:35:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728975AbfFCOeG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 3 Jun 2019 10:34:06 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37332 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728872AbfFCOeG (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 3 Jun 2019 10:34:06 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CBC7730C2516
-        for <ceph-devel@vger.kernel.org>; Mon,  3 Jun 2019 14:33:57 +0000 (UTC)
-Received: from ovpn-112-65.rdu2.redhat.com (ovpn-112-65.rdu2.redhat.com [10.10.112.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7D69B600CC
-        for <ceph-devel@vger.kernel.org>; Mon,  3 Jun 2019 14:33:57 +0000 (UTC)
-Date:   Mon, 3 Jun 2019 14:33:56 +0000 (UTC)
-From:   Sage Weil <sweil@redhat.com>
-X-X-Sender: sage@piezo.novalocal
-To:     ceph-devel@vger.kernel.org
-Subject: ANNOUNCE: moving the ceph-devel list to ceph.io
-Message-ID: <alpine.DEB.2.11.1906022104460.3107@piezo.novalocal>
-User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
+        id S1728216AbfFCPfe (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 3 Jun 2019 11:35:34 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40589 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbfFCPfd (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 Jun 2019 11:35:33 -0400
+Received: by mail-io1-f66.google.com with SMTP id n5so14655531ioc.7
+        for <ceph-devel@vger.kernel.org>; Mon, 03 Jun 2019 08:35:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h2Xuvzx+l4P9z4sjkUJ523igDktNkqo2hcyaGmQFGR8=;
+        b=dPATpK31ux4Z3S3q86fHo5GJq6ZgesIQDfgDRdRl4GFCWVrihRXEZzTzVAMUGXlD3c
+         GEWt+kJ6ADHqi6NNcpQA68UziBcosJv6PUhvZhrOwijhDpbdbHLFE6rl9216kqz1ev0u
+         5T7tvCQPFVsSoiYzsEZxEkwsYImFMlmpqu9PRh4aSNB0f/KlUDb32W9IOfT1meRUWGKp
+         lRC0LN64giKcU4ihuxD/7afsVxrrDgmNCAUSyQnjS3CbFmn52PswZCcjzArbORhOjASo
+         p4o9MZIR3FeOlzbGNlPIrLUMlrLqBZ4m5bdfzOzzD+PyAgcN1DwQaWgZ6WhvlCsXA4lZ
+         ljug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h2Xuvzx+l4P9z4sjkUJ523igDktNkqo2hcyaGmQFGR8=;
+        b=ExLRs9K0XesPyGd1sInVwzDN38ote6ExnhBvuFYXw2DmH6tjjNsKO0rtdPDspU2GJG
+         jOO0bp4K+FNBoRWEjWYI2IIw2s0KKkfU5gpKEDOrsVdR+AS7FP1jdoFBKOMW+OWlxMgh
+         Vcfy+FBiDMODnVU42A4idK1SJNDFxST/7ZpGYDH3ifTBrqCl2JsYcw0IytIg+QYkLBjk
+         TUCsiy/XI/KGkqWliASMuI1fR6w1p7fMJgLkM7oOLUMsSbECuKHabVoXPo3jYh4xCnSh
+         gkUtYuxgmCuZUwzVhc8Lodk2iapRIJPQaU2ZF8VwXsQNHlYEmVjRt/3RC+J5jwE29R9g
+         Z50g==
+X-Gm-Message-State: APjAAAWMuEiE0k+3dWG/T+uGbpPV8R5hHyhNng++2iKmvvnJYHUaL/+x
+        Q2obPblqRqrGb0LSqMo/v1Bx8yR5ApLpZ4zyGsg=
+X-Google-Smtp-Source: APXvYqwGprQKAX2QgRabub4VywVaavUGbcintp56I7iKFKjmPcM9DXeRB/D4H/or/teTq7rr3nf334QFGB+WanTA8mk=
+X-Received: by 2002:a5d:91cc:: with SMTP id k12mr257526ior.131.1559576132534;
+ Mon, 03 Jun 2019 08:35:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 03 Jun 2019 14:33:57 +0000 (UTC)
+References: <CAJACTufz=iQUcPW75vxX0qM6xK7Sd8XuDHrdZrAt4B9uGJGvog@mail.gmail.com>
+In-Reply-To: <CAJACTufz=iQUcPW75vxX0qM6xK7Sd8XuDHrdZrAt4B9uGJGvog@mail.gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 3 Jun 2019 17:35:37 +0200
+Message-ID: <CAOi1vP_nucPE4h7OcfSCDEJqF7OQkj=T8qwAAPA_ZUva6+zxtA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] control cephfs generated io with the help of cgroup
+ io controller
+To:     Xuehan Xu <xxhdx1985126@gmail.com>
+Cc:     "Yan, Zheng" <ukernel@gmail.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Xuehan Xu <xuxuehan@360.cn>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi everyone,
+On Mon, Jun 3, 2019 at 5:59 AM Xuehan Xu <xxhdx1985126@gmail.com> wrote:
+>
+> Hi, ilya
+>
+> I've changed the code to add a new io controller policy that provide
+> the functionality to restrain cephfs generated io in terms of iops and
+> throughput.
+>
+> This inflexible appoarch is a little crude indeed, like tejun said.
+> But we think, this should be able to provide some basic io throttling
+> for cephfs kernel client, and can protect the cephfs cluster from
+> being buggy or even client applications be the cephfs cluster has the
+> ability to do QoS or not. So we are submitting these patches, in case
+> they can really provide some help:-)
 
-We are splitting the ceph-devel@vger.kernel.org list into two:
+Hi Xuehan,
 
-- ceph-devel@ceph.io 
+AFAICT only this cover letter has made it to the mailing list.  It
+looks like you cut and pasted from the terminal instead of generating
+the patches with git-send-email.  Please resend with git-send-email to
+avoid malformed patches and mailing list issues.
 
-  This will be the new general purpose Ceph development discussion list.  
-  We encourage all subscribers to the current ceph-devel@vger.kernel.org to 
-  subscribe to this new list.
+Thanks,
 
-  Subscribe to the new ceph-devel list now at:
-
-    https://lists.ceph.io/postorius/lists/ceph-devel.ceph.io/
-
-- ceph-devel@vger.kernel.org
-
-  The current list will continue to exist, but its role will shift to  Linux 
-  kernel-related traffic, including kernel patches and discussion of 
-  implementation details for the kernel client code.
-
-  At some point in the future, when all non-kernel discussion has shifted 
-  to the new list, you might want to unsubscribe from the old list.
-
-For the next week or two, please direct discussion at both lists.  Once a 
-bit of time has passed and most active developers have subscribed to the 
-new list, we will focus discussion on the new list only.
-
-We will send several more emails to the old list to remind people to 
-subscribe to the new list.
-
-Why are we doing this?
-
-1 The new list is mailman and managed by the Ceph community, which means
-  that when people have problems with subscribe, mails being lost, or any 
-  other list-related problems, we can actually do something about it.  
-  Currently we have no real ability to perform any management-related tasks 
-  on the vger list.
-
-2 The vger majordomo software also has some frustrating 
-  features/limitations, the most notable being that it only accepts 
-  plaintext email; anything with MIME or HTML formatting is rejected.  This 
-  confuses many users.
-
-3 The kernel development and general Ceph development have slightly
-  different modes of collaboration.  Kernel code review is based on email 
-  patches to the list and reviewing via email, which can be noisy and 
-  verbose for those not involved in kernel development.  The Ceph userspace 
-  code is handled via github pull requests, which capture both proposed 
-  changes and code review.
-
-Thanks!
-
+                Ilya
