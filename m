@@ -2,135 +2,113 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A65713436E
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Jun 2019 11:39:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DB19344BF
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Jun 2019 12:51:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfFDJjd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 4 Jun 2019 05:39:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:20199 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727023AbfFDJjc (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 4 Jun 2019 05:39:32 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 46A8490906
-        for <ceph-devel@vger.kernel.org>; Tue,  4 Jun 2019 09:39:32 +0000 (UTC)
-Received: from zhyan-laptop.redhat.com (ovpn-12-98.pek2.redhat.com [10.72.12.98])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C907C61981;
-        Tue,  4 Jun 2019 09:39:27 +0000 (UTC)
-From:   "Yan, Zheng" <zyan@redhat.com>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@redhat.com, jlayton@redhat.com,
-        "Yan, Zheng" <zyan@redhat.com>
-Subject: [PATCH 4/4] ceph: allow remounting aborted mount
-Date:   Tue,  4 Jun 2019 17:39:08 +0800
-Message-Id: <20190604093908.30491-4-zyan@redhat.com>
-In-Reply-To: <20190604093908.30491-1-zyan@redhat.com>
-References: <20190604093908.30491-1-zyan@redhat.com>
+        id S1727295AbfFDKvC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 4 Jun 2019 06:51:02 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:36051 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727266AbfFDKvB (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 4 Jun 2019 06:51:01 -0400
+Received: by mail-yb1-f193.google.com with SMTP id y2so7787595ybo.3
+        for <ceph-devel@vger.kernel.org>; Tue, 04 Jun 2019 03:51:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=Gbz6Kw4Y/MVzdljaUhHZp0/Jeinqt2LDdu2lyCkgUrc=;
+        b=GigTRL8brGzK2g8yOSOTyETTGqq+Eq6hJgMUjppoYAm75EGHeEYpiNRSD52KSn1tOY
+         FqiVWh/isYjATE1dpcwzcgi/tyiY9cqTVMmdRmdUDJp5w3XoEamj+clDV+PqUB1ERsa7
+         EBgHC3BxyCo8m1Zbx+ijAs8BypF0vK868YknZzvnrF8yhwagaEJ6JYAPx6BslsGpmNRO
+         rj0aOj5h2SCrREa8mJ32KY27NX93Luc6xRh8/4P069+g9s9xKIbeowFdliQ3X7WoRTv4
+         3WNzqTCXZseJxs0itCfGGwr9mo/NE4s+BsIjM1PajcqpZ4/s0fJy0LL0fV62tmYACHJ7
+         iIZA==
+X-Gm-Message-State: APjAAAWP/HztqFsJg6xYCdSImj9wQxl+UNgDDRVP7Stzmpl/n8TGpXMN
+        sd8fbi8EEW87LRqcaZOwBEdjgA==
+X-Google-Smtp-Source: APXvYqy9HkN2P+VjlkBz0ugejBAtu9fAEbvNWcocdhSJVK5ETsXXLVn1l5dvDhkm0Lot3//O8GZ3MA==
+X-Received: by 2002:a25:358b:: with SMTP id c133mr14258376yba.296.1559645460817;
+        Tue, 04 Jun 2019 03:51:00 -0700 (PDT)
+Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-2AF.dyn6.twc.com. [2606:a000:1100:37d::2af])
+        by smtp.gmail.com with ESMTPSA id j65sm859644ywd.36.2019.06.04.03.50.59
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 04 Jun 2019 03:51:00 -0700 (PDT)
+Message-ID: <b742f7bf2ad6075468625120623b6c89c259ad0a.camel@redhat.com>
+Subject: Re: [PATCH 2/3] ceph: add method that forces client to reconnect
+ using new entity addr
+From:   Jeff Layton <jlayton@redhat.com>
+To:     Ilya Dryomov <idryomov@gmail.com>,
+        Patrick Donnelly <pdonnell@redhat.com>
+Cc:     Gregory Farnum <gfarnum@redhat.com>,
+        "Yan, Zheng" <ukernel@gmail.com>, "Yan, Zheng" <zyan@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@redhat.com>,
+        Luis Henriques <lhenriques@suse.com>
+Date:   Tue, 04 Jun 2019 06:50:59 -0400
+In-Reply-To: <CAOi1vP_QNR9u78GhJzxeiUPkq6OT7FVBP3R2u3d02F=uNN1FDw@mail.gmail.com>
+References: <20190531122802.12814-1-zyan@redhat.com>
+         <20190531122802.12814-2-zyan@redhat.com>
+         <CAOi1vP8O6VviiNKrozmwUOtVN+GtvA=-0fEOXcdbg8O+pu1PhQ@mail.gmail.com>
+         <CAAM7YAmY-ky2E_9aPHNSNMmmTp9rC+Aw-eBMN_KP1suY_u+Wmg@mail.gmail.com>
+         <CAJ4mKGZHm3TqwU8Q=rn1xQtePMhaJNvU4yHGj0jDqR_9oxz2fA@mail.gmail.com>
+         <CAOi1vP8k88mFJgLYvD-zWBFgwV4vQ4DR0wBDzSDeDCDBaSLj_g@mail.gmail.com>
+         <CAJ4mKGY+jhc926uSRJUtHgL174wtq_3dLO3_1ks=2kpNk9Pkaw@mail.gmail.com>
+         <CA+2bHPboGYSY82Mh73qdSREZhzve72s4GgDVXqhdrdpW9YbC7Q@mail.gmail.com>
+         <CAOi1vP_QNR9u78GhJzxeiUPkq6OT7FVBP3R2u3d02F=uNN1FDw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 04 Jun 2019 09:39:32 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-When remounting aborted mount, also reset client's entity addr.
-'umount -f /ceph; mount -o remount /ceph' can be used for recovering
-from blacklist.
+On Tue, 2019-06-04 at 11:37 +0200, Ilya Dryomov wrote:
+> On Mon, Jun 3, 2019 at 11:05 PM Patrick Donnelly <pdonnell@redhat.com> wrote:
+> > On Mon, Jun 3, 2019 at 1:24 PM Gregory Farnum <gfarnum@redhat.com> wrote:
+> > > On Mon, Jun 3, 2019 at 1:07 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+> > > > Can we also discuss how useful is allowing to recover a mount after it
+> > > > has been blacklisted?  After we fail everything with EIO and throw out
+> > > > all dirty state, how many applications would continue working without
+> > > > some kind of restart?  And if you are restarting your application, why
+> > > > not get a new mount?
+> > > > 
+> > > > IOW what is the use case for introducing a new debugfs knob that isn't
+> > > > that much different from umount+mount?
+> > > 
+> > > People don't like it when their filesystem refuses to umount, which is
+> > > what happens when the kernel client can't reconnect to the MDS right
+> > > now. I'm not sure there's a practical way to deal with that besides
+> > > some kind of computer admin intervention.
+> > 
+> > Furthermore, there are often many applications using the mount (even
+> > with containers) and it's not a sustainable position that any
+> > network/client/cephfs hiccup requires a remount. Also, an application
+> 
+> Well, it's not just any hiccup.  It's one that lead to blacklisting...
+> 
+> > that fails because of EIO is easy to deal with a layer above but a
+> > remount usually requires grump admin intervention.
+> 
+> I feel like I'm missing something here.  Would figuring out $ID,
+> obtaining root and echoing to /sys/kernel/debug/$ID/control make the
+> admin less grumpy, especially when containers are involved?
+> 
+> Doing the force_reconnect thing would retain the mount point, but how
+> much use would it be?  Would using existing (i.e. pre-blacklist) file
+> descriptors be allowed?  I assumed it wouldn't be (permanent EIO or
+> something of that sort), so maybe that is the piece I'm missing...
+> 
 
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
----
- fs/ceph/mds_client.c | 14 ++++++++++++--
- fs/ceph/super.c      | 23 +++++++++++++++++++++--
- 2 files changed, 33 insertions(+), 4 deletions(-)
+I agree with Ilya here. I don't see how applications can just pick up
+where they left off after being blacklisted. Remounting in some fashion
+is really the only recourse here.
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index f5c3499fdec6..eb3976a742ac 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -1377,7 +1377,7 @@ static int remove_session_caps_cb(struct inode *inode, struct ceph_cap *cap,
- 		struct ceph_cap_flush *cf;
- 		struct ceph_mds_client *mdsc = fsc->mdsc;
- 
--		if (ci->i_wrbuffer_ref > 0 &&
-+		if (inode->i_data.nrpages > 0 &&
- 		    READ_ONCE(fsc->mount_state) == CEPH_MOUNT_SHUTDOWN)
- 			invalidate = true;
- 
-@@ -4347,6 +4347,7 @@ void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc)
- {
- 	struct ceph_mds_session *session;
- 	int mds;
-+       LIST_HEAD(requests);
- 
- 	dout("force umount\n");
- 
-@@ -4355,7 +4356,12 @@ void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc)
- 		session = __ceph_lookup_mds_session(mdsc, mds);
- 		if (!session)
- 			continue;
-+
-+		list_splice_init(&session->s_waiting, &requests);
-+		if (session->s_state == CEPH_MDS_SESSION_REJECTED)
-+			__unregister_session(mdsc, session);
- 		mutex_unlock(&mdsc->mutex);
-+
- 		mutex_lock(&session->s_mutex);
- 		__close_session(mdsc, session);
- 		if (session->s_state == CEPH_MDS_SESSION_CLOSING) {
-@@ -4364,10 +4370,14 @@ void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc)
- 		}
- 		mutex_unlock(&session->s_mutex);
- 		ceph_put_mds_session(session);
-+
- 		mutex_lock(&mdsc->mutex);
- 		kick_requests(mdsc, mds);
- 	}
--	__wake_requests(mdsc, &mdsc->waiting_for_map);
-+
-+       list_splice_init(&mdsc->waiting_for_map, &requests);
-+       __wake_requests(mdsc, &requests);
-+
- 	mutex_unlock(&mdsc->mutex);
- }
- 
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 67eb9d592ab7..a6a3c065f697 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -833,8 +833,27 @@ static void ceph_umount_begin(struct super_block *sb)
- 
- static int ceph_remount(struct super_block *sb, int *flags, char *data)
- {
--	sync_filesystem(sb);
--	return 0;
-+	struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
-+
-+	if (fsc->mount_state != CEPH_MOUNT_SHUTDOWN) {
-+		sync_filesystem(sb);
-+		return 0;
-+	}
-+
-+	/* Make sure all page caches get invalidated.
-+	 * see remove_session_caps_cb() */
-+	flush_workqueue(fsc->inode_wq);
-+	/* In case that we were blacklisted. This also reset
-+	 * all mon/osd connections */
-+	ceph_reset_client_addr(fsc->client);
-+
-+	ceph_osdc_clear_abort_err(&fsc->client->osdc);
-+	fsc->mount_state = 0;
-+
-+	if (!sb->s_root)
-+		return 0;
-+	return __ceph_do_getattr(d_inode(sb->s_root), NULL,
-+				 CEPH_STAT_CAP_INODE, true);
- }
- 
- static const struct super_operations ceph_super_ops = {
+To be clear, what happens to stateful objects (open files, byte-range
+locks, etc.) in this scenario? Were you planning to just re-open files
+and re-request locks that you held before being blacklisted? If so, that
+sounds like a great way to cause some silent data corruption...
 -- 
-2.17.2
+Jeff Layton <jlayton@redhat.com>
 
