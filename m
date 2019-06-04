@@ -2,113 +2,95 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52EA334935
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Jun 2019 15:43:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5430F349A7
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Jun 2019 16:00:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbfFDNmr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 4 Jun 2019 09:42:47 -0400
-Received: from tragedy.dreamhost.com ([66.33.205.236]:42778 "EHLO
-        tragedy.dreamhost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbfFDNmq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 4 Jun 2019 09:42:46 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by tragedy.dreamhost.com (Postfix) with ESMTPS id C88A615F88C;
-        Tue,  4 Jun 2019 06:42:43 -0700 (PDT)
-Date:   Tue, 4 Jun 2019 13:42:41 +0000 (UTC)
-From:   Sage Weil <sage@newdream.net>
-X-X-Sender: sage@piezo.novalocal
-To:     Ugis <ugis22@gmail.com>
-cc:     Ceph Development <ceph-devel@vger.kernel.org>
-Subject: Re: rbd blocking, no health warning
-In-Reply-To: <CAE63xUM=y_EJjtdzJud_=cL4-iPX6CBBUMGbAQ5q+yZ9RCr8iA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.11.1906041336210.12100@piezo.novalocal>
-References: <CAE63xUM=y_EJjtdzJud_=cL4-iPX6CBBUMGbAQ5q+yZ9RCr8iA@mail.gmail.com>
-User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
+        id S1727347AbfFDOAp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 4 Jun 2019 10:00:45 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43403 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727182AbfFDOAp (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 4 Jun 2019 10:00:45 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f25so10413558pgv.10
+        for <ceph-devel@vger.kernel.org>; Tue, 04 Jun 2019 07:00:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J/j0iEirlgVUfVQdfnTTiO0PbSTrbTR+6ViDhQBEOTk=;
+        b=WAjClpLiL28cLduOGpIctgPyqRUDTj6qzFVgQRN4MiWHtvhTDN1ywGILarH3gTT79c
+         MzzKEY+/EEOL54H94VlU+3AgB7nOvVqcY9eIlLk4bv2cZG7TUSbdleklUsR1WCVyxNk/
+         dI9GbLGk97wIjuSxn5YIUoa48REqM94oY1sCUmUN4DoXmdXtY9pgOFEWJ0ULKIPPorOO
+         mAljsUI/r1E8PtSkW9hPZv4FxoWMKhitX1sN6CAcKW23g04XTm6FJaQ5vv8l/wnifis5
+         8g2emtGakCgntQorx2CJ5uc6zfJGL5jGXaugBSWCTVedC2rcMFWnnm6yfUCvRIOe/Amy
+         ljYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J/j0iEirlgVUfVQdfnTTiO0PbSTrbTR+6ViDhQBEOTk=;
+        b=pu/l7rMVgAzJBIEG1rUT7pfLwvSo/ipPIgyYn0jFc1TkAEXOSRgVfNMx2zcaMtUMXk
+         ccBcaS8w7bg4gIAC7E9qKuvuvqFQROTJOEapBI2ORGhogJpUuJaUjFF7/GFyCBjVK9MD
+         4asOQTfJn7PkkFxx6amzzTi35JnAzpf6iaaaVGL7VYoZ/348Kx5o0Jh2upvreuZvEfPw
+         1I/IsZjGMcajOhdnXexI7DJ+B05cgKcFfA3FU9rHRwfkoslUOcr9O4FTUVQ0rBYHmEND
+         5JKaZmzsPGBYdWi4rGaDMa68DC4Tlt5dL1cWUbiu2P28wEmjxKCojIjrt/FTm7CUVWOq
+         ZJvw==
+X-Gm-Message-State: APjAAAUKestgQ13VMQzff0unfNlkupBOpuc4wW1EV8B/jijdjwSPXZGS
+        EGFDiRtVYPsh3L5oV2xGKb0=
+X-Google-Smtp-Source: APXvYqzFUl2oqiIw6edW4i78qUltKot5iYeAjKUq2dhejWp9GqWaC/umalTZDd3NNIyZHrjgK5q0IQ==
+X-Received: by 2002:a63:1d14:: with SMTP id d20mr35866808pgd.281.1559656844178;
+        Tue, 04 Jun 2019 07:00:44 -0700 (PDT)
+Received: from localhost.localdomain ([104.192.108.10])
+        by smtp.gmail.com with ESMTPSA id v23sm19746154pff.185.2019.06.04.07.00.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Jun 2019 07:00:42 -0700 (PDT)
+From:   xxhdx1985126@gmail.com
+To:     idryomov@gmail.com, ukernel@gmail.com, ceph-devel@vger.kernel.org
+Cc:     Xuehan Xu <xxhdx1985126@163.com>
+Subject: [PATCH 0/2] control cephfs generated io with the help of cgroup io controller
+Date:   Tue,  4 Jun 2019 21:51:16 +0800
+Message-Id: <20190604135119.8109-1-xxhdx1985126@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-VR-STATUS: OK
-X-VR-SCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddrudefledgieekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuggftfghnshhusghstghrihgsvgdpffftgfetoffjqffuvfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffujgfkfhgfgggtsehttdertddtredvnecuhfhrohhmpefurghgvgcuhggvihhluceoshgrghgvsehnvgifughrvggrmhdrnhgvtheqnecukfhppeduvdejrddtrddtrddunecurfgrrhgrmhepmhhouggvpehsmhhtphdphhgvlhhopehlohgtrghlhhhoshhtpdhinhgvthepuddvjedrtddrtddruddprhgvthhurhhnqdhprghthhepufgrghgvucghvghilhcuoehsrghgvgesnhgvfigurhgvrghmrdhnvghtqedpmhgrihhlfhhrohhmpehsrghgvgesnhgvfigurhgvrghmrdhnvghtpdhnrhgtphhtthhopegtvghphhdquggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedt
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 4 Jun 2019, Ugis wrote:
-> Hi,
-> 
-> ceph version 14.2.1 (d555a9489eb35f84f2e1ef49b77e19da9d113972) nautilus (stable)
-> Yesterday we had massive ceph reballancing due to stopped osd daemons
-> on one host, but issue was fixed and data migrated back till HEALTH_OK
-> state.
-> 
-> Today we had strange rbd blocking issue. Windows server used rbd over
-> tgt iscsi but I/O in rbd disks suddenly stopped - shares did not
-> respond, could not delete file etc.
-> Tgt iscsi daemon side logs showed following(after googling I conclude
-> these mean ceph backend timeout on iscsi commands):
-> # journalctl -f -u tgt.service
-> ...
-> Jun 04 12:29:16 cgw1 tgtd[12506]: tgtd: abort_cmd(1324) found 7a5f0400 6
-> Jun 04 12:29:16 cgw1 tgtd[12506]: tgtd: abort_cmd(1324) found 785f0400 6
-> Jun 04 12:29:16 cgw1 tgtd[12506]: tgtd: abort_cmd(1324) found 765f0400 6
-> Jun 04 12:29:16 cgw1 tgtd[12506]: tgtd: abort_cmd(1324) found 755f0400 6
-> Jun 04 12:29:35 cgw1 tgtd[12506]: tgtd: conn_close(92) already closed
-> 0x1b67040 9
-> 
-> At this point ceph health detail showed nothing wrong(to be clear,
-> there was and still is hanging one active+recovering+repair pg, but it
-> was not related to pool of windows server and below mentioned osd.35
-> not involved - so should not have any effect).
-> 
-> I started to dig monitor logs and noticed following:
-> 
-> ceph-mon
-> ...
-> 2019-06-04 06:25:11.194 7f6dc9034700 -1 mon.ceph1@0(leader) e23
-> get_health_metrics reporting 1 slow ops, oldest is osd_failure(failed
-> timeout osd.35 v1:10.100.3.7:6801/2979 for 633956sec e372024 v372024)
+From: Xuehan Xu <xxhdx1985126@163.com>
 
-This is definitely a bug.  Did the ceph health indicate there was a slow 
-mon request?
+Hi, ilya
 
-Note that 633956sec is ~1 week... so that also looks fishy.  Is it 
-possible the clocks shifted on your OSD nodes?  
+I've changed the code to add a new io controller policy that provide
+the functionality to restrain cephfs generated io in terms of iops and
+throughput.
 
-> As "failed timeout osd.35" seemed suspicious I restarted that daemon
-> and I/O on windows server went live again.
-> 
-> ceph-osd before restart : tail -f /var/log/ceph/ceph-osd.35.log
-> 
-> 2019-06-04 12:42:08.036 7fab336e8700 -1 osd.35 372024
-> get_health_metrics reporting 27 slow ops, oldest is
-> osd_op(client.132208006.0:224153909 54.53
-> 54:ca20732d:::rbd_data.5fc5542ae8944a.000000000001d0dd:head
-> [set-alloc-hint object_size 4194304 write_size 4194304,write
-> 3538944~4096] snapc 0=[] ondisk+write+known_if_redirected e372024)
-> 2019-06-04 12:42:09.036 7fab336e8700 -1 osd.35 372024
-> get_health_metrics reporting 27 slow ops, oldest is
-> osd_op(client.132208006.0:224153909 54.53
-> 54:ca20732d:::rbd_data.5fc5542ae8944a.000000000001d0dd:head
-> [set-alloc-hint object_size 4194304 write_size 4194304,write
-> 3538944~4096] snapc 0=[] ondisk+write+known_if_redirected e372024)
-> 2019-06-04 12:42:10.040 7fab336e8700 -1 osd.35 372024
-> get_health_metrics reporting 27 slow ops, oldest is
-> osd_op(client.132208006.0:224153909 54.53
-> 54:ca20732d:::rbd_data.5fc5542ae8944a.000000000001d0dd:head
-> [set-alloc-hint object_size 4194304 write_size 4194304,write
-> 3538944~4096] snapc 0=[] ondisk+write+known_if_redirected e372024)
-> 
-> Here I noticed pg "54.53" - that is related to blocking rbd.
-> 
-> So in short: rbd I/O resumed only after osd.35 restart.
-> 
-> Question: why ceph health detail did not inform about blocking osd
-> issue? Is it a bug?
+This inflexible appoarch is a little crude indeed, like tejun said.
+But we think, this should be able to provide some basic io throttling
+for cephfs kernel client, and can protect the cephfs cluster from
+being buggy or even client applications be the cephfs cluster has the
+ability to do QoS or not. So we are submitting these patches, in case
+they can really provide some help:-)
 
-That also sounds like a bug.
+Xuehan Xu (2):
+  ceph: add a new blkcg policy for cephfs
+  ceph: use the ceph-specific blkcg policy to limit ceph client ops
 
-What does your 'ceph -s' say?  Is it possible your mgr is down or 
-something?  (The OSD health alerts are fed via the mgr to the mon.)
+ fs/ceph/Kconfig                     |   8 +
+ fs/ceph/Makefile                    |   1 +
+ fs/ceph/addr.c                      | 156 ++++++++++
+ fs/ceph/ceph_io_policy.c            | 445 ++++++++++++++++++++++++++++
+ fs/ceph/file.c                      | 110 +++++++
+ fs/ceph/mds_client.c                |  26 ++
+ fs/ceph/mds_client.h                |   7 +
+ fs/ceph/super.c                     |  12 +
+ include/linux/ceph/ceph_io_policy.h |  74 +++++
+ include/linux/ceph/osd_client.h     |   7 +
+ 10 files changed, 846 insertions(+)
+ create mode 100644 fs/ceph/ceph_io_policy.c
+ create mode 100644 include/linux/ceph/ceph_io_policy.h
 
-sage
+-- 
+2.21.0
+
