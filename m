@@ -2,95 +2,104 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3739B3420A
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Jun 2019 10:40:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2E2B34319
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Jun 2019 11:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbfFDIkR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 4 Jun 2019 04:40:17 -0400
-Received: from mail-it1-f173.google.com ([209.85.166.173]:34935 "EHLO
-        mail-it1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbfFDIkR (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 4 Jun 2019 04:40:17 -0400
-Received: by mail-it1-f173.google.com with SMTP id n189so12615776itd.0
-        for <ceph-devel@vger.kernel.org>; Tue, 04 Jun 2019 01:40:16 -0700 (PDT)
+        id S1727008AbfFDJZv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 4 Jun 2019 05:25:51 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44637 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbfFDJZv (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 4 Jun 2019 05:25:51 -0400
+Received: by mail-io1-f65.google.com with SMTP id s7so9387724iob.11
+        for <ceph-devel@vger.kernel.org>; Tue, 04 Jun 2019 02:25:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=UaWgTwrWQpbPn79otAdoarRJdY2Sau16OQJGXAT0T9Q=;
-        b=cRLQSizx4y9uoDneRZcNAZVMbY5oRFxhdWVAIICLRNainQ533iFonVga5Ksh9hfCWU
-         TTMYNGhyORAXhsZDM3Q5wHgJdbfw4Hayfpwu08TJHGg2C9Q7Gm3WwgBpMatnnAhoUx+3
-         K2UzUPjt1GOCJS9kJFZi+CNWsf5dwuXcxNlHtYVg+luO650leoNOXt5wBsxfDYCqqGMS
-         R29THd1+8fUbLm1JGir5bQcsaLLWZmQM2k6Wlrz73KvMd54/w/ogthq7IWWFMV8wcYjY
-         HB62P3YvMqhHHgKRjEiAwTfX/gt+nJfGvS0m6lfaL5ANqpcEptHZGJYoTZRIs5jVaE2c
-         H4rw==
+         :cc;
+        bh=TqT+Y1UwZ8M5cIhN4TkgEItz+Q4CCRViHy/HvwMlws8=;
+        b=SbZjN98ZYNqoyivIV4+l1mic5KaKcR/WEE82nnW1y2PXRczeYcRUqqkCgOq0tLMLJf
+         WCJ5mKMOlOVCeLxSZnxxfNHetXkvpcVOnuX0xB7VS1sbpdfOeFQy4U6xidKhSmRa3DkB
+         5RyLpf9JeWuatnCOMH5wpy2223+55XMbKDcBroVMNKraFOw6jr8BEw3v5rBdZjaT17Qz
+         iE8oTHibG3NvaeXMSAhW+jHag1tbriHo3BS7LceqX0w+z14ur5hfO8BnU2SsnGM8aw0n
+         NliSTHjOQAw0L7cK+AiClMsztGl6Ki3DcG8kIEAhY4RNbRBr+J3w57MuCRMF1B840yk8
+         Zm9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=UaWgTwrWQpbPn79otAdoarRJdY2Sau16OQJGXAT0T9Q=;
-        b=iD52tHIvePptdsZ03PXuserJs6KblS3gg9pV3j/hca+yuapLBkjWTrfWZFWrMSwqHT
-         e2kcD8oFLz0sYXHcZxNAb8VP3myM/MRT4nwBTq80Zdkh2j5n/pnbN8MIO008hvt+6nhF
-         TS/2EeOecBvr0To221olbhvJdFOfk85PXUE0KnA19YJN6FHPgvRJCqAVOb/2mBzDlR9z
-         H+Z1htR1kqgRmsJNwHUyvKH/bgS3nVTbGMB0OXObcrpxAB+2MW1Du2nIkK4BS4ll3prW
-         8YgMlMYaqsaINdLJW6tPJZw5ZoTFjV6WFZfU2XoA6OadJjwMUUWGx7HiPDTNGBAacPmi
-         7SRA==
-X-Gm-Message-State: APjAAAWfRJPYAJ2+ldKPZfyp4pkbazMrE1b/Bvc+Ueb0L6EqB50XoKKE
-        HOnNnfpjhcsNtLa+HrLntpQVZ02bPsSm/GWtwPWx2A==
-X-Google-Smtp-Source: APXvYqxZglDK3SYTLXu9N7RAg5acdLV9O+fcAOIpQyLUP6PfYO/j/maSPmzSkumK3+8gXc9YMSZE5knMxRij0F0VQq0=
-X-Received: by 2002:a24:b648:: with SMTP id d8mr6782859itj.14.1559637615827;
- Tue, 04 Jun 2019 01:40:15 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=TqT+Y1UwZ8M5cIhN4TkgEItz+Q4CCRViHy/HvwMlws8=;
+        b=U7zhD2Y7Z1s41gzE7mLzRVDeynySskUmMQe54/crWmNKFflf2q2wAsW45mBR0mFAsm
+         OYOFk3OAK9isEKJ7lXMjpGrKok73mjQ1atTGRJjkM+aAaOA9dZ2T4oCJg4S04E+fLSH4
+         +7cO56MfdonfxVtlNd/aNuJjVdJl7+bhnIHWBnQ6UXn9cJRCUlY9AJvOWjrSCMoY8AcR
+         PnbbYmsdRr11ms7OncgWS33dLaiKu770cAqhgYUIq7pxLR6mstbWtPjI6rtMCQouBPOe
+         O2RACbCTnxSjcnZ2ZRF3N4Xi+hhQUrVp1iJLw3A30geW6s+7hbhQnMii8mV4SVe6BXds
+         sbmQ==
+X-Gm-Message-State: APjAAAXvvo0Nc06kyyL4YDLiUYW8wfHbMh+J94beAuZz4q/BDFKtXtaG
+        S50gj4/oL8puaoom/TAvWrtYWWm+lJT65K1cfMk=
+X-Google-Smtp-Source: APXvYqzd3nygeOHAlholV7slOwUq1jO6hIOz6iFzlvcWPdpdDY03MR5W0VBLbA6AYjclJikIitKWSAagoOT/gQitmpo=
+X-Received: by 2002:a5d:91cc:: with SMTP id k12mr576440ior.131.1559640350465;
+ Tue, 04 Jun 2019 02:25:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <CALbLmkCvybsEWGRoZDjjmr9juYBfzYBfOt+h2F+MAq_2oc=3Mw@mail.gmail.com>
-In-Reply-To: <CALbLmkCvybsEWGRoZDjjmr9juYBfzYBfOt+h2F+MAq_2oc=3Mw@mail.gmail.com>
-From:   =?UTF-8?B?6Z+m55qT6K+a?= <whc0000001@gmail.com>
-Date:   Tue, 4 Jun 2019 16:40:04 +0800
-Message-ID: <CALbLmkAcUKG2yaGe0poCmeSrWSqVEj=mzSFM=mU43HhP6i6aOQ@mail.gmail.com>
-Subject: Re: DPDK memory error when using spdk in 14.2.1
-To:     ceph-devel@vger.kernel.org
+References: <20190531122802.12814-1-zyan@redhat.com> <20190531122802.12814-2-zyan@redhat.com>
+ <CAOi1vP8O6VviiNKrozmwUOtVN+GtvA=-0fEOXcdbg8O+pu1PhQ@mail.gmail.com>
+ <CAAM7YAmY-ky2E_9aPHNSNMmmTp9rC+Aw-eBMN_KP1suY_u+Wmg@mail.gmail.com>
+ <CAJ4mKGZHm3TqwU8Q=rn1xQtePMhaJNvU4yHGj0jDqR_9oxz2fA@mail.gmail.com>
+ <CAOi1vP8k88mFJgLYvD-zWBFgwV4vQ4DR0wBDzSDeDCDBaSLj_g@mail.gmail.com>
+ <CAJ4mKGY+jhc926uSRJUtHgL174wtq_3dLO3_1ks=2kpNk9Pkaw@mail.gmail.com>
+ <CAOi1vP88A7G_7ScstLSNwe-tUZcBUxhK=W5Qdix2tgPEOB9i8g@mail.gmail.com> <CAAM7YAmF4_9ajORX3ENmRGEgQO6Y-H4XNUu67U+bss+D-rt7PA@mail.gmail.com>
+In-Reply-To: <CAAM7YAmF4_9ajORX3ENmRGEgQO6Y-H4XNUu67U+bss+D-rt7PA@mail.gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 4 Jun 2019 11:25:55 +0200
+Message-ID: <CAOi1vP_MGaWmytu7QvAttXq7bGftXtr6gWqEh3j1TShzb_kn3w@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ceph: add method that forces client to reconnect
+ using new entity addr
+To:     "Yan, Zheng" <ukernel@gmail.com>
+Cc:     Gregory Farnum <gfarnum@redhat.com>,
+        "Yan, Zheng" <zyan@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Luis Henriques <lhenriques@suse.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Sorry, the ceph version is 15.0.0
+On Tue, Jun 4, 2019 at 4:10 AM Yan, Zheng <ukernel@gmail.com> wrote:
+>
+> On Tue, Jun 4, 2019 at 5:18 AM Ilya Dryomov <idryomov@gmail.com> wrote:
+> >
+> > On Mon, Jun 3, 2019 at 10:23 PM Gregory Farnum <gfarnum@redhat.com> wrote:
+> > >
+> > > On Mon, Jun 3, 2019 at 1:07 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+> > > > Can we also discuss how useful is allowing to recover a mount after it
+> > > > has been blacklisted?  After we fail everything with EIO and throw out
+> > > > all dirty state, how many applications would continue working without
+> > > > some kind of restart?  And if you are restarting your application, why
+> > > > not get a new mount?
+> > > >
+> > > > IOW what is the use case for introducing a new debugfs knob that isn't
+> > > > that much different from umount+mount?
+> > >
+> > > People don't like it when their filesystem refuses to umount, which is
+> > > what happens when the kernel client can't reconnect to the MDS right
+> > > now. I'm not sure there's a practical way to deal with that besides
+> > > some kind of computer admin intervention. (Even if you umount -l, that
+> > > by design doesn't reply to syscalls and let the applications exit.)
+> >
+> > Well, that is what I'm saying: if an admin intervention is required
+> > anyway, then why not make it be umount+mount?  That is certainly more
+> > intuitive than an obscure write-only file in debugfs...
+> >
+>
+> I think  'umount -f' + 'mount -o remount' is better than the debugfs file
 
-=E9=9F=A6=E7=9A=93=E8=AF=9A <whc0000001@gmail.com> =E4=BA=8E2019=E5=B9=B46=
-=E6=9C=884=E6=97=A5=E5=91=A8=E4=BA=8C =E4=B8=8B=E5=8D=884:13=E5=86=99=E9=81=
-=93=EF=BC=9A
->
-> Hi~
->    I recently tried to use SPDK in version 14.2.1 to speed up access
-> to nvme. But I encountered the following error when I start osd:
->
->   EAL: Detected 72 lcore(s)
-> EAL: Detected 2 NUMA nodes
-> EAL: No free hugepages reported in hugepages-1048576kB
-> EAL: Probing VFIO support...
-> EAL: PCI device 0000:1a:00.0 on NUMA socket 0
-> EAL:   probe driver: 1c5f:550 spdk_nvme
-> EAL: PCI device 0000:1b:00.0 on NUMA socket 0
-> EAL:   probe driver: 1c5f:550 spdk_nvme
-> EAL: PCI device 0000:3e:00.0 on NUMA socket 0
-> EAL:   probe driver: 1c5f:550 spdk_nvme
-> /data/weihaocheng/ceph-rpm/rpmbuild/BUILD/ceph-15.0.0-1494-ged2ce0e/src/c=
-ommon/PriorityCache.cc:
-> In function 'void PriorityCache::Manager::balance()' thread
-> 7f8e8bffc700 time 2019-06-04T15:41:00.171667+0800
-> /data/weihaocheng/ceph-rpm/rpmbuild/BUILD/ceph-15.0.0-1494-ged2ce0e/src/c=
-ommon/PriorityCache.cc:
-> 288: FAILED ceph_assert(mem_avail >=3D 0)
->  ceph version 15.0.0-1494-ged2ce0e
-> (ed2ce0efad31b2b953c49be957fd2f46199e84b1) octopus (dev)
->  1: (ceph::__ceph_assert_fail(char const*, char const*, int, char
-> const*)+0x14a) [0x7f9e97084f59]
->  2: (()+0x4c5121) [0x7f9e97085121]
->  3: (PriorityCache::Manager::balance()+0x421) [0x7f9e9771b2c1]
->  4: (BlueStore::MempoolThread::entry()+0x501) [0x7f9e97655601]
->  5: (()+0x7e25) [0x7f9e937e4e25]
->  6: (clone()+0x6d) [0x7f9e926a5bad]
-> *** Caught signal (Aborted) **
->  Is my system configured incorrect, or dependent versions incorrect or
-> any bug in the codes?
+Why '-o remount'?  I wouldn't expect 'umount -f' to leave behind any
+actionable state, it should tear down all data structures, mount point,
+etc.  What would '-o remount' act on?
+
+Thanks,
+
+                Ilya
