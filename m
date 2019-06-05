@@ -2,65 +2,136 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10B5436301
-	for <lists+ceph-devel@lfdr.de>; Wed,  5 Jun 2019 19:51:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56586364C4
+	for <lists+ceph-devel@lfdr.de>; Wed,  5 Jun 2019 21:35:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbfFERvr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 5 Jun 2019 13:51:47 -0400
-Received: from mx2.bfh.ch ([147.87.250.53]:47042 "EHLO mx2.bfh.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725950AbfFERvr (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 5 Jun 2019 13:51:47 -0400
-X-Greylist: delayed 850 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Jun 2019 13:51:46 EDT
-Received: from MAIL24.bfh.ch (mail24.bfh.ch [147.87.245.164])
-        by mx2.bfh.ch (8.14.4/8.14.4/Debian-4) with ESMTP id x55HbTOR015588
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Jun 2019 19:37:29 +0200
-Received: from [10.8.0.14] (147.87.245.141) by MAIL24.bfh.ch (147.87.245.164)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Wed, 5 Jun 2019
- 19:37:28 +0200
-Reply-To: <daniel.baumann@bfh.ch>
-Subject: Re: [ceph-users] Changing the release cadence
-To:     <ceph-users@ceph.com>
-References: <alpine.DEB.2.11.1906051556500.987@piezo.novalocal>
-CC:     <ceph-devel@vger.kernel.org>, <dev@ceph.io>
-From:   Daniel Baumann <daniel.baumann@bfh.ch>
-Message-ID: <d713faee-ae2f-5022-1fd2-2fd9b0a2e39d@bfh.ch>
-Date:   Wed, 5 Jun 2019 19:37:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
+        id S1726532AbfFETfP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Wed, 5 Jun 2019 15:35:15 -0400
+Received: from mailpro.odiso.net ([89.248.211.110]:56934 "EHLO
+        mailpro.odiso.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726461AbfFETfP (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 5 Jun 2019 15:35:15 -0400
+X-Greylist: delayed 1140 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Jun 2019 15:35:14 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mailpro.odiso.net (Postfix) with ESMTP id 7E7BC14A2986;
+        Wed,  5 Jun 2019 21:16:13 +0200 (CEST)
+Received: from mailpro.odiso.net ([127.0.0.1])
+        by localhost (mailpro.odiso.net [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Nx8BNjEdyjqw; Wed,  5 Jun 2019 21:16:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by mailpro.odiso.net (Postfix) with ESMTP id 6504314A298A;
+        Wed,  5 Jun 2019 21:16:13 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mailpro.odiso.com
+Received: from mailpro.odiso.net ([127.0.0.1])
+        by localhost (mailpro.odiso.net [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id fT8uRu3wmyAy; Wed,  5 Jun 2019 21:16:13 +0200 (CEST)
+Received: from mailpro.odiso.net (mailpro.odiso.net [10.1.31.111])
+        by mailpro.odiso.net (Postfix) with ESMTP id 4F16014A2986;
+        Wed,  5 Jun 2019 21:16:13 +0200 (CEST)
+Date:   Wed, 5 Jun 2019 21:16:13 +0200 (CEST)
+From:   Alexandre DERUMIER <aderumier@odiso.com>
+To:     Sage Weil <sage@newdream.net>
+Cc:     ceph-users <ceph-users@ceph.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
+Message-ID: <12252276.433203.1559762173198.JavaMail.zimbra@odiso.com>
 In-Reply-To: <alpine.DEB.2.11.1906051556500.987@piezo.novalocal>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [147.87.245.141]
-X-ClientProxiedBy: MAIL23.bfh.ch (147.87.245.163) To MAIL24.bfh.ch
- (147.87.245.164)
-X-Bayes-Prob: 0.0001 (Score 0, tokens from: outbound, bfh:default, base:default, @@RPTN)
-X-Spam-Score: 0.00 () [Hold at 10.00] 
-X-CanIt-Geo: ip=147.87.245.164; country=CH; region=Bern; city=Bern; latitude=46.9312; longitude=7.4866; http://maps.google.com/maps?q=46.9312,7.4866&z=6
-X-CanItPRO-Stream: bfh:outbound (inherits from bfh:default,base:default)
-X-Canit-Stats-ID: 030l5BtAI - 435714beeb61 - 20190605
-X-CanIt-Archive-Cluster: gbKgvJ3SmUdnfmr4CnDUWvXR30M
-X-Scanned-By: CanIt (www . roaringpenguin . com) on 147.87.250.53
+References: <alpine.DEB.2.11.1906051556500.987@piezo.novalocal>
+Subject: Re: Changing the release cadence
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - GC71 (Linux)/8.8.12_GA_3794)
+Thread-Topic: Changing the release cadence
+Thread-Index: JEDPZL2hf2MXql9JV6NUM+ayilQ2Mw==
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 6/5/19 5:57 PM, Sage Weil wrote:
-> So far the balance of opinion seems to favor a shift to a 12 month 
-> cycle [...] it seems pretty likely we'll make that shift.
+Hi,
 
-thanks, much appreciated (from an cluster operating point of view).
 
-> Thoughts?
+>>- November: If we release Octopus 9 months from the Nautilus release 
+>>(planned for Feb, released in Mar) then we'd target this November. We 
+>>could shift to a 12 months candence after that. 
 
-GNOME and a few others are doing April and October releases which seems
-balanced and to be good timing for most people; personally I prefer
-spring rather than autum for upgrades, hence.. would suggest April.
+For the 2 last debian releases, the freeze was around january-february,
+november seem to be a good time for ceph release.
 
-Regards,
-Daniel
+----- Mail original -----
+De: "Sage Weil" <sage@newdream.net>
+À: "ceph-users" <ceph-users@ceph.com>, "ceph-devel" <ceph-devel@vger.kernel.org>, dev@ceph.io
+Envoyé: Mercredi 5 Juin 2019 17:57:52
+Objet: Changing the release cadence
+
+Hi everyone, 
+
+Since luminous, we have had the follow release cadence and policy: 
+- release every 9 months 
+- maintain backports for the last two releases 
+- enable upgrades to move either 1 or 2 releases heads 
+(e.g., luminous -> mimic or nautilus; mimic -> nautilus or octopus; ...) 
+
+This has mostly worked out well, except that the mimic release received 
+less attention that we wanted due to the fact that multiple downstream 
+Ceph products (from Red Has and SUSE) decided to based their next release 
+on nautilus. Even though upstream every release is an "LTS" release, as a 
+practical matter mimic got less attention than luminous or nautilus. 
+
+We've had several requests/proposals to shift to a 12 month cadence. This 
+has several advantages: 
+
+- Stable/conservative clusters only have to be upgraded every 2 years 
+(instead of every 18 months) 
+- Yearly releases are more likely to intersect with downstream 
+distribution release (e.g., Debian). In the past there have been 
+problems where the Ceph releases included in consecutive releases of a 
+distro weren't easily upgradeable. 
+- Vendors that make downstream Ceph distributions/products tend to 
+release yearly. Aligning with those vendors means they are more likely 
+to productize *every* Ceph release. This will help make every Ceph 
+release an "LTS" release (not just in name but also in terms of 
+maintenance attention). 
+
+So far the balance of opinion seems to favor a shift to a 12 month 
+cycle[1], especially among developers, so it seems pretty likely we'll 
+make that shift. (If you do have strong concerns about such a move, now 
+is the time to raise them.) 
+
+That brings us to an important decision: what time of year should we 
+release? Once we pick the timing, we'll be releasing at that time *every 
+year* for each release (barring another schedule shift, which we want to 
+avoid), so let's choose carefully! 
+
+A few options: 
+
+- November: If we release Octopus 9 months from the Nautilus release 
+(planned for Feb, released in Mar) then we'd target this November. We 
+could shift to a 12 months candence after that. 
+- February: That's 12 months from the Nautilus target. 
+- March: That's 12 months from when Nautilus was *actually* released. 
+
+November is nice in the sense that we'd wrap things up before the 
+holidays. It's less good in that users may not be inclined to install the 
+new release when many developers will be less available in December. 
+
+February kind of sucked in that the scramble to get the last few things 
+done happened during the holidays. OTOH, we should be doing what we can 
+to avoid such scrambles, so that might not be something we should factor 
+in. March may be a bit more balanced, with a solid 3 months before when 
+people are productive, and 3 months after before they disappear on holiday 
+to address any post-release issues. 
+
+People tend to be somewhat less available over the summer months due to 
+holidays etc, so an early or late summer release might also be less than 
+ideal. 
+
+Thoughts? If we can narrow it down to a few options maybe we could do a 
+poll to gauge user preferences. 
+
+Thanks! 
+sage 
+
+
+[1] https://twitter.com/larsmb/status/1130010208971952129 
+
