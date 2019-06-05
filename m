@@ -2,136 +2,83 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56586364C4
-	for <lists+ceph-devel@lfdr.de>; Wed,  5 Jun 2019 21:35:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2D8336510
+	for <lists+ceph-devel@lfdr.de>; Wed,  5 Jun 2019 22:05:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726532AbfFETfP convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Wed, 5 Jun 2019 15:35:15 -0400
-Received: from mailpro.odiso.net ([89.248.211.110]:56934 "EHLO
-        mailpro.odiso.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726461AbfFETfP (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 5 Jun 2019 15:35:15 -0400
-X-Greylist: delayed 1140 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Jun 2019 15:35:14 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mailpro.odiso.net (Postfix) with ESMTP id 7E7BC14A2986;
-        Wed,  5 Jun 2019 21:16:13 +0200 (CEST)
-Received: from mailpro.odiso.net ([127.0.0.1])
-        by localhost (mailpro.odiso.net [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Nx8BNjEdyjqw; Wed,  5 Jun 2019 21:16:13 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by mailpro.odiso.net (Postfix) with ESMTP id 6504314A298A;
-        Wed,  5 Jun 2019 21:16:13 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mailpro.odiso.com
-Received: from mailpro.odiso.net ([127.0.0.1])
-        by localhost (mailpro.odiso.net [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id fT8uRu3wmyAy; Wed,  5 Jun 2019 21:16:13 +0200 (CEST)
-Received: from mailpro.odiso.net (mailpro.odiso.net [10.1.31.111])
-        by mailpro.odiso.net (Postfix) with ESMTP id 4F16014A2986;
-        Wed,  5 Jun 2019 21:16:13 +0200 (CEST)
-Date:   Wed, 5 Jun 2019 21:16:13 +0200 (CEST)
-From:   Alexandre DERUMIER <aderumier@odiso.com>
-To:     Sage Weil <sage@newdream.net>
-Cc:     ceph-users <ceph-users@ceph.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
-Message-ID: <12252276.433203.1559762173198.JavaMail.zimbra@odiso.com>
-In-Reply-To: <alpine.DEB.2.11.1906051556500.987@piezo.novalocal>
-References: <alpine.DEB.2.11.1906051556500.987@piezo.novalocal>
-Subject: Re: Changing the release cadence
+        id S1726543AbfFEUFB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Wed, 5 Jun 2019 16:05:01 -0400
+Received: from mail-it1-f173.google.com ([209.85.166.173]:54475 "EHLO
+        mail-it1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726510AbfFEUFA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 5 Jun 2019 16:05:00 -0400
+Received: by mail-it1-f173.google.com with SMTP id h20so5489422itk.4
+        for <ceph-devel@vger.kernel.org>; Wed, 05 Jun 2019 13:05:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=zgG7ve5wHt8Xb8MTNgVa1JtZ3UuESn1PDJ9GAhpL8TE=;
+        b=t+I5CjYtxNDKWkvvNBrURJHrE6cmx7kiGKBcbLge85cGbnMdu1GI3FRiRC9yM+eGzu
+         DAuqutBXRjgmQK4/mpkl8UHL2DjZEHxxP78Q/8vVBthaI72iwB/jTQdQL+fH67nm+b2m
+         6pfu5i1TM5ZDu5nZGe2D9QLMspmHRz3zfBUTD9igg7iZvGH2GNBR//W0GTy7kQttiUeU
+         EmnLJzf8iw3B1t2EQrqxT1lYkjLAqGzQo3xPuz1KONxq7Hnb6yXvyor5zaylKTzgX7rr
+         xIOx2NukP4Vw9bOINbm16P6KakdDneoQ/iNVwJh2vXRAZgIXqbaykpx1+qeT8iAQPrIu
+         K0sg==
+X-Gm-Message-State: APjAAAXpoGyf2FFel29FgYeD16+VVk8ICXig+k+taZBi4Y44/jkKX6bP
+        bFa1z94B0Ps8n7lgw3feJSqe5CLeOai8pXmojiZza7K0
+X-Google-Smtp-Source: APXvYqwHKcT156clk94+XZd8fSRzYbxcpyxV4keNk+ILnMYVpU63PRRQjkTij2L3mvCGTg8tYqSFKzvA8JxJX9a1Icg=
+X-Received: by 2002:a24:9083:: with SMTP id x125mr21154136itd.76.1559765099413;
+ Wed, 05 Jun 2019 13:04:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20190604132003.4z6oxllc2ghcncle@jfsuselaptop>
+In-Reply-To: <20190604132003.4z6oxllc2ghcncle@jfsuselaptop>
+From:   Gregory Farnum <gfarnum@redhat.com>
+Date:   Wed, 5 Jun 2019 13:04:13 -0700
+Message-ID: <CAJ4mKGaanO57aK1avp+N4uRocYh1m8qppVe+oEbiTqv7zZkyKA@mail.gmail.com>
+Subject: Re: MDS refuses startup if id == admin
+To:     ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
-X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - GC71 (Linux)/8.8.12_GA_3794)
-Thread-Topic: Changing the release cadence
-Thread-Index: JEDPZL2hf2MXql9JV6NUM+ayilQ2Mw==
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi,
+On Tue, Jun 4, 2019 at 6:22 AM Jan Fajerski <jfajerski@suse.com> wrote:
+>
+> Hi list,
+> I came across some strange MDS behaviour recently where it is not possible to
+> start and MDS on a machine that happens to have the hostname "admin".
+>
+> This turns out to be this code
+> https://github.com/ceph/ceph/blob/master/src/common/entity_name.cc#L128 that is
+> called by ceph-mds here
+> https://github.com/ceph/ceph/blob/master/src/ceph_mds.cc#L116.
+>
+> Together with the respective systemd unit file (passing "--id %i") this prevents
+> starting an MDS on a machine witht he hostname admin.
+>
+> Is this just old code and chance or is there a reason behind this? The MDS is
+> the only daemon doing that, though I did not check for other but similar checks
+> in other daemons.
 
+There's a pretty funny trail of updates there, but it's still
+basically what we see in the MDS code: it doesn't want to turn on if
+it doesn't have a specified name. "admin" is the default (ie,
+client.admin) and so the checker is incorrectly flagging it as being
+unnamed when the name is derived from a host short name "admin".
 
->>- November: If we release Octopus 9 months from the Nautilus release 
->>(planned for Feb, released in Mar) then we'd target this November. We 
->>could shift to a 12 months candence after that. 
+I'm not sure there's a good way to deal with that — we really *don't*
+want somebody's misconfigured cluster to start up a bunch of MDSes
+that all display as "mds.admin"!
+-Greg
 
-For the 2 last debian releases, the freeze was around january-february,
-november seem to be a good time for ceph release.
-
------ Mail original -----
-De: "Sage Weil" <sage@newdream.net>
-À: "ceph-users" <ceph-users@ceph.com>, "ceph-devel" <ceph-devel@vger.kernel.org>, dev@ceph.io
-Envoyé: Mercredi 5 Juin 2019 17:57:52
-Objet: Changing the release cadence
-
-Hi everyone, 
-
-Since luminous, we have had the follow release cadence and policy: 
-- release every 9 months 
-- maintain backports for the last two releases 
-- enable upgrades to move either 1 or 2 releases heads 
-(e.g., luminous -> mimic or nautilus; mimic -> nautilus or octopus; ...) 
-
-This has mostly worked out well, except that the mimic release received 
-less attention that we wanted due to the fact that multiple downstream 
-Ceph products (from Red Has and SUSE) decided to based their next release 
-on nautilus. Even though upstream every release is an "LTS" release, as a 
-practical matter mimic got less attention than luminous or nautilus. 
-
-We've had several requests/proposals to shift to a 12 month cadence. This 
-has several advantages: 
-
-- Stable/conservative clusters only have to be upgraded every 2 years 
-(instead of every 18 months) 
-- Yearly releases are more likely to intersect with downstream 
-distribution release (e.g., Debian). In the past there have been 
-problems where the Ceph releases included in consecutive releases of a 
-distro weren't easily upgradeable. 
-- Vendors that make downstream Ceph distributions/products tend to 
-release yearly. Aligning with those vendors means they are more likely 
-to productize *every* Ceph release. This will help make every Ceph 
-release an "LTS" release (not just in name but also in terms of 
-maintenance attention). 
-
-So far the balance of opinion seems to favor a shift to a 12 month 
-cycle[1], especially among developers, so it seems pretty likely we'll 
-make that shift. (If you do have strong concerns about such a move, now 
-is the time to raise them.) 
-
-That brings us to an important decision: what time of year should we 
-release? Once we pick the timing, we'll be releasing at that time *every 
-year* for each release (barring another schedule shift, which we want to 
-avoid), so let's choose carefully! 
-
-A few options: 
-
-- November: If we release Octopus 9 months from the Nautilus release 
-(planned for Feb, released in Mar) then we'd target this November. We 
-could shift to a 12 months candence after that. 
-- February: That's 12 months from the Nautilus target. 
-- March: That's 12 months from when Nautilus was *actually* released. 
-
-November is nice in the sense that we'd wrap things up before the 
-holidays. It's less good in that users may not be inclined to install the 
-new release when many developers will be less available in December. 
-
-February kind of sucked in that the scramble to get the last few things 
-done happened during the holidays. OTOH, we should be doing what we can 
-to avoid such scrambles, so that might not be something we should factor 
-in. March may be a bit more balanced, with a solid 3 months before when 
-people are productive, and 3 months after before they disappear on holiday 
-to address any post-release issues. 
-
-People tend to be somewhat less available over the summer months due to 
-holidays etc, so an early or late summer release might also be less than 
-ideal. 
-
-Thoughts? If we can narrow it down to a few options maybe we could do a 
-poll to gauge user preferences. 
-
-Thanks! 
-sage 
-
-
-[1] https://twitter.com/larsmb/status/1130010208971952129 
-
+>
+> Best,
+> Jan
+>
+> --
+> Jan Fajerski
+> Engineer Enterprise Storage
+> SUSE Linux GmbH, GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
+> HRB 21284 (AG Nürnberg)
