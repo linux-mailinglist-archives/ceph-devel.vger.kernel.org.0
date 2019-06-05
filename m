@@ -2,158 +2,84 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 479153658C
-	for <lists+ceph-devel@lfdr.de>; Wed,  5 Jun 2019 22:35:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 953BD3669C
+	for <lists+ceph-devel@lfdr.de>; Wed,  5 Jun 2019 23:17:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbfFEUfE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 5 Jun 2019 16:35:04 -0400
-Received: from mail.eyonic.com ([173.164.195.35]:45726 "EHLO mail.eyonic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726305AbfFEUfE (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 5 Jun 2019 16:35:04 -0400
-X-Greylist: delayed 478 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Jun 2019 16:35:03 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.eyonic.com (Postfix) with ESMTP id 292612089A;
-        Wed,  5 Jun 2019 13:27:05 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at eyonic.com
-Received: from mail.eyonic.com ([127.0.0.1])
-        by localhost (mail.eyonic.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id kVlFElR3iKBD; Wed,  5 Jun 2019 13:27:02 -0700 (PDT)
-Received: from mail.eyonic.com (localhost [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: ctaylor)
-        by mail.eyonic.com (Postfix) with ESMTPSA id 15D6D2019C;
-        Wed,  5 Jun 2019 13:27:01 -0700 (PDT)
+        id S1726636AbfFEVRK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 5 Jun 2019 17:17:10 -0400
+Received: from mail-qt1-f177.google.com ([209.85.160.177]:39387 "EHLO
+        mail-qt1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbfFEVRK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 5 Jun 2019 17:17:10 -0400
+Received: by mail-qt1-f177.google.com with SMTP id i34so251779qta.6
+        for <ceph-devel@vger.kernel.org>; Wed, 05 Jun 2019 14:17:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gbqp5bx9qyVxkLxaR9fG2uFoCs6utycng5C1GMn9m6g=;
+        b=aU/4PXJM5URmFvievNcJ3xX518GjBCbWkM7ZrBmqawTz30XJHO6ClzqWlVw8QBh2Ks
+         bD+t4ompKSujMBm5y9fnoyAOYRmih53mCKzDOQXx4eGMe2C6WUpV4nqFc6ZUBGmcjCWy
+         4THup1nBM5b+7aVi213eBrHVrtgikNc4HDiCPR1Rp254RRgCX/Qh7UWC434FMSClPdyD
+         XjfKsDyGNUE7REiYZaoMb/HnrGgqRulxet9Ex7jx0nKqGnfdcoUYJVLw8khFJuZ/ziiD
+         7QQGYSO3Duhh4q7fgdScgir7A/y/PNN+Ibhi3m/lPc5dFS4A7M7aE1JC09JWmQG+h3dQ
+         +uhw==
+X-Gm-Message-State: APjAAAWzKCdqqQV4LvsWBPjPOoYv0TV3yPoZoeV2h1ZvN9ETe+yjKhxT
+        zEKsu1Ft0W2cFdR0HivL+iCP9YdZGNBh3e7cwGnhfdMS
+X-Google-Smtp-Source: APXvYqxdGWRwZNhGaqSZQMGCwwIaCMNy8agUya4w6RegldscquZ9yBzbygdMx0XKyVLhfceg/tZGQO87TvggM4sDI+k=
+X-Received: by 2002:ac8:374d:: with SMTP id p13mr35888509qtb.389.1559769429198;
+ Wed, 05 Jun 2019 14:17:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Wed, 05 Jun 2019 13:27:01 -0700
-From:   Chris Taylor <ctaylor@eyonic.com>
-To:     Alexandre DERUMIER <aderumier@odiso.com>
-Cc:     Sage Weil <sage@newdream.net>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        ceph-users <ceph-users@ceph.com>, dev@ceph.io
-Subject: Re: [ceph-users] Changing the release cadence
-In-Reply-To: <12252276.433203.1559762173198.JavaMail.zimbra@odiso.com>
-References: <alpine.DEB.2.11.1906051556500.987@piezo.novalocal>
- <12252276.433203.1559762173198.JavaMail.zimbra@odiso.com>
-Message-ID: <c7af8b1292cd0c82f14ef99f977468b8@mail.eyonic.com>
-X-Sender: ctaylor@eyonic.com
-User-Agent: Roundcube Webmail/1.2-beta
+References: <20190603092600.covgtxixlsgmw3mt@jfsuselaptop>
+In-Reply-To: <20190603092600.covgtxixlsgmw3mt@jfsuselaptop>
+From:   Patrick Donnelly <pdonnell@redhat.com>
+Date:   Wed, 5 Jun 2019 14:16:43 -0700
+Message-ID: <CA+2bHPZ0jkoNWPBKcAWWe0=k8jwxUURPpOVaKKx0GZdo7rYC2Q@mail.gmail.com>
+Subject: Re: luminous ceph_volume_client against a nautilus cluster
+To:     ceph-devel <ceph-devel@vger.kernel.org>
+Cc:     Ramana Venkatesh Raja <rraja@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Hello Jan,
 
-It seems like since the change to the 9 months cadence it has been bumpy 
-for the Debian based installs. Changing to a 12 month cadence sounds 
-like a good idea. Perhaps some Debian maintainers can suggest a good 
-month for them to get the packages in time for their release cycle.
+On Mon, Jun 3, 2019 at 2:26 AM Jan Fajerski <jfajerski@suse.com> wrote:
+> I've asked about this in IRC already, but due to timezone foo ceph-devel might
+> be more effective.
+> I was wondering if there was a plan or expectation of creating cephfs subvolumes
+> using a luminous ceph_volume_client on a nautilus cluster (or any other sensible
+> version combination)?
 
+I do not think so. We do plan to have Nautilus clusters continue to
+function with the old ceph_volume_client.py clients.
 
-On 2019-06-05 12:16 pm, Alexandre DERUMIER wrote:
-> Hi,
-> 
-> 
->>> - November: If we release Octopus 9 months from the Nautilus release
->>> (planned for Feb, released in Mar) then we'd target this November. We
->>> could shift to a 12 months candence after that.
-> 
-> For the 2 last debian releases, the freeze was around january-february,
-> november seem to be a good time for ceph release.
-> 
-> ----- Mail original -----
-> De: "Sage Weil" <sage@newdream.net>
-> À: "ceph-users" <ceph-users@ceph.com>, "ceph-devel"
-> <ceph-devel@vger.kernel.org>, dev@ceph.io
-> Envoyé: Mercredi 5 Juin 2019 17:57:52
-> Objet: Changing the release cadence
-> 
-> Hi everyone,
-> 
-> Since luminous, we have had the follow release cadence and policy:
-> - release every 9 months
-> - maintain backports for the last two releases
-> - enable upgrades to move either 1 or 2 releases heads
-> (e.g., luminous -> mimic or nautilus; mimic -> nautilus or octopus; 
-> ...)
-> 
-> This has mostly worked out well, except that the mimic release received
-> less attention that we wanted due to the fact that multiple downstream
-> Ceph products (from Red Has and SUSE) decided to based their next 
-> release
-> on nautilus. Even though upstream every release is an "LTS" release, as 
-> a
-> practical matter mimic got less attention than luminous or nautilus.
-> 
-> We've had several requests/proposals to shift to a 12 month cadence. 
-> This
-> has several advantages:
-> 
-> - Stable/conservative clusters only have to be upgraded every 2 years
-> (instead of every 18 months)
-> - Yearly releases are more likely to intersect with downstream
-> distribution release (e.g., Debian). In the past there have been
-> problems where the Ceph releases included in consecutive releases of a
-> distro weren't easily upgradeable.
-> - Vendors that make downstream Ceph distributions/products tend to
-> release yearly. Aligning with those vendors means they are more likely
-> to productize *every* Ceph release. This will help make every Ceph
-> release an "LTS" release (not just in name but also in terms of
-> maintenance attention).
-> 
-> So far the balance of opinion seems to favor a shift to a 12 month
-> cycle[1], especially among developers, so it seems pretty likely we'll
-> make that shift. (If you do have strong concerns about such a move, now
-> is the time to raise them.)
-> 
-> That brings us to an important decision: what time of year should we
-> release? Once we pick the timing, we'll be releasing at that time 
-> *every
-> year* for each release (barring another schedule shift, which we want 
-> to
-> avoid), so let's choose carefully!
-> 
-> A few options:
-> 
-> - November: If we release Octopus 9 months from the Nautilus release
-> (planned for Feb, released in Mar) then we'd target this November. We
-> could shift to a 12 months candence after that.
-> - February: That's 12 months from the Nautilus target.
-> - March: That's 12 months from when Nautilus was *actually* released.
-> 
-> November is nice in the sense that we'd wrap things up before the
-> holidays. It's less good in that users may not be inclined to install 
-> the
-> new release when many developers will be less available in December.
-> 
-> February kind of sucked in that the scramble to get the last few things
-> done happened during the holidays. OTOH, we should be doing what we can
-> to avoid such scrambles, so that might not be something we should 
-> factor
-> in. March may be a bit more balanced, with a solid 3 months before when
-> people are productive, and 3 months after before they disappear on 
-> holiday
-> to address any post-release issues.
-> 
-> People tend to be somewhat less available over the summer months due to
-> holidays etc, so an early or late summer release might also be less 
-> than
-> ideal.
-> 
-> Thoughts? If we can narrow it down to a few options maybe we could do a
-> poll to gauge user preferences.
-> 
-> Thanks!
-> sage
-> 
-> 
-> [1] https://twitter.com/larsmb/status/1130010208971952129
-> 
-> _______________________________________________
-> ceph-users mailing list
-> ceph-users@lists.ceph.com
-> http://lists.ceph.com/listinfo.cgi/ceph-users-ceph.com
+> Currently this does not work, due to the volume client using the now removed
+> 'ceph mds dump' command. The fix is straight forward, but depending on if that
+> should work this could be more complex (essentially making ceph_volume_client
+> aware of the version of the ceph cluster).
+
+... so this is a bug. Is there a tracker ticket open for this yet?
+
+> I'm aware of the current refactor of the volume client as a mgr module. Will we
+> backport this to luminous?
+
+No.
+
+>Or is there an expectation that the volume client and
+> the ceph cluster have to run the same version?
+
+That's what we'd like yes. I think the tricky part is dealing with
+applications (like Manila) using an older ceph_volume_client.py. We
+could backport a switch in the library so that it uses the new `ceph
+fs volume` commands if the cluster is Nautilus+. I'm not sure that is
+really needed though.
+
+-- 
+Patrick Donnelly, Ph.D.
+He / Him / His
+Senior Software Engineer
+Red Hat Sunnyvale, CA
+GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
