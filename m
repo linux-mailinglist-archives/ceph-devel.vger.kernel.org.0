@@ -2,29 +2,29 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D82136C86
-	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2019 08:47:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E2C936D40
+	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2019 09:23:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbfFFGr5 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Thu, 6 Jun 2019 02:47:57 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:37078 "EHLO
+        id S1726040AbfFFHX1 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Thu, 6 Jun 2019 03:23:27 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:46565 "EHLO
         smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbfFFGr4 (ORCPT
+        with ESMTP id S1725784AbfFFHX1 (ORCPT
         <rfc822;groupwise-ceph-devel@vger.kernel.org:0:0>);
-        Thu, 6 Jun 2019 02:47:56 -0400
+        Thu, 6 Jun 2019 03:23:27 -0400
 Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 06 Jun 2019 08:47:55 +0200
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 06 Jun 2019 09:23:26 +0200
 Received: from localhost (nwb-a10-snat.microfocus.com [10.120.13.202])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Thu, 06 Jun 2019 07:47:48 +0100
-Date:   Thu, 6 Jun 2019 08:47:47 +0200
+        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Thu, 06 Jun 2019 08:22:59 +0100
+Date:   Thu, 6 Jun 2019 09:22:58 +0200
 From:   Jan Fajerski <jfajerski@suse.com>
-To:     ceph-devel <ceph-devel@vger.kernel.org>
-Cc:     Patrick Donnelly <pdonnell@redhat.com>,
+To:     Patrick Donnelly <pdonnell@redhat.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
         Ramana Venkatesh Raja <rraja@redhat.com>
 Subject: Re: luminous ceph_volume_client against a nautilus cluster
-Message-ID: <20190606064747.qnh73tymregwqjff@jfsuselaptop>
-Mail-Followup-To: ceph-devel <ceph-devel@vger.kernel.org>,
-        Patrick Donnelly <pdonnell@redhat.com>,
+Message-ID: <20190606072258.77x6tq6lbe6iyani@jfsuselaptop>
+Mail-Followup-To: Patrick Donnelly <pdonnell@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
         Ramana Venkatesh Raja <rraja@redhat.com>
 References: <20190603092600.covgtxixlsgmw3mt@jfsuselaptop>
  <CA+2bHPZ0jkoNWPBKcAWWe0=k8jwxUURPpOVaKKx0GZdo7rYC2Q@mail.gmail.com>
@@ -58,8 +58,7 @@ On Wed, Jun 05, 2019 at 02:16:43PM -0700, Patrick Donnelly wrote:
 >> aware of the version of the ceph cluster).
 >
 >... so this is a bug. Is there a tracker ticket open for this yet?
-
-Not yet, will open one.
+http://tracker.ceph.com/issues/40182
 >
 >> I'm aware of the current refactor of the volume client as a mgr module. Will we
 >> backport this to luminous?
@@ -74,12 +73,6 @@ Not yet, will open one.
 >could backport a switch in the library so that it uses the new `ceph
 >fs volume` commands if the cluster is Nautilus+. I'm not sure that is
 >really needed though.
-
-We see a case like that (luminous manila client against a nautilus cluster), so 
-I'd argue something is needed. I have a patch for this (with a switch), though 
-it might be enough to simply use 'ceph fs dump' instead of 'ceph mds dump' (i.e.  
-without a switch). luminous has the fs command already after all. I'm just not 
-sure if that would break something else.
 >
 >-- 
 >Patrick Donnelly, Ph.D.
