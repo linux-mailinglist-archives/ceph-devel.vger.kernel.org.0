@@ -2,80 +2,96 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7024C37AB3
-	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2019 19:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EE6C37D01
+	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2019 21:12:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728712AbfFFROH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 6 Jun 2019 13:14:07 -0400
-Received: from mail-qt1-f170.google.com ([209.85.160.170]:40005 "EHLO
-        mail-qt1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbfFFROG (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 6 Jun 2019 13:14:06 -0400
-Received: by mail-qt1-f170.google.com with SMTP id a15so3535531qtn.7
-        for <ceph-devel@vger.kernel.org>; Thu, 06 Jun 2019 10:14:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AnLaX7fHvbIIDylP09JjITW2JhZBdpO6lh9QMn1MXA8=;
-        b=ZAgDb65yikVUCyxxViv62thqNT2VGkrQ3iDRnYjaz9rP3OGUxr9+Xc6KvGLUmijMbz
-         3F9jpbjjdMpZsdrS1dLcv2dHs8yXPgI4W/tzn004crXKUXesKAH+dW2BcmwdMU6PgRHI
-         NLmflAVOUpeYpRBQ4GJuUvEjRZ8xpF6kO9wxdC2Fb2Go0XvfJWx5rtIa3oYl4m5AeNgW
-         34YlF/IeBvasdPrxEfjbE23s/ndTvjEdPk8xy6KS3bW9gvydS3QxSG5/JSY0ZE26I3Lo
-         iH/0VwHmtcgoRcgbKibhhFk2Kv2zUVS5G4G+66vCD4shbCfpIcmPJT+mrbTYfAAkoCk9
-         m2TQ==
-X-Gm-Message-State: APjAAAV35BKxhi0goSBUGXYPxMEvHkO+OJKFgFkeNOFXmratHL2YTqLM
-        GWjr7cx34zold+TAoDiSkCHGphOVxU9xZp4Tdzhrjr9R
-X-Google-Smtp-Source: APXvYqwWy1b/PHxM3tvGq6dt2pWZX38+Vyyl46Z0zWTHpjjP/9swpyYVRfpiX5DpSEzU7FBxX2UuGRGCdBxw5C1UAyw=
-X-Received: by 2002:a0c:c164:: with SMTP id i33mr21375890qvh.37.1559841245663;
- Thu, 06 Jun 2019 10:14:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <alpine.DEB.2.11.1906061434200.13706@piezo.novalocal>
-In-Reply-To: <alpine.DEB.2.11.1906061434200.13706@piezo.novalocal>
-From:   Patrick Donnelly <pdonnell@redhat.com>
-Date:   Thu, 6 Jun 2019 10:13:39 -0700
-Message-ID: <CA+2bHPZT81Dm+_tJBwqeqLefZ=JM2buK2R=RN=VicnAR3iwvYQ@mail.gmail.com>
-Subject: Re: octopus planning calls
-To:     Sage Weil <sweil@redhat.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>, dev@ceph.io
+        id S1728843AbfFFTMN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 6 Jun 2019 15:12:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46246 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728690AbfFFTMN (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 6 Jun 2019 15:12:13 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1144020872;
+        Thu,  6 Jun 2019 19:12:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559848332;
+        bh=7YRIG9AX9cEM3s6rKYJP9drCZyeEG5BrPSihaRIo3iw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=mdlK3RyJkGrk5b2FgKhQ7er9JNCtm2CXhtIC9g8LSYcdivl8R1/Bwsubg4uUDIfDJ
+         8lfH0hIOZP9sWy4MRGi/hNxkgOjsq4V6z1sIxcuDEi5qzuWDgbXw1PKJ8XD5fBw6KL
+         UFJ+KwgVX7VC/PnfhLY3oVmA4F46zFjUkfmrW6F8=
+Message-ID: <52aacd32597d3f66b900618d7dddd52b6bd933c7.camel@kernel.org>
+Subject: Re: [PATCH 0/2] control cephfs generated io with the help of cgroup
+ io controller
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xxhdx1985126@gmail.com, idryomov@gmail.com, ukernel@gmail.com,
+        ceph-devel@vger.kernel.org
+Cc:     Xuehan Xu <xxhdx1985126@163.com>, Tejun Heo <tj@kernel.org>
+Date:   Thu, 06 Jun 2019 15:12:10 -0400
+In-Reply-To: <20190604135119.8109-1-xxhdx1985126@gmail.com>
+References: <20190604135119.8109-1-xxhdx1985126@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jun 6, 2019 at 8:15 AM Sage Weil <sweil@redhat.com> wrote:
->
-> Hi everyone,
->
-> We'd like to do some planning calls for octopus.  Each call would be 30-60
-> minutes, and cover (at least) rados, rbd, rgw, and cephfs.  The dashboard
-> team has a face to face meeting next week in Germany so they should be in
-> good shape.  Sebastian, do we need to schedule something on the
-> orchestrator, or just rely on the existing Monday call?
->
-> 1- Does the 1500-1700 UTC time range work well enough for everyone?  We'll
-> record the calls, of course, and send an email summary after.
->
-> 2- What day(s):
->
->  Tomorrow (Friday Jun 7)
->  Next week (Jun 10-14... may conflict with dashboard f2f)
->  The following week (Jun 17-21)
->
-> If notice isn't too short for tomorrow or Monday, it might be nice to have
-> some clarity for the dashboard folks going into their f2f as far as what
-> underlying work and new features are in the pipeline.
->
-> Maybe... RADOS and RBD tomorrow, CephFS and RGW Monday?  Is that too much
-> of a stretch?
+On Tue, 2019-06-04 at 21:51 +0800, xxhdx1985126@gmail.com wrote:
+> From: Xuehan Xu <xxhdx1985126@163.com>
+> 
+> Hi, ilya
+> 
+> I've changed the code to add a new io controller policy that provide
+> the functionality to restrain cephfs generated io in terms of iops and
+> throughput.
+> 
+> This inflexible appoarch is a little crude indeed, like tejun said.
+> But we think, this should be able to provide some basic io throttling
+> for cephfs kernel client, and can protect the cephfs cluster from
+> being buggy or even client applications be the cephfs cluster has the
+> ability to do QoS or not. So we are submitting these patches, in case
+> they can really provide some help:-)
+> 
+> Xuehan Xu (2):
+>   ceph: add a new blkcg policy for cephfs
+>   ceph: use the ceph-specific blkcg policy to limit ceph client ops
+> 
+>  fs/ceph/Kconfig                     |   8 +
+>  fs/ceph/Makefile                    |   1 +
+>  fs/ceph/addr.c                      | 156 ++++++++++
+>  fs/ceph/ceph_io_policy.c            | 445 ++++++++++++++++++++++++++++
+>  fs/ceph/file.c                      | 110 +++++++
+>  fs/ceph/mds_client.c                |  26 ++
+>  fs/ceph/mds_client.h                |   7 +
+>  fs/ceph/super.c                     |  12 +
+>  include/linux/ceph/ceph_io_policy.h |  74 +++++
+>  include/linux/ceph/osd_client.h     |   7 +
+>  10 files changed, 846 insertions(+)
+>  create mode 100644 fs/ceph/ceph_io_policy.c
+>  create mode 100644 include/linux/ceph/ceph_io_policy.h
+> 
 
-Tomorrow is no good for me. Monday at 1500 UTC (8am PDT if Google is
-truthful) works.
+(cc'ing Tejun)
 
+This is interesting work, but it's not clear to me how you'd use this in
+practice. In particular, there are no instructions for users, and no
+real guidelines on when and how you'd want to set these values.
+
+Also, as Tejun pointed out, it's _really_ hard to parcel out resources
+properly when you don't have an accurate count of them. AIUI, that's the
+primary reason that the cgroup guys like interfaces that deal with
+percentages of a whole rather than discrete limits.
+
+I think we'd need to understand how we'd expect someone to use this in
+practice before we could merge this. At a bare minimum, a description of
+how you're setting them in your environment, and how you're gauging
+things like the total bandwidth and iops for the clients.
 -- 
-Patrick Donnelly, Ph.D.
-He / Him / His
-Senior Software Engineer
-Red Hat Sunnyvale, CA
-GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+Jeff Layton <jlayton@kernel.org>
+
