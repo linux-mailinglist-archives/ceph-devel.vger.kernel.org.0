@@ -2,73 +2,62 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87E8637716
-	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2019 16:47:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75E0E3778D
+	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2019 17:14:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728929AbfFFOrP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 6 Jun 2019 10:47:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47544 "EHLO mx1.redhat.com"
+        id S1729109AbfFFPO2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 6 Jun 2019 11:14:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41976 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727309AbfFFOrP (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 6 Jun 2019 10:47:15 -0400
+        id S1729086AbfFFPO2 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 6 Jun 2019 11:14:28 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3696030F1BA7
-        for <ceph-devel@vger.kernel.org>; Thu,  6 Jun 2019 14:47:15 +0000 (UTC)
-Received: from [10.3.118.11] (ovpn-118-11.phx2.redhat.com [10.3.118.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 01E417C3F8
-        for <ceph-devel@vger.kernel.org>; Thu,  6 Jun 2019 14:47:14 +0000 (UTC)
-From:   Mark Nelson <mnelson@redhat.com>
-Subject: 06/06/2019 perf meeting is on!
-To:     Ceph Development <ceph-devel@vger.kernel.org>
-Message-ID: <ae0d1372-7021-baac-3743-5122e0397d9b@redhat.com>
-Date:   Thu, 6 Jun 2019 09:47:14 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        by mx1.redhat.com (Postfix) with ESMTPS id A348E31628F2;
+        Thu,  6 Jun 2019 15:14:28 +0000 (UTC)
+Received: from ovpn-112-65.rdu2.redhat.com (ovpn-112-65.rdu2.redhat.com [10.10.112.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 36AA67D67C;
+        Thu,  6 Jun 2019 15:14:28 +0000 (UTC)
+Date:   Thu, 6 Jun 2019 15:14:27 +0000 (UTC)
+From:   Sage Weil <sweil@redhat.com>
+X-X-Sender: sage@piezo.novalocal
+To:     ceph-devel@vger.kernel.org, dev@ceph.io
+Subject: octopus planning calls
+Message-ID: <alpine.DEB.2.11.1906061434200.13706@piezo.novalocal>
+User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 06 Jun 2019 14:47:15 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 06 Jun 2019 15:14:28 +0000 (UTC)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Folks,
+Hi everyone,
 
+We'd like to do some planning calls for octopus.  Each call would be 30-60 
+minutes, and cover (at least) rados, rbd, rgw, and cephfs.  The dashboard 
+team has a face to face meeting next week in Germany so they should be in 
+good shape.  Sebastian, do we need to schedule something on the 
+orchestrator, or just rely on the existing Monday call?
 
-Welcome back from Cephalocon!  Perf meeting is on in ~15 minutes.  I'm 
-sending this both to the old and the new ceph development lists, but in 
-the future these emails will only be sent to the new dev@ceph.io list so 
-please remember to register!
+1- Does the 1500-1700 UTC time range work well enough for everyone?  We'll 
+record the calls, of course, and send an email summary after.
 
-Today we will talk a bit about some of the discussion that happened at 
-cephalocon around the new community performance hardware, plans for 
-incerta, Jenkins performance testing, autotuning, and trocksdb.
+2- What day(s):
 
+ Tomorrow (Friday Jun 7)
+ Next week (Jun 10-14... may conflict with dashboard f2f)
+ The following week (Jun 17-21)
 
+If notice isn't too short for tomorrow or Monday, it might be nice to have 
+some clarity for the dashboard folks going into their f2f as far as what 
+underlying work and new features are in the pipeline.
 
-Etherpad:
+Maybe... RADOS and RBD tomorrow, CephFS and RGW Monday?  Is that too much 
+of a stretch?
 
-https://pad.ceph.com/p/performance_weekly
-
-Bluejeans:
-
-https://bluejeans.com/908675367
-
-
-Thanks,
-
-Mark
-
-
-
-
-
-
-
-
-
+sage
+ 
