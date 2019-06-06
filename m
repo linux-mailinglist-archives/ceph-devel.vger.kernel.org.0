@@ -2,75 +2,67 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F07C37D16
-	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2019 21:15:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 883C137FAA
+	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2019 23:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbfFFTPu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 6 Jun 2019 15:15:50 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:37715 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728504AbfFFTPu (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 6 Jun 2019 15:15:50 -0400
-Received: by mail-qk1-f195.google.com with SMTP id d15so2199427qkl.4
-        for <ceph-devel@vger.kernel.org>; Thu, 06 Jun 2019 12:15:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=i2G7XApa4qYRDLh0iesXmVak2Gwm7NIrIFlC9ENg1aI=;
-        b=nPMHjKLaXxjJP/HycqWV75pwPNaXaq40andTXc7SNuXvfz+/Rd9bPbFXI/nIAMQr9U
-         GA32mvIztE5IudawEKN6KtQuwzpmELbZA0ZZ1EQjce5/xyj52OSvqf62WbClT4yIyhJD
-         Jx9jpB2Er7n15jiLb421+7Euu11LaNADO0kSG1+hcC6+j4eBx2j4QJFiDyNQzFlNg6OJ
-         +OdyKOdYYIAibuaiSKMinhfECY+lPyW/G91mfSWOpBYpz0qJskhZRNX0CzYRNYlXILi8
-         tFZt/LUUATu4ExrQscU16vmGjheo6bz8BfUximau+GASztquO+LFQFX5bJeqhvnDhOQT
-         ZSfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i2G7XApa4qYRDLh0iesXmVak2Gwm7NIrIFlC9ENg1aI=;
-        b=XiiWcp0MbQCNQgetYC5GeMQGDCOWQee6X+xJyFQ3p/RLA28mHofjy+dhRIDLigT9D/
-         1SRfn/kxaAZQvZYqD3/Baml9VSZ/Fu0r08fni//s25UGBhpE5pV4Q96/LHJuMP1YQzoi
-         ethKoz4f2rugx0GlE7Ujsqy2ZCMRZTdbUthGc0zVAiDq0YbruHJToT0A+3Rx5eaY5xic
-         NkjtrKAMk0X9zC7aNJ3lpvfzS2Y0axuol3+ouUKN9gsCkfDvAc94hbmJsmpR1C9yJmxv
-         cxFDltiqI0eUoQWo7RIyAshCWoiQy8cNuKiK+1BSuAKlTeDuKtDBq1EgCU+A5wqkBm8Q
-         hYGw==
-X-Gm-Message-State: APjAAAX3RdtPB4xbEXxZXeAmgT35gVoITpy4jVEUzoVLLj0vzIeVZG/o
-        ZwgwKrzx9Kb3c4+/H9rXVLo=
-X-Google-Smtp-Source: APXvYqygh4DgwmHFtd3KCXb1z5bmCZ6f8eMg8XKZ67DiPG41hkbT0YAsab2DG4hEXJt64b/z7mpYAw==
-X-Received: by 2002:a37:6a87:: with SMTP id f129mr25188719qkc.183.1559848549318;
-        Thu, 06 Jun 2019 12:15:49 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::1:c027])
-        by smtp.gmail.com with ESMTPSA id j1sm1980464qtc.26.2019.06.06.12.15.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 12:15:48 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 12:15:45 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     xxhdx1985126@gmail.com, idryomov@gmail.com, ukernel@gmail.com,
-        ceph-devel@vger.kernel.org, Xuehan Xu <xxhdx1985126@163.com>
-Subject: Re: [PATCH 0/2] control cephfs generated io with the help of cgroup
- io controller
-Message-ID: <20190606191545.GR374014@devbig004.ftw2.facebook.com>
-References: <20190604135119.8109-1-xxhdx1985126@gmail.com>
- <52aacd32597d3f66b900618d7dddd52b6bd933c7.camel@kernel.org>
+        id S1728452AbfFFVfp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 6 Jun 2019 17:35:45 -0400
+Received: from tragedy.dreamhost.com ([66.33.205.236]:50902 "EHLO
+        tragedy.dreamhost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbfFFVfo (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 6 Jun 2019 17:35:44 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by tragedy.dreamhost.com (Postfix) with ESMTPS id B3C8815F886;
+        Thu,  6 Jun 2019 14:35:43 -0700 (PDT)
+Date:   Thu, 6 Jun 2019 21:35:41 +0000 (UTC)
+From:   Sage Weil <sage@newdream.net>
+X-X-Sender: sage@piezo.novalocal
+To:     ceph-devel@vger.kernel.org, dev@ceph.io
+Subject: Re: octopus planning calls
+In-Reply-To: <alpine.DEB.2.11.1906061434200.13706@piezo.novalocal>
+Message-ID: <alpine.DEB.2.11.1906062131180.12100@piezo.novalocal>
+References: <alpine.DEB.2.11.1906061434200.13706@piezo.novalocal>
+User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <52aacd32597d3f66b900618d7dddd52b6bd933c7.camel@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-VR-STATUS: OK
+X-VR-SCORE: 0
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddrudeggedgudeihecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucggtfgfnhhsuhgsshgtrhhisggvpdfftffgtefojffquffvnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffujgfkfhgfgggtsehttdertddtredvnecuhfhrohhmpefurghgvgcuhggvihhluceoshgrghgvsehnvgifughrvggrmhdrnhgvtheqnecukfhppeduvdejrddtrddtrddunecurfgrrhgrmhepmhhouggvpehsmhhtphdphhgvlhhopehlohgtrghlhhhoshhtpdhinhgvthepuddvjedrtddrtddruddprhgvthhurhhnqdhprghthhepufgrghgvucghvghilhcuoehsrghgvgesnhgvfigurhgvrghmrdhnvghtqedpmhgrihhlfhhrohhmpehsrghgvgesnhgvfigurhgvrghmrdhnvghtpdhnrhgtphhtthhopeguvghvsegtvghphhdrihhonecuvehluhhsthgvrhfuihiivgeptd
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hello,
+On Thu, 6 Jun 2019, Sage Weil wrote:
+> Hi everyone,
+> 
+> We'd like to do some planning calls for octopus.  Each call would be 30-60 
+> minutes, and cover (at least) rados, rbd, rgw, and cephfs.  The dashboard 
+> team has a face to face meeting next week in Germany so they should be in 
+> good shape.  Sebastian, do we need to schedule something on the 
+> orchestrator, or just rely on the existing Monday call?
+> 
+> 1- Does the 1500-1700 UTC time range work well enough for everyone?  We'll 
+> record the calls, of course, and send an email summary after.
+> 
+> 2- What day(s):
+> 
+>  Tomorrow (Friday Jun 7)
+>  Next week (Jun 10-14... may conflict with dashboard f2f)
 
-On Thu, Jun 06, 2019 at 03:12:10PM -0400, Jeff Layton wrote:
-> (cc'ing Tejun)
+It seems SUSE's storage team offsite runs through tomorrow, and Monday is 
+a holiday in Germany, so let's wait until next week.
 
-Thanks for the cc.  I'd really appreciate if you guys keep me in the
-loop.
+How about:
 
--- 
-tejun
+Tue Jun 11:
+  1500 UTC  Orchestrator (Sebastian is already planning a call)
+  1600 UTC  RADOS
+Wed Jun 12:
+  1500 UTC  RBD
+  1600 UTC  RGW
+Thu Jun 13:
+  1600 UTC  CephFS
+
+?
+sage
