@@ -2,184 +2,68 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAD9636D51
-	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2019 09:27:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 601B636D69
+	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2019 09:37:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726324AbfFFH07 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 6 Jun 2019 03:26:59 -0400
-Received: from mail-it1-f179.google.com ([209.85.166.179]:55793 "EHLO
-        mail-it1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbfFFH06 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 6 Jun 2019 03:26:58 -0400
-Received: by mail-it1-f179.google.com with SMTP id i21so1639695ita.5
-        for <ceph-devel@vger.kernel.org>; Thu, 06 Jun 2019 00:26:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=JPyhmNFyrkq4eY97JM73u1LP9mPVjNxEJAZLZYTbzpw=;
-        b=jzlNDD3jwTjvPHWwbwGThIyfjQkBulzD3lXDQcq3dL11vfNMZuF69L/R469LvsPuHy
-         GLeyzf8Tii6mr9ET21ufGnLAQ4satUUbewMgncEmTWFSgdGhNzEzluAQ2/ZHKmbNASKp
-         1/91qN/ZpUIoFPytcCsnw92zQdokRCSMNwpm6z7x6Q3TiQodk6vTXGen3lwh+3wzNt1n
-         xmWTYroTgLGFQZaVi5D6Mhn1nDRTtUbE5KjP50aWkaxfJ5wFM60vURZKcxmzwiID3rDE
-         R+vYVtF1zYbNxM1ECn7kOR5SZvfWT8BvSLiI0ZOIPbhZLd0cCpAT57ligTrT0QqT2nRS
-         ZoBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JPyhmNFyrkq4eY97JM73u1LP9mPVjNxEJAZLZYTbzpw=;
-        b=uVKESRBUMpgY0Tk74ILAoLjtYjAGJBdH2oFvof0/wq3KzXMFSuvbSv4SkiS4lD6yDu
-         IFYiiKVbqlt4VAyg9LuTwa2z1emuBq7+LHBNLpUgs/j6DofRctJvvarVkh0QquViCVM4
-         nDWy7u5boT0Ar9HEA80RS+K8nA8pnFEa0Ouq8xKP54ejGTwAMxxqLvkbcOivy7lNEjcI
-         zyvvsD3lygrqQjNpJrtH5mZEM2q0D/WNAdLzoJC6dugI+Ebe3ztWZh8ZeqiCzFy950KH
-         6sDsTm28AmM21lv1vWuj/9PKR8XulrktzkXmxjDSAX0vIOtVFGGe4FIs51WPgljNEY/x
-         GiQQ==
-X-Gm-Message-State: APjAAAUhc+AVU2V38+ahgckSldgNm7YIoQXz7R15De87xM8OTEuAsfvY
-        XCp1zubhTZsme4rFodyOU2zdGjwvQpbfKnXtE0w=
-X-Google-Smtp-Source: APXvYqz7xNZNm4fOT1T4AaQ8KwF6JwKPy+qNCkN1PSUUEZonMMFIAJ8VAsXjUe5L2x3uD+eqfQR6f8K/vPJXywLKzGo=
-X-Received: by 2002:a02:cd82:: with SMTP id l2mr29744803jap.96.1559806017656;
- Thu, 06 Jun 2019 00:26:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <alpine.DEB.2.11.1906051556500.987@piezo.novalocal> <ME1PR01MB070645B4EDCB63853433D02A81170@ME1PR01MB0706.ausprd01.prod.outlook.com>
-In-Reply-To: <ME1PR01MB070645B4EDCB63853433D02A81170@ME1PR01MB0706.ausprd01.prod.outlook.com>
-From:   Xiaoxi Chen <superdebuger@gmail.com>
-Date:   Thu, 6 Jun 2019 15:26:46 +0800
-Message-ID: <CAEYCsVLdWh_hGQN+LoTrX1=BOVJZ-ras+PTGgRJ0n1Z_3-P3dw@mail.gmail.com>
+        id S1726092AbfFFHht (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 6 Jun 2019 03:37:49 -0400
+Received: from mx2.bfh.ch ([147.87.250.53]:34509 "EHLO mx2.bfh.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725769AbfFFHht (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 6 Jun 2019 03:37:49 -0400
+Received: from MAIL24.bfh.ch (mail24.bfh.ch [147.87.245.164])
+        by mx2.bfh.ch (8.14.4/8.14.4/Debian-4) with ESMTP id x567beRj013709
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 6 Jun 2019 09:37:40 +0200
+Received: from [10.8.0.14] (147.87.245.142) by MAIL24.bfh.ch (147.87.245.164)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Thu, 6 Jun 2019
+ 09:37:40 +0200
+Reply-To: <daniel.baumann@bfh.ch>
 Subject: Re: [ceph-users] Changing the release cadence
-To:     Linh Vu <vul@unimelb.edu.au>
-Cc:     Sage Weil <sage@newdream.net>,
-        "ceph-users@ceph.com" <ceph-users@ceph.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+CC:     "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
         "dev@ceph.io" <dev@ceph.io>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <alpine.DEB.2.11.1906051556500.987@piezo.novalocal>
+ <ME1PR01MB070645B4EDCB63853433D02A81170@ME1PR01MB0706.ausprd01.prod.outlook.com>
+ <CAEYCsVLdWh_hGQN+LoTrX1=BOVJZ-ras+PTGgRJ0n1Z_3-P3dw@mail.gmail.com>
+To:     "ceph-users@ceph.com" <ceph-users@ceph.com>
+From:   Daniel Baumann <daniel.baumann@bfh.ch>
+Message-ID: <869f9b91-9623-9c45-460e-1c563c6d5418@bfh.ch>
+Date:   Thu, 6 Jun 2019 09:37:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <CAEYCsVLdWh_hGQN+LoTrX1=BOVJZ-ras+PTGgRJ0n1Z_3-P3dw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [147.87.245.142]
+X-ClientProxiedBy: MAIL21.bfh.ch (147.87.245.161) To MAIL24.bfh.ch
+ (147.87.245.164)
+X-Bayes-Prob: 0.0001 (Score 0, tokens from: outbound, bfh:default, base:default, @@RPTN)
+X-Spam-Score: 0.00 () [Hold at 10.00] 
+X-CanIt-Geo: ip=147.87.245.164; country=CH; region=Bern; city=Bern; latitude=46.9312; longitude=7.4866; http://maps.google.com/maps?q=46.9312,7.4866&z=6
+X-CanItPRO-Stream: bfh:outbound (inherits from bfh:default,base:default)
+X-Canit-Stats-ID: 030ljBEW8 - 9f543106e51b - 20190606
+X-CanIt-Archive-Cluster: gbKgvJ3SmUdnfmr4CnDUWvXR30M
+X-Scanned-By: CanIt (www . roaringpenguin . com) on 147.87.250.53
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-We go with upstream release and mostly Nautilus now, probably the most
-aggressive ones among serious production user (i.e tens of PB+ ),
+On 6/6/19 9:26 AM, Xiaoxi Chen wrote:
+> I will vote for November for several reasons:
 
-I will vote for November for several reasons:
+[...]
 
- 1.   Q4 is holiday season and usually production rollout was blocked
-, especially storage related change, which usually give team more time
-to prepare/ testing/ LnP the new releases, as well as catch up with
-new features.
+as an academic institution we're aligned by August to July (school year)
+instead of the January to December (calendar year), so all your reasons
+(thanks!) are valid for us.. just shifted by 6 months, hence Q1 is ideal
+for us.
 
- 2.  Q4/Q1 is usually the planning season,  having the upstream
-released and testing to know the readiness of new feature, will
-greatly helps when planning the feature/offering of next year.
+however, given that academic institutions are the minority, I'm
+convinced now that November is the better choice for everyone.
 
- 3.  Users have whole year to migrate their
-provision/monitoring/deployment/remediation system to new version, and
-have enough time to fix and stable the surrounding system before next
-holiday season.
-
-Release in Feb or March will make the Q4 just in the middle of the
-cycle, and lot of changes will land at last minutes(month),   in which
-case, few things can be test and forecasted based on the state-of-art
-in Q4.
-
--Xiaoxi
-
-Linh Vu <vul@unimelb.edu.au> =E4=BA=8E2019=E5=B9=B46=E6=9C=886=E6=97=A5=E5=
-=91=A8=E5=9B=9B =E4=B8=8A=E5=8D=888:32=E5=86=99=E9=81=93=EF=BC=9A
->
-> I think 12 months cycle is much better from the cluster operations perspe=
-ctive. I also like March as a release month as well.
-> ________________________________
-> From: ceph-users <ceph-users-bounces@lists.ceph.com> on behalf of Sage We=
-il <sage@newdream.net>
-> Sent: Thursday, 6 June 2019 1:57 AM
-> To: ceph-users@ceph.com; ceph-devel@vger.kernel.org; dev@ceph.io
-> Subject: [ceph-users] Changing the release cadence
->
-> Hi everyone,
->
-> Since luminous, we have had the follow release cadence and policy:
->  - release every 9 months
->  - maintain backports for the last two releases
->  - enable upgrades to move either 1 or 2 releases heads
->    (e.g., luminous -> mimic or nautilus; mimic -> nautilus or octopus; ..=
-.)
->
-> This has mostly worked out well, except that the mimic release received
-> less attention that we wanted due to the fact that multiple downstream
-> Ceph products (from Red Has and SUSE) decided to based their next release
-> on nautilus.  Even though upstream every release is an "LTS" release, as =
-a
-> practical matter mimic got less attention than luminous or nautilus.
->
-> We've had several requests/proposals to shift to a 12 month cadence. This
-> has several advantages:
->
->  - Stable/conservative clusters only have to be upgraded every 2 years
->    (instead of every 18 months)
->  - Yearly releases are more likely to intersect with downstream
->    distribution release (e.g., Debian).  In the past there have been
->    problems where the Ceph releases included in consecutive releases of a
->    distro weren't easily upgradeable.
->  - Vendors that make downstream Ceph distributions/products tend to
->    release yearly.  Aligning with those vendors means they are more likel=
-y
->    to productize *every* Ceph release.  This will help make every Ceph
->    release an "LTS" release (not just in name but also in terms of
->    maintenance attention).
->
-> So far the balance of opinion seems to favor a shift to a 12 month
-> cycle[1], especially among developers, so it seems pretty likely we'll
-> make that shift.  (If you do have strong concerns about such a move, now
-> is the time to raise them.)
->
-> That brings us to an important decision: what time of year should we
-> release?  Once we pick the timing, we'll be releasing at that time *every
-> year* for each release (barring another schedule shift, which we want to
-> avoid), so let's choose carefully!
->
-> A few options:
->
->  - November: If we release Octopus 9 months from the Nautilus release
->    (planned for Feb, released in Mar) then we'd target this November.  We
->    could shift to a 12 months candence after that.
->  - February: That's 12 months from the Nautilus target.
->  - March: That's 12 months from when Nautilus was *actually* released.
->
-> November is nice in the sense that we'd wrap things up before the
-> holidays.  It's less good in that users may not be inclined to install th=
-e
-> new release when many developers will be less available in December.
->
-> February kind of sucked in that the scramble to get the last few things
-> done happened during the holidays.  OTOH, we should be doing what we can
-> to avoid such scrambles, so that might not be something we should factor
-> in.  March may be a bit more balanced, with a solid 3 months before when
-> people are productive, and 3 months after before they disappear on holida=
-y
-> to address any post-release issues.
->
-> People tend to be somewhat less available over the summer months due to
-> holidays etc, so an early or late summer release might also be less than
-> ideal.
->
-> Thoughts?  If we can narrow it down to a few options maybe we could do a
-> poll to gauge user preferences.
->
-> Thanks!
-> sage
->
->
-> [1] https://protect-au.mimecast.com/s/N1l6CROAEns1RN1Zu9Jwts?domain=3Dtwi=
-tter.com
->
-> _______________________________________________
-> ceph-users mailing list
-> ceph-users@lists.ceph.com
-> http://lists.ceph.com/listinfo.cgi/ceph-users-ceph.com
->
-> _______________________________________________
-> ceph-users mailing list
-> ceph-users@lists.ceph.com
-> http://lists.ceph.com/listinfo.cgi/ceph-users-ceph.com
+Regards,
+Daniel
