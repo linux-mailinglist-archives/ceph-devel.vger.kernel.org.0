@@ -2,33 +2,33 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEFB438F44
-	for <lists+ceph-devel@lfdr.de>; Fri,  7 Jun 2019 17:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1627238F48
+	for <lists+ceph-devel@lfdr.de>; Fri,  7 Jun 2019 17:38:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729989AbfFGPiX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 7 Jun 2019 11:38:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48208 "EHLO mail.kernel.org"
+        id S1730035AbfFGPil (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 7 Jun 2019 11:38:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729868AbfFGPiW (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:38:22 -0400
+        id S1729938AbfFGPiX (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:38:23 -0400
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 648802147A;
-        Fri,  7 Jun 2019 15:38:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44CF1214AE;
+        Fri,  7 Jun 2019 15:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1559921902;
-        bh=mYFbO6z0xwV6my6cGOyFNrN4RWuepkjibLLeJYv4iZk=;
+        bh=VyMGwNHbNW332OuFcFpZGqUXUtoxNFAGNBioKLMK8Mw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IQkDFX1a15Y00Q8essrXE3lqQ7WYvb/BntI/HWuQOoirYDyimAfcjCH38mvUPs5Dw
-         fTdzWDDZBh1EJ1Q6f8rw4LCaAPXGB3sgTDzZTxM9WdtxGf0Ggb5s7XVV5NBUeP/f8s
-         U/JJIjeW6B+sRf1xwg6X9bqhkkmkFfkdRnVMCJL8=
+        b=mh9EQNKRR8V1R27k7KJP75VcUDwxsUxOUbohqfhkMJvozcC3NqkqdJBH3kkerlALs
+         F+mLwb0JfVqWCgCC3CnjCgcVdSKOow1xZrcQcdV55CVK5wkCzzwwByQfRSrGq0VLvm
+         bBW5xSRUVAeFsTPbmHzRMUC6BFSkbCCJz4FrXDn4=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     idryomov@redhat.com, zyan@redhat.com, sage@redhat.com
 Cc:     ceph-devel@vger.kernel.org, dev@ceph.io
-Subject: [PATCH 04/16] libceph: switch osdmap decoding to use ceph_decode_entity_addr
-Date:   Fri,  7 Jun 2019 11:38:04 -0400
-Message-Id: <20190607153816.12918-5-jlayton@kernel.org>
+Subject: [PATCH 05/16] libceph: fix watch_item_t decoding to use ceph_decode_entity_addr
+Date:   Fri,  7 Jun 2019 11:38:05 -0400
+Message-Id: <20190607153816.12918-6-jlayton@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190607153816.12918-1-jlayton@kernel.org>
 References: <20190607153816.12918-1-jlayton@kernel.org>
@@ -39,45 +39,52 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+While we're in there, let's also fix up the decoder to do proper
+bounds checking.
+
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- net/ceph/osdmap.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ net/ceph/osd_client.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-index 48a31dc9161c..95e98ae59a54 100644
---- a/net/ceph/osdmap.c
-+++ b/net/ceph/osdmap.c
-@@ -1489,11 +1489,9 @@ static int osdmap_decode(void **p, void *end, struct ceph_osdmap *map)
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index e6d31e0f0289..f8a4d29ef688 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -4914,20 +4914,26 @@ static int decode_watcher(void **p, void *end, struct ceph_watch_item *item)
+ 	ret = ceph_start_decoding(p, end, 2, "watch_item_t",
+ 				  &struct_v, &struct_len);
+ 	if (ret)
+-		return ret;
++		goto bad;
++
++	ret = -EINVAL;
++	ceph_decode_copy_safe(p, end, &item->name, sizeof(item->name), bad);
++	ceph_decode_64_safe(p, end, item->cookie, bad);
++	ceph_decode_skip_32(p, end, bad); /* skip timeout seconds */
  
- 	/* osd_state, osd_weight, osd_addrs->client_addr */
- 	ceph_decode_need(p, end, 3*sizeof(u32) +
--			 map->max_osd*((struct_v >= 5 ? sizeof(u32) :
--							sizeof(u8)) +
--				       sizeof(*map->osd_weight) +
--				       sizeof(*map->osd_addr)), e_inval);
--
-+			 map->max_osd*(struct_v >= 5 ? sizeof(u32) :
-+						       sizeof(u8)) +
-+				       sizeof(*map->osd_weight), e_inval);
- 	if (ceph_decode_32(p) != map->max_osd)
- 		goto e_inval;
- 
-@@ -1514,9 +1512,11 @@ static int osdmap_decode(void **p, void *end, struct ceph_osdmap *map)
- 	if (ceph_decode_32(p) != map->max_osd)
- 		goto e_inval;
- 
--	ceph_decode_copy(p, map->osd_addr, map->max_osd*sizeof(*map->osd_addr));
--	for (i = 0; i < map->max_osd; i++)
--		ceph_decode_addr(&map->osd_addr[i]);
-+	for (i = 0; i < map->max_osd; i++) {
-+		err = ceph_decode_entity_addr(p, end, &map->osd_addr[i]);
-+		if (err)
+-	ceph_decode_copy(p, &item->name, sizeof(item->name));
+-	item->cookie = ceph_decode_64(p);
+-	*p += 4; /* skip timeout_seconds */
+ 	if (struct_v >= 2) {
+-		ceph_decode_copy(p, &item->addr, sizeof(item->addr));
+-		ceph_decode_addr(&item->addr);
++		ret = ceph_decode_entity_addr(p, end, &item->addr);
++		if (ret)
 +			goto bad;
-+	}
++	} else {
++		ret = 0;
+ 	}
  
- 	/* pg_temp */
- 	err = decode_pg_temp(p, end, map);
+ 	dout("%s %s%llu cookie %llu addr %s\n", __func__,
+ 	     ENTITY_NAME(item->name), item->cookie,
+ 	     ceph_pr_addr(&item->addr));
+-	return 0;
++bad:
++	return ret;
+ }
+ 
+ static int decode_watchers(void **p, void *end,
 -- 
 2.21.0
 
