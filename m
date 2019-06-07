@@ -2,102 +2,89 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AABCC38F42
-	for <lists+ceph-devel@lfdr.de>; Fri,  7 Jun 2019 17:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DBC639299
+	for <lists+ceph-devel@lfdr.de>; Fri,  7 Jun 2019 18:57:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730031AbfFGPih (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 7 Jun 2019 11:38:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48472 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730020AbfFGPid (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:38:33 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9A7B21473;
-        Fri,  7 Jun 2019 15:38:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559921912;
-        bh=QcOnqNpzplixhuP1nCon2irlFxVrwyg1/XFSCQvbxrw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kcJbKC/plLT6QqkOLN+V2w+w9iZES4/FW6sZD6ahYIzgnsuSBRk+atjZT5pdMh7/x
-         8UIyttaKROz6jXpxb/u2NndXtjK3HQ9CJMwZQw88sbRINmpNBqet/qtCAAZWvvL36w
-         ++VFSvuyGhCGCY6DXQ84XD/NFQ0RhW2wYHjDHscc=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     idryomov@redhat.com, zyan@redhat.com, sage@redhat.com
-Cc:     ceph-devel@vger.kernel.org, dev@ceph.io
-Subject: [PATCH 16/16] ceph: increment change_attribute on local changes
-Date:   Fri,  7 Jun 2019 11:38:16 -0400
-Message-Id: <20190607153816.12918-17-jlayton@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153816.12918-1-jlayton@kernel.org>
-References: <20190607153816.12918-1-jlayton@kernel.org>
+        id S1729858AbfFGQ5g (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 7 Jun 2019 12:57:36 -0400
+Received: from mail-io1-f44.google.com ([209.85.166.44]:42629 "EHLO
+        mail-io1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729241AbfFGQ5f (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 7 Jun 2019 12:57:35 -0400
+Received: by mail-io1-f44.google.com with SMTP id u19so1931484ior.9
+        for <ceph-devel@vger.kernel.org>; Fri, 07 Jun 2019 09:57:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZZUBQAY2NKLcWV7ykeBDlWj5fofo9UbVtWDtMbHVbK4=;
+        b=e71XXaUrMCmyTV3edC18FxKU8pGXJreaNCtXRnGtOOeTvZgI5B9CtxZCjmkdlSoJDX
+         Cx6vkWG8FfwKXxY0FrOoMGUA1178YVyGopXqAUFw++gAJPAV8B0whbmOx3JVTxkpxvwS
+         y7GCFTyVDuqiXbM/o6B2q0RVUK0Qkvws/kiOYjBeNUYNRI8VL4T9R7wx+aXMXMF4oQ8A
+         Psf1HiCaslkvfaXokeAXzNXotPYoxVRwAfVpXOzX9tVf69I12pDSzamlM8RCgLwIFQ4/
+         dXq/4E6vv29AUrWKAZ25H8eHH0BCKov3MSx0IL0U4beIWMEx6dGDnXesvO686qz3t5Wb
+         AJ0w==
+X-Gm-Message-State: APjAAAUcq63IVvxPbGoNJdjHQaJ8yHYIoVvSxoPedwkg2mk9UEPnqydb
+        usdljLh44lWdyvEAR20YxgQr/sPNAYtnjvaMYw2dzQ==
+X-Google-Smtp-Source: APXvYqxHVm3C5XPz/ngFMM100/gC4WsDEeBgGwoJHu9vwaSJ1OCmlx1IQkPgqCA7t7599JkG1xfYhjIzhX0Gi0Ao63c=
+X-Received: by 2002:a6b:6012:: with SMTP id r18mr11632737iog.241.1559926654959;
+ Fri, 07 Jun 2019 09:57:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <ae0d1372-7021-baac-3743-5122e0397d9b@redhat.com>
+In-Reply-To: <ae0d1372-7021-baac-3743-5122e0397d9b@redhat.com>
+From:   Mike Perez <miperez@redhat.com>
+Date:   Fri, 7 Jun 2019 09:57:23 -0700
+Message-ID: <CAFFUGJdVQf3e9TupdbCTR5OoN368N=WtFQuRhrp=Rz_f0TU3ow@mail.gmail.com>
+Subject: Re: 06/06/2019 perf meeting is on!
+To:     Mark Nelson <mnelson@redhat.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-We don't set SB_I_VERSION on ceph since we need to manage it ourselves,
-so we must increment it whenever we update the file times.
+And here is the recording:
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/addr.c | 2 ++
- fs/ceph/file.c | 5 +++++
- 2 files changed, 7 insertions(+)
+https://youtu.be/us8X3tGuBOo
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index a47c541f8006..e078cc55b989 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -10,6 +10,7 @@
- #include <linux/pagevec.h>
- #include <linux/task_io_accounting_ops.h>
- #include <linux/signal.h>
-+#include <linux/iversion.h>
- 
- #include "super.h"
- #include "mds_client.h"
-@@ -1576,6 +1577,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
- 
- 	/* Update time before taking page lock */
- 	file_update_time(vma->vm_file);
-+	inode_inc_iversion_raw(inode);
- 
- 	do {
- 		lock_page(page);
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index a7080783fe20..e993ffeae9de 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -10,6 +10,7 @@
- #include <linux/namei.h>
- #include <linux/writeback.h>
- #include <linux/falloc.h>
-+#include <linux/iversion.h>
- 
- #include "super.h"
- #include "mds_client.h"
-@@ -1434,6 +1435,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	if (err)
- 		goto out;
- 
-+	inode_inc_iversion_raw(inode);
-+
- 	if (ci->i_inline_version != CEPH_INLINE_NONE) {
- 		err = ceph_uninline_data(file, NULL);
- 		if (err < 0)
-@@ -2065,6 +2068,8 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 		do_final_copy = true;
- 
- 	file_update_time(dst_file);
-+	inode_inc_iversion_raw(dst_inode);
-+
- 	if (endoff > size) {
- 		int caps_flags = 0;
- 
--- 
-2.21.0
+--
+Mike Perez (thingee)
 
+On Thu, Jun 6, 2019 at 7:47 AM Mark Nelson <mnelson@redhat.com> wrote:
+>
+> Hi Folks,
+>
+>
+> Welcome back from Cephalocon!  Perf meeting is on in ~15 minutes.  I'm
+> sending this both to the old and the new ceph development lists, but in
+> the future these emails will only be sent to the new dev@ceph.io list so
+> please remember to register!
+>
+> Today we will talk a bit about some of the discussion that happened at
+> cephalocon around the new community performance hardware, plans for
+> incerta, Jenkins performance testing, autotuning, and trocksdb.
+>
+>
+>
+> Etherpad:
+>
+> https://pad.ceph.com/p/performance_weekly
+>
+> Bluejeans:
+>
+> https://bluejeans.com/908675367
+>
+>
+> Thanks,
+>
+> Mark
+>
+>
+>
+>
+>
+>
+>
+>
+>
