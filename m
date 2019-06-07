@@ -2,89 +2,70 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DBC639299
-	for <lists+ceph-devel@lfdr.de>; Fri,  7 Jun 2019 18:57:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8552D392A8
+	for <lists+ceph-devel@lfdr.de>; Fri,  7 Jun 2019 19:00:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729858AbfFGQ5g (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 7 Jun 2019 12:57:36 -0400
-Received: from mail-io1-f44.google.com ([209.85.166.44]:42629 "EHLO
-        mail-io1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729241AbfFGQ5f (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 7 Jun 2019 12:57:35 -0400
-Received: by mail-io1-f44.google.com with SMTP id u19so1931484ior.9
-        for <ceph-devel@vger.kernel.org>; Fri, 07 Jun 2019 09:57:35 -0700 (PDT)
+        id S1731093AbfFGRAl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 7 Jun 2019 13:00:41 -0400
+Received: from mail-io1-f45.google.com ([209.85.166.45]:34860 "EHLO
+        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728974AbfFGRAj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 7 Jun 2019 13:00:39 -0400
+Received: by mail-io1-f45.google.com with SMTP id m24so1958788ioo.2
+        for <ceph-devel@vger.kernel.org>; Fri, 07 Jun 2019 10:00:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZZUBQAY2NKLcWV7ykeBDlWj5fofo9UbVtWDtMbHVbK4=;
-        b=e71XXaUrMCmyTV3edC18FxKU8pGXJreaNCtXRnGtOOeTvZgI5B9CtxZCjmkdlSoJDX
-         Cx6vkWG8FfwKXxY0FrOoMGUA1178YVyGopXqAUFw++gAJPAV8B0whbmOx3JVTxkpxvwS
-         y7GCFTyVDuqiXbM/o6B2q0RVUK0Qkvws/kiOYjBeNUYNRI8VL4T9R7wx+aXMXMF4oQ8A
-         Psf1HiCaslkvfaXokeAXzNXotPYoxVRwAfVpXOzX9tVf69I12pDSzamlM8RCgLwIFQ4/
-         dXq/4E6vv29AUrWKAZ25H8eHH0BCKov3MSx0IL0U4beIWMEx6dGDnXesvO686qz3t5Wb
-         AJ0w==
-X-Gm-Message-State: APjAAAUcq63IVvxPbGoNJdjHQaJ8yHYIoVvSxoPedwkg2mk9UEPnqydb
-        usdljLh44lWdyvEAR20YxgQr/sPNAYtnjvaMYw2dzQ==
-X-Google-Smtp-Source: APXvYqxHVm3C5XPz/ngFMM100/gC4WsDEeBgGwoJHu9vwaSJ1OCmlx1IQkPgqCA7t7599JkG1xfYhjIzhX0Gi0Ao63c=
-X-Received: by 2002:a6b:6012:: with SMTP id r18mr11632737iog.241.1559926654959;
- Fri, 07 Jun 2019 09:57:34 -0700 (PDT)
+        bh=3t1+EkYtzd4ceShN5yJXmRooepXBWprvxABwURCAe2o=;
+        b=BFgAUp9xDj/A1P9G427VaSuU1uhC745ULQh8MrDzWHQqI2LIzFugOE598fZOBEaEBK
+         xIT5fxbV7TpXiZLjeVL5+UwE6whvjkpFJyv3Op5xTg1ziiGjIJOGDPCiYLwvmvaV+Hmo
+         NjBsBnuA8jN2FPRfNGmvV4TReP9GIELE6Mq5CVo1VUTWY402xWTEXGnrX9OXVvlavKcW
+         JSDCiMIVd632Aqpm0PRIqbjUS94kPUJue3IYQxuA+KRkmcv5txkqybz9CS4Xe2zpD5Vn
+         5g/agssQUmHsKSh7eOnwvMR1V1vN4fKECJSe2G7W2P3oXKEXl6B+pNVP5DUuF7kUHnHz
+         iDRA==
+X-Gm-Message-State: APjAAAXYkDn879goZE5I3ZVRGgseberVZ24GzR2DWyuf930CIQZgWfaG
+        r9ZdbsoBMbJcxXfsQStgZu58Pje4zbDUeUkjTRaKOw==
+X-Google-Smtp-Source: APXvYqyzzlnFLoKVDXFhHte+7ULieNx4Yb1YevhJhrv26qzbRMhoALg3XUQrSsCD7ljfeTjjYEKac8wDQzvcBN9K3hU=
+X-Received: by 2002:a6b:6012:: with SMTP id r18mr11641250iog.241.1559926839138;
+ Fri, 07 Jun 2019 10:00:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <ae0d1372-7021-baac-3743-5122e0397d9b@redhat.com>
-In-Reply-To: <ae0d1372-7021-baac-3743-5122e0397d9b@redhat.com>
+References: <alpine.DEB.2.11.1905301812380.29593@piezo.novalocal>
+ <alpine.DEB.2.11.1906051630420.13706@piezo.novalocal> <CAJACTufv89tC=BOGJLn=ufjdh9q25NFcETg-nfodk_Rxh=KLmg@mail.gmail.com>
+In-Reply-To: <CAJACTufv89tC=BOGJLn=ufjdh9q25NFcETg-nfodk_Rxh=KLmg@mail.gmail.com>
 From:   Mike Perez <miperez@redhat.com>
-Date:   Fri, 7 Jun 2019 09:57:23 -0700
-Message-ID: <CAFFUGJdVQf3e9TupdbCTR5OoN368N=WtFQuRhrp=Rz_f0TU3ow@mail.gmail.com>
-Subject: Re: 06/06/2019 perf meeting is on!
-To:     Mark Nelson <mnelson@redhat.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+Date:   Fri, 7 Jun 2019 10:00:27 -0700
+Message-ID: <CAFFUGJdCz8QLv7Xdm7nLRW9Jyea5iRRZZ9hYNaVf4ENnhLgRWA@mail.gmail.com>
+Subject: Re: CDM next Wednesday: multi-site rbd and cephfs; rados progress events
+To:     Xuehan Xu <xxhdx1985126@gmail.com>
+Cc:     Sage Weil <sage@newdream.net>,
+        ceph-devel <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-And here is the recording:
+Hi Xuehan,
 
-https://youtu.be/us8X3tGuBOo
+Here are the recordings for this meeting:
+
+https://www.youtube.com/watch?v=EG-3rcvqvGI
+https://www.youtube.com/watch?v=vYY4yngqMsQ
 
 --
 Mike Perez (thingee)
 
-On Thu, Jun 6, 2019 at 7:47 AM Mark Nelson <mnelson@redhat.com> wrote:
+On Wed, Jun 5, 2019 at 7:24 PM Xuehan Xu <xxhdx1985126@gmail.com> wrote:
 >
-> Hi Folks,
+> > BTW for those using Chrome, for some reason using the redhat.bluejean.com
+> > URL variant works better for me (doesn't prompt me to install the app):
+> >
+> > https://redhat.bluejeans.com/908675367
+> >
+> > sage
 >
+> Hi, everyone.
 >
-> Welcome back from Cephalocon!  Perf meeting is on in ~15 minutes.  I'm
-> sending this both to the old and the new ceph development lists, but in
-> the future these emails will only be sent to the new dev@ceph.io list so
-> please remember to register!
->
-> Today we will talk a bit about some of the discussion that happened at
-> cephalocon around the new community performance hardware, plans for
-> incerta, Jenkins performance testing, autotuning, and trocksdb.
->
->
->
-> Etherpad:
->
-> https://pad.ceph.com/p/performance_weekly
->
-> Bluejeans:
->
-> https://bluejeans.com/908675367
->
->
-> Thanks,
->
-> Mark
->
->
->
->
->
->
->
->
->
+> Sorry, I missed the CDM last night, I was too tired and had to work at day time.
+> Could anyone share the recording, please? Thanks:-)
