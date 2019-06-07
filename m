@@ -2,97 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05D6138340
-	for <lists+ceph-devel@lfdr.de>; Fri,  7 Jun 2019 06:03:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2903B384EC
+	for <lists+ceph-devel@lfdr.de>; Fri,  7 Jun 2019 09:25:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725554AbfFGEDB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 7 Jun 2019 00:03:01 -0400
-Received: from mail-qt1-f170.google.com ([209.85.160.170]:44662 "EHLO
-        mail-qt1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725468AbfFGEDB (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 7 Jun 2019 00:03:01 -0400
-Received: by mail-qt1-f170.google.com with SMTP id x47so761386qtk.11
-        for <ceph-devel@vger.kernel.org>; Thu, 06 Jun 2019 21:03:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xCuKZCCqerpXKHaRSEwjIqGz9caDX8QiW6ojt21WDTE=;
-        b=EAWOqKtrnA4X/DtDHeH4aDmhlGfV9VyKqhtL1PppYxZz7C2gHB6eai1EzpAG3NTshS
-         QBuGBqN1cyduuCrGb+s643a9CuEKtmMn/mdooNYvib9bzLaP7AfssVk7oY3Q0+dcl3vE
-         DuwFZyE+tKtTkmrtiBHmjuNKGuKCWpoi/7/lUQSC48NVCGooKM9zKWMxuVHTzZon4Ea7
-         AkDlXmwKMWn37EQlDAB0ASKFBk2JdLi9/UmWVnmWD0L0ZSDHMzfnzmIub6srqYEpjGOM
-         oHTQiLHLAEnCthyGPL7ek3Sn5Ny2msVeoEM7Pjksw6FxB/kmSCtwLLOP8m8jnxw5xX84
-         gGCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xCuKZCCqerpXKHaRSEwjIqGz9caDX8QiW6ojt21WDTE=;
-        b=PwGn08l+XoJthy0stJY65XWuG3Qkzw6EDM0YyHMPG6ttL5GQcM8ec9ab+hULvlfNqt
-         l6lH0nO+NlSmmiuOOpcDFtX5PgP+vPmW6YPBxneY4z+HmNsux0bR2x0n4a12gJ4FcREO
-         7SCIQ0uKNByOsEDYfeq3SzNfT98x8JsK9Jvecq5l+AzZdjYEtTGNtipf9zeBpJS8I+ub
-         jWyPjh+SFocus7aMWLPjOX0RBHI+zIuFR7nlQgtYoRHXL4KDdDSmUwLfaUQZdW8OFL8J
-         OS+oibnudgFlN0mMU7vG5+m7TXstHI5CntSMpyVBKMQ7cuf/FSQ8ik/yxI+gmtZ8cr8i
-         uEoA==
-X-Gm-Message-State: APjAAAW7w+K2+bamWYxDCeeyzKTAcll/kVH6hpncH7Mw5XA55vivQiIe
-        sig7UzP09Ki3fBbktbkPS9vzI0kI6KcVwmNH0I3o2N4U
-X-Google-Smtp-Source: APXvYqzz/nRFHGyNwbhysZx/nJpUSVKa+t3xpvkcbapdf4I4Sd6L5yFn6LfBv3m53EzsHcNRyOnGayAjVsfFs/+ytE4=
-X-Received: by 2002:aed:3b33:: with SMTP id p48mr37373511qte.143.1559880180025;
- Thu, 06 Jun 2019 21:03:00 -0700 (PDT)
+        id S1727687AbfFGHZk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 7 Jun 2019 03:25:40 -0400
+Received: from smtp1.iitb.ac.in ([103.21.127.13]:58170 "EHLO smtp1.iitb.ac.in"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727055AbfFGHZk (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 7 Jun 2019 03:25:40 -0400
+Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
+        by smtp1.iitb.ac.in (Postfix) with SMTP id C37C1105C46B
+        for <ceph-devel@vger.kernel.org>; Fri,  7 Jun 2019 12:01:53 +0530 (IST)
+Received: (qmail 29995 invoked by uid 510); 7 Jun 2019 12:01:34 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <rws@aero.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/25472} 
+ Clear:RC:1(10.200.1.25):SA:0(1.5/7.0):. Processed in 3.224183 secs; 07 Jun 2019 12:01:34 +0530
+X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on ldns2.iitb.ac.in
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=7.0 tests=BAYES_50,IITB_ORIG,
+        MISSING_HEADERS,PROPER_IITB_MSGID autolearn=disabled version=3.4.1
+X-Spam-Pyzor: Reported 1 times.
+X-Envelope-From: rws@aero.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
+  by ldns2.iitb.ac.in with SMTP; 7 Jun 2019 12:01:31 +0530
+Received: from vayu.aero.iitb.ac.in (vayu.aero.iitb.ac.in [10.101.1.1])
+        by ldns2.iitb.ac.in (Postfix) with ESMTP id CB958341965;
+        Fri,  7 Jun 2019 12:01:17 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+        by vayu.aero.iitb.ac.in (Postfix) with ESMTP id 9509A8902E52F;
+        Fri,  7 Jun 2019 12:01:17 +0530 (IST)
+Received: from vayu.aero.iitb.ac.in ([127.0.0.1])
+        by localhost (vayu.aero.iitb.ac.in [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 3VnK-_U7b-vs; Fri,  7 Jun 2019 12:01:17 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+        by vayu.aero.iitb.ac.in (Postfix) with ESMTP id 5DAB88902E54D;
+        Fri,  7 Jun 2019 12:01:14 +0530 (IST)
+X-Virus-Scanned: amavisd-new at aero.iitb.ac.in
+Received: from vayu.aero.iitb.ac.in ([127.0.0.1])
+        by localhost (vayu.aero.iitb.ac.in [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id TgJiwoMo_EHZ; Fri,  7 Jun 2019 12:01:14 +0530 (IST)
+Received: from vayu.aero.iitb.ac.in (vayu.aero.iitb.ac.in [10.101.1.1])
+        by vayu.aero.iitb.ac.in (Postfix) with ESMTP id 0EEE684310111;
+        Fri,  7 Jun 2019 12:01:10 +0530 (IST)
+Date:   Fri, 7 Jun 2019 12:01:09 +0530 (IST)
+From:   Martins Henry <rws@aero.iitb.ac.in>
+Message-ID: <412557711.60336.1559889069980.JavaMail.zimbra@aero.iitb.ac.in>
+Subject: Thanks and I wait for your answer
 MIME-Version: 1.0
-References: <alpine.DEB.2.11.1906061434200.13706@piezo.novalocal> <alpine.DEB.2.11.1906062131180.12100@piezo.novalocal>
-In-Reply-To: <alpine.DEB.2.11.1906062131180.12100@piezo.novalocal>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Fri, 7 Jun 2019 12:02:48 +0800
-Message-ID: <CAAM7YA=XiKgoSMHx_Mi45K6Juf5n6RrfdYrjiQ23m4Qgkuyihw@mail.gmail.com>
-Subject: Re: octopus planning calls
-To:     Sage Weil <sage@newdream.net>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.101.1.5]
+X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - FF11 (Win)/8.8.12_GA_3794)
+Thread-Index: SsslhYkcLNFU69da/wYft5cO9/ZYnA==
+Thread-Topic: Thanks and I wait for your answer
+To:     unlisted-recipients:; (no To-header on input)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Jun 7, 2019 at 5:35 AM Sage Weil <sage@newdream.net> wrote:
->
-> On Thu, 6 Jun 2019, Sage Weil wrote:
-> > Hi everyone,
-> >
-> > We'd like to do some planning calls for octopus.  Each call would be 30-60
-> > minutes, and cover (at least) rados, rbd, rgw, and cephfs.  The dashboard
-> > team has a face to face meeting next week in Germany so they should be in
-> > good shape.  Sebastian, do we need to schedule something on the
-> > orchestrator, or just rely on the existing Monday call?
-> >
-> > 1- Does the 1500-1700 UTC time range work well enough for everyone?  We'll
-> > record the calls, of course, and send an email summary after.
-> >
-> > 2- What day(s):
-> >
-> >  Tomorrow (Friday Jun 7)
-> >  Next week (Jun 10-14... may conflict with dashboard f2f)
->
-> It seems SUSE's storage team offsite runs through tomorrow, and Monday is
-> a holiday in Germany, so let's wait until next week.
->
-> How about:
->
-> Tue Jun 11:
->   1500 UTC  Orchestrator (Sebastian is already planning a call)
->   1600 UTC  RADOS
-> Wed Jun 12:
->   1500 UTC  RBD
->   1600 UTC  RGW
-> Thu Jun 13:
->   1600 UTC  CephFS
->
+Hello,
 
-+1
+I am Martin Henry, An American Citizen; I am the personal secretary to
+Mr. Donald Railton, the controller of a Lottery Company. Please I am
+having big problem now, I have a 6yrs old daughter who has leukemia, a
+disease of the blood, and she needs a bone marrow transplant or she
+will die.
 
-> ?
-> sage
-> _______________________________________________
-> Dev mailing list -- dev@ceph.io
-> To unsubscribe send an email to dev-leave@ceph.io
+Please I am only asking for your help and you will benefit from it
+also. As an insider with Lottery Firm, working as the personal
+secretary to the controller, I want you to send me your name to play,
+I have some numbers that are going to win, stored in his secret data
+system in the office. The Lottery is an online entry with credit card
+anywhere with a name and address. All I want you to do is to send your
+name to play it and I will send confirmation to you.
+
+I will play with my card on your name and the Prize will be shared
+equally between us. Immediately the results are released they will
+contact you for payment as the oversea winner. The lotto can be played
+with 9.00 dollars, or 50 dollars but the prize will be Millions.
+Remember that I am playing on your name with my card; I just want to
+front you for this, because I need this money to save the life of my
+little daughter.
+
+Thanks and I wait for your answer
+Martin Henry.
