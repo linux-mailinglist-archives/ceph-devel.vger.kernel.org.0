@@ -2,95 +2,93 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0E8939541
-	for <lists+ceph-devel@lfdr.de>; Fri,  7 Jun 2019 21:04:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34C1C3A165
+	for <lists+ceph-devel@lfdr.de>; Sat,  8 Jun 2019 21:05:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729764AbfFGTEi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 7 Jun 2019 15:04:38 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:43109 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729456AbfFGTEi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 7 Jun 2019 15:04:38 -0400
-Received: by mail-qt1-f194.google.com with SMTP id z24so3513480qtj.10
-        for <ceph-devel@vger.kernel.org>; Fri, 07 Jun 2019 12:04:37 -0700 (PDT)
+        id S1727522AbfFHTEm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 8 Jun 2019 15:04:42 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:32829 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727513AbfFHTEl (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 8 Jun 2019 15:04:41 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n9so5328583wru.0;
+        Sat, 08 Jun 2019 12:04:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A3Hudhze4ozjG5nDlaCCw5DZCvRef03puHwfaHxWkTk=;
+        b=RblqYiQ7DnCzvDoe2qNNYKDkb1xlqJtaFqAHNiNZFCeXdQSBQ7Sh80gGKiKAyqVsOw
+         laWoZOR8K2bYhiIutSWHlgvlq7YA3yoq+7alfoWxkGlEgLFpTci3fAxGT+/3XTSlQXdH
+         xkyCFGCl5UgPHe4tpdWecRlIMl6lL9kr8uaU+SSOhgvgPe3NfPRSu7gkfzZpKQm7OpXK
+         oQIvxsE2phcxJ35vzsuHN9kzpwud+RwMcckQFnVlKRjGFPbLobtwGYKijgQM7U3y4Lu+
+         59kFsk3v3PXgs9Zo7GKHEayORMs1NolT5pMnGvYLhfJZM3KcvgI7zg9ktldsJtckAr7T
+         KI4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NwtWlPzjHrZ/+RYwit1/I7mnqDOWya2PAuPPum6wePs=;
-        b=UDrqx1F4NaD+rAwZTXS4ya+ui6kIr6Gb5b4y6dLEupxhr0WhUqg+Mi3DCkwjt4Ttv1
-         8gmkEy+dLgAxRN16EmPUMiWbqVZLEVUwu+srsyDceJD9ShamKnUXNa833O66PDLy+T5o
-         ao7O437C1V8OB6tqlwlUNV0vWMT5iahwPCn7AvQapniXv/rcKPSnzjJHofpeAKHAQ/5w
-         A6AN+e8wgMh0KRCpdw46RJyzeTckvxYsUKyq8+VhneziLZ9n85DxhvebafiDDIvrbKbE
-         9rQg5W32jyl8VzLPMyWZtQYTePFqsPUzGNiNt+bMGVQxQWvbOHxNbpt+nr7neU7t34s0
-         EIpg==
-X-Gm-Message-State: APjAAAWhVRWWzmGYOY+iQQ9PmzEOeHTjwFkADUif0Ymzjgu4e4LrUYo7
-        6TaQjo5eDZpxnKf6Y5MftpI5+AjNzDCzqM6xO6+WlQ==
-X-Google-Smtp-Source: APXvYqz7Ec9DBlJhO1DweJO8s20+FZsuP8cFOfqKPPUbZq3Wlv56dmGT8TFbatkdBxtaFcWAsi81pa+LCMXe7yTYS0k=
-X-Received: by 2002:ac8:25d9:: with SMTP id f25mr46840992qtf.256.1559934276882;
- Fri, 07 Jun 2019 12:04:36 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A3Hudhze4ozjG5nDlaCCw5DZCvRef03puHwfaHxWkTk=;
+        b=NcNXMZAl0x0ZGWvt/3sHZs0fNF+EauH9Uqa9Yz6jkddUqUSWfxIn9mfmkvFIRgig3k
+         84GzM9Ha0+WJTmSmFV93ccX21nTltbwOOBmPFTkwGflnK/ZySnLsGNO9hrcAldLPnBR5
+         aXhRhTNzbr3gNEziylW6WdQfA5Hd6wWz8onWGFelUD7BsXfSNF3wWS1B3baKyJtJ8+z7
+         PCo+ZBfk8Uy4nhY5ThKS5m1uuRG97UKbd/npE+3nJlyQAN+u6j5VboiLKSkY2Ou3pYcv
+         /Lt1jn83r210/gY2uoAAOQVHp7bYNHtSFcIl88uIVcQYVc08Vv6tYrg0kkOtVDhmg2+w
+         dpzQ==
+X-Gm-Message-State: APjAAAWAM+6p6IK9xXV3KUdldcJ8HMCf80Pus3mVmXgFSwTTRsukGacs
+        Sh4xmzA1F8dAaKyRPhJkOfhz76F5
+X-Google-Smtp-Source: APXvYqzsI3eay4SJpxc6HMysG8GiIaym+9fSnDnGjwhZmJvwS04ahED3cgLuDiFP9FbRVWrqQv0TKA==
+X-Received: by 2002:adf:f951:: with SMTP id q17mr11373995wrr.173.1560020680217;
+        Sat, 08 Jun 2019 12:04:40 -0700 (PDT)
+Received: from kwango.local (ip-89-102-68-197.net.upcbroadband.cz. [89.102.68.197])
+        by smtp.gmail.com with ESMTPSA id l4sm4294060wmh.18.2019.06.08.12.04.39
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sat, 08 Jun 2019 12:04:39 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 5.2-rc4
+Date:   Sat,  8 Jun 2019 21:04:38 +0200
+Message-Id: <20190608190438.7665-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <20190607184749.8333-1-jlayton@kernel.org>
-In-Reply-To: <20190607184749.8333-1-jlayton@kernel.org>
-From:   Patrick Donnelly <pdonnell@redhat.com>
-Date:   Fri, 7 Jun 2019 12:04:10 -0700
-Message-ID: <CA+2bHPYo4pmp0V3HkEVp3dy8YKu-iu-OPUqvjXhFth1y1L0QYA@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: fix getxattr return values for vxattrs
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ilya Dryomov <idryomov@redhat.com>, Zheng Yan <zyan@redhat.com>,
-        Sage Weil <sage@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>, dev@ceph.io,
-        Tomas Petr <tpetr@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Jun 7, 2019 at 11:48 AM Jeff Layton <jlayton@kernel.org> wrote:
->
-> We have several virtual xattrs in cephfs which return various values as
-> strings. xattrs don't necessarily return strings however, so we need to
-> include the terminating NULL byte when we return the length.
->
-> Furthermore, the getxattr manpage says that we should return -ERANGE if
-> the buffer is too small to hold the resulting value. Let's start doing
-> that here as well.
->
-> URL: https://bugzilla.redhat.com/show_bug.cgi?id=1717454
-> Reported-by: Tomas Petr <tpetr@redhat.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/xattr.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index 6621d27e64f5..2a61e02e7166 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -803,8 +803,15 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
->                 if (err)
->                         return err;
->                 err = -ENODATA;
-> -               if (!(vxattr->exists_cb && !vxattr->exists_cb(ci)))
-> -                       err = vxattr->getxattr_cb(ci, value, size);
-> +               if (!(vxattr->exists_cb && !vxattr->exists_cb(ci))) {
-> +                       /*
-> +                        * getxattr_cb returns strlen(value), xattr length must
-> +                        * include the NULL.
-> +                        */
-> +                       err = vxattr->getxattr_cb(ci, value, size) + 1;
-> +                       if (size && size < err)
-> +                               err = -ERANGE;
-> +               }
->                 return err;
->         }
+Hi Linus,
 
-Reviewed-by: Patrick Donnelly <pdonnell@redhat.com>
+The following changes since commit f2c7c76c5d0a443053e94adb9f0918fa2fb85c3a:
 
--- 
-Patrick Donnelly, Ph.D.
-He / Him / His
-Senior Software Engineer
-Red Hat Sunnyvale, CA
-GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+  Linux 5.2-rc3 (2019-06-02 13:55:33 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.2-rc4
+
+for you to fetch changes up to 7b2f936fc8282ab56d4d21247f2f9c21607c085c:
+
+  ceph: fix error handling in ceph_get_caps() (2019-06-05 20:34:39 +0200)
+
+----------------------------------------------------------------
+A change to call iput() asynchronously to avoid a possible deadlock
+when iput_final() needs to wait for in-flight I/O (e.g. readahead) and
+a fixup for a cleanup that went into -rc1.
+
+----------------------------------------------------------------
+Yan, Zheng (3):
+      ceph: single workqueue for inode related works
+      ceph: avoid iput_final() while holding mutex or in dispatch thread
+      ceph: fix error handling in ceph_get_caps()
+
+ fs/ceph/caps.c       |  34 ++++++-----
+ fs/ceph/file.c       |   2 +-
+ fs/ceph/inode.c      | 155 +++++++++++++++++++++++++++------------------------
+ fs/ceph/mds_client.c |  28 ++++++----
+ fs/ceph/quota.c      |   9 ++-
+ fs/ceph/snap.c       |  16 ++++--
+ fs/ceph/super.c      |  28 +++-------
+ fs/ceph/super.h      |  19 ++++---
+ 8 files changed, 156 insertions(+), 135 deletions(-)
