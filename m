@@ -2,93 +2,53 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34C1C3A165
-	for <lists+ceph-devel@lfdr.de>; Sat,  8 Jun 2019 21:05:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D9413A274
+	for <lists+ceph-devel@lfdr.de>; Sun,  9 Jun 2019 01:20:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbfFHTEm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 8 Jun 2019 15:04:42 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:32829 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727513AbfFHTEl (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 8 Jun 2019 15:04:41 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n9so5328583wru.0;
-        Sat, 08 Jun 2019 12:04:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=A3Hudhze4ozjG5nDlaCCw5DZCvRef03puHwfaHxWkTk=;
-        b=RblqYiQ7DnCzvDoe2qNNYKDkb1xlqJtaFqAHNiNZFCeXdQSBQ7Sh80gGKiKAyqVsOw
-         laWoZOR8K2bYhiIutSWHlgvlq7YA3yoq+7alfoWxkGlEgLFpTci3fAxGT+/3XTSlQXdH
-         xkyCFGCl5UgPHe4tpdWecRlIMl6lL9kr8uaU+SSOhgvgPe3NfPRSu7gkfzZpKQm7OpXK
-         oQIvxsE2phcxJ35vzsuHN9kzpwud+RwMcckQFnVlKRjGFPbLobtwGYKijgQM7U3y4Lu+
-         59kFsk3v3PXgs9Zo7GKHEayORMs1NolT5pMnGvYLhfJZM3KcvgI7zg9ktldsJtckAr7T
-         KI4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=A3Hudhze4ozjG5nDlaCCw5DZCvRef03puHwfaHxWkTk=;
-        b=NcNXMZAl0x0ZGWvt/3sHZs0fNF+EauH9Uqa9Yz6jkddUqUSWfxIn9mfmkvFIRgig3k
-         84GzM9Ha0+WJTmSmFV93ccX21nTltbwOOBmPFTkwGflnK/ZySnLsGNO9hrcAldLPnBR5
-         aXhRhTNzbr3gNEziylW6WdQfA5Hd6wWz8onWGFelUD7BsXfSNF3wWS1B3baKyJtJ8+z7
-         PCo+ZBfk8Uy4nhY5ThKS5m1uuRG97UKbd/npE+3nJlyQAN+u6j5VboiLKSkY2Ou3pYcv
-         /Lt1jn83r210/gY2uoAAOQVHp7bYNHtSFcIl88uIVcQYVc08Vv6tYrg0kkOtVDhmg2+w
-         dpzQ==
-X-Gm-Message-State: APjAAAWAM+6p6IK9xXV3KUdldcJ8HMCf80Pus3mVmXgFSwTTRsukGacs
-        Sh4xmzA1F8dAaKyRPhJkOfhz76F5
-X-Google-Smtp-Source: APXvYqzsI3eay4SJpxc6HMysG8GiIaym+9fSnDnGjwhZmJvwS04ahED3cgLuDiFP9FbRVWrqQv0TKA==
-X-Received: by 2002:adf:f951:: with SMTP id q17mr11373995wrr.173.1560020680217;
-        Sat, 08 Jun 2019 12:04:40 -0700 (PDT)
-Received: from kwango.local (ip-89-102-68-197.net.upcbroadband.cz. [89.102.68.197])
-        by smtp.gmail.com with ESMTPSA id l4sm4294060wmh.18.2019.06.08.12.04.39
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 08 Jun 2019 12:04:39 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 5.2-rc4
-Date:   Sat,  8 Jun 2019 21:04:38 +0200
-Message-Id: <20190608190438.7665-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727554AbfFHXUQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 8 Jun 2019 19:20:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50338 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727528AbfFHXUQ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Sat, 8 Jun 2019 19:20:16 -0400
+Subject: Re: [GIT PULL] Ceph fixes for 5.2-rc4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560036015;
+        bh=NPAj0LTbm23/h0bYT049hwbLN2GkGOpeqVdbgYEPxAw=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=t9VVhTPVSSuext+LZecjZCrOHfH0BJpBJ8yqFt/cKKMuA5Ip5L691U2UM/vbhtg0w
+         /n9GChTczPowamR1/uqy7hDUb34+EbYdZBsUP/OGcFkXJjkbK3kehSemFQNO7QThVR
+         rBoz6Kj88F5upoQ7JlkMcw+uQOScnTT9f64Nvg1s=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190608190438.7665-1-idryomov@gmail.com>
+References: <20190608190438.7665-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190608190438.7665-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git
+ tags/ceph-for-5.2-rc4
+X-PR-Tracked-Commit-Id: 7b2f936fc8282ab56d4d21247f2f9c21607c085c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2759e05cdb2577a0e8970a9fa80a7f5ff092596f
+Message-Id: <156003600933.32420.3897484961481092321.pr-tracker-bot@kernel.org>
+Date:   Sat, 08 Jun 2019 23:20:09 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Sat,  8 Jun 2019 21:04:38 +0200:
 
-The following changes since commit f2c7c76c5d0a443053e94adb9f0918fa2fb85c3a:
+> https://github.com/ceph/ceph-client.git tags/ceph-for-5.2-rc4
 
-  Linux 5.2-rc3 (2019-06-02 13:55:33 -0700)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2759e05cdb2577a0e8970a9fa80a7f5ff092596f
 
-are available in the Git repository at:
+Thank you!
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-5.2-rc4
-
-for you to fetch changes up to 7b2f936fc8282ab56d4d21247f2f9c21607c085c:
-
-  ceph: fix error handling in ceph_get_caps() (2019-06-05 20:34:39 +0200)
-
-----------------------------------------------------------------
-A change to call iput() asynchronously to avoid a possible deadlock
-when iput_final() needs to wait for in-flight I/O (e.g. readahead) and
-a fixup for a cleanup that went into -rc1.
-
-----------------------------------------------------------------
-Yan, Zheng (3):
-      ceph: single workqueue for inode related works
-      ceph: avoid iput_final() while holding mutex or in dispatch thread
-      ceph: fix error handling in ceph_get_caps()
-
- fs/ceph/caps.c       |  34 ++++++-----
- fs/ceph/file.c       |   2 +-
- fs/ceph/inode.c      | 155 +++++++++++++++++++++++++++------------------------
- fs/ceph/mds_client.c |  28 ++++++----
- fs/ceph/quota.c      |   9 ++-
- fs/ceph/snap.c       |  16 ++++--
- fs/ceph/super.c      |  28 +++-------
- fs/ceph/super.h      |  19 ++++---
- 8 files changed, 156 insertions(+), 135 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
