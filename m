@@ -2,95 +2,57 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01DA63BCC8
-	for <lists+ceph-devel@lfdr.de>; Mon, 10 Jun 2019 21:24:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23AB53C0C2
+	for <lists+ceph-devel@lfdr.de>; Tue, 11 Jun 2019 03:06:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389044AbfFJTYA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 10 Jun 2019 15:24:00 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53833 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388841AbfFJTYA (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 10 Jun 2019 15:24:00 -0400
-Received: by mail-it1-f196.google.com with SMTP id m187so915850ite.3;
-        Mon, 10 Jun 2019 12:23:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9d9TchCmXOpazV5fGw/e5BwqVle7tBPHcq2VVRFHpjU=;
-        b=kDv8DeKe18uzB/O3oige0/Tw1MRnkELqC/XXKTW98ZW/X4CEVRWZHqK7G8MWMSeibJ
-         lVn21HnpNcyykNxfiMx5kNuNWUIUQTpmVg04RjLh9J8u5hRJp7JBvpsg5u23fPQ0QV+F
-         ByEpcOixlXjWtQUWqquiRMNWPhQzt/aP/ccxHCzYiJyP6vYq/28LrXk128pUGX1OjXN/
-         5r1Wfg57Pu/q+rgCTsfz39EUhhxK01GIu8L95r4B6RRl3R4gxlHc8DfntkK1HdWNvrx6
-         QFxgqa+n0BwGOzerqzTLnGAXy9m3tUVyORZP9Xw9FCIMiKCfN+00JB/UqCKTJ8dYywQL
-         Uuqg==
+        id S2389723AbfFKBGO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 10 Jun 2019 21:06:14 -0400
+Received: from mail-pl1-f178.google.com ([209.85.214.178]:44898 "EHLO
+        mail-pl1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388845AbfFKBGO (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 10 Jun 2019 21:06:14 -0400
+Received: by mail-pl1-f178.google.com with SMTP id t7so1715725plr.11
+        for <ceph-devel@vger.kernel.org>; Mon, 10 Jun 2019 18:06:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9d9TchCmXOpazV5fGw/e5BwqVle7tBPHcq2VVRFHpjU=;
-        b=tw58biFs4gAfpEXVC3CWmDG7T9NFruUgjcMJ+ut2UclJbF6wj6H2CFIj9ISomTmg23
-         tIbdrRouXgh8iHbBAypMxAFTTFRlwVikFrVlGgRsI1DGE7DC0h8phFEI4Wkif4ojjgjm
-         HOxCP2BDNcT7ZZ+iEy5MSTO4V/W9cBkzxJaW6fKcWFtK2KgI/hBupq1bTsxJSmBEJWlU
-         8fFwLGejy0H+LmonJKtiU1fdfBJXA3PR2k+Oi96nXR19MxRt3bDXLM4AAw2Z6MWCtqBw
-         MOJFgtyD6PDhJWGuKsh7eBVQFhMA7i+R1m9APdG5nuR7XYoAF9bv+3EYPJ9Jcq31AeDv
-         mJXw==
-X-Gm-Message-State: APjAAAWW4+fRAi0Pfv+G/PTNBL1ogaYIFpaNq8hE+/udUxabBvZjGi7j
-        uvtELIjHSlHiquj2d28hI7zk3+TUuQvQiPawrfw=
-X-Google-Smtp-Source: APXvYqwjdtih55E8Hk2+rPXz2u8fESUhUXHzWKyv6dJ+dhUCVzUIFKDOb3//P6w+quG6CIgGD60Wjmf8e7MXD4mgzQE=
-X-Received: by 2002:a24:b309:: with SMTP id e9mr878614itf.104.1560194639625;
- Mon, 10 Jun 2019 12:23:59 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=X+N7DLX3Zp9tYFqn7AFAlE/MLRrXDuGpJtyfv6hsl4Y=;
+        b=HJQX7K6tbPAehqacBPPsugyHyI5YlW5BpZXTpLxJ1l/tDKwQazwHcFK3S3a2QrB7rY
+         bRY+nvAGkcORvAmf9KVSlRHbbLuN+h3JsGVJF6oqt8DAXumOKlMN81/occkbWpuc3V6l
+         95S2go3Zkts0rm42bR/Z4Ah75h/7q6DcxrcaXAUB8PWSnElB9PAVDWaXNbW545NMYrke
+         LqZY24Fii8SNdkq3YIWE5DXIqkAwUqPFIaZ+Ha7F3w2lFQbIxl6aTWQIHKOL+2dAzJ8p
+         HyvfX/gaXKGpR2Cj0zXAK4TLULw8zR9uf8zkSsz+BqwFqmm5nHkiMJRYX3hqbMdrEme6
+         dDpQ==
+X-Gm-Message-State: APjAAAVz3GIe4opsu7bUZmh2EIXKFD4XooKmoZAWU2zErBMIze/688oP
+        LemgRN/tVcQlzj9KdIeSx5tbxcmFl8FxT85jTNtcXLn1JNc=
+X-Google-Smtp-Source: APXvYqx+b1cRv8WKzMZR+tjFFN/XfafU/PM9QmUKEn12WEujjPAaJO+I8bdBnVwh0T7eVDsbny2SGWTE67pjA8VUWZ8=
+X-Received: by 2002:a17:902:4481:: with SMTP id l1mr74596785pld.121.1560215173155;
+ Mon, 10 Jun 2019 18:06:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190610174007.4818-1-amir73il@gmail.com>
-In-Reply-To: <20190610174007.4818-1-amir73il@gmail.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 10 Jun 2019 21:24:07 +0200
-Message-ID: <CAOi1vP-ad+62U4hBkSetFq+8kxC2fhmCLzcHZ+=wYBqgTyyy7g@mail.gmail.com>
-Subject: Re: [PATCH] ceph: copy_file_range needs to strip setuid bits and
- update timestamps
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        xfs <linux-xfs@vger.kernel.org>,
-        Luis Henriques <lhenriques@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        "Yan, Zheng" <zyan@redhat.com>, Jeff Layton <jlayton@redhat.com>
+From:   Yuri Weinstein <yweinste@redhat.com>
+Date:   Mon, 10 Jun 2019 18:06:02 -0700
+Message-ID: <CAMMFjmHQ-cEeZcXzftCr_q=iYb8BjpUndtg2iWoGEN92EMqkZg@mail.gmail.com>
+Subject: ubuntu 14.04 tests support
+To:     "Development, Ceph" <ceph-devel@vger.kernel.org>,
+        Zack Cerza <zcerza@redhat.com>,
+        David Galloway <dgallowa@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 7:40 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> Because ceph doesn't hold destination inode lock throughout the copy,
-> strip setuid bits before and after copy.
->
-> The destination inode mtime is updated before and after the copy and the
-> source inode atime is updated after the copy, similar to the filesystem
-> ->read_iter() implementation.
->
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->
-> Hi Ilya,
->
-> Please consider applying this patch to ceph branch after merging
-> Darrick's copy-file-range-fixes branch from:
->         git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
->
-> The series (including this patch) was tested on ceph by
-> Luis Henriques using new copy_range xfstests.
->
-> AFAIK, only fallback from ceph to generic_copy_file_range()
-> implementation was tested and not the actual ceph clustered
-> copy_file_range.
+Latest changes to teuthology may prevent tests to be able to run on ubuntu 14.04
 
-Zheng, Jeff, please take a look.
+ref:
+https://github.com/ceph/teuthology/commit/629f343dde18c2fad371bca0963b731c6e85b079
+https://github.com/ceph/teuthology/pull/1294#issuecomment-500568491
 
-Thanks,
+(Zack and David have more on why)
 
-                Ilya
+There are some tests that have ubuntu 14.04 configurations specified ATM.
+Question - is it OK to remove references from those suites ?
+Do we have any use cases when ubuntu 14.04 must be supported?
+
+Thx
+YuriW
