@@ -2,67 +2,130 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2882C446E1
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Jun 2019 18:55:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38DE343AFD
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Jun 2019 17:25:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392851AbfFMQzN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 13 Jun 2019 12:55:13 -0400
-Received: from mail-qt1-f181.google.com ([209.85.160.181]:44561 "EHLO
-        mail-qt1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730024AbfFMCGH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 12 Jun 2019 22:06:07 -0400
-Received: by mail-qt1-f181.google.com with SMTP id x47so20768642qtk.11
-        for <ceph-devel@vger.kernel.org>; Wed, 12 Jun 2019 19:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=fyx+3s4EUK88QjRF+Wurf+zD25KMcYIVyvXcOSyqAys=;
-        b=ObxYenY92IdC5SeLlVis3D7M8EzWIo6crjdcX2y5ym5SXE3Dw02NsKfrSmsh8lQKZX
-         BqsMhhNaIyrKMCuTgP++rIJQpMi/41h9whaeieTYRmIhOy/ljZG9TZXZyiqIxHebuKYq
-         oUpq9Q8FTAhEeOzmhgMcqANPDHGrDbWD75GOhGJHlVBX0IQCoQzrX6SkMA+xduMIHVg/
-         DvKm+xtBVTl975PCk5BWO0t+MpVpvzX76AFC2gSE03O8m/tIkbv3MMSClkZuTXWH9csA
-         0lzofqqX/ZA60BwvuvFWhSElpSEQEGwo04ueDupvuslxhqSXq14SjGe0eCa4jVdahV4K
-         cRiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=fyx+3s4EUK88QjRF+Wurf+zD25KMcYIVyvXcOSyqAys=;
-        b=qW5L2K/QAaGl/3xYWsTgnrnPs+IeU14LnClYCLY+nRri/24JYveEbkFGzeWx+hG3aL
-         qlY4KJIRQHf8GWLs7r3IMPXJw+ejlcj070gxac+RVT8VaegUZmmpwIVbRDDcjfprzMbt
-         TVBcXK0y8QkqcrrjdMph7IpD7EZTt24/5s1zM/tKRBkEH1CxJXluW2bRFy4d4IE3LRXq
-         H9J6ba69JgwwiIDSM19jVB+BjHjfaD/PbbhtOfPQLvxXUYBBwfcu2S25RMlLH3fQJuSO
-         UXjGVwJufDyXUcPLRoBbPcyuRn4+gQraIanWj9610mgP29Ki2mz/MMyoUH8UaQsKee9T
-         ikJw==
-X-Gm-Message-State: APjAAAVHO8po44A1hd4becclIKFp2RavM2TQE6sT3G+GtULS7D25caVD
-        Gwt5/liBQrg53gDGcN/UMGaBAxJbx4rd0EXKwngfWvsjyTk=
-X-Google-Smtp-Source: APXvYqzcCHdGh9ta3FdGXFV3xemf7Ji1MTvBBp17DuoF6YAWvQwHy6FYURmTUJIJbBAuprdZuh1LmdoL+Jn4MC8Hlwo=
-X-Received: by 2002:a0c:eecd:: with SMTP id h13mr1362270qvs.46.1560391565773;
- Wed, 12 Jun 2019 19:06:05 -0700 (PDT)
-MIME-Version: 1.0
-From:   huang jun <hjwsm1989@gmail.com>
-Date:   Thu, 13 Jun 2019 10:05:53 +0800
-Message-ID: <CABAwU-Zv1d1qT5n2-JEcm1vpK9XdTg30yzrhMoeQ2B4ujO=peA@mail.gmail.com>
-Subject: ceph-monstore-tool rebuild question
-To:     ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
+        id S1732121AbfFMPZN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 13 Jun 2019 11:25:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45740 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731575AbfFMMD7 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 13 Jun 2019 08:03:59 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D5C421721;
+        Thu, 13 Jun 2019 12:03:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560427438;
+        bh=p2FKjRUBwjz5hPRVT7bIqF2K2jvLxaCfR3Nd2QCuhAI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=h7oNytnJoZSKgKryW1tJj9jWvo+nYi59n7LE9Dz/eaP3Mc2jgY3VNdcESIoxlvf+u
+         C0GXDXC/EjUmbNb/AVlxc3XpOYwUovNGErQ2VUEoVEPPUz9Onqp8RncBTcRjN8oQBr
+         hjCcALIYmN7Y1oU3GcpawPyxm6X1xLhhZ9Aq+sh4=
+Message-ID: <ed2e4b5d26890e96ba9dafcb3dba88427e36e619.camel@kernel.org>
+Subject: Re: [PATCH] ceph: copy_file_range needs to strip setuid bits and
+ update timestamps
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        Luis Henriques <lhenriques@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
+Date:   Thu, 13 Jun 2019 08:03:55 -0400
+In-Reply-To: <20190610174007.4818-1-amir73il@gmail.com>
+References: <20190610174007.4818-1-amir73il@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi,all
-I recently read the ceph-monstore-tool code, and have a question about
-rebuild operations.
-In update_paxos() we read  osdmap, pgmap, auth and pgmap_pg records to
-pending_proposal(a bufferlist) as the value of  the key paxos_1, and
-set paxos_pending_v=1,
-and set the paxos_last_committed=0 and paxos_first_committed=0;
+On Mon, 2019-06-10 at 20:40 +0300, Amir Goldstein wrote:
+> Because ceph doesn't hold destination inode lock throughout the copy,
+> strip setuid bits before and after copy.
+> 
+> The destination inode mtime is updated before and after the copy and the
+> source inode atime is updated after the copy, similar to the filesystem
+> ->read_iter() implementation.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+> 
+> Hi Ilya,
+> 
+> Please consider applying this patch to ceph branch after merging
+> Darrick's copy-file-range-fixes branch from:
+>         git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+> 
+> The series (including this patch) was tested on ceph by
+> Luis Henriques using new copy_range xfstests.
+> 
+> AFAIK, only fallback from ceph to generic_copy_file_range()
+> implementation was tested and not the actual ceph clustered
+> copy_file_range.
+> 
+> Thanks,
+> Amir.
+> 
+>  fs/ceph/file.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index c5517ffeb11c..b04c97c7d393 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -1949,6 +1949,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>  		goto out;
+>  	}
+>  
+> +	/* Should dst_inode lock be held throughout the copy operation? */
+> +	inode_lock(dst_inode);
+> +	ret = file_modified(dst_file);
+> +	inode_unlock(dst_inode);
+> +	if (ret < 0) {
+> +		dout("failed to modify dst file before copy (%zd)\n", ret);
+> +		goto out;
+> +	}
+> +
 
-My question is if we start the mon after rebuild, let's say there is
-only one mon now, the mon will not commit the paxos_pending_v=1, and
-if we change the osdmap by 'ceph osd set noout' the new pending_v=1
-will overwrite the former one in rebuild, so i think we don't need to
-set paxos_1=pending_proposal, paxos_pending_v=1 in 'ceph-monstore-tool
-rebuild'.
+I don't see anything that guarantees that the mode of the destination
+file is up to date at this point. file_modified() just ends up checking
+the mode cached in the inode.
 
-Thanks!
+I wonder if we ought to fix get_rd_wr_caps() to also acquire a reference
+to AUTH_SHARED caps on the destination inode, and then call
+file_modified() after we get those caps. That would also mean that we
+wouldn't need to do this a second time after the copy.
+
+The catch is that if we did need to issue a setattr, I'm not sure if
+we'd need to release those caps first.
+
+Luis, Zheng, thoughts?
+
+>  	/*
+>  	 * We need FILE_WR caps for dst_ci and FILE_RD for src_ci as other
+>  	 * clients may have dirty data in their caches.  And OSDs know nothing
+> @@ -2099,6 +2108,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>  out:
+>  	ceph_free_cap_flush(prealloc_cf);
+>  
+> +	file_accessed(src_file);
+> +	/* To be on the safe side, try to remove privs also after copy */
+> +	inode_lock(dst_inode);
+> +	err = file_modified(dst_file);
+> +	inode_unlock(dst_inode);
+> +	if (err < 0)
+> +		dout("failed to modify dst file after copy (%d)\n", err);
+> +
+>  	return ret;
+>  }
+>  
+
+
