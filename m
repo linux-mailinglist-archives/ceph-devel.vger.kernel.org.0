@@ -2,140 +2,70 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB38343E81
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Jun 2019 17:50:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F10A443EF6
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Jun 2019 17:54:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387792AbfFMPua (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 13 Jun 2019 11:50:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54340 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727006AbfFMPu3 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:50:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 04871AF47;
-        Thu, 13 Jun 2019 15:50:26 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH] ceph: copy_file_range needs to strip setuid bits and update timestamps
-References: <20190610174007.4818-1-amir73il@gmail.com>
-        <ed2e4b5d26890e96ba9dafcb3dba88427e36e619.camel@kernel.org>
-Date:   Thu, 13 Jun 2019 16:50:25 +0100
-In-Reply-To: <ed2e4b5d26890e96ba9dafcb3dba88427e36e619.camel@kernel.org> (Jeff
-        Layton's message of "Thu, 13 Jun 2019 08:03:55 -0400")
-Message-ID: <87zhml7ada.fsf@suse.com>
+        id S2389119AbfFMPyK convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Thu, 13 Jun 2019 11:54:10 -0400
+Received: from mail-io1-f54.google.com ([209.85.166.54]:36434 "EHLO
+        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389556AbfFMPyF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 13 Jun 2019 11:54:05 -0400
+Received: by mail-io1-f54.google.com with SMTP id h6so18041617ioh.3
+        for <ceph-devel@vger.kernel.org>; Thu, 13 Jun 2019 08:54:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+1odG3EXnhDEfYKQ+l2mMTuQNeu82UvsdZ8E0dVT/rY=;
+        b=MYtf9j1Tk7jigzuiwg9NnRlq45GVlBXTcsBXwO1Y6a8zHTWKjU753fVUMRzb0zFGmY
+         JZh8oSxeA2s7sTecuUPXvRE4H5WHePurVIl+7RoCPZLex1rzjNEA4xhWEz1AU1kA9NPF
+         RVN7kYfxgykSBbNBFLYcfNzDSKiSzb+G1xcQ6SnY1snE7nwyt1PIQqVfbBpHTPAQAcV3
+         oyUtVh+72If10LEgI+hlRX0MgAarcaeATwoalBLxAVEuCeAMzyhQHQ4MUfcS85gJMm3w
+         olm/O/XD81Lw22FJu7qEPvntkBZa+gD0tqXLMaHegzuaaNXXbzSKk8UGjHGV/ypPuxzG
+         dTrg==
+X-Gm-Message-State: APjAAAUo7YFQNBTC1AY2/7Ce/VY4cXAC1P2hr0NUlvIGfYvLWIZZ1KQT
+        CZjoN1KcHVXe5Z9GI7T7dP5UJdebLzp6E3Zy4x40f3XSu1Q=
+X-Google-Smtp-Source: APXvYqyn4M6Wk3G2FfGYNaNwY7E73adLV3wv4hH9XX+oXDMeivO0g/tclgFIUd9nIMcgvVNPoO74Y4qcC8uD9qj9a/o=
+X-Received: by 2002:a6b:641a:: with SMTP id t26mr2537415iog.3.1560441244953;
+ Thu, 13 Jun 2019 08:54:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <alpine.DEB.2.11.1906061434200.13706@piezo.novalocal>
+ <alpine.DEB.2.11.1906062131180.12100@piezo.novalocal> <alpine.DEB.2.11.1906111326130.32406@piezo.novalocal>
+ <alpine.DEB.2.11.1906121438520.4977@piezo.novalocal> <17f88e39-45d7-d13b-0c42-db1f07195c26@suse.com>
+ <alpine.DEB.2.11.1906131354420.12100@piezo.novalocal> <b2e59205-8cb7-235f-5b1f-651af75480da@suse.com>
+In-Reply-To: <b2e59205-8cb7-235f-5b1f-651af75480da@suse.com>
+From:   Mike Perez <miperez@redhat.com>
+Date:   Thu, 13 Jun 2019 08:53:53 -0700
+Message-ID: <CAFFUGJeWYcYaHPe30eeiZB2+_pNjjz0EC4Ps7rZFRrZ6TDmNug@mail.gmail.com>
+Subject: Re: octopus planning calls
+To:     Kai Wagner <kwagner@suse.com>
+Cc:     Sage Weil <sage@newdream.net>,
+        Ceph Development <ceph-devel@vger.kernel.org>, dev@ceph.io
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> writes:
+Just a reminder to everyone that the next planning call will be
+happening in the next hour for Ceph FS.
 
-> On Mon, 2019-06-10 at 20:40 +0300, Amir Goldstein wrote:
->> Because ceph doesn't hold destination inode lock throughout the copy,
->> strip setuid bits before and after copy.
->> 
->> The destination inode mtime is updated before and after the copy and the
->> source inode atime is updated after the copy, similar to the filesystem
->> ->read_iter() implementation.
->> 
->> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->> ---
->> 
->> Hi Ilya,
->> 
->> Please consider applying this patch to ceph branch after merging
->> Darrick's copy-file-range-fixes branch from:
->>         git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
->> 
->> The series (including this patch) was tested on ceph by
->> Luis Henriques using new copy_range xfstests.
->> 
->> AFAIK, only fallback from ceph to generic_copy_file_range()
->> implementation was tested and not the actual ceph clustered
->> copy_file_range.
->> 
->> Thanks,
->> Amir.
->> 
->>  fs/ceph/file.c | 17 +++++++++++++++++
->>  1 file changed, 17 insertions(+)
->> 
->> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
->> index c5517ffeb11c..b04c97c7d393 100644
->> --- a/fs/ceph/file.c
->> +++ b/fs/ceph/file.c
->> @@ -1949,6 +1949,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->>  		goto out;
->>  	}
->>  
->> +	/* Should dst_inode lock be held throughout the copy operation? */
->> +	inode_lock(dst_inode);
->> +	ret = file_modified(dst_file);
->> +	inode_unlock(dst_inode);
->> +	if (ret < 0) {
->> +		dout("failed to modify dst file before copy (%zd)\n", ret);
->> +		goto out;
->> +	}
->> +
->
-> I don't see anything that guarantees that the mode of the destination
-> file is up to date at this point. file_modified() just ends up checking
-> the mode cached in the inode.
->
-> I wonder if we ought to fix get_rd_wr_caps() to also acquire a reference
-> to AUTH_SHARED caps on the destination inode, and then call
-> file_modified() after we get those caps. That would also mean that we
-> wouldn't need to do this a second time after the copy.
->
-> The catch is that if we did need to issue a setattr, I'm not sure if
-> we'd need to release those caps first.
->
-> Luis, Zheng, thoughts?
+https://bluejeans.com/522156210
 
-Hmm... I missed that.  IIRC the FILE_WR caps allow to modify some
-metadata (such as timestamps, and file size).  I suppose it doesn't
-allow to cache the mode, does it?  If it does, fixing it would be a
-matter of moving the code a bit further down.  If it doesn't the
-ceph_copy_file_range function already has this problem, as it calls
-file_update_time.  And I wonder if other code paths have this problem
-too.
+--
+Mike Perez (thingee)
 
-Obviously, the chunk below will have the same problem.
-
-Cheers,
--- 
-Luis
-
-
+On Thu, Jun 13, 2019 at 8:11 AM Kai Wagner <kwagner@suse.com> wrote:
 >
->>  	/*
->>  	 * We need FILE_WR caps for dst_ci and FILE_RD for src_ci as other
->>  	 * clients may have dirty data in their caches.  And OSDs know nothing
->> @@ -2099,6 +2108,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->>  out:
->>  	ceph_free_cap_flush(prealloc_cf);
->>  
->> +	file_accessed(src_file);
->> +	/* To be on the safe side, try to remove privs also after copy */
->> +	inode_lock(dst_inode);
->> +	err = file_modified(dst_file);
->> +	inode_unlock(dst_inode);
->> +	if (err < 0)
->> +		dout("failed to modify dst file after copy (%d)\n", err);
->> +
->>  	return ret;
->>  }
->>  
 >
+> On 13.06.19 15:56, Sage Weil wrote:
+> > Now we just need to figure out if that means November or March... :P
+> Mentioned exactly that in the dashboard planning meeting atm - the more
+> time the better ;-)
+>
+> --
+> GF: Felix Imendörffer, Mary Higgins, Sri Rasiah HRB 21284 (AG Nürnberg)
 >
 >
