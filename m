@@ -2,86 +2,114 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A17B84652D
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2019 18:56:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD1E4465D6
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2019 19:38:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbfFNQ4q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 Jun 2019 12:56:46 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45548 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725814AbfFNQ4q (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 Jun 2019 12:56:46 -0400
-Received: by mail-ot1-f66.google.com with SMTP id x21so3244191otq.12
-        for <ceph-devel@vger.kernel.org>; Fri, 14 Jun 2019 09:56:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cNzgw8zU6lYxY9116+VTCavjD+4v/EZJ92kV6MCy3Hw=;
-        b=suKR1Na7pw5qpJvH5xqrKXAAaFWY4hN5KOwbfto5ytgTyz9r50G3myqK2FveZGGAGI
-         fDrfmVdTUBpbxtEOBt8b00PGCPhdMnQC97/co+2Qqsm1FAc79fxLi6uBuMHK+Pnb8aaT
-         63EcmvZ12eO3zWRdsQOFE2qBe0EJxcHK6mV7kW6RC4RHvg0UH5p9/GA/11uBZUe3qUU2
-         SWo4/N5jq3FCHkThbB4rsEJC3ok6Js+fM7ma66Rhy4+wDvGrdT+UQOlQ847Q/go84Mde
-         i44WdBH1KF4dZMPMVY2OlMMKiWkh4ogNjXJHbT1eZFbN9A5vbTdZ9YGsSzEaKDFz31Rw
-         2NQA==
-X-Gm-Message-State: APjAAAV6hnY6i+L+Uaa94DsIDA6KHTF0U6zNBEUuqNcMNFxM3+TLwa4o
-        B55MufgfxDU6sBkvWdhlQ//ZxLDlmBj8uj7EL2lfDA==
-X-Google-Smtp-Source: APXvYqy2rNq9+R6u/xnYlzAgf1nwxm3PpCU3YNzHzhAoC+UXWr4Wmm6PlURMQyQ3rNfDdi+Dv87oUDmHrlRke6mba2A=
-X-Received: by 2002:a9d:704f:: with SMTP id x15mr17973354otj.297.1560531405363;
- Fri, 14 Jun 2019 09:56:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190614134625.6870-1-jlayton@kernel.org>
-In-Reply-To: <20190614134625.6870-1-jlayton@kernel.org>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Fri, 14 Jun 2019 18:56:34 +0200
-Message-ID: <CAHc6FU5QVQQ43TZNZ7A53D3Ka3e_qq9GEtV_fZt7C5A+xrWm_A@mail.gmail.com>
-Subject: Re: [PATCH 0/3] ceph: don't NULL terminate virtual xattr values
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S1726393AbfFNRiR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 Jun 2019 13:38:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725859AbfFNRiR (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:38:17 -0400
+Received: from vulcan.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BA7D217D6;
+        Fri, 14 Jun 2019 17:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560533896;
+        bh=+yP5wi3wnLDRDdHK0vuOYEPDsVjMoYvGf6QmAdcsQ8k=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=ObPN6ko5DRFwZ9uLj/AJbCS367Rm9N7NOmZppxvRlsZErKeTlKiLtbBBxs2X76z5G
+         J579UBbB/JwhWSOhjcVcWVLJNubw6kuGof5RXOflMEj14/PE4KaIMo3KeoHiByOCxr
+         aaJmIWTUlk4IXwPJ05ttAkAy/6b3HakOojk/wQfI=
+Message-ID: <7cc694cd3acd1873a469062cf76e32423ff9487f.camel@kernel.org>
+Subject: Re: [PATCH] ceph: copy_file_range needs to strip setuid bits and
+ update timestamps
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
         Ilya Dryomov <idryomov@gmail.com>,
-        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
+Date:   Fri, 14 Jun 2019 13:38:13 -0400
+In-Reply-To: <e9d51b85eef556f5ebe74bd581961953c5d9f2b4.camel@kernel.org>
+References: <20190610174007.4818-1-amir73il@gmail.com>
+         <ed2e4b5d26890e96ba9dafcb3dba88427e36e619.camel@kernel.org>
+         <87zhml7ada.fsf@suse.com>
+         <38f6f71f6be0b5baaea75417aa4bcf072e625567.camel@kernel.org>
+         <87v9x87dmi.fsf@suse.com>
+         <e9d51b85eef556f5ebe74bd581961953c5d9f2b4.camel@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 14 Jun 2019 at 15:46, Jeff Layton <jlayton@kernel.org> wrote:
-> kcephfs has several "virtual" xattrs that return strings that are
-> currently populated using snprintf(), which always NULL terminates the
-> string.
->
-> This leads to the string being truncated when we use a buffer length
-> acquired by calling getxattr with a 0 size first. The last character
-> of the string ends up being clobbered by the termination.
->
-> The convention with xattrs is to not store the termination with string
-> data, given that we have the length. This is how setfattr/getfattr
-> operate.
->
-> This patch makes ceph's virtual xattrs not include NULL termination
-> when formatting their values. In order to handle this, a new
-> snprintf_noterm function is added, and ceph is changed over to use
-> this to populate the xattr value buffer. Finally, we fix ceph to
-> return -ERANGE properly when the string didn't fit in the buffer.
+On Fri, 2019-06-14 at 07:43 -0400, Jeff Layton wrote:
+> On Fri, 2019-06-14 at 09:52 +0100, Luis Henriques wrote:
+> > So, do you think the patch below would be enough?  It's totally
+> > untested, but I wanted to know if that would be acceptable before
+> > running some tests on it.
+> > 
+> > Cheers,
+> > --
+> > Luis
+> > 
+> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > index c5517ffeb11c..f6b0683dd8dc 100644
+> > --- a/fs/ceph/file.c
+> > +++ b/fs/ceph/file.c
+> > @@ -1949,6 +1949,21 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+> >                 goto out;
+> >         }
+> >  
+> > +       ret = ceph_do_getattr(dst_inode, CEPH_CAP_AUTH_SHARED, false);
+> > +       if (ret < 0) {
+> > +               dout("failed to get auth caps on dst file (%zd)\n", ret);
+> > +               goto out;
+> > +       }
+> > +
+> 
+> I think this is still racy. You could lose As caps before file_modified
+> is called. IMO, this code should hold a reference to As caps until the
+> c_f_r operation is complete.
+> 
+> That may get tricky however if you do need to issue a setattr to change
+> the mode, as the MDS may try to recall As caps at that point. You won't
+> be able to release them until you drop the reference, so will that
+> deadlock? I'm not sure.
+> 
 
-This looks reasonable from an xattr point of view.
+That said...in many (most?) cases the client will already have As caps
+on the file from the permission check during open, and mode changes
+(and AUTH cap revokes) are relatively rare. So, the race I'm talking
+about probably almost never happens in practice.
 
-Thanks,
-Andreas
+But...privilege escalation attacks often involve setuid changes, so I
+think we really ought to be careful here.
 
-> Jeff Layton (3):
->   lib/vsprintf: add snprintf_noterm
->   ceph: don't NULL terminate virtual xattr strings
->   ceph: return -ERANGE if virtual xattr value didn't fit in buffer
->
->  fs/ceph/xattr.c        |  49 +++++++-------
->  include/linux/kernel.h |   2 +
->  lib/vsprintf.c         | 145 ++++++++++++++++++++++++++++-------------
->  3 files changed, 130 insertions(+), 66 deletions(-)
->
-> --
-> 2.21.0
->
+In any case, if holding a reference to As is not feasible, then I we
+could take the original version of the patch, and maybe pair it with
+the getattr above. It's not ideal, but it's better than nothing.
+
+
+> > +       /* Should dst_inode lock be held throughout the copy operation? */
+> > +       inode_lock(dst_inode);
+> > +       ret = file_modified(dst_file);
+> > +       inode_unlock(dst_inode);
+> > +       if (ret < 0) {
+> > +               dout("failed to modify dst file before copy (%zd)\n", ret);
+> > +               goto out;
+> > +       }
+> > +
+> >         /*
+> >          * We need FILE_WR caps for dst_ci and FILE_RD for src_ci as other
+> >          * clients may have dirty data in their caches.  And OSDs know nothing
+
