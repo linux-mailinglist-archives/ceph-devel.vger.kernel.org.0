@@ -2,51 +2,51 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29D44456EF
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2019 10:06:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6727845749
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2019 10:18:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbfFNIGJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 Jun 2019 04:06:09 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44632 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726420AbfFNIGI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 Jun 2019 04:06:08 -0400
-Received: by mail-qt1-f193.google.com with SMTP id x47so1447961qtk.11
-        for <ceph-devel@vger.kernel.org>; Fri, 14 Jun 2019 01:06:07 -0700 (PDT)
+        id S1726447AbfFNIRn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 Jun 2019 04:17:43 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36682 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbfFNIRn (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 Jun 2019 04:17:43 -0400
+Received: by mail-qt1-f194.google.com with SMTP id p15so1526295qtl.3
+        for <ceph-devel@vger.kernel.org>; Fri, 14 Jun 2019 01:17:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=9W9yEllBGuvnKfoInthMdHBQrQumvpWRKfJ7538MiVk=;
-        b=LIgzctlr810RRWnc+zNmzLx68SyC2YpJdqwYNq0JYY0dtdkvFk3j1Ff03e6Fw7X/OU
-         rIM4MAFt4MZCK/KH3kd8S+SYpv2lBlKpncUehYD1lapDAGIqFm4MVD4pgJyhf/CmMiiV
-         3OXQHPtHveVVRQUjIbZ4jZW2iH3UzaKuXbs721xXLJSX3PZXZ1edhy2wW+fMp07zjFYv
-         Gmui0bUbQRUHGKD/06fFyKUFSzOwZP15unb8NndaGIJwretfCSYHZqVkjP2uGym30kc2
-         WKjWxW2pug5ozOu2/0vbSpN5XwSicsVWlk0en69ZRvayJWoKfiDits1/eZ70cLn248CF
-         m+8A==
+        bh=aaLU90yx25J8Lq3S7JM2HHthDUqZaBZOrD0MXMXw2Fo=;
+        b=ctcFzLOW/kOT9G+5eH+Ol/ygHS1htfFWktCVrnBBIBtORdb+G53zrs9VpnyIz5v0wn
+         nZDm2Emv4Kyc2QZ4Jtz3a9WHVkBd2A+y12/VKnk07us4kXL3GthO+xkXzW9VUE1iytc3
+         +DEkgv3LVwIqPgSfMudFNdtcb+j/F9K3O1HIcFXr7Nbj3gcGjzs/crlYGA+iqWMfaZqa
+         +NF3ANXN1WBxKb3mzouofS5xPWbcvSHqQ58pcBApSg4PJr28A4ZIh8Crsw4fkh9ANIrF
+         Sw9VHjWSsjuIY6NPtjAJC/ysvJDKap8YN60SRaz3kWyPH9+qkDI/pqia2wC5vivOjFLJ
+         KDIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=9W9yEllBGuvnKfoInthMdHBQrQumvpWRKfJ7538MiVk=;
-        b=oLh5UuVd5fHptngoDTRECtqk7xQdBiYyG8rnpNTggdCpFdgQEw3N5u7vn5Vzq/YVZR
-         hoHRPglZdemQk7z7dhTXxcVNiW19fnUlaHE5XgzrsYvTuru/2wl7XA+X0GUfhu/7Xg5f
-         0oDhaTaP+r5/ygsanGKj5OL7HMd5L02EUINZkKDkB+ZV+7XQyGeaSu4wOkDG+LU4OjyM
-         sP6JcpF/e0AjXwEAoXdJpcqzJZ2ly0r/BrWYgnVFk98+uxEkyM8iqfZt+iHblLNPNtHE
-         Q3X8ifEj4fN8EhIeuzKztRsaCaK2t9DywUiejBP9adA/RoKCj9qEF45TEKfA4nP0ckqy
-         jpiw==
-X-Gm-Message-State: APjAAAUkGcHOBbcYtDl1P9ycBQ953RTS7Q4xbjUdsuf+Kb/DhN+6nwOw
-        /zceZ6X6VMOTBohpErJJuqyutNzX2TD6bzHk51w=
-X-Google-Smtp-Source: APXvYqz63gs6A5xVBt0HNU/CQIyQIMIvq6y6d2P6QIBYMSBuB/fSKoSGpi1dBujRJwegJiS2zJ0UDaASIJZCzqK5GYc=
-X-Received: by 2002:ac8:32e9:: with SMTP id a38mr81220610qtb.245.1560499567229;
- Fri, 14 Jun 2019 01:06:07 -0700 (PDT)
+        bh=aaLU90yx25J8Lq3S7JM2HHthDUqZaBZOrD0MXMXw2Fo=;
+        b=kfo+qcozaB9qyc2+/1k9PjcR1N1XUhxNLGncI7Pq6t5vTOs25fYU62OMqVmfQU7LNC
+         dmYddzMQVBrvIfw5bKRu2MRmnsuomfWC0AWjnvkCFPl7AtLFbqtvYqAG/akTBY2407es
+         aRvw9Wv5Li7SL+k+/c9H+YnN8lAQi5J6sS9F9g+BM8V92EkVJVJqm2MIULOnvjZXmsbo
+         0y4s/3v2SQNq6tcUeQfVb6XvfWB8p739XhzqepsNWtk3FR2ybuVDtH2tdaXbjk09/5UD
+         O1tqf3VGdJHd2p9bxOeCKnXRizqJDs+2jsayrRQBZnCuZLFNtS8qbROzff3wUvVL5Nf3
+         bExQ==
+X-Gm-Message-State: APjAAAUkrqCA0hmHFz2Q48dGyEZGbM7qiejvU0C3Racy5Gk6VGy0tDo5
+        s+d6gE3KTNxSmumoWYoQYCnHpL4EAfd48RgUt1w=
+X-Google-Smtp-Source: APXvYqyVUnqvPidf4edGsV8wlC8d90VkvbS0duxPiIAWA/yz4c9O9ZoaPJBvINP6YpX3MYZjpvkioc7FmmYmCKUNY54=
+X-Received: by 2002:ac8:87d:: with SMTP id x58mr79866828qth.368.1560500261749;
+ Fri, 14 Jun 2019 01:17:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190607153816.12918-1-jlayton@kernel.org> <20190607153816.12918-3-jlayton@kernel.org>
-In-Reply-To: <20190607153816.12918-3-jlayton@kernel.org>
+References: <20190607153816.12918-1-jlayton@kernel.org> <20190607153816.12918-11-jlayton@kernel.org>
+In-Reply-To: <20190607153816.12918-11-jlayton@kernel.org>
 From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Fri, 14 Jun 2019 16:05:55 +0800
-Message-ID: <CAAM7YAnVF_+m-Ege6u5mS9wcT_ttJZrvRuWh7F3-49Yxd98kEA@mail.gmail.com>
-Subject: Re: [PATCH 02/16] libceph: add ceph_decode_entity_addr
+Date:   Fri, 14 Jun 2019 16:17:30 +0800
+Message-ID: <CAAM7YAkaJJngkPzWEMhtXWULEWpvqNhSgGiWOHNL1Czpo=obLw@mail.gmail.com>
+Subject: Re: [PATCH 10/16] ceph: handle btime in cap messages
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     Ilya Dryomov <idryomov@redhat.com>, Zheng Yan <zyan@redhat.com>,
         Sage Weil <sage@redhat.com>,
@@ -59,157 +59,126 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 On Fri, Jun 7, 2019 at 11:38 PM Jeff Layton <jlayton@kernel.org> wrote:
 >
-> Add a way to decode an entity_addr_t. Once CEPH_FEATURE_MSG_ADDR2 is
-> enabled, the server daemons will start encoding entity_addr_t
-> differently.
->
-> Add a new helper function that can handle either format.
->
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  include/linux/ceph/decode.h |  2 +
->  net/ceph/Makefile           |  2 +-
->  net/ceph/decode.c           | 75 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 78 insertions(+), 1 deletion(-)
->  create mode 100644 net/ceph/decode.c
+>  fs/ceph/caps.c  | 18 ++++++++++++------
+>  fs/ceph/snap.c  |  1 +
+>  fs/ceph/super.h |  2 +-
+>  3 files changed, 14 insertions(+), 7 deletions(-)
 >
-> diff --git a/include/linux/ceph/decode.h b/include/linux/ceph/decode.h
-> index a6c2a48d42e0..1c0a665bfc03 100644
-> --- a/include/linux/ceph/decode.h
-> +++ b/include/linux/ceph/decode.h
-> @@ -230,6 +230,8 @@ static inline void ceph_decode_addr(struct ceph_entity_addr *a)
->         WARN_ON(a->in_addr.ss_family == 512);
->  }
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 50409d9fdc90..623b82684e90 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -1139,7 +1139,7 @@ struct cap_msg_args {
+>         u64                     flush_tid, oldest_flush_tid, size, max_size;
+>         u64                     xattr_version;
+>         struct ceph_buffer      *xattr_buf;
+> -       struct timespec64       atime, mtime, ctime;
+> +       struct timespec64       atime, mtime, ctime, btime;
+>         int                     op, caps, wanted, dirty;
+>         u32                     seq, issue_seq, mseq, time_warp_seq;
+>         u32                     flags;
+> @@ -1160,7 +1160,6 @@ static int send_cap_msg(struct cap_msg_args *arg)
+>         struct ceph_msg *msg;
+>         void *p;
+>         size_t extra_len;
+> -       struct timespec64 zerotime = {0};
+>         struct ceph_osd_client *osdc = &arg->session->s_mdsc->fsc->client->osdc;
 >
-> +extern int ceph_decode_entity_addr(void **p, void *end,
-> +                                  struct ceph_entity_addr *addr);
+>         dout("send_cap_msg %s %llx %llx caps %s wanted %s dirty %s"
+> @@ -1251,7 +1250,7 @@ static int send_cap_msg(struct cap_msg_args *arg)
+>          * We just zero these out for now, as the MDS ignores them unless
+>          * the requisite feature flags are set (which we don't do yet).
+>          */
+> -       ceph_encode_timespec64(p, &zerotime);
+> +       ceph_encode_timespec64(p, &arg->btime);
+>         p += sizeof(struct ceph_timespec);
+>         ceph_encode_64(&p, 0);
+>
+> @@ -1379,6 +1378,7 @@ static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
+>         arg.mtime = inode->i_mtime;
+>         arg.atime = inode->i_atime;
+>         arg.ctime = inode->i_ctime;
+> +       arg.btime = ci->i_btime;
+>
+>         arg.op = op;
+>         arg.caps = cap->implemented;
+> @@ -1438,6 +1438,7 @@ static inline int __send_flush_snap(struct inode *inode,
+>         arg.atime = capsnap->atime;
+>         arg.mtime = capsnap->mtime;
+>         arg.ctime = capsnap->ctime;
+> +       arg.btime = capsnap->btime;
+>
+>         arg.op = CEPH_CAP_OP_FLUSHSNAP;
+>         arg.caps = capsnap->issued;
+> @@ -3044,6 +3045,7 @@ struct cap_extra_info {
+>         u64 nsubdirs;
+>         /* currently issued */
+>         int issued;
+> +       struct timespec64 btime;
+>  };
+>
 >  /*
->   * encoders
->   */
-> diff --git a/net/ceph/Makefile b/net/ceph/Makefile
-> index db09defe27d0..59d0ba2072de 100644
-> --- a/net/ceph/Makefile
-> +++ b/net/ceph/Makefile
-> @@ -5,7 +5,7 @@
->  obj-$(CONFIG_CEPH_LIB) += libceph.o
+> @@ -3130,6 +3132,7 @@ static void handle_cap_grant(struct inode *inode,
+>                 inode->i_mode = le32_to_cpu(grant->mode);
+>                 inode->i_uid = make_kuid(&init_user_ns, le32_to_cpu(grant->uid));
+>                 inode->i_gid = make_kgid(&init_user_ns, le32_to_cpu(grant->gid));
+> +               ci->i_btime = extra_info->btime;
+may btime change?  If not, we don't need to update it.
+
+>                 dout("%p mode 0%o uid.gid %d.%d\n", inode, inode->i_mode,
+>                      from_kuid(&init_user_ns, inode->i_uid),
+>                      from_kgid(&init_user_ns, inode->i_gid));
+> @@ -3851,17 +3854,20 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+>                 }
+>         }
 >
->  libceph-y := ceph_common.o messenger.o msgpool.o buffer.o pagelist.o \
-> -       mon_client.o \
-> +       mon_client.o decode.o \
->         cls_lock_client.o \
->         osd_client.o osdmap.o crush/crush.o crush/mapper.o crush/hash.o \
->         striper.o \
-> diff --git a/net/ceph/decode.c b/net/ceph/decode.c
-> new file mode 100644
-> index 000000000000..27edf5d341ec
-> --- /dev/null
-> +++ b/net/ceph/decode.c
-> @@ -0,0 +1,75 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/ceph/decode.h>
-> +
-> +int
-> +ceph_decode_entity_addr(void **p, void *end, struct ceph_entity_addr *addr)
-> +{
-> +       u8 marker, v, compat;
-
-It's better to use name struct_v, struct_compat
-
-
-> +       u32 len;
-> +
-> +       ceph_decode_8_safe(p, end, marker, bad);
-> +       if (marker == 1) {
-> +               ceph_decode_8_safe(p, end, v, bad);
-> +               ceph_decode_8_safe(p, end, compat, bad);
-> +               if (!v || compat != 1)
-> +                       goto bad;
-> +               /* FIXME: sanity check? */
-> +               ceph_decode_32_safe(p, end, len, bad);
-> +               /* type is __le32, so we must copy into place as-is */
-> +               ceph_decode_copy_safe(p, end, &addr->type,
-> +                                       sizeof(addr->type), bad);
-> +
-> +               /*
-> +                * TYPE_NONE == 0
-> +                * TYPE_LEGACY == 1
-> +                *
-> +                * Clients that don't support ADDR2 always send TYPE_NONE.
-> +                * For now, since all we support is msgr1, just set this to 0
-> +                * when we get a TYPE_LEGACY type.
-> +                */
-> +               if (addr->type == cpu_to_le32(1))
-> +                       addr->type = 0;
-> +       } else if (marker == 0) {
-> +               addr->type = 0;
-> +               /* Skip rest of type field */
-> +               ceph_decode_skip_n(p, end, 3, bad);
-> +       } else {
-
-versioned encoding has forward compatibility.  The code should looks like
-
-if (struct_v == 0) {
-  /* old format */
-  return;
-}
-
-if (struct_compat != 1)
-   goto bad
-
-end = *p + struct_len;
-
-if  (struct_v == 1) {
-....
-}
-
-if (struct_v == 2) {
-...
-}
-
-*p = end;
-
-
-
-
-> +               goto bad;
+> -       if (msg_version >= 11) {
+> +       if (msg_version >= 9) {
+>                 struct ceph_timespec *btime;
+>                 u64 change_attr;
+> -               u32 flags;
+>
+> -               /* version >= 9 */
+>                 if (p + sizeof(*btime) > end)
+>                         goto bad;
+>                 btime = p;
+> +               ceph_decode_timespec64(&extra_info.btime, btime);
+>                 p += sizeof(*btime);
+>                 ceph_decode_64_safe(&p, end, change_attr, bad);
 > +       }
 > +
-> +       ceph_decode_need(p, end, sizeof(addr->nonce), bad);
-> +       ceph_decode_copy(p, &addr->nonce, sizeof(addr->nonce));
-> +
-> +       /* addr length */
-> +       if (marker ==  1) {
-> +               ceph_decode_32_safe(p, end, len, bad);
-> +               if (len > sizeof(addr->in_addr))
-> +                       goto bad;
-> +       } else  {
-> +               len = sizeof(addr->in_addr);
-> +       }
-> +
-> +       memset(&addr->in_addr, 0, sizeof(addr->in_addr));
-> +
-> +       if (len) {
-> +               ceph_decode_need(p, end, len, bad);
-> +               ceph_decode_copy(p, &addr->in_addr, len);
-> +
-> +               /*
-> +                * Fix up sa_family. Legacy encoding sends it in BE, addr2
-> +                * encoding uses LE.
-> +                */
-> +               if (marker == 1)
-> +                       addr->in_addr.ss_family =
-> +                               le16_to_cpu((__force __le16)addr->in_addr.ss_family);
-> +               else
-> +                       addr->in_addr.ss_family =
-> +                               be16_to_cpu((__force __be16)addr->in_addr.ss_family);
-> +       }
-> +       return 0;
-> +bad:
-> +       return -EINVAL;
-> +}
-> +EXPORT_SYMBOL(ceph_decode_entity_addr);
-> +
+> +       if (msg_version >= 11) {
+> +               u32 flags;
+>                 /* version >= 10 */
+>                 ceph_decode_32_safe(&p, end, flags, bad);
+>                 /* version >= 11 */
+> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> index 72c6c022f02b..854308e13f12 100644
+> --- a/fs/ceph/snap.c
+> +++ b/fs/ceph/snap.c
+> @@ -606,6 +606,7 @@ int __ceph_finish_cap_snap(struct ceph_inode_info *ci,
+>         capsnap->mtime = inode->i_mtime;
+>         capsnap->atime = inode->i_atime;
+>         capsnap->ctime = inode->i_ctime;
+> +       capsnap->btime = ci->i_btime;
+>         capsnap->time_warp_seq = ci->i_time_warp_seq;
+>         capsnap->truncate_size = ci->i_truncate_size;
+>         capsnap->truncate_seq = ci->i_truncate_seq;
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 3dd9d467bb80..c3cb942e08b0 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -197,7 +197,7 @@ struct ceph_cap_snap {
+>         u64 xattr_version;
+>
+>         u64 size;
+> -       struct timespec64 mtime, atime, ctime;
+> +       struct timespec64 mtime, atime, ctime, btime;
+>         u64 time_warp_seq;
+>         u64 truncate_size;
+>         u32 truncate_seq;
 > --
 > 2.21.0
 > _______________________________________________
