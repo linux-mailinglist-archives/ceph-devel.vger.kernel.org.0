@@ -2,171 +2,158 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD173457EA
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2019 10:52:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9018D45871
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2019 11:19:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbfFNIw0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 Jun 2019 04:52:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48512 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725951AbfFNIw0 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 14 Jun 2019 04:52:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F13A3B02E;
-        Fri, 14 Jun 2019 08:52:23 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH] ceph: copy_file_range needs to strip setuid bits and update timestamps
-References: <20190610174007.4818-1-amir73il@gmail.com>
-        <ed2e4b5d26890e96ba9dafcb3dba88427e36e619.camel@kernel.org>
-        <87zhml7ada.fsf@suse.com>
-        <38f6f71f6be0b5baaea75417aa4bcf072e625567.camel@kernel.org>
-Date:   Fri, 14 Jun 2019 09:52:21 +0100
-In-Reply-To: <38f6f71f6be0b5baaea75417aa4bcf072e625567.camel@kernel.org> (Jeff
-        Layton's message of "Thu, 13 Jun 2019 13:48:42 -0400")
-Message-ID: <87v9x87dmi.fsf@suse.com>
+        id S1726545AbfFNJTy convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Fri, 14 Jun 2019 05:19:54 -0400
+Received: from mx-out.tlen.pl ([193.222.135.140]:33410 "EHLO mx-out.tlen.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726083AbfFNJTx (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 14 Jun 2019 05:19:53 -0400
+Received: (wp-smtpd smtp.tlen.pl 6229 invoked from network); 14 Jun 2019 11:19:48 +0200
+Received: from 87-207-64-23.dynamic.chello.pl (HELO [10.0.2.15]) (skidoo@o2.pl@[87.207.64.23])
+          (envelope-sender <skidoo@tlen.pl>)
+          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-SHA encrypted SMTP
+          for <ceph-users@lists.ceph.com>; 14 Jun 2019 11:19:48 +0200
+Date:   Fri, 14 Jun 2019 11:19:47 +0200
+From:   Luk <skidoo@tlen.pl>
+Reply-To: =?iso-8859-2?Q?=A3ukasz_Chrustek?= <skidoo@tlen.pl>
+Message-ID: <304057881.20190614111947@tlen.pl>
+To:     ceph-users@lists.ceph.com, ceph-devel@vger.kernel.org
+Subject: problem with degraded PG
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-2
+Content-Transfer-Encoding: 8BIT
+X-WP-MailID: 680706a9fb6a7fd803aa5663abee61e3
+X-WP-AV: skaner antywirusowy Poczty o2
+X-WP-SPAM: NO 000000A [kcM0]                               
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> writes:
+Hello,
 
-> On Thu, 2019-06-13 at 16:50 +0100, Luis Henriques wrote:
->> Jeff Layton <jlayton@kernel.org> writes:
->> 
->> > On Mon, 2019-06-10 at 20:40 +0300, Amir Goldstein wrote:
->> > > Because ceph doesn't hold destination inode lock throughout the copy,
->> > > strip setuid bits before and after copy.
->> > > 
->> > > The destination inode mtime is updated before and after the copy and the
->> > > source inode atime is updated after the copy, similar to the filesystem
->> > > ->read_iter() implementation.
->> > > 
->> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->> > > ---
->> > > 
->> > > Hi Ilya,
->> > > 
->> > > Please consider applying this patch to ceph branch after merging
->> > > Darrick's copy-file-range-fixes branch from:
->> > >         git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
->> > > 
->> > > The series (including this patch) was tested on ceph by
->> > > Luis Henriques using new copy_range xfstests.
->> > > 
->> > > AFAIK, only fallback from ceph to generic_copy_file_range()
->> > > implementation was tested and not the actual ceph clustered
->> > > copy_file_range.
->> > > 
->> > > Thanks,
->> > > Amir.
->> > > 
->> > >  fs/ceph/file.c | 17 +++++++++++++++++
->> > >  1 file changed, 17 insertions(+)
->> > > 
->> > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
->> > > index c5517ffeb11c..b04c97c7d393 100644
->> > > --- a/fs/ceph/file.c
->> > > +++ b/fs/ceph/file.c
->> > > @@ -1949,6 +1949,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->> > >  		goto out;
->> > >  	}
->> > >  
->> > > +	/* Should dst_inode lock be held throughout the copy operation? */
->> > > +	inode_lock(dst_inode);
->> > > +	ret = file_modified(dst_file);
->> > > +	inode_unlock(dst_inode);
->> > > +	if (ret < 0) {
->> > > +		dout("failed to modify dst file before copy (%zd)\n", ret);
->> > > +		goto out;
->> > > +	}
->> > > +
->> > 
->> > I don't see anything that guarantees that the mode of the destination
->> > file is up to date at this point. file_modified() just ends up checking
->> > the mode cached in the inode.
->> > 
->> > I wonder if we ought to fix get_rd_wr_caps() to also acquire a reference
->> > to AUTH_SHARED caps on the destination inode, and then call
->> > file_modified() after we get those caps. That would also mean that we
->> > wouldn't need to do this a second time after the copy.
->> > 
->> > The catch is that if we did need to issue a setattr, I'm not sure if
->> > we'd need to release those caps first.
->> > 
->> > Luis, Zheng, thoughts?
->> 
->> Hmm... I missed that.  IIRC the FILE_WR caps allow to modify some
->> metadata (such as timestamps, and file size).  I suppose it doesn't
->> allow to cache the mode, does it? 
->
-> No, W caps don't guarantee that the mode won't change. You need As or Ax
-> caps for that.
->
->>  If it does, fixing it would be a
->> matter of moving the code a bit further down.  If it doesn't the
->> ceph_copy_file_range function already has this problem, as it calls
->> file_update_time.  And I wonder if other code paths have this problem
->> too.
->> 
->
-> I think you mean file_remove_privs, but yes...the write codepath has a
-> similar problem. file_remove_privs is called before acquiring any caps,
-> so the same thing could happen there too.
->
-> It'd be good to fix both places, but taking As cap references in the
-> write codepath could have performance impact in some cases. OTOH, they
-> don't change that much, so maybe that's OK.
->
->> Obviously, the chunk below will have the same problem.
->> 
->
-> Right. If however, we have this code take an As cap reference before
-> doing the copy, then we can be sure that the mode can't change until we
-> drop them. That way we wouldn't need the second call.
+Maybe  somone  was  fighting  with this kind of stuck in ceph already.
+This  is  production  cluster,  can't/don't  want to make wrong steps,
+please advice, what to do.
 
-So, do you think the patch below would be enough?  It's totally
-untested, but I wanted to know if that would be acceptable before
-running some tests on it.
+After  changing  of  one failed disk (it was osd-7) on our cluster ceph
+didn't recover to HEALTH_OK, it stopped in state:
 
-Cheers,
--- 
-Luis
-
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index c5517ffeb11c..f6b0683dd8dc 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1949,6 +1949,21 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 		goto out;
- 	}
+[root@ceph-mon-01 ~]# ceph -s
+  cluster:
+    id:     b6f23cff-7279-f4b0-ff91-21fadac95bb5
+    health: HEALTH_WARN
+            noout,noscrub,nodeep-scrub flag(s) set
+            Degraded data redundancy: 24761/45994899 objects degraded (0.054%), 8 pgs degraded, 8 pgs undersized
  
-+	ret = ceph_do_getattr(dst_inode, CEPH_CAP_AUTH_SHARED, false);
-+	if (ret < 0) {
-+		dout("failed to get auth caps on dst file (%zd)\n", ret);
-+		goto out;
-+	}
-+
-+	/* Should dst_inode lock be held throughout the copy operation? */
-+	inode_lock(dst_inode);
-+	ret = file_modified(dst_file);
-+	inode_unlock(dst_inode);
-+	if (ret < 0) {
-+		dout("failed to modify dst file before copy (%zd)\n", ret);
-+		goto out;
-+	}
-+
- 	/*
- 	 * We need FILE_WR caps for dst_ci and FILE_RD for src_ci as other
- 	 * clients may have dirty data in their caches.  And OSDs know nothing
+  services:
+    mon:        3 daemons, quorum ceph-mon-01,ceph-mon-02,ceph-mon-03
+    mgr:        ceph-mon-03(active), standbys: ceph-mon-02, ceph-mon-01
+    osd:        144 osds: 144 up, 144 in
+                flags noout,noscrub,nodeep-scrub
+    rbd-mirror: 3 daemons active
+    rgw:        6 daemons active
+ 
+  data:
+    pools:   18 pools, 2176 pgs
+    objects: 15.33M objects, 49.3TiB
+    usage:   151TiB used, 252TiB / 403TiB avail
+    pgs:     24761/45994899 objects degraded (0.054%)
+             2168 active+clean
+             8    active+undersized+degraded
+ 
+  io:
+    client:   435MiB/s rd, 415MiB/s wr, 7.94kop/s rd, 2.96kop/s wr
+
+Restart of OSD didn't helped, changing choose_total_tries from 50 to 100 didn't help.
+
+I checked one of degraded PG, 10.3c4
+
+[root@ceph-mon-01 ~]# ceph pg dump 2>&1 | grep -w 10.3c4
+10.3c4     3593                  0     3593         0       0 14769891858 10076    10076    active+undersized+degraded 2019-06-13 08:19:39.802219  37380'71900564 37380:119411139       [9,109]          9       [9,109]              9  33550'69130424 2019-06-08 02:28:40.508790  33550'69130424 2019-06-08 02:28:40.508790            18 
+
+
+[root@ceph-mon-01 ~]# ceph pg 10.3c4 query | jq '.["peer_info"][] | {peer: .peer, last_update:.last_update}' 
+{
+  "peer": "0",
+  "last_update": "36847'71412720"
+}
+{
+  "peer": "109",
+  "last_update": "37380'71900570"
+}
+{
+  "peer": "117",
+  "last_update": "0'0"
+}
+
+
+[root@ceph-mon-01 ~]#   
+I have checked space taken for this PG on storage nodes:
+here is how to check where is particular OSD (on which physical storage node):
+[root@ceph-mon-01 ~]# ceph osd status 2>&1 | grep " 9 "
+|  9  |   stor-a02  | 2063G | 5386G |   52   |  1347k  |   53   |   292k  | exists,up |
+[root@ceph-mon-01 ~]# ceph osd status 2>&1 | grep " 109 "
+| 109 |   stor-a01  | 1285G | 4301G |    5   |  31.0k  |    6   |  59.2k  | exists,up |
+[root@ceph-mon-01 ~]# watch ceph -s
+[root@ceph-mon-01 ~]# ceph osd status 2>&1 | grep " 117 "
+| 117 |   stor-b02  | 1334G | 4252G |   54   |  1216k  |   13   |  27.4k  | exists,up |
+[root@ceph-mon-01 ~]# ceph osd status 2>&1 | grep " 0 "
+|  0  |   stor-a01  | 2156G | 5293G |   58   |   387k  |   29   |  30.7k  | exists,up |
+[root@ceph-mon-01 ~]# 
+and checking sizes on servers:
+stor-a01 (this PG shouldn't be on the same host):
+[root@stor-a01 /var/lib/ceph/osd/ceph-0/current]# du -sh 10.3c4_*
+2.4G    10.3c4_head
+0       10.3c4_TEMP
+[root@stor-a01 /var/lib/ceph/osd/ceph-109/current]# du -sh 10.3c4_*
+14G     10.3c4_head
+0       10.3c4_TEMP
+[root@stor-a01 /var/lib/ceph/osd/ceph-109/current]#
+stor-a02:
+[root@stor-a02 /var/lib/ceph/osd/ceph-9/current]# du -sh 10.3c4_*
+14G     10.3c4_head
+0       10.3c4_TEMP
+[root@stor-a02 /var/lib/ceph/osd/ceph-9/current]#     
+stor-b02:
+[root@stor-b02 /var/lib/ceph/osd/ceph-117/current]# du -sh 10.3c4_*
+zsh: no matches found: 10.3c4_*
+
+information about ceph:
+[root@ceph-mon-01 ~]# ceph versions
+{
+    "mon": {
+        "ceph version 12.2.9 (9e300932ef8a8916fb3fda78c58691a6ab0f4217) luminous (stable)": 3
+    },
+    "mgr": {
+        "ceph version 12.2.9 (9e300932ef8a8916fb3fda78c58691a6ab0f4217) luminous (stable)": 3
+    },
+    "osd": {
+        "ceph version 12.2.9 (9e300932ef8a8916fb3fda78c58691a6ab0f4217) luminous (stable)": 144
+    },
+    "mds": {},
+    "rbd-mirror": {
+        "ceph version 12.2.9 (9e300932ef8a8916fb3fda78c58691a6ab0f4217) luminous (stable)": 3
+    },
+    "rgw": {
+        "ceph version 12.2.9 (9e300932ef8a8916fb3fda78c58691a6ab0f4217) luminous (stable)": 6
+    },
+    "overall": {
+        "ceph version 12.2.9 (9e300932ef8a8916fb3fda78c58691a6ab0f4217) luminous (stable)": 159
+    }
+}
+
+crushmap: https://pastebin.com/cpC2WmyS
+ceph osd tree: https://pastebin.com/XvZ2cNZZ
+
+I'm  cross-posting this do devel because maybe there is some known bug
+in  this  particular  version  of  ceph,  and  You  could  point  some
+directions to fix this problem.
+
+-- 
+Regards
+Lukasz
+
