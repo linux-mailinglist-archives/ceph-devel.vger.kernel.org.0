@@ -2,114 +2,306 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD1E4465D6
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2019 19:38:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC00846DC9
+	for <lists+ceph-devel@lfdr.de>; Sat, 15 Jun 2019 04:26:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbfFNRiR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 Jun 2019 13:38:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725859AbfFNRiR (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:38:17 -0400
-Received: from vulcan.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BA7D217D6;
-        Fri, 14 Jun 2019 17:38:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560533896;
-        bh=+yP5wi3wnLDRDdHK0vuOYEPDsVjMoYvGf6QmAdcsQ8k=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ObPN6ko5DRFwZ9uLj/AJbCS367Rm9N7NOmZppxvRlsZErKeTlKiLtbBBxs2X76z5G
-         J579UBbB/JwhWSOhjcVcWVLJNubw6kuGof5RXOflMEj14/PE4KaIMo3KeoHiByOCxr
-         aaJmIWTUlk4IXwPJ05ttAkAy/6b3HakOojk/wQfI=
-Message-ID: <7cc694cd3acd1873a469062cf76e32423ff9487f.camel@kernel.org>
-Subject: Re: [PATCH] ceph: copy_file_range needs to strip setuid bits and
- update timestamps
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
-Date:   Fri, 14 Jun 2019 13:38:13 -0400
-In-Reply-To: <e9d51b85eef556f5ebe74bd581961953c5d9f2b4.camel@kernel.org>
-References: <20190610174007.4818-1-amir73il@gmail.com>
-         <ed2e4b5d26890e96ba9dafcb3dba88427e36e619.camel@kernel.org>
-         <87zhml7ada.fsf@suse.com>
-         <38f6f71f6be0b5baaea75417aa4bcf072e625567.camel@kernel.org>
-         <87v9x87dmi.fsf@suse.com>
-         <e9d51b85eef556f5ebe74bd581961953c5d9f2b4.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        id S1726293AbfFOC0L (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 Jun 2019 22:26:11 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:34796 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbfFOC0L (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 Jun 2019 22:26:11 -0400
+Received: by mail-qt1-f194.google.com with SMTP id m29so4774496qtu.1
+        for <ceph-devel@vger.kernel.org>; Fri, 14 Jun 2019 19:26:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XC3aUpncAEc7x+1YX5XWe4x0xnCwQ0iqQSDOCvHlcyY=;
+        b=sZuNw+WZ7ciGA6e4x3Is8iF2150/948PFzYcBdLmqV/BXZC5ydmJAREcGRzV5hzq/f
+         RoIQJI1kkV1ehmDtPz5ZvsML3KgAopqcjjmBi9R7+/FePDrQBtQQg0IepMmsZOCSZibR
+         sFeh/MXtMZ/xAQkDgBf6S9g8oTg5UScfxUtja/dnZhSqqLRQjD5Ux1/AezbxfRw8GA5R
+         tBC0CMRtLKU74nUkmr/8+UImZ8+MkZT94JEnHihd0IrUKKIxUjFuwiMUuC/rzMqolBWb
+         wK79YOPULm0f7paDzxFhNhpo5uF9jLaXlX4F2J49jfM4gR1cLIPlH3YfLHKBvIbOmvJH
+         8e2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XC3aUpncAEc7x+1YX5XWe4x0xnCwQ0iqQSDOCvHlcyY=;
+        b=HovHSs+yiKqGJD0C6QgjFqUrh0pbGe4VbtuVkGHM+lURU3x+jt9HoZU/fxfzGjI25v
+         +8/j9iQig+/Nhery1pG8VUm8okD38Zm9+VZkAqoCK9RDEBvGurzdATlilBxH1FyYWzPe
+         C4hn3ngBIsKwIGhncvjp4XLAjYD2bXelhAV3xaZo1VeqRGLt24/KJTnmnPoVQ1iQZPKb
+         yoD5s++Xm+Hxf5w2FvC3xzvC89j/upCm8D3jtSWEOOklG1PPJ/lIybaeEnUv7lt0qonE
+         pgeLSoBD34LyiRmRmHz1qpqY5fCxtmSubNZQEl5UdxOyHZlQV12FqCQzmhSKm2/cEItP
+         BsRg==
+X-Gm-Message-State: APjAAAW61DQLgJjG2G4sZZRZoygOeVbTRJn3j0GlFspw8rTYGCQ2zH06
+        SLAklg9VByhm/j7o9EQPU/MBGH4lK0DiYPx5ShQ=
+X-Google-Smtp-Source: APXvYqwnEYfTjhT0Gt20mkoBlJYC4nsrlis1+JU8RT7dfba0+eatqY8i5iemGsE3gGr+Tn6gruwvbUnlxVQdjtj2mA0=
+X-Received: by 2002:ac8:368a:: with SMTP id a10mr1365670qtc.143.1560565570155;
+ Fri, 14 Jun 2019 19:26:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20190607153816.12918-1-jlayton@kernel.org> <20190607153816.12918-3-jlayton@kernel.org>
+ <CAAM7YAnVF_+m-Ege6u5mS9wcT_ttJZrvRuWh7F3-49Yxd98kEA@mail.gmail.com> <c6c5d94ce2526a3885050eb2395f2c4efa2a9c17.camel@kernel.org>
+In-Reply-To: <c6c5d94ce2526a3885050eb2395f2c4efa2a9c17.camel@kernel.org>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Sat, 15 Jun 2019 10:25:58 +0800
+Message-ID: <CAAM7YAmSWzumRthVmpW1FKK+0XBrNsrFNU2GvKDytOc1hHabjw@mail.gmail.com>
+Subject: Re: [PATCH 02/16] libceph: add ceph_decode_entity_addr
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ilya Dryomov <idryomov@redhat.com>, Zheng Yan <zyan@redhat.com>,
+        Sage Weil <sage@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2019-06-14 at 07:43 -0400, Jeff Layton wrote:
-> On Fri, 2019-06-14 at 09:52 +0100, Luis Henriques wrote:
-> > So, do you think the patch below would be enough?  It's totally
-> > untested, but I wanted to know if that would be acceptable before
-> > running some tests on it.
-> > 
-> > Cheers,
-> > --
-> > Luis
-> > 
-> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > index c5517ffeb11c..f6b0683dd8dc 100644
-> > --- a/fs/ceph/file.c
-> > +++ b/fs/ceph/file.c
-> > @@ -1949,6 +1949,21 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >                 goto out;
-> >         }
-> >  
-> > +       ret = ceph_do_getattr(dst_inode, CEPH_CAP_AUTH_SHARED, false);
-> > +       if (ret < 0) {
-> > +               dout("failed to get auth caps on dst file (%zd)\n", ret);
-> > +               goto out;
-> > +       }
-> > +
-> 
-> I think this is still racy. You could lose As caps before file_modified
-> is called. IMO, this code should hold a reference to As caps until the
-> c_f_r operation is complete.
-> 
-> That may get tricky however if you do need to issue a setattr to change
-> the mode, as the MDS may try to recall As caps at that point. You won't
-> be able to release them until you drop the reference, so will that
-> deadlock? I'm not sure.
-> 
+On Fri, Jun 14, 2019 at 9:13 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> On Fri, 2019-06-14 at 16:05 +0800, Yan, Zheng wrote:
+> > On Fri, Jun 7, 2019 at 11:38 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > > Add a way to decode an entity_addr_t. Once CEPH_FEATURE_MSG_ADDR2 is
+> > > enabled, the server daemons will start encoding entity_addr_t
+> > > differently.
+> > >
+> > > Add a new helper function that can handle either format.
+> > >
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  include/linux/ceph/decode.h |  2 +
+> > >  net/ceph/Makefile           |  2 +-
+> > >  net/ceph/decode.c           | 75 +++++++++++++++++++++++++++++++++++++
+> > >  3 files changed, 78 insertions(+), 1 deletion(-)
+> > >  create mode 100644 net/ceph/decode.c
+> > >
+> > > diff --git a/include/linux/ceph/decode.h b/include/linux/ceph/decode.h
+> > > index a6c2a48d42e0..1c0a665bfc03 100644
+> > > --- a/include/linux/ceph/decode.h
+> > > +++ b/include/linux/ceph/decode.h
+> > > @@ -230,6 +230,8 @@ static inline void ceph_decode_addr(struct ceph_entity_addr *a)
+> > >         WARN_ON(a->in_addr.ss_family == 512);
+> > >  }
+> > >
+> > > +extern int ceph_decode_entity_addr(void **p, void *end,
+> > > +                                  struct ceph_entity_addr *addr);
+> > >  /*
+> > >   * encoders
+> > >   */
+> > > diff --git a/net/ceph/Makefile b/net/ceph/Makefile
+> > > index db09defe27d0..59d0ba2072de 100644
+> > > --- a/net/ceph/Makefile
+> > > +++ b/net/ceph/Makefile
+> > > @@ -5,7 +5,7 @@
+> > >  obj-$(CONFIG_CEPH_LIB) += libceph.o
+> > >
+> > >  libceph-y := ceph_common.o messenger.o msgpool.o buffer.o pagelist.o \
+> > > -       mon_client.o \
+> > > +       mon_client.o decode.o \
+> > >         cls_lock_client.o \
+> > >         osd_client.o osdmap.o crush/crush.o crush/mapper.o crush/hash.o \
+> > >         striper.o \
+> > > diff --git a/net/ceph/decode.c b/net/ceph/decode.c
+> > > new file mode 100644
+> > > index 000000000000..27edf5d341ec
+> > > --- /dev/null
+> > > +++ b/net/ceph/decode.c
+> > > @@ -0,0 +1,75 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +#include <linux/ceph/decode.h>
+> > > +
+> > > +int
+> > > +ceph_decode_entity_addr(void **p, void *end, struct ceph_entity_addr *addr)
+> > > +{
+> > > +       u8 marker, v, compat;
+> >
+> > It's better to use name struct_v, struct_compat
+> >
+> >
+> > > +       u32 len;
+> > > +
+> > > +       ceph_decode_8_safe(p, end, marker, bad);
+> > > +       if (marker == 1) {
+> > > +               ceph_decode_8_safe(p, end, v, bad);
+> > > +               ceph_decode_8_safe(p, end, compat, bad);
+> > > +               if (!v || compat != 1)
+> > > +                       goto bad;
+> > > +               /* FIXME: sanity check? */
+> > > +               ceph_decode_32_safe(p, end, len, bad);
+> > > +               /* type is __le32, so we must copy into place as-is */
+> > > +               ceph_decode_copy_safe(p, end, &addr->type,
+> > > +                                       sizeof(addr->type), bad);
+> > > +
+> > > +               /*
+> > > +                * TYPE_NONE == 0
+> > > +                * TYPE_LEGACY == 1
+> > > +                *
+> > > +                * Clients that don't support ADDR2 always send TYPE_NONE.
+> > > +                * For now, since all we support is msgr1, just set this to 0
+> > > +                * when we get a TYPE_LEGACY type.
+> > > +                */
+> > > +               if (addr->type == cpu_to_le32(1))
+> > > +                       addr->type = 0;
+> > > +       } else if (marker == 0) {
+> > > +               addr->type = 0;
+> > > +               /* Skip rest of type field */
+> > > +               ceph_decode_skip_n(p, end, 3, bad);
+> > > +       } else {
+> >
+> > versioned encoding has forward compatibility.  The code should looks like
+> >
+> > if (struct_v == 0) {
+> >   /* old format */
+> >   return;
+> > }
+> >
+> > if (struct_compat != 1)
+> >    goto bad
+> >
+> > end = *p + struct_len;
+> >
+> > if  (struct_v == 1) {
+> > ....
+> > }
+> >
+> > if (struct_v == 2) {
+> > ...
+> > }
+> >
+> > *p = end;
+> >
+> >
+> >
+> >
+> > > +               goto bad;
+> > > +       }
+> > > +
+> > > +       ceph_decode_need(p, end, sizeof(addr->nonce), bad);
+> > > +       ceph_decode_copy(p, &addr->nonce, sizeof(addr->nonce));
+> > > +
+> > > +       /* addr length */
+> > > +       if (marker ==  1) {
+> > > +               ceph_decode_32_safe(p, end, len, bad);
+> > > +               if (len > sizeof(addr->in_addr))
+> > > +                       goto bad;
+> > > +       } else  {
+> > > +               len = sizeof(addr->in_addr);
+> > > +       }
+> > > +
+> > > +       memset(&addr->in_addr, 0, sizeof(addr->in_addr));
+> > > +
+> > > +       if (len) {
+> > > +               ceph_decode_need(p, end, len, bad);
+> > > +               ceph_decode_copy(p, &addr->in_addr, len);
+> > > +
+> > > +               /*
+> > > +                * Fix up sa_family. Legacy encoding sends it in BE, addr2
+> > > +                * encoding uses LE.
+> > > +                */
+> > > +               if (marker == 1)
+> > > +                       addr->in_addr.ss_family =
+> > > +                               le16_to_cpu((__force __le16)addr->in_addr.ss_family);
+> > > +               else
+> > > +                       addr->in_addr.ss_family =
+> > > +                               be16_to_cpu((__force __be16)addr->in_addr.ss_family);
+> > > +       }
+> > > +       return 0;
+> > > +bad:
+> > > +       return -EINVAL;
+> > > +}
+> > > +EXPORT_SYMBOL(ceph_decode_entity_addr);
+> > > +
+> > > --
+> > > 2.21.0
+>
+>
+> (Dropping dev@ceph.io from cc list since they evidently _really_ don't
+> want to see kernel patches there)
+>
+> Something like this then on top of the original patch?
+>
+> SQUASH: address Zheng's comments
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  net/ceph/decode.c | 21 ++++++++++++---------
+>  1 file changed, 12 insertions(+), 9 deletions(-)
+>
+> diff --git a/net/ceph/decode.c b/net/ceph/decode.c
+> index 27edf5d341ec..5a008567d018 100644
+> --- a/net/ceph/decode.c
+> +++ b/net/ceph/decode.c
+> @@ -5,18 +5,20 @@
+>  int
+>  ceph_decode_entity_addr(void **p, void *end, struct ceph_entity_addr *addr)
+>  {
+> -       u8 marker, v, compat;
+> +       u8 marker, struct_v, struct_compat;
+>         u32 len;
+>
+>         ceph_decode_8_safe(p, end, marker, bad);
+>         if (marker == 1) {
+> -               ceph_decode_8_safe(p, end, v, bad);
+> -               ceph_decode_8_safe(p, end, compat, bad);
+> -               if (!v || compat != 1)
+> +               ceph_decode_8_safe(p, end, struct_v, bad);
+> +               ceph_decode_8_safe(p, end, struct_compat, bad);
+> +               if (!struct_v || struct_compat != 1)
+>                         goto bad;
+> +
+>                 /* FIXME: sanity check? */
+>                 ceph_decode_32_safe(p, end, len, bad);
+> -               /* type is __le32, so we must copy into place as-is */
+> +
+> +               /* type is defined as __le32, copy into place as-is */
+>                 ceph_decode_copy_safe(p, end, &addr->type,
+>                                         sizeof(addr->type), bad);
+>
+> @@ -32,17 +34,18 @@ ceph_decode_entity_addr(void **p, void *end, struct ceph_entity_addr *addr)
+>                         addr->type = 0;
+>         } else if (marker == 0) {
+>                 addr->type = 0;
+> +               struct_v = 0;
+> +               struct_compat = 0;
+>                 /* Skip rest of type field */
+>                 ceph_decode_skip_n(p, end, 3, bad);
+>         } else {
+>                 goto bad;
+>         }
+>
+> -       ceph_decode_need(p, end, sizeof(addr->nonce), bad);
+> -       ceph_decode_copy(p, &addr->nonce, sizeof(addr->nonce));
+> +       ceph_decode_copy_safe(p, end, &addr->nonce, sizeof(addr->nonce), bad);
+>
+>         /* addr length */
+> -       if (marker ==  1) {
+> +       if (struct_v > 0) {
+>                 ceph_decode_32_safe(p, end, len, bad);
+>                 if (len > sizeof(addr->in_addr))
+>                         goto bad;
+> @@ -60,7 +63,7 @@ ceph_decode_entity_addr(void **p, void *end, struct ceph_entity_addr *addr)
+>                  * Fix up sa_family. Legacy encoding sends it in BE, addr2
+>                  * encoding uses LE.
+>                  */
+> -               if (marker == 1)
+> +               if (struct_v > 0)
+>                         addr->in_addr.ss_family =
+>                                 le16_to_cpu((__force __le16)addr->in_addr.ss_family);
+>                 else
+> --
+> 2.21.0
+>
+>
 
-That said...in many (most?) cases the client will already have As caps
-on the file from the permission check during open, and mode changes
-(and AUTH cap revokes) are relatively rare. So, the race I'm talking
-about probably almost never happens in practice.
+still missing  code that updates (*p) at the very end.
 
-But...privilege escalation attacks often involve setuid changes, so I
-think we really ought to be careful here.
+if (struct_compat != 1)
+  goto bad
+end = *p + struct_len;
+...
+*p = end;
 
-In any case, if holding a reference to As is not feasible, then I we
-could take the original version of the patch, and maybe pair it with
-the getattr above. It's not ideal, but it's better than nothing.
-
-
-> > +       /* Should dst_inode lock be held throughout the copy operation? */
-> > +       inode_lock(dst_inode);
-> > +       ret = file_modified(dst_file);
-> > +       inode_unlock(dst_inode);
-> > +       if (ret < 0) {
-> > +               dout("failed to modify dst file before copy (%zd)\n", ret);
-> > +               goto out;
-> > +       }
-> > +
-> >         /*
-> >          * We need FILE_WR caps for dst_ci and FILE_RD for src_ci as other
-> >          * clients may have dirty data in their caches.  And OSDs know nothing
-
+I think It's better to define separate functions for legacy encoding
+and new format.
