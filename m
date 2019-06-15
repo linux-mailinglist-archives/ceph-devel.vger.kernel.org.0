@@ -2,306 +2,286 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC00846DC9
-	for <lists+ceph-devel@lfdr.de>; Sat, 15 Jun 2019 04:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45A9446DDC
+	for <lists+ceph-devel@lfdr.de>; Sat, 15 Jun 2019 04:41:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbfFOC0L (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 Jun 2019 22:26:11 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:34796 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725812AbfFOC0L (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 Jun 2019 22:26:11 -0400
-Received: by mail-qt1-f194.google.com with SMTP id m29so4774496qtu.1
-        for <ceph-devel@vger.kernel.org>; Fri, 14 Jun 2019 19:26:10 -0700 (PDT)
+        id S1726293AbfFOCle (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 Jun 2019 22:41:34 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36801 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbfFOCle (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 Jun 2019 22:41:34 -0400
+Received: by mail-qt1-f195.google.com with SMTP id p15so4787761qtl.3;
+        Fri, 14 Jun 2019 19:41:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=XC3aUpncAEc7x+1YX5XWe4x0xnCwQ0iqQSDOCvHlcyY=;
-        b=sZuNw+WZ7ciGA6e4x3Is8iF2150/948PFzYcBdLmqV/BXZC5ydmJAREcGRzV5hzq/f
-         RoIQJI1kkV1ehmDtPz5ZvsML3KgAopqcjjmBi9R7+/FePDrQBtQQg0IepMmsZOCSZibR
-         sFeh/MXtMZ/xAQkDgBf6S9g8oTg5UScfxUtja/dnZhSqqLRQjD5Ux1/AezbxfRw8GA5R
-         tBC0CMRtLKU74nUkmr/8+UImZ8+MkZT94JEnHihd0IrUKKIxUjFuwiMUuC/rzMqolBWb
-         wK79YOPULm0f7paDzxFhNhpo5uF9jLaXlX4F2J49jfM4gR1cLIPlH3YfLHKBvIbOmvJH
-         8e2A==
+        bh=yQ21ZLTY4RLs3iCwXQ/kkbuwACv/NnfO4tOeczfZY60=;
+        b=jxl5nOKfyRLXyx2VWgc1moJ5CiBIhaKj69hQEyyAxgoT/lWw02iRRkWodxJWYQMGCM
+         OnT1uNt/uY9cwxMJH5hsafz710swXVWjmGMESazI46sMMenCcmIQgM3H0zIfg/ZBiwSt
+         D5RltyqTPYaMg5hibHCVdHH9exVNiPkW5dwV6L1fvTkr0IpwTB1itRp9iz12SyHaTGww
+         mFc3JuzkZOcEJHd8ieK3za9kCMksjhgKSPW0xcBd1XptkzHjwjzRsxSsnojHUGBuerzN
+         1UwC3er4q9JPDnCEo+M8Wmt0KGerZ07KJ4C8IGnL5nrDX5cihs6YaQvDJtdRH4hTBOhg
+         mqkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XC3aUpncAEc7x+1YX5XWe4x0xnCwQ0iqQSDOCvHlcyY=;
-        b=HovHSs+yiKqGJD0C6QgjFqUrh0pbGe4VbtuVkGHM+lURU3x+jt9HoZU/fxfzGjI25v
-         +8/j9iQig+/Nhery1pG8VUm8okD38Zm9+VZkAqoCK9RDEBvGurzdATlilBxH1FyYWzPe
-         C4hn3ngBIsKwIGhncvjp4XLAjYD2bXelhAV3xaZo1VeqRGLt24/KJTnmnPoVQ1iQZPKb
-         yoD5s++Xm+Hxf5w2FvC3xzvC89j/upCm8D3jtSWEOOklG1PPJ/lIybaeEnUv7lt0qonE
-         pgeLSoBD34LyiRmRmHz1qpqY5fCxtmSubNZQEl5UdxOyHZlQV12FqCQzmhSKm2/cEItP
-         BsRg==
-X-Gm-Message-State: APjAAAW61DQLgJjG2G4sZZRZoygOeVbTRJn3j0GlFspw8rTYGCQ2zH06
-        SLAklg9VByhm/j7o9EQPU/MBGH4lK0DiYPx5ShQ=
-X-Google-Smtp-Source: APXvYqwnEYfTjhT0Gt20mkoBlJYC4nsrlis1+JU8RT7dfba0+eatqY8i5iemGsE3gGr+Tn6gruwvbUnlxVQdjtj2mA0=
-X-Received: by 2002:ac8:368a:: with SMTP id a10mr1365670qtc.143.1560565570155;
- Fri, 14 Jun 2019 19:26:10 -0700 (PDT)
+        bh=yQ21ZLTY4RLs3iCwXQ/kkbuwACv/NnfO4tOeczfZY60=;
+        b=hYtn1KCunEidOomCAiEPCzPzRZguABMwXOL9c0/vElVMCWEofTj3rH+ayB+DELG/Au
+         XiKx33Bopb9HBJ0GjJZXsCUN5TKeaouZ9E2jGKfPOC/2oEfU2d5ptPXTHLPhTXiRVehF
+         n3Dh3o2ozh1A9IMcZLaltwxSe+NCKsg51u+FH5yp44+iTVNjm2zKnGG53Ynls8kzYFAX
+         swM/Xc5nlwAc/msU8dq3asBybezobDRI3VrU13XvDgoIul0gd1GqmEa3teZWbAPVZ7wo
+         uNE/HpwCNtftnNJS0UGG+I/G5fWjs90kv7Fnri6//rmnGZfRa+2SeCOf0pci6HfRcEPy
+         saAQ==
+X-Gm-Message-State: APjAAAVupFVOGubDe3OWWit56YSedBIJAZIsNddEdwY7Fp6Zl1hwjdPG
+        8Q5N8I4bQZHu8+M0Eg9bcXGyGrRFbuRa7ZUSWRk2uVXR
+X-Google-Smtp-Source: APXvYqxH+mhpDhI2qltwu89UwIsOjPGqHLTkqWWqpOi1GyC//4dnc5oSdU3HjOgk+ow2Y36YJbnoCzJJ+6Qj/h5mH6E=
+X-Received: by 2002:ac8:87d:: with SMTP id x58mr84178585qth.368.1560566492712;
+ Fri, 14 Jun 2019 19:41:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190607153816.12918-1-jlayton@kernel.org> <20190607153816.12918-3-jlayton@kernel.org>
- <CAAM7YAnVF_+m-Ege6u5mS9wcT_ttJZrvRuWh7F3-49Yxd98kEA@mail.gmail.com> <c6c5d94ce2526a3885050eb2395f2c4efa2a9c17.camel@kernel.org>
-In-Reply-To: <c6c5d94ce2526a3885050eb2395f2c4efa2a9c17.camel@kernel.org>
+References: <20190614134625.6870-1-jlayton@kernel.org> <20190614134625.6870-2-jlayton@kernel.org>
+In-Reply-To: <20190614134625.6870-2-jlayton@kernel.org>
 From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Sat, 15 Jun 2019 10:25:58 +0800
-Message-ID: <CAAM7YAmSWzumRthVmpW1FKK+0XBrNsrFNU2GvKDytOc1hHabjw@mail.gmail.com>
-Subject: Re: [PATCH 02/16] libceph: add ceph_decode_entity_addr
+Date:   Sat, 15 Jun 2019 10:41:21 +0800
+Message-ID: <CAAM7YAnZ=NtsOuR0Pm82fWCSUdFLkJ7NLNk+fNK9+T4viW=_1Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] lib/vsprintf: add snprintf_noterm
 To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ilya Dryomov <idryomov@redhat.com>, Zheng Yan <zyan@redhat.com>,
-        Sage Weil <sage@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ilya Dryomov <idryomov@gmail.com>, Zheng Yan <zyan@redhat.com>,
+        Sage Weil <sage@redhat.com>, agruenba@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 9:13 PM Jeff Layton <jlayton@kernel.org> wrote:
+On Fri, Jun 14, 2019 at 9:48 PM Jeff Layton <jlayton@kernel.org> wrote:
 >
-> On Fri, 2019-06-14 at 16:05 +0800, Yan, Zheng wrote:
-> > On Fri, Jun 7, 2019 at 11:38 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > Add a way to decode an entity_addr_t. Once CEPH_FEATURE_MSG_ADDR2 is
-> > > enabled, the server daemons will start encoding entity_addr_t
-> > > differently.
-> > >
-> > > Add a new helper function that can handle either format.
-> > >
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  include/linux/ceph/decode.h |  2 +
-> > >  net/ceph/Makefile           |  2 +-
-> > >  net/ceph/decode.c           | 75 +++++++++++++++++++++++++++++++++++++
-> > >  3 files changed, 78 insertions(+), 1 deletion(-)
-> > >  create mode 100644 net/ceph/decode.c
-> > >
-> > > diff --git a/include/linux/ceph/decode.h b/include/linux/ceph/decode.h
-> > > index a6c2a48d42e0..1c0a665bfc03 100644
-> > > --- a/include/linux/ceph/decode.h
-> > > +++ b/include/linux/ceph/decode.h
-> > > @@ -230,6 +230,8 @@ static inline void ceph_decode_addr(struct ceph_entity_addr *a)
-> > >         WARN_ON(a->in_addr.ss_family == 512);
-> > >  }
-> > >
-> > > +extern int ceph_decode_entity_addr(void **p, void *end,
-> > > +                                  struct ceph_entity_addr *addr);
-> > >  /*
-> > >   * encoders
-> > >   */
-> > > diff --git a/net/ceph/Makefile b/net/ceph/Makefile
-> > > index db09defe27d0..59d0ba2072de 100644
-> > > --- a/net/ceph/Makefile
-> > > +++ b/net/ceph/Makefile
-> > > @@ -5,7 +5,7 @@
-> > >  obj-$(CONFIG_CEPH_LIB) += libceph.o
-> > >
-> > >  libceph-y := ceph_common.o messenger.o msgpool.o buffer.o pagelist.o \
-> > > -       mon_client.o \
-> > > +       mon_client.o decode.o \
-> > >         cls_lock_client.o \
-> > >         osd_client.o osdmap.o crush/crush.o crush/mapper.o crush/hash.o \
-> > >         striper.o \
-> > > diff --git a/net/ceph/decode.c b/net/ceph/decode.c
-> > > new file mode 100644
-> > > index 000000000000..27edf5d341ec
-> > > --- /dev/null
-> > > +++ b/net/ceph/decode.c
-> > > @@ -0,0 +1,75 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +#include <linux/ceph/decode.h>
-> > > +
-> > > +int
-> > > +ceph_decode_entity_addr(void **p, void *end, struct ceph_entity_addr *addr)
-> > > +{
-> > > +       u8 marker, v, compat;
-> >
-> > It's better to use name struct_v, struct_compat
-> >
-> >
-> > > +       u32 len;
-> > > +
-> > > +       ceph_decode_8_safe(p, end, marker, bad);
-> > > +       if (marker == 1) {
-> > > +               ceph_decode_8_safe(p, end, v, bad);
-> > > +               ceph_decode_8_safe(p, end, compat, bad);
-> > > +               if (!v || compat != 1)
-> > > +                       goto bad;
-> > > +               /* FIXME: sanity check? */
-> > > +               ceph_decode_32_safe(p, end, len, bad);
-> > > +               /* type is __le32, so we must copy into place as-is */
-> > > +               ceph_decode_copy_safe(p, end, &addr->type,
-> > > +                                       sizeof(addr->type), bad);
-> > > +
-> > > +               /*
-> > > +                * TYPE_NONE == 0
-> > > +                * TYPE_LEGACY == 1
-> > > +                *
-> > > +                * Clients that don't support ADDR2 always send TYPE_NONE.
-> > > +                * For now, since all we support is msgr1, just set this to 0
-> > > +                * when we get a TYPE_LEGACY type.
-> > > +                */
-> > > +               if (addr->type == cpu_to_le32(1))
-> > > +                       addr->type = 0;
-> > > +       } else if (marker == 0) {
-> > > +               addr->type = 0;
-> > > +               /* Skip rest of type field */
-> > > +               ceph_decode_skip_n(p, end, 3, bad);
-> > > +       } else {
-> >
-> > versioned encoding has forward compatibility.  The code should looks like
-> >
-> > if (struct_v == 0) {
-> >   /* old format */
-> >   return;
-> > }
-> >
-> > if (struct_compat != 1)
-> >    goto bad
-> >
-> > end = *p + struct_len;
-> >
-> > if  (struct_v == 1) {
-> > ....
-> > }
-> >
-> > if (struct_v == 2) {
-> > ...
-> > }
-> >
-> > *p = end;
-> >
-> >
-> >
-> >
-> > > +               goto bad;
-> > > +       }
-> > > +
-> > > +       ceph_decode_need(p, end, sizeof(addr->nonce), bad);
-> > > +       ceph_decode_copy(p, &addr->nonce, sizeof(addr->nonce));
-> > > +
-> > > +       /* addr length */
-> > > +       if (marker ==  1) {
-> > > +               ceph_decode_32_safe(p, end, len, bad);
-> > > +               if (len > sizeof(addr->in_addr))
-> > > +                       goto bad;
-> > > +       } else  {
-> > > +               len = sizeof(addr->in_addr);
-> > > +       }
-> > > +
-> > > +       memset(&addr->in_addr, 0, sizeof(addr->in_addr));
-> > > +
-> > > +       if (len) {
-> > > +               ceph_decode_need(p, end, len, bad);
-> > > +               ceph_decode_copy(p, &addr->in_addr, len);
-> > > +
-> > > +               /*
-> > > +                * Fix up sa_family. Legacy encoding sends it in BE, addr2
-> > > +                * encoding uses LE.
-> > > +                */
-> > > +               if (marker == 1)
-> > > +                       addr->in_addr.ss_family =
-> > > +                               le16_to_cpu((__force __le16)addr->in_addr.ss_family);
-> > > +               else
-> > > +                       addr->in_addr.ss_family =
-> > > +                               be16_to_cpu((__force __be16)addr->in_addr.ss_family);
-> > > +       }
-> > > +       return 0;
-> > > +bad:
-> > > +       return -EINVAL;
-> > > +}
-> > > +EXPORT_SYMBOL(ceph_decode_entity_addr);
-> > > +
-> > > --
-> > > 2.21.0
+> The getxattr interface returns a length after filling out the value
+> buffer, and the convention with xattrs is to not NULL terminate string
+> data.
 >
+> CephFS implements some virtual xattrs by using snprintf to fill the
+> buffer, but that always NULL terminates the string. If userland sends
+> down a buffer that is just the right length to hold the text without
+> termination then we end up truncating the value.
 >
-> (Dropping dev@ceph.io from cc list since they evidently _really_ don't
-> want to see kernel patches there)
->
-> Something like this then on top of the original patch?
->
-> SQUASH: address Zheng's comments
+> Factor the formatting piece of vsnprintf into a separate helper
+> function, and have vsnprintf call that and then do the NULL termination
+> afterward. Then add a snprintf_noterm function that calls the new helper
+> to populate the string but skips the termination.
 >
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  net/ceph/decode.c | 21 ++++++++++++---------
->  1 file changed, 12 insertions(+), 9 deletions(-)
+>  include/linux/kernel.h |   2 +
+>  lib/vsprintf.c         | 145 ++++++++++++++++++++++++++++-------------
+>  2 files changed, 103 insertions(+), 44 deletions(-)
 >
-> diff --git a/net/ceph/decode.c b/net/ceph/decode.c
-> index 27edf5d341ec..5a008567d018 100644
-> --- a/net/ceph/decode.c
-> +++ b/net/ceph/decode.c
-> @@ -5,18 +5,20 @@
->  int
->  ceph_decode_entity_addr(void **p, void *end, struct ceph_entity_addr *addr)
+> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+> index 2d14e21c16c0..2f305a347482 100644
+> --- a/include/linux/kernel.h
+> +++ b/include/linux/kernel.h
+> @@ -462,6 +462,8 @@ extern int num_to_str(char *buf, int size,
+>  extern __printf(2, 3) int sprintf(char *buf, const char * fmt, ...);
+>  extern __printf(2, 0) int vsprintf(char *buf, const char *, va_list);
+>  extern __printf(3, 4)
+> +int snprintf_noterm(char *buf, size_t size, const char *fmt, ...);
+> +extern __printf(3, 4)
+>  int snprintf(char *buf, size_t size, const char *fmt, ...);
+>  extern __printf(3, 0)
+>  int vsnprintf(char *buf, size_t size, const char *fmt, va_list args);
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index 791b6fa36905..ad5f4990eda3 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -2296,53 +2296,24 @@ set_precision(struct printf_spec *spec, int prec)
+>  }
+>
+>  /**
+> - * vsnprintf - Format a string and place it in a buffer
+> + * vsnprintf_noterm - Format a string and place it in a buffer without NULL
+> + *                   terminating it
+>   * @buf: The buffer to place the result into
+> - * @size: The size of the buffer, including the trailing null space
+> + * @end: The end of the buffer
+>   * @fmt: The format string to use
+>   * @args: Arguments for the format string
+>   *
+> - * This function generally follows C99 vsnprintf, but has some
+> - * extensions and a few limitations:
+> - *
+> - *  - ``%n`` is unsupported
+> - *  - ``%p*`` is handled by pointer()
+> - *
+> - * See pointer() or Documentation/core-api/printk-formats.rst for more
+> - * extensive description.
+> - *
+> - * **Please update the documentation in both places when making changes**
+> - *
+> - * The return value is the number of characters which would
+> - * be generated for the given input, excluding the trailing
+> - * '\0', as per ISO C99. If you want to have the exact
+> - * number of characters written into @buf as return value
+> - * (not including the trailing '\0'), use vscnprintf(). If the
+> - * return is greater than or equal to @size, the resulting
+> - * string is truncated.
+> - *
+> - * If you're not already dealing with a va_list consider using snprintf().
+> + * See the documentation over vsnprintf. This function does NOT add any NULL
+> + * termination to the buffer. The caller must do that if necessary.
+>   */
+> -int vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
+> +static int vsnprintf_noterm(char *buf, char *end, const char *fmt,
+> +                           va_list args)
 >  {
-> -       u8 marker, v, compat;
-> +       u8 marker, struct_v, struct_compat;
->         u32 len;
+>         unsigned long long num;
+> -       char *str, *end;
+> +       char *str;
+>         struct printf_spec spec = {0};
 >
->         ceph_decode_8_safe(p, end, marker, bad);
->         if (marker == 1) {
-> -               ceph_decode_8_safe(p, end, v, bad);
-> -               ceph_decode_8_safe(p, end, compat, bad);
-> -               if (!v || compat != 1)
-> +               ceph_decode_8_safe(p, end, struct_v, bad);
-> +               ceph_decode_8_safe(p, end, struct_compat, bad);
-> +               if (!struct_v || struct_compat != 1)
->                         goto bad;
+> -       /* Reject out-of-range values early.  Large positive sizes are
+> -          used for unknown buffer sizes. */
+> -       if (WARN_ON_ONCE(size > INT_MAX))
+> -               return 0;
+> -
+>         str = buf;
+> -       end = buf + size;
+> -
+> -       /* Make sure end is always >= buf */
+> -       if (end < buf) {
+> -               end = ((void *)-1);
+> -               size = end - buf;
+> -       }
+> -
+>         while (*fmt) {
+>                 const char *old_fmt = fmt;
+>                 int read = format_decode(fmt, &spec);
+> @@ -2462,18 +2433,69 @@ int vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
+>                         str = number(str, end, num, spec);
+>                 }
+>         }
+> -
+>  out:
+> +       /* the trailing null byte doesn't count towards the total */
+> +       return str-buf;
+> +}
+> +EXPORT_SYMBOL(vsnprintf_noterm);
+
+export static function?
+
 > +
->                 /* FIXME: sanity check? */
->                 ceph_decode_32_safe(p, end, len, bad);
-> -               /* type is __le32, so we must copy into place as-is */
+> +/**
+> + * vsnprintf - Format a string and place it in a buffer
+> + * @buf: The buffer to place the result into
+> + * @size: The size of the buffer, including the trailing null space
+> + * @fmt: The format string to use
+> + * @args: Arguments for the format string
+> + *
+> + * This function generally follows C99 vsnprintf, but has some
+> + * extensions and a few limitations:
+> + *
+> + *  - ``%n`` is unsupported
+> + *  - ``%p*`` is handled by pointer()
+> + *
+> + * See pointer() or Documentation/core-api/printk-formats.rst for more
+> + * extensive description.
+> + *
+> + * **Please update the documentation in both places when making changes**
+> + *
+> + * The return value is the number of characters which would
+> + * be generated for the given input, excluding the trailing
+> + * '\0', as per ISO C99. If you want to have the exact
+> + * number of characters written into @buf as return value
+> + * (not including the trailing '\0'), use vscnprintf(). If the
+> + * return is greater than or equal to @size, the resulting
+> + * string is truncated.
+> + *
+> + * If you're not already dealing with a va_list consider using snprintf().
+> + */
+> +int vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
+> +{
+> +       int ret;
+> +       char *end;
 > +
-> +               /* type is defined as __le32, copy into place as-is */
->                 ceph_decode_copy_safe(p, end, &addr->type,
->                                         sizeof(addr->type), bad);
->
-> @@ -32,17 +34,18 @@ ceph_decode_entity_addr(void **p, void *end, struct ceph_entity_addr *addr)
->                         addr->type = 0;
->         } else if (marker == 0) {
->                 addr->type = 0;
-> +               struct_v = 0;
-> +               struct_compat = 0;
->                 /* Skip rest of type field */
->                 ceph_decode_skip_n(p, end, 3, bad);
->         } else {
->                 goto bad;
+> +       /* Reject out-of-range values early.  Large positive sizes are
+> +          used for unknown buffer sizes. */
+> +       if (WARN_ON_ONCE(size > INT_MAX))
+> +               return 0;
+> +
+> +       end = buf + size;
+> +
+> +       /* Make sure end is always >= buf */
+> +       if (end < buf) {
+> +               end = ((void *)-1);
+> +               size = end - buf;
+> +       }
+> +
+> +       ret = vsnprintf_noterm(buf, end, fmt, args);
+> +
+> +       /* NULL terminate the result */
+>         if (size > 0) {
+> -               if (str < end)
+> -                       *str = '\0';
+> +               if (ret < size)
+> +                       buf[ret] = '\0';
+>                 else
+> -                       end[-1] = '\0';
+> +                       buf[size - 1] = '\0';
 >         }
 >
-> -       ceph_decode_need(p, end, sizeof(addr->nonce), bad);
-> -       ceph_decode_copy(p, &addr->nonce, sizeof(addr->nonce));
-> +       ceph_decode_copy_safe(p, end, &addr->nonce, sizeof(addr->nonce), bad);
+> -       /* the trailing null byte doesn't count towards the total */
+> -       return str-buf;
+> -
+> +       return ret;
+>  }
+>  EXPORT_SYMBOL(vsnprintf);
 >
->         /* addr length */
-> -       if (marker ==  1) {
-> +       if (struct_v > 0) {
->                 ceph_decode_32_safe(p, end, len, bad);
->                 if (len > sizeof(addr->in_addr))
->                         goto bad;
-> @@ -60,7 +63,7 @@ ceph_decode_entity_addr(void **p, void *end, struct ceph_entity_addr *addr)
->                  * Fix up sa_family. Legacy encoding sends it in BE, addr2
->                  * encoding uses LE.
->                  */
-> -               if (marker == 1)
-> +               if (struct_v > 0)
->                         addr->in_addr.ss_family =
->                                 le16_to_cpu((__force __le16)addr->in_addr.ss_family);
->                 else
+> @@ -2506,6 +2528,41 @@ int vscnprintf(char *buf, size_t size, const char *fmt, va_list args)
+>  }
+>  EXPORT_SYMBOL(vscnprintf);
+>
+> +/**
+> + * snprintf_noterm - Format a string and place it in a buffer
+> + * @buf: The buffer to place the result into
+> + * @size: The size of the buffer, including the trailing null space
+> + * @fmt: The format string to use
+> + * @...: Arguments for the format string
+> + *
+> + * Same as snprintf, but don't NULL terminate the result.
+> + */
+> +int snprintf_noterm(char *buf, size_t size, const char *fmt, ...)
+> +{
+> +       va_list args;
+> +       int ret;
+> +       char *end;
+> +
+> +       /* Reject out-of-range values early.  Large positive sizes are
+> +          used for unknown buffer sizes. */
+> +       if (WARN_ON_ONCE(size > INT_MAX))
+> +               return 0;
+> +
+> +       /* Make sure end is always >= buf */
+> +       end = buf + size;
+> +       if (end < buf) {
+> +               end = ((void *)-1);
+> +               size = end - buf;
+> +       }
+> +
+> +       va_start(args, fmt);
+> +       ret = vsnprintf_noterm(buf, end, fmt, args);
+> +       va_end(args);
+> +
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL(snprintf_noterm);
+> +
+>  /**
+>   * snprintf - Format a string and place it in a buffer
+>   * @buf: The buffer to place the result into
 > --
 > 2.21.0
 >
->
-
-still missing  code that updates (*p) at the very end.
-
-if (struct_compat != 1)
-  goto bad
-end = *p + struct_len;
-...
-*p = end;
-
-I think It's better to define separate functions for legacy encoding
-and new format.
