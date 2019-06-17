@@ -2,33 +2,33 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A764D4877A
-	for <lists+ceph-devel@lfdr.de>; Mon, 17 Jun 2019 17:38:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22C374877B
+	for <lists+ceph-devel@lfdr.de>; Mon, 17 Jun 2019 17:38:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbfFQPiK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 17 Jun 2019 11:38:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54744 "EHLO mail.kernel.org"
+        id S1728526AbfFQPiL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 17 Jun 2019 11:38:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728503AbfFQPiJ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:38:09 -0400
+        id S1728519AbfFQPiK (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 17 Jun 2019 11:38:10 -0400
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 906EC21882;
-        Mon, 17 Jun 2019 15:38:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B9AF2147A;
+        Mon, 17 Jun 2019 15:38:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1560785889;
-        bh=gIKkq5mIVUK2QAdQphahGiEgVy4BD8vuIMOejT43afM=;
+        bh=QcOnqNpzplixhuP1nCon2irlFxVrwyg1/XFSCQvbxrw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QhDQrua2nzXVi+QwE2i3nwZ6qY0uGfDQhhpqCqxmJiHC8J5WaDFr0Ykdd5uLu/4Oy
-         o0GLQYoduufQtIXO9Im32lMhv7qXQTbDUsfHYFZO+MkPE+5pL4fEXfJ/pQOeTkCYqT
-         cjBfUCigVkQ1NHs6EybOjota1RxO/oTlTxD3R36M=
+        b=ZbdSZ1RR8GICKEM3rwDhgMU9wMF8uDvN3m4bpgIHQG9zzpI36Zj+yiEpJUONpyDfH
+         o4S5WWNNrKXbWONvYN+4vIBMBz0ynzfsRlsmROzYO16Pg9LMl4j+5SQ7s0KWUHxFJB
+         UfSaAWyM5sCm7+hmEnNq12okjMDXwHsN+QUJcgVs=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     zyan@redhat.com, sage@redhat.com, idryomov@gmail.com
-Subject: [PATCH v2 17/18] ceph: handle change_attr in cap messages
-Date:   Mon, 17 Jun 2019 11:37:52 -0400
-Message-Id: <20190617153753.3611-18-jlayton@kernel.org>
+Subject: [PATCH v2 18/18] ceph: increment change_attribute on local changes
+Date:   Mon, 17 Jun 2019 11:37:53 -0400
+Message-Id: <20190617153753.3611-19-jlayton@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190617153753.3611-1-jlayton@kernel.org>
 References: <20190617153753.3611-1-jlayton@kernel.org>
@@ -39,132 +39,65 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+We don't set SB_I_VERSION on ceph since we need to manage it ourselves,
+so we must increment it whenever we update the file times.
+
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/caps.c  | 19 ++++++++++---------
- fs/ceph/snap.c  |  2 ++
- fs/ceph/super.h |  1 +
- 3 files changed, 13 insertions(+), 9 deletions(-)
+ fs/ceph/addr.c | 2 ++
+ fs/ceph/file.c | 5 +++++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 623b82684e90..2e22efd79b0c 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -8,6 +8,7 @@
- #include <linux/vmalloc.h>
- #include <linux/wait.h>
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index a47c541f8006..e078cc55b989 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -10,6 +10,7 @@
+ #include <linux/pagevec.h>
+ #include <linux/task_io_accounting_ops.h>
+ #include <linux/signal.h>
++#include <linux/iversion.h>
+ 
+ #include "super.h"
+ #include "mds_client.h"
+@@ -1576,6 +1577,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+ 
+ 	/* Update time before taking page lock */
+ 	file_update_time(vma->vm_file);
++	inode_inc_iversion_raw(inode);
+ 
+ 	do {
+ 		lock_page(page);
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index a7080783fe20..e993ffeae9de 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -10,6 +10,7 @@
+ #include <linux/namei.h>
  #include <linux/writeback.h>
+ #include <linux/falloc.h>
 +#include <linux/iversion.h>
  
  #include "super.h"
  #include "mds_client.h"
-@@ -1138,6 +1139,7 @@ struct cap_msg_args {
- 	u64			ino, cid, follows;
- 	u64			flush_tid, oldest_flush_tid, size, max_size;
- 	u64			xattr_version;
-+	u64			change_attr;
- 	struct ceph_buffer	*xattr_buf;
- 	struct timespec64	atime, mtime, ctime, btime;
- 	int			op, caps, wanted, dirty;
-@@ -1244,15 +1246,10 @@ static int send_cap_msg(struct cap_msg_args *arg)
- 	/* pool namespace (version 8) (mds always ignores this) */
- 	ceph_encode_32(&p, 0);
+@@ -1434,6 +1435,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (err)
+ 		goto out;
  
--	/*
--	 * btime and change_attr (version 9)
--	 *
--	 * We just zero these out for now, as the MDS ignores them unless
--	 * the requisite feature flags are set (which we don't do yet).
--	 */
-+	/* btime and change_attr (version 9) */
- 	ceph_encode_timespec64(p, &arg->btime);
- 	p += sizeof(struct ceph_timespec);
--	ceph_encode_64(&p, 0);
-+	ceph_encode_64(&p, arg->change_attr);
- 
- 	/* Advisory flags (version 10) */
- 	ceph_encode_32(&p, arg->flags);
-@@ -1379,6 +1376,7 @@ static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
- 	arg.atime = inode->i_atime;
- 	arg.ctime = inode->i_ctime;
- 	arg.btime = ci->i_btime;
-+	arg.change_attr = inode_peek_iversion_raw(inode);
- 
- 	arg.op = op;
- 	arg.caps = cap->implemented;
-@@ -1439,6 +1437,7 @@ static inline int __send_flush_snap(struct inode *inode,
- 	arg.mtime = capsnap->mtime;
- 	arg.ctime = capsnap->ctime;
- 	arg.btime = capsnap->btime;
-+	arg.change_attr = capsnap->change_attr;
- 
- 	arg.op = CEPH_CAP_OP_FLUSHSNAP;
- 	arg.caps = capsnap->issued;
-@@ -3043,6 +3042,7 @@ struct cap_extra_info {
- 	bool dirstat_valid;
- 	u64 nfiles;
- 	u64 nsubdirs;
-+	u64 change_attr;
- 	/* currently issued */
- 	int issued;
- 	struct timespec64 btime;
-@@ -3127,6 +3127,8 @@ static void handle_cap_grant(struct inode *inode,
- 
- 	__check_cap_issue(ci, cap, newcaps);
- 
-+	inode_set_max_iversion_raw(inode, extra_info->change_attr);
++	inode_inc_iversion_raw(inode);
 +
- 	if ((newcaps & CEPH_CAP_AUTH_SHARED) &&
- 	    (extra_info->issued & CEPH_CAP_AUTH_EXCL) == 0) {
- 		inode->i_mode = le32_to_cpu(grant->mode);
-@@ -3856,14 +3858,13 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ 	if (ci->i_inline_version != CEPH_INLINE_NONE) {
+ 		err = ceph_uninline_data(file, NULL);
+ 		if (err < 0)
+@@ -2065,6 +2068,8 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
+ 		do_final_copy = true;
  
- 	if (msg_version >= 9) {
- 		struct ceph_timespec *btime;
--		u64 change_attr;
+ 	file_update_time(dst_file);
++	inode_inc_iversion_raw(dst_inode);
++
+ 	if (endoff > size) {
+ 		int caps_flags = 0;
  
- 		if (p + sizeof(*btime) > end)
- 			goto bad;
- 		btime = p;
- 		ceph_decode_timespec64(&extra_info.btime, btime);
- 		p += sizeof(*btime);
--		ceph_decode_64_safe(&p, end, change_attr, bad);
-+		ceph_decode_64_safe(&p, end, extra_info.change_attr, bad);
- 	}
- 
- 	if (msg_version >= 11) {
-diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-index 854308e13f12..4c6494eb02b5 100644
---- a/fs/ceph/snap.c
-+++ b/fs/ceph/snap.c
-@@ -3,6 +3,7 @@
- 
- #include <linux/sort.h>
- #include <linux/slab.h>
-+#include <linux/iversion.h>
- #include "super.h"
- #include "mds_client.h"
- #include <linux/ceph/decode.h>
-@@ -607,6 +608,7 @@ int __ceph_finish_cap_snap(struct ceph_inode_info *ci,
- 	capsnap->atime = inode->i_atime;
- 	capsnap->ctime = inode->i_ctime;
- 	capsnap->btime = ci->i_btime;
-+	capsnap->change_attr = inode_peek_iversion_raw(inode);
- 	capsnap->time_warp_seq = ci->i_time_warp_seq;
- 	capsnap->truncate_size = ci->i_truncate_size;
- 	capsnap->truncate_seq = ci->i_truncate_seq;
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index c3cb942e08b0..8ecbcd7d45e8 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -197,6 +197,7 @@ struct ceph_cap_snap {
- 	u64 xattr_version;
- 
- 	u64 size;
-+	u64 change_attr;
- 	struct timespec64 mtime, atime, ctime, btime;
- 	u64 time_warp_seq;
- 	u64 truncate_size;
 -- 
 2.21.0
 
