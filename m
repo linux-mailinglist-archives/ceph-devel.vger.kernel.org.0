@@ -2,33 +2,33 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7188A48773
+	by mail.lfdr.de (Postfix) with ESMTP id E857648774
 	for <lists+ceph-devel@lfdr.de>; Mon, 17 Jun 2019 17:38:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728437AbfFQPiE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 17 Jun 2019 11:38:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54646 "EHLO mail.kernel.org"
+        id S1728478AbfFQPiG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 17 Jun 2019 11:38:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728368AbfFQPiE (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        id S1728432AbfFQPiE (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
         Mon, 17 Jun 2019 11:38:04 -0400
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29C41217D4;
+        by mail.kernel.org (Postfix) with ESMTPSA id EC02C2182B;
         Mon, 17 Jun 2019 15:38:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560785883;
-        bh=TXRXgpxgBKh0S83CIzm+PHLDc5g0o5VLpJxyp5EKY1E=;
+        s=default; t=1560785884;
+        bh=OexlBFxEoQpuBU+72BiOhih4Ko3zCjEMZb8upr3lqDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e+4LPmdKDfJiLhFnuvDAsNoWl3y2tH07MSRWKHTONP/ln+7Zem5ZAXrlBkOVNA36n
-         VAG/sPmsSCSWvYh84o0xAsTOWq0qWb2XOfEt+Bq9V8RidSdI8KVis23SCPO1hgCU75
-         Qoz4+nqgJxb125zVq5JAHDPpN/s/yghnsebK/1LM=
+        b=hug93pBSsnItGMJ7XdnrPY9icroCX7qPZGjd0LLlmHuhpvJR6VmuY+rvQ6PiYrxOb
+         s8xA3j6GyLxREzwt0KnDE6sjDwlEGioJKKvEBVisly8GQs0h+Tl9ikz6zFgeXQH1QE
+         KdutxS/7T3GtGjXya0KVXHhWlUj3/rv/DzSYjhIk=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     zyan@redhat.com, sage@redhat.com, idryomov@gmail.com
-Subject: [PATCH v2 10/18] libceph: rename ceph_encode_addr to ceph_encode_banner_addr
-Date:   Mon, 17 Jun 2019 11:37:45 -0400
-Message-Id: <20190617153753.3611-11-jlayton@kernel.org>
+Subject: [PATCH v2 11/18] ceph: add btime field to ceph_inode_info
+Date:   Mon, 17 Jun 2019 11:37:46 -0400
+Message-Id: <20190617153753.3611-12-jlayton@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190617153753.3611-1-jlayton@kernel.org>
 References: <20190617153753.3611-1-jlayton@kernel.org>
@@ -39,67 +39,97 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-...ditto for the decode function. We only use these functions to fix
-up banner addresses now, so let's name them more appropriately.
-
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- include/linux/ceph/decode.h | 4 ++--
- net/ceph/messenger.c        | 6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ fs/ceph/inode.c      |  2 ++
+ fs/ceph/mds_client.c | 21 +++++++++++++--------
+ fs/ceph/mds_client.h |  1 +
+ fs/ceph/super.h      |  1 +
+ 4 files changed, 17 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/ceph/decode.h b/include/linux/ceph/decode.h
-index ce488d95be89..450384fe487c 100644
---- a/include/linux/ceph/decode.h
-+++ b/include/linux/ceph/decode.h
-@@ -221,7 +221,7 @@ static inline void ceph_encode_timespec64(struct ceph_timespec *tv,
- #define CEPH_ENTITY_ADDR_TYPE_NONE	0
- #define CEPH_ENTITY_ADDR_TYPE_LEGACY	__cpu_to_le32(1)
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 6003187dd39e..211947e3c737 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -509,6 +509,7 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
  
--static inline void ceph_encode_addr(struct ceph_entity_addr *a)
-+static inline void ceph_encode_banner_addr(struct ceph_entity_addr *a)
- {
- 	__be16 ss_family = htons(a->in_addr.ss_family);
- 	a->in_addr.ss_family = *(__u16 *)&ss_family;
-@@ -229,7 +229,7 @@ static inline void ceph_encode_addr(struct ceph_entity_addr *a)
- 	/* Banner addresses require TYPE_NONE */
- 	a->type = CEPH_ENTITY_ADDR_TYPE_NONE;
- }
--static inline void ceph_decode_addr(struct ceph_entity_addr *a)
-+static inline void ceph_decode_banner_addr(struct ceph_entity_addr *a)
- {
- 	__be16 ss_family = *(__be16 *)&a->in_addr.ss_family;
- 	a->in_addr.ss_family = ntohs(ss_family);
-diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-index 57cb0554c9e2..35a2f3be43e5 100644
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -222,7 +222,7 @@ EXPORT_SYMBOL(ceph_pr_addr);
- static void encode_my_addr(struct ceph_messenger *msgr)
- {
- 	memcpy(&msgr->my_enc_addr, &msgr->inst.addr, sizeof(msgr->my_enc_addr));
--	ceph_encode_addr(&msgr->my_enc_addr);
-+	ceph_encode_banner_addr(&msgr->my_enc_addr);
- }
+ 	INIT_WORK(&ci->i_work, ceph_inode_work);
+ 	ci->i_work_mask = 0;
++	memset(&ci->i_btime, '\0', sizeof(ci->i_btime));
  
- /*
-@@ -1734,14 +1734,14 @@ static int read_partial_banner(struct ceph_connection *con)
- 	ret = read_partial(con, end, size, &con->actual_peer_addr);
- 	if (ret <= 0)
- 		goto out;
--	ceph_decode_addr(&con->actual_peer_addr);
-+	ceph_decode_banner_addr(&con->actual_peer_addr);
+ 	ceph_fscache_inode_init(ci);
  
- 	size = sizeof (con->peer_addr_for_me);
- 	end += size;
- 	ret = read_partial(con, end, size, &con->peer_addr_for_me);
- 	if (ret <= 0)
- 		goto out;
--	ceph_decode_addr(&con->peer_addr_for_me);
-+	ceph_decode_banner_addr(&con->peer_addr_for_me);
+@@ -822,6 +823,7 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
+ 		dout("%p mode 0%o uid.gid %d.%d\n", inode, inode->i_mode,
+ 		     from_kuid(&init_user_ns, inode->i_uid),
+ 		     from_kgid(&init_user_ns, inode->i_gid));
++		ceph_decode_timespec64(&ci->i_btime, &iinfo->btime);
+ 		ceph_decode_timespec64(&ci->i_snap_btime, &iinfo->snap_btime);
+ 	}
  
- out:
- 	return ret;
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 19c62cf7d5b8..5602e7ba5307 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -150,14 +150,13 @@ static int parse_reply_info_in(void **p, void *end,
+ 			info->pool_ns_data = *p;
+ 			*p += info->pool_ns_len;
+ 		}
+-		/* btime, change_attr */
+-		{
+-			struct ceph_timespec btime;
+-			u64 change_attr;
+-			ceph_decode_need(p, end, sizeof(btime), bad);
+-			ceph_decode_copy(p, &btime, sizeof(btime));
+-			ceph_decode_64_safe(p, end, change_attr, bad);
+-		}
++
++		/* btime */
++		ceph_decode_need(p, end, sizeof(info->btime), bad);
++		ceph_decode_copy(p, &info->btime, sizeof(info->btime));
++
++		/* change attribute */
++		ceph_decode_skip_64(p, end, bad);
+ 
+ 		/* dir pin */
+ 		if (struct_v >= 2) {
+@@ -206,6 +205,12 @@ static int parse_reply_info_in(void **p, void *end,
+ 			}
+ 		}
+ 
++		if (features & CEPH_FEATURE_FS_BTIME) {
++			ceph_decode_need(p, end, sizeof(info->btime), bad);
++			ceph_decode_copy(p, &info->btime, sizeof(info->btime));
++			ceph_decode_skip_64(p, end, bad);
++		}
++
+ 		info->dir_pin = -ENODATA;
+ 		/* info->snap_btime remains zero */
+ 	}
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index 330769ecb601..da2f53646217 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -69,6 +69,7 @@ struct ceph_mds_reply_info_in {
+ 	u64 max_bytes;
+ 	u64 max_files;
+ 	s32 dir_pin;
++	struct ceph_timespec btime;
+ 	struct ceph_timespec snap_btime;
+ };
+ 
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 98d2bafc2ee2..3dd9d467bb80 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -384,6 +384,7 @@ struct ceph_inode_info {
+ 	int i_snap_realm_counter; /* snap realm (if caps) */
+ 	struct list_head i_snap_realm_item;
+ 	struct list_head i_snap_flush_item;
++	struct timespec64 i_btime;
+ 	struct timespec64 i_snap_btime;
+ 
+ 	struct work_struct i_work;
 -- 
 2.21.0
 
