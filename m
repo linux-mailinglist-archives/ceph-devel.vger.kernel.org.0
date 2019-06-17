@@ -2,33 +2,33 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8736A4876F
-	for <lists+ceph-devel@lfdr.de>; Mon, 17 Jun 2019 17:38:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D29448770
+	for <lists+ceph-devel@lfdr.de>; Mon, 17 Jun 2019 17:38:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbfFQPiC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        id S1728405AbfFQPiC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
         Mon, 17 Jun 2019 11:38:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54592 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:54604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728269AbfFQPiA (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:38:00 -0400
+        id S1727967AbfFQPiB (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 17 Jun 2019 11:38:01 -0400
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45D0021530;
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F1DD21655;
         Mon, 17 Jun 2019 15:37:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560785879;
-        bh=VyMGwNHbNW332OuFcFpZGqUXUtoxNFAGNBioKLMK8Mw=;
+        s=default; t=1560785880;
+        bh=r6OZ5ULp+6V4Rtq5MkU/csIINVDLzaMk0vdOMTcVwU4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tv5q7Bb8RHmst0r9od6cKO87zQG2+4ZCLq0W0q0Q1hGAqycObRJPoaAfXW+uXWgNY
-         lKUcfhIP6jXxINXr4IS7aNDiLCCswV9Dfjz3WBCLa770Of3/UNtuJAPjvugdrTKxTX
-         H1QEXP7cyJGJ+jNH3aIOz6mb0rrNWTiAV42t9uvw=
+        b=AeLIioKo6vsR+IkGRIB6m4FmUwD4HisvDBH8YXRt//Ct1Xd9D6gs5on5Auy5otrTs
+         fmtQEd8WGawcScBC0JHnPar7ombwDN5B/4buTF9taKGdpoVsaslF3tXHvWNwcWziIs
+         LC6idkvlwpPuTTKfrfUL6zMTesfuuXGcyl9ARXE0=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     zyan@redhat.com, sage@redhat.com, idryomov@gmail.com
-Subject: [PATCH v2 05/18] libceph: fix watch_item_t decoding to use ceph_decode_entity_addr
-Date:   Mon, 17 Jun 2019 11:37:40 -0400
-Message-Id: <20190617153753.3611-6-jlayton@kernel.org>
+Subject: [PATCH v2 06/18] libceph: correctly decode ADDR2 addresses in incremental OSD maps
+Date:   Mon, 17 Jun 2019 11:37:41 -0400
+Message-Id: <20190617153753.3611-7-jlayton@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190617153753.3611-1-jlayton@kernel.org>
 References: <20190617153753.3611-1-jlayton@kernel.org>
@@ -39,52 +39,52 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-While we're in there, let's also fix up the decoder to do proper
-bounds checking.
+Given the new format, we have to decode the addresses twice. Once to
+skip past the new_up_client field, and a second time to collect the
+addresses.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- net/ceph/osd_client.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ net/ceph/osdmap.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index e6d31e0f0289..f8a4d29ef688 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -4914,20 +4914,26 @@ static int decode_watcher(void **p, void *end, struct ceph_watch_item *item)
- 	ret = ceph_start_decoding(p, end, 2, "watch_item_t",
- 				  &struct_v, &struct_len);
- 	if (ret)
--		return ret;
-+		goto bad;
+diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
+index 95e98ae59a54..90437906b7bc 100644
+--- a/net/ceph/osdmap.c
++++ b/net/ceph/osdmap.c
+@@ -1618,12 +1618,17 @@ static int decode_new_up_state_weight(void **p, void *end, u8 struct_v,
+ 	void *new_state;
+ 	void *new_weight_end;
+ 	u32 len;
++	int i;
+ 
+ 	new_up_client = *p;
+ 	ceph_decode_32_safe(p, end, len, e_inval);
+-	len *= sizeof(u32) + sizeof(struct ceph_entity_addr);
+-	ceph_decode_need(p, end, len, e_inval);
+-	*p += len;
++	for (i = 0; i < len; ++i) {
++		struct ceph_entity_addr addr;
 +
-+	ret = -EINVAL;
-+	ceph_decode_copy_safe(p, end, &item->name, sizeof(item->name), bad);
-+	ceph_decode_64_safe(p, end, item->cookie, bad);
-+	ceph_decode_skip_32(p, end, bad); /* skip timeout seconds */
++		ceph_decode_skip_32(p, end, e_inval);
++		if (ceph_decode_entity_addr(p, end, &addr))
++			goto e_inval;
++	}
  
--	ceph_decode_copy(p, &item->name, sizeof(item->name));
--	item->cookie = ceph_decode_64(p);
--	*p += 4; /* skip timeout_seconds */
- 	if (struct_v >= 2) {
--		ceph_decode_copy(p, &item->addr, sizeof(item->addr));
--		ceph_decode_addr(&item->addr);
-+		ret = ceph_decode_entity_addr(p, end, &item->addr);
-+		if (ret)
-+			goto bad;
-+	} else {
-+		ret = 0;
- 	}
+ 	new_state = *p;
+ 	ceph_decode_32_safe(p, end, len, e_inval);
+@@ -1699,9 +1704,9 @@ static int decode_new_up_state_weight(void **p, void *end, u8 struct_v,
+ 		struct ceph_entity_addr addr;
  
- 	dout("%s %s%llu cookie %llu addr %s\n", __func__,
- 	     ENTITY_NAME(item->name), item->cookie,
- 	     ceph_pr_addr(&item->addr));
--	return 0;
-+bad:
-+	return ret;
- }
- 
- static int decode_watchers(void **p, void *end,
+ 		osd = ceph_decode_32(p);
+-		ceph_decode_copy(p, &addr, sizeof(addr));
+-		ceph_decode_addr(&addr);
+ 		BUG_ON(osd >= map->max_osd);
++		if (ceph_decode_entity_addr(p, end, &addr))
++			goto e_inval;
+ 		pr_info("osd%d up\n", osd);
+ 		map->osd_state[osd] |= CEPH_OSD_EXISTS | CEPH_OSD_UP;
+ 		map->osd_addr[osd] = addr;
 -- 
 2.21.0
 
