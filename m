@@ -2,159 +2,143 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79599498F2
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Jun 2019 08:41:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35FBC49AA1
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Jun 2019 09:31:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725913AbfFRGlo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 18 Jun 2019 02:41:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51240 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbfFRGln (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:41:43 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A578589AD0
-        for <ceph-devel@vger.kernel.org>; Tue, 18 Jun 2019 06:25:26 +0000 (UTC)
-Received: from [10.72.12.188] (ovpn-12-188.pek2.redhat.com [10.72.12.188])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A54F362926;
-        Tue, 18 Jun 2019 06:25:23 +0000 (UTC)
-Subject: Re: [PATCH 4/8] ceph: allow remounting aborted mount
-To:     Jeff Layton <jlayton@redhat.com>, ceph-devel@vger.kernel.org
-Cc:     idryomov@redhat.com
-References: <20190617125529.6230-1-zyan@redhat.com>
- <20190617125529.6230-5-zyan@redhat.com>
- <86f838f18f0871d6c21ae7bfb97541f1de8d918f.camel@redhat.com>
-From:   "Yan, Zheng" <zyan@redhat.com>
-Message-ID: <3b0a4024-d47e-0a3f-48ca-0f1f657e9da9@redhat.com>
-Date:   Tue, 18 Jun 2019 14:25:21 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1725963AbfFRHbt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 18 Jun 2019 03:31:49 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:46062 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbfFRHbt (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 18 Jun 2019 03:31:49 -0400
+Received: by mail-qk1-f194.google.com with SMTP id s22so7885508qkj.12
+        for <ceph-devel@vger.kernel.org>; Tue, 18 Jun 2019 00:31:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qgstaAcs0jfGEJgkxlLhjagsZ2KOXz31nYSXT8KFsDU=;
+        b=Gkle1zuEGPb9PqOV/Q5XrEWmrfJsAxwXc72GmfUCWjkQjUICetYz1uKgxsAPuZDYan
+         COEUkMsi1XjZ06H5ddaL2KgGY+Zhm+8CmFKCzYSX3cbboRjArP47jkvctD80n69jqnTE
+         JdhP2mC1PBjhV3B2FkQGsvehc71p9b2thzPMKNicsjqRASFOd5vP0amz7Uqfj0HqNor/
+         kQTluQOst/r9hZafgZ2s6gAhVlat9ajxAWgXSDNqvOrfzCloAB7Ll1mlqW1rmchkgnNF
+         0vI/VEigN+PDEAsEFlH2U5iMz+By9hPJB0kJaKxsP8rsFebMgiRDb2pKO1wL8YMyXWJi
+         Ld6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qgstaAcs0jfGEJgkxlLhjagsZ2KOXz31nYSXT8KFsDU=;
+        b=dGFVQKqH244aJj3qX5xmZmQivUj8hsTqQ6N+py4T/DHbfyVxiMVOhfBY1IQg23AWHE
+         UeErQzdqy4N2e/rsL95k/PCEkZyVVFsdXOyrDeHsb1lNDpkeXzMoGR+16sVr8De3if2B
+         XIGGmiHYFhu7eT38KpBw1Ycdhl0miGakZ1KWxmswp4UspXOtZ/gaZMqwNP/L2vGX2nDz
+         yOTmVOTQJMvnXaMZVKOxNgExuqrjYQYjKasDdhzM79scJxKpAKbTVQakLHxKwrUL8P9O
+         mtU3fJ5zgGNt9TUXNHWEthjV7BPiTkGxKDhaZnxLeSP/TVnRtiRbrumnF40BZfI1jLJV
+         VEjg==
+X-Gm-Message-State: APjAAAUveQW5M0Z5ciaP5gj78dGHktoH6QWHn4QP3udKrI7SfSd1FSGn
+        MCUJECzIh14gtyZA5GVB0Fcoklc1CNBB/doZcz8=
+X-Google-Smtp-Source: APXvYqxzon+i9vzkKELf1ZDljAR9l7PzSXoQWk1jpwhnoFW/0bgkavyzLEksYE6KLT2JeuhH1xZJLL8tNh2lAkfl7UI=
+X-Received: by 2002:a05:620a:533:: with SMTP id h19mr35764324qkh.325.1560843108065;
+ Tue, 18 Jun 2019 00:31:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <86f838f18f0871d6c21ae7bfb97541f1de8d918f.camel@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 18 Jun 2019 06:25:26 +0000 (UTC)
+References: <20190617153753.3611-1-jlayton@kernel.org>
+In-Reply-To: <20190617153753.3611-1-jlayton@kernel.org>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Tue, 18 Jun 2019 15:31:36 +0800
+Message-ID: <CAAM7YAmK7V=14xXohYauhiKi-Tomwm50dkhQF5uE7tWTFbaLMw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/18] ceph: addr2, btime and change_attr support
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Zheng Yan <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 6/18/19 1:30 AM, Jeff Layton wrote:
-> On Mon, 2019-06-17 at 20:55 +0800, Yan, Zheng wrote:
->> When remounting aborted mount, also reset client's entity addr.
->> 'umount -f /ceph; mount -o remount /ceph' can be used for recovering
->> from blacklist.
->>
-> 
-> Why do I need to umount here? Once the filesystem is unmounted, then the
-> '-o remount' becomes superfluous, no? In fact, I get an error back when
-> I try to remount an unmounted filesystem:
-> 
->      $ sudo umount -f /mnt/cephfs ; sudo mount -o remount /mnt/cephfs
->      mount: /mnt/cephfs: mount point not mounted or bad option.
-> 
-> My client isn't blacklisted above, so I guess you're counting on the
-> umount returning without having actually unmounted the filesystem?
-> 
-> I think this ought to not need a umount first. From a UI standpoint,
-> just doing a "mount -o remount" ought to be sufficient to clear this.
-> 
+On Mon, Jun 17, 2019 at 11:39 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> v2: properly handle later versions in entity_addr decoder
+>     internally track addresses as TYPE_LEGACY instead of TYPE_NONE
+>     minor cleanup and log changes
+>
+> This is the second posting of this set. This one should handle decoding
+> later versions of the entity_addr_t struct, should there ever be any
+> (thanks, Zheng!).
+>
+> This also breaks up that decoder into smaller helper functions, and
+> changes how we track the addresses internally for better compatibility
+> going forward.
+>
+> Original patch description follows:
+>
+> ------------------------8<-------------------------
+>
+> CEPH_FEATURE_MSG_ADDR2 was added to the userland code a couple of years
+> ago, but the kclient never got support for it. While addr2 doesn't add a
+> lot of new functionality, it is a prerequisite for msgr2 support, which
+> we will eventually need, and the feature bit is shared with
+> CEPH_FEATURE_FS_BTIME and CEPH_FEATURE_FS_CHANGE_ATTR.
+>
+> This set adds support for all of three features (necessary since the bit
+> is shared). I've also added support for querying birthtime via statx().
+>
+> I was able to do a cephfs mount and ran xfstests on it, but some of the
+> more obscure messages haven't yet been tested. Birthtime support works
+> as expected, but I don't have a great way to test the change attribute.
+>
+> We don't set SB_I_VERSION, so none of the internal kernel users will
+> rely on it, and that value is not exposed to userspace via statx (yet).
+> Given that, we could leave off the last 4 patches for now.
+>
+> Jeff Layton (18):
+>   libceph: fix sa_family just after reading address
+>   libceph: add ceph_decode_entity_addr
+>   libceph: ADDR2 support for monmap
+>   libceph: switch osdmap decoding to use ceph_decode_entity_addr
+>   libceph: fix watch_item_t decoding to use ceph_decode_entity_addr
+>   libceph: correctly decode ADDR2 addresses in incremental OSD maps
+>   ceph: have MDS map decoding use entity_addr_t decoder
+>   ceph: fix decode_locker to use ceph_decode_entity_addr
+>   libceph: use TYPE_LEGACY for entity addrs instead of TYPE_NONE
+>   libceph: rename ceph_encode_addr to ceph_encode_banner_addr
+>   ceph: add btime field to ceph_inode_info
+>   ceph: handle btime in cap messages
+>   libceph: turn on CEPH_FEATURE_MSG_ADDR2
+>   ceph: allow querying of STATX_BTIME in ceph_getattr
+>   iversion: add a routine to update a raw value with a larger one
+>   ceph: add change_attr field to ceph_inode_info
+>   ceph: handle change_attr in cap messages
+>   ceph: increment change_attribute on local changes
+>
+>  fs/ceph/addr.c                     |  2 +
+>  fs/ceph/caps.c                     | 37 +++++++------
+>  fs/ceph/file.c                     |  5 ++
+>  fs/ceph/inode.c                    | 23 ++++++--
+>  fs/ceph/mds_client.c               | 21 +++++---
+>  fs/ceph/mds_client.h               |  2 +
+>  fs/ceph/mdsmap.c                   | 12 +++--
+>  fs/ceph/snap.c                     |  3 ++
+>  fs/ceph/super.h                    |  4 +-
+>  include/linux/ceph/ceph_features.h |  1 +
+>  include/linux/ceph/decode.h        | 13 ++++-
+>  include/linux/ceph/mon_client.h    |  1 -
+>  include/linux/iversion.h           | 24 +++++++++
+>  net/ceph/Makefile                  |  2 +-
+>  net/ceph/cls_lock_client.c         |  7 ++-
+>  net/ceph/decode.c                  | 86 ++++++++++++++++++++++++++++++
+>  net/ceph/messenger.c               | 14 ++---
+>  net/ceph/mon_client.c              | 21 +++++---
+>  net/ceph/osd_client.c              | 20 ++++---
+>  net/ceph/osdmap.c                  | 31 ++++++-----
+>  20 files changed, 258 insertions(+), 71 deletions(-)
+>  create mode 100644 net/ceph/decode.c
+>
 
-If just doing "mount -o remount", user will expect there is no 
-data/metadata get lost.  The 'mount -f' explicitly tell user this 
-operation may lose data/metadata.
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
 
 
-> Also, how would an admin know that this is something they ought to try?
-> Is there a way for them to know that their client has been blacklisted?
-> 
->> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
->> ---
->>   fs/ceph/mds_client.c | 16 +++++++++++++---
->>   fs/ceph/super.c      | 23 +++++++++++++++++++++--
->>   2 files changed, 34 insertions(+), 5 deletions(-)
->>
->> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
->> index 19c62cf7d5b8..188c33709d9a 100644
->> --- a/fs/ceph/mds_client.c
->> +++ b/fs/ceph/mds_client.c
->> @@ -1378,9 +1378,12 @@ static int remove_session_caps_cb(struct inode *inode, struct ceph_cap *cap,
->>   		struct ceph_cap_flush *cf;
->>   		struct ceph_mds_client *mdsc = fsc->mdsc;
->>   
->> -		if (ci->i_wrbuffer_ref > 0 &&
->> -		    READ_ONCE(fsc->mount_state) == CEPH_MOUNT_SHUTDOWN)
->> -			invalidate = true;
->> +		if (READ_ONCE(fsc->mount_state) == CEPH_MOUNT_SHUTDOWN) {
->> +			if (inode->i_data.nrpages > 0)
->> +				invalidate = true;
->> +			if (ci->i_wrbuffer_ref > 0)
->> +				mapping_set_error(&inode->i_data, -EIO);
->> +		}
->>   
->>   		while (!list_empty(&ci->i_cap_flush_list)) {
->>   			cf = list_first_entry(&ci->i_cap_flush_list,
->> @@ -4350,7 +4353,12 @@ void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc)
->>   		session = __ceph_lookup_mds_session(mdsc, mds);
->>   		if (!session)
->>   			continue;
->> +
->> +		if (session->s_state == CEPH_MDS_SESSION_REJECTED)
->> +			__unregister_session(mdsc, session);
->> +		__wake_requests(mdsc, &session->s_waiting);
->>   		mutex_unlock(&mdsc->mutex);
->> +
->>   		mutex_lock(&session->s_mutex);
->>   		__close_session(mdsc, session);
->>   		if (session->s_state == CEPH_MDS_SESSION_CLOSING) {
->> @@ -4359,9 +4367,11 @@ void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc)
->>   		}
->>   		mutex_unlock(&session->s_mutex);
->>   		ceph_put_mds_session(session);
->> +
->>   		mutex_lock(&mdsc->mutex);
->>   		kick_requests(mdsc, mds);
->>   	}
->> +
->>   	__wake_requests(mdsc, &mdsc->waiting_for_map);
->>   	mutex_unlock(&mdsc->mutex);
->>   }
->> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
->> index 67eb9d592ab7..a6a3c065f697 100644
->> --- a/fs/ceph/super.c
->> +++ b/fs/ceph/super.c
->> @@ -833,8 +833,27 @@ static void ceph_umount_begin(struct super_block *sb)
->>   
->>   static int ceph_remount(struct super_block *sb, int *flags, char *data)
->>   {
->> -	sync_filesystem(sb);
->> -	return 0;
->> +	struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
->> +
->> +	if (fsc->mount_state != CEPH_MOUNT_SHUTDOWN) {
->> +		sync_filesystem(sb);
->> +		return 0;
->> +	}
->> +
->> +	/* Make sure all page caches get invalidated.
->> +	 * see remove_session_caps_cb() */
->> +	flush_workqueue(fsc->inode_wq);
->> +	/* In case that we were blacklisted. This also reset
->> +	 * all mon/osd connections */
->> +	ceph_reset_client_addr(fsc->client);
->> +
->> +	ceph_osdc_clear_abort_err(&fsc->client->osdc);
->> +	fsc->mount_state = 0;
->> +
->> +	if (!sb->s_root)
->> +		return 0;
->> +	return __ceph_do_getattr(d_inode(sb->s_root), NULL,
->> +				 CEPH_STAT_CAP_INODE, true);
->>   }
->>   
->>   static const struct super_operations ceph_super_ops = {
-> 
-
+> --
+> 2.21.0
+>
