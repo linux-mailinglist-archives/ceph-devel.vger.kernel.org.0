@@ -2,88 +2,196 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ABAB49193
-	for <lists+ceph-devel@lfdr.de>; Mon, 17 Jun 2019 22:45:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8EEA496B2
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Jun 2019 03:31:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbfFQUpV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 17 Jun 2019 16:45:21 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:38907 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727813AbfFQUpU (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 17 Jun 2019 16:45:20 -0400
-Received: by mail-qt1-f194.google.com with SMTP id n11so12527427qtl.5
-        for <ceph-devel@vger.kernel.org>; Mon, 17 Jun 2019 13:45:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=8TqmPskf0njDpD2GlgZgTI3pr2V49D6lJzOJ3o1kO3E=;
-        b=fO+8pQ1B6wLc9XWKxO1M57gACALPj3mgp+/TQUfvEbWwBuDacMVmn8hZ3y9oyXNaMz
-         CaXOGIrXzJ4KnFb7WdzJrlcDOoWmw+uAM1tlllpTXr6DLbqGMsmDgJa/VgMNr2Z4yK+v
-         Cl8/prxInR7N+p2sXt98bMI10S3wnYoIDZiH/NKcrLLuXbNxi+zupo/f5uPjgCRurKsn
-         98YK4gi9YutjHu+6k3xWrtyg/MIo9scDb68mycM122sMphPou7bxR94B6DUcMs0gV0pJ
-         gF83qMTVpHrem3ErIAz8p1HnNyeEBHWBtMsIJJuSllCRUBihBe6BzilkQC1wkxBtDmXx
-         EBXg==
-X-Gm-Message-State: APjAAAUnALiyqGeEJiVYYIU+M8/obEwAPRHgsgfzJvjhIm79Tagd7EMW
-        AGO1o9yyjSWScBaDka+rQqFOgYipcfw=
-X-Google-Smtp-Source: APXvYqyXCRYwTowRZKrBgEO7ZFeQ3BVFjB/mKTox1grwWsOfmmapWrL2eSFCsZRK/MWWyr8eAtHJmA==
-X-Received: by 2002:a0c:b929:: with SMTP id u41mr23536332qvf.50.1560804319778;
-        Mon, 17 Jun 2019 13:45:19 -0700 (PDT)
-Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-8C7.dyn6.twc.com. [2606:a000:1100:37d::8c7])
-        by smtp.gmail.com with ESMTPSA id w189sm6236118qkc.38.2019.06.17.13.45.18
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 13:45:19 -0700 (PDT)
-Message-ID: <c0a3e8d3c1313810606f5a1f9fb8d0c4be322a51.camel@redhat.com>
-Subject: Re: [PATCH 8/8] ceph: return -EIO if read/write against filp that
- lost file locks
-From:   Jeff Layton <jlayton@redhat.com>
-To:     Patrick Donnelly <pdonnell@redhat.com>,
-        "Yan, Zheng" <zyan@redhat.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@redhat.com>
-Date:   Mon, 17 Jun 2019 16:45:17 -0400
-In-Reply-To: <CA+2bHPZBy8pFkhvSRnjBzD4dosP2E-n_hNWHXJxQPDqch=+y0Q@mail.gmail.com>
+        id S1726739AbfFRBbR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 17 Jun 2019 21:31:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46754 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726023AbfFRBbQ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 17 Jun 2019 21:31:16 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 31EAF81F0D
+        for <ceph-devel@vger.kernel.org>; Tue, 18 Jun 2019 01:31:16 +0000 (UTC)
+Received: from [10.72.12.23] (ovpn-12-23.pek2.redhat.com [10.72.12.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1C4165E7C6;
+        Tue, 18 Jun 2019 01:31:13 +0000 (UTC)
+Subject: Re: [PATCH 1/8] libceph: add function that reset client's entity addr
+To:     Jeff Layton <jlayton@redhat.com>, ceph-devel@vger.kernel.org
+Cc:     idryomov@redhat.com
 References: <20190617125529.6230-1-zyan@redhat.com>
-         <20190617125529.6230-9-zyan@redhat.com>
-         <CA+2bHPZBy8pFkhvSRnjBzD4dosP2E-n_hNWHXJxQPDqch=+y0Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+ <20190617125529.6230-2-zyan@redhat.com>
+ <956c1db29cb1c1c1a0bfb87e6d8e6b846abe0b0d.camel@redhat.com>
+From:   "Yan, Zheng" <zyan@redhat.com>
+Message-ID: <1178534d-ca74-e8d5-2acc-b0aea7854a21@redhat.com>
+Date:   Tue, 18 Jun 2019 09:31:11 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <956c1db29cb1c1c1a0bfb87e6d8e6b846abe0b0d.camel@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 18 Jun 2019 01:31:16 +0000 (UTC)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2019-06-17 at 13:32 -0700, Patrick Donnelly wrote:
-> On Mon, Jun 17, 2019 at 5:56 AM Yan, Zheng <zyan@redhat.com> wrote:
-> > After mds evicts session, file locks get lost sliently. It's not safe to
-> > let programs continue to do read/write.
+On 6/18/19 1:21 AM, Jeff Layton wrote:
+> On Mon, 2019-06-17 at 20:55 +0800, Yan, Zheng wrote:
+>> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+>> ---
+>>   include/linux/ceph/libceph.h    |  1 +
+>>   include/linux/ceph/messenger.h  |  1 +
+>>   include/linux/ceph/mon_client.h |  1 +
+>>   include/linux/ceph/osd_client.h |  1 +
+>>   net/ceph/ceph_common.c          |  8 ++++++++
+>>   net/ceph/messenger.c            |  5 +++++
+>>   net/ceph/mon_client.c           |  7 +++++++
+>>   net/ceph/osd_client.c           | 16 ++++++++++++++++
+>>   8 files changed, 40 insertions(+)
+>>
+>> diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
+>> index a3cddf5f0e60..f29959eed025 100644
+>> --- a/include/linux/ceph/libceph.h
+>> +++ b/include/linux/ceph/libceph.h
+>> @@ -291,6 +291,7 @@ struct ceph_client *ceph_create_client(struct ceph_options *opt, void *private);
+>>   struct ceph_entity_addr *ceph_client_addr(struct ceph_client *client);
+>>   u64 ceph_client_gid(struct ceph_client *client);
+>>   extern void ceph_destroy_client(struct ceph_client *client);
+>> +extern void ceph_reset_client_addr(struct ceph_client *client);
+>>   extern int __ceph_open_session(struct ceph_client *client,
+>>   			       unsigned long started);
+>>   extern int ceph_open_session(struct ceph_client *client);
+>> diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenger.h
+>> index 23895d178149..c4458dc6a757 100644
+>> --- a/include/linux/ceph/messenger.h
+>> +++ b/include/linux/ceph/messenger.h
+>> @@ -337,6 +337,7 @@ extern void ceph_msgr_flush(void);
+>>   extern void ceph_messenger_init(struct ceph_messenger *msgr,
+>>   				struct ceph_entity_addr *myaddr);
+>>   extern void ceph_messenger_fini(struct ceph_messenger *msgr);
+>> +extern void ceph_messenger_reset_nonce(struct ceph_messenger *msgr);
+>>   
+>>   extern void ceph_con_init(struct ceph_connection *con, void *private,
+>>   			const struct ceph_connection_operations *ops,
+>> diff --git a/include/linux/ceph/mon_client.h b/include/linux/ceph/mon_client.h
+>> index 3a4688af7455..0d8d890c6759 100644
+>> --- a/include/linux/ceph/mon_client.h
+>> +++ b/include/linux/ceph/mon_client.h
+>> @@ -110,6 +110,7 @@ extern int ceph_monmap_contains(struct ceph_monmap *m,
+>>   
+>>   extern int ceph_monc_init(struct ceph_mon_client *monc, struct ceph_client *cl);
+>>   extern void ceph_monc_stop(struct ceph_mon_client *monc);
+>> +extern void ceph_monc_reopen_session(struct ceph_mon_client *monc);
+>>   
+>>   enum {
+>>   	CEPH_SUB_MONMAP = 0,
+>> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+>> index 2294f963dab7..a12b7fc9cfd6 100644
+>> --- a/include/linux/ceph/osd_client.h
+>> +++ b/include/linux/ceph/osd_client.h
+>> @@ -381,6 +381,7 @@ extern void ceph_osdc_cleanup(void);
+>>   extern int ceph_osdc_init(struct ceph_osd_client *osdc,
+>>   			  struct ceph_client *client);
+>>   extern void ceph_osdc_stop(struct ceph_osd_client *osdc);
+>> +extern void ceph_osdc_reopen_osds(struct ceph_osd_client *osdc);
+>>   
+>>   extern void ceph_osdc_handle_reply(struct ceph_osd_client *osdc,
+>>   				   struct ceph_msg *msg);
+>> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+>> index 79eac465ec65..55210823d1cc 100644
+>> --- a/net/ceph/ceph_common.c
+>> +++ b/net/ceph/ceph_common.c
+>> @@ -693,6 +693,14 @@ void ceph_destroy_client(struct ceph_client *client)
+>>   }
+>>   EXPORT_SYMBOL(ceph_destroy_client);
+>>   
+>> +void ceph_reset_client_addr(struct ceph_client *client)
+>> +{
+>> +	ceph_messenger_reset_nonce(&client->msgr);
+>> +	ceph_monc_reopen_session(&client->monc);
+>> +	ceph_osdc_reopen_osds(&client->osdc);
+>> +}
+>> +EXPORT_SYMBOL(ceph_reset_client_addr);
+>> +
+>>   /*
+>>    * true if we have the mon map (and have thus joined the cluster)
+>>    */
+>> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+>> index 3ee380758ddd..cd03a1cba849 100644
+>> --- a/net/ceph/messenger.c
+>> +++ b/net/ceph/messenger.c
+>> @@ -3028,6 +3028,11 @@ static void con_fault(struct ceph_connection *con)
+>>   }
+>>   
+>>   
+>> +void ceph_messenger_reset_nonce(struct ceph_messenger *msgr)
+>> +{
+>> +	msgr->inst.addr.nonce += 1000000;
 > 
-> I think one issue with returning EIO on a file handle that did hold a
-> lock is that the application may be programmed to write to other files
-> assuming that lock is never lost, yes? In that case, it may not ever
-> write to the locked file in any case.
+> Why 1000000 here? This is originally set by get_random_bytes, AFAICT.
+> Should we be calling that again instead?
+
+
+Because user space code Messenger::rebind() does this. yes, calling 
+get_random_bytes() is better.
+
 > 
-
-Sure, applications do all sorts of crazy things. We can only cater to so
-much craziness. I'll assert that most applications don't have these
-sorts of weirdo usage patterns, and an error on read/write is more
-reasonable.
-
-Note that this behavior is already documented in fcntl(2) as well, as is
-SIGLOST not being implemented.
-
-> Again, I'd like to see SIGLOST sent to the application here. Are there
-> any objections to reviving whatever patchset was in flight to add
-> that? Or just writeup a new one?
+>> +	encode_my_addr(msgr);
+>> +}
+>>   
+>>   /*
+>>    * initialize a new messenger instance
+>> diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+>> index 895679d3529b..6dab6a94e9cc 100644
+>> --- a/net/ceph/mon_client.c
+>> +++ b/net/ceph/mon_client.c
+>> @@ -209,6 +209,13 @@ static void reopen_session(struct ceph_mon_client *monc)
+>>   	__open_session(monc);
+>>   }
+>>   
+>> +void ceph_monc_reopen_session(struct ceph_mon_client *monc)
+>> +{
+>> +	mutex_lock(&monc->mutex);
+>> +	reopen_session(monc);
+>> +	mutex_unlock(&monc->mutex);
+>> +}
+>> +
+>>   static void un_backoff(struct ceph_mon_client *monc)
+>>   {
+>>   	monc->hunt_mult /= 2; /* reduce by 50% */
+>> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+>> index e6d31e0f0289..67e9466f27fd 100644
+>> --- a/net/ceph/osd_client.c
+>> +++ b/net/ceph/osd_client.c
+>> @@ -5089,6 +5089,22 @@ int ceph_osdc_call(struct ceph_osd_client *osdc,
+>>   }
+>>   EXPORT_SYMBOL(ceph_osdc_call);
+>>   
+>> +/*
+>> + * reset all osd connections
+>> + */
+>> +void ceph_osdc_reopen_osds(struct ceph_osd_client *osdc)
+>> +{
+>> +	struct rb_node *n;
+>> +	down_write(&osdc->lock);
+>> +	for (n = rb_first(&osdc->osds); n; ) {
+>> +		struct ceph_osd *osd = rb_entry(n, struct ceph_osd, o_node);
+>> +		n = rb_next(n);
+>> +		if (!reopen_osd(osd))
+>> +			kick_osd_requests(osd);
+>> +	}
+>> +	up_write(&osdc->lock);
+>> +}
+>> +
+>>   /*
+>>    * init, shutdown
+>>    */
 > 
-
-I think SIGLOST's utility is somewhat questionable. Applications will
-need to be custom-written to handle it. If you're going to do that, then
-it may be better to consider other async notification mechanisms.
-inotify or fanotify, perhaps? Those may be simpler to implement and get
-merged.
--- 
-Jeff Layton <jlayton@redhat.com>
 
