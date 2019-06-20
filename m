@@ -2,157 +2,125 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7E274CEA5
-	for <lists+ceph-devel@lfdr.de>; Thu, 20 Jun 2019 15:28:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11FE64CFA4
+	for <lists+ceph-devel@lfdr.de>; Thu, 20 Jun 2019 15:54:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731511AbfFTN2a (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 20 Jun 2019 09:28:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40706 "EHLO mx1.redhat.com"
+        id S1726784AbfFTNyR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 20 Jun 2019 09:54:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726392AbfFTN2a (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 20 Jun 2019 09:28:30 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726551AbfFTNyR (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 20 Jun 2019 09:54:17 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EF4C981F0E
-        for <ceph-devel@vger.kernel.org>; Thu, 20 Jun 2019 13:28:29 +0000 (UTC)
-Received: from zhyan-laptop.redhat.com (ovpn-12-67.pek2.redhat.com [10.72.12.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2492A60FAB;
-        Thu, 20 Jun 2019 13:28:27 +0000 (UTC)
-From:   "Yan, Zheng" <zyan@redhat.com>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@redhat.com, jlayton@redhat.com,
-        "Yan, Zheng" <zyan@redhat.com>
-Subject: [PATCH 3/3] ceph: more precise CEPH_CLIENT_CAPS_PENDING_CAPSNAP
-Date:   Thu, 20 Jun 2019 21:28:21 +0800
-Message-Id: <20190620132821.7814-3-zyan@redhat.com>
-In-Reply-To: <20190620132821.7814-1-zyan@redhat.com>
-References: <20190620132821.7814-1-zyan@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 149E920675;
+        Thu, 20 Jun 2019 13:54:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561038856;
+        bh=ujco4toh4VcjlC1PwExMobr+TbEakBM2rfFRTVzVA9w=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=DcVNrNiFpeuOwljp7LA2Gtb02dNaMIRCyt2onZkB+mR6mFkpcrSlYGpiTB9KervaC
+         /H9aM9bFIH90qaIB4tLZYT5gsUm8dXfLXtqP0hiqbkQiyxN/OtVbv7oXBTxHX9fWFk
+         qfMa7L8TI19+SYm/jjA1KH+05QZpKoxAhMLYBMng=
+Message-ID: <d8218bd280f19ebbd38f396dbf4e763b945d40bd.camel@kernel.org>
+Subject: Re: [PATCH v2 0/3] ceph: don't NULL terminate virtual xattr values
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, Zheng Yan <zyan@redhat.com>,
+        sage@redhat.com, agruenba@redhat.com,
+        Joe Perches <joe@perches.com>, Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Date:   Thu, 20 Jun 2019 09:54:13 -0400
+In-Reply-To: <CAMuHMdUtwtruJtcUe4-YQJQ5h9B-WCcjK57hVMvxjnrZeFjrfA@mail.gmail.com>
+References: <20190619164528.31958-1-jlayton@kernel.org>
+         <20190620102410.GT9224@smile.fi.intel.com>
+         <7c12abe8a7e6cd3cfe9129a1e74d9c788ff2f1a9.camel@kernel.org>
+         <CAMuHMdUtwtruJtcUe4-YQJQ5h9B-WCcjK57hVMvxjnrZeFjrfA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 20 Jun 2019 13:28:29 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Client uses this flag to tell mds if there is more cap snap need to
-flush. It's mainly for the case that client needs to re-send cap/snap
-flushes after mds failover, but CEPH_CAP_ANY_FILE_WR on corresponding
-inodes are all released before mds failover.
+On Thu, 2019-06-20 at 14:22 +0200, Geert Uytterhoeven wrote:
+> Hi Jeff,
+> 
+> On Thu, Jun 20, 2019 at 1:41 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > On Thu, 2019-06-20 at 13:24 +0300, Andy Shevchenko wrote:
+> > > On Wed, Jun 19, 2019 at 12:45:25PM -0400, Jeff Layton wrote:
+> > > > v2: drop bogus EXPORT_SYMBOL of static function
+> > > > 
+> > > > The only real difference between this set and the one I sent originally
+> > > > is the removal of a spurious EXPORT_SYMBOL in the snprintf patch.
+> > > > 
+> > > > I'm mostly sending this with a wider cc list in an effort to get a
+> > > > review from the maintainers of the printf code. Basically ceph needs a
+> > > > snprintf variant that does not NULL terminate in order to handle its
+> > > > virtual xattrs.
+> > > > 
+> > > > Joe Perches had expressed some concerns about stack usage in vsnprintf
+> > > > with this, but I'm not sure I really understand the basis of that
+> > > > concern. If it is problematic, then I could use suggestions as to how
+> > > > best to fix that up.
+> > > 
+> > > It might be problematic, since vsnprintf() can be called recursively.
+> > > 
+> > 
+> > So the concern is that we'd have extra call/ret activity in the stack?
+> > That seems like a lot of hand-wringing over very little, but ok if so.
+> > 
+> > > > ----------------------------8<-----------------------------
+> > > > 
+> > > > kcephfs has several "virtual" xattrs that return strings that are
+> > > > currently populated using snprintf(), which always NULL terminates the
+> > > > string.
+> > > > 
+> > > > This leads to the string being truncated when we use a buffer length
+> > > > acquired by calling getxattr with a 0 size first. The last character
+> > > > of the string ends up being clobbered by the termination.
+> > > 
+> > > So, then don't use snprintf() for this, simple memcpy() designed for that kind
+> > > of things.
+> > > 
+> > 
+> > memcpy from what? For many of these xattrs, we need to format integer
+> > data into strings. I could roll my own routine to do this formatting,
+> > but that's sort of what sprintf and its variants are for and I'd rather
+> > not reimplement all of it from scratch.
+> 
+> snprintf() to a temporary buffer, and memcpy() to the final destination.
+> These are all fairly small buffers (most are single integer values),
+> so the overhead should be minimal, right?
+> 
 
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
----
- fs/ceph/caps.c               | 41 ++++++++++++++++++++++++++----------
- include/linux/ceph/ceph_fs.h |  2 +-
- 2 files changed, 31 insertions(+), 12 deletions(-)
+Yeah. I was trying to avoid having to deal with a second buffer, but
+this is not a performance-critical codepath, so maybe that's the best
+option.
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 82cfb153d0f3..4b189c97799d 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -1295,7 +1295,7 @@ void __ceph_remove_caps(struct ceph_inode_info *ci)
-  * caller should hold snap_rwsem (read), s_mutex.
-  */
- static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
--		      int op, bool sync, int used, int want, int retain,
-+		      int op, int flags, int used, int want, int retain,
- 		      int flushing, u64 flush_tid, u64 oldest_flush_tid)
- 	__releases(cap->ci->i_ceph_lock)
- {
-@@ -1393,12 +1393,19 @@ static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
- 	arg.mode = inode->i_mode;
- 
- 	arg.inline_data = ci->i_inline_version != CEPH_INLINE_NONE;
--	if (list_empty(&ci->i_cap_snaps))
--		arg.flags = CEPH_CLIENT_CAPS_NO_CAPSNAP;
--	else
--		arg.flags = CEPH_CLIENT_CAPS_PENDING_CAPSNAP;
--	if (sync)
--		arg.flags |= CEPH_CLIENT_CAPS_SYNC;
-+	if (!(flags & CEPH_CLIENT_CAPS_PENDING_CAPSNAP) &&
-+	    !list_empty(&ci->i_cap_snaps)) {
-+		struct ceph_cap_snap *capsnap;
-+		list_for_each_entry_reverse(capsnap, &ci->i_cap_snaps, ci_item) {
-+			if (capsnap->cap_flush.tid)
-+				break;
-+			if (capsnap->need_flush) {
-+				flags |= CEPH_CLIENT_CAPS_PENDING_CAPSNAP;
-+				break;
-+			}
-+		}
-+	}
-+	arg.flags = flags;
- 
- 	spin_unlock(&ci->i_ceph_lock);
- 
-@@ -2085,7 +2092,7 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
- 		sent++;
- 
- 		/* __send_cap drops i_ceph_lock */
--		delayed += __send_cap(mdsc, cap, CEPH_CAP_OP_UPDATE, false,
-+		delayed += __send_cap(mdsc, cap, CEPH_CAP_OP_UPDATE, 0,
- 				cap_used, want, retain, flushing,
- 				flush_tid, oldest_flush_tid);
- 		goto retry; /* retake i_ceph_lock and restart our cap scan. */
-@@ -2155,7 +2162,8 @@ static int try_flush_caps(struct inode *inode, u64 *ptid)
- 						&flush_tid, &oldest_flush_tid);
- 
- 		/* __send_cap drops i_ceph_lock */
--		delayed = __send_cap(mdsc, cap, CEPH_CAP_OP_FLUSH, true,
-+		delayed = __send_cap(mdsc, cap, CEPH_CAP_OP_FLUSH,
-+				     CEPH_CLIENT_CAPS_SYNC,
- 				     __ceph_caps_used(ci),
- 				     __ceph_caps_wanted(ci),
- 				     (cap->issued | cap->implemented),
-@@ -2338,9 +2346,17 @@ static void __kick_flushing_caps(struct ceph_mds_client *mdsc,
- 	struct ceph_cap_flush *cf;
- 	int ret;
- 	u64 first_tid = 0;
-+	u64 last_snap_flush = 0;
- 
- 	ci->i_ceph_flags &= ~CEPH_I_KICK_FLUSH;
- 
-+	list_for_each_entry_reverse(cf, &ci->i_cap_flush_list, i_list) {
-+		if (!cf->caps) {
-+			last_snap_flush = cf->tid;
-+			break;
-+		}
-+	}
-+
- 	list_for_each_entry(cf, &ci->i_cap_flush_list, i_list) {
- 		if (cf->tid < first_tid)
- 			continue;
-@@ -2358,10 +2374,13 @@ static void __kick_flushing_caps(struct ceph_mds_client *mdsc,
- 			dout("kick_flushing_caps %p cap %p tid %llu %s\n",
- 			     inode, cap, cf->tid, ceph_cap_string(cf->caps));
- 			ci->i_ceph_flags |= CEPH_I_NODELAY;
-+
- 			ret = __send_cap(mdsc, cap, CEPH_CAP_OP_FLUSH,
--					  false, __ceph_caps_used(ci),
-+					 (cf->tid < last_snap_flush ?
-+					  CEPH_CLIENT_CAPS_PENDING_CAPSNAP : 0),
-+					  __ceph_caps_used(ci),
- 					  __ceph_caps_wanted(ci),
--					  cap->issued | cap->implemented,
-+					  (cap->issued | cap->implemented),
- 					  cf->caps, cf->tid, oldest_flush_tid);
- 			if (ret) {
- 				pr_err("kick_flushing_caps: error sending "
-diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-index 3ac0feaf2b5e..cb21c5cf12c3 100644
---- a/include/linux/ceph/ceph_fs.h
-+++ b/include/linux/ceph/ceph_fs.h
-@@ -682,7 +682,7 @@ extern const char *ceph_cap_op_name(int op);
- /* flags field in client cap messages (version >= 10) */
- #define CEPH_CLIENT_CAPS_SYNC			(1<<0)
- #define CEPH_CLIENT_CAPS_NO_CAPSNAP		(1<<1)
--#define CEPH_CLIENT_CAPS_PENDING_CAPSNAP	(1<<2);
-+#define CEPH_CLIENT_CAPS_PENDING_CAPSNAP	(1<<2)
- 
- /*
-  * caps message, used for capability callbacks, acks, requests, etc.
+> In fact the two largest strings are already formatted in a temporary
+> buffer, so there is no reason ceph_vxattrcb_layout() cannot just use
+> snprintf() now.
+>
+> Or perhaps this can use the existing seq_*() interface in some form?
+> 
+
+Hmm. I'll have to think about that.
+
+> BTW, while at it, please get rid of the casts when calling snprintf(), and
+> use the correct format specifiers instead.
+> 
+
+Sure, will do.
+
+Thanks for the suggestions so far (and from Andy too),
 -- 
-2.17.2
+Jeff Layton <jlayton@kernel.org>
 
