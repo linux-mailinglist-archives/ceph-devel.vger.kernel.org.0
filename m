@@ -2,100 +2,105 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 223D04CDCB
-	for <lists+ceph-devel@lfdr.de>; Thu, 20 Jun 2019 14:34:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97B004CEA3
+	for <lists+ceph-devel@lfdr.de>; Thu, 20 Jun 2019 15:28:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731080AbfFTMea (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 20 Jun 2019 08:34:30 -0400
-Received: from mga02.intel.com ([134.134.136.20]:31729 "EHLO mga02.intel.com"
+        id S1726757AbfFTN2Z (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 20 Jun 2019 09:28:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42144 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726294AbfFTMea (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 20 Jun 2019 08:34:30 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 05:34:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,396,1557212400"; 
-   d="scan'208";a="183052550"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by fmsmga004.fm.intel.com with ESMTP; 20 Jun 2019 05:34:26 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hdwGn-00005G-OX; Thu, 20 Jun 2019 15:34:25 +0300
-Date:   Thu, 20 Jun 2019 15:34:25 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        idryomov@gmail.com, zyan@redhat.com, sage@redhat.com,
-        agruenba@redhat.com, joe@perches.com, pmladek@suse.com,
-        rostedt@goodmis.org, geert+renesas@glider.be
-Subject: Re: [PATCH v2 0/3] ceph: don't NULL terminate virtual xattr values
-Message-ID: <20190620123425.GZ9224@smile.fi.intel.com>
-References: <20190619164528.31958-1-jlayton@kernel.org>
- <20190620102410.GT9224@smile.fi.intel.com>
- <7c12abe8a7e6cd3cfe9129a1e74d9c788ff2f1a9.camel@kernel.org>
+        id S1726392AbfFTN2Z (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 20 Jun 2019 09:28:25 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2591A2F8BD5
+        for <ceph-devel@vger.kernel.org>; Thu, 20 Jun 2019 13:28:25 +0000 (UTC)
+Received: from zhyan-laptop.redhat.com (ovpn-12-67.pek2.redhat.com [10.72.12.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D61E60FAB;
+        Thu, 20 Jun 2019 13:28:23 +0000 (UTC)
+From:   "Yan, Zheng" <zyan@redhat.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@redhat.com, jlayton@redhat.com,
+        "Yan, Zheng" <zyan@redhat.com>
+Subject: [PATCH 1/3] ceph: clear CEPH_I_KICK_FLUSH flag inside __kick_flushing_caps()
+Date:   Thu, 20 Jun 2019 21:28:19 +0800
+Message-Id: <20190620132821.7814-1-zyan@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c12abe8a7e6cd3cfe9129a1e74d9c788ff2f1a9.camel@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 20 Jun 2019 13:28:25 +0000 (UTC)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 07:41:06AM -0400, Jeff Layton wrote:
-> On Thu, 2019-06-20 at 13:24 +0300, Andy Shevchenko wrote:
-> > On Wed, Jun 19, 2019 at 12:45:25PM -0400, Jeff Layton wrote:
+Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+---
+ fs/ceph/caps.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-> > So, then don't use snprintf() for this, simple memcpy() designed for that kind
-> > of things.
-> > 
-> 
-> memcpy from what? For many of these xattrs, we need to format integer
-> data into strings. I could roll my own routine to do this formatting,
-> but that's sort of what sprintf and its variants are for and I'd rather
-> not reimplement all of it from scratch.
-
-So, use bigger temporary buffer and decide what to do with data if it doesn't
-fit the destination one.
-
-String without nul is not considered as a string, thus, memcpy() the data.
-
-> > > This patch makes ceph's virtual xattrs not include NULL termination
-> > > when formatting their values. In order to handle this, a new
-> > > snprintf_noterm function is added, and ceph is changed over to use
-> > > this to populate the xattr value buffer.
-> > 
-> > In terms of vsnprintf(), and actually compiler point of view, it's not a string
-> > anymore, it's a text-based data.
-> > 
-> > Personally, I don't see an advantage of a deep intrusion into vsnprintf().
-> > The wrapper can be made to achieve this w/o touching the generic code. Thus,
-> > you can quickly and cleanly fix the issue, while discussing this with wider
-> > audience.
-> > 
-> 
-> Sorry, if I'm being dense but I'm not sure I follow here.
-> 
-> Are you suggesting I should just copy/paste most of vsnprintf into a new
-> function that just leaves off the termination at the end, and leave the
-> original alone?
-
-Yes. The data you are expecting is not a string anymore from these functions
-point of view. Even GCC nowadays complains on strncpy() when nul doesn't fit
-the destination buffer.
-
-> That seems like a bit of a waste, but if that's the
-> consensus then ok.
-
-My personal view is not a consensus, let's wait for more opinions.
-
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 61f9bde547e3..cd946bca4792 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -1605,10 +1605,8 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
+ 	}
+ 
+ 	// make sure flushsnap messages are sent in proper order.
+-	if (ci->i_ceph_flags & CEPH_I_KICK_FLUSH) {
++	if (ci->i_ceph_flags & CEPH_I_KICK_FLUSH)
+ 		__kick_flushing_caps(mdsc, session, ci, 0);
+-		ci->i_ceph_flags &= ~CEPH_I_KICK_FLUSH;
+-	}
+ 
+ 	__ceph_flush_snaps(ci, session);
+ out:
+@@ -2050,10 +2048,8 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+ 		if (cap == ci->i_auth_cap &&
+ 		    (ci->i_ceph_flags &
+ 		     (CEPH_I_KICK_FLUSH | CEPH_I_FLUSH_SNAPS))) {
+-			if (ci->i_ceph_flags & CEPH_I_KICK_FLUSH) {
++			if (ci->i_ceph_flags & CEPH_I_KICK_FLUSH)
+ 				__kick_flushing_caps(mdsc, session, ci, 0);
+-				ci->i_ceph_flags &= ~CEPH_I_KICK_FLUSH;
+-			}
+ 			if (ci->i_ceph_flags & CEPH_I_FLUSH_SNAPS)
+ 				__ceph_flush_snaps(ci, session);
+ 
+@@ -2333,6 +2329,8 @@ static void __kick_flushing_caps(struct ceph_mds_client *mdsc,
+ 	int ret;
+ 	u64 first_tid = 0;
+ 
++	ci->i_ceph_flags &= ~CEPH_I_KICK_FLUSH;
++
+ 	list_for_each_entry(cf, &ci->i_cap_flush_list, i_list) {
+ 		if (cf->tid < first_tid)
+ 			continue;
+@@ -2422,7 +2420,6 @@ void ceph_early_kick_flushing_caps(struct ceph_mds_client *mdsc,
+ 		 */
+ 		if ((cap->issued & ci->i_flushing_caps) !=
+ 		    ci->i_flushing_caps) {
+-			ci->i_ceph_flags &= ~CEPH_I_KICK_FLUSH;
+ 			/* encode_caps_cb() also will reset these sequence
+ 			 * numbers. make sure sequence numbers in cap flush
+ 			 * message match later reconnect message */
+@@ -2462,7 +2459,6 @@ void ceph_kick_flushing_caps(struct ceph_mds_client *mdsc,
+ 			continue;
+ 		}
+ 		if (ci->i_ceph_flags & CEPH_I_KICK_FLUSH) {
+-			ci->i_ceph_flags &= ~CEPH_I_KICK_FLUSH;
+ 			__kick_flushing_caps(mdsc, session, ci,
+ 					     oldest_flush_tid);
+ 		}
+@@ -2490,7 +2486,6 @@ static void kick_flushing_inode_caps(struct ceph_mds_client *mdsc,
+ 		oldest_flush_tid = __get_oldest_flush_tid(mdsc);
+ 		spin_unlock(&mdsc->cap_dirty_lock);
+ 
+-		ci->i_ceph_flags &= ~CEPH_I_KICK_FLUSH;
+ 		__kick_flushing_caps(mdsc, session, ci, oldest_flush_tid);
+ 		spin_unlock(&ci->i_ceph_lock);
+ 	} else {
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.17.2
 
