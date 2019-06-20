@@ -2,72 +2,119 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77FC54C5FC
-	for <lists+ceph-devel@lfdr.de>; Thu, 20 Jun 2019 06:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B3824CBB4
+	for <lists+ceph-devel@lfdr.de>; Thu, 20 Jun 2019 12:24:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725875AbfFTEIk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 20 Jun 2019 00:08:40 -0400
-Received: from mail-pg1-f169.google.com ([209.85.215.169]:39760 "EHLO
-        mail-pg1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbfFTEIk (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 20 Jun 2019 00:08:40 -0400
-Received: by mail-pg1-f169.google.com with SMTP id 196so839303pgc.6
-        for <ceph-devel@vger.kernel.org>; Wed, 19 Jun 2019 21:08:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:content-transfer-encoding:mime-version:subject:message-id:date
-         :to;
-        bh=a7AadoNY/WrNh71T2NT/dRdDl5KODGXTxd/gv4OyIS8=;
-        b=hPyr3kSO2kZmorp7gAKIoEYCILYKaF0pbNqVaFomGzvQlTpt/TLtoktP626K/bft1N
-         ejkm+TeTSFKiT54KWeHwrB0euh1SFmEhGFikNsNXrcW6ozHF6uvcOKB49v69wYhH5+pO
-         jNMw56C5T6I1LEGyQwwO4+Ei354DKRaJb2uQUsPY4Wbjl/O0OWKt6jYEbTvPNPWCGimV
-         /AvCrYymIkaL0EQUJlKIkqW23CTxFjRyZpUOB51DLEaU6fSo+LDuD0v7ELBJZXZTRXBO
-         /zJrSPlGC1xz/xkI1TP69V6M8uGf0DIxBIubyFpgDKI+JsdFZsbYJ3S9Iw0yRIqUQdoi
-         UK5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:content-transfer-encoding:mime-version
-         :subject:message-id:date:to;
-        bh=a7AadoNY/WrNh71T2NT/dRdDl5KODGXTxd/gv4OyIS8=;
-        b=ZI17i5OsEmrnQqJAtp8m+5Og4FEXTjWdbcXzGIYMrYq6GBJOnd5hXinC0C5GMl0Y4e
-         01TtfVzfuFp5fsMl8NmZkxp2U54J7zpLMIDeco4yfOeu/aJJUnHlPCh/1u8fCZPJBw2R
-         +tPrEhJnr73gyt5t6Vqcy9CHURNin8xa6jrOC97P6U2jEfcettehycKku5vhOhiIclDU
-         5uEZrJQ574D2hq0vFpom2vr/GOBMZNxoLHzCy6/GtySkUP5UuSIo5/leuBt6MNkDzKQ9
-         4NGX8rFOGlOjQTBeZF2D8Uknrqnl17ULu8zaEKSw0wAl5Kylv/r3Hb+UixFRJb393e8X
-         jFeQ==
-X-Gm-Message-State: APjAAAWkaUEKWR5aUlM3AnGz43UiRZ0HUwAhqr/GGYbGZICau6Cllkqk
-        Jjl7S0gBFQC+mY6iY4LJ1e4JymDY
-X-Google-Smtp-Source: APXvYqymhnubAwfkBuAoB2nlk2nuxvOoJ6y1El1XZ/XI8rK6F73BDduLhSQxwektx3WELiflA1/vQw==
-X-Received: by 2002:a65:41c7:: with SMTP id b7mr10955085pgq.165.1561003719360;
-        Wed, 19 Jun 2019 21:08:39 -0700 (PDT)
-Received: from [127.0.0.1] (220-132-77-164.HINET-IP.hinet.net. [220.132.77.164])
-        by smtp.gmail.com with ESMTPSA id b8sm25591443pff.20.2019.06.19.21.08.37
-        for <ceph-devel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Jun 2019 21:08:38 -0700 (PDT)
-From:   =?gb2312?B?zNW2rLas?= <tdd21151186@gmail.com>
-Content-Type: text/plain; charset=gb2312
-Content-Transfer-Encoding: quoted-printable
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: backport PR https://github.com/ceph/ceph/pull/26564
-Message-Id: <221D4B4C-BF10-4E9C-AB29-BDD1F1563941@gmail.com>
-Date:   Thu, 20 Jun 2019 12:08:35 +0800
-To:     Ceph Development <ceph-devel@vger.kernel.org>
-X-Mailer: Apple Mail (2.3273)
+        id S1726704AbfFTKYR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 20 Jun 2019 06:24:17 -0400
+Received: from mga03.intel.com ([134.134.136.65]:55912 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726081AbfFTKYR (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 20 Jun 2019 06:24:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 03:24:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,396,1557212400"; 
+   d="scan'208";a="358487338"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
+  by fmsmga005.fm.intel.com with ESMTP; 20 Jun 2019 03:24:12 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1hduEk-0007HN-VY; Thu, 20 Jun 2019 13:24:10 +0300
+Date:   Thu, 20 Jun 2019 13:24:10 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        idryomov@gmail.com, zyan@redhat.com, sage@redhat.com,
+        agruenba@redhat.com, joe@perches.com, pmladek@suse.com,
+        rostedt@goodmis.org, geert+renesas@glider.be
+Subject: Re: [PATCH v2 0/3] ceph: don't NULL terminate virtual xattr values
+Message-ID: <20190620102410.GT9224@smile.fi.intel.com>
+References: <20190619164528.31958-1-jlayton@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190619164528.31958-1-jlayton@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Cephers,
+On Wed, Jun 19, 2019 at 12:45:25PM -0400, Jeff Layton wrote:
+> v2: drop bogus EXPORT_SYMBOL of static function
+> 
+> The only real difference between this set and the one I sent originally
+> is the removal of a spurious EXPORT_SYMBOL in the snprintf patch.
+> 
+> I'm mostly sending this with a wider cc list in an effort to get a
+> review from the maintainers of the printf code. Basically ceph needs a
+> snprintf variant that does not NULL terminate in order to handle its
+> virtual xattrs.
+> 
 
-Since this PR is important for lifecycle to be able to work.
-I=A1=AFm wondering if there is anyone working on backporting PR =
-https://github.com/ceph/ceph/pull/26564 to Luminous and Mimic.
-I saw it=A1=AFs pending from ticket =
-https://tracker.ceph.com/issues/38882 and =
-https://tracker.ceph.com/issues/38884
-I can be able to help to work on this if no one is working on it ?
+> Joe Perches had expressed some concerns about stack usage in vsnprintf
+> with this, but I'm not sure I really understand the basis of that
+> concern. If it is problematic, then I could use suggestions as to how
+> best to fix that up.
 
-Thanks,
-Dongdong=
+It might be problematic, since vsnprintf() can be called recursively.
+
+> ----------------------------8<-----------------------------
+> 
+> kcephfs has several "virtual" xattrs that return strings that are
+> currently populated using snprintf(), which always NULL terminates the
+> string.
+> 
+> This leads to the string being truncated when we use a buffer length
+> acquired by calling getxattr with a 0 size first. The last character
+> of the string ends up being clobbered by the termination.
+
+So, then don't use snprintf() for this, simple memcpy() designed for that kind
+of things.
+
+> The convention with xattrs is to not store the termination with string
+> data, given that we have the length. This is how setfattr/getfattr
+> operate.
+
+Fine.
+
+> This patch makes ceph's virtual xattrs not include NULL termination
+> when formatting their values. In order to handle this, a new
+> snprintf_noterm function is added, and ceph is changed over to use
+> this to populate the xattr value buffer.
+
+In terms of vsnprintf(), and actually compiler point of view, it's not a string
+anymore, it's a text-based data.
+
+Personally, I don't see an advantage of a deep intrusion into vsnprintf().
+The wrapper can be made to achieve this w/o touching the generic code. Thus,
+you can quickly and cleanly fix the issue, while discussing this with wider
+audience.
+
+> Finally, we fix ceph to
+> return -ERANGE properly when the string didn't fit in the buffer.
+> 
+> Jeff Layton (3):
+>   lib/vsprintf: add snprintf_noterm
+>   ceph: don't NULL terminate virtual xattr strings
+>   ceph: return -ERANGE if virtual xattr value didn't fit in buffer
+> 
+>  fs/ceph/xattr.c        |  49 +++++++-------
+>  include/linux/kernel.h |   2 +
+>  lib/vsprintf.c         | 144 ++++++++++++++++++++++++++++-------------
+>  3 files changed, 129 insertions(+), 66 deletions(-)
+> 
+> -- 
+> 2.21.0
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
