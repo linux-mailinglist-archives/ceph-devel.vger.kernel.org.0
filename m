@@ -2,83 +2,101 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCFFE4EA6B
-	for <lists+ceph-devel@lfdr.de>; Fri, 21 Jun 2019 16:18:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C5A64EA9E
+	for <lists+ceph-devel@lfdr.de>; Fri, 21 Jun 2019 16:30:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbfFUOSj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 21 Jun 2019 10:18:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48338 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726032AbfFUOSi (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 21 Jun 2019 10:18:38 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 523262089E;
-        Fri, 21 Jun 2019 14:18:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561126718;
-        bh=O+JyAbE7gzuZFVR1B/RarBWiVxRT8VXQTKJYS6wMfCw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UjxiQvSWZhLqAuGD0i+m4OlOiB+HVbzoEeVWsoUgMilW9vrX3l+LpeldEYj8s0AtF
-         528kIHJ/cLIrtr7MqTHYYVTsLxudCFmRDmUGrlI8cTEE5DJWXgb69GC9zry7b7+Jea
-         yHcOY+vcUd8innAsaPnCo4S5qy3RB3bvbnYFnM68=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, zyan@redhat.com, sage@redhat.com,
-        agruenba@redhat.com, joe@perches.com, geert+renesas@glider.be,
-        andriy.shevchenko@linux.intel.com
-Subject: [PATCH v3 2/2] ceph: fix return of ceph_vxattrcb_layout
-Date:   Fri, 21 Jun 2019 10:18:33 -0400
-Message-Id: <20190621141833.17551-3-jlayton@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190621141833.17551-1-jlayton@kernel.org>
-References: <20190621141833.17551-1-jlayton@kernel.org>
+        id S1726274AbfFUOaq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 21 Jun 2019 10:30:46 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37803 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725975AbfFUOap (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 21 Jun 2019 10:30:45 -0400
+Received: by mail-ot1-f65.google.com with SMTP id s20so6510120otp.4
+        for <ceph-devel@vger.kernel.org>; Fri, 21 Jun 2019 07:30:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cic1xXg1Zsa9ZT/6O0fIxPbZ+6LB3btGevHVvR5edf8=;
+        b=BrlpUuitkknzkUXsF8OzWVVqweUZ7IZJoqsST+z+dp7j9FV4fCfJEmXw0iDpvEWRxG
+         +mHmWP7mpTD98G+ByZrT86pvGGq1GBEF87C7pLMkl40u2oNUpzVpcTCTABR3N1i7vEsT
+         s44QenaEs1/IJAp/KlMQizXjpfBr044G3y6CIGZ2KodiJ6X8UD/OWCgOQ2Q9XnhKxVQ7
+         Mt3LuEte5NxRhiwxlBb7rCRIUwxGY5byPGRGdnCsuLvChk6/WamRaXLF79e8z759OcFe
+         q0UbGtGYaUtQ9K91usOJQ5d4ZXELK4qnZWQcUgkVakAevEoE/Tgi6zNwTWWyV9Lgbmxh
+         4U3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cic1xXg1Zsa9ZT/6O0fIxPbZ+6LB3btGevHVvR5edf8=;
+        b=EAZnon83BHIILdx32Hh075Ab0VzF6SRfIpdiZRLYVCoE5WHPXdCnpf/+0s2cQgC3fW
+         WBjn5bpRnr14sOC681vEkt8Nc6Zyl6vWiE3B/4EtCltC45n0g1ZcX2dIVSDzpDi5GGSY
+         JmYLIEwGRfdtvkKOe7SIvGvYzj7+KkuapSlbMVNfPdiX9AttlDSb6FYhL1kZWv5GAi6S
+         5K9RT47OS/fIWeuHRfcd8C8txwUFG2qwhRFs5bKw9zvwUV8Q5iKiCeCEDZRf6MBBeQwx
+         QKMU1GsR0IeLkUHnTLmwVh2vNihHHewQDm4Z10KGU+/nS5vr1SnTTZ8ZQtWsOY1PhVe+
+         1sEQ==
+X-Gm-Message-State: APjAAAVaBslflG+qc2TKJeINQ/SZv4gu2xmP479usE+SoKoV/+vXCENC
+        YuX3L4kR4ZtBw9HTyUCWWE6bHBlqLhOQ/ZmcR7VvGzTM
+X-Google-Smtp-Source: APXvYqxhqYpi2U8lkBonmo2g2FqfrXzlPlZDc6PDdudxGUn55GltP1na7IcV5op13vUjW4gzQClI/5Ky4Rp+PJAoADw=
+X-Received: by 2002:a9d:4109:: with SMTP id o9mr8649420ote.353.1561127445113;
+ Fri, 21 Jun 2019 07:30:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CABAwU-Zv1d1qT5n2-JEcm1vpK9XdTg30yzrhMoeQ2B4ujO=peA@mail.gmail.com>
+In-Reply-To: <CABAwU-Zv1d1qT5n2-JEcm1vpK9XdTg30yzrhMoeQ2B4ujO=peA@mail.gmail.com>
+From:   kefu chai <tchaikov@gmail.com>
+Date:   Fri, 21 Jun 2019 22:30:33 +0800
+Message-ID: <CAJE9aONkU7L7wAZheQyZQ6kbaZ8C-jtCGB+qY6_rrmiuDijHzQ@mail.gmail.com>
+Subject: Re: ceph-monstore-tool rebuild question
+To:     huang jun <hjwsm1989@gmail.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Currently it returns -ERANGE if it thinks that the buffer won't fit, but
-the function returns size_t which is unsigned. Fix it to just return the
-length in this case like the other xattrs do, and rely on the caller to
-handle the case where it won't fit in the destination buffer.
+On Thu, Jun 13, 2019 at 10:06 AM huang jun <hjwsm1989@gmail.com> wrote:
+>
+> Hi,all
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/xattr.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+Jun, sorry for the latency. got stuck by something else. =(
 
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index 359d3cbbb37b..23687e3819f5 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -62,8 +62,7 @@ static size_t ceph_vxattrcb_layout(struct ceph_inode_info *ci, char *val,
- 	const char *pool_name;
- 	const char *ns_field = " pool_namespace=";
- 	char buf[128];
--	size_t len, total_len = 0;
--	int ret;
-+	size_t ret, len, total_len = 0;
- 
- 	pool_ns = ceph_try_get_string(ci->i_layout.pool_ns);
- 
-@@ -87,11 +86,8 @@ static size_t ceph_vxattrcb_layout(struct ceph_inode_info *ci, char *val,
- 	if (pool_ns)
- 		total_len += strlen(ns_field) + pool_ns->len;
- 
--	if (!size) {
--		ret = total_len;
--	} else if (total_len > size) {
--		ret = -ERANGE;
--	} else {
-+	ret = total_len;
-+	if (size >= total_len) {
- 		memcpy(val, buf, len);
- 		ret = len;
- 		if (pool_name) {
--- 
-2.21.0
+> I recently read the ceph-monstore-tool code, and have a question about
+> rebuild operations.
+> In update_paxos() we read  osdmap, pgmap, auth and pgmap_pg records to
+> pending_proposal(a bufferlist) as the value of  the key paxos_1, and
+> set paxos_pending_v=1,
+> and set the paxos_last_committed=0 and paxos_first_committed=0;
+>
+> My question is if we start the mon after rebuild, let's say there is
+> only one mon now, the mon will not commit the paxos_pending_v=1, and
+> if we change the osdmap by 'ceph osd set noout' the new pending_v=1
+> will overwrite the former one in rebuild, so i think we don't need to
 
+agreed, unless the initial monmap requires more monitors. it will
+prevent the monitor from forming a quorum to write to the store. yeah,
+the paxos/1 will be overwritten by the first proposal at rebuilding
+the mondb. but i think we still need to store the "rebuild"
+transaction as a paxos proposal, as we need to apply the transaction
+on the sync client side, after the it syncs the chunks with the sync
+provider.
+
+probably we should just bump up the last_committed to a non-zero
+number, to preserve the rebuild transaction. actually, i was testing
+the fix of the issue you are talking about using the PR of
+https://github.com/ceph/ceph/pull/27465. but i didn't get a chance to
+look into the reason why it still failed..
+
+> set paxos_1=pending_proposal, paxos_pending_v=1 in 'ceph-monstore-tool
+> rebuild'.
+>
+> Thanks!
+> _______________________________________________
+> Dev mailing list -- dev@ceph.io
+> To unsubscribe send an email to dev-leave@ceph.io
+
+
+
+--
+Regards
+Kefu Chai
