@@ -2,101 +2,282 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C5A64EA9E
-	for <lists+ceph-devel@lfdr.de>; Fri, 21 Jun 2019 16:30:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ED904ED62
+	for <lists+ceph-devel@lfdr.de>; Fri, 21 Jun 2019 18:49:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726274AbfFUOaq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 21 Jun 2019 10:30:46 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37803 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfFUOap (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 21 Jun 2019 10:30:45 -0400
-Received: by mail-ot1-f65.google.com with SMTP id s20so6510120otp.4
-        for <ceph-devel@vger.kernel.org>; Fri, 21 Jun 2019 07:30:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cic1xXg1Zsa9ZT/6O0fIxPbZ+6LB3btGevHVvR5edf8=;
-        b=BrlpUuitkknzkUXsF8OzWVVqweUZ7IZJoqsST+z+dp7j9FV4fCfJEmXw0iDpvEWRxG
-         +mHmWP7mpTD98G+ByZrT86pvGGq1GBEF87C7pLMkl40u2oNUpzVpcTCTABR3N1i7vEsT
-         s44QenaEs1/IJAp/KlMQizXjpfBr044G3y6CIGZ2KodiJ6X8UD/OWCgOQ2Q9XnhKxVQ7
-         Mt3LuEte5NxRhiwxlBb7rCRIUwxGY5byPGRGdnCsuLvChk6/WamRaXLF79e8z759OcFe
-         q0UbGtGYaUtQ9K91usOJQ5d4ZXELK4qnZWQcUgkVakAevEoE/Tgi6zNwTWWyV9Lgbmxh
-         4U3Q==
+        id S1726043AbfFUQtB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 21 Jun 2019 12:49:01 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:38484 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbfFUQtB (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 21 Jun 2019 12:49:01 -0400
+Received: by mail-yb1-f195.google.com with SMTP id x7so2909853ybg.5
+        for <ceph-devel@vger.kernel.org>; Fri, 21 Jun 2019 09:49:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cic1xXg1Zsa9ZT/6O0fIxPbZ+6LB3btGevHVvR5edf8=;
-        b=EAZnon83BHIILdx32Hh075Ab0VzF6SRfIpdiZRLYVCoE5WHPXdCnpf/+0s2cQgC3fW
-         WBjn5bpRnr14sOC681vEkt8Nc6Zyl6vWiE3B/4EtCltC45n0g1ZcX2dIVSDzpDi5GGSY
-         JmYLIEwGRfdtvkKOe7SIvGvYzj7+KkuapSlbMVNfPdiX9AttlDSb6FYhL1kZWv5GAi6S
-         5K9RT47OS/fIWeuHRfcd8C8txwUFG2qwhRFs5bKw9zvwUV8Q5iKiCeCEDZRf6MBBeQwx
-         QKMU1GsR0IeLkUHnTLmwVh2vNihHHewQDm4Z10KGU+/nS5vr1SnTTZ8ZQtWsOY1PhVe+
-         1sEQ==
-X-Gm-Message-State: APjAAAVaBslflG+qc2TKJeINQ/SZv4gu2xmP479usE+SoKoV/+vXCENC
-        YuX3L4kR4ZtBw9HTyUCWWE6bHBlqLhOQ/ZmcR7VvGzTM
-X-Google-Smtp-Source: APXvYqxhqYpi2U8lkBonmo2g2FqfrXzlPlZDc6PDdudxGUn55GltP1na7IcV5op13vUjW4gzQClI/5Ky4Rp+PJAoADw=
-X-Received: by 2002:a9d:4109:: with SMTP id o9mr8649420ote.353.1561127445113;
- Fri, 21 Jun 2019 07:30:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <CABAwU-Zv1d1qT5n2-JEcm1vpK9XdTg30yzrhMoeQ2B4ujO=peA@mail.gmail.com>
-In-Reply-To: <CABAwU-Zv1d1qT5n2-JEcm1vpK9XdTg30yzrhMoeQ2B4ujO=peA@mail.gmail.com>
-From:   kefu chai <tchaikov@gmail.com>
-Date:   Fri, 21 Jun 2019 22:30:33 +0800
-Message-ID: <CAJE9aONkU7L7wAZheQyZQ6kbaZ8C-jtCGB+qY6_rrmiuDijHzQ@mail.gmail.com>
-Subject: Re: ceph-monstore-tool rebuild question
-To:     huang jun <hjwsm1989@gmail.com>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=9Oca30c4STaG1kQaemk+JLBZ3596mmXa8Tr+NTAeJdo=;
+        b=FE7vX4t7RxrL1tiLyzEUuy1dU7RsEzqqrTM3utoQ+c6RDxZDNN/bR1bUyCqO7z+2BL
+         vUj079BIJCrdravUvKJIq9X/pT6mRo9NWvWuzWEGOoD+6IgEsEYeBFJInNgJ//FxzENe
+         wq3F/zqhlHep9craaWvwa/mM88BIkuJZQHqYlr0anw7MynqERokdnVqcMwzuhKyUGAXR
+         SHRtPkaDhKLye707WymsJGg2fZ2JT7iloiOljSBtcUtLPcckV14GjmTOLJpscWb1vN+q
+         ZdjerPm2MDI3IOkfDwtnKcwyluwjJ/DC1lCV84zj5nkvKTnkK4g8aIS/Ar7oZ1+EAAmw
+         7drw==
+X-Gm-Message-State: APjAAAWCMbV6Kzuq0GRKb8TWrtEecJaRgWnos+dLrrebswbydfAsxvuk
+        UNKhHhnZGkizFzQYSGz+vcSqtQ==
+X-Google-Smtp-Source: APXvYqwOWoFQjaTB5ZiUmV/gxevND3/T4WfAwx3/TKj59pScrjAt/LN6B9QuLGO0/oC+O0Ow4/gGRw==
+X-Received: by 2002:a25:5ce:: with SMTP id 197mr72028395ybf.429.1561135739752;
+        Fri, 21 Jun 2019 09:48:59 -0700 (PDT)
+Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-5C3.dyn6.twc.com. [2606:a000:1100:37d::5c3])
+        by smtp.gmail.com with ESMTPSA id l68sm790029ywf.90.2019.06.21.09.48.58
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 21 Jun 2019 09:48:59 -0700 (PDT)
+Message-ID: <2cc051f6e86201ddd524b2bf6f3b04ddb89c9d36.camel@redhat.com>
+Subject: Re: [PATCH 4/8] ceph: allow remounting aborted mount
+From:   Jeff Layton <jlayton@redhat.com>
+To:     "Yan, Zheng" <zyan@redhat.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@redhat.com>
+Date:   Fri, 21 Jun 2019 12:48:57 -0400
+In-Reply-To: <d45fef05-5b6c-5919-fa0f-98e900c7f05b@redhat.com>
+References: <20190617125529.6230-1-zyan@redhat.com>
+         <20190617125529.6230-5-zyan@redhat.com>
+         <86f838f18f0871d6c21ae7bfb97541f1de8d918f.camel@redhat.com>
+         <3b0a4024-d47e-0a3f-48ca-0f1f657e9da9@redhat.com>
+         <e220f9e72b736141c39da52eb7d8d00b97a2c040.camel@redhat.com>
+         <CAAM7YAmaQ6eC_zcC7xFr9c6XMOsJvR=TFXZ__i_+jnxQf5MmtA@mail.gmail.com>
+         <03262ecae2386444d50571484fbe21592d4d3f95.camel@redhat.com>
+         <d45fef05-5b6c-5919-fa0f-98e900c7f05b@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.3 (3.32.3-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 10:06 AM huang jun <hjwsm1989@gmail.com> wrote:
->
-> Hi,all
+On Fri, 2019-06-21 at 16:10 +0800, Yan, Zheng wrote:
+> On 6/20/19 11:33 PM, Jeff Layton wrote:
+> > On Wed, 2019-06-19 at 08:24 +0800, Yan, Zheng wrote:
+> > > On Tue, Jun 18, 2019 at 6:39 PM Jeff Layton <jlayton@redhat.com> wrote:
+> > > > On Tue, 2019-06-18 at 14:25 +0800, Yan, Zheng wrote:
+> > > > > On 6/18/19 1:30 AM, Jeff Layton wrote:
+> > > > > > On Mon, 2019-06-17 at 20:55 +0800, Yan, Zheng wrote:
+> > > > > > > When remounting aborted mount, also reset client's entity addr.
+> > > > > > > 'umount -f /ceph; mount -o remount /ceph' can be used for recovering
+> > > > > > > from blacklist.
+> > > > > > > 
+> > > > > > 
+> > > > > > Why do I need to umount here? Once the filesystem is unmounted, then the
+> > > > > > '-o remount' becomes superfluous, no? In fact, I get an error back when
+> > > > > > I try to remount an unmounted filesystem:
+> > > > > > 
+> > > > > >       $ sudo umount -f /mnt/cephfs ; sudo mount -o remount /mnt/cephfs
+> > > > > >       mount: /mnt/cephfs: mount point not mounted or bad option.
+> > > > > > 
+> > > > > > My client isn't blacklisted above, so I guess you're counting on the
+> > > > > > umount returning without having actually unmounted the filesystem?
+> > > > > > 
+> > > > > > I think this ought to not need a umount first. From a UI standpoint,
+> > > > > > just doing a "mount -o remount" ought to be sufficient to clear this.
+> > > > > > 
+> > > > > This series is mainly for the case that mount point is not umountable.
+> > > > > If mount point is umountable, user should use 'umount -f /ceph; mount
+> > > > > /ceph'. This avoids all trouble of error handling.
+> > > > > 
+> > > > 
+> > > > ...
+> > > > 
+> > > > > If just doing "mount -o remount", user will expect there is no
+> > > > > data/metadata get lost.  The 'mount -f' explicitly tell user this
+> > > > > operation may lose data/metadata.
+> > > > > 
+> > > > > 
+> > > > 
+> > > > I don't think they'd expect that and even if they did, that's why we'd
+> > > > return errors on certain operations until they are cleared. But, I think
+> > > > all of this points out the main issue I have with this patchset, which
+> > > > is that it's not clear what problem this is solving.
+> > > > 
+> > > > So: client gets blacklisted and we want to allow it to come back in some
+> > > > fashion. Do we expect applications that happened to be accessing that
+> > > > mount to be able to continue running, or will they need to be restarted?
+> > > > If they need to be restarted why not just expect the admin to kill them
+> > > > all off, unmount and remount and then start them back up again?
+> > > > 
+> > > 
+> > > The point is let users decide what to do. Some user values
+> > > availability over consistency. It's inconvenient to kill all
+> > > applications that use the mount, then do umount.
+> > > 
+> > > 
+> > 
+> > I think I have a couple of issues with this patchset. Maybe you can
+> > convince me though:
+> > 
+> > 1) The interface is really weird.
+> > 
+> > You suggested that we needed to do:
+> > 
+> >      # umount -f /mnt/foo ; mount -o remount /mnt/foo
+> > 
+> > ...but what if I'm not really blacklisted? Didn't I just kill off all
+> > the calls in-flight with the umount -f? What if that umount actually
+> > succeeds? Then the subsequent remount call will fail.
+> > 
+> > ISTM, that this interface (should we choose to accept it) should just
+> > be:
+> > 
+> >      # mount -o remount /mnt/foo
+> > 
+> 
+> I have patch that does
+> 
+> mount -o remount,force_reconnect /mnt/ceph
+> 
+> 
 
-Jun, sorry for the latency. got stuck by something else. =(
+That seems clearer.
 
-> I recently read the ceph-monstore-tool code, and have a question about
-> rebuild operations.
-> In update_paxos() we read  osdmap, pgmap, auth and pgmap_pg records to
-> pending_proposal(a bufferlist) as the value of  the key paxos_1, and
-> set paxos_pending_v=1,
-> and set the paxos_last_committed=0 and paxos_first_committed=0;
->
-> My question is if we start the mon after rebuild, let's say there is
-> only one mon now, the mon will not commit the paxos_pending_v=1, and
-> if we change the osdmap by 'ceph osd set noout' the new pending_v=1
-> will overwrite the former one in rebuild, so i think we don't need to
+> > ...and if the client figures out that it has been blacklisted, then it
+> > does the right thing during the remount (whatever that right thing is).
+> > 
+> > 2) It's not clear to me who we expect to use this.
+> > 
+> > Are you targeting applications that do not use file locking? Any that do
+> > use file locking will probably need some special handling, but those
+> > that don't might be able to get by unscathed as long as they can deal
+> > with -EIO on fsync by replaying writes since the last fsync.
+> > 
+> 
+> Several users said they availability over consistency. For example: 
+> ImageNet training, cephfs is used for storing image files.
+> 
+> 
 
-agreed, unless the initial monmap requires more monitors. it will
-prevent the monitor from forming a quorum to write to the store. yeah,
-the paxos/1 will be overwritten by the first proposal at rebuilding
-the mondb. but i think we still need to store the "rebuild"
-transaction as a paxos proposal, as we need to apply the transaction
-on the sync client side, after the it syncs the chunks with the sync
-provider.
+Which sounds reasonable on its face...but why bother with remounting at
+that point? Why not just have the client reattempt connections until it
+succeeds (or you forcibly unmount).
 
-probably we should just bump up the last_committed to a non-zero
-number, to preserve the rebuild transaction. actually, i was testing
-the fix of the issue you are talking about using the PR of
-https://github.com/ceph/ceph/pull/27465. but i didn't get a chance to
-look into the reason why it still failed..
+For that matter, why not just redirty the pages after the writes fail in
+that case instead of forcing those users to rewrite their data? If they
+don't care about consistency that much, then that would seem to be a
+nicer way to deal with this.
 
-> set paxos_1=pending_proposal, paxos_pending_v=1 in 'ceph-monstore-tool
-> rebuild'.
->
-> Thanks!
-> _______________________________________________
-> Dev mailing list -- dev@ceph.io
-> To unsubscribe send an email to dev-leave@ceph.io
+I also find all of this a little difficult to reconcile with Patrick's
+desire to forcibly terminate any application that had a file lock at the
+time of the blacklisting. That doesn't seem to be something that will
+enhance availability.
 
+Again, I think I'm missing some piece of the bigger picture here, which
+is why I'm asking about how, specifically, we expect this to be used.
+I'd like to understand the actual use-cases here so we can ensure we're
+addressing them in the best possible fashion.
 
+> 
+> > The catch here is that not many applications do that. Most just fall
+> > over once fsync hits an error. That is a bit of a chicken and egg
+> > problem though, so that's not necessarily an argument against doing
+> > this.
+> > 
+> 
+> 
+> 
+> > > > > > Also, how would an admin know that this is something they ought to try?
+> > > > > > Is there a way for them to know that their client has been blacklisted?
+> > > > > > 
+> > > > > > > Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+> > > > > > > ---
+> > > > > > >    fs/ceph/mds_client.c | 16 +++++++++++++---
+> > > > > > >    fs/ceph/super.c      | 23 +++++++++++++++++++++--
+> > > > > > >    2 files changed, 34 insertions(+), 5 deletions(-)
+> > > > > > > 
+> > > > > > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > > > > > > index 19c62cf7d5b8..188c33709d9a 100644
+> > > > > > > --- a/fs/ceph/mds_client.c
+> > > > > > > +++ b/fs/ceph/mds_client.c
+> > > > > > > @@ -1378,9 +1378,12 @@ static int remove_session_caps_cb(struct inode *inode, struct ceph_cap *cap,
+> > > > > > >                    struct ceph_cap_flush *cf;
+> > > > > > >                    struct ceph_mds_client *mdsc = fsc->mdsc;
+> > > > > > > 
+> > > > > > > -         if (ci->i_wrbuffer_ref > 0 &&
+> > > > > > > -             READ_ONCE(fsc->mount_state) == CEPH_MOUNT_SHUTDOWN)
+> > > > > > > -                 invalidate = true;
+> > > > > > > +         if (READ_ONCE(fsc->mount_state) == CEPH_MOUNT_SHUTDOWN) {
+> > > > > > > +                 if (inode->i_data.nrpages > 0)
+> > > > > > > +                         invalidate = true;
+> > > > > > > +                 if (ci->i_wrbuffer_ref > 0)
+> > > > > > > +                         mapping_set_error(&inode->i_data, -EIO);
+> > > > > > > +         }
+> > > > > > > 
+> > > > > > >                    while (!list_empty(&ci->i_cap_flush_list)) {
+> > > > > > >                            cf = list_first_entry(&ci->i_cap_flush_list,
+> > > > > > > @@ -4350,7 +4353,12 @@ void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc)
+> > > > > > >                    session = __ceph_lookup_mds_session(mdsc, mds);
+> > > > > > >                    if (!session)
+> > > > > > >                            continue;
+> > > > > > > +
+> > > > > > > +         if (session->s_state == CEPH_MDS_SESSION_REJECTED)
+> > > > > > > +                 __unregister_session(mdsc, session);
+> > > > > > > +         __wake_requests(mdsc, &session->s_waiting);
+> > > > > > >                    mutex_unlock(&mdsc->mutex);
+> > > > > > > +
+> > > > > > >                    mutex_lock(&session->s_mutex);
+> > > > > > >                    __close_session(mdsc, session);
+> > > > > > >                    if (session->s_state == CEPH_MDS_SESSION_CLOSING) {
+> > > > > > > @@ -4359,9 +4367,11 @@ void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc)
+> > > > > > >                    }
+> > > > > > >                    mutex_unlock(&session->s_mutex);
+> > > > > > >                    ceph_put_mds_session(session);
+> > > > > > > +
+> > > > > > >                    mutex_lock(&mdsc->mutex);
+> > > > > > >                    kick_requests(mdsc, mds);
+> > > > > > >            }
+> > > > > > > +
+> > > > > > >            __wake_requests(mdsc, &mdsc->waiting_for_map);
+> > > > > > >            mutex_unlock(&mdsc->mutex);
+> > > > > > >    }
+> > > > > > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > > > > > > index 67eb9d592ab7..a6a3c065f697 100644
+> > > > > > > --- a/fs/ceph/super.c
+> > > > > > > +++ b/fs/ceph/super.c
+> > > > > > > @@ -833,8 +833,27 @@ static void ceph_umount_begin(struct super_block *sb)
+> > > > > > > 
+> > > > > > >    static int ceph_remount(struct super_block *sb, int *flags, char *data)
+> > > > > > >    {
+> > > > > > > - sync_filesystem(sb);
+> > > > > > > - return 0;
+> > > > > > > + struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
+> > > > > > > +
+> > > > > > > + if (fsc->mount_state != CEPH_MOUNT_SHUTDOWN) {
+> > > > > > > +         sync_filesystem(sb);
+> > > > > > > +         return 0;
+> > > > > > > + }
+> > > > > > > +
+> > > > > > > + /* Make sure all page caches get invalidated.
+> > > > > > > +  * see remove_session_caps_cb() */
+> > > > > > > + flush_workqueue(fsc->inode_wq);
+> > > > > > > + /* In case that we were blacklisted. This also reset
+> > > > > > > +  * all mon/osd connections */
+> > > > > > > + ceph_reset_client_addr(fsc->client);
+> > > > > > > +
+> > > > > > > + ceph_osdc_clear_abort_err(&fsc->client->osdc);
+> > > > > > > + fsc->mount_state = 0;
+> > > > > > > +
+> > > > > > > + if (!sb->s_root)
+> > > > > > > +         return 0;
+> > > > > > > + return __ceph_do_getattr(d_inode(sb->s_root), NULL,
+> > > > > > > +                          CEPH_STAT_CAP_INODE, true);
+> > > > > > >    }
+> > > > > > > 
+> > > > > > >    static const struct super_operations ceph_super_ops = {
+> > > > 
+> > > > --
+> > > > Jeff Layton <jlayton@redhat.com>
+> > > > 
 
---
-Regards
-Kefu Chai
+-- 
+Jeff Layton <jlayton@redhat.com>
+
