@@ -2,216 +2,258 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FBF251B0F
-	for <lists+ceph-devel@lfdr.de>; Mon, 24 Jun 2019 20:59:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55F5651E52
+	for <lists+ceph-devel@lfdr.de>; Tue, 25 Jun 2019 00:31:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbfFXS7X (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 24 Jun 2019 14:59:23 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:43499 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbfFXS7X (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 24 Jun 2019 14:59:23 -0400
-Received: by mail-yb1-f196.google.com with SMTP id 5so2549072ybj.10
-        for <ceph-devel@vger.kernel.org>; Mon, 24 Jun 2019 11:59:22 -0700 (PDT)
+        id S1726804AbfFXWbw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Jun 2019 18:31:52 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45950 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbfFXWbw (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 24 Jun 2019 18:31:52 -0400
+Received: by mail-qt1-f196.google.com with SMTP id j19so16284306qtr.12
+        for <ceph-devel@vger.kernel.org>; Mon, 24 Jun 2019 15:31:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B/kGlY6I6S0jxoLKq4624SBDOYwI/5+ZgFZCyRlCPC4=;
+        b=TwXfAWA4aUgED0KHpAW8ywdDRBP49+DII957ccOuCI9ltxgX8M+vVvNoJSlARaNJJo
+         iKdZ63aJfZL6uRvHMj/CkWRPBmNoajuAnQrIE7SgDCcjlwIRY9ZOfq/WJQjLc977gkUA
+         Fo6t7aJ0uNf4URNGB3H+hDACWiLrD9WMPQ5vR/+OeGkySSHvFPjAv6BcnXR5kMUtgyl8
+         HQ5R3T+f8HiQfHejYrvDRa97l9tC8Qey3aWAYVhNGTAPEza0H/n3We8DYkmKCKesDEei
+         OGcJVRofoZVWNMTcKGqBvILwEX3fEB4fUsflAWv9u5om1GmSgFvpDJn5Vi1v00qZCrnU
+         xUbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=4gIcKKWiE6jpSB+y23YYVMxj3baAa+R5jdFjvVZh6pE=;
-        b=E7fwKpaH7f3Ev67PJZpGPsUyriRNLGteJIHLopjxnL+9LSBOzDYY76kWvkau4qHEA8
-         EkeuF5lbpg/MU9gI+0g2xt3v+EyKJ7u5O6JGlNJtajW+viubsjd3KBAyp+w9WwwTR2fw
-         cYadtEgUdZSAyUHiflA3y18E16zI4JY9WX5z4BsL8NwgbtXssUYl7LLz9zDohcCsXuAJ
-         qyjFhVwM7/zjWCJ2vzR9XuTYLE3NHOyeFVV8qK+827DsNuY7FqSrZj0wTqnpXNLJ293F
-         G/OI1guIvepuB/waIG56rTaI+L7t/F9VIC5IOPfXilQT1TpcuoE6dXFsfjAJj13fdJp/
-         /Oig==
-X-Gm-Message-State: APjAAAVzXwwQUZUxZP3I/zoGV4bXWbwNH30cnF7DeQDYaqMO6uzJ6kTt
-        W5sCpDKxRlyaZhhWSu09+2Adhw==
-X-Google-Smtp-Source: APXvYqw77BZX8y8Ji2fqAAsD75v0xLpHKhERUgfj+kDJBowfZK7AOwx+TQc+/4QUqyqUnF+mDDwatQ==
-X-Received: by 2002:a25:cd48:: with SMTP id d69mr53556452ybf.204.1561402762030;
-        Mon, 24 Jun 2019 11:59:22 -0700 (PDT)
-Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-C58.dyn6.twc.com. [2606:a000:1100:37d::c58])
-        by smtp.gmail.com with ESMTPSA id u3sm3024672ywc.104.2019.06.24.11.59.21
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 24 Jun 2019 11:59:21 -0700 (PDT)
-Message-ID: <6c8bf99ba7c32f40a5028ba15a83c30eab2e712e.camel@redhat.com>
-Subject: Re: [PATCH 8/8] ceph: return -EIO if read/write against filp that
- lost file locks
-From:   Jeff Layton <jlayton@redhat.com>
-To:     Patrick Donnelly <pdonnell@redhat.com>
-Cc:     "Yan, Zheng" <zyan@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@redhat.com>,
-        Anna Schumaker <Anna.Schumaker@netapp.com>
-Date:   Mon, 24 Jun 2019 14:59:19 -0400
-In-Reply-To: <CA+2bHPaNu9CX0t7tf7y=KywdTec5OM+XZ13pxWVZVw=Hgu+umw@mail.gmail.com>
-References: <20190617125529.6230-1-zyan@redhat.com>
-         <20190617125529.6230-9-zyan@redhat.com>
-         <CA+2bHPZBy8pFkhvSRnjBzD4dosP2E-n_hNWHXJxQPDqch=+y0Q@mail.gmail.com>
-         <c0a3e8d3c1313810606f5a1f9fb8d0c4be322a51.camel@redhat.com>
-         <CA+2bHPZtLvUF2c+GsU2smoh-KJ2OquYNj4QP23=jA9N3Ziyb_A@mail.gmail.com>
-         <cc0f77b2058d363ce2efc2a7e9dec036161c2b38.camel@redhat.com>
-         <CA+2bHPZMd2WhHrkZRj_EKCNXEEcty08bgcwMqsm-OssEjyDUjg@mail.gmail.com>
-         <7ec066c518675254a9011f562b9005a2e5920afa.camel@redhat.com>
-         <CA+2bHPbggV7LriUhBv-pqD1CjErUf0vPeneL4mHnZ2PBCtBquA@mail.gmail.com>
-         <8b57db35ec3f3212b8219890d8e8c3e3bbff99f9.camel@redhat.com>
-         <CA+2bHPaNu9CX0t7tf7y=KywdTec5OM+XZ13pxWVZVw=Hgu+umw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.3 (3.32.3-1.fc30) 
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B/kGlY6I6S0jxoLKq4624SBDOYwI/5+ZgFZCyRlCPC4=;
+        b=gm8ymNwIvmmTsHp80wixEw064/RPpddG7ilW5vMNq6XGY3Byn3NYU+XfLOHJHd9aGO
+         WNEJWJWnTULgrVvlBTudXkMNk5DX/zS31QrjzFloYlkBEsYIOJwuaN4WM7KGaMxLziJf
+         h5ngXCIfAve0L6VAswJ6q0ihmIZHaAjJqgtHz1rqPhnmKmHxDqFJ5Sqz5bap6ilFnY45
+         pFv6GZb9XP1DmOMzSB0HgDiQngGacRCsDO0WGfkbQMNOdVvCqRvHUQHCS+Cx2GtkdECl
+         SMSKb17GDdWJ4F3LAOdoDk6HfOveoxCaYQutsjZ+rPYvX4kJhvQWxtWrkf3UUyavti8C
+         thjQ==
+X-Gm-Message-State: APjAAAXxRhDBEEaCR1qpIdKJRazUeHmDq/Fz/6z4s/9Ga1Y2KtZZw1Dk
+        4uH2HkIe3Y7cqt/626CirV4/aqDcQ9bbvw3ABdA=
+X-Google-Smtp-Source: APXvYqzau8nOpVrxq+5nIXYGchRumV9IRYaOpHerAGr98MicpD2COY7cE7MAGZvc2As6euMpWX7uEHuA/pWGcRjBASY=
+X-Received: by 2002:ac8:3637:: with SMTP id m52mr117139442qtb.238.1561415510952;
+ Mon, 24 Jun 2019 15:31:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20190617125529.6230-1-zyan@redhat.com> <20190617125529.6230-5-zyan@redhat.com>
+ <86f838f18f0871d6c21ae7bfb97541f1de8d918f.camel@redhat.com>
+ <3b0a4024-d47e-0a3f-48ca-0f1f657e9da9@redhat.com> <e220f9e72b736141c39da52eb7d8d00b97a2c040.camel@redhat.com>
+ <CAAM7YAmaQ6eC_zcC7xFr9c6XMOsJvR=TFXZ__i_+jnxQf5MmtA@mail.gmail.com>
+ <03262ecae2386444d50571484fbe21592d4d3f95.camel@redhat.com>
+ <d45fef05-5b6c-5919-fa0f-98e900c7f05b@redhat.com> <2cc051f6e86201ddd524b2bf6f3b04ddb89c9d36.camel@redhat.com>
+ <15e9508d-903b-ae32-7c6d-11b23d20e19d@redhat.com> <CA+2bHPZh153dstOHPucamuPRS8nd37LjKm6uUf5n4B+T_ckVXA@mail.gmail.com>
+ <e0604e462e8e6c6ddae0d000634723f87d4deb69.camel@redhat.com>
+In-Reply-To: <e0604e462e8e6c6ddae0d000634723f87d4deb69.camel@redhat.com>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Tue, 25 Jun 2019 06:31:39 +0800
+Message-ID: <CAAM7YAns+NmdjJf7wvzj90ZqtrXEiOsLNgevbho4uuqv2dp5RQ@mail.gmail.com>
+Subject: Re: [PATCH 4/8] ceph: allow remounting aborted mount
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     Patrick Donnelly <pdonnell@redhat.com>,
+        "Yan, Zheng" <zyan@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2019-06-20 at 15:25 -0700, Patrick Donnelly wrote:
-> On Thu, Jun 20, 2019 at 1:06 PM Jeff Layton <jlayton@redhat.com> wrote:
-> > On Thu, 2019-06-20 at 12:50 -0700, Patrick Donnelly wrote:
-> > > On Thu, Jun 20, 2019 at 12:00 PM Jeff Layton <jlayton@redhat.com> wrote:
-> > > > On Thu, 2019-06-20 at 11:51 -0700, Patrick Donnelly wrote:
-> > > > > On Thu, Jun 20, 2019 at 11:18 AM Jeff Layton <jlayton@redhat.com> wrote:
-> > > > > > On Thu, 2019-06-20 at 10:19 -0700, Patrick Donnelly wrote:
-> > > > > > > On Mon, Jun 17, 2019 at 1:45 PM Jeff Layton <jlayton@redhat.com> wrote:
-> > > > > > > > > Again, I'd like to see SIGLOST sent to the application here. Are there
-> > > > > > > > > any objections to reviving whatever patchset was in flight to add
-> > > > > > > > > that? Or just writeup a new one?
-> > > > > > > > > 
-> > > > > > > > 
-> > > > > > > > I think SIGLOST's utility is somewhat questionable. Applications will
-> > > > > > > > need to be custom-written to handle it. If you're going to do that, then
-> > > > > > > > it may be better to consider other async notification mechanisms.
-> > > > > > > > inotify or fanotify, perhaps? Those may be simpler to implement and get
-> > > > > > > > merged.
-> > > > > > > 
-> > > > > > > The utility of SIGLOST is not well understood from the viewpoint of a
-> > > > > > > local file system. The problem uniquely applies to distributed file
-> > > > > > > systems. There simply is no way to recover from a lost lock for an
-> > > > > > > application through POSIX mechanisms. We really need a new signal to
-> > > > > > > just kill the application (by default) because recovery cannot be
-> > > > > > > automatically performed even through system call errors. I don't see
-> > > > > > > how inotify/fanotify (not POSIX interfaces!) helps here as it assumes
-> > > > > > > the application will even use those system calls to monitor for lost
-> > > > > > > locks when POSIX has no provision for that to happen.
-> > > > > > > 
-> > > > > > 
-> > > > > > (cc'ing Anna in case she has an opinion)
-> > > > > > 
-> > > > > > SIGLOST isn't defined in POSIX either, so I'm not sure that argument
-> > > > > > carries much weight. The _only_ way you'd be able to add SIGLOST is if
-> > > > > > it defaults to SIG_IGN, such that only applications that are watching
-> > > > > > for it will react to it. Given that, you're already looking at code
-> > > > > > modifications.
-> > > > > 
-> > > > > Why does the default need to be SIG_IGN? Is that existing convention
-> > > > > for new signals in Linux?
-> > > > > 
-> > > > 
-> > > > No, it's just that if you don't do that, and locks are lost, then you'll
-> > > > have a bunch of applications suddenly crash. That sounds scary.
-> > > > 
-> > > > > > So, the real question is: what's the best method to watch for lost
-> > > > > > locks? I don't have a terribly strong opinion about any of these
-> > > > > > notification methods, tbh. I only suggested inotify/fanotify because
-> > > > > > they'd likely be much simpler to implement.
-> > > > > > 
-> > > > > > Adding signals is a non-trivial affair as we're running out of bits in
-> > > > > > that space. The lower 32 bits are all taken and the upper ones are
-> > > > > > reserved for realtime signals. My signal.h has a commented out SIGLOST:
-> > > > > > 
-> > > > > > #define SIGIO           29
-> > > > > > #define SIGPOLL         SIGIO
-> > > > > > /*
-> > > > > > #define SIGLOST         29
-> > > > > > */
-> > > > > > 
-> > > > > > Sharing the value with SIGIO/SIGPOLL makes it distinctly less useful. I
-> > > > > > think it'd probably need its own value. Maybe there is some way to have
-> > > > > > the application ask that one of the realtime signals be set up for this?
-> > > > > 
-> > > > > Well, SIGPOLL is on its way out according to the standards. So SIGIO
-> > > > > looks like what Linux uses instead. Looking at the man page for
-> > > > > signal.h, I wonder if we could use SIGIO with si_code==POLL_LOST (a
-> > > > > new code); si_band==POLL_MSG; and si_fd==<locked fd>. Then the inotify
-> > > > > interface could then be used to process the event?
-> > > > > 
-> > > > > The one nit here is that we would be generating SIGIO for regular
-> > > > > files (and directories?) which would be new. It makes sense with what
-> > > > > we want to do though. Also, SIGIO default behavior is to terminate the
-> > > > > process.
-> > > > > 
-> > > > 
-> > > > That sounds like it could have unintended side-effects. A systemwide
-> > > > event that causes a ton of userland processes to suddenly catch a fatal
-> > > > signal seems rather nasty.
-> > > 
-> > > To be clear: that's only if the mount is configured in the most
-> > > conservative way. Killing only userland processes with file locks
-> > > would be an intermediate option (and maybe a default).
-> > > 
-> > 
-> > A disable switch for this behavior would be a minimum requirement, I
-> > think.
-> > 
-> > > > It's also not clear to me how you'll identify recipients for this
-> > > > signal. What tasks will get a SIGLOST when this occurs? Going from file
-> > > > descriptors or inodes to tasks that are associated with them is not
-> > > > straightforward.
-> > > 
-> > > We could start with file locks (which do have owners?) and table the
-> > > idea of killing all tasks that have any kind of file descriptor open.
-> > 
-> > Well...we do track current->tgid for l_pid, so you could probably go by
-> > that for traditional POSIX locks.
-> > 
-> > For flock() and OFD locks though, the tasks are owned by the file
-> > description and those can be shared between processes. So, even if you
-> > kill the tgid that acquired the lock, there's no guarantee other
-> > processes that might be using that lock will get the signal. Not that
-> > that's a real argument against doing this, but this approach could have
-> > significant gaps.
-> 
-> I wonder if it's actually common for a process to share locked file
-> descriptors? I'm not even sure what that should mean.
-> 
-> > OTOH, reporting a lost lock via fanotify would be quite straightforward
-> > (and not even that difficult). Then, any process that really cares could
-> > watch for these events.
-> > 
-> > Again, I really think I'm missing the big picture on the problem you're
-> > attempting to solve with this.
-> 
-> I may be zooming farther than you want, but here's "The Big Picture":
-> a kernel cephfs mount should recover after blacklist and continue to
-> be usable at least for new processes/applications. Recovery should be
-> automatic without admin intervention.
-> 
-> > For instance, I was operating under the assumption that you wanted this
-> > to be an opt-in thing, but it sounds like you're aiming for something
-> > that is more draconian. I'm not convinced that that's a good idea --
-> > especially not initially. Enabling this by default could be a very
-> > unwelcome surprise in some environments.
-> 
-> Losing file locks is a serious issue that is grounds for terminating
-> applications. Reminder once-again: status quo is the application is
-> freezing without _any way to recover_. Almost any change is an
-> improvement over that behavior, including termination because then
-> monitor processes/init may recover.
-> 
-> I'm not looking to build "opt-in" mechanisms (because the alternative
-> is what? hang forever?) but I am happy to make the behavior
-> configurable via mount options.
-> 
+On Tue, Jun 25, 2019 at 5:18 AM Jeff Layton <jlayton@redhat.com> wrote:
+>
+> On Sun, 2019-06-23 at 20:20 -0700, Patrick Donnelly wrote:
+> > On Sun, Jun 23, 2019 at 6:50 PM Yan, Zheng <zyan@redhat.com> wrote:
+> > > On 6/22/19 12:48 AM, Jeff Layton wrote:
+> > > > On Fri, 2019-06-21 at 16:10 +0800, Yan, Zheng wrote:
+> > > > > On 6/20/19 11:33 PM, Jeff Layton wrote:
+> > > > > > On Wed, 2019-06-19 at 08:24 +0800, Yan, Zheng wrote:
+> > > > > > > On Tue, Jun 18, 2019 at 6:39 PM Jeff Layton <jlayton@redhat.com> wrote:
+> > > > > > > > On Tue, 2019-06-18 at 14:25 +0800, Yan, Zheng wrote:
+> > > > > > > > > On 6/18/19 1:30 AM, Jeff Layton wrote:
+> > > > > > > > > > On Mon, 2019-06-17 at 20:55 +0800, Yan, Zheng wrote:
+> > > > > > > > > > > When remounting aborted mount, also reset client's entity addr.
+> > > > > > > > > > > 'umount -f /ceph; mount -o remount /ceph' can be used for recovering
+> > > > > > > > > > > from blacklist.
+> > > > > > > > > > >
+> > > > > > > > > >
+> > > > > > > > > > Why do I need to umount here? Once the filesystem is unmounted, then the
+> > > > > > > > > > '-o remount' becomes superfluous, no? In fact, I get an error back when
+> > > > > > > > > > I try to remount an unmounted filesystem:
+> > > > > > > > > >
+> > > > > > > > > >        $ sudo umount -f /mnt/cephfs ; sudo mount -o remount /mnt/cephfs
+> > > > > > > > > >        mount: /mnt/cephfs: mount point not mounted or bad option.
+> > > > > > > > > >
+> > > > > > > > > > My client isn't blacklisted above, so I guess you're counting on the
+> > > > > > > > > > umount returning without having actually unmounted the filesystem?
+> > > > > > > > > >
+> > > > > > > > > > I think this ought to not need a umount first. From a UI standpoint,
+> > > > > > > > > > just doing a "mount -o remount" ought to be sufficient to clear this.
+> > > > > > > > > >
+> > > > > > > > > This series is mainly for the case that mount point is not umountable.
+> > > > > > > > > If mount point is umountable, user should use 'umount -f /ceph; mount
+> > > > > > > > > /ceph'. This avoids all trouble of error handling.
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > ...
+> > > > > > > >
+> > > > > > > > > If just doing "mount -o remount", user will expect there is no
+> > > > > > > > > data/metadata get lost.  The 'mount -f' explicitly tell user this
+> > > > > > > > > operation may lose data/metadata.
+> > > > > > > > >
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > I don't think they'd expect that and even if they did, that's why we'd
+> > > > > > > > return errors on certain operations until they are cleared. But, I think
+> > > > > > > > all of this points out the main issue I have with this patchset, which
+> > > > > > > > is that it's not clear what problem this is solving.
+> > > > > > > >
+> > > > > > > > So: client gets blacklisted and we want to allow it to come back in some
+> > > > > > > > fashion. Do we expect applications that happened to be accessing that
+> > > > > > > > mount to be able to continue running, or will they need to be restarted?
+> > > > > > > > If they need to be restarted why not just expect the admin to kill them
+> > > > > > > > all off, unmount and remount and then start them back up again?
+> > > > > > > >
+> > > > > > >
+> > > > > > > The point is let users decide what to do. Some user values
+> > > > > > > availability over consistency. It's inconvenient to kill all
+> > > > > > > applications that use the mount, then do umount.
+> > > > > > >
+> > > > > > >
+> > > > > >
+> > > > > > I think I have a couple of issues with this patchset. Maybe you can
+> > > > > > convince me though:
+> > > > > >
+> > > > > > 1) The interface is really weird.
+> > > > > >
+> > > > > > You suggested that we needed to do:
+> > > > > >
+> > > > > >       # umount -f /mnt/foo ; mount -o remount /mnt/foo
+> > > > > >
+> > > > > > ...but what if I'm not really blacklisted? Didn't I just kill off all
+> > > > > > the calls in-flight with the umount -f? What if that umount actually
+> > > > > > succeeds? Then the subsequent remount call will fail.
+> > > > > >
+> > > > > > ISTM, that this interface (should we choose to accept it) should just
+> > > > > > be:
+> > > > > >
+> > > > > >       # mount -o remount /mnt/foo
+> > > > > >
+> > > > >
+> > > > > I have patch that does
+> > > > >
+> > > > > mount -o remount,force_reconnect /mnt/ceph
+> > > > >
+> > > > >
+> > > >
+> > > > That seems clearer.
+> > > >
+> > > > > > ...and if the client figures out that it has been blacklisted, then it
+> > > > > > does the right thing during the remount (whatever that right thing is).
+> > > > > >
+> > > > > > 2) It's not clear to me who we expect to use this.
+> > > > > >
+> > > > > > Are you targeting applications that do not use file locking? Any that do
+> > > > > > use file locking will probably need some special handling, but those
+> > > > > > that don't might be able to get by unscathed as long as they can deal
+> > > > > > with -EIO on fsync by replaying writes since the last fsync.
+> > > > > >
+> > > > >
+> > > > > Several users said they availability over consistency. For example:
+> > > > > ImageNet training, cephfs is used for storing image files.
+> > > > >
+> > > > >
+> > > >
+> > > > Which sounds reasonable on its face...but why bother with remounting at
+> > > > that point? Why not just have the client reattempt connections until it
+> > > > succeeds (or you forcibly unmount).
+> > > >
+> > > > For that matter, why not just redirty the pages after the writes fail in
+> > > > that case instead of forcing those users to rewrite their data? If they
+> > > > don't care about consistency that much, then that would seem to be a
+> > > > nicer way to deal with this.
+> > > >
+> > >
+> > > I'm not clear about this either
+> >
+> > As I've said elsewhere: **how** the client recovers from the lost
+> > session and blacklist event is configurable. There should be a range
+> > of mount options which control the behavior: such as a _hypothetical_
+> > "recover_session=<mode>", where mode may be:
+> >
+> > - "brute": re-acquire capabilities and flush all dirty data. All open
+> > file handles continue to work normally. Dangerous and definitely not
+> > the default. (How should file locks be handled?)
+> >
+>
+> IMO, just reacquire them as if nothing happened for this mode. I see
+> this as conceptually similar to recover_lost_locks module parameter in
+> nfs.ko. That said, we will need to consider what to do if the lock can't
+> be reacquired in this mode.
+>
+> > - "clean": re-acquire read capabilities and drop dirty write buffers.
+> > Writable file handles return -EIO. Locks are lost and the lock owners
+> > are sent SIGIO, si_code=SI_LOST, si_fd=lockedfd (default is
+> > termination!). Read-only handles continue to work and caches are
+> > dropped if necessary. This should probably be the default.
+> >
+>
+> Sounds good, except for maybe modulo SIGLOST handling for reasons I
+> outlined in another thread.
+>
+> > - "fresh": like "clean" but read-only handles also return -EIO. Not
+> > sure if this one is useful but not difficult to add.
+> >
+>
+> Meh, maybe. If we don't clearly need it then let's not add it. I'd want
+> to know that someone has an actual use for this option. Adding
+> interfaces just because we can, just makes trouble later as the code
+> ages.
+>
+> > No "-o remount" mount commands necessary.
+> >
+> > Now, these details are open for change. I'm just trying to suggest a
+> > way forward. I'm not well versed in how difficult this proposal is to
+> > implement in the kernel. There are probably details or challenges I'm
+> > not considering. I recommend that before Zheng writes new code that he
+> > and Jeff work out what the right semantics and configurations should
+> > be and make a proposal to ceph-devel/dev@ceph.io for user feedback.
+> >
+>
+> That sounds a bit more reasonable. I'd prefer not having to wait for
+> admin intervention in order to get things moving again if the goal is
+> making things more available.
+>
+> That said, whenever we're doing something like this, it's easy for all
+> of us to make subtle assumptions and end up talking at cross-purposes to
+> one another. The first step here is to clearly identify the problem
+> we're trying to solve. From earlier emails I'd suggest this as a
+> starting point:
+>
+> "Clients can end up blacklisted due to various connectivity issues, and
+> we'd like to offer admins a way to configure the mount to reconnect
+> after blacklisting/unblacklisting, and continue working. Preferably,
+> with no disruption to the application other than the client hanging
+> while blacklisted."
+>
+> Does this sound about right?
+>
+> If so, then I think we ought to aim for something closer to what Patrick
+> is suggesting; a mount option or something that causes the cephfs client
+> to aggressively attempt to recover after being unblacklisted.
+>
 
-FWIW, here are some links to old linux-nfs threads on SIGLOST/SIGIO
-handling (from 2011 and 2013):
+Clients shouldn't be too aggressively in this case. Otherwise they can
+easily create too many blacklist entries in osdmap.
 
-    https://marc.info/?l=linux-nfs&m=137114937610166&w=4
-
-    https://marc.info/?l=linux-nfs&m=131101162420308&w=4
-
-The original patcheset used SIGIO (since that's what SIGLOST is aliased
-to on most arches), with plans to use siginfo to distinguish a SIGLOST
-signal vs SIGIO.
--- 
-Jeff Layton <jlayton@redhat.com>
-
+> Assuming that is correct, who is asking for this? We should run this
+> proposal by them (and the wider ceph community) to make sure this
+> proposal will address their problem.
+> --
+> Jeff Layton <jlayton@redhat.com>
+>
