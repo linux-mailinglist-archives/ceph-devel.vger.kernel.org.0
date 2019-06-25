@@ -2,54 +2,54 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CEFF55233
+	by mail.lfdr.de (Postfix) with ESMTP id 044B155232
 	for <lists+ceph-devel@lfdr.de>; Tue, 25 Jun 2019 16:41:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731291AbfFYOlP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        id S1731534AbfFYOlP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
         Tue, 25 Jun 2019 10:41:15 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38091 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730758AbfFYOlO (ORCPT
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44298 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730689AbfFYOlO (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>); Tue, 25 Jun 2019 10:41:14 -0400
-Received: by mail-wm1-f65.google.com with SMTP id s15so3245303wmj.3
-        for <ceph-devel@vger.kernel.org>; Tue, 25 Jun 2019 07:41:11 -0700 (PDT)
+Received: by mail-wr1-f66.google.com with SMTP id r16so18159312wrl.11
+        for <ceph-devel@vger.kernel.org>; Tue, 25 Jun 2019 07:41:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hjiKF6W5YArRGMlIr6RuVtD15rOklVYGBYBVGE8NRJE=;
-        b=V3+LLvR30bDvK+Z7JpXkV4dPhMdvMCWXKp90ZDsg8c7sY01uqOh/sgKK1g4INquJoA
-         brX4yBEE1C6n4IeXYPC0j02BUDjgwvZpTXzxLwofNOQk4JwYAMuAspZXfch+C2SWktSW
-         FWmxtrZMoS7SzzvsjXAMK8FAu2EBNlGWDxAeQ6g0GuCModLHOowa2j6qI2QhoBUFpK8e
-         tiEOcFNIYWKWK2xskV0EO3rQW1DivFxSIQ0A5haYYRyGwZjwtxNyWI/Ox2zRJ4GSE4L0
-         5qxQGRxMoRlhOs2/aMIthuTwzXZW1zai3wzr1Tw1cf5JI5+GEB4MiSWtpZ2GVZ9u6PH6
-         r2Ww==
+        bh=Qe/U9AKfQAWDBylF7c8/i1SeuzUZ8V2J8WgofUcdj6s=;
+        b=ZbGgUIV2UA9IDOdEBPOO6oYnqkxCuYOVSucuEoqV7v3gt4CjDzZQCNpyriWGvfK1XD
+         Yy051huoMoo4ff6DaVBriuhXPE1nZC+iB87CkQn+sPbTaPFk084I6DBbSEQY80MfBzOS
+         cwuF/D8hn6ma/wbhKLSNSmrWwK+xQg8S+Kjb71RcxMxMj9qhm45Tg3nqMDML0P3kbn6t
+         qdsc/8BLHGT5uCPD3s+mjr0JdPbkmVJoSpWTVy0NPjlzFLzZBoBFvnJqriJKPJZCi2Vn
+         twS84s6ZY0cM/HpoOoEB3tKCP3BDctACE9q7Ih29SjsZrFAfbkw1zNsMNY1FtIOPvH0h
+         0FCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hjiKF6W5YArRGMlIr6RuVtD15rOklVYGBYBVGE8NRJE=;
-        b=dXHAnFD9RLB+yscIO7fQIo8V4GaqTo7rgaNZZUqdo74p8vuQVFjH4fdBLGarPR+g5F
-         2S5yVAUkBd/e2e0VAFm47vBpgs+do19EUz6fn2s/dxHVVfUueRo8Fq/qtHxQC/kSe7nE
-         g76DzcsDFBlTO7HDoP+lr/0HlxyG2DWEw1jwv5XMHBZWwg8ni4Q/iRfvagLQVUPcm9Mb
-         3C2Qk0GHCCuHsQQW6m1sAJgrXQNeLMk5HlgcPBkNEUuHCht5kJE8se3JGn0eF9hI6A99
-         e0FNj9ch7zyLrOaElhfXOSaVUGgggZrJHFfIT8Am7+2tO5rap2Nkei/y5B1TWgZbvm2O
-         FWVw==
-X-Gm-Message-State: APjAAAVSBr638udd1MFxQjRv3ZjI+UW0Rjd3pFceaZR3NM1MkyvWyiSs
-        CmVbWB3o4Pxb2YEbactoz2b0EuZW0q8=
-X-Google-Smtp-Source: APXvYqzFsU//I1E/GcdWZI+LfzLSvqSuJOtEVOK4LPGWn3HeMzEKJGX/sacDFNeCGCI6lzUd68movw==
-X-Received: by 2002:a1c:e341:: with SMTP id a62mr20858748wmh.165.1561473670238;
-        Tue, 25 Jun 2019 07:41:10 -0700 (PDT)
+        bh=Qe/U9AKfQAWDBylF7c8/i1SeuzUZ8V2J8WgofUcdj6s=;
+        b=CGE2tyVAZP61Ccg47JCg7OaSGiWmKgFkazTBFIn5bnzTlBJyL5DJx4Ep8XZ6PmJ4Li
+         EKx2gbRTvguR55DtvOOJTFuB3YD0qCcpLw8ceBoxHDytjONQc9IpuL0MSXVKTbH5LSWJ
+         wE3wqDjmL3f/y+OfhCneceKrJLcuCpKtJCbGkmpRicXd+Gk4jOW6AQMaqpgIyi1k3Kh/
+         FQjwtpBSF3YiD9M0PStx9sWyPGEbt79k9GJasEvi2yMyczhzoKvKCLrqGfo4R3z0Hr//
+         5Tw8gqVRSDPiYcbJQJcW6v/PMK6t/bkdckNCGOHh6O0FNDpAeL7mqx2xxr/MZ8yBZr5I
+         Rb5Q==
+X-Gm-Message-State: APjAAAU44PfTKZZSzDr9bCWh3WORFsn+tFxXXuTnl5Cqa9beJBTLg+pn
+        TDOjuLaNRUsazJzLE0Ayb57pI4XXAmk=
+X-Google-Smtp-Source: APXvYqw7CJXT20h++24GL0hwf9Fp/lNuuNTNtso6pNPYPL9ZgmbEB7hj4/sKejdKkGWF2OzN2wkZCQ==
+X-Received: by 2002:adf:e311:: with SMTP id b17mr22937456wrj.11.1561473671414;
+        Tue, 25 Jun 2019 07:41:11 -0700 (PDT)
 Received: from kwango.redhat.com (ovpn-brq.redhat.com. [213.175.37.11])
-        by smtp.gmail.com with ESMTPSA id f2sm20282378wrq.48.2019.06.25.07.41.09
+        by smtp.gmail.com with ESMTPSA id f2sm20282378wrq.48.2019.06.25.07.41.10
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 07:41:09 -0700 (PDT)
+        Tue, 25 Jun 2019 07:41:10 -0700 (PDT)
 From:   Ilya Dryomov <idryomov@gmail.com>
 To:     ceph-devel@vger.kernel.org
 Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: [PATCH 03/20] rbd: get rid of RBD_OBJ_WRITE_{FLAT,GUARD}
-Date:   Tue, 25 Jun 2019 16:40:54 +0200
-Message-Id: <20190625144111.11270-4-idryomov@gmail.com>
+Subject: [PATCH 04/20] rbd: move OSD request submission into object request state machines
+Date:   Tue, 25 Jun 2019 16:40:55 +0200
+Message-Id: <20190625144111.11270-5-idryomov@gmail.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190625144111.11270-1-idryomov@gmail.com>
 References: <20190625144111.11270-1-idryomov@gmail.com>
@@ -60,265 +60,199 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-In preparation for moving OSD request allocation and submission into
-object request state machines, get rid of RBD_OBJ_WRITE_{FLAT,GUARD}.
-We would need to start in a new state, whether the request is guarded
-or not.  Unify them into RBD_OBJ_WRITE_OBJECT and pass guard info
-through obj_req->flags.
+Start eliminating asymmetry where the initial OSD request is allocated
+and submitted from outside the state machine, making error handling and
+restarts harder than they could be.  This commit deals with submission,
+a commit that deals with allocation will follow.
 
-While at it, make our ENOENT handling a little more precise: only hide
-ENOENT when it is actually expected, that is on delete.
+Note that this commit adds parent chain recursion on the submission
+side:
+
+  rbd_img_request_submit
+    rbd_obj_handle_request
+      __rbd_obj_handle_request
+        rbd_obj_handle_read
+          rbd_obj_handle_write_guard
+            rbd_obj_read_from_parent
+              rbd_img_request_submit
+
+This will be fixed in the next commit.
 
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 ---
- drivers/block/rbd.c | 112 ++++++++++++++++++++++++--------------------
- 1 file changed, 60 insertions(+), 52 deletions(-)
+ drivers/block/rbd.c | 60 ++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 49 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 7925b2fdde79..488da877a2bb 100644
+index 488da877a2bb..9c6be82353c0 100644
 --- a/drivers/block/rbd.c
 +++ b/drivers/block/rbd.c
-@@ -219,6 +219,9 @@ enum obj_operation_type {
- 	OBJ_OP_ZEROOUT,
+@@ -223,7 +223,8 @@ enum obj_operation_type {
+ #define RBD_OBJ_FLAG_COPYUP_ENABLED		(1U << 1)
+ 
+ enum rbd_obj_read_state {
+-	RBD_OBJ_READ_OBJECT = 1,
++	RBD_OBJ_READ_START = 1,
++	RBD_OBJ_READ_OBJECT,
+ 	RBD_OBJ_READ_PARENT,
  };
  
-+#define RBD_OBJ_FLAG_DELETION			(1U << 0)
-+#define RBD_OBJ_FLAG_COPYUP_ENABLED		(1U << 1)
-+
- enum rbd_obj_read_state {
- 	RBD_OBJ_READ_OBJECT = 1,
- 	RBD_OBJ_READ_PARENT,
-@@ -250,8 +253,7 @@ enum rbd_obj_read_state {
+@@ -253,7 +254,8 @@ enum rbd_obj_read_state {
   * even if there is a parent).
   */
  enum rbd_obj_write_state {
--	RBD_OBJ_WRITE_FLAT = 1,
--	RBD_OBJ_WRITE_GUARD,
-+	RBD_OBJ_WRITE_OBJECT = 1,
+-	RBD_OBJ_WRITE_OBJECT = 1,
++	RBD_OBJ_WRITE_START = 1,
++	RBD_OBJ_WRITE_OBJECT,
  	RBD_OBJ_WRITE_READ_FROM_PARENT,
  	RBD_OBJ_WRITE_COPYUP_EMPTY_SNAPC,
  	RBD_OBJ_WRITE_COPYUP_OPS,
-@@ -259,6 +261,7 @@ enum rbd_obj_write_state {
+@@ -284,6 +286,7 @@ struct rbd_obj_request {
  
- struct rbd_obj_request {
- 	struct ceph_object_extent ex;
-+	unsigned int		flags;	/* RBD_OBJ_FLAG_* */
- 	union {
- 		enum rbd_obj_read_state	 read_state;	/* for reads */
- 		enum rbd_obj_write_state write_state;	/* for writes */
-@@ -1858,7 +1861,6 @@ static void __rbd_obj_setup_write(struct rbd_obj_request *obj_req,
- static int rbd_obj_setup_write(struct rbd_obj_request *obj_req)
- {
- 	unsigned int num_osd_ops, which = 0;
--	bool need_guard;
- 	int ret;
+ 	struct ceph_osd_request	*osd_req;
  
- 	/* reverse map the entire object onto the parent */
-@@ -1866,23 +1868,24 @@ static int rbd_obj_setup_write(struct rbd_obj_request *obj_req)
- 	if (ret)
- 		return ret;
++	struct mutex		state_mutex;
+ 	struct kref		kref;
+ };
  
--	need_guard = rbd_obj_copyup_enabled(obj_req);
--	num_osd_ops = need_guard + count_write_ops(obj_req);
-+	if (rbd_obj_copyup_enabled(obj_req))
-+		obj_req->flags |= RBD_OBJ_FLAG_COPYUP_ENABLED;
-+
-+	num_osd_ops = count_write_ops(obj_req);
-+	if (obj_req->flags & RBD_OBJ_FLAG_COPYUP_ENABLED)
-+		num_osd_ops++; /* stat */
+@@ -1560,6 +1563,7 @@ static struct rbd_obj_request *rbd_obj_request_create(void)
+ 		return NULL;
  
- 	obj_req->osd_req = rbd_osd_req_create(obj_req, num_osd_ops);
- 	if (!obj_req->osd_req)
- 		return -ENOMEM;
+ 	ceph_object_extent_init(&obj_request->ex);
++	mutex_init(&obj_request->state_mutex);
+ 	kref_init(&obj_request->kref);
  
--	if (need_guard) {
-+	if (obj_req->flags & RBD_OBJ_FLAG_COPYUP_ENABLED) {
- 		ret = __rbd_obj_setup_stat(obj_req, which++);
- 		if (ret)
+ 	dout("%s %p\n", __func__, obj_request);
+@@ -1802,7 +1806,7 @@ static int rbd_obj_setup_read(struct rbd_obj_request *obj_req)
+ 	rbd_osd_req_setup_data(obj_req, 0);
+ 
+ 	rbd_osd_req_format_read(obj_req);
+-	obj_req->read_state = RBD_OBJ_READ_OBJECT;
++	obj_req->read_state = RBD_OBJ_READ_START;
+ 	return 0;
+ }
+ 
+@@ -1885,7 +1889,7 @@ static int rbd_obj_setup_write(struct rbd_obj_request *obj_req)
  			return ret;
--
--		obj_req->write_state = RBD_OBJ_WRITE_GUARD;
--	} else {
--		obj_req->write_state = RBD_OBJ_WRITE_FLAT;
  	}
  
-+	obj_req->write_state = RBD_OBJ_WRITE_OBJECT;
+-	obj_req->write_state = RBD_OBJ_WRITE_OBJECT;
++	obj_req->write_state = RBD_OBJ_WRITE_START;
  	__rbd_obj_setup_write(obj_req, which);
  	return 0;
  }
-@@ -1921,11 +1924,15 @@ static int rbd_obj_setup_discard(struct rbd_obj_request *obj_req)
- 	if (ret)
- 		return ret;
- 
-+	if (rbd_obj_is_entire(obj_req) && !obj_req->num_img_extents)
-+		obj_req->flags |= RBD_OBJ_FLAG_DELETION;
-+
- 	obj_req->osd_req = rbd_osd_req_create(obj_req, 1);
- 	if (!obj_req->osd_req)
- 		return -ENOMEM;
- 
- 	if (rbd_obj_is_entire(obj_req) && !obj_req->num_img_extents) {
-+		rbd_assert(obj_req->flags & RBD_OBJ_FLAG_DELETION);
- 		osd_req_op_init(obj_req->osd_req, 0, CEPH_OSD_OP_DELETE, 0);
- 	} else {
- 		dout("%s %p %llu~%llu -> %llu~%llu\n", __func__,
-@@ -1936,7 +1943,7 @@ static int rbd_obj_setup_discard(struct rbd_obj_request *obj_req)
+@@ -1943,7 +1947,7 @@ static int rbd_obj_setup_discard(struct rbd_obj_request *obj_req)
  				       off, next_off - off, 0, 0);
  	}
  
--	obj_req->write_state = RBD_OBJ_WRITE_FLAT;
-+	obj_req->write_state = RBD_OBJ_WRITE_OBJECT;
+-	obj_req->write_state = RBD_OBJ_WRITE_OBJECT;
++	obj_req->write_state = RBD_OBJ_WRITE_START;
  	rbd_osd_req_format_write(obj_req);
  	return 0;
  }
-@@ -1961,11 +1968,12 @@ static void __rbd_obj_setup_zeroout(struct rbd_obj_request *obj_req,
- 
- 	if (rbd_obj_is_entire(obj_req)) {
- 		if (obj_req->num_img_extents) {
--			if (!rbd_obj_copyup_enabled(obj_req))
-+			if (!(obj_req->flags & RBD_OBJ_FLAG_COPYUP_ENABLED))
- 				osd_req_op_init(obj_req->osd_req, which++,
- 						CEPH_OSD_OP_CREATE, 0);
- 			opcode = CEPH_OSD_OP_TRUNCATE;
- 		} else {
-+			rbd_assert(obj_req->flags & RBD_OBJ_FLAG_DELETION);
- 			osd_req_op_init(obj_req->osd_req, which++,
- 					CEPH_OSD_OP_DELETE, 0);
- 			opcode = 0;
-@@ -1986,7 +1994,6 @@ static void __rbd_obj_setup_zeroout(struct rbd_obj_request *obj_req,
- static int rbd_obj_setup_zeroout(struct rbd_obj_request *obj_req)
- {
- 	unsigned int num_osd_ops, which = 0;
--	bool need_guard;
- 	int ret;
- 
- 	/* reverse map the entire object onto the parent */
-@@ -1994,23 +2001,28 @@ static int rbd_obj_setup_zeroout(struct rbd_obj_request *obj_req)
- 	if (ret)
- 		return ret;
- 
--	need_guard = rbd_obj_copyup_enabled(obj_req);
--	num_osd_ops = need_guard + count_zeroout_ops(obj_req);
-+	if (rbd_obj_copyup_enabled(obj_req))
-+		obj_req->flags |= RBD_OBJ_FLAG_COPYUP_ENABLED;
-+	if (!obj_req->num_img_extents) {
-+		if (rbd_obj_is_entire(obj_req))
-+			obj_req->flags |= RBD_OBJ_FLAG_DELETION;
-+	}
-+
-+	num_osd_ops = count_zeroout_ops(obj_req);
-+	if (obj_req->flags & RBD_OBJ_FLAG_COPYUP_ENABLED)
-+		num_osd_ops++; /* stat */
- 
- 	obj_req->osd_req = rbd_osd_req_create(obj_req, num_osd_ops);
- 	if (!obj_req->osd_req)
- 		return -ENOMEM;
- 
--	if (need_guard) {
-+	if (obj_req->flags & RBD_OBJ_FLAG_COPYUP_ENABLED) {
- 		ret = __rbd_obj_setup_stat(obj_req, which++);
- 		if (ret)
+@@ -2022,7 +2026,7 @@ static int rbd_obj_setup_zeroout(struct rbd_obj_request *obj_req)
  			return ret;
--
--		obj_req->write_state = RBD_OBJ_WRITE_GUARD;
--	} else {
--		obj_req->write_state = RBD_OBJ_WRITE_FLAT;
  	}
  
-+	obj_req->write_state = RBD_OBJ_WRITE_OBJECT;
+-	obj_req->write_state = RBD_OBJ_WRITE_OBJECT;
++	obj_req->write_state = RBD_OBJ_WRITE_START;
  	__rbd_obj_setup_zeroout(obj_req, which);
  	return 0;
  }
-@@ -2617,6 +2629,11 @@ static int setup_copyup_bvecs(struct rbd_obj_request *obj_req, u64 obj_overlap)
+@@ -2363,11 +2367,17 @@ static void rbd_img_request_submit(struct rbd_img_request *img_request)
+ 
+ 	rbd_img_request_get(img_request);
+ 	for_each_obj_request(img_request, obj_request)
+-		rbd_obj_request_submit(obj_request);
++		rbd_obj_handle_request(obj_request, 0);
+ 
+ 	rbd_img_request_put(img_request);
+ }
+ 
++static int rbd_obj_read_object(struct rbd_obj_request *obj_req)
++{
++	rbd_obj_request_submit(obj_req);
++	return 0;
++}
++
+ static int rbd_obj_read_from_parent(struct rbd_obj_request *obj_req)
+ {
+ 	struct rbd_img_request *img_req = obj_req->img_request;
+@@ -2415,12 +2425,22 @@ static int rbd_obj_read_from_parent(struct rbd_obj_request *obj_req)
  	return 0;
  }
  
-+/*
-+ * The target object doesn't exist.  Read the data for the entire
-+ * target object up to the overlap point (if any) from the parent,
-+ * so we can use it for a copyup.
-+ */
- static int rbd_obj_handle_write_guard(struct rbd_obj_request *obj_req)
+-static bool rbd_obj_handle_read(struct rbd_obj_request *obj_req, int *result)
++static bool rbd_obj_advance_read(struct rbd_obj_request *obj_req, int *result)
  {
  	struct rbd_device *rbd_dev = obj_req->img_request->rbd_dev;
-@@ -2649,22 +2666,24 @@ static bool rbd_obj_handle_write(struct rbd_obj_request *obj_req, int *result)
+ 	int ret;
+ 
+ 	switch (obj_req->read_state) {
++	case RBD_OBJ_READ_START:
++		rbd_assert(!*result);
++
++		ret = rbd_obj_read_object(obj_req);
++		if (ret) {
++			*result = ret;
++			return true;
++		}
++		obj_req->read_state = RBD_OBJ_READ_OBJECT;
++		return false;
+ 	case RBD_OBJ_READ_OBJECT:
+ 		if (*result == -ENOENT && rbd_dev->parent_overlap) {
+ 			/* reverse map this object extent onto the parent */
+@@ -2464,6 +2484,12 @@ static bool rbd_obj_handle_read(struct rbd_obj_request *obj_req, int *result)
+ 	}
+ }
+ 
++static int rbd_obj_write_object(struct rbd_obj_request *obj_req)
++{
++	rbd_obj_request_submit(obj_req);
++	return 0;
++}
++
+ /*
+  * copyup_bvecs pages are never highmem pages
+  */
+@@ -2661,11 +2687,21 @@ static int rbd_obj_handle_write_guard(struct rbd_obj_request *obj_req)
+ 	return rbd_obj_read_from_parent(obj_req);
+ }
+ 
+-static bool rbd_obj_handle_write(struct rbd_obj_request *obj_req, int *result)
++static bool rbd_obj_advance_write(struct rbd_obj_request *obj_req, int *result)
+ {
  	int ret;
  
  	switch (obj_req->write_state) {
--	case RBD_OBJ_WRITE_GUARD:
-+	case RBD_OBJ_WRITE_OBJECT:
++	case RBD_OBJ_WRITE_START:
++		rbd_assert(!*result);
++
++		ret = rbd_obj_write_object(obj_req);
++		if (ret) {
++			*result = ret;
++			return true;
++		}
++		obj_req->write_state = RBD_OBJ_WRITE_OBJECT;
++		return false;
+ 	case RBD_OBJ_WRITE_OBJECT:
  		if (*result == -ENOENT) {
-+			if (obj_req->flags & RBD_OBJ_FLAG_COPYUP_ENABLED) {
-+				ret = rbd_obj_handle_write_guard(obj_req);
-+				if (ret) {
-+					*result = ret;
-+					return true;
-+				}
-+				return false;
-+			}
- 			/*
--			 * The target object doesn't exist.  Read the data for
--			 * the entire target object up to the overlap point (if
--			 * any) from the parent, so we can use it for a copyup.
-+			 * On a non-existent object:
-+			 *   delete - -ENOENT, truncate/zero - 0
- 			 */
--			ret = rbd_obj_handle_write_guard(obj_req);
--			if (ret) {
--				*result = ret;
--				return true;
--			}
--			return false;
-+			if (obj_req->flags & RBD_OBJ_FLAG_DELETION)
-+				*result = 0;
- 		}
- 		/* fall through */
--	case RBD_OBJ_WRITE_FLAT:
- 	case RBD_OBJ_WRITE_COPYUP_OPS:
- 		return true;
- 	case RBD_OBJ_WRITE_READ_FROM_PARENT:
-@@ -2695,31 +2714,20 @@ static bool rbd_obj_handle_write(struct rbd_obj_request *obj_req, int *result)
- }
+ 			if (obj_req->flags & RBD_OBJ_FLAG_COPYUP_ENABLED) {
+@@ -2722,10 +2758,12 @@ static bool __rbd_obj_handle_request(struct rbd_obj_request *obj_req,
+ 	struct rbd_img_request *img_req = obj_req->img_request;
+ 	bool done;
  
- /*
-- * Returns true if @obj_req is completed, or false otherwise.
-+ * Return true if @obj_req is completed.
-  */
- static bool __rbd_obj_handle_request(struct rbd_obj_request *obj_req,
- 				     int *result)
- {
--	switch (obj_req->img_request->op_type) {
--	case OBJ_OP_READ:
--		return rbd_obj_handle_read(obj_req, result);
--	case OBJ_OP_WRITE:
--		return rbd_obj_handle_write(obj_req, result);
--	case OBJ_OP_DISCARD:
--	case OBJ_OP_ZEROOUT:
--		if (rbd_obj_handle_write(obj_req, result)) {
--			/*
--			 * Hide -ENOENT from delete/truncate/zero -- discarding
--			 * a non-existent object is not a problem.
--			 */
--			if (*result == -ENOENT)
--				*result = 0;
--			return true;
--		}
--		return false;
--	default:
--		BUG();
--	}
-+	struct rbd_img_request *img_req = obj_req->img_request;
-+	bool done;
-+
-+	if (!rbd_img_is_write(img_req))
-+		done = rbd_obj_handle_read(obj_req, result);
-+	else
-+		done = rbd_obj_handle_write(obj_req, result);
-+
-+	return done;
- }
++	mutex_lock(&obj_req->state_mutex);
+ 	if (!rbd_img_is_write(img_req))
+-		done = rbd_obj_handle_read(obj_req, result);
++		done = rbd_obj_advance_read(obj_req, result);
+ 	else
+-		done = rbd_obj_handle_write(obj_req, result);
++		done = rbd_obj_advance_write(obj_req, result);
++	mutex_unlock(&obj_req->state_mutex);
  
- static void rbd_obj_end_request(struct rbd_obj_request *obj_req, int result)
+ 	return done;
+ }
 -- 
 2.19.2
 
