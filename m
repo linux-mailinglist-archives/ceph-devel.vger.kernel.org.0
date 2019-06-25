@@ -2,54 +2,54 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48B6F55236
+	by mail.lfdr.de (Postfix) with ESMTP id B26E055237
 	for <lists+ceph-devel@lfdr.de>; Tue, 25 Jun 2019 16:42:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731233AbfFYOlS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        id S1731255AbfFYOlS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
         Tue, 25 Jun 2019 10:41:18 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45634 "EHLO
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44310 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730689AbfFYOlQ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 25 Jun 2019 10:41:16 -0400
-Received: by mail-wr1-f66.google.com with SMTP id f9so18159240wre.12
-        for <ceph-devel@vger.kernel.org>; Tue, 25 Jun 2019 07:41:15 -0700 (PDT)
+        with ESMTP id S1731158AbfFYOlS (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 25 Jun 2019 10:41:18 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r16so18159657wrl.11
+        for <ceph-devel@vger.kernel.org>; Tue, 25 Jun 2019 07:41:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Kfgg56rrIxnrF2y2atSD41gIa/zUpwvAKREsDRQXx4U=;
-        b=tXVNv3PeNlz4vENvBFgPwrmXbz14WsDI9gNsfQOnR8mPAEG4RX93SW01zg7fIxw6bK
-         2EDleLL710DhyeE8u2OS6Fu7m4Sj91M0e9gDiOWcPTkMXzCLJyLQuR+cZNrnV4reR3rW
-         7YocIKeeks8W+O/YWYcylnuNaBD3BsKREvkluai/69zdsG5qOs34Q0iE5zCGesEeedXk
-         RTM5hXXVNHPl2a/kagTR2HnN8m6/FWVMOipsRUfTHQQHYHEcEAzNKkJXsnjD0k3PWH3B
-         L7TqbBKiX0nQXmSBUiSJOHTCljriiOdh3U61hNt9Y9S4q5V1M/JvVs4ZBvMeaHWeSNav
-         QC1A==
+        bh=gHQJOX947kOtkb2gjtZGqnw55LHsHg48YQn88Ila+kQ=;
+        b=pGnfA6wPSKNJ4kWGSC1AXp7PBrU/rDpwNMqH45vt95Hq2GUjI3y7osByT5SFMrkQZ2
+         ap98rhh1k5eiFPYH6fEQEhtT6uZAWBdjNuUV2VGkWSQgvrgyAYGPfxBN/4zpVsx262Cx
+         ipOI60O9XgzwAAdPo6BmyAifuZGz902BzDZBsOi9KpoOBtyoTFx2Y2gIw0EZyYSdMJ/I
+         aWmrjGy1wQimpqMqv8DgieTdlLp2jlk7JuKLABHf+rR7YVyysY5XD7Hr6BvE/HHaZpuJ
+         Hrx/dvQfdKqjn5Og+QQ6qIuUCv8ih6IQJoh6JP2pMsU8z3XjmpaIzGwNV27bg+tXI7OU
+         Lv3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Kfgg56rrIxnrF2y2atSD41gIa/zUpwvAKREsDRQXx4U=;
-        b=T2XWv7fC+WImW81gu3qvzIB35zEA0vtBPez8MFu/SKmD8JKHZUFBP+eO4d0zMhFvCm
-         3BTFDOFCDuaMuwsajHSIaVVAq7s6bHnU2LtRp7aThoPmPUOeN5/I4lPjkFzWa4732B70
-         HoMbPsSgTbO4l0tf6sttSFEBd+d1yjSHbEmkO2gedfroEp25CyY+5FhUoftu6DFlrTuI
-         kqUjym+obMIbLPb3Gy+V4VXo9uG6d5TKkAN9Ljffnv56PPJn2ZIXwcjaXCbTQ8F5Lkea
-         yAm49JQXI8ejGFA78qanqr/v+tN+CNDM9BAdDcWhulJWEXiZC4f75DxpM1OYO5fTr0jJ
-         o1NQ==
-X-Gm-Message-State: APjAAAUZw7NhS2Vx1+UlR8Gc6VwI/5DUUYbJJTrHjnDFT6SHUNPsWEM+
-        Q2BtClOSmdAjaV2NF7sWDo0OKQpYDu4=
-X-Google-Smtp-Source: APXvYqy8KV/g1AgsDy4kK3IEqjyGFpQZPpH0UAkCYLGYUsc8MvgoAjPdAGMJB07GKUHn8Rk9YSc/7Q==
-X-Received: by 2002:adf:ec0c:: with SMTP id x12mr22107487wrn.342.1561473675001;
-        Tue, 25 Jun 2019 07:41:15 -0700 (PDT)
+        bh=gHQJOX947kOtkb2gjtZGqnw55LHsHg48YQn88Ila+kQ=;
+        b=L4/cbg7Jh9CJBI8uz07RFghgZ2sPmj28f8etq4T8T33fjGYps0thj3Sur9l14dGRun
+         8TrbDjtIDNYLjlTmIA2x1Ls4eEHH1mqXXpLQ8wOZgXrBuzu375tzQ6NwyCfGZvmGIWmz
+         y0bo073NJWLAG8G6FJx9nyHmT4n4VJrh/3zfbdonBnIYQi9YZgUiiYWa2HKsa2GTNKMS
+         729bnVTynm6EbEWU6J7tguPskWtzRMyIZT/tqTLBKNYcrUYxR7Fp+c/lTaa81VL7eFZg
+         e2KfGBTcXYo+tO50Qa9YNcP6rpLc/KqiqnYiFObN1kidlpPN/X9kTjnbbXjh0IP34ILH
+         w+0A==
+X-Gm-Message-State: APjAAAWNmNmgFqc+3oZmI5PACTDCBKVwDoP+QYNsmHY9f2VjUCLpMYN/
+        qcOdJMNi785g2yogjP3cbVL3a8pQl9c=
+X-Google-Smtp-Source: APXvYqzVRE8kpaWUFDYeF6m3Uj05VKVnKyF4aPF3zdscJ2JQ7tyQA/f1U94r1N333zvJU3UeJaGfmw==
+X-Received: by 2002:adf:ce88:: with SMTP id r8mr40114257wrn.42.1561473676301;
+        Tue, 25 Jun 2019 07:41:16 -0700 (PDT)
 Received: from kwango.redhat.com (ovpn-brq.redhat.com. [213.175.37.11])
-        by smtp.gmail.com with ESMTPSA id f2sm20282378wrq.48.2019.06.25.07.41.13
+        by smtp.gmail.com with ESMTPSA id f2sm20282378wrq.48.2019.06.25.07.41.15
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 25 Jun 2019 07:41:14 -0700 (PDT)
+        Tue, 25 Jun 2019 07:41:15 -0700 (PDT)
 From:   Ilya Dryomov <idryomov@gmail.com>
 To:     ceph-devel@vger.kernel.org
 Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: [PATCH 07/20] rbd: factor out rbd_osd_setup_copyup()
-Date:   Tue, 25 Jun 2019 16:40:58 +0200
-Message-Id: <20190625144111.11270-8-idryomov@gmail.com>
+Subject: [PATCH 08/20] rbd: factor out __rbd_osd_setup_discard_ops()
+Date:   Tue, 25 Jun 2019 16:40:59 +0200
+Message-Id: <20190625144111.11270-9-idryomov@gmail.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190625144111.11270-1-idryomov@gmail.com>
 References: <20190625144111.11270-1-idryomov@gmail.com>
@@ -60,70 +60,90 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+With obj_req->xferred removed, obj_req->ex.oe_off and obj_req->ex.oe_len
+can be updated if required for alignment.  Previously the new offset and
+length weren't stored anywhere beyond rbd_obj_setup_discard().
+
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 ---
- drivers/block/rbd.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ drivers/block/rbd.c | 43 +++++++++++++++++++++++++++----------------
+ 1 file changed, 27 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 5c34fe215c63..e059a8139e4f 100644
+index e059a8139e4f..acc9017034d7 100644
 --- a/drivers/block/rbd.c
 +++ b/drivers/block/rbd.c
-@@ -1861,6 +1861,21 @@ static int rbd_osd_setup_stat(struct ceph_osd_request *osd_req, int which)
- 	return 0;
+@@ -1943,12 +1943,27 @@ static u16 truncate_or_zero_opcode(struct rbd_obj_request *obj_req)
+ 					  CEPH_OSD_OP_ZERO;
  }
  
-+static int rbd_osd_setup_copyup(struct ceph_osd_request *osd_req, int which,
-+				u32 bytes)
++static void __rbd_osd_setup_discard_ops(struct ceph_osd_request *osd_req,
++					int which)
 +{
 +	struct rbd_obj_request *obj_req = osd_req->r_priv;
-+	int ret;
 +
-+	ret = osd_req_op_cls_init(osd_req, which, "rbd", "copyup");
-+	if (ret)
-+		return ret;
-+
-+	osd_req_op_cls_request_data_bvecs(osd_req, which, obj_req->copyup_bvecs,
-+					  obj_req->copyup_bvec_count, bytes);
-+	return 0;
++	if (rbd_obj_is_entire(obj_req) && !obj_req->num_img_extents) {
++		rbd_assert(obj_req->flags & RBD_OBJ_FLAG_DELETION);
++		osd_req_op_init(osd_req, which, CEPH_OSD_OP_DELETE, 0);
++	} else {
++		osd_req_op_extent_init(osd_req, which,
++				       truncate_or_zero_opcode(obj_req),
++				       obj_req->ex.oe_off, obj_req->ex.oe_len,
++				       0, 0);
++	}
 +}
 +
- static int count_write_ops(struct rbd_obj_request *obj_req)
+ static int rbd_obj_setup_discard(struct rbd_obj_request *obj_req)
  {
- 	return 2; /* setallochint + write/writefull */
-@@ -2560,14 +2575,10 @@ static int rbd_obj_issue_copyup_empty_snapc(struct rbd_obj_request *obj_req,
+ 	struct rbd_device *rbd_dev = obj_req->img_request->rbd_dev;
+ 	struct ceph_osd_request *osd_req;
+-	u64 off = obj_req->ex.oe_off;
+-	u64 next_off = obj_req->ex.oe_off + obj_req->ex.oe_len;
++	u64 off, next_off;
+ 	int ret;
+ 
+ 	/*
+@@ -1961,10 +1976,17 @@ static int rbd_obj_setup_discard(struct rbd_obj_request *obj_req)
+ 	 */
+ 	if (rbd_dev->opts->alloc_size != rbd_dev->layout.object_size ||
+ 	    !rbd_obj_is_tail(obj_req)) {
+-		off = round_up(off, rbd_dev->opts->alloc_size);
+-		next_off = round_down(next_off, rbd_dev->opts->alloc_size);
++		off = round_up(obj_req->ex.oe_off, rbd_dev->opts->alloc_size);
++		next_off = round_down(obj_req->ex.oe_off + obj_req->ex.oe_len,
++				      rbd_dev->opts->alloc_size);
+ 		if (off >= next_off)
+ 			return 1;
++
++		dout("%s %p %llu~%llu -> %llu~%llu\n", __func__,
++		     obj_req, obj_req->ex.oe_off, obj_req->ex.oe_len,
++		     off, next_off - off);
++		obj_req->ex.oe_off = off;
++		obj_req->ex.oe_len = next_off - off;
+ 	}
+ 
+ 	/* reverse map the entire object onto the parent */
+@@ -1979,19 +2001,8 @@ static int rbd_obj_setup_discard(struct rbd_obj_request *obj_req)
  	if (IS_ERR(osd_req))
  		return PTR_ERR(osd_req);
  
--	ret = osd_req_op_cls_init(osd_req, 0, "rbd", "copyup");
-+	ret = rbd_osd_setup_copyup(osd_req, 0, bytes);
- 	if (ret)
- 		return ret;
- 
--	osd_req_op_cls_request_data_bvecs(osd_req, 0,
--					  obj_req->copyup_bvecs,
--					  obj_req->copyup_bvec_count,
--					  bytes);
- 	rbd_osd_format_write(osd_req);
- 
- 	ret = ceph_osdc_alloc_messages(osd_req, GFP_NOIO);
-@@ -2604,15 +2615,9 @@ static int rbd_obj_issue_copyup_ops(struct rbd_obj_request *obj_req, u32 bytes)
- 		return PTR_ERR(osd_req);
- 
- 	if (bytes != MODS_ONLY) {
--		ret = osd_req_op_cls_init(osd_req, which, "rbd",
--					  "copyup");
-+		ret = rbd_osd_setup_copyup(osd_req, which++, bytes);
- 		if (ret)
- 			return ret;
+-	if (rbd_obj_is_entire(obj_req) && !obj_req->num_img_extents) {
+-		rbd_assert(obj_req->flags & RBD_OBJ_FLAG_DELETION);
+-		osd_req_op_init(osd_req, 0, CEPH_OSD_OP_DELETE, 0);
+-	} else {
+-		dout("%s %p %llu~%llu -> %llu~%llu\n", __func__,
+-		     obj_req, obj_req->ex.oe_off, obj_req->ex.oe_len,
+-		     off, next_off - off);
+-		osd_req_op_extent_init(osd_req, 0,
+-				       truncate_or_zero_opcode(obj_req),
+-				       off, next_off - off, 0, 0);
+-	}
 -
--		osd_req_op_cls_request_data_bvecs(osd_req, which++,
--						  obj_req->copyup_bvecs,
--						  obj_req->copyup_bvec_count,
--						  bytes);
- 	}
- 
- 	switch (img_req->op_type) {
+ 	obj_req->write_state = RBD_OBJ_WRITE_START;
++	__rbd_osd_setup_discard_ops(osd_req, 0);
+ 	rbd_osd_format_write(osd_req);
+ 	return 0;
+ }
 -- 
 2.19.2
 
