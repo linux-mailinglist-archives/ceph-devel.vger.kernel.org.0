@@ -2,88 +2,128 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1217C551BD
-	for <lists+ceph-devel@lfdr.de>; Tue, 25 Jun 2019 16:31:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7007551CC
+	for <lists+ceph-devel@lfdr.de>; Tue, 25 Jun 2019 16:35:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730505AbfFYObd convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Tue, 25 Jun 2019 10:31:33 -0400
-Received: from mail-qk1-f180.google.com ([209.85.222.180]:40760 "EHLO
-        mail-qk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727730AbfFYObd (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 25 Jun 2019 10:31:33 -0400
-Received: by mail-qk1-f180.google.com with SMTP id c70so12744135qkg.7
-        for <ceph-devel@vger.kernel.org>; Tue, 25 Jun 2019 07:31:32 -0700 (PDT)
+        id S1730844AbfFYOfu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 25 Jun 2019 10:35:50 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:39598 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728710AbfFYOfu (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 25 Jun 2019 10:35:50 -0400
+Received: by mail-io1-f68.google.com with SMTP id r185so3515490iod.6;
+        Tue, 25 Jun 2019 07:35:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H4FBl2kb9Q12PpnYpa3OFWNOR4QPgL14IwXIkF/APGc=;
+        b=AqwXCb4MR2+p96JwYF9xQiAb6f8jOSAJ14XqFgrLKa6BOu9+BQk7J0IYaqxikkKACl
+         MpsYVm3Tv07NyhtN88rdYHc6brn73Nei8wOK861KMG4PMMRIcCYs2Yxwj8F3eNZOy9Uw
+         s3fVQKbrim/sM5N2/yd7HLOtNkBpWnaGhq48VOG9Zthztr3LrY4NKVx/2kNVL4Ixbn0y
+         QK7VX9Ja9cb/SZABcPiFEVLkkKke9HtJuBoPQmApMXHehMTQP4n2nvsDPbUib8qupOqu
+         UyMiPrbhKj4TU9IYRXsBZGptM5M7lYvpAlN0UAVW4lA3+yPnfC64wCxjVUaF1kivLTb0
+         CgKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=LhB9tw+6Rxd7xpBD+3efceh3yawGzZkW+XHflRNvBCQ=;
-        b=Y8mZXrdso7C7rUPWv7rZyjXYUZpB0Z6M/ThOcNpxz/HhfnjOzS+ydYcc1GghN5HVo3
-         E6Nk8ROTGwbzDllWnKjMVARp7AfTjOL4qB4RjxqY+cg8hFlPDc5Br0OTWwrydxQ32hfe
-         TT7Z4myFOgdHhTGMGlWHhY5qY45UAZhezhrA5o3WUdsI75G/cbYdDCUQ+hDINkISUCCo
-         lgCBE3/9yOQgJ/z7frYcyG4A//pdyUPZOsxUwJ0R0DJM9ARF4mDcqxYgTJjGg4h21uPR
-         stnZ7IBV4cQROlJ1OnWFx84tIESHAuszAYmZwvsL0bSmlllJ4T/3iiks+m/dWc9jLfsf
-         qZKA==
-X-Gm-Message-State: APjAAAUUveyoVAEdNgfugywwYJJBndTQhgPKtdOJ3WTl67iSVlkRGUxi
-        ALckZGMXOe0AAP3ixDrukB3hu6K4VngPeUoKuCU4pOlBm+o=
-X-Google-Smtp-Source: APXvYqzuevIBO4F5FqjMs3kCtjSEVtM9CPYkM8hzsAkKcdHSQmrkZBQTDCgTNuFNYKz9I0IUekizE/bRSCbH8KNPq8g=
-X-Received: by 2002:a37:4e0d:: with SMTP id c13mr32936813qkb.116.1561473092353;
- Tue, 25 Jun 2019 07:31:32 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=H4FBl2kb9Q12PpnYpa3OFWNOR4QPgL14IwXIkF/APGc=;
+        b=dkmaq8UABj7fS+toIvkbcVaqP9r+Yjbw6tNbsfpUaWbdAPH0FNf5aq5RZkXEf6qCC1
+         Kjx9Y7Cwl7YL0nBedaigyqDXWIhdGDLlTIE73VYDlPVTVdv8JpLm4hWH0xk9krB56scD
+         lqhOFLpzIie5qonfMPm+tm7thPxURJ/e7hsZuyW1xRJVZvlbxRywcfkopz6hqEPwbvMs
+         7AfZf0IPo1eY067DPE+9SwD/BCgUDjcrZN8jImi1J110qK+U/vRxsKzEftYCEPXOl6Eb
+         qdDCOOUzPkUPoNG9NdLzk//TMN2gVrS2B5jlRu2/WaqL+aOGRr+TU6oib3yxN+W8OTya
+         pTZA==
+X-Gm-Message-State: APjAAAVGBcaqFT/h6bTQ43zL5Q1491q/oSbnz3/N4S+VKtUZnAtWVma/
+        ghRHuR3mqeQP5AexqIDDFl32VMVYjMcG7Hjqeu12bMlT1k4=
+X-Google-Smtp-Source: APXvYqzY1wYzaxVeLZGo/x3Ina8bunvFlXLEAzmrewz/4RxLjz3A2w2qU1FGwreXznfAa7UKOq3PfU0/6lpK42MDqfo=
+X-Received: by 2002:a05:6638:149:: with SMTP id y9mr110950563jao.76.1561473349281;
+ Tue, 25 Jun 2019 07:35:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <alpine.DEB.2.11.1906051556500.987@piezo.novalocal>
- <alpine.DEB.2.11.1906171621000.20504@piezo.novalocal> <CAN-Gep+9bxadHMTFQgUFUt_q9Jmfpy3MPU5UTTRNY1jueu7n9w@mail.gmail.com>
-In-Reply-To: <CAN-Gep+9bxadHMTFQgUFUt_q9Jmfpy3MPU5UTTRNY1jueu7n9w@mail.gmail.com>
-From:   Alfredo Deza <adeza@redhat.com>
-Date:   Tue, 25 Jun 2019 10:31:21 -0400
-Message-ID: <CAC-Np1zcniBxm84SEGhzYfu55t+fckg1d-Dq0xpab62+ON4K5w@mail.gmail.com>
-Subject: Re: [ceph-users] Changing the release cadence
-To:     David Turner <drakonstein@gmail.com>
-Cc:     Sage Weil <sage@newdream.net>,
-        Ceph Devel <ceph-devel@vger.kernel.org>,
-        Ceph-User <ceph-users@ceph.com>, dev@ceph.io
+References: <20190624162726.17413-1-jlayton@kernel.org> <20190624162726.17413-4-jlayton@kernel.org>
+In-Reply-To: <20190624162726.17413-4-jlayton@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 25 Jun 2019 16:35:59 +0200
+Message-ID: <CAOi1vP_G9ybNs_QEn34cPvovAa=JB7G9F3FGy33QPH4yfST-iQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] ceph: don't NULL terminate virtual xattrs
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        agruenba@redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 4:09 PM David Turner <drakonstein@gmail.com> wrote:
+On Mon, Jun 24, 2019 at 6:27 PM Jeff Layton <jlayton@kernel.org> wrote:
 >
-> This was a little long to respond with on Twitter, so I thought I'd share my thoughts here. I love the idea of a 12 month cadence. I like October because admins aren't upgrading production within the first few months of a new release. It gives it plenty of time to be stable for the OS distros as well as giving admins something low-key to work on over the holidays with testing the new releases in stage/QA.
-
-October sounds ideal, but in reality, we haven't been able to release
-right on time as long as I can remember. Realistically, if we set
-October, we are probably going to get into November/December.
-
-For example, Nautilus was set to release in February and we got it out
-late in late March (Almost April)
-
-Would love to see more of a discussion around solving the problem of
-releasing when we say we are going to - so that we can then choose
-what the cadence is.
-
+> The convention with xattrs is to not store the termination with string
+> data, given that it returns the length. This is how setfattr/getfattr
+> operate.
 >
-> On Mon, Jun 17, 2019 at 12:22 PM Sage Weil <sage@newdream.net> wrote:
->>
->> On Wed, 5 Jun 2019, Sage Weil wrote:
->> > That brings us to an important decision: what time of year should we
->> > release?  Once we pick the timing, we'll be releasing at that time *every
->> > year* for each release (barring another schedule shift, which we want to
->> > avoid), so let's choose carefully!
->>
->> I've put up a twitter poll:
->>
->>         https://twitter.com/liewegas/status/1140655233430970369
->>
->> Thanks!
->> sage
->> _______________________________________________
->> ceph-users mailing list
->> ceph-users@lists.ceph.com
->> http://lists.ceph.com/listinfo.cgi/ceph-users-ceph.com
+> Most of ceph's virtual xattr routines use snprintf to plop the string
+> directly into the destination buffer, but snprintf always NULL
+> terminates the string. This means that if we send the kernel a buffer
+> that is the exact length needed to hold the string, it'll end up
+> truncated.
 >
-> _______________________________________________
-> ceph-users mailing list
-> ceph-users@lists.ceph.com
-> http://lists.ceph.com/listinfo.cgi/ceph-users-ceph.com
+> Add a ceph_fmt_xattr helper function to format the string into an
+> on-stack buffer that is should always be large enough to hold the whole
+> thing and then memcpy the result into the destination buffer. If it does
+> turn out that the formatted string won't fit in the on-stack buffer,
+> then return -E2BIG and do a WARN_ONCE().
+>
+> Change over most of the virtual xattr routines to use the new helper. A
+> couple of the xattrs are sourced from strings however, and it's
+> difficult to know how long they'll be. Just have those memcpy the result
+> in place after verifying the length.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/xattr.c | 84 ++++++++++++++++++++++++++++++++++---------------
+>  1 file changed, 59 insertions(+), 25 deletions(-)
+>
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 9b77dca0b786..37b458a9af3a 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -109,22 +109,49 @@ static ssize_t ceph_vxattrcb_layout(struct ceph_inode_info *ci, char *val,
+>         return ret;
+>  }
+>
+> +/*
+> + * The convention with strings in xattrs is that they should not be NULL
+> + * terminated, since we're returning the length with them. snprintf always
+> + * NULL terminates however, so call it on a temporary buffer and then memcpy
+> + * the result into place.
+> + */
+> +static int ceph_fmt_xattr(char *val, size_t size, const char *fmt, ...)
+> +{
+> +       int ret;
+> +       va_list args;
+> +       char buf[96]; /* NB: reevaluate size if new vxattrs are added */
+> +
+> +       va_start(args, fmt);
+> +       ret = vsnprintf(buf, size ? sizeof(buf) : 0, fmt, args);
+> +       va_end(args);
+> +
+> +       /* Sanity check */
+> +       if (size && ret + 1 > sizeof(buf)) {
+> +               WARN_ONCE(true, "Returned length too big (%d)", ret);
+> +               return -E2BIG;
+> +       }
+> +
+> +       if (ret <= size)
+> +               memcpy(val, buf, ret);
+> +       return ret;
+> +}
+
+Nit: perhaps check size at the top and bail early instead of checking
+it at every step?
+
+Thanks,
+
+                Ilya
