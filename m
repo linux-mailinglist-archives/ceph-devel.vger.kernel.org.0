@@ -2,80 +2,66 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9B685693D
-	for <lists+ceph-devel@lfdr.de>; Wed, 26 Jun 2019 14:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 134EE569D1
+	for <lists+ceph-devel@lfdr.de>; Wed, 26 Jun 2019 14:55:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfFZMdK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 26 Jun 2019 08:33:10 -0400
-Received: from mail-ed1-f50.google.com ([209.85.208.50]:32816 "EHLO
-        mail-ed1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbfFZMdK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 26 Jun 2019 08:33:10 -0400
-Received: by mail-ed1-f50.google.com with SMTP id i11so3162933edq.0
-        for <ceph-devel@vger.kernel.org>; Wed, 26 Jun 2019 05:33:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=yhlhQFspDmxCrHBv9HH/5gC/OxtfpmUsCpkjWjyc7GU=;
-        b=YqyuuGuUdlaO7uDW4BtkhUyTdemEob8/ExL+NcaV+nptJ9yzKO0gMLXObS9V+esWf3
-         36rab9C/H3gnMATmeSqWEEBHBZhw6oXy0UJqHYcw4qZX5wgLwRiyMwSucsWA8t8rVuyM
-         k+Cgx+g4sMp/sYVgDyfFaRh/0sSz6s1QkALEzhgK+rezqtT88473YP3w6w3SiAZpkJ1e
-         d0nuUQuBB2sXiLBt3Gj+kqnmKFd4+Nwjp2X5orrRiYkhDt74vaxmDGQPst5XVNgNmrdN
-         KE2HYizYgA1ukcC+uE40SHHH/SivRCknEhPeHeY2G+tdyYmS1cPcR890UBHH5fiOtk3g
-         3btA==
-X-Gm-Message-State: APjAAAWozVcy1R1ExkPhJ2gKBxwT3VxNVOweg3ZXoALcJ7lEDSqCQ5eU
-        kfru1xHyNN/Q/+JUqZ5e/hLw4rR5LNqlmzPVa9bbNA==
-X-Google-Smtp-Source: APXvYqwSUTBIyzHohWfnuTS6vQRVtvmic16VrREl2QCNJjYdWFqjIaT7aRgdNZOxJsjk0V4v3h8JweN51TPOa6QvI6o=
-X-Received: by 2002:a05:6402:12d2:: with SMTP id k18mr4802201edx.197.1561552388508;
- Wed, 26 Jun 2019 05:33:08 -0700 (PDT)
+        id S1727276AbfFZMzu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 26 Jun 2019 08:55:50 -0400
+Received: from tragedy.dreamhost.com ([66.33.205.236]:45147 "EHLO
+        tragedy.dreamhost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726948AbfFZMzu (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 26 Jun 2019 08:55:50 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by tragedy.dreamhost.com (Postfix) with ESMTPS id D1BE715F883;
+        Wed, 26 Jun 2019 05:55:48 -0700 (PDT)
+Date:   Wed, 26 Jun 2019 12:55:47 +0000 (UTC)
+From:   Sage Weil <sage@newdream.net>
+X-X-Sender: sage@piezo.novalocal
+To:     Alfredo Deza <adeza@redhat.com>
+cc:     David Turner <drakonstein@gmail.com>,
+        Ceph Devel <ceph-devel@vger.kernel.org>,
+        Ceph-User <ceph-users@ceph.com>, dev@ceph.io
+Subject: Re: [ceph-users] Changing the release cadence
+In-Reply-To: <CAC-Np1zcniBxm84SEGhzYfu55t+fckg1d-Dq0xpab62+ON4K5w@mail.gmail.com>
+Message-ID: <alpine.DEB.2.11.1906261248400.17148@piezo.novalocal>
+References: <alpine.DEB.2.11.1906051556500.987@piezo.novalocal> <alpine.DEB.2.11.1906171621000.20504@piezo.novalocal> <CAN-Gep+9bxadHMTFQgUFUt_q9Jmfpy3MPU5UTTRNY1jueu7n9w@mail.gmail.com> <CAC-Np1zcniBxm84SEGhzYfu55t+fckg1d-Dq0xpab62+ON4K5w@mail.gmail.com>
+User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
 MIME-Version: 1.0
-References: <CAGgPxMfzfvKQuqmUuO32jNpAnWr0j66J74hm1rq18A0M1dB2zg@mail.gmail.com>
- <CAGgPxMcwsxbZRwjOgx1FDjF2SSFTxq6Oxu+D-=HmEpotFJvg3g@mail.gmail.com>
-In-Reply-To: <CAGgPxMcwsxbZRwjOgx1FDjF2SSFTxq6Oxu+D-=HmEpotFJvg3g@mail.gmail.com>
-Reply-To: dillaman@redhat.com
-From:   Jason Dillaman <jdillama@redhat.com>
-Date:   Wed, 26 Jun 2019 08:32:57 -0400
-Message-ID: <CA+aFP1BtF+1BBH42-EF82U2oNG0OFF72j6ywoaKCfRfcCKwe0w@mail.gmail.com>
-Subject: Re: rbd exports do not use the object-map feature
-To:     Tony <yaoguot@gmail.com>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-VR-STATUS: OK
+X-VR-SCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduvddrudeigdeitdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucggtfgfnhhsuhgsshgtrhhisggvpdfftffgtefojffquffvnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvufgjkfhffgggtgesthdtredttdervdenucfhrhhomhepufgrghgvucghvghilhcuoehsrghgvgesnhgvfigurhgvrghmrdhnvghtqeenucfkphepuddvjedrtddrtddrudenucfrrghrrghmpehmohguvgepshhmthhppdhhvghloheplhhotggrlhhhohhsthdpihhnvghtpeduvdejrddtrddtrddupdhrvghtuhhrnhdqphgrthhhpefurghgvgcuhggvihhluceoshgrghgvsehnvgifughrvggrmhdrnhgvtheqpdhmrghilhhfrhhomhepshgrghgvsehnvgifughrvggrmhdrnhgvthdpnhhrtghpthhtohepuggvvhestggvphhhrdhiohenucevlhhushhtvghrufhiiigvpedt
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jun 25, 2019 at 10:37 PM Tony <yaoguot@gmail.com> wrote:
->
-> Hi all,
->
-> Recently, I have been studying the influence of object-map on RBD export .
-> My expectation is that object-map can improve the speed of export
->
-> But, I did not find any effect of object-map in the experiment.  Then,
-> I look in the code for the reason.
-> I found that the object-map was ignored when rbd opened the image in
-> read-only mode,
-> and Open image read-only when export.
->
-> I'm wondering why we can't open an image in read-only mode using
-> object-map feature.
+On Tue, 25 Jun 2019, Alfredo Deza wrote:
+> On Mon, Jun 17, 2019 at 4:09 PM David Turner <drakonstein@gmail.com> wrote:
+> >
+> > This was a little long to respond with on Twitter, so I thought I'd share my thoughts here. I love the idea of a 12 month cadence. I like October because admins aren't upgrading production within the first few months of a new release. It gives it plenty of time to be stable for the OS distros as well as giving admins something low-key to work on over the holidays with testing the new releases in stage/QA.
+> 
+> October sounds ideal, but in reality, we haven't been able to release
+> right on time as long as I can remember. Realistically, if we set
+> October, we are probably going to get into November/December.
+> 
+> For example, Nautilus was set to release in February and we got it out
+> late in late March (Almost April)
+> 
+> Would love to see more of a discussion around solving the problem of
+> releasing when we say we are going to - so that we can then choose
+> what the cadence is.
 
-It's because the HEAD revision of the image is still mutable and you
-don't have any assurances that it isn't being modified in the
-background. If you take a snapshot and export the snapshot, the
-object-map will be used since the snapshot content is immutable.
+I think the "on time" part is solveable.  We should just use the amount 
+of time between take the previous release's freeze date and the 
+target release date and go with that.  It is a bit fuzzy because I left it 
+up to the leads how they handle the freeze, but I think mid-Januaray is 
+about right (in reality we waiting longer than that for lots of RADOS 
+stuff).  v14.2.0 was Mar 18, so ~2 months.
 
-> In this case, the object-map feature does not seem to improve the
-> performance of rbd export .
->
-> Your prompt reply will be appreciated.
-> Thanks.
->
-> Guotao Yao
+The cadence is really separate from that, though: even if every release 
+were 2 full months late, if we start with the same target it's still a 1 
+year cycle.
 
+sage
 
-
--- 
-Jason
