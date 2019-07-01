@@ -2,38 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B32F5B435
-	for <lists+ceph-devel@lfdr.de>; Mon,  1 Jul 2019 07:34:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD92A5B43C
+	for <lists+ceph-devel@lfdr.de>; Mon,  1 Jul 2019 07:34:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbfGAFe3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 1 Jul 2019 01:34:29 -0400
-Received: from m97138.mail.qiye.163.com ([220.181.97.138]:23811 "EHLO
+        id S1727375AbfGAFew (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 1 Jul 2019 01:34:52 -0400
+Received: from m97138.mail.qiye.163.com ([220.181.97.138]:24370 "EHLO
         m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727373AbfGAFe3 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 1 Jul 2019 01:34:29 -0400
+        with ESMTP id S1726036AbfGAFew (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 1 Jul 2019 01:34:52 -0400
 Received: from yds-pc.domain (unknown [218.94.118.90])
-        by smtp9 (Coremail) with SMTP id u+CowABnNHYvmhldy33wAA--.1248S2;
-        Mon, 01 Jul 2019 13:29:19 +0800 (CST)
-Subject: Re: [PATCH 13/20] rbd: quiescing lock should wait for image requests
+        by smtp9 (Coremail) with SMTP id u+CowABHp_NDmhldfX7wAA--.1221S2;
+        Mon, 01 Jul 2019 13:29:39 +0800 (CST)
+Subject: Re: [PATCH 14/20] rbd: new exclusive lock wait/wake code
 To:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
 References: <20190625144111.11270-1-idryomov@gmail.com>
- <20190625144111.11270-14-idryomov@gmail.com>
+ <20190625144111.11270-15-idryomov@gmail.com>
 From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
-Message-ID: <5D199A2F.7010808@easystack.cn>
-Date:   Mon, 1 Jul 2019 13:29:19 +0800
+Message-ID: <5D199A43.1060005@easystack.cn>
+Date:   Mon, 1 Jul 2019 13:29:39 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
  Thunderbird/38.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190625144111.11270-14-idryomov@gmail.com>
+In-Reply-To: <20190625144111.11270-15-idryomov@gmail.com>
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: u+CowABnNHYvmhldy33wAA--.1248S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3GFWUuFy5uF45ZF15Jr18Krg_yoW3Kw4rp3
-        yrJay3KFWUXr12qw1rGF15Xr4rWa18Ka9rWrySk3W7CF95Xrs2kF1IkFyjvFW3XrykArs7
-        Gr45Xrs5Cr429rDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zKXHRAUUUUU=
+X-CM-TRANSID: u+CowABHp_NDmhldfX7wAA--.1221S2
+X-Coremail-Antispam: 1Uf129KBjvAXoWfXw1xGw17tr1rZw1rGFy3urg_yoW8urWkJo
+        Z5WrZ3Zw1fJryUC34DJryIqryUGrZrJ390yrW5ua1UAF47Kr1UKw1jka13ta4rA34SyF10
+        gr1xXr10gF18J3y5n29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+        AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjTRmNt3UUUUU
 X-Originating-IP: [218.94.118.90]
-X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbidRDkeln5euZvfwAAsX
+X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbicwPkeln5exdT9wAAsG
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
@@ -42,237 +42,638 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 
 On 06/25/2019 10:41 PM, Ilya Dryomov wrote:
-> Syncing OSD requests doesn't really work.  A single image request may
-> be comprised of multiple object requests, each of which can go through
-> a series of OSD requests (original, copyups, etc).  On top of that, the
-> OSD cliest may be shared with other rbd devices.
+> rbd_wait_state_locked() is built around rbd_dev->lock_waitq and blocks
+> rbd worker threads while waiting for the lock, potentially impacting
+> other rbd devices.  There is no good way to pass an error code into
+> image request state machines when acquisition fails, hence the use of
+> RBD_DEV_FLAG_BLACKLISTED for everything and various other issues.
 >
-> What we want is to ensure that all in-flight image requests complete.
-> Introduce rbd_dev->running_list and block in RBD_LOCK_STATE_RELEASING
-> until that happens.  New OSD requests may be started during this time.
+> Introduce rbd_dev->acquiring_list and move acquisition into image
+> request state machine.  Use rbd_img_schedule() for kicking and passing
+> error codes.  No blocking occurs while waiting for the lock, but
+> rbd_dev->lock_rwsem is still held across lock, unlock and set_cookie
+> calls.
 >
-> Note that __rbd_img_handle_request() acquires rbd_dev->lock_rwsem only
-> if need_exclusive_lock() returns true.  This avoids a deadlock similar
-> to the one outlined in the previous commit between unlock and I/O that
-> doesn't require lock, such as a read with object-map feature disabled.
+> Always acquire the lock on "rbd map" to avoid associating the latency
+> of acquiring the lock with the first I/O request.
+>
+> A slight regression is that lock_timeout is now respected only if lock
+> acquisition is triggered by "rbd map" and not by I/O.  This is somewhat
+> compensated by the fact that we no longer block if the peer refuses to
+> release lock -- I/O is failed with EROFS right away.
 >
 > Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 
+Great, that's really what we need. Just two small question inline.
+
 Reviewed-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
 > ---
->   drivers/block/rbd.c | 104 ++++++++++++++++++++++++++++++++++++++------
->   1 file changed, 90 insertions(+), 14 deletions(-)
+>   drivers/block/rbd.c | 325 +++++++++++++++++++++++++-------------------
+>   1 file changed, 182 insertions(+), 143 deletions(-)
 >
 > diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 5fcb4ebd981a..59d1fef35663 100644
+> index 59d1fef35663..fd3f248ba9c2 100644
 > --- a/drivers/block/rbd.c
 > +++ b/drivers/block/rbd.c
-> @@ -331,6 +331,7 @@ struct rbd_img_request {
->   		struct rbd_obj_request	*obj_request;	/* obj req initiator */
->   	};
+> @@ -312,6 +312,7 @@ enum img_req_flags {
 >   
-> +	struct list_head	lock_item;
->   	struct list_head	object_extents;	/* obj_req.ex structs */
->   
->   	struct mutex		state_mutex;
-> @@ -410,6 +411,9 @@ struct rbd_device {
->   	struct work_struct	released_lock_work;
+>   enum rbd_img_state {
+>   	RBD_IMG_START = 1,
+> +	RBD_IMG_EXCLUSIVE_LOCK,
+>   	__RBD_IMG_OBJECT_REQUESTS,
+>   	RBD_IMG_OBJECT_REQUESTS,
+>   };
+> @@ -412,9 +413,11 @@ struct rbd_device {
 >   	struct delayed_work	lock_dwork;
 >   	struct work_struct	unlock_work;
-> +	spinlock_t		lock_lists_lock;
-> +	struct list_head	running_list;
-> +	struct completion	releasing_wait;
->   	wait_queue_head_t	lock_waitq;
+>   	spinlock_t		lock_lists_lock;
+> +	struct list_head	acquiring_list;
+>   	struct list_head	running_list;
+> +	struct completion	acquire_wait;
+> +	int			acquire_err;
+>   	struct completion	releasing_wait;
+> -	wait_queue_head_t	lock_waitq;
 >   
 >   	struct workqueue_struct	*task_wq;
-> @@ -1726,6 +1730,7 @@ static struct rbd_img_request *rbd_img_request_create(
->   	if (rbd_dev_parent_get(rbd_dev))
->   		img_request_layered_set(img_request);
 >   
-> +	INIT_LIST_HEAD(&img_request->lock_item);
->   	INIT_LIST_HEAD(&img_request->object_extents);
->   	mutex_init(&img_request->state_mutex);
->   	kref_init(&img_request->kref);
-> @@ -1745,6 +1750,7 @@ static void rbd_img_request_destroy(struct kref *kref)
+> @@ -442,12 +445,10 @@ struct rbd_device {
+>    * Flag bits for rbd_dev->flags:
+>    * - REMOVING (which is coupled with rbd_dev->open_count) is protected
+>    *   by rbd_dev->lock
+> - * - BLACKLISTED is protected by rbd_dev->lock_rwsem
+>    */
+>   enum rbd_dev_flags {
+>   	RBD_DEV_FLAG_EXISTS,	/* mapped snapshot has not been deleted */
+>   	RBD_DEV_FLAG_REMOVING,	/* this mapping is being removed */
+> -	RBD_DEV_FLAG_BLACKLISTED, /* our ceph_client is blacklisted */
+>   };
 >   
->   	dout("%s: img %p\n", __func__, img_request);
+>   static DEFINE_MUTEX(client_mutex);	/* Serialize client creation */
+> @@ -500,6 +501,8 @@ static int minor_to_rbd_dev_id(int minor)
 >   
-> +	WARN_ON(!list_empty(&img_request->lock_item));
->   	for_each_obj_request_safe(img_request, obj_request, next_obj_request)
->   		rbd_img_obj_request_del(img_request, obj_request);
->   
-> @@ -2872,6 +2878,50 @@ static void rbd_obj_handle_request(struct rbd_obj_request *obj_req, int result)
->   		rbd_img_handle_request(obj_req->img_request, result);
+>   static bool __rbd_is_lock_owner(struct rbd_device *rbd_dev)
+>   {
+> +	lockdep_assert_held(&rbd_dev->lock_rwsem);
+> +
+>   	return rbd_dev->lock_state == RBD_LOCK_STATE_LOCKED ||
+>   	       rbd_dev->lock_state == RBD_LOCK_STATE_RELEASING;
+>   }
+> @@ -2895,15 +2898,21 @@ static bool need_exclusive_lock(struct rbd_img_request *img_req)
+>   	return rbd_img_is_write(img_req);
 >   }
 >   
-> +static bool need_exclusive_lock(struct rbd_img_request *img_req)
+> -static void rbd_lock_add_request(struct rbd_img_request *img_req)
+> +static bool rbd_lock_add_request(struct rbd_img_request *img_req)
+>   {
+>   	struct rbd_device *rbd_dev = img_req->rbd_dev;
+> +	bool locked;
+>   
+>   	lockdep_assert_held(&rbd_dev->lock_rwsem);
+> +	locked = rbd_dev->lock_state == RBD_LOCK_STATE_LOCKED;
+>   	spin_lock(&rbd_dev->lock_lists_lock);
+>   	rbd_assert(list_empty(&img_req->lock_item));
+> -	list_add_tail(&img_req->lock_item, &rbd_dev->running_list);
+> +	if (!locked)
+> +		list_add_tail(&img_req->lock_item, &rbd_dev->acquiring_list);
+> +	else
+> +		list_add_tail(&img_req->lock_item, &rbd_dev->running_list);
+>   	spin_unlock(&rbd_dev->lock_lists_lock);
+> +	return locked;
+>   }
+>   
+>   static void rbd_lock_del_request(struct rbd_img_request *img_req)
+> @@ -2922,6 +2931,30 @@ static void rbd_lock_del_request(struct rbd_img_request *img_req)
+>   		complete(&rbd_dev->releasing_wait);
+>   }
+>   
+> +static int rbd_img_exclusive_lock(struct rbd_img_request *img_req)
 > +{
 > +	struct rbd_device *rbd_dev = img_req->rbd_dev;
 > +
-> +	if (!(rbd_dev->header.features & RBD_FEATURE_EXCLUSIVE_LOCK))
-> +		return false;
+> +	if (!need_exclusive_lock(img_req))
+> +		return 1;
 > +
-> +	if (rbd_dev->spec->snap_id != CEPH_NOSNAP)
-> +		return false;
+> +	if (rbd_lock_add_request(img_req))
+> +		return 1;
 > +
-> +	rbd_assert(!test_bit(IMG_REQ_CHILD, &img_req->flags));
-> +	if (rbd_dev->opts->lock_on_read)
-> +		return true;
+> +	if (rbd_dev->opts->exclusive) {
+> +		WARN_ON(1); /* lock got released? */
+> +		return -EROFS;
+> +	}
 > +
-> +	return rbd_img_is_write(img_req);
-> +}
-> +
-> +static void rbd_lock_add_request(struct rbd_img_request *img_req)
-> +{
-> +	struct rbd_device *rbd_dev = img_req->rbd_dev;
-> +
-> +	lockdep_assert_held(&rbd_dev->lock_rwsem);
-> +	spin_lock(&rbd_dev->lock_lists_lock);
-> +	rbd_assert(list_empty(&img_req->lock_item));
-> +	list_add_tail(&img_req->lock_item, &rbd_dev->running_list);
-> +	spin_unlock(&rbd_dev->lock_lists_lock);
-> +}
-> +
-> +static void rbd_lock_del_request(struct rbd_img_request *img_req)
-> +{
-> +	struct rbd_device *rbd_dev = img_req->rbd_dev;
-> +	bool need_wakeup;
-> +
-> +	lockdep_assert_held(&rbd_dev->lock_rwsem);
-> +	spin_lock(&rbd_dev->lock_lists_lock);
-> +	rbd_assert(!list_empty(&img_req->lock_item));
-> +	list_del_init(&img_req->lock_item);
-> +	need_wakeup = (rbd_dev->lock_state == RBD_LOCK_STATE_RELEASING &&
-> +		       list_empty(&rbd_dev->running_list));
-> +	spin_unlock(&rbd_dev->lock_lists_lock);
-> +	if (need_wakeup)
-> +		complete(&rbd_dev->releasing_wait);
+> +	/*
+> +	 * Note the use of mod_delayed_work() in rbd_acquire_lock()
+> +	 * and cancel_delayed_work() in wake_requests().
+> +	 */
+> +	dout("%s rbd_dev %p queueing lock_dwork\n", __func__, rbd_dev);
+> +	queue_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork, 0);
+> +	return 0;
 > +}
 > +
 >   static void rbd_img_object_requests(struct rbd_img_request *img_req)
 >   {
 >   	struct rbd_obj_request *obj_req;
-> @@ -2927,9 +2977,19 @@ static bool __rbd_img_handle_request(struct rbd_img_request *img_req,
->   	struct rbd_device *rbd_dev = img_req->rbd_dev;
->   	bool done;
+> @@ -2944,11 +2977,30 @@ static void rbd_img_object_requests(struct rbd_img_request *img_req)
 >   
-> -	mutex_lock(&img_req->state_mutex);
-> -	done = rbd_img_advance(img_req, result);
-> -	mutex_unlock(&img_req->state_mutex);
-> +	if (need_exclusive_lock(img_req)) {
-> +		down_read(&rbd_dev->lock_rwsem);
-> +		mutex_lock(&img_req->state_mutex);
-> +		done = rbd_img_advance(img_req, result);
-> +		if (done)
-> +			rbd_lock_del_request(img_req);
-> +		mutex_unlock(&img_req->state_mutex);
-> +		up_read(&rbd_dev->lock_rwsem);
-> +	} else {
-> +		mutex_lock(&img_req->state_mutex);
-> +		done = rbd_img_advance(img_req, result);
-> +		mutex_unlock(&img_req->state_mutex);
-> +	}
->   
->   	if (done && *result) {
->   		rbd_assert(*result < 0);
-> @@ -3413,30 +3473,40 @@ static void rbd_acquire_lock(struct work_struct *work)
->   
->   static bool rbd_quiesce_lock(struct rbd_device *rbd_dev)
+>   static bool rbd_img_advance(struct rbd_img_request *img_req, int *result)
 >   {
-> +	bool need_wait;
+> +	struct rbd_device *rbd_dev = img_req->rbd_dev;
+> +	int ret;
 > +
->   	dout("%s rbd_dev %p\n", __func__, rbd_dev);
->   	lockdep_assert_held_exclusive(&rbd_dev->lock_rwsem);
+>   again:
+>   	switch (img_req->state) {
+>   	case RBD_IMG_START:
+>   		rbd_assert(!*result);
 >   
->   	if (rbd_dev->lock_state != RBD_LOCK_STATE_LOCKED)
->   		return false;
+> +		ret = rbd_img_exclusive_lock(img_req);
+> +		if (ret < 0) {
+> +			*result = ret;
+> +			return true;
+> +		}
+> +		img_req->state = RBD_IMG_EXCLUSIVE_LOCK;
+> +		if (ret > 0)
+> +			goto again;
+> +		return false;
+> +	case RBD_IMG_EXCLUSIVE_LOCK:
+> +		if (*result)
+> +			return true;
+> +
+> +		rbd_assert(!need_exclusive_lock(img_req) ||
+> +			   __rbd_is_lock_owner(rbd_dev));
+> +
+>   		rbd_img_object_requests(img_req);
+>   		if (!img_req->pending.num_pending) {
+>   			*result = img_req->pending.result;
+> @@ -3107,7 +3159,7 @@ static void rbd_unlock(struct rbd_device *rbd_dev)
+>   	ret = ceph_cls_unlock(osdc, &rbd_dev->header_oid, &rbd_dev->header_oloc,
+>   			      RBD_LOCK_NAME, rbd_dev->lock_cookie);
+>   	if (ret && ret != -ENOENT)
+> -		rbd_warn(rbd_dev, "failed to unlock: %d", ret);
+> +		rbd_warn(rbd_dev, "failed to unlock header: %d", ret);
 >   
-> -	rbd_dev->lock_state = RBD_LOCK_STATE_RELEASING;
-> -	downgrade_write(&rbd_dev->lock_rwsem);
->   	/*
->   	 * Ensure that all in-flight IO is flushed.
-> -	 *
-> -	 * FIXME: ceph_osdc_sync() flushes the entire OSD client, which
-> -	 * may be shared with other devices.
->   	 */
-> -	ceph_osdc_sync(&rbd_dev->rbd_client->client->osdc);
-> +	rbd_dev->lock_state = RBD_LOCK_STATE_RELEASING;
-> +	rbd_assert(!completion_done(&rbd_dev->releasing_wait));
-> +	need_wait = !list_empty(&rbd_dev->running_list);
-> +	downgrade_write(&rbd_dev->lock_rwsem);
-> +	if (need_wait)
-> +		wait_for_completion(&rbd_dev->releasing_wait);
->   	up_read(&rbd_dev->lock_rwsem);
->   
->   	down_write(&rbd_dev->lock_rwsem);
->   	if (rbd_dev->lock_state != RBD_LOCK_STATE_RELEASING)
->   		return false;
->   
-> +	rbd_assert(list_empty(&rbd_dev->running_list));
->   	return true;
+>   	/* treat errors as the image is unlocked */
+>   	rbd_dev->lock_state = RBD_LOCK_STATE_UNLOCKED;
+> @@ -3234,15 +3286,30 @@ static int rbd_request_lock(struct rbd_device *rbd_dev)
+>   	goto out;
 >   }
 >   
-> +static void __rbd_release_lock(struct rbd_device *rbd_dev)
-> +{
+> -static void wake_requests(struct rbd_device *rbd_dev, bool wake_all)
+> +static void wake_requests(struct rbd_device *rbd_dev, int result)
+This code cover two cases I think,
+(1) rbd mapping to waiting acquire_wait,
+(2) img_request state machine in RBD_IMG_EXCLUSIVE_LOCK.
+
+So the case (1) is not waking *requests* actually :). Can you add a 
+comment here to make it clear?
+Maybe add some comment about that.
+>   {
+> -	dout("%s rbd_dev %p wake_all %d\n", __func__, rbd_dev, wake_all);
+> +	struct rbd_img_request *img_req;
+> +
+> +	dout("%s rbd_dev %p result %d\n", __func__, rbd_dev, result);
+> +	lockdep_assert_held_exclusive(&rbd_dev->lock_rwsem);
+>   
+>   	cancel_delayed_work(&rbd_dev->lock_dwork);
+> -	if (wake_all)
+> -		wake_up_all(&rbd_dev->lock_waitq);
+> -	else
+> -		wake_up(&rbd_dev->lock_waitq);
+> +	if (!completion_done(&rbd_dev->acquire_wait)) {
+> +		rbd_assert(list_empty(&rbd_dev->acquiring_list) &&
+> +			   list_empty(&rbd_dev->running_list));
+> +		rbd_dev->acquire_err = result;
+> +		complete_all(&rbd_dev->acquire_wait);
+> +		return;
+> +	}
+> +
+> +	list_for_each_entry(img_req, &rbd_dev->acquiring_list, lock_item) {
+> +		mutex_lock(&img_req->state_mutex);
+> +		rbd_assert(img_req->state == RBD_IMG_EXCLUSIVE_LOCK);
+> +		rbd_img_schedule(img_req, result);
+> +		mutex_unlock(&img_req->state_mutex);
+> +	}
+> +
+> +	list_splice_tail_init(&rbd_dev->acquiring_list, &rbd_dev->running_list);
+>   }
+ From the code, above, there should be a window img_req will be in 
+*running*, but it is not in running_list.
+
+But that can't happen because the lock_rwsem protect it, right?
+
+Thanx
+>   
+>   static int get_lock_owner_info(struct rbd_device *rbd_dev,
+> @@ -3357,11 +3424,8 @@ static int rbd_try_lock(struct rbd_device *rbd_dev)
+>   			goto again;
+>   
+>   		ret = find_watcher(rbd_dev, lockers);
+> -		if (ret) {
+> -			if (ret > 0)
+> -				ret = 0; /* have to request lock */
+> -			goto out;
+> -		}
+> +		if (ret)
+> +			goto out; /* request lock or error */
+>   
+>   		rbd_warn(rbd_dev, "%s%llu seems dead, breaking lock",
+>   			 ENTITY_NAME(lockers[0].id.name));
+> @@ -3391,52 +3455,65 @@ static int rbd_try_lock(struct rbd_device *rbd_dev)
+>   }
+>   
+>   /*
+> - * ret is set only if lock_state is RBD_LOCK_STATE_UNLOCKED
+> + * Return:
+> + *   0 - lock acquired
+> + *   1 - caller should call rbd_request_lock()
+> + *  <0 - error
+>    */
+> -static enum rbd_lock_state rbd_try_acquire_lock(struct rbd_device *rbd_dev,
+> -						int *pret)
+> +static int rbd_try_acquire_lock(struct rbd_device *rbd_dev)
+>   {
+> -	enum rbd_lock_state lock_state;
+> +	int ret;
+>   
+>   	down_read(&rbd_dev->lock_rwsem);
+>   	dout("%s rbd_dev %p read lock_state %d\n", __func__, rbd_dev,
+>   	     rbd_dev->lock_state);
+>   	if (__rbd_is_lock_owner(rbd_dev)) {
+> -		lock_state = rbd_dev->lock_state;
+>   		up_read(&rbd_dev->lock_rwsem);
+> -		return lock_state;
+> +		return 0;
+>   	}
+>   
+>   	up_read(&rbd_dev->lock_rwsem);
+>   	down_write(&rbd_dev->lock_rwsem);
+>   	dout("%s rbd_dev %p write lock_state %d\n", __func__, rbd_dev,
+>   	     rbd_dev->lock_state);
+> -	if (!__rbd_is_lock_owner(rbd_dev)) {
+> -		*pret = rbd_try_lock(rbd_dev);
+> -		if (*pret)
+> -			rbd_warn(rbd_dev, "failed to acquire lock: %d", *pret);
+> +	if (__rbd_is_lock_owner(rbd_dev)) {
+> +		up_write(&rbd_dev->lock_rwsem);
+> +		return 0;
+>   	}
+>   
+> -	lock_state = rbd_dev->lock_state;
+> +	ret = rbd_try_lock(rbd_dev);
+> +	if (ret < 0) {
+> +		rbd_warn(rbd_dev, "failed to lock header: %d", ret);
+> +		if (ret == -EBLACKLISTED)
+> +			goto out;
+> +
+> +		ret = 1; /* request lock anyway */
+> +	}
+> +	if (ret > 0) {
+> +		up_write(&rbd_dev->lock_rwsem);
+> +		return ret;
+> +	}
+> +
+> +	rbd_assert(rbd_dev->lock_state == RBD_LOCK_STATE_LOCKED);
 > +	rbd_assert(list_empty(&rbd_dev->running_list));
 > +
-> +	rbd_unlock(rbd_dev);
-> +}
-> +
->   /*
->    * lock_rwsem must be held for write
->    */
-> @@ -3445,7 +3515,7 @@ static void rbd_release_lock(struct rbd_device *rbd_dev)
->   	if (!rbd_quiesce_lock(rbd_dev))
->   		return;
+> +out:
+> +	wake_requests(rbd_dev, ret);
+>   	up_write(&rbd_dev->lock_rwsem);
+> -	return lock_state;
+> +	return ret;
+>   }
 >   
-> -	rbd_unlock(rbd_dev);
-> +	__rbd_release_lock(rbd_dev);
+>   static void rbd_acquire_lock(struct work_struct *work)
+>   {
+>   	struct rbd_device *rbd_dev = container_of(to_delayed_work(work),
+>   					    struct rbd_device, lock_dwork);
+> -	enum rbd_lock_state lock_state;
+> -	int ret = 0;
+> +	int ret;
+>   
+>   	dout("%s rbd_dev %p\n", __func__, rbd_dev);
+>   again:
+> -	lock_state = rbd_try_acquire_lock(rbd_dev, &ret);
+> -	if (lock_state != RBD_LOCK_STATE_UNLOCKED || ret == -EBLACKLISTED) {
+> -		if (lock_state == RBD_LOCK_STATE_LOCKED)
+> -			wake_requests(rbd_dev, true);
+> -		dout("%s rbd_dev %p lock_state %d ret %d - done\n", __func__,
+> -		     rbd_dev, lock_state, ret);
+> +	ret = rbd_try_acquire_lock(rbd_dev);
+> +	if (ret <= 0) {
+> +		dout("%s rbd_dev %p ret %d - done\n", __func__, rbd_dev, ret);
+>   		return;
+>   	}
+>   
+> @@ -3445,16 +3522,9 @@ static void rbd_acquire_lock(struct work_struct *work)
+>   		goto again; /* treat this as a dead client */
+>   	} else if (ret == -EROFS) {
+>   		rbd_warn(rbd_dev, "peer will not release lock");
+> -		/*
+> -		 * If this is rbd_add_acquire_lock(), we want to fail
+> -		 * immediately -- reuse BLACKLISTED flag.  Otherwise we
+> -		 * want to block.
+> -		 */
+> -		if (!(rbd_dev->disk->flags & GENHD_FL_UP)) {
+> -			set_bit(RBD_DEV_FLAG_BLACKLISTED, &rbd_dev->flags);
+> -			/* wake "rbd map --exclusive" process */
+> -			wake_requests(rbd_dev, false);
+> -		}
+> +		down_write(&rbd_dev->lock_rwsem);
+> +		wake_requests(rbd_dev, ret);
+> +		up_write(&rbd_dev->lock_rwsem);
+>   	} else if (ret < 0) {
+>   		rbd_warn(rbd_dev, "error requesting lock: %d", ret);
+>   		mod_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork,
+> @@ -3519,10 +3589,10 @@ static void rbd_release_lock(struct rbd_device *rbd_dev)
 >   
 >   	/*
 >   	 * Give others a chance to grab the lock - we would re-acquire
-> @@ -3819,7 +3889,7 @@ static void rbd_reacquire_lock(struct rbd_device *rbd_dev)
->   		 * Lock cookie cannot be updated on older OSDs, so do
->   		 * a manual release and queue an acquire.
->   		 */
-> -		rbd_unlock(rbd_dev);
-> +		__rbd_release_lock(rbd_dev);
->   		queue_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork, 0);
->   	} else {
->   		__rbd_lock(rbd_dev, cookie);
-> @@ -4085,9 +4155,12 @@ static void rbd_queue_workfn(struct work_struct *work)
->   	if (result)
->   		goto err_img_request;
->   
-> -	rbd_img_handle_request(img_request, 0);
-> -	if (must_be_locked)
-> +	if (must_be_locked) {
-> +		rbd_lock_add_request(img_request);
->   		up_read(&rbd_dev->lock_rwsem);
-> +	}
-> +
-> +	rbd_img_handle_request(img_request, 0);
->   	return;
->   
->   err_img_request:
-> @@ -4761,6 +4834,9 @@ static struct rbd_device *__rbd_dev_create(struct rbd_client *rbdc,
->   	INIT_WORK(&rbd_dev->released_lock_work, rbd_notify_released_lock);
->   	INIT_DELAYED_WORK(&rbd_dev->lock_dwork, rbd_acquire_lock);
->   	INIT_WORK(&rbd_dev->unlock_work, rbd_release_lock_work);
-> +	spin_lock_init(&rbd_dev->lock_lists_lock);
-> +	INIT_LIST_HEAD(&rbd_dev->running_list);
-> +	init_completion(&rbd_dev->releasing_wait);
->   	init_waitqueue_head(&rbd_dev->lock_waitq);
->   
->   	rbd_dev->dev.bus = &rbd_bus_type;
-> @@ -5777,7 +5853,7 @@ static void rbd_dev_image_unlock(struct rbd_device *rbd_dev)
->   {
->   	down_write(&rbd_dev->lock_rwsem);
->   	if (__rbd_is_lock_owner(rbd_dev))
-> -		rbd_unlock(rbd_dev);
-> +		__rbd_release_lock(rbd_dev);
+> -	 * almost immediately if we got new IO during ceph_osdc_sync()
+> -	 * otherwise.  We need to ack our own notifications, so this
+> -	 * lock_dwork will be requeued from rbd_wait_state_locked()
+> -	 * after wake_requests() in rbd_handle_released_lock().
+> +	 * almost immediately if we got new IO while draining the running
+> +	 * list otherwise.  We need to ack our own notifications, so this
+> +	 * lock_dwork will be requeued from rbd_handle_released_lock() by
+> +	 * way of maybe_kick_acquire().
+>   	 */
+>   	cancel_delayed_work(&rbd_dev->lock_dwork);
+>   }
+> @@ -3537,6 +3607,23 @@ static void rbd_release_lock_work(struct work_struct *work)
 >   	up_write(&rbd_dev->lock_rwsem);
 >   }
 >   
+> +static void maybe_kick_acquire(struct rbd_device *rbd_dev)
+> +{
+> +	bool have_requests;
+> +
+> +	dout("%s rbd_dev %p\n", __func__, rbd_dev);
+> +	if (__rbd_is_lock_owner(rbd_dev))
+> +		return;
+> +
+> +	spin_lock(&rbd_dev->lock_lists_lock);
+> +	have_requests = !list_empty(&rbd_dev->acquiring_list);
+> +	spin_unlock(&rbd_dev->lock_lists_lock);
+> +	if (have_requests || delayed_work_pending(&rbd_dev->lock_dwork)) {
+> +		dout("%s rbd_dev %p kicking lock_dwork\n", __func__, rbd_dev);
+> +		mod_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork, 0);
+> +	}
+> +}
+> +
+>   static void rbd_handle_acquired_lock(struct rbd_device *rbd_dev, u8 struct_v,
+>   				     void **p)
+>   {
+> @@ -3566,8 +3653,7 @@ static void rbd_handle_acquired_lock(struct rbd_device *rbd_dev, u8 struct_v,
+>   		down_read(&rbd_dev->lock_rwsem);
+>   	}
+>   
+> -	if (!__rbd_is_lock_owner(rbd_dev))
+> -		wake_requests(rbd_dev, false);
+> +	maybe_kick_acquire(rbd_dev);
+>   	up_read(&rbd_dev->lock_rwsem);
+>   }
+>   
+> @@ -3599,8 +3685,7 @@ static void rbd_handle_released_lock(struct rbd_device *rbd_dev, u8 struct_v,
+>   		down_read(&rbd_dev->lock_rwsem);
+>   	}
+>   
+> -	if (!__rbd_is_lock_owner(rbd_dev))
+> -		wake_requests(rbd_dev, false);
+> +	maybe_kick_acquire(rbd_dev);
+>   	up_read(&rbd_dev->lock_rwsem);
+>   }
+>   
+> @@ -3850,7 +3935,6 @@ static void cancel_tasks_sync(struct rbd_device *rbd_dev)
+>   
+>   static void rbd_unregister_watch(struct rbd_device *rbd_dev)
+>   {
+> -	WARN_ON(waitqueue_active(&rbd_dev->lock_waitq));
+>   	cancel_tasks_sync(rbd_dev);
+>   
+>   	mutex_lock(&rbd_dev->watch_mutex);
+> @@ -3893,6 +3977,7 @@ static void rbd_reacquire_lock(struct rbd_device *rbd_dev)
+>   		queue_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork, 0);
+>   	} else {
+>   		__rbd_lock(rbd_dev, cookie);
+> +		wake_requests(rbd_dev, 0);
+>   	}
+>   }
+>   
+> @@ -3913,15 +3998,18 @@ static void rbd_reregister_watch(struct work_struct *work)
+>   	ret = __rbd_register_watch(rbd_dev);
+>   	if (ret) {
+>   		rbd_warn(rbd_dev, "failed to reregister watch: %d", ret);
+> -		if (ret == -EBLACKLISTED || ret == -ENOENT) {
+> -			set_bit(RBD_DEV_FLAG_BLACKLISTED, &rbd_dev->flags);
+> -			wake_requests(rbd_dev, true);
+> -		} else {
+> +		if (ret != -EBLACKLISTED && ret != -ENOENT) {
+>   			queue_delayed_work(rbd_dev->task_wq,
+>   					   &rbd_dev->watch_dwork,
+>   					   RBD_RETRY_DELAY);
+> +			mutex_unlock(&rbd_dev->watch_mutex);
+> +			return;
+>   		}
+> +
+>   		mutex_unlock(&rbd_dev->watch_mutex);
+> +		down_write(&rbd_dev->lock_rwsem);
+> +		wake_requests(rbd_dev, ret);
+> +		up_write(&rbd_dev->lock_rwsem);
+>   		return;
+>   	}
+>   
+> @@ -3996,54 +4084,6 @@ static int rbd_obj_method_sync(struct rbd_device *rbd_dev,
+>   	return ret;
+>   }
+>   
+> -/*
+> - * lock_rwsem must be held for read
+> - */
+> -static int rbd_wait_state_locked(struct rbd_device *rbd_dev, bool may_acquire)
+> -{
+> -	DEFINE_WAIT(wait);
+> -	unsigned long timeout;
+> -	int ret = 0;
+> -
+> -	if (test_bit(RBD_DEV_FLAG_BLACKLISTED, &rbd_dev->flags))
+> -		return -EBLACKLISTED;
+> -
+> -	if (rbd_dev->lock_state == RBD_LOCK_STATE_LOCKED)
+> -		return 0;
+> -
+> -	if (!may_acquire) {
+> -		rbd_warn(rbd_dev, "exclusive lock required");
+> -		return -EROFS;
+> -	}
+> -
+> -	do {
+> -		/*
+> -		 * Note the use of mod_delayed_work() in rbd_acquire_lock()
+> -		 * and cancel_delayed_work() in wake_requests().
+> -		 */
+> -		dout("%s rbd_dev %p queueing lock_dwork\n", __func__, rbd_dev);
+> -		queue_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork, 0);
+> -		prepare_to_wait_exclusive(&rbd_dev->lock_waitq, &wait,
+> -					  TASK_UNINTERRUPTIBLE);
+> -		up_read(&rbd_dev->lock_rwsem);
+> -		timeout = schedule_timeout(ceph_timeout_jiffies(
+> -						rbd_dev->opts->lock_timeout));
+> -		down_read(&rbd_dev->lock_rwsem);
+> -		if (test_bit(RBD_DEV_FLAG_BLACKLISTED, &rbd_dev->flags)) {
+> -			ret = -EBLACKLISTED;
+> -			break;
+> -		}
+> -		if (!timeout) {
+> -			rbd_warn(rbd_dev, "timed out waiting for lock");
+> -			ret = -ETIMEDOUT;
+> -			break;
+> -		}
+> -	} while (rbd_dev->lock_state != RBD_LOCK_STATE_LOCKED);
+> -
+> -	finish_wait(&rbd_dev->lock_waitq, &wait);
+> -	return ret;
+> -}
+> -
+>   static void rbd_queue_workfn(struct work_struct *work)
+>   {
+>   	struct request *rq = blk_mq_rq_from_pdu(work);
+> @@ -4054,7 +4094,6 @@ static void rbd_queue_workfn(struct work_struct *work)
+>   	u64 length = blk_rq_bytes(rq);
+>   	enum obj_operation_type op_type;
+>   	u64 mapping_size;
+> -	bool must_be_locked;
+>   	int result;
+>   
+>   	switch (req_op(rq)) {
+> @@ -4128,21 +4167,10 @@ static void rbd_queue_workfn(struct work_struct *work)
+>   		goto err_rq;
+>   	}
+>   
+> -	must_be_locked =
+> -	    (rbd_dev->header.features & RBD_FEATURE_EXCLUSIVE_LOCK) &&
+> -	    (op_type != OBJ_OP_READ || rbd_dev->opts->lock_on_read);
+> -	if (must_be_locked) {
+> -		down_read(&rbd_dev->lock_rwsem);
+> -		result = rbd_wait_state_locked(rbd_dev,
+> -					       !rbd_dev->opts->exclusive);
+> -		if (result)
+> -			goto err_unlock;
+> -	}
+> -
+>   	img_request = rbd_img_request_create(rbd_dev, op_type, snapc);
+>   	if (!img_request) {
+>   		result = -ENOMEM;
+> -		goto err_unlock;
+> +		goto err_rq;
+>   	}
+>   	img_request->rq = rq;
+>   	snapc = NULL; /* img_request consumes a ref */
+> @@ -4155,19 +4183,11 @@ static void rbd_queue_workfn(struct work_struct *work)
+>   	if (result)
+>   		goto err_img_request;
+>   
+> -	if (must_be_locked) {
+> -		rbd_lock_add_request(img_request);
+> -		up_read(&rbd_dev->lock_rwsem);
+> -	}
+> -
+>   	rbd_img_handle_request(img_request, 0);
+>   	return;
+>   
+>   err_img_request:
+>   	rbd_img_request_put(img_request);
+> -err_unlock:
+> -	if (must_be_locked)
+> -		up_read(&rbd_dev->lock_rwsem);
+>   err_rq:
+>   	if (result)
+>   		rbd_warn(rbd_dev, "%s %llx at %llx result %d",
+> @@ -4835,9 +4855,10 @@ static struct rbd_device *__rbd_dev_create(struct rbd_client *rbdc,
+>   	INIT_DELAYED_WORK(&rbd_dev->lock_dwork, rbd_acquire_lock);
+>   	INIT_WORK(&rbd_dev->unlock_work, rbd_release_lock_work);
+>   	spin_lock_init(&rbd_dev->lock_lists_lock);
+> +	INIT_LIST_HEAD(&rbd_dev->acquiring_list);
+>   	INIT_LIST_HEAD(&rbd_dev->running_list);
+> +	init_completion(&rbd_dev->acquire_wait);
+>   	init_completion(&rbd_dev->releasing_wait);
+> -	init_waitqueue_head(&rbd_dev->lock_waitq);
+>   
+>   	rbd_dev->dev.bus = &rbd_bus_type;
+>   	rbd_dev->dev.type = &rbd_device_type;
+> @@ -5857,24 +5878,45 @@ static void rbd_dev_image_unlock(struct rbd_device *rbd_dev)
+>   	up_write(&rbd_dev->lock_rwsem);
+>   }
+>   
+> +/*
+> + * If the wait is interrupted, an error is returned even if the lock
+> + * was successfully acquired.  rbd_dev_image_unlock() will release it
+> + * if needed.
+> + */
+>   static int rbd_add_acquire_lock(struct rbd_device *rbd_dev)
+>   {
+> -	int ret;
+> +	long ret;
+>   
+>   	if (!(rbd_dev->header.features & RBD_FEATURE_EXCLUSIVE_LOCK)) {
+> +		if (!rbd_dev->opts->exclusive && !rbd_dev->opts->lock_on_read)
+> +			return 0;
+> +
+>   		rbd_warn(rbd_dev, "exclusive-lock feature is not enabled");
+>   		return -EINVAL;
+>   	}
+>   
+> -	/* FIXME: "rbd map --exclusive" should be in interruptible */
+> -	down_read(&rbd_dev->lock_rwsem);
+> -	ret = rbd_wait_state_locked(rbd_dev, true);
+> -	up_read(&rbd_dev->lock_rwsem);
+> +	if (rbd_dev->spec->snap_id != CEPH_NOSNAP)
+> +		return 0;
+> +
+> +	rbd_assert(!rbd_is_lock_owner(rbd_dev));
+> +	queue_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork, 0);
+> +	ret = wait_for_completion_killable_timeout(&rbd_dev->acquire_wait,
+> +			    ceph_timeout_jiffies(rbd_dev->opts->lock_timeout));
+> +	if (ret > 0)
+> +		ret = rbd_dev->acquire_err;
+> +	else if (!ret)
+> +		ret = -ETIMEDOUT;
+> +
+>   	if (ret) {
+> -		rbd_warn(rbd_dev, "failed to acquire exclusive lock");
+> -		return -EROFS;
+> +		rbd_warn(rbd_dev, "failed to acquire exclusive lock: %ld", ret);
+> +		return ret;
+>   	}
+>   
+> +	/*
+> +	 * The lock may have been released by now, unless automatic lock
+> +	 * transitions are disabled.
+> +	 */
+> +	rbd_assert(!rbd_dev->opts->exclusive || rbd_is_lock_owner(rbd_dev));
+>   	return 0;
+>   }
+>   
+> @@ -6319,11 +6361,9 @@ static ssize_t do_rbd_add(struct bus_type *bus,
+>   	if (rc)
+>   		goto err_out_image_probe;
+>   
+> -	if (rbd_dev->opts->exclusive) {
+> -		rc = rbd_add_acquire_lock(rbd_dev);
+> -		if (rc)
+> -			goto err_out_device_setup;
+> -	}
+> +	rc = rbd_add_acquire_lock(rbd_dev);
+> +	if (rc)
+> +		goto err_out_image_lock;
+>   
+>   	/* Everything's ready.  Announce the disk to the world. */
+>   
+> @@ -6349,7 +6389,6 @@ static ssize_t do_rbd_add(struct bus_type *bus,
+>   
+>   err_out_image_lock:
+>   	rbd_dev_image_unlock(rbd_dev);
+> -err_out_device_setup:
+>   	rbd_dev_device_release(rbd_dev);
+>   err_out_image_probe:
+>   	rbd_dev_image_release(rbd_dev);
 
 
