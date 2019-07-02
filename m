@@ -2,92 +2,103 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AD655C692
-	for <lists+ceph-devel@lfdr.de>; Tue,  2 Jul 2019 03:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CE345C6A2
+	for <lists+ceph-devel@lfdr.de>; Tue,  2 Jul 2019 03:33:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfGBB0d (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 1 Jul 2019 21:26:33 -0400
-Received: from mail-qk1-f170.google.com ([209.85.222.170]:35529 "EHLO
-        mail-qk1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbfGBB0d (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 1 Jul 2019 21:26:33 -0400
-Received: by mail-qk1-f170.google.com with SMTP id l128so12677215qke.2
-        for <ceph-devel@vger.kernel.org>; Mon, 01 Jul 2019 18:26:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=EGcqcvyULoziQNIwona+UhvfcWphJFHF2je74a4tzD4=;
-        b=HhJ7az8F60Wn9r6sFA2M3QYLGjEe+zSpZDiX2hM7gQ03NrSoYElfScrUkbnWWDcMbX
-         nJgVXOXs86tIm8vQ4qc03wZDE6HEWx7Eb2G8ME6QqdFxnDFQywkvbiu/sTlK+VLh5b7J
-         OIaq7dbTnnPfSTSS5A7tg9DYs3rjzznWOTyQaIjhcIGU2XZQW3sDEADZyz5gj4tsxZ/3
-         M/e7aVfR8HSfRLV/nQ5jSzuhz30X9Qx/ozSZtUbvCf7zhSKbwZdtfUoj9gf9T8Z/9pG+
-         5iH7qW+xvajc1VmRG1B9jwkpPU3nJJhXz22AY1v/7aQXT8GSc7fXO1k0F+cW4aMzo3Bd
-         qObQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=EGcqcvyULoziQNIwona+UhvfcWphJFHF2je74a4tzD4=;
-        b=UvwotKwP97Vca2gxvC00SjQOQmIFBVx9l9DN/P1ucYeT8MehsQEnoi0Ct1ngQNPpJl
-         nveYuKXPDa47TDDyrw4fBeZDk70B73Zj5tzjK+uG6HymCTvz+LDNUWUZWmWV1WgZV7pW
-         WkMX1yp/jDPuKPhWrgSd8MNdsy7IK0jRQo8IjUEOJawBebxGb1LcCSzH9hl9R2i0uCMv
-         HR4W/1cMOP+VjhSBNT7yzUfGZ1c4Rm48ylsIR5txGk8It8kWGcvmnqT+TgkehGKw+7aq
-         XgLyQ9XNE77iK0GrcJZ2AwYGtBqVCc0wF0bhAtiVADX4tmSs4XLOYkOTmbqVmuouhBNq
-         ZzTA==
-X-Gm-Message-State: APjAAAX8Tai49hUFRuzu9Zsl1vymMgxYa64qZp77sR7FFMGE/Y/1Ryne
-        bOiAy9vEdKKoVv8f9EHlnJbjfkT3O6I/lU4HKxnAEw==
-X-Google-Smtp-Source: APXvYqwgRgWGEsxtqGuNS7h8uicpJH+sD7q6Vc40B3YkIJH5SV7pro3xSgByFcOhF+1oIcg39bb1RUfRUuEEi6M9GZ8=
-X-Received: by 2002:a37:6dc7:: with SMTP id i190mr21499392qkc.489.1562030791834;
- Mon, 01 Jul 2019 18:26:31 -0700 (PDT)
+        id S1727022AbfGBBdB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 1 Jul 2019 21:33:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59722 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726347AbfGBBdB (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 1 Jul 2019 21:33:01 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 411A530833B5
+        for <ceph-devel@vger.kernel.org>; Tue,  2 Jul 2019 01:33:01 +0000 (UTC)
+Received: from zhyan-laptop.redhat.com (ovpn-12-170.pek2.redhat.com [10.72.12.170])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2672D60C43;
+        Tue,  2 Jul 2019 01:32:56 +0000 (UTC)
+From:   "Yan, Zheng" <zyan@redhat.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@redhat.com, jlayton@redhat.com
+Subject: [PATCH] ceph: use ceph_evict_inode to cleanup inode's resource
+Date:   Tue,  2 Jul 2019 09:32:54 +0800
+Message-Id: <20190702013254.21028-1-zyan@redhat.com>
 MIME-Version: 1.0
-References: <CABAwU-btvFQypUTwjgGfS0L2iPdzOBdKFUYSLK_TY-_Sq+96Dw@mail.gmail.com>
- <CAJE9aOOTZbM8GE=_2BckrcLiZ5inG=LSb4Cr0Saw=H0y51fH8A@mail.gmail.com>
-In-Reply-To: <CAJE9aOOTZbM8GE=_2BckrcLiZ5inG=LSb4Cr0Saw=H0y51fH8A@mail.gmail.com>
-From:   huang jun <hjwsm1989@gmail.com>
-Date:   Tue, 2 Jul 2019 09:26:20 +0800
-Message-ID: <CABAwU-bF4pP8bMt=RaoUoUfvJaXiwJAyoea9X5_qVZNNK1udKg@mail.gmail.com>
-Subject: Re: how to do cross compile ceph to aarch64 on x86
-To:     kefu chai <tchaikov@gmail.com>
-Cc:     dev@ceph.io, ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 02 Jul 2019 01:33:01 +0000 (UTC)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Thanks kefu, i will try to get toolchain ready first.
+remove_session_caps() relies on __wait_on_freeing_inode(), to wait for
+freeing inode to remove its caps. But VFS wakes freeing inode waiters
+before calling destroy_inode().
 
-kefu chai <tchaikov@gmail.com> =E4=BA=8E2019=E5=B9=B47=E6=9C=882=E6=97=A5=
-=E5=91=A8=E4=BA=8C =E4=B8=8A=E5=8D=8812:51=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Tue, Jul 2, 2019 at 12:21 AM huang jun <hjwsm1989@gmail.com> wrote:
-> >
-> > Hi, all
-> > I'm bit curious whether ceph support cross compile to aarch64 on x86,
->
-> actually, i don't think ceph is different from other softwares in this
-> perspective. so if you know how to crossbuild software xyz, then the
-> same applies to Ceph.
->
-> > any documents introduce about this?
->
-> IMHO, strictly speaking, this is not in the scope of ceph-devel. but
-> anyway, first of all, you need to ready the toolchain, and then
-> prepare a toolchain.cmake. and then, just use cmake do build Ceph. see
-> https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html#cross-=
-compiling
-> .
->
-> or, you could just use sbuild or some other tools to do this.
->
-> > _______________________________________________
-> > Dev mailing list -- dev@ceph.io
-> > To unsubscribe send an email to dev-leave@ceph.io
->
->
->
-> --
-> Regards
-> Kefu Chai
+Link: https://tracker.ceph.com/issues/40102
+Cc: stable@vger.kernel.org
+Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+---
+ fs/ceph/inode.c | 7 +++++--
+ fs/ceph/super.c | 2 +-
+ fs/ceph/super.h | 2 +-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 2c49eb831c6f..a565ab124282 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -526,13 +526,16 @@ void ceph_free_inode(struct inode *inode)
+ 	kmem_cache_free(ceph_inode_cachep, ci);
+ }
+ 
+-void ceph_destroy_inode(struct inode *inode)
++void ceph_evict_inode(struct inode *inode)
+ {
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_inode_frag *frag;
+ 	struct rb_node *n;
+ 
+-	dout("destroy_inode %p ino %llx.%llx\n", inode, ceph_vinop(inode));
++	dout("evict_inode %p ino %llx.%llx\n", inode, ceph_vinop(inode));
++
++	truncate_inode_pages_final(&inode->i_data);
++	clear_inode(inode);
+ 
+ 	ceph_fscache_unregister_inode_cookie(ci);
+ 
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index c21201a951ce..5f0c950ca966 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -840,10 +840,10 @@ static int ceph_remount(struct super_block *sb, int *flags, char *data)
+ 
+ static const struct super_operations ceph_super_ops = {
+ 	.alloc_inode	= ceph_alloc_inode,
+-	.destroy_inode	= ceph_destroy_inode,
+ 	.free_inode	= ceph_free_inode,
+ 	.write_inode    = ceph_write_inode,
+ 	.drop_inode	= ceph_drop_inode,
++	.evict_inode	= ceph_evict_inode,
+ 	.sync_fs        = ceph_sync_fs,
+ 	.put_super	= ceph_put_super,
+ 	.remount_fs	= ceph_remount,
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index a592d4a8266c..30e9a4e415cc 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -884,7 +884,7 @@ static inline bool __ceph_have_pending_cap_snap(struct ceph_inode_info *ci)
+ extern const struct inode_operations ceph_file_iops;
+ 
+ extern struct inode *ceph_alloc_inode(struct super_block *sb);
+-extern void ceph_destroy_inode(struct inode *inode);
++extern void ceph_evict_inode(struct inode *inode);
+ extern void ceph_free_inode(struct inode *inode);
+ extern int ceph_drop_inode(struct inode *inode);
+ 
+-- 
+2.20.1
+
