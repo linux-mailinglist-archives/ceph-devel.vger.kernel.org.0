@@ -2,122 +2,518 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5CFA5CE3A
-	for <lists+ceph-devel@lfdr.de>; Tue,  2 Jul 2019 13:15:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 341935CEE9
+	for <lists+ceph-devel@lfdr.de>; Tue,  2 Jul 2019 13:55:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726369AbfGBLP1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 2 Jul 2019 07:15:27 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:34909 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfGBLP1 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 2 Jul 2019 07:15:27 -0400
-Received: by mail-yb1-f196.google.com with SMTP id p85so1169778yba.2
-        for <ceph-devel@vger.kernel.org>; Tue, 02 Jul 2019 04:15:27 -0700 (PDT)
+        id S1726418AbfGBLze (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 2 Jul 2019 07:55:34 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43545 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfGBLze (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 2 Jul 2019 07:55:34 -0400
+Received: by mail-ed1-f65.google.com with SMTP id e3so26979697edr.10
+        for <ceph-devel@vger.kernel.org>; Tue, 02 Jul 2019 04:55:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=AU/yxioX5MeEbNLlk6+Fqc2847LOxYHCFHhQ99AFEbs=;
-        b=BgGKkxRI6270y0We/cbbUc3Uf644GSCr0h+VROEDiFuHp0c3cOyB1N0MOCOQcle2OE
-         shsHM6cYXaJ9q0ZbKZSWMWg9rLSjCcfsqZIa+buDu/XHEjHludw/7u5q6OkYsT5PE+ft
-         w8ImljfeJ//0Ar2MIBPX4zvvv4y2Zi+7tN5FmSU+nA5yUAjTSo4u7lNxYoIWBb1IMVty
-         W2eZOYxcZ/W6VU2aB3hpTe5ut/Ir7b9YRFw2e1C1OjCgxeIg8qHf3dVe/ryWHgZS3vvo
-         BJPtiH/1FWbIC+AxVqruZqvKU6MVnLdis5vWrRh0MJ/CFHBO9TRlDdxiAsXIpflCCJ1c
-         vZLQ==
-X-Gm-Message-State: APjAAAXjilXFbuxJq9/lSkNqsXVyORHOVw+Iz8KaY/1orEdG96ibsD3t
-        nqOA1XCJzyl0CbVUwFsBb9C7FOMVGv4=
-X-Google-Smtp-Source: APXvYqy25LctTZaCQRrLKK/UTXT3BZvRiEcbH9HDOHxEqeppzNuwSJ6RzVLDfxyk3znOQl2V6Vkr5A==
-X-Received: by 2002:a25:3d44:: with SMTP id k65mr20315375yba.43.1562066126495;
-        Tue, 02 Jul 2019 04:15:26 -0700 (PDT)
-Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-E37.dyn6.twc.com. [2606:a000:1100:37d::e37])
-        by smtp.gmail.com with ESMTPSA id e20sm3260490ywe.95.2019.07.02.04.15.25
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 02 Jul 2019 04:15:25 -0700 (PDT)
-Message-ID: <ae4debe6088381e32444fd24942686236b9c8442.camel@redhat.com>
-Subject: Re: [PATCH] ceph: use ceph_evict_inode to cleanup inode's resource
-From:   Jeff Layton <jlayton@redhat.com>
-To:     "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org
-Cc:     idryomov@redhat.com
-Date:   Tue, 02 Jul 2019 07:15:23 -0400
-In-Reply-To: <20190702013254.21028-1-zyan@redhat.com>
-References: <20190702013254.21028-1-zyan@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.3 (3.32.3-1.fc30) 
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=xMNjMhyesbihLEvtb1vccMj43+L509ytckx+Qm7ckEQ=;
+        b=jeQTStQRCUFZWCNpPSfmmUhzNhl+vK6SIZe/f8AxpjTaLV0KYeGr042Y5Ki/N0XBrg
+         JopwOeWQvVNKwOdisGVzqq2GZprMKGE5m7Og6SyXsS1hNGB+++KoxoO1tY4bR/esAMOZ
+         SyV0pYnlmIf/5Rua6yOpAOL3vQO547nMSqDiIfFJQlVTA+sl1qUcHbmObBRnhMNaSgXP
+         q45Cib45fIIJWBPvhqpet/gBJNPw5gv+TkpOL01hdliv47gm0rXnvvAMcgXcRdADCAnc
+         TzKvekuUiNbkdq+jYqy7MmMYg8LtzspH3pf1n6LBlz8dgQBY52U4vtkqZWY4qvaNJ0EY
+         60kQ==
+X-Gm-Message-State: APjAAAVsP+ZDAh1d/S1RrR6J5qP07XOTwYk1c78SmCqdBin3oq4rU7uP
+        x8YRtIEQm+oo6W4zEwE0g7ssSfNiJPBmXNcPlL27rA==
+X-Google-Smtp-Source: APXvYqz5rkaTOeDhpqAobwfgXPKWoZU3RnNBJKRAYrqs2sjdHGqE5m3fgFOj+c8qMJLFS1+wnWKpAODdlZq03GXc6Cg=
+X-Received: by 2002:a17:906:4694:: with SMTP id a20mr28547810ejr.67.1562068530737;
+ Tue, 02 Jul 2019 04:55:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20190625144111.11270-1-idryomov@gmail.com> <20190625144111.11270-20-idryomov@gmail.com>
+ <CA+aFP1BYABF13KgHxqnHOptrXBBeNU-ZL5D9=bapc1YwtmNkUw@mail.gmail.com> <5D1AF635.7050705@easystack.cn>
+In-Reply-To: <5D1AF635.7050705@easystack.cn>
+Reply-To: dillaman@redhat.com
+From:   Jason Dillaman <jdillama@redhat.com>
+Date:   Tue, 2 Jul 2019 07:55:19 -0400
+Message-ID: <CA+aFP1C3ms7tK31QDcEH2+emEPvX_JBOjUJKAahALv+UBRA3CQ@mail.gmail.com>
+Subject: Re: [PATCH 19/20] rbd: support for object-map and fast-diff
+To:     Dongsheng Yang <dongsheng.yang@easystack.cn>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2019-07-02 at 09:32 +0800, Yan, Zheng wrote:
-> remove_session_caps() relies on __wait_on_freeing_inode(), to wait for
-> freeing inode to remove its caps. But VFS wakes freeing inode waiters
-> before calling destroy_inode().
-> 
-> Link: https://tracker.ceph.com/issues/40102
-> Cc: stable@vger.kernel.org
-> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-> ---
->  fs/ceph/inode.c | 7 +++++--
->  fs/ceph/super.c | 2 +-
->  fs/ceph/super.h | 2 +-
->  3 files changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 2c49eb831c6f..a565ab124282 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -526,13 +526,16 @@ void ceph_free_inode(struct inode *inode)
->  	kmem_cache_free(ceph_inode_cachep, ci);
->  }
->  
-> -void ceph_destroy_inode(struct inode *inode)
-> +void ceph_evict_inode(struct inode *inode)
->  {
->  	struct ceph_inode_info *ci = ceph_inode(inode);
->  	struct ceph_inode_frag *frag;
->  	struct rb_node *n;
->  
-> -	dout("destroy_inode %p ino %llx.%llx\n", inode, ceph_vinop(inode));
-> +	dout("evict_inode %p ino %llx.%llx\n", inode, ceph_vinop(inode));
-> +
-> +	truncate_inode_pages_final(&inode->i_data);
-> +	clear_inode(inode);
->  
->  	ceph_fscache_unregister_inode_cookie(ci);
->  
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index c21201a951ce..5f0c950ca966 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -840,10 +840,10 @@ static int ceph_remount(struct super_block *sb, int *flags, char *data)
->  
->  static const struct super_operations ceph_super_ops = {
->  	.alloc_inode	= ceph_alloc_inode,
-> -	.destroy_inode	= ceph_destroy_inode,
->  	.free_inode	= ceph_free_inode,
->  	.write_inode    = ceph_write_inode,
->  	.drop_inode	= ceph_drop_inode,
-> +	.evict_inode	= ceph_evict_inode,
->  	.sync_fs        = ceph_sync_fs,
->  	.put_super	= ceph_put_super,
->  	.remount_fs	= ceph_remount,
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index a592d4a8266c..30e9a4e415cc 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -884,7 +884,7 @@ static inline bool __ceph_have_pending_cap_snap(struct ceph_inode_info *ci)
->  extern const struct inode_operations ceph_file_iops;
->  
->  extern struct inode *ceph_alloc_inode(struct super_block *sb);
-> -extern void ceph_destroy_inode(struct inode *inode);
-> +extern void ceph_evict_inode(struct inode *inode);
->  extern void ceph_free_inode(struct inode *inode);
->  extern int ceph_drop_inode(struct inode *inode);
->  
+On Tue, Jul 2, 2019 at 2:16 AM Dongsheng Yang
+<dongsheng.yang@easystack.cn> wrote:
+>
+> Hi Jason,
+>
+> On 07/02/2019 12:09 AM, Jason Dillaman wrote:
+> > On Tue, Jun 25, 2019 at 10:42 AM Ilya Dryomov <idryomov@gmail.com> wrote:
+> >> Speed up reads, discards and zeroouts through RBD_OBJ_FLAG_MAY_EXIST
+> >> and RBD_OBJ_FLAG_NOOP_FOR_NONEXISTENT based on object map.
+> >>
+> >> Invalid object maps are not trusted, but still updated.  Note that we
+> >> never iterate, resize or invalidate object maps.  If object-map feature
+> >> is enabled but object map fails to load, we just fail the requester
+> >> (either "rbd map" or I/O, by way of post-acquire action).
+> ... ...
+> >> +}
+> >> +
+> >> +static int rbd_object_map_open(struct rbd_device *rbd_dev)
+> >> +{
+> >> +       int ret;
+> >> +
+> >> +       ret = rbd_object_map_lock(rbd_dev);
+> > Only lock/unlock if rbd_dev->spec.snap_id == CEPH_NOSNAP?
+>
+> Hmm, IIUC, rbd_object_map_open() is called in post exclusive-lock
+> acquired, when
+> rbd_dev->spec.snap_id != CEPH_NOSNAP, we don't need to acquire
+> exclusive-lock I think.
 
-Looks good.
+Userspace opens the object-map for snapshots (and therefore parent
+images) are well. It doesn't require the exclusive-lock since the
+images should be immutable at the snapshot.
 
-Reviewed-by: Jeff Layton <jlayton@redhat.com>
+> But maybe we can add an assert in this function to make it clear.
+> >
+> >> +       if (ret)
+> >> +               return ret;
+> >> +
+> >> +       ret = rbd_object_map_load(rbd_dev);
+> >> +       if (ret) {
+> >> +               rbd_object_map_unlock(rbd_dev);
+> >> +               return ret;
+> >> +       }
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +
+> >> +static void rbd_object_map_close(struct rbd_device *rbd_dev)
+> >> +{
+> >> +       rbd_object_map_free(rbd_dev);
+> >> +       rbd_object_map_unlock(rbd_dev);
+> >> +}
+> >> +
+> >> +/*
+> >> + * This function needs snap_id (or more precisely just something to
+> >> + * distinguish between HEAD and snapshot object maps), new_state and
+> >> + * current_state that were passed to rbd_object_map_update().
+> >> + *
+> >> + * To avoid allocating and stashing a context we piggyback on the OSD
+> >> + * request.  A HEAD update has two ops (assert_locked).  For new_state
+> >> + * and current_state we decode our own object_map_update op, encoded in
+> >> + * rbd_cls_object_map_update().
+> > Decoding the OSD request seems a little awkward. Since you would only
+> > update the in-memory state for the HEAD revision, could you just stash
+> > these fields in the "rbd_object_request" struct? Then in
+> > "rbd_object_map_update", set the callback to either a
+> > "rbd_object_map_snapshot_callback" callback or
+> > "rbd_object_map_head_callback".
+>
+> Good idea, even we don't need two callback, because the
+> rbd_object_map_update_finish() will not update snapshot:
 
+The deep-flatten feature requires updating object-map snapshots for
+the child image during copy-up. There just isn't an in-memory version
+of the object-map for that case, if that is what you are refering to.
+
+> +    /*
+> +     * Nothing to do for a snapshot object map.
+> +     */
+> +    if (osd_req->r_num_ops == 1)
+> +        return 0;
+> >> + */
+> >> +static int rbd_object_map_update_finish(struct rbd_obj_request *obj_req,
+> >> +                                       struct ceph_osd_request *osd_req)
+> >> +{
+> >> +       struct rbd_device *rbd_dev = obj_req->img_request->rbd_dev;
+> >> +       struct ceph_osd_data *osd_data;
+> >> +       u64 objno;
+> >> +       u8 state, new_state, current_state;
+> >> +       bool has_current_state;
+> >> +       void *p;
+> ... ...
+> >>
+> >> +/*
+> >> + * Return:
+> >> + *   0 - object map update sent
+> >> + *   1 - object map update isn't needed
+> >> + *  <0 - error
+> >> + */
+> >> +static int rbd_obj_write_post_object_map(struct rbd_obj_request *obj_req)
+> >> +{
+> >> +       struct rbd_device *rbd_dev = obj_req->img_request->rbd_dev;
+> >> +       u8 current_state = OBJECT_PENDING;
+> >> +
+> >> +       if (!(rbd_dev->header.features & RBD_FEATURE_OBJECT_MAP))
+> >> +               return 1;
+> >> +
+> >> +       if (!(obj_req->flags & RBD_OBJ_FLAG_DELETION))
+> >> +               return 1;
+> >> +
+> >> +       return rbd_object_map_update(obj_req, CEPH_NOSNAP, OBJECT_NONEXISTENT,
+> >> +                                    &current_state);
+> >> +}
+> >> +
+> >>   static bool rbd_obj_advance_write(struct rbd_obj_request *obj_req, int *result)
+> >>   {
+> >>          struct rbd_device *rbd_dev = obj_req->img_request->rbd_dev;
+> >> @@ -2805,6 +3419,24 @@ static bool rbd_obj_advance_write(struct rbd_obj_request *obj_req, int *result)
+> >>          case RBD_OBJ_WRITE_START:
+> >>                  rbd_assert(!*result);
+> >>
+> >> +               if (rbd_obj_write_is_noop(obj_req))
+> >> +                       return true;
+> > Does this properly handle the case where it has a parent overlap? If
+> > the child object doesn't exist, we would still want to perform the
+> > copyup (if required), correct?
+>
+> Good point. I found the zeroout case is handled, but discard not.
+>
+> zeroout will check  (!obj_req->num_img_extents) before setting NOOP
+> flag. but discard check it after setting.
+> Thanx
+> Yang
+> >
+> >> +               ret = rbd_obj_write_pre_object_map(obj_req);
+> >> +               if (ret < 0) {
+> >> +                       *result = ret;
+> >> +                       return true;
+> >> +               }
+> >> +               obj_req->write_state = RBD_OBJ_WRITE_PRE_OBJECT_MAP;
+> >> +               if (ret > 0)
+> >> +                       goto again;
+> >> +               return false;
+> >> +       case RBD_OBJ_WRITE_PRE_OBJECT_MAP:
+> >> +               if (*result) {
+> >> +                       rbd_warn(rbd_dev, "pre object map update failed: %d",
+> >> +                                *result);
+> >> +                       return true;
+> >> +               }
+> >>                  ret = rbd_obj_write_object(obj_req);
+> >>                  if (ret) {
+> >>                          *result = ret;
+> >> @@ -2837,8 +3469,23 @@ static bool rbd_obj_advance_write(struct rbd_obj_request *obj_req, int *result)
+> >>                          return false;
+> >>                  /* fall through */
+> >>          case RBD_OBJ_WRITE_COPYUP:
+> >> -               if (*result)
+> >> +               if (*result) {
+> >>                          rbd_warn(rbd_dev, "copyup failed: %d", *result);
+> >> +                       return true;
+> >> +               }
+> >> +               ret = rbd_obj_write_post_object_map(obj_req);
+> >> +               if (ret < 0) {
+> >> +                       *result = ret;
+> >> +                       return true;
+> >> +               }
+> >> +               obj_req->write_state = RBD_OBJ_WRITE_POST_OBJECT_MAP;
+> >> +               if (ret > 0)
+> >> +                       goto again;
+> >> +               return false;
+> >> +       case RBD_OBJ_WRITE_POST_OBJECT_MAP:
+> >> +               if (*result)
+> >> +                       rbd_warn(rbd_dev, "post object map update failed: %d",
+> >> +                                *result);
+> >>                  return true;
+> >>          default:
+> >>                  BUG();
+> >> @@ -2892,7 +3539,8 @@ static bool need_exclusive_lock(struct rbd_img_request *img_req)
+> >>                  return false;
+> >>
+> >>          rbd_assert(!test_bit(IMG_REQ_CHILD, &img_req->flags));
+> >> -       if (rbd_dev->opts->lock_on_read)
+> >> +       if (rbd_dev->opts->lock_on_read ||
+> >> +           (rbd_dev->header.features & RBD_FEATURE_OBJECT_MAP))
+> >>                  return true;
+> >>
+> >>          return rbd_img_is_write(img_req);
+> >> @@ -3427,7 +4075,7 @@ static int rbd_try_lock(struct rbd_device *rbd_dev)
+> >>                  if (ret)
+> >>                          goto out; /* request lock or error */
+> >>
+> >> -               rbd_warn(rbd_dev, "%s%llu seems dead, breaking lock",
+> >> +               rbd_warn(rbd_dev, "breaking header lock owned by %s%llu",
+> >>                           ENTITY_NAME(lockers[0].id.name));
+> >>
+> >>                  ret = ceph_monc_blacklist_add(&client->monc,
+> >> @@ -3454,6 +4102,19 @@ static int rbd_try_lock(struct rbd_device *rbd_dev)
+> >>          return ret;
+> >>   }
+> >>
+> >> +static int rbd_post_acquire_action(struct rbd_device *rbd_dev)
+> >> +{
+> >> +       int ret;
+> >> +
+> >> +       if (rbd_dev->header.features & RBD_FEATURE_OBJECT_MAP) {
+> >> +               ret = rbd_object_map_open(rbd_dev);
+> >> +               if (ret)
+> >> +                       return ret;
+> >> +       }
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +
+> >>   /*
+> >>    * Return:
+> >>    *   0 - lock acquired
+> >> @@ -3497,6 +4158,17 @@ static int rbd_try_acquire_lock(struct rbd_device *rbd_dev)
+> >>          rbd_assert(rbd_dev->lock_state == RBD_LOCK_STATE_LOCKED);
+> >>          rbd_assert(list_empty(&rbd_dev->running_list));
+> >>
+> >> +       ret = rbd_post_acquire_action(rbd_dev);
+> >> +       if (ret) {
+> >> +               rbd_warn(rbd_dev, "post-acquire action failed: %d", ret);
+> >> +               /*
+> >> +                * Can't stay in RBD_LOCK_STATE_LOCKED because
+> >> +                * rbd_lock_add_request() would let the request through,
+> >> +                * assuming that e.g. object map is locked and loaded.
+> >> +                */
+> >> +               rbd_unlock(rbd_dev);
+> >> +       }
+> >> +
+> >>   out:
+> >>          wake_requests(rbd_dev, ret);
+> >>          up_write(&rbd_dev->lock_rwsem);
+> >> @@ -3570,10 +4242,17 @@ static bool rbd_quiesce_lock(struct rbd_device *rbd_dev)
+> >>          return true;
+> >>   }
+> >>
+> >> +static void rbd_pre_release_action(struct rbd_device *rbd_dev)
+> >> +{
+> >> +       if (rbd_dev->header.features & RBD_FEATURE_OBJECT_MAP)
+> >> +               rbd_object_map_close(rbd_dev);
+> >> +}
+> >> +
+> >>   static void __rbd_release_lock(struct rbd_device *rbd_dev)
+> >>   {
+> >>          rbd_assert(list_empty(&rbd_dev->running_list));
+> >>
+> >> +       rbd_pre_release_action(rbd_dev);
+> >>          rbd_unlock(rbd_dev);
+> >>   }
+> >>
+> >> @@ -4860,6 +5539,8 @@ static struct rbd_device *__rbd_dev_create(struct rbd_client *rbdc,
+> >>          init_completion(&rbd_dev->acquire_wait);
+> >>          init_completion(&rbd_dev->releasing_wait);
+> >>
+> >> +       spin_lock_init(&rbd_dev->object_map_lock);
+> >> +
+> >>          rbd_dev->dev.bus = &rbd_bus_type;
+> >>          rbd_dev->dev.type = &rbd_device_type;
+> >>          rbd_dev->dev.parent = &rbd_root_dev;
+> >> @@ -5041,6 +5722,32 @@ static int rbd_dev_v2_features(struct rbd_device *rbd_dev)
+> >>                                                  &rbd_dev->header.features);
+> >>   }
+> >>
+> >> +/*
+> >> + * These are generic image flags, but since they are used only for
+> >> + * object map, store them in rbd_dev->object_map_flags.
+> >> + *
+> >> + * For the same reason, this function is called only on object map
+> >> + * (re)load and not on header refresh.
+> >> + */
+> >> +static int rbd_dev_v2_get_flags(struct rbd_device *rbd_dev)
+> >> +{
+> >> +       __le64 snapid = cpu_to_le64(rbd_dev->spec->snap_id);
+> >> +       __le64 flags;
+> >> +       int ret;
+> >> +
+> >> +       ret = rbd_obj_method_sync(rbd_dev, &rbd_dev->header_oid,
+> >> +                                 &rbd_dev->header_oloc, "get_flags",
+> >> +                                 &snapid, sizeof(snapid),
+> >> +                                 &flags, sizeof(flags));
+> >> +       if (ret < 0)
+> >> +               return ret;
+> >> +       if (ret < sizeof(flags))
+> >> +               return -EBADMSG;
+> >> +
+> >> +       rbd_dev->object_map_flags = le64_to_cpu(flags);
+> >> +       return 0;
+> >> +}
+> >> +
+> >>   struct parent_image_info {
+> >>          u64             pool_id;
+> >>          const char      *pool_ns;
+> >> @@ -6014,6 +6721,7 @@ static void rbd_dev_unprobe(struct rbd_device *rbd_dev)
+> >>          struct rbd_image_header *header;
+> >>
+> >>          rbd_dev_parent_put(rbd_dev);
+> >> +       rbd_object_map_free(rbd_dev);
+> >>          rbd_dev_mapping_clear(rbd_dev);
+> >>
+> >>          /* Free dynamic fields from the header, then zero it out */
+> >> @@ -6263,6 +6971,13 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
+> >>          if (ret)
+> >>                  goto err_out_probe;
+> >>
+> >> +       if (rbd_dev->spec->snap_id != CEPH_NOSNAP &&
+> >> +           (rbd_dev->header.features & RBD_FEATURE_OBJECT_MAP)) {
+> >> +               ret = rbd_object_map_load(rbd_dev);
+> >> +               if (ret)
+> >> +                       goto err_out_probe;
+> >> +       }
+> >> +
+> >>          if (rbd_dev->header.features & RBD_FEATURE_LAYERING) {
+> >>                  ret = rbd_dev_v2_parent_info(rbd_dev);
+> >>                  if (ret)
+> >> diff --git a/drivers/block/rbd_types.h b/drivers/block/rbd_types.h
+> >> index 62ff50d3e7a6..ac98ab6ccd3b 100644
+> >> --- a/drivers/block/rbd_types.h
+> >> +++ b/drivers/block/rbd_types.h
+> >> @@ -18,6 +18,7 @@
+> >>   /* For format version 2, rbd image 'foo' consists of objects
+> >>    *   rbd_id.foo                - id of image
+> >>    *   rbd_header.<id>   - image metadata
+> >> + *   rbd_object_map.<id> - optional image object map
+> >>    *   rbd_data.<id>.0000000000000000
+> >>    *   rbd_data.<id>.0000000000000001
+> >>    *   ...               - data
+> >> @@ -25,6 +26,7 @@
+> >>    */
+> >>
+> >>   #define RBD_HEADER_PREFIX      "rbd_header."
+> >> +#define RBD_OBJECT_MAP_PREFIX  "rbd_object_map."
+> >>   #define RBD_ID_PREFIX          "rbd_id."
+> >>   #define RBD_V2_DATA_FORMAT     "%s.%016llx"
+> >>
+> >> @@ -39,6 +41,14 @@ enum rbd_notify_op {
+> >>          RBD_NOTIFY_OP_HEADER_UPDATE      = 3,
+> >>   };
+> >>
+> >> +#define OBJECT_NONEXISTENT     0
+> >> +#define OBJECT_EXISTS          1
+> >> +#define OBJECT_PENDING         2
+> >> +#define OBJECT_EXISTS_CLEAN    3
+> >> +
+> >> +#define RBD_FLAG_OBJECT_MAP_INVALID    (1ULL << 0)
+> >> +#define RBD_FLAG_FAST_DIFF_INVALID     (1ULL << 1)
+> >> +
+> >>   /*
+> >>    * For format version 1, rbd image 'foo' consists of objects
+> >>    *   foo.rbd           - image metadata
+> >> diff --git a/include/linux/ceph/cls_lock_client.h b/include/linux/ceph/cls_lock_client.h
+> >> index bea6c77d2093..17bc7584d1fe 100644
+> >> --- a/include/linux/ceph/cls_lock_client.h
+> >> +++ b/include/linux/ceph/cls_lock_client.h
+> >> @@ -52,4 +52,7 @@ int ceph_cls_lock_info(struct ceph_osd_client *osdc,
+> >>                         char *lock_name, u8 *type, char **tag,
+> >>                         struct ceph_locker **lockers, u32 *num_lockers);
+> >>
+> >> +int ceph_cls_assert_locked(struct ceph_osd_request *req, int which,
+> >> +                          char *lock_name, u8 type, char *cookie, char *tag);
+> >> +
+> >>   #endif
+> >> diff --git a/include/linux/ceph/striper.h b/include/linux/ceph/striper.h
+> >> index cbd0d24b7148..3486636c0e6e 100644
+> >> --- a/include/linux/ceph/striper.h
+> >> +++ b/include/linux/ceph/striper.h
+> >> @@ -66,4 +66,6 @@ int ceph_extent_to_file(struct ceph_file_layout *l,
+> >>                          struct ceph_file_extent **file_extents,
+> >>                          u32 *num_file_extents);
+> >>
+> >> +u64 ceph_get_num_objects(struct ceph_file_layout *l, u64 size);
+> >> +
+> >>   #endif
+> >> diff --git a/net/ceph/cls_lock_client.c b/net/ceph/cls_lock_client.c
+> >> index 56bbfe01e3ac..99cce6f3ec48 100644
+> >> --- a/net/ceph/cls_lock_client.c
+> >> +++ b/net/ceph/cls_lock_client.c
+> >> @@ -6,6 +6,7 @@
+> >>
+> >>   #include <linux/ceph/cls_lock_client.h>
+> >>   #include <linux/ceph/decode.h>
+> >> +#include <linux/ceph/libceph.h>
+> >>
+> >>   /**
+> >>    * ceph_cls_lock - grab rados lock for object
+> >> @@ -375,3 +376,47 @@ int ceph_cls_lock_info(struct ceph_osd_client *osdc,
+> >>          return ret;
+> >>   }
+> >>   EXPORT_SYMBOL(ceph_cls_lock_info);
+> >> +
+> >> +int ceph_cls_assert_locked(struct ceph_osd_request *req, int which,
+> >> +                          char *lock_name, u8 type, char *cookie, char *tag)
+> >> +{
+> >> +       int assert_op_buf_size;
+> >> +       int name_len = strlen(lock_name);
+> >> +       int cookie_len = strlen(cookie);
+> >> +       int tag_len = strlen(tag);
+> >> +       struct page **pages;
+> >> +       void *p, *end;
+> >> +       int ret;
+> >> +
+> >> +       assert_op_buf_size = name_len + sizeof(__le32) +
+> >> +                            cookie_len + sizeof(__le32) +
+> >> +                            tag_len + sizeof(__le32) +
+> >> +                            sizeof(u8) + CEPH_ENCODING_START_BLK_LEN;
+> >> +       if (assert_op_buf_size > PAGE_SIZE)
+> >> +               return -E2BIG;
+> >> +
+> >> +       ret = osd_req_op_cls_init(req, which, "lock", "assert_locked");
+> >> +       if (ret)
+> >> +               return ret;
+> >> +
+> >> +       pages = ceph_alloc_page_vector(1, GFP_NOIO);
+> >> +       if (IS_ERR(pages))
+> >> +               return PTR_ERR(pages);
+> >> +
+> >> +       p = page_address(pages[0]);
+> >> +       end = p + assert_op_buf_size;
+> >> +
+> >> +       /* encode cls_lock_assert_op struct */
+> >> +       ceph_start_encoding(&p, 1, 1,
+> >> +                           assert_op_buf_size - CEPH_ENCODING_START_BLK_LEN);
+> >> +       ceph_encode_string(&p, end, lock_name, name_len);
+> >> +       ceph_encode_8(&p, type);
+> >> +       ceph_encode_string(&p, end, cookie, cookie_len);
+> >> +       ceph_encode_string(&p, end, tag, tag_len);
+> >> +       WARN_ON(p != end);
+> >> +
+> >> +       osd_req_op_cls_request_data_pages(req, which, pages, assert_op_buf_size,
+> >> +                                         0, false, true);
+> >> +       return 0;
+> >> +}
+> >> +EXPORT_SYMBOL(ceph_cls_assert_locked);
+> >> diff --git a/net/ceph/striper.c b/net/ceph/striper.c
+> >> index c36462dc86b7..3b3fa75d1189 100644
+> >> --- a/net/ceph/striper.c
+> >> +++ b/net/ceph/striper.c
+> >> @@ -259,3 +259,20 @@ int ceph_extent_to_file(struct ceph_file_layout *l,
+> >>          return 0;
+> >>   }
+> >>   EXPORT_SYMBOL(ceph_extent_to_file);
+> >> +
+> >> +u64 ceph_get_num_objects(struct ceph_file_layout *l, u64 size)
+> >> +{
+> >> +       u64 period = (u64)l->stripe_count * l->object_size;
+> >> +       u64 num_periods = DIV64_U64_ROUND_UP(size, period);
+> >> +       u64 remainder_bytes;
+> >> +       u64 remainder_objs = 0;
+> >> +
+> >> +       div64_u64_rem(size, period, &remainder_bytes);
+> >> +       if (remainder_bytes > 0 &&
+> >> +           remainder_bytes < (u64)l->stripe_count * l->stripe_unit)
+> >> +               remainder_objs = l->stripe_count -
+> >> +                           DIV_ROUND_UP_ULL(remainder_bytes, l->stripe_unit);
+> >> +
+> >> +       return num_periods * l->stripe_count - remainder_objs;
+> >> +}
+> >> +EXPORT_SYMBOL(ceph_get_num_objects);
+> >> --
+> >> 2.19.2
+> >>
+> > Nit: might have been nice to break this one commit into several smaller commits.
+> >
+>
+>
+
+
+-- 
+Jason
