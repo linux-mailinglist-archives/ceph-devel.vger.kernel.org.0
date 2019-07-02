@@ -2,121 +2,122 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD7185CDE6
-	for <lists+ceph-devel@lfdr.de>; Tue,  2 Jul 2019 12:51:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5CFA5CE3A
+	for <lists+ceph-devel@lfdr.de>; Tue,  2 Jul 2019 13:15:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbfGBKvv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 2 Jul 2019 06:51:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41230 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725767AbfGBKvv (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 2 Jul 2019 06:51:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7E73DB130;
-        Tue,  2 Jul 2019 10:51:49 +0000 (UTC)
-From:   Sebastian Wagner <sebastian.wagner@suse.com>
-Subject: New central place to put common Python code?
-Openpgp: preference=signencrypt
-Autocrypt: addr=swagner@suse.com; prefer-encrypt=mutual; keydata=
- mQENBFgkpqgBCACl4ZHmEEhiZiofnuiVR3wc4ZH3ty2Y7Fgv/ttDAtyQSM3l5MrwFVEkTUKW
- zZOaLPsVl8FwBoy1ciK3cS6nOKwgYogStBBqX8mvnlb915kvhtQ84bSPQ9W5206tKfQDKmZ8
- jWjgEKCwFxH3O2teG2Jc8HFVjNWeUEdF1s9OrL6s6RQmiDf7gkzZL5ew5vS0G1yIWzJBpQzS
- GJEcjm1TmnZWN1jgkKOENBzbDQcBg/IDiLDnbSpAL4LG7RAaavMMdSyVXMOGpmbgV9vNkpTw
- 0qpVttsU2t919B02bLTEbYBb3Amsfy8S+ahzQgjg2xiT94xyC7ukLQI4nKEseolN9uERABEB
- AAG0I1NlYmFzdGlhbiBXYWduZXIgPHN3YWduZXJAc3VzZS5jb20+iQE7BBMBAgAlAhsDBgsJ
- CAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCWCWwgwIZAQAKCRCNJEKAfml5+CdFB/wPI/8K94em
- Zi7GvN6FwCy0Ts+CKSYJcJoX7m0Jp6i3PaTgZMjhmH+KGH/mwXAUPE1NB/Pe/iIwrhRR9tnP
- iJgFcOh4Qe64dsk1DwftVOIk+xEBPYPb6S0FDVLdRkdJUT+2/R+yQirEQACcakHHZvbGru3e
- kF+P8OPQxX6llR3kK6MUa3RX2ZlrwiLNsw4LABKSInl0wsVlzH10LaQxujaqs/NFELR7kkZx
- wd2L3uVAmNxu2XAD6h3oEabQCN6Ol9MDPwX+QZNJ6ZTT5Qofba7Vm1zA5Tmj6mMxMK4M62qu
- 5ekGxgWDRmf5Sx6PPphJ1JZY/N/TqchUlpeNIxyHGGMRuQENBFgkpqgBCAC8AHCom5ZNqJhB
- Jsftllb+TTVAtGMt/2R5c+5BfRrrd8rsN7st5hG2RECaokswFHrBWsJvxTex1V+v+ctej4SQ
- 64TII9Z2ffySTzdqGFWssOUrHoJvk+4BRuJ48f+bSRETGlXILqIiAISRAfeYOJIGCbsRmijx
- fMjRPzMel2TobmCBW3YsSNVLo/3cMzF7sYHDK9IiAeb9fWrG/p5brtItlfJUmsw+1aZ42TaR
- 94mcjKK0U2tTtj1fGkjhb0bRNTiXMQEWIx0xAyCaR61mGpqMhRE8FJ7eY19mAl9G5zTs604I
- ToEcJ6Bd518hJ0HXFJrqKJ/TUKL/dKR4iMViFUORABEBAAGJAR8EGAECAAkFAlgkpqgCGwwA
- CgkQjSRCgH5pefiqQwf/U+POJe0SgWBzX6+69CuRUwE68Uu0qGrNWOfWphaKPksBDx46IhhA
- UlmBJbEoo9h6E7utwwgDNf92O2Lv6yClR+2D2BA9mHLm0DBsmH04bahHGsicU1qK0rBgujqc
- GNrrgYPx3z66C7MB/o6/smS26baOChtrs5XeX3r4zE5+1yZCPb9AR8pwitNF+N81FIXE0DXp
- XhxSviD3KT4QH6Oo6f1PJ3kYnHHX9FmS/3f6hDU2o/kBwOfaP2C0ZWIcbh8VH0ENWdGl6/OK
- QJO68y6QM2NCeCAvfyISE4GERtb7/oRlvtBwWfq7OBsqLXkrKobW4sdx8Scbwb728fF14Oyn 2A==
-To:     "dev@ceph.io" <dev@ceph.io>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
-Message-ID: <8a024ee8-a50a-069b-ead8-315531a1bc20@suse.com>
-Date:   Tue, 2 Jul 2019 12:51:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1726369AbfGBLP1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 2 Jul 2019 07:15:27 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:34909 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfGBLP1 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 2 Jul 2019 07:15:27 -0400
+Received: by mail-yb1-f196.google.com with SMTP id p85so1169778yba.2
+        for <ceph-devel@vger.kernel.org>; Tue, 02 Jul 2019 04:15:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=AU/yxioX5MeEbNLlk6+Fqc2847LOxYHCFHhQ99AFEbs=;
+        b=BgGKkxRI6270y0We/cbbUc3Uf644GSCr0h+VROEDiFuHp0c3cOyB1N0MOCOQcle2OE
+         shsHM6cYXaJ9q0ZbKZSWMWg9rLSjCcfsqZIa+buDu/XHEjHludw/7u5q6OkYsT5PE+ft
+         w8ImljfeJ//0Ar2MIBPX4zvvv4y2Zi+7tN5FmSU+nA5yUAjTSo4u7lNxYoIWBb1IMVty
+         W2eZOYxcZ/W6VU2aB3hpTe5ut/Ir7b9YRFw2e1C1OjCgxeIg8qHf3dVe/ryWHgZS3vvo
+         BJPtiH/1FWbIC+AxVqruZqvKU6MVnLdis5vWrRh0MJ/CFHBO9TRlDdxiAsXIpflCCJ1c
+         vZLQ==
+X-Gm-Message-State: APjAAAXjilXFbuxJq9/lSkNqsXVyORHOVw+Iz8KaY/1orEdG96ibsD3t
+        nqOA1XCJzyl0CbVUwFsBb9C7FOMVGv4=
+X-Google-Smtp-Source: APXvYqy25LctTZaCQRrLKK/UTXT3BZvRiEcbH9HDOHxEqeppzNuwSJ6RzVLDfxyk3znOQl2V6Vkr5A==
+X-Received: by 2002:a25:3d44:: with SMTP id k65mr20315375yba.43.1562066126495;
+        Tue, 02 Jul 2019 04:15:26 -0700 (PDT)
+Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-E37.dyn6.twc.com. [2606:a000:1100:37d::e37])
+        by smtp.gmail.com with ESMTPSA id e20sm3260490ywe.95.2019.07.02.04.15.25
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 02 Jul 2019 04:15:25 -0700 (PDT)
+Message-ID: <ae4debe6088381e32444fd24942686236b9c8442.camel@redhat.com>
+Subject: Re: [PATCH] ceph: use ceph_evict_inode to cleanup inode's resource
+From:   Jeff Layton <jlayton@redhat.com>
+To:     "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org
+Cc:     idryomov@redhat.com
+Date:   Tue, 02 Jul 2019 07:15:23 -0400
+In-Reply-To: <20190702013254.21028-1-zyan@redhat.com>
+References: <20190702013254.21028-1-zyan@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.3 (3.32.3-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-All,
-
-especially in the Ceph Orchestrator world, we're facing an issue where
-we don't have a place for for Python code that can be imported by the
-MGR and by tools that deploy Ceph.
-
-Having a Library for common Python code would also provide a way to ease
-some other Python related problems (also orchestrator independent):
-
-1. There is duplicated code in the cython bindings. Especially the
-Exceptions are duplicated for each binding.
-
-2. There is no good way to share Python code between different tools
-written in Pyhton
-
-3. There is no way to share common code, like e.g. common data
-structures between the different layers of the Orchestrator stacks.
-
-4. There is no statically type-checkable Python API for the (mon)
-command API.
-
-5. The local Ceph version number is hard coded into the ceph cli binary
-
-Now, the idea is to build a new Python package that is supposed to be
-importable by everyone.
-
-From a user's POV, this would look something like
-
+On Tue, 2019-07-02 at 09:32 +0800, Yan, Zheng wrote:
+> remove_session_caps() relies on __wait_on_freeing_inode(), to wait for
+> freeing inode to remove its caps. But VFS wakes freeing inode waiters
+> before calling destroy_inode().
 > 
-> from ceph.mon_command_api import MonCommandApi
-> from ceph.deployment_utils import DriveGroupSpec
-> from ceph.exceptions import Error
+> Link: https://tracker.ceph.com/issues/40102
+> Cc: stable@vger.kernel.org
+> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+> ---
+>  fs/ceph/inode.c | 7 +++++--
+>  fs/ceph/super.c | 2 +-
+>  fs/ceph/super.h | 2 +-
+>  3 files changed, 7 insertions(+), 4 deletions(-)
 > 
-> MonCommandApi(...).osd_pool_create(pool='my_pool', ...)
-> 
-> try:
->     ...
-> except OSError:
->     ...
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 2c49eb831c6f..a565ab124282 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -526,13 +526,16 @@ void ceph_free_inode(struct inode *inode)
+>  	kmem_cache_free(ceph_inode_cachep, ci);
+>  }
+>  
+> -void ceph_destroy_inode(struct inode *inode)
+> +void ceph_evict_inode(struct inode *inode)
+>  {
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
+>  	struct ceph_inode_frag *frag;
+>  	struct rb_node *n;
+>  
+> -	dout("destroy_inode %p ino %llx.%llx\n", inode, ceph_vinop(inode));
+> +	dout("evict_inode %p ino %llx.%llx\n", inode, ceph_vinop(inode));
+> +
+> +	truncate_inode_pages_final(&inode->i_data);
+> +	clear_inode(inode);
+>  
+>  	ceph_fscache_unregister_inode_cookie(ci);
+>  
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index c21201a951ce..5f0c950ca966 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -840,10 +840,10 @@ static int ceph_remount(struct super_block *sb, int *flags, char *data)
+>  
+>  static const struct super_operations ceph_super_ops = {
+>  	.alloc_inode	= ceph_alloc_inode,
+> -	.destroy_inode	= ceph_destroy_inode,
+>  	.free_inode	= ceph_free_inode,
+>  	.write_inode    = ceph_write_inode,
+>  	.drop_inode	= ceph_drop_inode,
+> +	.evict_inode	= ceph_evict_inode,
+>  	.sync_fs        = ceph_sync_fs,
+>  	.put_super	= ceph_put_super,
+>  	.remount_fs	= ceph_remount,
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index a592d4a8266c..30e9a4e415cc 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -884,7 +884,7 @@ static inline bool __ceph_have_pending_cap_snap(struct ceph_inode_info *ci)
+>  extern const struct inode_operations ceph_file_iops;
+>  
+>  extern struct inode *ceph_alloc_inode(struct super_block *sb);
+> -extern void ceph_destroy_inode(struct inode *inode);
+> +extern void ceph_evict_inode(struct inode *inode);
+>  extern void ceph_free_inode(struct inode *inode);
+>  extern int ceph_drop_inode(struct inode *inode);
+>  
 
-What would be the scope of this library? Basically everything where
-there is a real benefit for having it included, like sharing common code
-between things. From the orchestrator, this could include common
-deployment recipes. Or recipes used by the SSH orchestrator.
+Looks good.
 
-Some open questions are:
+Reviewed-by: Jeff Layton <jlayton@redhat.com>
 
-What about code that right now lives in the dashboard, like
-pybind/mgr/dashboard.controllers.rbd.Rbd#_rbd_disk_usage
-for calculating the RBD disk usage?
-
-Where does it live in the ceph git? /src/python-common/ ?
-
-How can we package it?
-
-Python 2?
-
-Thanks,
-Sebastian
-
--- 
--- 
-SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
-GF: Felix Imendörffer, Mary Higgins, Sri Rasiah, HRB 21284 (AG Nürnberg)
