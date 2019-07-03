@@ -2,47 +2,119 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A6515E744
-	for <lists+ceph-devel@lfdr.de>; Wed,  3 Jul 2019 16:59:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4E585E845
+	for <lists+ceph-devel@lfdr.de>; Wed,  3 Jul 2019 17:59:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfGCO7s (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 3 Jul 2019 10:59:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44688 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725847AbfGCO7s (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 3 Jul 2019 10:59:48 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 92E3CC01F28C;
-        Wed,  3 Jul 2019 14:59:48 +0000 (UTC)
-Received: from ovpn-112-39.rdu2.redhat.com (ovpn-112-39.rdu2.redhat.com [10.10.112.39])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 295B17C5CA;
-        Wed,  3 Jul 2019 14:59:48 +0000 (UTC)
-Date:   Wed, 3 Jul 2019 14:59:47 +0000 (UTC)
-From:   Sage Weil <sweil@redhat.com>
-X-X-Sender: sage@piezo.novalocal
+        id S1726928AbfGCP71 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 3 Jul 2019 11:59:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38968 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726473AbfGCP70 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 3 Jul 2019 11:59:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D2B5BAEF5
+        for <ceph-devel@vger.kernel.org>; Wed,  3 Jul 2019 15:59:25 +0000 (UTC)
+From:   David Disseldorp <ddiss@suse.de>
 To:     ceph-devel@vger.kernel.org
-cc:     dev@ceph.io
-Subject: Completing migration to dev@ceph.io
-Message-ID: <alpine.DEB.2.11.1907031457420.2617@piezo.novalocal>
-User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 03 Jul 2019 14:59:48 +0000 (UTC)
+Cc:     David Disseldorp <ddiss@suse.de>
+Subject: [PATCH] libceph: handle OSD op ceph_pagelist_append() errors
+Date:   Wed,  3 Jul 2019 17:59:20 +0200
+Message-Id: <20190703155920.2809-1-ddiss@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-We created dev@ceph.io several weeks back.  There has been plenty of 
-time now for everyone to get subscribed, so please now direct all dev 
-discussion for Ceph proper to dev@ceph.io and use this list for 
-ceph kernel client development only.  Avoid copying both lists unless the 
-discussion is relevant both for userspace and the kernel.
+osd_req_op_cls_init() and osd_req_op_xattr_init() currently propagate
+ceph_pagelist_alloc() ENOMEM errors but ignore ceph_pagelist_append()
+memory allocation failures. Add these checks and cleanup on error.
 
-https://lists.ceph.io/postorius/lists/dev.ceph.io/
+Signed-off-by: David Disseldorp <ddiss@suse.de>
+---
+ net/ceph/osd_client.c | 26 ++++++++++++++++++++++----
+ 1 file changed, 22 insertions(+), 4 deletions(-)
 
-Thanks!
-sage
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index 9a8eca5eda65..83a7382bbe86 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -849,6 +849,7 @@ int osd_req_op_cls_init(struct ceph_osd_request *osd_req, unsigned int which,
+ 	struct ceph_pagelist *pagelist;
+ 	size_t payload_len = 0;
+ 	size_t size;
++	int ret;
+ 
+ 	op = _osd_req_op_init(osd_req, which, CEPH_OSD_OP_CALL, 0);
+ 
+@@ -860,20 +861,28 @@ int osd_req_op_cls_init(struct ceph_osd_request *osd_req, unsigned int which,
+ 	size = strlen(class);
+ 	BUG_ON(size > (size_t) U8_MAX);
+ 	op->cls.class_len = size;
+-	ceph_pagelist_append(pagelist, class, size);
++	ret = ceph_pagelist_append(pagelist, class, size);
++	if (ret)
++		goto err_pagelist_free;
+ 	payload_len += size;
+ 
+ 	op->cls.method_name = method;
+ 	size = strlen(method);
+ 	BUG_ON(size > (size_t) U8_MAX);
+ 	op->cls.method_len = size;
+-	ceph_pagelist_append(pagelist, method, size);
++	ret = ceph_pagelist_append(pagelist, method, size);
++	if (ret)
++		goto err_pagelist_free;
+ 	payload_len += size;
+ 
+ 	osd_req_op_cls_request_info_pagelist(osd_req, which, pagelist);
+ 
+ 	op->indata_len = payload_len;
+ 	return 0;
++
++err_pagelist_free:
++	ceph_pagelist_release(pagelist);
++	return ret;
+ }
+ EXPORT_SYMBOL(osd_req_op_cls_init);
+ 
+@@ -885,6 +894,7 @@ int osd_req_op_xattr_init(struct ceph_osd_request *osd_req, unsigned int which,
+ 						      opcode, 0);
+ 	struct ceph_pagelist *pagelist;
+ 	size_t payload_len;
++	int ret;
+ 
+ 	BUG_ON(opcode != CEPH_OSD_OP_SETXATTR && opcode != CEPH_OSD_OP_CMPXATTR);
+ 
+@@ -894,10 +904,14 @@ int osd_req_op_xattr_init(struct ceph_osd_request *osd_req, unsigned int which,
+ 
+ 	payload_len = strlen(name);
+ 	op->xattr.name_len = payload_len;
+-	ceph_pagelist_append(pagelist, name, payload_len);
++	ret = ceph_pagelist_append(pagelist, name, payload_len);
++	if (ret)
++		goto err_pagelist_free;
+ 
+ 	op->xattr.value_len = size;
+-	ceph_pagelist_append(pagelist, value, size);
++	ret = ceph_pagelist_append(pagelist, value, size);
++	if (ret)
++		goto err_pagelist_free;
+ 	payload_len += size;
+ 
+ 	op->xattr.cmp_op = cmp_op;
+@@ -906,6 +920,10 @@ int osd_req_op_xattr_init(struct ceph_osd_request *osd_req, unsigned int which,
+ 	ceph_osd_data_pagelist_init(&op->xattr.osd_data, pagelist);
+ 	op->indata_len = payload_len;
+ 	return 0;
++
++err_pagelist_free:
++	ceph_pagelist_release(pagelist);
++	return ret;
+ }
+ EXPORT_SYMBOL(osd_req_op_xattr_init);
+ 
+-- 
+2.16.4
+
