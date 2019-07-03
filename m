@@ -2,147 +2,221 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50B6C5DF4F
-	for <lists+ceph-devel@lfdr.de>; Wed,  3 Jul 2019 10:09:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19E715DFAA
+	for <lists+ceph-devel@lfdr.de>; Wed,  3 Jul 2019 10:21:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbfGCIJn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 3 Jul 2019 04:09:43 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:38675 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbfGCIJn (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 3 Jul 2019 04:09:43 -0400
-Received: by mail-io1-f66.google.com with SMTP id j6so2681312ioa.5
-        for <ceph-devel@vger.kernel.org>; Wed, 03 Jul 2019 01:09:42 -0700 (PDT)
+        id S1727244AbfGCIVW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 3 Jul 2019 04:21:22 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37946 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727052AbfGCIVW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 3 Jul 2019 04:21:22 -0400
+Received: by mail-io1-f68.google.com with SMTP id j6so2749273ioa.5
+        for <ceph-devel@vger.kernel.org>; Wed, 03 Jul 2019 01:21:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0pPl85eXtBTjLjXsh9wjwr+XE4H3UNzPLQzB9yqvlcI=;
-        b=Dv4vDRYMqQtaMMgEmSbdtQtz++0y2LY8Fg4akFr68xJeViOlW6cte0IiZa5NhXkuyS
-         w/sR8brDifS0ARpmrOKBeP0YaS9khXeTs6J2Ufd32tNaAXC7o1b7Lo57muwQjS/aAcJp
-         1m5K54Hn+vmilAU6VznRu1Cm+oRe9hmyFcf8/m9xG1Eohg2YRIH4dmsZKn5qd9uVaF1C
-         GN2SxY/Svvcy757sun+LgQmxPTtqUwpbooZlqPaZw4gIRsfKiItTrJKXXjeM2G5Qlito
-         RVV438l710ToTw3ul6OaNT73L5cN9vZo86ze5Yq1xco/hafDizNzMgQOLwXKiOYuwVq5
-         +cvg==
+        bh=Aj79oismbLC7yQIx40SyqSj8fHF86lFo1uCcUj+Lmfg=;
+        b=Ixf4XYa11FnOFtssfIb02sPMk7XXnsCpBr+k8SBV1Tw2wgy1r/3ToZ+Je0fcJdnRDi
+         V2oddwxSyL+GAXOOP8PuMpwKZiuXhLggrW7gJeS14DfuJzdq8BN1DO2EqtRrh7nWc4NF
+         ynfBBhKSUyHUMY7RZVAjWdvV1ncujgC77V7eYYY/3ojSN+xM7TlVeFMR5X2Hn0lOZC+Y
+         lS+uklkQY7zUKw3p+Sczl1jqDzZ7mGREMVP0duJ8QRONSFQYJuwLP+qDOK2JAXFKfSuz
+         7GASo9ZUn3wxCTOmbdWxHxHG0cwY9O6tbeJBXmLeK8vAUhFrgFcG6LhCFPoMyaSdyY10
+         qKJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0pPl85eXtBTjLjXsh9wjwr+XE4H3UNzPLQzB9yqvlcI=;
-        b=I5WOfC41ZlJHFYLXEVvXmVLhEYZq0mpC3TucjPwfgjtX8oij1PJeZjR/C3+8iSXkuk
-         Sji75nO2/iPBBDIEgei4mTp1d+MIwwFJmn2IXl9TVglMV1cABRAOTteRIqWSb86/5Cyi
-         PmPNYvpEVHH9EQQNKsEn0bfCsPdwdgq+cIO/BXlp+7VGtKznQccACtjJ63L2pUuKPfnX
-         6SWMwL0ApqfcBz2TqPYvHsPXiDZ4XJfhk6A4oxZDg8bgUqmKGyurrD7lKOy1/nqMaUn4
-         RHCxbHqYfcIwSnenfmzl/k5ol/nciRR+BQmq+3cjMUkv1kgsFSf4zXTyp4T8L+B8RBaU
-         xIBQ==
-X-Gm-Message-State: APjAAAUMq9B30GF7JrL5ipMsyPiBaW0ckNlklzuV4Ls+IvGQN8mmcHj6
-        mRZgt3ZmrbofjqV7wg/TGgUSDEcenPTx+r0x0JRXUQ3p
-X-Google-Smtp-Source: APXvYqx/qewyYkZMV4OiUhB88YltOzuUr0QQrDOZYLwCFa7OCCMmm8ypYVjZKP1KFW4doRBKUynakM3WD9Hjgz66Sks=
-X-Received: by 2002:a05:6638:149:: with SMTP id y9mr41177359jao.76.1562141382469;
- Wed, 03 Jul 2019 01:09:42 -0700 (PDT)
+        bh=Aj79oismbLC7yQIx40SyqSj8fHF86lFo1uCcUj+Lmfg=;
+        b=f5eIZ+Z1OZJoAMycft8iPIQ6jetevs9OZS1i2NNxsfcy7noeu7GPlQbDjdLwj5Fc0K
+         WQd328Dv6D3RHF4UUa/0kTtUG7CY55Crh97QZ3bOPwMsrNAVx+7sBnABV7vYH0zMQ4cb
+         Itww99yuxem+TWweQi8ZXcVL3KBn+XzoL06P3a9JT45Sgy3ErYNbz43+HT74OT6CAbDa
+         +JzSS4Z7n+kYUYLRZ7kSH+ZvrHFBqjY8x9SxVme3f/UMvhCpIOEG3Rj0JGek98zeUsbq
+         7gWBCKmIKIzZAAaRkDqBk3LuJdttLWcif+5H4ScUQ6IUvbA8LvOQO/Vzf2/MWaHAtUYB
+         QBQA==
+X-Gm-Message-State: APjAAAUd6d3PBMwGMuWvj1lc2N4mdFmlURKkOXL3CmAlSn+FmQ7anZ9d
+        HTo0WA1LMhm6O7+P8Pricl4zsKu+IdX6X7+oKGpbwws+
+X-Google-Smtp-Source: APXvYqwyoCUlAN3HdwxW3VN2557HIBIUYlM8oNHkWAslNO6oh1sYFeLu2223f7TWByzVIhlRhP3don8aG1Hh30LQT7E=
+X-Received: by 2002:a5d:9550:: with SMTP id a16mr16680142ios.106.1562142082058;
+ Wed, 03 Jul 2019 01:21:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190625144111.11270-1-idryomov@gmail.com> <db51e9b9-1eed-2257-6201-2a43c3cdaf98@petasan.org>
-In-Reply-To: <db51e9b9-1eed-2257-6201-2a43c3cdaf98@petasan.org>
+References: <20190625144111.11270-1-idryomov@gmail.com> <20190625144111.11270-3-idryomov@gmail.com>
+ <5D1999EA.30102@easystack.cn>
+In-Reply-To: <5D1999EA.30102@easystack.cn>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 3 Jul 2019 10:12:22 +0200
-Message-ID: <CAOi1vP-=ThJW1NgVFOXeWT4WbM2mKzHprYkZQjz3bgLT2NMdUw@mail.gmail.com>
-Subject: Re: [PATCH 00/20] rbd: support for object-map and fast-diff
-To:     Maged Mokhtar <mmokhtar@petasan.org>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>
+Date:   Wed, 3 Jul 2019 10:24:02 +0200
+Message-ID: <CAOi1vP_TaRcQv1Xo=nr_NMih+e3yBPhdkCTV0HzdJiMxHPrn5Q@mail.gmail.com>
+Subject: Re: [PATCH 02/20] rbd: replace obj_req->tried_parent with obj_req->read_state
+To:     Dongsheng Yang <dongsheng.yang@easystack.cn>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, Jun 30, 2019 at 3:55 PM Maged Mokhtar <mmokhtar@petasan.org> wrote:
+On Mon, Jul 1, 2019 at 7:28 AM Dongsheng Yang
+<dongsheng.yang@easystack.cn> wrote:
 >
 >
 >
-> Hi Ilya,
->
-> Nice work. Some comments/questions:
->
-> 1) Generally having a state machine makes things easier to track as the
-> code is less dispersed than before.
->
-> 2) The running_list is used to keep track of inflight requests in case
-> of exclusive lock to support rbd_quiesce_lock() when releasing the lock.
-> It would be great to generalize this list to keep track of all inflight
-> requests even in the case when lock is not required, it could be used to
-> support a generic flush (similar to librbd work queue flush/drain).
-> Having a generic inflight requests list will also make it easier to
-> support other functions such as task aborts, request timeouts, flushing
-> on pre-snapshots.
+> On 06/25/2019 10:40 PM, Ilya Dryomov wrote:
+> > Make rbd_obj_handle_read() look like a state machine and get rid of
+> > the necessity to patch result in rbd_obj_handle_request(), completing
+> > the removal of obj_req->xferred and img_req->xferred.
+> >
+> > Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+> > ---
+> >   drivers/block/rbd.c | 82 +++++++++++++++++++++++++--------------------
+> >   1 file changed, 46 insertions(+), 36 deletions(-)
+> >
+> > diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> > index a9b0b23148f9..7925b2fdde79 100644
+> > --- a/drivers/block/rbd.c
+> > +++ b/drivers/block/rbd.c
+> > @@ -219,6 +219,11 @@ enum obj_operation_type {
+> >       OBJ_OP_ZEROOUT,
+> >   };
+> >
+> > +enum rbd_obj_read_state {
+> > +     RBD_OBJ_READ_OBJECT = 1,
+> > +     RBD_OBJ_READ_PARENT,
+> > +};
+> > +
+> >   /*
+> >    * Writes go through the following state machine to deal with
+> >    * layering:
+> > @@ -255,7 +260,7 @@ enum rbd_obj_write_state {
+> >   struct rbd_obj_request {
+> >       struct ceph_object_extent ex;
+> >       union {
+> > -             bool                    tried_parent;   /* for reads */
+> > +             enum rbd_obj_read_state  read_state;    /* for reads */
+> >               enum rbd_obj_write_state write_state;   /* for writes */
+> >       };
+> >
+> > @@ -1794,6 +1799,7 @@ static int rbd_obj_setup_read(struct rbd_obj_request *obj_req)
+> >       rbd_osd_req_setup_data(obj_req, 0);
+> >
+> >       rbd_osd_req_format_read(obj_req);
+> > +     obj_req->read_state = RBD_OBJ_READ_OBJECT;
+> >       return 0;
+> >   }
+> >
+> > @@ -2402,44 +2408,48 @@ static bool rbd_obj_handle_read(struct rbd_obj_request *obj_req, int *result)
+> >       struct rbd_device *rbd_dev = obj_req->img_request->rbd_dev;
+> >       int ret;
+> >
+> > -     if (*result == -ENOENT &&
+> > -         rbd_dev->parent_overlap && !obj_req->tried_parent) {
+> > -             /* reverse map this object extent onto the parent */
+> > -             ret = rbd_obj_calc_img_extents(obj_req, false);
+> > -             if (ret) {
+> > -                     *result = ret;
+> > -                     return true;
+> > -             }
+> > -
+> > -             if (obj_req->num_img_extents) {
+> > -                     obj_req->tried_parent = true;
+> > -                     ret = rbd_obj_read_from_parent(obj_req);
+> > +     switch (obj_req->read_state) {
+> > +     case RBD_OBJ_READ_OBJECT:
+> > +             if (*result == -ENOENT && rbd_dev->parent_overlap) {
+> > +                     /* reverse map this object extent onto the parent */
+> > +                     ret = rbd_obj_calc_img_extents(obj_req, false);
+> >                       if (ret) {
+> >                               *result = ret;
+> >                               return true;
+> >                       }
+> > -                     return false;
+> > +                     if (obj_req->num_img_extents) {
+> > +                             ret = rbd_obj_read_from_parent(obj_req);
+> > +                             if (ret) {
+> > +                                     *result = ret;
+> > +                                     return true;
+> > +                             }
+> > +                             obj_req->read_state = RBD_OBJ_READ_PARENT;
+> Seems there is a race window between the read request complete but the
+> read_state is still RBD_OBJ_READ_OBJECT.
 
-Hi Maged,
+Yes, this is resolved with the addition of obj_req->state_mutex later
+in the series.
 
-We could extend it in the future, but right now it is there just for
-exclusive lock.  Likely, we would need a different list for tracking
-all in-flight requests because if we start adding random requests
-(e.g. those that don't require exclusive lock), deadlocks will occur.
+> > +                             return false;
+> > +                     }
+> >               }
+> > -     }
+> >
+> > -     /*
+> > -      * -ENOENT means a hole in the image -- zero-fill the entire
+> > -      * length of the request.  A short read also implies zero-fill
+> > -      * to the end of the request.
+> > -      */
+> > -     if (*result == -ENOENT) {
+> > -             rbd_obj_zero_range(obj_req, 0, obj_req->ex.oe_len);
+> > -             *result = 0;
+> > -     } else if (*result >= 0) {
+> > -             if (*result < obj_req->ex.oe_len)
+> > -                     rbd_obj_zero_range(obj_req, *result,
+> > -                                        obj_req->ex.oe_len - *result);
+> > -             else
+> > -                     rbd_assert(*result == obj_req->ex.oe_len);
+> > -             *result = 0;
+> > +             /*
+> > +              * -ENOENT means a hole in the image -- zero-fill the entire
+> > +              * length of the request.  A short read also implies zero-fill
+> > +              * to the end of the request.
+> > +              */
+> > +             if (*result == -ENOENT) {
+> > +                     rbd_obj_zero_range(obj_req, 0, obj_req->ex.oe_len);
+> > +                     *result = 0;
+> > +             } else if (*result >= 0) {
+> > +                     if (*result < obj_req->ex.oe_len)
+> > +                             rbd_obj_zero_range(obj_req, *result,
+> > +                                             obj_req->ex.oe_len - *result);
+> > +                     else
+> > +                             rbd_assert(*result == obj_req->ex.oe_len);
+> > +                     *result = 0;
+> > +             }
+> > +             return true;
+> > +     case RBD_OBJ_READ_PARENT:
+> > +             return true;
+> > +     default:
+> > +             BUG();
+> >       }
+> > -
+> > -     return true;
+> >   }
+> >
+> >   /*
+> > @@ -2658,11 +2668,11 @@ static bool rbd_obj_handle_write(struct rbd_obj_request *obj_req, int *result)
+> >       case RBD_OBJ_WRITE_COPYUP_OPS:
+> >               return true;
+> >       case RBD_OBJ_WRITE_READ_FROM_PARENT:
+> > -             if (*result < 0)
+> > +             if (*result)
+> >                       return true;
+> >
+> > -             rbd_assert(*result);
+> > -             ret = rbd_obj_issue_copyup(obj_req, *result);
+> > +             ret = rbd_obj_issue_copyup(obj_req,
+> > +                                        rbd_obj_img_extents_bytes(obj_req));
+> >               if (ret) {
+> >                       *result = ret;
+> >                       return true;
+> > @@ -2757,7 +2767,7 @@ static void rbd_obj_handle_request(struct rbd_obj_request *obj_req, int result)
+> >       rbd_assert(img_req->result <= 0);
+> >       if (test_bit(IMG_REQ_CHILD, &img_req->flags)) {
+> >               obj_req = img_req->obj_request;
+> > -             result = img_req->result ?: rbd_obj_img_extents_bytes(obj_req);
+> > +             result = img_req->result;
+> >               rbd_img_request_put(img_req);
+> >               goto again;
+> >       }
+> should this part be in 01/20 ?
 
->
-> 3) For the acquiring_list, my concern is that while the lock is pending
-> to be acquired, the requests are being accepted without a limit. In case
-> there is a delay acquiring the lock, for example if the primary of the
-> object header is down (which could block for ~ 25 sec) or worse if the
-> pool is inactive, the count could well exceed the max queue depth + for
-> write requests this can consume a lot of memory.
-
-As you noted in a different email, it is limited by queue_depth.  No
-different from regular I/O taking too long.
-
->
-> 4) In rbd_img_exclusive_lock() at end, we queue an acquire lock task for
-> every request. I understand this is a single threaded queue and if lock
-> is acquired then all acquire tasks are cancelled, however i feel the
-> queue could fill a lot. Any chance we can only schedule 1 acquire task ?
-
-This is not new, it's done in existing code too.  queue_delayed_work()
-bails if the work is already queued, so ->lock_dwork is never queued
-more than once.
-
->
-> 5) The state RBD_IMG_EXCLUSIVE_LOCK is used for both cases when image
-> does not require exclusive lock + when lock is acquired. Cosmetically it
-> may be better to separate them.
-
-Not all requests require exclusive lock even if exclusive-lock feature
-is enabled (e.g. reads when object-map feature is disabled).  We switch
-from RBD_IMG_EXCLUSIVE_LOCK early (i.e. no waiting) in those cases and
-the case of exclusive-lock feature being disabled just falls into that
-basket.
-
->
-> 6) Probably not an issue, but we are now creating a large number of
-> mutexes, at least 2 for every request. Maybe we need to test in high
-> iops/queue depths that there is no overhead for this.
-
-Yes, that would be useful.  If you do that, please share your results!
-
-We can get that down to one by reusing image requests with the help of
-blk-mq.  We would still need to allocate them for accessing the parent
-image, but for regular image requests it should be pretty easy to do.
-
-Reusing object requests is going to be harder, but we could probably
-preallocate one per image request, as that is by far the most common
-case.
-
->
-> 7) Is there any consideration to split the rbd module to multiple files
-> ? Looking at how big librbd, fitting this in a single kernel file is
-> challenging at best.
-
-Dongsheng expressed this concern is well.  Personally, I don't mind
-a large file as long as it is nicely structured.  Adding object-map and
-fast-diff added just two forward declarations, one of which could be
-avoided.
-
-We are never going to fit the entire librbd into the kernel, no matter
-how many files ;)  Breaking up into multiple files complicates blaming,
-so I would rather keep it as is at this point.
+No, 01/20 wouldn't pass a basic copyup test with that.
 
 Thanks,
 
