@@ -2,94 +2,205 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B31A95E4FE
-	for <lists+ceph-devel@lfdr.de>; Wed,  3 Jul 2019 15:13:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08CF05E4EE
+	for <lists+ceph-devel@lfdr.de>; Wed,  3 Jul 2019 15:12:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfGCNNp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 3 Jul 2019 09:13:45 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34583 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfGCNNp (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 3 Jul 2019 09:13:45 -0400
-Received: by mail-pg1-f196.google.com with SMTP id p10so1249133pgn.1;
-        Wed, 03 Jul 2019 06:13:44 -0700 (PDT)
+        id S1726811AbfGCNMj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 3 Jul 2019 09:12:39 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35605 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbfGCNMj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 3 Jul 2019 09:12:39 -0400
+Received: by mail-io1-f67.google.com with SMTP id m24so4656870ioo.2
+        for <ceph-devel@vger.kernel.org>; Wed, 03 Jul 2019 06:12:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=fs73VhBOyzdIlK7YRoWsh1OqkxflcVmUXV5igdjoOaY=;
-        b=BEXICzBtUf+LWzuwiVitPQJyjh0z0UiuDy9pOagTf1LOBXd/txFvzx/PW3/rhhuDcK
-         F/DvcMKyoERmx6VBiqA+VP+Clc65y3FL5yfZaRA1ai/YA62KbB5MPEKrmOQn0L4FEkZ4
-         pG3undSA5aVNmHNKStTEWAGx3xU11yDAK0tDCBOnOTALxHRWOrsumrDeKuTVxsrfDMYf
-         O+HsK3a+zhSgu1tJM75YFVybSzo4LlSgi1THX7UivqMtqPfvSMm0LvqKx/kPRJC3qKc5
-         NgIXXT/o7R4GZpiS3xkC2pQNaERBvSQYxfHPTp1iFWmPAce1tFk4RhqJaN95JioEORo9
-         6zfw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uuS5Pytt+4DGhdezCjpMU4zuTr3NA/B4AiKnsX4VEyk=;
+        b=qbqSE6TDH2Z1mlDrHlNrW59o7TL1muFJWuucQuzka57vgFUyDJzeN+C9Dsh5pmuFAP
+         PXeIZ8pWPZsJpjjUMfhVESbux4l6ugOVsla2esQnMYxyDMC4JFd9U0jvZazgPwT8CNGq
+         LqpJkjO1HIKRFTwa9ipRanrNJxq5M/XNWZGI1Nn6xX4GU7eKZ23xOj9wwkBD91RbLlDq
+         LAsDyhJ4MuFYKxdMRt0bTKlKRxvGH9bpDybuRTj1wSvtplz9MptwSNG6gMwC5CqGSCf7
+         R8xijjj4kKMXZo820WzEc6WYOS64ZcIUHwo+X5YcY2f/QiSloS4L4C06ERlpXT+9tptk
+         bhwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=fs73VhBOyzdIlK7YRoWsh1OqkxflcVmUXV5igdjoOaY=;
-        b=m1hq0tPHebsCRFH3mWYJR0MQV1ZieVor/zP1BhEJf2GeR9QEmK7CM+7gqzmZiO4yJD
-         H93g1km+lslV3U+y0V4MJA1zCI/AvXf1918SDcL+sMGBVpTgZ9aH+lXt+sKOn+ImSBEk
-         X3SM0UEmqpwuJ0vBFYCa55l2ti0bICSoyVuO2wjTXpqZIS9pt+WNBM05JLCuPZ6Seqkw
-         wX2kVAxR/F+p5pt5eeL6aJ5dcqYgCUMqKpn3lUrZf4Vw+a/rckmRArbbndhvzu3gMug5
-         Ho065xdupu8PV65GsqT9t5eIruEI3NuTsCA/9GgCXD+3keOQ3BSFiJDMCTMmZhGigO/K
-         PMgA==
-X-Gm-Message-State: APjAAAUU193d75IwsJKUPVvYiV5te9uEInzKSyb90WQM/M9Uan0oRnkm
-        TPARTpNkcG1394lmxNo9r2xETkteoIg=
-X-Google-Smtp-Source: APXvYqzWl6TjQMQji2rpNBgch+fJu98DPtzuMAHWJT08/Ao4l1frJAV1VFzoF7qnwymeQSRzPkuavQ==
-X-Received: by 2002:a17:90a:2525:: with SMTP id j34mr13150137pje.11.1562159624573;
-        Wed, 03 Jul 2019 06:13:44 -0700 (PDT)
-Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.googlemail.com with ESMTPSA id b36sm7680259pjc.16.2019.07.03.06.13.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Jul 2019 06:13:44 -0700 (PDT)
-From:   Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
-        Alex Elder <elder@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        ceph-devel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Fuqian Huang <huangfq.daxian@gmail.com>
-Subject: [PATCH 03/30] block: Use kmemdup rather than duplicating its implementation
-Date:   Wed,  3 Jul 2019 21:13:36 +0800
-Message-Id: <20190703131336.24808-1-huangfq.daxian@gmail.com>
-X-Mailer: git-send-email 2.11.0
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uuS5Pytt+4DGhdezCjpMU4zuTr3NA/B4AiKnsX4VEyk=;
+        b=gIPUIWzP8r1GCU2Q9oAAB8CTZNkB9AK4NplpKNqhlbtXxN6xf+eciy1Tvr68V4a5zP
+         +wbzvIaax8FuiWwaldfAMMJJ7G2mvjcLthPdK0vvW1ajBYuzL9/5fpykYO3Igxdpxnsx
+         aDxxY0r9KkTc9ZyXmZ+Z68Uic7o+HR2InHiA4pvt19JY122ByU8iaB12GhoNK5KFjEQF
+         WsHcvoQMpPSCdQeQXowmF/t64zVZHE/LWf75rs5LvmJJWPUi1goGyKTT7QGdxLzUqph0
+         +iwiL3UV8Jl6Xz1b0VuHBf0s+86TUBPKDTmDIHtyn9t3A9f2Qs3FHkiqxAYsZq9kvIOw
+         en6A==
+X-Gm-Message-State: APjAAAX4qZUbAWjXT4nX714kGh2O9ds/0iGgMYebq6WM1zivENk8dGHs
+        88tkoWddHzZbq9c0yiVmL7WEIkrr74woBvRZj1M=
+X-Google-Smtp-Source: APXvYqwrPFNujVY0ir4RInCn66s8DwqdA9CmDNQcNlqJ9DMjhIXQNKJ1ALtzYgFlBND2zaCKZnSSEOVrTJDith1A+IU=
+X-Received: by 2002:a02:c778:: with SMTP id k24mr914844jao.144.1562159558640;
+ Wed, 03 Jul 2019 06:12:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190625144111.11270-1-idryomov@gmail.com> <20190625144111.11270-20-idryomov@gmail.com>
+ <CA+aFP1BYABF13KgHxqnHOptrXBBeNU-ZL5D9=bapc1YwtmNkUw@mail.gmail.com>
+ <5D1AF635.7050705@easystack.cn> <CA+aFP1C3ms7tK31QDcEH2+emEPvX_JBOjUJKAahALv+UBRA3CQ@mail.gmail.com>
+In-Reply-To: <CA+aFP1C3ms7tK31QDcEH2+emEPvX_JBOjUJKAahALv+UBRA3CQ@mail.gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Wed, 3 Jul 2019 15:15:18 +0200
+Message-ID: <CAOi1vP-O9xB+qagucUdO7yFX7cXd8iQ-OhWN0GiVJnyGiwxWVQ@mail.gmail.com>
+Subject: Re: [PATCH 19/20] rbd: support for object-map and fast-diff
+To:     Jason Dillaman <dillaman@redhat.com>
+Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-kmemdup is introduced to duplicate a region of memory in a neat way.
-Rather than kmalloc/kzalloc + memset, which the programmer needs to
-write the size twice (sometimes lead to mistakes), kmemdup improves
-readability, leads to smaller code and also reduce the chances of mistakes.
-Suggestion to use kmemdup rather than using kmalloc/kzalloc + memset.
+On Tue, Jul 2, 2019 at 1:55 PM Jason Dillaman <jdillama@redhat.com> wrote:
+>
+> On Tue, Jul 2, 2019 at 2:16 AM Dongsheng Yang
+> <dongsheng.yang@easystack.cn> wrote:
+> >
+> > Hi Jason,
+> >
+> > On 07/02/2019 12:09 AM, Jason Dillaman wrote:
+> > > On Tue, Jun 25, 2019 at 10:42 AM Ilya Dryomov <idryomov@gmail.com> wrote:
+> > >> Speed up reads, discards and zeroouts through RBD_OBJ_FLAG_MAY_EXIST
+> > >> and RBD_OBJ_FLAG_NOOP_FOR_NONEXISTENT based on object map.
+> > >>
+> > >> Invalid object maps are not trusted, but still updated.  Note that we
+> > >> never iterate, resize or invalidate object maps.  If object-map feature
+> > >> is enabled but object map fails to load, we just fail the requester
+> > >> (either "rbd map" or I/O, by way of post-acquire action).
+> > ... ...
+> > >> +}
+> > >> +
+> > >> +static int rbd_object_map_open(struct rbd_device *rbd_dev)
+> > >> +{
+> > >> +       int ret;
+> > >> +
+> > >> +       ret = rbd_object_map_lock(rbd_dev);
+> > > Only lock/unlock if rbd_dev->spec.snap_id == CEPH_NOSNAP?
+> >
+> > Hmm, IIUC, rbd_object_map_open() is called in post exclusive-lock
+> > acquired, when
+> > rbd_dev->spec.snap_id != CEPH_NOSNAP, we don't need to acquire
+> > exclusive-lock I think.
+>
+> Userspace opens the object-map for snapshots (and therefore parent
+> images) are well. It doesn't require the exclusive-lock since the
+> images should be immutable at the snapshot.
+>
+> > But maybe we can add an assert in this function to make it clear.
+> > >
+> > >> +       if (ret)
+> > >> +               return ret;
+> > >> +
+> > >> +       ret = rbd_object_map_load(rbd_dev);
+> > >> +       if (ret) {
+> > >> +               rbd_object_map_unlock(rbd_dev);
+> > >> +               return ret;
+> > >> +       }
+> > >> +
+> > >> +       return 0;
+> > >> +}
+> > >> +
+> > >> +static void rbd_object_map_close(struct rbd_device *rbd_dev)
+> > >> +{
+> > >> +       rbd_object_map_free(rbd_dev);
+> > >> +       rbd_object_map_unlock(rbd_dev);
+> > >> +}
+> > >> +
+> > >> +/*
+> > >> + * This function needs snap_id (or more precisely just something to
+> > >> + * distinguish between HEAD and snapshot object maps), new_state and
+> > >> + * current_state that were passed to rbd_object_map_update().
+> > >> + *
+> > >> + * To avoid allocating and stashing a context we piggyback on the OSD
+> > >> + * request.  A HEAD update has two ops (assert_locked).  For new_state
+> > >> + * and current_state we decode our own object_map_update op, encoded in
+> > >> + * rbd_cls_object_map_update().
+> > > Decoding the OSD request seems a little awkward. Since you would only
+> > > update the in-memory state for the HEAD revision, could you just stash
+> > > these fields in the "rbd_object_request" struct? Then in
+> > > "rbd_object_map_update", set the callback to either a
+> > > "rbd_object_map_snapshot_callback" callback or
+> > > "rbd_object_map_head_callback".
+> >
+> > Good idea, even we don't need two callback, because the
+> > rbd_object_map_update_finish() will not update snapshot:
+>
+> The deep-flatten feature requires updating object-map snapshots for
+> the child image during copy-up. There just isn't an in-memory version
+> of the object-map for that case, if that is what you are refering to.
+>
+> > +    /*
+> > +     * Nothing to do for a snapshot object map.
+> > +     */
+> > +    if (osd_req->r_num_ops == 1)
+> > +        return 0;
+> > >> + */
+> > >> +static int rbd_object_map_update_finish(struct rbd_obj_request *obj_req,
+> > >> +                                       struct ceph_osd_request *osd_req)
+> > >> +{
+> > >> +       struct rbd_device *rbd_dev = obj_req->img_request->rbd_dev;
+> > >> +       struct ceph_osd_data *osd_data;
+> > >> +       u64 objno;
+> > >> +       u8 state, new_state, current_state;
+> > >> +       bool has_current_state;
+> > >> +       void *p;
+> > ... ...
+> > >>
+> > >> +/*
+> > >> + * Return:
+> > >> + *   0 - object map update sent
+> > >> + *   1 - object map update isn't needed
+> > >> + *  <0 - error
+> > >> + */
+> > >> +static int rbd_obj_write_post_object_map(struct rbd_obj_request *obj_req)
+> > >> +{
+> > >> +       struct rbd_device *rbd_dev = obj_req->img_request->rbd_dev;
+> > >> +       u8 current_state = OBJECT_PENDING;
+> > >> +
+> > >> +       if (!(rbd_dev->header.features & RBD_FEATURE_OBJECT_MAP))
+> > >> +               return 1;
+> > >> +
+> > >> +       if (!(obj_req->flags & RBD_OBJ_FLAG_DELETION))
+> > >> +               return 1;
+> > >> +
+> > >> +       return rbd_object_map_update(obj_req, CEPH_NOSNAP, OBJECT_NONEXISTENT,
+> > >> +                                    &current_state);
+> > >> +}
+> > >> +
+> > >>   static bool rbd_obj_advance_write(struct rbd_obj_request *obj_req, int *result)
+> > >>   {
+> > >>          struct rbd_device *rbd_dev = obj_req->img_request->rbd_dev;
+> > >> @@ -2805,6 +3419,24 @@ static bool rbd_obj_advance_write(struct rbd_obj_request *obj_req, int *result)
+> > >>          case RBD_OBJ_WRITE_START:
+> > >>                  rbd_assert(!*result);
+> > >>
+> > >> +               if (rbd_obj_write_is_noop(obj_req))
+> > >> +                       return true;
+> > > Does this properly handle the case where it has a parent overlap? If
+> > > the child object doesn't exist, we would still want to perform the
+> > > copyup (if required), correct?
+> >
+> > Good point. I found the zeroout case is handled, but discard not.
+> >
+> > zeroout will check  (!obj_req->num_img_extents) before setting NOOP
+> > flag. but discard check it after setting.
 
-Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
----
- drivers/block/rbd.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+We never perform the copyup for discard because, unlike in librbd,
+discard and zeroout are two different operations.
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index e5009a34f9c2..47ad3772dc58 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -1068,7 +1068,7 @@ static int rbd_header_from_disk(struct rbd_device *rbd_dev,
- 
- 		if (snap_names_len > (u64)SIZE_MAX)
- 			goto out_2big;
--		snap_names = kmalloc(snap_names_len, GFP_KERNEL);
-+		snap_names = kmemdup(&ondisk->snaps[snap_count], snap_names_len, GFP_KERNEL);
- 		if (!snap_names)
- 			goto out_err;
- 
-@@ -1088,7 +1088,6 @@ static int rbd_header_from_disk(struct rbd_device *rbd_dev,
- 		 * snap_names_len bytes beyond the end of the
- 		 * snapshot id array, this memcpy() is safe.
- 		 */
--		memcpy(snap_names, &ondisk->snaps[snap_count], snap_names_len);
- 		snaps = ondisk->snaps;
- 		for (i = 0; i < snap_count; i++) {
- 			snapc->snaps[i] = le64_to_cpu(snaps[i].id);
--- 
-2.11.0
+num_img_extents is checked just to pick between delete and truncate.
+If there is overlap, delete is a bad choice because it would expose
+parent data, effectively going back in time.  While technically a read
+from a discarded region is allowed to return _anything_, zeros is what
+many people expect, so we truncate instead of deleting in this case.
 
+Thanks,
+
+                Ilya
