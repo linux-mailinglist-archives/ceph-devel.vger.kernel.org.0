@@ -2,93 +2,78 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3650661FCC
-	for <lists+ceph-devel@lfdr.de>; Mon,  8 Jul 2019 15:49:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A0C661FF9
+	for <lists+ceph-devel@lfdr.de>; Mon,  8 Jul 2019 16:02:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731472AbfGHNtT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 8 Jul 2019 09:49:19 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:43821 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727401AbfGHNtT (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 Jul 2019 09:49:19 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MJW5G-1i4CkC2B8y-00Js0c; Mon, 08 Jul 2019 15:48:24 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        id S1731517AbfGHOCP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 8 Jul 2019 10:02:15 -0400
+Received: from mail-yw1-f41.google.com ([209.85.161.41]:34856 "EHLO
+        mail-yw1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729009AbfGHOCP (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 Jul 2019 10:02:15 -0400
+Received: by mail-yw1-f41.google.com with SMTP id o7so4435216ywi.2
+        for <ceph-devel@vger.kernel.org>; Mon, 08 Jul 2019 07:02:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=yoDwpfjrWpALxiXmQ8oob0PEis7aklvJdMv2TcHcARo=;
+        b=YC0ahxydeelgDLoCHLz09jwBY5mgt4DE/u/NpCVcqiwRDABZ/tP0Fqc7o9uamfKAYt
+         4SgRaSrIkwnEr5pcovDCJKnkT1B7SmyayA3JdkuqwKuwWH4ITnEv6QEU0DFOGOq9xOV0
+         fwXMBTEql/mX0OsRjiMGkd9vLg6/75RVpc3afEt+hyw+SYYSiYzqAwxumfvm78+GaP48
+         A5TgOq+kkCIaFVZf4hWffhorbs2OUdp3oKutA6811haxABlcQHVB04YKCKBSsMtSAB+0
+         vRAHCdzksGpYPq4qWLFRbx6Kpx4DqN2/F1LZjNFzSg/iVASCuTpRsqjvS7CjfVEqPg3O
+         4GyA==
+X-Gm-Message-State: APjAAAUUhVsIHMTLGT/L4l908ez5XMTfx13bAmRCLhnPdZZWW7ley6hR
+        ajbHehCaoCy3PszsXDBiPsUgyA==
+X-Google-Smtp-Source: APXvYqxKSjlzBuhFqdwcjJwKVs0JWKBEjyMTz3YUjDNkFoMemjrrP0BtabRdJymXBa3F53mmiiZm6w==
+X-Received: by 2002:a81:1d84:: with SMTP id d126mr4034134ywd.199.1562594534084;
+        Mon, 08 Jul 2019 07:02:14 -0700 (PDT)
+Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-43E.dyn6.twc.com. [2606:a000:1100:37d::43e])
+        by smtp.gmail.com with ESMTPSA id g189sm5418488ywa.20.2019.07.08.07.02.13
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 08 Jul 2019 07:02:13 -0700 (PDT)
+Message-ID: <f93a412ecd6b17389622ac7d0ae9b225921e4163.camel@redhat.com>
+Subject: ceph_fsync race with reconnect?
+From:   Jeff Layton <jlayton@redhat.com>
+To:     "Yan, Zheng" <zyan@redhat.com>
+Cc:     Sage Weil <sage@newdream.net>,
+        "open list:CEPH DISTRIBUTED..." <ceph-devel@vger.kernel.org>,
+        Patrick Donnelly <pdonnell@redhat.com>,
         Ilya Dryomov <idryomov@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        Luis Henriques <lhenriques@suse.com>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH] ceph: fix uninitialized return code
-Date:   Mon,  8 Jul 2019 15:48:08 +0200
-Message-Id: <20190708134821.587398-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+Date:   Mon, 08 Jul 2019 10:02:12 -0400
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.3 (3.32.3-1.fc30) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:j9WuTzznNib1eqFqYiDaL4gyRPc7QzL4NZ/bydGzytMcRzEQWWK
- 1pfqAtiy4q5IanUhQ9tbckly/jv44kLphwurVdExoHEQsGWJ+Z4NZxg7kCC5PghpPWCo8Zb
- NbqHurMOI0cgLCrHaTuSvWpITh9lqB1KJXAVataxPXbQjzmwgQSYlUAatKHcX0lhBQAFMZu
- BBrK8kwdiMyfsMqLatOCA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:MxxQnbkvXE8=:TMJta/lJz0aLSAbBBndGLO
- mcIHI6ma3NwEw2ZFBeNkx+gNiu2g7Ku28dtW59kaFE+5v7q6QClShdY4dfTqsxCbJn49W6AUG
- EXD1G7BLeTx45pa2eB3qeT/1P/kNYacCRWfalVZC/qhNmSfFvlL+lWoYlMXu3mJPHKc7sKFa8
- 1bE9Av3mK2ONfwdipFvjo9FdjAR35CXkXd6wAV4o4+YuSBNDzG3gZhPY7vDui1Bib1efF4OYM
- kl9GUpLApjYW+h2B547FwjavClw3MqXSj3WCwnb/Jq7l5REq9jn/mDzi4qIwYthTz1Xbhs/D3
- vkm5rTjp0HtalvtWo94e4jgGA4uFJM4vq4doUAtgw5XvsJ0jzRV9zDrcp/CexUMRRly3BVxhD
- 6UbMl1n8ocIyv1WrJD5mNxJJ1+4TerOU2O+/gLKQrtMANifkVr+HRZAFXevQrDP81f6eRxzgb
- Zlt1VeubJUzML8lLAN0Z6EEwH9ES+DqjyW7xqYFlpKCwIX/ABOs3tJ2bIn5Ref1YKKkQ3FmJI
- 1C01aAZXtM8UTbTpSgnLnU7UBv0DlbDMVUWcxobYIoZI/fCsqZ4qVRp4A1jPzsyiat5NiMjAc
- 0YgdAyQKd+6c6xrxxRbkgvoy6wCMzITwby1WROyLepGVGOMX+5EOO/GWtL18nnr/R8Zr05AsA
- a7Jti8FX4rf8PfX8Y4Po92v0Kas6bYoG0U61VYHZ9wc+Ffxy6W4ufZ4hOGesYgXp3FQbeIn1r
- 3NiLkvooYtr34YQrCApGaL/MI19hkqOTZpl3wA==
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-clang points out a -Wsometimed-uninitized bug in the modified
-ceph_real_mount() function:
+I've been working on a patchset to add inline write support to kcephfs,
+and have run across a potential race in fsync. I could use someone to
+sanity check me though since I don't have a great grasp of the MDS
+session handling:
 
-fs/ceph/super.c:850:6: error: variable 'err' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
-        if (!fsc->sb->s_root) {
-            ^~~~~~~~~~~~~~~~
-fs/ceph/super.c:885:9: note: uninitialized use occurs here
-        return err;
-               ^~~
-fs/ceph/super.c:850:2: note: remove the 'if' if its condition is always true
-        if (!fsc->sb->s_root) {
-        ^~~~~~~~~~~~~~~~~~~~~~
-fs/ceph/super.c:843:9: note: initialize the variable 'err' to silence this warning
-        int err;
-               ^
-                = 0
+ceph_fsync() calls try_flush_caps() to flush the dirty metadata back to
+the MDS when Fw caps are flushed back.  try_flush_caps does this,
+however:
 
-Set it to zero if the condition is false.
+                if (cap->session->s_state < CEPH_MDS_SESSION_OPEN) {
+                        spin_unlock(&ci->i_ceph_lock);
+                        goto out;
+                }
 
-Fixes: 108f95bfaa56 ("vfs: Convert ceph to use the new mount API")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/ceph/super.c | 2 ++
- 1 file changed, 2 insertions(+)
+...at that point, try_flush_caps will return 0, and set *ptid to 0 on
+the way out. ceph_fsync won't see that Fw is still dirty at that point
+and won't wait, returning without flushing metadata.
 
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 0d23903ddfa5..d663aa1286f6 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -876,6 +876,8 @@ static int ceph_real_mount(struct fs_context *fc, struct ceph_fs_client *fsc)
- 			goto out;
- 		}
- 		fsc->sb->s_root = root;
-+	} else {
-+		err = 0;
- 	}
- 
- 	fc->root = dget(fsc->sb->s_root);
+Am I missing something that prevents this? I can open a tracker bug for
+this if it is a problem, but I wanted to be sure it was a bug before I
+did so.
+
+Thanks,
 -- 
-2.20.0
+Jeff Layton <jlayton@redhat.com>
 
