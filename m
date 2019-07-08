@@ -2,73 +2,50 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AC32620DB
-	for <lists+ceph-devel@lfdr.de>; Mon,  8 Jul 2019 16:50:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BE19626F1
+	for <lists+ceph-devel@lfdr.de>; Mon,  8 Jul 2019 19:16:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731985AbfGHOuI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 8 Jul 2019 10:50:08 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45337 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbfGHOuI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 Jul 2019 10:50:08 -0400
-Received: by mail-ed1-f66.google.com with SMTP id e2so8066555edi.12;
-        Mon, 08 Jul 2019 07:50:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xqD9//vj8hyLQhGtAn7OCQx4sQ5rQOlHZCIXpnadci0=;
-        b=rOrXFx3Bc/hwiJvEdJNsKrbM90PbzvbN/E+5fM3JYFUlefRprxepT8ORwFRGfjH6g5
-         SwECpUtBnUTYXiQYYW3FwXa4FciqgA70AdhmrVxZPqAC2kPrnENv5dkLpXbBuR+3tyk7
-         ZvtGejI3nsLP/XQZIuo/2LXKPsojhJ6aV1szipsFm0AQ8kDj8aDn1dAFvvbSq6bP3mYi
-         dBoY66MpsAhDIPuus8AXUyVG9vYjdVrv7F06zNhCu+msD4JJtBfiNkfqSqhLJgSnmMnd
-         Umpc7BI3ziNyAOP510ujmqpcY5fJCCPFn3T9HPzwsXETGHMwSaXn/G39GhZj+oXmTsGQ
-         vuCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xqD9//vj8hyLQhGtAn7OCQx4sQ5rQOlHZCIXpnadci0=;
-        b=dJnz8bO8F7KSgQKNs8Q9E9Hf1arpre3KcUpb0Q6cVdf+zQUd+Qs1pZSuunPOHj4h3R
-         z8hnaS+2ldlnaIePpqr6zaD2SCEcOVY2oG7/ZpVx1DzWwrAzKL9r0puxmxk9YdFiYpvH
-         +VbHNKYohs3hw1+OhKcTJYXjl+xaxYRGZzcbMTmwNsPHCLKODU/BawnzXYgJyMqvaNeH
-         fnq6Z0jjDnwwWAqvuuJysvZ8WBQejvFuHfzbVYMTaWtP+YrQaCoHTcZ4EjeMKcMGLBuZ
-         3QM8ADFj/B+pSXffNxDRJ0Ngp2hjtVFbxHNskIU0d2CflQWBKlUAuXyI8MdFjerowJ2t
-         m0KQ==
-X-Gm-Message-State: APjAAAU5aY8luGtY8tNHi3EudnHR9WgSQBGIKSRMO5xIKYiqH6GqF30e
-        TyBIQXApez76WtEN3SXkUMg=
-X-Google-Smtp-Source: APXvYqxt23CLo9IIkHXCkj0qvqdL4T6+9V8SwBfp/4gULMA6Th4DnExR1aYs+mQefTg1e9PwHQh4yQ==
-X-Received: by 2002:a17:906:310c:: with SMTP id 12mr16489797ejx.259.1562597406063;
-        Mon, 08 Jul 2019 07:50:06 -0700 (PDT)
-Received: from archlinux-epyc ([2a01:4f9:2b:2b15::2])
-        by smtp.gmail.com with ESMTPSA id 43sm5668607edz.87.2019.07.08.07.50.04
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 08 Jul 2019 07:50:05 -0700 (PDT)
-Date:   Mon, 8 Jul 2019 07:50:03 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        David Howells <dhowells@redhat.com>,
+        id S2387987AbfGHRQR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 8 Jul 2019 13:16:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387560AbfGHRQR (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 8 Jul 2019 13:16:17 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AE7C216FD;
+        Mon,  8 Jul 2019 17:16:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1562606177;
+        bh=o1EzjiG2Ss2e/ZZxah1TPImcTccs8sGSRE8rXZthfxk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=RSfNULse0O64hAnv/VvVw49jsZ08Aisju9dioP+dPpQ73CvqnIQ+ZJaPolzT/Rs8z
+         1LhYHZca8RCOu/Dk3hcArxsSZplpRXkric6uWmBPtwV7JyF+0c3UsPcOeCa5yn3ATW
+         6y7czlpVDHROLjrIziUj9OmCbjcrlF003kBUKXJ4=
+Message-ID: <e2d1659f8fec54d9bfcbec1822afc76753b44667.camel@kernel.org>
+Subject: Re: [PATCH] ceph: fix uninitialized return code
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>, "Yan, Zheng" <zyan@redhat.com>,
+        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
         Luis Henriques <lhenriques@suse.com>,
         ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
         clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] ceph: fix uninitialized return code
-Message-ID: <20190708145003.GB43693@archlinux-epyc>
-References: <20190708134821.587398-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Date:   Mon, 08 Jul 2019 13:16:14 -0400
 In-Reply-To: <20190708134821.587398-1-arnd@arndb.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190708134821.587398-1-arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.3 (3.32.3-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 03:48:08PM +0200, Arnd Bergmann wrote:
+On Mon, 2019-07-08 at 15:48 +0200, Arnd Bergmann wrote:
 > clang points out a -Wsometimed-uninitized bug in the modified
 > ceph_real_mount() function:
 > 
@@ -90,7 +67,29 @@ On Mon, Jul 08, 2019 at 03:48:08PM +0200, Arnd Bergmann wrote:
 > 
 > Fixes: 108f95bfaa56 ("vfs: Convert ceph to use the new mount API")
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  fs/ceph/super.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index 0d23903ddfa5..d663aa1286f6 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -876,6 +876,8 @@ static int ceph_real_mount(struct fs_context *fc, struct ceph_fs_client *fsc)
+>  			goto out;
+>  		}
+>  		fsc->sb->s_root = root;
+> +	} else {
+> +		err = 0;
+>  	}
+>  
+>  	fc->root = dget(fsc->sb->s_root);
 
-Thanks for the patch!
+I see 108f95bfaa56 linux-next, but this hasn't been merged into the ceph
+kclient tree yet. It'd be ideal if Al just squashed this in before
+sending the PR to Linus.
 
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+In any case, patch looks fine:
+
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+
