@@ -2,113 +2,102 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFA6962AFC
-	for <lists+ceph-devel@lfdr.de>; Mon,  8 Jul 2019 23:31:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4780D62CC8
+	for <lists+ceph-devel@lfdr.de>; Tue,  9 Jul 2019 01:53:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405304AbfGHVbg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 8 Jul 2019 17:31:36 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56022 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729474AbfGHVbf (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 Jul 2019 17:31:35 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hkbET-0006LV-6P; Mon, 08 Jul 2019 21:31:33 +0000
-From:   Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-To:     David Howells <dhowells@redhat.com>,
-        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        ceph-devel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-block@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Subject: bug report: re: vfs: Convert ceph to use the new mount API
-Message-ID: <2b919604-282e-85d6-b9d8-827beefdcb0d@canonical.com>
-Date:   Mon, 8 Jul 2019 22:31:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1725877AbfGHXxC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 8 Jul 2019 19:53:02 -0400
+Received: from mail-qk1-f181.google.com ([209.85.222.181]:45100 "EHLO
+        mail-qk1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbfGHXxC (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 Jul 2019 19:53:02 -0400
+Received: by mail-qk1-f181.google.com with SMTP id s22so14680781qkj.12
+        for <ceph-devel@vger.kernel.org>; Mon, 08 Jul 2019 16:53:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=plhBw2lqVBdLdf/az7zbVw/GcAnMOSTnGqKM5eHiNdE=;
+        b=oSGPlTjLgmn9sftaIszSFAw1niGVWbO0d50RmNERAYCeCzV2RMDxsl0Td3U5z6EXDZ
+         VBlRULQVYpbSCRNpLXUYgEjowMQc9ns2wZQVF6ZQhaeUCZVpkwWqnRIQbLfYP461s6Fc
+         9v8umDs0f6WPOh9Z1uHXbKO5Pl0M4ITLdreqmjMZsmcjq05yk0/RvrYMHQH+Qm4YTdbX
+         jtkM9ITYuBMZag5stqDcw0HnKDoI/a/oGsXDu5iMualD72AQp1kUkffMw9NaT/xDCTYO
+         fn1ysEhWF9rY0DwM7JNer8WJgywmoy9wKqS98j+9tNn+pq8amAQ1e8Z9Sp6mp2bwAWlh
+         AdMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=plhBw2lqVBdLdf/az7zbVw/GcAnMOSTnGqKM5eHiNdE=;
+        b=ePjuffj3Tu4MXa4WleVtp/gCmD42h/fL+5tWLoS6CWGUaQ6FOF3HEhqyOVrTbkh5Oy
+         LwRJkI0KrtF+EdSxpZWi+K15GrZS0bqViBdVJXC3xZISFJzhYrNQVE9jtEQbA14IPUCc
+         DQd2rrgT1OlAKNjYEegWdbc3Ps91+Pi3K8HM3g2PfjsvDZHsXdeEa+n74i/TCTbuSmWx
+         OzK5mwKs4gaFeMttvkeJ61VnBXRUl6/VsjJKoybuc2erHE3adyn672brj7Yj5VmYZl4z
+         Xg5iK7CgE8HeVG1Owh3UoWreD11eHOBtcurHrn7qn27j3QnIb+8iGrQRconeHYZpjdx+
+         90Uw==
+X-Gm-Message-State: APjAAAU9wHiLUYJTV9pajjbr5k8z8MF/FyBEEhOzXesSzZ9XryP0HMeC
+        2TNJWMjdJehUO9aRlxLzLJ8iMbbjPAhEzetQDes=
+X-Google-Smtp-Source: APXvYqxtI3ZMHLgytgmGwrxHZ2ft9d4YkoA9mS43YntkN5inRsW5o5twnHxTUD29AYhvJgMk2N0dde69c4OKeJd8jnA=
+X-Received: by 2002:a05:620a:102d:: with SMTP id a13mr15983271qkk.268.1562629981582;
+ Mon, 08 Jul 2019 16:53:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <f93a412ecd6b17389622ac7d0ae9b225921e4163.camel@redhat.com>
+In-Reply-To: <f93a412ecd6b17389622ac7d0ae9b225921e4163.camel@redhat.com>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Tue, 9 Jul 2019 07:52:50 +0800
+Message-ID: <CAAM7YA=DW5jYtWkz-gqZ_Eg8ko-sK8mChMGB7yOV=Xz8o=AhLQ@mail.gmail.com>
+Subject: Re: ceph_fsync race with reconnect?
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@newdream.net>,
+        "open list:CEPH DISTRIBUTED..." <ceph-devel@vger.kernel.org>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi,
+On Tue, Jul 9, 2019 at 3:23 AM Jeff Layton <jlayton@redhat.com> wrote:
+>
+> I've been working on a patchset to add inline write support to kcephfs,
+> and have run across a potential race in fsync. I could use someone to
+> sanity check me though since I don't have a great grasp of the MDS
+> session handling:
+>
+> ceph_fsync() calls try_flush_caps() to flush the dirty metadata back to
+> the MDS when Fw caps are flushed back.  try_flush_caps does this,
+> however:
+>
+>                 if (cap->session->s_state < CEPH_MDS_SESSION_OPEN) {
+>                         spin_unlock(&ci->i_ceph_lock);
+>                         goto out;
+>                 }
+>
 
-Static analysis with Coverity on linux-next has detected an
-uninitialized variable error in the following commit:
+enum {
+        CEPH_MDS_SESSION_NEW = 1,
+        CEPH_MDS_SESSION_OPENING = 2,
+        CEPH_MDS_SESSION_OPEN = 3,
+        CEPH_MDS_SESSION_HUNG = 4,
+        CEPH_MDS_SESSION_RESTARTING = 5,
+        CEPH_MDS_SESSION_RECONNECTING = 6,
+        CEPH_MDS_SESSION_CLOSING = 7,
+        CEPH_MDS_SESSION_REJECTED = 8,
+};
 
-commit 108f95bfaa5665724159e66e4a26206b5589f126
-Author: David Howells <dhowells@redhat.com>
-Date:   Mon Mar 25 16:38:32 2019 +0000
-
-    vfs: Convert ceph to use the new mount API
+the value of reconnect state is larger than 2
 
 
-Specifically, in fs/ceph/super.c in function ceph_real_mount, variable
-err is not initialized, and when the if (!fsc->sb->s_root) code block is
-not executed then err is never assigned and an uninitialized value is
-returned:
-
- 884        mutex_unlock(&fsc->client->mount_mutex);
-
-Uninitialized scalar variable (UNINIT)
-uninit_use: Using uninitialized value err.
-
- 885        return err;
- 886
- 887 out:
- 888        mutex_unlock(&fsc->client->mount_mutex);
- 889        return err;
- 890 }
-
-Not sure what err should be returning, so I'm reporting this a as bug.
-
-Colin
+> ...at that point, try_flush_caps will return 0, and set *ptid to 0 on
+> the way out. ceph_fsync won't see that Fw is still dirty at that point
+> and won't wait, returning without flushing metadata.
+>
+> Am I missing something that prevents this? I can open a tracker bug for
+> this if it is a problem, but I wanted to be sure it was a bug before I
+> did so.
+>
+> Thanks,
+> --
+> Jeff Layton <jlayton@redhat.com>
+>
