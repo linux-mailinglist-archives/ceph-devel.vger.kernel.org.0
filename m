@@ -2,135 +2,204 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D5566382C
-	for <lists+ceph-devel@lfdr.de>; Tue,  9 Jul 2019 16:50:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 948106385E
+	for <lists+ceph-devel@lfdr.de>; Tue,  9 Jul 2019 17:09:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726154AbfGIOuY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 9 Jul 2019 10:50:24 -0400
-Received: from mail-qt1-f182.google.com ([209.85.160.182]:38860 "EHLO
-        mail-qt1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbfGIOuY (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 9 Jul 2019 10:50:24 -0400
-Received: by mail-qt1-f182.google.com with SMTP id n11so21872385qtl.5
-        for <ceph-devel@vger.kernel.org>; Tue, 09 Jul 2019 07:50:23 -0700 (PDT)
+        id S1726496AbfGIPJu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 9 Jul 2019 11:09:50 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45196 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfGIPJu (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 9 Jul 2019 11:09:50 -0400
+Received: by mail-qt1-f193.google.com with SMTP id j19so21906656qtr.12
+        for <ceph-devel@vger.kernel.org>; Tue, 09 Jul 2019 08:09:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=bRFlBLcRuUEhBV2qDL2VsPPolE6dCWD3/lzTDMgYTCI=;
-        b=fBPQyFyXPgnVYYqlnz30BHLzutbvWgx7wAJpB5GKdydOoBUkdMggiF+Dk+l1arWkoh
-         tfqkqfaLjBI/qUncrIxThWm5BhIueWPa9NYlejpAcvtqH3cIc6Rlyw9IMQTej+9IWclf
-         xpUm5tfTpk1fjri8WKyZ7lxXVVQaFtyA6DIvpFyeECf4uRrkd5HUyoXckURNO1jjIWrf
-         /KOjfc0GoBrS7vGPodQRjsiTm0aw3xqHaUuxOIsEPfcJyPGFWYk9VkqyAzcwEApISaGk
-         Dy8IG/6OUOa0K3S+YOoXERiHFu87MVi7iTNzmX20DHDmsTlsIeuSl/rwE5YFq1vA6BXz
-         A7/A==
+        bh=ChKdXHcqUyUc9cqSfW10KcqwIJYHkk84ynCNa/vVx3M=;
+        b=ahsuanZtvozV5NQOj/16zHsuJNdh06mVV+0I6TiW7bRCCNCEj4b8YKBzuO0AK4o8cD
+         Rr5zHzJn6SW13xOCd0GwAdE0QbeBQa1I2iGZxcVTiXc1sKt8zeEED9MCbTZGzYUO68Ic
+         UbRrqfzVyc4cdu3BxzztEaMRp5ALdIPhO8IuSNjNQTvCLG4er1xx4hRf4DM7RSmqmtnq
+         xWiOSaq0YQXQ9UoeAKKX8aKaj0bJPhHtxOXkSys4sS9/3dtweSciyvoEoURgQxg2t76G
+         6dqRL9yC7PiGzO2f3L1nMxTjXZfaqKbcVXJzgFThOfY/W7MeFLsQN7FDzKI3tZt7bkuT
+         tAdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bRFlBLcRuUEhBV2qDL2VsPPolE6dCWD3/lzTDMgYTCI=;
-        b=gotqGESP5x5+iBUipzomlehZVEoMUfqtm01uvWsywQaU8zOV/NK+ILBgD8mgSfjLy+
-         FBCE9vSKikFwKe3Bt37bprC6dv4pkWs8kilLyL/zrbAZv3+JO5XwaN67VkTtViM5N3x3
-         D5r/1Arcs5SYf58wHTZSk6Rpqxl4IyagaIScabDmoY89LT5ES0yLyR8jEMb1neDmTdb8
-         EN3O/yeHSvnaOwSSs8jyf9qlCdqA/kDAlQ4rUrDHfENttD6WFICfHPJAGRH45z6QQAST
-         +LSHPQF8e6bz/KL8AIJljIbBEhQc3Bxo276E+60cKV4OxUvxgZgYlEs4VJ27IGfu5Fhd
-         mELA==
-X-Gm-Message-State: APjAAAVvZqV9z7ThD4xMi6F2jClQUjbxbxiW+nPR0MPU7Bfcu07DV3Ya
-        A5rkCfNuBC1kEMifUxlutZBwouKLrq1lBF+lRhdUxuv8bIm+1A==
-X-Google-Smtp-Source: APXvYqzl0u0rEgEFaeSCOUwZVXFjn5b6D5L9hWjyrMl3z40boEn2BUEeK0+ox47JUmgQKLahG/gBUIfeQNj3cgqlhOQ=
-X-Received: by 2002:a0c:b0a8:: with SMTP id o37mr14849922qvc.76.1562683822926;
- Tue, 09 Jul 2019 07:50:22 -0700 (PDT)
+        bh=ChKdXHcqUyUc9cqSfW10KcqwIJYHkk84ynCNa/vVx3M=;
+        b=ZeCpL5wBQWRiGeV/FTbWmbXKBTgvaPVAy74j8kFZ21J0/Phx1hi/gm6N/aUz/qneKX
+         eE+woDWUDwaM3tX0X6Q1f9OHVsU6qD/kdTm7WTQeIYPIQr3OOSY7ffUW7n/rJ0vmp915
+         9rtr3ooytptH75r1fIJ60OQg6feKPor7diIQcitweRBi4R8sfRxbhzUqTB2fcp8xNogJ
+         KQSdBlmeqhn25r3jkC+gvBmFfATeZO8nJTZkQXIbrW9tBEUW2UWtJwaGUcN71RWDGzGf
+         vB3YHAVa47MP40M0idOiOGFtLBTCEnsg1k8XfeivefaIOkuPi5SFdDygoOYUIdfZM5Aa
+         Ga2A==
+X-Gm-Message-State: APjAAAXYi41mUjQg+j05rmtZuMeSi5gC6NveJHfdRHJkdf7pe+TaiKOS
+        l7f5VSvktjnjlF6P9Bwej28nZcdf3m7m8clQl4IRPQ5iiHI=
+X-Google-Smtp-Source: APXvYqwGTWL5KXXMHp6q6oc5axHyDqi1QqU9f9sBWp25l0ozFFPVHRvsj9bKW0RdAiaUqvwV27SIT7gK5G4sJwvXVlo=
+X-Received: by 2002:a0c:f945:: with SMTP id i5mr19311866qvo.33.1562684988784;
+ Tue, 09 Jul 2019 08:09:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <f93a412ecd6b17389622ac7d0ae9b225921e4163.camel@redhat.com>
- <CAAM7YA=DW5jYtWkz-gqZ_Eg8ko-sK8mChMGB7yOV=Xz8o=AhLQ@mail.gmail.com> <35a7c9dce30f557a3be756cfeb15c0e471ae80ce.camel@redhat.com>
-In-Reply-To: <35a7c9dce30f557a3be756cfeb15c0e471ae80ce.camel@redhat.com>
+References: <20190703124442.6614-1-zyan@redhat.com> <4bd33f73c9f64e79c0364a22dfdd63db02b4e7ab.camel@redhat.com>
+ <1f6359f5-7669-a60b-0a3b-5f74d203af67@redhat.com> <a51ccdea2d6cc43ae5dde5c0f150fc754d10158c.camel@redhat.com>
+ <CAAM7YAmPrUvP=cnSG33utodvoveuaL5wJCBGrncXbrbEj8bCPg@mail.gmail.com>
+ <ec097fd85e1890d904f1dd542b70649b917d4118.camel@redhat.com>
+ <CAAM7YA=4=mC1kOVyWbuZ94xzJTb2M63f72MeyT1EdZxfTtRt+Q@mail.gmail.com>
+ <f38b809b01839e3719acebaa3d5d3280eec71b81.camel@redhat.com>
+ <CAAM7YAk8iEfWDg_ZvJNSkkMQr2ZFxMieZ_oUEZGYwteeH8GpOw@mail.gmail.com>
+ <bd9569f6d4c91e3fdda1e86b10372150d0c606fa.camel@redhat.com>
+ <CAAM7YAkR5cjLQc4uS-Nsq7vchV76w7WwQqWXsxuJfnDeJswOrA@mail.gmail.com>
+ <f9aba1c6bb58f6cd4d9bce8012be78dadfb5d7bb.camel@redhat.com>
+ <CAAM7YAn2tNxwyk1+p9kJppNb8RC4UER3B+BLfD1HBeAMVFDF1g@mail.gmail.com>
+ <8f530be7babafdd280586a1529a7ee5eafaaccfd.camel@redhat.com>
+ <CAAM7YA=GWm41zCUmj_aUjQ6xuT0C_QCkSfrUJNcdO53daXO4KQ@mail.gmail.com>
+ <0109e8b80ef562095be8b1b4afe0076319dfc531.camel@redhat.com>
+ <CAAM7YAk+5NJyEP-kJiC-oQjg8fsfMcS+UKdPH9enbF_en_4htw@mail.gmail.com> <b7d47dab403000a8ce2d296e3f13f63f3914147e.camel@redhat.com>
+In-Reply-To: <b7d47dab403000a8ce2d296e3f13f63f3914147e.camel@redhat.com>
 From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Tue, 9 Jul 2019 22:50:11 +0800
-Message-ID: <CAAM7YA=Cug6x+2m+RVNjmEaJaMsTAufx__yZug5SeREQSfy2tA@mail.gmail.com>
-Subject: Re: ceph_fsync race with reconnect?
+Date:   Tue, 9 Jul 2019 23:09:36 +0800
+Message-ID: <CAAM7YA=s4TgoYghaaaOHpbYcGL_VTN3CsRq6y8XSL7qtX6TPZA@mail.gmail.com>
+Subject: Re: [PATCH 0/9] ceph: auto reconnect after blacklisted
 To:     Jeff Layton <jlayton@redhat.com>
-Cc:     "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@newdream.net>,
-        "open list:CEPH DISTRIBUTED..." <ceph-devel@vger.kernel.org>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
+Cc:     "Yan, Zheng" <zyan@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jul 9, 2019 at 6:13 PM Jeff Layton <jlayton@redhat.com> wrote:
+On Tue, Jul 9, 2019 at 10:17 PM Jeff Layton <jlayton@redhat.com> wrote:
 >
-> On Tue, 2019-07-09 at 07:52 +0800, Yan, Zheng wrote:
-> > On Tue, Jul 9, 2019 at 3:23 AM Jeff Layton <jlayton@redhat.com> wrote:
-> > > I've been working on a patchset to add inline write support to kcephfs,
-> > > and have run across a potential race in fsync. I could use someone to
-> > > sanity check me though since I don't have a great grasp of the MDS
-> > > session handling:
+> On Tue, 2019-07-09 at 21:31 +0800, Yan, Zheng wrote:
+> > On Tue, Jul 9, 2019 at 6:18 PM Jeff Layton <jlayton@redhat.com> wrote:
+> > > On Tue, 2019-07-09 at 10:14 +0800, Yan, Zheng wrote:
+> > > > On Mon, Jul 8, 2019 at 9:45 PM Jeff Layton <jlayton@redhat.com> wrote:
+> > > > > On Mon, 2019-07-08 at 19:55 +0800, Yan, Zheng wrote:
+> > > > > > On Mon, Jul 8, 2019 at 7:43 PM Jeff Layton <jlayton@redhat.com> wrote:
+> > > > > > > On Mon, 2019-07-08 at 19:34 +0800, Yan, Zheng wrote:
+> > > > > > > > On Mon, Jul 8, 2019 at 6:59 PM Jeff Layton <jlayton@redhat.com> wrote:
+> > > > > > > > > On Mon, 2019-07-08 at 16:43 +0800, Yan, Zheng wrote:
+> > > > > > > > > > On Fri, Jul 5, 2019 at 9:22 PM Jeff Layton <jlayton@redhat.com> wrote:
+> > > > > > > > > > > On Fri, 2019-07-05 at 19:26 +0800, Yan, Zheng wrote:
+> > > > > > > > > > > > On Fri, Jul 5, 2019 at 6:16 PM Jeff Layton <jlayton@redhat.com> wrote:
+> > > > > > > > > > > > > On Fri, 2019-07-05 at 09:17 +0800, Yan, Zheng wrote:
+> > > > > > > > > > > > > > On Thu, Jul 4, 2019 at 10:30 PM Jeff Layton <jlayton@redhat.com> wrote:
+> > > > > > > > > > > > > > > On Thu, 2019-07-04 at 09:30 +0800, Yan, Zheng wrote:
+> > > > > > > > > > > > > > > > On 7/4/19 12:01 AM, Jeff Layton wrote:
+> > > > > > > > > > > > > > > > > On Wed, 2019-07-03 at 20:44 +0800, Yan, Zheng wrote:
+> > > > > > > > > > > > > > > > > > This series add support for auto reconnect after blacklisted.
+> > > > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > > > Auto reconnect is controlled by recover_session=<clean|no> mount option.
+> > > > > > > > > > > > > > > > > > Clean mode is enabled by default. In this mode, client drops dirty date
+> > > > > > > > > > > > > > > > > > and dirty metadata, All writable file handles are invalidated. Read-only
+> > > > > > > > > > > > > > > > > > file handles continue to work and caches are dropped if necessary.
+> > > > > > > > > > > > > > > > > > If an inode contains any lost file lock, read and write are not allowed.
+> > > > > > > > > > > > > > > > > > until all lost file locks are released.
+> > > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > > Just giving this a quick glance:
+> > > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > > Based on the last email discussion about this, I thought that you were
+> > > > > > > > > > > > > > > > > going to provide a mount option that someone could enable that would
+> > > > > > > > > > > > > > > > > basically allow the client to "soldier on" in the face of being
+> > > > > > > > > > > > > > > > > blacklisted and then unblacklisted, without needing to remount anything.
+> > > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > > This set seems to keep the force_reconnect option (patch #7) though, so
+> > > > > > > > > > > > > > > > > I'm quite confused at this point. What exactly is the goal of here?
+> > > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > > because auto reconnect can be disabled, force_reconnect is the manual
+> > > > > > > > > > > > > > > > way to fix blacklistd mount.
+> > > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > Why not instead allow remounting with a different recover_session= mode?
+> > > > > > > > > > > > > > > Then you wouldn't need this option that's only valid during a remount.
+> > > > > > > > > > > > > > > That seems like a more natural way to use a new mount option.
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > you mean something like 'recover_session=now' for remount?
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > No, I meant something like:
+> > > > > > > > > > > > >
+> > > > > > > > > > > > >     -o remount,recover_session=brute
+> > > > > > > > > > > > >
+> > > > > > > > > > > >
+> > > > > > > > > > > > This is confusing. user may just want to change auto reconnect mode
+> > > > > > > > > > > > for backlist event in the future, does not want to force reconnect.
+> > > > > > > > > > > >
+> > > > > > > > > > >
+> > > > > > > > > > > Why do we need to allow the admin to manually force a reconnect? If you
+> > > > > > > > > > > (hypothetically) change the mode to "brute" then it should do it on its
+> > > > > > > > > > > own when it detects that it's in this situation, no?
+> > > > > > > > > > >
+> > > > > > > > > >
+> > > > > > > > > > First, auto reconnect is limited to once every 30 seconds. Second,
+> > > > > > > > > > client may fail to detect that itself is blacklisted. So I think we
+> > > > > > > > > > still need a way to force client to reconnect
+> > > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > How does it detect that it has been blacklisted? Does it do that by
+> > > > > > > > > looking at the OSD maps? I'd like to better understand how the client
+> > > > > > > > > would recognize this automatically and why it might miss it.
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > By checking osd request reply and session reject message from mds.
+> > > > > > > >
+> > > > > > >
+> > > > > > > Ok, so is the issue is that the client may become blacklisted and
+> > > > > > > unblacklisted before it sends anything to either server?
+> > > > > > >
+> > > > > >
+> > > > > > No. The issue is that old version mds does not send session reject
+> > > > > > message or no 'error_str=blacklisted' in session reject message.
+> > > > >
+> > > > > Is that the only way to detect that this has happened? What if we were
+> > > > > to simply force a reconnect on any remount? Would that break anything?
+> > > > >
+> > > >
+> > > > why?  reconnect causes all sorts of integrity issues
+> > > >
 > > >
-> > > ceph_fsync() calls try_flush_caps() to flush the dirty metadata back to
-> > > the MDS when Fw caps are flushed back.  try_flush_caps does this,
-> > > however:
+> > > Care to elaborate?
 > > >
-> > >                 if (cap->session->s_state < CEPH_MDS_SESSION_OPEN) {
-> > >                         spin_unlock(&ci->i_ceph_lock);
-> > >                         goto out;
-> > >                 }
+> > > My understanding was that the fact that the MDS journaled everything
+> > > meant that the client would be able to reclaim all of its state if the
+> > > MDS crashed and restarted, or we had a momentary loss of connection. Is
+> > > that not the case?
 > > >
+> > > Either way, remounts should be _very_ rare events, almost always
+> > > performed manually by an administrator. I suggested this under the
+> > > assumption that an immediate reconnection might just be a small blip in
+> > > performance. If there are data integrity issues when this occurs then
+> > > that seems like a bigger problem.
 > >
-> > enum {
-> >         CEPH_MDS_SESSION_NEW = 1,
-> >         CEPH_MDS_SESSION_OPENING = 2,
-> >         CEPH_MDS_SESSION_OPEN = 3,
-> >         CEPH_MDS_SESSION_HUNG = 4,
-> >         CEPH_MDS_SESSION_RESTARTING = 5,
-> >         CEPH_MDS_SESSION_RECONNECTING = 6,
-> >         CEPH_MDS_SESSION_CLOSING = 7,
-> >         CEPH_MDS_SESSION_REJECTED = 8,
-> > };
-> >
-> > the value of reconnect state is larger than 2
+> > If reconnect means 're-open mds sessions',  mds lose track of caps and
+> > file locks after reconnect.  It's similar to the situation that client
+> > get blacklisted.
 > >
 >
-> Right, I get that. The big question is whether you can ever move from a
-> higher state to something less than CEPH_MDS_SESSION_OPEN.
+> I don't have a great grasp of the way state recovery works with cephfs,
+> so please bear with me here...
+>
+> Suppose I have a client with a bunch of caps and file locks, and the MDS
+> crashes and is restarted. Will the client be able to reclaim those
+> caps/locks in some fashion? If so, how is that different from the
+> situation where the client reconnects its session spuriously?
 >
 
-I guess it does not happen because closing session happens only when
-umounting.
+client can only reclaim caps/locks when mds is in reconnect state.
+'rre-open sessions' is likely to happen when mds is active.
 
-But there is a corner case in handle_cap_export(). It set inode's auth
-cap to a place holder cap. the placeholder cap's session can be in
-opening state.
+> I'm quite leery of giving admins a knob that may cause data integrity
+> problems. No other network filesystem requires something like this
+> force_reconnect button, so I'm rather interested to see if we can come
+> up with a more conventional way to achieve what you want.
 
-> __do_request can do this:
->
->                 if (session->s_state == CEPH_MDS_SESSION_NEW ||
->                     session->s_state == CEPH_MDS_SESSION_CLOSING)
->                         __open_session(mdsc, session);
->
-> ...and __open_session does this:
->
->         session->s_state = CEPH_MDS_SESSION_OPENING;
->
-> ...so it sort of looks like you can go from CLOSING(7) to OPENING(2).
-> That said, I don't have a great feel for the session state transitions,
-> and don't know whether this is a real possibility.
->
-> >
-> > > ...at that point, try_flush_caps will return 0, and set *ptid to 0 on
-> > > the way out. ceph_fsync won't see that Fw is still dirty at that point
-> > > and won't wait, returning without flushing metadata.
-> > >
-> > > Am I missing something that prevents this? I can open a tracker bug for
-> > > this if it is a problem, but I wanted to be sure it was a bug before I
-> > > did so.
-> > >
-> > > Thanks,
-> > > --
-> > > Jeff Layton <jlayton@redhat.com>
-> > >
->
+
 > --
 > Jeff Layton <jlayton@redhat.com>
 >
