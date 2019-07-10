@@ -2,34 +2,34 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF7ED64C1F
-	for <lists+ceph-devel@lfdr.de>; Wed, 10 Jul 2019 20:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DF4F64C65
+	for <lists+ceph-devel@lfdr.de>; Wed, 10 Jul 2019 20:48:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727287AbfGJSeK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 10 Jul 2019 14:34:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57070 "EHLO mail.kernel.org"
+        id S1727782AbfGJSsh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 10 Jul 2019 14:48:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727063AbfGJSeK (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 10 Jul 2019 14:34:10 -0400
+        id S1726957AbfGJSsh (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 10 Jul 2019 14:48:37 -0400
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5328920651;
-        Wed, 10 Jul 2019 18:34:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9321320844;
+        Wed, 10 Jul 2019 18:48:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562783648;
-        bh=Imp/6yldw5Nk7wj5oMtmNa024kijFVRUN+7ltmcfqbY=;
+        s=default; t=1562784516;
+        bh=xwKwXQqz74vjxT3CQ48h+jrH7caAqa85xiBFovF6QKs=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=QpTJ8YBUQZzd4NabDHnD2Yp5zwwsFwdJdt3a3uBPCYnak+mk+vQkFaULaow0NrLnE
-         7p8PJozH8Ep3h+vmDfa1von6QDzuzdh3xYnND/nqNQI6l6nBQyOxCNqzth/vrnNjzv
-         JwZIJ/53KGptB63CpOOtTwvg09rb/pAlUbM5fOZE=
-Message-ID: <941b9bea3fe33b95ce5d5510b810df37bb757101.camel@kernel.org>
+        b=kaHlu4lrjeA8Tt4IDjhLAZFerb8gM0ZWTBIoJCTizxt8oUrk8xjezr8JDbFmnZlff
+         kvl+kqGCWL7ivHtt+fhKTAOO5EuQTT4VHS3fzyZNcyAY9X9hzHAV3CRjHXPgjeFtbD
+         GfONNNitAJtWqvmcJZTqsH7bjq1GYvlqTOAhR5C4=
+Message-ID: <f39ec4e774e7b57891c49901b9a727eb6baec48b.camel@kernel.org>
 Subject: Re: [PATCH 3/3] ceph: fix potential races in ceph_uninline_data
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Luis Henriques <lhenriques@suse.com>
 Cc:     ceph-devel@vger.kernel.org, zyan@redhat.com, idryomov@gmail.com,
         sage@redhat.com
-Date:   Wed, 10 Jul 2019 14:34:07 -0400
+Date:   Wed, 10 Jul 2019 14:48:34 -0400
 In-Reply-To: <87k1cpdaxi.fsf@suse.com>
 References: <20190710161154.26125-1-jlayton@kernel.org>
          <20190710161154.26125-4-jlayton@kernel.org> <87k1cpdaxi.fsf@suse.com>
@@ -125,7 +125,11 @@ On Wed, 2019-07-10 at 19:03 +0100, Luis Henriques wrote:
 > We may need to do the unlock_page(page) before returning.
 > 
 
-No, we shouldn't here, because of patch #2.
+We don't need to do that, but if the value is 1, then the existing code
+will reset it to CEPH_INLINE_NONE even though it doesn't inline
+anything. I'll fix that up for v2.
+
+Thanks for the review so far!
 
 > > + + mutex_lock(&ci->i_truncate_mutex); + + /* Double check the version
 > > after taking mutex */ + spin_lock(&ci->i_ceph_lock); + inline_version
@@ -144,8 +148,8 @@ No, we shouldn't here, because of patch #2.
 > Shouldn't this be ci->i_inline_version = CEPH_INLINE_NONE ?  Or maybe
 > both since the dout() below uses inline_version.
 > 
+> Cheers,
 
-Yes!
 -- 
 Jeff Layton <jlayton@kernel.org>
 
