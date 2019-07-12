@@ -2,40 +2,40 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCB1366AD5
-	for <lists+ceph-devel@lfdr.de>; Fri, 12 Jul 2019 12:19:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F9BB67016
+	for <lists+ceph-devel@lfdr.de>; Fri, 12 Jul 2019 15:30:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbfGLKTq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 12 Jul 2019 06:19:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42694 "EHLO mail.kernel.org"
+        id S1727309AbfGLNaQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 12 Jul 2019 09:30:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726050AbfGLKTq (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 12 Jul 2019 06:19:46 -0400
+        id S1726466AbfGLNaQ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 12 Jul 2019 09:30:16 -0400
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9344E2084B;
-        Fri, 12 Jul 2019 10:19:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B960E206B8;
+        Fri, 12 Jul 2019 13:30:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562926785;
-        bh=F0cz4fD3abdAx2/7z+eGbjfJseymBAyfc3xUnoUceGI=;
+        s=default; t=1562938214;
+        bh=JNPYFJxtDEOHae3PrqnWWXtOHlVdJE/BCdE3KWUfNxk=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Aq9+ckwligObkja5LPlEvmphSFxW6srqC2/TgVu3cXmgdPktUYUMItmQ7hd3YRkjs
-         7YRwzMNQaIcPPpPREWLkj4Yef3YQVh0fEUTJ1CAVYaF1C+T4qb0yIg1hgHvWT7Nah0
-         DNKEq2du4C/H4XGgfB6USBcGk/d8eIlGYxRTRmy4=
-Message-ID: <fc7ae57664266acdaf66b3d438bb312da38f11bc.camel@kernel.org>
-Subject: Re: [PATCH v2 5/5] ceph: handle inlined files in copy_file_range
+        b=DxSO8L8NrJgZjgQ/o7++ik+p1Ho1MQVaYR5uAgTdRsFwggtAwJayLKtymZR4hT/Td
+         UkBIl2pwFzVQvpI47J0MPsCeI64icR8vpByd/wmgwYtpVRfOw4Cu4/yHE8mjC9TQWR
+         mbnjcCNa6S2vdRVTMm2V5pNi590j6lrQKSHJOmLI=
+Message-ID: <90861198da779dc1d36d3a85e6028aed15ebfdfa.camel@kernel.org>
+Subject: Re: [PATCH v2 3/5] ceph: fix potential races in ceph_uninline_data
 From:   Jeff Layton <jlayton@kernel.org>
 To:     "Yan, Zheng" <ukernel@gmail.com>
 Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
         Zheng Yan <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
         Sage Weil <sage@redhat.com>,
         Luis Henriques <lhenriques@suse.com>
-Date:   Fri, 12 Jul 2019 06:19:43 -0400
-In-Reply-To: <CAAM7YAk=CWNCFrk7cudTHY4Gt0u_izjsRV8M=uZEOqTd-e2PTA@mail.gmail.com>
+Date:   Fri, 12 Jul 2019 09:30:12 -0400
+In-Reply-To: <CAAM7YA=b7-Rj641+jR3vsEQwiuZTtgv_2MRfiMQ6r52N0+H83A@mail.gmail.com>
 References: <20190711184136.19779-1-jlayton@kernel.org>
-         <20190711184136.19779-6-jlayton@kernel.org>
-         <CAAM7YAk=CWNCFrk7cudTHY4Gt0u_izjsRV8M=uZEOqTd-e2PTA@mail.gmail.com>
+         <20190711184136.19779-4-jlayton@kernel.org>
+         <CAAM7YA=b7-Rj641+jR3vsEQwiuZTtgv_2MRfiMQ6r52N0+H83A@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.32.3 (3.32.3-1.fc30) 
 MIME-Version: 1.0
@@ -45,60 +45,402 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2019-07-12 at 10:46 +0800, Yan, Zheng wrote:
+On Fri, 2019-07-12 at 10:44 +0800, Yan, Zheng wrote:
 > On Fri, Jul 12, 2019 at 3:17 AM Jeff Layton <jlayton@kernel.org> wrote:
-> > If the src is inlined, then just bail out. Have it attempt to uninline
-> > the dst file however.
+> > The current code will do the uninlining but it relies on the callers to
+> > set the i_inline_version appropriately afterward. Multiple tasks can end
+> > up attempting to uninline the data, and overwrite changes that follow
+> > the first uninlining.
+> > 
+> > Protect against competing uninlining attempts by having the callers take
+> > the i_truncate_mutex and then have ceph_uninline_data update the version
+> > itself before dropping it. This means that we also need to have
+> > ceph_uninline_data mark the caps dirty and pass back I_DIRTY_* flags if
+> > any of them are newly dirty.
+> > 
+> > We can't mark the caps dirty though unless we actually have them, so
+> > move the uninlining after the point where Fw caps are acquired in all of
+> > the callers.
+> > 
+> > Finally, since we are doing a lockless check first in all cases, just
+> > move that into ceph_uninline_data as well, and have the callers call it
+> > unconditionally.
 > > 
 > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > > ---
-> >  fs/ceph/file.c | 13 ++++++++++++-
-> >  1 file changed, 12 insertions(+), 1 deletion(-)
+> >  fs/ceph/addr.c | 119 +++++++++++++++++++++++++++++++++----------------
+> >  fs/ceph/file.c |  39 +++++++---------
+> >  2 files changed, 97 insertions(+), 61 deletions(-)
 > > 
-> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > index 252aac44b8ce..774f51b0b63d 100644
-> > --- a/fs/ceph/file.c
-> > +++ b/fs/ceph/file.c
-> > @@ -1934,6 +1934,10 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >         if (len < src_ci->i_layout.object_size)
-> >                 return -EOPNOTSUPP; /* no remote copy will be done */
+> > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> > index 038678963cf9..4606da82da6f 100644
+> > --- a/fs/ceph/addr.c
+> > +++ b/fs/ceph/addr.c
+> > @@ -1531,7 +1531,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+> >         loff_t off = page_offset(page);
+> >         loff_t size = i_size_read(inode);
+> >         size_t len;
+> > -       int want, got, err;
+> > +       int want, got, err, dirty;
+> >         sigset_t oldset;
+> >         vm_fault_t ret = VM_FAULT_SIGBUS;
 > > 
-> > +       /* Fall back if src file is inlined */
-> > +       if (READ_ONCE(src_ci->i_inline_version) != CEPH_INLINE_NONE)
-> > +               return -EOPNOTSUPP;
+> > @@ -1541,12 +1541,6 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+> > 
+> >         ceph_block_sigs(&oldset);
+> > 
+> > -       if (ci->i_inline_version != CEPH_INLINE_NONE) {
+> > -               err = ceph_uninline_data(inode, off == 0 ? page : NULL);
+> > -               if (err < 0)
+> > -                       goto out_free;
+> > -       }
+> > -
+> >         if (off + PAGE_SIZE <= size)
+> >                 len = PAGE_SIZE;
+> >         else
+> > @@ -1565,6 +1559,11 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+> >         if (err < 0)
+> >                 goto out_free;
+> > 
+> > +       err = ceph_uninline_data(inode, off == 0 ? page : NULL);
+> > +       if (err < 0)
+> > +               goto out_put_caps;
+> > +       dirty = err;
 > > +
-> >         prealloc_cf = ceph_alloc_cap_flush();
-> >         if (!prealloc_cf)
-> >                 return -ENOMEM;
-> > @@ -1967,6 +1971,13 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >         if (ret < 0)
-> >                 goto out_caps;
+> >         dout("page_mkwrite %p %llu~%zd got cap refs on %s\n",
+> >              inode, off, len, ceph_cap_string(got));
 > > 
-> > +       /* uninline the dst inode */
-> > +       dirty = ceph_uninline_data(dst_inode, NULL);
-> > +       if (dirty < 0) {
-> > +               ret = dirty;
-> > +               goto out_caps;
-> > +       }
+> > @@ -1591,11 +1590,9 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+> > 
+> >         if (ret == VM_FAULT_LOCKED ||
+> >             ci->i_inline_version != CEPH_INLINE_NONE) {
+> > -               int dirty;
+> >                 spin_lock(&ci->i_ceph_lock);
+> > -               ci->i_inline_version = CEPH_INLINE_NONE;
+> > -               dirty = __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
+> > -                                              &prealloc_cf);
+> > +               dirty |= __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
+> > +                                               &prealloc_cf);
+> >                 spin_unlock(&ci->i_ceph_lock);
+> >                 if (dirty)
+> >                         __mark_inode_dirty(inode, dirty);
+> > @@ -1603,6 +1600,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+> > 
+> >         dout("page_mkwrite %p %llu~%zd dropping cap refs on %s ret %x\n",
+> >              inode, off, len, ceph_cap_string(got), ret);
+> > +out_put_caps:
+> >         ceph_put_cap_refs(ci, got);
+> >  out_free:
+> >         ceph_restore_sigs(&oldset);
+> > @@ -1656,27 +1654,60 @@ void ceph_fill_inline_data(struct inode *inode, struct page *locked_page,
+> >         }
+> >  }
+> > 
+> > +/**
+> > + * ceph_uninline_data - convert an inlined file to uninlined
+> > + * @inode: inode to be uninlined
+> > + * @page: optional pointer to first page in file
+> > + *
+> > + * Convert a file from inlined to non-inlined. We borrow the i_truncate_mutex
+> > + * to serialize callers and prevent races. Returns either a negative error code
+> > + * or a positive set of I_DIRTY_* flags that the caller should apply when
+> > + * dirtying the inode.
+> > + */
+> >  int ceph_uninline_data(struct inode *inode, struct page *provided_page)
+> >  {
+> >         struct ceph_inode_info *ci = ceph_inode(inode);
+> >         struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> >         struct ceph_osd_request *req;
+> > +       struct ceph_cap_flush *prealloc_cf = NULL;
+> >         struct page *page = NULL;
+> >         u64 len, inline_version;
+> > -       int err = 0;
+> > +       int ret = 0;
+> >         bool from_pagecache = false;
+> >         bool allocated_page = false;
+> > 
+> > +       /* Do a lockless check first -- paired with i_ceph_lock for changes */
+> > +       inline_version = READ_ONCE(ci->i_inline_version);
+> > +       if (likely(inline_version == CEPH_INLINE_NONE))
+> > +               return 0;
 > > +
-> >         size = i_size_read(dst_inode);
-> >         endoff = dst_off + len;
+> > +       dout("uninline_data %p %llx.%llx inline_version %llu\n",
+> > +            inode, ceph_vinop(inode), inline_version);
+> > +
+> > +       mutex_lock(&ci->i_truncate_mutex);
+> > +
+> > +       /* Double check the version after taking mutex */
+> >         spin_lock(&ci->i_ceph_lock);
+> >         inline_version = ci->i_inline_version;
+> >         spin_unlock(&ci->i_ceph_lock);
 > > 
-> > @@ -2080,7 +2091,7 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >         /* Mark Fw dirty */
-> >         spin_lock(&dst_ci->i_ceph_lock);
-> >         dst_ci->i_inline_version = CEPH_INLINE_NONE;
-> remove this line
+> > -       dout("uninline_data %p %llx.%llx inline_version %llu\n",
+> > -            inode, ceph_vinop(inode), inline_version);
+> > +       /* If someone beat us to the uninlining then just return. */
+> > +       if (inline_version == CEPH_INLINE_NONE)
+> > +               goto out;
+> > 
+> > -       if (inline_version == 1 || /* initial version, no data */
+> I'd like to avoid this optimization. check i_size instead.
 > 
 
-Good catch. Looks like I left another one too in ceph_aio_complete. I'll
-remove that one as well.
+This one is being removed already...
 
-> > -       dirty = __ceph_mark_dirty_caps(dst_ci, CEPH_CAP_FILE_WR, &prealloc_cf);
-> > +       dirty |= __ceph_mark_dirty_caps(dst_ci, CEPH_CAP_FILE_WR, &prealloc_cf);
-> >         spin_unlock(&dst_ci->i_ceph_lock);
-> >         if (dirty)
-> >                 __mark_inode_dirty(dst_inode, dirty);
+> > -           inline_version == CEPH_INLINE_NONE)
+> > +       prealloc_cf = ceph_alloc_cap_flush();
+> > +       if (!prealloc_cf) {
+> > +               ret = -ENOMEM;
+> >                 goto out;
+> > +       }
+> > +
+> > +       /*
+> > +        * Handle the initial version (1) as a a special case: switch the
+> > +        * version to CEPH_INLINE_NONE, but we don't need to do any uninlining
+> > +        * in that case since there is no data yet.
+> > +        */
+> > +       if (inline_version == 1)
+> > +               goto out_set_vers;
+> 
+> ditto
+> 
+
+Fixed this up in my tree, and removed the places that set the
+i_inline_version to CEPH_INLINE_NONE in aio completion and cfr
+codepaths. I went ahead and pushed the result to the ceph-client/testing 
+branch.
+
+Thanks to you and Luis for the review so far!
+
+> >         if (provided_page) {
+> >                 page = provided_page;
+> > @@ -1703,20 +1734,20 @@ int ceph_uninline_data(struct inode *inode, struct page *provided_page)
+> >         } else {
+> >                 page = __page_cache_alloc(GFP_NOFS);
+> >                 if (!page) {
+> > -                       err = -ENOMEM;
+> > +                       ret = -ENOMEM;
+> >                         goto out;
+> >                 }
+> >                 allocated_page = true;
+> >                 lock_page(page);
+> > -               err = __ceph_do_getattr(inode, page,
+> > +               ret = __ceph_do_getattr(inode, page,
+> >                                         CEPH_STAT_CAP_INLINE_DATA, true);
+> > -               if (err < 0) {
+> > +               if (ret < 0) {
+> >                         /* no inline data */
+> > -                       if (err == -ENODATA)
+> > -                               err = 0;
+> > +                       if (ret == -ENODATA)
+> > +                               ret = 0;
+> >                         goto out;
+> >                 }
+> > -               len = err;
+> > +               len = ret;
+> >         }
+> > 
+> >         req = ceph_osdc_new_request(&fsc->client->osdc, &ci->i_layout,
+> > @@ -1724,16 +1755,16 @@ int ceph_uninline_data(struct inode *inode, struct page *provided_page)
+> >                                     CEPH_OSD_OP_CREATE, CEPH_OSD_FLAG_WRITE,
+> >                                     NULL, 0, 0, false);
+> >         if (IS_ERR(req)) {
+> > -               err = PTR_ERR(req);
+> > +               ret = PTR_ERR(req);
+> >                 goto out;
+> >         }
+> > 
+> >         req->r_mtime = inode->i_mtime;
+> > -       err = ceph_osdc_start_request(&fsc->client->osdc, req, false);
+> > -       if (!err)
+> > -               err = ceph_osdc_wait_request(&fsc->client->osdc, req);
+> > +       ret = ceph_osdc_start_request(&fsc->client->osdc, req, false);
+> > +       if (!ret)
+> > +               ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
+> >         ceph_osdc_put_request(req);
+> > -       if (err < 0)
+> > +       if (ret < 0)
+> >                 goto out;
+> > 
+> >         req = ceph_osdc_new_request(&fsc->client->osdc, &ci->i_layout,
+> > @@ -1742,7 +1773,7 @@ int ceph_uninline_data(struct inode *inode, struct page *provided_page)
+> >                                     NULL, ci->i_truncate_seq,
+> >                                     ci->i_truncate_size, false);
+> >         if (IS_ERR(req)) {
+> > -               err = PTR_ERR(req);
+> > +               ret = PTR_ERR(req);
+> >                 goto out;
+> >         }
+> > 
+> > @@ -1750,12 +1781,12 @@ int ceph_uninline_data(struct inode *inode, struct page *provided_page)
+> > 
+> >         {
+> >                 __le64 xattr_buf = cpu_to_le64(inline_version);
+> > -               err = osd_req_op_xattr_init(req, 0, CEPH_OSD_OP_CMPXATTR,
+> > +               ret = osd_req_op_xattr_init(req, 0, CEPH_OSD_OP_CMPXATTR,
+> >                                             "inline_version", &xattr_buf,
+> >                                             sizeof(xattr_buf),
+> >                                             CEPH_OSD_CMPXATTR_OP_GT,
+> >                                             CEPH_OSD_CMPXATTR_MODE_U64);
+> > -               if (err)
+> > +               if (ret)
+> >                         goto out_put;
+> >         }
+> > 
+> > @@ -1763,22 +1794,31 @@ int ceph_uninline_data(struct inode *inode, struct page *provided_page)
+> >                 char xattr_buf[32];
+> >                 int xattr_len = snprintf(xattr_buf, sizeof(xattr_buf),
+> >                                          "%llu", inline_version);
+> > -               err = osd_req_op_xattr_init(req, 2, CEPH_OSD_OP_SETXATTR,
+> > +               ret = osd_req_op_xattr_init(req, 2, CEPH_OSD_OP_SETXATTR,
+> >                                             "inline_version",
+> >                                             xattr_buf, xattr_len, 0, 0);
+> > -               if (err)
+> > +               if (ret)
+> >                         goto out_put;
+> >         }
+> > 
+> >         req->r_mtime = inode->i_mtime;
+> > -       err = ceph_osdc_start_request(&fsc->client->osdc, req, false);
+> > -       if (!err)
+> > -               err = ceph_osdc_wait_request(&fsc->client->osdc, req);
+> > +       ret = ceph_osdc_start_request(&fsc->client->osdc, req, false);
+> > +       if (!ret)
+> > +               ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
+> >  out_put:
+> >         ceph_osdc_put_request(req);
+> > -       if (err == -ECANCELED)
+> > -               err = 0;
+> > +       if (ret == -ECANCELED)
+> > +               ret = 0;
+> > +out_set_vers:
+> > +       if (!ret) {
+> > +               spin_lock(&ci->i_ceph_lock);
+> > +               ci->i_inline_version = CEPH_INLINE_NONE;
+> > +               ret = __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
+> > +                                            &prealloc_cf);
+> > +               spin_unlock(&ci->i_ceph_lock);
+> > +       }
+> >  out:
+> > +       mutex_unlock(&ci->i_truncate_mutex);
+> >         if (page) {
+> >                 unlock_page(page);
+> >                 if (from_pagecache)
+> > @@ -1786,10 +1826,11 @@ int ceph_uninline_data(struct inode *inode, struct page *provided_page)
+> >                 else if (allocated_page)
+> >                         __free_pages(page, 0);
+> >         }
+> > +       ceph_free_cap_flush(prealloc_cf);
+> > 
+> >         dout("uninline_data %p %llx.%llx inline_version %llu = %d\n",
+> > -            inode, ceph_vinop(inode), inline_version, err);
+> > -       return err;
+> > +            inode, ceph_vinop(inode), inline_version, ret);
+> > +       return ret;
+> >  }
+> > 
+> >  static const struct vm_operations_struct ceph_vmops = {
+> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > index 7bb090fa99d3..252aac44b8ce 100644
+> > --- a/fs/ceph/file.c
+> > +++ b/fs/ceph/file.c
+> > @@ -1387,7 +1387,7 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> >         struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> >         struct ceph_cap_flush *prealloc_cf;
+> >         ssize_t count, written = 0;
+> > -       int err, want, got;
+> > +       int err, want, got, dirty;
+> >         loff_t pos;
+> >         loff_t limit = max(i_size_read(inode), fsc->max_file_size);
+> > 
+> > @@ -1438,12 +1438,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> > 
+> >         inode_inc_iversion_raw(inode);
+> > 
+> > -       if (ci->i_inline_version != CEPH_INLINE_NONE) {
+> > -               err = ceph_uninline_data(inode, NULL);
+> > -               if (err < 0)
+> > -                       goto out;
+> > -       }
+> > -
+> >         /* FIXME: not complete since it doesn't account for being at quota */
+> >         if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_FULL)) {
+> >                 err = -ENOSPC;
+> > @@ -1462,6 +1456,11 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> >         if (err < 0)
+> >                 goto out;
+> > 
+> > +       err = ceph_uninline_data(inode, NULL);
+> > +       if (err < 0)
+> > +               goto out_put_caps;
+> > +       dirty = err;
+> > +
+> >         dout("aio_write %p %llx.%llx %llu~%zd got cap refs on %s\n",
+> >              inode, ceph_vinop(inode), pos, count, ceph_cap_string(got));
+> > 
+> > @@ -1510,12 +1509,9 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> >         }
+> > 
+> >         if (written >= 0) {
+> > -               int dirty;
+> > -
+> >                 spin_lock(&ci->i_ceph_lock);
+> > -               ci->i_inline_version = CEPH_INLINE_NONE;
+> > -               dirty = __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
+> > -                                              &prealloc_cf);
+> > +               dirty |= __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
+> > +                                               &prealloc_cf);
+> >                 spin_unlock(&ci->i_ceph_lock);
+> >                 if (dirty)
+> >                         __mark_inode_dirty(inode, dirty);
+> > @@ -1526,6 +1522,7 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> >         dout("aio_write %p %llx.%llx %llu~%u  dropping cap refs on %s\n",
+> >              inode, ceph_vinop(inode), pos, (unsigned)count,
+> >              ceph_cap_string(got));
+> > +out_put_caps:
+> >         ceph_put_cap_refs(ci, got);
+> > 
+> >         if (written == -EOLDSNAPC) {
+> > @@ -1762,12 +1759,6 @@ static long ceph_fallocate(struct file *file, int mode,
+> >                 goto unlock;
+> >         }
+> > 
+> > -       if (ci->i_inline_version != CEPH_INLINE_NONE) {
+> > -               ret = ceph_uninline_data(inode, NULL);
+> > -               if (ret < 0)
+> > -                       goto unlock;
+> > -       }
+> > -
+> >         size = i_size_read(inode);
+> > 
+> >         /* Are we punching a hole beyond EOF? */
+> > @@ -1785,19 +1776,23 @@ static long ceph_fallocate(struct file *file, int mode,
+> >         if (ret < 0)
+> >                 goto unlock;
+> > 
+> > +       ret = ceph_uninline_data(inode, NULL);
+> > +       if (ret < 0)
+> > +               goto out_put_caps;
+> > +       dirty = ret;
+> > +
+> >         ceph_zero_pagecache_range(inode, offset, length);
+> >         ret = ceph_zero_objects(inode, offset, length);
+> > 
+> >         if (!ret) {
+> >                 spin_lock(&ci->i_ceph_lock);
+> > -               ci->i_inline_version = CEPH_INLINE_NONE;
+> > -               dirty = __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
+> > -                                              &prealloc_cf);
+> > +               dirty |= __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
+> > +                                               &prealloc_cf);
+> >                 spin_unlock(&ci->i_ceph_lock);
+> >                 if (dirty)
+> >                         __mark_inode_dirty(inode, dirty);
+> >         }
+> > -
+> > +out_put_caps:
+> >         ceph_put_cap_refs(ci, got);
+> >  unlock:
+> >         inode_unlock(inode);
 > > --
 > > 2.21.0
 > > 
