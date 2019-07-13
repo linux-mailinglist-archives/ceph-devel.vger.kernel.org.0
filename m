@@ -2,278 +2,101 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E8DC67354
-	for <lists+ceph-devel@lfdr.de>; Fri, 12 Jul 2019 18:33:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AF7967BBA
+	for <lists+ceph-devel@lfdr.de>; Sat, 13 Jul 2019 21:01:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbfGLQdx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 12 Jul 2019 12:33:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44908 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726628AbfGLQdx (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 12 Jul 2019 12:33:53 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7273320838;
-        Fri, 12 Jul 2019 16:33:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1562949232;
-        bh=+xeUGsfb4Sq9JDLGXMlZyhUeCbNonjcXqbyqbbCErBw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=sU0mWUaxYxUKTtdEwn5k/imtwvBvQF+icY/hL4HHI8cGSDYBqgWiSOwZuAgjXp8u6
-         B5NgnF0t/aE7lPNNXknyE0rUhUizEtCA2a7kXWwPxuQXmrTJaPETZg6Rpj7PI8Lf0S
-         bbRcOm93YwZe273ryyOBKXyMUj1/ya1HpQSdwB7M=
-Message-ID: <5f9f895b9c0980f714fa76763e746a1cb42ac2ae.camel@kernel.org>
-Subject: Re: [PATCH v2 3/5] ceph: fix potential races in ceph_uninline_data
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "Yan, Zheng" <ukernel@gmail.com>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
-        Zheng Yan <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Sage Weil <sage@redhat.com>,
-        Luis Henriques <lhenriques@suse.com>
-Date:   Fri, 12 Jul 2019 12:33:50 -0400
-In-Reply-To: <90861198da779dc1d36d3a85e6028aed15ebfdfa.camel@kernel.org>
-References: <20190711184136.19779-1-jlayton@kernel.org>
-         <20190711184136.19779-4-jlayton@kernel.org>
-         <CAAM7YA=b7-Rj641+jR3vsEQwiuZTtgv_2MRfiMQ6r52N0+H83A@mail.gmail.com>
-         <90861198da779dc1d36d3a85e6028aed15ebfdfa.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.3 (3.32.3-1.fc30) 
+        id S1727881AbfGMTBq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 13 Jul 2019 15:01:46 -0400
+Received: from se01-out.route25.eu ([185.66.251.200]:47121 "EHLO
+        se01-out.mail.pcextreme.nl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727874AbfGMTBq (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Sat, 13 Jul 2019 15:01:46 -0400
+X-Greylist: delayed 1987 seconds by postgrey-1.27 at vger.kernel.org; Sat, 13 Jul 2019 15:01:44 EDT
+To:     Ceph Development <ceph-devel@vger.kernel.org>
+From:   Wido den Hollander <wido@42on.com>
+Subject: rados-java 0.5.0 has been released
+Openpgp: preference=signencrypt
+Autocrypt: addr=wido@42on.com; prefer-encrypt=mutual; keydata=
+ xsBNBFPkomgBCADGA8E8Wm2bG2lSTggjk4i6iEHEA6EZJ9Ln2nTIGPg+QbRAZSYuPBtr0d6K
+ kijiFzh0oujoQ5Q6UlK1sp3on7PIsmKeK5K54Ji+is28xPaUAoEVteTb/2XuLon/sobO+fzM
+ v2nrZ63owjQRMUtuR9vJmZ+aODq0WyHUj4bw1WVIL3PBkQ5QuwDA6u5e/UlugvdVf+GMCFOM
+ wOo8mh6IRtYQTqoUkiGydrAM8gFbOTA9rO4bFpbSbiu/e9FbDwdmj370YHFVd6s/wgNtOeKs
+ pQVdWD8tJI8eI8g0L/HYfxD69BTnyI0YPjI1n/aDHRvh0F1usYoTXb2/18pDPNcjVfxvABEB
+ AAHNO1dpZG8gZGVuIEhvbGxhbmRlciAoUENleHRyZW1lIEIuVi4ga2V5KSA8d2lkb0BwY2V4
+ dHJlbWUubmw+wsB4BBMBAgAiBQJT5KJoAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAK
+ CRB9xvI4O0zu2g9wB/9l6xuaRF1J3gQB7jAg/B2PnOM4KmjoFPMGSMtKs94rLoqmcn5GUD4H
+ JEdSiP5USqh0OnLN6Knb1ZAASWzLOji9QLq+nPI8zjeMXChF2Qf7/qkP75MslH3wBxy16yl2
+ 0yvd7wqZZXbc7vKSkxVMvJdxqf738d+Zc38u0z0cV43h77T3CvxZuEA13WeHK/eHQCXx3sBl
+ zrjfylM0UbIDhntNWe9q5BYtOOQJpfq9t7DQwTQ6m7VFMrFBExP3ZdHIOvFKesrHyGAJLMw+
+ 8nMeEdWOe9TEsBgmhxny5TJmygNcekuzoaWSknyHn7vwLNSESejs/Vs3/duv/luZWbkpvaq/
+ zsBNBFPkomgBCACbkn7d8A2z/4691apLM07NyvkXBON7+HPtBm7LFJ2YnVcfc1AaX6d8XVnG
+ s5aKMqaa5+ZVDpvKX0rUE9B8neQQ0UwUaEG8QlSuilBfAbDA1+8NtjIkoo7Vcy0PTJ1kGhgV
+ D4cD98SIT+NpCB0Om9D80O14YP+ES9pkL3XEcixPy7LpLVTVMz2ZH1PXZy/pm7AdSHX/xcKG
+ SctiO2C8jWq0VZdoQSP5hhnf4FOZdhTnp2bZFFgC/5EQ3tTrBMOJiftmOFf5ai5CLffoBRqN
+ 8e8wsVohcdRKEDvMtdKJntncG3pmJIuDMSWQxhM1LrZ7UgeSBbrS+vCdyKplXwdDw/GJABEB
+ AAHCwF8EGAECAAkFAlPkomgCGwwACgkQfcbyODtM7trA2gf/Ydp28gq6PFZZAycM4n4bUQ2p
+ E34E91VBpJZlYGHJWoBbkBgf6eAzkWXZq2sDnnAjxPP9H7RWyPZGH4xRB4U7JdtAD4z46gWT
+ 8qoWvkbwfZlrmxEPkyTIi05msiNYRk6iGOkb5Oob0yp03ROxZRGljiiLzS44BgK9M+n67DxC
+ IlhSiSotHSfljbMUeMj1VXLrmusEw7Dtds5LzON2UZFd/AUJP6zj9GHCpTsvEwacsCdia683
+ 44jzAsFJLduXHdNa9SKlreahe8fGmv8CAtQpD4OuLiDsqzzwkKPI6GAd1MqJQh5AwM0HarPt
+ oDhu3Bo+SVdO5LIKLCmujjBbHZBHIw==
+Message-ID: <da5b29d5-4be4-6cb6-c260-c0a5cccaafea@42on.com>
+Date:   Sat, 13 Jul 2019 20:28:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: 2a00:f10:400:2:425:b2ff:fe00:1c1
+X-SpamExperts-Domain: out.pcextreme.nl
+X-SpamExperts-Username: 2a00:f10:400:2:425:b2ff:fe00:1c1
+Authentication-Results: route25.eu; auth=pass smtp.auth=2a00:f10:400:2:425:b2ff:fe00:1c1@out.pcextreme.nl
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: Combined (0.15)
+X-Recommended-Action: accept
+X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0U6y6flTXvu8AHhQTLy0w52pSDasLI4SayDByyq9LIhVUZbR67CQ7/vm
+ /hHDJU4RXkTNWdUk1Ol2OGx3IfrIJKywOmJyM1qr8uRnWBrbSAGDTAVfnPe72Ud6Wq1Gu1PAzrsr
+ 2GHY/oPc/Sj6e6fjMOPgo34CxMJsfFVRRl+N7XQzvcr3Zfx69WQ9D9qeF/TvXEMC83EcGqebH9oT
+ x2HeTuIEQSRkwWzD2mSh4NTwjLDCSq2swcqdmOMtvfhrEkAbGxX98uJKifzY3xpJiZsVAXaQVhek
+ f4tomG8ezZ3lBknoGZi9JExiFTdw7YTNQfBVcTBDOAfdlSW2SB1UylrOE0M+PB9oHasT9LYGFAGT
+ CUrRSAoKui/UZqxZXW+PYL7Slxe4BPzpam1U3Cj9xZx6U4N8tahyNNWIjL5I1fiG9y8ZwNP1kbQK
+ ZdzS/i0oexRKO47w4vcwqZanLHsZM8r4s5ZjlHoGly8aneNxj+pRyx6DOD5CLkxb45eJDDFXfbzI
+ hV32xBCtyUJ3/LbSt9KpDYeNLtSRWKGmohoil/1AiKo+tkgXyuidojvEg3qjfiiAf/vg7iEFLP+S
+ SY+Av5+AiC5WR8iGwBY1KJ7qAHJR+1YmT01pFYpIIFi9UgNlQHB3Y8pPWJnot0587se7BLtPvFq1
+ XeLBrYcYJalfgTMPbKrqcgBpDQhLVZmxes5GqKWcApBulS1g9I8ykB+sHWZJB9K4yHHb7u7gww5i
+ F3nCyxFU3fE36i0gnrStL1mrPLHgOqCm7NVHprnCF4AvxZB8t6Rr5VekyFH2PxiKUWMGdhUBQ6Uz
+ ftoOj4uNELrC733lNxhJ9mxCYKx8Ry2Cil+ihZEOicdxThHJVcNqfJwjtI/gHHASJNUmoOHSoqgq
+ xfHmWRq17OupxD/P66B7w+Dkmeov6A2GoMB4xVOP5F2mqXdn5gs4uLvDJioEdCswT4sgCG0AuXq0
+ T17woJo3avKeADIPpOpYJ5j2uH0RpwEAtX6IYWJ+VvKzLzqnxavnP4ahhPVMxaTEvkG4ksrS4XAI
+ /xZgMfW3dtMUO/t2hIeLElNMMG1QP35nsYfP84c+RFK3KmTSAEVWoBDIY8hi+ZZUOvcZrqpC1wjA
+ V/qK1pG17sL3
+X-Report-Abuse-To: spam@semaster01.route25.eu
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2019-07-12 at 09:30 -0400, Jeff Layton wrote:
-> On Fri, 2019-07-12 at 10:44 +0800, Yan, Zheng wrote:
-> > On Fri, Jul 12, 2019 at 3:17 AM Jeff Layton <jlayton@kernel.org> wrote:
-> > > The current code will do the uninlining but it relies on the callers to
-> > > set the i_inline_version appropriately afterward. Multiple tasks can end
-> > > up attempting to uninline the data, and overwrite changes that follow
-> > > the first uninlining.
-> > > 
-> > > Protect against competing uninlining attempts by having the callers take
-> > > the i_truncate_mutex and then have ceph_uninline_data update the version
-> > > itself before dropping it. This means that we also need to have
-> > > ceph_uninline_data mark the caps dirty and pass back I_DIRTY_* flags if
-> > > any of them are newly dirty.
-> > > 
-> > > We can't mark the caps dirty though unless we actually have them, so
-> > > move the uninlining after the point where Fw caps are acquired in all of
-> > > the callers.
-> > > 
-> > > Finally, since we are doing a lockless check first in all cases, just
-> > > move that into ceph_uninline_data as well, and have the callers call it
-> > > unconditionally.
-> > > 
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  fs/ceph/addr.c | 119 +++++++++++++++++++++++++++++++++----------------
-> > >  fs/ceph/file.c |  39 +++++++---------
-> > >  2 files changed, 97 insertions(+), 61 deletions(-)
-> > > 
-> > > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> > > index 038678963cf9..4606da82da6f 100644
-> > > --- a/fs/ceph/addr.c
-> > > +++ b/fs/ceph/addr.c
-> > > @@ -1531,7 +1531,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
-> > >         loff_t off = page_offset(page);
-> > >         loff_t size = i_size_read(inode);
-> > >         size_t len;
-> > > -       int want, got, err;
-> > > +       int want, got, err, dirty;
-> > >         sigset_t oldset;
-> > >         vm_fault_t ret = VM_FAULT_SIGBUS;
-> > > 
-> > > @@ -1541,12 +1541,6 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
-> > > 
-> > >         ceph_block_sigs(&oldset);
-> > > 
-> > > -       if (ci->i_inline_version != CEPH_INLINE_NONE) {
-> > > -               err = ceph_uninline_data(inode, off == 0 ? page : NULL);
-> > > -               if (err < 0)
-> > > -                       goto out_free;
-> > > -       }
-> > > -
-> > >         if (off + PAGE_SIZE <= size)
-> > >                 len = PAGE_SIZE;
-> > >         else
-> > > @@ -1565,6 +1559,11 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
-> > >         if (err < 0)
-> > >                 goto out_free;
-> > > 
-> > > +       err = ceph_uninline_data(inode, off == 0 ? page : NULL);
-> > > +       if (err < 0)
-> > > +               goto out_put_caps;
-> > > +       dirty = err;
-> > > +
-> > >         dout("page_mkwrite %p %llu~%zd got cap refs on %s\n",
-> > >              inode, off, len, ceph_cap_string(got));
-> > > 
-> > > @@ -1591,11 +1590,9 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
-> > > 
-> > >         if (ret == VM_FAULT_LOCKED ||
-> > >             ci->i_inline_version != CEPH_INLINE_NONE) {
-> > > -               int dirty;
-> > >                 spin_lock(&ci->i_ceph_lock);
-> > > -               ci->i_inline_version = CEPH_INLINE_NONE;
-> > > -               dirty = __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
-> > > -                                              &prealloc_cf);
-> > > +               dirty |= __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
-> > > +                                               &prealloc_cf);
-> > >                 spin_unlock(&ci->i_ceph_lock);
-> > >                 if (dirty)
-> > >                         __mark_inode_dirty(inode, dirty);
-> > > @@ -1603,6 +1600,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
-> > > 
-> > >         dout("page_mkwrite %p %llu~%zd dropping cap refs on %s ret %x\n",
-> > >              inode, off, len, ceph_cap_string(got), ret);
-> > > +out_put_caps:
-> > >         ceph_put_cap_refs(ci, got);
-> > >  out_free:
-> > >         ceph_restore_sigs(&oldset);
-> > > @@ -1656,27 +1654,60 @@ void ceph_fill_inline_data(struct inode *inode, struct page *locked_page,
-> > >         }
-> > >  }
-> > > 
-> > > +/**
-> > > + * ceph_uninline_data - convert an inlined file to uninlined
-> > > + * @inode: inode to be uninlined
-> > > + * @page: optional pointer to first page in file
-> > > + *
-> > > + * Convert a file from inlined to non-inlined. We borrow the i_truncate_mutex
-> > > + * to serialize callers and prevent races. Returns either a negative error code
-> > > + * or a positive set of I_DIRTY_* flags that the caller should apply when
-> > > + * dirtying the inode.
-> > > + */
-> > >  int ceph_uninline_data(struct inode *inode, struct page *provided_page)
-> > >  {
-> > >         struct ceph_inode_info *ci = ceph_inode(inode);
-> > >         struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-> > >         struct ceph_osd_request *req;
-> > > +       struct ceph_cap_flush *prealloc_cf = NULL;
-> > >         struct page *page = NULL;
-> > >         u64 len, inline_version;
-> > > -       int err = 0;
-> > > +       int ret = 0;
-> > >         bool from_pagecache = false;
-> > >         bool allocated_page = false;
-> > > 
-> > > +       /* Do a lockless check first -- paired with i_ceph_lock for changes */
-> > > +       inline_version = READ_ONCE(ci->i_inline_version);
-> > > +       if (likely(inline_version == CEPH_INLINE_NONE))
-> > > +               return 0;
-> > > +
-> > > +       dout("uninline_data %p %llx.%llx inline_version %llu\n",
-> > > +            inode, ceph_vinop(inode), inline_version);
-> > > +
-> > > +       mutex_lock(&ci->i_truncate_mutex);
-> > > +
-> > > +       /* Double check the version after taking mutex */
-> > >         spin_lock(&ci->i_ceph_lock);
-> > >         inline_version = ci->i_inline_version;
-> > >         spin_unlock(&ci->i_ceph_lock);
-> > > 
-> > > -       dout("uninline_data %p %llx.%llx inline_version %llu\n",
-> > > -            inode, ceph_vinop(inode), inline_version);
-> > > +       /* If someone beat us to the uninlining then just return. */
-> > > +       if (inline_version == CEPH_INLINE_NONE)
-> > > +               goto out;
-> > > 
-> > > -       if (inline_version == 1 || /* initial version, no data */
-> > I'd like to avoid this optimization. check i_size instead.
-> > 
-> 
-> This one is being removed already...
-> 
-> > > -           inline_version == CEPH_INLINE_NONE)
-> > > +       prealloc_cf = ceph_alloc_cap_flush();
-> > > +       if (!prealloc_cf) {
-> > > +               ret = -ENOMEM;
-> > >                 goto out;
-> > > +       }
-> > > +
-> > > +       /*
-> > > +        * Handle the initial version (1) as a a special case: switch the
-> > > +        * version to CEPH_INLINE_NONE, but we don't need to do any uninlining
-> > > +        * in that case since there is no data yet.
-> > > +        */
-> > > +       if (inline_version == 1)
-> > > +               goto out_set_vers;
-> > 
-> > ditto
-> > 
-> 
-> Fixed this up in my tree, and removed the places that set the
-> i_inline_version to CEPH_INLINE_NONE in aio completion and cfr
-> codepaths. I went ahead and pushed the result to the ceph-client/testing 
-> branch.
-> 
-> Thanks to you and Luis for the review so far!
-> 
+Hi,
 
-Dang...I was going to do that, but I hit a deadlock this morning in
-testing on xfstest generic/198:
+Just wanted to let everybody know that rados-java [0] 0.5.0 has been
+released.
 
-[  160.393788] kworker/11:1    D    0   177      2 0x80004000
-[  160.394953] Workqueue: ceph-msgr ceph_con_workfn [libceph]
-[  160.396105] Call Trace:
-[  160.396849]  ? __schedule+0x29f/0x680
-[  160.397762]  schedule+0x33/0x90
-[  160.398576]  io_schedule+0x12/0x40
-[  160.399436]  __lock_page+0x13a/0x230
-[  160.400329]  ? file_fdatawait_range+0x20/0x20
-[  160.401326]  pagecache_get_page+0x196/0x370
-[  160.402293]  ceph_fill_inline_data+0x190/0x2d0 [ceph]
-[  160.403381]  handle_cap_grant+0x465/0xcd0 [ceph]
-[  160.404409]  ceph_handle_caps+0xb1f/0x1900 [ceph]
-[  160.405442]  dispatch+0x5a6/0x1220 [ceph]
-[  160.406387]  ceph_con_workfn+0xd48/0x27e0 [libceph]
-[  160.407432]  ? __switch_to_asm+0x40/0x70
-[  160.408349]  ? __switch_to_asm+0x34/0x70
-[  160.409264]  ? __switch_to_asm+0x40/0x70
-[  160.410162]  ? __switch_to_asm+0x34/0x70
-[  160.411048]  ? __switch_to_asm+0x40/0x70
-[  160.411967]  ? __switch_to_asm+0x40/0x70
-[  160.412850]  ? __switch_to+0x152/0x440
-[  160.413697]  ? __switch_to_asm+0x34/0x70
-[  160.414550]  process_one_work+0x19d/0x380
-[  160.415415]  worker_thread+0x50/0x3b0
-[  160.416236]  kthread+0xfb/0x130
-[  160.416981]  ? process_one_work+0x380/0x380
-[  160.417884]  ? kthread_park+0x90/0x90
-[  160.418708]  ret_from_fork+0x22/0x40
+You can download the new version from download.ceph.com's maven repo [1].
 
-[  160.435539] aiodio_sparse2  D    0  1615   1474 0x00004000
-[  160.436575] Call Trace:
-[  160.437226]  ? __schedule+0x29f/0x680
-[  160.438020]  schedule+0x33/0x90
-[  160.438751]  schedule_preempt_disabled+0xa/0x10
-[  160.439652]  __mutex_lock.isra.0+0x25a/0x4b0
-[  160.440533]  ceph_check_caps+0x66a/0xa80 [ceph]
-[  160.441450]  ? __mark_inode_dirty+0xd2/0x370
-[  160.442336]  ceph_put_cap_refs+0x1f5/0x350 [ceph]
-[  160.443285]  ? __ceph_mark_dirty_caps+0x14e/0x270 [ceph]
-[  160.444312]  ceph_page_mkwrite+0x1d2/0x360 [ceph]
-[  160.445252]  do_page_mkwrite+0x30/0xc0
-[  160.446067]  __handle_mm_fault+0x1020/0x1ac0
-[  160.446941]  handle_mm_fault+0xc4/0x1f0
-[  160.447777]  do_user_addr_fault+0x1f6/0x450
-[  160.448638]  do_page_fault+0x33/0x120
-[  160.449445]  ? async_page_fault+0x8/0x30
-[  160.450298]  async_page_fault+0x1e/0x30
+A list of changes:
 
-I think page_mkwrite has locked the page, and is trying to lock the
-s_mutex, but handle_cap_grant already holds that mutex and is trying to
-lock the page. So, an ABBA deadlock...
+- implement Closeable interface in RdbImage for try-with-resource
+- fix JVM crash due-to invalid pointer access
+- Realize the function for a snap to roll back
 
-The interesting bit is that this does not seem to involve any of the
-code that I touched. I think the changes I've made may be exposing this
-somehow, possibly changing how caps are being handed out or something.
+Thanks to everybody who helped!
 
-I'm still looking how best to fix it.
--- 
-Jeff Layton <jlayton@kernel.org>
+Wido
 
+P.S.: I need some help to get this into maven central. Anybody who can
+help me with this?
+
+[0]: https://github.com/ceph/rados-java
+[1]: https://download.ceph.com/maven/
