@@ -2,49 +2,53 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83F476C800
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 Jul 2019 05:36:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65A4E6D401
+	for <lists+ceph-devel@lfdr.de>; Thu, 18 Jul 2019 20:32:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389289AbfGRDgE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 17 Jul 2019 23:36:04 -0400
-Received: from mail-lf1-f48.google.com ([209.85.167.48]:40543 "EHLO
-        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389084AbfGRDgE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 17 Jul 2019 23:36:04 -0400
-Received: by mail-lf1-f48.google.com with SMTP id b17so18074245lff.7
-        for <ceph-devel@vger.kernel.org>; Wed, 17 Jul 2019 20:36:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=2csDHUwsfZ9vKiM6L0X2VwRtlMfkReR7eWIJEs97n9I=;
-        b=NWyUaX2M7WVy8/r17ZiFMNi37Gdu/bFfTK9ovHmU+raVCDr89fq12v19vyDLMaqsvJ
-         cl6BUcm1aesxzrZHTFFNn7fyuCqvB39EfaULJJFigRXB5gTTo7Fz3F1t5n9AuQsQO8f1
-         b8JflGT4KE/tnzK8j7NisvcV1+fR5ySKlLAOtSsetAhAbeiPsByvz2y38IfhWbUd7/DT
-         2I5VUW44QDCHjBnEJbLtx+CJmNNRXt3Y2RPxitcvdaenzoF17Zq2LbInMHrWXwdQbqsW
-         G+NCVMkeeLiLjWFVKY49CXaocSnEascm/d93SG2oxXWg45Nk6k+9At67gpBecM8Z/U6+
-         EluQ==
-X-Gm-Message-State: APjAAAXZTmcZRvsYe1jutl1VKJDnlc0gX5uQmskUW0ZvdlndcMIy6cN6
-        Pw963zv8farLUvX4OkH0ey6H+jN1eFVRzaGhSkDntuARAIA=
-X-Google-Smtp-Source: APXvYqxjlh/R/+KUs4jXYPZOLxiQmSUpcPociKzEdhcvShNvqH1sqkqR//kZCvw3cGjYs308QSKK0pHBSOY8kJWjAkY=
-X-Received: by 2002:a19:ca0d:: with SMTP id a13mr19095669lfg.110.1563420962315;
- Wed, 17 Jul 2019 20:36:02 -0700 (PDT)
-MIME-Version: 1.0
-From:   Brad Hubbard <bhubbard@redhat.com>
-Date:   Thu, 18 Jul 2019 13:35:51 +1000
-Message-ID: <CAF-wwdGyvNojcL26hotQRx5DR-EGn6m8GgrX1TpLBHQ3WcManw@mail.gmail.com>
-Subject: Static Analysis
-To:     dev@ceph.io, ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S2391297AbfGRSaa (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 18 Jul 2019 14:30:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49684 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391188AbfGRSaS (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 18 Jul 2019 14:30:18 -0400
+Subject: Re: [GIT PULL] Ceph updates for 5.3-rc1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563474617;
+        bh=qZHMcMnRBTr/LKF9ulZ0FQG18lq34RDEgtPvWy2omN0=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=UNqIH+2dEtjY0pMu+XxRGarXfHVgfrxgCNbcDLHSrM6IjQFE2OhFdRYW8YgPFqqmb
+         Y5pJl9aQVl7ru/7Hdv8b2xVbhStS2OEkRVr8VsymJQGA78ov6T74+bbUlWCBKSB8T/
+         z+g2nIwcUbhSRceIR/Gg9qaUbPBwbyAM4XrkI9v0=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190717112825.23829-1-idryomov@gmail.com>
+References: <20190717112825.23829-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190717112825.23829-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git
+ tags/ceph-for-5.3-rc1
+X-PR-Tracked-Commit-Id: d31d07b97a5e76f41e00eb81dcca740e84aa7782
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: d9b9c893048e9d308a833619f0866f1f52778cf5
+Message-Id: <156347461755.12683.16079074350077877952.pr-tracker-bot@kernel.org>
+Date:   Thu, 18 Jul 2019 18:30:17 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Latest static analyser results are up on  http://people.redhat.com/bhubbard/
+The pull request you sent on Wed, 17 Jul 2019 13:28:25 +0200:
 
-Weekly Fedora Copr builds are at
-https://copr.fedorainfracloud.org/coprs/badone/ceph-weeklies/
+> https://github.com/ceph/ceph-client.git tags/ceph-for-5.3-rc1
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/d9b9c893048e9d308a833619f0866f1f52778cf5
+
+Thank you!
 
 -- 
-Cheers,
-Brad
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
