@@ -2,107 +2,87 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C9796E768
-	for <lists+ceph-devel@lfdr.de>; Fri, 19 Jul 2019 16:34:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70E926E7E6
+	for <lists+ceph-devel@lfdr.de>; Fri, 19 Jul 2019 17:20:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729797AbfGSOc3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 19 Jul 2019 10:32:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41232 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729754AbfGSOc2 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 19 Jul 2019 10:32:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EC6FBAFF1;
-        Fri, 19 Jul 2019 14:32:27 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.com>
-Subject: [PATCH 4/4] ceph: fix buffer free while holding i_ceph_lock in fill_inode()
-Date:   Fri, 19 Jul 2019 15:32:22 +0100
-Message-Id: <20190719143222.16058-5-lhenriques@suse.com>
+        id S1728629AbfGSPUi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 19 Jul 2019 11:20:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43696 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726711AbfGSPUh (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 19 Jul 2019 11:20:37 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37F4C2083B;
+        Fri, 19 Jul 2019 15:20:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563549636;
+        bh=8RmchD2l/bQKOy5engQ2eeDSOmx7TCxD1k24iaIMbZ8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=KQLv5u08yyAKXzEUPKpbKlUHiHHPOt7/5VvYLjgbCzXCT9uiALvaGBrw5N/tqYH1T
+         ioGJNewKrHA6GNGdPdh5gQL3ZS/cmgIw46bWjT+XmDXVD/iJsaqJ4P/JN+wz6pi6ZV
+         h7nLu6bzmRR4LBwP4Xk1fC3LpOHWvkwmJRv4pUBQ=
+Message-ID: <ab5ccaa05994e2eef05bdb54510e6b017db2d807.camel@kernel.org>
+Subject: Re: [PATCH 0/4] Sleeping functions in invalid context bug fixes
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.com>,
+        Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 19 Jul 2019 11:20:34 -0400
 In-Reply-To: <20190719143222.16058-1-lhenriques@suse.com>
 References: <20190719143222.16058-1-lhenriques@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Calling ceph_buffer_put() in fill_inode() may result in freeing the
-i_xattrs.blob buffer while holding the i_ceph_lock.  This can be fixed by
-postponing the call until later, when the lock is released.
+On Fri, 2019-07-19 at 15:32 +0100, Luis Henriques wrote:
+> Hi,
+> 
+> I'm sending three "sleeping function called from invalid context" bug
+> fixes that I had on my TODO for a while.  All of them are ceph_buffer_put
+> related, and all the fixes follow the same pattern: delay the operation
+> until the ci->i_ceph_lock is released.
+> 
+> The first patch simply allows ceph_buffer_put to receive a NULL buffer so
+> that the NULL check doesn't need to be performed in all the other patches.
+> IOW, it's not really required, just convenient.
+> 
+> (Note: maybe these patches should all be tagged for stable.)
+> 
+> Luis Henriques (4):
+>   libceph: allow ceph_buffer_put() to receive a NULL ceph_buffer
+>   ceph: fix buffer free while holding i_ceph_lock in __ceph_setxattr()
+>   ceph: fix buffer free while holding i_ceph_lock in
+>     __ceph_build_xattrs_blob()
+>   ceph: fix buffer free while holding i_ceph_lock in fill_inode()
+> 
+>  fs/ceph/caps.c              |  5 ++++-
+>  fs/ceph/inode.c             |  7 ++++---
+>  fs/ceph/snap.c              |  4 +++-
+>  fs/ceph/super.h             |  2 +-
+>  fs/ceph/xattr.c             | 19 ++++++++++++++-----
+>  include/linux/ceph/buffer.h |  3 ++-
+>  6 files changed, 28 insertions(+), 12 deletions(-)
 
-The following backtrace was triggered by fstests generic/070.
+This all looks good to me. I'll plan to merge these into the testing
+branch soon, and tag them for stable.
 
-  BUG: sleeping function called from invalid context at mm/vmalloc.c:2283
-  in_atomic(): 1, irqs_disabled(): 0, pid: 3852, name: kworker/0:4
-  6 locks held by kworker/0:4/3852:
-   #0: 000000004270f6bb ((wq_completion)ceph-msgr){+.+.}, at: process_one_work+0x1b8/0x5f0
-   #1: 00000000eb420803 ((work_completion)(&(&con->work)->work)){+.+.}, at: process_one_work+0x1b8/0x5f0
-   #2: 00000000be1c53a4 (&s->s_mutex){+.+.}, at: dispatch+0x288/0x1476
-   #3: 00000000559cb958 (&mdsc->snap_rwsem){++++}, at: dispatch+0x2eb/0x1476
-   #4: 000000000d5ebbae (&req->r_fill_mutex){+.+.}, at: dispatch+0x2fc/0x1476
-   #5: 00000000a83d0514 (&(&ci->i_ceph_lock)->rlock){+.+.}, at: fill_inode.isra.0+0xf8/0xf70
-  CPU: 0 PID: 3852 Comm: kworker/0:4 Not tainted 5.2.0+ #441
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58-prebuilt.qemu.org 04/01/2014
-  Workqueue: ceph-msgr ceph_con_workfn
-  Call Trace:
-   dump_stack+0x67/0x90
-   ___might_sleep.cold+0x9f/0xb1
-   vfree+0x4b/0x60
-   ceph_buffer_release+0x1b/0x60
-   fill_inode.isra.0+0xa9b/0xf70
-   ceph_fill_trace+0x13b/0xc70
-   ? dispatch+0x2eb/0x1476
-   dispatch+0x320/0x1476
-   ? __mutex_unlock_slowpath+0x4d/0x2a0
-   ceph_con_workfn+0xc97/0x2ec0
-   ? process_one_work+0x1b8/0x5f0
-   process_one_work+0x244/0x5f0
-   worker_thread+0x4d/0x3e0
-   kthread+0x105/0x140
-   ? process_one_work+0x5f0/0x5f0
-   ? kthread_park+0x90/0x90
-   ret_from_fork+0x3a/0x50
+PS: On a related note (and more of a question for Ilya)...
 
-Signed-off-by: Luis Henriques <lhenriques@suse.com>
----
- fs/ceph/inode.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+I'm wondering if we get any benefit from having our own ceph_kvmalloc
+routine. Why are we not better off using the stock kvmalloc routine
+instead? Forcing a vmalloc just because we've gone above 32k allocation
+doesn't seem like the right thing to do.
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 791f84a13bb8..18500edefc56 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -736,6 +736,7 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
- 	int issued, new_issued, info_caps;
- 	struct timespec64 mtime, atime, ctime;
- 	struct ceph_buffer *xattr_blob = NULL;
-+	struct ceph_buffer *old_blob = NULL;
- 	struct ceph_string *pool_ns = NULL;
- 	struct ceph_cap *new_cap = NULL;
- 	int err = 0;
-@@ -881,7 +882,7 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
- 	if ((ci->i_xattrs.version == 0 || !(issued & CEPH_CAP_XATTR_EXCL))  &&
- 	    le64_to_cpu(info->xattr_version) > ci->i_xattrs.version) {
- 		if (ci->i_xattrs.blob)
--			ceph_buffer_put(ci->i_xattrs.blob);
-+			old_blob = ci->i_xattrs.blob;
- 		ci->i_xattrs.blob = xattr_blob;
- 		if (xattr_blob)
- 			memcpy(ci->i_xattrs.blob->vec.iov_base,
-@@ -1022,8 +1023,8 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
- out:
- 	if (new_cap)
- 		ceph_put_cap(mdsc, new_cap);
--	if (xattr_blob)
--		ceph_buffer_put(xattr_blob);
-+	ceph_buffer_put(old_blob);
-+	ceph_buffer_put(xattr_blob);
- 	ceph_put_string(pool_ns);
- 	return err;
- }
+PPS: I also wonder if we ought to put a might_sleep() in kvfree(). I
+think that kfree generally doesn't, and I wonder how many uses of this
+end up using kfree until memory ends up fragmented.
+-- 
+Jeff Layton <jlayton@kernel.org>
+
