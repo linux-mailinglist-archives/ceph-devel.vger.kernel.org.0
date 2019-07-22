@@ -2,93 +2,67 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 106306FF33
-	for <lists+ceph-devel@lfdr.de>; Mon, 22 Jul 2019 14:07:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83C437054D
+	for <lists+ceph-devel@lfdr.de>; Mon, 22 Jul 2019 18:21:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729107AbfGVMG6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 22 Jul 2019 08:06:58 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34391 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728266AbfGVMG6 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 22 Jul 2019 08:06:58 -0400
-Received: by mail-ed1-f68.google.com with SMTP id s49so5563442edb.1
-        for <ceph-devel@vger.kernel.org>; Mon, 22 Jul 2019 05:06:57 -0700 (PDT)
+        id S1728715AbfGVQVn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 22 Jul 2019 12:21:43 -0400
+Received: from mail-yb1-f180.google.com ([209.85.219.180]:32894 "EHLO
+        mail-yb1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727743AbfGVQVn (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 22 Jul 2019 12:21:43 -0400
+Received: by mail-yb1-f180.google.com with SMTP id c202so13807468ybf.0
+        for <ceph-devel@vger.kernel.org>; Mon, 22 Jul 2019 09:21:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=WEqA24c57DR+jeJsCxm6cVwdfSsqSalYCpKR16YGSbE=;
-        b=ksdfGHVTITiIGuWKQfnHKHMi4RFkEfj95LIRjjf/jmsp/Yxll43dHHfXxRFUgpPA3N
-         ZC5b5lsEIKSAlKPb8UANAW+7PdpXkuHAst8UKlvufcltu5se03KyjRHwr1TbvK27LcYk
-         tV3M7EQGc5q1l+pT9j9DG+d5Z519RdUIWjSSQrtJIzfSsD80pf7586ouLDl5HhQxiADC
-         +QVOgUCKXoi6JGp9eMwq9+f4cTBa73o++gRQX6uIvwya2SBcQsu/1dWSjoNPf6o5xSzx
-         I1KvCNMalOWYvLyd6ubH+LbzupGQ/zUKvZ1aRlEJPGDkwRtPVr6BJfzAU92CqnjBbnfQ
-         7TDw==
-X-Gm-Message-State: APjAAAUO+x3WDxD7gyH0iKmcWqWW00FWS/nMCLhwpmOf8XzrEGMvtABJ
-        HxOUZCdjXStIK7a2cyTXZfRRLI8kiEnd9YUxgIG76x1p
-X-Google-Smtp-Source: APXvYqxZfaKS0tymxK8y/xUsu0d9y7Mu6byEYEVzy7PVrl28AHZt5qAFkEWpD2gve4KMbbTAywBMkcDDc2QotFSqosA=
-X-Received: by 2002:a50:f05a:: with SMTP id u26mr60261715edl.116.1563797216405;
- Mon, 22 Jul 2019 05:06:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAEbG6hHOe0Q8-dcgBxbW2GX+21BuETso9orZY-9sW37Y5rDwKQ@mail.gmail.com>
-In-Reply-To: <CAEbG6hHOe0Q8-dcgBxbW2GX+21BuETso9orZY-9sW37Y5rDwKQ@mail.gmail.com>
-Reply-To: dillaman@redhat.com
-From:   Jason Dillaman <jdillama@redhat.com>
-Date:   Mon, 22 Jul 2019 08:06:45 -0400
-Message-ID: <CA+aFP1BaKeK6QNhiV3dRr9JArsH3nxOuoOY4Tjdu=k_g6PdxyQ@mail.gmail.com>
-Subject: Re: [ceph-users] Failed to get omap key when mirroring of image is enabled
-To:     Ajitha Robert <ajitharobert01@gmail.com>
-Cc:     ceph-users <ceph-users@lists.ceph.com>,
-        ceph-users <ceph-users@ceph.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=HlBQiyjZnWaOWwgjYgrCE3QkNbgjgfCSJcMxFvt2Syc=;
+        b=qaTkWaH7y94h2mlbGRSaolsOGOZgKhGc4xTrWijESxd0t+JOtby0r1iM9Ir1YYRTZs
+         R88hwm0tSFV2ljuwWtQ+QoASF/iz3YVwkLVwG372/aJ5IvbmmvCX65pGLs65hY0Ux+9W
+         m6Y6+5D8H3LgHPDN0csDFDrPi0BoE80llaDOjGcAPi7/HB1ZGqPjBB7GwtN7A4wtbavr
+         7DWhX/nyXk5Pi3U48/KbyRBjKNpu0fcdQNlnnEomtbEA7MQrYwOfRq1LKvIAZSdCWLZ1
+         BCKV8WA7PfJDO2Cvfn6f+UxQbbDgm6EICSsCdDhOEgmLB5GEvtYx1qWn2//8+htJnY6Y
+         lLbw==
+X-Gm-Message-State: APjAAAVAQsy6FsEFrvRDpODPYTqG+Hfk3C4NE2ZWsL6hTaN9q1n01ZBQ
+        JXeHdCCH7QTrOnTiyVPw6iFBXIX2kAg=
+X-Google-Smtp-Source: APXvYqxX1K2NicZLeNoUEyF/WpLd2KfzVmsg90EJq+qQOPGbNEKY3wZ+niD2FAsboRBg5aUNRP9g5A==
+X-Received: by 2002:a25:aaea:: with SMTP id t97mr42157417ybi.126.1563812502291;
+        Mon, 22 Jul 2019 09:21:42 -0700 (PDT)
+Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-62B.dyn6.twc.com. [2606:a000:1100:37d::62b])
+        by smtp.gmail.com with ESMTPSA id q83sm9652749ywq.88.2019.07.22.09.21.41
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 22 Jul 2019 09:21:41 -0700 (PDT)
+Message-ID: <0d71a1419ed8bedb55e0368139052a8ff527891d.camel@redhat.com>
+Subject: is anyone using cephfs inline_data support?
+From:   Jeff Layton <jlayton@redhat.com>
+To:     ceph-users <ceph-users@ceph.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
+        "dev@ceph.io" <dev@ceph.io>
+Date:   Mon, 22 Jul 2019 12:21:40 -0400
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, Jul 21, 2019 at 8:25 PM Ajitha Robert <ajitharobert01@gmail.com> wrote:
->
->  I have a rbd mirroring setup with primary and secondary clusters as peers and I have a pool enabled image mode.., In this i created a rbd image , enabled with journaling.
->
-> But whenever i enable mirroring on the image,  I m getting error in osd.log. I couldnt trace it out. please guide me to solve this error.
->
-> I think initially it worked fine. but after ceph process restart. these error coming
->
->
-> Secondary.osd.0.log
->
-> 2019-07-22 05:36:17.371771 7ffbaa0e9700  0 <cls> /build/ceph-12.2.12/src/cls/journal/cls_journal.cc:61: failed to get omap key: client_a5c76849-ba16-480a-a96b-ebfdb7f6ac65
-> 2019-07-22 05:36:17.388552 7ffbaa0e9700  0 <cls> /build/ceph-12.2.12/src/cls/journal/cls_journal.cc:472: active object set earlier than minimum: 0 < 1
-> 2019-07-22 05:36:17.413102 7ffbaa0e9700  0 <cls> /build/ceph-12.2.12/src/cls/journal/cls_journal.cc:61: failed to get omap key: order
-> 2019-07-22 05:36:23.341490 7ffbab8ec700  0 <cls> /build/ceph-12.2.12/src/cls/rbd/cls_rbd.cc:4125: error retrieving image id for global id '9e36b9f8-238e-4a54-a055-19b19447855e': (2) No such file or directory
->
->
-> primary-osd.0.log
->
-> 2019-07-22 05:16:49.287769 7fae12db1700  0 log_channel(cluster) log [DBG] : 1.b deep-scrub ok
-> 2019-07-22 05:16:54.078698 7fae125b0700  0 log_channel(cluster) log [DBG] : 1.1b scrub starts
-> 2019-07-22 05:16:54.293839 7fae125b0700  0 log_channel(cluster) log [DBG] : 1.1b scrub ok
-> 2019-07-22 05:17:04.055277 7fae12db1700  0 <cls> /build/ceph-12.2.12/src/cls/journal/cls_journal.cc:472: active object set earlier than minimum: 0 < 1
->
-> 2019-07-22 05:33:21.540986 7fae135b2700  0 <cls> /build/ceph-12.2.12/src/cls/journal/cls_journal.cc:472: active object set earlier than minimum: 0 < 1
-> 2019-07-22 05:35:27.447820 7fae12db1700  0 <cls> /build/ceph-12.2.12/src/cls/rbd/cls_rbd.cc:4125: error retrieving image id for global id '8a61f694-f650-4ba1-b768-c5e7629ad2e0': (2) No such file or directory
+A broad question for the cephfs user community:
 
-Those don't look like errors, but the log level should probably be
-reduced for those OSD cls methods. If you look at your rbd-mirror
-daemon log, do you see any errors? That would be the important place
-to look.
+I've been looking at adding inline_data write support for kcephfs [1].
+It's non-trivial to handle correctly in the kernel (due to the more
+complex locking, primarily), and I'm finding some bugs in what's already
+there.
 
->
-> --
-> Regards,
-> Ajitha R
-> _______________________________________________
-> ceph-users mailing list
-> ceph-users@lists.ceph.com
-> http://lists.ceph.com/listinfo.cgi/ceph-users-ceph.com
+Is anyone actually enabling inline_data in their environments? Is this
+something we should be expending effort to support?
 
-
-
+Thanks,
 -- 
-Jason
+Jeff Layton <jlayton@redhat.com>
+
+[1]: http://docs.ceph.com/docs/master/cephfs/experimental-features/#inline-data
+
+
