@@ -2,93 +2,92 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D349571623
-	for <lists+ceph-devel@lfdr.de>; Tue, 23 Jul 2019 12:35:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5FDA716A9
+	for <lists+ceph-devel@lfdr.de>; Tue, 23 Jul 2019 12:57:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731003AbfGWKfw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 23 Jul 2019 06:35:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53992 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726907AbfGWKfv (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 23 Jul 2019 06:35:51 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A220223DD;
-        Tue, 23 Jul 2019 10:35:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563878150;
-        bh=SwSNXJQxLYKzFP08JGpvbUdpAJ5BS2tuAlAShX0OZxo=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=zFqjNcP1x9Y9ZJHhmoBKAobmqFsioJ1zUPTRE33ZksFsWv1Gy5VDl4W6xrBSin4rX
-         n8ethSaC1CzmhRcqi4zNOH4qYdzkHl4QDFTiyKJ4cBjD5u4pD53T9EWTOHXyxZzomb
-         pC1g5RumsAi7Fb7kdqfWL74b/D9kadV2BiyWjSm8=
-Message-ID: <6ee307ee11261d9e1c5beb73ffbb4cc750415227.camel@kernel.org>
-Subject: Re: [PATCH] ceph: clear page dirty before invalidate page
-From:   Jeff Layton <jlayton@kernel.org>
-To:     erqi chen <chenerqi@gmail.com>, ceph-devel@vger.kernel.org
-Date:   Tue, 23 Jul 2019 06:35:49 -0400
-In-Reply-To: <CA+eEYqX6OkHEF0AhQ5E7DbSF16So7W0wiff=2uhgm9dmtsQGjQ@mail.gmail.com>
-References: <CA+eEYqX6OkHEF0AhQ5E7DbSF16So7W0wiff=2uhgm9dmtsQGjQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S2387537AbfGWK5U (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 23 Jul 2019 06:57:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46022 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731069AbfGWK5U (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 23 Jul 2019 06:57:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 06D31AEC5;
+        Tue, 23 Jul 2019 10:57:18 +0000 (UTC)
+Date:   Tue, 23 Jul 2019 12:57:18 +0200
+From:   Nathan Cutler <ncutler@suse.cz>
+To:     ceph-devel@vger.kernel.org, ceph-users@ceph.com,
+        ceph-maintainers@ceph.com, ceph-announce@ceph.com, dev@ceph.io
+Subject: v14.2.2 Nautilus released
+Message-ID: <20190723105718.4rajxxcegzptw7y7@wilbur.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2019-07-23 at 15:55 +0800, erqi chen wrote:
-> From: Erqi Chen <chenerqi@gmail.com>
-> 
-> clear_page_dirty_for_io(page) before mapping->a_ops->invalidatepage().
-> invalidatepage() clears page's private flag, if dirty flag is not
-> cleared, the page may cause BUG_ON failure in ceph_set_page_dirty().
-> 
-> Fixes: https://tracker.ceph.com/issues/40862
-> Signed-off-by: Erqi Chen chenerqi@gmail.com
-> ---
->  fs/ceph/addr.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index e078cc5..5ad63bf 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -914,9 +914,11 @@ static int ceph_writepages_start(struct
-> address_space *mapping,
->                                 dout("%p page eof %llu\n",
->                                      page, ceph_wbc.i_size);
->                                 if (ceph_wbc.size_stable ||
-> -                                   page_offset(page) >= i_size_read(inode))
-> -                                       mapping->a_ops->invalidatepage(page,
-> -                                                               0, PAGE_SIZE);
-> +                                   page_offset(page) >= i_size_read(inode)) {
-> +                                   if (clear_page_dirty_for_io(page))
-> +                                       mapping->a_ops->invalidatepage(page,
-> +                                                               0, PAGE_SIZE);
+This is the second bug fix release of Ceph Nautilus release series. We
+recommend all Nautilus users upgrade to this release. For upgrading from older
+releases of ceph, general guidelines for upgrade to nautilus must be followed.
 
-It might be cleaner to just add:
+Notable Changes
+---------------
 
-    && clear_page_dirty_for_io(page)
+* The no{up,down,in,out} related commands have been revamped. There are now 2
+  ways to set the no{up,down,in,out} flags: the old 'ceph osd [un]set <flag>'
+  command, which sets cluster-wide flags; and the new 'ceph osd [un]set-group
+  <flags> <who>' command, which sets flags in batch at the granularity of any
+  crush node, or device class.
 
-to the existing if statement -- that will reduce the level of
-indentation (which is already pretty far here).
+* radosgw-admin introduces two subcommands that allow the managing of
+  expire-stale objects that might be left behind after a bucket reshard in
+  earlier versions of RGW. One subcommand lists such objects and the other
+  deletes them. Read the troubleshooting section of the dynamic resharding docs
+  for details.
 
-> +                               }
->                                 unlock_page(page);
->                                 continue;
->                         }
-> --
-> 1.8.3.1
+* Earlier Nautilus releases (14.2.1 and 14.2.0) have an issue where deploying a
+  single new (Nautilus) BlueStore OSD on an upgraded cluster (i.e. one that was
+  originally deployed pre-Nautilus) breaks the pool utilization stats reported
+  by ceph df. Until all OSDs have been reprovisioned or updated (via
+  ceph-bluestore-tool repair), the pool stats will show values that are lower
+  than the true value. This is resolved in 14.2.2, such that the cluster only
+  switches to using the more accurate per-pool stats after all OSDs are 14.2.2
+  (or later), are BlueStore, and (if they were created prior to Nautilus) have
+  been updated via the repair function.
 
-This patch looks good at first glance, but there is some whitespace
-damage here and it does not apply. It looks like you may have cut and
-pasted it into an email? Could you resend it? Maybe look into using
-the git-send-email script to send it.
+* The default value for mon_crush_min_required_version has been changed from
+  firefly to hammer, which means the cluster will issue a health warning if
+  your CRUSH tunables are older than hammer. There is generally a small (but
+  non-zero) amount of data that will move around by making the switch to hammer
+  tunables.
 
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
+  If possible, we recommend that you set the oldest allowed client to hammer or
+  later. You can tell what the current oldest allowed client is with:
 
+      ceph osd dump | grep min_compat_client
+
+  If the current value is older than hammer, you can tell whether it is safe to
+  make this change by verifying that there are no clients older than hammer
+  current connected to the cluster with:
+
+      ceph features
+
+  The newer straw2 CRUSH bucket type was introduced in hammer, and ensuring
+  that all clients are hammer or newer allows new features only supported for
+  straw2 buckets to be used, including the crush-compat mode for the Balancer.
+
+For a detailed changelog please refer to the official release notes 
+entry at the ceph blog: https://ceph.com/releases/v14-2-2-nautilus-released/
+
+
+Getting Ceph
+------------
+
+* Git at git://github.com/ceph/ceph.git
+* Tarball at http://download.ceph.com/tarballs/ceph-14.2.2.tar.gz
+* For packages, see http://docs.ceph.com/docs/master/install/get-packages/
+* Release git sha1: 4f8fa0a0024755aae7d95567c63f11d6862d55be
