@@ -2,110 +2,84 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB37B72F51
-	for <lists+ceph-devel@lfdr.de>; Wed, 24 Jul 2019 14:56:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A832F72FB9
+	for <lists+ceph-devel@lfdr.de>; Wed, 24 Jul 2019 15:19:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbfGXM45 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 24 Jul 2019 08:56:57 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:34635 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726312AbfGXM45 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 24 Jul 2019 08:56:57 -0400
-Received: by mail-yb1-f195.google.com with SMTP id q5so5128482ybp.1
-        for <ceph-devel@vger.kernel.org>; Wed, 24 Jul 2019 05:56:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=e1ZQ5REdTmHZsqBo+0gHrm1lr43naCKKCu0Dz3JX80I=;
-        b=XYpcKY6/KBWPh1g018Qq02Jbr5zFgyU6wLPFwv4mTd3FXLoWDYU9+aNGpAhrZaWkUw
-         rmy5SaZ2D17BpFkPS3dt51hoegIH8IYAqsGAoeIYKGrA9FD/BAiTpgmrzEvMtjKKIry7
-         qn5lE1dWA7fug2iTtJwI2OWSajcjQXJc7j5QgGj4N2w+8cojjqtsjBBUdv6LHVU3e+5v
-         iVXcXkeO2sjyXmOJp6ObjBr2+cSNlnHxJtEDLC62AVfkvS4WgjngQxglnHgQytWJcn86
-         AZsXLMA/wfTEvketG/ECgZHvafVL/5msZPyoP0rb5KFeOApaex2R4ncd2/POhupY9zBu
-         NkuA==
-X-Gm-Message-State: APjAAAVlShbofm6FK92HOQrtrIjwgOW+wgvI1+RFWsbjDsrKzDPuYnDn
-        99C2IkimNFqAwKRKnj5+xnKYjxuYClI=
-X-Google-Smtp-Source: APXvYqzRPfp0z7OAYrAWD6Px76t6W63OYYTZE336GjC70tEA7nbykzUdQG/npnKcUM9rOwjTLrE69Q==
-X-Received: by 2002:a25:85:: with SMTP id 127mr52857009yba.186.1563973016286;
-        Wed, 24 Jul 2019 05:56:56 -0700 (PDT)
-Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-62B.dyn6.twc.com. [2606:a000:1100:37d::62b])
-        by smtp.gmail.com with ESMTPSA id v144sm10765136ywv.17.2019.07.24.05.56.55
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 05:56:55 -0700 (PDT)
-Message-ID: <0db845ac61f98157e8dbe3e23fea90996fdc69fb.camel@redhat.com>
-Subject: Re: [PATCH 0/9 v2] ceph: auto reconnect after blacklisted
-From:   Jeff Layton <jlayton@redhat.com>
-To:     "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org
-Cc:     idryomov@redhat.com
-Date:   Wed, 24 Jul 2019 08:56:54 -0400
-In-Reply-To: <20190724122120.17438-1-zyan@redhat.com>
-References: <20190724122120.17438-1-zyan@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1728607AbfGXNTQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 24 Jul 2019 09:19:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45726 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727528AbfGXNTQ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 24 Jul 2019 09:19:16 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7A4CFAE8C;
+        Wed, 24 Jul 2019 13:19:14 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.com>
+To:     "Jeff Layton" <jlayton@kernel.org>
+Cc:     <ceph-devel@vger.kernel.org>
+Subject: Re: [PATCH] ceph: have copy op fall back when src_inode == dst_inode
+References: <20190724120542.26391-1-jlayton@kernel.org>
+Date:   Wed, 24 Jul 2019 14:19:13 +0100
+In-Reply-To: <20190724120542.26391-1-jlayton@kernel.org> (Jeff Layton's
+        message of "Wed, 24 Jul 2019 08:05:42 -0400")
+Message-ID: <87tvbb4lke.fsf@suse.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2019-07-24 at 20:21 +0800, Yan, Zheng wrote:
-> This series add support for auto reconnect after blacklisted.
-> 
-> Auto reconnect is controlled by recover_session=<clean|no> mount option.
-> So far only clean mode is supported and it is the default mode. In this
-> mode, client drops any dirty data/metadata, invalidates page caches and
-> invalidates all writable file handles. After reconnect, file locks become
-> stale because MDS lose track of them. If an inode contains any stale file
-> lock, read/write on the indoe are not allowed until all stale file locks
-> are released by applications.
-> 
-> v2: remove force_remount mount option
->     no enabled auto reconnect by default
->     remove unfinished recover_session=brute code
-> 
+"Jeff Layton" <jlayton@kernel.org> writes:
 
-I've looked over the set and I think this looks reasonable modulo a few
-small nits that can be cleaned up during or after merging.
+> Currently this just fails, but the fallback implementation can handle
+> this case. Change it to return -EOPNOTSUPP instead of -EINVAL when
+> copying data to a different spot in the same inode.
 
-I don't see the knob that forces a reconnect in this set any longer. Did
-you decide that that wasn't needed or are you planning to add it in a
-later set?
+Thanks, Jeff!
 
+So, just FTR (we had a quick chat on IRC already): I have a slightly
+different patch sitting on my tree for a while.  The difference is that
+my patch still allows to use the 'copy-from' operation in some cases,
+even when src == dst.
 
-> Yan, Zheng (9):
->   libceph: add function that reset client's entity addr
->   libceph: add function that clears osd client's abort_err
->   ceph: allow closing session in restarting/reconnect state
->   ceph: track and report error of async metadata operation
->   ceph: pass filp to ceph_get_caps()
->   ceph: add helper function that forcibly reconnects to ceph cluster.
->   ceph: return -EIO if read/write against filp that lost file locks
->   ceph: invalidate all write mode filp after reconnect
->   ceph: auto reconnect after blacklisted
-> 
->  Documentation/filesystems/ceph.txt | 10 ++++
->  fs/ceph/addr.c                     | 37 ++++++++----
->  fs/ceph/caps.c                     | 93 +++++++++++++++++++++---------
->  fs/ceph/file.c                     | 50 +++++++++-------
->  fs/ceph/inode.c                    |  2 +
->  fs/ceph/locks.c                    |  8 ++-
->  fs/ceph/mds_client.c               | 89 ++++++++++++++++++++++------
->  fs/ceph/mds_client.h               |  6 +-
->  fs/ceph/super.c                    | 45 ++++++++++++++-
->  fs/ceph/super.h                    | 21 +++++--
->  include/linux/ceph/libceph.h       |  1 +
->  include/linux/ceph/messenger.h     |  1 +
->  include/linux/ceph/mon_client.h    |  1 +
->  include/linux/ceph/osd_client.h    |  2 +
->  net/ceph/ceph_common.c             |  8 +++
->  net/ceph/messenger.c               |  5 ++
->  net/ceph/mon_client.c              |  7 +++
->  net/ceph/osd_client.c              | 24 ++++++++
->  18 files changed, 324 insertions(+), 86 deletions(-)
-> 
+I'll run a few more tests on it and send it out soon.
 
+Cheers,
 -- 
-Jeff Layton <jlayton@redhat.com>
+Luis
 
+
+>
+> Cc: Luis Henriques <lhenriques@suse.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/file.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> NB: with this patch, xfstest generic/075 now passes
+>
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 82af4a3c714d..1b25df9d5853 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -1915,8 +1915,6 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>  
+>  	if (src_inode->i_sb != dst_inode->i_sb)
+>  		return -EXDEV;
+> -	if (src_inode == dst_inode)
+> -		return -EINVAL;
+>  	if (ceph_snap(dst_inode) != CEPH_NOSNAP)
+>  		return -EROFS;
+>  
+> @@ -1928,6 +1926,10 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>  	 * efficient).
+>  	 */
+>  
+> +	/* Can't do OSD copy op to same object */
+> +	if (src_inode == dst_inode)
+> +		return -EOPNOTSUPP;
+> +
+>  	if (ceph_test_mount_opt(ceph_inode_to_client(src_inode), NOCOPYFROM))
+>  		return -EOPNOTSUPP;
