@@ -2,77 +2,84 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAEAA72E60
-	for <lists+ceph-devel@lfdr.de>; Wed, 24 Jul 2019 14:05:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C55372EAF
+	for <lists+ceph-devel@lfdr.de>; Wed, 24 Jul 2019 14:21:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbfGXMFo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 24 Jul 2019 08:05:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42944 "EHLO mail.kernel.org"
+        id S1728128AbfGXMVZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 24 Jul 2019 08:21:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44664 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727412AbfGXMFo (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 24 Jul 2019 08:05:44 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728123AbfGXMVZ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 24 Jul 2019 08:21:25 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E602E229ED;
-        Wed, 24 Jul 2019 12:05:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563969944;
-        bh=ce4lVMMApXOGCsJ6+cFaIhtxdgLVBafviUU4GJ1LkYI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XYzTyyUk9SfAQj0ZGIwguRCGQnqrKwyxah9D9s8WqE2zLm0ZmxX0Bg/+FcpQhbQKC
-         hpQkf0wbuQY89EfjSD1Xpll7qBCOKo4NbLJ0HcWCoYiDtlh60Ydjo47ROw8nzu98Sr
-         2VZniAq6Xo3M75oLKS/0Kms5dnrTrg3kPsHuITTQ=
-From:   Jeff Layton <jlayton@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 7F39E307D965
+        for <ceph-devel@vger.kernel.org>; Wed, 24 Jul 2019 12:21:25 +0000 (UTC)
+Received: from zhyan-laptop.redhat.com (ovpn-12-93.pek2.redhat.com [10.72.12.93])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 383F160BEC;
+        Wed, 24 Jul 2019 12:21:22 +0000 (UTC)
+From:   "Yan, Zheng" <zyan@redhat.com>
 To:     ceph-devel@vger.kernel.org
-Cc:     lhenriques@suse.com
-Subject: [PATCH] ceph: have copy op fall back when src_inode == dst_inode
-Date:   Wed, 24 Jul 2019 08:05:42 -0400
-Message-Id: <20190724120542.26391-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.21.0
+Cc:     idryomov@redhat.com, jlayton@redhat.com,
+        "Yan, Zheng" <zyan@redhat.com>
+Subject: [PATCH 0/9 v2] ceph: auto reconnect after blacklisted
+Date:   Wed, 24 Jul 2019 20:21:11 +0800
+Message-Id: <20190724122120.17438-1-zyan@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 24 Jul 2019 12:21:25 +0000 (UTC)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Currently this just fails, but the fallback implementation can handle
-this case. Change it to return -EOPNOTSUPP instead of -EINVAL when
-copying data to a different spot in the same inode.
+This series add support for auto reconnect after blacklisted.
 
-Cc: Luis Henriques <lhenriques@suse.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/file.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Auto reconnect is controlled by recover_session=<clean|no> mount option.
+So far only clean mode is supported and it is the default mode. In this
+mode, client drops any dirty data/metadata, invalidates page caches and
+invalidates all writable file handles. After reconnect, file locks become
+stale because MDS lose track of them. If an inode contains any stale file
+lock, read/write on the indoe are not allowed until all stale file locks
+are released by applications.
 
-NB: with this patch, xfstest generic/075 now passes
+v2: remove force_remount mount option
+    no enabled auto reconnect by default
+    remove unfinished recover_session=brute code
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 82af4a3c714d..1b25df9d5853 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1915,8 +1915,6 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 
- 	if (src_inode->i_sb != dst_inode->i_sb)
- 		return -EXDEV;
--	if (src_inode == dst_inode)
--		return -EINVAL;
- 	if (ceph_snap(dst_inode) != CEPH_NOSNAP)
- 		return -EROFS;
- 
-@@ -1928,6 +1926,10 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 	 * efficient).
- 	 */
- 
-+	/* Can't do OSD copy op to same object */
-+	if (src_inode == dst_inode)
-+		return -EOPNOTSUPP;
-+
- 	if (ceph_test_mount_opt(ceph_inode_to_client(src_inode), NOCOPYFROM))
- 		return -EOPNOTSUPP;
- 
+Yan, Zheng (9):
+  libceph: add function that reset client's entity addr
+  libceph: add function that clears osd client's abort_err
+  ceph: allow closing session in restarting/reconnect state
+  ceph: track and report error of async metadata operation
+  ceph: pass filp to ceph_get_caps()
+  ceph: add helper function that forcibly reconnects to ceph cluster.
+  ceph: return -EIO if read/write against filp that lost file locks
+  ceph: invalidate all write mode filp after reconnect
+  ceph: auto reconnect after blacklisted
+
+ Documentation/filesystems/ceph.txt | 10 ++++
+ fs/ceph/addr.c                     | 37 ++++++++----
+ fs/ceph/caps.c                     | 93 +++++++++++++++++++++---------
+ fs/ceph/file.c                     | 50 +++++++++-------
+ fs/ceph/inode.c                    |  2 +
+ fs/ceph/locks.c                    |  8 ++-
+ fs/ceph/mds_client.c               | 89 ++++++++++++++++++++++------
+ fs/ceph/mds_client.h               |  6 +-
+ fs/ceph/super.c                    | 45 ++++++++++++++-
+ fs/ceph/super.h                    | 21 +++++--
+ include/linux/ceph/libceph.h       |  1 +
+ include/linux/ceph/messenger.h     |  1 +
+ include/linux/ceph/mon_client.h    |  1 +
+ include/linux/ceph/osd_client.h    |  2 +
+ net/ceph/ceph_common.c             |  8 +++
+ net/ceph/messenger.c               |  5 ++
+ net/ceph/mon_client.c              |  7 +++
+ net/ceph/osd_client.c              | 24 ++++++++
+ 18 files changed, 324 insertions(+), 86 deletions(-)
+
 -- 
-2.21.0
+2.20.1
 
