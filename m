@@ -2,365 +2,102 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41C9673360
-	for <lists+ceph-devel@lfdr.de>; Wed, 24 Jul 2019 18:09:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C34F73562
+	for <lists+ceph-devel@lfdr.de>; Wed, 24 Jul 2019 19:26:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbfGXQJW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 24 Jul 2019 12:09:22 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:45188 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbfGXQJW (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 24 Jul 2019 12:09:22 -0400
-Received: by mail-yb1-f193.google.com with SMTP id s41so14777171ybe.12
-        for <ceph-devel@vger.kernel.org>; Wed, 24 Jul 2019 09:09:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=NvgmQz3Ug2n42edj7iKROyMjxFqQXv+ivhfH11qfYsI=;
-        b=TYiOIq7h6S6LCszeMxMk7AO3rlA2dKDSYp9J1fYY6oo5lHyGOW+dnuAIr6JX+7sZ0Z
-         4+y4C66vmITNHQhgB75Isz2GRHEYcimGUFYa61alko9We37ttanMZksfEqe73Ll18nDo
-         x0ZvqK98Ew4/JI4ASPkJFCioXG+vcpV5J1y9yrCn0aM0dfAtVowkYU1YxUN4f/1EoDBc
-         LvJldc7bxdNhpornYsH5Bc/Mva6+VjLstdGBSdib1RlO7Nz4y6tjeUr7a6QcHPNynFNs
-         qIqlWebBNW/APV3YX269jWGQbJ3Fvo0WGsds3HI5V+c+/mqR9vmyAXvfUzKZ0snjzmNm
-         zDYw==
-X-Gm-Message-State: APjAAAXoAUKXWvH/MoAnfxlNmZZD8n1haju9tlnpViIGwUvvnbJ0e9sY
-        HBzR9jXNB1QJ7RMBQkrpUIyVUQ==
-X-Google-Smtp-Source: APXvYqy6G3KZecZPlZib2w2PM+40zCZAx8jfYUkQKJUHTC+IW0Pu7m/GN5onpyrFZcdFLTtkviwHdg==
-X-Received: by 2002:a25:4503:: with SMTP id s3mr51043531yba.380.1563984561558;
-        Wed, 24 Jul 2019 09:09:21 -0700 (PDT)
-Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-37D-0-0-0-62B.dyn6.twc.com. [2606:a000:1100:37d::62b])
-        by smtp.gmail.com with ESMTPSA id b128sm10611583ywf.101.2019.07.24.09.09.20
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 09:09:21 -0700 (PDT)
-Message-ID: <f5c08aee1638ef0ee36a2e72bfa6ce4e413afaae.camel@redhat.com>
-Subject: Re: [PATCH v2 9/9] ceph: auto reconnect after blacklisted
-From:   Jeff Layton <jlayton@redhat.com>
-To:     "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org
-Cc:     idryomov@redhat.com
-Date:   Wed, 24 Jul 2019 12:09:20 -0400
-In-Reply-To: <20190724122120.17438-10-zyan@redhat.com>
-References: <20190724122120.17438-1-zyan@redhat.com>
-         <20190724122120.17438-10-zyan@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1728077AbfGXR0W (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 24 Jul 2019 13:26:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727999AbfGXR0W (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 24 Jul 2019 13:26:22 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2715C20840
+        for <ceph-devel@vger.kernel.org>; Wed, 24 Jul 2019 17:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1563988828;
+        bh=byGa3lgbUpT7aeqvzaXTJmtOHyq1uGNzmLM1kGZlT5o=;
+        h=From:To:Subject:Date:From;
+        b=ZLdZoltztEy6PdnyeG+/wINcmZOsb/A+NlAvAQ9chVLir4k22FNBH+MVx43ksO4x/
+         AEipCpVjk3eMlsRKOWDxkAfdwYAFrKCUjnUocDmMr553N4Le0ClZNjUTFSyAOQmzx6
+         jljLHQhNdMHAgJV0Wp1sbSAbVyiLL5iOT1R1ilxA=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Subject: [RFC PATCH] ceph: don't list vxattrs in listxattr()
+Date:   Wed, 24 Jul 2019 13:20:26 -0400
+Message-Id: <20190724172026.23999-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2019-07-24 at 20:21 +0800, Yan, Zheng wrote:
-> Make client use osd reply and session message to infer if itself is
-> blacklisted. Client reconnect to cluster using new entity addr if it
-> is blacklisted. Auto reconnect is limited to once every 30 minutes.
-> 
-> Auto reconnect is controlled by recover_session=<clean|no> mount option.
-> So far only clean mode is supported and it is the default mode. In this
-> mode, client drops any dirty data/metadata, invalidates page caches and
-> invalidates all writable file handles. After reconnect, file locks become
-> stale because MDS lose track of them. If an inode contains any stale file
-> lock, read/write on the indoe are not allowed until all stale file locks
-> are released by applications.
-> 
-> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-> ---
->  Documentation/filesystems/ceph.txt | 10 +++++++++
->  fs/ceph/addr.c                     | 22 ++++++++++++++-----
->  fs/ceph/file.c                     |  8 ++++++-
->  fs/ceph/mds_client.c               | 34 ++++++++++++++++++++++++++++--
->  fs/ceph/super.c                    | 17 +++++++++++++++
->  fs/ceph/super.h                    |  4 ++++
->  6 files changed, 87 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/ceph.txt b/Documentation/filesystems/ceph.txt
-> index d2c6a5ccf0f5..215f83625a42 100644
-> --- a/Documentation/filesystems/ceph.txt
-> +++ b/Documentation/filesystems/ceph.txt
-> @@ -158,6 +158,16 @@ Mount Options
->          copies.  Currently, it's only used in copy_file_range, which will revert
->          to the default VFS implementation if this option is used.
->  
-> +  recover_session=<no|clean>
-> +	Set auto reconnect mode in the case of blacklisted. Auto reconnect
-> +	is disabled when mode is 'no'. In 'clean' mode, client reconnect
-> +	to ceph cluster automatically when it detects itself is blacklisted.
-> +	During reconnect, client drops dirty data/metadata, invalidates page
-> +	caches and writable file handles. After reconnect, file locks become
-> +	stale because MDS lose track of them. If an inode contains any stale
-> +	file lock, read/write on the indoe are not allowed until all stale file
-> +	locks are released by applications. The default mode is 'no'.
-> +
->  More Information
->  ================
->  
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 9f357c5ce84d..982bb8d7aa03 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -189,8 +189,7 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
->  {
->  	struct inode *inode = file_inode(filp);
->  	struct ceph_inode_info *ci = ceph_inode(inode);
-> -	struct ceph_osd_client *osdc =
-> -		&ceph_inode_to_client(inode)->client->osdc;
-> +	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
->  	int err = 0;
->  	u64 off = page_offset(page);
->  	u64 len = PAGE_SIZE;
-> @@ -219,8 +218,8 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
->  
->  	dout("readpage inode %p file %p page %p index %lu\n",
->  	     inode, filp, page, page->index);
-> -	err = ceph_osdc_readpages(osdc, ceph_vino(inode), &ci->i_layout,
-> -				  off, &len,
-> +	err = ceph_osdc_readpages(&fsc->client->osdc, ceph_vino(inode),
-> +				  &ci->i_layout, off, &len,
->  				  ci->i_truncate_seq, ci->i_truncate_size,
->  				  &page, 1, 0);
->  	if (err == -ENOENT)
-> @@ -228,6 +227,8 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
->  	if (err < 0) {
->  		SetPageError(page);
->  		ceph_fscache_readpage_cancel(inode, page);
-> +		if (err == -EBLACKLISTED)
-> +			fsc->blacklisted = 1;
->  		goto out;
->  	}
->  	if (err < PAGE_SIZE)
-> @@ -266,6 +267,8 @@ static void finish_read(struct ceph_osd_request *req)
->  	int i;
->  
->  	dout("finish_read %p req %p rc %d bytes %d\n", inode, req, rc, bytes);
-> +	if (rc == -EBLACKLISTED)
-> +		ceph_inode_to_client(inode)->blacklisted = 1;
->  
->  	/* unlock all pages, zeroing any data we didn't read */
->  	osd_data = osd_req_op_extent_osd_data(req, 0);
-> @@ -641,6 +644,8 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
->  			end_page_writeback(page);
->  			return err;
->  		}
-> +		if (err == -EBLACKLISTED)
-> +			fsc->blacklisted = 1;
->  		dout("writepage setting page/mapping error %d %p\n",
->  		     err, page);
->  		SetPageError(page);
-> @@ -721,6 +726,8 @@ static void writepages_finish(struct ceph_osd_request *req)
->  	if (rc < 0) {
->  		mapping_set_error(mapping, rc);
->  		ceph_set_error_write(ci);
-> +		if (rc == -EBLACKLISTED)
-> +			fsc->blacklisted = 1;
->  	} else {
->  		ceph_clear_error_write(ci);
->  	}
-> @@ -1947,12 +1954,17 @@ static int __ceph_pool_perm_get(struct ceph_inode_info *ci,
->  
->  	if (err >= 0 || err == -ENOENT)
->  		have |= POOL_READ;
-> -	else if (err != -EPERM)
-> +	else if (err != -EPERM) {
-> +		if (err == -EBLACKLISTED)
-> +			fsc->blacklisted = 1;
->  		goto out_unlock;
-> +	}
->  
->  	if (err2 == 0 || err2 == -EEXIST)
->  		have |= POOL_WRITE;
->  	else if (err2 != -EPERM) {
-> +		if (err2 == -EBLACKLISTED)
-> +			fsc->blacklisted = 1;
->  		err = err2;
->  		goto out_unlock;
->  	}
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 42cb1453c602..856a8f8e4981 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -698,7 +698,13 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
->  			ceph_release_page_vector(pages, num_pages);
->  		}
->  
-> -		if (ret <= 0 || off >= i_size || !more)
-> +		if (ret < 0) {
-> +			if (ret == -EBLACKLISTED)
-> +				fsc->blacklisted = 1;
-> +			break;
-> +		}
-> +
-> +		if (off >= i_size || !more)
->  			break;
->  	}
->  
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index c49009965369..4659da732c77 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -3032,18 +3032,23 @@ static void handle_forward(struct ceph_mds_client *mdsc,
->  	pr_err("mdsc_handle_forward decode error err=%d\n", err);
->  }
->  
-> -static int __decode_and_drop_session_metadata(void **p, void *end)
-> +static int __decode_session_metadata(void **p, void *end,
-> +				     bool *blacklisted)
->  {
->  	/* map<string,string> */
->  	u32 n;
-> +	bool err_str;
->  	ceph_decode_32_safe(p, end, n, bad);
->  	while (n-- > 0) {
->  		u32 len;
->  		ceph_decode_32_safe(p, end, len, bad);
->  		ceph_decode_need(p, end, len, bad);
-> +		err_str = !strncmp(*p, "error_string", len);
->  		*p += len;
->  		ceph_decode_32_safe(p, end, len, bad);
->  		ceph_decode_need(p, end, len, bad);
-> +		if (err_str && strnstr(*p, "blacklisted", len))
-> +			*blacklisted = true;
->  		*p += len;
->  	}
->  	return 0;
-> @@ -3067,6 +3072,7 @@ static void handle_session(struct ceph_mds_session *session,
->  	u64 seq;
->  	unsigned long features = 0;
->  	int wake = 0;
-> +	bool blacklisted = false;
->  
->  	/* decode */
->  	ceph_decode_need(&p, end, sizeof(*h), bad);
-> @@ -3079,7 +3085,7 @@ static void handle_session(struct ceph_mds_session *session,
->  	if (msg_version >= 3) {
->  		u32 len;
->  		/* version >= 2, metadata */
-> -		if (__decode_and_drop_session_metadata(&p, end) < 0)
-> +		if (__decode_session_metadata(&p, end, &blacklisted) < 0)
->  			goto bad;
->  		/* version >= 3, feature bits */
->  		ceph_decode_32_safe(&p, end, len, bad);
-> @@ -3166,6 +3172,8 @@ static void handle_session(struct ceph_mds_session *session,
->  		session->s_state = CEPH_MDS_SESSION_REJECTED;
->  		cleanup_session_requests(mdsc, session);
->  		remove_session_caps(session);
-> +		if (blacklisted)
-> +			mdsc->fsc->blacklisted = 1;
->  		wake = 2; /* for good measure */
->  		break;
->  
-> @@ -4015,7 +4023,27 @@ static void lock_unlock_sessions(struct ceph_mds_client *mdsc)
->  	mutex_unlock(&mdsc->mutex);
->  }
->  
-> +void maybe_recover_session(struct ceph_mds_client *mdsc)
+Most filesystems that provide virtual xattrs (e.g. CIFS) don't display
+them via listxattr(). Ceph does, and that causes some of the tests in
+xfstests to fail.
 
-This function should be static
+Have cephfs stop listing vxattrs in listxattr. Userspace can always
+query them directly when the name is known.
 
-> +{
-> +	struct ceph_fs_client *fsc = mdsc->fsc;
-> +
-> +	if (!ceph_test_mount_opt(fsc, CLEANRECOVER))
-> +		return;
-> +
-> +	if (READ_ONCE(fsc->mount_state) != CEPH_MOUNT_MOUNTED)
-> +		return;
->  
-> +	if (!READ_ONCE(fsc->blacklisted))
-> +		return;
-> +
-> +	if (fsc->last_force_reconnect &&
-> +	    time_before(jiffies, fsc->last_force_reconnect + HZ * 60 * 30))
-> +		return;
-> +
-> +	pr_info("auto reconnect after blacklisted\n");
-> +	fsc->last_force_reconnect = jiffies;
-> +	ceph_force_reconnect(fsc->sb);
-> +}
->  
->  /*
->   * delayed work -- periodically trim expired leases, renew caps with mds
-> @@ -4089,6 +4117,8 @@ static void delayed_work(struct work_struct *work)
->  
->  	ceph_trim_snapid_map(mdsc);
->  
-> +	maybe_recover_session(mdsc);
-> +
->  	schedule_delayed(mdsc);
->  }
->  
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index b55ab2fd73db..8231ad96de48 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -143,6 +143,7 @@ enum {
->  	Opt_snapdirname,
->  	Opt_mds_namespace,
->  	Opt_fscache_uniq,
-> +	Opt_recover_session,
->  	Opt_last_string,
->  	/* string args above */
->  	Opt_dirstat,
-> @@ -184,6 +185,7 @@ static match_table_t fsopt_tokens = {
->  	/* int args above */
->  	{Opt_snapdirname, "snapdirname=%s"},
->  	{Opt_mds_namespace, "mds_namespace=%s"},
-> +	{Opt_recover_session, "recover_session=%s"},
->  	{Opt_fscache_uniq, "fsc=%s"},
->  	/* string args above */
->  	{Opt_dirstat, "dirstat"},
-> @@ -254,6 +256,17 @@ static int parse_fsopt_token(char *c, void *private)
->  		if (!fsopt->mds_namespace)
->  			return -ENOMEM;
->  		break;
-> +	case Opt_recover_session:
-> +		if (!strncmp(argstr[0].from, "no",
-> +			     argstr[0].to-argstr[0].from)) {
-> +			fsopt->flags &= ~CEPH_MOUNT_OPT_CLEANRECOVER;
-> +		} else if (!strncmp(argstr[0].from, "clean",
-> +                           argstr[0].to-argstr[0].from)) {
-> +			fsopt->flags |= CEPH_MOUNT_OPT_CLEANRECOVER;
-> +		} else {
-> +			return -EINVAL;
-> +		}
-> +		break;
->  	case Opt_fscache_uniq:
->  		kfree(fsopt->fscache_uniq);
->  		fsopt->fscache_uniq = kstrndup(argstr[0].from,
-> @@ -576,6 +589,10 @@ static int ceph_show_options(struct seq_file *m, struct dentry *root)
->  
->  	if (fsopt->mds_namespace)
->  		seq_show_option(m, "mds_namespace", fsopt->mds_namespace);
-> +
-> +	if (fsopt->flags & CEPH_MOUNT_OPT_CLEANRECOVER)
-> +		seq_show_option(m, "recover_session", "clean");
-> +
->  	if (fsopt->wsize != CEPH_MAX_WRITE_SIZE)
->  		seq_printf(m, ",wsize=%d", fsopt->wsize);
->  	if (fsopt->rsize != CEPH_MAX_READ_SIZE)
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index f64a5271cb1a..358559c17c41 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -31,6 +31,7 @@
->  #define CEPH_BLOCK_SHIFT   22  /* 4 MB */
->  #define CEPH_BLOCK         (1 << CEPH_BLOCK_SHIFT)
->  
-> +#define CEPH_MOUNT_OPT_CLEANRECOVER    (1<<1) /* auto reonnect (clean mode) after blacklisted */
->  #define CEPH_MOUNT_OPT_DIRSTAT         (1<<4) /* `cat dirname` for stats */
->  #define CEPH_MOUNT_OPT_RBYTES          (1<<5) /* dir st_bytes = rbytes */
->  #define CEPH_MOUNT_OPT_NOASYNCREADDIR  (1<<7) /* no dcache readdir */
-> @@ -102,6 +103,9 @@ struct ceph_fs_client {
->  
->  	unsigned long mount_state;
->  
-> +	unsigned long last_force_reconnect;
-> +	int blacklisted;
-> +
->  	u32 filp_gen;
->  	loff_t max_file_size;
->  
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/xattr.c | 29 -----------------------------
+ 1 file changed, 29 deletions(-)
 
+diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+index 939eab7aa219..2fba06b50f25 100644
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -903,11 +903,9 @@ ssize_t ceph_listxattr(struct dentry *dentry, char *names, size_t size)
+ {
+ 	struct inode *inode = d_inode(dentry);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+-	struct ceph_vxattr *vxattrs = ceph_inode_vxattrs(inode);
+ 	bool len_only = (size == 0);
+ 	u32 namelen;
+ 	int err;
+-	int i;
+ 
+ 	spin_lock(&ci->i_ceph_lock);
+ 	dout("listxattr %p ver=%lld index_ver=%lld\n", inode,
+@@ -936,33 +934,6 @@ ssize_t ceph_listxattr(struct dentry *dentry, char *names, size_t size)
+ 		names = __copy_xattr_names(ci, names);
+ 		size -= namelen;
+ 	}
+-
+-
+-	/* virtual xattr names, too */
+-	if (vxattrs) {
+-		for (i = 0; vxattrs[i].name; i++) {
+-			size_t this_len;
+-
+-			if (vxattrs[i].flags & VXATTR_FLAG_HIDDEN)
+-				continue;
+-			if (vxattrs[i].exists_cb && !vxattrs[i].exists_cb(ci))
+-				continue;
+-
+-			this_len = strlen(vxattrs[i].name) + 1;
+-			namelen += this_len;
+-			if (len_only)
+-				continue;
+-
+-			if (this_len > size) {
+-				err = -ERANGE;
+-				goto out;
+-			}
+-
+-			memcpy(names, vxattrs[i].name, this_len);
+-			names += this_len;
+-			size -= this_len;
+-		}
+-	}
+ 	err = namelen;
+ out:
+ 	spin_unlock(&ci->i_ceph_lock);
 -- 
-Jeff Layton <jlayton@redhat.com>
+2.21.0
 
