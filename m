@@ -2,70 +2,87 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E969C74C6F
-	for <lists+ceph-devel@lfdr.de>; Thu, 25 Jul 2019 13:06:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54B3F74CB7
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Jul 2019 13:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391541AbfGYLGK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 25 Jul 2019 07:06:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60628 "EHLO mail.kernel.org"
+        id S2391733AbfGYLRO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 25 Jul 2019 07:17:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389082AbfGYLGK (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 25 Jul 2019 07:06:10 -0400
+        id S2388479AbfGYLRO (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 25 Jul 2019 07:17:14 -0400
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 231CF22BE8
-        for <ceph-devel@vger.kernel.org>; Thu, 25 Jul 2019 11:06:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3A912238C;
+        Thu, 25 Jul 2019 11:17:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564052769;
-        bh=upwtm3gLb5t2035HAVVsZXQXdVjMwUrlQqbAAtcl2Pw=;
-        h=From:To:Subject:Date:From;
-        b=ZVs9H03du4NwbsLOXCz6ZlrNXr+eiJz266pJVTnCc9tofEPcU/mLtdEvAPzD3i7CO
-         5QHL70pJQD8F/bfvEmOIVuA/GsW9c7B7lzNOthIegj/k9lko5C1DGjZEgKoy6HFHg6
-         RGxTEkqxzC0Lq3/pd3/c8NhDnJ/kUm3DOmEvEkFw=
+        s=default; t=1564053433;
+        bh=UjgdV+iZtZXoP1Wh/hwkrmprGRBM+Ym8MwREU0ea+Bw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Iq6v1mGajPpmCWXaC4qiIkH9S6Je1Fh2O5oLn05XPcDUt0gR1iTl0U/AAFpbmP11t
+         uvIz6o7nvp3toYc0fOqJ/raKNQ/U6ocwbhyyvPfb8AV26EIzGhpZk+1t1cWLFzv3XD
+         AzAoT90iobfO3v5aA+t4Y6I/ZLNOEmfpTG/XpT0g=
+Message-ID: <fd396da29b62b83559d7489757a3871b7453e7fa.camel@kernel.org>
+Subject: Re: [RFC PATCH] ceph: don't list vxattrs in listxattr()
 From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Subject: [PATCH] ceph: don't SetPageError on writepage errors
-Date:   Thu, 25 Jul 2019 07:06:07 -0400
-Message-Id: <20190725110607.9445-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.21.0
+To:     David Disseldorp <ddiss@suse.com>,
+        Luis Henriques <lhenriques@suse.com>
+Cc:     ceph-devel@vger.kernel.org
+Date:   Thu, 25 Jul 2019 07:17:11 -0400
+In-Reply-To: <20190725115458.21e304c6@suse.com>
+References: <20190724172026.23999-1-jlayton@kernel.org>
+         <20190724172026.23999-1-jlayton@kernel.org> <87ftmu4fq3.fsf@suse.com>
+         <20190725115458.21e304c6@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-We already mark the mapping in that case, and doing this can cause
-false positives to occur at fsync time, as well as spurious read
-errors.
+On Thu, 2019-07-25 at 11:54 +0200, David Disseldorp wrote:
+> Hi,
+> 
+> On Thu, 25 Jul 2019 10:37:40 +0100, Luis Henriques wrote:
+> 
+> > Jeff Layton <jlayton@kernel.org> writes:
+> > 
+> > (CC'ing David)
+> > 
+> > > Most filesystems that provide virtual xattrs (e.g. CIFS) don't display
+> > > them via listxattr(). Ceph does, and that causes some of the tests in
+> > > xfstests to fail.
+> > > 
+> > > Have cephfs stop listing vxattrs in listxattr. Userspace can always
+> > > query them directly when the name is known.  
+> > 
+> > I don't see a problem with this, unless we already have applications
+> > relying on this behaviour.  The first thing that came to my mind was
+> > samba, but I guess David can probably confirm whether this is true or
+> > not.
+> > 
+> > If we're unable to stop listing there xattrs, the other option for
+> > fixing the xfstests that _may_ be acceptable by the maintainers is to
+> > use an output filter (lots of examples in common/filter).
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/addr.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Yeah, I rolled a half-assed xfstests patch that did this, and HCH gave
+it a NAK. He's probably right though, and fixing it in ceph.ko is a
+better approach I think.
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 3793116fcb33..9051e2063d36 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -573,7 +573,7 @@ static u64 get_writepages_data_length(struct inode *inode,
- /*
-  * Write a single page, but leave the page locked.
-  *
-- * If we get a write error, set the page error bit, but still adjust the
-+ * If we get a write error, mark the mapping for error, but still adjust the
-  * dirty page accounting (i.e., page is no longer dirty).
-  */
- static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
-@@ -648,7 +648,6 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
- 			fsc->blacklisted = 1;
- 		dout("writepage setting page/mapping error %d %p\n",
- 		     err, page);
--		SetPageError(page);
- 		mapping_set_error(&inode->i_data, err);
- 		wbc->pages_skipped++;
- 	} else {
+> 
+> Samba currently only makes use of the ceph.snap.btime vxattr. It doesn't
+> depend on it appearing in the listxattr(), so removal would be fine. Not
+> sure about other applications though.
+> 
+> Cheers, David
+
+Ok, thanks guys. I'll go ahead and push this into the ceph/testing
+branch and see if teuthology complains.
+
+Thanks,
 -- 
-2.21.0
+Jeff Layton <jlayton@kernel.org>
 
