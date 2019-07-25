@@ -2,32 +2,32 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D66374CBE
-	for <lists+ceph-devel@lfdr.de>; Thu, 25 Jul 2019 13:18:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E238474CBD
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Jul 2019 13:18:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403943AbfGYLRw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 25 Jul 2019 07:17:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35236 "EHLO mail.kernel.org"
+        id S2403932AbfGYLRv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 25 Jul 2019 07:17:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403917AbfGYLRt (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 25 Jul 2019 07:17:49 -0400
+        id S2403918AbfGYLRu (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 25 Jul 2019 07:17:50 -0400
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 725CF22C97
+        by mail.kernel.org (Postfix) with ESMTPSA id EF52C22C7C
         for <ceph-devel@vger.kernel.org>; Thu, 25 Jul 2019 11:17:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564053468;
-        bh=TXbW8SY9/nknr2tQ0OeaYfQOyIIEk5SOmNbtYEPz6GA=;
+        s=default; t=1564053469;
+        bh=n4F7qRXOj0Z68P8NoocgpSboVcZ2sy0QDBfZsaWy0sk=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=Fs5x4V9zgarF/fLqJgQMmaZV/r9Z4eae4CrDN28uJb58kmhDUtwyna+EFIc1KpysR
-         RgJ1el90vmZknD6StMGvM8YksGXToQ5lmbDNEVWqPBciwzZIpaRYoJDsoRm9VBRPZU
-         78eGGh9B7R4plfomcxHbvw/pzh6fZ08TnnVl+3jI=
+        b=OKrPISR/Vd/53U/ohHk+jB1AbozOuIZRTeoMh1mDtRDHodOusnP3AL7af4cYvmnoq
+         ekk2175gcHN2Mf3oJbppQfQQY1/7JEcCMUwBaMJO5yxhd2q25CiS40UdUHw45BFK8x
+         RiG+OK4uFeNN6dAgsBxN+vWYI3Z3RTO3LqhQGnn8=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
-Subject: [PATCH 1/8] ceph: remove ceph_get_cap_mds and __ceph_get_cap_mds
-Date:   Thu, 25 Jul 2019 07:17:39 -0400
-Message-Id: <20190725111746.10393-2-jlayton@kernel.org>
+Subject: [PATCH 2/8] ceph: fetch cap_gen under spinlock in ceph_add_cap
+Date:   Thu, 25 Jul 2019 07:17:40 -0400
+Message-Id: <20190725111746.10393-3-jlayton@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190725111746.10393-1-jlayton@kernel.org>
 References: <20190725111746.10393-1-jlayton@kernel.org>
@@ -38,68 +38,55 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Nothing calls these routines.
+It's protected by the s_gen_ttl_lock, so we should fetch under it
+and ensure that we're using the same generation in both places.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/caps.c  | 31 -------------------------------
- fs/ceph/super.h |  1 -
- 2 files changed, 32 deletions(-)
+ fs/ceph/caps.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index d17bde5d4f9a..4615f2501e15 100644
+index 4615f2501e15..bdfec8978479 100644
 --- a/fs/ceph/caps.c
 +++ b/fs/ceph/caps.c
-@@ -457,37 +457,6 @@ struct ceph_cap *ceph_get_cap_for_mds(struct ceph_inode_info *ci, int mds)
- 	return cap;
- }
+@@ -614,6 +614,7 @@ void ceph_add_cap(struct inode *inode,
+ 	struct ceph_cap *cap;
+ 	int mds = session->s_mds;
+ 	int actual_wanted;
++	u32 gen;
  
--/*
-- * Return id of any MDS with a cap, preferably FILE_WR|BUFFER|EXCL, else -1.
-- */
--static int __ceph_get_cap_mds(struct ceph_inode_info *ci)
--{
--	struct ceph_cap *cap;
--	int mds = -1;
--	struct rb_node *p;
--
--	/* prefer mds with WR|BUFFER|EXCL caps */
--	for (p = rb_first(&ci->i_caps); p; p = rb_next(p)) {
--		cap = rb_entry(p, struct ceph_cap, ci_node);
--		mds = cap->mds;
--		if (cap->issued & (CEPH_CAP_FILE_WR |
--				   CEPH_CAP_FILE_BUFFER |
--				   CEPH_CAP_FILE_EXCL))
--			break;
--	}
--	return mds;
--}
--
--int ceph_get_cap_mds(struct inode *inode)
--{
--	struct ceph_inode_info *ci = ceph_inode(inode);
--	int mds;
--	spin_lock(&ci->i_ceph_lock);
--	mds = __ceph_get_cap_mds(ceph_inode(inode));
--	spin_unlock(&ci->i_ceph_lock);
--	return mds;
--}
--
- /*
-  * Called under i_ceph_lock.
-  */
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 358559c17c41..817bab741267 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1052,7 +1052,6 @@ extern void ceph_kick_flushing_caps(struct ceph_mds_client *mdsc,
- 				    struct ceph_mds_session *session);
- extern struct ceph_cap *ceph_get_cap_for_mds(struct ceph_inode_info *ci,
- 					     int mds);
--extern int ceph_get_cap_mds(struct inode *inode);
- extern void ceph_get_cap_refs(struct ceph_inode_info *ci, int caps);
- extern void ceph_put_cap_refs(struct ceph_inode_info *ci, int had);
- extern void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int nr,
+ 	dout("add_cap %p mds%d cap %llx %s seq %d\n", inode,
+ 	     session->s_mds, cap_id, ceph_cap_string(issued), seq);
+@@ -625,6 +626,10 @@ void ceph_add_cap(struct inode *inode,
+ 	if (fmode >= 0)
+ 		wanted |= ceph_caps_for_mode(fmode);
+ 
++	spin_lock(&session->s_gen_ttl_lock);
++	gen = session->s_cap_gen;
++	spin_unlock(&session->s_gen_ttl_lock);
++
+ 	cap = __get_cap_for_mds(ci, mds);
+ 	if (!cap) {
+ 		cap = *new_cap;
+@@ -650,7 +655,7 @@ void ceph_add_cap(struct inode *inode,
+ 		list_move_tail(&cap->session_caps, &session->s_caps);
+ 		spin_unlock(&session->s_cap_lock);
+ 
+-		if (cap->cap_gen < session->s_cap_gen)
++		if (cap->cap_gen < gen)
+ 			cap->issued = cap->implemented = CEPH_CAP_PIN;
+ 
+ 		/*
+@@ -744,7 +749,7 @@ void ceph_add_cap(struct inode *inode,
+ 	cap->seq = seq;
+ 	cap->issue_seq = seq;
+ 	cap->mseq = mseq;
+-	cap->cap_gen = session->s_cap_gen;
++	cap->cap_gen = gen;
+ 
+ 	if (fmode >= 0)
+ 		__ceph_get_fmode(ci, fmode);
 -- 
 2.21.0
 
