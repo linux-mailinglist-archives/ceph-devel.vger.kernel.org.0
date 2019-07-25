@@ -2,87 +2,112 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15A65743FA
-	for <lists+ceph-devel@lfdr.de>; Thu, 25 Jul 2019 05:28:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12D7774A0F
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Jul 2019 11:37:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389014AbfGYD2n (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 24 Jul 2019 23:28:43 -0400
-Received: from mail-lj1-f180.google.com ([209.85.208.180]:45837 "EHLO
-        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388946AbfGYD2n (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 24 Jul 2019 23:28:43 -0400
-Received: by mail-lj1-f180.google.com with SMTP id m23so46451095lje.12
-        for <ceph-devel@vger.kernel.org>; Wed, 24 Jul 2019 20:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=EmpICZQ4LMeM0vAPgknJUzAn35cWby4k9wSSU9JAVxI=;
-        b=XbW+bNs+RsXiAxdZDVKnePWsDb6GXQ9GAv+fbRYYzUxVsYWm3gfb/L0zE4h8uP7v/W
-         mkeb3fp8ezxEx5AaozKZZyHjuld+M6Jw62F8e0rYmVMlSrIddL8KZ5ETZKBRo2tYmbE2
-         RbuTsb4ca5aIrpO+VoHPuhXN2DVl2M57vQppU21D+6LIyC45zgopxEwX3tfAsbnjLSkP
-         UIwgvei1ImcqGkXCbwEj4N+ZwFfQCCbAAe/n0ukABTfGXEI7HHR5aG+ct0IbbpYm4IeO
-         wKIq2LUCNowIUlL0xUHRug/xbE/MiumhTwHLW9eaanqer0pJEkFGiYrFq5r2vSX9Zb+M
-         +YOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=EmpICZQ4LMeM0vAPgknJUzAn35cWby4k9wSSU9JAVxI=;
-        b=dTEmwMcBW861bjxMJvkVlXkHUbyJLrG2kI+foSrOSa5m2yhr3djt0jXkcRO/3S4Pcb
-         ZoJexpKDKUdc/z8aLZ1LZWzrNfSDC8vq7BziLSIoavzAA/G1unDsHTBWN8tUs8KDImJH
-         l8vpel9wdJGApFyMqd9gbZ+6WoNCdGmnEwsJcbvTKkmpuPKL2pL2slkdzqElunevLrIh
-         FBVShQjMv0/W4zZ3lqtxxulGHD3mVyAikZaEG4RdViLNfAxP+sPntL45aEjiNLXKOS6v
-         9oJYVwzAr0JWDBJzm9yg3q75nTsj2gvHMztXl2dm/14HkxH2H2CAZvu1t1V3cKDCDf/s
-         NgtA==
-X-Gm-Message-State: APjAAAUVXP5+FvXKmjleJk4TdyyY8OTJrDjbU/40T4qz2Yf7D3f5+k7t
-        Br/mNh2uIFVptnp9kDkmP8LZF+P6Le4Og8MUXz+FHSdEUWI=
-X-Google-Smtp-Source: APXvYqwiQ1M58Y7aJz4JmYqSRacc9JKfLboI/b9SgZPq3S1W7qeivXSKbxjc4ue4AJrrinQo0At46/CbRq9dPttqE3s=
-X-Received: by 2002:a2e:9f57:: with SMTP id v23mr32633169ljk.138.1564025320929;
- Wed, 24 Jul 2019 20:28:40 -0700 (PDT)
+        id S2389375AbfGYJhm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 25 Jul 2019 05:37:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53408 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727600AbfGYJhm (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 25 Jul 2019 05:37:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3AC03ABE9;
+        Thu, 25 Jul 2019 09:37:41 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     David Disseldorp <ddiss@suse.com>, ceph-devel@vger.kernel.org
+Subject: Re: [RFC PATCH] ceph: don't list vxattrs in listxattr()
+References: <20190724172026.23999-1-jlayton@kernel.org>
+Date:   Thu, 25 Jul 2019 10:37:40 +0100
+In-Reply-To: <20190724172026.23999-1-jlayton@kernel.org> (Jeff Layton's
+        message of "Wed, 24 Jul 2019 13:20:26 -0400")
+Message-ID: <87ftmu4fq3.fsf@suse.com>
 MIME-Version: 1.0
-From:   Songbo Wang <songbo1227@gmail.com>
-Date:   Thu, 25 Jul 2019 11:28:29 +0800
-Message-ID: <CAHRQ3VVjW31oiGnoiZfLhpQUGpN6AHrsENTeNUPWpPXs5bAbxw@mail.gmail.com>
-Subject: Implement QoS for CephFS
-To:     ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi guys,
+Jeff Layton <jlayton@kernel.org> writes:
 
-As a distributed filesystem, all clients of CephFS share the whole
-cluster's resources, for example, IOPS, throughput. In some cases,
-resources will be occupied by some clients. So QoS for CephFS is
-needed in most cases.
+(CC'ing David)
 
-Based on the token bucket algorithm, I implement QoS for CephFS.
+> Most filesystems that provide virtual xattrs (e.g. CIFS) don't display
+> them via listxattr(). Ceph does, and that causes some of the tests in
+> xfstests to fail.
+>
+> Have cephfs stop listing vxattrs in listxattr. Userspace can always
+> query them directly when the name is known.
 
-The basic idea is as follows:
+I don't see a problem with this, unless we already have applications
+relying on this behaviour.  The first thing that came to my mind was
+samba, but I guess David can probably confirm whether this is true or
+not.
 
-  1. Set QoS info as one of the dir's xattrs;
-  2. All clients can access the same dirs with the same QoS setting.
-  3. Similar to the Quota's config flow. when the MDS receives the QoS
-setting, it'll also broadcast the message to all clients.
-  4. We can change the limit online.
+If we're unable to stop listing there xattrs, the other option for
+fixing the xfstests that _may_ be acceptable by the maintainers is to
+use an output filter (lots of examples in common/filter).
 
+Cheers,
+-- 
+Luis
 
-And we will config QoS as follows, it supports
-{limit/burst}{iops/bps/read_iops/read_bps/write_iops/write_bps}
-configure setting, some examples:
-
-      setfattr -n ceph.qos.limit.iops           -v 200 /mnt/cephfs/testdirs/
-      setfattr -n ceph.qos.burst.read_bps -v 200 /mnt/cephfs/testdirs/
-      getfattr -n ceph.qos.limit.iops                      /mnt/cephfs/testdirs/
-      getfattr -n ceph.qos
-/mnt/cephfs/testdirs/
-
-
-But, there is also a big problem. For the bps{bps/write_bps/read_bps}
-setting, if the bps is lower than the request's block size, the client
-will be blocked until it gets enough token.
-
-Any suggestion will be appreciated, thanks!
-
-PR: https://github.com/ceph/ceph/pull/29266
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/xattr.c | 29 -----------------------------
+>  1 file changed, 29 deletions(-)
+>
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 939eab7aa219..2fba06b50f25 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -903,11 +903,9 @@ ssize_t ceph_listxattr(struct dentry *dentry, char *names, size_t size)
+>  {
+>  	struct inode *inode = d_inode(dentry);
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
+> -	struct ceph_vxattr *vxattrs = ceph_inode_vxattrs(inode);
+>  	bool len_only = (size == 0);
+>  	u32 namelen;
+>  	int err;
+> -	int i;
+>  
+>  	spin_lock(&ci->i_ceph_lock);
+>  	dout("listxattr %p ver=%lld index_ver=%lld\n", inode,
+> @@ -936,33 +934,6 @@ ssize_t ceph_listxattr(struct dentry *dentry, char *names, size_t size)
+>  		names = __copy_xattr_names(ci, names);
+>  		size -= namelen;
+>  	}
+> -
+> -
+> -	/* virtual xattr names, too */
+> -	if (vxattrs) {
+> -		for (i = 0; vxattrs[i].name; i++) {
+> -			size_t this_len;
+> -
+> -			if (vxattrs[i].flags & VXATTR_FLAG_HIDDEN)
+> -				continue;
+> -			if (vxattrs[i].exists_cb && !vxattrs[i].exists_cb(ci))
+> -				continue;
+> -
+> -			this_len = strlen(vxattrs[i].name) + 1;
+> -			namelen += this_len;
+> -			if (len_only)
+> -				continue;
+> -
+> -			if (this_len > size) {
+> -				err = -ERANGE;
+> -				goto out;
+> -			}
+> -
+> -			memcpy(names, vxattrs[i].name, this_len);
+> -			names += this_len;
+> -			size -= this_len;
+> -		}
+> -	}
+>  	err = namelen;
+>  out:
+>  	spin_unlock(&ci->i_ceph_lock);
