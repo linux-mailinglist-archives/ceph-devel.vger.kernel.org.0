@@ -2,119 +2,94 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35BF27573F
-	for <lists+ceph-devel@lfdr.de>; Thu, 25 Jul 2019 20:52:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D5FC75774
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Jul 2019 20:59:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726251AbfGYSwK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 25 Jul 2019 14:52:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34398 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726107AbfGYSwK (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 25 Jul 2019 14:52:10 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 603D922BEF
-        for <ceph-devel@vger.kernel.org>; Thu, 25 Jul 2019 18:52:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564080728;
-        bh=LlJsqsZJv3gcGOyquUKPQpm1gQnosiPLXqKEh7ZqSxg=;
-        h=From:To:Subject:Date:From;
-        b=MzQAiXviRzaW4n3kV4mLqLhuFaRgcnNTCZxDxPPnnNDPF9gUyFw7p9T82VRqSzKto
-         y+PSPyEfEfqsfxt4MVfMe4/yKhumvLK9n1cI11MskGNpLQzlYEf5GwGLZQ9VPF6DfL
-         gc6hHbcAVK1s4JRM7idN5mW5T88TRT4wvT37Dtsc=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Subject: [PATCH] ceph: update the mtime when truncating up
-Date:   Thu, 25 Jul 2019 14:52:07 -0400
-Message-Id: <20190725185207.9665-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.21.0
+        id S1726230AbfGYS7p (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 25 Jul 2019 14:59:45 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:40797 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbfGYS7p (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 25 Jul 2019 14:59:45 -0400
+Received: by mail-qk1-f194.google.com with SMTP id s145so37253733qke.7
+        for <ceph-devel@vger.kernel.org>; Thu, 25 Jul 2019 11:59:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Spqia9w4n2GeovFHM8IMllhSHuKE084RgYBBEVSmjLI=;
+        b=qvVhq+X2/e/cpz9NOaiMHj7+MZIySRmc8rWNCJ3WMR/gDRA+xxmb75xCCzk2wNh9fT
+         lIbvIhUc81XduP2sEFf3Z2koizto1zFUM1n5WXaw+yMeztdRW1ryGY9ZHVv01dTSDa8P
+         KRoJo1k23Gsdqut4JgmqosC53G4Kgrx39TvMQtgVwFX0VRsn50MG8glqhJYoevXQXwE/
+         +KarGgHlaE/9kNbDVOswuBb+8rTn8S+9p7eVFJ318ns3MkoWEGf4yhnUcuMnu8k1uxCD
+         Vl6lAaZFP6uZfJdiQTFRM6vY2pLeDfKvn0crAjQIl8Lj5GLHby+Am7sC0ytBuXfWnVbT
+         xB6Q==
+X-Gm-Message-State: APjAAAWLGhT5BZIc0d7TmZANN3MDODzJX0WTU5A5he8pYwVv+xsEYAoD
+        redA1aLxJxNL8pii6M2BKHt9RtNolSood+QDKTyUJw==
+X-Google-Smtp-Source: APXvYqwz35C/il+37BPzwvKKITrXGEFWjcT/mBaDBM5wNeh7kP2QmuYobUKHBKKzwLrRHYvPQddVtrJWelAcq/YB2ww=
+X-Received: by 2002:a37:9644:: with SMTP id y65mr59266247qkd.191.1564081184033;
+ Thu, 25 Jul 2019 11:59:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAHRQ3VVjW31oiGnoiZfLhpQUGpN6AHrsENTeNUPWpPXs5bAbxw@mail.gmail.com>
+In-Reply-To: <CAHRQ3VVjW31oiGnoiZfLhpQUGpN6AHrsENTeNUPWpPXs5bAbxw@mail.gmail.com>
+From:   Gregory Farnum <gfarnum@redhat.com>
+Date:   Thu, 25 Jul 2019 11:59:31 -0700
+Message-ID: <CAJ4mKGYHOj+vi6JEOeCz91dkMEG5FqdSrP0L_QRjc10fHD9M0A@mail.gmail.com>
+Subject: Re: Implement QoS for CephFS
+To:     Songbo Wang <songbo1227@gmail.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-If we have Fx caps, and the we're truncating the size to be larger, then
-we'll cache the size attribute change, but the mtime won't be updated.
+On Wed, Jul 24, 2019 at 8:29 PM Songbo Wang <songbo1227@gmail.com> wrote:
+>
+> Hi guys,
+>
+> As a distributed filesystem, all clients of CephFS share the whole
+> cluster's resources, for example, IOPS, throughput. In some cases,
+> resources will be occupied by some clients. So QoS for CephFS is
+> needed in most cases.
+>
+> Based on the token bucket algorithm, I implement QoS for CephFS.
+>
+> The basic idea is as follows:
+>
+>   1. Set QoS info as one of the dir's xattrs;
+>   2. All clients can access the same dirs with the same QoS setting.
+>   3. Similar to the Quota's config flow. when the MDS receives the QoS
+> setting, it'll also broadcast the message to all clients.
+>   4. We can change the limit online.
+>
+>
+> And we will config QoS as follows, it supports
+> {limit/burst}{iops/bps/read_iops/read_bps/write_iops/write_bps}
+> configure setting, some examples:
+>
+>       setfattr -n ceph.qos.limit.iops           -v 200 /mnt/cephfs/testdirs/
+>       setfattr -n ceph.qos.burst.read_bps -v 200 /mnt/cephfs/testdirs/
+>       getfattr -n ceph.qos.limit.iops                      /mnt/cephfs/testdirs/
+>       getfattr -n ceph.qos
+> /mnt/cephfs/testdirs/
+>
+>
+> But, there is also a big problem. For the bps{bps/write_bps/read_bps}
+> setting, if the bps is lower than the request's block size, the client
+> will be blocked until it gets enough token.
+>
+> Any suggestion will be appreciated, thanks!
+>
+> PR: https://github.com/ceph/ceph/pull/29266
 
-Move the size handling before the mtime, and add ATTR_MTIME to ia_valid
-in that case to make sure the mtime also gets updated.
+I briefly skimmed this and if I understand correctly, this lets you
+specify a per-client limit on hierarchies. But it doesn't try and
+limit total IO across a hierarchy, and it doesn't let you specify
+total per-client limits if they have multiple mount points.
 
-This fixes xfstest generic/313.
-
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/inode.c | 41 +++++++++++++++++++++--------------------
- 1 file changed, 21 insertions(+), 20 deletions(-)
-
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 332433b490f5..9f135624ae47 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1989,7 +1989,7 @@ static const struct inode_operations ceph_symlink_iops = {
- int __ceph_setattr(struct inode *inode, struct iattr *attr)
- {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
--	const unsigned int ia_valid = attr->ia_valid;
-+	unsigned int ia_valid = attr->ia_valid;
- 	struct ceph_mds_request *req;
- 	struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
- 	struct ceph_cap_flush *prealloc_cf;
-@@ -2094,6 +2094,26 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
- 				   CEPH_CAP_FILE_RD | CEPH_CAP_FILE_WR;
- 		}
- 	}
-+	if (ia_valid & ATTR_SIZE) {
-+		dout("setattr %p size %lld -> %lld\n", inode,
-+		     inode->i_size, attr->ia_size);
-+		if ((issued & CEPH_CAP_FILE_EXCL) &&
-+		    attr->ia_size > inode->i_size) {
-+			i_size_write(inode, attr->ia_size);
-+			inode->i_blocks = calc_inode_blocks(attr->ia_size);
-+			ci->i_reported_size = attr->ia_size;
-+			dirtied |= CEPH_CAP_FILE_EXCL;
-+			ia_valid |= ATTR_MTIME;
-+		} else if ((issued & CEPH_CAP_FILE_SHARED) == 0 ||
-+			   attr->ia_size != inode->i_size) {
-+			req->r_args.setattr.size = cpu_to_le64(attr->ia_size);
-+			req->r_args.setattr.old_size =
-+				cpu_to_le64(inode->i_size);
-+			mask |= CEPH_SETATTR_SIZE;
-+			release |= CEPH_CAP_FILE_SHARED | CEPH_CAP_FILE_EXCL |
-+				   CEPH_CAP_FILE_RD | CEPH_CAP_FILE_WR;
-+		}
-+	}
- 	if (ia_valid & ATTR_MTIME) {
- 		dout("setattr %p mtime %lld.%ld -> %lld.%ld\n", inode,
- 		     inode->i_mtime.tv_sec, inode->i_mtime.tv_nsec,
-@@ -2116,25 +2136,6 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
- 				   CEPH_CAP_FILE_RD | CEPH_CAP_FILE_WR;
- 		}
- 	}
--	if (ia_valid & ATTR_SIZE) {
--		dout("setattr %p size %lld -> %lld\n", inode,
--		     inode->i_size, attr->ia_size);
--		if ((issued & CEPH_CAP_FILE_EXCL) &&
--		    attr->ia_size > inode->i_size) {
--			i_size_write(inode, attr->ia_size);
--			inode->i_blocks = calc_inode_blocks(attr->ia_size);
--			ci->i_reported_size = attr->ia_size;
--			dirtied |= CEPH_CAP_FILE_EXCL;
--		} else if ((issued & CEPH_CAP_FILE_SHARED) == 0 ||
--			   attr->ia_size != inode->i_size) {
--			req->r_args.setattr.size = cpu_to_le64(attr->ia_size);
--			req->r_args.setattr.old_size =
--				cpu_to_le64(inode->i_size);
--			mask |= CEPH_SETATTR_SIZE;
--			release |= CEPH_CAP_FILE_SHARED | CEPH_CAP_FILE_EXCL |
--				   CEPH_CAP_FILE_RD | CEPH_CAP_FILE_WR;
--		}
--	}
- 
- 	/* these do nothing */
- 	if (ia_valid & ATTR_CTIME) {
--- 
-2.21.0
-
+Given this, what's the point of maintaining the QoS data in the
+filesystem instead of just as information that's passed when the
+client mounts?
+How hard is this scheme likely to be to implement in the kernel?
+-Greg
