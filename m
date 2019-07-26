@@ -2,130 +2,86 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECD6575FB7
-	for <lists+ceph-devel@lfdr.de>; Fri, 26 Jul 2019 09:23:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BE39760A6
+	for <lists+ceph-devel@lfdr.de>; Fri, 26 Jul 2019 10:26:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725955AbfGZHXN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 26 Jul 2019 03:23:13 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42935 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbfGZHXN (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 26 Jul 2019 03:23:13 -0400
-Received: by mail-ot1-f68.google.com with SMTP id l15so54394332otn.9
-        for <ceph-devel@vger.kernel.org>; Fri, 26 Jul 2019 00:23:13 -0700 (PDT)
+        id S1726191AbfGZI0D (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 26 Jul 2019 04:26:03 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:45521 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbfGZI0B (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 26 Jul 2019 04:26:01 -0400
+Received: by mail-qt1-f195.google.com with SMTP id x22so46864972qtp.12
+        for <ceph-devel@vger.kernel.org>; Fri, 26 Jul 2019 01:26:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/VkQMhrZ6B/Rh6JDjXeorQNhsxudxgysKEK9uYwX0mE=;
-        b=TtFuVSt4senaEiZKyt03XrK5zP0bCMPCEo6EkrojPas7r+0ORWUuVmUHAYT4otzcu4
-         /TPufU+0wJ1sJq001zHlE3duqtNjDjCMMg2WVPRyLECXlKq9jvAk7NvgZ3nmGQdEBOho
-         MsTa2VqPTuB4cMQGjinlrQwhNUc/u1xcHxIGEHV6XB8kxsKouv1nyK7HG8rsXnSugBak
-         TIZjCO3hq0tuK7sYh2B+glltVPc21hE4PJ08Sg4vmiq3a1gyb8EHmJ3cj/uTI+rfshiX
-         DExF5FvtfJIh9CtfQTCOfUuLZAarbL9BFzZdD2969X1R0mWyaMedjm9U3PoF2NMLnIkP
-         3M9Q==
+        bh=k3qriwTFQyja3MChLrh6VlWxpuljvFjMZBEt0+5vTX8=;
+        b=nlithE+I/gs0gnOWOIHYjfpWOcrsSEwAxuJGeDru4XWIOM4PzGDJ2z7fGwgn361f4Y
+         sWGvjXKJLZwqHqEtKvl26JW7WAWdtUJbxkK7FXttNYJEIhDEb8zwzxnYcWJN2grN7dAe
+         mNKFlkWTd3/7wktyDBP2EEBd1OcrSQ0rizZV5BVPoLE0HyD6/LaOOlgL/6cN0xXrSNp9
+         CcJ/PsKy5UWmFkFMmp6Gul7gUxmDAVBIpD1BLjBOHqqKGhTbETBHDDWc56H/gzR0ew52
+         fLtsp43dZkFwAf4tBGFXRChIoiPdvnCfJOLLaBvrM7VkXINmeSApy4Gopf16BCSCidDI
+         D+qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/VkQMhrZ6B/Rh6JDjXeorQNhsxudxgysKEK9uYwX0mE=;
-        b=Fr/tqI4rRUp5WMkYOR6C23PiwtmdQnMnGVXxIJZyEv7HncqO0qPhvtBEfJNtOpOr87
-         I15tn0vaga1UwLDZlDZvLUgRwA9tAGMXwMdl1JlkHeIGkEJpnrWQtRPVVDUdnisqX/5G
-         VAsg4s7WrGmodWB2XZsglhna05lVMuUF2FXc8LEY8pGKidnpVjS/hXWi3+jJBd6bVzl2
-         +EGAFOA0bRVJb9uIeW2o3AFpuQ4TgU/UVlOWWmoad3z9DKmYVmmDe/VSZXGEf3IB3adt
-         W3zPpxf6/YzPSzljohTh7CLXCSWHPf6g/rBGwZ1PtOUubNMfVeMeeOBTqNv/Kg96+pVR
-         yw7g==
-X-Gm-Message-State: APjAAAXLN6pBA9eUpVCzJMa7iDxs4+ithrZJaDN2Srg2vhhBwp3gTF2w
-        jFh7sT2KSLg1Hi1hlaJNpXWjtxxK0Sevx3jsIzk=
-X-Google-Smtp-Source: APXvYqw521hWCw0FGisHd3Q+7Wyo5ep6SjBFuWEhpVEL2sfNCV/VnPZdnm77NhyZmnrL7jvI8D5Rl17HTCG1HDJLx/4=
-X-Received: by 2002:a9d:65da:: with SMTP id z26mr57669327oth.257.1564125792770;
- Fri, 26 Jul 2019 00:23:12 -0700 (PDT)
+        bh=k3qriwTFQyja3MChLrh6VlWxpuljvFjMZBEt0+5vTX8=;
+        b=nXgcUaN5CLbg90Ne5Q6+3yICvYjcemH3l0dtCoAcrXsNI10AnoVeaQdIRKpH8JShrK
+         OUC74GzHuIt5hn3FN4o1XG5AjiXK3eFYhkX317X1mnbJIXXjzgwYutb1a0SFZjJ/ddx+
+         iqE4VkLOkiRi00Gss6jp5EM4IqHDHIRNcHi4W2cLzqef5pb2csm2RwhPPbw/cBAWc/Ep
+         nTt9Pih9tLY9kWOD9KI3sJEpp91hFSE8Ml1Wuu40X8qaOBLsHblCt74NhLw5IvgYpnYX
+         jfaPiNI6onssJRtMDlcwqNfz/I3eYzokCwUo+7qe+ja6Zf0MrZ1TvErk7aEKjY8Gpp5T
+         v4KQ==
+X-Gm-Message-State: APjAAAVw43FBYpYnSFi/UJtdCk1ckwMyGq+ldDSOEnAiVpP/JdsQh9fH
+        0tgwanMgWFdgg6+u98rWsleXtjupH4F1fgYuZOnPmPbwAsc=
+X-Google-Smtp-Source: APXvYqy4ORWSMZn0SPP03Vn793Yn7BZ1Ys1TU7FfwCXEgNZZr8OPivuNB4Kem7Lhyp93saQz421C5/aBNcYQPl9HU0U=
+X-Received: by 2002:ac8:368a:: with SMTP id a10mr65562150qtc.143.1564129560643;
+ Fri, 26 Jul 2019 01:26:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAKQB+fsGD4b_RE1yF3RQszne+xrcEVV9QZiObwwZ39GDCh6n5Q@mail.gmail.com>
- <CAAM7YAmd+63fAO8EPvw4jE0=ZUZAW2nOQhkmuYcXLhdEPeV-dA@mail.gmail.com>
-In-Reply-To: <CAAM7YAmd+63fAO8EPvw4jE0=ZUZAW2nOQhkmuYcXLhdEPeV-dA@mail.gmail.com>
-From:   Jerry Lee <leisurelysw24@gmail.com>
-Date:   Fri, 26 Jul 2019 15:22:56 +0800
-Message-ID: <CAKQB+fsbPXvmGj11NW0nJ50VGJeWkTc7vfpDZ0a6Jrw2DOWSgA@mail.gmail.com>
-Subject: Re: cephfs kernel client umount stucks forever
-To:     "Yan, Zheng" <ukernel@gmail.com>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
-        Jeff Layton <jlayton@redhat.com>
+References: <20190725111746.10393-1-jlayton@kernel.org>
+In-Reply-To: <20190725111746.10393-1-jlayton@kernel.org>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Fri, 26 Jul 2019 16:25:49 +0800
+Message-ID: <CAAM7YA=Fp5Np5e6YMgx-mPrmHZcgtMpiaXy_k51doZ4NGn_-Tg@mail.gmail.com>
+Subject: Re: [PATCH 0/8] ceph: minor cleanup patches for v5.4
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Zheng,
-
-Sorry for the late reply.  It's really hard to encounter the issue.
-However, it happens again today, but unfortunately, the command shows
-that no op is under processing.
-
-$ ceph daemon osd.13 dump_ops_in_flight
-{
-    "ops": [],
-    "num_ops": 0
-}
-
-Is it more likely that the there are some subtle bugs in kernel client
-or network stability issue between the client and server?  Thanks.
-
-On Fri, 19 Jul 2019 at 20:43, Yan, Zheng <ukernel@gmail.com> wrote:
+On Fri, Jul 26, 2019 at 12:54 AM Jeff Layton <jlayton@kernel.org> wrote:
 >
-> On Fri, Jul 19, 2019 at 7:11 PM Jerry Lee <leisurelysw24@gmail.com> wrote:
-> >
-> > Hi,
-> >
-> > Recently I encountered a issue that cephfs kernel client umount stucks
-> > forever. Under such condition, the call stack of umount process is
-> > shown as below and it seems to be reasonable:
-> >
-> > [~] # cat /proc/985427/stack
-> > [<ffffffff81098bcd>] io_schedule+0xd/0x30
-> > [<ffffffff8111ab6f>] wait_on_page_bit_common+0xdf/0x160
-> > [<ffffffff8111b0ec>] __filemap_fdatawait_range+0xec/0x140
-> > [<ffffffff8111b195>] filemap_fdatawait_keep_errors+0x15/0x40
-> > [<ffffffff811ab5a9>] sync_inodes_sb+0x1e9/0x220
-> > [<ffffffff811b15be>] sync_filesystem+0x4e/0x80
-> > [<ffffffff8118203d>] generic_shutdown_super+0x1d/0x110
-> > [<ffffffffa08a48cc>] ceph_kill_sb+0x2c/0x80 [ceph]
-> > [<ffffffff81181ca4>] deactivate_locked_super+0x34/0x60
-> > [<ffffffff811a2f56>] cleanup_mnt+0x36/0x70
-> > [<ffffffff8108e86f>] task_work_run+0x6f/0x90
-> > [<ffffffff81001a9b>] do_syscall_64+0x27b/0x2c0
-> > [<ffffffff81a00071>] entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-> > [<ffffffffffffffff>] 0xffffffffffffffff
-> >
-> > From the debugfs entry, two write requests are indeed not complete but
-> > I can't figure it out.
-> > [/sys/kernel/debug/ceph/63be7de3-e137-4b6d-ab75-323b27f21254.client4475]
-> > # cat osdc
-> > REQUESTS 2 homeless 0
-> > 36      osd13   1.d069c5d       1.1d    [13,4,0]/13     [13,4,0]/13
-> >  e327    10000000028.00000000    0x40002c        2       write
-> > 37      osd13   1.8088c98       1.18    [13,6,0]/13     [13,6,0]/13
-> >  e327    10000000029.00000000    0x40002c        2       write
-> > LINGER REQUESTS
-> > BACKOFFS
-> >
-> > The kernel version is 4.14 with some customized features and the
-> > cluster is composed by 3 nodes.  On those nodes, CephFS is mount via
-> > kernel client and the issue only happens on one node while others
-> > umount the CephFS successfully.  I've already checked the upstream
-> > patches and no related issues are found.  Currently, I try to
-> > re-produce the issue in an environment with bad network quality
-> > (emulated by tc, add some packet loss, corruption and latency to the
-> > network between client and server).  Also, osdmap is tuned much more
-> > frequently to trigger request resent on the client.  But, I got no
-> > luck with above approach.
-> >
-> > Is there any suggestion or idea that I could do to further investigate
-> > the issue?  Thanks!
+> I've been trying to chip away at the coverage of the session->s_mutex,
+> and in the process have been doing some minor cleanup of the code and
+> comments, mostly around the cap handing.
 >
-> check if osd.13 has received these requests.
+> These shouldn't cause much in the way of behavioral changes.
 >
-> ceph daemon osd.13 dump_ops_in_flight
-> >
-> > - Jerry
+> Jeff Layton (8):
+>   ceph: remove ceph_get_cap_mds and __ceph_get_cap_mds
+>   ceph: fetch cap_gen under spinlock in ceph_add_cap
+>   ceph: eliminate session->s_trim_caps
+>   ceph: fix comments over ceph_add_cap
+>   ceph: have __mark_caps_flushing return flush_tid
+>   ceph: remove unneeded test in try_flush_caps
+>   ceph: remove CEPH_I_NOFLUSH
+>   ceph: remove incorrect comment above __send_cap
+>
+
+reviewed-by
+
+>  fs/ceph/caps.c       | 80 ++++++++++++--------------------------------
+>  fs/ceph/mds_client.c | 17 +++++-----
+>  fs/ceph/mds_client.h |  2 +-
+>  fs/ceph/super.h      | 20 +++++------
+>  4 files changed, 39 insertions(+), 80 deletions(-)
+>
+> --
+> 2.21.0
+>
