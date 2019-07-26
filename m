@@ -2,86 +2,87 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C445976760
-	for <lists+ceph-devel@lfdr.de>; Fri, 26 Jul 2019 15:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEE707687A
+	for <lists+ceph-devel@lfdr.de>; Fri, 26 Jul 2019 15:44:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727405AbfGZNZu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 26 Jul 2019 09:25:50 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44743 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727375AbfGZNZt (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 26 Jul 2019 09:25:49 -0400
-Received: by mail-lj1-f196.google.com with SMTP id k18so51459242ljc.11
-        for <ceph-devel@vger.kernel.org>; Fri, 26 Jul 2019 06:25:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XPtS6ED+jMsCmLsIUdpymt2uSsOTDiI/hof6/QZOZBc=;
-        b=Dv2HSwFi71w104X2GaSQGMu6Z+KAjRY7rO86yzO52kNwXYAncNz4nPuLX4rIzeaqdn
-         mfB4IKdAdMxiB3i/dbwRfsmZduzl/gk1n9hlwdB0PfEEHSiPGxr+CcdB3xViCYQ94ziq
-         VIqYpX9oWRLp5FldJYcjB0fizuYM4fROA/pAW80c6laDe45E9ktoyd/iKBNMTwhMWz+t
-         eNKZkzkG+BuW/LeXyupVzmuJ/TtO9G4oyzg5duR2YB2crQbKyvTE567h4N+KXriBlant
-         MjlSkQpAyr3QdjbCY1/Iq+0lHH4karpsBBRvDocoy2qXAc7NSxgrEb+lduo/ibRE9jGF
-         uceA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XPtS6ED+jMsCmLsIUdpymt2uSsOTDiI/hof6/QZOZBc=;
-        b=qAOP5+iKpm3IHqVuwKKyu3e7NeO3IESD6OrM1d8zyKab0j6Cr6B4sOAA7/phhKEl4k
-         945JIQ2wnkEXP5283VGzIHkQ2LOZs+p12LSA7K7A20C+bE6kqxmBnEAEgTho6Rdm2yox
-         4l0OFBs+dbz/p7DdQQ2TInFmaqE1A++7NBROSbHoxPoDaPNPWUvjJQk7YO0+53Hk1dn8
-         KBaH5ReHop4EPyldbld/Uz8vaIubDpHK4sZFd4VjGn7ChWuAZTJ7qX13nu+oBKsNZlMe
-         8WwE3KYPwjcEWNJim950Yu6RP1BxV7wPIhkGckuQVT++e21yIRdEG3bdgtitO1/megz9
-         Pzew==
-X-Gm-Message-State: APjAAAV725/C6qrhbDCbDpvnKTnVZYykByr5F9FtKBRv4JgT8ZvXOnk7
-        gRekdxZdWTmme4jzsQTWNQ==
-X-Google-Smtp-Source: APXvYqxWqeCus7jNiK8qNYE3he6hRXQpROx24jlOv11F7DwAyq7JfV8N3W7Z1YnajBkrbBpddfu+Og==
-X-Received: by 2002:a2e:2411:: with SMTP id k17mr11061240ljk.136.1564147548219;
-        Fri, 26 Jul 2019 06:25:48 -0700 (PDT)
-Received: from localhost ([91.245.78.132])
-        by smtp.gmail.com with ESMTPSA id u21sm10122020lju.2.2019.07.26.06.25.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 26 Jul 2019 06:25:47 -0700 (PDT)
-From:   Mykola Golub <to.my.trociny@gmail.com>
-X-Google-Original-From: Mykola Golub <mgolub@suse.de>
-Date:   Fri, 26 Jul 2019 16:25:46 +0300
-To:     Ajitha Robert <ajitharobert01@gmail.com>
-Cc:     Mykola Golub <to.my.trociny@gmail.com>, ceph-users@lists.ceph.com,
-        ceph-users@ceph.com, ceph-devel@vger.kernel.org
-Subject: Re: [ceph-users] Error in ceph rbd
- mirroring(rbd::mirror::InstanceWatcher: C_NotifyInstanceRequestfinish:
- resending after timeout)
-Message-ID: <20190726132546.GA6825@gmail.com>
-References: <CAEbG6hG7dAhg=Z9JUKcCCTOEPyXZ6cZcS=jar7SeL-5VTcqEgA@mail.gmail.com>
- <20190726093147.GA31242@gmail.com>
- <CAEbG6hFgvWFMgaYHRRtZdth-OkJ7ib4vWxf__b7QvGPd1rF6Qg@mail.gmail.com>
+        id S2387689AbfGZNot (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 26 Jul 2019 09:44:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53154 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388424AbfGZNos (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:44:48 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8A3222CBF;
+        Fri, 26 Jul 2019 13:44:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564148687;
+        bh=oBtKpssrtk9bhbLDtEqB6X5gVClL753A890gQUH2fYg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=vc5k0D/a+ZgrdWW30aq4epuctoRNHuHCXl0Is8A68daDilergte6sd8yFsDoF4UOl
+         LEEZPNBGIKWxY8Mx6DWf19GfcbfpzmXc13vD80V0FML81nvdzoOL1PKQ/pYR+AHXjs
+         txaS2o2zcb6LPiwvsgdZOalgMY3THxxveZayo8oU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 11/30] ceph: fix improper use of smp_mb__before_atomic()
+Date:   Fri, 26 Jul 2019 09:44:13 -0400
+Message-Id: <20190726134432.12993-11-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190726134432.12993-1-sashal@kernel.org>
+References: <20190726134432.12993-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEbG6hFgvWFMgaYHRRtZdth-OkJ7ib4vWxf__b7QvGPd1rF6Qg@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 04:40:35PM +0530, Ajitha Robert wrote:
-> Thank you for the clarification.
-> 
-> But i was trying with openstack-cinder.. when i load some data into the
-> volume around 50gb, the image sync will stop by 5 % or something within
-> 15%...  What could be the reason?
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-I suppose you see image sync stop in mirror status output? Could you
-please provide an example? And I suppose you don't see any other
-messages in rbd-mirror log apart from what you have already posted?
-Depending on configuration rbd-mirror might log in several logs. Could
-you please try to find all its logs? `lsof |grep 'rbd-mirror.*log'`
-may be useful for this.
+[ Upstream commit 749607731e26dfb2558118038c40e9c0c80d23b5 ]
 
-BTW, what rbd-mirror version are you running?
+This barrier only applies to the read-modify-write operations; in
+particular, it does not apply to the atomic64_set() primitive.
 
+Replace the barrier with an smp_mb().
+
+Fixes: fdd4e15838e59 ("ceph: rework dcache readdir")
+Reported-by: "Paul E. McKenney" <paulmck@linux.ibm.com>
+Reported-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/ceph/super.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 622d5dd9f616..9bd0d928057b 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -476,7 +476,12 @@ static inline void __ceph_dir_set_complete(struct ceph_inode_info *ci,
+ 					   long long release_count,
+ 					   long long ordered_count)
+ {
+-	smp_mb__before_atomic();
++	/*
++	 * Makes sure operations that setup readdir cache (update page
++	 * cache and i_size) are strongly ordered w.r.t. the following
++	 * atomic64_set() operations.
++	 */
++	smp_mb();
+ 	atomic64_set(&ci->i_complete_seq[0], release_count);
+ 	atomic64_set(&ci->i_complete_seq[1], ordered_count);
+ }
 -- 
-Mykola Golub
+2.20.1
+
