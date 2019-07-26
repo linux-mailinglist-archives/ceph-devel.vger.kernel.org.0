@@ -2,142 +2,139 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54ACD76103
-	for <lists+ceph-devel@lfdr.de>; Fri, 26 Jul 2019 10:40:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDB8E761C5
+	for <lists+ceph-devel@lfdr.de>; Fri, 26 Jul 2019 11:22:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725953AbfGZIkQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 26 Jul 2019 04:40:16 -0400
-Received: from mail-wr1-f44.google.com ([209.85.221.44]:33852 "EHLO
-        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbfGZIkQ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 26 Jul 2019 04:40:16 -0400
-Received: by mail-wr1-f44.google.com with SMTP id 31so53563593wrm.1
-        for <ceph-devel@vger.kernel.org>; Fri, 26 Jul 2019 01:40:15 -0700 (PDT)
+        id S1726139AbfGZJWm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 26 Jul 2019 05:22:42 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:35822 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfGZJWm (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 26 Jul 2019 05:22:42 -0400
+Received: by mail-oi1-f194.google.com with SMTP id a127so39773975oii.2
+        for <ceph-devel@vger.kernel.org>; Fri, 26 Jul 2019 02:22:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=sza4Njfs9Q1len1RyNznfxVY7je8XlhXZD5qRHZNwYc=;
-        b=Hk+gfyyCX8T85cDzssWoo8QbksNHXx/l21OWMHjgiWqdGIHze5C/JmKiSSLorDvokD
-         NVmPuPaBGVcxu8AsNDXx44ajaYwmHlZIibenvg0hraazAuCvduPG3HRnI2B2cZfGpom2
-         0FFQdZMejaBrhs+2HIBwYHABb1Oa/YV0aU+3jCh/1UK1Y0uLQEkAWWAGeHZiHl4f033m
-         5B5fHHyiuoSa+N9MahkfxhDo3uEvx//Y7Uh4I6A4YUvwCL+MwvguuhPd7D6PpYmaIYW/
-         O5jPsT9oQdBbpgvy5NYBN6OblS8ZEVk7i9Qa9ZT7/tD2xFKn4FLRzn3gCDFOg9IFUnh4
-         fETA==
+         :cc;
+        bh=3OFNMXS5kEoWe7aQXTab5kJqVcE1yn7QF3y4T3FXuM8=;
+        b=jKOhtqSXYnWAfl0Wv3CVv40uGwe6P+sPDS8ptZyP93VZzEnT+8WucPuHNi6EwsxaFu
+         oFB/VbABeMh0JrYzEchyQIjHX2DES6yUWfG1LHPm1iCQ3h8aBI5RdLzYMh724BKOyHK+
+         H0vaajboldwkKA1pOvPgBTY72EI8ai3fXe2ihlvl35ONWI42xrephTaI1e5fgIdunihg
+         HBzkaK0Rm0VOAoN7IFhJBSkinAtxQ5IFevyxNBo48YWq0vFTUHPGrUU29O2lHET0HD1w
+         bg8aLiH357aXEoFdwFSC1137iHXrvrkp6Z6Icjq9OzDxY0pnfKywnG2qCj1brVY6aX+c
+         7W2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=sza4Njfs9Q1len1RyNznfxVY7je8XlhXZD5qRHZNwYc=;
-        b=OtA8WzPML5CUko6q8dPcp/Jf9TvvlKNA2ug6e6m1/gY6/3fknN2oZ22NjeaHYh8mXo
-         1zlcXHpRINhYKpvnZmw25cCWfAIHDzrjxqkNGqwsQZTy0IDFckmETomHFsW9vtp5DOJm
-         IJ+AvrNNKtuslF+ixPn5rGPnnPfRFRJUReEF83RfxOcXpb4ipI2xAGat54bAXCSXGGTT
-         SsD0JBuXC2/EG7RyXDCeASqlkULJOFrwPFDRcHUYVuHRVO65ak7i3RE0iw39ErqKRb0x
-         iNzAyWPnWwCq7Xjvy55PJWsGy+I3uQSRtVmzSc1Gnrc8T0XlU82Eb8o7TgtsvzZ1Fher
-         L8Kg==
-X-Gm-Message-State: APjAAAXHaWQZ0IZTdcdMk3NwpPwq9lOPRqNwf+MzAHS7efFZOU1pFADc
-        pjz/R47tKFhK8x0YsAGj1IRNHe31dqRAmmpJmWtVr7x66fWU7w==
-X-Google-Smtp-Source: APXvYqyaWmJy+mBVUcTqOcUPIVsElbFwlWuu/gDEMY+QBjaK1Xy5DerCxRDd0t7JAhML2VY38X2po1wgD+yteDVaXb4=
-X-Received: by 2002:adf:ed41:: with SMTP id u1mr95335543wro.162.1564130414355;
- Fri, 26 Jul 2019 01:40:14 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=3OFNMXS5kEoWe7aQXTab5kJqVcE1yn7QF3y4T3FXuM8=;
+        b=SERRZ4BVoMPv0UHqtbHw5IwFdluDpv0eUmU4IiuPPeAk06CXxanca9KPIHBkD+S2RK
+         RRMufwVZB/BeBhOQnkvlGWvJ0z95OfqK2aro159uJ5dSDzIvsDmbLPo+G6sac9srD+tE
+         8wIOOwyvTnustAo3HoGv0aT1I4BEBSzTtr9cv/Mq36hQMRTecpJDk1DZsw2VbttETumb
+         K3J+KUonFGzLrnjKJdYUvcQ5/iAuDYQ+1p6jGVY3xqyZziLHSAnmNGdlYH8fx9R5g9Xs
+         sc0kzCFw4Dz0UjFvm9pIHanSRzk9LSoxdvrD9XhiG5iUiXibnO/1aTa8W67kZqz0lAqi
+         A84A==
+X-Gm-Message-State: APjAAAWB2H+92cZlCJkEMA+sfqNDe0tlhsQGLq3WovDR+eCgN+g7MYwF
+        uwR6uSiJYIy7kvOG7a4109sUNRYhk79SkoTOWJA=
+X-Google-Smtp-Source: APXvYqwWYV5hD9d18/ApLQG4JB6mSIQlOr5Optfj6d9XoeZV7w8UC83QqxW6GAafYYzuGZFBacmvFNHBSAk88Q+aKkM=
+X-Received: by 2002:aca:bfd4:: with SMTP id p203mr24548393oif.95.1564132961343;
+ Fri, 26 Jul 2019 02:22:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHRQ3VVjW31oiGnoiZfLhpQUGpN6AHrsENTeNUPWpPXs5bAbxw@mail.gmail.com>
- <CAJ4mKGYHOj+vi6JEOeCz91dkMEG5FqdSrP0L_QRjc10fHD9M0A@mail.gmail.com>
-In-Reply-To: <CAJ4mKGYHOj+vi6JEOeCz91dkMEG5FqdSrP0L_QRjc10fHD9M0A@mail.gmail.com>
-From:   Songbo Wang <hack.coo@gmail.com>
-Date:   Fri, 26 Jul 2019 16:40:02 +0800
-Message-ID: <CAG=-QKposGfEzPvyXbjd-mSxDCb+pNhi45RctQ+fUWWuZ-mb8Q@mail.gmail.com>
-Subject: Re: Implement QoS for CephFS
-To:     Gregory Farnum <gfarnum@redhat.com>
-Cc:     Songbo Wang <songbo1227@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
+References: <CAKQB+fsGD4b_RE1yF3RQszne+xrcEVV9QZiObwwZ39GDCh6n5Q@mail.gmail.com>
+ <CAAM7YAmd+63fAO8EPvw4jE0=ZUZAW2nOQhkmuYcXLhdEPeV-dA@mail.gmail.com> <CAKQB+fsbPXvmGj11NW0nJ50VGJeWkTc7vfpDZ0a6Jrw2DOWSgA@mail.gmail.com>
+In-Reply-To: <CAKQB+fsbPXvmGj11NW0nJ50VGJeWkTc7vfpDZ0a6Jrw2DOWSgA@mail.gmail.com>
+From:   Jerry Lee <leisurelysw24@gmail.com>
+Date:   Fri, 26 Jul 2019 17:22:27 +0800
+Message-ID: <CAKQB+fuoAmSzsFmJz2ou5Rp6jGKv6XSpfo08t2C+Hj6_yb2+_A@mail.gmail.com>
+Subject: Re: cephfs kernel client umount stucks forever
+To:     "Yan, Zheng" <ukernel@gmail.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Jeff Layton <jlayton@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Gregory,
+Some additional information are provided as below:
 
-Appreciated for your reply. And comments inline.
+I tried to restart the active MDS, and after the standby MDS took
+over, there is no client session recorded in the output of `ceph
+daemon mds.xxx session ls`.  When I restarted the OSD.13 daemon, the
+stuck write op finished immediately.  Thanks.
 
-Gregory Farnum <gfarnum@redhat.com> =E4=BA=8E2019=E5=B9=B47=E6=9C=8826=E6=
-=97=A5=E5=91=A8=E4=BA=94 =E4=B8=8A=E5=8D=883:01=E5=86=99=E9=81=93=EF=BC=9A
+On Fri, 26 Jul 2019 at 15:22, Jerry Lee <leisurelysw24@gmail.com> wrote:
 >
-> On Wed, Jul 24, 2019 at 8:29 PM Songbo Wang <songbo1227@gmail.com> wrote:
-> >
-> > Hi guys,
-> >
-> > As a distributed filesystem, all clients of CephFS share the whole
-> > cluster's resources, for example, IOPS, throughput. In some cases,
-> > resources will be occupied by some clients. So QoS for CephFS is
-> > needed in most cases.
-> >
-> > Based on the token bucket algorithm, I implement QoS for CephFS.
-> >
-> > The basic idea is as follows:
-> >
-> >   1. Set QoS info as one of the dir's xattrs;
-> >   2. All clients can access the same dirs with the same QoS setting.
-> >   3. Similar to the Quota's config flow. when the MDS receives the QoS
-> > setting, it'll also broadcast the message to all clients.
-> >   4. We can change the limit online.
-> >
-> >
-> > And we will config QoS as follows, it supports
-> > {limit/burst}{iops/bps/read_iops/read_bps/write_iops/write_bps}
-> > configure setting, some examples:
-> >
-> >       setfattr -n ceph.qos.limit.iops           -v 200 /mnt/cephfs/test=
-dirs/
-> >       setfattr -n ceph.qos.burst.read_bps -v 200 /mnt/cephfs/testdirs/
-> >       getfattr -n ceph.qos.limit.iops                      /mnt/cephfs/=
-testdirs/
-> >       getfattr -n ceph.qos
-> > /mnt/cephfs/testdirs/
-> >
-> >
-> > But, there is also a big problem. For the bps{bps/write_bps/read_bps}
-> > setting, if the bps is lower than the request's block size, the client
-> > will be blocked until it gets enough token.
-> >
-> > Any suggestion will be appreciated, thanks!
-> >
-> > PR: https://github.com/ceph/ceph/pull/29266
+> Hi Zheng,
 >
-> I briefly skimmed this and if I understand correctly, this lets you
-> specify a per-client limit on hierarchies. But it doesn't try and
-> limit total IO across a hierarchy, and it doesn't let you specify
-> total per-client limits if they have multiple mount points.
+> Sorry for the late reply.  It's really hard to encounter the issue.
+> However, it happens again today, but unfortunately, the command shows
+> that no op is under processing.
 >
-> Given this, what's the point of maintaining the QoS data in the
-> filesystem instead of just as information that's passed when the
-> client mounts?
-
-Sorry for my little description of my design in my previous email.
-I have made two kinds of design, as follows:
-1. all clients use the same QoS setting, just as the implementation in this=
- PR.
-Maybe there are multiple mount points, if we limit the total IO, the
-number of total
-mount points is also limited. So in my implementation, the total IO &
-BPS is not limited.
-
-2. all clients share a specific QoS setting. I think there are two
-kinds of use cases in detail.
-2.1 setting a total limit, all clients limited by the average:
-total_limit/clients_num.
-2.2 setting a total limit, the mds decide the client's limitation by
-their historical IO&BPS.
-
-I think both of these design all have their usage scenario.
-So I need more suggestions about this feature.
-
-> How hard is this scheme likely to be to implement in the kernel?
-
-It's not difficult to implement this in the kernel. I think most of
-the work is to translate the TokenBucketThrottle into the kernel.
-I have started this work and will push the code when I finish.
-
-Thanks.
+> $ ceph daemon osd.13 dump_ops_in_flight
+> {
+>     "ops": [],
+>     "num_ops": 0
+> }
+>
+> Is it more likely that the there are some subtle bugs in kernel client
+> or network stability issue between the client and server?  Thanks.
+>
+> On Fri, 19 Jul 2019 at 20:43, Yan, Zheng <ukernel@gmail.com> wrote:
+> >
+> > On Fri, Jul 19, 2019 at 7:11 PM Jerry Lee <leisurelysw24@gmail.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > Recently I encountered a issue that cephfs kernel client umount stucks
+> > > forever. Under such condition, the call stack of umount process is
+> > > shown as below and it seems to be reasonable:
+> > >
+> > > [~] # cat /proc/985427/stack
+> > > [<ffffffff81098bcd>] io_schedule+0xd/0x30
+> > > [<ffffffff8111ab6f>] wait_on_page_bit_common+0xdf/0x160
+> > > [<ffffffff8111b0ec>] __filemap_fdatawait_range+0xec/0x140
+> > > [<ffffffff8111b195>] filemap_fdatawait_keep_errors+0x15/0x40
+> > > [<ffffffff811ab5a9>] sync_inodes_sb+0x1e9/0x220
+> > > [<ffffffff811b15be>] sync_filesystem+0x4e/0x80
+> > > [<ffffffff8118203d>] generic_shutdown_super+0x1d/0x110
+> > > [<ffffffffa08a48cc>] ceph_kill_sb+0x2c/0x80 [ceph]
+> > > [<ffffffff81181ca4>] deactivate_locked_super+0x34/0x60
+> > > [<ffffffff811a2f56>] cleanup_mnt+0x36/0x70
+> > > [<ffffffff8108e86f>] task_work_run+0x6f/0x90
+> > > [<ffffffff81001a9b>] do_syscall_64+0x27b/0x2c0
+> > > [<ffffffff81a00071>] entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+> > > [<ffffffffffffffff>] 0xffffffffffffffff
+> > >
+> > > From the debugfs entry, two write requests are indeed not complete but
+> > > I can't figure it out.
+> > > [/sys/kernel/debug/ceph/63be7de3-e137-4b6d-ab75-323b27f21254.client4475]
+> > > # cat osdc
+> > > REQUESTS 2 homeless 0
+> > > 36      osd13   1.d069c5d       1.1d    [13,4,0]/13     [13,4,0]/13
+> > >  e327    10000000028.00000000    0x40002c        2       write
+> > > 37      osd13   1.8088c98       1.18    [13,6,0]/13     [13,6,0]/13
+> > >  e327    10000000029.00000000    0x40002c        2       write
+> > > LINGER REQUESTS
+> > > BACKOFFS
+> > >
+> > > The kernel version is 4.14 with some customized features and the
+> > > cluster is composed by 3 nodes.  On those nodes, CephFS is mount via
+> > > kernel client and the issue only happens on one node while others
+> > > umount the CephFS successfully.  I've already checked the upstream
+> > > patches and no related issues are found.  Currently, I try to
+> > > re-produce the issue in an environment with bad network quality
+> > > (emulated by tc, add some packet loss, corruption and latency to the
+> > > network between client and server).  Also, osdmap is tuned much more
+> > > frequently to trigger request resent on the client.  But, I got no
+> > > luck with above approach.
+> > >
+> > > Is there any suggestion or idea that I could do to further investigate
+> > > the issue?  Thanks!
+> >
+> > check if osd.13 has received these requests.
+> >
+> > ceph daemon osd.13 dump_ops_in_flight
+> > >
+> > > - Jerry
