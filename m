@@ -2,218 +2,157 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD541788BD
-	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2019 11:43:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BFA5788BB
+	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2019 11:43:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728098AbfG2Jny (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 29 Jul 2019 05:43:54 -0400
-Received: from m97138.mail.qiye.163.com ([220.181.97.138]:22649 "EHLO
+        id S1728087AbfG2Jnt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 29 Jul 2019 05:43:49 -0400
+Received: from m97138.mail.qiye.163.com ([220.181.97.138]:22727 "EHLO
         m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727852AbfG2Jnx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 29 Jul 2019 05:43:53 -0400
+        with ESMTP id S1726496AbfG2Jnt (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 29 Jul 2019 05:43:49 -0400
 Received: from atest-guest.localdomain (unknown [218.94.118.90])
-        by smtp9 (Coremail) with SMTP id u+CowADHYpWjvz5djxunAA--.901S9;
-        Mon, 29 Jul 2019 17:43:01 +0800 (CST)
+        by smtp9 (Coremail) with SMTP id u+CowADHYpWjvz5djxunAA--.901S10;
+        Mon, 29 Jul 2019 17:43:02 +0800 (CST)
 From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
 To:     idryomov@gmail.com, jdillama@redhat.com
 Cc:     ceph-devel@vger.kernel.org,
         Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: [PATCH v3 07/15] libceph: journaling: introduce api to replay uncommitted journal events
-Date:   Mon, 29 Jul 2019 09:42:49 +0000
-Message-Id: <1564393377-28949-8-git-send-email-dongsheng.yang@easystack.cn>
+Subject: [PATCH v3 08/15] libceph: journaling: introduce api for journal appending
+Date:   Mon, 29 Jul 2019 09:42:50 +0000
+Message-Id: <1564393377-28949-9-git-send-email-dongsheng.yang@easystack.cn>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1564393377-28949-1-git-send-email-dongsheng.yang@easystack.cn>
 References: <1564393377-28949-1-git-send-email-dongsheng.yang@easystack.cn>
-X-CM-TRANSID: u+CowADHYpWjvz5djxunAA--.901S9
-X-Coremail-Antispam: 1Uf129KBjvAXoWfXryrJw4xZFW7KF1rur4rXwb_yoW8uF1UJo
-        Z7ZF45C3W5G345ZFyxKr1kW34fXa4UGayrJr4aqFWY93Z3Ary093yxCr15J34Yyr4Y9rWD
-        Xws7Jw1Sqw4DAa45n29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+X-CM-TRANSID: u+CowADHYpWjvz5djxunAA--.901S10
+X-Coremail-Antispam: 1Uf129KBjvAXoWftFW8KryrWw45uw1furyfWFg_yoW5WrW3to
+        WxWa1UuFn5WFy2vF97KrykJa4rX348WayrArWYgF4a9anrAry8Z3y7Gr15Ary5Aw4UCrZF
+        qw1xJwn3WF4DJ3W5n29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
         AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjfUp-z3UUUUU
 X-Originating-IP: [218.94.118.90]
-X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiVwUBelf4pUwc3AAAsv
+X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiUgYBelf4pVbJ-QAAsH
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-When we are going to make sure the data and journal are consistent in opening
-journal, we can call the api of start_replay() to replay the all events recorded
-but not committed.
+This commit introduce 3 APIs for journal recording:
+
+(1) ceph_journaler_allocate_tag()
+    This api allocate a new tag for user to get a unified
+tag_tid. Then each event appended by this user will be tagged
+by this tag_tid.
+
+(2) ceph_journaler_append()
+    This api allow user to append event to journal objects.
+
+(3) ceph_journaler_client_committed()
+    This api will notify journaling that a event is already
+committed, you can remove it from journal if there is no other
+client refre to it.
 
 Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
 ---
- net/ceph/journaler.c | 693 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 693 insertions(+)
+ include/linux/ceph/journaler.h |   2 +-
+ net/ceph/journaler.c           | 834 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 835 insertions(+), 1 deletion(-)
 
+diff --git a/include/linux/ceph/journaler.h b/include/linux/ceph/journaler.h
+index e3b82af..f04fb3f 100644
+--- a/include/linux/ceph/journaler.h
++++ b/include/linux/ceph/journaler.h
+@@ -173,7 +173,7 @@ static inline uint64_t ceph_journaler_get_max_append_size(struct ceph_journaler
+ struct ceph_journaler_ctx *ceph_journaler_ctx_alloc(void);
+ void ceph_journaler_ctx_put(struct ceph_journaler_ctx *journaler_ctx);
+ int ceph_journaler_append(struct ceph_journaler *journaler,
+-			  uint64_t tag_tid, uint64_t *commit_tid,
++			  uint64_t tag_tid,
+ 			  struct ceph_journaler_ctx *ctx);
+ void ceph_journaler_client_committed(struct ceph_journaler *journaler,
+ 				     uint64_t commit_tid);
 diff --git a/net/ceph/journaler.c b/net/ceph/journaler.c
-index 1b04d3f..3e92e96 100644
+index 3e92e96..26a5b97 100644
 --- a/net/ceph/journaler.c
 +++ b/net/ceph/journaler.c
-@@ -594,3 +594,696 @@ int ceph_journaler_get_cached_client(struct ceph_journaler *journaler, char *cli
+@@ -29,6 +29,42 @@ static char *object_oid_prefix(int pool_id, const char *journal_id)
+ 	return prefix;
+ }
+ 
++static void journaler_flush(struct work_struct *work);
++static void journaler_client_commit(struct work_struct *work);
++static void journaler_notify_update(struct work_struct *work);
++static void journaler_overflow(struct work_struct *work);
++static void journaler_append_finish(struct work_struct *work);
++
++/*
++ * Append got through the following state machine:
++ *
++ *                    JOURNALER_APPEND_START 
++ *                              |              
++ *                              v              
++ *            ..>. . . JOURNALER_APPEND_SEND  . . . . 
++ *            .                 |                    .
++ * JOURNALER_APPEND_OVERFLOW    |                    .
++ *                              |                    . 
++ *            ^                 v                    v 
++ *            .. . . . JOURNALER_APPEND_FLUSH . . >. .
++ *                              |                    . 
++ *                              v                 (error) 
++ *                     JOURNALER_APPEND_SAFE         v
++ *                              |                    .
++ *                              v                    . 
++ *                     JOURNALER_APPEND_FINISH . < . .
++ *
++ * Append starts in JOURNALER_APPEND_START and ends in JOURNALER_APPEND_FINISH
++ */
++enum journaler_append_state {
++	JOURNALER_APPEND_START = 1,
++	JOURNALER_APPEND_SEND,
++	JOURNALER_APPEND_FLUSH,
++	JOURNALER_APPEND_OVERFLOW,
++	JOURNALER_APPEND_SAFE,
++	JOURNALER_APPEND_FINISH,
++};
++
+ /*
+  * journaler_append_ctx is an internal structure to represent an append op.
+  */
+@@ -44,6 +80,7 @@ struct journaler_append_ctx {
+ 	struct ceph_journaler_entry entry;
+ 	struct ceph_journaler_ctx journaler_ctx;
+ 
++	enum journaler_append_state state;
+ 	struct kref	kref;
+ };
+ 
+@@ -151,6 +188,12 @@ struct ceph_journaler *ceph_journaler_create(struct ceph_osd_client *osdc,
+ 	if (!journaler->notify_wq)
+ 		goto err_destroy_task_wq;
+ 
++	INIT_WORK(&journaler->flush_work, journaler_flush);
++	INIT_WORK(&journaler->finish_work, journaler_append_finish);
++	INIT_DELAYED_WORK(&journaler->commit_work, journaler_client_commit);
++	INIT_WORK(&journaler->notify_update_work, journaler_notify_update);
++	INIT_WORK(&journaler->overflow_work, journaler_overflow);
++
+ 	journaler->fetch_buf = NULL;
+ 	journaler->handle_entry = NULL;
+ 	journaler->entry_handler = NULL;
+@@ -1287,3 +1330,794 @@ int ceph_journaler_start_replay(struct ceph_journaler *journaler)
  	return ret;
  }
- EXPORT_SYMBOL(ceph_journaler_get_cached_client);
+ EXPORT_SYMBOL(ceph_journaler_start_replay);
 +
-+// replaying
-+static int ceph_journaler_obj_read_sync(struct ceph_journaler *journaler,
-+			     struct ceph_object_id *oid,
-+			     struct ceph_object_locator *oloc,
-+			     void *buf, uint32_t read_off, uint64_t buf_len)
-+
-+{
-+	struct ceph_osd_client *osdc = journaler->osdc;
-+	struct ceph_osd_request *req;
-+	struct page **pages;
-+	int num_pages = calc_pages_for(0, buf_len);
-+	int ret;
-+
-+	req = ceph_osdc_alloc_request(osdc, NULL, 1, false, GFP_NOIO);
-+	if (!req)
-+		return -ENOMEM;
-+
-+	ceph_oid_copy(&req->r_base_oid, oid);
-+	ceph_oloc_copy(&req->r_base_oloc, oloc);
-+	req->r_flags = CEPH_OSD_FLAG_READ;
-+
-+	pages = ceph_alloc_page_vector(num_pages, GFP_NOIO);
-+	if (IS_ERR(pages)) {
-+		ret = PTR_ERR(pages);
-+		goto out_req;
-+	}
-+
-+	osd_req_op_extent_init(req, 0, CEPH_OSD_OP_READ, read_off, buf_len, 0, 0);
-+	osd_req_op_extent_osd_data_pages(req, 0, pages, buf_len, 0, false,
-+					 true);
-+
-+	ret = ceph_osdc_alloc_messages(req, GFP_NOIO);
-+	if (ret)
-+		goto out_req;
-+
-+	ceph_osdc_start_request(osdc, req, false);
-+	ret = ceph_osdc_wait_request(osdc, req);
-+	if (ret >= 0)
-+		ceph_copy_from_page_vector(pages, buf, 0, ret);
-+
-+out_req:
-+	ceph_osdc_put_request(req);
-+	return ret;
-+}
-+
-+static bool entry_is_readable(struct ceph_journaler *journaler, void *buf,
-+			      void *end, uint32_t *bytes_needed)
-+{
-+	/// preamble, version, entry tid, tag id
-+	const uint32_t HEADER_FIXED_SIZE = 25;
-+	uint32_t remaining = end - buf;
-+	uint64_t preamble;
-+	uint32_t data_size;
-+	void *origin_buf = buf;
-+	uint32_t crc, crc_encoded;
-+
-+	if (remaining < HEADER_FIXED_SIZE) {
-+		*bytes_needed = HEADER_FIXED_SIZE - remaining;
-+		return false;
-+	}
-+
-+	preamble = ceph_decode_64(&buf);
-+	if (PREAMBLE != preamble) {
-+		*bytes_needed = 0;
-+		return false;
-+	}
-+
-+	buf += (HEADER_FIXED_SIZE - sizeof(preamble));
-+	remaining = end - buf;
-+	if (remaining < sizeof(uint32_t)) {
-+		*bytes_needed = sizeof(uint32_t) - remaining;
-+		return false;
-+	}
-+
-+	data_size = ceph_decode_32(&buf);
-+	remaining = end - buf;
-+	if (remaining < data_size) {
-+		*bytes_needed = data_size - remaining;
-+		return false;
-+	}
-+
-+	buf += data_size;
-+	
-+	remaining = end - buf;
-+	if (remaining < sizeof(uint32_t)) {
-+		*bytes_needed = sizeof(uint32_t) - remaining;
-+		return false;
-+	}
-+
-+	*bytes_needed = 0;
-+	crc = crc32c(0, origin_buf, buf - origin_buf);
-+	crc_encoded = ceph_decode_32(&buf);
-+	if (crc != crc_encoded) {
-+		pr_err("crc corrupted");
-+		return false;
-+	}
-+	return true;
-+}
-+
-+static int playback_entry(struct ceph_journaler *journaler,
-+			  struct ceph_journaler_entry *entry,
-+			  uint64_t commit_tid)
-+{
-+	BUG_ON(!journaler->handle_entry || !journaler->entry_handler);
-+
-+	return journaler->handle_entry(journaler->entry_handler,
-+				      entry, commit_tid);
-+}
-+
-+static bool get_last_entry_tid(struct ceph_journaler *journaler,
-+			       uint64_t tag_tid, uint64_t *entry_tid)
++// recording
++static int get_new_entry_tid(struct ceph_journaler *journaler,
++			      uint64_t tag_tid, uint64_t *entry_tid)
 +{
 +	struct entry_tid *pos;
 +
 +	spin_lock(&journaler->entry_tid_lock);
 +	list_for_each_entry(pos, &journaler->entry_tids, node) {
 +		if (pos->tag_tid == tag_tid) {
-+			*entry_tid = pos->entry_tid;
-+			spin_unlock(&journaler->entry_tid_lock);
-+			return true;
-+		}
-+	}
-+	spin_unlock(&journaler->entry_tid_lock);
-+
-+	return false;
-+}
-+
-+// There would not be too many entry_tids here, we need
-+// only one entry_tid for all entries with same tag_tid.
-+static struct entry_tid *entry_tid_alloc(struct ceph_journaler *journaler,
-+					 uint64_t tag_tid)
-+{
-+	struct entry_tid *entry_tid;
-+
-+	entry_tid = kzalloc(sizeof(struct entry_tid), GFP_NOIO);
-+	if (!entry_tid) {
-+		pr_err("failed to allocate new entry.");
-+		return NULL;
-+	}
-+
-+	entry_tid->tag_tid = tag_tid;
-+	entry_tid->entry_tid = 0;
-+	INIT_LIST_HEAD(&entry_tid->node);
-+
-+	list_add_tail(&entry_tid->node, &journaler->entry_tids);
-+	return entry_tid;
-+}
-+
-+static int reserve_entry_tid(struct ceph_journaler *journaler,
-+			      uint64_t tag_tid, uint64_t entry_tid)
-+{
-+	struct entry_tid *pos;
-+
-+	spin_lock(&journaler->entry_tid_lock);
-+	list_for_each_entry(pos, &journaler->entry_tids, node) {
-+		if (pos->tag_tid == tag_tid) {
-+			if (pos->entry_tid < entry_tid) {
-+				pos->entry_tid = entry_tid;
-+			}
-+
++			*entry_tid = pos->entry_tid++;
 +			spin_unlock(&journaler->entry_tid_lock);
 +			return 0;
 +		}
@@ -226,526 +165,774 @@ index 1b04d3f..3e92e96 100644
 +		return -ENOMEM;
 +	}
 +
-+	pos->entry_tid = entry_tid;
++	*entry_tid = pos->entry_tid++;
 +	spin_unlock(&journaler->entry_tid_lock);
 +
 +	return 0;
 +}
 +
-+static void journaler_entry_free(struct ceph_journaler_entry *entry)
++static uint64_t get_object(struct ceph_journaler *journaler, uint64_t splay_offset)
 +{
-+	if (entry->data)
-+		kvfree(entry->data);
-+	kfree(entry);
++	return splay_offset + (journaler->splay_width * journaler->active_set);
 +}
 +
-+static struct ceph_journaler_entry *journaler_entry_decode(void **p, void *end)
++static void future_init(struct ceph_journaler_future *future,
++			uint64_t tag_tid,
++						   uint64_t entry_tid,
++						   uint64_t commit_tid,
++			struct ceph_journaler_ctx *journaler_ctx)
 +{
-+	struct ceph_journaler_entry *entry;
-+	uint64_t preamble;
-+	uint8_t version;
-+	uint32_t crc, crc_encoded;
-+	void *start = *p;
++	future->tag_tid = tag_tid;
++	future->entry_tid = entry_tid;
++	future->commit_tid = commit_tid;
 +
-+	preamble = ceph_decode_64(p);
-+	if (PREAMBLE != preamble) {
-+		return NULL;
-+	}
++	spin_lock_init(&future->lock);
++	future->safe = false;
++	future->consistent = false;
 +
-+	version = ceph_decode_8(p);
-+	if (version != 1)
-+		return NULL;
-+
-+	entry = kzalloc(sizeof(struct ceph_journaler_entry), GFP_NOIO);
-+	if (!entry) {
-+		goto err;
-+	}
-+
-+	INIT_LIST_HEAD(&entry->node);
-+	entry->entry_tid = ceph_decode_64(p);
-+	entry->tag_tid = ceph_decode_64(p);
-+	// use kvmalloc to extract the data
-+	entry->data = ceph_extract_encoded_string_kvmalloc(p, end,
-+					&entry->data_len, GFP_KERNEL);
-+	if (IS_ERR(entry->data)) {
-+		entry->data = NULL;
-+		goto free_entry;
-+	}
-+
-+	crc = crc32c(0, start, *p - start);
-+	crc_encoded = ceph_decode_32(p);
-+	if (crc != crc_encoded) {
-+		goto free_entry;
-+	}
-+	return entry;
-+
-+free_entry:
-+	journaler_entry_free(entry);
-+err:
-+	return NULL;
++	future->ctx = journaler_ctx;
++	future->wait = NULL;
 +}
 +
-+static int fetch(struct ceph_journaler *journaler, uint64_t object_num)
++static void set_prev_future(struct ceph_journaler *journaler,
++			    struct journaler_append_ctx *append_ctx)
++{
++	struct ceph_journaler_future *future = &append_ctx->future;
++	bool prev_future_finished = false;
++
++	if (journaler->prev_future == NULL) {
++		prev_future_finished = true;
++	} else {
++		spin_lock(&journaler->prev_future->lock);
++		prev_future_finished = (journaler->prev_future->consistent &&
++					journaler->prev_future->safe);
++		journaler->prev_future->wait = append_ctx;
++		spin_unlock(&journaler->prev_future->lock);
++	}
++
++	spin_lock(&future->lock);
++	if (prev_future_finished) {
++		future->consistent = true;
++	}
++	spin_unlock(&future->lock);
++
++	journaler->prev_future = future;
++}
++
++static void entry_init(struct ceph_journaler_entry *entry,
++			uint64_t tag_tid,
++			uint64_t entry_tid,
++			struct ceph_journaler_ctx *journaler_ctx)
++{
++	entry->tag_tid = tag_tid;
++	entry->entry_tid = entry_tid;
++	entry->data_len = journaler_ctx->bio_len +
++			  journaler_ctx->prefix_len + journaler_ctx->suffix_len;
++}
++
++static void journaler_entry_encode_prefix(struct ceph_journaler_entry *entry,
++					  void **p, void *end)
++{
++	ceph_encode_64(p, PREAMBLE);
++	ceph_encode_8(p, (uint8_t)1);
++	ceph_encode_64(p, entry->entry_tid);
++	ceph_encode_64(p, entry->tag_tid);
++
++	ceph_encode_32(p, entry->data_len);
++}
++
++static uint32_t crc_bio(uint32_t crc, struct bio *bio, u64 length)
++{
++	struct bio_vec bv;
++	struct bvec_iter iter;
++	char *buf;
++	u64 offset = 0;
++	u64 len = length;
++
++next:
++	bio_for_each_segment(bv, bio, iter) {
++		buf = page_address(bv.bv_page) + bv.bv_offset;
++		len = min_t(u64, length, bv.bv_len);
++		crc = crc32c(crc, buf, len);
++		offset += len;
++		length -= len;
++
++		if (length == 0)
++			goto out;
++	}
++
++	if (length && bio->bi_next) {
++		bio = bio->bi_next;
++		goto next;
++	}
++
++	WARN_ON(length != 0);
++out:
++	return crc;
++}
++
++static void journaler_append_finish(struct work_struct *work)
++{
++	struct ceph_journaler *journaler = container_of(work, struct ceph_journaler,
++						        finish_work);
++	struct journaler_append_ctx *ctx_pos, *next;
++	LIST_HEAD(tmp_list);
++
++	spin_lock(&journaler->finish_lock);
++	list_splice_init(&journaler->finish_list, &tmp_list);
++	spin_unlock(&journaler->finish_lock);
++
++	list_for_each_entry_safe(ctx_pos, next, &tmp_list, node) {
++		list_del(&ctx_pos->node);
++		ctx_pos->journaler_ctx.callback(&ctx_pos->journaler_ctx);
++	}
++}
++
++static void journaler_handle_append(struct journaler_append_ctx *ctx, int ret);
++static void future_consistent(struct journaler_append_ctx *append_ctx,
++			      int result) {
++	struct ceph_journaler_future *future = &append_ctx->future;
++	bool future_finished = false;
++
++	spin_lock(&future->lock);
++	future->consistent = true;
++	future_finished = (future->safe && future->consistent);
++	spin_unlock(&future->lock);
++
++	if (future_finished) {
++		append_ctx->state = JOURNALER_APPEND_FINISH;
++		journaler_handle_append(append_ctx, result);
++	}
++}
++
++static void future_finish(struct journaler_append_ctx *append_ctx,
++			  int result) {
++	struct ceph_journaler *journaler = append_ctx->journaler;
++	struct ceph_journaler_ctx *journaler_ctx = &append_ctx->journaler_ctx;
++	struct ceph_journaler_future *future = &append_ctx->future;
++	struct journaler_append_ctx *wait = future->wait;
++
++	mutex_lock(&journaler->meta_lock);
++	if (journaler->prev_future == future)
++		journaler->prev_future = NULL;
++	mutex_unlock(&journaler->meta_lock);
++
++	spin_lock(&journaler->finish_lock);
++	if (journaler_ctx->result == 0)
++		journaler_ctx->result = result;
++	list_add_tail(&append_ctx->node, &journaler->finish_list);
++	spin_unlock(&journaler->finish_lock);
++
++	queue_work(journaler->task_wq, &journaler->finish_work);
++	if (wait)
++		future_consistent(wait, result);
++}
++
++static void journaler_notify_update(struct work_struct *work)
++{
++	struct ceph_journaler *journaler = container_of(work,
++							struct ceph_journaler,
++						        notify_update_work);
++	int ret = 0;
++
++	ret = ceph_osdc_notify(journaler->osdc, &journaler->header_oid,
++				&journaler->header_oloc, NULL, 0,
++				5000, NULL, NULL);
++	if (ret)
++		pr_err("notify_update failed: %d", ret);
++}
++
++// advance the active_set to (active_set + 1). This function
++// will call ceph_cls_journaler_set_active_set to update journal
++// metadata and notify all clients about this event. We don't
++// update journaler->active_set in memory currently.
++//
++// The journaler->active_set will be updated in refresh() when
++// we get the notification.
++static void advance_object_set(struct ceph_journaler *journaler)
++{
++	struct object_recorder *obj_recorder;
++	uint64_t active_set;
++	int i, ret;
++
++	mutex_lock(&journaler->meta_lock);
++	if (journaler->advancing || journaler->flushing) {
++		mutex_unlock(&journaler->meta_lock);
++		return;
++	}
++
++	// make sure all inflight appending finish
++	for (i = 0; i < journaler->splay_width; i++) {
++		obj_recorder = &journaler->obj_recorders[i];
++		spin_lock(&obj_recorder->lock);
++		if (obj_recorder->inflight_append) {
++			spin_unlock(&obj_recorder->lock);
++			mutex_unlock(&journaler->meta_lock);
++			return;
++		}
++		spin_unlock(&obj_recorder->lock);
++	}
++
++	journaler->advancing = true;
++
++	active_set = journaler->active_set + 1;
++	mutex_unlock(&journaler->meta_lock);
++
++	ret = ceph_cls_journaler_set_active_set(journaler->osdc,
++			&journaler->header_oid, &journaler->header_oloc,
++			active_set);
++	if (ret) {
++		pr_err("error in set active_set: %d", ret);
++	}
++
++	queue_work(journaler->task_wq, &journaler->notify_update_work);
++}
++
++static void journaler_overflow(struct work_struct *work)
++{
++	struct ceph_journaler *journaler = container_of(work,
++						        struct ceph_journaler,
++						        overflow_work);
++	advance_object_set(journaler);
++}
++
++static void journaler_append_callback(struct ceph_osd_request *osd_req)
++{
++	struct journaler_append_ctx *ctx = osd_req->r_priv;
++	int ret = osd_req->r_result;
++
++	if (ret)
++		pr_debug("ret of journaler_append_callback: %d", ret);
++
++	__free_page(ctx->req_page);
++	ceph_osdc_put_request(osd_req);
++
++	journaler_handle_append(ctx, ret);
++}
++
++static int append(struct ceph_journaler *journaler,
++		  struct ceph_object_id *oid,
++		  struct ceph_object_locator *oloc,
++		  struct journaler_append_ctx *ctx)
++
++{
++	struct ceph_osd_client *osdc = journaler->osdc;
++	struct ceph_osd_request *req;
++	void *p;
++	int ret;
++
++	req = ceph_osdc_alloc_request(osdc, NULL, 2, false, GFP_NOIO);
++	if (!req)
++		return -ENOMEM;
++
++	ceph_oid_copy(&req->r_base_oid, oid);
++	ceph_oloc_copy(&req->r_base_oloc, oloc);
++	req->r_flags = CEPH_OSD_FLAG_WRITE;
++	req->r_callback = journaler_append_callback;
++	req->r_priv = ctx;
++
++	// guard_append
++	ctx->req_page = alloc_page(GFP_NOIO);
++	if (!ctx->req_page) {
++		ret = -ENOMEM;
++		goto out_req;
++	}
++	p = page_address(ctx->req_page);
++	ceph_encode_64(&p, 1 << journaler->order);
++	ret = osd_req_op_cls_init(req, 0, "journal", "guard_append");
++	if (ret)
++		goto out_free_page;
++	osd_req_op_cls_request_data_pages(req, 0, &ctx->req_page, 8, 0, false, false);
++
++	// append_data
++	osd_req_op_extent_init(req, 1, CEPH_OSD_OP_APPEND, 0,
++		ctx->journaler_ctx.prefix_len + ctx->journaler_ctx.bio_len + ctx->journaler_ctx.suffix_len, 0, 0);
++
++	if (ctx->journaler_ctx.prefix_len)
++		osd_req_op_extent_prefix_pages(req, 1, &ctx->journaler_ctx.prefix_page,
++					       ctx->journaler_ctx.prefix_len,
++					       ctx->journaler_ctx.prefix_offset,
++					       false, false);
++
++	if (ctx->journaler_ctx.bio_len)
++		osd_req_op_extent_osd_data_bio(req, 1, &ctx->journaler_ctx.bio_iter, ctx->journaler_ctx.bio_len);
++
++	if (ctx->journaler_ctx.suffix_len)
++		osd_req_op_extent_suffix_pages(req, 1, &ctx->journaler_ctx.suffix_page,
++					       ctx->journaler_ctx.suffix_len,
++					       ctx->journaler_ctx.suffix_offset,
++					       false, false);
++	ret = ceph_osdc_alloc_messages(req, GFP_NOIO);
++	if (ret)
++		goto out_free_page;
++
++	ceph_osdc_start_request(osdc, req, false);
++	return 0;
++
++out_free_page:
++	__free_page(ctx->req_page);
++out_req:
++	ceph_osdc_put_request(req);
++	return ret;
++}
++
++static int send_append_request(struct ceph_journaler *journaler,
++			       uint64_t object_num,
++			       struct journaler_append_ctx *ctx)
 +{
 +	struct ceph_object_id object_oid;
-+	int ret;
-+	void *read_buf, *end;
-+	uint64_t read_len = 2 << journaler->order;
-+	struct ceph_journaler_object_pos *pos;
-+	struct object_replayer *obj_replayer;
++	int ret = 0;
 +
-+	// get the replayer for this splay and set the object number of it to object_num.
-+	obj_replayer = &journaler->obj_replayers[object_num % journaler->splay_width];
-+	obj_replayer->object_num = object_num;
-+
-+	// find the commit position for this object_num.
-+	list_for_each_entry(pos, &journaler->client->object_positions, node) {
-+		if (pos->in_using && pos->object_num == object_num) {
-+			// Tell the replayer there is a commit position
-+			// in this object. So delete the entries before
-+			// this position, they are already committed.
-+			obj_replayer->pos = pos;
-+			break;
-+		}
-+	}
-+
-+	// read the object data
 +	ceph_oid_init(&object_oid);
 +	ret = ceph_oid_aprintf(&object_oid, GFP_NOIO, "%s%llu",
 +				journaler->object_oid_prefix, object_num);
 +	if (ret) {
-+		pr_err("failed to initialize object_id : %d", ret);
-+		return ret;
++		pr_err("failed to initialize object id: %d", ret);
++		goto out;
 +	}
 +
-+	read_buf = journaler->fetch_buf;
-+	ret = ceph_journaler_obj_read_sync(journaler, &object_oid,
-+					   &journaler->data_oloc, read_buf,
-+					   0, read_len);
-+	if (ret == -ENOENT) {
-+		dout("no such object, %s: %d", object_oid.name, ret);
-+		goto err_free_object_oid;
-+	} else if (ret < 0) {
-+		pr_err("failed to read: %d", ret);
-+		goto err_free_object_oid;
-+	} else if (ret == 0) {
-+		pr_err("no data: %d", ret);
-+		goto err_free_object_oid;
-+	}
-+
-+	// decode the entries in this object
-+	end = read_buf + ret;
-+	while (read_buf < end) {
-+		uint32_t bytes_needed = 0;
-+		struct ceph_journaler_entry *entry = NULL;
-+
-+		if (!entry_is_readable(journaler, read_buf, end, &bytes_needed)) {
-+			ret = -EIO;
-+			goto err_free_object_oid;
-+		}
-+
-+		entry = journaler_entry_decode(&read_buf, end);
-+		if (!entry)
-+			goto err_free_object_oid;
-+
-+		list_add_tail(&entry->node, &obj_replayer->entry_list);
-+	}
-+	ret = 0;
-+
-+err_free_object_oid:
++	ret = append(journaler, &object_oid, &journaler->data_oloc, ctx);
++out:
 +	ceph_oid_destroy(&object_oid);
 +	return ret;
 +}
 +
-+static int add_commit_entry(struct ceph_journaler *journaler, uint64_t commit_tid,
-+			    uint64_t object_num, uint64_t tag_tid, uint64_t entry_tid)
++static void journaler_flush(struct work_struct *work)
 +{
-+	struct commit_entry	*commit_entry;
-+
-+	commit_entry = kmem_cache_zalloc(journaler_commit_entry_cache, GFP_NOIO);
-+	if (!commit_entry)
-+		return -ENOMEM;
-+
-+	RB_CLEAR_NODE(&commit_entry->r_node);
-+
-+	commit_entry->commit_tid = commit_tid;
-+	commit_entry->object_num = object_num;
-+	commit_entry->tag_tid = tag_tid;
-+	commit_entry->entry_tid = entry_tid;
-+
-+	mutex_lock(&journaler->commit_lock);
-+	insert_commit_entry(&journaler->commit_entries, commit_entry);
-+	mutex_unlock(&journaler->commit_lock);
-+
-+	return 0;
-+}
-+
-+// journaler->meta_lock held
-+static uint64_t __allocate_commit_tid(struct ceph_journaler *journaler)
-+{
-+	return ++journaler->commit_tid;
-+}
-+
-+static uint64_t allocate_commit_tid(struct ceph_journaler *journaler)
-+{
-+	uint64_t commit_tid;
++	struct ceph_journaler *journaler = container_of(work,
++							struct ceph_journaler,
++							flush_work);
++	int i = 0;
++	struct object_recorder *obj_recorder;
++	struct journaler_append_ctx *ctx, *next_ctx;
++	LIST_HEAD(tmp);
 +
 +	mutex_lock(&journaler->meta_lock);
-+	commit_tid = __allocate_commit_tid(journaler);
++	if (journaler->overflowed) {
++		mutex_unlock(&journaler->meta_lock);
++		return;
++	}
++
++	journaler->flushing = true;
 +	mutex_unlock(&journaler->meta_lock);
 +
-+	return commit_tid;
-+}
-+
-+static void prune_tag(struct ceph_journaler *journaler, uint64_t tag_tid)
-+{
-+	struct ceph_journaler_entry *entry, *next;
-+	struct object_replayer *obj_replayer;
-+	int i;
-+
-+	if (journaler->prune_tag_tid == UINT_MAX ||
-+	    journaler->prune_tag_tid < tag_tid) {
-+		journaler->prune_tag_tid = tag_tid;
-+	}
-+
 +	for (i = 0; i < journaler->splay_width; i++) {
-+		obj_replayer = &journaler->obj_replayers[i];
-+		list_for_each_entry_safe(entry, next,
-+					 &obj_replayer->entry_list, node) {
-+			if (entry->tag_tid == tag_tid) {
-+				list_del(&entry->node);
-+				journaler_entry_free(entry);
-+			}
++		INIT_LIST_HEAD(&tmp);
++		obj_recorder = &journaler->obj_recorders[i];
++
++		spin_lock(&obj_recorder->lock);
++		list_splice_tail_init(&obj_recorder->overflow_list, &tmp);
++		list_splice_tail_init(&obj_recorder->append_list, &tmp);
++		spin_unlock(&obj_recorder->lock);
++
++		list_for_each_entry_safe(ctx, next_ctx, &tmp, node) {
++			list_del(&ctx->node);
++			ctx->object_num = get_object(journaler, obj_recorder->splay_offset);
++			journaler_handle_append(ctx, 0);
 +		}
 +	}
++
++	mutex_lock(&journaler->meta_lock);
++	journaler->flushing = false;
++	// As we don't do advance in flushing, so queue another overflow_work
++	// after flushing finished if we journaler is overflowed.
++	if (journaler->overflowed)
++		queue_work(journaler->task_wq, &journaler->overflow_work);
++	mutex_unlock(&journaler->meta_lock);
 +}
 +
-+static int get_first_entry(struct ceph_journaler *journaler,
-+			   struct ceph_journaler_entry **entry,
-+			   uint64_t *commit_tid)
++static void ceph_journaler_object_append(struct ceph_journaler *journaler,
++					 struct journaler_append_ctx *append_ctx)
 +{
-+	struct object_replayer *obj_replayer;
-+	struct ceph_journaler_entry *tmp_entry;
-+	uint64_t last_entry_tid;
-+	bool expect_first_entry = false;
++	void *buf, *end;
++	uint32_t crc = 0;
++	struct ceph_journaler_ctx *journaler_ctx = &append_ctx->journaler_ctx;
++	struct ceph_bio_iter *bio_iter = &journaler_ctx->bio_iter;
++	struct object_recorder *obj_recorder;
++
++	// PEAMBLE(8) + version(1) + entry_tid(8) + tag_tid(8) + string_len(4) = 29
++	journaler_ctx->prefix_offset -= 29;
++	journaler_ctx->prefix_len += 29;
++	buf = page_address(journaler_ctx->prefix_page) + journaler_ctx->prefix_offset;
++	end = buf + 29;
++	journaler_entry_encode_prefix(&append_ctx->entry, &buf, end);
++
++	// size of crc is 4
++	journaler_ctx->suffix_offset += 0;
++	journaler_ctx->suffix_len += 4;
++	buf = page_address(journaler_ctx->suffix_page);
++	end = buf + 4;
++	crc = crc32c(crc, page_address(journaler_ctx->prefix_page) + journaler_ctx->prefix_offset,
++		     journaler_ctx->prefix_len);
++	if (journaler_ctx->bio_len)
++		crc = crc_bio(crc, bio_iter->bio, journaler_ctx->bio_len);
++	ceph_encode_32(&buf, crc);
++	obj_recorder = &journaler->obj_recorders[append_ctx->splay_offset];
++
++	spin_lock(&obj_recorder->lock);
++	list_add_tail(&append_ctx->node, &obj_recorder->append_list);
++	queue_work(journaler->task_wq, &journaler->flush_work);
++	spin_unlock(&obj_recorder->lock);
++}
++
++static void journaler_handle_append(struct journaler_append_ctx *ctx, int ret)
++{
++	struct ceph_journaler *journaler = ctx->journaler;
++	struct object_recorder *obj_recorder = &journaler->obj_recorders[ctx->splay_offset];
++
++again:
++	switch (ctx->state) {
++	case JOURNALER_APPEND_START:
++		ctx->state = JOURNALER_APPEND_SEND;
++		ceph_journaler_object_append(journaler, ctx);
++		break;
++	case JOURNALER_APPEND_SEND:
++		ctx->state = JOURNALER_APPEND_FLUSH;
++		spin_lock(&obj_recorder->lock);
++		obj_recorder->inflight_append++;
++		spin_unlock(&obj_recorder->lock);
++		ret = send_append_request(journaler, ctx->object_num, ctx);
++		if (ret) {
++			pr_err("failed to send append request: %d", ret);
++			ctx->state = JOURNALER_APPEND_FINISH;
++			goto again;
++		}
++		break;
++	case JOURNALER_APPEND_FLUSH:
++		if (ret == -EOVERFLOW) {
++			mutex_lock(&journaler->meta_lock);
++			journaler->overflowed = true;
++			mutex_unlock(&journaler->meta_lock);
++
++			spin_lock(&obj_recorder->lock);
++			ctx->state = JOURNALER_APPEND_OVERFLOW;
++			list_add_tail(&ctx->node, &obj_recorder->overflow_list);
++			if (--obj_recorder->inflight_append == 0)
++				queue_work(journaler->task_wq, &journaler->overflow_work);
++			spin_unlock(&obj_recorder->lock);
++			break;
++		}
++
++		spin_lock(&obj_recorder->lock);
++		if (--obj_recorder->inflight_append == 0) {
++			mutex_lock(&journaler->meta_lock);
++			if (journaler->overflowed)
++				queue_work(journaler->task_wq, &journaler->overflow_work);
++			mutex_unlock(&journaler->meta_lock);
++		}
++		spin_unlock(&obj_recorder->lock);
++
++		ret = add_commit_entry(journaler, ctx->future.commit_tid, ctx->object_num,
++				       ctx->future.tag_tid, ctx->future.entry_tid);
++		if (ret) {
++			pr_err("failed to add_commit_entry: %d", ret);
++			ctx->state = JOURNALER_APPEND_FINISH;
++			ret = -ENOMEM;
++			goto again;
++		}
++
++		ctx->state = JOURNALER_APPEND_SAFE;
++		goto again;
++	case JOURNALER_APPEND_OVERFLOW:
++		ctx->state = JOURNALER_APPEND_SEND;
++		goto again;
++	case JOURNALER_APPEND_SAFE:
++		spin_lock(&ctx->future.lock);
++		ctx->future.safe = true;
++		if (ctx->future.consistent) {
++			spin_unlock(&ctx->future.lock);
++			ctx->state = JOURNALER_APPEND_FINISH;
++			goto again;
++		}
++		spin_unlock(&ctx->future.lock);
++		break;
++	case JOURNALER_APPEND_FINISH:
++		future_finish(ctx, ret);
++		break;
++	default:
++		BUG();
++	}
++}
++
++// journaler_append_ctx alloc and release
++struct journaler_append_ctx *journaler_append_ctx_alloc(void)
++{
++	struct journaler_append_ctx *append_ctx;
++	struct ceph_journaler_ctx *journaler_ctx;
++
++	append_ctx = kmem_cache_zalloc(journaler_append_ctx_cache, GFP_NOIO);
++	if (!append_ctx)
++		return NULL;
++
++	journaler_ctx = &append_ctx->journaler_ctx;
++	journaler_ctx->prefix_page = alloc_page(GFP_NOIO);
++	if (!journaler_ctx->prefix_page)
++		goto free_journaler_ctx;
++
++	journaler_ctx->suffix_page = alloc_page(GFP_NOIO);
++	if (!journaler_ctx->suffix_page)
++		goto free_prefix_page;
++
++	memset(page_address(journaler_ctx->prefix_page), 0, PAGE_SIZE);
++	memset(page_address(journaler_ctx->suffix_page), 0, PAGE_SIZE);
++	INIT_LIST_HEAD(&journaler_ctx->node);
++
++	kref_init(&append_ctx->kref);
++	INIT_LIST_HEAD(&append_ctx->node);
++	return append_ctx;
++
++free_prefix_page:
++	__free_page(journaler_ctx->prefix_page);
++free_journaler_ctx:
++	kmem_cache_free(journaler_append_ctx_cache, append_ctx);
++	return NULL;
++}
++
++struct ceph_journaler_ctx *ceph_journaler_ctx_alloc(void)
++{
++	struct journaler_append_ctx *append_ctx;
++
++	append_ctx = journaler_append_ctx_alloc();
++	if (!append_ctx)
++		return NULL;
++
++	return &append_ctx->journaler_ctx;
++}
++EXPORT_SYMBOL(ceph_journaler_ctx_alloc);
++
++static void journaler_append_ctx_release(struct kref *kref)
++{
++	struct journaler_append_ctx *append_ctx;
++	struct ceph_journaler_ctx *journaler_ctx;
++
++	append_ctx = container_of(kref, struct journaler_append_ctx, kref);
++	journaler_ctx = &append_ctx->journaler_ctx;
++
++	__free_page(journaler_ctx->prefix_page);
++	__free_page(journaler_ctx->suffix_page);
++	kmem_cache_free(journaler_append_ctx_cache, append_ctx);
++}
++
++static void journaler_append_ctx_put(struct journaler_append_ctx *append_ctx)
++{
++	if (append_ctx) {
++		kref_put(&append_ctx->kref, journaler_append_ctx_release);
++	}
++}
++
++void ceph_journaler_ctx_put(struct ceph_journaler_ctx *journaler_ctx)
++{
++	struct journaler_append_ctx *append_ctx;
++
++	if (journaler_ctx) {
++		append_ctx = container_of(journaler_ctx,
++					  struct journaler_append_ctx,
++					  journaler_ctx);
++		journaler_append_ctx_put(append_ctx);
++	}
++}
++EXPORT_SYMBOL(ceph_journaler_ctx_put);
++
++int ceph_journaler_append(struct ceph_journaler *journaler,
++			  uint64_t tag_tid,
++			  struct ceph_journaler_ctx *journaler_ctx)
++{
++	uint64_t entry_tid;
++	struct object_recorder *obj_recorder;
++	struct journaler_append_ctx *append_ctx;
 +	int ret;
 +
-+next:
-+	// find the current replayer.
-+	obj_replayer = &journaler->obj_replayers[journaler->splay_offset];
-+	if (list_empty(&obj_replayer->entry_list)) {
-+		if (journaler->splay_offset == 0) {
-+			return -ENOENT;
-+		} else {
-+			journaler->splay_offset = 0;
-+			goto next;
-+		}
-+	}
++	append_ctx = container_of(journaler_ctx,
++				  struct journaler_append_ctx,
++				  journaler_ctx);
 +
-+	// get the first entry in current replayer
-+	tmp_entry = list_first_entry(&obj_replayer->entry_list,
-+				     struct ceph_journaler_entry, node);
-+
-+	// advance the splay_offset
-+	journaler->splay_offset = (journaler->splay_offset + 1) % journaler->splay_width;
-+	if (journaler->active_tag_tid == UINT_MAX) {
-+		// There is no active tag tid. This would happen when
-+		// there is no commit in this journal. But
-+		// we have some uncommitted entries. So set the current
-+		// tag_tid to be the active_tag_tid.
-+		journaler->active_tag_tid = tmp_entry->tag_tid;
-+	} else if (tmp_entry->tag_tid < journaler->active_tag_tid ||
-+		   (journaler->prune_tag_tid != UINT_MAX &&
-+                    tmp_entry->tag_tid <= journaler->prune_tag_tid)) {
-+		pr_err("detected stale entry: object_num=%llu, tag_tid=%llu,\
-+			entry_tid=%llu.", obj_replayer->object_num, tmp_entry->tag_tid,
-+			tmp_entry->entry_tid);
-+		list_del(&tmp_entry->node);
-+		prune_tag(journaler, tmp_entry->tag_tid);
-+		journaler_entry_free(tmp_entry);
-+		goto next;
-+	} else if (tmp_entry->tag_tid > journaler->active_tag_tid) {
-+		// found a new tag_tid, which means a new client is starting
-+		// to append journal events. lets prune the old tag
-+		prune_tag(journaler, journaler->active_tag_tid);
-+		if (tmp_entry->entry_tid == 0) {
-+			// this is the first entry of new tag client,
-+			// advance the active_tag_tid to the new tag_tid.
-+			journaler->active_tag_tid = tmp_entry->tag_tid;
-+		} else {
-+			if (expect_first_entry) {
-+				pr_err("We expect this is the first entry for \
-+					next tag. but the entry_tid is: %llu.",
-+					tmp_entry->entry_tid);
-+				return -ENOMSG;
-+			}
-+			// each client is appending events from the first
-+			// object (splay_offset: 0). If we found a new tag
-+			// but this is not the first entry (entry_tid: 0),
-+			// let's jump the splay_offset to 0 to get the
-+			// first entry from the new tag client.
-+			journaler->splay_offset = 0;
-+
-+			// When we jump splay_offset to 0, we expect to get
-+			// the first entry for a new tag.
-+			expect_first_entry = true;
-+			goto next;
-+		}
-+	}
-+
-+	// Pop this entry from journal
-+	list_del(&tmp_entry->node);
-+
-+	// check entry_tid to make sure this entry_tid is after last_entry_tid
-+	// for the same tag.
-+	ret = get_last_entry_tid(journaler, tmp_entry->tag_tid, &last_entry_tid);
-+	if (ret && tmp_entry->entry_tid != last_entry_tid + 1) {
-+		pr_err("missing prior journal entry, last_entry_tid: %llu",
-+		       last_entry_tid);
-+		ret = -ENOMSG;
-+		goto free_entry;
-+	}
-+
-+	// fetch next object if this object is done.
-+	if (list_empty(&obj_replayer->entry_list)) {
-+		ret = fetch(journaler, obj_replayer->object_num + journaler->splay_width);
-+		if (ret && ret != -ENOENT) {
-+			goto free_entry;
-+		}
-+	}
-+
-+	ret = reserve_entry_tid(journaler, tmp_entry->tag_tid, tmp_entry->entry_tid);
-+	if (ret)
-+		goto free_entry;
-+
-+	// allocate commit_tid for this entry
-+	*commit_tid = allocate_commit_tid(journaler);
-+	ret = add_commit_entry(journaler, *commit_tid, obj_replayer->object_num,
-+			       tmp_entry->tag_tid, tmp_entry->entry_tid);
-+	if (ret)
-+		goto free_entry;
-+
-+	*entry = tmp_entry;
-+	return 0;
-+
-+free_entry:
-+	journaler_entry_free(tmp_entry);
-+	return ret;
-+}
-+
-+static int process_replay(struct ceph_journaler *journaler)
-+{
-+	int r;
-+	struct ceph_journaler_entry *entry;
-+	uint64_t commit_tid;
-+
-+next:
-+	// get the first entry from the journal, while there
-+	// are different journal objects.
-+	r = get_first_entry(journaler, &entry, &commit_tid);
-+	if (r) {
-+		if (r == -ENOENT) {
-+			prune_tag(journaler, journaler->active_tag_tid);
-+			r = 0;
-+		}
-+		return r;
-+	}
-+
-+	r = playback_entry(journaler, entry, commit_tid);
-+	journaler_entry_free(entry);
-+	if (r) {
-+		return r;
-+	}
-+
-+	goto next;
-+}
-+
-+// reserve entry tid and delete entries before commit position
-+static int preprocess_replay(struct ceph_journaler *journaler)
-+{
-+	struct ceph_journaler_entry *entry, *next;
-+	bool found_commit = false;
-+	struct object_replayer *obj_replayer;
-+	int i, ret;
-+
-+	for (i = 0; i < journaler->splay_width; i++) {
-+		obj_replayer = &journaler->obj_replayers[i];
-+		// If obj_replayer->pos is NULL, that means
-+		// there is no commit position in this object.
-+		if (!obj_replayer->pos)
-+			continue;
-+		found_commit = false;
-+		list_for_each_entry_safe(entry, next,
-+					 &obj_replayer->entry_list, node) {
-+			if (entry->tag_tid == obj_replayer->pos->tag_tid &&
-+			    entry->entry_tid == obj_replayer->pos->entry_tid) {
-+				found_commit = true;
-+			} else if (found_commit) {
-+				break;
-+			}
-+
-+			// This entry is before commit position, skip it in replaying.
-+			ret = reserve_entry_tid(journaler, entry->tag_tid, entry->entry_tid);
-+			if (ret)
-+				return ret;
-+			list_del(&entry->node);
-+			journaler_entry_free(entry);
-+		}
-+	}
-+	return 0;
-+}
-+
-+/*
-+ * Why do we need to replay?
-+ *
-+ * Because we append journal firstly before write data objects. So when
-+ * a crash happened in last writing, there would be some entries in journal
-+ * which means these data is safe, but they are not committed to data
-+ * objects. So when we want to open journal again, we need to check the journal
-+ * and playback the uncommitted journal.
-+ *
-+ * Example:
-+ *
-+ * splay_width: 4
-+ *
-+ * commit positions:
-+ *   [[object_number=2, tag_tid=1, entry_tid=10],
-+ *    [object_number=1, tag_tid=1, entry_tid=9],
-+ *    [object_number=0, tag_tid=1, entry_tid=8],
-+ *    [object_number=3, tag_tid=1, entry_tid=7]]
-+ *
-+ * journal entries (number means the entry_tid; * means commit position):
-+ * object 0: |0|4|8*|12|16|20|
-+ * object 1: |1|5|9*|13|17|21|
-+ * object 2: |2|6|10*|14|18|
-+ * object 3: |3|7*|11|15|19|
-+ *
-+ * In this case, we need to replay the entries from 11 to 21.
-+ *
-+ * Step 1: Get the active position and fetch objects.
-+ * 	"Active position" means the last committied position, that's the head
-+ * 	of commit positions. We need to replay the entries after this position. 
-+ *
-+ * 	"fetch objects" means the last committed object in each splay. we don't need
-+ * 	to replay entries committed, so let's fetch journal from the last committed
-+ * 	objects
-+ *
-+ *	The active position in above example is [object_number=2, tag_tid=1, entry_tid=10].
-+ *	The fetch objects in above example is [0, 1, 2, 3]
-+ *
-+ * Step 2: fetch journal objects.
-+ * 	read the data in "fetch objects" ([0, 1, 2, 3]), decode the entries and put
-+ * 	them in list of replayer->entry_list.
-+ *
-+ * 	In above example, the entry_list would be like this:
-+ * 	replayer_0->entry_list: 0->4->8*->12->16->20.
-+ * 	replayer_1->entry_list: 1->5->9*->13->17->21.
-+ * 	replayer_2->entry_list: 2->6->10*->14->18.
-+ * 	replayer_3->entry_list: 3->7*->11->15->19.
-+ *
-+ * Step 3: preprocess the journal entries
-+ * 	delete entries before commit position which we dont need to replay,
-+ * 	because they are already committed. So after preprocess, the entry_list
-+ * 	would be that:
-+ *
-+ * 	replayer_0->entry_list: 12->16->20.
-+ * 	replayer_1->entry_list: 13->17->21.
-+ * 	replayer_2->entry_list: 14->18.
-+ * 	replayer_3->entry_list: 11->15->19.
-+ *
-+ * Step 4: process the journal entries
-+ * 	replay the entries one by one start from the entry after last commit position.
-+ * 	
-+ * 	As we know in Step 1, the last commit position is 10, the replay will begin
-+ * 	from 11 and end after the last entry 21.
-+ */
-+int ceph_journaler_start_replay(struct ceph_journaler *journaler)
-+{	
-+	struct ceph_journaler_object_pos *active_pos;
-+	uint64_t *fetch_objects;
-+	uint64_t buf_len = (2 << journaler->order);
-+	uint64_t object_num;
-+	int i;
-+	int ret = 0;
-+
-+	if (!journaler->handle_entry || !journaler->entry_handler) {
-+		pr_err("Please initialize the ->handle_entry and ->entry_handler");
-+		return -EINVAL;
-+	}
-+
-+	fetch_objects = kzalloc(sizeof(uint64_t) * journaler->splay_width, GFP_NOIO);
-+	if (!fetch_objects)
-+		return -ENOMEM;
-+
-+	// Step 1: Get the active position.
++	append_ctx->journaler = journaler;
 +	mutex_lock(&journaler->meta_lock);
-+	// Get the HEAD of commit positions, that means the last committed object position.
-+	active_pos = list_first_entry(&journaler->client->object_positions,
-+				      struct ceph_journaler_object_pos, node);
-+	// When there is no commit position in this journal, the active_pos would be empty.
-+	// So skip getting active information when active_pos->in_using is false.
-+	if (active_pos->in_using) {
-+		journaler->splay_offset = (active_pos->object_num + 1) % journaler->splay_width;
-+		journaler->active_tag_tid = active_pos->tag_tid;
-+
-+		list_for_each_entry(active_pos, &journaler->client->object_positions, node) {
-+			if (active_pos->in_using) {
-+				fetch_objects[active_pos->object_num %
-+					      journaler->splay_width] = active_pos->object_num;
-+			}
-+		}
++	// get entry_tid for this event. (tag_tid, entry_tid) is
++	// the uniq id for every journal event.
++	ret = get_new_entry_tid(journaler, tag_tid, &entry_tid);
++	if (ret) {
++		mutex_unlock(&journaler->meta_lock);
++		return ret;
 +	}
++
++	// calculate the object_num for this entry.
++	append_ctx->splay_offset = entry_tid % journaler->splay_width;
++	obj_recorder = &journaler->obj_recorders[journaler->splay_width];
++	append_ctx->object_num = get_object(journaler, append_ctx->splay_offset);
++
++	// allocate a commit_tid for this event, when the data is committed
++	// to data objects, ceph_journaler_client_committed() will accept
++	// the commit_tid to understand how to update journal commit position.
++	journaler_ctx->commit_tid = __allocate_commit_tid(journaler);
++	entry_init(&append_ctx->entry, tag_tid, entry_tid, journaler_ctx);
++
++	// To make sure the journal entry is consistent, we use future
++	// to track it. And every journal entry depent on the previous
++	// entry. Only if the previous entry is finished, current entry
++	// could be consistent. and then we can finish current entry. 
++	future_init(&append_ctx->future, tag_tid, entry_tid,
++		    journaler_ctx->commit_tid, journaler_ctx);
++	set_prev_future(journaler, append_ctx);
 +	mutex_unlock(&journaler->meta_lock);
 +
-+	// Step 2: fetch journal objects.
-+	// fetch_buf will be used to read every journal object
-+	journaler->fetch_buf = ceph_kvmalloc(buf_len, GFP_NOIO);
-+	if (!journaler->fetch_buf) {
-+		pr_err("failed to alloc fetch buf: %llu", buf_len);
-+		ret = -ENOMEM;
-+		goto out;
++	append_ctx->state = JOURNALER_APPEND_START;
++	journaler_handle_append(append_ctx, 0);
++	return 0;
++}
++EXPORT_SYMBOL(ceph_journaler_append);
++
++static void journaler_client_commit(struct work_struct *work)
++{
++	struct ceph_journaler *journaler = container_of(to_delayed_work(work),
++							struct ceph_journaler,
++							commit_work);
++	int ret;
++
++	mutex_lock(&journaler->commit_lock);
++	copy_pos_list(&journaler->obj_pos_pending,
++		      &journaler->obj_pos_committing);
++	mutex_unlock(&journaler->commit_lock);
++
++	ret = ceph_cls_journaler_client_committed(journaler->osdc,
++		&journaler->header_oid, &journaler->header_oloc,
++		journaler->client, &journaler->obj_pos_committing);
++
++	if (ret) {
++		pr_err("error in client committed: %d", ret);
 +	}
 +
-+	for (i = 0; i < journaler->splay_width; i++) {
-+		if (fetch_objects[i] == 0) {
-+			// No active commit position, so fetch
-+			// them in splay order.
-+			object_num = i;
-+		} else {
-+			object_num = fetch_objects[i];
++	queue_work(journaler->task_wq, &journaler->notify_update_work);
++
++	mutex_lock(&journaler->commit_lock);
++	journaler->commit_scheduled = false;
++	mutex_unlock(&journaler->commit_lock);
++}
++
++// hold journaler->commit_lock
++static void add_object_position(struct commit_entry *entry,
++			       struct list_head *object_positions,
++			       uint64_t splay_width)
++{
++	struct ceph_journaler_object_pos *position;
++	uint8_t splay_offset = entry->object_num % splay_width;
++	bool found = false;
++	
++	list_for_each_entry(position, object_positions, node) {
++		if (position->in_using == false) {
++			found = true;
++			break;
 +		}
-+		ret = fetch(journaler, object_num);
-+		if (ret && ret != -ENOENT)
-+			goto free_fetch_buf;
++
++		if (splay_offset == position->object_num % splay_width) {
++			found = true;
++			break;
++		}
 +	}
 +
-+	// Step 3: preprocess the journal entries
-+	ret = preprocess_replay(journaler);
++	BUG_ON(!found);
++	if (position->in_using == false)
++		position->in_using = true;
++	position->object_num = entry->object_num;
++	position->tag_tid = entry->tag_tid;
++	position->entry_tid = entry->entry_tid;
++	list_move(&position->node, object_positions);
++}
++
++void ceph_journaler_client_committed(struct ceph_journaler *journaler, uint64_t commit_tid)
++{
++	struct commit_entry *commit_entry;
++	bool update_client_commit = true;
++	struct rb_node *n;
++
++	mutex_lock(&journaler->commit_lock);
++	// search commit entries in commit_tid order.
++	for (n = rb_first(&journaler->commit_entries); n; n = rb_next(n)) {
++		commit_entry = rb_entry(n, struct commit_entry, r_node);
++		// set current commit entry to be committed.
++		if (commit_entry->commit_tid == commit_tid) {
++			commit_entry->committed = true;
++			break;
++		}
++		// if there is any one entry before commit_tid is not committed,
++		// we dont need to update_client_commit.
++		if (commit_entry->committed == false)
++			update_client_commit = false;
++	}
++
++	// update_client_commit when the all commit entries before this commit_tid
++	// are all committed.
++	if (update_client_commit) {
++		// update commit positions rely on commit entries one by one.
++		// until corrent commit_tid.
++		for (n = rb_first(&journaler->commit_entries); n;) {
++			commit_entry = rb_entry(n, struct commit_entry, r_node);
++			n = rb_next(n);
++
++			if (commit_entry->commit_tid > commit_tid)
++				break;
++			add_object_position(commit_entry,
++				&journaler->obj_pos_pending,
++				journaler->splay_width);
++			erase_commit_entry(&journaler->commit_entries, commit_entry);
++			kmem_cache_free(journaler_commit_entry_cache, commit_entry);
++		}
++	}
++
++	// schedule commit_work to call ceph_cls_journaler_client_committed()
++	// after JOURNALER_COMMIT_INTERVAL
++	if (update_client_commit && !journaler->commit_scheduled) {
++		queue_delayed_work(journaler->task_wq, &journaler->commit_work,
++				   JOURNALER_COMMIT_INTERVAL);
++		journaler->commit_scheduled = true;
++	}
++	mutex_unlock(&journaler->commit_lock);
++
++}
++EXPORT_SYMBOL(ceph_journaler_client_committed);
++
++// client need to allocate an uniq tag for itself, then every
++// journaler entry from this client will be tagged as his tag.
++int ceph_journaler_allocate_tag(struct ceph_journaler *journaler,
++				uint64_t tag_class, void *buf,
++				uint32_t buf_len,
++				struct ceph_journaler_tag *tag)
++{
++	uint64_t tag_tid;
++	int ret;
++
++retry:
++	ret = ceph_cls_journaler_get_next_tag_tid(journaler->osdc,
++					&journaler->header_oid,
++					&journaler->header_oloc,
++					&tag_tid);
 +	if (ret)
-+		goto free_fetch_buf;
++		goto out;
 +
-+	// Step 4: process the journal entries
-+	ret = process_replay(journaler);
-+
-+free_fetch_buf:
-+	kvfree(journaler->fetch_buf);
-+out:
-+	// cleanup replayers
-+	for (i = 0; i < journaler->splay_width; i++) {
-+		struct object_replayer *obj_replayer = &journaler->obj_replayers[i];
-+		struct ceph_journaler_entry *entry = NULL, *next_entry = NULL;
-+
-+		spin_lock(&obj_replayer->lock);
-+		list_for_each_entry_safe(entry, next_entry, &obj_replayer->entry_list, node) {
-+			list_del(&entry->node);
-+			journaler_entry_free(entry);
++	ret = ceph_cls_journaler_tag_create(journaler->osdc,
++					&journaler->header_oid,
++					&journaler->header_oloc,
++					tag_tid, tag_class,
++					buf, buf_len);
++	if (ret < 0) {
++		if (ret == -ESTALE) {
++			goto retry;
++		} else {
++			goto out;
 +		}
-+		spin_unlock(&obj_replayer->lock);
 +	}
-+	kfree(fetch_objects);
++
++	ret = ceph_cls_journaler_get_tag(journaler->osdc,
++					&journaler->header_oid,
++					&journaler->header_oloc,
++					tag_tid, tag);
++	if (ret)
++		goto out;
++
++out:
 +	return ret;
 +}
-+EXPORT_SYMBOL(ceph_journaler_start_replay);
++EXPORT_SYMBOL(ceph_journaler_allocate_tag);
 -- 
 1.8.3.1
 
