@@ -2,197 +2,199 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07FFA788B7
-	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2019 11:43:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A58F788BC
+	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2019 11:43:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728093AbfG2Jnn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 29 Jul 2019 05:43:43 -0400
-Received: from m97138.mail.qiye.163.com ([220.181.97.138]:22806 "EHLO
+        id S1726496AbfG2Jnx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 29 Jul 2019 05:43:53 -0400
+Received: from m97138.mail.qiye.163.com ([220.181.97.138]:23111 "EHLO
         m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbfG2Jnm (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 29 Jul 2019 05:43:42 -0400
+        with ESMTP id S1728025AbfG2Jnw (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 29 Jul 2019 05:43:52 -0400
 Received: from atest-guest.localdomain (unknown [218.94.118.90])
-        by smtp9 (Coremail) with SMTP id u+CowADHYpWjvz5djxunAA--.901S16;
+        by smtp9 (Coremail) with SMTP id u+CowADHYpWjvz5djxunAA--.901S17;
         Mon, 29 Jul 2019 17:43:04 +0800 (CST)
 From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
 To:     idryomov@gmail.com, jdillama@redhat.com
 Cc:     ceph-devel@vger.kernel.org,
         Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: [PATCH v3 14/15] rbd: replay events in journal
-Date:   Mon, 29 Jul 2019 09:42:56 +0000
-Message-Id: <1564393377-28949-15-git-send-email-dongsheng.yang@easystack.cn>
+Subject: [PATCH v3 15/15] rbd: add support for feature of RBD_FEATURE_JOURNALING
+Date:   Mon, 29 Jul 2019 09:42:57 +0000
+Message-Id: <1564393377-28949-16-git-send-email-dongsheng.yang@easystack.cn>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1564393377-28949-1-git-send-email-dongsheng.yang@easystack.cn>
 References: <1564393377-28949-1-git-send-email-dongsheng.yang@easystack.cn>
-X-CM-TRANSID: u+CowADHYpWjvz5djxunAA--.901S16
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXr17WFy8Kr4rKF43WFy5XFb_yoWrur47pF
-        WUJFWakrs5CF12vr4fGan5Zr15X3yxArZrWry7KrnF9an5Grn2kF1rCFyYvrW3ZFW7GF18
-        GFs0qr97Wr1qqFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: u+CowADHYpWjvz5djxunAA--.901S17
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZw13Ww4kJFyftF43JrWrXwb_yoWrCw4rpF
+        W8JF9YyrWUZr17uw4fXrs8JrWYqa10y34DWr9rCrn7K3Z3Jrnrta4IkFyUJ3y7tFyUGa1k
+        Jr45J3yUCw4UtrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
         9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0Jbtku7UUUUU=
 X-Originating-IP: [218.94.118.90]
-X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiPAgBelyqDvPC4gAAsk
+X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiQRMBelbdGyrNdAAAsq
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-when we found uncommitted events in journal, we need to do a replay.
-This commit only implement three kinds of events replaying:
+Allow user to map rbd images with journaling enabled, but
+there is a warning in demsg:
 
-EVENT_TYPE_AIO_DISCARD:
-        Will send a img_request to image with OBJ_OP_DISCARD, and
-        wait for it completed.
-EVENT_TYPE_AIO_WRITE:
-        Will send a img_request to image with OBJ_OP_WRITE, and
-        wait for it completed.
-EVENT_TYPE_AIO_FLUSH:
-        As all other events are replayed in synchoronized way, that
-        means the events before are all flushed. we did nothing for this event.
+        WARNING: kernel journaling is EXPERIMENTAL!
 
 Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
 ---
- drivers/block/rbd.c | 128 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 128 insertions(+)
+ drivers/block/rbd.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
 
 diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 89bc7b3..3c44db7 100644
+index 3c44db7..3e940a7 100644
 --- a/drivers/block/rbd.c
 +++ b/drivers/block/rbd.c
-@@ -7175,6 +7175,134 @@ static void rbd_img_journal_append(struct rbd_img_request *img_req)
+@@ -131,6 +131,7 @@ static int atomic_dec_return_safe(atomic_t *v)
+ 				 RBD_FEATURE_OBJECT_MAP |	\
+ 				 RBD_FEATURE_FAST_DIFF |	\
+ 				 RBD_FEATURE_DEEP_FLATTEN |	\
++				 RBD_FEATURE_JOURNALING |	\
+ 				 RBD_FEATURE_DATA_POOL |	\
+ 				 RBD_FEATURE_OPERATIONS)
+ 
+@@ -3847,6 +3848,7 @@ static void __rbd_lock(struct rbd_device *rbd_dev, const char *cookie)
+ /*
+  * lock_rwsem must be held for write
+  */
++static int rbd_dev_open_journal(struct rbd_device *rbd_dev);
+ static int rbd_lock(struct rbd_device *rbd_dev)
+ {
+ 	struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
+@@ -4190,6 +4192,12 @@ static int rbd_post_acquire_action(struct rbd_device *rbd_dev)
+ 			return ret;
  	}
+ 
++	if (rbd_dev->header.features & RBD_FEATURE_JOURNALING) {
++		ret = rbd_dev_open_journal(rbd_dev);
++		if (ret)
++			return ret;
++	}
++
+ 	return 0;
  }
  
-+static int rbd_journal_handle_aio_discard(struct rbd_device *rbd_dev, void **p, void *end, u8 struct_v, uint64_t commit_tid)
+@@ -4320,10 +4328,14 @@ static bool rbd_quiesce_lock(struct rbd_device *rbd_dev)
+ 	return true;
+ }
+ 
++static void rbd_dev_close_journal(struct rbd_device *rbd_dev);
+ static void rbd_pre_release_action(struct rbd_device *rbd_dev)
+ {
+ 	if (rbd_dev->header.features & RBD_FEATURE_OBJECT_MAP)
+ 		rbd_object_map_close(rbd_dev);
++
++	if (rbd_dev->header.features & RBD_FEATURE_JOURNALING)
++		rbd_dev_close_journal(rbd_dev);
+ }
+ 
+ static void __rbd_release_lock(struct rbd_device *rbd_dev)
+@@ -7303,6 +7315,88 @@ static int rbd_journal_replay(void *entry_handler, struct ceph_journaler_entry *
+ 	return ret;
+ }
+ 
++static int rbd_journal_allocate_tag(struct rbd_journal *journal);
++static int rbd_journal_open(struct rbd_journal *journal)
 +{
-+	uint64_t offset;
-+	uint64_t length;
-+	int result;
-+	enum obj_operation_type op_type;
-+	struct rbd_img_request *img_request;
-+	struct ceph_snap_context *snapc;
-+
-+	offset = ceph_decode_64(p);
-+	length = ceph_decode_64(p);
-+
-+	snapc = rbd_dev->header.snapc;
-+	ceph_get_snap_context(snapc);
-+	op_type = OBJ_OP_DISCARD;
-+
-+	img_request = rbd_img_request_create(rbd_dev, op_type, snapc);
-+	if (!img_request) {
-+		result = -ENOMEM;
-+		goto err;
-+	}
-+	__set_bit(IMG_REQ_NOLOCK, &img_request->flags);
-+	img_request->journaler_commit_tid = commit_tid;
-+	result = rbd_img_fill_nodata(img_request, offset, length);
-+	if (result)
-+		goto err;
-+
-+	img_request->state = RBD_IMG_APPEND_JOURNAL;
-+	rbd_img_handle_request(img_request, 0);
-+	result = wait_for_completion_interruptible(&img_request->completion);
-+err:
-+	return result;
-+}
-+
-+static int rbd_journal_handle_aio_write(struct rbd_device *rbd_dev, void **p, void *end, u8 struct_v, uint64_t commit_tid)
-+{
-+	uint64_t offset;
-+	uint64_t length;
-+	char *data;
-+	ssize_t data_len;
-+	int result;
-+	enum obj_operation_type op_type;
-+	struct ceph_snap_context *snapc;
-+	struct rbd_img_request *img_request;
-+
-+	struct ceph_file_extent ex;
-+	struct bio_vec *bvecs = NULL;
-+
-+	offset = ceph_decode_64(p);
-+	length = ceph_decode_64(p);
-+
-+	data_len = ceph_decode_32(p);
-+	if (!ceph_has_room(p, end, data_len)) {
-+		pr_err("our of range");
-+		return -ERANGE;
-+	}
-+
-+	data = *p;
-+	*p = (char *) *p + data_len;
-+
-+	snapc = rbd_dev->header.snapc;
-+	ceph_get_snap_context(snapc);
-+	op_type = OBJ_OP_WRITE;
-+
-+	img_request = rbd_img_request_create(rbd_dev, op_type, snapc);
-+	if (!img_request) {
-+		result = -ENOMEM;
-+		goto err;
-+	}
-+
-+	__set_bit(IMG_REQ_NOLOCK, &img_request->flags);
-+	img_request->journaler_commit_tid = commit_tid;
-+	snapc = NULL; /* img_request consumes a ref */
-+
-+	ex.fe_off = offset;
-+	ex.fe_len = length;
-+
-+	bvecs = setup_write_bvecs(data, offset, length);
-+	if (!bvecs)
-+		rbd_warn(rbd_dev, "failed to alloc bvecs.");
-+	result = rbd_img_fill_from_bvecs(img_request,
-+				         &ex, 1, bvecs);
-+	if (result)
-+		goto err;
-+
-+	img_request->state = RBD_IMG_APPEND_JOURNAL;
-+	rbd_img_handle_request(img_request, 0);
-+	result = wait_for_completion_interruptible(&img_request->completion);
-+err:
-+	if (bvecs)
-+		kfree(bvecs);
-+	return result;
-+}
-+
-+static int rbd_journal_replay(void *entry_handler, struct ceph_journaler_entry *entry, uint64_t commit_tid)
-+{
-+	struct rbd_device *rbd_dev = entry_handler;
-+	void *data = entry->data;
-+	void **p = &data;
-+	void *end = *p + entry->data_len;
-+	uint32_t event_type;
-+	u8 struct_v;
-+	u32 struct_len;
++	struct ceph_journaler *journaler = journal->journaler;
 +	int ret;
 +
-+	ret = ceph_start_decoding(p, end, 1, "rbd_decode_entry",
-+				  &struct_v, &struct_len);
++	ret = ceph_journaler_open(journaler);
 +	if (ret)
-+		return -EINVAL;
++		goto out;
 +
-+	event_type = ceph_decode_32(p);
++	ret = ceph_journaler_start_replay(journaler);
++	if (ret)
++		goto err_close_journaler;
 +
-+	switch (event_type) {
-+	case EVENT_TYPE_AIO_WRITE:
-+		ret = rbd_journal_handle_aio_write(rbd_dev, p, end, struct_v, commit_tid);
-+		break;
-+	case EVENT_TYPE_AIO_DISCARD:
-+		ret = rbd_journal_handle_aio_discard(rbd_dev, p, end, struct_v, commit_tid);
-+		break;
-+	case EVENT_TYPE_AIO_FLUSH:
-+		break;
-+	default:
-+		rbd_warn(rbd_dev, "unknown event_type: %u", event_type);
-+		return -EINVAL;
-+	}
++	ret = rbd_journal_allocate_tag(journal);
++	if (ret)
++		goto err_close_journaler;
 +	return ret;
++
++err_close_journaler:
++	ceph_journaler_close(journaler);
++
++out:
++	return ret;
++}
++
++static int rbd_dev_open_journal(struct rbd_device *rbd_dev)
++{
++	int ret;
++	struct rbd_journal *journal;
++	struct ceph_journaler *journaler;
++	struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
++
++	// create journal
++	rbd_assert(!rbd_dev->journal);
++
++	journal = kzalloc(sizeof(struct rbd_journal), GFP_KERNEL);
++	if (!journal)
++		return -ENOMEM;
++
++	journaler = ceph_journaler_create(osdc, &rbd_dev->header_oloc,
++					  rbd_dev->spec->image_id,
++					  LOCAL_CLIENT_ID);
++	if (!journaler) {
++		ret = -ENOMEM;
++		goto err_free_journal;
++	}
++
++	// journal init
++	journaler->entry_handler = rbd_dev;
++	journaler->handle_entry = rbd_journal_replay;
++
++	journal->journaler = journaler;
++	rbd_dev->journal = journal;
++
++	// journal open
++	ret = rbd_journal_open(rbd_dev->journal);
++	if (ret)
++		goto err_destroy_journaler;
++
++	return ret;
++
++err_destroy_journaler:
++	ceph_journaler_destroy(journaler);
++err_free_journal:
++	kfree(rbd_dev->journal);
++	rbd_dev->journal = NULL;
++	return ret;
++}
++
++static void rbd_dev_close_journal(struct rbd_device *rbd_dev)
++{
++	rbd_assert(rbd_dev->journal);
++
++	ceph_journaler_close(rbd_dev->journal->journaler);
++	rbd_dev->journal->tag_tid = 0;
++
++	ceph_journaler_destroy(rbd_dev->journal->journaler);
++	kfree(rbd_dev->journal);
++	rbd_dev->journal = NULL;
 +}
 +
  typedef struct rbd_journal_tag_predecessor {
  	bool commit_valid;
  	uint64_t tag_tid;
+@@ -7493,6 +7587,11 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
+ 			goto err_out_probe;
+ 	}
+ 
++	if (rbd_dev->header.features & RBD_FEATURE_JOURNALING) {
++		rbd_warn(rbd_dev,
++			 "WARNING: kernel rbd journaling is EXPERIMENTAL!");
++	}
++
+ 	ret = rbd_dev_probe_parent(rbd_dev, depth);
+ 	if (ret)
+ 		goto err_out_probe;
 -- 
 1.8.3.1
 
