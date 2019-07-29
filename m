@@ -2,200 +2,111 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A58F788BC
-	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2019 11:43:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1776790DE
+	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2019 18:30:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbfG2Jnx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 29 Jul 2019 05:43:53 -0400
-Received: from m97138.mail.qiye.163.com ([220.181.97.138]:23111 "EHLO
-        m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728025AbfG2Jnw (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 29 Jul 2019 05:43:52 -0400
-Received: from atest-guest.localdomain (unknown [218.94.118.90])
-        by smtp9 (Coremail) with SMTP id u+CowADHYpWjvz5djxunAA--.901S17;
-        Mon, 29 Jul 2019 17:43:04 +0800 (CST)
-From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
-To:     idryomov@gmail.com, jdillama@redhat.com
-Cc:     ceph-devel@vger.kernel.org,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: [PATCH v3 15/15] rbd: add support for feature of RBD_FEATURE_JOURNALING
-Date:   Mon, 29 Jul 2019 09:42:57 +0000
-Message-Id: <1564393377-28949-16-git-send-email-dongsheng.yang@easystack.cn>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1564393377-28949-1-git-send-email-dongsheng.yang@easystack.cn>
-References: <1564393377-28949-1-git-send-email-dongsheng.yang@easystack.cn>
-X-CM-TRANSID: u+CowADHYpWjvz5djxunAA--.901S17
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZw13Ww4kJFyftF43JrWrXwb_yoWrCw4rpF
-        W8JF9YyrWUZr17uw4fXrs8JrWYqa10y34DWr9rCrn7K3Z3Jrnrta4IkFyUJ3y7tFyUGa1k
-        Jr45J3yUCw4UtrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0Jbtku7UUUUU=
-X-Originating-IP: [218.94.118.90]
-X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiQRMBelbdGyrNdAAAsq
+        id S1729022AbfG2Qaj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 29 Jul 2019 12:30:39 -0400
+Received: from mail-ed1-f51.google.com ([209.85.208.51]:40246 "EHLO
+        mail-ed1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728792AbfG2Qaj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 29 Jul 2019 12:30:39 -0400
+Received: by mail-ed1-f51.google.com with SMTP id k8so59858677eds.7
+        for <ceph-devel@vger.kernel.org>; Mon, 29 Jul 2019 09:30:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0A+fiT+RHGB4xOEN7V94jZiSA+9cADMZQP/Bk8C7xoY=;
+        b=HVYYBP7mVKMvkXdFW1DyCxbo0cYwr1lE+ugx0UsSoZgCfYu7pZEM7aIm490QmCVKoD
+         2zakrMJ2Sf/3OfabTUdqFRzcqtmKc44obnoq6Q6iAuvo+6DzozGYxn27tzMYRHIn1def
+         eL4kuR9maMbrlKAyzyew6FR2zxP2eVBJYThAMgNsJZO6QNtS9jvqqAyqCTSKGh2Id0uP
+         s1G8dYJwVt6r6vnn+W9ODp+5jgkot19pNYBLh23fFc5j9b8e0/z+oGZFPkN+OnITMl2k
+         OTcjKhAG6En/82sNDTmC7eG2fR6VOZctfSJ/db+zJsRSC1jcpWSLVHDpX8mxef+6AwAT
+         bADg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0A+fiT+RHGB4xOEN7V94jZiSA+9cADMZQP/Bk8C7xoY=;
+        b=sU7Q1aZ/G7cFgR6wHGeqR1txeJqXlQ43WqlaAfXXVzsFULTLOJfCNVTQvk84KuOn1d
+         MODUdXK3hQDZCHRYkWW6TCO/vcuFcAdrE+2WBEsdFNN1+Rsrfn0EgDEgv/C/maywDlSL
+         L1JntE+3O+HrIDz0KADkmYzQ+pbewnjv6GcpZZCeMC1/Z5GixACeVgWy1GGR+tGy6/+k
+         nw3EoLp4YeUy6bqA5BnXApyXxnaDKzoIM0Vwg15nsF8lWddiX7GByQvtPYJRpw2O15nD
+         xhF6ev5XHu6mMMx/6TGyJlsy9ELTkv3EWcOAXNit2gEjBUwAwM12SgFaeLlzZqPT+Fr/
+         sTdA==
+X-Gm-Message-State: APjAAAVNhpzP3HrfzyJAxx22kVXCWPmxwh2+wT+4tdKHeU5iXw0BidVE
+        MYWkECNhAzWb3DvVdve58w==
+X-Google-Smtp-Source: APXvYqyBjLG32l4nxzi6zE3jdi+jfpaqseOkDm7EJDj0H/3Hvz0L4dyC+nZ7rJRsdmRSk1LYfhd9MA==
+X-Received: by 2002:a17:906:2409:: with SMTP id z9mr39771676eja.179.1564417837952;
+        Mon, 29 Jul 2019 09:30:37 -0700 (PDT)
+Received: from localhost ([91.245.78.132])
+        by smtp.gmail.com with ESMTPSA id cb19sm11681704ejb.51.2019.07.29.09.30.37
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 29 Jul 2019 09:30:37 -0700 (PDT)
+From:   Mykola Golub <to.my.trociny@gmail.com>
+X-Google-Original-From: Mykola Golub <mgolub@suse.de>
+Date:   Mon, 29 Jul 2019 19:30:36 +0300
+To:     Ajitha Robert <ajitharobert01@gmail.com>
+Cc:     ceph-users@lists.ceph.com, ceph-users@ceph.com,
+        ceph-devel@vger.kernel.org
+Subject: Re: [ceph-users] Error in ceph rbd
+ mirroring(rbd::mirror::InstanceWatcher: C_NotifyInstanceRequestfinish:
+ resending after timeout)
+Message-ID: <20190729163035.GB8882@gmail.com>
+References: <CAEbG6hG7dAhg=Z9JUKcCCTOEPyXZ6cZcS=jar7SeL-5VTcqEgA@mail.gmail.com>
+ <20190726093147.GA31242@gmail.com>
+ <CAEbG6hFgvWFMgaYHRRtZdth-OkJ7ib4vWxf__b7QvGPd1rF6Qg@mail.gmail.com>
+ <20190726132546.GA6825@gmail.com>
+ <CAEbG6hE1s=wJ7hGAPSiFee7iLu7QPrC-s4zDf1kZa3xMsVscdw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEbG6hE1s=wJ7hGAPSiFee7iLu7QPrC-s4zDf1kZa3xMsVscdw@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Allow user to map rbd images with journaling enabled, but
-there is a warning in demsg:
+On Sat, Jul 27, 2019 at 06:08:58PM +0530, Ajitha Robert wrote:
 
-        WARNING: kernel journaling is EXPERIMENTAL!
+> *1) Will there be any folder related to rbd-mirroring in /var/lib/ceph ? *
 
-Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
----
- drivers/block/rbd.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+no
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 3c44db7..3e940a7 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -131,6 +131,7 @@ static int atomic_dec_return_safe(atomic_t *v)
- 				 RBD_FEATURE_OBJECT_MAP |	\
- 				 RBD_FEATURE_FAST_DIFF |	\
- 				 RBD_FEATURE_DEEP_FLATTEN |	\
-+				 RBD_FEATURE_JOURNALING |	\
- 				 RBD_FEATURE_DATA_POOL |	\
- 				 RBD_FEATURE_OPERATIONS)
- 
-@@ -3847,6 +3848,7 @@ static void __rbd_lock(struct rbd_device *rbd_dev, const char *cookie)
- /*
-  * lock_rwsem must be held for write
-  */
-+static int rbd_dev_open_journal(struct rbd_device *rbd_dev);
- static int rbd_lock(struct rbd_device *rbd_dev)
- {
- 	struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
-@@ -4190,6 +4192,12 @@ static int rbd_post_acquire_action(struct rbd_device *rbd_dev)
- 			return ret;
- 	}
- 
-+	if (rbd_dev->header.features & RBD_FEATURE_JOURNALING) {
-+		ret = rbd_dev_open_journal(rbd_dev);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return 0;
- }
- 
-@@ -4320,10 +4328,14 @@ static bool rbd_quiesce_lock(struct rbd_device *rbd_dev)
- 	return true;
- }
- 
-+static void rbd_dev_close_journal(struct rbd_device *rbd_dev);
- static void rbd_pre_release_action(struct rbd_device *rbd_dev)
- {
- 	if (rbd_dev->header.features & RBD_FEATURE_OBJECT_MAP)
- 		rbd_object_map_close(rbd_dev);
-+
-+	if (rbd_dev->header.features & RBD_FEATURE_JOURNALING)
-+		rbd_dev_close_journal(rbd_dev);
- }
- 
- static void __rbd_release_lock(struct rbd_device *rbd_dev)
-@@ -7303,6 +7315,88 @@ static int rbd_journal_replay(void *entry_handler, struct ceph_journaler_entry *
- 	return ret;
- }
- 
-+static int rbd_journal_allocate_tag(struct rbd_journal *journal);
-+static int rbd_journal_open(struct rbd_journal *journal)
-+{
-+	struct ceph_journaler *journaler = journal->journaler;
-+	int ret;
-+
-+	ret = ceph_journaler_open(journaler);
-+	if (ret)
-+		goto out;
-+
-+	ret = ceph_journaler_start_replay(journaler);
-+	if (ret)
-+		goto err_close_journaler;
-+
-+	ret = rbd_journal_allocate_tag(journal);
-+	if (ret)
-+		goto err_close_journaler;
-+	return ret;
-+
-+err_close_journaler:
-+	ceph_journaler_close(journaler);
-+
-+out:
-+	return ret;
-+}
-+
-+static int rbd_dev_open_journal(struct rbd_device *rbd_dev)
-+{
-+	int ret;
-+	struct rbd_journal *journal;
-+	struct ceph_journaler *journaler;
-+	struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
-+
-+	// create journal
-+	rbd_assert(!rbd_dev->journal);
-+
-+	journal = kzalloc(sizeof(struct rbd_journal), GFP_KERNEL);
-+	if (!journal)
-+		return -ENOMEM;
-+
-+	journaler = ceph_journaler_create(osdc, &rbd_dev->header_oloc,
-+					  rbd_dev->spec->image_id,
-+					  LOCAL_CLIENT_ID);
-+	if (!journaler) {
-+		ret = -ENOMEM;
-+		goto err_free_journal;
-+	}
-+
-+	// journal init
-+	journaler->entry_handler = rbd_dev;
-+	journaler->handle_entry = rbd_journal_replay;
-+
-+	journal->journaler = journaler;
-+	rbd_dev->journal = journal;
-+
-+	// journal open
-+	ret = rbd_journal_open(rbd_dev->journal);
-+	if (ret)
-+		goto err_destroy_journaler;
-+
-+	return ret;
-+
-+err_destroy_journaler:
-+	ceph_journaler_destroy(journaler);
-+err_free_journal:
-+	kfree(rbd_dev->journal);
-+	rbd_dev->journal = NULL;
-+	return ret;
-+}
-+
-+static void rbd_dev_close_journal(struct rbd_device *rbd_dev)
-+{
-+	rbd_assert(rbd_dev->journal);
-+
-+	ceph_journaler_close(rbd_dev->journal->journaler);
-+	rbd_dev->journal->tag_tid = 0;
-+
-+	ceph_journaler_destroy(rbd_dev->journal->journaler);
-+	kfree(rbd_dev->journal);
-+	rbd_dev->journal = NULL;
-+}
-+
- typedef struct rbd_journal_tag_predecessor {
- 	bool commit_valid;
- 	uint64_t tag_tid;
-@@ -7493,6 +7587,11 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
- 			goto err_out_probe;
- 	}
- 
-+	if (rbd_dev->header.features & RBD_FEATURE_JOURNALING) {
-+		rbd_warn(rbd_dev,
-+			 "WARNING: kernel rbd journaling is EXPERIMENTAL!");
-+	}
-+
- 	ret = rbd_dev_probe_parent(rbd_dev, depth);
- 	if (ret)
- 		goto err_out_probe;
+> *2) Is ceph rbd-mirror authentication mandatory?*
+
+no. But why are you asking?
+
+> *3)when even i create any cinder volume loaded with glance image i get the
+> following error.. *
+> 
+> 2019-07-27 17:26:46.762571 7f93eb0a5780 20 librbd::api::Mirror: peer_list:
+> 2019-07-27 17:27:07.541701 7f939d7fa700  0 rbd::mirror::ImageReplayer:
+> 0x7f93c800e9e0 [19/b6656be7-6006-4246-ba93-a49a220e33ce] handle_shut_down:
+> remote image no longer exists: scheduling deletion
+> 2019-07-27 17:27:16.766199 7f93eb0a5780 20 librbd::api::Mirror: peer_list:
+> 2019-07-27 17:27:22.568970 7f939d7fa700  0 rbd::mirror::ImageReplayer:
+> 0x7f93c800e9e0 [19/b6656be7-6006-4246-ba93-a49a220e33ce] handle_shut_down:
+> mirror image no longer exists
+> 2019-07-27 17:27:46.769158 7f93eb0a5780 20 librbd::api::Mirror: peer_list:
+> 2019
+
+The log tells that the primary image was deleted by some reason and
+the rbd-mirror scheduled the secondary (mirrored) image deletion. From
+the logs it is not seen why the primary image was deleted. It might be
+sinder but can't exlude some bug in the rbd-mirror, running on the
+primary cluster, though I don't recall any issues like this.
+
+> *Attimes i can able to create bootable cinder volume apart from the above
+> errors, but certain times i face the following
+> 
+> example, For a 50 gb volume, Local image get created, but it couldnt create
+> a mirror image
+
+"Connection timed out" errors suggest you have a connectivity issue
+between sites?
+
 -- 
-1.8.3.1
-
-
+Mykola Golub
