@@ -2,85 +2,122 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1804787AB
-	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2019 10:42:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BED1788A9
+	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2019 11:43:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbfG2Imh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 29 Jul 2019 04:42:37 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:38750 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727109AbfG2Img (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 29 Jul 2019 04:42:36 -0400
-Received: by mail-io1-f65.google.com with SMTP id j6so43038140ioa.5
-        for <ceph-devel@vger.kernel.org>; Mon, 29 Jul 2019 01:42:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5TNsxgSGr0hqSgPDD85uDWoUArEOMGS+PXx5/qD+LA0=;
-        b=ni4Z6xXhk7LNagNGzy5DiDUzVswBvdwa5QzPIdwrWcd27lKIoKZhEsG2D8K3D+sMaK
-         zby+HqskLg/j36dyffAJ3GqeQHfB+pnTodVBALBylEELRzSMKI1az4jmF/YICngNmcuE
-         Q4eO8OatePUdzpyJniWsBgWIkVhOpL2xilUkpKSTi6eUvbKtTIc6LU7CjPjeePOe752n
-         plV2ac1lNL8SRXLAviTogrWdDVZp7hXow86fGZhPaI3CoXtigvGVNnZu47MiagHIMdpW
-         TKpA9+XCC58ue+G8vjRHzRmV8AggqdEMtcI6ZaLdoz6h5+bjNIjsutOGOMDRR5U0e1fO
-         8lJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5TNsxgSGr0hqSgPDD85uDWoUArEOMGS+PXx5/qD+LA0=;
-        b=Om3mrh46kBg8suD31M3JnpQoCDu5uFycbQ4MZU7s4ihZ4z06kRb+z5Uo9YyQbq9LX4
-         K6x80C1jxEEhFFlVmIL6gXvnZwGr5Xrqm2bhTt9wG7pmktAdR82AhfcRABytsFvx4YIe
-         ruflnp21rCy4OcyXMITT7dbr/2U6P7XQ4DlZQoe9c8SlnZHg6M7rYJSHCsg6HafOBxm2
-         qtDYMIYh63NNwJSvZKolckM57EW7nU/NWYpOz3C//40W5YX6ZzWTpxLY8GGleLVEx88Z
-         NOfS0Qh/8BI9gfLMmYc5FlWcX8S1TtHIk91rjwTuNjRzGLbSlFMVRLBnNgKjfis5V+/l
-         K7/Q==
-X-Gm-Message-State: APjAAAU8kEMkOGnjyimEMukkwVOxHK13KLrpWErTe1iV13Pv8IQIqzOJ
-        mZfpOR23u+y9JxpyCna+0ovxr/bLfPl00GxQKUk=
-X-Google-Smtp-Source: APXvYqxH2Xuqp8iVe9BIdnqn/WqQjNuHgHoYXYFdZHPDlAlcfvXiyIdGUSnMLcXjpgAFdKEIzp29XUT1B46lKbyShLU=
-X-Received: by 2002:a6b:7311:: with SMTP id e17mr54849946ioh.112.1564389755552;
- Mon, 29 Jul 2019 01:42:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAKQB+fsGD4b_RE1yF3RQszne+xrcEVV9QZiObwwZ39GDCh6n5Q@mail.gmail.com>
- <CAAM7YAmd+63fAO8EPvw4jE0=ZUZAW2nOQhkmuYcXLhdEPeV-dA@mail.gmail.com>
- <CAKQB+fsbPXvmGj11NW0nJ50VGJeWkTc7vfpDZ0a6Jrw2DOWSgA@mail.gmail.com> <CAKQB+fuoAmSzsFmJz2ou5Rp6jGKv6XSpfo08t2C+Hj6_yb2+_A@mail.gmail.com>
-In-Reply-To: <CAKQB+fuoAmSzsFmJz2ou5Rp6jGKv6XSpfo08t2C+Hj6_yb2+_A@mail.gmail.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 29 Jul 2019 10:45:29 +0200
-Message-ID: <CAOi1vP-6Xd_jrnRf-Q7qL0SKUQ3kXHuKfOUmx_uYqQEX6R=PJQ@mail.gmail.com>
-Subject: Re: cephfs kernel client umount stucks forever
-To:     Jerry Lee <leisurelysw24@gmail.com>
-Cc:     "Yan, Zheng" <ukernel@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        Jeff Layton <jlayton@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726371AbfG2Jn3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 29 Jul 2019 05:43:29 -0400
+Received: from m97138.mail.qiye.163.com ([220.181.97.138]:22496 "EHLO
+        m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725818AbfG2Jn2 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 29 Jul 2019 05:43:28 -0400
+Received: from atest-guest.localdomain (unknown [218.94.118.90])
+        by smtp9 (Coremail) with SMTP id u+CowADHYpWjvz5djxunAA--.901S2;
+        Mon, 29 Jul 2019 17:42:59 +0800 (CST)
+From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
+To:     idryomov@gmail.com, jdillama@redhat.com
+Cc:     ceph-devel@vger.kernel.org,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>
+Subject: [PATCH v3 00/15] rbd journaling feature
+Date:   Mon, 29 Jul 2019 09:42:42 +0000
+Message-Id: <1564393377-28949-1-git-send-email-dongsheng.yang@easystack.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-CM-TRANSID: u+CowADHYpWjvz5djxunAA--.901S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWrW3tw4fuF1xGF1DtF48Xrb_yoWrJr4DpF
+        43Gw13XrWUZr17Aws7Ja18Jry5ZrW8ArWUWr1DGrn7Kw15AFy2qr1UtryrJry7JryxGr1U
+        Jr1UJw1UGw1UAFUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JbSxhLUUUUU=
+X-Originating-IP: [218.94.118.90]
+X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiWwMBelf4pRYZaAAAsO
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 11:23 AM Jerry Lee <leisurelysw24@gmail.com> wrote:
->
-> Some additional information are provided as below:
->
-> I tried to restart the active MDS, and after the standby MDS took
-> over, there is no client session recorded in the output of `ceph
-> daemon mds.xxx session ls`.  When I restarted the OSD.13 daemon, the
-> stuck write op finished immediately.  Thanks.
+Hi Ilya, Jason and all:
+      	As new exclusive-lock is merged, I think we can start this work now.
+This is V3, which is rebased against 5.3-rc1.
 
-So it happened again with the same OSD?  Did you see this with other
-OSDs?
+Testing:
+	kernel branch: https://github.com/yangdongsheng/linux/tree/krbd_journaling_v3
+	ceph qa branch: https://github.com/yangdongsheng/ceph/tree/krbd_mirror_qa
 
-Try enabling some logging on osd.13 since this seems to be a recurring
-issue.  At least "debug ms = 1" so we can see whether it ever sends the
-reply to the original op (i.e. prior to restart).
+	(1). A new test added: workunits/rbd/kernel_journal.sh: to test the journal replaying in krbd.
+	(2). A new test added: qa/suites/krbd/mirror/, this test krbd journaling with rbd-mirror daemon.
 
-Also, take note of the epoch in osdc output:
+Performance:
+        compared with librbd journaling, preformance of krbd journaling looks reasonable.
+        -------------------------------------------------------------------------------------
+        (1) rbd bench with journaling disabled:         |       IOPS: 114
+        -------------------------------------------------------------------------------------
+        (2) rbd bench with journaling enabled:          |       IOPS: 55
+        -------------------------------------------------------------------------------------
+        (3) fio krbd with journaling disabled:          |       IOPS: 118
+        -------------------------------------------------------------------------------------
+        (4) fio krbd with journaling enabled:           |       IOPS: 57
+        -------------------------------------------------------------------------------------
 
-36      osd13   ... e327 ...
+TODO:
+	(1). there are some TODOs in comments, such as supporting rbd_journal_max_concurrent_object_sets.
+	(2). add debugfs for generic journaling.
 
-Does "ceph osd dump" show the same epoch when things are stuck?
+	I would like to put this TODO work in next cycle, but focus on making  the current work ready to go.
 
-Thanks,
+Changelog:
+	-V2
+		1. support large event (> 4M)
+		2. fix bug in replay in different clients appending
+		3. rebase against 5.3-rc1
+		4. refactor journaler appending into state machine
+        -V1
+                1. add test case in qa
+                2. address all memleak found in kmemleak
+                3. several bug fixes
+                4. performance improvement.
+        -RFC
+                1. error out if there is some unsupported event type in replaying
+                2. just one memory copy from bio to msg.
+                3. use async IO in journal appending.
+                4. no mutex around IO.
 
-                Ilya
+Any comments are welcome!!
+
+Dongsheng Yang (15):
+  libceph: introduce ceph_extract_encoded_string_kvmalloc
+  libceph: introduce a new parameter of workqueue in ceph_osdc_watch()
+  libceph: support op append
+  libceph: add prefix and suffix in ceph_osd_req_op.extent
+  libceph: introduce cls_journaler_client
+  libceph: introduce generic journaling
+  libceph: journaling: introduce api to replay uncommitted journal
+    events
+  libceph: journaling: introduce api for journal appending
+  libceph: journaling: trim object set when we found there is no client
+    refer it
+  rbd: introduce completion for each img_request
+  rbd: introduce IMG_REQ_NOLOCK flag for image request state
+  rbd: introduce rbd_journal_allocate_tag to allocate journal tag for
+    rbd client
+  rbd: append journal event in image request state machine
+  rbd: replay events in journal
+  rbd: add support for feature of RBD_FEATURE_JOURNALING
+
+ drivers/block/rbd.c                       |  600 +++++++-
+ include/linux/ceph/cls_journaler_client.h |   94 ++
+ include/linux/ceph/decode.h               |   21 +-
+ include/linux/ceph/journaler.h            |  184 +++
+ include/linux/ceph/osd_client.h           |   19 +
+ net/ceph/Makefile                         |    3 +-
+ net/ceph/cls_journaler_client.c           |  558 ++++++++
+ net/ceph/journaler.c                      | 2231 +++++++++++++++++++++++++++++
+ net/ceph/osd_client.c                     |   61 +-
+ 9 files changed, 3759 insertions(+), 12 deletions(-)
+ create mode 100644 include/linux/ceph/cls_journaler_client.h
+ create mode 100644 include/linux/ceph/journaler.h
+ create mode 100644 net/ceph/cls_journaler_client.c
+ create mode 100644 net/ceph/journaler.c
+
+-- 
+1.8.3.1
+
+
