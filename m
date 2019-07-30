@@ -2,101 +2,124 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C7197AD03
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 Jul 2019 17:57:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA8187B349
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Jul 2019 21:28:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729216AbfG3P5U (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 30 Jul 2019 11:57:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40090 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726363AbfG3P5U (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:57:20 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AD19A300CB0C;
-        Tue, 30 Jul 2019 15:57:17 +0000 (UTC)
-Received: from redhat.com (ovpn-112-36.rdu2.redhat.com [10.10.112.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A63655D6A7;
-        Tue, 30 Jul 2019 15:57:05 +0000 (UTC)
-Date:   Tue, 30 Jul 2019 11:57:02 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Christoph Hellwig <hch@infradead.org>, john.hubbard@gmail.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        netdev@vger.kernel.org, samba-technical@lists.samba.org,
-        v9fs-developer@lists.sourceforge.net,
-        virtualization@lists.linux-foundation.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        Minwoo Im <minwoo.im.dev@gmail.com>
-Subject: Re: [PATCH 03/12] block: bio_release_pages: use flags arg instead of
- bool
-Message-ID: <20190730155702.GB10366@redhat.com>
-References: <20190724042518.14363-1-jhubbard@nvidia.com>
- <20190724042518.14363-4-jhubbard@nvidia.com>
- <20190724053053.GA18330@infradead.org>
- <20190729205721.GB3760@redhat.com>
- <20190730102557.GA1700@lst.de>
+        id S2387863AbfG3T22 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 30 Jul 2019 15:28:28 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:33433 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727169AbfG3T22 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 30 Jul 2019 15:28:28 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MfpjF-1iYSFh2Mgb-00gKk2; Tue, 30 Jul 2019 21:28:20 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, "Yan, Zheng" <zyan@redhat.com>,
+        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        ceph-devel@vger.kernel.org
+Subject: [PATCH v5 07/29] ceph: fix compat_ioctl for ceph_dir_operations
+Date:   Tue, 30 Jul 2019 21:25:18 +0200
+Message-Id: <20190730192552.4014288-8-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20190730192552.4014288-1-arnd@arndb.de>
+References: <20190730192552.4014288-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190730102557.GA1700@lst.de>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 30 Jul 2019 15:57:19 +0000 (UTC)
+X-Provags-ID: V03:K1:OFNJPOAxGGQ88UZpH506xX65QSClANbkeR8AXnNFg+lHh90Gp1y
+ Km41PW8pur9V06yneCdcMZ9hh6d7J9oJdH/kEeWqHVzsG8RfrRQSupk+d4DtS4KyFBYLPBk
+ rLbLRcJlpLJWSeIcWqGypgZFvJWpty+odggTjE26mYnYSO+ZtQlFYfaJz+zO9Ttf4G3JFIk
+ GArX7xpL2XyXJhbP6c1FA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:7ixz1WNaE9E=:uKu7zALGZzh9Pb/581lnUp
+ nEk/LWN5HTdg5wgAzCfGiVw/W98p50xEGd/MYkeFR/+jqdAlXWazfuGBWuoHj/4eQJfnvWJ5r
+ 4mVE7cUYfbuFFpZ+Vp+MldVtItnygDJl4pYCuOWCGYep5VqwG1vaLk4kGIj91MRla4R3f//mN
+ Ao3WW5mslyMD18Z+FIV50rXswB9VoGR4WQw7RTJUHetuBsHa07aPDlSRcY/uP2lOEkmZ2p2kN
+ YFsUfeib4Gt9qLDT4OI0fyD7SvU9ZELhn5Q+RJk1rv4DxktrrUern2aMCavVNcat0Izyxz5jq
+ GMZzq2Gc9G3qdZ5NGD9I2nQA1qYLsPlr1ZOybe2mG6r69qiwGnCV/aEFfehF147d8NBcZkIb3
+ aQn1oI+qSDtExttzQKmjqV8Cr9PvYZTBV5+kXOQa5HjTdQj+ECe82bjd/+/D4fByztqZlwqjJ
+ yQWn6RZ4myWQG6fv/KYq0Ws3eHzP/9STmpTiTh4zQzz+GWGVHzFcIqvkP5VA5rr75q95jzPn7
+ 394M+z/wTyOYXLfcXkUOAxu/+lXElKeFl6hsPOtRAxIMidDR1Z/OJV5ACHotfEjWCHTQns1H4
+ qhefIVICQQS3pBpDC9mbTC83KPjxxgwOMdmWfzc0d5sS2vlzQRcDh+o9GP6ad992ZzONHzn+f
+ 9bot1snjzctzXYFC/KfkjepJfrF4h+GLon35W3nYgIqFb8ZzPKescF3M7t1zHlnqoJ2JrpJIz
+ Mx8EeqifWwxcXLRP7OQCYd9H/5ANh8rYYo1wNg==
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 12:25:57PM +0200, Christoph Hellwig wrote:
-> On Mon, Jul 29, 2019 at 04:57:21PM -0400, Jerome Glisse wrote:
-> > > All pages releases by bio_release_pages should come from
-> > > get_get_user_pages, so I don't really see the point here.
-> > 
-> > No they do not all comes from GUP for see various callers
-> > of bio_check_pages_dirty() for instance iomap_dio_zero()
-> > 
-> > I have carefully tracked down all this and i did not do
-> > anyconvertion just for the fun of it :)
-> 
-> Well, the point is _should_ not necessarily do.  iomap_dio_zero adds the
-> ZERO_PAGE, which we by definition don't need to refcount.  So we can
-> mark this bio BIO_NO_PAGE_REF safely after removing the get_page there.
-> 
-> Note that the equivalent in the old direct I/O code, dio_refill_pages,
-> will be a little more complicated as it can match user pages and the
-> ZERO_PAGE in a single bio, so a per-bio flag won't handle it easily.
-> Maybe we just need to use a separate bio there as well.
-> 
-> In general with series like this we should not encode the status quo an
-> pile new hacks upon the old one, but thing where we should be and fix
-> up the old warts while having to wade through all that code.
+The ceph_ioctl function is used both for files and directories, but only
+the files support doing that in 32-bit compat mode.
 
-Other user can also add page that are not coming from GUP but need to
-have a reference see __blkdev_direct_IO() saddly bio get fill from many
-different places and not always with GUP. So we can not say that all
-pages here are coming from bio. I had a different version of the patchset
-i think that was adding a new release dirty function for GUP versus non
-GUP bio. I posted it a while ago, i will try to dig it up once i am
-back.
+For consistency, add the same compat handler to the dir operations
+as well, and use a handler that applies the appropriate compat_ptr()
+conversion.
 
-Cheers,
-Jérôme
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/ceph/dir.c   |  1 +
+ fs/ceph/file.c  |  2 +-
+ fs/ceph/super.h | 10 ++++++++++
+ 3 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index 4ca0b8ff9a72..401c17d36b71 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1808,6 +1808,7 @@ const struct file_operations ceph_dir_fops = {
+ 	.open = ceph_open,
+ 	.release = ceph_release,
+ 	.unlocked_ioctl = ceph_ioctl,
++	.compat_ioctl = ceph_compat_ioctl,
+ 	.fsync = ceph_fsync,
+ 	.lock = ceph_lock,
+ 	.flock = ceph_flock,
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 685a03cc4b77..99712b6b1ad5 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -2138,7 +2138,7 @@ const struct file_operations ceph_file_fops = {
+ 	.splice_read = generic_file_splice_read,
+ 	.splice_write = iter_file_splice_write,
+ 	.unlocked_ioctl = ceph_ioctl,
+-	.compat_ioctl	= ceph_ioctl,
++	.compat_ioctl = ceph_compat_ioctl,
+ 	.fallocate	= ceph_fallocate,
+ 	.copy_file_range = ceph_copy_file_range,
+ };
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index d2352fd95dbc..0aebccd48fa0 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -6,6 +6,7 @@
+ 
+ #include <asm/unaligned.h>
+ #include <linux/backing-dev.h>
++#include <linux/compat.h>
+ #include <linux/completion.h>
+ #include <linux/exportfs.h>
+ #include <linux/fs.h>
+@@ -1108,6 +1109,15 @@ extern void ceph_readdir_cache_release(struct ceph_readdir_cache_control *ctl);
+ 
+ /* ioctl.c */
+ extern long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
++static inline long
++ceph_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++#ifdef CONFIG_COMPAT
++	return ceph_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
++#else
++	return -ENOTTY;
++#endif
++}
+ 
+ /* export.c */
+ extern const struct export_operations ceph_export_ops;
+-- 
+2.20.0
+
