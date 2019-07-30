@@ -2,126 +2,101 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C4567ABD6
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 Jul 2019 17:02:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C7197AD03
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Jul 2019 17:57:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731928AbfG3PCE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 30 Jul 2019 11:02:04 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34815 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730274AbfG3PCE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 30 Jul 2019 11:02:04 -0400
-Received: by mail-io1-f68.google.com with SMTP id k8so128826857iot.1
-        for <ceph-devel@vger.kernel.org>; Tue, 30 Jul 2019 08:02:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TX4cM7SbAOrMoR83f2VqHS09S2ytNB1eGNkrG7/uN5A=;
-        b=R6+63yagElfhjKNQzPnPTBcq+29J3Cd4ff7luVZCbtI98Pd32NQj8gi9hcw2CPL/Z8
-         DVBAn/MR51S48DNhLr5/5l16rBlvQU82yo07JcMmwWBFfpFLZW7tMBUj5oYigUGYMF4q
-         Dqt2L3ymduVHIOHF2fO8zSUr/uF373GUtdvjfzU8Z8TBUypWLJ+bA8l2uEzWejHIoK4D
-         +RWa9Y1k3jnKheFkxuRgIncZ4RBYpP1M27MFGzt7BE1QXQ80gNNqwuQRrGv/NgMwBerG
-         3w+gcONEX8j+YKf3G+yKTdv8ZzauoFpvmphZmu+9Fvy8915tKU1x+LjO1lr2Jzo57bDW
-         wESA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TX4cM7SbAOrMoR83f2VqHS09S2ytNB1eGNkrG7/uN5A=;
-        b=NhOTUdk1gZ0O1rzejkV5thmtjFPWNiFRlN4VxP77zuYHezAkEVCRT6DhChRMfllUNN
-         HLI82Dr6bLNA0Tk7k29MtDdU5DsHK9oOXUrNuwvpwTInOmL5R13CCW8tfY/3TerpYitM
-         a8qI4He/SKJRsIQsGYNSWkN32U83d3r2d97Mw0eXHhdNRYqcDWahN5htbNwjGPpR4HI1
-         /zIvcOMC4JfDDhCV+3KFX3tUa5GGdyzr2xkWnfsVPVQJXhJ3VbZALTs37dEmUtSMFOGH
-         ZXZlKa4q0IwajVZmcmKPGe2Wng5XaB/nuHWhpYrg6Fju9GG4S1pV3QrFmzYQNXCL499L
-         bCrQ==
-X-Gm-Message-State: APjAAAVDlWuux0lsc3bGK9VV1SHqNXTcCy56WKkzRCbf/PloQhtglUPW
-        PxxSCPzMonZIAdd7I4rhzFLAqUczZnBcV26P6lE=
-X-Google-Smtp-Source: APXvYqyAKX3CcuW+EEoGDMg6zXZEWTjV+fGut7+rr+Cp3viARiZuuOoRYgIimf45iz2yxPsAobvgA3E7tS3WxNtl+EM=
-X-Received: by 2002:a02:5a89:: with SMTP id v131mr122942515jaa.130.1564498923490;
- Tue, 30 Jul 2019 08:02:03 -0700 (PDT)
+        id S1729216AbfG3P5U (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 30 Jul 2019 11:57:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40090 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726363AbfG3P5U (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 30 Jul 2019 11:57:20 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AD19A300CB0C;
+        Tue, 30 Jul 2019 15:57:17 +0000 (UTC)
+Received: from redhat.com (ovpn-112-36.rdu2.redhat.com [10.10.112.36])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A63655D6A7;
+        Tue, 30 Jul 2019 15:57:05 +0000 (UTC)
+Date:   Tue, 30 Jul 2019 11:57:02 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Christoph Hellwig <hch@infradead.org>, john.hubbard@gmail.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, samba-technical@lists.samba.org,
+        v9fs-developer@lists.sourceforge.net,
+        virtualization@lists.linux-foundation.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        Minwoo Im <minwoo.im.dev@gmail.com>
+Subject: Re: [PATCH 03/12] block: bio_release_pages: use flags arg instead of
+ bool
+Message-ID: <20190730155702.GB10366@redhat.com>
+References: <20190724042518.14363-1-jhubbard@nvidia.com>
+ <20190724042518.14363-4-jhubbard@nvidia.com>
+ <20190724053053.GA18330@infradead.org>
+ <20190729205721.GB3760@redhat.com>
+ <20190730102557.GA1700@lst.de>
 MIME-Version: 1.0
-References: <CAKQB+fsGD4b_RE1yF3RQszne+xrcEVV9QZiObwwZ39GDCh6n5Q@mail.gmail.com>
- <CAAM7YAmd+63fAO8EPvw4jE0=ZUZAW2nOQhkmuYcXLhdEPeV-dA@mail.gmail.com>
- <CAKQB+fsbPXvmGj11NW0nJ50VGJeWkTc7vfpDZ0a6Jrw2DOWSgA@mail.gmail.com>
- <CAKQB+fuoAmSzsFmJz2ou5Rp6jGKv6XSpfo08t2C+Hj6_yb2+_A@mail.gmail.com>
- <CAOi1vP-6Xd_jrnRf-Q7qL0SKUQ3kXHuKfOUmx_uYqQEX6R=PJQ@mail.gmail.com> <CAKQB+fsCpkWf=OfVPiQ8Fq159g+X7v33fvTV85pwUErUzA=dzA@mail.gmail.com>
-In-Reply-To: <CAKQB+fsCpkWf=OfVPiQ8Fq159g+X7v33fvTV85pwUErUzA=dzA@mail.gmail.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 30 Jul 2019 17:04:57 +0200
-Message-ID: <CAOi1vP8bSFvh600_q7SiMnOkV0BTKutD=qKP66Lh0FcNtH0kLw@mail.gmail.com>
-Subject: Re: cephfs kernel client umount stucks forever
-To:     Jerry Lee <leisurelysw24@gmail.com>
-Cc:     "Yan, Zheng" <ukernel@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        Jeff Layton <jlayton@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190730102557.GA1700@lst.de>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 30 Jul 2019 15:57:19 +0000 (UTC)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 11:20 AM Jerry Lee <leisurelysw24@gmail.com> wrote:
->
-> Hello Ilya,
->
-> On Mon, 29 Jul 2019 at 16:42, Ilya Dryomov <idryomov@gmail.com> wrote:
-> >
-> > On Fri, Jul 26, 2019 at 11:23 AM Jerry Lee <leisurelysw24@gmail.com> wrote:
-> > >
-> > > Some additional information are provided as below:
-> > >
-> > > I tried to restart the active MDS, and after the standby MDS took
-> > > over, there is no client session recorded in the output of `ceph
-> > > daemon mds.xxx session ls`.  When I restarted the OSD.13 daemon, the
-> > > stuck write op finished immediately.  Thanks.
-> >
-> > So it happened again with the same OSD?  Did you see this with other
-> > OSDs?
->
-> Yes.  The issue always happened on the same OSD from previous
-> experience.  However, it did happen with other OSD on other node from
-> the Cephfs kernel client's point of view.
+On Tue, Jul 30, 2019 at 12:25:57PM +0200, Christoph Hellwig wrote:
+> On Mon, Jul 29, 2019 at 04:57:21PM -0400, Jerome Glisse wrote:
+> > > All pages releases by bio_release_pages should come from
+> > > get_get_user_pages, so I don't really see the point here.
+> > 
+> > No they do not all comes from GUP for see various callers
+> > of bio_check_pages_dirty() for instance iomap_dio_zero()
+> > 
+> > I have carefully tracked down all this and i did not do
+> > anyconvertion just for the fun of it :)
+> 
+> Well, the point is _should_ not necessarily do.  iomap_dio_zero adds the
+> ZERO_PAGE, which we by definition don't need to refcount.  So we can
+> mark this bio BIO_NO_PAGE_REF safely after removing the get_page there.
+> 
+> Note that the equivalent in the old direct I/O code, dio_refill_pages,
+> will be a little more complicated as it can match user pages and the
+> ZERO_PAGE in a single bio, so a per-bio flag won't handle it easily.
+> Maybe we just need to use a separate bio there as well.
+> 
+> In general with series like this we should not encode the status quo an
+> pile new hacks upon the old one, but thing where we should be and fix
+> up the old warts while having to wade through all that code.
 
-Hi Jerry,
+Other user can also add page that are not coming from GUP but need to
+have a reference see __blkdev_direct_IO() saddly bio get fill from many
+different places and not always with GUP. So we can not say that all
+pages here are coming from bio. I had a different version of the patchset
+i think that was adding a new release dirty function for GUP versus non
+GUP bio. I posted it a while ago, i will try to dig it up once i am
+back.
 
-I'm not sure what you mean by "it did happen with other OSD on other
-node from the Cephfs kernel client's point of view".
-
->
-> >
-> > Try enabling some logging on osd.13 since this seems to be a recurring
-> > issue.  At least "debug ms = 1" so we can see whether it ever sends the
-> > reply to the original op (i.e. prior to restart).
->
-> Get it, I will raise the debug level to retrive more logs for further
-> investigateion.
->
-> >
-> > Also, take note of the epoch in osdc output:
-> >
-> > 36      osd13   ... e327 ...
-> >
-> > Does "ceph osd dump" show the same epoch when things are stuck?
-> >
->
-> Unfortunately, the environment was gone.  But from the logs captured
-> before, the epoch seems to be consistent between client and ceph
-> cluster when thing are stuck, right?
->
-> 2019-07-26 12:24:08.475 7f06efebc700  0 log_channel(cluster) log [DBG]
-> : osdmap e306: 15 total, 15 up, 15 in
->
-> BTW, logs of OSD.13 and dynamic debug kernel logs of libceph captured
-> on the stuck node are provided in
-> https://drive.google.com/drive/folders/1gYksDbCecisWtP05HEoSxevDK8sywKv6?usp=sharing.
-
-The libceph log confirms that it had two laggy requests but it ends
-before you restarted the OSD.  The OSD log is useless: we really need
-to see individual ops coming in and replies going out.  It appears that
-the OSD simply dropped those ops expecting the kernel to resend them
-but that didn't happen for some reason.
-
-Thanks,
-
-                Ilya
+Cheers,
+Jérôme
