@@ -2,114 +2,119 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC1EA7A3E6
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 Jul 2019 11:20:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E2CC7A4AB
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Jul 2019 11:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729211AbfG3JUZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 30 Jul 2019 05:20:25 -0400
-Received: from mail-ot1-f41.google.com ([209.85.210.41]:38182 "EHLO
-        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728192AbfG3JUZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 30 Jul 2019 05:20:25 -0400
-Received: by mail-ot1-f41.google.com with SMTP id d17so65598582oth.5
-        for <ceph-devel@vger.kernel.org>; Tue, 30 Jul 2019 02:20:24 -0700 (PDT)
+        id S1731780AbfG3Ji1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 30 Jul 2019 05:38:27 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:34696 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728830AbfG3Ji1 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 30 Jul 2019 05:38:27 -0400
+Received: by mail-io1-f68.google.com with SMTP id k8so126642137iot.1;
+        Tue, 30 Jul 2019 02:38:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=RSha2djFRdlNL8qQLyzKbk2AYjvCREhjMCRE6C7Axr4=;
-        b=uCr+W8FTJxz6N7d5Da71YvBBNnHFf4veRzLK7ZCADy+KgUtJI/ZHy/s20Ch3t/dG8b
-         MWI8FXbQ3pKpqrIkcRFzdc9hGPlNXNXHnEut6WYt961bxSsNOu/vx5jBjwfXv91Hfee7
-         srJUtRvWvvkTQ/wmZTPJvYqhUggz+wwpgbera3j78NIaSObfEOUS5AGKUwhN17AjkGbB
-         VR6ZO/+pJntVKBy8lGBupa4LHzqeZNG1EPUyZ4aBXahJvsSwUzsXt3vLffrrwZ/Qtbad
-         /FUum49KlZa9sY8B+sivhLnIHfjKhvW7Ukz7q9GNT7wxXf9ZDN1EtMRoMtrXU7uVqGs3
-         /hrQ==
+        bh=Ou13JSb7APrBhtuQv/5kmhMM+zV7koQaR2bgg5AZQlY=;
+        b=j0EFIzRfAw0lRTK+yYPE5ulbxWukeaSAp3cdW3OtkvwySlKqShPEX+esUskyEmaz91
+         smWqM1KuHFepV/SlIWOSjqsSdg8Rx2XmuuZpOHigBAW4QSrFVXmG7MdUVnC6R9ajU2hm
+         xm15gw005bdAhMxcfib8hbYxQCjB7VN7JpsJ94/H0hBwuKq/94Av/hGYlmwDR0GJvrEI
+         Zl60nLCHPxaRhKZmHADpAje0zxwvLZx/J8L99Ybb886lm1oPeQxkk9KtTFwsj/jRh7zE
+         tWatY/3twGR0P+54g2zzWwAK/Iz5zfAqGrFuLR2sUEL4/fHqysGsmSGKYK1dOCJ3nW0G
+         TeUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RSha2djFRdlNL8qQLyzKbk2AYjvCREhjMCRE6C7Axr4=;
-        b=i5KjHNdXwgJPv6Way1WzfydBhf8q56cVEHa5aEXSnfhZRJwncCOC0HqOXdMw6CE0bq
-         UcoJwYvsoqD8Q52x27Sby8I99G5opgNVMsNem9F+8oRAK5yukVrHrT/6bzQGo6ZZdBFt
-         C5MlVHBJJ/P6m/Tonbl/DWZPUUXqJz7QxAjMlioP4m/Axrgya88+p0XLvhM0kFdTqyPt
-         Aax+8tOu6D4cMoNKDC+rTLqBpGvVOZDEhZh23QTyF64NUZohHvFuLrmjkrpornnKMllU
-         lAMLf56mbG4TKwgUev9sjS3qOv4zxynhSWwvYOpadXWJ1tk48ZRkRgGUISYqSpVPxGfM
-         K5Yg==
-X-Gm-Message-State: APjAAAV2VBk+owkPlteMjysR76Nch/541ZizUw+L1DtUItW0iT6Ajpuq
-        jqjtaw3k2JcM+ynKWfNlFI+sKOrfVgS08/PkfskDohwl
-X-Google-Smtp-Source: APXvYqykQTIze4oYmQO742dHvSePM8kLh85OdrdXZE9Z9lJy32nukiw/DU3KBto+rreIu7Y2FiKhvhKmApQxSckX3rk=
-X-Received: by 2002:a05:6830:18a:: with SMTP id q10mr81130399ota.114.1564478424191;
- Tue, 30 Jul 2019 02:20:24 -0700 (PDT)
+        bh=Ou13JSb7APrBhtuQv/5kmhMM+zV7koQaR2bgg5AZQlY=;
+        b=Y7lKTsJDyBa1QlcMkslkasyaY5LhfA1oDvCsNxCnSLxkyV3AgEoZl2jkg7MP5QDMEp
+         UXuOxk5Vd7T6ZNVdvpMyEgoCa81OrACqqwGob3tyYtj0N5GE5vo1tIhJoW2aWjNQvITH
+         grGmFTIAVErnezdS0fgHF9bOfSGM0d8I+6pnUH14IL+P6Atd7FXhD4OpIOWoWZxY7pVa
+         M2Vkypyvrg0AA8kQ+0pn8WbswoEXyVxSKafKjLJdyEZFkNjZGfKvgvULStwaGsvp1jsb
+         Mf0p0KEJ1POZcSKcVXhs+P5DYsbV/7WYXvBnvO6k//dNCeElbxHAB+5BYxAMkzeHdwdN
+         2YZA==
+X-Gm-Message-State: APjAAAUKlUmRl25Uy5oiaeDvscNmdfmEBDvdu39dpTnrazFU08TgNYSM
+        ptr+OFtgSnC7mGuviRSKtzSpaLRuXrvGJbWq7Ss=
+X-Google-Smtp-Source: APXvYqwl+CcolgEuiHDJ5d3iGImkrYA0AzcC+jBZlbomvM4WeZ0E72xKKPGki6Miq7I+qMQaYqL0tAiTMKCmbUnR/FY=
+X-Received: by 2002:a5e:d817:: with SMTP id l23mr6112819iok.282.1564479506244;
+ Tue, 30 Jul 2019 02:38:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAKQB+fsGD4b_RE1yF3RQszne+xrcEVV9QZiObwwZ39GDCh6n5Q@mail.gmail.com>
- <CAAM7YAmd+63fAO8EPvw4jE0=ZUZAW2nOQhkmuYcXLhdEPeV-dA@mail.gmail.com>
- <CAKQB+fsbPXvmGj11NW0nJ50VGJeWkTc7vfpDZ0a6Jrw2DOWSgA@mail.gmail.com>
- <CAKQB+fuoAmSzsFmJz2ou5Rp6jGKv6XSpfo08t2C+Hj6_yb2+_A@mail.gmail.com> <CAOi1vP-6Xd_jrnRf-Q7qL0SKUQ3kXHuKfOUmx_uYqQEX6R=PJQ@mail.gmail.com>
-In-Reply-To: <CAOi1vP-6Xd_jrnRf-Q7qL0SKUQ3kXHuKfOUmx_uYqQEX6R=PJQ@mail.gmail.com>
-From:   Jerry Lee <leisurelysw24@gmail.com>
-Date:   Tue, 30 Jul 2019 17:20:09 +0800
-Message-ID: <CAKQB+fsCpkWf=OfVPiQ8Fq159g+X7v33fvTV85pwUErUzA=dzA@mail.gmail.com>
-Subject: Re: cephfs kernel client umount stucks forever
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     "Yan, Zheng" <ukernel@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        Jeff Layton <jlayton@redhat.com>
+References: <20190724094306.1866-1-baijiaju1990@gmail.com>
+In-Reply-To: <20190724094306.1866-1-baijiaju1990@gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 30 Jul 2019 11:41:20 +0200
+Message-ID: <CAOi1vP8Q=fYZWv9qFZcyBdKV1VYq_yr3qWyAb44W=jHZ6zfYrA@mail.gmail.com>
+Subject: Re: [PATCH] net: ceph: Fix a possible null-pointer dereference in ceph_crypto_key_destroy()
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hello Ilya,
-
-On Mon, 29 Jul 2019 at 16:42, Ilya Dryomov <idryomov@gmail.com> wrote:
+On Wed, Jul 24, 2019 at 11:43 AM Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
 >
-> On Fri, Jul 26, 2019 at 11:23 AM Jerry Lee <leisurelysw24@gmail.com> wrote:
-> >
-> > Some additional information are provided as below:
-> >
-> > I tried to restart the active MDS, and after the standby MDS took
-> > over, there is no client session recorded in the output of `ceph
-> > daemon mds.xxx session ls`.  When I restarted the OSD.13 daemon, the
-> > stuck write op finished immediately.  Thanks.
+> In set_secret(), key->tfm is assigned to NULL on line 55, and then
+> ceph_crypto_key_destroy(key) is executed.
 >
-> So it happened again with the same OSD?  Did you see this with other
-> OSDs?
-
-Yes.  The issue always happened on the same OSD from previous
-experience.  However, it did happen with other OSD on other node from
-the Cephfs kernel client's point of view.
-
+> ceph_crypto_key_destroy(key)
+>     crypto_free_sync_skcipher(key->tfm)
+>         crypto_skcipher_tfm(tfm)
+>             return &tfm->base;
 >
-> Try enabling some logging on osd.13 since this seems to be a recurring
-> issue.  At least "debug ms = 1" so we can see whether it ever sends the
-> reply to the original op (i.e. prior to restart).
-
-Get it, I will raise the debug level to retrive more logs for further
-investigateion.
-
+> Thus, a possible null-pointer dereference may occur.
 >
-> Also, take note of the epoch in osdc output:
+> To fix this bug, key->tfm is checked before calling
+> crypto_free_sync_skcipher().
 >
-> 36      osd13   ... e327 ...
+> This bug is found by a static analysis tool STCheck written by us.
 >
-> Does "ceph osd dump" show the same epoch when things are stuck?
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  net/ceph/crypto.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
+> diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
+> index 5d6724cee38f..ac28463bcfd8 100644
+> --- a/net/ceph/crypto.c
+> +++ b/net/ceph/crypto.c
+> @@ -136,7 +136,8 @@ void ceph_crypto_key_destroy(struct ceph_crypto_key *key)
+>         if (key) {
+>                 kfree(key->key);
+>                 key->key = NULL;
+> -               crypto_free_sync_skcipher(key->tfm);
+> +               if (key->tfm)
+> +                       crypto_free_sync_skcipher(key->tfm);
+>                 key->tfm = NULL;
+>         }
+>  }
 
-Unfortunately, the environment was gone.  But from the logs captured
-before, the epoch seems to be consistent between client and ceph
-cluster when thing are stuck, right?
+Hi Jia-Ju,
 
-2019-07-26 12:24:08.475 7f06efebc700  0 log_channel(cluster) log [DBG]
-: osdmap e306: 15 total, 15 up, 15 in
+Yeah, looks like the only reason this continued to work after
+69d6302b65a8 ("libceph: Remove VLA usage of skcipher") is because
+crypto_sync_skcipher is a trivial wrapper around crypto_skcipher
+added just for type checking AFAICT.
 
-BTW, logs of OSD.13 and dynamic debug kernel logs of libceph captured
-on the stuck node are provided in
-https://drive.google.com/drive/folders/1gYksDbCecisWtP05HEoSxevDK8sywKv6?usp=sharing.
-I deeply appreciate your kindly help!
+struct crypto_sync_skcipher {
+    struct crypto_skcipher base;
+};
 
-- Jerry
+Before that ceph_crypto_key_destroy() used crypto_free_skcipher(),
+which is safe to call on a NULL tfm.
 
-> Thanks,
->
->                 Ilya
+Applied with a slight modification -- I moved key->tfm = NULL under
+the new if and amended the changelog.
+
+https://github.com/ceph/ceph-client/commit/b3d79916ff99074d289d66f1643b423ae0008c50
+
+Thanks,
+
+                Ilya
