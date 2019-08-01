@@ -2,62 +2,58 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9DBD7D729
-	for <lists+ceph-devel@lfdr.de>; Thu,  1 Aug 2019 10:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70C6C7D86C
+	for <lists+ceph-devel@lfdr.de>; Thu,  1 Aug 2019 11:23:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731047AbfHAIUM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 1 Aug 2019 04:20:12 -0400
-Received: from verein.lst.de ([213.95.11.211]:41407 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728146AbfHAIUM (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 1 Aug 2019 04:20:12 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 21DE768AFE; Thu,  1 Aug 2019 10:20:05 +0200 (CEST)
-Date:   Thu, 1 Aug 2019 10:20:04 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Christoph Hellwig <hch@infradead.org>, john.hubbard@gmail.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        netdev@vger.kernel.org, samba-technical@lists.samba.org,
-        v9fs-developer@lists.sourceforge.net,
-        virtualization@lists.linux-foundation.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        Minwoo Im <minwoo.im.dev@gmail.com>
-Subject: Re: [PATCH 03/12] block: bio_release_pages: use flags arg instead
- of bool
-Message-ID: <20190801082004.GA17348@lst.de>
-References: <20190724042518.14363-1-jhubbard@nvidia.com> <20190724042518.14363-4-jhubbard@nvidia.com> <20190724053053.GA18330@infradead.org> <20190729205721.GB3760@redhat.com> <20190730102557.GA1700@lst.de> <20190730155702.GB10366@redhat.com>
+        id S1731090AbfHAJXb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 1 Aug 2019 05:23:31 -0400
+Received: from mail-wr1-f45.google.com ([209.85.221.45]:46512 "EHLO
+        mail-wr1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729449AbfHAJXa (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 1 Aug 2019 05:23:30 -0400
+Received: by mail-wr1-f45.google.com with SMTP id z1so72746944wru.13
+        for <ceph-devel@vger.kernel.org>; Thu, 01 Aug 2019 02:23:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=spoEVR+KueiVtScYpxG0luRhwbpR4pYNNoNVE7qCyH8=;
+        b=YUFUDBiv0jSl54DFS+tbhfRBm8LPSv/XAUX5ug6A5C0NW1zfUU9JQhrbXNEfgJZoPm
+         EkGWkGOEz2rMdz9naqG4AhBmoPZP8CXMRRzI+8cpTM5DGVKauwZWtX9PapSvFTMO9NSp
+         7Uvl9epdJf7XiUP2piKzEO2CvUGjIIKYEKGfdzxT+Kj7shfBJiquhLUocS10DFFs1LEF
+         TmRUGqf/JVN5an2Ez+v4zHwz2WP/V8THmqxPXdYQYicFqMyY7I7JHSGH7Nnuds2GPX4T
+         /1GUbxkFZ87vXNDp/MdM1GSgRNxja0gW6tz87m89GXcZV9cPDnmbm1J69GnH6ZJlwTWH
+         S1SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=spoEVR+KueiVtScYpxG0luRhwbpR4pYNNoNVE7qCyH8=;
+        b=W82hGZf14VD2GqAn3Owr2h6+hNg9nhXEqmNXB+bPcIkTuxBhmlvj6qPAnmoyc2Ur9Z
+         7BsKKS2yctUbE0J29hoWcr1Ron7lD3X+EajWL3gqEE+FPfEgnGJJ2065syEKzJb29n7B
+         MMCQ9gsgYLquIZnfHikKhh9QlCp+/OcTtawaCQXB4P051IJAbkqXQYVw4c5xvtwILT9H
+         zIKIMXkcjKAdNRCJEYnZxSoqikY/QujssDEb/BYwazCgLKtZuhcAke7FJbM6O1+datGc
+         cP5PzEBoCIjRg6AqEn3J5dq+jpC2lmY4Sp8QzbnmwYMWdGdLbu0iRJY86QYbHdM2rVY1
+         8VPA==
+X-Gm-Message-State: APjAAAWv+2ockdF4sE0NWKEQvIqokNDkmQUUBq8vo/m+4SrTXHLO2OE0
+        0Ocy67k9YiSql/QN82coeYFnsic96JgrMg2DU6aNsI0b
+X-Google-Smtp-Source: APXvYqyqP1nK0aSUEpzkXY129UftiAFiEqCN0e2LBnd6rox02hTPvOCRpH8L+GSwl40V3nuGTb4es46bBhGDcnKDJZo=
+X-Received: by 2002:a5d:6389:: with SMTP id p9mr114507368wru.297.1564651408583;
+ Thu, 01 Aug 2019 02:23:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190730155702.GB10366@redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+From:   =?UTF-8?B?5r2Y5Lic5YWD?= <dongyuanpan0@gmail.com>
+Date:   Thu, 1 Aug 2019 17:23:17 +0800
+Message-ID: <CANkQ9LhcjLd+z804pVxkUY+sRSapVz88=VLoo2sNnXmQaj3+7A@mail.gmail.com>
+Subject: about ceph v12.2.12 rpm have no found
+To:     ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 11:57:02AM -0400, Jerome Glisse wrote:
-> Other user can also add page that are not coming from GUP but need to
-> have a reference see __blkdev_direct_IO()
-
-Except for the zero page case I mentioned in my last mail explicitly,
-and the KVEC/PIPE type iov vecs from the original mail what other
-pages do you see to get added?
+Hello,every one,
+  I can not found ceph v12.2.12 rpm at
+https://download.ceph.com/rpm-luminous/el7/aarch64/
+  why=EF=BC=9F
