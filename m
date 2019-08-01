@@ -2,34 +2,34 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 639127E411
-	for <lists+ceph-devel@lfdr.de>; Thu,  1 Aug 2019 22:28:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDF867E410
+	for <lists+ceph-devel@lfdr.de>; Thu,  1 Aug 2019 22:28:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbfHAU0Q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 1 Aug 2019 16:26:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49546 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727659AbfHAU0P (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        id S1727993AbfHAU0P (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
         Thu, 1 Aug 2019 16:26:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726999AbfHAU0O (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 1 Aug 2019 16:26:14 -0400
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A6262084C;
-        Thu,  1 Aug 2019 20:26:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC5A92087E;
+        Thu,  1 Aug 2019 20:26:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564691173;
-        bh=Xij1cDAFauv0aRo5uNWz6wMddYgRsuoDrvdZy+qgQcc=;
+        s=default; t=1564691174;
+        bh=nZQgPJKv5fwJ8ut+b7rCh8xkm2nY5C7BWMl6iIexTP0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qDafvrt6OHm58hF1E3tydhQqjyzPMEUgulJOJF3Wbvy0zqmjzquOBv5ZrrXEny4RD
-         ZZ/APZBikw4gIRUvTPElHiMQ7iaQtDOiu+1/ftIDL/dxVsrJ+mI7fud9nAb8HpN2KN
-         LPkmDukh0VvDa98fTJqICspC94wpbw+ysRuos4MM=
+        b=DbweZTEca2y2rjgMrm+LHR4wGSK1jUwTm5LV+zXoMoNvgOXXukpcmQmw/BVP+if81
+         wa6PfAy5n/vTX3xsKt3gq+RCbD1zhcgqKWoiVZ6rOdrWyEufpVbwIjn96a0Lk9ikuz
+         awk6R/G2sEdru3+ZzbNkyd7LVAB4bWg8GT1YKnl8=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     ukernel@gmail.com, idryomov@gmail.com, sage@redhat.com,
         pdonnell@redhat.com
-Subject: [PATCH 7/9] ceph: perform asynchronous unlink if we have sufficient caps
-Date:   Thu,  1 Aug 2019 16:26:03 -0400
-Message-Id: <20190801202605.18172-8-jlayton@kernel.org>
+Subject: [PATCH 8/9] ceph: new tracepoints when adding and removing caps
+Date:   Thu,  1 Aug 2019 16:26:04 -0400
+Message-Id: <20190801202605.18172-9-jlayton@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190801202605.18172-1-jlayton@kernel.org>
 References: <20190801202605.18172-1-jlayton@kernel.org>
@@ -40,270 +40,224 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: "Yan, Zheng" <zyan@redhat.com>
+Add support for two new tracepoints surrounding the adding/updating and
+removing of caps from the cache. To support this, we also add new functions
+for printing cap strings a'la ceph_cap_string().
 
-The MDS is getting a new lock-caching facility that will allow it
-to cache the necessary locks to allow asynchronous directory operations.
-Since the CEPH_CAP_FILE_* caps are currently unused on directories,
-we can repurpose those bits for this purpose.
-
-When performing an unlink, if we have Fx on the parent directory,
-and CEPH_CAP_DIR_UNLINK (aka Fr), and we know that the dentry being
-removed is the primary link, then then we can fire off an unlink
-request immediately and don't need to wait on reply before returning.
-
-In that situation, just fix up the dcache and link count and return
-immediately after issuing the call to the MDS. This does mean that we
-need to hold an extra reference to the inode being unlinked, and extra
-references to the caps to avoid races. Those references are put and
-error handling is done in the r_callback routine.
-
-If the operation ends up failing, then set a writeback error on the
-directory inode that can be fetched later by an fsync on the dir.
-
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/caps.c               | 35 ++++++++++++------
- fs/ceph/dir.c                | 70 +++++++++++++++++++++++++++++++++---
- fs/ceph/inode.c              |  8 ++++-
- fs/ceph/super.h              |  1 +
- include/linux/ceph/ceph_fs.h |  9 +++++
- 5 files changed, 107 insertions(+), 16 deletions(-)
+ fs/ceph/Makefile                |  3 +-
+ fs/ceph/caps.c                  |  4 ++
+ fs/ceph/trace.c                 | 76 +++++++++++++++++++++++++++++++++
+ fs/ceph/trace.h                 | 55 ++++++++++++++++++++++++
+ include/linux/ceph/ceph_debug.h |  1 +
+ 5 files changed, 138 insertions(+), 1 deletion(-)
+ create mode 100644 fs/ceph/trace.c
+ create mode 100644 fs/ceph/trace.h
 
+diff --git a/fs/ceph/Makefile b/fs/ceph/Makefile
+index a699e320393f..5148284f74a9 100644
+--- a/fs/ceph/Makefile
++++ b/fs/ceph/Makefile
+@@ -3,12 +3,13 @@
+ # Makefile for CEPH filesystem.
+ #
+ 
++ccflags-y += -I$(src)	# needed for trace events
+ obj-$(CONFIG_CEPH_FS) += ceph.o
+ 
+ ceph-y := super.o inode.o dir.o file.o locks.o addr.o ioctl.o \
+ 	export.o caps.o snap.o xattr.o quota.o \
+ 	mds_client.o mdsmap.o strings.o ceph_frag.o \
+-	debugfs.o
++	debugfs.o trace.o
+ 
+ ceph-$(CONFIG_CEPH_FSCACHE) += cache.o
+ ceph-$(CONFIG_CEPH_FS_POSIX_ACL) += acl.o
 diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index a9d0a2d211ac..9344e742397e 100644
+index 9344e742397e..236d9c205e3d 100644
 --- a/fs/ceph/caps.c
 +++ b/fs/ceph/caps.c
-@@ -991,7 +991,11 @@ int __ceph_caps_file_wanted(struct ceph_inode_info *ci)
- int __ceph_caps_wanted(struct ceph_inode_info *ci)
- {
- 	int w = __ceph_caps_file_wanted(ci) | __ceph_caps_used(ci);
--	if (!S_ISDIR(ci->vfs_inode.i_mode)) {
-+	if (S_ISDIR(ci->vfs_inode.i_mode)) {
-+		/* we want EXCL if holding caps of dir ops */
-+		if (w & CEPH_CAP_ANY_DIR_OPS)
-+			w |= CEPH_CAP_FILE_EXCL;
-+	} else {
- 		/* we want EXCL if dirty data */
- 		if (w & CEPH_CAP_FILE_BUFFER)
- 			w |= CEPH_CAP_FILE_EXCL;
-@@ -1886,10 +1890,13 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
- 			 * revoking the shared cap on every create/unlink
- 			 * operation.
- 			 */
--			if (IS_RDONLY(inode))
-+			if (IS_RDONLY(inode)) {
- 				want = CEPH_CAP_ANY_SHARED;
--			else
--				want = CEPH_CAP_ANY_SHARED | CEPH_CAP_FILE_EXCL;
-+			} else {
-+				want = CEPH_CAP_ANY_SHARED |
-+				       CEPH_CAP_FILE_EXCL |
-+				       CEPH_CAP_ANY_DIR_OPS;
-+			}
- 			retain |= want;
- 		} else {
+@@ -13,6 +13,7 @@
+ #include "super.h"
+ #include "mds_client.h"
+ #include "cache.h"
++#include "trace.h"
+ #include <linux/ceph/decode.h>
+ #include <linux/ceph/messenger.h>
  
-@@ -2652,7 +2659,10 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
- 				}
- 				snap_rwsem_locked = true;
- 			}
--			*got = need | (have & want);
-+			if ((have & want) == want)
-+				*got = need | want;
-+			else
-+				*got = need;
- 			if (S_ISREG(inode->i_mode) &&
- 			    (need & CEPH_CAP_FILE_RD) &&
- 			    !(*got & CEPH_CAP_FILE_CACHE))
-@@ -2742,13 +2752,16 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
- 	int ret;
+@@ -754,6 +755,8 @@ void ceph_add_cap(struct inode *inode,
+ 	cap->mseq = mseq;
+ 	cap->cap_gen = gen;
  
- 	BUG_ON(need & ~CEPH_CAP_FILE_RD);
--	BUG_ON(want & ~(CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO|CEPH_CAP_FILE_SHARED));
--	ret = ceph_pool_perm_check(inode, need);
--	if (ret < 0)
--		return ret;
-+	if (need) {
-+		ret = ceph_pool_perm_check(inode, need);
-+		if (ret < 0)
-+			return ret;
-+	}
- 
--	ret = try_get_cap_refs(inode, need, want, 0,
--			       (nonblock ? NON_BLOCKING : 0), got);
-+	BUG_ON(want & ~(CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO |
-+			CEPH_CAP_FILE_SHARED | CEPH_CAP_FILE_EXCL |
-+			CEPH_CAP_ANY_DIR_OPS));
-+	ret = try_get_cap_refs(inode, need, want, 0, nonblock, got);
- 	return ret == -EAGAIN ? 0 : ret;
++	trace_ceph_add_cap(cap);
++
+ 	if (fmode >= 0)
+ 		__ceph_get_fmode(ci, fmode);
  }
+@@ -1078,6 +1081,7 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
+ 	int removed = 0;
  
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 35797ff895e7..2bd3e073249e 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1068,6 +1068,47 @@ int ceph_async_dirop_request_wait(struct inode *inode)
- 	return ret;
- }
+ 	dout("__ceph_remove_cap %p from %p\n", cap, &ci->vfs_inode);
++	trace_ceph_remove_cap(cap);
  
-+static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
-+				 struct ceph_mds_request *req)
+ 	/* remove from session list */
+ 	spin_lock(&session->s_cap_lock);
+diff --git a/fs/ceph/trace.c b/fs/ceph/trace.c
+new file mode 100644
+index 000000000000..e082d4eb973f
+--- /dev/null
++++ b/fs/ceph/trace.c
+@@ -0,0 +1,76 @@
++// SPDX-License-Identifier: GPL-2.0
++#define CREATE_TRACE_POINTS
++#include "trace.h"
++
++#define CEPH_CAP_BASE_MASK	(CEPH_CAP_GSHARED|CEPH_CAP_GEXCL)
++#define CEPH_CAP_FILE_MASK	(CEPH_CAP_GSHARED |	\
++				 CEPH_CAP_GEXCL |	\
++				 CEPH_CAP_GCACHE |	\
++				 CEPH_CAP_GRD |		\
++				 CEPH_CAP_GWR |		\
++				 CEPH_CAP_GBUFFER |	\
++				 CEPH_CAP_GWREXTEND |	\
++				 CEPH_CAP_GLAZYIO)
++
++static void
++trace_gcap_string(struct trace_seq *p, int c)
 +{
-+	/* If op failed, set error on parent directory */
-+	mapping_set_error(req->r_parent->i_mapping, req->r_err);
-+	if (req->r_err)
-+		printk("%s: req->r_err = %d\n", __func__, req->r_err);
-+	ceph_put_cap_refs(ceph_inode(req->r_parent),
-+			  CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_UNLINK);
-+	iput(req->r_old_inode);
++	if (c & CEPH_CAP_GSHARED)
++		trace_seq_putc(p, 's');
++	if (c & CEPH_CAP_GEXCL)
++		trace_seq_putc(p, 'x');
++	if (c & CEPH_CAP_GCACHE)
++		trace_seq_putc(p, 'c');
++	if (c & CEPH_CAP_GRD)
++		trace_seq_putc(p, 'r');
++	if (c & CEPH_CAP_GWR)
++		trace_seq_putc(p, 'w');
++	if (c & CEPH_CAP_GBUFFER)
++		trace_seq_putc(p, 'b');
++	if (c & CEPH_CAP_GWREXTEND)
++		trace_seq_putc(p, 'a');
++	if (c & CEPH_CAP_GLAZYIO)
++		trace_seq_putc(p, 'l');
 +}
 +
-+static bool get_caps_for_async_unlink(struct inode *dir, struct dentry *dentry)
++const char *
++trace_ceph_cap_string(struct trace_seq *p, int caps)
 +{
-+	struct ceph_inode_info *ci = ceph_inode(dir);
-+	struct ceph_dentry_info *di;
-+	int ret, want, got;
++	int c;
++	const char *ret = trace_seq_buffer_ptr(p);
 +
-+	want = CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_UNLINK;
-+	ret = ceph_try_get_caps(dir, 0, want, true, &got);
-+	dout("Fx on %p ret=%d got=%d\n", dir, ret, got);
-+	if (ret != 1 || got != want)
-+		return false;
-+
-+        spin_lock(&dentry->d_lock);
-+        di = ceph_dentry(dentry);
-+	/* - We are holding CEPH_CAP_FILE_EXCL, which implies
-+	 * CEPH_CAP_FILE_SHARED.
-+	 * - Only support async unlink for primary linkage */
-+	if (atomic_read(&ci->i_shared_gen) != di->lease_shared_gen ||
-+	    !(di->flags & CEPH_DENTRY_PRIMARY_LINK))
-+		ret = 0;
-+        spin_unlock(&dentry->d_lock);
-+
-+	if (!ret) {
-+		ceph_put_cap_refs(ci, got);
-+		return false;
++	if (caps == 0) {
++		trace_seq_putc(p, '-');
++		goto out;
 +	}
-+	return true;
++
++	if (caps & CEPH_CAP_PIN)
++		trace_seq_putc(p, 'p');
++
++	c = (caps >> CEPH_CAP_SAUTH) & CEPH_CAP_BASE_MASK;
++	if (c) {
++		trace_seq_putc(p, 'A');
++		trace_gcap_string(p, c);
++	}
++
++	c = (caps >> CEPH_CAP_SLINK) & CEPH_CAP_BASE_MASK;
++	if (c) {
++		trace_seq_putc(p, 'L');
++		trace_gcap_string(p, c);
++	}
++
++	c = (caps >> CEPH_CAP_SXATTR) & CEPH_CAP_BASE_MASK;
++	if (c) {
++		trace_seq_putc(p, 'X');
++		trace_gcap_string(p, c);
++	}
++
++	c = (caps >> CEPH_CAP_SFILE) & CEPH_CAP_FILE_MASK;
++	if (c) {
++		trace_seq_putc(p, 'F');
++		trace_gcap_string(p, c);
++	}
++out:
++	trace_seq_putc(p, '\0');
++	return ret;
 +}
+diff --git a/fs/ceph/trace.h b/fs/ceph/trace.h
+new file mode 100644
+index 000000000000..d1cf4bb8a21d
+--- /dev/null
++++ b/fs/ceph/trace.h
+@@ -0,0 +1,55 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM ceph
 +
- /*
-  * rmdir and unlink are differ only by the metadata op code
-  */
-@@ -1105,13 +1146,33 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
- 	req->r_dentry = dget(dentry);
- 	req->r_num_caps = 2;
- 	req->r_parent = dir;
--	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
- 	req->r_dentry_drop = CEPH_CAP_FILE_SHARED;
- 	req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
- 	req->r_inode_drop = ceph_drop_caps_for_unlink(inode);
--	err = ceph_mdsc_do_request(mdsc, dir, req);
--	if (!err && !req->r_reply_info.head->is_dentry)
--		d_delete(dentry);
++#if !defined(_CEPH_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _CEPH_TRACE_H
 +
-+	if (op == CEPH_MDS_OP_UNLINK &&
-+	    get_caps_for_async_unlink(dir, dentry)) {
-+		dout("ceph: Async unlink on %lu/%.*s", dir->i_ino,
-+		     dentry->d_name.len, dentry->d_name.name);
-+		req->r_callback = ceph_async_unlink_cb;
-+		req->r_old_inode = d_inode(dentry);
-+		ihold(req->r_old_inode);
-+		err = ceph_mdsc_submit_request(mdsc, dir, req);
-+		if (!err) {
-+			/*
-+			 * We have enough caps, so we assume that the unlink
-+			 * will succeed. Fix up the target inode and dcache.
-+			 */
-+			drop_nlink(inode);
-+			d_delete(dentry);
-+		}
-+	} else {
-+		set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
-+		err = ceph_mdsc_do_request(mdsc, dir, req);
-+		if (!err && !req->r_reply_info.head->is_dentry)
-+			d_delete(dentry);
-+	}
++#include <linux/tracepoint.h>
++#include <linux/trace_seq.h>
++#include "super.h"
 +
- 	ceph_mdsc_put_request(req);
- out:
- 	return err;
-@@ -1455,6 +1516,7 @@ void ceph_invalidate_dentry_lease(struct dentry *dentry)
- 	spin_lock(&dentry->d_lock);
- 	di->time = jiffies;
- 	di->lease_shared_gen = 0;
-+	di->flags &= ~CEPH_DENTRY_PRIMARY_LINK;
- 	__dentry_lease_unlist(di);
- 	spin_unlock(&dentry->d_lock);
- }
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index c844bd7f5f37..d71d97540b72 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1047,6 +1047,7 @@ static void __update_dentry_lease(struct inode *dir, struct dentry *dentry,
- 				  struct ceph_mds_session **old_lease_session)
- {
- 	struct ceph_dentry_info *di = ceph_dentry(dentry);
-+	unsigned mask = le16_to_cpu(lease->mask);
- 	long unsigned duration = le32_to_cpu(lease->duration_ms);
- 	long unsigned ttl = from_time + (duration * HZ) / 1000;
- 	long unsigned half_ttl = from_time + (duration * HZ / 2) / 1000;
-@@ -1058,8 +1059,13 @@ static void __update_dentry_lease(struct inode *dir, struct dentry *dentry,
- 	if (ceph_snap(dir) != CEPH_NOSNAP)
- 		return;
++const char *trace_ceph_cap_string(struct trace_seq *p, int caps);
++#define show_caps(caps) ({ trace_ceph_cap_string(p, caps); })
++
++#define show_snapid(snap)	\
++	__print_symbolic_u64(snap, {CEPH_NOSNAP, "NOSNAP" })
++
++DECLARE_EVENT_CLASS(ceph_cap_class,
++	TP_PROTO(struct ceph_cap *cap),
++	TP_ARGS(cap),
++	TP_STRUCT__entry(
++		__field(u64, ino)
++		__field(u64, snap)
++		__field(int, issued)
++		__field(int, implemented)
++		__field(int, mds)
++		__field(int, mds_wanted)
++	),
++	TP_fast_assign(
++		__entry->ino = cap->ci->i_vino.ino;
++		__entry->snap = cap->ci->i_vino.snap;
++		__entry->issued = cap->issued;
++		__entry->implemented = cap->implemented;
++		__entry->mds = cap->mds;
++		__entry->mds_wanted = cap->mds_wanted;
++	),
++	TP_printk("ino=0x%llx snap=%s mds=%d issued=%s implemented=%s mds_wanted=%s",
++		__entry->ino, show_snapid(__entry->snap), __entry->mds,
++		show_caps(__entry->issued), show_caps(__entry->implemented),
++		show_caps(__entry->mds_wanted))
++)
++
++#define DEFINE_CEPH_CAP_EVENT(name)             \
++DEFINE_EVENT(ceph_cap_class, ceph_##name,       \
++	TP_PROTO(struct ceph_cap *cap),		\
++	TP_ARGS(cap))
++
++DEFINE_CEPH_CAP_EVENT(add_cap);
++DEFINE_CEPH_CAP_EVENT(remove_cap);
++
++#endif /* _CEPH_TRACE_H */
++
++#define TRACE_INCLUDE_PATH .
++#define TRACE_INCLUDE_FILE trace
++#include <trace/define_trace.h>
+diff --git a/include/linux/ceph/ceph_debug.h b/include/linux/ceph/ceph_debug.h
+index d5a5da838caf..fa4a84e0e018 100644
+--- a/include/linux/ceph/ceph_debug.h
++++ b/include/linux/ceph/ceph_debug.h
+@@ -2,6 +2,7 @@
+ #ifndef _FS_CEPH_DEBUG_H
+ #define _FS_CEPH_DEBUG_H
  
-+	if (mask & CEPH_LEASE_PRIMARY_LINK)
-+		di->flags |= CEPH_DENTRY_PRIMARY_LINK;
-+	else
-+		di->flags &= ~CEPH_DENTRY_PRIMARY_LINK;
-+
- 	di->lease_shared_gen = atomic_read(&ceph_inode(dir)->i_shared_gen);
--	if (duration == 0) {
-+	if (!(mask & CEPH_LEASE_VALID)) {
- 		__ceph_dentry_dir_lease_touch(di);
- 		return;
- 	}
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 292ac0544e33..537db863010b 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -282,6 +282,7 @@ struct ceph_dentry_info {
- #define CEPH_DENTRY_REFERENCED		1
- #define CEPH_DENTRY_LEASE_LIST		2
- #define CEPH_DENTRY_SHRINK_LIST		4
-+#define CEPH_DENTRY_PRIMARY_LINK	8
++#undef pr_fmt
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
- struct ceph_inode_xattrs_info {
- 	/*
-diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-index cb21c5cf12c3..a099f60feb7b 100644
---- a/include/linux/ceph/ceph_fs.h
-+++ b/include/linux/ceph/ceph_fs.h
-@@ -530,6 +530,9 @@ struct ceph_mds_reply_lease {
- 	__le32 seq;
- } __attribute__ ((packed));
- 
-+#define CEPH_LEASE_VALID        (1 | 2) /* old and new bit values */
-+#define CEPH_LEASE_PRIMARY_LINK 4       /* primary linkage */
-+
- struct ceph_mds_reply_dirfrag {
- 	__le32 frag;            /* fragment */
- 	__le32 auth;            /* auth mds, if this is a delegation point */
-@@ -659,6 +662,12 @@ int ceph_flags_to_mode(int flags);
- #define CEPH_CAP_LOCKS (CEPH_LOCK_IFILE | CEPH_LOCK_IAUTH | CEPH_LOCK_ILINK | \
- 			CEPH_LOCK_IXATTR)
- 
-+/* cap masks async dir operations */
-+#define CEPH_CAP_DIR_CREATE	CEPH_CAP_FILE_CACHE
-+#define CEPH_CAP_DIR_UNLINK	CEPH_CAP_FILE_RD
-+#define CEPH_CAP_ANY_DIR_OPS	(CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_RD | \
-+				 CEPH_CAP_FILE_WREXTEND | CEPH_CAP_FILE_LAZYIO)
-+
- int ceph_caps_for_mode(int mode);
- 
- enum {
+ #include <linux/string.h>
 -- 
 2.21.0
 
