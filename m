@@ -2,34 +2,34 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5C907E40B
-	for <lists+ceph-devel@lfdr.de>; Thu,  1 Aug 2019 22:28:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B3727E40C
+	for <lists+ceph-devel@lfdr.de>; Thu,  1 Aug 2019 22:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbfHAU0K (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 1 Aug 2019 16:26:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49504 "EHLO mail.kernel.org"
+        id S1727362AbfHAU0L (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 1 Aug 2019 16:26:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726667AbfHAU0J (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 1 Aug 2019 16:26:09 -0400
+        id S1726920AbfHAU0K (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 1 Aug 2019 16:26:10 -0400
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9FF82080C;
-        Thu,  1 Aug 2019 20:26:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 956C22084C;
+        Thu,  1 Aug 2019 20:26:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564691169;
-        bh=lg2sSncJAePQ1VLP3BBA6UWn/Xj9FgztGxLE5Q2T3ec=;
+        s=default; t=1564691170;
+        bh=oPdnWw5iLQqd3ABGNQFABrtBkAYA0vsRRjE/JsBbDDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P6MS838FvLwxu5IRQSgaIixu38C5gAYb48lXxqmv0seVUiPgI3foktwfwZCpDlZHp
-         IQap2m9GAxDTxkguV6rx9yUF73oZYDLTCBxjPy7fSqmryGGy0BoJBdDKeUV1nXXbQe
-         9tyraFCoeX62z+Q4MSaHTlEtA4znQdlN5bQLRX8g=
+        b=FUtk5ag8tyhX7Z8Caw2un3VFlzULkTCzS6nIrYqvyrp/L0tJmUhGHNw0PGTyJXZmI
+         zJKXbiiFeWXtDFnD3YlGFANEU/+cZjUKTq2cD54w0Mx6HdL5JqS0/wTRWt4aQTQ9Sg
+         N67Pu2LK9OU8Plt5rGTfRfHy8MRomvW+R9/lA758=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     ukernel@gmail.com, idryomov@gmail.com, sage@redhat.com,
         pdonnell@redhat.com
-Subject: [PATCH 2/9] ceph: hold extra reference to r_parent over life of request
-Date:   Thu,  1 Aug 2019 16:25:58 -0400
-Message-Id: <20190801202605.18172-3-jlayton@kernel.org>
+Subject: [PATCH 3/9] ceph: register MDS request with dir inode from the get-go
+Date:   Thu,  1 Aug 2019 16:25:59 -0400
+Message-Id: <20190801202605.18172-4-jlayton@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190801202605.18172-1-jlayton@kernel.org>
 References: <20190801202605.18172-1-jlayton@kernel.org>
@@ -40,46 +40,65 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Currently, we just assume that it will stick around by virtue of the
-submitter's reference, but later patches will allow the syscall to
-return early and we can't rely on that reference at that point.
+When the unsafe reply to a request comes in, we put it on the
+r_unsafe_dir inode's list. In future patches, we're going to need to
+wait on requests that may not have gotten an unsafe reply yet.
 
-Take an extra reference to the inode when setting r_parent and release
-it when releasing the request.
+Change __register_request to put the entry on the dir inode's list when
+the pointer is set in the request, and don't check the
+CEPH_MDS_R_GOT_UNSAFE flag when unregistering it.
+
+The only place that uses this list is fsync codepath, and for that we'd
+want to wait on all operations whether the flag is set or not.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/mds_client.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/ceph/mds_client.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index d3c00b417c4e..115f753e05b1 100644
+index 115f753e05b1..89c71db77a33 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -707,8 +707,10 @@ void ceph_mdsc_release_request(struct kref *kref)
- 		/* avoid calling iput_final() in mds dispatch threads */
- 		ceph_async_iput(req->r_inode);
+@@ -791,8 +791,13 @@ static void __register_request(struct ceph_mds_client *mdsc,
+ 		mdsc->oldest_tid = req->r_tid;
+ 
+ 	if (dir) {
++		struct ceph_inode_info *ci = ceph_inode(dir);
++
+ 		ihold(dir);
+ 		req->r_unsafe_dir = dir;
++		spin_lock(&ci->i_unsafe_lock);
++		list_add_tail(&req->r_unsafe_dir_item, &ci->i_unsafe_dirops);
++		spin_unlock(&ci->i_unsafe_lock);
  	}
--	if (req->r_parent)
-+	if (req->r_parent) {
- 		ceph_put_cap_refs(ceph_inode(req->r_parent), CEPH_CAP_PIN);
-+		ceph_async_iput(req->r_parent);
-+	}
- 	ceph_async_iput(req->r_target_inode);
- 	if (req->r_dentry)
- 		dput(req->r_dentry);
-@@ -2669,8 +2671,10 @@ int ceph_mdsc_submit_request(struct ceph_mds_client *mdsc, struct inode *dir,
- 	/* take CAP_PIN refs for r_inode, r_parent, r_old_dentry */
- 	if (req->r_inode)
- 		ceph_get_cap_refs(ceph_inode(req->r_inode), CEPH_CAP_PIN);
--	if (req->r_parent)
-+	if (req->r_parent) {
- 		ceph_get_cap_refs(ceph_inode(req->r_parent), CEPH_CAP_PIN);
-+		ihold(req->r_parent);
-+	}
- 	if (req->r_old_dentry_dir)
- 		ceph_get_cap_refs(ceph_inode(req->r_old_dentry_dir),
- 				  CEPH_CAP_PIN);
+ }
+ 
+@@ -820,8 +825,7 @@ static void __unregister_request(struct ceph_mds_client *mdsc,
+ 
+ 	erase_request(&mdsc->request_tree, req);
+ 
+-	if (req->r_unsafe_dir  &&
+-	    test_bit(CEPH_MDS_R_GOT_UNSAFE, &req->r_req_flags)) {
++	if (req->r_unsafe_dir) {
+ 		struct ceph_inode_info *ci = ceph_inode(req->r_unsafe_dir);
+ 		spin_lock(&ci->i_unsafe_lock);
+ 		list_del_init(&req->r_unsafe_dir_item);
+@@ -2891,14 +2895,6 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
+ 	} else {
+ 		set_bit(CEPH_MDS_R_GOT_UNSAFE, &req->r_req_flags);
+ 		list_add_tail(&req->r_unsafe_item, &req->r_session->s_unsafe);
+-		if (req->r_unsafe_dir) {
+-			struct ceph_inode_info *ci =
+-					ceph_inode(req->r_unsafe_dir);
+-			spin_lock(&ci->i_unsafe_lock);
+-			list_add_tail(&req->r_unsafe_dir_item,
+-				      &ci->i_unsafe_dirops);
+-			spin_unlock(&ci->i_unsafe_lock);
+-		}
+ 	}
+ 
+ 	dout("handle_reply tid %lld result %d\n", tid, result);
 -- 
 2.21.0
 
