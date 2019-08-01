@@ -2,35 +2,37 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E690A7E409
-	for <lists+ceph-devel@lfdr.de>; Thu,  1 Aug 2019 22:28:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BFA37E40A
+	for <lists+ceph-devel@lfdr.de>; Thu,  1 Aug 2019 22:28:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfHAU0I (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 1 Aug 2019 16:26:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49494 "EHLO mail.kernel.org"
+        id S1726888AbfHAU0J (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 1 Aug 2019 16:26:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbfHAU0I (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 1 Aug 2019 16:26:08 -0400
+        id S1726667AbfHAU0J (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 1 Aug 2019 16:26:09 -0400
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 097852080C;
-        Thu,  1 Aug 2019 20:26:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAA502084C;
+        Thu,  1 Aug 2019 20:26:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564691167;
-        bh=jLU3KTSBpsrPujoOPCcAqEuPFYAsg1mmJubqFAMMP7Y=;
-        h=From:To:Cc:Subject:Date:From;
-        b=S1JdCGpuwmHdbZ9X2DP181mWVXCN8NCoB3+KEAukGK+RhTaOEjmtzYDFRwHoxOEWq
-         TC572xol6U70twRX2DwuL2+vHULtrT78u/mFyNGPOSy0tZpreEsJUjVIuRuQOUOgUo
-         e0rtcCtmSixhNKuzBGBRQmlI3kgz6IELyHtO/K30=
+        s=default; t=1564691168;
+        bh=T7ShJQd5gV3+K8ARj1JPvIb8bpDsUEpH5CHeVaJ3C4c=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GlYdY4SiYbv5QTKpf36KVHO7xCO8KkndHyXEqssInwLnzSWtvkGF1FlwKRKwcu3qB
+         lq2MbYkpisHin96Z306M78Bg4ssVT1rTJyivyo6WIyTFf3B2Df7zys4AgLS0anoILc
+         u3rYJAQQCPeI7drboBvUdASOg/duyGd3Cej1qD0I=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     ukernel@gmail.com, idryomov@gmail.com, sage@redhat.com,
         pdonnell@redhat.com
-Subject: [PATCH 0/9] ceph: add asynchronous unlink support
-Date:   Thu,  1 Aug 2019 16:25:56 -0400
-Message-Id: <20190801202605.18172-1-jlayton@kernel.org>
+Subject: [PATCH 1/9] ceph: make several helper accessors take const pointers
+Date:   Thu,  1 Aug 2019 16:25:57 -0400
+Message-Id: <20190801202605.18172-2-jlayton@kernel.org>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190801202605.18172-1-jlayton@kernel.org>
+References: <20190801202605.18172-1-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
@@ -38,55 +40,49 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-I sent a preliminary patchset for this back in April, which relied
-on a totally hacked-up MDS patchset. Since then, Zheng has modified
-the approach somewhat to make the MDS grant the client explicit
-capabilities for asynchronous directory operations.
+None of these helper functions change anything in memory, so we can
+declare their arguments as const.
 
-This patchset is an updated version of the earlier set. With this,
-and the companion MDS set in play, removing a directory with a large
-number of files in it is roughly twice as fast as doing it
-synchronously.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/super.h | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-In addition this set includes some new tracepoints that allow the
-admin to better view what's happening with caps. They're mostly
-limited to unlink and cap handling here, but I expect we'll add
-more of those as time goes on.
-
-I don't think we'll want to merge this just yet, until the MDS
-support is merged. Once that goes in, and assuming we don't have
-any changes to the client/MDS interface, we should clear to do
-so.
-
-Jeff Layton (7):
-  ceph: make several helper accessors take const pointers
-  ceph: hold extra reference to r_parent over life of request
-  ceph: register MDS request with dir inode from the get-go
-  ceph: add refcounting for Fx caps
-  ceph: wait for async dir ops to complete before doing synchronous dir
-    ops
-  ceph: new tracepoints when adding and removing caps
-  ceph: add tracepoints for async and sync unlink
-
-Yan, Zheng (2):
-  ceph: check inode type for CEPH_CAP_FILE_{CACHE,RD,REXTEND,LAZYIO}
-  ceph: perform asynchronous unlink if we have sufficient caps
-
- fs/ceph/Makefile                |   3 +-
- fs/ceph/caps.c                  |  88 +++++++++++++++++------
- fs/ceph/dir.c                   | 121 ++++++++++++++++++++++++++++++--
- fs/ceph/file.c                  |   4 ++
- fs/ceph/inode.c                 |   9 ++-
- fs/ceph/mds_client.c            |  27 +++----
- fs/ceph/super.h                 |  28 ++++----
- fs/ceph/trace.c                 |  76 ++++++++++++++++++++
- fs/ceph/trace.h                 |  86 +++++++++++++++++++++++
- include/linux/ceph/ceph_debug.h |   1 +
- include/linux/ceph/ceph_fs.h    |   9 +++
- 11 files changed, 393 insertions(+), 59 deletions(-)
- create mode 100644 fs/ceph/trace.c
- create mode 100644 fs/ceph/trace.h
-
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 28404b3adcd2..4cd60f58d690 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -406,22 +406,26 @@ struct ceph_inode_info {
+ 	struct inode vfs_inode; /* at end */
+ };
+ 
+-static inline struct ceph_inode_info *ceph_inode(struct inode *inode)
++static inline struct ceph_inode_info *
++ceph_inode(const struct inode *inode)
+ {
+ 	return container_of(inode, struct ceph_inode_info, vfs_inode);
+ }
+ 
+-static inline struct ceph_fs_client *ceph_inode_to_client(struct inode *inode)
++static inline struct ceph_fs_client *
++ceph_inode_to_client(const struct inode *inode)
+ {
+ 	return (struct ceph_fs_client *)inode->i_sb->s_fs_info;
+ }
+ 
+-static inline struct ceph_fs_client *ceph_sb_to_client(struct super_block *sb)
++static inline struct ceph_fs_client *
++ceph_sb_to_client(const struct super_block *sb)
+ {
+ 	return (struct ceph_fs_client *)sb->s_fs_info;
+ }
+ 
+-static inline struct ceph_vino ceph_vino(struct inode *inode)
++static inline struct ceph_vino
++ceph_vino(const struct inode *inode)
+ {
+ 	return ceph_inode(inode)->i_vino;
+ }
 -- 
 2.21.0
 
