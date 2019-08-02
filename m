@@ -2,93 +2,82 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A044E7ECF7
-	for <lists+ceph-devel@lfdr.de>; Fri,  2 Aug 2019 08:57:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CEE67EE5B
+	for <lists+ceph-devel@lfdr.de>; Fri,  2 Aug 2019 10:07:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389182AbfHBG5E (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 2 Aug 2019 02:57:04 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:35628 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389177AbfHBG5E (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 2 Aug 2019 02:57:04 -0400
-Received: by mail-qk1-f195.google.com with SMTP id r21so54081337qke.2
-        for <ceph-devel@vger.kernel.org>; Thu, 01 Aug 2019 23:57:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iyQuH8z92eM8W0ixGoLiLLANc2nKFnR0UZo57YTTMvw=;
-        b=SumGcTXf9zPzZhvfbObFI8CVp3XKGsCDVzmd1PH5roLDCcQo8ChGn76LzBEE5iOsVl
-         Yjb0KA0gvP8yYqbNZjraSAbnNWOLU3LhG2u9HLjDydNQFoGbjxia9XgONDYQXDEx/gVa
-         1HXBgnhzJ4XQvWqvkTjMamuUOsDERF6KyvSJhD2+Tn5PEiPHcdOeL1FpVkS7FMVDuigx
-         Bdisn0fsWvaDY+YrjNMpi6GdL+wkVKeSUtlQuTxValPKJ7lmUv9aMLTVTtrlm7HPZMp+
-         SoOdCc3oRd/p5kfwUyTejy/TBlZcU4NS5gZsNHiUCDetqstmFNHtwl9tKzhelV66jWsb
-         400Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iyQuH8z92eM8W0ixGoLiLLANc2nKFnR0UZo57YTTMvw=;
-        b=C6q6QIy8c7Czd1Ij7ghCYP0whdMq0NsxCwapPEX/nuSK2EN+YMshbR81/u3B3wA598
-         92Y0laAKW6QX43akmoI2sDzIS0vOzYHBnD1MLYZc8B6llOiC0yXEvqqxp/7pORQeRbSt
-         7gW+JKQJv0ySn+ZOPtJcohKQfh+2y0YaiPn7tymceiaEw9cWyht4XufYuemhuP05863B
-         KZB4kS+BlCHvCuomfVGJgfdjIUEzdDn6OdmqrDjkqhXMMLnNV5EJOgqtBLnp88fNAPJY
-         C5uAmd7H71aypw0ZHDoTth3lFqBuSjj99YstUhVDZzEF3OE30hDayuSbnvFcyRC3kvO9
-         yLWQ==
-X-Gm-Message-State: APjAAAWb4196saiEXTQJ6+BN1AK5Lul7UdKpzmboApHPymlHU2gx+hVX
-        2P3oqcemvhzA8Rcyp9ufTiDgc5/Mh4a6C+Wrquo=
-X-Google-Smtp-Source: APXvYqx7IAHCRU5XSh1a7knGW50foiLQPvAyz67G0k3LxLpiCrj348ceCrY/qp+iIkejYfB2qQFj6OWyFx94zcjM3Ss=
-X-Received: by 2002:a37:6397:: with SMTP id x145mr84094417qkb.56.1564729023065;
- Thu, 01 Aug 2019 23:57:03 -0700 (PDT)
+        id S2390692AbfHBIHW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 2 Aug 2019 04:07:22 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:59956 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731650AbfHBIHV (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 2 Aug 2019 04:07:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oQGkgX+xjP5mcvxvnZUNTJDjzsROZ8JGq6RAdmO4uPA=; b=Kn7zyiwFYY1w4GG19f5Z+fxXG
+        rpdCjyayz/9gviyRYspgLpeSBWC2GfVoCY+63/ODQnmLa1Ss8JkqUpftu3V0chMAiw/KlU2kDYgEh
+        oR5YKgy/zWb5/EAWdvNxCcTyybQ/h6IZloFk2u58KpdWjALZ6VxSlYgO9NyD6ORVH0k4+/SJs5gc5
+        s9u9DnNkq+UczyxB+jcY/9wLHc7m1xooYunausG0HwlgSx5YAgAGjYk+/D776D8302Y3gySch17HH
+        NqaNqFjlPIzia2+bWk3vao3mV6/a02u4eJ9MN9jE/yE1oy7yiEOCMpBpQIwm2mrZk60vD3Q8D3Ve6
+        97+ImnTKw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1htSZZ-0007h0-0W; Fri, 02 Aug 2019 08:05:57 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8B3D42029F4CB; Fri,  2 Aug 2019 10:05:54 +0200 (CEST)
+Date:   Fri, 2 Aug 2019 10:05:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     john.hubbard@gmail.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, ceph-devel@vger.kernel.org,
+        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-xfs@vger.kernel.org,
+        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
+        sparclinux@vger.kernel.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 00/34] put_user_pages(): miscellaneous call sites
+Message-ID: <20190802080554.GD2332@hirez.programming.kicks-ass.net>
+References: <20190802021653.4882-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
-References: <20190801201242.16675-1-jlayton@kernel.org>
-In-Reply-To: <20190801201242.16675-1-jlayton@kernel.org>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Fri, 2 Aug 2019 14:56:51 +0800
-Message-ID: <CAAM7YA=WRmQr0R2J3GK_Zv40drm0v9kptmenmDSNUmo=eQ4_Ew@mail.gmail.com>
-Subject: Re: [PATCH] ceph: don't freeze during write page faults
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
-        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802021653.4882-1-jhubbard@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Aug 2, 2019 at 11:14 AM Jeff Layton <jlayton@kernel.org> wrote:
->
-> Prevent freezing operations during write page faults. This is good
-> practice for most filesystems, but especially for ceph since we're
-> monkeying with the signal table here.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/addr.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 563423891a98..731d96f8270d 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -1548,6 +1548,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
->         if (!prealloc_cf)
->                 return VM_FAULT_OOM;
->
-> +       sb_start_pagefault(inode->i_sb);
->         ceph_block_sigs(&oldset);
->
->         if (ci->i_inline_version != CEPH_INLINE_NONE) {
-> @@ -1622,6 +1623,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
->         ceph_put_cap_refs(ci, got);
->  out_free:
->         ceph_restore_sigs(&oldset);
-> +       sb_end_pagefault(inode->i_sb);
->         ceph_free_cap_flush(prealloc_cf);
->         if (err < 0)
->                 ret = vmf_error(err);
-> --
-> 2.21.0
->
+On Thu, Aug 01, 2019 at 07:16:19PM -0700, john.hubbard@gmail.com wrote:
 
-Reviewed-by
+> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+> ("mm: introduce put_user_page*(), placeholder versions"). That commit
+> has an extensive description of the problem and the planned steps to
+> solve it, but the highlites are:
+
+That is one horridly mangled Changelog there :-/ It looks like it's
+partially duplicated.
+
+Anyway; no objections to any of that, but I just wanted to mention that
+there are other problems with long term pinning that haven't been
+mentioned, notably they inhibit compaction.
+
+A long time ago I proposed an interface to mark pages as pinned, such
+that we could run compaction before we actually did the pinning.
