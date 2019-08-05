@@ -2,130 +2,387 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6593C82328
-	for <lists+ceph-devel@lfdr.de>; Mon,  5 Aug 2019 18:53:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D831825D8
+	for <lists+ceph-devel@lfdr.de>; Mon,  5 Aug 2019 22:05:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729053AbfHEQxO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 5 Aug 2019 12:53:14 -0400
-Received: from mga12.intel.com ([192.55.52.136]:43074 "EHLO mga12.intel.com"
+        id S1730457AbfHEUFE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 5 Aug 2019 16:05:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728760AbfHEQxN (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 5 Aug 2019 12:53:13 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 09:53:12 -0700
-X-IronPort-AV: E=Sophos;i="5.64,350,1559545200"; 
-   d="scan'208";a="168030649"
-Received: from rdvivi-losangeles.jf.intel.com (HELO intel.com) ([10.7.196.65])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Aug 2019 09:53:12 -0700
-Date:   Mon, 5 Aug 2019 09:53:46 -0700
-From:   Rodrigo Vivi <rodrigo.vivi@intel.com>
-To:     john.hubbard@gmail.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-fbdev@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        kvm@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
-        sparclinux@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
-        ceph-devel@vger.kernel.org, devel@driverdev.osuosl.org,
-        rds-devel@oss.oracle.com, linux-rdma@vger.kernel.org,
-        x86@kernel.org, amd-gfx@lists.freedesktop.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, xen-devel@lists.xenproject.org,
-        devel@lists.orangefs.org, linux-media@vger.kernel.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        intel-gfx@lists.freedesktop.org, linux-block@vger.kernel.org,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-xfs@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 06/34] drm/i915: convert put_page() to put_user_page*()
-Message-ID: <20190805165346.GB25953@intel.com>
-References: <20190804224915.28669-1-jhubbard@nvidia.com>
- <20190804224915.28669-7-jhubbard@nvidia.com>
+        id S1727802AbfHEUFD (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 5 Aug 2019 16:05:03 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8503B20665;
+        Mon,  5 Aug 2019 20:05:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565035503;
+        bh=V2AjWznxs9ahJCi+JaX7ad+f1VaKXlfKf6I2i+TThz0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FLvf33y1y2eTFpcp5s97J/x3ULARMWupJDtsu4IY0klIExI2C1J0VUJC+5COK+nBJ
+         LBN76NditSyeQOa1FsSZayKdP3D+VuCzutD6f3RDnuo+Ug4KecwT8OfYqAktQFIgED
+         HHudYt9BISRS4+PjV4YKmNhKCabyfLw5d32PRLvw=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, sage@redhat.com, ukernel@gmail.com
+Subject: [PATCH] ceph: add buffered/direct exclusionary locking for reads and writes
+Date:   Mon,  5 Aug 2019 16:05:01 -0400
+Message-Id: <20190805200501.17905-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190804224915.28669-7-jhubbard@nvidia.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, Aug 04, 2019 at 03:48:47PM -0700, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
-> 
-> For pages that were retained via get_user_pages*(), release those pages
-> via the new put_user_page*() routines, instead of via put_page() or
-> release_pages().
-> 
-> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
-> ("mm: introduce put_user_page*(), placeholder versions").
-> 
-> This is a merge-able version of the fix, because it restricts
-> itself to put_user_page() and put_user_pages(), both of which
-> have not changed their APIs. Later, i915_gem_userptr_put_pages()
-> can be simplified to use put_user_pages_dirty_lock().
+xfstest generic/451 intermittently fails. The test does O_DIRECT writes
+to a file, and then reads back the result using buffered I/O, while
+running a separate set of tasks that are also doing buffered reads.
 
-Thanks for that.
-with this version we won't have any conflict.
+The client will invalidate the cache prior to a direct write, but it's
+easy for one of the other readers' replies to race in and reinstantiate
+the invalidated range with stale data.
 
-Ack for going through mm tree.
+To fix this, we must to serialize direct I/O writes and buffered reads.
+We could just sprinkle in some shared locks on the i_rwsem for reads,
+and increase the exclusive footprint on the write side, but that would
+cause O_DIRECT writes to end up serialized vs. other direct requests.
 
-> 
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: intel-gfx@lists.freedesktop.org
-> Cc: dri-devel@lists.freedesktop.org
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  drivers/gpu/drm/i915/gem/i915_gem_userptr.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_userptr.c b/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
-> index 2caa594322bc..76dda2923cf1 100644
-> --- a/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
-> +++ b/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
-> @@ -527,7 +527,7 @@ __i915_gem_userptr_get_pages_worker(struct work_struct *_work)
->  	}
->  	mutex_unlock(&obj->mm.lock);
->  
-> -	release_pages(pvec, pinned);
-> +	put_user_pages(pvec, pinned);
->  	kvfree(pvec);
->  
->  	i915_gem_object_put(obj);
-> @@ -640,7 +640,7 @@ static int i915_gem_userptr_get_pages(struct drm_i915_gem_object *obj)
->  		__i915_gem_userptr_set_active(obj, true);
->  
->  	if (IS_ERR(pages))
-> -		release_pages(pvec, pinned);
-> +		put_user_pages(pvec, pinned);
->  	kvfree(pvec);
->  
->  	return PTR_ERR_OR_ZERO(pages);
-> @@ -675,7 +675,7 @@ i915_gem_userptr_put_pages(struct drm_i915_gem_object *obj,
->  			set_page_dirty_lock(page);
->  
->  		mark_page_accessed(page);
-> -		put_page(page);
-> +		put_user_page(page);
->  	}
->  	obj->mm.dirty = false;
->  
-> -- 
-> 2.22.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Instead, borrow the scheme used by nfs.ko. Buffered writes take the
+i_rwsem exclusively, but buffered reads and all O_DIRECT requests
+take a shared lock, allowing them to run in parallel.
+
+To fix the bug though, we need buffered reads and O_DIRECT I/O to not
+run in parallel. A flag on the ceph_inode_info is used to indicate
+whether it's in direct or buffered I/O mode. When a conflicting request
+is submitted, it will block until the inode can flip to the necessary
+mode.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/Makefile |   2 +-
+ fs/ceph/file.c   |  28 ++++++--
+ fs/ceph/io.c     | 163 +++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ceph/io.h     |  12 ++++
+ fs/ceph/super.h  |   2 +-
+ 5 files changed, 198 insertions(+), 9 deletions(-)
+ create mode 100644 fs/ceph/io.c
+ create mode 100644 fs/ceph/io.h
+
+diff --git a/fs/ceph/Makefile b/fs/ceph/Makefile
+index a699e320393f..c1da294418d1 100644
+--- a/fs/ceph/Makefile
++++ b/fs/ceph/Makefile
+@@ -6,7 +6,7 @@
+ obj-$(CONFIG_CEPH_FS) += ceph.o
+ 
+ ceph-y := super.o inode.o dir.o file.o locks.o addr.o ioctl.o \
+-	export.o caps.o snap.o xattr.o quota.o \
++	export.o caps.o snap.o xattr.o quota.o io.o \
+ 	mds_client.o mdsmap.o strings.o ceph_frag.o \
+ 	debugfs.o
+ 
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 5182e1a49d6f..d7d264e05303 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -15,6 +15,7 @@
+ #include "super.h"
+ #include "mds_client.h"
+ #include "cache.h"
++#include "io.h"
+ 
+ static __le32 ceph_flags_sys2wire(u32 flags)
+ {
+@@ -1284,12 +1285,16 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 
+ 		if (ci->i_inline_version == CEPH_INLINE_NONE) {
+ 			if (!retry_op && (iocb->ki_flags & IOCB_DIRECT)) {
++				ceph_start_io_direct(inode);
+ 				ret = ceph_direct_read_write(iocb, to,
+ 							     NULL, NULL);
++				ceph_end_io_direct(inode);
+ 				if (ret >= 0 && ret < len)
+ 					retry_op = CHECK_EOF;
+ 			} else {
++				ceph_start_io_read(inode);
+ 				ret = ceph_sync_read(iocb, to, &retry_op);
++				ceph_end_io_read(inode);
+ 			}
+ 		} else {
+ 			retry_op = READ_INLINE;
+@@ -1300,7 +1305,9 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		     inode, ceph_vinop(inode), iocb->ki_pos, (unsigned)len,
+ 		     ceph_cap_string(got));
+ 		ceph_add_rw_context(fi, &rw_ctx);
++		ceph_start_io_read(inode);
+ 		ret = generic_file_read_iter(iocb, to);
++		ceph_end_io_read(inode);
+ 		ceph_del_rw_context(fi, &rw_ctx);
+ 	}
+ 	dout("aio_read %p %llx.%llx dropping cap refs on %s = %d\n",
+@@ -1409,7 +1416,10 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		return -ENOMEM;
+ 
+ retry_snap:
+-	inode_lock(inode);
++	if (iocb->ki_flags & IOCB_DIRECT)
++		ceph_start_io_direct(inode);
++	else
++		ceph_start_io_write(inode);
+ 
+ 	/* We can write back this queue in page reclaim */
+ 	current->backing_dev_info = inode_to_bdi(inode);
+@@ -1480,7 +1490,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	    (ci->i_ceph_flags & CEPH_I_ERROR_WRITE)) {
+ 		struct ceph_snap_context *snapc;
+ 		struct iov_iter data;
+-		inode_unlock(inode);
+ 
+ 		spin_lock(&ci->i_ceph_lock);
+ 		if (__ceph_have_pending_cap_snap(ci)) {
+@@ -1497,11 +1506,14 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 		/* we might need to revert back to that point */
+ 		data = *from;
+-		if (iocb->ki_flags & IOCB_DIRECT)
++		if (iocb->ki_flags & IOCB_DIRECT) {
+ 			written = ceph_direct_read_write(iocb, &data, snapc,
+ 							 &prealloc_cf);
+-		else
++			ceph_end_io_direct(inode);
++		} else {
+ 			written = ceph_sync_write(iocb, &data, pos, snapc);
++			ceph_end_io_write(inode);
++		}
+ 		if (written > 0)
+ 			iov_iter_advance(from, written);
+ 		ceph_put_snap_context(snapc);
+@@ -1516,7 +1528,7 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		written = generic_perform_write(file, from, pos);
+ 		if (likely(written >= 0))
+ 			iocb->ki_pos = pos + written;
+-		inode_unlock(inode);
++		ceph_end_io_write(inode);
+ 	}
+ 
+ 	if (written >= 0) {
+@@ -1551,9 +1563,11 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	}
+ 
+ 	goto out_unlocked;
+-
+ out:
+-	inode_unlock(inode);
++	if (iocb->ki_flags & IOCB_DIRECT)
++		ceph_end_io_direct(inode);
++	else
++		ceph_end_io_write(inode);
+ out_unlocked:
+ 	ceph_free_cap_flush(prealloc_cf);
+ 	current->backing_dev_info = NULL;
+diff --git a/fs/ceph/io.c b/fs/ceph/io.c
+new file mode 100644
+index 000000000000..8367cbcc81e8
+--- /dev/null
++++ b/fs/ceph/io.c
+@@ -0,0 +1,163 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2016 Trond Myklebust
++ * Copyright (c) 2019 Jeff Layton
++ *
++ * I/O and data path helper functionality.
++ *
++ * Heavily borrowed from equivalent code in fs/nfs/io.c
++ */
++
++#include <linux/ceph/ceph_debug.h>
++
++#include <linux/types.h>
++#include <linux/kernel.h>
++#include <linux/rwsem.h>
++#include <linux/fs.h>
++
++#include "super.h"
++#include "io.h"
++
++/* Call with exclusively locked inode->i_rwsem */
++static void ceph_block_o_direct(struct ceph_inode_info *ci, struct inode *inode)
++{
++	lockdep_assert_held_write(&inode->i_rwsem);
++
++	if (READ_ONCE(ci->i_ceph_flags) & CEPH_I_ODIRECT) {
++		spin_lock(&ci->i_ceph_lock);
++		ci->i_ceph_flags &= ~CEPH_I_ODIRECT;
++		spin_unlock(&ci->i_ceph_lock);
++		inode_dio_wait(inode);
++	}
++}
++
++/**
++ * ceph_start_io_read - declare the file is being used for buffered reads
++ * @inode: file inode
++ *
++ * Declare that a buffered read operation is about to start, and ensure
++ * that we block all direct I/O.
++ * On exit, the function ensures that the CEPH_I_ODIRECT flag is unset,
++ * and holds a shared lock on inode->i_rwsem to ensure that the flag
++ * cannot be changed.
++ * In practice, this means that buffered read operations are allowed to
++ * execute in parallel, thanks to the shared lock, whereas direct I/O
++ * operations need to wait to grab an exclusive lock in order to set
++ * CEPH_I_ODIRECT.
++ * Note that buffered writes and truncates both take a write lock on
++ * inode->i_rwsem, meaning that those are serialised w.r.t. the reads.
++ */
++void
++ceph_start_io_read(struct inode *inode)
++{
++	struct ceph_inode_info *ci = ceph_inode(inode);
++
++	/* Be an optimist! */
++	down_read(&inode->i_rwsem);
++	if (!(READ_ONCE(ci->i_ceph_flags) & CEPH_I_ODIRECT))
++		return;
++	up_read(&inode->i_rwsem);
++	/* Slow path.... */
++	down_write(&inode->i_rwsem);
++	ceph_block_o_direct(ci, inode);
++	downgrade_write(&inode->i_rwsem);
++}
++
++/**
++ * ceph_end_io_read - declare that the buffered read operation is done
++ * @inode: file inode
++ *
++ * Declare that a buffered read operation is done, and release the shared
++ * lock on inode->i_rwsem.
++ */
++void
++ceph_end_io_read(struct inode *inode)
++{
++	up_read(&inode->i_rwsem);
++}
++
++/**
++ * ceph_start_io_write - declare the file is being used for buffered writes
++ * @inode: file inode
++ *
++ * Declare that a buffered read operation is about to start, and ensure
++ * that we block all direct I/O.
++ */
++void
++ceph_start_io_write(struct inode *inode)
++{
++	down_write(&inode->i_rwsem);
++	ceph_block_o_direct(ceph_inode(inode), inode);
++}
++
++/**
++ * ceph_end_io_write - declare that the buffered write operation is done
++ * @inode: file inode
++ *
++ * Declare that a buffered write operation is done, and release the
++ * lock on inode->i_rwsem.
++ */
++void
++ceph_end_io_write(struct inode *inode)
++{
++	up_write(&inode->i_rwsem);
++}
++
++/* Call with exclusively locked inode->i_rwsem */
++static void ceph_block_buffered(struct ceph_inode_info *ci, struct inode *inode)
++{
++	lockdep_assert_held_write(&inode->i_rwsem);
++
++	if (!(READ_ONCE(ci->i_ceph_flags) & CEPH_I_ODIRECT)) {
++		spin_lock(&ci->i_ceph_lock);
++		ci->i_ceph_flags |= CEPH_I_ODIRECT;
++		spin_unlock(&ci->i_ceph_lock);
++		/* FIXME: unmap_mapping_range? */
++		filemap_write_and_wait(inode->i_mapping);
++	}
++}
++
++/**
++ * ceph_end_io_direct - declare the file is being used for direct i/o
++ * @inode: file inode
++ *
++ * Declare that a direct I/O operation is about to start, and ensure
++ * that we block all buffered I/O.
++ * On exit, the function ensures that the CEPH_I_ODIRECT flag is set,
++ * and holds a shared lock on inode->i_rwsem to ensure that the flag
++ * cannot be changed.
++ * In practice, this means that direct I/O operations are allowed to
++ * execute in parallel, thanks to the shared lock, whereas buffered I/O
++ * operations need to wait to grab an exclusive lock in order to clear
++ * CEPH_I_ODIRECT.
++ * Note that buffered writes and truncates both take a write lock on
++ * inode->i_rwsem, meaning that those are serialised w.r.t. O_DIRECT.
++ */
++void
++ceph_start_io_direct(struct inode *inode)
++{
++	struct ceph_inode_info *ci = ceph_inode(inode);
++
++	/* Be an optimist! */
++	down_read(&inode->i_rwsem);
++	if (READ_ONCE(ci->i_ceph_flags) & CEPH_I_ODIRECT)
++		return;
++	up_read(&inode->i_rwsem);
++	/* Slow path.... */
++	down_write(&inode->i_rwsem);
++	ceph_block_buffered(ci, inode);
++	downgrade_write(&inode->i_rwsem);
++}
++
++/**
++ * ceph_end_io_direct - declare that the direct i/o operation is done
++ * @inode: file inode
++ *
++ * Declare that a direct I/O operation is done, and release the shared
++ * lock on inode->i_rwsem.
++ */
++void
++ceph_end_io_direct(struct inode *inode)
++{
++	up_read(&inode->i_rwsem);
++}
+diff --git a/fs/ceph/io.h b/fs/ceph/io.h
+new file mode 100644
+index 000000000000..fa594cd77348
+--- /dev/null
++++ b/fs/ceph/io.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _FS_CEPH_IO_H
++#define _FS_CEPH_IO_H
++
++void ceph_start_io_read(struct inode *inode);
++void ceph_end_io_read(struct inode *inode);
++void ceph_start_io_write(struct inode *inode);
++void ceph_end_io_write(struct inode *inode);
++void ceph_start_io_direct(struct inode *inode);
++void ceph_end_io_direct(struct inode *inode);
++
++#endif /* FS_CEPH_IO_H */
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 03e4828c7635..46a64293a3f7 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -516,7 +516,7 @@ static inline struct inode *ceph_find_inode(struct super_block *sb,
+ #define CEPH_I_FLUSH_SNAPS	(1 << 9) /* need flush snapss */
+ #define CEPH_I_ERROR_WRITE	(1 << 10) /* have seen write errors */
+ #define CEPH_I_ERROR_FILELOCK	(1 << 11) /* have seen file lock errors */
+-
++#define CEPH_I_ODIRECT		(1 << 12) /* active direct I/O in progress */
+ 
+ /*
+  * Masks of ceph inode work.
+-- 
+2.21.0
+
