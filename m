@@ -2,56 +2,65 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F8782DA8
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Aug 2019 10:25:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F79082FC6
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Aug 2019 12:35:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731711AbfHFIZW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 6 Aug 2019 04:25:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45508 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730068AbfHFIZV (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Aug 2019 04:25:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=rUHpKHn0Tc9SregrETfddkybOV3JSLyP5uCclUMnWe4=; b=mm11TT8D4JZumuo+P5u8bFBCBt
-        JhcGcctHl6quJPyAJXRDJm0JufIPwi5BaJ2MKHYcmzuWR7Ira/Su/ILT9q3dvoEpzoxMm+LOlXBGM
-        65O8AFGLSVELcsRsUtYBOn8w/DOkl7ZXSx67XKkYRru0pxCb4Y9g/coPyuDxLmKyAc3JKq//UHpPc
-        c9MQq/teevs/zeroAlJD+wBOye00ZEC1oxuT0FDDbs912w8jvM0m92w/rdDJfbHzsYW5pwbhKRlrb
-        rM3CajAQEglRYYClDL1B2LWtybxLqNYFhgv1UOL+s8Ixz1/Nmf/FIhkPGshgujYT0R2t6V2gW+5N3
-        5gfvJMuw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1huumW-0001fp-Pe; Tue, 06 Aug 2019 08:25:20 +0000
-Date:   Tue, 6 Aug 2019 01:25:20 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com, sage@redhat.com,
-        ukernel@gmail.com
-Subject: Re: [PATCH] ceph: add buffered/direct exclusionary locking for reads
- and writes
-Message-ID: <20190806082520.GA30230@infradead.org>
+        id S1732474AbfHFKfT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 6 Aug 2019 06:35:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38884 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726713AbfHFKfT (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 6 Aug 2019 06:35:19 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EBA120B1F;
+        Tue,  6 Aug 2019 10:35:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565087718;
+        bh=5uEJGEnf0POX97W4uku8pfQigCiKdHxRxIMHnbh45WU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Z1msf/pr6IZh1pVtA2cGQQaiScTpHUCBZ4SBohK7aAeR3/n5VhfBuQbxvj7nbZEYh
+         mkXCUl2pN+lnVa3MbzyPceh27jr0cr9tl7xh9n/OYpWjTVp7GAE4H5wTHB7mEc71Um
+         u1UwFYH9eTvqqewHX+bpJos4ppinAe8CzTcPzbWk=
+Message-ID: <a0db7ebed3aef86f4e6d0cb4f47d5f3f93a9c04a.camel@kernel.org>
+Subject: Re: [PATCH] ceph: add buffered/direct exclusionary locking for
+ reads and writes
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Sage Weil <sage@newdream.net>
+Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com, ukernel@gmail.com
+Date:   Tue, 06 Aug 2019 06:35:16 -0400
+In-Reply-To: <alpine.DEB.2.11.1908060326400.25659@piezo.novalocal>
 References: <20190805200501.17905-1-jlayton@kernel.org>
+         <alpine.DEB.2.11.1908060326400.25659@piezo.novalocal>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190805200501.17905-1-jlayton@kernel.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 04:05:01PM -0400, Jeff Layton wrote:
-> Instead, borrow the scheme used by nfs.ko. Buffered writes take the
-> i_rwsem exclusively, but buffered reads and all O_DIRECT requests
-> take a shared lock, allowing them to run in parallel.
+On Tue, 2019-08-06 at 03:27 +0000, Sage Weil wrote:
+> On Mon, 5 Aug 2019, Jeff Layton wrote:
+> > xfstest generic/451 intermittently fails. The test does O_DIRECT writes
+> > to a file, and then reads back the result using buffered I/O, while
+> > running a separate set of tasks that are also doing buffered reads.
+> > 
+> > The client will invalidate the cache prior to a direct write, but it's
+> > easy for one of the other readers' replies to race in and reinstantiate
+> > the invalidated range with stale data.
+> 
+> Maybe a silly question, but: what if the write path did the invalidation 
+> after the write instead of before?  Then any racing read will see the new 
+> data on disk.
+> 
 
-Note that you'll still need an exclusive lock to guard against cache
-invalidation for direct writes.  And instead of adding a new lock you
-might want to look at the i_rwsem based scheme in XFS (whіch also
-happens to be where O_DIRECT originally came from).
+I tried that originally. It reduces the race window somewhat, but it's
+still present since a reply to a concurrent read can get in just after
+the invalidation occurs. You really do have to serialize them to fix
+this, AFAICT.
+-- 
+Jeff Layton <jlayton@kernel.org>
+
