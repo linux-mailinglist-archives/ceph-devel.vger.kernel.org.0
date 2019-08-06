@@ -2,118 +2,151 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81C9C83854
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Aug 2019 20:00:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7763483A67
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Aug 2019 22:39:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732119AbfHFSAW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 6 Aug 2019 14:00:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57926 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726713AbfHFSAW (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 6 Aug 2019 14:00:22 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D5F620C01;
-        Tue,  6 Aug 2019 18:00:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565114422;
-        bh=PKBetCGCB9PsYPFpf6uRyrricIHBm9yHIhHqp34zCEw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uTpl1og5k95AN2DtWHbRrnr8Eb+G/V6SjZEZTxnZxRTkbn3wm3Xx3ZAigqMrcPUN2
-         80s+1goPVNus6/J3RrjH/RbkHbxHIdMpx73GPKTB7+JuhbkXkzwH+kBeqf48eiOaf2
-         Ie8JWDXXMXdZyNdz6LT2bdOYG1J6oWNsdy+tcsNc=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     ukernel@gmail.com, idryomov@gmail.com, sage@redhat.com
-Subject: [PATCH 2/2] ceph: allow arbitrary security.* xattrs
-Date:   Tue,  6 Aug 2019 14:00:19 -0400
-Message-Id: <20190806180019.6213-2-jlayton@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190806180019.6213-1-jlayton@kernel.org>
-References: <20190806180019.6213-1-jlayton@kernel.org>
+        id S1726412AbfHFUjU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 6 Aug 2019 16:39:20 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:2263 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbfHFUjT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Aug 2019 16:39:19 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d49e5760000>; Tue, 06 Aug 2019 13:39:18 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 06 Aug 2019 13:39:17 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 06 Aug 2019 13:39:17 -0700
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 6 Aug
+ 2019 20:39:16 +0000
+Subject: Re: [PATCH v2 01/34] mm/gup: add make_dirty arg to
+ put_user_pages_dirty_lock()
+To:     Ira Weiny <ira.weiny@intel.com>, <john.hubbard@gmail.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jan Kara <jack@suse.cz>, Jason Gunthorpe <jgg@ziepe.ca>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <amd-gfx@lists.freedesktop.org>, <ceph-devel@vger.kernel.org>,
+        <devel@driverdev.osuosl.org>, <devel@lists.orangefs.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <intel-gfx@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-block@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-fbdev@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-nfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-xfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <rds-devel@oss.oracle.com>, <sparclinux@vger.kernel.org>,
+        <x86@kernel.org>, <xen-devel@lists.xenproject.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>
+References: <20190804224915.28669-1-jhubbard@nvidia.com>
+ <20190804224915.28669-2-jhubbard@nvidia.com>
+ <20190806173945.GA4748@iweiny-DESK2.sc.intel.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <0e232d84-e6ea-159e-91d4-77e938377161@nvidia.com>
+Date:   Tue, 6 Aug 2019 13:39:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190806173945.GA4748@iweiny-DESK2.sc.intel.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1565123958; bh=kP7gTuC3ZdPRsl2ZM8hKtRsMZoJPCXuUqs/7ZYFYlas=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=De7r6lQUtbn+GTEsMqljgVKTlQIrCw8ZESuRqc7w4LEYPASOCDyQM6KfNGQouIjYR
+         fh0BckBJVbNT9AbXMQb66ZhMKSleBMpCp4Q67sEppT12m031guaO+mSQiN77Vubrty
+         dLwAVLGyjRDyH8bKz/ie59UuEUjWXDBsQB9IGYcfiHyqrDkJ8dhLAwUMAPjRDqyeiY
+         KJw8zEX2A8/HIUmoazoyVwItiLDzuGpYh0geDqgdodA5dwJzt0S2azlo+PhdmfDHXO
+         6GhmRkzx66GKpfVpxeAm8ztIGHTRgebRJf3i5iJHgoMtdv7J6YmmRpepQCyIfl7KA0
+         CyUb7h3ZsvM+w==
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Most filesystems don't limit what security.* xattrs can be set or
-fetched. I see no reason that we need to limit that on cephfs either.
+On 8/6/19 10:39 AM, Ira Weiny wrote:
+> On Sun, Aug 04, 2019 at 03:48:42PM -0700, john.hubbard@gmail.com wrote:
+>> From: John Hubbard <jhubbard@nvidia.com>
+...
+>> -
+>>  /**
+>> - * put_user_pages_dirty() - release and dirty an array of gup-pinned pages
+>> - * @pages:  array of pages to be marked dirty and released.
+>> + * put_user_pages_dirty_lock() - release and optionally dirty gup-pinned pages
+>> + * @pages:  array of pages to be maybe marked dirty, and definitely released.
+> 
+> Better would be.
+> 
+> @pages:  array of pages to be put
 
-Drop the special xattr handler for "security." xattrs, and allow the
-"other" xattr handler to handle security xattrs as well.
+OK, I'll change to that wording.
 
-In addition to fixing xfstest generic/093, this allows us to support
-per-file capabilities (a'la setcap(8)).
+> 
+>>   * @npages: number of pages in the @pages array.
+>> + * @make_dirty: whether to mark the pages dirty
+>>   *
+>>   * "gup-pinned page" refers to a page that has had one of the get_user_pages()
+>>   * variants called on that page.
+>>   *
+>>   * For each page in the @pages array, make that page (or its head page, if a
+>> - * compound page) dirty, if it was previously listed as clean. Then, release
+>> - * the page using put_user_page().
+>> + * compound page) dirty, if @make_dirty is true, and if the page was previously
+>> + * listed as clean. In any case, releases all pages using put_user_page(),
+>> + * possibly via put_user_pages(), for the non-dirty case.
+> 
+> I don't think users of this interface need this level of detail.  I think
+> something like.
+> 
+>  * For each page in the @pages array, release the page.  If @make_dirty is
+>  * true, mark the page dirty prior to release.
 
-URL: https://tracker.ceph.com/issues/41135
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/xattr.c | 35 ++---------------------------------
- 1 file changed, 2 insertions(+), 33 deletions(-)
+Yes, it is too wordy, I'll change to that.
 
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index 410eaf1ba211..d690debe6ef4 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -20,7 +20,8 @@ static int __remove_xattr(struct ceph_inode_info *ci,
- 
- static bool ceph_is_valid_xattr(const char *name)
- {
--	return !strncmp(name, XATTR_CEPH_PREFIX, XATTR_CEPH_PREFIX_LEN) ||
-+	return !strncmp(name, XATTR_SECURITY_PREFIX, XATTR_TRUSTED_PREFIX_LEN) ||
-+	       !strncmp(name, XATTR_CEPH_PREFIX, XATTR_CEPH_PREFIX_LEN) ||
- 	       !strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN) ||
- 	       !strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN);
- }
-@@ -1265,35 +1266,6 @@ int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
- 		ceph_pagelist_release(pagelist);
- 	return err;
- }
--
--static int ceph_xattr_set_security_label(const struct xattr_handler *handler,
--				    struct dentry *unused, struct inode *inode,
--				    const char *key, const void *buf,
--				    size_t buflen, int flags)
--{
--	if (security_ismaclabel(key)) {
--		const char *name = xattr_full_name(handler, key);
--		return __ceph_setxattr(inode, name, buf, buflen, flags);
--	}
--	return  -EOPNOTSUPP;
--}
--
--static int ceph_xattr_get_security_label(const struct xattr_handler *handler,
--				    struct dentry *unused, struct inode *inode,
--				    const char *key, void *buf, size_t buflen)
--{
--	if (security_ismaclabel(key)) {
--		const char *name = xattr_full_name(handler, key);
--		return __ceph_getxattr(inode, name, buf, buflen);
--	}
--	return  -EOPNOTSUPP;
--}
--
--static const struct xattr_handler ceph_security_label_handler = {
--	.prefix = XATTR_SECURITY_PREFIX,
--	.get    = ceph_xattr_get_security_label,
--	.set    = ceph_xattr_set_security_label,
--};
- #endif /* CONFIG_CEPH_FS_SECURITY_LABEL */
- #endif /* CONFIG_SECURITY */
- 
-@@ -1318,9 +1290,6 @@ const struct xattr_handler *ceph_xattr_handlers[] = {
- #ifdef CONFIG_CEPH_FS_POSIX_ACL
- 	&posix_acl_access_xattr_handler,
- 	&posix_acl_default_xattr_handler,
--#endif
--#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
--	&ceph_security_label_handler,
- #endif
- 	&ceph_other_xattr_handler,
- 	NULL,
+> 
+...
+>> -void put_user_pages_dirty_lock(struct page **pages, unsigned long npages)
+>> -{
+>> -	__put_user_pages_dirty(pages, npages, set_page_dirty_lock);
+>> +	/*
+>> +	 * TODO: this can be optimized for huge pages: if a series of pages is
+>> +	 * physically contiguous and part of the same compound page, then a
+>> +	 * single operation to the head page should suffice.
+>> +	 */
+> 
+> I think this comment belongs to the for loop below...  or just something about
+> how to make this and put_user_pages() more efficient.  It is odd, that this is
+> the same comment as in put_user_pages()...
+
+Actually I think I'll just delete the comment entirely, it's just noise really.
+
+> 
+> The code is good.  So... Other than the comments.
+> 
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+
+
+Thanks for the review!
+
+
+thanks,
 -- 
-2.21.0
-
+John Hubbard
+NVIDIA
