@@ -2,44 +2,44 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 186EA85C13
-	for <lists+ceph-devel@lfdr.de>; Thu,  8 Aug 2019 09:52:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A90385CAA
+	for <lists+ceph-devel@lfdr.de>; Thu,  8 Aug 2019 10:19:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731668AbfHHHw1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 8 Aug 2019 03:52:27 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42037 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731669AbfHHHw0 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 8 Aug 2019 03:52:26 -0400
-Received: by mail-ot1-f67.google.com with SMTP id l15so115037642otn.9
-        for <ceph-devel@vger.kernel.org>; Thu, 08 Aug 2019 00:52:26 -0700 (PDT)
+        id S1731936AbfHHITq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 8 Aug 2019 04:19:46 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45751 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731281AbfHHITp (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 8 Aug 2019 04:19:45 -0400
+Received: by mail-ot1-f68.google.com with SMTP id x21so22002963otq.12
+        for <ceph-devel@vger.kernel.org>; Thu, 08 Aug 2019 01:19:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=9+fbTx8KTb2o2XJ6iVSruPfbDhPXhJbGPw+/nok9aVg=;
-        b=XppKs3jSlJfk7kPCChjynPY4mjMW3eB6sZ29/geKs2vmH+XvtplCEpESDuwGeA9Rh0
-         m0C3uE9BVXYSQ/Rp6Bu+jh05c5s9+Nxy/Um9AgtyN+Q54RZb5cSrBta8nxO1YPiF63l+
-         vvlQFUTeEQIbGA131ECA3eqGEvksUeK9dpDW9lvFbtsJTX+wpweTSRJfbY9H9TESf8O1
-         9+wOe1hGbDxfOOB/U5OKCWK945mkgaz21gZUXlhCwQ+HOyK3x3VVt9UnsUX/PNmhs5w9
-         i8zdC5ijV7BbyYx23tvpAFzNy/Q9e//VWEvaprY6mAok3ZmxF9abQIdsaNsS67iMsWgN
-         U/eQ==
+        bh=VGchmqgz3+OgfBF4qRxHpdxkFUuNeIm3m8qIwBwmHmA=;
+        b=QlGg6T6sQFJpB2n/vZDua8NrpNUl/cNA5S1FzrHwF+vDfEnG6PH9fXvgr+uTH1IZjR
+         ax40XZSk8sfTM/SFixQMBq8fpm1/zd4RD+GIo7lLu6vd5Rk7gDi34Y9dfyGZmOrL8I9w
+         P87UBZ7jho9eateKT7/S+zgLo+UHX+E95AeYljbpQIgQJwDfecVG4YfGwpiBXXOgA+0F
+         i8YB9z9uZstWrWJSqhbE0hvzJp80a9krecrD6UoTsS1CxiGnsxiXxpyy1qTYWBTZiGri
+         Ba9nJ0yvHlxl1vDOsQflmOfZx9rQSH2Abf0AQAU++7yunB1Ox85pxLFN05GxCQki8e/K
+         E2bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=9+fbTx8KTb2o2XJ6iVSruPfbDhPXhJbGPw+/nok9aVg=;
-        b=ig2TEmxuE66bqq5hfFUwBjDatOhZHTzh5EpQpOcjpTwJ3/IHHuPonKM7wJrekUg+fy
-         xEIicMclmr4ntTCwR3mCgnZdsVR4lisz3oSBstnpozkpmqO1FJutj0w1DXdqb+nM5oEu
-         +HmLKEmsUktNeIvrFKPK9kcz3kwWwU+2BPmr0pDpZYUxONZe7qnTcLXLvXWw9oFtIBwW
-         BVMab+lbW/khlvy9F5QSaLjSN+5Wmo7aIvCTrasKAGUcbdAfnj/RPBkCLLPupvsIIt+k
-         Ny7QBM5vxkyAFOOANzP0U6yhwyRQ8pbXfU1irZZtr+ee7mC2zlbBNx7FWkKD4RGwsGoa
-         snGQ==
-X-Gm-Message-State: APjAAAWng/fxp1WlMTYybxTv5iIzCFOpOxijGD4tev0PYk7TqnIrZzk/
-        /rA9oDYAFXHrv3CNzy4VetgxY/Gq6i9+beAHRC0=
-X-Google-Smtp-Source: APXvYqzruj/8+wmvOlZ3Wo7/n06Z+G/L2bCDbK/dChD2By7a29mna1a/VK3RPuN0y46/7RO/2a2Z2XHK5KqFaS2Qw88=
-X-Received: by 2002:a5e:d817:: with SMTP id l23mr13597524iok.282.1565250745449;
- Thu, 08 Aug 2019 00:52:25 -0700 (PDT)
+        bh=VGchmqgz3+OgfBF4qRxHpdxkFUuNeIm3m8qIwBwmHmA=;
+        b=O/A5kzTaSsHmuo7iYo4v/DIXiuWWDLx0wRtBf5zSRRSLZLdvHXl8+pZ3E5gHdCuKNB
+         ZfhTE9UVA9VCsj0iH7MKIsDkRos8KgxPla4P4vUbs/ykMQas6sybRiuCiY2AdtdkRntQ
+         YEm01k6aiM5eVKCNVmuLA2WMxPk3gKObKyEXxWPCDyshOGEuBvrgiNfZ5V/MBE3Vzx5k
+         q+47iWDXWRK6YOPqeMY4hJL9Etsgn5gz8YvIdY95bRgQ2oSYIBTepiQISdzMLnrVkCGu
+         gWuzxpastG69xgUSE9UtBZqVlOARvA8GsZh1XlJa+H2A5NPsTSbva/lfClxuqWO1AE/x
+         VkRA==
+X-Gm-Message-State: APjAAAU0o9+UmQiy+gfhwFa20mhdnrsrKNtKkGfIkVlKY+NUm50UUzkr
+        1E2Uvscz9x+wtQB30srlRKd4TRYjI3gF0s9KFXI=
+X-Google-Smtp-Source: APXvYqzJw8Tv0yDQkpGT5jd776oVZoiqf1HSzTqQoE+r14W9dfMbaPcAlvtF20PGRmRZk68jkuNBl5pCaxUa6YH8fVA=
+X-Received: by 2002:a05:6830:1319:: with SMTP id p25mr12233547otq.224.1565252383517;
+ Thu, 08 Aug 2019 01:19:43 -0700 (PDT)
 MIME-Version: 1.0
 References: <CAKQB+fsGD4b_RE1yF3RQszne+xrcEVV9QZiObwwZ39GDCh6n5Q@mail.gmail.com>
  <CAAM7YAmd+63fAO8EPvw4jE0=ZUZAW2nOQhkmuYcXLhdEPeV-dA@mail.gmail.com>
@@ -51,13 +51,14 @@ References: <CAKQB+fsGD4b_RE1yF3RQszne+xrcEVV9QZiObwwZ39GDCh6n5Q@mail.gmail.com>
  <CAKQB+ftuKxkkBN73rQx5x7-oqy=39fAac-4M-P0m3vm6KMZXew@mail.gmail.com>
  <CAKQB+fuscd=W02Faj9syH0_C78A_yqm7abAYDpAb+S_6fuq0Jg@mail.gmail.com>
  <CAOi1vP8cvc6+S-GSiy-xKw4P+o4vtc=q4eggfaza_hG0yYf9HA@mail.gmail.com>
- <CAOi1vP_7k7M6Quwfr+fZ_Hb4WCA73HVb8J69143mmjAZzh0Lxg@mail.gmail.com> <CAKQB+fvGY2XjBoMVoMzB0VWdfO0i5MqhgiGhMZ0gxvNLd4sQKw@mail.gmail.com>
-In-Reply-To: <CAKQB+fvGY2XjBoMVoMzB0VWdfO0i5MqhgiGhMZ0gxvNLd4sQKw@mail.gmail.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 8 Aug 2019 09:55:22 +0200
-Message-ID: <CAOi1vP9uu3cc03Qu1d8nYGARhf+ko5Lubmsr7qhmt9RP0d=-5A@mail.gmail.com>
+ <CAOi1vP_7k7M6Quwfr+fZ_Hb4WCA73HVb8J69143mmjAZzh0Lxg@mail.gmail.com>
+ <CAKQB+fvGY2XjBoMVoMzB0VWdfO0i5MqhgiGhMZ0gxvNLd4sQKw@mail.gmail.com> <CAOi1vP9uu3cc03Qu1d8nYGARhf+ko5Lubmsr7qhmt9RP0d=-5A@mail.gmail.com>
+In-Reply-To: <CAOi1vP9uu3cc03Qu1d8nYGARhf+ko5Lubmsr7qhmt9RP0d=-5A@mail.gmail.com>
+From:   Jerry Lee <leisurelysw24@gmail.com>
+Date:   Thu, 8 Aug 2019 16:19:26 +0800
+Message-ID: <CAKQB+fs7Hj-kKm-diQauNq3qJ8eCeseFF3dz6fR-GbxjoPERnQ@mail.gmail.com>
 Subject: Re: cephfs kernel client umount stucks forever
-To:     Jerry Lee <leisurelysw24@gmail.com>
+To:     Ilya Dryomov <idryomov@gmail.com>
 Cc:     "Yan, Zheng" <ukernel@gmail.com>,
         ceph-devel <ceph-devel@vger.kernel.org>,
         Jeff Layton <jlayton@redhat.com>
@@ -67,333 +68,345 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Aug 8, 2019 at 9:04 AM Jerry Lee <leisurelysw24@gmail.com> wrote:
+On Thu, 8 Aug 2019 at 15:52, Ilya Dryomov <idryomov@gmail.com> wrote:
 >
-> On Thu, 8 Aug 2019 at 01:38, Ilya Dryomov <idryomov@gmail.com> wrote:
+> On Thu, Aug 8, 2019 at 9:04 AM Jerry Lee <leisurelysw24@gmail.com> wrote:
 > >
-> > On Wed, Aug 7, 2019 at 10:15 AM Ilya Dryomov <idryomov@gmail.com> wrote:
+> > On Thu, 8 Aug 2019 at 01:38, Ilya Dryomov <idryomov@gmail.com> wrote:
 > > >
-> > > On Tue, Aug 6, 2019 at 1:11 PM Jerry Lee <leisurelysw24@gmail.com> wrote:
+> > > On Wed, Aug 7, 2019 at 10:15 AM Ilya Dryomov <idryomov@gmail.com> wrote:
 > > > >
-> > > > Hi,
+> > > > On Tue, Aug 6, 2019 at 1:11 PM Jerry Lee <leisurelysw24@gmail.com> wrote:
+> > > > >
+> > > > > Hi,
+> > > > >
+> > > > > After simplifying the environment and the issue can be re-produced
+> > > > > much easier.  The IP and infrastructure are simply described as below:
+> > > > >
+> > > > > CephFS Kernel Client (172.16.10.7, linux-4.14)
+> > > > > Node1 (172.16.10.17)
+> > > > >   - OSD0~2
+> > > > > Node2 (172.16.10.18)
+> > > > >   - OSD3~7
+> > > > > Node3 (172.16.10.19)
+> > > > >   - OSD8~12
+> > > > >
+> > > > > The client mounts the CephFS right after the Node1 is setup.  And
+> > > > > every time a new Node joins the cluster, some files will be added to
+> > > > > the CephFS.  The issue always happens after the Nodes3 joins the
+> > > > > cluster and the stuck write op seems to be sent to the old pg acting
+> > > > > set although the epoch of osdmap on the client is already the same to
+> > > > > the one on ceph.
+> > > > >
+> > > > > osdmap epoch 69
+> > > > > ##############
+> > > > > Tue Aug  6 16:04:25 CST 2019
+> > > > > epoch 69 barrier 30 flags 0x188000
+> > > > > pool 1 'cephfs_data' type 1 size 3 min_size 2 pg_num 64 pg_num_mask 63
+> > > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > pool 2 'cephfs_md' type 1 size 3 min_size 2 pg_num 32 pg_num_mask 31
+> > > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > osd0    172.16.10.17:6802       100%    (exists, up)    100%
+> > > > > osd1    172.16.10.17:6806       100%    (exists, up)    100%
+> > > > > osd2    172.16.10.17:6810       100%    (exists, up)    100%
+> > > > > osd3    172.16.10.18:6801       100%    (exists, up)    100%
+> > > > > osd4    172.16.10.18:6805       100%    (exists, up)    100%
+> > > > > osd5    172.16.10.18:6809       100%    (exists, up)    100%
+> > > > > osd6    172.16.10.18:6813       100%    (exists, up)    100%
+> > > > > osd7    172.16.10.18:6817       100%    (exists, up)    100%
+> > > > > osd8    (unknown sockaddr family 0)       0%    (exists)        100%
+> > > > >
+> > > > > (IO on Cephfs ...)
+> > > > >
+> > > > > osdmap epoch 103
+> > > > > ###############
+> > > > > Tue Aug  6 16:04:26 CST 2019
+> > > > > epoch 103 barrier 30 flags 0x188000
+> > > > > pool 1 'cephfs_data' type 1 size 3 min_size 2 pg_num 128 pg_num_mask
+> > > > > 127 flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > pool 2 'cephfs_md' type 1 size 3 min_size 2 pg_num 32 pg_num_mask 31
+> > > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > osd0    172.16.10.17:6802       100%    (exists, up)    100%
+> > > > > osd1    172.16.10.17:6806       100%    (exists, up)    100%
+> > > > > osd2    172.16.10.17:6810       100%    (exists, up)    100%
+> > > > > osd3    172.16.10.18:6801       100%    (exists, up)    100%
+> > > > > osd4    172.16.10.18:6805       100%    (exists, up)    100%
+> > > > > osd5    172.16.10.18:6809       100%    (exists, up)    100%
+> > > > > osd6    172.16.10.18:6813       100%    (exists, up)    100%
+> > > > > osd7    172.16.10.18:6817       100%    (exists, up)    100%
+> > > > > osd8    172.16.10.19:6801       100%    (exists, up)    100%
+> > > > > osd9    172.16.10.19:6805       100%    (exists, up)    100%
+> > > > > osd10   172.16.10.19:6809       100%    (exists, up)    100%
+> > > > > osd11   172.16.10.19:6813       100%    (exists, up)    100%
+> > > > > osd12   172.16.10.19:6817       100%    (exists, up)    100%
+> > > > >
+> > > > > (IO on Cephfs ...)
+> > > > >
+> > > > > osdmap epoch 103
+> > > > > ###############
+> > > > > Tue Aug  6 16:04:38 CST 2019
+> > > > > epoch 103 barrier 30 flags 0x188000
+> > > > > pool 1 'cephfs_data' type 1 size 3 min_size 2 pg_num 128 pg_num_mask
+> > > > > 127 flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > pool 2 'cephfs_md' type 1 size 3 min_size 2 pg_num 32 pg_num_mask 31
+> > > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > osd0    172.16.10.17:6802       100%    (exists, up)    100%
+> > > > > osd1    172.16.10.17:6806       100%    (exists, up)    100%
+> > > > > osd2    172.16.10.17:6810       100%    (exists, up)    100%
+> > > > > osd3    172.16.10.18:6801       100%    (exists, up)    100%
+> > > > > osd4    172.16.10.18:6805       100%    (exists, up)    100%
+> > > > > osd5    172.16.10.18:6809       100%    (exists, up)    100%
+> > > > > osd6    172.16.10.18:6813       100%    (exists, up)    100%
+> > > > > osd7    172.16.10.18:6817       100%    (exists, up)    100%
+> > > > > osd8    172.16.10.19:6801       100%    (exists, up)    100%
+> > > > > osd9    172.16.10.19:6805       100%    (exists, up)    100%
+> > > > > osd10   172.16.10.19:6809       100%    (exists, up)    100%
+> > > > > osd11   172.16.10.19:6813       100%    (exists, up)    100%
+> > > > > osd12   172.16.10.19:6817       100%    (exists, up)    100%
+> > > > > REQUESTS 13 homeless 0
+> > > > > 389     osd2    1.23964a4b      1.4b    [2,4,12]/2      [2,4,12]/2
+> > > > >  e103    10000000028.00000006    0x400024        1       write
+> > > > > 365     osd5    1.cde1721f      1.1f    [5,10,2]/5      [5,10,2]/5
+> > > > >  e103    10000000017.00000007    0x400024        1       write
+> > > > > 371     osd5    1.9d081620      1.20    [5,12,2]/5      [5,12,2]/5
+> > > > >  e103    10000000025.00000007    0x400024        1       write
+> > > > > 375     osd5    1.8b5def1f      1.1f    [5,10,2]/5      [5,10,2]/5
+> > > > >  e103    1000000001f.00000006    0x400024        1       write
+> > > > > 204     osd7    1.4dbcd0b2      1.32    [7,5,0]/7       [7,5,0]/7
+> > > > >  e103    10000000017.00000001    0x400024        1       write
+> > > > > 373     osd7    1.8f57faf5      1.75    [7,11,2]/7      [7,11,2]/7
+> > > > >  e103    10000000027.00000007    0x400024        1       write
+> > > > > 369     osd8    1.cec2d5dd      1.5d    [8,2,7]/8       [8,2,7]/8
+> > > > >  e103    10000000020.00000007    0x400024        1       write
+> > > > > 378     osd8    1.3853fefc      1.7c    [8,3,2]/8       [8,3,2]/8
+> > > > >  e103    1000000001c.00000006    0x400024        1       write
+> > > > > 384     osd8    1.342be187      1.7     [8,6,2]/8       [8,6,2]/8
+> > > > >  e103    1000000001b.00000006    0x400024        1       write
+> > > > > 390     osd11   1.1ac10bad      1.2d    [11,5,2]/11     [11,5,2]/11
+> > > > >  e103    10000000028.00000007    0x400024        1       write
+> > > > > 364     osd12   1.345417ca      1.4a    [12,7,2]/12     [12,7,2]/12
+> > > > >  e103    10000000017.00000006    0x400024        1       write
+> > > > > 374     osd12   1.50114f4a      1.4a    [12,7,2]/12     [12,7,2]/12
+> > > > >  e103    10000000026.00000007    0x400024        1       write
+> > > > > 381     osd12   1.d670203f      1.3f    [12,2,4]/12     [12,2,4]/12
+> > > > >  e103    10000000021.00000006    0x400024        1       write
+> > > > >
+> > > > > (IO stop ...)
+> > > > >
+> > > > > osdmap epoch 103
+> > > > > ###############
+> > > > > Tue Aug  6 16:04:39 CST 2019
+> > > > > epoch 103 barrier 30 flags 0x188000
+> > > > > pool 1 'cephfs_data' type 1 size 3 min_size 2 pg_num 128 pg_num_mask
+> > > > > 127 flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > pool 2 'cephfs_md' type 1 size 3 min_size 2 pg_num 32 pg_num_mask 31
+> > > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > osd0    172.16.10.17:6802       100%    (exists, up)    100%
+> > > > > osd1    172.16.10.17:6806       100%    (exists, up)    100%
+> > > > > osd2    172.16.10.17:6810       100%    (exists, up)    100%
+> > > > > osd3    172.16.10.18:6801       100%    (exists, up)    100%
+> > > > > osd4    172.16.10.18:6805       100%    (exists, up)    100%
+> > > > > osd5    172.16.10.18:6809       100%    (exists, up)    100%
+> > > > > osd6    172.16.10.18:6813       100%    (exists, up)    100%
+> > > > > osd7    172.16.10.18:6817       100%    (exists, up)    100%
+> > > > > osd8    172.16.10.19:6801       100%    (exists, up)    100%
+> > > > > osd9    172.16.10.19:6805       100%    (exists, up)    100%
+> > > > > osd10   172.16.10.19:6809       100%    (exists, up)    100%
+> > > > > osd11   172.16.10.19:6813       100%    (exists, up)    100%
+> > > > > osd12   172.16.10.19:6817       100%    (exists, up)    100%
+> > > > > REQUESTS 1 homeless 0
+> > > > > 204     osd7    1.4dbcd0b2      1.32    [7,5,0]/7       [7,5,0]/7
+> > > > >  e103    10000000017.00000001    0x400024        1       write
+> > > > >
+> > > > >
+> > > > > Strangely, the acting set of pg 1.32 shown on ceph is [7,1,9] instead
+> > > > > of [7,5,0].
+> > > > >
+> > > > > [root@Jerry-x85-n2 ceph]# ceph pg dump | grep ^1.32
+> > > > > dumped all
+> > > > > 1.32          1                  0        0         0       0  4194304
+> > > > >   3        3 active+clean 2019-08-06 16:03:33.978990    68'3   103:98
+> > > > > [7,1,9]          7  [7,1,9]
+> > > > >
+> > > > > [root@Jerry-x85-n2 ceph]# grep -rn "replicas change" ceph-osd.7.log | grep 1.32
+> > > > > ceph-osd.7.log:1844:2019-08-06 15:59:53.276 7fa390256700 10 osd.7
+> > > > > pg_epoch: 66 pg[1.32( empty local-lis/les=64/65 n=0 ec=47/16 lis/c
+> > > > > 64/64 les/c/f 65/65/0 66/66/64) [7,5,0] r=0 lpr=66 pi=[64,66)/1
+> > > > > crt=0'0 mlcod 0'0 unknown mbc={}] [7,5,2] -> [7,5,0], replicas changed
+> > > > > ceph-osd.7.log:15330:2019-08-06 16:02:38.769 7fa390256700 10 osd.7
+> > > > > pg_epoch: 84 pg[1.32( v 68'3 (0'0,68'3] local-lis/les=66/67 n=2
+> > > > > ec=47/16 lis/c 66/66 les/c/f 67/67/0 66/84/64) [7,5,0] r=0 lpr=84
+> > > > > pi=[66,84)/1 crt=68'3 lcod 68'2 mlcod 0'0 unknown mbc={}] [7,5,0] ->
+> > > > > [7,5,0], replicas changed
+> > > > > ceph-osd.7.log:25741:2019-08-06 16:02:53.618 7fa390256700 10 osd.7
+> > > > > pg_epoch: 90 pg[1.32( v 68'3 (0'0,68'3] local-lis/les=84/85 n=1
+> > > > > ec=47/16 lis/c 84/84 les/c/f 85/85/0 90/90/64) [7,1,8] r=0 lpr=90
+> > > > > pi=[84,90)/1 crt=68'3 lcod 68'2 mlcod 0'0 unknown mbc={}] [7,5,0] ->
+> > > > > [7,1,8], replicas changed
+> > > > > ceph-osd.7.log:37917:2019-08-06 16:03:17.932 7fa390256700 10 osd.7
+> > > > > pg_epoch: 100 pg[1.32( v 68'3 (0'0,68'3] local-lis/les=90/91 n=1
+> > > > > ec=47/16 lis/c 90/90 les/c/f 91/97/0 100/100/64) [7,1,9] r=0 lpr=100
+> > > > > pi=[90,100)/1 crt=68'3 lcod 68'2 mlcod 0'0 unknown mbc={}] [7,1,8] ->
+> > > > > [7,1,9], replicas changed
+> > > > >
+> > > > > Related logs with debug_osd=10 and debug_ms=1 are provided in the
+> > > > > https://drive.google.com/open?id=1gYksDbCecisWtP05HEoSxevDK8sywKv6 .
+> > > > > Currently, I am tracing the code to figure out the root cause.  Any
+> > > > > ideas or insights will be appreciated, thanks!
 > > > >
-> > > > After simplifying the environment and the issue can be re-produced
-> > > > much easier.  The IP and infrastructure are simply described as below:
+> > > > Hi Jerry,
 > > > >
-> > > > CephFS Kernel Client (172.16.10.7, linux-4.14)
-> > > > Node1 (172.16.10.17)
-> > > >   - OSD0~2
-> > > > Node2 (172.16.10.18)
-> > > >   - OSD3~7
-> > > > Node3 (172.16.10.19)
-> > > >   - OSD8~12
+> > > > So the original request was dropped by osd.7 because the PG got split:
 > > > >
-> > > > The client mounts the CephFS right after the Node1 is setup.  And
-> > > > every time a new Node joins the cluster, some files will be added to
-> > > > the CephFS.  The issue always happens after the Nodes3 joins the
-> > > > cluster and the stuck write op seems to be sent to the old pg acting
-> > > > set although the epoch of osdmap on the client is already the same to
-> > > > the one on ceph.
+> > > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 dequeue_op
+> > > > 0x561adf90f500 prio 127 cost 4194304 latency 0.015565
+> > > > osd_op(client.4418.0:204 1.32 1.4dbcd0b2 (undecoded)
+> > > > ondisk+write+known_if_redirected e69) v8 pg pg[1.32( v 68'3 (0'0,68'3]
+> > > > local-lis/les=100/101 n=1 ec=47/16 lis/c 100/100 les/c/f 101/102/0
+> > > > 100/100/64) [7,1,9] r=0 lpr=100 crt=68'3 lcod 68'2 mlcod 0'0
+> > > > active+clean]
+> > > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 client.4418 has old
+> > > > map 69 < 103
+> > > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 send_incremental_map
+> > > > 69 -> 103 to 0x561ae4cfb600 172.16.10.7:0/3068540720
+> > > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 add_map_inc_bl 80 220 bytes
+> > > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 add_map_inc_bl 72 240 bytes
+> > > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 add_map_inc_bl 71 240 bytes
+> > > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 add_map_inc_bl 70 240 bytes
+> > > > 2019-08-06 16:04:25.747 7fa390256700  7 osd.7 pg_epoch: 103 pg[1.32( v
+> > > > 68'3 (0'0,68'3] local-lis/les=100/101 n=1 ec=47/16 lis/c 100/100
+> > > > les/c/f 101/102/0 100/100/64) [7,1,9] r=0 lpr=100 crt=68'3 lcod 68'2
+> > > > mlcod 0'0 active+clean] can_discard_op pg split in 84, dropping
+> > > > 2019-08-06 16:04:25.748 7fa390256700 10 osd.7 103 dequeue_op
+> > > > 0x561adf90f500 finish
 > > > >
-> > > > osdmap epoch 69
-> > > > ##############
-> > > > Tue Aug  6 16:04:25 CST 2019
-> > > > epoch 69 barrier 30 flags 0x188000
-> > > > pool 1 'cephfs_data' type 1 size 3 min_size 2 pg_num 64 pg_num_mask 63
-> > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
-> > > > pool 2 'cephfs_md' type 1 size 3 min_size 2 pg_num 32 pg_num_mask 31
-> > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
-> > > > osd0    172.16.10.17:6802       100%    (exists, up)    100%
-> > > > osd1    172.16.10.17:6806       100%    (exists, up)    100%
-> > > > osd2    172.16.10.17:6810       100%    (exists, up)    100%
-> > > > osd3    172.16.10.18:6801       100%    (exists, up)    100%
-> > > > osd4    172.16.10.18:6805       100%    (exists, up)    100%
-> > > > osd5    172.16.10.18:6809       100%    (exists, up)    100%
-> > > > osd6    172.16.10.18:6813       100%    (exists, up)    100%
-> > > > osd7    172.16.10.18:6817       100%    (exists, up)    100%
-> > > > osd8    (unknown sockaddr family 0)       0%    (exists)        100%
+> > > > The request was never resent -- this appears to be a kernel client bug.
 > > > >
-> > > > (IO on Cephfs ...)
+> > > > It would be great if you could reproduce with
 > > > >
-> > > > osdmap epoch 103
-> > > > ###############
-> > > > Tue Aug  6 16:04:26 CST 2019
-> > > > epoch 103 barrier 30 flags 0x188000
-> > > > pool 1 'cephfs_data' type 1 size 3 min_size 2 pg_num 128 pg_num_mask
-> > > > 127 flags 0x1 lfor 0 read_tier -1 write_tier -1
-> > > > pool 2 'cephfs_md' type 1 size 3 min_size 2 pg_num 32 pg_num_mask 31
-> > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
-> > > > osd0    172.16.10.17:6802       100%    (exists, up)    100%
-> > > > osd1    172.16.10.17:6806       100%    (exists, up)    100%
-> > > > osd2    172.16.10.17:6810       100%    (exists, up)    100%
-> > > > osd3    172.16.10.18:6801       100%    (exists, up)    100%
-> > > > osd4    172.16.10.18:6805       100%    (exists, up)    100%
-> > > > osd5    172.16.10.18:6809       100%    (exists, up)    100%
-> > > > osd6    172.16.10.18:6813       100%    (exists, up)    100%
-> > > > osd7    172.16.10.18:6817       100%    (exists, up)    100%
-> > > > osd8    172.16.10.19:6801       100%    (exists, up)    100%
-> > > > osd9    172.16.10.19:6805       100%    (exists, up)    100%
-> > > > osd10   172.16.10.19:6809       100%    (exists, up)    100%
-> > > > osd11   172.16.10.19:6813       100%    (exists, up)    100%
-> > > > osd12   172.16.10.19:6817       100%    (exists, up)    100%
+> > > > echo 'file osd_client +p' > /sys/kernel/debug/dynamic_debug/control
 > > > >
-> > > > (IO on Cephfs ...)
+> > > > on the kernel client node and the same set of logs on the OSD side.
 > > > >
-> > > > osdmap epoch 103
-> > > > ###############
-> > > > Tue Aug  6 16:04:38 CST 2019
-> > > > epoch 103 barrier 30 flags 0x188000
-> > > > pool 1 'cephfs_data' type 1 size 3 min_size 2 pg_num 128 pg_num_mask
-> > > > 127 flags 0x1 lfor 0 read_tier -1 write_tier -1
-> > > > pool 2 'cephfs_md' type 1 size 3 min_size 2 pg_num 32 pg_num_mask 31
-> > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
-> > > > osd0    172.16.10.17:6802       100%    (exists, up)    100%
-> > > > osd1    172.16.10.17:6806       100%    (exists, up)    100%
-> > > > osd2    172.16.10.17:6810       100%    (exists, up)    100%
-> > > > osd3    172.16.10.18:6801       100%    (exists, up)    100%
-> > > > osd4    172.16.10.18:6805       100%    (exists, up)    100%
-> > > > osd5    172.16.10.18:6809       100%    (exists, up)    100%
-> > > > osd6    172.16.10.18:6813       100%    (exists, up)    100%
-> > > > osd7    172.16.10.18:6817       100%    (exists, up)    100%
-> > > > osd8    172.16.10.19:6801       100%    (exists, up)    100%
-> > > > osd9    172.16.10.19:6805       100%    (exists, up)    100%
-> > > > osd10   172.16.10.19:6809       100%    (exists, up)    100%
-> > > > osd11   172.16.10.19:6813       100%    (exists, up)    100%
-> > > > osd12   172.16.10.19:6817       100%    (exists, up)    100%
-> > > > REQUESTS 13 homeless 0
-> > > > 389     osd2    1.23964a4b      1.4b    [2,4,12]/2      [2,4,12]/2
-> > > >  e103    10000000028.00000006    0x400024        1       write
-> > > > 365     osd5    1.cde1721f      1.1f    [5,10,2]/5      [5,10,2]/5
-> > > >  e103    10000000017.00000007    0x400024        1       write
-> > > > 371     osd5    1.9d081620      1.20    [5,12,2]/5      [5,12,2]/5
-> > > >  e103    10000000025.00000007    0x400024        1       write
-> > > > 375     osd5    1.8b5def1f      1.1f    [5,10,2]/5      [5,10,2]/5
-> > > >  e103    1000000001f.00000006    0x400024        1       write
-> > > > 204     osd7    1.4dbcd0b2      1.32    [7,5,0]/7       [7,5,0]/7
-> > > >  e103    10000000017.00000001    0x400024        1       write
-> > > > 373     osd7    1.8f57faf5      1.75    [7,11,2]/7      [7,11,2]/7
-> > > >  e103    10000000027.00000007    0x400024        1       write
-> > > > 369     osd8    1.cec2d5dd      1.5d    [8,2,7]/8       [8,2,7]/8
-> > > >  e103    10000000020.00000007    0x400024        1       write
-> > > > 378     osd8    1.3853fefc      1.7c    [8,3,2]/8       [8,3,2]/8
-> > > >  e103    1000000001c.00000006    0x400024        1       write
-> > > > 384     osd8    1.342be187      1.7     [8,6,2]/8       [8,6,2]/8
-> > > >  e103    1000000001b.00000006    0x400024        1       write
-> > > > 390     osd11   1.1ac10bad      1.2d    [11,5,2]/11     [11,5,2]/11
-> > > >  e103    10000000028.00000007    0x400024        1       write
-> > > > 364     osd12   1.345417ca      1.4a    [12,7,2]/12     [12,7,2]/12
-> > > >  e103    10000000017.00000006    0x400024        1       write
-> > > > 374     osd12   1.50114f4a      1.4a    [12,7,2]/12     [12,7,2]/12
-> > > >  e103    10000000026.00000007    0x400024        1       write
-> > > > 381     osd12   1.d670203f      1.3f    [12,2,4]/12     [12,2,4]/12
-> > > >  e103    10000000021.00000006    0x400024        1       write
-> > > >
-> > > > (IO stop ...)
-> > > >
-> > > > osdmap epoch 103
-> > > > ###############
-> > > > Tue Aug  6 16:04:39 CST 2019
-> > > > epoch 103 barrier 30 flags 0x188000
-> > > > pool 1 'cephfs_data' type 1 size 3 min_size 2 pg_num 128 pg_num_mask
-> > > > 127 flags 0x1 lfor 0 read_tier -1 write_tier -1
-> > > > pool 2 'cephfs_md' type 1 size 3 min_size 2 pg_num 32 pg_num_mask 31
-> > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
-> > > > osd0    172.16.10.17:6802       100%    (exists, up)    100%
-> > > > osd1    172.16.10.17:6806       100%    (exists, up)    100%
-> > > > osd2    172.16.10.17:6810       100%    (exists, up)    100%
-> > > > osd3    172.16.10.18:6801       100%    (exists, up)    100%
-> > > > osd4    172.16.10.18:6805       100%    (exists, up)    100%
-> > > > osd5    172.16.10.18:6809       100%    (exists, up)    100%
-> > > > osd6    172.16.10.18:6813       100%    (exists, up)    100%
-> > > > osd7    172.16.10.18:6817       100%    (exists, up)    100%
-> > > > osd8    172.16.10.19:6801       100%    (exists, up)    100%
-> > > > osd9    172.16.10.19:6805       100%    (exists, up)    100%
-> > > > osd10   172.16.10.19:6809       100%    (exists, up)    100%
-> > > > osd11   172.16.10.19:6813       100%    (exists, up)    100%
-> > > > osd12   172.16.10.19:6817       100%    (exists, up)    100%
-> > > > REQUESTS 1 homeless 0
-> > > > 204     osd7    1.4dbcd0b2      1.32    [7,5,0]/7       [7,5,0]/7
-> > > >  e103    10000000017.00000001    0x400024        1       write
-> > > >
-> > > >
-> > > > Strangely, the acting set of pg 1.32 shown on ceph is [7,1,9] instead
-> > > > of [7,5,0].
-> > > >
-> > > > [root@Jerry-x85-n2 ceph]# ceph pg dump | grep ^1.32
-> > > > dumped all
-> > > > 1.32          1                  0        0         0       0  4194304
-> > > >   3        3 active+clean 2019-08-06 16:03:33.978990    68'3   103:98
-> > > > [7,1,9]          7  [7,1,9]
-> > > >
-> > > > [root@Jerry-x85-n2 ceph]# grep -rn "replicas change" ceph-osd.7.log | grep 1.32
-> > > > ceph-osd.7.log:1844:2019-08-06 15:59:53.276 7fa390256700 10 osd.7
-> > > > pg_epoch: 66 pg[1.32( empty local-lis/les=64/65 n=0 ec=47/16 lis/c
-> > > > 64/64 les/c/f 65/65/0 66/66/64) [7,5,0] r=0 lpr=66 pi=[64,66)/1
-> > > > crt=0'0 mlcod 0'0 unknown mbc={}] [7,5,2] -> [7,5,0], replicas changed
-> > > > ceph-osd.7.log:15330:2019-08-06 16:02:38.769 7fa390256700 10 osd.7
-> > > > pg_epoch: 84 pg[1.32( v 68'3 (0'0,68'3] local-lis/les=66/67 n=2
-> > > > ec=47/16 lis/c 66/66 les/c/f 67/67/0 66/84/64) [7,5,0] r=0 lpr=84
-> > > > pi=[66,84)/1 crt=68'3 lcod 68'2 mlcod 0'0 unknown mbc={}] [7,5,0] ->
-> > > > [7,5,0], replicas changed
-> > > > ceph-osd.7.log:25741:2019-08-06 16:02:53.618 7fa390256700 10 osd.7
-> > > > pg_epoch: 90 pg[1.32( v 68'3 (0'0,68'3] local-lis/les=84/85 n=1
-> > > > ec=47/16 lis/c 84/84 les/c/f 85/85/0 90/90/64) [7,1,8] r=0 lpr=90
-> > > > pi=[84,90)/1 crt=68'3 lcod 68'2 mlcod 0'0 unknown mbc={}] [7,5,0] ->
-> > > > [7,1,8], replicas changed
-> > > > ceph-osd.7.log:37917:2019-08-06 16:03:17.932 7fa390256700 10 osd.7
-> > > > pg_epoch: 100 pg[1.32( v 68'3 (0'0,68'3] local-lis/les=90/91 n=1
-> > > > ec=47/16 lis/c 90/90 les/c/f 91/97/0 100/100/64) [7,1,9] r=0 lpr=100
-> > > > pi=[90,100)/1 crt=68'3 lcod 68'2 mlcod 0'0 unknown mbc={}] [7,1,8] ->
-> > > > [7,1,9], replicas changed
-> > > >
-> > > > Related logs with debug_osd=10 and debug_ms=1 are provided in the
-> > > > https://drive.google.com/open?id=1gYksDbCecisWtP05HEoSxevDK8sywKv6 .
-> > > > Currently, I am tracing the code to figure out the root cause.  Any
-> > > > ideas or insights will be appreciated, thanks!
+> > > > Looking...
 > > >
-> > > Hi Jerry,
+> > > Nothing so far.  The split detection logic appears to work.
+> > > There were 11 other requests dropped by the OSDs due to splits and they
+> > > were all handled correctly:
 > > >
-> > > So the original request was dropped by osd.7 because the PG got split:
+> > > Split in epoch 47:
 > > >
-> > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 dequeue_op
-> > > 0x561adf90f500 prio 127 cost 4194304 latency 0.015565
-> > > osd_op(client.4418.0:204 1.32 1.4dbcd0b2 (undecoded)
-> > > ondisk+write+known_if_redirected e69) v8 pg pg[1.32( v 68'3 (0'0,68'3]
-> > > local-lis/les=100/101 n=1 ec=47/16 lis/c 100/100 les/c/f 101/102/0
-> > > 100/100/64) [7,1,9] r=0 lpr=100 crt=68'3 lcod 68'2 mlcod 0'0
-> > > active+clean]
-> > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 client.4418 has old
-> > > map 69 < 103
-> > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 send_incremental_map
-> > > 69 -> 103 to 0x561ae4cfb600 172.16.10.7:0/3068540720
-> > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 add_map_inc_bl 80 220 bytes
-> > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 add_map_inc_bl 72 240 bytes
-> > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 add_map_inc_bl 71 240 bytes
-> > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 add_map_inc_bl 70 240 bytes
-> > > 2019-08-06 16:04:25.747 7fa390256700  7 osd.7 pg_epoch: 103 pg[1.32( v
-> > > 68'3 (0'0,68'3] local-lis/les=100/101 n=1 ec=47/16 lis/c 100/100
-> > > les/c/f 101/102/0 100/100/64) [7,1,9] r=0 lpr=100 crt=68'3 lcod 68'2
-> > > mlcod 0'0 active+clean] can_discard_op pg split in 84, dropping
-> > > 2019-08-06 16:04:25.748 7fa390256700 10 osd.7 103 dequeue_op
-> > > 0x561adf90f500 finish
+> > > orig  osd2 osd_op(client.4418.0:5 1.f 1.b1e464af (undecoded)
+> > > ondisk+write+known_if_redirected e35)
+> > > retry osd0 osd_op(client.4418.0:5 1.2f 1.b1e464af (undecoded)
+> > > ondisk+retry+write+known_if_redirected e68)
 > > >
-> > > The request was never resent -- this appears to be a kernel client bug.
+> > > orig  osd0 osd_op(client.4418.0:13 1.10 1.fec32590 (undecoded)
+> > > ondisk+write+known_if_redirected e35)
+> > > retry osd0 osd_op(client.4418.0:13 1.10 1.fec32590 (undecoded)
+> > > ondisk+retry+write+known_if_redirected e68)
 > > >
-> > > It would be great if you could reproduce with
+> > > Split in epoch 84:
 > > >
-> > > echo 'file osd_client +p' > /sys/kernel/debug/dynamic_debug/control
+> > > orig  osd5 osd_op(client.4418.0:194 1.20 1.260bc0e0 (undecoded)
+> > > ondisk+write+known_if_redirected e69)
+> > > retry osd0 osd_op(client.4418.0:194 1.60 1.260bc0e0 (undecoded)
+> > > ondisk+retry+write+known_if_redirected e103)
 > > >
-> > > on the kernel client node and the same set of logs on the OSD side.
+> > > orig  osd3 osd_op(client.4418.0:195 1.33 1.9b583df3 (undecoded)
+> > > ondisk+write+known_if_redirected e69)
+> > > retry osd1 osd_op(client.4418.0:195 1.73 1.9b583df3 (undecoded)
+> > > ondisk+retry+write+known_if_redirected e103)
 > > >
-> > > Looking...
+> > > orig  osd1 osd_op(client.4418.0:197 1.1a 1.a986dc1a (undecoded)
+> > > ondisk+write+known_if_redirected e69)
+> > > retry osd1 osd_op(client.4418.0:197 1.1a 1.a986dc1a (undecoded)
+> > > ondisk+retry+write+known_if_redirected e103)
+> > >
+> > > orig  osd2 osd_op(client.4418.0:198 1.14 1.b93e34d4 (undecoded)
+> > > ondisk+write+known_if_redirected e69)
+> > > retry osd4 osd_op(client.4418.0:198 1.54 1.b93e34d4 (undecoded)
+> > > ondisk+retry+write+known_if_redirected e103)
+> > >
+> > > orig  osd1 osd_op(client.4418.0:199 1.1a 1.92ca525a (undecoded)
+> > > ondisk+write+known_if_redirected e69)
+> > > retry osd11 osd_op(client.4418.0:199 1.5a 1.92ca525a (undecoded)
+> > > ondisk+retry+write+known_if_redirected e103)
+> > >
+> > > orig  osd0 osd_op(client.4418.0:202 1.3b 1.6388bdbb (undecoded)
+> > > ondisk+write+known_if_redirected e69)
+> > > retry osd0 osd_op(client.4418.0:202 1.3b 1.6388bdbb (undecoded)
+> > > ondisk+retry+write+known_if_redirected e103)
+> > >
+> > > orig  osd3 osd_op(client.4418.0:203 1.1e 1.fe5731e (undecoded)
+> > > ondisk+write+known_if_redirected e69)
+> > > retry osd3 osd_op(client.4418.0:203 1.1e 1.fe5731e (undecoded)
+> > > ondisk+retry+write+known_if_redirected e103)
+> > >
+> > > orig  osd7 osd_op(client.4418.0:204 1.32 1.4dbcd0b2 (undecoded)
+> > > ondisk+write+known_if_redirected e69)
+> > > retry ???
+> > >
+> > > orig  osd0 osd_op(client.4418.0:205 1.10 1.42c29750 (undecoded)
+> > > ondisk+write+known_if_redirected e69)
+> > > retry osd0 osd_op(client.4418.0:205 1.50 1.42c29750 (undecoded)
+> > > ondisk+retry+write+known_if_redirected e103)
+> > >
+> > > orig  osd3 osd_op(client.4418.0:207 1.33 1.918809b3 (undecoded)
+> > > ondisk+write+known_if_redirected e69)
+> > > retry osd3 osd_op(client.4418.0:207 1.33 1.918809b3 (undecoded)
+> > > ondisk+retry+write+known_if_redirected e103)
+> > >
+> > > This shows that both staying in the old PG and moving to the new PG
+> > > cases are handled correctly, as staying on the same OSD and moving to
+> > > the new OSD.  The request in question (tid 204) is on the right list
+> > > as indicated by e103 in osdc output, but it looks like something went
+> > > wrong inside calc_target().
+> > >
+> > > What is the exact kernel version you are running?  I know you said
+> > > 4.14, but you also mentioned some customizations...
 > >
-> > Nothing so far.  The split detection logic appears to work.
-> > There were 11 other requests dropped by the OSDs due to splits and they
-> > were all handled correctly:
+> > Hi Ilya,
 > >
-> > Split in epoch 47:
+> > Thanks for your help on analysing the issue.  New logs are provided in
+> > https://drive.google.com/open?id=1dJ1-eGClDWf18yPrIQMRtLoLJ5xsN3jA .
+> > I'm also tracing the calc_target() and it seems that for those stuck
+> > requests, the calc_target() decides that there is no action
+> > (CALC_TARGET_NO_ACTION) for them.
 > >
-> > orig  osd2 osd_op(client.4418.0:5 1.f 1.b1e464af (undecoded)
-> > ondisk+write+known_if_redirected e35)
-> > retry osd0 osd_op(client.4418.0:5 1.2f 1.b1e464af (undecoded)
-> > ondisk+retry+write+known_if_redirected e68)
+> > REQUESTS 2 homeless 0
+> > 199     osd0    1.6388bdbb      1.3b    [0,1,7]/0       [0,1,7]/0
+> >  e106    10000000016.00000002    0x400024        1       write
+> > 202     osd0    1.42c29750      1.50    [0,2,5]/0       [0,2,5]/0
+> >  e106    10000000017.00000002    0x400024        1       write
 > >
-> > orig  osd0 osd_op(client.4418.0:13 1.10 1.fec32590 (undecoded)
-> > ondisk+write+known_if_redirected e35)
-> > retry osd0 osd_op(client.4418.0:13 1.10 1.fec32590 (undecoded)
-> > ondisk+retry+write+known_if_redirected e68)
-> >
-> > Split in epoch 84:
-> >
-> > orig  osd5 osd_op(client.4418.0:194 1.20 1.260bc0e0 (undecoded)
-> > ondisk+write+known_if_redirected e69)
-> > retry osd0 osd_op(client.4418.0:194 1.60 1.260bc0e0 (undecoded)
-> > ondisk+retry+write+known_if_redirected e103)
-> >
-> > orig  osd3 osd_op(client.4418.0:195 1.33 1.9b583df3 (undecoded)
-> > ondisk+write+known_if_redirected e69)
-> > retry osd1 osd_op(client.4418.0:195 1.73 1.9b583df3 (undecoded)
-> > ondisk+retry+write+known_if_redirected e103)
-> >
-> > orig  osd1 osd_op(client.4418.0:197 1.1a 1.a986dc1a (undecoded)
-> > ondisk+write+known_if_redirected e69)
-> > retry osd1 osd_op(client.4418.0:197 1.1a 1.a986dc1a (undecoded)
-> > ondisk+retry+write+known_if_redirected e103)
-> >
-> > orig  osd2 osd_op(client.4418.0:198 1.14 1.b93e34d4 (undecoded)
-> > ondisk+write+known_if_redirected e69)
-> > retry osd4 osd_op(client.4418.0:198 1.54 1.b93e34d4 (undecoded)
-> > ondisk+retry+write+known_if_redirected e103)
-> >
-> > orig  osd1 osd_op(client.4418.0:199 1.1a 1.92ca525a (undecoded)
-> > ondisk+write+known_if_redirected e69)
-> > retry osd11 osd_op(client.4418.0:199 1.5a 1.92ca525a (undecoded)
-> > ondisk+retry+write+known_if_redirected e103)
-> >
-> > orig  osd0 osd_op(client.4418.0:202 1.3b 1.6388bdbb (undecoded)
-> > ondisk+write+known_if_redirected e69)
-> > retry osd0 osd_op(client.4418.0:202 1.3b 1.6388bdbb (undecoded)
-> > ondisk+retry+write+known_if_redirected e103)
-> >
-> > orig  osd3 osd_op(client.4418.0:203 1.1e 1.fe5731e (undecoded)
-> > ondisk+write+known_if_redirected e69)
-> > retry osd3 osd_op(client.4418.0:203 1.1e 1.fe5731e (undecoded)
-> > ondisk+retry+write+known_if_redirected e103)
-> >
-> > orig  osd7 osd_op(client.4418.0:204 1.32 1.4dbcd0b2 (undecoded)
-> > ondisk+write+known_if_redirected e69)
-> > retry ???
-> >
-> > orig  osd0 osd_op(client.4418.0:205 1.10 1.42c29750 (undecoded)
-> > ondisk+write+known_if_redirected e69)
-> > retry osd0 osd_op(client.4418.0:205 1.50 1.42c29750 (undecoded)
-> > ondisk+retry+write+known_if_redirected e103)
-> >
-> > orig  osd3 osd_op(client.4418.0:207 1.33 1.918809b3 (undecoded)
-> > ondisk+write+known_if_redirected e69)
-> > retry osd3 osd_op(client.4418.0:207 1.33 1.918809b3 (undecoded)
-> > ondisk+retry+write+known_if_redirected e103)
-> >
-> > This shows that both staying in the old PG and moving to the new PG
-> > cases are handled correctly, as staying on the same OSD and moving to
-> > the new OSD.  The request in question (tid 204) is on the right list
-> > as indicated by e103 in osdc output, but it looks like something went
-> > wrong inside calc_target().
-> >
-> > What is the exact kernel version you are running?  I know you said
-> > 4.14, but you also mentioned some customizations...
+> > <7>[11617.144891] libceph:  applying incremental map 106 len 212
+> > <7>[11617.144893] libceph:  scan_requests req ffff8808260614a0 tid 199
+> > <7>[11617.144898] libceph:  calc_target t ffff8808260614e0 -> ct_res 0 osd 0
+> > ...
+> > <7>[11646.137530] libceph:   req ffff8808260614a0 tid 199 on osd0 is laggy
 >
-> Hi Ilya,
+> Right, that is what I expected.  Looking...
 >
-> Thanks for your help on analysing the issue.  New logs are provided in
-> https://drive.google.com/open?id=1dJ1-eGClDWf18yPrIQMRtLoLJ5xsN3jA .
-> I'm also tracing the calc_target() and it seems that for those stuck
-> requests, the calc_target() decides that there is no action
-> (CALC_TARGET_NO_ACTION) for them.
+> >
+> > The exact kernel version is liunx-4.14.24 and most of the
+> > customizations are made in the block layer, file system, and scsi
+> > driver.   However, some patches related to net/ceph and fs/ceph files
+> > in linux-4.14.y upstream are backported, so I'm also checking whether
+> > those backports cause this issue or not.
 >
-> REQUESTS 2 homeless 0
-> 199     osd0    1.6388bdbb      1.3b    [0,1,7]/0       [0,1,7]/0
->  e106    10000000016.00000002    0x400024        1       write
-> 202     osd0    1.42c29750      1.50    [0,2,5]/0       [0,2,5]/0
->  e106    10000000017.00000002    0x400024        1       write
->
-> <7>[11617.144891] libceph:  applying incremental map 106 len 212
-> <7>[11617.144893] libceph:  scan_requests req ffff8808260614a0 tid 199
-> <7>[11617.144898] libceph:  calc_target t ffff8808260614e0 -> ct_res 0 osd 0
-> ...
-> <7>[11646.137530] libceph:   req ffff8808260614a0 tid 199 on osd0 is laggy
+> Can you pastebin or attach your osdmap.c and osd_client.c files?
 
-Right, that is what I expected.  Looking...
+Hi Ilya,
 
->
-> The exact kernel version is liunx-4.14.24 and most of the
-> customizations are made in the block layer, file system, and scsi
-> driver.   However, some patches related to net/ceph and fs/ceph files
-> in linux-4.14.y upstream are backported, so I'm also checking whether
-> those backports cause this issue or not.
-
-Can you pastebin or attach your osdmap.c and osd_client.c files?
+- osdmap https://pastebin.com/Aj5h0eLC
+- osd_client https://pastebin.com/FZNepUVe
 
 Thanks,
 
-                Ilya
+- Jerry
+
+>
+> Thanks,
+>
+>                 Ilya
