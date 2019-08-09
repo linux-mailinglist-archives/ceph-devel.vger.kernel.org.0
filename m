@@ -2,133 +2,79 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9AA187057
-	for <lists+ceph-devel@lfdr.de>; Fri,  9 Aug 2019 05:57:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBE01872A5
+	for <lists+ceph-devel@lfdr.de>; Fri,  9 Aug 2019 09:05:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404791AbfHID46 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 8 Aug 2019 23:56:58 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41416 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729419AbfHID46 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 8 Aug 2019 23:56:58 -0400
-Received: by mail-pf1-f196.google.com with SMTP id m30so45297370pff.8;
-        Thu, 08 Aug 2019 20:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=a8MxHbYgV4FR4px/xpjjPQF9zcuXdOB9bKmKMJtQBFU=;
-        b=nyrb/ENFwvzE16dXeTFhPmi36X4sq+y7mO/ApHgRvnaPxwKJ5nGwT5Xb3iXfy0Qr3x
-         IaMvF6+lQTM9lB+ZUETp3fPRI+0ObQ7TS0LgZn9nalv1VTFMU78wGQ8jFe47zq2jnTpW
-         BezeG6Vtupjk2x8nzomi0ZuFQVfoEXL+ieH92E/XhA41Lefl23FBKfQYj2JIvUDUT8CE
-         BPSl/rO3vPQyN+NYKQWKLnYDYpfkhCt/8J+5Rrk6Ofn+PVt/69f9EEE7JuNA/3DuUWqY
-         GbAwq5zNz60yOTQpjVUm2UeIJBJ+LMqvgxetIuM420wpoRREFUxc2MFNuOONio9z5Ma9
-         2b5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=a8MxHbYgV4FR4px/xpjjPQF9zcuXdOB9bKmKMJtQBFU=;
-        b=XIipFqaNdOdpoqqQAVqXnQaWkK962qOCB8esByKv3xr8aGYoHX1V71k+NdRHuvTkrF
-         6x2ylZdusJIS+8DaC3ao5RNiUQp27dD83IvNygL0eCe0htjwzaSIPPsGRX8wyOC7Uhz0
-         KkoIRCNr05nbVcODNNTSEtdTRGX6MmeqMHIZuVTtUFXGkVtyTGUl7A1GdkxE4RIlmqj0
-         CHkKfRVrk0DVPrMAbUMVERUvIp5z+oj0wLu7bM8ecjs7nNNxOqCno/S9FhtWKobHxenT
-         bHlqJcMmgVdw7A6eMieD/f0JM82VJClcT4cMle7Y0h9Ov2+NS+SKYOMpVIt7eVfQ2H3L
-         4V5w==
-X-Gm-Message-State: APjAAAW8c0debInEOTmpW0g8LfBpniZ4xo88WPtZgzwOBbd5BhPpctis
-        P7GegSiDEsI+XlhKLqFDt8o=
-X-Google-Smtp-Source: APXvYqxscUTAgil4snTeC8qFgKtSj5vq1Em0S9l09CJFvTqPZu1N/wafFWjrKzQO41BiEh3fmIu9aA==
-X-Received: by 2002:a17:90a:7d04:: with SMTP id g4mr7402936pjl.41.1565323017911;
-        Thu, 08 Aug 2019 20:56:57 -0700 (PDT)
-Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id 21sm3513849pjh.25.2019.08.08.20.56.56
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 08 Aug 2019 20:56:57 -0700 (PDT)
-From:   john.hubbard@gmail.com
-X-Google-Original-From: jhubbard@nvidia.com
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        ceph-devel@vger.kernel.org
-Subject: [PATCH] fs/ceph: use release_pages() directly
-Date:   Thu,  8 Aug 2019 20:56:47 -0700
-Message-Id: <20190809035647.18866-1-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.22.0
-MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
+        id S2405413AbfHIHFc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 9 Aug 2019 03:05:32 -0400
+Received: from m97138.mail.qiye.163.com ([220.181.97.138]:41624 "EHLO
+        m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726212AbfHIHFc (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Aug 2019 03:05:32 -0400
+Received: from atest-guest.localdomain (unknown [218.94.118.90])
+        by smtp9 (Coremail) with SMTP id u+CowAAnkUg5G01dDjIEAQ--.1115S2;
+        Fri, 09 Aug 2019 15:05:29 +0800 (CST)
+From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, Dongsheng Yang <dongsheng.yang@easystack.cn>
+Subject: [PATCH] rbd: fix response length parameter for rbd_obj_method_sync()
+Date:   Fri,  9 Aug 2019 07:05:27 +0000
+Message-Id: <1565334327-7454-1-git-send-email-dongsheng.yang@easystack.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-CM-TRANSID: u+CowAAnkUg5G01dDjIEAQ--.1115S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjfUBnXoUUUUU
+X-Originating-IP: [218.94.118.90]
+X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiQxkMelbdG4gJTwAAsy
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
+Response will be an encoded string, which includes a length.
+So we need to allocate more buf of sizeof (__le32) in reply
+buffer, and pass the reply buffer size as a parameter in
+rbd_obj_method_sync function.
 
-release_pages() has been available to modules since Oct, 2010,
-when commit 0be8557bcd34 ("fuse: use release_pages()") added
-EXPORT_SYMBOL(release_pages). However, this ceph code was still
-using a workaround.
-
-Remove the workaround, and call release_pages() directly.
-
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: Sage Weil <sage@redhat.com>
-Cc: Ilya Dryomov <idryomov@gmail.com>
-Cc: ceph-devel@vger.kernel.org
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
 ---
+ drivers/block/rbd.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Hi,
-
-I noticed this while I trying to understand mlock.c's use of
-pagevec_release(). So I was looking around for examples, and stumbled
-across this, which seems worth cleaning up.
-
-thanks,
-John Hubbard
-NVIDIA
-
- fs/ceph/addr.c | 19 +------------------
- 1 file changed, 1 insertion(+), 18 deletions(-)
-
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index e078cc55b989..22ed45d143be 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -679,23 +679,6 @@ static int ceph_writepage(struct page *page, struct writeback_control *wbc)
- 	return err;
- }
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 3327192..db55ece 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -5661,14 +5661,17 @@ static int rbd_dev_v2_object_prefix(struct rbd_device *rbd_dev)
+ 	void *reply_buf;
+ 	int ret;
+ 	void *p;
++	size_t size;
  
--/*
-- * lame release_pages helper.  release_pages() isn't exported to
-- * modules.
-- */
--static void ceph_release_pages(struct page **pages, int num)
--{
--	struct pagevec pvec;
--	int i;
--
--	pagevec_init(&pvec);
--	for (i = 0; i < num; i++) {
--		if (pagevec_add(&pvec, pages[i]) == 0)
--			pagevec_release(&pvec);
--	}
--	pagevec_release(&pvec);
--}
--
- /*
-  * async writeback completion handler.
-  *
-@@ -769,7 +752,7 @@ static void writepages_finish(struct ceph_osd_request *req)
- 		dout("writepages_finish %p wrote %llu bytes cleaned %d pages\n",
- 		     inode, osd_data->length, rc >= 0 ? num_pages : 0);
+-	reply_buf = kzalloc(RBD_OBJ_PREFIX_LEN_MAX, GFP_KERNEL);
++	/* Response will be an encoded string, which includes a length */
++	size = sizeof (__le32) + RBD_OBJ_PREFIX_LEN_MAX;
++	reply_buf = kzalloc(size, GFP_KERNEL);
+ 	if (!reply_buf)
+ 		return -ENOMEM;
  
--		ceph_release_pages(osd_data->pages, num_pages);
-+		release_pages(osd_data->pages, num_pages);
- 	}
+ 	ret = rbd_obj_method_sync(rbd_dev, &rbd_dev->header_oid,
+ 				  &rbd_dev->header_oloc, "get_object_prefix",
+-				  NULL, 0, reply_buf, RBD_OBJ_PREFIX_LEN_MAX);
++				  NULL, 0, reply_buf, size);
+ 	dout("%s: rbd_obj_method_sync returned %d\n", __func__, ret);
+ 	if (ret < 0)
+ 		goto out;
+@@ -6697,7 +6700,7 @@ static int rbd_dev_image_id(struct rbd_device *rbd_dev)
  
- 	ceph_put_wrbuffer_cap_refs(ci, total_pages, snapc);
+ 	ret = rbd_obj_method_sync(rbd_dev, &oid, &rbd_dev->header_oloc,
+ 				  "get_id", NULL, 0,
+-				  response, RBD_IMAGE_ID_LEN_MAX);
++				  response, size);
+ 	dout("%s: rbd_obj_method_sync returned %d\n", __func__, ret);
+ 	if (ret == -ENOENT) {
+ 		image_id = kstrdup("", GFP_KERNEL);
 -- 
-2.22.0
+1.8.3.1
+
 
