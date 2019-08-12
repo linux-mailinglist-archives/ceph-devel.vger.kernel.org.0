@@ -2,302 +2,479 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D115F88B59
-	for <lists+ceph-devel@lfdr.de>; Sat, 10 Aug 2019 14:29:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93D4C897ED
+	for <lists+ceph-devel@lfdr.de>; Mon, 12 Aug 2019 09:36:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726146AbfHJM3I (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 10 Aug 2019 08:29:08 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42853 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725927AbfHJM3H (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 10 Aug 2019 08:29:07 -0400
-Received: by mail-ot1-f68.google.com with SMTP id l15so143046772otn.9
-        for <ceph-devel@vger.kernel.org>; Sat, 10 Aug 2019 05:29:07 -0700 (PDT)
+        id S1726956AbfHLHgc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 12 Aug 2019 03:36:32 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38503 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbfHLHgb (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 12 Aug 2019 03:36:31 -0400
+Received: by mail-ot1-f67.google.com with SMTP id r20so5717275ota.5
+        for <ceph-devel@vger.kernel.org>; Mon, 12 Aug 2019 00:36:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=FZkB5xW1xfXMsy2KV0BaHxtN5dQ4VW6PxpMENS6k1hs=;
-        b=qTgaMeLKWUMGikdC9iN0vHJwLk6PIjBl3M1SvStE+fLRnmdasA3LkyMQ3WYleLnPVQ
-         JD2iwUZ4Baz4wCrMOpksNo9K8eneKZip6TnMRU0kw6gU7hAakj4WNm8IWslMfhJlf2ZS
-         5aQvSfKrndZJiwYI+3j5r22/Y5kzDi+Xi+0yXQ5pHbv2/LIffKjJ82vv9e3lVNrjIac4
-         36rNQh+tShKLgQaMX5Ve1QztcOZmPKfCEClv/dQ4pPP51lehXAzb0ZniJllZ5R6ZaDhp
-         opmFDB1tf7x9qpjm/7xKBIgZ0IpEDxQPQBM6PTIviFA4DJT76y8+uAhNxXtB/pAkGEcd
-         Flcw==
+        bh=UOWyqgZISKgSPCKtuoikh6q3kkVyI4MWTWMHlyi2d0k=;
+        b=IVTY9LbC9R0HTXNGk6heKSiBtrdCbzpeMtS1OjZ3I2xdTlNyu0/sqf/GZ+g0kJ+O41
+         zp3/pthJlajGaT8Ss7xJpri8LZIuWRfXsBElGSw3hdVORjsyhRrFVw0P8aI4bUbvKM/P
+         ck54BMN3Xn95lkmWSVRVV8lnVYIQahlFNPI7X40LiUf4teyE8pUxKxrYTH7Z4CXfkpKn
+         9oTeLucRlDxTJrcjbtE8blkbV30gMd/5g4sk7TCk5GGkslm5u49oEaH9PD1z8/usM01W
+         Vp3TrOrKyF+7QJje16QyvZz7YT7wDUPfnj2jhh5I/V6Q+W548MWe+nzFZ2oSh/Ap3qFy
+         Jp8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=FZkB5xW1xfXMsy2KV0BaHxtN5dQ4VW6PxpMENS6k1hs=;
-        b=PdcDNsbZtNAmqI0woxJGDv3fN9V5ZFvvK6boqh78E9X7pb4AH+gQX4Awe/Uq7glCPF
-         KJwMvxeSsLY0nUEKXoTnc2x19IdFbdawpFV6VDJa5R1fpZYbDW3PmjKtr5Pp5ujXCB9G
-         StXxpYns2sPzov4yXB5u6SnO7nTLigCXM5NTR1bPNx2nIkgZFtMFGHRNfxoqGFdOPdYv
-         sAmfrqQlbxjuqN4TZcqw9ZYr5yQg9dEcQyMFiqJOEsBBOkj0bYBenpsuoL+GxJ8QTZ0l
-         UDvsqY2EyOn6aYbk82N6Z2GzFDy8vG5vMNqVyxrj02dXwjn0AHp5aQZir0JuyPEMZtTt
-         GvMA==
-X-Gm-Message-State: APjAAAWXsrOlXrpVYFf8F43TzN8BPXyKzPTPnIC/fz3MZHbtYObeSk9C
-        jfLGmU60UdT5o4T/LTteP2EFZ2eYHv7bX+k1dHk=
-X-Google-Smtp-Source: APXvYqzztfnS2YCO4IkVFJGKJex7ldsimPtFarrz2QYSmtlb8q1jraq7ft+M/stz7MfQI4WdOKJb3rk9t2HceobpL9w=
-X-Received: by 2002:a5e:d817:: with SMTP id l23mr25519921iok.282.1565440146594;
- Sat, 10 Aug 2019 05:29:06 -0700 (PDT)
+        bh=UOWyqgZISKgSPCKtuoikh6q3kkVyI4MWTWMHlyi2d0k=;
+        b=RMonkaLUlLHm6zpbJkSrC1o6KFWR9bmI2YqBerWqbIyIob0S/ivB+9mqPiAF++SP30
+         k1aA7F9YKL+lNVZPILQ22cNfTYGswQ3L95v75kaeMkf0P+ZsDjmPCFkJ656Q4zCrydxK
+         +jFsGCyj1zQzrwtALm382UoExT+ULrlw1NvFmw7x3zphQcSfsc5p1ogpTzS1BION48Ua
+         6n9CF3axAPni+Pm8/VjB96Th+bsuZn2P0qJLm3675krHpXDeuN5+uTkbPXrjmGkE+/EY
+         wo//lcb7Za92ZlP8cQqYC4H1C6Qxaua5u4ER7iYd11pg7G49mSRsumT1FbJ9oZ8CHmu8
+         1Vzw==
+X-Gm-Message-State: APjAAAWJevXMhygkq35Hg/4XnqPGHdzvEK7qi1kK/q8oDx1qA4zHLMUu
+        V2O4lfMcLv0vpkeTvKNHWqwBwi8VvnpOiAHlb2Y=
+X-Google-Smtp-Source: APXvYqztTOQTgA6onlOE7wbLYaJ0sUMsXLx7v+46xtwOQo+vZBi+/JNIrIMXO4JgSPsGFUbQ3HueNoo2XwKo1439qM8=
+X-Received: by 2002:a5d:924e:: with SMTP id e14mr31387924iol.215.1565595389600;
+ Mon, 12 Aug 2019 00:36:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190801202605.18172-1-jlayton@kernel.org> <20190801202605.18172-9-jlayton@kernel.org>
- <1916bc5f2b96eab8556fa9154492fb8379447278.camel@kernel.org>
-In-Reply-To: <1916bc5f2b96eab8556fa9154492fb8379447278.camel@kernel.org>
+References: <CAKQB+fsGD4b_RE1yF3RQszne+xrcEVV9QZiObwwZ39GDCh6n5Q@mail.gmail.com>
+ <CAAM7YAmd+63fAO8EPvw4jE0=ZUZAW2nOQhkmuYcXLhdEPeV-dA@mail.gmail.com>
+ <CAKQB+fsbPXvmGj11NW0nJ50VGJeWkTc7vfpDZ0a6Jrw2DOWSgA@mail.gmail.com>
+ <CAKQB+fuoAmSzsFmJz2ou5Rp6jGKv6XSpfo08t2C+Hj6_yb2+_A@mail.gmail.com>
+ <CAOi1vP-6Xd_jrnRf-Q7qL0SKUQ3kXHuKfOUmx_uYqQEX6R=PJQ@mail.gmail.com>
+ <CAKQB+fsCpkWf=OfVPiQ8Fq159g+X7v33fvTV85pwUErUzA=dzA@mail.gmail.com>
+ <CAOi1vP8bSFvh600_q7SiMnOkV0BTKutD=qKP66Lh0FcNtH0kLw@mail.gmail.com>
+ <CAKQB+ftuKxkkBN73rQx5x7-oqy=39fAac-4M-P0m3vm6KMZXew@mail.gmail.com>
+ <CAKQB+fuscd=W02Faj9syH0_C78A_yqm7abAYDpAb+S_6fuq0Jg@mail.gmail.com>
+ <CAOi1vP8cvc6+S-GSiy-xKw4P+o4vtc=q4eggfaza_hG0yYf9HA@mail.gmail.com>
+ <CAOi1vP_7k7M6Quwfr+fZ_Hb4WCA73HVb8J69143mmjAZzh0Lxg@mail.gmail.com>
+ <CAKQB+fvGY2XjBoMVoMzB0VWdfO0i5MqhgiGhMZ0gxvNLd4sQKw@mail.gmail.com>
+ <CAOi1vP9uu3cc03Qu1d8nYGARhf+ko5Lubmsr7qhmt9RP0d=-5A@mail.gmail.com>
+ <CAKQB+fs7Hj-kKm-diQauNq3qJ8eCeseFF3dz6fR-GbxjoPERnQ@mail.gmail.com>
+ <CAOi1vP_=PpzoP4x37vAayGoYOup0fXYrS44enUqWoWY-9h+fAg@mail.gmail.com>
+ <CAOi1vP_zszb5mwBMBM+gMhDeq3iZLARXGCt5az-MnynJ1-yJBg@mail.gmail.com> <CAKQB+ft3uqU0zQo-gPknAvvDJ0M_=4DwGYbE3b-M5-wq9YYM0w@mail.gmail.com>
+In-Reply-To: <CAKQB+ft3uqU0zQo-gPknAvvDJ0M_=4DwGYbE3b-M5-wq9YYM0w@mail.gmail.com>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Sat, 10 Aug 2019 14:32:03 +0200
-Message-ID: <CAOi1vP9i_=WWbngP2=tONY+rTVSiC=4=qfmZbV25roDkVUYp5A@mail.gmail.com>
-Subject: Re: [PATCH 8/9] ceph: new tracepoints when adding and removing caps
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        "Yan, Zheng" <ukernel@gmail.com>, Sage Weil <sage@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>
+Date:   Mon, 12 Aug 2019 09:39:27 +0200
+Message-ID: <CAOi1vP_ZfD60Tv42haNVs49H7zqAdXSKfQRMgiUn=V2bXp1eXg@mail.gmail.com>
+Subject: Re: cephfs kernel client umount stucks forever
+To:     Jerry Lee <leisurelysw24@gmail.com>
+Cc:     "Yan, Zheng" <ukernel@gmail.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Jeff Layton <jlayton@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Aug 9, 2019 at 7:21 PM Jeff Layton <jlayton@kernel.org> wrote:
+On Fri, Aug 9, 2019 at 12:40 PM Jerry Lee <leisurelysw24@gmail.com> wrote:
 >
-> On Thu, 2019-08-01 at 16:26 -0400, Jeff Layton wrote:
-> > Add support for two new tracepoints surrounding the adding/updating and
-> > removing of caps from the cache. To support this, we also add new functions
-> > for printing cap strings a'la ceph_cap_string().
+> On Thu, 8 Aug 2019 at 20:17, Ilya Dryomov <idryomov@gmail.com> wrote:
 > >
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/ceph/Makefile                |  3 +-
-> >  fs/ceph/caps.c                  |  4 ++
-> >  fs/ceph/trace.c                 | 76 +++++++++++++++++++++++++++++++++
-> >  fs/ceph/trace.h                 | 55 ++++++++++++++++++++++++
-> >  include/linux/ceph/ceph_debug.h |  1 +
-> >  5 files changed, 138 insertions(+), 1 deletion(-)
-> >  create mode 100644 fs/ceph/trace.c
-> >  create mode 100644 fs/ceph/trace.h
-> >
-> > diff --git a/fs/ceph/Makefile b/fs/ceph/Makefile
-> > index a699e320393f..5148284f74a9 100644
-> > --- a/fs/ceph/Makefile
-> > +++ b/fs/ceph/Makefile
-> > @@ -3,12 +3,13 @@
-> >  # Makefile for CEPH filesystem.
-> >  #
-> >
-> > +ccflags-y += -I$(src)        # needed for trace events
-> >  obj-$(CONFIG_CEPH_FS) += ceph.o
-> >
-> >  ceph-y := super.o inode.o dir.o file.o locks.o addr.o ioctl.o \
-> >       export.o caps.o snap.o xattr.o quota.o \
-> >       mds_client.o mdsmap.o strings.o ceph_frag.o \
-> > -     debugfs.o
-> > +     debugfs.o trace.o
-> >
-> >  ceph-$(CONFIG_CEPH_FSCACHE) += cache.o
-> >  ceph-$(CONFIG_CEPH_FS_POSIX_ACL) += acl.o
-> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > index 9344e742397e..236d9c205e3d 100644
-> > --- a/fs/ceph/caps.c
-> > +++ b/fs/ceph/caps.c
-> > @@ -13,6 +13,7 @@
-> >  #include "super.h"
-> >  #include "mds_client.h"
-> >  #include "cache.h"
-> > +#include "trace.h"
-> >  #include <linux/ceph/decode.h>
-> >  #include <linux/ceph/messenger.h>
-> >
-> > @@ -754,6 +755,8 @@ void ceph_add_cap(struct inode *inode,
-> >       cap->mseq = mseq;
-> >       cap->cap_gen = gen;
-> >
-> > +     trace_ceph_add_cap(cap);
-> > +
-> >       if (fmode >= 0)
-> >               __ceph_get_fmode(ci, fmode);
-> >  }
-> > @@ -1078,6 +1081,7 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
-> >       int removed = 0;
-> >
-> >       dout("__ceph_remove_cap %p from %p\n", cap, &ci->vfs_inode);
-> > +     trace_ceph_remove_cap(cap);
-> >
-> >       /* remove from session list */
-> >       spin_lock(&session->s_cap_lock);
-> > diff --git a/fs/ceph/trace.c b/fs/ceph/trace.c
-> > new file mode 100644
-> > index 000000000000..e082d4eb973f
-> > --- /dev/null
-> > +++ b/fs/ceph/trace.c
-> > @@ -0,0 +1,76 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +#define CREATE_TRACE_POINTS
-> > +#include "trace.h"
-> > +
-> > +#define CEPH_CAP_BASE_MASK   (CEPH_CAP_GSHARED|CEPH_CAP_GEXCL)
-> > +#define CEPH_CAP_FILE_MASK   (CEPH_CAP_GSHARED |     \
-> > +                              CEPH_CAP_GEXCL |       \
-> > +                              CEPH_CAP_GCACHE |      \
-> > +                              CEPH_CAP_GRD |         \
-> > +                              CEPH_CAP_GWR |         \
-> > +                              CEPH_CAP_GBUFFER |     \
-> > +                              CEPH_CAP_GWREXTEND |   \
-> > +                              CEPH_CAP_GLAZYIO)
-> > +
-> > +static void
-> > +trace_gcap_string(struct trace_seq *p, int c)
-> > +{
-> > +     if (c & CEPH_CAP_GSHARED)
-> > +             trace_seq_putc(p, 's');
-> > +     if (c & CEPH_CAP_GEXCL)
-> > +             trace_seq_putc(p, 'x');
-> > +     if (c & CEPH_CAP_GCACHE)
-> > +             trace_seq_putc(p, 'c');
-> > +     if (c & CEPH_CAP_GRD)
-> > +             trace_seq_putc(p, 'r');
-> > +     if (c & CEPH_CAP_GWR)
-> > +             trace_seq_putc(p, 'w');
-> > +     if (c & CEPH_CAP_GBUFFER)
-> > +             trace_seq_putc(p, 'b');
-> > +     if (c & CEPH_CAP_GWREXTEND)
-> > +             trace_seq_putc(p, 'a');
-> > +     if (c & CEPH_CAP_GLAZYIO)
-> > +             trace_seq_putc(p, 'l');
-> > +}
-> > +
-> > +const char *
-> > +trace_ceph_cap_string(struct trace_seq *p, int caps)
-> > +{
-> > +     int c;
-> > +     const char *ret = trace_seq_buffer_ptr(p);
-> > +
-> > +     if (caps == 0) {
-> > +             trace_seq_putc(p, '-');
-> > +             goto out;
-> > +     }
-> > +
-> > +     if (caps & CEPH_CAP_PIN)
-> > +             trace_seq_putc(p, 'p');
-> > +
-> > +     c = (caps >> CEPH_CAP_SAUTH) & CEPH_CAP_BASE_MASK;
-> > +     if (c) {
-> > +             trace_seq_putc(p, 'A');
-> > +             trace_gcap_string(p, c);
-> > +     }
-> > +
-> > +     c = (caps >> CEPH_CAP_SLINK) & CEPH_CAP_BASE_MASK;
-> > +     if (c) {
-> > +             trace_seq_putc(p, 'L');
-> > +             trace_gcap_string(p, c);
-> > +     }
-> > +
-> > +     c = (caps >> CEPH_CAP_SXATTR) & CEPH_CAP_BASE_MASK;
-> > +     if (c) {
-> > +             trace_seq_putc(p, 'X');
-> > +             trace_gcap_string(p, c);
-> > +     }
-> > +
-> > +     c = (caps >> CEPH_CAP_SFILE) & CEPH_CAP_FILE_MASK;
-> > +     if (c) {
-> > +             trace_seq_putc(p, 'F');
-> > +             trace_gcap_string(p, c);
-> > +     }
-> > +out:
-> > +     trace_seq_putc(p, '\0');
-> > +     return ret;
-> > +}
-> > diff --git a/fs/ceph/trace.h b/fs/ceph/trace.h
-> > new file mode 100644
-> > index 000000000000..d1cf4bb8a21d
-> > --- /dev/null
-> > +++ b/fs/ceph/trace.h
-> > @@ -0,0 +1,55 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#undef TRACE_SYSTEM
-> > +#define TRACE_SYSTEM ceph
-> > +
-> > +#if !defined(_CEPH_TRACE_H) || defined(TRACE_HEADER_MULTI_READ)
-> > +#define _CEPH_TRACE_H
-> > +
-> > +#include <linux/tracepoint.h>
-> > +#include <linux/trace_seq.h>
-> > +#include "super.h"
-> > +
-> > +const char *trace_ceph_cap_string(struct trace_seq *p, int caps);
-> > +#define show_caps(caps) ({ trace_ceph_cap_string(p, caps); })
-> > +
-> > +#define show_snapid(snap)    \
-> > +     __print_symbolic_u64(snap, {CEPH_NOSNAP, "NOSNAP" })
-> > +
-> > +DECLARE_EVENT_CLASS(ceph_cap_class,
-> > +     TP_PROTO(struct ceph_cap *cap),
-> > +     TP_ARGS(cap),
-> > +     TP_STRUCT__entry(
-> > +             __field(u64, ino)
-> > +             __field(u64, snap)
-> > +             __field(int, issued)
-> > +             __field(int, implemented)
-> > +             __field(int, mds)
-> > +             __field(int, mds_wanted)
-> > +     ),
-> > +     TP_fast_assign(
-> > +             __entry->ino = cap->ci->i_vino.ino;
-> > +             __entry->snap = cap->ci->i_vino.snap;
-> > +             __entry->issued = cap->issued;
-> > +             __entry->implemented = cap->implemented;
-> > +             __entry->mds = cap->mds;
-> > +             __entry->mds_wanted = cap->mds_wanted;
-> > +     ),
-> > +     TP_printk("ino=0x%llx snap=%s mds=%d issued=%s implemented=%s mds_wanted=%s",
-> > +             __entry->ino, show_snapid(__entry->snap), __entry->mds,
-> > +             show_caps(__entry->issued), show_caps(__entry->implemented),
-> > +             show_caps(__entry->mds_wanted))
-> > +)
-> > +
-> > +#define DEFINE_CEPH_CAP_EVENT(name)             \
-> > +DEFINE_EVENT(ceph_cap_class, ceph_##name,       \
-> > +     TP_PROTO(struct ceph_cap *cap),         \
-> > +     TP_ARGS(cap))
-> > +
-> > +DEFINE_CEPH_CAP_EVENT(add_cap);
-> > +DEFINE_CEPH_CAP_EVENT(remove_cap);
-> > +
-> > +#endif /* _CEPH_TRACE_H */
-> > +
-> > +#define TRACE_INCLUDE_PATH .
-> > +#define TRACE_INCLUDE_FILE trace
-> > +#include <trace/define_trace.h>
-> > diff --git a/include/linux/ceph/ceph_debug.h b/include/linux/ceph/ceph_debug.h
-> > index d5a5da838caf..fa4a84e0e018 100644
-> > --- a/include/linux/ceph/ceph_debug.h
-> > +++ b/include/linux/ceph/ceph_debug.h
-> > @@ -2,6 +2,7 @@
-> >  #ifndef _FS_CEPH_DEBUG_H
-> >  #define _FS_CEPH_DEBUG_H
-> >
-> > +#undef pr_fmt
-> >  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> >
-> >  #include <linux/string.h>
+> > On Thu, Aug 8, 2019 at 2:05 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+> > >
+> > > On Thu, Aug 8, 2019 at 10:19 AM Jerry Lee <leisurelysw24@gmail.com> wrote:
+> > > >
+> > > > On Thu, 8 Aug 2019 at 15:52, Ilya Dryomov <idryomov@gmail.com> wrote:
+> > > > >
+> > > > > On Thu, Aug 8, 2019 at 9:04 AM Jerry Lee <leisurelysw24@gmail.com> wrote:
+> > > > > >
+> > > > > > On Thu, 8 Aug 2019 at 01:38, Ilya Dryomov <idryomov@gmail.com> wrote:
+> > > > > > >
+> > > > > > > On Wed, Aug 7, 2019 at 10:15 AM Ilya Dryomov <idryomov@gmail.com> wrote:
+> > > > > > > >
+> > > > > > > > On Tue, Aug 6, 2019 at 1:11 PM Jerry Lee <leisurelysw24@gmail.com> wrote:
+> > > > > > > > >
+> > > > > > > > > Hi,
+> > > > > > > > >
+> > > > > > > > > After simplifying the environment and the issue can be re-produced
+> > > > > > > > > much easier.  The IP and infrastructure are simply described as below:
+> > > > > > > > >
+> > > > > > > > > CephFS Kernel Client (172.16.10.7, linux-4.14)
+> > > > > > > > > Node1 (172.16.10.17)
+> > > > > > > > >   - OSD0~2
+> > > > > > > > > Node2 (172.16.10.18)
+> > > > > > > > >   - OSD3~7
+> > > > > > > > > Node3 (172.16.10.19)
+> > > > > > > > >   - OSD8~12
+> > > > > > > > >
+> > > > > > > > > The client mounts the CephFS right after the Node1 is setup.  And
+> > > > > > > > > every time a new Node joins the cluster, some files will be added to
+> > > > > > > > > the CephFS.  The issue always happens after the Nodes3 joins the
+> > > > > > > > > cluster and the stuck write op seems to be sent to the old pg acting
+> > > > > > > > > set although the epoch of osdmap on the client is already the same to
+> > > > > > > > > the one on ceph.
+> > > > > > > > >
+> > > > > > > > > osdmap epoch 69
+> > > > > > > > > ##############
+> > > > > > > > > Tue Aug  6 16:04:25 CST 2019
+> > > > > > > > > epoch 69 barrier 30 flags 0x188000
+> > > > > > > > > pool 1 'cephfs_data' type 1 size 3 min_size 2 pg_num 64 pg_num_mask 63
+> > > > > > > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > > > > > pool 2 'cephfs_md' type 1 size 3 min_size 2 pg_num 32 pg_num_mask 31
+> > > > > > > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > > > > > osd0    172.16.10.17:6802       100%    (exists, up)    100%
+> > > > > > > > > osd1    172.16.10.17:6806       100%    (exists, up)    100%
+> > > > > > > > > osd2    172.16.10.17:6810       100%    (exists, up)    100%
+> > > > > > > > > osd3    172.16.10.18:6801       100%    (exists, up)    100%
+> > > > > > > > > osd4    172.16.10.18:6805       100%    (exists, up)    100%
+> > > > > > > > > osd5    172.16.10.18:6809       100%    (exists, up)    100%
+> > > > > > > > > osd6    172.16.10.18:6813       100%    (exists, up)    100%
+> > > > > > > > > osd7    172.16.10.18:6817       100%    (exists, up)    100%
+> > > > > > > > > osd8    (unknown sockaddr family 0)       0%    (exists)        100%
+> > > > > > > > >
+> > > > > > > > > (IO on Cephfs ...)
+> > > > > > > > >
+> > > > > > > > > osdmap epoch 103
+> > > > > > > > > ###############
+> > > > > > > > > Tue Aug  6 16:04:26 CST 2019
+> > > > > > > > > epoch 103 barrier 30 flags 0x188000
+> > > > > > > > > pool 1 'cephfs_data' type 1 size 3 min_size 2 pg_num 128 pg_num_mask
+> > > > > > > > > 127 flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > > > > > pool 2 'cephfs_md' type 1 size 3 min_size 2 pg_num 32 pg_num_mask 31
+> > > > > > > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > > > > > osd0    172.16.10.17:6802       100%    (exists, up)    100%
+> > > > > > > > > osd1    172.16.10.17:6806       100%    (exists, up)    100%
+> > > > > > > > > osd2    172.16.10.17:6810       100%    (exists, up)    100%
+> > > > > > > > > osd3    172.16.10.18:6801       100%    (exists, up)    100%
+> > > > > > > > > osd4    172.16.10.18:6805       100%    (exists, up)    100%
+> > > > > > > > > osd5    172.16.10.18:6809       100%    (exists, up)    100%
+> > > > > > > > > osd6    172.16.10.18:6813       100%    (exists, up)    100%
+> > > > > > > > > osd7    172.16.10.18:6817       100%    (exists, up)    100%
+> > > > > > > > > osd8    172.16.10.19:6801       100%    (exists, up)    100%
+> > > > > > > > > osd9    172.16.10.19:6805       100%    (exists, up)    100%
+> > > > > > > > > osd10   172.16.10.19:6809       100%    (exists, up)    100%
+> > > > > > > > > osd11   172.16.10.19:6813       100%    (exists, up)    100%
+> > > > > > > > > osd12   172.16.10.19:6817       100%    (exists, up)    100%
+> > > > > > > > >
+> > > > > > > > > (IO on Cephfs ...)
+> > > > > > > > >
+> > > > > > > > > osdmap epoch 103
+> > > > > > > > > ###############
+> > > > > > > > > Tue Aug  6 16:04:38 CST 2019
+> > > > > > > > > epoch 103 barrier 30 flags 0x188000
+> > > > > > > > > pool 1 'cephfs_data' type 1 size 3 min_size 2 pg_num 128 pg_num_mask
+> > > > > > > > > 127 flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > > > > > pool 2 'cephfs_md' type 1 size 3 min_size 2 pg_num 32 pg_num_mask 31
+> > > > > > > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > > > > > osd0    172.16.10.17:6802       100%    (exists, up)    100%
+> > > > > > > > > osd1    172.16.10.17:6806       100%    (exists, up)    100%
+> > > > > > > > > osd2    172.16.10.17:6810       100%    (exists, up)    100%
+> > > > > > > > > osd3    172.16.10.18:6801       100%    (exists, up)    100%
+> > > > > > > > > osd4    172.16.10.18:6805       100%    (exists, up)    100%
+> > > > > > > > > osd5    172.16.10.18:6809       100%    (exists, up)    100%
+> > > > > > > > > osd6    172.16.10.18:6813       100%    (exists, up)    100%
+> > > > > > > > > osd7    172.16.10.18:6817       100%    (exists, up)    100%
+> > > > > > > > > osd8    172.16.10.19:6801       100%    (exists, up)    100%
+> > > > > > > > > osd9    172.16.10.19:6805       100%    (exists, up)    100%
+> > > > > > > > > osd10   172.16.10.19:6809       100%    (exists, up)    100%
+> > > > > > > > > osd11   172.16.10.19:6813       100%    (exists, up)    100%
+> > > > > > > > > osd12   172.16.10.19:6817       100%    (exists, up)    100%
+> > > > > > > > > REQUESTS 13 homeless 0
+> > > > > > > > > 389     osd2    1.23964a4b      1.4b    [2,4,12]/2      [2,4,12]/2
+> > > > > > > > >  e103    10000000028.00000006    0x400024        1       write
+> > > > > > > > > 365     osd5    1.cde1721f      1.1f    [5,10,2]/5      [5,10,2]/5
+> > > > > > > > >  e103    10000000017.00000007    0x400024        1       write
+> > > > > > > > > 371     osd5    1.9d081620      1.20    [5,12,2]/5      [5,12,2]/5
+> > > > > > > > >  e103    10000000025.00000007    0x400024        1       write
+> > > > > > > > > 375     osd5    1.8b5def1f      1.1f    [5,10,2]/5      [5,10,2]/5
+> > > > > > > > >  e103    1000000001f.00000006    0x400024        1       write
+> > > > > > > > > 204     osd7    1.4dbcd0b2      1.32    [7,5,0]/7       [7,5,0]/7
+> > > > > > > > >  e103    10000000017.00000001    0x400024        1       write
+> > > > > > > > > 373     osd7    1.8f57faf5      1.75    [7,11,2]/7      [7,11,2]/7
+> > > > > > > > >  e103    10000000027.00000007    0x400024        1       write
+> > > > > > > > > 369     osd8    1.cec2d5dd      1.5d    [8,2,7]/8       [8,2,7]/8
+> > > > > > > > >  e103    10000000020.00000007    0x400024        1       write
+> > > > > > > > > 378     osd8    1.3853fefc      1.7c    [8,3,2]/8       [8,3,2]/8
+> > > > > > > > >  e103    1000000001c.00000006    0x400024        1       write
+> > > > > > > > > 384     osd8    1.342be187      1.7     [8,6,2]/8       [8,6,2]/8
+> > > > > > > > >  e103    1000000001b.00000006    0x400024        1       write
+> > > > > > > > > 390     osd11   1.1ac10bad      1.2d    [11,5,2]/11     [11,5,2]/11
+> > > > > > > > >  e103    10000000028.00000007    0x400024        1       write
+> > > > > > > > > 364     osd12   1.345417ca      1.4a    [12,7,2]/12     [12,7,2]/12
+> > > > > > > > >  e103    10000000017.00000006    0x400024        1       write
+> > > > > > > > > 374     osd12   1.50114f4a      1.4a    [12,7,2]/12     [12,7,2]/12
+> > > > > > > > >  e103    10000000026.00000007    0x400024        1       write
+> > > > > > > > > 381     osd12   1.d670203f      1.3f    [12,2,4]/12     [12,2,4]/12
+> > > > > > > > >  e103    10000000021.00000006    0x400024        1       write
+> > > > > > > > >
+> > > > > > > > > (IO stop ...)
+> > > > > > > > >
+> > > > > > > > > osdmap epoch 103
+> > > > > > > > > ###############
+> > > > > > > > > Tue Aug  6 16:04:39 CST 2019
+> > > > > > > > > epoch 103 barrier 30 flags 0x188000
+> > > > > > > > > pool 1 'cephfs_data' type 1 size 3 min_size 2 pg_num 128 pg_num_mask
+> > > > > > > > > 127 flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > > > > > pool 2 'cephfs_md' type 1 size 3 min_size 2 pg_num 32 pg_num_mask 31
+> > > > > > > > > flags 0x1 lfor 0 read_tier -1 write_tier -1
+> > > > > > > > > osd0    172.16.10.17:6802       100%    (exists, up)    100%
+> > > > > > > > > osd1    172.16.10.17:6806       100%    (exists, up)    100%
+> > > > > > > > > osd2    172.16.10.17:6810       100%    (exists, up)    100%
+> > > > > > > > > osd3    172.16.10.18:6801       100%    (exists, up)    100%
+> > > > > > > > > osd4    172.16.10.18:6805       100%    (exists, up)    100%
+> > > > > > > > > osd5    172.16.10.18:6809       100%    (exists, up)    100%
+> > > > > > > > > osd6    172.16.10.18:6813       100%    (exists, up)    100%
+> > > > > > > > > osd7    172.16.10.18:6817       100%    (exists, up)    100%
+> > > > > > > > > osd8    172.16.10.19:6801       100%    (exists, up)    100%
+> > > > > > > > > osd9    172.16.10.19:6805       100%    (exists, up)    100%
+> > > > > > > > > osd10   172.16.10.19:6809       100%    (exists, up)    100%
+> > > > > > > > > osd11   172.16.10.19:6813       100%    (exists, up)    100%
+> > > > > > > > > osd12   172.16.10.19:6817       100%    (exists, up)    100%
+> > > > > > > > > REQUESTS 1 homeless 0
+> > > > > > > > > 204     osd7    1.4dbcd0b2      1.32    [7,5,0]/7       [7,5,0]/7
+> > > > > > > > >  e103    10000000017.00000001    0x400024        1       write
+> > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > Strangely, the acting set of pg 1.32 shown on ceph is [7,1,9] instead
+> > > > > > > > > of [7,5,0].
+> > > > > > > > >
+> > > > > > > > > [root@Jerry-x85-n2 ceph]# ceph pg dump | grep ^1.32
+> > > > > > > > > dumped all
+> > > > > > > > > 1.32          1                  0        0         0       0  4194304
+> > > > > > > > >   3        3 active+clean 2019-08-06 16:03:33.978990    68'3   103:98
+> > > > > > > > > [7,1,9]          7  [7,1,9]
+> > > > > > > > >
+> > > > > > > > > [root@Jerry-x85-n2 ceph]# grep -rn "replicas change" ceph-osd.7.log | grep 1.32
+> > > > > > > > > ceph-osd.7.log:1844:2019-08-06 15:59:53.276 7fa390256700 10 osd.7
+> > > > > > > > > pg_epoch: 66 pg[1.32( empty local-lis/les=64/65 n=0 ec=47/16 lis/c
+> > > > > > > > > 64/64 les/c/f 65/65/0 66/66/64) [7,5,0] r=0 lpr=66 pi=[64,66)/1
+> > > > > > > > > crt=0'0 mlcod 0'0 unknown mbc={}] [7,5,2] -> [7,5,0], replicas changed
+> > > > > > > > > ceph-osd.7.log:15330:2019-08-06 16:02:38.769 7fa390256700 10 osd.7
+> > > > > > > > > pg_epoch: 84 pg[1.32( v 68'3 (0'0,68'3] local-lis/les=66/67 n=2
+> > > > > > > > > ec=47/16 lis/c 66/66 les/c/f 67/67/0 66/84/64) [7,5,0] r=0 lpr=84
+> > > > > > > > > pi=[66,84)/1 crt=68'3 lcod 68'2 mlcod 0'0 unknown mbc={}] [7,5,0] ->
+> > > > > > > > > [7,5,0], replicas changed
+> > > > > > > > > ceph-osd.7.log:25741:2019-08-06 16:02:53.618 7fa390256700 10 osd.7
+> > > > > > > > > pg_epoch: 90 pg[1.32( v 68'3 (0'0,68'3] local-lis/les=84/85 n=1
+> > > > > > > > > ec=47/16 lis/c 84/84 les/c/f 85/85/0 90/90/64) [7,1,8] r=0 lpr=90
+> > > > > > > > > pi=[84,90)/1 crt=68'3 lcod 68'2 mlcod 0'0 unknown mbc={}] [7,5,0] ->
+> > > > > > > > > [7,1,8], replicas changed
+> > > > > > > > > ceph-osd.7.log:37917:2019-08-06 16:03:17.932 7fa390256700 10 osd.7
+> > > > > > > > > pg_epoch: 100 pg[1.32( v 68'3 (0'0,68'3] local-lis/les=90/91 n=1
+> > > > > > > > > ec=47/16 lis/c 90/90 les/c/f 91/97/0 100/100/64) [7,1,9] r=0 lpr=100
+> > > > > > > > > pi=[90,100)/1 crt=68'3 lcod 68'2 mlcod 0'0 unknown mbc={}] [7,1,8] ->
+> > > > > > > > > [7,1,9], replicas changed
+> > > > > > > > >
+> > > > > > > > > Related logs with debug_osd=10 and debug_ms=1 are provided in the
+> > > > > > > > > https://drive.google.com/open?id=1gYksDbCecisWtP05HEoSxevDK8sywKv6 .
+> > > > > > > > > Currently, I am tracing the code to figure out the root cause.  Any
+> > > > > > > > > ideas or insights will be appreciated, thanks!
+> > > > > > > >
+> > > > > > > > Hi Jerry,
+> > > > > > > >
+> > > > > > > > So the original request was dropped by osd.7 because the PG got split:
+> > > > > > > >
+> > > > > > > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 dequeue_op
+> > > > > > > > 0x561adf90f500 prio 127 cost 4194304 latency 0.015565
+> > > > > > > > osd_op(client.4418.0:204 1.32 1.4dbcd0b2 (undecoded)
+> > > > > > > > ondisk+write+known_if_redirected e69) v8 pg pg[1.32( v 68'3 (0'0,68'3]
+> > > > > > > > local-lis/les=100/101 n=1 ec=47/16 lis/c 100/100 les/c/f 101/102/0
+> > > > > > > > 100/100/64) [7,1,9] r=0 lpr=100 crt=68'3 lcod 68'2 mlcod 0'0
+> > > > > > > > active+clean]
+> > > > > > > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 client.4418 has old
+> > > > > > > > map 69 < 103
+> > > > > > > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 send_incremental_map
+> > > > > > > > 69 -> 103 to 0x561ae4cfb600 172.16.10.7:0/3068540720
+> > > > > > > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 add_map_inc_bl 80 220 bytes
+> > > > > > > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 add_map_inc_bl 72 240 bytes
+> > > > > > > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 add_map_inc_bl 71 240 bytes
+> > > > > > > > 2019-08-06 16:04:25.747 7fa390256700 10 osd.7 103 add_map_inc_bl 70 240 bytes
+> > > > > > > > 2019-08-06 16:04:25.747 7fa390256700  7 osd.7 pg_epoch: 103 pg[1.32( v
+> > > > > > > > 68'3 (0'0,68'3] local-lis/les=100/101 n=1 ec=47/16 lis/c 100/100
+> > > > > > > > les/c/f 101/102/0 100/100/64) [7,1,9] r=0 lpr=100 crt=68'3 lcod 68'2
+> > > > > > > > mlcod 0'0 active+clean] can_discard_op pg split in 84, dropping
+> > > > > > > > 2019-08-06 16:04:25.748 7fa390256700 10 osd.7 103 dequeue_op
+> > > > > > > > 0x561adf90f500 finish
+> > > > > > > >
+> > > > > > > > The request was never resent -- this appears to be a kernel client bug.
+> > > > > > > >
+> > > > > > > > It would be great if you could reproduce with
+> > > > > > > >
+> > > > > > > > echo 'file osd_client +p' > /sys/kernel/debug/dynamic_debug/control
+> > > > > > > >
+> > > > > > > > on the kernel client node and the same set of logs on the OSD side.
+> > > > > > > >
+> > > > > > > > Looking...
+> > > > > > >
+> > > > > > > Nothing so far.  The split detection logic appears to work.
+> > > > > > > There were 11 other requests dropped by the OSDs due to splits and they
+> > > > > > > were all handled correctly:
+> > > > > > >
+> > > > > > > Split in epoch 47:
+> > > > > > >
+> > > > > > > orig  osd2 osd_op(client.4418.0:5 1.f 1.b1e464af (undecoded)
+> > > > > > > ondisk+write+known_if_redirected e35)
+> > > > > > > retry osd0 osd_op(client.4418.0:5 1.2f 1.b1e464af (undecoded)
+> > > > > > > ondisk+retry+write+known_if_redirected e68)
+> > > > > > >
+> > > > > > > orig  osd0 osd_op(client.4418.0:13 1.10 1.fec32590 (undecoded)
+> > > > > > > ondisk+write+known_if_redirected e35)
+> > > > > > > retry osd0 osd_op(client.4418.0:13 1.10 1.fec32590 (undecoded)
+> > > > > > > ondisk+retry+write+known_if_redirected e68)
+> > > > > > >
+> > > > > > > Split in epoch 84:
+> > > > > > >
+> > > > > > > orig  osd5 osd_op(client.4418.0:194 1.20 1.260bc0e0 (undecoded)
+> > > > > > > ondisk+write+known_if_redirected e69)
+> > > > > > > retry osd0 osd_op(client.4418.0:194 1.60 1.260bc0e0 (undecoded)
+> > > > > > > ondisk+retry+write+known_if_redirected e103)
+> > > > > > >
+> > > > > > > orig  osd3 osd_op(client.4418.0:195 1.33 1.9b583df3 (undecoded)
+> > > > > > > ondisk+write+known_if_redirected e69)
+> > > > > > > retry osd1 osd_op(client.4418.0:195 1.73 1.9b583df3 (undecoded)
+> > > > > > > ondisk+retry+write+known_if_redirected e103)
+> > > > > > >
+> > > > > > > orig  osd1 osd_op(client.4418.0:197 1.1a 1.a986dc1a (undecoded)
+> > > > > > > ondisk+write+known_if_redirected e69)
+> > > > > > > retry osd1 osd_op(client.4418.0:197 1.1a 1.a986dc1a (undecoded)
+> > > > > > > ondisk+retry+write+known_if_redirected e103)
+> > > > > > >
+> > > > > > > orig  osd2 osd_op(client.4418.0:198 1.14 1.b93e34d4 (undecoded)
+> > > > > > > ondisk+write+known_if_redirected e69)
+> > > > > > > retry osd4 osd_op(client.4418.0:198 1.54 1.b93e34d4 (undecoded)
+> > > > > > > ondisk+retry+write+known_if_redirected e103)
+> > > > > > >
+> > > > > > > orig  osd1 osd_op(client.4418.0:199 1.1a 1.92ca525a (undecoded)
+> > > > > > > ondisk+write+known_if_redirected e69)
+> > > > > > > retry osd11 osd_op(client.4418.0:199 1.5a 1.92ca525a (undecoded)
+> > > > > > > ondisk+retry+write+known_if_redirected e103)
+> > > > > > >
+> > > > > > > orig  osd0 osd_op(client.4418.0:202 1.3b 1.6388bdbb (undecoded)
+> > > > > > > ondisk+write+known_if_redirected e69)
+> > > > > > > retry osd0 osd_op(client.4418.0:202 1.3b 1.6388bdbb (undecoded)
+> > > > > > > ondisk+retry+write+known_if_redirected e103)
+> > > > > > >
+> > > > > > > orig  osd3 osd_op(client.4418.0:203 1.1e 1.fe5731e (undecoded)
+> > > > > > > ondisk+write+known_if_redirected e69)
+> > > > > > > retry osd3 osd_op(client.4418.0:203 1.1e 1.fe5731e (undecoded)
+> > > > > > > ondisk+retry+write+known_if_redirected e103)
+> > > > > > >
+> > > > > > > orig  osd7 osd_op(client.4418.0:204 1.32 1.4dbcd0b2 (undecoded)
+> > > > > > > ondisk+write+known_if_redirected e69)
+> > > > > > > retry ???
+> > > > > > >
+> > > > > > > orig  osd0 osd_op(client.4418.0:205 1.10 1.42c29750 (undecoded)
+> > > > > > > ondisk+write+known_if_redirected e69)
+> > > > > > > retry osd0 osd_op(client.4418.0:205 1.50 1.42c29750 (undecoded)
+> > > > > > > ondisk+retry+write+known_if_redirected e103)
+> > > > > > >
+> > > > > > > orig  osd3 osd_op(client.4418.0:207 1.33 1.918809b3 (undecoded)
+> > > > > > > ondisk+write+known_if_redirected e69)
+> > > > > > > retry osd3 osd_op(client.4418.0:207 1.33 1.918809b3 (undecoded)
+> > > > > > > ondisk+retry+write+known_if_redirected e103)
+> > > > > > >
+> > > > > > > This shows that both staying in the old PG and moving to the new PG
+> > > > > > > cases are handled correctly, as staying on the same OSD and moving to
+> > > > > > > the new OSD.  The request in question (tid 204) is on the right list
+> > > > > > > as indicated by e103 in osdc output, but it looks like something went
+> > > > > > > wrong inside calc_target().
+> > > > > > >
+> > > > > > > What is the exact kernel version you are running?  I know you said
+> > > > > > > 4.14, but you also mentioned some customizations...
+> > > > > >
+> > > > > > Hi Ilya,
+> > > > > >
+> > > > > > Thanks for your help on analysing the issue.  New logs are provided in
+> > > > > > https://drive.google.com/open?id=1dJ1-eGClDWf18yPrIQMRtLoLJ5xsN3jA .
+> > > > > > I'm also tracing the calc_target() and it seems that for those stuck
+> > > > > > requests, the calc_target() decides that there is no action
+> > > > > > (CALC_TARGET_NO_ACTION) for them.
+> > > > > >
+> > > > > > REQUESTS 2 homeless 0
+> > > > > > 199     osd0    1.6388bdbb      1.3b    [0,1,7]/0       [0,1,7]/0
+> > > > > >  e106    10000000016.00000002    0x400024        1       write
+> > > > > > 202     osd0    1.42c29750      1.50    [0,2,5]/0       [0,2,5]/0
+> > > > > >  e106    10000000017.00000002    0x400024        1       write
+> > > > > >
+> > > > > > <7>[11617.144891] libceph:  applying incremental map 106 len 212
+> > > > > > <7>[11617.144893] libceph:  scan_requests req ffff8808260614a0 tid 199
+> > > > > > <7>[11617.144898] libceph:  calc_target t ffff8808260614e0 -> ct_res 0 osd 0
+> > > > > > ...
+> > > > > > <7>[11646.137530] libceph:   req ffff8808260614a0 tid 199 on osd0 is laggy
+> > > > >
+> > > > > Right, that is what I expected.  Looking...
+> > > > >
+> > > > > >
+> > > > > > The exact kernel version is liunx-4.14.24 and most of the
+> > > > > > customizations are made in the block layer, file system, and scsi
+> > > > > > driver.   However, some patches related to net/ceph and fs/ceph files
+> > > > > > in linux-4.14.y upstream are backported, so I'm also checking whether
+> > > > > > those backports cause this issue or not.
+> > > > >
+> > > > > Can you pastebin or attach your osdmap.c and osd_client.c files?
+> > > >
+> > > > Hi Ilya,
+> > > >
+> > > > - osdmap https://pastebin.com/Aj5h0eLC
+> > > > - osd_client https://pastebin.com/FZNepUVe
+> > >
+> > > I think I see the problem.
+> > >
+> > > 1) creating the OSD session doesn't open the TCP socket, the messenger
+> > >    opens it in try_write()
+> > >
+> > > 2) con->peer_features remains 0 until the TCP socket is opened and
+> > >    either CEPH_MSGR_TAG_SEQ or CEPH_MSGR_TAG_READY is received
+> > >
+> > > 3) calc_target() uses con->peer_features to check for RESEND_ON_SPLIT
+> > >    and resends only if it's set
+> > >
+> > > What happened is there was no osd0 session and tid 199 had to
+> > > create it before submitting itself to the messenger.  However before
+> > > the messenger got to tid 199, some other request with pre-split epoch
+> > > had reached some other OSD and triggered osdmap incrementals.  While
+> > > processing the split incremental, calc_target() for tid 199 returned
+> > > NO_ACTION:
+> > >
+> > >   if (unpaused || legacy_change || force_resend ||
+> > >       (split && con && CEPH_HAVE_FEATURE(con->peer_features,
+> > >                                          RESEND_ON_SPLIT)))
+> > >           ct_res = CALC_TARGET_NEED_RESEND;
+> > >   else
+> > >           ct_res = CALC_TARGET_NO_ACTION;
+> > >
+> > > This isn't logged, but I'm pretty sure that split was 1, con wasn't
+> > > NULL and con->peer_features was 0.
 >
-> Since the MDS async unlink code is still a WIP, I'm going to break out
-> this patch from the series and merge it separately. I'm finding this to
-> be pretty useful in tracking down cap handling issues in the kernel.
+> Hi Ilya,
 >
-> Let me know if anyone has objections.
+> Yes, you're right!  I just add more logs to print out split and
+> con->peer_features and it's exactly what you think:
+>
+> <7>[11347.891038] libceph:  scan_requests req ffff880817fc5300 tid 215
+> <7>[11347.891043] libceph:  calc_target t ffff880817fc5340 -> ct_res 0
+> osd 2 split 1 peer_features 0
+>
+> > >
+> > > I would have noticed this earlier, but I was mislead by osdc
+> > > output.  It shows outdated up/acting sets and that lead me to assume
+> > > that split was 0 (because if split is 1, up/acting sets are updated
+> > > _before_ con->peer_features check).  However in this case up/acting
+> > > sets remained the same for a few epochs after the split, so they are
+> > > not actually outdated wrt the split.
+> > >
+> > > Checking con->peer_features in calc_target() is fundamentally racy...
+> >
+> > Objecter had the same bug, it was fixed by looking at per-OSD features
+> > in osd_xinfo array instead of con->peer_features:
+> >
+> >   https://github.com/ceph/ceph/pull/23850
+> >
+> > I'll see if we can do the same thing here.
+>
+> Again, thanks for your patience and kindly help on this issue.  And,
+> I'm willing to re-verify it if a fix comes out :)
 
-I have a concern that this sets the precedent for segregating our
-debugging infrastructure into two silos: the existing douts based on
-pr_debug() and the new tracepoints.  I do agree that tracepoints are
-nicer, can be easily filtered, etc but I don't see an overwhelming
-reason for going with tracepoints here instead of amending one of the
-existing douts or adding a new one.
+Thanks for confirming, I'll CC you on the patch.
 
-On top of this there is the tracepoint ABI question.  This has been
-a recurring topic at a couple of recent kernel summits, with not much
-progress.  AFAIK this hasn't been an issue for individual filesystems,
-but probably still worth considering.
+Here is the tracker ticket for reference:
 
-Thanks,
+https://tracker.ceph.com/issues/41162
 
                 Ilya
