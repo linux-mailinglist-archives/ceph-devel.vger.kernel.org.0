@@ -2,104 +2,194 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B90528AEB4
-	for <lists+ceph-devel@lfdr.de>; Tue, 13 Aug 2019 07:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB4628AFCE
+	for <lists+ceph-devel@lfdr.de>; Tue, 13 Aug 2019 08:17:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726086AbfHMFYq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 13 Aug 2019 01:24:46 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:39199 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbfHMFYq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 13 Aug 2019 01:24:46 -0400
-Received: from [192.168.178.60] ([109.104.47.130]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MPGiR-1hevT50O45-00PbYR; Tue, 13 Aug 2019 07:23:46 +0200
-Subject: Re: [PATCH v2 15/34] staging/vc04_services: convert put_page() to
- put_user_page*()
-To:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-fbdev@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        kvm@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
-        sparclinux@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
-        ceph-devel@vger.kernel.org, devel@driverdev.osuosl.org,
-        rds-devel@oss.oracle.com, linux-rdma@vger.kernel.org,
-        Suniel Mahesh <sunil.m@techveda.org>, x86@kernel.org,
-        amd-gfx@lists.freedesktop.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mihaela Muraru <mihaela.muraru21@gmail.com>,
-        xen-devel@lists.xenproject.org, devel@lists.orangefs.org,
-        linux-media@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        intel-gfx@lists.freedesktop.org,
-        Kishore KP <kishore.p@techveda.org>,
-        linux-block@vger.kernel.org,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sidong Yang <realwakka@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-nfs@vger.kernel.org,
-        Eric Anholt <eric@anholt.net>, netdev@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-References: <20190804224915.28669-1-jhubbard@nvidia.com>
- <20190804224915.28669-16-jhubbard@nvidia.com>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <f92a9b35-072c-a452-3248-ded047a9ee7e@i2se.com>
-Date:   Tue, 13 Aug 2019 07:23:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727699AbfHMGQs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 13 Aug 2019 02:16:48 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42403 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727371AbfHMGQr (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 13 Aug 2019 02:16:47 -0400
+Received: by mail-pg1-f194.google.com with SMTP id p3so392785pgb.9;
+        Mon, 12 Aug 2019 23:16:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nL9PyzNKtAFr+Adeyaa0mv/ZBzbqceeQurZwipQbI9U=;
+        b=M6a1lbX/QMKRBowg/REKBlhpahKFtMjvvZG2VZlHVhn8xWNE8HMKDSiu2uNAFYXTLH
+         2az6Yz3meyyw5ob2HxAIYn3xlyYIZMsvr2BQShotqy9pxElgOb+4QqW6Ep/62XLU1n2w
+         Vn/JWUFBYYG/i9oCq4qlSuAAdxX0e1Qqjy+CsNXrl80Q2ymuwCSg0PKeZ5zvDOYU0+CX
+         a9y/1guN+eb+Ug6IiLSvmIB5eyENxmN5kpxxLT8zs3ezLZf1RILCDSFpz4GhvzUU4RgM
+         Tj1tTp95hpuvfucv6lwUcCjHiAn5rk7bJt2IrhJazdYtQy5UthwgjeNagIUw28xYOMqr
+         if+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nL9PyzNKtAFr+Adeyaa0mv/ZBzbqceeQurZwipQbI9U=;
+        b=UCtaFwH9HHLraucVm1E1/GgtwklTWVWgheGQABtuNHPFsFO932ZMVFjtt11PHUJb/A
+         qSeTDlTmpsIgjPJGFs19dOqkGmM/nv8O2hNRaa7s9pVzisuI0uL//4+ZYDKNVp/Dr5QO
+         b4uw5pG/sC7cGL8fu9s4p+0UH77el1HnImzM9okpQWlL6RMXF8HZti8fuCu58ssMpRZW
+         +MPpIGTPfltAaFrdRd+5uZJ8i+phnYe39Gavu/M1vKvrU0xecZjb0CoglGBsXJ9aUBNI
+         Wjg+XnMIXHEQHMwPwWAHmiPFK6/HszDgNfBobmJZ4fxZJ25o5iDu51FxGWntzz9xQQTi
+         +wSQ==
+X-Gm-Message-State: APjAAAUbob5WLLkvNJpS2CFCho27ISvj1NWcuMDus+ZLINYg+roCN58E
+        4Y8J31F+a2jYw7VqhsQ3a/E=
+X-Google-Smtp-Source: APXvYqwLQhlZXFxPe2sOgdGVt1EiVo8WOfWlft8uB5djhw5MMQlc564Zq6Rna3xdpeGiEnuUOI9g6Q==
+X-Received: by 2002:a17:90a:eb08:: with SMTP id j8mr772974pjz.72.1565677006908;
+        Mon, 12 Aug 2019 23:16:46 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
+        by smtp.gmail.com with ESMTPSA id k5sm6062037pfg.167.2019.08.12.23.16.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 12 Aug 2019 23:16:46 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
+        Alex Elder <elder@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        ceph-devel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH v2 2/3] rbd: Use refcount_t for refcount
+Date:   Tue, 13 Aug 2019 14:16:41 +0800
+Message-Id: <20190813061641.5428-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190804224915.28669-16-jhubbard@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Provags-ID: V03:K1:WLtnGHSdIdsSOgSCw9gLWN/He07a3vhG8P/jw9q/ZsKCLbsJUeS
- 5llVNlt7KE/tvHn+5EOmDYYv4pX1cHVWKOXHtrw4HQWAHuCkTohFsgxlEY0fExapDm8vR8t
- zVIsUr/Bms6Kvxj5sCY8IbKiNL01LBum+j6x95pPZHXG9iG9KDUI7QIiVK2/58tc3NB1jnX
- y7VHJG/KIA+fGCfAbINIQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:e2tiG/LoUCE=:MfCllk8c06iYHLUWJWcKAL
- cdQ1fi1ypP4tC6pu8XAt4M+fU5mGlkjM5ziFPw9nAP5+ICbjFLhxsiDLATVpll3xwUgna69cS
- Ev9bpFgmBYRqbHsiOVM335kNgAU19xY/LXN/GzEuigzotpDhc5IdC4FGsNTdqmIYi0Bx4dgCw
- bLM/SrMXG40Mg1UArtxdqWQvHnINj7yK6JacwPswBAo33CV5S5U4U1PS67DpEMKA7dX0oduGb
- 5fQtkN1kvCZEg2/ekJnnb+PAR6KRS8Eu0zqK7cwQwWxs+nxHFNvcdfFolT7waPuKj24rhpnjW
- ZntPcErm15w8EJ72vFuARtCUk4Lh4jU+zYNtoDE6B8RJqr/+yxycmwEDucEbNXrujkaPH72RU
- fWCHjlXjsJS29DRMlBs91cqiKMaK/ktbzSpegz+iLEJq/HkDuPh/jiz/b8w2crkMXTYEXfcIb
- WqkuI5hHrAdEh99xa/X99FupD8F6iZ52Pv/g2glNHL9WlKL41btCn/KodqBqy/glIqHZeYzq2
- SXjRol/t4oy36qgSCQmUGiCt1lssYLkBWOzcxjui5lZUL2V9O7wn91tHl7G+DbqjQzgMyVtBP
- 60iHHkwkWe3su3M3o+o4m8sWd9OG5XIToU/4cSDhBQohrRIKKqoUbXAyCJH96bxaYdq/zseIf
- oMsHaN/31pBaLs6MtsAa2tu5PRj9qlBX5kso+Y5up4mj5gl7CfIWyGwpM4gPWtVKv1En5k3ZR
- HR/0MJ6spaP8P86u5+VALfxj2aM5bbcj+ZVczoVE2BIVl4lPQEesVoHHwFc=
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 05.08.19 00:48, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
->
-> For pages that were retained via get_user_pages*(), release those pages
-> via the new put_user_page*() routines, instead of via put_page() or
-> release_pages().
->
-> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
-> ("mm: introduce put_user_page*(), placeholder versions").
->
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->
-> Cc: Eric Anholt <eric@anholt.net>
-> Cc: Stefan Wahren <stefan.wahren@i2se.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Mihaela Muraru <mihaela.muraru21@gmail.com>
-> Cc: Suniel Mahesh <sunil.m@techveda.org>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Sidong Yang <realwakka@gmail.com>
-> Cc: Kishore KP <kishore.p@techveda.org>
-> Cc: linux-rpi-kernel@lists.infradead.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: devel@driverdev.osuosl.org
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Reference counters are preferred to use refcount_t instead of
+atomic_t.
+This is because the implementation of refcount_t can prevent
+overflows and detect possible use-after-free.
+So convert atomic_t ref counters to refcount_t.
+
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+ drivers/block/rbd.c | 57 ++++++++-------------------------------------
+ 1 file changed, 10 insertions(+), 47 deletions(-)
+
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 3327192bb71f..74d2dddbe108 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -46,44 +46,12 @@
+ #include <linux/slab.h>
+ #include <linux/idr.h>
+ #include <linux/workqueue.h>
++#include <linux/refcount.h>
+ 
+ #include "rbd_types.h"
+ 
+ #define RBD_DEBUG	/* Activate rbd_assert() calls */
+ 
+-/*
+- * Increment the given counter and return its updated value.
+- * If the counter is already 0 it will not be incremented.
+- * If the counter is already at its maximum value returns
+- * -EINVAL without updating it.
+- */
+-static int atomic_inc_return_safe(atomic_t *v)
+-{
+-	unsigned int counter;
+-
+-	counter = (unsigned int)atomic_fetch_add_unless(v, 1, 0);
+-	if (counter <= (unsigned int)INT_MAX)
+-		return (int)counter;
+-
+-	atomic_dec(v);
+-
+-	return -EINVAL;
+-}
+-
+-/* Decrement the counter.  Return the resulting value, or -EINVAL */
+-static int atomic_dec_return_safe(atomic_t *v)
+-{
+-	int counter;
+-
+-	counter = atomic_dec_return(v);
+-	if (counter >= 0)
+-		return counter;
+-
+-	atomic_inc(v);
+-
+-	return -EINVAL;
+-}
+-
+ #define RBD_DRV_NAME "rbd"
+ 
+ #define RBD_MINORS_PER_MAJOR		256
+@@ -438,7 +406,7 @@ struct rbd_device {
+ 
+ 	struct rbd_spec		*parent_spec;
+ 	u64			parent_overlap;
+-	atomic_t		parent_ref;
++	refcount_t		parent_ref;
+ 	struct rbd_device	*parent;
+ 
+ 	/* Block layer tags. */
+@@ -1680,21 +1648,19 @@ static void rbd_dev_unparent(struct rbd_device *rbd_dev)
+  */
+ static void rbd_dev_parent_put(struct rbd_device *rbd_dev)
+ {
+-	int counter;
++	bool is_dec_to_zero;
+ 
+ 	if (!rbd_dev->parent_spec)
+ 		return;
+ 
+-	counter = atomic_dec_return_safe(&rbd_dev->parent_ref);
+-	if (counter > 0)
++	is_dec_to_zero = refcount_dec_and_test_checked(&rbd_dev->parent_ref);
++	if (!is_dec_to_zero)
+ 		return;
+ 
+ 	/* Last reference; clean up parent data structures */
+ 
+-	if (!counter)
++	if (is_dec_to_zero)
+ 		rbd_dev_unparent(rbd_dev);
+-	else
+-		rbd_warn(rbd_dev, "parent reference underflow");
+ }
+ 
+ /*
+@@ -1707,20 +1673,17 @@ static void rbd_dev_parent_put(struct rbd_device *rbd_dev)
+  */
+ static bool rbd_dev_parent_get(struct rbd_device *rbd_dev)
+ {
+-	int counter = 0;
++	bool is_inc_suc = false;
+ 
+ 	if (!rbd_dev->parent_spec)
+ 		return false;
+ 
+ 	down_read(&rbd_dev->header_rwsem);
+ 	if (rbd_dev->parent_overlap)
+-		counter = atomic_inc_return_safe(&rbd_dev->parent_ref);
++		is_inc_suc = refcount_inc_not_zero_checked(&rbd_dev->parent_ref);
+ 	up_read(&rbd_dev->header_rwsem);
+ 
+-	if (counter < 0)
+-		rbd_warn(rbd_dev, "parent reference overflow");
+-
+-	return counter > 0;
++	return is_inc_suc;
+ }
+ 
+ /*
+@@ -6823,7 +6786,7 @@ static int rbd_dev_probe_parent(struct rbd_device *rbd_dev, int depth)
+ 		goto out_err;
+ 
+ 	rbd_dev->parent = parent;
+-	atomic_set(&rbd_dev->parent_ref, 1);
++	refcount_set(&rbd_dev->parent_ref, 1);
+ 	return 0;
+ 
+ out_err:
+-- 
+2.20.1
+
