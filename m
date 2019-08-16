@@ -2,91 +2,92 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80DA28EBF3
-	for <lists+ceph-devel@lfdr.de>; Thu, 15 Aug 2019 14:51:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64DEB90091
+	for <lists+ceph-devel@lfdr.de>; Fri, 16 Aug 2019 13:15:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731638AbfHOMvu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 15 Aug 2019 08:51:50 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40629 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729627AbfHOMvt (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 15 Aug 2019 08:51:49 -0400
-Received: by mail-qt1-f193.google.com with SMTP id e8so2155416qtp.7
-        for <ceph-devel@vger.kernel.org>; Thu, 15 Aug 2019 05:51:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vDxpi3VtyQtbGKAXa10ENJoIPaDUdxpEr2EhOT9Nysg=;
-        b=KtOlwrc9lmJGyW+RpeeyoqgJeLIkZwZqd0t0IVenBC/fKxZYe+u5TBTCgEe7S7CNGi
-         WVmTw4FgA0WJLPPNhWjEidXWplgA9LniABl4kzCZSkX6Nnx3zbm/k1OMNtEmTDalVDoL
-         MQKiflzcv4lm97dQwBBrjdR2jHNHpEaysU7gXxpn4hb7wPRXKOwNRCm2aky12E7i394O
-         LNh2js8M42PCylZIQY6rrmdCdWf6zcDQ8mdFDgMtFPMpK27+TEGWB67uFuV+5jpdh5rn
-         k8d5u8Zz/qJVXRyEJecT9sb7dvfAcdSaJnQt+4T/lsiMSZOypRKyybRAOoNlc1DM8BnM
-         u4KQ==
+        id S1727167AbfHPLPV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 16 Aug 2019 07:15:21 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:44394 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbfHPLPV (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 16 Aug 2019 07:15:21 -0400
+Received: by mail-yw1-f68.google.com with SMTP id l79so1657772ywe.11
+        for <ceph-devel@vger.kernel.org>; Fri, 16 Aug 2019 04:15:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vDxpi3VtyQtbGKAXa10ENJoIPaDUdxpEr2EhOT9Nysg=;
-        b=briBI6cPscQIoMNvAWSmNTh6sVkblN/6Dl9MfnZOfdnQeQ3J9lNCuuIJC9u+nYX/cQ
-         Gu0VCam/II3qZ/HGu7oJ4u3yy97nR4o8fOstJdoT7slRufqX62JPUe6h4odk/7AnJZBC
-         JV1+IrIkvlFWWZFoqmgyWxszXuXJutfsoM96ur2PFL5TjIZB9zM9+xSZC22igklHOtoL
-         IGC5yvrqMghxmPxUxsOPgV7ldMca9xZ5GvW3wkvk/X+sojBX3gLTBgw4GryJ52tyhbJe
-         wubqUR23TdfxywTbVhBnidGTgJIOacPQLmKC25X6KZAO/agGxhoMA2YYmLzFyfmY2ujB
-         kHFA==
-X-Gm-Message-State: APjAAAUVM2/KkidEudPcWq7jlQykmIDoMZY/5tXge8a6EQDbuXWB8svj
-        rXycLusisrx3qJB5KiMofIofjPXy7mzoXCn+HL4=
-X-Google-Smtp-Source: APXvYqz2Gu9a9FOMcTdTe54ylOdtBUzI6tqx9yveGgMAS1a0o4yqQwtoJtC9V5Gr+vs54yjOF+lK/Q3R7sj3onW0Dqc=
-X-Received: by 2002:ac8:4103:: with SMTP id q3mr3693791qtl.296.1565873508856;
- Thu, 15 Aug 2019 05:51:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190815121555.15825-1-jlayton@kernel.org>
-In-Reply-To: <20190815121555.15825-1-jlayton@kernel.org>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Thu, 15 Aug 2019 20:51:37 +0800
-Message-ID: <CAAM7YA=yJmLpgNRL4SGYG65TbJ9oYt2LdHxbcjYN6U-Ce1T4fw@mail.gmail.com>
-Subject: Re: [PATCH] ceph: don't try fill file_lock on unsuccessful
- GETFILELOCK reply
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
-        Hector Martin <hector@marcansoft.com>,
-        Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=mh6AzGY70LwhJ4eTO/EZzHypKHxPoSvzNb5Iich9FKc=;
+        b=H55OOFTQmSaF+P/z8fyxTEFJTPwjhUKLUMRtSsnbzT/qkoOM1l7wnjDSeln40lvs9h
+         E1/fR52U9b7BrB4Q4N47PuunjJKkbbEx8AzyYbck1utG6vo3TZpeJl6yOqLGJphfFCQd
+         zcCsqRUdZ0t6WQzJy1PNJxTGvfmFymE6FWqGWXnoi94QoGy4gAu+CJ4zgzVc2gi8U9zh
+         chPDm0zGdcferWlEpIhIzm645vl3ka8Meba0PaXfIuN8xJ2a4VNG3nH1XZEq17j5Uyl9
+         58JMJoUy01sUj2V6RVY6g69kOj964zKz23/09hbF75hJ0GDBc0NcDlcUF9FI6JRhCdag
+         +iwg==
+X-Gm-Message-State: APjAAAU0lzTHkZYu+Q1RCcRYf0C2LYP2t6sIHJhSHLZop1s9vu4DBPTc
+        ZuixPCH1Y1xvYEUK6z0fTA62KCJFYJk=
+X-Google-Smtp-Source: APXvYqx/X+tRr1BLPXSiqduLUb4Ig945GZKaFlIATUn0+D6MBM+E/DtFRUiq+J1AeDrWpCzVoocRAQ==
+X-Received: by 2002:a0d:e502:: with SMTP id o2mr138677ywe.33.1565954120523;
+        Fri, 16 Aug 2019 04:15:20 -0700 (PDT)
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id r9sm1322587ywl.108.2019.08.16.04.15.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2019 04:15:20 -0700 (PDT)
+Message-ID: <e392e00ed22ba37c37208988cf5a095150f6c45b.camel@redhat.com>
+Subject: deprecating inline_data support for CephFS
+From:   Jeff Layton <jlayton@redhat.com>
+To:     ceph-users <ceph-users@ceph.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
+        "dev@ceph.io" <dev@ceph.io>
+Date:   Fri, 16 Aug 2019 07:15:18 -0400
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 8:15 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> When ceph_mdsc_do_request returns an error, we can't assume that the
-> filelock_reply pointer will be set. Only try to fetch fields out of
-> the r_reply_info when it returns success.
->
-> Cc: stable@vger.kernel.org
-> Reported-by: Hector Martin <hector@marcansoft.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/locks.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
-> index cb216501c959..544e9e85b120 100644
-> --- a/fs/ceph/locks.c
-> +++ b/fs/ceph/locks.c
-> @@ -115,8 +115,7 @@ static int ceph_lock_message(u8 lock_type, u16 operation, struct inode *inode,
->                 req->r_wait_for_completion = ceph_lock_wait_for_completion;
->
->         err = ceph_mdsc_do_request(mdsc, inode, req);
-> -
-> -       if (operation == CEPH_MDS_OP_GETFILELOCK) {
-> +       if (!err && operation == CEPH_MDS_OP_GETFILELOCK) {
->                 fl->fl_pid = -le64_to_cpu(req->r_reply_info.filelock_reply->pid);
->                 if (CEPH_LOCK_SHARED == req->r_reply_info.filelock_reply->type)
->                         fl->fl_type = F_RDLCK;
-> --
-> 2.21.0
->
+A couple of weeks ago, I sent a request to the mailing list asking
+whether anyone was using the inline_data support in cephfs:
 
-Reviewed by
+    https://docs.ceph.com/docs/mimic/cephfs/experimental-features/#inline-data
+
+I got exactly zero responses, so I'm going to formally propose that we
+move to start deprecating this feature for Octopus.
+
+Why deprecate this feature?
+===========================
+While the userland clients have support for both reading and writing,
+the kernel only has support for reading, and aggressively uninlines
+everything as soon as it needs to do any writing. That uninlining has
+some rather nasty potential race conditions too that could cause data
+corruption.
+
+We could work to fix this, and maybe add write support for the kernel,
+but it adds a lot of complexity to the read and write codepaths in the
+clients, which are already pretty complex. Given that there isn't a lot
+of interest in this feature, I think we ought to just pull the plug on
+it.
+
+How should we do this?
+======================
+We should start by disabling this feature in master for Octopus. 
+
+In particular, we should stop allowing users to call "fs set inline_data
+true" on filesystems where it's disabled, and maybe throw a loud warning
+about the feature being deprecated if the mds is started on a filesystem
+that has it enabled.
+
+We could also consider creating a utility to crawl an existing
+filesystem and uninline anything there, if there was need for it.
+
+Then, in a few release cycles, once we're past the point where someone
+can upgrade directly from Nautilus (release Q or R?) we'd rip out
+support for this feature entirely.
+
+Thoughts, comments, questions welcome.
+-- 
+Jeff Layton <jlayton@redhat.com>
+
