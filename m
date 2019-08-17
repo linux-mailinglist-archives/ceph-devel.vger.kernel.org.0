@@ -2,145 +2,126 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA67902F6
-	for <lists+ceph-devel@lfdr.de>; Fri, 16 Aug 2019 15:27:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97BD3913B9
+	for <lists+ceph-devel@lfdr.de>; Sun, 18 Aug 2019 01:50:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbfHPN1S (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 16 Aug 2019 09:27:18 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:43877 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726981AbfHPN1S (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 16 Aug 2019 09:27:18 -0400
-Received: by mail-yb1-f196.google.com with SMTP id o82so1942120ybg.10
-        for <ceph-devel@vger.kernel.org>; Fri, 16 Aug 2019 06:27:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=ERNAii9hB91PGwJIt3TDjMRY9cxkVuaDX73C6OB2tnE=;
-        b=KB+fmgkoAPFP23PL1TS+ubOuDA9W3WGvcgcS1uYxSEqdah+sVTskc1PGh3qRwv5fR/
-         qjtl08ynKuAOLO/rGze6DPie4V86MP1VM5Nd8PUdIBIVaUOFsTZXdnW2nS2j+krPDbS7
-         2BW+DayXA1zz/2TYK9AtWnhG0VBsyBYhBeNhdw0rm/+1zxZcVYTnxEcvAkd1jRcjU/lS
-         HmlHUqXwkH9TVguw/JbdCIGJOXzsYWfEB8zj8+MZrUbO+P50KaXvpb0fBoBHmWkI0JBi
-         WP94/3k9AMfL9OrVFqKynMcXZfYQzymGHUWqxPbVoWYdACMkQJjGKdMDNOyYOPSz+8d5
-         Zzig==
-X-Gm-Message-State: APjAAAWF+BH7oILQ2Aqnf1z9AvaMB3uq4kdKzqbsfS0WftD3TsEi6zhj
-        brXBqPdaZ8PjpRVgfeU6bd4Jww==
-X-Google-Smtp-Source: APXvYqzoEBkyZW8cB3D/07TrCCiHhRjqRj/tJFxDtsaozYgfbuUAKC/1MGpn/fACUZmJqtYzPJ958Q==
-X-Received: by 2002:a25:be4b:: with SMTP id d11mr7542869ybm.206.1565962037506;
-        Fri, 16 Aug 2019 06:27:17 -0700 (PDT)
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id y193sm1639272ywy.62.2019.08.16.06.27.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2019 06:27:16 -0700 (PDT)
-Message-ID: <a1a1bd7918ef51c09a07ae28bdad4f85e978c1ed.camel@redhat.com>
-Subject: Re: deprecating inline_data support for CephFS
-From:   Jeff Layton <jlayton@redhat.com>
-To:     Jonas Jelten <jelten@in.tum.de>, ceph-users <ceph-users@ceph.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        "dev@ceph.io" <dev@ceph.io>
-Date:   Fri, 16 Aug 2019 09:27:09 -0400
-In-Reply-To: <f1829e2b-f78a-1202-b15a-2b23c9a6183d@in.tum.de>
-References: <e392e00ed22ba37c37208988cf5a095150f6c45b.camel@redhat.com>
-         <f1829e2b-f78a-1202-b15a-2b23c9a6183d@in.tum.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1726256AbfHQXuY convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Sat, 17 Aug 2019 19:50:24 -0400
+Received: from linux-libre.fsfla.org ([209.51.188.54]:51094 "EHLO
+        linux-libre.fsfla.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbfHQXuY (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 17 Aug 2019 19:50:24 -0400
+X-Greylist: delayed 675 seconds by postgrey-1.27 at vger.kernel.org; Sat, 17 Aug 2019 19:50:23 EDT
+Received: from free.home (home.lxoliva.fsfla.org [172.31.160.164])
+        by linux-libre.fsfla.org (8.15.2/8.15.2/Debian-3) with ESMTP id x7HNd3sx026395
+        for <ceph-devel@vger.kernel.org>; Sat, 17 Aug 2019 23:39:05 GMT
+Received: from livre (livre.home [172.31.160.2])
+        by free.home (8.15.2/8.15.2) with ESMTPS id x7HNcfWR421836
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Sat, 17 Aug 2019 20:38:46 -0300
+From:   Alexandre Oliva <oliva@gnu.org>
+To:     ceph-devel@vger.kernel.org
+Subject: fix for hidden corei7 requirement in binary packages
+Organization: Free thinker, not speaking for the GNU Project
+Date:   Sat, 17 Aug 2019 20:38:15 -0300
+Message-ID: <ord0h3gy6w.fsf@lxoliva.fsfla.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.84
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2019-08-16 at 14:12 +0200, Jonas Jelten wrote:
-> Hi!
-> 
-> I've missed your previous post, but we do have inline_data enabled on our cluster.
-> We've not yet benchmarked, but the filesystem has a wide variety of file sizes, and it sounded like a good idea to speed
-> up performance. We mount it with the kernel client only, and I've had the subjective impression that latency was better
-> once we enabled the feature. Now that you say the kernel client has no write support for it, my impression is probably
-> wrong.
->
-> I think inline_data is a nice and easy way to improve performance when the CephFS metadata are on SSDs but the bulk data
-> is on HDDs. So I'd vote against removal and would instead vouch for improvements of this feature :)
-> 
-> If storage on the MDS is a problem, files could be stored on a different (e.g. SSD) pool instead, and the file size
-> limit and pool selection could be configured via xattrs. And there was some idea to store small objects not in the OSD
-> block, but only in the OSD's DB (which is more complicated to use than separate SSD-pool and HDD-pool, but when block.db
-> is on an SSD the speed would be better). Maybe this could all be combined to have better small-file performance in CephFS!
-> 
+Hi,
 
-The main problem is developer time and the maintenance burden this
-feature represents. This is very much a non-trivial thing to implement.
-Consider that the read() and write() codepaths in the kernel already
-have 3 main branches each:
+After upgrading some old Phenom servers from Fedora/Freed-ora 29 to
+30's, to ceph-14.2.2, I was surprised by very early crashes of both
+ceph-mon and ceph-osd.  After ruling out disk and memory corruption, I
+investigated a bit noticed all of them crashed during pre-main() init
+section processing, at an instruction not available on the Phenom X6
+processors that support sse4a, but not e.g. sse4.1.
 
-buffered I/O (when Fcb caps are held)
-synchronous I/O (when Fcb caps are not held)
-O_DIRECT I/O
+It turns out that much of librte is built with -march=corei7.  That's a
+little excessive, considering that x86/rte_memcpy.h would be happy
+enough with -msse4.1, but not with earlier sse versions that Fedora is
+supposed to target.
 
-We could probably consolidate the O_DIRECT and sync I/O code somewhat,
-but buffered is handled entirely differently. Once we mix in inline_data
-support, we have to add a completely new branch for each of those cases,
-effectively doubling the complexity.
+I understand rte_memcpy.h is meant for better performance, inlining
+fixed-size and known-alignment implementations of memcpy into users.
+Alas, that requires setting a baseline target processor, and you'll only
+get as efficient an implementation as what's built in.
 
-We'd also need to add similar handing for mmap'ed I/O and for things
-like copy_file_range.
+I noticed an attempt for dynamic selection, but GCC rightfully won't
+inline across different target flags, so we'd have to give up inlining
+to get better dynamic behavior.  The good news is that glibc already
+offers dynamic selection of memcpy implementations, so hopefully the
+impact of this change won't be much worse than that of enabling dynamic
+selection, without the complications.
 
-But, even before that...I have some real concerns about the existing
-handling, even with a single client.
+If that's not good enough, compiling ceph with flags that enable SSE4.1,
+AVX2 or AVX512, or with a -march flag that implicitly enables them,
+would restore current performance, but without that, you will (with the
+patch below) get a package that runs on a broader range of processors,
+that the base distro (through the compiler's baseline flags) chooses to
+support.  It's not nice when you install a package on a processor that's
+supposed to be supported and suddenly you're no longer sure it is ;-)
 
-While I haven't attempted to roll a testcase for it, I think we can
-probably hit races where multiple tasks handling write page faults can
-compete to uninline the data, potentially clobbering the others' writes.
-Again, this is non-trivial to fix.
-
-In summary I don't see a real future for this feature unless someone
-wants to step up to own it and commit to fixing up these problems.
+Perhaps building a shared librte, so that one could build and install
+builds targeting different ISA versions, without having to rebuild all
+of ceph, would be a reasonable way to address the better tuning of these
+performance-critical bits.
 
 
-> On 16/08/2019 13.15, Jeff Layton wrote:
-> > A couple of weeks ago, I sent a request to the mailing list asking
-> > whether anyone was using the inline_data support in cephfs:
-> > 
-> >     https://docs.ceph.com/docs/mimic/cephfs/experimental-features/#inline-data
-> > 
-> > I got exactly zero responses, so I'm going to formally propose that we
-> > move to start deprecating this feature for Octopus.
-> > 
-> > Why deprecate this feature?
-> > ===========================
-> > While the userland clients have support for both reading and writing,
-> > the kernel only has support for reading, and aggressively uninlines
-> > everything as soon as it needs to do any writing. That uninlining has
-> > some rather nasty potential race conditions too that could cause data
-> > corruption.
-> > 
-> > We could work to fix this, and maybe add write support for the kernel,
-> > but it adds a lot of complexity to the read and write codepaths in the
-> > clients, which are already pretty complex. Given that there isn't a lot
-> > of interest in this feature, I think we ought to just pull the plug on
-> > it.
-> > 
-> > How should we do this?
-> > ======================
-> > We should start by disabling this feature in master for Octopus. 
-> > 
-> > In particular, we should stop allowing users to call "fs set inline_data
-> > true" on filesystems where it's disabled, and maybe throw a loud warning
-> > about the feature being deprecated if the mds is started on a filesystem
-> > that has it enabled.
-> > 
-> > We could also consider creating a utility to crawl an existing
-> > filesystem and uninline anything there, if there was need for it.
-> > 
-> > Then, in a few release cycles, once we're past the point where someone
-> > can upgrade directly from Nautilus (release Q or R?) we'd rip out
-> > support for this feature entirely.
-> > 
-> > Thoughts, comments, questions welcome.
-> > 
+
+src/spdk/dpdk:
+
+diff --git a/lib/librte_eal/common/include/arch/x86/rte_memcpy.h b/lib/librte_eal/common/include/arch/x86/rte_memcpy.h
+index 7b758094d..ce714bf02 100644
+--- a/lib/librte_eal/common/include/arch/x86/rte_memcpy.h
++++ b/lib/librte_eal/common/include/arch/x86/rte_memcpy.h
+@@ -40,6 +40,16 @@ extern "C" {
+ static __rte_always_inline void *
+ rte_memcpy(void *dst, const void *src, size_t n);
+ 
++#ifndef RTE_MACHINE_CPUFLAG_SSE4_1
++
++static __rte_always_inline void *
++rte_memcpy(void *dst, const void *src, size_t n)
++{
++  return memcpy(dst, src, n);
++}
++
++#else /* RTE_MACHINE_CPUFLAG_SSE4_1 */
++
+ #ifdef RTE_MACHINE_CPUFLAG_AVX512F
+ 
+ #define ALIGNMENT_MASK 0x3F
+@@ -869,6 +879,8 @@ rte_memcpy(void *dst, const void *src, size_t n)
+ 		return rte_memcpy_generic(dst, src, n);
+ }
+ 
++#endif /* RTE_MACHINE_CPUFLAG_SSE4_1 */
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/mk/machine/default/rte.vars.mk b/mk/machine/default/rte.vars.mk
+index df08d3b03..6bf695849 100644
+--- a/mk/machine/default/rte.vars.mk
++++ b/mk/machine/default/rte.vars.mk
+@@ -27,4 +27,4 @@
+ # CPU_LDFLAGS =
+ # CPU_ASFLAGS =
+ 
+-MACHINE_CFLAGS += -march=corei7
++# MACHINE_CFLAGS += -march=corei7
+
 
 -- 
-Jeff Layton <jlayton@redhat.com>
-
+Alexandre Oliva, freedom fighter  he/him   https://FSFLA.org/blogs/lxo
+Be the change, be Free!                 FSF Latin America board member
+GNU Toolchain Engineer                        Free Software Evangelist
+Hay que enGNUrecerse, pero sin perder la terGNUra jamás - Che GNUevara
