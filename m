@@ -2,17 +2,16 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8CAD99451
-	for <lists+ceph-devel@lfdr.de>; Thu, 22 Aug 2019 14:54:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C59699463
+	for <lists+ceph-devel@lfdr.de>; Thu, 22 Aug 2019 15:00:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388756AbfHVMyr convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Thu, 22 Aug 2019 08:54:47 -0400
-Received: from cdptpa-bc5-oedge-vip.email.rr.com ([107.14.166.92]:27898 "EHLO
+        id S2388756AbfHVM7N convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Thu, 22 Aug 2019 08:59:13 -0400
+Received: from cdptpa-bc5-oedge-vip.email.rr.com ([107.14.166.92]:31721 "EHLO
         cdptpa-bc5-oedge-vip.email.rr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725857AbfHVMyq (ORCPT
+        by vger.kernel.org with ESMTP id S2387779AbfHVM7M (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 22 Aug 2019 08:54:46 -0400
-X-Greylist: delayed 341 seconds by postgrey-1.27 at vger.kernel.org; Thu, 22 Aug 2019 08:48:28 EDT
+        Thu, 22 Aug 2019 08:59:12 -0400
 Received: from cdptpa-bc5-fep05 ([107.14.172.149])
         by cmsmtp with ESMTPA
         id 0mPuiDI1eBhsP0mPuitT3q; Thu, 22 Aug 2019 08:42:15 -0400
