@@ -2,53 +2,53 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 879519B4CA
-	for <lists+ceph-devel@lfdr.de>; Fri, 23 Aug 2019 18:45:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F9EF9BFD8
+	for <lists+ceph-devel@lfdr.de>; Sat, 24 Aug 2019 21:26:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405995AbfHWQpN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 23 Aug 2019 12:45:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48328 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387833AbfHWQpH (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 23 Aug 2019 12:45:07 -0400
-Subject: Re: [GIT PULL] Ceph fixes for 5.3-rc6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566578706;
-        bh=401L9q2plDtCB5nU2+0tkCczmKLSc0y/pUJJJtq7f2g=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Max1r8WF0jIUIgOCVzJPygSwsKi1zjMmDtSrk8Fytt5AhG0By6fDfivSiOx7wNmCt
-         azjsPD8LYOIahrUcG0+a/xAMo/9nueWP+rAYb5nCu/JuUbImVMVkxY/ZUTLzEVR0wQ
-         hd41WLhe6T4bXkE/bcKQd+DIA4ElZka3oF+tzy4I=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190823122726.15050-1-idryomov@gmail.com>
-References: <20190823122726.15050-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190823122726.15050-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git
- tags/ceph-for-5.3-rc6
-X-PR-Tracked-Commit-Id: a561372405cf6bc6f14239b3a9e57bb39f2788b0
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4e5639449069d12e95edc10b63acf170843e1706
-Message-Id: <156657870685.6801.1793404829962707462.pr-tracker-bot@kernel.org>
-Date:   Fri, 23 Aug 2019 16:45:06 +0000
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1727908AbfHXT0y convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Sat, 24 Aug 2019 15:26:54 -0400
+Received: from smtp2.osep.mendoza.gov.ar ([200.16.135.145]:50372 "HELO
+        smtp2.osep.mendoza.gov.ar" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726553AbfHXT0x (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 24 Aug 2019 15:26:53 -0400
+X-Greylist: delayed 9271 seconds by postgrey-1.27 at vger.kernel.org; Sat, 24 Aug 2019 15:26:53 EDT
+Received: (qmail 7533 invoked from network); 24 Aug 2019 14:20:25 -0000
+Received: from unknown (HELO zimbra.servers.dg.intranet) (10.10.195.224)
+  by smtp2.osep.mendoza.gov.ar with SMTP; 24 Aug 2019 14:20:25 -0000
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.servers.dg.intranet (Postfix) with ESMTP id B8395CF7C645;
+        Sat, 24 Aug 2019 11:20:24 -0300 (ART)
+Received: from zimbra.servers.dg.intranet ([127.0.0.1])
+        by localhost (zimbra.servers.dg.intranet [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id pb6wlu1Boz77; Sat, 24 Aug 2019 11:20:24 -0300 (ART)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.servers.dg.intranet (Postfix) with ESMTP id 545ABCF7C63B;
+        Sat, 24 Aug 2019 11:20:24 -0300 (ART)
+X-Virus-Scanned: amavisd-new at osep.mendoza.gov.ar
+Received: from zimbra.servers.dg.intranet ([127.0.0.1])
+        by localhost (zimbra.servers.dg.intranet [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id CCq8ULmTg8uS; Sat, 24 Aug 2019 11:20:24 -0300 (ART)
+Received: from zimbra.servers.dg.intranet (zimbra.servers.dg.intranet [10.10.195.224])
+        by zimbra.servers.dg.intranet (Postfix) with ESMTP id 4234ECF7C2F5;
+        Sat, 24 Aug 2019 11:20:23 -0300 (ART)
+Date:   Sat, 24 Aug 2019 11:20:23 -0300 (ART)
+From:   "Herr.Robert Jackson" <liliana.marinero@osep.mendoza.gov.ar>
+Reply-To: SKY GROUP FINANCIAL <skygroupfinancial0@gmail.com>
+Message-ID: <1151111687.24999404.1566656423244.JavaMail.zimbra@osep.mendoza.gov.ar>
+Subject: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [172.16.3.2]
+X-Mailer: Zimbra 8.6.0_GA_1153 (zclient/8.6.0_GA_1153)
+Thread-Topic: 
+Thread-Index: MdIObfe4JmwGu/ihyShtRSAZj2ZHhg==
+To:     unlisted-recipients:; (no To-header on input)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The pull request you sent on Fri, 23 Aug 2019 14:27:26 +0200:
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-5.3-rc6
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4e5639449069d12e95edc10b63acf170843e1706
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Wir sind zuverlässige, vertrauenswürdige Kreditgeber, leihen wir Unternehmen und Einzelpersonen zu einem niedrigen Zinssatz von 2%, Sind Sie auf der Suche nach einem Geschäftskredit, Privatkredite, Schuldenkonsolidierung, unbesicherte Kredite, Risikokapital, wenn ja Kontaktieren Sie uns jetzt für weitere Einzelheiten.
