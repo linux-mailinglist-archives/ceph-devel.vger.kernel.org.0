@@ -2,229 +2,202 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E3409C02D
-	for <lists+ceph-devel@lfdr.de>; Sat, 24 Aug 2019 22:43:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA6A59C773
+	for <lists+ceph-devel@lfdr.de>; Mon, 26 Aug 2019 04:53:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbfHXUns convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Sat, 24 Aug 2019 16:43:48 -0400
-Received: from linux-libre.fsfla.org ([209.51.188.54]:44050 "EHLO
-        linux-libre.fsfla.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727879AbfHXUnr (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 24 Aug 2019 16:43:47 -0400
-Received: from free.home (home.lxoliva.fsfla.org [172.31.160.164])
-        by linux-libre.fsfla.org (8.15.2/8.15.2/Debian-3) with ESMTP id x7OKhbCQ023003;
-        Sat, 24 Aug 2019 20:43:38 GMT
-Received: from libre (free-to-gw.home [172.31.160.161])
-        by free.home (8.15.2/8.15.2) with ESMTPS id x7OKhMnO366180
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Sat, 24 Aug 2019 17:43:22 -0300
-From:   Alexandre Oliva <oliva@gnu.org>
-To:     kefu chai <tchaikov@gmail.com>
-Cc:     Brad Hubbard <bhubbard@redhat.com>,
-        Tone Zhang <tone.zhang@linaro.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
-Subject: Re: fix for hidden corei7 requirement in binary packages
-Organization: Free thinker, not speaking for the GNU Project
-References: <ord0h3gy6w.fsf@lxoliva.fsfla.org>
-        <CAF-wwdEsyDC=X90ECi05a3FxWwbkv-gTTZAyfnB-N=K8KgNAPw@mail.gmail.com>
-        <CAJE9aOObStUp7Xqcrp6g4yOntGZ81Z7unnYJ5jBeDG=8wg=DcQ@mail.gmail.com>
-        <CAJE9aOMNvOmLc9=7LLCfZTUgiyjM20vpiE8a8v9iM8CyBVJE1g@mail.gmail.com>
-        <orblwk9xwp.fsf@lxoliva.fsfla.org>
-        <CAJE9aONvV+mfCDWpFdE_cZBbaa91wS2ECXoYjqQ3i1h4HQmZrg@mail.gmail.com>
-        <ory2zn8wow.fsf@lxoliva.fsfla.org>
-Date:   Sat, 24 Aug 2019 17:43:21 -0300
-In-Reply-To: <ory2zn8wow.fsf@lxoliva.fsfla.org> (Alexandre Oliva's message of
-        "Tue, 20 Aug 2019 16:26:55 -0300")
-Message-ID: <orr25al2fq.fsf@lxoliva.fsfla.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+        id S1729388AbfHZCxn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 25 Aug 2019 22:53:43 -0400
+Received: from m97138.mail.qiye.163.com ([220.181.97.138]:18319 "EHLO
+        m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729361AbfHZCxn (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 25 Aug 2019 22:53:43 -0400
+Received: from yds-pc.domain (unknown [218.94.118.90])
+        by smtp9 (Coremail) with SMTP id u+CowAAnl1+VSWNd09t8AQ--.37S2;
+        Mon, 26 Aug 2019 10:53:09 +0800 (CST)
+From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
+Subject: Re: [PATCH v3 00/15] rbd journaling feature
+To:     Ilya Dryomov <idryomov@gmail.com>
+References: <1564393377-28949-1-git-send-email-dongsheng.yang@easystack.cn>
+ <CAOi1vP9G2MuEPd5cdia=44L_zvAQTM6bi_bn+eH1C-bV0ahAAA@mail.gmail.com>
+Cc:     Jason Dillaman <jdillama@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Message-ID: <5D634994.5050300@easystack.cn>
+Date:   Mon, 26 Aug 2019 10:53:08 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Scanned-By: MIMEDefang 2.84
+In-Reply-To: <CAOi1vP9G2MuEPd5cdia=44L_zvAQTM6bi_bn+eH1C-bV0ahAAA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: u+CowAAnl1+VSWNd09t8AQ--.37S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKr45CrWUWr4xXw4Utw1xGrg_yoWxJw13pa
+        nxGr13ArWUAr17Crs7Xa18ZryYv3y8trWUCrykGrn7Kwn8AF12qF4UtrWrCry7JryxGw1U
+        Jr1Ut3WUGw1jyFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRIfO7UUUUU=
+X-Originating-IP: [218.94.118.90]
+X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiThYdeldp-8c84AAAsl
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Aug 20, 2019, Alexandre Oliva <oliva@gnu.org> wrote:
-
->> if you are able to pinpoint an FTBFS issue or bug while using Ceph on
->> 32 bit platforms. i can take a look at it.
-
-> Oh, thanks, I didn't mean to burden anyone with that, it's just
-> something that I care about and would be happy to undertake myself.  I
-> was just surprised that there weren't i686 ceph packages in Fedora 30,
-> and found comments in the spec file suggesting it didn't work, but I
-> didn't look into why yet.
-
-Here's the patch I used to disable spdk in my rebuilds of the Fedora 30
-packages.
-
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 3b95cc231d2c..ba4fc8506651 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -267,7 +267,7 @@ if(WITH_BLUESTORE)
-   endif()
- endif()
- 
--if(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i686|amd64|x86_64|AMD64|aarch64")
-+if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
-   option(WITH_SPDK "Enable SPDK" ON)
- else()
-   option(WITH_SPDK "Enable SPDK" OFF)
-
-With the following additional tweaks, I could even build 32-bit x86
-packages.  The problems seem to be all related with int types.
-
-For example, this one fixes an assumption that size_t and unsigned are
-not the same type:
-
-diff --git a/src/include/buffer.h b/src/include/buffer.h
-index b8c78210eae0..8e010a150224 100644
---- a/src/include/buffer.h
-+++ b/src/include/buffer.h
-@@ -737,7 +737,7 @@ inline namespace v14_2_0 {
- 
-       void advance(int o) = delete;
-       void advance(unsigned o);
--      void advance(size_t o) { advance(static_cast<unsigned>(o)); }
-+      void advance(unsigned long o) { advance(static_cast<unsigned>(o)); }
-       void seek(unsigned o);
-       char operator*() const;
-       iterator_impl& operator++();
-
-This one was the simplest fix I could find to address problems in other
-overloads that did not expect unsigned, only int64_t and uint64_t.
-Though I'm not sure this change gets to external representations, I
-figured it made sense to settle on a well-defined width instead of
-letting it vary across platforms, and to go with the width used in the
-prevalent, working platforms:
-
-diff --git a/src/common/config_values.h b/src/common/config_values.h
-index ab52060e4629..17eb11d0329d 100644
---- a/src/common/config_values.h
-+++ b/src/common/config_values.h
-@@ -50,7 +50,7 @@ public:
- #define OPTION_OPT_U32(name) uint64_t name;
- #define OPTION_OPT_U64(name) uint64_t name;
- #define OPTION_OPT_UUID(name) uuid_d name;
--#define OPTION_OPT_SIZE(name) size_t name;
-+#define OPTION_OPT_SIZE(name) uint64_t name;
- #define OPTION(name, ty)       \
-   public:                      \
-     OPTION_##ty(name)          
-
-This is probably the only fallout from the above:
-
-diff --git a/src/osd/PrimaryLogPG.cc b/src/osd/PrimaryLogPG.cc
-index 19bd1a3efd5d..0dcf50ca10cb 100644
---- a/src/osd/PrimaryLogPG.cc
-+++ b/src/osd/PrimaryLogPG.cc
-@@ -1628,7 +1628,7 @@ void PrimaryLogPG::calc_trim_to()
-       limit != pg_trim_to &&
-       pg_log.get_log().approx_size() > target) {
-     size_t num_to_trim = std::min(pg_log.get_log().approx_size() - target,
--                             cct->_conf->osd_pg_log_trim_max);
-+				  size_t(cct->_conf->osd_pg_log_trim_max));
-     if (num_to_trim < cct->_conf->osd_pg_log_trim_min &&
-         cct->_conf->osd_pg_log_trim_max >= cct->_conf->osd_pg_log_trim_min) {
-       return;
-
-encode/decode don't handle long at all, they deal with u?int{32,64}_t
-and uint64_t.  When int64_t happens to be int or long, this works, but
-when int64_t is long long, then long ends up uncovered:
-
-diff --git a/src/test/bufferlist.cc b/src/test/bufferlist.cc
-index 8a5bc65d31da..adcdcf3b7b68 100644
---- a/src/test/bufferlist.cc
-+++ b/src/test/bufferlist.cc
-@@ -837,7 +837,7 @@ TEST(BufferListIterator, iterate_with_empties) {
-   EXPECT_EQ(bl.length(), 0u);
-   EXPECT_EQ(bl.get_num_buffers(), 1u);
- 
--  encode(42l, bl);
-+  encode(int64_t(42l), bl);
-   EXPECT_EQ(bl.get_num_buffers(), 2u);
- 
-   bl.push_back(ceph::buffer::create(0));
-@@ -853,11 +853,11 @@ TEST(BufferListIterator, iterate_with_empties) {
-     bl.append(bl_with_empty_ptr);
-   }
- 
--  encode(24l, bl);
-+  encode(int64_t(24l), bl);
-   EXPECT_EQ(bl.get_num_buffers(), 5u);
- 
-   auto i = bl.cbegin();
--  long val;
-+  int64_t val;
-   decode(val, i);
-   EXPECT_EQ(val, 42l);
- 
-@@ -865,7 +865,7 @@ TEST(BufferListIterator, iterate_with_empties) {
-   EXPECT_EQ(val, 24l);
- 
-   val = 0;
--  i.seek(sizeof(long));
-+  i.seek(sizeof(val));
-   decode(val, i);
-   EXPECT_EQ(val, 24l);
-   EXPECT_TRUE(i == bl.end());
-@@ -2665,7 +2665,7 @@ TEST(BufferList, InternalCarriage) {
-   ceph::bufferlist bl;
-   EXPECT_EQ(bl.get_num_buffers(), 0u);
- 
--  encode(42l, bl);
-+  encode(int64_t(42l), bl);
-   EXPECT_EQ(bl.get_num_buffers(), 1u);
- 
-   {
-@@ -2678,7 +2678,7 @@ TEST(BufferList, InternalCarriage) {
-     EXPECT_EQ(bl.get_num_buffers(), 2u);
-   }
- 
--  encode(24l, bl);
-+  encode(int64_t(24l), bl);
-   EXPECT_EQ(bl.get_num_buffers(), 3u);
- }
- 
-@@ -2690,7 +2690,7 @@ TEST(BufferList, ContiguousAppender) {
-   {
-     auto ap = bl.get_contiguous_appender(100);
- 
--    denc(42l, ap);
-+    denc(int64_t(42l), ap);
-     EXPECT_EQ(bl.get_num_buffers(), 1u);
- 
-     // append bufferlist with single ptr inside. This should
-@@ -2707,11 +2707,11 @@ TEST(BufferList, ContiguousAppender) {
-       EXPECT_EQ(bl.get_num_buffers(), 3u);
-     }
- 
--    denc(24l, ap);
-+    denc(int64_t(24l), ap);
-     EXPECT_EQ(bl.get_num_buffers(), 3u);
--    EXPECT_EQ(bl.length(), sizeof(long) + 3u);
-+    EXPECT_EQ(bl.length(), sizeof(int64_t) + 3u);
-   }
--  EXPECT_EQ(bl.length(), 2u * sizeof(long) + 3u);
-+  EXPECT_EQ(bl.length(), 2u * sizeof(int64_t) + 3u);
- }
- 
- TEST(BufferList, TestPtrAppend) {
 
 
-That was all it took to build ceph-14.2.2-1.fc30 on x86_64 and i686.  I
-haven't even had a chance to check that the resulting packages install,
-and I won't be able to get to them before I'm back home on Thu, but
-these are simple enough that I figured I'd post them before I got my
-attention on something else ;-)
+On 08/19/2019 03:28 AM, Ilya Dryomov wrote:
+> On Mon, Jul 29, 2019 at 11:43 AM Dongsheng Yang
+> <dongsheng.yang@easystack.cn>  wrote:
+>> Hi Ilya, Jason and all:
+>>          As new exclusive-lock is merged, I think we can start this work now.
+>> This is V3, which is rebased against 5.3-rc1.
+>>
+>> Testing:
+>>          kernel branch:https://github.com/yangdongsheng/linux/tree/krbd_journaling_v3
+>>          ceph qa branch:https://github.com/yangdongsheng/ceph/tree/krbd_mirror_qa
+>>
+>>          (1). A new test added: workunits/rbd/kernel_journal.sh: to test the journal replaying in krbd.
+>>          (2). A new test added: qa/suites/krbd/mirror/, this test krbd journaling with rbd-mirror daemon.
+>>
+>> Performance:
+>>          compared with librbd journaling, preformance of krbd journaling looks reasonable.
+>>          -------------------------------------------------------------------------------------
+>>          (1) rbd bench with journaling disabled:         |       IOPS: 114
+>>          -------------------------------------------------------------------------------------
+>>          (2) rbd bench with journaling enabled:          |       IOPS: 55
+>>          -------------------------------------------------------------------------------------
+>>          (3) fio krbd with journaling disabled:          |       IOPS: 118
+>>          -------------------------------------------------------------------------------------
+>>          (4) fio krbd with journaling enabled:           |       IOPS: 57
+>>          -------------------------------------------------------------------------------------
+>>
+>> TODO:
+>>          (1). there are some TODOs in comments, such as supporting rbd_journal_max_concurrent_object_sets.
+>>          (2). add debugfs for generic journaling.
+>>
+>>          I would like to put this TODO work in next cycle, but focus on making  the current work ready to go.
+>>
+>> Changelog:
+>>          -V2
+>>                  1. support large event (> 4M)
+>>                  2. fix bug in replay in different clients appending
+>>                  3. rebase against 5.3-rc1
+>>                  4. refactor journaler appending into state machine
+>>          -V1
+>>                  1. add test case in qa
+>>                  2. address all memleak found in kmemleak
+>>                  3. several bug fixes
+>>                  4. performance improvement.
+>>          -RFC
+>>                  1. error out if there is some unsupported event type in replaying
+>>                  2. just one memory copy from bio to msg.
+>>                  3. use async IO in journal appending.
+>>                  4. no mutex around IO.
+>>
+>> Any comments are welcome!!
+>>
+>> Dongsheng Yang (15):
+>>    libceph: introduce ceph_extract_encoded_string_kvmalloc
+>>    libceph: introduce a new parameter of workqueue in ceph_osdc_watch()
+>>    libceph: support op append
+>>    libceph: add prefix and suffix in ceph_osd_req_op.extent
+>>    libceph: introduce cls_journaler_client
+>>    libceph: introduce generic journaling
+>>    libceph: journaling: introduce api to replay uncommitted journal
+>>      events
+>>    libceph: journaling: introduce api for journal appending
+>>    libceph: journaling: trim object set when we found there is no client
+>>      refer it
+>>    rbd: introduce completion for each img_request
+>>    rbd: introduce IMG_REQ_NOLOCK flag for image request state
+>>    rbd: introduce rbd_journal_allocate_tag to allocate journal tag for
+>>      rbd client
+>>    rbd: append journal event in image request state machine
+>>    rbd: replay events in journal
+>>    rbd: add support for feature of RBD_FEATURE_JOURNALING
+>>
+>>   drivers/block/rbd.c                       |  600 +++++++-
+>>   include/linux/ceph/cls_journaler_client.h |   94 ++
+>>   include/linux/ceph/decode.h               |   21 +-
+>>   include/linux/ceph/journaler.h            |  184 +++
+>>   include/linux/ceph/osd_client.h           |   19 +
+>>   net/ceph/Makefile                         |    3 +-
+>>   net/ceph/cls_journaler_client.c           |  558 ++++++++
+>>   net/ceph/journaler.c                      | 2231 +++++++++++++++++++++++++++++
+>>   net/ceph/osd_client.c                     |   61 +-
+>>   9 files changed, 3759 insertions(+), 12 deletions(-)
+>>   create mode 100644 include/linux/ceph/cls_journaler_client.h
+>>   create mode 100644 include/linux/ceph/journaler.h
+>>   create mode 100644 net/ceph/cls_journaler_client.c
+>>   create mode 100644 net/ceph/journaler.c
+> Hi Dongsheng,
+>
+> Some general comments that apply to the whole series:
+>
+> - comments should look like
+>
+>    /* comment */
+>
+>    /*
+>     * multi-line
+>     * comment
+>     */
+>
+> - placement of braces: a) don't use braces around single statements
+>    (everywhere) and b) functions should have the opening brace on the
+>    next line (e.g. rbd_img_need_journal())
+>
+> - 80 column limit: we aren't very strict about it, but overly long
+>    lines should be the exception, not the rule
+>
+> - unnecessary forward declarations: just place the new function above
+>    the call-site
+>
+> - sizeof(struct foo) should be sizeof(*foo_ptr)
+>
+> - integer types: use u{8,16,32,64} instead of uint{8,16,32,64}_t
+>
+> - static const variables should be defines (e.g. PREAMBLE)
+>
+> - no need to initialize fields to 0, NULL, etc after kzalloc() or
+>    similar (e.g. ceph_journaler_open())
+>
+> Many of these rules are in Documentation/process/coding-style.rst.
 
-I hope this helps,
+Hi Ilya,
+     Thanx for your suggestion about coding-style above, I will check my 
+code again.
+> Lastly, I would drop replaying for now.  This is a large series and
+> replaying amounts to at least a quarter of it without actually solving
+> the problem in its entirety.  Let's try to get appending and trimming
+> in shape first.
 
--- 
-Alexandre Oliva, freedom fighter  he/him   https://FSFLA.org/blogs/lxo
-Be the change, be Free!                 FSF Latin America board member
-GNU Toolchain Engineer                        Free Software Evangelist
-Hay que enGNUrecerse, pero sin perder la terGNUra jamás - Che GNUevara
+I would like to keep replaying:
+(1) The current replaying at least cover the all events generated from 
+kernel rbd. So this feature looks self-consistent
+I think.
+
+That means, if you are only using krbd in your usecase, krbd journaling 
+would works well. But if we drop replaying, I
+am afraid we can't use journaling at all even when we are going to use 
+krbd only.
+
+(2) Even if we don't do replaying, we still have to do journal fetching 
+and preprocess, to
+know is there any uncommitted journal event. That's still a not small work.
+
+(3) About solving the problem entirely, I actually had a plan in my mind.
+we can provide an map option to user,
+maybe "rbd map IMAGE -o 
+journal-replay-helper=/usr/bin/rbd-journal-replay-helper.sh"
+
+If this option is specified, we will use call_usermodehelper() to call 
+the helper specified to do replay in journal opening.
+
+else, we can use default replaying which is provided in this patch set.
+
+Thanx
+> Thanks,
+>
+>                  Ilya
+>
+
+
