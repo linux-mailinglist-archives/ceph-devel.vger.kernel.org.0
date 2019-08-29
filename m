@@ -2,39 +2,39 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66A9EA23CD
-	for <lists+ceph-devel@lfdr.de>; Thu, 29 Aug 2019 20:18:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9A5DA2507
+	for <lists+ceph-devel@lfdr.de>; Thu, 29 Aug 2019 20:27:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbfH2SSV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 29 Aug 2019 14:18:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60560 "EHLO mail.kernel.org"
+        id S1729326AbfH2S13 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 29 Aug 2019 14:27:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730409AbfH2SSU (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:18:20 -0400
+        id S1728460AbfH2SPc (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:15:32 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6785A2173E;
-        Thu, 29 Aug 2019 18:18:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 473922341C;
+        Thu, 29 Aug 2019 18:15:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102699;
-        bh=b4C4Ntzc86COefHknOh3FnsI8HVK+79pWqiOHxCzUv8=;
+        s=default; t=1567102531;
+        bh=T2htdwQXOeQ4/hkAuJA8LIvdZihWsSm1K99O882HxmE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E/emfUDuy573vLCIk9cgr3ltdJ+n11FfMJUgKUC0ckUbaQNyWs2/0WaGsCgYsEh0A
-         CWawwLJVkWUsMnvGh3cHjzotu9OxzMX9aB0aXyE/3CZ2YtaiB1EkBwcI0NThwMVHbw
-         ZceXt7K5FDCR3h55y7UQEeG5CXQ9X2VdKoiXVlXY=
+        b=a2jiXR8jlHeqzkEgGN6knTnLQUyQDC69IKxZ/6uhjlI2/10CiM4LpEZK/1s9tommn
+         esOmX9pMRhxeY+fT4b+A05ziLFPNYiryqp02usLC3w561eK9NwACwRkx9KfxXYNOQT
+         86MCP39uHQmHjDF53SJCSJinGvECRf00p/7YqRus=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Luis Henriques <lhenriques@suse.com>,
         Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 14/15] ceph: fix buffer free while holding i_ceph_lock in __ceph_setxattr()
-Date:   Thu, 29 Aug 2019 14:18:01 -0400
-Message-Id: <20190829181802.9619-14-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 66/76] ceph: fix buffer free while holding i_ceph_lock in __ceph_setxattr()
+Date:   Thu, 29 Aug 2019 14:13:01 -0400
+Message-Id: <20190829181311.7562-66-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190829181802.9619-1-sashal@kernel.org>
-References: <20190829181802.9619-1-sashal@kernel.org>
+In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
+References: <20190829181311.7562-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -92,18 +92,18 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index b24275ef97f74..22e5f3432abbf 100644
+index 0619adbcbe14c..8382299fc2d84 100644
 --- a/fs/ceph/xattr.c
 +++ b/fs/ceph/xattr.c
-@@ -916,6 +916,7 @@ int __ceph_setxattr(struct dentry *dentry, const char *name,
+@@ -1028,6 +1028,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
  	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_mds_client *mdsc = ceph_sb_to_client(dentry->d_sb)->mdsc;
+ 	struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
  	struct ceph_cap_flush *prealloc_cf = NULL;
 +	struct ceph_buffer *old_blob = NULL;
  	int issued;
  	int err;
  	int dirty = 0;
-@@ -984,13 +985,15 @@ int __ceph_setxattr(struct dentry *dentry, const char *name,
+@@ -1101,13 +1102,15 @@ int __ceph_setxattr(struct inode *inode, const char *name,
  		struct ceph_buffer *blob;
  
  		spin_unlock(&ci->i_ceph_lock);
@@ -121,7 +121,7 @@ index b24275ef97f74..22e5f3432abbf 100644
  		ci->i_xattrs.prealloc_blob = blob;
  		goto retry;
  	}
-@@ -1006,6 +1009,7 @@ int __ceph_setxattr(struct dentry *dentry, const char *name,
+@@ -1123,6 +1126,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
  	}
  
  	spin_unlock(&ci->i_ceph_lock);
