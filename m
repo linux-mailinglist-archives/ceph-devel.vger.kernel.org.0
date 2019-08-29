@@ -2,80 +2,129 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB22BA041B
-	for <lists+ceph-devel@lfdr.de>; Wed, 28 Aug 2019 16:04:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CB59A23A8
+	for <lists+ceph-devel@lfdr.de>; Thu, 29 Aug 2019 20:18:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727376AbfH1OEU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 28 Aug 2019 10:04:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59276 "EHLO mail.kernel.org"
+        id S1729881AbfH2SQv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 29 Aug 2019 14:16:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726830AbfH1OET (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 28 Aug 2019 10:04:19 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729875AbfH2SQt (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:16:49 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BEC52080F;
-        Wed, 28 Aug 2019 14:04:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1D712341B;
+        Thu, 29 Aug 2019 18:16:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567001058;
-        bh=nTA0Mhc3f63XWszB6RLxEhVJe8t/AOi22YeOsdOKJyY=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=CIed2oIilZa7/JGZlaT74HBZHvf3xUVtQ7ctBSCEWFQneoaM1BT2EVVSLMQGZ7A4F
-         RjZkQ1rgDEqUneQVC9V6r3QEOEMU0sIh14LlgyTEC6yTl3rcXQeRIlKoSP+z3zCqFq
-         zvPE7As2Or9Z7+4a61EXXrCaoJa9YBtyn5L5n57Q=
-Message-ID: <398eae89e986dc9847c76421cc6d866ab2f1c4bb.camel@kernel.org>
-Subject: Re: [PATCH] ceph: reconnect connection if session hang in opening
- state
-From:   Jeff Layton <jlayton@kernel.org>
-To:     chenerqi@gmail.com, ceph-devel@vger.kernel.org
-Date:   Wed, 28 Aug 2019 10:04:17 -0400
-In-Reply-To: <20190828132245.53155-1-chenerqi@gmail.com>
-References: <20190828132245.53155-1-chenerqi@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        s=default; t=1567102608;
+        bh=tEh/zX/idwYlsgWRmY9MyRvVAoNdwwEcLh+B1mAIrHM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nt12v1ifBqHK3b9D+DA6FJAXhiEY1VMNlTAT06wlPgSdSK3SOgMqVe23JOT3ppXIV
+         B8TR0ws0W8+V5BVRik6CL07N+XN0I4fvFGRdEtMy73tVnlAL44K/GckkxCVvhCZKF1
+         9ioGSyjd3O4Av3NLuu25+ve244J123hIEhexIRf4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Luis Henriques <lhenriques@suse.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 42/45] ceph: fix buffer free while holding i_ceph_lock in fill_inode()
+Date:   Thu, 29 Aug 2019 14:15:42 -0400
+Message-Id: <20190829181547.8280-42-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190829181547.8280-1-sashal@kernel.org>
+References: <20190829181547.8280-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2019-08-28 at 21:22 +0800, chenerqi@gmail.com wrote:
-> From: Erqi Chen <chenerqi@gmail.com>
-> 
-> If client mds session is evicted in CEPH_MDS_SESSION_OPENING state,
-> mds won't send session msg to client, and delayed_work skip
-> CEPH_MDS_SESSION_OPENING state session, the session hang forever.
-> ceph_con_keepalive reconnct connection for CEPH_MDS_SESSION_OPENING
-> session to avoid session hang.
-> 
-> Fixes: https://tracker.ceph.com/issues/41551
-> Signed-off-by: Erqi Chen chenerqi@gmail.com
-> ---
->  fs/ceph/mds_client.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 920e9f0..3d589c0 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -4044,7 +4044,9 @@ static void delayed_work(struct work_struct *work)
->  				pr_info("mds%d hung\n", s->s_mds);
->  			}
->  		}
-> -		if (s->s_state < CEPH_MDS_SESSION_OPEN) {
-> +		if (s->s_state == CEPH_MDS_SESSION_NEW ||
-> +		    s->s_state == CEPH_MDS_SESSION_RESTARTING ||
-> +		    s->s_state == CEPH_MDS_SESSION_REJECTED)
->  			/* this mds is failed or recovering, just wait */
->  			ceph_put_mds_session(s);
->  			continue;
+From: Luis Henriques <lhenriques@suse.com>
 
-This "if" is missing an opening curly brace. I fixed that up and cleaned
-up the changelog. I'll merge this into ceph/testing after doing some
-tests with it today.
+[ Upstream commit af8a85a41734f37b67ba8ce69d56b685bee4ac48 ]
 
-Thanks!
+Calling ceph_buffer_put() in fill_inode() may result in freeing the
+i_xattrs.blob buffer while holding the i_ceph_lock.  This can be fixed by
+postponing the call until later, when the lock is released.
+
+The following backtrace was triggered by fstests generic/070.
+
+  BUG: sleeping function called from invalid context at mm/vmalloc.c:2283
+  in_atomic(): 1, irqs_disabled(): 0, pid: 3852, name: kworker/0:4
+  6 locks held by kworker/0:4/3852:
+   #0: 000000004270f6bb ((wq_completion)ceph-msgr){+.+.}, at: process_one_work+0x1b8/0x5f0
+   #1: 00000000eb420803 ((work_completion)(&(&con->work)->work)){+.+.}, at: process_one_work+0x1b8/0x5f0
+   #2: 00000000be1c53a4 (&s->s_mutex){+.+.}, at: dispatch+0x288/0x1476
+   #3: 00000000559cb958 (&mdsc->snap_rwsem){++++}, at: dispatch+0x2eb/0x1476
+   #4: 000000000d5ebbae (&req->r_fill_mutex){+.+.}, at: dispatch+0x2fc/0x1476
+   #5: 00000000a83d0514 (&(&ci->i_ceph_lock)->rlock){+.+.}, at: fill_inode.isra.0+0xf8/0xf70
+  CPU: 0 PID: 3852 Comm: kworker/0:4 Not tainted 5.2.0+ #441
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58-prebuilt.qemu.org 04/01/2014
+  Workqueue: ceph-msgr ceph_con_workfn
+  Call Trace:
+   dump_stack+0x67/0x90
+   ___might_sleep.cold+0x9f/0xb1
+   vfree+0x4b/0x60
+   ceph_buffer_release+0x1b/0x60
+   fill_inode.isra.0+0xa9b/0xf70
+   ceph_fill_trace+0x13b/0xc70
+   ? dispatch+0x2eb/0x1476
+   dispatch+0x320/0x1476
+   ? __mutex_unlock_slowpath+0x4d/0x2a0
+   ceph_con_workfn+0xc97/0x2ec0
+   ? process_one_work+0x1b8/0x5f0
+   process_one_work+0x244/0x5f0
+   worker_thread+0x4d/0x3e0
+   kthread+0x105/0x140
+   ? process_one_work+0x5f0/0x5f0
+   ? kthread_park+0x90/0x90
+   ret_from_fork+0x3a/0x50
+
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/ceph/inode.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 3e518c2ae2bf9..11f19432a74c4 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -742,6 +742,7 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
+ 	int issued, new_issued, info_caps;
+ 	struct timespec64 mtime, atime, ctime;
+ 	struct ceph_buffer *xattr_blob = NULL;
++	struct ceph_buffer *old_blob = NULL;
+ 	struct ceph_string *pool_ns = NULL;
+ 	struct ceph_cap *new_cap = NULL;
+ 	int err = 0;
+@@ -878,7 +879,7 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
+ 	if ((ci->i_xattrs.version == 0 || !(issued & CEPH_CAP_XATTR_EXCL))  &&
+ 	    le64_to_cpu(info->xattr_version) > ci->i_xattrs.version) {
+ 		if (ci->i_xattrs.blob)
+-			ceph_buffer_put(ci->i_xattrs.blob);
++			old_blob = ci->i_xattrs.blob;
+ 		ci->i_xattrs.blob = xattr_blob;
+ 		if (xattr_blob)
+ 			memcpy(ci->i_xattrs.blob->vec.iov_base,
+@@ -1017,8 +1018,8 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
+ out:
+ 	if (new_cap)
+ 		ceph_put_cap(mdsc, new_cap);
+-	if (xattr_blob)
+-		ceph_buffer_put(xattr_blob);
++	ceph_buffer_put(old_blob);
++	ceph_buffer_put(xattr_blob);
+ 	ceph_put_string(pool_ns);
+ 	return err;
+ }
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.20.1
 
