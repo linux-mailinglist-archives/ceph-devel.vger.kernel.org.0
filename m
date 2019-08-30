@@ -2,166 +2,111 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08563A3252
-	for <lists+ceph-devel@lfdr.de>; Fri, 30 Aug 2019 10:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D935A38C4
+	for <lists+ceph-devel@lfdr.de>; Fri, 30 Aug 2019 16:05:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbfH3I2v (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 30 Aug 2019 04:28:51 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:43417 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfH3I2v (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 30 Aug 2019 04:28:51 -0400
-Received: by mail-io1-f68.google.com with SMTP id u185so8581361iod.10;
-        Fri, 30 Aug 2019 01:28:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FnQGezDYO5hoi4qMr6hFteu6J0hxc2afK6Bu1JCgpJs=;
-        b=J0175i7PLeHrpTIwJsAcjfdidXf+v04TTsZELE9ltkPQ4tU0FTMGiEGfrh7gzahRcN
-         gI+2m7WmnEzGmVtL3lyOvPLu7WpeJgT7zFZPDvYyusZZXIYHpGS3KoTemenCmRAWNvKQ
-         lBpSeCe5b/5846aDMypZHsV6xObfkqZ8XP2ezfzf/I4kGiRPvHd4/D2+X+aU5u9bFwzI
-         DiL9qH19yqf1m3gkHvPWFC5Ra2kJjO2qSOMNd4qfNlma5nCIVbpbA2RF+V1MnAC8nV4E
-         uKvZ0eEVqRYb8OGAV3fCBPv+5v/DwhFuh55ASVp/AvZmnT2aKq0ZeEE+qRi4aVlcJo9Z
-         7XTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FnQGezDYO5hoi4qMr6hFteu6J0hxc2afK6Bu1JCgpJs=;
-        b=nsDDoj16Ko9L5+cmuHbARIBt1qVToQ8rrPEtJf23Zn2X45QIFnB6NuXYVsribmrO4I
-         sHVGn1mwN9yBds6FChZp2hprEF2emEHIBfmqdHLZWPbAEHKAWIbHRLZh9FiRXiaqppWl
-         gx0AJwS0MQGkwHwtBnAJZCllfny4qrUV92C510HBwJu474kPBoYjt0RcvbTrjpCJI/9c
-         WYR4arC57MVTx7eQaxyfSdFxcRRKUEJQ3UmQAFDv1k8M+5m53CJXjj73Q7L1leL5TS6H
-         a7e7zntT2FXRRY0pdj547NNOl5qGgwMp5RNkDnVKfTHxX1WrkmqN5MWWoc1tckD3D1wd
-         8tDA==
-X-Gm-Message-State: APjAAAX6A9dBjj/J37LJaewwBS+0XiZuREmb1sBaLG1Ha0BuvmvnE1sr
-        zztxQm9lGDqp3C75uzjhLTdJCb1c6e0pSvvrpRU=
-X-Google-Smtp-Source: APXvYqzh4ZWbYUgOrIXRKzNwKFlVdvLdRsMAd4czJUiBBQ34pQ8gvCsfatlbWy3/zbYJpGODP3+G603e8CbSc4iZKHc=
-X-Received: by 2002:a5d:9d49:: with SMTP id k9mr1449448iok.106.1567153729688;
- Fri, 30 Aug 2019 01:28:49 -0700 (PDT)
+        id S1727914AbfH3OFc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 30 Aug 2019 10:05:32 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56877 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbfH3OFb (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 30 Aug 2019 10:05:31 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1i3hWr-0000GM-AR; Fri, 30 Aug 2019 14:05:29 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        ceph-devel@vger.kernel.org,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Subject: bug report: libceph: follow redirect replies from osds
+Message-ID: <3a4ff829-7302-7201-81c2-a557fe35afc8@canonical.com>
+Date:   Fri, 30 Aug 2019 15:05:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190829181311.7562-1-sashal@kernel.org> <20190829181311.7562-66-sashal@kernel.org>
- <CAOi1vP9-A-U6J15hT+XmtXzBw5WVRZECry8gPFzqp0CV36ecig@mail.gmail.com> <20190829211640.GN5281@sasha-vm>
-In-Reply-To: <20190829211640.GN5281@sasha-vm>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Fri, 30 Aug 2019 10:31:53 +0200
-Message-ID: <CAOi1vP-EPJ5VfEAMa_-4LyNv-mXf1acozoa=Z0kHDMAnVKfGxw@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.2 66/76] ceph: fix buffer free while holding
- i_ceph_lock in __ceph_setxattr()
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 11:16 PM Sasha Levin <sashal@kernel.org> wrote:
->
-> On Thu, Aug 29, 2019 at 10:51:04PM +0200, Ilya Dryomov wrote:
-> >On Thu, Aug 29, 2019 at 8:15 PM Sasha Levin <sashal@kernel.org> wrote:
-> >>
-> >> From: Luis Henriques <lhenriques@suse.com>
-> >>
-> >> [ Upstream commit 86968ef21596515958d5f0a40233d02be78ecec0 ]
-> >>
-> >> Calling ceph_buffer_put() in __ceph_setxattr() may end up freeing the
-> >> i_xattrs.prealloc_blob buffer while holding the i_ceph_lock.  This can be
-> >> fixed by postponing the call until later, when the lock is released.
-> >>
-> >> The following backtrace was triggered by fstests generic/117.
-> >>
-> >>   BUG: sleeping function called from invalid context at mm/vmalloc.c:2283
-> >>   in_atomic(): 1, irqs_disabled(): 0, pid: 650, name: fsstress
-> >>   3 locks held by fsstress/650:
-> >>    #0: 00000000870a0fe8 (sb_writers#8){.+.+}, at: mnt_want_write+0x20/0x50
-> >>    #1: 00000000ba0c4c74 (&type->i_mutex_dir_key#6){++++}, at: vfs_setxattr+0x55/0xa0
-> >>    #2: 000000008dfbb3f2 (&(&ci->i_ceph_lock)->rlock){+.+.}, at: __ceph_setxattr+0x297/0x810
-> >>   CPU: 1 PID: 650 Comm: fsstress Not tainted 5.2.0+ #437
-> >>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58-prebuilt.qemu.org 04/01/2014
-> >>   Call Trace:
-> >>    dump_stack+0x67/0x90
-> >>    ___might_sleep.cold+0x9f/0xb1
-> >>    vfree+0x4b/0x60
-> >>    ceph_buffer_release+0x1b/0x60
-> >>    __ceph_setxattr+0x2b4/0x810
-> >>    __vfs_setxattr+0x66/0x80
-> >>    __vfs_setxattr_noperm+0x59/0xf0
-> >>    vfs_setxattr+0x81/0xa0
-> >>    setxattr+0x115/0x230
-> >>    ? filename_lookup+0xc9/0x140
-> >>    ? rcu_read_lock_sched_held+0x74/0x80
-> >>    ? rcu_sync_lockdep_assert+0x2e/0x60
-> >>    ? __sb_start_write+0x142/0x1a0
-> >>    ? mnt_want_write+0x20/0x50
-> >>    path_setxattr+0xba/0xd0
-> >>    __x64_sys_lsetxattr+0x24/0x30
-> >>    do_syscall_64+0x50/0x1c0
-> >>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >>   RIP: 0033:0x7ff23514359a
-> >>
-> >> Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> >> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> >> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-> >> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> >> ---
-> >>  fs/ceph/xattr.c | 8 ++++++--
-> >>  1 file changed, 6 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> >> index 0619adbcbe14c..8382299fc2d84 100644
-> >> --- a/fs/ceph/xattr.c
-> >> +++ b/fs/ceph/xattr.c
-> >> @@ -1028,6 +1028,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
-> >>         struct ceph_inode_info *ci = ceph_inode(inode);
-> >>         struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
-> >>         struct ceph_cap_flush *prealloc_cf = NULL;
-> >> +       struct ceph_buffer *old_blob = NULL;
-> >>         int issued;
-> >>         int err;
-> >>         int dirty = 0;
-> >> @@ -1101,13 +1102,15 @@ int __ceph_setxattr(struct inode *inode, const char *name,
-> >>                 struct ceph_buffer *blob;
-> >>
-> >>                 spin_unlock(&ci->i_ceph_lock);
-> >> -               dout(" preaallocating new blob size=%d\n", required_blob_size);
-> >> +               ceph_buffer_put(old_blob); /* Shouldn't be required */
-> >> +               dout(" pre-allocating new blob size=%d\n", required_blob_size);
-> >>                 blob = ceph_buffer_new(required_blob_size, GFP_NOFS);
-> >>                 if (!blob)
-> >>                         goto do_sync_unlocked;
-> >>                 spin_lock(&ci->i_ceph_lock);
-> >> +               /* prealloc_blob can't be released while holding i_ceph_lock */
-> >>                 if (ci->i_xattrs.prealloc_blob)
-> >> -                       ceph_buffer_put(ci->i_xattrs.prealloc_blob);
-> >> +                       old_blob = ci->i_xattrs.prealloc_blob;
-> >>                 ci->i_xattrs.prealloc_blob = blob;
-> >>                 goto retry;
-> >>         }
-> >> @@ -1123,6 +1126,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
-> >>         }
-> >>
-> >>         spin_unlock(&ci->i_ceph_lock);
-> >> +       ceph_buffer_put(old_blob);
-> >>         if (lock_snap_rwsem)
-> >>                 up_read(&mdsc->snap_rwsem);
-> >>         if (dirty)
-> >
-> >Hi Sasha,
-> >
-> >I didn't tag i_ceph_lock series for stable because this is a very old
-> >bug which no one ever hit in real life, at least to my knowledge.
->
-> I can drop it if you prefer.
+Hi,
 
-Either is fine with me.  I just wanted to explain my rationale for not
-tagging them for stable in the first place and point out that there is
-a prerequisite.
+Static analysis with Coverity has picked up an issue with commit:
 
-Thanks,
+commit 205ee1187a671c3b067d7f1e974903b44036f270
+Author: Ilya Dryomov <ilya.dryomov@inktank.com>
+Date:   Mon Jan 27 17:40:20 2014 +0200
 
-                Ilya
+    libceph: follow redirect replies from osds
+
+Specifically in function ceph_redirect_decode in net/ceph/osd_client.c:
+
+3485
+3486        len = ceph_decode_32(p);
+
+CID 17904: Unused value (UNUSED_VALUE)
+
+3487        *p += len; /* skip osd_instructions */
+3488
+3489        /* skip the rest */
+3490        *p = struct_end;
+
+The double write to *p looks wrong, I suspect the *p += len; should be
+just incrementing pointer p as in: p += len.  Am I correct to assume
+this is the correct fix?
+
+Colin
+
+
+
