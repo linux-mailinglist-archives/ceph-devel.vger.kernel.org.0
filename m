@@ -2,111 +2,86 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D935A38C4
-	for <lists+ceph-devel@lfdr.de>; Fri, 30 Aug 2019 16:05:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D4B1A38CE
+	for <lists+ceph-devel@lfdr.de>; Fri, 30 Aug 2019 16:08:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727914AbfH3OFc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 30 Aug 2019 10:05:32 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56877 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727135AbfH3OFb (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 30 Aug 2019 10:05:31 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1i3hWr-0000GM-AR; Fri, 30 Aug 2019 14:05:29 +0000
-To:     Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        ceph-devel@vger.kernel.org,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Subject: bug report: libceph: follow redirect replies from osds
-Message-ID: <3a4ff829-7302-7201-81c2-a557fe35afc8@canonical.com>
-Date:   Fri, 30 Aug 2019 15:05:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727891AbfH3OIS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 30 Aug 2019 10:08:18 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50519 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727756AbfH3OIR (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 30 Aug 2019 10:08:17 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v15so7504218wml.0;
+        Fri, 30 Aug 2019 07:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bFUHC/+EATNzZGS6Qv9osJUqzQ4/Jabg74pmuJQG+ao=;
+        b=orkgkJvizZDLkJHjRmYVCQyak58OJtxEFodoeD5wP4g5hcIRU2NClViYSeiCUDQVZ5
+         kHZ+az6cSmiWVuvzqU86OO3nYF8+In07z4i8THkk0NFy7k7+j0ETGb6ibebuI+kltY4w
+         nU036TNydz9tFvEG206ol/HQdvzDKEkRx1hZhXHx5PWLt+7nJCFEy+HLtpREtGYoq9dF
+         d4sMK8QwdeshG9Y0GxpoTvxJDQqXZBLvAAbh1BoJkwDNK+NiDSnyCy9AQRazrpk/WUvX
+         0Dw21sv2XjZXkRuqR3mv1sIZ7aBvhDwMRgzGDwh/tG5vpuGhfCnU4aLe7ovWKkDuFjqZ
+         OG2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bFUHC/+EATNzZGS6Qv9osJUqzQ4/Jabg74pmuJQG+ao=;
+        b=ZyfgLMaVMOej4Gfe9XmoRUMmXDElgSBv9T8x4eNUdUvuhWEDxehHU2h5ORv5aLDZUt
+         hws6D/OEPCBZ9KfrjPGt8WOUFo3/kUHJ8wptuaHl91WQ2Po8+W5oID//dcqGzLv4QEgN
+         b9P1mpbpyR1NEpnOcpCHfn6xvtu0U54vJuP0j6nXdtnVWLm3Fep4qzHTuy4m59sgQlS0
+         TCdF5WEjIUufmfLuHuE9IZx3QXx5P+RRQFphN7Owj45lIMvxYFgBVsI4lXh6biKpY6Me
+         EJWPc66s4KRmP5vpAug663FVbWxqfOEiMHvhJtENx6UVY3joAgl7UQESZjj8o36VqUcu
+         K1RA==
+X-Gm-Message-State: APjAAAV8p6L/sHQb8X9njWl1LAAsxqRgvzfx8n0OSzbP+/uhoyqm/p+c
+        EqRSrqIAvkIb7SN8K34cLW7Pp0OQmCc=
+X-Google-Smtp-Source: APXvYqwyFcHyRzTsY7Z+1TShzWkeVl765NQ9a6hgjs0odCoqrdfASrTPsCXgcMxa1532uD86QsG8kQ==
+X-Received: by 2002:a1c:b342:: with SMTP id c63mr18699850wmf.84.1567174095533;
+        Fri, 30 Aug 2019 07:08:15 -0700 (PDT)
+Received: from kwango.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id a17sm7458822wmm.47.2019.08.30.07.08.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 07:08:15 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 5.3-rc7
+Date:   Fri, 30 Aug 2019 16:11:15 +0200
+Message-Id: <20190830141115.8049-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi,
+Hi Linus,
 
-Static analysis with Coverity has picked up an issue with commit:
+The following changes since commit a55aa89aab90fae7c815b0551b07be37db359d76:
 
-commit 205ee1187a671c3b067d7f1e974903b44036f270
-Author: Ilya Dryomov <ilya.dryomov@inktank.com>
-Date:   Mon Jan 27 17:40:20 2014 +0200
+  Linux 5.3-rc6 (2019-08-25 12:01:23 -0700)
 
-    libceph: follow redirect replies from osds
+are available in the Git repository at:
 
-Specifically in function ceph_redirect_decode in net/ceph/osd_client.c:
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.3-rc7
 
-3485
-3486        len = ceph_decode_32(p);
+for you to fetch changes up to d435c9a7b85be1e820668d2f3718c2d9f24d5548:
 
-CID 17904: Unused value (UNUSED_VALUE)
+  rbd: restore zeroing past the overlap when reading from parent (2019-08-28 12:34:11 +0200)
 
-3487        *p += len; /* skip osd_instructions */
-3488
-3489        /* skip the rest */
-3490        *p = struct_end;
+----------------------------------------------------------------
+A fix for a -rc1 regression in rbd and a trivial static checker fix.
 
-The double write to *p looks wrong, I suspect the *p += len; should be
-just incrementing pointer p as in: p += len.  Am I correct to assume
-this is the correct fix?
+----------------------------------------------------------------
+Ilya Dryomov (1):
+      rbd: restore zeroing past the overlap when reading from parent
 
-Colin
+Jia-Ju Bai (1):
+      libceph: don't call crypto_free_sync_skcipher() on a NULL tfm
 
-
-
+ drivers/block/rbd.c | 11 +++++++++++
+ net/ceph/crypto.c   |  6 ++++--
+ 2 files changed, 15 insertions(+), 2 deletions(-)
