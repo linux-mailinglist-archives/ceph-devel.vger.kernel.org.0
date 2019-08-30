@@ -2,146 +2,109 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18DF5A28B7
-	for <lists+ceph-devel@lfdr.de>; Thu, 29 Aug 2019 23:16:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07F17A2C48
+	for <lists+ceph-devel@lfdr.de>; Fri, 30 Aug 2019 03:30:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727928AbfH2VQn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 29 Aug 2019 17:16:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55106 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726526AbfH2VQm (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 29 Aug 2019 17:16:42 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CECB208C2;
-        Thu, 29 Aug 2019 21:16:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567113401;
-        bh=S8jZl5qXwtASsh5sqmmpoIddnxCBuXvV58tUABgzZKo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pf4R/qE5U0ptoMvA6pBMA2mE1A59uGzHclP0IcO1McDCsMmRqgD/adkoEj+nu59xk
-         dR/inm3HdrOS6Hml8x/aWb6cykxATePFa/h5RbsRBepApDwGyxBIOKpa6ihPstjoLd
-         QEcnRqw1Vl2tvAuVCKYZI6mtQlXlE9yeSISENWnw=
-Date:   Thu, 29 Aug 2019 17:16:40 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Subject: Re: [PATCH AUTOSEL 5.2 66/76] ceph: fix buffer free while holding
- i_ceph_lock in __ceph_setxattr()
-Message-ID: <20190829211640.GN5281@sasha-vm>
-References: <20190829181311.7562-1-sashal@kernel.org>
- <20190829181311.7562-66-sashal@kernel.org>
- <CAOi1vP9-A-U6J15hT+XmtXzBw5WVRZECry8gPFzqp0CV36ecig@mail.gmail.com>
+        id S1727632AbfH3BaC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 29 Aug 2019 21:30:02 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:40562 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727417AbfH3BaB (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 29 Aug 2019 21:30:01 -0400
+Received: by mail-yw1-f66.google.com with SMTP id z64so1842352ywe.7
+        for <ceph-devel@vger.kernel.org>; Thu, 29 Aug 2019 18:30:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yDmQxANGbqTJGtO1OhTa4PkciZSXcUVcA6Y2VnUF5Ug=;
+        b=tRuQF9NGsWriwh9rOUGWV/XnpvxEIfrIBLDnzsNlL2DcXYptI5uYx9v9XRgXG9ikj+
+         lAdRFBmN8WWgzpxjYwMBvOBMGH9vQkyzn/bAHiywFTqTy8Rv0zmy7NK3LdyKNjjgvNdr
+         mcLlIarH9lbZWT5t7oU7MIVWXKIhgWd4FFEn+XvtJUHOlIO0rItLGA+Zt6tlzfYijXTt
+         MmEvGy0xnlwDGgt/OUq/OkC9egtS+p7sT3eJ3BcAb9vNf6OatXnbSWZ0hHXVonsgbMVH
+         pMy2zHMasv+EgzYrXDb3idQdrvXUOVYyNS1FKC2EzXUecfAda8U+O/uwCTXSTJ6SOTSm
+         T3ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yDmQxANGbqTJGtO1OhTa4PkciZSXcUVcA6Y2VnUF5Ug=;
+        b=UF3/iFNhLaccmfloB++bOcj3IgzWJS3u3pDP/cydJ7J+grAPPWA/+PePYKMeh922x9
+         7BAgfCjlqiNHTMmO2kbXILtwn6XUCUi9yAd3FU/4P6QmT7Ft+YjrowGU6QHFjwD2E6GQ
+         r3juV7Q0+0PI+QyFjCEsdIbX6Zcf2cdPCCixA49VIVtXZ1KYkD0Z63E2h4xe6KWC3oCG
+         KKWR7LI9mHMyphZzFDGZ+ko93hETqLMGm6YNuvJYZ40gYlDsEoNd7QheHHmVhlJYFLQR
+         z6eOYh05rkTsIYAWQjoETaIuKDJyF1cDMzxs+pTMI70WAgHF8taIzAbVWp9zFL/s01+D
+         Tbbw==
+X-Gm-Message-State: APjAAAUgOXVBSa87MAC3+IqyVaAhukDycL+XWf7gd5UdT/zNmQ2LaPk6
+        oUFAy96VrEyG5QC2dr2UWqFdBPcHzVOkBtybKTGHmw==
+X-Google-Smtp-Source: APXvYqyIDKOrxjb28zWL9kagM4gqNHMvZYp0EWQP/d+eBC6/dEWbXTKwXclpCyHxrYDHzsr0mwrMijbohn/hHGTlziQ=
+X-Received: by 2002:a81:3681:: with SMTP id d123mr9802172ywa.348.1567128600919;
+ Thu, 29 Aug 2019 18:30:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAOi1vP9-A-U6J15hT+XmtXzBw5WVRZECry8gPFzqp0CV36ecig@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190807013340.9706-1-jhubbard@nvidia.com> <912eb2bd-4102-05c1-5571-c261617ad30b@nvidia.com>
+In-Reply-To: <912eb2bd-4102-05c1-5571-c261617ad30b@nvidia.com>
+From:   Mike Marshall <hubcap@omnibond.com>
+Date:   Thu, 29 Aug 2019 21:29:50 -0400
+Message-ID: <CAOg9mSQKGDywcMde2DE42diUS7J8m74Hdv+xp_PJhC39EXZQuw@mail.gmail.com>
+Subject: Re: [PATCH v3 00/39] put_user_pages(): miscellaneous call sites
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-fbdev@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-media@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-rdma@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-xfs@vger.kernel.org, netdev@vger.kernel.org,
+        rds-devel@oss.oracle.com, sparclinux@vger.kernel.org,
+        x86@kernel.org, xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 10:51:04PM +0200, Ilya Dryomov wrote:
->On Thu, Aug 29, 2019 at 8:15 PM Sasha Levin <sashal@kernel.org> wrote:
->>
->> From: Luis Henriques <lhenriques@suse.com>
->>
->> [ Upstream commit 86968ef21596515958d5f0a40233d02be78ecec0 ]
->>
->> Calling ceph_buffer_put() in __ceph_setxattr() may end up freeing the
->> i_xattrs.prealloc_blob buffer while holding the i_ceph_lock.  This can be
->> fixed by postponing the call until later, when the lock is released.
->>
->> The following backtrace was triggered by fstests generic/117.
->>
->>   BUG: sleeping function called from invalid context at mm/vmalloc.c:2283
->>   in_atomic(): 1, irqs_disabled(): 0, pid: 650, name: fsstress
->>   3 locks held by fsstress/650:
->>    #0: 00000000870a0fe8 (sb_writers#8){.+.+}, at: mnt_want_write+0x20/0x50
->>    #1: 00000000ba0c4c74 (&type->i_mutex_dir_key#6){++++}, at: vfs_setxattr+0x55/0xa0
->>    #2: 000000008dfbb3f2 (&(&ci->i_ceph_lock)->rlock){+.+.}, at: __ceph_setxattr+0x297/0x810
->>   CPU: 1 PID: 650 Comm: fsstress Not tainted 5.2.0+ #437
->>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58-prebuilt.qemu.org 04/01/2014
->>   Call Trace:
->>    dump_stack+0x67/0x90
->>    ___might_sleep.cold+0x9f/0xb1
->>    vfree+0x4b/0x60
->>    ceph_buffer_release+0x1b/0x60
->>    __ceph_setxattr+0x2b4/0x810
->>    __vfs_setxattr+0x66/0x80
->>    __vfs_setxattr_noperm+0x59/0xf0
->>    vfs_setxattr+0x81/0xa0
->>    setxattr+0x115/0x230
->>    ? filename_lookup+0xc9/0x140
->>    ? rcu_read_lock_sched_held+0x74/0x80
->>    ? rcu_sync_lockdep_assert+0x2e/0x60
->>    ? __sb_start_write+0x142/0x1a0
->>    ? mnt_want_write+0x20/0x50
->>    path_setxattr+0xba/0xd0
->>    __x64_sys_lsetxattr+0x24/0x30
->>    do_syscall_64+0x50/0x1c0
->>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>   RIP: 0033:0x7ff23514359a
->>
->> Signed-off-by: Luis Henriques <lhenriques@suse.com>
->> Reviewed-by: Jeff Layton <jlayton@kernel.org>
->> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->> ---
->>  fs/ceph/xattr.c | 8 ++++++--
->>  1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
->> index 0619adbcbe14c..8382299fc2d84 100644
->> --- a/fs/ceph/xattr.c
->> +++ b/fs/ceph/xattr.c
->> @@ -1028,6 +1028,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
->>         struct ceph_inode_info *ci = ceph_inode(inode);
->>         struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
->>         struct ceph_cap_flush *prealloc_cf = NULL;
->> +       struct ceph_buffer *old_blob = NULL;
->>         int issued;
->>         int err;
->>         int dirty = 0;
->> @@ -1101,13 +1102,15 @@ int __ceph_setxattr(struct inode *inode, const char *name,
->>                 struct ceph_buffer *blob;
->>
->>                 spin_unlock(&ci->i_ceph_lock);
->> -               dout(" preaallocating new blob size=%d\n", required_blob_size);
->> +               ceph_buffer_put(old_blob); /* Shouldn't be required */
->> +               dout(" pre-allocating new blob size=%d\n", required_blob_size);
->>                 blob = ceph_buffer_new(required_blob_size, GFP_NOFS);
->>                 if (!blob)
->>                         goto do_sync_unlocked;
->>                 spin_lock(&ci->i_ceph_lock);
->> +               /* prealloc_blob can't be released while holding i_ceph_lock */
->>                 if (ci->i_xattrs.prealloc_blob)
->> -                       ceph_buffer_put(ci->i_xattrs.prealloc_blob);
->> +                       old_blob = ci->i_xattrs.prealloc_blob;
->>                 ci->i_xattrs.prealloc_blob = blob;
->>                 goto retry;
->>         }
->> @@ -1123,6 +1126,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
->>         }
->>
->>         spin_unlock(&ci->i_ceph_lock);
->> +       ceph_buffer_put(old_blob);
->>         if (lock_snap_rwsem)
->>                 up_read(&mdsc->snap_rwsem);
->>         if (dirty)
->
->Hi Sasha,
->
->I didn't tag i_ceph_lock series for stable because this is a very old
->bug which no one ever hit in real life, at least to my knowledge.
+Hi John...
 
-I can drop it if you prefer.
+I added this patch series on top of Linux 5.3rc6 and ran
+xfstests with no regressions...
 
---
-Thanks,
-Sasha
+Acked-by: Mike Marshall <hubcap@omnibond.com>
+
+-Mike
+
+On Tue, Aug 6, 2019 at 9:50 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>
+> On 8/6/19 6:32 PM, john.hubbard@gmail.com wrote:
+> > From: John Hubbard <jhubbard@nvidia.com>
+> > ...
+> >
+> > John Hubbard (38):
+> >   mm/gup: add make_dirty arg to put_user_pages_dirty_lock()
+> ...
+> >  54 files changed, 191 insertions(+), 323 deletions(-)
+> >
+> ahem, yes, apparently this is what happens if I add a few patches while editing
+> the cover letter... :)
+>
+> The subject line should read "00/41", and the list of files affected here is
+> therefore under-reported in this cover letter. However, the patch series itself is
+> intact and ready for submission.
+>
+> thanks,
+> --
+> John Hubbard
+> NVIDIA
