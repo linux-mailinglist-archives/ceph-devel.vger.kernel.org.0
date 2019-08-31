@@ -2,53 +2,110 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA1B5A3C3A
-	for <lists+ceph-devel@lfdr.de>; Fri, 30 Aug 2019 18:40:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E7BFA4665
+	for <lists+ceph-devel@lfdr.de>; Sun,  1 Sep 2019 00:01:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbfH3QkS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 30 Aug 2019 12:40:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44022 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728148AbfH3QkJ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 30 Aug 2019 12:40:09 -0400
-Subject: Re: [GIT PULL] Ceph fixes for 5.3-rc7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567183208;
-        bh=bIcxhqZxKQbXUfLLcCayl7DeVujt/jXc7X7NoYLsUwM=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=VY/AXX9Rlu6vaJ6NaHr4rObXErAuOUhrnU0IT6ev6VeVKj2tAnS6ClkDUkcPpyWEw
-         bOBI/rs6aUjUnppvNRcafL4AzGJ2e/C3lM6/qVzy3z6SVPhtbempOU5mK7bTaWIFpk
-         J9LPlsizIOe04eKpiUamfhQZzFZnLgy9TUttUvsc=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190830141115.8049-1-idryomov@gmail.com>
-References: <20190830141115.8049-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190830141115.8049-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git
- tags/ceph-for-5.3-rc7
-X-PR-Tracked-Commit-Id: d435c9a7b85be1e820668d2f3718c2d9f24d5548
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: fbcb0b4feb5c3f5431a2ed9f0211653864cf2104
-Message-Id: <156718320888.32023.5337613688472185467.pr-tracker-bot@kernel.org>
-Date:   Fri, 30 Aug 2019 16:40:08 +0000
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        id S1726996AbfHaV5R (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 31 Aug 2019 17:57:17 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38652 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbfHaV5Q (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 31 Aug 2019 17:57:16 -0400
+Received: by mail-wm1-f67.google.com with SMTP id o184so10928742wme.3;
+        Sat, 31 Aug 2019 14:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AYOwNEwasq9ZeSJ1tPX4siPkH0OJNt6wmi5XPh6tDK0=;
+        b=AJ/i3mis8+vkGBYtlunuOHCXAG4O8vnpGO3SINmsB3D1igJM59m6N1qGCFoR3ZWiYT
+         +qMqyF6K2zbG1JvudVAbxWgSUVNz8oqsMuw6J11JvqklrJLU3KyAny8mNZnBAiNqxBZw
+         rm2ls2KADFRsIUQbWS4/O2aQj9cg+NCt/qvbP/pBdH+oAgnD2duVkr2fvLs4Dv2hoL/4
+         TY8wjE+VccJ5Dz0fNvc+UnxSUfidcC2yWEJP2nycJE85dN7mx40zlyWwuL3CVY6G/WJx
+         SHp2Xr2Gg60owC5FMmAKbXzzSWj/SxXzOaiVADFsaOLLtW9mIxI/EaD8K/DCefFO3mJ1
+         FyDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=AYOwNEwasq9ZeSJ1tPX4siPkH0OJNt6wmi5XPh6tDK0=;
+        b=byYESp64RnnmEWuug8cKG0CcGIQFArxEJNlCUXGAdjyTVop2pLjRCgHbmcZwoeq2qS
+         qbxlPckeI3zgrCX75EOfh/t2v4VNSS0kJvjC5H/CCEdgY9MZS414C1ERHyvjWajwkPpB
+         i37p2aEfLTs8uIqEjXDLqKOMbmK6xRnKk5QzgpOpe8bnnvhrp8rSPwXJWQLnpUqVCx2L
+         BoaJwnTclvvpPPZO5e6LrD0K4Z8NG7F+bzn8y8TPTetLimd6jTBNGzEOJ5SLCxbho1hv
+         F3DpjBKC5NUZNLxNuX6/4sliNkWWTad6auvYatjlSjALwT7En5Q9AovNZGM/mmJKy+E8
+         Akmg==
+X-Gm-Message-State: APjAAAU69MgD8f7N2jG3txC8rThx9ZMapnZdjQGa11Cr1Pxt7gSDA9gw
+        FJlBplgkbZLZTxP8VB+7O2c=
+X-Google-Smtp-Source: APXvYqxF8OnuJlVtDEZ2N/jealSjlLOGtlyQPVrn47WwZgo7igVRtfxdne/npBcKcgefeskRr2H8/A==
+X-Received: by 2002:a05:600c:2181:: with SMTP id e1mr10119664wme.117.1567288634393;
+        Sat, 31 Aug 2019 14:57:14 -0700 (PDT)
+Received: from localhost.localdomain (ip5b4096c3.dynamic.kabel-deutschland.de. [91.64.150.195])
+        by smtp.gmail.com with ESMTPSA id l9sm7713580wmi.29.2019.08.31.14.57.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 31 Aug 2019 14:57:13 -0700 (PDT)
+From:   Krzysztof Wilczynski <kw@linux.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
         ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ceph: Move static keyword to the front of declarations
+Date:   Sat, 31 Aug 2019 23:57:12 +0200
+Message-Id: <20190831215712.10148-1-kw@linux.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The pull request you sent on Fri, 30 Aug 2019 16:11:15 +0200:
+Move the static keyword to the front of declarations of
+snap_handle_length, handle_length and connected_handle_length,
+and resolve the following compiler warnings that can be seen
+when building with warnings enabled (W=1):
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-5.3-rc7
+fs/ceph/export.c:38:2: warning:
+  ‘static’ is not at beginning of declaration [-Wold-style-declaration]
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/fbcb0b4feb5c3f5431a2ed9f0211653864cf2104
+fs/ceph/export.c:88:2: warning:
+  ‘static’ is not at beginning of declaration [-Wold-style-declaration]
 
-Thank you!
+fs/ceph/export.c:90:2: warning:
+  ‘static’ is not at beginning of declaration [-Wold-style-declaration]
 
+Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
+---
+Related: https://lore.kernel.org/r/20190827233017.GK9987@google.com
+
+ fs/ceph/export.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+index 020d39a85ecc..b6bfa94332c3 100644
+--- a/fs/ceph/export.c
++++ b/fs/ceph/export.c
+@@ -35,7 +35,7 @@ struct ceph_nfs_snapfh {
+ static int ceph_encode_snapfh(struct inode *inode, u32 *rawfh, int *max_len,
+ 			      struct inode *parent_inode)
+ {
+-	const static int snap_handle_length =
++	static const int snap_handle_length =
+ 		sizeof(struct ceph_nfs_snapfh) >> 2;
+ 	struct ceph_nfs_snapfh *sfh = (void *)rawfh;
+ 	u64 snapid = ceph_snap(inode);
+@@ -85,9 +85,9 @@ static int ceph_encode_snapfh(struct inode *inode, u32 *rawfh, int *max_len,
+ static int ceph_encode_fh(struct inode *inode, u32 *rawfh, int *max_len,
+ 			  struct inode *parent_inode)
+ {
+-	const static int handle_length =
++	static const int handle_length =
+ 		sizeof(struct ceph_nfs_fh) >> 2;
+-	const static int connected_handle_length =
++	static const int connected_handle_length =
+ 		sizeof(struct ceph_nfs_confh) >> 2;
+ 	int type;
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.22.1
+
