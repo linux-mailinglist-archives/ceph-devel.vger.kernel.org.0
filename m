@@ -2,129 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C519FA91A8
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Sep 2019 21:39:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45384A8CC3
+	for <lists+ceph-devel@lfdr.de>; Wed,  4 Sep 2019 21:30:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388517AbfIDSVj convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Wed, 4 Sep 2019 14:21:39 -0400
-Received: from pdx1-sub0-mail-fallback-mx1.dreamhost.com ([64.90.62.139]:52078
-        "EHLO pdx1-sub0-mail-fallback-mx1.dreamhost.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388933AbfIDSVi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 Sep 2019 14:21:38 -0400
-X-Greylist: delayed 21640 seconds by postgrey-1.27 at vger.kernel.org; Wed, 04 Sep 2019 14:21:38 EDT
-Received: from pdx1-sub0-mail-mx62.g.dreamhost.com (unknown [10.35.43.107])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by pdx1-sub0-mail-fallback-mx1.dreamhost.com (Postfix) with ESMTPS id 9A2A117D1EF
-        for <ceph-devel@vger.kernel.org>; Wed,  4 Sep 2019 05:20:57 -0700 (PDT)
-Received: from vade-backend20.dreamhost.com (fltr-in2.mail.dreamhost.com [66.33.205.213])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by pdx1-sub0-mail-mx62.g.dreamhost.com (Postfix) with ESMTPS id 08C5D851B1
-        for <ceph-devel@ceph.com>; Wed,  4 Sep 2019 05:20:56 -0700 (PDT)
-Received: from mx1.redhat.com (mx1.redhat.com [209.132.183.28])
-        by vade-backend20.dreamhost.com (Postfix) with ESMTPS id 7ABDA400001FB
-        for <ceph-devel@ceph.com>; Wed,  4 Sep 2019 05:20:56 -0700 (PDT)
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        id S1732426AbfIDQRU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 4 Sep 2019 12:17:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33588 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732299AbfIDP7N (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 4 Sep 2019 11:59:13 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A6DB6883CA
-        for <ceph-devel@ceph.com>; Wed,  4 Sep 2019 12:20:55 +0000 (UTC)
-Received: by mail-ed1-f70.google.com with SMTP id e13so4660966edl.13
-        for <ceph-devel@ceph.com>; Wed, 04 Sep 2019 05:20:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=9zHcvmKGmur3OvLsGSLQkhu+pyC/lNLSBIGP+ii3kno=;
-        b=ckWRxBwJ0ZcVdLLque44vO2rtoqpziEdEtZVUGE6ZLfPfIG3QV10XzodoyneQCrrAh
-         ZBcHr0hCTGU/HqZhjZmrM+bjuED0D5EIc2d0OR8QV9dqeRQswaaJ2jHXP0LrZHG1h+hG
-         RNJIZKU7Bwd5XjLDNXSVRA6FiCls0bfP5B0uJZnRw4YTOt9UKKfVrkXI4LyOoPJsKovR
-         llZQfM1+cJR23W6VTXPFPu3H2sSWvC4fSMK8AYs8qkYhuw0e7R1BGWsHBZZNe5NNcVpI
-         GEMV3ZElEj6SFKEfwPAZ9d5y9O5JF6EJZyTzRbgFHi8K+7PQFE4J4bW7C3xlu9J+R+ja
-         aokg==
-X-Gm-Message-State: APjAAAWlQBltUnXLFY/ou0xE8S6hTnTzjUEdF6HMxAiead77oDp4W9gn
-        yKcK2KedqPdI9Huoh882JW9YswmF9o+NNOD2iiEXGaZrwOFrQpms2c6OFR0Mi+uOlQ7XhNsS5Vd
-        wAJHhFwnSFHP1Jdx1NcaCRUhSeWs2
-X-Received: by 2002:a17:906:70c3:: with SMTP id g3mr32205361ejk.195.1567599654125;
-        Wed, 04 Sep 2019 05:20:54 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwm2S1UtMu4c/pvzhdm0poTEYnr5nWXvWp5tDQghS4YKbZcmDxsNDY61pMH4wTEwJ7otyS9ekvryDaxuoX0slI=
-X-Received: by 2002:a17:906:70c3:: with SMTP id g3mr32205343ejk.195.1567599653795;
- Wed, 04 Sep 2019 05:20:53 -0700 (PDT)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53D1122CF5;
+        Wed,  4 Sep 2019 15:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567612753;
+        bh=lQYj4NUXHSkeIRtL2lZVGzZ2tZyvwgqLTUTTjnchcWA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FkVVKNcJRscE51XVCDAzvT79U7qlKGzqreDZeumKSzVf2SnZ2hoMkwLdLTGnmMkEg
+         SJdDo+jLVabVzHCcvJE75NuGhh2l7SZ8oYFxyeL0+geBexHo6igwUKIDGjGiC0WhLY
+         6zA3/Az16Op5RCxkuAIlXDC/6y47nJq3cmGhKmo4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 62/94] libceph: don't call crypto_free_sync_skcipher() on a NULL tfm
+Date:   Wed,  4 Sep 2019 11:57:07 -0400
+Message-Id: <20190904155739.2816-62-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190904155739.2816-1-sashal@kernel.org>
+References: <20190904155739.2816-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <tencent_06FE934D0B94847E25783566@qq.com> <E5EB2B68-6F73-4639-A32E-09B023A2585A@redhat.com>
- <tencent_2A6CC6A10743C562379448D0@qq.com> <tencent_4CB49E3C5A13B24047F052E6@qq.com>
-In-Reply-To: <tencent_4CB49E3C5A13B24047F052E6@qq.com>
-Reply-To: dillaman@redhat.com
-From:   Jason Dillaman <jdillama@redhat.com>
-Date:   Wed, 4 Sep 2019 08:20:42 -0400
-Message-ID: <CA+aFP1Bvf8yf-4DPRuk-oYU7Tdc1MxC+sysjMV3vpXsdKaCkfA@mail.gmail.com>
-Subject: Re: request docs about the rbd migartion design and usage scenario
-To:     =?UTF-8?B?546L5YuH?= <wangyong@szsandstone.com>
-Cc:     ceph-devel@ceph.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-VR-STATUS: OK
-X-VR-SCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduvddrudejhedghedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuggftfghnshhusghstghrihgsvgdpffftgfetoffjqffuvfenuceurghilhhouhhtmecufedttdenucenucfjughrpeggfhgjrhfhfffkuffvtgfgsehtqhertddttdejnecuhfhrohhmpeflrghsohhnucffihhllhgrmhgrnhcuoehjughilhhlrghmrgesrhgvughhrghtrdgtohhmqeenucfkphepvddtledrudefvddrudekfedrvdekpddvtdelrdekhedrvddtkedrjedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdphhgvlhhopehmgidurdhrvgguhhgrthdrtghomhdpihhnvghtpedvtdelrddufedvrddukeefrddvkedprhgvthhurhhnqdhprghthheplfgrshhonhcuffhilhhlrghmrghnuceojhguihhllhgrmhgrsehrvgguhhgrthdrtghomheqpdhmrghilhhfrhhomhepjhguihhllhgrmhgrsehrvgguhhgrthdrtghomhdpnhhrtghpthhtoheptggvphhhqdguvghvvghlsegtvghphhdrtghomhenucevlhhushhtvghrufhiiigvpedt
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Sep 4, 2019 at 7:18 AM 王勇 <wangyong@szsandstone.com> wrote:
->
-> Hi Jason,
-> the rbd live-migration seems like two issues.
-> 1、discard
-> 1). discard one object （m_no =1000）
-> 2). rbd execute current object (m_no=500)
-> 3). rbd execute m_no=1000, object not exsits.  old data will overwrite new data.
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-A discard is a hint to free space and shouldn't be confused w/ a zero
-operation. In this case, when a discard is issued against a clone (or
-migration destination), it cannot just delete the object. Instead, it
-creates a zero-byte object to ensure that it won't read from the
-parent image in the future. When the "rbd migration execute"
-eventually gets to the discarded object, there is a guard on the IO
-operation to prevent it from writing to the object (which is the same
-logic used to prevent old writes from the source image from
-overwriting newer writes to the destination).
+[ Upstream commit e8c99200b4d117c340c392ebd5e62d85dfeed027 ]
 
-> 2、src image has clone image，
-> rbd prepare need first close the src image, but no need to close close image.
-> when rbd prepare ok, the clone image parent omap changed, but  in the librbd context of the clone image,
-> it used the old parent. so clone image read will get the old data.
+In set_secret(), key->tfm is assigned to NULL on line 55, and then
+ceph_crypto_key_destroy(key) is executed.
 
-I'm not sure I understand what you mean here. What is the "clone"
-image in your example here? The migration source or destination? In
-the context of migration, the destination image has the source image's
-parent as its parent, but it satisfies all reads by reading from the
-source (and then the parent if required).
+ceph_crypto_key_destroy(key)
+  crypto_free_sync_skcipher(key->tfm)
+    crypto_free_skcipher(&tfm->base);
 
-> could I get some discuss about those ?
+This happens to work because crypto_sync_skcipher is a trivial wrapper
+around crypto_skcipher: &tfm->base is still 0 and crypto_free_skcipher()
+handles that.  Let's not rely on the layout of crypto_sync_skcipher.
 
-In the future, please use the ceph-devel mailing list.
+This bug is found by a static analysis tool STCheck written by us.
 
->
->
-> ------------------ Original ------------------
-> From:  "王勇"<wangyong@szsandstone.com>;
-> Date:  Fri, Aug 30, 2019 11:28 AM
-> To:  "Jason Dillaman"<jdillama@redhat.com>;
-> Subject:  Re: request docs about the rbd migartion design and usage scenario
->
-> Hi Jason,
-> I had done review on the docs about the live migration.
-> it designed 3 steps: prepare/execute/commit.
-> did it should be better which designed just 1 step? it seems like to one double  things.
-> do you have backgroud design docs or discuss for  those designe?
->
-> Thanks and Regards.
-> ------
-> wang yong
+Fixes: 69d6302b65a8 ("libceph: Remove VLA usage of skcipher").
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/ceph/crypto.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-
-
+diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
+index 5d6724cee38f9..4f75df40fb121 100644
+--- a/net/ceph/crypto.c
++++ b/net/ceph/crypto.c
+@@ -136,8 +136,10 @@ void ceph_crypto_key_destroy(struct ceph_crypto_key *key)
+ 	if (key) {
+ 		kfree(key->key);
+ 		key->key = NULL;
+-		crypto_free_sync_skcipher(key->tfm);
+-		key->tfm = NULL;
++		if (key->tfm) {
++			crypto_free_sync_skcipher(key->tfm);
++			key->tfm = NULL;
++		}
+ 	}
+ }
+ 
 -- 
-Jason
+2.20.1
+
