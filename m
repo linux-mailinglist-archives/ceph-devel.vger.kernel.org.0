@@ -2,64 +2,129 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C618A84B3
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Sep 2019 15:50:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C519FA91A8
+	for <lists+ceph-devel@lfdr.de>; Wed,  4 Sep 2019 21:39:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730410AbfIDNp4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 4 Sep 2019 09:45:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37740 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726943AbfIDNp4 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 4 Sep 2019 09:45:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 12D6AAD5D;
-        Wed,  4 Sep 2019 13:45:55 +0000 (UTC)
-From:   Abhishek Lekshmanan <abhishek@suse.com>
-To:     ceph-announce@ceph.com, ceph-maintainers@ceph.com,
-        ceph-users@ceph.com, dev@ceph.io, ceph-devel@vger.kernel.org
-Subject: v14.2.3 Nautilus released
-Date:   Wed, 04 Sep 2019 15:45:54 +0200
-Message-ID: <87v9u8dvjh.fsf@suse.com>
+        id S2388517AbfIDSVj convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Wed, 4 Sep 2019 14:21:39 -0400
+Received: from pdx1-sub0-mail-fallback-mx1.dreamhost.com ([64.90.62.139]:52078
+        "EHLO pdx1-sub0-mail-fallback-mx1.dreamhost.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388933AbfIDSVi (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 Sep 2019 14:21:38 -0400
+X-Greylist: delayed 21640 seconds by postgrey-1.27 at vger.kernel.org; Wed, 04 Sep 2019 14:21:38 EDT
+Received: from pdx1-sub0-mail-mx62.g.dreamhost.com (unknown [10.35.43.107])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by pdx1-sub0-mail-fallback-mx1.dreamhost.com (Postfix) with ESMTPS id 9A2A117D1EF
+        for <ceph-devel@vger.kernel.org>; Wed,  4 Sep 2019 05:20:57 -0700 (PDT)
+Received: from vade-backend20.dreamhost.com (fltr-in2.mail.dreamhost.com [66.33.205.213])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pdx1-sub0-mail-mx62.g.dreamhost.com (Postfix) with ESMTPS id 08C5D851B1
+        for <ceph-devel@ceph.com>; Wed,  4 Sep 2019 05:20:56 -0700 (PDT)
+Received: from mx1.redhat.com (mx1.redhat.com [209.132.183.28])
+        by vade-backend20.dreamhost.com (Postfix) with ESMTPS id 7ABDA400001FB
+        for <ceph-devel@ceph.com>; Wed,  4 Sep 2019 05:20:56 -0700 (PDT)
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A6DB6883CA
+        for <ceph-devel@ceph.com>; Wed,  4 Sep 2019 12:20:55 +0000 (UTC)
+Received: by mail-ed1-f70.google.com with SMTP id e13so4660966edl.13
+        for <ceph-devel@ceph.com>; Wed, 04 Sep 2019 05:20:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=9zHcvmKGmur3OvLsGSLQkhu+pyC/lNLSBIGP+ii3kno=;
+        b=ckWRxBwJ0ZcVdLLque44vO2rtoqpziEdEtZVUGE6ZLfPfIG3QV10XzodoyneQCrrAh
+         ZBcHr0hCTGU/HqZhjZmrM+bjuED0D5EIc2d0OR8QV9dqeRQswaaJ2jHXP0LrZHG1h+hG
+         RNJIZKU7Bwd5XjLDNXSVRA6FiCls0bfP5B0uJZnRw4YTOt9UKKfVrkXI4LyOoPJsKovR
+         llZQfM1+cJR23W6VTXPFPu3H2sSWvC4fSMK8AYs8qkYhuw0e7R1BGWsHBZZNe5NNcVpI
+         GEMV3ZElEj6SFKEfwPAZ9d5y9O5JF6EJZyTzRbgFHi8K+7PQFE4J4bW7C3xlu9J+R+ja
+         aokg==
+X-Gm-Message-State: APjAAAWlQBltUnXLFY/ou0xE8S6hTnTzjUEdF6HMxAiead77oDp4W9gn
+        yKcK2KedqPdI9Huoh882JW9YswmF9o+NNOD2iiEXGaZrwOFrQpms2c6OFR0Mi+uOlQ7XhNsS5Vd
+        wAJHhFwnSFHP1Jdx1NcaCRUhSeWs2
+X-Received: by 2002:a17:906:70c3:: with SMTP id g3mr32205361ejk.195.1567599654125;
+        Wed, 04 Sep 2019 05:20:54 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwm2S1UtMu4c/pvzhdm0poTEYnr5nWXvWp5tDQghS4YKbZcmDxsNDY61pMH4wTEwJ7otyS9ekvryDaxuoX0slI=
+X-Received: by 2002:a17:906:70c3:: with SMTP id g3mr32205343ejk.195.1567599653795;
+ Wed, 04 Sep 2019 05:20:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <tencent_06FE934D0B94847E25783566@qq.com> <E5EB2B68-6F73-4639-A32E-09B023A2585A@redhat.com>
+ <tencent_2A6CC6A10743C562379448D0@qq.com> <tencent_4CB49E3C5A13B24047F052E6@qq.com>
+In-Reply-To: <tencent_4CB49E3C5A13B24047F052E6@qq.com>
+Reply-To: dillaman@redhat.com
+From:   Jason Dillaman <jdillama@redhat.com>
+Date:   Wed, 4 Sep 2019 08:20:42 -0400
+Message-ID: <CA+aFP1Bvf8yf-4DPRuk-oYU7Tdc1MxC+sysjMV3vpXsdKaCkfA@mail.gmail.com>
+Subject: Re: request docs about the rbd migartion design and usage scenario
+To:     =?UTF-8?B?546L5YuH?= <wangyong@szsandstone.com>
+Cc:     ceph-devel@ceph.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-VR-STATUS: OK
+X-VR-SCORE: 0
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduvddrudejhedghedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuggftfghnshhusghstghrihgsvgdpffftgfetoffjqffuvfenuceurghilhhouhhtmecufedttdenucenucfjughrpeggfhgjrhfhfffkuffvtgfgsehtqhertddttdejnecuhfhrohhmpeflrghsohhnucffihhllhgrmhgrnhcuoehjughilhhlrghmrgesrhgvughhrghtrdgtohhmqeenucfkphepvddtledrudefvddrudekfedrvdekpddvtdelrdekhedrvddtkedrjedtnecurfgrrhgrmhepmhhouggvpehsmhhtphdphhgvlhhopehmgidurdhrvgguhhgrthdrtghomhdpihhnvghtpedvtdelrddufedvrddukeefrddvkedprhgvthhurhhnqdhprghthheplfgrshhonhcuffhilhhlrghmrghnuceojhguihhllhgrmhgrsehrvgguhhgrthdrtghomheqpdhmrghilhhfrhhomhepjhguihhllhgrmhgrsehrvgguhhgrthdrtghomhdpnhhrtghpthhtoheptggvphhhqdguvghvvghlsegtvghphhdrtghomhenucevlhhushhtvghrufhiiigvpedt
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Wed, Sep 4, 2019 at 7:18 AM 王勇 <wangyong@szsandstone.com> wrote:
+>
+> Hi Jason,
+> the rbd live-migration seems like two issues.
+> 1、discard
+> 1). discard one object （m_no =1000）
+> 2). rbd execute current object (m_no=500)
+> 3). rbd execute m_no=1000, object not exsits.  old data will overwrite new data.
 
-This is the third bug fix release of Ceph Nautilus release series. This
-release fixes a security issue. We recommend all Nautilus users upgrade
-to this release. For upgrading from older releases of ceph, general
-guidelines for upgrade to nautilus must be followed
+A discard is a hint to free space and shouldn't be confused w/ a zero
+operation. In this case, when a discard is issued against a clone (or
+migration destination), it cannot just delete the object. Instead, it
+creates a zero-byte object to ensure that it won't read from the
+parent image in the future. When the "rbd migration execute"
+eventually gets to the discarded object, there is a guard on the IO
+operation to prevent it from writing to the object (which is the same
+logic used to prevent old writes from the source image from
+overwriting newer writes to the destination).
 
-Notable Changes
----------------
-* CVE-2019-10222 - Fixed a denial of service vulnerability where an
-  unauthenticated client of Ceph Object Gateway could trigger a crash from an
-  uncaught exception
-* Nautilus-based librbd clients can now open images on Jewel clusters.
-* The RGW `num_rados_handles` has been removed. If you were using a value of
-  `num_rados_handles` greater than 1, multiply your current
-  `objecter_inflight_ops` and `objecter_inflight_op_bytes` parameters by the
-  old `num_rados_handles` to get the same throttle behavior.
-* The secure mode of Messenger v2 protocol is no longer experimental with this
-  release. This mode is now the preferred mode of connection for monitors.
-* "osd_deep_scrub_large_omap_object_key_threshold" has been lowered to detect an
-  object with large number of omap keys more easily.
+> 2、src image has clone image，
+> rbd prepare need first close the src image, but no need to close close image.
+> when rbd prepare ok, the clone image parent omap changed, but  in the librbd context of the clone image,
+> it used the old parent. so clone image read will get the old data.
 
-For a detailed changelog please refer to the official release notes 
-entry at the ceph blog: https://ceph.io/releases/v14-2-3-nautilus-released/
+I'm not sure I understand what you mean here. What is the "clone"
+image in your example here? The migration source or destination? In
+the context of migration, the destination image has the source image's
+parent as its parent, but it satisfies all reads by reading from the
+source (and then the parent if required).
 
-Getting Ceph
-------------
+> could I get some discuss about those ?
 
-* Git at git://github.com/ceph/ceph.git
-* Tarball at http://download.ceph.com/tarballs/ceph-14.2.3.tar.gz
-* For packages, see http://docs.ceph.com/docs/master/install/get-packages/
-* Release git sha1: 0f776cf838a1ae3130b2b73dc26be9c95c6ccc39
+In the future, please use the ceph-devel mailing list.
+
+>
+>
+> ------------------ Original ------------------
+> From:  "王勇"<wangyong@szsandstone.com>;
+> Date:  Fri, Aug 30, 2019 11:28 AM
+> To:  "Jason Dillaman"<jdillama@redhat.com>;
+> Subject:  Re: request docs about the rbd migartion design and usage scenario
+>
+> Hi Jason,
+> I had done review on the docs about the live migration.
+> it designed 3 steps: prepare/execute/commit.
+> did it should be better which designed just 1 step? it seems like to one double  things.
+> do you have backgroud design docs or discuss for  those designe?
+>
+> Thanks and Regards.
+> ------
+> wang yong
+
+
 
 -- 
-Abhishek Lekshmanan
-SUSE Software Solutions Germany GmbH
+Jason
