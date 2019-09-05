@@ -2,111 +2,120 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7ACDAA092
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Sep 2019 12:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9BDFAA211
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Sep 2019 13:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731857AbfIEKzs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 5 Sep 2019 06:55:48 -0400
-Received: from mail-lj1-f175.google.com ([209.85.208.175]:34669 "EHLO
-        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730973AbfIEKzs (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Sep 2019 06:55:48 -0400
-Received: by mail-lj1-f175.google.com with SMTP id x18so1997343ljh.1
-        for <ceph-devel@vger.kernel.org>; Thu, 05 Sep 2019 03:55:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=U7WoZ+r/dLtm5QVtP7FosO7Kdqw58r2fPaGcoBT5Euw=;
-        b=nkORy/NREfLo9O/MkUxDv42h5C8bSkKvqweQvpOjwGiq6XsK1fkpcH8MWC8HPNo1J5
-         tHKvdtyt5wfvwrlQekfpiCdEqPL+Q2bqkFwyS65V11253ZKT9NgNMSRdX7TWQytwAUhT
-         am//2bRtV1EGFZDCqDCedoAiWT2cL9DalYcU4YIm5wmafnwR+na55Q7ie0Fnn1c6pBs/
-         f7naQiKiFYyHn2FbjoWwSq0Ix62DGIA4t0I1N8dWGohSIk6Y8NzmNrdg+8nKtPt+obfh
-         Sxvn9g4tU+wdk2TARIaqxOeigbyq6lbTmzCRY5KrjR12bT3tNXgv3OS76OE9temfXdRP
-         nT4A==
+        id S2387612AbfIEL4f convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Thu, 5 Sep 2019 07:56:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33822 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725921AbfIEL4f (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 5 Sep 2019 07:56:35 -0400
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A8FAA90B0A
+        for <ceph-devel@vger.kernel.org>; Thu,  5 Sep 2019 11:56:34 +0000 (UTC)
+Received: by mail-qt1-f200.google.com with SMTP id i19so2156992qtq.17
+        for <ceph-devel@vger.kernel.org>; Thu, 05 Sep 2019 04:56:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=U7WoZ+r/dLtm5QVtP7FosO7Kdqw58r2fPaGcoBT5Euw=;
-        b=YgGB86KuaAXUWXDjHHaWv9OTVvmeYcDdyfpKauzEaFET4TRFOmWDCqSZCWnvTs3mFD
-         z1fUiP7zId7RKZ2KvepWglvHqIR3q4MD3AHoncrS6b+XGoHH6/dkdvknLcSZmhv6l/+Q
-         wcOMlHqyVuVFqIDU5hSteMlQVzzyV2WE4qboRLeK29iE9+XvXd94JrrXxFR6FvSU05Eh
-         DFir6Hta2OGh1NSULI/TEnGaFrk4MXzPGtc+4OGThfqujIkUdkxx3qEh4tnHlvROIlE3
-         SPs5bhNkQ5aB0EZSgk+ZmtJK0roWLBkd7pn8wBtpIwTsCFsg+oTjbrhZVMe+V4XacTRG
-         DxGw==
-X-Gm-Message-State: APjAAAXwoWh282vupHrd9upE4y8/z3hS8ZQVKbh+0KMuMBnMjOb5ysK0
-        zqN3MxAQ545TEIY9ZsktkkOeSspuusmImq5BBbxJnQfOjODPjA==
-X-Google-Smtp-Source: APXvYqxro+gtfXFbH5nJQS7tdNsmBgqb9RCienwyVi3sSJHzf8PIAfj/EvDaxz2+Wahn/vuqumy+Y9cRgOvwwkHSAco=
-X-Received: by 2002:a2e:b4e3:: with SMTP id s3mr1674719ljm.143.1567680945604;
- Thu, 05 Sep 2019 03:55:45 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FKwYhaiBHo7B4SN6mZ6fcEfWCtr1gokBhQPNst6mfWY=;
+        b=ooPsO7qv+VQqvvBZ7TOqCG0qB3XWKTeczh5sUtj+5BCaREcSFciry5roPbo8KnWhHd
+         T5mrND6nFZ/EKHY4h85dC9rElYkAzjdpRfvVgdAggUDEkl0MD/cbqRMse8q3LAUJZV0W
+         0TB3I7OVg5zbQC6zrNfYHBMVqTq0D+GLGgtYlBwTEjb5ojsvzKiaQuwqFF3bDCgr94ZV
+         1Ez+qFfwi080uwlNqUVroc3Ralt1fkJT/kkbZZH8ZfUdmZmtSumzhigGZ6Krbm3QFF+N
+         TcbjE/4ALBar5oSsJ64qRvORbqaMPKHy9GvpmVOw1itlyAk+pCIftMrBel0mQOYi6AWE
+         WREQ==
+X-Gm-Message-State: APjAAAXiNhQrjDnh6qvI47WCLjNjQfyJ9vH0seDrPFshJZMyLOB5beBm
+        85BiBsnHxQm9ouvshpxYK3TKNdaQw6UjaDjGbwglerpzVH1KgmUefYxwnJrU3WHgtaR3otrVZZ5
+        gBQ7HhPRpaQ+GuJPd10f3jYrzZndb2m01QFieog==
+X-Received: by 2002:ac8:4548:: with SMTP id z8mr2718650qtn.258.1567684593733;
+        Thu, 05 Sep 2019 04:56:33 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwXb9hqc0QX4Q3B/rGq+Yt4kVcnhj/S+jyqoPUUtwJ7LOCJzjs87ef5utIuNpfGqR/tn87G3tmxdaK40V7DGPA=
+X-Received: by 2002:ac8:4548:: with SMTP id z8mr2718635qtn.258.1567684593524;
+ Thu, 05 Sep 2019 04:56:33 -0700 (PDT)
 MIME-Version: 1.0
-From:   Ugis <ugis22@gmail.com>
-Date:   Thu, 5 Sep 2019 13:55:34 +0300
-Message-ID: <CAE63xUMfe0fgbhr3cSUxoVXm_CtHT3OTKxmXJKNC0h=Gg6hmKA@mail.gmail.com>
-Subject: Probable bug when raplacing osd disk with smaller one
-To:     Ceph Development <ceph-devel@vger.kernel.org>
+References: <CAD9yTbH74a+i5viVjV6Qj4yB9dguxO946YkUDf6ODQb-wvJM=Q@mail.gmail.com>
+ <CAC-Np1xhZoKqVVjMhCPnBoJ5Z0aPj6iL4UYJfgp7M+VXCs9vkA@mail.gmail.com>
+ <CALi_L4-rkKonTLAcBK==qs4Cr190j00cbRCDOGWsBWy61RdwMQ@mail.gmail.com> <CAC-Np1zv8oHtGj_0L4gWa23KTf3tOnAs_JtTqhZYDvKzNinUpQ@mail.gmail.com>
+In-Reply-To: <CAC-Np1zv8oHtGj_0L4gWa23KTf3tOnAs_JtTqhZYDvKzNinUpQ@mail.gmail.com>
+From:   Alfredo Deza <adeza@redhat.com>
+Date:   Thu, 5 Sep 2019 07:56:22 -0400
+Message-ID: <CAC-Np1w45EGTW07ovfrK_sWNg5JNuMkwbs7kxcfBxr=98n6xsQ@mail.gmail.com>
+Subject: Re: ceph-volume lvm activate --all broken in 14.2.3
+To:     Sasha Litvak <alexander.v.litvak@gmail.com>
+Cc:     Paul Emmerich <paul.emmerich@croit.io>,
+        ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi,
+While we try to fix this, in the meantime the only workaround is not
+to redirect stderr. This is far from ideal if you require redirection,
+but so far is the only workaround to avoid this problem.
 
-ceph version 14.2.1 (d555a9489eb35f84f2e1ef49b77e19da9d113972) nautilus (st=
-able)
 
-Yesterday noticed unexpected behavior, probably bug. It seems ceph
-wrongly calculates osd size if it is replaced with smaller disk.
-
-In detail:
-Starting point: 1 osd disk had failed, ceph had reballanced and osd
-was marked down.
-
-I did remove failed disk(10TB) and replaced with smaller 6TB.
-Followed disk replacement instructions here:
-https://docs.ceph.com/docs/mimic/rados/operations/add-or-rm-osds/
-
-Destroy the OSD first:
-  ceph osd destroy {id} --yes-i-really-mean-it
-Zap a disk for the new OSD, if the disk was used before for other
-purposes. It=E2=80=99s not necessary for a new disk:
-  ceph-volume lvm zap /dev/sdX
-Prepare the disk for replacement by using the previously destroyed OSD id:
- ceph-volume lvm  prepare --osd-id {id} --data /dev/sdX
-And activate the OSD:
- ceph-volume lvm activate {id} {fsid}
- I skipped this as was not clear what fsid was needed(probably ceph
-cluster fsid} and just started osd
- systemctl start ceph-osd@29
-
-OSD came up and reballance started.
-
-After some time ceph started to complain following:
-# ceph health detail
-HEALTH_WARN 1 nearfull osd(s); 19 pool(s) nearfull; 10 pgs not
-deep-scrubbed in time
-OSD_NEARFULL 1 nearfull osd(s)
-    osd.29 is near full
-
-#ceph osd df tree
---------------------
-ID  CLASS WEIGHT    REWEIGHT SIZE    RAW USE DATA    OMAP    META
-AVAIL   %USE  VAR  PGS  STATUS TYPE NAME
-...
-29   hdd   9.09569  1.00000 5.5 TiB 3.3 TiB 3.3 TiB 981 KiB  4.9 GiB
-2.2 TiB 59.75 0.99  590     up         osd.29
-
-Later I noticed that weight of osd.29 was still 9.09569 as for
-replaced 10TB disk.
-I did: ceph osd crush reweight osd.29 5.45789
-Things got back to normal after reballance.
-
-Got impression that ceph did not realize that osd had been replaced
-with smaller disk. Could that be because I skipped activation step? Or
-this is a bug.
-
-Best regards,
-Ugis
+On Wed, Sep 4, 2019 at 7:54 PM Alfredo Deza <adeza@redhat.com> wrote:
+>
+> On Wed, Sep 4, 2019 at 6:35 PM Sasha Litvak
+> <alexander.v.litvak@gmail.com> wrote:
+> >
+> > How do you fix it?  Or you wait till 14.2.4?
+>
+> This is a high priority for me, I will provide a fix as soon as
+> possible and hopefully a workaround.
+>
+> >
+> > On Wed, Sep 4, 2019, 3:38 PM Alfredo Deza <adeza@redhat.com> wrote:
+> >>
+> >> On Wed, Sep 4, 2019 at 4:01 PM Paul Emmerich <paul.emmerich@croit.io> wrote:
+> >> >
+> >> > Hi,
+> >> >
+> >> > see https://tracker.ceph.com/issues/41660
+> >> >
+> >> > ceph-volume lvm activate --all fails on the second OSD when stderr is
+> >> > not a terminal.
+> >> > Reproducible on different servers, so there's nothing weird about a
+> >> > particular disk.
+> >> >
+> >> > Any idea where/how this is happening?
+> >>
+> >> That looks very odd, haven't seen it other than a unit test we have
+> >> that fails in some machines. I was just investigating that today.
+> >>
+> >> Is it possible that the locale is set to something that is not
+> >> en_US.UTF-8 ? I was able to replicate some failures with LC_ALL=C
+> >>
+> >> Another thing I would try is to enable debug (or show/paste the
+> >> traceback) so that tracebacks are immediately available in the output:
+> >>
+> >> CEPH_VOLUME_DEBUG=1 ceph-volume lvm activate --all
+> >>
+> >> I'll follow up in the tracker ticket
+> >> >
+> >> > This makes 14.2.3 unusable for us as we need to re-activate all OSDs
+> >> > after reboots because we don't have a persistent system disk.
+> >> >
+> >> >
+> >> > Paul
+> >> >
+> >> > --
+> >> > Paul Emmerich
+> >> >
+> >> > Looking for help with your Ceph cluster? Contact us at https://croit.io
+> >> >
+> >> > croit GmbH
+> >> > Freseniusstr. 31h
+> >> > 81247 München
+> >> > www.croit.io
+> >> > Tel: +49 89 1896585 90
+> >> _______________________________________________
+> >> Dev mailing list -- dev@ceph.io
+> >> To unsubscribe send an email to dev-leave@ceph.io
