@@ -2,111 +2,187 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E48ADAAD90
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Sep 2019 23:05:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7830BAB074
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Sep 2019 03:57:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391731AbfIEVFo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 5 Sep 2019 17:05:44 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44884 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391724AbfIEVFo (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Sep 2019 17:05:44 -0400
-Received: by mail-io1-f66.google.com with SMTP id j4so7955665iog.11;
-        Thu, 05 Sep 2019 14:05:44 -0700 (PDT)
+        id S2404292AbfIFB5f (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 5 Sep 2019 21:57:35 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:36252 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730991AbfIFB5e (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Sep 2019 21:57:34 -0400
+Received: by mail-qk1-f196.google.com with SMTP id s18so4233815qkj.3
+        for <ceph-devel@vger.kernel.org>; Thu, 05 Sep 2019 18:57:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8iIlyAotvW4/18LwXApdfEoPXtA2KQQGEH61jRfRVAo=;
-        b=sHXnG50SGTAEMamnJiePV25Po8ZEH8WUcAJsqNeVSvbJi4KV0S3Cr5cd8EF4KTFY2V
-         t6edZIJhwHxVz8F9u3N4HlECsMSqqGzPFAjMmx4svi8TBzmUhYKBBVi6v9kmaH/o/x80
-         Ek3Qzq3OZ+VuIlklEMCtJOa3egi90xym2pFOQrccb0O7QZEvUmRE9opcTD6D247AGajW
-         zwqsWZTFHR5M6R8udErfw+cCFHIWFO0cyPY/3c7UociWcrIkXM/nNVhTLNJePRleXzIx
-         1OBBvIaWb77euYq/lOP+whcpS7og8UwJa/Pt+MoCYijj+uKwjAfikwk0n1k6lhsyK3nq
-         CPlQ==
+        bh=3LSEYVnquwrDyIg80STd3+kuV9a6LDX6tJlOngS8a3o=;
+        b=FdE9QIVaFQGoru2RleUDf5PPP6zDtat44gvALQoCZevgOMb8+qraRfAer1h/Ddmtyp
+         88FKlXwZRSPyRpgoigf8GWWj1BNUpqgxqBfYX8WthtQW2I5MMlm4CyJCPM9zarOmTUHW
+         I4w8v411oCaQtl8Jo6fTefsCKEcPhb6m98tuBgFbqozlMPk4sBobSDnLSC1SsF2UcKcR
+         BORWkUdjByzLckJVeRGVx5n/wnROkjy2QQUiR0VyG3175bADB+67sRAFV4bVaOyHpZIu
+         vAUs8cNNEeLigNiiJvo95ndhG8YTXStXW4w0MgKdoFTWb0JRDcB0ffRiA05Df2y4UUdD
+         rAQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8iIlyAotvW4/18LwXApdfEoPXtA2KQQGEH61jRfRVAo=;
-        b=aJem6F5rGPAaa7et8STNxa0B/C0W9ozfucFEWjID7/tEVnOW8uIYhTeB88IERMLI8L
-         jfhef2Oh97B7h8X1t9wWZD8Jtj4nrJcFnbxnHe1dRVbSNbB+/zdDGbxuDRMcvcP6K425
-         plw5ANd2OEyTDFRl1xtdqk2pFbJsGC9L2B1lD3iLVLueskrgizo2psvKw7CmgDO2MW7I
-         D5IPtldzw4v42+G1HHh8nj4Z8Yx+d5ISQwzySsMyLqfr1Fhk3V/dcUXBwdc8d1AjInAE
-         HXG4XJlcKn8jz4JGnboa0CmhLmy1FR7qRwaOemzqjG8dSA3nhYoKEz0ilfWZbhVTD8V+
-         z7ng==
-X-Gm-Message-State: APjAAAWxL+79jahz2W5BanuvtEmeJCvaACxTRfSkSD4Uzh7kgOJ3rRNQ
-        J2T5BVZFbKR0IEjnNkQ8mc0O1IGt+XKWU7xSpHQ=
-X-Google-Smtp-Source: APXvYqwCvwJOw20p4s9Eazhb+LVC8v7V4AWVLbMPedSP/EC2a4khEk6OwDQ8iZprMwwnnjQxgLX8S/Mf51kbguSXTzY=
-X-Received: by 2002:a5d:8444:: with SMTP id w4mr6449112ior.51.1567717543746;
- Thu, 05 Sep 2019 14:05:43 -0700 (PDT)
+        bh=3LSEYVnquwrDyIg80STd3+kuV9a6LDX6tJlOngS8a3o=;
+        b=ommmRLntuL+JrsCNB8ff1zk5sVZOFoSsZ5SBddGvkSC7spR0rYUeP8EZLsUEb4H6p7
+         GrOzXDtPCUb9Zu6Hl7xYINjSEPcNwHdqR7EjEastkChqgyxT4G20z64L0NvzzAnw0wTN
+         UYarDQRY/zo8bdn3tcvn4c3YqG/+4HDpQ4NU5l4V8h9WCFbjxSL0EOzs5X9/Lj+x/up/
+         Xf25Vq1n95pwfhNBLSWVocY0xDITzwb5WCaFts8iQ8Oq1cYjkPNEwTL48f+IDhLSxhGg
+         OUnQhFqKCV9Y0o0aPAnLBIRgV7T2RlhIhgpt+z3THJfPqeZxoGWb3o6zsns0ClWCSf+7
+         tpsg==
+X-Gm-Message-State: APjAAAXeI6lerXYkJRWeTbL6hXJ2D3qhySiGWzditVvZpR0z1ismgfZt
+        AzMgCM19LYrWEs/gwj5aaB2PbQK0ulGQ6pLzafI=
+X-Google-Smtp-Source: APXvYqwNqYyoSB34kFqcvwkA6+v7Gu2Az7W00Zknh34R3uGQsx7J2Jpz+CyrfWPBCdqy2MvXOyu0dm4A09ahQNKe6OU=
+X-Received: by 2002:a37:486:: with SMTP id 128mr6406331qke.141.1567735053406;
+ Thu, 05 Sep 2019 18:57:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190905190558.25717-1-jlayton@kernel.org>
-In-Reply-To: <20190905190558.25717-1-jlayton@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 5 Sep 2019 23:05:33 +0200
-Message-ID: <CAOi1vP_OYDevF9Kn-FU6bEbCY2MG811Hvvshu=Feb3r9MGDMgg@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: Convert ceph to use the new mount API
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Yan, Zheng" <zyan@redhat.com>
+References: <1567687915-121426-1-git-send-email-simon29rock@gmail.com>
+In-Reply-To: <1567687915-121426-1-git-send-email-simon29rock@gmail.com>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Fri, 6 Sep 2019 09:57:22 +0800
+Message-ID: <CAAM7YA=RC84igiJY8qRgBhkdcEwQkTaxokHz6XN2MeKt9kTRQg@mail.gmail.com>
+Subject: Re: [PATCH] modify the mode of req from USE_ANY_MDS to USE_AUTH_MDS
+ to reduce the cache size of mds and forward op.
+To:     simon gao <simon29rock@gmail.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Sep 5, 2019 at 9:06 PM Jeff Layton <jlayton@kernel.org> wrote:
+I think it's better to add a mount option (not enable by default) for
+this change
+
+On Fri, Sep 6, 2019 at 1:02 AM simon gao <simon29rock@gmail.com> wrote:
 >
-> From: David Howells <dhowells@redhat.com>
->
-> Convert the ceph filesystem to the new internal mount API as the old
-> one will be obsoleted and removed.  This allows greater flexibility in
-> communication of mount parameters between userspace, the VFS and the
-> filesystem.
->
-> See Documentation/filesystems/mount_api.txt for more information.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
-> cc: Ilya Dryomov <idryomov@gmail.com>
-> cc: Sage Weil <sage@redhat.com>
-> cc: ceph-devel@vger.kernel.org
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  drivers/block/rbd.c          | 341 ++++++++---------
->  fs/ceph/cache.c              |  10 +-
->  fs/ceph/cache.h              |   5 +-
->  fs/ceph/super.c              | 687 +++++++++++++++++------------------
->  fs/ceph/super.h              |   1 -
->  include/linux/ceph/libceph.h |  17 +-
->  net/ceph/ceph_common.c       | 410 +++++++++------------
->  7 files changed, 715 insertions(+), 756 deletions(-)
+>  fs/ceph/dir.c        | 4 ++--
+>  fs/ceph/export.c     | 8 ++++----
+>  fs/ceph/file.c       | 2 +-
+>  fs/ceph/inode.c      | 2 +-
+>  fs/ceph/mds_client.c | 1 +
+>  fs/ceph/super.c      | 2 +-
+>  6 files changed, 10 insertions(+), 9 deletions(-)
 >
-> v2: fix several string parsing bugs in rbd_add_parse_args and rbd_parse_monolithic
->     prefix rbd log message with "rbd:"
->     drop unneeded #undef from ceph_debug.h
->     drop unrelated comment fixes in fs/fs_*.c
->     rebase onto current ceph/testing branch
-
-This is still broken.
-
-A simple "rbd map" works, but option parsing is busted:
-
-  $ sudo rbd map -o ro testimg
-  rbd: sysfs write failed
-  In some cases useful info is found in syslog - try "dmesg | tail".
-  rbd: map failed: (519) Unknown error 519
-
-meaning errno = 519 from write()...
-
-On one of the attempts it crashed in kfree(), probably called from
-rbd_parse_monolithic().
-
-Thanks,
-
-                Ilya
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index 4ca0b8f..a441b8d 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -771,7 +771,7 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
+>
+>         op = ceph_snap(dir) == CEPH_SNAPDIR ?
+>                 CEPH_MDS_OP_LOOKUPSNAP : CEPH_MDS_OP_LOOKUP;
+> -       req = ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS);
+> +       req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+>         if (IS_ERR(req))
+>                 return ERR_CAST(req);
+>         req->r_dentry = dget(dentry);
+> @@ -1600,7 +1600,7 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
+>
+>                 op = ceph_snap(dir) == CEPH_SNAPDIR ?
+>                         CEPH_MDS_OP_LOOKUPSNAP : CEPH_MDS_OP_LOOKUP;
+> -               req = ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS);
+> +               req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+>                 if (!IS_ERR(req)) {
+>                         req->r_dentry = dget(dentry);
+>                         req->r_num_caps = 2;
+> diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+> index 15ff1b0..a7d5174 100644
+> --- a/fs/ceph/export.c
+> +++ b/fs/ceph/export.c
+> @@ -135,7 +135,7 @@ static struct inode *__lookup_inode(struct super_block *sb, u64 ino)
+>                 int mask;
+>
+>                 req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_LOOKUPINO,
+> -                                              USE_ANY_MDS);
+> +                                              USE_AUTH_MDS);
+>                 if (IS_ERR(req))
+>                         return ERR_CAST(req);
+>
+> @@ -210,7 +210,7 @@ static struct dentry *__snapfh_to_dentry(struct super_block *sb,
+>                 return d_obtain_alias(inode);
+>
+>         req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_LOOKUPINO,
+> -                                      USE_ANY_MDS);
+> +                                      USE_AUTH_MDS);
+>         if (IS_ERR(req))
+>                 return ERR_CAST(req);
+>
+> @@ -294,7 +294,7 @@ static struct dentry *__get_parent(struct super_block *sb,
+>         int err;
+>
+>         req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_LOOKUPPARENT,
+> -                                      USE_ANY_MDS);
+> +                                      USE_AUTH_MDS);
+>         if (IS_ERR(req))
+>                 return ERR_CAST(req);
+>
+> @@ -509,7 +509,7 @@ static int ceph_get_name(struct dentry *parent, char *name,
+>
+>         mdsc = ceph_inode_to_client(inode)->mdsc;
+>         req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_LOOKUPNAME,
+> -                                      USE_ANY_MDS);
+> +                                      USE_AUTH_MDS);
+>         if (IS_ERR(req))
+>                 return PTR_ERR(req);
+>
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 685a03c..79533f2 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -182,7 +182,7 @@ static void put_bvecs(struct bio_vec *bvecs, int num_bvecs, bool should_dirty)
+>         struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
+>         struct ceph_mds_client *mdsc = fsc->mdsc;
+>         struct ceph_mds_request *req;
+> -       int want_auth = USE_ANY_MDS;
+> +       int want_auth = USE_AUTH_MDS;
+>         int op = (flags & O_CREAT) ? CEPH_MDS_OP_CREATE : CEPH_MDS_OP_OPEN;
+>
+>         if (flags & (O_WRONLY|O_RDWR|O_CREAT|O_TRUNC))
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 18500ede..6c67548 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -2247,7 +2247,7 @@ int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
+>         if (!force && ceph_caps_issued_mask(ceph_inode(inode), mask, 1))
+>                 return 0;
+>
+> -       mode = (mask & CEPH_STAT_RSTAT) ? USE_AUTH_MDS : USE_ANY_MDS;
+> +       mode = USE_AUTH_MDS;
+>         req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETATTR, mode);
+>         if (IS_ERR(req))
+>                 return PTR_ERR(req);
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 920e9f0..acfb969 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -867,6 +867,7 @@ static struct inode *get_nonsnap_parent(struct dentry *dentry)
+>         return inode;
+>  }
+>
+> +static struct inode *get_parent()
+>  /*
+>   * Choose mds to send request to next.  If there is a hint set in the
+>   * request (e.g., due to a prior forward hint from the mds), use that.
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index ab4868c..517e605 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -867,7 +867,7 @@ static struct dentry *open_root_dentry(struct ceph_fs_client *fsc,
+>
+>         /* open dir */
+>         dout("open_root_inode opening '%s'\n", path);
+> -       req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETATTR, USE_ANY_MDS);
+> +       req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETATTR, USE_AUTH_MDS);
+>         if (IS_ERR(req))
+>                 return ERR_CAST(req);
+>         req->r_path1 = kstrdup(path, GFP_NOFS);
+> --
+> 1.8.3.1
+>
