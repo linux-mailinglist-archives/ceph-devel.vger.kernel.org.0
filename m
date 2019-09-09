@@ -2,125 +2,57 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5015AC72C
-	for <lists+ceph-devel@lfdr.de>; Sat,  7 Sep 2019 17:07:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1AB3AD202
+	for <lists+ceph-devel@lfdr.de>; Mon,  9 Sep 2019 04:38:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394711AbfIGPHj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 7 Sep 2019 11:07:39 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:50710 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732540AbfIGPHi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 7 Sep 2019 11:07:38 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1i6cJK-0003cK-H1; Sat, 07 Sep 2019 15:07:34 +0000
-Date:   Sat, 7 Sep 2019 16:07:34 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Yan, Zheng" <zyan@redhat.com>
-Subject: Re: [PATCH v3] ceph: Convert ceph to use the new mount API
-Message-ID: <20190907150734.GB1131@ZenIV.linux.org.uk>
-References: <20190906101618.8939-1-jlayton@kernel.org>
- <CAOi1vP-3aHy8yerpMkmA80WF1=e4umg_zCt8Dvc+X6V8-Dg+Qw@mail.gmail.com>
- <7a72bf67b17f78398604270a2cbfe5d145686377.camel@kernel.org>
+        id S1733155AbfIICiD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 8 Sep 2019 22:38:03 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35164 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732975AbfIICiC (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Sun, 8 Sep 2019 22:38:02 -0400
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AF55934CC
+        for <ceph-devel@vger.kernel.org>; Mon,  9 Sep 2019 02:38:02 +0000 (UTC)
+Received: by mail-lj1-f199.google.com with SMTP id v9so879001ljc.11
+        for <ceph-devel@vger.kernel.org>; Sun, 08 Sep 2019 19:38:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=2csDHUwsfZ9vKiM6L0X2VwRtlMfkReR7eWIJEs97n9I=;
+        b=ppWGE3RoS/m2V0S5PaRW8wPo5a7cxYypmiIgZRznycrSrAHhF5pp3pVNpj4Ss55AxX
+         43sOs9oK2ZfJveDo+msJ7M67wyWqMTy5dZQ7w4Uc1HODSZl0l5wBMlKqfLvZUE3luweC
+         4tCVKRcTouSc4qlKKGSIRRr/uSXu7wevPFv8Sn+XjRF+nU/33ih8kdiCQez4nx2/LnyT
+         sj5VXvCQnMfObNII3fFOgdre4jlDrpTUTFYpApIk1XnEE6GV3vNiDKM0j6A+Q2Xp6MC9
+         3dFpLlk8O1a+Iu87XIPZUAeBuztacNpq3gJEJIZ9vRl8bUKs/pfthI6Gzs+DbSHuzUd6
+         kErQ==
+X-Gm-Message-State: APjAAAXxJbRXIwji29K5zzd9PIrzZDGCE/xOjqrR/O89payash6IxbCb
+        krX2csYhkEjI5KwWeXa/zyzSBqzR9O9n0FYcc2ZaGcFW2Zo9EhixwmgwluIa86nZvPTrU5nv2IM
+        9EKV+UYSc5B1ZBFGsjILi1b8bKCZTkqv+Kz506A==
+X-Received: by 2002:ac2:5685:: with SMTP id 5mr14715374lfr.5.1567996680890;
+        Sun, 08 Sep 2019 19:38:00 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxGZmYaJY5cSpEn1iRFIhh7BmfdhfV5XG4d8U8zfHZD5XKnAPcas2mS0hePcgyiW+KOEXSRXV5Kqkfyy91xnPI=
+X-Received: by 2002:ac2:5685:: with SMTP id 5mr14715364lfr.5.1567996680688;
+ Sun, 08 Sep 2019 19:38:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7a72bf67b17f78398604270a2cbfe5d145686377.camel@kernel.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+From:   Brad Hubbard <bhubbard@redhat.com>
+Date:   Mon, 9 Sep 2019 12:37:49 +1000
+Message-ID: <CAF-wwdGc2pKHwtA3sjUAqZ_uQgg9yULFhUbbUgZDfcVE3cBK0w@mail.gmail.com>
+Subject: Static Analysis
+To:     dev@ceph.io, ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Sep 06, 2019 at 04:10:24PM -0400, Jeff Layton wrote:
-> > >         case Opt_queue_depth:
-> > > -               if (intval < 1) {
-> > > -                       pr_err("queue_depth out of range\n");
-> > > -                       return -EINVAL;
-> > > -               }
-> > > -               pctx->opts->queue_depth = intval;
-> > > +               if (result.uint_32 < 1)
-> > > +                       goto out_of_range;
-> > > +               opts->queue_depth = result.uint_32;
+Latest static analyser results are up on  http://people.redhat.com/bhubbard/
 
-FWIW, I wonder if something like fsparam_int_range() would be
-useful, both here and in other places.
+Weekly Fedora Copr builds are at
+https://copr.fedorainfracloud.org/coprs/badone/ceph-weeklies/
 
-NOTE: this is not going to happen until we get rid of trying to
-enumerate those "types"; enum fs_parameter_type as it is now
-is an invitation for trouble.
-
-What I want to get at is a situation when fs_parameter_spec
-"type" is a *method*, not an enumerator.  I'm not entirely
-sure what would the right calling conventions be, though.
-
-But fs_parse() switch is not sustainable - we can't keep
-it long-term.  A really straigtforward approach would be
-something along the lines of
-
-bool is_string_param(const struct fs_parameter_spec *p,
-	            struct fs_parameter *param)
-{
-	if (param->type != fs_value_is_string)
-		return false;
-	if (param->string)
-		return true;
-	return p->flags & fs_param_v_optional;
-}
-
-int fs_param_is_string(struct fs_context *fc,
-		    const struct fs_parameter_spec *p,
-	            struct fs_parameter *param,
-		    struct fs_parse_result *result)
-{
-	if (is_string_param(p, param))
-		return 0;
-	return fs_param_bad(fc, param);
-}
-
-int fs_param_is_s32(struct fs_context *fc,
-		    const struct fs_parameter_spec *p,
-	            struct fs_parameter *param,
-		    struct fs_parse_result *result)
-{
-	if (is_string_param(p, param)) {
-		const char *s = param->string;
-		result->int_32 = 0;
-		if (!s || kstrtoint(s, 0, &result->int_32) == 0)
-			return 0;
-	}
-	return fs_param_bad(fc, param);
-}
-
-int fs_param_is_blob(struct fs_context *fc,
-		    const struct fs_parameter_spec *p,
-	            struct fs_parameter *param,
-		    struct fs_parse_result *result)
-{
-	return param->type == fs_value_is_blob ? 0 : fs_param_bad(fc, param);
-}
-
-int fs_param_is_fd(struct fs_context *fc,
-		    const struct fs_parameter_spec *p,
-	            struct fs_parameter *param,
-		    struct fs_parse_result *result)
-{
-	if (param->type == fs_value_is_file) {
-		result->uint_32 = param->dirfd;
-                if (result->uint_32 <= INT_MAX)
-			return 0;
-	} else if (is_string_param(p, param)) {
-		const char *s = param->string;
-
-		if (s && kstrtouint(param->string, 0, &result->uint_32) == 0 &&
-                    result->uint_32 <= INT_MAX)
-			return 0;
-        }
-	return fs_param_bad(fc, param);
-}
-
-etc., but error reporting is clumsy that way ;-/
+-- 
+Cheers,
+Brad
