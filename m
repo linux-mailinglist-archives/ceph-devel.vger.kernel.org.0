@@ -2,52 +2,52 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A493AE256
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Sep 2019 04:28:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 200C2AE266
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Sep 2019 04:43:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392729AbfIJC2w (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 9 Sep 2019 22:28:52 -0400
-Received: from mail-pf1-f180.google.com ([209.85.210.180]:40585 "EHLO
-        mail-pf1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389281AbfIJC2v (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 9 Sep 2019 22:28:51 -0400
-Received: by mail-pf1-f180.google.com with SMTP id x127so10574674pfb.7
-        for <ceph-devel@vger.kernel.org>; Mon, 09 Sep 2019 19:28:51 -0700 (PDT)
+        id S2392748AbfIJCna (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 9 Sep 2019 22:43:30 -0400
+Received: from mail-pg1-f170.google.com ([209.85.215.170]:44026 "EHLO
+        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392694AbfIJCn3 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 9 Sep 2019 22:43:29 -0400
+Received: by mail-pg1-f170.google.com with SMTP id u72so8961379pgb.10
+        for <ceph-devel@vger.kernel.org>; Mon, 09 Sep 2019 19:43:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=1yvypgCwgBIaDaKKdhVXOWYjJK3iDLXuqFFpmOfi2xQ=;
-        b=AMwBEH0FO4u+D732aasqr1699tS50OU+fa0QCYXymD9HjLnY0hVtieODcumPl/rwSF
-         PqS3EdE0Gty83huATBWtDMf/1cNEHAznHvj9MGc4woMCJe7ueVYjeiglVeJgiIX1jad6
-         P4TVAZoyoerncofrcP8OZDgNsPNtxn9af0JoGxX3XownpqdDjS4892JgZvzZZS8CE8Fk
-         BBfI5Y/ksul5B//ikmJTObMugc5KP8U+RZlksXTz/oTNm8fLvr9X9JvsgvnAZovGn2Xo
-         B2CYIlsdTvS2Q6h3GeEKtb5Ythqg+uDxF5EFoNAu2TwgTz/6R7CsULPuSiHi4DsYe1/y
-         Zb2g==
+        bh=J1r0uUmGKa1GkSMAjeFMiSSU9M+PPccmqV9wcqokyBY=;
+        b=htZ7Mll84UBYS8P3Qb8rIvzGTedT2H6o7sjpybBl+ySdkuWP0O3YJwPV904PXqYe6C
+         B7s2gUhsNZLWJ3SA6H2t4avEZKOhtSwhL0a9ZFVlWFCTQakvBDnCXigj380UJgFci+Hl
+         xrs6chwi9cIznWeF/23Fcr1oiqcE43cFn/veN6fgAZyguvpYvKhcJR9z6uPsDkhWWEW4
+         a69hteMFq3Z8EG1qqSgp/dQ4tiKTiMRF9d8/PhAb/n/lGmfEN40m5rMbkx4k2KKxmofi
+         e1VWTlNmdEkpPKDvC5yeBV0K8rh3SYPJf8USTXeQJrVcX+SSdUEDpxemTgFmMi2PtD1R
+         +ZqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1yvypgCwgBIaDaKKdhVXOWYjJK3iDLXuqFFpmOfi2xQ=;
-        b=iWvp/j42McFYmCN+zfT9n1hDkjhEBSQIM5LKMit5nRzkwwZ9Gin5LRi2TOP5RAjBbT
-         mln5Dae48XhIY+GXV2ZpXAQ54JXS4jsGT+t47ADsrtO+XNF2+M5P/7cnQMnEJuyRQKjJ
-         M8wdo2+cBvtX7P2PDkLTD9ZkZT4aGgCDkoMz+LxuPVDV4uwqkR1jZXh9kVeiu9ipwrD3
-         qB/PPBrx8IpSdYkmyGktKkrerZ1OvMyi1F7osv0gpD4YqmjCLHMtam/sOeizqT9MiSrq
-         gbTSVVo8idKXygS1S6Abv8bHU/EzNRCl5T7bYr+S00ozcWIENOx2kCzLwQHyeQzDUNss
-         kCGA==
-X-Gm-Message-State: APjAAAU3jkeCoo8vY+V8DRjAH6GZDFGki5bwITX0CUizkq7NKoH0Jgg4
-        yp5j5D+3OOLuiQiJx6vjTSk2WC1Q88Y=
-X-Google-Smtp-Source: APXvYqzivNrh3eR2EUHQ2WTcr4KskFqMmM28X8VKKeV/Os23S+GeU2I4xfjwfhBc1BBbqlZqJPISrw==
-X-Received: by 2002:a63:7e17:: with SMTP id z23mr25290785pgc.14.1568082530887;
-        Mon, 09 Sep 2019 19:28:50 -0700 (PDT)
+        bh=J1r0uUmGKa1GkSMAjeFMiSSU9M+PPccmqV9wcqokyBY=;
+        b=Di76nVBd45bYNWQmQYEqJOdY5i0dorRLj6KKlwyXryWjoE5zarrb5Lv15yKN7r+ZA7
+         B+3QEkZOcyktL0VCyTD5hQ1zsj0QQRiw3F2rb+9OjZZ2nZFn7mQU+A8nV0r7CGHWWpID
+         ExonU1cpcg67ZKMLbda4kiQ/9cq8wJPU++QKDSd1j6gLohW2Hl6Pk1zjFy8Wy4z7pyCA
+         joTCpG+p25PeNz3655zFEUCmCi5NBjAFlhY4f0By30IwRTm2cPZA319qQjA93gxzWp2R
+         zIXJtWt2dGJVfeUkrZy+CcssQEW7kCabUNyUJOI+g1W9K/KehIMGZld/MtkiB8OYvPvK
+         yKbw==
+X-Gm-Message-State: APjAAAVYud+FcPyYkmrxvPply4xy71QGQHAqlUtBv+Y4JDX3WXn8Oxgk
+        sVrhDdPOl0+uHPAVgQ3EbhVb8Gm6bfk=
+X-Google-Smtp-Source: APXvYqyNODotCIy2oOPjr4SBBvw0rogZ+I/kf8NecyP6mu/5pC063GI7ViTh/63k6jFDyRaEr53+ew==
+X-Received: by 2002:a63:d615:: with SMTP id q21mr24503453pgg.296.1568083407236;
+        Mon, 09 Sep 2019 19:43:27 -0700 (PDT)
 Received: from centos7.localdomain ([103.112.79.192])
-        by smtp.gmail.com with ESMTPSA id v12sm16178330pff.40.2019.09.09.19.28.49
+        by smtp.gmail.com with ESMTPSA id 193sm20591318pfc.59.2019.09.09.19.43.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Sep 2019 19:28:50 -0700 (PDT)
+        Mon, 09 Sep 2019 19:43:26 -0700 (PDT)
 From:   simon gao <simon29rock@gmail.com>
 To:     ceph-devel@vger.kernel.org
 Cc:     simon gao <simon29rock@gmail.com>
-Subject: [PATCH] add mount opt, always_auth, to force to send req to auth mds
-Date:   Mon,  9 Sep 2019 22:28:31 -0400
-Message-Id: <1568082511-805-1-git-send-email-simon29rock@gmail.com>
+Subject: [PATCH] ceph: add mount opt, always_auth
+Date:   Mon,  9 Sep 2019 22:43:11 -0400
+Message-Id: <1568083391-920-1-git-send-email-simon29rock@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
@@ -58,7 +58,7 @@ In larger clusters (hundreds of millions of files). We have to pin the
 directory on a fixed mds now. Some op of client use USE_ANY_MDS mode
 to access mds, which may result in requests being sent to noauth mds
 and then forwarded to authmds.
-the opt is used to reduce forward op.
+the opt is used to reduce forward ops by sending req to auth mds.
 ---
  fs/ceph/mds_client.c | 7 ++++++-
  fs/ceph/super.c      | 7 +++++++
