@@ -2,138 +2,168 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0252AE7AB
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Sep 2019 12:11:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05E65AE892
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Sep 2019 12:45:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392136AbfIJKL2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Sep 2019 06:11:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40256 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726142AbfIJKL2 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Sep 2019 06:11:28 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBAE52067B;
-        Tue, 10 Sep 2019 10:11:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568110287;
-        bh=/sv86EXYpamicuJc0DartGaeeC7iUdx22MRZOFBjLE4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=M4sXwjN/mVpT9K7IhMkCe4Xd/a60aW4pPJ4nN8tCeKMgEtUFS2YDlbCtKx1XBGs3T
-         UNoJ39+IUNndMb4lG22uZNbF37PgM7N6WMcEi7hCVsMEyWiuI3Vk0kdMbAUK1jdcMu
-         rIVHOX2Ktf8TfI5oa78lE4Yjhimcx5U+2RVNe33A=
-Message-ID: <e413734270fc43cabbf9df09b0ed4bff06a96699.camel@kernel.org>
-Subject: Re: [PATCH] ceph: add mount opt, always_auth
-From:   Jeff Layton <jlayton@kernel.org>
-To:     simon gao <simon29rock@gmail.com>, ceph-devel@vger.kernel.org
-Cc:     Gregory Farnum <gfarnum@redhat.com>
-Date:   Tue, 10 Sep 2019 06:11:25 -0400
-In-Reply-To: <1568083391-920-1-git-send-email-simon29rock@gmail.com>
-References: <1568083391-920-1-git-send-email-simon29rock@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1729493AbfIJKpp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Sep 2019 06:45:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39996 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728238AbfIJKpp (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 10 Sep 2019 06:45:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C1A64B684;
+        Tue, 10 Sep 2019 10:45:42 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Gregory Farnum <gfarnum@redhat.com>
+Cc:     IlyaDryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
+        Sage Weil <sage@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ceph: allow object copies across different filesystems in the same cluster
+References: <87k1ahojri.fsf@suse.com>
+        <20190909102834.16246-1-lhenriques@suse.com>
+        <3f838e42a50575595c7310386cf698aca8f89607.camel@kernel.org>
+        <87d0g9oh4r.fsf@suse.com>
+        <CAJ4mKGZVjJxQA69s92C+7DFbDxv87SOj10AUfyLXwVe9b+SDTw@mail.gmail.com>
+Date:   Tue, 10 Sep 2019 11:45:41 +0100
+In-Reply-To: <CAJ4mKGZVjJxQA69s92C+7DFbDxv87SOj10AUfyLXwVe9b+SDTw@mail.gmail.com>
+        (Gregory Farnum's message of "Mon, 9 Sep 2019 15:22:10 -0700")
+Message-ID: <871rwoo2ei.fsf@suse.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2019-09-09 at 22:43 -0400, simon gao wrote:
-> In larger clusters (hundreds of millions of files). We have to pin the
-> directory on a fixed mds now. Some op of client use USE_ANY_MDS mode
-> to access mds, which may result in requests being sent to noauth mds
-> and then forwarded to authmds.
-> the opt is used to reduce forward ops by sending req to auth mds.
-> ---
->  fs/ceph/mds_client.c | 7 ++++++-
->  fs/ceph/super.c      | 7 +++++++
->  fs/ceph/super.h      | 1 +
->  3 files changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 920e9f0..aca4490 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -878,6 +878,7 @@ static struct inode *get_nonsnap_parent(struct dentry *dentry)
->  static int __choose_mds(struct ceph_mds_client *mdsc,
->  			struct ceph_mds_request *req)
->  {
-> +	struct ceph_mount_options *ma = mdsc->fsc->mount_options;
->  	struct inode *inode;
->  	struct ceph_inode_info *ci;
->  	struct ceph_cap *cap;
-> @@ -900,7 +901,11 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
->  
->  	if (mode == USE_RANDOM_MDS)
->  		goto random;
-> -
-> +	// force to send the req to auth mds
-> +	if (ma->flags & CEPH_MOUNT_OPT_ALWAYS_AUTH && mode != USE_AUTH_MDS){
-> +		dout("change mode %d => USE_AUTH_MDS", mode);
-> +		mode = USE_AUTH_MDS;
-> +	}
->  	inode = NULL;
->  	if (req->r_inode) {
->  		if (ceph_snap(req->r_inode) != CEPH_SNAPDIR) {
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index ab4868c..1e81ebc 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -169,6 +169,7 @@ enum {
->  	Opt_noquotadf,
->  	Opt_copyfrom,
->  	Opt_nocopyfrom,
-> +	Opt_always_auth,
->  };
->  
->  static match_table_t fsopt_tokens = {
-> @@ -210,6 +211,7 @@ enum {
->  	{Opt_noquotadf, "noquotadf"},
->  	{Opt_copyfrom, "copyfrom"},
->  	{Opt_nocopyfrom, "nocopyfrom"},
-> +	{Opt_always_auth, "always_auth"},
->  	{-1, NULL}
->  };
->  
-> @@ -381,6 +383,9 @@ static int parse_fsopt_token(char *c, void *private)
->  	case Opt_noacl:
->  		fsopt->sb_flags &= ~SB_POSIXACL;
->  		break;
-> +	case Opt_always_auth:
-> +		fsopt->flags |= CEPH_MOUNT_OPT_ALWAYS_AUTH;
-> +		break;
->  	default:
->  		BUG_ON(token);
->  	}
-> @@ -563,6 +568,8 @@ static int ceph_show_options(struct seq_file *m, struct dentry *root)
->  		seq_puts(m, ",nopoolperm");
->  	if (fsopt->flags & CEPH_MOUNT_OPT_NOQUOTADF)
->  		seq_puts(m, ",noquotadf");
-> +	if (fsopt->flags & CEPH_MOUNT_OPT_ALWAYS_AUTH)
-> +		seq_puts(m, ",always_auth");
->  
->  #ifdef CONFIG_CEPH_FS_POSIX_ACL
->  	if (fsopt->sb_flags & SB_POSIXACL)
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 6b9f1ee..65f6423 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -41,6 +41,7 @@
->  #define CEPH_MOUNT_OPT_MOUNTWAIT       (1<<12) /* mount waits if no mds is up */
->  #define CEPH_MOUNT_OPT_NOQUOTADF       (1<<13) /* no root dir quota in statfs */
->  #define CEPH_MOUNT_OPT_NOCOPYFROM      (1<<14) /* don't use RADOS 'copy-from' op */
-> +#define CEPH_MOUNT_OPT_ALWAYS_AUTH     (1<<15) /* send op to auth mds, not to replicative mds */
->  
->  #define CEPH_MOUNT_OPT_DEFAULT			\
->  	(CEPH_MOUNT_OPT_DCACHE |		\
+Gregory Farnum <gfarnum@redhat.com> writes:
 
-I've no particular objection here, but I'd prefer Greg's ack before we
-merge it, since he raised earlier concerns.
+> On Mon, Sep 9, 2019 at 4:15 AM Luis Henriques <lhenriques@suse.com> wrote:
+>>
+>> "Jeff Layton" <jlayton@kernel.org> writes:
+>>
+>> > On Mon, 2019-09-09 at 11:28 +0100, Luis Henriques wrote:
+>> >> OSDs are able to perform object copies across different pools.  Thus,
+>> >> there's no need to prevent copy_file_range from doing remote copies if the
+>> >> source and destination superblocks are different.  Only return -EXDEV if
+>> >> they have different fsid (the cluster ID).
+>> >>
+>> >> Signed-off-by: Luis Henriques <lhenriques@suse.com>
+>> >> ---
+>> >>  fs/ceph/file.c | 18 ++++++++++++++----
+>> >>  1 file changed, 14 insertions(+), 4 deletions(-)
+>> >>
+>> >> Hi,
+>> >>
+>> >> Here's the patch changelog since initial submittion:
+>> >>
+>> >> - Dropped have_fsid checks on client structs
+>> >> - Use %pU to print the fsid instead of raw hex strings (%*ph)
+>> >> - Fixed 'To:' field in email so that this time the patch hits vger
+>> >>
+>> >> Cheers,
+>> >> --
+>> >> Luis
+>> >>
+>> >> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>> >> index 685a03cc4b77..4a624a1dd0bb 100644
+>> >> --- a/fs/ceph/file.c
+>> >> +++ b/fs/ceph/file.c
+>> >> @@ -1904,6 +1904,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>> >>      struct ceph_inode_info *src_ci = ceph_inode(src_inode);
+>> >>      struct ceph_inode_info *dst_ci = ceph_inode(dst_inode);
+>> >>      struct ceph_cap_flush *prealloc_cf;
+>> >> +    struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
+>> >>      struct ceph_object_locator src_oloc, dst_oloc;
+>> >>      struct ceph_object_id src_oid, dst_oid;
+>> >>      loff_t endoff = 0, size;
+>> >> @@ -1915,8 +1916,17 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>> >>
+>> >>      if (src_inode == dst_inode)
+>> >>              return -EINVAL;
+>> >> -    if (src_inode->i_sb != dst_inode->i_sb)
+>> >> -            return -EXDEV;
+>> >> +    if (src_inode->i_sb != dst_inode->i_sb) {
+>> >> +            struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
+>> >> +
+>> >> +            if (ceph_fsid_compare(&src_fsc->client->fsid,
+>> >> +                                  &dst_fsc->client->fsid)) {
+>> >> +                    dout("Copying object across different clusters:");
+>> >> +                    dout("  src fsid: %pU dst fsid: %pU\n",
+>> >> +                         &src_fsc->client->fsid, &dst_fsc->client->fsid);
+>> >> +                    return -EXDEV;
+>> >> +            }
+>> >> +    }
+>> >
+>> > Just to be clear: what happens here if I mount two entirely separate
+>> > clusters, and their OSDs don't have any access to one another? Will this
+>> > fail at some later point with an error that we can catch so that we can
+>> > fall back?
+>>
+>> This is exactly what this check prevents: if we have two CephFS from two
+>> unrelated clusters mounted and we try to copy a file across them, the
+>> operation will fail with -EXDEV[1] because the FSIDs for these two
+>> ceph_fs_client will be different.  OTOH, if these two filesystems are
+>> within the same cluster (and thus with the same FSID), then the OSDs are
+>> able to do 'copy-from' operations between them.
+>>
+>> I've tested all these scenarios and they seem to be handled correctly.
+>> Now, I'm assuming that *all* OSDs within the same ceph cluster can
+>> communicate between themselves; if this assumption is false, then this
+>> patch is broken.  But again, I'm not aware of any mechanism that
+>> prevents 2 OSDs from communicating between them.
+>
+> Your assumption is correct: all OSDs in a Ceph cluster can communicate
+> with each other. I'm not aware of any plans to change this.
+>
+> I spent a bit of time trying to figure out how this could break
+> security models and things and didn't come up with anything, so I
+> think functionally it's fine even though I find it a bit scary.
+>
+> Also, yes, cluster FSIDs are UUIDs so they shouldn't collide.
 
-If we are going to take it, then this will need to be rebased on top of
-the mount API conversion that's currently in ceph-client/testing branch.
+Awesome, thanks for clarifying these points!
+
+Cheers,
 -- 
-Jeff Layton <jlayton@kernel.org>
+Luis
 
+
+> -Greg
+>
+>>
+>> [1] Actually, the files will still be copied because we'll fallback into
+>> the default VFS generic_copy_file_range behaviour, which is to do
+>> reads+writes operations.
+>>
+>> Cheers,
+>> --
+>> Luis
+>>
+>>
+>> >
+>> >
+>> >>      if (ceph_snap(dst_inode) != CEPH_NOSNAP)
+>> >>              return -EROFS;
+>> >>
+>> >> @@ -1928,7 +1938,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>> >>       * efficient).
+>> >>       */
+>> >>
+>> >> -    if (ceph_test_mount_opt(ceph_inode_to_client(src_inode), NOCOPYFROM))
+>> >> +    if (ceph_test_mount_opt(src_fsc, NOCOPYFROM))
+>> >>              return -EOPNOTSUPP;
+>> >>
+>> >>      if ((src_ci->i_layout.stripe_unit != dst_ci->i_layout.stripe_unit) ||
+>> >> @@ -2044,7 +2054,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>> >>                              dst_ci->i_vino.ino, dst_objnum);
+>> >>              /* Do an object remote copy */
+>> >>              err = ceph_osdc_copy_from(
+>> >> -                    &ceph_inode_to_client(src_inode)->client->osdc,
+>> >> +                    &src_fsc->client->osdc,
+>> >>                      src_ci->i_vino.snap, 0,
+>> >>                      &src_oid, &src_oloc,
+>> >>                      CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
+>
