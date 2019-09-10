@@ -2,224 +2,138 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C1EAAE429
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Sep 2019 09:00:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0252AE7AB
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Sep 2019 12:11:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729701AbfIJHAK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Sep 2019 03:00:10 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:34526 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729270AbfIJHAJ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Sep 2019 03:00:09 -0400
-Received: by mail-qk1-f195.google.com with SMTP id q203so15935433qke.1
-        for <ceph-devel@vger.kernel.org>; Tue, 10 Sep 2019 00:00:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IVwpwI5KOiKm3fEXo10QCrP3ndVPh+UuvjARB0mp4iE=;
-        b=ZZLZxdaI7wqFgk+Ghxg+hwF/oZnUmvv9ssM1+YMQ6WaRH7wWNX5tsuDyhIseIwlFRY
-         7rkorajL0nv3m+3IQP2hdVZChwh4gHdDBSnHyI4zAOiZLgkePJzM1aAZNPjvu/kZLbne
-         SU/xusgDQwtCbnRdm8jMLCS2YWfYL/IaNil+CGMYB+lL4vox2CLHXECWLAq50XTA3enN
-         ZWrvUR2qnwiBGqgBAKfKkgwHfaI4ekI3q+1nj20fw06t8ZNc93+fneaVH0i/xzGKKOFt
-         PCw8yk5j1WZbWGpODZ3HiF+8EUkKyINd7rDvaP/QjdYiRx45nwSIueJ6K6MkyGpPv9E9
-         MJSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IVwpwI5KOiKm3fEXo10QCrP3ndVPh+UuvjARB0mp4iE=;
-        b=Yi1zS011jY8+nMR0bfFeGtYgECo8ZqbCWULaOgeRiXB0ZNjEoAS1blXjUzaoVTuo9p
-         86ctkKrDgd1qZJJrGEEAjWLjlqF6Uh8NBlztmnGXSLskmI8tH+2sVBavzeO2drm/TWQ+
-         +b+ROK1i+KEzysqCNbOkaxJPiXsxZE3CUD89LqnxWZOwgHrrZgDC8+JnOQlugiaxJWxj
-         ifHunozdN+QM+aMz3n7mv+emaD06LKnDO/eN1MFq98iMLuv5FmuqMJtKf3Os8nQTdUQ7
-         V1tVHmn/xwOkztTdKjA81qR6l/0b6RBMx6xJFz2jzwEijUjOPS8sjMRfQQUFbxYcwqCl
-         wHqA==
-X-Gm-Message-State: APjAAAWysPKyzYAWkQzLYU9Nkiiqso7DC/wbhIu+TGxzoCFeikRbNSJz
-        ZxNnEG/rjO44KblZ+2zPoxv6JUnyMaBS65o09jk=
-X-Google-Smtp-Source: APXvYqwRG+BygwKovNbvtbdsdLREuSDAukTREIpfzWu77Gif1RObs3f3VcZG4e1CpXc7Zity8vII/1sk6coYtKOhTvw=
-X-Received: by 2002:a37:a858:: with SMTP id r85mr13272607qke.394.1568098808516;
- Tue, 10 Sep 2019 00:00:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <1567687915-121426-1-git-send-email-simon29rock@gmail.com>
- <82144ffcc3f52a9b4cc923884d8aa3d096b76599.camel@kernel.org> <CAJ4mKGYS_yF+49VfxbLErE5WJEbNCyNZ5i-FvG6=i6dTrrKTUg@mail.gmail.com>
-In-Reply-To: <CAJ4mKGYS_yF+49VfxbLErE5WJEbNCyNZ5i-FvG6=i6dTrrKTUg@mail.gmail.com>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Tue, 10 Sep 2019 14:59:57 +0800
-Message-ID: <CAAM7YAnyK3yA-ZMCgQCPWBqFKB0+7StwsWPjj6bve=UTppk3iA@mail.gmail.com>
-Subject: Re: [PATCH] modify the mode of req from USE_ANY_MDS to USE_AUTH_MDS
- to reduce the cache size of mds and forward op.
-To:     Gregory Farnum <gfarnum@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        simon gao <simon29rock@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
+        id S2392136AbfIJKL2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Sep 2019 06:11:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40256 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726142AbfIJKL2 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 10 Sep 2019 06:11:28 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBAE52067B;
+        Tue, 10 Sep 2019 10:11:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568110287;
+        bh=/sv86EXYpamicuJc0DartGaeeC7iUdx22MRZOFBjLE4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=M4sXwjN/mVpT9K7IhMkCe4Xd/a60aW4pPJ4nN8tCeKMgEtUFS2YDlbCtKx1XBGs3T
+         UNoJ39+IUNndMb4lG22uZNbF37PgM7N6WMcEi7hCVsMEyWiuI3Vk0kdMbAUK1jdcMu
+         rIVHOX2Ktf8TfI5oa78lE4Yjhimcx5U+2RVNe33A=
+Message-ID: <e413734270fc43cabbf9df09b0ed4bff06a96699.camel@kernel.org>
+Subject: Re: [PATCH] ceph: add mount opt, always_auth
+From:   Jeff Layton <jlayton@kernel.org>
+To:     simon gao <simon29rock@gmail.com>, ceph-devel@vger.kernel.org
+Cc:     Gregory Farnum <gfarnum@redhat.com>
+Date:   Tue, 10 Sep 2019 06:11:25 -0400
+In-Reply-To: <1568083391-920-1-git-send-email-simon29rock@gmail.com>
+References: <1568083391-920-1-git-send-email-simon29rock@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, Sep 8, 2019 at 9:32 AM Gregory Farnum <gfarnum@redhat.com> wrote:
->
-> On Thu, Sep 5, 2019 at 11:46 AM Jeff Layton <jlayton@kernel.org> wrote:
-> >
-> > On Thu, 2019-09-05 at 08:51 -0400, simon gao wrote:
-> >
-> > I think this deserves a much better description than just the subject
-> > line above. This change may be obvious to others but it's not clear to
-> > me why this will have the effect you suggest, and what downsides it may
-> > have.
-> >
-> > Can you flesh out the patch description and resend?
->
-> Yeah this seems wrong to me in general. I don't remember exactly how
-> it's implemented client-side but generally speaking we want to allow
-> use of the replicated metadata on slave MDSes so that we eg spread the
-> load around on subtree boundaries, and don't have to split up request
-> streams across multiple MDSes when we're doing stuff like working in a
-> private subdirectory but occasionally need to look at stuff on the
-> parent.
-> In general if the client knows which MDS is auth for a dentry/inode I
-> don't think they'll send requests elsewhere without a good reason for
-> it.
+On Mon, 2019-09-09 at 22:43 -0400, simon gao wrote:
+> In larger clusters (hundreds of millions of files). We have to pin the
+> directory on a fixed mds now. Some op of client use USE_ANY_MDS mode
+> to access mds, which may result in requests being sent to noauth mds
+> and then forwarded to authmds.
+> the opt is used to reduce forward ops by sending req to auth mds.
+> ---
+>  fs/ceph/mds_client.c | 7 ++++++-
+>  fs/ceph/super.c      | 7 +++++++
+>  fs/ceph/super.h      | 1 +
+>  3 files changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 920e9f0..aca4490 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -878,6 +878,7 @@ static struct inode *get_nonsnap_parent(struct dentry *dentry)
+>  static int __choose_mds(struct ceph_mds_client *mdsc,
+>  			struct ceph_mds_request *req)
+>  {
+> +	struct ceph_mount_options *ma = mdsc->fsc->mount_options;
+>  	struct inode *inode;
+>  	struct ceph_inode_info *ci;
+>  	struct ceph_cap *cap;
+> @@ -900,7 +901,11 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
+>  
+>  	if (mode == USE_RANDOM_MDS)
+>  		goto random;
+> -
+> +	// force to send the req to auth mds
+> +	if (ma->flags & CEPH_MOUNT_OPT_ALWAYS_AUTH && mode != USE_AUTH_MDS){
+> +		dout("change mode %d => USE_AUTH_MDS", mode);
+> +		mode = USE_AUTH_MDS;
+> +	}
+>  	inode = NULL;
+>  	if (req->r_inode) {
+>  		if (ceph_snap(req->r_inode) != CEPH_SNAPDIR) {
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index ab4868c..1e81ebc 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -169,6 +169,7 @@ enum {
+>  	Opt_noquotadf,
+>  	Opt_copyfrom,
+>  	Opt_nocopyfrom,
+> +	Opt_always_auth,
+>  };
+>  
+>  static match_table_t fsopt_tokens = {
+> @@ -210,6 +211,7 @@ enum {
+>  	{Opt_noquotadf, "noquotadf"},
+>  	{Opt_copyfrom, "copyfrom"},
+>  	{Opt_nocopyfrom, "nocopyfrom"},
+> +	{Opt_always_auth, "always_auth"},
+>  	{-1, NULL}
+>  };
+>  
+> @@ -381,6 +383,9 @@ static int parse_fsopt_token(char *c, void *private)
+>  	case Opt_noacl:
+>  		fsopt->sb_flags &= ~SB_POSIXACL;
+>  		break;
+> +	case Opt_always_auth:
+> +		fsopt->flags |= CEPH_MOUNT_OPT_ALWAYS_AUTH;
+> +		break;
+>  	default:
+>  		BUG_ON(token);
+>  	}
+> @@ -563,6 +568,8 @@ static int ceph_show_options(struct seq_file *m, struct dentry *root)
+>  		seq_puts(m, ",nopoolperm");
+>  	if (fsopt->flags & CEPH_MOUNT_OPT_NOQUOTADF)
+>  		seq_puts(m, ",noquotadf");
+> +	if (fsopt->flags & CEPH_MOUNT_OPT_ALWAYS_AUTH)
+> +		seq_puts(m, ",always_auth");
+>  
+>  #ifdef CONFIG_CEPH_FS_POSIX_ACL
+>  	if (fsopt->sb_flags & SB_POSIXACL)
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 6b9f1ee..65f6423 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -41,6 +41,7 @@
+>  #define CEPH_MOUNT_OPT_MOUNTWAIT       (1<<12) /* mount waits if no mds is up */
+>  #define CEPH_MOUNT_OPT_NOQUOTADF       (1<<13) /* no root dir quota in statfs */
+>  #define CEPH_MOUNT_OPT_NOCOPYFROM      (1<<14) /* don't use RADOS 'copy-from' op */
+> +#define CEPH_MOUNT_OPT_ALWAYS_AUTH     (1<<15) /* send op to auth mds, not to replicative mds */
+>  
+>  #define CEPH_MOUNT_OPT_DEFAULT			\
+>  	(CEPH_MOUNT_OPT_DCACHE |		\
 
+I've no particular objection here, but I'd prefer Greg's ack before we
+merge it, since he raised earlier concerns.
 
-The problem is when client sends request to a wrong mds. the wrong mds
-'discovers' corresponding metadata instead of forwarding the request.
-If dir.pin is used to pin subtree to different mds and each mds
-already has large cache, 'discover' is inefficient because it cache
-same metadata at multiple places.
+If we are going to take it, then this will need to be rebased on top of
+the mount API conversion that's currently in ceph-client/testing branch.
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-
-> -Greg
->
-> >
-> > Thanks,
-> >
-> > > ---
-> > >  fs/ceph/dir.c        | 4 ++--
-> > >  fs/ceph/export.c     | 8 ++++----
-> > >  fs/ceph/file.c       | 2 +-
-> > >  fs/ceph/inode.c      | 2 +-
-> > >  fs/ceph/mds_client.c | 1 +
-> > >  fs/ceph/super.c      | 2 +-
-> > >  6 files changed, 10 insertions(+), 9 deletions(-)
-> > >
-> > > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> > > index 4ca0b8f..a441b8d 100644
-> > > --- a/fs/ceph/dir.c
-> > > +++ b/fs/ceph/dir.c
-> > > @@ -771,7 +771,7 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
-> > >
-> > >       op = ceph_snap(dir) == CEPH_SNAPDIR ?
-> > >               CEPH_MDS_OP_LOOKUPSNAP : CEPH_MDS_OP_LOOKUP;
-> > > -     req = ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS);
-> > > +     req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
-> > >       if (IS_ERR(req))
-> > >               return ERR_CAST(req);
-> > >       req->r_dentry = dget(dentry);
-> > > @@ -1600,7 +1600,7 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
-> > >
-> > >               op = ceph_snap(dir) == CEPH_SNAPDIR ?
-> > >                       CEPH_MDS_OP_LOOKUPSNAP : CEPH_MDS_OP_LOOKUP;
-> > > -             req = ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS);
-> > > +             req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
-> > >               if (!IS_ERR(req)) {
-> > >                       req->r_dentry = dget(dentry);
-> > >                       req->r_num_caps = 2;
-> > > diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-> > > index 15ff1b0..a7d5174 100644
-> > > --- a/fs/ceph/export.c
-> > > +++ b/fs/ceph/export.c
-> > > @@ -135,7 +135,7 @@ static struct inode *__lookup_inode(struct super_block *sb, u64 ino)
-> > >               int mask;
-> > >
-> > >               req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_LOOKUPINO,
-> > > -                                            USE_ANY_MDS);
-> > > +                                            USE_AUTH_MDS);
-> > >               if (IS_ERR(req))
-> > >                       return ERR_CAST(req);
-> > >
-> > > @@ -210,7 +210,7 @@ static struct dentry *__snapfh_to_dentry(struct super_block *sb,
-> > >               return d_obtain_alias(inode);
-> > >
-> > >       req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_LOOKUPINO,
-> > > -                                    USE_ANY_MDS);
-> > > +                                    USE_AUTH_MDS);
-> > >       if (IS_ERR(req))
-> > >               return ERR_CAST(req);
-> > >
-> > > @@ -294,7 +294,7 @@ static struct dentry *__get_parent(struct super_block *sb,
-> > >       int err;
-> > >
-> > >       req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_LOOKUPPARENT,
-> > > -                                    USE_ANY_MDS);
-> > > +                                    USE_AUTH_MDS);
-> > >       if (IS_ERR(req))
-> > >               return ERR_CAST(req);
-> > >
-> > > @@ -509,7 +509,7 @@ static int ceph_get_name(struct dentry *parent, char *name,
-> > >
-> > >       mdsc = ceph_inode_to_client(inode)->mdsc;
-> > >       req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_LOOKUPNAME,
-> > > -                                    USE_ANY_MDS);
-> > > +                                    USE_AUTH_MDS);
-> > >       if (IS_ERR(req))
-> > >               return PTR_ERR(req);
-> > >
-> > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > > index 685a03c..79533f2 100644
-> > > --- a/fs/ceph/file.c
-> > > +++ b/fs/ceph/file.c
-> > > @@ -182,7 +182,7 @@ static void put_bvecs(struct bio_vec *bvecs, int num_bvecs, bool should_dirty)
-> > >       struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
-> > >       struct ceph_mds_client *mdsc = fsc->mdsc;
-> > >       struct ceph_mds_request *req;
-> > > -     int want_auth = USE_ANY_MDS;
-> > > +     int want_auth = USE_AUTH_MDS;
-> > >       int op = (flags & O_CREAT) ? CEPH_MDS_OP_CREATE : CEPH_MDS_OP_OPEN;
-> > >
-> > >       if (flags & (O_WRONLY|O_RDWR|O_CREAT|O_TRUNC))
-> > > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > > index 18500ede..6c67548 100644
-> > > --- a/fs/ceph/inode.c
-> > > +++ b/fs/ceph/inode.c
-> > > @@ -2247,7 +2247,7 @@ int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
-> > >       if (!force && ceph_caps_issued_mask(ceph_inode(inode), mask, 1))
-> > >               return 0;
-> > >
-> > > -     mode = (mask & CEPH_STAT_RSTAT) ? USE_AUTH_MDS : USE_ANY_MDS;
-> > > +     mode = USE_AUTH_MDS;
-> > >       req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETATTR, mode);
-> > >       if (IS_ERR(req))
-> > >               return PTR_ERR(req);
-> > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > > index 920e9f0..acfb969 100644
-> > > --- a/fs/ceph/mds_client.c
-> > > +++ b/fs/ceph/mds_client.c
-> > > @@ -867,6 +867,7 @@ static struct inode *get_nonsnap_parent(struct dentry *dentry)
-> > >       return inode;
-> > >  }
-> > >
-> > > +static struct inode *get_parent()
-> > >  /*
-> > >   * Choose mds to send request to next.  If there is a hint set in the
-> > >   * request (e.g., due to a prior forward hint from the mds), use that.
-> > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> > > index ab4868c..517e605 100644
-> > > --- a/fs/ceph/super.c
-> > > +++ b/fs/ceph/super.c
-> > > @@ -867,7 +867,7 @@ static struct dentry *open_root_dentry(struct ceph_fs_client *fsc,
-> > >
-> > >       /* open dir */
-> > >       dout("open_root_inode opening '%s'\n", path);
-> > > -     req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETATTR, USE_ANY_MDS);
-> > > +     req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETATTR, USE_AUTH_MDS);
-> > >       if (IS_ERR(req))
-> > >               return ERR_CAST(req);
-> > >       req->r_path1 = kstrdup(path, GFP_NOFS);
-> >
-> >
-> > --
-> > Jeff Layton <jlayton@kernel.org>
-> >
