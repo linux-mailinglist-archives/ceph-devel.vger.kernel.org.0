@@ -2,168 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05E65AE892
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Sep 2019 12:45:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39FABAEB1E
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Sep 2019 15:07:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729493AbfIJKpp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Sep 2019 06:45:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39996 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728238AbfIJKpp (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Sep 2019 06:45:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C1A64B684;
-        Tue, 10 Sep 2019 10:45:42 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Gregory Farnum <gfarnum@redhat.com>
-Cc:     IlyaDryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
-        Sage Weil <sage@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ceph: allow object copies across different filesystems in the same cluster
-References: <87k1ahojri.fsf@suse.com>
-        <20190909102834.16246-1-lhenriques@suse.com>
-        <3f838e42a50575595c7310386cf698aca8f89607.camel@kernel.org>
-        <87d0g9oh4r.fsf@suse.com>
-        <CAJ4mKGZVjJxQA69s92C+7DFbDxv87SOj10AUfyLXwVe9b+SDTw@mail.gmail.com>
-Date:   Tue, 10 Sep 2019 11:45:41 +0100
-In-Reply-To: <CAJ4mKGZVjJxQA69s92C+7DFbDxv87SOj10AUfyLXwVe9b+SDTw@mail.gmail.com>
-        (Gregory Farnum's message of "Mon, 9 Sep 2019 15:22:10 -0700")
-Message-ID: <871rwoo2ei.fsf@suse.com>
+        id S1726527AbfIJNHU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Sep 2019 09:07:20 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42402 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732884AbfIJNFY (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Sep 2019 09:05:24 -0400
+Received: by mail-pl1-f193.google.com with SMTP id x20so2974616plm.9
+        for <ceph-devel@vger.kernel.org>; Tue, 10 Sep 2019 06:05:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LOJ2zES3bk0QoKCPEn2hEsA+Dz8PVav4Qg38pwiXnIk=;
+        b=bRMAWtrNntzaO0aYNlUKd5CcQwJiSEkys9GQ3x8hniD19SO6+0QDCcpGbi7QRz70ga
+         cYhpMOjYip/Hux3o6UajbJ4iNFqjkj+Vn2oIp+sDzr9TU2g0bJVXEeQwVjbL2UThxp37
+         DQaUhHE0yoAN89/owOZeWpiQLm28GEwPWbSPusiOzVKRVH5oHOJhBbCAwTCvdj2UVEFq
+         9HIDQ4tz/2Gsu2+X0RaNB9tj3eL2526o5kXbP8qbVlNJdAp2AAIKReeANYWYfmDgSJXL
+         LexwhvJN/gqR/wFHzc86Ft5WPw8Xcqzs1OEvzCkJabNuiTZC23o/vA8WjfHLfUhGoY8z
+         Axqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LOJ2zES3bk0QoKCPEn2hEsA+Dz8PVav4Qg38pwiXnIk=;
+        b=l2OO/IcHPFzIPQdP396H4Ysf6WNJ0BJCMxr88lbJP89hdvxAUYCtpEQSqMeNXiyl+8
+         FO4gPTgDCv+wS3IK3NAT5ihEbELBboUhk9YXMUdUKn4xWzuPKJ3ELCIknVm/J2KyuVkA
+         AHnvDVkZrKw0Atiz1yesGS3/aacYMLu220/1VORtglueYYvvVVGmH2uWm+oGIbqnT5Ro
+         AW4TuY9d0z79K+Qfeb5dgVNJ7Fvbdu48o0FvsqC4OvXMmGnx+Ky8k2kzmUxmN5AkPr6r
+         raFQnmERa6NdLTsvJlHqO+mZQ3olTQpVB4sV3LbfNG3kfq/4BJHBWJlDvVethOwa8UmF
+         Rj4A==
+X-Gm-Message-State: APjAAAUx1xpqcKz+su69hQFBeTNdMW4fn4PBLWIFms84+WfOZ0zYwPgi
+        j9IAInrjpsXkDCzT0PkmFONKkOK/
+X-Google-Smtp-Source: APXvYqy7L9GRcAkZvUZP/ZtZd5J4dskiL9ktZiFlW/DCYE1VBLKR0c0JIzqDH8lk/J2huZBy1nZ9VA==
+X-Received: by 2002:a17:902:b086:: with SMTP id p6mr30363875plr.315.1568120722064;
+        Tue, 10 Sep 2019 06:05:22 -0700 (PDT)
+Received: from localhost.localdomain ([103.112.79.192])
+        by smtp.gmail.com with ESMTPSA id j18sm19911904pfh.70.2019.09.10.06.05.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 10 Sep 2019 06:05:21 -0700 (PDT)
+From:   chenerqi@gmail.com
+To:     ceph-devel@vger.kernel.org
+Cc:     chenerqi@gmail.com, chenerqi <chenerqi@kuaishou.con>
+Subject: [PATCH] ceph: reconnect connection if session hang in opening state
+Date:   Tue, 10 Sep 2019 21:05:07 +0800
+Message-Id: <20190910130507.46145-1-chenerqi@gmail.com>
+X-Mailer: git-send-email 2.20.1 (Apple Git-117)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Gregory Farnum <gfarnum@redhat.com> writes:
+From: chenerqi <chenerqi@kuaishou.con>
 
-> On Mon, Sep 9, 2019 at 4:15 AM Luis Henriques <lhenriques@suse.com> wrote:
->>
->> "Jeff Layton" <jlayton@kernel.org> writes:
->>
->> > On Mon, 2019-09-09 at 11:28 +0100, Luis Henriques wrote:
->> >> OSDs are able to perform object copies across different pools.  Thus,
->> >> there's no need to prevent copy_file_range from doing remote copies if the
->> >> source and destination superblocks are different.  Only return -EXDEV if
->> >> they have different fsid (the cluster ID).
->> >>
->> >> Signed-off-by: Luis Henriques <lhenriques@suse.com>
->> >> ---
->> >>  fs/ceph/file.c | 18 ++++++++++++++----
->> >>  1 file changed, 14 insertions(+), 4 deletions(-)
->> >>
->> >> Hi,
->> >>
->> >> Here's the patch changelog since initial submittion:
->> >>
->> >> - Dropped have_fsid checks on client structs
->> >> - Use %pU to print the fsid instead of raw hex strings (%*ph)
->> >> - Fixed 'To:' field in email so that this time the patch hits vger
->> >>
->> >> Cheers,
->> >> --
->> >> Luis
->> >>
->> >> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
->> >> index 685a03cc4b77..4a624a1dd0bb 100644
->> >> --- a/fs/ceph/file.c
->> >> +++ b/fs/ceph/file.c
->> >> @@ -1904,6 +1904,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->> >>      struct ceph_inode_info *src_ci = ceph_inode(src_inode);
->> >>      struct ceph_inode_info *dst_ci = ceph_inode(dst_inode);
->> >>      struct ceph_cap_flush *prealloc_cf;
->> >> +    struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
->> >>      struct ceph_object_locator src_oloc, dst_oloc;
->> >>      struct ceph_object_id src_oid, dst_oid;
->> >>      loff_t endoff = 0, size;
->> >> @@ -1915,8 +1916,17 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->> >>
->> >>      if (src_inode == dst_inode)
->> >>              return -EINVAL;
->> >> -    if (src_inode->i_sb != dst_inode->i_sb)
->> >> -            return -EXDEV;
->> >> +    if (src_inode->i_sb != dst_inode->i_sb) {
->> >> +            struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
->> >> +
->> >> +            if (ceph_fsid_compare(&src_fsc->client->fsid,
->> >> +                                  &dst_fsc->client->fsid)) {
->> >> +                    dout("Copying object across different clusters:");
->> >> +                    dout("  src fsid: %pU dst fsid: %pU\n",
->> >> +                         &src_fsc->client->fsid, &dst_fsc->client->fsid);
->> >> +                    return -EXDEV;
->> >> +            }
->> >> +    }
->> >
->> > Just to be clear: what happens here if I mount two entirely separate
->> > clusters, and their OSDs don't have any access to one another? Will this
->> > fail at some later point with an error that we can catch so that we can
->> > fall back?
->>
->> This is exactly what this check prevents: if we have two CephFS from two
->> unrelated clusters mounted and we try to copy a file across them, the
->> operation will fail with -EXDEV[1] because the FSIDs for these two
->> ceph_fs_client will be different.  OTOH, if these two filesystems are
->> within the same cluster (and thus with the same FSID), then the OSDs are
->> able to do 'copy-from' operations between them.
->>
->> I've tested all these scenarios and they seem to be handled correctly.
->> Now, I'm assuming that *all* OSDs within the same ceph cluster can
->> communicate between themselves; if this assumption is false, then this
->> patch is broken.  But again, I'm not aware of any mechanism that
->> prevents 2 OSDs from communicating between them.
->
-> Your assumption is correct: all OSDs in a Ceph cluster can communicate
-> with each other. I'm not aware of any plans to change this.
->
-> I spent a bit of time trying to figure out how this could break
-> security models and things and didn't come up with anything, so I
-> think functionally it's fine even though I find it a bit scary.
->
-> Also, yes, cluster FSIDs are UUIDs so they shouldn't collide.
+If client mds session is evicted in CEPH_MDS_SESSION_OPENING state,
+mds won't send session msg to client, and delayed_work skip
+CEPH_MDS_SESSION_OPENING state session, the session hang forever.
+ceph_con_keepalive reconnct connection for CEPH_MDS_SESSION_OPENING
+session to avoid session hang.
 
-Awesome, thanks for clarifying these points!
+Fixes: https://tracker.ceph.com/issues/41551
+Signed-off-by: Erqi Chen chenerqi@gmail.com
+---
+ fs/ceph/mds_client.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Cheers,
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 937e887..8f382b5 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -3581,7 +3581,9 @@ static void delayed_work(struct work_struct *work)
+ 				pr_info("mds%d hung\n", s->s_mds);
+ 			}
+ 		}
+-		if (s->s_state < CEPH_MDS_SESSION_OPEN) {
++		if (s->s_state == CEPH_MDS_SESSION_NEW ||
++		    s->s_state == CEPH_MDS_SESSION_RESTARTING ||
++		    s->s_state == CEPH_MDS_SESSION_REJECTED) {
+ 			/* this mds is failed or recovering, just wait */
+ 			ceph_put_mds_session(s);
+ 			continue;
 -- 
-Luis
+1.8.3.1
 
-
-> -Greg
->
->>
->> [1] Actually, the files will still be copied because we'll fallback into
->> the default VFS generic_copy_file_range behaviour, which is to do
->> reads+writes operations.
->>
->> Cheers,
->> --
->> Luis
->>
->>
->> >
->> >
->> >>      if (ceph_snap(dst_inode) != CEPH_NOSNAP)
->> >>              return -EROFS;
->> >>
->> >> @@ -1928,7 +1938,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->> >>       * efficient).
->> >>       */
->> >>
->> >> -    if (ceph_test_mount_opt(ceph_inode_to_client(src_inode), NOCOPYFROM))
->> >> +    if (ceph_test_mount_opt(src_fsc, NOCOPYFROM))
->> >>              return -EOPNOTSUPP;
->> >>
->> >>      if ((src_ci->i_layout.stripe_unit != dst_ci->i_layout.stripe_unit) ||
->> >> @@ -2044,7 +2054,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->> >>                              dst_ci->i_vino.ino, dst_objnum);
->> >>              /* Do an object remote copy */
->> >>              err = ceph_osdc_copy_from(
->> >> -                    &ceph_inode_to_client(src_inode)->client->osdc,
->> >> +                    &src_fsc->client->osdc,
->> >>                      src_ci->i_vino.snap, 0,
->> >>                      &src_oid, &src_oloc,
->> >>                      CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
->
