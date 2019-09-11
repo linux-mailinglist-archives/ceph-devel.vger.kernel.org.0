@@ -2,218 +2,169 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2267AAF1F9
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Sep 2019 21:41:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E2D5AF442
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Sep 2019 04:28:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725942AbfIJTlt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Sep 2019 15:41:49 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55910 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725263AbfIJTlt (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Sep 2019 15:41:49 -0400
-Received: by mail-wm1-f67.google.com with SMTP id g207so831712wmg.5
-        for <ceph-devel@vger.kernel.org>; Tue, 10 Sep 2019 12:41:46 -0700 (PDT)
+        id S1726726AbfIKC2H (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Sep 2019 22:28:07 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41113 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726560AbfIKC2G (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Sep 2019 22:28:06 -0400
+Received: by mail-oi1-f196.google.com with SMTP id h4so12865986oih.8
+        for <ceph-devel@vger.kernel.org>; Tue, 10 Sep 2019 19:28:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=i2GUSnTVaKNZGm5Grfj1QEVpfuINTJz3eKO+bUvqqZU=;
-        b=lvtlL+/0cWT4uSUAN61qcKl1SWPRpXykHKo7qKhNynSS7Fh4yYdCTEJv9GC2B6Y5Q3
-         3E2LQ3U2m+jXw1QQK/XH+g3RGqN2UvDrzp8EGqlSTV0tF5G7ycRxxuzG5HkFz+fC1u8K
-         bHG/vA2cphyIRH370Smr41wSLoui5ubt5vFzCcLeU2Gy52uKzdxkxV3B7cnZ4dgYfvy1
-         L1MEzg6c84tKRH08Ihzacgnxq5E5zTbTAeiBgkzkVzrw9xVP11F434sL+H7qcNQLO5IT
-         mqWIpapIViADA87kkyEoYF21X0WdzsmQk02j/ooHFyidmJ8Xz5oZOyA45IHZw18RQYAC
-         s1cA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ueG9KvLL3fkCAthn/b4YDYRZJnBip3pIKkl5cbsdQvE=;
+        b=SazlB1xfwqeEHZPWRFRxYr1w+kNOgr6v4zAGPzPHHfjA607TgVbbYQsYdNpTI+QGI7
+         YbzxJIbR1usgYh9Q+6Gr9W2fNMhv7A9L8QxUkeIxRS0dC73BfC3AvDvCfhw4csQ+e5zK
+         iVvxbmUSuuTuHbawCcqrx52cZG1ow50dFCC9jew+nbzi+EolVtBfpmvdSHFK/ywQNJ/i
+         j+/Jfw84R0SwTCMdwrKd99R8MLDLOS6+DknM8k3/jAZBGhZCTXZWZ7QdqLoObUr6vsyp
+         0sC49GxxrR3w/IIdCUuMsCkEqrZDDL4k4Z7ExsYBqYcE1U4jPMeo6a0F9UAcwoNeQDg/
+         J6MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=i2GUSnTVaKNZGm5Grfj1QEVpfuINTJz3eKO+bUvqqZU=;
-        b=pt2P3xsbs57tDYpLauGS3mZbKwDfyuas19RTaqsTTy26g7EJgURwFgwCxxvAhA5he0
-         hAM3NvOXBbpIZCeRquZtxQEZdk31vLLHrEXLKM5DReJDIzU8bIevsZcPhKFTDiIYpiqe
-         mzdrnp4j/tlcOqqMRqg9CVOCTZQ8Les3CqGBqeU/I5vU8qA3DBMB1KfPGfWuPV2bOswf
-         oF06l+8aTSms/mlXRJOQv/g5rGAYKKO4WTKkxCktQHQe7Wp13Nfn4niJ3loqpKeMqTK/
-         +qYMnme1mfD+Xa8ixM5VIyxLzllnZTLhni69iKOOBZ5idxUVoOZ7Gy+jYIArbQWEKhZ8
-         sd5Q==
-X-Gm-Message-State: APjAAAWf5qxhFFVy7icimAA25Zrxu7Nk2vtL4jjV3C9BAPdFeTWTKGKo
-        C2tQDASWNV8IEWtZ/za177tHJc6tvIQ=
-X-Google-Smtp-Source: APXvYqxwXdIIbiwkPeBpEfwBupiw0ckseW6J3A/hOq4mWDEhJkgfMPvO6uvch2YGUdVdbcIMZQk43g==
-X-Received: by 2002:a1c:3904:: with SMTP id g4mr944058wma.116.1568144505839;
-        Tue, 10 Sep 2019 12:41:45 -0700 (PDT)
-Received: from kwango.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id s3sm478857wmh.37.2019.09.10.12.41.44
-        for <ceph-devel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2019 12:41:45 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     ceph-devel@vger.kernel.org
-Subject: [PATCH] libceph: use ceph_kvmalloc() for osdmap arrays
-Date:   Tue, 10 Sep 2019 21:41:26 +0200
-Message-Id: <20190910194126.21144-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ueG9KvLL3fkCAthn/b4YDYRZJnBip3pIKkl5cbsdQvE=;
+        b=NphizdSQvbnAjR6vzWlXSCCs6oooii8lDF+nCCqIe00HhIc4vtmlhCqkXvdgtRbd7I
+         kbJlx5ozFN+1D9l4HW//U8LUqIMDdOcCTstNyjEaxRt/KUOMLVsPEBYnmb/qL4voNqQK
+         X7rtVxWTteDR52/O+5VmlxT7C67MMWj76khnLtcDSbgUTTsDzi+SYyY6og0HsRktMshl
+         OOXeEeegIQucU9wL9hJnwKufEFxqVXqG+uxaTZp3GBD6VVE6I6ApSbptFCfgbYPrhmNs
+         wk3F/L74OudNgKYmoZBPcgIUztZMIije8p18W5btIK30U/ytS5nHfDN7oa9CrD4m31oV
+         0FDw==
+X-Gm-Message-State: APjAAAXzi+/44085+zenyehOUSLWRhMA2O6uQwWTYzyoOhTr9PxB0+Mh
+        dt2johkAGDquXYACILI3XcHRzLxzhf/OxGUIc8U=
+X-Google-Smtp-Source: APXvYqzPVHiyhCCGUf19fzpAfZl30dTdhb3jXiDDaLD1dw8O5D2uu8abPYqQMD919N1Gz+qYQ55UXgdBBtOkytCWtgc=
+X-Received: by 2002:aca:1b06:: with SMTP id b6mr2079366oib.141.1568168885411;
+ Tue, 10 Sep 2019 19:28:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1568083391-920-1-git-send-email-simon29rock@gmail.com> <e413734270fc43cabbf9df09b0ed4bff06a96699.camel@kernel.org>
+In-Reply-To: <e413734270fc43cabbf9df09b0ed4bff06a96699.camel@kernel.org>
+From:   simon gao <simon29rock@gmail.com>
+Date:   Wed, 11 Sep 2019 10:27:54 +0800
+Message-ID: <CAGR3woW0aYOC6qtpQLOc1M4tsNkTvYFDezi+cFNM4Ay4AG=DUA@mail.gmail.com>
+Subject: Re: [PATCH] ceph: add mount opt, always_auth
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Gregory Farnum <gfarnum@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-osdmap has a bunch of arrays that grow linearly with the number of
-OSDs.  osd_state, osd_weight and osd_primary_affinity take 4 bytes per
-OSD.  osd_addr takes 136 bytes per OSD because of sockaddr_storage.
-The CRUSH workspace area also grows linearly with the number of OSDs.
+thanks
 
-Normally these arrays are allocated at client startup.  The osdmap is
-usually updated in small incrementals, but once in a while a full map
-may need to be processed.  For a cluster with 10000 OSDs, this means
-a bunch of 40K allocations followed by a 1.3M allocation, all of which
-are currently required to be physically contiguous.  This results in
-sporadic ENOMEM errors, hanging the client.
-
-Go back to manually (re)allocating arrays and use ceph_kvmalloc() to
-fall back to non-contiguous allocation when necessary.
-
-Link: https://tracker.ceph.com/issues/40481
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
----
- net/ceph/osdmap.c | 69 +++++++++++++++++++++++++++++------------------
- 1 file changed, 43 insertions(+), 26 deletions(-)
-
-diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-index 90437906b7bc..4e0de14f80bb 100644
---- a/net/ceph/osdmap.c
-+++ b/net/ceph/osdmap.c
-@@ -973,11 +973,11 @@ void ceph_osdmap_destroy(struct ceph_osdmap *map)
- 				 struct ceph_pg_pool_info, node);
- 		__remove_pg_pool(&map->pg_pools, pi);
- 	}
--	kfree(map->osd_state);
--	kfree(map->osd_weight);
--	kfree(map->osd_addr);
--	kfree(map->osd_primary_affinity);
--	kfree(map->crush_workspace);
-+	kvfree(map->osd_state);
-+	kvfree(map->osd_weight);
-+	kvfree(map->osd_addr);
-+	kvfree(map->osd_primary_affinity);
-+	kvfree(map->crush_workspace);
- 	kfree(map);
- }
- 
-@@ -986,28 +986,41 @@ void ceph_osdmap_destroy(struct ceph_osdmap *map)
-  *
-  * The new elements are properly initialized.
-  */
--static int osdmap_set_max_osd(struct ceph_osdmap *map, int max)
-+static int osdmap_set_max_osd(struct ceph_osdmap *map, u32 max)
- {
- 	u32 *state;
- 	u32 *weight;
- 	struct ceph_entity_addr *addr;
-+	u32 to_copy;
- 	int i;
- 
--	state = krealloc(map->osd_state, max*sizeof(*state), GFP_NOFS);
--	if (!state)
--		return -ENOMEM;
--	map->osd_state = state;
-+	dout("%s old %u new %u\n", __func__, map->max_osd, max);
-+	if (max == map->max_osd)
-+		return 0;
- 
--	weight = krealloc(map->osd_weight, max*sizeof(*weight), GFP_NOFS);
--	if (!weight)
-+	state = ceph_kvmalloc(array_size(max, sizeof(*state)), GFP_NOFS);
-+	weight = ceph_kvmalloc(array_size(max, sizeof(*weight)), GFP_NOFS);
-+	addr = ceph_kvmalloc(array_size(max, sizeof(*addr)), GFP_NOFS);
-+	if (!state || !weight || !addr) {
-+		kvfree(state);
-+		kvfree(weight);
-+		kvfree(addr);
- 		return -ENOMEM;
--	map->osd_weight = weight;
-+	}
- 
--	addr = krealloc(map->osd_addr, max*sizeof(*addr), GFP_NOFS);
--	if (!addr)
--		return -ENOMEM;
--	map->osd_addr = addr;
-+	to_copy = min(map->max_osd, max);
-+	if (map->osd_state) {
-+		memcpy(state, map->osd_state, to_copy * sizeof(*state));
-+		memcpy(weight, map->osd_weight, to_copy * sizeof(*weight));
-+		memcpy(addr, map->osd_addr, to_copy * sizeof(*addr));
-+		kvfree(map->osd_state);
-+		kvfree(map->osd_weight);
-+		kvfree(map->osd_addr);
-+	}
- 
-+	map->osd_state = state;
-+	map->osd_weight = weight;
-+	map->osd_addr = addr;
- 	for (i = map->max_osd; i < max; i++) {
- 		map->osd_state[i] = 0;
- 		map->osd_weight[i] = CEPH_OSD_OUT;
-@@ -1017,12 +1030,16 @@ static int osdmap_set_max_osd(struct ceph_osdmap *map, int max)
- 	if (map->osd_primary_affinity) {
- 		u32 *affinity;
- 
--		affinity = krealloc(map->osd_primary_affinity,
--				    max*sizeof(*affinity), GFP_NOFS);
-+		affinity = ceph_kvmalloc(array_size(max, sizeof(*affinity)),
-+					 GFP_NOFS);
- 		if (!affinity)
- 			return -ENOMEM;
--		map->osd_primary_affinity = affinity;
- 
-+		memcpy(affinity, map->osd_primary_affinity,
-+		       to_copy * sizeof(*affinity));
-+		kvfree(map->osd_primary_affinity);
-+
-+		map->osd_primary_affinity = affinity;
- 		for (i = map->max_osd; i < max; i++)
- 			map->osd_primary_affinity[i] =
- 			    CEPH_OSD_DEFAULT_PRIMARY_AFFINITY;
-@@ -1043,7 +1060,7 @@ static int osdmap_set_crush(struct ceph_osdmap *map, struct crush_map *crush)
- 
- 	work_size = crush_work_size(crush, CEPH_PG_MAX_SIZE);
- 	dout("%s work_size %zu bytes\n", __func__, work_size);
--	workspace = kmalloc(work_size, GFP_NOIO);
-+	workspace = ceph_kvmalloc(work_size, GFP_NOIO);
- 	if (!workspace) {
- 		crush_destroy(crush);
- 		return -ENOMEM;
-@@ -1052,7 +1069,7 @@ static int osdmap_set_crush(struct ceph_osdmap *map, struct crush_map *crush)
- 
- 	if (map->crush)
- 		crush_destroy(map->crush);
--	kfree(map->crush_workspace);
-+	kvfree(map->crush_workspace);
- 	map->crush = crush;
- 	map->crush_workspace = workspace;
- 	return 0;
-@@ -1298,9 +1315,9 @@ static int set_primary_affinity(struct ceph_osdmap *map, int osd, u32 aff)
- 	if (!map->osd_primary_affinity) {
- 		int i;
- 
--		map->osd_primary_affinity = kmalloc_array(map->max_osd,
--							  sizeof(u32),
--							  GFP_NOFS);
-+		map->osd_primary_affinity = ceph_kvmalloc(
-+		    array_size(map->max_osd, sizeof(*map->osd_primary_affinity)),
-+		    GFP_NOFS);
- 		if (!map->osd_primary_affinity)
- 			return -ENOMEM;
- 
-@@ -1321,7 +1338,7 @@ static int decode_primary_affinity(void **p, void *end,
- 
- 	ceph_decode_32_safe(p, end, len, e_inval);
- 	if (len == 0) {
--		kfree(map->osd_primary_affinity);
-+		kvfree(map->osd_primary_affinity);
- 		map->osd_primary_affinity = NULL;
- 		return 0;
- 	}
--- 
-2.19.2
-
+Jeff Layton <jlayton@kernel.org> =E4=BA=8E2019=E5=B9=B49=E6=9C=8810=E6=97=
+=A5=E5=91=A8=E4=BA=8C =E4=B8=8B=E5=8D=886:11=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Mon, 2019-09-09 at 22:43 -0400, simon gao wrote:
+> > In larger clusters (hundreds of millions of files). We have to pin the
+> > directory on a fixed mds now. Some op of client use USE_ANY_MDS mode
+> > to access mds, which may result in requests being sent to noauth mds
+> > and then forwarded to authmds.
+> > the opt is used to reduce forward ops by sending req to auth mds.
+> > ---
+> >  fs/ceph/mds_client.c | 7 ++++++-
+> >  fs/ceph/super.c      | 7 +++++++
+> >  fs/ceph/super.h      | 1 +
+> >  3 files changed, 14 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > index 920e9f0..aca4490 100644
+> > --- a/fs/ceph/mds_client.c
+> > +++ b/fs/ceph/mds_client.c
+> > @@ -878,6 +878,7 @@ static struct inode *get_nonsnap_parent(struct dent=
+ry *dentry)
+> >  static int __choose_mds(struct ceph_mds_client *mdsc,
+> >                       struct ceph_mds_request *req)
+> >  {
+> > +     struct ceph_mount_options *ma =3D mdsc->fsc->mount_options;
+> >       struct inode *inode;
+> >       struct ceph_inode_info *ci;
+> >       struct ceph_cap *cap;
+> > @@ -900,7 +901,11 @@ static int __choose_mds(struct ceph_mds_client *md=
+sc,
+> >
+> >       if (mode =3D=3D USE_RANDOM_MDS)
+> >               goto random;
+> > -
+> > +     // force to send the req to auth mds
+> > +     if (ma->flags & CEPH_MOUNT_OPT_ALWAYS_AUTH && mode !=3D USE_AUTH_=
+MDS){
+> > +             dout("change mode %d =3D> USE_AUTH_MDS", mode);
+> > +             mode =3D USE_AUTH_MDS;
+> > +     }
+> >       inode =3D NULL;
+> >       if (req->r_inode) {
+> >               if (ceph_snap(req->r_inode) !=3D CEPH_SNAPDIR) {
+> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > index ab4868c..1e81ebc 100644
+> > --- a/fs/ceph/super.c
+> > +++ b/fs/ceph/super.c
+> > @@ -169,6 +169,7 @@ enum {
+> >       Opt_noquotadf,
+> >       Opt_copyfrom,
+> >       Opt_nocopyfrom,
+> > +     Opt_always_auth,
+> >  };
+> >
+> >  static match_table_t fsopt_tokens =3D {
+> > @@ -210,6 +211,7 @@ enum {
+> >       {Opt_noquotadf, "noquotadf"},
+> >       {Opt_copyfrom, "copyfrom"},
+> >       {Opt_nocopyfrom, "nocopyfrom"},
+> > +     {Opt_always_auth, "always_auth"},
+> >       {-1, NULL}
+> >  };
+> >
+> > @@ -381,6 +383,9 @@ static int parse_fsopt_token(char *c, void *private=
+)
+> >       case Opt_noacl:
+> >               fsopt->sb_flags &=3D ~SB_POSIXACL;
+> >               break;
+> > +     case Opt_always_auth:
+> > +             fsopt->flags |=3D CEPH_MOUNT_OPT_ALWAYS_AUTH;
+> > +             break;
+> >       default:
+> >               BUG_ON(token);
+> >       }
+> > @@ -563,6 +568,8 @@ static int ceph_show_options(struct seq_file *m, st=
+ruct dentry *root)
+> >               seq_puts(m, ",nopoolperm");
+> >       if (fsopt->flags & CEPH_MOUNT_OPT_NOQUOTADF)
+> >               seq_puts(m, ",noquotadf");
+> > +     if (fsopt->flags & CEPH_MOUNT_OPT_ALWAYS_AUTH)
+> > +             seq_puts(m, ",always_auth");
+> >
+> >  #ifdef CONFIG_CEPH_FS_POSIX_ACL
+> >       if (fsopt->sb_flags & SB_POSIXACL)
+> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > index 6b9f1ee..65f6423 100644
+> > --- a/fs/ceph/super.h
+> > +++ b/fs/ceph/super.h
+> > @@ -41,6 +41,7 @@
+> >  #define CEPH_MOUNT_OPT_MOUNTWAIT       (1<<12) /* mount waits if no md=
+s is up */
+> >  #define CEPH_MOUNT_OPT_NOQUOTADF       (1<<13) /* no root dir quota in=
+ statfs */
+> >  #define CEPH_MOUNT_OPT_NOCOPYFROM      (1<<14) /* don't use RADOS 'cop=
+y-from' op */
+> > +#define CEPH_MOUNT_OPT_ALWAYS_AUTH     (1<<15) /* send op to auth mds,=
+ not to replicative mds */
+> >
+> >  #define CEPH_MOUNT_OPT_DEFAULT                       \
+> >       (CEPH_MOUNT_OPT_DCACHE |                \
+>
+> I've no particular objection here, but I'd prefer Greg's ack before we
+> merge it, since he raised earlier concerns.
+>
+> If we are going to take it, then this will need to be rebased on top of
+> the mount API conversion that's currently in ceph-client/testing branch.
+> --
+> Jeff Layton <jlayton@kernel.org>
+>
