@@ -2,167 +2,94 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FBAFAFD3D
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Sep 2019 14:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C0AAFDC6
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Sep 2019 15:33:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbfIKM6n (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 11 Sep 2019 08:58:43 -0400
-Received: from mail-oi1-f177.google.com ([209.85.167.177]:42945 "EHLO
-        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727307AbfIKM6n (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 Sep 2019 08:58:43 -0400
-Received: by mail-oi1-f177.google.com with SMTP id z6so8488375oix.9
-        for <ceph-devel@vger.kernel.org>; Wed, 11 Sep 2019 05:58:42 -0700 (PDT)
+        id S1728105AbfIKNdg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 11 Sep 2019 09:33:36 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:39920 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbfIKNdf (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 Sep 2019 09:33:35 -0400
+Received: by mail-io1-f66.google.com with SMTP id d25so45828472iob.6
+        for <ceph-devel@vger.kernel.org>; Wed, 11 Sep 2019 06:33:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=cK0kTuVYEZo8E4oQkxsgI5qdI3LXb7jBDH9oK7QAq2o=;
-        b=a/C5Fhr3ObGNgJsdAUE+CSk40ke72x/QtHqjeSZ1WrojE5VtbN6B7d1u84SCqpInar
-         tOwCfSc0Fz7P4YpXSGgV3EKh+zEBKH5hnyUbCcHgRUZvKh5kQQLb3xQLPB7Gv1aQrVHE
-         RtYpv8Mo0GJRvGcIkzy0dx98YKl0QBC5lB3TGKLp81wQo4JrzQLbZUb0aS0G7p2XtFDf
-         lEIkVQZAXPntTao+dwHBRN/rg2PkKKoOYb9C9rcO0A3FQEASIgL/EUHGT4e8Dz2iq25p
-         aZ7Q96zOV9Unu14HMGx0M7RHwBaB4oXyPU7mEAOdNo/A1EAsN79FilpKaAQHRazTIZcQ
-         EQ6g==
+         :cc;
+        bh=+Xoo6l4F2Pk5XEf9omz9OQQmWDtqGeVytsL5N6pgpho=;
+        b=EiOgxOx+k3kL7A75YeUxfZvJx2QrWIsicTmrAVnD2KdX9HicA66s7fxMfGt851qo7r
+         dtYClJn/IG95ITAvXlz9LTydz1JJz9gBj2I2dVWnU7idXvea2PMJt8s82YeBLEvlq/3a
+         NuvRtydDQeOsHk7XPAMW+AcLpUivIO2K4lCSsBDL6bcm2nkCBRlDEVOYqTORZ3YyPds7
+         ZLtv/0V6gKD78fhQxO9Wfgwpy8I20bBB+/mo3tGYMA8fJvY6f/jFhLpyiktA+IGBQ94R
+         yhL5WU7obe26nHYcIwhLA39Vq+dNLfg8qNFClR0G8LBX0at86pCBWUq9z8fOC8ehkaAg
+         gIkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=cK0kTuVYEZo8E4oQkxsgI5qdI3LXb7jBDH9oK7QAq2o=;
-        b=eicK3tXuspexJmsPA1Bfdxe9uZBaaW/KY+OcQ5w2wWNsZ3FxWb2G336Efl4gSVDc4L
-         peqvXV1BAateGs/1j1zr50Y53fdaRnBG3Bw7/lHqm+3JSHxwv+R6YVTaP4ZZOIDZ7iOu
-         Ticz+IvqB2kJlpH9+1WuQhe/Vc7GVJi5YFfYuUpTWdHruwNW26P0uJTWBS2GVLFQWxM7
-         rg6Sk4yD+mYBVQ2K8q+WPXsBRKQK9rlhmDNeENH1YhoyNhYNJDnQzTnS4JpJF8nvSOOG
-         Kcx0ILiIEISeW950ixGj3sPg8mVcjMLuhL48uznHZGDddfhpsEhgBOpznFwIBqMonTr2
-         xyiw==
-X-Gm-Message-State: APjAAAVpODy2KdqBdPwH7axpGbjkk4VXXtVWLbrLFVdZANqv7nHrOiT1
-        bVnd8KT0NHmQuGdgw5zDXwldZRT6JsFP5vic4gU=
-X-Google-Smtp-Source: APXvYqx1o3asYZts20enFzvFHiZ+bPGHJJqdMusgV9y9lFEMmiWIikyu7Mt7Auk9/PgdLGEIN07p23aNQaQpqcJZYBM=
-X-Received: by 2002:aca:6744:: with SMTP id b4mr3696948oiy.95.1568206721986;
- Wed, 11 Sep 2019 05:58:41 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=+Xoo6l4F2Pk5XEf9omz9OQQmWDtqGeVytsL5N6pgpho=;
+        b=JJ/F5C3juR3Iuka88xYQ5sktYoiZbgZdYtIdHR0N8H1XGjiSt8ehINuhEl/OdRjns3
+         5kXv+enGisGahVvJvC2CRpSLUZn5RQ/iGvkXgdhaDXDvP16s1vNjX6Vm4f8Ae0/n5s0n
+         VnFYuzYPlLoP1/zxFJgiXn9Uergg3ClR4Jqocc1obEiFaTziZAknP/UKsxyyFHL+HxRP
+         cZiMVRvSeEBUWoCMOKuR0/kg8odo7zzEb8P9uU6uASIpraOFoGZGYlDogelJIFBSU0yC
+         vpSMa57fY7oF8Y4C3DfTr//KHN3yfvFjYpM6Ei4b2dabm5w/6AkH9Csvrc41VdXaDV3J
+         iP+A==
+X-Gm-Message-State: APjAAAUyA33vpsE844y4gQxy44lHu2QM2aDJxmYMTwzvfK26yZ+ByuSc
+        mwSjgZERvSgpVS7kYpIc5SY5g/PFu3cC5llewUXhHJjGzeU=
+X-Google-Smtp-Source: APXvYqyAcfVVsHrTlbYH5NycgOJl3xLFYHeEtm+7tXGGqgKYHyMPykYdUUQZeoOcBKsXTyBOQ/nBnYdqC3jjsraF+v0=
+X-Received: by 2002:a02:b882:: with SMTP id p2mr5670148jam.16.1568208813623;
+ Wed, 11 Sep 2019 06:33:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <1568082511-805-1-git-send-email-simon29rock@gmail.com> <CAAM7YAkzGWwqfRojzmQ1hX_hwF=xgKFHQ-Xfb66Tds0v3iLzSQ@mail.gmail.com>
-In-Reply-To: <CAAM7YAkzGWwqfRojzmQ1hX_hwF=xgKFHQ-Xfb66Tds0v3iLzSQ@mail.gmail.com>
-From:   simon gao <simon29rock@gmail.com>
-Date:   Wed, 11 Sep 2019 20:58:31 +0800
-Message-ID: <CAGR3woW2f=xR5E3MJuR4ihnPXZDzKrh4FP_D41=3JMDNHtYYxQ@mail.gmail.com>
-Subject: Re: [PATCH] add mount opt, always_auth, to force to send req to auth mds
-To:     "Yan, Zheng" <ukernel@gmail.com>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>
+References: <20190910151748.914-1-idryomov@gmail.com> <20190911063159.GA25496@infradead.org>
+In-Reply-To: <20190911063159.GA25496@infradead.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Wed, 11 Sep 2019 15:33:27 +0200
+Message-ID: <CAOi1vP-unOFL2RMweG9gjfSY=xrmED=0bJxd5H0KrKsMSiMdmA@mail.gmail.com>
+Subject: Re: [PATCH] libceph: avoid a __vmalloc() deadlock in ceph_kvmalloc()
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-changed it.
-thanks
+On Wed, Sep 11, 2019 at 8:32 AM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Tue, Sep 10, 2019 at 05:17:48PM +0200, Ilya Dryomov wrote:
+> > The vmalloc allocator doesn't fully respect the specified gfp mask:
+> > while the actual pages are allocated as requested, the page table pages
+> > are always allocated with GFP_KERNEL.  ceph_kvmalloc() may be called
+> > with GFP_NOFS and GFP_NOIO (for ceph and rbd respectively), so this may
+> > result in a deadlock.
+> >
+> > There is no real reason for the current PAGE_ALLOC_COSTLY_ORDER logic,
+> > it's just something that seemed sensible at the time (ceph_kvmalloc()
+> > predates kvmalloc()).  kvmalloc() is smarter: in an attempt to reduce
+> > long term fragmentation, it first tries to kmalloc non-disruptively.
+> >
+> > Switch to kvmalloc() and set the respective PF_MEMALLOC_* flag using
+> > the scope API to avoid the deadlock.  Note that kvmalloc() needs to be
+> > passed GFP_KERNEL to enable the fallback.
+>
+> If you can please just stop using GFP_NOFS altogether and set
+> PF_MEMALLOC_* for the actual contexts.
 
-Yan, Zheng <ukernel@gmail.com> =E4=BA=8E2019=E5=B9=B49=E6=9C=8811=E6=97=A5=
-=E5=91=A8=E4=B8=89 =E4=B8=8A=E5=8D=8810:58=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Wed, Sep 11, 2019 at 2:46 AM simon gao <simon29rock@gmail.com> wrote:
-> >
-> > In larger clusters (hundreds of millions of files). We have to pin the
-> > directory on a fixed mds now. Some op of client use USE_ANY_MDS mode
-> > to access mds, which may result in requests being sent to noauth mds
-> > and then forwarded to authmds.
-> > the opt is used to reduce forward op.
-> > ---
-> >  fs/ceph/mds_client.c | 7 ++++++-
-> >  fs/ceph/super.c      | 7 +++++++
-> >  fs/ceph/super.h      | 1 +
-> >  3 files changed, 14 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index 920e9f0..aca4490 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -878,6 +878,7 @@ static struct inode *get_nonsnap_parent(struct dent=
-ry *dentry)
-> >  static int __choose_mds(struct ceph_mds_client *mdsc,
-> >                         struct ceph_mds_request *req)
-> >  {
-> > +       struct ceph_mount_options *ma =3D mdsc->fsc->mount_options;
-> >         struct inode *inode;
-> >         struct ceph_inode_info *ci;
-> >         struct ceph_cap *cap;
-> > @@ -900,7 +901,11 @@ static int __choose_mds(struct ceph_mds_client *md=
-sc,
-> >
-> >         if (mode =3D=3D USE_RANDOM_MDS)
-> >                 goto random;
-> > -
-> > +       // force to send the req to auth mds
-> > +       if (ma->flags & CEPH_MOUNT_OPT_ALWAYS_AUTH && mode !=3D USE_AUT=
-H_MDS){
->
-> use ceph_test_mount_opt(). Otherwise, looks good to me
->
-> > +               dout("change mode %d =3D> USE_AUTH_MDS", mode);
-> > +               mode =3D USE_AUTH_MDS;
-> > +       }
-> >         inode =3D NULL;
-> >         if (req->r_inode) {
-> >                 if (ceph_snap(req->r_inode) !=3D CEPH_SNAPDIR) {
-> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> > index ab4868c..1e81ebc 100644
-> > --- a/fs/ceph/super.c
-> > +++ b/fs/ceph/super.c
-> > @@ -169,6 +169,7 @@ enum {
-> >         Opt_noquotadf,
-> >         Opt_copyfrom,
-> >         Opt_nocopyfrom,
-> > +       Opt_always_auth,
-> >  };
-> >
-> >  static match_table_t fsopt_tokens =3D {
-> > @@ -210,6 +211,7 @@ enum {
-> >         {Opt_noquotadf, "noquotadf"},
-> >         {Opt_copyfrom, "copyfrom"},
-> >         {Opt_nocopyfrom, "nocopyfrom"},
-> > +       {Opt_always_auth, "always_auth"},
-> >         {-1, NULL}
-> >  };
-> >
-> > @@ -381,6 +383,9 @@ static int parse_fsopt_token(char *c, void *private=
-)
-> >         case Opt_noacl:
-> >                 fsopt->sb_flags &=3D ~SB_POSIXACL;
-> >                 break;
-> > +       case Opt_always_auth:
-> > +               fsopt->flags |=3D CEPH_MOUNT_OPT_ALWAYS_AUTH;
-> > +               break;
-> >         default:
-> >                 BUG_ON(token);
-> >         }
-> > @@ -563,6 +568,8 @@ static int ceph_show_options(struct seq_file *m, st=
-ruct dentry *root)
-> >                 seq_puts(m, ",nopoolperm");
-> >         if (fsopt->flags & CEPH_MOUNT_OPT_NOQUOTADF)
-> >                 seq_puts(m, ",noquotadf");
-> > +       if (fsopt->flags & CEPH_MOUNT_OPT_ALWAYS_AUTH)
-> > +               seq_puts(m, ",always_auth");
-> >
-> >  #ifdef CONFIG_CEPH_FS_POSIX_ACL
-> >         if (fsopt->sb_flags & SB_POSIXACL)
-> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> > index 6b9f1ee..65f6423 100644
-> > --- a/fs/ceph/super.h
-> > +++ b/fs/ceph/super.h
-> > @@ -41,6 +41,7 @@
-> >  #define CEPH_MOUNT_OPT_MOUNTWAIT       (1<<12) /* mount waits if no md=
-s is up */
-> >  #define CEPH_MOUNT_OPT_NOQUOTADF       (1<<13) /* no root dir quota in=
- statfs */
-> >  #define CEPH_MOUNT_OPT_NOCOPYFROM      (1<<14) /* don't use RADOS 'cop=
-y-from' op */
-> > +#define CEPH_MOUNT_OPT_ALWAYS_AUTH     (1<<15) /* send op to auth mds,=
- not to replicative mds */
-> >
-> >  #define CEPH_MOUNT_OPT_DEFAULT                 \
-> >         (CEPH_MOUNT_OPT_DCACHE |                \
-> > --
-> > 1.8.3.1
-> >
+Hi Christoph,
+
+ceph_kvmalloc() is indirectly called from dozens of places, everywhere
+a new RPC message is allocated.  Some of them are used for client setup
+and don't need a scope (GFP_KERNEL is fine), but the vast majority do.
+I don't think wrapping each call is practical.
+
+As for getting rid of GFP_NOFS and GFP_NOIO entirely (i.e. dropping the
+gfp mask from all libceph APIs and using scopes instead), it's something
+that I have had in the back of my head for a while now because we cheat
+in a few places and hard-code GFP_NOIO as the lowest common denominator
+instead of properly propagating the gfp mask.  It's more of a project
+though, and won't be backportable.
+
+Thanks,
+
+                Ilya
