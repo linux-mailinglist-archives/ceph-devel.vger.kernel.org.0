@@ -2,34 +2,34 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35949AFF12
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Sep 2019 16:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D7C8AFF3C
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Sep 2019 16:54:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbfIKOp7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 11 Sep 2019 10:45:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42774 "EHLO mail.kernel.org"
+        id S1728285AbfIKOyd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 11 Sep 2019 10:54:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727020AbfIKOp7 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 11 Sep 2019 10:45:59 -0400
+        id S1727627AbfIKOyd (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 11 Sep 2019 10:54:33 -0400
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48A2E20644;
-        Wed, 11 Sep 2019 14:45:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BA0E2075C;
+        Wed, 11 Sep 2019 14:54:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568213157;
-        bh=jKKbrkpAal/QD48EE9vzeg1oiRuwzKYAtypZnetUa7Q=;
+        s=default; t=1568213672;
+        bh=z8fA1CtUng7cgwSqeC1jjtP6k6oD7NU2RrgaHhvBeNo=;
         h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=AhmLJwVbJuXnXNBUxhb0f1s1wxB9JmxU+Pxfj0cgsB5rmaNfM6kvy7pCTPCYfn3fK
-         zLG7T5xupv6XsNmGwPJRxyNVkCAt9ZPBsFrI4p02dGwFbFU6BfvOWoxUiATYIjpTmM
-         81ohPteQUguReu3hTBZlI5Btvoe4uTj4E0r+2GCE=
-Message-ID: <2570072aa4f573cc9686b3ca3ecc83a3066700d0.camel@kernel.org>
-Subject: Re: [PATCH] libceph: avoid a __vmalloc() deadlock in ceph_kvmalloc()
+        b=oOdCAV2O9dSsu2H3rZ3j9XTL9K7kq7z+XbN9nVB0+JDfSODpvQHRkgmvE1Im52+6J
+         4gsDyMruIZRqKjbPYagcKrRRwxAfFNICuitu7LJls+Vf+k6m/k2n5TTP959Ncez4ZA
+         BcT6jlroj0RqBCInchTvZdu2U8vVpwxmD6JgButM=
+Message-ID: <6730435b5fbae66393de4b55d82891d9e7c4dd11.camel@kernel.org>
+Subject: Re: [PATCH] libceph: use ceph_kvmalloc() for osdmap arrays
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-Date:   Wed, 11 Sep 2019 10:45:56 -0400
-In-Reply-To: <20190910151748.914-1-idryomov@gmail.com>
-References: <20190910151748.914-1-idryomov@gmail.com>
+Date:   Wed, 11 Sep 2019 10:54:31 -0400
+In-Reply-To: <20190910194126.21144-1-idryomov@gmail.com>
+References: <20190910194126.21144-1-idryomov@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
@@ -39,80 +39,168 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2019-09-10 at 17:17 +0200, Ilya Dryomov wrote:
-> The vmalloc allocator doesn't fully respect the specified gfp mask:
-> while the actual pages are allocated as requested, the page table pages
-> are always allocated with GFP_KERNEL.  ceph_kvmalloc() may be called
-> with GFP_NOFS and GFP_NOIO (for ceph and rbd respectively), so this may
-> result in a deadlock.
+On Tue, 2019-09-10 at 21:41 +0200, Ilya Dryomov wrote:
+> osdmap has a bunch of arrays that grow linearly with the number of
+> OSDs.  osd_state, osd_weight and osd_primary_affinity take 4 bytes per
+> OSD.  osd_addr takes 136 bytes per OSD because of sockaddr_storage.
+> The CRUSH workspace area also grows linearly with the number of OSDs.
 > 
-> There is no real reason for the current PAGE_ALLOC_COSTLY_ORDER logic,
-> it's just something that seemed sensible at the time (ceph_kvmalloc()
-> predates kvmalloc()).  kvmalloc() is smarter: in an attempt to reduce
-> long term fragmentation, it first tries to kmalloc non-disruptively.
+> Normally these arrays are allocated at client startup.  The osdmap is
+> usually updated in small incrementals, but once in a while a full map
+> may need to be processed.  For a cluster with 10000 OSDs, this means
+> a bunch of 40K allocations followed by a 1.3M allocation, all of which
+> are currently required to be physically contiguous.  This results in
+> sporadic ENOMEM errors, hanging the client.
 > 
-> Switch to kvmalloc() and set the respective PF_MEMALLOC_* flag using
-> the scope API to avoid the deadlock.  Note that kvmalloc() needs to be
-> passed GFP_KERNEL to enable the fallback.
+> Go back to manually (re)allocating arrays and use ceph_kvmalloc() to
+> fall back to non-contiguous allocation when necessary.
 > 
+> Link: https://tracker.ceph.com/issues/40481
 > Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 > ---
->  net/ceph/ceph_common.c | 29 +++++++++++++++++++++++------
->  1 file changed, 23 insertions(+), 6 deletions(-)
+>  net/ceph/osdmap.c | 69 +++++++++++++++++++++++++++++------------------
+>  1 file changed, 43 insertions(+), 26 deletions(-)
 > 
-> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-> index c41789154cdb..970e74b46213 100644
-> --- a/net/ceph/ceph_common.c
-> +++ b/net/ceph/ceph_common.c
-> @@ -13,6 +13,7 @@
->  #include <linux/nsproxy.h>
->  #include <linux/fs_parser.h>
->  #include <linux/sched.h>
-> +#include <linux/sched/mm.h>
->  #include <linux/seq_file.h>
->  #include <linux/slab.h>
->  #include <linux/statfs.h>
-> @@ -185,18 +186,34 @@ int ceph_compare_options(struct ceph_options *new_opt,
->  }
->  EXPORT_SYMBOL(ceph_compare_options);
->  
-> +/*
-> + * kvmalloc() doesn't fall back to the vmalloc allocator unless flags are
-> + * compatible with (a superset of) GFP_KERNEL.  This is because while the
-> + * actual pages are allocated with the specified flags, the page table pages
-> + * are always allocated with GFP_KERNEL.  map_vm_area() doesn't even take
-> + * flags because GFP_KERNEL is hard-coded in {p4d,pud,pmd,pte}_alloc().
-> + *
-> + * ceph_kvmalloc() may be called with GFP_KERNEL, GFP_NOFS or GFP_NOIO.
-> + */
->  void *ceph_kvmalloc(size_t size, gfp_t flags)
->  {
-> -	if (size <= (PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER)) {
-> -		void *ptr = kmalloc(size, flags | __GFP_NOWARN);
-> -		if (ptr)
-> -			return ptr;
-> +	void *p;
-> +
-> +	if ((flags & (__GFP_IO | __GFP_FS)) == (__GFP_IO | __GFP_FS)) {
-> +		p = kvmalloc(size, flags);
-> +	} else if ((flags & (__GFP_IO | __GFP_FS)) == __GFP_IO) {
-> +		unsigned int nofs_flag = memalloc_nofs_save();
-> +		p = kvmalloc(size, GFP_KERNEL);
-> +		memalloc_nofs_restore(nofs_flag);
-> +	} else {
-> +		unsigned int noio_flag = memalloc_noio_save();
-> +		p = kvmalloc(size, GFP_KERNEL);
-> +		memalloc_noio_restore(noio_flag);
+> diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
+> index 90437906b7bc..4e0de14f80bb 100644
+> --- a/net/ceph/osdmap.c
+> +++ b/net/ceph/osdmap.c
+> @@ -973,11 +973,11 @@ void ceph_osdmap_destroy(struct ceph_osdmap *map)
+>  				 struct ceph_pg_pool_info, node);
+>  		__remove_pg_pool(&map->pg_pools, pi);
 >  	}
->  
-> -	return __vmalloc(size, flags, PAGE_KERNEL);
-> +	return p;
+> -	kfree(map->osd_state);
+> -	kfree(map->osd_weight);
+> -	kfree(map->osd_addr);
+> -	kfree(map->osd_primary_affinity);
+> -	kfree(map->crush_workspace);
+> +	kvfree(map->osd_state);
+> +	kvfree(map->osd_weight);
+> +	kvfree(map->osd_addr);
+> +	kvfree(map->osd_primary_affinity);
+> +	kvfree(map->crush_workspace);
+>  	kfree(map);
 >  }
 >  
-> -
->  static int parse_fsid(const char *str, struct ceph_fsid *fsid)
+> @@ -986,28 +986,41 @@ void ceph_osdmap_destroy(struct ceph_osdmap *map)
+>   *
+>   * The new elements are properly initialized.
+>   */
+> -static int osdmap_set_max_osd(struct ceph_osdmap *map, int max)
+> +static int osdmap_set_max_osd(struct ceph_osdmap *map, u32 max)
 >  {
->  	int i = 0;
+>  	u32 *state;
+>  	u32 *weight;
+>  	struct ceph_entity_addr *addr;
+> +	u32 to_copy;
+>  	int i;
+>  
+> -	state = krealloc(map->osd_state, max*sizeof(*state), GFP_NOFS);
+> -	if (!state)
+> -		return -ENOMEM;
+> -	map->osd_state = state;
+> +	dout("%s old %u new %u\n", __func__, map->max_osd, max);
+> +	if (max == map->max_osd)
+> +		return 0;
+>  
+> -	weight = krealloc(map->osd_weight, max*sizeof(*weight), GFP_NOFS);
+> -	if (!weight)
+> +	state = ceph_kvmalloc(array_size(max, sizeof(*state)), GFP_NOFS);
+> +	weight = ceph_kvmalloc(array_size(max, sizeof(*weight)), GFP_NOFS);
+> +	addr = ceph_kvmalloc(array_size(max, sizeof(*addr)), GFP_NOFS);
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Is GFP_NOFS sufficient here, given that this may be called from rbd?
+Should we be using NOIO instead (or maybe the PF_MEMALLOC_* equivalent)?
+
+> +	if (!state || !weight || !addr) {
+> +		kvfree(state);
+> +		kvfree(weight);
+> +		kvfree(addr);
+>  		return -ENOMEM;
+> -	map->osd_weight = weight;
+> +	}
+>  
+> -	addr = krealloc(map->osd_addr, max*sizeof(*addr), GFP_NOFS);
+> -	if (!addr)
+> -		return -ENOMEM;
+> -	map->osd_addr = addr;
+> +	to_copy = min(map->max_osd, max);
+> +	if (map->osd_state) {
+> +		memcpy(state, map->osd_state, to_copy * sizeof(*state));
+> +		memcpy(weight, map->osd_weight, to_copy * sizeof(*weight));
+> +		memcpy(addr, map->osd_addr, to_copy * sizeof(*addr));
+> +		kvfree(map->osd_state);
+> +		kvfree(map->osd_weight);
+> +		kvfree(map->osd_addr);
+> +	}
+>  
+> +	map->osd_state = state;
+> +	map->osd_weight = weight;
+> +	map->osd_addr = addr;
+>  	for (i = map->max_osd; i < max; i++) {
+>  		map->osd_state[i] = 0;
+>  		map->osd_weight[i] = CEPH_OSD_OUT;
+> @@ -1017,12 +1030,16 @@ static int osdmap_set_max_osd(struct ceph_osdmap *map, int max)
+>  	if (map->osd_primary_affinity) {
+>  		u32 *affinity;
+>  
+> -		affinity = krealloc(map->osd_primary_affinity,
+> -				    max*sizeof(*affinity), GFP_NOFS);
+> +		affinity = ceph_kvmalloc(array_size(max, sizeof(*affinity)),
+> +					 GFP_NOFS);
+>  		if (!affinity)
+>  			return -ENOMEM;
+> -		map->osd_primary_affinity = affinity;
+>  
+> +		memcpy(affinity, map->osd_primary_affinity,
+> +		       to_copy * sizeof(*affinity));
+> +		kvfree(map->osd_primary_affinity);
+> +
+> +		map->osd_primary_affinity = affinity;
+>  		for (i = map->max_osd; i < max; i++)
+>  			map->osd_primary_affinity[i] =
+>  			    CEPH_OSD_DEFAULT_PRIMARY_AFFINITY;
+> @@ -1043,7 +1060,7 @@ static int osdmap_set_crush(struct ceph_osdmap *map, struct crush_map *crush)
+>  
+>  	work_size = crush_work_size(crush, CEPH_PG_MAX_SIZE);
+>  	dout("%s work_size %zu bytes\n", __func__, work_size);
+> -	workspace = kmalloc(work_size, GFP_NOIO);
+> +	workspace = ceph_kvmalloc(work_size, GFP_NOIO);
+>  	if (!workspace) {
+>  		crush_destroy(crush);
+>  		return -ENOMEM;
+> @@ -1052,7 +1069,7 @@ static int osdmap_set_crush(struct ceph_osdmap *map, struct crush_map *crush)
+>  
+>  	if (map->crush)
+>  		crush_destroy(map->crush);
+> -	kfree(map->crush_workspace);
+> +	kvfree(map->crush_workspace);
+>  	map->crush = crush;
+>  	map->crush_workspace = workspace;
+>  	return 0;
+> @@ -1298,9 +1315,9 @@ static int set_primary_affinity(struct ceph_osdmap *map, int osd, u32 aff)
+>  	if (!map->osd_primary_affinity) {
+>  		int i;
+>  
+> -		map->osd_primary_affinity = kmalloc_array(map->max_osd,
+> -							  sizeof(u32),
+> -							  GFP_NOFS);
+> +		map->osd_primary_affinity = ceph_kvmalloc(
+> +		    array_size(map->max_osd, sizeof(*map->osd_primary_affinity)),
+> +		    GFP_NOFS);
+>  		if (!map->osd_primary_affinity)
+>  			return -ENOMEM;
+>  
+> @@ -1321,7 +1338,7 @@ static int decode_primary_affinity(void **p, void *end,
+>  
+>  	ceph_decode_32_safe(p, end, len, e_inval);
+>  	if (len == 0) {
+> -		kfree(map->osd_primary_affinity);
+> +		kvfree(map->osd_primary_affinity);
+>  		map->osd_primary_affinity = NULL;
+>  		return 0;
+>  	}
+
+-- 
+Jeff Layton <jlayton@kernel.org>
 
