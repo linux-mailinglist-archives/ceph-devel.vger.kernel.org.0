@@ -2,37 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76989B0492
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Sep 2019 21:33:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE923B0497
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Sep 2019 21:35:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728555AbfIKTcM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 11 Sep 2019 15:32:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44318 "EHLO mail.kernel.org"
+        id S1728762AbfIKTfx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 11 Sep 2019 15:35:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728285AbfIKTcL (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 11 Sep 2019 15:32:11 -0400
+        id S1728285AbfIKTfx (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 11 Sep 2019 15:35:53 -0400
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C62C8206A5;
-        Wed, 11 Sep 2019 19:32:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FFF1206A5;
+        Wed, 11 Sep 2019 19:35:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568230331;
-        bh=Ao8l+W7vJkqG5WR3WLlQ0pRT+2DGRSnnwjhAHQFt42w=;
+        s=default; t=1568230552;
+        bh=6d/cYa6+FD68raDbTyz2Mu6mUuEJP7/J5qlIbY0qE7c=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ttFjmhGlQdNa4dFNZ1+i5LA6Ei95aiORD+sPsOabCThKPPeb58rR2R2ZiYwmd3SQ8
-         Ab17+CqieSktHvVWlU6lCbMVpflL7ZTL/17JRYg7zIUkYnlOlwEO+HRu8yGVHQmW79
-         EPM9rLDKOT7MHhJNEL6bmByOz6snAkza/RBUJgC8=
-Message-ID: <e9003274871de6262459fe6e57f05f9521692adf.camel@kernel.org>
-Subject: Re: [PATCH] ceph: convert int fields in ceph_mount_options to
- unsigned int
+        b=bc+Y0p+3hWikC8iljW5S5vb4rOyg0uzdZumAlxmenEky0X4AbQp3X9SFAatBqn7fa
+         0ABtWgXNC71R6cXZwtvN6H7FnG1fyNMFGXP6XuZCEGCnduCS77bEJtumrqsSVpSsiY
+         dDcafBVTRlHoZlpSfl9XMgHXNtBjpv3yaA4gxaOs=
+Message-ID: <dc75c171278e4dd1fc00c20b3a9843bb412901ac.camel@kernel.org>
+Subject: Re: [PATCH] ceph: add mount opt, always_auth
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
-Date:   Wed, 11 Sep 2019 15:32:09 -0400
-In-Reply-To: <CAOi1vP-=qNbaCffVft8WDUuHvS9BccML8zvC8ZszDb=QGb6LVg@mail.gmail.com>
-References: <20190911164037.23495-1-jlayton@kernel.org>
-         <CAOi1vP-=qNbaCffVft8WDUuHvS9BccML8zvC8ZszDb=QGb6LVg@mail.gmail.com>
+To:     Gregory Farnum <gfarnum@redhat.com>
+Cc:     simon gao <simon29rock@gmail.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Date:   Wed, 11 Sep 2019 15:35:51 -0400
+In-Reply-To: <CAJ4mKGbY+veWdLv588Hz4mQidz5ofiGemOQ2Nwx_M6XN0WXGJw@mail.gmail.com>
+References: <1568083391-920-1-git-send-email-simon29rock@gmail.com>
+         <e413734270fc43cabbf9df09b0ed4bff06a96699.camel@kernel.org>
+         <CAJ4mKGbY+veWdLv588Hz4mQidz5ofiGemOQ2Nwx_M6XN0WXGJw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
@@ -42,98 +43,44 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2019-09-11 at 20:32 +0200, Ilya Dryomov wrote:
-> On Wed, Sep 11, 2019 at 6:42 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > Most of these values should never be negative, so convert them to
-> > unsigned values. Leave caps_max alone however, as it will be compared
-> > with a counter that we want to leave signed.
-> > 
-> > Add some sanity checking to the parsed values, and clean up some
-> > unneeded casts.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/ceph/mds_client.c |  5 +++--
-> >  fs/ceph/super.c      | 34 ++++++++++++++++++----------------
-> >  fs/ceph/super.h      | 16 ++++++++--------
-> >  3 files changed, 29 insertions(+), 26 deletions(-)
-> > 
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index 0d7afabb1f49..da882217d04d 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -2031,12 +2031,13 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds_request *req,
-> >         struct ceph_mds_reply_info_parsed *rinfo = &req->r_reply_info;
-> >         struct ceph_mount_options *opt = req->r_mdsc->fsc->mount_options;
-> >         size_t size = sizeof(struct ceph_mds_reply_dir_entry);
-> > -       int order, num_entries;
-> > +       unsigned int num_entries;
-> > +       int order;
-> > 
-> >         spin_lock(&ci->i_ceph_lock);
-> >         num_entries = ci->i_files + ci->i_subdirs;
-> >         spin_unlock(&ci->i_ceph_lock);
-> > -       num_entries = max(num_entries, 1);
-> > +       num_entries = max(num_entries, 1U);
-> >         num_entries = min(num_entries, opt->max_readdir);
-> > 
-> >         order = get_order(size * num_entries);
-> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> > index 2710f9a4a372..fa95c2faf167 100644
-> > --- a/fs/ceph/super.c
-> > +++ b/fs/ceph/super.c
-> > @@ -170,10 +170,10 @@ static const struct fs_parameter_enum ceph_param_enums[] = {
-> >  static const struct fs_parameter_spec ceph_param_specs[] = {
-> >         fsparam_flag_no ("acl",                         Opt_acl),
-> >         fsparam_flag_no ("asyncreaddir",                Opt_asyncreaddir),
-> > -       fsparam_u32     ("caps_max",                    Opt_caps_max),
-> > +       fsparam_s32     ("caps_max",                    Opt_caps_max),
-> >         fsparam_u32     ("caps_wanted_delay_max",       Opt_caps_wanted_delay_max),
-> >         fsparam_u32     ("caps_wanted_delay_min",       Opt_caps_wanted_delay_min),
-> > -       fsparam_s32     ("write_congestion_kb",         Opt_congestion_kb),
-> > +       fsparam_u32     ("write_congestion_kb",         Opt_congestion_kb),
-> >         fsparam_flag_no ("copyfrom",                    Opt_copyfrom),
-> >         fsparam_flag_no ("dcache",                      Opt_dcache),
-> >         fsparam_flag_no ("dirstat",                     Opt_dirstat),
-> > @@ -185,8 +185,8 @@ static const struct fs_parameter_spec ceph_param_specs[] = {
-> >         fsparam_flag_no ("quotadf",                     Opt_quotadf),
-> >         fsparam_u32     ("rasize",                      Opt_rasize),
-> >         fsparam_flag_no ("rbytes",                      Opt_rbytes),
-> > -       fsparam_s32     ("readdir_max_bytes",           Opt_readdir_max_bytes),
-> > -       fsparam_s32     ("readdir_max_entries",         Opt_readdir_max_entries),
-> > +       fsparam_u32     ("readdir_max_bytes",           Opt_readdir_max_bytes),
-> > +       fsparam_u32     ("readdir_max_entries",         Opt_readdir_max_entries),
-> > 
-> > [...]
-> > 
-> >         case Opt_caps_max:
-> > -               fsopt->caps_max = result.uint_32;
-> > +               if (result.int_32 < 0)
-> > +                       goto invalid_value;
-> > +               fsopt->caps_max = result.int_32;
+On Wed, 2019-09-11 at 11:30 -0700, Gregory Farnum wrote:
+> On Tue, Sep 10, 2019 at 3:11 AM Jeff Layton <jlayton@kernel.org> wrote:
+> > I've no particular objection here, but I'd prefer Greg's ack before we
+> > merge it, since he raised earlier concerns.
 > 
-> I picked on David's patch because it converted everything to unsigned,
-> but left write_congestion_kb, readdir_max_bytes and readdir_max_entries
-> signed.  None of them can be negative, so it didn't make sense to me.
+> You have my acked-by in light of Zheng's comments elsewhere and the
+> evidence that this actually works in some scenarios.
 > 
-> This patch fixes that, but leaves caps_max signed.  caps_max can't be
-> negative, so again it doesn't make sense to me.  If we are going to
-> tweak the option table as part of this conversion, I think it needs to
-> be consistent: either signed with a check or unsigned without a check
-> for all options that can't be negative.
+> Might be nice to at least get far enough to generate tickets based on
+> your questions in the other thread, though:
+> 
 
-It should never be set to a negative value, but caps_max gets propagated
-to mdsc->caps_use_max, and that value is eventually compared to
-mdsc->caps_use_count (see ceph_trim_dentries). caps_use_max is a simple
-counter that is incremented or decremented when we add or remove caps.
+I'm not sold yet.
 
-My experience with these sorts of counters is that it's best to leave
-them signed, as they can underflow in the face of bugs. When that
-happens it's better that the resulting value end up looking to be less
-than zero than really large.
+Why is this something the client should have to worry about at all? Can
+we do something on the MDS to better handle this situation? This really
+feels like we're exposing an implementation detail via mount option.
 
-Could we make caps_max be unsigned and leave everything else signed?
-Sure, but I don't see any benefit to doing that.
+At a bare minimum, if we take this, I'd like to see some documentation.
+When should a user decide to turn this on or off? There are no
+guidelines to the use of this thing so far.
+
+
+> On Wed, Sep 11, 2019 at 9:26 AM Jeff Layton <jlayton@kernel.org> wrote:
+> > In an ideal world, what should happen in this case? Should we be
+> > changing MDS policy to forward the request in this situation?
+> > 
+> > This mount option seems like it's exposing something that is really an
+> > internal implementation detail to the admin. That might be justified,
+> > but I'm unclear on why we don't expect more saner behavior from the MDS
+> > on this?
+> 
+> I think partly it's that early designs underestimated the cost of
+> replication and overestimated its utility, but I also thought forwards
+> were supposed to happen more often than replication so I'm curious why
+> it's apparently not doing that.
+> -Greg
+
 -- 
 Jeff Layton <jlayton@kernel.org>
 
