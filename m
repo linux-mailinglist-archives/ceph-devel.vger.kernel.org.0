@@ -2,94 +2,117 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64C0AAFDC6
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Sep 2019 15:33:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35949AFF12
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Sep 2019 16:46:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728105AbfIKNdg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 11 Sep 2019 09:33:36 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39920 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727307AbfIKNdf (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 Sep 2019 09:33:35 -0400
-Received: by mail-io1-f66.google.com with SMTP id d25so45828472iob.6
-        for <ceph-devel@vger.kernel.org>; Wed, 11 Sep 2019 06:33:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+Xoo6l4F2Pk5XEf9omz9OQQmWDtqGeVytsL5N6pgpho=;
-        b=EiOgxOx+k3kL7A75YeUxfZvJx2QrWIsicTmrAVnD2KdX9HicA66s7fxMfGt851qo7r
-         dtYClJn/IG95ITAvXlz9LTydz1JJz9gBj2I2dVWnU7idXvea2PMJt8s82YeBLEvlq/3a
-         NuvRtydDQeOsHk7XPAMW+AcLpUivIO2K4lCSsBDL6bcm2nkCBRlDEVOYqTORZ3YyPds7
-         ZLtv/0V6gKD78fhQxO9Wfgwpy8I20bBB+/mo3tGYMA8fJvY6f/jFhLpyiktA+IGBQ94R
-         yhL5WU7obe26nHYcIwhLA39Vq+dNLfg8qNFClR0G8LBX0at86pCBWUq9z8fOC8ehkaAg
-         gIkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+Xoo6l4F2Pk5XEf9omz9OQQmWDtqGeVytsL5N6pgpho=;
-        b=JJ/F5C3juR3Iuka88xYQ5sktYoiZbgZdYtIdHR0N8H1XGjiSt8ehINuhEl/OdRjns3
-         5kXv+enGisGahVvJvC2CRpSLUZn5RQ/iGvkXgdhaDXDvP16s1vNjX6Vm4f8Ae0/n5s0n
-         VnFYuzYPlLoP1/zxFJgiXn9Uergg3ClR4Jqocc1obEiFaTziZAknP/UKsxyyFHL+HxRP
-         cZiMVRvSeEBUWoCMOKuR0/kg8odo7zzEb8P9uU6uASIpraOFoGZGYlDogelJIFBSU0yC
-         vpSMa57fY7oF8Y4C3DfTr//KHN3yfvFjYpM6Ei4b2dabm5w/6AkH9Csvrc41VdXaDV3J
-         iP+A==
-X-Gm-Message-State: APjAAAUyA33vpsE844y4gQxy44lHu2QM2aDJxmYMTwzvfK26yZ+ByuSc
-        mwSjgZERvSgpVS7kYpIc5SY5g/PFu3cC5llewUXhHJjGzeU=
-X-Google-Smtp-Source: APXvYqyAcfVVsHrTlbYH5NycgOJl3xLFYHeEtm+7tXGGqgKYHyMPykYdUUQZeoOcBKsXTyBOQ/nBnYdqC3jjsraF+v0=
-X-Received: by 2002:a02:b882:: with SMTP id p2mr5670148jam.16.1568208813623;
- Wed, 11 Sep 2019 06:33:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190910151748.914-1-idryomov@gmail.com> <20190911063159.GA25496@infradead.org>
-In-Reply-To: <20190911063159.GA25496@infradead.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 11 Sep 2019 15:33:27 +0200
-Message-ID: <CAOi1vP-unOFL2RMweG9gjfSY=xrmED=0bJxd5H0KrKsMSiMdmA@mail.gmail.com>
+        id S1728117AbfIKOp7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 11 Sep 2019 10:45:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42774 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727020AbfIKOp7 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 11 Sep 2019 10:45:59 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48A2E20644;
+        Wed, 11 Sep 2019 14:45:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568213157;
+        bh=jKKbrkpAal/QD48EE9vzeg1oiRuwzKYAtypZnetUa7Q=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=AhmLJwVbJuXnXNBUxhb0f1s1wxB9JmxU+Pxfj0cgsB5rmaNfM6kvy7pCTPCYfn3fK
+         zLG7T5xupv6XsNmGwPJRxyNVkCAt9ZPBsFrI4p02dGwFbFU6BfvOWoxUiATYIjpTmM
+         81ohPteQUguReu3hTBZlI5Btvoe4uTj4E0r+2GCE=
+Message-ID: <2570072aa4f573cc9686b3ca3ecc83a3066700d0.camel@kernel.org>
 Subject: Re: [PATCH] libceph: avoid a __vmalloc() deadlock in ceph_kvmalloc()
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+Date:   Wed, 11 Sep 2019 10:45:56 -0400
+In-Reply-To: <20190910151748.914-1-idryomov@gmail.com>
+References: <20190910151748.914-1-idryomov@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 8:32 AM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Tue, Sep 10, 2019 at 05:17:48PM +0200, Ilya Dryomov wrote:
-> > The vmalloc allocator doesn't fully respect the specified gfp mask:
-> > while the actual pages are allocated as requested, the page table pages
-> > are always allocated with GFP_KERNEL.  ceph_kvmalloc() may be called
-> > with GFP_NOFS and GFP_NOIO (for ceph and rbd respectively), so this may
-> > result in a deadlock.
-> >
-> > There is no real reason for the current PAGE_ALLOC_COSTLY_ORDER logic,
-> > it's just something that seemed sensible at the time (ceph_kvmalloc()
-> > predates kvmalloc()).  kvmalloc() is smarter: in an attempt to reduce
-> > long term fragmentation, it first tries to kmalloc non-disruptively.
-> >
-> > Switch to kvmalloc() and set the respective PF_MEMALLOC_* flag using
-> > the scope API to avoid the deadlock.  Note that kvmalloc() needs to be
-> > passed GFP_KERNEL to enable the fallback.
->
-> If you can please just stop using GFP_NOFS altogether and set
-> PF_MEMALLOC_* for the actual contexts.
+On Tue, 2019-09-10 at 17:17 +0200, Ilya Dryomov wrote:
+> The vmalloc allocator doesn't fully respect the specified gfp mask:
+> while the actual pages are allocated as requested, the page table pages
+> are always allocated with GFP_KERNEL.  ceph_kvmalloc() may be called
+> with GFP_NOFS and GFP_NOIO (for ceph and rbd respectively), so this may
+> result in a deadlock.
+> 
+> There is no real reason for the current PAGE_ALLOC_COSTLY_ORDER logic,
+> it's just something that seemed sensible at the time (ceph_kvmalloc()
+> predates kvmalloc()).  kvmalloc() is smarter: in an attempt to reduce
+> long term fragmentation, it first tries to kmalloc non-disruptively.
+> 
+> Switch to kvmalloc() and set the respective PF_MEMALLOC_* flag using
+> the scope API to avoid the deadlock.  Note that kvmalloc() needs to be
+> passed GFP_KERNEL to enable the fallback.
+> 
+> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+> ---
+>  net/ceph/ceph_common.c | 29 +++++++++++++++++++++++------
+>  1 file changed, 23 insertions(+), 6 deletions(-)
+> 
+> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> index c41789154cdb..970e74b46213 100644
+> --- a/net/ceph/ceph_common.c
+> +++ b/net/ceph/ceph_common.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/nsproxy.h>
+>  #include <linux/fs_parser.h>
+>  #include <linux/sched.h>
+> +#include <linux/sched/mm.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/slab.h>
+>  #include <linux/statfs.h>
+> @@ -185,18 +186,34 @@ int ceph_compare_options(struct ceph_options *new_opt,
+>  }
+>  EXPORT_SYMBOL(ceph_compare_options);
+>  
+> +/*
+> + * kvmalloc() doesn't fall back to the vmalloc allocator unless flags are
+> + * compatible with (a superset of) GFP_KERNEL.  This is because while the
+> + * actual pages are allocated with the specified flags, the page table pages
+> + * are always allocated with GFP_KERNEL.  map_vm_area() doesn't even take
+> + * flags because GFP_KERNEL is hard-coded in {p4d,pud,pmd,pte}_alloc().
+> + *
+> + * ceph_kvmalloc() may be called with GFP_KERNEL, GFP_NOFS or GFP_NOIO.
+> + */
+>  void *ceph_kvmalloc(size_t size, gfp_t flags)
+>  {
+> -	if (size <= (PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER)) {
+> -		void *ptr = kmalloc(size, flags | __GFP_NOWARN);
+> -		if (ptr)
+> -			return ptr;
+> +	void *p;
+> +
+> +	if ((flags & (__GFP_IO | __GFP_FS)) == (__GFP_IO | __GFP_FS)) {
+> +		p = kvmalloc(size, flags);
+> +	} else if ((flags & (__GFP_IO | __GFP_FS)) == __GFP_IO) {
+> +		unsigned int nofs_flag = memalloc_nofs_save();
+> +		p = kvmalloc(size, GFP_KERNEL);
+> +		memalloc_nofs_restore(nofs_flag);
+> +	} else {
+> +		unsigned int noio_flag = memalloc_noio_save();
+> +		p = kvmalloc(size, GFP_KERNEL);
+> +		memalloc_noio_restore(noio_flag);
+>  	}
+>  
+> -	return __vmalloc(size, flags, PAGE_KERNEL);
+> +	return p;
+>  }
+>  
+> -
+>  static int parse_fsid(const char *str, struct ceph_fsid *fsid)
+>  {
+>  	int i = 0;
 
-Hi Christoph,
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
-ceph_kvmalloc() is indirectly called from dozens of places, everywhere
-a new RPC message is allocated.  Some of them are used for client setup
-and don't need a scope (GFP_KERNEL is fine), but the vast majority do.
-I don't think wrapping each call is practical.
-
-As for getting rid of GFP_NOFS and GFP_NOIO entirely (i.e. dropping the
-gfp mask from all libceph APIs and using scopes instead), it's something
-that I have had in the back of my head for a while now because we cheat
-in a few places and hard-code GFP_NOIO as the lowest common denominator
-instead of properly propagating the gfp mask.  It's more of a project
-though, and won't be backportable.
-
-Thanks,
-
-                Ilya
