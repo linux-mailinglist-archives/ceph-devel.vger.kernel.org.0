@@ -2,78 +2,140 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7929DB03A5
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Sep 2019 20:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87FE4B03AF
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Sep 2019 20:32:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729859AbfIKSa0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 11 Sep 2019 14:30:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50094 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729016AbfIKSaZ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 11 Sep 2019 14:30:25 -0400
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 949E4AD880
-        for <ceph-devel@vger.kernel.org>; Wed, 11 Sep 2019 18:30:25 +0000 (UTC)
-Received: by mail-qk1-f198.google.com with SMTP id z128so13576031qke.8
-        for <ceph-devel@vger.kernel.org>; Wed, 11 Sep 2019 11:30:25 -0700 (PDT)
+        id S1730026AbfIKScf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 11 Sep 2019 14:32:35 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:36387 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729825AbfIKScf (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 Sep 2019 14:32:35 -0400
+Received: by mail-io1-f68.google.com with SMTP id b136so48219917iof.3
+        for <ceph-devel@vger.kernel.org>; Wed, 11 Sep 2019 11:32:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yTUKwfQ1M5s88Dxgsklac6B+3MRh6p9URMByF6Dab24=;
+        b=X/xy6Ze+XQGy4VJ4Xl02BC9aPlfPXD8sb/ovHF+Ko10nqMKMQzPTvpGS7UTsjxpHGR
+         9LLh7uBhch4xwO4bhucjmu6s/C54yLUy6rIOxdj9BUP0Aq3pnaq0X8aCIJdLm5coLTT9
+         wqNVK7JKuxNy45XLS5mi5lsq4yLE68V1lCp7EfQVBZdswQ7lwSIjlXXJUNJyyRdnxMvj
+         E4TpKgQdEjw4Snmq/w0tmXav4nZWKdu4+LFB694dnS8ps6ZmipB3ggl4DcuaaZO+Trmv
+         Yd+qBG0SNvzRJ1aktRdALdDVVC7NiRw2JGmHEXG+YJRUbGPTZzfGkNvXEqTggw6TOw4M
+         3HyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vr25q8HXRs/5Z/IQGtPD0824c39CxA4jNiAmKfLKcxc=;
-        b=CbnrkPz9Fgq5WjDlgJgzMrzSvRhUhu7lWfxTGxiiz0jV8IAll0haJh4iGB6Ehz/cmx
-         477QD5pgVj/qxIoPQN3rXCbojQwP5lxs/IZ4+Nj+2Wzz3+hP9HcfW2XO3lmptwGmL9oH
-         yxtRfsLpG1W/rOoaDDqBgbM3UsUmv2eq3nIPBu6dGPE5/KVHfpegupH6iTgxl+6bTgHG
-         E6uU3SaJmrUmC67ZMx12ojUO1rf/aJ6CdwEKodyMjW9YUluZl5Teguf7FD7lulQlcEWU
-         0iuqNMppS+7QlxHWFvCcCMGZ/Dwn+I1O8hi4BY7kPMk4JubIdUy/5YhNgZ0yciSr1e8W
-         ZrbQ==
-X-Gm-Message-State: APjAAAWd8xtDAyEKjJoo2UH+2x+Z/m2EzwbX1A/Se4EG9Ot89S7GqWw+
-        AkbqxbTuzcx5sS4NQQ77FTijYBdX1/+HC7MYIyJ4nQ7n9t+1MNjEbWOgk9DSBP1Aju9o923xfkQ
-        gKNUhoWeLl0DA4KWfSWZdXZGhQ3YKwj8yzkX+lQ==
-X-Received: by 2002:a37:49d6:: with SMTP id w205mr36858422qka.191.1568226624492;
-        Wed, 11 Sep 2019 11:30:24 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyKyhS4a9dt2TReEq1jLkbiviLyRQ0s5Z8qmT7e2RfsRbYaNoexlLBZWl4mJUsQQp6n4bEx/q1CdvCTq4Uphzg=
-X-Received: by 2002:a37:49d6:: with SMTP id w205mr36858356qka.191.1568226623926;
- Wed, 11 Sep 2019 11:30:23 -0700 (PDT)
+        bh=yTUKwfQ1M5s88Dxgsklac6B+3MRh6p9URMByF6Dab24=;
+        b=GGGQfcfKqSKFDbYMwvAyTgW/7db1k6Wjz+JM27fckEzMp5QHQxAX4HVh27CJgsAQD8
+         lyvNFOp7ez/K/8njNpHibK3Ah4IBTwBxCc6MX92iUz7IIJsRrxx65keWDmWIYGI47F2/
+         Le2zuRcUKnutFQxJBtgd8ZarholvJdJgufrtxn+q+lb9Fn59jnTHCQHswtOvMuFJW6Ar
+         YUrkfBObCklOaVrfjxPiOAPFCew1AL5UgUbTEY30R8aOlvShltqxfExEQSLmIyNBg8Th
+         elWICHZJizuvkm90Wu4/j5/Bxu35J2fR5L58c4ysG4JnSXgkAnMyb5g9tLZMdAyOOcXS
+         N4vA==
+X-Gm-Message-State: APjAAAUyC8czmGOi2BHcHlPKOctbxUr0nOKKasyvuBx2biAX/pjK6wwM
+        MKV90hlFnHF3yKpPWRY64IPVBKLolPv3DkKU020=
+X-Google-Smtp-Source: APXvYqzlQVd1lSm7ygD9eIoo5x/OGvpkScppR2cIaLXZXV2x3ndwgi6lPkqC9BvxV9DjTQxBNdFihuO90HrV/+cN8ok=
+X-Received: by 2002:a6b:ef0b:: with SMTP id k11mr8547565ioh.143.1568226752726;
+ Wed, 11 Sep 2019 11:32:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <1568083391-920-1-git-send-email-simon29rock@gmail.com> <e413734270fc43cabbf9df09b0ed4bff06a96699.camel@kernel.org>
-In-Reply-To: <e413734270fc43cabbf9df09b0ed4bff06a96699.camel@kernel.org>
-From:   Gregory Farnum <gfarnum@redhat.com>
-Date:   Wed, 11 Sep 2019 11:30:13 -0700
-Message-ID: <CAJ4mKGbY+veWdLv588Hz4mQidz5ofiGemOQ2Nwx_M6XN0WXGJw@mail.gmail.com>
-Subject: Re: [PATCH] ceph: add mount opt, always_auth
+References: <20190911164037.23495-1-jlayton@kernel.org>
+In-Reply-To: <20190911164037.23495-1-jlayton@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Wed, 11 Sep 2019 20:32:26 +0200
+Message-ID: <CAOi1vP-=qNbaCffVft8WDUuHvS9BccML8zvC8ZszDb=QGb6LVg@mail.gmail.com>
+Subject: Re: [PATCH] ceph: convert int fields in ceph_mount_options to
+ unsigned int
 To:     Jeff Layton <jlayton@kernel.org>
-Cc:     simon gao <simon29rock@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 3:11 AM Jeff Layton <jlayton@kernel.org> wrote:
-> I've no particular objection here, but I'd prefer Greg's ack before we
-> merge it, since he raised earlier concerns.
-
-You have my acked-by in light of Zheng's comments elsewhere and the
-evidence that this actually works in some scenarios.
-
-Might be nice to at least get far enough to generate tickets based on
-your questions in the other thread, though:
-
-On Wed, Sep 11, 2019 at 9:26 AM Jeff Layton <jlayton@kernel.org> wrote:
-> In an ideal world, what should happen in this case? Should we be
-> changing MDS policy to forward the request in this situation?
+On Wed, Sep 11, 2019 at 6:42 PM Jeff Layton <jlayton@kernel.org> wrote:
 >
-> This mount option seems like it's exposing something that is really an
-> internal implementation detail to the admin. That might be justified,
-> but I'm unclear on why we don't expect more saner behavior from the MDS
-> on this?
+> Most of these values should never be negative, so convert them to
+> unsigned values. Leave caps_max alone however, as it will be compared
+> with a counter that we want to leave signed.
+>
+> Add some sanity checking to the parsed values, and clean up some
+> unneeded casts.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/mds_client.c |  5 +++--
+>  fs/ceph/super.c      | 34 ++++++++++++++++++----------------
+>  fs/ceph/super.h      | 16 ++++++++--------
+>  3 files changed, 29 insertions(+), 26 deletions(-)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 0d7afabb1f49..da882217d04d 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -2031,12 +2031,13 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds_request *req,
+>         struct ceph_mds_reply_info_parsed *rinfo = &req->r_reply_info;
+>         struct ceph_mount_options *opt = req->r_mdsc->fsc->mount_options;
+>         size_t size = sizeof(struct ceph_mds_reply_dir_entry);
+> -       int order, num_entries;
+> +       unsigned int num_entries;
+> +       int order;
+>
+>         spin_lock(&ci->i_ceph_lock);
+>         num_entries = ci->i_files + ci->i_subdirs;
+>         spin_unlock(&ci->i_ceph_lock);
+> -       num_entries = max(num_entries, 1);
+> +       num_entries = max(num_entries, 1U);
+>         num_entries = min(num_entries, opt->max_readdir);
+>
+>         order = get_order(size * num_entries);
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index 2710f9a4a372..fa95c2faf167 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -170,10 +170,10 @@ static const struct fs_parameter_enum ceph_param_enums[] = {
+>  static const struct fs_parameter_spec ceph_param_specs[] = {
+>         fsparam_flag_no ("acl",                         Opt_acl),
+>         fsparam_flag_no ("asyncreaddir",                Opt_asyncreaddir),
+> -       fsparam_u32     ("caps_max",                    Opt_caps_max),
+> +       fsparam_s32     ("caps_max",                    Opt_caps_max),
+>         fsparam_u32     ("caps_wanted_delay_max",       Opt_caps_wanted_delay_max),
+>         fsparam_u32     ("caps_wanted_delay_min",       Opt_caps_wanted_delay_min),
+> -       fsparam_s32     ("write_congestion_kb",         Opt_congestion_kb),
+> +       fsparam_u32     ("write_congestion_kb",         Opt_congestion_kb),
+>         fsparam_flag_no ("copyfrom",                    Opt_copyfrom),
+>         fsparam_flag_no ("dcache",                      Opt_dcache),
+>         fsparam_flag_no ("dirstat",                     Opt_dirstat),
+> @@ -185,8 +185,8 @@ static const struct fs_parameter_spec ceph_param_specs[] = {
+>         fsparam_flag_no ("quotadf",                     Opt_quotadf),
+>         fsparam_u32     ("rasize",                      Opt_rasize),
+>         fsparam_flag_no ("rbytes",                      Opt_rbytes),
+> -       fsparam_s32     ("readdir_max_bytes",           Opt_readdir_max_bytes),
+> -       fsparam_s32     ("readdir_max_entries",         Opt_readdir_max_entries),
+> +       fsparam_u32     ("readdir_max_bytes",           Opt_readdir_max_bytes),
+> +       fsparam_u32     ("readdir_max_entries",         Opt_readdir_max_entries),
+>
+> [...]
+>
+>         case Opt_caps_max:
+> -               fsopt->caps_max = result.uint_32;
+> +               if (result.int_32 < 0)
+> +                       goto invalid_value;
+> +               fsopt->caps_max = result.int_32;
 
-I think partly it's that early designs underestimated the cost of
-replication and overestimated its utility, but I also thought forwards
-were supposed to happen more often than replication so I'm curious why
-it's apparently not doing that.
--Greg
+I picked on David's patch because it converted everything to unsigned,
+but left write_congestion_kb, readdir_max_bytes and readdir_max_entries
+signed.  None of them can be negative, so it didn't make sense to me.
+
+This patch fixes that, but leaves caps_max signed.  caps_max can't be
+negative, so again it doesn't make sense to me.  If we are going to
+tweak the option table as part of this conversion, I think it needs to
+be consistent: either signed with a check or unsigned without a check
+for all options that can't be negative.
+
+Thanks,
+
+                Ilya
