@@ -2,129 +2,84 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD185B67B8
-	for <lists+ceph-devel@lfdr.de>; Wed, 18 Sep 2019 18:06:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A76DCB73B2
+	for <lists+ceph-devel@lfdr.de>; Thu, 19 Sep 2019 09:06:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731860AbfIRQGk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 18 Sep 2019 12:06:40 -0400
-Received: from mtax.cdmx.gob.mx ([187.141.35.197]:10320 "EHLO mtaw.cdmx.gob.mx"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727609AbfIRQGk (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 18 Sep 2019 12:06:40 -0400
-X-NAI-Header: Modified by McAfee Email Gateway (4500)
+        id S2387782AbfISHGG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 19 Sep 2019 03:06:06 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44515 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387611AbfISHGG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 19 Sep 2019 03:06:06 -0400
+Received: by mail-lj1-f193.google.com with SMTP id m13so2388940ljj.11
+        for <ceph-devel@vger.kernel.org>; Thu, 19 Sep 2019 00:06:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cdmx.gob.mx; s=72359050-3965-11E6-920A-0192F7A2F08E;
-        t=1568822106; h=X-Virus-Scanned:Content-Type:
-         MIME-Version:Content-Transfer-Encoding:Content-Description:
-         Subject:To:From:Date:Reply-To:Message-Id:X-AnalysisOut:
-         X-AnalysisOut:X-AnalysisOut:X-AnalysisOut:
-         X-AnalysisOut:X-AnalysisOut:X-AnalysisOut:
-         X-SAAS-TrackingID:X-NAIMIME-Disclaimer:X-NAIMIME-Modified:
-         X-NAI-Spam-Flag:X-NAI-Spam-Threshold:X-NAI-Spam-Score:
-         X-NAI-Spam-Rules:X-NAI-Spam-Version; bh=K
-        jij0GhOpdKSaBiEpb4h9F2ukULK7Zgku7ZRRhmMNN
-        U=; b=comgZJw3wu5ohKfLEIOcLFdi82Dgrx9DhzP67VnI7E0q
-        IfkOsStYQsufcWlV6vl+KsO0QYnpvsDSJVXeTaAejkMQwOcvfB
-        p3vEIrKAYbomJJvK9Inh+qZbEBqbdxU6J7+Vc5teUt+FRyO9pe
-        405g671qbtoSVsgX+8KkE4xgHk4=
-Received: from correo.seciti.cdmx.gob.mx (gdf-correo.cdmx.gob.mx [10.250.102.17]) by mtaw.cdmx.gob.mx with smtp
-         id 0310_70f9_83c6b71a_1b7b_4a46_94a2_228397648603;
-        Wed, 18 Sep 2019 10:55:05 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by gdf-correo.df.gob.mx (Postfix) with ESMTP id E3C9E30C5;
-        Wed, 18 Sep 2019 10:54:58 -0500 (CDT)
-Received: from correo.seciti.cdmx.gob.mx ([127.0.0.1])
-        by localhost (gdf-correo.df.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id R3dGnUdEvXEa; Wed, 18 Sep 2019 10:54:58 -0500 (CDT)
-Received: from localhost (localhost [127.0.0.1])
-        by gdf-correo.df.gob.mx (Postfix) with ESMTP id D5EBC30A7;
-        Wed, 18 Sep 2019 10:54:57 -0500 (CDT)
-X-Virus-Scanned: amavisd-new at gdf-correo.df.gob.mx
-Received: from correo.seciti.cdmx.gob.mx ([127.0.0.1])
-        by localhost (gdf-correo.df.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ZG5VOcH2h7ND; Wed, 18 Sep 2019 10:54:57 -0500 (CDT)
-Received: from [41.148.42.229] (8ta-148-42-229.telkomadsl.co.za [41.148.42.229])
-        by gdf-correo.df.gob.mx (Postfix) with ESMTPSA id AEE08126D;
-        Wed, 18 Sep 2019 10:54:35 -0500 (CDT)
-Content-Type: text/plain;
-  charset="utf-8"
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=ceDNX4Ub1qGFtJMawhIizXcWlWEuKqM4ifvARNNnMjQ=;
+        b=nuuw3lygvea72Oet2KV+wj1n7DjNGMu/c79VM8PbSMSUYPz/itbrfMchATHCkBHlxg
+         pnOyY62Gp936f0VNnjxxM21L01VIA9CkAZ84ut+3jPJ00FdeaQrs59ap9y86lLwBgYyJ
+         1E15ISKikT7Q1aA0iC12Erpii28ri56RpwjqDV3Q9vpcUoZ6eWNpFcz/UA8Fad/LYQgd
+         n0viMpGyGuRPKDgzCyGnV6EmP3BMGnrRk9hkt6DhrPDOhAKAzVHvOd8eT76n1qdVlzcO
+         60LiWwDN9Ag4xEO5es4zXtpQsVNoaHXmioqQDWmRV6ONjfZ8fF3DhOAt4SLUFI70rixm
+         VfaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=ceDNX4Ub1qGFtJMawhIizXcWlWEuKqM4ifvARNNnMjQ=;
+        b=EgGBaMGnRmwovLnwEvTsz9ghSQt0yjz8r67luhDqTsC2MkWiJtJYKNrrkcHrZYntvL
+         egDp+Phazcj1MR4xNcLSvXP4cXqFJppqJb7YahV5tOEXZ7xnGB+lXAZpA0ymuWfySkTG
+         FV/oC1v8LS9PnwuMX2Yf5LHFcStVMGaISSu+CjPt+kKBXyEHYew0OkYbV7lknPO/Cvtq
+         zGp96vJw5EApLmsSBYicf151nAxVNKIobfUaqbs3yudUIxaRTIDdp1AYUBC6MpYpX+6+
+         UcZQ8aPXcm3Ye7EVSYpkY+ZGiNjQNiuECIjkRtWVe0YicB91x/DFqEKSpi6anALXeIKe
+         V8Ng==
+X-Gm-Message-State: APjAAAVnqJEY64gpUeIOhKTR9qlNozvDs+rY2dV/A+DsM452G+4e8VU5
+        s3kGM2hq7Cccjm6iNuhAOh2QFuyd9pmoTHypFyGlmTCSqpc=
+X-Google-Smtp-Source: APXvYqwUw17GGTMfEZdqTnQaU+DiR7RG7Ho3w4HG49DOMGOHvBsN3plVX49UJjm9h2URMEFipoJrk6TJO+uA830mE8c=
+X-Received: by 2002:a2e:9094:: with SMTP id l20mr661387ljg.35.1568876763578;
+ Thu, 19 Sep 2019 00:06:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Description: Mail message body
-Subject: Spende von 5 Millionen Euro
-To:     Recipients <mramirezg@mexicocity.gob.mx>
-From:   "Shane Missler" <mramirezg@mexicocity.gob.mx>
-Date:   Wed, 18 Sep 2019 17:54:23 +0200
-Reply-To: shanemissler3@gmail.com
-Message-Id: <20190918155435.AEE08126D@gdf-correo.df.gob.mx>
-X-AnalysisOut: [v=2.2 cv=OqU/823t c=1 sm=1 tr=0 p=ELT1L0JgSr8A:10 p=09-KjH]
-X-AnalysisOut: [S_CW8A:10 p=bEr4i4eggGkA:10 p=emDABjehN2fqPHqc8RbT:22 p=Ly]
-X-AnalysisOut: [qu6MUUigPyaOuRX7ce:22 a=KsSCQl7LcZej77FuluUcQw==:117 a=oLf]
-X-AnalysisOut: [NtqljNgXPa7RrmTwnGA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:]
-X-AnalysisOut: [10 a=J70Eh1EUuV4A:10 a=pGLkceISAAAA:8 a=wN7rT8hNlMSaUXRpxS]
-X-AnalysisOut: [gA:9 a=K7tsimcRO30Sg2YH:21 a=QOCYt1FwmxBrUrRv:21 a=QEXdDO2]
-X-AnalysisOut: [ut3YA:10]
-X-SAAS-TrackingID: 953528d5.0.82464120.00-2332.138586654.s12p02m011.mxlogic.net
-X-NAIMIME-Disclaimer: 1
-X-NAIMIME-Modified: 1
-X-NAI-Spam-Flag: NO
-X-NAI-Spam-Threshold: 3
-X-NAI-Spam-Score: -5000
-X-NAI-Spam-Rules: 1 Rules triggered
-        WHITELISTED=-5000
-X-NAI-Spam-Version: 2.3.0.9418 : core <6637> : inlines <7142> : streams
- <1833126> : uri <2906028>
+From:   Alex Xu <alexu4993@gmail.com>
+Date:   Thu, 19 Sep 2019 15:05:52 +0800
+Message-ID: <CAPHfcngzug4HDzHtZcb80xdf-NZFNjc2Q7r3vJWSHJufjcgKKQ@mail.gmail.com>
+Subject: RADOS EC: is it okay to reduce the number of commits required for
+ reply to client?
+To:     ceph-devel@vger.kernel.org, ceph-users@lists.ceph.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-RGllcyBpc3QgZWluZSBwZXJzw7ZubGljaGUgTWFpbCwgZGllIGljaCBhbiBTaWUgYWRyZXNzaWVy
-ZS4gSWNoIGJpbiBTSEFORSBNSVNTTEVSIGF1cyBGbG9yaWRhLCBVU0EuIFdpZSBTaWUgYmVyZWl0
-cyB3aXNzZW4sIGhhYmUgaWNoIGVpbmVuIExvdHRvLUphY2twb3QgaW4gSMO2aGUgdm9uIDQ1MSBN
-aW8uIFVTRCAoMzMwIE1pby4gR0JQKSBnZXdvbm5lbiB1bmQgZGFzIEdlbGQgaGF0IG1laW4gTGVi
-ZW4gdW5kIG1laW4gRmFtaWxpZW5sZWJlbiB2ZXLDpG5kZXJ0LCBhYmVyIGVzIHdpcmQgbWVpbiBI
-ZXJ6IG5pY2h0IHZlcsOkbmRlcm4sIHdpZSBpY2ggYW4gZGVtIFRhZyBzYWd0ZSwgYW4gZGVtIGlj
-aCBtZWluIEdlbGQgaGFiZSwgZGFzIGljaCB2ZXJ3ZW5kZW4gd2VyZGUgRGllc2VzIEdlbGQgZsO8
-ciBkaWUgSGlsZmUgZGVyIE1lbnNjaGhlaXQuIEljaCBoYWJlIGJlc2NobG9zc2VuLCBJaG5lbiB1
-bmQgSWhyZXIgR2VtZWluZGUgZWluZW4gQmV0cmFnIHZvbiA1IE1pbGxpb25lbiBFdXJvIHp1IHNw
-ZW5kZW4sIHVtIGRpZXNlIFNwZW5kZSBhbnp1Zm9yZGVybi4gRS1NYWlsOiAoc2hhbmVtaXNzbGVy
-MEBnbWFpbC5jb20pCgoKQ2VjaSBlc3QgdW4gY291cnJpZXIgcGVyc29ubmVsIHF1ZSBqZSB2b3Vz
-IGFkcmVzc2UuIEplIHN1aXMgU0hBTkUgTUlTU0xFUiwgZGUgRmxvcmlkZSwgw4l0YXRzLVVuaXMu
-IENvbW1lIHZvdXMgbGUgc2F2ZXogZMOpasOgLCBqJ2FpIGdhZ27DqSA0NTEgbWlsbGlvbnMgZGUg
-ZG9sbGFycyAoTG90dG8gSmFja3BvdCkgZXQgbCdhcmdlbnQgYSBjaGFuZ8OpIG1hIHZpZSBldCBj
-ZWxsZSBkZSBtYSBmYW1pbGxlLCBtYWlzIGNlbGEgbmUgY2hhbmdlcmEgcGFzIG1vbiBjxZN1ciwg
-Y29tbWUgamUgbCdhaSBkaXQgbGUgam91ciBvw7kgaidhaSBtb24gYXJnZW50LCBqJ3V0aWxpc2Vy
-YWkgY2V0IGFyZ2VudCBwb3VyIGwnYWlkZSBkZSBsJ2h1bWFuaXTDqS5KJ2FpIGTDqWNpZMOpIGRl
-IHZvdXMgZG9ubmVyIGxhIHNvbW1lIGRlIDUgbWlsbGlvbnMgZCdldXJvcyDDoCB2b3VzIGV0IMOg
-IHZvdHJlIGNvbW11bmF1dMOpLCBwb3VyIHLDqWNsYW1lciBjZSBkb24sIGVtYWlsLSAoc2hhbmVt
-aXNzbGVyMEBnbWFpbC5jb20pCgoKCgouLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4KCgpMYSBpbmZvcm1hY2lvbiBjb250ZW5pZGEgZW4gZXN0ZSBjb3JyZW8sIGFzaSBj
-b21vIGxhIGNvbnRlbmlkYSBlbiBsb3MgZG9jdW1lbnRvcyBhbmV4b3MsIHB1ZWRlIGNvbnRlbmVy
-IGRhdG9zIHBlcnNvbmFsZXMsIHBvciBsbyBxdWUgc3UgZGlmdXNpb24gZXMgcmVzcG9uc2FiaWxp
-ZGFkIGRlIHF1aWVuIGxvcyB0cmFuc21pdGUgeSBxdWllbiBsb3MgcmVjaWJlLCBlbiB0w6lybWlu
-b3MgZGUgbG8gZGlzcHVlc3RvIHBvciBsYXMgZnJhY2Npb25lcyBJSSB5IFZJSSBkZWwgYXJ0aWN1
-bG8gNCwgdWx0aW1vIHBhcnJhZm8gZGVsIGFydGljdWxvIDgsIGFydGljdWxvIDM2IHBhcnJhZm8g
-SUksIDM4IGZyYWNjaW9uIEkgeSBkZW1hcyBhcGxpY2FibGVzIGRlIGxhIExleSBkZSBUcmFuc3Bh
-cmVuY2lhIHkgQWNjZXNvIGEgbGEgSW5mb3JtYWNpb24gUHVibGljYSBkZWwgRGlzdHJpdG8gRmVk
-ZXJhbC4NCkxvcyBEYXRvcyBQZXJzb25hbGVzIHNlIGVuY3VlbnRyYW4gcHJvdGVnaWRvcyBwb3Ig
-bGEgTGV5IGRlIFByb3RlY2Npb24gZGUgRGF0b3MgUGVyc29uYWxlcyBkZWwgRGlzdHJpdG8gRmVk
-ZXJhbCwgcG9yIGxvIHF1ZSBzdSBkaWZ1c2lvbiBzZSBlbmN1ZW50cmEgdHV0ZWxhZGEgZW4gc3Vz
-IGFydGljdWxvcyAyLCA1LCAxNiwgMjEsIDQxIHkgZGVtYXMgcmVsYXRpdm9zIHkgYXBsaWNhYmxl
-cywgZGViaWVuZG8gc3VqZXRhcnNlIGVuIHN1IGNhc28sIGEgbGFzIGRpc3Bvc2ljaW9uZXMgcmVs
-YXRpdmFzIGEgbGEgY3JlYWNpb24sIG1vZGlmaWNhY2lvbiBvIHN1cHJlc2lvbiBkZSBkYXRvcyBw
-ZXJzb25hbGVzIHByZXZpc3Rvcy4gQXNpbWlzbW8sIGRlYmVyYSBlc3RhcnNlIGEgbG8gc2XDsWFs
-YWRvIGVuIGxvcyBudW1lcmFsZXMgMSAsIDMsIDEyLCAxOCwgMTksIDIwLCAyMSwgMjMsIDI0LCAy
-OSwgMzUgeSBkZW1hcyBhcGxpY2FibGVzIGRlIGxvcyBMaW5lYW1pZW50b3MgcGFyYSBsYSBQcm90
-ZWNjaW9uIGRlIERhdG9zIFBlcnNvbmFsZXMgZW4gZWwgRGlzdHJpdG8gRmVkZXJhbC4NCkVuIGVs
-IHVzbyBkZSBsYXMgdGVjbm9sb2dpYXMgZGUgbGEgaW5mb3JtYWNpb24geSBjb211bmljYWNpb25l
-cyBkZWwgR29iaWVybm8gZGVsIERpc3RyaXRvIEZlZGVyYWwsIGRlYmVyYSBvYnNlcnZhcnNlIHB1
-bnR1YWxtZW50ZSBsbyBkaXNwdWVzdG8gcG9yIGxhIExleSBHb2JpZXJubyBFbGVjdHJvbmljbyBk
-ZWwgRGlzdHJpdG8gRmVkZXJhbCwgbGEgbGV5IHBhcmEgaGFjZXIgZGUgbGEgQ2l1ZGFkIGRlIE1l
-eGljbyB1bmEgQ2l1ZGFkIE1hcyBBYmllcnRhLCBlbCBhcGFydGFkbyAxMCBkZSBsYSBDaXJjdWxh
-ciBVbm8gdmlnZW50ZSB5IGxhcyBOb3JtYXMgR2VuZXJhbGVzIHF1ZSBkZWJlcmFuIG9ic2VydmFy
-c2UgZW4gbWF0ZXJpYSBkZSBTZWd1cmlkYWQgZGUgbGEgSW5mb3JtYWNpb24gZW4gbGEgQWRtaW5p
-c3RyYWNpb24gUHVibGljYSBkZWwgRGlzdHJpdG8gRmVkZXJhbC4K
+Hi Cephers,
+
+We are testing the write performance of Ceph EC (Luminous, 8 + 4), and
+noticed that tail latency is extremly high. Say, avgtime of 10th
+commit is 40ms, acceptable as it's an all HDD cluster; 11th is 80ms,
+doubled; then 12th is 160ms, doubled again, which is not so good. Then
+we made a small modification and tested again, and did get a much
+better result. The patch is quite simple (for test only of course):
+
+--- a/src/osd/ECBackend.cc
++++ b/src/osd/ECBackend.cc
+@@ -1188,7 +1188,7 @@ void ECBackend::handle_sub_write_reply(
+     i->second.on_all_applied = 0;
+     i->second.trace.event("ec write all applied");
+   }
+-  if (i->second.pending_commit.empty() && i->second.on_all_commit) {
++  if (i->second.pending_commit.size() == 2 &&
+i->second.on_all_commit) {  // 8 + 4 - 10 = 2
+     dout(10) << __func__ << " Calling on_all_commit on " << i->second << dendl;
+     i->second.on_all_commit->complete(0);
+     i->second.on_all_commit = 0;
+
+As far as what I see, everything still goes well (maybe because of the
+rwlock in primary OSD? not sure though), but I'm afraid it might break
+data consistency in some ways not aware of. So I'm writing to ask if
+someone could kindly provide expertise comments on this or maybe share
+any known drawbacks. Thank you!
+
+PS: OSD is backended with filestore, not bluestore, if that matters.
+
+Regards,
+Alex
