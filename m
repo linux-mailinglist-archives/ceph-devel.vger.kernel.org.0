@@ -2,85 +2,77 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7D92BBC54
-	for <lists+ceph-devel@lfdr.de>; Mon, 23 Sep 2019 21:41:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D950FBD346
+	for <lists+ceph-devel@lfdr.de>; Tue, 24 Sep 2019 22:05:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbfIWTlN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 23 Sep 2019 15:41:13 -0400
-Received: from mail-io1-f45.google.com ([209.85.166.45]:42905 "EHLO
-        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728033AbfIWTlN (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 23 Sep 2019 15:41:13 -0400
-Received: by mail-io1-f45.google.com with SMTP id n197so36408093iod.9
-        for <ceph-devel@vger.kernel.org>; Mon, 23 Sep 2019 12:41:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jK9Y//+cFsxMeb3vADmP6uivnmHsMWatmt/NxFneOEw=;
-        b=B1IYkY980jC6tImyMiYKbOxWA5NpXp421h5ICWSv4hpUDiEKnvTgMz15Dw6dE+uPaC
-         HRZ6i4dtk1oZHl8b0/k8qlAYbgrgVndTkgOZBO0sndQOjivcm1zCZkRV1/w3UHjgufCC
-         gWBd1hJ2dxsenUXpC1dxUdTjp1+pWocaPwJw1ZUNY2fYgK/VaKiTbRqgDMGQBkI/swnB
-         T/72FIRJ0FS2loc8D0kGtf+oUYLdS520qYRljdqQp2MPOOvZsSCuL2nInKcC3oZC/PJB
-         fSDFUuvbTgLycNRlvpnK7ZmN263PJni4Xoz35R8xHflqhtUzW95e2W6g8NsV+g4NU+2i
-         Vssg==
+        id S2633098AbfIXUFs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 24 Sep 2019 16:05:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36996 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728405AbfIXUFs (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 24 Sep 2019 16:05:48 -0400
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DDD5BC057F31
+        for <ceph-devel@vger.kernel.org>; Tue, 24 Sep 2019 20:05:47 +0000 (UTC)
+Received: by mail-qt1-f199.google.com with SMTP id m19so3306388qtm.13
+        for <ceph-devel@vger.kernel.org>; Tue, 24 Sep 2019 13:05:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=jK9Y//+cFsxMeb3vADmP6uivnmHsMWatmt/NxFneOEw=;
-        b=ubixa5W+oOXvRippaGEpNSjgoIlhxx9eNIleWohZXqCKUu2xlOgvXPEdkh2cXqlQkL
-         60AuKJidfUv9w1ZZgJKiBs6fGx41sTJbRcVvzbnM9UzWkTXG8KEG01IQ6nPTVUASv1b4
-         7qLXzRHsIo87WV2uYDnmj1JLSd14yiDQdxy6VEUd4pXN0vrtvlVUa9UlQo5Qt5CRMPmE
-         GQotFbjtrG29yGt85V3RYsUP4afNhNF+svWxIc+jQQYqMP7jHM+VwEUDmqFhj++U33Vk
-         S86wv9baGtQCciTJTEMHGnGKSl1rv2cw1RfchhVMxu855DmbMXPgQ12kXceyyf5o7AIE
-         z3Pw==
-X-Gm-Message-State: APjAAAWZeGR0onB9OtaejY9zmNSPdDcVzPzqhAT2SmNw6CmISI/g7cs5
-        EWJrImcmeSANSheAQvFqoUSG4x7v2ru4tt89DmM=
-X-Google-Smtp-Source: APXvYqxNmzxIGR+xi+w5ZWrGIqjEOp+Ji5ccnyWnR16YvIsnFAtrB08cLi16qEhaKjGwcj9j9dm03GjUDA5ZU+Ice5Q=
-X-Received: by 2002:a5d:9f4e:: with SMTP id u14mr1203237iot.106.1569267672304;
- Mon, 23 Sep 2019 12:41:12 -0700 (PDT)
+        bh=E4regRNVO3vjgMaoXNbC5zaN4cX4bMmKQcG81nsWQsQ=;
+        b=Dag5UsNp2DU5dKTdVsSCWZfoYCZ/FLCndhcwsNvy/G0Pqh28c41qoWy80yZxfui3cy
+         eTH0EbAyh2vua/pVVks3Po5Pv9CGusG6b/HqIjSAJQloNiIu9k8SWKnxvMQZ0OIpdG3Z
+         S/n6sFxcYfA+vxOPHnEFrkbkZA47+NIjRdzRC5koU61AuOl0yFE4BZWBzdlWOubpHgM0
+         DgE/F6NmgPpsiaz4yj8Q2ocEUWJm3/k4R7FCdSow7LTeu8Tea/4SgXObL73Y9Rhd0m1a
+         Y6/BErkvuHMfMl5BbSjBxfychGrHgGGd2WC21ORlYQ8ljo/RlHrIJ5RUAnQ26be05WA3
+         Cv3A==
+X-Gm-Message-State: APjAAAVnqhjnQ8ouzm6qfHVJm5z8E3t0AotrY6e0roO3gY9fKL4vd0Np
+        4NlXz3PKjoEraPcihvKfaciHKla3NBLJJpSebIpJMu81hwtpIkD2wLJthIj67b+mwLUklhSkvLX
+        1q/flQcYxO5D+YeQZzsuw2iL3mJaGVsHDE3VE7g==
+X-Received: by 2002:ac8:340d:: with SMTP id u13mr4783974qtb.103.1569355547219;
+        Tue, 24 Sep 2019 13:05:47 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzI3xB6n/sb1QWt5Wu7pfEbNA7rXtqPVwcW84UJmUNsLo5n0p0Il1YF24qXTIPCnWrZx2tl2RWkeENKHgi1tGk=
+X-Received: by 2002:ac8:340d:: with SMTP id u13mr4783962qtb.103.1569355546993;
+ Tue, 24 Sep 2019 13:05:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <12d3b59259ebf2810c866c863445a68ea1f172c6.camel@kernel.org>
-In-Reply-To: <12d3b59259ebf2810c866c863445a68ea1f172c6.camel@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 23 Sep 2019 21:41:04 +0200
-Message-ID: <CAOi1vP_bO-0c2prJQ=yaZoyrL1sVekcQN=c1-JK+x5zMVbLL8Q@mail.gmail.com>
-Subject: Re: ceph-client/wip-* branch cleanup
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        "Yan, Zheng" <ukernel@gmail.com>,
-        "Dillaman, Jason" <dillaman@redhat.com>,
-        Michael Christie <mchristi@redhat.com>
+References: <CAC-Np1zTk1G-LF3eJiqzSF8SS=h=Jrr261C4vHdgmmwcqhUeXQ@mail.gmail.com>
+ <CAC-Np1zjZJW2iqLVe720u_sxQDTKjoUqL9ftrqKbMcYbZQgYFQ@mail.gmail.com> <CALi_L4_Sz8oFHAFyRfqDfLWGRJSHnSd=dyYUZ6P92o8VY3vGCQ@mail.gmail.com>
+In-Reply-To: <CALi_L4_Sz8oFHAFyRfqDfLWGRJSHnSd=dyYUZ6P92o8VY3vGCQ@mail.gmail.com>
+From:   Ken Dreyer <kdreyer@redhat.com>
+Date:   Tue, 24 Sep 2019 14:05:36 -0600
+Message-ID: <CALqRxCygXUzA0+4sY6meMO9Smq2rouei7ay0BqJD9+-du7RCYQ@mail.gmail.com>
+Subject: Re: [ceph-users] Re: download.ceph.com repository changes
+To:     Sasha Litvak <alexander.v.litvak@gmail.com>
+Cc:     Alfredo Deza <adeza@redhat.com>, ceph-maintainers@ceph.com,
+        ceph-users <ceph-users@ceph.io>,
+        ceph-devel <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 6:45 PM Jeff Layton <jlayton@kernel.org> wrote:
+On Tue, Sep 17, 2019 at 8:03 AM Sasha Litvak
+<alexander.v.litvak@gmail.com> wrote:
 >
-> We have a bunch of branches in the ceph-client tree with the prefix
-> "wip-" (see attached file) that are all well over a year old.
->
-> For consistency with the other jenkins build trees, it would be good to
-> be able to have it build any branch that starts with "wip-*", but if we
-> turn that on now, it's going to try to build all of these old branches.
->
-> Would anyone have objections to tagging all of these branches with a new
-> prefix (maybe "legacy-ceph-wip-*") and deleting them? I don't think any
-> of them are under active development at this point, so I don't think we
-> need to retain them as branches.
->
-> I'll give it a week or so and then do that unless anyone has objections.
+> * I am bothered with a quality of the releases of a very complex system that
+> can bring down a whole house and keep it down for a while.  While I wish the
+> QA would be perfect, I wonder if it would be practical to release new
+> packages to a testing repo before moving it to a main one.  There is a
+> chance then someone will detect a problem before it becomes a production
+> issue.  Let it seat for a couple days or weeks in testing.  People who need
+> new update right away or just want to test will install it and report the
+> problems.  Others will not be affected.
 
-I went ahead and removed those that got merged in one way or another
-and renamed the rest to historic/<name>.  We have had a couple of
-branches under historic "directory" for many years, so I chose to keep
-these as branches.
+I think it would be a good step forward to have a separate "testing"
+repository. This repository would be a little more cutting-edge, and we'd copy
+all the binaries over to the "main" repository location after 48 hours or
+something.
 
-Jenkins has been updated, any "wip-*" branch will now trigger a build.
+This would let us all publicly test the candidate GPG-signed packages, for
+example.
 
-Thanks,
-
-                Ilya
+- Ken
