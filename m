@@ -2,386 +2,300 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10B86BDA8D
-	for <lists+ceph-devel@lfdr.de>; Wed, 25 Sep 2019 11:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9BAABDA88
+	for <lists+ceph-devel@lfdr.de>; Wed, 25 Sep 2019 11:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387724AbfIYJJQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 25 Sep 2019 05:09:16 -0400
-Received: from m97138.mail.qiye.163.com ([220.181.97.138]:21638 "EHLO
+        id S2387569AbfIYJJP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 25 Sep 2019 05:09:15 -0400
+Received: from m97138.mail.qiye.163.com ([220.181.97.138]:21512 "EHLO
         m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728608AbfIYJJN (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 25 Sep 2019 05:09:13 -0400
+        with ESMTP id S1728572AbfIYJIn (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 25 Sep 2019 05:08:43 -0400
 Received: from atest-guest.localdomain (unknown [218.94.118.90])
-        by smtp9 (Coremail) with SMTP id u+CowAD3dl9YLotdHDhSAg--.166S12;
-        Wed, 25 Sep 2019 17:07:39 +0800 (CST)
+        by smtp9 (Coremail) with SMTP id u+CowAD3dl9YLotdHDhSAg--.166S13;
+        Wed, 25 Sep 2019 17:07:40 +0800 (CST)
 From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
 To:     idryomov@gmail.com, jdillama@redhat.com
 Cc:     ceph-devel@vger.kernel.org,
         Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: [PATCH v4 10/12] rbd: append journal event in image request state machine
-Date:   Wed, 25 Sep 2019 09:07:32 +0000
-Message-Id: <1569402454-4736-11-git-send-email-dongsheng.yang@easystack.cn>
+Subject: [PATCH v4 11/12] rbd: replay events in journal
+Date:   Wed, 25 Sep 2019 09:07:33 +0000
+Message-Id: <1569402454-4736-12-git-send-email-dongsheng.yang@easystack.cn>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1569402454-4736-1-git-send-email-dongsheng.yang@easystack.cn>
 References: <1569402454-4736-1-git-send-email-dongsheng.yang@easystack.cn>
-X-CM-TRANSID: u+CowAD3dl9YLotdHDhSAg--.166S12
-X-Coremail-Antispam: 1Uf129KBjvJXoW3KrykJr4UGr13Xr13Ww1kuFg_yoWkZr18pw
-        4rJFW5CrZ8ur12kw4rWa1kXrW3X3y0kFZrWrWvkr9ak3Wvgrn7KF1UKFW3ZrZrXryxGw18
-        Kr4UX348Cw17KrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0Jb_-BiUUUUU=
+X-CM-TRANSID: u+CowAD3dl9YLotdHDhSAg--.166S13
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtF17Jr43AF1UKr1kJrW5KFg_yoW3Wr47pF
+        W5GFWYkrZ5WF129rs3Gr4rZryaq397AFZrWry7Kr129rnxGwn29F1FkFyavrW3ZFWxu34D
+        KF4qq3ZFgF1qgFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JbMYLgUUUUU=
 X-Originating-IP: [218.94.118.90]
-X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiHBw7elpchhMJugAAsh
+X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiXxw7eli2k8jLgAAAs8
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Introduce RBD_IMG_APPEND_JOURNAL and __RBD_IMG_APPEND_JOURNAL in rbd_img_state.
-When a image request after RBD_IMG_EXCLUSIVE_LOCK, it will go into __RBD_IMG_APPEND_JOURNAL
-and then RBD_IMG_APPEND_JOURNAL. after that, it then would go into __RBD_IMG_OBJECT_REQUESTS.
+when we found uncommitted events in journal, we need to do a replay.
+This commit only implement three kinds of events replaying:
 
-That means, we will append journal event before send the data object request for image request.
+EVENT_TYPE_AIO_DISCARD:
+        Will send a img_request to image with OBJ_OP_ZEROOUT, and
+        wait for it completed.
+EVENT_TYPE_AIO_WRITE:
+        Will send a img_request to image with OBJ_OP_WRITE, and
+        wait for it completed.
+EVENT_TYPE_AIO_FLUSH:
+        As all other events are replayed in synchoronized way, that
+        means the events before are all flushed. we did nothing for this event.
 
 Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
 ---
- drivers/block/rbd.c | 260 +++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 259 insertions(+), 1 deletion(-)
+ drivers/block/rbd.c | 236 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 236 insertions(+)
 
 diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 6987259..79929c7 100644
+index 79929c7..e8c2446 100644
 --- a/drivers/block/rbd.c
 +++ b/drivers/block/rbd.c
-@@ -119,6 +119,7 @@ static int atomic_dec_return_safe(atomic_t *v)
- #define RBD_FEATURE_OBJECT_MAP		(1ULL<<3)
- #define RBD_FEATURE_FAST_DIFF		(1ULL<<4)
- #define RBD_FEATURE_DEEP_FLATTEN	(1ULL<<5)
-+#define RBD_FEATURE_JOURNALING          (1ULL<<6)
- #define RBD_FEATURE_DATA_POOL		(1ULL<<7)
- #define RBD_FEATURE_OPERATIONS		(1ULL<<8)
- 
-@@ -325,10 +326,17 @@ enum img_req_flags {
- enum rbd_img_state {
- 	RBD_IMG_START = 1,
- 	RBD_IMG_EXCLUSIVE_LOCK,
-+	__RBD_IMG_APPEND_JOURNAL,
-+	RBD_IMG_APPEND_JOURNAL,
- 	__RBD_IMG_OBJECT_REQUESTS,
- 	RBD_IMG_OBJECT_REQUESTS,
- };
- 
-+struct journal_commit_info {
-+	struct list_head	node;
-+	u64		commit_tid;
-+};
-+
- struct rbd_img_request {
- 	struct rbd_device	*rbd_dev;
- 	enum obj_operation_type	op_type;
-@@ -353,6 +361,7 @@ struct rbd_img_request {
- 	int			work_result;
- 
- 	struct completion	completion;
-+	struct list_head	journal_commit_list;
- 
- 	struct kref		kref;
- };
-@@ -1764,6 +1773,7 @@ static struct rbd_img_request *rbd_img_request_create(
- 	INIT_LIST_HEAD(&img_request->lock_item);
- 	init_completion(&img_request->completion);
- 	INIT_LIST_HEAD(&img_request->object_extents);
-+	INIT_LIST_HEAD(&img_request->journal_commit_list);
- 	mutex_init(&img_request->state_mutex);
- 	kref_init(&img_request->kref);
- 
-@@ -1777,6 +1787,7 @@ static void rbd_img_request_destroy(struct kref *kref)
- 	struct rbd_img_request *img_request;
- 	struct rbd_obj_request *obj_request;
- 	struct rbd_obj_request *next_obj_request;
-+	struct journal_commit_info *commit_info, *next_commit_info;
- 
- 	img_request = container_of(kref, struct rbd_img_request, kref);
- 
-@@ -1791,6 +1802,12 @@ static void rbd_img_request_destroy(struct kref *kref)
- 		rbd_dev_parent_put(img_request->rbd_dev);
+@@ -7182,6 +7182,242 @@ static void rbd_img_journal_append(struct rbd_img_request *img_req)
  	}
+ }
  
-+	list_for_each_entry_safe(commit_info, next_commit_info,
-+				 &img_request->journal_commit_list, node) {
-+		list_del(&commit_info->node);
-+		kfree(commit_info);
++static int setup_write_bvecs(void *buf, u64 offset,
++			     u64 length, struct bio_vec **bvecs,
++			     u32 *bvec_count)
++{
++	u32 i;
++	u32 off;
++
++	*bvec_count = calc_pages_for(offset, length);
++	*bvecs = kcalloc(*bvec_count, sizeof(**bvecs), GFP_NOIO);
++	if (!(*bvecs))
++		return -ENOMEM;
++
++	div_u64_rem(offset, PAGE_SIZE, &off);
++	for (i = 0; i < *bvec_count; i++) {
++		u32 len = min(length, (u64)PAGE_SIZE - off);
++
++		(*bvecs)[i].bv_page = alloc_page(GFP_NOIO);
++		if (!(*bvecs)[i].bv_page)
++			return -ENOMEM;
++
++		(*bvecs)[i].bv_offset = off;
++		(*bvecs)[i].bv_len = len;
++		memcpy(page_address((*bvecs)[i].bv_page) + (*bvecs)[i].bv_offset, buf,
++		       (*bvecs)[i].bv_len);
++		length -= len;
++		buf += len;
++		off = 0;
 +	}
-+
- 	if (rbd_img_is_write(img_request))
- 		ceph_put_snap_context(img_request->snapc);
- 
-@@ -3647,6 +3664,20 @@ static void rbd_img_object_requests(struct rbd_img_request *img_req)
- 	}
- }
- 
-+static bool rbd_img_need_journal(struct rbd_img_request *img_req)
-+{
-+	struct rbd_device *rbd_dev = img_req->rbd_dev;
-+
-+	if (img_req->op_type == OBJ_OP_READ)
-+		return false;
-+
-+	if (!(rbd_dev->header.features & RBD_FEATURE_JOURNALING))
-+		return false;
-+
-+	return true;
++	rbd_assert(!length);
++	return 0;
 +}
 +
-+static void rbd_img_journal_append(struct rbd_img_request *img_req);
- static bool rbd_img_advance(struct rbd_img_request *img_req, int *result)
- {
- 	struct rbd_device *rbd_dev = img_req->rbd_dev;
-@@ -3673,6 +3704,27 @@ static bool rbd_img_advance(struct rbd_img_request *img_req, int *result)
- 		rbd_assert(!need_exclusive_lock(img_req) ||
- 			   __rbd_is_lock_owner(rbd_dev));
- 
-+		if (!rbd_img_need_journal(img_req)) {
-+			img_req->state = RBD_IMG_APPEND_JOURNAL;
-+			goto again;
-+		}
-+
-+		rbd_img_journal_append(img_req);
-+		if (!img_req->pending.num_pending) {
-+			*result = img_req->pending.result;
-+			img_req->state = RBD_IMG_OBJECT_REQUESTS;
-+			goto again;
-+		}
-+		img_req->state = __RBD_IMG_APPEND_JOURNAL;
-+		return false;
-+	case __RBD_IMG_APPEND_JOURNAL:
-+		if (!pending_result_dec(&img_req->pending, result))
-+			return false;
-+		/* fall through */
-+	case RBD_IMG_APPEND_JOURNAL:
-+		if (*result)
-+			return true;
-+
- 		rbd_img_object_requests(img_req);
- 		if (!img_req->pending.num_pending) {
- 			*result = img_req->pending.result;
-@@ -3741,9 +3793,22 @@ static void rbd_img_handle_request(struct rbd_img_request *img_req, int result)
- 	} else {
- 		struct request *rq = img_req->rq;
- 
-+		if (!result) {
-+			struct journal_commit_info *commit_info;
-+
-+			list_for_each_entry(commit_info,
-+					    &img_req->journal_commit_list,
-+					    node) {
-+				ceph_journaler_client_committed(
-+					img_req->rbd_dev->journal->journaler,
-+					commit_info->commit_tid);
-+			}
-+		}
-+
- 		complete_all(&img_req->completion);
- 		rbd_img_request_put(img_req);
--		blk_mq_end_request(rq, errno_to_blk_status(result));
-+		if (rq)
-+			blk_mq_end_request(rq, errno_to_blk_status(result));
- 	}
- }
- 
-@@ -6924,6 +6989,199 @@ static int rbd_dev_header_name(struct rbd_device *rbd_dev)
- 	return ret;
- }
- 
-+enum rbd_journal_event_type {
-+	EVENT_TYPE_AIO_DISCARD           = 0,
-+	EVENT_TYPE_AIO_WRITE             = 1,
-+	EVENT_TYPE_AIO_FLUSH             = 2,
-+	EVENT_TYPE_OP_FINISH             = 3,
-+	EVENT_TYPE_SNAP_CREATE           = 4,
-+	EVENT_TYPE_SNAP_REMOVE           = 5,
-+	EVENT_TYPE_SNAP_RENAME           = 6,
-+	EVENT_TYPE_SNAP_PROTECT          = 7,
-+	EVENT_TYPE_SNAP_UNPROTECT        = 8,
-+	EVENT_TYPE_SNAP_ROLLBACK         = 9,
-+	EVENT_TYPE_RENAME                = 10,
-+	EVENT_TYPE_RESIZE                = 11,
-+	EVENT_TYPE_FLATTEN               = 12,
-+	EVENT_TYPE_DEMOTE_PROMOTE        = 13,
-+	EVENT_TYPE_SNAP_LIMIT            = 14,
-+	EVENT_TYPE_UPDATE_FEATURES       = 15,
-+	EVENT_TYPE_METADATA_SET          = 16,
-+	EVENT_TYPE_METADATA_REMOVE       = 17,
-+	EVENT_TYPE_AIO_WRITESAME         = 18,
-+	EVENT_TYPE_AIO_COMPARE_AND_WRITE = 19,
-+};
-+
-+
-+/*
-+ * RBD_EVENT_FIXED_SIZE(10 = CEPH_ENCODING_START_BLK_LEN(6) + EVENT_TYPE(4))
-+ */
-+#define RBD_EVENT_FIXED_SIZE	10
-+
-+static void rbd_journal_callback(struct ceph_journaler_ctx *journaler_ctx)
++static int rbd_journal_handle_aio_write(struct rbd_device *rbd_dev, void **p,
++					void *end, u8 struct_v, u64 commit_tid)
 +{
-+	struct rbd_img_request *img_req = journaler_ctx->priv;
-+	int result = journaler_ctx->result;
-+
-+	ceph_journaler_ctx_free(journaler_ctx);
-+	rbd_img_handle_request(img_req, result);
-+}
-+
-+static void img_journal_append_write_event(struct rbd_img_request *img_req)
-+{
-+	struct rbd_journal *journal = img_req->rbd_dev->journal;
++	struct ceph_snap_context *snapc;
++	struct rbd_img_request *img_request;
 +	struct journal_commit_info *commit_info;
-+	struct ceph_journaler_ctx *journaler_ctx;
-+	u64 offset = (u64)blk_rq_pos(img_req->rq) << SECTOR_SHIFT;
-+	u64 length = blk_rq_bytes(img_req->rq);
-+	/* RBD_EVENT_FIXED_SIZE + offset(8) + length(8) + string_len(4) */
-+	u64 prefix_len = RBD_EVENT_FIXED_SIZE + 20;
-+	u64 max_append_size = ceph_journaler_get_max_append_size(journal->journaler) - prefix_len;
-+	u64 append_size = min(max_append_size, length);
-+	u64 bio_offset = 0;
-+	void *p;
-+	int ret;
++	struct ceph_file_extent ex;
++	struct bio_vec *bvecs = NULL;
++	u32 bvec_count;
++	ssize_t data_len;
++	u64 offset, length;
++	int result;
 +
-+	while (length > 0) {
-+		journaler_ctx = ceph_journaler_ctx_alloc();
-+		if (!journaler_ctx) {
-+			img_req->pending.result = -ENOMEM;
-+			return;
-+		}
-+
-+		commit_info = kzalloc(sizeof(*commit_info), GFP_NOIO);
-+		if (!commit_info) {
-+			ceph_journaler_ctx_free(journaler_ctx);
-+			img_req->pending.result = -ENOMEM;
-+			return;
-+		}
-+		INIT_LIST_HEAD(&commit_info->node);
-+
-+		journaler_ctx->bio_iter.bio = img_req->rq->bio;
-+		journaler_ctx->bio_iter.iter = img_req->rq->bio->bi_iter;
-+		ceph_bio_iter_advance(&journaler_ctx->bio_iter, bio_offset);
-+
-+		append_size = min(max_append_size, length);
-+		journaler_ctx->bio_len = append_size;
-+
-+		journaler_ctx->prefix_len = prefix_len;
-+		journaler_ctx->prefix_offset = PAGE_SIZE - journaler_ctx->prefix_len;
-+
-+		p = page_address(journaler_ctx->prefix_page) + journaler_ctx->prefix_offset;
-+		ceph_start_encoding(&p, 1, 1,
-+			journaler_ctx->prefix_len + journaler_ctx->bio_len - CEPH_ENCODING_START_BLK_LEN);
-+		ceph_encode_32(&p, EVENT_TYPE_AIO_WRITE);
-+		ceph_encode_64(&p, offset);
-+		ceph_encode_64(&p, append_size);
-+		/* first part of ceph_encode_string(); */
-+		ceph_encode_32(&p, journaler_ctx->bio_len);
-+
-+		offset += append_size;
-+		length -= append_size;
-+		bio_offset += append_size;
-+
-+		journaler_ctx->priv = img_req;
-+		journaler_ctx->callback = rbd_journal_callback;
-+
-+		ret = ceph_journaler_append(journal->journaler,
-+					    journal->tag_tid, journaler_ctx);
-+		if (ret) {
-+			kfree(commit_info);
-+			ceph_journaler_ctx_free(journaler_ctx);
-+			img_req->pending.result = ret;
-+			return;
-+		}
-+		commit_info->commit_tid = journaler_ctx->commit_tid;
-+		list_add_tail(&commit_info->node,
-+			      &img_req->journal_commit_list);
-+		img_req->pending.num_pending++;
++	/* get offset and length */
++	offset = ceph_decode_64(p);
++	length = ceph_decode_64(p);
++	/* get data_len and check the buffer length */
++	data_len = ceph_decode_32(p);
++	if (!ceph_has_room(p, end, data_len)) {
++		pr_err("our of range");
++		return -ERANGE;
 +	}
-+}
-+
-+static void img_journal_append_discard_event(struct rbd_img_request *img_req,
-+					     bool skip_partial_discard)
-+{
-+	struct rbd_journal *journal = img_req->rbd_dev->journal;
-+	struct journal_commit_info *commit_info;
-+	struct ceph_journaler_ctx *journaler_ctx;
-+	u64 offset = (u64)blk_rq_pos(img_req->rq) << SECTOR_SHIFT;
-+	u64 length = blk_rq_bytes(img_req->rq);
-+	struct timespec64 mtime;
-+	void *p;
-+	int ret;
-+
-+	journaler_ctx = ceph_journaler_ctx_alloc();
-+	if (!journaler_ctx) {
-+		img_req->pending.result = -ENOMEM;
-+		return;
++	rbd_assert(length == data_len);
++	/* Create a new image request for writing */
++	snapc = rbd_dev->header.snapc;
++	ceph_get_snap_context(snapc);
++	img_request = rbd_img_request_create(rbd_dev, OBJ_OP_WRITE, snapc);
++	if (!img_request) {
++		result = -ENOMEM;
++		goto err;
 +	}
-+
++	/* Allocate a new commit_info for this journal replay */
 +	commit_info = kzalloc(sizeof(*commit_info), GFP_NOIO);
 +	if (!commit_info) {
-+		ceph_journaler_ctx_free(journaler_ctx);
-+		img_req->pending.result = -ENOMEM;
-+		return;
++		result = -ENOMEM;
++		rbd_img_request_put(img_request);
++		goto err;
 +	}
 +	INIT_LIST_HEAD(&commit_info->node);
 +
-+	journaler_ctx->bio_iter.bio = img_req->rq->bio;
-+	journaler_ctx->bio_iter.iter = img_req->rq->bio->bi_iter;
-+	journaler_ctx->bio_len = 0;
++	/* Don't down ->lock_rwsem in __rbd_img_handle_request */
++	__set_bit(IMG_REQ_NOLOCK, &img_request->flags);
++	commit_info->commit_tid = commit_tid;
++	list_add_tail(&commit_info->node, &img_request->journal_commit_list);
++	snapc = NULL; /* img_request consumes a ref */
 +
-+	/* RBD_EVENT_FIXED_SIZE + offset(8) + length(8) + bool(1)= 27 */
-+	journaler_ctx->prefix_len = RBD_EVENT_FIXED_SIZE + 17;
-+	journaler_ctx->prefix_offset = PAGE_SIZE - journaler_ctx->prefix_len;
-+
-+	p = page_address(journaler_ctx->prefix_page) + journaler_ctx->prefix_offset;
-+	ceph_start_encoding(&p, 4, 1, journaler_ctx->prefix_len - CEPH_ENCODING_START_BLK_LEN);
-+	ceph_encode_32(&p, EVENT_TYPE_AIO_DISCARD);
-+	ceph_encode_64(&p, offset);
-+	ceph_encode_64(&p, length);
-+	ceph_encode_8(&p, skip_partial_discard);
-+
-+	/* encode metadata */
-+	journaler_ctx->suffix_len = CEPH_ENCODING_START_BLK_LEN + sizeof(struct ceph_timespec);
-+	p = page_address(journaler_ctx->suffix_page);
-+	ceph_start_encoding(&p, 1, 1, journaler_ctx->suffix_len - CEPH_ENCODING_START_BLK_LEN);
-+	ktime_get_real_ts64(&mtime);
-+	ceph_encode_timespec64(p, &mtime);
-+
-+	journaler_ctx->priv = img_req;
-+	journaler_ctx->callback = rbd_journal_callback;
-+
-+	ret = ceph_journaler_append(journal->journaler, journal->tag_tid,
-+				    journaler_ctx);
-+	if (ret) {
-+		kfree(commit_info);
-+		ceph_journaler_ctx_free(journaler_ctx);
-+		img_req->pending.result = ret;
-+		return;
++	result = setup_write_bvecs(*p, offset, length, &bvecs, &bvec_count);
++	if (result) {
++		rbd_warn(rbd_dev, "failed to setup bvecs.");
++		rbd_img_request_put(img_request);
++		goto err;
 +	}
++	/* Skip data for this event */
++	*p = (char *)*p + data_len;
++	ex.fe_off = offset;
++	ex.fe_len = length;
++	result = rbd_img_fill_from_bvecs(img_request, &ex, 1, bvecs);
++	if (result) {
++		rbd_img_request_put(img_request);
++		goto err;
++	}
++	/* 
++	 * As we are doing journal replaying in exclusive-lock aqcuiring,
++	 * we don't need to aquire exclusive-lock for this writing, so
++	 * set the ->state to RBD_IMG_APPEND_JOURNAL to skip exclusive-lock
++	 * acquiring in state machine
++	 */
++	img_request->state = RBD_IMG_APPEND_JOURNAL;
++	rbd_img_handle_request(img_request, 0);
++	result = wait_for_completion_interruptible(&img_request->completion);
++err:
++	if (bvecs) {
++		int i;
 +
-+	commit_info->commit_tid = journaler_ctx->commit_tid;
-+	list_add_tail(&commit_info->node, &img_req->journal_commit_list);
-+	img_req->pending.num_pending++;
++		for (i = 0; i < bvec_count; i++) {
++			if (bvecs[i].bv_page)
++				__free_page(bvecs[i].bv_page);
++		}
++		kfree(bvecs);
++	}
++	return result;
 +}
 +
-+static void rbd_img_journal_append(struct rbd_img_request *img_req)
++static int rbd_journal_handle_aio_discard(struct rbd_device *rbd_dev, void **p,
++					  void *end, u8 struct_v,
++					  u64 commit_tid)
 +{
-+	rbd_assert(!img_req->pending.result && !img_req->pending.num_pending);
++	struct rbd_img_request *img_request;
++	struct ceph_snap_context *snapc;
++	struct journal_commit_info *commit_info;
++	enum obj_operation_type	op_type;
++	u64 offset, length;
++	bool skip_partial_discard = true;
++	int result;
 +
-+	switch (img_req->op_type) {
-+	case OBJ_OP_WRITE:
-+		img_journal_append_write_event(img_req);
++	/* get offset and length*/
++	offset = ceph_decode_64(p);
++	length = ceph_decode_64(p);
++	if (struct_v >= 4)
++		skip_partial_discard = ceph_decode_8(p);
++	if (struct_v >= 5) {
++		/* skip discard_granularity_bytes */
++		ceph_decode_32(p);
++	}
++
++	snapc = rbd_dev->header.snapc;
++	ceph_get_snap_context(snapc);
++	/*
++	 * When the skip_partial_discard is false, we need to guarantee
++	 * that the data range would be zeroout-ed. Otherwise, we don't
++	 * guarantee the range discarded would be zero filled.
++	 */
++	if (skip_partial_discard)
++		op_type = OBJ_OP_DISCARD;
++	else
++		op_type = OBJ_OP_ZEROOUT;
++
++	img_request = rbd_img_request_create(rbd_dev, op_type, snapc);
++	if (!img_request) {
++		result = -ENOMEM;
++		goto err;
++	}
++	/* Allocate a commit_info for this image request */
++	commit_info = kzalloc(sizeof(*commit_info), GFP_NOIO);
++	if (!commit_info) {
++		result = -ENOMEM;
++		rbd_img_request_put(img_request);
++		goto err;
++	}
++	INIT_LIST_HEAD(&commit_info->node);
++
++	/* Don't down ->lock_rwsem in __rbd_img_handle_request */
++	__set_bit(IMG_REQ_NOLOCK, &img_request->flags);
++	commit_info->commit_tid = commit_tid;
++	list_add_tail(&commit_info->node, &img_request->journal_commit_list);
++	result = rbd_img_fill_nodata(img_request, offset, length);
++	if (result) {
++		rbd_img_request_put(img_request);
++		goto err;
++	}
++
++	img_request->state = RBD_IMG_APPEND_JOURNAL;
++	rbd_img_handle_request(img_request, 0);
++	result = wait_for_completion_interruptible(&img_request->completion);
++err:
++	return result;
++}
++
++static int rbd_journal_replay(void *entry_handler,
++			      struct ceph_journaler_entry *entry,
++			      u64 commit_tid)
++{
++	struct rbd_device *rbd_dev = entry_handler;
++	void *data = entry->data;
++	void **p = &data;
++	void *end = *p + entry->data_len;
++	u32 event_type;
++	u8 struct_v;
++	u32 struct_len;
++	int ret;
++
++	ret = ceph_start_decoding(p, end, 1, "rbd_decode_entry", &struct_v,
++				  &struct_len);
++	if (ret)
++		return -EINVAL;
++
++	event_type = ceph_decode_32(p);
++	switch (event_type) {
++	case EVENT_TYPE_AIO_WRITE:
++		ret = rbd_journal_handle_aio_write(rbd_dev, p, end, struct_v,
++						   commit_tid);
 +		break;
-+	case OBJ_OP_ZEROOUT:
-+		img_journal_append_discard_event(img_req, false);
++	case EVENT_TYPE_AIO_DISCARD:
++		ret = rbd_journal_handle_aio_discard(rbd_dev, p, end, struct_v,
++						     commit_tid);
 +		break;
-+	case OBJ_OP_DISCARD:
-+		img_journal_append_discard_event(img_req, true);
++	case EVENT_TYPE_AIO_FLUSH:
++		/*
++		 * As the all event replaying are synchronized, we don't
++		 * need any more work for replaying flush event. Just
++		 * commit it.
++		 */
++		ceph_journaler_client_committed(rbd_dev->journal->journaler,
++						commit_tid);
 +		break;
 +	default:
-+		img_req->pending.result = -ENOTSUPP;
++		rbd_warn(rbd_dev, "unknown event_type: %u", event_type);
++		return -EINVAL;
 +	}
++
++	if (struct_v >= 4) {
++		u8 meta_struct_v;
++		u32 meta_struct_len;
++
++		/* skip metadata */
++		ret = ceph_start_decoding(p, end, 1, "decode_metadata",
++					     &meta_struct_v, &meta_struct_len);
++		if (ret)
++			return ret;
++		*p += meta_struct_len;
++	}
++	return ret;
 +}
 +
  struct rbd_journal_tag_predecessor {
