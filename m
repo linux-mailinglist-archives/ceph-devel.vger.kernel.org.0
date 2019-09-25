@@ -2,119 +2,83 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0744ABD58B
-	for <lists+ceph-devel@lfdr.de>; Wed, 25 Sep 2019 01:41:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 465E3BDA87
+	for <lists+ceph-devel@lfdr.de>; Wed, 25 Sep 2019 11:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442104AbfIXXly (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 24 Sep 2019 19:41:54 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41735 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2442084AbfIXXlx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 24 Sep 2019 19:41:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1569368512;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=SZOKpNm8dnm6a82jGO/e/qbdKrI7hpoMwxPeHPJ8Xrs=;
-        b=HGXLo4bRCxoq4z0mcY1iUjkrMAT/SosAkNywkNR6LQzCAnVSRJpsguWxCQp/PdF1nZBd/p
-        rwDrtzdEKAmcXSzyYuhDJ9N0ARa8jnbY1QsV83nRVkk4ykEoNOzkB4PlIcdOMXuSvEnUdo
-        42Ir0YjJjT40lF6HNbo/gxLMGz9eCHo=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-152-pJ8t-B1OMsqaPApgIMuxJA-1; Tue, 24 Sep 2019 19:41:49 -0400
-Received: by mail-lj1-f200.google.com with SMTP id q23so1008345ljg.10
-        for <ceph-devel@vger.kernel.org>; Tue, 24 Sep 2019 16:41:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R1H2meoAoVEJlhba1ECtL8fM9CvJ1HVaK5dxoI+zOUM=;
-        b=qrHGTpGfmcE0pAX8fPEl90ocRvni8/8QPeC96t2cNQc0m0IALsOdMHjRf5s3qxazen
-         yLLU5xhnUKHKcgukBZEfn/0cpEmcagDLenartWDVlH/69e4HRF4KBBxDcthoIkxhwuF7
-         8Pl/iqYaSElVEc7lLaQ7ceW00kc6MeuGSyd4GB06rTlJGiBEIcXWlANF9MR3JFxFcK1Z
-         cFCeDV9CGOY6dsfX58VeAB9jqVsDAGaFs1UH52c/n03Q30c/4yMftHIqvru6Nvq+DEbf
-         WA1E9eCqgvaqlv6yS+RiaBLbHn9nV/4vCNa4r0vamtPDOA5eNQaPUWC2UURLNT4YMVH/
-         AJJw==
-X-Gm-Message-State: APjAAAVpc7JH+xR/kf4BlYmgzvSNrYyMY3Ly/Xc+sBtmU8dgw7Kk9Qdf
-        dyDFzyBkLyfTZ+YTGNYsCXuKr2CDfwkbJUdQT67+matJnyeiGuKFKA5Gq1i0V9jEtKJ30xz1eDl
-        cTMmehxYgbvkDiPwHD6sdurLYwVJ264/tVid+HQ==
-X-Received: by 2002:ac2:5e9e:: with SMTP id b30mr3519291lfq.5.1569368507798;
-        Tue, 24 Sep 2019 16:41:47 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxtksGsWiEr29oI0Y0uhenHq/r7AW9wePvJeU26H+Ns0PI0iWQItkfe69ar5G0uYgVZgmY+ctnRXnn6KNJYwlQ=
-X-Received: by 2002:ac2:5e9e:: with SMTP id b30mr3519284lfq.5.1569368507622;
- Tue, 24 Sep 2019 16:41:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <CANA9Uk7nUFcLc7L4-=3hGH-7Dcf4dt1+xVSrs7hDzgWdNB+vqw@mail.gmail.com>
- <CAANLjFq3HCJvd6R-17ip+-TqTYeQFk0Z2eSz+hkCr2B4jUyX7w@mail.gmail.com> <CANA9Uk53woKRHkOqRTRsthODL8+JOfXX4BEpNhriqdTb0wG4yw@mail.gmail.com>
-In-Reply-To: <CANA9Uk53woKRHkOqRTRsthODL8+JOfXX4BEpNhriqdTb0wG4yw@mail.gmail.com>
-From:   Brad Hubbard <bhubbard@redhat.com>
-Date:   Wed, 25 Sep 2019 09:41:35 +1000
-Message-ID: <CAF-wwdFvbTRDULTYQAK_3orwqcFLJZYQHcqPXd0d4kyF99orMw@mail.gmail.com>
-Subject: Re: [ceph-users] ceph; pg scrub errors
-To:     M Ranga Swami Reddy <swamireddy@gmail.com>
-Cc:     Robert LeBlanc <robert@leblancnet.us>,
-        ceph-users <ceph-users@lists.ceph.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-X-MC-Unique: pJ8t-B1OMsqaPApgIMuxJA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        id S2387509AbfIYJJP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 25 Sep 2019 05:09:15 -0400
+Received: from m97138.mail.qiye.163.com ([220.181.97.138]:21294 "EHLO
+        m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728523AbfIYJIl (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 25 Sep 2019 05:08:41 -0400
+Received: from atest-guest.localdomain (unknown [218.94.118.90])
+        by smtp9 (Coremail) with SMTP id u+CowAD3dl9YLotdHDhSAg--.166S2;
+        Wed, 25 Sep 2019 17:07:36 +0800 (CST)
+From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
+To:     idryomov@gmail.com, jdillama@redhat.com
+Cc:     ceph-devel@vger.kernel.org,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>
+Subject: [PATCH v4 00/12] rbd journaling feature
+Date:   Wed, 25 Sep 2019 09:07:22 +0000
+Message-Id: <1569402454-4736-1-git-send-email-dongsheng.yang@easystack.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-CM-TRANSID: u+CowAD3dl9YLotdHDhSAg--.166S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjfUPoGQUUUUU
+X-Originating-IP: [218.94.118.90]
+X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbifxg7elrpOUem0wAAse
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 10:51 PM M Ranga Swami Reddy
-<swamireddy@gmail.com> wrote:
->
-> Interestingly - "rados list-inconsistent-obj ${PG} --format=3Djson"  not =
-showing any objects inconsistent-obj.
-> And also "rados list-missing-obj ${PG} --format=3Djson" also not showing =
-any missing or unfound objects.
+Hi Ilya, Jason and all:
+	This is V4 fro krbd journaling feature. Please help to review. thanx
 
-Complete a scrub of ${PG} just before you run these commands.
+	kernel branch: https://github.com/yangdongsheng/linux/tree/krbd_journaling_v4
+	ceph qa branch: https://github.com/yangdongsheng/ceph/tree/krbd_mirror_qa
 
->
-> Thanks
-> Swami
->
-> On Mon, Sep 23, 2019 at 8:18 PM Robert LeBlanc <robert@leblancnet.us> wro=
-te:
->>
->> On Thu, Sep 19, 2019 at 4:34 AM M Ranga Swami Reddy
->> <swamireddy@gmail.com> wrote:
->> >
->> > Hi-Iam using ceph 12.2.11. here I am getting a few scrub errors. To fi=
-x these scrub error I ran the "ceph pg repair <pg_id>".
->> > But scrub error not going and the repair is talking long time like 8-1=
-2 hours.
->>
->> Depending on the size of the PGs and how active the cluster is, it
->> could take a long time as it takes another deep scrub to happen to
->> clear the error status after a repair. Since it is not going away,
->> either the problem is too complicated to automatically repair and
->> needs to be done by hand, or the problem is repaired and when it
->> deep-scrubs to check it, the problem has reappeared or another problem
->> was found and the disk needs to be replaced.
->>
->> Try running:
->> rados list-inconsistent-obj ${PG} --format=3Djson
->>
->> and see what the exact problems are.
->> ----------------
->> Robert LeBlanc
->> PGP Fingerprint 79A2 9CA4 6CC4 45DD A904  C70E E654 3BB2 FA62 B9F1
->
-> _______________________________________________
-> ceph-users mailing list
-> ceph-users@lists.ceph.com
-> http://lists.ceph.com/listinfo.cgi/ceph-users-ceph.com
+Changelog:
+	- from v3:
+		1 Fix multi-events for single write problem. And I added a test case
+		    in rbd_mirror.sh for it: https://github.com/yangdongsheng/ceph/commit/cb1f2d10d7c206afbd05718868401e6c2ee13e0c#diff-64d0a5a0c5330ed542d2b395a20b0a97R31
+		2 Add zeroout event support. And I added a test case in rbd_mirror.sh:
+		    https://github.com/yangdongsheng/ceph/commit/20ead333371603000747e17b9f528fe2584d4034#diff-64d0a5a0c5330ed542d2b395a20b0a97R43
+		3 Fix call chain problem found in iozone testing.
+		4 coding-style. fixed some coding-style problem. In addition, I tried clang-format
+		  to do a double check.
 
+Dongsheng Yang (12):
+  libceph: introduce ceph_extract_encoded_string_kvmalloc
+  libceph: introduce a new parameter of workqueue in ceph_osdc_watch()
+  libceph: support op append
+  libceph: add prefix and suffix in ceph_osd_req_op.extent
+  libceph: introduce cls_journal_client
+  libceph: introduce generic journaler module
+  rbd: introduce completion for each img_request
+  rbd: introduce IMG_REQ_NOLOCK flag for image request state
+  rbd: introduce rbd_journal_allocate_tag to allocate journal tag for
+    rbd client
+  rbd: append journal event in image request state machine
+  rbd: replay events in journal
+  rbd: add support for feature of RBD_FEATURE_JOURNALING
 
+ drivers/block/rbd.c                     |  698 +++++++++-
+ include/linux/ceph/cls_journal_client.h |   84 ++
+ include/linux/ceph/decode.h             |   21 +-
+ include/linux/ceph/journaler.h          |  182 +++
+ include/linux/ceph/osd_client.h         |   21 +
+ net/ceph/Makefile                       |    3 +-
+ net/ceph/cls_journal_client.c           |  527 ++++++++
+ net/ceph/journaler.c                    | 2205 +++++++++++++++++++++++++++++++
+ net/ceph/osd_client.c                   |   61 +-
+ 9 files changed, 3790 insertions(+), 12 deletions(-)
+ create mode 100644 include/linux/ceph/cls_journal_client.h
+ create mode 100644 include/linux/ceph/journaler.h
+ create mode 100644 net/ceph/cls_journal_client.c
+ create mode 100644 net/ceph/journaler.c
 
---=20
-Cheers,
-Brad
+-- 
+1.8.3.1
+
 
