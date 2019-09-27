@@ -2,109 +2,141 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54F44BE81C
-	for <lists+ceph-devel@lfdr.de>; Thu, 26 Sep 2019 00:10:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3666AC08AA
+	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2019 17:34:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728733AbfIYWKl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 25 Sep 2019 18:10:41 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51117 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727356AbfIYWKl (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 25 Sep 2019 18:10:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1569449439;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4FQhVVM1l2BEk49qslRTmBjpuQNnyv04u3wbYB9SsbU=;
-        b=ev0tiV8E16ADHxTz83AnMqs36bJy3NehA8w1Wzw5wsJWR2ljZwvO1M5NXw1CWe9gHLlIra
-        JcVnxGy7O6Vgi2dtIE4b+CZAOjMemghVFzAX9rVaSRwOTMiUE6noiHrhdfWYouWVV3KxgC
-        7zOHr+kFVr1aJzM/Ma51GXjO+J8b+NQ=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-29-kHLw-i0UPUy0t0zG_RvoJg-1; Wed, 25 Sep 2019 18:10:37 -0400
-Received: by mail-qt1-f198.google.com with SMTP id e13so383788qto.18
-        for <ceph-devel@vger.kernel.org>; Wed, 25 Sep 2019 15:10:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4FQhVVM1l2BEk49qslRTmBjpuQNnyv04u3wbYB9SsbU=;
-        b=kcN40hRM217a1WmZnjKhehXvtVdYNmDRoN0moBjP2Jg9OxEnsEKH/llKaQi1CXP/0I
-         LmUZkKGqNHLOXsAxD5+0MLQ3fDsscrzgejz2tCT4ihaSV0kwnr5qxJVN42QXOq7E+Os1
-         7EZoHM8L9paoiQQPykxzCJUleYGlZuxoXI4cpO66jZAcE0TwCGNB998iCE2yTPo3bmtB
-         cCel1YuWhTAFOCcUjjWV7FgrynQ0f5Vwg+vTxNalp0Vhu9KqBEAsi1+cJB7bejFYJ5uV
-         xwjcZyiT3DGDeWSa9byfDy+RAwTmsQhESKShLxrvQjHYtY5ya8vkzN4mMo94ddb9jilP
-         BaGQ==
-X-Gm-Message-State: APjAAAVGSXNqPrc0r1GOxGyG+ghfzPiCQ1Ko9xFIOLNJrwUAXkF3Fh7h
-        N9aKrN0sWPMGOlrILMs34qgqtuz9QHR8Jtq9uAybVrXOE9PtNo+2LCuCI7kKwYj1L124MoV+0fI
-        D2jSSW1Ymm2l84U9Ci3SvPKmEc1JNX7wfew4nEw==
-X-Received: by 2002:ac8:1bcb:: with SMTP id m11mr795092qtk.122.1569449436434;
-        Wed, 25 Sep 2019 15:10:36 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwyfybyX3r4qqNk+zZN/PCisMZlbUhaH1nlSLH3Q3l34TsGH8aV+X/dhRQQrFyvZ6rjjIHY3BbLkilvg7I3J3c=
-X-Received: by 2002:ac8:1bcb:: with SMTP id m11mr795065qtk.122.1569449436234;
- Wed, 25 Sep 2019 15:10:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAC-Np1zTk1G-LF3eJiqzSF8SS=h=Jrr261C4vHdgmmwcqhUeXQ@mail.gmail.com>
- <CAC-Np1zjZJW2iqLVe720u_sxQDTKjoUqL9ftrqKbMcYbZQgYFQ@mail.gmail.com>
- <CALi_L4_Sz8oFHAFyRfqDfLWGRJSHnSd=dyYUZ6P92o8VY3vGCQ@mail.gmail.com>
- <CALqRxCygXUzA0+4sY6meMO9Smq2rouei7ay0BqJD9+-du7RCYQ@mail.gmail.com>
- <CAN-GepKyROe6CRmKFjFyMvH8b5AGPomh96Q6gRVzQS-Zv-iDtQ@mail.gmail.com>
- <CAA6-MF_OwcHjDTM=48_pbPbp8BPf0Dd+iLTWZ+06E8akKoMxGA@mail.gmail.com> <CALi_L4-QGFaKhRSNUMcC+CfNnh8rBR_A8PBkVqDydSEX5ho7Ag@mail.gmail.com>
-In-Reply-To: <CALi_L4-QGFaKhRSNUMcC+CfNnh8rBR_A8PBkVqDydSEX5ho7Ag@mail.gmail.com>
-From:   Ken Dreyer <kdreyer@redhat.com>
-Date:   Wed, 25 Sep 2019 16:10:25 -0600
-Message-ID: <CALqRxCw3Z2HHfszEizVtNbd2f22antp-2CbRpehUVTMO0b3FKw@mail.gmail.com>
-Subject: Re: [ceph-users] Re: download.ceph.com repository changes
-To:     Sasha Litvak <alexander.v.litvak@gmail.com>
-Cc:     Janne Johansson <icepic.dz@gmail.com>,
-        Unknown <ceph-maintainers@ceph.com>,
-        ceph-users <ceph-users@ceph.io>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-X-MC-Unique: kHLw-i0UPUy0t0zG_RvoJg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        id S1727585AbfI0PeQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 27 Sep 2019 11:34:16 -0400
+Received: from m97138.mail.qiye.163.com ([220.181.97.138]:11294 "EHLO
+        m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727140AbfI0PeP (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 27 Sep 2019 11:34:15 -0400
+Received: from atest-guest.localdomain (unknown [218.94.118.90])
+        by smtp9 (Coremail) with SMTP id u+CowADnJWXEK45dy7JmAg--.1633S2;
+        Fri, 27 Sep 2019 23:33:24 +0800 (CST)
+From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
+To:     idryomov@gmail.com
+Cc:     ceph-devel@vger.kernel.org,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>
+Subject: [PATCH] rbd: cancel lock_dwork before unlocking in cleanup path of do_rbd_add()
+Date:   Fri, 27 Sep 2019 15:33:22 +0000
+Message-Id: <1569598402-28609-1-git-send-email-dongsheng.yang@easystack.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-CM-TRANSID: u+CowADnJWXEK45dy7JmAg--.1633S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxuFyxXw1ftFy3uF4DJr1xuFg_yoWxXr1rpr
+        15KF1UKr4kJryjqF48AF15Zw17Ja1DAa43Wr4xAry7WFs8Gr1UXr1xKrWjyrZ8trZrXrWa
+        qws3Xw4rtF1jgaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JbfF4iUUUUU=
+X-Originating-IP: [218.94.118.90]
+X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiHQQ9elpchlXpWAAAs6
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 1:56 PM Sasha Litvak
-<alexander.v.litvak@gmail.com> wrote:
->
-> I guess for me the more crucial  questions should be answered:
->
+There is a warning message[1] in my test with below steps:
+  # rbd bench --io-type write --io-size 4K --io-threads 1 --io-pattern rand test &
+  # sleep 5
+  # pkill -9 rbd
+  # rbd map test &
+  # sleep 5
+  # pkill rbd
 
-> 1.  How can a busted release be taken out of repos (some metadata
-> update I hope)?
+The reason is that the rbd_add_acquire_lock() is interruptable,
+that means, when we kill the waiting on ->acquire_wait, the lock_dwork
+could be still running.
 
-It's hard to define the word "busted" in a way that satisfies everyone.
+1. do_rbd_add()							2. lock_dwork
+rbd_add_acquire_lock()
+  - queue_delayed_work()
+								lock_dwork queued
+    - wait_for_completion_killable_timeout()  <-- kill happen
+rbd_dev_image_unlock()	<-- UNLOCKED now, nothing to do.
+rbd_dev_device_release()
+rbd_dev_image_release()
+  - ...
+								lock successed here
+     - cancel_delayed_work_sync(&rbd_dev->lock_dwork)
 
-For example, in the past, we've heard rumors that the releases are
-"busted" and we need to pull them, and in reality the impact turned out
-to be way smaller than expected. If we let panic reign, we would have
-builds appearing and disappearing quite often.
+Then when we reach the rbd_dev_free(), lock_state is not RBD_LOCK_STATE_UNLOCKED.
 
-Or to borrow a real example, what happens when the new (buggy) release
-fixes a CVE, and we coordinated the disclosure of the CVE to happen on
-release day? Then we're hurting some users to help others.
+To fix it, this commit make sure the lock_dwork was finished before calling
+rbd_dev_image_unlock().
 
-> 2.  Can some fix(es) be added into a test release so they can be
-> accessed by community and tested  / used before next general release
-> is avaialble.  I was thinking about trying to pick some critical
-> backports for internal build / testing but it is not very simple for
-> everyone.  It seems that shaman has some test builds going on, so may
-> be if a track issue will mention that build xxxyz contains fixes for
-> ticket 9999 "for testing purposes only use at your peril", it will
-> allow the community to test the build and for someone who in need to
-> get to the higher ground quickly.
+On the other hand, this would not happend in do_rbd_remove(), because
+after rbd mapped, lock_dwork will only be queued for IO request, and
+request will continue unless lock_dwork finished. when we call
+rbd_dev_image_unlock() in do_rbd_remove(), all requests are done.
+that means, lock_state should not be locked again after rbd_dev_image_unlock().
 
-There's certainly more to explore here. Maybe we need a defined release
-criteria so things are less subjective. Or maybe increasing the
-frequency and decreasing the size of releases will help. I'm interested
-in lowering the barriers for contributors to test early and often so
-our cutting-edge users get their builds fast and our more conservative
-users get something more stable.
+[1]:
+[  116.043632] rbd: rbd0: no lock owners detected
+[  117.745975] rbd: rbd0: failed to acquire exclusive lock: -512
+[  121.055286] rbd: image test: no lock owners detected
+[  126.066977] rbd: image test: no lock owners detected
+[  131.103870] rbd: image test: no lock owners detected
+[  132.360374] rbd: image test: no lock owners detected
+[  132.369202] rbd: image test: breaking header lock owned by client24204
+[  132.903969] rbd: image test: failed to unwatch: -512
+[  137.905601] ------------[ cut here ]------------
+[  137.906922] WARNING: CPU: 18 PID: 4545 at drivers/block/rbd.c:5576 rbd_dev_free+0xa5/0xc0 [rbd]
+[  137.908957] Modules linked in: nbd(OE) rbd(OE) libceph(OE) dns_resolver tcp_diag udp_diag inet_diag unix_diag af_packet_diag netlink_diag sg cfg80211 rfkill snd_hda_codec_generic ledtrig_audio kvm_intel kvm irqbypass crct10dif_pclmul cirrus crc32_pclmul drm_kms_helper snd_hda_intel ghash_clmulni_intel ext4 syscopyarea snd_hda_codec sysfillrect nfsd mbcache sysimgblt snd_hda_core fb_sys_fops jbd2 drm snd_hwdep aesni_intel snd_seq crypto_simd cryptd glue_helper snd_seq_device auth_rpcgss snd_pcm nfs_acl snd_timer lockd i2c_piix4 snd i2c_core pcspkr virtio_balloon soundcore grace sunrpc ip_tables xfs libcrc32c virtio_console virtio_blk(O) 8139too ata_generic pata_acpi serio_raw ata_piix libata virtio_pci crc32c_intel 8139cp virtio_ring mii floppy(O) virtio dm_mirror dm_region_hash dm_log dm_mod dax [last unloaded: libceph]
+[  137.926270] CPU: 18 PID: 4545 Comm: rbd Tainted: G           OE     5.3.0-rc1+ #15
+[  137.928091] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.2-0-gf9626ccb91-prebuilt.qemu-project.org 04/01/2014
+[  137.931081] RIP: 0010:rbd_dev_free+0xa5/0xc0 [rbd]
+[  137.932240] Code: 00 00 75 05 e8 1c ad ff ff 48 8b bb e0 00 00 00 e8 c0 99 ba e5 48 89 df 5b e9 b7 99 ba e5 48 c7 c7 98 90 6d c0 e8 69 20 a4 e5 <0f> 0b e9 75 ff ff ff 48 c7 c7 98 90 6d c0 e8 56 20 a4 e5 0f 0b e9
+[  137.936783] RSP: 0018:ffffb0f9c2f53dc8 EFLAGS: 00010282
+[  137.938161] RAX: 0000000000000024 RBX: ffff97f68636f000 RCX: 0000000000000000
+[  137.939922] RDX: 0000000000000000 RSI: ffff97f69fa97b18 RDI: ffff97f69fa97b18
+[  137.941673] RBP: ffff97f68636f000 R08: 0000000000000000 R09: 0000000000000000
+[  137.943469] R10: 0000000000000000 R11: 0000000000000000 R12: ffff97f68636f7c0
+[  137.944970] R13: ffff97f693dad270 R14: 0000000000000000 R15: ffff97f68fc76800
+[  137.946292] FS:  00007f3de0e7bb00(0000) GS:ffff97f69fa80000(0000) knlGS:0000000000000000
+[  137.948207] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  137.949720] CR2: 00007f1281623000 CR3: 00000007f0ec2005 CR4: 00000000000206e0
+[  137.951469] Call Trace:
+[  137.952417]  rbd_dev_release+0x41/0x60 [rbd]
+[  137.953651]  device_release+0x27/0x80
+[  137.954792]  kobject_release+0x68/0x190
+[  137.955954]  do_rbd_add.isra.67+0x970/0xf60 [rbd]
+[  137.957253]  kernfs_fop_write+0x109/0x190
+[  137.958484]  vfs_write+0xbe/0x1d0
+[  137.959566]  ksys_write+0xa4/0xe0
+[  137.960643]  do_syscall_64+0x60/0x270
+[  137.961749]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  137.963119] RIP: 0033:0x7f3dd455469d
+[  137.964245] Code: cd 20 00 00 75 10 b8 01 00 00 00 0f 05 48 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 4e fd ff ff 48 89 04 24 b8 01 00 00 00 0f 05 <48> 8b 3c 24 48 89 c2 e8 97 fd ff ff 48 89 d0 48 83 c4 08 48 3d 01
+[  137.968699] RSP: 002b:00007ffd91490010 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
+[  137.970559] RAX: ffffffffffffffda RBX: 0000000000000086 RCX: 00007f3dd455469d
+[  137.972254] RDX: 0000000000000086 RSI: 000055790f5f5338 RDI: 0000000000000009
+[  137.974030] RBP: 00007ffd91490050 R08: 0000000000000004 R09: 000000000000004d
+[  137.975806] R10: 00007ffd9148fbe0 R11: 0000000000000293 R12: 000055790f5c8e58
+[  137.977528] R13: 000055790f3479b8 R14: 0000000000000001 R15: 0000000000000001
+[  137.979250] irq event stamp: 61780
+[  137.980421] hardirqs last  enabled at (61779): [<ffffffffa610f403>] console_unlock+0x503/0x5f0
+[  137.982397] hardirqs last disabled at (61780): [<ffffffffa600379a>] trace_hardirqs_off_thunk+0x1a/0x20
+[  137.984495] softirqs last  enabled at (61776): [<ffffffffa6c00343>] __do_softirq+0x343/0x447
+[  137.986504] softirqs last disabled at (61769): [<ffffffffa609a1b7>] irq_exit+0xe7/0xf0
+[  137.988417] ---[ end trace 10917ffd2e2f48ca ]---
+
+Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
+---
+ drivers/block/rbd.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 5bb98f5..44dd7a0 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -7807,6 +7807,7 @@ static ssize_t do_rbd_add(struct bus_type *bus,
+ 	return rc;
+ 
+ err_out_image_lock:
++	cancel_delayed_work_sync(&rbd_dev->lock_dwork);
+ 	rbd_dev_image_unlock(rbd_dev);
+ 	rbd_dev_device_release(rbd_dev);
+ err_out_image_probe:
+-- 
+1.8.3.1
+
 
