@@ -2,141 +2,110 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3666AC08AA
-	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2019 17:34:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCAD4C08E6
+	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2019 17:48:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbfI0PeQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 27 Sep 2019 11:34:16 -0400
-Received: from m97138.mail.qiye.163.com ([220.181.97.138]:11294 "EHLO
-        m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727140AbfI0PeP (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 27 Sep 2019 11:34:15 -0400
-Received: from atest-guest.localdomain (unknown [218.94.118.90])
-        by smtp9 (Coremail) with SMTP id u+CowADnJWXEK45dy7JmAg--.1633S2;
-        Fri, 27 Sep 2019 23:33:24 +0800 (CST)
-From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
-To:     idryomov@gmail.com
-Cc:     ceph-devel@vger.kernel.org,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: [PATCH] rbd: cancel lock_dwork before unlocking in cleanup path of do_rbd_add()
-Date:   Fri, 27 Sep 2019 15:33:22 +0000
-Message-Id: <1569598402-28609-1-git-send-email-dongsheng.yang@easystack.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-CM-TRANSID: u+CowADnJWXEK45dy7JmAg--.1633S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxuFyxXw1ftFy3uF4DJr1xuFg_yoWxXr1rpr
-        15KF1UKr4kJryjqF48AF15Zw17Ja1DAa43Wr4xAry7WFs8Gr1UXr1xKrWjyrZ8trZrXrWa
-        qws3Xw4rtF1jgaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JbfF4iUUUUU=
-X-Originating-IP: [218.94.118.90]
-X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiHQQ9elpchlXpWAAAs6
+        id S1727872AbfI0Psb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 27 Sep 2019 11:48:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726251AbfI0Psb (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 27 Sep 2019 11:48:31 -0400
+Received: from tleilax.poochiereds.net.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D40B8205F4;
+        Fri, 27 Sep 2019 15:48:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569599310;
+        bh=u5266vdHriBnW1I4v4FlTkLugyi+gbGXvPAHhQ4/i+w=;
+        h=From:To:Cc:Subject:Date:From;
+        b=F2cXMN0QVTiEIM/PUmrYkAAn8S9dPZC88PuQAVVLGn2ONrqCxjbhBopDppIryNEZi
+         sZfLIJCS64EYTB8wbEfwtDfJwyhTeOSX3tovQjKvJLyDruUgBKw9h+Po8pqY9UduuF
+         ZLOKuaDmp+xZdCuqBlQwF1jnRlSfJCXUY4Yw7dEg=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com
+Subject: [PATCH] ceph: just skip unrecognized info in ceph_reply_info_extra
+Date:   Fri, 27 Sep 2019 11:48:28 -0400
+Message-Id: <20190927154828.13708-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-There is a warning message[1] in my test with below steps:
-  # rbd bench --io-type write --io-size 4K --io-threads 1 --io-pattern rand test &
-  # sleep 5
-  # pkill -9 rbd
-  # rbd map test &
-  # sleep 5
-  # pkill rbd
+In the future, we're going to want to extend the ceph_reply_info_extra
+for create replies. Currently though, the kernel code doesn't accept an
+extra blob that is larger than the expected data.
 
-The reason is that the rbd_add_acquire_lock() is interruptable,
-that means, when we kill the waiting on ->acquire_wait, the lock_dwork
-could be still running.
+Change the code to skip over any unrecognized fields at the end of the
+extra blob, rather than returning -EIO.
 
-1. do_rbd_add()							2. lock_dwork
-rbd_add_acquire_lock()
-  - queue_delayed_work()
-								lock_dwork queued
-    - wait_for_completion_killable_timeout()  <-- kill happen
-rbd_dev_image_unlock()	<-- UNLOCKED now, nothing to do.
-rbd_dev_device_release()
-rbd_dev_image_release()
-  - ...
-								lock successed here
-     - cancel_delayed_work_sync(&rbd_dev->lock_dwork)
-
-Then when we reach the rbd_dev_free(), lock_state is not RBD_LOCK_STATE_UNLOCKED.
-
-To fix it, this commit make sure the lock_dwork was finished before calling
-rbd_dev_image_unlock().
-
-On the other hand, this would not happend in do_rbd_remove(), because
-after rbd mapped, lock_dwork will only be queued for IO request, and
-request will continue unless lock_dwork finished. when we call
-rbd_dev_image_unlock() in do_rbd_remove(), all requests are done.
-that means, lock_state should not be locked again after rbd_dev_image_unlock().
-
-[1]:
-[  116.043632] rbd: rbd0: no lock owners detected
-[  117.745975] rbd: rbd0: failed to acquire exclusive lock: -512
-[  121.055286] rbd: image test: no lock owners detected
-[  126.066977] rbd: image test: no lock owners detected
-[  131.103870] rbd: image test: no lock owners detected
-[  132.360374] rbd: image test: no lock owners detected
-[  132.369202] rbd: image test: breaking header lock owned by client24204
-[  132.903969] rbd: image test: failed to unwatch: -512
-[  137.905601] ------------[ cut here ]------------
-[  137.906922] WARNING: CPU: 18 PID: 4545 at drivers/block/rbd.c:5576 rbd_dev_free+0xa5/0xc0 [rbd]
-[  137.908957] Modules linked in: nbd(OE) rbd(OE) libceph(OE) dns_resolver tcp_diag udp_diag inet_diag unix_diag af_packet_diag netlink_diag sg cfg80211 rfkill snd_hda_codec_generic ledtrig_audio kvm_intel kvm irqbypass crct10dif_pclmul cirrus crc32_pclmul drm_kms_helper snd_hda_intel ghash_clmulni_intel ext4 syscopyarea snd_hda_codec sysfillrect nfsd mbcache sysimgblt snd_hda_core fb_sys_fops jbd2 drm snd_hwdep aesni_intel snd_seq crypto_simd cryptd glue_helper snd_seq_device auth_rpcgss snd_pcm nfs_acl snd_timer lockd i2c_piix4 snd i2c_core pcspkr virtio_balloon soundcore grace sunrpc ip_tables xfs libcrc32c virtio_console virtio_blk(O) 8139too ata_generic pata_acpi serio_raw ata_piix libata virtio_pci crc32c_intel 8139cp virtio_ring mii floppy(O) virtio dm_mirror dm_region_hash dm_log dm_mod dax [last unloaded: libceph]
-[  137.926270] CPU: 18 PID: 4545 Comm: rbd Tainted: G           OE     5.3.0-rc1+ #15
-[  137.928091] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.2-0-gf9626ccb91-prebuilt.qemu-project.org 04/01/2014
-[  137.931081] RIP: 0010:rbd_dev_free+0xa5/0xc0 [rbd]
-[  137.932240] Code: 00 00 75 05 e8 1c ad ff ff 48 8b bb e0 00 00 00 e8 c0 99 ba e5 48 89 df 5b e9 b7 99 ba e5 48 c7 c7 98 90 6d c0 e8 69 20 a4 e5 <0f> 0b e9 75 ff ff ff 48 c7 c7 98 90 6d c0 e8 56 20 a4 e5 0f 0b e9
-[  137.936783] RSP: 0018:ffffb0f9c2f53dc8 EFLAGS: 00010282
-[  137.938161] RAX: 0000000000000024 RBX: ffff97f68636f000 RCX: 0000000000000000
-[  137.939922] RDX: 0000000000000000 RSI: ffff97f69fa97b18 RDI: ffff97f69fa97b18
-[  137.941673] RBP: ffff97f68636f000 R08: 0000000000000000 R09: 0000000000000000
-[  137.943469] R10: 0000000000000000 R11: 0000000000000000 R12: ffff97f68636f7c0
-[  137.944970] R13: ffff97f693dad270 R14: 0000000000000000 R15: ffff97f68fc76800
-[  137.946292] FS:  00007f3de0e7bb00(0000) GS:ffff97f69fa80000(0000) knlGS:0000000000000000
-[  137.948207] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  137.949720] CR2: 00007f1281623000 CR3: 00000007f0ec2005 CR4: 00000000000206e0
-[  137.951469] Call Trace:
-[  137.952417]  rbd_dev_release+0x41/0x60 [rbd]
-[  137.953651]  device_release+0x27/0x80
-[  137.954792]  kobject_release+0x68/0x190
-[  137.955954]  do_rbd_add.isra.67+0x970/0xf60 [rbd]
-[  137.957253]  kernfs_fop_write+0x109/0x190
-[  137.958484]  vfs_write+0xbe/0x1d0
-[  137.959566]  ksys_write+0xa4/0xe0
-[  137.960643]  do_syscall_64+0x60/0x270
-[  137.961749]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  137.963119] RIP: 0033:0x7f3dd455469d
-[  137.964245] Code: cd 20 00 00 75 10 b8 01 00 00 00 0f 05 48 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 4e fd ff ff 48 89 04 24 b8 01 00 00 00 0f 05 <48> 8b 3c 24 48 89 c2 e8 97 fd ff ff 48 89 d0 48 83 c4 08 48 3d 01
-[  137.968699] RSP: 002b:00007ffd91490010 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-[  137.970559] RAX: ffffffffffffffda RBX: 0000000000000086 RCX: 00007f3dd455469d
-[  137.972254] RDX: 0000000000000086 RSI: 000055790f5f5338 RDI: 0000000000000009
-[  137.974030] RBP: 00007ffd91490050 R08: 0000000000000004 R09: 000000000000004d
-[  137.975806] R10: 00007ffd9148fbe0 R11: 0000000000000293 R12: 000055790f5c8e58
-[  137.977528] R13: 000055790f3479b8 R14: 0000000000000001 R15: 0000000000000001
-[  137.979250] irq event stamp: 61780
-[  137.980421] hardirqs last  enabled at (61779): [<ffffffffa610f403>] console_unlock+0x503/0x5f0
-[  137.982397] hardirqs last disabled at (61780): [<ffffffffa600379a>] trace_hardirqs_off_thunk+0x1a/0x20
-[  137.984495] softirqs last  enabled at (61776): [<ffffffffa6c00343>] __do_softirq+0x343/0x447
-[  137.986504] softirqs last disabled at (61769): [<ffffffffa609a1b7>] irq_exit+0xe7/0xf0
-[  137.988417] ---[ end trace 10917ffd2e2f48ca ]---
-
-Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- drivers/block/rbd.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/ceph/mds_client.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 5bb98f5..44dd7a0 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -7807,6 +7807,7 @@ static ssize_t do_rbd_add(struct bus_type *bus,
- 	return rc;
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index da882217d04d..54a4e480c16b 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -384,8 +384,8 @@ static int parse_reply_info_readdir(void **p, void *end,
+ 	}
  
- err_out_image_lock:
-+	cancel_delayed_work_sync(&rbd_dev->lock_dwork);
- 	rbd_dev_image_unlock(rbd_dev);
- 	rbd_dev_device_release(rbd_dev);
- err_out_image_probe:
+ done:
+-	if (*p != end)
+-		goto bad;
++	/* Skip over any unrecognized fields */
++	*p = end;
+ 	return 0;
+ 
+ bad:
+@@ -406,12 +406,10 @@ static int parse_reply_info_filelock(void **p, void *end,
+ 		goto bad;
+ 
+ 	info->filelock_reply = *p;
+-	*p += sizeof(*info->filelock_reply);
+ 
+-	if (unlikely(*p != end))
+-		goto bad;
++	/* Skip over any unrecognized fields */
++	*p = end;
+ 	return 0;
+-
+ bad:
+ 	return -EIO;
+ }
+@@ -425,18 +423,21 @@ static int parse_reply_info_create(void **p, void *end,
+ {
+ 	if (features == (u64)-1 ||
+ 	    (features & CEPH_FEATURE_REPLY_CREATE_INODE)) {
++		/* Malformed reply? */
+ 		if (*p == end) {
+ 			info->has_create_ino = false;
+ 		} else {
+ 			info->has_create_ino = true;
+-			info->ino = ceph_decode_64(p);
++			ceph_decode_64_safe(p, end, info->ino, bad);
+ 		}
++	} else {
++		if (*p != end)
++			goto bad;
+ 	}
+ 
+-	if (unlikely(*p != end))
+-		goto bad;
++	/* Skip over any unrecognized fields */
++	*p = end;
+ 	return 0;
+-
+ bad:
+ 	return -EIO;
+ }
 -- 
-1.8.3.1
-
+2.21.0
 
