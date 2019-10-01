@@ -2,33 +2,34 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E07A1C429B
-	for <lists+ceph-devel@lfdr.de>; Tue,  1 Oct 2019 23:23:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AFADC42A2
+	for <lists+ceph-devel@lfdr.de>; Tue,  1 Oct 2019 23:24:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbfJAVXk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 1 Oct 2019 17:23:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57006 "EHLO mail.kernel.org"
+        id S1727801AbfJAVY2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 1 Oct 2019 17:24:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727454AbfJAVXk (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 1 Oct 2019 17:23:40 -0400
+        id S1726414AbfJAVY2 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 1 Oct 2019 17:24:28 -0400
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 112412168B;
-        Tue,  1 Oct 2019 21:23:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 358F12168B;
+        Tue,  1 Oct 2019 21:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569965019;
-        bh=dOlrecZEYNKoeRK87Vf4WJChifP2ZEyoGpUZPEi8AdI=;
+        s=default; t=1569965066;
+        bh=jQ5zE9UYCh7mNDyAapzJSpEb0s39jCgJ6xDdia4cttA=;
         h=From:To:Cc:Subject:Date:From;
-        b=Cjl22kLDqiVBALwLDPtJ9iI6rInnsfs2yr+WetMUlHKHrSRvGyG5fJYOtHvx6bnO6
-         eolIgPolaqLgIh10jwQTCDkUPHGRWlpJ+p/2lSOVn195/sEcDYTZp1xFJDhW16XrBx
-         rJBGlGBK5iKD0oIbEbqhwvAZD7W/It+hOzlfA0PA=
+        b=aCAsNKoA5BL/OhJbzpfM/hn13sd+ySzwXD2BF1tXkAbSze6xPTQXpFMUwN49IDV29
+         q78qzbgEclerTbE/7Ctj3+0xIdcv4dM9FAMHEnFo26P23UjtX78W4E4AZPbD/zGlCo
+         niJYnz16DOc1vq/h3BJv0xbWqD+sU704XBWkvRkg=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     sashal@kernel.org
-Cc:     idryomov@gmail.com, zyan@redhat.com, ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, zyan@redhat.com, ceph-devel@vger.kernel.org,
+        stable@vger.kernel.org
 Subject: [v4.19-stable PATCH] ceph: use ceph_evict_inode to cleanup inode's resource
-Date:   Tue,  1 Oct 2019 17:23:37 -0400
-Message-Id: <20191001212337.2997-1-jlayton@kernel.org>
+Date:   Tue,  1 Oct 2019 17:24:24 -0400
+Message-Id: <20191001212425.3085-1-jlayton@kernel.org>
 X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -62,6 +63,8 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  3 files changed, 10 insertions(+), 2 deletions(-)
 
 Hi Sasha,
+
+Sorry for the resend -- forgot to cc stable@vger on the first one.
 
 This patch should be applied after commit 81281039999 is reverted.
 Sorry for the mixup!
