@@ -2,39 +2,39 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57CB9C3CA5
-	for <lists+ceph-devel@lfdr.de>; Tue,  1 Oct 2019 18:54:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7E62C3C43
+	for <lists+ceph-devel@lfdr.de>; Tue,  1 Oct 2019 18:50:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730508AbfJAQx1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 1 Oct 2019 12:53:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55436 "EHLO mail.kernel.org"
+        id S2388128AbfJAQoa (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 1 Oct 2019 12:44:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732268AbfJAQnY (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:43:24 -0400
+        id S2388087AbfJAQoa (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:44:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B078D21924;
-        Tue,  1 Oct 2019 16:43:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F85021855;
+        Tue,  1 Oct 2019 16:44:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948203;
-        bh=G5VaTwfS5O/XxUYXqnwGpmGX3h20JN+8pFptTAtSvIo=;
+        s=default; t=1569948269;
+        bh=iYquV7rnSBLN4fz1yz+JjspIOWP43YtxMzKycPphq00=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sP97qoQrvjWoSi4/a1W/bOfOgoiJVCvkRKX7zX8GPBztzJ67NDTSbNn7hePDx2keJ
-         Lz097muGjUw1NcIgdfhyPujP8G0Hon6mu3okOg2/YsJmkx6ZJmAxTG3ZNz0+UxwT8+
-         kIb08SoomY+ohlEKsDrK4RDNoYGp9bbqFk+uFM9o=
+        b=Ekaxrtg092HUo9gk9/jWswA41fI6KQWOtpIui1hKqUoh/A1ulfiRlr80vdP7JQCWY
+         Rd1RCoC4hGMg8VP/uYxplNy7m27BaLRt0YNVbeQbWYGte+q5AbHMVItiQYCOvuM9kO
+         7yrgQqwEoA/N+sNJ0Xna0/PPtur1mRPYhpJsfcQI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>,
+Cc:     Luis Henriques <lhenriques@suse.com>,
+        Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 10/43] rbd: fix response length parameter for encoded strings
-Date:   Tue,  1 Oct 2019 12:42:38 -0400
-Message-Id: <20191001164311.15993-10-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 05/29] ceph: fix directories inode i_blkbits initialization
+Date:   Tue,  1 Oct 2019 12:43:59 -0400
+Message-Id: <20191001164423.16406-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191001164311.15993-1-sashal@kernel.org>
-References: <20191001164311.15993-1-sashal@kernel.org>
+In-Reply-To: <20191001164423.16406-1-sashal@kernel.org>
+References: <20191001164423.16406-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -44,66 +44,48 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Dongsheng Yang <dongsheng.yang@easystack.cn>
+From: Luis Henriques <lhenriques@suse.com>
 
-[ Upstream commit 5435d2069503e2aa89c34a94154f4f2fa4a0c9c4 ]
+[ Upstream commit 750670341a24cb714e624e0fd7da30900ad93752 ]
 
-rbd_dev_image_id() allocates space for length but passes a smaller
-value to rbd_obj_method_sync().  rbd_dev_v2_object_prefix() doesn't
-allocate space for length.  Fix both to be consistent.
+When filling an inode with info from the MDS, i_blkbits is being
+initialized using fl_stripe_unit, which contains the stripe unit in
+bytes.  Unfortunately, this doesn't make sense for directories as they
+have fl_stripe_unit set to '0'.  This means that i_blkbits will be set
+to 0xff, causing an UBSAN undefined behaviour in i_blocksize():
 
-Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
-Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
+  UBSAN: Undefined behaviour in ./include/linux/fs.h:731:12
+  shift exponent 255 is too large for 32-bit type 'int'
+
+Fix this by initializing i_blkbits to CEPH_BLOCK_SHIFT if fl_stripe_unit
+is zero.
+
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/rbd.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ fs/ceph/inode.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 585378bc988cd..3d01ad6a3bcfc 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -4510,17 +4510,20 @@ static int rbd_dev_v2_image_size(struct rbd_device *rbd_dev)
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 9bda8c7a80a05..879bc08250931 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -789,7 +789,12 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
+ 	ci->i_version = le64_to_cpu(info->version);
+ 	inode->i_version++;
+ 	inode->i_rdev = le32_to_cpu(info->rdev);
+-	inode->i_blkbits = fls(le32_to_cpu(info->layout.fl_stripe_unit)) - 1;
++	/* directories have fl_stripe_unit set to zero */
++	if (le32_to_cpu(info->layout.fl_stripe_unit))
++		inode->i_blkbits =
++			fls(le32_to_cpu(info->layout.fl_stripe_unit)) - 1;
++	else
++		inode->i_blkbits = CEPH_BLOCK_SHIFT;
  
- static int rbd_dev_v2_object_prefix(struct rbd_device *rbd_dev)
- {
-+	size_t size;
- 	void *reply_buf;
- 	int ret;
- 	void *p;
- 
--	reply_buf = kzalloc(RBD_OBJ_PREFIX_LEN_MAX, GFP_KERNEL);
-+	/* Response will be an encoded string, which includes a length */
-+	size = sizeof(__le32) + RBD_OBJ_PREFIX_LEN_MAX;
-+	reply_buf = kzalloc(size, GFP_KERNEL);
- 	if (!reply_buf)
- 		return -ENOMEM;
- 
- 	ret = rbd_obj_method_sync(rbd_dev, &rbd_dev->header_oid,
- 				  &rbd_dev->header_oloc, "get_object_prefix",
--				  NULL, 0, reply_buf, RBD_OBJ_PREFIX_LEN_MAX);
-+				  NULL, 0, reply_buf, size);
- 	dout("%s: rbd_obj_method_sync returned %d\n", __func__, ret);
- 	if (ret < 0)
- 		goto out;
-@@ -5489,7 +5492,6 @@ static int rbd_dev_image_id(struct rbd_device *rbd_dev)
- 	dout("rbd id object name is %s\n", oid.name);
- 
- 	/* Response will be an encoded string, which includes a length */
--
- 	size = sizeof (__le32) + RBD_IMAGE_ID_LEN_MAX;
- 	response = kzalloc(size, GFP_NOIO);
- 	if (!response) {
-@@ -5501,7 +5503,7 @@ static int rbd_dev_image_id(struct rbd_device *rbd_dev)
- 
- 	ret = rbd_obj_method_sync(rbd_dev, &oid, &rbd_dev->header_oloc,
- 				  "get_id", NULL, 0,
--				  response, RBD_IMAGE_ID_LEN_MAX);
-+				  response, size);
- 	dout("%s: rbd_obj_method_sync returned %d\n", __func__, ret);
- 	if (ret == -ENOENT) {
- 		image_id = kstrdup("", GFP_KERNEL);
+ 	if ((new_version || (new_issued & CEPH_CAP_AUTH_SHARED)) &&
+ 	    (issued & CEPH_CAP_AUTH_EXCL) == 0) {
 -- 
 2.20.1
 
