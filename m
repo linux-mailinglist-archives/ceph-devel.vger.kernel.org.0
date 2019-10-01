@@ -2,39 +2,39 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7876CC3C14
-	for <lists+ceph-devel@lfdr.de>; Tue,  1 Oct 2019 18:50:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1FC2C3DF7
+	for <lists+ceph-devel@lfdr.de>; Tue,  1 Oct 2019 19:04:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbfJAQsp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 1 Oct 2019 12:48:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57616 "EHLO mail.kernel.org"
+        id S1731276AbfJARDi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 1 Oct 2019 13:03:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390200AbfJAQpL (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:45:11 -0400
+        id S1728227AbfJAQjk (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:39:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76F7E20B7C;
-        Tue,  1 Oct 2019 16:45:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37AA521D79;
+        Tue,  1 Oct 2019 16:39:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948311;
-        bh=oSBMJg9jxiX29dS/4Zk49nDXcKWbTqNiDD2KtX8PJe4=;
+        s=default; t=1569947980;
+        bh=au7RXpazVKg8aDvc0+r3dLxy0AhQ6+CZk+Ol5BMAo6c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nex7EIKK78owCDRboRfxKGVB6N7mV1d9YVa8+wi19JykIjlYogG/YJUCajIHnfS3a
-         L04VNBPhdBTeE9OsPLZzfpE9dZekJq5jWr8NpMQP8faYN94gnqaTL7eDp0Jvpk2IJ2
-         VYVqND1aPsFw5V6Km2nvdr5ggFV/s1lollqgAh20=
+        b=R1Mand8YmHXVHMe14HG64bjEMXdzQt4kCmr1v7CDblqjCnD/6RXkmq+oOZjDhjNkm
+         0qV703FSh/csJIXLfXOPrkac+JNJ0G0Z5Q0TcWDgE+ES2gqb1aHdlSoAd3tqsKi0Uj
+         Poe747laz2ccTkfYUg4LiZmdyd26b7ftKjVMgn7g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Luis Henriques <lhenriques@suse.com>,
         Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 05/19] ceph: fix directories inode i_blkbits initialization
-Date:   Tue,  1 Oct 2019 12:44:51 -0400
-Message-Id: <20191001164505.16708-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 12/71] ceph: fix directories inode i_blkbits initialization
+Date:   Tue,  1 Oct 2019 12:38:22 -0400
+Message-Id: <20191001163922.14735-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191001164505.16708-1-sashal@kernel.org>
-References: <20191001164505.16708-1-sashal@kernel.org>
+In-Reply-To: <20191001163922.14735-1-sashal@kernel.org>
+References: <20191001163922.14735-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -69,12 +69,12 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 339fdf6355df7..7fcddaaca8a5d 100644
+index 18500edefc56f..3b537e7038c7a 100644
 --- a/fs/ceph/inode.c
 +++ b/fs/ceph/inode.c
-@@ -800,7 +800,12 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
- 	ci->i_version = le64_to_cpu(info->version);
- 	inode->i_version++;
+@@ -801,7 +801,12 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
+ 
+ 	/* update inode */
  	inode->i_rdev = le32_to_cpu(info->rdev);
 -	inode->i_blkbits = fls(le32_to_cpu(info->layout.fl_stripe_unit)) - 1;
 +	/* directories have fl_stripe_unit set to zero */
@@ -84,8 +84,8 @@ index 339fdf6355df7..7fcddaaca8a5d 100644
 +	else
 +		inode->i_blkbits = CEPH_BLOCK_SHIFT;
  
- 	if ((new_version || (new_issued & CEPH_CAP_AUTH_SHARED)) &&
- 	    (issued & CEPH_CAP_AUTH_EXCL) == 0) {
+ 	__ceph_update_quota(ci, iinfo->max_bytes, iinfo->max_files);
+ 
 -- 
 2.20.1
 
