@@ -2,38 +2,39 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E201C3B18
-	for <lists+ceph-devel@lfdr.de>; Tue,  1 Oct 2019 18:43:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB0ABC3BDD
+	for <lists+ceph-devel@lfdr.de>; Tue,  1 Oct 2019 18:49:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731264AbfJAQln (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 1 Oct 2019 12:41:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53322 "EHLO mail.kernel.org"
+        id S2390224AbfJAQpR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 1 Oct 2019 12:45:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731218AbfJAQll (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:41:41 -0400
+        id S2388464AbfJAQpN (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:45:13 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26CB72190F;
-        Tue,  1 Oct 2019 16:41:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 936122168B;
+        Tue,  1 Oct 2019 16:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948100;
-        bh=Wmk2nFhDp2+8jCV07diTlQn1EA/r5Bpio5yf57OjGyI=;
+        s=default; t=1569948312;
+        bh=DdXffDv43Dzcs2A5WSrvHVsPPlFVTzzPNg20It8U2EU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eXizrT+X5SMU3x/Wtb1fWvRPR5ozu92G7XUa7ICA6oyctHrmLEdMuF8itmsd5ZDu9
-         grt4k82xDrK09L0NH1zb0ZBYMqlgBrKo4nSGtjIewmj07DjIAU7DBPVWIQCYQtR4Cm
-         tPeQHg3yzPXuGe2hHlf/U5jSnhHaR7DiNZSY2dGQ=
+        b=ce1qvMFXs4tC52ZdzhdroMp+PcxOf0RjnzRMksBJV84fE2eh2xL4vxchXr2FbM7MR
+         CQ67hIeho9FZkHtlNnSToXeiqzxS4Sqx9LrajDcYt9goJD9jRLqquBxK1V9AWljb9f
+         2/E+Bf1/tGJdkpyaJxeku2oHgN5HPqV+G7fRKLps=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeff Layton <jlayton@kernel.org>, "Yan, Zheng" <zyan@redhat.com>,
+Cc:     Erqi Chen <chenerqi@gmail.com>, "Yan, Zheng" <zyan@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 12/63] ceph: fetch cap_gen under spinlock in ceph_add_cap
-Date:   Tue,  1 Oct 2019 12:40:34 -0400
-Message-Id: <20191001164125.15398-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 06/19] ceph: reconnect connection if session hang in opening state
+Date:   Tue,  1 Oct 2019 12:44:52 -0400
+Message-Id: <20191001164505.16708-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191001164125.15398-1-sashal@kernel.org>
-References: <20191001164125.15398-1-sashal@kernel.org>
+In-Reply-To: <20191001164505.16708-1-sashal@kernel.org>
+References: <20191001164505.16708-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -43,62 +44,44 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Jeff Layton <jlayton@kernel.org>
+From: Erqi Chen <chenerqi@gmail.com>
 
-[ Upstream commit 606d102327a45a49d293557527802ee7fbfd7af1 ]
+[ Upstream commit 71a228bc8d65900179e37ac309e678f8c523f133 ]
 
-It's protected by the s_gen_ttl_lock, so we should fetch under it
-and ensure that we're using the same generation in both places.
+If client mds session is evicted in CEPH_MDS_SESSION_OPENING state,
+mds won't send session msg to client, and delayed_work skip
+CEPH_MDS_SESSION_OPENING state session, the session hang forever.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Allow ceph_con_keepalive to reconnect a session in OPENING to avoid
+session hang. Also, ensure that we skip sessions in RESTARTING and
+REJECTED states since those states can't be resurrected by issuing
+a keepalive.
+
+Link: https://tracker.ceph.com/issues/41551
+Signed-off-by: Erqi Chen chenerqi@gmail.com
 Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ceph/caps.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ fs/ceph/mds_client.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 622467e47cde8..07ac2de542eb3 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -644,6 +644,7 @@ void ceph_add_cap(struct inode *inode,
- 	struct ceph_cap *cap;
- 	int mds = session->s_mds;
- 	int actual_wanted;
-+	u32 gen;
- 
- 	dout("add_cap %p mds%d cap %llx %s seq %d\n", inode,
- 	     session->s_mds, cap_id, ceph_cap_string(issued), seq);
-@@ -655,6 +656,10 @@ void ceph_add_cap(struct inode *inode,
- 	if (fmode >= 0)
- 		wanted |= ceph_caps_for_mode(fmode);
- 
-+	spin_lock(&session->s_gen_ttl_lock);
-+	gen = session->s_cap_gen;
-+	spin_unlock(&session->s_gen_ttl_lock);
-+
- 	cap = __get_cap_for_mds(ci, mds);
- 	if (!cap) {
- 		cap = *new_cap;
-@@ -680,7 +685,7 @@ void ceph_add_cap(struct inode *inode,
- 		list_move_tail(&cap->session_caps, &session->s_caps);
- 		spin_unlock(&session->s_cap_lock);
- 
--		if (cap->cap_gen < session->s_cap_gen)
-+		if (cap->cap_gen < gen)
- 			cap->issued = cap->implemented = CEPH_CAP_PIN;
- 
- 		/*
-@@ -774,7 +779,7 @@ void ceph_add_cap(struct inode *inode,
- 	cap->seq = seq;
- 	cap->issue_seq = seq;
- 	cap->mseq = mseq;
--	cap->cap_gen = session->s_cap_gen;
-+	cap->cap_gen = gen;
- 
- 	if (fmode >= 0)
- 		__ceph_get_fmode(ci, fmode);
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 67cb9d078bfa7..3139fbd4c34e3 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -3410,7 +3410,9 @@ static void delayed_work(struct work_struct *work)
+ 				pr_info("mds%d hung\n", s->s_mds);
+ 			}
+ 		}
+-		if (s->s_state < CEPH_MDS_SESSION_OPEN) {
++		if (s->s_state == CEPH_MDS_SESSION_NEW ||
++		    s->s_state == CEPH_MDS_SESSION_RESTARTING ||
++		    s->s_state == CEPH_MDS_SESSION_REJECTED) {
+ 			/* this mds is failed or recovering, just wait */
+ 			ceph_put_mds_session(s);
+ 			continue;
 -- 
 2.20.1
 
