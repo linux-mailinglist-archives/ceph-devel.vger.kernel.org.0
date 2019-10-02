@@ -2,135 +2,81 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6CD9C42A1
-	for <lists+ceph-devel@lfdr.de>; Tue,  1 Oct 2019 23:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E6EBC44D9
+	for <lists+ceph-devel@lfdr.de>; Wed,  2 Oct 2019 02:17:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbfJAVY2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 1 Oct 2019 17:24:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57344 "EHLO mail.kernel.org"
+        id S1729386AbfJBAR3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 1 Oct 2019 20:17:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727454AbfJAVY2 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 1 Oct 2019 17:24:28 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        id S1727772AbfJBAR3 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 1 Oct 2019 20:17:29 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E195F21855;
-        Tue,  1 Oct 2019 21:24:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D550B20815;
+        Wed,  2 Oct 2019 00:17:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569965067;
-        bh=jQ5zE9UYCh7mNDyAapzJSpEb0s39jCgJ6xDdia4cttA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Iw7BUrH+LhT3gwV3i9qq+az2gngXPdhIisdEZ1wsxoi3GgXzBMYv/D5zmb/8nZYvL
-         KINJ4rRoKSuMyMwEF8wasu2DLEQ2GepEFV1XUDkesZhbFJzcHvR1OxmIlXYPRdbU5S
-         ZHhBJBNL86ltw12PyVmJwOigFkptBj+cpSmpKot8=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     sashal@kernel.org
+        s=default; t=1569975449;
+        bh=OrDxYjzuePo+bgSDlMBbf2dr4fp03Kb0+bL8nImiBy0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2sSkuPH7QIhuQ1rlykYEDncpQesvqaTWXlbEHPfQUenzhPcwI8P6QviWBbV3eFTHH
+         QyZYD6wQucHaX5qLpY7ACsStakFjxrs3vquXLzbz7V2Qp5GUYoF2SnqGcXhTC1lHLd
+         ARVcf21lBCh1IzRL/6bCYC2FfBfxo6V5hwIJ5qQA=
+Date:   Tue, 1 Oct 2019 20:17:27 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
 Cc:     idryomov@gmail.com, zyan@redhat.com, ceph-devel@vger.kernel.org,
         stable@vger.kernel.org
-Subject: [v4.19-stable PATCH] ceph: use ceph_evict_inode to cleanup inode's resource
-Date:   Tue,  1 Oct 2019 17:24:25 -0400
-Message-Id: <20191001212425.3085-2-jlayton@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191001212425.3085-1-jlayton@kernel.org>
+Subject: Re: [v4.19-stable PATCH] ceph: use ceph_evict_inode to cleanup
+ inode's resource
+Message-ID: <20191002001727.GI17454@sasha-vm>
 References: <20191001212425.3085-1-jlayton@kernel.org>
+ <20191001212425.3085-2-jlayton@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191001212425.3085-2-jlayton@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: "Yan, Zheng" <zyan@redhat.com>
+On Tue, Oct 01, 2019 at 05:24:25PM -0400, Jeff Layton wrote:
+>From: "Yan, Zheng" <zyan@redhat.com>
+>
+>[ Upstream commit 87bc5b895d94a0f40fe170d4cf5771c8e8f85d15 ]
+>
+>remove_session_caps() relies on __wait_on_freeing_inode(), to wait for
+>freeing inode to remove its caps. But VFS wakes freeing inode waiters
+>before calling destroy_inode().
+>
+>[ jlayton: mainline moved to ->free_inode before the original patch was
+>	   merged. This backport reinstates ceph_destroy_inode and just
+>	   has it do the call_rcu call. ]
+>
+>Cc: stable@vger.kernel.org
+>Link: https://tracker.ceph.com/issues/40102
+>Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+>Reviewed-by: Jeff Layton <jlayton@redhat.com>
+>Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+>Signed-off-by: Sasha Levin <sashal@kernel.org>
+>---
+> fs/ceph/inode.c | 10 ++++++++--
+> fs/ceph/super.c |  1 +
+> fs/ceph/super.h |  1 +
+> 3 files changed, 10 insertions(+), 2 deletions(-)
+>
+>Hi Sasha,
+>
+>Sorry for the resend -- forgot to cc stable@vger on the first one.
+>
+>This patch should be applied after commit 81281039999 is reverted.
+>Sorry for the mixup!
 
-[ Upstream commit 87bc5b895d94a0f40fe170d4cf5771c8e8f85d15 ]
+I've queued it up for the next release, thank you!
 
-remove_session_caps() relies on __wait_on_freeing_inode(), to wait for
-freeing inode to remove its caps. But VFS wakes freeing inode waiters
-before calling destroy_inode().
-
-[ jlayton: mainline moved to ->free_inode before the original patch was
-	   merged. This backport reinstates ceph_destroy_inode and just
-	   has it do the call_rcu call. ]
-
-Cc: stable@vger.kernel.org
-Link: https://tracker.ceph.com/issues/40102
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ceph/inode.c | 10 ++++++++--
- fs/ceph/super.c |  1 +
- fs/ceph/super.h |  1 +
- 3 files changed, 10 insertions(+), 2 deletions(-)
-
-Hi Sasha,
-
-Sorry for the resend -- forgot to cc stable@vger on the first one.
-
-This patch should be applied after commit 81281039999 is reverted.
-Sorry for the mixup!
-
--- Jeff
-
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 11f19432a74c..c06845237cba 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -528,13 +528,16 @@ static void ceph_i_callback(struct rcu_head *head)
- 	kmem_cache_free(ceph_inode_cachep, ci);
- }
- 
--void ceph_destroy_inode(struct inode *inode)
-+void ceph_evict_inode(struct inode *inode)
- {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_inode_frag *frag;
- 	struct rb_node *n;
- 
--	dout("destroy_inode %p ino %llx.%llx\n", inode, ceph_vinop(inode));
-+	dout("evict_inode %p ino %llx.%llx\n", inode, ceph_vinop(inode));
-+
-+	truncate_inode_pages_final(&inode->i_data);
-+	clear_inode(inode);
- 
- 	ceph_fscache_unregister_inode_cookie(ci);
- 
-@@ -576,7 +579,10 @@ void ceph_destroy_inode(struct inode *inode)
- 		ceph_buffer_put(ci->i_xattrs.prealloc_blob);
- 
- 	ceph_put_string(rcu_dereference_raw(ci->i_layout.pool_ns));
-+}
- 
-+void ceph_destroy_inode(struct inode *inode)
-+{
- 	call_rcu(&inode->i_rcu, ceph_i_callback);
- }
- 
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index c5cf46e43f2e..ccab249a37f6 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -830,6 +830,7 @@ static const struct super_operations ceph_super_ops = {
- 	.destroy_inode	= ceph_destroy_inode,
- 	.write_inode    = ceph_write_inode,
- 	.drop_inode	= ceph_drop_inode,
-+	.evict_inode	= ceph_evict_inode,
- 	.sync_fs        = ceph_sync_fs,
- 	.put_super	= ceph_put_super,
- 	.remount_fs	= ceph_remount,
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 018019309790..8d3eabf06d66 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -854,6 +854,7 @@ static inline bool __ceph_have_pending_cap_snap(struct ceph_inode_info *ci)
- extern const struct inode_operations ceph_file_iops;
- 
- extern struct inode *ceph_alloc_inode(struct super_block *sb);
-+extern void ceph_evict_inode(struct inode *inode);
- extern void ceph_destroy_inode(struct inode *inode);
- extern int ceph_drop_inode(struct inode *inode);
- 
--- 
-2.21.0
-
+--
+Thanks,
+Sasha
