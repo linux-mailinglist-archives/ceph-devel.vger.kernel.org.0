@@ -2,76 +2,65 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 74C1223BE27
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Aug 2020 18:32:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81F2623C45D
+	for <lists+ceph-devel@lfdr.de>; Wed,  5 Aug 2020 06:21:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729472AbgHDQcB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 4 Aug 2020 12:32:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726027AbgHDQcA (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 4 Aug 2020 12:32:00 -0400
-Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4B70208A9;
-        Tue,  4 Aug 2020 16:31:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596558720;
-        bh=BaAGDHAbBr+iHu3pSFTSG88KjntsdEBSuHJYo38G694=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jU418mjGgo92JYHEblpMKPxccotMXgC4rB7si33M9riTyKZGi2kw4619NCleM69qW
-         VXyKiG5kabIvsg1YGi44ygHvAn0x1N2W749XwGB+g74A69buVwpFi9JPFenOuPZb1f
-         fc6tBixVDOaIZqZ7BzUOvmPbLxEi9ad2NQ57ec8w=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, edward6@linux.ibm.com, pdonnell@redhat.com
-Subject: [PATCH] ceph: handle zero-length feature mask in session messages
-Date:   Tue,  4 Aug 2020 12:31:56 -0400
-Message-Id: <20200804163156.314711-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.26.2
+        id S1725920AbgHEEVv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 5 Aug 2020 00:21:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43952 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725763AbgHEEVv (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 5 Aug 2020 00:21:51 -0400
+X-Greylist: delayed 2323 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 04 Aug 2020 21:21:50 PDT
+Received: from dockerbox (unknown [IPv6:2001:4800:7817:101:be76:4eff:fe04:a215])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DF429C06174A
+        for <ceph-devel@vger.kernel.org>; Tue,  4 Aug 2020 21:21:50 -0700 (PDT)
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        by dockerbox (Postfix) with SMTP id 5CB347784D;
+        Wed,  9 Oct 2019 23:23:23 -0500 (CDT)
+Received: from [100.75.253.171] by 127.0.0.1 with ESMTP id 57687952; Wed, 09 Oct 2019 21:18:28 -0700
+Message-ID: <0tdu7caajmz3@dtthizh>
+From:   "Mr Barrister Hans Erich" <dave@dbsoundfactory.com>
+Reply-To: "Mr Barrister Hans Erich" <dave@dbsoundfactory.com>
+To:     cedpckjb@gmail.com
+Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
+Date:   Wed, 09 Oct 19 21:18:28 GMT
+X-Mailer: Microsoft Outlook, Build 10.0.2627
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/alternative;
+        boundary="7FE33.7_8EAEF6982F"
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Most session messages contain a feature mask, but the MDS will routinely
-send a REJECT message with one that is zero-length.
 
-Commit 0fa8263367db (ceph: fix endianness bug when handling MDS session
-feature bits) fixed the decoding of the feature mask, but failed to
-account for the MDS sending a zero-length feature mask. This causes
-REJECT message decoding to fail.
+--7FE33.7_8EAEF6982F
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-Skip trying to decode a feature mask if the word count is zero.
+Greetings
 
-Cc: stable@vger.kernel.org # v5.7.x: 0fa8263367db: ceph: fix endianness bug when handling MDS session feature bits
-Fixes: 0fa8263367db (ceph: fix endianness bug when handling MDS session feature bits)
-URL: https://tracker.ceph.com/issues/46823
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/mds_client.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+My name is Barrister Hans Erich.
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 1095802ad9bd..4a26862d7667 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -3358,8 +3358,10 @@ static void handle_session(struct ceph_mds_session *session,
- 			goto bad;
- 		/* version >= 3, feature bits */
- 		ceph_decode_32_safe(&p, end, len, bad);
--		ceph_decode_64_safe(&p, end, features, bad);
--		p += len - sizeof(features);
-+		if (len) {
-+			ceph_decode_64_safe(&p, end, features, bad);
-+			p += len - sizeof(features);
-+		}
- 	}
- 
- 	mutex_lock(&mdsc->mutex);
--- 
-2.26.2
+I have a client who is interested to invest in your country, she is a well=
+ known politician in her country and deserve a lucrative investment partne=
+rship with you outside her country without any delay   Please can you mana=
+ge such investment please Kindly reply for further details.
+
+Your full nameS -----------
+
+
+Your urgent response will be appreciated
+
+Thank you and God bless you.
+
+Barrister Hans Erich
+
+Yours sincerely,
+Barrister Hans Erich
+
+--7FE33.7_8EAEF6982F--
 
