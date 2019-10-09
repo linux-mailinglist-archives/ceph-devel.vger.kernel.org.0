@@ -2,149 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49B04D061B
-	for <lists+ceph-devel@lfdr.de>; Wed,  9 Oct 2019 05:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E28D6D0B3E
+	for <lists+ceph-devel@lfdr.de>; Wed,  9 Oct 2019 11:32:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbfJIDpX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 8 Oct 2019 23:45:23 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35208 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727696AbfJIDpX (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Oct 2019 23:45:23 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c3so375310plo.2
-        for <ceph-devel@vger.kernel.org>; Tue, 08 Oct 2019 20:45:22 -0700 (PDT)
+        id S1730490AbfJIJcI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 9 Oct 2019 05:32:08 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39507 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfJIJcI (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 9 Oct 2019 05:32:08 -0400
+Received: by mail-lj1-f193.google.com with SMTP id y3so1749234ljj.6
+        for <ceph-devel@vger.kernel.org>; Wed, 09 Oct 2019 02:32:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=liff+2I181mBeYcP7vnPa93eBbGSoVxP2sz1/iUSuJA=;
-        b=lzHc6dfnxI3dTD9LV+12XsYQ1hfX4oAzzxy28wzYWGuzZM3OrIjcsVdMJsl2NCRffU
-         nWHgdMrHBTKPRwoxwzLvUhyy8+d2CPtNvSNRmbX+PAPE0Ock4jWRBw/8L7PZq6VSYJx6
-         Wv8bE4jrOsVmNqFT23UsmDV0HmsolL/P4rXtlBlF+xM0rKtomvz/At5XZpHwH2tV/p/X
-         2tPKwyTBRpPAicoHU6BbukbZuruFT9/c0DLwvVTqcGPa4gaWWoIx5Xo9vxUbogtWfuM5
-         VWd9rWEFHfhBen67fEILP6GH7uk3wS10t9Etur1Gac3M1FmL3+9NljBpx/B9grMGbZOB
-         X4bg==
+        d=ub-ac-id.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=GO77O9NugfDMF3sM0pFxjAVwqVXEKORDEOteZl6SPpM=;
+        b=qH/wFdj1rFjhtainMGstZoLlgR4LsFsNWvSG7uh/AmKvgaIZNrK53sienycHK9+QDB
+         8Z6qfNmMyfJdwsdKSR2yMV38KMqV3sNLFJ9f/WAcDNqoTCwidVryYflfI29F4iUcMe6f
+         B1RWhLlkfBJ+vHtnhxN0CGWMsrEz/6JdNoaAlHepOn13NOtzTwiNLCGnNqMtFlTCHxfB
+         LOXTeKKbxUZpTjJf6OFDjowe34/SCXlDOsB9f1tgZt0k3sFDie5AVfTwACM/Uf7IcWdV
+         x/hzJiQf3RVm9t7xpsTE7KsXH7tJxWVNAmfbQ0KW+QOF9cRNsL0262fxjPh4I497S7aU
+         QO2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=liff+2I181mBeYcP7vnPa93eBbGSoVxP2sz1/iUSuJA=;
-        b=Z+hS6wufztUSKfqxmK4XQlzXyotjnE2ZyI3HnQtLBOqq90DWGuwY8505gpMkf0baFg
-         lo8sF8xvoCTSj7tgI7FPyaWUTOK9pV+XYyrfuLpHN89oUQFoN3T4pC3nbu5P1VmnaLnc
-         IBaWevU++kGMXRJ4xslde5AbIAR/dv6d44Au4rxUcjgLlntbw15Qjkol5d0XCReAU3h+
-         4+t7DNOzygGmQCWX3Ih5PLewL4yN+mBWJZj41ZMVw+r64/3P5ig9o0wzH+el+950Wvx4
-         IlwX2AwmZOSpHVs/WwnT+lwLFr9SsgVltdaCmaQTDHHl4no8NCHgr8Y28k6ILxiySeNZ
-         eEqg==
-X-Gm-Message-State: APjAAAWa5hiqSz7Wcvj+ZnMC+lbNCVMPH66Ibq36P49xZQ7VcnDzWle5
-        ly/v2XIVydsROd+iwdnK0J17IUMKhOPmAg==
-X-Google-Smtp-Source: APXvYqzfO/3qMUWyXK1s8QSMSKpYAi65qrIiMZYufP6UyQiC5vB5Y5+5O56CER+1kzI4YCQYOTisoQ==
-X-Received: by 2002:a17:902:8d8e:: with SMTP id v14mr1030449plo.287.1570592721944;
-        Tue, 08 Oct 2019 20:45:21 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.79])
-        by smtp.gmail.com with ESMTPSA id w11sm563669pfd.116.2019.10.08.20.45.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Oct 2019 20:45:20 -0700 (PDT)
-Subject: Re: [PATCH AUTOSEL 5.3 15/71] rbd: fix response length parameter for
- encoded strings
-To:     Sasha Levin <sashal@kernel.org>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>
-References: <20191001163922.14735-1-sashal@kernel.org>
- <20191001163922.14735-15-sashal@kernel.org>
- <CAOi1vP-2iSHxJVOabN05+NCiSZ0DxBC9fGN=5cx98mk5RvaDZA@mail.gmail.com>
- <20191008212944.GD1396@sasha-vm>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ecddc946-4fbf-4bb2-aac2-689135473f36@kernel.dk>
-Date:   Tue, 8 Oct 2019 21:45:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=GO77O9NugfDMF3sM0pFxjAVwqVXEKORDEOteZl6SPpM=;
+        b=EL1vgH2rNM1K14aUxlU/ZeuXmdLr2riLcVTY2TfPpjhsDVqXp9xKPORLcuyiFNpQ8f
+         OdAFvdbmtxps0gLEYcj7bmYUkqi5qSqYN0f6jlxPoSUSSJwhCbNvX4ZDObvwdBbtYtmj
+         oo3qXQOGLOu1kCny4uFtuXnyClDZfn3isEp8UKCJHMAB8JUuykH8eWLaFiXVvOSzndRJ
+         kluMuxsujJlCB/nH0jR4zU34s6HkOAeMvdfsS65PCWWcN/RE8rAvEiitcO3xtkVFQKiZ
+         xCcUoByVXTDo4PH+/FxEB6mzmB3fOxRCDpD7PXCKO3VmIO979A66++gd8Q9bxMqOZjgj
+         S0Sg==
+X-Gm-Message-State: APjAAAUDOhjrkl4soeDbMzZ+TKbQ+mMWdKKkDI9ToI5cr1mQC/oTNRHL
+        vXCSK2ClqjoiCrPLcwqhlRljZJvSGmnH6PmpuFDOYw==
+X-Google-Smtp-Source: APXvYqz/FVzRmQvt2WwgqlrWe+GfT7HaBJDuLYRIcfxvbGSDgreO0s3efdIarARgvfXyGQqEiPlZjnXByRpTqRI6eeI=
+X-Received: by 2002:a2e:584b:: with SMTP id x11mr1746488ljd.90.1570613526423;
+ Wed, 09 Oct 2019 02:32:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191008212944.GD1396@sasha-vm>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ab3:22:0:0:0:0:0 with HTTP; Wed, 9 Oct 2019 02:32:05 -0700 (PDT)
+Reply-To: sunrisefundingltd50@gmail.com
+From:   "Agustina ." <tinapermana.fk@ub.ac.id>
+Date:   Wed, 9 Oct 2019 10:32:05 +0100
+Message-ID: <CAJxeoqNrdYyXB_+zmU_w+qziet_TH8Bydw8Yxk=SumO8=Ehf1A@mail.gmail.com>
+Subject: Apply For Financial investment at a lower rate 2%
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 10/8/19 3:29 PM, Sasha Levin wrote:
-> On Tue, Oct 01, 2019 at 07:15:49PM +0200, Ilya Dryomov wrote:
->> On Tue, Oct 1, 2019 at 6:39 PM Sasha Levin <sashal@kernel.org> wrote:
->>>
->>> From: Dongsheng Yang <dongsheng.yang@easystack.cn>
->>>
->>> [ Upstream commit 5435d2069503e2aa89c34a94154f4f2fa4a0c9c4 ]
->>>
->>> rbd_dev_image_id() allocates space for length but passes a smaller
->>> value to rbd_obj_method_sync().  rbd_dev_v2_object_prefix() doesn't
->>> allocate space for length.  Fix both to be consistent.
->>>
->>> Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
->>> Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
->>> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
->>> Signed-off-by: Sasha Levin <sashal@kernel.org>
->>> ---
->>>   drivers/block/rbd.c | 10 ++++++----
->>>   1 file changed, 6 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
->>> index c8fb886aebd4e..69db7385c8df5 100644
->>> --- a/drivers/block/rbd.c
->>> +++ b/drivers/block/rbd.c
->>> @@ -5669,17 +5669,20 @@ static int rbd_dev_v2_image_size(struct rbd_device *rbd_dev)
->>>
->>>   static int rbd_dev_v2_object_prefix(struct rbd_device *rbd_dev)
->>>   {
->>> +       size_t size;
->>>          void *reply_buf;
->>>          int ret;
->>>          void *p;
->>>
->>> -       reply_buf = kzalloc(RBD_OBJ_PREFIX_LEN_MAX, GFP_KERNEL);
->>> +       /* Response will be an encoded string, which includes a length */
->>> +       size = sizeof(__le32) + RBD_OBJ_PREFIX_LEN_MAX;
->>> +       reply_buf = kzalloc(size, GFP_KERNEL);
->>>          if (!reply_buf)
->>>                  return -ENOMEM;
->>>
->>>          ret = rbd_obj_method_sync(rbd_dev, &rbd_dev->header_oid,
->>>                                    &rbd_dev->header_oloc, "get_object_prefix",
->>> -                                 NULL, 0, reply_buf, RBD_OBJ_PREFIX_LEN_MAX);
->>> +                                 NULL, 0, reply_buf, size);
->>>          dout("%s: rbd_obj_method_sync returned %d\n", __func__, ret);
->>>          if (ret < 0)
->>>                  goto out;
->>> @@ -6696,7 +6699,6 @@ static int rbd_dev_image_id(struct rbd_device *rbd_dev)
->>>          dout("rbd id object name is %s\n", oid.name);
->>>
->>>          /* Response will be an encoded string, which includes a length */
->>> -
->>>          size = sizeof (__le32) + RBD_IMAGE_ID_LEN_MAX;
->>>          response = kzalloc(size, GFP_NOIO);
->>>          if (!response) {
->>> @@ -6708,7 +6710,7 @@ static int rbd_dev_image_id(struct rbd_device *rbd_dev)
->>>
->>>          ret = rbd_obj_method_sync(rbd_dev, &oid, &rbd_dev->header_oloc,
->>>                                    "get_id", NULL, 0,
->>> -                                 response, RBD_IMAGE_ID_LEN_MAX);
->>> +                                 response, size);
->>>          dout("%s: rbd_obj_method_sync returned %d\n", __func__, ret);
->>>          if (ret == -ENOENT) {
->>>                  image_id = kstrdup("", GFP_KERNEL);
->>
->> Hi Sasha,
->>
->> This patch just made things consistent, there was no bug here.  I don't
->> think it should be backported.
-> 
-> I'll drop it, thanks!
-
-How did it even get picked up, it's not marked for stable?
-
 -- 
-Jens Axboe
+Hello,
 
+We are private lenders based in UK.
+Do you need a loan (credit) as soon as possible. Are you in search of
+money to solve your personal needs or finance your business venture,
+then get Your desired loan today! Consult us at Sunrise Funding Ltd.
+
+* We offer personal loan & huge capital loan at 2% interest rate to
+the general public both locally and internationally.
+* Credit amount range from $5,000.00 -- $500,000.00 and above.
+* Special $10,000,000.00 Loan offer for huge project also available.
+* Loan period of 6 months -- 10 years.
+* Loan is granted 24 hours after approval and accredited, directly in
+hand or bank account.
+
+Please note that you are advised to contact us for more details via
+the following e-mail address below;
+
+EMAIL : sunrisefundingltd50@gmail.com
+FIRM : Sunrise Funding Ltd UK.
