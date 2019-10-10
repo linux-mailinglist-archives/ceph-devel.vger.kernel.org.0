@@ -2,80 +2,71 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57B61D1FB1
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Oct 2019 06:36:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 821C0D1FF7
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Oct 2019 07:20:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727642AbfJJEgQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 10 Oct 2019 00:36:16 -0400
-Received: from mail-ot1-f48.google.com ([209.85.210.48]:34553 "EHLO
-        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbfJJEgP (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Oct 2019 00:36:15 -0400
-Received: by mail-ot1-f48.google.com with SMTP id m19so3744721otp.1
-        for <ceph-devel@vger.kernel.org>; Wed, 09 Oct 2019 21:36:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R2aiytYTusZVNvIPxYqXGcb5faB6M/RJribfGqk39JQ=;
-        b=B6r9QRwIK/bGY0FjX0OPh0qAO0RnC456GeRXUgo7JVHpNekloxg0Udyad6oXfarCPA
-         eI1pEm9fVHQ+LixElEQb34bI9c1I0Dy7UaraQJ6J4Lbz3c5TL14cqbYmWH/58sQGswWs
-         rYjJPjwptAl5xUCgoMnGtQU7jSrQY9t/0Tuu/pASdunsWX6XrDClZ7w/WgATA85cK5a+
-         aACkBNUoDug42AmFr/nPjqsnZl9BG6TRO8BCaD9TRZkJzGcYUoLn2bXY/kVvmfi/vwhn
-         MQJE+DecAVe3En2dwdushNpZF/XZO/zF96hZEvn3rnToel5NrHrhaljZFW2Tj498kRp6
-         Wvyg==
+        id S1732719AbfJJFR6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 10 Oct 2019 01:17:58 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:48841 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726065AbfJJFR6 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 10 Oct 2019 01:17:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1570684677;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=IIUQsWLLdXyO0HZ5yO9sGqI3kxT6BNrLJms5eiD6EUY=;
+        b=cZ/j7m0BJdZtO+vI7SI/wGuP4W2DTxM0dLk+UIDt6IJN++OaE+mj+Hy3MbTlh4hIQrPpIB
+        0bMD2HYjnORMPBJ3Imm5PmxCFuKi0BEwv7mspAa0LbE0N0xL8tcrk/sFiNGe4itsnxXNdu
+        axNxOOy1d0FVDbm+tiB2ZL1eOk68DNA=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-207-McYF-IoxNwSqYa_xH_Teqg-1; Thu, 10 Oct 2019 01:17:54 -0400
+Received: by mail-lf1-f70.google.com with SMTP id y27so1055137lfg.21
+        for <ceph-devel@vger.kernel.org>; Wed, 09 Oct 2019 22:17:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R2aiytYTusZVNvIPxYqXGcb5faB6M/RJribfGqk39JQ=;
-        b=ZBGslajoT9BqcXDs1qgiI0hIc75njhB/0/wc/rQALfJyNaeQgfOlXmDwlJOWZn0X7S
-         lcdJImiGVWANmWeM0P4byigZ8ztJSYchMrcFBgSxOMXsnElWIpEfxwXCXdTVfR68SigS
-         How6SnPuqnTgSCf7n7puhSLcklQvTiXVvYt0xQ5a3YjI05Bz6aHrgSabnUcOBNV1WfHr
-         8HwntKvbe93iaT5erqVoQ5i/buyKNSshvxziLvkiDQ4CrZSLuIVWeII3eKg5/+zVDxp+
-         GqxrIMmm7R4m7hg1PY4kteBgUS+9TSOmtgBmI5bI8xm+kTCFz3nTTYobk6h++79W8moF
-         nCng==
-X-Gm-Message-State: APjAAAVnQZSlYkJ23KAs2mWryweRmOzBkFGEzSPJzg3r7XcQVCf9ZFY8
-        gCv43OWx1NHYS/Fz+6rhN83wd6lv1nDFLieXzp4wnA==
-X-Google-Smtp-Source: APXvYqwwM8YeH0S0k/7cwhOQ0U7DrMYRZOJ2uL/QTW8mP3lxpH6+/Lj1PHUBrBvw13m4oordCLKBhfR5Tp5G8udyGFs=
-X-Received: by 2002:a9d:6307:: with SMTP id q7mr6225149otk.46.1570682174850;
- Wed, 09 Oct 2019 21:36:14 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=xrTm6Fig/hFlLP9Sp0UitIQO7SCfsxTohGWMxpvxfyU=;
+        b=iOAEawcqizEYCpVAJCPteurnmCY4knU0cKgtR6lxxlfa+h2PBKSnktEZzbAl421C2F
+         kurrLxXLAY/2nuVUxnNppOyQ9ve+dPGpYqkWHPd0i75EVlpe1c8sPWOUOrV4rRjG9OaS
+         s/DJt8qP2h+gvFIKgdM6xJ5fRtq1+MfwmHrpD1B+gaDMcFmMeVOu2cGpG2kY4mv6iesj
+         QytBTiFa4xvmmiCW+JqWbX8T5yukJnH8JEdg41FVZ9o4ZsvqFcFotXUZ2uoffzc76qXk
+         G2vJJCeCR6guxlypa0hd9Xryue0iKYmLsP04i90GVUjfUt0FUr1GsY0CAUfwxVuZHaID
+         +sPw==
+X-Gm-Message-State: APjAAAVDm6rPODzCbgQyETafNr5udXTgZ17wOPUuK5RRJwE7hPFd98ul
+        MqRGbdsGzf5fXJBJw6+gm1Fde9sLEcJIbR10zbrFdAhewTVJvWtyra+HxSDRwjkrcNBcLL0kO8X
+        JKCWEDqrdhPJJEONpqGc/I7bVlG07DMtn9PGYtQ==
+X-Received: by 2002:ac2:5c4b:: with SMTP id s11mr4546295lfp.18.1570684672961;
+        Wed, 09 Oct 2019 22:17:52 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwc9TCrRbG9u0MwTJtUpIQgO47QER9r+9Um7JYvecngJsEf8vgQSmPBqexh/mOTg7v8DlGsRxhQR+SM6Fw40IY=
+X-Received: by 2002:ac2:5c4b:: with SMTP id s11mr4546283lfp.18.1570684672809;
+ Wed, 09 Oct 2019 22:17:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAJACTufSmSphvg4-RDR65KOSWzZsL=3b8mn_yRxSE-YtvDhMAg@mail.gmail.com>
- <alpine.DEB.2.11.1909291528200.5147@piezo.novalocal>
-In-Reply-To: <alpine.DEB.2.11.1909291528200.5147@piezo.novalocal>
-From:   Xuehan Xu <xxhdx1985126@gmail.com>
-Date:   Thu, 10 Oct 2019 12:36:03 +0800
-Message-ID: <CAJACTuf+_VC=zJxbNP5Au3VUTqSu=jPffRgOjPyQvaoXStLmFg@mail.gmail.com>
-Subject: Re: Why BlueRocksDirectory::Fsync only sync metadata?
-To:     Sage Weil <sage@newdream.net>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
-Content-Type: text/plain; charset="UTF-8"
+From:   Brad Hubbard <bhubbard@redhat.com>
+Date:   Thu, 10 Oct 2019 15:17:40 +1000
+Message-ID: <CAF-wwdHoUAEqJ7_ep+uDtnqsVDfaNdKQ2XM8T_+a=70mFd=80Q@mail.gmail.com>
+Subject: Static Analysis
+To:     ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
+X-MC-Unique: McYF-IoxNwSqYa_xH_Teqg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-> My recollection is that rocksdb is always flushing, correct.  There are
-> conveniently only a handful of writers in rocksdb, the main ones being log
-> files and sst files.
->
-> We could probably put an assertion in fsync() so ensure that the
-> FileWriter buffer is empty and flushed...?
+Latest static analyser results are up on  http://people.redhat.com/bhubbard=
+/
 
-Thanks for your reply, sage:-) I will do that:-)
+Weekly Fedora Copr builds are at
+https://copr.fedorainfracloud.org/coprs/badone/ceph-weeklies/
 
-By the way, I've got another question here:
-       It seems that BlueStore tries to provide some kind of atomic
-I/O mechanism in which data and metadata are either both modified or
-both untouched. To accomplish this, for modifications whose size is
-larger than prefer_defer_size, BlueStore will allocate new space for
-the modifications and release the old storage space. I think, in the
-long run, a initially contiguous stored file in bluestore could become
-scattered if there have been many random modifications to that file.
-Actually, this is what we are experiencing in our test clusters. The
-consequence is that after some period of random modification, the
-sequential read performance of that file is significantly degraded.
-Should we make this atomic I/O mechanism optional? It seems that most
-hard disk only make sure that a sector is never half-modified, for
-which, I think, the deferred I/O is enough. Am I right? Thanks:-)
+
+--=20
+Cheers,
+Brad
+
