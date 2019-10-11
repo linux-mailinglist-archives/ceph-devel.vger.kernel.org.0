@@ -2,81 +2,94 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C2C9D2908
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Oct 2019 14:10:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AC23D38C9
+	for <lists+ceph-devel@lfdr.de>; Fri, 11 Oct 2019 07:45:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732999AbfJJMKp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 10 Oct 2019 08:10:45 -0400
-Received: from tragedy.dreamhost.com ([66.33.205.236]:38924 "EHLO
-        tragedy.dreamhost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728030AbfJJMKp (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Oct 2019 08:10:45 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by tragedy.dreamhost.com (Postfix) with ESMTPS id BE08315F888;
-        Thu, 10 Oct 2019 05:10:43 -0700 (PDT)
-Date:   Thu, 10 Oct 2019 12:10:41 +0000 (UTC)
-From:   Sage Weil <sage@newdream.net>
-X-X-Sender: sage@piezo.novalocal
-To:     Xuehan Xu <xxhdx1985126@gmail.com>
-cc:     ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
-Subject: Re: Why BlueRocksDirectory::Fsync only sync metadata?
-In-Reply-To: <CAJACTufO-wgKCmJtKs2N8fWwZaRjK7D3EvWMnxe0fgk+7_J-kA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.11.1910101207120.14245@piezo.novalocal>
-References: <CAJACTufSmSphvg4-RDR65KOSWzZsL=3b8mn_yRxSE-YtvDhMAg@mail.gmail.com> <alpine.DEB.2.11.1909291528200.5147@piezo.novalocal> <CAJACTuf+_VC=zJxbNP5Au3VUTqSu=jPffRgOjPyQvaoXStLmFg@mail.gmail.com>
- <CAJACTufO-wgKCmJtKs2N8fWwZaRjK7D3EvWMnxe0fgk+7_J-kA@mail.gmail.com>
-User-Agent: Alpine 2.11 (DEB 23 2013-08-11)
+        id S1726742AbfJKFpH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 11 Oct 2019 01:45:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34176 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726174AbfJKFpH (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 11 Oct 2019 01:45:07 -0400
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9A69983F3D
+        for <ceph-devel@vger.kernel.org>; Fri, 11 Oct 2019 05:45:06 +0000 (UTC)
+Received: by mail-lj1-f199.google.com with SMTP id w26so1509321ljh.9
+        for <ceph-devel@vger.kernel.org>; Thu, 10 Oct 2019 22:45:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qeuTo8X/oVOZm8y6iZFzztGDEPo7S4JgpKNk8sZGfYI=;
+        b=k/W12MR2cADfcaDtylbZq/veqieh+T+zDqp4xUucrBdKlmbJ6JkLjjm0UGM0I9aamI
+         hasu9ww9Y3pSxr5vwxkMvAdw1P1JwZmYSIhRVZrHfyTT0DbT00L4pMUAHANknegrui8d
+         m5bRriPNOhZZHmfw25xnapyrekiNml8LmEVZZEmwDdgBEec9LUZ8LMWU91KcZQD2nU15
+         ESI8EzpA+2974iXbn0MSsvEmnN+cjJ4SMOfL6HoJOy7oAOsIiAuAp/XerJ/BupGl2Uvd
+         nVnub70VtdAzHe/ex9M+JMSLpNCoNMaFjjNMGLjnggQkh2uwez9+QUcuoNg8Wr6vMecI
+         xWqw==
+X-Gm-Message-State: APjAAAWQmks9BkD024Hcr/2ZUxesmuiS2kMCIUPC+qwwjoxm8RjxtSu5
+        GKmU8oZTY5t4/xaJwKIvc2QNfAdy/de50JiD5Td13ane1jmygiOR0Oywfsy8BACmqcoHPK+GGuQ
+        +ePLlFO8FtINjLJ343nW750tIIUa5LU/heB/RPQ==
+X-Received: by 2002:a2e:8ec2:: with SMTP id e2mr7962425ljl.151.1570772705060;
+        Thu, 10 Oct 2019 22:45:05 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwZS9wcGIB16tiMCTc64WIG57dAKD6hIjVK+ZMPnGpKzoV1Kzg/bO9gsla++Wmsv3ZNE9LJZLFWE4grG9q2xg0=
+X-Received: by 2002:a2e:8ec2:: with SMTP id e2mr7962416ljl.151.1570772704869;
+ Thu, 10 Oct 2019 22:45:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-VR-STATUS: OK
-X-VR-SCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrieefgdehudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucggtfgfnhhsuhgsshgtrhhisggvpdfftffgtefojffquffvnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffujgfkfhgfgggtsehttdertddtredvnecuhfhrohhmpefurghgvgcuhggvihhluceoshgrghgvsehnvgifughrvggrmhdrnhgvtheqnecukfhppeduvdejrddtrddtrddunecurfgrrhgrmhepmhhouggvpehsmhhtphdphhgvlhhopehlohgtrghlhhhoshhtpdhinhgvthepuddvjedrtddrtddruddprhgvthhurhhnqdhprghthhepufgrghgvucghvghilhcuoehsrghgvgesnhgvfigurhgvrghmrdhnvghtqedpmhgrihhlfhhrohhmpehsrghgvgesnhgvfigurhgvrghmrdhnvghtpdhnrhgtphhtthhopeguvghvsegtvghphhdrihhonecuvehluhhsthgvrhfuihiivgeptd
+References: <CAF-wwdHoUAEqJ7_ep+uDtnqsVDfaNdKQ2XM8T_+a=70mFd=80Q@mail.gmail.com>
+ <CACBud-DDEsbR16BEwHgsvK_z=paXggjgAqGCUT_yryiNN8Cb9A@mail.gmail.com>
+In-Reply-To: <CACBud-DDEsbR16BEwHgsvK_z=paXggjgAqGCUT_yryiNN8Cb9A@mail.gmail.com>
+From:   Brad Hubbard <bhubbard@redhat.com>
+Date:   Fri, 11 Oct 2019 15:44:52 +1000
+Message-ID: <CAF-wwdEEf=MCPTOthKeT8-raUFtN6u1SBi3VrNDi2kmFanSrbA@mail.gmail.com>
+Subject: Re: Static Analysis
+To:     Yuval Lifshitz <ylifshit@redhat.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 10 Oct 2019, Xuehan Xu wrote:
-> > > My recollection is that rocksdb is always flushing, correct.  There are
-> > > conveniently only a handful of writers in rocksdb, the main ones being log
-> > > files and sst files.
-> > >
-> > > We could probably put an assertion in fsync() so ensure that the
-> > > FileWriter buffer is empty and flushed...?
-> >
-> > Thanks for your reply, sage:-) I will do that:-)
-> >
-> > By the way, I've got another question here:
-> >        It seems that BlueStore tries to provide some kind of atomic
-> > I/O mechanism in which data and metadata are either both modified or
-> > both untouched. To accomplish this, for modifications whose size is
-> > larger than prefer_defer_size, BlueStore will allocate new space for
-> > the modifications and release the old storage space. I think, in the
-> > long run, a initially contiguous stored file in bluestore could become
-> > scattered if there have been many random modifications to that file.
-> > Actually, this is what we are experiencing in our test clusters. The
-> > consequence is that after some period of random modification, the
-> > sequential read performance of that file is significantly degraded.
-> > Should we make this atomic I/O mechanism optional? It seems that most
-> > hard disk only make sure that a sector is never half-modified, for
-> > which, I think, the deferred I/O is enough. Am I right? Thanks:-)
-> 
-> I mean, in the scenario of RBD, since most real hard disk only
-> guarantee that a sector is never half-modified, only providing atomic
-> I/O guarantee for modifications whose are less than or equal to that
-> of a disk sector, which is guaranteed by deferred io, should be
-> enough. So, maybe, this atomic I/O guarantee for large size
-> modifications should be made configurable.
+On Thu, Oct 10, 2019 at 3:41 PM Yuval Lifshitz <ylifshit@redhat.com> wrote:
+>
+> This is awesome!
 
-The OSD needs to record both the data update *and* the metadata associated 
-with it (pg log entry) atomically, so atomic sector updates aren't 
-sufficient.
+First thing to note is these scans each take a long time to run.
 
-You might try looking at the bluestore_prefer_deferred_size, which will 
-make writes take the deferred IO path.  This gets increasingly inefficient 
-the larger the value is, though!
+> How difficult would it be to add these as cmake targets?
 
-If we really find that fragmentation is a problem over the long term, we 
-should make the deep scrub process rewrite the data it has read if/when it 
-is too fragmented.
+With Coverity, currently impossible since the only version I can find
+that works is not publicly available.
 
-sage
+As for the others I use the following script to run them so it
+wouldn't be that hard I guess. There's some changes in there at the
+moment to try and get them to only scan 'ceph code' (not submodule
+code) but that seems to be confusing scan-build as it currently
+produces zero results. I have some work to do there and there seems to
+be a lot of maintenance work around these scans. I'm not sure how much
+bang for our buck we would get by adding any of them as cmake targets.
+
+>
+> On Thu, Oct 10, 2019 at 8:18 AM Brad Hubbard <bhubbard@redhat.com> wrote:
+>>
+>> Latest static analyser results are up on  http://people.redhat.com/bhubbard/
+>>
+>> Weekly Fedora Copr builds are at
+>> https://copr.fedorainfracloud.org/coprs/badone/ceph-weeklies/
+>>
+>>
+>> --
+>> Cheers,
+>> Brad
+>> _______________________________________________
+>> Dev mailing list -- dev@ceph.io
+>> To unsubscribe send an email to dev-leave@ceph.io
+
+
+
+-- 
+Cheers,
+Brad
