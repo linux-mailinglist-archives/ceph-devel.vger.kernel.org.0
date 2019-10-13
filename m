@@ -2,91 +2,104 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 444A2D55C1
-	for <lists+ceph-devel@lfdr.de>; Sun, 13 Oct 2019 13:24:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20055D563A
+	for <lists+ceph-devel@lfdr.de>; Sun, 13 Oct 2019 14:46:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728806AbfJMLTq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 13 Oct 2019 07:19:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36232 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728620AbfJMLTq (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Sun, 13 Oct 2019 07:19:46 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20B6F20659;
-        Sun, 13 Oct 2019 11:19:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570965585;
-        bh=AGE2pLJEcqWm7oQJ7BRPIZi5R/hfODBLYdWNecuV/K0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=xYrrYv0Csg+NBOViYiX0DH/e3JGCfGez2c3fgvGZrzokqgNOk1DN4OIyJj+ccM+jE
-         OYSKdMEZ+DyrjAB1qhSbHAsWAkawAAdMZbhxkyQYVRyuJKcy8lZvmZsw5LySOwDZsO
-         VWZTYCL+Cp3U6qA92lZEXz8no/AipjPp8ce6H2fg=
-Message-ID: <78d8aae33c9d4ccccf32698285c91664965afbcd.camel@kernel.org>
-Subject: Re: Hung CephFS client
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Robert LeBlanc <robert@leblancnet.us>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>
-Date:   Sun, 13 Oct 2019 07:19:43 -0400
-In-Reply-To: <CAANLjFpvyTiSanWVOdHvaLjP_oqyPikKeDJ9oMqUq=1SS7GX-w@mail.gmail.com>
-References: <CAANLjFpQuOjeGkD_+0LNTeLystCKJ6WqA7A3X4vNgu8n+L8KWw@mail.gmail.com>
-         <e9890c9feabe863dacf702327fd219f3a76fac57.camel@kernel.org>
-         <CAANLjFpvyTiSanWVOdHvaLjP_oqyPikKeDJ9oMqUq=1SS7GX-w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1728843AbfJMMpA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 13 Oct 2019 08:45:00 -0400
+Received: from mail-io1-f53.google.com ([209.85.166.53]:41860 "EHLO
+        mail-io1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728159AbfJMMpA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 13 Oct 2019 08:45:00 -0400
+Received: by mail-io1-f53.google.com with SMTP id n26so31263340ioj.8
+        for <ceph-devel@vger.kernel.org>; Sun, 13 Oct 2019 05:45:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Qb3uBGDLBFB4nesy+F5UknOVQ2NWWEP6cjLrmd0aiXo=;
+        b=g5nNHSQ7yJyGFKeDwjVnWiIzlrLq5d+IFokO9SWPucfLQmv5YnbR00PSqlRm3BAsdp
+         JWN8se1RI6rorGdrEM3iwnBp1fs87CWB8/PcBJSb/b/m4k+fQbsaFK4CvowqyMRML9oJ
+         35m6sQuOUxj4wiCZI4xk+xn81URMe5rX1aWNcu5eyCM0lIYIDALH3YumjlXCzVKTRe4y
+         gnp22AvLoTAf1bs4MhOklPlbCpjpmq2VQEBZ/GBlUbzE92ZeETcN8BrzbbC7fwMVRKpm
+         eaiGp2J0JZ4bRGOpTjR4plYd1DOZqWOW/FH0ha0HIj+dJ+IFL9qgHXgz/KMY2sbajsBz
+         lYyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Qb3uBGDLBFB4nesy+F5UknOVQ2NWWEP6cjLrmd0aiXo=;
+        b=PZDDi1Z5s7hgFlyxIvLYB2mqsNy4ggKctkO0hcZ+jiCFI3gA1N3vqBIIaMY+w/Dqlo
+         uHghF4po6X/M8CbI3BO5BNT7IVlZ34/V5r4Jpzc3mpMG2wNykifDr9ReW0yzqh4bhlJY
+         CPM7pEQHnXq8aK/tsY3JrC7zvwlIM3mKG47ZBDSVRHFM1tR3D6ToTbwTQmcU4j6XXUaF
+         OSGDNpGIWoehBnPZF739T7QRXn4LilNbIwoI3J2/jTJfKBlYQj8q7OpFq7/qJnCurpQJ
+         gTZxyv7iLIJZIAeH2FBrvPIjoAXRSlOgIbYZCY0D63Si7oYdU+Y8rixjL8YCqgg91SUV
+         e31w==
+X-Gm-Message-State: APjAAAXcDg/29JOvnSNwIgnfWvWsOmDF1i9QB6KFPLTkkKjfRrgr2niG
+        Ol7HQ3gXm6/wCN0oYllqIVzI2FVVB1fx6GyDJjE=
+X-Google-Smtp-Source: APXvYqwZqiD9JUFIpXxYMbqhPVkrivdwz3tC0SrCxofXYDQvSDhGawnv2qfgogZRVU29jBo6YZjUmF/nmNXugY18oqc=
+X-Received: by 2002:a5d:9359:: with SMTP id i25mr28986169ioo.184.1570970699710;
+ Sun, 13 Oct 2019 05:44:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <CAMrPN_JjckOAnQC_=C+YJ1+QTMRbUkGSu24Pyuo1EC=rfXGuRQ@mail.gmail.com>
+ <555f9bd9-8523-02ab-d7b0-97cd860c4d71@redhat.com>
+In-Reply-To: <555f9bd9-8523-02ab-d7b0-97cd860c4d71@redhat.com>
+From:   "Honggang(Joseph) Yang" <eagle.rtlinux@gmail.com>
+Date:   Sun, 13 Oct 2019 20:44:45 +0800
+Message-ID: <CAMrPN_+U2d++xXGvY=SSBZZS_B447jzEEZZY9pPM6U1CfoDk5w@mail.gmail.com>
+Subject: Re: local mode -- a new tier mode
+To:     Mark Nelson <mnelson@redhat.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sat, 2019-10-12 at 11:20 -0700, Robert LeBlanc wrote:
-> On Fri, Oct 11, 2019 at 5:47 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > What kernel version is this? Do you happen to have a more readable stack
-> > trace? Did this come from a hung task warning in the kernel?
-> 
-> $ uname -a
-> Linux sun-gpu225 4.4.0-142-generic #168~14.04.1-Ubuntu SMP Sat Jan 19
-> 11:26:28 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
-> 
+After the sysbench prepare operation is completed, about 48883MB of db
+data is generated.
+I set the fast partition to 30GB, so in the sysbench run stage,
+eviction was taking place.
 
-That's pretty old. I'm not sure how aggressively Canonical backports
-ceph patches.
-
-> This was the best stack trace we could get. /proc was not helpful:
-> root@sun-gpu225:/proc/77292# cat stack
-> 
-> 
-> 
-> [<ffffffffffffffff>] 0xffffffffffffffff
-> 
-
-A stack trace like the above generally means that the task is running in
-userland. The earlier stack trace you sent might just indicate that it
-was in the process of spinning on a lock when you grabbed the trace, but
-isn't actually stuck in the kernel.
-
-> We did not get messages of hung tasks from the kernel. This container
-> was running for 9 days when the jobs should have completed in a matter
-> of hours. They were not able to stop the container, but it still was
-> using CPU. So it smells like uninterruptable sleep, but still using
-> CPU which based on the trace looks like it's stuck in spinlock.
-> 
-
-That could be anything then, including userland bugs. What state was the
-process in (maybe grab /proc/<pid>/status if this happens again?).
-
-> Do you want me to get something more specific? Just tell me how.
-> 
-
-If you really think tasks are getting hung in the kernel, then you can
-crash the box and get a vmcore if you have kdump set up. With that we
-can analyze it and determine what it's doing.
-
-If you suspect ceph is involved then you might want to turn up dynamic
-debugging in the kernel and see what it's doing.
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Mark Nelson <mnelson@redhat.com> =E4=BA=8E2019=E5=B9=B410=E6=9C=8812=E6=97=
+=A5=E5=91=A8=E5=85=AD =E4=B8=8A=E5=8D=8812:15=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Hi Honggang,
+>
+>
+> I personally I find this very exciting!  I was hoping that we might
+> eventually try local caching in bluestore especially given trends for
+> larger NVMe devices and pmem.  When you were running performance tests,
+> did you run any tests where the data set size was significantly larger
+> than the available "fast" local tier cache (ie so that eviction was
+> taking place)?  In the past, that's been the area we've really needed to
+> focus on getting right.
+>
+>
+> Mark
+>
+>
+> On 10/11/19 11:04 AM, Honggang(Joseph) Yang wrote:
+> > Hi,
+> >
+> > We implemented a new cache tier mode - local mode. In this mode, an
+> > osd is configured to manage two data devices, one is fast device, one
+> > is slow device. Hot objects are promoted from slow device to fast
+> > device, and demoted from fast device to slow device when they become
+> > cold.
+> >
+> > The introduction of tier local mode in detail is
+> > https://tracker.ceph.com/issues/42286
+> >
+> > tier local mode: https://github.com/yanghonggang/ceph/commits/wip-tier-=
+new
+> >
+> > This work is based on ceph v12.2.5. I'm glad to port it to master
+> > branch if needed.
+> >
+> > Any advice and suggestions will be greatly appreciated.
+> >
+> > thx,
+> >
+> > Yang Honggang
