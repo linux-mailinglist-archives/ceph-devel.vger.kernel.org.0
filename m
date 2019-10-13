@@ -2,104 +2,168 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20055D563A
-	for <lists+ceph-devel@lfdr.de>; Sun, 13 Oct 2019 14:46:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93190D5760
+	for <lists+ceph-devel@lfdr.de>; Sun, 13 Oct 2019 20:37:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbfJMMpA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 13 Oct 2019 08:45:00 -0400
-Received: from mail-io1-f53.google.com ([209.85.166.53]:41860 "EHLO
-        mail-io1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728159AbfJMMpA (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 13 Oct 2019 08:45:00 -0400
-Received: by mail-io1-f53.google.com with SMTP id n26so31263340ioj.8
-        for <ceph-devel@vger.kernel.org>; Sun, 13 Oct 2019 05:45:00 -0700 (PDT)
+        id S1728408AbfJMSh4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 13 Oct 2019 14:37:56 -0400
+Received: from mail-qk1-f171.google.com ([209.85.222.171]:41721 "EHLO
+        mail-qk1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbfJMSh4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 13 Oct 2019 14:37:56 -0400
+Received: by mail-qk1-f171.google.com with SMTP id p10so13791927qkg.8
+        for <ceph-devel@vger.kernel.org>; Sun, 13 Oct 2019 11:37:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=leblancnet-us.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Qb3uBGDLBFB4nesy+F5UknOVQ2NWWEP6cjLrmd0aiXo=;
-        b=g5nNHSQ7yJyGFKeDwjVnWiIzlrLq5d+IFokO9SWPucfLQmv5YnbR00PSqlRm3BAsdp
-         JWN8se1RI6rorGdrEM3iwnBp1fs87CWB8/PcBJSb/b/m4k+fQbsaFK4CvowqyMRML9oJ
-         35m6sQuOUxj4wiCZI4xk+xn81URMe5rX1aWNcu5eyCM0lIYIDALH3YumjlXCzVKTRe4y
-         gnp22AvLoTAf1bs4MhOklPlbCpjpmq2VQEBZ/GBlUbzE92ZeETcN8BrzbbC7fwMVRKpm
-         eaiGp2J0JZ4bRGOpTjR4plYd1DOZqWOW/FH0ha0HIj+dJ+IFL9qgHXgz/KMY2sbajsBz
-         lYyw==
+         :cc;
+        bh=5BRnO+ki3v+6HxkMZ0q7MNwk19LXxIgJAQXWK/Qhc2A=;
+        b=tixgLC4BtuhtdA5FZG4kC4XQeieDRmajKgv7INuitHUdGDpQKe4sUW7/J0TvVML1QZ
+         AGbobgcqi0mZ2lgb77zP/hBMwGqMNbTXhUNp//47y3YQvmsjJRlEUWwCvL0fXlmPz8E9
+         jduFbY+GR7rLYlVluONTzHdOYKNPNtCoCoyHB0X/JdGkNU+ZuRXjQQZO0Dnev+72zQfE
+         z+eAeeYENBV2zOFE4zRG3dUJlMCGLvvchUzUaKtWI29wOHPcS2W9aGW1+ZOFv4fQbaMy
+         xv7dvRLlctFJDQ+mVV3czPGPZ92cetOko1RRsprPb/gKwQ07MrJCeW83ZaUlx1jdeY3m
+         64MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Qb3uBGDLBFB4nesy+F5UknOVQ2NWWEP6cjLrmd0aiXo=;
-        b=PZDDi1Z5s7hgFlyxIvLYB2mqsNy4ggKctkO0hcZ+jiCFI3gA1N3vqBIIaMY+w/Dqlo
-         uHghF4po6X/M8CbI3BO5BNT7IVlZ34/V5r4Jpzc3mpMG2wNykifDr9ReW0yzqh4bhlJY
-         CPM7pEQHnXq8aK/tsY3JrC7zvwlIM3mKG47ZBDSVRHFM1tR3D6ToTbwTQmcU4j6XXUaF
-         OSGDNpGIWoehBnPZF739T7QRXn4LilNbIwoI3J2/jTJfKBlYQj8q7OpFq7/qJnCurpQJ
-         gTZxyv7iLIJZIAeH2FBrvPIjoAXRSlOgIbYZCY0D63Si7oYdU+Y8rixjL8YCqgg91SUV
-         e31w==
-X-Gm-Message-State: APjAAAXcDg/29JOvnSNwIgnfWvWsOmDF1i9QB6KFPLTkkKjfRrgr2niG
-        Ol7HQ3gXm6/wCN0oYllqIVzI2FVVB1fx6GyDJjE=
-X-Google-Smtp-Source: APXvYqwZqiD9JUFIpXxYMbqhPVkrivdwz3tC0SrCxofXYDQvSDhGawnv2qfgogZRVU29jBo6YZjUmF/nmNXugY18oqc=
-X-Received: by 2002:a5d:9359:: with SMTP id i25mr28986169ioo.184.1570970699710;
- Sun, 13 Oct 2019 05:44:59 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=5BRnO+ki3v+6HxkMZ0q7MNwk19LXxIgJAQXWK/Qhc2A=;
+        b=g2TVDksg+7rE35ELjmYMKs36/VU5v9e9uFEmTKB68tjPyFBbi+m2ntx+rvmD/dnZPP
+         9pI8aGol0j112z5SBDRcQox1UGO+pH8T2adcYjK/h/NNTfT6DMLLm5F86Qmk44ptVXHF
+         1DeLBz8T6F6NROHGfAdOcJX4BBIC8e3wg1L049qhrDTqwQ4rziOXXCRQM44J2Zo4o/hs
+         vZ10MpAl/YHbrp1fSXMZIa/rgI8ooo7g9xhk7v4tICGf6EAmRw6UBBsJWZBPViBOALpM
+         l2VVHMCz+Ii2iRssTL5pmqa9MNNK4zT13sXAdIQa64BZduxGhb9cPvWtCdbdMi62Szus
+         Ja+A==
+X-Gm-Message-State: APjAAAVCy0P8Hn90dapx0twZB8Ykf8Px8U8OyAozVnVMakXhZ0bztsgC
+        UjDnh6+VqBFGYEZA4blFrx2s6PF9q/8RnBJDckA+hA==
+X-Google-Smtp-Source: APXvYqw7jXIQYKK/aGMv40vfNJ3T4g9NOiZpSgQjqcMJbOwDfvR8ZdoEsoVCY+7CS/KbV6BtgbDPT5xg4T1z3LiCJMs=
+X-Received: by 2002:ae9:e511:: with SMTP id w17mr24316623qkf.379.1570991874675;
+ Sun, 13 Oct 2019 11:37:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAMrPN_JjckOAnQC_=C+YJ1+QTMRbUkGSu24Pyuo1EC=rfXGuRQ@mail.gmail.com>
- <555f9bd9-8523-02ab-d7b0-97cd860c4d71@redhat.com>
-In-Reply-To: <555f9bd9-8523-02ab-d7b0-97cd860c4d71@redhat.com>
-From:   "Honggang(Joseph) Yang" <eagle.rtlinux@gmail.com>
-Date:   Sun, 13 Oct 2019 20:44:45 +0800
-Message-ID: <CAMrPN_+U2d++xXGvY=SSBZZS_B447jzEEZZY9pPM6U1CfoDk5w@mail.gmail.com>
-Subject: Re: local mode -- a new tier mode
-To:     Mark Nelson <mnelson@redhat.com>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
+References: <CAANLjFpQuOjeGkD_+0LNTeLystCKJ6WqA7A3X4vNgu8n+L8KWw@mail.gmail.com>
+ <e9890c9feabe863dacf702327fd219f3a76fac57.camel@kernel.org>
+ <CAANLjFpvyTiSanWVOdHvaLjP_oqyPikKeDJ9oMqUq=1SS7GX-w@mail.gmail.com> <78d8aae33c9d4ccccf32698285c91664965afbcd.camel@kernel.org>
+In-Reply-To: <78d8aae33c9d4ccccf32698285c91664965afbcd.camel@kernel.org>
+From:   Robert LeBlanc <robert@leblancnet.us>
+Date:   Sun, 13 Oct 2019 11:37:43 -0700
+Message-ID: <CAANLjFot-VP0dUz7Czw6C=NvP8cXOK--Kt8Gd8HecMLHp1CPYA@mail.gmail.com>
+Subject: Re: Hung CephFS client
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-After the sysbench prepare operation is completed, about 48883MB of db
-data is generated.
-I set the fast partition to 30GB, so in the sysbench run stage,
-eviction was taking place.
+On Sun, Oct 13, 2019 at 4:19 AM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> On Sat, 2019-10-12 at 11:20 -0700, Robert LeBlanc wrote:
+> > $ uname -a
+> > Linux sun-gpu225 4.4.0-142-generic #168~14.04.1-Ubuntu SMP Sat Jan 19
+> > 11:26:28 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
+> >
+>
+> That's pretty old. I'm not sure how aggressively Canonical backports
+> ceph patches.
 
-Mark Nelson <mnelson@redhat.com> =E4=BA=8E2019=E5=B9=B410=E6=9C=8812=E6=97=
-=A5=E5=91=A8=E5=85=AD =E4=B8=8A=E5=8D=8812:15=E5=86=99=E9=81=93=EF=BC=9A
->
-> Hi Honggang,
->
->
-> I personally I find this very exciting!  I was hoping that we might
-> eventually try local caching in bluestore especially given trends for
-> larger NVMe devices and pmem.  When you were running performance tests,
-> did you run any tests where the data set size was significantly larger
-> than the available "fast" local tier cache (ie so that eviction was
-> taking place)?  In the past, that's been the area we've really needed to
-> focus on getting right.
->
->
-> Mark
->
->
-> On 10/11/19 11:04 AM, Honggang(Joseph) Yang wrote:
-> > Hi,
+Just trying to understand if this may be fixed in a newer version, but
+we also have to balance NVidia drivers as well.
+
+> > This was the best stack trace we could get. /proc was not helpful:
+> > root@sun-gpu225:/proc/77292# cat stack
 > >
-> > We implemented a new cache tier mode - local mode. In this mode, an
-> > osd is configured to manage two data devices, one is fast device, one
-> > is slow device. Hot objects are promoted from slow device to fast
-> > device, and demoted from fast device to slow device when they become
-> > cold.
 > >
-> > The introduction of tier local mode in detail is
-> > https://tracker.ceph.com/issues/42286
 > >
-> > tier local mode: https://github.com/yanghonggang/ceph/commits/wip-tier-=
-new
+> > [<ffffffffffffffff>] 0xffffffffffffffff
 > >
-> > This work is based on ceph v12.2.5. I'm glad to port it to master
-> > branch if needed.
+>
+> A stack trace like the above generally means that the task is running in
+> userland. The earlier stack trace you sent might just indicate that it
+> was in the process of spinning on a lock when you grabbed the trace, but
+> isn't actually stuck in the kernel.
+
+I tried catting it multiple times, but it was always that.
+
+> > We did not get messages of hung tasks from the kernel. This container
+> > was running for 9 days when the jobs should have completed in a matter
+> > of hours. They were not able to stop the container, but it still was
+> > using CPU. So it smells like uninterruptable sleep, but still using
+> > CPU which based on the trace looks like it's stuck in spinlock.
 > >
-> > Any advice and suggestions will be greatly appreciated.
+>
+> That could be anything then, including userland bugs. What state was the
+> process in (maybe grab /proc/<pid>/status if this happens again?).
+
+We still have this box up. Here is the output of status:
+root@sun-gpu225:/proc/77292# cat status
+Name:   offline_percept
+State:  R (running)
+Tgid:   77292
+Ngid:   77986
+Pid:    77292
+PPid:   168913
+TracerPid:      20719
+Uid:    1000    1000    1000    1000
+Gid:    1000    1000    1000    1000
+FDSize: 256
+Groups: 27 999
+NStgid: 77292   2830
+NSpid:  77292   2830
+NSpgid: 169001  8
+NSsid:  168913  1
+VmPeak: 1094897144 kB
+VmSize: 1094639324 kB
+VmLck:         0 kB
+VmPin:         0 kB
+VmHWM:   3512696 kB
+VmRSS:   3121848 kB
+VmData: 19331276 kB
+VmStk:       144 kB
+VmExe:       184 kB
+VmLib:   1060628 kB
+VmPTE:      8992 kB
+VmPMD:        88 kB
+VmSwap:        0 kB
+HugetlbPages:          0 kB
+Threads:        1
+SigQ:   3/3090620
+SigPnd: 0000000000040100
+ShdPnd: 0000000000000001
+SigBlk: 0000000000001000
+SigIgn: 0000000001001000
+SigCgt: 00000001800044e8
+CapInh: 00000000a80425fb
+CapPrm: 0000000000000000
+CapEff: 0000000000000000
+CapBnd: 00000000a80425fb
+CapAmb: 0000000000000000
+Seccomp:        0
+Speculation_Store_Bypass:       thread vulnerable
+Cpus_allowed:
+00000000,00000000,00000000,00000000,00000000,00000000,ffffffff
+Cpus_allowed_list:      0-31
+Mems_allowed:   00000000,00000003
+Mems_allowed_list:      0-1
+voluntary_ctxt_switches:        6499
+nonvoluntary_ctxt_switches:     28044102
+
+> > Do you want me to get something more specific? Just tell me how.
 > >
-> > thx,
-> >
-> > Yang Honggang
+>
+> If you really think tasks are getting hung in the kernel, then you can
+> crash the box and get a vmcore if you have kdump set up. With that we
+> can analyze it and determine what it's doing.
+>
+> If you suspect ceph is involved then you might want to turn up dynamic
+> debugging in the kernel and see what it's doing.
+
+I looked in /sys/kernel/debug/ceph/, but wasn't sure how to up the
+debugging that would be beneficial.
+
+We don't have a crash kernel loaded, so that won't be an option in this case.
+
+----------------
+Robert LeBlanc
+PGP Fingerprint 79A2 9CA4 6CC4 45DD A904  C70E E654 3BB2 FA62 B9F1
