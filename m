@@ -2,39 +2,37 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E0FD5F4A
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Oct 2019 11:49:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25A95D5F98
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Oct 2019 12:01:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731125AbfJNJtQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Oct 2019 05:49:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45632 "EHLO mail.kernel.org"
+        id S1731316AbfJNKBB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Oct 2019 06:01:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730677AbfJNJtQ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 14 Oct 2019 05:49:16 -0400
+        id S1731119AbfJNKBA (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 14 Oct 2019 06:01:00 -0400
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0251207FF;
-        Mon, 14 Oct 2019 09:49:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BA5D2054F;
+        Mon, 14 Oct 2019 10:00:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571046555;
-        bh=vCu29IIe+a46pLXgxs4tzKDN6FjcyctMy5akY/4HL+M=;
+        s=default; t=1571047260;
+        bh=8hv8kOwTn5l1HMAW6XIWlV7FwUBsOLdkJOgm2pAl2aI=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=kWmzmPbJdvv9xNyLJ2oOUUYY1xw5TZ5UMVx4jp1JRF7wO/twUA+dcnSPMsPFynb7z
-         O0pyUXzEbKb1vLkC5sMSxIHGCGe+LPUUtjWgreBQqqlh8/Z8kbM/1Oyun6ox+abGYN
-         mNYryeCt29JDF4PuUtEh3gJ79afpwD0qYzmEJo+0=
-Message-ID: <95f300bcb6886fbe16cfd306d0021e451279d793.camel@kernel.org>
-Subject: Re: Hung CephFS client
+        b=g7gI7ebKZCUYTZattLt0HE3lw3Nsq6q00J7tMhyyt9zDE8dEXgfC3XH8klLi+lsOp
+         6yGF/Za110rw9sekhZIdCmSEXI3nbPJ7CdbBd9QEclVQKQbkhCGs/FECyI+eERPhJX
+         sWISdHTROwOTQZ1ZSSRXTdDiihJAg6mphwKG5X3w=
+Message-ID: <6157a498a381e63bbf19094b5d59137f62be7c7f.camel@kernel.org>
+Subject: Re: [PATCH] function dispatch should return if mds session does not
+ exist
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Robert LeBlanc <robert@leblancnet.us>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>
-Date:   Mon, 14 Oct 2019 05:49:13 -0400
-In-Reply-To: <CAANLjFot-VP0dUz7Czw6C=NvP8cXOK--Kt8Gd8HecMLHp1CPYA@mail.gmail.com>
-References: <CAANLjFpQuOjeGkD_+0LNTeLystCKJ6WqA7A3X4vNgu8n+L8KWw@mail.gmail.com>
-         <e9890c9feabe863dacf702327fd219f3a76fac57.camel@kernel.org>
-         <CAANLjFpvyTiSanWVOdHvaLjP_oqyPikKeDJ9oMqUq=1SS7GX-w@mail.gmail.com>
-         <78d8aae33c9d4ccccf32698285c91664965afbcd.camel@kernel.org>
-         <CAANLjFot-VP0dUz7Czw6C=NvP8cXOK--Kt8Gd8HecMLHp1CPYA@mail.gmail.com>
+To:     Yanhu Cao <gmayyyha@gmail.com>
+Cc:     sage@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 14 Oct 2019 06:00:58 -0400
+In-Reply-To: <20191014090059.21871-1-gmayyyha@gmail.com>
+References: <20191014090059.21871-1-gmayyyha@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
@@ -44,141 +42,82 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, 2019-10-13 at 11:37 -0700, Robert LeBlanc wrote:
-> On Sun, Oct 13, 2019 at 4:19 AM Jeff Layton <jlayton@kernel.org> wrote:
-> > On Sat, 2019-10-12 at 11:20 -0700, Robert LeBlanc wrote:
-> > > $ uname -a
-> > > Linux sun-gpu225 4.4.0-142-generic #168~14.04.1-Ubuntu SMP Sat Jan 19
-> > > 11:26:28 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
-> > > 
-> > 
-> > That's pretty old. I'm not sure how aggressively Canonical backports
-> > ceph patches.
+On Mon, 2019-10-14 at 17:00 +0800, Yanhu Cao wrote:
+> we shouldn't call ceph_msg_put, otherwise libceph will pass
+> invalid pointer to mm.
 > 
-> Just trying to understand if this may be fixed in a newer version, but
-> we also have to balance NVidia drivers as well.
-
-Hard to say at this point. The stack frames you captured earlier don't
-make a lot of sense. How did you get those anyway? Some sysrq activity?
-
-In any case, I think we shouldn't assume that the problem is ceph
-related just yet. It may very well be, but it's not clear so far.
-
-> > > This was the best stack trace we could get. /proc was not helpful:
-> > > root@sun-gpu225:/proc/77292# cat stack
-> > > 
-> > > 
-> > > 
-> > > [<ffffffffffffffff>] 0xffffffffffffffff
-> > > 
-> > 
-> > A stack trace like the above generally means that the task is running in
-> > userland. The earlier stack trace you sent might just indicate that it
-> > was in the process of spinning on a lock when you grabbed the trace, but
-> > isn't actually stuck in the kernel.
+> kernel panic - not syncing: fatal exception
+>     [5452201.213885] ------------[ cut here ]------------
+>     [5452201.213889] kernel BUG at mm/slub.c:3901!
+>     [5452201.213938] invalid opcode: 0000 [#1] SMP PTI
+>     [5452201.213971] CPU: 35 PID: 3037447 Comm: kworker/35:1 Kdump: loaded Not tainted 4.19.15 #1
+>     [5452201.214020] Hardware name: HP ProLiant DL380 Gen9/ProLiant DL380 Gen9, BIOS P89 01/22/2018
+>     [5452201.214088] Workqueue: ceph-msgr ceph_con_workfn [libceph]
+>     [5452201.214129] RIP: 0010:kfree+0x15b/0x170
+>     [5452201.214156] Code: 8b 02 f6 c4 80 75 08 49 8b 42 08 a8 01 74 1b 49 8b 02 31 f6 f6 c4 80 74 05 41 0f b6 72 51 5b 5d 41 5c 4c 89 d7 e9 95 03 f9 ff <0f> 0b 48 83 e8 01 e9 01 ff ff ff 49 83 ea 01 e9 e9 fe ff ff 90 0f
+>     [5452201.214262] RSP: 0018:ffffb8c3a0607cb0 EFLAGS: 00010246
+>     [5452201.214296] RAX: ffffeee840000008 RBX: ffff9130c0000000 RCX: 0000000080200016
+>     [5452201.214339] RDX: 00006f0ec0000000 RSI: 0000000000000000 RDI: ffff9130c0000000
+>     [5452201.214383] RBP: ffff91107f823970 R08: 0000000000000001 R09: 0000000000000000
+>     [5452201.214426] R10: ffffeee840000000 R11: 0000000000000001 R12: ffffffffc076c45d
+>     [5452201.214469] R13: ffff91107f823970 R14: ffff91107f8239e0 R15: ffff91107f823900
+>     [5452201.214513] FS:  0000000000000000(0000) GS:ffff9110bfbc0000(0000) knlGS:0000000000000000
+>     [5452201.214562] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>     [5452201.214598] CR2: 000055993ab29620 CR3: 0000003a1e00a003 CR4: 00000000003606e0
+>     [5452201.214641] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>     [5452201.214685] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>     [5452201.214728] Call Trace:
+>     [5452201.214759]  ceph_msg_release+0x15d/0x190 [libceph]
+>     [5452201.214811]  dispatch+0x66/0xa50 [ceph]
+>     [5452201.214846]  try_read+0x7f3/0x11d0 [libceph]
+>     [5452201.214878]  ? dequeue_entity+0x37e/0x7e0
+>     [5452201.214907]  ? pick_next_task_fair+0x291/0x610
+>     [5452201.214937]  ? dequeue_task_fair+0x5d/0x700
+>     [5452201.214966]  ? __switch_to+0x8c/0x470
+>     [5452201.214999]  ceph_con_workfn+0xa2/0x5b0 [libceph]
+>     [5452201.215033]  process_one_work+0x16b/0x370
+>     [5452201.215062]  worker_thread+0x49/0x3f0
+>     [5452201.215089]  kthread+0xf5/0x130
+>     [5452201.215112]  ? max_active_store+0x80/0x80
+>     [5452201.215139]  ? kthread_bind+0x10/0x10
+>     [5452201.215167]  ret_from_fork+0x1f/0x30
 > 
-> I tried catting it multiple times, but it was always that.
+> Link: https://tracker.ceph.com/issues/42288
 > 
-
-Ok, so it sounds like it's spending a lot of its time in userspace.
-
-> > > We did not get messages of hung tasks from the kernel. This container
-> > > was running for 9 days when the jobs should have completed in a matter
-> > > of hours. They were not able to stop the container, but it still was
-> > > using CPU. So it smells like uninterruptable sleep, but still using
-> > > CPU which based on the trace looks like it's stuck in spinlock.
-> > > 
-> > 
-> > That could be anything then, including userland bugs. What state was the
-> > process in (maybe grab /proc/<pid>/status if this happens again?).
+> Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> ---
+>  fs/ceph/mds_client.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> We still have this box up. Here is the output of status:
-> root@sun-gpu225:/proc/77292# cat status
-> Name:   offline_percept
-> State:  R (running)
-> Tgid:   77292
-> Ngid:   77986
-> Pid:    77292
-> PPid:   168913
-> TracerPid:      20719
-> Uid:    1000    1000    1000    1000
-> Gid:    1000    1000    1000    1000
-> FDSize: 256
-> Groups: 27 999
-> NStgid: 77292   2830
-> NSpid:  77292   2830
-> NSpgid: 169001  8
-> NSsid:  168913  1
-> VmPeak: 1094897144 kB
-> VmSize: 1094639324 kB
-> VmLck:         0 kB
-> VmPin:         0 kB
-> VmHWM:   3512696 kB
-> VmRSS:   3121848 kB
-> VmData: 19331276 kB
-> VmStk:       144 kB
-> VmExe:       184 kB
-> VmLib:   1060628 kB
-> VmPTE:      8992 kB
-> VmPMD:        88 kB
-> VmSwap:        0 kB
-> HugetlbPages:          0 kB
-> Threads:        1
-> SigQ:   3/3090620
-> SigPnd: 0000000000040100
-> ShdPnd: 0000000000000001
-> SigBlk: 0000000000001000
-> SigIgn: 0000000001001000
-> SigCgt: 00000001800044e8
-> CapInh: 00000000a80425fb
-> CapPrm: 0000000000000000
-> CapEff: 0000000000000000
-> CapBnd: 00000000a80425fb
-> CapAmb: 0000000000000000
-> Seccomp:        0
-> Speculation_Store_Bypass:       thread vulnerable
-> Cpus_allowed:
-> 00000000,00000000,00000000,00000000,00000000,00000000,ffffffff
-> Cpus_allowed_list:      0-31
-> Mems_allowed:   00000000,00000003
-> Mems_allowed_list:      0-1
-> voluntary_ctxt_switches:        6499
-> nonvoluntary_ctxt_switches:     28044102
-> 
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index a8a8f84f3bbf..066358fea347 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -4635,7 +4635,7 @@ static void dispatch(struct ceph_connection *con, struct ceph_msg *msg)
+>  	mutex_lock(&mdsc->mutex);
+>  	if (__verify_registered_session(mdsc, s) < 0) {
+>  		mutex_unlock(&mdsc->mutex);
+> -		goto out;
+> +		return;
+>  	}
+>  	mutex_unlock(&mdsc->mutex);
+>  
+> @@ -4672,7 +4672,6 @@ static void dispatch(struct ceph_connection *con, struct ceph_msg *msg)
+>  		pr_err("received unknown message type %d %s\n", type,
+>  		       ceph_msg_type_name(type));
+>  	}
+> -out:
+>  	ceph_msg_put(msg);
+>  }
+>  
 
-It's in running state, so it's not sleeping at the time you gathered
-this. What you may want to do is strace the task and see what it's
-doing. Is it doing syscalls and rapidly returning from them or just
-spinning in userland? If it's doing syscalls, is it getting unexpected
-errors that are causing it to loop? etc...
+This doesn't look quite right. We hold a msg reference here. If we don't
+call ceph_msg_put on it then that reference will leak.
 
-> > > Do you want me to get something more specific? Just tell me how.
-> > > 
-> > 
-> > If you really think tasks are getting hung in the kernel, then you can
-> > crash the box and get a vmcore if you have kdump set up. With that we
-> > can analyze it and determine what it's doing.
-> > 
-> > If you suspect ceph is involved then you might want to turn up dynamic
-> > debugging in the kernel and see what it's doing.
-> 
-> I looked in /sys/kernel/debug/ceph/, but wasn't sure how to up the
-> debugging that would be beneficial.
-> 
+Do you know which pointer it was trying to kfree at the time of the
+crash? What's your rationale for thinking that this is the problem?
 
-See here:
-
-https://docs.ceph.com/docs/master/cephfs/troubleshooting/#dynamic-debugging
-
-...but I wouldn't turn that up yet, until you have a clearer idea of
-what the task is doing.
-
-> We don't have a crash kernel loaded, so that won't be an option in this case.
-> 
-
-Ok. It's a good thing to have if you ever need to track down kernel
-crashes or hangs. You may want to consider enabling it in the future.
-
+Thanks,
 -- 
 Jeff Layton <jlayton@kernel.org>
 
