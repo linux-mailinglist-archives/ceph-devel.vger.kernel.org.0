@@ -2,147 +2,138 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B27AD5EDF
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Oct 2019 11:29:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C082D5F0A
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Oct 2019 11:36:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730898AbfJNJ3i (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Oct 2019 05:29:38 -0400
-Received: from mail-io1-f53.google.com ([209.85.166.53]:37799 "EHLO
-        mail-io1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730667AbfJNJ3h (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Oct 2019 05:29:37 -0400
-Received: by mail-io1-f53.google.com with SMTP id b19so36517343iob.4
-        for <ceph-devel@vger.kernel.org>; Mon, 14 Oct 2019 02:29:37 -0700 (PDT)
+        id S1730981AbfJNJgF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Oct 2019 05:36:05 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43145 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730667AbfJNJgF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Oct 2019 05:36:05 -0400
+Received: by mail-io1-f66.google.com with SMTP id v2so36475853iob.10;
+        Mon, 14 Oct 2019 02:36:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KY0XdoywdB3LC54iMZ7NeHt/wUvKNA4bcTigux6w/hk=;
-        b=nN6era/k6lNxHhjb21RQpPB/sUYoyKVY8YNhpgmmbGoRjanflk4S2QdPOl7NXiwa2u
-         B7UlHe4fgbs/n0pqSPFhEWFpSojyGRRZXjbSDLYs3sWFhGfOLHfk1mdj9TK9M1ihn/wn
-         Ruz/gi6DOAPwgpN72FY/8upzMK4NphwGRKOnk9kWgQL7C9y7S0Rqmf5tKUwT7dX6eyIL
-         i4dzlMvdj8s7Iuosin5IRpHklYnHXbErgaRjvUeF2rylslBvrBJW6u7Iq9oX7PTRsJyf
-         f3fBhadjlGZjkTwr7Wjq54juuVYOon60/nW0uMb/bwSFwezw3gHkcLYbKj95KXe/yrD6
-         iBoA==
+         :cc;
+        bh=s9AqOQmZzl9ck63tcXDk11yCxjKOidou9bwFz65u/jY=;
+        b=a8OgWxl4ipJM47v4BTC5OYcqLvNxhJEQ1+VoNrsGVzDbrnnA7xxCAirf2517sNSbM5
+         jjYg7s2NajIZg8w0UN5hhO8g6vcOGR4yOl1gdsVlsM9vFiYAWbIwJQCkOj+JImfiVh5n
+         wm/apkKezw78dEhqLQr/5WAGOpk9uLtJtaBiEGouVym7vd0Bvlne4Qhumvo+ouISpmpf
+         WBh++iAkyZS0QYoC9Q50igOcefydGfp5X6d+yq9oHVEOBwZ4ss7OaXSsF1L9sPoouf0N
+         BQ0B76O/5eMGES3LjUnDr6nBVl+9sIwq3zZFaP48aFb7omfFVt1YhhFhDKDEY4iFlzAv
+         Ti+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KY0XdoywdB3LC54iMZ7NeHt/wUvKNA4bcTigux6w/hk=;
-        b=S29HfwkWGdc1eycaRPPoC2Z0iq6VKB/2TfGoUU9xXvNqROhDuk7EpkYCxmGHhBY51M
-         LeKO0vAtdEiFK0J2K019NH0GO/1CYdvzVA0cSUDaeSY145SuUlxV9t2qsRDmt9Pjx0X3
-         ult2H3c2PVuZXAXaVNpDBlNGMlD5lVscb5W5wyUAY4OZGpPxoagANGMroyELwT9Rro22
-         ZqQrvZMwhSC16m98qMvcFfwoi+AG1zeQ6AOrqodP1+eAp7jRQY2F+JS6x75XSkT50hDH
-         74XP0P4yChZzyC5zqERuqx53+LJWra6m/ETpZaSmT0Qb17iU33S/SnT+oiDLtUedz5x9
-         qCkQ==
-X-Gm-Message-State: APjAAAWPCIr3kub7wCpivzDOgrXkYYHcxiVM1FKHJLFgcDHgzj2nWUY9
-        0dtzUOVLgyMGKBp1CkGv0lVK2QtxAXh5k2RoexeXxA==
-X-Google-Smtp-Source: APXvYqwzKkGc4yzFQA/IUGGam9IyFlUKza4fXfZ83yKzJVvXwdQT4I+xdaejpWZWr4W1MwigJWY8t+1NHEzbspTf+2U=
-X-Received: by 2002:a02:52c4:: with SMTP id d187mr37377428jab.127.1571045376641;
- Mon, 14 Oct 2019 02:29:36 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=s9AqOQmZzl9ck63tcXDk11yCxjKOidou9bwFz65u/jY=;
+        b=Hy4IkO+0tuxITSFO/kKuXIq7SEpZqOcu8lLnqwHlUSDTJsO1jUgqW1uDlLH+m8fUyZ
+         QuO4Gh7cN6S01MsEUpY9B/qohQ5v813s1U7dQ//GBPhvA8xXWM1L89RTNOSeNcIOfhIE
+         6DIkCSM2uB4oh9lDNa4REUDpmreJGkuZl6Ja5EGwI/CxyccpLgMuVq6TMbZ7D1hbPBX6
+         WXx/gjc8uP4Evn8hleQyF2ZA76Bd+YjDcGRcl/DjON+iLgdKDs3WVRzfuUyyirenXcos
+         Ndlr+pruhyQf+tpnEYRDgHq7x+QTx4qiyrj0K0+hj5ofD01xSWWxiOc2Sg7ljqYQfEi3
+         PhQA==
+X-Gm-Message-State: APjAAAXD7Z2DXa2oLxIf9A+ATIgCWhEguIvZeNLDkUc/LSOsJWw/Ax7u
+        MAAUT6MNbIFY3inroZlQslBkFZCBqD9+DK+0aqI=
+X-Google-Smtp-Source: APXvYqyt51wuPmTidlghhiH+FcOVbHb2tpKLjvK3ekBqksHUkhbxWfwTO53T0r8tu4bySR9NF8asNHSg4uK9rU461Og=
+X-Received: by 2002:a02:a619:: with SMTP id c25mr36046904jam.144.1571045762783;
+ Mon, 14 Oct 2019 02:36:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAMrPN_JjckOAnQC_=C+YJ1+QTMRbUkGSu24Pyuo1EC=rfXGuRQ@mail.gmail.com>
- <555f9bd9-8523-02ab-d7b0-97cd860c4d71@redhat.com> <CAMrPN_+U2d++xXGvY=SSBZZS_B447jzEEZZY9pPM6U1CfoDk5w@mail.gmail.com>
- <CAEYCsVLaLHBY4D4hr7qu5QKO54GgPgh5d6hC_VCPZ7s64OAZfg@mail.gmail.com>
-In-Reply-To: <CAEYCsVLaLHBY4D4hr7qu5QKO54GgPgh5d6hC_VCPZ7s64OAZfg@mail.gmail.com>
-From:   "Honggang(Joseph) Yang" <eagle.rtlinux@gmail.com>
-Date:   Mon, 14 Oct 2019 17:29:25 +0800
-Message-ID: <CAMrPN_Lb4fC7mky95bKPnEoRFG5OkXDB4ezd-mcrQtacMf+ehw@mail.gmail.com>
-Subject: Re: local mode -- a new tier mode
-To:     Xiaoxi Chen <superdebuger@gmail.com>
-Cc:     Mark Nelson <mnelson@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
+References: <20191014090059.21871-1-gmayyyha@gmail.com>
+In-Reply-To: <20191014090059.21871-1-gmayyyha@gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 14 Oct 2019 11:36:09 +0200
+Message-ID: <CAOi1vP-tvu-p4J+OJKcu209zn_pNFr_=sYhZ5=1ChgejQzHJpg@mail.gmail.com>
+Subject: Re: [PATCH] function dispatch should return if mds session does not exist
+To:     Yanhu Cao <gmayyyha@gmail.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 14 Oct 2019 at 10:31, Xiaoxi Chen <superdebuger@gmail.com> wrote:
+On Mon, Oct 14, 2019 at 11:01 AM Yanhu Cao <gmayyyha@gmail.com> wrote:
 >
-> Several considerations on deployment:
+> we shouldn't call ceph_msg_put, otherwise libceph will pass
+> invalid pointer to mm.
 >
-> 1.  How a traditional OSD(filestore, or bluestore W/O local cache) behavi=
-or if the OSD is selected as a PG member of the local-cache-pool?
-> hopefully the osd can just work as-is like an OSD with CACHE-FULL.
+> kernel panic - not syncing: fatal exception
+>     [5452201.213885] ------------[ cut here ]------------
+>     [5452201.213889] kernel BUG at mm/slub.c:3901!
+>     [5452201.213938] invalid opcode: 0000 [#1] SMP PTI
+>     [5452201.213971] CPU: 35 PID: 3037447 Comm: kworker/35:1 Kdump: loaded Not tainted 4.19.15 #1
+>     [5452201.214020] Hardware name: HP ProLiant DL380 Gen9/ProLiant DL380 Gen9, BIOS P89 01/22/2018
+>     [5452201.214088] Workqueue: ceph-msgr ceph_con_workfn [libceph]
+>     [5452201.214129] RIP: 0010:kfree+0x15b/0x170
+>     [5452201.214156] Code: 8b 02 f6 c4 80 75 08 49 8b 42 08 a8 01 74 1b 49 8b 02 31 f6 f6 c4 80 74 05 41 0f b6 72 51 5b 5d 41 5c 4c 89 d7 e9 95 03 f9 ff <0f> 0b 48 83 e8 01 e9 01 ff ff ff 49 83 ea 01 e9 e9 fe ff ff 90 0f
+>     [5452201.214262] RSP: 0018:ffffb8c3a0607cb0 EFLAGS: 00010246
+>     [5452201.214296] RAX: ffffeee840000008 RBX: ffff9130c0000000 RCX: 0000000080200016
+>     [5452201.214339] RDX: 00006f0ec0000000 RSI: 0000000000000000 RDI: ffff9130c0000000
+>     [5452201.214383] RBP: ffff91107f823970 R08: 0000000000000001 R09: 0000000000000000
+>     [5452201.214426] R10: ffffeee840000000 R11: 0000000000000001 R12: ffffffffc076c45d
+>     [5452201.214469] R13: ffff91107f823970 R14: ffff91107f8239e0 R15: ffff91107f823900
+>     [5452201.214513] FS:  0000000000000000(0000) GS:ffff9110bfbc0000(0000) knlGS:0000000000000000
+>     [5452201.214562] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>     [5452201.214598] CR2: 000055993ab29620 CR3: 0000003a1e00a003 CR4: 00000000003606e0
+>     [5452201.214641] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>     [5452201.214685] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>     [5452201.214728] Call Trace:
+>     [5452201.214759]  ceph_msg_release+0x15d/0x190 [libceph]
+>     [5452201.214811]  dispatch+0x66/0xa50 [ceph]
+>     [5452201.214846]  try_read+0x7f3/0x11d0 [libceph]
+>     [5452201.214878]  ? dequeue_entity+0x37e/0x7e0
+>     [5452201.214907]  ? pick_next_task_fair+0x291/0x610
+>     [5452201.214937]  ? dequeue_task_fair+0x5d/0x700
+>     [5452201.214966]  ? __switch_to+0x8c/0x470
+>     [5452201.214999]  ceph_con_workfn+0xa2/0x5b0 [libceph]
+>     [5452201.215033]  process_one_work+0x16b/0x370
+>     [5452201.215062]  worker_thread+0x49/0x3f0
+>     [5452201.215089]  kthread+0xf5/0x130
+>     [5452201.215112]  ? max_active_store+0x80/0x80
+>     [5452201.215139]  ? kthread_bind+0x10/0x10
+>     [5452201.215167]  ret_from_fork+0x1f/0x30
+>
+> Link: https://tracker.ceph.com/issues/42288
+>
+> Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> ---
+>  fs/ceph/mds_client.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index a8a8f84f3bbf..066358fea347 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -4635,7 +4635,7 @@ static void dispatch(struct ceph_connection *con, struct ceph_msg *msg)
+>         mutex_lock(&mdsc->mutex);
+>         if (__verify_registered_session(mdsc, s) < 0) {
+>                 mutex_unlock(&mdsc->mutex);
+> -               goto out;
+> +               return;
+>         }
+>         mutex_unlock(&mdsc->mutex);
+>
+> @@ -4672,7 +4672,6 @@ static void dispatch(struct ceph_connection *con, struct ceph_msg *msg)
+>                 pr_err("received unknown message type %d %s\n", type,
+>                        ceph_msg_type_name(type));
+>         }
+> -out:
+>         ceph_msg_put(msg);
+>  }
 >
 
-Only the pools whose cache mode is local will be affected, all other
-pools share the same osds will just act like before.
+Hi Yanhu,
 
-> 2.  Compared to other *global* caching mode, local-cache-mode cannot scal=
-e cache tier/storage tier separately, which will be a big caveats in real p=
-roduction environment,  especially for those case that the working set is c=
-onsistent but the archival data amount is keeping  increasing.
->
-> Overall it seems like a alternative for b-cache/flashcache/i-cas , more t=
-est or analysis is needed to understand the benefit of this approach over t=
-he existing b-cache solution.
->
+This doesn't look right to me.  The messenger hands its reference to
+the dispatch function, the dispatch function is responsible for putting
+it.  Even if the session isn't registered, the message should still be
+valid and should still be freed.  The bug is somewhere else...
 
-Yes, this is a problem.
+Thanks,
 
-For now, tier local mode only support SSD:HDD =3D 1:1 mode.
-
-If you want to extend cache's size under tier local mode, you can:
-- disable tier local mode
-- flush all fast objects to HDD
-- replace SSD dev to a large one
-- enable local mode again
-
-or add more SSD:HDD pairs into the related crush domain.
-
-> Honggang(Joseph) Yang <eagle.rtlinux@gmail.com> =E4=BA=8E2019=E5=B9=B410=
-=E6=9C=8813=E6=97=A5=E5=91=A8=E6=97=A5 =E4=B8=8B=E5=8D=888:47=E5=86=99=E9=
-=81=93=EF=BC=9A
->>
->> After the sysbench prepare operation is completed, about 48883MB of db
->> data is generated.
->> I set the fast partition to 30GB, so in the sysbench run stage,
->> eviction was taking place.
->>
->> Mark Nelson <mnelson@redhat.com> =E4=BA=8E2019=E5=B9=B410=E6=9C=8812=E6=
-=97=A5=E5=91=A8=E5=85=AD =E4=B8=8A=E5=8D=8812:15=E5=86=99=E9=81=93=EF=BC=9A
->> >
->> > Hi Honggang,
->> >
->> >
->> > I personally I find this very exciting!  I was hoping that we might
->> > eventually try local caching in bluestore especially given trends for
->> > larger NVMe devices and pmem.  When you were running performance tests=
-,
->> > did you run any tests where the data set size was significantly larger
->> > than the available "fast" local tier cache (ie so that eviction was
->> > taking place)?  In the past, that's been the area we've really needed =
-to
->> > focus on getting right.
->> >
->> >
->> > Mark
->> >
->> >
->> > On 10/11/19 11:04 AM, Honggang(Joseph) Yang wrote:
->> > > Hi,
->> > >
->> > > We implemented a new cache tier mode - local mode. In this mode, an
->> > > osd is configured to manage two data devices, one is fast device, on=
-e
->> > > is slow device. Hot objects are promoted from slow device to fast
->> > > device, and demoted from fast device to slow device when they become
->> > > cold.
->> > >
->> > > The introduction of tier local mode in detail is
->> > > https://tracker.ceph.com/issues/42286
->> > >
->> > > tier local mode: https://github.com/yanghonggang/ceph/commits/wip-ti=
-er-new
->> > >
->> > > This work is based on ceph v12.2.5. I'm glad to port it to master
->> > > branch if needed.
->> > >
->> > > Any advice and suggestions will be greatly appreciated.
->> > >
->> > > thx,
->> > >
->> > > Yang Honggang
+                Ilya
