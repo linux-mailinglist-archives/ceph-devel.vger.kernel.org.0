@@ -2,84 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88A5ED75D6
-	for <lists+ceph-devel@lfdr.de>; Tue, 15 Oct 2019 14:08:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E547AD80AD
+	for <lists+ceph-devel@lfdr.de>; Tue, 15 Oct 2019 22:08:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730572AbfJOMIy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 15 Oct 2019 08:08:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41550 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726540AbfJOMIx (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 15 Oct 2019 08:08:53 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E34EC205F4;
-        Tue, 15 Oct 2019 12:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571141333;
-        bh=FIiuMvLQBd4N732u5C4vfUfF3K7FEl2CkuvxEyqeyck=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ka/zwXLsX/iTzif1QOUiMmCC2KmKbU0NsEItX4R31Fhf1bBYjqYyaIIZXvXmiaPIP
-         20cTpWSinJ9xUQiKUSHCrx1HRy2o8btMR8bS2/WfcQ1R7icJt6B5aqBZbBIg0ro5p1
-         nyIBiZZwVmb+XQgW/W+RoOC520PCNAIIO7SU8UFg=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, sage@redhat.com, zyan@redhat.com
-Subject: [PATCH] ceph: make several helper accessors take const pointers
-Date:   Tue, 15 Oct 2019 08:08:51 -0400
-Message-Id: <20191015120851.13788-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.21.0
+        id S1732820AbfJOUI6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 15 Oct 2019 16:08:58 -0400
+Received: from smtp3-out.ioc.ee ([193.40.251.188]:49869 "EHLO smtp3.ioc.ee"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726717AbfJOUI6 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 15 Oct 2019 16:08:58 -0400
+X-Greylist: delayed 472 seconds by postgrey-1.27 at vger.kernel.org; Tue, 15 Oct 2019 16:08:57 EDT
+Received: from roundcube.ioc.ee (ioc-gw.kybi [172.17.0.254])
+        by smtp3.ioc.ee (Postfix) with ESMTPSA id 985304042D;
+        Tue, 15 Oct 2019 23:00:58 +0300 (EEST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 15 Oct 2019 13:00:58 -0700
+From:   Borrow Loan <loanfinancialfirm@ioc.ee>
+To:     undisclosed-recipients:;
+Subject: 2% Loan
+Reply-To: loanfinancialfirm01@gmail.com
+Mail-Reply-To: loanfinancialfirm01@gmail.com
+Message-ID: <1a7806c038c237b0e34233414f221ca7@ioc.ee>
+X-Sender: loanfinancialfirm@ioc.ee
+User-Agent: Roundcube Webmail/1.2.5
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-None of these helper functions change anything in memory, so we can
-declare their arguments as const.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/super.h | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index e174425cf44c..3bf1a01cd536 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -406,22 +406,26 @@ struct ceph_inode_info {
- 	struct inode vfs_inode; /* at end */
- };
- 
--static inline struct ceph_inode_info *ceph_inode(struct inode *inode)
-+static inline struct ceph_inode_info *
-+ceph_inode(const struct inode *inode)
- {
- 	return container_of(inode, struct ceph_inode_info, vfs_inode);
- }
- 
--static inline struct ceph_fs_client *ceph_inode_to_client(struct inode *inode)
-+static inline struct ceph_fs_client *
-+ceph_inode_to_client(const struct inode *inode)
- {
- 	return (struct ceph_fs_client *)inode->i_sb->s_fs_info;
- }
- 
--static inline struct ceph_fs_client *ceph_sb_to_client(struct super_block *sb)
-+static inline struct ceph_fs_client *
-+ceph_sb_to_client(const struct super_block *sb)
- {
- 	return (struct ceph_fs_client *)sb->s_fs_info;
- }
- 
--static inline struct ceph_vino ceph_vino(struct inode *inode)
-+static inline struct ceph_vino
-+ceph_vino(const struct inode *inode)
- {
- 	return ceph_inode(inode)->i_vino;
- }
 -- 
-2.21.0
-
+Get fast and emergency loan today at 2% rate. Reply for details.
