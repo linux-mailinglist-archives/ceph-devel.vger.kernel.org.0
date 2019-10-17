@@ -2,84 +2,76 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24441DB056
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Oct 2019 16:46:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 426C2DBEAF
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Oct 2019 09:48:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440334AbfJQOqm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Oct 2019 10:46:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38618 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2403882AbfJQOqm (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 17 Oct 2019 10:46:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 66C19B6AD;
-        Thu, 17 Oct 2019 14:46:38 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.com>
-Subject: [PATCH] ceph: Fix use-after-free in __ceph_remove_cap
-Date:   Thu, 17 Oct 2019 15:46:36 +0100
-Message-Id: <20191017144636.28617-1-lhenriques@suse.com>
+        id S2409627AbfJRHsJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 18 Oct 2019 03:48:09 -0400
+Received: from schoolmoda.ru ([88.200.194.99]:35879 "EHLO usrv.lan"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727388AbfJRHsI (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 18 Oct 2019 03:48:08 -0400
+X-Greylist: delayed 40450 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Oct 2019 03:48:07 EDT
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        by usrv.lan (Postfix) with SMTP id EEB9817F3ED;
+        Thu, 17 Oct 2019 17:01:05 +0400 (MSD)
+Received: from [71.52.170.79]
+        by 127.0.0.1 with ESMTP id 04732710
+        for <cecelia_quisenberry@gmail.com>; Thu, 17 Oct 2019 10:55:04 -0200
+Message-ID: <25du3$-yfs04@43gr4l3xh.dk>
+From:   "Mr Ekrem Bayraktar" <dave@dbsoundfactory.com>
+Reply-To: "Mr Ekrem Bayraktar" <dave@dbsoundfactory.com>
+To:     cecelia_quisenberry@gmail.com
+Subject: MOTHERLESS CHILDREN IN YOUR CITY !!
+Date:   Thu, 17 Oct 19 10:55:04 GMT
+X-Mailer: AOL 7.0 for Windows US sub 118
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/alternative;
+        boundary="EFA7_FB09FAD2"
+X-Priority: 3
+X-MSMail-Priority: Normal
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-KASAN reports a use-after-free when running xfstest generic/531, with the
-following trace:
 
-[  293.903362]  kasan_report+0xe/0x20
-[  293.903365]  rb_erase+0x1f/0x790
-[  293.903370]  __ceph_remove_cap+0x201/0x370
-[  293.903375]  __ceph_remove_caps+0x4b/0x70
-[  293.903380]  ceph_evict_inode+0x4e/0x360
-[  293.903386]  evict+0x169/0x290
-[  293.903390]  __dentry_kill+0x16f/0x250
-[  293.903394]  dput+0x1c6/0x440
-[  293.903398]  __fput+0x184/0x330
-[  293.903404]  task_work_run+0xb9/0xe0
-[  293.903410]  exit_to_usermode_loop+0xd3/0xe0
-[  293.903413]  do_syscall_64+0x1a0/0x1c0
-[  293.903417]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+--EFA7_FB09FAD2
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-This happens because __ceph_remove_cap() may queue a cap release
-(__ceph_queue_cap_release) which can be scheduled before that cap is
-removed from the inode list with
+Dear Sir / Madam
 
-	rb_erase(&cap->ci_node, &ci->i_caps);
 
-And, when this finally happens, the use-after-free will occur.
 
-This can be fixed by protecting the rb_erase with the s_cap_lock spinlock,
-which is used by ceph_send_cap_releases(), before the cap is freed.
+Since ever we left your country back to Canada , we have gotten Government=
+ approval and we have been busying planning for the less privilege Childre=
+n projects.
 
-Signed-off-by: Luis Henriques <lhenriques@suse.com>
----
- fs/ceph/caps.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+We are planning to release first batch of the funds $2,990,000.00 within 1=
+4 days for building an estate for motherless children in your city.
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index d3b9c9d5c1bd..21ee38cabe98 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -1089,13 +1089,13 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
- 	}
- 	cap->cap_ino = ci->i_vino.ino;
- 
--	spin_unlock(&session->s_cap_lock);
--
- 	/* remove from inode list */
- 	rb_erase(&cap->ci_node, &ci->i_caps);
- 	if (ci->i_auth_cap == cap)
- 		ci->i_auth_cap = NULL;
- 
-+	spin_unlock(&session->s_cap_lock);
-+
- 	if (removed)
- 		ceph_put_cap(mdsc, cap);
- 
+I want you to use my mother;s company name to register this charity projec=
+t in your country after receiving the project funds.
+
+It must be registered as { Bayraktar Group Homeless Children Ltd }.
+
+
+Can you handle and supervise this big project ?
+Can you manager all the workers as a senior supervisor ?
+We want to be sure you can handle it before we proceed with this project.
+
+
+Please call me if you want to hear from us + 1-917 580 4919.
+Please can you manage such project please Kindly reply for further details=
+.
+
+Your full names-----------
+
+
+
+Ekrem Bayraktar.
+Bayraktar Shipping Group
+
+--EFA7_FB09FAD2--
+
