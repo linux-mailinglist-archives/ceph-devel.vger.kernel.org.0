@@ -2,58 +2,123 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10D7FE503D
-	for <lists+ceph-devel@lfdr.de>; Fri, 25 Oct 2019 17:37:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAA7BE5AD2
+	for <lists+ceph-devel@lfdr.de>; Sat, 26 Oct 2019 15:18:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395443AbfJYPhR convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Fri, 25 Oct 2019 11:37:17 -0400
-Received: from static-155-212-5-20.mas.onecommunications.net ([155.212.5.20]:55530
-        "EHLO info.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727068AbfJYPhR (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 25 Oct 2019 11:37:17 -0400
-X-Greylist: delayed 100382 seconds by postgrey-1.27 at vger.kernel.org; Fri, 25 Oct 2019 11:37:16 EDT
-Reply-To: rev.jamesabel@firstbanknig.org
-From:   Firstbankofnigeria@info.org
-To:     ceph-devel@vger.kernel.org
-Subject: Dear Honest Partner
-Date:   25 Oct 2019 11:37:24 -0400
-Message-ID: <20191025113724.77481F720AB6211E@info.org>
+        id S1726845AbfJZNSQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 26 Oct 2019 09:18:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39916 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726428AbfJZNSP (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Sat, 26 Oct 2019 09:18:15 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FEDF222C1;
+        Sat, 26 Oct 2019 13:18:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572095894;
+        bh=vynhhrOIgD91jp8ZzJ4jb3KoxhLiUMc3HFR97hqu90M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=DvepoksP4dQYGP7wo2QWJD/xSUCe3mk0BH7nb5eMzEl7k62rHWTMevb/Qd+Rs4SqH
+         f9zfrzvq6VQ7ITQW9+iL3d5ml6mV+pFh+6s03SZQhgXM1c3xnMPjy3bs2imIwEgp1p
+         8VpSbRG6d0HwuyNhM6FCTc8qoiU/7UrXPIXqc9Lo=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 76/99] rbd: cancel lock_dwork if the wait is interrupted
+Date:   Sat, 26 Oct 2019 09:15:37 -0400
+Message-Id: <20191026131600.2507-76-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191026131600.2507-1-sashal@kernel.org>
+References: <20191026131600.2507-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-REV JAMES ABEL OF
-FIRST BANK OF NIGERIA LTD
-35 Marina P. O. Box 5216,
-LAGOS- NIGERIA.
+From: Dongsheng Yang <dongsheng.yang@easystack.cn>
 
-Dear Honest Partner.
+[ Upstream commit 25e6be21230d3208d687dad90b6e43419013c351 ]
 
-I need your assistance to transfer the sum of $7.500.000.00 
-Million Dollars out of my bank to a foreign country.This fund has 
-been dormant for a very long time and my bank does not know about 
-it.I will put your name as the real owner of this fund and i will 
-present you to the bank.
+There is a warning message in my test with below steps:
 
-At the end of the successful transfer of this fund to your bank 
-account.We are to share it 70% 30%.70% for you and 30% for me.I 
-will come down to your country and receive my own share of the 
-fund to avoid any detection from my bank and government.
+  # rbd bench --io-type write --io-size 4K --io-threads 1 --io-pattern rand test &
+  # sleep 5
+  # pkill -9 rbd
+  # rbd map test &
+  # sleep 5
+  # pkill rbd
 
-However,all i need is a trustworthy person.Reply me with your 
-direct phone number and country of origin so that i can call you 
-and brief you more about this transaction.
+The reason is that the rbd_add_acquire_lock() is interruptable,
+that means, when we kill the waiting on ->acquire_wait, the lock_dwork
+could be still running.
 
-Please note that,this transaction is risk free and safe,because i 
-have all the documents as proof.
+1. do_rbd_add()					2. lock_dwork
+rbd_add_acquire_lock()
+  - queue_delayed_work()
+						lock_dwork queued
+    - wait_for_completion_killable_timeout()  <-- kill happen
+rbd_dev_image_unlock()	<-- UNLOCKED now, nothing to do.
+rbd_dev_device_release()
+rbd_dev_image_release()
+  - ...
+						lock successed here
+     - cancel_delayed_work_sync(&rbd_dev->lock_dwork)
 
-Yours truly,
-Rev. James Abel
-+2349037592530
-(Director International Remittance Department)
-Email: rev.jamesabel@firstbanknig.org
+Then when we reach the rbd_dev_free(), WARN_ON is triggered because
+lock_state is not RBD_LOCK_STATE_UNLOCKED.
+
+To fix it, this commit make sure the lock_dwork was finished before
+calling rbd_dev_image_unlock().
+
+On the other hand, this would not happend in do_rbd_remove(), because
+after rbd mapped, lock_dwork will only be queued for IO request, and
+request will continue unless lock_dwork finished. when we call
+rbd_dev_image_unlock() in do_rbd_remove(), all requests are done.
+That means, lock_state should not be locked again after
+rbd_dev_image_unlock().
+
+[ Cancel lock_dwork in rbd_add_acquire_lock(), only if the wait is
+  interrupted. ]
+
+Fixes: 637cd060537d ("rbd: new exclusive lock wait/wake code")
+Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/block/rbd.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index c8fb886aebd4e..e6369b9f33873 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -6632,10 +6632,13 @@ static int rbd_add_acquire_lock(struct rbd_device *rbd_dev)
+ 	queue_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork, 0);
+ 	ret = wait_for_completion_killable_timeout(&rbd_dev->acquire_wait,
+ 			    ceph_timeout_jiffies(rbd_dev->opts->lock_timeout));
+-	if (ret > 0)
++	if (ret > 0) {
+ 		ret = rbd_dev->acquire_err;
+-	else if (!ret)
+-		ret = -ETIMEDOUT;
++	} else {
++		cancel_delayed_work_sync(&rbd_dev->lock_dwork);
++		if (!ret)
++			ret = -ETIMEDOUT;
++	}
+ 
+ 	if (ret) {
+ 		rbd_warn(rbd_dev, "failed to acquire exclusive lock: %ld", ret);
+-- 
+2.20.1
+
