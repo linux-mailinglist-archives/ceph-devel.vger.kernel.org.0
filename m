@@ -2,46 +2,87 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95850E88F6
-	for <lists+ceph-devel@lfdr.de>; Tue, 29 Oct 2019 14:01:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62ED0E89E8
+	for <lists+ceph-devel@lfdr.de>; Tue, 29 Oct 2019 14:50:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388193AbfJ2NBC convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Tue, 29 Oct 2019 09:01:02 -0400
-Received: from s0090.ppsmtp.net ([91.90.154.91]:50804 "EHLO s0090.ppsmtp.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388097AbfJ2NBC (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 29 Oct 2019 09:01:02 -0400
-Received: from pps.filterd (s0090.ppsmtp.net [127.0.0.1])
-        by s0090.ppsmtp.net (8.16.0.27/8.16.0.27) with SMTP id x9T6h3ix016606;
-        Tue, 29 Oct 2019 07:54:00 +0100
-Received: from mail.schuetz.net ([212.185.169.233])
-        by s0090.ppsmtp.net with ESMTP id 2vx8bh89yj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Oct 2019 07:54:00 +0100
-Received: from julia02 (localhost [127.0.0.1])
-        by mail.schuetz.net (Postfix) with ESMTP id CE55F20220FC;
-        Tue, 29 Oct 2019 07:50:53 +0100 (CET)
+        id S2388799AbfJ2NuV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 29 Oct 2019 09:50:21 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:35400 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388561AbfJ2NuU (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 29 Oct 2019 09:50:20 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iPRt5-0005QJ-Kd; Tue, 29 Oct 2019 13:50:19 +0000
+Date:   Tue, 29 Oct 2019 13:50:19 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     ceph-devel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [PATCH] ceph_d_revalidate(): fix RCU case handling
+Message-ID: <20191029135019.GG26530@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Subject: Dear Friend,
-To:     Recipients <infocarfer1@aim.com>
-From:   "Mr.R.C" <infocarfer1@aim.com>
-Date:   Tue, 29 Oct 2019 06:50:37 +0000
-Reply-To: infocarfer@aim.com
-X-TNEFEvaluated: 1
-Message-ID: <OF6FAF3DF0.A2AF154D-ON882584A2.00259E04@schuetz.net>
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Description: Mail message body
-X-Proofpoint-ID: SID=2vx8bh89yj QID=2vx8bh89yj-1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-29_03:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dear Friend,
+For RCU case ->d_revalidate() is called with rcu_read_lock() and
+without pinning the dentry passed to it.  Which means that it
+can't rely upon ->d_inode remaining stable; that's the reason
+for d_inode_rcu(), actually.
 
-I am Vice Chairman of Hang Seng Bank, I have Important Matter to Discuss with you concerning my late client, Died without a NEXT OF KIN. Send me your private email for full details information. email me at (infocarfer@aim.com)
-Mail:
-Regards
+Make sure we don't reload ->d_inode there.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index 4ca0b8ff9a72..d17a789fd856 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1553,36 +1553,37 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
+ {
+ 	int valid = 0;
+ 	struct dentry *parent;
+-	struct inode *dir;
++	struct inode *dir, *inode;
+ 
+ 	if (flags & LOOKUP_RCU) {
+ 		parent = READ_ONCE(dentry->d_parent);
+ 		dir = d_inode_rcu(parent);
+ 		if (!dir)
+ 			return -ECHILD;
++		inode = d_inode_rcu(dentry);
+ 	} else {
+ 		parent = dget_parent(dentry);
+ 		dir = d_inode(parent);
++		inode = d_inode(dentry);
+ 	}
+ 
+ 	dout("d_revalidate %p '%pd' inode %p offset %lld\n", dentry,
+-	     dentry, d_inode(dentry), ceph_dentry(dentry)->offset);
++	     dentry, inode, ceph_dentry(dentry)->offset);
+ 
+ 	/* always trust cached snapped dentries, snapdir dentry */
+ 	if (ceph_snap(dir) != CEPH_NOSNAP) {
+ 		dout("d_revalidate %p '%pd' inode %p is SNAPPED\n", dentry,
+-		     dentry, d_inode(dentry));
++		     dentry, inode);
+ 		valid = 1;
+-	} else if (d_really_is_positive(dentry) &&
+-		   ceph_snap(d_inode(dentry)) == CEPH_SNAPDIR) {
++	} else if (inode && ceph_snap(inode) == CEPH_SNAPDIR) {
+ 		valid = 1;
+ 	} else {
+ 		valid = dentry_lease_is_valid(dentry, flags);
+ 		if (valid == -ECHILD)
+ 			return valid;
+ 		if (valid || dir_lease_is_valid(dir, dentry)) {
+-			if (d_really_is_positive(dentry))
+-				valid = ceph_is_any_caps(d_inode(dentry));
++			if (inode)
++				valid = ceph_is_any_caps(inode);
+ 			else
+ 				valid = 1;
+ 		}
