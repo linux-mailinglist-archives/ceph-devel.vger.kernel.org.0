@@ -2,74 +2,93 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2482CEB88E
-	for <lists+ceph-devel@lfdr.de>; Thu, 31 Oct 2019 21:47:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DFB4EBB8B
+	for <lists+ceph-devel@lfdr.de>; Fri,  1 Nov 2019 02:01:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729768AbfJaUrj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 31 Oct 2019 16:47:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727669AbfJaUrj (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 31 Oct 2019 16:47:39 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728073AbfKABBd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 31 Oct 2019 21:01:33 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:47840 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727455AbfKABBd (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 31 Oct 2019 21:01:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1572570091;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:openpgp:openpgp:autocrypt:autocrypt;
+        bh=HiB1gNmbkXsaxU36IpSBTBcYuG9yBUhldXjckIVTi9Y=;
+        b=DesrBN8PSmYWAyRXPvzr2gA/hmuf11vWRewQSJWh14a3b99QLRAFXgvEc7FZSXKLHvwaNA
+        gEYimRTOU5d1dZAfSmDypCmzCnL1iW5s69JVSfs72xuZMc1JOeSMOCbHwa8P8yfPv0jLYb
+        P0WB9PJsBe75h+gwVHLScNRzm8THEzw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-359-Qbxy6Xt0MQiiCsfrP2ShpQ-1; Thu, 31 Oct 2019 21:01:27 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3D192086D;
-        Thu, 31 Oct 2019 20:47:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572554859;
-        bh=jRn9WiP1eKTYv9UoYEtDMvs0cbElsns6t2N8n/fIp5U=;
-        h=From:To:Cc:Subject:Date:From;
-        b=xbAhdaeF4Kc+YGs5lwMnfFKps4uQDf11av5LQnrtUbvmZUJaOXSumdXMtqyilom4v
-         5O54wJlPhEMLg4cj8qccxuiU1Wj+/GOD0FpFSlRR9Hu8f7lT2HzfeJMngN5VzwsuGg
-         V73mJdeFl2z5xtBFKLrkkOmX+6h/2QsjCvGrVPO8=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk
-Subject: [PATCH v2] ceph: don't try to handle hashed dentries in non-O_CREAT atomic_open
-Date:   Thu, 31 Oct 2019 16:47:37 -0400
-Message-Id: <20191031204737.20310-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.21.0
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7FBC28017E0
+        for <ceph-devel@vger.kernel.org>; Fri,  1 Nov 2019 01:01:26 +0000 (UTC)
+Received: from [10.10.121.236] (ovpn-121-236.rdu2.redhat.com [10.10.121.236])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 497E25D6A7
+        for <ceph-devel@vger.kernel.org>; Fri,  1 Nov 2019 01:01:26 +0000 (UTC)
+To:     ceph-devel <ceph-devel@vger.kernel.org>
+From:   David Galloway <dgallowa@redhat.com>
+Subject: Jenkins outage today
+Openpgp: preference=signencrypt
+Autocrypt: addr=dgallowa@redhat.com; prefer-encrypt=mutual; keydata=
+ mQENBE60O2sBCADafZy0luRceto63vARvurZ7oepCBc+yBiDHHcFLmdZLs0nugjyYa1V1WW/
+ j/tMPkjmQPGT1IcoXIrhppUXKrwXMkK4JB56GHI3cdximVuRMmHCY45ZbmAL7YnuNXz+5jbs
+ iuzarsc9W3SyovQUx9n1lUymk1lASaPfNVdgzxl0/FHpKMhEqJGo0eQPh8o5M+ybZS9zXKNa
+ QPiXJKLiHuise1hP4529ZTExjCqk+R3x6y7YwySKSFUhEVwY7ksU0rr/Xv5VVEsrLgS4nENe
+ u9UQvJq2hp+RhgBH0ZV9+jLgwoYxjqbifJDlghbDPe7rhAfiD/xvoQFgAy/AOkVPRKHVABEB
+ AAG0JERhdmlkIEdhbGxvd2F5IDxkZ2FsbG93YUByZWRoYXQuY29tPokBNwQTAQgAIQUCVfr6
+ SAIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgAAKCRA4J2vQ1bgO+m5hB/kBOH7I2uhhhvGH
+ BzGFKSh/1C9NO8ECg5N//b7xu9EtQfoVgNODTYqpG0mhH9phV7Cvld5gAlX3YV/m4lgDwJH9
+ 5fcNB2x7M6OEY2kOI20DxBKxVDmamhmQLQzm2ZFqbfHwh/H6zq3jdXWCbp8LQ9uvta5qbsFp
+ rU4sVg2AhKAPrvr2JoO7MLVCdNfRhwdJFwvxlc6ltilateChU5dHpy2/2aSM3794VLZXQZkD
+ Ei5PIc9XrXOKqqpbwMuizlh/tNA0O1a3jY8ccl9rYpCyELa9nfGw1HxXmfj8hMtndf077Bat
+ 7AxNyUoLu8+C9vD2F0oqXGumYCkcXIoSyiDAPY2IuQENBE60O2sBCADlXsFRIss3rM3IW9dK
+ 8084c3kktyOyA0JO4cQtXglGVvmALIaqxLlQ8qabibmRgdozjh5YsYFIQwBasmD+0rZVEi7W
+ OMc1pO/dbwAzlhzfmbAvkvzctB4CS2MP6RLkGR9MquiLAAWdfOiRoKeNkgSup8VlSPrvlXwF
+ qsolEbH14LJGtJBF3uRUrhieyV+dQ5wE/UJCmuN/m1KWlZmcUeDbTefNM/NaWxSdycu27QyL
+ PBMIS9bDHPoPAaPjRKoMr80aYbHLZxiXPXlP3wyfirWiN5jqL2mjcCqGqzAC2IPuWftD4oHr
+ P+3w6cBi1noh1ps76iD37IUsU8tZgTX5sE8RABEBAAGJAR8EGAECAAkFAk60O2sCGwwACgkQ
+ OCdr0NW4Dvq5ywf/ZEVxP1LOUnkab+B8ZDQs6L66bBMMuWaoUKp9ngdpSqKfSy6YnbmshKaE
+ SkNBNlpVpdOweSBPnLx4ss2sksLwDxrQTxW71Zui67mUbdurhlkbsG1pM4c1sAcdqa7xG6nB
+ +fkpwgn9bcvv3qQGuKDwit6fdIVnPRJckM1T8w8d0yG+0uNSzOhwKI6h8E0Za2ESLmTyfkr1
+ FtSVF86xVAGMI8jMiccCzKfOlkP89ND84r5EDzeATa3Imv7xKCgcIlSuMQKk45506NFPQQlP
+ nCTgp61XOM4EWjembxD6lWBXHltcm3K1dXvf3JbAxG7v2BSd0hRhnXfQdZoAzRJwYIHh2Q==
+Message-ID: <f5a5bb09-0bae-4e27-2a6e-775fa1e93c7c@redhat.com>
+Date:   Thu, 31 Oct 2019 21:01:25 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: Qbxy6Xt0MQiiCsfrP2ShpQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-If ceph_atomic_open is handed a !d_in_lookup dentry, then that means
-that it already passed d_revalidate so we *know* that it's negative (or
-at least was very recently). Just return -ENOENT in that case.
+There was a Jenkins outage from 16:12 on 31OCT2019 until 01:00 1NOV2019
+today.
 
-This also addresses a subtle bug in dentry handling. Non-O_CREAT opens
-call atomic_open with the parent's i_rwsem shared, but calling
-d_splice_alias on a hashed dentry requires the exclusive lock.
+The Openstack volume serving /var/lib/jenkins kept corrupting the XFS
+filesystem so I had to create a new volume and restore /var/lib/jenkins
+from this morning's daily backups.
 
-If ceph_atomic_open receives a hashed, negative dentry on a non-O_CREAT
-open, and another client were to race in and create the file before we
-issue our OPEN, ceph_fill_trace could end up calling d_splice_alias on
-the dentry with the new inode with insufficient locks.
+You should be able to force push any branches you need built.
 
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/file.c | 3 +++
- 1 file changed, 3 insertions(+)
+See https://status.sepia.ceph.com/incidents/3756 for more details.
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index e9689e7bea08..bd77adb64bfd 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -462,6 +462,9 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 		err = ceph_security_init_secctx(dentry, mode, &as_ctx);
- 		if (err < 0)
- 			goto out_ctx;
-+	} else if (!d_in_lookup(dentry)) {
-+		/* If it's not being looked up, it's negative */
-+		return -ENOENT;
- 	}
- 
- 	/* do the open */
--- 
-2.21.0
+--=20
+David Galloway
+Systems Administrator, RDU
+Ceph Engineering
+IRC: dgalloway
 
