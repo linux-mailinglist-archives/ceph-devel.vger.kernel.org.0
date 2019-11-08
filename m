@@ -2,131 +2,98 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79FDCF4F11
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 Nov 2019 16:15:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D9A9F5065
+	for <lists+ceph-devel@lfdr.de>; Fri,  8 Nov 2019 16:58:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbfKHPPP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 8 Nov 2019 10:15:15 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42007 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfKHPPP (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 8 Nov 2019 10:15:15 -0500
-Received: by mail-io1-f68.google.com with SMTP id g15so6719211iob.9;
-        Fri, 08 Nov 2019 07:15:13 -0800 (PST)
+        id S1727451AbfKHP6b (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 8 Nov 2019 10:58:31 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36661 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbfKHP6b (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 8 Nov 2019 10:58:31 -0500
+Received: by mail-wm1-f66.google.com with SMTP id c22so6751338wmd.1;
+        Fri, 08 Nov 2019 07:58:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nOrCgpvdg/KvlO/h5Wd7G5wPvTtcd3OWqo9gJ0rgrlo=;
-        b=dWD4v22OkhbbvMSwYUZ95Ok4srdhWnRsopBViIewC4JmRXRvOygT1/st1DPNL/km0a
-         4Qh7mw7c1/p9vTWr9caM7ju13HrbpcIoVQkwMyAfL/4369W722zY8lGpL1B2QXTT+3LT
-         sX2CkMi9IH0pqzWqbL0+WiNyPQ761G4VtIBuoUH2dTEuNW4wLXkFIgT2/V133bdOW/GG
-         7KjOO3LrGgjISU35uVmmUYQnZbns+V0hH02lTWY2b8mGGB6CppsZYGHc9T3cfiK/22nM
-         jVEit7LL33l8rThG0som+WHYLoAUvrS43aRSEjI+ZC4iSeSYdldAiswtdzA/I19jFv0s
-         6lwQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=54MaFm5VBMDV6T2K1upBSmgHCQwtV4l01lLVii97q6Y=;
+        b=mv2joeqPloU9UDeNXUo3JCrcB64QG+nEy0VfqFs7HZa3wmRER8yz3CA478sLYVy+7s
+         iCkS3TwmcKdRB5AcLPSS2c/dmJmUvwfwksrbiLVl8VAjQATB4dPXkoJS6OQr6bywAF5e
+         c09BFDXGZp1G+/ITuGs45qE4SfdpslP5cpMOYJqmmC4D79j/h3nz0DEgVKlRYmxxNEXw
+         GyA42I/WR4SO4gz9SmAX7i5I6feTckjsQ8mAhKhUG/UlBjA/Rq7Jk5D1bDBx9jhjRP7w
+         UZPPkVBCrn8w9F70nUM2N3MBOWJIKHeqB0OwIBdXUWm3juL8krb54RjqYWaQXP/f4T+u
+         iDmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nOrCgpvdg/KvlO/h5Wd7G5wPvTtcd3OWqo9gJ0rgrlo=;
-        b=axB++Qh90eLd+x98FKnTvDaA8RZvZuGPIzyeXBcjEq7YNlOaAq9xThOSMY1M3MfJaY
-         HdWmHVuCxsg8hg6rAxRCmxQu0ET1tNVV8jmK9wVWAbBA5jUmWhvRErVKSxS8F34tP8Hj
-         vtqdHV4f6iF4N6NCIcMUPK07NHCJfQ7WPskzFefM2AYvl/jOw+InsuTNMVoX5DWVCE69
-         1+iWjpVDgRfEkSgbES8iWuiyHrrqECCrk9QkorUHt87YobpNwLIZfIygJNgLbcBp2+Y2
-         5Z29kLjbSiBKZfqKj8vW2RXu7WsWSJix0CmJ2q9udgFYeIkWujNPLl+9abMfcX8gjOHR
-         wWlQ==
-X-Gm-Message-State: APjAAAWHJZVQ86cEgh4TLexiXY++AHoGlU2Siz3qzRyrfElFouyp3cSi
-        DRXqHFNU482D38XM5B4bVHx9Ce2ATu0T4i/nRj4=
-X-Google-Smtp-Source: APXvYqxP2aQUBKViEIx5O56eV6Vn7vzymNBSZ5tThWTlQR6H1FW1tTABHAooQOoLLS1Me/daB472OZSuhF0bLyc8UKI=
-X-Received: by 2002:a5d:94d8:: with SMTP id y24mr11174566ior.131.1573226112847;
- Fri, 08 Nov 2019 07:15:12 -0800 (PST)
-MIME-Version: 1.0
-References: <20191108141555.31176-1-lhenriques@suse.com>
-In-Reply-To: <20191108141555.31176-1-lhenriques@suse.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=54MaFm5VBMDV6T2K1upBSmgHCQwtV4l01lLVii97q6Y=;
+        b=ZK25eFOjCnXpQSxkpLSAIJcgxVJtNAWd1cTozNpTL9bbJFuKeKlwPjKJMrS9y8d0al
+         R8OhTERgRVK/bBZsEB3w9wbW2Da9kz9t9p8LQck6S5GiSP6psjGwty8bihcwNi2XQSjN
+         rTzKX+mL5SqxNoHuq0zpzpHvXMdJjOwU2C2twa8S9UzsZLUGjwKuNYirZY/aqTcIaHBi
+         mBG5eIv8DPzsTgozIYXfqQwC+9r8E0FDDBH1bEckGb++BC0P3z8Ct+x3rg9fAnEKFTTM
+         GRCbliMwzZ6ReqmsXQTZdBB36h5+8O/FrS/89bGd1ESv2QrkbTHkjnw/f7S2QqbYl/HV
+         MpqQ==
+X-Gm-Message-State: APjAAAXy7OVeE4NplNIU1yxHkN/rO8VbyI8xTnM2nwnoZ7Xn1+PlRKsN
+        p4WeN4XQGKV96j44cUGQ3cTACBl+
+X-Google-Smtp-Source: APXvYqxLU8zgDdkhQgCEpkb26FgMwUGhyh9oaKlyKHnXMeb1H0ep+XDOjg8W+GkhCGduqRGrz3jFtA==
+X-Received: by 2002:a1c:1b0d:: with SMTP id b13mr8895424wmb.120.1573228707753;
+        Fri, 08 Nov 2019 07:58:27 -0800 (PST)
+Received: from kwango.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id h124sm7759434wmf.30.2019.11.08.07.58.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2019 07:58:26 -0800 (PST)
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Fri, 8 Nov 2019 16:15:35 +0100
-Message-ID: <CAOi1vP-sVQKvpiPLoZ=9s7Hy=c2eQRocxSs1nPrXAUCbbZUZ-g@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] ceph: safely use 'copy-from' Op on Octopus OSDs
-To:     Luis Henriques <lhenriques@suse.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "Yan, Zheng" <ukernel@gmail.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 5.4-rc7
+Date:   Fri,  8 Nov 2019 16:58:53 +0100
+Message-Id: <20191108155853.23314-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Nov 8, 2019 at 3:15 PM Luis Henriques <lhenriques@suse.com> wrote:
->
-> Hi!
->
-> (Sorry for the long cover letter!)
+Hi Linus,
 
-This is exactly what cover letters are for!
+The following changes since commit d6d5df1db6e9d7f8f76d2911707f7d5877251b02:
 
->
-> Since the fix for [1] has finally been merged and should be available in
-> the next (Octopus) ceph release, I'm trying to clean-up my kernel client
-> patch that tries to find out whether or not it's safe to use the
-> 'copy-from' RADOS operation for copy_file_range.
->
-> So, the fix for [1] was to modify the 'copy-from' operation to allow
-> clients to optionally (using the CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ
-> flag) send the extra truncate_seq and truncate_size parameters.  Since
-> only Octopus will have this fix (no backports planned), the client
-> simply needs to ensure the OSDs being used have SERVER_OCTOPUS in their
-> features.
->
-> My initial solution was to add an extra test in __submit_request,
-> looping all the request ops and checking if the connection has the
-> required features for that operation.  Obviously, at the moment only the
-> copy-from operation has a restriction but I guess others may be added in
-> the future.  I believe that doing this at this point (__submit_request)
-> allows to cover cases where a cluster is being upgraded to Octopus and
-> we have different OSDs running with different feature bits.
->
-> Unfortunately, this solution is racy because the connection state
-> machine may be changing and the peer_features field isn't yet set.  For
-> example: if the connection to an OSD is being re-open when we're about
-> to check the features, the con->state will be CON_STATE_PREOPEN and the
-> con->peer_features will be 0.  I tried to find ways to move the feature
-> check further down in the stack, but that can't be easily done without
-> adding more infrastructure.  A solution that came to my mind was to add
-> a new con->ops, invoked in the context of ceph_con_workfn, under the
-> con->mutex.  This callback could then verify the available features,
-> aborting the operation if needed.
->
-> Note that the race in this patchset doesn't seem to be a huge problem,
-> other than occasionally reverting to a VFS generic copy_file_range, as
-> -EOPNOTSUPP will be returned here.  But it's still a race, and there are
-> probably other cases that I'm missing.
->
-> Anyway, maybe I'm missing an obvious solution for checking these OSD
-> features, but I'm open to any suggestions on other options (or some
-> feedback on the new callback in ceph_connection_operations option).
->
-> [1] https://tracker.ceph.com/issues/37378
+  Linux 5.4-rc5 (2019-10-27 13:19:19 -0400)
 
-If the OSD checked for unknown flags, like newer syscalls do, it would
-be super easy, but it looks like it doesn't.
+are available in the Git repository at:
 
-An obvious solution is to look at require_osd_release in osdmap, but we
-don't decode that in the kernel because it lives the OSD portion of the
-osdmap.  We could add that and consider the fact that the client now
-needs to decode more than just the client portion a design mistake.
-I'm not sure what can of worms does that open and if copy-from alone is
-worth it though.  Perhaps that field could be moved to (or a copy of it
-be replicated in) the client portion of the osdmap starting with
-octopus?  We seem to be running into it on the client side more and
-more...
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.4-rc7
 
-Given the track record of this feature (the fix for the most recently
-discovered data corrupting bug hasn't even merged yet), I would be very
-hesitant to turn it back on by default even if we figure out a good
-solution for the feature check.  In my opinion, it should stay opt-in.
+for you to fetch changes up to ff29fde84d1fc82f233c7da0daa3574a3942bec7:
 
-Thanks,
+  ceph: return -EINVAL if given fsc mount option on kernel w/o support (2019-11-07 18:03:23 +0100)
 
-                Ilya
+----------------------------------------------------------------
+Some late-breaking dentry handling fixes from Al and Jeff, a patch to
+further restrict copy_file_range() to avoid potential data corruption
+from Luis and a fix for !CONFIG_CEPH_FSCACHE kernels.  Everything but
+the fscache fix is marked for stable.
+
+----------------------------------------------------------------
+Al Viro (2):
+      ceph: fix RCU case handling in ceph_d_revalidate()
+      ceph: add missing check in d_revalidate snapdir handling
+
+Jeff Layton (2):
+      ceph: don't try to handle hashed dentries in non-O_CREAT atomic_open
+      ceph: return -EINVAL if given fsc mount option on kernel w/o support
+
+Luis Henriques (2):
+      ceph: fix use-after-free in __ceph_remove_cap()
+      ceph: don't allow copy_file_range when stripe_count != 1
+
+ fs/ceph/caps.c  | 10 +++++-----
+ fs/ceph/dir.c   | 15 ++++++++-------
+ fs/ceph/file.c  | 15 +++++++++++++--
+ fs/ceph/inode.c |  1 +
+ fs/ceph/super.c | 11 ++++++++++-
+ 5 files changed, 37 insertions(+), 15 deletions(-)
