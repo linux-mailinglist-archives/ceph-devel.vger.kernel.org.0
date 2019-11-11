@@ -2,95 +2,153 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BC42F7369
-	for <lists+ceph-devel@lfdr.de>; Mon, 11 Nov 2019 12:51:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14A67F78CF
+	for <lists+ceph-devel@lfdr.de>; Mon, 11 Nov 2019 17:30:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbfKKLvZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 11 Nov 2019 06:51:25 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:57613 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726810AbfKKLvZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 11 Nov 2019 06:51:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573473084;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=GDNFoderkQrnYyZj4E6c9FtkV33mg0Gci6iSHwP+PZY=;
-        b=Iy2ExHDzAUOnUEnXI8HhXP9z1qYbSMlydM471FSK4TjDWoJbR0xDCDaW4/Q0bEYgvSJR2Z
-        letcHlcHkaD883YnaYK+/qADkOZzpgQZYhjdaWOfltM19LbmJJ/hsgq8E2xfT2Qe9XtzA5
-        gUl/KclS2iX/24WE7oLwoFjNZLR7FTc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-137-GamrE1PKOYuMs1fFZelrIw-1; Mon, 11 Nov 2019 06:51:21 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3BCDEDB21;
-        Mon, 11 Nov 2019 11:51:20 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-180.pek2.redhat.com [10.72.12.180])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EB2EF608EB;
-        Mon, 11 Nov 2019 11:51:14 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org, sage@redhat.com, idryomov@gmail.com
-Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: fix geting random mds from mdsmap
-Date:   Mon, 11 Nov 2019 06:51:05 -0500
-Message-Id: <20191111115105.58758-1-xiubli@redhat.com>
+        id S1726915AbfKKQak (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 11 Nov 2019 11:30:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57020 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726871AbfKKQak (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 11 Nov 2019 11:30:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 72E0CB3F1;
+        Mon, 11 Nov 2019 16:30:37 +0000 (UTC)
+Date:   Mon, 11 Nov 2019 16:30:36 +0000
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Sage Weil <sage@newdream.net>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "Yan, Zheng" <ukernel@gmail.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/2] ceph: safely use 'copy-from' Op on Octopus OSDs
+Message-ID: <20191111163036.GA20513@hermes.olymp>
+References: <20191108141555.31176-1-lhenriques@suse.com>
+ <CAOi1vP-sVQKvpiPLoZ=9s7Hy=c2eQRocxSs1nPrXAUCbbZUZ-g@mail.gmail.com>
+ <20191108164758.GA1760@hermes.olymp>
+ <alpine.DEB.2.21.1911081656320.10553@piezo.novalocal>
+ <20191108171616.GA2569@hermes.olymp>
+ <alpine.DEB.2.21.1911081721120.28682@piezo.novalocal>
+ <20191108173101.GA3300@hermes.olymp>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: GamrE1PKOYuMs1fFZelrIw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191108173101.GA3300@hermes.olymp>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Fri, Nov 08, 2019 at 05:31:01PM +0000, Luis Henriques wrote:
+<snip>
+> > - You'll need to add it for both OSDMap::Incremental and OSDMap
+> > - You'll need to make the encoding condition by updating the block like 
+> > the one below from OSDMap::encode()
+> > 
+> >     uint8_t v = 9;
+> >     if (!HAVE_FEATURE(features, SERVER_LUMINOUS)) {
+> >       v = 3;
+> >     } else if (!HAVE_FEATURE(features, SERVER_MIMIC)) {
+> >       v = 6;
+> >     } else if (!HAVE_FEATURE(features, SERVER_NAUTILUS)) {
+> >       v = 7;
+> >     }
+> > 
+> > to include a SERVER_OCTOPUS case too.  Same goes for Incremental::encode()
+> 
+> Awesome, thanks!  I'll give it a try, and test it with the appropriate
+> kernel client side changes to use this.
 
-For example, if we have 5 mds in the mdsmap and the states are:
-m_info[5] --> [-1, 1, -1, 1, 1]
+Ok, I've got the patch bellow for the OSD code, which IIRC should do
+exactly what we want: duplicate the require_osd_release in the client
+side.
 
-If we get a ramdon number 1, then we should get the mds index 3 as
-expected, but actually we will get index 2, which the state is -1.
+Now, in order to quickly test this I've started adding flags to the
+CEPH_FEATURES_SUPPORTED_DEFAULT definition.  SERVER_MIMIC *seemed* to be
+Ok, but once I've added SERVER_NAUTILUS I've realized that we'll need to
+handle TYPE_MSGR2 address.  Which is a _big_ thing.  Is anyone already
+looking into adding support for msgr v2 to the kernel client?
 
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/mdsmap.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+Cheers,
+--
+Luís
 
-diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
-index ce2d00da5096..2011147f76bf 100644
---- a/fs/ceph/mdsmap.c
-+++ b/fs/ceph/mdsmap.c
-@@ -20,7 +20,7 @@
- int ceph_mdsmap_get_random_mds(struct ceph_mdsmap *m)
- {
- =09int n =3D 0;
--=09int i;
-+=09int i, j;
-=20
- =09/* special case for one mds */
- =09if (1 =3D=3D m->m_num_mds && m->m_info[0].state > 0)
-@@ -35,9 +35,12 @@ int ceph_mdsmap_get_random_mds(struct ceph_mdsmap *m)
-=20
- =09/* pick */
- =09n =3D prandom_u32() % n;
--=09for (i =3D 0; n > 0; i++, n--)
--=09=09while (m->m_info[i].state <=3D 0)
--=09=09=09i++;
-+=09for (j =3D 0, i =3D 0; i < m->m_num_mds; i++) {
-+=09=09if (m->m_info[0].state > 0)
-+=09=09=09j++;
-+=09=09if (j > n)
-+=09=09=09break;
-+=09}
-=20
- =09return i;
- }
---=20
-2.21.0
-
+diff --git a/src/osd/OSDMap.cc b/src/osd/OSDMap.cc
+index 6b5930743a33..b38d91d98fcf 100644
+--- a/src/osd/OSDMap.cc
++++ b/src/osd/OSDMap.cc
+@@ -555,13 +555,15 @@ void OSDMap::Incremental::encode(ceph::buffer::list& bl, uint64_t features) cons
+   ENCODE_START(8, 7, bl);
+ 
+   {
+-    uint8_t v = 8;
++    uint8_t v = 9;
+     if (!HAVE_FEATURE(features, SERVER_LUMINOUS)) {
+       v = 3;
+     } else if (!HAVE_FEATURE(features, SERVER_MIMIC)) {
+       v = 5;
+     } else if (!HAVE_FEATURE(features, SERVER_NAUTILUS)) {
+       v = 6;
++    } else if (!HAVE_FEATURE(features, SERVER_OCTOPUS)) {
++      v = 8;
+     }
+     ENCODE_START(v, 1, bl); // client-usable data
+     encode(fsid, bl);
+@@ -611,6 +613,9 @@ void OSDMap::Incremental::encode(ceph::buffer::list& bl, uint64_t features) cons
+       encode(new_last_up_change, bl);
+       encode(new_last_in_change, bl);
+     }
++    if (v >= 9) {
++      encode(new_require_osd_release, bl);
++    }
+     ENCODE_FINISH(bl); // client-usable data
+   }
+ 
+@@ -816,7 +821,7 @@ void OSDMap::Incremental::decode(ceph::buffer::list::const_iterator& bl)
+     return;
+   }
+   {
+-    DECODE_START(8, bl); // client-usable data
++    DECODE_START(9, bl); // client-usable data
+     decode(fsid, bl);
+     decode(epoch, bl);
+     decode(modified, bl);
+@@ -2847,13 +2852,15 @@ void OSDMap::encode(ceph::buffer::list& bl, uint64_t features) const
+   {
+     // NOTE: any new encoding dependencies must be reflected by
+     // SIGNIFICANT_FEATURES
+-    uint8_t v = 9;
++    uint8_t v = 10;
+     if (!HAVE_FEATURE(features, SERVER_LUMINOUS)) {
+       v = 3;
+     } else if (!HAVE_FEATURE(features, SERVER_MIMIC)) {
+       v = 6;
+     } else if (!HAVE_FEATURE(features, SERVER_NAUTILUS)) {
+       v = 7;
++    } else if (!HAVE_FEATURE(features, SERVER_OCTOPUS)) {
++      v = 9;
+     }
+     ENCODE_START(v, 1, bl); // client-usable data
+     // base
+@@ -2929,6 +2936,9 @@ void OSDMap::encode(ceph::buffer::list& bl, uint64_t features) const
+       encode(last_up_change, bl);
+       encode(last_in_change, bl);
+     }
++    if (v >= 10) {
++      encode(require_osd_release, bl);
++    }
+     ENCODE_FINISH(bl); // client-usable data
+   }
+ 
+@@ -3170,7 +3180,7 @@ void OSDMap::decode(ceph::buffer::list::const_iterator& bl)
+    * Since we made it past that hurdle, we can use our normal paths.
+    */
+   {
+-    DECODE_START(9, bl); // client-usable data
++    DECODE_START(10, bl); // client-usable data
+     // base
+     decode(fsid, bl);
+     decode(epoch, bl);
