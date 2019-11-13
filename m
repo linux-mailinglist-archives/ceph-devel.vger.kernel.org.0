@@ -2,58 +2,132 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3860FAE8C
-	for <lists+ceph-devel@lfdr.de>; Wed, 13 Nov 2019 11:30:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FCCFFB4CE
+	for <lists+ceph-devel@lfdr.de>; Wed, 13 Nov 2019 17:18:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbfKMKac (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 13 Nov 2019 05:30:32 -0500
-Received: from mail-oi1-f181.google.com ([209.85.167.181]:44276 "EHLO
-        mail-oi1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbfKMKac (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Nov 2019 05:30:32 -0500
-Received: by mail-oi1-f181.google.com with SMTP id s71so1279992oih.11
-        for <ceph-devel@vger.kernel.org>; Wed, 13 Nov 2019 02:30:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=wkgkBWwrmvUNqJgWfUgMu75e9j+K4hNyMsgkTTekXuY=;
-        b=S8/+Q6kggRU4mGvgnpmDE6juhOS0q9zRUlGr4LAA3hC9jbkwqiQf1Y6BgHwxyObHOt
-         84EIjRQj1JRCFQQHaNyKi1Yhv1QtpiOQW6iFkPzGZC7C/ap9b3K26ur/3BXZOJCpwGhe
-         SLouqdtIMgnr+yGLiUwwBEWIAtSPE23+AbmtMGmyQTdlqp9x25fQUnEVSS8w7d1jBlOA
-         jHN9mH4I6V1qAXRDjLp2EPylnx4t2zwExtFp1+vOZojDbDKswYr1XJDaEc79xXtMOAYl
-         IBA04TbmMUZJeL6UovkW6+ZbkvmlJhOcEiWeg8cB6yb5rpqRDfocaIMWT2G/svtMx8XN
-         ab+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=wkgkBWwrmvUNqJgWfUgMu75e9j+K4hNyMsgkTTekXuY=;
-        b=rbZryFzivKJp6PZDcJB/afcFPCZ9LOT3ehsImnbCiC6R46t2Rbwcxpa9NKC0/9uov6
-         uG5T12Hr+w/OhR+ojUARn6TIB/GXSAlXYXQisCCpE/EcXmON9Iwsr1wZBh5hkux2Ib2q
-         6jYmKp7BDZ548frboat7axONjtEV9SGVayIkoieGHEgnrFLzX7CfYb8RjegWEavI+kAD
-         y60yRyhGMmZvQt7NmskXEl8mPO+U4cceqE2343RoWY81ZsgH0SkKvM+ajP04fRSmPXQV
-         Hzg06KzxKLsdbNf67yd4zA2W/nU70nQKWfqHgc2BpxoDYmAB11ZSR+PYQZcde9m3TIk6
-         QNfw==
-X-Gm-Message-State: APjAAAVJrRi0gsUm0qXqE47nSmitIdtGi/JwWqTTFAddYI/T2hERBgOH
-        RXYwezKbcuuA74tXM1afmv3iIaf9FP+meTrnDyS37w==
-X-Google-Smtp-Source: APXvYqwDr26GnCZjxju6cBLUIiI4OBfnGlVkgQxE2g751w9POHdmAHDCz+Y1NsKzFrSqOcUJ/vUO3xLrB7AxPy7WkSc=
-X-Received: by 2002:aca:4c4a:: with SMTP id z71mr2611755oia.147.1573641031905;
- Wed, 13 Nov 2019 02:30:31 -0800 (PST)
+        id S1727196AbfKMQS5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 13 Nov 2019 11:18:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38796 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726114AbfKMQS4 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 13 Nov 2019 11:18:56 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04E602084F;
+        Wed, 13 Nov 2019 16:18:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573661935;
+        bh=OZj/ksgTZyxap+sGsZDR+ouxLrWwZ9KxJrF9Lfh3Lfw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AYaNcnBXnzj/+XHjYSyfJO2Kri+nX280VQQE3KfFl3oAKaaGmuXnhWqPz2Yd1GKu3
+         2dtFagfgxRNqmaAR1AJS43E0WgJl4TKl4Em1cmAJn+k19Qu3G5rZ9Q8aPGQ4ajvMn7
+         7B5e49G+HiA0hyeEZZbiNjJwS/d8GPHuEebOJTIo=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com
+Subject: [PATCH] ceph: take the inode lock before acquiring cap refs
+Date:   Wed, 13 Nov 2019 11:18:47 -0500
+Message-Id: <20191113161848.91812-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-From:   Jerry Lee <leisurelysw24@gmail.com>
-Date:   Wed, 13 Nov 2019 18:30:19 +0800
-Message-ID: <CAKQB+ftphk7pepLdGEgckLtfj=KBp02cMqdea+R_NTd6Gwn-TA@mail.gmail.com>
-Subject: Revert a CephFS snapshot?
-To:     ceph-users@lists.ceph.com, ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi,
+Most of the time, we (or the vfs layer) takes the inode_lock and then
+acquires caps, but ceph_read_iter does the opposite, and that can lead
+to a deadlock.
 
-Recently, I'm evaluating the snpahsot feature of CephFS from kernel
-client and everthing works like a charm.  But, it seems that reverting
-a snapshot is not available currently.  Is there some reason or
-technical limitation that the feature is not provided?  Any insights
-or ideas are appreciated.
+When there are multiple clients treading over the same data, we can end
+up in a situation where a reader takes caps and then tries to acquire
+the inode_lock. Another task holds the inode_lock and issues a request
+to the MDS which needs to revoke the caps, but that can't happen until
+the inode_lock is unwedged.
+
+Fix this by having ceph_read_iter take the inode_lock earlier, before
+attempting to acquire caps.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/file.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
+
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index bd77adb64bfd..06efeaff3b57 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1264,14 +1264,24 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	dout("aio_read %p %llx.%llx %llu~%u trying to get caps on %p\n",
+ 	     inode, ceph_vinop(inode), iocb->ki_pos, (unsigned)len, inode);
+ 
++	if (iocb->ki_flags & IOCB_DIRECT)
++		ceph_start_io_direct(inode);
++	else
++		ceph_start_io_read(inode);
++
+ 	if (fi->fmode & CEPH_FILE_MODE_LAZY)
+ 		want = CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO;
+ 	else
+ 		want = CEPH_CAP_FILE_CACHE;
+ 	ret = ceph_get_caps(filp, CEPH_CAP_FILE_RD, want, -1,
+ 			    &got, &pinned_page);
+-	if (ret < 0)
++	if (ret < 0) {
++		if (iocb->ki_flags & IOCB_DIRECT)
++			ceph_end_io_direct(inode);
++		else
++			ceph_end_io_read(inode);
+ 		return ret;
++	}
+ 
+ 	if ((got & (CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO)) == 0 ||
+ 	    (iocb->ki_flags & IOCB_DIRECT) ||
+@@ -1283,16 +1293,12 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 
+ 		if (ci->i_inline_version == CEPH_INLINE_NONE) {
+ 			if (!retry_op && (iocb->ki_flags & IOCB_DIRECT)) {
+-				ceph_start_io_direct(inode);
+ 				ret = ceph_direct_read_write(iocb, to,
+ 							     NULL, NULL);
+-				ceph_end_io_direct(inode);
+ 				if (ret >= 0 && ret < len)
+ 					retry_op = CHECK_EOF;
+ 			} else {
+-				ceph_start_io_read(inode);
+ 				ret = ceph_sync_read(iocb, to, &retry_op);
+-				ceph_end_io_read(inode);
+ 			}
+ 		} else {
+ 			retry_op = READ_INLINE;
+@@ -1303,11 +1309,10 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		     inode, ceph_vinop(inode), iocb->ki_pos, (unsigned)len,
+ 		     ceph_cap_string(got));
+ 		ceph_add_rw_context(fi, &rw_ctx);
+-		ceph_start_io_read(inode);
+ 		ret = generic_file_read_iter(iocb, to);
+-		ceph_end_io_read(inode);
+ 		ceph_del_rw_context(fi, &rw_ctx);
+ 	}
++
+ 	dout("aio_read %p %llx.%llx dropping cap refs on %s = %d\n",
+ 	     inode, ceph_vinop(inode), ceph_cap_string(got), (int)ret);
+ 	if (pinned_page) {
+@@ -1315,6 +1320,12 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		pinned_page = NULL;
+ 	}
+ 	ceph_put_cap_refs(ci, got);
++
++	if (iocb->ki_flags & IOCB_DIRECT)
++		ceph_end_io_direct(inode);
++	else
++		ceph_end_io_read(inode);
++
+ 	if (retry_op > HAVE_RETRIED && ret >= 0) {
+ 		int statret;
+ 		struct page *page = NULL;
+-- 
+2.23.0
+
