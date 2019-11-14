@@ -2,153 +2,95 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9BE9FC05E
-	for <lists+ceph-devel@lfdr.de>; Thu, 14 Nov 2019 07:54:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4A88FC4D9
+	for <lists+ceph-devel@lfdr.de>; Thu, 14 Nov 2019 11:58:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725920AbfKNGyB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 14 Nov 2019 01:54:01 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29424 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725838AbfKNGyB (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 14 Nov 2019 01:54:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573714439;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xsWbKdIChZWr+5bzkND3NrxgB3rhqXcgO/mpILiuT+Q=;
-        b=R3MDP9SsycM1BrfI+JY7rXVsSR/65a23Ru42lBH5XM4NxlinJY+Wut6cQu6avSnhG/UPVq
-        gyxE58xjetZw0A7jHNRe0zBDL9BJYAUlAI1U9ieyG/S5OaTqDZsxw/0yr2sw3lhYb48HmQ
-        g8NAQ76SGuksBHH1urGGxbOupXJtFDs=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-233-ukZA4_mMNL-btjpvJdWtnQ-1; Thu, 14 Nov 2019 01:53:57 -0500
-Received: by mail-ed1-f72.google.com with SMTP id v4so3426558edq.22
-        for <ceph-devel@vger.kernel.org>; Wed, 13 Nov 2019 22:53:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=669m1A8kDmElHyrk5E+W7i7Sd0Tm5niH9TfU8Unm5h0=;
-        b=rBhPCIfsHlF7YjFDd31+psSZJZAP736MEIuYyLpvHOsONLN3BCumjXg3kuPI+smWcF
-         oUe+E52Ka5gE0urromFP9bvzZyeBBEoLAPPjJnu/XDv4RVbqhttJStQIDPm3vbbGS94q
-         MRLQqQspPQX6iZ59GuqHj9w/M1TTwuTro5J6DhiKSTzQXCA+M/Zt18locKHGnGiBItEd
-         tJHiCEbWvaaIwC77EqS96XO1cZSu6X3alDPn1Vfkn4Kzn4GsWofnp9WxEFJGQ3mwpPG4
-         WjpkkaFnRl5EjX9jnVmcVM1nmIMQ9xQjEHz3q4v64eL0FgRLZMtuL3DuEMk/pyJKqqOe
-         A19Q==
-X-Gm-Message-State: APjAAAWUTSua//JzOlHdAqWJNf25xuBzMmuFMJ8VMYlL00BWJg9y17QT
-        hR4LgRCHeuexofAmK1wQRTYCIfuhjW2czI4wexR2BmnBteFpETzp/P6GPhWZaoaYdTPkJaOIBUR
-        OQFUbv+4foWLWiQsxrVc/oKjHKZmUdMB6GRrQhw==
-X-Received: by 2002:a17:906:e0d5:: with SMTP id gl21mr6712173ejb.292.1573714435922;
-        Wed, 13 Nov 2019 22:53:55 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxK/93m6lFt+yWXz2rwh5Sg+76Hs37PC3vnxIS56cHR7JfcLjYWuH6CJbyovB2nMwBy5cSn5m/8ILyXkGp26v8=
-X-Received: by 2002:a17:906:e0d5:: with SMTP id gl21mr6712159ejb.292.1573714435649;
- Wed, 13 Nov 2019 22:53:55 -0800 (PST)
+        id S1726852AbfKNK5k (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 14 Nov 2019 05:57:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33300 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725977AbfKNK5k (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 14 Nov 2019 05:57:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4E0BFACD8;
+        Thu, 14 Nov 2019 10:57:38 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        "Yan, Zheng" <zyan@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Luis Henriques <lhenriques@suse.com>
+Subject: [RFC PATCH v2 0/4] ceph: safely use 'copy-from' Op on Octopus OSDs
+Date:   Thu, 14 Nov 2019 10:57:32 +0000
+Message-Id: <20191114105736.8636-1-lhenriques@suse.com>
 MIME-Version: 1.0
-References: <CAF-wwdHoUAEqJ7_ep+uDtnqsVDfaNdKQ2XM8T_+a=70mFd=80Q@mail.gmail.com>
- <CACBud-DDEsbR16BEwHgsvK_z=paXggjgAqGCUT_yryiNN8Cb9A@mail.gmail.com>
- <CAF-wwdEEf=MCPTOthKeT8-raUFtN6u1SBi3VrNDi2kmFanSrbA@mail.gmail.com>
- <CACBud-C8La_eZ+Ta0PpLfM14xkOEGtH4H9k1gZozzbticpGMnA@mail.gmail.com> <CAF-wwdEd5-E+bS4+wB9dMaG6SKiJg2RCiuBW+vR7XxUq6PS_rA@mail.gmail.com>
-In-Reply-To: <CAF-wwdEd5-E+bS4+wB9dMaG6SKiJg2RCiuBW+vR7XxUq6PS_rA@mail.gmail.com>
-From:   Yuval Lifshitz <ylifshit@redhat.com>
-Date:   Thu, 14 Nov 2019 08:53:44 +0200
-Message-ID: <CACBud-BbeauQsGfVTWGmyJN2suzj+huDTJ7hS06_ogA+KCO8nw@mail.gmail.com>
-Subject: Re: Static Analysis
-To:     Brad Hubbard <bhubbard@redhat.com>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>, dev@ceph.io
-X-MC-Unique: ukZA4_mMNL-btjpvJdWtnQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Yes, I agree. Especially that, at least ion fedora, iwyu should be
-built from source.
+Hi!
 
-On Thu, Nov 14, 2019 at 12:24 AM Brad Hubbard <bhubbard@redhat.com> wrote:
->
-> On Wed, Nov 13, 2019 at 5:04 AM Yuval Lifshitz <ylifshit@redhat.com> wrot=
-e:
-> >
-> > Hi Brad,
->
-> Hi Yuval,
->
-> > Thanks for providing the script! I added 2 of the targets to the cmake
-> > system in this PR [1].
-> > Still working on scan-build.
-> > As a side note, on Fedora30, the iwyu version is pretty old, and
-> > create many false positives, I had to build and install from source.
->
-> I don't think adding additional dependencies to ceph for this is a
-> good idea. If we are to implement this, given this is strictly for
-> developers, I would suggest we make satisfying the dependencies for
-> these cmake options a manual process and avoid pulling in more
-> dependencies. What do you think?
->
-> >
-> > Yuval
-> >
-> > [1] https://github.com/ceph/ceph/pull/31579
-> >
-> > On Fri, Oct 11, 2019 at 8:45 AM Brad Hubbard <bhubbard@redhat.com> wrot=
-e:
-> > >
-> > > On Thu, Oct 10, 2019 at 3:41 PM Yuval Lifshitz <ylifshit@redhat.com> =
-wrote:
-> > > >
-> > > > This is awesome!
-> > >
-> > > First thing to note is these scans each take a long time to run.
-> > >
-> > > > How difficult would it be to add these as cmake targets?
-> > >
-> > > With Coverity, currently impossible since the only version I can find
-> > > that works is not publicly available.
-> > >
-> > > As for the others I use the following script to run them so it
-> > > wouldn't be that hard I guess. There's some changes in there at the
-> > > moment to try and get them to only scan 'ceph code' (not submodule
-> > > code) but that seems to be confusing scan-build as it currently
-> > > produces zero results. I have some work to do there and there seems t=
-o
-> > > be a lot of maintenance work around these scans. I'm not sure how muc=
-h
-> > > bang for our buck we would get by adding any of them as cmake targets=
-.
-> > >
-> > > >
-> > > > On Thu, Oct 10, 2019 at 8:18 AM Brad Hubbard <bhubbard@redhat.com> =
-wrote:
-> > > >>
-> > > >> Latest static analyser results are up on  http://people.redhat.com=
-/bhubbard/
-> > > >>
-> > > >> Weekly Fedora Copr builds are at
-> > > >> https://copr.fedorainfracloud.org/coprs/badone/ceph-weeklies/
-> > > >>
-> > > >>
-> > > >> --
-> > > >> Cheers,
-> > > >> Brad
-> > > >> _______________________________________________
-> > > >> Dev mailing list -- dev@ceph.io
-> > > >> To unsubscribe send an email to dev-leave@ceph.io
-> > >
-> > >
-> > >
-> > > --
-> > > Cheers,
-> > > Brad
-> >
->
->
-> --
-> Cheers,
-> Brad
->
+So, after the feedback I got from v1 [1] I've sent out a pull-request
+for the OSDs [2] which encodes require_osd_release into the OSDMap
+client data.  This allows the client to figure out which ceph release
+the OSDs cluster is running and decide whether or not it's safe to use
+the copy-from Op for copy_file_range.
+
+This new patchset I'm sending simply adds enough functionality to the
+kernel client so that it can take advantage of this OSD patch:
+
+0001 - adds the ability to decode TYPE_MSGR2 addresses.  This is a
+       required functionality for enabling SERVER_NAUTILUS in the
+       client.  I hope I got the new format right, as I couldn't figure
+       out what the hard-coded values (see comments) really mean.
+
+0002 - allows the client to retrieve the new require_osd_release field
+       from the OSDMap if available.  This patch also adds SERVER_MIMIC,
+       SERVER_NAUTILUS and SERVER_OCTOPUS to the supported features,
+       which TBH I'm not sure if that's a safe thing to do -- the only
+       issue I've seen was that Nautilus requires the ability to decode
+       TYPE_MSGR2 address, but I may have missed others.
+
+0003 - debug code to add require_osd_release to the osdmap debugfs file.
+
+0004 - adds the truncate_{seq,size} fields to the 'copy-from' operation
+       if the OSDs are >= Octopus.
+
+Also note that, as suggested by Ilya, I've dropped the patch that would
+change the default mount options to 'copyfrom'.
+
+These patches have been tested with the xfstests generic test suite, and
+with a couple of other (local) tests that exercise the cephfs
+copy_file_range syscall.  I didn't saw any issues, but as I said above,
+I'm not really sure if adding the SERVER_* flags to the supported
+features have other side effects.
+
+[1] https://lore.kernel.org/lkml/20191108141555.31176-1-lhenriques@suse.com/
+[2] https://github.com/ceph/ceph/pull/31611
+
+Cheers,
+--
+Luis
+
+Luis Henriques (4):
+  ceph: add support for TYPE_MSGR2 address decode
+  ceph: get the require_osd_release field from the osdmap
+  ceph: add require_osd_release field to osdmap debugfs
+  ceph: add support for sending truncate_{seq,size} in 'copy-from' Op
+
+ fs/ceph/file.c                     | 10 +++++++-
+ include/linux/ceph/ceph_features.h | 10 ++++++--
+ include/linux/ceph/decode.h        |  3 ++-
+ include/linux/ceph/osd_client.h    |  1 +
+ include/linux/ceph/osdmap.h        |  1 +
+ include/linux/ceph/rados.h         | 23 ++++++++++++++++++
+ net/ceph/ceph_strings.c            | 38 ++++++++++++++++++++++++++++++
+ net/ceph/debugfs.c                 |  2 ++
+ net/ceph/decode.c                  | 33 ++++++++++++++++++++++++--
+ net/ceph/osd_client.c              |  7 +++++-
+ net/ceph/osdmap.c                  | 21 +++++++++++++++++
+ 11 files changed, 142 insertions(+), 7 deletions(-)
 
