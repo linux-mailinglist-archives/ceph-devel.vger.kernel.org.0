@@ -2,77 +2,90 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7E1DFBDC9
-	for <lists+ceph-devel@lfdr.de>; Thu, 14 Nov 2019 03:14:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D9E8FBDF6
+	for <lists+ceph-devel@lfdr.de>; Thu, 14 Nov 2019 03:36:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726410AbfKNCMc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 13 Nov 2019 21:12:32 -0500
-Received: from m97138.mail.qiye.163.com ([220.181.97.138]:10124 "EHLO
-        m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbfKNCMc (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Nov 2019 21:12:32 -0500
-Received: from yds-pc.domain (unknown [218.94.118.90])
-        by smtp9 (Coremail) with SMTP id u+CowAAnjWcNuMxddEXKAw--.246S2;
-        Thu, 14 Nov 2019 10:12:29 +0800 (CST)
-Subject: Re: [PATCH] rbd: silence bogus uninitialized warning in
- rbd_object_map_update_finish()
-To:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-References: <20191113192954.29732-1-idryomov@gmail.com>
-From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
-Message-ID: <5DCCB80C.80508@easystack.cn>
-Date:   Thu, 14 Nov 2019 10:12:28 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.0
+        id S1726519AbfKNCgU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 13 Nov 2019 21:36:20 -0500
+Received: from mail-ot1-f42.google.com ([209.85.210.42]:41414 "EHLO
+        mail-ot1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726120AbfKNCgU (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Nov 2019 21:36:20 -0500
+Received: by mail-ot1-f42.google.com with SMTP id 94so3544982oty.8
+        for <ceph-devel@vger.kernel.org>; Wed, 13 Nov 2019 18:36:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VpUQGGAHeGKvH0uv0MKdLbYJoy8FYFlU3E6qdtnQrA0=;
+        b=In7XNFVNGnJ6DsWU6WXZY0kFm6H/7TOrD7Nwm9AwA1GfiMZFiax+ByRAbIzuisn2ku
+         F7Y+Lv0Yh6fRnp9KXhpTwq3KHfjWxikdYYLGVskg5XISjVYZROimSs05leIEKM5iNiRm
+         BRPKxddCyfmmHhGtQQCNGCmggdkGjF3H4lxqdseLF58WdQP72pqll5Ep9XQcejaDr4fs
+         B+9LAZBn9K8h0h+vTHOz5KVKKJKbnuA2CVBd8U99TwDGUO2wjiUF4VM5o+33GxINgQxW
+         MH2Y1S/rCaOSCgg29QidtmDr8e1MSYpl1BKvda32kxf/WBgpOWz9IIgh2IKgle9FmhwG
+         ke2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VpUQGGAHeGKvH0uv0MKdLbYJoy8FYFlU3E6qdtnQrA0=;
+        b=URgZ2lsGEFasFtUZ+/FaC5f6jvpyMpiBhEALrhB+wVpb0eBSJTVu33jEhjOltX1F9T
+         WvjlpAWrjlIsPKxqzkm9F1FbqKBXXeya7+1X8gsdneYahbW5SqavUr2jXLhcVQav1jAG
+         whwAbhZr/wj0bnTNhnBcPIdQtkGyytLygXfBtsMtSNI2dk9i7NHjbMLrf2AyCn2gc5KK
+         po+mF4NdqI5BP43NmRdsntuUQys1NqAmUgGWwax+pMzBJyKp94xPAXk1rWdxYzH8dbJF
+         VyrxlTP9D0r1EOKRwzYBYxn44HUu8r4EATsqCntaNs6v5xIap64O/aTfnpTVfYVeDH9s
+         cVdA==
+X-Gm-Message-State: APjAAAVx4LtVmmlXEnhyi1jKBMXUHC9RRLBTjc3FPzXcmPq7cbQZ+Ve9
+        7u0ndsm+ank8BmZDi8rHp3cu71+OBTSImpm86UTCpw==
+X-Google-Smtp-Source: APXvYqwoaV5ufGK5x0fY77/yuHno3eUixnM2TmkP4rYapWOqY61pTogpwInVxt578/+TPqzQiu8pMxJnDbWrSPklMn0=
+X-Received: by 2002:a9d:7a4a:: with SMTP id z10mr6072529otm.283.1573698978763;
+ Wed, 13 Nov 2019 18:36:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191113192954.29732-1-idryomov@gmail.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: u+CowAAnjWcNuMxddEXKAw--.246S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjTRGPfHDUUUU
-X-Originating-IP: [218.94.118.90]
-X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiaQ1tellZu3FelAAAsz
+References: <CAKQB+ftphk7pepLdGEgckLtfj=KBp02cMqdea+R_NTd6Gwn-TA@mail.gmail.com>
+ <CA+2bHPaCg4Pq-88hnvnH93QCOfgKv27gDTUjHF5rnDr6Nd2=wQ@mail.gmail.com>
+In-Reply-To: <CA+2bHPaCg4Pq-88hnvnH93QCOfgKv27gDTUjHF5rnDr6Nd2=wQ@mail.gmail.com>
+From:   Jerry Lee <leisurelysw24@gmail.com>
+Date:   Thu, 14 Nov 2019 10:36:05 +0800
+Message-ID: <CAKQB+fvUCUAeHEHwP06auyK+ZGUHZdRzTT-38xtgsSbQDjyoHQ@mail.gmail.com>
+Subject: Re: [ceph-users] Revert a CephFS snapshot?
+To:     Patrick Donnelly <pdonnell@redhat.com>
+Cc:     Ceph Users <ceph-users@lists.ceph.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-
-
-On 11/14/2019 03:29 AM, Ilya Dryomov wrote:
-> Some versions of gcc (so far 6.3 and 7.4) throw a warning:
+On Thu, 14 Nov 2019 at 07:07, Patrick Donnelly <pdonnell@redhat.com> wrote:
 >
->    drivers/block/rbd.c: In function 'rbd_object_map_callback':
->    drivers/block/rbd.c:2124:21: warning: 'current_state' may be used uninitialized in this function [-Wmaybe-uninitialized]
->          (current_state == OBJECT_EXISTS && state == OBJECT_EXISTS_CLEAN))
->    drivers/block/rbd.c:2092:23: note: 'current_state' was declared here
->      u8 state, new_state, current_state;
->                            ^~~~~~~~~~~~~
+> On Wed, Nov 13, 2019 at 2:30 AM Jerry Lee <leisurelysw24@gmail.com> wrote:
+> > Recently, I'm evaluating the snpahsot feature of CephFS from kernel
+> > client and everthing works like a charm.  But, it seems that reverting
+> > a snapshot is not available currently.  Is there some reason or
+> > technical limitation that the feature is not provided?  Any insights
+> > or ideas are appreciated.
 >
-> It's bogus because all current_state accesses are guarded by
-> has_current_state.
->
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-> ---
->   drivers/block/rbd.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 395410b0d335..2aaa56e4cec9 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -2070,7 +2070,7 @@ static int rbd_object_map_update_finish(struct rbd_obj_request *obj_req,
->   	struct rbd_device *rbd_dev = obj_req->img_request->rbd_dev;
->   	struct ceph_osd_data *osd_data;
->   	u64 objno;
-> -	u8 state, new_state, current_state;
-> +	u8 state, new_state, uninitialized_var(current_state);
->   	bool has_current_state;
->   	void *p;
->   
-Reviewed-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
+> Please provide more information about what you tried to do (commands
+> run) and how it surprised you.
 
-Thanx
+The thing I would like to do is to rollback a snapped directory to a
+previous version of snapshot.  It looks like the operation can be done
+by over-writting all the current version of files/directories from a
+previous snapshot via cp.  But cp may take lots of time when there are
+many files and directories in the target directory.  Is there any
+possibility to achieve the goal much faster from the CephFS internal
+via command like "ceph fs <cephfs_name> <dir> snap rollback
+<snapname>" (just a example)?  Thank you!
 
 
+- Jerry
+
+>
+> --
+> Patrick Donnelly, Ph.D.
+> He / Him / His
+> Senior Software Engineer
+> Red Hat Sunnyvale, CA
+> GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+>
