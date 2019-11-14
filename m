@@ -2,83 +2,73 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1463FBC3B
-	for <lists+ceph-devel@lfdr.de>; Thu, 14 Nov 2019 00:07:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C01A7FBD82
+	for <lists+ceph-devel@lfdr.de>; Thu, 14 Nov 2019 02:33:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726519AbfKMXHs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 13 Nov 2019 18:07:48 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:55756 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726251AbfKMXHs (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 13 Nov 2019 18:07:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573686466;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Af3xjZVPwpehrlGco9NARZTtS18PCQEkRErtMAq8w7A=;
-        b=gTie6wfA7N1RWsH8VTupUwuf4SPSxbMf2cW8qsKG3SpX2gQu4n66u+CiXj8czizpHrpVhF
-        xG3GM6d51Wh87C9t87Y5Ai9c5IeyGs8WVNEvtm/GFzRjdFxntQwBD/2hKDNow3hWWeGL+m
-        k+AWnxxKdeLJ9EB9/7xfmIeNI1cfbzE=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-189-6SX4GOavNJm6DVqtQUNC4Q-1; Wed, 13 Nov 2019 18:07:44 -0500
-Received: by mail-qv1-f69.google.com with SMTP id k11so2738379qvw.19
-        for <ceph-devel@vger.kernel.org>; Wed, 13 Nov 2019 15:07:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U8FhU5lz6aRNFE3Rz3qqUuOjtHtFgAS4WGcbAQcZD9c=;
-        b=QavNHF8GwfQgWbCU7xHGtwnQvmy1afsVuWmGnYojSzyUQpN32pI0Yx9Oq93uSFbBqk
-         /e10GiQSTDmBlMGUuPavUvvoiZ//7jS0dI3v0YiJP0jVD5f8Cm9Rm9+4LmEZAxOlDFKU
-         +OgJQ5QUkUqh0RlhUEg63chIB45lH0YagskZZabT3d82Pnj1tHLvttNMbgbzJKuQ1+Yd
-         EEl5B3cJziH42BYkmynFkIBlw/n5xLF2eijJYtB1SMz9QwDv9Y0O53L8w/MmED586e3q
-         x/TRycbYLhtEhv0bSsDmVpTZJcSBVjtfSBa6ZSjXQ+1i4r/NsiwvF+Ho/9yxi4p3T2MS
-         Aj4g==
-X-Gm-Message-State: APjAAAUXHmA4/Qq7GXOvdIuOmLiwcX8jKBqQfXyTzYNqjvw/rpSGlaQJ
-        g+Iby9F1oM2ir5H05A1XpbkQ3U/3lHEM/qdAkewMRXpjWnW28vqHBkhTXMLuwK6EiCw8iJrilE2
-        ZlstZn66/+R62JlPIVhF/R44HexR82VVZXBBlvA==
-X-Received: by 2002:a37:a00f:: with SMTP id j15mr5069262qke.103.1573686464190;
-        Wed, 13 Nov 2019 15:07:44 -0800 (PST)
-X-Google-Smtp-Source: APXvYqy/4MBqEgzXQrIKuIY4dFSHudDlt0xeec65oBfW1YTMbAF+6WL4TcJHqyIrK3SXT80bDDZNF51rMUcHsO41xvA=
-X-Received: by 2002:a37:a00f:: with SMTP id j15mr5069246qke.103.1573686463948;
- Wed, 13 Nov 2019 15:07:43 -0800 (PST)
+        id S1726409AbfKNBdE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 13 Nov 2019 20:33:04 -0500
+Received: from m97138.mail.qiye.163.com ([220.181.97.138]:44244 "EHLO
+        m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbfKNBdE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Nov 2019 20:33:04 -0500
+X-Greylist: delayed 341 seconds by postgrey-1.27 at vger.kernel.org; Wed, 13 Nov 2019 20:33:03 EST
+Received: from yds-pc.domain (unknown [218.94.118.90])
+        by smtp9 (Coremail) with SMTP id u+CowADH_WRmrcxdqczJAw--.7196S2;
+        Thu, 14 Nov 2019 09:27:02 +0800 (CST)
+Subject: Re: [PATCH] rbd: update MAINTAINERS info
+To:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+References: <20191113200151.30674-1-idryomov@gmail.com>
+Cc:     Alex Elder <elder@kernel.org>, Sage Weil <sage@redhat.com>
+From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
+Message-ID: <5DCCAD65.50007@easystack.cn>
+Date:   Thu, 14 Nov 2019 09:27:01 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
 MIME-Version: 1.0
-References: <CAKQB+ftphk7pepLdGEgckLtfj=KBp02cMqdea+R_NTd6Gwn-TA@mail.gmail.com>
-In-Reply-To: <CAKQB+ftphk7pepLdGEgckLtfj=KBp02cMqdea+R_NTd6Gwn-TA@mail.gmail.com>
-From:   Patrick Donnelly <pdonnell@redhat.com>
-Date:   Wed, 13 Nov 2019 15:07:18 -0800
-Message-ID: <CA+2bHPaCg4Pq-88hnvnH93QCOfgKv27gDTUjHF5rnDr6Nd2=wQ@mail.gmail.com>
-Subject: Re: [ceph-users] Revert a CephFS snapshot?
-To:     Jerry Lee <leisurelysw24@gmail.com>
-Cc:     Ceph Users <ceph-users@lists.ceph.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-X-MC-Unique: 6SX4GOavNJm6DVqtQUNC4Q-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191113200151.30674-1-idryomov@gmail.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: u+CowADH_WRmrcxdqczJAw--.7196S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjTRZUUUDUUUU
+X-Originating-IP: [218.94.118.90]
+X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbibgttellZuxXmGQAAsj
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 2:30 AM Jerry Lee <leisurelysw24@gmail.com> wrote:
-> Recently, I'm evaluating the snpahsot feature of CephFS from kernel
-> client and everthing works like a charm.  But, it seems that reverting
-> a snapshot is not available currently.  Is there some reason or
-> technical limitation that the feature is not provided?  Any insights
-> or ideas are appreciated.
+Hi Ilya,
 
-Please provide more information about what you tried to do (commands
-run) and how it surprised you.
+On 11/14/2019 04:01 AM, Ilya Dryomov wrote:
+> Alex has got plenty on his plate aside from rbd and hasn't really been
+> active in recent years.  Remove his maintainership entry.
+>
+> Dongsheng is very familiar with the code base and has been reviewing rbd
+> patches for a while now.  Add him as a reviewer.
+>
+> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+> ---
+>   MAINTAINERS | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index eb19fad370d7..073cacc1b23c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13582,7 +13582,7 @@ F:	drivers/media/radio/radio-tea5777.c
+>   RADOS BLOCK DEVICE (RBD)
+>   M:	Ilya Dryomov <idryomov@gmail.com>
+>   M:	Sage Weil <sage@redhat.com>
+> -M:	Alex Elder <elder@kernel.org>
+> +R:	Dongsheng Yang <dongsheng.yang@easystack.cn>
 
---=20
-Patrick Donnelly, Ph.D.
-He / Him / His
-Senior Software Engineer
-Red Hat Sunnyvale, CA
-GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+Acked-by: Dongsheng Yang<dongsheng.yang@easystack.cn>
+
+
+Thanx
+>   L:	ceph-devel@vger.kernel.org
+>   W:	http://ceph.com/
+>   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sage/ceph-client.git
+
 
