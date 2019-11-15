@@ -2,77 +2,53 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5B1EFE419
-	for <lists+ceph-devel@lfdr.de>; Fri, 15 Nov 2019 18:35:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0F95FE4FC
+	for <lists+ceph-devel@lfdr.de>; Fri, 15 Nov 2019 19:35:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbfKORfR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 15 Nov 2019 12:35:17 -0500
-Received: from mail.hgs.gob.ec ([190.214.19.83]:37476 "HELO mail.hgs.gob.ec"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-        id S1727540AbfKORfO (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 15 Nov 2019 12:35:14 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.hgs.gob.ec (Postfix) with ESMTP id 2E4429FF276;
-        Thu, 14 Nov 2019 16:09:46 -0500 (-05)
-Received: from mail.hgs.gob.ec ([127.0.0.1])
-        by localhost (mail.hgs.gob.ec [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id VNb7PKmCZMvq; Thu, 14 Nov 2019 16:09:45 -0500 (-05)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.hgs.gob.ec (Postfix) with ESMTP id 2B72EA17CD8;
-        Thu, 14 Nov 2019 16:09:12 -0500 (-05)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.hgs.gob.ec 2B72EA17CD8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hgs.gob.ec;
-        s=DD120D66-D63F-11E9-9729-9452E74E1CB4; t=1573765752;
-        bh=oYeOwTtTK4mcRNNK0JGL7ZOgP8mm7StpJG1pujYq4Z0=;
-        h=MIME-Version:To:From:Date:Message-Id;
-        b=x/GZ2ssTT7OPJ5cjNJA63p2tD1Vqbe8EL8ik+IBebsYg8ELN88YKF5XX4e3jJbRFg
-         iY5uMHUQkbZsBdoQD22bgQcHaQTQ4+rgqHKhz3p7PVQJVnjvDijfbyVJ4YJ1Si6ZW2
-         w8+vV/plfxBjX3Y96Fh5JbSVFTIImNIBLUFdy+LsbK5sB9giti9lZtHKfCA3CDrQVn
-         JCoHrjOXv9d5SHBYkK1Jo6PaqI7bIs/3ZD5CRTVq2QqzJf0zOyiQTSuEa6Vmdi4/f/
-         xdVyb5pP7ZUk/oOWd/1ycDBZETVGrbFIAQT+BPrdTOkVGT6k0w7Shfs0tsHlaoLX5l
-         b3prparNBcXWQ==
-X-Virus-Scanned: amavisd-new at hgs.gob.ec
-Received: from mail.hgs.gob.ec ([127.0.0.1])
-        by localhost (mail.hgs.gob.ec [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id E0F-HAB61kE0; Thu, 14 Nov 2019 16:09:12 -0500 (-05)
-Received: from [10.32.142.65] (unknown [105.4.7.6])
-        by mail.hgs.gob.ec (Postfix) with ESMTPSA id F04AD9FEE48;
-        Thu, 14 Nov 2019 16:08:23 -0500 (-05)
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000=2E000_Euro?=
-To:     Recipients <dietetica@hgs.gob.ec>
-From:   ''Charles jackson'' <dietetica@hgs.gob.ec>
-Date:   Thu, 14 Nov 2019 23:08:14 +0200
-Reply-To: charlesjacksonjr001@gmail.com
-Message-Id: <20191114210823.F04AD9FEE48@mail.hgs.gob.ec>
+        id S1727001AbfKOSfG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 15 Nov 2019 13:35:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726075AbfKOSfF (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 15 Nov 2019 13:35:05 -0500
+Subject: Re: [GIT PULL] Ceph fixes for 5.4-rc8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573842905;
+        bh=OHKgzOUpXnPdoGshHR7HdVDvkl5j8Sw42Ea4LafCam4=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=M4gzUJPNFwjqxqKM9fxj95/Dn6W91WbTBlYm6oMTDBININqJJtXh9wGD5zRXkhNyQ
+         lyfsQ8KHJbjBv4t+459wBN+7YNyktfHIJEkLeNPTbWjj9vwB+sAWKmn7TnHu6xT1co
+         XJRoo5radsCNvEEQ88tZpGfrxZcNj6CJnwfEDxjc=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191115170309.28988-1-idryomov@gmail.com>
+References: <20191115170309.28988-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191115170309.28988-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git
+ tags/ceph-for-5.4-rc8
+X-PR-Tracked-Commit-Id: 633739b2fedb6617d782ca252797b7a8ad754347
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 875fef493f21e54d20d71a581687990aaa50268c
+Message-Id: <157384290529.19807.1502940485438146004.pr-tracker-bot@kernel.org>
+Date:   Fri, 15 Nov 2019 18:35:05 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Lieber Freund,
+The pull request you sent on Fri, 15 Nov 2019 18:03:09 +0100:
 
-Ich bin Herr Charles W Jackson, North Carolina, Vereinigte Staaten von Amer=
-ika, der Mega-Gewinner von 344 Millionen US-Dollar. Beim Mega-Millions-Jack=
-pot spende ich an 5 zuf&auml;llige Personen. Wenn Sie diese E-Mail erhalten=
-, wurde Ihre E-Mail zu einem Spinball, den ich am h&auml;ufigsten verteilt =
-habe von meinem Verm&ouml;gen an eine Reihe von Wohlt&auml;tigkeitsorganisa=
-tionen. Ich habe mich freiwillig entschlossen, Ihnen als einer der ausgew&a=
-uml;hlten 5 einen Betrag von &euro; 2.000.000,00 zu spenden, um meine Gewin=
-ne zu &uuml;berpr&uuml;fen.
-Dies ist Ihr Spendencode: [CJ530342019]
+> https://github.com/ceph/ceph-client.git tags/ceph-for-5.4-rc8
 
-www.youtube.com/watch?v=3DBSr8myiLPMQ
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/875fef493f21e54d20d71a581687990aaa50268c
 
-Antworten Sie auf diese E-Mail mit dem SPENDER-CODE: =
+Thank you!
 
-
-charlesjacksonjr001@gmail.com
-
-Ich hoffe, Sie und Ihre Familie gl&uuml;cklich zu machen
-
-Sch&ouml;ne Gr&uuml;&szlig;e
-Mr. Charles Jackson
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
