@@ -2,89 +2,71 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 623BAFD27B
-	for <lists+ceph-devel@lfdr.de>; Fri, 15 Nov 2019 02:34:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A184FD979
+	for <lists+ceph-devel@lfdr.de>; Fri, 15 Nov 2019 10:41:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbfKOBeV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 14 Nov 2019 20:34:21 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37061 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727121AbfKOBeU (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 14 Nov 2019 20:34:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1573781659;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=x+4oh8fNf2u80zKZMu2nQ9WKTEeMrclTstuZlyy8P44=;
-        b=NusVHzqQHrHnKCCxm/CFCPWt3WfXb+2Vn4jgh05MpWI78JblLpfxStnFxd9KEfCv/62obt
-        HChb+w3FdaghfGKWkJP3nAzuDT0BR84ZkrVzowPFBJq/cbxidA/W6UJys6KOwsxnU5CHS2
-        lEbAlU2Nwr8D5XfQ/Nwx7td9Gcvdkh0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-302-qdYF2qYGOgmk1fKKJLpRgg-1; Thu, 14 Nov 2019 20:34:16 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 612241802CE0;
-        Fri, 15 Nov 2019 01:34:15 +0000 (UTC)
-Received: from [10.72.12.58] (ovpn-12-58.pek2.redhat.com [10.72.12.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 838F15D6AE;
-        Fri, 15 Nov 2019 01:34:10 +0000 (UTC)
-Subject: Re: [RFC PATCH] ceph: remove the extra slashes in the server path
-To:     Patrick Donnelly <pdonnell@redhat.com>,
-        Jeff Layton <jlayton@kernel.org>
-Cc:     Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Zheng Yan <zyan@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-References: <20191114023719.25316-1-xiubli@redhat.com>
- <d92dfa711410cdef2b6f9f0dc0a0c86ad263844c.camel@kernel.org>
- <CA+2bHPZXzFXhOPioKUDi-J-jsJb+MWg958VV7aF6Z9E=WEd+kw@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <c8ca1102-25b8-5d5b-3af6-6b269b680450@redhat.com>
-Date:   Fri, 15 Nov 2019 09:34:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726980AbfKOJk6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 15 Nov 2019 04:40:58 -0500
+Received: from mail-ot1-f42.google.com ([209.85.210.42]:38544 "EHLO
+        mail-ot1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbfKOJk5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 15 Nov 2019 04:40:57 -0500
+Received: by mail-ot1-f42.google.com with SMTP id z25so7524979oti.5
+        for <ceph-devel@vger.kernel.org>; Fri, 15 Nov 2019 01:40:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=Y8iHX3mAOQDmH2o1lw7xiic8qV1gq91jduLLMfji+7Y=;
+        b=BDM6SKa0Kn3Xzvvt3euGCp51sfee2WQKI4VnUiIkqY7LSqAXNaP3yjYKmVDoTGDGI7
+         VcviP6V6pWktM9TQVmP2EQgK0OKuVfzkZffr28b3w3/fUFRuPYDnQtguGOLQbH9nD7WN
+         KCwFWSyn/O1FXjS3G9MbR+yOEHHSQ1yovkM510gX16Cs4hzuahgZaqTaaeOEcSc3YRV/
+         Bod6OstT0pm2wBZKRl9WMy63VPjelcPzuODoVDgvkyO/K6oDAoti+6I8vwMFZunzwTeT
+         EBRtL4iNeWjtqOaFLza/cmkj++FLm4K5eNDzKpUv170ExKu1dVG4l8j7SYzg3v1QKlSM
+         AeMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=Y8iHX3mAOQDmH2o1lw7xiic8qV1gq91jduLLMfji+7Y=;
+        b=YHAG+2kfdFm8iLQ4tJvLi5SnmHhu69WZrHbG7523MN0uJnmw2m+kwBmSnHW6j8Dych
+         y8/X2zx/4CVRauRAawbaHZFmpmDmK4d8GuykXnyStyeDSJD/azTMlzJLQWaFnNNHxrgR
+         LQA1CEUTje4hC1b0y+keA2dd3+CzOcR+ZuQLT8EvNWy9kXCHD8PDXQ+QXD9JUgBUwSQN
+         wrtk/gnoJzou2ulY311GY+HPGZLuCYwavpRazAoV/rk8uDTHpoLIl+2NBELFcczQg+5O
+         haw4mxVXCxGk1t5yWA3fGRZ2LCOuawcuFvU1kEfrUYQi3aT0vUyTKRQFlCq4Uhngp/rc
+         blmQ==
+X-Gm-Message-State: APjAAAUrKWKnM/wSP1fOWzXX8LAt7VAq9VVP6wjUrlS5koKjPmLCbaf4
+        MgDMMuvqCqrqrNcXmUAxZU9NIZiGsCTx7Iej36Jy11S2
+X-Google-Smtp-Source: APXvYqw53o16LvlF2dECskBga3IjXINcfSwwaqRe13VQR4mwLxXwaUdF+wzkYMOOjodI/QT1cF47GUHK6JmCfZjAXuE=
+X-Received: by 2002:a9d:5c2:: with SMTP id 60mr11257838otd.104.1573810856569;
+ Fri, 15 Nov 2019 01:40:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CA+2bHPZXzFXhOPioKUDi-J-jsJb+MWg958VV7aF6Z9E=WEd+kw@mail.gmail.com>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: qdYF2qYGOgmk1fKKJLpRgg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+From:   Xinying Song <songxinying.ftd@gmail.com>
+Date:   Fri, 15 Nov 2019 17:40:45 +0800
+Message-ID: <CAMWWNq_ye1ok8FcJUsaOP8pjMUQi0tOzm3ycHhKd5w+sHWAd7A@mail.gmail.com>
+Subject: RGW: range copy failed with tenant enable
+To:     ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2019/11/15 3:30, Patrick Donnelly wrote:
-> On Thu, Nov 14, 2019 at 3:35 AM Jeff Layton <jlayton@kernel.org> wrote:
->> On Wed, 2019-11-13 at 21:37 -0500, xiubli@redhat.com wrote:
->>> From: Xiubo Li <xiubli@redhat.com>
->>>
->> Any reason not to cc ceph-devel here? Was that just an oversight, or do
->> you think this needs a security embargo?
->>
->>> When mounting if the server path has more than one slash, such as:
->>>
->>> 'mount.ceph 192.168.195.165:40176:/// /mnt/cephfs/'
->>>
->>> In the MDS server side the extra slash will be treated as snap dir,
->>> and then we can get the following debug logs:
->>>
->> It sort of sounds like the real problem is in the MDS.
->>
->> Shouldn't it just be ignoring the extra '/' characters? I'm not a huge
->> fan of adding in this complex handling to work around an MDS bug.
-> Agreed! Xiubo, please create a tracker ticket.
+Hi, everyone:
 
-Sure, will do it.
+I'm using the range copy function in rgw of Luminous. I create a user
+account  which is under a named tenant. When I'm trying to start a
+range copy within its bucket, rgw complaints with 404. The log shows
+that rgw failed to find the bucket under the empty tenant.
+What's more, when I create the same name bucket using another user
+account which is under an empty tenant, range copy will succeed, and
+the tenanted user finally reads the content of the empty-tenant user
+without any permission check fail. This problem also exists in master
+branch.
 
-BRs
+The permission check in verify_permission() seems not to work for
+range copy, because of the variable used in the if sentence has never
+been initialized. I have tried to fix it by moving the copy-source
+logic in get_params() to rgw_op::init_processing(), and it seems to
+work. But I'm not sure if this is the right way.
 
-Xiubo
-
-
-
+The issue tracker is https://tracker.ceph.com/issues/42825. Any
+suggestion is appreciated, thanks!
