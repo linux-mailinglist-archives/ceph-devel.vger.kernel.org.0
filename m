@@ -2,81 +2,89 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE612100642
-	for <lists+ceph-devel@lfdr.de>; Mon, 18 Nov 2019 14:12:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 285C010069D
+	for <lists+ceph-devel@lfdr.de>; Mon, 18 Nov 2019 14:38:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbfKRNMm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 18 Nov 2019 08:12:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726178AbfKRNMm (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 18 Nov 2019 08:12:42 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F9C52071C;
-        Mon, 18 Nov 2019 13:12:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574082761;
-        bh=WMe0I3EG4ps7xAe3DkVvXD3fbqLLGFm0wowZjHciiQY=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=z/L6foljQByrauIjOI06JjV8sgoV4yE3qF1V9DNieqEgkqN2ps64CE18YqzmwQv4i
-         z2mVqVGNQpcTGHmH5ckJdaAtPTEQeIuWWKWG31lyolu1lbZ5YeSb180Ee89ofrta0r
-         xBOPuP6/qICXsw0aMUdRPj+r3qCI7L7Hq2m9bZ4w=
-Message-ID: <3dc2df0ba5776fb0f7aaac3a099a938823ed0ebf.camel@kernel.org>
-Subject: Re: [RFC PATCH v3] ceph: add new obj copy OSD Op
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Yan, Zheng" <zyan@redhat.com>, Gregory Farnum <gfarnum@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 18 Nov 2019 08:12:39 -0500
-In-Reply-To: <20191118120935.7013-1-lhenriques@suse.com>
-References: <20191118120935.7013-1-lhenriques@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1 (3.34.1-1.fc31) 
+        id S1726739AbfKRNia (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 18 Nov 2019 08:38:30 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34261 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbfKRNia (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 18 Nov 2019 08:38:30 -0500
+Received: by mail-wm1-f68.google.com with SMTP id j18so15981210wmk.1
+        for <ceph-devel@vger.kernel.org>; Mon, 18 Nov 2019 05:38:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gesLCMBuPmiyA/wE4MIe3Ytkk0ovihVOwFFwkjxL2Rc=;
+        b=J8fdQ03vTZdf99fhzwmZN6gCDvct5ggA5O+uX55JDUx5IFG+B4xgf7NfRN/aYEMbgN
+         YPXjVkgkkAGRwGmbkPGk47cEC+6+M5bcChfmnF3C1OgedYewP+jrn2qjsDLQdXJDMZwc
+         ihVFn07a1s9KRlqkQ5rALhLULs4SSTNv0QCX242PCZvpDl2//+irGuG9v2CiknN6x/45
+         SgfnDc/AT3mYk1U41T/a+gtbLmbq/X7c77XmCFhKjRx7Rf457o3zxFrHrolTx/LXvjV9
+         SRGvq3HpVNW68+9sktKNxOtQ0pWfNuU18gLVgVEJkZETZniBcSO/P5yQ/vQNdIi+/abG
+         VudA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gesLCMBuPmiyA/wE4MIe3Ytkk0ovihVOwFFwkjxL2Rc=;
+        b=U8/meZgBTqyruVx15xKzP/UEzjnoHGe663LD+zcMwy4zYtPlS+weD6UzTL7fmIFEx5
+         mfpRGrMUk8tngfvNdQBFYaEamS4KRyDq6LtsOGHQ4IB3bt7oL5g0qPYgPme9O4NUI0cm
+         tB5EREaFpvpifaybjGwVGm14umTvDybeY2g55ouJ7GIJQ0vA2Byt4jFHqLIg9hbHNgjd
+         fs0BwnTO9VX0vF143eHZG+dFDrDZnVdSqhLdH0EFpuq8VFpvo5SOV2G2cGB62PiaPA0T
+         qL2m1rDRPv+lbP2agskkNLKTN7R08N6CqYf3jjFNwZqGajSKfQghtcRpzdgrGz45oYHU
+         nOew==
+X-Gm-Message-State: APjAAAUfoWgOi7jHe7WoJabnkXAEuFBtPxkiWtTWPc0sX4LxbS11sdxA
+        H6u5LnV4Yu1thn+PQ3EByot2uMqv
+X-Google-Smtp-Source: APXvYqwbB44VzWhTJ5GTyy9XoC6p63VW4CZqja80RzHKslqkkmaAH5Kk356eqzc36MsqThhRe2xcYQ==
+X-Received: by 2002:a1c:9dd3:: with SMTP id g202mr30400815wme.43.1574084308385;
+        Mon, 18 Nov 2019 05:38:28 -0800 (PST)
+Received: from kwango.local (ip-94-112-128-92.net.upcbroadband.cz. [94.112.128.92])
+        by smtp.gmail.com with ESMTPSA id t133sm24670242wmb.1.2019.11.18.05.38.27
+        for <ceph-devel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2019 05:38:27 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     ceph-devel@vger.kernel.org
+Subject: [PATCH 0/9] wip-krbd-readonly
+Date:   Mon, 18 Nov 2019 14:38:07 +0100
+Message-Id: <20191118133816.3963-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2019-11-18 at 12:09 +0000, Luis Henriques wrote:
-> Hi,
-> 
-> Before going ahead with a pull-request for ceph I would like to make sure
-> we're all on the same page regarding the final fix for this problem.
-> Thus, following this email, I'm sending 2 patches: one for ceph OSDs and
-> the another for the kernel client.
-> 
-> * osd: add new 'copy-from-notrunc' operation
->   This patch shall be applied to ceph master after reverting commit
->   ba152435fd85 ("osd: add flag to prevent truncate_seq copy in copy-from
->   operation").  It adds a new operation that will be exactly the same as
->   the original 'copy-from' operation, but with the extra 2 parameters
->   (truncate_{seq,size})
-> 
-> * ceph: switch copy_file_range to 'copy-from-notrunc' operation
->   This will make the kernel client use the new OSD op in
->   copy_file_range.  One extra thing that could probably be added is
->   changing the mount options to NOCOPYFROM if the first call to
->   ceph_osdc_copy_from() fails.
-> 
+Hello,
 
-I probably wouldn't change the mount options to be different from what
-was initially specified. How about just disable copy_file_range
-internally for that superblock, and then pr_notice a message that says
-that copy_file_range is being autodisabled. If they mount with '-o
-nocopyfrom' that will make the warning go away.
+This series makes read-only mappings compatible with read-only caps:
+we no longer establish a watch, acquire header and object map locks,
+etc.  In addition, because images mapped read-only can no longer be
+flipped to read-write, we allow read-only mappings with unsupported
+features, as long as the image is still readable.
 
-> Does this look good, or did I missed something from the previous
-> discussion?
-> 
-> (One advantage of this approach: the OSD patch can be easily backported!)
-> 
+Thanks,
 
-Yep, I think this looks like a _much_ simpler approach to the problem.
+                Ilya
+
+
+Ilya Dryomov (9):
+  rbd: introduce rbd_is_snap()
+  rbd: introduce RBD_DEV_FLAG_READONLY
+  rbd: treat images mapped read-only seriously
+  rbd: disallow read-write partitions on images mapped read-only
+  rbd: don't acquire exclusive lock for read-only mappings
+  rbd: don't establish watch for read-only mappings
+  rbd: remove snapshot existence validation code
+  rbd: don't query snapshot features
+  rbd: ask for a weaker incompat mask for read-only mappings
+
+ drivers/block/rbd.c | 203 ++++++++++++++++++++------------------------
+ 1 file changed, 93 insertions(+), 110 deletions(-)
+
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.19.2
 
