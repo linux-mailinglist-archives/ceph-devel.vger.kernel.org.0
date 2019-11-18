@@ -2,54 +2,54 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB62D10069E
-	for <lists+ceph-devel@lfdr.de>; Mon, 18 Nov 2019 14:38:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3D261006A0
+	for <lists+ceph-devel@lfdr.de>; Mon, 18 Nov 2019 14:38:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbfKRNic (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 18 Nov 2019 08:38:32 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51393 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726627AbfKRNib (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 18 Nov 2019 08:38:31 -0500
-Received: by mail-wm1-f66.google.com with SMTP id q70so17408524wme.1
-        for <ceph-devel@vger.kernel.org>; Mon, 18 Nov 2019 05:38:31 -0800 (PST)
+        id S1727082AbfKRNid (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 18 Nov 2019 08:38:33 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42905 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbfKRNic (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 18 Nov 2019 08:38:32 -0500
+Received: by mail-wr1-f65.google.com with SMTP id a15so19517555wrf.9
+        for <ceph-devel@vger.kernel.org>; Mon, 18 Nov 2019 05:38:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=L3iBl88RH0m5yJZUDU8PaXLBX7yDxnnVlnvkkfsp37w=;
-        b=lmwUmOxIcyV7xWleokJDeu+/c4VgeqnEcNdZkI42dvOPuBlpaEC3REJs9P91s0owqv
-         QTpsxyles5p3pH2V4ZYpbXEWLMuUp90N3/PHpp9/BH3RAWZTVM1bV1AcOFagK/XLUwO6
-         zWbElYBsZoX3BSPOrVrdWnWixvoSw70yxVGJur9agZBPaLP4+K18SH1kjlSHmEsHNJAG
-         dn53V1TATbwal3SuX/O6gpLurXeZVqTJsr6mbnBK6SyGRfalHtw80V4lUlZdcsE3S/iD
-         /ycldmu117lLLAjtRh2PWHbklcbQzsPyzXlp1peBuxHamaiqdyTCEvW8F/3i1zTwsmX1
-         HYeg==
+        bh=DVnn3LT8HfKAn3otZMw1YLXrFkmCYdTRUb1AiySCKGs=;
+        b=b9mXIRhaUJvYBW3ITSriLeo8fiMP/XMr9W3b71lEQ0ArHtAJAUIphbq45wN9dRRJcf
+         9t2FNXsLxbg6lXcEn8Ai0rIlrTbdzXOswOE5a/iOLcu2rs2stJ+QMR4Ln6Khjx3WqOfo
+         3AA2B5/XIixUL2Mr8Xy7oT7Yq727dLYtYjLtrRt5lHsUGGhdK18z9dpjLugervzxo0s7
+         +fnbiovtwRJhjGtey+w5Iydc18oRmnuJjUJ6pbbo9LcsJoCc675kqpk5udRu755oYqx0
+         E9H9FIrOKkqzqxWnFitngMFaB2mTnKE00CILmp3O655/KjNqqpTtV/kvAPpoyuwf9pbS
+         bfMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=L3iBl88RH0m5yJZUDU8PaXLBX7yDxnnVlnvkkfsp37w=;
-        b=rCNE1/HQDA4XY7JmuWmb1NESuD+hZbbzmHQh5N7YMjVQIFwh907GtrcqoqyDNmyjrg
-         38p7VZ3qdqG9Hirb/qEJNamiid/EWg6/CVwYF+f/C2fFcGYIu/rMAkL3KmnaZCl1IIq7
-         tZweiT6Jf+XwG9VUyxT83zCiUoANYh/Mc2oEl6apj3gIjVRR9QbED9Z8zspw0yy6jA+U
-         5pKxsVk+Nap/LmSKX0yneYJzSW/GljXlWvdxYJZ5Lsn6o3XBJ03ewJjRxDgAJrLu/d3C
-         zpvMrksG0h1Jl2x4buE4kxjNiC9Cb3kSIJhwjO6owre3N5q1SxD3TbdsvuWPI8FTMczw
-         iETQ==
-X-Gm-Message-State: APjAAAXMUftgNA1NjWBaRVROoBSL2e33fu1SLFSpnb67NcZic7kj0A5v
-        uYQkNl3RGsqLjykfM6oyjhH8VRGC
-X-Google-Smtp-Source: APXvYqwjF2jBXHB6ejDMnrUhkRobZIYyRRxR9ZJAvaRxMzdNeelWodkwMSjc43R68rvQIhg8GnQZiw==
-X-Received: by 2002:a05:600c:2307:: with SMTP id 7mr30790207wmo.154.1574084310161;
-        Mon, 18 Nov 2019 05:38:30 -0800 (PST)
+        bh=DVnn3LT8HfKAn3otZMw1YLXrFkmCYdTRUb1AiySCKGs=;
+        b=bWho5mB6pf2uDSWDtQz5gnL7a/tDNKU9LPF+/fP2S2qgu7ZcZhzohZSsEvF0ZEpjFY
+         5a7/o1FTal8z51cBk/fJ5hoDdkM27hLTysIz9RN2MsS2vKKql42TqFoLT7GDjH+mW7a8
+         KQbSpwed6TGJZqjA42PnUwHKEvepA8SgTRJreVireHmxheER5/HNVbci0CgkEDsXKHzp
+         T1cc+YE9UalD8NY8WFF0AIoRCBFdN1i+z7+vqtrs1bcG1rHWDCKlve41j8YlQjVVOq53
+         b965FRP3Udie3bZ2AEebGTvK/OZ/nBjEt44EwAnQj5+t1kGQqE1fN5UMQfQYHfwGdATh
+         9m1Q==
+X-Gm-Message-State: APjAAAVZqcIuQmYkB7I3DzkQFU5PFhOQwhs2q9C7Lkf0P4/ey1beEL7D
+        HA18Pqx43WYGalRzpKY803uOTtQ8
+X-Google-Smtp-Source: APXvYqzZz5Ycf5q5Z/+i3gQct/yXyx40Zr8f8LQJwyHCWemuiO/NJTuzIQlWVldgEqbWEEc+oTOJBA==
+X-Received: by 2002:a5d:538d:: with SMTP id d13mr32234603wrv.304.1574084311319;
+        Mon, 18 Nov 2019 05:38:31 -0800 (PST)
 Received: from kwango.local (ip-94-112-128-92.net.upcbroadband.cz. [94.112.128.92])
-        by smtp.gmail.com with ESMTPSA id t133sm24670242wmb.1.2019.11.18.05.38.29
+        by smtp.gmail.com with ESMTPSA id t133sm24670242wmb.1.2019.11.18.05.38.30
         for <ceph-devel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 05:38:29 -0800 (PST)
+        Mon, 18 Nov 2019 05:38:30 -0800 (PST)
 From:   Ilya Dryomov <idryomov@gmail.com>
 To:     ceph-devel@vger.kernel.org
-Subject: [PATCH 2/9] rbd: introduce RBD_DEV_FLAG_READONLY
-Date:   Mon, 18 Nov 2019 14:38:09 +0100
-Message-Id: <20191118133816.3963-3-idryomov@gmail.com>
+Subject: [PATCH 3/9] rbd: treat images mapped read-only seriously
+Date:   Mon, 18 Nov 2019 14:38:10 +0100
+Message-Id: <20191118133816.3963-4-idryomov@gmail.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20191118133816.3963-1-idryomov@gmail.com>
 References: <20191118133816.3963-1-idryomov@gmail.com>
@@ -60,85 +60,44 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-rbd_dev->opts is not available for parent images, making checking
-rbd_dev->opts->read_only in various places (rbd_dev_image_probe(),
-need_exclusive_lock(), use_object_map() in the following patches)
-harder than it needs to be.
+Even though -o ro/-o read_only/--read-only options are very old, we
+have never really treated them seriously (on par with snapshots).  As
+a first step, fail writes to images mapped read-only just like we do
+for snapshots.
 
-Keeping rbd_dev_image_probe() in mind, move the initialization in
-do_rbd_add() up.  snap_id isn't filled in at that point, so replace
-rbd_is_snap() with a snap_name comparison.
+We need this check in rbd because the block layer basically ignores
+read-only setting, see commit a32e236eb93e ("Partially revert "block:
+fail op_is_write() requests to read-only partitions"").
 
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 ---
- drivers/block/rbd.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/block/rbd.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index cf2a7d094890..330d2789f373 100644
+index 330d2789f373..842b92ef2c06 100644
 --- a/drivers/block/rbd.c
 +++ b/drivers/block/rbd.c
-@@ -464,6 +464,7 @@ struct rbd_device {
- enum rbd_dev_flags {
- 	RBD_DEV_FLAG_EXISTS,	/* mapped snapshot has not been deleted */
- 	RBD_DEV_FLAG_REMOVING,	/* this mapping is being removed */
-+	RBD_DEV_FLAG_READONLY,  /* -o ro or snapshot */
- };
- 
- static DEFINE_MUTEX(client_mutex);	/* Serialize client creation */
-@@ -514,6 +515,11 @@ static int minor_to_rbd_dev_id(int minor)
- 	return minor >> RBD_SINGLE_MAJOR_PART_SHIFT;
- }
- 
-+static bool rbd_is_ro(struct rbd_device *rbd_dev)
-+{
-+	return test_bit(RBD_DEV_FLAG_READONLY, &rbd_dev->flags);
-+}
-+
- static bool rbd_is_snap(struct rbd_device *rbd_dev)
- {
- 	return rbd_dev->spec->snap_id != CEPH_NOSNAP;
-@@ -6867,6 +6873,8 @@ static int rbd_dev_probe_parent(struct rbd_device *rbd_dev, int depth)
- 	__rbd_get_client(rbd_dev->rbd_client);
- 	rbd_spec_get(rbd_dev->parent_spec);
- 
-+	__set_bit(RBD_DEV_FLAG_READONLY, &parent->flags);
-+
- 	ret = rbd_dev_image_probe(parent, depth);
- 	if (ret < 0)
- 		goto out_err;
-@@ -6918,7 +6926,7 @@ static int rbd_dev_device_setup(struct rbd_device *rbd_dev)
- 		goto err_out_blkdev;
- 
- 	set_capacity(rbd_dev->disk, rbd_dev->mapping.size / SECTOR_SIZE);
--	set_disk_ro(rbd_dev->disk, rbd_dev->opts->read_only);
-+	set_disk_ro(rbd_dev->disk, rbd_is_ro(rbd_dev));
- 
- 	ret = dev_set_name(&rbd_dev->dev, "%d", rbd_dev->dev_id);
- 	if (ret)
-@@ -7107,6 +7115,11 @@ static ssize_t do_rbd_add(struct bus_type *bus,
- 	ctx.rbd_spec = NULL;	/* rbd_dev now owns this */
- 	ctx.rbd_opts = NULL;	/* rbd_dev now owns this */
- 
-+	/* if we are mapping a snapshot it will be a read-only mapping */
-+	if (rbd_dev->opts->read_only ||
-+	    strcmp(rbd_dev->spec->snap_name, RBD_SNAP_HEAD_NAME))
-+		__set_bit(RBD_DEV_FLAG_READONLY, &rbd_dev->flags);
-+
- 	rbd_dev->config_info = kstrdup(buf, GFP_KERNEL);
- 	if (!rbd_dev->config_info) {
- 		rc = -ENOMEM;
-@@ -7120,10 +7133,6 @@ static ssize_t do_rbd_add(struct bus_type *bus,
- 		goto err_out_rbd_dev;
+@@ -4820,11 +4820,14 @@ static void rbd_queue_workfn(struct work_struct *work)
+ 		goto err_rq;
  	}
  
--	/* If we are mapping a snapshot it must be marked read-only */
--	if (rbd_is_snap(rbd_dev))
--		rbd_dev->opts->read_only = true;
--
- 	if (rbd_dev->opts->alloc_size > rbd_dev->layout.object_size) {
- 		rbd_warn(rbd_dev, "alloc_size adjusted to %u",
- 			 rbd_dev->layout.object_size);
+-	if (op_type != OBJ_OP_READ && rbd_is_snap(rbd_dev)) {
+-		rbd_warn(rbd_dev, "%s on read-only snapshot",
+-			 obj_op_name(op_type));
+-		result = -EIO;
+-		goto err;
++	if (op_type != OBJ_OP_READ) {
++		if (rbd_is_ro(rbd_dev)) {
++			rbd_warn(rbd_dev, "%s on read-only mapping",
++				 obj_op_name(op_type));
++			result = -EIO;
++			goto err;
++		}
++		rbd_assert(!rbd_is_snap(rbd_dev));
+ 	}
+ 
+ 	/*
 -- 
 2.19.2
 
