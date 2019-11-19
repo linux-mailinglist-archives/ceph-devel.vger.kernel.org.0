@@ -2,37 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7A75101DD5
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2019 09:37:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49BFD101DD8
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2019 09:38:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfKSIhw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 19 Nov 2019 03:37:52 -0500
-Received: from m97138.mail.qiye.163.com ([220.181.97.138]:2846 "EHLO
+        id S1727216AbfKSIh7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 19 Nov 2019 03:37:59 -0500
+Received: from m97138.mail.qiye.163.com ([220.181.97.138]:3103 "EHLO
         m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727102AbfKSIhw (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 19 Nov 2019 03:37:52 -0500
+        with ESMTP id S1727174AbfKSIh6 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 19 Nov 2019 03:37:58 -0500
 Received: from yds-pc.domain (unknown [218.94.118.90])
-        by smtp9 (Coremail) with SMTP id u+CowAAXF1feqdNdGhfvAw--.94S2;
-        Tue, 19 Nov 2019 16:37:50 +0800 (CST)
-Subject: Re: [PATCH 5/9] rbd: don't acquire exclusive lock for read-only
- mappings
+        by smtp9 (Coremail) with SMTP id u+CowADXQVzjqdNdVxfvAw--.110S2;
+        Tue, 19 Nov 2019 16:37:55 +0800 (CST)
+Subject: Re: [PATCH 6/9] rbd: don't establish watch for read-only mappings
 To:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
 References: <20191118133816.3963-1-idryomov@gmail.com>
- <20191118133816.3963-6-idryomov@gmail.com>
+ <20191118133816.3963-7-idryomov@gmail.com>
 From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
-Message-ID: <5DD3A9DE.9080905@easystack.cn>
-Date:   Tue, 19 Nov 2019 16:37:50 +0800
+Message-ID: <5DD3A9E3.3040002@easystack.cn>
+Date:   Tue, 19 Nov 2019 16:37:55 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
  Thunderbird/38.5.0
 MIME-Version: 1.0
-In-Reply-To: <20191118133816.3963-6-idryomov@gmail.com>
+In-Reply-To: <20191118133816.3963-7-idryomov@gmail.com>
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: u+CowAAXF1feqdNdGhfvAw--.94S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjfUUBT5DUUUU
+X-CM-TRANSID: u+CowADXQVzjqdNdVxfvAw--.110S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCrWDtF13Xw4DuFyrGFW7Arb_yoW5uw4kpa
+        n8tayYyFy8GF1Iya45Awn0qFyjgFn2q34Du3W7C34xCrn3Wrn8tr1SkFy5XrWUAFyxCr4k
+        JF45JrWDCFZ0vrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRmQ6JUUUUU=
 X-Originating-IP: [218.94.118.90]
-X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiaB5yellZu4lmWgAAsw
+X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiKARyelz4rO7izgAAsu
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
@@ -41,61 +42,113 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 
 On 11/18/2019 09:38 PM, Ilya Dryomov wrote:
-> A read-only mapping should be usable with read-only OSD caps, so
-> neither the header lock nor the object map lock can be acquired.
-> Unfortunately, this means that images mapped read-only lose the
-> advantage of the object map.
->
-> Snapshots, however, can take advantage of the object map without
-> any exclusionary locks, so if the object map is desired, snapshot
-> the image and map the snapshot instead of the image.
+> With exclusive lock out of the way, watch is the only thing left that
+> prevents a read-only mapping from being used with read-only OSD caps.
 >
 > Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-
-Reviewed-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
 > ---
->   drivers/block/rbd.c | 15 +++++++++++++--
->   1 file changed, 13 insertions(+), 2 deletions(-)
+>   drivers/block/rbd.c | 41 +++++++++++++++++++++++++++--------------
+>   1 file changed, 27 insertions(+), 14 deletions(-)
 >
 > diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 979203cd934c..aaa359561356 100644
+> index aaa359561356..bfff195e8e23 100644
 > --- a/drivers/block/rbd.c
 > +++ b/drivers/block/rbd.c
-> @@ -1833,6 +1833,17 @@ static u8 rbd_object_map_get(struct rbd_device *rbd_dev, u64 objno)
->   
->   static bool use_object_map(struct rbd_device *rbd_dev)
->   {
-> +	/*
-> +	 * An image mapped read-only can't use the object map -- it isn't
-> +	 * loaded because the header lock isn't acquired.  Someone else can
-> +	 * write to the image and update the object map behind our back.
-> +	 *
-> +	 * A snapshot can't be written to, so using the object map is always
-> +	 * safe.
-> +	 */
-> +	if (!rbd_is_snap(rbd_dev) && rbd_is_ro(rbd_dev))
-> +		return false;
-> +
->   	return ((rbd_dev->header.features & RBD_FEATURE_OBJECT_MAP) &&
->   		!(rbd_dev->object_map_flags & RBD_FLAG_OBJECT_MAP_INVALID));
+> @@ -6985,6 +6985,24 @@ static int rbd_dev_header_name(struct rbd_device *rbd_dev)
+>   	return ret;
 >   }
-> @@ -3556,7 +3567,7 @@ static bool need_exclusive_lock(struct rbd_img_request *img_req)
->   	if (!(rbd_dev->header.features & RBD_FEATURE_EXCLUSIVE_LOCK))
->   		return false;
 >   
-> -	if (rbd_is_snap(rbd_dev))
-> +	if (rbd_is_ro(rbd_dev))
->   		return false;
+> +static void rbd_print_dne(struct rbd_device *rbd_dev, bool is_snap)
+> +{
+> +	if (!is_snap) {
+> +		pr_info("image %s/%s%s%s does not exist\n",
+> +			rbd_dev->spec->pool_name,
+> +			rbd_dev->spec->pool_ns ?: "",
+> +			rbd_dev->spec->pool_ns ? "/" : "",
+> +			rbd_dev->spec->image_name);
+> +	} else {
+> +		pr_info("snap %s/%s%s%s@%s does not exist\n",
+> +			rbd_dev->spec->pool_name,
+> +			rbd_dev->spec->pool_ns ?: "",
+> +			rbd_dev->spec->pool_ns ? "/" : "",
+> +			rbd_dev->spec->image_name,
+> +			rbd_dev->spec->snap_name);
+> +	}
+> +}
+> +
+>   static void rbd_dev_image_release(struct rbd_device *rbd_dev)
+>   {
+>   	rbd_dev_unprobe(rbd_dev);
+> @@ -7003,6 +7021,7 @@ static void rbd_dev_image_release(struct rbd_device *rbd_dev)
+>    */
+>   static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
+>   {
+> +	bool need_watch = !depth && !rbd_is_ro(rbd_dev);
+>   	int ret;
 >   
->   	rbd_assert(!test_bit(IMG_REQ_CHILD, &img_req->flags));
-> @@ -6677,7 +6688,7 @@ static int rbd_add_acquire_lock(struct rbd_device *rbd_dev)
->   		return -EINVAL;
+>   	/*
+> @@ -7019,22 +7038,21 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
+>   	if (ret)
+>   		goto err_out_format;
+>   
+> -	if (!depth) {
+> +	if (need_watch) {
+>   		ret = rbd_register_watch(rbd_dev);
+>   		if (ret) {
+>   			if (ret == -ENOENT)
+> -				pr_info("image %s/%s%s%s does not exist\n",
+> -					rbd_dev->spec->pool_name,
+> -					rbd_dev->spec->pool_ns ?: "",
+> -					rbd_dev->spec->pool_ns ? "/" : "",
+> -					rbd_dev->spec->image_name);
+> +				rbd_print_dne(rbd_dev, false);
+>   			goto err_out_format;
+>   		}
 >   	}
 >   
-> -	if (rbd_is_snap(rbd_dev))
-> +	if (rbd_is_ro(rbd_dev))
->   		return 0;
+>   	ret = rbd_dev_header_info(rbd_dev);
+> -	if (ret)
+> +	if (ret) {
+> +		if (ret == -ENOENT && !need_watch)
+
+It's not just "if (ret == -ENOENT)" here, could you explain it more 
+about why we need "&& !need_watch"?
+> +			rbd_print_dne(rbd_dev, false);
+>   		goto err_out_watch;
+> +	}
 >   
->   	rbd_assert(!rbd_is_lock_owner(rbd_dev));
+>   	/*
+>   	 * If this image is the one being mapped, we have pool name and
+> @@ -7048,12 +7066,7 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
+>   		ret = rbd_spec_fill_names(rbd_dev);
+>   	if (ret) {
+>   		if (ret == -ENOENT)
+> -			pr_info("snap %s/%s%s%s@%s does not exist\n",
+> -				rbd_dev->spec->pool_name,
+> -				rbd_dev->spec->pool_ns ?: "",
+> -				rbd_dev->spec->pool_ns ? "/" : "",
+> -				rbd_dev->spec->image_name,
+> -				rbd_dev->spec->snap_name);
+> +			rbd_print_dne(rbd_dev, true);
+
+is_snap here is always true? IIUC, as we have a watcher for non-snap 
+mapping, the rbd_spec_fill_snap_id()
+would not be fail with -ENOENT. Is that the reason? If so, can we add an 
+rbd_assert(depth); and add
+a comment about why we use is_snap == true here?
+
+Thanx
+>   		goto err_out_probe;
+>   	}
+>   
+> @@ -7085,7 +7098,7 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
+>   err_out_probe:
+>   	rbd_dev_unprobe(rbd_dev);
+>   err_out_watch:
+> -	if (!depth)
+> +	if (need_watch)
+>   		rbd_unregister_watch(rbd_dev);
+>   err_out_format:
+>   	rbd_dev->image_format = 0;
 
 
