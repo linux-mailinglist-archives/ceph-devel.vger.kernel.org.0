@@ -2,40 +2,39 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE7571023EB
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2019 13:08:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 567E41023F6
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2019 13:11:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbfKSMIr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 19 Nov 2019 07:08:47 -0500
-Received: from m97138.mail.qiye.163.com ([220.181.97.138]:37056 "EHLO
+        id S1727782AbfKSMLo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 19 Nov 2019 07:11:44 -0500
+Received: from m97138.mail.qiye.163.com ([220.181.97.138]:39850 "EHLO
         m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727255AbfKSMIr (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 19 Nov 2019 07:08:47 -0500
+        with ESMTP id S1725798AbfKSMLn (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 19 Nov 2019 07:11:43 -0500
 Received: from yds-pc.domain (unknown [218.94.118.90])
-        by smtp9 (Coremail) with SMTP id u+CowACnKVw829NdIJzwAw--.1151S2;
-        Tue, 19 Nov 2019 20:08:28 +0800 (CST)
-Subject: Re: [PATCH 8/9] rbd: don't query snapshot features
+        by smtp9 (Coremail) with SMTP id u+CowACnoWb429Ndkp_wAw--.1121S2;
+        Tue, 19 Nov 2019 20:11:36 +0800 (CST)
+Subject: Re: [PATCH 0/9] wip-krbd-readonly
 To:     Ilya Dryomov <idryomov@gmail.com>
 References: <20191118133816.3963-1-idryomov@gmail.com>
- <20191118133816.3963-9-idryomov@gmail.com> <5DD3A9EA.6050108@easystack.cn>
- <CAOi1vP_Yn4HJAvMqYk5MH_z0uawLy-Aky_cBsdNG6g=WBqzZ5A@mail.gmail.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+ <5DD3ACD6.6040009@easystack.cn>
+ <CAOi1vP8xERUXtoh7sGUZDR6kRMKBVYx_6uofzA855OPR3Ar61A@mail.gmail.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
+        Jason Dillaman <jdillama@redhat.com>
 From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
-Message-ID: <5DD3DB3C.2050302@easystack.cn>
-Date:   Tue, 19 Nov 2019 20:08:28 +0800
+Message-ID: <5DD3DBF8.2010805@easystack.cn>
+Date:   Tue, 19 Nov 2019 20:11:36 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
  Thunderbird/38.5.0
 MIME-Version: 1.0
-In-Reply-To: <CAOi1vP_Yn4HJAvMqYk5MH_z0uawLy-Aky_cBsdNG6g=WBqzZ5A@mail.gmail.com>
+In-Reply-To: <CAOi1vP8xERUXtoh7sGUZDR6kRMKBVYx_6uofzA855OPR3Ar61A@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: u+CowACnKVw829NdIJzwAw--.1151S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJw4kKFW8Cr13GF1kGr47twb_yoW5Xw4Upr
-        4fJF9FkFWUWry2ka15Xrn8ArWrKa17t34DuryUA34xuasYkr9xAFyxCFW0qFWDGa4DWFW8
-        GF4YyrZxAr4jyFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_4E_ZUUUUU=
+X-CM-TRANSID: u+CowACnoWb429Ndkp_wAw--.1121S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvj4iQeYNDUUUU
 X-Originating-IP: [218.94.118.90]
-X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbibxxyellZu1mh4gAAsa
+X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiYBhyeli2lHXVegAAsQ
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
@@ -43,73 +42,37 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 
 
-On 11/19/2019 07:55 PM, Ilya Dryomov wrote:
-> On Tue, Nov 19, 2019 at 9:38 AM Dongsheng Yang
+On 11/19/2019 07:59 PM, Ilya Dryomov wrote:
+> On Tue, Nov 19, 2019 at 9:50 AM Dongsheng Yang
 > <dongsheng.yang@easystack.cn> wrote:
 >>
+>> Hi Ilya,
 >>
 >> On 11/18/2019 09:38 PM, Ilya Dryomov wrote:
->>> Since infernalis, ceph.git commit 281f87f9ee52 ("cls_rbd: get_features
->>> on snapshots returns HEAD image features"), querying and checking that
->>> is pointless.  Userspace support for manipulating image features after
->>> image creation came also in infernalis, so a snapshot with a different
->>> set of features wasn't ever possible.
+>>> Hello,
 >>>
->>> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
->> Reviewed-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
+>>> This series makes read-only mappings compatible with read-only caps:
+>>> we no longer establish a watch,
+>> Although this is true in userspace librbd, I think that's wired: when
+>> there is someone is reading this image, it can be removed. And the
+>> reader will get all zero for later reads.
 >>
->> Just one small nit below.
->>> ---
->>>    drivers/block/rbd.c | 38 +-------------------------------------
->>>    1 file changed, 1 insertion(+), 37 deletions(-)
->>>
->>> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
->>> index aba60e37b058..935b66808e40 100644
->>> --- a/drivers/block/rbd.c
->>> +++ b/drivers/block/rbd.c
->>> @@ -377,7 +377,6 @@ struct rbd_client_id {
->>>
->>>    struct rbd_mapping {
->>>        u64                     size;
->>> -     u64                     features;
->>>    };
->>>
->>>    /*
->>> @@ -644,8 +643,6 @@ static const char *rbd_dev_v2_snap_name(struct rbd_device *rbd_dev,
->>>                                        u64 snap_id);
->>>    static int _rbd_dev_v2_snap_size(struct rbd_device *rbd_dev, u64 snap_id,
->>>                                u8 *order, u64 *snap_size);
->>> -static int _rbd_dev_v2_snap_features(struct rbd_device *rbd_dev, u64 snap_id,
->>> -             u64 *snap_features);
->>>    static int rbd_dev_v2_get_flags(struct rbd_device *rbd_dev);
->>>
->>>    static void rbd_obj_handle_request(struct rbd_obj_request *obj_req, int result);
->>> @@ -1303,51 +1300,23 @@ static int rbd_snap_size(struct rbd_device *rbd_dev, u64 snap_id,
->>>        return 0;
->>>    }
->>>
->>> -static int rbd_snap_features(struct rbd_device *rbd_dev, u64 snap_id,
->>> -                     u64 *snap_features)
->>> -{
->>> -     rbd_assert(rbd_image_format_valid(rbd_dev->image_format));
->>> -     if (snap_id == CEPH_NOSNAP) {
->>> -             *snap_features = rbd_dev->header.features;
->>> -     } else if (rbd_dev->image_format == 1) {
->>> -             *snap_features = 0;     /* No features for format 1 */
->>> -     } else {
->>> -             u64 features = 0;
->>> -             int ret;
->>> -
->>> -             ret = _rbd_dev_v2_snap_features(rbd_dev, snap_id, &features);
->> Just nit:
->>
->> _rbd_dev_v2_snap_features has only one caller now. we can implement it directly in rbd_dev_v2_features().
-> I kept both to minimize code churn and also because I actually expect
-> rbd_dev_v2_features() to be removed in the future.  We need to get away
-> from using rbd_dev as a global variable (and thus functions that take
-> just rbd_dev and both read from and write to it).
+>> What about register a watcher but always ack for notifications? Then
+>> we can prevent removing from image being reading.
+> We can't register a watch because it is a write operation on the OSD
+> and we want read-only mappings to be usable with read-only OSD caps:
+>
+>    $ ceph auth add client.ro ... osd 'profile rbd-read-only'
+>    $ sudo rbd map --user ro -o ro ..
+>
+> Further, while returning zeros if an image or a snapshot is removed is
+> bad, a watch isn't a good solution.  It can be lost, and even when it's
+> there it's still racy.  See the description of patch 7
 
-Okey, so there is a reason from future plan to keep it. No problem
+
+Right, it's not that easy. Maybe we need another series patches to 
+improve it.
+I am okey for it now, librbd is working in the same way.
 
 Thanx
 >
