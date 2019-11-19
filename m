@@ -2,99 +2,89 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBAF91027B3
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2019 16:09:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64E6C102AC8
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2019 18:28:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbfKSPJ4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 19 Nov 2019 10:09:56 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34842 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbfKSPJ4 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 19 Nov 2019 10:09:56 -0500
-Received: by mail-io1-f66.google.com with SMTP id x21so23595910ior.2
-        for <ceph-devel@vger.kernel.org>; Tue, 19 Nov 2019 07:09:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S+ew+26giqg5R2A12lhI717EI/IQVJU83AEqk0GL6Hw=;
-        b=NWWNoMt2lfr1Nv+nyl+HmALyoOHLTXtb8q9bP7Ph6oITQAc7bhg5LCxRDGBTSXStwo
-         s9x03Y70xXb1GLljEjSmwV0dBxsIhNHox07wGxt9gg8f3satCsXo61VjkgoTQiZIABX2
-         aZ0nm/TDs9buTztB/uMuyjQ/cdLA1Ly368h6hYpdhPkO3t0uKYXU7qhvwmtZ90ZbM4CH
-         8zL8YpyeLWSbWXIKd7fIxfgfvZBL0pHvcgz56pN5QUzXTjGcN93Hb5ametm5EC6bE7+5
-         chtBJWXYxPgZZ6r1kjKTg4sKRDYnz3dJ12nQJX62O+al5Ajjci6h5/+iF8SVbetPHOJ0
-         mMiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S+ew+26giqg5R2A12lhI717EI/IQVJU83AEqk0GL6Hw=;
-        b=e5dU9FIKOzSmh1mhXCMMk26ihs6UjCrDG2Lo7SWw3f9uiVeEoK37rFrBOkCcf/UNAK
-         tNfy6bXBGhvY5/nGJji8PR2gxYQpS2wXnEp73S1iYjMpaOuMC/KwMyUaM0fzjqAfR7tc
-         qgRhd06fyGKVwVdaWjn01ze8GaCIzin/M1NZ89nL8KDhkquql1imAx1Quu7D3gUM/ht4
-         nvrHRjuO3DKPYI14dNFZ1ho7lBa+EzqnHkidZMZiQK4skSfaCDaB/As2a9oIaHBF6SM9
-         iCT20RMcXTpKJnDGyOkGutOR/gy+HTxrDOwrLkTyH/aGV/euVoiZGtjr+TfWDasWlfeN
-         puAA==
-X-Gm-Message-State: APjAAAVxRCHWjNGxd0fAOLWz52vwE4MSzg9cUNKdVFT6rD0vHn8AZ3Ds
-        WJXz+5DPBkXVttfeeurZxMv3HETtkkoOa5jvnEycvCvK
-X-Google-Smtp-Source: APXvYqzQ6FopesIxbmuHl40iGPoCWlhoTFlziaSrLNltIog54nEGz6yTGwMc0qi6SGnhLnXhQCYF/bAJGjUn/DS/V9s=
-X-Received: by 2002:a6b:ba04:: with SMTP id k4mr19665265iof.131.1574176195471;
- Tue, 19 Nov 2019 07:09:55 -0800 (PST)
-MIME-Version: 1.0
-References: <20191118133816.3963-1-idryomov@gmail.com> <5DD3ACD6.6040009@easystack.cn>
- <CAOi1vP8xERUXtoh7sGUZDR6kRMKBVYx_6uofzA855OPR3Ar61A@mail.gmail.com> <5DD3DBF8.2010805@easystack.cn>
-In-Reply-To: <5DD3DBF8.2010805@easystack.cn>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 19 Nov 2019 16:10:27 +0100
-Message-ID: <CAOi1vP_o6prR7N7Or9tyBFybGM3bddkD+1+vTatEdHCdKdeOUA@mail.gmail.com>
-Subject: Re: [PATCH 0/9] wip-krbd-readonly
-To:     Dongsheng Yang <dongsheng.yang@easystack.cn>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        Jason Dillaman <jdillama@redhat.com>
+        id S1728528AbfKSR26 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 19 Nov 2019 12:28:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38350 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728060AbfKSR25 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 19 Nov 2019 12:28:57 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B2E9208A1;
+        Tue, 19 Nov 2019 17:28:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574184537;
+        bh=GKlGK69iHTa/H5Ql41aPNCWtNEMlnT25CP6rvry5zzk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=XdLQyR5v5zb6/W/g9hXuSrLoLV5bAcGR0C4WTgrk0TMVteatA+Wf0NF4hrQB/qlAe
+         3bLCHFOnSPmXQPJf5E1lGjDaJ4VJ0PgSSO8pGhYeFQTJ4v106E/t/lPjvKOjYCwbcn
+         v0ghcl5JNblkyLUGgejyFnvLpk8Ou2QMpx6Qw7Ek=
+Message-ID: <d3650353d002964adb4b3f38335ff9e90a11a918.camel@kernel.org>
+Subject: Re: [PATCH] ceph: check availability of mds cluster on mount after
+ wait timeout
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com, sage@redhat.com, idryomov@gmail.com
+Cc:     ceph-devel@vger.kernel.org, zyan@redhat.com, pdonnell@redhat.com
+Date:   Tue, 19 Nov 2019 12:28:55 -0500
+In-Reply-To: <20191119130440.19384-1-xiubli@redhat.com>
+References: <20191119130440.19384-1-xiubli@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1 (3.34.1-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 1:11 PM Dongsheng Yang
-<dongsheng.yang@easystack.cn> wrote:
->
->
->
-> On 11/19/2019 07:59 PM, Ilya Dryomov wrote:
-> > On Tue, Nov 19, 2019 at 9:50 AM Dongsheng Yang
-> > <dongsheng.yang@easystack.cn> wrote:
-> >>
-> >> Hi Ilya,
-> >>
-> >> On 11/18/2019 09:38 PM, Ilya Dryomov wrote:
-> >>> Hello,
-> >>>
-> >>> This series makes read-only mappings compatible with read-only caps:
-> >>> we no longer establish a watch,
-> >> Although this is true in userspace librbd, I think that's wired: when
-> >> there is someone is reading this image, it can be removed. And the
-> >> reader will get all zero for later reads.
-> >>
-> >> What about register a watcher but always ack for notifications? Then
-> >> we can prevent removing from image being reading.
-> > We can't register a watch because it is a write operation on the OSD
-> > and we want read-only mappings to be usable with read-only OSD caps:
-> >
-> >    $ ceph auth add client.ro ... osd 'profile rbd-read-only'
-> >    $ sudo rbd map --user ro -o ro ..
-> >
-> > Further, while returning zeros if an image or a snapshot is removed is
-> > bad, a watch isn't a good solution.  It can be lost, and even when it's
-> > there it's still racy.  See the description of patch 7
->
->
-> Right, it's not that easy. Maybe we need another series patches to
-> improve it.
+On Tue, 2019-11-19 at 08:04 -0500, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> If all the MDS daemons are down for some reasons, and immediately
+> just before the kclient getting the new mdsmap the mount request is
+> fired out, it will be the request wait will timeout with -EIO.
+> 
+> After this just check the mds cluster availability to give a friendly
+> hint to let the users check the MDS cluster status.
+> 
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/mds_client.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index a5163296d9d9..82a929084671 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -2712,6 +2712,9 @@ static int ceph_mdsc_wait_request(struct ceph_mds_client *mdsc,
+>  	if (test_bit(CEPH_MDS_R_GOT_RESULT, &req->r_req_flags)) {
+>  		err = le32_to_cpu(req->r_reply_info.head->result);
+>  	} else if (err < 0) {
+> +		if (!ceph_mdsmap_is_cluster_available(mdsc->mdsmap))
+> +			pr_info("probably no mds server is up\n");
+> +
+>  		dout("aborted request %lld with %d\n", req->r_tid, err);
+>  
+>  		/*
 
-Yeah, just watching a header as it is is not going to do it.
+Probably? If they're all unavailable then definitely. Also, this is a
+pr_info message, so you probably need to prefix this with "ceph: ".
 
-Thanks for the review!
+Beyond that though, do we want to do this in what amounts to low-level
+infrastructure for MDS requests?
 
-                Ilya
+I wonder if a warning like this would be better suited in
+open_root_dentry(). If ceph_mdsc_do_request returns -EIO [1] maybe have
+open_root_dentry do the check and pr_info?
+
+[1]: Why does it use -EIO here anyway? Wouldn't -ETIMEOUT or something
+be better? Maybe the worry was that that error could bubble up to userla
+nd?
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
