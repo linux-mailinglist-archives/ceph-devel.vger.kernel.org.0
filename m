@@ -2,89 +2,102 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 558091023B1
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2019 12:58:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F33CC1023D3
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2019 13:04:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfKSL6e (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 19 Nov 2019 06:58:34 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:33684 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbfKSL6d (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 19 Nov 2019 06:58:33 -0500
-Received: by mail-il1-f193.google.com with SMTP id m5so19388615ilq.0
-        for <ceph-devel@vger.kernel.org>; Tue, 19 Nov 2019 03:58:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nlRLyURN36qolCcp/IUK8Fpx2um4fB8KxP76/SYu/Do=;
-        b=AiuvBT6vXO0+7HGI152H47HxUUz0BhNf7sDHcUNVnptEpYqHRxEYOtLfBV/uzd9hrf
-         oIgBBNk1kPgTvj+4QIgVnbW/Hki3I9+faRXQqGICIcMZTuTWcKUcWV1dr2mOdtmofzQT
-         4lkdbCLx2DDnvuYIaEZWGhR+/XLSQcifs7k1TT4WYYgs1S0T0fdc59BWAH7bCfy9iFhK
-         uBFvVTJX1p23JxZ5qHuy6QGb33N19qrerdCT45S9XXKves+kxvjb4GAYQWyj1mgDEQT2
-         Pex/uEnBu0xVULXI4fE3rioyGzS6ac14leCVMtYe7h8t4hdiHszusSCLhmTV9FHpuP4h
-         ox5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nlRLyURN36qolCcp/IUK8Fpx2um4fB8KxP76/SYu/Do=;
-        b=hsUjkprj30oi+xkRG2VnveOKbyCbLcnEmKe1c25onH+u09qAgUvnu/5lC2h6T7Klzg
-         Zw3LhE75da7u8WZLGQ/rxtuglqcgt6XfLM5xfs6ehDfuqXHMtsH0YAmYpbT0HGcd5UQj
-         E08h78/XQDmZvCCb6Effujz1XuAbjEcGDRpBwCe4wFqLoOoJT3NXgWOAD+DBDs5FgDlh
-         3/yK6A5pDhBDLBEHOWx7XETaBNbMn358SYTKVsAfa8yfckN6bdJA+Ib26yeJaL+KDdqg
-         Jo986wrkZ9skZCb6ib+mj5Px/FH5BrhraMRoJvaFF+WKBcqKaU9oNIuAZoVIURxY3Hb3
-         EAbA==
-X-Gm-Message-State: APjAAAXValjkANh/Kq2aXGdCUP0TGgNRHSR7Bj9k2h64BQanVMtU19Qb
-        vfmT1dK7fyYr1QCZCF2yRvwvTQFdkaUndNFucOs=
-X-Google-Smtp-Source: APXvYqwv9CjsbaEImYmo1jOOWE4mMEjFURnazC6AySs8fwN8tXu9aJ32dnBUArjI5SIwAFWjRFyr4RR2oaOUNjiJGxo=
-X-Received: by 2002:a92:b656:: with SMTP id s83mr20850152ili.282.1574164711088;
- Tue, 19 Nov 2019 03:58:31 -0800 (PST)
+        id S1727751AbfKSMEf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 19 Nov 2019 07:04:35 -0500
+Received: from m97138.mail.qiye.163.com ([220.181.97.138]:33402 "EHLO
+        m97138.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725280AbfKSMEf (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 19 Nov 2019 07:04:35 -0500
+Received: from yds-pc.domain (unknown [218.94.118.90])
+        by smtp9 (Coremail) with SMTP id u+CowADHz19O2tNdkJfwAw--.1046S2;
+        Tue, 19 Nov 2019 20:04:30 +0800 (CST)
+Subject: Re: [PATCH 3/9] rbd: treat images mapped read-only seriously
+To:     Ilya Dryomov <idryomov@gmail.com>
+References: <20191118133816.3963-1-idryomov@gmail.com>
+ <20191118133816.3963-4-idryomov@gmail.com> <5DD3A9D6.4010908@easystack.cn>
+ <CAOi1vP-Q0B4omNcoWCR7SX7V=4L_81o4HfZciH1EtOULmM=epA@mail.gmail.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
+Message-ID: <5DD3DA4E.1060107@easystack.cn>
+Date:   Tue, 19 Nov 2019 20:04:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
 MIME-Version: 1.0
-References: <20191118133816.3963-1-idryomov@gmail.com> <5DD3ACD6.6040009@easystack.cn>
-In-Reply-To: <5DD3ACD6.6040009@easystack.cn>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 19 Nov 2019 12:59:02 +0100
-Message-ID: <CAOi1vP8xERUXtoh7sGUZDR6kRMKBVYx_6uofzA855OPR3Ar61A@mail.gmail.com>
-Subject: Re: [PATCH 0/9] wip-krbd-readonly
-To:     Dongsheng Yang <dongsheng.yang@easystack.cn>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        Jason Dillaman <jdillama@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAOi1vP-Q0B4omNcoWCR7SX7V=4L_81o4HfZciH1EtOULmM=epA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: u+CowADHz19O2tNdkJfwAw--.1046S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjfUj6wZDUUUU
+X-Originating-IP: [218.94.118.90]
+X-CM-SenderInfo: 5grqw2pkhqwhp1dqwq5hdv52pwdfyhdfq/1tbiGw5yelpcg-WabwAAsY
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 9:50 AM Dongsheng Yang
-<dongsheng.yang@easystack.cn> wrote:
->
->
-> Hi Ilya,
->
-> On 11/18/2019 09:38 PM, Ilya Dryomov wrote:
-> > Hello,
-> >
-> > This series makes read-only mappings compatible with read-only caps:
-> > we no longer establish a watch,
->
-> Although this is true in userspace librbd, I think that's wired: when
-> there is someone is reading this image, it can be removed. And the
-> reader will get all zero for later reads.
->
-> What about register a watcher but always ack for notifications? Then
-> we can prevent removing from image being reading.
 
-We can't register a watch because it is a write operation on the OSD
-and we want read-only mappings to be usable with read-only OSD caps:
 
-  $ ceph auth add client.ro ... osd 'profile rbd-read-only'
-  $ sudo rbd map --user ro -o ro ...
+On 11/19/2019 06:55 PM, Ilya Dryomov wrote:
+> On Tue, Nov 19, 2019 at 9:37 AM Dongsheng Yang
+> <dongsheng.yang@easystack.cn> wrote:
+>>
+>>
+>> On 11/18/2019 09:38 PM, Ilya Dryomov wrote:
+>>> Even though -o ro/-o read_only/--read-only options are very old, we
+>>> have never really treated them seriously (on par with snapshots).  As
+>>> a first step, fail writes to images mapped read-only just like we do
+>>> for snapshots.
+>>>
+>>> We need this check in rbd because the block layer basically ignores
+>>> read-only setting, see commit a32e236eb93e ("Partially revert "block:
+>>> fail op_is_write() requests to read-only partitions"").
+>>>
+>>> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+>>> ---
+>>>    drivers/block/rbd.c | 13 ++++++++-----
+>>>    1 file changed, 8 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+>>> index 330d2789f373..842b92ef2c06 100644
+>>> --- a/drivers/block/rbd.c
+>>> +++ b/drivers/block/rbd.c
+>>> @@ -4820,11 +4820,14 @@ static void rbd_queue_workfn(struct work_struct *work)
+>>>                goto err_rq;
+>>>        }
+>>>
+>>> -     if (op_type != OBJ_OP_READ && rbd_is_snap(rbd_dev)) {
+>>> -             rbd_warn(rbd_dev, "%s on read-only snapshot",
+>>> -                      obj_op_name(op_type));
+>>> -             result = -EIO;
+>>> -             goto err;
+>>> +     if (op_type != OBJ_OP_READ) {
+>>> +             if (rbd_is_ro(rbd_dev)) {
+>>> +                     rbd_warn(rbd_dev, "%s on read-only mapping",
+>>> +                              obj_op_name(op_type));
+>>> +                     result = -EIO;
+>>> +                     goto err;
+>>> +             }
+>>> +             rbd_assert(!rbd_is_snap(rbd_dev));
+>> Just one question here, if block layer does not prevent write for
+>> readonly disk 100%,
+>> should we make it rbd-level readonly in rbd_ioctl_set_ro() when requested ?
+> No, the point is to divorce the read-only setting at the block layer
+> level from read-only setting in rbd.  Enforcing the block layer setting
+> is up to the block layer, rbd only enforces the rbd setting.  We allow
+> the block layer setting to be tweaked with BLKROSET, while rbd setting
+> is immutable (i.e. if you mapped with -o ro, you would have to unmap
+> and map without -o ro).  So we propagate rbd setting up to the block
+> layer, but the block layer setting isn't propagated down to rbd.
 
-Further, while returning zeros if an image or a snapshot is removed is
-bad, a watch isn't a good solution.  It can be lost, and even when it's
-there it's still racy.  See the description of patch 7.
+makes sense
+>
+> Thanks,
+>
+>                  Ilya
+>
 
-Thanks,
 
-                Ilya
