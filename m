@@ -2,80 +2,96 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01281105897
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 Nov 2019 18:30:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88907105C26
+	for <lists+ceph-devel@lfdr.de>; Thu, 21 Nov 2019 22:41:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbfKURaT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 21 Nov 2019 12:30:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38228 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726568AbfKURaS (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 21 Nov 2019 12:30:18 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C86432067D;
-        Thu, 21 Nov 2019 17:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574357418;
-        bh=0ojH0IBj7T7q8pGWyRTYS+jkG7sG3ZRGDZBM3P9X/T0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=um9nacxgCl/FtgxgeqvG1Uy1h4LGx6lfy5cQyNkmfx6yVTZzGw8h3e9P/A/BiYBZ0
-         HqG7yfmGDa69w75jUOYiO6c0+dXJBp6oujT75Natig/+Zh2i0AeH45yDwr0/rkTf79
-         JsHRaKIRjDXEY7rA6tjQKkiepkM0rgy+U8oxqeU4=
-Message-ID: <52135037d9009f678e1b05964f0d6a1366a77ed0.camel@kernel.org>
-Subject: Re: [PATCH 2/3] mdsmap: fix mdsmap cluster available check based on
- laggy number
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
-        pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Thu, 21 Nov 2019 12:30:17 -0500
-In-Reply-To: <20191120082902.38666-3-xiubli@redhat.com>
-References: <20191120082902.38666-1-xiubli@redhat.com>
-         <20191120082902.38666-3-xiubli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1 (3.34.1-1.fc31) 
+        id S1726658AbfKUVlj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 21 Nov 2019 16:41:39 -0500
+Received: from mx0a-00003501.pphosted.com ([67.231.144.15]:12980 "EHLO
+        mx0a-00003501.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726293AbfKUVlj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 21 Nov 2019 16:41:39 -0500
+X-Greylist: delayed 969 seconds by postgrey-1.27 at vger.kernel.org; Thu, 21 Nov 2019 16:41:38 EST
+Received: from pps.filterd (m0075553.ppops.net [127.0.0.1])
+        by mx0a-00003501.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xALLAiui021569
+        for <ceph-devel@vger.kernel.org>; Thu, 21 Nov 2019 16:25:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seagate.com; h=mime-version : from
+ : date : message-id : subject : to : content-type; s=proofpoint;
+ bh=IJ5JFKp7qKPfwv8OVoCwrAvwLAd4jOxNTjUF2X40hlI=;
+ b=R8Bpx3+JQX8ZgolwW9HNvcSVrZ6XAevl/NBb8CKkMS7YXQaMM/Gl7dgUsnUFEefrwinv
+ mNq0E/uDko8+EaLyIKVRrpRKzBYXEZbi7T8Wvqscp7Z8UcuyGtRQ8jwGpgo0JUU1MUr3
+ lMal56M/wpCYDLFF9e/cGQXm+gBKAuC1VZhFWAq2LB7jzyJJwgCK6OoJNYUGOJs5qN7Z
+ IibUOqLPs9bwHOEWrFfwcd7agV4rF09AkUGY0uqRKJfyBB5Q/TEifycX1E4r1KR/CMgs
+ Twe5ZuoTEdlYL8LCRhM6N+PWCxP6eSHWyNXmPvtFAPM9voRBpXD2+0C4bqczn4pvJ2q7 3g== 
+Authentication-Results: seagate.com;
+        dkim=pass header.s=google header.d=seagate.com
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+        by mx0a-00003501.pphosted.com with ESMTP id 2wayb313pc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <ceph-devel@vger.kernel.org>; Thu, 21 Nov 2019 16:25:28 -0500
+Received: by mail-ed1-f69.google.com with SMTP id a3so2580067eda.0
+        for <ceph-devel@vger.kernel.org>; Thu, 21 Nov 2019 13:25:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=seagate.com; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=IJ5JFKp7qKPfwv8OVoCwrAvwLAd4jOxNTjUF2X40hlI=;
+        b=Wl3k4PhmDTOpE1rmPyFVpkTxtDGSz+NrCeqixf8VNSNEpn78lTvzaeRq6EwHl19Fh+
+         /jFjoR9gw1bPtiN+RyXkC6kpzJunYrt322xCtsmv2UzG7V8+53teGzfCKlu4SwSozWwS
+         TTVJ+3fuZuvI7HJg+7iQPqn7LoE/YHSy+TTzE3pU1jIlwsSDWpI2o03zDch501qabGJV
+         V/U4bfVTdvLT5ZE8B+AZ3YVU1XLP06smSqPF85wfvLgjbRoW3kiEwbkQeid5QpsmM9Ls
+         HrlVv0WdQoTSE4w3+FxLJckOT1px+sj7TYWLfYy1O+b6hwMnaRApQOZFJhbtAh9u3vkn
+         qOnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=IJ5JFKp7qKPfwv8OVoCwrAvwLAd4jOxNTjUF2X40hlI=;
+        b=tl5x1EjuLHxoYsVnfC378ErxQs1m5nyZ2iu7OGOO5OfwSMUceyp0g3M4/Yhkctwqge
+         yM3gmjzSVUGFhsvvzKIdrsGPBfeOUfBOnuADh+Biw7sNcDTr3ym2C9ieh/Idnu6Weiz6
+         BT/oGsriYJboPxRYPFvI14ATEQ//zvCpRh5D1oGpIMKRGkvM50XWNz2ly3sE7qoyfG3W
+         Rob2wemisNpkV3EU9LsRL3qY34gZCVL4652d1BfjdaQPJ1lVM1LJPGVmGht3ZrF95/ut
+         ijYgoGlWLfacWpu0hXryiWM8prwJ7Uo7n+xpiAaU3KjXYVqmte3y0mFMfKOCGTyr/RVM
+         ApUw==
+X-Gm-Message-State: APjAAAWo43uMgxZviR4v38xJazlt6wSvt0ehM5r0bi1TsedEd5AKsxgW
+        zG/MK25JL+QRrn4VKtk7xBKS04seG4si5bdvKpMLYvALpsv9HCGkFCiCNXerdDgj/m6sEaq8yeL
+        fRmjkN4kBblPAivzUURD8D/X7r4ggFgouW9UTvB0plOmVf8ArIhHL1kb1XBpUKgg=
+X-Received: by 2002:a17:906:7e41:: with SMTP id z1mr16417014ejr.63.1574371526568;
+        Thu, 21 Nov 2019 13:25:26 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz5HtQYjLWKwmsPFUIwXDQP6LVGrP6H1pkmDPzMvtwt2K0h3UMOxKUjCYeQMF6en6KdstXJZi0yXLl5uPIQ78w=
+X-Received: by 2002:a17:906:7e41:: with SMTP id z1mr16416980ejr.63.1574371526223;
+ Thu, 21 Nov 2019 13:25:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+From:   Muhammad Ahmad <muhammad.ahmad@seagate.com>
+Date:   Thu, 21 Nov 2019 15:24:49 -0600
+Message-ID: <CAPNbX4TY5Yv31FscT0=Q5GEbFcY7M=y07y7UL9ikPhFxA+wiJw@mail.gmail.com>
+Subject: device class : nvme
+To:     ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-PolicyRoute: Outbound
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-21_06:2019-11-21,2019-11-21 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 spamscore=0
+ lowpriorityscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
+ impostorscore=0 phishscore=0 clxscore=1015 mlxlogscore=658 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-1911210177
+X-Proofpoint-Spam-Policy: Default Domain Policy
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2019-11-20 at 03:29 -0500, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> In case the max_mds > 1 in MDS cluster and there is no any standby
-> MDS and all the max_mds MDSs are in up:active state, if one of the
-> up:active MDSs is dead, the m->m_num_laggy in kclient will be 1.
-> Then the mount will fail without considering other healthy MDSs.
-> 
-> Only when all the MDSs in the cluster are laggy will treat the
-> cluster as not be available.
-> 
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/mdsmap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
-> index 471bac335fae..8b4f93e5b468 100644
-> --- a/fs/ceph/mdsmap.c
-> +++ b/fs/ceph/mdsmap.c
-> @@ -396,7 +396,7 @@ bool ceph_mdsmap_is_cluster_available(struct ceph_mdsmap *m)
->  		return false;
->  	if (m->m_damaged)
->  		return false;
-> -	if (m->m_num_laggy > 0)
-> +	if (m->m_num_laggy == m->m_num_mds)
->  		return false;
->  	for (i = 0; i < m->m_num_mds; i++) {
->  		if (m->m_info[i].state == CEPH_MDS_STATE_ACTIVE)
+While trying to research how crush maps are used/modified I stumbled
+upon these device classes.
+https://ceph.io/community/new-luminous-crush-device-classes/
 
-Given that laggy servers are still expected to be "in" the cluster,
-should we just eliminate this check altogether? It seems like we'd still
-want to allow a mount to occur even if the cluster is lagging.
--- 
-Jeff Layton <jlayton@kernel.org>
+I wanted to highlight that having nvme as a separate class will
+eventually break and should be removed.
 
+There is already a push within the industry to consolidate future
+command sets and NVMe will likely be it. In other words, NVMe HDDs are
+not too far off. In fact, the recent October OCP F2F discussed this
+topic in detail.
+
+If the classification is based on performance then command set
+(SATA/SAS/NVMe) is probably not the right classification.
