@@ -2,123 +2,78 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41D911073C7
-	for <lists+ceph-devel@lfdr.de>; Fri, 22 Nov 2019 15:00:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6323E107550
+	for <lists+ceph-devel@lfdr.de>; Fri, 22 Nov 2019 17:01:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbfKVOAL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 22 Nov 2019 09:00:11 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:32999 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbfKVOAL (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 22 Nov 2019 09:00:11 -0500
-Received: by mail-io1-f65.google.com with SMTP id j13so8144274ioe.0;
-        Fri, 22 Nov 2019 06:00:10 -0800 (PST)
+        id S1726865AbfKVQBV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 22 Nov 2019 11:01:21 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:37606 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726760AbfKVQBV (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 22 Nov 2019 11:01:21 -0500
+Received: by mail-qt1-f196.google.com with SMTP id w47so4251469qtk.4;
+        Fri, 22 Nov 2019 08:01:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A3eKvaFo1JGhu6lnAN1aDIgq1Pf6mOkZOyokY6qopcs=;
-        b=A6fh5q+F4GC/hZejOwyrpnYhDN+x0FLlt7gyPcxFTCEIGdyK0qgh0s4KHaIE/kpvwL
-         GZe6kl/qQy1CA3jABX7M2XrVjU1Zhzlm2ku1Wc+JlO/h6PK3VeKoeiVmrbpPEJ3XVSgY
-         XxlsRPUSOrqz7G3hEWAINFGlOxlfyHaaz4pq9rKXsEZveAco7HAulJixh39Q+ehsQlwU
-         PA/+5WJ90zhFL/Hzyd8M3W28ZizEqlJxkdelyVrbTjtiZbV5U2CF6K1Pk5z/ZhFFQ7uI
-         cl9zcUjEI/iHMgBVeWDClGJoRidtWH9veioqpcuYZG045mi8fazgsc2AZ3DSYRA/exEc
-         MAGQ==
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=CdX7ZQEUe/cRH9WC2wubBDri/lMHrSGbYedbb2yw4Hc=;
+        b=VBSZIm/NitEgFgAiYMVXY43lq5XjFUUTjaYCUvPZMFM3pP+4Wn/Ra81LvNCG2B/dqJ
+         O6+C4i5V5lsX27m/EGX/IIARNSgTmUZiXI5PQoF97enNrvv6/mJebzS5Yj5OAR21DDoX
+         s4zlKfGVcczc06smz2ulDrS/Zl297SC6dcC64rH1OZ+gai2JvhSrKRBitBBnrTvQMaQg
+         H+pzisp2xLarzHpVCLA2fOqxxjrKKkgP66m1mHkoy0m5a431z/fWNSOG/vzQ15Hs2ESN
+         fXgp914i6/lDpaaL4j27zwbYHltwdJIRFp1dKQkcR6jleKZgd7L9hxRDjngn325S4xzk
+         woCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A3eKvaFo1JGhu6lnAN1aDIgq1Pf6mOkZOyokY6qopcs=;
-        b=TaYqy+Finv9xdIkX72mYpA34hGiDQsia0KW0CgQDBnxL8LNLgLzKRJ6aA+5wGpYEeN
-         Icj4c15z3+2kS+evnCbBLY8aOvhGfgHyJb+WJwkU6L97n4eR7q3OZpmPfkzGLfC4nW7b
-         FmHSbMzbGfN5moUr/7Ve/Ai2m0B2lLDoJ81baJ4P+XLeSJ82oBDolc77K8mZepn5zavF
-         JctzLIqb5f7l+DiBZwtmmFqqb5uoLRUUOZyKN8HsnYdJJaUeZkyIpIDGbFaOfZZQ595u
-         8B8pkidr9o7VzJBszSnyh60sixIpq4BStWNCmeCgoYo9JcRAwYAmieiQBOcUjbcuIbTQ
-         x19A==
-X-Gm-Message-State: APjAAAWbIAdoWSOXuS2x+clbb5xvRaKkL7bD7GT9IOh/xW9qt5JnqtFO
-        49xVm6GKuvKz89t3bVeN//eunt257rmlu/4UDJ0ZQp3DUKs=
-X-Google-Smtp-Source: APXvYqwaUR+5DSTETTRFfyfpI1V27XTxBW6BS9bvv8ctDtLaBovtbrmFzfqebLHu+KU4PgEKnwitUz7Ur31g4V49TEM=
-X-Received: by 2002:a02:9f95:: with SMTP id a21mr14065328jam.16.1574431209771;
- Fri, 22 Nov 2019 06:00:09 -0800 (PST)
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=CdX7ZQEUe/cRH9WC2wubBDri/lMHrSGbYedbb2yw4Hc=;
+        b=mRzhnBuqbjcrG48mEUpz1t54cXbTGjjIFQsr9kYhRRHL99DUNvn67LNFWNvKwayxav
+         +U1eXMv3C9Kh4g4hDiMB1ZrveUf9lf/oQb1alZbE4AEJTF4WcNnQ/KqkK01GVL05GgRG
+         Jj4Br20wVbYM2LgiOd4GevD8xXexUY+nll3LPBmBx3ImxBr5Qr4lD1WNWo8Tes/4EOos
+         CBWhdQ1oDQm+SMFH7wDBF/ukBf2+9MBShwRwiZflzsw12ihRK7j5TOn0/0IsxMEim/0k
+         9pKuhHUVotOxWm1Sfkrtxw9ZCSC5b5SB3em8ZGacPkYNyaENvvc+gVlxMXPV7pGKXKFB
+         2vrQ==
+X-Gm-Message-State: APjAAAWwlBR/BYOStCtQ8RZuUENEeFZo14gbLanQSE3ZU7LbaF2RO03V
+        91zEx5pBQZsUzj1TaUPlMWNQJt2AgTJA4w==
+X-Google-Smtp-Source: APXvYqxWtITWMvEHpWI203D+raKApDrbUfvSAVn8EvwssACZseFHVbt5V5RSqvf9csq4q2LiWohHOQ==
+X-Received: by 2002:ac8:1415:: with SMTP id k21mr4959630qtj.80.1574438477243;
+        Fri, 22 Nov 2019 08:01:17 -0800 (PST)
+Received: from [192.168.1.164] (pool-108-20-37-130.bstnma.fios.verizon.net. [108.20.37.130])
+        by smtp.gmail.com with ESMTPSA id m27sm2196315qta.21.2019.11.22.08.01.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Nov 2019 08:01:15 -0800 (PST)
+From:   Ric Wheeler <ricwheeler@gmail.com>
+Subject: USENIX Vault - open source storage call for talks - CFP deadline
+ extended
+To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-block@vger.kernel.org
+Cc:     Vault '20 Program Co-Chairs <vault20chairs@usenix.org>
+Message-ID: <727e2a7a-eab7-9ba7-e1b8-d75eb853245a@gmail.com>
+Date:   Fri, 22 Nov 2019 11:01:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.0
 MIME-Version: 1.0
-References: <20191122054911.1750-1-sashal@kernel.org> <20191122054911.1750-133-sashal@kernel.org>
-In-Reply-To: <20191122054911.1750-133-sashal@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Fri, 22 Nov 2019 15:00:43 +0100
-Message-ID: <CAOi1vP9MCrPf44V2GMyODH185A0HJcuPsYfVkOAVGkcMRb+=iw@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 4.19 140/219] libceph: drop last_piece logic from write_partial_message_data()
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 6:51 AM Sasha Levin <sashal@kernel.org> wrote:
->
-> From: Ilya Dryomov <idryomov@gmail.com>
->
-> [ Upstream commit 1f6b821aef78e3d79e8d598ae59fc7e23fb6c563 ]
->
-> last_piece is for the last piece in the current data item, not in the
-> entire data payload of the message.  This is harmful for messages with
-> multiple data items.  On top of that, we don't need to signal the end
-> of a data payload either because it is always followed by a footer.
->
-> We used to signal "more" unconditionally, until commit fe38a2b67bc6
-> ("libceph: start defining message data cursor").  Part of a large
-> series, it introduced cursor->last_piece and also mistakenly inverted
-> the hint by passing last_piece for "more".  This was corrected with
-> commit c2cfa1940097 ("libceph: Fix ceph_tcp_sendpage()'s more boolean
-> usage").
->
-> As it is, last_piece is not helping at all: because Nagle algorithm is
-> disabled, for a simple message with two 512-byte data items we end up
-> emitting three packets: front + first data item, second data item and
-> footer.  Go back to the original pre-fe38a2b67bc6 behavior -- a single
-> packet in most cases.
->
-> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  net/ceph/messenger.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-> index f7d7f32ac673c..6514816947fbe 100644
-> --- a/net/ceph/messenger.c
-> +++ b/net/ceph/messenger.c
-> @@ -1612,7 +1612,6 @@ static int write_partial_message_data(struct ceph_connection *con)
->                 struct page *page;
->                 size_t page_offset;
->                 size_t length;
-> -               bool last_piece;
->                 int ret;
->
->                 if (!cursor->resid) {
-> @@ -1620,10 +1619,9 @@ static int write_partial_message_data(struct ceph_connection *con)
->                         continue;
->                 }
->
-> -               page = ceph_msg_data_next(cursor, &page_offset, &length,
-> -                                         &last_piece);
-> -               ret = ceph_tcp_sendpage(con->sock, page, page_offset,
-> -                                       length, !last_piece);
-> +               page = ceph_msg_data_next(cursor, &page_offset, &length, NULL);
-> +               ret = ceph_tcp_sendpage(con->sock, page, page_offset, length,
-> +                                       true);
->                 if (ret <= 0) {
->                         if (do_datacrc)
->                                 msg->footer.data_crc = cpu_to_le32(crc);
+Hi all,
 
-Hi Sasha,
+We decided to push the CFP deadline for USENIX Vault back until Dec 3rd given 
+the holiday and some slowness we had in opening the CFP site. We already have a 
+good set of submissions, so please do submit any talk ideas as soon as possible.
 
-This commit was part of a larger series and shouldn't be backported on
-its own.  Please drop it.
+See here for more information on how to submit your talk proposals:
 
-Thanks,
+https://www.usenix.org/conference/vault20
 
-                Ilya
+Hope to see you all there!
+
+
+
