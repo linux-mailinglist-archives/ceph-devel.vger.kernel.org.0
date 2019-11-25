@@ -2,172 +2,164 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6B62108CA6
-	for <lists+ceph-devel@lfdr.de>; Mon, 25 Nov 2019 12:09:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70C63108EDB
+	for <lists+ceph-devel@lfdr.de>; Mon, 25 Nov 2019 14:27:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbfKYLJY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 25 Nov 2019 06:09:24 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:35434 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727633AbfKYLJY (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 25 Nov 2019 06:09:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574680163;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=aUB1SOEzee/uLv95tCGE3sqZ+srfP2ZV5gKnHlcz8MU=;
-        b=XRcaXT2xBNpNvsweZsxDSjwEKvx22zKKNe2A/Oe4cpPD3Fxl/EwX26IhKd9YdZ7Mzt4nIl
-        T0T5uwA3TPFzuam0O4VC1jLmA5oM7bdWna2Sb5pVY3d9y1Mz4QMaT9rOKtKmWcjxUXMSTH
-        NQGKD2KTrqZ06IQq8xUDQCOpvcpgfEc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-67-IZAEJYZwOD2FYEXJ6geodg-1; Mon, 25 Nov 2019 06:09:21 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727666AbfKYN1g (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 25 Nov 2019 08:27:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727393AbfKYN1g (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 25 Nov 2019 08:27:36 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A9321800585;
-        Mon, 25 Nov 2019 11:09:20 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-66.pek2.redhat.com [10.72.12.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F27E35D9CA;
-        Mon, 25 Nov 2019 11:09:17 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org
+        by mail.kernel.org (Postfix) with ESMTPSA id A5F3F2075C;
+        Mon, 25 Nov 2019 13:27:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574688455;
+        bh=0vE/lXvOmTRk+Opg5nlb3oHWh5mYdNRb+pjJqxVpFhg=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=USd6uxIYYwzNDcBAAoQgFSzqZ3Wvldcn/IF36Fro1UN0QWm6BUmULPYzV+ogXmCDO
+         0k11u4vMxxeQSWI2JyrsyQ28Q+PkxfOOR6+UqweBrJ0hv4i1qGIKo8fXlt94KShPaK
+         pRzqcOOPpXhdTIy98qCtGXmxamzn8THEkb72ra34=
+Message-ID: <3cbf12af7e05ea711e376ddbf93be5abf84fbf00.camel@kernel.org>
+Subject: Re: [PATCH v2 2/3] mdsmap: fix mdsmap cluster available check based
+ on laggy number
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com
 Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
-        pdonnell@redhat.com, ceph-devel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v2 3/3] mdsmap: only choose one MDS who is in up:active state without laggy
-Date:   Mon, 25 Nov 2019 06:08:27 -0500
-Message-Id: <20191125110827.12827-4-xiubli@redhat.com>
-In-Reply-To: <20191125110827.12827-1-xiubli@redhat.com>
+        pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Mon, 25 Nov 2019 08:27:33 -0500
+In-Reply-To: <20191125110827.12827-3-xiubli@redhat.com>
 References: <20191125110827.12827-1-xiubli@redhat.com>
+         <20191125110827.12827-3-xiubli@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1 (3.34.1-1.fc31) 
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-MC-Unique: IZAEJYZwOD2FYEXJ6geodg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Mon, 2019-11-25 at 06:08 -0500, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> In case the max_mds > 1 in MDS cluster and there is no any standby
+> MDS and all the max_mds MDSs are in up:active state, if one of the
+> up:active MDSs is dead, the m->m_num_laggy in kclient will be 1.
+> Then the mount will fail without considering other healthy MDSs.
+> 
+> There manybe some MDSs still "in" the cluster but not in up:active
+> state, we will ignore them. Only when all the up:active MDSs in
+> the cluster are laggy will treat the cluster as not be available.
+> 
+> In case decreasing the max_mds, the cluster will not stop the extra
+> up:active MDSs immediately and there will be a latency. During it
+> the up:active MDS number will be larger than the max_mds, so later
+> the m_info memories will 100% be reallocated.
+> 
+> Here will pick out the up:active MDSs as the m_num_mds and allocate
+> the needed memories once.
+> 
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/mdsmap.c            | 32 ++++++++++----------------------
+>  include/linux/ceph/mdsmap.h |  5 +++--
+>  2 files changed, 13 insertions(+), 24 deletions(-)
+> 
+> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+> index 471bac335fae..cc9ec959fe46 100644
+> --- a/fs/ceph/mdsmap.c
+> +++ b/fs/ceph/mdsmap.c
+> @@ -138,14 +138,21 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
+>  	m->m_session_autoclose = ceph_decode_32(p);
+>  	m->m_max_file_size = ceph_decode_64(p);
+>  	m->m_max_mds = ceph_decode_32(p);
+> -	m->m_num_mds = m->m_max_mds;
+> +
+> +	/*
+> +	 * pick out the active nodes as the m_num_mds, the m_num_mds
+> +	 * maybe larger than m_max_mds when decreasing the max_mds in
+> +	 * cluster side, in other case it should less than or equal
+> +	 * to m_max_mds.
+> +	 */
+> +	m->m_num_mds = n = ceph_decode_32(p);
+> +	m->m_num_active_mds = m->m_num_mds;
+>  
+>  	m->m_info = kcalloc(m->m_num_mds, sizeof(*m->m_info), GFP_NOFS);
+>  	if (!m->m_info)
+>  		goto nomem;
+>  
+>  	/* pick out active nodes from mds_info (state > 0) */
+> -	n = ceph_decode_32(p);
+>  	for (i = 0; i < n; i++) {
+>  		u64 global_id;
+>  		u32 namelen;
+> @@ -218,17 +225,6 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
+>  		if (mds < 0 || state <= 0)
+>  			continue;
+>  
+> -		if (mds >= m->m_num_mds) {
+> -			int new_num = max(mds + 1, m->m_num_mds * 2);
+> -			void *new_m_info = krealloc(m->m_info,
+> -						new_num * sizeof(*m->m_info),
+> -						GFP_NOFS | __GFP_ZERO);
+> -			if (!new_m_info)
+> -				goto nomem;
+> -			m->m_info = new_m_info;
+> -			m->m_num_mds = new_num;
+> -		}
+> -
 
-Even the MDS is in up:active state, but it also maybe laggy. Here
-will skip the laggy MDSs.
+I don't think we want to get rid of this bit. What happens if the number
+of MDS' increases after the mount occurs?
 
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/mds_client.c | 13 +++++++++----
- fs/ceph/mdsmap.c     | 30 +++++++++++++++++++++++-------
- 2 files changed, 32 insertions(+), 11 deletions(-)
+>  		info = &m->m_info[mds];
+>  		info->global_id = global_id;
+>  		info->state = state;
+> @@ -247,14 +243,6 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
+>  			info->export_targets = NULL;
+>  		}
+>  	}
+> -	if (m->m_num_mds > m->m_max_mds) {
+> -		/* find max up mds */
+> -		for (i = m->m_num_mds; i >= m->m_max_mds; i--) {
+> -			if (i == 0 || m->m_info[i-1].state > 0)
+> -				break;
+> -		}
+> -		m->m_num_mds = i;
+> -	}
+>  
+>  	/* pg_pools */
+>  	ceph_decode_32_safe(p, end, n, bad);
+> @@ -396,7 +384,7 @@ bool ceph_mdsmap_is_cluster_available(struct ceph_mdsmap *m)
+>  		return false;
+>  	if (m->m_damaged)
+>  		return false;
+> -	if (m->m_num_laggy > 0)
+> +	if (m->m_num_laggy == m->m_num_active_mds)
+>  		return false;
+>  	for (i = 0; i < m->m_num_mds; i++) {
+>  		if (m->m_info[i].state == CEPH_MDS_STATE_ACTIVE)
+> diff --git a/include/linux/ceph/mdsmap.h b/include/linux/ceph/mdsmap.h
+> index 0067d767c9ae..3a66f4f926ce 100644
+> --- a/include/linux/ceph/mdsmap.h
+> +++ b/include/linux/ceph/mdsmap.h
+> @@ -25,8 +25,9 @@ struct ceph_mdsmap {
+>  	u32 m_session_timeout;          /* seconds */
+>  	u32 m_session_autoclose;        /* seconds */
+>  	u64 m_max_file_size;
+> -	u32 m_max_mds;                  /* size of m_addr, m_state arrays */
+> -	int m_num_mds;
+> +	u32 m_max_mds;			/* expected up:active mds number */
+> +	int m_num_active_mds;		/* actual up:active mds number */
+> +	int m_num_mds;                  /* size of m_info array */
+>  	struct ceph_mds_info *m_info;
+>  
+>  	/* which object pools file data can be stored in */
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 0444288fe87e..2c92a1452876 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -972,14 +972,14 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
- =09=09=09=09     frag.frag, mds,
- =09=09=09=09     (int)r, frag.ndist);
- =09=09=09=09if (ceph_mdsmap_get_state(mdsc->mdsmap, mds) >=3D
--=09=09=09=09    CEPH_MDS_STATE_ACTIVE)
-+=09=09=09=09    CEPH_MDS_STATE_ACTIVE &&
-+=09=09=09=09    !ceph_mdsmap_is_laggy(mdsc->mdsmap, mds))
- =09=09=09=09=09goto out;
- =09=09=09}
-=20
- =09=09=09/* since this file/dir wasn't known to be
- =09=09=09 * replicated, then we want to look for the
- =09=09=09 * authoritative mds. */
--=09=09=09mode =3D USE_AUTH_MDS;
- =09=09=09if (frag.mds >=3D 0) {
- =09=09=09=09/* choose auth mds */
- =09=09=09=09mds =3D frag.mds;
-@@ -987,9 +987,14 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
- =09=09=09=09     "frag %u mds%d (auth)\n",
- =09=09=09=09     inode, ceph_vinop(inode), frag.frag, mds);
- =09=09=09=09if (ceph_mdsmap_get_state(mdsc->mdsmap, mds) >=3D
--=09=09=09=09    CEPH_MDS_STATE_ACTIVE)
--=09=09=09=09=09goto out;
-+=09=09=09=09    CEPH_MDS_STATE_ACTIVE) {
-+=09=09=09=09=09if (mode =3D=3D USE_ANY_MDS &&
-+=09=09=09=09=09    !ceph_mdsmap_is_laggy(mdsc->mdsmap,
-+=09=09=09=09=09=09=09=09  mds))
-+=09=09=09=09=09=09goto out;
-+=09=09=09=09}
- =09=09=09}
-+=09=09=09mode =3D USE_AUTH_MDS;
- =09=09}
- =09}
-=20
-diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
-index cc9ec959fe46..1e32cf486825 100644
---- a/fs/ceph/mdsmap.c
-+++ b/fs/ceph/mdsmap.c
-@@ -13,22 +13,24 @@
-=20
- #include "super.h"
-=20
-+#define CEPH_MDS_IS_READY(i, ignore_laggy) \
-+=09(m->m_info[i].state > 0 && (ignore_laggy ? true : !m->m_info[i].laggy))
-=20
--/*
-- * choose a random mds that is "up" (i.e. has a state > 0), or -1.
-- */
--int ceph_mdsmap_get_random_mds(struct ceph_mdsmap *m)
-+static int __mdsmap_get_random_mds(struct ceph_mdsmap *m, bool ignore_lagg=
-y)
- {
- =09int n =3D 0;
- =09int i, j;
-=20
--=09/* special case for one mds */
-+=09/*
-+=09 * special case for one mds, no matter it is laggy or
-+=09 * not we have no choice
-+=09 */
- =09if (1 =3D=3D m->m_num_mds && m->m_info[0].state > 0)
- =09=09return 0;
-=20
- =09/* count */
- =09for (i =3D 0; i < m->m_num_mds; i++)
--=09=09if (m->m_info[i].state > 0)
-+=09=09if (CEPH_MDS_IS_READY(i, ignore_laggy))
- =09=09=09n++;
- =09if (n =3D=3D 0)
- =09=09return -1;
-@@ -36,7 +38,7 @@ int ceph_mdsmap_get_random_mds(struct ceph_mdsmap *m)
- =09/* pick */
- =09n =3D prandom_u32() % n;
- =09for (j =3D 0, i =3D 0; i < m->m_num_mds; i++) {
--=09=09if (m->m_info[i].state > 0)
-+=09=09if (CEPH_MDS_IS_READY(i, ignore_laggy))
- =09=09=09j++;
- =09=09if (j > n)
- =09=09=09break;
-@@ -45,6 +47,20 @@ int ceph_mdsmap_get_random_mds(struct ceph_mdsmap *m)
- =09return i;
- }
-=20
-+/*
-+ * choose a random mds that is "up" (i.e. has a state > 0), or -1.
-+ */
-+int ceph_mdsmap_get_random_mds(struct ceph_mdsmap *m)
-+{
-+=09int mds;
-+
-+=09mds =3D __mdsmap_get_random_mds(m, false);
-+=09if (mds =3D=3D m->m_num_mds || mds =3D=3D -1)
-+=09=09mds =3D __mdsmap_get_random_mds(m, true);
-+
-+=09return mds =3D=3D m->m_num_mds ? -1 : mds;
-+}
-+
- #define __decode_and_drop_type(p, end, type, bad)=09=09\
- =09do {=09=09=09=09=09=09=09\
- =09=09if (*p + sizeof(type) > end)=09=09=09\
---=20
-2.21.0
+-- 
+Jeff Layton <jlayton@kernel.org>
 
