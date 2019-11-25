@@ -2,193 +2,149 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93AA6108F3A
-	for <lists+ceph-devel@lfdr.de>; Mon, 25 Nov 2019 14:51:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA557108F8F
+	for <lists+ceph-devel@lfdr.de>; Mon, 25 Nov 2019 15:06:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbfKYNvP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 25 Nov 2019 08:51:15 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:35517 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727462AbfKYNvP (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 25 Nov 2019 08:51:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574689873;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MGaD9OVKXZ6h413vDWG1Wxg4Ym6exqFGPtdxZcLJ9vY=;
-        b=QDj3Tv58T8gV7V75WyEASo9SkjCaJVokwFuLtZxw21QWae6irJVQOZ/nevfbA3DU89I006
-        tjXMtdw5sOgOd+Pc4VTwEJzTQAOvgO4r9W5mtQv5QPFaZXjZ2imhAPooSP86rCxj53qhXQ
-        TP7veqIXLl44sOSncSeCGomyqqiwRgI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-115-ncCRsW2XPHWUN-NWdd1ogg-1; Mon, 25 Nov 2019 08:51:10 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727928AbfKYOGx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 25 Nov 2019 09:06:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35310 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727666AbfKYOGx (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 25 Nov 2019 09:06:53 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 832A58CF43B;
-        Mon, 25 Nov 2019 13:51:09 +0000 (UTC)
-Received: from [10.72.12.66] (ovpn-12-66.pek2.redhat.com [10.72.12.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BC4BB19C70;
-        Mon, 25 Nov 2019 13:51:01 +0000 (UTC)
-Subject: Re: [PATCH v2 2/3] mdsmap: fix mdsmap cluster available check based
- on laggy number
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
-        pdonnell@redhat.com, ceph-devel@vger.kernel.org
-References: <20191125110827.12827-1-xiubli@redhat.com>
- <20191125110827.12827-3-xiubli@redhat.com>
- <3cbf12af7e05ea711e376ddbf93be5abf84fbf00.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <7e9ebebf-10b2-76e4-ae5f-cbdde25061f1@redhat.com>
-Date:   Mon, 25 Nov 2019 21:50:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 7082520748;
+        Mon, 25 Nov 2019 14:06:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574690812;
+        bh=BzJVgwBAwb4fHGnSImlrlJjuXvyWjGJYoST3KN7QX9w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=z862imtl/relCWKoHlsc4QFiNhnxcLP5NhqfeYNWAUk8xjWW30M1VqkJ6VYJMXrSB
+         HjkopeqGLOz0pa6coQJcGrf68iQmAOmX68RIQIcs3jLNUzSi0N13e8nb0ealzXLFw1
+         2LbhyFX5pkc3JSly90U3IdUEq8hWGnosckklFZD4=
+Date:   Mon, 25 Nov 2019 09:06:51 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH AUTOSEL 4.19 100/237] libceph: don't consume a ref on
+ pagelist in ceph_msg_data_add_pagelist()
+Message-ID: <20191125140651.GE5861@sasha-vm>
+References: <20191116154113.7417-1-sashal@kernel.org>
+ <20191116154113.7417-100-sashal@kernel.org>
+ <CAOi1vP8ZTyaGsn-hXtnr+AnCrEQfSB6sTLYwkkZ8P1oY9EgPXg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <3cbf12af7e05ea711e376ddbf93be5abf84fbf00.camel@kernel.org>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: ncCRsW2XPHWUN-NWdd1ogg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAOi1vP8ZTyaGsn-hXtnr+AnCrEQfSB6sTLYwkkZ8P1oY9EgPXg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2019/11/25 21:27, Jeff Layton wrote:
-> On Mon, 2019-11-25 at 06:08 -0500, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
+On Sat, Nov 16, 2019 at 05:23:28PM +0100, Ilya Dryomov wrote:
+>On Sat, Nov 16, 2019 at 4:43 PM Sasha Levin <sashal@kernel.org> wrote:
 >>
->> In case the max_mds > 1 in MDS cluster and there is no any standby
->> MDS and all the max_mds MDSs are in up:active state, if one of the
->> up:active MDSs is dead, the m->m_num_laggy in kclient will be 1.
->> Then the mount will fail without considering other healthy MDSs.
+>> From: Ilya Dryomov <idryomov@gmail.com>
 >>
->> There manybe some MDSs still "in" the cluster but not in up:active
->> state, we will ignore them. Only when all the up:active MDSs in
->> the cluster are laggy will treat the cluster as not be available.
+>> [ Upstream commit 894868330a1e038ea4a65dbb81741eef70ad71b1 ]
 >>
->> In case decreasing the max_mds, the cluster will not stop the extra
->> up:active MDSs immediately and there will be a latency. During it
->> the up:active MDS number will be larger than the max_mds, so later
->> the m_info memories will 100% be reallocated.
+>> Because send_mds_reconnect() wants to send a message with a pagelist
+>> and pass the ownership to the messenger, ceph_msg_data_add_pagelist()
+>> consumes a ref which is then put in ceph_msg_data_destroy().  This
+>> makes managing pagelists in the OSD client (where they are wrapped in
+>> ceph_osd_data) unnecessarily hard because the handoff only happens in
+>> ceph_osdc_start_request() instead of when the pagelist is passed to
+>> ceph_osd_data_pagelist_init().  I counted several memory leaks on
+>> various error paths.
 >>
->> Here will pick out the up:active MDSs as the m_num_mds and allocate
->> the needed memories once.
+>> Fix up ceph_msg_data_add_pagelist() and carry a pagelist ref in
+>> ceph_osd_data.
 >>
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+>> Signed-off-by: Sasha Levin <sashal@kernel.org>
 >> ---
->>   fs/ceph/mdsmap.c            | 32 ++++++++++----------------------
->>   include/linux/ceph/mdsmap.h |  5 +++--
->>   2 files changed, 13 insertions(+), 24 deletions(-)
+>>  fs/ceph/mds_client.c  | 2 +-
+>>  net/ceph/messenger.c  | 1 +
+>>  net/ceph/osd_client.c | 8 ++++++++
+>>  3 files changed, 10 insertions(+), 1 deletion(-)
 >>
->> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
->> index 471bac335fae..cc9ec959fe46 100644
->> --- a/fs/ceph/mdsmap.c
->> +++ b/fs/ceph/mdsmap.c
->> @@ -138,14 +138,21 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
->>   	m->m_session_autoclose = ceph_decode_32(p);
->>   	m->m_max_file_size = ceph_decode_64(p);
->>   	m->m_max_mds = ceph_decode_32(p);
->> -	m->m_num_mds = m->m_max_mds;
->> +
->> +	/*
->> +	 * pick out the active nodes as the m_num_mds, the m_num_mds
->> +	 * maybe larger than m_max_mds when decreasing the max_mds in
->> +	 * cluster side, in other case it should less than or equal
->> +	 * to m_max_mds.
->> +	 */
->> +	m->m_num_mds = n = ceph_decode_32(p);
->> +	m->m_num_active_mds = m->m_num_mds;
->>   
->>   	m->m_info = kcalloc(m->m_num_mds, sizeof(*m->m_info), GFP_NOFS);
->>   	if (!m->m_info)
->>   		goto nomem;
->>   
->>   	/* pick out active nodes from mds_info (state > 0) */
->> -	n = ceph_decode_32(p);
->>   	for (i = 0; i < n; i++) {
->>   		u64 global_id;
->>   		u32 namelen;
->> @@ -218,17 +225,6 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
->>   		if (mds < 0 || state <= 0)
->>   			continue;
->>   
->> -		if (mds >= m->m_num_mds) {
->> -			int new_num = max(mds + 1, m->m_num_mds * 2);
->> -			void *new_m_info = krealloc(m->m_info,
->> -						new_num * sizeof(*m->m_info),
->> -						GFP_NOFS | __GFP_ZERO);
->> -			if (!new_m_info)
->> -				goto nomem;
->> -			m->m_info = new_m_info;
->> -			m->m_num_mds = new_num;
->> -		}
->> -
-> I don't think we want to get rid of this bit. What happens if the number
-> of MDS' increases after the mount occurs?
-Every time when we receive a new version of mdsmap, the old whole 
-mdsc->mdsmap memory will be reallocated and replaced, no matter the MDS' 
-increases or decreases.
+>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+>> index 09db6d08614d2..94494d05a94cb 100644
+>> --- a/fs/ceph/mds_client.c
+>> +++ b/fs/ceph/mds_client.c
+>> @@ -2184,7 +2184,6 @@ static struct ceph_msg *create_request_message(struct ceph_mds_client *mdsc,
+>>
+>>         if (req->r_pagelist) {
+>>                 struct ceph_pagelist *pagelist = req->r_pagelist;
+>> -               refcount_inc(&pagelist->refcnt);
+>>                 ceph_msg_data_add_pagelist(msg, pagelist);
+>>                 msg->hdr.data_len = cpu_to_le32(pagelist->length);
+>>         } else {
+>> @@ -3289,6 +3288,7 @@ static void send_mds_reconnect(struct ceph_mds_client *mdsc,
+>>         mutex_unlock(&mdsc->mutex);
+>>
+>>         up_read(&mdsc->snap_rwsem);
+>> +       ceph_pagelist_release(pagelist);
+>>         return;
+>>
+>>  fail:
+>> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+>> index f7d7f32ac673c..2c8cd339d59ea 100644
+>> --- a/net/ceph/messenger.c
+>> +++ b/net/ceph/messenger.c
+>> @@ -3323,6 +3323,7 @@ void ceph_msg_data_add_pagelist(struct ceph_msg *msg,
+>>
+>>         data = ceph_msg_data_create(CEPH_MSG_DATA_PAGELIST);
+>>         BUG_ON(!data);
+>> +       refcount_inc(&pagelist->refcnt);
+>>         data->pagelist = pagelist;
+>>
+>>         list_add_tail(&data->links, &msg->data);
+>> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+>> index 76c41a84550e7..c3494c1fb3a9a 100644
+>> --- a/net/ceph/osd_client.c
+>> +++ b/net/ceph/osd_client.c
+>> @@ -126,6 +126,9 @@ static void ceph_osd_data_init(struct ceph_osd_data *osd_data)
+>>         osd_data->type = CEPH_OSD_DATA_TYPE_NONE;
+>>  }
+>>
+>> +/*
+>> + * Consumes @pages if @own_pages is true.
+>> + */
+>>  static void ceph_osd_data_pages_init(struct ceph_osd_data *osd_data,
+>>                         struct page **pages, u64 length, u32 alignment,
+>>                         bool pages_from_pool, bool own_pages)
+>> @@ -138,6 +141,9 @@ static void ceph_osd_data_pages_init(struct ceph_osd_data *osd_data,
+>>         osd_data->own_pages = own_pages;
+>>  }
+>>
+>> +/*
+>> + * Consumes a ref on @pagelist.
+>> + */
+>>  static void ceph_osd_data_pagelist_init(struct ceph_osd_data *osd_data,
+>>                         struct ceph_pagelist *pagelist)
+>>  {
+>> @@ -362,6 +368,8 @@ static void ceph_osd_data_release(struct ceph_osd_data *osd_data)
+>>                 num_pages = calc_pages_for((u64)osd_data->alignment,
+>>                                                 (u64)osd_data->length);
+>>                 ceph_release_page_vector(osd_data->pages, num_pages);
+>> +       } else if (osd_data->type == CEPH_OSD_DATA_TYPE_PAGELIST) {
+>> +               ceph_pagelist_release(osd_data->pagelist);
+>>         }
+>>         ceph_osd_data_init(osd_data);
+>>  }
+>
+>Hi Sasha,
+>
+>This commit was part of a larger series and shouldn't be backported on
+>its own.  Please drop it.
 
-The active nodes from mds_info above will help record the actual MDS 
-number and then we decode it into "m_num_active_mds". If we are 
-decreasing the max_mds in the cluster side, the "m_num_active_mds" will 
-very probably be larger than the expected "m_num_mds", then we 
-definitely will need to reallocate the memory for m->m_info here. Why 
-not allocate enough memory beforehand ?
+Dropped, thanks!
 
-BTW, from my investigation that the mds number decoded from the mds_info 
-won't be larger than the "m_num_active_mds". If I am right then this 
-code is useless here, or we need it.
-
-
->>   		info = &m->m_info[mds];
->>   		info->global_id = global_id;
->>   		info->state = state;
->> @@ -247,14 +243,6 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
->>   			info->export_targets = NULL;
->>   		}
->>   	}
->> -	if (m->m_num_mds > m->m_max_mds) {
->> -		/* find max up mds */
->> -		for (i = m->m_num_mds; i >= m->m_max_mds; i--) {
->> -			if (i == 0 || m->m_info[i-1].state > 0)
->> -				break;
->> -		}
->> -		m->m_num_mds = i;
->> -	}
->>   
->>   	/* pg_pools */
->>   	ceph_decode_32_safe(p, end, n, bad);
->> @@ -396,7 +384,7 @@ bool ceph_mdsmap_is_cluster_available(struct ceph_mdsmap *m)
->>   		return false;
->>   	if (m->m_damaged)
->>   		return false;
->> -	if (m->m_num_laggy > 0)
->> +	if (m->m_num_laggy == m->m_num_active_mds)
->>   		return false;
->>   	for (i = 0; i < m->m_num_mds; i++) {
->>   		if (m->m_info[i].state == CEPH_MDS_STATE_ACTIVE)
->> diff --git a/include/linux/ceph/mdsmap.h b/include/linux/ceph/mdsmap.h
->> index 0067d767c9ae..3a66f4f926ce 100644
->> --- a/include/linux/ceph/mdsmap.h
->> +++ b/include/linux/ceph/mdsmap.h
->> @@ -25,8 +25,9 @@ struct ceph_mdsmap {
->>   	u32 m_session_timeout;          /* seconds */
->>   	u32 m_session_autoclose;        /* seconds */
->>   	u64 m_max_file_size;
->> -	u32 m_max_mds;                  /* size of m_addr, m_state arrays */
->> -	int m_num_mds;
->> +	u32 m_max_mds;			/* expected up:active mds number */
->> +	int m_num_active_mds;		/* actual up:active mds number */
->> +	int m_num_mds;                  /* size of m_info array */
->>   	struct ceph_mds_info *m_info;
->>   
->>   	/* which object pools file data can be stored in */
-
-
+-- 
+Thanks,
+Sasha
