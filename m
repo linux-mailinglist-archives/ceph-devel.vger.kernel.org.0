@@ -2,131 +2,124 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65E46109DDE
-	for <lists+ceph-devel@lfdr.de>; Tue, 26 Nov 2019 13:24:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE23C109DE0
+	for <lists+ceph-devel@lfdr.de>; Tue, 26 Nov 2019 13:24:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728357AbfKZMYd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 26 Nov 2019 07:24:33 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:42720 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728290AbfKZMYd (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 26 Nov 2019 07:24:33 -0500
-Received: by mail-qk1-f195.google.com with SMTP id i3so15844332qkk.9
-        for <ceph-devel@vger.kernel.org>; Tue, 26 Nov 2019 04:24:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=at4j5qBoWb/wUNZ4mBO3aVKSs5pO7Fcpu97Om0CsfKk=;
-        b=UgAmWjYjnArNENldbPqwbAlTh86J8LlRanGQPv/6yWD1aYESx93Kpe5ze5QIMBS7P7
-         LMCwsh9NZO3aKslY74jS1egVTSI2syhRgMh7sFbbRhNhzmHSL0Jj568diDfAdo1ynuBc
-         wUglSKeyxOHeFdiA1n/0EXap/Ro1d33EigzeLZVbWwE+9liYl8UbBFM0JLMxTxuSUGfa
-         vGgrisy/Rr/G4fGxAdLmN1g0b0XpJIlfcwRgMeV4nDfCM90RS1fqAbBcwF7eHTAK3549
-         f89TriIEmTl3bzgGDfF1Ql0AvOjJzc5R5AkaGzUUkAakqCxvEbc/+cKVkGFFWo7HbIxX
-         /ADQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=at4j5qBoWb/wUNZ4mBO3aVKSs5pO7Fcpu97Om0CsfKk=;
-        b=FzTs1kuZJ4ZwkIWjfY9Hzf17NZK4MLZAKDZ7jnvp3Wb29hfAt5xV9s5bF2PI7IX1sI
-         VdesH8EOg+TwNaEyApI/abUmmhHuq7zeg5OBEEUsVJB+wOMCCGS2xGStFsbaqr6It+l8
-         qF9t+JwZkcdSEamF5yZ9hMOAeJjCln4UvetU3w0IvyU8SauQGpNG7DFoEEY72IYLj2tK
-         a3es+8tEjv+eNYxwuWTl5LVUKFvwR4dPEME/aq5t6dfgXm5KVI41otJ3buZIokdwRZ5T
-         fR+hnU6aT+zcpWiG4CWW54VA3/nSI2DpHpkFT5ZqComrAaiovoZwMSakfmHGjWjY3AA8
-         IHuA==
-X-Gm-Message-State: APjAAAWUV0RZKW86iJMyH0JvAxlW0Ee0SwF2iTHNGdqWNXWHAqGUjv+4
-        NzE+rc3XmcTE3n27JXEelO4Hz6ND9f4CugB5sgE=
-X-Google-Smtp-Source: APXvYqyh87Sx4LL2XzGvEtFkBhwb8YZtDVkr7fvBlb3O4SbihQV4VtlMyrHbXo44XbRO8bQbFRt8sU9CKTZhZqS9rzE=
-X-Received: by 2002:a37:68d5:: with SMTP id d204mr17090225qkc.268.1574771072011;
- Tue, 26 Nov 2019 04:24:32 -0800 (PST)
+        id S1728365AbfKZMYq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 26 Nov 2019 07:24:46 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:41191 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728361AbfKZMYp (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 26 Nov 2019 07:24:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574771084;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0434QUXjPvIaHT1EaIkqlZLBAS2xooOlYe242h7NpmM=;
+        b=MvAuYerdJMd1mpfrECow+yFAp+ruwgaZYPYEYnrRN289QSmmW5unSXZFn7v+72R5FcNkpu
+        LWB4hRCh3Toqw+BYwVDldHbegvfO3Ozfdr1PCMVGV/OBq3YFk2HBe98R3YSYIxH1uKmvKG
+        ssAmTlVAIv/VxpjtKZu/Pj2VMZ55Nrs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-384-gmd6WlKnOY29-wKYDhxCew-1; Tue, 26 Nov 2019 07:24:42 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DE65780183C;
+        Tue, 26 Nov 2019 12:24:41 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-66.pek2.redhat.com [10.72.12.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 27D765D6BE;
+        Tue, 26 Nov 2019 12:24:38 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org, zyan@redhat.com
+Cc:     sage@redhat.com, idryomov@gmail.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v3 1/3] mdsmap: add more debug info when decoding
+Date:   Tue, 26 Nov 2019 07:24:20 -0500
+Message-Id: <20191126122422.12396-2-xiubli@redhat.com>
+In-Reply-To: <20191126122422.12396-1-xiubli@redhat.com>
+References: <20191126122422.12396-1-xiubli@redhat.com>
 MIME-Version: 1.0
-References: <20191126085114.40326-1-xiubli@redhat.com> <CAAM7YA=SAY-DQ5iUB-837=eC-ERV46_1_6Zi4SLNdD13_x4U4A@mail.gmail.com>
- <b0714ccd-4844-4b3e-24d4-d75e10bb6b08@redhat.com> <62d6459b-f227-64c9-482b-80148bdea696@redhat.com>
- <f215a5ce-f71a-4811-3650-5d62ec00262d@redhat.com>
-In-Reply-To: <f215a5ce-f71a-4811-3650-5d62ec00262d@redhat.com>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Tue, 26 Nov 2019 20:24:20 +0800
-Message-ID: <CAAM7YAnRwKtMKH2=jnaLZovd1+t1pAx1qf0BceUYRS-Mv385VQ@mail.gmail.com>
-Subject: Re: [PATCH] ceph: trigger the reclaim work once there has enough
- pending caps
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     "Yan, Zheng" <zyan@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-MC-Unique: gmd6WlKnOY29-wKYDhxCew-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Nov 26, 2019 at 7:25 PM Xiubo Li <xiubli@redhat.com> wrote:
->
-> On 2019/11/26 19:03, Yan, Zheng wrote:
-> > On 11/26/19 6:01 PM, Xiubo Li wrote:
-> >> On 2019/11/26 17:49, Yan, Zheng wrote:
-> >>> On Tue, Nov 26, 2019 at 4:57 PM <xiubli@redhat.com> wrote:
-> >>>> From: Xiubo Li <xiubli@redhat.com>
-> >>>>
-> >>>> The nr in ceph_reclaim_caps_nr() is very possibly larger than 1,
-> >>>> so we may miss it and the reclaim work couldn't triggered as expected.
-> >>>>
-> >>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> >>>> ---
-> >>>>   fs/ceph/mds_client.c | 2 +-
-> >>>>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> >>>> index 08b70b5ee05e..547ffe16f91c 100644
-> >>>> --- a/fs/ceph/mds_client.c
-> >>>> +++ b/fs/ceph/mds_client.c
-> >>>> @@ -2020,7 +2020,7 @@ void ceph_reclaim_caps_nr(struct
-> >>>> ceph_mds_client *mdsc, int nr)
-> >>>>          if (!nr)
-> >>>>                  return;
-> >>>>          val = atomic_add_return(nr, &mdsc->cap_reclaim_pending);
-> >>>> -       if (!(val % CEPH_CAPS_PER_RELEASE)) {
-> >>>> +       if (val / CEPH_CAPS_PER_RELEASE) {
-> >>>> atomic_set(&mdsc->cap_reclaim_pending, 0);
-> >>>>                  ceph_queue_cap_reclaim_work(mdsc);
-> >>>>          }
-> >>> this will call ceph_queue_cap_reclaim_work too frequently
-> >>
-> >> No it won't, the '/' here equals to '>=' and then the
-> >> "mdsc->cap_reclaim_pending" will be reset and it will increase from 0
-> >> again.
-> >>
-> >> It will make sure that only when "mdsc->cap_reclaim_pending >=
-> >> CEPH_CAPS_PER_RELEASE" will call the work queue.
-> >
-> > Work does not get executed immediately. call
-> > ceph_queue_cap_reclaim_work() when val == CEPH_CAPS_PER_RELEASE is
-> > enough. There is no point to call it too frequently
-> >
-> >
-> Yeah, it true and I am okay with this. Just going through the session
-> release related code, and saw the "nr" parameter will be "ctx->used" in
-> ceph_reclaim_caps_nr(mdsc, ctx->used), and in case there has many
-> sessions with tremendous amount of caps. In corner case that we may
-> always miss the condition that the "val == CEPH_CAPS_PER_RELEASE" here.
->
+From: Xiubo Li <xiubli@redhat.com>
 
-good catch. But the test should be something like
+Show the laggy state.
 
-"if ((val % CEPH_CAPS_PER_RELEASE) < nr)"
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/mdsmap.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-> IMO, it wants to fire the work queue once "val >=
-> CEPH_CAPS_PER_RELEASE", but it is not working like this, the val may
-> just skip it without doing any thing.
->
-> Thanks
->
->
-> >>
-> >>>> --
-> >>>> 2.21.0
-> >>>>
-> >>
-> >
->
+diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+index aeec1d6e3769..471bac335fae 100644
+--- a/fs/ceph/mdsmap.c
++++ b/fs/ceph/mdsmap.c
+@@ -158,6 +158,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *=
+end)
+ =09=09void *pexport_targets =3D NULL;
+ =09=09struct ceph_timespec laggy_since;
+ =09=09struct ceph_mds_info *info;
++=09=09bool laggy;
+=20
+ =09=09ceph_decode_need(p, end, sizeof(u64) + 1, bad);
+ =09=09global_id =3D ceph_decode_64(p);
+@@ -190,6 +191,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *=
+end)
+ =09=09if (err)
+ =09=09=09goto corrupt;
+ =09=09ceph_decode_copy(p, &laggy_since, sizeof(laggy_since));
++=09=09laggy =3D laggy_since.tv_sec !=3D 0 || laggy_since.tv_nsec !=3D 0;
+ =09=09*p +=3D sizeof(u32);
+ =09=09ceph_decode_32_safe(p, end, namelen, bad);
+ =09=09*p +=3D namelen;
+@@ -207,10 +209,11 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void=
+ *end)
+ =09=09=09*p =3D info_end;
+ =09=09}
+=20
+-=09=09dout("mdsmap_decode %d/%d %lld mds%d.%d %s %s\n",
++=09=09dout("mdsmap_decode %d/%d %lld mds%d.%d %s %s%s\n",
+ =09=09     i+1, n, global_id, mds, inc,
+ =09=09     ceph_pr_addr(&addr),
+-=09=09     ceph_mds_state_name(state));
++=09=09     ceph_mds_state_name(state),
++=09=09     laggy ? "(laggy)" : "");
+=20
+ =09=09if (mds < 0 || state <=3D 0)
+ =09=09=09continue;
+@@ -230,8 +233,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *=
+end)
+ =09=09info->global_id =3D global_id;
+ =09=09info->state =3D state;
+ =09=09info->addr =3D addr;
+-=09=09info->laggy =3D (laggy_since.tv_sec !=3D 0 ||
+-=09=09=09       laggy_since.tv_nsec !=3D 0);
++=09=09info->laggy =3D laggy;
+ =09=09info->num_export_targets =3D num_export_targets;
+ =09=09if (num_export_targets) {
+ =09=09=09info->export_targets =3D kcalloc(num_export_targets,
+@@ -355,6 +357,8 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *=
+end)
+ =09=09m->m_damaged =3D false;
+ =09}
+ bad_ext:
++=09dout("mdsmap_decode m_enabled: %d, m_damaged: %d, m_num_laggy: %d\n",
++=09     !!m->m_enabled, !!m->m_damaged, m->m_num_laggy);
+ =09*p =3D end;
+ =09dout("mdsmap_decode success epoch %u\n", m->m_epoch);
+ =09return m;
+--=20
+2.21.0
+
