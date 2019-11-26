@@ -2,171 +2,137 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9927109DE2
-	for <lists+ceph-devel@lfdr.de>; Tue, 26 Nov 2019 13:24:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE35B109DEB
+	for <lists+ceph-devel@lfdr.de>; Tue, 26 Nov 2019 13:27:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbfKZMYx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 26 Nov 2019 07:24:53 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38559 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728361AbfKZMYw (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 26 Nov 2019 07:24:52 -0500
+        id S1727735AbfKZM1r (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 26 Nov 2019 07:27:47 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:60865 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727408AbfKZM1r (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 26 Nov 2019 07:27:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574771091;
+        s=mimecast20190719; t=1574771266;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=95xHkjFfntMGoj7eo2xSGgnX9aGcbuQcnLi3CaS/buI=;
-        b=F2BkRN5TsIgyLV9PRr30xLjZlFsRGV7Mqu3nM46Vu1mgvxoTkRnUTDWG7HOzoeIqYL1r/G
-        hseNKFQYcbD9jHlx+vtUofJy6RILC6guhN2/hAxJqiGPObdVdxThpk6Fkkf2bk5UdkJQpC
-        K3JpTFTtd8+zd+CIGMAd10bHQes9gV4=
+        bh=8lfD2SDCmfAxTpc5kc18Wui0u5bwuQDSN923sxKLj4Q=;
+        b=Gd4ps8JIyWa7S8c6laAHkgKSOeij7jD/gFGfyt0qG698pfxuKntLc9xGjnRX0H4tlRnKJN
+        C1xTD4CKOOl5BijXWLcUru2fs4X6zDmRKS5hgKwHFfP+HNZ7AB1if2a/jds0uZSZNS05IC
+        rcozr/J4HdBAD3D8nm6Iw3Q7WUAL9gY=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-359-i-iLk7HAOfGXzveMwgqrbg-1; Tue, 26 Nov 2019 07:24:49 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+ us-mta-186-1fo76IM-Nt2jvx2FGrAxog-1; Tue, 26 Nov 2019 07:27:42 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6F40E477;
-        Tue, 26 Nov 2019 12:24:48 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-66.pek2.redhat.com [10.72.12.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B60325D6C3;
-        Tue, 26 Nov 2019 12:24:45 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org, zyan@redhat.com
-Cc:     sage@redhat.com, idryomov@gmail.com, pdonnell@redhat.com,
-        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v3 3/3] mdsmap: only choose one MDS who is in up:active state without laggy
-Date:   Tue, 26 Nov 2019 07:24:22 -0500
-Message-Id: <20191126122422.12396-4-xiubli@redhat.com>
-In-Reply-To: <20191126122422.12396-1-xiubli@redhat.com>
-References: <20191126122422.12396-1-xiubli@redhat.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C23B01007293;
+        Tue, 26 Nov 2019 12:27:41 +0000 (UTC)
+Received: from [10.72.12.66] (ovpn-12-66.pek2.redhat.com [10.72.12.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D08A25C1D8;
+        Tue, 26 Nov 2019 12:27:36 +0000 (UTC)
+Subject: Re: [PATCH] ceph: trigger the reclaim work once there has enough
+ pending caps
+To:     "Yan, Zheng" <ukernel@gmail.com>
+Cc:     "Yan, Zheng" <zyan@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+References: <20191126085114.40326-1-xiubli@redhat.com>
+ <CAAM7YA=SAY-DQ5iUB-837=eC-ERV46_1_6Zi4SLNdD13_x4U4A@mail.gmail.com>
+ <b0714ccd-4844-4b3e-24d4-d75e10bb6b08@redhat.com>
+ <62d6459b-f227-64c9-482b-80148bdea696@redhat.com>
+ <f215a5ce-f71a-4811-3650-5d62ec00262d@redhat.com>
+ <CAAM7YAnRwKtMKH2=jnaLZovd1+t1pAx1qf0BceUYRS-Mv385VQ@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <8bfca8cb-9191-2b8b-bde2-8ca57d3b84b9@redhat.com>
+Date:   Tue, 26 Nov 2019 20:27:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: i-iLk7HAOfGXzveMwgqrbg-1
+In-Reply-To: <CAAM7YAnRwKtMKH2=jnaLZovd1+t1pAx1qf0BceUYRS-Mv385VQ@mail.gmail.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: 1fo76IM-Nt2jvx2FGrAxog-1
 X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On 2019/11/26 20:24, Yan, Zheng wrote:
+> On Tue, Nov 26, 2019 at 7:25 PM Xiubo Li <xiubli@redhat.com> wrote:
+>> On 2019/11/26 19:03, Yan, Zheng wrote:
+>>> On 11/26/19 6:01 PM, Xiubo Li wrote:
+>>>> On 2019/11/26 17:49, Yan, Zheng wrote:
+>>>>> On Tue, Nov 26, 2019 at 4:57 PM <xiubli@redhat.com> wrote:
+>>>>>> From: Xiubo Li <xiubli@redhat.com>
+>>>>>>
+>>>>>> The nr in ceph_reclaim_caps_nr() is very possibly larger than 1,
+>>>>>> so we may miss it and the reclaim work couldn't triggered as expected.
+>>>>>>
+>>>>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>>>>>> ---
+>>>>>>    fs/ceph/mds_client.c | 2 +-
+>>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+>>>>>> index 08b70b5ee05e..547ffe16f91c 100644
+>>>>>> --- a/fs/ceph/mds_client.c
+>>>>>> +++ b/fs/ceph/mds_client.c
+>>>>>> @@ -2020,7 +2020,7 @@ void ceph_reclaim_caps_nr(struct
+>>>>>> ceph_mds_client *mdsc, int nr)
+>>>>>>           if (!nr)
+>>>>>>                   return;
+>>>>>>           val = atomic_add_return(nr, &mdsc->cap_reclaim_pending);
+>>>>>> -       if (!(val % CEPH_CAPS_PER_RELEASE)) {
+>>>>>> +       if (val / CEPH_CAPS_PER_RELEASE) {
+>>>>>> atomic_set(&mdsc->cap_reclaim_pending, 0);
+>>>>>>                   ceph_queue_cap_reclaim_work(mdsc);
+>>>>>>           }
+>>>>> this will call ceph_queue_cap_reclaim_work too frequently
+>>>> No it won't, the '/' here equals to '>=' and then the
+>>>> "mdsc->cap_reclaim_pending" will be reset and it will increase from 0
+>>>> again.
+>>>>
+>>>> It will make sure that only when "mdsc->cap_reclaim_pending >=
+>>>> CEPH_CAPS_PER_RELEASE" will call the work queue.
+>>> Work does not get executed immediately. call
+>>> ceph_queue_cap_reclaim_work() when val == CEPH_CAPS_PER_RELEASE is
+>>> enough. There is no point to call it too frequently
+>>>
+>>>
+>> Yeah, it true and I am okay with this. Just going through the session
+>> release related code, and saw the "nr" parameter will be "ctx->used" in
+>> ceph_reclaim_caps_nr(mdsc, ctx->used), and in case there has many
+>> sessions with tremendous amount of caps. In corner case that we may
+>> always miss the condition that the "val == CEPH_CAPS_PER_RELEASE" here.
+>>
+> good catch. But the test should be something like
+>
+> "if ((val % CEPH_CAPS_PER_RELEASE) < nr)"
 
-Even the MDS is in up:active state, but it also maybe laggy. Here
-will skip the laggy MDSs.
+Sure, this looks a bit more graceful.
 
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/mds_client.c | 13 +++++++++----
- fs/ceph/mdsmap.c     | 30 +++++++++++++++++++++++-------
- 2 files changed, 32 insertions(+), 11 deletions(-)
+Will fix it.
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 0444288fe87e..2c92a1452876 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -972,14 +972,14 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
- =09=09=09=09     frag.frag, mds,
- =09=09=09=09     (int)r, frag.ndist);
- =09=09=09=09if (ceph_mdsmap_get_state(mdsc->mdsmap, mds) >=3D
--=09=09=09=09    CEPH_MDS_STATE_ACTIVE)
-+=09=09=09=09    CEPH_MDS_STATE_ACTIVE &&
-+=09=09=09=09    !ceph_mdsmap_is_laggy(mdsc->mdsmap, mds))
- =09=09=09=09=09goto out;
- =09=09=09}
-=20
- =09=09=09/* since this file/dir wasn't known to be
- =09=09=09 * replicated, then we want to look for the
- =09=09=09 * authoritative mds. */
--=09=09=09mode =3D USE_AUTH_MDS;
- =09=09=09if (frag.mds >=3D 0) {
- =09=09=09=09/* choose auth mds */
- =09=09=09=09mds =3D frag.mds;
-@@ -987,9 +987,14 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
- =09=09=09=09     "frag %u mds%d (auth)\n",
- =09=09=09=09     inode, ceph_vinop(inode), frag.frag, mds);
- =09=09=09=09if (ceph_mdsmap_get_state(mdsc->mdsmap, mds) >=3D
--=09=09=09=09    CEPH_MDS_STATE_ACTIVE)
--=09=09=09=09=09goto out;
-+=09=09=09=09    CEPH_MDS_STATE_ACTIVE) {
-+=09=09=09=09=09if (mode =3D=3D USE_ANY_MDS &&
-+=09=09=09=09=09    !ceph_mdsmap_is_laggy(mdsc->mdsmap,
-+=09=09=09=09=09=09=09=09  mds))
-+=09=09=09=09=09=09goto out;
-+=09=09=09=09}
- =09=09=09}
-+=09=09=09mode =3D USE_AUTH_MDS;
- =09=09}
- =09}
-=20
-diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
-index 3418cf2c6a12..284d68646c40 100644
---- a/fs/ceph/mdsmap.c
-+++ b/fs/ceph/mdsmap.c
-@@ -13,22 +13,24 @@
-=20
- #include "super.h"
-=20
-+#define CEPH_MDS_IS_READY(i, ignore_laggy) \
-+=09(m->m_info[i].state > 0 && (ignore_laggy ? true : !m->m_info[i].laggy))
-=20
--/*
-- * choose a random mds that is "up" (i.e. has a state > 0), or -1.
-- */
--int ceph_mdsmap_get_random_mds(struct ceph_mdsmap *m)
-+static int __mdsmap_get_random_mds(struct ceph_mdsmap *m, bool ignore_lagg=
-y)
- {
- =09int n =3D 0;
- =09int i, j;
-=20
--=09/* special case for one mds */
-+=09/*
-+=09 * special case for one mds, no matter it is laggy or
-+=09 * not we have no choice
-+=09 */
- =09if (1 =3D=3D m->m_num_mds && m->m_info[0].state > 0)
- =09=09return 0;
-=20
- =09/* count */
- =09for (i =3D 0; i < m->m_num_mds; i++)
--=09=09if (m->m_info[i].state > 0)
-+=09=09if (CEPH_MDS_IS_READY(i, ignore_laggy))
- =09=09=09n++;
- =09if (n =3D=3D 0)
- =09=09return -1;
-@@ -36,7 +38,7 @@ int ceph_mdsmap_get_random_mds(struct ceph_mdsmap *m)
- =09/* pick */
- =09n =3D prandom_u32() % n;
- =09for (j =3D 0, i =3D 0; i < m->m_num_mds; i++) {
--=09=09if (m->m_info[i].state > 0)
-+=09=09if (CEPH_MDS_IS_READY(i, ignore_laggy))
- =09=09=09j++;
- =09=09if (j > n)
- =09=09=09break;
-@@ -45,6 +47,20 @@ int ceph_mdsmap_get_random_mds(struct ceph_mdsmap *m)
- =09return i;
- }
-=20
-+/*
-+ * choose a random mds that is "up" (i.e. has a state > 0), or -1.
-+ */
-+int ceph_mdsmap_get_random_mds(struct ceph_mdsmap *m)
-+{
-+=09int mds;
-+
-+=09mds =3D __mdsmap_get_random_mds(m, false);
-+=09if (mds =3D=3D m->m_num_mds || mds =3D=3D -1)
-+=09=09mds =3D __mdsmap_get_random_mds(m, true);
-+
-+=09return mds =3D=3D m->m_num_mds ? -1 : mds;
-+}
-+
- #define __decode_and_drop_type(p, end, type, bad)=09=09\
- =09do {=09=09=09=09=09=09=09\
- =09=09if (*p + sizeof(type) > end)=09=09=09\
---=20
-2.21.0
+Thanks Yan
+
+BRs
+
+
+>> IMO, it wants to fire the work queue once "val >=
+>> CEPH_CAPS_PER_RELEASE", but it is not working like this, the val may
+>> just skip it without doing any thing.
+>>
+>> Thanks
+>>
+>>
+>>>>>> --
+>>>>>> 2.21.0
+>>>>>>
 
