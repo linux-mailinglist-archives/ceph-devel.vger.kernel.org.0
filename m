@@ -2,72 +2,85 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B669210AE7E
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 Nov 2019 12:07:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACCD710AF86
+	for <lists+ceph-devel@lfdr.de>; Wed, 27 Nov 2019 13:25:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfK0LH0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 27 Nov 2019 06:07:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36832 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726478AbfK0LH0 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 27 Nov 2019 06:07:26 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726696AbfK0MZy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 27 Nov 2019 07:25:54 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:27365 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726383AbfK0MZx (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 27 Nov 2019 07:25:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1574857552;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=i+fR2QmvgcA90nbdf39PxebDagZK9bY+zK1EmUnVwt4=;
+        b=ClHHchu6GEJNgPC2qUWDNy8aIYl1dOiuhaO8W/nb1jiD0jgt07a3w0Xi7ghKMwpLUFncy5
+        7OcNu7E6PGo7my/r8RAHeiMZMANi77mjFD2mFezubyVCXnp3Ai6DymLgXwbe+cilFIOt+h
+        7ntjUYLF1VwrTU8zBfi9mnTtORU7icY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-68-Cic0Z4MROYKLreIDmArm9w-1; Wed, 27 Nov 2019 07:25:51 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BF972053B;
-        Wed, 27 Nov 2019 11:07:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574852845;
-        bh=GxvNAEs0uFHHB8z77yeadgkeitaaIbk3NmL8bBI8GkI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ODPi7msCfwNev6SWUYFTreozP5nQFvawy+AP3yrL+SYMz5flPGC0aX3qTq+uCZces
-         tLUxPH2u+vjuQcxGzRXHIyjox9Ab44pH24vwiUq3fPTImmiW40M27jpEUJqeuNYkZO
-         w6k4o1Z043hjWla+eysK1vPnssYK6mewmeXdqneY=
-Message-ID: <f1ece18a6d78630b94cbc329b2c4c03136f480c0.camel@kernel.org>
-Subject: Re: [PATCH v3 0/3] mdsmap: fix mds choosing
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com, zyan@redhat.com
-Cc:     sage@redhat.com, idryomov@gmail.com, pdonnell@redhat.com,
-        ceph-devel@vger.kernel.org
-Date:   Wed, 27 Nov 2019 06:07:23 -0500
-In-Reply-To: <20191126122422.12396-1-xiubli@redhat.com>
-References: <20191126122422.12396-1-xiubli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1 (3.34.1-1.fc31) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 28D4E1005516;
+        Wed, 27 Nov 2019 12:25:50 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-69.pek2.redhat.com [10.72.12.69])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D7BDD600CA;
+        Wed, 27 Nov 2019 12:25:44 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
+        pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: remove unused code in ceph_check_caps
+Date:   Wed, 27 Nov 2019 07:25:38 -0500
+Message-Id: <20191127122538.33832-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-MC-Unique: Cic0Z4MROYKLreIDmArm9w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2019-11-26 at 07:24 -0500, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> V2:
-> - ignore laggy for the auth mds case
-> - for the random mds choosing, get one none laggy first and only
->   when there has no we will fall back to choose a laggy one if there
->   has.
-> 
-> V3:
-> - add the mds sanity check
-> 
-> Xiubo Li (3):
->   mdsmap: add more debug info when decoding
->   mdsmap: fix mdsmap cluster available check based on laggy number
->   mdsmap: only choose one MDS who is in up:active state without laggy
-> 
->  fs/ceph/mds_client.c        | 13 +++++--
->  fs/ceph/mdsmap.c            | 74 ++++++++++++++++++++-----------------
->  include/linux/ceph/mdsmap.h |  1 +
->  3 files changed, 51 insertions(+), 37 deletions(-)
-> 
+From: Xiubo Li <xiubli@redhat.com>
 
-Ok, I think this looks sane enough. I'll merge it into the testing
-branch and we'll see how it does.
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/caps.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index f5a38910a82b..c62e88da4fee 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -1828,7 +1828,7 @@ void ceph_check_caps(struct ceph_inode_info *ci, int =
+flags,
+ =09int mds =3D -1;   /* keep track of how far we've gone through i_caps li=
+st
+ =09=09=09   to avoid an infinite loop on retry */
+ =09struct rb_node *p;
+-=09int delayed =3D 0, sent =3D 0;
++=09int delayed =3D 0;
+ =09bool no_delay =3D flags & CHECK_CAPS_NODELAY;
+ =09bool queue_invalidate =3D false;
+ =09bool tried_invalidate =3D false;
+@@ -2058,7 +2058,6 @@ void ceph_check_caps(struct ceph_inode_info *ci, int =
+flags,
+ =09=09}
+=20
+ =09=09mds =3D cap->mds;  /* remember mds, so we don't repeat */
+-=09=09sent++;
+=20
+ =09=09/* __send_cap drops i_ceph_lock */
+ =09=09delayed +=3D __send_cap(mdsc, cap, CEPH_CAP_OP_UPDATE, 0,
+--=20
+2.21.0
 
