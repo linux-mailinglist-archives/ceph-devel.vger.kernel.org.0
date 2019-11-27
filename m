@@ -2,104 +2,199 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1663710B272
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 Nov 2019 16:31:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B49A10B2C2
+	for <lists+ceph-devel@lfdr.de>; Wed, 27 Nov 2019 16:52:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbfK0Pb3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 27 Nov 2019 10:31:29 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44585 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726603AbfK0Pb3 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 27 Nov 2019 10:31:29 -0500
-Received: by mail-lj1-f194.google.com with SMTP id g3so24918720ljl.11
-        for <ceph-devel@vger.kernel.org>; Wed, 27 Nov 2019 07:31:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=FgDsPfj1gyS6S65TVD3JUynSP32FL1jGL5TymhXBml0=;
-        b=ewdckFfBQvhGxIbUXrfPAQpB2pHFa+VhkugxLeAQKR8it4hzmrNbBmfImIr1kIpq7f
-         eeVkEF6r6Fe+o5so/L/LKjNXJwKY2Jly4SVqyICoNzJWNdYOa42wPjpRz7pSRr/I3TRu
-         Jmy1pVbMmTzt7p4tAQvnOxTCC39I8Y++O6UCQ80EYPKv+y5ldww6+LulW+d8bCE4fwGZ
-         ZlBaAHv6UrbfMg26BWQsJJ+Lgsd3DsGkJc1xs/VRE2y0+rOTiLsru5YnLtoL+C9lckR0
-         4dI2tyB3lI2CoK4fWNqxL+uFxeONGZXoY4YqPZAKb8fuwXc8tB/EKH6s5bNbnicpky9f
-         7MEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=FgDsPfj1gyS6S65TVD3JUynSP32FL1jGL5TymhXBml0=;
-        b=IcI0eHRaO+OlT05TnkRu5ELFsqtTSAFzgHYM4rUm/wmQg86EQHgB4VRYOBvHvQAYis
-         rNuzxLHQBobdNUNgLYxqY1evDDEXo2XpO6rXxFAk0qQmSXmu8/xbWUtIyeR6iivYwWmM
-         gR5Hqiekx2M0nwm7gw9Vk/oevZCVyWxJCGKR1oZpPSkunSGZ/u6RdjONOdQ8E1oZwjgC
-         oh7iP+IY3RkwDbgIAiCQPSgzog9ou0vGViQYNBXwzlyx3uUdIPwz3tyGFwfAVReUNt3l
-         HbEVct5kPhXKgqK8DnGR9gZnSYUX+/y4MFhT91mZVlg1fZIaqhLDYiCjJ9ZxCi4Mrrft
-         kABw==
-X-Gm-Message-State: APjAAAUFl9U7BdmxGr5mGTc82j58APweKGnfL/p8KwhtBXh9FRlsFMpD
-        X1quiBLZro75qhrTsXedWtONBmXoqgTygUDng0DLddQ6
-X-Google-Smtp-Source: APXvYqwn8w5hMw/ehmvwWdt44qiOH3/v5vLt4sex07w0ArtpTA/bC5WqR1ZOwZx0UQ/szjjOqwIzxoY9535qveluGGk=
-X-Received: by 2002:a2e:3216:: with SMTP id y22mr16899871ljy.95.1574868685856;
- Wed, 27 Nov 2019 07:31:25 -0800 (PST)
+        id S1727127AbfK0Pwy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 27 Nov 2019 10:52:54 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:38300 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbfK0Pwx (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 27 Nov 2019 10:52:53 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xARFi6ak075759;
+        Wed, 27 Nov 2019 15:52:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=H+/wgbi6zpbbhzBcnf3ZgXVMUMhhbOupxJKtToXxUKY=;
+ b=Kg0k/vAlSe8xFiAPHV3p230uhEAIhD+RfNy3L2xMgLeJjWzANRMgYHEoE0Ep3N7qUiEj
+ vcF15VBYr8vifEfZfiVr6t7u8ViSjjCg7FNvuwZfLuggXSVyPGlhSN6JUTfYB83peZvJ
+ 2Uo59BKL0j0vX1rUEJqlR/o/pNlsdkvaPc0SHw+2iWbYlZWmF6wiaTespaEP5ykBV9AG
+ ImLwc8stIz9ZL95hlZuIpbBT4NAPPaz+UgI3qRiVr/uxeOf58bY1exPNLO2+wgw9Fc9C
+ Rl8vZBiL+t0XTNoRZlRlrnqJqMZNYYPP0oHZxwuNG+rB9l114hLMSs0+hA/EVvczaecf TQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2wewdrecda-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Nov 2019 15:52:06 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xARFdTWt031310;
+        Wed, 27 Nov 2019 15:50:06 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2wgvhccg37-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Nov 2019 15:50:05 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xARFnumk003050;
+        Wed, 27 Nov 2019 15:49:56 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 27 Nov 2019 07:49:56 -0800
+Date:   Wed, 27 Nov 2019 07:49:54 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] fs: Fix page_mkwrite off-by-one errors
+Message-ID: <20191127154954.GT6219@magnolia>
+References: <20191127151811.9229-1-agruenba@redhat.com>
 MIME-Version: 1.0
-From:   Vincent Godin <vince.mlist@gmail.com>
-Date:   Wed, 27 Nov 2019 16:31:14 +0100
-Message-ID: <CAL2-6b+A2tQd=pMoXRewK2KeakDpy0X40vDg0OTWk-ZAm5RfmA@mail.gmail.com>
-Subject: mimic 13.2.6 too much broken connexions
-To:     ceph-users@ceph.io, Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191127151811.9229-1-agruenba@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9454 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911270137
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9454 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911270137
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Till i submit the mail below few days ago, we found some clues
-We observed a lot of lossy connexion like :
-ceph-osd.9.log:2019-11-27 11:03:49.369 7f6bb77d0700  0 --
-192.168.4.181:6818/2281415 >> 192.168.4.41:0/1962809518
-conn(0x563979a9f600 :6818   s=STATE_ACCEPTING_WAIT_CONNECT_MSG_AUTH
-pgs=0 cs=0 l=1).handle_connect_msg accept replacing existing (lossy)
-channel (new one lossy=1)
-We raised the log of the messenger to 5/5 and observed for the whole
-cluster more than 80 000 lossy connexion per minute !!!
-We adjusted  the "ms_tcp_read_timeout" from 900 to 60 sec then no more
-lossy connexion in logs nor health check failed
-It's just a workaround but there is a real problem with these broken
-sessions and it leads to two
-assertions :
-- Ceph take too much time to detect broken session and should recycle quicker !
-- The reasons for these broken sessions ?
+On Wed, Nov 27, 2019 at 04:18:11PM +0100, Andreas Gruenbacher wrote:
+> Fix a check in block_page_mkwrite meant to determine whether an offset
+> is within the inode size.  This error has spread to several filesystems
+> and to iomap_page_mkwrite, so fix those instances as well.
 
-We have a other mimic cluster on different hardware and observed the
-same behavior : lot of lossy sessions, slow ops and co.
-Symptoms are the same :
-- some OSDs on one host have no response from an other osd on a different hosts
-- after some time, slow ops are detected
-- sometime it leads to ioblocked
-- after about 15mn the problem vanish
+Seeing how this has gotten screwed up at least six times in the kernel,
+maybe we need a static inline helper to do this for us?
 
------------
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-Help on diag needed : heartbeat_failed
+The iomap part looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-We encounter a strange behavior on our Mimic 13.2.6 cluster. A any
-time, and without any load, some OSDs become unreachable from only
-some hosts. It last 10 mn and then the problem vanish.
-It 's not always the same OSDs and the same hosts. There is no network
-failure on any of the host (because only some OSDs become unreachable)
-nor disk freeze as we can see in our grafana dashboard. Logs message
-are :
-first msg :
-2019-11-24 09:19:43.292 7fa9980fc700 -1 osd.596 146481
-heartbeat_check: no reply from 192.168.6.112:6817 osd.394 since back
-2019-11-24 09:19:22.761142 front 2019-11-24 09:19:39.769138 (cutoff
-2019-11-24 09:19:23.293436)
-last msg:
-2019-11-24 09:30:33.735 7f632354f700 -1 osd.591 146481
-heartbeat_check: no reply from 192.168.6.123:6828 osd.600 since back
-2019-11-24 09:27:05.269330 front 2019-11-24 09:30:33.214874 (cutoff
-2019-11-24 09:30:13.736517)
-During this time, 3 hosts were involved : host-18, host-20 and host-30 :
-host-30 is the only one who can't see osds 346,356,and 352 on host-18
-host-30 is the only one who can't see osds 387 and 394 on host-20
-host-18 is the only one who can't see osds 583, 585, 591 and 597 on host-30
-We can't see any strange behavior on hosts 18, 20 and 30 in our node
-exporter data during this time
-Any ideas or advices ?
+(I might just extract the iomap part and put it in the iomap tree if
+someone doesn't merge this one before I get to it...)
+
+--D
+
+> 
+> ---
+> 
+> This patch has a trivial conflict with commit "iomap: Fix overflow in
+> iomap_page_mkwrite" in Darrick's iomap pull request for 5.5:
+> 
+>   https://lore.kernel.org/lkml/20191125190907.GN6219@magnolia/
+> ---
+>  fs/buffer.c            | 2 +-
+>  fs/ceph/addr.c         | 2 +-
+>  fs/ext4/inode.c        | 2 +-
+>  fs/f2fs/file.c         | 2 +-
+>  fs/iomap/buffered-io.c | 2 +-
+>  fs/ubifs/file.c        | 2 +-
+>  6 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 86a38b979323..152d391858d4 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -2465,7 +2465,7 @@ int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
+>  	lock_page(page);
+>  	size = i_size_read(inode);
+>  	if ((page->mapping != inode->i_mapping) ||
+> -	    (page_offset(page) > size)) {
+> +	    (page_offset(page) >= size)) {
+>  		/* We overload EFAULT to mean page got truncated */
+>  		ret = -EFAULT;
+>  		goto out_unlock;
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 7ab616601141..9fa0729ece41 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -1575,7 +1575,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+>  	do {
+>  		lock_page(page);
+>  
+> -		if ((off > size) || (page->mapping != inode->i_mapping)) {
+> +		if ((off >= size) || (page->mapping != inode->i_mapping)) {
+>  			unlock_page(page);
+>  			ret = VM_FAULT_NOPAGE;
+>  			break;
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 516faa280ced..6dd4efe2fb63 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -6224,7 +6224,7 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
+>  	lock_page(page);
+>  	size = i_size_read(inode);
+>  	/* Page got truncated from under us? */
+> -	if (page->mapping != mapping || page_offset(page) > size) {
+> +	if (page->mapping != mapping || page_offset(page) >= size) {
+>  		unlock_page(page);
+>  		ret = VM_FAULT_NOPAGE;
+>  		goto out;
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 29bc0a542759..3436be01af45 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -71,7 +71,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>  	down_read(&F2FS_I(inode)->i_mmap_sem);
+>  	lock_page(page);
+>  	if (unlikely(page->mapping != inode->i_mapping ||
+> -			page_offset(page) > i_size_read(inode) ||
+> +			page_offset(page) >= i_size_read(inode) ||
+>  			!PageUptodate(page))) {
+>  		unlock_page(page);
+>  		err = -EFAULT;
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index e25901ae3ff4..d454dbab5133 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1041,7 +1041,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
+>  	lock_page(page);
+>  	size = i_size_read(inode);
+>  	if ((page->mapping != inode->i_mapping) ||
+> -	    (page_offset(page) > size)) {
+> +	    (page_offset(page) >= size)) {
+>  		/* We overload EFAULT to mean page got truncated */
+>  		ret = -EFAULT;
+>  		goto out_unlock;
+> diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+> index cd52585c8f4f..ca0148ec77e6 100644
+> --- a/fs/ubifs/file.c
+> +++ b/fs/ubifs/file.c
+> @@ -1564,7 +1564,7 @@ static vm_fault_t ubifs_vm_page_mkwrite(struct vm_fault *vmf)
+>  
+>  	lock_page(page);
+>  	if (unlikely(page->mapping != inode->i_mapping ||
+> -		     page_offset(page) > i_size_read(inode))) {
+> +		     page_offset(page) >= i_size_read(inode))) {
+>  		/* Page got truncated out from underneath us */
+>  		goto sigbus;
+>  	}
+> -- 
+> 2.20.1
+> 
