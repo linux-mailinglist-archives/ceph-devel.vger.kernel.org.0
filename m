@@ -2,204 +2,231 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8CE810D279
-	for <lists+ceph-devel@lfdr.de>; Fri, 29 Nov 2019 09:30:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3504910D389
+	for <lists+ceph-devel@lfdr.de>; Fri, 29 Nov 2019 10:58:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbfK2IaW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 29 Nov 2019 03:30:22 -0500
-Received: from mail-eopbgr140082.outbound.protection.outlook.com ([40.107.14.82]:65518
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725892AbfK2IaW (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 29 Nov 2019 03:30:22 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hiuCRwg5sQRksjeSIxreZIz3JzBgkQujVof1tJcvxHNrDjYQqvsJN5LpxttRBd2VwBUru9IXbzFkLIHMFhYAxWD1g/D6pk8dNCmAPCQZKrTTHMHNTVJnEm1iEmZJ8eYtqKclcT0DHzHK+UMNOvUD36MMXp3zBwtnuygu0uaSW80Y1B73PC2C9yJrQED9dLcWfdHYPktyVUkcF0Sa42TU/UIx+/xj27Vn0xFle6mdkXCfjGOiGwkJDigmYQoqz8Hqcu/sfvhSR5NGnXRYWK3SH7w/T1OX3GnSzYLgXFFeqU6iD+vyZvoWCYQL16Zaf6scPbYmjbYAjrioNUKSiJucmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U+3kXEet3pouGo8VXyR+cPtaL56wR93b/DqdsloWpo8=;
- b=Eu1vKF8S9ZLfOjRmFjRc5C1lp3WxdfIW0UnukxilExL1Zn2mtx1xFCDG294hbe94fV6AyPTI4Ixy8PG2lBXzLyJWdAr63t8Aoh7gsYQeJ/KlfNG3Ofww44WcpLDodFJhoXdmp+Ucoi3bV7lUQWQ7znYdi6UiEDmO/gAnW8uTLSaFpBBM7sfKHKXHE1QvfEkuEU792QRh6F4SdBKI8lbQztKH+MEKK/KcUufPMPtAAC5MeT7ousBHjRvJHY9AqYn/Ne2mnQl7dkphzEvekiRXdGi5sElFvd9P2A3kgF46CM+h4kwni7qCOyZchFnWzGWA8pQ15C6Dpd0k8x2lpT4T1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.38.82.194) smtp.rcpttodomain=gmail.com smtp.mailfrom=dtu.dk; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=dtu.dk;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dtu.dk; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U+3kXEet3pouGo8VXyR+cPtaL56wR93b/DqdsloWpo8=;
- b=4Y+Ay2sn6x084oUjjOor2fTxWvD8+Ak9z9/PMrRHhgb3y1LpEI0pWC1v20lMwXHw9eFx/LoXU12kHCtsj8AsVAcPDtRlBpq/Lt9gbwf3Au/nV5Hm+/NwwoiMvp5rsS1Vm2H2HRoYvvI2RVqTccEOwuDlVPECq5VFmgYqXlQ8+cI=
-Received: from AM6P192CA0019.EURP192.PROD.OUTLOOK.COM (2603:10a6:209:83::32)
- by DB7P192MB0267.EURP192.PROD.OUTLOOK.COM (2603:10a6:5:7::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2495.20; Fri, 29 Nov 2019 08:30:16 +0000
-Received: from VE1EUR01FT040.eop-EUR01.prod.protection.outlook.com
- (2a01:111:f400:7e01::202) by AM6P192CA0019.outlook.office365.com
- (2603:10a6:209:83::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2495.19 via Frontend
- Transport; Fri, 29 Nov 2019 08:30:16 +0000
-Authentication-Results: spf=pass (sender IP is 192.38.82.194)
- smtp.mailfrom=dtu.dk; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=pass action=none header.from=dtu.dk;
-Received-SPF: Pass (protection.outlook.com: domain of dtu.dk designates
- 192.38.82.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=192.38.82.194; helo=mail.win.dtu.dk;
-Received: from mail.win.dtu.dk (192.38.82.194) by
- VE1EUR01FT040.mail.protection.outlook.com (10.152.3.46) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.20.2495.18 via Frontend Transport; Fri, 29 Nov 2019 08:30:16 +0000
-Received: from ait-pexsrv08.win.dtu.dk (192.38.82.201) by
- ait-pexsrv01.win.dtu.dk (192.38.82.194) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1779.2; Fri, 29 Nov 2019 09:30:14 +0100
-Received: from ait-pexsrv03.win.dtu.dk (192.38.82.196) by
- ait-pexsrv08.win.dtu.dk (192.38.82.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1779.2; Fri, 29 Nov 2019 09:30:14 +0100
-Received: from ait-pexsrv03.win.dtu.dk ([192.38.82.196]) by
- ait-pexsrv03.win.dtu.dk ([192.38.82.196]) with mapi id 15.01.1779.007; Fri,
- 29 Nov 2019 09:30:14 +0100
-From:   Frank Schilder <frans@dtu.dk>
-To:     Vincent Godin <vince.mlist@gmail.com>,
-        Anthony D'Atri <aad@dreamsnake.net>,
-        "ceph-users@ceph.io" <ceph-users@ceph.io>,
-        "Ceph Development" <ceph-devel@vger.kernel.org>
-Subject: Re: [ceph-users] Re: mimic 13.2.6 too much broken connexions
-Thread-Topic: [ceph-users] Re: mimic 13.2.6 too much broken connexions
-Thread-Index: AQHVpVaXXCV6MIT0KUu/Fi+rW5b8Kaeh0Wve
-Date:   Fri, 29 Nov 2019 08:30:13 +0000
-Message-ID: <8c4c081a83e640e9bfaaa6679590cefa@dtu.dk>
-References: <CAL2-6b+A2tQd=pMoXRewK2KeakDpy0X40vDg0OTWk-ZAm5RfmA@mail.gmail.com>
- <62E3E7FC-DEB5-4EBC-8945-F7FF43C6433C@dreamsnake.net>,<CAL2-6b+wKe0X1BB2Wts9Q7RX_BQiVk0MaA0=k1LXV_hGwezb5Q@mail.gmail.com>
-In-Reply-To: <CAL2-6b+wKe0X1BB2Wts9Q7RX_BQiVk0MaA0=k1LXV_hGwezb5Q@mail.gmail.com>
-Accept-Language: en-GB, da-DK, en-US
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [192.38.82.8]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726684AbfK2J6D (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 29 Nov 2019 04:58:03 -0500
+Received: from mail-lf1-f43.google.com ([209.85.167.43]:34285 "EHLO
+        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbfK2J6D (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 29 Nov 2019 04:58:03 -0500
+Received: by mail-lf1-f43.google.com with SMTP id l18so4134403lfc.1
+        for <ceph-devel@vger.kernel.org>; Fri, 29 Nov 2019 01:57:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Y8pcc5cZ2NurKJJVHn0PkFL/fNiks8t9gKlztRdNjMs=;
+        b=pDlopjEuD3+uncoRfRHApq1I5rA511ZpnpyG40yndiGsiHanKY9z7m8qQDodE6fkdV
+         L2uq0Me6hDuHx/SonXqMXd5EZbhfkPOdoHDZ+gp9UB5UJR126Ckn7z62TxoYgHaRAks2
+         3RGL2kV812i4Jo8vXzbfJziyXHm4IADDwWMQVdcteCSyONwmR93yhwXROJq7GggnUkoT
+         bMZUpub7GJCFct1Bn3NZHEdbWGEpHCEB2DIJ8M0TKWLdhR/3OdaYwkJ2Gxtwd7IkdGuK
+         oJvQWuOSnGk9hVuSToIIlGcD3TgFKXPh46aUQzD4hHim1Enmh+rf6Dn0vy1lMTgdILF3
+         9xug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Y8pcc5cZ2NurKJJVHn0PkFL/fNiks8t9gKlztRdNjMs=;
+        b=FgE9iu+qiZ1OQ+mSv1y/mMezWUdqV2EypMb+500proWu/cYv3TUQ1Nf6LXbPuXeDLH
+         yDJif4sRmE9JV02PzMCOrMAQSeg+WJzjSHGOWLjlokDX+M5clhPtplTBDtuE67qlbvgh
+         RIsOEsbadGZ47GRHeDrZo6h5nXnvKXW1R5r0r2IxrDNnLLVrMSvyqxQ1JTv4MkDkcHkE
+         kQPJXG0huGTqLgPn3skqlIZKgoDqS4WvEWzICqM5+IKHonPFD1de6kKX5/dmEIM+cm68
+         9ptDY0YF1uezOlI0nbDolqPsQfDnMEJrMQ1MFbdiibG8VYID0jZel39DPiFyLQItQgLQ
+         UDAA==
+X-Gm-Message-State: APjAAAU164kcryDEfBxF/zQ4qlog1OeZYfYn36xGKMIJZbgMlArCE3bg
+        ilMRaqPztDGvKPY3Vz/hvlA9PPT77Sx9Aalv+K4=
+X-Google-Smtp-Source: APXvYqyW2unCwMc5I+QKHhiqktgmzdKlP7oTThskala6ytrAo6ec+CT93cpzfBC/l6oGhjXDd79Zz8b+Cp6fqcavoD4=
+X-Received: by 2002:a19:5509:: with SMTP id n9mr34232373lfe.27.1575021479102;
+ Fri, 29 Nov 2019 01:57:59 -0800 (PST)
 MIME-Version: 1.0
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:192.38.82.194;IPV:CAL;SCL:-1;CTRY:DK;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(39860400002)(136003)(45924002)(199004)(189003)(70206006)(305945005)(26005)(3846002)(6116002)(102836004)(7736002)(186003)(70586007)(36756003)(11346002)(66574012)(8676002)(229853002)(356004)(246002)(4001150100001)(86362001)(956004)(6246003)(53546011)(446003)(436003)(426003)(76130400001)(2616005)(2501003)(47776003)(24736004)(76176011)(66066001)(5660300002)(478600001)(7696005)(50466002)(2486003)(23676004)(14444005)(53416004)(336012)(786003)(106002)(110136005)(26826003)(316002)(8976002)(108616005)(8936002)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7P192MB0267;H:mail.win.dtu.dk;FPR:;SPF:Pass;LANG:en;PTR:ait-pexsrv01.win.dtu.dk;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 20ccd05b-cd2c-48d5-b7b1-08d774a65cd1
-X-MS-TrafficTypeDiagnostic: DB7P192MB0267:
-X-Microsoft-Antispam-PRVS: <DB7P192MB02677A0AD60DE3C89ACCFEBCD6460@DB7P192MB0267.EURP192.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-Forefront-PRVS: 0236114672
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: q0VkUlXdZAj7LNA/7RvIyoegnkic5mR7gyS++S1E1hz16S7py3gE/K9W2zUY6C1RoQGevS5zWpM15DpKnuHZLXOLhzcoGR+6DgriJm0bC4U8AQHhFzC9BEdf/uJl6bG0C5BmI2VItxGvo+rXdk5LRgpqB/PYo4QgHNW0JnX+fEhpUAVkiGnMbKaUDJ9Xro8tObfqTN8IGcdA43gGb2upGHM9HRifYp5S31AAjk0/Z6psHzpOVpoh2Z4OI+2c2jDw78oduEBE3Vr73CBU61GgAnwiSHqnI1JB8y30UNJgPPwZ57pnu3Kc3W4bq6IkwmQWx4YbbkElnEF01sBI9G5IaVDEuIEO42s6G/P+6vVNAz/va61LTzA8F5yDL3pibY0kfraucgSdmy0vhpbyhrMqMBgTZc4A3Ps39QhHURJTg5QUVMaCUPxCdEVBwgOarDXCfeChXYyubyJhxmROm9mj2w==
-X-OriginatorOrg: dtu.dk
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2019 08:30:16.6195
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20ccd05b-cd2c-48d5-b7b1-08d774a65cd1
-X-MS-Exchange-CrossTenant-Id: f251f123-c9ce-448e-9277-34bb285911d9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f251f123-c9ce-448e-9277-34bb285911d9;Ip=[192.38.82.194];Helo=[mail.win.dtu.dk]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7P192MB0267
+References: <CAL2-6b+A2tQd=pMoXRewK2KeakDpy0X40vDg0OTWk-ZAm5RfmA@mail.gmail.com>
+ <62E3E7FC-DEB5-4EBC-8945-F7FF43C6433C@dreamsnake.net> <CAL2-6b+wKe0X1BB2Wts9Q7RX_BQiVk0MaA0=k1LXV_hGwezb5Q@mail.gmail.com>
+ <8c4c081a83e640e9bfaaa6679590cefa@dtu.dk>
+In-Reply-To: <8c4c081a83e640e9bfaaa6679590cefa@dtu.dk>
+From:   Vincent Godin <vince.mlist@gmail.com>
+Date:   Fri, 29 Nov 2019 10:57:47 +0100
+Message-ID: <CAL2-6b+DW1pENpNucjnnEGaZ4PxkGUOyY4K2fXARc0RX4WjFrg@mail.gmail.com>
+Subject: Re: [ceph-users] Re: mimic 13.2.6 too much broken connexions
+To:     Frank Schilder <frans@dtu.dk>
+Cc:     "Anthony D'Atri" <aad@dreamsnake.net>,
+        "ceph-users@ceph.io" <ceph-users@ceph.io>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-SG93IGxhcmdlIGlzIHlvdXIgYXJwIGNhY2hlPyBXZSBoYXZlIHNlZW4gY2VwaCBkcm9wcGluZyBj
-b25uZWN0aW9ucyBhcyBzb29uIGFzIHRoZSBsZXZlbC0yIG5ldHdvcmsgKGRpcmVjdCBuZWlnaGJv
-dXJzKSBpcyBsYXJnZXIgdGhhbiB0aGUgYXJwIGNhY2hlLiBXZSBhZGp1c3RlZCB0aGUgZm9sbG93
-aW5nIHNldHRpbmdzOg0KDQojIEluY3JlYXNlIEFSUCBjYWNoZSBzaXplIHRvIGFjY29tbW9kYXRl
-IGxhcmdlIGxldmVsLTIgY2xpZW50IG5ldHdvcmsuDQpuZXQuaXB2NC5uZWlnaC5kZWZhdWx0Lmdj
-X3RocmVzaDEgPSAxMDI0DQpuZXQuaXB2NC5uZWlnaC5kZWZhdWx0LmdjX3RocmVzaDIgPSAyMDQ4
-DQpuZXQuaXB2NC5uZWlnaC5kZWZhdWx0LmdjX3RocmVzaDMgPSA0MDk2DQoNCkFub3RoZXIgaW1w
-b3J0YW50IGdyb3VwIG9mIHBhcmFtZXRlcnMgZm9yIFRDUCBjb25uZWN0aW9ucyBzZWVtcyB0byBi
-ZSB0aGVzZSwgd2l0aCBvdXIgdmFsdWVzOg0KDQojIyBJbmNyZWFzZSBudW1iZXIgb2YgaW5jb21p
-bmcgY29ubmVjdGlvbnMuIFRoZSB2YWx1ZSBjYW4gYmUgcmFpc2VkIHRvIGJ1cnN0cyBvZiByZXF1
-ZXN0LCBkZWZhdWx0IGlzIDEyOA0KbmV0LmNvcmUuc29tYXhjb25uID0gMjA0OA0KIyMgSW5jcmVh
-c2UgbnVtYmVyIG9mIGluY29taW5nIGNvbm5lY3Rpb25zIGJhY2tsb2csIGRlZmF1bHQgaXMgMTAw
-MA0KbmV0LmNvcmUubmV0ZGV2X21heF9iYWNrbG9nID0gNTAwMDANCiMjIE1heGltdW0gbnVtYmVy
-IG9mIHJlbWVtYmVyZWQgY29ubmVjdGlvbiByZXF1ZXN0cywgZGVmYXVsdCBpcyAxMjgNCm5ldC5p
-cHY0LnRjcF9tYXhfc3luX2JhY2tsb2cgPSAzMDAwMA0KDQpXaXRoIHRoaXMsIHdlIGdvdCByaWQg
-b2YgZHJvcHBlZCBjb25uZWN0aW9ucyBpbiBhIGNsdXN0ZXIgb2YgMjAgY2VwaCBub2RlcyBhbmQg
-Y2EuIDU1MCBjbGllbnQgbm9kZXMsIGFjY291bnRpbmcgZm9yIGFib3V0IDE1MDAgYWN0aXZlIGNl
-cGggY2xpZW50cywgMTQwMCBjZXBoZnMgYW5kIDE3MCBSQkQgaW1hZ2VzLg0KDQpCZXN0IHJlZ2Fy
-ZHMsDQoNCj09PT09PT09PT09PT09PT09DQpGcmFuayBTY2hpbGRlcg0KQUlUIFJpc8O4IENhbXB1
-cw0KQnlnbmluZyAxMDksIHJ1bSBTMTQNCg0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXw0KRnJvbTogVmluY2VudCBHb2RpbiA8dmluY2UubWxpc3RAZ21haWwuY29tPg0K
-U2VudDogMjcgTm92ZW1iZXIgMjAxOSAyMDoxMToyMw0KVG86IEFudGhvbnkgRCdBdHJpOyBjZXBo
-LXVzZXJzQGNlcGguaW87IENlcGggRGV2ZWxvcG1lbnQNClN1YmplY3Q6IFtjZXBoLXVzZXJzXSBS
-ZTogbWltaWMgMTMuMi42IHRvbyBtdWNoIGJyb2tlbiBjb25uZXhpb25zDQoNCklmIGl0IHdhcyBh
-IG5ldHdvcmsgaXNzdWUsIHRoZSBjb3VudGVycyBzaG91bGQgZXhwbG9zZSAoYXMgaSBzYWlkLA0K
-d2l0aCBhIGxvZyBsZXZlbCBvZiA1IG9uIHRoZSBtZXNzZW5nZXIsIHdlIG9ic2VydmVkIG1vcmUg
-dGhlbiA4MCAwMDANCmxvc3N5IGNoYW5uZWxzIHBlciBtaW51dGUpIGJ1dCBub3RoaW5nIGFibm9y
-bWFsIGlzIHJlbGV2YW50IG9uIHRoZQ0KY291bnRlcnMgKG9uIHN3aXRjaHMgYW5kIHNlcnZlcnMp
-DQpPbiB0aGUgc3dpdGNocyAgbm8gZHJvcCwgbm8gY3JjIGVycm9yLCBubyBwYWNrZXQgbG9zcywg
-b25seSBzb21lDQpvdXRwdXQgZGlzY2FyZHMgYnV0IG5vdCBlbm91Z2ggdG8gYmUgc2lnbmlmaWNh
-bnQuIE9uIHRoZSBOSUNzIG9uIHRoZQ0Kc2VydmVycyB2aWEgZXRodG9vbCAtUywgbm90aGluZyBp
-cyByZWxldmFudC4NCkFuZCBhcyBpIHNhaWQsIGFuIG90aGVyIG1pbWljIGNsdXN0ZXIgd2l0aCBk
-aWZmZXJlbnQgaGFyZHdhcmUgaGFzIHRoZQ0Kc2FtZSBiZWhhdmlvcg0KQ2VwaCB1c2VzIGNvbm5l
-eGlvbnMgcG9vbHMgZnJvbSBob3N0IHRvIGhvc3QgYnV0IGhvdyBkb2VzIGl0IGNoZWNrIHRoZQ0K
-YXZhaWxhYmlsaXR5IG9mIHRoZXNlIGNvbm5leGlvbnMgb3ZlciB0aGUgdGltZSA/DQpBbmQgYXMg
-dGhlIG5ldHdvcmsgZG9lc24ndCBzZWVtIHRvIGJlIGd1aWx0eSwgd2hhdCBjYW4gZXhwbGFpbiB0
-aGVzZQ0KYnJva2VuIGNoYW5uZWxzID8NCg0KTGUgbWVyLiAyNyBub3YuIDIwMTkgw6AgMTk6MDUs
-IEFudGhvbnkgRCdBdHJpIDxhYWRAZHJlYW1zbmFrZS5uZXQ+IGEgw6ljcml0IDoNCj4NCj4gQXJl
-IHlvdSBib25kaW5nIE5JQyBwb3J0cz8gICBJZiBzbyBkbyB5b3UgaGF2ZSB0aGUgY29ycmVjdCBo
-YXNoIHBvbGljeSBkZWZpbmVkPyBIYXZlIHlvdSBsb29rZWQgYXQgdGhlICpzd2l0Y2gqIHNpZGUg
-Zm9yIHBhY2tldCBsb3NzLCBDUkMgZXJyb3JzLCBldGM/ICAgV2hhdCB5b3UgcmVwb3J0IGNvdWxk
-IGJlIGNvbnNpc3RlbnQgd2l0aCB0aGlzLiAgU2luY2UgdGhlIGhvc3QgIGludGVyZmFjZSBmb3Ig
-YSBnaXZlbiBjb25uZWN0aW9uIHdpbGwgdmFyeSBieSB0aGUgYm9uZCBoYXNoLCBzb21lIE9TRCBj
-b25uZWN0aW9ucyB3aWxsIHVzZSBvbmUgcG9ydCBhbmQgc29tZSB0aGUgb3RoZXIuICAgU28gaWYg
-b25lIHBvcnQgaGFzIHN3aXRjaCBzaWRlIGVycm9ycywgb3IgaXMgYmxhY2tob2xlZCBvbiB0aGUg
-c3dpdGNoLCB5b3UgY291bGQgc2VlIHNvbWUgaGVhcnQgYmVhdGluZyBpbXBhY3RlZCBidXQgbm90
-IG90aGVycy4NCj4NCj4gQWxzbyBtYWtlIHN1cmUgeW91IGhhdmUgdGhlIG9wdGltYWwgcmVwb3J0
-ZXJzIHZhbHVlLg0KPg0KPiA+IE9uIE5vdiAyNywgMjAxOSwgYXQgNzozMSBBTSwgVmluY2VudCBH
-b2RpbiA8dmluY2UubWxpc3RAZ21haWwuY29tPiB3cm90ZToNCj4gPg0KPiA+IO+7v1RpbGwgaSBz
-dWJtaXQgdGhlIG1haWwgYmVsb3cgZmV3IGRheXMgYWdvLCB3ZSBmb3VuZCBzb21lIGNsdWVzDQo+
-ID4gV2Ugb2JzZXJ2ZWQgYSBsb3Qgb2YgbG9zc3kgY29ubmV4aW9uIGxpa2UgOg0KPiA+IGNlcGgt
-b3NkLjkubG9nOjIwMTktMTEtMjcgMTE6MDM6NDkuMzY5IDdmNmJiNzdkMDcwMCAgMCAtLQ0KPiA+
-IDE5Mi4xNjguNC4xODE6NjgxOC8yMjgxNDE1ID4+IDE5Mi4xNjguNC40MTowLzE5NjI4MDk1MTgN
-Cj4gPiBjb25uKDB4NTYzOTc5YTlmNjAwIDo2ODE4ICAgcz1TVEFURV9BQ0NFUFRJTkdfV0FJVF9D
-T05ORUNUX01TR19BVVRIDQo+ID4gcGdzPTAgY3M9MCBsPTEpLmhhbmRsZV9jb25uZWN0X21zZyBh
-Y2NlcHQgcmVwbGFjaW5nIGV4aXN0aW5nIChsb3NzeSkNCj4gPiBjaGFubmVsIChuZXcgb25lIGxv
-c3N5PTEpDQo+ID4gV2UgcmFpc2VkIHRoZSBsb2cgb2YgdGhlIG1lc3NlbmdlciB0byA1LzUgYW5k
-IG9ic2VydmVkIGZvciB0aGUgd2hvbGUNCj4gPiBjbHVzdGVyIG1vcmUgdGhhbiA4MCAwMDAgbG9z
-c3kgY29ubmV4aW9uIHBlciBtaW51dGUgISEhDQo+ID4gV2UgYWRqdXN0ZWQgIHRoZSAibXNfdGNw
-X3JlYWRfdGltZW91dCIgZnJvbSA5MDAgdG8gNjAgc2VjIHRoZW4gbm8gbW9yZQ0KPiA+IGxvc3N5
-IGNvbm5leGlvbiBpbiBsb2dzIG5vciBoZWFsdGggY2hlY2sgZmFpbGVkDQo+ID4gSXQncyBqdXN0
-IGEgd29ya2Fyb3VuZCBidXQgdGhlcmUgaXMgYSByZWFsIHByb2JsZW0gd2l0aCB0aGVzZSBicm9r
-ZW4NCj4gPiBzZXNzaW9ucyBhbmQgaXQgbGVhZHMgdG8gdHdvDQo+ID4gYXNzZXJ0aW9ucyA6DQo+
-ID4gLSBDZXBoIHRha2UgdG9vIG11Y2ggdGltZSB0byBkZXRlY3QgYnJva2VuIHNlc3Npb24gYW5k
-IHNob3VsZCByZWN5Y2xlIHF1aWNrZXIgIQ0KPiA+IC0gVGhlIHJlYXNvbnMgZm9yIHRoZXNlIGJy
-b2tlbiBzZXNzaW9ucyA/DQo+ID4NCj4gPiBXZSBoYXZlIGEgb3RoZXIgbWltaWMgY2x1c3RlciBv
-biBkaWZmZXJlbnQgaGFyZHdhcmUgYW5kIG9ic2VydmVkIHRoZQ0KPiA+IHNhbWUgYmVoYXZpb3Ig
-OiBsb3Qgb2YgbG9zc3kgc2Vzc2lvbnMsIHNsb3cgb3BzIGFuZCBjby4NCj4gPiBTeW1wdG9tcyBh
-cmUgdGhlIHNhbWUgOg0KPiA+IC0gc29tZSBPU0RzIG9uIG9uZSBob3N0IGhhdmUgbm8gcmVzcG9u
-c2UgZnJvbSBhbiBvdGhlciBvc2Qgb24gYSBkaWZmZXJlbnQgaG9zdHMNCj4gPiAtIGFmdGVyIHNv
-bWUgdGltZSwgc2xvdyBvcHMgYXJlIGRldGVjdGVkDQo+ID4gLSBzb21ldGltZSBpdCBsZWFkcyB0
-byBpb2Jsb2NrZWQNCj4gPiAtIGFmdGVyIGFib3V0IDE1bW4gdGhlIHByb2JsZW0gdmFuaXNoDQo+
-ID4NCj4gPiAtLS0tLS0tLS0tLQ0KPiA+DQo+ID4gSGVscCBvbiBkaWFnIG5lZWRlZCA6IGhlYXJ0
-YmVhdF9mYWlsZWQNCj4gPg0KPiA+IFdlIGVuY291bnRlciBhIHN0cmFuZ2UgYmVoYXZpb3Igb24g
-b3VyIE1pbWljIDEzLjIuNiBjbHVzdGVyLiBBIGFueQ0KPiA+IHRpbWUsIGFuZCB3aXRob3V0IGFu
-eSBsb2FkLCBzb21lIE9TRHMgYmVjb21lIHVucmVhY2hhYmxlIGZyb20gb25seQ0KPiA+IHNvbWUg
-aG9zdHMuIEl0IGxhc3QgMTAgbW4gYW5kIHRoZW4gdGhlIHByb2JsZW0gdmFuaXNoLg0KPiA+IEl0
-ICdzIG5vdCBhbHdheXMgdGhlIHNhbWUgT1NEcyBhbmQgdGhlIHNhbWUgaG9zdHMuIFRoZXJlIGlz
-IG5vIG5ldHdvcmsNCj4gPiBmYWlsdXJlIG9uIGFueSBvZiB0aGUgaG9zdCAoYmVjYXVzZSBvbmx5
-IHNvbWUgT1NEcyBiZWNvbWUgdW5yZWFjaGFibGUpDQo+ID4gbm9yIGRpc2sgZnJlZXplIGFzIHdl
-IGNhbiBzZWUgaW4gb3VyIGdyYWZhbmEgZGFzaGJvYXJkLiBMb2dzIG1lc3NhZ2UNCj4gPiBhcmUg
-Og0KPiA+IGZpcnN0IG1zZyA6DQo+ID4gMjAxOS0xMS0yNCAwOToxOTo0My4yOTIgN2ZhOTk4MGZj
-NzAwIC0xIG9zZC41OTYgMTQ2NDgxDQo+ID4gaGVhcnRiZWF0X2NoZWNrOiBubyByZXBseSBmcm9t
-IDE5Mi4xNjguNi4xMTI6NjgxNyBvc2QuMzk0IHNpbmNlIGJhY2sNCj4gPiAyMDE5LTExLTI0IDA5
-OjE5OjIyLjc2MTE0MiBmcm9udCAyMDE5LTExLTI0IDA5OjE5OjM5Ljc2OTEzOCAoY3V0b2ZmDQo+
-ID4gMjAxOS0xMS0yNCAwOToxOToyMy4yOTM0MzYpDQo+ID4gbGFzdCBtc2c6DQo+ID4gMjAxOS0x
-MS0yNCAwOTozMDozMy43MzUgN2Y2MzIzNTRmNzAwIC0xIG9zZC41OTEgMTQ2NDgxDQo+ID4gaGVh
-cnRiZWF0X2NoZWNrOiBubyByZXBseSBmcm9tIDE5Mi4xNjguNi4xMjM6NjgyOCBvc2QuNjAwIHNp
-bmNlIGJhY2sNCj4gPiAyMDE5LTExLTI0IDA5OjI3OjA1LjI2OTMzMCBmcm9udCAyMDE5LTExLTI0
-IDA5OjMwOjMzLjIxNDg3NCAoY3V0b2ZmDQo+ID4gMjAxOS0xMS0yNCAwOTozMDoxMy43MzY1MTcp
-DQo+ID4gRHVyaW5nIHRoaXMgdGltZSwgMyBob3N0cyB3ZXJlIGludm9sdmVkIDogaG9zdC0xOCwg
-aG9zdC0yMCBhbmQgaG9zdC0zMCA6DQo+ID4gaG9zdC0zMCBpcyB0aGUgb25seSBvbmUgd2hvIGNh
-bid0IHNlZSBvc2RzIDM0NiwzNTYsYW5kIDM1MiBvbiBob3N0LTE4DQo+ID4gaG9zdC0zMCBpcyB0
-aGUgb25seSBvbmUgd2hvIGNhbid0IHNlZSBvc2RzIDM4NyBhbmQgMzk0IG9uIGhvc3QtMjANCj4g
-PiBob3N0LTE4IGlzIHRoZSBvbmx5IG9uZSB3aG8gY2FuJ3Qgc2VlIG9zZHMgNTgzLCA1ODUsIDU5
-MSBhbmQgNTk3IG9uIGhvc3QtMzANCj4gPiBXZSBjYW4ndCBzZWUgYW55IHN0cmFuZ2UgYmVoYXZp
-b3Igb24gaG9zdHMgMTgsIDIwIGFuZCAzMCBpbiBvdXIgbm9kZQ0KPiA+IGV4cG9ydGVyIGRhdGEg
-ZHVyaW5nIHRoaXMgdGltZQ0KPiA+IEFueSBpZGVhcyBvciBhZHZpY2VzID8NCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQpjZXBoLXVzZXJzIG1haWxpbmcg
-bGlzdCAtLSBjZXBoLXVzZXJzQGNlcGguaW8NClRvIHVuc3Vic2NyaWJlIHNlbmQgYW4gZW1haWwg
-dG8gY2VwaC11c2Vycy1sZWF2ZUBjZXBoLmlvDQo=
+Hello Franck,
+Thank you for your help
+Ceph is our Openstack main storage. We have 64 computes (ceph
+clients), 36 Ceph-Hosts (client and cluster networks) and 3 Mons :  so
+roughly 140 arp entries
+Our ARP cache size is based on default so 128/512/1024. As 140 < 512,
+default should works (i will check over time the arp cachesize however
+We tried these settings below 2 weeks ago (we thought it should
+improve our network) but it was worst !
+net.core.rmem_max =3D 134217728     (for a 10Gbps with low latency)
+net.core.wmem_max =3D 134217728     (for a 10Gbps with low latency)
+net.core.netdev_max_backlog =3D 300000
+net.core.somaxconn =3D 2000
+net.ipv4.ip_local_port_range=3D=E2=80=9910000 65000=E2=80=99
+net.ipv4.tcp_rmem =3D 4096 87380 134217728     (for a 10Gbps with low laten=
+cy)
+net.ipv4.tcp_wmem =3D 4096 87380 134217728     (for a 10Gbps with low laten=
+cy)
+net.ipv4.tcp_mtu_probing =3D 1
+net.ipv4.tcp_sack =3D 0
+net.ipv4.tcp_dsack =3D 0
+net.ipv4.tcp_fack =3D 0
+net.ipv4.tcp_fin_timeout =3D 20
+net.ipv4.tcp_slow_start_after_idle =3D 0
+net.ipv4.tcp_timestamps =3D 0
+net.ipv4.tcp_max_syn_backlog =3D 30000
+
+Client and Cluster Network have a 9000 MTU. Each OSD-Host has two
+teaming (LACP): 2x10Gbps for client and 2x10Gbps for cluster. Client
+network is one level-2 lan, idem for Cluster network
+As i said we didn't see significant errors counters on switchs or server
+
+Vincent
+
+
+Le ven. 29 nov. 2019 =C3=A0 09:30, Frank Schilder <frans@dtu.dk> a =C3=A9cr=
+it :
+>
+> How large is your arp cache? We have seen ceph dropping connections as so=
+on as the level-2 network (direct neighbours) is larger than the arp cache.=
+ We adjusted the following settings:
+>
+> # Increase ARP cache size to accommodate large level-2 client network.
+> net.ipv4.neigh.default.gc_thresh1 =3D 1024
+> net.ipv4.neigh.default.gc_thresh2 =3D 2048
+> net.ipv4.neigh.default.gc_thresh3 =3D 4096
+>
+> Another important group of parameters for TCP connections seems to be the=
+se, with our values:
+>
+> ## Increase number of incoming connections. The value can be raised to bu=
+rsts of request, default is 128
+> net.core.somaxconn =3D 2048
+> ## Increase number of incoming connections backlog, default is 1000
+> net.core.netdev_max_backlog =3D 50000
+> ## Maximum number of remembered connection requests, default is 128
+> net.ipv4.tcp_max_syn_backlog =3D 30000
+>
+> With this, we got rid of dropped connections in a cluster of 20 ceph node=
+s and ca. 550 client nodes, accounting for about 1500 active ceph clients, =
+1400 cephfs and 170 RBD images.
+>
+> Best regards,
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Frank Schilder
+> AIT Ris=C3=B8 Campus
+> Bygning 109, rum S14
+>
+> ________________________________________
+> From: Vincent Godin <vince.mlist@gmail.com>
+> Sent: 27 November 2019 20:11:23
+> To: Anthony D'Atri; ceph-users@ceph.io; Ceph Development
+> Subject: [ceph-users] Re: mimic 13.2.6 too much broken connexions
+>
+> If it was a network issue, the counters should explose (as i said,
+> with a log level of 5 on the messenger, we observed more then 80 000
+> lossy channels per minute) but nothing abnormal is relevant on the
+> counters (on switchs and servers)
+> On the switchs  no drop, no crc error, no packet loss, only some
+> output discards but not enough to be significant. On the NICs on the
+> servers via ethtool -S, nothing is relevant.
+> And as i said, an other mimic cluster with different hardware has the
+> same behavior
+> Ceph uses connexions pools from host to host but how does it check the
+> availability of these connexions over the time ?
+> And as the network doesn't seem to be guilty, what can explain these
+> broken channels ?
+>
+> Le mer. 27 nov. 2019 =C3=A0 19:05, Anthony D'Atri <aad@dreamsnake.net> a =
+=C3=A9crit :
+> >
+> > Are you bonding NIC ports?   If so do you have the correct hash policy =
+defined? Have you looked at the *switch* side for packet loss, CRC errors, =
+etc?   What you report could be consistent with this.  Since the host  inte=
+rface for a given connection will vary by the bond hash, some OSD connectio=
+ns will use one port and some the other.   So if one port has switch side e=
+rrors, or is blackholed on the switch, you could see some heart beating imp=
+acted but not others.
+> >
+> > Also make sure you have the optimal reporters value.
+> >
+> > > On Nov 27, 2019, at 7:31 AM, Vincent Godin <vince.mlist@gmail.com> wr=
+ote:
+> > >
+> > > =EF=BB=BFTill i submit the mail below few days ago, we found some clu=
+es
+> > > We observed a lot of lossy connexion like :
+> > > ceph-osd.9.log:2019-11-27 11:03:49.369 7f6bb77d0700  0 --
+> > > 192.168.4.181:6818/2281415 >> 192.168.4.41:0/1962809518
+> > > conn(0x563979a9f600 :6818   s=3DSTATE_ACCEPTING_WAIT_CONNECT_MSG_AUTH
+> > > pgs=3D0 cs=3D0 l=3D1).handle_connect_msg accept replacing existing (l=
+ossy)
+> > > channel (new one lossy=3D1)
+> > > We raised the log of the messenger to 5/5 and observed for the whole
+> > > cluster more than 80 000 lossy connexion per minute !!!
+> > > We adjusted  the "ms_tcp_read_timeout" from 900 to 60 sec then no mor=
+e
+> > > lossy connexion in logs nor health check failed
+> > > It's just a workaround but there is a real problem with these broken
+> > > sessions and it leads to two
+> > > assertions :
+> > > - Ceph take too much time to detect broken session and should recycle=
+ quicker !
+> > > - The reasons for these broken sessions ?
+> > >
+> > > We have a other mimic cluster on different hardware and observed the
+> > > same behavior : lot of lossy sessions, slow ops and co.
+> > > Symptoms are the same :
+> > > - some OSDs on one host have no response from an other osd on a diffe=
+rent hosts
+> > > - after some time, slow ops are detected
+> > > - sometime it leads to ioblocked
+> > > - after about 15mn the problem vanish
+> > >
+> > > -----------
+> > >
+> > > Help on diag needed : heartbeat_failed
+> > >
+> > > We encounter a strange behavior on our Mimic 13.2.6 cluster. A any
+> > > time, and without any load, some OSDs become unreachable from only
+> > > some hosts. It last 10 mn and then the problem vanish.
+> > > It 's not always the same OSDs and the same hosts. There is no networ=
+k
+> > > failure on any of the host (because only some OSDs become unreachable=
+)
+> > > nor disk freeze as we can see in our grafana dashboard. Logs message
+> > > are :
+> > > first msg :
+> > > 2019-11-24 09:19:43.292 7fa9980fc700 -1 osd.596 146481
+> > > heartbeat_check: no reply from 192.168.6.112:6817 osd.394 since back
+> > > 2019-11-24 09:19:22.761142 front 2019-11-24 09:19:39.769138 (cutoff
+> > > 2019-11-24 09:19:23.293436)
+> > > last msg:
+> > > 2019-11-24 09:30:33.735 7f632354f700 -1 osd.591 146481
+> > > heartbeat_check: no reply from 192.168.6.123:6828 osd.600 since back
+> > > 2019-11-24 09:27:05.269330 front 2019-11-24 09:30:33.214874 (cutoff
+> > > 2019-11-24 09:30:13.736517)
+> > > During this time, 3 hosts were involved : host-18, host-20 and host-3=
+0 :
+> > > host-30 is the only one who can't see osds 346,356,and 352 on host-18
+> > > host-30 is the only one who can't see osds 387 and 394 on host-20
+> > > host-18 is the only one who can't see osds 583, 585, 591 and 597 on h=
+ost-30
+> > > We can't see any strange behavior on hosts 18, 20 and 30 in our node
+> > > exporter data during this time
+> > > Any ideas or advices ?
+> _______________________________________________
+> ceph-users mailing list -- ceph-users@ceph.io
+> To unsubscribe send an email to ceph-users-leave@ceph.io
