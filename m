@@ -2,97 +2,86 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AC3810DC9F
-	for <lists+ceph-devel@lfdr.de>; Sat, 30 Nov 2019 06:31:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8BFE10DCAA
+	for <lists+ceph-devel@lfdr.de>; Sat, 30 Nov 2019 06:31:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725847AbfK3FbG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 30 Nov 2019 00:31:06 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42437 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725298AbfK3FbF (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 30 Nov 2019 00:31:05 -0500
-Received: by mail-pl1-f193.google.com with SMTP id j12so13755792plt.9;
-        Fri, 29 Nov 2019 21:31:03 -0800 (PST)
+        id S1727198AbfK3FbU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 30 Nov 2019 00:31:20 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:39179 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727027AbfK3FbT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 30 Nov 2019 00:31:19 -0500
+Received: by mail-pj1-f68.google.com with SMTP id v93so11028566pjb.6;
+        Fri, 29 Nov 2019 21:31:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=lYWP7zytKnpdVNeZVRSceMLc6JN66P/+OOZqYOKvOUw=;
-        b=igLUlxuCC+k/SSH2NPd7tiC4wvtspNZoNwamKYlkc0m7L0n//FM+My6BZ6azDP7/SK
-         iRm0oAwcLTi6MrNA4QeyFD+KnJht4TLd1zL8f8fiyzwHF/LDKepPK1eaihuGZMIjjQ8F
-         Yr2+F95dejxJI0Qt39U7G/iHawD9aTbeuikL0WSb0DF4ojuhWYPlRSXIY/YrjuFusKad
-         bAHFi+9BOdJSYI3SiAArRmNyWUY/DQSdm07w+iw8tj2IW1C9nP9q6ss5JdFDGU6dqt6E
-         ZXXK7h54u1K8ly10CgjqV14eixvf9cIaot0Yf3W8d5J6drm6r6pacukcQFnpQ3BNZCda
-         LhxA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=3yGQn+iiQJUO9GKnXnkOFOtv94PHfEunM5yutQgfYz4=;
+        b=Z8gfwWDS8fngo0CFYRMI015w2/aTU/TwhQBZ+GkrJmW2J2tl0dtjKq77JKCJEBIe8M
+         z5JKNnjm4fQpc/BgJHwU8quoC4dJNYcXtIPK2uwWV4aHVHH2Nch31BduJliDB7WzvIjW
+         NDZHRKK5K1NyYWLQn6aN7Ln0her5Bx08tYOxUB8hRXTMM3Q6km6m+L0WjVNjRSwpFaQn
+         lz+KW6jAZKJn8VxO5FQr83MSDA8KaLeuQ0MWM2OCJXjOGLxI+hpobbvXuOERN1oEfQ25
+         nWCypGglQ92bPPZKDUePE9h5/PmcyrenxXht9bBQHJTrKK1lpAbUOyKObNnw/xguypS1
+         k/YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lYWP7zytKnpdVNeZVRSceMLc6JN66P/+OOZqYOKvOUw=;
-        b=ZapjVN8PKSb8O4oqU/dxKfBwxaoFjKpDNitXLKtC609jnXRJ0Zh8ueyGTh2rjrJXnf
-         mYlkMuy/zMC3FXMacpNqtYGgmjHUWOBt/DESTOdtlaVSXxdi+vvk7DSfQc1aLzOvnYh0
-         6FWpF0pSbvH4ENiAAftVJiBmD8Nb/M8GIGz6ivEISBZM0pLmqgX8wX5KOW1xS6bK2zFv
-         RPG/X32jyxVUR23vMm40ZTSiF2voNxPow5HqmowtvxvyN/PlJLlk0SKIAf5WKeIFSu/V
-         25tVrTqer9De4fGuSiMUHlILBZC0hhS/6PeuK5bSQcx63Fxyoze3BAkcL9hk/svM9A/e
-         xhPA==
-X-Gm-Message-State: APjAAAX2cWF+IHYicST04YQtWyNIsJdm1zIsDSFHnAgjum94EyU2vXHH
-        pyaAAEmMqPLte+22M72gCf2XTlPS
-X-Google-Smtp-Source: APXvYqy33aPRjft3yCKru3Uh3iHw5wJaGEdVutWBqmYrn3a9UjFbYTyaOCnYWxymdH8kO2GSbdbUNw==
-X-Received: by 2002:a17:90b:4391:: with SMTP id in17mr5280823pjb.33.1575091863374;
-        Fri, 29 Nov 2019 21:31:03 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=3yGQn+iiQJUO9GKnXnkOFOtv94PHfEunM5yutQgfYz4=;
+        b=XEzp6WSQOyXmMME0S0sNI01Y4S0WQslCYkHWCZzEJXOCNt9Klstua1oooAyxwx/ZFK
+         O7/+TvrIHvnWAjAd5HWrZKYz8wi9HfoPZuYu3xyQFvgmA+D1ltTwyojxNcRZxfkGctb2
+         Fys+ueF6e1/YxHK4D8q54upt0OkFIp7YsO3V4OK2HA0utyqr+WAZKu+bQj0LT0uFGfQA
+         dMUlYYI4wppxbBX+3aS+vywjDF8/IFINsQY4xM8ONZG2gQjc+WNHrM6p0X5aOqIpjEJs
+         hbGMHWL2CfkrFKKmRRVJBJwhsA8v4k9Zr6Ao0TKJ63bu6K8mnb+effz5xlfBZdaT4CAV
+         OouQ==
+X-Gm-Message-State: APjAAAVaTPF1wb4Cev2IPU6je/djORUWCY27AeLZ6EBvOnT2Qrm/j3Bq
+        SNCvQ+G1CtxawtCgqa8tDfw=
+X-Google-Smtp-Source: APXvYqwjTogqYXJ/8/ZBbuTkMsannOQsuO+jop3OO+IlN09OCUIHRza2bNsjA5C6osCWH3aSy1CMgg==
+X-Received: by 2002:a17:90a:2a44:: with SMTP id d4mr22653988pjg.91.1575091878527;
+        Fri, 29 Nov 2019 21:31:18 -0800 (PST)
 Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
-        by smtp.gmail.com with ESMTPSA id a13sm26131734pfi.187.2019.11.29.21.31.01
+        by smtp.gmail.com with ESMTPSA id a13sm26131734pfi.187.2019.11.29.21.31.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 21:31:02 -0800 (PST)
+        Fri, 29 Nov 2019 21:31:18 -0800 (PST)
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
 To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, arnd@arndb.de,
-        hirofumi@mail.parknet.co.jp, jlayton@kernel.org, richard@nod.at,
-        stfrench@microsoft.com, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-mtd@lists.infradead.org
-Subject: [PATCH 0/7] Delete timespec64_trunc()
-Date:   Fri, 29 Nov 2019 21:30:23 -0800
-Message-Id: <20191130053030.7868-1-deepa.kernel@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, arnd@arndb.de, jlayton@kernel.org,
+        ceph-devel@vger.kernel.org
+Subject: [PATCH 4/7] fs: ceph: Delete timespec64_trunc() usage
+Date:   Fri, 29 Nov 2019 21:30:27 -0800
+Message-Id: <20191130053030.7868-5-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191130053030.7868-1-deepa.kernel@gmail.com>
+References: <20191130053030.7868-1-deepa.kernel@gmail.com>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-This series aims at deleting timespec64_trunc().
-There is a new api: timestamp_truncate() that is the
-replacement api. The api additionally does a limits
-check on the filesystem timestamps.
+Since ceph always uses ns granularity, skip the
+truncation which is a no-op.
 
-The suggestion to open code some of the truncate logic
-came from Al Viro. And, this does make the code in some
-filesystems easy to follow.
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: jlayton@kernel.org
+Cc: ceph-devel@vger.kernel.org
+---
+ fs/ceph/mds_client.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-The series also does some update_time() cleanup as
-suggested by Al Viro.
-
-Deepa Dinamani (7):
-  fs: fat: Eliminate timespec64_trunc() usage
-  fs: cifs: Fix atime update check vs mtime
-  fs: cifs: Delete usage of timespec64_trunc
-  fs: ceph: Delete timespec64_trunc() usage
-  fs: ubifs: Eliminate timespec64_trunc() usage
-  fs: Delete timespec64_trunc()
-  fs: Do not overload update_time
-
- fs/ceph/mds_client.c |  3 +--
- fs/cifs/inode.c      | 15 ++++++++-------
- fs/fat/misc.c        | 10 +++++++++-
- fs/inode.c           | 30 +++---------------------------
- fs/ubifs/sb.c        | 11 ++++-------
- include/linux/fs.h   |  1 -
- 6 files changed, 25 insertions(+), 45 deletions(-)
-
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 068b029cf073..c2aa290f6c3e 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2088,8 +2088,7 @@ ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
+ 	init_completion(&req->r_safe_completion);
+ 	INIT_LIST_HEAD(&req->r_unsafe_item);
+ 
+-	ktime_get_coarse_real_ts64(&ts);
+-	req->r_stamp = timespec64_trunc(ts, mdsc->fsc->sb->s_time_gran);
++	ktime_get_coarse_real_ts64(&req->r_stamp);
+ 
+ 	req->r_op = op;
+ 	req->r_direct_mode = mode;
 -- 
 2.17.1
 
-Cc: hirofumi@mail.parknet.co.jp
-Cc: jlayton@kernel.org
-Cc: richard@nod.at
-Cc: stfrench@microsoft.com
-Cc: ceph-devel@vger.kernel.org
-Cc: linux-cifs@vger.kernel.org
-Cc: linux-mtd@lists.infradead.org
