@@ -2,62 +2,62 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DC0010EA94
-	for <lists+ceph-devel@lfdr.de>; Mon,  2 Dec 2019 14:13:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F2DC10EABF
+	for <lists+ceph-devel@lfdr.de>; Mon,  2 Dec 2019 14:23:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbfLBNNC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 2 Dec 2019 08:13:02 -0500
-Received: from mout.gmx.net ([212.227.15.18]:53227 "EHLO mout.gmx.net"
+        id S1727515AbfLBNWy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 2 Dec 2019 08:22:54 -0500
+Received: from mout.gmx.net ([212.227.15.15]:33305 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727386AbfLBNNC (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 2 Dec 2019 08:13:02 -0500
+        id S1727381AbfLBNWx (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 2 Dec 2019 08:22:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1575292378;
-        bh=TJuoaevhHU1zdo+3MbO+IXJ2AdjntuXocHJFM7FzJeY=;
-        h=X-UI-Sender-Class:From:Subject:To:Cc:Date;
-        b=I4boSX5Rjo4ejAWt9DUlIMlLrRwz9GJyDJqrnJ8zxq6Y4IGYbCfvPC1OaYnGOr4f/
-         ze78QVkDLIEYDRwSnFSwcGdS48uoHZmvhC1JLVtIDU/doEx/94BbWi9flkLwet2eUx
-         Pp72JW38Her9Po7rgUJXR6eJsk6jVt7fJM/4NFwo=
+        s=badeba3b8450; t=1575292969;
+        bh=LgNVBVbE6D5Qlj8QoAVRh1ICQ98mgZj6q7j69D+NgPY=;
+        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
+        b=SOMw+HB8ysCLfhbViosT4Ol7QxA5e7eb99Efq09pROu+Da4GYDg/2NwQWZZFypKWp
+         QQc5TFuDNcASfNY5qF3WZ5LijEjMVaHEu65nx7KiAw1UdZnWKGcSwgIbAljV18zKs4
+         LEOxBi/KZ4wRVcVY35LVoioyDebYgPls/RvThSgQ=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from [10.10.25.124] ([103.59.50.2]) by mail.gmx.com (mrgmx004
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1M6Ue3-1ii65r1dZB-006zwb; Mon, 02
- Dec 2019 14:12:58 +0100
-From:   norman <norman.kern@gmx.com>
-Subject: [BUG]cephfs hang for ever
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MkHQh-1hvsSO0R0z-00kgIN; Mon, 02
+ Dec 2019 14:22:49 +0100
 To:     ceph-devel@vger.kernel.org
 Cc:     zyan@redhat.com
-Message-ID: <e81c2147-f2f0-bcc3-87fd-ec2fc1554c3c@gmx.com>
-Date:   Mon, 2 Dec 2019 21:12:55 +0800
+From:   norman <norman.kern@gmx.com>
+Subject: [BUG]cephfs hang forever
+Message-ID: <7e0d0252-0b60-e3c6-1ac4-36b27818ecaa@gmx.com>
+Date:   Mon, 2 Dec 2019 21:22:45 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
-X-Provags-ID: V03:K1:ei8TqbXo4c8239nq8PosA8E6FuzQQAxCTVfAYbIExdpyn9l9du+
- zTz3u/4hLiDT+dgWFAKqbdGvw9m9kXpqQ3tJJYQ5fIaseotIIy/zdII4CTGzILi34WSr0NI
- W08d40Jwj7fTDeWy6ygj8Bmi7QEb6IWskxcSLPEKUnU+2jwBoWgCbXNcUiacOhDQoo4PwAZ
- oa5wu/j4i51qvUTSfcnrQ==
+X-Provags-ID: V03:K1:OGNCrFcBIEel8Y5ACgdZlHkPk206dGYhhEaKajaku51h0kKbnv7
+ gPPNVeNZ5p0uP6PL/FP4C7hRyXlc9BLuJQ4As+rB38ZFb905bw01IQaUMjan06UScJs3E6K
+ GihSk6YqJE51mw2Z98ushqQgmV3yjQ+DoVHphBfE+BQl/PKjweAdNHWhvMwCbKo53uNSxne
+ ZQTJHzEkvU+c33pN59Mxg==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:EifrLYcP0cw=:rfrXVJF5bxxNP+QSIz4GnT
- 2FgpM8IfFMmaxJoYjjdlZrW91LLaQBJZSz5MrS6VcfyHRB17GLRscqXxdO+A3+5fW0UfbiB3U
- Hvp9YxqGUl3v+siYfMbvT2QzDc5gn02rbxy7eH9Aw5LCTDA5U9guf+Wb0o8P4/2E5Z4pcHF+3
- teS6lYIFe/b8tN5xH5sBZigFQuK06tCtC35UMA7pjGruj0hHf0sjfvjTzas7JK4NeVmFOgzjo
- +Ir+vBKTgOckDjVS4Dl5uBNCYsE/SubujadhvBvg96lHXyd96EcGFrrez686P4rNtFxhIgUte
- LiNPpHVV17Y9o/JaOn6g52zKiBg9ER6W+cG6DHKARht8YO9TbLUQ3CDtH+pNO4xwEB4SXrB3F
- 5cORCOgj54XJVDl8+BjvlMGfPvOxADQoXu5lx89Mki4WEL7/pjXhEemS9PJ+SJe68U6osL8JF
- YvJnzqv+l9T1MyzY/9WdO0YGmkIdtC5jWYpsYPDYNBWaSnqitessCj/3vm7zyZXKBv7hwxRdS
- ru4Ms47s41RucUhyv2Gy1GvT55ZoL9nIz8crHP8xQ3D8QGW7Ywahdn7dPDyhUFp7C8lGo1hVN
- C0SF72q1yjXXXo03NZUJKbXTJSDz68nrYZfFpSblGI2FXXzeTTfeUOqqZQxvVuX2W7whzJnAX
- yqhl2FyBh6LuvtJO5JGgnLst6fsYawyg5wW4gtVmv/WyAvnz0dpMyoAsZlgSXGcGeYhjjUefr
- EVgPYig22Y3QSvU9SE/wAbVGK3huGQuqxXwRIqSQMdoOQUVeHZli0c1sZFgjeSA3ST+g3clHz
- kjtJQUZ8C+Aw92GVfL5a5+6UCLi9V5lVgw79/kG59y8sL1BU8bxVkrE/uc/DfCqB09EIiPjFK
- mQRukfyziUT+pLSTVbm75cYr/dWuQpHmd9ZeMNMvPIvTcyNofb+MDn6wLpF7HZhJ+rp7h1Yzg
- v9Myf7kNpzVHynGw6ktTbkgDYSBzfTOxhWtDKxelEsiMiREVGTqnN4f7Aw5T7YpvNu3LfKuYr
- LfJf0f1R2ktRZ7EArZdIfrxCa0kzRjphy7757RQYlbggGyseOP+oOL7HTjrHa2sxlt+Afk9vu
- Aa2qJ8ZTQ306N8kYrBsLqkPygcOig4G2dHTYYllRP4NCMXVOjjvRHUTOT2BtE4OqtGle2zx/L
- qCJZuRXUXg5rAoHqCvBhRuzHsdNAebEH2YDQRKP8PRDA52Npo0Wzy8qChtweqvWwomJBKEEE4
- a3nyBoGEi3/LqgcjRVCW5w9Tgxyw8ZblEYFpX3uLe7lFh3ZStrh52oOldXO0=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:DDK3uG7j1aU=:6WX+fow6uAR4IQ6Xqb2rVd
+ eoUeggZmwNtShERaceBHctcU7l9QTlkLq+y9atVT+LSFZ+tzKsWjaq0QZBoxGkWiNqzDdbTZh
+ 1JwolutdZbCELX5esxVwpvuywEgm4Zw9769AS7Vz+ARoVjqI+NIAzy3Ap9x+V8BSvW8Qh/A+t
+ jl7CH5zGSEiqANUq/LaaH9QTUEdmMYY8RxxXHZJqrM3XBZtx+HPDagKnUWMv4CsGesOHA93lu
+ RPpXKAby09iAcLOyG45wjObngpbLQWPRWKwnSr3pZa0Gm/1Oj4abO8Z94EQrT+4UdreU9TTFX
+ msw0U9Rl/1PgpeqhZKEOXbG0oT1UWiGIygEPUHrmzo0ciiPYvB1I/Zxwk1JOAYtyn2Ck1ptQz
+ 57xegNVRsM7qoGF/QgsNckSH3EI+niG2iLuKcyo1yuAd5hjktp3rdd3wD+L93gJ1d0Ski+Lop
+ n4PqZ3QWzChehkvDAvg4ulyrkuATW6olwLcC6WTKhgtjjbpTujTnlreXs4cfmLIa7tKWtTpeO
+ erzx/Z+rvmlzIl/tp8SOZPtWK7Q1Co6uLQ3Hei4OSGNzhN+1JFB7vokmPp+EAo8ptccpzoxjT
+ EhGvH0t5zxulQI95L+jIG/fXPGksBpgf720vJkoYvgK539z/jlEce4tnSgvAS2Oxp2VozSwa2
+ 8UNzBH/mHCX8FhZ2ycZeo2nIAN8huJ+v1CCZm9uFI2sv2LN35UyDrQ3u1o8jbV/CrEOLRu0gk
+ LcIv0ha15GLtSXyPl8upfzIElkXG3h0Hbx+GN/5fayGDiLVRtYEViOgISnTCiq77bi5AqO77p
+ hIpenllo1DjNrT1LPFADq7ScfUzjx2hr2szR2bXGZ7AQP0KbYSgx7OPPrgIPSVZ6bouWkH8qm
+ dyvP4AA1eqRBidWMFkaQvPy0/N/k/WvrIDnaOPQzoxmh9Fy+Q+xTaYQGsuzHI7+Jmcgbn6GMm
+ mCKGM8H//26J9gn721uSyKxIif3BDYMrb6zwDW+Zc0TmAaMZ9n3F2ozFR4m5TEdUGzBbwYVoG
+ BZKWDPyJ/CbvuN4ssi8DGh0Q/DdAnZD21guF8N/4p2cXplNPd3l8z0xebZUmb9GJVPk93AL0F
+ ZLMAl85zJa3Sy15yWOtQkY47s5OR4pomL1IiAzrY9x3DTtNaD0hst96v2BhLIs/Vks/WUXsIZ
+ MoaZqkddr9FjJzjL/KQV2ysu3kK5e+WzGUGdwRQTb9RYGE4z4hDnScnOabIxTuXcTIGJG0ZeO
+ oeBWko323W5Gjn2AvmIZK56tWP+bki/NVB4B/8kTME8SDxzAzlwb8oWlfuN8=
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
@@ -80,7 +80,6 @@ debug-user@CEPH0207:/home/debug-user$ sudo cat /proc/46071/stack
 [<ffffffffffffffff>] 0xffffffffffffffff
 
 and I found the the session has lost its connection,
-
 debug-user@CEPH0207:/home/debug-user$ sudo cat
 /sys/kernel/debug/ceph/64803197-c207-4012-b8f3-18825d34196c.client15099020=
 /mds_sessions
@@ -95,8 +94,6 @@ Thanks.
 The envrionment info:
 
 OS: Ubuntu
-
 kernel:=C2=A0 linux-image-4.13.0-36-generic
-
 cpeh version: luminous
 
