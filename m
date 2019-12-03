@@ -2,104 +2,120 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2494E1104C2
-	for <lists+ceph-devel@lfdr.de>; Tue,  3 Dec 2019 20:09:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD4981104E5
+	for <lists+ceph-devel@lfdr.de>; Tue,  3 Dec 2019 20:16:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbfLCTJd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 3 Dec 2019 14:09:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726075AbfLCTJd (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 3 Dec 2019 14:09:33 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83222206DF;
-        Tue,  3 Dec 2019 19:09:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575400172;
-        bh=BnLzoKKXtDLBZePSPHATmQyeNeAsjHO4W6Mhaw42xZk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=uoQaQrdU6RQjB3lnkTPNlC8adatrQcSbXsDrSSs/EfogMjd1/svEnOLaI4Uw2HMY6
-         rD4SDvaSFuDWzJ0BplacymEjMJuc8EfBQ62n2tjCjVce93n5S1ZHuPlhyxws3UG9Wt
-         v2d8MGleV9uE7TSo6E4uYAGg4iHoF6D4Osv20TE0=
-Message-ID: <3f37461a0bdd94e9068526fa9a722fdf65c37fdf.camel@kernel.org>
-Subject: Re: [ceph-users] Revert a CephFS snapshot?
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Robert LeBlanc <robert@leblancnet.us>,
-        Sage Weil <sage@newdream.net>
-Cc:     Jerry Lee <leisurelysw24@gmail.com>,
-        Ceph Users <ceph-users@lists.ceph.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Date:   Tue, 03 Dec 2019 14:09:30 -0500
-In-Reply-To: <CAANLjFoHWayCwMi3+n7sGtU_ofeYBVxfqUuJvtOO_NdSMvdRUA@mail.gmail.com>
-References: <CAKQB+ftphk7pepLdGEgckLtfj=KBp02cMqdea+R_NTd6Gwn-TA@mail.gmail.com>
-         <CA+2bHPaCg4Pq-88hnvnH93QCOfgKv27gDTUjHF5rnDr6Nd2=wQ@mail.gmail.com>
-         <CAKQB+fvUCUAeHEHwP06auyK+ZGUHZdRzTT-38xtgsSbQDjyoHQ@mail.gmail.com>
-         <CA+2bHPbw3uMLeq77XfjZfhYnYcnF-Gk+Od6UJrTiYkW+g77s4w@mail.gmail.com>
-         <alpine.DEB.2.21.1911141900360.17979@piezo.novalocal>
-         <CAANLjFoHWayCwMi3+n7sGtU_ofeYBVxfqUuJvtOO_NdSMvdRUA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+        id S1727326AbfLCTQ4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 3 Dec 2019 14:16:56 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:41847 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbfLCTQ4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 Dec 2019 14:16:56 -0500
+Received: by mail-io1-f65.google.com with SMTP id z26so5036849iot.8
+        for <ceph-devel@vger.kernel.org>; Tue, 03 Dec 2019 11:16:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nWNXZUxg6DXwTopAZmZ9+iGoLTQA5nV5bgiJWZwftlY=;
+        b=Q9xTbB5+hrqOHNyz5MToEk+WKWhWnAGSI01/moxtB6UDAxLPJ+0EqJpWeNh9YREmoV
+         HTJkA7YKa3JfZVJveBN7G2+op2RMkilqaX01rfFYCCKnfJLeNhROXO0syYJ1Kn4kDNfc
+         gwT6KDFP/3vzd/0spnUjHtWCYmi9SnbRbeocjxn40aYAdIK7FmqSjfAiHkfrQGdqcnns
+         CNUxL6x3F2t487JjX+lLUQeiQXzElF+J8cyfbqlNkHVkykQn8b6G9BYqi9tkWW9xahq7
+         Mzu2vc1CSw6Bb3FEehoI+An1IfQGWONBDQQL0jhaVI8q38iTMGYYjmqPT7tkmpce/RK/
+         reFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nWNXZUxg6DXwTopAZmZ9+iGoLTQA5nV5bgiJWZwftlY=;
+        b=UEIXQHA3wpobHlrKe8u2+BrO2SXI5ssIMjLS7umEpIZhTvNQLBEdcG5XBXsrBi8HaF
+         CpEuV6BIZAnayh/zGFXDVvjwFeyGcKqwfPaHbPh1/DGv9zux10WLf9PCI+YKN5zxe3TN
+         kfI/vaa8dmK4T9hOFkA7/Z/Q23knyoU8ddRc55dxBTN4OtYljxhyP83XaQngksmkNqA9
+         EajHDooi4olB68oks5SzrF4z5ZtFPDVoMeD54DCleiVCvuZ9GMEoRa6PxhQDyWicPjLv
+         8ZTYclUtVT7bFWKMi1nVeOcvp9cl/NihVGG4UQBYYXBD1pnMPOF7nIDPiWsbdQ8zayHK
+         3qJQ==
+X-Gm-Message-State: APjAAAWnsADpHyweF3tqk7mGZ6L4piVqwZ+b77kGAxX84t622JumoOF4
+        GNKYnCSndo4LlKUn8Cx2l2fm6KqGRyDRk76KoDg=
+X-Google-Smtp-Source: APXvYqwmK4xUeIys82mANFTj7M6UYQ+PXBiLSGR0tx8y3qZu1Vbj7LTn+MxszavyMwgFN8opK8AxWuztZWOXJmH9NwY=
+X-Received: by 2002:a02:7102:: with SMTP id n2mr7067806jac.76.1575400615757;
+ Tue, 03 Dec 2019 11:16:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20191203142949.34910-1-xiubli@redhat.com>
+In-Reply-To: <20191203142949.34910-1-xiubli@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 3 Dec 2019 20:17:37 +0100
+Message-ID: <CAOi1vP816t4vFznuP91TvA9UTZO63Esidkdp5UOHr-QxUThrNQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix mdsmap_decode got incorrect mds(X)
+To:     xiubli@redhat.com
+Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        "Yan, Zheng" <zyan@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2019-12-03 at 07:59 -0800, Robert LeBlanc wrote:
-> On Thu, Nov 14, 2019 at 11:48 AM Sage Weil <sage@newdream.net> wrote:
-> > On Thu, 14 Nov 2019, Patrick Donnelly wrote:
-> > > On Wed, Nov 13, 2019 at 6:36 PM Jerry Lee <leisurelysw24@gmail.com> wrote:
-> > > >
-> > > > On Thu, 14 Nov 2019 at 07:07, Patrick Donnelly <pdonnell@redhat.com> wrote:
-> > > > >
-> > > > > On Wed, Nov 13, 2019 at 2:30 AM Jerry Lee <leisurelysw24@gmail.com> wrote:
-> > > > > > Recently, I'm evaluating the snpahsot feature of CephFS from kernel
-> > > > > > client and everthing works like a charm.  But, it seems that reverting
-> > > > > > a snapshot is not available currently.  Is there some reason or
-> > > > > > technical limitation that the feature is not provided?  Any insights
-> > > > > > or ideas are appreciated.
-> > > > >
-> > > > > Please provide more information about what you tried to do (commands
-> > > > > run) and how it surprised you.
-> > > >
-> > > > The thing I would like to do is to rollback a snapped directory to a
-> > > > previous version of snapshot.  It looks like the operation can be done
-> > > > by over-writting all the current version of files/directories from a
-> > > > previous snapshot via cp.  But cp may take lots of time when there are
-> > > > many files and directories in the target directory.  Is there any
-> > > > possibility to achieve the goal much faster from the CephFS internal
-> > > > via command like "ceph fs <cephfs_name> <dir> snap rollback
-> > > > <snapname>" (just a example)?  Thank you!
-> > > 
-> > > RADOS doesn't support rollback of snapshots so it needs to be done
-> > > manually. The best tool to do this would probably be rsync of the
-> > > .snap directory with appropriate options including deletion of files
-> > > that do not exist in the source (snapshot).
-> > 
-> > rsync is the best bet now, yeah.
-> > 
-> > RADOS does have a rollback operation that uses clone where it can, but 
-> > it's a per-object operation, so something still needs to walk the 
-> > hierarchy and roll back each file's content.  The MDS could do this more 
-> > efficiently than rsync give what it knows about the snapped inodes 
-> > (skipping untouched inodes or, eventually, entire subtrees) but it's a 
-> > non-trivial amount of work to implement.
-> > 
-> 
-> Would it make sense to extend CephFS to leverage reflinks for cases like this? That could be faster than rsync and more space efficient. It would require some development time though.
-> 
+On Tue, Dec 3, 2019 at 3:30 PM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> The possible max rank, it maybe larger than the m->m_num_mds,
+> for example if the mds_max == 2 in the cluster, when the MDS(0)
+> was laggy and being replaced by a new MDS, we will temporarily
+> receive a new mds map with n_num_mds == 1 and the active MDS(1),
+> and the mds rank >= m->m_num_mds.
+>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/mdsmap.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+> index 284d68646c40..a77e0ecb9a6b 100644
+> --- a/fs/ceph/mdsmap.c
+> +++ b/fs/ceph/mdsmap.c
+> @@ -129,6 +129,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
+>         int err;
+>         u8 mdsmap_v, mdsmap_cv;
+>         u16 mdsmap_ev;
+> +       u32 possible_max_rank;
 
-I think reflink would be hard. Ceph hardcodes the inode number into the
-object name of the backing objects, so sharing between different inode
-numbers is really difficult to do. It could be done, but it means a new
-in-object-store layout scheme.
+I think this should be an int, like mds and m_num_mds,
 
-That said...I wonder if we could get better performance by just
-converting rsync to use copy_file_range in this situation. That has the
-potential to offload a lot of the actual copying work to the OSDs. 
--- 
-Jeff Layton <jlayton@kernel.org>
+>
+>         m = kzalloc(sizeof(*m), GFP_NOFS);
+>         if (!m)
+> @@ -164,6 +165,15 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
+>         m->m_num_mds = n = ceph_decode_32(p);
+>         m->m_num_active_mds = m->m_num_mds;
+>
+> +       /*
+> +        * the possible max rank, it maybe larger than the m->m_num_mds,
+> +        * for example if the mds_max == 2 in the cluster, when the MDS(0)
+> +        * was laggy and being replaced by a new MDS, we will temporarily
+> +        * receive a new mds map with n_num_mds == 1 and the active MDS(1),
+> +        * and the mds rank >= m->m_num_mds.
+> +        */
+> +       possible_max_rank = max((u32)m->m_num_mds, m->m_max_mds);
 
+... making this cast unnecessary,
+
+> +
+>         m->m_info = kcalloc(m->m_num_mds, sizeof(*m->m_info), GFP_NOFS);
+>         if (!m->m_info)
+>                 goto nomem;
+> @@ -238,7 +248,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
+>                      ceph_mds_state_name(state),
+>                      laggy ? "(laggy)" : "");
+>
+> -               if (mds < 0 || mds >= m->m_num_mds) {
+> +               if (mds < 0 || mds >= possible_max_rank) {
+
+... and avoiding sign mismatch here.
+
+Thanks,
+
+                Ilya
