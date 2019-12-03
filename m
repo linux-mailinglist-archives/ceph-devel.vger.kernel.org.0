@@ -2,94 +2,124 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4666C10F6EB
-	for <lists+ceph-devel@lfdr.de>; Tue,  3 Dec 2019 06:20:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EB6D10F95F
+	for <lists+ceph-devel@lfdr.de>; Tue,  3 Dec 2019 09:01:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbfLCFUO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 3 Dec 2019 00:20:14 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34988 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbfLCFUN (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 Dec 2019 00:20:13 -0500
-Received: by mail-pl1-f196.google.com with SMTP id s10so1215187plp.2;
-        Mon, 02 Dec 2019 21:20:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uY2QG58kzGEqaCGR7UmQKvscEap1XpvW7KPcaFFGZH0=;
-        b=Dwv7oCgyLvufvYLeLRzMwe6yJWXvwTZcsL4hY36GtT6tUoG+/ujy697/eU9HOVoVeD
-         61kUnWfMnw7InOz5Zx+IyK06HBrzit+48tCEBba3bnstghTMM9BteNOU2CostXaY5GB+
-         OHgQJ9Yayd96Vj1r8Xic4WDPeQgfxVAopDZIzhAYkCcyAf2A5ZMRWnE23CdHsV2aYsV8
-         S9ZrVro0inM5m8RIkdpmz7FpcwAAtMdXoKVR30kQ8o57N3N5uCg1IwTfyWUtlhdWD08p
-         P+VhLoJ+X3adQP86EiasnJ+zwhKSLVh/3Hyz0Q25jZzqycSzZYx2BJ1kQ1L5NMjqwQQj
-         MUQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=uY2QG58kzGEqaCGR7UmQKvscEap1XpvW7KPcaFFGZH0=;
-        b=VeW8C8i6kG0rTm8MAiyWJKTITzei1PlfKz/zqy2GMi5i5LIlYgqHeiZQzqoH40GYtD
-         y027rKoKLEEOF+WZofXcaRn4BJdsGt8YleoMoTj8HH8ppcekTPM8gINZpE+q/WDJkuPn
-         cFBviotIJcezvn0z3W0Etq5zcG98LC14iK3qwDN9kmHAufk8sf8kMtvEYO05V/PhoBHH
-         IEabXvaQF0ir/leuN4o2JQmWqmgxGD5p66NxdyPXZi3MAB9HY2SY+/2KUu7UTb9OBbxI
-         9UdNCjW4Tzorbl/6Itm76b1udpjzeB4Sap1PPh/MBBv+3QN7ZBUDDIOyDMBPnr2r9mSe
-         YZDA==
-X-Gm-Message-State: APjAAAU+P7LgnsuQsWvkBB6hjp6vLpP00ZrvaLxp0pv1XVsiTTRShNNu
-        KXLEB57+zPKaVvd1Hwx30IslQuJR
-X-Google-Smtp-Source: APXvYqzDgx8INoeZxdQp1PJtJjENI+ChJSa1vX6DYbZjaNzNcWkYL193jZVNhMWOY/a0Mw1ZTEqQsw==
-X-Received: by 2002:a17:90a:a114:: with SMTP id s20mr3579555pjp.44.1575350413045;
-        Mon, 02 Dec 2019 21:20:13 -0800 (PST)
-Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
-        by smtp.gmail.com with ESMTPSA id h9sm1451915pgk.84.2019.12.02.21.20.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2019 21:20:12 -0800 (PST)
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, arnd@arndb.de, jlayton@kernel.org,
-        ceph-devel@vger.kernel.org
-Subject: [PATCH v2 3/6] fs: ceph: Delete timespec64_trunc() usage
-Date:   Mon,  2 Dec 2019 21:19:42 -0800
-Message-Id: <20191203051945.9440-4-deepa.kernel@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191203051945.9440-1-deepa.kernel@gmail.com>
-References: <20191203051945.9440-1-deepa.kernel@gmail.com>
+        id S1727522AbfLCIBF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 3 Dec 2019 03:01:05 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:43894 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727491AbfLCIBF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 Dec 2019 03:01:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575360063;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=zpdrG/gVlOUI7Tj9PCzbzOCrhNW+/oOCHLJdbmCTX08=;
+        b=ZThBHU/q29iUhP5CxQJ2+vyTOwQxz+kzLIYAgs1Lsp70VvMgE0LoH9cETGUZkNCAJVfXxr
+        VP92TuZpVE7pFAhMjnqDWLJcqBGXS+0w2GqRLiwb1m5uSqPSTexCg9hHVqGm5eer7wUiqG
+        Yjexd2YklUC2ZHrnzGnfAHfOiTtwnNs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-238-_ITDq-AoP9OfkkN0_DoJPw-1; Tue, 03 Dec 2019 03:01:02 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2EEA2DB62;
+        Tue,  3 Dec 2019 08:01:01 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-69.pek2.redhat.com [10.72.12.69])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D3289608E2;
+        Tue,  3 Dec 2019 08:00:55 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
+        pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: switch to global cap helper
+Date:   Tue,  3 Dec 2019 03:00:51 -0500
+Message-Id: <20191203080051.13240-1-xiubli@redhat.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MC-Unique: _ITDq-AoP9OfkkN0_DoJPw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Since ceph always uses ns granularity, skip the
-truncation which is a no-op.
+From: Xiubo Li <xiubli@redhat.com>
 
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: jlayton@kernel.org
-Cc: ceph-devel@vger.kernel.org
+__ceph_is_any_caps is a duplicate helper.
+
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/ceph/mds_client.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/ceph/caps.c | 24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 068b029cf073..88687ed65cff 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2069,7 +2069,6 @@ struct ceph_mds_request *
- ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index c62e88da4fee..fafb84a2d8f5 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -1011,18 +1011,13 @@ static int __ceph_is_single_caps(struct ceph_inode_=
+info *ci)
+ =09return rb_first(&ci->i_caps) =3D=3D rb_last(&ci->i_caps);
+ }
+=20
+-static int __ceph_is_any_caps(struct ceph_inode_info *ci)
+-{
+-=09return !RB_EMPTY_ROOT(&ci->i_caps);
+-}
+-
+ int ceph_is_any_caps(struct inode *inode)
  {
- 	struct ceph_mds_request *req = kzalloc(sizeof(*req), GFP_NOFS);
--	struct timespec64 ts;
- 
- 	if (!req)
- 		return ERR_PTR(-ENOMEM);
-@@ -2088,8 +2087,7 @@ ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
- 	init_completion(&req->r_safe_completion);
- 	INIT_LIST_HEAD(&req->r_unsafe_item);
- 
--	ktime_get_coarse_real_ts64(&ts);
--	req->r_stamp = timespec64_trunc(ts, mdsc->fsc->sb->s_time_gran);
-+	ktime_get_coarse_real_ts64(&req->r_stamp);
- 
- 	req->r_op = op;
- 	req->r_direct_mode = mode;
--- 
-2.17.1
+ =09struct ceph_inode_info *ci =3D ceph_inode(inode);
+ =09int ret;
+=20
+ =09spin_lock(&ci->i_ceph_lock);
+-=09ret =3D __ceph_is_any_caps(ci);
++=09ret =3D __ceph_is_any_real_caps(ci);
+ =09spin_unlock(&ci->i_ceph_lock);
+=20
+ =09return ret;
+@@ -1099,15 +1094,16 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool q=
+ueue_release)
+ =09if (removed)
+ =09=09ceph_put_cap(mdsc, cap);
+=20
+-=09/* when reconnect denied, we remove session caps forcibly,
+-=09 * i_wr_ref can be non-zero. If there are ongoing write,
+-=09 * keep i_snap_realm.
+-=09 */
+-=09if (!__ceph_is_any_caps(ci) && ci->i_wr_ref =3D=3D 0 && ci->i_snap_real=
+m)
+-=09=09drop_inode_snap_realm(ci);
++=09if (!__ceph_is_any_real_caps(ci)) {
++=09=09/* when reconnect denied, we remove session caps forcibly,
++=09=09 * i_wr_ref can be non-zero. If there are ongoing write,
++=09=09 * keep i_snap_realm.
++=09=09 */
++=09=09if (ci->i_wr_ref =3D=3D 0 && ci->i_snap_realm)
++=09=09=09drop_inode_snap_realm(ci);
+=20
+-=09if (!__ceph_is_any_real_caps(ci))
+ =09=09__cap_delay_cancel(mdsc, ci);
++=09}
+ }
+=20
+ struct cap_msg_args {
+@@ -2927,7 +2923,7 @@ void ceph_put_cap_refs(struct ceph_inode_info *ci, in=
+t had)
+ =09=09=09=09ci->i_head_snapc =3D NULL;
+ =09=09=09}
+ =09=09=09/* see comment in __ceph_remove_cap() */
+-=09=09=09if (!__ceph_is_any_caps(ci) && ci->i_snap_realm)
++=09=09=09if (!__ceph_is_any_real_caps(ci) && ci->i_snap_realm)
+ =09=09=09=09drop_inode_snap_realm(ci);
+ =09=09}
+ =09spin_unlock(&ci->i_ceph_lock);
+--=20
+2.21.0
 
