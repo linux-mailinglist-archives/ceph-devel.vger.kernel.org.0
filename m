@@ -2,94 +2,109 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2803F112AF7
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Dec 2019 13:07:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 481E2112B18
+	for <lists+ceph-devel@lfdr.de>; Wed,  4 Dec 2019 13:13:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbfLDMG7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 4 Dec 2019 07:06:59 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:45037 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727445AbfLDMG7 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 Dec 2019 07:06:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575461218;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=syp/93gcuPvHoeHG60t3ZTi4svuD6y13CxVRQEq8ej8=;
-        b=XUEiNIG3NHzjMO662g82ZHtHEuvScbv1bx+fDGNtjr/p0ZdJlD4hbxqDdn7j4b+ct6qooI
-        PUtXmiIBpIWy+UmchfwqokiMV6jjwkdvIS5ktFamZ/1EzepF7siFJhMIr26QlEIE4BmbnQ
-        bCW1ZiWlQTFXETlr9cPew7Fics7X0II=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-342-jt6au2tfP3ucqge1Kb07vQ-1; Wed, 04 Dec 2019 07:06:57 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2745E2F60;
-        Wed,  4 Dec 2019 12:06:56 +0000 (UTC)
-Received: from [10.72.12.69] (ovpn-12-69.pek2.redhat.com [10.72.12.69])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DFBA660C63;
-        Wed,  4 Dec 2019 12:06:51 +0000 (UTC)
-Subject: Re: [PATCH] ceph: add possible_max_rank and make the code more
- readable
-To:     jlayton@kernel.org
-Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
-        pdonnell@redhat.com, ceph-devel@vger.kernel.org
-References: <20191204115739.53303-1-xiubli@redhat.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <4a3d6805-5e48-7665-4e89-0cb2fe208f91@redhat.com>
-Date:   Wed, 4 Dec 2019 20:06:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1727503AbfLDMNF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 4 Dec 2019 07:13:05 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:40927 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727445AbfLDMNE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 Dec 2019 07:13:04 -0500
+Received: by mail-il1-f193.google.com with SMTP id b15so6462388ila.7
+        for <ceph-devel@vger.kernel.org>; Wed, 04 Dec 2019 04:13:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=q2n2ZxVnPYlDDyTzDGDztKXEawDaHmkWHyeUyru4vmI=;
+        b=UMyxEcYyvAuX8m/CGj9hnakrZihXg5evHgYipgbGQGi0jvvPu2HgX6Io/EZt6ISWCS
+         NjWhAkBr20OcFNPMXlckrRVxwuqdcWDqeITvZ+jxX9Q3sBuJED1sFLGqCr0wqTIRn11W
+         ne4J1qjprzZlxv+tEn74VUx5iKJHiVy770P73neWwzrhRK4ik1o90pYCWknzwG+sjKPM
+         HBeW+JY/CprvXHfZrT/KgL224F4yFvEozdN8UvzBIKQC6D5WEQyHdAzbaxCW2hUqMRUH
+         kmZiDOyhlL/zW+YZln0Ek9eKMXQWPzkwPjb7RBDfjkc/vA7pjN83Aek/PT9MxjDu5+Rz
+         GO9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=q2n2ZxVnPYlDDyTzDGDztKXEawDaHmkWHyeUyru4vmI=;
+        b=doGQen3HzhwseH39T1bAw99+PBS8vjHj/t/rRQTnsg6w89tnl/CZHpHVbd09aAuPbJ
+         WEXZFuSeBNpVXH649nyPb8DlMaVYndAWwcFqsnZHxJzGHZrvjOFa+rlqC3dtDSPk5sDr
+         3xv56uHM/hYzwe6RLio/KNfkD1AMgpmc2sAJ5DJ7b3o/s5z5I7lBnpKkEhbG+sPOFNPC
+         Cr6bgFt1X6DgU/rGfTQP9SScZ4cem8773CXhTV62T2YLBQAOKb5R6lwoovGxOedSYWEl
+         Utx/w/t3k+o7/qL8e0pHQI8AHkUSMLaxpfniS6wruIX78cKN0zSn8fFnCCjmxpExA3Oi
+         OhXw==
+X-Gm-Message-State: APjAAAVL45SNvGrSLgSrbUgUSpd6rQDnhjjn2sHWqTu8SjlCb9dtdYNj
+        WpaewRXpQdiT17h36fu+/howc3iGib4UW/+YbA==
+X-Google-Smtp-Source: APXvYqxr8W299OVX5sDwhf+yAxJR7U8Q7Y9Afl20/05cr6wuEtLcM/atFeG22R3RuazQLmsW65YMfpkg87Lc2lhgBcs=
+X-Received: by 2002:a92:51:: with SMTP id 78mr1175601ila.121.1575461584011;
+ Wed, 04 Dec 2019 04:13:04 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191204115739.53303-1-xiubli@redhat.com>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-MC-Unique: jt6au2tfP3ucqge1Kb07vQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a02:6603:0:0:0:0:0 with HTTP; Wed, 4 Dec 2019 04:13:03 -0800 (PST)
+Reply-To: moneygram.1820@outlook.fr
+From:   "Rev.Dr Emmanuel Okoye" <info.zennitbankplcnigerian@gmail.com>
+Date:   Wed, 4 Dec 2019 13:13:03 +0100
+Message-ID: <CABHzvrkD9GuepA+ux=vSf0mPaVNpD-S9jS45rjSMoJCGP2twTw@mail.gmail.com>
+Subject: God has remembered your prayers.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2019/12/4 19:57, xiubli@redhat.com wrote:
-[...]
-> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
-> index a77e0ecb9a6b..889627817e52 100644
-> --- a/fs/ceph/mdsmap.c
-> +++ b/fs/ceph/mdsmap.c
-> @@ -14,22 +14,15 @@
->   #include "super.h"
->   
->   #define CEPH_MDS_IS_READY(i, ignore_laggy) \
-> -	(m->m_info[i].state > 0 && (ignore_laggy ? true : !m->m_info[i].laggy))
-> +	(m->m_info[i].state > 0 && ignore_laggy ? true : !m->m_info[i].laggy)
->   
->   static int __mdsmap_get_random_mds(struct ceph_mdsmap *m, bool ignore_laggy)
->   {
->   	int n = 0;
->   	int i, j;
->   
-> -	/*
-> -	 * special case for one mds, no matter it is laggy or
-> -	 * not we have no choice
-> -	 */
-> -	if (1 == m->m_num_mds && m->m_info[0].state > 0)
-> -		return 0;
-> -
+Attn, dear Beneficiary.
 
-I removed this because when possible_max_mds != m_num_mds and the 
-validate MDS rank possible be 1 or a larger number.
+God has remembered your prayers.
+I have already sent you Money Gram payment of $5000.00 today, MG 1029-8096
+This is because we have finally concluded to effect your transfer
+funds of $4.8,000.000usd
+through MONEY GRAM International Fund transfer Service
+Each payment will be sending to you by $5000.00 daily until the
+($4.8,000.000usd) is completely transferred
+we have this morning sent  MONEY GRAM payment of $5,000.00 in your name today
+So Contact the MONEY GRAM Agent to pick up your first payment of $5000
+now. MG 1029-8096
 
-This bug existed even without my previous mdsmap series.
+Contact person Mrs. Alan Ude
+Dir. MONEY GRAM Service,Benin
+Phone number: +229 98856728
+E-mail: moneygram.1820@outlook.fr
 
-All the other code are for enhancement.
+Ask him to give you the complete mtcn, sender name, question and
+answer to enable you
+pick up the $5000.00 sent today,
+Also you are instructed to re-confirm your information's
+to Mrs.Alan Ude as listed below to avoid wrong transactions.
 
-BRs
+(1Your Full name:............................................
+(2 Phone number.....................................................
+(3 Contact address:.....................................
+(4 Age:..................................................................
+(5 Country..............................................
+(6) Sex .................................................................
+(7) your occupation...........................................
 
-[...]
+(8)Passport/By Attach or Drivers License Number:
+Contact Mrs. Alan Ude for your MONEY GRAM payment of $4.8,000.000usd
+Note please: I have paid service fees for you but the only money you
+are required
+to send to Mrs. Alan Ude is $90.00 transfer fee only
+before you can pick up your transfer today.
 
+Send it via Money Gram
+Receiver's Name-----Alan Ude
+Country----------Benin
+Address-----------Cotonou
+Quest--------Honest
+Ans-----------Trust
+
+I done all my best for you to receive your transfer now ok.
+We need your urgent reply
+Best Regards
+Rev.Dr Emmanuel Okoye
+CEO Ecobank-benin
+
+If we did not receive it urgent from you today,
+I will go ahead and release you funds to Mrs. Lyndia Ppaulson as your
+representative.
