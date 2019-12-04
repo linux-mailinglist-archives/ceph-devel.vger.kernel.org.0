@@ -2,106 +2,106 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 061411120CD
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Dec 2019 01:57:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A31C1121C6
+	for <lists+ceph-devel@lfdr.de>; Wed,  4 Dec 2019 04:10:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbfLDA5P (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 3 Dec 2019 19:57:15 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:36329 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726060AbfLDA5P (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 Dec 2019 19:57:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575421033;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nCeSou7/BHWhZArOz4LwTAokn/+m1zRl+xV3FrUAkvE=;
-        b=UdrU3U61lo0mnWYwOwO/7FMz9k8rZvcA0SvCEQz0q+GqONvIT0ma4zgTxKlSxxKp4z/hNW
-        74mxFToXhln9GwoWdhkxKcZtv9rDJaUUfox7aKe7Se3yL/jDU59dG2nIapBIdByy9dIQwN
-        pd+g1g/KF6nk66rsedbiGYtbAcs+rs4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-139-i4HtW0zfPcOKemQ21OuKJQ-1; Tue, 03 Dec 2019 19:57:12 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 254CC800C76;
-        Wed,  4 Dec 2019 00:57:11 +0000 (UTC)
-Received: from [10.72.12.69] (ovpn-12-69.pek2.redhat.com [10.72.12.69])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 63176600C8;
-        Wed,  4 Dec 2019 00:57:06 +0000 (UTC)
-Subject: Re: [PATCH v2] ceph: trigger the reclaim work once there has enough
- pending caps
-To:     jlayton@kernel.org, zyan@redhat.com
-Cc:     sage@redhat.com, idryomov@gmail.com, pdonnell@redhat.com,
-        ceph-devel@vger.kernel.org
-References: <20191126123222.29510-1-xiubli@redhat.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <7cdff2fd-1f17-4ad4-48cb-bf138cadf887@redhat.com>
-Date:   Wed, 4 Dec 2019 08:57:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726917AbfLDDKQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 3 Dec 2019 22:10:16 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36607 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726804AbfLDDKQ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 Dec 2019 22:10:16 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b19so2868376pfd.3;
+        Tue, 03 Dec 2019 19:10:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yiyDDHELLu91Yg2Toujn+sD7fMeLzTV+cltZc+zA9ok=;
+        b=SgPTXfpx0nRKHkWNSTnPfkqt1Fe1WuYLfr7WaWvijqmGsmRMtpgYhZiKRNgy0Hn1Gk
+         FQa/Wx0lCd+jkf0YkIrTxpAzzIR2EqpFU5yyAen4IuNsDtPF8uMxKG8rgdXJhKZNF9ut
+         MMW1QnmvSmoANhn/j+iCewDFoyHFHp8lNSWbPXy6BkLaydzBKx4eg+aKwHQOacKrMtBN
+         FRig1GHyhem4ReVJOQ6E9LhmCVc2Fix0PDjuaaq3JgeeWbVjNcr/t8Cc2K+Bfynme90F
+         QfaHitLStq8ykhrzw1XE0cmXg4Eb++qXaPsXiKvg8dnfdNIMtGLSUOmup7BLJMF+Yh5p
+         9vuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yiyDDHELLu91Yg2Toujn+sD7fMeLzTV+cltZc+zA9ok=;
+        b=njkokoFItxH4BuEChU/hz+qiqSAXzHlCMwd6M4dhJ0t/zFYzePUg5bTT+zBDuHfa4O
+         h0fdldxRJUzJ402DOHDb39eUfiEAQw3mFWVMg1vwncbC5nSHVYmwAzz4dyFsQv4FOCfT
+         O0QN3cTzyioroxFqH0f0iGrwti6THqwI0Cv9bpxQu+9pCdwsCFy/6xp38oeiXdBnV6qW
+         ip9yrfzNZI6THHEZODiAO2RKUfp3kZJwYSqCA4BSwF+tpKIxTJmmE4NOd9fuGcoJhhc+
+         T2x01vsFdtbVpV6FkFsGMhy8IULzAkLIHFE0Og6Zsw+wFf4gaIAn/M9ZCdW33x1WZiel
+         ZM7Q==
+X-Gm-Message-State: APjAAAWtTzn5eSkLhfC6JPIqhMsEjBGK7KaVPvgjGGn9bCDdnrhefhWb
+        PJlbnmreuIWeNbY955Jafjs=
+X-Google-Smtp-Source: APXvYqxeIQRBA0Yrk5XUXzy4fTVh5A8rdb4VMC9xb46PwQWepX1G479M+lHNy330e96tMuCMNr4NKw==
+X-Received: by 2002:aa7:8a8b:: with SMTP id a11mr1306022pfc.207.1575429015536;
+        Tue, 03 Dec 2019 19:10:15 -0800 (PST)
+Received: from MacBook-Pro.jd.com ([111.200.23.19])
+        by smtp.googlemail.com with ESMTPSA id 20sm4747289pgw.71.2019.12.03.19.10.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Dec 2019 19:10:15 -0800 (PST)
+From:   Yanhu Cao <gmayyyha@gmail.com>
+To:     jlayton@kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yanhu Cao <gmayyyha@gmail.com>
+Subject: [PATCH] ceph: check set quota operation support before syncing setxattr.
+Date:   Wed,  4 Dec 2019 11:10:05 +0800
+Message-Id: <20191204031005.2638-1-gmayyyha@gmail.com>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122.2)
 MIME-Version: 1.0
-In-Reply-To: <20191126123222.29510-1-xiubli@redhat.com>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-MC-Unique: i4HtW0zfPcOKemQ21OuKJQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Yan,
+Environment
+-----------
+ceph version: 12.2.*
+kernel version: 4.19+
 
-Good morning.
+setfattr quota operation actually sends op to MDS, and settings
+effective. but kclient outputs 'Operation not supported'. This may confuse
+users' understandings.
 
-Is this version okay for you =EF=BC=9F
+If the kernel version and ceph version are not compatible, should check
+quota operations are supported first, then do sync_setxattr.
 
-Addtional info:
+reference: https://docs.ceph.com/docs/master/cephfs/quota/
 
-The ceph_reclaim_caps_nr will be called with the parameter "nr" =3D=3D 1 or=
-=20
-2 for now and a larger count in future for some cases. The old code just=20
-assumed that "nr=3D=3D1". So in corner case we may skip it many times=20
-leaving large amount of cap reclaim pending in short time.
+Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+---
+ fs/ceph/xattr.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-
-Thanks
-BRs
-
-On 2019/11/26 20:32, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
->
-> The nr in ceph_reclaim_caps_nr() is very possibly larger than 1,
-> so we may miss it and the reclaim work couldn't triggered as expected.
->
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->
-> V2:
-> - use a more graceful test.
->
->   fs/ceph/mds_client.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 2c92a1452876..109ec7e2ee7b 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -2020,7 +2020,7 @@ void ceph_reclaim_caps_nr(struct ceph_mds_client *m=
-dsc, int nr)
->   =09if (!nr)
->   =09=09return;
->   =09val =3D atomic_add_return(nr, &mdsc->cap_reclaim_pending);
-> -=09if (!(val % CEPH_CAPS_PER_RELEASE)) {
-> +=09if ((val % CEPH_CAPS_PER_RELEASE) < nr) {
->   =09=09atomic_set(&mdsc->cap_reclaim_pending, 0);
->   =09=09ceph_queue_cap_reclaim_work(mdsc);
->   =09}
-
+diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+index cb18ee637cb7..189aace75186 100644
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -1132,8 +1132,8 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+ 				    "during filling trace\n", inode);
+ 		err = -EBUSY;
+ 	} else {
+-		err = ceph_sync_setxattr(inode, name, value, size, flags);
+-		if (err >= 0 && check_realm) {
++		err = 0;
++		if (check_realm) {
+ 			/* check if snaprealm was created for quota inode */
+ 			spin_lock(&ci->i_ceph_lock);
+ 			if ((ci->i_max_files || ci->i_max_bytes) &&
+@@ -1142,6 +1142,8 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+ 				err = -EOPNOTSUPP;
+ 			spin_unlock(&ci->i_ceph_lock);
+ 		}
++		if (err == 0)
++			err = ceph_sync_setxattr(inode, name, value, size, flags);
+ 	}
+ out:
+ 	ceph_free_cap_flush(prealloc_cf);
+-- 
+2.21.0 (Apple Git-122.2)
 
