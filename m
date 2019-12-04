@@ -2,88 +2,89 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBF1B112D69
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Dec 2019 15:26:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D5E2112D86
+	for <lists+ceph-devel@lfdr.de>; Wed,  4 Dec 2019 15:35:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbfLDO0M (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 4 Dec 2019 09:26:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727867AbfLDO0M (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 4 Dec 2019 09:26:12 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728030AbfLDOfj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 4 Dec 2019 09:35:39 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:48219 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727911AbfLDOfj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 Dec 2019 09:35:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575470137;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=BURKk2xGoP5oYIy+ZuxRWHxMkxx4q1xnrlAN16HRr/4=;
+        b=OtwKYBcs7Wm2s8DQlGaeu/FM5vnS3hH0j9V+Vb+X0QPb0FhxaR2hVJMm2zJ2uXZlodMZxN
+        gaG9Rl0P7JG0b0+p6yOkjadLmfCSC8CV8hemoKu11wqRrcJfu24sbLXotCaMsKwXSS3SGo
+        Ybze/xERTPdiNjtYoMAdom/eIXcOE/Y=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-184-lh3qnDZYPAupWS8BITu08w-1; Wed, 04 Dec 2019 09:35:34 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D602D20675;
-        Wed,  4 Dec 2019 14:26:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575469571;
-        bh=Z8eK8/MSuwOkBqh5TqyNn+JjBARYSgpBx4V3X08U2Ak=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=QOQLkfHnu/g6IN/Tnq16D3GZtz8s1PIsss7et78nlLp7WoMwAtKX7WKOdD7y8GeBO
-         eEZuGhBRMIuCEpbl8TSOrJ7MTihzI60x1gKID1aHdxO/nhjgixltYamDUylhjOh2zX
-         tyuw1gdfYJPyiQ4wI855CkwiwQIRTlcHO9zqAFzM=
-Message-ID: <0cc3149a27bf6c64ba3a7b1530d623c68ed02531.camel@kernel.org>
-Subject: Re: [PATCH] ceph: fix possible long time wait during umount
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
-        pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Wed, 04 Dec 2019 09:26:09 -0500
-In-Reply-To: <20191204062718.56105-1-xiubli@redhat.com>
-References: <20191204062718.56105-1-xiubli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DB28B107ACC9;
+        Wed,  4 Dec 2019 14:35:33 +0000 (UTC)
+Received: from [10.72.12.105] (ovpn-12-105.pek2.redhat.com [10.72.12.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8964019C68;
+        Wed,  4 Dec 2019 14:35:29 +0000 (UTC)
+Subject: Re: [PATCH v2] ceph: trigger the reclaim work once there has enough
+ pending caps
+To:     xiubli@redhat.com, jlayton@kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org
+References: <20191126123222.29510-1-xiubli@redhat.com>
+From:   "Yan, Zheng" <zyan@redhat.com>
+Message-ID: <4185708e-f614-4271-3b11-2aba6f0e1da6@redhat.com>
+Date:   Wed, 4 Dec 2019 22:35:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <20191126123222.29510-1-xiubli@redhat.com>
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-MC-Unique: lh3qnDZYPAupWS8BITu08w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2019-12-04 at 01:27 -0500, xiubli@redhat.com wrote:
+On 11/26/19 8:32 PM, xiubli@redhat.com wrote:
 > From: Xiubo Li <xiubli@redhat.com>
 > 
-> During umount, if there has no any unsafe request in the mdsc and
-> some requests still in-flight and not got reply yet, and if the
-> rest requets are all safe ones, after that even all of them in mdsc
-> are unregistered, the umount must wait until after mount_timeout
-> seconds anyway.
+> The nr in ceph_reclaim_caps_nr() is very possibly larger than 1,
+> so we may miss it and the reclaim work couldn't triggered as expected.
 > 
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  fs/ceph/mds_client.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> V2:
+> - use a more graceful test.
+> 
+>   fs/ceph/mds_client.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 163b470f3000..39f4d8501df5 100644
+> index 2c92a1452876..109ec7e2ee7b 100644
 > --- a/fs/ceph/mds_client.c
 > +++ b/fs/ceph/mds_client.c
-> @@ -2877,6 +2877,10 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
->  		set_bit(CEPH_MDS_R_GOT_SAFE, &req->r_req_flags);
->  		__unregister_request(mdsc, req);
->  
-> +		/* last request during umount? */
-> +		if (mdsc->stopping && !__get_oldest_req(mdsc))
-> +			complete_all(&mdsc->safe_umount_waiters);
-> +
->  		if (test_bit(CEPH_MDS_R_GOT_UNSAFE, &req->r_req_flags)) {
->  			/*
->  			 * We already handled the unsafe response, now do the
-> @@ -2887,9 +2891,6 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
->  			 */
->  			dout("got safe reply %llu, mds%d\n", tid, mds);
->  
-> -			/* last unsafe request during umount? */
-> -			if (mdsc->stopping && !__get_oldest_req(mdsc))
-> -				complete_all(&mdsc->safe_umount_waiters);
->  			mutex_unlock(&mdsc->mutex);
->  			goto out;
->  		}
+> @@ -2020,7 +2020,7 @@ void ceph_reclaim_caps_nr(struct ceph_mds_client *mdsc, int nr)
+>   	if (!nr)
+>   		return;
+>   	val = atomic_add_return(nr, &mdsc->cap_reclaim_pending);
+> -	if (!(val % CEPH_CAPS_PER_RELEASE)) {
+> +	if ((val % CEPH_CAPS_PER_RELEASE) < nr) {
+>   		atomic_set(&mdsc->cap_reclaim_pending, 0);
+>   		ceph_queue_cap_reclaim_work(mdsc);
+>   	}
+> 
 
-Looks reasonable. AIUI, the MDS is free to send a safe reply without
-ever sending an unsafe one, so I don't see why we want to make that
-conditional on receiving an earlier unsafe reply.
--- 
-Jeff Layton <jlayton@kernel.org>
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
 
