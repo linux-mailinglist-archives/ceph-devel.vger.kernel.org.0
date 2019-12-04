@@ -2,113 +2,122 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D6DA112DB2
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Dec 2019 15:46:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4ADD113616
+	for <lists+ceph-devel@lfdr.de>; Wed,  4 Dec 2019 21:02:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbfLDOqr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 4 Dec 2019 09:46:47 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:24330 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727887AbfLDOqr (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 Dec 2019 09:46:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575470805;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8MpRUGvWPU8NVJcIt0G8DO59vuwIx6aN8LfptX2ZPA0=;
-        b=Ge/BRl7wqyZL+vuk230b/ZAxfCiAlQjVT/yt7D4NM3aNffQerAAm8nO92FF8Cck92Gb7HC
-        yg6vxtH7zUj1V0C/Ak1LOQSFdF4bswu4k66m+XXxUu3OjArMShR4hByWM/kR3133yD4oCV
-        Hdr+UvseXKQUIM2pg9SF1FVAR7ef0JY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-251-PNzps1foOA-h4dGPR6eIjA-1; Wed, 04 Dec 2019 09:46:44 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1E057800D4C;
-        Wed,  4 Dec 2019 14:46:43 +0000 (UTC)
-Received: from [10.72.12.69] (ovpn-12-69.pek2.redhat.com [10.72.12.69])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2C8425D6AE;
-        Wed,  4 Dec 2019 14:46:34 +0000 (UTC)
-Subject: Re: [PATCH] ceph: fix possible long time wait during umount
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
-        pdonnell@redhat.com, ceph-devel@vger.kernel.org
-References: <20191204062718.56105-1-xiubli@redhat.com>
- <0cc3149a27bf6c64ba3a7b1530d623c68ed02531.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <5f1117fa-10be-21a0-5c5e-32a2244ea228@redhat.com>
-Date:   Wed, 4 Dec 2019 22:46:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1728071AbfLDUCj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 4 Dec 2019 15:02:39 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42211 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727033AbfLDUCj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 Dec 2019 15:02:39 -0500
+Received: by mail-wr1-f65.google.com with SMTP id a15so678276wrf.9;
+        Wed, 04 Dec 2019 12:02:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cT11YIcdkgYhqPU2AoD2MILDuUK9k9JrX8T2PQ0wiok=;
+        b=Jf765RLV+6LVYeO1/qjODFKvDMtjuXP3EMmCo7Za5XuSjYXPGcSDIqj9EAJC0wfmH+
+         A5KTCr1znLUPapknCAEF/9GJ+6yUaqT5b6hOXZ2NCR18/Mtc7W2epI9+3zwUIRE842JF
+         UwspeWXaJzFHAKhQYMVxboRVvv4KLS7/IXTImHPU2TgXO+D0h237IGbpFsTwiam+hMTp
+         imsxzTHAEjKhEnICuarTPb59P16aMrcBPiZ19jheMna6rz1EfUVmAmojQ5eqU+O0r1Ui
+         ffGW3VdC+v6i4mQYxHaZdSEjLijsRNOewLOX/0aivPBydQ4VdZT7zcf8pAZLtm9NXoKe
+         ejww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cT11YIcdkgYhqPU2AoD2MILDuUK9k9JrX8T2PQ0wiok=;
+        b=OL/1ST6agOxpW/PuEVoY2zIQkrb50u5FbwIwM/o1mEkMTsojFcdRO6hr9sgMLKmyff
+         T9Ss/eH8Ag5i+/5cZt0nkdCg/FS8svQ+beYpcUiQJm7W8Rz52R4JSeBkBlShfZTlkXFi
+         GR5GFZGpq+hsk+xCZ6wx/WVwCz6edFtnwANPtndlK5PdamXEa1ts0wVjE5Pf1skxn+AO
+         TZlQqgI+pFN9/lW9TcujruV0nlL+LBRom9Dg8vSLxPf4FrQrthGhQDlQfw3xuib5a47+
+         21TmdpG5d91/yqJW7S89CX20brPf27AUwUKYHLMTWTjY7RLOdMN4Dsq8lJSAwX08kitB
+         +s9g==
+X-Gm-Message-State: APjAAAVT+IIhosIhl6eBs0DCJqiLlgAUh45gCwbCyEMm8IWf5aCV3B2o
+        LIqYXwktev/VvmljCeIbYLLTGkED3Bg=
+X-Google-Smtp-Source: APXvYqwhsXbE+16pnIoX7jXk6Byem86Plk7+CaoB3dZ6j2EiZAPM+gx1eDZb1yscAtBwka2A7+qm4g==
+X-Received: by 2002:adf:9b83:: with SMTP id d3mr6072634wrc.54.1575489757346;
+        Wed, 04 Dec 2019 12:02:37 -0800 (PST)
+Received: from kwango.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id h127sm7962492wme.31.2019.12.04.12.02.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 12:02:36 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph updates for 5.5-rc1
+Date:   Wed,  4 Dec 2019 21:03:07 +0100
+Message-Id: <20191204200307.21047-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <0cc3149a27bf6c64ba3a7b1530d623c68ed02531.camel@kernel.org>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: PNzps1foOA-h4dGPR6eIjA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2019/12/4 22:26, Jeff Layton wrote:
-> On Wed, 2019-12-04 at 01:27 -0500, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> During umount, if there has no any unsafe request in the mdsc and
->> some requests still in-flight and not got reply yet, and if the
->> rest requets are all safe ones, after that even all of them in mdsc
->> are unregistered, the umount must wait until after mount_timeout
->> seconds anyway.
->>
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>   fs/ceph/mds_client.c | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
->> index 163b470f3000..39f4d8501df5 100644
->> --- a/fs/ceph/mds_client.c
->> +++ b/fs/ceph/mds_client.c
->> @@ -2877,6 +2877,10 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
->>   		set_bit(CEPH_MDS_R_GOT_SAFE, &req->r_req_flags);
->>   		__unregister_request(mdsc, req);
->>   
->> +		/* last request during umount? */
->> +		if (mdsc->stopping && !__get_oldest_req(mdsc))
->> +			complete_all(&mdsc->safe_umount_waiters);
->> +
->>   		if (test_bit(CEPH_MDS_R_GOT_UNSAFE, &req->r_req_flags)) {
->>   			/*
->>   			 * We already handled the unsafe response, now do the
->> @@ -2887,9 +2891,6 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
->>   			 */
->>   			dout("got safe reply %llu, mds%d\n", tid, mds);
->>   
->> -			/* last unsafe request during umount? */
->> -			if (mdsc->stopping && !__get_oldest_req(mdsc))
->> -				complete_all(&mdsc->safe_umount_waiters);
->>   			mutex_unlock(&mdsc->mutex);
->>   			goto out;
->>   		}
-> Looks reasonable. AIUI, the MDS is free to send a safe reply without
-> ever sending an unsafe one,
+Hi Linus,
 
-Yeah, that's the same from the test output.
+The following changes since commit 219d54332a09e8d8741c1e1982f5eae56099de85:
 
+  Linux 5.4 (2019-11-24 16:32:01 -0800)
 
->   so I don't see why we want to make that
-> conditional on receiving an earlier unsafe reply.
+are available in the Git repository at:
 
- From the commit history I couldn't get why.
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.5-rc1
 
-Thanks.
+for you to fetch changes up to 82995cc6c5ae4bf4d72edef381a085e52d5b5905:
 
-BRs
+  libceph, rbd, ceph: convert to use the new mount API (2019-11-27 22:28:37 +0100)
 
+----------------------------------------------------------------
+The two highlights are a set of improvements to how rbd read-only
+mappings are handled and a conversion to the new mount API (slightly
+complicated by the fact that we had a common option parsing framework
+that called out into rbd and the filesystem instead of them calling
+into it).  Also included a few scattered fixes and a MAINTAINERS update
+for rbd, adding Dongsheng as a reviewer.
 
+----------------------------------------------------------------
+Colin Ian King (1):
+      rbd: fix spelling mistake "requeueing" -> "requeuing"
+
+David Howells (1):
+      libceph, rbd, ceph: convert to use the new mount API
+
+Ilya Dryomov (11):
+      libceph: drop unnecessary check from dispatch() in mon_client.c
+      rbd: update MAINTAINERS info
+      rbd: introduce rbd_is_snap()
+      rbd: introduce RBD_DEV_FLAG_READONLY
+      rbd: treat images mapped read-only seriously
+      rbd: disallow read-write partitions on images mapped read-only
+      rbd: don't acquire exclusive lock for read-only mappings
+      rbd: don't establish watch for read-only mappings
+      rbd: remove snapshot existence validation code
+      rbd: don't query snapshot features
+      rbd: ask for a weaker incompat mask for read-only mappings
+
+Jeff Layton (3):
+      ceph: make several helper accessors take const pointers
+      ceph: tone down loglevel on ceph_mdsc_build_path warning
+      ceph: don't leave ino field in ceph_mds_request_head uninitialized
+
+Xiubo Li (1):
+      ceph: fix geting random mds from mdsmap
+
+ MAINTAINERS                  |   2 +-
+ drivers/block/rbd.c          | 467 ++++++++++++++++---------------
+ fs/ceph/cache.c              |   9 +-
+ fs/ceph/cache.h              |   5 +-
+ fs/ceph/mds_client.c         |  19 +-
+ fs/ceph/mdsmap.c             |  11 +-
+ fs/ceph/super.c              | 646 ++++++++++++++++++++++---------------------
+ fs/ceph/super.h              |  13 +-
+ include/linux/ceph/libceph.h |  10 +-
+ net/ceph/ceph_common.c       | 419 +++++++++++++---------------
+ net/ceph/messenger.c         |   2 -
+ net/ceph/mon_client.c        |   3 -
+ 12 files changed, 803 insertions(+), 803 deletions(-)
