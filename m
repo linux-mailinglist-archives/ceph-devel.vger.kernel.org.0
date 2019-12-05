@@ -2,337 +2,130 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CA17114477
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2019 17:08:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACE86114870
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2019 22:03:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730057AbfLEQIX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 5 Dec 2019 11:08:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730020AbfLEQIX (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 5 Dec 2019 11:08:23 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEFA624249;
-        Thu,  5 Dec 2019 16:08:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575562101;
-        bh=4BBbM4w57ZUGYAZen6Z4sS7m2spu0jjZRJ7n/AxkzNQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=dO9ySgKuhd+dTs2uIHnmBXmTkx0+ZaIVZNTu8iWwCnF73ueH7IvQFP4butiJMIPWF
-         DrHILJMHUlFjMuOZuIePpNG09ojuE33AD3P3sEdbn/qU8mR8Kn5MD046didGRRAJv4
-         rfh3B8BnmLPWjGlyroSsRsXW6d5MmvBprLYDPcEY=
-Message-ID: <388342be7cd03e34bcccb1287d790cac04376e85.camel@kernel.org>
-Subject: Re: [PATCH 1/1] fs: Use inode_lock/unlock class of provided APIs in
- filesystems
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>, willy@infradead.org,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Cc:     ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
-        linux-unionfs@vger.kernel.org
-Date:   Thu, 05 Dec 2019 11:08:19 -0500
-In-Reply-To: <20191205103902.23618-2-riteshh@linux.ibm.com>
-References: <20191205103902.23618-1-riteshh@linux.ibm.com>
-         <20191205103902.23618-2-riteshh@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1730020AbfLEVDn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 5 Dec 2019 16:03:43 -0500
+Received: from mail-lj1-f175.google.com ([209.85.208.175]:34210 "EHLO
+        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729968AbfLEVDm (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Dec 2019 16:03:42 -0500
+Received: by mail-lj1-f175.google.com with SMTP id m6so5245790ljc.1
+        for <ceph-devel@vger.kernel.org>; Thu, 05 Dec 2019 13:03:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=k+Xn4teanzP6fs/pfnKUe73rK72k2IRDJnr5VP28aDY=;
+        b=bA4uNFxuj4m1n4hOyUi8ehqeCUOvNHy2NXWwTjTvOEfh9JqwbTwf5mywixKzIBzAaU
+         1nKT1RF6S817OuJVBIlqFxKLf8fk5H/kiMuflHFH0XXpl+p8W52uxSSkKKN+pdJvG+kV
+         RnmtNEUpwbW4i3YVeeRw3x9JcJ7somGqex4Z33U/piQjyUSKb742djk491APwm5kqY5a
+         Y5JFAoH6fzR16mlZ6fHx7vPrGJDW9o6jUdBTf3YX/bwMGDOhxqEpxeNS/XF70WMDAceT
+         mysSEh4Al/OPWZdQcdGONakBb0Na3aqHCCXalvDPUNQuLAlnEL+VAmLOCWTZbR/50PAg
+         PnSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=k+Xn4teanzP6fs/pfnKUe73rK72k2IRDJnr5VP28aDY=;
+        b=jWoNfFBCyxIxWGHOcdp/Hg3Cz9eayh8syQLGEEaIeSYjcxVaPjitW8y+xLpOxhD01y
+         X9PAQzmRQg7NwFfIIuekAKxH51/IAYZx5W4A4jnpIXBzzvvsxZ5r08OK3VRTS3W6ZWja
+         rkjVmTDLE/9V/7h/fveogrr1/dfxgq5gEcl7wS6w2WGz1zeRoxnOb/1XgPxQiNyjjpAd
+         4f/kCyDU+9DPDfYDvRF8jG1pIsfhO+d5k4c4MdkGKez3FXs7NNGhLbtQVwCvgsQG7mq3
+         DfIY3dEJKPKpf+pazF0OIB3HIoDQGBuT2+GbGH2m1iDmvIEYTV06Yn6X6d69UWWJ4A7j
+         3p6A==
+X-Gm-Message-State: APjAAAVMjoDldpjy31DimAK916sIedjR+Gsyh2INVFnDAM3j99+8O4Lm
+        PP/4QJn7w2NESTMsV1Zg9x0=
+X-Google-Smtp-Source: APXvYqy9Iqco46bqi+16isJ+4Gyn+T1RpUriCOt1LSmOjw5dQaC4VXbuSsHV2eXQ1SzL8vtSdgZElA==
+X-Received: by 2002:a2e:9e8f:: with SMTP id f15mr6720400ljk.9.1575579820885;
+        Thu, 05 Dec 2019 13:03:40 -0800 (PST)
+Received: from [192.168.1.46] ([79.137.153.132])
+        by smtp.gmail.com with ESMTPSA id v9sm5445453lfb.77.2019.12.05.13.03.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Dec 2019 13:03:40 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3601.0.10\))
+Subject: Re: device class : nvme
+From:   Mike A <mike.almateia@gmail.com>
+In-Reply-To: <alpine.DEB.2.21.1911212223110.21478@piezo.novalocal>
+Date:   Fri, 6 Dec 2019 00:03:39 +0300
+Cc:     Muhammad Ahmad <muhammad.ahmad@seagate.com>, dev@ceph.io,
+        Ceph Development List <ceph-devel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <DC688FA2-0625-4B5C-99A7-2D2766C842ED@gmail.com>
+References: <CAPNbX4TY5Yv31FscT0=Q5GEbFcY7M=y07y7UL9ikPhFxA+wiJw@mail.gmail.com>
+ <alpine.DEB.2.21.1911212223110.21478@piezo.novalocal>
+To:     Sage Weil <sage@newdream.net>
+X-Mailer: Apple Mail (2.3601.0.10)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2019-12-05 at 16:09 +0530, Ritesh Harjani wrote:
-> This defines 4 more APIs which some of the filesystem needs
-> and reduces the direct use of i_rwsem in filesystem drivers.
-> Instead those are replaced with inode_lock/unlock_** APIs.
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> ---
->  fs/btrfs/delayed-inode.c |  2 +-
->  fs/btrfs/ioctl.c         |  4 ++--
->  fs/ceph/io.c             | 24 ++++++++++++------------
->  fs/nfs/io.c              | 24 ++++++++++++------------
->  fs/orangefs/file.c       |  4 ++--
->  fs/overlayfs/readdir.c   |  2 +-
->  fs/readdir.c             |  4 ++--
->  include/linux/fs.h       | 21 +++++++++++++++++++++
->  8 files changed, 53 insertions(+), 32 deletions(-)
-> 
-> diff --git a/fs/btrfs/delayed-inode.c b/fs/btrfs/delayed-inode.c
-> index d3e15e1d4a91..c3e92f2fd915 100644
-> --- a/fs/btrfs/delayed-inode.c
-> +++ b/fs/btrfs/delayed-inode.c
-> @@ -1644,7 +1644,7 @@ void btrfs_readdir_put_delayed_items(struct inode *inode,
->  	 * The VFS is going to do up_read(), so we need to downgrade back to a
->  	 * read lock.
->  	 */
-> -	downgrade_write(&inode->i_rwsem);
-> +	inode_lock_downgrade(inode);
->  }
->  
->  int btrfs_should_delete_dir_index(struct list_head *del_list,
-> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> index a1ee0b775e65..1cbd763a46d8 100644
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-> @@ -955,7 +955,7 @@ static noinline int btrfs_mksubvol(const struct path *parent,
->  	struct dentry *dentry;
->  	int error;
->  
-> -	error = down_write_killable_nested(&dir->i_rwsem, I_MUTEX_PARENT);
-> +	error = inode_lock_killable_nested(dir, I_MUTEX_PARENT);
->  	if (error == -EINTR)
->  		return error;
->  
-> @@ -2863,7 +2863,7 @@ static noinline int btrfs_ioctl_snap_destroy(struct file *file,
->  		goto out;
->  
->  
-> -	err = down_write_killable_nested(&dir->i_rwsem, I_MUTEX_PARENT);
-> +	err = inode_lock_killable_nested(dir, I_MUTEX_PARENT);
->  	if (err == -EINTR)
->  		goto out_drop_write;
->  	dentry = lookup_one_len(vol_args->name, parent, namelen);
-> diff --git a/fs/ceph/io.c b/fs/ceph/io.c
-> index 97602ea92ff4..e94186259c2e 100644
-> --- a/fs/ceph/io.c
-> +++ b/fs/ceph/io.c
-> @@ -53,14 +53,14 @@ ceph_start_io_read(struct inode *inode)
->  	struct ceph_inode_info *ci = ceph_inode(inode);
->  
->  	/* Be an optimist! */
-> -	down_read(&inode->i_rwsem);
-> +	inode_lock_shared(inode);
->  	if (!(READ_ONCE(ci->i_ceph_flags) & CEPH_I_ODIRECT))
->  		return;
-> -	up_read(&inode->i_rwsem);
-> +	inode_unlock_shared(inode);
->  	/* Slow path.... */
-> -	down_write(&inode->i_rwsem);
-> +	inode_lock(inode);
->  	ceph_block_o_direct(ci, inode);
-> -	downgrade_write(&inode->i_rwsem);
-> +	inode_lock_downgrade(inode);
->  }
->  
->  /**
-> @@ -73,7 +73,7 @@ ceph_start_io_read(struct inode *inode)
->  void
->  ceph_end_io_read(struct inode *inode)
->  {
-> -	up_read(&inode->i_rwsem);
-> +	inode_unlock_shared(inode);
->  }
->  
->  /**
-> @@ -86,7 +86,7 @@ ceph_end_io_read(struct inode *inode)
->  void
->  ceph_start_io_write(struct inode *inode)
->  {
-> -	down_write(&inode->i_rwsem);
-> +	inode_lock(inode);
->  	ceph_block_o_direct(ceph_inode(inode), inode);
->  }
->  
-> @@ -100,7 +100,7 @@ ceph_start_io_write(struct inode *inode)
->  void
->  ceph_end_io_write(struct inode *inode)
->  {
-> -	up_write(&inode->i_rwsem);
-> +	inode_unlock(inode);
->  }
->  
->  /* Call with exclusively locked inode->i_rwsem */
-> @@ -139,14 +139,14 @@ ceph_start_io_direct(struct inode *inode)
->  	struct ceph_inode_info *ci = ceph_inode(inode);
->  
->  	/* Be an optimist! */
-> -	down_read(&inode->i_rwsem);
-> +	inode_lock_shared(inode);
->  	if (READ_ONCE(ci->i_ceph_flags) & CEPH_I_ODIRECT)
->  		return;
-> -	up_read(&inode->i_rwsem);
-> +	inode_unlock_shared(inode);
->  	/* Slow path.... */
-> -	down_write(&inode->i_rwsem);
-> +	inode_lock(inode);
->  	ceph_block_buffered(ci, inode);
-> -	downgrade_write(&inode->i_rwsem);
-> +	inode_lock_downgrade(inode);
->  }
->  
->  /**
-> @@ -159,5 +159,5 @@ ceph_start_io_direct(struct inode *inode)
->  void
->  ceph_end_io_direct(struct inode *inode)
->  {
-> -	up_read(&inode->i_rwsem);
-> +	inode_unlock_shared(inode);
->  }
-> diff --git a/fs/nfs/io.c b/fs/nfs/io.c
-> index 5088fda9b453..bf5ed7bea59d 100644
-> --- a/fs/nfs/io.c
-> +++ b/fs/nfs/io.c
-> @@ -44,14 +44,14 @@ nfs_start_io_read(struct inode *inode)
->  {
->  	struct nfs_inode *nfsi = NFS_I(inode);
->  	/* Be an optimist! */
-> -	down_read(&inode->i_rwsem);
-> +	inode_lock_shared(inode);
->  	if (test_bit(NFS_INO_ODIRECT, &nfsi->flags) == 0)
->  		return;
-> -	up_read(&inode->i_rwsem);
-> +	inode_unlock_shared(inode);
->  	/* Slow path.... */
-> -	down_write(&inode->i_rwsem);
-> +	inode_lock(inode);
->  	nfs_block_o_direct(nfsi, inode);
-> -	downgrade_write(&inode->i_rwsem);
-> +	inode_lock_downgrade(inode);
->  }
->  
->  /**
-> @@ -64,7 +64,7 @@ nfs_start_io_read(struct inode *inode)
->  void
->  nfs_end_io_read(struct inode *inode)
->  {
-> -	up_read(&inode->i_rwsem);
-> +	inode_unlock_shared(inode);
->  }
->  
->  /**
-> @@ -77,7 +77,7 @@ nfs_end_io_read(struct inode *inode)
->  void
->  nfs_start_io_write(struct inode *inode)
->  {
-> -	down_write(&inode->i_rwsem);
-> +	inode_lock(inode);
->  	nfs_block_o_direct(NFS_I(inode), inode);
->  }
->  
-> @@ -91,7 +91,7 @@ nfs_start_io_write(struct inode *inode)
->  void
->  nfs_end_io_write(struct inode *inode)
->  {
-> -	up_write(&inode->i_rwsem);
-> +	inode_unlock(inode);
->  }
->  
->  /* Call with exclusively locked inode->i_rwsem */
-> @@ -124,14 +124,14 @@ nfs_start_io_direct(struct inode *inode)
->  {
->  	struct nfs_inode *nfsi = NFS_I(inode);
->  	/* Be an optimist! */
-> -	down_read(&inode->i_rwsem);
-> +	inode_lock_shared(inode);
->  	if (test_bit(NFS_INO_ODIRECT, &nfsi->flags) != 0)
->  		return;
-> -	up_read(&inode->i_rwsem);
-> +	inode_unlock_shared(inode);
->  	/* Slow path.... */
-> -	down_write(&inode->i_rwsem);
-> +	inode_lock(inode);
->  	nfs_block_buffered(nfsi, inode);
-> -	downgrade_write(&inode->i_rwsem);
-> +	inode_lock_downgrade(inode);
->  }
->  
->  /**
-> @@ -144,5 +144,5 @@ nfs_start_io_direct(struct inode *inode)
->  void
->  nfs_end_io_direct(struct inode *inode)
->  {
-> -	up_read(&inode->i_rwsem);
-> +	inode_unlock_shared(inode);
->  }
-> diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
-> index a5612abc0936..6420503e1275 100644
-> --- a/fs/orangefs/file.c
-> +++ b/fs/orangefs/file.c
-> @@ -328,14 +328,14 @@ static ssize_t orangefs_file_read_iter(struct kiocb *iocb,
->  		ro->blksiz = iter->count;
->  	}
->  
-> -	down_read(&file_inode(iocb->ki_filp)->i_rwsem);
-> +	inode_lock_shared(file_inode(iocb->ki_filp));
->  	ret = orangefs_revalidate_mapping(file_inode(iocb->ki_filp));
->  	if (ret)
->  		goto out;
->  
->  	ret = generic_file_read_iter(iocb, iter);
->  out:
-> -	up_read(&file_inode(iocb->ki_filp)->i_rwsem);
-> +	inode_unlock_shared(file_inode(iocb->ki_filp));
->  	return ret;
->  }
->  
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index 47a91c9733a5..c203e73160b0 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -273,7 +273,7 @@ static int ovl_check_whiteouts(struct dentry *dir, struct ovl_readdir_data *rdd)
->  
->  	old_cred = ovl_override_creds(rdd->dentry->d_sb);
->  
-> -	err = down_write_killable(&dir->d_inode->i_rwsem);
-> +	err = inode_lock_killable(dir->d_inode);
->  	if (!err) {
->  		while (rdd->first_maybe_whiteout) {
->  			p = rdd->first_maybe_whiteout;
-> diff --git a/fs/readdir.c b/fs/readdir.c
-> index d26d5ea4de7b..10a34efa0af0 100644
-> --- a/fs/readdir.c
-> +++ b/fs/readdir.c
-> @@ -52,9 +52,9 @@ int iterate_dir(struct file *file, struct dir_context *ctx)
->  		goto out;
->  
->  	if (shared)
-> -		res = down_read_killable(&inode->i_rwsem);
-> +		res = inode_lock_shared_killable(inode);
->  	else
-> -		res = down_write_killable(&inode->i_rwsem);
-> +		res = inode_lock_killable(inode);
->  	if (res)
->  		goto out;
->  
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 98e0349adb52..2b407464fac1 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -831,6 +831,27 @@ static inline void inode_lock_shared_nested(struct inode *inode, unsigned subcla
->  	down_read_nested(&inode->i_rwsem, subclass);
->  }
->  
-> +static inline void inode_lock_downgrade(struct inode *inode)
-> +{
-> +	downgrade_write(&inode->i_rwsem);
-> +}
-> +
-> +static inline int inode_lock_killable(struct inode *inode)
-> +{
-> +	return down_write_killable(&inode->i_rwsem);
-> +}
-> +
-> +static inline int inode_lock_shared_killable(struct inode *inode)
-> +{
-> +	return down_read_killable(&inode->i_rwsem);
-> +}
-> +
-> +static inline int inode_lock_killable_nested(struct inode *inode,
-> +					     unsigned subclass)
-> +{
-> +	return down_write_killable_nested(&inode->i_rwsem, subclass);
-> +}
-> +
->  void lock_two_nondirectories(struct inode *, struct inode*);
->  void unlock_two_nondirectories(struct inode *, struct inode*);
->  
+Hello.
 
-Nice little cleanup.
+> 22 =D0=BD=D0=BE=D1=8F=D0=B1. 2019 =D0=B3., =D0=B2 01:25, Sage Weil =
+<sage@newdream.net> =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB(=D0=B0):
+>=20
+> Adding dev@ceph.io
+>   Does anybody see class 'nvme' devices in their cluster?
+>=20
+> Thanks!
+> sage
+>=20
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+This is my production Luminous cluster:
+[root@r1flash1 ~]# ceph osd tree
+ID  CLASS WEIGHT    TYPE NAME         STATUS REWEIGHT PRI-AFF=20
+ -1       130.98889 root default                             =20
+ -3        21.83148     host r1flash1                        =20
+  0  nvme   1.81929         osd.0         up  1.00000 1.00000=20
+  1  nvme   1.81929         osd.1         up  1.00000 1.00000=20
+  2  nvme   1.81929         osd.2         up  1.00000 1.00000=20
+  3  nvme   1.81929         osd.3         up  1.00000 1.00000=20
+  4  nvme   1.81929         osd.4         up  1.00000 1.00000=20
+  5  nvme   1.81929         osd.5         up  1.00000 1.00000=20
+  6  nvme   1.81929         osd.6         up  1.00000 1.00000=20
+  7  nvme   1.81929         osd.7         up  1.00000 1.00000=20
+  8  nvme   1.81929         osd.8         up  1.00000 1.00000=20
+  9  nvme   1.81929         osd.9         up  1.00000 1.00000=20
+ 10  nvme   1.81929         osd.10        up  1.00000 1.00000=20
+ 11  nvme   1.81929         osd.11        up  1.00000 1.00000=20
+=E2=80=A6=20
+
+6 nodes, 6 Intel NVMe drives per server and 2 OSD per drive.
+
+An OSD was created with custom a script, no use LVM at all, no use =
+ceph-disk or ceph-volume.
+A part create an OSD in script:
+<cut>
+#
+ID=3D$(echo "{\"cephx_secret\": \"$OSD_SECRET\"}" | ceph osd new $UUID =
+-i - -n client.bootstrap-osd -k =
+/var/lib/ceph/bootstrap-osd/ceph.keyring)
+sudo -u ceph mkdir /var/lib/ceph/osd/ceph-$ID
+ceph-authtool --create-keyring /var/lib/ceph/osd/ceph-$ID/keyring --name =
+osd.$ID --add-key $OSD_SECRET
+echo bluestore > /var/lib/ceph/osd/ceph-$ID/type
+ln -s /dev/disk/by-partuuid/$PARTUUID /var/lib/ceph/osd/ceph-$ID/block
+ln -s /dev/disk/by-partuuid/$PARTUUID_DB =
+/var/lib/ceph/osd/ceph-$ID/block.db
+chown ceph:ceph /var/lib/ceph/osd/ceph-$ID
+chown ceph:ceph /var/lib/ceph/osd/ceph-$ID/*
+chmod 600 /var/lib/ceph/osd/ceph-$ID/keyring
+chmod 600 /var/lib/ceph/osd/ceph-$ID/type
+ceph-osd -i $ID --mkfs --osd-uuid $UUID
+chown ceph:ceph /var/lib/ceph/osd/ceph-$ID/*
+<cut>
+
+We didn=E2=80=99t use LVM for maximize IO performance and latency and =
+use the script because the ceph-volume don=E2=80=99t support RAW devices =
+by now.
+=E2=80=94=20
+Mike, runs!
+
+
+
 
