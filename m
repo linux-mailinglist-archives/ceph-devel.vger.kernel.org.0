@@ -2,125 +2,98 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D0A0113F51
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2019 11:24:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C64C113F8F
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2019 11:40:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729198AbfLEKYh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 5 Dec 2019 05:24:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56154 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726384AbfLEKYg (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 5 Dec 2019 05:24:36 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3F1DEAE88;
-        Thu,  5 Dec 2019 10:24:34 +0000 (UTC)
-Date:   Thu, 5 Dec 2019 10:24:33 +0000
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Yanhu Cao <gmayyyha@gmail.com>
-Cc:     jlayton@kernel.org, sage@redhat.com, idryomov@gmail.com,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ceph: check set quota operation support before syncing
- setxattr.
-Message-ID: <20191205102433.GA5758@hermes.olymp>
-References: <20191204031005.2638-1-gmayyyha@gmail.com>
- <20191204103629.GA22244@hermes.olymp>
- <CAB9OAC2vzPy=ELYzDRjBvA6m8T8AvwdJugS2NoCczwD1+Xb36Q@mail.gmail.com>
+        id S1729048AbfLEKkX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 5 Dec 2019 05:40:23 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:16964 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726384AbfLEKkW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Dec 2019 05:40:22 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB5AeFWG027528
+        for <ceph-devel@vger.kernel.org>; Thu, 5 Dec 2019 05:40:21 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wpx8mce92-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <ceph-devel@vger.kernel.org>; Thu, 05 Dec 2019 05:40:20 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <ceph-devel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Thu, 5 Dec 2019 10:39:10 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 5 Dec 2019 10:39:07 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB5Ad6JO65732634
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 5 Dec 2019 10:39:06 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 67382A405C;
+        Thu,  5 Dec 2019 10:39:06 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6D686A4054;
+        Thu,  5 Dec 2019 10:39:04 +0000 (GMT)
+Received: from dhcp-9-199-159-163.in.ibm.com (unknown [9.199.159.163])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  5 Dec 2019 10:39:04 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     willy@infradead.org, linux-fsdevel@vger.kernel.org,
+        jlayton@kernel.org, viro@zeniv.linux.org.uk
+Cc:     ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
+        linux-unionfs@vger.kernel.org,
+        Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [PATCH 0/1] Use inode_lock/unlock class of provided APIs in filesystems
+Date:   Thu,  5 Dec 2019 16:09:01 +0530
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAB9OAC2vzPy=ELYzDRjBvA6m8T8AvwdJugS2NoCczwD1+Xb36Q@mail.gmail.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19120510-0020-0000-0000-0000039440D3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19120510-0021-0000-0000-000021EB6D6B
+Message-Id: <20191205103902.23618-1-riteshh@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-05_02:2019-12-04,2019-12-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 mlxlogscore=365 adultscore=0 mlxscore=0
+ phishscore=0 malwarescore=0 spamscore=0 bulkscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912050087
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Dec 05, 2019 at 10:42:46AM +0800, Yanhu Cao wrote:
-> On Wed, Dec 4, 2019 at 6:36 PM Luis Henriques <lhenriques@suse.com> wrote:
-> >
-> > On Wed, Dec 04, 2019 at 11:10:05AM +0800, Yanhu Cao wrote:
-> > > Environment
-> > > -----------
-> > > ceph version: 12.2.*
-> > > kernel version: 4.19+
-> > >
-> > > setfattr quota operation actually sends op to MDS, and settings
-> > > effective. but kclient outputs 'Operation not supported'. This may confuse
-> > > users' understandings.
-> >
-> > What exactly do you mean by "settings effective"?  There have been
-> > changes in the way CephFS quotas work in mimic and, if you're using a
-> > Luminous cluster (12.2.*) the kernel client effectively does *not*
-> > support quotas -- you'll be able to exceed the quotas you've tried to
-> > set because the client won't be checking the limits.  Thus, -EOPNOTSUPP
-> > seems appropriate for this scenario.
-> >
-> > I guess that the confusing part is that the xattr is actually set in
-> > that case, but the kernel client won't be able to use it to validate
-> > quotas in the filesystem tree because realms won't be created.
-> >
-> Yes. we use kcephfs+nfs for CentOS6.*, it does not support ceph-fuse(12.2.*).
-> The operating system of other applications is CentOS7.*, which uses
-> ceph-fuse and can get quota settings set by kclient.
+Matthew Wilcox in [1] suggested that it will be a good idea
+to define some missing API instead of directly using i_rwsem in
+filesystems drivers for lock/unlock/downgrade purposes.
 
-Ok, so if I understand correctly, you're setting quotas with the kernel
-client but actually using ceph-fuse on CentOS7 (I'm assuming a Luminous
-cluster).  This should work fine for the fuse-client, but please note
-that the kernel client will not respect quotas.
+This patch does that work. No functionality change in this patch.
 
-Anyway, the ideal solution for this would be for the kernel to not set
-the xattr if the cluster doesn't support the new quotas format
-introduced in Mimic.  Unfortunately, the only way we have to find that
-out is to set the xattr and see if we get a snap_realm. 
+After this there are only lockdep class of APIs at certain places
+in filesystems which are directly using i_rwsem and second is XFS,
+but it seems to be anyway defining it's own xfs_ilock/iunlock set
+of APIs and 'iolock' naming convention for this lock.
 
-Cheers,
---
-Luís
+[1]: https://www.spinics.net/lists/linux-ext4/msg68689.html
 
-> 
-> Thanks.
-> BRs
-> 
-> > Cheers,
-> > --
-> > Luís
-> > >
-> > > If the kernel version and ceph version are not compatible, should check
-> > > quota operations are supported first, then do sync_setxattr.
-> > >
-> > > reference: https://docs.ceph.com/docs/master/cephfs/quota/
-> > >
-> > > Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
-> > > ---
-> > >  fs/ceph/xattr.c | 6 ++++--
-> > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> > > index cb18ee637cb7..189aace75186 100644
-> > > --- a/fs/ceph/xattr.c
-> > > +++ b/fs/ceph/xattr.c
-> > > @@ -1132,8 +1132,8 @@ int __ceph_setxattr(struct inode *inode, const char *name,
-> > >                                   "during filling trace\n", inode);
-> > >               err = -EBUSY;
-> > >       } else {
-> > > -             err = ceph_sync_setxattr(inode, name, value, size, flags);
-> > > -             if (err >= 0 && check_realm) {
-> > > +             err = 0;
-> > > +             if (check_realm) {
-> > >                       /* check if snaprealm was created for quota inode */
-> > >                       spin_lock(&ci->i_ceph_lock);
-> > >                       if ((ci->i_max_files || ci->i_max_bytes) &&
-> > > @@ -1142,6 +1142,8 @@ int __ceph_setxattr(struct inode *inode, const char *name,
-> > >                               err = -EOPNOTSUPP;
-> > >                       spin_unlock(&ci->i_ceph_lock);
-> > >               }
-> > > +             if (err == 0)
-> > > +                     err = ceph_sync_setxattr(inode, name, value, size, flags);
-> > >       }
-> > >  out:
-> > >       ceph_free_cap_flush(prealloc_cf);
-> > > --
-> > > 2.21.0 (Apple Git-122.2)
-> > >
+Ritesh Harjani (1):
+  fs: Use inode_lock/unlock class of provided APIs in filesystems
+
+ fs/btrfs/delayed-inode.c |  2 +-
+ fs/btrfs/ioctl.c         |  4 ++--
+ fs/ceph/io.c             | 24 ++++++++++++------------
+ fs/nfs/io.c              | 24 ++++++++++++------------
+ fs/orangefs/file.c       |  4 ++--
+ fs/overlayfs/readdir.c   |  2 +-
+ fs/readdir.c             |  4 ++--
+ include/linux/fs.h       | 21 +++++++++++++++++++++
+ 8 files changed, 53 insertions(+), 32 deletions(-)
+
+-- 
+2.20.1
+
