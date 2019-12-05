@@ -2,121 +2,337 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2525E1142AE
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2019 15:28:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CA17114477
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2019 17:08:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbfLEO1v (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 5 Dec 2019 09:27:51 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33855 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729099AbfLEO1u (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Dec 2019 09:27:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575556069;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=z5iA0GGbSWVRIrJpxqreIFaCrP3R35UY8flqQ3D3tjo=;
-        b=bvXfPIK2aiepL3sElS7UtZlm4a89ZbOp8AzRAc2W/lHGrBmWbPXyHo6qJK5nqWjisOQXqu
-        wnBSjibrrjU5rIcQY/NFq/KrCwFjAxGSDksaHqBjfcjU+Q/0Iyw39xg2VdiOV+JNK63z5K
-        GarN/dv6a0og2z9N2UySUsF128Fy9GM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-326-hQaVgjxKNXepKrgZpLy4ng-1; Thu, 05 Dec 2019 09:27:45 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1730057AbfLEQIX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 5 Dec 2019 11:08:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44856 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730020AbfLEQIX (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 5 Dec 2019 11:08:23 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6BE6F1010FE1;
-        Thu,  5 Dec 2019 14:27:44 +0000 (UTC)
-Received: from [10.72.12.69] (ovpn-12-69.pek2.redhat.com [10.72.12.69])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8F5E33C1D;
-        Thu,  5 Dec 2019 14:27:40 +0000 (UTC)
-Subject: Re: [PATCH] ceph: drop unused ttl_from parameter from fill_inode
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     sage@redhat.com, idryomov@gmail.com
-References: <20191204203120.12355-1-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <eba38db7-38ca-8990-8e0a-b5cc22ada344@redhat.com>
-Date:   Thu, 5 Dec 2019 22:27:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        by mail.kernel.org (Postfix) with ESMTPSA id EEFA624249;
+        Thu,  5 Dec 2019 16:08:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575562101;
+        bh=4BBbM4w57ZUGYAZen6Z4sS7m2spu0jjZRJ7n/AxkzNQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=dO9ySgKuhd+dTs2uIHnmBXmTkx0+ZaIVZNTu8iWwCnF73ueH7IvQFP4butiJMIPWF
+         DrHILJMHUlFjMuOZuIePpNG09ojuE33AD3P3sEdbn/qU8mR8Kn5MD046didGRRAJv4
+         rfh3B8BnmLPWjGlyroSsRsXW6d5MmvBprLYDPcEY=
+Message-ID: <388342be7cd03e34bcccb1287d790cac04376e85.camel@kernel.org>
+Subject: Re: [PATCH 1/1] fs: Use inode_lock/unlock class of provided APIs in
+ filesystems
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>, willy@infradead.org,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Cc:     ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
+        linux-unionfs@vger.kernel.org
+Date:   Thu, 05 Dec 2019 11:08:19 -0500
+In-Reply-To: <20191205103902.23618-2-riteshh@linux.ibm.com>
+References: <20191205103902.23618-1-riteshh@linux.ibm.com>
+         <20191205103902.23618-2-riteshh@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
 MIME-Version: 1.0
-In-Reply-To: <20191204203120.12355-1-jlayton@kernel.org>
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-MC-Unique: hQaVgjxKNXepKrgZpLy4ng-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2019/12/5 4:31, Jeff Layton wrote:
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Thu, 2019-12-05 at 16:09 +0530, Ritesh Harjani wrote:
+> This defines 4 more APIs which some of the filesystem needs
+> and reduces the direct use of i_rwsem in filesystem drivers.
+> Instead those are replaced with inode_lock/unlock_** APIs.
+> 
+> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 > ---
->   fs/ceph/inode.c | 15 ++++++---------
->   1 file changed, 6 insertions(+), 9 deletions(-)
->
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index c07407586ce8..5bdc1afc2bee 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -728,8 +728,7 @@ void ceph_fill_file_time(struct inode *inode, int issued,
->   static int fill_inode(struct inode *inode, struct page *locked_page,
->   		      struct ceph_mds_reply_info_in *iinfo,
->   		      struct ceph_mds_reply_dirfrag *dirinfo,
-> -		      struct ceph_mds_session *session,
-> -		      unsigned long ttl_from, int cap_fmode,
-> +		      struct ceph_mds_session *session, int cap_fmode,
->   		      struct ceph_cap_reservation *caps_reservation)
->   {
->   	struct ceph_mds_client *mdsc = ceph_inode_to_client(inode)->mdsc;
-> @@ -1237,7 +1236,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
->   		if (dir) {
->   			err = fill_inode(dir, NULL,
->   					 &rinfo->diri, rinfo->dirfrag,
-> -					 session, req->r_request_started, -1,
-> +					 session, -1,
->   					 &req->r_caps_reservation);
->   			if (err < 0)
->   				goto done;
-> @@ -1305,9 +1304,9 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
->   		req->r_target_inode = in;
->   
->   		err = fill_inode(in, req->r_locked_page, &rinfo->targeti, NULL,
-> -				session, req->r_request_started,
-> +				session,
->   				(!test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags) &&
-> -				rinfo->head->result == 0) ?  req->r_fmode : -1,
-> +				 rinfo->head->result == 0) ?  req->r_fmode : -1,
->   				&req->r_caps_reservation);
->   		if (err < 0) {
->   			pr_err("fill_inode badness %p %llx.%llx\n",
-> @@ -1493,8 +1492,7 @@ static int readdir_prepopulate_inodes_only(struct ceph_mds_request *req,
->   			continue;
->   		}
->   		rc = fill_inode(in, NULL, &rde->inode, NULL, session,
-> -				req->r_request_started, -1,
-> -				&req->r_caps_reservation);
-> +				-1, &req->r_caps_reservation);
->   		if (rc < 0) {
->   			pr_err("fill_inode badness on %p got %d\n", in, rc);
->   			err = rc;
-> @@ -1694,8 +1692,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
->   		}
->   
->   		ret = fill_inode(in, NULL, &rde->inode, NULL, session,
-> -				 req->r_request_started, -1,
-> -				 &req->r_caps_reservation);
-> +				 -1, &req->r_caps_reservation);
->   		if (ret < 0) {
->   			pr_err("fill_inode badness on %p\n", in);
->   			if (d_really_is_negative(dn)) {
+>  fs/btrfs/delayed-inode.c |  2 +-
+>  fs/btrfs/ioctl.c         |  4 ++--
+>  fs/ceph/io.c             | 24 ++++++++++++------------
+>  fs/nfs/io.c              | 24 ++++++++++++------------
+>  fs/orangefs/file.c       |  4 ++--
+>  fs/overlayfs/readdir.c   |  2 +-
+>  fs/readdir.c             |  4 ++--
+>  include/linux/fs.h       | 21 +++++++++++++++++++++
+>  8 files changed, 53 insertions(+), 32 deletions(-)
+> 
+> diff --git a/fs/btrfs/delayed-inode.c b/fs/btrfs/delayed-inode.c
+> index d3e15e1d4a91..c3e92f2fd915 100644
+> --- a/fs/btrfs/delayed-inode.c
+> +++ b/fs/btrfs/delayed-inode.c
+> @@ -1644,7 +1644,7 @@ void btrfs_readdir_put_delayed_items(struct inode *inode,
+>  	 * The VFS is going to do up_read(), so we need to downgrade back to a
+>  	 * read lock.
+>  	 */
+> -	downgrade_write(&inode->i_rwsem);
+> +	inode_lock_downgrade(inode);
+>  }
+>  
+>  int btrfs_should_delete_dir_index(struct list_head *del_list,
+> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> index a1ee0b775e65..1cbd763a46d8 100644
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -955,7 +955,7 @@ static noinline int btrfs_mksubvol(const struct path *parent,
+>  	struct dentry *dentry;
+>  	int error;
+>  
+> -	error = down_write_killable_nested(&dir->i_rwsem, I_MUTEX_PARENT);
+> +	error = inode_lock_killable_nested(dir, I_MUTEX_PARENT);
+>  	if (error == -EINTR)
+>  		return error;
+>  
+> @@ -2863,7 +2863,7 @@ static noinline int btrfs_ioctl_snap_destroy(struct file *file,
+>  		goto out;
+>  
+>  
+> -	err = down_write_killable_nested(&dir->i_rwsem, I_MUTEX_PARENT);
+> +	err = inode_lock_killable_nested(dir, I_MUTEX_PARENT);
+>  	if (err == -EINTR)
+>  		goto out_drop_write;
+>  	dentry = lookup_one_len(vol_args->name, parent, namelen);
+> diff --git a/fs/ceph/io.c b/fs/ceph/io.c
+> index 97602ea92ff4..e94186259c2e 100644
+> --- a/fs/ceph/io.c
+> +++ b/fs/ceph/io.c
+> @@ -53,14 +53,14 @@ ceph_start_io_read(struct inode *inode)
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
+>  
+>  	/* Be an optimist! */
+> -	down_read(&inode->i_rwsem);
+> +	inode_lock_shared(inode);
+>  	if (!(READ_ONCE(ci->i_ceph_flags) & CEPH_I_ODIRECT))
+>  		return;
+> -	up_read(&inode->i_rwsem);
+> +	inode_unlock_shared(inode);
+>  	/* Slow path.... */
+> -	down_write(&inode->i_rwsem);
+> +	inode_lock(inode);
+>  	ceph_block_o_direct(ci, inode);
+> -	downgrade_write(&inode->i_rwsem);
+> +	inode_lock_downgrade(inode);
+>  }
+>  
+>  /**
+> @@ -73,7 +73,7 @@ ceph_start_io_read(struct inode *inode)
+>  void
+>  ceph_end_io_read(struct inode *inode)
+>  {
+> -	up_read(&inode->i_rwsem);
+> +	inode_unlock_shared(inode);
+>  }
+>  
+>  /**
+> @@ -86,7 +86,7 @@ ceph_end_io_read(struct inode *inode)
+>  void
+>  ceph_start_io_write(struct inode *inode)
+>  {
+> -	down_write(&inode->i_rwsem);
+> +	inode_lock(inode);
+>  	ceph_block_o_direct(ceph_inode(inode), inode);
+>  }
+>  
+> @@ -100,7 +100,7 @@ ceph_start_io_write(struct inode *inode)
+>  void
+>  ceph_end_io_write(struct inode *inode)
+>  {
+> -	up_write(&inode->i_rwsem);
+> +	inode_unlock(inode);
+>  }
+>  
+>  /* Call with exclusively locked inode->i_rwsem */
+> @@ -139,14 +139,14 @@ ceph_start_io_direct(struct inode *inode)
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
+>  
+>  	/* Be an optimist! */
+> -	down_read(&inode->i_rwsem);
+> +	inode_lock_shared(inode);
+>  	if (READ_ONCE(ci->i_ceph_flags) & CEPH_I_ODIRECT)
+>  		return;
+> -	up_read(&inode->i_rwsem);
+> +	inode_unlock_shared(inode);
+>  	/* Slow path.... */
+> -	down_write(&inode->i_rwsem);
+> +	inode_lock(inode);
+>  	ceph_block_buffered(ci, inode);
+> -	downgrade_write(&inode->i_rwsem);
+> +	inode_lock_downgrade(inode);
+>  }
+>  
+>  /**
+> @@ -159,5 +159,5 @@ ceph_start_io_direct(struct inode *inode)
+>  void
+>  ceph_end_io_direct(struct inode *inode)
+>  {
+> -	up_read(&inode->i_rwsem);
+> +	inode_unlock_shared(inode);
+>  }
+> diff --git a/fs/nfs/io.c b/fs/nfs/io.c
+> index 5088fda9b453..bf5ed7bea59d 100644
+> --- a/fs/nfs/io.c
+> +++ b/fs/nfs/io.c
+> @@ -44,14 +44,14 @@ nfs_start_io_read(struct inode *inode)
+>  {
+>  	struct nfs_inode *nfsi = NFS_I(inode);
+>  	/* Be an optimist! */
+> -	down_read(&inode->i_rwsem);
+> +	inode_lock_shared(inode);
+>  	if (test_bit(NFS_INO_ODIRECT, &nfsi->flags) == 0)
+>  		return;
+> -	up_read(&inode->i_rwsem);
+> +	inode_unlock_shared(inode);
+>  	/* Slow path.... */
+> -	down_write(&inode->i_rwsem);
+> +	inode_lock(inode);
+>  	nfs_block_o_direct(nfsi, inode);
+> -	downgrade_write(&inode->i_rwsem);
+> +	inode_lock_downgrade(inode);
+>  }
+>  
+>  /**
+> @@ -64,7 +64,7 @@ nfs_start_io_read(struct inode *inode)
+>  void
+>  nfs_end_io_read(struct inode *inode)
+>  {
+> -	up_read(&inode->i_rwsem);
+> +	inode_unlock_shared(inode);
+>  }
+>  
+>  /**
+> @@ -77,7 +77,7 @@ nfs_end_io_read(struct inode *inode)
+>  void
+>  nfs_start_io_write(struct inode *inode)
+>  {
+> -	down_write(&inode->i_rwsem);
+> +	inode_lock(inode);
+>  	nfs_block_o_direct(NFS_I(inode), inode);
+>  }
+>  
+> @@ -91,7 +91,7 @@ nfs_start_io_write(struct inode *inode)
+>  void
+>  nfs_end_io_write(struct inode *inode)
+>  {
+> -	up_write(&inode->i_rwsem);
+> +	inode_unlock(inode);
+>  }
+>  
+>  /* Call with exclusively locked inode->i_rwsem */
+> @@ -124,14 +124,14 @@ nfs_start_io_direct(struct inode *inode)
+>  {
+>  	struct nfs_inode *nfsi = NFS_I(inode);
+>  	/* Be an optimist! */
+> -	down_read(&inode->i_rwsem);
+> +	inode_lock_shared(inode);
+>  	if (test_bit(NFS_INO_ODIRECT, &nfsi->flags) != 0)
+>  		return;
+> -	up_read(&inode->i_rwsem);
+> +	inode_unlock_shared(inode);
+>  	/* Slow path.... */
+> -	down_write(&inode->i_rwsem);
+> +	inode_lock(inode);
+>  	nfs_block_buffered(nfsi, inode);
+> -	downgrade_write(&inode->i_rwsem);
+> +	inode_lock_downgrade(inode);
+>  }
+>  
+>  /**
+> @@ -144,5 +144,5 @@ nfs_start_io_direct(struct inode *inode)
+>  void
+>  nfs_end_io_direct(struct inode *inode)
+>  {
+> -	up_read(&inode->i_rwsem);
+> +	inode_unlock_shared(inode);
+>  }
+> diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
+> index a5612abc0936..6420503e1275 100644
+> --- a/fs/orangefs/file.c
+> +++ b/fs/orangefs/file.c
+> @@ -328,14 +328,14 @@ static ssize_t orangefs_file_read_iter(struct kiocb *iocb,
+>  		ro->blksiz = iter->count;
+>  	}
+>  
+> -	down_read(&file_inode(iocb->ki_filp)->i_rwsem);
+> +	inode_lock_shared(file_inode(iocb->ki_filp));
+>  	ret = orangefs_revalidate_mapping(file_inode(iocb->ki_filp));
+>  	if (ret)
+>  		goto out;
+>  
+>  	ret = generic_file_read_iter(iocb, iter);
+>  out:
+> -	up_read(&file_inode(iocb->ki_filp)->i_rwsem);
+> +	inode_unlock_shared(file_inode(iocb->ki_filp));
+>  	return ret;
+>  }
+>  
+> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+> index 47a91c9733a5..c203e73160b0 100644
+> --- a/fs/overlayfs/readdir.c
+> +++ b/fs/overlayfs/readdir.c
+> @@ -273,7 +273,7 @@ static int ovl_check_whiteouts(struct dentry *dir, struct ovl_readdir_data *rdd)
+>  
+>  	old_cred = ovl_override_creds(rdd->dentry->d_sb);
+>  
+> -	err = down_write_killable(&dir->d_inode->i_rwsem);
+> +	err = inode_lock_killable(dir->d_inode);
+>  	if (!err) {
+>  		while (rdd->first_maybe_whiteout) {
+>  			p = rdd->first_maybe_whiteout;
+> diff --git a/fs/readdir.c b/fs/readdir.c
+> index d26d5ea4de7b..10a34efa0af0 100644
+> --- a/fs/readdir.c
+> +++ b/fs/readdir.c
+> @@ -52,9 +52,9 @@ int iterate_dir(struct file *file, struct dir_context *ctx)
+>  		goto out;
+>  
+>  	if (shared)
+> -		res = down_read_killable(&inode->i_rwsem);
+> +		res = inode_lock_shared_killable(inode);
+>  	else
+> -		res = down_write_killable(&inode->i_rwsem);
+> +		res = inode_lock_killable(inode);
+>  	if (res)
+>  		goto out;
+>  
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 98e0349adb52..2b407464fac1 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -831,6 +831,27 @@ static inline void inode_lock_shared_nested(struct inode *inode, unsigned subcla
+>  	down_read_nested(&inode->i_rwsem, subclass);
+>  }
+>  
+> +static inline void inode_lock_downgrade(struct inode *inode)
+> +{
+> +	downgrade_write(&inode->i_rwsem);
+> +}
+> +
+> +static inline int inode_lock_killable(struct inode *inode)
+> +{
+> +	return down_write_killable(&inode->i_rwsem);
+> +}
+> +
+> +static inline int inode_lock_shared_killable(struct inode *inode)
+> +{
+> +	return down_read_killable(&inode->i_rwsem);
+> +}
+> +
+> +static inline int inode_lock_killable_nested(struct inode *inode,
+> +					     unsigned subclass)
+> +{
+> +	return down_write_killable_nested(&inode->i_rwsem, subclass);
+> +}
+> +
+>  void lock_two_nondirectories(struct inode *, struct inode*);
+>  void unlock_two_nondirectories(struct inode *, struct inode*);
+>  
 
-Looks good to me.
+Nice little cleanup.
 
-BRs
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
