@@ -2,99 +2,125 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3E56113A38
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2019 04:09:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D0A0113F51
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2019 11:24:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbfLEDJq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 4 Dec 2019 22:09:46 -0500
-Received: from mail-ua1-f42.google.com ([209.85.222.42]:43742 "EHLO
-        mail-ua1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728132AbfLEDJq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 Dec 2019 22:09:46 -0500
-Received: by mail-ua1-f42.google.com with SMTP id o42so679840uad.10
-        for <ceph-devel@vger.kernel.org>; Wed, 04 Dec 2019 19:09:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=UwDkFYwAzVJJ6pvABOQ1f420z5wwO/OafzsDYee4x+E=;
-        b=Ga+vlXxQGXPjwydMykWL+Q5pvRKrfmClfGWXYIwMuL14P8DBYULuEnmconcCqEn+98
-         Fa7dd5PaWI80TtzYSESmpaCQYSJF9BJ+/B3QUQ02+obBBRWJI+YYGBd8Afr1OaMs56vc
-         oSebDOv95/66Xpp02FotN/OGl2AWOBNxcYRU6/xPA8N1kMC26ojPMldK9yHxxl8bdwqo
-         fgKQSObiXOqMDT7WkeJhjlExwL1zi303Aj5dVfjGt4d0nvEN3W0BnEe7zv36PRLLHTEm
-         Ah7Rv8AhJoeIaZ+NqY6X8Qdw1fPInmJVqZhnrvPWraWf9otzY6WOUy236eUaTbn3eCV4
-         Yz8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=UwDkFYwAzVJJ6pvABOQ1f420z5wwO/OafzsDYee4x+E=;
-        b=Vr1k6u9IamUBJobPphNCYHfonSAHqjAoXcUyYWxYg/77UPKVRBT6ZjFCHE+eIsh1X7
-         7QaHbCT4W/gPOPB6QYB4WWp9bUEhX6SXjapaiqVuyUlsT41lhNLQ9rjS0Bp7+MJTHtY4
-         i1U8jXG0zUTZU/uFtpCL0HFTpPZDJidm2MHVcmW4XSvnw4QltFElNnEpb97JaKkt4UBf
-         FiM7o+09o9KSti7MsLItC6++oEOLxeIaSAKkt39g03qZjnnWYUpT9WQicKLEICM/8clU
-         fInAhtBiKB0SE0Iov1o8vlNrPKCTqdz3lm5apaK0flDXDQ1l/yMqm0AYXOxyYgONbnN6
-         WXpg==
-X-Gm-Message-State: APjAAAX1AeS5Wx7P0Ho6UjAKt/5i4F44lELlTr31BrUtVGOr3AWz2O/i
-        JaYr2PtyuLPGvAaoLUc6E/dbMY3kr5vbjeWDWoEg5Hok
-X-Google-Smtp-Source: APXvYqzeX3Oypp/ANA9v35KCwle4yVphzpbCc6iBntTV2rv78e6gA2SuFrRrGh9NYoTiaWXTI7GOysKduUe8dz4YD8w=
-X-Received: by 2002:ab0:1492:: with SMTP id d18mr5245151uae.0.1575515385496;
- Wed, 04 Dec 2019 19:09:45 -0800 (PST)
+        id S1729198AbfLEKYh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 5 Dec 2019 05:24:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56154 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726384AbfLEKYg (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 5 Dec 2019 05:24:36 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3F1DEAE88;
+        Thu,  5 Dec 2019 10:24:34 +0000 (UTC)
+Date:   Thu, 5 Dec 2019 10:24:33 +0000
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Yanhu Cao <gmayyyha@gmail.com>
+Cc:     jlayton@kernel.org, sage@redhat.com, idryomov@gmail.com,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ceph: check set quota operation support before syncing
+ setxattr.
+Message-ID: <20191205102433.GA5758@hermes.olymp>
+References: <20191204031005.2638-1-gmayyyha@gmail.com>
+ <20191204103629.GA22244@hermes.olymp>
+ <CAB9OAC2vzPy=ELYzDRjBvA6m8T8AvwdJugS2NoCczwD1+Xb36Q@mail.gmail.com>
 MIME-Version: 1.0
-From:   WeiGuo Ren <rwg1335252904@gmail.com>
-Date:   Thu, 5 Dec 2019 11:09:34 +0800
-Message-ID: <CAPy+zYU4TCxitLwgDqQF_7BhX9b9=vcu0YDD0XyxN1z2iEXPaQ@mail.gmail.com>
-Subject: lease_cr memory release
-To:     ceph-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAB9OAC2vzPy=ELYzDRjBvA6m8T8AvwdJugS2NoCczwD1+Xb36Q@mail.gmail.com>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi cephers,
-I have a question=E3=80=82
-in class RGWMetaSyncShardCR
-boost::intrusive_ptr<RGWContinuousLeaseCR> lease_cr;
-lease_cr Reference count added 2 times
-the one is  lease_cr.reset(new RGWContinuousLeaseCR(....));the other
-is  lease_stack.reset(spawn(lease_cr.get(), false));
-but lease_cr Reference count subtracted  1 times    That is op->put()
-when op done .So I want to know where the other op - > put is=EF=BC=9F
-I add assert() in  RGWContinuousLeaseCR Deconstruction find
-stack:
- 1: (()+0x5c9562) [0x53f4562]
- 2: (()+0xf370) [0xf182370]
- 3: (gsignal()+0x37) [0xfae71d7]
- 4: (abort()+0x148) [0xfae88c8]
- 5: (()+0x2e146) [0xfae0146]
- 6: (()+0x2e1f2) [0xfae01f2]
- 7: (RGWContinuousLeaseCR::~RGWContinuousLeaseCR()+0x7e) [0x513b69e]
- 8: (RGWContinuousLeaseCR::~RGWContinuousLeaseCR()+0x9) [0x513b739]
- 9: (RefCountedObject::put()+0xe5) [0x5139185]
- 10: (RGWMetaSyncShardCR::~RGWMetaSyncShardCR()+0x95) [0x51e1775]
- 11: (RGWMetaSyncShardCR::~RGWMetaSyncShardCR()+0x9) [0x51e18d9]
- 12: (RefCountedObject::put()+0xe5) [0x5139185]
- 13: (RGWBackoffControlCR::operate()+0x115) [0x51cc715]
- 14: (RGWCoroutinesStack::operate(RGWCoroutinesEnv*)+0x73) [0x5134943]
- 15: (RGWCoroutinesManager::run(std::list<RGWCoroutinesStack*,
-std::allocator<RGWCoroutinesStack*> >&)+0x3bc) [0x513788c]
- 16: (RGWCoroutinesManager::run(RGWCoroutine*)+0x5d) [0x513840d]
- 17: (RGWRemoteMetaLog::run_sync()+0x108a) [0x51d3f2a]
- 18: (RGWMetaSyncProcessorThread::process()+0xd) [0x52d662d]
- 19: (RGWRadosThread::Worker::entry()+0x11b) [0x52787bb]
- 20: (()+0x7dc5) [0xf17adc5]
- 21: (clone()+0x6d) [0xfba973d]
-I don't understand it ,because ~RGWMetaSyncShardCR() doesn't call
-RGWContinuousLeaseCR->put().
-code:
-~RGWMetaSyncShardCR() override {
-delete marker_tracker;
-if (lease_cr) {
-lease_cr->abort();
-}
-}
+On Thu, Dec 05, 2019 at 10:42:46AM +0800, Yanhu Cao wrote:
+> On Wed, Dec 4, 2019 at 6:36 PM Luis Henriques <lhenriques@suse.com> wrote:
+> >
+> > On Wed, Dec 04, 2019 at 11:10:05AM +0800, Yanhu Cao wrote:
+> > > Environment
+> > > -----------
+> > > ceph version: 12.2.*
+> > > kernel version: 4.19+
+> > >
+> > > setfattr quota operation actually sends op to MDS, and settings
+> > > effective. but kclient outputs 'Operation not supported'. This may confuse
+> > > users' understandings.
+> >
+> > What exactly do you mean by "settings effective"?  There have been
+> > changes in the way CephFS quotas work in mimic and, if you're using a
+> > Luminous cluster (12.2.*) the kernel client effectively does *not*
+> > support quotas -- you'll be able to exceed the quotas you've tried to
+> > set because the client won't be checking the limits.  Thus, -EOPNOTSUPP
+> > seems appropriate for this scenario.
+> >
+> > I guess that the confusing part is that the xattr is actually set in
+> > that case, but the kernel client won't be able to use it to validate
+> > quotas in the filesystem tree because realms won't be created.
+> >
+> Yes. we use kcephfs+nfs for CentOS6.*, it does not support ceph-fuse(12.2.*).
+> The operating system of other applications is CentOS7.*, which uses
+> ceph-fuse and can get quota settings set by kclient.
 
-can you help me!
-Thanks.
+Ok, so if I understand correctly, you're setting quotas with the kernel
+client but actually using ceph-fuse on CentOS7 (I'm assuming a Luminous
+cluster).  This should work fine for the fuse-client, but please note
+that the kernel client will not respect quotas.
+
+Anyway, the ideal solution for this would be for the kernel to not set
+the xattr if the cluster doesn't support the new quotas format
+introduced in Mimic.  Unfortunately, the only way we have to find that
+out is to set the xattr and see if we get a snap_realm. 
+
+Cheers,
+--
+Luís
+
+> 
+> Thanks.
+> BRs
+> 
+> > Cheers,
+> > --
+> > Luís
+> > >
+> > > If the kernel version and ceph version are not compatible, should check
+> > > quota operations are supported first, then do sync_setxattr.
+> > >
+> > > reference: https://docs.ceph.com/docs/master/cephfs/quota/
+> > >
+> > > Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> > > ---
+> > >  fs/ceph/xattr.c | 6 ++++--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> > > index cb18ee637cb7..189aace75186 100644
+> > > --- a/fs/ceph/xattr.c
+> > > +++ b/fs/ceph/xattr.c
+> > > @@ -1132,8 +1132,8 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+> > >                                   "during filling trace\n", inode);
+> > >               err = -EBUSY;
+> > >       } else {
+> > > -             err = ceph_sync_setxattr(inode, name, value, size, flags);
+> > > -             if (err >= 0 && check_realm) {
+> > > +             err = 0;
+> > > +             if (check_realm) {
+> > >                       /* check if snaprealm was created for quota inode */
+> > >                       spin_lock(&ci->i_ceph_lock);
+> > >                       if ((ci->i_max_files || ci->i_max_bytes) &&
+> > > @@ -1142,6 +1142,8 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+> > >                               err = -EOPNOTSUPP;
+> > >                       spin_unlock(&ci->i_ceph_lock);
+> > >               }
+> > > +             if (err == 0)
+> > > +                     err = ceph_sync_setxattr(inode, name, value, size, flags);
+> > >       }
+> > >  out:
+> > >       ceph_free_cap_flush(prealloc_cf);
+> > > --
+> > > 2.21.0 (Apple Git-122.2)
+> > >
