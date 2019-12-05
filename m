@@ -2,101 +2,137 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44B90113677
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Dec 2019 21:31:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46E40113A0B
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2019 03:43:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbfLDUbW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 4 Dec 2019 15:31:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44702 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727978AbfLDUbW (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 4 Dec 2019 15:31:22 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9D2720659;
-        Wed,  4 Dec 2019 20:31:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575491482;
-        bh=2lsV2y6zQ4LSOpSfTUv9xk17/NwtKD/K7FFwPyxBg9U=;
-        h=From:To:Cc:Subject:Date:From;
-        b=OT+lTxQar8vW4VOaB92w1p5pEYlDrOKn/z/yY/0p4r7Nl9NrBMvuC2kwT27UgAhBi
-         cTwM2kOSqN5uomdXj8zdY+E8DKTjj879dingnx/c9Rhwgu0vPXNbI7Hil0xRZrBjjB
-         mRtV0gHod3dwqYKsAbQlSgpxEhnT8p8nh2ILZQUg=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     sage@redhat.com, idryomov@gmail.com
-Subject: [PATCH] ceph: drop unused ttl_from parameter from fill_inode
-Date:   Wed,  4 Dec 2019 15:31:20 -0500
-Message-Id: <20191204203120.12355-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.23.0
+        id S1728774AbfLECnA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 4 Dec 2019 21:43:00 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41663 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728548AbfLECm7 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 Dec 2019 21:42:59 -0500
+Received: by mail-io1-f68.google.com with SMTP id z26so1966955iot.8;
+        Wed, 04 Dec 2019 18:42:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vSYXq7k3D7T0dUleEUNaJBpJRJeTNo0CbEMieQSFYHs=;
+        b=OAlH3TSVK/Ihtm0+HajQjItGYfwrIRCBBjFV/Jq4zFcQ4UILqZZ9O01MdQdPHTO94K
+         RXkSag1msFqS9qcpaCFw3tFi8LKwaRNbNzcCcP+txvSJTZUIZghbvmRKh0QCArK+6vjo
+         aQfdJj+3mDALDsspWeWTX26ZUmvxuU06vQbRezXjJ6wTuQPy7Qvurfu+7xtgTI7lGVhV
+         U5Ub0HJE67O8y9USyAtE2JrAxkf32WGOozmWkSLWsxOo+WiGUShQGn6xUrJFLTYafiZB
+         4Tt6Oiex20c6VWI9iZ5naBG3HddAx4DcJhCfwi37RXUs8pevPteod4qqWp9uuSipjM1D
+         jsqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vSYXq7k3D7T0dUleEUNaJBpJRJeTNo0CbEMieQSFYHs=;
+        b=dLylXVxn4mN+luOoEI69tsr9RqnmoshavUU772P17YU0i+2P7Ep8xcAk7EPhE04a9L
+         Ziw4J9/YbNHG3V2+/KtCuxRMT/5Ge0KZlsoYSpVgv6Q6xpCAXm86VpQ5vMmXv0fy8bnc
+         TRYLFTVebyX4+Qbqe+Ti5l5PHF6RhjLEpx4JIAgb4rDgxgrs8z43s7lVKFSBU1uG1oDz
+         ImlZgp7j80KkIh+gXDDE4zIawlt7sux/OxqEAQddejr8+o2y39SWB05aUC8eWD3XH5nJ
+         VVBb8b8ttiMMbus6ShE8KKaDj8oJmfFXg6jcMEt7AeKoZbkqvFRVoa5GDCaiXH1U6ggO
+         IOvQ==
+X-Gm-Message-State: APjAAAVkmi8IrVf/R+T+hu0zx3ztgr0/htm/Vf6yCH/pIRf6MFjrjL6D
+        b3zM4zi2VZHr7El1TTov77DOwXfn7Luuzy/vRbw=
+X-Google-Smtp-Source: APXvYqxjxJswzFYlrl9uW8u0CkKp94IvIZ2n+WI2Ew/dZQblDPXe5IPsqoDnmP6u7zEKBzaYLc2rUWnp2z1NuLM6VvA=
+X-Received: by 2002:a6b:ab07:: with SMTP id u7mr4543829ioe.27.1575513778857;
+ Wed, 04 Dec 2019 18:42:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191204031005.2638-1-gmayyyha@gmail.com> <20191204103629.GA22244@hermes.olymp>
+In-Reply-To: <20191204103629.GA22244@hermes.olymp>
+From:   Yanhu Cao <gmayyyha@gmail.com>
+Date:   Thu, 5 Dec 2019 10:42:46 +0800
+Message-ID: <CAB9OAC2vzPy=ELYzDRjBvA6m8T8AvwdJugS2NoCczwD1+Xb36Q@mail.gmail.com>
+Subject: Re: [PATCH] ceph: check set quota operation support before syncing setxattr.
+To:     Luis Henriques <lhenriques@suse.com>
+Cc:     jlayton@kernel.org, sage@redhat.com, idryomov@gmail.com,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/inode.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+On Wed, Dec 4, 2019 at 6:36 PM Luis Henriques <lhenriques@suse.com> wrote:
+>
+> On Wed, Dec 04, 2019 at 11:10:05AM +0800, Yanhu Cao wrote:
+> > Environment
+> > -----------
+> > ceph version: 12.2.*
+> > kernel version: 4.19+
+> >
+> > setfattr quota operation actually sends op to MDS, and settings
+> > effective. but kclient outputs 'Operation not supported'. This may conf=
+use
+> > users' understandings.
+>
+> What exactly do you mean by "settings effective"?  There have been
+> changes in the way CephFS quotas work in mimic and, if you're using a
+> Luminous cluster (12.2.*) the kernel client effectively does *not*
+> support quotas -- you'll be able to exceed the quotas you've tried to
+> set because the client won't be checking the limits.  Thus, -EOPNOTSUPP
+> seems appropriate for this scenario.
+>
+> I guess that the confusing part is that the xattr is actually set in
+> that case, but the kernel client won't be able to use it to validate
+> quotas in the filesystem tree because realms won't be created.
+>
+Yes. we use kcephfs+nfs for CentOS6.*, it does not support ceph-fuse(12.2.*=
+).
+The operating system of other applications is CentOS7.*, which uses
+ceph-fuse and can get quota settings set by kclient.
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index c07407586ce8..5bdc1afc2bee 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -728,8 +728,7 @@ void ceph_fill_file_time(struct inode *inode, int issued,
- static int fill_inode(struct inode *inode, struct page *locked_page,
- 		      struct ceph_mds_reply_info_in *iinfo,
- 		      struct ceph_mds_reply_dirfrag *dirinfo,
--		      struct ceph_mds_session *session,
--		      unsigned long ttl_from, int cap_fmode,
-+		      struct ceph_mds_session *session, int cap_fmode,
- 		      struct ceph_cap_reservation *caps_reservation)
- {
- 	struct ceph_mds_client *mdsc = ceph_inode_to_client(inode)->mdsc;
-@@ -1237,7 +1236,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 		if (dir) {
- 			err = fill_inode(dir, NULL,
- 					 &rinfo->diri, rinfo->dirfrag,
--					 session, req->r_request_started, -1,
-+					 session, -1,
- 					 &req->r_caps_reservation);
- 			if (err < 0)
- 				goto done;
-@@ -1305,9 +1304,9 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 		req->r_target_inode = in;
- 
- 		err = fill_inode(in, req->r_locked_page, &rinfo->targeti, NULL,
--				session, req->r_request_started,
-+				session,
- 				(!test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags) &&
--				rinfo->head->result == 0) ?  req->r_fmode : -1,
-+				 rinfo->head->result == 0) ?  req->r_fmode : -1,
- 				&req->r_caps_reservation);
- 		if (err < 0) {
- 			pr_err("fill_inode badness %p %llx.%llx\n",
-@@ -1493,8 +1492,7 @@ static int readdir_prepopulate_inodes_only(struct ceph_mds_request *req,
- 			continue;
- 		}
- 		rc = fill_inode(in, NULL, &rde->inode, NULL, session,
--				req->r_request_started, -1,
--				&req->r_caps_reservation);
-+				-1, &req->r_caps_reservation);
- 		if (rc < 0) {
- 			pr_err("fill_inode badness on %p got %d\n", in, rc);
- 			err = rc;
-@@ -1694,8 +1692,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
- 		}
- 
- 		ret = fill_inode(in, NULL, &rde->inode, NULL, session,
--				 req->r_request_started, -1,
--				 &req->r_caps_reservation);
-+				 -1, &req->r_caps_reservation);
- 		if (ret < 0) {
- 			pr_err("fill_inode badness on %p\n", in);
- 			if (d_really_is_negative(dn)) {
--- 
-2.23.0
+Thanks.
+BRs
 
+> Cheers,
+> --
+> Lu=C3=ADs
+> >
+> > If the kernel version and ceph version are not compatible, should check
+> > quota operations are supported first, then do sync_setxattr.
+> >
+> > reference: https://docs.ceph.com/docs/master/cephfs/quota/
+> >
+> > Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> > ---
+> >  fs/ceph/xattr.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> > index cb18ee637cb7..189aace75186 100644
+> > --- a/fs/ceph/xattr.c
+> > +++ b/fs/ceph/xattr.c
+> > @@ -1132,8 +1132,8 @@ int __ceph_setxattr(struct inode *inode, const ch=
+ar *name,
+> >                                   "during filling trace\n", inode);
+> >               err =3D -EBUSY;
+> >       } else {
+> > -             err =3D ceph_sync_setxattr(inode, name, value, size, flag=
+s);
+> > -             if (err >=3D 0 && check_realm) {
+> > +             err =3D 0;
+> > +             if (check_realm) {
+> >                       /* check if snaprealm was created for quota inode=
+ */
+> >                       spin_lock(&ci->i_ceph_lock);
+> >                       if ((ci->i_max_files || ci->i_max_bytes) &&
+> > @@ -1142,6 +1142,8 @@ int __ceph_setxattr(struct inode *inode, const ch=
+ar *name,
+> >                               err =3D -EOPNOTSUPP;
+> >                       spin_unlock(&ci->i_ceph_lock);
+> >               }
+> > +             if (err =3D=3D 0)
+> > +                     err =3D ceph_sync_setxattr(inode, name, value, si=
+ze, flags);
+> >       }
+> >  out:
+> >       ceph_free_cap_flush(prealloc_cf);
+> > --
+> > 2.21.0 (Apple Git-122.2)
+> >
