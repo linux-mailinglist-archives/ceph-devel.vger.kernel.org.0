@@ -2,118 +2,88 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2287D114B73
-	for <lists+ceph-devel@lfdr.de>; Fri,  6 Dec 2019 04:36:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22103114F93
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Dec 2019 12:04:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726209AbfLFDgE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 5 Dec 2019 22:36:04 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:60219 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726097AbfLFDgE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Dec 2019 22:36:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575603363;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=NbjZmvuQHnJP5eEKKBwXyT8/CFgyTu6y7Qi9J0TeK74=;
-        b=MTVyUzWfcsKrKlkIRhqDqSfHtz8Uqq6J+dCYbsKxRYi+tq42JZ+/o7Ym7rzLN8wbJcrNU8
-        ha7x51j8MyHeOaGN5fZ6U9hcJhVuOG5rJ2VtxkfJVIpRKMoS22fmQN+/J42zRGwGTG7lS6
-        mcwYokr1uGFMTpupaoh+8jt7jg1L5A4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-288--MPHVQpNPQy86sWAIqerBw-1; Thu, 05 Dec 2019 22:36:01 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 92845107AD25;
-        Fri,  6 Dec 2019 03:36:00 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-69.pek2.redhat.com [10.72.12.69])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7177EA4B8F;
-        Fri,  6 Dec 2019 03:35:55 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org
-Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
-        pdonnell@redhat.com, ceph-devel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: keep the session state until it is released
-Date:   Thu,  5 Dec 2019 22:35:51 -0500
-Message-Id: <20191206033551.34802-1-xiubli@redhat.com>
+        id S1726222AbfLFLES (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 6 Dec 2019 06:04:18 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:34974 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbfLFLES (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 6 Dec 2019 06:04:18 -0500
+Received: by mail-il1-f194.google.com with SMTP id g12so5922274ild.2;
+        Fri, 06 Dec 2019 03:04:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+K2i2NBMzFxBPENxFOj55e/4N2mWKkV/KyZn4aZDJ/E=;
+        b=J+lO5rdeGz/uq0GRKk7Vlr5+fkJbi9Q/1L1Gwh+GLdHU53JmXXqwGZSMXm4oTnW/pJ
+         xFdXk3URIBtlYttPmbi80Mq2JLb2ijEE/qFoMXLoZlwOeNlLDSfkVCFL3UUPA3BikOgv
+         oWM8lcunhgf4MF6NvE7wr1iJBsgDKzvIj3chFPjOlSB143YYRduKSiACDtZ4Svc5+T72
+         A4svWQQNE8vdhl7W6uOVrUWI6gKNE050XWF7CwV66vQCdRScdvKt7A9qfH9P9LrTbj0B
+         DDgMm14YybtG8sEkxlQnl1SIK0Fm7uSmviAK9gKti8JayhDQsXq9pmj2CKEKEYoPmZIU
+         VD1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+K2i2NBMzFxBPENxFOj55e/4N2mWKkV/KyZn4aZDJ/E=;
+        b=LylePvITvvCyTax2LjGOM7QrjgnW1Yi3uNsWVesRsl6huPyT+Tj6+XcdsQERqrJ5LZ
+         7UX5sGvGFH/p+hWd3zdT/4OGkwk11b2j0PiSfqCs0JCYIiM1HVXamtYcM5q41eKLYEoF
+         NkDqLPa7CThSZsfSpT2l3TzIbzjgARzOzcIg0quZbgrFHfGmu3azHTakiRmE6VzT8s7X
+         mAmVvXbnyub3eVGQ4JOoQs7w/3zXQBE7b/OldxOig7W8Zsr3LesbJF3C8jhJk+mjuOku
+         XZH+D+qifX597LkeOYL87Rs7x2fCDVbI8ddPLZsgLB3SL0YYXNSBfSpvDkSnQyRwcm6t
+         9gaw==
+X-Gm-Message-State: APjAAAVe+UxrnEyzIk3vrHPp1sQisyRsLenhitb4Frx0iLJC1HWzZoNF
+        SLm0Iy/HdGd7Oc9nAyuwgnMus42dIfqTMBl8S0w=
+X-Google-Smtp-Source: APXvYqya8X01NYggP7t3CVoWZjUKlt/yGkpN4d2gA6d/51cmQjMCHZUZmiorAjcnVj4Xoyt4OswyArH2DattCHmByvo=
+X-Received: by 2002:a92:b749:: with SMTP id c9mr13076534ilm.143.1575630257440;
+ Fri, 06 Dec 2019 03:04:17 -0800 (PST)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-MC-Unique: -MPHVQpNPQy86sWAIqerBw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+References: <20191204200307.21047-1-idryomov@gmail.com> <CAHk-=wjm+9rJvh=aRahfoN7z6waV87Eqr=-i_Cb7zOwHrugf5A@mail.gmail.com>
+In-Reply-To: <CAHk-=wjm+9rJvh=aRahfoN7z6waV87Eqr=-i_Cb7zOwHrugf5A@mail.gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Fri, 6 Dec 2019 12:05:01 +0100
+Message-ID: <CAOi1vP_biwOVuG9U4nemfH803O_ADHGgjmd0_6eL-ZJhyrkOYA@mail.gmail.com>
+Subject: Re: [GIT PULL] Ceph updates for 5.5-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Thu, Dec 5, 2019 at 10:19 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Wed, Dec 4, 2019 at 12:02 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+> >
+> > Colin Ian King (1):
+> >       rbd: fix spelling mistake "requeueing" -> "requeuing"
+>
+> Hmm. Why? That's not a spelling mistake, it's the same word.
+>
+> Arguably "requeue" isn't much of a real word to begin with, and is
+> more of a made-up tech language. And then on wiktionary apparently the
+> only "ing" form you find is the one without the final "e", but
+> honestly, that's reaching. The word doesn't exist in _real_
+> dictionaries at all.
+>
+> I suspect "re-queueing" with the explicit hyphen would be the more
+> legible spelling (with or without the "e" - both forms are as
+> correct), but whatever.
+>
+> I've pulled it, but I really don't think it was misspelled to begin
+> with, and somebody who actually cares about language probably wouldn't
+> like either form.
 
-When reconnecting the session but if it is denied by the MDS due
-to client was in blacklist or something else, kclient will receive
-a session close reply, and we will never see the important log:
+FWIW that was my spelling.  I suspected the same thing, saw it being
+used in various spellings, but since Colin is a native speaker I took
+the patch.
 
-"ceph:  mds%d reconnect denied"
+Thanks,
 
-And with the confusing log:
-
-"ceph:  handle_session mds0 close 0000000085804730 state ??? seq 0"
-
-Let's keep the session state until its memories is released.
-
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/mds_client.c | 3 ++-
- fs/ceph/mds_client.h | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 82dfc85b24ee..be1ac9f8e0e6 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -530,6 +530,7 @@ const char *ceph_session_state_name(int s)
- =09case CEPH_MDS_SESSION_OPEN: return "open";
- =09case CEPH_MDS_SESSION_HUNG: return "hung";
- =09case CEPH_MDS_SESSION_CLOSING: return "closing";
-+=09case CEPH_MDS_SESSION_CLOSED: return "closed";
- =09case CEPH_MDS_SESSION_RESTARTING: return "restarting";
- =09case CEPH_MDS_SESSION_RECONNECTING: return "reconnecting";
- =09case CEPH_MDS_SESSION_REJECTED: return "rejected";
-@@ -674,7 +675,6 @@ static void __unregister_session(struct ceph_mds_client=
- *mdsc,
- =09dout("__unregister_session mds%d %p\n", s->s_mds, s);
- =09BUG_ON(mdsc->sessions[s->s_mds] !=3D s);
- =09mdsc->sessions[s->s_mds] =3D NULL;
--=09s->s_state =3D 0;
- =09ceph_con_close(&s->s_con);
- =09ceph_put_mds_session(s);
- =09atomic_dec(&mdsc->num_sessions);
-@@ -3159,6 +3159,7 @@ static void handle_session(struct ceph_mds_session *s=
-ession,
- =09case CEPH_SESSION_CLOSE:
- =09=09if (session->s_state =3D=3D CEPH_MDS_SESSION_RECONNECTING)
- =09=09=09pr_info("mds%d reconnect denied\n", session->s_mds);
-+=09=09session->s_state =3D CEPH_MDS_SESSION_CLOSED;
- =09=09cleanup_session_requests(mdsc, session);
- =09=09remove_session_caps(session);
- =09=09wake =3D 2; /* for good measure */
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 5cd131b41d84..9fb2063b0600 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -151,7 +151,8 @@ enum {
- =09CEPH_MDS_SESSION_RESTARTING =3D 5,
- =09CEPH_MDS_SESSION_RECONNECTING =3D 6,
- =09CEPH_MDS_SESSION_CLOSING =3D 7,
--=09CEPH_MDS_SESSION_REJECTED =3D 8,
-+=09CEPH_MDS_SESSION_CLOSED =3D 8,
-+=09CEPH_MDS_SESSION_REJECTED =3D 9,
- };
-=20
- struct ceph_mds_session {
---=20
-2.21.0
-
+                Ilya
