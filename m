@@ -2,167 +2,114 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B04F01164FD
-	for <lists+ceph-devel@lfdr.de>; Mon,  9 Dec 2019 03:14:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B312411694B
+	for <lists+ceph-devel@lfdr.de>; Mon,  9 Dec 2019 10:28:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfLICNz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 8 Dec 2019 21:13:55 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:40566 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbfLICNz (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 8 Dec 2019 21:13:55 -0500
-Received: by mail-il1-f193.google.com with SMTP id b15so11336148ila.7;
-        Sun, 08 Dec 2019 18:13:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=k15R5nnH7ejDpMt2qDC/YjWGHq/27T3NqR985G0b1io=;
-        b=e0YvdE3pADvK2Ktnt0flJw9zLH2RNpK3dJowZUsSejzeefqwu7BqYYIeAY01iQt7cn
-         Z9s/Gk0ybxsjTSfOItKoypebt/D1cSPOPwVd1PBfSvFvNPpUph4qoH1IcXYJyDaJhRTL
-         j5FOw6lY1ggO3hL/aExyG+zCF6bG3Lu5ACeuK0YxQfJFk3r3dK473a4gLDcOacqGeiuU
-         yqg3OHtgpPy7qZ/Rl9BVaHBCJZkqKBh5tZl5FLFoHHAc0J05ijxNFI3Oi5DNRUf7xvDc
-         yAI4qM2ofJdINtkmivJhdalTyrdIO8v8rkoTQQ5/9xCv2gECnlcpbO/SOAnu+eRIHRO1
-         d8zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=k15R5nnH7ejDpMt2qDC/YjWGHq/27T3NqR985G0b1io=;
-        b=B8rVOxu+ng1LiM2Hk4C/QSePR+ZPxWb6lEMxQp5QBrMQ+LgUE4YMyBHSfuZnqUkI+z
-         lz3KlzQUal15K8YlHIAEaisKGrF7O4w1qqzo7Tr7grSCnnQihlIOUNzWttkbwTL+nTS7
-         nJcwhR4pt5AZyHKzbKjP20pJepiJ/7OTv+R6a0RyFDw7fqTNDjjIG+EdloCU1yFMicKy
-         6bMIh4bhI4WUWWSUvXCvYzDEKEsm5qUf0v3X0sp7uj3lnwEGkdrcujw3APnXHHRqzxuD
-         Th2q9uJ0P6MY7gjOK5SpHPA/vwI5TTa202fNE/WYMA0/35DNsuUaqQvsBiR95WZ6XjJg
-         6a5g==
-X-Gm-Message-State: APjAAAWvFzfnmKPM28BwFV3/dbrdyhGwIZRPRWUd5ZF8QqMx+r5ySxzH
-        eZzS4wbjG4ww6P2lQKdEFEyclRoDU0nwSpkqaJ4=
-X-Google-Smtp-Source: APXvYqxv5NywBnj4CHBu47U5qi0QCZ9tpg7hVXEx/R4Tuj/ZqbHkan08oiS9gCkMH9qRlDjKXXFtvT/03EDiC01wC4c=
-X-Received: by 2002:a92:6a08:: with SMTP id f8mr24730721ilc.27.1575857634060;
- Sun, 08 Dec 2019 18:13:54 -0800 (PST)
+        id S1727241AbfLIJ2q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 9 Dec 2019 04:28:46 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:58450 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727144AbfLIJ2q (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 9 Dec 2019 04:28:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1575883724;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=3pTBDLl0BWbJPd5nPsQpBfReTw+s4WliLhpqo/bH5Mo=;
+        b=WVjJtBb4IoWzeGuhXC5GpAt5WUQBHhdxbnFK2mOOFV869ON0SwuKH/4+HpRPiDrrlHeTwK
+        uL70Bn/gmJhuhbaMYvwh78jM0jf+rZKYrO59CYgIqETNiO01fUhTqa14rnNYTH7otxufgl
+        YkxmA4n+BqTXcWNMtZyLUXxGa2lRjvE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-326-L4OqxVT0NNigwAy_qzq_NQ-1; Mon, 09 Dec 2019 04:28:43 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0EC1C1005512;
+        Mon,  9 Dec 2019 09:28:42 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-181.pek2.redhat.com [10.72.12.181])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 24BF85C545;
+        Mon,  9 Dec 2019 09:28:35 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
+        pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: clean the dirty page when session is closed or rejected
+Date:   Mon,  9 Dec 2019 04:28:30 -0500
+Message-Id: <20191209092830.22157-1-xiubli@redhat.com>
 MIME-Version: 1.0
-References: <20191204031005.2638-1-gmayyyha@gmail.com> <20191204103629.GA22244@hermes.olymp>
- <CAB9OAC2vzPy=ELYzDRjBvA6m8T8AvwdJugS2NoCczwD1+Xb36Q@mail.gmail.com> <20191205102433.GA5758@hermes.olymp>
-In-Reply-To: <20191205102433.GA5758@hermes.olymp>
-From:   Yanhu Cao <gmayyyha@gmail.com>
-Date:   Mon, 9 Dec 2019 10:13:41 +0800
-Message-ID: <CAB9OAC3eH89pA4EORu93gE+r9LJ7CW_gBYr4dSn0u3K3+p7T8w@mail.gmail.com>
-Subject: Re: [PATCH] ceph: check set quota operation support before syncing setxattr.
-To:     Luis Henriques <lhenriques@suse.com>
-Cc:     jlayton@kernel.org, sage@redhat.com, idryomov@gmail.com,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-MC-Unique: L4OqxVT0NNigwAy_qzq_NQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Dec 5, 2019 at 6:24 PM Luis Henriques <lhenriques@suse.com> wrote:
->
-> On Thu, Dec 05, 2019 at 10:42:46AM +0800, Yanhu Cao wrote:
-> > On Wed, Dec 4, 2019 at 6:36 PM Luis Henriques <lhenriques@suse.com> wro=
-te:
-> > >
-> > > On Wed, Dec 04, 2019 at 11:10:05AM +0800, Yanhu Cao wrote:
-> > > > Environment
-> > > > -----------
-> > > > ceph version: 12.2.*
-> > > > kernel version: 4.19+
-> > > >
-> > > > setfattr quota operation actually sends op to MDS, and settings
-> > > > effective. but kclient outputs 'Operation not supported'. This may =
-confuse
-> > > > users' understandings.
-> > >
-> > > What exactly do you mean by "settings effective"?  There have been
-> > > changes in the way CephFS quotas work in mimic and, if you're using a
-> > > Luminous cluster (12.2.*) the kernel client effectively does *not*
-> > > support quotas -- you'll be able to exceed the quotas you've tried to
-> > > set because the client won't be checking the limits.  Thus, -EOPNOTSU=
-PP
-> > > seems appropriate for this scenario.
-> > >
-> > > I guess that the confusing part is that the xattr is actually set in
-> > > that case, but the kernel client won't be able to use it to validate
-> > > quotas in the filesystem tree because realms won't be created.
-> > >
-> > Yes. we use kcephfs+nfs for CentOS6.*, it does not support ceph-fuse(12=
-.2.*).
-> > The operating system of other applications is CentOS7.*, which uses
-> > ceph-fuse and can get quota settings set by kclient.
->
-> Ok, so if I understand correctly, you're setting quotas with the kernel
-> client but actually using ceph-fuse on CentOS7 (I'm assuming a Luminous
-> cluster).  This should work fine for the fuse-client, but please note
-> that the kernel client will not respect quotas.
-Yes. do with fuse-client now.
+From: Xiubo Li <xiubli@redhat.com>
 
->
-> Anyway, the ideal solution for this would be for the kernel to not set
-> the xattr if the cluster doesn't support the new quotas format
-> introduced in Mimic.  Unfortunately, the only way we have to find that
-> out is to set the xattr and see if we get a snap_realm.
-Therefore, I think that if kclient is incompatible with the ceph
-version, logically, op should not be sent to MDS.
+Try to queue writeback and invalidate the dirty pages when sessions
+are closed, rejected or reconnect denied.
 
-Thanks.
-BRs
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/mds_client.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
->
-> Cheers,
-> --
-> Lu=C3=ADs
->
-> >
-> > Thanks.
-> > BRs
-> >
-> > > Cheers,
-> > > --
-> > > Lu=C3=ADs
-> > > >
-> > > > If the kernel version and ceph version are not compatible, should c=
-heck
-> > > > quota operations are supported first, then do sync_setxattr.
-> > > >
-> > > > reference: https://docs.ceph.com/docs/master/cephfs/quota/
-> > > >
-> > > > Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
-> > > > ---
-> > > >  fs/ceph/xattr.c | 6 ++++--
-> > > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> > > > index cb18ee637cb7..189aace75186 100644
-> > > > --- a/fs/ceph/xattr.c
-> > > > +++ b/fs/ceph/xattr.c
-> > > > @@ -1132,8 +1132,8 @@ int __ceph_setxattr(struct inode *inode, cons=
-t char *name,
-> > > >                                   "during filling trace\n", inode);
-> > > >               err =3D -EBUSY;
-> > > >       } else {
-> > > > -             err =3D ceph_sync_setxattr(inode, name, value, size, =
-flags);
-> > > > -             if (err >=3D 0 && check_realm) {
-> > > > +             err =3D 0;
-> > > > +             if (check_realm) {
-> > > >                       /* check if snaprealm was created for quota i=
-node */
-> > > >                       spin_lock(&ci->i_ceph_lock);
-> > > >                       if ((ci->i_max_files || ci->i_max_bytes) &&
-> > > > @@ -1142,6 +1142,8 @@ int __ceph_setxattr(struct inode *inode, cons=
-t char *name,
-> > > >                               err =3D -EOPNOTSUPP;
-> > > >                       spin_unlock(&ci->i_ceph_lock);
-> > > >               }
-> > > > +             if (err =3D=3D 0)
-> > > > +                     err =3D ceph_sync_setxattr(inode, name, value=
-, size, flags);
-> > > >       }
-> > > >  out:
-> > > >       ceph_free_cap_flush(prealloc_cf);
-> > > > --
-> > > > 2.21.0 (Apple Git-122.2)
-> > > >
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index be1ac9f8e0e6..68f3b5ed6ac8 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -1385,9 +1385,11 @@ static int remove_session_caps_cb(struct inode *inod=
+e, struct ceph_cap *cap,
+ {
+ =09struct ceph_fs_client *fsc =3D (struct ceph_fs_client *)arg;
+ =09struct ceph_inode_info *ci =3D ceph_inode(inode);
++=09struct ceph_mds_session *session =3D cap->session;
+ =09LIST_HEAD(to_remove);
+ =09bool dirty_dropped =3D false;
+ =09bool invalidate =3D false;
++=09bool writeback =3D false;
+=20
+ =09dout("removing cap %p, ci is %p, inode is %p\n",
+ =09     cap, ci, &ci->vfs_inode);
+@@ -1398,12 +1400,21 @@ static int remove_session_caps_cb(struct inode *ino=
+de, struct ceph_cap *cap,
+ =09if (!ci->i_auth_cap) {
+ =09=09struct ceph_cap_flush *cf;
+ =09=09struct ceph_mds_client *mdsc =3D fsc->mdsc;
++=09=09int s_state =3D session->s_state;
+=20
+ =09=09if (READ_ONCE(fsc->mount_state) =3D=3D CEPH_MOUNT_SHUTDOWN) {
+ =09=09=09if (inode->i_data.nrpages > 0)
+ =09=09=09=09invalidate =3D true;
+ =09=09=09if (ci->i_wrbuffer_ref > 0)
+ =09=09=09=09mapping_set_error(&inode->i_data, -EIO);
++=09=09} else if (s_state =3D=3D CEPH_MDS_SESSION_CLOSED ||
++=09=09=09   s_state =3D=3D CEPH_MDS_SESSION_REJECTED) {
++=09=09=09/* reconnect denied or rejected */
++=09=09=09if (!__ceph_is_any_real_caps(ci) &&
++=09=09=09    inode->i_data.nrpages > 0)
++=09=09=09=09invalidate =3D true;
++=09=09=09if (ci->i_wrbuffer_ref > 0)
++=09=09=09=09writeback =3D true;
+ =09=09}
+=20
+ =09=09while (!list_empty(&ci->i_cap_flush_list)) {
+@@ -1472,6 +1483,8 @@ static int remove_session_caps_cb(struct inode *inode=
+, struct ceph_cap *cap,
+ =09}
+=20
+ =09wake_up_all(&ci->i_cap_wq);
++=09if (writeback)
++=09=09ceph_queue_writeback(inode);
+ =09if (invalidate)
+ =09=09ceph_queue_invalidate(inode);
+ =09if (dirty_dropped)
+--=20
+2.21.0
+
