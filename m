@@ -2,232 +2,137 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C85A611CFBA
-	for <lists+ceph-devel@lfdr.de>; Thu, 12 Dec 2019 15:25:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31F0E11CFC1
+	for <lists+ceph-devel@lfdr.de>; Thu, 12 Dec 2019 15:27:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729672AbfLLOZG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 12 Dec 2019 09:25:06 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31095 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729612AbfLLOZG (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 12 Dec 2019 09:25:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576160703;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=FtzRmZ7cJ4/C+s7R7zE6KQL+M2K0AsuKJqZHnD3XC5s=;
-        b=gsiihmYZ6lDiqaOhsFPa7JPtct971rlOrn+VM2Yo9g5u6fzvPSaTQsf0R2bpx8cjec6ArP
-        oIE0wKDNOonukrQ0OBjsC5APo5ulH4oko16Sr39XYH+A4kRzlmE5sW1XCCUssWn2KEz15Q
-        gKBoKSiYC1xraoxCN5NiHW77p21WYYQ=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-210-C8rU6rtOP0WazeJE892MGQ-1; Thu, 12 Dec 2019 09:25:02 -0500
-X-MC-Unique: C8rU6rtOP0WazeJE892MGQ-1
-Received: by mail-qt1-f199.google.com with SMTP id e8so1485117qtg.9
-        for <ceph-devel@vger.kernel.org>; Thu, 12 Dec 2019 06:25:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FtzRmZ7cJ4/C+s7R7zE6KQL+M2K0AsuKJqZHnD3XC5s=;
-        b=auT+xAvOwuLZgQO3bFTfoPapsmFII81LfspMQS4dY9eUWzs+08h/quIcwLyR2xuc7r
-         FT1c8Q2tQlxbUMGLQQ6Bsou535wU+DgTYa8TfG1nZq1fcyrM1IMvugfax91lquEkdSiJ
-         PhKBFm3y1d1ZuQrzRDFCJrqm5HhzNdAr+iff256RsSW5uxp81Dv93f43iqWvkOukCltm
-         1V7zQi5nbiFywoWi9ySE2Njc744JH+fkk18cnB+FZAC5/Pn5cJxhz+3wtjklrwWuSv7u
-         PnkpERT853eCeETqL4thqk+Egw8srcejm7rlha74vYnCmha7UFDj6NnZFhM0Mi1TLnPR
-         ximg==
-X-Gm-Message-State: APjAAAXQcRm79SgN6hrYCLNWSGS/qlGwqIOEc16PHHj7lQlteY5h9UT/
-        OsKVY6m70gcizj5uNLBzHlprAhStw+EhWuuK9ODiZLbHkSfW7T/vrKWbNpWcBX5+8juP0zAcHxs
-        T9CB2JJRrRCne8u0UVv2Xsob1UbxhSm+6n8lKjw==
-X-Received: by 2002:a37:4288:: with SMTP id p130mr8012377qka.116.1576160701281;
-        Thu, 12 Dec 2019 06:25:01 -0800 (PST)
-X-Google-Smtp-Source: APXvYqykN1QWx8UtUCI73r7qMgwhKAyPoDEUxQE/ZPqeB0oYYYAIcKV5xaQ4WVV+H5LqfJtHb4XosdUKeKOYOUIrHkQ=
-X-Received: by 2002:a37:4288:: with SMTP id p130mr8012343qka.116.1576160700912;
- Thu, 12 Dec 2019 06:25:00 -0800 (PST)
+        id S1729694AbfLLO1U (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 12 Dec 2019 09:27:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42540 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729392AbfLLO1U (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 12 Dec 2019 09:27:20 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BF9C214D8;
+        Thu, 12 Dec 2019 14:27:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576160838;
+        bh=JNRZpOcuvJo0bsWr0HgrRU2kAZT9gkIykLNcH28+ryQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pHM1A0eXktGaSml5wDMibYYhIoKztG/1xFjacSjulWqxRikvL+ky1z+sekp4vLglU
+         ywhdM3uy37USjEtCkIyQltQoS0xn8FF6HpHl41CGe8gCY5mGPOydCmvf7dFnuDpPzQ
+         jpzjSrV7JclsQJMF5k4OBQhUDlsYhPd3B/3xddVM=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, sage@redhat.com, zyan@redhat.com
+Subject: [PATCH] ceph: don't clear I_NEW until inode metadata is fully populated
+Date:   Thu, 12 Dec 2019 09:27:17 -0500
+Message-Id: <20191212142717.23656-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <87sglscy4z.fsf@suse.com> <CABZ+qq==8cpO3_16aj4ZQtgKmcg59qqZaMYk+L+9faGKQ5-yLQ@mail.gmail.com>
-In-Reply-To: <CABZ+qq==8cpO3_16aj4ZQtgKmcg59qqZaMYk+L+9faGKQ5-yLQ@mail.gmail.com>
-From:   Alfredo Deza <adeza@redhat.com>
-Date:   Thu, 12 Dec 2019 09:24:49 -0500
-Message-ID: <CAC-Np1y6u6ojdFPX0qNOZ6uzSQbjQL56+67JXVmAY5hGi5tpJQ@mail.gmail.com>
-Subject: Re: v14.2.5 Nautilus released
-To:     Dan van der Ster <dan@vanderster.com>
-Cc:     Abhishek Lekshmanan <abhishek@suse.com>, ceph-announce@ceph.io,
-        ceph-users <ceph-users@ceph.io>, dev@ceph.io,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 9:06 AM Dan van der Ster <dan@vanderster.com> wrote:
->
-> Thanks for this!
->
-> We're having trouble installing the ceph-debuginfo rpm, which shows a
-> negative file size (apparently because it now exceeds 2GB):
-> https://pastebin.com/5bnNCGHh
->
-> Does this change need to be applied to the release builds too?
-> https://tracker.ceph.com/issues/39387
+Currently, we could have an open-by-handle (or NFS server) call
+into the filesystem and start working with an inode before it's
+properly filled out.
 
-Good catch! I just checked and yes, we need to use the --no-database flag
+Don't clear I_NEW until we have filled out the inode, and discard it
+properly if that fails. Note that we occasionally take an extra
+reference to the inode to ensure that we don't put the last reference in
+discard_new_inode, but rather leave it for ceph_async_iput.
 
->
-> -- Dan
->
-> On Tue, Dec 10, 2019 at 10:45 AM Abhishek Lekshmanan <abhishek@suse.com> wrote:
-> >
-> > This is the fifth release of the Ceph Nautilus release series. Among the many
-> > notable changes, this release fixes a critical BlueStore bug that was introduced
-> > in 14.2.3. All Nautilus users are advised to upgrade to this release.
-> >
-> > For the complete changelog entry, please visit the release blog at
-> > https://ceph.io/releases/v14-2-5-nautilus-released/
-> >
-> > Notable Changes
-> > ---------------
-> >
-> > Critical fix:
-> >
-> > * This release fixes a `critical BlueStore bug <https://tracker.ceph.com/issues/42223>`_
-> >   introduced in 14.2.3 (and also present in 14.2.4) that can lead to data
-> >   corruption when a separate "WAL" device is used.
-> >
-> > New health warnings:
-> >
-> > * Ceph will now issue health warnings if daemons have recently crashed. Ceph
-> >   has been collecting crash reports since the initial Nautilus release, but the
-> >   health alerts are new. To view new crashes (or all crashes, if you've just
-> >   upgraded)::
-> >
-> >     ceph crash ls-new
-> >
-> >   To acknowledge a particular crash (or all crashes) and silence the health warning::
-> >
-> >     ceph crash archive <crash-id>
-> >     ceph crash archive-all
-> >
-> > * Ceph will now issue a health warning if a RADOS pool has a ``pg_num``
-> >   value that is not a power of two. This can be fixed by adjusting
-> >   the pool to a nearby power of two::
-> >
-> >     ceph osd pool set <pool-name> pg_num <new-pg-num>
-> >
-> >   Alternatively, the warning can be silenced with::
-> >
-> >     ceph config set global mon_warn_on_pool_pg_num_not_power_of_two false
-> >
-> > * Ceph will issue a health warning if a RADOS pool's ``size`` is set to 1
-> >   or, in other words, if the pool is configured with no redundancy. Ceph will
-> >   stop issuing the warning if the pool size is set to the minimum
-> >   recommended value::
-> >
-> >     ceph osd pool set <pool-name> size <num-replicas>
-> >
-> >   The warning can be silenced with::
-> >
-> >     ceph config set global mon_warn_on_pool_no_redundancy false
-> >
-> > * A health warning is now generated if the average osd heartbeat ping
-> >   time exceeds a configurable threshold for any of the intervals
-> >   computed. The OSD computes 1 minute, 5 minute and 15 minute
-> >   intervals with average, minimum and maximum values.  New configuration
-> >   option `mon_warn_on_slow_ping_ratio` specifies a percentage of
-> >   `osd_heartbeat_grace` to determine the threshold.  A value of zero
-> >   disables the warning. New configuration option `mon_warn_on_slow_ping_time`
-> >   specified in milliseconds over-rides the computed value, causes a warning
-> >   when OSD heartbeat pings take longer than the specified amount.
-> >   A new admin command, `ceph daemon mgr.# dump_osd_network [threshold]`, will
-> >   list all connections with a ping time longer than the specified threshold or
-> >   value determined by the config options, for the average for any of the 3 intervals.
-> >   Another new admin command, `ceph daemon osd.# dump_osd_network [threshold]`,
-> >   will do the same but only including heartbeats initiated by the specified OSD.
-> >
-> > Changes in the telemetry module:
-> >
-> > * The telemetry module now has a 'device' channel, enabled by default, that
-> >   will report anonymized hard disk and SSD health metrics to telemetry.ceph.com
-> >   in order to build and improve device failure prediction algorithms. Because
-> >   the content of telemetry reports has changed, you will need to re-opt-in
-> >   with::
-> >
-> >     ceph telemetry on
-> >
-> >   You can view exactly what information will be reported first with::
-> >
-> >     ceph telemetry show
-> >     ceph telemetry show device   # specifically show the device channel
-> >
-> >   If you are not comfortable sharing device metrics, you can disable that
-> >   channel first before re-opting-in:
-> >
-> >     ceph config set mgr mgr/telemetry/channel_crash false
-> >     ceph telemetry on
-> >
-> > * The telemetry module now reports more information about CephFS file systems,
-> >   including:
-> >
-> >     - how many MDS daemons (in total and per file system)
-> >     - which features are (or have been) enabled
-> >     - how many data pools
-> >     - approximate file system age (year + month of creation)
-> >     - how many files, bytes, and snapshots
-> >     - how much metadata is being cached
-> >
-> >   We have also added:
-> >
-> >     - which Ceph release the monitors are running
-> >     - whether msgr v1 or v2 addresses are used for the monitors
-> >     - whether IPv4 or IPv6 addresses are used for the monitors
-> >     - whether RADOS cache tiering is enabled (and which mode)
-> >     - whether pools are replicated or erasure coded, and
-> >       which erasure code profile plugin and parameters are in use
-> >     - how many hosts are in the cluster, and how many hosts have each type of daemon
-> >     - whether a separate OSD cluster network is being used
-> >     - how many RBD pools and images are in the cluster, and how many pools have RBD mirroring enabled
-> >     - how many RGW daemons, zones, and zonegroups are present; which RGW frontends are in use
-> >     - aggregate stats about the CRUSH map, like which algorithms are used, how
-> >       big buckets are, how many rules are defined, and what tunables are in
-> >       use
-> >
-> >   If you had telemetry enabled, you will need to re-opt-in with::
-> >
-> >     ceph telemetry on
-> >
-> >   You can view exactly what information will be reported first with::
-> >
-> >     ceph telemetry show        # see everything
-> >     ceph telemetry show basic  # basic cluster info (including all of the new info)
-> >
-> > OSD:
-> >
-> > * A new OSD daemon command, 'dump_recovery_reservations', reveals the
-> >   recovery locks held (in_progress) and waiting in priority queues.
-> >
-> > * Another new OSD daemon command, 'dump_scrub_reservations', reveals the
-> >   scrub reservations that are held for local (primary) and remote (replica) PGs.
-> >
-> > RGW:
-> >
-> > * RGW now supports S3 Object Lock set of APIs allowing for a WORM model for
-> >   storing objects. 6 new APIs have been added put/get bucket object lock,
-> >   put/get object retention, put/get object legal hold.
-> >
-> > * RGW now supports List Objects V2
-> >
-> > Getting Ceph
-> > ------------
-> >
-> > * Git at git://github.com/ceph/ceph.git
-> > * Tarball at http://download.ceph.com/tarballs/ceph-14.2.5.tar.gz
-> > * For packages, see http://docs.ceph.com/docs/master/install/get-packages/
-> > * Release git sha1: ad5bd132e1492173c85fda2cc863152730b16a92
-> >
-> > --
-> > Abhishek Lekshmanan
-> > SUSE Software Solutions Germany GmbH
->
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/inode.c | 25 +++++++++++++++++++++----
+ 1 file changed, 21 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 5bdc1afc2bee..11672f8192b9 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -55,11 +55,9 @@ struct inode *ceph_get_inode(struct super_block *sb, struct ceph_vino vino)
+ 	inode = iget5_locked(sb, t, ceph_ino_compare, ceph_set_ino_cb, &vino);
+ 	if (!inode)
+ 		return ERR_PTR(-ENOMEM);
+-	if (inode->i_state & I_NEW) {
++	if (inode->i_state & I_NEW)
+ 		dout("get_inode created new inode %p %llx.%llx ino %llx\n",
+ 		     inode, ceph_vinop(inode), (u64)inode->i_ino);
+-		unlock_new_inode(inode);
+-	}
+ 
+ 	dout("get_inode on %lu=%llx.%llx got %p\n", inode->i_ino, vino.ino,
+ 	     vino.snap, inode);
+@@ -88,6 +86,10 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+ 	inode->i_fop = &ceph_snapdir_fops;
+ 	ci->i_snap_caps = CEPH_CAP_PIN; /* so we can open */
+ 	ci->i_rbytes = 0;
++
++	if (inode->i_state & I_NEW)
++		unlock_new_inode(inode);
++
+ 	return inode;
+ }
+ 
+@@ -1301,7 +1303,6 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 			err = PTR_ERR(in);
+ 			goto done;
+ 		}
+-		req->r_target_inode = in;
+ 
+ 		err = fill_inode(in, req->r_locked_page, &rinfo->targeti, NULL,
+ 				session,
+@@ -1311,8 +1312,13 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 		if (err < 0) {
+ 			pr_err("fill_inode badness %p %llx.%llx\n",
+ 				in, ceph_vinop(in));
++			if (in->i_state & I_NEW)
++				discard_new_inode(in);
+ 			goto done;
+ 		}
++		req->r_target_inode = in;
++		if (in->i_state & I_NEW)
++			unlock_new_inode(in);
+ 	}
+ 
+ 	/*
+@@ -1496,7 +1502,12 @@ static int readdir_prepopulate_inodes_only(struct ceph_mds_request *req,
+ 		if (rc < 0) {
+ 			pr_err("fill_inode badness on %p got %d\n", in, rc);
+ 			err = rc;
++			ihold(in);
++			discard_new_inode(in);
++		} else if (in->i_state & I_NEW) {
++			unlock_new_inode(in);
+ 		}
++
+ 		/* avoid calling iput_final() in mds dispatch threads */
+ 		ceph_async_iput(in);
+ 	}
+@@ -1698,12 +1709,18 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+ 			if (d_really_is_negative(dn)) {
+ 				/* avoid calling iput_final() in mds
+ 				 * dispatch threads */
++				if (in->i_state & I_NEW) {
++					ihold(in);
++					discard_new_inode(in);
++				}
+ 				ceph_async_iput(in);
+ 			}
+ 			d_drop(dn);
+ 			err = ret;
+ 			goto next_item;
+ 		}
++		if (in->i_state & I_NEW)
++			unlock_new_inode(in);
+ 
+ 		if (d_really_is_negative(dn)) {
+ 			if (ceph_security_xattr_deadlock(in)) {
+-- 
+2.23.0
 
