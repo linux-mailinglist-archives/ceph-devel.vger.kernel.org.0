@@ -2,34 +2,55 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8D4711D406
-	for <lists+ceph-devel@lfdr.de>; Thu, 12 Dec 2019 18:32:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5076D11D617
+	for <lists+ceph-devel@lfdr.de>; Thu, 12 Dec 2019 19:44:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730221AbfLLRcC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 12 Dec 2019 12:32:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36914 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730061AbfLLRcB (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 12 Dec 2019 12:32:01 -0500
-Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D99421655;
-        Thu, 12 Dec 2019 17:32:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576171920;
-        bh=hJB3E9urb9zjZhZu+zaW/fiyO01ppEA4BJt6nxXD8b4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BK2iG/DdKq7kcJY3EYTnrspqao56JcaUbLx9jIhV2QwwhISlrMbekTCht8yqGdnCI
-         Rhvmahu3e14zMLKt0XsuHa/pYNHbywy8uHXrw3vmxGmfSObdtxQYDebroccRbnMhGT
-         zOl4ouVZlfeCW1tXvBPhdaM9I0h6fQRaOoPfLFfM=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@redhat.com, ukernel@gmail.com
-Subject: [RFC PATCH] ceph: guard against __ceph_remove_cap races
-Date:   Thu, 12 Dec 2019 12:31:59 -0500
-Message-Id: <20191212173159.35013-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.23.0
+        id S1730444AbfLLSoR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 12 Dec 2019 13:44:17 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43615 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730400AbfLLSoR (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 12 Dec 2019 13:44:17 -0500
+Received: by mail-wr1-f65.google.com with SMTP id d16so3848882wre.10;
+        Thu, 12 Dec 2019 10:44:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5DKpgH8XAvi3uA/mISb+fZKoyXnYonlOHAe7V1uGxoE=;
+        b=nhJMtdHAGaGjkw2xvo1YkJMwUtNAion8YJTDLtnPbocPLXhvIlE+MEgTdXFBqPidTX
+         icSEhQYwhGARMdwJcJ14WnnQtNIFaHCW6o9VLbL97/ZGOynr1xS2L63QfNeQBba03FWl
+         Ij/CZVfkXUDM0Kg3hUWaEVVZS1iKkpc21lUEDea6kM/TGbwtuDfRhXh28aUzW10c25VP
+         SjRwzGqO6E/t0KXVHwIIzc8FXmyiOQnD44lRXKZmw4bQmU4toWl5YUAiPi9Bb/kRoxsY
+         8dJynUIEvHqnosW1APwgAntrLVNG5jJorKKVpBGsfaCOUCobs/lT5/PBLwb/I2IeWCwo
+         wqxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5DKpgH8XAvi3uA/mISb+fZKoyXnYonlOHAe7V1uGxoE=;
+        b=Tl3tH/D92jK5MA72Egv3G1WLN2RMEA+6o7nXOJFsBAJEtR3HqOmqnbPsLYw0JxhM3P
+         j3XiCilYE8fhx89DpYWjhM5pREU1yPkFUwQ4FvCOdWBesB63pCYpNb6IYJabD6O/QqDP
+         ob+GNGpAZNWrvJ3U7fpoWOFUeOsLoDZ6keVSUu7AZwrMfVsX6elFHfvrfGiF0aZbeVfo
+         QAnOktvpTc2NRYcq4zQdFCYmkEaoPnopDfDIhtQKACC5O6DcMTKq5ui7LhYJQsvDGIGr
+         cdnb4kxaJhEriaTWIpJNCJYOSQxz2OfMio+iOTv5NOLUaCNzi1aKJctQSDFALGRaRQsn
+         A0sA==
+X-Gm-Message-State: APjAAAUqFTvRyRVsuLE/idATnXVvcHrAumInwuQ1HU1BqfUt+rij3yF1
+        QmsfPvFFvHhtCawJW6bzIpQ=
+X-Google-Smtp-Source: APXvYqyuQOSGLR6/IBab/w6lPDb1uX2GY2FBp9dNcex+KPlzE9sVx24oZImN1D/YwW2KKoKQqGJJVQ==
+X-Received: by 2002:a5d:62d0:: with SMTP id o16mr7725210wrv.197.1576176255053;
+        Thu, 12 Dec 2019 10:44:15 -0800 (PST)
+Received: from kwango.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id p15sm2305631wma.40.2019.12.12.10.44.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2019 10:44:14 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 5.5-rc2
+Date:   Thu, 12 Dec 2019 19:43:56 +0100
+Message-Id: <20191212184356.7143-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
@@ -37,79 +58,40 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-I believe it's possible that we could end up with racing calls to
-__ceph_remove_cap for the same cap. If that happens, the cap->ci
-pointer will be zereoed out and we can hit a NULL pointer dereference.
+Hi Linus,
 
-Once we acquire the s_cap_lock, check for the ci pointer being NULL,
-and just return without doing anything if it is.
+The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
-URL: https://tracker.ceph.com/issues/43272
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/caps.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
 
-This is the only scenario that made sense to me in light of Ilya's
-analysis on the tracker above. I could be off here though -- the locking
-around this code is horrifically complex, and I could be missing what
-should guard against this scenario.
+are available in the Git repository at:
 
-Thoughts?
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.5-rc2
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 9d09bb53c1ab..7e39ee8eff60 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -1046,11 +1046,22 @@ static void drop_inode_snap_realm(struct ceph_inode_info *ci)
- void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
- {
- 	struct ceph_mds_session *session = cap->session;
--	struct ceph_inode_info *ci = cap->ci;
--	struct ceph_mds_client *mdsc =
--		ceph_sb_to_client(ci->vfs_inode.i_sb)->mdsc;
-+	struct ceph_inode_info *ci;
-+	struct ceph_mds_client *mdsc;
- 	int removed = 0;
- 
-+	spin_lock(&session->s_cap_lock);
-+	ci = cap->ci;
-+	if (!ci) {
-+		/*
-+		 * Did we race with a competing __ceph_remove_cap call? If
-+		 * ci is zeroed out, then just unlock and don't do anything.
-+		 * Assume that it's on its way out anyway.
-+		 */
-+		spin_unlock(&session->s_cap_lock);
-+		return;
-+	}
-+
- 	dout("__ceph_remove_cap %p from %p\n", cap, &ci->vfs_inode);
- 
- 	/* remove from inode's cap rbtree, and clear auth cap */
-@@ -1058,13 +1069,12 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
- 	if (ci->i_auth_cap == cap)
- 		ci->i_auth_cap = NULL;
- 
--	/* remove from session list */
--	spin_lock(&session->s_cap_lock);
- 	if (session->s_cap_iterator == cap) {
- 		/* not yet, we are iterating over this very cap */
- 		dout("__ceph_remove_cap  delaying %p removal from session %p\n",
- 		     cap, cap->session);
- 	} else {
-+		/* remove from session list */
- 		list_del_init(&cap->session_caps);
- 		session->s_nr_caps--;
- 		cap->session = NULL;
-@@ -1072,6 +1082,7 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
- 	}
- 	/* protect backpointer with s_cap_lock: see iterate_session_caps */
- 	cap->ci = NULL;
-+	mdsc = ceph_sb_to_client(ci->vfs_inode.i_sb)->mdsc;
- 
- 	/*
- 	 * s_cap_reconnect is protected by s_cap_lock. no one changes
--- 
-2.23.0
+for you to fetch changes up to da08e1e1d7c3f805f8771ad6a6fd3a7a30ba4fe2:
 
+  ceph: add more debug info when decoding mdsmap (2019-12-09 20:55:10 +0100)
+
+----------------------------------------------------------------
+A fix to avoid a corner case when scheduling cap reclaim in batches
+from Xiubo, a patch to add some observability into cap waiters from
+Jeff and a couple of cleanups.
+
+----------------------------------------------------------------
+Jeff Layton (2):
+      ceph: convert int fields in ceph_mount_options to unsigned int
+      ceph: show tasks waiting on caps in debugfs caps file
+
+Xiubo Li (3):
+      ceph: trigger the reclaim work once there has enough pending caps
+      ceph: switch to global cap helper
+      ceph: add more debug info when decoding mdsmap
+
+ fs/ceph/caps.c       | 41 +++++++++++++++++++++++++++--------------
+ fs/ceph/debugfs.c    | 13 +++++++++++++
+ fs/ceph/mds_client.c |  8 +++++---
+ fs/ceph/mds_client.h |  9 +++++++++
+ fs/ceph/mdsmap.c     | 12 ++++++++----
+ fs/ceph/super.c      | 28 +++++++++++++++-------------
+ fs/ceph/super.h      | 16 ++++++++--------
+ 7 files changed, 85 insertions(+), 42 deletions(-)
