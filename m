@@ -2,140 +2,106 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3F9011F00A
-	for <lists+ceph-devel@lfdr.de>; Sat, 14 Dec 2019 03:46:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7221F11F92D
+	for <lists+ceph-devel@lfdr.de>; Sun, 15 Dec 2019 17:43:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfLNCqm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 13 Dec 2019 21:46:42 -0500
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:44235 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbfLNCqm (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 13 Dec 2019 21:46:42 -0500
-Received: by mail-qv1-f65.google.com with SMTP id n8so537608qvg.11
-        for <ceph-devel@vger.kernel.org>; Fri, 13 Dec 2019 18:46:41 -0800 (PST)
+        id S1726199AbfLOQnh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 15 Dec 2019 11:43:37 -0500
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:48162 "EHLO
+        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbfLOQng (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 15 Dec 2019 11:43:36 -0500
+X-Greylist: delayed 485 seconds by postgrey-1.27 at vger.kernel.org; Sun, 15 Dec 2019 11:43:36 EST
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 47bVPv5MK2z9vZ63
+        for <ceph-devel@vger.kernel.org>; Sun, 15 Dec 2019 16:35:31 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p6.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 31xnMYoM1nRu for <ceph-devel@vger.kernel.org>;
+        Sun, 15 Dec 2019 10:35:31 -0600 (CST)
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com [209.85.219.197])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 47bVPv493tz9vZ5m
+        for <ceph-devel@vger.kernel.org>; Sun, 15 Dec 2019 10:35:31 -0600 (CST)
+Received: by mail-yb1-f197.google.com with SMTP id y204so2365352yby.18
+        for <ceph-devel@vger.kernel.org>; Sun, 15 Dec 2019 08:35:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n3o7EywoAx5lCov0+XDSzgYBVJgii6VcvHYbvuBvVMw=;
-        b=s2nFXGgwlHhBwt3D+8TmZBIaOonE8paojsznusatfkKY+OODp5e0UuHjZtwvpkkrQw
-         10Qt2lemPUrcV93EH/fmeVxeByk3+1S1HVnnFyZmaN8WVzPs2Dh+g0DdDAZMO82BUSTA
-         wRHg/VHWgGvI4hJeqL/9Ye6DYkBZ2csMSaL9lz3StQjFxQW0PU6UGV6kxPnG4RQE+YIS
-         7Cm5sHZEzVFZAviQczBnAVGMcJMvDV8F7axyux7hnMUAYHNnBBG0lvlguC56EHdjRQNF
-         MW0ZP5RL9w+lALgBq1UR05q84aqghIxd6EOUCvI4zldmnKf+uErkAEBoCyx4hjUAWkdX
-         AQ/Q==
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RtqtAENkikt2OwSsUAKI6q95l8UgBNbet4mLKXhPLPc=;
+        b=gASw7z/I0SjFUTMduO0mrbXnhtLKxXhWkOF1hA/NCG12Ch6gDZFEqMnbJIwzzEPoou
+         +xH47X1jCoab581xt65AVJdaT3JqBWycPK5jVlQq0+xGLTyro0BNAy6T6oB1/wt/dles
+         ag7qhX3VwtoyqJFRO+djy8VltI5NtuvPH+NoE3e2pZl1gm9KBPs0tNtqIYIV9YV+iP7j
+         BHNwjeLz35FgXSkYJz0vrOhsE/tvHIKDsss25zHf4nVDcqCbzb7gM6ATSy0cbmgug3Q2
+         XTlMUOK0GYYiGZRDWz5Esl0NS0AozgZJ4ge0Ve6AbtJCcyVVNp8l9cAL4TZxrmk86wn2
+         VLQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n3o7EywoAx5lCov0+XDSzgYBVJgii6VcvHYbvuBvVMw=;
-        b=N56H6tkZVQmplPk4XSI+qU9XmmfwLXmuTnM1r+H2EmkuqQ0v6imU7HWo94dsRNk+KZ
-         Gp7yJoII8ohDbjHHUhWDhAcGe9C0KjKtSjv+W7kVhJAgYso4vDEITarwn7BEx20079O5
-         XmcLw4PVwyIP/JRpnJp7dxs396JWxg3xLBmQPg0954RBcafKyuX4VChZ2+Z07An7GYsA
-         s5ER/bIT/EzhotBM3pPIqFeWVwNE/97HHFAGL7uJtv9ZAB48KOcu4yEytUjTIi0vDD+e
-         6/JKLcHR+IDjR/Rai2FyjrCkcP8jsaCQlWBa9HduYvmd1CEhmh8apDBHjX/Z6lL3LI0a
-         waZw==
-X-Gm-Message-State: APjAAAWf/WZLJRTt5JWU7KS2R5cAObxcugL+RGsxIlIJwWk4pKeeXGWQ
-        0l6UHOaMAog+3B+Cp1O1cAOtt5q7q8I2OMedvIQ=
-X-Google-Smtp-Source: APXvYqyKnHWXBW0TInZ7HdfWXflCukw0UXe1AUNfbRiP81AljutJxkzY+nE0YdnP0h/++3jWjRzdyWsm2/M5+CLYtg4=
-X-Received: by 2002:a05:6214:18c:: with SMTP id q12mr16666581qvr.32.1576291601436;
- Fri, 13 Dec 2019 18:46:41 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RtqtAENkikt2OwSsUAKI6q95l8UgBNbet4mLKXhPLPc=;
+        b=c447kJM0O9/p3pR9HUSb6YgamdB5Qp5Bxt+3qc3U0oGbH6q9HXRUflEtLOa/2z3Ryy
+         11Musczwv6wN3KYunyHXQVWENLryXopq/FTMQreqUj6oqtkfljsBtB237NIb0Wvdn71f
+         jPZMz462B0IGEbZFKG/nWxKkP9GHXuDS/5haahc+L6Gfk5EpahtzV45B9GcoHq6NgFh1
+         ZEzyBX0FU+eMCKIjcB8mVsv0XsnsM4gY7elMQ9hkxOIblh8v3sBtf5sbNdFsUkMtzAaI
+         r8anYarFxfjtL1coQVx8J8mWnSchTDx6djZ6Urjcw+YeuXRUSZYilswKO/TJMc4SfTkr
+         M40w==
+X-Gm-Message-State: APjAAAUJzJ86PRyb557MIpUq5EvgpzzPv67lLzRGaHcW3bgNT/NOFX8z
+        S+XXD8W+t4Kdmcdu/qx+/DK35bzXK+avo3vSmxxnI+p2Cckr1SpdC/LqRF9yBDM+4mkIqbY/b2g
+        +3O+Wf5hlwti5srVYOtGjA3xATA==
+X-Received: by 2002:a0d:cc4c:: with SMTP id o73mr16970366ywd.482.1576427730956;
+        Sun, 15 Dec 2019 08:35:30 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz926INkyG4z0GFI/Np7oPSQT09p97e6twIqiathpPSkhQbrht1R/pRTZ9FNegpZbKOIIU6sA==
+X-Received: by 2002:a0d:cc4c:: with SMTP id o73mr16970343ywd.482.1576427730693;
+        Sun, 15 Dec 2019 08:35:30 -0800 (PST)
+Received: from cs-u-syssec1.dtc.umn.edu (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
+        by smtp.gmail.com with ESMTPSA id y9sm7261560ywc.19.2019.12.15.08.35.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Dec 2019 08:35:30 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, Ilya Dryomov <idryomov@gmail.com>,
+        Sage Weil <sage@redhat.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Jens Axboe <axboe@kernel.dk>, ceph-devel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rbd: Avoid calling BUG() when object_map is not empty
+Date:   Sun, 15 Dec 2019 10:35:27 -0600
+Message-Id: <20191215163527.25203-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20191212173159.35013-1-jlayton@kernel.org>
-In-Reply-To: <20191212173159.35013-1-jlayton@kernel.org>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Sat, 14 Dec 2019 10:46:30 +0800
-Message-ID: <CAAM7YAmquOg5ESMAMa5y0gGAR-UAivYF8m+nqrJNmK=SzG6+wA@mail.gmail.com>
-Subject: Re: [RFC PATCH] ceph: guard against __ceph_remove_cap races
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 1:32 AM Jeff Layton <jlayton@kernel.org> wrote:
->
-> I believe it's possible that we could end up with racing calls to
-> __ceph_remove_cap for the same cap. If that happens, the cap->ci
-> pointer will be zereoed out and we can hit a NULL pointer dereference.
->
-> Once we acquire the s_cap_lock, check for the ci pointer being NULL,
-> and just return without doing anything if it is.
->
-> URL: https://tracker.ceph.com/issues/43272
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/caps.c | 21 ++++++++++++++++-----
->  1 file changed, 16 insertions(+), 5 deletions(-)
->
-> This is the only scenario that made sense to me in light of Ilya's
-> analysis on the tracker above. I could be off here though -- the locking
-> around this code is horrifically complex, and I could be missing what
-> should guard against this scenario.
->
+In __rbd_object_map_load, if object_map contains data, return
+error -EINVAL upstream, instead of crashing, via BUG. The patch
+fixes this issue.
 
-I think the simpler fix is,  in trim_caps_cb, check if cap-ci is
-non-null before calling __ceph_remove_cap().  this should work because
-__ceph_remove_cap() is always called inside i_ceph_lock
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+---
+ drivers/block/rbd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> Thoughts?
->
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index 9d09bb53c1ab..7e39ee8eff60 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -1046,11 +1046,22 @@ static void drop_inode_snap_realm(struct ceph_inode_info *ci)
->  void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
->  {
->         struct ceph_mds_session *session = cap->session;
-> -       struct ceph_inode_info *ci = cap->ci;
-> -       struct ceph_mds_client *mdsc =
-> -               ceph_sb_to_client(ci->vfs_inode.i_sb)->mdsc;
-> +       struct ceph_inode_info *ci;
-> +       struct ceph_mds_client *mdsc;
->         int removed = 0;
->
-> +       spin_lock(&session->s_cap_lock);
-> +       ci = cap->ci;
-> +       if (!ci) {
-> +               /*
-> +                * Did we race with a competing __ceph_remove_cap call? If
-> +                * ci is zeroed out, then just unlock and don't do anything.
-> +                * Assume that it's on its way out anyway.
-> +                */
-> +               spin_unlock(&session->s_cap_lock);
-> +               return;
-> +       }
-> +
->         dout("__ceph_remove_cap %p from %p\n", cap, &ci->vfs_inode);
->
->         /* remove from inode's cap rbtree, and clear auth cap */
-> @@ -1058,13 +1069,12 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
->         if (ci->i_auth_cap == cap)
->                 ci->i_auth_cap = NULL;
->
-> -       /* remove from session list */
-> -       spin_lock(&session->s_cap_lock);
->         if (session->s_cap_iterator == cap) {
->                 /* not yet, we are iterating over this very cap */
->                 dout("__ceph_remove_cap  delaying %p removal from session %p\n",
->                      cap, cap->session);
->         } else {
-> +               /* remove from session list */
->                 list_del_init(&cap->session_caps);
->                 session->s_nr_caps--;
->                 cap->session = NULL;
-> @@ -1072,6 +1082,7 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
->         }
->         /* protect backpointer with s_cap_lock: see iterate_session_caps */
->         cap->ci = NULL;
-> +       mdsc = ceph_sb_to_client(ci->vfs_inode.i_sb)->mdsc;
->
->         /*
->          * s_cap_reconnect is protected by s_cap_lock. no one changes
-> --
-> 2.23.0
->
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 2b184563cd32..6e9a11f32a94 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -1892,7 +1892,8 @@ static int __rbd_object_map_load(struct rbd_device *rbd_dev)
+ 	int num_pages;
+ 	int ret;
+ 
+-	rbd_assert(!rbd_dev->object_map && !rbd_dev->object_map_size);
++	if (rbd_dev->object_map || rbd_dev->object_map_size)
++		return -EINVAL;
+ 
+ 	num_objects = ceph_get_num_objects(&rbd_dev->layout,
+ 					   rbd_dev->mapping.size);
+-- 
+2.20.1
+
