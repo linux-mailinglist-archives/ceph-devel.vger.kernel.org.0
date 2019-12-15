@@ -2,120 +2,137 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F1EC11FB9C
-	for <lists+ceph-devel@lfdr.de>; Sun, 15 Dec 2019 23:00:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A4EF11FBB0
+	for <lists+ceph-devel@lfdr.de>; Sun, 15 Dec 2019 23:41:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbfLOWAY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 15 Dec 2019 17:00:24 -0500
-Received: from mout.web.de ([212.227.17.12]:58279 "EHLO mout.web.de"
+        id S1726292AbfLOWk0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 15 Dec 2019 17:40:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbfLOWAX (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Sun, 15 Dec 2019 17:00:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1576447210;
-        bh=MEuVMTzxFT03+YnVTN8Qa/paKtmADt3WIQppotGSB+0=;
-        h=X-UI-Sender-Class:Cc:References:Subject:To:From:Date:In-Reply-To;
-        b=SyC4FGUs6boEW1pQD/qh5RTa8pjAQBk1Mw52knF027CQkCpdW+57/ioBJsZ0FKFVy
-         9sPbTNUrdwZ2aIshaQnqxjMZZjBoForFrGPp9KyIJWJGS2mQu9Hk4LDuh2cActlS88
-         mc3KsA21y0BqWvBARKDu3VCy8Ri9GAm2lYHTgIJ8=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([2.243.76.50]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0M3jwL-1hq1LX0FAP-00rL2W; Sun, 15
- Dec 2019 23:00:10 +0100
-Cc:     linux-kernel@vger.kernel.org,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Kangjie Lu <kjlu@umn.edu>,
-        Sage Weil <sage@redhat.com>
-References: <20191215163527.25203-1-pakki001@umn.edu>
-Subject: Re: [PATCH] rbd: Avoid calling BUG() when object_map is not empty
-To:     Aditya Pakki <pakki001@umn.edu>, ceph-devel@vger.kernel.org,
-        linux-block@vger.kernel.org
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <2b5305f3-1224-01a4-ee52-5e05b92e56d6@web.de>
-Date:   Sun, 15 Dec 2019 23:00:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1726260AbfLOWkZ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Sun, 15 Dec 2019 17:40:25 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9ADB24676;
+        Sun, 15 Dec 2019 22:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576449624;
+        bh=7fvVsjGOXuRarpThwV1NOwYUT+rh8Ev7cYG5o29zMgs=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=BUODI5BBOGJV5gmrNXfvtEwnCAFsAdlJCgusZf7Z4x7LSwr57v4eHaQVNlGrG54dV
+         hBrwIHstIKEiNhYSa2tIieZCu3AcR+UBwJfLAQzUytgQva3zIyOE+6TBWQIYIqTqik
+         DkIATFtEMdNrbtnJNW6UD+U2YH8yeSNUah5mHI/w=
+Message-ID: <64d5a16d920098122144e0df8e03df0cadfb2784.camel@kernel.org>
+Subject: Re: [RFC PATCH] ceph: guard against __ceph_remove_cap races
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "Yan, Zheng" <ukernel@gmail.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@redhat.com>
+Date:   Sun, 15 Dec 2019 17:40:21 -0500
+In-Reply-To: <CAAM7YAmquOg5ESMAMa5y0gGAR-UAivYF8m+nqrJNmK=SzG6+wA@mail.gmail.com>
+References: <20191212173159.35013-1-jlayton@kernel.org>
+         <CAAM7YAmquOg5ESMAMa5y0gGAR-UAivYF8m+nqrJNmK=SzG6+wA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
 MIME-Version: 1.0
-In-Reply-To: <20191215163527.25203-1-pakki001@umn.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:fVDxTeu5YavYWreg6nYpuyDmw0DU/PFA/q7RcKJigR0hVGq8Jij
- wKtlNM6Gl58PTQkrauhXor0mlek6f7a70eh45qsoiLM6Sf2Csoz7HHXo1UY021MF7SEP1Ia
- FM9KNysKPx5EnGQSQkW6O0OlXLSVhZFBqDK4putHRV1iVIji4m2smiqXkALnOJrj/DSwCxC
- wiCH2BcOQ+LQUNX9HOh5A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:QZDpB2b+TCI=:fNzrWN/6qzH7xsjxkHZfRM
- ylRGhop23RXq4Q6TbmhtFMpi930GEagxJ37VL+QbfwYHRbNJKHxUGfqb0nj6RY+02LLCBrWf4
- HWq8fT8h5ESgKbk5gv164kPj/LKgKecew8lQVT6hHFuS1gvyKrlyA597MSlDr7GYF8WWlTHfm
- aFg4/d0hp8eYK9mU29qdSeXZ7IZEUYVaz3nN0lHjbak9zJqmvV/jyVTQRoQgDwjAQxVFYTe+d
- NEUGGg9vLvLnNaC4amJSGbbDIH7hb7b0aXNzka+Gklsuy0GI9POKui1IY3o+r/+6X1+A54qR1
- syB96TmR/vvo9VDMuC6BUEjx/t2UzTMoU+HwpoQtfM/xwaVvDJjZPXUGm3srZ5d7KmYmdIPGs
- bV2kq/eND5ZdbYsUyk4QjxEwAljtYMSmGinloE7dR7SkLUQ2sKJwDX4xcNB9wTKzlQc6FyW/t
- OSXaxBV8Pr9oLxG/+K/1ixCz9J1sqq8D9riDmuXXlOdZbeF1427nnAT65YqIleyWeQhqZ39Un
- wsE1Y6P92wGLEDjj0ay1urByEfVr9husEStf9qtgl+/N8gff59u14TYKO1cLezHSIbgneoJmx
- c5ZO3HdGSkXhuKJjyLA3WzfT6bDOoglvv0V/yLWtbD5VfPubtOfSNt42SIYh8+eTc/WkKDUIw
- UOhgIBzaKEkCkYDuP4L2/E4wUqX1norDtlRbOhavIn5zpzAFfGNWQIgJ50toRIcy7raX6Vkd/
- eJw5M6cNTIJKmymxA8DuXeprqwxJCAGonj6El+VZx5YUfnNt0moCYYbTxLgIsKQ2XgZZGD/i9
- 7tNalg9NPjm0S7ZVzUg2fdl/5Ft3hE22dygbh1QlXcQyNQVLZbBjeI8rOzApzvDNu9vJ+WojS
- RDT4rkVavBORvcuk4F7DUmIsvAZUrq0mGEHbNtqyZcujJ6nY+VYpaR+bsa+ISMhLXEMBgpCdI
- fLXU0JjKeiBpjWSs3rDUaPVbQKgxPQeUnu1Z9GSE/Rfp0QUkOXdtq9RP0hr3GfqAIkqWIUDGq
- WYXQKm854ZJvzJQo9TD73LIHu5Cy0gw7DG30fosiC5RvhrYVpplWatGzCMNT1HbHMWAPR3R8w
- sIzxdtNxFNQrk5xl5PSuRAnBA8cfLNI+a05fXoXMweYQ8fJoOGH+h2q2Ic2/RDRlUcoeJFAlF
- Wf5nrAxYN9ETWgB8rYJsjLM334SLLpySQslun/U4oRDaFjgzl/sFA19y1cyvXAGwJ9EuUcCq6
- KYRrwvyLGpNLWNg7FQQNfQpP82dZ2kpw7c2pBw05IJkV3VfAOh7RC65Pkw1M=
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-> The patch fixes this issue.
+On Sat, 2019-12-14 at 10:46 +0800, Yan, Zheng wrote:
+> On Fri, Dec 13, 2019 at 1:32 AM Jeff Layton <jlayton@kernel.org> wrote:
+> > I believe it's possible that we could end up with racing calls to
+> > __ceph_remove_cap for the same cap. If that happens, the cap->ci
+> > pointer will be zereoed out and we can hit a NULL pointer dereference.
+> > 
+> > Once we acquire the s_cap_lock, check for the ci pointer being NULL,
+> > and just return without doing anything if it is.
+> > 
+> > URL: https://tracker.ceph.com/issues/43272
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/ceph/caps.c | 21 ++++++++++++++++-----
+> >  1 file changed, 16 insertions(+), 5 deletions(-)
+> > 
+> > This is the only scenario that made sense to me in light of Ilya's
+> > analysis on the tracker above. I could be off here though -- the locking
+> > around this code is horrifically complex, and I could be missing what
+> > should guard against this scenario.
+> > 
+> 
+> I think the simpler fix is,  in trim_caps_cb, check if cap-ci is
+> non-null before calling __ceph_remove_cap().  this should work because
+> __ceph_remove_cap() is always called inside i_ceph_lock
+> 
 
-Will the tag =E2=80=9CFixes=E2=80=9D be more helpful than this sentence?
+Is that sufficient though? The stack trace in the bug shows it being
+called by ceph_trim_caps, but I think we could hit the same problem with
+other __ceph_remove_cap callers, if they happen to race in at the right
+time.
 
-Regards,
-Markus
+
+> > Thoughts?
+> > 
+> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> > index 9d09bb53c1ab..7e39ee8eff60 100644
+> > --- a/fs/ceph/caps.c
+> > +++ b/fs/ceph/caps.c
+> > @@ -1046,11 +1046,22 @@ static void drop_inode_snap_realm(struct ceph_inode_info *ci)
+> >  void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
+> >  {
+> >         struct ceph_mds_session *session = cap->session;
+> > -       struct ceph_inode_info *ci = cap->ci;
+> > -       struct ceph_mds_client *mdsc =
+> > -               ceph_sb_to_client(ci->vfs_inode.i_sb)->mdsc;
+> > +       struct ceph_inode_info *ci;
+> > +       struct ceph_mds_client *mdsc;
+> >         int removed = 0;
+> > 
+> > +       spin_lock(&session->s_cap_lock);
+> > +       ci = cap->ci;
+> > +       if (!ci) {
+> > +               /*
+> > +                * Did we race with a competing __ceph_remove_cap call? If
+> > +                * ci is zeroed out, then just unlock and don't do anything.
+> > +                * Assume that it's on its way out anyway.
+> > +                */
+> > +               spin_unlock(&session->s_cap_lock);
+> > +               return;
+> > +       }
+> > +
+> >         dout("__ceph_remove_cap %p from %p\n", cap, &ci->vfs_inode);
+> > 
+> >         /* remove from inode's cap rbtree, and clear auth cap */
+> > @@ -1058,13 +1069,12 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
+> >         if (ci->i_auth_cap == cap)
+> >                 ci->i_auth_cap = NULL;
+> > 
+> > -       /* remove from session list */
+> > -       spin_lock(&session->s_cap_lock);
+> >         if (session->s_cap_iterator == cap) {
+> >                 /* not yet, we are iterating over this very cap */
+> >                 dout("__ceph_remove_cap  delaying %p removal from session %p\n",
+> >                      cap, cap->session);
+> >         } else {
+> > +               /* remove from session list */
+> >                 list_del_init(&cap->session_caps);
+> >                 session->s_nr_caps--;
+> >                 cap->session = NULL;
+> > @@ -1072,6 +1082,7 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
+> >         }
+> >         /* protect backpointer with s_cap_lock: see iterate_session_caps */
+> >         cap->ci = NULL;
+> > +       mdsc = ceph_sb_to_client(ci->vfs_inode.i_sb)->mdsc;
+> > 
+> >         /*
+> >          * s_cap_reconnect is protected by s_cap_lock. no one changes
+> > --
+> > 2.23.0
+> > 
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
