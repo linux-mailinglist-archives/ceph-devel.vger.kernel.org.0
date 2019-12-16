@@ -2,110 +2,154 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 397C312065F
-	for <lists+ceph-devel@lfdr.de>; Mon, 16 Dec 2019 13:55:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDCA3120740
+	for <lists+ceph-devel@lfdr.de>; Mon, 16 Dec 2019 14:37:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbfLPMxr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 16 Dec 2019 07:53:47 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43762 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727550AbfLPMxr (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Dec 2019 07:53:47 -0500
-Received: by mail-ed1-f68.google.com with SMTP id dc19so4879369edb.10
-        for <ceph-devel@vger.kernel.org>; Mon, 16 Dec 2019 04:53:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=tDwS+iNU9JGSp+goJy4t4RaGpR/i+KbC6rKWKCSOga0=;
-        b=LU2zi/oY/TydcxuA/91rpBX1hRiu/V0lUMsXLc9dq28Ck/gYoa7xVQOblzlvnZt7Fy
-         MV2g70BEy2jjA5q4cZeQzrh1hgHayfsBrTsdoIhUHj6yJ0bJVVFBmuiAbcxPBsqoST3Q
-         Z56Mxdw03te69wdXKYcDDoFsfNMCNof+VwPxTvmR28Selo7Lx53VwwKhXQcNdNU39t/G
-         F9mQnRgn/fS0D3vfgDU+oqiE37D7X3V8PaVvcUttMDTQqw39PhvrbfaNxSpdp+a4zlzw
-         +lVv9xIkcQ9cdmzVieenJmkO/ZSzQhz/eq2XJZd5fZ1nVbOehASJN6KkJT1B4D192J9c
-         9IHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=tDwS+iNU9JGSp+goJy4t4RaGpR/i+KbC6rKWKCSOga0=;
-        b=o1PTp1cvTmunMjbOxjQPoAC9Dkyr2Itm895mqxhFhViRfjZargogw6cNGCYZ2tbm0/
-         bTHvMnOSo06RkM6haLLG+MJyovjmvFVpZfrbyrzXbT/w3OY38f4zbaY2mHM5EyogCO5U
-         daK35DLFRgQTC3WbhgNKSNZPmCqpCTUaPmmF/3KM7lVwNduxw8FcmjcsU9zjnMe9OBxB
-         2x2ds3aPGZgsHDv/rYcQPSuo7TpXd5AFeF6sA9bFbogzY2AXK8F5v1XLRRA2ow4qB/PI
-         5KUlI7bxNXEHspPwoUIBTtsJhqBSLxZsOxp6LnNjDqiZKI/rtVBLjygKPnoPpY9rVTUf
-         Bl0w==
-X-Gm-Message-State: APjAAAXrV6oDzKBHKu00OM1Ecyl7QP0MK3LvUuwshrsOvqBt+xk09oqe
-        lqLxU7JaJLPUE1Ooio335uvCdlveHF8lHLDUidc=
-X-Google-Smtp-Source: APXvYqz4ECBPOqkSw1PFZgdUh/oFZ6Zs2WW0zgO7JiSe8wYhHuUDVl6W3g/p1I/vzcG3ZoLb3dlMRpKHS0wLhM8ZkN4=
-X-Received: by 2002:a17:906:e0c5:: with SMTP id gl5mr16224608ejb.283.1576500825569;
- Mon, 16 Dec 2019 04:53:45 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a05:6402:22dc:0:0:0:0 with HTTP; Mon, 16 Dec 2019 04:53:45
- -0800 (PST)
-Reply-To: moneygram.1820@outlook.fr
-From:   "Mrs. ALAN UDE, Official Director.Money Gram-Benin" 
-        <eco.bank1204@gmail.com>
-Date:   Mon, 16 Dec 2019 13:53:45 +0100
-Message-ID: <CAOE+jABLJF+T-eDPm-eUnJ7Q8_pG1xr8TLC36EQznG+Z=gDXwA@mail.gmail.com>
-Subject: Why did you authorized Mrs. Lyndia Paulson to receive your funds
- $4.800.000 us dollars from this office?,
-To:     undisclosed-recipients:;
+        id S1727833AbfLPNgB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 16 Dec 2019 08:36:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45576 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727601AbfLPNgB (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 16 Dec 2019 08:36:01 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E852206CB;
+        Mon, 16 Dec 2019 13:36:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576503360;
+        bh=GqZirLs/aD9yUnJgA5+V/Ogf7rPENTb5Jfb2T2t7OlU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=n6lHsJ+/qA/KMmYR0+QLSBviM38FwNFb71HpEb9KcTlNnhwCmBZUHXim/H7o1dy0c
+         i8i4R3W5wFHGXRBF8sjPdaBA1vyj8meVzLaDSUa8q6jyPvUIDaqgPva7qSNZcpD3N0
+         tnHxGVkjybbZAIE0KhcomqzbbDH122toyEBtdf+I=
+Message-ID: <fd29229debd759b254dc8e47e4769265a5f64205.camel@kernel.org>
+Subject: Re: [RFC PATCH] ceph: guard against __ceph_remove_cap races
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
+Cc:     idryomov@redhat.com, ukernel@gmail.com
+Date:   Mon, 16 Dec 2019 08:35:59 -0500
+In-Reply-To: <0a58cb14-1648-6c7e-6e6d-7f6c093f7563@redhat.com>
+References: <20191212173159.35013-1-jlayton@kernel.org>
+         <0a58cb14-1648-6c7e-6e6d-7f6c093f7563@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-MONEY GRAM.
-AROPORT INTL DE COTONOU COTONOU.
-Office of Mrs. ALAN UDE.
+On Mon, 2019-12-16 at 09:57 +0800, Xiubo Li wrote:
+> On 2019/12/13 1:31, Jeff Layton wrote:
+> > I believe it's possible that we could end up with racing calls to
+> > __ceph_remove_cap for the same cap. If that happens, the cap->ci
+> > pointer will be zereoed out and we can hit a NULL pointer dereference.
+> > 
+> > Once we acquire the s_cap_lock, check for the ci pointer being NULL,
+> > and just return without doing anything if it is.
+> > 
+> > URL: https://tracker.ceph.com/issues/43272
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >   fs/ceph/caps.c | 21 ++++++++++++++++-----
+> >   1 file changed, 16 insertions(+), 5 deletions(-)
+> > 
+> > This is the only scenario that made sense to me in light of Ilya's
+> > analysis on the tracker above. I could be off here though -- the locking
+> > around this code is horrifically complex, and I could be missing what
+> > should guard against this scenario.
+> 
+> Checked the downstream 3.10.0-862.14.4 code, it seems that when doing 
+> trim_caps_cb() and at the same time if the inode is being destroyed we 
+> could hit this.
+> 
 
-Attn,Dear Funds beneficiary.
+Yes, RHEL7 kernels clearly have this race. We can probably pull in
+d6e47819721ae2d9 to fix it there.
 
-I am Mrs. ALAN UDE., Official Director.Money Gram-Benin
-Confirm to us urgent,
-Why  did you authorized Mrs. Lyndia Paulson to receive your funds
-$4.800.000 us dollars from this office?, I need your urgent response
-now because this woman contacted us again this morning with all her
-mailing address stating that you are very ill, meanwhile you have
-advised her to claim the funds on your behalf, i am real confuse now,
-and i need to hear from you urgent before our office will release your
-transfer to this woman,
-Here is the address she forward to us this morning where your funds
-will be transfer to her.Please do you know this address?
+> All the __ceph_remove_cap() calls will be protected by the 
+> "ci->i_ceph_lock" lock, only except when destroying the inode.
+> 
+> And the upstream seems have no this problem now.
+> 
 
-Full name, Mrs. Lyndia Paulson
-Address. 21644 Vaca Dr.
-Eckert Colorado 81418
-Country. USA
+The only way the i_ceph_lock helps this is if you don't drop it after
+you've found the cap in the inode's rbtree.
 
-Also i want you to know that we have cut down the transfer fees to
-$23.00 only for your help, to enable you afford it,
-this is because we need all our real customers to receive their funds
-before the end of this year 2019, due after this physical year 2019,
-all remaining and unclaimed funds in our office will be cancelled, so
-you are advised to try and send the remaining $23.00 today so that you
-can pick up your first $US5000.00 immediately today,
-I promise you with all of my life, no more fees, this $23.00 is the
-last fee you will pay to receive your transfer now, once i receive it,
-you must pick up first $US5000.00 at your Money Gram today,
-and i will send you another US$5000.00 tomorrow morning, i just plan
-to make sure that you receive at least $100,000.00 US Dollars before
-the Christmas day, to enable you celebrate a good Christmas with your
-family. Note Iam only here to help you out and make sure you did not
-lose your transfer total amount of $4.8m us dollars to Mrs. Lyndia
-Paulson ok.
-So try and send the $23.00 today once you receive this email ok. God
-bless you, it is your time to rejoice and be happy forever.
-Send the transfer fee $23.00 to us by Money Gram.
+The only callers that don't hold the i_ceph_lock continuously are the
+ceph_iterate_session_caps callbacks. Those however are iterating over
+the session->s_caps list, so they shouldn't have a problem there either.
 
-Receiver's Name--------Alan Ude
-Country------Benin
-City address-----Cotonou
-Amount------23.00 dollars Only
-Text  Question---------Honest
-Answer-----------------Trust
+So I agree -- upstream doesn't have this problem and we can drop this
+patch. We'll just have to focus on fixing this in RHEL7 instead.
 
-Thanks
-I wait for your urgent response
-Mrs. ALAN UDE., Official Director.Money Gram-Benin
+Longer term, I think we need to consider a substantial overhaul of the
+cap handling code. The locking in here is much more complex than is
+warranted for what this code does. I'll probably start looking at that
+once the dust settles on some other efforts.
+
+
+> 
+> > Thoughts?
+> > 
+> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> > index 9d09bb53c1ab..7e39ee8eff60 100644
+> > --- a/fs/ceph/caps.c
+> > +++ b/fs/ceph/caps.c
+> > @@ -1046,11 +1046,22 @@ static void drop_inode_snap_realm(struct ceph_inode_info *ci)
+> >   void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
+> >   {
+> >   	struct ceph_mds_session *session = cap->session;
+> > -	struct ceph_inode_info *ci = cap->ci;
+> > -	struct ceph_mds_client *mdsc =
+> > -		ceph_sb_to_client(ci->vfs_inode.i_sb)->mdsc;
+> > +	struct ceph_inode_info *ci;
+> > +	struct ceph_mds_client *mdsc;
+> >   	int removed = 0;
+> >   
+> > +	spin_lock(&session->s_cap_lock);
+> > +	ci = cap->ci;
+> > +	if (!ci) {
+> > +		/*
+> > +		 * Did we race with a competing __ceph_remove_cap call? If
+> > +		 * ci is zeroed out, then just unlock and don't do anything.
+> > +		 * Assume that it's on its way out anyway.
+> > +		 */
+> > +		spin_unlock(&session->s_cap_lock);
+> > +		return;
+> > +	}
+> > +
+> >   	dout("__ceph_remove_cap %p from %p\n", cap, &ci->vfs_inode);
+> >   
+> >   	/* remove from inode's cap rbtree, and clear auth cap */
+> > @@ -1058,13 +1069,12 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
+> >   	if (ci->i_auth_cap == cap)
+> >   		ci->i_auth_cap = NULL;
+> >   
+> > -	/* remove from session list */
+> > -	spin_lock(&session->s_cap_lock);
+> >   	if (session->s_cap_iterator == cap) {
+> >   		/* not yet, we are iterating over this very cap */
+> >   		dout("__ceph_remove_cap  delaying %p removal from session %p\n",
+> >   		     cap, cap->session);
+> >   	} else {
+> > +		/* remove from session list */
+> >   		list_del_init(&cap->session_caps);
+> >   		session->s_nr_caps--;
+> >   		cap->session = NULL;
+> > @@ -1072,6 +1082,7 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
+> >   	}
+> >   	/* protect backpointer with s_cap_lock: see iterate_session_caps */
+> >   	cap->ci = NULL;
+> > +	mdsc = ceph_sb_to_client(ci->vfs_inode.i_sb)->mdsc;
+> >   
+> >   	/*
+> >   	 * s_cap_reconnect is protected by s_cap_lock. no one changes
+> 
+> 
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
