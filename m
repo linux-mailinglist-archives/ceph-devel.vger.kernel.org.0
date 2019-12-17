@@ -2,538 +2,319 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ACA6122E3D
-	for <lists+ceph-devel@lfdr.de>; Tue, 17 Dec 2019 15:13:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8328122E5E
+	for <lists+ceph-devel@lfdr.de>; Tue, 17 Dec 2019 15:18:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728722AbfLQONh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 17 Dec 2019 09:13:37 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:44936 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728546AbfLQONg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 17 Dec 2019 09:13:36 -0500
+        id S1728614AbfLQOSg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 17 Dec 2019 09:18:36 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41115 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728546AbfLQOSg (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 17 Dec 2019 09:18:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576592013;
+        s=mimecast20190719; t=1576592314;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7xoqHDSEbp7zRv9hngEjQW4z6puh8uHP7JocGUUg7rQ=;
-        b=e+OQTKYfxWJfyx97b+aWOLDFapxJUeokOSr/zNA/6fos4/fcKmXHHikXVfdFpkFx1OzqjV
-        izqgdBp/wpMgFaN1Kz4PxprR+qcI5NPAjppfrgvwoe2eK12Bff02tFwnL47fb250FyFk9q
-        t+UXOjn08KUwTk9ig/2i9XinfFwE2Lo=
+        bh=L5g00K9HJ2IWS5c+xHydoIaq72MyWZpNK6WeEak+a8Y=;
+        b=Z5NTNChUOsYa/+xgs1CJs2VaSm4qaOuzAqfIO8JPmY+go/hbrp+ONfVNkzkMHdsJRowqJN
+        BboAUr6wS1UK5zCvGdwiO7HdS0Yv0FiXdoAoFRoo4JCu7xCt97BSIDEMx3hgtnUio/j5g1
+        W8SLdJ9t2OkQezTbfnLRO5Oh0o3MWAw=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-322-q75rZmqHOk2_9lGfBvQrcw-1; Tue, 17 Dec 2019 09:13:32 -0500
-X-MC-Unique: q75rZmqHOk2_9lGfBvQrcw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-110-t8RItBo9NFOBd2lgiUqCmw-1; Tue, 17 Dec 2019 09:18:33 -0500
+X-MC-Unique: t8RItBo9NFOBd2lgiUqCmw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 86FE01856A62;
-        Tue, 17 Dec 2019 14:13:29 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 276B8801E66;
+        Tue, 17 Dec 2019 14:18:32 +0000 (UTC)
 Received: from [10.72.12.95] (ovpn-12-95.pek2.redhat.com [10.72.12.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6BD495C1B0;
-        Tue, 17 Dec 2019 14:13:24 +0000 (UTC)
-Subject: Re: [PATCH] ceph: add dentry lease and caps perf metric support
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EF15B5D9E2;
+        Tue, 17 Dec 2019 14:18:26 +0000 (UTC)
+Subject: Re: [PATCH v2] ceph: remove the extra slashes in the server path
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
         pdonnell@redhat.com, ceph-devel@vger.kernel.org
-References: <20191216115334.33321-1-xiubli@redhat.com>
- <c9713c6d861d374a666a5068c259b672d4f05e2a.camel@kernel.org>
+References: <20191217050231.3856-1-xiubli@redhat.com>
+ <36ce4302dfe0716fa8db9f1bd08f47ecc984d627.camel@kernel.org>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <870fd249-55b7-2644-a616-9d02ad7097b2@redhat.com>
-Date:   Tue, 17 Dec 2019 22:13:20 +0800
+Message-ID: <0f66356b-64c4-d952-d61c-53d322a3200f@redhat.com>
+Date:   Tue, 17 Dec 2019 22:18:22 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <c9713c6d861d374a666a5068c259b672d4f05e2a.camel@kernel.org>
+In-Reply-To: <36ce4302dfe0716fa8db9f1bd08f47ecc984d627.camel@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2019/12/17 22:02, Jeff Layton wrote:
-> On Mon, 2019-12-16 at 06:53 -0500, xiubli@redhat.com wrote:
+On 2019/12/17 20:52, Jeff Layton wrote:
+> On Tue, 2019-12-17 at 00:02 -0500, xiubli@redhat.com wrote:
 >> From: Xiubo Li <xiubli@redhat.com>
 >>
->> For both dentry lease and caps perf metric we will only count the
->> hit/miss info triggered from the vfs calls, for the cases like
->> request reply handling and perodically ceph_trim_dentries() we will
->> ignore them.
+>> When mounting if the server path has more than one slash continously,
+>> such as:
 >>
->> Currently only the debugfs is support and next will fulfill sending
->> the mertic data to MDS.
+>> 'mount.ceph 192.168.195.165:40176:/// /mnt/cephfs/'
 >>
->> The output will be:
+>> In the MDS server side the extra slashes of the server path will be
+>> treated as snap dir, and then we can get the following debug logs:
 >>
->> item              hit              miss
->> ---------------------------------------
->> d_lease           19               0
->> i_caps            168              1
+>> <7>[  ...] ceph:  mount opening path //
+>> <7>[  ...] ceph:  open_root_inode opening '//'
+>> <7>[  ...] ceph:  fill_trace 0000000059b8a3bc is_dentry 0 is_target 1
+>> <7>[  ...] ceph:  alloc_inode 00000000dc4ca00b
+>> <7>[  ...] ceph:  get_inode created new inode 00000000dc4ca00b 1.ffffffffffffffff ino 1
+>> <7>[  ...] ceph:  get_inode on 1=1.ffffffffffffffff got 00000000dc4ca00b
+>>
+>> And then when creating any new file or directory under the mount
+>> point, we can get the following crash core dump:
+>>
+>> <4>[  ...] ------------[ cut here ]------------
+>> <2>[  ...] kernel BUG at fs/ceph/inode.c:1347!
+>> <4>[  ...] invalid opcode: 0000 [#1] SMP PTI
+>> <4>[  ...] CPU: 0 PID: 7 Comm: kworker/0:1 Tainted: G            E     5.4.0-rc5+ #1
+>> <4>[  ...] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+>> <4>[  ...] Workqueue: ceph-msgr ceph_con_workfn [libceph]
+>> <4>[  ...] RIP: 0010:ceph_fill_trace+0x992/0xb30 [ceph]
+>> <4>[  ...] Code: ff 0f 0b 0f 0b 0f 0b 4c 89 fa 48 c7 c6 4d [...]
+>> <4>[  ...] RSP: 0018:ffffa23d40067c70 EFLAGS: 00010297
+>> <4>[  ...] RAX: fffffffffffffffe RBX: ffff8a229eb566c0 RCX: 0000000000000006
+>> <4>[  ...] RDX: 0000000000000000 RSI: 0000000000000092 RDI: ffff8a23aec17900
+>> <4>[  ...] RBP: ffff8a226bd91eb0 R08: 0000000000000001 R09: 0000000000000885
+>> <4>[  ...] R10: 000000000002dfd8 R11: ffff8a226bd95b30 R12: ffff8a239347e000
+>> <4>[  ...] R13: 0000000000000000 R14: ffff8a22fabeb000 R15: ffff8a2338b0c900
+>> <4>[  ...] FS:  0000000000000000(0000) GS:ffff8a23aec00000(0000) knlGS:0000000000000000
+>> <4>[  ...] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> <4>[  ...] CR2: 000055b479d92068 CR3: 00000003764f6004 CR4: 00000000003606f0
+>> <4>[  ...] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> <4>[  ...] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>> <4>[  ...] Call Trace:
+>> <4>[  ...]  dispatch+0x2ac/0x12b0 [ceph]
+>> <4>[  ...]  ceph_con_workfn+0xd40/0x27c0 [libceph]
+>> <4>[  ...]  process_one_work+0x1b0/0x350
+>> <4>[  ...]  worker_thread+0x50/0x3b0
+>> <4>[  ...]  kthread+0xfb/0x130
+>> <4>[  ...]  ? process_one_work+0x350/0x350
+>> <4>[  ...]  ? kthread_park+0x90/0x90
+>> <4>[  ...]  ret_from_fork+0x35/0x40
+>> <4>[  ...] Modules linked in: ceph(E) libceph fscache [...]
+>> <4>[  ...] ---[ end trace ba883d8ccf9afcb0 ]---
+>> <4>[  ...] RIP: 0010:ceph_fill_trace+0x992/0xb30 [ceph]
+>> <4>[  ...] Code: ff 0f 0b 0f 0b 0f 0b 4c 89 fa 48 c7 c6 [...]
+>> <4>[  ...] RSP: 0018:ffffa23d40067c70 EFLAGS: 00010297
+>> <4>[  ...] RAX: fffffffffffffffe RBX: ffff8a229eb566c0 RCX: 0000000000000006
+>> <4>[  ...] RDX: 0000000000000000 RSI: 0000000000000092 RDI: ffff8a23aec17900
+>> <4>[  ...] RBP: ffff8a226bd91eb0 R08: 0000000000000001 R09: 0000000000000885
+>> <4>[  ...] R10: 000000000002dfd8 R11: ffff8a226bd95b30 R12: ffff8a239347e000
+>> <4>[  ...] R13: 0000000000000000 R14: ffff8a22fabeb000 R15: ffff8a2338b0c900
+>> <4>[  ...] FS:  0000000000000000(0000) GS:ffff8a23aec00000(0000) knlGS:0000000000000000
+>> <4>[  ...] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> <4>[  ...] CR2: 000055b479d92068 CR3: 00000003764f6004 CR4: 00000000003606f0
+>> <4>[  ...] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> <4>[  ...] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>
+>> And we should ignore the extra slashes in the server path when mount
+>> opening in case users have added them by mistake.
+>>
+>> This will also help us to get an existing superblock if all the
+>> other options are the same, such as all the following server paths
+>> are treated as the same:
+>>
+>> 1) "//mydir1///mydir//"
+>> 2) "/mydir1/mydir"
+>> 3) "/mydir1/mydir/"
+>>
+>> The mount_options->server_path will always save the original string
+>> including the leading '/'.
 >>
 >> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 >> ---
->>   fs/ceph/acl.c        |  2 +-
->>   fs/ceph/caps.c       | 24 +++++++++++++++++++++++-
->>   fs/ceph/debugfs.c    | 31 +++++++++++++++++++++++++++----
->>   fs/ceph/dir.c        | 30 +++++++++++++++++++-----------
->>   fs/ceph/file.c       | 10 ++++++++++
->>   fs/ceph/mds_client.c |  1 +
->>   fs/ceph/mds_client.h |  9 +++++++++
->>   fs/ceph/super.h      |  6 ++++--
->>   fs/ceph/xattr.c      |  6 +++---
->>   9 files changed, 97 insertions(+), 22 deletions(-)
+>>   fs/ceph/super.c | 108 +++++++++++++++++++++++++++++++++++++++++-------
+>>   1 file changed, 93 insertions(+), 15 deletions(-)
 >>
->> diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
->> index aa55f412a6e3..b9411da0f6f2 100644
->> --- a/fs/ceph/acl.c
->> +++ b/fs/ceph/acl.c
->> @@ -22,7 +22,7 @@ static inline void ceph_set_cached_acl(struct inode *inode,
->>   	struct ceph_inode_info *ci = ceph_inode(inode);
+>> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+>> index 6f33a265ccf1..9fe1bfac66a2 100644
+>> --- a/fs/ceph/super.c
+>> +++ b/fs/ceph/super.c
+>> @@ -211,7 +211,6 @@ struct ceph_parse_opts_ctx {
 >>   
->>   	spin_lock(&ci->i_ceph_lock);
->> -	if (__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 0))
->> +	if (__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 0, true))
->>   		set_cached_acl(inode, type, acl);
->>   	else
->>   		forget_cached_acl(inode, type);
->> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
->> index 3d56c1333777..319182229b9c 100644
->> --- a/fs/ceph/caps.c
->> +++ b/fs/ceph/caps.c
->> @@ -862,17 +862,22 @@ static void __touch_cap(struct ceph_cap *cap)
->>    * front of their respective LRUs.  (This is the preferred way for
->>    * callers to check for caps they want.)
->>    */
->> -int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch)
->> +int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch,
->> +			    bool metric)
->>   {
->>   	struct ceph_cap *cap;
->>   	struct rb_node *p;
->>   	int have = ci->i_snap_caps;
->> +	struct inode *inode = &ci->vfs_inode;
->> +	struct ceph_mds_client *mdsc = ceph_inode_to_client(inode)->mdsc;
+>>   /*
+>>    * Parse the source parameter.  Distinguish the server list from the path.
+>> - * Internally we do not include the leading '/' in the path.
+>>    *
+>>    * The source will look like:
+>>    *     <server_spec>[,<server_spec>...]:[<path>]
+>> @@ -232,12 +231,15 @@ static int ceph_parse_source(struct fs_parameter *param, struct fs_context *fc)
 >>   
->>   	if ((have & mask) == mask) {
->>   		dout("__ceph_caps_issued_mask ino 0x%lx snap issued %s"
->>   		     " (mask %s)\n", ci->vfs_inode.i_ino,
->>   		     ceph_cap_string(have),
->>   		     ceph_cap_string(mask));
->> +		if (metric)
->> +			mdsc->metric.i_caps_hit++;
->>   		return 1;
->>   	}
->>   
->> @@ -887,6 +892,8 @@ int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch)
->>   			     ceph_cap_string(mask));
->>   			if (touch)
->>   				__touch_cap(cap);
->> +			if (metric)
->> +				mdsc->metric.i_caps_hit++;
->>   			return 1;
->>   		}
->>   
->> @@ -912,10 +919,14 @@ int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch)
->>   						__touch_cap(cap);
->>   				}
->>   			}
->> +			if (metric)
->> +				mdsc->metric.i_caps_hit++;
->>   			return 1;
->>   		}
->>   	}
->>   
->> +	if (metric)
->> +		mdsc->metric.i_caps_mis++;
->>   	return 0;
->>   }
->>   
->> @@ -2718,6 +2729,7 @@ static void check_max_size(struct inode *inode, loff_t endoff)
->>   int ceph_try_get_caps(struct inode *inode, int need, int want,
->>   		      bool nonblock, int *got)
->>   {
->> +	struct ceph_mds_client *mdsc = ceph_inode_to_client(inode)->mdsc;
->>   	int ret;
->>   
->>   	BUG_ON(need & ~CEPH_CAP_FILE_RD);
->> @@ -2728,6 +2740,11 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
->>   
->>   	ret = try_get_cap_refs(inode, need, want, 0,
->>   			       (nonblock ? NON_BLOCKING : 0), got);
->> +	if (ret == 1)
->> +		mdsc->metric.i_caps_hit++;
->> +	else
->> +		mdsc->metric.i_caps_mis++;
+>>   	dev_name_end = strchr(dev_name, '/');
+>>   	if (dev_name_end) {
+>> -		if (strlen(dev_name_end) > 1) {
+>> -			kfree(fsopt->server_path);
+>> -			fsopt->server_path = kstrdup(dev_name_end, GFP_KERNEL);
+>> -			if (!fsopt->server_path)
+>> -				return -ENOMEM;
+>> -		}
+>> +		kfree(fsopt->server_path);
 >> +
->>   	return ret == -EAGAIN ? 0 : ret;
+>> +		/*
+>> +		 * The server_path will include the whole chars from userland
+>> +		 * including the leading '/'.
+>> +		 */
+>> +		fsopt->server_path = kstrdup(dev_name_end, GFP_KERNEL);
+>> +		if (!fsopt->server_path)
+>> +			return -ENOMEM;
+>>   	} else {
+>>   		dev_name_end = dev_name + strlen(dev_name);
+>>   	}
+>> @@ -459,6 +461,64 @@ static int strcmp_null(const char *s1, const char *s2)
+>>   	return strcmp(s1, s2);
 >>   }
 >>   
->> @@ -2782,6 +2799,11 @@ int ceph_get_caps(struct file *filp, int need, int want,
->>   				continue;
->>   		}
->>   
->> +		if (ret == 1)
->> +			fsc->mdsc->metric.i_caps_hit++;
->> +		else
->> +			fsc->mdsc->metric.i_caps_mis++;
->> +
->>   		if ((fi->fmode & CEPH_FILE_MODE_WR) &&
->>   		    fi->filp_gen != READ_ONCE(fsc->filp_gen)) {
->>   			if (ret >= 0 && _got)
->> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
->> index facb387c2735..e86192f597e7 100644
->> --- a/fs/ceph/debugfs.c
->> +++ b/fs/ceph/debugfs.c
->> @@ -124,6 +124,21 @@ static int mdsc_show(struct seq_file *s, void *p)
->>   	return 0;
->>   }
->>   
->> +static int metric_show(struct seq_file *s, void *p)
+>> +/**
+>> + * path_remove_extra_slash - Remove the extra slashes in the server path
+>> + * @server_path: the server path and could be NULL
+>> + *
+>> + * Return NULL if the path is NULL or only consists of "/", or a string
+>> + * without any extra slashes including the leading slash(es) and the
+>> + * slash(es) at the end of the server path, such as:
+>> + * "//dir1////dir2///" --> "dir1/dir2"
+>> + */
+>> +static char *path_remove_extra_slash(const char *server_path)
 >> +{
->> +	struct ceph_fs_client *fsc = s->private;
->> +	struct ceph_mds_client *mdsc = fsc->mdsc;
+>> +	const char *path = server_path;
+>> +	bool last_is_slash;
+>> +	int i, j, len;
+>> +	char *p;
 >> +
->> +	seq_printf(s, "item              hit              miss\n");
->> +	seq_printf(s, "---------------------------------------\n");
->> +	seq_printf(s, "%-18s%-17llu%llu\n", "d_lease",
->> +		   mdsc->metric.d_lease_hit, mdsc->metric.d_lease_mis);
->> +	seq_printf(s, "%-18s%-17llu%llu\n", "i_caps",
->> +		   mdsc->metric.i_caps_hit, mdsc->metric.i_caps_mis);
+>> +	/* if the server path is omitted */
+>> +	if (!path)
+>> +		return NULL;
 >> +
->> +	return 0;
+>> +	/* remove all the leading slashes */
+>> +	while (*path == '/')
+>> +		path++;
+>> +
+>> +	/* if the server path only consists of slashes */
+>> +	if (*path == '\0')
+>> +		return NULL;
+>> +
+>> +	len = strlen(path);
+>> +
+>> +	p = kmalloc(len, GFP_KERNEL);
+>> +	if (!p)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	last_is_slash = false;
+>> +	for (j = 0, i = 0; i < len; i++) {
+>> +		if (path[i] == '/') {
+>> +			if (last_is_slash)
+>> +				continue;
+>> +			last_is_slash = true;
+>> +		} else {
+>> +			last_is_slash = false;
+>> +		}
+>> +		p[j++] = path[i];
+>> +	}
+>> +
+> Rather than walking through character by character, it might be better
+> to use strchr and the other string handling functions in
+> include/linux/string.h. Some arches have optimized string handling
+> routines that may perform better here.
+
+Will fix it, thanks.
+
+
+>> +	/*
+>> +	 * remove the last slash if there has just to make sure that
+>> +	 * we will get "dir1/dir2"
+>> +	 */
+>> +	if (p[j - 1] == '/')
+>> +		j--;
+>> +
+>> +	p[j] = '\0';
+>> +
+>> +	return p;
 >> +}
 >> +
->>   static int caps_show_cb(struct inode *inode, struct ceph_cap *cap, void *p)
->>   {
->>   	struct seq_file *s = p;
->> @@ -207,6 +222,7 @@ static int mds_sessions_show(struct seq_file *s, void *ptr)
+>>   static int compare_mount_options(struct ceph_mount_options *new_fsopt,
+>>   				 struct ceph_options *new_opt,
+>>   				 struct ceph_fs_client *fsc)
+>> @@ -466,6 +526,7 @@ static int compare_mount_options(struct ceph_mount_options *new_fsopt,
+>>   	struct ceph_mount_options *fsopt1 = new_fsopt;
+>>   	struct ceph_mount_options *fsopt2 = fsc->mount_options;
+>>   	int ofs = offsetof(struct ceph_mount_options, snapdir_name);
+>> +	char *p1, *p2;
+>>   	int ret;
 >>   
->>   CEPH_DEFINE_SHOW_FUNC(mdsmap_show)
->>   CEPH_DEFINE_SHOW_FUNC(mdsc_show)
->> +CEPH_DEFINE_SHOW_FUNC(metric_show)
->>   CEPH_DEFINE_SHOW_FUNC(caps_show)
->>   CEPH_DEFINE_SHOW_FUNC(mds_sessions_show)
->>   
->> @@ -242,6 +258,7 @@ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
->>   	debugfs_remove(fsc->debugfs_mdsmap);
->>   	debugfs_remove(fsc->debugfs_mds_sessions);
->>   	debugfs_remove(fsc->debugfs_caps);
->> +	debugfs_remove(fsc->debugfs_metric);
->>   	debugfs_remove(fsc->debugfs_mdsc);
->>   }
->>   
->> @@ -282,11 +299,17 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
->>   						fsc,
->>   						&mdsc_show_fops);
->>   
->> +	fsc->debugfs_metric = debugfs_create_file("metric",
->> +						  0400,
->> +						  fsc->client->debugfs_dir,
->> +						  fsc,
->> +						  &metric_show_fops);
+>>   	ret = memcmp(fsopt1, fsopt2, ofs);
+>> @@ -478,9 +539,21 @@ static int compare_mount_options(struct ceph_mount_options *new_fsopt,
+>>   	ret = strcmp_null(fsopt1->mds_namespace, fsopt2->mds_namespace);
+>>   	if (ret)
+>>   		return ret;
+>> -	ret = strcmp_null(fsopt1->server_path, fsopt2->server_path);
 >> +
->>   	fsc->debugfs_caps = debugfs_create_file("caps",
->> -						   0400,
->> -						   fsc->client->debugfs_dir,
->> -						   fsc,
->> -						   &caps_show_fops);
->> +						0400,
->> +						fsc->client->debugfs_dir,
->> +						fsc,
->> +						&caps_show_fops);
->>   }
->>   
->>   
->> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
->> index d17a789fd856..26864581f142 100644
->> --- a/fs/ceph/dir.c
->> +++ b/fs/ceph/dir.c
->> @@ -30,7 +30,7 @@
->>   const struct dentry_operations ceph_dentry_ops;
->>   
->>   static bool __dentry_lease_is_valid(struct ceph_dentry_info *di);
->> -static int __dir_lease_try_check(const struct dentry *dentry);
->> +static int __dir_lease_try_check(const struct dentry *dentry, bool metric);
->>   
->>   /*
->>    * Initialize ceph dentry state.
->> @@ -341,7 +341,7 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
->>   	    !ceph_test_mount_opt(fsc, NOASYNCREADDIR) &&
->>   	    ceph_snap(inode) != CEPH_SNAPDIR &&
->>   	    __ceph_dir_is_complete_ordered(ci) &&
->> -	    __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1)) {
->> +	    __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1, true)) {
->>   		int shared_gen = atomic_read(&ci->i_shared_gen);
->>   		spin_unlock(&ci->i_ceph_lock);
->>   		err = __dcache_readdir(file, ctx, shared_gen);
->> @@ -759,7 +759,8 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
->>   		    !is_root_ceph_dentry(dir, dentry) &&
->>   		    ceph_test_mount_opt(fsc, DCACHE) &&
->>   		    __ceph_dir_is_complete(ci) &&
->> -		    (__ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1))) {
->> +		    (__ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1,
->> +					     true))) {
->>   			spin_unlock(&ci->i_ceph_lock);
->>   			dout(" dir %p complete, -ENOENT\n", dir);
->>   			d_add(dentry, NULL);
->> @@ -1336,7 +1337,7 @@ static int __dentry_lease_check(struct dentry *dentry, void *arg)
->>   
->>   	if (__dentry_lease_is_valid(di))
->>   		return STOP;
->> -	ret = __dir_lease_try_check(dentry);
->> +	ret = __dir_lease_try_check(dentry, false);
->>   	if (ret == -EBUSY)
->>   		return KEEP;
->>   	if (ret > 0)
->> @@ -1349,7 +1350,7 @@ static int __dir_lease_check(struct dentry *dentry, void *arg)
->>   	struct ceph_lease_walk_control *lwc = arg;
->>   	struct ceph_dentry_info *di = ceph_dentry(dentry);
->>   
->> -	int ret = __dir_lease_try_check(dentry);
->> +	int ret = __dir_lease_try_check(dentry, false);
->>   	if (ret == -EBUSY)
->>   		return KEEP;
->>   	if (ret > 0) {
->> @@ -1488,7 +1489,7 @@ static int dentry_lease_is_valid(struct dentry *dentry, unsigned int flags)
->>   /*
->>    * Called under dentry->d_lock.
->>    */
->> -static int __dir_lease_try_check(const struct dentry *dentry)
->> +static int __dir_lease_try_check(const struct dentry *dentry, bool metric)
->>   {
->>   	struct ceph_dentry_info *di = ceph_dentry(dentry);
->>   	struct inode *dir;
->> @@ -1505,7 +1506,8 @@ static int __dir_lease_try_check(const struct dentry *dentry)
->>   
->>   	if (spin_trylock(&ci->i_ceph_lock)) {
->>   		if (atomic_read(&ci->i_shared_gen) == di->lease_shared_gen &&
->> -		    __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 0))
->> +		    __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 0,
->> +					    metric))
->>   			valid = 1;
->>   		spin_unlock(&ci->i_ceph_lock);
->>   	} else {
->> @@ -1527,7 +1529,7 @@ static int dir_lease_is_valid(struct inode *dir, struct dentry *dentry)
->>   	int shared_gen;
->>   
->>   	spin_lock(&ci->i_ceph_lock);
->> -	valid = __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1);
->> +	valid = __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1, true);
->>   	shared_gen = atomic_read(&ci->i_shared_gen);
->>   	spin_unlock(&ci->i_ceph_lock);
->>   	if (valid) {
->> @@ -1551,6 +1553,7 @@ static int dir_lease_is_valid(struct inode *dir, struct dentry *dentry)
->>    */
->>   static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
->>   {
->> +	struct ceph_mds_client *mdsc;
->>   	int valid = 0;
->>   	struct dentry *parent;
->>   	struct inode *dir, *inode;
->> @@ -1567,6 +1570,8 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
->>   		inode = d_inode(dentry);
->>   	}
->>   
->> +	mdsc = ceph_sb_to_client(dir->i_sb)->mdsc;
+>> +	p1 = path_remove_extra_slash(fsopt1->server_path);
+>> +	if (IS_ERR(p1))
+>> +		return PTR_ERR(p1);
+>> +	p2 = path_remove_extra_slash(fsopt2->server_path);
+>> +	if (IS_ERR(p2)) {
+>> +		kfree(p1);
+>> +		return PTR_ERR(p2);
+>> +	}
+>> +	ret = strcmp_null(p1, p2);
+>> +	kfree(p1);
+>> +	kfree(p2);
+>>   	if (ret)
+>>   		return ret;
 >> +
->>   	dout("d_revalidate %p '%pd' inode %p offset %lld\n", dentry,
->>   	     dentry, inode, ceph_dentry(dentry)->offset);
+>>   	ret = strcmp_null(fsopt1->fscache_uniq, fsopt2->fscache_uniq);
+>>   	if (ret)
+>>   		return ret;
+>> @@ -883,7 +956,7 @@ static struct dentry *ceph_real_mount(struct ceph_fs_client *fsc,
+>>   	mutex_lock(&fsc->client->mount_mutex);
 >>   
->> @@ -1590,12 +1595,12 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
->>   	}
->>   
->>   	if (!valid) {
->> -		struct ceph_mds_client *mdsc =
->> -			ceph_sb_to_client(dir->i_sb)->mdsc;
->>   		struct ceph_mds_request *req;
->>   		int op, err;
->>   		u32 mask;
->>   
->> +		mdsc->metric.d_lease_mis++;
->> +
->>   		if (flags & LOOKUP_RCU)
->>   			return -ECHILD;
->>   
->> @@ -1630,6 +1635,8 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
->>   			dout("d_revalidate %p lookup result=%d\n",
->>   			     dentry, err);
+>>   	if (!fsc->sb->s_root) {
+>> -		const char *path;
+>> +		const char *path, *p;
+>>   		err = __ceph_open_session(fsc->client, started);
+>>   		if (err < 0)
+>>   			goto out;
+>> @@ -895,17 +968,22 @@ static struct dentry *ceph_real_mount(struct ceph_fs_client *fsc,
+>>   				goto out;
 >>   		}
->> +	} else {
->> +		mdsc->metric.d_lease_hit++;
->>   	}
 >>   
->>   	dout("d_revalidate %p %s\n", dentry, valid ? "valid" : "invalid");
->> @@ -1638,6 +1645,7 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
+>> -		if (!fsc->mount_options->server_path) {
+>> -			path = "";
+>> -			dout("mount opening path \\t\n");
+>> -		} else {
+>> -			path = fsc->mount_options->server_path + 1;
+>> -			dout("mount opening path %s\n", path);
+>> +		p = path_remove_extra_slash(fsc->mount_options->server_path);
+>> +		if (IS_ERR(p)) {
+>> +			err = PTR_ERR(p);
+>> +			goto out;
+>>   		}
+>> +		/* if the server path is omitted or just consists of '/' */
+>> +		if (!p)
+>> +			path = "";
+>> +		else
+>> +			path = p;
+>> +		dout("mount opening path '%s'\n", path);
 >>   
->>   	if (!(flags & LOOKUP_RCU))
->>   		dput(parent);
->> +
->>   	return valid;
->>   }
+>>   		ceph_fs_debugfs_init(fsc);
 >>   
->> @@ -1660,7 +1668,7 @@ static int ceph_d_delete(const struct dentry *dentry)
->>   	if (di) {
->>   		if (__dentry_lease_is_valid(di))
->>   			return 0;
->> -		if (__dir_lease_try_check(dentry))
->> +		if (__dir_lease_try_check(dentry, true))
->>   			return 0;
->>   	}
->>   	return 1;
->> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
->> index 8de633964dc3..1d06220a5986 100644
->> --- a/fs/ceph/file.c
->> +++ b/fs/ceph/file.c
->> @@ -375,6 +375,9 @@ int ceph_open(struct inode *inode, struct file *file)
->>   		spin_lock(&ci->i_ceph_lock);
->>   		__ceph_get_fmode(ci, fmode);
->>   		spin_unlock(&ci->i_ceph_lock);
->> +
->> +		mdsc->metric.i_caps_hit++;
->> +
->>   		return ceph_init_file(inode, file, fmode);
->>   	}
->>   
->> @@ -395,6 +398,8 @@ int ceph_open(struct inode *inode, struct file *file)
->>   		__ceph_get_fmode(ci, fmode);
->>   		spin_unlock(&ci->i_ceph_lock);
->>   
->> +		mdsc->metric.i_caps_hit++;
->> +
->>   		/* adjust wanted? */
->>   		if ((issued & wanted) != wanted &&
->>   		    (mds_wanted & wanted) != wanted &&
->> @@ -406,11 +411,16 @@ int ceph_open(struct inode *inode, struct file *file)
->>   		   (ci->i_snap_caps & wanted) == wanted) {
->>   		__ceph_get_fmode(ci, fmode);
->>   		spin_unlock(&ci->i_ceph_lock);
->> +
->> +		mdsc->metric.i_caps_hit++;
->> +
->>   		return ceph_init_file(inode, file, fmode);
->>   	}
->>   
->>   	spin_unlock(&ci->i_ceph_lock);
->>   
->> +	mdsc->metric.i_caps_mis++;
->> +
->>   	dout("open fmode %d wants %s\n", fmode, ceph_cap_string(wanted));
->>   	req = prepare_open_request(inode->i_sb, flags, 0);
->>   	if (IS_ERR(req)) {
->> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
->> index d8bb3eebfaeb..6c3b6bb0b2c8 100644
->> --- a/fs/ceph/mds_client.c
->> +++ b/fs/ceph/mds_client.c
->> @@ -4209,6 +4209,7 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
->>   	init_waitqueue_head(&mdsc->cap_flushing_wq);
->>   	INIT_WORK(&mdsc->cap_reclaim_work, ceph_cap_reclaim_work);
->>   	atomic_set(&mdsc->cap_reclaim_pending, 0);
->> +	memset(&mdsc->metric, 0, sizeof(mdsc->metric));
->>   
->>   	spin_lock_init(&mdsc->dentry_list_lock);
->>   	INIT_LIST_HEAD(&mdsc->dentry_leases);
->> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
->> index 9fb2063b0600..8b51188b2c68 100644
->> --- a/fs/ceph/mds_client.h
->> +++ b/fs/ceph/mds_client.h
->> @@ -341,6 +341,13 @@ struct ceph_quotarealm_inode {
->>   	struct inode *inode;
->>   };
->>   
->> +struct ceph_client_metric {
->> +	u64 d_lease_hit;
->> +	u64 d_lease_mis;
->> +	u64 i_caps_hit;
->> +	u64 i_caps_mis;
->> +};
->> +
-> How are these counters protected? You're not using atomic operations or
-> per-cpu variables, so what locks are protecting them?
-
-Locally I switched them to atomic64_t and at the same time will add the 
-dentry/nr_caps support.
-
-BRs
-
->
->>   /*
->>    * mds client state
->>    */
->> @@ -428,6 +435,8 @@ struct ceph_mds_client {
->>   	struct list_head  dentry_leases;     /* fifo list */
->>   	struct list_head  dentry_dir_leases; /* lru list */
->>   
->> +	struct ceph_client_metric metric;
->> +
->>   	spinlock_t		snapid_map_lock;
->>   	struct rb_root		snapid_map_tree;
->>   	struct list_head	snapid_map_lru;
->> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
->> index f0f9cb7447ac..a0e4d0bd013d 100644
->> --- a/fs/ceph/super.h
->> +++ b/fs/ceph/super.h
->> @@ -123,6 +123,7 @@ struct ceph_fs_client {
->>   	struct dentry *debugfs_congestion_kb;
->>   	struct dentry *debugfs_bdi;
->>   	struct dentry *debugfs_mdsc, *debugfs_mdsmap;
->> +	struct dentry *debugfs_metric;
->>   	struct dentry *debugfs_mds_sessions;
->>   #endif
->>   
->> @@ -635,7 +636,8 @@ static inline bool __ceph_is_any_real_caps(struct ceph_inode_info *ci)
->>   }
->>   
->>   extern int __ceph_caps_issued(struct ceph_inode_info *ci, int *implemented);
->> -extern int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int t);
->> +extern int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask,
->> +				   int t, bool metric);
->>   extern int __ceph_caps_issued_other(struct ceph_inode_info *ci,
->>   				    struct ceph_cap *cap);
->>   
->> @@ -653,7 +655,7 @@ static inline int ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask,
->>   {
->>   	int r;
->>   	spin_lock(&ci->i_ceph_lock);
->> -	r = __ceph_caps_issued_mask(ci, mask, touch);
->> +	r = __ceph_caps_issued_mask(ci, mask, touch, true);
->>   	spin_unlock(&ci->i_ceph_lock);
->>   	return r;
->>   }
->> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
->> index cb18ee637cb7..530fc2a72236 100644
->> --- a/fs/ceph/xattr.c
->> +++ b/fs/ceph/xattr.c
->> @@ -856,7 +856,7 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
->>   
->>   	if (ci->i_xattrs.version == 0 ||
->>   	    !((req_mask & CEPH_CAP_XATTR_SHARED) ||
->> -	      __ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 1))) {
->> +	      __ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 1, true))) {
->>   		spin_unlock(&ci->i_ceph_lock);
->>   
->>   		/* security module gets xattr while filling trace */
->> @@ -914,7 +914,7 @@ ssize_t ceph_listxattr(struct dentry *dentry, char *names, size_t size)
->>   	     ci->i_xattrs.version, ci->i_xattrs.index_version);
->>   
->>   	if (ci->i_xattrs.version == 0 ||
->> -	    !__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 1)) {
->> +	    !__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 1, true)) {
->>   		spin_unlock(&ci->i_ceph_lock);
->>   		err = ceph_do_getattr(inode, CEPH_STAT_CAP_XATTR, true);
->>   		if (err)
->> @@ -1192,7 +1192,7 @@ bool ceph_security_xattr_deadlock(struct inode *in)
->>   	spin_lock(&ci->i_ceph_lock);
->>   	ret = !(ci->i_ceph_flags & CEPH_I_SEC_INITED) &&
->>   	      !(ci->i_xattrs.version > 0 &&
->> -		__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 0));
->> +		__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 0, false));
->>   	spin_unlock(&ci->i_ceph_lock);
->>   	return ret;
->>   }
+>>   		root = open_root_dentry(fsc, path, started);
+>> +		kfree(p);
+>>   		if (IS_ERR(root)) {
+>>   			err = PTR_ERR(root);
+>>   			goto out;
 
 
