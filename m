@@ -2,165 +2,332 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2985122260
-	for <lists+ceph-devel@lfdr.de>; Tue, 17 Dec 2019 04:09:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CE4F12235A
+	for <lists+ceph-devel@lfdr.de>; Tue, 17 Dec 2019 06:02:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbfLQDI5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 16 Dec 2019 22:08:57 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:44357 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725836AbfLQDI5 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 16 Dec 2019 22:08:57 -0500
+        id S1725856AbfLQFCs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 17 Dec 2019 00:02:48 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39977 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725812AbfLQFCs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 17 Dec 2019 00:02:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576552135;
+        s=mimecast20190719; t=1576558966;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=oHgo59hJQAxnpIX24jb8GAjovreVd+cb46ZEvUXBFNo=;
-        b=bTMbaI5krhc6zB9mL7J7rNcUTBC80QL09h1NYw3gcIJ5ik3CZ/5rwC9zdUn5ayjSVAR64b
-        QcS1ITMIKEO7CrKeVlYlm2LBKdqu6iJTp96ga3vDNGAQOKov7WjcVLYmRrb2YnGw36Wqzo
-        0p57x9N/Tg/zcKFWsvlhkMoBo8Utc5s=
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=T+KpCZYO8k+cCohfhNtMi66hJVZlQ7hDvZoopjn5o3k=;
+        b=arh0Ae9xtUcKyM0oQw8rRc8WaR66hFc7WrqYbx0GAPAqJ8Ghd8d8wG+rdK6T+Lr+1xHncd
+        I4YHkpKUbh+l4HLOQQtyfXriEelkGh8HB9fC5f3PTO5NGrBnyFVoebz8c79O3bxKIcLgaW
+        PNrydJczFYUrTiFa0F/H1N0jqLVFz6o=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-220-y1lRQklYMpeLMYTT1MTN2w-1; Mon, 16 Dec 2019 22:08:40 -0500
-X-MC-Unique: y1lRQklYMpeLMYTT1MTN2w-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-283-i8a7bW0PPqK7hgtxaRg17A-1; Tue, 17 Dec 2019 00:02:44 -0500
+X-MC-Unique: i8a7bW0PPqK7hgtxaRg17A-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C7001800053;
-        Tue, 17 Dec 2019 03:08:39 +0000 (UTC)
-Received: from [10.72.12.95] (ovpn-12-95.pek2.redhat.com [10.72.12.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C10075C1B5;
-        Tue, 17 Dec 2019 03:08:35 +0000 (UTC)
-Subject: Re: [PATCH] ceph: don't clear I_NEW until inode metadata is fully
- populated
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, sage@redhat.com, zyan@redhat.com
-References: <20191212142717.23656-1-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <701d9acb-4a2c-cecb-a76a-12bf6e2b1430@redhat.com>
-Date:   Tue, 17 Dec 2019 11:08:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 85FDC107ACCD;
+        Tue, 17 Dec 2019 05:02:43 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-95.pek2.redhat.com [10.72.12.95])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 63F6360C63;
+        Tue, 17 Dec 2019 05:02:36 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
+        pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v2] ceph: remove the extra slashes in the server path
+Date:   Tue, 17 Dec 2019 00:02:31 -0500
+Message-Id: <20191217050231.3856-1-xiubli@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20191212142717.23656-1-jlayton@kernel.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2019/12/12 22:27, Jeff Layton wrote:
-> Currently, we could have an open-by-handle (or NFS server) call
-> into the filesystem and start working with an inode before it's
-> properly filled out.
->
-> Don't clear I_NEW until we have filled out the inode, and discard it
-> properly if that fails. Note that we occasionally take an extra
-> reference to the inode to ensure that we don't put the last reference in
-> discard_new_inode, but rather leave it for ceph_async_iput.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/ceph/inode.c | 25 +++++++++++++++++++++----
->   1 file changed, 21 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 5bdc1afc2bee..11672f8192b9 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -55,11 +55,9 @@ struct inode *ceph_get_inode(struct super_block *sb, struct ceph_vino vino)
->   	inode = iget5_locked(sb, t, ceph_ino_compare, ceph_set_ino_cb, &vino);
->   	if (!inode)
->   		return ERR_PTR(-ENOMEM);
-> -	if (inode->i_state & I_NEW) {
-> +	if (inode->i_state & I_NEW)
->   		dout("get_inode created new inode %p %llx.%llx ino %llx\n",
->   		     inode, ceph_vinop(inode), (u64)inode->i_ino);
-> -		unlock_new_inode(inode);
-> -	}
->   
->   	dout("get_inode on %lu=%llx.%llx got %p\n", inode->i_ino, vino.ino,
->   	     vino.snap, inode);
-> @@ -88,6 +86,10 @@ struct inode *ceph_get_snapdir(struct inode *parent)
->   	inode->i_fop = &ceph_snapdir_fops;
->   	ci->i_snap_caps = CEPH_CAP_PIN; /* so we can open */
->   	ci->i_rbytes = 0;
-> +
-> +	if (inode->i_state & I_NEW)
-> +		unlock_new_inode(inode);
-> +
->   	return inode;
->   }
->   
-> @@ -1301,7 +1303,6 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
->   			err = PTR_ERR(in);
->   			goto done;
->   		}
-> -		req->r_target_inode = in;
->   
->   		err = fill_inode(in, req->r_locked_page, &rinfo->targeti, NULL,
->   				session,
-> @@ -1311,8 +1312,13 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
->   		if (err < 0) {
->   			pr_err("fill_inode badness %p %llx.%llx\n",
->   				in, ceph_vinop(in));
-> +			if (in->i_state & I_NEW)
-> +				discard_new_inode(in);
->   			goto done;
->   		}
-> +		req->r_target_inode = in;
-> +		if (in->i_state & I_NEW)
-> +			unlock_new_inode(in);
->   	}
->   
->   	/*
-> @@ -1496,7 +1502,12 @@ static int readdir_prepopulate_inodes_only(struct ceph_mds_request *req,
->   		if (rc < 0) {
->   			pr_err("fill_inode badness on %p got %d\n", in, rc);
->   			err = rc;
-> +			ihold(in);
-> +			discard_new_inode(in);
+From: Xiubo Li <xiubli@redhat.com>
 
-Will it be warning when the inode is not a new one ?
+When mounting if the server path has more than one slash continously,
+such as:
 
+'mount.ceph 192.168.195.165:40176:/// /mnt/cephfs/'
 
-> +		} else if (in->i_state & I_NEW) {
-> +			unlock_new_inode(in);
->   		}
-> +
+In the MDS server side the extra slashes of the server path will be
+treated as snap dir, and then we can get the following debug logs:
 
-Maybe to be simple, we can switch ihold() & discard_new_inode() to 
-unlock_new_inode() instead all over the ceph cold, since we do not care 
-about the I_CREATING state.
+<7>[  ...] ceph:  mount opening path //
+<7>[  ...] ceph:  open_root_inode opening '//'
+<7>[  ...] ceph:  fill_trace 0000000059b8a3bc is_dentry 0 is_target 1
+<7>[  ...] ceph:  alloc_inode 00000000dc4ca00b
+<7>[  ...] ceph:  get_inode created new inode 00000000dc4ca00b 1.ffffffff=
+ffffffff ino 1
+<7>[  ...] ceph:  get_inode on 1=3D1.ffffffffffffffff got 00000000dc4ca00=
+b
 
+And then when creating any new file or directory under the mount
+point, we can get the following crash core dump:
 
->   		/* avoid calling iput_final() in mds dispatch threads */
->   		ceph_async_iput(in);
->   	}
-> @@ -1698,12 +1709,18 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
->   			if (d_really_is_negative(dn)) {
->   				/* avoid calling iput_final() in mds
->   				 * dispatch threads */
-> +				if (in->i_state & I_NEW) {
-> +					ihold(in);
-> +					discard_new_inode(in);
-> +				}
->   				ceph_async_iput(in);
->   			}
->   			d_drop(dn);
->   			err = ret;
->   			goto next_item;
->   		}
-> +		if (in->i_state & I_NEW)
-> +			unlock_new_inode(in);
->   
->   		if (d_really_is_negative(dn)) {
->   			if (ceph_security_xattr_deadlock(in)) {
+<4>[  ...] ------------[ cut here ]------------
+<2>[  ...] kernel BUG at fs/ceph/inode.c:1347!
+<4>[  ...] invalid opcode: 0000 [#1] SMP PTI
+<4>[  ...] CPU: 0 PID: 7 Comm: kworker/0:1 Tainted: G            E     5.=
+4.0-rc5+ #1
+<4>[  ...] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desk=
+top Reference Platform, BIOS 6.00 05/19/2017
+<4>[  ...] Workqueue: ceph-msgr ceph_con_workfn [libceph]
+<4>[  ...] RIP: 0010:ceph_fill_trace+0x992/0xb30 [ceph]
+<4>[  ...] Code: ff 0f 0b 0f 0b 0f 0b 4c 89 fa 48 c7 c6 4d [...]
+<4>[  ...] RSP: 0018:ffffa23d40067c70 EFLAGS: 00010297
+<4>[  ...] RAX: fffffffffffffffe RBX: ffff8a229eb566c0 RCX: 0000000000000=
+006
+<4>[  ...] RDX: 0000000000000000 RSI: 0000000000000092 RDI: ffff8a23aec17=
+900
+<4>[  ...] RBP: ffff8a226bd91eb0 R08: 0000000000000001 R09: 0000000000000=
+885
+<4>[  ...] R10: 000000000002dfd8 R11: ffff8a226bd95b30 R12: ffff8a239347e=
+000
+<4>[  ...] R13: 0000000000000000 R14: ffff8a22fabeb000 R15: ffff8a2338b0c=
+900
+<4>[  ...] FS:  0000000000000000(0000) GS:ffff8a23aec00000(0000) knlGS:00=
+00000000000000
+<4>[  ...] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+<4>[  ...] CR2: 000055b479d92068 CR3: 00000003764f6004 CR4: 0000000000360=
+6f0
+<4>[  ...] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000=
+000
+<4>[  ...] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000=
+400
+<4>[  ...] Call Trace:
+<4>[  ...]  dispatch+0x2ac/0x12b0 [ceph]
+<4>[  ...]  ceph_con_workfn+0xd40/0x27c0 [libceph]
+<4>[  ...]  process_one_work+0x1b0/0x350
+<4>[  ...]  worker_thread+0x50/0x3b0
+<4>[  ...]  kthread+0xfb/0x130
+<4>[  ...]  ? process_one_work+0x350/0x350
+<4>[  ...]  ? kthread_park+0x90/0x90
+<4>[  ...]  ret_from_fork+0x35/0x40
+<4>[  ...] Modules linked in: ceph(E) libceph fscache [...]
+<4>[  ...] ---[ end trace ba883d8ccf9afcb0 ]---
+<4>[  ...] RIP: 0010:ceph_fill_trace+0x992/0xb30 [ceph]
+<4>[  ...] Code: ff 0f 0b 0f 0b 0f 0b 4c 89 fa 48 c7 c6 [...]
+<4>[  ...] RSP: 0018:ffffa23d40067c70 EFLAGS: 00010297
+<4>[  ...] RAX: fffffffffffffffe RBX: ffff8a229eb566c0 RCX: 0000000000000=
+006
+<4>[  ...] RDX: 0000000000000000 RSI: 0000000000000092 RDI: ffff8a23aec17=
+900
+<4>[  ...] RBP: ffff8a226bd91eb0 R08: 0000000000000001 R09: 0000000000000=
+885
+<4>[  ...] R10: 000000000002dfd8 R11: ffff8a226bd95b30 R12: ffff8a239347e=
+000
+<4>[  ...] R13: 0000000000000000 R14: ffff8a22fabeb000 R15: ffff8a2338b0c=
+900
+<4>[  ...] FS:  0000000000000000(0000) GS:ffff8a23aec00000(0000) knlGS:00=
+00000000000000
+<4>[  ...] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+<4>[  ...] CR2: 000055b479d92068 CR3: 00000003764f6004 CR4: 0000000000360=
+6f0
+<4>[  ...] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000=
+000
+<4>[  ...] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000=
+400
 
+And we should ignore the extra slashes in the server path when mount
+opening in case users have added them by mistake.
+
+This will also help us to get an existing superblock if all the
+other options are the same, such as all the following server paths
+are treated as the same:
+
+1) "//mydir1///mydir//"
+2) "/mydir1/mydir"
+3) "/mydir1/mydir/"
+
+The mount_options->server_path will always save the original string
+including the leading '/'.
+
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/super.c | 108 +++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 93 insertions(+), 15 deletions(-)
+
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 6f33a265ccf1..9fe1bfac66a2 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -211,7 +211,6 @@ struct ceph_parse_opts_ctx {
+=20
+ /*
+  * Parse the source parameter.  Distinguish the server list from the pat=
+h.
+- * Internally we do not include the leading '/' in the path.
+  *
+  * The source will look like:
+  *     <server_spec>[,<server_spec>...]:[<path>]
+@@ -232,12 +231,15 @@ static int ceph_parse_source(struct fs_parameter *p=
+aram, struct fs_context *fc)
+=20
+ 	dev_name_end =3D strchr(dev_name, '/');
+ 	if (dev_name_end) {
+-		if (strlen(dev_name_end) > 1) {
+-			kfree(fsopt->server_path);
+-			fsopt->server_path =3D kstrdup(dev_name_end, GFP_KERNEL);
+-			if (!fsopt->server_path)
+-				return -ENOMEM;
+-		}
++		kfree(fsopt->server_path);
++
++		/*
++		 * The server_path will include the whole chars from userland
++		 * including the leading '/'.
++		 */
++		fsopt->server_path =3D kstrdup(dev_name_end, GFP_KERNEL);
++		if (!fsopt->server_path)
++			return -ENOMEM;
+ 	} else {
+ 		dev_name_end =3D dev_name + strlen(dev_name);
+ 	}
+@@ -459,6 +461,64 @@ static int strcmp_null(const char *s1, const char *s=
+2)
+ 	return strcmp(s1, s2);
+ }
+=20
++/**
++ * path_remove_extra_slash - Remove the extra slashes in the server path
++ * @server_path: the server path and could be NULL
++ *
++ * Return NULL if the path is NULL or only consists of "/", or a string
++ * without any extra slashes including the leading slash(es) and the
++ * slash(es) at the end of the server path, such as:
++ * "//dir1////dir2///" --> "dir1/dir2"
++ */
++static char *path_remove_extra_slash(const char *server_path)
++{
++	const char *path =3D server_path;
++	bool last_is_slash;
++	int i, j, len;
++	char *p;
++
++	/* if the server path is omitted */
++	if (!path)
++		return NULL;
++
++	/* remove all the leading slashes */
++	while (*path =3D=3D '/')
++		path++;
++
++	/* if the server path only consists of slashes */
++	if (*path =3D=3D '\0')
++		return NULL;
++
++	len =3D strlen(path);
++
++	p =3D kmalloc(len, GFP_KERNEL);
++	if (!p)
++		return ERR_PTR(-ENOMEM);
++
++	last_is_slash =3D false;
++	for (j =3D 0, i =3D 0; i < len; i++) {
++		if (path[i] =3D=3D '/') {
++			if (last_is_slash)
++				continue;
++			last_is_slash =3D true;
++		} else {
++			last_is_slash =3D false;
++		}
++		p[j++] =3D path[i];
++	}
++
++	/*
++	 * remove the last slash if there has just to make sure that
++	 * we will get "dir1/dir2"
++	 */
++	if (p[j - 1] =3D=3D '/')
++		j--;
++
++	p[j] =3D '\0';
++
++	return p;
++}
++
+ static int compare_mount_options(struct ceph_mount_options *new_fsopt,
+ 				 struct ceph_options *new_opt,
+ 				 struct ceph_fs_client *fsc)
+@@ -466,6 +526,7 @@ static int compare_mount_options(struct ceph_mount_op=
+tions *new_fsopt,
+ 	struct ceph_mount_options *fsopt1 =3D new_fsopt;
+ 	struct ceph_mount_options *fsopt2 =3D fsc->mount_options;
+ 	int ofs =3D offsetof(struct ceph_mount_options, snapdir_name);
++	char *p1, *p2;
+ 	int ret;
+=20
+ 	ret =3D memcmp(fsopt1, fsopt2, ofs);
+@@ -478,9 +539,21 @@ static int compare_mount_options(struct ceph_mount_o=
+ptions *new_fsopt,
+ 	ret =3D strcmp_null(fsopt1->mds_namespace, fsopt2->mds_namespace);
+ 	if (ret)
+ 		return ret;
+-	ret =3D strcmp_null(fsopt1->server_path, fsopt2->server_path);
++
++	p1 =3D path_remove_extra_slash(fsopt1->server_path);
++	if (IS_ERR(p1))
++		return PTR_ERR(p1);
++	p2 =3D path_remove_extra_slash(fsopt2->server_path);
++	if (IS_ERR(p2)) {
++		kfree(p1);
++		return PTR_ERR(p2);
++	}
++	ret =3D strcmp_null(p1, p2);
++	kfree(p1);
++	kfree(p2);
+ 	if (ret)
+ 		return ret;
++
+ 	ret =3D strcmp_null(fsopt1->fscache_uniq, fsopt2->fscache_uniq);
+ 	if (ret)
+ 		return ret;
+@@ -883,7 +956,7 @@ static struct dentry *ceph_real_mount(struct ceph_fs_=
+client *fsc,
+ 	mutex_lock(&fsc->client->mount_mutex);
+=20
+ 	if (!fsc->sb->s_root) {
+-		const char *path;
++		const char *path, *p;
+ 		err =3D __ceph_open_session(fsc->client, started);
+ 		if (err < 0)
+ 			goto out;
+@@ -895,17 +968,22 @@ static struct dentry *ceph_real_mount(struct ceph_f=
+s_client *fsc,
+ 				goto out;
+ 		}
+=20
+-		if (!fsc->mount_options->server_path) {
+-			path =3D "";
+-			dout("mount opening path \\t\n");
+-		} else {
+-			path =3D fsc->mount_options->server_path + 1;
+-			dout("mount opening path %s\n", path);
++		p =3D path_remove_extra_slash(fsc->mount_options->server_path);
++		if (IS_ERR(p)) {
++			err =3D PTR_ERR(p);
++			goto out;
+ 		}
++		/* if the server path is omitted or just consists of '/' */
++		if (!p)
++			path =3D "";
++		else
++			path =3D p;
++		dout("mount opening path '%s'\n", path);
+=20
+ 		ceph_fs_debugfs_init(fsc);
+=20
+ 		root =3D open_root_dentry(fsc, path, started);
++		kfree(p);
+ 		if (IS_ERR(root)) {
+ 			err =3D PTR_ERR(root);
+ 			goto out;
+--=20
+2.21.0
 
