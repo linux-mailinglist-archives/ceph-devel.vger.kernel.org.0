@@ -2,319 +2,308 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E2F31260FC
-	for <lists+ceph-devel@lfdr.de>; Thu, 19 Dec 2019 12:39:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CCC51266A8
+	for <lists+ceph-devel@lfdr.de>; Thu, 19 Dec 2019 17:19:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbfLSLjd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 19 Dec 2019 06:39:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48506 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726692AbfLSLja (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 19 Dec 2019 06:39:30 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 294532082E;
-        Thu, 19 Dec 2019 11:39:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576755568;
-        bh=LXBDsubEijKVjR2Ap/9NlfAl3z8mON8g9LLUpDHw4pY=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=RnODh74AKWmLUNrAFBm4g9U4qNnJk4WPRs+w3JkNv235aQcl14Fhdpxp5qFSNizcF
-         7cOt5rGtu+DtKca1YQWJ8vuS3p10dD8UAYQ3VmKaaEqPQLkVsbfmHTppgFcg5snwF/
-         Q6Ti5Z2+raAOjvTEMlKhZFvbOr+5bJ5Vakog9PWA=
-Message-ID: <d2793594c1577c60bd940577ff143b34a3cb2891.camel@kernel.org>
-Subject: Re: [PATCH] ceph: add possible_max_rank and make the code more
- readable
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
-        pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Thu, 19 Dec 2019 06:39:27 -0500
-In-Reply-To: <20191204115739.53303-1-xiubli@redhat.com>
-References: <20191204115739.53303-1-xiubli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+        id S1727181AbfLSQTT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 19 Dec 2019 11:19:19 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:32909 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbfLSQTS (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 19 Dec 2019 11:19:18 -0500
+Received: by mail-il1-f194.google.com with SMTP id v15so5362775iln.0
+        for <ceph-devel@vger.kernel.org>; Thu, 19 Dec 2019 08:19:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=yWJEsXtNWZDOzVcWxb9L6pCtXF7AS5GaRwBQfaUqIWU=;
+        b=Vn4kcLVloxWrOVtn+anSGNrdKK29YeUnYbgVkUrrOmfJ6ijPetDNRgMwNBDarGW9BV
+         jFD2YAsGWpYLo8WxfdpdQ4bfUT9+5r1tlUjVeLd5J5LQRIJiUlUGvsE+08Zi3jP0iFmz
+         yPh8EdDtSqgIX++Ocn/Bebot2cI8lSo3YGB+noTaAMnUDtl5IxW51m8ll62ON8mD5ExB
+         7dbEfSYNmxZGpVyjU1ZFU0u8x+mSQ4kFOu96q+MzvoThVziw3c/ZxCUfZMcpAvLFSASK
+         nO3mcTVpC3vBX+qkXi7hMWntVj5NkDBDS8dbup+tkReDG45Ko/ZI2NW13RrdyPXqS5Vi
+         Q5qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=yWJEsXtNWZDOzVcWxb9L6pCtXF7AS5GaRwBQfaUqIWU=;
+        b=exSRxe0FMVS5Unac9jHng+HrWiOYKwzW+tgTLqFOEjBYliFtUUMQ1H0JqkwkCsh1La
+         5xR7HGDrsOQOXlSnLEtlfHdwNIbeX0qEgnAwB9svkjcE41/xy0fmvt2rRd1sYW+nEWtX
+         DPawAtIXX0YURVT/QArfdW0hmTLmSB5EuuXB9qPohukbGA7PFogf6egcRMw9+IKLnyBH
+         BJYuhuwsrydEbtIYEp6rZUKvllnc6zeQ5XbaefusGcsx6ywYH16pPFViMW2lVyjJQtxR
+         L+aB9xJ1gIJJYLULJzL2PHxvrjEqqbZCbx5ciUizE798aZu8rtDobf/n2+qNYbGN92uI
+         r7mQ==
+X-Gm-Message-State: APjAAAUrPp0Vrx4C4pCIjkX9aEN/v7Dj8cZ+ENe1wEdgwNfyyKnthgQd
+        H8XG4XwLehCD547QGj9CdPFxZtxo9tFRNZJqoB4f+SXT0gM=
+X-Google-Smtp-Source: APXvYqxvHo9FuMkPTYcQ7EJcKmJsiAwzRZ3G3BaDwJIKOGSJ0V0meTGx1W1pcMQ7+Ghx8qz+O2JMmikwf+QWulwTSI0=
+X-Received: by 2002:a92:cb10:: with SMTP id s16mr7266766ilo.176.1576772357268;
+ Thu, 19 Dec 2019 08:19:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+From:   VHPC 20 <vhpc.dist@gmail.com>
+Date:   Thu, 19 Dec 2019 17:19:06 +0100
+Message-ID: <CAF05tLNAo6G5LfrJBSUeQEM_FEjsizTZ2=FpUSm18+wnfgAGYQ@mail.gmail.com>
+Subject: CfP VHPC20: HPC Containers-Kubernetes
+To:     ceph-users@ceph.com, ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2019-12-04 at 06:57 -0500, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> The m_num_mds here is actually the number for MDSs which are in
-> up:active status, and it will be duplicated to m_num_active_mds,
-> so remove it.
-> 
-> Add possible_max_rank to the mdsmap struct and this will be
-> the correctly possible largest rank boundary.
-> 
-> Remove the special case for one mds in __mdsmap_get_random_mds(),
-> because the validate mds rank may not always be 0.
-> 
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/debugfs.c           |  2 +-
->  fs/ceph/mds_client.c        | 10 ++++----
->  fs/ceph/mdsmap.c            | 49 +++++++++++++++----------------------
->  include/linux/ceph/mdsmap.h | 10 ++++----
->  4 files changed, 31 insertions(+), 40 deletions(-)
-> 
-> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-> index facb387c2735..0b1591e76077 100644
-> --- a/fs/ceph/debugfs.c
-> +++ b/fs/ceph/debugfs.c
-> @@ -33,7 +33,7 @@ static int mdsmap_show(struct seq_file *s, void *p)
->  	seq_printf(s, "max_mds %d\n", mdsmap->m_max_mds);
->  	seq_printf(s, "session_timeout %d\n", mdsmap->m_session_timeout);
->  	seq_printf(s, "session_autoclose %d\n", mdsmap->m_session_autoclose);
-> -	for (i = 0; i < mdsmap->m_num_mds; i++) {
-> +	for (i = 0; i < mdsmap->possible_max_rank; i++) {
->  		struct ceph_entity_addr *addr = &mdsmap->m_info[i].addr;
->  		int state = mdsmap->m_info[i].state;
->  		seq_printf(s, "\tmds%d\t%s\t(%s)\n", i,
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 39f4d8501df5..036d388ddb10 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -597,7 +597,7 @@ static struct ceph_mds_session *register_session(struct ceph_mds_client *mdsc,
->  {
->  	struct ceph_mds_session *s;
->  
-> -	if (mds >= mdsc->mdsmap->m_num_mds)
-> +	if (mds >= mdsc->mdsmap->possible_max_rank)
->  		return ERR_PTR(-EINVAL);
->  
->  	s = kzalloc(sizeof(*s), GFP_NOFS);
-> @@ -1222,7 +1222,7 @@ static void __open_export_target_sessions(struct ceph_mds_client *mdsc,
->  	struct ceph_mds_session *ts;
->  	int i, mds = session->s_mds;
->  
-> -	if (mds >= mdsc->mdsmap->m_num_mds)
-> +	if (mds >= mdsc->mdsmap->possible_max_rank)
->  		return;
->  
->  	mi = &mdsc->mdsmap->m_info[mds];
-> @@ -3762,7 +3762,7 @@ static void check_new_map(struct ceph_mds_client *mdsc,
->  	dout("check_new_map new %u old %u\n",
->  	     newmap->m_epoch, oldmap->m_epoch);
->  
-> -	for (i = 0; i < oldmap->m_num_mds && i < mdsc->max_sessions; i++) {
-> +	for (i = 0; i < oldmap->possible_max_rank && i < mdsc->max_sessions; i++) {
->  		if (!mdsc->sessions[i])
->  			continue;
->  		s = mdsc->sessions[i];
-> @@ -3776,7 +3776,7 @@ static void check_new_map(struct ceph_mds_client *mdsc,
->  		     ceph_mdsmap_is_laggy(newmap, i) ? " (laggy)" : "",
->  		     ceph_session_state_name(s->s_state));
->  
-> -		if (i >= newmap->m_num_mds) {
-> +		if (i >= newmap->possible_max_rank) {
->  			/* force close session for stopped mds */
->  			get_session(s);
->  			__unregister_session(mdsc, s);
-> @@ -3833,7 +3833,7 @@ static void check_new_map(struct ceph_mds_client *mdsc,
->  		}
->  	}
->  
-> -	for (i = 0; i < newmap->m_num_mds && i < mdsc->max_sessions; i++) {
-> +	for (i = 0; i < newmap->possible_max_rank && i < mdsc->max_sessions; i++) {
->  		s = mdsc->sessions[i];
->  		if (!s)
->  			continue;
-> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
-> index a77e0ecb9a6b..889627817e52 100644
-> --- a/fs/ceph/mdsmap.c
-> +++ b/fs/ceph/mdsmap.c
-> @@ -14,22 +14,15 @@
->  #include "super.h"
->  
->  #define CEPH_MDS_IS_READY(i, ignore_laggy) \
-> -	(m->m_info[i].state > 0 && (ignore_laggy ? true : !m->m_info[i].laggy))
-> +	(m->m_info[i].state > 0 && ignore_laggy ? true : !m->m_info[i].laggy)
->  
->  static int __mdsmap_get_random_mds(struct ceph_mdsmap *m, bool ignore_laggy)
->  {
->  	int n = 0;
->  	int i, j;
->  
-> -	/*
-> -	 * special case for one mds, no matter it is laggy or
-> -	 * not we have no choice
-> -	 */
-> -	if (1 == m->m_num_mds && m->m_info[0].state > 0)
-> -		return 0;
-> -
->  	/* count */
-> -	for (i = 0; i < m->m_num_mds; i++)
-> +	for (i = 0; i < m->possible_max_rank; i++)
->  		if (CEPH_MDS_IS_READY(i, ignore_laggy))
->  			n++;
->  	if (n == 0)
-> @@ -37,7 +30,7 @@ static int __mdsmap_get_random_mds(struct ceph_mdsmap *m, bool ignore_laggy)
->  
->  	/* pick */
->  	n = prandom_u32() % n;
-> -	for (j = 0, i = 0; i < m->m_num_mds; i++) {
-> +	for (j = 0, i = 0; i < m->possible_max_rank; i++) {
->  		if (CEPH_MDS_IS_READY(i, ignore_laggy))
->  			j++;
->  		if (j > n)
-> @@ -55,10 +48,10 @@ int ceph_mdsmap_get_random_mds(struct ceph_mdsmap *m)
->  	int mds;
->  
->  	mds = __mdsmap_get_random_mds(m, false);
-> -	if (mds == m->m_num_mds || mds == -1)
-> +	if (mds == m->possible_max_rank || mds == -1)
->  		mds = __mdsmap_get_random_mds(m, true);
->  
-> -	return mds == m->m_num_mds ? -1 : mds;
-> +	return mds == m->possible_max_rank ? -1 : mds;
->  }
->  
->  #define __decode_and_drop_type(p, end, type, bad)		\
-> @@ -129,7 +122,6 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
->  	int err;
->  	u8 mdsmap_v, mdsmap_cv;
->  	u16 mdsmap_ev;
-> -	u32 possible_max_rank;
->  
->  	m = kzalloc(sizeof(*m), GFP_NOFS);
->  	if (!m)
-> @@ -157,24 +149,23 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
->  	m->m_max_mds = ceph_decode_32(p);
->  
->  	/*
-> -	 * pick out the active nodes as the m_num_mds, the m_num_mds
-> -	 * maybe larger than m_max_mds when decreasing the max_mds in
-> -	 * cluster side, in other case it should less than or equal
-> -	 * to m_max_mds.
-> +	 * pick out the active nodes as the m_num_active_mds, the
-> +	 * m_num_active_mds maybe larger than m_max_mds when decreasing
-> +	 * the max_mds in cluster side, in other case it should less
-> +	 * than or equal to m_max_mds.
->  	 */
-> -	m->m_num_mds = n = ceph_decode_32(p);
-> -	m->m_num_active_mds = m->m_num_mds;
-> +	m->m_num_active_mds = n = ceph_decode_32(p);
->  
->  	/*
-> -	 * the possible max rank, it maybe larger than the m->m_num_mds,
-> +	 * the possible max rank, it maybe larger than the m_num_active_mds,
->  	 * for example if the mds_max == 2 in the cluster, when the MDS(0)
->  	 * was laggy and being replaced by a new MDS, we will temporarily
->  	 * receive a new mds map with n_num_mds == 1 and the active MDS(1),
-> -	 * and the mds rank >= m->m_num_mds.
-> +	 * and the mds rank >= m_num_active_mds.
->  	 */
-> -	possible_max_rank = max((u32)m->m_num_mds, m->m_max_mds);
-> +	m->possible_max_rank = max(m->m_num_active_mds, m->m_max_mds);
->  
-> -	m->m_info = kcalloc(m->m_num_mds, sizeof(*m->m_info), GFP_NOFS);
-> +	m->m_info = kcalloc(m->possible_max_rank, sizeof(*m->m_info), GFP_NOFS);
->  	if (!m->m_info)
->  		goto nomem;
->  
-> @@ -248,7 +239,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
->  		     ceph_mds_state_name(state),
->  		     laggy ? "(laggy)" : "");
->  
-> -		if (mds < 0 || mds >= possible_max_rank) {
-> +		if (mds < 0 || mds >= m->possible_max_rank) {
->  			pr_warn("mdsmap_decode got incorrect mds(%d)\n", mds);
->  			continue;
->  		}
-> @@ -318,14 +309,14 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
->  
->  		for (i = 0; i < n; i++) {
->  			s32 mds = ceph_decode_32(p);
-> -			if (mds >= 0 && mds < m->m_num_mds) {
-> +			if (mds >= 0 && mds < m->possible_max_rank) {
->  				if (m->m_info[mds].laggy)
->  					num_laggy++;
->  			}
->  		}
->  		m->m_num_laggy = num_laggy;
->  
-> -		if (n > m->m_num_mds) {
-> +		if (n > m->possible_max_rank) {
->  			void *new_m_info = krealloc(m->m_info,
->  						    n * sizeof(*m->m_info),
->  						    GFP_NOFS | __GFP_ZERO);
-> @@ -333,7 +324,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
->  				goto nomem;
->  			m->m_info = new_m_info;
->  		}
-> -		m->m_num_mds = n;
-> +		m->possible_max_rank = n;
->  	}
->  
->  	/* inc */
-> @@ -404,7 +395,7 @@ void ceph_mdsmap_destroy(struct ceph_mdsmap *m)
->  {
->  	int i;
->  
-> -	for (i = 0; i < m->m_num_mds; i++)
-> +	for (i = 0; i < m->possible_max_rank; i++)
->  		kfree(m->m_info[i].export_targets);
->  	kfree(m->m_info);
->  	kfree(m->m_data_pg_pools);
-> @@ -420,7 +411,7 @@ bool ceph_mdsmap_is_cluster_available(struct ceph_mdsmap *m)
->  		return false;
->  	if (m->m_num_laggy == m->m_num_active_mds)
->  		return false;
-> -	for (i = 0; i < m->m_num_mds; i++) {
-> +	for (i = 0; i < m->possible_max_rank; i++) {
->  		if (m->m_info[i].state == CEPH_MDS_STATE_ACTIVE)
->  			nr_active++;
->  	}
-> diff --git a/include/linux/ceph/mdsmap.h b/include/linux/ceph/mdsmap.h
-> index 3a66f4f926ce..35d385296fbb 100644
-> --- a/include/linux/ceph/mdsmap.h
-> +++ b/include/linux/ceph/mdsmap.h
-> @@ -26,8 +26,8 @@ struct ceph_mdsmap {
->  	u32 m_session_autoclose;        /* seconds */
->  	u64 m_max_file_size;
->  	u32 m_max_mds;			/* expected up:active mds number */
-> -	int m_num_active_mds;		/* actual up:active mds number */
-> -	int m_num_mds;                  /* size of m_info array */
-> +	u32 m_num_active_mds;		/* actual up:active mds number */
-> +	u32 possible_max_rank;		/* possible max rank index */
->  	struct ceph_mds_info *m_info;
->  
->  	/* which object pools file data can be stored in */
-> @@ -43,7 +43,7 @@ struct ceph_mdsmap {
->  static inline struct ceph_entity_addr *
->  ceph_mdsmap_get_addr(struct ceph_mdsmap *m, int w)
->  {
-> -	if (w >= m->m_num_mds)
-> +	if (w >= m->possible_max_rank)
->  		return NULL;
->  	return &m->m_info[w].addr;
->  }
-> @@ -51,14 +51,14 @@ ceph_mdsmap_get_addr(struct ceph_mdsmap *m, int w)
->  static inline int ceph_mdsmap_get_state(struct ceph_mdsmap *m, int w)
->  {
->  	BUG_ON(w < 0);
-> -	if (w >= m->m_num_mds)
-> +	if (w >= m->possible_max_rank)
->  		return CEPH_MDS_STATE_DNE;
->  	return m->m_info[w].state;
->  }
->  
->  static inline bool ceph_mdsmap_is_laggy(struct ceph_mdsmap *m, int w)
->  {
-> -	if (w >= 0 && w < m->m_num_mds)
-> +	if (w >= 0 && w < m->possible_max_rank)
->  		return m->m_info[w].laggy;
->  	return false;
->  }
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+CALL FOR PAPERSa
+
+15th Workshop on Virtualization in High-Performance Cloud Computing
+(VHPC 20) held in conjunction with the International Supercomputing
+Conference - High Performance, June 21-25, 2020, Frankfurt, Germany.
+(Springer LNCS Proceedings)
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
 
-Looks reasonable -- merged.
--- 
-Jeff Layton <jlayton@kernel.org>
+Date: June 25, 2020
+Workshop URL: vhpc[dot]org
 
+
+Abstract registration Deadline: Jan 31st, 2020
+Paper Submission Deadline: Apr 05th, 2020
+Springer LNCS
+
+
+
+Call for Papers
+
+
+Containers and virtualization technologies constitute key enabling
+factors for flexible resource management in modern data centers, and
+particularly in cloud environments. Cloud providers need to manage
+complex infrastructures in a seamless fashion to support the highly
+dynamic and heterogeneous workloads and hosted applications customers
+deploy. Similarly, HPC environments have been increasingly adopting
+techniques that enable flexible management of vast computing and
+networking resources, close to marginal provisioning cost, which is
+unprecedented in the history of scientific and commercial computing.
+Most recently, Function as a Service (Faas) and Serverless computing,
+utilizing lightweight VMs-containers widens the spectrum of
+applications that can be deployed in a cloud environment, especially
+in an HPC context. Here, HPC-provided services can be become
+accessible to distributed workloads outside of large cluster
+environments.
+
+Various virtualization-containerization technologies contribute to the
+overall picture in different ways: machine virtualization, with its
+capability to enable consolidation of multiple under=C2=ADutilized servers
+with heterogeneous software and operating systems (OSes), and its
+capability to live=C2=AD-migrate a fully operating virtual machine (VM)
+with a very short downtime, enables novel and dynamic ways to manage
+physical servers; OS-=C2=ADlevel virtualization (i.e., containerization),
+with its capability to isolate multiple user=C2=AD-space environments and
+to allow for their co=C2=ADexistence within the same OS kernel, promises to
+provide many of the advantages of machine virtualization with high
+levels of responsiveness and performance; lastly, unikernels provide
+for many virtualization benefits with a minimized OS/library surface.
+I/O Virtualization in turn allows physical network interfaces to take
+traffic from multiple VMs or containers; network virtualization, with
+its capability to create logical network overlays that are independent
+of the underlying physical topology is furthermore enabling
+virtualization of HPC infrastructures.
+
+
+Publication
+
+
+Accepted papers will be published in a Springer LNCS proceedings
+volume.
+
+
+Topics of Interest
+
+
+The VHPC program committee solicits original, high-quality submissions
+related to virtualization across the entire software stack with a
+special focus on the intersection of HPC, containers-virtualization
+and the cloud.
+
+
+Major Topics:
+- HPC workload orchestration (Kubernetes)
+- Kubernetes HPC batch
+- HPC Container Environments Landscape
+- HW Heterogeneity
+- Container ecosystem (Docker alternatives)
+- Networking
+- Lightweight Virtualization
+- Unikernels / LibOS
+- State-of-the-art processor virtualization (RISC-V, EPI)
+- Containerizing HPC Stacks/Apps/Codes:
+  Climate model containers
+
+
+each major topic encompassing design/architecture, management,
+performance management, modeling and configuration/tooling.
+Specifically, we invite papers that deal with the following topics:
+
+- HPC orchestration (Kubernetes)
+   - Virtualizing Kubernetes for HPC
+   - Deployment paradigms
+   - Multitenancy
+   - Serverless
+   - Declerative data center integration
+   - Network provisioning
+   - Storage
+   - OCI i.a. images
+   - Isolation/security
+- HW Accelerators, including GPUs, FPGAs, AI, and others
+   - State-of-practice/art, including transition to cloud
+   - Frameworks, system software
+   - Programming models, runtime systems, and APIs to facilitate cloud
+     adoption
+   - Edge use-cases
+   - Application adaptation, success stories
+- Kubernetes Batch
+   - Scheduling, job management
+   - Execution paradigm - workflow
+   - Data management
+   - Deployment paradigm
+   - Multi-cluster/scalability
+   - Performance improvement
+   - Workflow / execution paradigm
+- Podman: end-to-end Docker alternative container environment & use-cases
+   - Creating, Running containers as non-root (rootless)
+   - Running rootless containers with MPI
+   - Container live migration
+   - Running containers in restricted environments without setuid
+- Networking
+   - Software defined networks and network virtualization
+   - New virtualization NICs/Nitro alike ASICs for the data center?
+   - Kubernetes SDN policy (Calico i.a.)
+   - Kubernetes network provisioning (Flannel i.a.)
+- Lightweight Virtualization
+   - Micro VMMs (Rust-VMM, Firecracker, solo5)
+   - Xen
+   - Nitro hypervisor (KVM)
+   - RVirt
+   - Cloud Hypervisor
+- Unikernels / LibOS
+- HPC Storage in Virtualization
+   - HPC container storage
+   - Cloud-native storage
+   - Hypervisors in storage virtualization
+- Processor Virtualization
+   - RISC-V hypervisor extensions
+   - RISC-V Hypervisor ports
+   - EPI
+- Composable HPC microservices
+- Containerizing Scientific Codes
+   - Building
+   - Deploying
+   - Securing
+   - Storage
+   - Monitoring
+- Use case for containerizing HPC codes:
+  Climate model containers for portability, reproducibility,
+  traceability, immutability, provenance, data & software preservation
+
+
+
+The Workshop on Virtualization in High=C2=AD-Performance Cloud Computing
+(VHPC) aims to bring together researchers and industrial practitioners
+facing the challenges posed by virtualization in order to foster
+discussion, collaboration, mutual exchange of knowledge and
+experience, enabling research to ultimately provide novel solutions
+for virtualized computing systems of tomorrow.
+
+The workshop will be one day in length, composed of 20 min paper
+presentations, each followed by 10 min discussion sections, plus
+lightning talks that are limited to 5 minutes. Presentations may be
+accompanied by interactive demonstrations.
+
+
+Important Dates
+
+Jan 31st, 2020 - Abstract
+Apr 5th, 2020 - Paper submission deadline (Springer LNCS)
+Apr 26th, 2020 - Acceptance notification
+June 25th, 2020 - Workshop Day
+July 10th, 2020 - Camera-ready version due
+
+
+Chair
+
+Michael Alexander (chair), BOKU, Vienna, Austria
+Anastassios Nanos (co-=C2=ADchair), Sunlight.io, UK
+
+
+Program committee
+
+Stergios Anastasiadis, University of Ioannina, Greece
+Paolo Bonzini, Redhat, Italy
+Jakob Blomer, CERN, Europe
+Eduardo C=C3=A9sar, Universidad Autonoma de Barcelona, Spain
+Taylor Childers, Argonne National Laboratory, USA
+Stephen Crago, USC ISI, USA
+Tommaso Cucinotta, St. Anna School of Advanced Studies, Italy
+Fran=C3=A7ois Diakhat=C3=A9 CEA DAM Ile de France, France
+Kyle Hale, Northwestern University, USA
+Brian Kocoloski, Washington University, USA
+John Lange, University of Pittsburgh, USA
+Giuseppe Lettieri, University of Pisa, Italy
+Klaus Ma, Huawei, China
+Alberto Madonna, Swiss National Supercomputing Center, Switzerland
+Nikos Parlavantzas, IRISA, France
+Anup Patel, Western Digital, USA
+Kevin Pedretti, Sandia National Laboratories, USA
+Amer Qouneh, Western New England University, USA
+Carlos Rea=C3=B1o, Queen=E2=80=99s University Belfast, UK
+Adrian Reber, Redhat, Germany
+Riccardo Rocha, CERN, Europe
+Borja Sotomayor, University of Chicago, USA
+Jonathan Sparks, Cray, USA
+Kurt Tutschku, Blekinge Institute of Technology, Sweden
+John Walters, USC ISI, USA
+Yasuhiro Watashiba, Osaka University, Japan
+Chao-Tung Yang, Tunghai University, Taiwan
+
+
+
+Paper Submission-Publication
+
+Papers submitted to the workshop will be reviewed by at least two
+members of the program committee and external reviewers. Submissions
+should include abstract, keywords, the e-mail address of the
+corresponding author, and must not exceed 10 pages, including tables
+and figures at a main font size no smaller than 11 point. Submission
+of a paper should be regarded as a commitment that, should the paper
+be accepted, at least one of the authors will register and attend the
+conference to present the work. Accepted papers will be published in a
+Springer LNCS volume.
+
+The format must be according to the Springer LNCS Style. Initial
+submissions are in PDF; authors of accepted papers will be requested
+to provide source files.
+
+
+Abstract, Paper Submission Link:
+edas[dot]info/newPaper.php?c=3D26973
+
+
+Lightning Talks
+
+Lightning Talks are non-paper track, synoptical in nature and are
+strictly limited to 5 minutes. They can be used to gain early
+feedback on ongoing research, for demonstrations, to present research
+results, early research ideas, perspectives and positions of interest
+to the community. Submit abstract via the main submission link.
+
+General Information
+
+The workshop is one day in length and will be held in conjunction with
+the International Supercomputing Conference - High Performance (ISC)
+2019, June 21-25, Frankfurt, Germany.
