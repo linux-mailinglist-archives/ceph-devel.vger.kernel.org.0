@@ -2,89 +2,104 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CC30125F9D
-	for <lists+ceph-devel@lfdr.de>; Thu, 19 Dec 2019 11:45:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D66A126087
+	for <lists+ceph-devel@lfdr.de>; Thu, 19 Dec 2019 12:10:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfLSKpz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 19 Dec 2019 05:45:55 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:45466 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbfLSKpy (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 19 Dec 2019 05:45:54 -0500
-Received: by mail-il1-f193.google.com with SMTP id p8so4445608iln.12
-        for <ceph-devel@vger.kernel.org>; Thu, 19 Dec 2019 02:45:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vkiSuZycSI5zUnh5IyX2UW8ljaGAsOW3wFB46kEoxqQ=;
-        b=r5itbMnWobTEJdTCEgSW4wXxnLMdZg3GPVXe3gnRJOqtealmtXx/ZIPfwXYIZgRvws
-         Unqvpv0vzQwLzoq2tvesvvv2v0YjkjrcPSkmUfe1kbOE324KvpcJlR56ln7LFehTOcQq
-         TP7OFUtUr0Jf9Jg+sT+X+zLQsqcn7gBcEZ4oljvzdnQ6iRTx8HwFuIBNzcT6JS6Y6lbz
-         OWtTd9r/GGVbVqBjU4eSzhw3gP4+HhfoXD7rH4KEr4/inB4rtC87Dv6iKScF/Ee7JJHt
-         ardwQnRhnPDYzI+HSCBpaXuXmWLtqfi7d+mC+NLijDzNAt573IxqZjoXsxx10XaxsHJw
-         F9Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vkiSuZycSI5zUnh5IyX2UW8ljaGAsOW3wFB46kEoxqQ=;
-        b=kxNZKiC6TBsC0gqruCYqUO/9U1fD5/alggFBOU56hdV/k5jFNUakupfsD0eF+QmP9K
-         q+gWEteSJp6R9NXOzd0XPDbX6+VqlJvp9CHE8a36WE1+mgjIJ4mBqBEap449HZ/fiu9n
-         bl+1nfOjAqPovyNaixu1VFKfj8YrQfqJkeDBSRI2hETdBbWLScCJJ+y4YXXOBnFg9OqE
-         NTjox3B19w544+CApBaer1tMAcdV+vnzWLMOmHTzOrwFUJ6nVRccF4PSOaAnHEZF4JRp
-         T/0iyB6ksvy7KxZolI5NfCJBG939LCHJh75xQzZt1fsDUqhQWqswgbllAtfFVxEFWNYl
-         bHfw==
-X-Gm-Message-State: APjAAAWRVq7XftsI0BT8wxolWsCld/T8/zg9ZR3aEmYpkzGlcgPZ1+Pi
-        OrHPcgtj6sguHzEE2VMLa8Je1gRIHhaCw8G7xtL9NDCRLmc=
-X-Google-Smtp-Source: APXvYqyCIvj0N/lqTijUSIzV6YNq0n0Jc9khI0un7csfkS6+ZYUKEPX9m/epipR9GPPLZ1OUWrF66MVxrlyYBb1YUPY=
-X-Received: by 2002:a92:d7c6:: with SMTP id g6mr6259462ilq.282.1576752354128;
- Thu, 19 Dec 2019 02:45:54 -0800 (PST)
-MIME-Version: 1.0
-References: <20191219010716.60987-1-xiubli@redhat.com>
-In-Reply-To: <20191219010716.60987-1-xiubli@redhat.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 19 Dec 2019 11:45:48 +0100
-Message-ID: <CAOi1vP8XJ4nm1esUaQEcu3pQgmb_MUuWRqg6Eeip5-TXVwKmPg@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: rename get_session and switch to use ceph_get_mds_session
+        id S1726694AbfLSLK3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 19 Dec 2019 06:10:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51898 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726656AbfLSLK3 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 19 Dec 2019 06:10:29 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3744B222C2;
+        Thu, 19 Dec 2019 11:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576753828;
+        bh=8ksGHP2WPOaksnN+OglMR2u5IOfQp0+HRcp5bGI3gCM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=1coEdAOuKdF9ZXav7gzurJu/KgorssLjfi4dq3JFvRPtCOIIFkXWOSljK62xARIQz
+         sAvWosIyz0aJl/jMf4zsjALYBH5rSSI6T1FvrekLLELXM722fs3i//Zo6WXIGZFQDw
+         CLTc+gVS82PhECEy+WDDeLc+bkwdgxfJ/+cHpod0=
+Message-ID: <1b99ad456e4db43a1f27471adb5238211fec956e.camel@kernel.org>
+Subject: Re: [PATCH] ceph: cleanup the dir debug log and xattr_version
+From:   Jeff Layton <jlayton@kernel.org>
 To:     xiubli@redhat.com
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "Yan, Zheng" <zyan@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
+Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
+        pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Thu, 19 Dec 2019 06:10:26 -0500
+In-Reply-To: <20191219021518.60891-1-xiubli@redhat.com>
+References: <20191219021518.60891-1-xiubli@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 2:07 AM <xiubli@redhat.com> wrote:
->
+On Wed, 2019-12-18 at 21:15 -0500, xiubli@redhat.com wrote:
 > From: Xiubo Li <xiubli@redhat.com>
->
-> Just in case the session's refcount reach 0 and is releasing, and
-> if we get the session without checking it, we may encounter kernel
-> crash.
->
-> Rename get_session to ceph_get_mds_session and make it global.
->
+> 
+> In the debug logs about the di->offset or ctx->pos it is in hex
+> format, but some others are using the dec format. It is a little
+> hard to read.
+> 
+> For the xattr version, it is u64 type, using a shorter type may
+> truncate it.
+> 
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->
-> Changed in V2:
-> - there has some conflict and rebase to upstream code.
+>  fs/ceph/dir.c   | 4 ++--
+>  fs/ceph/xattr.c | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index 5c97bdbb0772..8d14a2867e7c 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -1192,7 +1192,7 @@ void __ceph_dentry_dir_lease_touch(struct ceph_dentry_info *di)
+>  	struct dentry *dn = di->dentry;
+>  	struct ceph_mds_client *mdsc;
+>  
+> -	dout("dentry_dir_lease_touch %p %p '%pd' (offset %lld)\n",
+> +	dout("dentry_dir_lease_touch %p %p '%pd' (offset %llx)\n",
+>  	     di, dn, dn, di->offset);
 
-Hi Xiubo,
+If you're printing hex values, it's generally a good idea to prefix them
+with "0x" so that it's clear that they are in hex.
 
-There were two patches in the testing branch that weren't meant to be
-there, one of them touching con_get().  I've just rebased and removed
-them.  (5.5-rc2 is broken, so it is based on 5.5-rc2 plus the fix for
-the breakage for now.)
+>  
+>  	if (!list_empty(&di->lease_list)) {
+> @@ -1577,7 +1577,7 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
+>  
+>  	mdsc = ceph_sb_to_client(dir->i_sb)->mdsc;
+>  
+> -	dout("d_revalidate %p '%pd' inode %p offset %lld\n", dentry,
+> +	dout("d_revalidate %p '%pd' inode %p offset %llx\n", dentry,
+>  	     dentry, inode, ceph_dentry(dentry)->offset);
+>  
+>  	/* always trust cached snapped dentries, snapdir dentry */
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 6e5e145d51d1..c8609dfd6b37 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -655,7 +655,7 @@ static int __build_xattrs(struct inode *inode)
+>  	u32 len;
+>  	const char *name, *val;
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
+> -	int xattr_version;
+> +	u64 xattr_version;
+>  	struct ceph_inode_xattr **xattrs = NULL;
+>  	int err = 0;
+>  	int i;
 
-It looks like neither v1 or v2 were based on testing though, so this is
-more of an FYI.  The reason I'm still sending this message is that both
-v1 and v2 appear to be whitespace corrupt and will need to be redone.
+Merged, but I went ahead and added the "0x" prefixes on these values.
 
 Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-                Ilya
