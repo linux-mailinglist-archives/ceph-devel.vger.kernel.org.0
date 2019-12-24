@@ -2,83 +2,162 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABA6D12977F
-	for <lists+ceph-devel@lfdr.de>; Mon, 23 Dec 2019 15:33:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F132C129D33
+	for <lists+ceph-devel@lfdr.de>; Tue, 24 Dec 2019 05:05:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfLWOcR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 23 Dec 2019 09:32:17 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8164 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726777AbfLWOcR (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 23 Dec 2019 09:32:17 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 2E9D8E26C98A02438037;
-        Mon, 23 Dec 2019 22:32:15 +0800 (CST)
-Received: from localhost.localdomain (10.90.53.225) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 23 Dec 2019 22:32:06 +0800
-From:   Chen Wandun <chenwandun@huawei.com>
-To:     <jlayton@kernel.org>, <sage@redhat.com>, <idryomov@gmail.com>,
-        <ceph-devel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <chenwandun@huawei.com>
-Subject: [PATCH next] ceph: Fix debugfs_simple_attr.cocci warnings
-Date:   Mon, 23 Dec 2019 22:39:18 +0800
-Message-ID: <1577111958-100981-1-git-send-email-chenwandun@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726874AbfLXEF3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 23 Dec 2019 23:05:29 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:58563 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726853AbfLXEF2 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 23 Dec 2019 23:05:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1577160327;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Vh9jlma9tomI66hlCUf3Wr+3rc1b+sCH0kaHjkXHD+A=;
+        b=aI0HHJ0CMxB2QgG7aMDcOSwKqwgAvhjUk/UJo7rXhrz3BghJBRVebZZZeOH03cpSgMD7+C
+        JcnmoRhTMKVE8O+2MvHTP9QURIepFosqfaprDkgBsqtUQTNR8oqBiSmW987uHakN7QdGYW
+        2cbJL/Blj2uISHVR7brjJx4+xm6fYZY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-326-MniuBIxZOL6Zcbv8ZGqRKQ-1; Mon, 23 Dec 2019 23:05:25 -0500
+X-MC-Unique: MniuBIxZOL6Zcbv8ZGqRKQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D1916800D48;
+        Tue, 24 Dec 2019 04:05:24 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-64.pek2.redhat.com [10.72.12.64])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A69331000322;
+        Tue, 24 Dec 2019 04:05:19 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org, idryomov@gmail.com
+Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH 0/4] ceph: add caps and dentry lease perf metrics support
+Date:   Mon, 23 Dec 2019 23:05:10 -0500
+Message-Id: <20191224040514.26144-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
-for debugfs files.
+From: Xiubo Li <xiubli@redhat.com>
 
-Semantic patch information:
-Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
-imposes some significant overhead as compared to
-DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
+*** Merry Christmas and Happy New Year! ***
 
-Signed-off-by: Chen Wandun <chenwandun@huawei.com>
----
- fs/ceph/debugfs.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+This will collect the dentry lease and sessions' cap hit/mis metrics.
 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index c281f32..60a0f1a 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -243,8 +243,8 @@ static int congestion_kb_get(void *data, u64 *val)
- 	return 0;
- }
- 
--DEFINE_SIMPLE_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
--			congestion_kb_set, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
-+			 congestion_kb_set, "%llu\n");
- 
- 
- void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
-@@ -264,11 +264,11 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
- 
- 	dout("ceph_fs_debugfs_init\n");
- 	fsc->debugfs_congestion_kb =
--		debugfs_create_file("writeback_congestion_kb",
--				    0600,
--				    fsc->client->debugfs_dir,
--				    fsc,
--				    &congestion_kb_fops);
-+		debugfs_create_file_unsafe("writeback_congestion_kb",
-+					   0600,
-+					   fsc->client->debugfs_dir,
-+					   fsc,
-+					   &congestion_kb_fops);
- 
- 	snprintf(name, sizeof(name), "../../bdi/%s",
- 		 dev_name(fsc->sb->s_bdi->dev));
--- 
-2.7.4
+=3D=3D=3D=3D=3D=3D=3D SHOW METRICS IN KCLIENT SIDE =3D=3D=3D=3D=3D=3D
+You can show this via the "metrics" debugfs, it will look like:
+
+$ cat /sys/kernel/debug/ceph/XXX.client4783/metrics
+
+item          total           miss            hit
+-------------------------------------------------
+d_lease       131             24              2891
+
+session       caps            miss            hit
+-------------------------------------------------
+0             54              3               106
+1             108             13              3254
+
+
+=3D=3D=3D=3D=3D=3D=3D SHOW METRICS IN MDS SIDE =3D=3D=3D=3D=3D=3D=3D
+And if you want to send this metrics stuff to MDS servers, you need
+to enable it by writing a "1" to sending_metrics debugfs:
+
+$ echo 1 > /sys/kernel/debug/ceph/XXX.client4783/sending_metrics
+
+And it will send the metric stuff periodically every second.
+Disabled as default.=20
+
+Then in the MDS we can show this by using:
+
+$ ceph mgr module enable stats
+$ ceph fs perf stats | python -m json.tool
+{
+    "client_metadata": {
+        "client.4783": {
+            "IP": "v1:192.168.195.165",
+            "hostname": "fedora1",
+            "mount_point": "N/A",
+            "root": "/"
+        }
+    },
+    "counters": [
+        "cap_hit"
+    ],
+    "global_counters": [
+        "read_latency",
+        "write_latency",
+        "metadata_latency"
+    ],
+    "global_metrics": {
+        "client.4783": [
+            [
+                0,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                0,
+                0
+            ]
+        ]
+    },
+    "metrics": {
+        "delayed_ranks": [],
+        "mds.0": {
+            "client.4783": [
+                [
+                    106,
+                    3
+                ]
+            ]
+        },
+        "mds.1": {
+            "client.4783": [
+                [
+                    3254,
+                    13
+                ]
+            ]
+        }
+    }
+}
+
+Currently the MDS hasn't support the dentry lease metric showing yet.
+
+Xiubo Li (4):
+  ceph: add global dentry lease metric support
+  ceph: add caps perf metric for each session
+  ceph: periodically send cap and dentry lease perf metrics to MDS
+  ceph: add enable/disable sending metrics to MDS debugfs support
+
+ fs/ceph/acl.c                |   2 +-
+ fs/ceph/caps.c               |  63 +++++++++---
+ fs/ceph/debugfs.c            |  94 +++++++++++++++++-
+ fs/ceph/dir.c                |  38 +++++--
+ fs/ceph/file.c               |   6 +-
+ fs/ceph/inode.c              |   8 +-
+ fs/ceph/mds_client.c         | 188 +++++++++++++++++++++++++++++++----
+ fs/ceph/mds_client.h         |  15 +++
+ fs/ceph/snap.c               |   2 +-
+ fs/ceph/super.h              |  14 ++-
+ fs/ceph/xattr.c              |   8 +-
+ include/linux/ceph/ceph_fs.h |  39 ++++++++
+ 12 files changed, 414 insertions(+), 63 deletions(-)
+
+--=20
+2.21.0
 
