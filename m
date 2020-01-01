@@ -2,98 +2,100 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B5CD12BFDA
-	for <lists+ceph-devel@lfdr.de>; Sun, 29 Dec 2019 02:24:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E02E412DE93
+	for <lists+ceph-devel@lfdr.de>; Wed,  1 Jan 2020 11:53:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbfL2BYe (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 28 Dec 2019 20:24:34 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:41509 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726187AbfL2BYe (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Sat, 28 Dec 2019 20:24:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577582673;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9EFHDYj8VdY8XUwBvRdGcSZCmQi6vUH8JCdWZNqW0gY=;
-        b=aX4omuBcXTpRIsGiELVrLHskExrG3uNt0zBspWsfHC1uA3x24VdWJuVxHq763RHuy2JJzK
-        4uyeaJ/37cfKtHcEY5andQ+iUqD9/xcEG71CyVCP5U8FRS1X5xt1PABmZ7AWmXe2RUGnSx
-        NKVuJI4mf9kSobj27L6IgQP0aE7KOHc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-111-tNCz571lMGGY3RTARv7EbQ-1; Sat, 28 Dec 2019 20:24:31 -0500
-X-MC-Unique: tNCz571lMGGY3RTARv7EbQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AF813107ACC4;
-        Sun, 29 Dec 2019 01:24:30 +0000 (UTC)
-Received: from [10.72.12.30] (ovpn-12-30.pek2.redhat.com [10.72.12.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3E122108131B;
-        Sun, 29 Dec 2019 01:24:25 +0000 (UTC)
-Subject: Re: [PATCH 3/4] ceph: periodically send cap and dentry lease perf
- metrics to MDS
-To:     jlayton@kernel.org, idryomov@gmail.com
-Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
-        ceph-devel@vger.kernel.org
-References: <20191224040514.26144-1-xiubli@redhat.com>
- <20191224040514.26144-4-xiubli@redhat.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <b5beb870-098b-6495-f519-e9331e078653@redhat.com>
-Date:   Sun, 29 Dec 2019 09:24:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1725945AbgAAKxA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 1 Jan 2020 05:53:00 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:19508 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725871AbgAAKxA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Jan 2020 05:53:00 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 001ApTXA052357
+        for <ceph-devel@vger.kernel.org>; Wed, 1 Jan 2020 05:52:59 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2x88jv2qp3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <ceph-devel@vger.kernel.org>; Wed, 01 Jan 2020 05:52:59 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <ceph-devel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Wed, 1 Jan 2020 10:52:57 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 1 Jan 2020 10:52:53 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 001AqqXU48103666
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 1 Jan 2020 10:52:52 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 680755204F;
+        Wed,  1 Jan 2020 10:52:52 +0000 (GMT)
+Received: from dhcp-9-199-159-72.in.ibm.com (unknown [9.199.159.72])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 3A8C952054;
+        Wed,  1 Jan 2020 10:52:49 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Cc:     willy@infradead.org, jlayton@kernel.org,
+        ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
+        linux-unionfs@vger.kernel.org, dsterba@suse.cz,
+        Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [RESEND PATCH 0/1] Use inode_lock/unlock class of provided APIs in filesystems
+Date:   Wed,  1 Jan 2020 16:22:47 +0530
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20191224040514.26144-4-xiubli@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20010110-0012-0000-0000-00000379A8D2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20010110-0013-0000-0000-000021B5B68A
+Message-Id: <20200101105248.25304-1-riteshh@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2020-01-01_03:2019-12-30,2020-01-01 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=387 mlxscore=0
+ impostorscore=0 clxscore=1015 bulkscore=0 adultscore=0 spamscore=0
+ malwarescore=0 priorityscore=1501 suspectscore=0 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-2001010101
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2019/12/24 12:05, xiubli@redhat.com wrote:
-> +
-> +	head = msg->front.iov_base;
-> +
-> +	/* encode the cap metric */
-> +	cap = (struct ceph_metric_cap *)(head + 1);
-> +	cap->type = cpu_to_le32(CLIENT_METRIC_TYPE_CAP_INFO);
-> +	cap->ver = 1;
-> +	cap->campat = 1;
-> +	cap->data_len = cpu_to_le32(sizeof(*cap) - 6);
+Al, any comments?
+Resending this after adding Reviewed-by/Acked-by tags.
 
-s/6/10/, the data_len shouldn't include the data_len itself.
 
-Will fix it in V2.
+From previous version:-
+Matthew Wilcox in [1] suggested that it will be a good idea
+to define some missing API instead of directly using i_rwsem in
+filesystems drivers for lock/unlock/downgrade purposes.
 
-> +	cap->hit = cpu_to_le64(percpu_counter_sum(&s->i_caps_hit));
-> +	cap->mis = cpu_to_le64(percpu_counter_sum(&s->i_caps_mis));
-> +	cap->total = cpu_to_le64(s->s_nr_caps);
-> +	items++;
-> +
-> +	dout("cap metric type %d, hit %lld, mis %lld, total %lld",
-> +	     cap->type, cap->hit, cap->mis, cap->total);
-> +
-> +	/* only send the global once */
-> +	if (skip_global)
-> +		goto skip_global;
-> +
-> +	/* encode the dentry lease metric */
-> +	lease = (struct ceph_metric_dentry_lease *)(cap + 1);
-> +	lease->type = cpu_to_le32(CLIENT_METRIC_TYPE_DENTRY_LEASE);
-> +	lease->ver = 1;
-> +	lease->campat = 1;
-> +	lease->data_len = cpu_to_le32(sizeof(*cap) - 6);
-Same here.
-> +	lease->hit = cpu_to_le64(percpu_counter_sum(&mdsc->metric.d_lease_hit));
-> +	lease->mis = cpu_to_le64(percpu_counter_sum(&mdsc->metric.d_lease_mis));
-> +	lease->total = cpu_to_le64(atomic64_read(&mdsc->metric.total_dentries));
-> +	items++;
-> +
+This patch does that work. No functionality change in this patch.
+
+After this there are only lockdep class of APIs at certain places
+in filesystems which are directly using i_rwsem and second is XFS,
+but it seems to be anyway defining it's own xfs_ilock/iunlock set
+of APIs and 'iolock' naming convention for this lock.
+
+[1]: https://www.spinics.net/lists/linux-ext4/msg68689.html
+
+Ritesh Harjani (1):
+  fs: Use inode_lock/unlock class of provided APIs in filesystems
+
+ fs/btrfs/delayed-inode.c |  2 +-
+ fs/btrfs/ioctl.c         |  4 ++--
+ fs/ceph/io.c             | 24 ++++++++++++------------
+ fs/nfs/io.c              | 24 ++++++++++++------------
+ fs/orangefs/file.c       |  4 ++--
+ fs/overlayfs/readdir.c   |  2 +-
+ fs/readdir.c             |  4 ++--
+ include/linux/fs.h       | 21 +++++++++++++++++++++
+ 8 files changed, 53 insertions(+), 32 deletions(-)
+
+-- 
+2.21.0
 
