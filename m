@@ -2,58 +2,46 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3E8112E1EC
-	for <lists+ceph-devel@lfdr.de>; Thu,  2 Jan 2020 04:36:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A601C12E5EB
+	for <lists+ceph-devel@lfdr.de>; Thu,  2 Jan 2020 12:57:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbgABDgZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 1 Jan 2020 22:36:25 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:20278 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727525AbgABDgZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Jan 2020 22:36:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577936183;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=cSz/9F3de58KCuRGVOiwWuv41Pw/pC6uuMVf6YXQEHM=;
-        b=BgnHbttMGg2HWbw8Fv2x7K4IaZBt5WlHpLOEe03zqWwp8PJV0CP+FO4XIlR31dKodlQx0F
-        jSU2qxt1fg/xVKGdRp6l9PnEN8P+snjqY0Yt61lfzAFEgFJIqOWdUOn/VTMszJ8R2W00r+
-        puBLaLCEXzghmKWKV9/8ZsaUQqieaLE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-69-Lox2N4zUNzeRtmpmsK0XxQ-1; Wed, 01 Jan 2020 22:36:22 -0500
-X-MC-Unique: Lox2N4zUNzeRtmpmsK0XxQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728282AbgABL5Y (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 2 Jan 2020 06:57:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41806 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728205AbgABL5Y (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 2 Jan 2020 06:57:24 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0483518031F8;
-        Thu,  2 Jan 2020 03:36:21 +0000 (UTC)
-Received: from [10.72.12.200] (ovpn-12-200.pek2.redhat.com [10.72.12.200])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3E0E75DA60;
-        Thu,  2 Jan 2020 03:36:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64D7A20863;
+        Thu,  2 Jan 2020 11:57:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577966242;
+        bh=zZpGvJPMCrJlEjbFOw1D+Rpfm5Ys8eAX/E/IbNgEHmU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=A4Ohmvqsd4oJyr5XcB2LNwUv3c7AmXcqvUGBSguqOPZX44WtJIWbLDK9+HdKssh7J
+         MZuItP9P7DmJCHb3ZlWx1UD0gEfKbrL5B/g6+IaDIF9XFB2NaCy50hR9di1KquymMe
+         J2j8EEDc7OLUD4Q0D6QZOKcRwy/4YwKRIAKf/iRc=
+Message-ID: <1223804be310293a8697eab9bb1ebd7b8c613bb6.camel@kernel.org>
 Subject: Re: [PATCH] ceph: dout switches to hex format for the 'hash'
-To:     xiubli@redhat.com, jlayton@kernel.org, idryomov@gmail.com
-Cc:     sage@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-References: <20200102030937.59546-1-xiubli@redhat.com>
-From:   "Yan, Zheng" <zyan@redhat.com>
-Message-ID: <3ffc8457-cf8a-a809-c9d5-28822cb821f0@redhat.com>
-Date:   Thu, 2 Jan 2020 11:36:13 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
-MIME-Version: 1.0
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com, idryomov@gmail.com
+Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org
+Date:   Thu, 02 Jan 2020 06:57:21 -0500
 In-Reply-To: <20200102030937.59546-1-xiubli@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+References: <20200102030937.59546-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 1/2/20 11:09 AM, xiubli@redhat.com wrote:
+On Wed, 2020-01-01 at 22:09 -0500, xiubli@redhat.com wrote:
 > From: Xiubo Li <xiubli@redhat.com>
 > 
 > It's hard to read especially when it is:
@@ -65,55 +53,55 @@ On 1/2/20 11:09 AM, xiubli@redhat.com wrote:
 > 
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->   fs/ceph/mds_client.c | 28 +++++++++++++---------------
->   1 file changed, 13 insertions(+), 15 deletions(-)
+>  fs/ceph/mds_client.c | 28 +++++++++++++---------------
+>  1 file changed, 13 insertions(+), 15 deletions(-)
 > 
 > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
 > index e209eb9f2efb..b2f3d62f6a78 100644
 > --- a/fs/ceph/mds_client.c
 > +++ b/fs/ceph/mds_client.c
 > @@ -911,7 +911,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
->   	if (req->r_resend_mds >= 0 &&
->   	    (__have_session(mdsc, req->r_resend_mds) ||
->   	     ceph_mdsmap_get_state(mdsc->mdsmap, req->r_resend_mds) > 0)) {
+>  	if (req->r_resend_mds >= 0 &&
+>  	    (__have_session(mdsc, req->r_resend_mds) ||
+>  	     ceph_mdsmap_get_state(mdsc->mdsmap, req->r_resend_mds) > 0)) {
 > -		dout("choose_mds using resend_mds mds%d\n",
 > +		dout("%s using resend_mds mds%d\n", __func__,
->   		     req->r_resend_mds);
->   		return req->r_resend_mds;
->   	}
+>  		     req->r_resend_mds);
+>  		return req->r_resend_mds;
+>  	}
 > @@ -929,7 +929,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
->   			rcu_read_lock();
->   			inode = get_nonsnap_parent(req->r_dentry);
->   			rcu_read_unlock();
+>  			rcu_read_lock();
+>  			inode = get_nonsnap_parent(req->r_dentry);
+>  			rcu_read_unlock();
 > -			dout("__choose_mds using snapdir's parent %p\n", inode);
 > +			dout("%s using snapdir's parent %p\n", __func__, inode);
->   		}
->   	} else if (req->r_dentry) {
->   		/* ignore race with rename; old or new d_parent is okay */
+>  		}
+>  	} else if (req->r_dentry) {
+>  		/* ignore race with rename; old or new d_parent is okay */
 > @@ -949,7 +949,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
->   			/* direct snapped/virtual snapdir requests
->   			 * based on parent dir inode */
->   			inode = get_nonsnap_parent(parent);
+>  			/* direct snapped/virtual snapdir requests
+>  			 * based on parent dir inode */
+>  			inode = get_nonsnap_parent(parent);
 > -			dout("__choose_mds using nonsnap parent %p\n", inode);
 > +			dout("%s using nonsnap parent %p\n", __func__, inode);
->   		} else {
->   			/* dentry target */
->   			inode = d_inode(req->r_dentry);
+>  		} else {
+>  			/* dentry target */
+>  			inode = d_inode(req->r_dentry);
 > @@ -965,8 +965,8 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
->   		rcu_read_unlock();
->   	}
->   
+>  		rcu_read_unlock();
+>  	}
+>  
 > -	dout("__choose_mds %p is_hash=%d (%d) mode %d\n", inode, (int)is_hash,
 > -	     (int)hash, mode);
 > +	dout("%s %p is_hash=%d (0x%x) mode %d\n", __func__, inode, (int)is_hash,
 > +	     hash, mode);
->   	if (!inode)
->   		goto random;
->   	ci = ceph_inode(inode);
+>  	if (!inode)
+>  		goto random;
+>  	ci = ceph_inode(inode);
 > @@ -984,11 +984,9 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
->   				get_random_bytes(&r, 1);
->   				r %= frag.ndist;
->   				mds = frag.dist[r];
+>  				get_random_bytes(&r, 1);
+>  				r %= frag.ndist;
+>  				mds = frag.dist[r];
 > -				dout("choose_mds %p %llx.%llx "
 > -				     "frag %u mds%d (%d/%d)\n",
 > -				     inode, ceph_vinop(inode),
@@ -122,41 +110,42 @@ On 1/2/20 11:09 AM, xiubli@redhat.com wrote:
 > +				dout("%s %p %llx.%llx frag %u mds%d (%d/%d)\n",
 > +				     __func__, inode, ceph_vinop(inode),
 > +				     frag.frag, mds, (int)r, frag.ndist);
->   				if (ceph_mdsmap_get_state(mdsc->mdsmap, mds) >=
->   				    CEPH_MDS_STATE_ACTIVE &&
->   				    !ceph_mdsmap_is_laggy(mdsc->mdsmap, mds))
+>  				if (ceph_mdsmap_get_state(mdsc->mdsmap, mds) >=
+>  				    CEPH_MDS_STATE_ACTIVE &&
+>  				    !ceph_mdsmap_is_laggy(mdsc->mdsmap, mds))
 > @@ -1001,9 +999,9 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
->   			if (frag.mds >= 0) {
->   				/* choose auth mds */
->   				mds = frag.mds;
+>  			if (frag.mds >= 0) {
+>  				/* choose auth mds */
+>  				mds = frag.mds;
 > -				dout("choose_mds %p %llx.%llx "
 > -				     "frag %u mds%d (auth)\n",
 > -				     inode, ceph_vinop(inode), frag.frag, mds);
 > +				dout("%s %p %llx.%llx frag %u mds%d (auth)\n",
 > +				     __func__, inode, ceph_vinop(inode),
 > +				     frag.frag, mds);
->   				if (ceph_mdsmap_get_state(mdsc->mdsmap, mds) >=
->   				    CEPH_MDS_STATE_ACTIVE) {
->   					if (mode == USE_ANY_MDS &&
+>  				if (ceph_mdsmap_get_state(mdsc->mdsmap, mds) >=
+>  				    CEPH_MDS_STATE_ACTIVE) {
+>  					if (mode == USE_ANY_MDS &&
 > @@ -1028,7 +1026,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
->   		goto random;
->   	}
->   	mds = cap->session->s_mds;
+>  		goto random;
+>  	}
+>  	mds = cap->session->s_mds;
 > -	dout("choose_mds %p %llx.%llx mds%d (%scap %p)\n",
 > +	dout("%s %p %llx.%llx mds%d (%scap %p)\n", __func__,
->   	     inode, ceph_vinop(inode), mds,
->   	     cap == ci->i_auth_cap ? "auth " : "", cap);
->   	spin_unlock(&ci->i_ceph_lock);
+>  	     inode, ceph_vinop(inode), mds,
+>  	     cap == ci->i_auth_cap ? "auth " : "", cap);
+>  	spin_unlock(&ci->i_ceph_lock);
 > @@ -1043,7 +1041,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
->   		*random = true;
->   
->   	mds = ceph_mdsmap_get_random_mds(mdsc->mdsmap);
+>  		*random = true;
+>  
+>  	mds = ceph_mdsmap_get_random_mds(mdsc->mdsmap);
 > -	dout("choose_mds chose random mds%d\n", mds);
 > +	dout("%s chose random mds%d\n", __func__, mds);
->   	return mds;
->   }
->   
-> 
+>  	return mds;
+>  }
+>  
 
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Thanks! Merged with a slightly revised changelog.
+-- 
+Jeff Layton <jlayton@kernel.org>
 
