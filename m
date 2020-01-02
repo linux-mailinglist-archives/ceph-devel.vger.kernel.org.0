@@ -2,361 +2,159 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DC6212DE98
-	for <lists+ceph-devel@lfdr.de>; Wed,  1 Jan 2020 11:53:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1433712E1D5
+	for <lists+ceph-devel@lfdr.de>; Thu,  2 Jan 2020 04:09:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbgAAKxF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 1 Jan 2020 05:53:05 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:6834 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726170AbgAAKxE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Jan 2020 05:53:04 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 001ApSeD052273
-        for <ceph-devel@vger.kernel.org>; Wed, 1 Jan 2020 05:53:03 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2x88jv2qq2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <ceph-devel@vger.kernel.org>; Wed, 01 Jan 2020 05:53:03 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <ceph-devel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Wed, 1 Jan 2020 10:53:01 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 1 Jan 2020 10:52:56 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 001Aqtar42271198
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 1 Jan 2020 10:52:55 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 68CE652052;
-        Wed,  1 Jan 2020 10:52:55 +0000 (GMT)
-Received: from dhcp-9-199-159-72.in.ibm.com (unknown [9.199.159.72])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id C0A3E5204F;
-        Wed,  1 Jan 2020 10:52:52 +0000 (GMT)
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-To:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Cc:     willy@infradead.org, jlayton@kernel.org,
-        ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
-        linux-unionfs@vger.kernel.org, dsterba@suse.cz,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [RESEND PATCH 1/1] fs: Use inode_lock/unlock class of provided APIs in filesystems
-Date:   Wed,  1 Jan 2020 16:22:48 +0530
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200101105248.25304-1-riteshh@linux.ibm.com>
-References: <20200101105248.25304-1-riteshh@linux.ibm.com>
+        id S1727590AbgABDJy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 1 Jan 2020 22:09:54 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:48538 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727509AbgABDJy (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Jan 2020 22:09:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1577934591;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=pSNAUHUZOHDoHbfTTtdfOLn4BRJdtlHnNA8hXYAgQ8k=;
+        b=LE9rD5eG74wTmwcAx9J2oO0phfn5CdQbx5jDD6QoExKnBsMG3Lpb5Z/szbb9n3T101uZX5
+        mZGBgA+HkT1Guuh0690CiUidvix6L2wn6raGmmW2eTIQ8Ph6gwBcW+2i8DDfOqD4i47SH9
+        iBvigt8jjhKWzFLLnIh2jE+efF/7My8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-418-F_DCVUKGPKa7RrBsgfd4iA-1; Wed, 01 Jan 2020 22:09:49 -0500
+X-MC-Unique: F_DCVUKGPKa7RrBsgfd4iA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 01241477;
+        Thu,  2 Jan 2020 03:09:48 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-30.pek2.redhat.com [10.72.12.30])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 539EB67673;
+        Thu,  2 Jan 2020 03:09:42 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org, idryomov@gmail.com
+Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: dout switches to hex format for the 'hash'
+Date:   Wed,  1 Jan 2020 22:09:37 -0500
+Message-Id: <20200102030937.59546-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20010110-0016-0000-0000-000002D9A3D0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20010110-0017-0000-0000-0000333C09E4
-Message-Id: <20200101105248.25304-2-riteshh@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2020-01-01_03:2019-12-30,2020-01-01 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=250 mlxscore=0
- impostorscore=0 clxscore=1015 bulkscore=0 adultscore=0 spamscore=0
- malwarescore=0 priorityscore=1501 suspectscore=3 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001010101
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-This defines 4 more APIs which some of the filesystem needs
-and reduces the direct use of i_rwsem in filesystem drivers.
-Instead those are replaced with inode_lock/unlock_** APIs.
+From: Xiubo Li <xiubli@redhat.com>
 
-Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Acked-by: David Sterba <dsterba@suse.com>
+It's hard to read especially when it is:
 
+ceph:  __choose_mds 00000000b7bc9c15 is_hash=3D1 (-271041095) mode 0
+
+At the same time switch to __func__ to get rid of the check patch
+warning.
+
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/btrfs/delayed-inode.c |  2 +-
- fs/btrfs/ioctl.c         |  4 ++--
- fs/ceph/io.c             | 24 ++++++++++++------------
- fs/nfs/io.c              | 24 ++++++++++++------------
- fs/orangefs/file.c       |  4 ++--
- fs/overlayfs/readdir.c   |  2 +-
- fs/readdir.c             |  4 ++--
- include/linux/fs.h       | 21 +++++++++++++++++++++
- 8 files changed, 53 insertions(+), 32 deletions(-)
+ fs/ceph/mds_client.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
-diff --git a/fs/btrfs/delayed-inode.c b/fs/btrfs/delayed-inode.c
-index d3e15e1d4a91..c3e92f2fd915 100644
---- a/fs/btrfs/delayed-inode.c
-+++ b/fs/btrfs/delayed-inode.c
-@@ -1644,7 +1644,7 @@ void btrfs_readdir_put_delayed_items(struct inode *inode,
- 	 * The VFS is going to do up_read(), so we need to downgrade back to a
- 	 * read lock.
- 	 */
--	downgrade_write(&inode->i_rwsem);
-+	inode_lock_downgrade(inode);
- }
- 
- int btrfs_should_delete_dir_index(struct list_head *del_list,
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 18e328ce4b54..caa80372992d 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -961,7 +961,7 @@ static noinline int btrfs_mksubvol(const struct path *parent,
- 	struct dentry *dentry;
- 	int error;
- 
--	error = down_write_killable_nested(&dir->i_rwsem, I_MUTEX_PARENT);
-+	error = inode_lock_killable_nested(dir, I_MUTEX_PARENT);
- 	if (error == -EINTR)
- 		return error;
- 
-@@ -2869,7 +2869,7 @@ static noinline int btrfs_ioctl_snap_destroy(struct file *file,
- 		goto out;
- 
- 
--	err = down_write_killable_nested(&dir->i_rwsem, I_MUTEX_PARENT);
-+	err = inode_lock_killable_nested(dir, I_MUTEX_PARENT);
- 	if (err == -EINTR)
- 		goto out_drop_write;
- 	dentry = lookup_one_len(vol_args->name, parent, namelen);
-diff --git a/fs/ceph/io.c b/fs/ceph/io.c
-index 97602ea92ff4..e94186259c2e 100644
---- a/fs/ceph/io.c
-+++ b/fs/ceph/io.c
-@@ -53,14 +53,14 @@ ceph_start_io_read(struct inode *inode)
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 
- 	/* Be an optimist! */
--	down_read(&inode->i_rwsem);
-+	inode_lock_shared(inode);
- 	if (!(READ_ONCE(ci->i_ceph_flags) & CEPH_I_ODIRECT))
- 		return;
--	up_read(&inode->i_rwsem);
-+	inode_unlock_shared(inode);
- 	/* Slow path.... */
--	down_write(&inode->i_rwsem);
-+	inode_lock(inode);
- 	ceph_block_o_direct(ci, inode);
--	downgrade_write(&inode->i_rwsem);
-+	inode_lock_downgrade(inode);
- }
- 
- /**
-@@ -73,7 +73,7 @@ ceph_start_io_read(struct inode *inode)
- void
- ceph_end_io_read(struct inode *inode)
- {
--	up_read(&inode->i_rwsem);
-+	inode_unlock_shared(inode);
- }
- 
- /**
-@@ -86,7 +86,7 @@ ceph_end_io_read(struct inode *inode)
- void
- ceph_start_io_write(struct inode *inode)
- {
--	down_write(&inode->i_rwsem);
-+	inode_lock(inode);
- 	ceph_block_o_direct(ceph_inode(inode), inode);
- }
- 
-@@ -100,7 +100,7 @@ ceph_start_io_write(struct inode *inode)
- void
- ceph_end_io_write(struct inode *inode)
- {
--	up_write(&inode->i_rwsem);
-+	inode_unlock(inode);
- }
- 
- /* Call with exclusively locked inode->i_rwsem */
-@@ -139,14 +139,14 @@ ceph_start_io_direct(struct inode *inode)
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 
- 	/* Be an optimist! */
--	down_read(&inode->i_rwsem);
-+	inode_lock_shared(inode);
- 	if (READ_ONCE(ci->i_ceph_flags) & CEPH_I_ODIRECT)
- 		return;
--	up_read(&inode->i_rwsem);
-+	inode_unlock_shared(inode);
- 	/* Slow path.... */
--	down_write(&inode->i_rwsem);
-+	inode_lock(inode);
- 	ceph_block_buffered(ci, inode);
--	downgrade_write(&inode->i_rwsem);
-+	inode_lock_downgrade(inode);
- }
- 
- /**
-@@ -159,5 +159,5 @@ ceph_start_io_direct(struct inode *inode)
- void
- ceph_end_io_direct(struct inode *inode)
- {
--	up_read(&inode->i_rwsem);
-+	inode_unlock_shared(inode);
- }
-diff --git a/fs/nfs/io.c b/fs/nfs/io.c
-index 5088fda9b453..bf5ed7bea59d 100644
---- a/fs/nfs/io.c
-+++ b/fs/nfs/io.c
-@@ -44,14 +44,14 @@ nfs_start_io_read(struct inode *inode)
- {
- 	struct nfs_inode *nfsi = NFS_I(inode);
- 	/* Be an optimist! */
--	down_read(&inode->i_rwsem);
-+	inode_lock_shared(inode);
- 	if (test_bit(NFS_INO_ODIRECT, &nfsi->flags) == 0)
- 		return;
--	up_read(&inode->i_rwsem);
-+	inode_unlock_shared(inode);
- 	/* Slow path.... */
--	down_write(&inode->i_rwsem);
-+	inode_lock(inode);
- 	nfs_block_o_direct(nfsi, inode);
--	downgrade_write(&inode->i_rwsem);
-+	inode_lock_downgrade(inode);
- }
- 
- /**
-@@ -64,7 +64,7 @@ nfs_start_io_read(struct inode *inode)
- void
- nfs_end_io_read(struct inode *inode)
- {
--	up_read(&inode->i_rwsem);
-+	inode_unlock_shared(inode);
- }
- 
- /**
-@@ -77,7 +77,7 @@ nfs_end_io_read(struct inode *inode)
- void
- nfs_start_io_write(struct inode *inode)
- {
--	down_write(&inode->i_rwsem);
-+	inode_lock(inode);
- 	nfs_block_o_direct(NFS_I(inode), inode);
- }
- 
-@@ -91,7 +91,7 @@ nfs_start_io_write(struct inode *inode)
- void
- nfs_end_io_write(struct inode *inode)
- {
--	up_write(&inode->i_rwsem);
-+	inode_unlock(inode);
- }
- 
- /* Call with exclusively locked inode->i_rwsem */
-@@ -124,14 +124,14 @@ nfs_start_io_direct(struct inode *inode)
- {
- 	struct nfs_inode *nfsi = NFS_I(inode);
- 	/* Be an optimist! */
--	down_read(&inode->i_rwsem);
-+	inode_lock_shared(inode);
- 	if (test_bit(NFS_INO_ODIRECT, &nfsi->flags) != 0)
- 		return;
--	up_read(&inode->i_rwsem);
-+	inode_unlock_shared(inode);
- 	/* Slow path.... */
--	down_write(&inode->i_rwsem);
-+	inode_lock(inode);
- 	nfs_block_buffered(nfsi, inode);
--	downgrade_write(&inode->i_rwsem);
-+	inode_lock_downgrade(inode);
- }
- 
- /**
-@@ -144,5 +144,5 @@ nfs_start_io_direct(struct inode *inode)
- void
- nfs_end_io_direct(struct inode *inode)
- {
--	up_read(&inode->i_rwsem);
-+	inode_unlock_shared(inode);
- }
-diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
-index c740159d9ad1..369ace12249d 100644
---- a/fs/orangefs/file.c
-+++ b/fs/orangefs/file.c
-@@ -363,14 +363,14 @@ static ssize_t orangefs_file_read_iter(struct kiocb *iocb,
- 		ro->blksiz = iter->count;
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index e209eb9f2efb..b2f3d62f6a78 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -911,7 +911,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
+ 	if (req->r_resend_mds >=3D 0 &&
+ 	    (__have_session(mdsc, req->r_resend_mds) ||
+ 	     ceph_mdsmap_get_state(mdsc->mdsmap, req->r_resend_mds) > 0)) {
+-		dout("choose_mds using resend_mds mds%d\n",
++		dout("%s using resend_mds mds%d\n", __func__,
+ 		     req->r_resend_mds);
+ 		return req->r_resend_mds;
  	}
- 
--	down_read(&file_inode(iocb->ki_filp)->i_rwsem);
-+	inode_lock_shared(file_inode(iocb->ki_filp));
- 	ret = orangefs_revalidate_mapping(file_inode(iocb->ki_filp));
- 	if (ret)
- 		goto out;
- 
- 	ret = generic_file_read_iter(iocb, iter);
- out:
--	up_read(&file_inode(iocb->ki_filp)->i_rwsem);
-+	inode_unlock_shared(file_inode(iocb->ki_filp));
- 	return ret;
+@@ -929,7 +929,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
+ 			rcu_read_lock();
+ 			inode =3D get_nonsnap_parent(req->r_dentry);
+ 			rcu_read_unlock();
+-			dout("__choose_mds using snapdir's parent %p\n", inode);
++			dout("%s using snapdir's parent %p\n", __func__, inode);
+ 		}
+ 	} else if (req->r_dentry) {
+ 		/* ignore race with rename; old or new d_parent is okay */
+@@ -949,7 +949,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
+ 			/* direct snapped/virtual snapdir requests
+ 			 * based on parent dir inode */
+ 			inode =3D get_nonsnap_parent(parent);
+-			dout("__choose_mds using nonsnap parent %p\n", inode);
++			dout("%s using nonsnap parent %p\n", __func__, inode);
+ 		} else {
+ 			/* dentry target */
+ 			inode =3D d_inode(req->r_dentry);
+@@ -965,8 +965,8 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
+ 		rcu_read_unlock();
+ 	}
+=20
+-	dout("__choose_mds %p is_hash=3D%d (%d) mode %d\n", inode, (int)is_hash=
+,
+-	     (int)hash, mode);
++	dout("%s %p is_hash=3D%d (0x%x) mode %d\n", __func__, inode, (int)is_ha=
+sh,
++	     hash, mode);
+ 	if (!inode)
+ 		goto random;
+ 	ci =3D ceph_inode(inode);
+@@ -984,11 +984,9 @@ static int __choose_mds(struct ceph_mds_client *mdsc=
+,
+ 				get_random_bytes(&r, 1);
+ 				r %=3D frag.ndist;
+ 				mds =3D frag.dist[r];
+-				dout("choose_mds %p %llx.%llx "
+-				     "frag %u mds%d (%d/%d)\n",
+-				     inode, ceph_vinop(inode),
+-				     frag.frag, mds,
+-				     (int)r, frag.ndist);
++				dout("%s %p %llx.%llx frag %u mds%d (%d/%d)\n",
++				     __func__, inode, ceph_vinop(inode),
++				     frag.frag, mds, (int)r, frag.ndist);
+ 				if (ceph_mdsmap_get_state(mdsc->mdsmap, mds) >=3D
+ 				    CEPH_MDS_STATE_ACTIVE &&
+ 				    !ceph_mdsmap_is_laggy(mdsc->mdsmap, mds))
+@@ -1001,9 +999,9 @@ static int __choose_mds(struct ceph_mds_client *mdsc=
+,
+ 			if (frag.mds >=3D 0) {
+ 				/* choose auth mds */
+ 				mds =3D frag.mds;
+-				dout("choose_mds %p %llx.%llx "
+-				     "frag %u mds%d (auth)\n",
+-				     inode, ceph_vinop(inode), frag.frag, mds);
++				dout("%s %p %llx.%llx frag %u mds%d (auth)\n",
++				     __func__, inode, ceph_vinop(inode),
++				     frag.frag, mds);
+ 				if (ceph_mdsmap_get_state(mdsc->mdsmap, mds) >=3D
+ 				    CEPH_MDS_STATE_ACTIVE) {
+ 					if (mode =3D=3D USE_ANY_MDS &&
+@@ -1028,7 +1026,7 @@ static int __choose_mds(struct ceph_mds_client *mds=
+c,
+ 		goto random;
+ 	}
+ 	mds =3D cap->session->s_mds;
+-	dout("choose_mds %p %llx.%llx mds%d (%scap %p)\n",
++	dout("%s %p %llx.%llx mds%d (%scap %p)\n", __func__,
+ 	     inode, ceph_vinop(inode), mds,
+ 	     cap =3D=3D ci->i_auth_cap ? "auth " : "", cap);
+ 	spin_unlock(&ci->i_ceph_lock);
+@@ -1043,7 +1041,7 @@ static int __choose_mds(struct ceph_mds_client *mds=
+c,
+ 		*random =3D true;
+=20
+ 	mds =3D ceph_mdsmap_get_random_mds(mdsc->mdsmap);
+-	dout("choose_mds chose random mds%d\n", mds);
++	dout("%s chose random mds%d\n", __func__, mds);
+ 	return mds;
  }
- 
-diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-index 47a91c9733a5..c203e73160b0 100644
---- a/fs/overlayfs/readdir.c
-+++ b/fs/overlayfs/readdir.c
-@@ -273,7 +273,7 @@ static int ovl_check_whiteouts(struct dentry *dir, struct ovl_readdir_data *rdd)
- 
- 	old_cred = ovl_override_creds(rdd->dentry->d_sb);
- 
--	err = down_write_killable(&dir->d_inode->i_rwsem);
-+	err = inode_lock_killable(dir->d_inode);
- 	if (!err) {
- 		while (rdd->first_maybe_whiteout) {
- 			p = rdd->first_maybe_whiteout;
-diff --git a/fs/readdir.c b/fs/readdir.c
-index d26d5ea4de7b..10a34efa0af0 100644
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -52,9 +52,9 @@ int iterate_dir(struct file *file, struct dir_context *ctx)
- 		goto out;
- 
- 	if (shared)
--		res = down_read_killable(&inode->i_rwsem);
-+		res = inode_lock_shared_killable(inode);
- 	else
--		res = down_write_killable(&inode->i_rwsem);
-+		res = inode_lock_killable(inode);
- 	if (res)
- 		goto out;
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 98e0349adb52..2b407464fac1 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -831,6 +831,27 @@ static inline void inode_lock_shared_nested(struct inode *inode, unsigned subcla
- 	down_read_nested(&inode->i_rwsem, subclass);
- }
- 
-+static inline void inode_lock_downgrade(struct inode *inode)
-+{
-+	downgrade_write(&inode->i_rwsem);
-+}
-+
-+static inline int inode_lock_killable(struct inode *inode)
-+{
-+	return down_write_killable(&inode->i_rwsem);
-+}
-+
-+static inline int inode_lock_shared_killable(struct inode *inode)
-+{
-+	return down_read_killable(&inode->i_rwsem);
-+}
-+
-+static inline int inode_lock_killable_nested(struct inode *inode,
-+					     unsigned subclass)
-+{
-+	return down_write_killable_nested(&inode->i_rwsem, subclass);
-+}
-+
- void lock_two_nondirectories(struct inode *, struct inode*);
- void unlock_two_nondirectories(struct inode *, struct inode*);
- 
--- 
+=20
+--=20
 2.21.0
 
