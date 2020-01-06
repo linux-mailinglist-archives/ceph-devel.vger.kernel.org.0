@@ -2,111 +2,130 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15B6013143D
-	for <lists+ceph-devel@lfdr.de>; Mon,  6 Jan 2020 15:59:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C61B51314BF
+	for <lists+ceph-devel@lfdr.de>; Mon,  6 Jan 2020 16:23:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbgAFO7i (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 6 Jan 2020 09:59:38 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:44568 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726303AbgAFO7h (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 6 Jan 2020 09:59:37 -0500
-Received: by mail-il1-f194.google.com with SMTP id z12so6322256iln.11;
-        Mon, 06 Jan 2020 06:59:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S/jebwPOZOQht3usJfKEu3FgzxbDletvVl/Mn3ZSls8=;
-        b=Q4/OzEe+kjmfTUoh5hd/7fq1RzIJaqnmzUnDWeWlC2IVq6fc5j6Ij9J5tJ4Bfwnqak
-         Kz/c7ASuRo9Pb9uzII6lCVjDvDD1V8EZ59tvAbQWLagoZgl+4jAu6T/lC0F5Bi/vqJtg
-         Hi0Sgqr9h4GDtyJN9InzycN8AK+XX4LhpMEwlZqMSYcFep0wZutiq2bnuqVFYo5AJMwm
-         +FfpkOhgF6f8LTuYjmMseTsSDHuz8d6dL8yytPJfNKNkUifK2AEMz+JMS944S70yLEh+
-         w6xp8OkF0BJiaWs0AdbIfhUzixk0rYsI7U/fEq0flD3YbM5Wf8Q3xbADIxecwfFnRn7y
-         +tXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S/jebwPOZOQht3usJfKEu3FgzxbDletvVl/Mn3ZSls8=;
-        b=c5AEoOfXr4FWwvQSfTl7+UFdeyT+mUg1oXZQSerUUXf28BTifufqJe/3LfvI6J7he4
-         QRCBXq+JlJ9Yt2IoxDf1Igqs0X4TPQgKGoSRVjkkt9tBLLLgpb8XeygOb3junnqEzT1X
-         aed9mMfr1veBwnaaA5XqtR7yGwfzhLZP0efCPJ16xElZlIOqgY9tAmCnzx7nE3bG8WoK
-         5lfk/RTd6407tGQ3w8iEB+03UIsfx1S8CgeXVnXtAMH5OvsEPA5xAtCWyk3NCUEaQ4zj
-         tOb7hvFFX3J08rlhmvpeGdrWkTdZ8eie6FilP0xfaZ3ZNMfcDDCUE2vy2SDyFEdkFP+u
-         m4Yw==
-X-Gm-Message-State: APjAAAW3vc1L2VmjL443gK3YI2E4iRa4478Lyhk0XHuNYRyHL+D7Cjz2
-        QfsWSFf/ket42Fza1Vv2NbFpYnXtzzKBgpZfguk=
-X-Google-Smtp-Source: APXvYqy4u/JRres2EGU5ieqrujzsZ3D2NuFMJ0n4GDkilQZGf8717lzAiCYPxnnzuD9NYYD1NUX58LG4TQDZ3K45/6s=
-X-Received: by 2002:a92:d7c6:: with SMTP id g6mr82995357ilq.282.1578322777185;
- Mon, 06 Jan 2020 06:59:37 -0800 (PST)
-MIME-Version: 1.0
-References: <1577111958-100981-1-git-send-email-chenwandun@huawei.com>
-In-Reply-To: <1577111958-100981-1-git-send-email-chenwandun@huawei.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 6 Jan 2020 16:04:36 +0100
-Message-ID: <CAOi1vP9-s9rp1=BTHrd=ounkZ0bzYV4HfKao6_GL+r8gh1muhg@mail.gmail.com>
-Subject: Re: [PATCH next] ceph: Fix debugfs_simple_attr.cocci warnings
-To:     Chen Wandun <chenwandun@huawei.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        id S1726446AbgAFPXG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 6 Jan 2020 10:23:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726303AbgAFPXG (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 6 Jan 2020 10:23:06 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DFC620731;
+        Mon,  6 Jan 2020 15:23:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578324185;
+        bh=WBMCOGGBYzWkAxpJe1r9uKjWKQdMhBCb3LuQ+Bj0Krg=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=X0u9U+Jq8GCFzIUu8ElJM5InHlv1RbY6nNELvw18OQlP6rnZmbSQmKERgSMTK/6Vz
+         GCQiwzzc7/nF05HyA4qRWIdmXf0HWQ3YeG16y92n3AmwZ2Fz+hximxB0WIJsCLWuEo
+         T0h3WpB+7avtE3BbbbfH95+lW4UqlfZEMg6A3Pi0=
+Message-ID: <86323475453efb218f04642297439fd22f567a56.camel@kernel.org>
+Subject: Re: [PATCH] ceph: allocate the accurate extra bytes for the session
+ features
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
+        pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Mon, 06 Jan 2020 10:23:03 -0500
+In-Reply-To: <20200103025950.27659-1-xiubli@redhat.com>
+References: <20200103025950.27659-1-xiubli@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Dec 23, 2019 at 3:32 PM Chen Wandun <chenwandun@huawei.com> wrote:
->
-> Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
-> for debugfs files.
->
-> Semantic patch information:
-> Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
-> imposes some significant overhead as compared to
-> DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
->
-> Signed-off-by: Chen Wandun <chenwandun@huawei.com>
+On Thu, 2020-01-02 at 21:59 -0500, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> The totally bytes maybe potentially larger than 8.
+> 
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  fs/ceph/debugfs.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-> index c281f32..60a0f1a 100644
-> --- a/fs/ceph/debugfs.c
-> +++ b/fs/ceph/debugfs.c
-> @@ -243,8 +243,8 @@ static int congestion_kb_get(void *data, u64 *val)
->         return 0;
+>  fs/ceph/mds_client.c | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index ad9573b7e115..aa49e8557599 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -1067,20 +1067,20 @@ static struct ceph_msg *create_session_msg(u32 op, u64 seq)
+>  	return msg;
 >  }
->
-> -DEFINE_SIMPLE_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
-> -                       congestion_kb_set, "%llu\n");
-> +DEFINE_DEBUGFS_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
-> +                        congestion_kb_set, "%llu\n");
->
->
->  void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
-> @@ -264,11 +264,11 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
->
->         dout("ceph_fs_debugfs_init\n");
->         fsc->debugfs_congestion_kb =
-> -               debugfs_create_file("writeback_congestion_kb",
-> -                                   0600,
-> -                                   fsc->client->debugfs_dir,
-> -                                   fsc,
-> -                                   &congestion_kb_fops);
-> +               debugfs_create_file_unsafe("writeback_congestion_kb",
-> +                                          0600,
-> +                                          fsc->client->debugfs_dir,
-> +                                          fsc,
-> +                                          &congestion_kb_fops);
+>  
+> +static const unsigned char feature_bits[] = CEPHFS_FEATURES_CLIENT_SUPPORTED;
+>  static void encode_supported_features(void **p, void *end)
+>  {
+> -	static const unsigned char bits[] = CEPHFS_FEATURES_CLIENT_SUPPORTED;
+> -	static const size_t count = ARRAY_SIZE(bits);
+> +	static const size_t count = ARRAY_SIZE(feature_bits);
+>  
+>  	if (count > 0) {
+>  		size_t i;
+> -		size_t size = ((size_t)bits[count - 1] + 64) / 64 * 8;
+> +		size_t size = ((size_t)feature_bits[count - 1] + 64) / 64 * 8;
 
-Hi Chen,
+The bug looks real, though it's not really a problem until we get to
+flag 65. Note too that this calculation relies on having the highest
+feature bit value as the last element of the array. That's probably
+worth a comment in mds_client.h so we don't screw that up later.
 
-debugfs_create_file_unsafe() has "unsafe" in its name for a reason.
-Have you verified that this conversion is safe?
+Also, I think this would be better expressed using DIV_ROUND_UP, and
+since we have this calculation in two places, maybe do something like:
 
-Thanks,
+    #define FEATURE_WORDS  (DIV_ROUND_UP(feature_bits[count - 1], 64) * 8)
 
-                Ilya
+...and then plug that macro into both places.
+
+>  		BUG_ON(*p + 4 + size > end);
+>  		ceph_encode_32(p, size);
+>  		memset(*p, 0, size);
+>  		for (i = 0; i < count; i++)
+> -			((unsigned char*)(*p))[i / 8] |= 1 << (bits[i] % 8);
+> +			((unsigned char*)(*p))[i / 8] |= 1 << (feature_bits[i] % 8);
+>  		*p += size;
+>  	} else {
+>  		BUG_ON(*p + 4 > end);
+> @@ -1101,6 +1101,7 @@ static struct ceph_msg *create_session_open_msg(struct ceph_mds_client *mdsc, u6
+>  	int metadata_key_count = 0;
+>  	struct ceph_options *opt = mdsc->fsc->client->options;
+>  	struct ceph_mount_options *fsopt = mdsc->fsc->mount_options;
+> +	size_t size, count;
+>  	void *p, *end;
+>  
+>  	const char* metadata[][2] = {
+> @@ -1118,8 +1119,13 @@ static struct ceph_msg *create_session_open_msg(struct ceph_mds_client *mdsc, u6
+>  			strlen(metadata[i][1]);
+>  		metadata_key_count++;
+>  	}
+> +
+>  	/* supported feature */
+> -	extra_bytes += 4 + 8;
+> +	size = 0;
+> +	count = ARRAY_SIZE(feature_bits);
+> +	if (count > 0)
+> +		size = ((size_t)feature_bits[count - 1] + 64) / 64 * 8;
+> +	extra_bytes += 4 + size;
+>  
+>  	/* Allocate the message */
+>  	msg = ceph_msg_new(CEPH_MSG_CLIENT_SESSION, sizeof(*h) + extra_bytes,
+> @@ -1139,7 +1145,7 @@ static struct ceph_msg *create_session_open_msg(struct ceph_mds_client *mdsc, u6
+>  	 * Serialize client metadata into waiting buffer space, using
+>  	 * the format that userspace expects for map<string, string>
+>  	 *
+> -	 * ClientSession messages with metadata are v2
+> +	 * ClientSession messages with metadata are v3
+>  	 */
+>  	msg->hdr.version = cpu_to_le16(3);
+>  	msg->hdr.compat_version = cpu_to_le16(1);
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
