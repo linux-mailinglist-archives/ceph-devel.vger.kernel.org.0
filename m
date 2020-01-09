@@ -2,38 +2,36 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 883521359B3
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jan 2020 14:06:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C54721359BA
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jan 2020 14:08:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730432AbgAINGU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 Jan 2020 08:06:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53846 "EHLO mail.kernel.org"
+        id S1730478AbgAINIt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 9 Jan 2020 08:08:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728435AbgAINGU (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 9 Jan 2020 08:06:20 -0500
+        id S1730222AbgAINIt (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 9 Jan 2020 08:08:49 -0500
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 410202075D;
-        Thu,  9 Jan 2020 13:06:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2C052072A;
+        Thu,  9 Jan 2020 13:08:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578575179;
-        bh=axH7W09l6kKa4CCzyrgUSdbPBpjdOOgfOa0kYkBco1s=;
+        s=default; t=1578575328;
+        bh=pE3TenjtBLa8o9Emkm6vNJ68KNOM4OEdRtbKsoxNBds=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=piBmbB3XvGE7xFhpP7YKf7dTSbgEatKhe+mCitJOlYu3Y8DHi4jv80wypBkIoKHnZ
-         fFxHd7SwD3zccmmB6W3ML6ral8RZY4m7BMpyWHRqGlMW7g+KfwvYNjnJOCMwszMFdh
-         ZqfoPznuaFfjJItsjmIzH81zMpXEDrjtQCoRDtik=
-Message-ID: <913eb28e6bb698f27f1831f75ea5250497ee659c.camel@kernel.org>
-Subject: Re: [RFC PATCH v4] ceph: use 'copy-from2' operation in
- copy_file_range
+        b=0ISiKa4AuItdtaZoFlG5BzavS7kIEJWtTxqcGg3Pf5CpqNgCc9Ds7A8DdiVF7KrR7
+         g4FF8bfHq4MuJG67lvZPOAPBoBdXCuwMMyBAdIrBMFsX984A6+POct5bl0UC5V/zcz
+         QgewFvWNEuSgJ5gJk/STicnX9maNNH0Qv1ipi1No=
+Message-ID: <11bff5cb24cfd0dd1ddc836aabaa23cf38c802aa.camel@kernel.org>
+Subject: Re: [PATCH v2] ceph: allocate the accurate extra bytes for the
+ session features
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Yan, Zheng" <zyan@redhat.com>, Gregory Farnum <gfarnum@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 09 Jan 2020 08:06:17 -0500
-In-Reply-To: <20200108100353.23770-1-lhenriques@suse.com>
-References: <20200108100353.23770-1-lhenriques@suse.com>
+To:     xiubli@redhat.com, idryomov@gmail.com, zyan@redhat.com
+Cc:     sage@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Thu, 09 Jan 2020 08:08:46 -0500
+In-Reply-To: <20200108101731.26652-1-xiubli@redhat.com>
+References: <20200108101731.26652-1-xiubli@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
 MIME-Version: 1.0
@@ -43,240 +41,134 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2020-01-08 at 10:03 +0000, Luis Henriques wrote:
-> Instead of using the 'copy-from' operation, switch copy_file_range to the
-> new 'copy-from2' operation, which allows to send the truncate_seq and
-> truncate_size parameters.
+On Wed, 2020-01-08 at 05:17 -0500, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
 > 
-> If an OSD does not support the 'copy-from2' operation it will return
-> -EOPNOTSUPP.  In that case, the kernel client will stop trying to do
-> remote object copies for this fs client and will always use the generic
-> VFS copy_file_range.
+> The totally bytes maybe potentially larger than 8.
 > 
-> Signed-off-by: Luis Henriques <lhenriques@suse.com>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
-> Hi Jeff,
+>  fs/ceph/mds_client.c | 20 ++++++++++++++------
+>  fs/ceph/mds_client.h | 23 ++++++++++++++++-------
+>  2 files changed, 30 insertions(+), 13 deletions(-)
 > 
-> This is a follow-up to the discussion in [1].  Since PR [2] has been
-> merged, it's now time to change the kernel client to use the new
-> 'copy-from2'.  And that's what this patch does.
-> 
-> [1] https://lore.kernel.org/lkml/20191118120935.7013-1-lhenriques@suse.com/
-> [2] https://github.com/ceph/ceph/pull/31728
-> 
->  fs/ceph/file.c                  | 13 ++++++++++++-
->  fs/ceph/super.c                 |  1 +
->  fs/ceph/super.h                 |  3 +++
->  include/linux/ceph/osd_client.h |  1 +
->  include/linux/ceph/rados.h      |  2 ++
->  net/ceph/osd_client.c           | 18 ++++++++++++------
->  6 files changed, 31 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 11929d2bb594..1e6cdf2dfe90 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1974,6 +1974,10 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  	if (ceph_test_mount_opt(src_fsc, NOCOPYFROM))
->  		return -EOPNOTSUPP;
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 94cce2ab92c4..d379f489ab63 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/debugfs.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/ratelimit.h>
+> +#include <linux/bits.h>
 >  
-> +	/* Do the OSDs support the 'copy-from2' operation? */
-> +	if (!src_fsc->have_copy_from2)
-> +		return -EOPNOTSUPP;
-> +
->  	/*
->  	 * Striped file layouts require that we copy partial objects, but the
->  	 * OSD copy-from operation only supports full-object copies.  Limit
-> @@ -2101,8 +2105,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->  			CEPH_OSD_OP_FLAG_FADVISE_NOCACHE,
->  			&dst_oid, &dst_oloc,
->  			CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
-> -			CEPH_OSD_OP_FLAG_FADVISE_DONTNEED, 0);
-> +			CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
-> +			dst_ci->i_truncate_seq, dst_ci->i_truncate_size,
-> +			CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
->  		if (err) {
-> +			if (err == -EOPNOTSUPP) {
-> +				src_fsc->have_copy_from2 = false;
-> +				pr_notice("OSDs don't support 'copy-from2'; "
-> +					  "disabling copy_file_range\n");
-> +			}
->  			dout("ceph_osdc_copy_from returned %d\n", err);
->  			if (!ret)
->  				ret = err;
-
-The patch itself looks fine to me. I'll not merge yet, since you sent it
-as an RFC, but I don't have any objection to it at first glance. The
-only other comment I'd make is that you should probably split this into
-two patches -- one for the libceph changes and one for cephfs.
-
-On a related note, I wonder if we'd get better performance out of large
-copy_file_range calls here if you were to move the wait for all of these
-osd requests after issuing them all in parallel?
-
-Currently we're doing:
-
-copy_from
-wait
-copy_from
-wait
-
-...but figure that the second copy_from might very well be between osds
-that are not involved in the first copy. There's no reason to do them
-sequentially. It'd be better to issue all of the OSD requests first, and
-then wait on all of the replies in turn:
-
-copy_from
-copy_from
-copy_from
-...
-wait
-wait
-wait
-
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index 29a795f975df..b62c487a53af 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -637,6 +637,7 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
->  	fsc->sb = NULL;
->  	fsc->mount_state = CEPH_MOUNT_MOUNTING;
->  	fsc->filp_gen = 1;
-> +	fsc->have_copy_from2 = true;
+>  #include "super.h"
+>  #include "mds_client.h"
+> @@ -1053,20 +1054,21 @@ static struct ceph_msg *create_session_msg(u32 op, u64 seq)
+>  	return msg;
+>  }
 >  
->  	atomic_long_set(&fsc->writeback_count, 0);
->  
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 3bf1a01cd536..b2f86bed5c2c 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -106,6 +106,9 @@ struct ceph_fs_client {
->  	unsigned long last_auto_reconnect;
->  	bool blacklisted;
->  
-> +	/* Do the OSDs support the 'copy-from2' Op? */
-> +	bool have_copy_from2;
-> +
->  	u32 filp_gen;
->  	loff_t max_file_size;
->  
-> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> index eaffbdddf89a..5a62dbd3f4c2 100644
-> --- a/include/linux/ceph/osd_client.h
-> +++ b/include/linux/ceph/osd_client.h
-> @@ -534,6 +534,7 @@ int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
->  			struct ceph_object_id *dst_oid,
->  			struct ceph_object_locator *dst_oloc,
->  			u32 dst_fadvise_flags,
-> +			u32 truncate_seq, u64 truncate_size,
->  			u8 copy_from_flags);
->  
->  /* watch/notify */
-> diff --git a/include/linux/ceph/rados.h b/include/linux/ceph/rados.h
-> index 3eb0e55665b4..59bdfd470100 100644
-> --- a/include/linux/ceph/rados.h
-> +++ b/include/linux/ceph/rados.h
-> @@ -256,6 +256,7 @@ extern const char *ceph_osd_state_name(int s);
->  									    \
->  	/* tiering */							    \
->  	f(COPY_FROM,	__CEPH_OSD_OP(WR, DATA, 26),	"copy-from")	    \
-> +	f(COPY_FROM2,	__CEPH_OSD_OP(WR, DATA, 45),	"copy-from2")	    \
->  	f(COPY_GET_CLASSIC, __CEPH_OSD_OP(RD, DATA, 27), "copy-get-classic") \
->  	f(UNDIRTY,	__CEPH_OSD_OP(WR, DATA, 28),	"undirty")	    \
->  	f(ISDIRTY,	__CEPH_OSD_OP(RD, DATA, 29),	"isdirty")	    \
-> @@ -446,6 +447,7 @@ enum {
->  	CEPH_OSD_COPY_FROM_FLAG_MAP_SNAP_CLONE = 8, /* map snap direct to
->  						     * cloneid */
->  	CEPH_OSD_COPY_FROM_FLAG_RWORDERED = 16,     /* order with write */
-> +	CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ = 32,  /* send truncate_{seq,size} */
->  };
->  
->  enum {
-> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> index ba45b074a362..b68b376d8c2f 100644
-> --- a/net/ceph/osd_client.c
-> +++ b/net/ceph/osd_client.c
-> @@ -402,7 +402,7 @@ static void osd_req_op_data_release(struct ceph_osd_request *osd_req,
->  	case CEPH_OSD_OP_LIST_WATCHERS:
->  		ceph_osd_data_release(&op->list_watchers.response_data);
->  		break;
-> -	case CEPH_OSD_OP_COPY_FROM:
-> +	case CEPH_OSD_OP_COPY_FROM2:
->  		ceph_osd_data_release(&op->copy_from.osd_data);
->  		break;
->  	default:
-> @@ -697,7 +697,7 @@ static void get_num_data_items(struct ceph_osd_request *req,
->  		case CEPH_OSD_OP_SETXATTR:
->  		case CEPH_OSD_OP_CMPXATTR:
->  		case CEPH_OSD_OP_NOTIFY_ACK:
-> -		case CEPH_OSD_OP_COPY_FROM:
-> +		case CEPH_OSD_OP_COPY_FROM2:
->  			*num_request_data_items += 1;
->  			break;
->  
-> @@ -1029,7 +1029,7 @@ static u32 osd_req_encode_op(struct ceph_osd_op *dst,
->  	case CEPH_OSD_OP_CREATE:
->  	case CEPH_OSD_OP_DELETE:
->  		break;
-> -	case CEPH_OSD_OP_COPY_FROM:
-> +	case CEPH_OSD_OP_COPY_FROM2:
->  		dst->copy_from.snapid = cpu_to_le64(src->copy_from.snapid);
->  		dst->copy_from.src_version =
->  			cpu_to_le64(src->copy_from.src_version);
-> @@ -1966,7 +1966,7 @@ static void setup_request_data(struct ceph_osd_request *req)
->  			ceph_osdc_msg_data_add(request_msg,
->  					       &op->notify_ack.request_data);
->  			break;
-> -		case CEPH_OSD_OP_COPY_FROM:
-> +		case CEPH_OSD_OP_COPY_FROM2:
->  			ceph_osdc_msg_data_add(request_msg,
->  					       &op->copy_from.osd_data);
->  			break;
-> @@ -5315,6 +5315,7 @@ static int osd_req_op_copy_from_init(struct ceph_osd_request *req,
->  				     struct ceph_object_locator *src_oloc,
->  				     u32 src_fadvise_flags,
->  				     u32 dst_fadvise_flags,
-> +				     u32 truncate_seq, u64 truncate_size,
->  				     u8 copy_from_flags)
+> +static const unsigned char feature_bits[] = CEPHFS_FEATURES_CLIENT_SUPPORTED;
+> +#define FEATURE_BYTES(c) (DIV_ROUND_UP((size_t)feature_bits[c - 1] + 1, 64) * 8)
+>  static void encode_supported_features(void **p, void *end)
 >  {
->  	struct ceph_osd_req_op *op;
-> @@ -5325,7 +5326,8 @@ static int osd_req_op_copy_from_init(struct ceph_osd_request *req,
->  	if (IS_ERR(pages))
->  		return PTR_ERR(pages);
+> -	static const unsigned char bits[] = CEPHFS_FEATURES_CLIENT_SUPPORTED;
+> -	static const size_t count = ARRAY_SIZE(bits);
+> +	static const size_t count = ARRAY_SIZE(feature_bits);
 >  
-> -	op = _osd_req_op_init(req, 0, CEPH_OSD_OP_COPY_FROM, dst_fadvise_flags);
-> +	op = _osd_req_op_init(req, 0, CEPH_OSD_OP_COPY_FROM2,
-> +			      dst_fadvise_flags);
->  	op->copy_from.snapid = src_snapid;
->  	op->copy_from.src_version = src_version;
->  	op->copy_from.flags = copy_from_flags;
-> @@ -5335,6 +5337,8 @@ static int osd_req_op_copy_from_init(struct ceph_osd_request *req,
->  	end = p + PAGE_SIZE;
->  	ceph_encode_string(&p, end, src_oid->name, src_oid->name_len);
->  	encode_oloc(&p, end, src_oloc);
-> +	ceph_encode_32(&p, truncate_seq);
-> +	ceph_encode_64(&p, truncate_size);
->  	op->indata_len = PAGE_SIZE - (end - p);
+>  	if (count > 0) {
+>  		size_t i;
+> -		size_t size = ((size_t)bits[count - 1] + 64) / 64 * 8;
+> +		size_t size = FEATURE_BYTES(count);
 >  
->  	ceph_osd_data_pages_init(&op->copy_from.osd_data, pages,
-> @@ -5350,6 +5354,7 @@ int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
->  			struct ceph_object_id *dst_oid,
->  			struct ceph_object_locator *dst_oloc,
->  			u32 dst_fadvise_flags,
-> +			u32 truncate_seq, u64 truncate_size,
->  			u8 copy_from_flags)
->  {
->  	struct ceph_osd_request *req;
-> @@ -5366,7 +5371,8 @@ int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+>  		BUG_ON(*p + 4 + size > end);
+>  		ceph_encode_32(p, size);
+>  		memset(*p, 0, size);
+>  		for (i = 0; i < count; i++)
+> -			((unsigned char*)(*p))[i / 8] |= 1 << (bits[i] % 8);
+> +			((unsigned char*)(*p))[i / 8] |= BIT(feature_bits[i] % 8);
+>  		*p += size;
+>  	} else {
+>  		BUG_ON(*p + 4 > end);
+> @@ -1087,6 +1089,7 @@ static struct ceph_msg *create_session_open_msg(struct ceph_mds_client *mdsc, u6
+>  	int metadata_key_count = 0;
+>  	struct ceph_options *opt = mdsc->fsc->client->options;
+>  	struct ceph_mount_options *fsopt = mdsc->fsc->mount_options;
+> +	size_t size, count;
+>  	void *p, *end;
 >  
->  	ret = osd_req_op_copy_from_init(req, src_snapid, src_version, src_oid,
->  					src_oloc, src_fadvise_flags,
-> -					dst_fadvise_flags, copy_from_flags);
-> +					dst_fadvise_flags, truncate_seq,
-> +					truncate_size, copy_from_flags);
->  	if (ret)
->  		goto out;
+>  	const char* metadata[][2] = {
+> @@ -1104,8 +1107,13 @@ static struct ceph_msg *create_session_open_msg(struct ceph_mds_client *mdsc, u6
+>  			strlen(metadata[i][1]);
+>  		metadata_key_count++;
+>  	}
+> +
+>  	/* supported feature */
+> -	extra_bytes += 4 + 8;
+> +	size = 0;
+> +	count = ARRAY_SIZE(feature_bits);
+> +	if (count > 0)
+> +		size = FEATURE_BYTES(count);
+> +	extra_bytes += 4 + size;
 >  
+>  	/* Allocate the message */
+>  	msg = ceph_msg_new(CEPH_MSG_CLIENT_SESSION, sizeof(*h) + extra_bytes,
+> @@ -1125,7 +1133,7 @@ static struct ceph_msg *create_session_open_msg(struct ceph_mds_client *mdsc, u6
+>  	 * Serialize client metadata into waiting buffer space, using
+>  	 * the format that userspace expects for map<string, string>
+>  	 *
+> -	 * ClientSession messages with metadata are v2
+> +	 * ClientSession messages with metadata are v3
+>  	 */
+>  	msg->hdr.version = cpu_to_le16(3);
+>  	msg->hdr.compat_version = cpu_to_le16(1);
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index c021df5f50ce..c950f8f88f58 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -17,22 +17,31 @@
+>  #include <linux/ceph/auth.h>
+>  
+>  /* The first 8 bits are reserved for old ceph releases */
+> -#define CEPHFS_FEATURE_MIMIC		8
+> -#define CEPHFS_FEATURE_REPLY_ENCODING	9
+> -#define CEPHFS_FEATURE_RECLAIM_CLIENT	10
+> -#define CEPHFS_FEATURE_LAZY_CAP_WANTED	11
+> -#define CEPHFS_FEATURE_MULTI_RECONNECT  12
+> +enum ceph_feature_type {
+> +	CEPHFS_FEATURE_MIMIC = 8,
+> +	CEPHFS_FEATURE_REPLY_ENCODING,
+> +	CEPHFS_FEATURE_RECLAIM_CLIENT,
+> +	CEPHFS_FEATURE_LAZY_CAP_WANTED,
+> +	CEPHFS_FEATURE_MULTI_RECONNECT,
+> +
+> +	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_MULTI_RECONNECT,
+> +};
+>  
+> -#define CEPHFS_FEATURES_CLIENT_SUPPORTED { 	\
+> +/*
+> + * This will always have the highest feature bit value
+> + * as the last element of the array.
+> + */
+> +#define CEPHFS_FEATURES_CLIENT_SUPPORTED {	\
+>  	0, 1, 2, 3, 4, 5, 6, 7,			\
+>  	CEPHFS_FEATURE_MIMIC,			\
+>  	CEPHFS_FEATURE_REPLY_ENCODING,		\
+>  	CEPHFS_FEATURE_LAZY_CAP_WANTED,		\
+>  	CEPHFS_FEATURE_MULTI_RECONNECT,		\
+> +						\
+> +	CEPHFS_FEATURE_MAX,			\
+>  }
+>  #define CEPHFS_FEATURES_CLIENT_REQUIRED {}
+>  
+> -
+>  /*
+>   * Some lock dependencies:
+>   *
+
+Merged (with small changelog rephrasing).
+
+Thanks!
 -- 
 Jeff Layton <jlayton@kernel.org>
 
