@@ -2,41 +2,54 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5697135A2D
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jan 2020 14:33:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6730135A33
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jan 2020 14:35:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730345AbgAINde (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 Jan 2020 08:33:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32768 "EHLO mail.kernel.org"
+        id S1730652AbgAINfA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 9 Jan 2020 08:35:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728974AbgAINde (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 9 Jan 2020 08:33:34 -0500
+        id S1728974AbgAINfA (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 9 Jan 2020 08:35:00 -0500
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1703820661;
-        Thu,  9 Jan 2020 13:33:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E05F20661;
+        Thu,  9 Jan 2020 13:34:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578576813;
-        bh=k8oYA3Zfxb737fchFs/GkzxOSznYGq7WjG0IGg3JO/g=;
+        s=default; t=1578576899;
+        bh=B5yzemeRMvzL4pKKGwpH7BIBwVJZXFC+F4JbFhOpfek=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=duJNURcHb9mJgygCT9SZrk33fQOUnkU8Kl+TFjp+jIYgSMsM0Ff0uUv0XmD8rXlwW
-         s2x/NgbvJDpg7mEXnYLzyGkAu4Vw3Fh7YCJS2QRJjg6GUNp2oBN0RW4kVkMikmIomU
-         bo9mu+/wp76inxzMWQHaJUG8Kbn0pPxRReomyjKk=
-Message-ID: <ab6d12e45f87a427bd442a84dae23893ad4b91e8.camel@kernel.org>
-Subject: Re: [PATCH 2/6] ceph: hold extra reference to r_parent over life of
- request
+        b=FP854yG1iF6PZ3f6ByuN1p2Ck1GBxOzQ7bJVht0FIaYDlv1ZpMklxdzoRLjXc24xu
+         yLKaBtnOxLxgrrHRlvX1FPMkTu5c2imI1AWkgiKt56QokkSQZHzV5fJTLYZBVp6zDp
+         o7s2RWwZqfybKsBicS2CNXr6XgOrIP1D8y9ov0kg=
+Message-ID: <03e0e79fefcd9e7985a5defce5d5833d3175847a.camel@kernel.org>
+Subject: Re: [PATCH v4] fs: Fix page_mkwrite off-by-one errors
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
-Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
-        pdonnell@redhat.com
-Date:   Thu, 09 Jan 2020 08:33:31 -0500
-In-Reply-To: <95938157-3d47-52e5-d847-b058e1191151@redhat.com>
-References: <20200106153520.307523-1-jlayton@kernel.org>
-         <20200106153520.307523-3-jlayton@kernel.org>
-         <e8e28503-bda4-df57-6a42-33761e716fe4@redhat.com>
-         <7baad50a9e9f8d8f93171e5d4756bc35ab36a319.camel@kernel.org>
-         <95938157-3d47-52e5-d847-b058e1191151@redhat.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, YueHaibing <yuehaibing@huawei.com>,
+        Arnd Bergmann <arnd@arndb.de>, Chao Yu <yuchao0@huawei.com>
+Date:   Thu, 09 Jan 2020 08:34:56 -0500
+In-Reply-To: <20200108131528.4279-1-agruenba@redhat.com>
+References: <20200108131528.4279-1-agruenba@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
 MIME-Version: 1.0
@@ -46,81 +59,152 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2020-01-09 at 21:16 +0800, Xiubo Li wrote:
-> On 2020/1/9 19:20, Jeff Layton wrote:
-> > On Thu, 2020-01-09 at 10:05 +0800, Xiubo Li wrote:
-> > > On 2020/1/6 23:35, Jeff Layton wrote:
-> > > > Currently, we just assume that it will stick around by virtue of the
-> > > > submitter's reference, but later patches will allow the syscall to
-> > > > return early and we can't rely on that reference at that point.
-> > > > 
-> > > > Take an extra reference to the inode when setting r_parent and release
-> > > > it when releasing the request.
-> > > > 
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > ---
-> > > >    fs/ceph/mds_client.c | 8 ++++++--
-> > > >    1 file changed, 6 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > > > index 94cce2ab92c4..b7122f682678 100644
-> > > > --- a/fs/ceph/mds_client.c
-> > > > +++ b/fs/ceph/mds_client.c
-> > > > @@ -708,8 +708,10 @@ void ceph_mdsc_release_request(struct kref *kref)
-> > > >    		/* avoid calling iput_final() in mds dispatch threads */
-> > > >    		ceph_async_iput(req->r_inode);
-> > > >    	}
-> > > > -	if (req->r_parent)
-> > > > +	if (req->r_parent) {
-> > > >    		ceph_put_cap_refs(ceph_inode(req->r_parent), CEPH_CAP_PIN);
-> > > > +		ceph_async_iput(req->r_parent);
-> > > > +	}
-> > > >    	ceph_async_iput(req->r_target_inode);
-> > > >    	if (req->r_dentry)
-> > > >    		dput(req->r_dentry);
-> > > > @@ -2706,8 +2708,10 @@ int ceph_mdsc_submit_request(struct ceph_mds_client *mdsc, struct inode *dir,
-> > > >    	/* take CAP_PIN refs for r_inode, r_parent, r_old_dentry */
-> > > >    	if (req->r_inode)
-> > > >    		ceph_get_cap_refs(ceph_inode(req->r_inode), CEPH_CAP_PIN);
-> > > > -	if (req->r_parent)
-> > > > +	if (req->r_parent) {
-> > > >    		ceph_get_cap_refs(ceph_inode(req->r_parent), CEPH_CAP_PIN);
-> > > > +		ihold(req->r_parent);
-> > > > +	}
-> > > This might also fix another issue when the mdsc request is timedout and
-> > > returns to the vfs, then the r_parent maybe released in vfs. And then if
-> > > we reference it again in mdsc handle_reply() -->
-> > > ceph_mdsc_release_request(),  some unknown issues may happen later ??
-> > > 
-> > AIUI, when a timeout occurs, the req is unhashed such that handle_reply
-> > can't find it. So, I doubt this affects that one way or another.
+On Wed, 2020-01-08 at 14:15 +0100, Andreas Gruenbacher wrote:
+> Hi Darrick,
 > 
-> If my understanding is correct, such as for rmdir(), the logic will be :
+> here's an updated version with the latest feedback incorporated.  Hope
+> you find that useful.
 > 
-> req = ceph_mdsc_create_request()      //  ref == 1
+> As far as the f2fs merge conflict goes, I've been told by Linus not to
+> resolve those kinds of conflicts but to point them out when sending the
+> merge request.  So this shouldn't be a big deal.
 > 
-> ceph_mdsc_do_request(req) -->
+> Changes:
 > 
->          ceph_mdsc_submit_request(req) -->
+> * Turn page_mkwrite_check_truncate into a non-inline function.
+> * Get rid of now-unused mapping variable in ext4_page_mkwrite.
+> * In btrfs_page_mkwrite, don't ignore the return value of
+>   block_page_mkwrite_return (no change in behavior).
+> * Clean up the f2fs_vm_page_mkwrite changes as suggested by
+>   Jaegeuk Kim.
 > 
->                  __register_request(req) // ref == 2
+> Thanks,
+> Andreas
 > 
->          ceph_mdsc_wait_request(req)  // If timedout
+> --
 > 
-> ceph_mdsc_put_request(req)  // ref == 1
+> The check in block_page_mkwrite that is meant to determine whether an
+> offset is within the inode size is off by one.  This bug has been copied
+> into iomap_page_mkwrite and several filesystems (ubifs, ext4, f2fs,
+> ceph).
 > 
-> Then in handled_reply(), only when we get a safe reply it will call 
-> __unregister_request(req), then the ref could be 0.
+> Fix that by introducing a new page_mkwrite_check_truncate helper that
+> checks for truncate and computes the bytes in the page up to EOF.  Use
+> the helper in the above mentioned filesystems.
 > 
-> Though it will ihold()/ceph_async_iput() the req->r_unsafe_dir(= 
-> req->r_parent) , but the _iput() will be called just before we reference 
-> the req->r_parent in the _relase_request(). And the _iput() here may 
-> call the iput_final().
+> In addition, use the new helper in btrfs as well.
 > 
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> Acked-by: David Sterba <dsterba@suse.com> (btrfs)
+> Acked-by: Richard Weinberger <richard@nod.at> (ubifs)
+> Acked-by: Theodore Ts'o <tytso@mit.edu> (ext4)
+> Acked-by: Chao Yu <yuchao0@huawei.com> (f2fs)
+> ---
+>  fs/btrfs/inode.c        | 16 +++++-----------
+>  fs/buffer.c             | 16 +++-------------
+>  fs/ceph/addr.c          |  2 +-
+>  fs/ext4/inode.c         | 15 ++++-----------
+>  fs/f2fs/file.c          | 19 +++++++------------
+>  fs/iomap/buffered-io.c  | 18 +++++-------------
+>  fs/ubifs/file.c         |  3 +--
+>  include/linux/pagemap.h |  2 ++
+>  mm/filemap.c            | 28 ++++++++++++++++++++++++++++
+>  9 files changed, 56 insertions(+), 63 deletions(-)
+> 
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index e3c76645cad7..23e6f614e000 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -9011,16 +9011,15 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
+>  		goto out_noreserve;
+>  	}
+>  
+> -	ret = VM_FAULT_NOPAGE; /* make the VM retry the fault */
+>  again:
+>  	lock_page(page);
+> -	size = i_size_read(inode);
+>  
+> -	if ((page->mapping != inode->i_mapping) ||
+> -	    (page_start >= size)) {
+> -		/* page got truncated out from underneath us */
+> +	ret2 = page_mkwrite_check_truncate(page, inode);
+> +	if (ret2 < 0) {
+> +		ret = block_page_mkwrite_return(ret2);
+>  		goto out_unlock;
+>  	}
+> +	zero_start = ret2;
+>  	wait_on_page_writeback(page);
+>  
+>  	lock_extent_bits(io_tree, page_start, page_end, &cached_state);
+> @@ -9041,6 +9040,7 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
+>  		goto again;
+>  	}
+>  
+> +	size = i_size_read(inode);
+>  	if (page->index == ((size - 1) >> PAGE_SHIFT)) {
+>  		reserved_space = round_up(size - page_start,
+>  					  fs_info->sectorsize);
+> @@ -9073,12 +9073,6 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
+>  	}
+>  	ret2 = 0;
+>  
+> -	/* page is wholly or partially inside EOF */
+> -	if (page_start + PAGE_SIZE > size)
+> -		zero_start = offset_in_page(size);
+> -	else
+> -		zero_start = PAGE_SIZE;
+> -
+>  	if (zero_start != PAGE_SIZE) {
+>  		kaddr = kmap(page);
+>  		memset(kaddr + zero_start, 0, PAGE_SIZE - zero_start);
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index d8c7242426bb..53aabde57ca7 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -2499,23 +2499,13 @@ int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
+>  	struct page *page = vmf->page;
+>  	struct inode *inode = file_inode(vma->vm_file);
+>  	unsigned long end;
+> -	loff_t size;
+>  	int ret;
+>  
+>  	lock_page(page);
+> -	size = i_size_read(inode);
+> -	if ((page->mapping != inode->i_mapping) ||
+> -	    (page_offset(page) > size)) {
+> -		/* We overload EFAULT to mean page got truncated */
+> -		ret = -EFAULT;
+> +	ret = page_mkwrite_check_truncate(page, inode);
+> +	if (ret < 0)
+>  		goto out_unlock;
+> -	}
+> -
+> -	/* page is wholly or partially inside EOF */
+> -	if (((page->index + 1) << PAGE_SHIFT) > size)
+> -		end = size & ~PAGE_MASK;
+> -	else
+> -		end = PAGE_SIZE;
+> +	end = ret;
+>  
+>  	ret = __block_write_begin(page, 0, end, get_block);
+>  	if (!ret)
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 7ab616601141..ef958aa4adb4 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -1575,7 +1575,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+>  	do {
+>  		lock_page(page);
+>  
+> -		if ((off > size) || (page->mapping != inode->i_mapping)) {
+> +		if (page_mkwrite_check_truncate(page, inode) < 0) {
+>  			unlock_page(page);
+>  			ret = VM_FAULT_NOPAGE;
+>  			break;
 
-I take it back, I think you're right. This likely would fix that issue
-up. I'll plan to add a note about that to the changelog before I merge
-it. Should we mark this for stable in light of that?
+
+You can add my Acked-by on the ceph part.
+
 -- 
 Jeff Layton <jlayton@kernel.org>
 
