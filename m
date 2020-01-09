@@ -2,300 +2,354 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD05D135B60
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jan 2020 15:30:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81A6F135BAF
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jan 2020 15:50:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731673AbgAIOay (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 Jan 2020 09:30:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60052 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727854AbgAIOay (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 9 Jan 2020 09:30:54 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C7159AFEC;
-        Thu,  9 Jan 2020 14:30:51 +0000 (UTC)
-Date:   Thu, 9 Jan 2020 14:30:50 +0000
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        "Yan, Zheng" <zyan@redhat.com>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v4] ceph: use 'copy-from2' operation in
- copy_file_range
-Message-ID: <20200109143011.GA14582@brahms>
-References: <20200108100353.23770-1-lhenriques@suse.com>
- <913eb28e6bb698f27f1831f75ea5250497ee659c.camel@kernel.org>
+        id S1728737AbgAIOuD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 9 Jan 2020 09:50:03 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36815 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731824AbgAIOuD (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Jan 2020 09:50:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578581401;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=otATSxp0UBI6/O6c9QSfCwlhXsr8Om8OyV+1B2ZRxag=;
+        b=RYxMFPKSDz5Wq8GaMTMEa4LLNHXNri4grWZ2mQVqGlRiyZOGIxbx6HnyaglMVXvjtC7Zr+
+        iy9pBQBIFdPRr/Etja1Pz7LpFbqdwMErR0WofZczn4DXg3YRfc+TVrYMCbDF2YZciMYIoS
+        qUSJi70iJuuhWW845C8sLPUSnMP/PEY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-252-TTqRTduVOXm6psjdLLYGpg-1; Thu, 09 Jan 2020 09:49:59 -0500
+X-MC-Unique: TTqRTduVOXm6psjdLLYGpg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2B394477;
+        Thu,  9 Jan 2020 14:49:58 +0000 (UTC)
+Received: from [10.72.12.239] (ovpn-12-239.pek2.redhat.com [10.72.12.239])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4DD309CA3;
+        Thu,  9 Jan 2020 14:49:53 +0000 (UTC)
+Subject: Re: [PATCH 6/6] ceph: perform asynchronous unlink if we have
+ sufficient caps
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com, pdonnell@redhat.com
+References: <20200106153520.307523-1-jlayton@kernel.org>
+ <20200106153520.307523-7-jlayton@kernel.org>
+From:   "Yan, Zheng" <zyan@redhat.com>
+Message-ID: <70141213-ae0d-f8ce-a852-3eefd8893698@redhat.com>
+Date:   Thu, 9 Jan 2020 22:49:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <913eb28e6bb698f27f1831f75ea5250497ee659c.camel@kernel.org>
+In-Reply-To: <20200106153520.307523-7-jlayton@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jan 09, 2020 at 08:06:17AM -0500, Jeff Layton wrote:
-> On Wed, 2020-01-08 at 10:03 +0000, Luis Henriques wrote:
-> > Instead of using the 'copy-from' operation, switch copy_file_range to the
-> > new 'copy-from2' operation, which allows to send the truncate_seq and
-> > truncate_size parameters.
-> > 
-> > If an OSD does not support the 'copy-from2' operation it will return
-> > -EOPNOTSUPP.  In that case, the kernel client will stop trying to do
-> > remote object copies for this fs client and will always use the generic
-> > VFS copy_file_range.
-> > 
-> > Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> > ---
-> > Hi Jeff,
-> > 
-> > This is a follow-up to the discussion in [1].  Since PR [2] has been
-> > merged, it's now time to change the kernel client to use the new
-> > 'copy-from2'.  And that's what this patch does.
-> > 
-> > [1] https://lore.kernel.org/lkml/20191118120935.7013-1-lhenriques@suse.com/
-> > [2] https://github.com/ceph/ceph/pull/31728
-> > 
-> >  fs/ceph/file.c                  | 13 ++++++++++++-
-> >  fs/ceph/super.c                 |  1 +
-> >  fs/ceph/super.h                 |  3 +++
-> >  include/linux/ceph/osd_client.h |  1 +
-> >  include/linux/ceph/rados.h      |  2 ++
-> >  net/ceph/osd_client.c           | 18 ++++++++++++------
-> >  6 files changed, 31 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > index 11929d2bb594..1e6cdf2dfe90 100644
-> > --- a/fs/ceph/file.c
-> > +++ b/fs/ceph/file.c
-> > @@ -1974,6 +1974,10 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >  	if (ceph_test_mount_opt(src_fsc, NOCOPYFROM))
-> >  		return -EOPNOTSUPP;
-> >  
-> > +	/* Do the OSDs support the 'copy-from2' operation? */
-> > +	if (!src_fsc->have_copy_from2)
-> > +		return -EOPNOTSUPP;
-> > +
-> >  	/*
-> >  	 * Striped file layouts require that we copy partial objects, but the
-> >  	 * OSD copy-from operation only supports full-object copies.  Limit
-> > @@ -2101,8 +2105,15 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >  			CEPH_OSD_OP_FLAG_FADVISE_NOCACHE,
-> >  			&dst_oid, &dst_oloc,
-> >  			CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
-> > -			CEPH_OSD_OP_FLAG_FADVISE_DONTNEED, 0);
-> > +			CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
-> > +			dst_ci->i_truncate_seq, dst_ci->i_truncate_size,
-> > +			CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
-> >  		if (err) {
-> > +			if (err == -EOPNOTSUPP) {
-> > +				src_fsc->have_copy_from2 = false;
-> > +				pr_notice("OSDs don't support 'copy-from2'; "
-> > +					  "disabling copy_file_range\n");
-> > +			}
-> >  			dout("ceph_osdc_copy_from returned %d\n", err);
-> >  			if (!ret)
-> >  				ret = err;
+On 1/6/20 11:35 PM, Jeff Layton wrote:
+> From: "Yan, Zheng" <zyan@redhat.com>
 > 
-> The patch itself looks fine to me. I'll not merge yet, since you sent it
-> as an RFC, but I don't have any objection to it at first glance.
+> The MDS is getting a new lock-caching facility that will allow it
+> to cache the necessary locks to allow asynchronous directory operations.
+> Since the CEPH_CAP_FILE_* caps are currently unused on directories,
+> we can repurpose those bits for this purpose.
+> 
+> When performing an unlink, if we have Fx on the parent directory,
+> and CEPH_CAP_DIR_UNLINK (aka Fr), and we know that the dentry being
+> removed is the primary link, then then we can fire off an unlink
+> request immediately and don't need to wait on reply before returning.
+> 
+> In that situation, just fix up the dcache and link count and return
+> immediately after issuing the call to the MDS. This does mean that we
+> need to hold an extra reference to the inode being unlinked, and extra
+> references to the caps to avoid races. Those references are put and
+> error handling is done in the r_callback routine.
+> 
+> If the operation ends up failing, then set a writeback error on the
+> directory inode that can be fetched later by an fsync on the dir.
+> 
+> Since this feature is very new, also add a new module parameter to
+> enable and disable it (default is disabled).
 
-I was going to drop the RFC, but then at the last minute decided to leave.
-
->                                                                    The
-> only other comment I'd make is that you should probably split this into
-> two patches -- one for the libceph changes and one for cephfs.
-
-Hmm... TBH I didn't thought about that, but since the libceph patch would
-be changing its API (ceph_osdc_copy_from would have 2 extra parameters), I
-don't think that's a good idea.  Bisection would be broken between these 2
-patches.
+author of this patch is not me :)
 
 > 
-> On a related note, I wonder if we'd get better performance out of large
-> copy_file_range calls here if you were to move the wait for all of these
-> osd requests after issuing them all in parallel?
+> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>   fs/ceph/caps.c               | 35 ++++++++++++------
+>   fs/ceph/dir.c                | 70 +++++++++++++++++++++++++++++++++---
+>   fs/ceph/inode.c              |  8 ++++-
+>   fs/ceph/super.c              |  4 +++
+>   fs/ceph/super.h              |  3 ++
+>   include/linux/ceph/ceph_fs.h |  9 +++++
+>   6 files changed, 113 insertions(+), 16 deletions(-)
 > 
-> Currently we're doing:
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index d05717397c2a..7fc87b693ba4 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -992,7 +992,11 @@ int __ceph_caps_file_wanted(struct ceph_inode_info *ci)
+>   int __ceph_caps_wanted(struct ceph_inode_info *ci)
+>   {
+>   	int w = __ceph_caps_file_wanted(ci) | __ceph_caps_used(ci);
+> -	if (!S_ISDIR(ci->vfs_inode.i_mode)) {
+> +	if (S_ISDIR(ci->vfs_inode.i_mode)) {
+> +		/* we want EXCL if holding caps of dir ops */
+> +		if (w & CEPH_CAP_ANY_DIR_OPS)
+> +			w |= CEPH_CAP_FILE_EXCL;
+> +	} else {
+>   		/* we want EXCL if dirty data */
+>   		if (w & CEPH_CAP_FILE_BUFFER)
+>   			w |= CEPH_CAP_FILE_EXCL;
+> @@ -1883,10 +1887,13 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+>   			 * revoking the shared cap on every create/unlink
+>   			 * operation.
+>   			 */
+> -			if (IS_RDONLY(inode))
+> +			if (IS_RDONLY(inode)) {
+>   				want = CEPH_CAP_ANY_SHARED;
+> -			else
+> -				want = CEPH_CAP_ANY_SHARED | CEPH_CAP_FILE_EXCL;
+> +			} else {
+> +				want = CEPH_CAP_ANY_SHARED |
+> +				       CEPH_CAP_FILE_EXCL |
+> +				       CEPH_CAP_ANY_DIR_OPS;
+> +			}
+>   			retain |= want;
+>   		} else {
+>   
+> @@ -2649,7 +2656,10 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
+>   				}
+>   				snap_rwsem_locked = true;
+>   			}
+> -			*got = need | (have & want);
+> +			if ((have & want) == want)
+> +				*got = need | want;
+> +			else
+> +				*got = need;
+>   			if (S_ISREG(inode->i_mode) &&
+>   			    (need & CEPH_CAP_FILE_RD) &&
+>   			    !(*got & CEPH_CAP_FILE_CACHE))
+> @@ -2739,13 +2749,16 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
+>   	int ret;
+>   
+>   	BUG_ON(need & ~CEPH_CAP_FILE_RD);
+> -	BUG_ON(want & ~(CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO|CEPH_CAP_FILE_SHARED));
+> -	ret = ceph_pool_perm_check(inode, need);
+> -	if (ret < 0)
+> -		return ret;
+> +	if (need) {
+> +		ret = ceph_pool_perm_check(inode, need);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+>   
+> -	ret = try_get_cap_refs(inode, need, want, 0,
+> -			       (nonblock ? NON_BLOCKING : 0), got);
+> +	BUG_ON(want & ~(CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO |
+> +			CEPH_CAP_FILE_SHARED | CEPH_CAP_FILE_EXCL |
+> +			CEPH_CAP_ANY_DIR_OPS));
+> +	ret = try_get_cap_refs(inode, need, want, 0, nonblock, got);
+>   	return ret == -EAGAIN ? 0 : ret;
+>   }
+>   
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index d0cd0aba5843..10294f07f5f0 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -1036,6 +1036,47 @@ static int ceph_link(struct dentry *old_dentry, struct inode *dir,
+>   	return err;
+>   }
+>   
+> +static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
+> +				 struct ceph_mds_request *req)
+> +{
+> +	/* If op failed, set error on parent directory */
+> +	mapping_set_error(req->r_parent->i_mapping, req->r_err);
+> +	if (req->r_err)
+> +		printk("%s: req->r_err = %d\n", __func__, req->r_err);
+> +	ceph_put_cap_refs(ceph_inode(req->r_parent),
+> +			  CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_UNLINK);
+> +	iput(req->r_old_inode);
+> +}
+> +
+> +static bool get_caps_for_async_unlink(struct inode *dir, struct dentry *dentry)
+> +{
+> +	struct ceph_inode_info *ci = ceph_inode(dir);
+> +	struct ceph_dentry_info *di;
+> +	int ret, want, got;
+> +
+> +	want = CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_UNLINK;
+> +	ret = ceph_try_get_caps(dir, 0, want, true, &got);
+> +	dout("Fx on %p ret=%d got=%d\n", dir, ret, got);
+> +	if (ret != 1 || got != want)
+> +		return false;
+> +
+> +        spin_lock(&dentry->d_lock);
+> +        di = ceph_dentry(dentry);
+> +	/* - We are holding CEPH_CAP_FILE_EXCL, which implies
+> +	 * CEPH_CAP_FILE_SHARED.
+> +	 * - Only support async unlink for primary linkage */
+> +	if (atomic_read(&ci->i_shared_gen) != di->lease_shared_gen ||
+> +	    !(di->flags & CEPH_DENTRY_PRIMARY_LINK))
+> +		ret = 0;
+> +        spin_unlock(&dentry->d_lock);
+> +
+> +	if (!ret) {
+> +		ceph_put_cap_refs(ci, got);
+> +		return false;
+> +	}
+> +	return true;
+> +}
+> +
+>   /*
+>    * rmdir and unlink are differ only by the metadata op code
+>    */
+> @@ -1067,13 +1108,33 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
+>   	req->r_dentry = dget(dentry);
+>   	req->r_num_caps = 2;
+>   	req->r_parent = dir;
+> -	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
+>   	req->r_dentry_drop = CEPH_CAP_FILE_SHARED;
+>   	req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
+>   	req->r_inode_drop = ceph_drop_caps_for_unlink(inode);
+> -	err = ceph_mdsc_do_request(mdsc, dir, req);
+> -	if (!err && !req->r_reply_info.head->is_dentry)
+> -		d_delete(dentry);
+> +
+> +	if (enable_async_dirops && op == CEPH_MDS_OP_UNLINK &&
+> +	    get_caps_for_async_unlink(dir, dentry)) {
+> +		dout("ceph: Async unlink on %lu/%.*s", dir->i_ino,
+> +		     dentry->d_name.len, dentry->d_name.name);
+> +		req->r_callback = ceph_async_unlink_cb;
+> +		req->r_old_inode = d_inode(dentry);
+> +		ihold(req->r_old_inode);
+> +		err = ceph_mdsc_submit_request(mdsc, dir, req);
+> +		if (!err) {
+> +			/*
+> +			 * We have enough caps, so we assume that the unlink
+> +			 * will succeed. Fix up the target inode and dcache.
+> +			 */
+> +			drop_nlink(inode);
+> +			d_delete(dentry);
+> +		}
+> +	} else {
+> +		set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
+> +		err = ceph_mdsc_do_request(mdsc, dir, req);
+> +		if (!err && !req->r_reply_info.head->is_dentry)
+> +			d_delete(dentry);
+> +	}
+> +
+>   	ceph_mdsc_put_request(req);
+>   out:
+>   	return err;
+> @@ -1411,6 +1472,7 @@ void ceph_invalidate_dentry_lease(struct dentry *dentry)
+>   	spin_lock(&dentry->d_lock);
+>   	di->time = jiffies;
+>   	di->lease_shared_gen = 0;
+> +	di->flags &= ~CEPH_DENTRY_PRIMARY_LINK;
+>   	__dentry_lease_unlist(di);
+>   	spin_unlock(&dentry->d_lock);
+>   }
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index ef9e8281d485..ffef475af72b 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -1048,6 +1048,7 @@ static void __update_dentry_lease(struct inode *dir, struct dentry *dentry,
+>   				  struct ceph_mds_session **old_lease_session)
+>   {
+>   	struct ceph_dentry_info *di = ceph_dentry(dentry);
+> +	unsigned mask = le16_to_cpu(lease->mask);
+>   	long unsigned duration = le32_to_cpu(lease->duration_ms);
+>   	long unsigned ttl = from_time + (duration * HZ) / 1000;
+>   	long unsigned half_ttl = from_time + (duration * HZ / 2) / 1000;
+> @@ -1059,8 +1060,13 @@ static void __update_dentry_lease(struct inode *dir, struct dentry *dentry,
+>   	if (ceph_snap(dir) != CEPH_NOSNAP)
+>   		return;
+>   
+> +	if (mask & CEPH_LEASE_PRIMARY_LINK)
+> +		di->flags |= CEPH_DENTRY_PRIMARY_LINK;
+> +	else
+> +		di->flags &= ~CEPH_DENTRY_PRIMARY_LINK;
+> +
+>   	di->lease_shared_gen = atomic_read(&ceph_inode(dir)->i_shared_gen);
+> -	if (duration == 0) {
+> +	if (!(mask & CEPH_LEASE_VALID)) {
+>   		__ceph_dentry_dir_lease_touch(di);
+>   		return;
+>   	}
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index 112927dbd2f2..c149edb6aa2d 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -1324,6 +1324,10 @@ static void __exit exit_ceph(void)
+>   	destroy_caches();
+>   }
+>   
+> +bool enable_async_dirops;
+> +module_param(enable_async_dirops, bool, 0644);
+> +MODULE_PARM_DESC(enable_async_dirops, "Asynchronous directory operations enabled");
+> +
+>   module_init(init_ceph);
+>   module_exit(exit_ceph);
+>   
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 4b53f32b9324..4083de451710 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -72,6 +72,8 @@
+>   #define CEPH_CAPS_WANTED_DELAY_MIN_DEFAULT      5  /* cap release delay */
+>   #define CEPH_CAPS_WANTED_DELAY_MAX_DEFAULT     60  /* cap release delay */
+>   
+> +extern bool enable_async_dirops;
+> +
+>   struct ceph_mount_options {
+>   	unsigned int flags;
+>   
+> @@ -282,6 +284,7 @@ struct ceph_dentry_info {
+>   #define CEPH_DENTRY_REFERENCED		1
+>   #define CEPH_DENTRY_LEASE_LIST		2
+>   #define CEPH_DENTRY_SHRINK_LIST		4
+> +#define CEPH_DENTRY_PRIMARY_LINK	8
+>   
+>   struct ceph_inode_xattrs_info {
+>   	/*
+> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+> index cb21c5cf12c3..a099f60feb7b 100644
+> --- a/include/linux/ceph/ceph_fs.h
+> +++ b/include/linux/ceph/ceph_fs.h
+> @@ -530,6 +530,9 @@ struct ceph_mds_reply_lease {
+>   	__le32 seq;
+>   } __attribute__ ((packed));
+>   
+> +#define CEPH_LEASE_VALID        (1 | 2) /* old and new bit values */
+> +#define CEPH_LEASE_PRIMARY_LINK 4       /* primary linkage */
+> +
+>   struct ceph_mds_reply_dirfrag {
+>   	__le32 frag;            /* fragment */
+>   	__le32 auth;            /* auth mds, if this is a delegation point */
+> @@ -659,6 +662,12 @@ int ceph_flags_to_mode(int flags);
+>   #define CEPH_CAP_LOCKS (CEPH_LOCK_IFILE | CEPH_LOCK_IAUTH | CEPH_LOCK_ILINK | \
+>   			CEPH_LOCK_IXATTR)
+>   
+> +/* cap masks async dir operations */
+> +#define CEPH_CAP_DIR_CREATE	CEPH_CAP_FILE_CACHE
+> +#define CEPH_CAP_DIR_UNLINK	CEPH_CAP_FILE_RD
+> +#define CEPH_CAP_ANY_DIR_OPS	(CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_RD | \
+> +				 CEPH_CAP_FILE_WREXTEND | CEPH_CAP_FILE_LAZYIO)
+> +
+>   int ceph_caps_for_mode(int mode);
+>   
+>   enum {
 > 
-> copy_from
-> wait
-> copy_from
-> wait
-> 
-> ...but figure that the second copy_from might very well be between osds
-> that are not involved in the first copy. There's no reason to do them
-> sequentially. It'd be better to issue all of the OSD requests first, and
-> then wait on all of the replies in turn:
-> 
-> copy_from
-> copy_from
-> copy_from
-> ...
-> wait
-> wait
-> wait
 
-Ah!  It looks like you've been looking into my TODO list :-)
-
-In fact I was discussing copy_file_range performance with some colleagues
-just before the EOY break and one of the things I had decided to
-experiment was to parallelize the 'copy-from' requests.  I haven't looked
-yet at the details, but I expect to be looking into that soon(ish).
-
-Thanks for your review and suggestion.
-
-Cheers,
---
-Luís
-
-> 
-> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> > index 29a795f975df..b62c487a53af 100644
-> > --- a/fs/ceph/super.c
-> > +++ b/fs/ceph/super.c
-> > @@ -637,6 +637,7 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
-> >  	fsc->sb = NULL;
-> >  	fsc->mount_state = CEPH_MOUNT_MOUNTING;
-> >  	fsc->filp_gen = 1;
-> > +	fsc->have_copy_from2 = true;
-> >  
-> >  	atomic_long_set(&fsc->writeback_count, 0);
-> >  
-> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> > index 3bf1a01cd536..b2f86bed5c2c 100644
-> > --- a/fs/ceph/super.h
-> > +++ b/fs/ceph/super.h
-> > @@ -106,6 +106,9 @@ struct ceph_fs_client {
-> >  	unsigned long last_auto_reconnect;
-> >  	bool blacklisted;
-> >  
-> > +	/* Do the OSDs support the 'copy-from2' Op? */
-> > +	bool have_copy_from2;
-> > +
-> >  	u32 filp_gen;
-> >  	loff_t max_file_size;
-> >  
-> > diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> > index eaffbdddf89a..5a62dbd3f4c2 100644
-> > --- a/include/linux/ceph/osd_client.h
-> > +++ b/include/linux/ceph/osd_client.h
-> > @@ -534,6 +534,7 @@ int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
-> >  			struct ceph_object_id *dst_oid,
-> >  			struct ceph_object_locator *dst_oloc,
-> >  			u32 dst_fadvise_flags,
-> > +			u32 truncate_seq, u64 truncate_size,
-> >  			u8 copy_from_flags);
-> >  
-> >  /* watch/notify */
-> > diff --git a/include/linux/ceph/rados.h b/include/linux/ceph/rados.h
-> > index 3eb0e55665b4..59bdfd470100 100644
-> > --- a/include/linux/ceph/rados.h
-> > +++ b/include/linux/ceph/rados.h
-> > @@ -256,6 +256,7 @@ extern const char *ceph_osd_state_name(int s);
-> >  									    \
-> >  	/* tiering */							    \
-> >  	f(COPY_FROM,	__CEPH_OSD_OP(WR, DATA, 26),	"copy-from")	    \
-> > +	f(COPY_FROM2,	__CEPH_OSD_OP(WR, DATA, 45),	"copy-from2")	    \
-> >  	f(COPY_GET_CLASSIC, __CEPH_OSD_OP(RD, DATA, 27), "copy-get-classic") \
-> >  	f(UNDIRTY,	__CEPH_OSD_OP(WR, DATA, 28),	"undirty")	    \
-> >  	f(ISDIRTY,	__CEPH_OSD_OP(RD, DATA, 29),	"isdirty")	    \
-> > @@ -446,6 +447,7 @@ enum {
-> >  	CEPH_OSD_COPY_FROM_FLAG_MAP_SNAP_CLONE = 8, /* map snap direct to
-> >  						     * cloneid */
-> >  	CEPH_OSD_COPY_FROM_FLAG_RWORDERED = 16,     /* order with write */
-> > +	CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ = 32,  /* send truncate_{seq,size} */
-> >  };
-> >  
-> >  enum {
-> > diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> > index ba45b074a362..b68b376d8c2f 100644
-> > --- a/net/ceph/osd_client.c
-> > +++ b/net/ceph/osd_client.c
-> > @@ -402,7 +402,7 @@ static void osd_req_op_data_release(struct ceph_osd_request *osd_req,
-> >  	case CEPH_OSD_OP_LIST_WATCHERS:
-> >  		ceph_osd_data_release(&op->list_watchers.response_data);
-> >  		break;
-> > -	case CEPH_OSD_OP_COPY_FROM:
-> > +	case CEPH_OSD_OP_COPY_FROM2:
-> >  		ceph_osd_data_release(&op->copy_from.osd_data);
-> >  		break;
-> >  	default:
-> > @@ -697,7 +697,7 @@ static void get_num_data_items(struct ceph_osd_request *req,
-> >  		case CEPH_OSD_OP_SETXATTR:
-> >  		case CEPH_OSD_OP_CMPXATTR:
-> >  		case CEPH_OSD_OP_NOTIFY_ACK:
-> > -		case CEPH_OSD_OP_COPY_FROM:
-> > +		case CEPH_OSD_OP_COPY_FROM2:
-> >  			*num_request_data_items += 1;
-> >  			break;
-> >  
-> > @@ -1029,7 +1029,7 @@ static u32 osd_req_encode_op(struct ceph_osd_op *dst,
-> >  	case CEPH_OSD_OP_CREATE:
-> >  	case CEPH_OSD_OP_DELETE:
-> >  		break;
-> > -	case CEPH_OSD_OP_COPY_FROM:
-> > +	case CEPH_OSD_OP_COPY_FROM2:
-> >  		dst->copy_from.snapid = cpu_to_le64(src->copy_from.snapid);
-> >  		dst->copy_from.src_version =
-> >  			cpu_to_le64(src->copy_from.src_version);
-> > @@ -1966,7 +1966,7 @@ static void setup_request_data(struct ceph_osd_request *req)
-> >  			ceph_osdc_msg_data_add(request_msg,
-> >  					       &op->notify_ack.request_data);
-> >  			break;
-> > -		case CEPH_OSD_OP_COPY_FROM:
-> > +		case CEPH_OSD_OP_COPY_FROM2:
-> >  			ceph_osdc_msg_data_add(request_msg,
-> >  					       &op->copy_from.osd_data);
-> >  			break;
-> > @@ -5315,6 +5315,7 @@ static int osd_req_op_copy_from_init(struct ceph_osd_request *req,
-> >  				     struct ceph_object_locator *src_oloc,
-> >  				     u32 src_fadvise_flags,
-> >  				     u32 dst_fadvise_flags,
-> > +				     u32 truncate_seq, u64 truncate_size,
-> >  				     u8 copy_from_flags)
-> >  {
-> >  	struct ceph_osd_req_op *op;
-> > @@ -5325,7 +5326,8 @@ static int osd_req_op_copy_from_init(struct ceph_osd_request *req,
-> >  	if (IS_ERR(pages))
-> >  		return PTR_ERR(pages);
-> >  
-> > -	op = _osd_req_op_init(req, 0, CEPH_OSD_OP_COPY_FROM, dst_fadvise_flags);
-> > +	op = _osd_req_op_init(req, 0, CEPH_OSD_OP_COPY_FROM2,
-> > +			      dst_fadvise_flags);
-> >  	op->copy_from.snapid = src_snapid;
-> >  	op->copy_from.src_version = src_version;
-> >  	op->copy_from.flags = copy_from_flags;
-> > @@ -5335,6 +5337,8 @@ static int osd_req_op_copy_from_init(struct ceph_osd_request *req,
-> >  	end = p + PAGE_SIZE;
-> >  	ceph_encode_string(&p, end, src_oid->name, src_oid->name_len);
-> >  	encode_oloc(&p, end, src_oloc);
-> > +	ceph_encode_32(&p, truncate_seq);
-> > +	ceph_encode_64(&p, truncate_size);
-> >  	op->indata_len = PAGE_SIZE - (end - p);
-> >  
-> >  	ceph_osd_data_pages_init(&op->copy_from.osd_data, pages,
-> > @@ -5350,6 +5354,7 @@ int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
-> >  			struct ceph_object_id *dst_oid,
-> >  			struct ceph_object_locator *dst_oloc,
-> >  			u32 dst_fadvise_flags,
-> > +			u32 truncate_seq, u64 truncate_size,
-> >  			u8 copy_from_flags)
-> >  {
-> >  	struct ceph_osd_request *req;
-> > @@ -5366,7 +5371,8 @@ int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
-> >  
-> >  	ret = osd_req_op_copy_from_init(req, src_snapid, src_version, src_oid,
-> >  					src_oloc, src_fadvise_flags,
-> > -					dst_fadvise_flags, copy_from_flags);
-> > +					dst_fadvise_flags, truncate_seq,
-> > +					truncate_size, copy_from_flags);
-> >  	if (ret)
-> >  		goto out;
-> >  
-> -- 
-> Jeff Layton <jlayton@kernel.org>
-> 
