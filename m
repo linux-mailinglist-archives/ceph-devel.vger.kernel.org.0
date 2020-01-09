@@ -2,209 +2,344 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6730135A33
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jan 2020 14:35:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4604135A8B
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jan 2020 14:50:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730652AbgAINfA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 Jan 2020 08:35:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34354 "EHLO mail.kernel.org"
+        id S1731131AbgAINun (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 9 Jan 2020 08:50:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39394 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728974AbgAINfA (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 9 Jan 2020 08:35:00 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E05F20661;
-        Thu,  9 Jan 2020 13:34:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578576899;
-        bh=B5yzemeRMvzL4pKKGwpH7BIBwVJZXFC+F4JbFhOpfek=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=FP854yG1iF6PZ3f6ByuN1p2Ck1GBxOzQ7bJVht0FIaYDlv1ZpMklxdzoRLjXc24xu
-         yLKaBtnOxLxgrrHRlvX1FPMkTu5c2imI1AWkgiKt56QokkSQZHzV5fJTLYZBVp6zDp
-         o7s2RWwZqfybKsBicS2CNXr6XgOrIP1D8y9ov0kg=
-Message-ID: <03e0e79fefcd9e7985a5defce5d5833d3175847a.camel@kernel.org>
-Subject: Re: [PATCH v4] fs: Fix page_mkwrite off-by-one errors
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Andreas Gruenbacher <agruenba@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, YueHaibing <yuehaibing@huawei.com>,
-        Arnd Bergmann <arnd@arndb.de>, Chao Yu <yuchao0@huawei.com>
-Date:   Thu, 09 Jan 2020 08:34:56 -0500
-In-Reply-To: <20200108131528.4279-1-agruenba@redhat.com>
-References: <20200108131528.4279-1-agruenba@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+        id S1731073AbgAINun (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 9 Jan 2020 08:50:43 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 5917AB134
+        for <ceph-devel@vger.kernel.org>; Thu,  9 Jan 2020 13:50:38 +0000 (UTC)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Thu, 09 Jan 2020 14:50:38 +0100
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     ceph-devel@vger.kernel.org
+Subject: crimson-osd vs legacy-osd: should the perf difference be already
+ noticeable?
+Message-ID: <02e2209f66f18217aa45b8f7caf715f6@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2020-01-08 at 14:15 +0100, Andreas Gruenbacher wrote:
-> Hi Darrick,
-> 
-> here's an updated version with the latest feedback incorporated.  Hope
-> you find that useful.
-> 
-> As far as the f2fs merge conflict goes, I've been told by Linus not to
-> resolve those kinds of conflicts but to point them out when sending the
-> merge request.  So this shouldn't be a big deal.
-> 
-> Changes:
-> 
-> * Turn page_mkwrite_check_truncate into a non-inline function.
-> * Get rid of now-unused mapping variable in ext4_page_mkwrite.
-> * In btrfs_page_mkwrite, don't ignore the return value of
->   block_page_mkwrite_return (no change in behavior).
-> * Clean up the f2fs_vm_page_mkwrite changes as suggested by
->   Jaegeuk Kim.
-> 
-> Thanks,
-> Andreas
-> 
-> --
-> 
-> The check in block_page_mkwrite that is meant to determine whether an
-> offset is within the inode size is off by one.  This bug has been copied
-> into iomap_page_mkwrite and several filesystems (ubifs, ext4, f2fs,
-> ceph).
-> 
-> Fix that by introducing a new page_mkwrite_check_truncate helper that
-> checks for truncate and computes the bytes in the page up to EOF.  Use
-> the helper in the above mentioned filesystems.
-> 
-> In addition, use the new helper in btrfs as well.
-> 
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-> Acked-by: David Sterba <dsterba@suse.com> (btrfs)
-> Acked-by: Richard Weinberger <richard@nod.at> (ubifs)
-> Acked-by: Theodore Ts'o <tytso@mit.edu> (ext4)
-> Acked-by: Chao Yu <yuchao0@huawei.com> (f2fs)
-> ---
->  fs/btrfs/inode.c        | 16 +++++-----------
->  fs/buffer.c             | 16 +++-------------
->  fs/ceph/addr.c          |  2 +-
->  fs/ext4/inode.c         | 15 ++++-----------
->  fs/f2fs/file.c          | 19 +++++++------------
->  fs/iomap/buffered-io.c  | 18 +++++-------------
->  fs/ubifs/file.c         |  3 +--
->  include/linux/pagemap.h |  2 ++
->  mm/filemap.c            | 28 ++++++++++++++++++++++++++++
->  9 files changed, 56 insertions(+), 63 deletions(-)
-> 
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index e3c76645cad7..23e6f614e000 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -9011,16 +9011,15 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
->  		goto out_noreserve;
->  	}
->  
-> -	ret = VM_FAULT_NOPAGE; /* make the VM retry the fault */
->  again:
->  	lock_page(page);
-> -	size = i_size_read(inode);
->  
-> -	if ((page->mapping != inode->i_mapping) ||
-> -	    (page_start >= size)) {
-> -		/* page got truncated out from underneath us */
-> +	ret2 = page_mkwrite_check_truncate(page, inode);
-> +	if (ret2 < 0) {
-> +		ret = block_page_mkwrite_return(ret2);
->  		goto out_unlock;
->  	}
-> +	zero_start = ret2;
->  	wait_on_page_writeback(page);
->  
->  	lock_extent_bits(io_tree, page_start, page_end, &cached_state);
-> @@ -9041,6 +9040,7 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
->  		goto again;
->  	}
->  
-> +	size = i_size_read(inode);
->  	if (page->index == ((size - 1) >> PAGE_SHIFT)) {
->  		reserved_space = round_up(size - page_start,
->  					  fs_info->sectorsize);
-> @@ -9073,12 +9073,6 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
->  	}
->  	ret2 = 0;
->  
-> -	/* page is wholly or partially inside EOF */
-> -	if (page_start + PAGE_SIZE > size)
-> -		zero_start = offset_in_page(size);
-> -	else
-> -		zero_start = PAGE_SIZE;
-> -
->  	if (zero_start != PAGE_SIZE) {
->  		kaddr = kmap(page);
->  		memset(kaddr + zero_start, 0, PAGE_SIZE - zero_start);
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index d8c7242426bb..53aabde57ca7 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -2499,23 +2499,13 @@ int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
->  	struct page *page = vmf->page;
->  	struct inode *inode = file_inode(vma->vm_file);
->  	unsigned long end;
-> -	loff_t size;
->  	int ret;
->  
->  	lock_page(page);
-> -	size = i_size_read(inode);
-> -	if ((page->mapping != inode->i_mapping) ||
-> -	    (page_offset(page) > size)) {
-> -		/* We overload EFAULT to mean page got truncated */
-> -		ret = -EFAULT;
-> +	ret = page_mkwrite_check_truncate(page, inode);
-> +	if (ret < 0)
->  		goto out_unlock;
-> -	}
-> -
-> -	/* page is wholly or partially inside EOF */
-> -	if (((page->index + 1) << PAGE_SHIFT) > size)
-> -		end = size & ~PAGE_MASK;
-> -	else
-> -		end = PAGE_SIZE;
-> +	end = ret;
->  
->  	ret = __block_write_begin(page, 0, end, get_block);
->  	if (!ret)
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 7ab616601141..ef958aa4adb4 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -1575,7 +1575,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
->  	do {
->  		lock_page(page);
->  
-> -		if ((off > size) || (page->mapping != inode->i_mapping)) {
-> +		if (page_mkwrite_check_truncate(page, inode) < 0) {
->  			unlock_page(page);
->  			ret = VM_FAULT_NOPAGE;
->  			break;
+Subject: crimson-osd vs legacy-osd: should the perf difference be 
+already noticeable?
+
+Hi folks,
+
+I was curios to read some early performance benchmarks which compare
+crimson-osd vs legacy-osd, but could not find any.  So eventually
+decided to do my own micro benchmarks in order to test transport
+together with PG layer, avoiding any storage costs completely
+(no reason to test memcpy of memstore which is the only available
+  objectstore for crimson).  At least recalling all these ad brochures
+of seastar which should bring performance on another level by doing
+preemption in userspace, the difference should be already there and
+visible in numbers.
+
+And yes I'm aware that crimson is in development, but if basic
+functionality is already supported (like write path), then I can
+squeeze some numbers.
+
+For all testing loads I run original rbd.fio, taken from fio/examples/,
+of course changing only block size.  Since this is a micro benchmark I
+run only 1 osd cluster.
+
+   [global]
+   ioengine=rbd
+   clientname=admin
+   pool=rbd
+   rbdname=fio_test
+   rw=randwrite
+   #bs=4k
+
+   [rbd_iodepth32]
+   iodepth=32
 
 
-You can add my Acked-by on the ceph part.
+-- Part 1, turn MemStore and cyan_store into null block
 
--- 
-Jeff Layton <jlayton@kernel.org>
+Testing memcpy is not interesting so in order to run any memstore with
+'memstore_debug_omit_block_device_write=true' option set and skip all
+writes I have to do a small tweak in order to start osd, namely I still
+need to pass small writes and omit big ones which are sent by the 
+client,
+something as the following:
+
+-  if (len > 0 && !local_conf()->memstore_debug_omit_block_device_write) 
+{
++
++  if (len > 0 &&
++      (!local_conf()->memstore_debug_omit_block_device_write ||
++       // We still want cluster meta-data to be saved, so pass only 
+small
++       // writes, expecting user writes will be >= 4k.
++       len < 4096)) {
+
+
+*** BTW at the bottom you can find the whole patch with all debug
+     modifications made to deliver these numbers.
+
+
+# legacy-osd, MemStore
+
+MON=1 MDS=0 OSD=1 MGR=1 ../src/vstart.sh  --memstore -n \
+     -o 'memstore_debug_omit_block_device_write=true'
+
+   4k  IOPS=42.7k,  BW=167MiB/s, Lat=749.18usec
+   8k  IOPS=40.2k, BW=314MiB/s,  Lat=795.03usec
+  16k  IOPS=37.6k, BW=588MiB/s,  Lat=849.12usec
+  32k  IOPS=32.0k, BW=1000MiB/s, Lat=998.56usec
+  64k  IOPS=25.5k, BW=1594MiB/s, Lat=1253.99usec
+128k  IOPS=17.5k, BW=2188MiB/s, Lat=1826.54usec
+256k  IOPS=10.1k, BW=2531MiB/s, Lat=3157.33usec
+512k  IOPS=5252, BW=2626MiB/s,  Lat=6071.37usec
+   1m  IOPS=2656, BW=2656MiB/s,  Lat=12029.65usec
+
+
+# crimson-osd, cyan_store
+
+MON=1 MDS=0 OSD=1 MGR=1 ../src/vstart.sh  --crimson --memstore -n \
+     -o 'memstore_debug_omit_block_device_write=true'
+
+   4k  IOPS=40.2k, BW=157MiB/s, Lat=796.07usec
+   8k  IOPS=37.1k, BW=290MiB/s, Lat=861.51usec
+  16k  IOPS=32.9k, BW=514MiB/s, Lat=970.99usec
+  32k  IOPS=26.1k, BW=815MiB/s, Lat=1225.78usec
+  64k  IOPS=21.3k, BW=1333MiB/s, Lat=1498.92usec
+128k  IOPS=14.4k, BW=1795MiB/s, Lat=2227.07usec
+256k  IOPS=6143, BW=1536MiB/s, Lat=5203.70usec
+512k  IOPS=3776, BW=1888MiB/s, Lat=8464.79usec
+   1m  IOPS=1866, BW=1867MiB/s, Lat=17126.36usec
+
+
+First thing that catches my eye is that for small blocks there is no big
+difference at all, but as the block increases, crimsons iops starts to
+decline. Can it be the transport issue? Can be tested as well.
+
+
+-- Part 2, complete writes immediately, even not leaving the transport
+
+Would be great to avoid PG logic costs, exactly like we did for 
+objectstore,
+i.e. the following question can be asked "how fast we can handle writes 
+and
+complete them immediately from the transport callback and measure socket
+read/write costs?".  I introduced new option 'osd_immediate_completions'
+and handle it directly from 'OSD::ms_[fast_]dispatch' function replying 
+with
+success just immediately (for details see patch at the bottom).
+
+
+# legacy-osd
+
+MON=1 MDS=0 OSD=1 MGR=1 ../src/vstart.sh --memstore -n \
+     -o 'osd_immediate_completions=true'
+
+   4k  IOPS=59.2k, BW=231MiB/s, Lat=539.68usec
+   8k  IOPS=55.1k, BW=430MiB/s, Lat=580.44usec
+  16k  IOPS=50.5k, BW=789MiB/s, Lat=633.03usec
+  32k  IOPS=44.6k, BW=1394MiB/s, Lat=716.74usec
+  64k  IOPS=33.5k, BW=2093MiB/s, Lat=954.60usec
+128k  IOPS=20.8k, BW=2604MiB/s, Lat=1535.01usec
+256k  IOPS=10.6k, BW=2642MiB/s, Lat=3026.19usec
+512k  IOPS=5400, BW=2700MiB/s, Lat=5920.86usec
+   1m  IOPS=2549, BW=2550MiB/s, Lat=12539.40usec
+
+
+# crimson-osd
+
+MON=1 MDS=0 OSD=1 MGR=1 ../src/vstart.sh --crimson --memstore -n \
+     -o 'osd_immediate_completions=true'
+
+   4k  IOPS=60.2k, BW=235MiB/s, Lat=530.95usec
+   8k  IOPS=52.0k, BW=407MiB/s, Lat=614.21usec
+  16k  IOPS=47.1k, BW=736MiB/s, Lat=678.41usec
+  32k  IOPS=37.8k, BW=1180MiB/s, Lat=846.75usec
+  64k  IOPS=26.6k, BW=1660MiB/s, Lat=1203.51usec
+128k  IOPS=15.5k, BW=1936MiB/s, Lat=2064.12usec
+256k  IOPS=7506, BW=1877MiB/s, Lat=4259.19usec
+512k  IOPS=3941, BW=1971MiB/s, Lat=8112.67usec
+   1m  IOPS=1785, BW=1786MiB/s, Lat=17896.44usec
+
+
+As a summary I can say that for me is quite surprising not to notice any
+iops improvements on crimson side (not to mention the problem with 
+reading
+of big blocks).  Since I run only 1 osd on one particular load I admit 
+the
+artificial nature of such tests (thus called micro benchmark), but then
+on what cluster scale and what benchmark can I run to see some 
+improvements
+of a new architecture?
+
+    Roman
+
+---
+  src/common/options.cc           |  4 ++++
+  src/crimson/os/cyan_store.cc    |  6 +++++-
+  src/crimson/osd/ops_executer.cc |  4 ++--
+  src/crimson/osd/osd.cc          | 20 ++++++++++++++++++++
+  src/os/memstore/MemStore.cc     |  6 +++++-
+  src/osd/OSD.cc                  | 24 ++++++++++++++++++++++++
+  6 files changed, 60 insertions(+), 4 deletions(-)
+
+diff --git a/src/common/options.cc b/src/common/options.cc
+index d91827c1a803..769666d2955c 100644
+--- a/src/common/options.cc
++++ b/src/common/options.cc
+@@ -4234,6 +4234,10 @@ std::vector<Option> get_global_options() {
+      .set_default(false)
+      .set_description(""),
+
++    Option("osd_immediate_completions", Option::TYPE_BOOL, 
+Option::LEVEL_ADVANCED)
++    .set_default(false)
++    .set_description(""),
++
+      // --------------------------
+      // bluestore
+
+diff --git a/src/crimson/os/cyan_store.cc b/src/crimson/os/cyan_store.cc
+index f0749cb921f9..c05e0e40b721 100644
+--- a/src/crimson/os/cyan_store.cc
++++ b/src/crimson/os/cyan_store.cc
+@@ -463,7 +463,11 @@ int CyanStore::_write(const coll_t& cid, const 
+ghobject_t& oid,
+      return -ENOENT;
+
+    ObjectRef o = c->get_or_create_object(oid);
+-  if (len > 0 && !local_conf()->memstore_debug_omit_block_device_write) 
+{
++  if (len > 0 &&
++      (!local_conf()->memstore_debug_omit_block_device_write ||
++       // We still want cluster meta-data to be saved, so pass only 
+small
++       // writes, expecting user writes will be >= 4k.
++       len < 4096)) {
+      const ssize_t old_size = o->get_size();
+      o->write(offset, bl);
+      used_bytes += (o->get_size() - old_size);
+diff --git a/src/crimson/osd/ops_executer.cc 
+b/src/crimson/osd/ops_executer.cc
+index 13f6f086c4ea..a76fc6e206d8 100644
+--- a/src/crimson/osd/ops_executer.cc
++++ b/src/crimson/osd/ops_executer.cc
+@@ -431,8 +431,8 @@ OpsExecuter::execute_osd_op(OSDOp& osd_op)
+
+    default:
+      logger().warn("unknown op {}", ceph_osd_op_name(op.op));
+-    throw std::runtime_error(
+-      fmt::format("op '{}' not supported", ceph_osd_op_name(op.op)));
++    // Without that `fio examples/rbd.fio` hangs on exit
++    throw ceph::osd::operation_not_supported{};
+    }
+  }
+
+diff --git a/src/crimson/osd/osd.cc b/src/crimson/osd/osd.cc
+index ddd8742d1a74..737cc266766e 100644
+--- a/src/crimson/osd/osd.cc
++++ b/src/crimson/osd/osd.cc
+@@ -17,6 +17,7 @@
+  #include "messages/MOSDOp.h"
+  #include "messages/MOSDPGLog.h"
+  #include "messages/MOSDRepOpReply.h"
++#include "messages/MOSDOpReply.h"
+  #include "messages/MPGStats.h"
+
+  #include "os/Transaction.h"
+@@ -881,6 +882,25 @@ seastar::future<> OSD::committed_osd_maps(version_t 
+first,
+  seastar::future<> OSD::handle_osd_op(ceph::net::Connection* conn,
+                                       Ref<MOSDOp> m)
+  {
++
++  //
++  // Immediately complete requests even without leaving the transport
++  //
++  if (local_conf().get_val<bool>("osd_immediate_completions")) {
++    m->finish_decode();
++
++    for (auto op : m->ops) {
++      if (op.op.op == CEPH_OSD_OP_WRITE &&
++          // Complete big writes only
++          op.op.extent.length >= 4096) {
++
++        auto reply = make_message<MOSDOpReply>(m.get(), 0, 
+osdmap->get_epoch(),
++                                CEPH_OSD_FLAG_ACK | 
+CEPH_OSD_FLAG_ONDISK, true);
++        return conn->send(reply);
++      }
++    }
++  }
++
+    shard_services.start_operation<ClientRequest>(
+      *this,
+      conn->get_shared(),
+diff --git a/src/os/memstore/MemStore.cc b/src/os/memstore/MemStore.cc
+index 05d16edb6cc0..265dc64c808d 100644
+--- a/src/os/memstore/MemStore.cc
++++ b/src/os/memstore/MemStore.cc
+@@ -1047,7 +1047,11 @@ int MemStore::_write(const coll_t& cid, const 
+ghobject_t& oid,
+      return -ENOENT;
+
+    ObjectRef o = c->get_or_create_object(oid);
+-  if (len > 0 && !cct->_conf->memstore_debug_omit_block_device_write) {
++  if (len > 0 &&
++      (!cct->_conf->memstore_debug_omit_block_device_write ||
++       // We still want cluster meta-data to be saved, so pass only 
+small
++       // writes, expecting user writes will be bigger than 4k.
++       len < 4096)) {
+      const ssize_t old_size = o->get_size();
+      o->write(offset, bl);
+      used_bytes += (o->get_size() - old_size);
+diff --git a/src/osd/OSD.cc b/src/osd/OSD.cc
+index 96aed0b706e3..796bf927126f 100644
+--- a/src/osd/OSD.cc
++++ b/src/osd/OSD.cc
+@@ -7223,6 +7223,30 @@ void OSD::ms_fast_dispatch(Message *m)
+      return;
+    }
+
++  //
++  // Immediately complete requests even without leaving the transport
++  //
++  if (g_conf().get_val<bool>("osd_immediate_completions") &&
++      m->get_type() == CEPH_MSG_OSD_OP) {
++    MOSDOp *osdop = static_cast<MOSDOp*>(m);
++
++    osdop->finish_decode();
++
++    for (auto op : osdop->ops) {
++      if (op.op.op == CEPH_OSD_OP_WRITE &&
++          // Complete big writes only
++          op.op.extent.length >= 4096) {
++        MOSDOpReply *reply;
++
++        reply = new MOSDOpReply(osdop, 0, osdmap->get_epoch(),
++                                CEPH_OSD_FLAG_ACK | 
+CEPH_OSD_FLAG_ONDISK, true);
++        osdop->get_connection()->send_message(reply);
++        m->put();
++        return;
++      }
++    }
++  }
++
+    // peering event?
+    switch (m->get_type()) {
+    case CEPH_MSG_PING:
 
