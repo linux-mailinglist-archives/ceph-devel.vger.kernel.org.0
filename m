@@ -2,354 +2,631 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81A6F135BAF
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jan 2020 15:50:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08ED4135BB9
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jan 2020 15:52:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbgAIOuD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 Jan 2020 09:50:03 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36815 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731824AbgAIOuD (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Jan 2020 09:50:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578581401;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=otATSxp0UBI6/O6c9QSfCwlhXsr8Om8OyV+1B2ZRxag=;
-        b=RYxMFPKSDz5Wq8GaMTMEa4LLNHXNri4grWZ2mQVqGlRiyZOGIxbx6HnyaglMVXvjtC7Zr+
-        iy9pBQBIFdPRr/Etja1Pz7LpFbqdwMErR0WofZczn4DXg3YRfc+TVrYMCbDF2YZciMYIoS
-        qUSJi70iJuuhWW845C8sLPUSnMP/PEY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-252-TTqRTduVOXm6psjdLLYGpg-1; Thu, 09 Jan 2020 09:49:59 -0500
-X-MC-Unique: TTqRTduVOXm6psjdLLYGpg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1731824AbgAIOwl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 9 Jan 2020 09:52:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730159AbgAIOwl (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 9 Jan 2020 09:52:41 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2B394477;
-        Thu,  9 Jan 2020 14:49:58 +0000 (UTC)
-Received: from [10.72.12.239] (ovpn-12-239.pek2.redhat.com [10.72.12.239])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4DD309CA3;
-        Thu,  9 Jan 2020 14:49:53 +0000 (UTC)
-Subject: Re: [PATCH 6/6] ceph: perform asynchronous unlink if we have
- sufficient caps
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     sage@redhat.com, idryomov@gmail.com, pdonnell@redhat.com
-References: <20200106153520.307523-1-jlayton@kernel.org>
- <20200106153520.307523-7-jlayton@kernel.org>
-From:   "Yan, Zheng" <zyan@redhat.com>
-Message-ID: <70141213-ae0d-f8ce-a852-3eefd8893698@redhat.com>
-Date:   Thu, 9 Jan 2020 22:49:51 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 877DD2067D;
+        Thu,  9 Jan 2020 14:52:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578581559;
+        bh=jM1f+cVaarFRVi60yFYly+EnsGQFVhzxmzys76DWtYE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=uTVCiO+Ag9jSE4r7H7HzDRTGRQbOQYrwfx+8ZGN3BMkhamt9E2Uu51PkWI3xmOwQP
+         Ldk+9WwUHWZ6hn10h+w2rGjJEIcGCx08wVE5ew3asmKqV7131eV44LdxNUhmqxuS63
+         gYnVYklgePWEzSkgo138z2k1ScppEVqaphX+BQig=
+Message-ID: <38fc860f80d251d5cbb5ee49c253a725625190d9.camel@kernel.org>
+Subject: Re: [PATCH v2 2/8] ceph: add caps perf metric for each session
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com, idryomov@gmail.com, zyan@redhat.com
+Cc:     sage@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Thu, 09 Jan 2020 09:52:37 -0500
+In-Reply-To: <20200108104152.28468-3-xiubli@redhat.com>
+References: <20200108104152.28468-1-xiubli@redhat.com>
+         <20200108104152.28468-3-xiubli@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
 MIME-Version: 1.0
-In-Reply-To: <20200106153520.307523-7-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 1/6/20 11:35 PM, Jeff Layton wrote:
-> From: "Yan, Zheng" <zyan@redhat.com>
+On Wed, 2020-01-08 at 05:41 -0500, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
 > 
-> The MDS is getting a new lock-caching facility that will allow it
-> to cache the necessary locks to allow asynchronous directory operations.
-> Since the CEPH_CAP_FILE_* caps are currently unused on directories,
-> we can repurpose those bits for this purpose.
+> This will fulfill the caps hit/miss metric for each session. When
+> checking the "need" mask and if one cap has the subset of the "need"
+> mask it means hit, or missed.
 > 
-> When performing an unlink, if we have Fx on the parent directory,
-> and CEPH_CAP_DIR_UNLINK (aka Fr), and we know that the dentry being
-> removed is the primary link, then then we can fire off an unlink
-> request immediately and don't need to wait on reply before returning.
+> item          total           miss            hit
+> -------------------------------------------------
+> d_lease       295             0               993
 > 
-> In that situation, just fix up the dcache and link count and return
-> immediately after issuing the call to the MDS. This does mean that we
-> need to hold an extra reference to the inode being unlinked, and extra
-> references to the caps to avoid races. Those references are put and
-> error handling is done in the r_callback routine.
+> session       caps            miss            hit
+> -------------------------------------------------
+> 0             295             107             4119
+> 1             1               107             9
 > 
-> If the operation ends up failing, then set a writeback error on the
-> directory inode that can be fetched later by an fsync on the dir.
-> 
-> Since this feature is very new, also add a new module parameter to
-> enable and disable it (default is disabled).
+> Fixes: https://tracker.ceph.com/issues/43215
 
-author of this patch is not me :)
+For the record, "Fixes:" has a different meaning for kernel patches.
+It's used to reference an earlier patch that introduced the bug that the
+patch is fixing.
 
-> 
-> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+It's a pity that the ceph team decided to use that to reference tracker
+tickets in their tree. For the kernel we usually use a generic "URL:"
+tag for that.
+
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->   fs/ceph/caps.c               | 35 ++++++++++++------
->   fs/ceph/dir.c                | 70 +++++++++++++++++++++++++++++++++---
->   fs/ceph/inode.c              |  8 ++++-
->   fs/ceph/super.c              |  4 +++
->   fs/ceph/super.h              |  3 ++
->   include/linux/ceph/ceph_fs.h |  9 +++++
->   6 files changed, 113 insertions(+), 16 deletions(-)
+>  fs/ceph/acl.c        |  2 +-
+>  fs/ceph/caps.c       | 63 +++++++++++++++++++++++++++++++++++---------
+>  fs/ceph/debugfs.c    | 20 ++++++++++++++
+>  fs/ceph/dir.c        | 20 +++++++-------
+>  fs/ceph/file.c       |  6 ++---
+>  fs/ceph/inode.c      |  8 +++---
+>  fs/ceph/mds_client.c | 16 ++++++++++-
+>  fs/ceph/mds_client.h |  3 +++
+>  fs/ceph/snap.c       |  2 +-
+>  fs/ceph/super.h      | 12 +++++----
+>  fs/ceph/xattr.c      |  8 +++---
+>  11 files changed, 120 insertions(+), 40 deletions(-)
 > 
+> diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
+> index 26be6520d3fb..fca6ff231020 100644
+> --- a/fs/ceph/acl.c
+> +++ b/fs/ceph/acl.c
+> @@ -22,7 +22,7 @@ static inline void ceph_set_cached_acl(struct inode *inode,
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
+>  
+>  	spin_lock(&ci->i_ceph_lock);
+> -	if (__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 0))
+> +	if (__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 0, true))
+>  		set_cached_acl(inode, type, acl);
+>  	else
+>  		forget_cached_acl(inode, type);
 > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index d05717397c2a..7fc87b693ba4 100644
+> index 28ae0c134700..6ab02aab7d9c 100644
 > --- a/fs/ceph/caps.c
 > +++ b/fs/ceph/caps.c
-> @@ -992,7 +992,11 @@ int __ceph_caps_file_wanted(struct ceph_inode_info *ci)
->   int __ceph_caps_wanted(struct ceph_inode_info *ci)
->   {
->   	int w = __ceph_caps_file_wanted(ci) | __ceph_caps_used(ci);
-> -	if (!S_ISDIR(ci->vfs_inode.i_mode)) {
-> +	if (S_ISDIR(ci->vfs_inode.i_mode)) {
-> +		/* we want EXCL if holding caps of dir ops */
-> +		if (w & CEPH_CAP_ANY_DIR_OPS)
-> +			w |= CEPH_CAP_FILE_EXCL;
-> +	} else {
->   		/* we want EXCL if dirty data */
->   		if (w & CEPH_CAP_FILE_BUFFER)
->   			w |= CEPH_CAP_FILE_EXCL;
-> @@ -1883,10 +1887,13 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
->   			 * revoking the shared cap on every create/unlink
->   			 * operation.
->   			 */
-> -			if (IS_RDONLY(inode))
-> +			if (IS_RDONLY(inode)) {
->   				want = CEPH_CAP_ANY_SHARED;
-> -			else
-> -				want = CEPH_CAP_ANY_SHARED | CEPH_CAP_FILE_EXCL;
-> +			} else {
-> +				want = CEPH_CAP_ANY_SHARED |
-> +				       CEPH_CAP_FILE_EXCL |
-> +				       CEPH_CAP_ANY_DIR_OPS;
-> +			}
->   			retain |= want;
->   		} else {
->   
-> @@ -2649,7 +2656,10 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
->   				}
->   				snap_rwsem_locked = true;
->   			}
-> -			*got = need | (have & want);
-> +			if ((have & want) == want)
-> +				*got = need | want;
-> +			else
-> +				*got = need;
->   			if (S_ISREG(inode->i_mode) &&
->   			    (need & CEPH_CAP_FILE_RD) &&
->   			    !(*got & CEPH_CAP_FILE_CACHE))
-> @@ -2739,13 +2749,16 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
->   	int ret;
->   
->   	BUG_ON(need & ~CEPH_CAP_FILE_RD);
-> -	BUG_ON(want & ~(CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO|CEPH_CAP_FILE_SHARED));
-> -	ret = ceph_pool_perm_check(inode, need);
-> -	if (ret < 0)
-> -		return ret;
-> +	if (need) {
-> +		ret = ceph_pool_perm_check(inode, need);
-> +		if (ret < 0)
-> +			return ret;
+> @@ -567,7 +567,7 @@ static void __cap_delay_cancel(struct ceph_mds_client *mdsc,
+>  static void __check_cap_issue(struct ceph_inode_info *ci, struct ceph_cap *cap,
+>  			      unsigned issued)
+>  {
+> -	unsigned had = __ceph_caps_issued(ci, NULL);
+> +	unsigned int had = __ceph_caps_issued(ci, NULL, -1);
+>  
+>  	/*
+>  	 * Each time we receive FILE_CACHE anew, we increment
+> @@ -787,20 +787,43 @@ static int __cap_is_valid(struct ceph_cap *cap)
+>   * out, and may be invalidated in bulk if the client session times out
+>   * and session->s_cap_gen is bumped.
+>   */
+> -int __ceph_caps_issued(struct ceph_inode_info *ci, int *implemented)
+> +int __ceph_caps_issued(struct ceph_inode_info *ci, int *implemented, int mask)
+
+
+This seems like the wrong approach. This function returns a set of caps,
+so it seems like the callers ought to determine whether a miss or hit
+occurred, and whether to record it.
+
+>  {
+>  	int have = ci->i_snap_caps;
+>  	struct ceph_cap *cap;
+>  	struct rb_node *p;
+> +	int revoking = 0;
+> +
+> +	if (ci->i_auth_cap) {
+> +		cap = ci->i_auth_cap;
+> +		revoking = cap->implemented & ~cap->issued;
 > +	}
->   
-> -	ret = try_get_cap_refs(inode, need, want, 0,
-> -			       (nonblock ? NON_BLOCKING : 0), got);
-> +	BUG_ON(want & ~(CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO |
-> +			CEPH_CAP_FILE_SHARED | CEPH_CAP_FILE_EXCL |
-> +			CEPH_CAP_ANY_DIR_OPS));
-> +	ret = try_get_cap_refs(inode, need, want, 0, nonblock, got);
->   	return ret == -EAGAIN ? 0 : ret;
->   }
->   
+>  
+>  	if (implemented)
+>  		*implemented = 0;
+>  	for (p = rb_first(&ci->i_caps); p; p = rb_next(p)) {
+> +		struct ceph_mds_session *s;
+> +		int r = 0;
+> +
+>  		cap = rb_entry(p, struct ceph_cap, ci_node);
+>  		if (!__cap_is_valid(cap))
+>  			continue;
+>  		dout("__ceph_caps_issued %p cap %p issued %s\n",
+>  		     &ci->vfs_inode, cap, ceph_cap_string(cap->issued));
+> +
+> +		if (mask >= 0) {
+> +			s = ceph_get_mds_session(cap->session);
+> +			if (cap == ci->i_auth_cap)
+> +				r = revoking;
+> +			if (s) {
+> +				if (mask & (cap->issued & ~r))
+> +					percpu_counter_inc(&s->i_caps_hit);
+> +				else
+> +					percpu_counter_inc(&s->i_caps_mis);
+> +				ceph_put_mds_session(s);
+> +			}
+> +		}
+> +
+>  		have |= cap->issued;
+>  		if (implemented)
+>  			*implemented |= cap->implemented;
+> @@ -810,10 +833,8 @@ int __ceph_caps_issued(struct ceph_inode_info *ci, int *implemented)
+>  	 * by the auth MDS. The non-auth MDS should be revoking/exporting
+>  	 * these caps, but the message is delayed.
+>  	 */
+> -	if (ci->i_auth_cap) {
+> -		cap = ci->i_auth_cap;
+> -		have &= ~cap->implemented | cap->issued;
+> -	}
+> +	have &= ~revoking;
+> +
+>  	return have;
+>  }
+>  
+> @@ -862,7 +883,8 @@ static void __touch_cap(struct ceph_cap *cap)
+>   * front of their respective LRUs.  (This is the preferred way for
+>   * callers to check for caps they want.)
+>   */
+> -int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch)
+> +int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch,
+> +			    bool metric)
+>  {
+>  	struct ceph_cap *cap;
+>  	struct rb_node *p;
+> @@ -877,9 +899,13 @@ int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch)
+>  	}
+>  
+>  	for (p = rb_first(&ci->i_caps); p; p = rb_next(p)) {
+> +		struct ceph_mds_session *s;
+> +
+>  		cap = rb_entry(p, struct ceph_cap, ci_node);
+>  		if (!__cap_is_valid(cap))
+>  			continue;
+> +
+> +		s = ceph_get_mds_session(cap->session);
+>  		if ((cap->issued & mask) == mask) {
+>  			dout("__ceph_caps_issued_mask ino 0x%lx cap %p issued %s"
+>  			     " (mask %s)\n", ci->vfs_inode.i_ino, cap,
+> @@ -887,9 +913,22 @@ int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch)
+>  			     ceph_cap_string(mask));
+>  			if (touch)
+>  				__touch_cap(cap);
+> +			if (s) {
+> +				if (metric)
+> +					percpu_counter_inc(&s->i_caps_hit);
+> +				ceph_put_mds_session(s);
+> +			}
+>  			return 1;
+>  		}
+>  
+> +		if (s) {
+> +			if (cap->issued & mask)
+> +				percpu_counter_inc(&s->i_caps_hit);
+> +			else
+> +				percpu_counter_inc(&s->i_caps_mis);
+> +			ceph_put_mds_session(s);
+> +		}
+> +
+>  		/* does a combination of caps satisfy mask? */
+>  		have |= cap->issued;
+>  		if ((have & mask) == mask) {
+> @@ -1849,7 +1888,7 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+>  retry_locked:
+>  	file_wanted = __ceph_caps_file_wanted(ci);
+>  	used = __ceph_caps_used(ci);
+> -	issued = __ceph_caps_issued(ci, &implemented);
+> +	issued = __ceph_caps_issued(ci, &implemented, -1);
+>  	revoking = implemented & ~issued;
+>  
+>  	want = file_wanted;
+> @@ -2577,7 +2616,7 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
+>  		spin_lock(&ci->i_ceph_lock);
+>  	}
+>  
+> -	have = __ceph_caps_issued(ci, &implemented);
+> +	have = __ceph_caps_issued(ci, &implemented, need);
+>  
+>  	if (have & need & CEPH_CAP_FILE_WR) {
+>  		if (endoff >= 0 && endoff > (loff_t)ci->i_max_size) {
+> @@ -3563,7 +3602,7 @@ static void handle_cap_trunc(struct inode *inode,
+>  	u64 size = le64_to_cpu(trunc->size);
+>  	int implemented = 0;
+>  	int dirty = __ceph_caps_dirty(ci);
+> -	int issued = __ceph_caps_issued(ceph_inode(inode), &implemented);
+> +	int issued = __ceph_caps_issued(ceph_inode(inode), &implemented, -1);
+>  	int queue_trunc = 0;
+>  
+>  	issued |= implemented | dirty;
+> @@ -3770,7 +3809,7 @@ static void handle_cap_import(struct ceph_mds_client *mdsc,
+>  		}
+>  	}
+>  
+> -	__ceph_caps_issued(ci, &issued);
+> +	__ceph_caps_issued(ci, &issued, -1);
+>  	issued |= __ceph_caps_dirty(ci);
+>  
+>  	ceph_add_cap(inode, session, cap_id, -1, caps, wanted, seq, mseq,
+> @@ -3996,7 +4035,7 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+>  	switch (op) {
+>  	case CEPH_CAP_OP_REVOKE:
+>  	case CEPH_CAP_OP_GRANT:
+> -		__ceph_caps_issued(ci, &extra_info.issued);
+> +		__ceph_caps_issued(ci, &extra_info.issued, -1);
+>  		extra_info.issued |= __ceph_caps_dirty(ci);
+>  		handle_cap_grant(inode, session, cap,
+>  				 h, msg->middle, &extra_info);
+> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+> index 40a22da0214a..c132fdb40d53 100644
+> --- a/fs/ceph/debugfs.c
+> +++ b/fs/ceph/debugfs.c
+> @@ -128,6 +128,7 @@ static int metric_show(struct seq_file *s, void *p)
+>  {
+>  	struct ceph_fs_client *fsc = s->private;
+>  	struct ceph_mds_client *mdsc = fsc->mdsc;
+> +	int i;
+>  
+>  	seq_printf(s, "item          total           miss            hit\n");
+>  	seq_printf(s, "-------------------------------------------------\n");
+> @@ -137,6 +138,25 @@ static int metric_show(struct seq_file *s, void *p)
+>  		   percpu_counter_sum(&mdsc->metric.d_lease_mis),
+>  		   percpu_counter_sum(&mdsc->metric.d_lease_hit));
+>  
+> +	seq_printf(s, "\n");
+> +	seq_printf(s, "session       caps            miss            hit\n");
+> +	seq_printf(s, "-------------------------------------------------\n");
+> +
+> +	mutex_lock(&mdsc->mutex);
+> +	for (i = 0; i < mdsc->max_sessions; i++) {
+> +		struct ceph_mds_session *session;
+> +
+> +		session = __ceph_lookup_mds_session(mdsc, i);
+> +		if (!session)
+> +			continue;
+> +		seq_printf(s, "%-14d%-16d%-16lld%lld\n", i,
+> +			   session->s_nr_caps,
+> +			   percpu_counter_sum(&session->i_caps_mis),
+> +			   percpu_counter_sum(&session->i_caps_hit));
+> +		ceph_put_mds_session(session);
+> +	}
+> +	mutex_unlock(&mdsc->mutex);
+> +
+>  	return 0;
+>  }
+>  
 > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index d0cd0aba5843..10294f07f5f0 100644
+> index 382beb04bacb..1e1ccae8953d 100644
 > --- a/fs/ceph/dir.c
 > +++ b/fs/ceph/dir.c
-> @@ -1036,6 +1036,47 @@ static int ceph_link(struct dentry *old_dentry, struct inode *dir,
->   	return err;
->   }
->   
-> +static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
-> +				 struct ceph_mds_request *req)
-> +{
-> +	/* If op failed, set error on parent directory */
-> +	mapping_set_error(req->r_parent->i_mapping, req->r_err);
-> +	if (req->r_err)
-> +		printk("%s: req->r_err = %d\n", __func__, req->r_err);
-> +	ceph_put_cap_refs(ceph_inode(req->r_parent),
-> +			  CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_UNLINK);
-> +	iput(req->r_old_inode);
-> +}
-> +
-> +static bool get_caps_for_async_unlink(struct inode *dir, struct dentry *dentry)
-> +{
-> +	struct ceph_inode_info *ci = ceph_inode(dir);
-> +	struct ceph_dentry_info *di;
-> +	int ret, want, got;
-> +
-> +	want = CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_UNLINK;
-> +	ret = ceph_try_get_caps(dir, 0, want, true, &got);
-> +	dout("Fx on %p ret=%d got=%d\n", dir, ret, got);
-> +	if (ret != 1 || got != want)
-> +		return false;
-> +
-> +        spin_lock(&dentry->d_lock);
-> +        di = ceph_dentry(dentry);
-> +	/* - We are holding CEPH_CAP_FILE_EXCL, which implies
-> +	 * CEPH_CAP_FILE_SHARED.
-> +	 * - Only support async unlink for primary linkage */
-> +	if (atomic_read(&ci->i_shared_gen) != di->lease_shared_gen ||
-> +	    !(di->flags & CEPH_DENTRY_PRIMARY_LINK))
-> +		ret = 0;
-> +        spin_unlock(&dentry->d_lock);
-> +
-> +	if (!ret) {
-> +		ceph_put_cap_refs(ci, got);
-> +		return false;
-> +	}
-> +	return true;
-> +}
-> +
->   /*
->    * rmdir and unlink are differ only by the metadata op code
->    */
-> @@ -1067,13 +1108,33 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
->   	req->r_dentry = dget(dentry);
->   	req->r_num_caps = 2;
->   	req->r_parent = dir;
-> -	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
->   	req->r_dentry_drop = CEPH_CAP_FILE_SHARED;
->   	req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
->   	req->r_inode_drop = ceph_drop_caps_for_unlink(inode);
-> -	err = ceph_mdsc_do_request(mdsc, dir, req);
-> -	if (!err && !req->r_reply_info.head->is_dentry)
-> -		d_delete(dentry);
-> +
-> +	if (enable_async_dirops && op == CEPH_MDS_OP_UNLINK &&
-> +	    get_caps_for_async_unlink(dir, dentry)) {
-> +		dout("ceph: Async unlink on %lu/%.*s", dir->i_ino,
-> +		     dentry->d_name.len, dentry->d_name.name);
-> +		req->r_callback = ceph_async_unlink_cb;
-> +		req->r_old_inode = d_inode(dentry);
-> +		ihold(req->r_old_inode);
-> +		err = ceph_mdsc_submit_request(mdsc, dir, req);
-> +		if (!err) {
-> +			/*
-> +			 * We have enough caps, so we assume that the unlink
-> +			 * will succeed. Fix up the target inode and dcache.
-> +			 */
-> +			drop_nlink(inode);
-> +			d_delete(dentry);
-> +		}
-> +	} else {
-> +		set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
-> +		err = ceph_mdsc_do_request(mdsc, dir, req);
-> +		if (!err && !req->r_reply_info.head->is_dentry)
-> +			d_delete(dentry);
-> +	}
-> +
->   	ceph_mdsc_put_request(req);
->   out:
->   	return err;
-> @@ -1411,6 +1472,7 @@ void ceph_invalidate_dentry_lease(struct dentry *dentry)
->   	spin_lock(&dentry->d_lock);
->   	di->time = jiffies;
->   	di->lease_shared_gen = 0;
-> +	di->flags &= ~CEPH_DENTRY_PRIMARY_LINK;
->   	__dentry_lease_unlist(di);
->   	spin_unlock(&dentry->d_lock);
->   }
+> @@ -30,7 +30,7 @@
+>  const struct dentry_operations ceph_dentry_ops;
+>  
+>  static bool __dentry_lease_is_valid(struct ceph_dentry_info *di);
+> -static int __dir_lease_try_check(const struct dentry *dentry);
+> +static int __dir_lease_try_check(const struct dentry *dentry, bool metric);
+>  
+
+AFAICT, this function is only called when trimming dentries and in
+d_delete. I don't think we care about measuring cache hits/misses for
+either of those cases.
+
+>  /*
+>   * Initialize ceph dentry state.
+> @@ -346,7 +346,7 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+>  	    !ceph_test_mount_opt(fsc, NOASYNCREADDIR) &&
+>  	    ceph_snap(inode) != CEPH_SNAPDIR &&
+>  	    __ceph_dir_is_complete_ordered(ci) &&
+> -	    __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1)) {
+> +	    __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1, true)) {
+>  		int shared_gen = atomic_read(&ci->i_shared_gen);
+>  		spin_unlock(&ci->i_ceph_lock);
+>  		err = __dcache_readdir(file, ctx, shared_gen);
+> @@ -764,7 +764,8 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
+>  		    !is_root_ceph_dentry(dir, dentry) &&
+>  		    ceph_test_mount_opt(fsc, DCACHE) &&
+>  		    __ceph_dir_is_complete(ci) &&
+> -		    (__ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1))) {
+> +		    (__ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1,
+> +					     true))) {
+>  			spin_unlock(&ci->i_ceph_lock);
+>  			dout(" dir %p complete, -ENOENT\n", dir);
+>  			d_add(dentry, NULL);
+> @@ -1341,7 +1342,7 @@ static int __dentry_lease_check(struct dentry *dentry, void *arg)
+>  
+>  	if (__dentry_lease_is_valid(di))
+>  		return STOP;
+> -	ret = __dir_lease_try_check(dentry);
+> +	ret = __dir_lease_try_check(dentry, false);
+>  	if (ret == -EBUSY)
+>  		return KEEP;
+>  	if (ret > 0)
+> @@ -1354,7 +1355,7 @@ static int __dir_lease_check(struct dentry *dentry, void *arg)
+>  	struct ceph_lease_walk_control *lwc = arg;
+>  	struct ceph_dentry_info *di = ceph_dentry(dentry);
+>  
+> -	int ret = __dir_lease_try_check(dentry);
+> +	int ret = __dir_lease_try_check(dentry, false);
+>  	if (ret == -EBUSY)
+>  		return KEEP;
+>  	if (ret > 0) {
+> @@ -1493,7 +1494,7 @@ static int dentry_lease_is_valid(struct dentry *dentry, unsigned int flags)
+>  /*
+>   * Called under dentry->d_lock.
+>   */
+> -static int __dir_lease_try_check(const struct dentry *dentry)
+> +static int __dir_lease_try_check(const struct dentry *dentry, bool metric)
+>  {
+>  	struct ceph_dentry_info *di = ceph_dentry(dentry);
+>  	struct inode *dir;
+> @@ -1510,7 +1511,8 @@ static int __dir_lease_try_check(const struct dentry *dentry)
+>  
+>  	if (spin_trylock(&ci->i_ceph_lock)) {
+>  		if (atomic_read(&ci->i_shared_gen) == di->lease_shared_gen &&
+> -		    __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 0))
+> +		    __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 0,
+> +					    metric))
+>  			valid = 1;
+>  		spin_unlock(&ci->i_ceph_lock);
+>  	} else {
+> @@ -1532,7 +1534,7 @@ static int dir_lease_is_valid(struct inode *dir, struct dentry *dentry)
+>  	int shared_gen;
+>  
+>  	spin_lock(&ci->i_ceph_lock);
+> -	valid = __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1);
+> +	valid = __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1, true);
+>  	shared_gen = atomic_read(&ci->i_shared_gen);
+>  	spin_unlock(&ci->i_ceph_lock);
+>  	if (valid) {
+> @@ -1670,7 +1672,7 @@ static int ceph_d_delete(const struct dentry *dentry)
+>  	if (di) {
+>  		if (__dentry_lease_is_valid(di))
+>  			return 0;
+> -		if (__dir_lease_try_check(dentry))
+> +		if (__dir_lease_try_check(dentry, true))
+>  			return 0;
+>  	}
+>  	return 1;
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 11929d2bb594..418c7b30c6db 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -296,7 +296,7 @@ int ceph_renew_caps(struct inode *inode)
+>  	wanted = __ceph_caps_file_wanted(ci);
+>  	if (__ceph_is_any_real_caps(ci) &&
+>  	    (!(wanted & CEPH_CAP_ANY_WR) || ci->i_auth_cap)) {
+> -		int issued = __ceph_caps_issued(ci, NULL);
+> +		int issued = __ceph_caps_issued(ci, NULL, -1);
+>  		spin_unlock(&ci->i_ceph_lock);
+>  		dout("renew caps %p want %s issued %s updating mds_wanted\n",
+>  		     inode, ceph_cap_string(wanted), ceph_cap_string(issued));
+> @@ -387,7 +387,7 @@ int ceph_open(struct inode *inode, struct file *file)
+>  	if (__ceph_is_any_real_caps(ci) &&
+>  	    (((fmode & CEPH_FILE_MODE_WR) == 0) || ci->i_auth_cap)) {
+>  		int mds_wanted = __ceph_caps_mds_wanted(ci, true);
+> -		int issued = __ceph_caps_issued(ci, NULL);
+> +		int issued = __ceph_caps_issued(ci, NULL, fmode);
+>  
+>  		dout("open %p fmode %d want %s issued %s using existing\n",
+>  		     inode, fmode, ceph_cap_string(wanted),
+> @@ -403,7 +403,7 @@ int ceph_open(struct inode *inode, struct file *file)
+>  
+>  		return ceph_init_file(inode, file, fmode);
+>  	} else if (ceph_snap(inode) != CEPH_NOSNAP &&
+> -		   (ci->i_snap_caps & wanted) == wanted) {
+> +			(ci->i_snap_caps & wanted) == wanted) {
+>  		__ceph_get_fmode(ci, fmode);
+>  		spin_unlock(&ci->i_ceph_lock);
+>  		return ceph_init_file(inode, file, fmode);
 > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index ef9e8281d485..ffef475af72b 100644
+> index 64634c5af403..c0108b8582c3 100644
 > --- a/fs/ceph/inode.c
 > +++ b/fs/ceph/inode.c
-> @@ -1048,6 +1048,7 @@ static void __update_dentry_lease(struct inode *dir, struct dentry *dentry,
->   				  struct ceph_mds_session **old_lease_session)
->   {
->   	struct ceph_dentry_info *di = ceph_dentry(dentry);
-> +	unsigned mask = le16_to_cpu(lease->mask);
->   	long unsigned duration = le32_to_cpu(lease->duration_ms);
->   	long unsigned ttl = from_time + (duration * HZ) / 1000;
->   	long unsigned half_ttl = from_time + (duration * HZ / 2) / 1000;
-> @@ -1059,8 +1060,13 @@ static void __update_dentry_lease(struct inode *dir, struct dentry *dentry,
->   	if (ceph_snap(dir) != CEPH_NOSNAP)
->   		return;
->   
-> +	if (mask & CEPH_LEASE_PRIMARY_LINK)
-> +		di->flags |= CEPH_DENTRY_PRIMARY_LINK;
-> +	else
-> +		di->flags &= ~CEPH_DENTRY_PRIMARY_LINK;
+> @@ -798,7 +798,7 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
+>  	/* Update change_attribute */
+>  	inode_set_max_iversion_raw(inode, iinfo->change_attr);
+>  
+> -	__ceph_caps_issued(ci, &issued);
+> +	__ceph_caps_issued(ci, &issued, -1);
+>  	issued |= __ceph_caps_dirty(ci);
+>  	new_issued = ~issued & info_caps;
+>  
+> @@ -2029,7 +2029,7 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
+>  	}
+>  
+>  	spin_lock(&ci->i_ceph_lock);
+> -	issued = __ceph_caps_issued(ci, NULL);
+> +	issued = __ceph_caps_issued(ci, NULL, -1);
+>  
+>  	if (!ci->i_head_snapc &&
+>  	    (issued & (CEPH_CAP_ANY_EXCL | CEPH_CAP_FILE_WR))) {
+> @@ -2038,7 +2038,7 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
+>  			spin_unlock(&ci->i_ceph_lock);
+>  			down_read(&mdsc->snap_rwsem);
+>  			spin_lock(&ci->i_ceph_lock);
+> -			issued = __ceph_caps_issued(ci, NULL);
+> +			issued = __ceph_caps_issued(ci, NULL, -1);
+>  		}
+>  	}
+>  
+> @@ -2269,7 +2269,7 @@ int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
+>  
+>  	dout("do_getattr inode %p mask %s mode 0%o\n",
+>  	     inode, ceph_cap_string(mask), inode->i_mode);
+> -	if (!force && ceph_caps_issued_mask(ceph_inode(inode), mask, 1))
+> +	if (!force && ceph_caps_issued_mask(ceph_inode(inode), mask, 1, true))
+>  		return 0;
+>  
+>  	mode = (mask & CEPH_STAT_RSTAT) ? USE_AUTH_MDS : USE_ANY_MDS;
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index a976febf9647..606fa8cd687f 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -558,6 +558,8 @@ void ceph_put_mds_session(struct ceph_mds_session *s)
+>  	if (refcount_dec_and_test(&s->s_ref)) {
+>  		if (s->s_auth.authorizer)
+>  			ceph_auth_destroy_authorizer(s->s_auth.authorizer);
+> +		percpu_counter_destroy(&s->i_caps_hit);
+> +		percpu_counter_destroy(&s->i_caps_mis);
+>  		kfree(s);
+>  	}
+>  }
+> @@ -598,6 +600,7 @@ static struct ceph_mds_session *register_session(struct ceph_mds_client *mdsc,
+>  						 int mds)
+>  {
+>  	struct ceph_mds_session *s;
+> +	int err;
+>  
+>  	if (mds >= mdsc->mdsmap->possible_max_rank)
+>  		return ERR_PTR(-EINVAL);
+> @@ -612,8 +615,10 @@ static struct ceph_mds_session *register_session(struct ceph_mds_client *mdsc,
+>  
+>  		dout("%s: realloc to %d\n", __func__, newmax);
+>  		sa = kcalloc(newmax, sizeof(void *), GFP_NOFS);
+> -		if (!sa)
+> +		if (!sa) {
+> +			err = -ENOMEM;
+>  			goto fail_realloc;
+> +		}
+>  		if (mdsc->sessions) {
+>  			memcpy(sa, mdsc->sessions,
+>  			       mdsc->max_sessions * sizeof(void *));
+> @@ -653,6 +658,13 @@ static struct ceph_mds_session *register_session(struct ceph_mds_client *mdsc,
+>  
+>  	INIT_LIST_HEAD(&s->s_cap_flushing);
+>  
+> +	err = percpu_counter_init(&s->i_caps_hit, 0, GFP_NOFS);
+> +	if (err)
+> +		goto fail_realloc;
+> +	err = percpu_counter_init(&s->i_caps_mis, 0, GFP_NOFS);
+> +	if (err)
+> +		goto fail_init;
 > +
->   	di->lease_shared_gen = atomic_read(&ceph_inode(dir)->i_shared_gen);
-> -	if (duration == 0) {
-> +	if (!(mask & CEPH_LEASE_VALID)) {
->   		__ceph_dentry_dir_lease_touch(di);
->   		return;
->   	}
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index 112927dbd2f2..c149edb6aa2d 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -1324,6 +1324,10 @@ static void __exit exit_ceph(void)
->   	destroy_caches();
->   }
->   
-> +bool enable_async_dirops;
-> +module_param(enable_async_dirops, bool, 0644);
-> +MODULE_PARM_DESC(enable_async_dirops, "Asynchronous directory operations enabled");
+>  	mdsc->sessions[mds] = s;
+>  	atomic_inc(&mdsc->num_sessions);
+>  	refcount_inc(&s->s_ref);  /* one ref to sessions[], one to caller */
+> @@ -662,6 +674,8 @@ static struct ceph_mds_session *register_session(struct ceph_mds_client *mdsc,
+>  
+>  	return s;
+>  
+> +fail_init:
+> +	percpu_counter_destroy(&s->i_caps_hit);
+>  fail_realloc:
+>  	kfree(s);
+>  	return ERR_PTR(-ENOMEM);
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 22186060bc37..c8935fd0d8bb 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -201,6 +201,9 @@ struct ceph_mds_session {
+>  	refcount_t        s_ref;
+>  	struct list_head  s_waiting;  /* waiting requests */
+>  	struct list_head  s_unsafe;   /* unsafe requests */
 > +
->   module_init(init_ceph);
->   module_exit(exit_ceph);
->   
+> +	struct percpu_counter i_caps_hit;
+> +	struct percpu_counter i_caps_mis;
+>  };
+>  
+>  /*
+> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> index ccfcc66aaf44..3d34af145f81 100644
+> --- a/fs/ceph/snap.c
+> +++ b/fs/ceph/snap.c
+> @@ -534,7 +534,7 @@ void ceph_queue_cap_snap(struct ceph_inode_info *ci)
+>  	INIT_LIST_HEAD(&capsnap->ci_item);
+>  
+>  	capsnap->follows = old_snapc->seq;
+> -	capsnap->issued = __ceph_caps_issued(ci, NULL);
+> +	capsnap->issued = __ceph_caps_issued(ci, NULL, -1);
+>  	capsnap->dirty = dirty;
+>  
+>  	capsnap->mode = inode->i_mode;
 > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 4b53f32b9324..4083de451710 100644
+> index 40703588b889..88da9e21af75 100644
 > --- a/fs/ceph/super.h
 > +++ b/fs/ceph/super.h
-> @@ -72,6 +72,8 @@
->   #define CEPH_CAPS_WANTED_DELAY_MIN_DEFAULT      5  /* cap release delay */
->   #define CEPH_CAPS_WANTED_DELAY_MAX_DEFAULT     60  /* cap release delay */
->   
-> +extern bool enable_async_dirops;
-> +
->   struct ceph_mount_options {
->   	unsigned int flags;
->   
-> @@ -282,6 +284,7 @@ struct ceph_dentry_info {
->   #define CEPH_DENTRY_REFERENCED		1
->   #define CEPH_DENTRY_LEASE_LIST		2
->   #define CEPH_DENTRY_SHRINK_LIST		4
-> +#define CEPH_DENTRY_PRIMARY_LINK	8
->   
->   struct ceph_inode_xattrs_info {
->   	/*
-> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-> index cb21c5cf12c3..a099f60feb7b 100644
-> --- a/include/linux/ceph/ceph_fs.h
-> +++ b/include/linux/ceph/ceph_fs.h
-> @@ -530,6 +530,9 @@ struct ceph_mds_reply_lease {
->   	__le32 seq;
->   } __attribute__ ((packed));
->   
-> +#define CEPH_LEASE_VALID        (1 | 2) /* old and new bit values */
-> +#define CEPH_LEASE_PRIMARY_LINK 4       /* primary linkage */
-> +
->   struct ceph_mds_reply_dirfrag {
->   	__le32 frag;            /* fragment */
->   	__le32 auth;            /* auth mds, if this is a delegation point */
-> @@ -659,6 +662,12 @@ int ceph_flags_to_mode(int flags);
->   #define CEPH_CAP_LOCKS (CEPH_LOCK_IFILE | CEPH_LOCK_IAUTH | CEPH_LOCK_ILINK | \
->   			CEPH_LOCK_IXATTR)
->   
-> +/* cap masks async dir operations */
-> +#define CEPH_CAP_DIR_CREATE	CEPH_CAP_FILE_CACHE
-> +#define CEPH_CAP_DIR_UNLINK	CEPH_CAP_FILE_RD
-> +#define CEPH_CAP_ANY_DIR_OPS	(CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_RD | \
-> +				 CEPH_CAP_FILE_WREXTEND | CEPH_CAP_FILE_LAZYIO)
-> +
->   int ceph_caps_for_mode(int mode);
->   
->   enum {
-> 
+> @@ -635,8 +635,10 @@ static inline bool __ceph_is_any_real_caps(struct ceph_inode_info *ci)
+>  	return !RB_EMPTY_ROOT(&ci->i_caps);
+>  }
+>  
+> -extern int __ceph_caps_issued(struct ceph_inode_info *ci, int *implemented);
+> -extern int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int t);
+> +extern int __ceph_caps_issued(struct ceph_inode_info *ci, int *implemented,
+> +			      int mask);
+> +extern int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int t,
+> +				   bool metric);
+>  extern int __ceph_caps_issued_other(struct ceph_inode_info *ci,
+>  				    struct ceph_cap *cap);
+>  
+> @@ -644,17 +646,17 @@ static inline int ceph_caps_issued(struct ceph_inode_info *ci)
+>  {
+>  	int issued;
+>  	spin_lock(&ci->i_ceph_lock);
+> -	issued = __ceph_caps_issued(ci, NULL);
+> +	issued = __ceph_caps_issued(ci, NULL, -1);
+>  	spin_unlock(&ci->i_ceph_lock);
+>  	return issued;
+>  }
+>  
+>  static inline int ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask,
+> -					int touch)
+> +					int touch, bool metric)
+>  {
+>  	int r;
+>  	spin_lock(&ci->i_ceph_lock);
+> -	r = __ceph_caps_issued_mask(ci, mask, touch);
+> +	r = __ceph_caps_issued_mask(ci, mask, touch, metric);
+>  	spin_unlock(&ci->i_ceph_lock);
+>  	return r;
+>  }
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 98a9a3101cda..aa9ee2c2d8f3 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -856,7 +856,7 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
+>  
+>  	if (ci->i_xattrs.version == 0 ||
+>  	    !((req_mask & CEPH_CAP_XATTR_SHARED) ||
+> -	      __ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 1))) {
+> +	      __ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 1, true))) {
+>  		spin_unlock(&ci->i_ceph_lock);
+>  
+>  		/* security module gets xattr while filling trace */
+> @@ -914,7 +914,7 @@ ssize_t ceph_listxattr(struct dentry *dentry, char *names, size_t size)
+>  	     ci->i_xattrs.version, ci->i_xattrs.index_version);
+>  
+>  	if (ci->i_xattrs.version == 0 ||
+> -	    !__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 1)) {
+> +	    !__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 1, true)) {
+>  		spin_unlock(&ci->i_ceph_lock);
+>  		err = ceph_do_getattr(inode, CEPH_STAT_CAP_XATTR, true);
+>  		if (err)
+> @@ -1064,7 +1064,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+>  
+>  	spin_lock(&ci->i_ceph_lock);
+>  retry:
+> -	issued = __ceph_caps_issued(ci, NULL);
+> +	issued = __ceph_caps_issued(ci, NULL, -1);
+>  	if (ci->i_xattrs.version == 0 || !(issued & CEPH_CAP_XATTR_EXCL))
+>  		goto do_sync;
+>  
+> @@ -1192,7 +1192,7 @@ bool ceph_security_xattr_deadlock(struct inode *in)
+>  	spin_lock(&ci->i_ceph_lock);
+>  	ret = !(ci->i_ceph_flags & CEPH_I_SEC_INITED) &&
+>  	      !(ci->i_xattrs.version > 0 &&
+> -		__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 0));
+> +		__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 0, true));
+>  	spin_unlock(&ci->i_ceph_lock);
+>  	return ret;
+>  }
+
+-- 
+Jeff Layton <jlayton@kernel.org>
 
