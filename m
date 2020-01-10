@@ -2,414 +2,257 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66CE9137834
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jan 2020 21:57:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80925137A3C
+	for <lists+ceph-devel@lfdr.de>; Sat, 11 Jan 2020 00:29:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbgAJU5C (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 10 Jan 2020 15:57:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49128 "EHLO mail.kernel.org"
+        id S1727485AbgAJX3M (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 10 Jan 2020 18:29:12 -0500
+Received: from mga09.intel.com ([134.134.136.24]:46942 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727216AbgAJU46 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 10 Jan 2020 15:56:58 -0500
-Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6734C208E4;
-        Fri, 10 Jan 2020 20:56:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578689816;
-        bh=apkW7LqAuC//YMDdbVkSXkrTn5QinVjKd84qBQfMvYA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QBXgvXdZ1rxyJiPrlXje1pvu+pLsWuFLyqPbUBTHHtFryZyakZ0URp1KmNVmVAPjw
-         QMo2oySbNBx/4wtDBXFrTJck8enUpw2sspaUhqT76V/hIRkDL899Dk9sgRZD1NI2WV
-         oR4Rs3rNtB50w1RKps6RfXod99X0KIP+RZ+Egbf4=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     zyan@redhat.com, sage@redhat.com, idryomov@gmail.com,
-        pdonnell@redhat.com
-Subject: [RFC PATCH 9/9] ceph: attempt to do async create when possible
-Date:   Fri, 10 Jan 2020 15:56:47 -0500
-Message-Id: <20200110205647.311023-10-jlayton@kernel.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200110205647.311023-1-jlayton@kernel.org>
-References: <20200110205647.311023-1-jlayton@kernel.org>
+        id S1727474AbgAJX3M (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 10 Jan 2020 18:29:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2020 15:29:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,418,1571727600"; 
+   d="scan'208";a="218210898"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by fmsmga007.fm.intel.com with ESMTP; 10 Jan 2020 15:29:11 -0800
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Fri, 10 Jan 2020 15:29:10 -0800
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 10 Jan 2020 15:29:10 -0800
+Received: from FMSEDG002.ED.cps.intel.com (10.1.192.134) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Fri, 10 Jan 2020 15:29:10 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.105)
+ by edgegateway.intel.com (192.55.55.69) with Microsoft SMTP Server (TLS) id
+ 14.3.439.0; Fri, 10 Jan 2020 15:29:10 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Lb6/HY6lxL46Ei5tEk9kLFWs8wep0KN6ngs+TuCPE7aDIY8t58sly7STN1xfVcW84aylE/PKm3NN8bRy+UDbsRHWH7dUGx4UDHSau1itl3xMKKP0TQb5fttROtw/99Vy7Rm9JKr88TXgN5MAPJ3JskCcuoS8IVMKGl0//ns05z4Jq/JU2+m1C+/G2MiDpkRWpIsnIhPK8r7251dMhuNLLHWJkRicN0T7BvNIp+DnXFHvhTLBAVAxr4WMXMS5fHrSnsY67atuX7crtVGrUwYHgOXHvi1Nsd1qtDZMmPRoQ5xn2WzpUdMpk4xvmlNPHu4m52Pmf0Zyy3ognx1U+z/jVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AdG74TMCG3tKDz7zEJ5t4p/Sbm9IqnIVA6cb0vUrAC4=;
+ b=Zcq0WW1mbIzD8TdEMkggXA7J0vlZOklTGYVzHy03kEDyfc55aO4xk3D156DxiA/EmWn2TCOtR61Kz4t5YbBj3xlY3b+1rkHaA1WgDqwaA4kx2psiLRPmtA/U02FwodwoYGIZ/4j6lJ5DztOMEt+u+TAszHQjUuislnOjN2j5P/eaEW/3ZBky2Ybj9k9vUWwXlIprK5y5hTZMsBIqlF8Rqd0fw+S+XjYmz4BQJhGYLwOIjTWB+KxlYk7xj+PF3bywyg8iPW8/vrREolJDaIpKlJyziOUx0l/kHPwjkzSeFWiRdm2qdKHxz9w1bo0iMGtKCf9ce1ZZNCJITg2EG5xANQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
+ s=selector2-intel-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AdG74TMCG3tKDz7zEJ5t4p/Sbm9IqnIVA6cb0vUrAC4=;
+ b=GjdX+GM9VeIGAXSKw55sWodAO4kW6Ps4NM2fQrOvMWlBJ8qLssD4ufNEVjK0Cxl6H3b82AcpbcFqOEy4JIkxcmN1u4xESsoZ4lHBhiB9XgTv8JaNMFPdrXfZsdLkTY16RV0RG/1RJV3ZGMasz2GZ9HS/8HZ62dG3rT3k7y7gHoo=
+Received: from BY5PR11MB4273.namprd11.prod.outlook.com (52.132.255.32) by
+ BY5PR11MB4210.namprd11.prod.outlook.com (52.132.253.29) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2623.9; Fri, 10 Jan 2020 23:28:59 +0000
+Received: from BY5PR11MB4273.namprd11.prod.outlook.com
+ ([fe80::9404:81be:8a3e:5477]) by BY5PR11MB4273.namprd11.prod.outlook.com
+ ([fe80::9404:81be:8a3e:5477%6]) with mapi id 15.20.2623.013; Fri, 10 Jan 2020
+ 23:28:59 +0000
+From:   "Liu, Chunmei" <chunmei.liu@intel.com>
+To:     Roman Penyaev <rpenyaev@suse.de>, kefu chai <tchaikov@gmail.com>,
+        "Ma, Jianpeng" <jianpeng.ma@intel.com>
+CC:     Radoslaw Zarzynski <rzarzyns@redhat.com>,
+        Samuel Just <sjust@redhat.com>,
+        The Esoteric Order of the Squid Cybernetic 
+        <ceph-devel@vger.kernel.org>
+Subject: RE: crimson-osd vs legacy-osd: should the perf difference be already
+ noticeable?
+Thread-Topic: crimson-osd vs legacy-osd: should the perf difference be already
+ noticeable?
+Thread-Index: AQHVxvPkJuFmrnJTI0aYjAoqNUuMEKfkFTEAgAArcACAAEdSIA==
+Date:   Fri, 10 Jan 2020 23:28:59 +0000
+Message-ID: <BY5PR11MB4273BE8C4A3FB0E3D01A20ACE0380@BY5PR11MB4273.namprd11.prod.outlook.com>
+References: <02e2209f66f18217aa45b8f7caf715f6@suse.de>
+ <CAJE9aON93O75PPRjfuFGYrtpBxRHHuepGX+tEC3FkBSgM6TgNQ@mail.gmail.com>
+ <f3a976a6d2eba9cd8bd6bf46c0fc9967@suse.de>
+In-Reply-To: <f3a976a6d2eba9cd8bd6bf46c0fc9967@suse.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+dlp-product: dlpe-windows
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNWY5YTNkNGMtOGNlNy00NGVkLWFkMTYtOWFlNWYxZDAzYmM3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUm5STTY3XC8yTlJXVytzKzZ2WHNRajdiZzYzWHVaRFNRcG81emtcL2Y1Umh1Z01VbVpmV1UwVDA0eG5abVdOaUFcLyJ9
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=chunmei.liu@intel.com; 
+x-originating-ip: [134.134.136.215]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6a1ecf32-e59a-41d4-bdbf-08d79624dec6
+x-ms-traffictypediagnostic: BY5PR11MB4210:
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BY5PR11MB4210AF270014C7131E87F466E0380@BY5PR11MB4210.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 02788FF38E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(366004)(39860400002)(396003)(376002)(189003)(199004)(8936002)(81156014)(81166006)(66476007)(2906002)(66946007)(55016002)(52536014)(76116006)(54906003)(6506007)(8676002)(64756008)(71200400001)(316002)(33656002)(66446008)(4326008)(9686003)(966005)(26005)(53546011)(66556008)(110136005)(5660300002)(478600001)(15650500001)(186003)(6636002)(86362001)(7696005);DIR:OUT;SFP:1102;SCL:1;SRVR:BY5PR11MB4210;H:BY5PR11MB4273.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ixTUquJh86JgpIz4EiwAe0FsqMhxBdXmXZUTuTY3G25WFO/XTScH+yMAsfIsvYSS++/MgW3QTRsLvYX1k2vKx9AG/cIJIUB8UDSSKKpid3BChPiErmXudiw6xlXqTJVL6Tw4J/D2SUreqZza6fNytAZ4M3NXFrp2wMXDg6zlCYuvpd6Pi1eXKWbhtmntoSDGPtq8cqM3bSpc8HwDI2brKjTj6PojwS5bZKlEUMROKpv4usnYHBL/Y7zxn8UAG/4gm9QaHz8U752jSQQOdOlCaae+NFIPkNPsf4GqqGLyez9egVeCuhqM+GNwewzfcFFiwbKkWgJyDgRALavjFW5ih3Cp39kG4mX3/X6BqbYW+Q6KUPiaPAu3KcH0BtqEoHizI4ypUaopJwViqDVfW90ABwJ+KORAShs9Wqz/U6BaABIbnKv/7dXEwqTfD6qD2VOXRit/8/27VsKwOB2OPo31WkIFdUG7yejub1HY2ExUWAw=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a1ecf32-e59a-41d4-bdbf-08d79624dec6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2020 23:28:59.4841
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dq9Artq5Yp+XC+Yx+Z26AT+h2Xq0E6E9CWfhZ4+2kheTZIfYgXLPW9NGwKx3jBCKI/1aEnBRGGhWdtJ45vv//w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR11MB4210
+X-OriginatorOrg: intel.com
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-With the Octopus release, the MDS will hand out directoy create caps.
-If we have Fxc caps on the directory, and complete directory information
-or a known negative dentry, then we can return without waiting on the
-reply, allowing the open() call to return very quickly to userland.
 
-We use the normal ceph_fill_inode() routine to fill in the inode, so we
-have to gin up some reply inode information with what we'd expect a
-newly-created inode to have. The client assumes that it has a full set
-of caps on the new inode, and that the MDS will revoke them when there
-is conflicting access.
 
-This functionality is gated on the enable_async_dirops module option,
-along with async unlinks, and on the server supporting the Octopus
-CephFS feature bit.
-
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/caps.c               |   7 +-
- fs/ceph/file.c               | 178 +++++++++++++++++++++++++++++++++--
- fs/ceph/mds_client.c         |  12 ++-
- fs/ceph/mds_client.h         |   3 +-
- fs/ceph/super.h              |   2 +
- include/linux/ceph/ceph_fs.h |   8 +-
- 6 files changed, 191 insertions(+), 19 deletions(-)
-
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index b96fb1378479..21a8a2ddc94b 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -654,6 +654,10 @@ void ceph_add_cap(struct inode *inode,
- 		session->s_nr_caps++;
- 		spin_unlock(&session->s_cap_lock);
- 	} else {
-+		/* Did an async create race with the reply? */
-+		if (cap_id == CEPH_CAP_ID_TBD && cap->issued == issued)
-+			return;
-+
- 		spin_lock(&session->s_cap_lock);
- 		list_move_tail(&cap->session_caps, &session->s_caps);
- 		spin_unlock(&session->s_cap_lock);
-@@ -672,7 +676,8 @@ void ceph_add_cap(struct inode *inode,
- 		 */
- 		if (ceph_seq_cmp(seq, cap->seq) <= 0) {
- 			WARN_ON(cap != ci->i_auth_cap);
--			WARN_ON(cap->cap_id != cap_id);
-+			WARN_ON(cap_id != CEPH_CAP_ID_TBD &&
-+				cap->cap_id != cap_id);
- 			seq = cap->seq;
- 			mseq = cap->mseq;
- 			issued |= cap->issued;
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index d4d7a277faf1..706abd71b731 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -450,6 +450,141 @@ copy_file_layout(struct inode *dst, struct inode *src)
- 	spin_unlock(&cdst->i_ceph_lock);
- }
- 
-+static bool get_caps_for_async_create(struct inode *dir, struct dentry *dentry)
-+{
-+	struct ceph_inode_info *ci = ceph_inode(dir);
-+	int ret, want, got;
-+
-+	/*
-+	 * We can do an async create if we either have a valid negative dentry
-+	 * or the complete contents of the directory. Do a quick check without
-+	 * cap refs.
-+	 */
-+	if ((d_in_lookup(dentry) && !__ceph_dir_is_complete(ci)) ||
-+	    !ceph_file_layout_is_valid(&ci->i_layout))
-+		return false;
-+
-+	/* Try to get caps */
-+	want = CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE;
-+	ret = ceph_try_get_caps(dir, 0, want, true, &got);
-+	dout("Fx on %p ret=%d got=%d\n", dir, ret, got);
-+	if (ret != 1)
-+		return false;
-+	if (got != want) {
-+		ceph_put_cap_refs(ci, got);
-+		return false;
-+	}
-+
-+	/* Check again, now that we hold cap refs */
-+	if ((d_in_lookup(dentry) && !__ceph_dir_is_complete(ci)) ||
-+	    !ceph_file_layout_is_valid(&ci->i_layout)) {
-+		ceph_put_cap_refs(ci, got);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+static void ceph_async_create_cb(struct ceph_mds_client *mdsc,
-+                                 struct ceph_mds_request *req)
-+{
-+	/* If we never sent anything then nothing to clean up */
-+	if (req->r_err == -ECHILD)
-+		goto out;
-+
-+	mapping_set_error(req->r_parent->i_mapping, req->r_err);
-+
-+	if (req->r_target_inode) {
-+		u64 ino = ceph_vino(req->r_target_inode).ino;
-+
-+		if (req->r_deleg_ino != ino)
-+			pr_warn("%s: inode number mismatch! err=%d deleg_ino=0x%lx target=0x%llx\n",
-+				__func__, req->r_err, req->r_deleg_ino, ino);
-+		mapping_set_error(req->r_target_inode->i_mapping, req->r_err);
-+	} else {
-+		pr_warn("%s: no req->r_target_inode for 0x%lx\n", __func__,
-+			req->r_deleg_ino);
-+	}
-+out:
-+	ceph_put_cap_refs(ceph_inode(req->r_parent),
-+			  CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE);
-+}
-+
-+static int ceph_finish_async_open(struct inode *dir, struct dentry *dentry,
-+				  struct file *file, umode_t mode,
-+				  struct ceph_mds_request *req,
-+				  struct ceph_acl_sec_ctx *as_ctx)
-+{
-+	int ret;
-+	struct ceph_mds_reply_inode in = { };
-+	struct ceph_mds_reply_info_in iinfo = { .in = &in };
-+	struct ceph_inode_info *ci = ceph_inode(dir);
-+	struct inode *inode;
-+	struct timespec64 now;
-+	struct ceph_vino vino = { .ino = req->r_deleg_ino,
-+				  .snap = CEPH_NOSNAP };
-+
-+	ktime_get_real_ts64(&now);
-+
-+	inode = ceph_get_inode(dentry->d_sb, vino);
-+	if (IS_ERR(inode))
-+		return PTR_ERR(inode);
-+
-+	/* If we can't get a buffer, just carry on */
-+	iinfo.xattr_data = kzalloc(4, GFP_NOFS);
-+	if (iinfo.xattr_data)
-+		iinfo.xattr_len = 4;
-+
-+	iinfo.inline_version = CEPH_INLINE_NONE;
-+	iinfo.change_attr = 1;
-+	ceph_encode_timespec64(&iinfo.btime, &now);
-+
-+	in.ino = cpu_to_le64(vino.ino);
-+	in.snapid = cpu_to_le64(CEPH_NOSNAP);
-+	in.version = cpu_to_le64(1);	// ???
-+	in.cap.caps = in.cap.wanted = cpu_to_le32(CEPH_CAP_ALL_FILE);
-+	in.cap.cap_id = cpu_to_le64(CEPH_CAP_ID_TBD);
-+	in.cap.realm = cpu_to_le64(ci->i_snap_realm->ino);
-+	in.cap.flags = CEPH_CAP_FLAG_AUTH;
-+	in.ctime = in.mtime = in.atime = iinfo.btime;
-+	in.mode = cpu_to_le32((u32)mode);
-+	in.truncate_seq = cpu_to_le32(1);
-+	in.truncate_size = cpu_to_le64(ci->i_truncate_size);
-+	in.max_size = cpu_to_le64(ci->i_max_size);
-+	in.xattr_version = cpu_to_le64(1);
-+	in.uid = cpu_to_le32(from_kuid(&init_user_ns, current_fsuid()));
-+	in.gid = cpu_to_le32(from_kgid(&init_user_ns, current_fsgid()));
-+	in.nlink = cpu_to_le32(1);
-+
-+	ceph_file_layout_to_legacy(&ci->i_layout, &in.layout);
-+
-+	ret = ceph_fill_inode(inode, NULL, &iinfo, NULL, req->r_session,
-+			      req->r_fmode, NULL);
-+	if (ret) {
-+		dout("%s failed to fill inode: %d\n", __func__, ret);
-+		if (inode->i_state & I_NEW)
-+			discard_new_inode(inode);
-+	} else {
-+		struct dentry *dn;
-+
-+		dout("%s d_adding new inode 0x%llx to 0x%lx/%s\n", __func__,
-+			vino.ino, dir->i_ino, dentry->d_name.name);
-+		ceph_dir_clear_ordered(dir);
-+		ceph_init_inode_acls(inode, as_ctx);
-+		if (inode->i_state & I_NEW)
-+			unlock_new_inode(inode);
-+		if (d_in_lookup(dentry) || d_really_is_negative(dentry)) {
-+			if (!d_unhashed(dentry))
-+				d_drop(dentry);
-+			dn = d_splice_alias(inode, dentry);
-+			WARN_ON_ONCE(dn && dn != dentry);
-+		}
-+		file->f_mode |= FMODE_CREATED;
-+		ret = finish_open(file, dentry, ceph_open);
-+	}
-+	return ret;
-+}
-+
- /*
-  * Do a lookup + open with a single request.  If we get a non-existent
-  * file or symlink, return 1 so the VFS can retry.
-@@ -462,6 +597,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 	struct ceph_mds_request *req;
- 	struct dentry *dn;
- 	struct ceph_acl_sec_ctx as_ctx = {};
-+	bool try_async = enable_async_dirops;
- 	int mask;
- 	int err;
- 
-@@ -486,6 +622,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 		return -ENOENT;
- 	}
- 
-+retry:
- 	/* do the open */
- 	req = prepare_open_request(dir->i_sb, flags, mode);
- 	if (IS_ERR(req)) {
-@@ -494,6 +631,12 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 	}
- 	req->r_dentry = dget(dentry);
- 	req->r_num_caps = 2;
-+	mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
-+	if (ceph_security_xattr_wanted(dir))
-+		mask |= CEPH_CAP_XATTR_SHARED;
-+	req->r_args.open.mask = cpu_to_le32(mask);
-+	req->r_parent = dir;
-+
- 	if (flags & O_CREAT) {
- 		req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
- 		req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
-@@ -501,21 +644,37 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 			req->r_pagelist = as_ctx.pagelist;
- 			as_ctx.pagelist = NULL;
- 		}
-+		if (try_async && get_caps_for_async_create(dir, dentry)) {
-+			set_bit(CEPH_MDS_R_DELEG_INO, &req->r_req_flags);
-+			req->r_callback = ceph_async_create_cb;
-+			err = ceph_mdsc_submit_request(mdsc, dir, req);
-+			switch (err) {
-+			case 0:
-+				/* set up inode, dentry and return */
-+				err = ceph_finish_async_open(dir, dentry, file,
-+							mode, req, &as_ctx);
-+				goto out_req;
-+			case -ECHILD:
-+				/* do a sync create */
-+				try_async = false;
-+				as_ctx.pagelist = req->r_pagelist;
-+				req->r_pagelist = NULL;
-+				ceph_mdsc_put_request(req);
-+				goto retry;
-+			default:
-+				/* Hard error, give up */
-+				goto out_req;
-+			}
-+		}
- 	}
- 
--       mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
--       if (ceph_security_xattr_wanted(dir))
--               mask |= CEPH_CAP_XATTR_SHARED;
--       req->r_args.open.mask = cpu_to_le32(mask);
--
--	req->r_parent = dir;
- 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
- 	err = ceph_mdsc_do_request(mdsc,
- 				   (flags & (O_CREAT|O_TRUNC)) ? dir : NULL,
- 				   req);
- 	err = ceph_handle_snapdir(req, dentry, err);
- 	if (err)
--		goto out_req;
-+		goto out_fmode;
- 
- 	if ((flags & O_CREAT) && !req->r_reply_info.head->is_dentry)
- 		err = ceph_handle_notrace_create(dir, dentry);
-@@ -529,7 +688,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 		dn = NULL;
- 	}
- 	if (err)
--		goto out_req;
-+		goto out_fmode;
- 	if (dn || d_really_is_negative(dentry) || d_is_symlink(dentry)) {
- 		/* make vfs retry on splice, ENOENT, or symlink */
- 		dout("atomic_open finish_no_open on dn %p\n", dn);
-@@ -545,9 +704,10 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 		}
- 		err = finish_open(file, dentry, ceph_open);
- 	}
--out_req:
-+out_fmode:
- 	if (!req->r_err && req->r_target_inode)
- 		ceph_put_fmode(ceph_inode(req->r_target_inode), req->r_fmode);
-+out_req:
- 	ceph_mdsc_put_request(req);
- out_ctx:
- 	ceph_release_acl_sec_ctx(&as_ctx);
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 9e7492b21b50..c76d6e7f8136 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2620,14 +2620,16 @@ static int __prepare_send_request(struct ceph_mds_client *mdsc,
- 		flags |= CEPH_MDS_FLAG_REPLAY;
- 	if (req->r_parent)
- 		flags |= CEPH_MDS_FLAG_WANT_DENTRY;
--	rhead->flags = cpu_to_le32(flags);
--	rhead->num_fwd = req->r_num_fwd;
--	rhead->num_retry = req->r_attempts - 1;
--	if (test_bit(CEPH_MDS_R_DELEG_INO, &req->r_req_flags))
-+	if (test_bit(CEPH_MDS_R_DELEG_INO, &req->r_req_flags)) {
- 		rhead->ino = cpu_to_le64(req->r_deleg_ino);
--	else
-+		flags |= CEPH_MDS_FLAG_ASYNC;
-+	} else {
- 		rhead->ino = 0;
-+	}
- 
-+	rhead->flags = cpu_to_le32(flags);
-+	rhead->num_fwd = req->r_num_fwd;
-+	rhead->num_retry = req->r_attempts - 1;
- 	dout(" r_parent = %p\n", req->r_parent);
- 	return 0;
- }
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index e0b36be7c44f..49e6cd5a07a2 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -39,8 +39,7 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_REPLY_ENCODING,		\
- 	CEPHFS_FEATURE_LAZY_CAP_WANTED,		\
- 	CEPHFS_FEATURE_MULTI_RECONNECT,		\
--						\
--	CEPHFS_FEATURE_MAX,			\
-+	CEPHFS_FEATURE_OCTOPUS,			\
- }
- #define CEPHFS_FEATURES_CLIENT_REQUIRED {}
- 
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index ec4d66d7c261..33e03fbba888 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -136,6 +136,8 @@ struct ceph_fs_client {
- #endif
- };
- 
-+/* Special placeholder value for a cap_id during an asynchronous create. */
-+#define        CEPH_CAP_ID_TBD         -1ULL
- 
- /*
-  * File i/o capability.  This tracks shared state with the metadata
-diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-index a099f60feb7b..b127563e21a1 100644
---- a/include/linux/ceph/ceph_fs.h
-+++ b/include/linux/ceph/ceph_fs.h
-@@ -444,8 +444,9 @@ union ceph_mds_request_args {
- 	} __attribute__ ((packed)) lookupino;
- } __attribute__ ((packed));
- 
--#define CEPH_MDS_FLAG_REPLAY        1  /* this is a replayed op */
--#define CEPH_MDS_FLAG_WANT_DENTRY   2  /* want dentry in reply */
-+#define CEPH_MDS_FLAG_REPLAY		1  /* this is a replayed op */
-+#define CEPH_MDS_FLAG_WANT_DENTRY	2  /* want dentry in reply */
-+#define CEPH_MDS_FLAG_ASYNC		4  /* request is asynchronous */
- 
- struct ceph_mds_request_head {
- 	__le64 oldest_client_tid;
-@@ -658,6 +659,9 @@ int ceph_flags_to_mode(int flags);
- #define CEPH_CAP_ANY      (CEPH_CAP_ANY_RD | CEPH_CAP_ANY_EXCL | \
- 			   CEPH_CAP_ANY_FILE_WR | CEPH_CAP_FILE_LAZYIO | \
- 			   CEPH_CAP_PIN)
-+#define CEPH_CAP_ALL_FILE (CEPH_CAP_PIN | CEPH_CAP_ANY_SHARED | \
-+			   CEPH_CAP_AUTH_EXCL | CEPH_CAP_XATTR_EXCL | \
-+			   CEPH_CAP_ANY_FILE_RD | CEPH_CAP_ANY_FILE_WR)
- 
- #define CEPH_CAP_LOCKS (CEPH_LOCK_IFILE | CEPH_LOCK_IAUTH | CEPH_LOCK_ILINK | \
- 			CEPH_LOCK_IXATTR)
--- 
-2.24.1
+> -----Original Message-----
+> From: ceph-devel-owner@vger.kernel.org <ceph-devel-owner@vger.kernel.org>
+> On Behalf Of Roman Penyaev
+> Sent: Friday, January 10, 2020 10:54 AM
+> To: kefu chai <tchaikov@gmail.com>
+> Cc: Radoslaw Zarzynski <rzarzyns@redhat.com>; Samuel Just
+> <sjust@redhat.com>; The Esoteric Order of the Squid Cybernetic <ceph-
+> devel@vger.kernel.org>
+> Subject: Re: crimson-osd vs legacy-osd: should the perf difference be alr=
+eady
+> noticeable?
+>=20
+> On 2020-01-10 17:18, kefu chai wrote:
+>=20
+> [skip]
+>=20
+> >>
+> >> First thing that catches my eye is that for small blocks there is no
+> >> big difference at all, but as the block increases, crimsons iops
+> >> starts to
+> >
+> > that's also our findings. and it's expected. as async messenger uses
+> > the same reactor model as seastar does. actually its original
+> > implementation was adapted from seastar's socket stream
+> > implementation.
+>=20
+> Hm, regardless of model messenger should not be a bottleneck.  Take a loo=
+k on
+> the results of fio_ceph_messenger load (runs pure messenger), I can squee=
+ze
+> IOPS=3D89.8k, BW=3D351MiB/s on 4k block size, iodepth=3D32.
+> (also good example https://github.com/ceph/ceph/pull/26932 , almost
+> ~200k)
+>=20
+> With PG layer (memstore_debug_omit_block_device_write=3Dtrue option) I ca=
+n
+> reach 40k iops max.  Without PG layer (immediate completion from the
+> transport callback, osd_immediate_completions=3Dtrue) I get almost 60k.
+>=20
+> Seems that here starts playing costs on client side and these costs preva=
+il.
+>=20
+> >
+> >> decline. Can it be the transport issue? Can be tested as well.
+> >
+> > because seastar's socket facility reads from the wire with 4K chunk
+> > size, while classic OSD's async messenger reads the payload with the
+> > size suggested by the header. so when it comes to larger block size,
+> > it takes crimson-osd multiple syscalls and memcpy calls to read the
+> > request from wire, that's why classic OSD wins in this case.
+>=20
+> Do you plan to fix that?
+>=20
+> > have you tried to use multiple fio clients to saturate CPU capacity of
+> > OSD nodes?
+>=20
+> Not yet.  But regarding CPU I have these numbers:
+>=20
+> output of pidstat while rbd.fio is running, 4k block only:
+>=20
+> legacy-osd
+>=20
+> [roman@dell ~]$ pidstat 1 -p 109930
+> Linux 5.3.13-arch1-1 (dell)     01/09/2020      _x86_64_        (8 CPU)
+>=20
+> 03:51:49 PM   UID       PID    %usr %system  %guest   %wait    %CPU
+> CPU  Command
+> 03:51:51 PM  1000    109930   14.00    8.00    0.00    0.00   22.00
+> 1  ceph-osd
+> 03:51:52 PM  1000    109930   40.00   19.00    0.00    0.00   59.00
+> 1  ceph-osd
+> 03:51:53 PM  1000    109930   44.00   17.00    0.00    0.00   61.00
+> 1  ceph-osd
+> 03:51:54 PM  1000    109930   40.00   20.00    0.00    0.00   60.00
+> 1  ceph-osd
+> 03:51:55 PM  1000    109930   39.00   18.00    0.00    0.00   57.00
+> 1  ceph-osd
+> 03:51:56 PM  1000    109930   41.00   20.00    0.00    0.00   61.00
+> 1  ceph-osd
+> 03:51:57 PM  1000    109930   41.00   15.00    0.00    0.00   56.00
+> 1  ceph-osd
+> 03:51:58 PM  1000    109930   42.00   16.00    0.00    0.00   58.00
+> 1  ceph-osd
+> 03:51:59 PM  1000    109930   42.00   15.00    0.00    0.00   57.00
+> 1  ceph-osd
+> 03:52:00 PM  1000    109930   43.00   15.00    0.00    0.00   58.00
+> 1  ceph-osd
+> 03:52:01 PM  1000    109930   24.00   12.00    0.00    0.00   36.00
+> 1  ceph-osd
+>=20
+>=20
+> crimson-osd
+>=20
+> [roman@dell ~]$ pidstat 1  -p 108141
+> Linux 5.3.13-arch1-1 (dell)     01/09/2020      _x86_64_        (8 CPU)
+>=20
+> 03:47:50 PM   UID       PID    %usr %system  %guest   %wait    %CPU
+> CPU  Command
+> 03:47:55 PM  1000    108141   67.00   11.00    0.00    0.00   78.00
+> 0  crimson-osd
+> 03:47:56 PM  1000    108141   79.00   12.00    0.00    0.00   91.00
+> 0  crimson-osd
+> 03:47:57 PM  1000    108141   81.00    9.00    0.00    0.00   90.00
+> 0  crimson-osd
+> 03:47:58 PM  1000    108141   78.00   12.00    0.00    0.00   90.00
+> 0  crimson-osd
+> 03:47:59 PM  1000    108141   78.00   12.00    0.00    1.00   90.00
+> 0  crimson-osd
+> 03:48:00 PM  1000    108141   78.00   13.00    0.00    0.00   91.00
+> 0  crimson-osd
+> 03:48:01 PM  1000    108141   79.00   13.00    0.00    0.00   92.00
+> 0  crimson-osd
+> 03:48:02 PM  1000    108141   78.00   12.00    0.00    0.00   90.00
+> 0  crimson-osd
+> 03:48:03 PM  1000    108141   77.00   11.00    0.00    0.00   88.00
+> 0  crimson-osd
+> 03:48:04 PM  1000    108141   79.00   12.00    0.00    1.00   91.00
+> 0  crimson-osd
+>=20
+>=20
+> Seems quite saturated, almost twice more than legacy-osd.  Did you see
+> something similar?
+Crimson-osd (seastar) use epoll, by default, it will use more cpu capacity,=
+(you can change epoll mode setting to reduce it), add Ma, Jianpeng in the t=
+hread since he did more study on it.=20
+BTW, by default crimson-osd is one thread, and legacy ceph-osd (3 threads f=
+or async messenger, 2x8 threads for osd (SDD), finisher thread etc,) ,so by=
+ default setting, it is 1 thread compare to over 10 threads work,  it is ex=
+pected crimson-osd not show obvious difference. you can change the default =
+thread number for legacy ceph-osd(such as thread=3D1 for each layer to see =
+more difference.)
+BTW, please use release build to do test.=20
+Crimson-osd is aysnc model, if workload is very light, can't take more adva=
+ntage of it.
+>=20
+> --
+> Roman
 
