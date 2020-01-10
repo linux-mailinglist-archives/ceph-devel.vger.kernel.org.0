@@ -2,97 +2,138 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CAD1136281
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jan 2020 22:30:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FC1F1364F2
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jan 2020 02:41:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbgAIVaI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 Jan 2020 16:30:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60654 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725763AbgAIVaI (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 9 Jan 2020 16:30:08 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730617AbgAJBlp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 9 Jan 2020 20:41:45 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:25526 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730596AbgAJBlo (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Jan 2020 20:41:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578620503;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=dmp53rUDXBNeR1+dLtfAN5lVZnsdYJ+k7u/hsa/k6A8=;
+        b=IaR4bk7J8wFkEKwNDxHlrniS3ioDyA1+u0HTBYF+YqHm0lsXRRdPLC1E7wQZwwQTIQsXF2
+        sGUBL5mk3tb0XVY/kaKRRf+GifvmtKxSqMJklMfNj/zSesonGuysFqpU7zpkvW41FHn/GL
+        UcoqvfYm7Xk7K9y657nwm+DdpYesmkA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-315-0WzT-TqQNFeqHg50LPD8OA-1; Thu, 09 Jan 2020 20:41:42 -0500
+X-MC-Unique: 0WzT-TqQNFeqHg50LPD8OA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D9FD2077C;
-        Thu,  9 Jan 2020 21:30:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578605407;
-        bh=gNCGXoYTfFZjTRN691+1oFZ7CU3ckTMHdANvjXzOt5I=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=rNytZeGmGid8lGWCBKZ2F2vJjTrWoYu8GLYetC+/llxGzBHNrte37ayGaf1pD07Im
-         V6NoMzVpDhHBDtnB5ct7XuptkiYEwUGrP2yIi8U56Z4/Vjcf5JPb8YYKYitvcYm5ie
-         iE3A3uAbjF/uyU/dM+BthQAwouIrJP/lvN/UVW3c=
-Message-ID: <9ec865ed1431455a6f272ab2c06a129624363902.camel@kernel.org>
-Subject: Re: [PATCH 6/6] ceph: perform asynchronous unlink if we have
- sufficient caps
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Patrick Donnelly <pdonnell@redhat.com>
-Cc:     "Yan, Zheng" <zyan@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 09 Jan 2020 16:30:06 -0500
-In-Reply-To: <CA+2bHPaML5kSYaZrNPsDHYTv-7_scEPWZ2xkD0fxp2Pg5G1cCA@mail.gmail.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A1B1710054E3;
+        Fri, 10 Jan 2020 01:41:41 +0000 (UTC)
+Received: from [10.72.12.70] (ovpn-12-70.pek2.redhat.com [10.72.12.70])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 056F986CA7;
+        Fri, 10 Jan 2020 01:41:34 +0000 (UTC)
+Subject: Re: [PATCH 2/6] ceph: hold extra reference to r_parent over life of
+ request
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
+        pdonnell@redhat.com
 References: <20200106153520.307523-1-jlayton@kernel.org>
-         <20200106153520.307523-7-jlayton@kernel.org>
-         <8f5e345a-2743-5868-3d89-017db6ae3d8c@redhat.com>
-         <9cd39feb0b8d92f29af69a787355b89359c797a8.camel@kernel.org>
-         <CA+2bHPaML5kSYaZrNPsDHYTv-7_scEPWZ2xkD0fxp2Pg5G1cCA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+ <20200106153520.307523-3-jlayton@kernel.org>
+ <e8e28503-bda4-df57-6a42-33761e716fe4@redhat.com>
+ <7baad50a9e9f8d8f93171e5d4756bc35ab36a319.camel@kernel.org>
+ <95938157-3d47-52e5-d847-b058e1191151@redhat.com>
+ <ab6d12e45f87a427bd442a84dae23893ad4b91e8.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <f0f6966d-12d8-d439-7e32-234d3cb3ada6@redhat.com>
+Date:   Fri, 10 Jan 2020 09:41:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
+In-Reply-To: <ab6d12e45f87a427bd442a84dae23893ad4b91e8.camel@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2020-01-09 at 09:53 -0800, Patrick Donnelly wrote:
-> On Thu, Jan 9, 2020 at 3:34 AM Jeff Layton <jlayton@kernel.org> wrote:
-> > On Thu, 2020-01-09 at 17:18 +0800, Yan, Zheng wrote:
-> > > > +bool enable_async_dirops;
-> > > > +module_param(enable_async_dirops, bool, 0644);
-> > > > +MODULE_PARM_DESC(enable_async_dirops, "Asynchronous directory operations enabled");
-> > > > +
-> > > 
-> > > why not use mount option
-> > > 
-> > 
-> > I'm open to suggestions here.
-> > 
-> > I mostly put this in originally to help facilitate performance testing.
-> > A module option makes it easy to change this at runtime (without having
-> > to remount or anything).
-> > 
-> > That said, we probably _do_ want to have a way for users to enable or
-> > disable this feature. We'll probably want this disabled by default
-> > initially, but I can forsee that changing once get more confidence.
-> > 
-> > Mount options are a bit of a pain to deal with over time. If the
-> > defaults change, we need to document that in the manpages and online
-> > documentation. If you put a mount option in the fstab, then you have to
-> > deal with breakage if you boot to an earlier kernel that doesn't support
-> > that option.
-> > 
-> > My thinking is that we should just use a module option initially (for
-> > the really early adopters) and only convert that to a mount option as
-> > the need for it becomes clear.
-> 
-> Module option makes sense.
-> 
-> A mount option to disable async ops would also make sense. I do not
-> think the default behavior should be off-by-default.
-> 
-> (Someday perhaps the kernel will be smart enough to also digest the
-> ceph configs delivered through the monitors...)
-> 
+On 2020/1/9 21:33, Jeff Layton wrote:
+> On Thu, 2020-01-09 at 21:16 +0800, Xiubo Li wrote:
+>> On 2020/1/9 19:20, Jeff Layton wrote:
+>>> On Thu, 2020-01-09 at 10:05 +0800, Xiubo Li wrote:
+>>>> On 2020/1/6 23:35, Jeff Layton wrote:
+>>>>> Currently, we just assume that it will stick around by virtue of the
+>>>>> submitter's reference, but later patches will allow the syscall to
+>>>>> return early and we can't rely on that reference at that point.
+>>>>>
+>>>>> Take an extra reference to the inode when setting r_parent and release
+>>>>> it when releasing the request.
+>>>>>
+>>>>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>>>>> ---
+>>>>>     fs/ceph/mds_client.c | 8 ++++++--
+>>>>>     1 file changed, 6 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+>>>>> index 94cce2ab92c4..b7122f682678 100644
+>>>>> --- a/fs/ceph/mds_client.c
+>>>>> +++ b/fs/ceph/mds_client.c
+>>>>> @@ -708,8 +708,10 @@ void ceph_mdsc_release_request(struct kref *kref)
+>>>>>     		/* avoid calling iput_final() in mds dispatch threads */
+>>>>>     		ceph_async_iput(req->r_inode);
+>>>>>     	}
+>>>>> -	if (req->r_parent)
+>>>>> +	if (req->r_parent) {
+>>>>>     		ceph_put_cap_refs(ceph_inode(req->r_parent), CEPH_CAP_PIN);
+>>>>> +		ceph_async_iput(req->r_parent);
+>>>>> +	}
+>>>>>     	ceph_async_iput(req->r_target_inode);
+>>>>>     	if (req->r_dentry)
+>>>>>     		dput(req->r_dentry);
+>>>>> @@ -2706,8 +2708,10 @@ int ceph_mdsc_submit_request(struct ceph_mds_client *mdsc, struct inode *dir,
+>>>>>     	/* take CAP_PIN refs for r_inode, r_parent, r_old_dentry */
+>>>>>     	if (req->r_inode)
+>>>>>     		ceph_get_cap_refs(ceph_inode(req->r_inode), CEPH_CAP_PIN);
+>>>>> -	if (req->r_parent)
+>>>>> +	if (req->r_parent) {
+>>>>>     		ceph_get_cap_refs(ceph_inode(req->r_parent), CEPH_CAP_PIN);
+>>>>> +		ihold(req->r_parent);
+>>>>> +	}
+>>>> This might also fix another issue when the mdsc request is timedout and
+>>>> returns to the vfs, then the r_parent maybe released in vfs. And then if
+>>>> we reference it again in mdsc handle_reply() -->
+>>>> ceph_mdsc_release_request(),  some unknown issues may happen later ??
+>>>>
+>>> AIUI, when a timeout occurs, the req is unhashed such that handle_reply
+>>> can't find it. So, I doubt this affects that one way or another.
+>> If my understanding is correct, such as for rmdir(), the logic will be :
+>>
+>> req = ceph_mdsc_create_request()      //  ref == 1
+>>
+>> ceph_mdsc_do_request(req) -->
+>>
+>>           ceph_mdsc_submit_request(req) -->
+>>
+>>                   __register_request(req) // ref == 2
+>>
+>>           ceph_mdsc_wait_request(req)  // If timedout
+>>
+>> ceph_mdsc_put_request(req)  // ref == 1
+>>
+>> Then in handled_reply(), only when we get a safe reply it will call
+>> __unregister_request(req), then the ref could be 0.
+>>
+>> Though it will ihold()/ceph_async_iput() the req->r_unsafe_dir(=
+>> req->r_parent) , but the _iput() will be called just before we reference
+>> the req->r_parent in the _relase_request(). And the _iput() here may
+>> call the iput_final().
+>>
+> I take it back, I think you're right. This likely would fix that issue
+> up. I'll plan to add a note about that to the changelog before I merge
+> it. Should we mark this for stable in light of that?
 
-I do think it should be off for now until we have some early adopters
-play with it, and make sure it doesn't fall down in unexpected ways.
-
-Once we've had it in place for a while (a couple of kernel releases?),
-and some success with it, I'd be open to flipping the default to on
-though.
--- 
-Jeff Layton <jlayton@kernel.org>
+Yeah, right :-)
 
