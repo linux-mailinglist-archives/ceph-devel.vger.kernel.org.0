@@ -2,153 +2,146 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0879F137672
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jan 2020 19:53:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CE9313782B
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jan 2020 21:56:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbgAJSxl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 10 Jan 2020 13:53:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34174 "EHLO mx2.suse.de"
+        id S1727176AbgAJU4v (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 10 Jan 2020 15:56:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728023AbgAJSxl (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 10 Jan 2020 13:53:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E4E9AACF2;
-        Fri, 10 Jan 2020 18:53:38 +0000 (UTC)
+        id S1726836AbgAJU4v (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 10 Jan 2020 15:56:51 -0500
+Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C118D20842;
+        Fri, 10 Jan 2020 20:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578689810;
+        bh=3rYOcfYtzBVvcOrbFnySiJR9GhTZTSbUXnIl41zUeuM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=s0yPQhocMQNf/AM2eguMp+3xZYAeE4qhkDSB9QBXTF51OseIiWv2SV/JWBCDtQzT1
+         BHOFYWED7v9oPHLDeEBB12QxVl9PIcHOYHeZ4wSU6hi0z7A+aEzrWEIo7BphxkLx4b
+         vwola7Omwd1Qc7eqPYWbTaBB58POqabafzcBg/Mc=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     zyan@redhat.com, sage@redhat.com, idryomov@gmail.com,
+        pdonnell@redhat.com
+Subject: [RFC PATCH 0/9] ceph: add asynchronous create functionality
+Date:   Fri, 10 Jan 2020 15:56:38 -0500
+Message-Id: <20200110205647.311023-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 10 Jan 2020 19:53:38 +0100
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     kefu chai <tchaikov@gmail.com>
-Cc:     Radoslaw Zarzynski <rzarzyns@redhat.com>,
-        Samuel Just <sjust@redhat.com>,
-        The Esoteric Order of the Squid Cybernetic 
-        <ceph-devel@vger.kernel.org>
-Subject: Re: crimson-osd vs legacy-osd: should the perf difference be already
- noticeable?
-In-Reply-To: <CAJE9aON93O75PPRjfuFGYrtpBxRHHuepGX+tEC3FkBSgM6TgNQ@mail.gmail.com>
-References: <02e2209f66f18217aa45b8f7caf715f6@suse.de>
- <CAJE9aON93O75PPRjfuFGYrtpBxRHHuepGX+tEC3FkBSgM6TgNQ@mail.gmail.com>
-Message-ID: <f3a976a6d2eba9cd8bd6bf46c0fc9967@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020-01-10 17:18, kefu chai wrote:
+I recently sent a patchset that allows the client to do an asynchronous
+UNLINK call to the MDS when it has the appropriate caps and dentry info.
+This set adds the corresponding functionality for creates.
 
-[skip]
+When the client has the appropriate caps on the parent directory and
+dentry information, and a delegated inode number, it can satisfy a
+request locally without contacting the server. This allows the kernel
+client to return very quickly from an O_CREAT open, so it can get on
+with doing other things.
 
->> 
->> First thing that catches my eye is that for small blocks there is no 
->> big
->> difference at all, but as the block increases, crimsons iops starts to
-> 
-> that's also our findings. and it's expected. as async messenger uses
-> the same reactor model as seastar does. actually its original
-> implementation was adapted from seastar's socket stream
-> implementation.
+These numbers are based on my personal test rig, which is a KVM client
+vs a vstart cluster running on my workstation (nothing scientific here).
 
-Hm, regardless of model messenger should not be a bottleneck.  Take
-a look on the results of fio_ceph_messenger load (runs pure messenger),
-I can squeeze IOPS=89.8k, BW=351MiB/s on 4k block size, iodepth=32.
-(also good example https://github.com/ceph/ceph/pull/26932 , almost
-~200k)
+A simple benchmark (with the cephfs mounted at /mnt/cephfs):
+-------------------8<-------------------
+#!/bin/sh
 
-With PG layer (memstore_debug_omit_block_device_write=true option)
-I can reach 40k iops max.  Without PG layer (immediate completion
-from the transport callback, osd_immediate_completions=true)
-I get almost 60k.
+TESTDIR=/mnt/cephfs/test-dirops.$$
 
-Seems that here starts playing costs on client side and these costs
-prevail.
+mkdir $TESTDIR
+stat $TESTDIR
+echo "Creating files in $TESTDIR"
+time for i in `seq 1 10000`; do
+    echo "foobarbaz" > $TESTDIR/$i
+done
+-------------------8<-------------------
 
-> 
->> decline. Can it be the transport issue? Can be tested as well.
-> 
-> because seastar's socket facility reads from the wire with 4K chunk
-> size, while classic OSD's async messenger reads the payload with the
-> size suggested by the header. so when it comes to larger block size,
-> it takes crimson-osd multiple syscalls and memcpy calls to read the
-> request from wire, that's why classic OSD wins in this case.
+With async dirops disabled:
 
-Do you plan to fix that?
+real	0m9.865s
+user	0m0.353s
+sys	0m0.888s
 
-> have you tried to use multiple fio clients to saturate CPU capacity of
-> OSD nodes?
+With async dirops enabled:
 
-Not yet.  But regarding CPU I have these numbers:
+real	0m5.272s
+user	0m0.104s
+sys	0m0.454s
 
-output of pidstat while rbd.fio is running, 4k block only:
+That workload is a bit synthetic though. One workload we're interested
+in improving is untar. Untarring a deep directory tree (random kernel
+tarball I had laying around):
 
-legacy-osd
+Disabled:
+$ time tar xf ~/linux-4.18.0-153.el8.jlayton.006.tar
 
-[roman@dell ~]$ pidstat 1 -p 109930
-Linux 5.3.13-arch1-1 (dell)     01/09/2020      _x86_64_        (8 CPU)
+real	1m35.774s
+user	0m0.835s
+sys	0m7.410s
 
-03:51:49 PM   UID       PID    %usr %system  %guest   %wait    %CPU   
-CPU  Command
-03:51:51 PM  1000    109930   14.00    8.00    0.00    0.00   22.00     
-1  ceph-osd
-03:51:52 PM  1000    109930   40.00   19.00    0.00    0.00   59.00     
-1  ceph-osd
-03:51:53 PM  1000    109930   44.00   17.00    0.00    0.00   61.00     
-1  ceph-osd
-03:51:54 PM  1000    109930   40.00   20.00    0.00    0.00   60.00     
-1  ceph-osd
-03:51:55 PM  1000    109930   39.00   18.00    0.00    0.00   57.00     
-1  ceph-osd
-03:51:56 PM  1000    109930   41.00   20.00    0.00    0.00   61.00     
-1  ceph-osd
-03:51:57 PM  1000    109930   41.00   15.00    0.00    0.00   56.00     
-1  ceph-osd
-03:51:58 PM  1000    109930   42.00   16.00    0.00    0.00   58.00     
-1  ceph-osd
-03:51:59 PM  1000    109930   42.00   15.00    0.00    0.00   57.00     
-1  ceph-osd
-03:52:00 PM  1000    109930   43.00   15.00    0.00    0.00   58.00     
-1  ceph-osd
-03:52:01 PM  1000    109930   24.00   12.00    0.00    0.00   36.00     
-1  ceph-osd
+Enabled:
+$ time tar xf ~/linux-4.18.0-153.el8.jlayton.006.tar
 
+real	1m32.182s
+user	0m0.783s
+sys	0m6.830s
 
-crimson-osd
+Not a huge win there. I suspect at this point that synchronous mkdir
+may be serializing behind the async creates.
 
-[roman@dell ~]$ pidstat 1  -p 108141
-Linux 5.3.13-arch1-1 (dell)     01/09/2020      _x86_64_        (8 CPU)
+It needs a lot more performance tuning and analysis, but it's now at the
+point where it's basically usable. To enable it, turn on the
+ceph.enable_async_dirops module option.
 
-03:47:50 PM   UID       PID    %usr %system  %guest   %wait    %CPU   
-CPU  Command
-03:47:55 PM  1000    108141   67.00   11.00    0.00    0.00   78.00     
-0  crimson-osd
-03:47:56 PM  1000    108141   79.00   12.00    0.00    0.00   91.00     
-0  crimson-osd
-03:47:57 PM  1000    108141   81.00    9.00    0.00    0.00   90.00     
-0  crimson-osd
-03:47:58 PM  1000    108141   78.00   12.00    0.00    0.00   90.00     
-0  crimson-osd
-03:47:59 PM  1000    108141   78.00   12.00    0.00    1.00   90.00     
-0  crimson-osd
-03:48:00 PM  1000    108141   78.00   13.00    0.00    0.00   91.00     
-0  crimson-osd
-03:48:01 PM  1000    108141   79.00   13.00    0.00    0.00   92.00     
-0  crimson-osd
-03:48:02 PM  1000    108141   78.00   12.00    0.00    0.00   90.00     
-0  crimson-osd
-03:48:03 PM  1000    108141   77.00   11.00    0.00    0.00   88.00     
-0  crimson-osd
-03:48:04 PM  1000    108141   79.00   12.00    0.00    1.00   91.00     
-0  crimson-osd
+There are some places that need further work:
 
+1) The MDS patchset to delegate inodes to the client is not yet merged:
 
-Seems quite saturated, almost twice more than legacy-osd.  Did you see 
-something
-similar?
+    https://github.com/ceph/ceph/pull/31817
 
---
-Roman
+2) this is 64-bit arch only for the moment. I'm using an xarray to track
+the delegated inode numbers, and those don't do 64-bit indexes on
+32-bit machines. Is anyone using 32-bit ceph clients? We could probably
+build an xarray of xarrays if needed.
+
+3) The error handling is still pretty lame. If the create fails, it'll
+set a writeback error on the parent dir and the inode itself, but the
+client could end up writing a bunch before it notices, if it even
+bothers to check. We probably need to do better here. I'm open to
+suggestions on this bit especially.
+
+Jeff Layton (9):
+  ceph: ensure we have a new cap before continuing in fill_inode
+  ceph: print name of xattr being set in set/getxattr dout message
+  ceph: close some holes in struct ceph_mds_request
+  ceph: make ceph_fill_inode non-static
+  libceph: export ceph_file_layout_is_valid
+  ceph: decode interval_sets for delegated inos
+  ceph: add flag to delegate an inode number for async create
+  ceph: copy layout, max_size and truncate_size on successful sync
+    create
+  ceph: attempt to do async create when possible
+
+ fs/ceph/caps.c               |  31 +++++-
+ fs/ceph/file.c               | 202 +++++++++++++++++++++++++++++++++--
+ fs/ceph/inode.c              |  57 +++++-----
+ fs/ceph/mds_client.c         | 130 ++++++++++++++++++++--
+ fs/ceph/mds_client.h         |  12 ++-
+ fs/ceph/super.h              |  10 ++
+ fs/ceph/xattr.c              |   5 +-
+ include/linux/ceph/ceph_fs.h |   8 +-
+ net/ceph/ceph_fs.c           |   1 +
+ 9 files changed, 396 insertions(+), 60 deletions(-)
+
+-- 
+2.24.1
 
