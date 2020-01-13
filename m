@@ -2,149 +2,444 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC345138D85
-	for <lists+ceph-devel@lfdr.de>; Mon, 13 Jan 2020 10:17:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E80C9138FA8
+	for <lists+ceph-devel@lfdr.de>; Mon, 13 Jan 2020 11:53:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbgAMJRX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 13 Jan 2020 04:17:23 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:48436 "EHLO
+        id S1726163AbgAMKxw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 13 Jan 2020 05:53:52 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:21997 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726399AbgAMJRX (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 13 Jan 2020 04:17:23 -0500
+        with ESMTP id S1725992AbgAMKxw (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 13 Jan 2020 05:53:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578907041;
+        s=mimecast20190719; t=1578912830;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=hSYalo05OBDmeVt35nA6/NcPZZO476eakh4B6d3MqbI=;
-        b=cfCBxq4r4mZ/90/tHA2i2AnmgFYgHEU8lgd6Pw29Ng42SRFEhoDxicaECPOy16uLwFo+m1
-        aAn0cBs/bEF6T/F/Va9ZCre0t6y1vFMMqhUktz0cDt3fELFTde4xrMCJ3wPj6GeHth3siC
-        DFDQB+q9qU2QET8ZAE2EVtRgb84iMl0=
+        bh=qiY9eg7QEsJwKZCT1EqBsWmdJdgCTPESiGbqq+X5S3s=;
+        b=gI3b+EX39gXJydBqlUPC8nou9T/fEoljUrcUa9wn8LDil46uAb5By+PA05xLZs/o+pQ6im
+        Ar1K5a1AAJwdFQsiGtfOxRAJYipMSuP45BnTQ2jJIYhcRLGsrSmfgkYc0Es+kSe0Jvd5s3
+        ZDH0WVj8CxuFOFCPNGILaWoxPn0CfNc=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-87-tTWTCQcMNT2YjyhS92R7qg-1; Mon, 13 Jan 2020 04:17:18 -0500
-X-MC-Unique: tTWTCQcMNT2YjyhS92R7qg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+ us-mta-259-tk6lqdPVNN-osaLxfzjc3g-1; Mon, 13 Jan 2020 05:53:47 -0500
+X-MC-Unique: tk6lqdPVNN-osaLxfzjc3g-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E05AE801E76;
-        Mon, 13 Jan 2020 09:17:16 +0000 (UTC)
-Received: from [10.72.12.218] (ovpn-12-218.pek2.redhat.com [10.72.12.218])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EE8287D642;
-        Mon, 13 Jan 2020 09:17:11 +0000 (UTC)
-Subject: Re: [RFC PATCH 7/9] ceph: add flag to delegate an inode number for
- async create
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D2473107ACCC;
+        Mon, 13 Jan 2020 10:53:45 +0000 (UTC)
+Received: from [10.72.12.95] (ovpn-12-95.pek2.redhat.com [10.72.12.95])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 54D1660BE2;
+        Mon, 13 Jan 2020 10:53:39 +0000 (UTC)
+Subject: Re: [RFC PATCH 9/9] ceph: attempt to do async create when possible
 To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
 Cc:     sage@redhat.com, idryomov@gmail.com, pdonnell@redhat.com
 References: <20200110205647.311023-1-jlayton@kernel.org>
- <20200110205647.311023-8-jlayton@kernel.org>
+ <20200110205647.311023-10-jlayton@kernel.org>
 From:   "Yan, Zheng" <zyan@redhat.com>
-Message-ID: <056df2f9-07b9-a5ac-f4f3-861b8a364ff3@redhat.com>
-Date:   Mon, 13 Jan 2020 17:17:09 +0800
+Message-ID: <28d7d968-17a0-db51-bba4-46de2d197510@redhat.com>
+Date:   Mon, 13 Jan 2020 18:53:37 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <20200110205647.311023-8-jlayton@kernel.org>
+In-Reply-To: <20200110205647.311023-10-jlayton@kernel.org>
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 On 1/11/20 4:56 AM, Jeff Layton wrote:
-> In order to issue an async create request, we need to send an inode
-> number when we do the request, but we don't know which to which MDS
-> we'll be issuing the request.
+> With the Octopus release, the MDS will hand out directoy create caps.
+> If we have Fxc caps on the directory, and complete directory information
+> or a known negative dentry, then we can return without waiting on the
+> reply, allowing the open() call to return very quickly to userland.
 > 
-
-the request should be sent to auth mds (dir_ci->i_auth_cap->session) of 
-directory. I think grabing inode number in get_caps_for_async_create() 
-is simpler.
-
-> Add a new r_req_flag that tells the request sending machinery to
-> grab an inode number from the delegated set, and encode it into the
-> request. If it can't get one then have it return -ECHILD. The
-> requestor can then reissue a synchronous request.
+> We use the normal ceph_fill_inode() routine to fill in the inode, so we
+> have to gin up some reply inode information with what we'd expect a
+> newly-created inode to have. The client assumes that it has a full set
+> of caps on the new inode, and that the MDS will revoke them when there
+> is conflicting access.
+> 
+> This functionality is gated on the enable_async_dirops module option,
+> along with async unlinks, and on the server supporting the Octopus
+> CephFS feature bit.
 > 
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->   fs/ceph/inode.c      |  1 +
->   fs/ceph/mds_client.c | 19 ++++++++++++++++++-
->   fs/ceph/mds_client.h |  2 ++
->   3 files changed, 21 insertions(+), 1 deletion(-)
+>   fs/ceph/caps.c               |   7 +-
+>   fs/ceph/file.c               | 178 +++++++++++++++++++++++++++++++++--
+>   fs/ceph/mds_client.c         |  12 ++-
+>   fs/ceph/mds_client.h         |   3 +-
+>   fs/ceph/super.h              |   2 +
+>   include/linux/ceph/ceph_fs.h |   8 +-
+>   6 files changed, 191 insertions(+), 19 deletions(-)
 > 
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 79bb1e6af090..9cfc093fd273 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -1317,6 +1317,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
->   		err = ceph_fill_inode(in, req->r_locked_page, &rinfo->targeti,
->   				NULL, session,
->   				(!test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags) &&
-> +				 !test_bit(CEPH_MDS_R_DELEG_INO, &req->r_req_flags) &&
->   				 rinfo->head->result == 0) ?  req->r_fmode : -1,
->   				&req->r_caps_reservation);
->   		if (err < 0) {
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 852c46550d96..9e7492b21b50 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -2623,7 +2623,10 @@ static int __prepare_send_request(struct ceph_mds_client *mdsc,
->   	rhead->flags = cpu_to_le32(flags);
->   	rhead->num_fwd = req->r_num_fwd;
->   	rhead->num_retry = req->r_attempts - 1;
-> -	rhead->ino = 0;
-> +	if (test_bit(CEPH_MDS_R_DELEG_INO, &req->r_req_flags))
-> +		rhead->ino = cpu_to_le64(req->r_deleg_ino);
-> +	else
-> +		rhead->ino = 0;
->   
->   	dout(" r_parent = %p\n", req->r_parent);
->   	return 0;
-> @@ -2736,6 +2739,20 @@ static void __do_request(struct ceph_mds_client *mdsc,
->   		goto out_session;
->   	}
->   
-> +	if (test_bit(CEPH_MDS_R_DELEG_INO, &req->r_req_flags) &&
-> +	    !req->r_deleg_ino) {
-> +		req->r_deleg_ino = get_delegated_ino(req->r_session);
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index b96fb1378479..21a8a2ddc94b 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -654,6 +654,10 @@ void ceph_add_cap(struct inode *inode,
+>   		session->s_nr_caps++;
+>   		spin_unlock(&session->s_cap_lock);
+>   	} else {
+> +		/* Did an async create race with the reply? */
+> +		if (cap_id == CEPH_CAP_ID_TBD && cap->issued == issued)
+> +			return;
 > +
-> +		if (!req->r_deleg_ino) {
-> +			/*
-> +			 * If we can't get a deleg ino, exit with -ECHILD,
-> +			 * so the caller can reissue a sync request
-> +			 */
-> +			err = -ECHILD;
-> +			goto out_session;
-> +		}
+>   		spin_lock(&session->s_cap_lock);
+>   		list_move_tail(&cap->session_caps, &session->s_caps);
+>   		spin_unlock(&session->s_cap_lock);
+> @@ -672,7 +676,8 @@ void ceph_add_cap(struct inode *inode,
+>   		 */
+>   		if (ceph_seq_cmp(seq, cap->seq) <= 0) {
+>   			WARN_ON(cap != ci->i_auth_cap);
+> -			WARN_ON(cap->cap_id != cap_id);
+> +			WARN_ON(cap_id != CEPH_CAP_ID_TBD &&
+> +				cap->cap_id != cap_id);
+>   			seq = cap->seq;
+>   			mseq = cap->mseq;
+>   			issued |= cap->issued;
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index d4d7a277faf1..706abd71b731 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -450,6 +450,141 @@ copy_file_layout(struct inode *dst, struct inode *src)
+>   	spin_unlock(&cdst->i_ceph_lock);
+>   }
+>   
+> +static bool get_caps_for_async_create(struct inode *dir, struct dentry *dentry)
+> +{
+> +	struct ceph_inode_info *ci = ceph_inode(dir);
+> +	int ret, want, got;
+> +
+> +	/*
+> +	 * We can do an async create if we either have a valid negative dentry
+> +	 * or the complete contents of the directory. Do a quick check without
+> +	 * cap refs.
+> +	 */
+> +	if ((d_in_lookup(dentry) && !__ceph_dir_is_complete(ci)) ||
+
+what does (d_in_lookup(dentry) && !__ceph_dir_is_complete(ci)) mean?
+
+I think we can async create if dentry is negative and its 
+lease_shared_gen == ci->i_shared_gen.
+
+> +	    !ceph_file_layout_is_valid(&ci->i_layout))
+> +		return false;
+> +
+> +	/* Try to get caps */
+> +	want = CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE;
+> +	ret = ceph_try_get_caps(dir, 0, want, true, &got);
+> +	dout("Fx on %p ret=%d got=%d\n", dir, ret, got);
+> +	if (ret != 1)
+> +		return false;
+> +	if (got != want) {
+> +		ceph_put_cap_refs(ci, got);
+> +		return false;
 > +	}
 > +
->   	/* send request */
->   	req->r_resend_mds = -1;   /* forget any previous mds hint */
+> +	/* Check again, now that we hold cap refs */
+> +	if ((d_in_lookup(dentry) && !__ceph_dir_is_complete(ci)) ||
+> +	    !ceph_file_layout_is_valid(&ci->i_layout)) {
+> +		ceph_put_cap_refs(ci, got);
+> +		return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +static void ceph_async_create_cb(struct ceph_mds_client *mdsc,
+> +                                 struct ceph_mds_request *req)
+> +{
+> +	/* If we never sent anything then nothing to clean up */
+> +	if (req->r_err == -ECHILD)
+> +		goto out;
+> +
+> +	mapping_set_error(req->r_parent->i_mapping, req->r_err);
+> +
+> +	if (req->r_target_inode) {
+> +		u64 ino = ceph_vino(req->r_target_inode).ino;
+> +
+> +		if (req->r_deleg_ino != ino)
+> +			pr_warn("%s: inode number mismatch! err=%d deleg_ino=0x%lx target=0x%llx\n",
+> +				__func__, req->r_err, req->r_deleg_ino, ino);
+> +		mapping_set_error(req->r_target_inode->i_mapping, req->r_err);
+> +	} else {
+> +		pr_warn("%s: no req->r_target_inode for 0x%lx\n", __func__,
+> +			req->r_deleg_ino);
+> +	}
+> +out:
+> +	ceph_put_cap_refs(ceph_inode(req->r_parent),
+> +			  CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE);
+> +}
+> +
+> +static int ceph_finish_async_open(struct inode *dir, struct dentry *dentry,
+> +				  struct file *file, umode_t mode,
+> +				  struct ceph_mds_request *req,
+> +				  struct ceph_acl_sec_ctx *as_ctx)
+> +{
+> +	int ret;
+> +	struct ceph_mds_reply_inode in = { };
+> +	struct ceph_mds_reply_info_in iinfo = { .in = &in };
+> +	struct ceph_inode_info *ci = ceph_inode(dir);
+> +	struct inode *inode;
+> +	struct timespec64 now;
+> +	struct ceph_vino vino = { .ino = req->r_deleg_ino,
+> +				  .snap = CEPH_NOSNAP };
+> +
+> +	ktime_get_real_ts64(&now);
+> +
+> +	inode = ceph_get_inode(dentry->d_sb, vino);
+> +	if (IS_ERR(inode))
+> +		return PTR_ERR(inode);
+> +
+> +	/* If we can't get a buffer, just carry on */
+> +	iinfo.xattr_data = kzalloc(4, GFP_NOFS);
+> +	if (iinfo.xattr_data)
+> +		iinfo.xattr_len = 4;
+
+??
+
+I think we should decode req->r_pagelist into xattrs
+
+
+> +
+> +	iinfo.inline_version = CEPH_INLINE_NONE;
+> +	iinfo.change_attr = 1;
+> +	ceph_encode_timespec64(&iinfo.btime, &now);
+> +
+> +	in.ino = cpu_to_le64(vino.ino);
+> +	in.snapid = cpu_to_le64(CEPH_NOSNAP);
+> +	in.version = cpu_to_le64(1);	// ???
+> +	in.cap.caps = in.cap.wanted = cpu_to_le32(CEPH_CAP_ALL_FILE);
+> +	in.cap.cap_id = cpu_to_le64(CEPH_CAP_ID_TBD);
+> +	in.cap.realm = cpu_to_le64(ci->i_snap_realm->ino);
+> +	in.cap.flags = CEPH_CAP_FLAG_AUTH;
+> +	in.ctime = in.mtime = in.atime = iinfo.btime;
+> +	in.mode = cpu_to_le32((u32)mode);
+> +	in.truncate_seq = cpu_to_le32(1);
+> +	in.truncate_size = cpu_to_le64(ci->i_truncate_size);
+> +	in.max_size = cpu_to_le64(ci->i_max_size);
+> +	in.xattr_version = cpu_to_le64(1);
+> +	in.uid = cpu_to_le32(from_kuid(&init_user_ns, current_fsuid()));
+> +	in.gid = cpu_to_le32(from_kgid(&init_user_ns, current_fsgid()));
+
+if dir has S_ISGID, new file's gid should be inherit from dir's gid
+
+
+> +	in.nlink = cpu_to_le32(1);
+> +
+> +	ceph_file_layout_to_legacy(&ci->i_layout, &in.layout);
+> +
+> +	ret = ceph_fill_inode(inode, NULL, &iinfo, NULL, req->r_session,
+> +			      req->r_fmode, NULL);
+> +	if (ret) {
+> +		dout("%s failed to fill inode: %d\n", __func__, ret);
+> +		if (inode->i_state & I_NEW)
+> +			discard_new_inode(inode);
+> +	} else {
+> +		struct dentry *dn;
+> +
+> +		dout("%s d_adding new inode 0x%llx to 0x%lx/%s\n", __func__,
+> +			vino.ino, dir->i_ino, dentry->d_name.name);
+> +		ceph_dir_clear_ordered(dir);
+> +		ceph_init_inode_acls(inode, as_ctx);
+> +		if (inode->i_state & I_NEW)
+> +			unlock_new_inode(inode);
+> +		if (d_in_lookup(dentry) || d_really_is_negative(dentry)) {
+> +			if (!d_unhashed(dentry))
+> +				d_drop(dentry);
+> +			dn = d_splice_alias(inode, dentry);
+> +			WARN_ON_ONCE(dn && dn != dentry);
+> +		}
+> +		file->f_mode |= FMODE_CREATED;
+> +		ret = finish_open(file, dentry, ceph_open);
+> +	}
+> +	return ret;
+> +}
+> +
+>   /*
+>    * Do a lookup + open with a single request.  If we get a non-existent
+>    * file or symlink, return 1 so the VFS can retry.
+> @@ -462,6 +597,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>   	struct ceph_mds_request *req;
+>   	struct dentry *dn;
+>   	struct ceph_acl_sec_ctx as_ctx = {};
+> +	bool try_async = enable_async_dirops;
+>   	int mask;
+>   	int err;
 >   
+> @@ -486,6 +622,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>   		return -ENOENT;
+>   	}
+>   
+> +retry:
+>   	/* do the open */
+>   	req = prepare_open_request(dir->i_sb, flags, mode);
+>   	if (IS_ERR(req)) {
+> @@ -494,6 +631,12 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>   	}
+>   	req->r_dentry = dget(dentry);
+>   	req->r_num_caps = 2;
+> +	mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
+> +	if (ceph_security_xattr_wanted(dir))
+> +		mask |= CEPH_CAP_XATTR_SHARED;
+> +	req->r_args.open.mask = cpu_to_le32(mask);
+> +	req->r_parent = dir;
+> +
+>   	if (flags & O_CREAT) {
+>   		req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
+>   		req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
+> @@ -501,21 +644,37 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>   			req->r_pagelist = as_ctx.pagelist;
+>   			as_ctx.pagelist = NULL;
+>   		}
+> +		if (try_async && get_caps_for_async_create(dir, dentry)) {
+> +			set_bit(CEPH_MDS_R_DELEG_INO, &req->r_req_flags);
+> +			req->r_callback = ceph_async_create_cb;
+> +			err = ceph_mdsc_submit_request(mdsc, dir, req);
+> +			switch (err) {
+> +			case 0:
+> +				/* set up inode, dentry and return */
+> +				err = ceph_finish_async_open(dir, dentry, file,
+> +							mode, req, &as_ctx);
+> +				goto out_req;
+> +			case -ECHILD:
+> +				/* do a sync create */
+> +				try_async = false;
+> +				as_ctx.pagelist = req->r_pagelist;
+> +				req->r_pagelist = NULL;
+> +				ceph_mdsc_put_request(req);
+> +				goto retry;
+> +			default:
+> +				/* Hard error, give up */
+> +				goto out_req;
+> +			}
+> +		}
+>   	}
+>   
+> -       mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
+> -       if (ceph_security_xattr_wanted(dir))
+> -               mask |= CEPH_CAP_XATTR_SHARED;
+> -       req->r_args.open.mask = cpu_to_le32(mask);
+> -
+> -	req->r_parent = dir;
+>   	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
+>   	err = ceph_mdsc_do_request(mdsc,
+>   				   (flags & (O_CREAT|O_TRUNC)) ? dir : NULL,
+>   				   req);
+>   	err = ceph_handle_snapdir(req, dentry, err);
+>   	if (err)
+> -		goto out_req;
+> +		goto out_fmode;
+>   
+>   	if ((flags & O_CREAT) && !req->r_reply_info.head->is_dentry)
+>   		err = ceph_handle_notrace_create(dir, dentry);
+> @@ -529,7 +688,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>   		dn = NULL;
+>   	}
+>   	if (err)
+> -		goto out_req;
+> +		goto out_fmode;
+>   	if (dn || d_really_is_negative(dentry) || d_is_symlink(dentry)) {
+>   		/* make vfs retry on splice, ENOENT, or symlink */
+>   		dout("atomic_open finish_no_open on dn %p\n", dn);
+> @@ -545,9 +704,10 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>   		}
+>   		err = finish_open(file, dentry, ceph_open);
+>   	}
+> -out_req:
+> +out_fmode:
+>   	if (!req->r_err && req->r_target_inode)
+>   		ceph_put_fmode(ceph_inode(req->r_target_inode), req->r_fmode);
+> +out_req:
+>   	ceph_mdsc_put_request(req);
+>   out_ctx:
+>   	ceph_release_acl_sec_ctx(&as_ctx);
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 9e7492b21b50..c76d6e7f8136 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -2620,14 +2620,16 @@ static int __prepare_send_request(struct ceph_mds_client *mdsc,
+>   		flags |= CEPH_MDS_FLAG_REPLAY;
+>   	if (req->r_parent)
+>   		flags |= CEPH_MDS_FLAG_WANT_DENTRY;
+> -	rhead->flags = cpu_to_le32(flags);
+> -	rhead->num_fwd = req->r_num_fwd;
+> -	rhead->num_retry = req->r_attempts - 1;
+> -	if (test_bit(CEPH_MDS_R_DELEG_INO, &req->r_req_flags))
+> +	if (test_bit(CEPH_MDS_R_DELEG_INO, &req->r_req_flags)) {
+>   		rhead->ino = cpu_to_le64(req->r_deleg_ino);
+> -	else
+> +		flags |= CEPH_MDS_FLAG_ASYNC;
+> +	} else {
+>   		rhead->ino = 0;
+> +	}
+>   
+> +	rhead->flags = cpu_to_le32(flags);
+> +	rhead->num_fwd = req->r_num_fwd;
+> +	rhead->num_retry = req->r_attempts - 1;
+>   	dout(" r_parent = %p\n", req->r_parent);
+>   	return 0;
+>   }
 > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index 3db7ef47e1c9..e0b36be7c44f 100644
+> index e0b36be7c44f..49e6cd5a07a2 100644
 > --- a/fs/ceph/mds_client.h
 > +++ b/fs/ceph/mds_client.h
-> @@ -258,6 +258,7 @@ struct ceph_mds_request {
->   #define CEPH_MDS_R_GOT_RESULT		(5) /* got a result */
->   #define CEPH_MDS_R_DID_PREPOPULATE	(6) /* prepopulated readdir */
->   #define CEPH_MDS_R_PARENT_LOCKED	(7) /* is r_parent->i_rwsem wlocked? */
-> +#define CEPH_MDS_R_DELEG_INO		(8) /* attempt to get r_deleg_ino */
->   	unsigned long	r_req_flags;
+> @@ -39,8 +39,7 @@ enum ceph_feature_type {
+>   	CEPHFS_FEATURE_REPLY_ENCODING,		\
+>   	CEPHFS_FEATURE_LAZY_CAP_WANTED,		\
+>   	CEPHFS_FEATURE_MULTI_RECONNECT,		\
+> -						\
+> -	CEPHFS_FEATURE_MAX,			\
+> +	CEPHFS_FEATURE_OCTOPUS,			\
+>   }
+>   #define CEPHFS_FEATURES_CLIENT_REQUIRED {}
 >   
->   	struct mutex r_fill_mutex;
-> @@ -307,6 +308,7 @@ struct ceph_mds_request {
->   	int               r_num_fwd;    /* number of forward attempts */
->   	int               r_resend_mds; /* mds to resend to next, if any*/
->   	u32               r_sent_on_mseq; /* cap mseq request was sent at*/
-> +	unsigned long	  r_deleg_ino;
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index ec4d66d7c261..33e03fbba888 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -136,6 +136,8 @@ struct ceph_fs_client {
+>   #endif
+>   };
 >   
->   	struct list_head  r_wait;
->   	struct completion r_completion;
+> +/* Special placeholder value for a cap_id during an asynchronous create. */
+> +#define        CEPH_CAP_ID_TBD         -1ULL
+>   
+>   /*
+>    * File i/o capability.  This tracks shared state with the metadata
+> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+> index a099f60feb7b..b127563e21a1 100644
+> --- a/include/linux/ceph/ceph_fs.h
+> +++ b/include/linux/ceph/ceph_fs.h
+> @@ -444,8 +444,9 @@ union ceph_mds_request_args {
+>   	} __attribute__ ((packed)) lookupino;
+>   } __attribute__ ((packed));
+>   
+> -#define CEPH_MDS_FLAG_REPLAY        1  /* this is a replayed op */
+> -#define CEPH_MDS_FLAG_WANT_DENTRY   2  /* want dentry in reply */
+> +#define CEPH_MDS_FLAG_REPLAY		1  /* this is a replayed op */
+> +#define CEPH_MDS_FLAG_WANT_DENTRY	2  /* want dentry in reply */
+> +#define CEPH_MDS_FLAG_ASYNC		4  /* request is asynchronous */
+>   
+>   struct ceph_mds_request_head {
+>   	__le64 oldest_client_tid;
+> @@ -658,6 +659,9 @@ int ceph_flags_to_mode(int flags);
+>   #define CEPH_CAP_ANY      (CEPH_CAP_ANY_RD | CEPH_CAP_ANY_EXCL | \
+>   			   CEPH_CAP_ANY_FILE_WR | CEPH_CAP_FILE_LAZYIO | \
+>   			   CEPH_CAP_PIN)
+> +#define CEPH_CAP_ALL_FILE (CEPH_CAP_PIN | CEPH_CAP_ANY_SHARED | \
+> +			   CEPH_CAP_AUTH_EXCL | CEPH_CAP_XATTR_EXCL | \
+> +			   CEPH_CAP_ANY_FILE_RD | CEPH_CAP_ANY_FILE_WR)
+>   
+>   #define CEPH_CAP_LOCKS (CEPH_LOCK_IFILE | CEPH_LOCK_IAUTH | CEPH_LOCK_ILINK | \
+>   			CEPH_LOCK_IXATTR)
 > 
 
