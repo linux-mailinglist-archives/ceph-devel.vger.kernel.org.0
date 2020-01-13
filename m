@@ -2,212 +2,227 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D37C713816F
-	for <lists+ceph-devel@lfdr.de>; Sat, 11 Jan 2020 14:42:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F0C2138927
+	for <lists+ceph-devel@lfdr.de>; Mon, 13 Jan 2020 02:12:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729382AbgAKNkG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 11 Jan 2020 08:40:06 -0500
-Received: from mail-qv1-f67.google.com ([209.85.219.67]:38578 "EHLO
-        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729294AbgAKNkG (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 11 Jan 2020 08:40:06 -0500
-Received: by mail-qv1-f67.google.com with SMTP id t6so2086066qvs.5
-        for <ceph-devel@vger.kernel.org>; Sat, 11 Jan 2020 05:40:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qgljkZSM3AFHE6N5pDggS4w0yEUbWXbJ0f1UZ3MgO7E=;
-        b=Gl7EDJPk6RwQQoTw3ubx/8nFkw5iQVy2IHvguquyAfmiAeoHb6HK7Wnzu9wmZ10AxM
-         s6vvTeRjpd/SsTVSjZF7bTsyZ7QgkM5+amg8ykM4MQZIhHP9tmYStQd1+DSGXJ/DJFzm
-         gN43DNRlvXxRFwZDgoxJuLkYRY4oZLYs+uu/bmENlXsWZtw1p13e5T96sLC1U4DXImTx
-         otzr2YtFwpL+Qj2rW4xtAp2tgXflYUeDhwIJ0pNbmJ1g0MAMhhpBLSLwg8b+Rw01PaAp
-         qUpM/VXgOhGBk7a3arieBEZp5age1zcW1ZNUbrAQ/cK+pioVEJXhdNKuAz5vHs+IromD
-         pJdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qgljkZSM3AFHE6N5pDggS4w0yEUbWXbJ0f1UZ3MgO7E=;
-        b=XzGulw5SLEAD/Rne5eTlKx7ZAA4N2atWW+MfIMePyLcamhCqnjrBt6yWTBMgZ6In6N
-         NAHZKriQNmy75IVgUBX31veZ6ApUtcR0wDDwIDy76A2QYM+0C9qNZ1bmQdUVhz9U/gNe
-         St7R+OGPrYBPSZ9WV0r07XCg3c4l6ocbDbtAF4OfuIfZLrFFW01W/LhKvtOSztfztZYr
-         WA/R+tr0Q+WEjfj7s3p9pVpAHN6ylc5GjRa5Q4q5OZQdRL4pQuXCehAibBsLzhET5D7L
-         SilRL5DdQUI9b9mFA2YM9H6+jitNjRwrmlyfdTgjSkMbal8jPfLOPvLdwALDRh03ljgo
-         fwLw==
-X-Gm-Message-State: APjAAAUrrHmxH1WXSfK9GyViJp+tAYEo9E7uFfsrBebggGpphb5dcziQ
-        x1L0wt0aiCUrPnZKRptIQoQrlF1lupM=
-X-Google-Smtp-Source: APXvYqzHHp6AEOybi8eSNzpS6yJenQVcFLfuQdedBvZo8EVVpn+IrB2YBO1WLPS/cnyQLb6Bv5XTSw==
-X-Received: by 2002:a05:6214:4f0:: with SMTP id cl16mr3529738qvb.213.1578750004788;
-        Sat, 11 Jan 2020 05:40:04 -0800 (PST)
-Received: from [192.168.50.240] (c-73-94-106-141.hsd1.mn.comcast.net. [73.94.106.141])
-        by smtp.gmail.com with ESMTPSA id x6sm2308285qkh.20.2020.01.11.05.39.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 11 Jan 2020 05:40:04 -0800 (PST)
-Subject: Re: crimson-osd vs legacy-osd: should the perf difference be already
- noticeable?
-To:     "Liu, Chunmei" <chunmei.liu@intel.com>,
-        Roman Penyaev <rpenyaev@suse.de>,
-        kefu chai <tchaikov@gmail.com>,
-        "Ma, Jianpeng" <jianpeng.ma@intel.com>
-Cc:     Radoslaw Zarzynski <rzarzyns@redhat.com>,
-        Samuel Just <sjust@redhat.com>,
-        The Esoteric Order of the Squid Cybernetic 
-        <ceph-devel@vger.kernel.org>
-References: <02e2209f66f18217aa45b8f7caf715f6@suse.de>
- <CAJE9aON93O75PPRjfuFGYrtpBxRHHuepGX+tEC3FkBSgM6TgNQ@mail.gmail.com>
- <f3a976a6d2eba9cd8bd6bf46c0fc9967@suse.de>
- <BY5PR11MB4273BE8C4A3FB0E3D01A20ACE0380@BY5PR11MB4273.namprd11.prod.outlook.com>
-From:   Mark Nelson <mark.a.nelson@gmail.com>
-Message-ID: <7650fa23-d922-95b4-7a9b-3bdab331724e@gmail.com>
-Date:   Sat, 11 Jan 2020 07:39:58 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730100AbgAMBMp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 12 Jan 2020 20:12:45 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:31620 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727222AbgAMBMp (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Sun, 12 Jan 2020 20:12:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578877962;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hdqhM815UDYLDrJMTEJNejdl0UOy2pTSEtjAWYd0xjs=;
+        b=dAOGSYmEaoCdE498zxbeejmtBeQjDTDWffRGGs+BOlftXykAT0zDmLiHdx+WuE7R6Haw89
+        MoAWOuEcCCshUfL6lp6V4MAidYRNERy3z1qRIF+zb+f4FoZ23nTirn1er4OEZbb61pfscN
+        PXfHMTmiKxbxY7KMx2FgFjI8QODjSXM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-302-Gzleo2JNMVqkI_65z09P0A-1; Sun, 12 Jan 2020 20:12:41 -0500
+X-MC-Unique: Gzleo2JNMVqkI_65z09P0A-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2EB5F184C700;
+        Mon, 13 Jan 2020 01:12:40 +0000 (UTC)
+Received: from [10.72.12.97] (ovpn-12-97.pek2.redhat.com [10.72.12.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 715BA5C1D4;
+        Mon, 13 Jan 2020 01:12:35 +0000 (UTC)
+Subject: Re: [PATCH v2 2/8] ceph: add caps perf metric for each session
+To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com,
+        zyan@redhat.com
+Cc:     sage@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
+References: <20200108104152.28468-1-xiubli@redhat.com>
+ <20200108104152.28468-3-xiubli@redhat.com>
+ <38fc860f80d251d5cbb5ee49c253a725625190d9.camel@kernel.org>
+ <a2ccd54f-11a3-a3e0-f299-00de28cca92d@redhat.com>
+ <2290d0986978eb65519f2c4842a9e40db9ee7c85.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <7075061f-2614-4bb2-cf8b-86b8b94a1f5f@redhat.com>
+Date:   Mon, 13 Jan 2020 09:12:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <BY5PR11MB4273BE8C4A3FB0E3D01A20ACE0380@BY5PR11MB4273.namprd11.prod.outlook.com>
+In-Reply-To: <2290d0986978eb65519f2c4842a9e40db9ee7c85.camel@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 1/10/20 5:28 PM, Liu, Chunmei wrote:
-> 
-> 
->> -----Original Message-----
->> From: ceph-devel-owner@vger.kernel.org <ceph-devel-owner@vger.kernel.org>
->> On Behalf Of Roman Penyaev
->> Sent: Friday, January 10, 2020 10:54 AM
->> To: kefu chai <tchaikov@gmail.com>
->> Cc: Radoslaw Zarzynski <rzarzyns@redhat.com>; Samuel Just
->> <sjust@redhat.com>; The Esoteric Order of the Squid Cybernetic <ceph-
->> devel@vger.kernel.org>
->> Subject: Re: crimson-osd vs legacy-osd: should the perf difference be already
->> noticeable?
->>
->> On 2020-01-10 17:18, kefu chai wrote:
->>
->> [skip]
->>
+On 2020/1/10 19:51, Jeff Layton wrote:
+> On Fri, 2020-01-10 at 11:38 +0800, Xiubo Li wrote:
+>> On 2020/1/9 22:52, Jeff Layton wrote:
+>>> On Wed, 2020-01-08 at 05:41 -0500, xiubli@redhat.com wrote:
+>>>> From: Xiubo Li <xiubli@redhat.com>
 >>>>
->>>> First thing that catches my eye is that for small blocks there is no
->>>> big difference at all, but as the block increases, crimsons iops
->>>> starts to
+>>>> This will fulfill the caps hit/miss metric for each session. When
+>>>> checking the "need" mask and if one cap has the subset of the "need"
+>>>> mask it means hit, or missed.
+>>>>
+>>>> item          total           miss            hit
+>>>> -------------------------------------------------
+>>>> d_lease       295             0               993
+>>>>
+>>>> session       caps            miss            hit
+>>>> -------------------------------------------------
+>>>> 0             295             107             4119
+>>>> 1             1               107             9
+>>>>
+>>>> Fixes: https://tracker.ceph.com/issues/43215
+>>> For the record, "Fixes:" has a different meaning for kernel patches.
+>>> It's used to reference an earlier patch that introduced the bug that =
+the
+>>> patch is fixing.
 >>>
->>> that's also our findings. and it's expected. as async messenger uses
->>> the same reactor model as seastar does. actually its original
->>> implementation was adapted from seastar's socket stream
->>> implementation.
+>>> It's a pity that the ceph team decided to use that to reference track=
+er
+>>> tickets in their tree. For the kernel we usually use a generic "URL:"
+>>> tag for that.
+>> Sure, will fix it.
 >>
->> Hm, regardless of model messenger should not be a bottleneck.  Take a look on
->> the results of fio_ceph_messenger load (runs pure messenger), I can squeeze
->> IOPS=89.8k, BW=351MiB/s on 4k block size, iodepth=32.
->> (also good example https://github.com/ceph/ceph/pull/26932 , almost
->> ~200k)
+>> [...]
+>>>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+>>>> index 28ae0c134700..6ab02aab7d9c 100644
+>>>> --- a/fs/ceph/caps.c
+>>>> +++ b/fs/ceph/caps.c
+>>>> @@ -567,7 +567,7 @@ static void __cap_delay_cancel(struct ceph_mds_c=
+lient *mdsc,
+>>>>    static void __check_cap_issue(struct ceph_inode_info *ci, struct =
+ceph_cap *cap,
+>>>>    			      unsigned issued)
+>>>>    {
+>>>> -	unsigned had =3D __ceph_caps_issued(ci, NULL);
+>>>> +	unsigned int had =3D __ceph_caps_issued(ci, NULL, -1);
+>>>>   =20
+>>>>    	/*
+>>>>    	 * Each time we receive FILE_CACHE anew, we increment
+>>>> @@ -787,20 +787,43 @@ static int __cap_is_valid(struct ceph_cap *cap=
+)
+>>>>     * out, and may be invalidated in bulk if the client session time=
+s out
+>>>>     * and session->s_cap_gen is bumped.
+>>>>     */
+>>>> -int __ceph_caps_issued(struct ceph_inode_info *ci, int *implemented=
+)
+>>>> +int __ceph_caps_issued(struct ceph_inode_info *ci, int *implemented=
+, int mask)
+>>> This seems like the wrong approach. This function returns a set of ca=
+ps,
+>>> so it seems like the callers ought to determine whether a miss or hit
+>>> occurred, and whether to record it.
+>> Currently this approach will count the hit/miss for each i_cap entity =
+in
+>> ci->i_caps, for example, if a i_cap has a subset of the requested cap
+>> mask it means the i_cap hit, or the i_cap miss.
 >>
->> With PG layer (memstore_debug_omit_block_device_write=true option) I can
->> reach 40k iops max.  Without PG layer (immediate completion from the
->> transport callback, osd_immediate_completions=true) I get almost 60k.
+>> This approach will be like:
 >>
->> Seems that here starts playing costs on client side and these costs prevail.
+>> session       caps            miss            hit
+>> -------------------------------------------------
+>> 0             295             107             4119
+>> 1             1               107             9
 >>
->>>
->>>> decline. Can it be the transport issue? Can be tested as well.
->>>
->>> because seastar's socket facility reads from the wire with 4K chunk
->>> size, while classic OSD's async messenger reads the payload with the
->>> size suggested by the header. so when it comes to larger block size,
->>> it takes crimson-osd multiple syscalls and memcpy calls to read the
->>> request from wire, that's why classic OSD wins in this case.
->>
->> Do you plan to fix that?
->>
->>> have you tried to use multiple fio clients to saturate CPU capacity of
->>> OSD nodes?
->>
->> Not yet.  But regarding CPU I have these numbers:
->>
->> output of pidstat while rbd.fio is running, 4k block only:
->>
->> legacy-osd
->>
->> [roman@dell ~]$ pidstat 1 -p 109930
->> Linux 5.3.13-arch1-1 (dell)     01/09/2020      _x86_64_        (8 CPU)
->>
->> 03:51:49 PM   UID       PID    %usr %system  %guest   %wait    %CPU
->> CPU  Command
->> 03:51:51 PM  1000    109930   14.00    8.00    0.00    0.00   22.00
->> 1  ceph-osd
->> 03:51:52 PM  1000    109930   40.00   19.00    0.00    0.00   59.00
->> 1  ceph-osd
->> 03:51:53 PM  1000    109930   44.00   17.00    0.00    0.00   61.00
->> 1  ceph-osd
->> 03:51:54 PM  1000    109930   40.00   20.00    0.00    0.00   60.00
->> 1  ceph-osd
->> 03:51:55 PM  1000    109930   39.00   18.00    0.00    0.00   57.00
->> 1  ceph-osd
->> 03:51:56 PM  1000    109930   41.00   20.00    0.00    0.00   61.00
->> 1  ceph-osd
->> 03:51:57 PM  1000    109930   41.00   15.00    0.00    0.00   56.00
->> 1  ceph-osd
->> 03:51:58 PM  1000    109930   42.00   16.00    0.00    0.00   58.00
->> 1  ceph-osd
->> 03:51:59 PM  1000    109930   42.00   15.00    0.00    0.00   57.00
->> 1  ceph-osd
->> 03:52:00 PM  1000    109930   43.00   15.00    0.00    0.00   58.00
->> 1  ceph-osd
->> 03:52:01 PM  1000    109930   24.00   12.00    0.00    0.00   36.00
->> 1  ceph-osd
+>> The "caps" here is the total i_caps in all the ceph_inodes we have.
 >>
 >>
->> crimson-osd
+>> Another approach is only when the ci->i_caps have all the requested ca=
+p
+>> mask, it means hit, or miss, this is what you meant as above.
 >>
->> [roman@dell ~]$ pidstat 1  -p 108141
->> Linux 5.3.13-arch1-1 (dell)     01/09/2020      _x86_64_        (8 CPU)
+>> This approach will be like:
 >>
->> 03:47:50 PM   UID       PID    %usr %system  %guest   %wait    %CPU
->> CPU  Command
->> 03:47:55 PM  1000    108141   67.00   11.00    0.00    0.00   78.00
->> 0  crimson-osd
->> 03:47:56 PM  1000    108141   79.00   12.00    0.00    0.00   91.00
->> 0  crimson-osd
->> 03:47:57 PM  1000    108141   81.00    9.00    0.00    0.00   90.00
->> 0  crimson-osd
->> 03:47:58 PM  1000    108141   78.00   12.00    0.00    0.00   90.00
->> 0  crimson-osd
->> 03:47:59 PM  1000    108141   78.00   12.00    0.00    1.00   90.00
->> 0  crimson-osd
->> 03:48:00 PM  1000    108141   78.00   13.00    0.00    0.00   91.00
->> 0  crimson-osd
->> 03:48:01 PM  1000    108141   79.00   13.00    0.00    0.00   92.00
->> 0  crimson-osd
->> 03:48:02 PM  1000    108141   78.00   12.00    0.00    0.00   90.00
->> 0  crimson-osd
->> 03:48:03 PM  1000    108141   77.00   11.00    0.00    0.00   88.00
->> 0  crimson-osd
->> 03:48:04 PM  1000    108141   79.00   12.00    0.00    1.00   91.00
->> 0  crimson-osd
+>> session       inodes            miss            hit
+>> -------------------------------------------------
+>> 0             295             107             4119
+>> 1             1               107             9
+>>
+>> The "inodes" here is the total ceph_inodes we have.
+>>
+>> Which one will be better ?
 >>
 >>
->> Seems quite saturated, almost twice more than legacy-osd.  Did you see
->> something similar?
-> Crimson-osd (seastar) use epoll, by default, it will use more cpu capacity,(you can change epoll mode setting to reduce it), add Ma, Jianpeng in the thread since he did more study on it.
-> BTW, by default crimson-osd is one thread, and legacy ceph-osd (3 threads for async messenger, 2x8 threads for osd (SDD), finisher thread etc,) ,so by default setting, it is 1 thread compare to over 10 threads work,  it is expected crimson-osd not show obvious difference. you can change the default thread number for legacy ceph-osd(such as thread=1 for each layer to see more difference.)
-> BTW, please use release build to do test.
-> Crimson-osd is aysnc model, if workload is very light, can't take more advantage of it.
->>
->> --
->> Roman
-> 
+> I think I wasn't clear. My objection was to adding this "mask" field to
+> __ceph_caps_issued and having the counting logic in there. It would be
+> cleaner to have the callers do that instead. __ceph_caps_issued returns
+> the issued caps, so the callers have all of the information they need t=
+o
+> increment the proper counters without having to change
+> __ceph_caps_issued.
 
-FWIW I can drive the classical OSD pretty hard and get around 70-80K 
-IOPS out of a single OSD, but as Kefu says above it will consume a 
-larger number of cores.  I do think per-OSD throughput is still 
-important to look at, but the per-OSD efficiency numbers as Radek has 
-been testing (I gathered some for classical OSD a while back for him) 
-are probably going to be more important overall.
+Do you mean if the (mask & issued =3D=3D mask) the caller will increase 1=
+ to=20
+the hit counter, or increase 1 miss counter, right ?
 
-Mark
+For currently approach of this patch, when traversing the ceph_inode's=20
+i_caps and if a i_cap has only a subset or all of the "mask" that means=20
+hit, or miss.
+
+This is why changing the __ceph_caps_issued().
+
+
+>
+>>>>    {
+>> [...]
+>>>>   =20
+>>>> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+>>>> index 382beb04bacb..1e1ccae8953d 100644
+>>>> --- a/fs/ceph/dir.c
+>>>> +++ b/fs/ceph/dir.c
+>>>> @@ -30,7 +30,7 @@
+>>>>    const struct dentry_operations ceph_dentry_ops;
+>>>>   =20
+>>>>    static bool __dentry_lease_is_valid(struct ceph_dentry_info *di);
+>>>> -static int __dir_lease_try_check(const struct dentry *dentry);
+>>>> +static int __dir_lease_try_check(const struct dentry *dentry, bool =
+metric);
+>>>>   =20
+>>> AFAICT, this function is only called when trimming dentries and in
+>>> d_delete. I don't think we care about measuring cache hits/misses for
+>>> either of those cases.
+>> Yeah, it is.
+>>
+>> This will ignore the trimming dentries case, and will count from the
+>> d_delete.
+>>
+>> This approach will only count the cap hit/miss called from VFS layer.
+>>
+> Why do you need this "metric" parameter here? We _know_ that we won't b=
+e
+> counting hits and misses in this codepath, so it doesn't seem to serve
+> any useful purpose.
+>
+We need to know where the caller comes from:
+
+In Case1:=C2=A0 caller is vfs
+
+This will count the hit/miss counters.
+
+ceph_d_delete() --> __dir_lease_try_check(metric =3D true) -->=20
+__ceph_caps_issued_mask(mask =3D XXX, metric =3D true)
+
+
+In Case2: caller is ceph.ko itself
+
+This will ignore the hit/miss counters.
+
+ceph_trim_dentries() --> __dentry_lease_check() -->=20
+__dir_lease_try_check(metric =3D false) --> __ceph_caps_issued_mask(mask =
+=3D=20
+XXX, metric =3D false)
+
+
+Thanks.
+
+
+
+
