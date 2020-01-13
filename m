@@ -2,240 +2,202 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E9D2139228
-	for <lists+ceph-devel@lfdr.de>; Mon, 13 Jan 2020 14:28:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 598FB13922C
+	for <lists+ceph-devel@lfdr.de>; Mon, 13 Jan 2020 14:29:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726505AbgAMN2Z (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 13 Jan 2020 08:28:25 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:30894 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726277AbgAMN2Z (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 13 Jan 2020 08:28:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1578922103;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=S3Ab7AXyfVBikg89PXlP495b0rK0o1ctGxgQkNulT00=;
-        b=anrhwVSdZ2J8nZ3DvcKLlIYwYSo7SOHAxbCbaiAODqSzqyGz1BD3wBeu88fft4fnrqnRbU
-        +wi9dBlUN0eG7Q3KEmzB0hIo+6b5bkhqBonQPmpmeG4G6xYsFeZvc6F0xaKqeq2pLUYJTt
-        wxBCygIaqV7/kEB24v14krGeDX6bGhw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-103-ZzHZy0rwMWGMOXX9G73Dyw-1; Mon, 13 Jan 2020 08:28:21 -0500
-X-MC-Unique: ZzHZy0rwMWGMOXX9G73Dyw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726593AbgAMN3Q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 13 Jan 2020 08:29:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726277AbgAMN3Q (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 13 Jan 2020 08:29:16 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3A9DF190D34D;
-        Mon, 13 Jan 2020 13:28:20 +0000 (UTC)
-Received: from [10.72.12.97] (ovpn-12-97.pek2.redhat.com [10.72.12.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 613F0806B9;
-        Mon, 13 Jan 2020 13:28:15 +0000 (UTC)
-Subject: Re: [PATCH v2 2/8] ceph: add caps perf metric for each session
-To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com,
-        zyan@redhat.com
-Cc:     sage@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-References: <20200108104152.28468-1-xiubli@redhat.com>
- <20200108104152.28468-3-xiubli@redhat.com>
- <38fc860f80d251d5cbb5ee49c253a725625190d9.camel@kernel.org>
- <a2ccd54f-11a3-a3e0-f299-00de28cca92d@redhat.com>
- <2290d0986978eb65519f2c4842a9e40db9ee7c85.camel@kernel.org>
- <7075061f-2614-4bb2-cf8b-86b8b94a1f5f@redhat.com>
- <b40d3ae50cb15d125a86d7b9c701d3836864613e.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <8808168b-8768-be71-680e-20e3a0bcaa2c@redhat.com>
-Date:   Mon, 13 Jan 2020 21:28:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 879AD207FD;
+        Mon, 13 Jan 2020 13:29:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578922155;
+        bh=cUp4OYgaJy9IPuE03aI1sc3zJISyN7HTQGnRec+jN+U=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=0VVgjjBvnYTdnvATWsKftfjdq7K96V6/r8H8H8705LoVfpDLywwFbeFToKA055ylL
+         Df6NGBbl+HC9pII5p9+wyCAMVbXMzV7vdB/HiCOHq2Y4p1/iQ3j3EviWF7kU8aSoAo
+         +kgzvikLbNBUKY09W6tgCKlvHwxGzd4pxE6+2+Mg=
+Message-ID: <1dea62351871a65e76d15c041aadf7fb51c5dd47.camel@kernel.org>
+Subject: Re: [RFC PATCH 8/9] ceph: copy layout, max_size and truncate_size
+ on successful sync create
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com, pdonnell@redhat.com
+Date:   Mon, 13 Jan 2020 08:29:13 -0500
+In-Reply-To: <b4dea395-11af-8a16-415e-da145c3def1f@redhat.com>
+References: <20200110205647.311023-1-jlayton@kernel.org>
+         <20200110205647.311023-9-jlayton@kernel.org>
+         <b4dea395-11af-8a16-415e-da145c3def1f@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
 MIME-Version: 1.0
-In-Reply-To: <b40d3ae50cb15d125a86d7b9c701d3836864613e.camel@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020/1/13 21:20, Jeff Layton wrote:
-> On Mon, 2020-01-13 at 09:12 +0800, Xiubo Li wrote:
->> On 2020/1/10 19:51, Jeff Layton wrote:
->>> On Fri, 2020-01-10 at 11:38 +0800, Xiubo Li wrote:
->>>> On 2020/1/9 22:52, Jeff Layton wrote:
->>>>> On Wed, 2020-01-08 at 05:41 -0500, xiubli@redhat.com wrote:
->>>>>> From: Xiubo Li <xiubli@redhat.com>
->>>>>>
->>>>>> This will fulfill the caps hit/miss metric for each session. When
->>>>>> checking the "need" mask and if one cap has the subset of the "need"
->>>>>> mask it means hit, or missed.
->>>>>>
->>>>>> item          total           miss            hit
->>>>>> -------------------------------------------------
->>>>>> d_lease       295             0               993
->>>>>>
->>>>>> session       caps            miss            hit
->>>>>> -------------------------------------------------
->>>>>> 0             295             107             4119
->>>>>> 1             1               107             9
->>>>>>
->>>>>> Fixes: https://tracker.ceph.com/issues/43215
->>>>> For the record, "Fixes:" has a different meaning for kernel patches.
->>>>> It's used to reference an earlier patch that introduced the bug that the
->>>>> patch is fixing.
->>>>>
->>>>> It's a pity that the ceph team decided to use that to reference tracker
->>>>> tickets in their tree. For the kernel we usually use a generic "URL:"
->>>>> tag for that.
->>>> Sure, will fix it.
->>>>
->>>> [...]
->>>>>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
->>>>>> index 28ae0c134700..6ab02aab7d9c 100644
->>>>>> --- a/fs/ceph/caps.c
->>>>>> +++ b/fs/ceph/caps.c
->>>>>> @@ -567,7 +567,7 @@ static void __cap_delay_cancel(struct ceph_mds_client *mdsc,
->>>>>>     static void __check_cap_issue(struct ceph_inode_info *ci, struct ceph_cap *cap,
->>>>>>     			      unsigned issued)
->>>>>>     {
->>>>>> -	unsigned had = __ceph_caps_issued(ci, NULL);
->>>>>> +	unsigned int had = __ceph_caps_issued(ci, NULL, -1);
->>>>>>     
->>>>>>     	/*
->>>>>>     	 * Each time we receive FILE_CACHE anew, we increment
->>>>>> @@ -787,20 +787,43 @@ static int __cap_is_valid(struct ceph_cap *cap)
->>>>>>      * out, and may be invalidated in bulk if the client session times out
->>>>>>      * and session->s_cap_gen is bumped.
->>>>>>      */
->>>>>> -int __ceph_caps_issued(struct ceph_inode_info *ci, int *implemented)
->>>>>> +int __ceph_caps_issued(struct ceph_inode_info *ci, int *implemented, int mask)
->>>>> This seems like the wrong approach. This function returns a set of caps,
->>>>> so it seems like the callers ought to determine whether a miss or hit
->>>>> occurred, and whether to record it.
->>>> Currently this approach will count the hit/miss for each i_cap entity in
->>>> ci->i_caps, for example, if a i_cap has a subset of the requested cap
->>>> mask it means the i_cap hit, or the i_cap miss.
->>>>
->>>> This approach will be like:
->>>>
->>>> session       caps            miss            hit
->>>> -------------------------------------------------
->>>> 0             295             107             4119
->>>> 1             1               107             9
->>>>
->>>> The "caps" here is the total i_caps in all the ceph_inodes we have.
->>>>
->>>>
->>>> Another approach is only when the ci->i_caps have all the requested cap
->>>> mask, it means hit, or miss, this is what you meant as above.
->>>>
->>>> This approach will be like:
->>>>
->>>> session       inodes            miss            hit
->>>> -------------------------------------------------
->>>> 0             295             107             4119
->>>> 1             1               107             9
->>>>
->>>> The "inodes" here is the total ceph_inodes we have.
->>>>
->>>> Which one will be better ?
->>>>
->>>>
->>> I think I wasn't clear. My objection was to adding this "mask" field to
->>> __ceph_caps_issued and having the counting logic in there. It would be
->>> cleaner to have the callers do that instead. __ceph_caps_issued returns
->>> the issued caps, so the callers have all of the information they need to
->>> increment the proper counters without having to change
->>> __ceph_caps_issued.
->> Do you mean if the (mask & issued == mask) the caller will increase 1 to
->> the hit counter, or increase 1 miss counter, right ?
->>
->> For currently approach of this patch, when traversing the ceph_inode's
->> i_caps and if a i_cap has only a subset or all of the "mask" that means
->> hit, or miss.
->>
->> This is why changing the __ceph_caps_issued().
->>
-> In this case, I'm specifically saying that you should move the hit and
-> miss counting into the _callers_ of __ceph_caps_issued().
->
-> That function is a piece of core infrastructure that returns the
-> currently issued caps. I think that it should not be changed to count
-> hits and misses, as the calling functions are in a better position to
-> make that determination and it needlessly complicates low-level code.
+On Mon, 2020-01-13 at 17:01 +0800, Yan, Zheng wrote:
+> On 1/11/20 4:56 AM, Jeff Layton wrote:
+> > It doesn't do much good to do an asynchronous create unless we can do
+> > I/O to it before the create reply comes in. That means we need layout
+> > info the new file before we've gotten the response from the MDS.
+> > 
+> > All files created in a directory will initially inherit the same layout,
+> > so copy off the requisite info from the first synchronous create in the
+> > directory. Save it in the same fields in the directory inode, as those
+> > are otherwise unsed for dir inodes. This means we need to be a bit
+> > careful about only updating layout info on non-dir inodes.
+> > 
+> > Also, zero out the layout when we drop Dc caps in the dir.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >   fs/ceph/caps.c  | 24 ++++++++++++++++++++----
+> >   fs/ceph/file.c  | 24 +++++++++++++++++++++++-
+> >   fs/ceph/inode.c |  4 ++--
+> >   3 files changed, 45 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> > index 7fc87b693ba4..b96fb1378479 100644
+> > --- a/fs/ceph/caps.c
+> > +++ b/fs/ceph/caps.c
+> > @@ -2847,7 +2847,7 @@ int ceph_get_caps(struct file *filp, int need, int want,
+> >   			return ret;
+> >   		}
+> >   
+> > -		if (S_ISREG(ci->vfs_inode.i_mode) &&
+> > +		if (!S_ISDIR(ci->vfs_inode.i_mode) &&
+> >   		    ci->i_inline_version != CEPH_INLINE_NONE &&
+> >   		    (_got & (CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO)) &&
+> >   		    i_size_read(inode) > 0) {
+> > @@ -2944,9 +2944,17 @@ void ceph_put_cap_refs(struct ceph_inode_info *ci, int had)
+> >   	if (had & CEPH_CAP_FILE_RD)
+> >   		if (--ci->i_rd_ref == 0)
+> >   			last++;
+> > -	if (had & CEPH_CAP_FILE_CACHE)
+> > -		if (--ci->i_rdcache_ref == 0)
+> > +	if (had & CEPH_CAP_FILE_CACHE) {
+> > +		if (--ci->i_rdcache_ref == 0) {
+> >   			last++;
+> > +			/* Zero out layout if we lost CREATE caps */
+> > +			if (S_ISDIR(inode->i_mode) &&
+> > +			    !(__ceph_caps_issued(ci, NULL) & CEPH_CAP_DIR_CREATE)) {
+> > +				ceph_put_string(rcu_dereference_raw(ci->i_layout.pool_ns));
+> > +				memset(&ci->i_layout, 0, sizeof(ci->i_layout));
+> > +			}
+> > +		}
+> > +	}
+> >   	if (had & CEPH_CAP_FILE_EXCL)
+> >   		if (--ci->i_fx_ref == 0)
+> >   			last++;
+> > @@ -3264,7 +3272,8 @@ static void handle_cap_grant(struct inode *inode,
+> >   		ci->i_subdirs = extra_info->nsubdirs;
+> >   	}
+> >   
+> > -	if (newcaps & (CEPH_CAP_ANY_FILE_RD | CEPH_CAP_ANY_FILE_WR)) {
+> > +	if (!S_ISDIR(inode->i_mode) &&
+> > +	    (newcaps & (CEPH_CAP_ANY_FILE_RD | CEPH_CAP_ANY_FILE_WR))) {
+> >   		/* file layout may have changed */
+> >   		s64 old_pool = ci->i_layout.pool_id;
+> >   		struct ceph_string *old_ns;
+> > @@ -3336,6 +3345,13 @@ static void handle_cap_grant(struct inode *inode,
+> >   		     ceph_cap_string(cap->issued),
+> >   		     ceph_cap_string(newcaps),
+> >   		     ceph_cap_string(revoking));
+> > +
+> > +		if (S_ISDIR(inode->i_mode) &&
+> > +		    (revoking & CEPH_CAP_DIR_CREATE) && !ci->i_rdcache_ref) {
+> > +			ceph_put_string(rcu_dereference_raw(ci->i_layout.pool_ns));
+> > +			memset(&ci->i_layout, 0, sizeof(ci->i_layout));
+> > +		}
+> > +
+> >   		if (S_ISREG(inode->i_mode) &&
+> >   		    (revoking & used & CEPH_CAP_FILE_BUFFER))
+> >   			writeback = true;  /* initiate writeback; will delay ack */
+> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > index 1e6cdf2dfe90..d4d7a277faf1 100644
+> > --- a/fs/ceph/file.c
+> > +++ b/fs/ceph/file.c
+> > @@ -430,6 +430,25 @@ int ceph_open(struct inode *inode, struct file *file)
+> >   	return err;
+> >   }
+> >   
+> > +/* Clone the layout from a synchronous create, if the dir now has Dc caps */
+> > +static void
+> > +copy_file_layout(struct inode *dst, struct inode *src)
+> > +{
+> > +	struct ceph_inode_info *cdst = ceph_inode(dst);
+> > +	struct ceph_inode_info *csrc = ceph_inode(src);
+> > +
+> > +	spin_lock(&cdst->i_ceph_lock);
+> > +	if ((__ceph_caps_issued(cdst, NULL) & CEPH_CAP_DIR_CREATE) &&
+> > +	    !ceph_file_layout_is_valid(&cdst->i_layout)) {
+> > +		memcpy(&cdst->i_layout, &csrc->i_layout,
+> > +			sizeof(cdst->i_layout));
+> 
+> directory's i_layout is used for other purpose. shouldn't modify it.
+> 
 
-Sure, sounds reasonable.
+Yeah, I realized that just recently. I'll add a new field for this.
+Maybe we can at least union it with something that is unused in
+directories.
 
-Will fix this part later.
+> > +		rcu_assign_pointer(cdst->i_layout.pool_ns,
+> > +				   ceph_try_get_string(csrc->i_layout.pool_ns));
+> > +		cdst->i_max_size = csrc->i_max_size; > +		cdst->i_truncate_size = csrc->i_truncate_size;
+> no need to save above two. just set truncate size of new file to 
+> (u64)-1, set max_size of new file to its layout.stripe_unit;
+> 
+> max_size == layout.strip_unit ensure that client only write to the first 
+> object before its writeable range is persistent.
+> 
 
->
->>>>>>     {
->>>> [...]
->>>>>>     
->>>>>> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
->>>>>> index 382beb04bacb..1e1ccae8953d 100644
->>>>>> --- a/fs/ceph/dir.c
->>>>>> +++ b/fs/ceph/dir.c
->>>>>> @@ -30,7 +30,7 @@
->>>>>>     const struct dentry_operations ceph_dentry_ops;
->>>>>>     
->>>>>>     static bool __dentry_lease_is_valid(struct ceph_dentry_info *di);
->>>>>> -static int __dir_lease_try_check(const struct dentry *dentry);
->>>>>> +static int __dir_lease_try_check(const struct dentry *dentry, bool metric);
->>>>>>     
->>>>> AFAICT, this function is only called when trimming dentries and in
->>>>> d_delete. I don't think we care about measuring cache hits/misses for
->>>>> either of those cases.
->>>> Yeah, it is.
->>>>
->>>> This will ignore the trimming dentries case, and will count from the
->>>> d_delete.
->>>>
->>>> This approach will only count the cap hit/miss called from VFS layer.
->>>>
->>> Why do you need this "metric" parameter here? We _know_ that we won't be
->>> counting hits and misses in this codepath, so it doesn't seem to serve
->>> any useful purpose.
->>>
->> We need to know where the caller comes from:
->>
->> In Case1:  caller is vfs
->>
->> This will count the hit/miss counters.
->>
->> ceph_d_delete() --> __dir_lease_try_check(metric = true) -->
->> __ceph_caps_issued_mask(mask = XXX, metric = true)
->>
-> Why would you count hits/misses from the d_delete codepath? That isn't
-> generally driven by user activity, and it's just checking to see whether
-> we have a lease for the dentry (in which case we'll keep it around). I
-> don't think we should count the lease check here as it's basically
-> similar to trimming.
+ACK, I saw that in your userland client patchset. I'll fix that up.
 
-Okay, will remove it.
+Thanks,
 
+> > +	}
+> > +	spin_unlock(&cdst->i_ceph_lock);
+> > +}
+> >   
+> >   /*
+> >    * Do a lookup + open with a single request.  If we get a non-existent
+> > @@ -518,7 +537,10 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+> >   	} else {
+> >   		dout("atomic_open finish_open on dn %p\n", dn);
+> >   		if (req->r_op == CEPH_MDS_OP_CREATE && req->r_reply_info.has_create_ino) {
+> > -			ceph_init_inode_acls(d_inode(dentry), &as_ctx);
+> > +			struct inode *newino = d_inode(dentry);
+> > +
+> > +			copy_file_layout(dir, newino);
+> > +			ceph_init_inode_acls(newino, &as_ctx);
+> >   			file->f_mode |= FMODE_CREATED;
+> >   		}
+> >   		err = finish_open(file, dentry, ceph_open);
+> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > index 9cfc093fd273..8b51051b79b0 100644
+> > --- a/fs/ceph/inode.c
+> > +++ b/fs/ceph/inode.c
+> > @@ -848,8 +848,8 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+> >   		ci->i_subdirs = le64_to_cpu(info->subdirs);
+> >   	}
+> >   
+> > -	if (new_version ||
+> > -	    (new_issued & (CEPH_CAP_ANY_FILE_RD | CEPH_CAP_ANY_FILE_WR))) {
+> > +	if (!S_ISDIR(inode->i_mode) && (new_version ||
+> > +	    (new_issued & (CEPH_CAP_ANY_FILE_RD | CEPH_CAP_ANY_FILE_WR)))) {
+> >   		s64 old_pool = ci->i_layout.pool_id;
+> >   		struct ceph_string *old_ns;
+> >   
+> > 
 
->> In Case2: caller is ceph.ko itself
->>
->> This will ignore the hit/miss counters.
->>
->> ceph_trim_dentries() --> __dentry_lease_check() -->
->> __dir_lease_try_check(metric = false) --> __ceph_caps_issued_mask(mask =
->> XXX, metric = false)
-> Right, so the caller (__dentry_lease_check()) just wouldn't count it in
-> this case.
->
-> In general, adding a boolean argument to a function like this is often a
-> sign that you're doing something wrong. You're almost always better off
-> doing this sort of thing in the caller, or making two different
-> functions that call the same underlying code.
-
-Sure, this is reasonable.
-
-BRs
-
-Xiubo
+-- 
+Jeff Layton <jlayton@kernel.org>
 
