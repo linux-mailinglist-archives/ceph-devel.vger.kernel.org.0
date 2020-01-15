@@ -2,45 +2,45 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F6DC13B844
-	for <lists+ceph-devel@lfdr.de>; Wed, 15 Jan 2020 04:45:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4968213B845
+	for <lists+ceph-devel@lfdr.de>; Wed, 15 Jan 2020 04:45:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729030AbgAODp1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 14 Jan 2020 22:45:27 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:51320 "EHLO
+        id S1729031AbgAODpd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 14 Jan 2020 22:45:33 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:46698 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728879AbgAODp1 (ORCPT
+        by vger.kernel.org with ESMTP id S1728879AbgAODpd (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 14 Jan 2020 22:45:27 -0500
+        Tue, 14 Jan 2020 22:45:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579059926;
+        s=mimecast20190719; t=1579059931;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=g0YadTtmptiUgf5YNBdWZITBm/SPjLAlPW70jp7PXL4=;
-        b=KE+QyiuSSGpuNu4TMxdC1HW/hVBhFhKju9xKV+s2zslvtmoQgZFf0MXinVQqLCjsZthpiJ
-        4Gd7tbFb50yg3LerlJIYp4Sif1Z/Y0fqiS9+/QPYGZkNDMKwMutf0DctFcoDTJrmUcBxoJ
-        VAGN/O5V8XVEknqLMxaPA/ip9UuICBw=
+        bh=PCrPh2PmuSiNoJNNneFMLIWTL+JRFsCtTfeQ2PL63C0=;
+        b=OQHIH9HfsikAPnHUVIy30sSOTyc4YLFJMhRZ0R9YTv+aWIKAG0rqEXUqaX3wIW7W1dDLvK
+        rUhrvuOAnorYQ1EFAa1W5yk0tew/r1gLYrcRtRyRjbG2sOmQqfQrHCqYkhOfa9tOGWptyw
+        s7WC4aFa7SyJqD4ANmI4lKl1SvMYlas=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-401-6JldePpvPWWV-jfTQhtwXg-1; Tue, 14 Jan 2020 22:45:24 -0500
-X-MC-Unique: 6JldePpvPWWV-jfTQhtwXg-1
+ us-mta-204-yLXVfR1MMgSK4yw-6mNr3Q-1; Tue, 14 Jan 2020 22:45:30 -0500
+X-MC-Unique: yLXVfR1MMgSK4yw-6mNr3Q-1
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B5E0A107ACC5;
-        Wed, 15 Jan 2020 03:45:23 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 56DBE1800D48;
+        Wed, 15 Jan 2020 03:45:29 +0000 (UTC)
 Received: from localhost.localdomain (ovpn-12-49.pek2.redhat.com [10.72.12.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1CCD8101F6D4;
-        Wed, 15 Jan 2020 03:45:19 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 48390101F6D4;
+        Wed, 15 Jan 2020 03:45:24 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     jlayton@kernel.org, idryomov@gmail.com, zyan@redhat.com
 Cc:     sage@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
         Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v3 4/8] ceph: add global write latency metric support
-Date:   Tue, 14 Jan 2020 22:44:40 -0500
-Message-Id: <20200115034444.14304-5-xiubli@redhat.com>
+Subject: [PATCH v3 5/8] ceph: add global metadata perf metric support
+Date:   Tue, 14 Jan 2020 22:44:41 -0500
+Message-Id: <20200115034444.14304-6-xiubli@redhat.com>
 In-Reply-To: <20200115034444.14304-1-xiubli@redhat.com>
 References: <20200115034444.14304-1-xiubli@redhat.com>
 MIME-Version: 1.0
@@ -55,184 +55,59 @@ From: Xiubo Li <xiubli@redhat.com>
 
 item          total       sum_lat(us)     avg_lat(us)
 -----------------------------------------------------
-write         222         5287750000      23818693
+metadata      1288        24506000        19026
 
 URL: https://tracker.ceph.com/issues/43215
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/ceph/addr.c                  | 23 +++++++++++++++++++++--
- fs/ceph/debugfs.c               |  8 ++++++++
- fs/ceph/file.c                  |  9 +++++++++
- fs/ceph/mds_client.c            | 20 ++++++++++++++++++++
- fs/ceph/mds_client.h            |  6 ++++++
- include/linux/ceph/osd_client.h |  3 ++-
- net/ceph/osd_client.c           |  9 ++++++++-
- 7 files changed, 74 insertions(+), 4 deletions(-)
+ fs/ceph/debugfs.c    |  8 ++++++++
+ fs/ceph/mds_client.c | 25 +++++++++++++++++++++++++
+ fs/ceph/mds_client.h |  6 ++++++
+ 3 files changed, 39 insertions(+)
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 2a32f731f92a..b667ddaa6623 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -598,12 +598,15 @@ static int writepage_nounlock(struct page *page, st=
-ruct writeback_control *wbc)
- 	loff_t page_off =3D page_offset(page);
- 	int err, len =3D PAGE_SIZE;
- 	struct ceph_writeback_ctl ceph_wbc;
-+	struct ceph_client_metric *metric;
-+	s64 latency;
-=20
- 	dout("writepage %p idx %lu\n", page, page->index);
-=20
- 	inode =3D page->mapping->host;
- 	ci =3D ceph_inode(inode);
- 	fsc =3D ceph_inode_to_client(inode);
-+	metric =3D &fsc->mdsc->metric;
-=20
- 	/* verify this is a writeable snap context */
- 	snapc =3D page_snap_context(page);
-@@ -645,7 +648,11 @@ static int writepage_nounlock(struct page *page, str=
-uct writeback_control *wbc)
- 				   &ci->i_layout, snapc, page_off, len,
- 				   ceph_wbc.truncate_seq,
- 				   ceph_wbc.truncate_size,
--				   &inode->i_mtime, &page, 1);
-+				   &inode->i_mtime, &page, 1,
-+				   &latency);
-+	if (latency)
-+		ceph_mdsc_update_write_latency(metric, latency);
-+
- 	if (err < 0) {
- 		struct writeback_control tmp_wbc;
- 		if (!wbc)
-@@ -707,6 +714,8 @@ static void writepages_finish(struct ceph_osd_request=
- *req)
- {
- 	struct inode *inode =3D req->r_inode;
- 	struct ceph_inode_info *ci =3D ceph_inode(inode);
-+	struct ceph_fs_client *fsc =3D ceph_inode_to_client(inode);
-+	struct ceph_client_metric *metric =3D &fsc->mdsc->metric;
- 	struct ceph_osd_data *osd_data;
- 	struct page *page;
- 	int num_pages, total_pages =3D 0;
-@@ -714,7 +723,6 @@ static void writepages_finish(struct ceph_osd_request=
- *req)
- 	int rc =3D req->r_result;
- 	struct ceph_snap_context *snapc =3D req->r_snapc;
- 	struct address_space *mapping =3D inode->i_mapping;
--	struct ceph_fs_client *fsc =3D ceph_inode_to_client(inode);
- 	bool remove_page;
-=20
- 	dout("writepages_finish %p rc %d\n", inode, rc);
-@@ -783,6 +791,11 @@ static void writepages_finish(struct ceph_osd_reques=
-t *req)
- 			     ceph_sb_to_client(inode->i_sb)->wb_pagevec_pool);
- 	else
- 		kfree(osd_data->pages);
-+
-+	if (!rc) {
-+		s64 latency =3D jiffies - req->r_start_stamp;
-+		ceph_mdsc_update_write_latency(metric, latency);
-+	}
- 	ceph_osdc_put_request(req);
- }
-=20
-@@ -1675,6 +1688,7 @@ int ceph_uninline_data(struct file *filp, struct pa=
-ge *locked_page)
- 	struct inode *inode =3D file_inode(filp);
- 	struct ceph_inode_info *ci =3D ceph_inode(inode);
- 	struct ceph_fs_client *fsc =3D ceph_inode_to_client(inode);
-+	struct ceph_client_metric *metric =3D &fsc->mdsc->metric;
- 	struct ceph_osd_request *req;
- 	struct page *page =3D NULL;
- 	u64 len, inline_version;
-@@ -1786,6 +1800,11 @@ int ceph_uninline_data(struct file *filp, struct p=
-age *locked_page)
- 	err =3D ceph_osdc_start_request(&fsc->client->osdc, req, false);
- 	if (!err)
- 		err =3D ceph_osdc_wait_request(&fsc->client->osdc, req);
-+
-+	if (!err || err =3D=3D -ETIMEDOUT) {
-+		s64 latency =3D jiffies - req->r_start_stamp;
-+		ceph_mdsc_update_write_latency(metric, latency);
-+	}
- out_put:
- 	ceph_osdc_put_request(req);
- 	if (err =3D=3D -ECANCELED)
 diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 8200bf025ccd..3fdb15af0a83 100644
+index 3fdb15af0a83..df8c1cc685d9 100644
 --- a/fs/ceph/debugfs.c
 +++ b/fs/ceph/debugfs.c
-@@ -142,6 +142,14 @@ static int metric_show(struct seq_file *s, void *p)
- 	seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "read",
+@@ -150,6 +150,14 @@ static int metric_show(struct seq_file *s, void *p)
+ 	seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "write",
  		   total, sum / NSEC_PER_USEC, avg / NSEC_PER_USEC);
 =20
-+	spin_lock(&mdsc->metric.write_lock);
-+	total =3D atomic64_read(&mdsc->metric.total_writes),
-+	sum =3D timespec64_to_ns(&mdsc->metric.write_latency_sum);
-+	spin_unlock(&mdsc->metric.write_lock);
++	spin_lock(&mdsc->metric.metadata_lock);
++	total =3D atomic64_read(&mdsc->metric.total_metadatas),
++	sum =3D timespec64_to_ns(&mdsc->metric.metadata_latency_sum);
++	spin_unlock(&mdsc->metric.metadata_lock);
 +	avg =3D total ? sum / total : 0;
-+	seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "write",
++	seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "metadata",
 +		   total, sum / NSEC_PER_USEC, avg / NSEC_PER_USEC);
 +
  	seq_printf(s, "\n");
  	seq_printf(s, "item          total           miss            hit\n");
  	seq_printf(s, "-------------------------------------------------\n");
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 797d4d224223..70530ac798ac 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -822,6 +822,8 @@ static void ceph_aio_complete_req(struct ceph_osd_req=
-uest *req)
- 			op =3D &req->r_ops[i];
- 			if (op->op =3D=3D CEPH_OSD_OP_READ)
- 				ceph_mdsc_update_read_latency(metric, latency);
-+			else if (op->op =3D=3D CEPH_OSD_OP_WRITE && rc !=3D -ENOENT)
-+				ceph_mdsc_update_write_latency(metric, latency);
- 		}
- 	}
-=20
-@@ -1075,6 +1077,8 @@ ceph_direct_read_write(struct kiocb *iocb, struct i=
-ov_iter *iter,
-=20
- 			if (!write)
- 				ceph_mdsc_update_read_latency(metric, latency);
-+			else if (write && ret !=3D -ENOENT)
-+				ceph_mdsc_update_write_latency(metric, latency);
- 		}
-=20
- 		size =3D i_size_read(inode);
-@@ -1163,6 +1167,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter=
- *from, loff_t pos,
- 	struct inode *inode =3D file_inode(file);
- 	struct ceph_inode_info *ci =3D ceph_inode(inode);
- 	struct ceph_fs_client *fsc =3D ceph_inode_to_client(inode);
-+	struct ceph_client_metric *metric =3D &fsc->mdsc->metric;
- 	struct ceph_vino vino;
- 	struct ceph_osd_request *req;
- 	struct page **pages;
-@@ -1248,6 +1253,10 @@ ceph_sync_write(struct kiocb *iocb, struct iov_ite=
-r *from, loff_t pos,
- 		if (!ret)
- 			ret =3D ceph_osdc_wait_request(&fsc->client->osdc, req);
-=20
-+		if (!ret || ret =3D=3D -ETIMEDOUT) {
-+			s64 latency =3D jiffies - req->r_start_stamp;
-+			ceph_mdsc_update_write_latency(metric, latency);
-+		}
- out:
- 		ceph_osdc_put_request(req);
- 		if (ret !=3D 0) {
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index dc2cda55a5a5..2569f9303c0c 100644
+index 2569f9303c0c..4539bd4b3451 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -4112,6 +4112,22 @@ void ceph_mdsc_update_read_latency(struct ceph_cli=
-ent_metric *m,
- 	spin_unlock(&m->read_lock);
+@@ -2903,6 +2903,11 @@ static void handle_reply(struct ceph_mds_session *=
+session, struct ceph_msg *msg)
+=20
+ 	result =3D le32_to_cpu(head->result);
+=20
++	if (!result || result =3D=3D -ESTALE || result =3D=3D -ENOENT) {
++		s64 latency =3D jiffies - req->r_started;
++		ceph_mdsc_update_metadata_latency(&mdsc->metric, latency);
++	}
++
+ 	/*
+ 	 * Handle an ESTALE
+ 	 * if we're not talking to the authority, send to them
+@@ -4128,6 +4133,22 @@ void ceph_mdsc_update_write_latency(struct ceph_cl=
+ient_metric *m,
+ 	spin_unlock(&m->write_lock);
  }
 =20
-+void ceph_mdsc_update_write_latency(struct ceph_client_metric *m,
-+				    s64 latency)
++void ceph_mdsc_update_metadata_latency(struct ceph_client_metric *m,
++				       s64 latency)
 +{
 +	struct timespec64 ts;
 +
@@ -241,100 +116,52 @@ ent_metric *m,
 +
 +	jiffies_to_timespec64(latency, &ts);
 +
-+	spin_lock(&m->write_lock);
-+	atomic64_inc(&m->total_writes);
-+	m->write_latency_sum =3D timespec64_add(m->write_latency_sum, ts);
-+	spin_unlock(&m->write_lock);
++	spin_lock(&m->metadata_lock);
++	atomic64_inc(&m->total_metadatas);
++	m->metadata_latency_sum =3D timespec64_add(m->metadata_latency_sum, ts)=
+;
++	spin_unlock(&m->metadata_lock);
 +}
 +
  /*
   * delayed work -- periodically trim expired leases, renew caps with mds
   */
-@@ -4212,6 +4228,10 @@ static int ceph_mdsc_metric_init(struct ceph_clien=
+@@ -4232,6 +4253,10 @@ static int ceph_mdsc_metric_init(struct ceph_clien=
 t_metric *metric)
- 	memset(&metric->read_latency_sum, 0, sizeof(struct timespec64));
- 	atomic64_set(&metric->total_reads, 0);
+ 	memset(&metric->write_latency_sum, 0, sizeof(struct timespec64));
+ 	atomic64_set(&metric->total_writes, 0);
 =20
-+	spin_lock_init(&metric->write_lock);
-+	memset(&metric->write_latency_sum, 0, sizeof(struct timespec64));
-+	atomic64_set(&metric->total_writes, 0);
++	spin_lock_init(&metric->metadata_lock);
++	memset(&metric->metadata_latency_sum, 0, sizeof(struct timespec64));
++	atomic64_set(&metric->total_metadatas, 0);
 +
  	return 0;
  }
 =20
 diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index fee25b999c7c..0120357e7549 100644
+index 0120357e7549..37cc12d40eef 100644
 --- a/fs/ceph/mds_client.h
 +++ b/fs/ceph/mds_client.h
-@@ -370,6 +370,10 @@ struct ceph_client_metric {
- 	spinlock_t              read_lock;
- 	atomic64_t		total_reads;
- 	struct timespec64	read_latency_sum;
+@@ -374,6 +374,10 @@ struct ceph_client_metric {
+ 	spinlock_t              write_lock;
+ 	atomic64_t		total_writes;
+ 	struct timespec64	write_latency_sum;
 +
-+	spinlock_t              write_lock;
-+	atomic64_t		total_writes;
-+	struct timespec64	write_latency_sum;
++	spinlock_t              metadata_lock;
++	atomic64_t		total_metadatas;
++	struct timespec64	metadata_latency_sum;
  };
 =20
  /*
-@@ -556,4 +560,6 @@ extern int ceph_trim_caps(struct ceph_mds_client *mds=
-c,
-=20
- extern void ceph_mdsc_update_read_latency(struct ceph_client_metric *m,
+@@ -562,4 +566,6 @@ extern void ceph_mdsc_update_read_latency(struct ceph=
+_client_metric *m,
  					  s64 latency);
-+extern void ceph_mdsc_update_write_latency(struct ceph_client_metric *m,
-+					   s64 latency);
+ extern void ceph_mdsc_update_write_latency(struct ceph_client_metric *m,
+ 					   s64 latency);
++extern void ceph_mdsc_update_metadata_latency(struct ceph_client_metric =
+*m,
++					      s64 latency);
  #endif
-diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_cli=
-ent.h
-index 43e4240d88e7..e73439d18f28 100644
---- a/include/linux/ceph/osd_client.h
-+++ b/include/linux/ceph/osd_client.h
-@@ -524,7 +524,8 @@ extern int ceph_osdc_writepages(struct ceph_osd_clien=
-t *osdc,
- 				u64 off, u64 len,
- 				u32 truncate_seq, u64 truncate_size,
- 				struct timespec64 *mtime,
--				struct page **pages, int nr_pages);
-+				struct page **pages, int nr_pages,
-+				s64 *latency);
-=20
- int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
- 			u64 src_snapid, u64 src_version,
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index 62eb758f2474..9f6833ab733c 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -5285,12 +5285,16 @@ int ceph_osdc_writepages(struct ceph_osd_client *=
-osdc, struct ceph_vino vino,
- 			 u64 off, u64 len,
- 			 u32 truncate_seq, u64 truncate_size,
- 			 struct timespec64 *mtime,
--			 struct page **pages, int num_pages)
-+			 struct page **pages, int num_pages,
-+			 s64 *latency)
- {
- 	struct ceph_osd_request *req;
- 	int rc =3D 0;
- 	int page_align =3D off & ~PAGE_MASK;
-=20
-+	if (latency)
-+		*latency =3D 0;
-+
- 	req =3D ceph_osdc_new_request(osdc, layout, vino, off, &len, 0, 1,
- 				    CEPH_OSD_OP_WRITE, CEPH_OSD_FLAG_WRITE,
- 				    snapc, truncate_seq, truncate_size,
-@@ -5308,6 +5312,9 @@ int ceph_osdc_writepages(struct ceph_osd_client *os=
-dc, struct ceph_vino vino,
- 	if (!rc)
- 		rc =3D ceph_osdc_wait_request(osdc, req);
-=20
-+	if (latency && (!rc || rc =3D=3D -ETIMEDOUT))
-+		*latency =3D jiffies - req->r_start_stamp;
-+
- 	ceph_osdc_put_request(req);
- 	if (rc =3D=3D 0)
- 		rc =3D len;
 --=20
 2.21.0
 
