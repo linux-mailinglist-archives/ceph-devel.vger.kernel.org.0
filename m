@@ -2,302 +2,369 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1191513DD7C
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2020 15:33:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED07313DDEB
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2020 15:46:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbgAPOdK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 16 Jan 2020 09:33:10 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:41812 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726084AbgAPOdK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 Jan 2020 09:33:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579185188;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DZ9seONj/nQspf+pYsdWOHLelo26/tGl/Ezt37tcB3g=;
-        b=DY6/oIPYIvJ1aGSVxEuXB2Ui4wOYQvQJuwa5ER9lQFQMVBwjEFM+lQodMzab1MLdx5/XI/
-        Te+goiA6X9qwaCoPvfzRS+/iOWnbKy8/rOAjumafn3Ko792mhby/aECqZnpU90lehQZzvI
-        52SzNnYCYaVVDgcSULL0hezP5umD5Jg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-229-CbY7VHx4P_mYdir8AT2R8g-1; Thu, 16 Jan 2020 09:33:05 -0500
-X-MC-Unique: CbY7VHx4P_mYdir8AT2R8g-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C039C1005510;
-        Thu, 16 Jan 2020 14:33:03 +0000 (UTC)
-Received: from [10.72.12.100] (ovpn-12-100.pek2.redhat.com [10.72.12.100])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 986B689D02;
-        Thu, 16 Jan 2020 14:32:58 +0000 (UTC)
-Subject: Re: [RFC PATCH v2 05/10] ceph: decode interval_sets for delegated
- inos
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     sage@redhat.com, idryomov@gmail.com, pdonnell@redhat.com,
-        xiubli@redhat.com
-References: <20200115205912.38688-1-jlayton@kernel.org>
- <20200115205912.38688-6-jlayton@kernel.org>
-From:   "Yan, Zheng" <zyan@redhat.com>
-Message-ID: <228e39e4-fb0f-cdb4-0bba-c9166cdc3e93@redhat.com>
-Date:   Thu, 16 Jan 2020 22:32:56 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1729108AbgAPOqQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 16 Jan 2020 09:46:16 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:43247 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbgAPOqP (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 Jan 2020 09:46:15 -0500
+Received: by mail-io1-f67.google.com with SMTP id n21so21988038ioo.10
+        for <ceph-devel@vger.kernel.org>; Thu, 16 Jan 2020 06:46:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rx77zaepCog8+dRcfW1JQdQc65pFwPan4v0si7TMm6w=;
+        b=FNULR3bLzdyGDxRic+FiS0PMQy51sX2lyDOrQ8vlGV/so5GEcHbWCmpjjZK0bzrkmr
+         5V6mgHsBYcegxXHoke/jwu5xPxjmZ8HM3hrnCD3RX7J0cGnxdQug5EEOJapiyxMiy8gB
+         f35C4nrn0NOS30Dl/ugtUFL6RxSZmDlPX5ACJvlw0L56JE52wYbPTC6WQyKCrHAkR85o
+         F56fRejcsS2T0Tp1JdNEWUM31cPMcoSHHJn9wuodG6CV0i4eIXWhPg8+1vPy0SBLnl6C
+         bBPaX/FXifzEEL/fSRkE/D3ZHJJn2sMFe5D9lTbrj3Gh6OUYdkFmwJNJVy/oGf9TQs79
+         Ucsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rx77zaepCog8+dRcfW1JQdQc65pFwPan4v0si7TMm6w=;
+        b=aZsGEkn0wlA2j36hHKguvoXhXk5cW43WljotUdu9ydcTlnSkbZlWGuZUneNSkViADP
+         KTBhSF/PS5W0Wsn5olAou2uUfqgZztFElCFGMyBRmvjTwBQB7NtNlBcAWKKC46q5vYPP
+         OvwHA0OMz5Mm2jMIEJPC6t6LNT0+5nFoKfzeCATZP4tucLTZKAZg+0rm5dHbqNH7A3cm
+         sJ/Z0nSuLQ+dgx6WV6W4uhY71dCUdrFz5zvRkueTkJAUERLJ4hlZorMsBVh1zyY+p0Is
+         lXo1Wd4HIMnF1Y217zPosZPYg13CVJp+JzQQAjauP/JoTiv5w1NlIot/LKBjZ+Kx1fkv
+         1IyQ==
+X-Gm-Message-State: APjAAAV3a+vcT9E3+tu8AqOA/Wv5GnPoFG8MPDmc6NZqsvn9LBPX/zyf
+        uMxZ1np9z0/LXuoxNW07X5D61PXdSTaJ0uPtAyYGOPnUYII=
+X-Google-Smtp-Source: APXvYqxI4Mm1/1+vAbq9JwQ8xKtgyFllzE7K9SJjuQFtch85W89UA49qS8neq9kHvC8zlkyM2TG8Ny+XM0l7eho8MM8=
+X-Received: by 2002:a5d:8448:: with SMTP id w8mr17385718ior.131.1579185973535;
+ Thu, 16 Jan 2020 06:46:13 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200115205912.38688-6-jlayton@kernel.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <20200115034444.14304-1-xiubli@redhat.com> <20200115034444.14304-5-xiubli@redhat.com>
+ <18a2177615ab26ff546601a1a5baae1798608bdd.camel@kernel.org>
+In-Reply-To: <18a2177615ab26ff546601a1a5baae1798608bdd.camel@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 16 Jan 2020 15:46:10 +0100
+Message-ID: <CAOi1vP8zLvH4tXVwYOcFDkvnfaWAPuTqwruAZAjjGQJzs1p-Jg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/8] ceph: add global write latency metric support
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Xiubo Li <xiubli@redhat.com>, "Yan, Zheng" <zyan@redhat.com>,
+        Sage Weil <sage@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 1/16/20 4:59 AM, Jeff Layton wrote:
-> Starting in Octopus, the MDS will hand out caps that allow the client
-> to do asynchronous file creates under certain conditions. As part of
-> that, the MDS will delegate ranges of inode numbers to the client.
-> 
-> Add the infrastructure to decode these ranges, and stuff them into an
-> xarray for later consumption by the async creation code.
-> 
-> Because the xarray code currently only handles unsigned long indexes,
-> and those are 32-bits on 32-bit arches, we only enable the decoding when
-> running on a 64-bit arch.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/ceph/mds_client.c | 109 +++++++++++++++++++++++++++++++++++++++----
->   fs/ceph/mds_client.h |   7 ++-
->   2 files changed, 106 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 8263f75badfc..19bd71eb5733 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -415,21 +415,110 @@ static int parse_reply_info_filelock(void **p, void *end,
->   	return -EIO;
->   }
->   
-> +
-> +#if BITS_PER_LONG == 64
-> +
-> +#define DELEGATED_INO_AVAILABLE		xa_mk_value(1)
-> +
-> +static int ceph_parse_deleg_inos(void **p, void *end,
-> +				 struct ceph_mds_session *s)
-> +{
-> +	u32 sets;
-> +
-> +	ceph_decode_32_safe(p, end, sets, bad);
-> +	dout("got %u sets of delegated inodes\n", sets);
-> +	while (sets--) {
-> +		u64 start, len, ino;
-> +
-> +		ceph_decode_64_safe(p, end, start, bad);
-> +		ceph_decode_64_safe(p, end, len, bad);
-> +		while (len--) {
-> +			int err = xa_insert(&s->s_delegated_inos, ino = start++,
-> +					    DELEGATED_INO_AVAILABLE,
-> +					    GFP_KERNEL);
-> +			if (!err) {
-> +				dout("added delegated inode 0x%llx\n",
-> +				     start - 1);
-> +			} else if (err == -EBUSY) {
-> +				pr_warn("ceph: MDS delegated inode 0x%llx more than once.\n",
-> +					start - 1);
-> +			} else {
-> +				return err;
-> +			}
-> +		}
-> +	}
-> +	return 0;
-> +bad:
-> +	return -EIO;
-> +}
-> +
-> +unsigned long ceph_get_deleg_ino(struct ceph_mds_session *s)
-> +{
-> +	unsigned long ino;
-> +	void *val;
-> +
-> +	xa_for_each(&s->s_delegated_inos, ino, val) {
-> +		val = xa_erase(&s->s_delegated_inos, ino);
-> +		if (val == DELEGATED_INO_AVAILABLE)
-> +			return ino;
-> +	}
-> +	return 0;
+On Thu, Jan 16, 2020 at 3:14 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> On Tue, 2020-01-14 at 22:44 -0500, xiubli@redhat.com wrote:
+> > From: Xiubo Li <xiubli@redhat.com>
+> >
+> > item          total       sum_lat(us)     avg_lat(us)
+> > -----------------------------------------------------
+> > write         222         5287750000      23818693
+> >
+> > URL: https://tracker.ceph.com/issues/43215
+> > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > ---
+> >  fs/ceph/addr.c                  | 23 +++++++++++++++++++++--
+> >  fs/ceph/debugfs.c               |  8 ++++++++
+> >  fs/ceph/file.c                  |  9 +++++++++
+> >  fs/ceph/mds_client.c            | 20 ++++++++++++++++++++
+> >  fs/ceph/mds_client.h            |  6 ++++++
+> >  include/linux/ceph/osd_client.h |  3 ++-
+> >  net/ceph/osd_client.c           |  9 ++++++++-
+> >  7 files changed, 74 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> > index 2a32f731f92a..b667ddaa6623 100644
+> > --- a/fs/ceph/addr.c
+> > +++ b/fs/ceph/addr.c
+> > @@ -598,12 +598,15 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+> >       loff_t page_off = page_offset(page);
+> >       int err, len = PAGE_SIZE;
+> >       struct ceph_writeback_ctl ceph_wbc;
+> > +     struct ceph_client_metric *metric;
+> > +     s64 latency;
+> >
+> >       dout("writepage %p idx %lu\n", page, page->index);
+> >
+> >       inode = page->mapping->host;
+> >       ci = ceph_inode(inode);
+> >       fsc = ceph_inode_to_client(inode);
+> > +     metric = &fsc->mdsc->metric;
+> >
+> >       /* verify this is a writeable snap context */
+> >       snapc = page_snap_context(page);
+> > @@ -645,7 +648,11 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+> >                                  &ci->i_layout, snapc, page_off, len,
+> >                                  ceph_wbc.truncate_seq,
+> >                                  ceph_wbc.truncate_size,
+> > -                                &inode->i_mtime, &page, 1);
+> > +                                &inode->i_mtime, &page, 1,
+> > +                                &latency);
+> > +     if (latency)
+> > +             ceph_mdsc_update_write_latency(metric, latency);
+> > +
+> >       if (err < 0) {
+> >               struct writeback_control tmp_wbc;
+> >               if (!wbc)
+> > @@ -707,6 +714,8 @@ static void writepages_finish(struct ceph_osd_request *req)
+> >  {
+> >       struct inode *inode = req->r_inode;
+> >       struct ceph_inode_info *ci = ceph_inode(inode);
+> > +     struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> > +     struct ceph_client_metric *metric = &fsc->mdsc->metric;
+> >       struct ceph_osd_data *osd_data;
+> >       struct page *page;
+> >       int num_pages, total_pages = 0;
+> > @@ -714,7 +723,6 @@ static void writepages_finish(struct ceph_osd_request *req)
+> >       int rc = req->r_result;
+> >       struct ceph_snap_context *snapc = req->r_snapc;
+> >       struct address_space *mapping = inode->i_mapping;
+> > -     struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> >       bool remove_page;
+> >
+> >       dout("writepages_finish %p rc %d\n", inode, rc);
+> > @@ -783,6 +791,11 @@ static void writepages_finish(struct ceph_osd_request *req)
+> >                            ceph_sb_to_client(inode->i_sb)->wb_pagevec_pool);
+> >       else
+> >               kfree(osd_data->pages);
+> > +
+> > +     if (!rc) {
+> > +             s64 latency = jiffies - req->r_start_stamp;
+> > +             ceph_mdsc_update_write_latency(metric, latency);
+> > +     }
+> >       ceph_osdc_put_request(req);
+> >  }
+> >
+> > @@ -1675,6 +1688,7 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+> >       struct inode *inode = file_inode(filp);
+> >       struct ceph_inode_info *ci = ceph_inode(inode);
+> >       struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> > +     struct ceph_client_metric *metric = &fsc->mdsc->metric;
+> >       struct ceph_osd_request *req;
+> >       struct page *page = NULL;
+> >       u64 len, inline_version;
+> > @@ -1786,6 +1800,11 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+> >       err = ceph_osdc_start_request(&fsc->client->osdc, req, false);
+> >       if (!err)
+> >               err = ceph_osdc_wait_request(&fsc->client->osdc, req);
+> > +
+> > +     if (!err || err == -ETIMEDOUT) {
+> > +             s64 latency = jiffies - req->r_start_stamp;
+> > +             ceph_mdsc_update_write_latency(metric, latency);
+> > +     }
+> >  out_put:
+> >       ceph_osdc_put_request(req);
+> >       if (err == -ECANCELED)
+> > diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+> > index 8200bf025ccd..3fdb15af0a83 100644
+> > --- a/fs/ceph/debugfs.c
+> > +++ b/fs/ceph/debugfs.c
+> > @@ -142,6 +142,14 @@ static int metric_show(struct seq_file *s, void *p)
+> >       seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "read",
+> >                  total, sum / NSEC_PER_USEC, avg / NSEC_PER_USEC);
+> >
+> > +     spin_lock(&mdsc->metric.write_lock);
+> > +     total = atomic64_read(&mdsc->metric.total_writes),
+> > +     sum = timespec64_to_ns(&mdsc->metric.write_latency_sum);
+> > +     spin_unlock(&mdsc->metric.write_lock);
+> > +     avg = total ? sum / total : 0;
+> > +     seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "write",
+> > +                total, sum / NSEC_PER_USEC, avg / NSEC_PER_USEC);
+> > +
+>
+>
+> >       seq_printf(s, "\n");
+> >       seq_printf(s, "item          total           miss            hit\n");
+> >       seq_printf(s, "-------------------------------------------------\n");
+> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > index 797d4d224223..70530ac798ac 100644
+> > --- a/fs/ceph/file.c
+> > +++ b/fs/ceph/file.c
+> > @@ -822,6 +822,8 @@ static void ceph_aio_complete_req(struct ceph_osd_request *req)
+> >                       op = &req->r_ops[i];
+> >                       if (op->op == CEPH_OSD_OP_READ)
+> >                               ceph_mdsc_update_read_latency(metric, latency);
+> > +                     else if (op->op == CEPH_OSD_OP_WRITE && rc != -ENOENT)
+> > +                             ceph_mdsc_update_write_latency(metric, latency);
+> >               }
+> >       }
+> >
+> > @@ -1075,6 +1077,8 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
+> >
+> >                       if (!write)
+> >                               ceph_mdsc_update_read_latency(metric, latency);
+> > +                     else if (write && ret != -ENOENT)
+> > +                             ceph_mdsc_update_write_latency(metric, latency);
+> >               }
+> >
+> >               size = i_size_read(inode);
+> > @@ -1163,6 +1167,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+> >       struct inode *inode = file_inode(file);
+> >       struct ceph_inode_info *ci = ceph_inode(inode);
+> >       struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> > +     struct ceph_client_metric *metric = &fsc->mdsc->metric;
+> >       struct ceph_vino vino;
+> >       struct ceph_osd_request *req;
+> >       struct page **pages;
+> > @@ -1248,6 +1253,10 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+> >               if (!ret)
+> >                       ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
+> >
+> > +             if (!ret || ret == -ETIMEDOUT) {
+> > +                     s64 latency = jiffies - req->r_start_stamp;
+> > +                     ceph_mdsc_update_write_latency(metric, latency);
+> > +             }
+> >  out:
+> >               ceph_osdc_put_request(req);
+> >               if (ret != 0) {
+> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > index dc2cda55a5a5..2569f9303c0c 100644
+> > --- a/fs/ceph/mds_client.c
+> > +++ b/fs/ceph/mds_client.c
+> > @@ -4112,6 +4112,22 @@ void ceph_mdsc_update_read_latency(struct ceph_client_metric *m,
+> >       spin_unlock(&m->read_lock);
+> >  }
+> >
+> > +void ceph_mdsc_update_write_latency(struct ceph_client_metric *m,
+> > +                                 s64 latency)
+> > +{
+> > +     struct timespec64 ts;
+> > +
+> > +     if (!m)
+> > +             return;
+> > +
+> > +     jiffies_to_timespec64(latency, &ts);
+> > +
+> > +     spin_lock(&m->write_lock);
+> > +     atomic64_inc(&m->total_writes);
+> > +     m->write_latency_sum = timespec64_add(m->write_latency_sum, ts);
+> > +     spin_unlock(&m->write_lock);
+> > +}
+> > +
+> >  /*
+> >   * delayed work -- periodically trim expired leases, renew caps with mds
+> >   */
+> > @@ -4212,6 +4228,10 @@ static int ceph_mdsc_metric_init(struct ceph_client_metric *metric)
+> >       memset(&metric->read_latency_sum, 0, sizeof(struct timespec64));
+> >       atomic64_set(&metric->total_reads, 0);
+> >
+> > +     spin_lock_init(&metric->write_lock);
+> > +     memset(&metric->write_latency_sum, 0, sizeof(struct timespec64));
+> > +     atomic64_set(&metric->total_writes, 0);
+> > +
+> >       return 0;
+> >  }
+> >
+> > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> > index fee25b999c7c..0120357e7549 100644
+> > --- a/fs/ceph/mds_client.h
+> > +++ b/fs/ceph/mds_client.h
+> > @@ -370,6 +370,10 @@ struct ceph_client_metric {
+> >       spinlock_t              read_lock;
+> >       atomic64_t              total_reads;
+> >       struct timespec64       read_latency_sum;
+> > +
+> > +     spinlock_t              write_lock;
+> > +     atomic64_t              total_writes;
+> > +     struct timespec64       write_latency_sum;
+>
+> Would percpu counters be better here? I mean it's not a _super_ high
+> performance codepath, but it's nice when stats gathering has very little
+> overhead. It'd take up a bit more space, but it's not that much, and
+> there'd be no serialization between CPUs operating on different inodes.
+>
+>
+> To be clear, the latency you're measuring is request time to the OSD?
+>
+> >  };
+> >
+> >  /*
+> > @@ -556,4 +560,6 @@ extern int ceph_trim_caps(struct ceph_mds_client *mdsc,
+> >
+> >  extern void ceph_mdsc_update_read_latency(struct ceph_client_metric *m,
+> >                                         s64 latency);
+> > +extern void ceph_mdsc_update_write_latency(struct ceph_client_metric *m,
+> > +                                        s64 latency);
+> >  #endif
+> > diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+> > index 43e4240d88e7..e73439d18f28 100644
+> > --- a/include/linux/ceph/osd_client.h
+> > +++ b/include/linux/ceph/osd_client.h
+> > @@ -524,7 +524,8 @@ extern int ceph_osdc_writepages(struct ceph_osd_client *osdc,
+> >                               u64 off, u64 len,
+> >                               u32 truncate_seq, u64 truncate_size,
+> >                               struct timespec64 *mtime,
+> > -                             struct page **pages, int nr_pages);
+> > +                             struct page **pages, int nr_pages,
+> > +                             s64 *latency);
+> >
+> >  int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+> >                       u64 src_snapid, u64 src_version,
+> > diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> > index 62eb758f2474..9f6833ab733c 100644
+> > --- a/net/ceph/osd_client.c
+> > +++ b/net/ceph/osd_client.c
+> > @@ -5285,12 +5285,16 @@ int ceph_osdc_writepages(struct ceph_osd_client *osdc, struct ceph_vino vino,
+> >                        u64 off, u64 len,
+> >                        u32 truncate_seq, u64 truncate_size,
+> >                        struct timespec64 *mtime,
+> > -                      struct page **pages, int num_pages)
+> > +                      struct page **pages, int num_pages,
+> > +                      s64 *latency)
+> >  {
+> >       struct ceph_osd_request *req;
+> >       int rc = 0;
+> >       int page_align = off & ~PAGE_MASK;
+> >
+> > +     if (latency)
+> > +             *latency = 0;
+> > +
+> >       req = ceph_osdc_new_request(osdc, layout, vino, off, &len, 0, 1,
+> >                                   CEPH_OSD_OP_WRITE, CEPH_OSD_FLAG_WRITE,
+> >                                   snapc, truncate_seq, truncate_size,
+> > @@ -5308,6 +5312,9 @@ int ceph_osdc_writepages(struct ceph_osd_client *osdc, struct ceph_vino vino,
+> >       if (!rc)
+> >               rc = ceph_osdc_wait_request(osdc, req);
+> >
+> > +     if (latency && (!rc || rc == -ETIMEDOUT))
+> > +             *latency = jiffies - req->r_start_stamp;
+> > +
+>
+> Are you concerned at all with scheduling delays? Note that you're doing
+> the latency calculation here which occurs in the task that is woken by
+> __complete_request. That won't necessarily wake up immediately on a busy
+> machine, so this measurement will include that delay as well.
+>
+> I wonder if we ought to add a r_end_stamp field to the req instead, and
+> grab jiffies in (e.g.) __complete_request. Then you could just fetch
+> that out and do the math.
 
-do we need to protect s_delegated_inos? ceph_get_deleg_ino() and 
-ceph_parse_deleg_inos() can be executed at the same time. multiple 
-thread may call ceph_parse_deleg_inos() at the same time.
+__complete_request() is a bit of a special case, putting it in
+finish_request() would work better.  It will still include some delays,
+but then measuring the OSD service time on the client side is pretty
+much impossible to do precisely.
 
-> +}
-> +#else /* BITS_PER_LONG == 64 */
-> +/*
-> + * FIXME: xarrays can't handle 64-bit indexes on a 32-bit arch. For now, just
-> + * ignore delegated_inos on 32 bit arch. Maybe eventually add xarrays for top
-> + * and bottom words?
-> + */
-> +static int ceph_parse_deleg_inos(void **p, void *end,
-> +				 struct ceph_mds_session *s)
-> +{
-> +	u32 sets;
-> +
-> +	ceph_decode_32_safe(p, end, sets, bad);
-> +	if (sets)
-> +		ceph_decode_skip_n(p, end, sets * 2 * sizeof(__le64), bad);
-> +	return 0;
-> +bad:
-> +	return -EIO;
-> +}
-> +
-> +unsigned long ceph_get_deleg_ino(struct ceph_mds_session *s)
-> +{
-> +	return 0;
-> +}
-> +#endif /* BITS_PER_LONG == 64 */
-> +
->   /*
->    * parse create results
->    */
->   static int parse_reply_info_create(void **p, void *end,
->   				  struct ceph_mds_reply_info_parsed *info,
-> -				  u64 features)
-> +				  u64 features, struct ceph_mds_session *s)
->   {
-> +	int ret;
-> +
->   	if (features == (u64)-1 ||
->   	    (features & CEPH_FEATURE_REPLY_CREATE_INODE)) {
-> -		/* Malformed reply? */
->   		if (*p == end) {
-> +			/* Malformed reply? */
->   			info->has_create_ino = false;
-> -		} else {
-> +		} else if (test_bit(CEPHFS_FEATURE_DELEG_INO, &s->s_features)) {
-> +			u8 struct_v, struct_compat;
-> +			u32 len;
-> +
->   			info->has_create_ino = true;
-> +			ceph_decode_8_safe(p, end, struct_v, bad);
-> +			ceph_decode_8_safe(p, end, struct_compat, bad);
-> +			ceph_decode_32_safe(p, end, len, bad);
-> +			ceph_decode_64_safe(p, end, info->ino, bad);
-> +			ret = ceph_parse_deleg_inos(p, end, s);
-> +			if (ret)
-> +				return ret;
-> +		} else {
-> +			/* legacy */
->   			ceph_decode_64_safe(p, end, info->ino, bad);
-> +			info->has_create_ino = true;
->   		}
->   	} else {
->   		if (*p != end)
-> @@ -448,7 +537,7 @@ static int parse_reply_info_create(void **p, void *end,
->    */
->   static int parse_reply_info_extra(void **p, void *end,
->   				  struct ceph_mds_reply_info_parsed *info,
-> -				  u64 features)
-> +				  u64 features, struct ceph_mds_session *s)
->   {
->   	u32 op = le32_to_cpu(info->head->op);
->   
-> @@ -457,7 +546,7 @@ static int parse_reply_info_extra(void **p, void *end,
->   	else if (op == CEPH_MDS_OP_READDIR || op == CEPH_MDS_OP_LSSNAP)
->   		return parse_reply_info_readdir(p, end, info, features);
->   	else if (op == CEPH_MDS_OP_CREATE)
-> -		return parse_reply_info_create(p, end, info, features);
-> +		return parse_reply_info_create(p, end, info, features, s);
->   	else
->   		return -EIO;
->   }
-> @@ -465,7 +554,7 @@ static int parse_reply_info_extra(void **p, void *end,
->   /*
->    * parse entire mds reply
->    */
-> -static int parse_reply_info(struct ceph_msg *msg,
-> +static int parse_reply_info(struct ceph_mds_session *s, struct ceph_msg *msg,
->   			    struct ceph_mds_reply_info_parsed *info,
->   			    u64 features)
->   {
-> @@ -490,7 +579,7 @@ static int parse_reply_info(struct ceph_msg *msg,
->   	ceph_decode_32_safe(&p, end, len, bad);
->   	if (len > 0) {
->   		ceph_decode_need(&p, end, len, bad);
-> -		err = parse_reply_info_extra(&p, p+len, info, features);
-> +		err = parse_reply_info_extra(&p, p+len, info, features, s);
->   		if (err < 0)
->   			goto out_bad;
->   	}
-> @@ -558,6 +647,7 @@ void ceph_put_mds_session(struct ceph_mds_session *s)
->   	if (refcount_dec_and_test(&s->s_ref)) {
->   		if (s->s_auth.authorizer)
->   			ceph_auth_destroy_authorizer(s->s_auth.authorizer);
-> +		xa_destroy(&s->s_delegated_inos);
->   		kfree(s);
->   	}
->   }
-> @@ -645,6 +735,7 @@ static struct ceph_mds_session *register_session(struct ceph_mds_client *mdsc,
->   	refcount_set(&s->s_ref, 1);
->   	INIT_LIST_HEAD(&s->s_waiting);
->   	INIT_LIST_HEAD(&s->s_unsafe);
-> +	xa_init(&s->s_delegated_inos);
->   	s->s_num_cap_releases = 0;
->   	s->s_cap_reconnect = 0;
->   	s->s_cap_iterator = NULL;
-> @@ -2947,9 +3038,9 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
->   	dout("handle_reply tid %lld result %d\n", tid, result);
->   	rinfo = &req->r_reply_info;
->   	if (test_bit(CEPHFS_FEATURE_REPLY_ENCODING, &session->s_features))
-> -		err = parse_reply_info(msg, rinfo, (u64)-1);
-> +		err = parse_reply_info(session, msg, rinfo, (u64)-1);
->   	else
-> -		err = parse_reply_info(msg, rinfo, session->s_con.peer_features);
-> +		err = parse_reply_info(session, msg, rinfo, session->s_con.peer_features);
->   	mutex_unlock(&mdsc->mutex);
->   
->   	mutex_lock(&session->s_mutex);
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index 27a7446e10d3..30fb60ba2580 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -23,8 +23,9 @@ enum ceph_feature_type {
->   	CEPHFS_FEATURE_RECLAIM_CLIENT,
->   	CEPHFS_FEATURE_LAZY_CAP_WANTED,
->   	CEPHFS_FEATURE_MULTI_RECONNECT,
-> +	CEPHFS_FEATURE_DELEG_INO,
->   
-> -	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_MULTI_RECONNECT,
-> +	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_DELEG_INO,
->   };
->   
->   /*
-> @@ -37,6 +38,7 @@ enum ceph_feature_type {
->   	CEPHFS_FEATURE_REPLY_ENCODING,		\
->   	CEPHFS_FEATURE_LAZY_CAP_WANTED,		\
->   	CEPHFS_FEATURE_MULTI_RECONNECT,		\
-> +	CEPHFS_FEATURE_DELEG_INO,		\
->   						\
->   	CEPHFS_FEATURE_MAX,			\
->   }
-> @@ -201,6 +203,7 @@ struct ceph_mds_session {
->   
->   	struct list_head  s_waiting;  /* waiting requests */
->   	struct list_head  s_unsafe;   /* unsafe requests */
-> +	struct xarray	  s_delegated_inos;
->   };
->   
->   /*
-> @@ -537,4 +540,6 @@ extern void ceph_mdsc_open_export_target_sessions(struct ceph_mds_client *mdsc,
->   extern int ceph_trim_caps(struct ceph_mds_client *mdsc,
->   			  struct ceph_mds_session *session,
->   			  int max_caps);
-> +
-> +extern unsigned long ceph_get_deleg_ino(struct ceph_mds_session *session);
->   #endif
-> 
+>
+> >       ceph_osdc_put_request(req);
+> >       if (rc == 0)
+> >               rc = len;
+>
+> Ditto here on my earlier comment in the earlier email. Let's just turn
+> this into a ceph_osdc_writepages_start function and open-code the wait
+> and latency calculation in writepage_nounlock().
 
+That's a good idea, but let's keep the existing name.  The non-blocking
+behavior should be the default -- I have most of the remaining blocking
+methods in libceph converted in a private branch for rbd exclusive-lock
+rewrite.
+
+Thanks,
+
+                Ilya
