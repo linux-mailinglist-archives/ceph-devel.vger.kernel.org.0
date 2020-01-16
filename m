@@ -2,177 +2,354 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8342613DE37
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2020 16:03:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0E8613DE4B
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2020 16:10:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbgAPPC7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 16 Jan 2020 10:02:59 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:40754 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbgAPPC7 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 Jan 2020 10:02:59 -0500
-Received: by mail-io1-f66.google.com with SMTP id x1so22060442iop.7
-        for <ceph-devel@vger.kernel.org>; Thu, 16 Jan 2020 07:02:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YmWwJuEqLq7OcakRc6JSBKh7wCFkxIjKSGd0GK2agVQ=;
-        b=VXAcwr3sDR8nP/WwezTNn0bA/4PT6Xw4Fmzk/zb7b5mT1Yru4mXL6hsW4gjOV10yzk
-         ej82/R3ZNxEZqWElfAjzUBq3SPEztHta6JVZiw+q9Q9FSP8Mt4G/Q+wjWeGh7aAFEAtF
-         kyYz5UyBLXUqBd1bJbeAN9i686kXrq1ZEvfihb9+JwjveFh9vUQ4W1MZDR3wSNUksKDR
-         MUl+BzPVX9S8c/oSBwjkBacVJEmD/qxPmrsmm3yAZtWrn5xLPngFPO7l0gt3hoaMGPQd
-         hGgStE/9o7xbQ5/tbHHBleqtEklGHs4nVtBb1jZ+tnTLUUJ1DhLXQAlPXMfkF+mE2vSb
-         JFlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YmWwJuEqLq7OcakRc6JSBKh7wCFkxIjKSGd0GK2agVQ=;
-        b=KdQSIAM7H4h9mKW2ff1+j+/KcXfAgvs4XfIRVA2q6t5tx7hU0XQl5YMm7YO52oEEwf
-         ZN9npxCAdKRnZGGcAKx/QO6xdTm4vLUkQX8Z/E+6k1PUsr6CH/2Nry0Xd+Fx+O2KFTAq
-         lSCNnx530p5Auluuc5QxCKEAXKLD02AaZlF8H34i2bd4DvhA9+JxGzDrbg4T+2pbwYoZ
-         HdxwkL2S+K8QpFDqZ4IssSdTcYOvHkdDiZqwiLc96rG/Po5/81R2x8Hfc25uwTAMohGL
-         dW6LzipTNh+LhSaGV5XHqRtoZNh3OS8DYZaOttzV+HIOWp9bY03K4Cau8nI8gtMbj0P5
-         rAaQ==
-X-Gm-Message-State: APjAAAWDu55Jl8LIqpvlcT/jbNi4uzapVHQ1QudN7gbxqCNDWLjhvYZd
-        /ivBEgct5Tmu52dUp1CxRhdmloGsmSq/4XGaYqvqajrguac=
-X-Google-Smtp-Source: APXvYqz2xDFhlOfUHp9A7/DlP0cUgwXGxmeXE4uuHU38J8TF9lJFHpIswI/BGIbIlGcJXBPLFSWr6yx4SbhcNuf3NJ8=
-X-Received: by 2002:a02:8587:: with SMTP id d7mr28802565jai.39.1579186977954;
- Thu, 16 Jan 2020 07:02:57 -0800 (PST)
+        id S1726406AbgAPPJb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 16 Jan 2020 10:09:31 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:38725 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726151AbgAPPJb (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 16 Jan 2020 10:09:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579187369;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=C8Xp3KwFNWMrI0HOTLsD5nNMxMgZ/fDw2WjG7e0n4yI=;
+        b=Q4cFMAKvrRcIfjFTstam3LbDC05kDwBzbKtZNbuO7YSUn3TV+P+gt4X1J1n9iWahhozL1h
+        8zzwgXL+lSITVoAoLTDp2wa4gV4/YX/gBdu29BAW91xGxP6MT4uhdf9f6BPDYyckW2n+9M
+        mA7OAVRmJP4qlNwsnNUC/JhY5rnyMco=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-289-7EO4b9jpNvygqUYlkc_QvA-1; Thu, 16 Jan 2020 10:09:28 -0500
+X-MC-Unique: 7EO4b9jpNvygqUYlkc_QvA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 55C31800D54;
+        Thu, 16 Jan 2020 15:09:27 +0000 (UTC)
+Received: from [10.72.12.37] (ovpn-12-37.pek2.redhat.com [10.72.12.37])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3FE585D9C9;
+        Thu, 16 Jan 2020 15:09:19 +0000 (UTC)
+Subject: Re: [RFC PATCH v2 10/10] ceph: attempt to do async create when
+ possible
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com, pdonnell@redhat.com,
+        xiubli@redhat.com
+References: <20200115205912.38688-1-jlayton@kernel.org>
+ <20200115205912.38688-11-jlayton@kernel.org>
+From:   "Yan, Zheng" <zyan@redhat.com>
+Message-ID: <33716b3f-e03e-0a8a-d849-24268aa8af75@redhat.com>
+Date:   Thu, 16 Jan 2020 23:09:17 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-References: <20200116103830.13591-1-xiubli@redhat.com> <20200116103830.13591-8-xiubli@redhat.com>
-In-Reply-To: <20200116103830.13591-8-xiubli@redhat.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 16 Jan 2020 16:02:55 +0100
-Message-ID: <CAOi1vP8iASjyLoTFo2CgiA4C-8u4nYKpEpyC91wAho=2_9hBuQ@mail.gmail.com>
-Subject: Re: [PATCH v4 7/8] ceph: add reset metrics support
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, "Yan, Zheng" <zyan@redhat.com>,
-        Sage Weil <sage@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200115205912.38688-11-jlayton@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 11:39 AM <xiubli@redhat.com> wrote:
->
-> From: Xiubo Li <xiubli@redhat.com>
->
-> This will reset the most metric counters, except the cap and dentry
-> total numbers.
->
-> Sometimes we need to discard the old metrics and start to get new
-> metrics.
->
-> URL: https://tracker.ceph.com/issues/43215
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+On 1/16/20 4:59 AM, Jeff Layton wrote:
+> With the Octopus release, the MDS will hand out directory create caps.
+> 
+> If we have Fxc caps on the directory, and complete directory information
+> or a known negative dentry, then we can return without waiting on the
+> reply, allowing the open() call to return very quickly to userland.
+> 
+> We use the normal ceph_fill_inode() routine to fill in the inode, so we
+> have to gin up some reply inode information with what we'd expect the
+> newly-created inode to have. The client assumes that it has a full set
+> of caps on the new inode, and that the MDS will revoke them when there
+> is conflicting access.
+> 
+> This functionality is gated on the enable_async_dirops module option,
+> along with async unlinks, and on the server supporting the necessary
+> CephFS feature bit.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  fs/ceph/debugfs.c | 57 +++++++++++++++++++++++++++++++++++++++++++++++
->  fs/ceph/super.h   |  1 +
->  2 files changed, 58 insertions(+)
->
-> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-> index bb96fb4d04c4..c24a704d4e99 100644
-> --- a/fs/ceph/debugfs.c
-> +++ b/fs/ceph/debugfs.c
-> @@ -158,6 +158,55 @@ static int sending_metrics_get(void *data, u64 *val)
->  DEFINE_SIMPLE_ATTRIBUTE(sending_metrics_fops, sending_metrics_get,
->                         sending_metrics_set, "%llu\n");
->
-> +static int reset_metrics_set(void *data, u64 val)
+>   fs/ceph/file.c               | 196 +++++++++++++++++++++++++++++++++--
+>   include/linux/ceph/ceph_fs.h |   3 +
+>   2 files changed, 190 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index b44ccbc85fe4..2742417fa5ec 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -448,6 +448,169 @@ cache_file_layout(struct inode *dst, struct inode *src)
+>   	spin_unlock(&cdst->i_ceph_lock);
+>   }
+>   
+> +/*
+> + * Try to set up an async create. We need caps, a file layout, and inode number,
+> + * and either a lease on the dentry or complete dir info. If any of those
+> + * criteria are not satisfied, then return false and the caller can go
+> + * synchronous.
+> + */
+> +static bool try_prep_async_create(struct inode *dir, struct dentry *dentry,
+> +				  struct ceph_file_layout *lo,
+> +				  unsigned long *pino)
 > +{
-> +       struct ceph_fs_client *fsc = (struct ceph_fs_client *)data;
-> +       struct ceph_mds_client *mdsc = fsc->mdsc;
-> +       struct ceph_client_metric *metric = &mdsc->metric;
-> +       int i;
+> +	struct ceph_inode_info *ci = ceph_inode(dir);
+> +	bool ret = false;
+> +	unsigned long ino;
 > +
-> +       if (val != 1) {
-> +               pr_err("Invalid reset metrics set value %llu\n", val);
-> +               return -EINVAL;
-> +       }
+> +	spin_lock(&ci->i_ceph_lock);
+> +	/* No auth cap means no chance for Dc caps */
+> +	if (!ci->i_auth_cap)
+> +		goto no_async;
 > +
-> +       percpu_counter_set(&metric->d_lease_hit, 0);
-> +       percpu_counter_set(&metric->d_lease_mis, 0);
+> +	/* Any delegated inos? */
+> +	if (xa_empty(&ci->i_auth_cap->session->s_delegated_inos))
+> +		goto no_async;
 > +
-> +       spin_lock(&metric->read_lock);
-> +       memset(&metric->read_latency_sum, 0, sizeof(struct timespec64));
-> +       atomic64_set(&metric->total_reads, 0),
-> +       spin_unlock(&metric->read_lock);
+> +	if (!ceph_file_layout_is_valid(&ci->i_cached_layout))
+> +		goto no_async;
 > +
-> +       spin_lock(&metric->write_lock);
-> +       memset(&metric->write_latency_sum, 0, sizeof(struct timespec64));
-> +       atomic64_set(&metric->total_writes, 0),
-> +       spin_unlock(&metric->write_lock);
+> +	/* Use LOOKUP_RCU since we're under i_ceph_lock */
+> +	if (!__ceph_dir_is_complete(ci) &&
+> +	    !dentry_lease_is_valid(dentry, LOOKUP_RCU))
+> +		goto no_async;
 > +
-> +       spin_lock(&metric->metadata_lock);
-> +       memset(&metric->metadata_latency_sum, 0, sizeof(struct timespec64));
-> +       atomic64_set(&metric->total_metadatas, 0),
-> +       spin_unlock(&metric->metadata_lock);
+> +	if (!(__ceph_caps_issued(ci, NULL) &
+> +	      (CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE)))
+> +		goto no_async;
 > +
-> +       mutex_lock(&mdsc->mutex);
-> +       for (i = 0; i < mdsc->max_sessions; i++) {
-> +               struct ceph_mds_session *session;
+
+(ceph_caps_issued(ci, NULL) &
+  CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE)) ==
+(CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE)
+
+> +	ino = ceph_get_deleg_ino(ci->i_auth_cap->session);
+> +	if (!ino)
+> +		goto no_async;
 > +
-> +               session = __ceph_lookup_mds_session(mdsc, i);
-> +               if (!session)
-> +                       continue;
-> +               percpu_counter_set(&session->i_caps_hit, 0);
-> +               percpu_counter_set(&session->i_caps_mis, 0);
-> +               ceph_put_mds_session(session);
-> +       }
-> +
-> +       mutex_unlock(&mdsc->mutex);
-> +
-> +       return 0;
+> +	*pino = ino;
+> +	ceph_take_cap_refs(ci, CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE, false);
+> +	memcpy(lo, &ci->i_cached_layout, sizeof(*lo));
+> +	rcu_assign_pointer(lo->pool_ns,
+> +			   ceph_try_get_string(ci->i_cached_layout.pool_ns));
+> +	ret = true;
+> +no_async:
+> +	spin_unlock(&ci->i_ceph_lock);
+> +	return ret;
 > +}
 > +
-> +DEFINE_SIMPLE_ATTRIBUTE(reset_metrics_fops, NULL, reset_metrics_set, "%llu\n");
+> +static void ceph_async_create_cb(struct ceph_mds_client *mdsc,
+> +                                 struct ceph_mds_request *req)
+> +{
+> +	mapping_set_error(req->r_parent->i_mapping, req->r_err);
 > +
->  static int metric_show(struct seq_file *s, void *p)
->  {
->         struct ceph_fs_client *fsc = s->private;
-> @@ -355,6 +404,7 @@ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
->         debugfs_remove(fsc->debugfs_caps);
->         debugfs_remove(fsc->debugfs_metric);
->         debugfs_remove(fsc->debugfs_sending_metrics);
-> +       debugfs_remove(fsc->debugfs_reset_metrics);
->         debugfs_remove(fsc->debugfs_mdsc);
->  }
->
-> @@ -402,6 +452,13 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
->                                             fsc,
->                                             &sending_metrics_fops);
->
-> +       fsc->debugfs_reset_metrics =
-> +                       debugfs_create_file("reset_metrics",
-> +                                           0600,
-> +                                           fsc->client->debugfs_dir,
-> +                                           fsc,
-> +                                           &reset_metrics_fops);
+> +	if (req->r_target_inode) {
+> +		struct ceph_inode_info *ci = ceph_inode(req->r_target_inode);
+> +		u64 ino = ceph_vino(req->r_target_inode).ino;
 > +
->         fsc->debugfs_metric = debugfs_create_file("metrics",
->                                                   0400,
->                                                   fsc->client->debugfs_dir,
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index a91431e9bdf7..d24929f1c4bf 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -129,6 +129,7 @@ struct ceph_fs_client {
->         struct dentry *debugfs_bdi;
->         struct dentry *debugfs_mdsc, *debugfs_mdsmap;
->         struct dentry *debugfs_sending_metrics;
-> +       struct dentry *debugfs_reset_metrics;
->         struct dentry *debugfs_metric;
->         struct dentry *debugfs_mds_sessions;
->  #endif
+> +		if (req->r_deleg_ino != ino)
+> +			pr_warn("%s: inode number mismatch! err=%d deleg_ino=0x%lx target=0x%llx\n",
+> +				__func__, req->r_err, req->r_deleg_ino, ino);
+> +		mapping_set_error(req->r_target_inode->i_mapping, req->r_err);
+> +
+> +		spin_lock(&ci->i_ceph_lock);
+> +		if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE) {
+> +			ci->i_ceph_flags &= ~CEPH_I_ASYNC_CREATE;
+> +			wake_up_bit(&ci->i_ceph_flags, CEPH_ASYNC_CREATE_BIT);
+> +		}
+> +		spin_unlock(&ci->i_ceph_lock);
+> +	} else {
+> +		pr_warn("%s: no req->r_target_inode for 0x%lx\n", __func__,
+> +			req->r_deleg_ino);
+> +	}
+> +	ceph_put_cap_refs(ceph_inode(req->r_parent),
+> +			  CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE);
+> +}
+> +
+> +static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
+> +				    struct file *file, umode_t mode,
+> +				    struct ceph_mds_request *req,
+> +				    struct ceph_acl_sec_ctx *as_ctx,
+> +				    struct ceph_file_layout *lo)
+> +{
+> +	int ret;
+> +	char xattr_buf[4];
+> +	struct ceph_mds_reply_inode in = { };
+> +	struct ceph_mds_reply_info_in iinfo = { .in = &in };
+> +	struct ceph_inode_info *ci = ceph_inode(dir);
+> +	struct inode *inode;
+> +	struct timespec64 now;
+> +	struct ceph_vino vino = { .ino = req->r_deleg_ino,
+> +				  .snap = CEPH_NOSNAP };
+> +
+> +	ktime_get_real_ts64(&now);
+> +
+> +	inode = ceph_get_inode(dentry->d_sb, vino);
+> +	if (IS_ERR(inode))
+> +		return PTR_ERR(inode);
+> +
+> +	iinfo.inline_version = CEPH_INLINE_NONE;
+> +	iinfo.change_attr = 1;
+> +	ceph_encode_timespec64(&iinfo.btime, &now);
+> +
+> +	iinfo.xattr_len = ARRAY_SIZE(xattr_buf);
+> +	iinfo.xattr_data = xattr_buf;
+> +	memset(iinfo.xattr_data, 0, iinfo.xattr_len);
+> +
+> +	in.ino = cpu_to_le64(vino.ino);
+> +	in.snapid = cpu_to_le64(CEPH_NOSNAP);
+> +	in.version = cpu_to_le64(1);	// ???
+> +	in.cap.caps = in.cap.wanted = cpu_to_le32(CEPH_CAP_ALL_FILE);
+> +	in.cap.cap_id = cpu_to_le64(1);
+> +	in.cap.realm = cpu_to_le64(ci->i_snap_realm->ino);
+> +	in.cap.flags = CEPH_CAP_FLAG_AUTH;
+> +	in.ctime = in.mtime = in.atime = iinfo.btime;
+> +	in.mode = cpu_to_le32((u32)mode);
+> +	in.truncate_seq = cpu_to_le32(1);
+> +	in.truncate_size = cpu_to_le64(-1ULL);
+> +	in.xattr_version = cpu_to_le64(1);
+> +	in.uid = cpu_to_le32(from_kuid(&init_user_ns, current_fsuid()));
+> +	in.gid = cpu_to_le32(from_kgid(&init_user_ns, dir->i_mode & S_ISGID ?
+> +				dir->i_gid : current_fsgid()));
+> +	in.nlink = cpu_to_le32(1);
+> +	in.max_size = cpu_to_le64(lo->stripe_unit);
+> +
+> +	ceph_file_layout_to_legacy(lo, &in.layout);
+> +
+> +	ret = ceph_fill_inode(inode, NULL, &iinfo, NULL, req->r_session,
+> +			      req->r_fmode, NULL);
+> +	if (ret) {
+> +		dout("%s failed to fill inode: %d\n", __func__, ret);
+> +		if (inode->i_state & I_NEW)
+> +			discard_new_inode(inode);
+> +	} else {
+> +		struct dentry *dn;
+> +
+> +		dout("%s d_adding new inode 0x%llx to 0x%lx/%s\n", __func__,
+> +			vino.ino, dir->i_ino, dentry->d_name.name);
+> +		ceph_dir_clear_ordered(dir);
+> +		ceph_init_inode_acls(inode, as_ctx);
+> +		if (inode->i_state & I_NEW) {
+> +			/*
+> +			 * If it's not I_NEW, then someone created this before
+> +			 * we got here. Assume the server is aware of it at
+> +			 * that point and don't worry about setting
+> +			 * CEPH_I_ASYNC_CREATE.
+> +			 */
+> +			ceph_inode(inode)->i_ceph_flags = CEPH_I_ASYNC_CREATE;
+> +			unlock_new_inode(inode);
+> +		}
+> +		if (d_in_lookup(dentry) || d_really_is_negative(dentry)) {
+> +			if (!d_unhashed(dentry))
+> +				d_drop(dentry);
+> +			dn = d_splice_alias(inode, dentry);
+> +			WARN_ON_ONCE(dn && dn != dentry);
+> +		}
+> +		file->f_mode |= FMODE_CREATED;
+> +		ret = finish_open(file, dentry, ceph_open);
+> +	}
+> +	return ret;
+> +}
+> +
+>   /*
+>    * Do a lookup + open with a single request.  If we get a non-existent
+>    * file or symlink, return 1 so the VFS can retry.
+> @@ -460,6 +623,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>   	struct ceph_mds_request *req;
+>   	struct dentry *dn;
+>   	struct ceph_acl_sec_ctx as_ctx = {};
+> +	bool try_async = enable_async_dirops;
+>   	int mask;
+>   	int err;
+>   
+> @@ -492,28 +656,41 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>   	}
+>   	req->r_dentry = dget(dentry);
+>   	req->r_num_caps = 2;
+> +	mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
+> +	if (ceph_security_xattr_wanted(dir))
+> +		mask |= CEPH_CAP_XATTR_SHARED;
+> +	req->r_args.open.mask = cpu_to_le32(mask);
+> +	req->r_parent = dir;
+> +
+>   	if (flags & O_CREAT) {
+> +		struct ceph_file_layout lo;
+> +
+>   		req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
+>   		req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
+>   		if (as_ctx.pagelist) {
+>   			req->r_pagelist = as_ctx.pagelist;
+>   			as_ctx.pagelist = NULL;
+>   		}
+> +		if (try_async && try_prep_async_create(dir, dentry, &lo,
+> +						       &req->r_deleg_ino)) {
+> +			set_bit(CEPH_MDS_R_ASYNC, &req->r_req_flags);
+> +			req->r_callback = ceph_async_create_cb;
+> +			err = ceph_mdsc_submit_request(mdsc, dir, req);
+> +			if (!err)
+> +				err = ceph_finish_async_create(dir, dentry,
+> +							file, mode, req,
+> +							&as_ctx, &lo);
+> +			goto out_req;
+> +		}
+>   	}
+>   
+> -       mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
+> -       if (ceph_security_xattr_wanted(dir))
+> -               mask |= CEPH_CAP_XATTR_SHARED;
+> -       req->r_args.open.mask = cpu_to_le32(mask);
+> -
+> -	req->r_parent = dir;
+>   	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
+>   	err = ceph_mdsc_do_request(mdsc,
+>   				   (flags & (O_CREAT|O_TRUNC)) ? dir : NULL,
+>   				   req);
+>   	err = ceph_handle_snapdir(req, dentry, err);
+>   	if (err)
+> -		goto out_req;
+> +		goto out_fmode;
+>   
+>   	if ((flags & O_CREAT) && !req->r_reply_info.head->is_dentry)
+>   		err = ceph_handle_notrace_create(dir, dentry);
+> @@ -527,7 +704,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>   		dn = NULL;
+>   	}
+>   	if (err)
+> -		goto out_req;
+> +		goto out_fmode;
+>   	if (dn || d_really_is_negative(dentry) || d_is_symlink(dentry)) {
+>   		/* make vfs retry on splice, ENOENT, or symlink */
+>   		dout("atomic_open finish_no_open on dn %p\n", dn);
+> @@ -543,9 +720,10 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>   		}
+>   		err = finish_open(file, dentry, ceph_open);
+>   	}
+> -out_req:
+> +out_fmode:
+>   	if (!req->r_err && req->r_target_inode)
+>   		ceph_put_fmode(ceph_inode(req->r_target_inode), req->r_fmode);
+> +out_req:
+>   	ceph_mdsc_put_request(req);
+>   out_ctx:
+>   	ceph_release_acl_sec_ctx(&as_ctx);
+> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+> index 91d09cf37649..e035c5194005 100644
+> --- a/include/linux/ceph/ceph_fs.h
+> +++ b/include/linux/ceph/ceph_fs.h
+> @@ -659,6 +659,9 @@ int ceph_flags_to_mode(int flags);
+>   #define CEPH_CAP_ANY      (CEPH_CAP_ANY_RD | CEPH_CAP_ANY_EXCL | \
+>   			   CEPH_CAP_ANY_FILE_WR | CEPH_CAP_FILE_LAZYIO | \
+>   			   CEPH_CAP_PIN)
+> +#define CEPH_CAP_ALL_FILE (CEPH_CAP_PIN | CEPH_CAP_ANY_SHARED | \
+> +			   CEPH_CAP_AUTH_EXCL | CEPH_CAP_XATTR_EXCL | \
+> +			   CEPH_CAP_ANY_FILE_RD | CEPH_CAP_ANY_FILE_WR)
+>   
+>   #define CEPH_CAP_LOCKS (CEPH_LOCK_IFILE | CEPH_LOCK_IAUTH | CEPH_LOCK_ILINK | \
+>   			CEPH_LOCK_IXATTR)
+> 
 
-Do we need a separate attribute for this?  Did you think about making
-metrics attribute writeable and accepting some string, e.g. "reset"?
-
-Thanks,
-
-                Ilya
