@@ -2,39 +2,41 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFF6413DFEC
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2020 17:22:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6735A13E024
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2020 17:31:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbgAPQVf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 16 Jan 2020 11:21:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44310 "EHLO mail.kernel.org"
+        id S1726827AbgAPQbK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 16 Jan 2020 11:31:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729094AbgAPQVa (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:21:30 -0500
+        id S1726370AbgAPQbK (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:31:10 -0500
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 387322081E;
-        Thu, 16 Jan 2020 16:21:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48559206D9;
+        Thu, 16 Jan 2020 16:31:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579191688;
-        bh=dlsOGeJoBStip1ybWLGL0G/+ypeu1yh3Vqrn0l//o/U=;
+        s=default; t=1579192268;
+        bh=ayalMA+SY3nOkEpLKRhNClAKPDj5G3agdexqc+h4IgM=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=jtxPdEmK1fG9vlUquh7FZ8l4WoUk7Y9NWE8I+R44yU7ayWIxRN0/CSCcY109ykAvF
-         e9PkAdHjn3wP3cFDZY6rjZNVeIo7xgFisOSm8cpyMBlCSM3bLZOTFz5itDF/fzB2G+
-         hw82EfF11tAEYzbaJW0ty5ZhXCGk4T0BWKcMe3/U=
-Message-ID: <ddaaf553d8557ccd3593190b56d1c5733f125e9b.camel@kernel.org>
-Subject: Re: [RFC PATCH v2 10/10] ceph: attempt to do async create when
- possible
+        b=yQYm1s0omfiukkNMeFvqOB6TX2AZflAdcSMdxJfE+dKFux8doNJ8JVWUV4WExi+qF
+         CYxK+lGnY32jFCVRgLGUDaulShbwjZuNtGmNNr1lsSD//5NGqY9lWVjxWghBb8euw/
+         kt1hIEb5iWw2eUyOXWtxAWfg9+COjMMzKdjC2aH4=
+Message-ID: <cb4aaae360079a0b2cf0f2c9d24ffc8b4ae9dde3.camel@kernel.org>
+Subject: Re: [PATCH v3 4/8] ceph: add global write latency metric support
 From:   Jeff Layton <jlayton@kernel.org>
-To:     "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org
-Cc:     sage@redhat.com, idryomov@gmail.com, pdonnell@redhat.com,
-        xiubli@redhat.com
-Date:   Thu, 16 Jan 2020 11:21:27 -0500
-In-Reply-To: <33716b3f-e03e-0a8a-d849-24268aa8af75@redhat.com>
-References: <20200115205912.38688-1-jlayton@kernel.org>
-         <20200115205912.38688-11-jlayton@kernel.org>
-         <33716b3f-e03e-0a8a-d849-24268aa8af75@redhat.com>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Xiubo Li <xiubli@redhat.com>, "Yan, Zheng" <zyan@redhat.com>,
+        Sage Weil <sage@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Date:   Thu, 16 Jan 2020 11:31:07 -0500
+In-Reply-To: <CAOi1vP8zLvH4tXVwYOcFDkvnfaWAPuTqwruAZAjjGQJzs1p-Jg@mail.gmail.com>
+References: <20200115034444.14304-1-xiubli@redhat.com>
+         <20200115034444.14304-5-xiubli@redhat.com>
+         <18a2177615ab26ff546601a1a5baae1798608bdd.camel@kernel.org>
+         <CAOi1vP8zLvH4tXVwYOcFDkvnfaWAPuTqwruAZAjjGQJzs1p-Jg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
@@ -44,305 +46,325 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2020-01-16 at 23:09 +0800, Yan, Zheng wrote:
-> On 1/16/20 4:59 AM, Jeff Layton wrote:
-> > With the Octopus release, the MDS will hand out directory create caps.
+On Thu, 2020-01-16 at 15:46 +0100, Ilya Dryomov wrote:
+> On Thu, Jan 16, 2020 at 3:14 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > On Tue, 2020-01-14 at 22:44 -0500, xiubli@redhat.com wrote:
+> > > From: Xiubo Li <xiubli@redhat.com>
+> > > 
+> > > item          total       sum_lat(us)     avg_lat(us)
+> > > -----------------------------------------------------
+> > > write         222         5287750000      23818693
+> > > 
+> > > URL: https://tracker.ceph.com/issues/43215
+> > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > > ---
+> > >  fs/ceph/addr.c                  | 23 +++++++++++++++++++++--
+> > >  fs/ceph/debugfs.c               |  8 ++++++++
+> > >  fs/ceph/file.c                  |  9 +++++++++
+> > >  fs/ceph/mds_client.c            | 20 ++++++++++++++++++++
+> > >  fs/ceph/mds_client.h            |  6 ++++++
+> > >  include/linux/ceph/osd_client.h |  3 ++-
+> > >  net/ceph/osd_client.c           |  9 ++++++++-
+> > >  7 files changed, 74 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> > > index 2a32f731f92a..b667ddaa6623 100644
+> > > --- a/fs/ceph/addr.c
+> > > +++ b/fs/ceph/addr.c
+> > > @@ -598,12 +598,15 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+> > >       loff_t page_off = page_offset(page);
+> > >       int err, len = PAGE_SIZE;
+> > >       struct ceph_writeback_ctl ceph_wbc;
+> > > +     struct ceph_client_metric *metric;
+> > > +     s64 latency;
+> > > 
+> > >       dout("writepage %p idx %lu\n", page, page->index);
+> > > 
+> > >       inode = page->mapping->host;
+> > >       ci = ceph_inode(inode);
+> > >       fsc = ceph_inode_to_client(inode);
+> > > +     metric = &fsc->mdsc->metric;
+> > > 
+> > >       /* verify this is a writeable snap context */
+> > >       snapc = page_snap_context(page);
+> > > @@ -645,7 +648,11 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+> > >                                  &ci->i_layout, snapc, page_off, len,
+> > >                                  ceph_wbc.truncate_seq,
+> > >                                  ceph_wbc.truncate_size,
+> > > -                                &inode->i_mtime, &page, 1);
+> > > +                                &inode->i_mtime, &page, 1,
+> > > +                                &latency);
+> > > +     if (latency)
+> > > +             ceph_mdsc_update_write_latency(metric, latency);
+> > > +
+> > >       if (err < 0) {
+> > >               struct writeback_control tmp_wbc;
+> > >               if (!wbc)
+> > > @@ -707,6 +714,8 @@ static void writepages_finish(struct ceph_osd_request *req)
+> > >  {
+> > >       struct inode *inode = req->r_inode;
+> > >       struct ceph_inode_info *ci = ceph_inode(inode);
+> > > +     struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> > > +     struct ceph_client_metric *metric = &fsc->mdsc->metric;
+> > >       struct ceph_osd_data *osd_data;
+> > >       struct page *page;
+> > >       int num_pages, total_pages = 0;
+> > > @@ -714,7 +723,6 @@ static void writepages_finish(struct ceph_osd_request *req)
+> > >       int rc = req->r_result;
+> > >       struct ceph_snap_context *snapc = req->r_snapc;
+> > >       struct address_space *mapping = inode->i_mapping;
+> > > -     struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> > >       bool remove_page;
+> > > 
+> > >       dout("writepages_finish %p rc %d\n", inode, rc);
+> > > @@ -783,6 +791,11 @@ static void writepages_finish(struct ceph_osd_request *req)
+> > >                            ceph_sb_to_client(inode->i_sb)->wb_pagevec_pool);
+> > >       else
+> > >               kfree(osd_data->pages);
+> > > +
+> > > +     if (!rc) {
+> > > +             s64 latency = jiffies - req->r_start_stamp;
+> > > +             ceph_mdsc_update_write_latency(metric, latency);
+> > > +     }
+> > >       ceph_osdc_put_request(req);
+> > >  }
+> > > 
+> > > @@ -1675,6 +1688,7 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+> > >       struct inode *inode = file_inode(filp);
+> > >       struct ceph_inode_info *ci = ceph_inode(inode);
+> > >       struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> > > +     struct ceph_client_metric *metric = &fsc->mdsc->metric;
+> > >       struct ceph_osd_request *req;
+> > >       struct page *page = NULL;
+> > >       u64 len, inline_version;
+> > > @@ -1786,6 +1800,11 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+> > >       err = ceph_osdc_start_request(&fsc->client->osdc, req, false);
+> > >       if (!err)
+> > >               err = ceph_osdc_wait_request(&fsc->client->osdc, req);
+> > > +
+> > > +     if (!err || err == -ETIMEDOUT) {
+> > > +             s64 latency = jiffies - req->r_start_stamp;
+> > > +             ceph_mdsc_update_write_latency(metric, latency);
+> > > +     }
+> > >  out_put:
+> > >       ceph_osdc_put_request(req);
+> > >       if (err == -ECANCELED)
+> > > diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+> > > index 8200bf025ccd..3fdb15af0a83 100644
+> > > --- a/fs/ceph/debugfs.c
+> > > +++ b/fs/ceph/debugfs.c
+> > > @@ -142,6 +142,14 @@ static int metric_show(struct seq_file *s, void *p)
+> > >       seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "read",
+> > >                  total, sum / NSEC_PER_USEC, avg / NSEC_PER_USEC);
+> > > 
+> > > +     spin_lock(&mdsc->metric.write_lock);
+> > > +     total = atomic64_read(&mdsc->metric.total_writes),
+> > > +     sum = timespec64_to_ns(&mdsc->metric.write_latency_sum);
+> > > +     spin_unlock(&mdsc->metric.write_lock);
+> > > +     avg = total ? sum / total : 0;
+> > > +     seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "write",
+> > > +                total, sum / NSEC_PER_USEC, avg / NSEC_PER_USEC);
+> > > +
+> > >       seq_printf(s, "\n");
+> > >       seq_printf(s, "item          total           miss            hit\n");
+> > >       seq_printf(s, "-------------------------------------------------\n");
+> > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > > index 797d4d224223..70530ac798ac 100644
+> > > --- a/fs/ceph/file.c
+> > > +++ b/fs/ceph/file.c
+> > > @@ -822,6 +822,8 @@ static void ceph_aio_complete_req(struct ceph_osd_request *req)
+> > >                       op = &req->r_ops[i];
+> > >                       if (op->op == CEPH_OSD_OP_READ)
+> > >                               ceph_mdsc_update_read_latency(metric, latency);
+> > > +                     else if (op->op == CEPH_OSD_OP_WRITE && rc != -ENOENT)
+> > > +                             ceph_mdsc_update_write_latency(metric, latency);
+> > >               }
+> > >       }
+> > > 
+> > > @@ -1075,6 +1077,8 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
+> > > 
+> > >                       if (!write)
+> > >                               ceph_mdsc_update_read_latency(metric, latency);
+> > > +                     else if (write && ret != -ENOENT)
+> > > +                             ceph_mdsc_update_write_latency(metric, latency);
+> > >               }
+> > > 
+> > >               size = i_size_read(inode);
+> > > @@ -1163,6 +1167,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+> > >       struct inode *inode = file_inode(file);
+> > >       struct ceph_inode_info *ci = ceph_inode(inode);
+> > >       struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> > > +     struct ceph_client_metric *metric = &fsc->mdsc->metric;
+> > >       struct ceph_vino vino;
+> > >       struct ceph_osd_request *req;
+> > >       struct page **pages;
+> > > @@ -1248,6 +1253,10 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+> > >               if (!ret)
+> > >                       ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
+> > > 
+> > > +             if (!ret || ret == -ETIMEDOUT) {
+> > > +                     s64 latency = jiffies - req->r_start_stamp;
+> > > +                     ceph_mdsc_update_write_latency(metric, latency);
+> > > +             }
+> > >  out:
+> > >               ceph_osdc_put_request(req);
+> > >               if (ret != 0) {
+> > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > > index dc2cda55a5a5..2569f9303c0c 100644
+> > > --- a/fs/ceph/mds_client.c
+> > > +++ b/fs/ceph/mds_client.c
+> > > @@ -4112,6 +4112,22 @@ void ceph_mdsc_update_read_latency(struct ceph_client_metric *m,
+> > >       spin_unlock(&m->read_lock);
+> > >  }
+> > > 
+> > > +void ceph_mdsc_update_write_latency(struct ceph_client_metric *m,
+> > > +                                 s64 latency)
+> > > +{
+> > > +     struct timespec64 ts;
+> > > +
+> > > +     if (!m)
+> > > +             return;
+> > > +
+> > > +     jiffies_to_timespec64(latency, &ts);
+> > > +
+> > > +     spin_lock(&m->write_lock);
+> > > +     atomic64_inc(&m->total_writes);
+> > > +     m->write_latency_sum = timespec64_add(m->write_latency_sum, ts);
+> > > +     spin_unlock(&m->write_lock);
+> > > +}
+> > > +
+> > >  /*
+> > >   * delayed work -- periodically trim expired leases, renew caps with mds
+> > >   */
+> > > @@ -4212,6 +4228,10 @@ static int ceph_mdsc_metric_init(struct ceph_client_metric *metric)
+> > >       memset(&metric->read_latency_sum, 0, sizeof(struct timespec64));
+> > >       atomic64_set(&metric->total_reads, 0);
+> > > 
+> > > +     spin_lock_init(&metric->write_lock);
+> > > +     memset(&metric->write_latency_sum, 0, sizeof(struct timespec64));
+> > > +     atomic64_set(&metric->total_writes, 0);
+> > > +
+> > >       return 0;
+> > >  }
+> > > 
+> > > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> > > index fee25b999c7c..0120357e7549 100644
+> > > --- a/fs/ceph/mds_client.h
+> > > +++ b/fs/ceph/mds_client.h
+> > > @@ -370,6 +370,10 @@ struct ceph_client_metric {
+> > >       spinlock_t              read_lock;
+> > >       atomic64_t              total_reads;
+> > >       struct timespec64       read_latency_sum;
+> > > +
+> > > +     spinlock_t              write_lock;
+> > > +     atomic64_t              total_writes;
+> > > +     struct timespec64       write_latency_sum;
 > > 
-> > If we have Fxc caps on the directory, and complete directory information
-> > or a known negative dentry, then we can return without waiting on the
-> > reply, allowing the open() call to return very quickly to userland.
+> > Would percpu counters be better here? I mean it's not a _super_ high
+> > performance codepath, but it's nice when stats gathering has very little
+> > overhead. It'd take up a bit more space, but it's not that much, and
+> > there'd be no serialization between CPUs operating on different inodes.
 > > 
-> > We use the normal ceph_fill_inode() routine to fill in the inode, so we
-> > have to gin up some reply inode information with what we'd expect the
-> > newly-created inode to have. The client assumes that it has a full set
-> > of caps on the new inode, and that the MDS will revoke them when there
-> > is conflicting access.
 > > 
-> > This functionality is gated on the enable_async_dirops module option,
-> > along with async unlinks, and on the server supporting the necessary
-> > CephFS feature bit.
+> > To be clear, the latency you're measuring is request time to the OSD?
 > > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >   fs/ceph/file.c               | 196 +++++++++++++++++++++++++++++++++--
-> >   include/linux/ceph/ceph_fs.h |   3 +
-> >   2 files changed, 190 insertions(+), 9 deletions(-)
+> > >  };
+> > > 
+> > >  /*
+> > > @@ -556,4 +560,6 @@ extern int ceph_trim_caps(struct ceph_mds_client *mdsc,
+> > > 
+> > >  extern void ceph_mdsc_update_read_latency(struct ceph_client_metric *m,
+> > >                                         s64 latency);
+> > > +extern void ceph_mdsc_update_write_latency(struct ceph_client_metric *m,
+> > > +                                        s64 latency);
+> > >  #endif
+> > > diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+> > > index 43e4240d88e7..e73439d18f28 100644
+> > > --- a/include/linux/ceph/osd_client.h
+> > > +++ b/include/linux/ceph/osd_client.h
+> > > @@ -524,7 +524,8 @@ extern int ceph_osdc_writepages(struct ceph_osd_client *osdc,
+> > >                               u64 off, u64 len,
+> > >                               u32 truncate_seq, u64 truncate_size,
+> > >                               struct timespec64 *mtime,
+> > > -                             struct page **pages, int nr_pages);
+> > > +                             struct page **pages, int nr_pages,
+> > > +                             s64 *latency);
+> > > 
+> > >  int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+> > >                       u64 src_snapid, u64 src_version,
+> > > diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> > > index 62eb758f2474..9f6833ab733c 100644
+> > > --- a/net/ceph/osd_client.c
+> > > +++ b/net/ceph/osd_client.c
+> > > @@ -5285,12 +5285,16 @@ int ceph_osdc_writepages(struct ceph_osd_client *osdc, struct ceph_vino vino,
+> > >                        u64 off, u64 len,
+> > >                        u32 truncate_seq, u64 truncate_size,
+> > >                        struct timespec64 *mtime,
+> > > -                      struct page **pages, int num_pages)
+> > > +                      struct page **pages, int num_pages,
+> > > +                      s64 *latency)
+> > >  {
+> > >       struct ceph_osd_request *req;
+> > >       int rc = 0;
+> > >       int page_align = off & ~PAGE_MASK;
+> > > 
+> > > +     if (latency)
+> > > +             *latency = 0;
+> > > +
+> > >       req = ceph_osdc_new_request(osdc, layout, vino, off, &len, 0, 1,
+> > >                                   CEPH_OSD_OP_WRITE, CEPH_OSD_FLAG_WRITE,
+> > >                                   snapc, truncate_seq, truncate_size,
+> > > @@ -5308,6 +5312,9 @@ int ceph_osdc_writepages(struct ceph_osd_client *osdc, struct ceph_vino vino,
+> > >       if (!rc)
+> > >               rc = ceph_osdc_wait_request(osdc, req);
+> > > 
+> > > +     if (latency && (!rc || rc == -ETIMEDOUT))
+> > > +             *latency = jiffies - req->r_start_stamp;
+> > > +
 > > 
-> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > index b44ccbc85fe4..2742417fa5ec 100644
-> > --- a/fs/ceph/file.c
-> > +++ b/fs/ceph/file.c
-> > @@ -448,6 +448,169 @@ cache_file_layout(struct inode *dst, struct inode *src)
-> >   	spin_unlock(&cdst->i_ceph_lock);
-> >   }
-> >   
-> > +/*
-> > + * Try to set up an async create. We need caps, a file layout, and inode number,
-> > + * and either a lease on the dentry or complete dir info. If any of those
-> > + * criteria are not satisfied, then return false and the caller can go
-> > + * synchronous.
-> > + */
-> > +static bool try_prep_async_create(struct inode *dir, struct dentry *dentry,
-> > +				  struct ceph_file_layout *lo,
-> > +				  unsigned long *pino)
-> > +{
-> > +	struct ceph_inode_info *ci = ceph_inode(dir);
-> > +	bool ret = false;
-> > +	unsigned long ino;
-> > +
-> > +	spin_lock(&ci->i_ceph_lock);
-> > +	/* No auth cap means no chance for Dc caps */
-> > +	if (!ci->i_auth_cap)
-> > +		goto no_async;
-> > +
-> > +	/* Any delegated inos? */
-> > +	if (xa_empty(&ci->i_auth_cap->session->s_delegated_inos))
-> > +		goto no_async;
-> > +
-> > +	if (!ceph_file_layout_is_valid(&ci->i_cached_layout))
-> > +		goto no_async;
-> > +
-> > +	/* Use LOOKUP_RCU since we're under i_ceph_lock */
-> > +	if (!__ceph_dir_is_complete(ci) &&
-> > +	    !dentry_lease_is_valid(dentry, LOOKUP_RCU))
-> > +		goto no_async;
-> > +
-> > +	if (!(__ceph_caps_issued(ci, NULL) &
-> > +	      (CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE)))
-> > +		goto no_async;
-> > +
+> > Are you concerned at all with scheduling delays? Note that you're doing
+> > the latency calculation here which occurs in the task that is woken by
+> > __complete_request. That won't necessarily wake up immediately on a busy
+> > machine, so this measurement will include that delay as well.
+> > 
+> > I wonder if we ought to add a r_end_stamp field to the req instead, and
+> > grab jiffies in (e.g.) __complete_request. Then you could just fetch
+> > that out and do the math.
 > 
-> (ceph_caps_issued(ci, NULL) &
->   CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE)) ==
-> (CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE)
+> __complete_request() is a bit of a special case, putting it in
+> finish_request() would work better.  It will still include some delays,
+> but then measuring the OSD service time on the client side is pretty
+> much impossible to do precisely.
 > 
 
-Good catch! Fixed in my tree. Retesting now and will fold that one in.
+Yeah, that sounds better. This is a best-effort sort of thing, but let's
+do make our best effort.
 
-> > +	ino = ceph_get_deleg_ino(ci->i_auth_cap->session);
-> > +	if (!ino)
-> > +		goto no_async;
-> > +
-> > +	*pino = ino;
-> > +	ceph_take_cap_refs(ci, CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE, false);
-> > +	memcpy(lo, &ci->i_cached_layout, sizeof(*lo));
-> > +	rcu_assign_pointer(lo->pool_ns,
-> > +			   ceph_try_get_string(ci->i_cached_layout.pool_ns));
-> > +	ret = true;
-> > +no_async:
-> > +	spin_unlock(&ci->i_ceph_lock);
-> > +	return ret;
-> > +}
-> > +
-> > +static void ceph_async_create_cb(struct ceph_mds_client *mdsc,
-> > +                                 struct ceph_mds_request *req)
-> > +{
-> > +	mapping_set_error(req->r_parent->i_mapping, req->r_err);
-> > +
-> > +	if (req->r_target_inode) {
-> > +		struct ceph_inode_info *ci = ceph_inode(req->r_target_inode);
-> > +		u64 ino = ceph_vino(req->r_target_inode).ino;
-> > +
-> > +		if (req->r_deleg_ino != ino)
-> > +			pr_warn("%s: inode number mismatch! err=%d deleg_ino=0x%lx target=0x%llx\n",
-> > +				__func__, req->r_err, req->r_deleg_ino, ino);
-> > +		mapping_set_error(req->r_target_inode->i_mapping, req->r_err);
-> > +
-> > +		spin_lock(&ci->i_ceph_lock);
-> > +		if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE) {
-> > +			ci->i_ceph_flags &= ~CEPH_I_ASYNC_CREATE;
-> > +			wake_up_bit(&ci->i_ceph_flags, CEPH_ASYNC_CREATE_BIT);
-> > +		}
-> > +		spin_unlock(&ci->i_ceph_lock);
-> > +	} else {
-> > +		pr_warn("%s: no req->r_target_inode for 0x%lx\n", __func__,
-> > +			req->r_deleg_ino);
-> > +	}
-> > +	ceph_put_cap_refs(ceph_inode(req->r_parent),
-> > +			  CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE);
-> > +}
-> > +
-> > +static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
-> > +				    struct file *file, umode_t mode,
-> > +				    struct ceph_mds_request *req,
-> > +				    struct ceph_acl_sec_ctx *as_ctx,
-> > +				    struct ceph_file_layout *lo)
-> > +{
-> > +	int ret;
-> > +	char xattr_buf[4];
-> > +	struct ceph_mds_reply_inode in = { };
-> > +	struct ceph_mds_reply_info_in iinfo = { .in = &in };
-> > +	struct ceph_inode_info *ci = ceph_inode(dir);
-> > +	struct inode *inode;
-> > +	struct timespec64 now;
-> > +	struct ceph_vino vino = { .ino = req->r_deleg_ino,
-> > +				  .snap = CEPH_NOSNAP };
-> > +
-> > +	ktime_get_real_ts64(&now);
-> > +
-> > +	inode = ceph_get_inode(dentry->d_sb, vino);
-> > +	if (IS_ERR(inode))
-> > +		return PTR_ERR(inode);
-> > +
-> > +	iinfo.inline_version = CEPH_INLINE_NONE;
-> > +	iinfo.change_attr = 1;
-> > +	ceph_encode_timespec64(&iinfo.btime, &now);
-> > +
-> > +	iinfo.xattr_len = ARRAY_SIZE(xattr_buf);
-> > +	iinfo.xattr_data = xattr_buf;
-> > +	memset(iinfo.xattr_data, 0, iinfo.xattr_len);
-> > +
-> > +	in.ino = cpu_to_le64(vino.ino);
-> > +	in.snapid = cpu_to_le64(CEPH_NOSNAP);
-> > +	in.version = cpu_to_le64(1);	// ???
-> > +	in.cap.caps = in.cap.wanted = cpu_to_le32(CEPH_CAP_ALL_FILE);
-> > +	in.cap.cap_id = cpu_to_le64(1);
-> > +	in.cap.realm = cpu_to_le64(ci->i_snap_realm->ino);
-> > +	in.cap.flags = CEPH_CAP_FLAG_AUTH;
-> > +	in.ctime = in.mtime = in.atime = iinfo.btime;
-> > +	in.mode = cpu_to_le32((u32)mode);
-> > +	in.truncate_seq = cpu_to_le32(1);
-> > +	in.truncate_size = cpu_to_le64(-1ULL);
-> > +	in.xattr_version = cpu_to_le64(1);
-> > +	in.uid = cpu_to_le32(from_kuid(&init_user_ns, current_fsuid()));
-> > +	in.gid = cpu_to_le32(from_kgid(&init_user_ns, dir->i_mode & S_ISGID ?
-> > +				dir->i_gid : current_fsgid()));
-> > +	in.nlink = cpu_to_le32(1);
-> > +	in.max_size = cpu_to_le64(lo->stripe_unit);
-> > +
-> > +	ceph_file_layout_to_legacy(lo, &in.layout);
-> > +
-> > +	ret = ceph_fill_inode(inode, NULL, &iinfo, NULL, req->r_session,
-> > +			      req->r_fmode, NULL);
-> > +	if (ret) {
-> > +		dout("%s failed to fill inode: %d\n", __func__, ret);
-> > +		if (inode->i_state & I_NEW)
-> > +			discard_new_inode(inode);
-> > +	} else {
-> > +		struct dentry *dn;
-> > +
-> > +		dout("%s d_adding new inode 0x%llx to 0x%lx/%s\n", __func__,
-> > +			vino.ino, dir->i_ino, dentry->d_name.name);
-> > +		ceph_dir_clear_ordered(dir);
-> > +		ceph_init_inode_acls(inode, as_ctx);
-> > +		if (inode->i_state & I_NEW) {
-> > +			/*
-> > +			 * If it's not I_NEW, then someone created this before
-> > +			 * we got here. Assume the server is aware of it at
-> > +			 * that point and don't worry about setting
-> > +			 * CEPH_I_ASYNC_CREATE.
-> > +			 */
-> > +			ceph_inode(inode)->i_ceph_flags = CEPH_I_ASYNC_CREATE;
-> > +			unlock_new_inode(inode);
-> > +		}
-> > +		if (d_in_lookup(dentry) || d_really_is_negative(dentry)) {
-> > +			if (!d_unhashed(dentry))
-> > +				d_drop(dentry);
-> > +			dn = d_splice_alias(inode, dentry);
-> > +			WARN_ON_ONCE(dn && dn != dentry);
-> > +		}
-> > +		file->f_mode |= FMODE_CREATED;
-> > +		ret = finish_open(file, dentry, ceph_open);
-> > +	}
-> > +	return ret;
-> > +}
-> > +
-> >   /*
-> >    * Do a lookup + open with a single request.  If we get a non-existent
-> >    * file or symlink, return 1 so the VFS can retry.
-> > @@ -460,6 +623,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
-> >   	struct ceph_mds_request *req;
-> >   	struct dentry *dn;
-> >   	struct ceph_acl_sec_ctx as_ctx = {};
-> > +	bool try_async = enable_async_dirops;
-> >   	int mask;
-> >   	int err;
-> >   
-> > @@ -492,28 +656,41 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
-> >   	}
-> >   	req->r_dentry = dget(dentry);
-> >   	req->r_num_caps = 2;
-> > +	mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
-> > +	if (ceph_security_xattr_wanted(dir))
-> > +		mask |= CEPH_CAP_XATTR_SHARED;
-> > +	req->r_args.open.mask = cpu_to_le32(mask);
-> > +	req->r_parent = dir;
-> > +
-> >   	if (flags & O_CREAT) {
-> > +		struct ceph_file_layout lo;
-> > +
-> >   		req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
-> >   		req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
-> >   		if (as_ctx.pagelist) {
-> >   			req->r_pagelist = as_ctx.pagelist;
-> >   			as_ctx.pagelist = NULL;
-> >   		}
-> > +		if (try_async && try_prep_async_create(dir, dentry, &lo,
-> > +						       &req->r_deleg_ino)) {
-> > +			set_bit(CEPH_MDS_R_ASYNC, &req->r_req_flags);
-> > +			req->r_callback = ceph_async_create_cb;
-> > +			err = ceph_mdsc_submit_request(mdsc, dir, req);
-> > +			if (!err)
-> > +				err = ceph_finish_async_create(dir, dentry,
-> > +							file, mode, req,
-> > +							&as_ctx, &lo);
-> > +			goto out_req;
-> > +		}
-> >   	}
-> >   
-> > -       mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
-> > -       if (ceph_security_xattr_wanted(dir))
-> > -               mask |= CEPH_CAP_XATTR_SHARED;
-> > -       req->r_args.open.mask = cpu_to_le32(mask);
-> > -
-> > -	req->r_parent = dir;
-> >   	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
-> >   	err = ceph_mdsc_do_request(mdsc,
-> >   				   (flags & (O_CREAT|O_TRUNC)) ? dir : NULL,
-> >   				   req);
-> >   	err = ceph_handle_snapdir(req, dentry, err);
-> >   	if (err)
-> > -		goto out_req;
-> > +		goto out_fmode;
-> >   
-> >   	if ((flags & O_CREAT) && !req->r_reply_info.head->is_dentry)
-> >   		err = ceph_handle_notrace_create(dir, dentry);
-> > @@ -527,7 +704,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
-> >   		dn = NULL;
-> >   	}
-> >   	if (err)
-> > -		goto out_req;
-> > +		goto out_fmode;
-> >   	if (dn || d_really_is_negative(dentry) || d_is_symlink(dentry)) {
-> >   		/* make vfs retry on splice, ENOENT, or symlink */
-> >   		dout("atomic_open finish_no_open on dn %p\n", dn);
-> > @@ -543,9 +720,10 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
-> >   		}
-> >   		err = finish_open(file, dentry, ceph_open);
-> >   	}
-> > -out_req:
-> > +out_fmode:
-> >   	if (!req->r_err && req->r_target_inode)
-> >   		ceph_put_fmode(ceph_inode(req->r_target_inode), req->r_fmode);
-> > +out_req:
-> >   	ceph_mdsc_put_request(req);
-> >   out_ctx:
-> >   	ceph_release_acl_sec_ctx(&as_ctx);
-> > diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-> > index 91d09cf37649..e035c5194005 100644
-> > --- a/include/linux/ceph/ceph_fs.h
-> > +++ b/include/linux/ceph/ceph_fs.h
-> > @@ -659,6 +659,9 @@ int ceph_flags_to_mode(int flags);
-> >   #define CEPH_CAP_ANY      (CEPH_CAP_ANY_RD | CEPH_CAP_ANY_EXCL | \
-> >   			   CEPH_CAP_ANY_FILE_WR | CEPH_CAP_FILE_LAZYIO | \
-> >   			   CEPH_CAP_PIN)
-> > +#define CEPH_CAP_ALL_FILE (CEPH_CAP_PIN | CEPH_CAP_ANY_SHARED | \
-> > +			   CEPH_CAP_AUTH_EXCL | CEPH_CAP_XATTR_EXCL | \
-> > +			   CEPH_CAP_ANY_FILE_RD | CEPH_CAP_ANY_FILE_WR)
-> >   
-> >   #define CEPH_CAP_LOCKS (CEPH_LOCK_IFILE | CEPH_LOCK_IAUTH | CEPH_LOCK_ILINK | \
-> >   			CEPH_LOCK_IXATTR)
+
+> > >       ceph_osdc_put_request(req);
+> > >       if (rc == 0)
+> > >               rc = len;
 > > 
+> > Ditto here on my earlier comment in the earlier email. Let's just turn
+> > this into a ceph_osdc_writepages_start function and open-code the wait
+> > and latency calculation in writepage_nounlock().
+> 
+> That's a good idea, but let's keep the existing name.  The non-blocking
+> behavior should be the default -- I have most of the remaining blocking
+> methods in libceph converted in a private branch for rbd exclusive-lock
+> rewrite.
+> 
+
+As a general rule, I like changing the name when a function's behavior
+changes significantly like this, as that makes it harder to screw things
+up when selectively backporting patches.
+
+In this case, there's only a single caller of each, so I don't have a
+strong objection, but I have been bitten by this before.
+
+It also might not hurt to move both ceph_osdc_readpages and
+ceph_osdc_writepages into ceph.ko. Given that they're only called from
+cephfs they probably belong there anyway.
 
 -- 
 Jeff Layton <jlayton@kernel.org>
