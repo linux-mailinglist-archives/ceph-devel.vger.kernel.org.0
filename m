@@ -2,43 +2,47 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 502D313D813
+	by mail.lfdr.de (Postfix) with ESMTP id C36BA13D814
 	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2020 11:40:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbgAPKis (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 16 Jan 2020 05:38:48 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45167 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725800AbgAPKis (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 Jan 2020 05:38:48 -0500
+        id S1726574AbgAPKiz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 16 Jan 2020 05:38:55 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:47992 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725800AbgAPKiz (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 16 Jan 2020 05:38:55 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579171127;
+        s=mimecast20190719; t=1579171133;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=MzxV17x5CpBSvYPBOaWOAHH6cV+7cir6yU/1hOZvW0c=;
-        b=GsLKBdBKaPv3/iIXlNbz75sP/oCndGTuFe3Mvgr2SC0VRU6UhJJJteveEIz3xga8wt/y7P
-        npot8yXXp7XrnGLy1AXF5J1H7jW8boVj+Bs3khTcI3RX57IzexIPSgnF1WdBkJFf9YnLdC
-        TxRCEM3dlNc0Te9rDQG7Glgprpgx3uQ=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XvUMa3v11SmMSTHgZk2fKGpZhBFffXE3qNzrjoSNnLM=;
+        b=LA/1TfzBJqdNufAJgi9cXLF0j/aJeTQcrap/R/wxtFtGsPRUoEgzc3M377A0uAyUl5Vu/X
+        4N1O0qZBH/dsUb1ePOE2lYXLcvsHVuRwofykZ01c2ZRotM+JCmWhWxRXXOYqKpl9T+veFq
+        /Z6tdYaTze+RH66GyNYY0kHpc0/urso=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-136-HR8S6tFEPiCJWVWkD4nsJA-1; Thu, 16 Jan 2020 05:38:46 -0500
-X-MC-Unique: HR8S6tFEPiCJWVWkD4nsJA-1
+ us-mta-391-aLq8IysXMWOqNR3ssvK4bQ-1; Thu, 16 Jan 2020 05:38:51 -0500
+X-MC-Unique: aLq8IysXMWOqNR3ssvK4bQ-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 76D10800D4C;
-        Thu, 16 Jan 2020 10:38:45 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A40B7190D342;
+        Thu, 16 Jan 2020 10:38:50 +0000 (UTC)
 Received: from localhost.localdomain (ovpn-12-49.pek2.redhat.com [10.72.12.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7D3D660C63;
-        Thu, 16 Jan 2020 10:38:40 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0CF9E60FC2;
+        Thu, 16 Jan 2020 10:38:45 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     jlayton@kernel.org, idryomov@gmail.com, zyan@redhat.com
 Cc:     sage@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
         Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v4 0/8] ceph: add perf metrics support
-Date:   Thu, 16 Jan 2020 05:38:22 -0500
-Message-Id: <20200116103830.13591-1-xiubli@redhat.com>
+Subject: [PATCH v4 1/8] ceph: add global dentry lease metric support
+Date:   Thu, 16 Jan 2020 05:38:23 -0500
+Message-Id: <20200116103830.13591-2-xiubli@redhat.com>
+In-Reply-To: <20200116103830.13591-1-xiubli@redhat.com>
+References: <20200116103830.13591-1-xiubli@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Content-Transfer-Encoding: quoted-printable
@@ -49,157 +53,306 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Xiubo Li <xiubli@redhat.com>
 
-Changed in V2:
-- add read/write/metadata latency metric support.
-- add and send client provided metric flags in client metadata
-- addressed the comments from Ilya and merged the 4/4 patch into 3/4.
-- addressed all the other comments in v1 series.
+For the dentry lease we will only count the hit/miss info triggered
+from the vfs calls, for the cases like request reply handling and
+perodically ceph_trim_dentries() we will ignore them.
 
-Changed in V3:
-- addressed Jeff's comments and let's the callers do the metric
-counting.
-- with some small fixes for the read/write latency
-- tested based on the latest testing branch
+Currently only the debugfs is support:
 
-Changed in V4:
-- fix the lock issue
-
-It will send the metrics to the MDSs every second if sending_metrics is e=
-nabled, disable as default.
-
-
-We can get the metrics from the debugfs:
-
-$ cat /sys/kernel/debug/ceph/0c93a60d-5645-4c46-8568-4c8f63db4c7f.client4=
-267/metrics=20
-item          total       sum_lat(us)     avg_lat(us)
------------------------------------------------------
-read          13          417000          32076
-write         42          131205000       3123928
-metadata      104         493000          4740
+The output will be:
 
 item          total           miss            hit
 -------------------------------------------------
-d_lease       204             0               918
+d_lease       11              7               141
 
-session       caps            miss            hit
--------------------------------------------------
-0             204             213             368218
+URL: https://tracker.ceph.com/issues/43215
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/debugfs.c    | 32 ++++++++++++++++++++++++++++----
+ fs/ceph/dir.c        | 18 ++++++++++++++++--
+ fs/ceph/mds_client.c | 37 +++++++++++++++++++++++++++++++++++--
+ fs/ceph/mds_client.h |  9 +++++++++
+ fs/ceph/super.h      |  1 +
+ 5 files changed, 89 insertions(+), 8 deletions(-)
 
-
-In the MDS side, we can get the metrics(NOTE: the latency is in
-nanosecond):
-
-$ ./bin/ceph fs perf stats | python -m json.tool
-{
-    "client_metadata": {
-        "client.4267": {
-            "IP": "v1:192.168.195.165",
-            "hostname": "fedora1",
-            "mount_point": "N/A",
-            "root": "/"
-        }
-    },
-    "counters": [
-        "cap_hit"
-    ],
-    "global_counters": [
-        "read_latency",
-        "write_latency",
-        "metadata_latency",
-        "dentry_lease_hit"
-    ],
-    "global_metrics": {
-        "client.4267": [
-            [
-                0,
-                32076923
-            ],
-            [
-                3,
-                123928571
-            ],
-            [
-                0,
-                4740384
-            ],
-            [
-                918,
-                0
-            ]
-        ]
-    },
-    "metrics": {
-        "delayed_ranks": [],
-        "mds.0": {
-            "client.4267": [
-                [
-                    368218,
-                    213
-                ]
-            ]
-        }
-    }
-}
-
-
-The provided metric flags in client metadata
-
-$./bin/cephfs-journal-tool --rank=3D1:0 event get --type=3DSESSION json
-Wrote output to JSON file 'dump'
-$ cat dump
-[=20
-    {
-        "client instance": "client.4275 v1:192.168.195.165:0/461391971",
-        "open": "true",
-        "client map version": 1,
-        "inos": "[]",
-        "inotable version": 0,
-        "client_metadata": {
-            "client_features": {
-                "feature_bits": "0000000000001bff"
-            },
-            "metric_spec": {
-                "metric_flags": {
-                    "feature_bits": "000000000000001f"
-                }
-            },
-            "entity_id": "",
-            "hostname": "fedora1",
-            "kernel_version": "5.5.0-rc2+",
-            "root": "/"
-        }
-    },
-[...]
-
-
-
-Xiubo Li (8):
-  ceph: add global dentry lease metric support
-  ceph: add caps perf metric for each session
-  ceph: add global read latency metric support
-  ceph: add global write latency metric support
-  ceph: add global metadata perf metric support
-  ceph: periodically send perf metrics to MDS
-  ceph: add reset metrics support
-  ceph: send client provided metric flags in client metadata
-
- fs/ceph/acl.c                   |   2 +
- fs/ceph/addr.c                  |  40 +++-
- fs/ceph/caps.c                  |  74 +++++++
- fs/ceph/debugfs.c               | 182 +++++++++++++++-
- fs/ceph/dir.c                   |  27 ++-
- fs/ceph/file.c                  |  37 ++++
- fs/ceph/mds_client.c            | 369 ++++++++++++++++++++++++++++++--
- fs/ceph/mds_client.h            |  48 +++++
- fs/ceph/quota.c                 |   9 +-
- fs/ceph/super.h                 |  14 ++
- fs/ceph/xattr.c                 |  17 +-
- include/linux/ceph/ceph_fs.h    |  77 +++++++
- include/linux/ceph/osd_client.h |   5 +-
- net/ceph/osd_client.c           |  18 +-
- 14 files changed, 878 insertions(+), 41 deletions(-)
-
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index fb7cabd98e7b..40a22da0214a 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -124,6 +124,22 @@ static int mdsc_show(struct seq_file *s, void *p)
+ 	return 0;
+ }
+=20
++static int metric_show(struct seq_file *s, void *p)
++{
++	struct ceph_fs_client *fsc =3D s->private;
++	struct ceph_mds_client *mdsc =3D fsc->mdsc;
++
++	seq_printf(s, "item          total           miss            hit\n");
++	seq_printf(s, "-------------------------------------------------\n");
++
++	seq_printf(s, "%-14s%-16lld%-16lld%lld\n", "d_lease",
++		   atomic64_read(&mdsc->metric.total_dentries),
++		   percpu_counter_sum(&mdsc->metric.d_lease_mis),
++		   percpu_counter_sum(&mdsc->metric.d_lease_hit));
++
++	return 0;
++}
++
+ static int caps_show_cb(struct inode *inode, struct ceph_cap *cap, void =
+*p)
+ {
+ 	struct seq_file *s =3D p;
+@@ -220,6 +236,7 @@ static int mds_sessions_show(struct seq_file *s, void=
+ *ptr)
+=20
+ CEPH_DEFINE_SHOW_FUNC(mdsmap_show)
+ CEPH_DEFINE_SHOW_FUNC(mdsc_show)
++CEPH_DEFINE_SHOW_FUNC(metric_show)
+ CEPH_DEFINE_SHOW_FUNC(caps_show)
+ CEPH_DEFINE_SHOW_FUNC(mds_sessions_show)
+=20
+@@ -255,6 +272,7 @@ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *f=
+sc)
+ 	debugfs_remove(fsc->debugfs_mdsmap);
+ 	debugfs_remove(fsc->debugfs_mds_sessions);
+ 	debugfs_remove(fsc->debugfs_caps);
++	debugfs_remove(fsc->debugfs_metric);
+ 	debugfs_remove(fsc->debugfs_mdsc);
+ }
+=20
+@@ -295,11 +313,17 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fs=
+c)
+ 						fsc,
+ 						&mdsc_show_fops);
+=20
++	fsc->debugfs_metric =3D debugfs_create_file("metrics",
++						  0400,
++						  fsc->client->debugfs_dir,
++						  fsc,
++						  &metric_show_fops);
++
+ 	fsc->debugfs_caps =3D debugfs_create_file("caps",
+-						   0400,
+-						   fsc->client->debugfs_dir,
+-						   fsc,
+-						   &caps_show_fops);
++						0400,
++						fsc->client->debugfs_dir,
++						fsc,
++						&caps_show_fops);
+ }
+=20
+=20
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index 10294f07f5f0..658c55b323cc 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -38,6 +38,8 @@ static int __dir_lease_try_check(const struct dentry *d=
+entry);
+ static int ceph_d_init(struct dentry *dentry)
+ {
+ 	struct ceph_dentry_info *di;
++	struct ceph_fs_client *fsc =3D ceph_sb_to_client(dentry->d_sb);
++	struct ceph_mds_client *mdsc =3D fsc->mdsc;
+=20
+ 	di =3D kmem_cache_zalloc(ceph_dentry_cachep, GFP_KERNEL);
+ 	if (!di)
+@@ -48,6 +50,9 @@ static int ceph_d_init(struct dentry *dentry)
+ 	di->time =3D jiffies;
+ 	dentry->d_fsdata =3D di;
+ 	INIT_LIST_HEAD(&di->lease_list);
++
++	atomic64_inc(&mdsc->metric.total_dentries);
++
+ 	return 0;
+ }
+=20
+@@ -1613,6 +1618,7 @@ static int dir_lease_is_valid(struct inode *dir, st=
+ruct dentry *dentry)
+  */
+ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
+ {
++	struct ceph_mds_client *mdsc;
+ 	int valid =3D 0;
+ 	struct dentry *parent;
+ 	struct inode *dir, *inode;
+@@ -1651,9 +1657,8 @@ static int ceph_d_revalidate(struct dentry *dentry,=
+ unsigned int flags)
+ 		}
+ 	}
+=20
++	mdsc =3D ceph_sb_to_client(dir->i_sb)->mdsc;
+ 	if (!valid) {
+-		struct ceph_mds_client *mdsc =3D
+-			ceph_sb_to_client(dir->i_sb)->mdsc;
+ 		struct ceph_mds_request *req;
+ 		int op, err;
+ 		u32 mask;
+@@ -1661,6 +1666,8 @@ static int ceph_d_revalidate(struct dentry *dentry,=
+ unsigned int flags)
+ 		if (flags & LOOKUP_RCU)
+ 			return -ECHILD;
+=20
++		percpu_counter_inc(&mdsc->metric.d_lease_mis);
++
+ 		op =3D ceph_snap(dir) =3D=3D CEPH_SNAPDIR ?
+ 			CEPH_MDS_OP_LOOKUPSNAP : CEPH_MDS_OP_LOOKUP;
+ 		req =3D ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS);
+@@ -1692,6 +1699,8 @@ static int ceph_d_revalidate(struct dentry *dentry,=
+ unsigned int flags)
+ 			dout("d_revalidate %p lookup result=3D%d\n",
+ 			     dentry, err);
+ 		}
++	} else {
++		percpu_counter_inc(&mdsc->metric.d_lease_hit);
+ 	}
+=20
+ 	dout("d_revalidate %p %s\n", dentry, valid ? "valid" : "invalid");
+@@ -1700,6 +1709,7 @@ static int ceph_d_revalidate(struct dentry *dentry,=
+ unsigned int flags)
+=20
+ 	if (!(flags & LOOKUP_RCU))
+ 		dput(parent);
++
+ 	return valid;
+ }
+=20
+@@ -1734,9 +1744,13 @@ static int ceph_d_delete(const struct dentry *dent=
+ry)
+ static void ceph_d_release(struct dentry *dentry)
+ {
+ 	struct ceph_dentry_info *di =3D ceph_dentry(dentry);
++	struct ceph_fs_client *fsc =3D ceph_sb_to_client(dentry->d_sb);
++	struct ceph_mds_client *mdsc =3D fsc->mdsc;
+=20
+ 	dout("d_release %p\n", dentry);
+=20
++	atomic64_dec(&mdsc->metric.total_dentries);
++
+ 	spin_lock(&dentry->d_lock);
+ 	__dentry_lease_unlist(di);
+ 	dentry->d_fsdata =3D NULL;
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 8263f75badfc..a24fd00676b8 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -4158,10 +4158,31 @@ static void delayed_work(struct work_struct *work=
+)
+ 	schedule_delayed(mdsc);
+ }
+=20
++static int ceph_mdsc_metric_init(struct ceph_client_metric *metric)
++{
++	int ret;
++
++	if (!metric)
++		return -EINVAL;
++
++	atomic64_set(&metric->total_dentries, 0);
++	ret =3D percpu_counter_init(&metric->d_lease_hit, 0, GFP_KERNEL);
++	if (ret)
++		return ret;
++	ret =3D percpu_counter_init(&metric->d_lease_mis, 0, GFP_KERNEL);
++	if (ret) {
++		percpu_counter_destroy(&metric->d_lease_hit);
++		return ret;
++	}
++
++	return 0;
++}
++
+ int ceph_mdsc_init(struct ceph_fs_client *fsc)
+=20
+ {
+ 	struct ceph_mds_client *mdsc;
++	int err;
+=20
+ 	mdsc =3D kzalloc(sizeof(struct ceph_mds_client), GFP_NOFS);
+ 	if (!mdsc)
+@@ -4170,8 +4191,8 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
+ 	mutex_init(&mdsc->mutex);
+ 	mdsc->mdsmap =3D kzalloc(sizeof(*mdsc->mdsmap), GFP_NOFS);
+ 	if (!mdsc->mdsmap) {
+-		kfree(mdsc);
+-		return -ENOMEM;
++		err =3D -ENOMEM;
++		goto err_mdsc;
+ 	}
+=20
+ 	fsc->mdsc =3D mdsc;
+@@ -4210,6 +4231,9 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
+ 	init_waitqueue_head(&mdsc->cap_flushing_wq);
+ 	INIT_WORK(&mdsc->cap_reclaim_work, ceph_cap_reclaim_work);
+ 	atomic_set(&mdsc->cap_reclaim_pending, 0);
++	err =3D ceph_mdsc_metric_init(&mdsc->metric);
++	if (err)
++		goto err_mdsmap;
+=20
+ 	spin_lock_init(&mdsc->dentry_list_lock);
+ 	INIT_LIST_HEAD(&mdsc->dentry_leases);
+@@ -4228,6 +4252,12 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
+ 	strscpy(mdsc->nodename, utsname()->nodename,
+ 		sizeof(mdsc->nodename));
+ 	return 0;
++
++err_mdsmap:
++	kfree(mdsc->mdsmap);
++err_mdsc:
++	kfree(mdsc);
++	return err;
+ }
+=20
+ /*
+@@ -4485,6 +4515,9 @@ void ceph_mdsc_destroy(struct ceph_fs_client *fsc)
+=20
+ 	ceph_mdsc_stop(mdsc);
+=20
++	percpu_counter_destroy(&mdsc->metric.d_lease_mis);
++	percpu_counter_destroy(&mdsc->metric.d_lease_hit);
++
+ 	fsc->mdsc =3D NULL;
+ 	kfree(mdsc);
+ 	dout("mdsc_destroy %p done\n", mdsc);
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index 27a7446e10d3..dd1f417b90eb 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -358,6 +358,13 @@ struct cap_wait {
+ 	int			want;
+ };
+=20
++/* This is the global metrics */
++struct ceph_client_metric {
++	atomic64_t		total_dentries;
++	struct percpu_counter	d_lease_hit;
++	struct percpu_counter	d_lease_mis;
++};
++
+ /*
+  * mds client state
+  */
+@@ -446,6 +453,8 @@ struct ceph_mds_client {
+ 	struct list_head  dentry_leases;     /* fifo list */
+ 	struct list_head  dentry_dir_leases; /* lru list */
+=20
++	struct ceph_client_metric metric;
++
+ 	spinlock_t		snapid_map_lock;
+ 	struct rb_root		snapid_map_tree;
+ 	struct list_head	snapid_map_lru;
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 3ef17dd6491e..7af91628636c 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -128,6 +128,7 @@ struct ceph_fs_client {
+ 	struct dentry *debugfs_congestion_kb;
+ 	struct dentry *debugfs_bdi;
+ 	struct dentry *debugfs_mdsc, *debugfs_mdsmap;
++	struct dentry *debugfs_metric;
+ 	struct dentry *debugfs_mds_sessions;
+ #endif
+=20
 --=20
 2.21.0
 
