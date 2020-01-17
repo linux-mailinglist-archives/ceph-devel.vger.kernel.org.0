@@ -2,260 +2,354 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21264140583
-	for <lists+ceph-devel@lfdr.de>; Fri, 17 Jan 2020 09:33:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92BC9140AB2
+	for <lists+ceph-devel@lfdr.de>; Fri, 17 Jan 2020 14:28:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729538AbgAQIdU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 17 Jan 2020 03:33:20 -0500
-Received: from mail-eopbgr1300089.outbound.protection.outlook.com ([40.107.130.89]:56480
-        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727002AbgAQIdT (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 17 Jan 2020 03:33:19 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dtn6RerhD6TrCsDnNyidnJ6hnoNtdfZNIc7cNVCcgipd4sGBWKSgk9aZ3WSDTlGNRRexJTYOXsJln37mn2GcNV2unFFwyYs35HaPPeD7XgYgh+2+1PzNAEEttME2RSkOSEAFuLZu1lxpNhoJThSnMSD8nem4waUNoWeAMAkPKP9N9lU63XyjHYz4stwHXDNWS5lY1tV70+V+bHRqh+zUauBsIm0ZWiN8Nc08zV6TMP4tzV7g4jcZC5sSvTacvEEz/fmR9G7pzozgs0nJyM35QJCWFR8mSaRW16K+N3bCebvpj6SNv2+90Ver7qitwFTOYHMr05A4Q2lv8JqgWi9WGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YFTTf0RxC0c05dt30u6FWqU/t6EK405ESQYzvHjPZHs=;
- b=WBoZdxW2GlsxJCqex0e9Er7DmLdYnmK4yNOmzLPh8uo8LHEAoC2TO6RLVs5x3oekzrLFK1QL3EutbjpcrxfbgxgrPSxcMLkI4HMdFRKnfZGvLe3PX1rpuoVQgP0hT7Cmir22CS+7oRp51ngc0PXs4KWJtacdJp26Wqwo5yfe5hUhgp93pfRhei5SboP+dMfAsLtnCGwfYo9wnoJWIfRz025o0qMrLbac2DXipSM2DWC8cJ8HadJ9l7ivpjM8nz2Ie2f1pgr6be3acCIO/VgZrQmE8C9KzVvHixcb051h0p+RC14bC+UBAU9raL7dW/RkRwrn45eWVlrqF3YVAcV1iA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
- dkim=pass header.d=oppo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oppoglobal.onmicrosoft.com; s=selector1-oppoglobal-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YFTTf0RxC0c05dt30u6FWqU/t6EK405ESQYzvHjPZHs=;
- b=YZLISQqkLaLKExnW2we0BAOM5PFaAsnm16I+MVBvzezSBjfJPlLTW1d+M6G+4NF6iod7NLNFW7/foFlWhn7Bj5pE36GAt+IXolVNgTKYPJiO9ybobLaBCSdg5edHv42Vbgr60CfwUTBteKUc/oa+6xEkqkqn1mmdnB4VI+WMRJc=
-Received: from HK0PR02MB2563.apcprd02.prod.outlook.com (52.133.210.11) by
- HK0PR02MB3425.apcprd02.prod.outlook.com (20.177.69.78) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2644.19; Fri, 17 Jan 2020 08:33:09 +0000
-Received: from HK0PR02MB2563.apcprd02.prod.outlook.com
- ([fe80::c091:ad63:8876:b001]) by HK0PR02MB2563.apcprd02.prod.outlook.com
- ([fe80::c091:ad63:8876:b001%2]) with mapi id 15.20.2644.021; Fri, 17 Jan 2020
- 08:33:09 +0000
-From:   =?utf-8?B?6ZmI5a6J5bqG?= <chenanqing@oppo.com>
-To:     "Yan, Zheng" <zyan@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: reply:just thank you all for your reply: [PATCH]--fix the race
- condition of remove_session_caps of ceph which tirgger bugon,
-Thread-Topic: reply:just thank you all for your reply: [PATCH]--fix the race
- condition of remove_session_caps of ceph which tirgger bugon,
-Thread-Index: AdXNDvhdW1jjFpB+SwymxnWKBZijNw==
-Date:   Fri, 17 Jan 2020 08:33:09 +0000
-Message-ID: <HK0PR02MB2563F5F9BE8E368DB9571EDCAB310@HK0PR02MB2563.apcprd02.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=chenanqing@oppo.com; 
-x-originating-ip: [58.255.79.105]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5a68b8c2-7c9e-4df4-8a8f-08d79b27e209
-x-ms-traffictypediagnostic: HK0PR02MB3425:
-x-microsoft-antispam-prvs: <HK0PR02MB3425C986C2A90679EDA8B338AB310@HK0PR02MB3425.apcprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:279;
-x-forefront-prvs: 0285201563
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39850400004)(346002)(136003)(366004)(396003)(199004)(189003)(66556008)(66476007)(66946007)(52536014)(66446008)(64756008)(81156014)(8676002)(81166006)(55016002)(8936002)(7696005)(71200400001)(2906002)(85182001)(86362001)(186003)(6506007)(53546011)(478600001)(33656002)(966005)(316002)(110136005)(76116006)(9686003)(26005)(5660300002)(11606004);DIR:OUT;SFP:1101;SCL:1;SRVR:HK0PR02MB3425;H:HK0PR02MB2563.apcprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: oppo.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: bwDJUPYToEe+19tjcrpZS5vs3WXK0WXc7bQuq7dpTkIbwW9eHzh2XXqVaDCN5HmKhW2dCAIuF2eH75wrGHGgZy+eGOed+uJJefObIUk0i8qkqHkNsNtFw6VOlCZYZ0TwiaXy0HVgX85fEDQ8Hz/gXL6GxcZn/EP6Ic0AzJhSnqml8SwVtL1rxRkkIr+A/dEAzujWJWz6S/ohTfaS4h9xnMMEyWFiazeNpftaZ3jqDBwiCX35O9+6A3xm4V4bEjFS7ZpAlWT0IQtFtE5rXca/Z4wmJdrSkCpg3RJho9Ul0BYsNInQSTIxUqOzx5lqXc0xEBbeHLyzxZ+r4WR6hTtTTUXnCJweF1iADISu0bSt/oHRYO0bJO7OyG2L9niT3oqgl3DMNdDU0gEn0gjQDHZ/hp5s7fOB05ghFX/XGtPMcV0PxcLG9iA7if/YOWc6mUmXfOEcHRq38fk801p3eP+7MS1wlkNms8ij0emDLOhs2Vk74D4wiBFkuOuvw42Dde4WHBBDZxrhVtRfzyvzGS67RlY5dqwr2lPDyLWOaSa3PAXQFHQtxC2I+qXB9aMHQ3jK
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727011AbgAQN2X (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 17 Jan 2020 08:28:23 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:34762 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726329AbgAQN2X (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 17 Jan 2020 08:28:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579267701;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nn/fYvc2FGsW1G7Xlop7rfGHRCr7kkVWLQHXhSy8wnI=;
+        b=XrYbEcwddwU0pjNbjInagzKhIeN5NMjNNVMCO5as922Se0YJfyaVRTNbfKNK7s3T3JUXeQ
+        4q08BLElfn/7scuLrjz8iiVGZIoIv0zi64LZpVcT9bc3iyZbNx0yZwJDShhS+w0wc2J9qK
+        J7nM4XD/OPlmtGvLhXgp65zt2TtnTvU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-248-U_ip5cEnPdCGygRSFWd5Ug-1; Fri, 17 Jan 2020 08:28:20 -0500
+X-MC-Unique: U_ip5cEnPdCGygRSFWd5Ug-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8EF6E992C6;
+        Fri, 17 Jan 2020 13:28:19 +0000 (UTC)
+Received: from [10.72.12.24] (ovpn-12-24.pek2.redhat.com [10.72.12.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BD4D389E63;
+        Fri, 17 Jan 2020 13:28:12 +0000 (UTC)
+Subject: Re: [RFC PATCH v2 10/10] ceph: attempt to do async create when
+ possible
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com, pdonnell@redhat.com,
+        xiubli@redhat.com
+References: <20200115205912.38688-1-jlayton@kernel.org>
+ <20200115205912.38688-11-jlayton@kernel.org>
+From:   "Yan, Zheng" <zyan@redhat.com>
+Message-ID: <05265520-30e8-1d88-c2f1-863308de31d1@redhat.com>
+Date:   Fri, 17 Jan 2020 21:28:11 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a68b8c2-7c9e-4df4-8a8f-08d79b27e209
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2020 08:33:09.3301
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yEM+vByjo86mj4yWJDtKCWYlVy7ABwodzeLnm1TdWYZowTQBsu95txwvn25NVOwG5GdVZp/C+m+XZkkSwZu2FA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0PR02MB3425
+In-Reply-To: <20200115205912.38688-11-jlayton@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-dGhhbmsgeW91IGFsbCBmb3IgeW91IHJlcGx5ICxpdCdzIG15IGZpcnN0IHRpbWUgdG8gc3VibWl0
-IHBhdGNoICxhbHRob3VnaCBpdCBpcyBmaXhlZCBieSA6DQpjb21taXQgODdiYzViODk1ZDk0YTBm
-NDBmZTE3MGQ0Y2Y1NzcxYzhlOGY4NWQxNQ0KDQpJJ20gc29ycnkgZm9yIG15IGNhcmVsZXNzIHdo
-aWNoIHdhc3RlIHlvdXIgc29tZSB0aW1lIC4NCg0KDQoNCk9uIDEvMTYvMjAgOTozMSBQTSwgSmVm
-ZiBMYXl0b24gd3JvdGU6DQo+IE9uIFRodSwgMjAyMC0wMS0xNiBhdCAwMjowMiArMDAwMCwg6ZmI
-5a6J5bqGIHdyb3RlOg0KPj4gSGkgQWxs77yMSSB0aGluayBJIGZpbmQgYSBidWcgaW4gdGhlIGNl
-cGggLg0KPj4NCj4+DQo+PiBiYWNrZ3JvdW5kOg0KPj4gWzM0MTg2ODcuMTIzNjEwXSBrZXJuZWwg
-QlVHIGF0IGZzL2NlcGgvbWRzX2NsaWVudC5jOjEzMjUhDQo+PiBbMzQxODY4Ny4xMjQxMDJdIGlu
-dmFsaWQgb3Bjb2RlOiAwMDAwIFsjMV0gU01QIFszNDE4Njg3LjEzMDEzMl0gQ1BVOg0KPj4gMjcg
-UElEOiA0NTM2OTIgQ29tbToga3dvcmtlci8yNzoyIEtkdW1wOiBsb2FkZWQgVGFpbnRlZDogUCBP
-RQ0KPj4gLS0tLS0tLS0tLS0tIFQgMy4xMC4wLTk1Ny4yNy4yLmVsNy54ODZfNjQgIzEgWzM0MTg2
-ODcuMTMxNDI3XQ0KPj4gSGFyZHdhcmUgbmFtZTogSW5zcHVyIE5GNTI4OE01L1laTUItMDA4MzQt
-MTAxLCBCSU9TIDQuMC4wOCAwOS8xOS8yMDE5DQo+PiBbMzQxODY4Ny4xMzIxMDldIFdvcmtxdWV1
-ZTogY2VwaC1tc2dyIGNlcGhfY29uX3dvcmtmbiBbbGliY2VwaF0NCj4+IFszNDE4Njg3LjEzMjc5
-Ml0gdGFzazogZmZmZjk0YzkzMjY1MjA4MCB0aTogZmZmZjk0YjczZGFlNDAwMCB0YXNrLnRpOg0K
-Pj4gZmZmZjk0YjczZGFlNDAwMCBbMzQxODY4Ny4xMzM0ODhdIFJJUDogMDAxMDpbPGZmZmZmZmZm
-YzFhY2RjOWY+XQ0KPj4gWzxmZmZmZmZmZmMxYWNkYzlmPl0gcmVtb3ZlX3Nlc3Npb25fY2Fwcysw
-eDFiZi8weDFkMCBbY2VwaF0NCj4+IFszNDE4Njg3LjEzNDIxM10gUlNQOiAwMDE4OmZmZmY5NGI3
-M2RhZTdiZTAgRUZMQUdTOiAwMDAxMDIwMg0KPj4gWzM0MTg2ODcuMTM0OTMzXSBSQVg6IDAwMDAw
-MDAwMDAwMDAwMDEgUkJYOiBmZmZmOTRhMDlhNDllZDM4IFJDWDoNCj4+IGZmZmY5NGI3M2RhZTdi
-ZTggWzM0MTg2ODcuMTM1NjY4XSBSRFg6IGZmZmY5NGM0MDlmNzgxMTggUlNJOg0KPj4gZmZmZjk0
-YjczZGFlN2JlOCBSREk6IGZmZmY5NGEwOWE0OWU4MDAgWzM0MTg2ODcuMTM2NDA3XSBSQlA6DQo+
-PiBmZmZmOTRiNzNkYWU3YzM4IFIwODogZmZmZjk0YzQwOWY3ODExOCBSMDk6IDAwMDAwMDAwMDAw
-MDAwMDENCj4+IFszNDE4Njg3LjEzNzE0N10gUjEwOiAwMDAwMDAwMDAwMDAwMDAwIFIxMTogMDAw
-MDAwMDAwMDAwMDAwMCBSMTI6DQo+PiBmZmZmOTRhMDlhNDllODAwIFszNDE4Njg3LjEzNzg5NV0g
-UjEzOiBmZmZmOTRiNzNkYWU3YmU4IFIxNDoNCj4+IGZmZmY5NGM0MDlmNzgwMDAgUjE1OiBmZmZm
-OTRhMDlhNDllZDQwIFszNDE4Njg3LjEzODY0OF0gRlM6DQo+PiAwMDAwMDAwMDAwMDAwMDAwKDAw
-MDApIEdTOmZmZmY5NGUwYmMwYzAwMDAoMDAwMCkNCj4+IGtubEdTOjAwMDAwMDAwMDAwMDAwMDAg
-WzM0MTg2ODcuMTM5NDE0XSBDUzogMDAxMCBEUzogMDAwMCBFUzogMDAwMA0KPj4gQ1IwOiAwMDAw
-MDAwMDgwMDUwMDMzIFszNDE4Njg3LjE0MDE3NV0gQ1IyOiAwMDAwN2Y0OWM4NjFhMzMwIENSMzog
-MDAwMDAwMmU0ZWVjNDAwMCBDUjQ6IDAwMDAwMDAwMDA3NjA3ZTAgWzM0MTg2ODcuMTQwOTM5XSBE
-UjA6IDAwMDAwMDAwMDAwMDAwMDAgRFIxOiAwMDAwMDAwMDAwMDAwMDAwIERSMjogMDAwMDAwMDAw
-MDAwMDAwMCBbMzQxODY4Ny4xNDE2OTRdIERSMzogMDAwMDAwMDAwMDAwMDAwMCBEUjY6IDAwMDAw
-MDAwZmZmZTBmZjAgRFI3OiAwMDAwMDAwMDAwMDAwNDAwIFszNDE4Njg3LjE0MjQzOV0gUEtSVTog
-MDAwMDAwMDAgWzM0MTg2ODcuMTQzMTczXSBDYWxsIFRyYWNlOg0KPj4gWzM0MTg2ODcuMTQzOTA3
-XSBbPGZmZmZmZmZmYzFhZDM5OWM+XSBkaXNwYXRjaCsweDM5Yy8weGIwMCBbY2VwaF0NCj4+IFsz
-NDE4Njg3LjE0NDYzNV0gWzxmZmZmZmZmZmJkODFiNTZhPl0gPyBrZXJuZWxfcmVjdm1zZysweDNh
-LzB4NTANCj4+IFszNDE4Njg3LjE0NTM2MV0gWzxmZmZmZmZmZmMxYTYwZmI0Pl0gdHJ5X3JlYWQr
-MHg1MTQvMHgxMmMwIFtsaWJjZXBoXQ0KPj4gWzM0MTg2ODcuMTQ2MDgxXSBbPGZmZmZmZmZmYzFh
-NjFmNjQ+XSBjZXBoX2Nvbl93b3JrZm4rMHhlNC8weDE1MzANCj4+IFtsaWJjZXBoXSBbMzQxODY4
-Ny4xNDY3OTVdIFs8ZmZmZmZmZmZiZDJkMWI2MD5dID8NCj4+IGZpbmlzaF90YXNrX3N3aXRjaCsw
-eGUwLzB4MWMwIFszNDE4Njg3LjE0NzUwMl0gWzxmZmZmZmZmZmJkOTY5YWJhPl0gPw0KPj4gX19z
-Y2hlZHVsZSsweDQyYS8weDg2MCBbMzQxODY4Ny4xNDgyMDFdIFs8ZmZmZmZmZmZiZDJiYWY5Zj5d
-DQo+PiBwcm9jZXNzX29uZV93b3JrKzB4MTdmLzB4NDQwIFszNDE4Njg3LjE0ODg5NV0gWzxmZmZm
-ZmZmZmJkMmJjMDM2Pl0NCj4+IHdvcmtlcl90aHJlYWQrMHgxMjYvMHgzYzAgWzM0MTg2ODcuMTQ5
-NTc5XSBbPGZmZmZmZmZmYmQyYmJmMTA+XSA/DQo+PiBtYW5hZ2Vfd29ya2Vycy5pc3JhLjI1KzB4
-MmEwLzB4MmEwDQo+PiBbMzQxODY4Ny4xNTAyNjFdIFs8ZmZmZmZmZmZiZDJjMmU4MT5dIGt0aHJl
-YWQrMHhkMS8weGUwDQo+PiBbMzQxODY4Ny4xNTA5MzNdIFs8ZmZmZmZmZmZiZDJjMmRiMD5dID8g
-aW5zZXJ0X2t0aHJlYWRfd29yaysweDQwLzB4NDANCj4+IFszNDE4Njg3LjE1MTYwM10gWzxmZmZm
-ZmZmZmJkOTc2YzFkPl0NCj4+IHJldF9mcm9tX2Zvcmtfbm9zcGVjX2JlZ2luKzB4Ny8weDIxDQo+
-PiBbMzQxODY4Ny4xNTIyNjZdIFs8ZmZmZmZmZmZiZDJjMmRiMD5dID8gaW5zZXJ0X2t0aHJlYWRf
-d29yaysweDQwLzB4NDANCj4+IFszNDE4Njg3LjE1MjkyMV0gQ29kZTogNWQgNDEgNWUgNDEgNWYg
-NWQgYzMgNDggODkgZmEgNDggYzcgYzYgNjggMzENCj4+IGFlIGMxIDQ4IGM3IGM3IDk4IDBmIGFm
-IGMxIDMxIGMwIGU4IDhkIDVjIGFkIGZiIGU5IDk2IGZlIGZmIGZmIGU4IDAzDQo+PiBhOSA3YyBm
-YiAwZiAwYiA8MGY+IDBiIDBmIDFmIDQ0IDAwIDAwIDY2IDJlIDBmIDFmIDg0IDAwIDAwIDAwIDAw
-IDAwDQo+PiAwZiAxZiA0NCAwMCBbMzQxODY4Ny4xNTQzMThdIFJJUCBbPGZmZmZmZmZmYzFhY2Rj
-OWY+XQ0KPj4gcmVtb3ZlX3Nlc3Npb25fY2FwcysweDFiZi8weDFkMCBbY2VwaF0gWzM0MTg2ODcu
-MTU0OTk4XSBSU1ANCj4+IDxmZmZmOTRiNzNkYWU3YmUwPg0KPj4NCj4+DQo+PiBhbmQgSSBmaW5k
-IGFub3RoZXIgdGhyZWFkIHdoaWNoIGlzIHdhaXRpbmcgZm9yIHRoZSBzcGlubG9jayBvZiBzZXNz
-aW9uLT5zX2NhcF9sb2NrLg0KPj4gUElEOiA1MTIxMzAgVEFTSzogZmZmZjk0YmNiNWFmYzEwMCBD
-UFU6IDYyIENPTU1BTkQ6ICJrd29ya2VyLzYyOjQiDQo+PiAjMCBbZmZmZjk0ZTBiYzU4OGU0OF0g
-Y3Jhc2hfbm1pX2NhbGxiYWNrIGF0IGZmZmZmZmZmYmQyNTYwMjcNCj4+ICMxIFtmZmZmOTRlMGJj
-NTg4ZTU4XSBubWlfaGFuZGxlIGF0IGZmZmZmZmZmYmQ5NmU5MWMNCj4+ICMyIFtmZmZmOTRlMGJj
-NTg4ZWIwXSBkb19ubWkgYXQgZmZmZmZmZmZiZDk2ZWIzZA0KPj4gIzMgW2ZmZmY5NGUwYmM1ODhl
-ZjBdIGVuZF9yZXBlYXRfbm1pIGF0IGZmZmZmZmZmYmQ5NmRkODkgW2V4Y2VwdGlvbg0KPj4gUklQ
-OiBuYXRpdmVfcXVldWVkX3NwaW5fbG9ja19zbG93cGF0aCs0NjJdDQo+PiBSSVA6IGZmZmZmZmZm
-YmQzMTM1ZGUgUlNQOiBmZmZmOTRjZmJmMmNmODAwIFJGTEFHUzogMDAwMDAyMDINCj4+IFJBWDog
-MDAwMDAwMDAwMDAwMDAwMSBSQlg6IGZmZmY5NGM0MDlmNzgwMDAgUkNYOiAwMDAwMDAwMDAwMDAw
-MDAxDQo+PiBSRFg6IDAwMDAwMDAwMDAwMDAxMDEgUlNJOiAwMDAwMDAwMDAwMDAwMDAxIFJESTog
-ZmZmZjk0YTA5YTQ5ZWQzOA0KPj4gUkJQOiBmZmZmOTRjZmJmMmNmODAwIFI4OiAwMDAwMDAwMDAw
-MDAwMTAxIFI5OiBmZmZmOTRhMWU2ZDJlMTgwDQo+PiBSMTA6IGZmZmY5NGUxYmZiYmEwZTAgUjEx
-OiBmZmZmZmZmZmZmZmZmZmZmIFIxMjogZmZmZjk0YTZjNzYzZTliMA0KPj4gUjEzOiBmZmZmOTRh
-MDlhNDllZDM4IFIxNDogZmZmZjk0YTA5YTQ5ZTgwMCBSMTU6IDAwMDAwMDAwMDAwMDA0MDANCj4+
-IE9SSUdfUkFYOiBmZmZmZmZmZmZmZmZmZmZmIENTOiAwMDEwIFNTOiAwMDE4DQo+PiAtLS0gPE5N
-SSBleGNlcHRpb24gc3RhY2s+IC0tLQ0KPj4gIzQgW2ZmZmY5NGNmYmYyY2Y4MDBdIG5hdGl2ZV9x
-dWV1ZWRfc3Bpbl9sb2NrX3Nsb3dwYXRoIGF0DQo+PiBmZmZmZmZmZmJkMzEzNWRlDQo+PiAjNSBb
-ZmZmZjk0Y2ZiZjJjZjgwOF0gcXVldWVkX3NwaW5fbG9ja19zbG93cGF0aCBhdCBmZmZmZmZmZmJk
-OTVlMmNiDQo+PiAjNiBbZmZmZjk0Y2ZiZjJjZjgxOF0gX3Jhd19zcGluX2xvY2sgYXQgZmZmZmZm
-ZmZiZDk2YzdhMA0KPj4gIzcgW2ZmZmY5NGNmYmYyY2Y4MjhdIF9fY2VwaF9yZW1vdmVfY2FwIGF0
-IGZmZmZmZmZmYzFhYzEzNjYNCj4+IFtjZXBoXS0tLS0tLS0tLS10aGlzIGZ1bmN0aW9uIGlzIHdh
-aXRpbmcgZm9yIHNwaW5sb2NrIG9mDQo+PiBzZXNzaW9uLT5zX2NhcF9sb2NrDQo+PiAjOCBbZmZm
-Zjk0Y2ZiZjJjZjg3MF0gY2VwaF9xdWV1ZV9jYXBzX3JlbGVhc2UgYXQgZmZmZmZmZmZjMWFjMTU2
-Yw0KPj4gW2NlcGhdDQo+PiAjOSBbZmZmZjk0Y2ZiZjJjZjg5MF0gY2VwaF9kZXN0cm95X2lub2Rl
-IGF0IGZmZmZmZmZmYzFhYWFiZDUgW2NlcGhdDQo+PiAjMTAgW2ZmZmY5NGNmYmYyY2Y4ZDBdIGRl
-c3Ryb3lfaW5vZGUgYXQgZmZmZmZmZmZiZDQ1ZmU0Yg0KPj4gIzExIFtmZmZmOTRjZmJmMmNmOGU4
-XSBldmljdCBhdCBmZmZmZmZmZmJkNDVmZjg1DQo+PiAjMTIgW2ZmZmY5NGNmYmYyY2Y5MTBdIGlw
-dXQgYXQgZmZmZmZmZmZiZDQ2MDgyYw0KPj4gIzEzIFtmZmZmOTRjZmJmMmNmOTQwXSBjZXBoX3B1
-dF93cmJ1ZmZlcl9jYXBfcmVmcyBhdCBmZmZmZmZmZmMxYWM0NmU0DQo+PiBbY2VwaF0NCj4+ICMx
-NCBbZmZmZjk0Y2ZiZjJjZjliMF0gd3JpdGVwYWdlc19maW5pc2ggYXQgZmZmZmZmZmZjMWFiOWVj
-YyBbY2VwaF0NCj4+ICMxNSBbZmZmZjk0Y2ZiZjJjZmEzMF0gX19jb21wbGV0ZV9yZXF1ZXN0IGF0
-IGZmZmZmZmZmYzFhNjdlYmUNCj4+IFtsaWJjZXBoXQ0KPj4gIzE2IFtmZmZmOTRjZmJmMmNmYTUw
-XSBoYW5kbGVfcmVwbHkgYXQgZmZmZmZmZmZjMWE3MGQxZCBbbGliY2VwaF0NCj4+ICMxNyBbZmZm
-Zjk0Y2ZiZjJjZmMxMF0gZGlzcGF0Y2ggYXQgZmZmZmZmZmZjMWE3MmFlMyBbbGliY2VwaF0NCj4+
-ICMxOCBbZmZmZjk0Y2ZiZjJjZmNkMF0gdHJ5X3JlYWQgYXQgZmZmZmZmZmZjMWE2MGZiNCBbbGli
-Y2VwaF0NCj4+ICMxOSBbZmZmZjk0Y2ZiZjJjZmQ5MF0gY2VwaF9jb25fd29ya2ZuIGF0IGZmZmZm
-ZmZmYzFhNjFmNjQgW2xpYmNlcGhdDQo+PiAjMjAgW2ZmZmY5NGNmYmYyY2ZlMjBdIHByb2Nlc3Nf
-b25lX3dvcmsgYXQgZmZmZmZmZmZiZDJiYWY5Zg0KPj4gIzIxIFtmZmZmOTRjZmJmMmNmZTY4XSB3
-b3JrZXJfdGhyZWFkIGF0IGZmZmZmZmZmYmQyYmMwMzYNCj4+ICMyMiBbZmZmZjk0Y2ZiZjJjZmVj
-OF0ga3RocmVhZCBhdCBmZmZmZmZmZmJkMmMyZTgxDQo+PiAjMjMgW2ZmZmY5NGNmYmYyY2ZmNTBd
-IHJldF9mcm9tX2Zvcmtfbm9zcGVjX2JlZ2luIGF0IGZmZmZmZmZmYmQ5NzZjMWQNCj4+DQo+PiBh
-ZnRlciBJIHJlYWQgdGhlIGNlcGggbW9kdWxlIG9mIGh0dHBzOi8vZ2l0aHViLmNvbS90b3J2YWxk
-cy9saW51eC5naXQNCj4+IGFuZCBrZXJuZWwvZ2l0L25leHQvbGludXgtbmV4dC5naXQgLEkgdGhp
-bmsgdGhlIGJ1ZyBpcyBleGlzdGVkIGFsbCB0aGUgc2FtZS4NCj4+DQo+PiBzbyBJIG1ha2UgYSBw
-YXRjaCxtYXliZSBJIHNob3VsZCByZXBsYWNlIHRoZSBwcl93YXJuX3JhdGVsaW1pdGVkIGJ5IHNv
-bWUgZnVuY3Rpb24gbGlrZSB1ZGVsYXk/DQo+Pg0KPg0KDQpJIHRoaW5rIHRoaXMgYnVnIGlzIGZp
-eGVkIGJ5Lg0KDQpjb21taXQgODdiYzViODk1ZDk0YTBmNDBmZTE3MGQ0Y2Y1NzcxYzhlOGY4NWQx
-NQ0KQXV0aG9yOiBZYW4sIFpoZW5nIDx6eWFuQHJlZGhhdC5jb20+DQpEYXRlOiAgIFN1biBKdW4g
-MiAwOTo0NTozOCAyMDE5ICswODAwDQoNCmNlcGg6IHVzZSBjZXBoX2V2aWN0X2lub2RlIHRvIGNs
-ZWFudXAgaW5vZGUncyByZXNvdXJjZQ0KDQpyZW1vdmVfc2Vzc2lvbl9jYXBzKCkgcmVsaWVzIG9u
-IF9fd2FpdF9vbl9mcmVlaW5nX2lub2RlKCksIHRvIHdhaXQgZm9yIGZyZWVpbmcgaW5vZGUgdG8g
-cmVtb3ZlIGl0cyBjYXBzLiBCdXQgVkZTIHdha2VzIGZyZWVpbmcgaW5vZGUgd2FpdGVycyBiZWZv
-cmUgY2FsbGluZyBkZXN0cm95X2lub2RlKCkuDQoNCkNjOiBzdGFibGVAdmdlci5rZXJuZWwub3Jn
-DQpMaW5rOiBodHRwczovL3RyYWNrZXIuY2VwaC5jb20vaXNzdWVzLzQwMTAyDQpTaWduZWQtb2Zm
-LWJ5OiAiWWFuLCBaaGVuZyIgPHp5YW5AcmVkaGF0LmNvbT4NClJldmlld2VkLWJ5OiBKZWZmIExh
-eXRvbiA8amxheXRvbkByZWRoYXQuY29tPg0KU2lnbmVkLW9mZi1ieTogSWx5YSBEcnlvbW92IDxp
-ZHJ5b21vdkBnbWFpbC5jb20+DQoNCg0KDQoNCj4gVGhhbmtzIGZvciB0aGUgcGF0Y2guDQo+DQo+
-IEZpcnN0LCBiZSBzdXJlIHlvdSBmb2xsb3cgdGhlIHBhdGNoIHN1Ym1pc3Npb24gZ3VpZGVsaW5l
-cyB3aGVuIHNlbmRpbmcNCj4gYSBwYXRjaC4gSW4gcGFydGljdWxhciwgZ2l0LXNlbmQtZW1haWwg
-aXMgcmVhbGx5IHRoZSBiZXN0IHdheSB0bw0KPiBzdWJtaXQgcGF0Y2hlcy4NCj4NCj4+IGRpZmYg
-LS1naXQgYS9mcy9jZXBoL21kc19jbGllbnQuYyBiL2ZzL2NlcGgvbWRzX2NsaWVudC5jIGluZGV4
-DQo+PiA0Y2ZjNGRmOWZjMzQuLjM3MzRkMmFmYjNjNSAxMDA2NDQNCj4+IC0tLSBhL2ZzL2NlcGgv
-bWRzX2NsaWVudC5jDQo+PiArKysgYi9mcy9jZXBoL21kc19jbGllbnQuYw0KPj4gQEAgLTE1MDMs
-OCArMTUwMywxNCBAQCBzdGF0aWMgdm9pZCByZW1vdmVfc2Vzc2lvbl9jYXBzKHN0cnVjdCBjZXBo
-X21kc19zZXNzaW9uICpzZXNzaW9uKQ0KPj4gICAgICAgICAgICAgICAgICB3aGlsZSAoIWxpc3Rf
-ZW1wdHkoJnNlc3Npb24tPnNfY2FwcykpIHsNCj4+ICAgICAgICAgICAgICAgICAgICAgICAgICBj
-YXAgPSBsaXN0X2VudHJ5KHNlc3Npb24tPnNfY2Fwcy5uZXh0LA0KPj4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGNlcGhfY2FwLCBzZXNzaW9uX2NhcHMp
-Ow0KPj4gLSAgICAgICAgICAgICAgICAgICAgICAgaWYgKGNhcCA9PSBwcmV2KQ0KPj4gLSAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7DQo+PiArICAgICAgICAgICAgICAgICAg
-ICAgICBpZiAoY2FwID09IHByZXYpIHsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgc3Bpbl91bmxvY2soJnNlc3Npb24tPnNfY2FwX2xvY2spOw0KPj4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBwcl93YXJuX3JhdGVsaW1pdGVkKA0KPj4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAicmVtb3ZpbmcgY2FwICVwLCBpbm9kZSBpcyAlcCBiZSBkZWxheWVk
-XG4iLA0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjYXAsICBpbm9kZSk7DQo+
-PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNwaW5fbG9jaygmc2Vzc2lvbi0+c19j
-YXBfbG9jayk7DQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOw0K
-Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgfQ0KPg0KPiAoY2MnaW5nIFpoZW5nKQ0KPg0KPiBU
-aGF0IHNlZW1zIGxpa2UgaXQgbWlnaHQgYmUgcHJvbmUgdG8gc3Bpbm5pbmcgZm9yIGEgdmVyeSBs
-b25nIHRpbWUgaWYNCj4gd2UgaGF2ZSBhbiBpbm9kZSB3aXRoIGFuIG91dHN0YW5kaW5nIHJlZmVy
-ZW5jZSBmb3IgYSBsb25nIHRpbWUuIEkgZ2V0DQo+IHRoYXQgdGhpcyBpcyBhIHByb2JsZW0gdGhv
-dWdoLg0KPg0KPiBJIHRoaW5rIHRoZSByZWFsIGJ1ZyBpcyB0aGF0IHRoaXMgaXMgbm90IG1vdmlu
-ZyB0aGUgY2FwIHRvIHRoZSBlbmQgb2YNCj4gdGhlIGxpc3QsIHNvIHRoYXQgaXQgY2FuIGF0dGVt
-cHQgdG8gY2xlYW4gdXAgbW9yZSB0aGFuIG9uZSB0aGF0IG1pZ2h0DQo+IGJlIHRoZXJlLiBQcm9i
-YWJseSB3ZSBqdXN0IG5lZWQgdG8gZG8gYSBsaXN0X21vdmVfdGFpbCBvbiB0aGUgZW50cnkNCj4g
-YmVmb3JlIGRyb3BwaW5nIHRoZSBzcGlubG9jaz8NCj4NCj4NCj4NCj4+ICAgICAgICAgICAgICAg
-ICAgICAgICAgICBwcmV2ID0gY2FwOw0KPj4gICAgICAgICAgICAgICAgICAgICAgICAgIHZpbm8g
-PSBjYXAtPmNpLT5pX3Zpbm87DQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgc3Bpbl91bmxv
-Y2soJnNlc3Npb24tPnNfY2FwX2xvY2spOw0KPj4gQEAgLTE1MjAsNiArMTUyNiwxMyBAQCBzdGF0
-aWMgdm9pZCByZW1vdmVfc2Vzc2lvbl9jYXBzKHN0cnVjdCBjZXBoX21kc19zZXNzaW9uICpzZXNz
-aW9uKQ0KPj4gICAgICAgICAgLy8gZHJvcCBjYXAgZXhwaXJlcyBhbmQgdW5sb2NrIHNfY2FwX2xv
-Y2sNCj4+ICAgICAgICAgIGRldGFjaF9jYXBfcmVsZWFzZXMoc2Vzc2lvbiwgJmRpc3Bvc2UpOw0K
-Pj4NCj4+ICsgICAgICAgLyoNCj4+ICsgICAgICAgICogaWYgY2VwaF9hc3luY19pcHV0IGV4ZWN1
-dGUgY2VwaF9kZXN0cm95X2lub2RlIHdoaWNoDQo+PiArICAgICAgICAqIGNhbGwgX19jZXBoX3Jl
-bW92ZV9jYXAgZmluYWxseSB0byBkZWMgdGhlIHNlc3Npb24tPnNfbnJfY2Fwcw0KPj4gKyAgICAg
-ICAgKiBtYXliZSBhZnRlciB0aGFuIEJVR09OLGJlY2F1c2UgaXQgbmVlZCBzZXNzaW9uLT5zX2Nh
-cF9sb2NrDQo+PiArICAgICAgICAqIHRoZW4gQlVHT04oc2Vzc2lvbi0+c19ucl9jYXBzID4gMCkg
-bXVzdCBiZSB0cmlnZ2VyZWQgLA0KPj4gKyAgICAgICAgKiBhbHRob3VnaCBpdCBpcyBqdXN0IGEg
-cmFjZSBjb25kaXRpb24uDQo+PiArICAgICAgICAqLw0KPj4gICAgICAgICAgQlVHX09OKHNlc3Np
-b24tPnNfbnJfY2FwcyA+IDApOw0KPj4gICAgICAgICAgQlVHX09OKCFsaXN0X2VtcHR5KCZzZXNz
-aW9uLT5zX2NhcF9mbHVzaGluZykpOw0KPj4gICAgICAgICAgc3Bpbl91bmxvY2soJnNlc3Npb24t
-PnNfY2FwX2xvY2spOw0KPj4NCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQpPUFBP
-DQoNCuacrOeUteWtkOmCruS7tuWPiuWFtumZhOS7tuWQq+aciU9QUE/lhazlj7jnmoTkv53lr4bk
-v6Hmga/vvIzku4XpmZDkuo7pgq7ku7bmjIfmmI7nmoTmlLbku7bkurrkvb/nlKjvvIjljIXlkKvk
-uKrkurrlj4rnvqTnu4TvvInjgILnpoHmraLku7vkvZXkurrlnKjmnKrnu4/mjojmnYPnmoTmg4Xl
-hrXkuIvku6Xku7vkvZXlvaLlvI/kvb/nlKjjgILlpoLmnpzmgqjplJnmlLbkuobmnKzpgq7ku7bv
-vIzor7fnq4vljbPku6XnlLXlrZDpgq7ku7bpgJrnn6Xlj5Hku7bkurrlubbliKDpmaTmnKzpgq7k
-u7blj4rlhbbpmYTku7bjgIINCg0KVGhpcyBlLW1haWwgYW5kIGl0cyBhdHRhY2htZW50cyBjb250
-YWluIGNvbmZpZGVudGlhbCBpbmZvcm1hdGlvbiBmcm9tIE9QUE8sIHdoaWNoIGlzIGludGVuZGVk
-IG9ubHkgZm9yIHRoZSBwZXJzb24gb3IgZW50aXR5IHdob3NlIGFkZHJlc3MgaXMgbGlzdGVkIGFi
-b3ZlLiBBbnkgdXNlIG9mIHRoZSBpbmZvcm1hdGlvbiBjb250YWluZWQgaGVyZWluIGluIGFueSB3
-YXkgKGluY2x1ZGluZywgYnV0IG5vdCBsaW1pdGVkIHRvLCB0b3RhbCBvciBwYXJ0aWFsIGRpc2Ns
-b3N1cmUsIHJlcHJvZHVjdGlvbiwgb3IgZGlzc2VtaW5hdGlvbikgYnkgcGVyc29ucyBvdGhlciB0
-aGFuIHRoZSBpbnRlbmRlZCByZWNpcGllbnQocykgaXMgcHJvaGliaXRlZC4gSWYgeW91IHJlY2Vp
-dmUgdGhpcyBlLW1haWwgaW4gZXJyb3IsIHBsZWFzZSBub3RpZnkgdGhlIHNlbmRlciBieSBwaG9u
-ZSBvciBlbWFpbCBpbW1lZGlhdGVseSBhbmQgZGVsZXRlIGl0IQ0K
+On 1/16/20 4:59 AM, Jeff Layton wrote:
+> With the Octopus release, the MDS will hand out directory create caps.
+> 
+> If we have Fxc caps on the directory, and complete directory information
+> or a known negative dentry, then we can return without waiting on the
+> reply, allowing the open() call to return very quickly to userland.
+> 
+> We use the normal ceph_fill_inode() routine to fill in the inode, so we
+> have to gin up some reply inode information with what we'd expect the
+> newly-created inode to have. The client assumes that it has a full set
+> of caps on the new inode, and that the MDS will revoke them when there
+> is conflicting access.
+> 
+> This functionality is gated on the enable_async_dirops module option,
+> along with async unlinks, and on the server supporting the necessary
+> CephFS feature bit.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>   fs/ceph/file.c               | 196 +++++++++++++++++++++++++++++++++--
+>   include/linux/ceph/ceph_fs.h |   3 +
+>   2 files changed, 190 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index b44ccbc85fe4..2742417fa5ec 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -448,6 +448,169 @@ cache_file_layout(struct inode *dst, struct inode *src)
+>   	spin_unlock(&cdst->i_ceph_lock);
+>   }
+>   
+> +/*
+> + * Try to set up an async create. We need caps, a file layout, and inode number,
+> + * and either a lease on the dentry or complete dir info. If any of those
+> + * criteria are not satisfied, then return false and the caller can go
+> + * synchronous.
+> + */
+> +static bool try_prep_async_create(struct inode *dir, struct dentry *dentry,
+> +				  struct ceph_file_layout *lo,
+> +				  unsigned long *pino)
+> +{
+> +	struct ceph_inode_info *ci = ceph_inode(dir);
+> +	bool ret = false;
+> +	unsigned long ino;
+> +
+> +	spin_lock(&ci->i_ceph_lock);
+> +	/* No auth cap means no chance for Dc caps */
+> +	if (!ci->i_auth_cap)
+> +		goto no_async;
+> +
+> +	/* Any delegated inos? */
+> +	if (xa_empty(&ci->i_auth_cap->session->s_delegated_inos))
+> +		goto no_async;
+> +
+> +	if (!ceph_file_layout_is_valid(&ci->i_cached_layout))
+> +		goto no_async;
+> +
+> +	/* Use LOOKUP_RCU since we're under i_ceph_lock */
+> +	if (!__ceph_dir_is_complete(ci) &&
+> +	    !dentry_lease_is_valid(dentry, LOOKUP_RCU))
+> +		goto no_async;
+
+dentry_lease_is_valid() checks dentry lease. When directory inode has
+Fsx caps, mds does not issue lease for individual dentry. Check here 
+should be something like dir_lease_is_valid()
+
+> +
+> +	if (!(__ceph_caps_issued(ci, NULL) &
+> +	      (CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE)))
+> +		goto no_async;
+> +
+> +	ino = ceph_get_deleg_ino(ci->i_auth_cap->session);
+> +	if (!ino)
+> +		goto no_async;
+> +
+> +	*pino = ino;
+> +	ceph_take_cap_refs(ci, CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE, false);
+> +	memcpy(lo, &ci->i_cached_layout, sizeof(*lo));
+> +	rcu_assign_pointer(lo->pool_ns,
+> +			   ceph_try_get_string(ci->i_cached_layout.pool_ns));
+> +	ret = true;
+> +no_async:
+> +	spin_unlock(&ci->i_ceph_lock);
+> +	return ret;
+> +}
+> +
+> +static void ceph_async_create_cb(struct ceph_mds_client *mdsc,
+> +                                 struct ceph_mds_request *req)
+> +{
+> +	mapping_set_error(req->r_parent->i_mapping, req->r_err);
+> +
+> +	if (req->r_target_inode) {
+> +		struct ceph_inode_info *ci = ceph_inode(req->r_target_inode);
+> +		u64 ino = ceph_vino(req->r_target_inode).ino;
+> +
+> +		if (req->r_deleg_ino != ino)
+> +			pr_warn("%s: inode number mismatch! err=%d deleg_ino=0x%lx target=0x%llx\n",
+> +				__func__, req->r_err, req->r_deleg_ino, ino);
+> +		mapping_set_error(req->r_target_inode->i_mapping, req->r_err);
+> +
+> +		spin_lock(&ci->i_ceph_lock);
+> +		if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE) {
+> +			ci->i_ceph_flags &= ~CEPH_I_ASYNC_CREATE;
+> +			wake_up_bit(&ci->i_ceph_flags, CEPH_ASYNC_CREATE_BIT);
+> +		}
+> +		spin_unlock(&ci->i_ceph_lock);
+> +	} else {
+> +		pr_warn("%s: no req->r_target_inode for 0x%lx\n", __func__,
+> +			req->r_deleg_ino);
+> +	}
+> +	ceph_put_cap_refs(ceph_inode(req->r_parent),
+> +			  CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE);
+> +}
+> +
+> +static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
+> +				    struct file *file, umode_t mode,
+> +				    struct ceph_mds_request *req,
+> +				    struct ceph_acl_sec_ctx *as_ctx,
+> +				    struct ceph_file_layout *lo)
+> +{
+> +	int ret;
+> +	char xattr_buf[4];
+> +	struct ceph_mds_reply_inode in = { };
+> +	struct ceph_mds_reply_info_in iinfo = { .in = &in };
+> +	struct ceph_inode_info *ci = ceph_inode(dir);
+> +	struct inode *inode;
+> +	struct timespec64 now;
+> +	struct ceph_vino vino = { .ino = req->r_deleg_ino,
+> +				  .snap = CEPH_NOSNAP };
+> +
+> +	ktime_get_real_ts64(&now);
+> +
+> +	inode = ceph_get_inode(dentry->d_sb, vino);
+> +	if (IS_ERR(inode))
+> +		return PTR_ERR(inode);
+> +
+> +	iinfo.inline_version = CEPH_INLINE_NONE;
+> +	iinfo.change_attr = 1;
+> +	ceph_encode_timespec64(&iinfo.btime, &now);
+> +
+> +	iinfo.xattr_len = ARRAY_SIZE(xattr_buf);
+> +	iinfo.xattr_data = xattr_buf;
+> +	memset(iinfo.xattr_data, 0, iinfo.xattr_len);
+> +
+> +	in.ino = cpu_to_le64(vino.ino);
+> +	in.snapid = cpu_to_le64(CEPH_NOSNAP);
+> +	in.version = cpu_to_le64(1);	// ???
+> +	in.cap.caps = in.cap.wanted = cpu_to_le32(CEPH_CAP_ALL_FILE);
+> +	in.cap.cap_id = cpu_to_le64(1);
+> +	in.cap.realm = cpu_to_le64(ci->i_snap_realm->ino);
+> +	in.cap.flags = CEPH_CAP_FLAG_AUTH;
+> +	in.ctime = in.mtime = in.atime = iinfo.btime;
+> +	in.mode = cpu_to_le32((u32)mode);
+> +	in.truncate_seq = cpu_to_le32(1);
+> +	in.truncate_size = cpu_to_le64(-1ULL);
+> +	in.xattr_version = cpu_to_le64(1);
+> +	in.uid = cpu_to_le32(from_kuid(&init_user_ns, current_fsuid()));
+> +	in.gid = cpu_to_le32(from_kgid(&init_user_ns, dir->i_mode & S_ISGID ?
+> +				dir->i_gid : current_fsgid()));
+> +	in.nlink = cpu_to_le32(1);
+> +	in.max_size = cpu_to_le64(lo->stripe_unit);
+> +
+> +	ceph_file_layout_to_legacy(lo, &in.layout);
+> +
+> +	ret = ceph_fill_inode(inode, NULL, &iinfo, NULL, req->r_session,
+> +			      req->r_fmode, NULL);
+> +	if (ret) {
+> +		dout("%s failed to fill inode: %d\n", __func__, ret);
+> +		if (inode->i_state & I_NEW)
+> +			discard_new_inode(inode);
+> +	} else {
+> +		struct dentry *dn;
+> +
+> +		dout("%s d_adding new inode 0x%llx to 0x%lx/%s\n", __func__,
+> +			vino.ino, dir->i_ino, dentry->d_name.name);
+> +		ceph_dir_clear_ordered(dir);
+> +		ceph_init_inode_acls(inode, as_ctx);
+> +		if (inode->i_state & I_NEW) {
+> +			/*
+> +			 * If it's not I_NEW, then someone created this before
+> +			 * we got here. Assume the server is aware of it at
+> +			 * that point and don't worry about setting
+> +			 * CEPH_I_ASYNC_CREATE.
+> +			 */
+> +			ceph_inode(inode)->i_ceph_flags = CEPH_I_ASYNC_CREATE;
+> +			unlock_new_inode(inode);
+> +		}
+> +		if (d_in_lookup(dentry) || d_really_is_negative(dentry)) {
+> +			if (!d_unhashed(dentry))
+> +				d_drop(dentry);
+> +			dn = d_splice_alias(inode, dentry);
+> +			WARN_ON_ONCE(dn && dn != dentry);
+> +		}
+> +		file->f_mode |= FMODE_CREATED;
+> +		ret = finish_open(file, dentry, ceph_open);
+> +	}
+> +	return ret;
+> +}
+> +
+>   /*
+>    * Do a lookup + open with a single request.  If we get a non-existent
+>    * file or symlink, return 1 so the VFS can retry.
+> @@ -460,6 +623,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>   	struct ceph_mds_request *req;
+>   	struct dentry *dn;
+>   	struct ceph_acl_sec_ctx as_ctx = {};
+> +	bool try_async = enable_async_dirops;
+>   	int mask;
+>   	int err;
+>   
+> @@ -492,28 +656,41 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>   	}
+>   	req->r_dentry = dget(dentry);
+>   	req->r_num_caps = 2;
+> +	mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
+> +	if (ceph_security_xattr_wanted(dir))
+> +		mask |= CEPH_CAP_XATTR_SHARED;
+> +	req->r_args.open.mask = cpu_to_le32(mask);
+> +	req->r_parent = dir;
+> +
+>   	if (flags & O_CREAT) {
+> +		struct ceph_file_layout lo;
+> +
+>   		req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
+>   		req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
+>   		if (as_ctx.pagelist) {
+>   			req->r_pagelist = as_ctx.pagelist;
+>   			as_ctx.pagelist = NULL;
+>   		}
+> +		if (try_async && try_prep_async_create(dir, dentry, &lo,
+> +						       &req->r_deleg_ino)) {
+> +			set_bit(CEPH_MDS_R_ASYNC, &req->r_req_flags);
+> +			req->r_callback = ceph_async_create_cb;
+> +			err = ceph_mdsc_submit_request(mdsc, dir, req);
+> +			if (!err)
+> +				err = ceph_finish_async_create(dir, dentry,
+> +							file, mode, req,
+> +							&as_ctx, &lo);
+> +			goto out_req;
+> +		}
+>   	}
+>   
+> -       mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
+> -       if (ceph_security_xattr_wanted(dir))
+> -               mask |= CEPH_CAP_XATTR_SHARED;
+> -       req->r_args.open.mask = cpu_to_le32(mask);
+> -
+> -	req->r_parent = dir;
+>   	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
+>   	err = ceph_mdsc_do_request(mdsc,
+>   				   (flags & (O_CREAT|O_TRUNC)) ? dir : NULL,
+>   				   req);
+>   	err = ceph_handle_snapdir(req, dentry, err);
+>   	if (err)
+> -		goto out_req;
+> +		goto out_fmode;
+>   
+>   	if ((flags & O_CREAT) && !req->r_reply_info.head->is_dentry)
+>   		err = ceph_handle_notrace_create(dir, dentry);
+> @@ -527,7 +704,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>   		dn = NULL;
+>   	}
+>   	if (err)
+> -		goto out_req;
+> +		goto out_fmode;
+>   	if (dn || d_really_is_negative(dentry) || d_is_symlink(dentry)) {
+>   		/* make vfs retry on splice, ENOENT, or symlink */
+>   		dout("atomic_open finish_no_open on dn %p\n", dn);
+> @@ -543,9 +720,10 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>   		}
+>   		err = finish_open(file, dentry, ceph_open);
+>   	}
+> -out_req:
+> +out_fmode:
+>   	if (!req->r_err && req->r_target_inode)
+>   		ceph_put_fmode(ceph_inode(req->r_target_inode), req->r_fmode);
+> +out_req:
+>   	ceph_mdsc_put_request(req);
+>   out_ctx:
+>   	ceph_release_acl_sec_ctx(&as_ctx);
+> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+> index 91d09cf37649..e035c5194005 100644
+> --- a/include/linux/ceph/ceph_fs.h
+> +++ b/include/linux/ceph/ceph_fs.h
+> @@ -659,6 +659,9 @@ int ceph_flags_to_mode(int flags);
+>   #define CEPH_CAP_ANY      (CEPH_CAP_ANY_RD | CEPH_CAP_ANY_EXCL | \
+>   			   CEPH_CAP_ANY_FILE_WR | CEPH_CAP_FILE_LAZYIO | \
+>   			   CEPH_CAP_PIN)
+> +#define CEPH_CAP_ALL_FILE (CEPH_CAP_PIN | CEPH_CAP_ANY_SHARED | \
+> +			   CEPH_CAP_AUTH_EXCL | CEPH_CAP_XATTR_EXCL | \
+> +			   CEPH_CAP_ANY_FILE_RD | CEPH_CAP_ANY_FILE_WR)
+>   
+>   #define CEPH_CAP_LOCKS (CEPH_LOCK_IFILE | CEPH_LOCK_IAUTH | CEPH_LOCK_ILINK | \
+>   			CEPH_LOCK_IXATTR)
+> 
+
