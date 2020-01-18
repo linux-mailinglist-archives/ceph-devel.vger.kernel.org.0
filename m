@@ -2,115 +2,183 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71E041410D5
-	for <lists+ceph-devel@lfdr.de>; Fri, 17 Jan 2020 19:32:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2BC1415A1
+	for <lists+ceph-devel@lfdr.de>; Sat, 18 Jan 2020 03:43:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729276AbgAQSb7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 17 Jan 2020 13:31:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729268AbgAQSb7 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 17 Jan 2020 13:31:59 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730643AbgARCmv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 17 Jan 2020 21:42:51 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:20732 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727033AbgARCmv (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 17 Jan 2020 21:42:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579315370;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9mDN88B/GrJU05I8VCw+Odj67shUJy0ijNOQpjeI7TY=;
+        b=fOzxIEDzSQyJnIl8Pytcpfc4gnD3SiP0jvKy7Fbhw0soQW4KEG/ulRIi/tjIfyf7K4HL0D
+        8lXCaFYYpShDIivoUWGVF2eNdR+lMW4Mw8yXY4OJlmOR+Lh2ozomTCiNNuPfG5RKiSc86U
+        j8xbd/pPOpA0RyYWWuzzY+5Oq7k9994=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-231-QY2WeVGTNmGwFSjAR5Q5JQ-1; Fri, 17 Jan 2020 21:42:49 -0500
+X-MC-Unique: QY2WeVGTNmGwFSjAR5Q5JQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BCD220728;
-        Fri, 17 Jan 2020 18:31:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579285918;
-        bh=NxNE+OH1CpS71VbqsH5SIfSLtMW+713VKoPKqz2h6n4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=FqpXHD3NtdX1IlznS0qvwBbVq9LZ1MGwbbW1JIU6Wf7hfC9lfunmu8yQmYYpPJMsd
-         beg0D0S8T4IRYw7fzao6dmwtZPFg14JxFFc7zQlbi70EQLFp/W2kZYQespMbZ2job2
-         JzTnBdCBgwUdsgIU5y+EFMM3aYaiH5YLcTv8DdCE=
-Message-ID: <c170d5d3ccec27a2c6a4ec1a7dd8265746356acf.camel@kernel.org>
-Subject: Re: [RFC PATCH v2 08/10] ceph: add new MDS req field to hold
- delegated inode number
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Xiubo Li <xiubli@redhat.com>
-Date:   Fri, 17 Jan 2020 13:31:56 -0500
-In-Reply-To: <CAOi1vP96P89S2uMF81kuKgLcb7MDR-GGonr665S=rR87+Otsgw@mail.gmail.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EE409800D48;
+        Sat, 18 Jan 2020 02:42:47 +0000 (UTC)
+Received: from [10.72.12.27] (ovpn-12-27.pek2.redhat.com [10.72.12.27])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 681695DA66;
+        Sat, 18 Jan 2020 02:42:42 +0000 (UTC)
+Subject: Re: [RFC PATCH v2 10/10] ceph: attempt to do async create when
+ possible
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com, pdonnell@redhat.com,
+        xiubli@redhat.com
 References: <20200115205912.38688-1-jlayton@kernel.org>
-         <20200115205912.38688-9-jlayton@kernel.org>
-         <CAOi1vP_oXUTLfhMU6qWfk9Ha=09BdmwF52MeoytKHQWz+Mfwdw@mail.gmail.com>
-         <374a760e8fae44e5cbdfd1bafa1f8f318e23770f.camel@kernel.org>
-         <CAOi1vP96P89S2uMF81kuKgLcb7MDR-GGonr665S=rR87+Otsgw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
+ <20200115205912.38688-11-jlayton@kernel.org>
+ <05265520-30e8-1d88-c2f1-863308de31d1@redhat.com>
+ <3d8442090c4590903425f8800dad7c504898b4ec.camel@kernel.org>
+From:   "Yan, Zheng" <zyan@redhat.com>
+Message-ID: <dcf131af-89e2-1218-3072-97232e46394a@redhat.com>
+Date:   Sat, 18 Jan 2020 10:42:39 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
+In-Reply-To: <3d8442090c4590903425f8800dad7c504898b4ec.camel@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2020-01-17 at 18:42 +0100, Ilya Dryomov wrote:
-> On Fri, Jan 17, 2020 at 5:53 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > On Fri, 2020-01-17 at 15:47 +0100, Ilya Dryomov wrote:
-> > > On Wed, Jan 15, 2020 at 9:59 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > > Add new request field to hold the delegated inode number. Encode that
-> > > > into the message when it's set.
-> > > > 
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > ---
-> > > >  fs/ceph/mds_client.c | 3 +--
-> > > >  fs/ceph/mds_client.h | 1 +
-> > > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > > > index e49ca0533df1..b8070e8c4686 100644
-> > > > --- a/fs/ceph/mds_client.c
-> > > > +++ b/fs/ceph/mds_client.c
-> > > > @@ -2466,7 +2466,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_client *mdsc,
-> > > >         head->op = cpu_to_le32(req->r_op);
-> > > >         head->caller_uid = cpu_to_le32(from_kuid(&init_user_ns, req->r_uid));
-> > > >         head->caller_gid = cpu_to_le32(from_kgid(&init_user_ns, req->r_gid));
-> > > > -       head->ino = 0;
-> > > > +       head->ino = cpu_to_le64(req->r_deleg_ino);
-> > > >         head->args = req->r_args;
-> > > > 
-> > > >         ceph_encode_filepath(&p, end, ino1, path1);
-> > > > @@ -2627,7 +2627,6 @@ static int __prepare_send_request(struct ceph_mds_client *mdsc,
-> > > >         rhead->flags = cpu_to_le32(flags);
-> > > >         rhead->num_fwd = req->r_num_fwd;
-> > > >         rhead->num_retry = req->r_attempts - 1;
-> > > > -       rhead->ino = 0;
-> > > > 
-> > > >         dout(" r_parent = %p\n", req->r_parent);
-> > > >         return 0;
-> > > > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> > > > index 2a32afa15eb6..0811543ffd79 100644
-> > > > --- a/fs/ceph/mds_client.h
-> > > > +++ b/fs/ceph/mds_client.h
-> > > > @@ -308,6 +308,7 @@ struct ceph_mds_request {
-> > > >         int               r_num_fwd;    /* number of forward attempts */
-> > > >         int               r_resend_mds; /* mds to resend to next, if any*/
-> > > >         u32               r_sent_on_mseq; /* cap mseq request was sent at*/
-> > > > +       unsigned long     r_deleg_ino;
-> > > 
-> > > u64, as head->ino is __le64?
-> > > 
-> > 
-> > Does that actually matter? It should get promoted to 64 bit when we do
-> > the encoding since we're passing by value, and this will never be larger
-> > than 32 bits on a 32 bit box.
+On 1/18/20 1:40 AM, Jeff Layton wrote:
+> On Fri, 2020-01-17 at 21:28 +0800, Yan, Zheng wrote:
+>> On 1/16/20 4:59 AM, Jeff Layton wrote:
+>>> With the Octopus release, the MDS will hand out directory create caps.
+>>>
+>>> If we have Fxc caps on the directory, and complete directory information
+>>> or a known negative dentry, then we can return without waiting on the
+>>> reply, allowing the open() call to return very quickly to userland.
+>>>
+>>> We use the normal ceph_fill_inode() routine to fill in the inode, so we
+>>> have to gin up some reply inode information with what we'd expect the
+>>> newly-created inode to have. The client assumes that it has a full set
+>>> of caps on the new inode, and that the MDS will revoke them when there
+>>> is conflicting access.
+>>>
+>>> This functionality is gated on the enable_async_dirops module option,
+>>> along with async unlinks, and on the server supporting the necessary
+>>> CephFS feature bit.
+>>>
+>>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>>> ---
+>>>    fs/ceph/file.c               | 196 +++++++++++++++++++++++++++++++++--
+>>>    include/linux/ceph/ceph_fs.h |   3 +
+>>>    2 files changed, 190 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>>> index b44ccbc85fe4..2742417fa5ec 100644
+>>> --- a/fs/ceph/file.c
+>>> +++ b/fs/ceph/file.c
+>>> @@ -448,6 +448,169 @@ cache_file_layout(struct inode *dst, struct inode *src)
+>>>    	spin_unlock(&cdst->i_ceph_lock);
+>>>    }
+>>>    
+>>> +/*
+>>> + * Try to set up an async create. We need caps, a file layout, and inode number,
+>>> + * and either a lease on the dentry or complete dir info. If any of those
+>>> + * criteria are not satisfied, then return false and the caller can go
+>>> + * synchronous.
+>>> + */
+>>> +static bool try_prep_async_create(struct inode *dir, struct dentry *dentry,
+>>> +				  struct ceph_file_layout *lo,
+>>> +				  unsigned long *pino)
+>>> +{
+>>> +	struct ceph_inode_info *ci = ceph_inode(dir);
+>>> +	bool ret = false;
+>>> +	unsigned long ino;
+>>> +
+>>> +	spin_lock(&ci->i_ceph_lock);
+>>> +	/* No auth cap means no chance for Dc caps */
+>>> +	if (!ci->i_auth_cap)
+>>> +		goto no_async;
+>>> +
+>>> +	/* Any delegated inos? */
+>>> +	if (xa_empty(&ci->i_auth_cap->session->s_delegated_inos))
+>>> +		goto no_async;
+>>> +
+>>> +	if (!ceph_file_layout_is_valid(&ci->i_cached_layout))
+>>> +		goto no_async;
+>>> +
+>>> +	/* Use LOOKUP_RCU since we're under i_ceph_lock */
+>>> +	if (!__ceph_dir_is_complete(ci) &&
+>>> +	    !dentry_lease_is_valid(dentry, LOOKUP_RCU))
+>>> +		goto no_async;
+>>
+>> dentry_lease_is_valid() checks dentry lease. When directory inode has
+>> Fsx caps, mds does not issue lease for individual dentry. Check here
+>> should be something like dir_lease_is_valid()
 > 
-> It raises eyebrows -- one needs to remember that inode numbers
-> fit into unsigned long when looking at the code.  We are using u64
-> for inode numbers throughout ceph.ko: ceph_vino, ino parameters to
-> various functions, etc -- not just in the wire format definitions.
-> I think sticking to u64 is more clear and consistent.
+> Ok, I think I get it. The catch here is that we're calling this from
+> atomic_open, so we may be dealing with a dentry that is brand new and
+> has never had a lookup. I think we have to handle those two cases
+> differently.
+> 
+> This is what I'm thinking:
+> 
+> ---
+>   fs/ceph/file.c | 14 +++++++++-----
+>   1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 7b14dba92266..a3eb38fac68a 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -459,6 +459,7 @@ static bool try_prep_async_create(struct inode *dir,
+> struct dentry *dentry,
+>   				  unsigned long *pino)
+>   {
+>   	struct ceph_inode_info *ci = ceph_inode(dir);
+> +	struct ceph_dentry_info *di = ceph_dentry(dentry);
+>   	bool ret = false;
+>   	unsigned long ino;
+>   
+> @@ -474,16 +475,19 @@ static bool try_prep_async_create(struct inode
+> *dir, struct dentry *dentry,
+>   	if (!ceph_file_layout_is_valid(&ci->i_cached_layout))
+>   		goto no_async;
+>   
+> -	/* Use LOOKUP_RCU since we're under i_ceph_lock */
+> -	if (!__ceph_dir_is_complete(ci) &&
+> -	    !dentry_lease_is_valid(dentry, LOOKUP_RCU))
+> -		goto no_async;
+> -
+>   	if ((__ceph_caps_issued(ci, NULL) &
+>   	     (CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE)) !=
+>   	    (CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE))
+>   		goto no_async;
+>   
+> +	if (d_in_lookup(dentry)) {
+> +		if (!__ceph_dir_is_complete(ci))
+> +			goto no_async;
+> +	} else if (atomic_read(&ci->i_shared_gen) !=
+> +		   READ_ONCE(di->lease_shared_gen)) {
+> +		goto no_async;
 > 
 
-Yeah, now that I think about it, you're right. This is going to be a
-inode presented to the MDS, so it will always need to be 64-bit. Fixed
-in my tree.
+Make sense
 
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
+
+>   	ino = ceph_get_deleg_ino(ci->i_auth_cap->session);
+>   	if (!ino)
+>   		goto no_async;
+> 
 
