@@ -2,34 +2,36 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E959144520
+	by mail.lfdr.de (Postfix) with ESMTP id F0B4C144521
 	for <lists+ceph-devel@lfdr.de>; Tue, 21 Jan 2020 20:29:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728853AbgAUT3c (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        id S1728896AbgAUT3c (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
         Tue, 21 Jan 2020 14:29:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40080 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:40096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726229AbgAUT3b (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 21 Jan 2020 14:29:31 -0500
+        id S1726926AbgAUT3c (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 21 Jan 2020 14:29:32 -0500
 Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96BE12073A;
-        Tue, 21 Jan 2020 19:29:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43EEE24655;
+        Tue, 21 Jan 2020 19:29:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1579634971;
-        bh=5Ya4MnG+TC+9umSQmJn45eENRYdof5dK7joItookw9Y=;
-        h=From:To:Cc:Subject:Date:From;
-        b=abP9qZiw6qH+gqozw73peHS0X9o3X9DAP4Tz6XLbyALOoX7NBxV9C7xMXyzR9VRfW
-         dHyDT1iezyHRUV/+nOc4BoiYNd1xiMSHGhnvbK48ISC0vhllkKoPTJZ/SHF4RHWk13
-         3iez6JlUr/18/DIn73HArerfogG4ag4nTw4q5ICg=
+        bh=zBUxbbWNjkr33vhkE5+2CQO8fqG7XgGumLlVydPRUBM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XNesf8by8OrWXGPHi4jrjdGehi53BnW6ecpHgeoh7xHbNP2r7VJSqAe5xOEKAPbDa
+         5npUmlIMkPzHeqrXYenRe8Kvfj5l9iZnLXtzIpGsWog8OhpOJ+k5R44V6b3XowY03v
+         Y8RyYYa1TngRBiAorCp7G7ejH8s+gkmrsgxamO8A=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     idridryomov@gmail.com, sage@redhat.com, zyan@redhat.com
-Subject: [RFC PATCH v3 00/10] ceph: asynchronous file create support
-Date:   Tue, 21 Jan 2020 14:29:18 -0500
-Message-Id: <20200121192928.469316-1-jlayton@kernel.org>
+Subject: [RFC PATCH v3 01/10] ceph: move net/ceph/ceph_fs.c to fs/ceph/util.c
+Date:   Tue, 21 Jan 2020 14:29:19 -0500
+Message-Id: <20200121192928.469316-2-jlayton@kernel.org>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200121192928.469316-1-jlayton@kernel.org>
+References: <20200121192928.469316-1-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
@@ -37,61 +39,77 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-v3:
-- move some cephfs-specific code into ceph.ko
-- present and track inode numbers as u64 values
-- fix up check for dentry and cap eligibility checks
-- set O_CEPH_EXCL on async creates
-- attempt to handle errors better on async create (invalidate dentries
-  and dir completeness).
-- ensure that fsync waits for async create to complete
+All of these functions are only called from CephFS, so move them into
+ceph.ko, and drop the exports.
 
-v2:
-- move cached layout to dedicated field in inode
-- protect cached layout with i_ceph_lock
-- wipe cached layout in __check_cap_issue
-- set max_size of file to layout.stripe_unit
-- set truncate_size to (u64)-1
-- use dedicated CephFS feature bit instead of CEPHFS_FEATURE_OCTOPUS
-- set cap_id to 1 in async created inode
-- allocate inode number before submitting request
-- rework the prep for an async create to be more efficient
-- don't allow MDS or cap messages involving an inode until we get async
-  create reply
-
-Still not quite ready for merge, but I've cleaned up a number of warts
-in the v2 set. Performance numbers still look about the same.
-
-There is definitely still a race of some sort that causes the client to
-try to asynchronously create a dentry that already exists. I'm still
-working on tracking that down.
-
-Jeff Layton (10):
-  ceph: move net/ceph/ceph_fs.c to fs/ceph/util.c
-  ceph: make ceph_fill_inode non-static
-  ceph: make dentry_lease_is_valid non-static
-  ceph: make __take_cap_refs non-static
-  ceph: decode interval_sets for delegated inos
-  ceph: add flag to designate that a request is asynchronous
-  ceph: add infrastructure for waiting for async create to complete
-  ceph: add new MDS req field to hold delegated inode number
-  ceph: cache layout in parent dir on first sync create
-  ceph: attempt to do async create when possible
-
- fs/ceph/Makefile                     |   2 +-
- fs/ceph/caps.c                       |  38 +++--
- fs/ceph/dir.c                        |  13 +-
- fs/ceph/file.c                       | 240 +++++++++++++++++++++++++--
- fs/ceph/inode.c                      |  50 +++---
- fs/ceph/mds_client.c                 | 123 ++++++++++++--
- fs/ceph/mds_client.h                 |  17 +-
- fs/ceph/super.h                      |  16 +-
- net/ceph/ceph_fs.c => fs/ceph/util.c |   4 -
- include/linux/ceph/ceph_fs.h         |   8 +-
- net/ceph/Makefile                    |   2 +-
- 11 files changed, 443 insertions(+), 70 deletions(-)
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/Makefile                     | 2 +-
+ net/ceph/ceph_fs.c => fs/ceph/util.c | 4 ----
+ net/ceph/Makefile                    | 2 +-
+ 3 files changed, 2 insertions(+), 6 deletions(-)
  rename net/ceph/ceph_fs.c => fs/ceph/util.c (94%)
 
+diff --git a/fs/ceph/Makefile b/fs/ceph/Makefile
+index c1da294418d1..0a0823d378db 100644
+--- a/fs/ceph/Makefile
++++ b/fs/ceph/Makefile
+@@ -8,7 +8,7 @@ obj-$(CONFIG_CEPH_FS) += ceph.o
+ ceph-y := super.o inode.o dir.o file.o locks.o addr.o ioctl.o \
+ 	export.o caps.o snap.o xattr.o quota.o io.o \
+ 	mds_client.o mdsmap.o strings.o ceph_frag.o \
+-	debugfs.o
++	debugfs.o util.o
+ 
+ ceph-$(CONFIG_CEPH_FSCACHE) += cache.o
+ ceph-$(CONFIG_CEPH_FS_POSIX_ACL) += acl.o
+diff --git a/net/ceph/ceph_fs.c b/fs/ceph/util.c
+similarity index 94%
+rename from net/ceph/ceph_fs.c
+rename to fs/ceph/util.c
+index 756a2dc10d27..2c34875675bf 100644
+--- a/net/ceph/ceph_fs.c
++++ b/fs/ceph/util.c
+@@ -39,7 +39,6 @@ void ceph_file_layout_from_legacy(struct ceph_file_layout *fl,
+ 	    fl->stripe_count == 0 && fl->object_size == 0)
+ 		fl->pool_id = -1;
+ }
+-EXPORT_SYMBOL(ceph_file_layout_from_legacy);
+ 
+ void ceph_file_layout_to_legacy(struct ceph_file_layout *fl,
+ 				struct ceph_file_layout_legacy *legacy)
+@@ -52,7 +51,6 @@ void ceph_file_layout_to_legacy(struct ceph_file_layout *fl,
+ 	else
+ 		legacy->fl_pg_pool = 0;
+ }
+-EXPORT_SYMBOL(ceph_file_layout_to_legacy);
+ 
+ int ceph_flags_to_mode(int flags)
+ {
+@@ -82,7 +80,6 @@ int ceph_flags_to_mode(int flags)
+ 
+ 	return mode;
+ }
+-EXPORT_SYMBOL(ceph_flags_to_mode);
+ 
+ int ceph_caps_for_mode(int mode)
+ {
+@@ -101,4 +98,3 @@ int ceph_caps_for_mode(int mode)
+ 
+ 	return caps;
+ }
+-EXPORT_SYMBOL(ceph_caps_for_mode);
+diff --git a/net/ceph/Makefile b/net/ceph/Makefile
+index 59d0ba2072de..ce09bb4fb249 100644
+--- a/net/ceph/Makefile
++++ b/net/ceph/Makefile
+@@ -13,5 +13,5 @@ libceph-y := ceph_common.o messenger.o msgpool.o buffer.o pagelist.o \
+ 	auth.o auth_none.o \
+ 	crypto.o armor.o \
+ 	auth_x.o \
+-	ceph_fs.o ceph_strings.o ceph_hash.o \
++	ceph_strings.o ceph_hash.o \
+ 	pagevec.o snapshot.o string_table.o
 -- 
 2.24.1
 
