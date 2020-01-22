@@ -2,112 +2,117 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59CE0144C67
-	for <lists+ceph-devel@lfdr.de>; Wed, 22 Jan 2020 08:20:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 487E1144C77
+	for <lists+ceph-devel@lfdr.de>; Wed, 22 Jan 2020 08:30:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726004AbgAVHUg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 22 Jan 2020 02:20:36 -0500
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:45838 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbgAVHUf (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 22 Jan 2020 02:20:35 -0500
-Received: by mail-qv1-f68.google.com with SMTP id l14so2762016qvu.12
-        for <ceph-devel@vger.kernel.org>; Tue, 21 Jan 2020 23:20:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Pwlj2VFyCsHXaFqkmqFSrMOgF8zqgwTSOGcaxpEYHR8=;
-        b=uGpFzfmj9WckmLJPSr+/KnsJIM6OYK4GgqsocSYiNLpbIhWOlFZJ3vsqU6VGoJRU/x
-         VQJLcrP2eIZAIlCjpSmn0KQmra73dA6Gnlhzq8aSuyFHcn6ZqPvO5tSwI3f3ut6UdAPz
-         b/wAq5F2bRc/3yawIdUXE3lOA/XuIaBSvC+AMdKdra8aABx8wcMRVVTW3jhlwaAbBbk9
-         mq+Zy5pdOj1EtT/XlCfh8++DIbR2mEDVmV3gqYMUEp9Xi/8A6Ug/mXhThrXgvT2ZFZOX
-         +nIvu+1kB+qNy22tc78h6ITLcHqXKvctdij+4KuhWG37Y5JFC1xHGITOxJDsMEy8dhNC
-         e8Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Pwlj2VFyCsHXaFqkmqFSrMOgF8zqgwTSOGcaxpEYHR8=;
-        b=pdAIq4KAoRW1bbfL4UO/00Ytxi1XLFL5a/O1az2WA+ttYeq4nuGqp0t15ugyh9bHn6
-         bMgs5HEb7aues57NjSVchL91JFG4dhhgEJAJ2UgMnIjRJUAQ2O306jw63xR7ivMrzBSW
-         O6z7kT5/wyt3+fGJs46KsIawhHSqliDxuR9Nohl6YLfdPmg2TVrJr5yYEahV/cIWbZ3a
-         X63fsJ9GrJQz3QHvQdd/haoOZplEzT/gkyp954mEQD394cvr1+b8vGVnt4p5/BYp+AtF
-         MLH8MpRQyb/AZpUF91oa3ZV8KuxbYW41l6LvwqdFlIfeLiOY11U/Lfm39nxC85vMp/3b
-         rxcw==
-X-Gm-Message-State: APjAAAWyfYJMCbaYhuIr5kNa0cTseoJsyqGWyzPKf8UUVMogkziu9J1N
-        R2h5SEF3GR0P5y7rmE9E0OOVoE8ItuJDTtFhzpY=
-X-Google-Smtp-Source: APXvYqziLkbblQzH9qTkR+yIQS0XJeNEZjoVs/6/yYhTq6MhuOahwGrBH1yS8QO8ecbs8uVwxlecNUVQy8g/l/jxdVI=
-X-Received: by 2002:a0c:9023:: with SMTP id o32mr9100958qvo.110.1579677634735;
- Tue, 21 Jan 2020 23:20:34 -0800 (PST)
+        id S1726016AbgAVHaN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 22 Jan 2020 02:30:13 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:60087 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725883AbgAVHaN (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 22 Jan 2020 02:30:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579678211;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=357h7ttiGlQTaF9fp2zxvv8y451ZBhurEf5ee1VkJCE=;
+        b=XKQv7jyx93rSDbBGjoqMYWSyTDQKh03+eEj1xTB+ZwGOld9blA4wDuml4teBVFjxBWjgeG
+        VZqdJBfT4+w4fsdwJooJSei0yZciBUIDZBnc6J6t90U3o5k9IhSaXpg2Iai6fXJCDn4DNU
+        oxUq/BfB2u/gJviMY1Jnx/YpcaB1hXw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-273-ipFYsI1FNZ-wdX4iOhKIKg-1; Wed, 22 Jan 2020 02:30:07 -0500
+X-MC-Unique: ipFYsI1FNZ-wdX4iOhKIKg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3CFA9800D4E;
+        Wed, 22 Jan 2020 07:30:06 +0000 (UTC)
+Received: from [10.72.12.142] (ovpn-12-142.pek2.redhat.com [10.72.12.142])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 240475C3FD;
+        Wed, 22 Jan 2020 07:30:01 +0000 (UTC)
+Subject: Re: [RFC PATCH v3 00/10] ceph: asynchronous file create support
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     idridryomov@gmail.com, sage@redhat.com
+References: <20200121192928.469316-1-jlayton@kernel.org>
+From:   "Yan, Zheng" <zyan@redhat.com>
+Message-ID: <9ca16b04-2351-ba1b-6e72-4b456ab19448@redhat.com>
+Date:   Wed, 22 Jan 2020 15:29:59 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200121192928.469316-1-jlayton@kernel.org> <20200121192928.469316-4-jlayton@kernel.org>
-In-Reply-To: <20200121192928.469316-4-jlayton@kernel.org>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Wed, 22 Jan 2020 15:20:23 +0800
-Message-ID: <CAAM7YAkL2fOgmxSatHreHjveZmzXd9o3ZsfhCW4C18x1He0eAg@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 03/10] ceph: make dentry_lease_is_valid non-static
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>, idridryomov@gmail.com,
-        Sage Weil <sage@redhat.com>, Zheng Yan <zyan@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200121192928.469316-1-jlayton@kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 3:31 AM Jeff Layton <jlayton@kernel.org> wrote:
->
-> ...and move a comment over the proper function.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/dir.c   | 10 +++++-----
->  fs/ceph/super.h |  1 +
->  2 files changed, 6 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index 10294f07f5f0..9d2eca67985a 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -1477,10 +1477,6 @@ void ceph_invalidate_dentry_lease(struct dentry *dentry)
->         spin_unlock(&dentry->d_lock);
->  }
->
-> -/*
-> - * Check if dentry lease is valid.  If not, delete the lease.  Try to
-> - * renew if the least is more than half up.
-> - */
->  static bool __dentry_lease_is_valid(struct ceph_dentry_info *di)
->  {
->         struct ceph_mds_session *session;
-> @@ -1507,7 +1503,11 @@ static bool __dentry_lease_is_valid(struct ceph_dentry_info *di)
->         return false;
->  }
->
-> -static int dentry_lease_is_valid(struct dentry *dentry, unsigned int flags)
-> +/*
-> + * Check if dentry lease is valid.  If not, delete the lease.  Try to
-> + * renew if the least is more than half up.
-> + */
-> +int dentry_lease_is_valid(struct dentry *dentry, unsigned int flags)
->  {
->         struct ceph_dentry_info *di;
->         struct ceph_mds_session *session = NULL;
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index ec4d66d7c261..f27b2bf9a3f5 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -1121,6 +1121,7 @@ extern int ceph_handle_snapdir(struct ceph_mds_request *req,
->  extern struct dentry *ceph_finish_lookup(struct ceph_mds_request *req,
->                                          struct dentry *dentry, int err);
->
-> +extern int dentry_lease_is_valid(struct dentry *dentry, unsigned int flags);
->  extern void __ceph_dentry_lease_touch(struct ceph_dentry_info *di);
->  extern void __ceph_dentry_dir_lease_touch(struct ceph_dentry_info *di);
->  extern void ceph_invalidate_dentry_lease(struct dentry *dentry);
-> --
-> 2.24.1
->
+On 1/22/20 3:29 AM, Jeff Layton wrote:
+> v3:
+> - move some cephfs-specific code into ceph.ko
+> - present and track inode numbers as u64 values
+> - fix up check for dentry and cap eligibility checks
+> - set O_CEPH_EXCL on async creates
+> - attempt to handle errors better on async create (invalidate dentries
+>    and dir completeness).
+> - ensure that fsync waits for async create to complete
+> 
+> v2:
+> - move cached layout to dedicated field in inode
+> - protect cached layout with i_ceph_lock
+> - wipe cached layout in __check_cap_issue
+> - set max_size of file to layout.stripe_unit
+> - set truncate_size to (u64)-1
+> - use dedicated CephFS feature bit instead of CEPHFS_FEATURE_OCTOPUS
+> - set cap_id to 1 in async created inode
+> - allocate inode number before submitting request
+> - rework the prep for an async create to be more efficient
+> - don't allow MDS or cap messages involving an inode until we get async
+>    create reply
+> 
+> Still not quite ready for merge, but I've cleaned up a number of warts
+> in the v2 set. Performance numbers still look about the same.
+> 
+> There is definitely still a race of some sort that causes the client to
+> try to asynchronously create a dentry that already exists. I'm still
+> working on tracking that down.
+> 
+> Jeff Layton (10):
+>    ceph: move net/ceph/ceph_fs.c to fs/ceph/util.c
+>    ceph: make ceph_fill_inode non-static
+>    ceph: make dentry_lease_is_valid non-static
+>    ceph: make __take_cap_refs non-static
+>    ceph: decode interval_sets for delegated inos
+>    ceph: add flag to designate that a request is asynchronous
+>    ceph: add infrastructure for waiting for async create to complete
+>    ceph: add new MDS req field to hold delegated inode number
+>    ceph: cache layout in parent dir on first sync create
+>    ceph: attempt to do async create when possible
+> 
+>   fs/ceph/Makefile                     |   2 +-
+>   fs/ceph/caps.c                       |  38 +++--
+>   fs/ceph/dir.c                        |  13 +-
+>   fs/ceph/file.c                       | 240 +++++++++++++++++++++++++--
+>   fs/ceph/inode.c                      |  50 +++---
+>   fs/ceph/mds_client.c                 | 123 ++++++++++++--
+>   fs/ceph/mds_client.h                 |  17 +-
+>   fs/ceph/super.h                      |  16 +-
+>   net/ceph/ceph_fs.c => fs/ceph/util.c |   4 -
+>   include/linux/ceph/ceph_fs.h         |   8 +-
+>   net/ceph/Makefile                    |   2 +-
+>   11 files changed, 443 insertions(+), 70 deletions(-)
+>   rename net/ceph/ceph_fs.c => fs/ceph/util.c (94%)
+> 
 
-This change is not needed
+Series
+
+Reviewed-By: "Yan, Zheng" <zyan@redhat.com>
+
+
