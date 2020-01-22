@@ -2,117 +2,107 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 487E1144C77
-	for <lists+ceph-devel@lfdr.de>; Wed, 22 Jan 2020 08:30:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28B8B1453B9
+	for <lists+ceph-devel@lfdr.de>; Wed, 22 Jan 2020 12:26:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726016AbgAVHaN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 22 Jan 2020 02:30:13 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:60087 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725883AbgAVHaN (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 22 Jan 2020 02:30:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579678211;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=357h7ttiGlQTaF9fp2zxvv8y451ZBhurEf5ee1VkJCE=;
-        b=XKQv7jyx93rSDbBGjoqMYWSyTDQKh03+eEj1xTB+ZwGOld9blA4wDuml4teBVFjxBWjgeG
-        VZqdJBfT4+w4fsdwJooJSei0yZciBUIDZBnc6J6t90U3o5k9IhSaXpg2Iai6fXJCDn4DNU
-        oxUq/BfB2u/gJviMY1Jnx/YpcaB1hXw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-273-ipFYsI1FNZ-wdX4iOhKIKg-1; Wed, 22 Jan 2020 02:30:07 -0500
-X-MC-Unique: ipFYsI1FNZ-wdX4iOhKIKg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728939AbgAVL0J (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 22 Jan 2020 06:26:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39402 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726094AbgAVL0J (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 22 Jan 2020 06:26:09 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3CFA9800D4E;
-        Wed, 22 Jan 2020 07:30:06 +0000 (UTC)
-Received: from [10.72.12.142] (ovpn-12-142.pek2.redhat.com [10.72.12.142])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 240475C3FD;
-        Wed, 22 Jan 2020 07:30:01 +0000 (UTC)
-Subject: Re: [RFC PATCH v3 00/10] ceph: asynchronous file create support
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     idridryomov@gmail.com, sage@redhat.com
+        by mail.kernel.org (Postfix) with ESMTPSA id 36D6E24684;
+        Wed, 22 Jan 2020 11:26:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579692368;
+        bh=Reb51cqZZJB7PTGhDvwScT28L28es1nfRVVcZxXUpX0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=rF7QT27DP9OJd1REGTeZujxE7RfNCAUzpey64eGt+wmb6OpS3/N+x0gNgcvghmLFS
+         OjHsw8v4E6LCCcIjmWoT9WPv3HxGkzZ7vh/kuF54GBqkE60x2KcK+hbWKUOR2pfhn/
+         fEVVsdto4hevkRcpLwwUYp2zOm8LZtiiwkQsMLdg=
+Message-ID: <798bc25f72341b77cda2c83690877e4ef4ad42fe.camel@kernel.org>
+Subject: Re: [RFC PATCH v3 03/10] ceph: make dentry_lease_is_valid non-static
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "Yan, Zheng" <ukernel@gmail.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>, idridryomov@gmail.com,
+        Sage Weil <sage@redhat.com>, Zheng Yan <zyan@redhat.com>
+Date:   Wed, 22 Jan 2020 06:26:06 -0500
+In-Reply-To: <CAAM7YAkL2fOgmxSatHreHjveZmzXd9o3ZsfhCW4C18x1He0eAg@mail.gmail.com>
 References: <20200121192928.469316-1-jlayton@kernel.org>
-From:   "Yan, Zheng" <zyan@redhat.com>
-Message-ID: <9ca16b04-2351-ba1b-6e72-4b456ab19448@redhat.com>
-Date:   Wed, 22 Jan 2020 15:29:59 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+         <20200121192928.469316-4-jlayton@kernel.org>
+         <CAAM7YAkL2fOgmxSatHreHjveZmzXd9o3ZsfhCW4C18x1He0eAg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-In-Reply-To: <20200121192928.469316-1-jlayton@kernel.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 1/22/20 3:29 AM, Jeff Layton wrote:
-> v3:
-> - move some cephfs-specific code into ceph.ko
-> - present and track inode numbers as u64 values
-> - fix up check for dentry and cap eligibility checks
-> - set O_CEPH_EXCL on async creates
-> - attempt to handle errors better on async create (invalidate dentries
->    and dir completeness).
-> - ensure that fsync waits for async create to complete
+On Wed, 2020-01-22 at 15:20 +0800, Yan, Zheng wrote:
+> On Wed, Jan 22, 2020 at 3:31 AM Jeff Layton <jlayton@kernel.org> wrote:
+> > ...and move a comment over the proper function.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/ceph/dir.c   | 10 +++++-----
+> >  fs/ceph/super.h |  1 +
+> >  2 files changed, 6 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> > index 10294f07f5f0..9d2eca67985a 100644
+> > --- a/fs/ceph/dir.c
+> > +++ b/fs/ceph/dir.c
+> > @@ -1477,10 +1477,6 @@ void ceph_invalidate_dentry_lease(struct dentry *dentry)
+> >         spin_unlock(&dentry->d_lock);
+> >  }
+> > 
+> > -/*
+> > - * Check if dentry lease is valid.  If not, delete the lease.  Try to
+> > - * renew if the least is more than half up.
+> > - */
+> >  static bool __dentry_lease_is_valid(struct ceph_dentry_info *di)
+> >  {
+> >         struct ceph_mds_session *session;
+> > @@ -1507,7 +1503,11 @@ static bool __dentry_lease_is_valid(struct ceph_dentry_info *di)
+> >         return false;
+> >  }
+> > 
+> > -static int dentry_lease_is_valid(struct dentry *dentry, unsigned int flags)
+> > +/*
+> > + * Check if dentry lease is valid.  If not, delete the lease.  Try to
+> > + * renew if the least is more than half up.
+> > + */
+> > +int dentry_lease_is_valid(struct dentry *dentry, unsigned int flags)
+> >  {
+> >         struct ceph_dentry_info *di;
+> >         struct ceph_mds_session *session = NULL;
+> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > index ec4d66d7c261..f27b2bf9a3f5 100644
+> > --- a/fs/ceph/super.h
+> > +++ b/fs/ceph/super.h
+> > @@ -1121,6 +1121,7 @@ extern int ceph_handle_snapdir(struct ceph_mds_request *req,
+> >  extern struct dentry *ceph_finish_lookup(struct ceph_mds_request *req,
+> >                                          struct dentry *dentry, int err);
+> > 
+> > +extern int dentry_lease_is_valid(struct dentry *dentry, unsigned int flags);
+> >  extern void __ceph_dentry_lease_touch(struct ceph_dentry_info *di);
+> >  extern void __ceph_dentry_dir_lease_touch(struct ceph_dentry_info *di);
+> >  extern void ceph_invalidate_dentry_lease(struct dentry *dentry);
+> > --
+> > 2.24.1
+> > 
 > 
-> v2:
-> - move cached layout to dedicated field in inode
-> - protect cached layout with i_ceph_lock
-> - wipe cached layout in __check_cap_issue
-> - set max_size of file to layout.stripe_unit
-> - set truncate_size to (u64)-1
-> - use dedicated CephFS feature bit instead of CEPHFS_FEATURE_OCTOPUS
-> - set cap_id to 1 in async created inode
-> - allocate inode number before submitting request
-> - rework the prep for an async create to be more efficient
-> - don't allow MDS or cap messages involving an inode until we get async
->    create reply
-> 
-> Still not quite ready for merge, but I've cleaned up a number of warts
-> in the v2 set. Performance numbers still look about the same.
-> 
-> There is definitely still a race of some sort that causes the client to
-> try to asynchronously create a dentry that already exists. I'm still
-> working on tracking that down.
-> 
-> Jeff Layton (10):
->    ceph: move net/ceph/ceph_fs.c to fs/ceph/util.c
->    ceph: make ceph_fill_inode non-static
->    ceph: make dentry_lease_is_valid non-static
->    ceph: make __take_cap_refs non-static
->    ceph: decode interval_sets for delegated inos
->    ceph: add flag to designate that a request is asynchronous
->    ceph: add infrastructure for waiting for async create to complete
->    ceph: add new MDS req field to hold delegated inode number
->    ceph: cache layout in parent dir on first sync create
->    ceph: attempt to do async create when possible
-> 
->   fs/ceph/Makefile                     |   2 +-
->   fs/ceph/caps.c                       |  38 +++--
->   fs/ceph/dir.c                        |  13 +-
->   fs/ceph/file.c                       | 240 +++++++++++++++++++++++++--
->   fs/ceph/inode.c                      |  50 +++---
->   fs/ceph/mds_client.c                 | 123 ++++++++++++--
->   fs/ceph/mds_client.h                 |  17 +-
->   fs/ceph/super.h                      |  16 +-
->   net/ceph/ceph_fs.c => fs/ceph/util.c |   4 -
->   include/linux/ceph/ceph_fs.h         |   8 +-
->   net/ceph/Makefile                    |   2 +-
->   11 files changed, 443 insertions(+), 70 deletions(-)
->   rename net/ceph/ceph_fs.c => fs/ceph/util.c (94%)
-> 
+> This change is not needed
 
-Series
+Quite right. I had done this for an earlier version of the series, but
+I'll drop this now.
 
-Reviewed-By: "Yan, Zheng" <zyan@redhat.com>
-
+Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
