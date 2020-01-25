@@ -2,38 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1452E1492D6
-	for <lists+ceph-devel@lfdr.de>; Sat, 25 Jan 2020 02:58:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AFFD1492D7
+	for <lists+ceph-devel@lfdr.de>; Sat, 25 Jan 2020 02:58:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387634AbgAYB61 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 24 Jan 2020 20:58:27 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:30979 "EHLO
+        id S2387660AbgAYB6w (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 24 Jan 2020 20:58:52 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:32184 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387608AbgAYB60 (ORCPT
+        by vger.kernel.org with ESMTP id S2387608AbgAYB6w (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 24 Jan 2020 20:58:26 -0500
+        Fri, 24 Jan 2020 20:58:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579917505;
+        s=mimecast20190719; t=1579917530;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=21YGRYjlggzFzDYX8QEQ85oISth2k9iFzqhLvmwf4nw=;
-        b=cHAlqiB09FHFg9HHiYVcqNDKltX+/ahkuM5XoYh7jy7d5tCCRDCnywVUdLto3ju8HWq8zR
-        LiDdLY7KIy2ISARmJsm2FhrT3e4haqnjuXJvUIQIfkF+gYz/TImHUOFx3Ux2i/SwvayjLH
-        RByZ8x0pn/PH6O2XcdrTkB/ktMIbCjo=
+        bh=sCTY3MUOhIT5JGZJSjGudd2fJZYDwoOMvR2a39fEd00=;
+        b=c0VJpAVrdIEjr5A4p9xK+D9jlYr+A5MSI8A7Ay0UM+8wpPo8Yf2FrUQ8IrprQGVWfxe89v
+        GbXVkqkGHn4ykg5VwC5z97ZucJlsATtnvT//qECUUcUsTPwbtG3lf32WVTqIGCXyK629V9
+        1MKjZhPE4276IsmaW7shcluceRtIMmo=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-28-xVlwbqmSMkuE9nUb4m5r0w-1; Fri, 24 Jan 2020 20:58:21 -0500
-X-MC-Unique: xVlwbqmSMkuE9nUb4m5r0w-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-199-NZ9mE3ZgMSKd2txzsO5vyQ-1; Fri, 24 Jan 2020 20:58:46 -0500
+X-MC-Unique: NZ9mE3ZgMSKd2txzsO5vyQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DB9D3107ACC5;
-        Sat, 25 Jan 2020 01:58:19 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 799631882CC0;
+        Sat, 25 Jan 2020 01:58:45 +0000 (UTC)
 Received: from [10.72.12.29] (ovpn-12-29.pek2.redhat.com [10.72.12.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 059D03CC8;
-        Sat, 25 Jan 2020 01:58:14 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EC8508645A;
+        Sat, 25 Jan 2020 01:58:40 +0000 (UTC)
 Subject: Re: [RFC PATCH v3 00/10] ceph: asynchronous file create support
 To:     Jeff Layton <jlayton@kernel.org>, "Yan, Zheng" <ukernel@gmail.com>
 Cc:     ceph-devel <ceph-devel@vger.kernel.org>, idridryomov@gmail.com,
@@ -42,8 +42,8 @@ References: <20200121192928.469316-1-jlayton@kernel.org>
  <CAAM7YAnYoCuxu2Oj3vK1ZyWyAgh_vWWTYRxE2ZqEhU9vT+YTKg@mail.gmail.com>
  <c894860b08a36191e8556afd3cf4bdb19cd5875b.camel@kernel.org>
 From:   "Yan, Zheng" <zyan@redhat.com>
-Message-ID: <5181ceb7-e4f2-fe7e-1016-e78495847157@redhat.com>
-Date:   Sat, 25 Jan 2020 09:58:12 +0800
+Message-ID: <8f207ea4-dc47-114f-cb33-edf2524bf334@redhat.com>
+Date:   Sat, 25 Jan 2020 09:58:39 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
@@ -51,7 +51,7 @@ In-Reply-To: <c894860b08a36191e8556afd3cf4bdb19cd5875b.camel@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
@@ -149,7 +149,8 @@ yes, that's a problem for current kclient impelmentaion
 > We remove all but Fsx here. That seems like quite a subtle difference
 > from how FILE caps work.
 
-only file caps have more than 2 bits. this removes all but AsxLsxXsxFsx.
+only file caps have more than 2 bits. this removes caps other than 
+AsxLsxXsxFsx.
 
 > 
 > Given the way that we're doing the inode delegation and handling dir
