@@ -2,51 +2,51 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0038014A956
-	for <lists+ceph-devel@lfdr.de>; Mon, 27 Jan 2020 18:58:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ACA614A99F
+	for <lists+ceph-devel@lfdr.de>; Mon, 27 Jan 2020 19:16:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbgA0R6k (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 27 Jan 2020 12:58:40 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:44374 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbgA0R6k (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 27 Jan 2020 12:58:40 -0500
-Received: by mail-il1-f194.google.com with SMTP id f16so8208468ilk.11;
-        Mon, 27 Jan 2020 09:58:39 -0800 (PST)
+        id S1726275AbgA0SQK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 27 Jan 2020 13:16:10 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45089 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbgA0SQK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 27 Jan 2020 13:16:10 -0500
+Received: by mail-io1-f68.google.com with SMTP id i11so11066652ioi.12;
+        Mon, 27 Jan 2020 10:16:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=p34WepIUAC+vVryS2npy0LwKKNXZ/pNTKpuvngEBmQ4=;
-        b=SzA1wa1YxhJrtJr0T5aFQUQL5QmF+ihyQ750kHstlHEv/VUitV23FBeCZlvxxR/eiK
-         WN9NHJ1ngZ73mmQTN/Xs+K7xksPSzzACs/tk3U+BzJtSbMdmsD4oSH/rL/DxoHSyM34z
-         w85pKqf6LYp3X5YbqXN8nq2TFcfbs613P8hWJ1bkuwqL3E5ZAhHiCtDtgRXgF919Oyub
-         EPQezKZ+T1DBapOeBNy+YhOpf6iSUcxQ6NbAbTRhXD2MCiarbWvt94vJC80vh8PEscBu
-         6Pj0UxpKTdUkacbdyCFGbz0E/u0lvcILtfffHxu8uyjw3stlFclMBNN9WTZmCTVSIwjP
-         c8Vw==
+        bh=6d8iK1MnMs1MUcRP0ixKsozU/LQP2hJZIf8aV/HUojg=;
+        b=oP2hJQjxqq25nVhwP7jAi6G/Pg6hv00lTpQ1Qod1Zpwzk2ZBr6lHHdsdIGlNxeT6pK
+         dkqT4uuUIb/qDfC3JKfi9FHontYPZwz22geG3dCTW8p1KronfgB+1USRWps4p6i5EPwf
+         eOnpD8BD8pISAAxJvlqkKvPVfHT9hN97cu31Kzp5NTTQg2ZExfG03f0uJASJfAMZPSH2
+         nKzXKJ7C76R6d0CFB0b/twhY7jH6U2XONx8+IaG6oPY3h+Gh+18t/DSutxc9uwTv0CDN
+         zMUgf8uu0C7UKj1RRLk/R4hHD9mynN7acUifqTbqBgcE1C0q3UlxtidmyFvZQLcXmIWU
+         YMuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=p34WepIUAC+vVryS2npy0LwKKNXZ/pNTKpuvngEBmQ4=;
-        b=ihOaQLC5SuYXuVXWXcI5bzD5m9DnW5CE8PloaqNCLYKXhQd9Q+X7SjwfURN1s9WWbf
-         /uRCLC+ebYP0bsV6FHaUPEUTtaxa6pxcmzF4Ib0zJVJmgS5tnkuzLYtibGrCfCRTS/ln
-         bKRWefXVRuVHbhBNfh+3HDdpm6UNhlI4RWZIx7O3g35Qtxqupz83STqwks1BjZJsK+Ya
-         9e2WCT/NIdv9vzrCNsm0vN3ivU0NDNL7J5FJZyLVYhOP3rjaudjhOttZesDalZfJvkyV
-         +VwyDrd8bw8OiBkyTmJKWVDgzgVIpranF26pBKpTgfT+BtZGv6O2dl6apa5ml6NBg3fT
-         qHUg==
-X-Gm-Message-State: APjAAAW0LyWDY/0nuLDGbl7H7JcLlH2uJv7VtmaOIuMBSW5hQn8VsICx
-        fhWBxANIsPCJTqdBNOAmxJINjPK1I7YNXr8bdpk=
-X-Google-Smtp-Source: APXvYqwOXJzX04ADWOS/heOjpPEeIGyDlSuV2xCkSmtAiKGFObKQbkQaiM/U80Y0J7a6CgumlMFl67BmhWr9pohUG8o=
-X-Received: by 2002:a92:ccd0:: with SMTP id u16mr14871734ilq.215.1580147919006;
- Mon, 27 Jan 2020 09:58:39 -0800 (PST)
+        bh=6d8iK1MnMs1MUcRP0ixKsozU/LQP2hJZIf8aV/HUojg=;
+        b=QwkRD+16tYnB3OAYWlpMr02O5q4CEotpkDlyx6e3cS0ntt7k6/u0WYA3szsQzIV7ao
+         hb8AC4L1V8P/hzzHGf5gVffwVQ7DtEyBU0jgiBPeHFfEFqsIWQXxakCNObd6hW2XvDj1
+         jrcbQzVDt/+GOHZJeYxWvS7XMGU5WCuFy4g/uLpbmqRohBuDGAJSw4llrNqDNnMhFfrf
+         jA5N/9rG/8gMXau4+BLvAZCvjSZLaWwWTOTNfyFm4NVBxKtSb/hZwWMetl5DaYR1HPtX
+         w98VXj7fLERRHnCLfVNEiEqrYh0bkETDi1GKQf0PtM9I+Nqvy7QfGfgEao9be2NgwhGO
+         +dbw==
+X-Gm-Message-State: APjAAAUzmfdV7lmIK1jZgLWZjX6Ws1hLNuBlxpg/JORLFV9Jbq52lVSq
+        z7THyauX425lhT91xC/usXymPDOd8PURseD8/Kw=
+X-Google-Smtp-Source: APXvYqylFbd3WaXxHx8TO06JVlUQjPqQj3vZq4mBStIup0QsMIklaBbFCanSiIP9IUcQaOr9iXwiJ5+zPgnIkwPAVhY=
+X-Received: by 2002:a6b:7215:: with SMTP id n21mr13908236ioc.131.1580148969772;
+ Mon, 27 Jan 2020 10:16:09 -0800 (PST)
 MIME-Version: 1.0
-References: <20200127164321.17468-1-lhenriques@suse.com> <20200127164321.17468-3-lhenriques@suse.com>
-In-Reply-To: <20200127164321.17468-3-lhenriques@suse.com>
+References: <20200127164321.17468-1-lhenriques@suse.com>
+In-Reply-To: <20200127164321.17468-1-lhenriques@suse.com>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 27 Jan 2020 18:58:46 +0100
-Message-ID: <CAOi1vP9HB4dPTHrgn2bTZ3nM2HSpLkwRvjZ8za0KE4NNnHmmtw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] ceph: parallelize all copy-from requests in copy_file_range
+Date:   Mon, 27 Jan 2020 19:16:17 +0100
+Message-ID: <CAOi1vP9RBBX9RtnZExk_9JX9-H-8B_2R6TQ6-iR3sRw047PfoQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] parallel 'copy-from' Ops in copy_file_range
 To:     Luis Henriques <lhenriques@suse.com>
 Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
         "Yan, Zheng" <zyan@redhat.com>,
@@ -61,127 +61,93 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 On Mon, Jan 27, 2020 at 5:43 PM Luis Henriques <lhenriques@suse.com> wrote:
 >
-> Right now the copy_file_range syscall serializes all the OSDs 'copy-from'
-> operations, waiting for each request to complete before sending the next
-> one.  This patch modifies copy_file_range so that all the 'copy-from'
-> operations are sent in bulk and waits for its completion at the end.  This
-> will allow significant speed-ups, specially when sending requests for
-> different target OSDs.
+> Hi,
 >
-> Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> ---
->  fs/ceph/file.c                  | 38 +++++++++++++++++++++++++++++++--
->  include/linux/ceph/osd_client.h |  2 ++
->  net/ceph/osd_client.c           |  1 +
->  3 files changed, 39 insertions(+), 2 deletions(-)
+> As discussed here[1] I'm sending an RFC patchset that does the
+> parallelization of the requests sent to the OSDs during a copy_file_range
+> syscall in CephFS.
 >
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 1e6cdf2dfe90..5d8f0ba11719 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1931,6 +1931,28 @@ static int is_file_size_ok(struct inode *src_inode, struct inode *dst_inode,
->         return 0;
->  }
+>   [1] https://lore.kernel.org/lkml/20200108100353.23770-1-lhenriques@suse.com/
 >
-> +static int wait_copy_from_reqs(struct list_head *osd_reqs)
-> +{
-> +       struct ceph_osd_request *req;
-> +       int ret = 0, err;
-> +
-> +       while (!list_empty(osd_reqs)) {
-> +               req = list_first_entry(osd_reqs,
-> +                                      struct ceph_osd_request,
-> +                                      r_copy_item);
-> +               list_del_init(&req->r_copy_item);
-> +               err = ceph_osdc_wait_request(req->r_osdc, req);
-> +               if (err) {
-> +                       if (!ret)
-> +                               ret = err;
-> +                       dout("copy request failed (err=%d)\n", err);
-> +               }
-> +               ceph_osdc_put_request(req);
-> +       }
-> +
-> +       return ret;
-> +}
+> I've also some performance numbers that I wanted to share. Here's a
+> description of the very simple tests I've run:
+>
+>  - create a file with 200 objects in it
+>    * i.e. tests with different object sizes mean different file sizes
+>  - drop all caches and umount the filesystem
+>  - Measure:
+>    * mount filesystem
+>    * full file copy (with copy_file_range)
+>    * umount filesystem
+>
+> Tests were repeated several times and the average value was used for
+> comparison.
+>
+>   DISCLAIMER:
+>   These numbers are only indicative, and different clusters and client
+>   configs will for sure show different performance!  More rigorous tests
+>   would be require to validate these results.
+>
+> Having as baseline a full read+write (basically, a copy_file_range
+> operation within a filesystem mounted without the 'copyfrom' option),
+> here's some values for different object sizes:
+>
+>                           8M      4M      1M      65k
+> read+write              100%    100%    100%     100%
+> sequential               51%     52%     83%    >100%
+> parallel (throttle=1)    51%     52%     83%    >100%
+> parallel (throttle=0)    17%     17%     83%    >100%
+>
+> Notes:
+>
+> - 'parallel (throttle=0)' was a test where *all* the requests (i.e. 200
+>   requests to copy the 200 objects in the file) were sent to the OSDs and
+>   the wait for requests completion is done at the end only.
+>
+> - 'parallel (throttle=1)' was just a control test, where the wait for
+>   completion is done immediately after a request is sent.  It was expected
+>   to be very similar to the non-optimized ('sequential') tests.
+>
+> - These tests were executed on a cluster with 40 OSDs, spread across 5
+>   (bare-metal) nodes.
+>
+> - The tests with object size of 65k show that copy_file_range definitely
+>   doesn't scale to files with small object sizes.  '> 100%' actually means
+>   more than 10x slower.
+>
+> Measuring the mount+copy+umount masks the actual difference between
+> different throttle values due to the time spent in mount+umount.  Thus,
+> there was no real difference between throttle=0 (send all and wait) and
+> throttle=20 (send 20, wait, send 20, ...).  But here's what I observed
+> when measuring only the copy operation (4M object size):
+>
+> read+write              100%
+> parallel (throttle=1)    56%
+> parallel (throttle=5)    23%
+> parallel (throttle=10)   14%
+> parallel (throttle=20)    9%
+> parallel (throttle=5)     5%
 
-This should probably go into libceph, as ceph_osdc_wait_requests().
+Was this supposed to be throttle=50?
 
-> +
->  static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->                                       struct file *dst_file, loff_t dst_off,
->                                       size_t len, unsigned int flags)
-> @@ -1943,12 +1965,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->         struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
->         struct ceph_object_locator src_oloc, dst_oloc;
->         struct ceph_object_id src_oid, dst_oid;
-> +       struct ceph_osd_request *req;
->         loff_t endoff = 0, size;
->         ssize_t ret = -EIO;
->         u64 src_objnum, dst_objnum, src_objoff, dst_objoff;
->         u32 src_objlen, dst_objlen, object_size;
->         int src_got = 0, dst_got = 0, err, dirty;
->         bool do_final_copy = false;
-> +       LIST_HEAD(osd_reqs);
 >
->         if (src_inode->i_sb != dst_inode->i_sb) {
->                 struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
-> @@ -2097,7 +2121,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->                 ceph_oid_printf(&dst_oid, "%llx.%08llx",
->                                 dst_ci->i_vino.ino, dst_objnum);
->                 /* Do an object remote copy */
-> -               err = ceph_osdc_copy_from(
-> +               req = ceph_osdc_copy_from_nowait(
->                         &src_fsc->client->osdc,
->                         src_ci->i_vino.snap, 0,
->                         &src_oid, &src_oloc,
-> @@ -2108,7 +2132,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->                         CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
->                         dst_ci->i_truncate_seq, dst_ci->i_truncate_size,
->                         CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
-> -               if (err) {
-> +               if (IS_ERR(req)) {
-> +                       err = PTR_ERR(req);
->                         if (err == -EOPNOTSUPP) {
->                                 src_fsc->have_copy_from2 = false;
->                                 pr_notice("OSDs don't support 'copy-from2'; "
-> @@ -2117,14 +2142,23 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->                         dout("ceph_osdc_copy_from returned %d\n", err);
->                         if (!ret)
->                                 ret = err;
-> +                       /* wait for all queued requests */
-> +                       wait_copy_from_reqs(&osd_reqs);
->                         goto out_caps;
->                 }
-> +               list_add(&req->r_copy_item, &osd_reqs);
->                 len -= object_size;
->                 src_off += object_size;
->                 dst_off += object_size;
->                 ret += object_size;
->         }
+> Anyway, I'll still need to revisit patch 0003 as it doesn't follow the
+> suggestion done by Jeff to *not* add another knob to fine-tune the
+> throttle value -- this patch adds a kernel parameter for a knob that I
+> wanted to use in my testing to observe different values of this throttle
+> limit.
 >
-> +       err = wait_copy_from_reqs(&osd_reqs);
-> +       if (err) {
-> +               if (!ret)
-> +                       ret = err;
-> +               goto out_caps;
-> +       }
->         if (len)
->                 /* We still need one final local copy */
->                 do_final_copy = true;
-> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> index 7916a178d137..2b4a14bc6154 100644
-> --- a/include/linux/ceph/osd_client.h
-> +++ b/include/linux/ceph/osd_client.h
-> @@ -210,6 +210,8 @@ struct ceph_osd_request {
->         u64 r_data_offset;                    /* ditto */
->         bool r_linger;                        /* don't resend on failure */
->
-> +       struct list_head r_copy_item;         /* used for copy-from operations */
-> +
+> The goal is to probably to drop this patch and do the throttling in patch
+> 0002.  I just need to come up with a decent heuristic.  Jeff's suggestion
+> was to use rsize/wsize, which are set to 64M by default IIRC.  Somehow I
+> feel that it should be related to the number of OSDs in the cluster
+> instead, but I'm not sure how.  And testing these sort of heuristics would
+> require different clusters, which isn't particularly easy to get.  Anyway,
+> comments are welcome!
 
-We have r_private_item for exactly this kind of ad-hoc lists, already
-used in rbd and ceph_direct_read_write().
+I agree with Jeff, this throttle is certainly not worth a module
+parameter (or a mount option).  I would start with something like
+C * (wsize / object size) and pick C between 1 and 4.
 
 Thanks,
 
