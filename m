@@ -2,177 +2,95 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08FFC14B4A2
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 Jan 2020 14:03:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B97FB14BA95
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 Jan 2020 15:40:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726182AbgA1ND5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 28 Jan 2020 08:03:57 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58147 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726034AbgA1ND5 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 28 Jan 2020 08:03:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580216636;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=95UghL6t9xaBh20+wUUUrrakBdh8t5YxMnU5/sz3IQA=;
-        b=asz+svzIhk6tH05GmTHqhNpAhmYsA+iXvCQHayN/Rmgr0PfPcdMN5pRSUT73cqkhF7N6g9
-        izi5/M2zctmZfj82aGxaYEisTIixxKAT50a02elkwmtbNBIYAEa0e1Y75ijBaaat3Cb9uA
-        aeE1H2BJ6fhMmV0f2WEMnMspmwDVziM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-275-Mdyo8dfoPkaW9lt6tH1V9g-1; Tue, 28 Jan 2020 08:03:48 -0500
-X-MC-Unique: Mdyo8dfoPkaW9lt6tH1V9g-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 61A4D8010C9;
-        Tue, 28 Jan 2020 13:03:47 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-34.pek2.redhat.com [10.72.12.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A1BD780A5C;
-        Tue, 28 Jan 2020 13:03:44 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org, idryomov@gmail.com, zyan@redhat.com
-Cc:     sage@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v5 10/10] ceph: send client provided metric flags in client metadata
-Date:   Tue, 28 Jan 2020 08:02:48 -0500
-Message-Id: <20200128130248.4266-11-xiubli@redhat.com>
-In-Reply-To: <20200128130248.4266-1-xiubli@redhat.com>
-References: <20200128130248.4266-1-xiubli@redhat.com>
+        id S1728332AbgA1Oj7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 28 Jan 2020 09:39:59 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40300 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727716AbgA1OQa (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 28 Jan 2020 09:16:30 -0500
+Received: by mail-io1-f66.google.com with SMTP id x1so14380191iop.7
+        for <ceph-devel@vger.kernel.org>; Tue, 28 Jan 2020 06:16:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wlsTiDZMPgxkZjxRWVhpxEI7aXlmDAWO0rSZGGtvDqE=;
+        b=hGLtMLch0XL64+CpupnH1srjBDJ/hu0JqUMTP3WuGynmwK3H1V4A1hmnWg+MaelI8l
+         K3ZIMEPTjTkdAvCPIl7XOicZGTO2hpxUhLt+fn89bS5DmHtK2TIT9dlkQWuEGWfivPW7
+         67Cyyfh5ot6rDAPJsZoferap53wKUR4y3bibnU+WaK7YyTzye81JLU0ICcQNTV9og1EW
+         HDSIXPD+oPxRqh73hS/oDxrHGXIH29zEYvEMwQFJ8EbOmDGw/difKa4B1NXi9MQt6ifG
+         A0OKenl6qw3M/MBlmGDpznlyCGG0VIzI5arT87s6jycaYsqFcvxfnZmgspnHJ5Uxp11k
+         Ef5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wlsTiDZMPgxkZjxRWVhpxEI7aXlmDAWO0rSZGGtvDqE=;
+        b=n8fXhzC14Wge04OetFgJt7QLw+9vYf4Ae3fbK1EibDfz6/F0jCiweGhyGlqKDJjtAN
+         wEosKHYqysJ9vk4Cmn08X/mNnBmkI9yYbMFNZzgMauan5Ejr0nV4Ve8GBZ6MeA5T6Is4
+         sIAc86ykHNw+yvJ4ScyEyl47CTA/hydj8vsOVYu/5FRF1Mw12XEh5YMmttzu4m1hWB3i
+         4zcx3BvXng+faG4tqQr0ZmOZzghV0hNCQ2fL+94sjTWlYwTu5qAWtk8p9tAjJbR9zgsj
+         sE/TQSl92gKa9NDGOW6E4cYNIPnmnVmgIJf+OIHrWGpaHxuAHp1vL6fD2rFMux/qDeFj
+         ZamA==
+X-Gm-Message-State: APjAAAUhIEX/cXUso7LQYE+JjFRALB2x4C4xJtpwYvIuTXi0FB26dDXN
+        qiKF0kHAp7J4xPKPw4yufksnukTDyTqhRJ1m9QQqAnw40Cw=
+X-Google-Smtp-Source: APXvYqxeL8ubaUadY3oxFj4lV9WnbQq9VxPGthzcq+Oh3vSth0rXCPyvLnIEcHC18tzUwyCSBXth+8XbWDUQbuMo3as=
+X-Received: by 2002:a05:6638:34c:: with SMTP id x12mr17281237jap.144.1580220989688;
+ Tue, 28 Jan 2020 06:16:29 -0800 (PST)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-Content-Transfer-Encoding: quoted-printable
+References: <20200128130248.4266-1-xiubli@redhat.com>
+In-Reply-To: <20200128130248.4266-1-xiubli@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 28 Jan 2020 15:16:37 +0100
+Message-ID: <CAOi1vP-o+mNPprtFKjD-=ifEzHS6uMva2ZDf=LM6PCT4CJuPoA@mail.gmail.com>
+Subject: Re: [PATCH v5 0/10] ceph: add perf metrics support
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, "Yan, Zheng" <zyan@redhat.com>,
+        Sage Weil <sage@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Tue, Jan 28, 2020 at 2:03 PM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> Changed in V2:
+> - add read/write/metadata latency metric support.
+> - add and send client provided metric flags in client metadata
+> - addressed the comments from Ilya and merged the 4/4 patch into 3/4.
+> - addressed all the other comments in v1 series.
+>
+> Changed in V3:
+> - addressed Jeff's comments and let's the callers do the metric
+> counting.
+> - with some small fixes for the read/write latency
+> - tested based on the latest testing branch
+>
+> Changed in V4:
+> - fix the lock issue
+>
+> Changed in V5:
+> - add r_end_stamp for the osdc request
+> - delete reset metric and move it to metric sysfs
+> - move ceph_osdc_{read,write}pages to ceph.ko
+> - use percpu counters instead for read/write/metadata latencies
+>
+> It will send the metrics to the MDSs every second if sending_metrics is enabled, disable as default.
 
-Will send the metric flags to MDS, currently it supports the cap,
-dentry lease, read latency, write latency and metadata latency.
+Hi Xiubo,
 
-URL: https://tracker.ceph.com/issues/43435
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/mds_client.c | 47 ++++++++++++++++++++++++++++++++++++++++++--
- fs/ceph/metric.h     | 14 +++++++++++++
- 2 files changed, 59 insertions(+), 2 deletions(-)
+What is this series based on?  "[PATCH v5 01/10] ceph: add caps perf
+metric for each session" changes metric_show() in fs/ceph/debugfs.c,
+but there is no such function upstream or in the testing branch.
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index d765804dc855..f9d3acd36656 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -1096,6 +1096,41 @@ static void encode_supported_features(void **p, vo=
-id *end)
- 	}
- }
-=20
-+static const unsigned char metric_bits[] =3D CEPHFS_METRIC_SPEC_CLIENT_S=
-UPPORTED;
-+#define METRIC_BYTES(cnt) (DIV_ROUND_UP((size_t)metric_bits[cnt - 1] + 1=
-, 64) * 8)
-+static void encode_metric_spec(void **p, void *end)
-+{
-+	static const size_t count =3D ARRAY_SIZE(metric_bits);
-+
-+	/* header */
-+	BUG_ON(*p + 2 > end);
-+	ceph_encode_8(p, 1); /* version */
-+	ceph_encode_8(p, 1); /* compat */
-+
-+	if (count > 0) {
-+		size_t i;
-+		size_t size =3D METRIC_BYTES(count);
-+
-+		BUG_ON(*p + 4 + 4 + size > end);
-+
-+		/* metric spec info length */
-+		ceph_encode_32(p, 4 + size);
-+
-+		/* metric spec */
-+		ceph_encode_32(p, size);
-+		memset(*p, 0, size);
-+		for (i =3D 0; i < count; i++)
-+			((unsigned char*)(*p))[i / 8] |=3D BIT(metric_bits[i] % 8);
-+		*p +=3D size;
-+	} else {
-+		BUG_ON(*p + 4 + 4 > end);
-+		/* metric spec info length */
-+		ceph_encode_32(p, 4);
-+		/* metric spec */
-+		ceph_encode_32(p, 0);
-+	}
-+}
-+
- /*
-  * session message, specialization for CEPH_SESSION_REQUEST_OPEN
-  * to include additional client metadata fields.
-@@ -1135,6 +1170,13 @@ static struct ceph_msg *create_session_open_msg(st=
-ruct ceph_mds_client *mdsc, u6
- 		size =3D FEATURE_BYTES(count);
- 	extra_bytes +=3D 4 + size;
-=20
-+	/* metric spec */
-+	size =3D 0;
-+	count =3D ARRAY_SIZE(metric_bits);
-+	if (count > 0)
-+		size =3D METRIC_BYTES(count);
-+	extra_bytes +=3D 2 + 4 + 4 + size;
-+
- 	/* Allocate the message */
- 	msg =3D ceph_msg_new(CEPH_MSG_CLIENT_SESSION, sizeof(*h) + extra_bytes,
- 			   GFP_NOFS, false);
-@@ -1153,9 +1195,9 @@ static struct ceph_msg *create_session_open_msg(str=
-uct ceph_mds_client *mdsc, u6
- 	 * Serialize client metadata into waiting buffer space, using
- 	 * the format that userspace expects for map<string, string>
- 	 *
--	 * ClientSession messages with metadata are v3
-+	 * ClientSession messages with metadata are v4
- 	 */
--	msg->hdr.version =3D cpu_to_le16(3);
-+	msg->hdr.version =3D cpu_to_le16(4);
- 	msg->hdr.compat_version =3D cpu_to_le16(1);
-=20
- 	/* The write pointer, following the session_head structure */
-@@ -1178,6 +1220,7 @@ static struct ceph_msg *create_session_open_msg(str=
-uct ceph_mds_client *mdsc, u6
- 	}
-=20
- 	encode_supported_features(&p, end);
-+	encode_metric_spec(&p, end);
- 	msg->front.iov_len =3D p - msg->front.iov_base;
- 	msg->hdr.front_len =3D cpu_to_le32(msg->front.iov_len);
-=20
-diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
-index 352eb753ce25..70e0b586b687 100644
---- a/fs/ceph/metric.h
-+++ b/fs/ceph/metric.h
-@@ -14,6 +14,20 @@ enum ceph_metric_type {
- 	CLIENT_METRIC_TYPE_MAX =3D CLIENT_METRIC_TYPE_DENTRY_LEASE,
- };
-=20
-+/*
-+ * This will always have the highest metric bit value
-+ * as the last element of the array.
-+ */
-+#define CEPHFS_METRIC_SPEC_CLIENT_SUPPORTED {	\
-+	CLIENT_METRIC_TYPE_CAP_INFO,		\
-+	CLIENT_METRIC_TYPE_READ_LATENCY,	\
-+	CLIENT_METRIC_TYPE_WRITE_LATENCY,	\
-+	CLIENT_METRIC_TYPE_METADATA_LATENCY,	\
-+	CLIENT_METRIC_TYPE_DENTRY_LEASE,	\
-+						\
-+	CLIENT_METRIC_TYPE_MAX,			\
-+}
-+
- /* metric caps header */
- struct ceph_metric_cap {
- 	__le32 type;     /* ceph metric type */
---=20
-2.21.0
+Thanks,
 
+                Ilya
