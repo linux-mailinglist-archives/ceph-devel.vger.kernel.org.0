@@ -2,210 +2,206 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80DDC14BE60
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 Jan 2020 18:16:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDC1314C176
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 Jan 2020 21:13:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726111AbgA1RP7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 28 Jan 2020 12:15:59 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:36860 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725881AbgA1RP7 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 28 Jan 2020 12:15:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580231758;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=b9v4LRJ0X/zwC21iWprb3Pdxwg0r6oKyP3zn7Ik5Yc0=;
-        b=hbp5RFMu/wwZhMGh2JnqrgZsf8QjUlyrYoYZJsnws/eqS+PNuRdUoDtRZmbsqmtalEL5wo
-        8O72cxZrrxSdsDF8Xv6Y/5+0TCxnt7E75cgqxdnpDzTHIQjUlv9uOuFZfT5JvS+mwJcvhB
-        vbyRop33wv3a44Bg5F2DhvPUuXie4z0=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-172-0zvPVJxbOtiOXjEviZFC4w-1; Tue, 28 Jan 2020 12:15:42 -0500
-X-MC-Unique: 0zvPVJxbOtiOXjEviZFC4w-1
-Received: by mail-qv1-f69.google.com with SMTP id g15so9100398qvq.20
-        for <ceph-devel@vger.kernel.org>; Tue, 28 Jan 2020 09:15:41 -0800 (PST)
+        id S1726211AbgA1UNW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 28 Jan 2020 15:13:22 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37744 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726141AbgA1UNW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 28 Jan 2020 15:13:22 -0500
+Received: by mail-wr1-f67.google.com with SMTP id w15so17614013wru.4
+        for <ceph-devel@vger.kernel.org>; Tue, 28 Jan 2020 12:13:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FJPhYYuMGsCBqs596JAEZWo51K+bs/O1V8cDpq3y4Fk=;
+        b=E8xkbZNXimpq646F1BdcfHaJCuSivNtO5YRUw57riiIcvNcQFtCSoFwd78n0GCN04o
+         m+56T1HjSp8K4jVA/XbtCXMnCPvJN4Jg7V7olK1BNr22GUZxSYCgoyWXOnmOHzjudO4b
+         EQBdOqL4hh4sRM2R2oL7z/biDd8NymNOkM5mbQEpVjh1PxXNYIDbHpHgFc3IF6rA6RkV
+         CuhJ5c22b8qEltfQgQMn54j6Wq3vgOB2hfyQQ5JGNiYIFA1h7HS4BdirFrasJ2YB06uc
+         uafGxWvNj+aXw84lSkUczyMKUMZP1O5SbbpIDAaVhny9ihvqb/WRz1X6YmMA6bZMfxkn
+         iG3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=b9v4LRJ0X/zwC21iWprb3Pdxwg0r6oKyP3zn7Ik5Yc0=;
-        b=a+C1mlA1wovza5EQjlamgiftIstBsrpGknxiMzNqsb5zv8v3E0NjQKi6nrTmpRCFfe
-         Iw+mLxCMT1knMeD5PoKfNd5m9NYqMYLfcHSppaBVB9+2xJ7yQf4JUHqWY9/WVBM8ibQB
-         WLLQccdUsQswmsxkOq7GUhSFP87Q38GF6CXwwa3mIlwApIncIIMf8bVdjhuoSZE7B0hc
-         WNDa8rQFu6jEGtlBf4NMwWWXoa6LyGqknK32aEdJ3IKI/KFgO9kcoAFdhs0lJhIc4oJC
-         F62/USx8jdtlrlYJXmd2Wr0ZayGplhqrq8JnLp2CN0GGRkg0zWVgO+7fgkfw+QuGA8uP
-         GpLA==
-X-Gm-Message-State: APjAAAVJpBJqkk25TR1Yxni2nnrOTRMdEQeUsIpVsyEMn1rB98Qt0CBq
-        jZdvWNGWhsJ+60jIBhE1aI23lnoo0uBOsEgQ3IdgFY/u1ObqkUiucVfxTwrquTXbRqP1ltXia/n
-        PL3Bp2JYKIdRDLEtXVZNvl4VE83+GzybURa5ayw==
-X-Received: by 2002:a37:4702:: with SMTP id u2mr23056581qka.106.1580231741093;
-        Tue, 28 Jan 2020 09:15:41 -0800 (PST)
-X-Google-Smtp-Source: APXvYqy12xK45XJ/S4v6FPIdibaw9orglTewXlm78OCE6+UYg4+e2OiLJb6k3g612FKAJA/XsK5i84ONxj8wE79oTsw=
-X-Received: by 2002:a37:4702:: with SMTP id u2mr23056525qka.106.1580231740587;
- Tue, 28 Jan 2020 09:15:40 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FJPhYYuMGsCBqs596JAEZWo51K+bs/O1V8cDpq3y4Fk=;
+        b=lVKoJ1mb6IQe/fNv2IL3/ossZ7vLdqckvVpQsGHihSLhyjERlp6fQCV36tCnufDaqy
+         wwZj6XZFUq8ZBlW5qE8kXC1wDKwTaplK/g0LsG9lIyt3mnR1GrHFKlzKEL3BHS7bkaaB
+         ikg9l7DVeVf7n/huqXtj2CMEdC9ArteB2oMFcAX8jrEjcK9cGfonOoAykhG1/3lPOdAS
+         wUNA1TdbWgALp2zJmxy8Y3Xcgjr77zSVko6m90Jt9nBRuNuLoALKsgoOlnQAudCkAfHy
+         6Uz3wbGHertxDpFcN+bwUq+Xa8v4XnrdVZ1nkkVsZNtS0gHgqj554UpEhmxU9CbrzOTW
+         idoQ==
+X-Gm-Message-State: APjAAAUjGa0nx18wDT5r5awEwZvd054Imh7ui2sQcRIcj9UXwcQXmsUq
+        1Bl4X8MZTar8JmXRJ5xImtvY59HAMb4=
+X-Google-Smtp-Source: APXvYqzw1AcwOwxihsp+Jzx3zE8C+ohmKXhD+fPxHYiYGlSHd5iVG5VcdlRzB9bVcQtlFZjbT6W2tA==
+X-Received: by 2002:a5d:6089:: with SMTP id w9mr30512892wrt.228.1580242400132;
+        Tue, 28 Jan 2020 12:13:20 -0800 (PST)
+Received: from kwango.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id r3sm2203234wrn.34.2020.01.28.12.13.18
+        for <ceph-devel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jan 2020 12:13:18 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     ceph-devel@vger.kernel.org
+Subject: [PATCH] libceph: drop CEPH_DEFINE_SHOW_FUNC
+Date:   Tue, 28 Jan 2020 21:13:03 +0100
+Message-Id: <20200128201303.16352-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <20200127164321.17468-1-lhenriques@suse.com> <CAOi1vP9RBBX9RtnZExk_9JX9-H-8B_2R6TQ6-iR3sRw047PfoQ@mail.gmail.com>
- <20200127185203.GC22545@suse.com>
-In-Reply-To: <20200127185203.GC22545@suse.com>
-From:   Gregory Farnum <gfarnum@redhat.com>
-Date:   Tue, 28 Jan 2020 18:15:29 +0100
-Message-ID: <CAJ4mKGYFg-phv1D=D9UxZPOB4FYN04Y=SYEr4AgQVzdWKGLCgw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/3] parallel 'copy-from' Ops in copy_file_range
-To:     Luis Henriques <lhenriques@suse.com>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "Yan, Zheng" <zyan@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 7:52 PM Luis Henriques <lhenriques@suse.com> wrote:
->
-> On Mon, Jan 27, 2020 at 07:16:17PM +0100, Ilya Dryomov wrote:
-> > On Mon, Jan 27, 2020 at 5:43 PM Luis Henriques <lhenriques@suse.com> wr=
-ote:
-> > >
-> > > Hi,
-> > >
-> > > As discussed here[1] I'm sending an RFC patchset that does the
-> > > parallelization of the requests sent to the OSDs during a copy_file_r=
-ange
-> > > syscall in CephFS.
-> > >
-> > >   [1] https://lore.kernel.org/lkml/20200108100353.23770-1-lhenriques@=
-suse.com/
-> > >
-> > > I've also some performance numbers that I wanted to share. Here's a
-> > > description of the very simple tests I've run:
-> > >
-> > >  - create a file with 200 objects in it
-> > >    * i.e. tests with different object sizes mean different file sizes
-> > >  - drop all caches and umount the filesystem
-> > >  - Measure:
-> > >    * mount filesystem
-> > >    * full file copy (with copy_file_range)
-> > >    * umount filesystem
-> > >
-> > > Tests were repeated several times and the average value was used for
-> > > comparison.
-> > >
-> > >   DISCLAIMER:
-> > >   These numbers are only indicative, and different clusters and clien=
-t
-> > >   configs will for sure show different performance!  More rigorous te=
-sts
-> > >   would be require to validate these results.
-> > >
-> > > Having as baseline a full read+write (basically, a copy_file_range
-> > > operation within a filesystem mounted without the 'copyfrom' option),
-> > > here's some values for different object sizes:
-> > >
-> > >                           8M      4M      1M      65k
-> > > read+write              100%    100%    100%     100%
-> > > sequential               51%     52%     83%    >100%
-> > > parallel (throttle=3D1)    51%     52%     83%    >100%
-> > > parallel (throttle=3D0)    17%     17%     83%    >100%
-> > >
-> > > Notes:
-> > >
-> > > - 'parallel (throttle=3D0)' was a test where *all* the requests (i.e.=
- 200
-> > >   requests to copy the 200 objects in the file) were sent to the OSDs=
- and
-> > >   the wait for requests completion is done at the end only.
-> > >
-> > > - 'parallel (throttle=3D1)' was just a control test, where the wait f=
-or
-> > >   completion is done immediately after a request is sent.  It was exp=
-ected
-> > >   to be very similar to the non-optimized ('sequential') tests.
-> > >
-> > > - These tests were executed on a cluster with 40 OSDs, spread across =
-5
-> > >   (bare-metal) nodes.
-> > >
-> > > - The tests with object size of 65k show that copy_file_range definit=
-ely
-> > >   doesn't scale to files with small object sizes.  '> 100%' actually =
-means
-> > >   more than 10x slower.
-> > >
-> > > Measuring the mount+copy+umount masks the actual difference between
-> > > different throttle values due to the time spent in mount+umount.  Thu=
-s,
-> > > there was no real difference between throttle=3D0 (send all and wait)=
- and
-> > > throttle=3D20 (send 20, wait, send 20, ...).  But here's what I obser=
-ved
-> > > when measuring only the copy operation (4M object size):
-> > >
-> > > read+write              100%
-> > > parallel (throttle=3D1)    56%
-> > > parallel (throttle=3D5)    23%
-> > > parallel (throttle=3D10)   14%
-> > > parallel (throttle=3D20)    9%
-> > > parallel (throttle=3D5)     5%
-> >
-> > Was this supposed to be throttle=3D50?
->
-> Ups, no it should be throttle=3D0 (i.e. no throttle).
->
-> > >
-> > > Anyway, I'll still need to revisit patch 0003 as it doesn't follow th=
-e
-> > > suggestion done by Jeff to *not* add another knob to fine-tune the
-> > > throttle value -- this patch adds a kernel parameter for a knob that =
-I
-> > > wanted to use in my testing to observe different values of this throt=
-tle
-> > > limit.
-> > >
-> > > The goal is to probably to drop this patch and do the throttling in p=
-atch
-> > > 0002.  I just need to come up with a decent heuristic.  Jeff's sugges=
-tion
-> > > was to use rsize/wsize, which are set to 64M by default IIRC.  Someho=
-w I
-> > > feel that it should be related to the number of OSDs in the cluster
-> > > instead, but I'm not sure how.  And testing these sort of heuristics =
-would
-> > > require different clusters, which isn't particularly easy to get.  An=
-yway,
-> > > comments are welcome!
-> >
-> > I agree with Jeff, this throttle is certainly not worth a module
-> > parameter (or a mount option).  I would start with something like
-> > C * (wsize / object size) and pick C between 1 and 4.
->
-> Sure, I also agree with not adding the new parameter or mount option.
-> It's just tricky to pick (and test!) the best formula to use.  From your
-> proposal the throttle value would be by default between 16 and 64; those
-> probably work fine in some situations (for example, in the cluster I used
-> for running my tests).  But for a really big cluster, with hundreds of
-> OSDs, it's difficult to say.
+Although CEPH_DEFINE_SHOW_FUNC is much older, it now duplicates
+DEFINE_SHOW_ATTRIBUTE from linux/seq_file.h.
 
-We don't really need a single client to be capable of spraying the
-entire cluster in a single operation =E2=80=94 as the wsize is already an
-effective control over how parallel a single write is allowed to be, I
-think we're okay using it as the basis for copy_file_range as well
-without worrying about scaling it up!.
--Greg
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+---
+ fs/ceph/debugfs.c            | 16 ++++++++--------
+ include/linux/ceph/debugfs.h | 14 --------------
+ net/ceph/debugfs.c           | 20 ++++++++++----------
+ 3 files changed, 18 insertions(+), 32 deletions(-)
 
->
-> Anyway, I'll come up with a proposal for the next revision.  And thanks a
-> lot for your feedback.
->
-> Cheers,
-> --
-> Lu=C3=ADs
->
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index fb7cabd98e7b..481ac97b4d25 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -218,10 +218,10 @@ static int mds_sessions_show(struct seq_file *s, void *ptr)
+ 	return 0;
+ }
+ 
+-CEPH_DEFINE_SHOW_FUNC(mdsmap_show)
+-CEPH_DEFINE_SHOW_FUNC(mdsc_show)
+-CEPH_DEFINE_SHOW_FUNC(caps_show)
+-CEPH_DEFINE_SHOW_FUNC(mds_sessions_show)
++DEFINE_SHOW_ATTRIBUTE(mdsmap);
++DEFINE_SHOW_ATTRIBUTE(mdsc);
++DEFINE_SHOW_ATTRIBUTE(caps);
++DEFINE_SHOW_ATTRIBUTE(mds_sessions);
+ 
+ 
+ /*
+@@ -281,25 +281,25 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
+ 					0400,
+ 					fsc->client->debugfs_dir,
+ 					fsc,
+-					&mdsmap_show_fops);
++					&mdsmap_fops);
+ 
+ 	fsc->debugfs_mds_sessions = debugfs_create_file("mds_sessions",
+ 					0400,
+ 					fsc->client->debugfs_dir,
+ 					fsc,
+-					&mds_sessions_show_fops);
++					&mds_sessions_fops);
+ 
+ 	fsc->debugfs_mdsc = debugfs_create_file("mdsc",
+ 						0400,
+ 						fsc->client->debugfs_dir,
+ 						fsc,
+-						&mdsc_show_fops);
++						&mdsc_fops);
+ 
+ 	fsc->debugfs_caps = debugfs_create_file("caps",
+ 						   0400,
+ 						   fsc->client->debugfs_dir,
+ 						   fsc,
+-						   &caps_show_fops);
++						   &caps_fops);
+ }
+ 
+ 
+diff --git a/include/linux/ceph/debugfs.h b/include/linux/ceph/debugfs.h
+index cf5e840eec71..8b3a1a7a953a 100644
+--- a/include/linux/ceph/debugfs.h
++++ b/include/linux/ceph/debugfs.h
+@@ -2,22 +2,8 @@
+ #ifndef _FS_CEPH_DEBUGFS_H
+ #define _FS_CEPH_DEBUGFS_H
+ 
+-#include <linux/ceph/ceph_debug.h>
+ #include <linux/ceph/types.h>
+ 
+-#define CEPH_DEFINE_SHOW_FUNC(name)					\
+-static int name##_open(struct inode *inode, struct file *file)		\
+-{									\
+-	return single_open(file, name, inode->i_private);		\
+-}									\
+-									\
+-static const struct file_operations name##_fops = {			\
+-	.open		= name##_open,					\
+-	.read		= seq_read,					\
+-	.llseek		= seq_lseek,					\
+-	.release	= single_release,				\
+-};
+-
+ /* debugfs.c */
+ extern void ceph_debugfs_init(void);
+ extern void ceph_debugfs_cleanup(void);
+diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
+index 7cb992e55475..1344f232ecc5 100644
+--- a/net/ceph/debugfs.c
++++ b/net/ceph/debugfs.c
+@@ -383,11 +383,11 @@ static int client_options_show(struct seq_file *s, void *p)
+ 	return 0;
+ }
+ 
+-CEPH_DEFINE_SHOW_FUNC(monmap_show)
+-CEPH_DEFINE_SHOW_FUNC(osdmap_show)
+-CEPH_DEFINE_SHOW_FUNC(monc_show)
+-CEPH_DEFINE_SHOW_FUNC(osdc_show)
+-CEPH_DEFINE_SHOW_FUNC(client_options_show)
++DEFINE_SHOW_ATTRIBUTE(monmap);
++DEFINE_SHOW_ATTRIBUTE(osdmap);
++DEFINE_SHOW_ATTRIBUTE(monc);
++DEFINE_SHOW_ATTRIBUTE(osdc);
++DEFINE_SHOW_ATTRIBUTE(client_options);
+ 
+ void __init ceph_debugfs_init(void)
+ {
+@@ -414,31 +414,31 @@ void ceph_debugfs_client_init(struct ceph_client *client)
+ 						      0400,
+ 						      client->debugfs_dir,
+ 						      client,
+-						      &monc_show_fops);
++						      &monc_fops);
+ 
+ 	client->osdc.debugfs_file = debugfs_create_file("osdc",
+ 						      0400,
+ 						      client->debugfs_dir,
+ 						      client,
+-						      &osdc_show_fops);
++						      &osdc_fops);
+ 
+ 	client->debugfs_monmap = debugfs_create_file("monmap",
+ 					0400,
+ 					client->debugfs_dir,
+ 					client,
+-					&monmap_show_fops);
++					&monmap_fops);
+ 
+ 	client->debugfs_osdmap = debugfs_create_file("osdmap",
+ 					0400,
+ 					client->debugfs_dir,
+ 					client,
+-					&osdmap_show_fops);
++					&osdmap_fops);
+ 
+ 	client->debugfs_options = debugfs_create_file("client_options",
+ 					0400,
+ 					client->debugfs_dir,
+ 					client,
+-					&client_options_show_fops);
++					&client_options_fops);
+ }
+ 
+ void ceph_debugfs_client_cleanup(struct ceph_client *client)
+-- 
+2.19.2
 
