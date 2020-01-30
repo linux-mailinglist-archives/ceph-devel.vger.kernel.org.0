@@ -2,264 +2,201 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B306A14DE02
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 Jan 2020 16:39:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C36E14DE46
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 Jan 2020 16:59:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbgA3Pjk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 30 Jan 2020 10:39:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33530 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727158AbgA3Pjk (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 30 Jan 2020 10:39:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id CDCDFAFFC;
-        Thu, 30 Jan 2020 15:39:36 +0000 (UTC)
-Subject: Re: [PATCH] rbd: lock object request list
-To:     Laurence Oberman <loberman@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     Sage Weil <sage@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        ceph-devel@vger.kernel.org, linux-block@vger.kernel.org
-References: <20200130114258.8482-1-hare@suse.de>
- <2fc165f5ad9ea0ec8a0878eabe800ca0af3e10b8.camel@redhat.com>
-From:   Hannes Reinecke <hare@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
- 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
- azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <b786e9dd-02c1-e117-db92-aa3f50804bc7@suse.de>
-Date:   Thu, 30 Jan 2020 16:39:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727239AbgA3P7w (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 30 Jan 2020 10:59:52 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:39072 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726948AbgA3P7w (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 Jan 2020 10:59:52 -0500
+Received: by mail-il1-f194.google.com with SMTP id f70so3473064ill.6;
+        Thu, 30 Jan 2020 07:59:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h9xiE7btg/VKDmdoMWriAUdoA021pLjPXiRTvTp+Dac=;
+        b=FG/NIHDAA1vnW0gjTFOtiJ0uIARPjaf/WJ36Sy+bsFtZZNQMGhzaQ2AI0r0HzeptaP
+         iUr1U9ue00WrRmmu56EhzUvtW06OQDnMy0JLQtQtw+aqjiHcSN9Lz4WFbZ7OtvPi57Cq
+         ChFKneMWW1k+/2RMKbDIegaVQbAY2HR3edPqK7JB3Yv+7b54CQMC93ZctElsjPCcT8B9
+         w8rCuZltK9ud/TPEuUI1uqLaVGY9xzCDAnLzYdwCHRDAPM4g+lTwd7ndZ282rWwx5m2B
+         LyfU5YaOcu1GInYzkprf/qcqdcAO3wX86OX71YZE8KAtZsphetQwawfZqGtrMEGmq7cS
+         XBmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h9xiE7btg/VKDmdoMWriAUdoA021pLjPXiRTvTp+Dac=;
+        b=NrM91NZJo98HbX9EuZgWHTJwiO+KkSDeeskO7G4DlhsAZpSAS9924qjT7CSerRnRGH
+         UTF8xr0SXlrd1ucRAL8lvCGAJ7K1nPrOB6XZSRtkFNBSqt96rARaPR7DpAw9yk9ma43u
+         fqQruYoeSrlXVS7ku1fbnGTS8ihGdKCZfCsn+Oh/5te0YpSWUKtXKYQVLJRBVUJYDQgT
+         Ws8giYXgf6hc6seaXxKU+dtCMqVbPqnC9tPe6KWPZT32gdMS9O7Rc2rfnTJTuM++Rytf
+         PzDc5xF7joYU6ziA2Ye00VbJOh4gaB1kF10rHk7f+ecryjhVDm+d4CFCIqP05U7wfztq
+         xUvQ==
+X-Gm-Message-State: APjAAAUM+M8vhCBLEqG1rTTpl85DeXYKGFbvwhv7D0kvLIwdvli7AONg
+        8wwLOaUo27eW1QWVOLT0H4lfEZY9AvqFyHdF3XY=
+X-Google-Smtp-Source: APXvYqy/QMACcFjOR4mDU/gf+9XAjBrXKSk3u6zwCAdJDeo3+L7+b+Nz3LWjgHn9qLrNbLv8w6ZLwNW4Prc7NOvG+oE=
+X-Received: by 2002:a92:b749:: with SMTP id c9mr4956376ilm.143.1580399990020;
+ Thu, 30 Jan 2020 07:59:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <2fc165f5ad9ea0ec8a0878eabe800ca0af3e10b8.camel@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200129182011.5483-1-lhenriques@suse.com> <20200129182011.5483-2-lhenriques@suse.com>
+ <CAOi1vP92rXoNU7ne-XrOiGH=WzVmMO9h8XnbReeEDO=xAcXHEg@mail.gmail.com> <20200130153711.GA20170@suse.com>
+In-Reply-To: <20200130153711.GA20170@suse.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 30 Jan 2020 16:59:59 +0100
+Message-ID: <CAOi1vP9+MkjrsH662zpkNLu2=RJA91dKuPo+ra7rXxFcEqxWLA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] ceph: parallelize all copy-from requests in copy_file_range
+To:     Luis Henriques <lhenriques@suse.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        "Yan, Zheng" <zyan@redhat.com>,
+        Gregory Farnum <gfarnum@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 1/30/20 3:26 PM, Laurence Oberman wrote:
-> On Thu, 2020-01-30 at 12:42 +0100, Hannes Reinecke wrote:
->> The object request list can be accessed from various contexts
->> so we need to lock it to avoid concurrent modifications and
->> random crashes.
->>
->> Signed-off-by: Hannes Reinecke <hare@suse.de>
->> ---
->>  drivers/block/rbd.c | 31 ++++++++++++++++++++++++-------
->>  1 file changed, 24 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
->> index 5710b2a8609c..ddc170661607 100644
->> --- a/drivers/block/rbd.c
->> +++ b/drivers/block/rbd.c
->> @@ -344,6 +344,7 @@ struct rbd_img_request {
->>  
->>  	struct list_head	lock_item;
->>  	struct list_head	object_extents;	/* obj_req.ex structs */
->> +	struct mutex		object_mutex;
->>  
->>  	struct mutex		state_mutex;
->>  	struct pending_result	pending;
->> @@ -1664,6 +1665,7 @@ static struct rbd_img_request
->> *rbd_img_request_create(
->>  	INIT_LIST_HEAD(&img_request->lock_item);
->>  	INIT_LIST_HEAD(&img_request->object_extents);
->>  	mutex_init(&img_request->state_mutex);
->> +	mutex_init(&img_request->object_mutex);
->>  	kref_init(&img_request->kref);
->>  
->>  	return img_request;
->> @@ -1680,8 +1682,10 @@ static void rbd_img_request_destroy(struct
->> kref *kref)
->>  	dout("%s: img %p\n", __func__, img_request);
->>  
->>  	WARN_ON(!list_empty(&img_request->lock_item));
->> +	mutex_lock(&img_request->object_mutex);
->>  	for_each_obj_request_safe(img_request, obj_request,
->> next_obj_request)
->>  		rbd_img_obj_request_del(img_request, obj_request);
->> +	mutex_unlock(&img_request->object_mutex);
->>  
->>  	if (img_request_layered_test(img_request)) {
->>  		img_request_layered_clear(img_request);
->> @@ -2486,6 +2490,7 @@ static int __rbd_img_fill_request(struct
->> rbd_img_request *img_req)
->>  	struct rbd_obj_request *obj_req, *next_obj_req;
->>  	int ret;
->>  
->> +	mutex_lock(&img_req->object_mutex);
->>  	for_each_obj_request_safe(img_req, obj_req, next_obj_req) {
->>  		switch (img_req->op_type) {
->>  		case OBJ_OP_READ:
->> @@ -2510,7 +2515,7 @@ static int __rbd_img_fill_request(struct
->> rbd_img_request *img_req)
->>  			continue;
->>  		}
->>  	}
->> -
->> +	mutex_unlock(&img_req->object_mutex);
->>  	img_req->state = RBD_IMG_START;
->>  	return 0;
->>  }
->> @@ -2569,6 +2574,7 @@ static int rbd_img_fill_request_nocopy(struct
->> rbd_img_request *img_req,
->>  	 * position in the provided bio (list) or bio_vec array.
->>  	 */
->>  	fctx->iter = *fctx->pos;
->> +	mutex_lock(&img_req->object_mutex);
->>  	for (i = 0; i < num_img_extents; i++) {
->>  		ret = ceph_file_to_extents(&img_req->rbd_dev->layout,
->>  					   img_extents[i].fe_off,
->> @@ -2576,10 +2582,12 @@ static int rbd_img_fill_request_nocopy(struct
->> rbd_img_request *img_req,
->>  					   &img_req->object_extents,
->>  					   alloc_object_extent,
->> img_req,
->>  					   fctx->set_pos_fn, &fctx-
->>> iter);
->> -		if (ret)
->> +		if (ret) {
->> +			mutex_unlock(&img_req->object_mutex);
->>  			return ret;
->> +		}
->>  	}
->> -
->> +	mutex_unlock(&img_req->object_mutex);
->>  	return __rbd_img_fill_request(img_req);
->>  }
->>  
->> @@ -2620,6 +2628,7 @@ static int rbd_img_fill_request(struct
->> rbd_img_request *img_req,
->>  	 * or bio_vec array because when mapped, those bio_vecs can
->> straddle
->>  	 * stripe unit boundaries.
->>  	 */
->> +	mutex_lock(&img_req->object_mutex);
->>  	fctx->iter = *fctx->pos;
->>  	for (i = 0; i < num_img_extents; i++) {
->>  		ret = ceph_file_to_extents(&rbd_dev->layout,
->> @@ -2629,15 +2638,17 @@ static int rbd_img_fill_request(struct
->> rbd_img_request *img_req,
->>  					   alloc_object_extent,
->> img_req,
->>  					   fctx->count_fn, &fctx-
->>> iter);
->>  		if (ret)
->> -			return ret;
->> +			goto out_unlock;
->>  	}
->>  
->>  	for_each_obj_request(img_req, obj_req) {
->>  		obj_req->bvec_pos.bvecs = kmalloc_array(obj_req-
->>> bvec_count,
->>  					      sizeof(*obj_req-
->>> bvec_pos.bvecs),
->>  					      GFP_NOIO);
->> -		if (!obj_req->bvec_pos.bvecs)
->> -			return -ENOMEM;
->> +		if (!obj_req->bvec_pos.bvecs) {
->> +			ret = -ENOMEM;
->> +			goto out_unlock;
->> +		}
->>  	}
->>  
->>  	/*
->> @@ -2652,10 +2663,14 @@ static int rbd_img_fill_request(struct
->> rbd_img_request *img_req,
->>  					   &img_req->object_extents,
->>  					   fctx->copy_fn, &fctx->iter);
->>  		if (ret)
->> -			return ret;
->> +			goto out_unlock;
->>  	}
->> +	mutex_unlock(&img_req->object_mutex);
->>  
->>  	return __rbd_img_fill_request(img_req);
->> +out_unlock:
->> +	mutex_unlock(&img_req->object_mutex);
->> +	return ret;
->>  }
->>  
->>  static int rbd_img_fill_nodata(struct rbd_img_request *img_req,
->> @@ -3552,6 +3567,7 @@ static void rbd_img_object_requests(struct
->> rbd_img_request *img_req)
->>  
->>  	rbd_assert(!img_req->pending.result && !img_req-
->>> pending.num_pending);
->>  
->> +	mutex_lock(&img_req->object_mutex);
->>  	for_each_obj_request(img_req, obj_req) {
->>  		int result = 0;
->>  
->> @@ -3564,6 +3580,7 @@ static void rbd_img_object_requests(struct
->> rbd_img_request *img_req)
->>  			img_req->pending.num_pending++;
->>  		}
->>  	}
->> +	mutex_unlock(&img_req->object_mutex);
->>  }
->>  
->>  static bool rbd_img_advance(struct rbd_img_request *img_req, int
->> *result)
-> 
-> Looks good to me. Just wonder how we escaped this for so long.
-> 
-> Reviewed-by: Laurence Oberman <loberman@redhat.com>
-> 
-The whole state machine is utterly fragile.
-I'll be posting a patchset to clean stuff up somewhat,
-but it's still a beast.
-I'm rather surprised that it doesn't break more often ...
+On Thu, Jan 30, 2020 at 4:37 PM Luis Henriques <lhenriques@suse.com> wrote:
+>
+> On Thu, Jan 30, 2020 at 03:15:52PM +0100, Ilya Dryomov wrote:
+> > On Wed, Jan 29, 2020 at 7:20 PM Luis Henriques <lhenriques@suse.com> wrote:
+> > >
+> > > Right now the copy_file_range syscall serializes all the OSDs 'copy-from'
+> > > operations, waiting for each request to complete before sending the next
+> > > one.  This patch modifies copy_file_range so that all the 'copy-from'
+> > > operations are sent in bulk and wait for its completion at the end.  This
+> > > will allow significant speed-ups, specially when sending requests to
+> > > different target OSDs.
+> > >
+> > > There's also a throttling mechanism so that OSDs aren't flooded with
+> > > requests when a client performs a big file copy.  Currently the throttling
+> > > mechanism simply waits for the requests when the number of in-flight
+> > > requests reaches (wsize / object size) * 4.
+> > >
+> > > Signed-off-by: Luis Henriques <lhenriques@suse.com>
+> > > ---
+> > >  fs/ceph/file.c                  | 34 ++++++++++++++++++++--
+> > >  include/linux/ceph/osd_client.h |  5 +++-
+> > >  net/ceph/osd_client.c           | 50 ++++++++++++++++++++++++---------
+> > >  3 files changed, 72 insertions(+), 17 deletions(-)
+> > >
+> > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > > index 1e6cdf2dfe90..77a16324dcb4 100644
+> > > --- a/fs/ceph/file.c
+> > > +++ b/fs/ceph/file.c
+> > > @@ -1943,12 +1943,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+> > >         struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
+> > >         struct ceph_object_locator src_oloc, dst_oloc;
+> > >         struct ceph_object_id src_oid, dst_oid;
+> > > +       struct ceph_osd_request *req;
+> > >         loff_t endoff = 0, size;
+> > >         ssize_t ret = -EIO;
+> > >         u64 src_objnum, dst_objnum, src_objoff, dst_objoff;
+> > >         u32 src_objlen, dst_objlen, object_size;
+> > > -       int src_got = 0, dst_got = 0, err, dirty;
+> > > +       int src_got = 0, dst_got = 0, err, dirty, ncopies;
+> > >         bool do_final_copy = false;
+> > > +       LIST_HEAD(osd_reqs);
+> > >
+> > >         if (src_inode->i_sb != dst_inode->i_sb) {
+> > >                 struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
+> > > @@ -2083,6 +2085,12 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+> > >                         goto out_caps;
+> > >         }
+> > >         object_size = src_ci->i_layout.object_size;
+> > > +
+> > > +       /*
+> > > +        * Throttle the object copies: ncopies holds the number of allowed
+> > > +        * in-flight 'copy-from' requests before waiting for their completion
+> > > +        */
+> > > +       ncopies = (src_fsc->mount_options->wsize / object_size) * 4;
+> > >         while (len >= object_size) {
+> > >                 ceph_calc_file_object_mapping(&src_ci->i_layout, src_off,
+> > >                                               object_size, &src_objnum,
+> > > @@ -2097,7 +2105,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+> > >                 ceph_oid_printf(&dst_oid, "%llx.%08llx",
+> > >                                 dst_ci->i_vino.ino, dst_objnum);
+> > >                 /* Do an object remote copy */
+> > > -               err = ceph_osdc_copy_from(
+> > > +               req = ceph_osdc_copy_from(
+> > >                         &src_fsc->client->osdc,
+> > >                         src_ci->i_vino.snap, 0,
+> > >                         &src_oid, &src_oloc,
+> > > @@ -2108,7 +2116,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+> > >                         CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
+> > >                         dst_ci->i_truncate_seq, dst_ci->i_truncate_size,
+> > >                         CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
+> > > -               if (err) {
+> > > +               if (IS_ERR(req)) {
+> > > +                       err = PTR_ERR(req);
+> > >                         if (err == -EOPNOTSUPP) {
+> >
+> > No point in checking for EOPNOTSUPP here, because ceph_osdc_copy_from()
+> > won't ever return that.  This loop needs more massaging and more testing
+> > on old OSDs...
+>
+> Right, I missed that.  Setting src_fsc->have_copy_from2 to false should be
+> moved into the two 'if (err)' statements following the calls to
+> ceph_osdc_wait_requests.  I'll go fix that.  And test it with on a cluster
+> with OSDs that don't have this copy-from2 operation.
+>
+> > >                                 src_fsc->have_copy_from2 = false;
+> > >                                 pr_notice("OSDs don't support 'copy-from2'; "
+> > > @@ -2117,14 +2126,33 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+> > >                         dout("ceph_osdc_copy_from returned %d\n", err);
+> > >                         if (!ret)
+> > >                                 ret = err;
+> > > +                       /* wait for all queued requests */
+> > > +                       ceph_osdc_wait_requests(&osd_reqs);
+> > >                         goto out_caps;
+> > >                 }
+> > > +               list_add(&req->r_private_item, &osd_reqs);
+> > >                 len -= object_size;
+> > >                 src_off += object_size;
+> > >                 dst_off += object_size;
+> > >                 ret += object_size;
+> >
+> > So ret is incremented here, but you have numerious tests where ret is
+> > assigned an error only if ret is 0.  Unless I'm missing something, this
+> > interferes with returning errors from __ceph_copy_file_range().
+>
+> Well, the problem is that an error may occur *after* we have already done
+> some copies.  In that case we need to return the number of bytes that have
+> been successfully copied instead of an error; eventually, subsequent calls
+> to complete the copy_file_range will then return the error.  At least this
+> is how I understood the man page (i.e. similar to the write(2) syscall).
 
-Cheers,
+AFAICS ret is incremented before you know that *any* of the copies were
+successful.  If the first copy fails, how do you report that error?
 
-Hannes
--- 
-Dr. Hannes Reinecke		      Teamlead Storage & Networking
-hare@suse.de			                  +49 911 74053 688
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), GF: Felix Imendörffer
+>
+> > > +               if (--ncopies == 0) {
+> > > +                       err = ceph_osdc_wait_requests(&osd_reqs);
+> > > +                       if (err) {
+> > > +                               if (!ret)
+> > > +                                       ret = err;
+> > > +                               goto out_caps;
+> > > +                       }
+> > > +                       ncopies = (src_fsc->mount_options->wsize /
+> > > +                                  object_size) * 4;
+> >
+> > The object size is constant within a file, so ncopies should be too.
+> > Perhaps introduce a counter instead of recalculating ncopies here?
+>
+> Not sure I understood your comment.  You would rather have:
+>
+>  * ncopies initialized only once outside the loop
+>  * have a counter counting the number of objects copied
+>  * call ceph_osdc_wait_requests() when this counter is a multiple of
+>    ncopies
+
+I was thinking of a counter that is initialized to ncopies and reset to
+ncopies any time it reaches 0.  This is just a nit though.
+
+Thanks,
+
+                Ilya
