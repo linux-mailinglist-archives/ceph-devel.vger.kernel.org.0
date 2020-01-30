@@ -2,256 +2,237 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CEA614DCAA
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 Jan 2020 15:15:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A035C14DCC3
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 Jan 2020 15:26:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbgA3OPo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 30 Jan 2020 09:15:44 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44765 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbgA3OPn (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 Jan 2020 09:15:43 -0500
-Received: by mail-io1-f67.google.com with SMTP id e7so4103628iof.11;
-        Thu, 30 Jan 2020 06:15:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eDbn66+ZS+nXSxCmLlLabueM3/KUJun483QO8xHqbiQ=;
-        b=ayCbSthN1D07Q50RjsKekYgdDnjpXRwpSiTxj8Fg4Wjo601TXnFDYi3ZpQ70TduDzx
-         0iO2QzS4IOixGHCqRG8E/uTjChPBkmYzGmHV2MPRYPyVZWLo0IQQrqLQEBdCXEpBVbdf
-         YpMDZeLy9IzNAwgjFrlkqOnwMrPGNTxgc9tJcZyNgeLGW4ecrdqwDd3yC9juQ3SAZ7D1
-         X2E55fREkV8WE3sOYQnfEE0zg1vfitMMhTEUrBSXNtcnKKPnCMZpy9FFOtXx77kjBYvA
-         KI46tnEN8/nKLWtlc4Tp6mI9XwaBPhhE/9A5G0NrPJOLmKKMg6flibX8msO4E7d4HlCU
-         qNPw==
+        id S1727370AbgA3O0b (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 30 Jan 2020 09:26:31 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:25111 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726980AbgA3O0b (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 Jan 2020 09:26:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580394389;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ScpmxLi/R8T49iU+nFtREz09YTFB53waXex14KNBO3U=;
+        b=hYis5rz+nY/nK/KuOttS4rsiH77/FjeGlGnwoF4O7qTfyqOB68xq4ohgP+v6U28ugLpmre
+        CtpG0jy/RdLzmErFnCIFXON93XNgh4xeJ3zhy1Nzrj9dCjiLHafbFozy6B1gD9bZrUtzlQ
+        b/Azq0Kwl+cuNNFQBF2Hih6HKrCXjfo=
+Received: from mail-yw1-f69.google.com (mail-yw1-f69.google.com
+ [209.85.161.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-317-H8_-UVPRNgGfEqKFV91hmA-1; Thu, 30 Jan 2020 09:26:27 -0500
+X-MC-Unique: H8_-UVPRNgGfEqKFV91hmA-1
+Received: by mail-yw1-f69.google.com with SMTP id a190so3411560ywe.15
+        for <ceph-devel@vger.kernel.org>; Thu, 30 Jan 2020 06:26:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eDbn66+ZS+nXSxCmLlLabueM3/KUJun483QO8xHqbiQ=;
-        b=bM5xdH7QIpYFXCxjk2qJScOrBAwW6fg9T7kdABTSLAZox1PBJy5//8vVaLJcR3Buy8
-         t6e72LAYLg6lc8SOtBerzBYP2BOl6tuNbTXtlRgcrnlE1KvUnXgTeDDbYD9PFTjSoIrp
-         PxxILYqcnnJ2iZoww2Aw2N8fefgNRMqlJ8zrhCfVPMzFn3nzO4h/lxK2EAtm4xxZEQ5u
-         X4UXsEjifJORki+nCF0qC/tcATPs9owTxelrGPh2mtzvDIF+xB4xUUhxBepMrF5Zsqk4
-         tZIluPIurYDcd70P4GPa5zntzhnVlwOAPAhwLn6PW/GNlFOqIHeXUBDbcdkqv4L1GDui
-         ARnw==
-X-Gm-Message-State: APjAAAWaRFjd055EjcGtqggXvSqCx+wHtRncRdF00ob79VlmWncX9e05
-        qZyaeQAqXNXmC0M8wRacbS3tH6YX0tCpgUkhg6SHEyJUL4c=
-X-Google-Smtp-Source: APXvYqwwjcKol1eLUrPmgqTQasp3Z+HBWPRDPPc/TV6N1XeGuRauvqRmcmbvoi52aZvuV6+XYUY/yQRVfOIWNmmA8ec=
-X-Received: by 2002:a6b:17c4:: with SMTP id 187mr4167678iox.143.1580393742934;
- Thu, 30 Jan 2020 06:15:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20200129182011.5483-1-lhenriques@suse.com> <20200129182011.5483-2-lhenriques@suse.com>
-In-Reply-To: <20200129182011.5483-2-lhenriques@suse.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 30 Jan 2020 15:15:52 +0100
-Message-ID: <CAOi1vP92rXoNU7ne-XrOiGH=WzVmMO9h8XnbReeEDO=xAcXHEg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ceph: parallelize all copy-from requests in copy_file_range
-To:     Luis Henriques <lhenriques@suse.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "Yan, Zheng" <zyan@redhat.com>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ScpmxLi/R8T49iU+nFtREz09YTFB53waXex14KNBO3U=;
+        b=XFGDr8QSGgYr3EuVp/HLrItxYCl31pdrHO0q1Ryy9VdDb+rslAk+NHpg20DqoWrWZe
+         3P3pM+DCgw0H9kSTSPF89YwkAxZurccGg0tI8GWNLpcPmNoi2CmnUNhKJQjjvXSGNkj0
+         3ENdMiq1R2YHt2lsdVeAXUUZmOY63UBau+aapUkK9HwI3abp7heh+26G6e4is75lCJeU
+         C+Ls8ucu4Gn0ib2TzOciv4ac1+psGBEKpoYn4vBLkPUQybqEg7imOhgxm9RsmI3tpAlg
+         AiH0b0JpinkZg76lwkNIr5d40S10ktDRjPJdhEvE38lCIV7YtxlQzt/rDSZYoZKMHrOM
+         M9VA==
+X-Gm-Message-State: APjAAAXwGbHUAlx2Xm8imQDtdbNAG3BVQstVdPUqs8b6eQfGIHQaTlmy
+        4novUa3ld5zqwW+CDGfFH482s2qFlQyfHjN1L/uxvlHP+Qej67XFdcK2iKSTE6mmWg2+Q8mvJl5
+        TzL6cRNNT/DQ8wo2CO9tF+A==
+X-Received: by 2002:a25:8502:: with SMTP id w2mr3860393ybk.161.1580394387210;
+        Thu, 30 Jan 2020 06:26:27 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyL77v1P/IVmm9gA18ewJmXh/TwTk6cOZj6mK+jE4IB7PvqOGXy6zGSImUV3Zuv4nT3sJy4NA==
+X-Received: by 2002:a25:8502:: with SMTP id w2mr3860363ybk.161.1580394386822;
+        Thu, 30 Jan 2020 06:26:26 -0800 (PST)
+Received: from loberhel7laptop ([2600:6c64:4e80:f1:4a17:2cf9:6a8a:f150])
+        by smtp.gmail.com with ESMTPSA id m62sm2430799ywb.107.2020.01.30.06.26.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Jan 2020 06:26:26 -0800 (PST)
+Message-ID: <2fc165f5ad9ea0ec8a0878eabe800ca0af3e10b8.camel@redhat.com>
+Subject: Re: [PATCH] rbd: lock object request list
+From:   Laurence Oberman <loberman@redhat.com>
+To:     Hannes Reinecke <hare@suse.de>, Ilya Dryomov <idryomov@gmail.com>
+Cc:     Sage Weil <sage@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        ceph-devel@vger.kernel.org, linux-block@vger.kernel.org
+Date:   Thu, 30 Jan 2020 09:26:25 -0500
+In-Reply-To: <20200130114258.8482-1-hare@suse.de>
+References: <20200130114258.8482-1-hare@suse.de>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-5.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 7:20 PM Luis Henriques <lhenriques@suse.com> wrote:
->
-> Right now the copy_file_range syscall serializes all the OSDs 'copy-from'
-> operations, waiting for each request to complete before sending the next
-> one.  This patch modifies copy_file_range so that all the 'copy-from'
-> operations are sent in bulk and wait for its completion at the end.  This
-> will allow significant speed-ups, specially when sending requests to
-> different target OSDs.
->
-> There's also a throttling mechanism so that OSDs aren't flooded with
-> requests when a client performs a big file copy.  Currently the throttling
-> mechanism simply waits for the requests when the number of in-flight
-> requests reaches (wsize / object size) * 4.
->
-> Signed-off-by: Luis Henriques <lhenriques@suse.com>
+On Thu, 2020-01-30 at 12:42 +0100, Hannes Reinecke wrote:
+> The object request list can be accessed from various contexts
+> so we need to lock it to avoid concurrent modifications and
+> random crashes.
+> 
+> Signed-off-by: Hannes Reinecke <hare@suse.de>
 > ---
->  fs/ceph/file.c                  | 34 ++++++++++++++++++++--
->  include/linux/ceph/osd_client.h |  5 +++-
->  net/ceph/osd_client.c           | 50 ++++++++++++++++++++++++---------
->  3 files changed, 72 insertions(+), 17 deletions(-)
->
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 1e6cdf2dfe90..77a16324dcb4 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1943,12 +1943,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->         struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
->         struct ceph_object_locator src_oloc, dst_oloc;
->         struct ceph_object_id src_oid, dst_oid;
-> +       struct ceph_osd_request *req;
->         loff_t endoff = 0, size;
->         ssize_t ret = -EIO;
->         u64 src_objnum, dst_objnum, src_objoff, dst_objoff;
->         u32 src_objlen, dst_objlen, object_size;
-> -       int src_got = 0, dst_got = 0, err, dirty;
-> +       int src_got = 0, dst_got = 0, err, dirty, ncopies;
->         bool do_final_copy = false;
-> +       LIST_HEAD(osd_reqs);
->
->         if (src_inode->i_sb != dst_inode->i_sb) {
->                 struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
-> @@ -2083,6 +2085,12 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->                         goto out_caps;
->         }
->         object_size = src_ci->i_layout.object_size;
-> +
-> +       /*
-> +        * Throttle the object copies: ncopies holds the number of allowed
-> +        * in-flight 'copy-from' requests before waiting for their completion
-> +        */
-> +       ncopies = (src_fsc->mount_options->wsize / object_size) * 4;
->         while (len >= object_size) {
->                 ceph_calc_file_object_mapping(&src_ci->i_layout, src_off,
->                                               object_size, &src_objnum,
-> @@ -2097,7 +2105,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->                 ceph_oid_printf(&dst_oid, "%llx.%08llx",
->                                 dst_ci->i_vino.ino, dst_objnum);
->                 /* Do an object remote copy */
-> -               err = ceph_osdc_copy_from(
-> +               req = ceph_osdc_copy_from(
->                         &src_fsc->client->osdc,
->                         src_ci->i_vino.snap, 0,
->                         &src_oid, &src_oloc,
-> @@ -2108,7 +2116,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->                         CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
->                         dst_ci->i_truncate_seq, dst_ci->i_truncate_size,
->                         CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
-> -               if (err) {
-> +               if (IS_ERR(req)) {
-> +                       err = PTR_ERR(req);
->                         if (err == -EOPNOTSUPP) {
-
-No point in checking for EOPNOTSUPP here, because ceph_osdc_copy_from()
-won't ever return that.  This loop needs more massaging and more testing
-on old OSDs...
-
->                                 src_fsc->have_copy_from2 = false;
->                                 pr_notice("OSDs don't support 'copy-from2'; "
-> @@ -2117,14 +2126,33 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
->                         dout("ceph_osdc_copy_from returned %d\n", err);
->                         if (!ret)
->                                 ret = err;
-> +                       /* wait for all queued requests */
-> +                       ceph_osdc_wait_requests(&osd_reqs);
->                         goto out_caps;
->                 }
-> +               list_add(&req->r_private_item, &osd_reqs);
->                 len -= object_size;
->                 src_off += object_size;
->                 dst_off += object_size;
->                 ret += object_size;
-
-So ret is incremented here, but you have numerious tests where ret is
-assigned an error only if ret is 0.  Unless I'm missing something, this
-interferes with returning errors from __ceph_copy_file_range().
-
-> +               if (--ncopies == 0) {
-> +                       err = ceph_osdc_wait_requests(&osd_reqs);
-> +                       if (err) {
-> +                               if (!ret)
-> +                                       ret = err;
-> +                               goto out_caps;
-> +                       }
-> +                       ncopies = (src_fsc->mount_options->wsize /
-> +                                  object_size) * 4;
-
-The object size is constant within a file, so ncopies should be too.
-Perhaps introduce a counter instead of recalculating ncopies here?
-
-> +               }
->         }
->
-> +       err = ceph_osdc_wait_requests(&osd_reqs);
-> +       if (err) {
-> +               if (!ret)
-> +                       ret = err;
-> +               goto out_caps;
-> +       }
->         if (len)
->                 /* We still need one final local copy */
->                 do_final_copy = true;
-> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> index 5a62dbd3f4c2..25565dbfd65a 100644
-> --- a/include/linux/ceph/osd_client.h
-> +++ b/include/linux/ceph/osd_client.h
-> @@ -526,7 +526,8 @@ extern int ceph_osdc_writepages(struct ceph_osd_client *osdc,
->                                 struct timespec64 *mtime,
->                                 struct page **pages, int nr_pages);
->
-> -int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
-> +struct ceph_osd_request *ceph_osdc_copy_from(
-> +                       struct ceph_osd_client *osdc,
->                         u64 src_snapid, u64 src_version,
->                         struct ceph_object_id *src_oid,
->                         struct ceph_object_locator *src_oloc,
-> @@ -537,6 +538,8 @@ int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
->                         u32 truncate_seq, u64 truncate_size,
->                         u8 copy_from_flags);
->
-> +int ceph_osdc_wait_requests(struct list_head *osd_reqs);
-> +
->  /* watch/notify */
->  struct ceph_osd_linger_request *
->  ceph_osdc_watch(struct ceph_osd_client *osdc,
-> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> index b68b376d8c2f..c123e231eaf4 100644
-> --- a/net/ceph/osd_client.c
-> +++ b/net/ceph/osd_client.c
-> @@ -5346,23 +5346,47 @@ static int osd_req_op_copy_from_init(struct ceph_osd_request *req,
->         return 0;
+>  drivers/block/rbd.c | 31 ++++++++++++++++++++++++-------
+>  1 file changed, 24 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index 5710b2a8609c..ddc170661607 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -344,6 +344,7 @@ struct rbd_img_request {
+>  
+>  	struct list_head	lock_item;
+>  	struct list_head	object_extents;	/* obj_req.ex structs */
+> +	struct mutex		object_mutex;
+>  
+>  	struct mutex		state_mutex;
+>  	struct pending_result	pending;
+> @@ -1664,6 +1665,7 @@ static struct rbd_img_request
+> *rbd_img_request_create(
+>  	INIT_LIST_HEAD(&img_request->lock_item);
+>  	INIT_LIST_HEAD(&img_request->object_extents);
+>  	mutex_init(&img_request->state_mutex);
+> +	mutex_init(&img_request->object_mutex);
+>  	kref_init(&img_request->kref);
+>  
+>  	return img_request;
+> @@ -1680,8 +1682,10 @@ static void rbd_img_request_destroy(struct
+> kref *kref)
+>  	dout("%s: img %p\n", __func__, img_request);
+>  
+>  	WARN_ON(!list_empty(&img_request->lock_item));
+> +	mutex_lock(&img_request->object_mutex);
+>  	for_each_obj_request_safe(img_request, obj_request,
+> next_obj_request)
+>  		rbd_img_obj_request_del(img_request, obj_request);
+> +	mutex_unlock(&img_request->object_mutex);
+>  
+>  	if (img_request_layered_test(img_request)) {
+>  		img_request_layered_clear(img_request);
+> @@ -2486,6 +2490,7 @@ static int __rbd_img_fill_request(struct
+> rbd_img_request *img_req)
+>  	struct rbd_obj_request *obj_req, *next_obj_req;
+>  	int ret;
+>  
+> +	mutex_lock(&img_req->object_mutex);
+>  	for_each_obj_request_safe(img_req, obj_req, next_obj_req) {
+>  		switch (img_req->op_type) {
+>  		case OBJ_OP_READ:
+> @@ -2510,7 +2515,7 @@ static int __rbd_img_fill_request(struct
+> rbd_img_request *img_req)
+>  			continue;
+>  		}
+>  	}
+> -
+> +	mutex_unlock(&img_req->object_mutex);
+>  	img_req->state = RBD_IMG_START;
+>  	return 0;
 >  }
->
-> -int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
-> -                       u64 src_snapid, u64 src_version,
-> -                       struct ceph_object_id *src_oid,
-> -                       struct ceph_object_locator *src_oloc,
-> -                       u32 src_fadvise_flags,
-> -                       struct ceph_object_id *dst_oid,
-> -                       struct ceph_object_locator *dst_oloc,
-> -                       u32 dst_fadvise_flags,
-> -                       u32 truncate_seq, u64 truncate_size,
-> -                       u8 copy_from_flags)
-> +int ceph_osdc_wait_requests(struct list_head *osd_reqs)
-> +{
-> +       struct ceph_osd_request *req;
-> +       int ret = 0, err;
-> +
-> +       while (!list_empty(osd_reqs)) {
-> +               req = list_first_entry(osd_reqs,
-> +                                      struct ceph_osd_request,
-> +                                      r_private_item);
-> +               list_del_init(&req->r_private_item);
-> +               err = ceph_osdc_wait_request(req->r_osdc, req);
-> +               if (err) {
-> +                       if (!ret)
-> +                               ret = err;
-> +                       dout("copy request failed (err=%d)\n", err);
+> @@ -2569,6 +2574,7 @@ static int rbd_img_fill_request_nocopy(struct
+> rbd_img_request *img_req,
+>  	 * position in the provided bio (list) or bio_vec array.
+>  	 */
+>  	fctx->iter = *fctx->pos;
+> +	mutex_lock(&img_req->object_mutex);
+>  	for (i = 0; i < num_img_extents; i++) {
+>  		ret = ceph_file_to_extents(&img_req->rbd_dev->layout,
+>  					   img_extents[i].fe_off,
+> @@ -2576,10 +2582,12 @@ static int rbd_img_fill_request_nocopy(struct
+> rbd_img_request *img_req,
+>  					   &img_req->object_extents,
+>  					   alloc_object_extent,
+> img_req,
+>  					   fctx->set_pos_fn, &fctx-
+> >iter);
+> -		if (ret)
+> +		if (ret) {
+> +			mutex_unlock(&img_req->object_mutex);
+>  			return ret;
+> +		}
+>  	}
+> -
+> +	mutex_unlock(&img_req->object_mutex);
+>  	return __rbd_img_fill_request(img_req);
+>  }
+>  
+> @@ -2620,6 +2628,7 @@ static int rbd_img_fill_request(struct
+> rbd_img_request *img_req,
+>  	 * or bio_vec array because when mapped, those bio_vecs can
+> straddle
+>  	 * stripe unit boundaries.
+>  	 */
+> +	mutex_lock(&img_req->object_mutex);
+>  	fctx->iter = *fctx->pos;
+>  	for (i = 0; i < num_img_extents; i++) {
+>  		ret = ceph_file_to_extents(&rbd_dev->layout,
+> @@ -2629,15 +2638,17 @@ static int rbd_img_fill_request(struct
+> rbd_img_request *img_req,
+>  					   alloc_object_extent,
+> img_req,
+>  					   fctx->count_fn, &fctx-
+> >iter);
+>  		if (ret)
+> -			return ret;
+> +			goto out_unlock;
+>  	}
+>  
+>  	for_each_obj_request(img_req, obj_req) {
+>  		obj_req->bvec_pos.bvecs = kmalloc_array(obj_req-
+> >bvec_count,
+>  					      sizeof(*obj_req-
+> >bvec_pos.bvecs),
+>  					      GFP_NOIO);
+> -		if (!obj_req->bvec_pos.bvecs)
+> -			return -ENOMEM;
+> +		if (!obj_req->bvec_pos.bvecs) {
+> +			ret = -ENOMEM;
+> +			goto out_unlock;
+> +		}
+>  	}
+>  
+>  	/*
+> @@ -2652,10 +2663,14 @@ static int rbd_img_fill_request(struct
+> rbd_img_request *img_req,
+>  					   &img_req->object_extents,
+>  					   fctx->copy_fn, &fctx->iter);
+>  		if (ret)
+> -			return ret;
+> +			goto out_unlock;
+>  	}
+> +	mutex_unlock(&img_req->object_mutex);
+>  
+>  	return __rbd_img_fill_request(img_req);
+> +out_unlock:
+> +	mutex_unlock(&img_req->object_mutex);
+> +	return ret;
+>  }
+>  
+>  static int rbd_img_fill_nodata(struct rbd_img_request *img_req,
+> @@ -3552,6 +3567,7 @@ static void rbd_img_object_requests(struct
+> rbd_img_request *img_req)
+>  
+>  	rbd_assert(!img_req->pending.result && !img_req-
+> >pending.num_pending);
+>  
+> +	mutex_lock(&img_req->object_mutex);
+>  	for_each_obj_request(img_req, obj_req) {
+>  		int result = 0;
+>  
+> @@ -3564,6 +3580,7 @@ static void rbd_img_object_requests(struct
+> rbd_img_request *img_req)
+>  			img_req->pending.num_pending++;
+>  		}
+>  	}
+> +	mutex_unlock(&img_req->object_mutex);
+>  }
+>  
+>  static bool rbd_img_advance(struct rbd_img_request *img_req, int
+> *result)
 
-This dout needs updating, but I'd just remove it.  The error code is
-there in other messages.
+Looks good to me. Just wonder how we escaped this for so long.
 
-> +               }
-> +               ceph_osdc_put_request(req);
-> +       }
-> +
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL(ceph_osdc_wait_requests);
+Reviewed-by: Laurence Oberman <loberman@redhat.com>
 
-Move this function after ceph_osdc_wait_request(), so that they are
-close to each other (and osd_req_op_copy_from_init() isn't separated
-from ceph_osdc_copy_from() by something unrelated).
-
-Thanks,
-
-                Ilya
