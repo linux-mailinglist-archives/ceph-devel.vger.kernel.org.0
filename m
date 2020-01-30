@@ -2,174 +2,97 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ADCD14DA04
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 Jan 2020 12:43:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED4C814DB00
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 Jan 2020 13:52:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbgA3LnF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 30 Jan 2020 06:43:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45006 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726873AbgA3LnF (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 30 Jan 2020 06:43:05 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 10107AFF4;
-        Thu, 30 Jan 2020 11:43:03 +0000 (UTC)
-From:   Hannes Reinecke <hare@suse.de>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Sage Weil <sage@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        ceph-devel@vger.kernel.org, linux-block@vger.kernel.org,
-        Hannes Reinecke <hare@suse.de>
-Subject: [PATCH] rbd: lock object request list
-Date:   Thu, 30 Jan 2020 12:42:58 +0100
-Message-Id: <20200130114258.8482-1-hare@suse.de>
-X-Mailer: git-send-email 2.16.4
+        id S1727135AbgA3MwX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 30 Jan 2020 07:52:23 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40027 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726873AbgA3MwW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 Jan 2020 07:52:22 -0500
+Received: by mail-io1-f66.google.com with SMTP id x1so3831308iop.7;
+        Thu, 30 Jan 2020 04:52:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WWWqqdl6/zFK7VCcqGs7VSKzeXfwiFPT65eOA+JJXKk=;
+        b=twe8H9y+mCOg6TGOfiQIftqYD39FkUN+YYK91PDxtj17ajF94Z3zgVLNpUHMzeh68r
+         o3vq1prap/dQZg/9D1cNFSRFvTZudwh3u8x0bpCsrswZbhjnVxk5GsflWiQ0LGMhhm27
+         3gvOMGq2hdLp2XoFs9VcLX0LBECMYnSM+3tT1Oc3IWsl95uCWUqJ4Rd3PuXhc02QwCgQ
+         zqJPfmmZQSMXGND86753npb18I2EgTD7f/RGp2ZSRUOpZjdwQQ4mKShWBA9OwvJm6O+A
+         EVybu0s2fbr8KqjM94fvKXC06DNkYB+LJmun8aJI0JAn41KfTHcPFDrfX4ICkyRZW037
+         bvMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WWWqqdl6/zFK7VCcqGs7VSKzeXfwiFPT65eOA+JJXKk=;
+        b=GB8rryzJ7Yau848v1WXVfsvzeHYbfCI8OiArPti/gnlPi/sk/TMHwayy8H4DRMXONT
+         pOPuC07Zrk526nKzxHSAq7quEXLKwDXeuIFHePl2cYBTuUydYSxbcVcWMn94J7AA1KI+
+         cO81bYIQMeafxNC5181BK6YrnoUxPE+HfezXE5Jc8450TEOeE42Qruqvv5912a2nq7y5
+         CtDijfFAA2aGWALghkTdJZhX0BIEIOdsLYdFS9Q6Gat8HHV8YLz7osnw9QuaecUM965G
+         +abksj22ezavYb6wH16Db2ci6mreebtBlT6apq/9uAwNNbCtLCdsEfb3bnzUuyQTezVr
+         8APQ==
+X-Gm-Message-State: APjAAAVtocwuh3nQsh55Se9SroLfHKv9uY4mM1M84enErwIWwPlOIcvf
+        404J+F+cA9BWDcVhL7I3NNF16aRLEYXZ0OXX52c=
+X-Google-Smtp-Source: APXvYqwLWvk3owCDvlr+AA1Dl8UWosu0KT7f6EU+23kap2Gjhu+X7y/CbfG9Wir0asR8yty0iCS+9l4/Rw3M22bp2V0=
+X-Received: by 2002:a5d:9707:: with SMTP id h7mr4159275iol.112.1580388742224;
+ Thu, 30 Jan 2020 04:52:22 -0800 (PST)
+MIME-Version: 1.0
+References: <20200129181253.24999-1-dave@stgolabs.net>
+In-Reply-To: <20200129181253.24999-1-dave@stgolabs.net>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 30 Jan 2020 13:52:32 +0100
+Message-ID: <CAOi1vP-75uoBBsnX262WoVL_jNreiSgnGmtytDKcsUE==ny2Jw@mail.gmail.com>
+Subject: Re: [PATCH] rbd: optimize barrier usage for Rmw atomic bitops
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dbueso@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The object request list can be accessed from various contexts
-so we need to lock it to avoid concurrent modifications and
-random crashes.
+On Wed, Jan 29, 2020 at 7:23 PM Davidlohr Bueso <dave@stgolabs.net> wrote:
+>
+> For both set and clear_bit, we can avoid the unnecessary barrier
+> on non LL/SC architectures, such as x86. Instead, use the
+> smp_mb__{before,after}_atomic() calls.
+>
+> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+> ---
+>  drivers/block/rbd.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index 2b184563cd32..7bc79b2b8f65 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -1371,13 +1371,13 @@ static void rbd_osd_submit(struct ceph_osd_request *osd_req)
+>  static void img_request_layered_set(struct rbd_img_request *img_request)
+>  {
+>         set_bit(IMG_REQ_LAYERED, &img_request->flags);
+> -       smp_mb();
+> +       smp_mb__after_atomic();
+>  }
+>
+>  static void img_request_layered_clear(struct rbd_img_request *img_request)
+>  {
+>         clear_bit(IMG_REQ_LAYERED, &img_request->flags);
+> -       smp_mb();
+> +       smp_mb__after_atomic();
+>  }
+>
+>  static bool img_request_layered_test(struct rbd_img_request *img_request)
 
-Signed-off-by: Hannes Reinecke <hare@suse.de>
----
- drivers/block/rbd.c | 31 ++++++++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 7 deletions(-)
+Hi Davidlohr,
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 5710b2a8609c..ddc170661607 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -344,6 +344,7 @@ struct rbd_img_request {
- 
- 	struct list_head	lock_item;
- 	struct list_head	object_extents;	/* obj_req.ex structs */
-+	struct mutex		object_mutex;
- 
- 	struct mutex		state_mutex;
- 	struct pending_result	pending;
-@@ -1664,6 +1665,7 @@ static struct rbd_img_request *rbd_img_request_create(
- 	INIT_LIST_HEAD(&img_request->lock_item);
- 	INIT_LIST_HEAD(&img_request->object_extents);
- 	mutex_init(&img_request->state_mutex);
-+	mutex_init(&img_request->object_mutex);
- 	kref_init(&img_request->kref);
- 
- 	return img_request;
-@@ -1680,8 +1682,10 @@ static void rbd_img_request_destroy(struct kref *kref)
- 	dout("%s: img %p\n", __func__, img_request);
- 
- 	WARN_ON(!list_empty(&img_request->lock_item));
-+	mutex_lock(&img_request->object_mutex);
- 	for_each_obj_request_safe(img_request, obj_request, next_obj_request)
- 		rbd_img_obj_request_del(img_request, obj_request);
-+	mutex_unlock(&img_request->object_mutex);
- 
- 	if (img_request_layered_test(img_request)) {
- 		img_request_layered_clear(img_request);
-@@ -2486,6 +2490,7 @@ static int __rbd_img_fill_request(struct rbd_img_request *img_req)
- 	struct rbd_obj_request *obj_req, *next_obj_req;
- 	int ret;
- 
-+	mutex_lock(&img_req->object_mutex);
- 	for_each_obj_request_safe(img_req, obj_req, next_obj_req) {
- 		switch (img_req->op_type) {
- 		case OBJ_OP_READ:
-@@ -2510,7 +2515,7 @@ static int __rbd_img_fill_request(struct rbd_img_request *img_req)
- 			continue;
- 		}
- 	}
--
-+	mutex_unlock(&img_req->object_mutex);
- 	img_req->state = RBD_IMG_START;
- 	return 0;
- }
-@@ -2569,6 +2574,7 @@ static int rbd_img_fill_request_nocopy(struct rbd_img_request *img_req,
- 	 * position in the provided bio (list) or bio_vec array.
- 	 */
- 	fctx->iter = *fctx->pos;
-+	mutex_lock(&img_req->object_mutex);
- 	for (i = 0; i < num_img_extents; i++) {
- 		ret = ceph_file_to_extents(&img_req->rbd_dev->layout,
- 					   img_extents[i].fe_off,
-@@ -2576,10 +2582,12 @@ static int rbd_img_fill_request_nocopy(struct rbd_img_request *img_req,
- 					   &img_req->object_extents,
- 					   alloc_object_extent, img_req,
- 					   fctx->set_pos_fn, &fctx->iter);
--		if (ret)
-+		if (ret) {
-+			mutex_unlock(&img_req->object_mutex);
- 			return ret;
-+		}
- 	}
--
-+	mutex_unlock(&img_req->object_mutex);
- 	return __rbd_img_fill_request(img_req);
- }
- 
-@@ -2620,6 +2628,7 @@ static int rbd_img_fill_request(struct rbd_img_request *img_req,
- 	 * or bio_vec array because when mapped, those bio_vecs can straddle
- 	 * stripe unit boundaries.
- 	 */
-+	mutex_lock(&img_req->object_mutex);
- 	fctx->iter = *fctx->pos;
- 	for (i = 0; i < num_img_extents; i++) {
- 		ret = ceph_file_to_extents(&rbd_dev->layout,
-@@ -2629,15 +2638,17 @@ static int rbd_img_fill_request(struct rbd_img_request *img_req,
- 					   alloc_object_extent, img_req,
- 					   fctx->count_fn, &fctx->iter);
- 		if (ret)
--			return ret;
-+			goto out_unlock;
- 	}
- 
- 	for_each_obj_request(img_req, obj_req) {
- 		obj_req->bvec_pos.bvecs = kmalloc_array(obj_req->bvec_count,
- 					      sizeof(*obj_req->bvec_pos.bvecs),
- 					      GFP_NOIO);
--		if (!obj_req->bvec_pos.bvecs)
--			return -ENOMEM;
-+		if (!obj_req->bvec_pos.bvecs) {
-+			ret = -ENOMEM;
-+			goto out_unlock;
-+		}
- 	}
- 
- 	/*
-@@ -2652,10 +2663,14 @@ static int rbd_img_fill_request(struct rbd_img_request *img_req,
- 					   &img_req->object_extents,
- 					   fctx->copy_fn, &fctx->iter);
- 		if (ret)
--			return ret;
-+			goto out_unlock;
- 	}
-+	mutex_unlock(&img_req->object_mutex);
- 
- 	return __rbd_img_fill_request(img_req);
-+out_unlock:
-+	mutex_unlock(&img_req->object_mutex);
-+	return ret;
- }
- 
- static int rbd_img_fill_nodata(struct rbd_img_request *img_req,
-@@ -3552,6 +3567,7 @@ static void rbd_img_object_requests(struct rbd_img_request *img_req)
- 
- 	rbd_assert(!img_req->pending.result && !img_req->pending.num_pending);
- 
-+	mutex_lock(&img_req->object_mutex);
- 	for_each_obj_request(img_req, obj_req) {
- 		int result = 0;
- 
-@@ -3564,6 +3580,7 @@ static void rbd_img_object_requests(struct rbd_img_request *img_req)
- 			img_req->pending.num_pending++;
- 		}
- 	}
-+	mutex_unlock(&img_req->object_mutex);
- }
- 
- static bool rbd_img_advance(struct rbd_img_request *img_req, int *result)
--- 
-2.16.4
+I don't think these barriers are needed at all.  I'll remove them.
 
+Thanks,
+
+                Ilya
