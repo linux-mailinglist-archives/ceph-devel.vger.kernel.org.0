@@ -2,120 +2,289 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B821914ED7F
-	for <lists+ceph-devel@lfdr.de>; Fri, 31 Jan 2020 14:36:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3A4214F26E
+	for <lists+ceph-devel@lfdr.de>; Fri, 31 Jan 2020 19:55:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbgAaNgg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 31 Jan 2020 08:36:36 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36977 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728614AbgAaNgg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 31 Jan 2020 08:36:36 -0500
+        id S1726264AbgAaSzU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 31 Jan 2020 13:55:20 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:58578 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725939AbgAaSzT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 31 Jan 2020 13:55:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580477795;
+        s=mimecast20190719; t=1580496918;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=/F47d0SzVr8o+Ycv4z+t6t4fJRvq2fjyAxFm0REePFs=;
-        b=GhDNou90Z7+k1HYYuiLqc6IQb6CH0/58IfB5Zd6MsEPSJFIrjaDUjU6vUDAchnJFJ0blR5
-        jqYfCzfTJKZR7ecFQE5zmnc9AbeVq/HU2mwzCpF/S8RN/sFHr691kkO01eVO8dS9LrcXNf
-        FWlQqPn3f37bscVml4RpTjF+kxGm8Rg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-182-qyRP7qmtNkyhSYIc36NWkA-1; Fri, 31 Jan 2020 08:36:30 -0500
-X-MC-Unique: qyRP7qmtNkyhSYIc36NWkA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 486EE18FE87F;
-        Fri, 31 Jan 2020 13:36:29 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-34.pek2.redhat.com [10.72.12.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6882C8477C;
-        Fri, 31 Jan 2020 13:36:23 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org, idryomov@gmail.com, zyan@redhat.com
-Cc:     sage@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [RFC PATCH] ceph: do not direct write executes in parallel if O_APPEND is set
-Date:   Fri, 31 Jan 2020 08:36:19 -0500
-Message-Id: <20200131133619.14209-1-xiubli@redhat.com>
-MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-Content-Transfer-Encoding: quoted-printable
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=w2rV2BA1+1IGal85Q1s+XQYGsNIEhFhkKtDX3+nUFqU=;
+        b=UPBI5mA83yCdHLXbNr1A3oh+bOj0w1vF2Wn2D5ZKLKVX5ZWphIdB1X5Wae9qvdnGDoC5Ll
+        4BS5rxTXigRv9pJlK6NIwG1Y9JScKoHrPcxQG3c9oYnU14D2guNkMM3Mtz90EzGMzQKkSV
+        KFnANddnBmYj8v6cZnekACCAN8DFp+E=
+Received: from mail-yw1-f72.google.com (mail-yw1-f72.google.com
+ [209.85.161.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-307-iM12lJb3MnGSDz49vOl3NA-1; Fri, 31 Jan 2020 13:55:16 -0500
+X-MC-Unique: iM12lJb3MnGSDz49vOl3NA-1
+Received: by mail-yw1-f72.google.com with SMTP id h66so8942590ywc.17
+        for <ceph-devel@vger.kernel.org>; Fri, 31 Jan 2020 10:55:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=w2rV2BA1+1IGal85Q1s+XQYGsNIEhFhkKtDX3+nUFqU=;
+        b=s4Ro7lUrmjIpUF3nTrHHiWj+Ayblys9NcyzBBjCo5Rl3/2YCDaOYX64nMVDddhILdl
+         2qrLtizvkrOg1PLX9yDn9U7m1BZuE2fMUYbEVQF/fp9H0ojkydPg7h63UNPl2cv+GXk5
+         HYUpwLnKm/GIBSr8gDn2ccJDNMTuOww8VwlZ2+MHcLzTM7+ahnlPSITFh38aYmue1ZV6
+         CfrmzgV112TLcpExziEH6nz9jZXsLl/8gYEHAMnZ4XZ063uYYrpvNijjFAwpZKF5z8nK
+         9HY0qJjWX/TkOQPyoLxsgGY4C184B5qLK6KGH8gYuRihk0upFkkBJoJCpOrT9dU9W3fv
+         xgqg==
+X-Gm-Message-State: APjAAAV/Cp02c6c2GJcCuM5uRHqZCxrT60yWozu+Lptmnd3KH1iddzD5
+        Ovz3h9/grTt8fzT16+0qgD1IgUSmssOg2rUaWagvwbzyoAZZozRseSYe47kDJCYYeGVrwRz5QVi
+        8spIlGYNYApyD+psOdcHuaQ==
+X-Received: by 2002:a81:980e:: with SMTP id p14mr9471979ywg.24.1580496915409;
+        Fri, 31 Jan 2020 10:55:15 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyvlTSP0I/IRYryro4c+hTqkfmh4iUjiVfSrvBDV9PHzuBLgbIcQZ0TXk+bC9jfe+hwRw5kEg==
+X-Received: by 2002:a81:980e:: with SMTP id p14mr9471960ywg.24.1580496914940;
+        Fri, 31 Jan 2020 10:55:14 -0800 (PST)
+Received: from loberhel7laptop ([2600:6c64:4e80:f1:4a17:2cf9:6a8a:f150])
+        by smtp.gmail.com with ESMTPSA id u185sm4430677ywf.89.2020.01.31.10.55.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 Jan 2020 10:55:14 -0800 (PST)
+Message-ID: <40db6804eeb24636cfafca405570526ac7aafad4.camel@redhat.com>
+Subject: Re: [PATCH] rbd: lock object request list
+From:   Laurence Oberman <loberman@redhat.com>
+To:     Ilya Dryomov <idryomov@gmail.com>, Hannes Reinecke <hare@suse.de>
+Cc:     Sage Weil <sage@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>
+Date:   Fri, 31 Jan 2020 13:55:12 -0500
+In-Reply-To: <CAOi1vP8U=vpFiKmbeheMKQiy6y_XfGBgCvLZF_OQbhz78x2iTg@mail.gmail.com>
+References: <20200130114258.8482-1-hare@suse.de>
+         <2fc165f5ad9ea0ec8a0878eabe800ca0af3e10b8.camel@redhat.com>
+         <b786e9dd-02c1-e117-db92-aa3f50804bc7@suse.de>
+         <CAOi1vP8U=vpFiKmbeheMKQiy6y_XfGBgCvLZF_OQbhz78x2iTg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-5.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Fri, 2020-01-31 at 10:50 +0100, Ilya Dryomov wrote:
+> On Thu, Jan 30, 2020 at 4:39 PM Hannes Reinecke <hare@suse.de> wrote:
+> > 
+> > On 1/30/20 3:26 PM, Laurence Oberman wrote:
+> > > On Thu, 2020-01-30 at 12:42 +0100, Hannes Reinecke wrote:
+> > > > The object request list can be accessed from various contexts
+> > > > so we need to lock it to avoid concurrent modifications and
+> > > > random crashes.
+> > > > 
+> > > > Signed-off-by: Hannes Reinecke <hare@suse.de>
+> > > > ---
+> > > >  drivers/block/rbd.c | 31 ++++++++++++++++++++++++-------
+> > > >  1 file changed, 24 insertions(+), 7 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> > > > index 5710b2a8609c..ddc170661607 100644
+> > > > --- a/drivers/block/rbd.c
+> > > > +++ b/drivers/block/rbd.c
+> > > > @@ -344,6 +344,7 @@ struct rbd_img_request {
+> > > > 
+> > > >      struct list_head        lock_item;
+> > > >      struct list_head        object_extents; /* obj_req.ex
+> > > > structs */
+> > > > +    struct mutex            object_mutex;
+> > > > 
+> > > >      struct mutex            state_mutex;
+> > > >      struct pending_result   pending;
+> > > > @@ -1664,6 +1665,7 @@ static struct rbd_img_request
+> > > > *rbd_img_request_create(
+> > > >      INIT_LIST_HEAD(&img_request->lock_item);
+> > > >      INIT_LIST_HEAD(&img_request->object_extents);
+> > > >      mutex_init(&img_request->state_mutex);
+> > > > +    mutex_init(&img_request->object_mutex);
+> > > >      kref_init(&img_request->kref);
+> > > > 
+> > > >      return img_request;
+> > > > @@ -1680,8 +1682,10 @@ static void
+> > > > rbd_img_request_destroy(struct
+> > > > kref *kref)
+> > > >      dout("%s: img %p\n", __func__, img_request);
+> > > > 
+> > > >      WARN_ON(!list_empty(&img_request->lock_item));
+> > > > +    mutex_lock(&img_request->object_mutex);
+> > > >      for_each_obj_request_safe(img_request, obj_request,
+> > > > next_obj_request)
+> > > >              rbd_img_obj_request_del(img_request, obj_request);
+> > > > +    mutex_unlock(&img_request->object_mutex);
+> > > > 
+> > > >      if (img_request_layered_test(img_request)) {
+> > > >              img_request_layered_clear(img_request);
+> > > > @@ -2486,6 +2490,7 @@ static int __rbd_img_fill_request(struct
+> > > > rbd_img_request *img_req)
+> > > >      struct rbd_obj_request *obj_req, *next_obj_req;
+> > > >      int ret;
+> > > > 
+> > > > +    mutex_lock(&img_req->object_mutex);
+> > > >      for_each_obj_request_safe(img_req, obj_req, next_obj_req)
+> > > > {
+> > > >              switch (img_req->op_type) {
+> > > >              case OBJ_OP_READ:
+> > > > @@ -2510,7 +2515,7 @@ static int __rbd_img_fill_request(struct
+> > > > rbd_img_request *img_req)
+> > > >                      continue;
+> > > >              }
+> > > >      }
+> > > > -
+> > > > +    mutex_unlock(&img_req->object_mutex);
+> > > >      img_req->state = RBD_IMG_START;
+> > > >      return 0;
+> > > >  }
+> > > > @@ -2569,6 +2574,7 @@ static int
+> > > > rbd_img_fill_request_nocopy(struct
+> > > > rbd_img_request *img_req,
+> > > >       * position in the provided bio (list) or bio_vec array.
+> > > >       */
+> > > >      fctx->iter = *fctx->pos;
+> > > > +    mutex_lock(&img_req->object_mutex);
+> > > >      for (i = 0; i < num_img_extents; i++) {
+> > > >              ret = ceph_file_to_extents(&img_req->rbd_dev-
+> > > > >layout,
+> > > >                                         img_extents[i].fe_off,
+> > > > @@ -2576,10 +2582,12 @@ static int
+> > > > rbd_img_fill_request_nocopy(struct
+> > > > rbd_img_request *img_req,
+> > > >                                         &img_req-
+> > > > >object_extents,
+> > > >                                         alloc_object_extent,
+> > > > img_req,
+> > > >                                         fctx->set_pos_fn,
+> > > > &fctx-
+> > > > > iter);
+> > > > 
+> > > > -            if (ret)
+> > > > +            if (ret) {
+> > > > +                    mutex_unlock(&img_req->object_mutex);
+> > > >                      return ret;
+> > > > +            }
+> > > >      }
+> > > > -
+> > > > +    mutex_unlock(&img_req->object_mutex);
+> > > >      return __rbd_img_fill_request(img_req);
+> > > >  }
+> > > > 
+> > > > @@ -2620,6 +2628,7 @@ static int rbd_img_fill_request(struct
+> > > > rbd_img_request *img_req,
+> > > >       * or bio_vec array because when mapped, those bio_vecs
+> > > > can
+> > > > straddle
+> > > >       * stripe unit boundaries.
+> > > >       */
+> > > > +    mutex_lock(&img_req->object_mutex);
+> > > >      fctx->iter = *fctx->pos;
+> > > >      for (i = 0; i < num_img_extents; i++) {
+> > > >              ret = ceph_file_to_extents(&rbd_dev->layout,
+> > > > @@ -2629,15 +2638,17 @@ static int rbd_img_fill_request(struct
+> > > > rbd_img_request *img_req,
+> > > >                                         alloc_object_extent,
+> > > > img_req,
+> > > >                                         fctx->count_fn, &fctx-
+> > > > > iter);
+> > > > 
+> > > >              if (ret)
+> > > > -                    return ret;
+> > > > +                    goto out_unlock;
+> > > >      }
+> > > > 
+> > > >      for_each_obj_request(img_req, obj_req) {
+> > > >              obj_req->bvec_pos.bvecs = kmalloc_array(obj_req-
+> > > > > bvec_count,
+> > > > 
+> > > >                                            sizeof(*obj_req-
+> > > > > bvec_pos.bvecs),
+> > > > 
+> > > >                                            GFP_NOIO);
+> > > > -            if (!obj_req->bvec_pos.bvecs)
+> > > > -                    return -ENOMEM;
+> > > > +            if (!obj_req->bvec_pos.bvecs) {
+> > > > +                    ret = -ENOMEM;
+> > > > +                    goto out_unlock;
+> > > > +            }
+> > > >      }
+> > > > 
+> > > >      /*
+> > > > @@ -2652,10 +2663,14 @@ static int rbd_img_fill_request(struct
+> > > > rbd_img_request *img_req,
+> > > >                                         &img_req-
+> > > > >object_extents,
+> > > >                                         fctx->copy_fn, &fctx-
+> > > > >iter);
+> > > >              if (ret)
+> > > > -                    return ret;
+> > > > +                    goto out_unlock;
+> > > >      }
+> > > > +    mutex_unlock(&img_req->object_mutex);
+> > > > 
+> > > >      return __rbd_img_fill_request(img_req);
+> > > > +out_unlock:
+> > > > +    mutex_unlock(&img_req->object_mutex);
+> > > > +    return ret;
+> > > >  }
+> > > > 
+> > > >  static int rbd_img_fill_nodata(struct rbd_img_request
+> > > > *img_req,
+> > > > @@ -3552,6 +3567,7 @@ static void
+> > > > rbd_img_object_requests(struct
+> > > > rbd_img_request *img_req)
+> > > > 
+> > > >      rbd_assert(!img_req->pending.result && !img_req-
+> > > > > pending.num_pending);
+> > > > 
+> > > > +    mutex_lock(&img_req->object_mutex);
+> > > >      for_each_obj_request(img_req, obj_req) {
+> > > >              int result = 0;
+> > > > 
+> > > > @@ -3564,6 +3580,7 @@ static void
+> > > > rbd_img_object_requests(struct
+> > > > rbd_img_request *img_req)
+> > > >                      img_req->pending.num_pending++;
+> > > >              }
+> > > >      }
+> > > > +    mutex_unlock(&img_req->object_mutex);
+> > > >  }
+> > > > 
+> > > >  static bool rbd_img_advance(struct rbd_img_request *img_req,
+> > > > int
+> > > > *result)
+> > > 
+> > > Looks good to me. Just wonder how we escaped this for so long.
+> > > 
+> > > Reviewed-by: Laurence Oberman <loberman@redhat.com>
+> > > 
+> > 
+> > The whole state machine is utterly fragile.
+> > I'll be posting a patchset to clean stuff up somewhat,
+> > but it's still a beast.
+> 
+> What do you want me to do about this patch then?
+> 
+> > I'm rather surprised that it doesn't break more often ...
+> 
+> If you or Laurence saw it break, I would appreciate the details.
+> 
+> Thanks,
+> 
+>                 Ilya
+> 
 
-In O_APPEND & O_DIRECT mode, the data from different writers will
-be possiblly overlapping each other. Just use the exclusive clock
-instead in O_APPEND & O_DIRECT mode.
+That is what I mentioned when I reviewed it.
+While I understand Hannes's patch and it looked right to me, here in
+support, I have not seen any reported cases of panics so was wondering
+how it escaped me so far.
 
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/file.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
-
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 77f8e58cbb99..1cedba452a66 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1443,6 +1443,7 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, =
-struct iov_iter *from)
- 	struct ceph_cap_flush *prealloc_cf;
- 	ssize_t count, written =3D 0;
- 	int err, want, got;
-+	bool direct_lock =3D false;
- 	loff_t pos;
- 	loff_t limit =3D max(i_size_read(inode), fsc->max_file_size);
-=20
-@@ -1453,8 +1454,11 @@ static ssize_t ceph_write_iter(struct kiocb *iocb,=
- struct iov_iter *from)
- 	if (!prealloc_cf)
- 		return -ENOMEM;
-=20
-+	if ((iocb->ki_flags & (IOCB_DIRECT | IOCB_APPEND)) =3D=3D IOCB_DIRECT)
-+		direct_lock =3D true;
-+
- retry_snap:
--	if (iocb->ki_flags & IOCB_DIRECT)
-+	if (direct_lock)
- 		ceph_start_io_direct(inode);
- 	else
- 		ceph_start_io_write(inode);
-@@ -1544,14 +1548,15 @@ static ssize_t ceph_write_iter(struct kiocb *iocb=
-, struct iov_iter *from)
-=20
- 		/* we might need to revert back to that point */
- 		data =3D *from;
--		if (iocb->ki_flags & IOCB_DIRECT) {
-+		if (iocb->ki_flags & IOCB_DIRECT)
- 			written =3D ceph_direct_read_write(iocb, &data, snapc,
- 							 &prealloc_cf);
--			ceph_end_io_direct(inode);
--		} else {
-+		else
- 			written =3D ceph_sync_write(iocb, &data, pos, snapc);
-+		if (direct_lock)
-+			ceph_end_io_direct(inode);
-+		else
- 			ceph_end_io_write(inode);
--		}
- 		if (written > 0)
- 			iov_iter_advance(from, written);
- 		ceph_put_snap_context(snapc);
-@@ -1602,7 +1607,7 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, =
-struct iov_iter *from)
-=20
- 	goto out_unlocked;
- out:
--	if (iocb->ki_flags & IOCB_DIRECT)
-+	if (direct_lock)
- 		ceph_end_io_direct(inode);
- 	else
- 		ceph_end_io_write(inode);
---=20
-2.21.0
+Regards
+Laurence
 
