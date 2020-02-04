@@ -2,28 +2,28 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 288F0151631
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Feb 2020 07:59:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDF9A15163C
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Feb 2020 08:05:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbgBDG72 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 4 Feb 2020 01:59:28 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45260 "EHLO mx2.suse.de"
+        id S1726574AbgBDHFj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 4 Feb 2020 02:05:39 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47462 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725976AbgBDG71 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 4 Feb 2020 01:59:27 -0500
+        id S1725834AbgBDHFj (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 4 Feb 2020 02:05:39 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 58416AAB8;
-        Tue,  4 Feb 2020 06:59:25 +0000 (UTC)
-Subject: Re: [PATCH 09/15] rbd: count pending object requests in-line
+        by mx2.suse.de (Postfix) with ESMTP id EEC7BAD5D;
+        Tue,  4 Feb 2020 07:05:35 +0000 (UTC)
+Subject: Re: [PATCH 02/15] rbd: use READ_ONCE() when checking the mapping size
 To:     Ilya Dryomov <idryomov@gmail.com>
 Cc:     Sage Weil <sage@redhat.com>, Daniel Disseldorp <ddiss@suse.com>,
         Jens Axboe <axboe@kernel.dk>,
         Ceph Development <ceph-devel@vger.kernel.org>,
         linux-block <linux-block@vger.kernel.org>
 References: <20200131103739.136098-1-hare@suse.de>
- <20200131103739.136098-10-hare@suse.de>
- <CAOi1vP9Z=7XPO3N7jajEG0eJDSUF+xnvn+arfU-waubra9pg-A@mail.gmail.com>
+ <20200131103739.136098-3-hare@suse.de>
+ <CAOi1vP--6qWHtifpeBVWRYOP8J_CC+fvKOkG7Xdsjoxaa7mrDQ@mail.gmail.com>
 From:   Hannes Reinecke <hare@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
@@ -69,12 +69,12 @@ Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
  ZtWlhGRERnDH17PUXDglsOA08HCls0PHx8itYsjYCAyETlxlLApXWdVl9YVwbQpQ+i693t/Y
  PGu8jotn0++P19d3JwXW8t6TVvBIQ1dRZHx1IxGLMn+CkDJMOmHAUMWTAXX2rf5tUjas8/v2
  azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <5bba85ee-7368-3573-cf27-f80875669571@suse.de>
-Date:   Tue, 4 Feb 2020 07:59:24 +0100
+Message-ID: <43e755d9-d7c0-5d0c-436f-220a1c807f85@suse.de>
+Date:   Tue, 4 Feb 2020 08:05:35 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <CAOi1vP9Z=7XPO3N7jajEG0eJDSUF+xnvn+arfU-waubra9pg-A@mail.gmail.com>
+In-Reply-To: <CAOi1vP--6qWHtifpeBVWRYOP8J_CC+fvKOkG7Xdsjoxaa7mrDQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -83,24 +83,79 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2/3/20 6:47 PM, Ilya Dryomov wrote:
+On 2/3/20 5:50 PM, Ilya Dryomov wrote:
 > On Fri, Jan 31, 2020 at 11:38 AM Hannes Reinecke <hare@suse.de> wrote:
 >>
->> Instead of having a counter for outstanding object requests
->> check the state and count only those which are not in the final
->> state.
+>> The mapping size is changed only very infrequently, so we don't
+>> need to take the header mutex for checking; using READ_ONCE()
+>> is sufficient here. And it avoids having to take a mutex in the
+>> hot path.
 >>
 >> Signed-off-by: Hannes Reinecke <hare@suse.de>
 >> ---
->>  drivers/block/rbd.c | 41 ++++++++++++++++++++++++++++++-----------
->>  1 file changed, 30 insertions(+), 11 deletions(-)
+>>  drivers/block/rbd.c | 12 ++++++------
+>>  1 file changed, 6 insertions(+), 6 deletions(-)
 >>
-[ .. ]
+>> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+>> index db80b964d8ea..792180548e89 100644
+>> --- a/drivers/block/rbd.c
+>> +++ b/drivers/block/rbd.c
+>> @@ -4788,13 +4788,13 @@ static void rbd_queue_workfn(struct work_struct *work)
+>>
+>>         blk_mq_start_request(rq);
+>>
+>> -       down_read(&rbd_dev->header_rwsem);
+>> -       mapping_size = rbd_dev->mapping.size;
+>> +       mapping_size = READ_ONCE(rbd_dev->mapping.size);
+>>         if (op_type != OBJ_OP_READ) {
+>> +               down_read(&rbd_dev->header_rwsem);
+>>                 snapc = rbd_dev->header.snapc;
+>>                 ceph_get_snap_context(snapc);
+>> +               up_read(&rbd_dev->header_rwsem);
+>>         }
+>> -       up_read(&rbd_dev->header_rwsem);
+>>
+>>         if (offset + length > mapping_size) {
+>>                 rbd_warn(rbd_dev, "beyond EOD (%llu~%llu > %llu)", offset,
+>> @@ -4981,9 +4981,9 @@ static int rbd_dev_refresh(struct rbd_device *rbd_dev)
+>>         u64 mapping_size;
+>>         int ret;
+>>
+>> -       down_write(&rbd_dev->header_rwsem);
+>> -       mapping_size = rbd_dev->mapping.size;
+>> +       mapping_size = READ_ONCE(rbd_dev->mapping.size);
+>>
+>> +       down_write(&rbd_dev->header_rwsem);
+>>         ret = rbd_dev_header_info(rbd_dev);
+>>         if (ret)
+>>                 goto out;
+>> @@ -4999,7 +4999,7 @@ static int rbd_dev_refresh(struct rbd_device *rbd_dev)
+>>         }
+>>
+>>         rbd_assert(!rbd_is_snap(rbd_dev));
+>> -       rbd_dev->mapping.size = rbd_dev->header.image_size;
+>> +       WRITE_ONCE(rbd_dev->mapping.size, rbd_dev->header.image_size);
+>>
+>>  out:
+>>         up_write(&rbd_dev->header_rwsem);
 > 
-> This is just to be able to drop img_req->state_mutex in patch 11,
-> right?
+> Does this result in a measurable performance improvement?
 > 
-correct.
+> I'd rather not go down the READ/WRITE_ONCE path and continue using
+> proper locking, especially given that it's only for reads.  FWIW the
+> plan is to replace header_rwsem with a spin lock, after refactoring
+> header read-in code to use a private buffer instead of reading into
+> rbd_dev directly.
+> 
+Well ... Not sure if I like the spin_lock idea.
+Thing is, the mapping size is evaluated exactly _once_ when assembling
+the request. So any change to the mapping size just after we've read it
+would go unnoticed.
+
+Hence it should be possible to combine both approaches; use READ_ONCE()
+to read the mapping size, but use a spin lock for updating it as you
+suggested. That way we'll eliminate a lock in the hot path, but would be
+getting safe updates.
 
 Cheers,
 
