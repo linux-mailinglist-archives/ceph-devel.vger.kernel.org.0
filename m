@@ -2,52 +2,63 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B455E151F83
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Feb 2020 18:33:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 290B4152009
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Feb 2020 18:52:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbgBDRdx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 4 Feb 2020 12:33:53 -0500
-Received: from tragedy.dreamhost.com ([66.33.205.236]:50033 "EHLO
-        tragedy.dreamhost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727334AbgBDRdx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 4 Feb 2020 12:33:53 -0500
-X-Greylist: delayed 553 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Feb 2020 12:33:53 EST
-Received: from localhost (localhost [127.0.0.1])
-        by tragedy.dreamhost.com (Postfix) with ESMTPS id 6C8AC15F883;
-        Tue,  4 Feb 2020 09:24:39 -0800 (PST)
-Date:   Tue, 4 Feb 2020 17:24:37 +0000 (UTC)
-From:   Sage Weil <sage@newdream.net>
-X-X-Sender: sage@piezo.novalocal
-To:     ceph-announce@ceph.io, ceph-users@ceph.io, dev@ceph.io,
-        ceph-devel@vger.kernel.org
-Subject: Cephalocon Seoul is canceled
-Message-ID: <alpine.DEB.2.21.2002041649050.21136@piezo.novalocal>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727452AbgBDRw6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 4 Feb 2020 12:52:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47060 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727369AbgBDRw6 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 4 Feb 2020 12:52:58 -0500
+Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30D3A2084E;
+        Tue,  4 Feb 2020 17:52:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580838777;
+        bh=i6I9apX4Gx93srSmpD0ey0m7U+NiBF4f6HaysbGlBtE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=udFJSub+Avubmfbn6cN91lVI8Lx2nC85gal1i/JxnJqOgCchzCBAPghoWcFJTIDkv
+         K30JU/zZNmTTiZa9wnxqTSOGWq2qsj9FJwSCkdsZCcviMidiHp9s/nr8CruGfrFr3y
+         RMHWFqNi6sa2IaqeiUSmBf/8uxLbY2oI1II4v5lc=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     dhowells@redhat.com
+Subject: [PATCH] ceph: don't ClearPageChecked in ceph_invalidatepage
+Date:   Tue,  4 Feb 2020 12:52:56 -0500
+Message-Id: <20200204175256.362163-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-VR-STATUS: OK
-X-VR-SCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedugedrgeelgdelhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucggtfgfnhhsuhgsshgtrhhisggvpdfftffgtefojffquffvnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfgfgggtsehttdertddtredvnecuhfhrohhmpefurghgvgcuhggvihhluceoshgrghgvsehnvgifughrvggrmhdrnhgvtheqnecukfhppeduvdejrddtrddtrddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhppdhhvghloheplhhotggrlhhhohhsthdpihhnvghtpeduvdejrddtrddtrddupdhrvghtuhhrnhdqphgrthhhpefurghgvgcuhggvihhluceoshgrghgvsehnvgifughrvggrmhdrnhgvtheqpdhmrghilhhfrhhomhepshgrghgvsehnvgifughrvggrmhdrnhgvthdpnhhrtghpthhtoheptggvphhhqdguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi everyone,
+CephFS doesn't set this bit to begin with, so there should be no need
+to clear it.
 
-We are sorry to announce that, due to the recent coronavirus outbreak, we 
-are canceling Cephalocon for March 3-5 in Seoul.
+Reported-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/addr.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-More details will follow about how to best handle cancellation of hotel 
-reservations and so forth.  Registrations will of course be 
-refunded--expect an email with details in the next day or two.
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 7ab616601141..6067847bc03b 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -159,8 +159,6 @@ static void ceph_invalidatepage(struct page *page, unsigned int offset,
+ 	if (!PagePrivate(page))
+ 		return;
+ 
+-	ClearPageChecked(page);
+-
+ 	dout("%p invalidatepage %p idx %lu full dirty page\n",
+ 	     inode, page, page->index);
+ 
+-- 
+2.24.1
 
-We are still looking into whether it makes sense to reschedule the event 
-for later in the year.
-
-Thank you to everyone who has helped to plan this event, submitted talks, 
-and agreed to sponsor.  It makes us sad to cancel, but the safety of 
-our community is of the utmost importance, and it was looking increasing 
-unlikely that we could make this event a success.
-
-Stay tuned...
