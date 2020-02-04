@@ -2,200 +2,212 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA323150FC2
-	for <lists+ceph-devel@lfdr.de>; Mon,  3 Feb 2020 19:40:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4874B151412
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Feb 2020 02:55:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729390AbgBCSkB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 3 Feb 2020 13:40:01 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40772 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729379AbgBCSkB (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 Feb 2020 13:40:01 -0500
-Received: by mail-io1-f67.google.com with SMTP id x1so17872358iop.7;
-        Mon, 03 Feb 2020 10:40:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/V4hzZYWVEsuUdGZwm6Xm8GVUq6qorIeWngqmvPL9aI=;
-        b=B9BK8wbzs53w/Imo8Fc5SBsM9+UCS2wOstUeylBFOGOahegmn8hi8lhupTG9J63wR8
-         8eanT7Sy+/eewIMUUocvT4THps27H3DgVZKLrvDoUE12Zo5uELn2InESCO5FcXrRc41R
-         tmOGrxsqCGem4YphyaeqQb8M8KTBs81ydiBFygV5K9GGyr/9GgAx0hwcgzQrWpBoYTBH
-         FNE5pguGZVV1vopHPtZvhEL4Gcg53g/UozrH1ooW5unMCgmsOtOm+b6RBCuvhr/af5TA
-         tq+GU6Ekt4V27nPkhnnSo364y8HfPsUP6EH94tdPYz8fvCm1SY33wxIRGZa98whI9TjT
-         zAug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/V4hzZYWVEsuUdGZwm6Xm8GVUq6qorIeWngqmvPL9aI=;
-        b=tJpgpabHYKypqrsH5FAG9ZctpSK4MKqA2UkhZjT+EJ5IVvJg2DhyNIcemyNHVymruS
-         mt/eU9Tg/nFn75J1YESUFOhYxImBpcPccyQtmnEzblEmGckdgWV06lJjw/jezv/+RBub
-         lpFFUyQW08vkHjysiaYmm1dvG5Es/GXY8nzx76e6qrhFtYpmzVdGsAS3SZ1ofR5LahGE
-         Xcdry/JK1pLvGmCUT98Ed+okiRa4StyF0JfoU1CE0lJ6xKf2peUTJKp2WAWby6hDJ7fn
-         piMo5wJTn+pS8rh0v7+bhWLGrBQVw1jkM4S3V/lcOq51t3ANd0HBbmQ8uYswJID7s8oQ
-         2brQ==
-X-Gm-Message-State: APjAAAXN58g4zJqGwgyf96WeCZ+EvFJWAvAv7w/JjieBvlkqWvyhHgeD
-        8gMHZU/eU6NueBlxdELWHvviuwNeC44UIAXMCBI=
-X-Google-Smtp-Source: APXvYqyGpPTrTUi4NwM9IJSc4py35UEbHU0cmbLf710+bA+o1yTr3+pNejzArP2FRNlXagDz17lxJbVxOIZw5Xa2VD8=
-X-Received: by 2002:a6b:17c4:: with SMTP id 187mr19617401iox.143.1580755199953;
- Mon, 03 Feb 2020 10:39:59 -0800 (PST)
+        id S1726928AbgBDBzE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 3 Feb 2020 20:55:04 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46988 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726369AbgBDBzE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 Feb 2020 20:55:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580781303;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=QS0+Kf438tAtfdozjM63Nrji59szzW6bu4vgTpxcLzM=;
+        b=DXmsTlJOM/gNhPC9bur2lCHLYhlaACjByuPL5ehroiBaPF1S3qqYQIWSaBaVnh3XyW/exQ
+        MoEzhWYOoJtBfAZtr2QjN8VQsLstfIPOulmg3k1uQS22QEM0xR+aAKZVQ7AaebOaNrK7cF
+        NHhmp++FBr+Af6aeyvFr+k8SkO8m1kk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-223-JmIFHAStMB-TXspKSk4-MQ-1; Mon, 03 Feb 2020 20:55:01 -0500
+X-MC-Unique: JmIFHAStMB-TXspKSk4-MQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1610D477;
+        Tue,  4 Feb 2020 01:55:00 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-34.pek2.redhat.com [10.72.12.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DF1E090F63;
+        Tue,  4 Feb 2020 01:54:54 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org, idryomov@gmail.com, zyan@redhat.com
+Cc:     sage@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [RFC PATCH] ceph: serialize the direct writes when couldn't submit in a single req
+Date:   Mon,  3 Feb 2020 20:54:45 -0500
+Message-Id: <20200204015445.4435-1-xiubli@redhat.com>
 MIME-Version: 1.0
-References: <20200131103739.136098-1-hare@suse.de> <20200131103739.136098-14-hare@suse.de>
-In-Reply-To: <20200131103739.136098-14-hare@suse.de>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 3 Feb 2020 19:40:13 +0100
-Message-ID: <CAOi1vP9D7qrmzX8bAK9AtEFQ=ke+DAOtzWfkf6fSWtFuj+C8YQ@mail.gmail.com>
-Subject: Re: [PATCH 13/15] rbd: schedule image_request after preparation
-To:     Hannes Reinecke <hare@suse.de>
-Cc:     Sage Weil <sage@redhat.com>, Daniel Disseldorp <ddiss@suse.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 11:38 AM Hannes Reinecke <hare@suse.de> wrote:
->
-> Instead of pushing I/O directly to the workqueue we should be
-> preparing it first, and push it onto the workqueue as the last
-> step. This allows us to signal some back-pressure to the block
-> layer in case the queue fills up.
+From: Xiubo Li <xiubli@redhat.com>
 
-I assume what you mean is signal BLK_STS_RESOURCE (i.e.  ENOMEM), not
-the queue full condition, as that is handled intrinsically?
+If the direct io couldn't be submit in a single request, for multiple
+writers, they may overlap each other.
 
->
-> Signed-off-by: Hannes Reinecke <hare@suse.de>
-> ---
->  drivers/block/rbd.c | 52 +++++++++++++++-------------------------------------
->  1 file changed, 15 insertions(+), 37 deletions(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 2566d6bd8230..9829f225c57d 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -4775,9 +4775,10 @@ static int rbd_obj_method_sync(struct rbd_device *rbd_dev,
->         return ret;
->  }
->
-> -static void rbd_queue_workfn(struct work_struct *work)
-> +static blk_status_t rbd_queue_rq(struct blk_mq_hw_ctx *hctx,
-> +               const struct blk_mq_queue_data *bd)
->  {
-> -       struct request *rq = blk_mq_rq_from_pdu(work);
-> +       struct request *rq = bd->rq;
->         struct rbd_device *rbd_dev = rq->q->queuedata;
->         struct rbd_img_request *img_request;
->         struct ceph_snap_context *snapc = NULL;
-> @@ -4802,24 +4803,14 @@ static void rbd_queue_workfn(struct work_struct *work)
->                 break;
->         default:
->                 dout("%s: non-fs request type %d\n", __func__, req_op(rq));
-> -               result = -EIO;
-> -               goto err;
-> -       }
-> -
-> -       /* Ignore/skip any zero-length requests */
-> -
-> -       if (!length) {
-> -               dout("%s: zero-length request\n", __func__);
-> -               result = 0;
-> -               goto err_rq;
-> +               return BLK_STS_IOERR;
->         }
->
->         if (op_type != OBJ_OP_READ) {
->                 if (rbd_is_ro(rbd_dev)) {
->                         rbd_warn(rbd_dev, "%s on read-only mapping",
->                                  obj_op_name(op_type));
-> -                       result = -EIO;
-> -                       goto err;
-> +                       return BLK_STS_IOERR;
->                 }
->                 rbd_assert(!rbd_is_snap(rbd_dev));
->         }
-> @@ -4827,11 +4818,17 @@ static void rbd_queue_workfn(struct work_struct *work)
->         if (offset && length > U64_MAX - offset + 1) {
->                 rbd_warn(rbd_dev, "bad request range (%llu~%llu)", offset,
->                          length);
-> -               result = -EINVAL;
-> -               goto err_rq;    /* Shouldn't happen */
-> +               return BLK_STS_NOSPC;   /* Shouldn't happen */
->         }
->
->         blk_mq_start_request(rq);
-> +       /* Ignore/skip any zero-length requests */
-> +       if (!length) {
-> +               dout("%s: zero-length request\n", __func__);
-> +               result = 0;
-> +               goto err;
-> +       }
-> +
->
->         mapping_size = READ_ONCE(rbd_dev->mapping.size);
->         if (op_type != OBJ_OP_READ) {
-> @@ -4868,8 +4865,8 @@ static void rbd_queue_workfn(struct work_struct *work)
->         if (result)
->                 goto err_img_request;
->
-> -       rbd_img_handle_request(img_request, 0);
-> -       return;
-> +       rbd_img_schedule(img_request, 0);
-> +       return BLK_STS_OK;
->
->  err_img_request:
->         rbd_img_request_destroy(img_request);
-> @@ -4880,15 +4877,6 @@ static void rbd_queue_workfn(struct work_struct *work)
->         ceph_put_snap_context(snapc);
->  err:
->         blk_mq_end_request(rq, errno_to_blk_status(result));
-> -}
-> -
-> -static blk_status_t rbd_queue_rq(struct blk_mq_hw_ctx *hctx,
-> -               const struct blk_mq_queue_data *bd)
-> -{
-> -       struct request *rq = bd->rq;
-> -       struct work_struct *work = blk_mq_rq_to_pdu(rq);
-> -
-> -       queue_work(rbd_wq, work);
->         return BLK_STS_OK;
->  }
->
-> @@ -5055,18 +5043,8 @@ static int rbd_dev_refresh(struct rbd_device *rbd_dev)
->         return ret;
->  }
->
-> -static int rbd_init_request(struct blk_mq_tag_set *set, struct request *rq,
-> -               unsigned int hctx_idx, unsigned int numa_node)
-> -{
-> -       struct work_struct *work = blk_mq_rq_to_pdu(rq);
-> -
-> -       INIT_WORK(work, rbd_queue_workfn);
-> -       return 0;
-> -}
-> -
->  static const struct blk_mq_ops rbd_mq_ops = {
->         .queue_rq       = rbd_queue_rq,
-> -       .init_request   = rbd_init_request,
->  };
->
->  static int rbd_init_disk(struct rbd_device *rbd_dev)
+For example, with the file layout:
+ceph.file.layout=3D"stripe_unit=3D4194304 stripe_count=3D1 object_size=3D=
+4194304
 
-Is .queue_rq allowed to block?  AFAIK it's not, or at least not unless
-BLK_MQ_F_BLOCKING is specified and I remember hearing about performance
-issues with BLK_MQ_F_BLOCKING -- it is basically an offload to kblockd
-workqueue, with a single work item per hw queue.
+fd =3D open(, O_DIRECT | O_WRONLY, );
 
-We don't have any device specific resources, the only thing we need is
-memory which we can't preallocate upfront because of too many variable
-sized pieces, both in rbd and in libceph.  Small GFP_NOIO allocations
-don't really fail, so I wonder how important returning something other
-than BLK_STS_OK is?
+Writer1:
+posix_memalign(&buffer, 4194304, SIZE);
+memset(buffer, 'T', SIZE);
+write(fd, buffer, SIZE);
 
-Thanks,
+Writer2:
+posix_memalign(&buffer, 4194304, SIZE);
+memset(buffer, 'X', SIZE);
+write(fd, buffer, SIZE);
 
-                Ilya
+From the test result, the data in the file possiblly will be:
+TTT...TTT <---> object1
+XXX...XXX <---> object2
+
+The expected result should be all "XX.." or "TT.." in both object1
+and object2.
+
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/file.c  | 38 +++++++++++++++++++++++++++++++++++---
+ fs/ceph/inode.c |  2 ++
+ fs/ceph/super.h |  3 +++
+ 3 files changed, 40 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 1cedba452a66..2741070a58a9 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -961,6 +961,8 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov=
+_iter *iter,
+ 	loff_t pos =3D iocb->ki_pos;
+ 	bool write =3D iov_iter_rw(iter) =3D=3D WRITE;
+ 	bool should_dirty =3D !write && iter_is_iovec(iter);
++	bool shared_lock =3D false;
++	u64 size;
+=20
+ 	if (write && ceph_snap(file_inode(file)) !=3D CEPH_NOSNAP)
+ 		return -EROFS;
+@@ -977,14 +979,27 @@ ceph_direct_read_write(struct kiocb *iocb, struct i=
+ov_iter *iter,
+ 			dout("invalidate_inode_pages2_range returned %d\n", ret2);
+=20
+ 		flags =3D /* CEPH_OSD_FLAG_ORDERSNAP | */ CEPH_OSD_FLAG_WRITE;
++
++		/*
++		 * If we cannot submit the whole iter in a single request we
++		 * should block all the requests followed to avoid the data
++		 * being overlapped by each other.
++		 *
++		 * But for those which could be submit in an single request
++		 * they could excute in parallel.
++		 *
++		 * Hold the exclusive lock first.
++		 */
++		down_write(&ci->i_direct_rwsem);
+ 	} else {
+ 		flags =3D CEPH_OSD_FLAG_READ;
+ 	}
+=20
+ 	while (iov_iter_count(iter) > 0) {
+-		u64 size =3D iov_iter_count(iter);
+ 		ssize_t len;
+=20
++		size =3D iov_iter_count(iter);
++
+ 		if (write)
+ 			size =3D min_t(u64, size, fsc->mount_options->wsize);
+ 		else
+@@ -1011,9 +1026,16 @@ ceph_direct_read_write(struct kiocb *iocb, struct =
+iov_iter *iter,
+ 			ret =3D len;
+ 			break;
+ 		}
++
+ 		if (len !=3D size)
+ 			osd_req_op_extent_update(req, 0, len);
+=20
++		if (write && pos =3D=3D iocb->ki_pos && len =3D=3D count) {
++			/* Switch to shared lock */
++			downgrade_write(&ci->i_direct_rwsem);
++			shared_lock =3D true;
++		}
++
+ 		/*
+ 		 * To simplify error handling, allow AIO when IO within i_size
+ 		 * or IO can be satisfied by single OSD request.
+@@ -1110,7 +1132,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct i=
+ov_iter *iter,
+=20
+ 		if (aio_req->num_reqs =3D=3D 0) {
+ 			kfree(aio_req);
+-			return ret;
++			goto unlock;
+ 		}
+=20
+ 		ceph_get_cap_refs(ci, write ? CEPH_CAP_FILE_WR :
+@@ -1131,13 +1153,23 @@ ceph_direct_read_write(struct kiocb *iocb, struct=
+ iov_iter *iter,
+ 				ceph_aio_complete_req(req);
+ 			}
+ 		}
+-		return -EIOCBQUEUED;
++		ret =3D -EIOCBQUEUED;
++		goto unlock;
+ 	}
+=20
+ 	if (ret !=3D -EOLDSNAPC && pos > iocb->ki_pos) {
+ 		ret =3D pos - iocb->ki_pos;
+ 		iocb->ki_pos =3D pos;
+ 	}
++
++unlock:
++	if (write) {
++		if (shared_lock)
++			up_read(&ci->i_direct_rwsem);
++		else
++			up_write(&ci->i_direct_rwsem);
++	}
++
+ 	return ret;
+ }
+=20
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index aee7a24bf1bc..e5d634acd273 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -518,6 +518,8 @@ struct inode *ceph_alloc_inode(struct super_block *sb=
+)
+=20
+ 	ceph_fscache_inode_init(ci);
+=20
++	init_rwsem(&ci->i_direct_rwsem);
++
+ 	ci->i_meta_err =3D 0;
+=20
+ 	return &ci->vfs_inode;
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index ee81920bb1a4..213c11bf41be 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -409,6 +409,9 @@ struct ceph_inode_info {
+ 	struct fscache_cookie *fscache;
+ 	u32 i_fscache_gen;
+ #endif
++
++	struct rw_semaphore i_direct_rwsem;
++
+ 	errseq_t i_meta_err;
+=20
+ 	struct inode vfs_inode; /* at end */
+--=20
+2.21.0
+
