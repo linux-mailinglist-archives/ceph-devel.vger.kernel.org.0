@@ -2,119 +2,176 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50640153907
-	for <lists+ceph-devel@lfdr.de>; Wed,  5 Feb 2020 20:24:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5084F15393A
+	for <lists+ceph-devel@lfdr.de>; Wed,  5 Feb 2020 20:41:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbgBETYL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 5 Feb 2020 14:24:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33894 "EHLO mx2.suse.de"
+        id S1727306AbgBETlf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 5 Feb 2020 14:41:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38490 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727085AbgBETYK (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 5 Feb 2020 14:24:10 -0500
+        id S1727079AbgBETlf (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 5 Feb 2020 14:41:35 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3B5AAB08C;
-        Wed,  5 Feb 2020 19:24:08 +0000 (UTC)
-Date:   Wed, 5 Feb 2020 19:24:14 +0000
+        by mx2.suse.de (Postfix) with ESMTP id 4E16CB174;
+        Wed,  5 Feb 2020 19:41:33 +0000 (UTC)
+Date:   Wed, 5 Feb 2020 19:41:39 +0000
 From:   Luis Henriques <lhenriques@suse.com>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
         "Yan, Zheng" <zyan@redhat.com>,
         Gregory Farnum <gfarnum@redhat.com>,
         Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] ceph: fix copy_file_range error path in short copies
-Message-ID: <20200205192414.GA27345@suse.com>
-References: <20200205102852.12236-1-lhenriques@suse.com>
- <CAOi1vP8w_ssGZJTimgDMULgd4jyb_CYuxNyjvHhbBR9FgAqB9A@mail.gmail.com>
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/1] ceph: parallelize all copy-from requests in
+ copy_file_range
+Message-ID: <20200205194139.GB27345@suse.com>
+References: <20200203165117.5701-1-lhenriques@suse.com>
+ <20200203165117.5701-2-lhenriques@suse.com>
+ <CAOi1vP8vXeY156baexdZY2FWK_F0jHfWkyNdZ90PA+7txG=Qsw@mail.gmail.com>
+ <20200204151158.GA15992@suse.com>
+ <CAOi1vP-LvJYwAALQ_69rDUaiXYWa-_NPboeZV5zZiw_cokNyfw@mail.gmail.com>
+ <20200205110007.GA11836@suse.com>
+ <CAOi1vP-kLCY+Q2UwpqvJdfeEV6me=FneLhasQrj2nkcu_7tRew@mail.gmail.com>
+ <2ce07148b49e6c1a857b4dd90c3bcea6ed0e8ce3.camel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOi1vP8w_ssGZJTimgDMULgd4jyb_CYuxNyjvHhbBR9FgAqB9A@mail.gmail.com>
+In-Reply-To: <2ce07148b49e6c1a857b4dd90c3bcea6ed0e8ce3.camel@kernel.org>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 12:16:02PM +0100, Ilya Dryomov wrote:
-> On Wed, Feb 5, 2020 at 11:28 AM Luis Henriques <lhenriques@suse.com> wrote:
-> >
-> > When there's an error in the copying loop but some bytes have already been
-> > copied into the destination file, it is necessary to dirty the caps and
-> > eventually update the MDS with the file metadata (timestamps, size).  This
-> > patch fixes this error path.
-> >
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> > ---
-> >  fs/ceph/file.c | 12 ++++++++++--
-> >  1 file changed, 10 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > index 11929d2bb594..7be47d24edb1 100644
-> > --- a/fs/ceph/file.c
-> > +++ b/fs/ceph/file.c
-> > @@ -2104,9 +2104,16 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >                         CEPH_OSD_OP_FLAG_FADVISE_DONTNEED, 0);
-> >                 if (err) {
-> >                         dout("ceph_osdc_copy_from returned %d\n", err);
-> > -                       if (!ret)
-> > +                       /*
-> > +                        * If we haven't done any copy yet, just exit with the
-> > +                        * error code; otherwise, return the number of bytes
-> > +                        * already copied, update metadata and dirty caps.
-> > +                        */
-> > +                       if (!ret) {
-> >                                 ret = err;
-> > -                       goto out_caps;
-> > +                               goto out_caps;
-> > +                       }
-> > +                       goto out_early;
-> >                 }
-> >                 len -= object_size;
-> >                 src_off += object_size;
-> > @@ -2118,6 +2125,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
-> >                 /* We still need one final local copy */
-> >                 do_final_copy = true;
-> >
-> > +out_early:
+On Wed, Feb 05, 2020 at 08:12:22AM -0500, Jeff Layton wrote:
+> On Wed, 2020-02-05 at 13:01 +0100, Ilya Dryomov wrote:
+> > On Wed, Feb 5, 2020 at 12:00 PM Luis Henriques <lhenriques@suse.com> wrote:
+> > > On Tue, Feb 04, 2020 at 07:06:36PM +0100, Ilya Dryomov wrote:
+> > > > On Tue, Feb 4, 2020 at 4:11 PM Luis Henriques <lhenriques@suse.com> wrote:
+> > > > > On Tue, Feb 04, 2020 at 11:56:57AM +0100, Ilya Dryomov wrote:
+> > > > > ...
+> > > > > > > @@ -2108,21 +2118,40 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+> > > > > > >                         CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
+> > > > > > >                         dst_ci->i_truncate_seq, dst_ci->i_truncate_size,
+> > > > > > >                         CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
+> > > > > > > -               if (err) {
+> > > > > > > -                       if (err == -EOPNOTSUPP) {
+> > > > > > > -                               src_fsc->have_copy_from2 = false;
+> > > > > > > -                               pr_notice("OSDs don't support 'copy-from2'; "
+> > > > > > > -                                         "disabling copy_file_range\n");
+> > > > > > > -                       }
+> > > > > > > +               if (IS_ERR(req)) {
+> > > > > > > +                       err = PTR_ERR(req);
+> > > > > > >                         dout("ceph_osdc_copy_from returned %d\n", err);
+> > > > > > > +
+> > > > > > > +                       /* wait for all queued requests */
+> > > > > > > +                       ceph_osdc_wait_requests(&osd_reqs, &reqs_complete);
+> > > > > > > +                       ret += reqs_complete * object_size; /* Update copied bytes */
+> > > > > > 
+> > > > > > Hi Luis,
+> > > > > > 
+> > > > > > Looks like ret is still incremented unconditionally?  What happens
+> > > > > > if there are three OSD requests on the list and the first fails but
+> > > > > > the second and the third succeed?  As is, ceph_osdc_wait_requests()
+> > > > > > will return an error with reqs_complete set to 2...
+> > > > > > 
+> > > > > > >                         if (!ret)
+> > > > > > >                                 ret = err;
+> > > > > > 
+> > > > > > ... and we will return 8M instead of an error.
+> > > > > 
+> > > > > Right, my assumption was that if a request fails, all subsequent requests
+> > > > > would also fail.  This would allow ret to be updated with the number of
+> > > > > successful requests (x object size), even if the OSDs replies were being
+> > > > > delivered in a different order.  But from your comment I see that my
+> > > > > assumption is incorrect.
+> > > > > 
+> > > > > In that case, when shall ret be updated with the number of bytes already
+> > > > > written?  Only after a successful call to ceph_osdc_wait_requests()?
+> > > > 
+> > > > I mentioned this in the previous email: you probably want to change
+> > > > ceph_osdc_wait_requests() so that the counter isn't incremented after
+> > > > an error is encountered.
+> > > 
+> > > Sure, I've seen that comment.  But it doesn't help either because it's not
+> > > guaranteed that we'll receive the replies from the OSDs in the same order
+> > > we've sent them.  Stopping the counter when we get an error doesn't
+> > > provide us any reliable information (which means I can simply drop that
+> > > counter).
+> > 
+> > The list is FIFO so even though replies may indeed arrive out of
+> > order, ceph_osdc_wait_requests() will process them in order.  If you
+> > stop counting as soon as an error is encountered, you know for sure
+> > that requests 1 through $COUNTER were successful and can safely
+> > multiply it by object size.
+> > 
+> > > > > I.e. only after each throttling cycle, when we don't have any requests
+> > > > > pending completion?  In this case, I can simply drop the extra
+> > > > > reqs_complete parameter to the ceph_osdc_wait_requests.
+> > > > > 
+> > > > > In your example the right thing to do would be to simply return an error,
+> > > > > I guess.  But then we're assuming that we're loosing space in the storage,
+> > > > > as we may have created objects that won't be reachable anymore.
+> > > > 
+> > > > Well, that is what I'm getting at -- this needs a lot more
+> > > > consideration.  How errors are dealt with, how file metadata is
+> > > > updated, when do we fall back to plain copy, etc.  Generating stray
+> > > > objects is bad but way better than reporting that e.g. 0..12M were
+> > > > copied when only 0..4M and 8M..12M were actually copied, leaving
+> > > > the user one step away from data loss.  One option is to revert to
+> > > > issuing copy-from requests serially when an error is encountered.
+> > > > Another option is to fall back to plain copy on any error.  Or perhaps
+> > > > we just don't bother with the complexity of parallel copy-from requests
+> > > > at all...
+> > > 
+> > > To be honest, I'm starting to lean towards this option.  Reverting to
+> > > serializing requests or to plain copy on error will not necessarily
+> > > prevent the stray objects:
+> > > 
+> > >   - send a bunch of copy requests
+> > >   - wait for them to complete
+> > >      * 1 failed, the other 63 succeeded
+> > >   - revert to serialized copies, repeating the previous 64 requests
+> > >      * after a few copies, we get another failure (maybe on the same OSDs)
+> > >        and abort, leaving behind some stray objects from the previous bulk
+> > >        request
+> > 
+> > Yeah, doing it serially makes the accounting a lot easier.  If you
+> > issue any OSD requests before updating the size, stray objects are
+> > bound to happen -- that's why "how file metadata is updated" is one
+> > of the important considerations.
 > 
-> out_early is misleading, especially given that there already
-> is out_caps, which just puts caps.  I suggest something like
-> update_dst_inode.
+> I don't think this is fundamentally different from the direct write
+> codepath. It's just that the source of the write is another OSD rather
+> than being sent in the request.
 > 
-> >         file_update_time(dst_file);
-> >         inode_inc_iversion_raw(dst_inode);
-> >
+> If you look at ceph_direct_read_write(), then it does this:
 > 
-> I think this is still buggy.  What follows is this:
+>       /*
+>        * To simplify error handling, allow AIO when IO within i_size
+>        * or IO can be satisfied by single OSD request.
+>        */
 > 
->         if (endoff > size) {
->                 int caps_flags = 0;
-> 
->                 /* Let the MDS know about dst file size change */
->                 if (ceph_quota_is_max_bytes_approaching(dst_inode, endoff))
->                         caps_flags |= CHECK_CAPS_NODELAY;
->                 if (ceph_inode_set_size(dst_inode, endoff))
->                         caps_flags |= CHECK_CAPS_AUTHONLY;
->                 if (caps_flags)
->                         ceph_check_caps(dst_ci, caps_flags, NULL);
->         }
-> 
-> with endoff being:
-> 
->         size = i_size_read(dst_inode);
->         endoff = dst_off + len;
-> 
-> So a short copy effectively zero-fills the destination file...
+> So, that's another possibility. Do the requests synchronously when they
+> will result in a change to i_size. Otherwise, you can do them in
+> parallel.
 
-Ah!  What a surprise!  Yet another bug in copy_file_range.  /me hides
-
-I guess that replacing 'endoff' by 'dst_off' in the 'if' statement above
-(including the condition itself) should fix it.  But I start to think that
-I'm biased and unable to see the most obvious issues with this code :-/
+This could also work, but would add even more complexity.  I already find
+the __copy_file_range implementation way to complex (and the fact that I
+keep adding bugs to it is a good indicator :-) ), although I know the
+performance improvements provided by the parallel requests can be huge.
+Anyway, let me (try to!) fix these other bugs that Ilya keeps finding and
+then I'll revisit the whole thing.
 
 Cheers,
 --
 Luís
+
+> In practice, we'd have to recommend that people truncate the destination
+> file up to the final length before doing copy_file_range, but that
+> doesn't sound too onerous.
+> 
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
