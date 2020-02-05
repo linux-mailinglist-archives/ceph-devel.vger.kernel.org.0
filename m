@@ -2,37 +2,37 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4262115396F
-	for <lists+ceph-devel@lfdr.de>; Wed,  5 Feb 2020 21:15:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 554A3153A68
+	for <lists+ceph-devel@lfdr.de>; Wed,  5 Feb 2020 22:43:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbgBEUPg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 5 Feb 2020 15:15:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48582 "EHLO mail.kernel.org"
+        id S1727307AbgBEVna (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 5 Feb 2020 16:43:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726208AbgBEUPg (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 5 Feb 2020 15:15:36 -0500
+        id S1727109AbgBEVna (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 5 Feb 2020 16:43:30 -0500
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64A4C20720;
-        Wed,  5 Feb 2020 20:15:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6E572072B;
+        Wed,  5 Feb 2020 21:43:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580933735;
-        bh=icxEkAvNlQWXQXJ+H42Xpc9QbEvgNa4juF4RcNJTuPA=;
+        s=default; t=1580939009;
+        bh=ESvdzhg8+HLw6eDfcvCf5jJfgSImdbGryTjJbWSHylY=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=HK3ft2e7SevP0j5BcY0F0Ykw2lhJst2ZC/u6IpoVpdb636PxueFuT99h1Auoj3V6+
-         32d2Q0IiBFO5OHiMdSv90a1meTlR3RoYcmMpab3EqOJwXduwVck4wnJ5+fb1rRgu/k
-         6bLyV9vZ1WRpn0GMyVUymfnKeo38xBzXDQxoqe5Y=
-Message-ID: <e0bbe210d52c69458828f8245f1252434713f4a9.camel@kernel.org>
-Subject: Re: [PATCH resend v5 05/11] ceph: add global read latency metric
- support
+        b=fdeWENzXKg0AEyDXY3bTdzRILAHYcmL+dFNmAsjnh/w6FP6EMdZ74YKqwecNpfXZN
+         Cihd3a2CWV7NAenxitAYimEBa/X8yeZq81tIdHgbE87bEOWKdVz3x3y2E5U/+Hg8u2
+         Cs4H8cC7C6Z/Ked3TYRSNBAaPElH6tkThBkBySZw=
+Message-ID: <57de3eb2f2009aec0ba086bb9d95a2936a7d1d9f.camel@kernel.org>
+Subject: Re: [PATCH resend v5 08/11] ceph: periodically send perf metrics to
+ MDS
 From:   Jeff Layton <jlayton@kernel.org>
 To:     xiubli@redhat.com, idryomov@gmail.com, zyan@redhat.com
 Cc:     sage@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Wed, 05 Feb 2020 15:15:33 -0500
-In-Reply-To: <20200129082715.5285-6-xiubli@redhat.com>
+Date:   Wed, 05 Feb 2020 16:43:27 -0500
+In-Reply-To: <20200129082715.5285-9-xiubli@redhat.com>
 References: <20200129082715.5285-1-xiubli@redhat.com>
-         <20200129082715.5285-6-xiubli@redhat.com>
+         <20200129082715.5285-9-xiubli@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
@@ -45,267 +45,522 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 On Wed, 2020-01-29 at 03:27 -0500, xiubli@redhat.com wrote:
 > From: Xiubo Li <xiubli@redhat.com>
 > 
-> item          total       sum_lat(us)     avg_lat(us)
-> -----------------------------------------------------
-> read          73          3590000         49178082
+> Add enable/disable sending metrics to MDS debugfs and disabled as
+> default, if it's enabled the kclient will send metrics every
+> second.
+> 
+> This will send global dentry lease hit/miss and read/write/metadata
+> latency metrics and each session's caps hit/miss metric to MDS.
+> 
+> Every time only sends the global metrics once via any availible
+> session.
 > 
 > URL: https://tracker.ceph.com/issues/43215
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  fs/ceph/addr.c       |  8 ++++++++
->  fs/ceph/debugfs.c    | 11 +++++++++++
->  fs/ceph/file.c       | 15 +++++++++++++++
->  fs/ceph/mds_client.c | 29 +++++++++++++++++++++++------
->  fs/ceph/mds_client.h |  9 ++-------
->  fs/ceph/metric.h     | 30 ++++++++++++++++++++++++++++++
->  6 files changed, 89 insertions(+), 13 deletions(-)
->  create mode 100644 fs/ceph/metric.h
+>  fs/ceph/debugfs.c            |  44 +++++++-
+>  fs/ceph/mds_client.c         | 201 ++++++++++++++++++++++++++++++++---
+>  fs/ceph/mds_client.h         |   3 +
+>  fs/ceph/metric.h             |  76 +++++++++++++
+>  fs/ceph/super.h              |   1 +
+>  include/linux/ceph/ceph_fs.h |   1 +
+>  6 files changed, 307 insertions(+), 19 deletions(-)
 > 
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 20e5ebfff389..0435a694370b 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -195,6 +195,7 @@ static int ceph_sync_readpages(struct ceph_fs_client *fsc,
->  			       int page_align)
->  {
->  	struct ceph_osd_client *osdc = &fsc->client->osdc;
-> +	struct ceph_client_metric *metric = &fsc->mdsc->metric;
-
-nit: I think you can drop this variable and just dereference the metric
-field directly below where it's used. Ditto in other places where
-"metric" is only used once in the function.
-
->  	struct ceph_osd_request *req;
->  	int rc = 0;
->  
-> @@ -218,6 +219,8 @@ static int ceph_sync_readpages(struct ceph_fs_client *fsc,
->  	if (!rc)
->  		rc = ceph_osdc_wait_request(osdc, req);
->  
-> +	ceph_update_read_latency(metric, req, rc);
-> +
->  	ceph_osdc_put_request(req);
->  	dout("readpages result %d\n", rc);
->  	return rc;
-> @@ -301,6 +304,8 @@ static int ceph_readpage(struct file *filp, struct page *page)
->  static void finish_read(struct ceph_osd_request *req)
->  {
->  	struct inode *inode = req->r_inode;
-> +	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-> +	struct ceph_client_metric *metric = &fsc->mdsc->metric;
->  	struct ceph_osd_data *osd_data;
->  	int rc = req->r_result <= 0 ? req->r_result : 0;
->  	int bytes = req->r_result >= 0 ? req->r_result : 0;
-> @@ -338,6 +343,9 @@ static void finish_read(struct ceph_osd_request *req)
->  		put_page(page);
->  		bytes -= PAGE_SIZE;
->  	}
-> +
-> +	ceph_update_read_latency(metric, req, rc);
-> +
->  	kfree(osd_data->pages);
->  }
->  
 > diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-> index c132fdb40d53..f8a32fa335ae 100644
+> index 7fd031c18309..8aae7ecea54a 100644
 > --- a/fs/ceph/debugfs.c
 > +++ b/fs/ceph/debugfs.c
-> @@ -128,8 +128,19 @@ static int metric_show(struct seq_file *s, void *p)
->  {
->  	struct ceph_fs_client *fsc = s->private;
->  	struct ceph_mds_client *mdsc = fsc->mdsc;
-> +	s64 total, sum, avg = 0;
->  	int i;
->  
-> +	seq_printf(s, "item          total       sum_lat(us)     avg_lat(us)\n");
-> +	seq_printf(s, "-----------------------------------------------------\n");
-> +
-> +	total = percpu_counter_sum(&mdsc->metric.total_reads);
-> +	sum = percpu_counter_sum(&mdsc->metric.read_latency_sum);
-> +	avg = total ? sum / total : 0;
-> +	seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "read",
-> +		   total, sum / NSEC_PER_USEC, avg / NSEC_PER_USEC);
-> +
-> +	seq_printf(s, "\n");
->  	seq_printf(s, "item          total           miss            hit\n");
->  	seq_printf(s, "-------------------------------------------------\n");
->  
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index c78dfbbb7b91..69288c39229b 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -588,6 +588,7 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
->  	struct inode *inode = file_inode(file);
->  	struct ceph_inode_info *ci = ceph_inode(inode);
->  	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-> +	struct ceph_client_metric *metric = &fsc->mdsc->metric;
->  	struct ceph_osd_client *osdc = &fsc->client->osdc;
->  	ssize_t ret;
->  	u64 off = iocb->ki_pos;
-> @@ -660,6 +661,9 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
->  		ret = ceph_osdc_start_request(osdc, req, false);
->  		if (!ret)
->  			ret = ceph_osdc_wait_request(osdc, req);
-> +
-> +		ceph_update_read_latency(metric, req, ret);
-> +
->  		ceph_osdc_put_request(req);
->  
->  		i_size = i_size_read(inode);
-> @@ -798,13 +802,20 @@ static void ceph_aio_complete_req(struct ceph_osd_request *req)
->  	struct inode *inode = req->r_inode;
->  	struct ceph_aio_request *aio_req = req->r_priv;
->  	struct ceph_osd_data *osd_data = osd_req_op_extent_osd_data(req, 0);
-> +	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-> +	struct ceph_client_metric *metric = &fsc->mdsc->metric;
->  
->  	BUG_ON(osd_data->type != CEPH_OSD_DATA_TYPE_BVECS);
->  	BUG_ON(!osd_data->num_bvecs);
-> +	BUG_ON(!aio_req);
->  
->  	dout("ceph_aio_complete_req %p rc %d bytes %u\n",
->  	     inode, rc, osd_data->bvec_pos.iter.bi_size);
->  
-> +	/* r_start_stamp == 0 means the request was not submitted */
-> +	if (req->r_start_stamp && !aio_req->write)
-> +		ceph_update_read_latency(metric, req, rc);
-> +
->  	if (rc == -EOLDSNAPC) {
->  		struct ceph_aio_work *aio_work;
->  		BUG_ON(!aio_req->write);
-> @@ -933,6 +944,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
->  	struct inode *inode = file_inode(file);
->  	struct ceph_inode_info *ci = ceph_inode(inode);
->  	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-> +	struct ceph_client_metric *metric = &fsc->mdsc->metric;
->  	struct ceph_vino vino;
->  	struct ceph_osd_request *req;
->  	struct bio_vec *bvecs;
-> @@ -1049,6 +1061,9 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
->  		if (!ret)
->  			ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
->  
-> +		if (!write)
-> +			ceph_update_read_latency(metric, req, ret);
-> +
->  		size = i_size_read(inode);
->  		if (!write) {
->  			if (ret == -ENOENT)
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 141c1c03636c..101b51f9f05d 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -4182,14 +4182,29 @@ static int ceph_mdsc_metric_init(struct ceph_client_metric *metric)
->  	atomic64_set(&metric->total_dentries, 0);
->  	ret = percpu_counter_init(&metric->d_lease_hit, 0, GFP_KERNEL);
->  	if (ret)
-> -		return ret;
-> +		return ret;;
-
-drop this, please ^^^
-
->  	ret = percpu_counter_init(&metric->d_lease_mis, 0, GFP_KERNEL);
-> -	if (ret) {
-> -		percpu_counter_destroy(&metric->d_lease_hit);
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		goto err_dlease_mis;
->  
-> -	return 0;
-> +	ret = percpu_counter_init(&metric->total_reads, 0, GFP_KERNEL);
-> +	if (ret)
-> +		goto err_total_reads;
-> +
-> +	ret = percpu_counter_init(&metric->read_latency_sum, 0, GFP_KERNEL);
-> +	if (ret)
-> +		goto err_read_latency_sum;
-> +
-> +	return ret;
-> +
-> +err_read_latency_sum:
-> +	percpu_counter_destroy(&metric->total_reads);
-> +err_total_reads:
-> +	percpu_counter_destroy(&metric->d_lease_mis);
-> +err_dlease_mis:
-> +	percpu_counter_destroy(&metric->d_lease_hit);
-> +
-> +	return ret;
+> @@ -124,6 +124,40 @@ static int mdsc_show(struct seq_file *s, void *p)
+>  	return 0;
 >  }
 >  
->  int ceph_mdsc_init(struct ceph_fs_client *fsc)
-> @@ -4529,6 +4544,8 @@ void ceph_mdsc_destroy(struct ceph_fs_client *fsc)
+> +/*
+> + * metrics debugfs
+> + */
+> +static int sending_metrics_set(void *data, u64 val)
+> +{
+> +	struct ceph_fs_client *fsc = (struct ceph_fs_client *)data;
+> +	struct ceph_mds_client *mdsc = fsc->mdsc;
+> +
+> +	if (val > 1) {
+> +		pr_err("Invalid sending metrics set value %llu\n", val);
+> +		return -EINVAL;
+> +	}
+> +
+> +	mutex_lock(&mdsc->mutex);
+> +	mdsc->sending_metrics = (unsigned int)val;
+
+Shouldn't that be a bool cast? Do we even need a cast there?
+
+> +	mutex_unlock(&mdsc->mutex);
+> +
+> +	return 0;
+> +}
+> +
+> +static int sending_metrics_get(void *data, u64 *val)
+> +{
+> +	struct ceph_fs_client *fsc = (struct ceph_fs_client *)data;
+> +	struct ceph_mds_client *mdsc = fsc->mdsc;
+> +
+> +	mutex_lock(&mdsc->mutex);
+> +	*val = (u64)mdsc->sending_metrics;
+> +	mutex_unlock(&mdsc->mutex);
+> +
+> +	return 0;
+> +}
+> +DEFINE_SIMPLE_ATTRIBUTE(sending_metrics_fops, sending_metrics_get,
+> +			sending_metrics_set, "%llu\n");
+> +
+
+I'd like to hear more about how we expect users to use this facility.
+This debugfs file doesn't seem consistent with the rest of the UI, and I
+imagine if the box reboots you'd have to (manually) re-enable it after
+mount, right? Maybe this should be a mount option instead?
+
+
+>  static int metric_show(struct seq_file *s, void *p)
+>  {
+>  	struct ceph_fs_client *fsc = s->private;
+> @@ -302,11 +336,9 @@ static int congestion_kb_get(void *data, u64 *val)
+>  	*val = (u64)fsc->mount_options->congestion_kb;
+>  	return 0;
+>  }
+> -
+>  DEFINE_SIMPLE_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
+>  			congestion_kb_set, "%llu\n");
 >  
->  	ceph_mdsc_stop(mdsc);
+> -
+>  void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
+>  {
+>  	dout("ceph_fs_debugfs_cleanup\n");
+> @@ -316,6 +348,7 @@ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
+>  	debugfs_remove(fsc->debugfs_mds_sessions);
+>  	debugfs_remove(fsc->debugfs_caps);
+>  	debugfs_remove(fsc->debugfs_metric);
+> +	debugfs_remove(fsc->debugfs_sending_metrics);
+>  	debugfs_remove(fsc->debugfs_mdsc);
+>  }
 >  
-> +	percpu_counter_destroy(&mdsc->metric.read_latency_sum);
-> +	percpu_counter_destroy(&mdsc->metric.total_reads);
->  	percpu_counter_destroy(&mdsc->metric.d_lease_mis);
->  	percpu_counter_destroy(&mdsc->metric.d_lease_hit);
+> @@ -356,6 +389,13 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
+>  						fsc,
+>  						&mdsc_show_fops);
+>  
+> +	fsc->debugfs_sending_metrics =
+> +			debugfs_create_file("sending_metrics",
+> +					    0600,
+> +					    fsc->client->debugfs_dir,
+> +					    fsc,
+> +					    &sending_metrics_fops);
+> +
+>  	fsc->debugfs_metric = debugfs_create_file("metrics",
+>  						  0400,
+>  						  fsc->client->debugfs_dir,
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 92a933810a79..d765804dc855 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -4104,13 +4104,156 @@ static void maybe_recover_session(struct ceph_mds_client *mdsc)
+>  	ceph_force_reconnect(fsc->sb);
+>  }
+>  
+> +/*
+> + * called under s_mutex
+> + */
+> +static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+> +				   struct ceph_mds_session *s,
+> +				   bool skip_global)
+> +{
+> +	struct ceph_metric_head *head;
+> +	struct ceph_metric_cap *cap;
+> +	struct ceph_metric_dentry_lease *lease;
+> +	struct ceph_metric_read_latency *read;
+> +	struct ceph_metric_write_latency *write;
+> +	struct ceph_metric_metadata_latency *meta;
+> +	struct ceph_msg *msg;
+> +	struct timespec64 ts;
+> +	s32 len = sizeof(*head) + sizeof(*cap);
+> +	s64 sum, total, avg;
+> +	s32 items = 0;
+> +
+> +	if (!mdsc || !s)
+> +		return false;
+> +
+> +	if (!skip_global) {
+> +		len += sizeof(*lease);
+> +		len += sizeof(*read);
+> +		len += sizeof(*write);
+> +		len += sizeof(*meta);
+> +	}
+> +
+> +	msg = ceph_msg_new(CEPH_MSG_CLIENT_METRICS, len, GFP_NOFS, true);
+> +	if (!msg) {
+> +		pr_err("send metrics to mds%d, failed to allocate message\n",
+> +		       s->s_mds);
+> +		return false;
+> +	}
+> +
+> +	head = msg->front.iov_base;
+> +
+> +	/* encode the cap metric */
+> +	cap = (struct ceph_metric_cap *)(head + 1);
+> +	cap->type = cpu_to_le32(CLIENT_METRIC_TYPE_CAP_INFO);
+> +	cap->ver = 1;
+> +	cap->campat = 1;
+> +	cap->data_len = cpu_to_le32(sizeof(*cap) - 10);
+> +	cap->hit = cpu_to_le64(percpu_counter_sum(&s->i_caps_hit));
+> +	cap->mis = cpu_to_le64(percpu_counter_sum(&s->i_caps_mis));
+> +	cap->total = cpu_to_le64(s->s_nr_caps);
+> +	items++;
+> +
+> +	dout("cap metric hit %lld, mis %lld, total caps %lld",
+> +	     le64_to_cpu(cap->hit), le64_to_cpu(cap->mis),
+> +	     le64_to_cpu(cap->total));
+> +
+> +	/* only send the global once */
+> +	if (skip_global)
+> +		goto skip_global;
+> +
+> +	/* encode the dentry lease metric */
+> +	lease = (struct ceph_metric_dentry_lease *)(cap + 1);
+> +	lease->type = cpu_to_le32(CLIENT_METRIC_TYPE_DENTRY_LEASE);
+> +	lease->ver = 1;
+> +	lease->campat = 1;
+> +	lease->data_len = cpu_to_le32(sizeof(*lease) - 10);
+> +	lease->hit = cpu_to_le64(percpu_counter_sum(&mdsc->metric.d_lease_hit));
+> +	lease->mis = cpu_to_le64(percpu_counter_sum(&mdsc->metric.d_lease_mis));
+> +	lease->total = cpu_to_le64(atomic64_read(&mdsc->metric.total_dentries));
+> +	items++;
+> +
+> +	dout("dentry lease metric hit %lld, mis %lld, total dentries %lld",
+> +	     le64_to_cpu(lease->hit), le64_to_cpu(lease->mis),
+> +	     le64_to_cpu(lease->total));
+> +
+> +	/* encode the read latency metric */
+> +	read = (struct ceph_metric_read_latency *)(lease + 1);
+> +	read->type = cpu_to_le32(CLIENT_METRIC_TYPE_READ_LATENCY);
+> +	read->ver = 1;
+> +	read->campat = 1;
+> +	read->data_len = cpu_to_le32(sizeof(*read) - 10);
+> +	total = percpu_counter_sum(&mdsc->metric.total_reads),
+> +	sum = percpu_counter_sum(&mdsc->metric.read_latency_sum);
+> +	avg = total ? sum / total : 0;
+> +	ts = ns_to_timespec64(avg);
+> +	read->sec = cpu_to_le32(ts.tv_sec);
+> +	read->nsec = cpu_to_le32(ts.tv_nsec);
+> +	items++;
+> +
+> +	dout("read latency metric total %lld, sum lat %lld, avg lat %lld",
+> +	     total, sum, avg);
+> +
+> +	/* encode the write latency metric */
+> +	write = (struct ceph_metric_write_latency *)(read + 1);
+> +	write->type = cpu_to_le32(CLIENT_METRIC_TYPE_WRITE_LATENCY);
+> +	write->ver = 1;
+> +	write->campat = 1;
+> +	write->data_len = cpu_to_le32(sizeof(*write) - 10);
+> +	total = percpu_counter_sum(&mdsc->metric.total_writes),
+> +	sum = percpu_counter_sum(&mdsc->metric.write_latency_sum);
+> +	avg = total ? sum / total : 0;
+> +	ts = ns_to_timespec64(avg);
+> +	write->sec = cpu_to_le32(ts.tv_sec);
+> +	write->nsec = cpu_to_le32(ts.tv_nsec);
+> +	items++;
+> +
+> +	dout("write latency metric total %lld, sum lat %lld, avg lat %lld",
+> +	     total, sum, avg);
+> +
+> +	/* encode the metadata latency metric */
+> +	meta = (struct ceph_metric_metadata_latency *)(write + 1);
+> +	meta->type = cpu_to_le32(CLIENT_METRIC_TYPE_METADATA_LATENCY);
+> +	meta->ver = 1;
+> +	meta->campat = 1;
+> +	meta->data_len = cpu_to_le32(sizeof(*meta) - 10);
+> +	total = percpu_counter_sum(&mdsc->metric.total_metadatas),
+> +	sum = percpu_counter_sum(&mdsc->metric.metadata_latency_sum);
+> +	avg = total ? sum / total : 0;
+> +	ts = ns_to_timespec64(avg);
+> +	meta->sec = cpu_to_le32(ts.tv_sec);
+> +	meta->nsec = cpu_to_le32(ts.tv_nsec);
+> +	items++;
+> +
+> +	dout("metadata latency metric total %lld, sum lat %lld, avg lat %lld",
+> +	     total, sum, avg);
+> +
+> +skip_global:
+> +	put_unaligned_le32(items, &head->num);
+> +	msg->front.iov_len = cpu_to_le32(len);
+> +	msg->hdr.version = cpu_to_le16(1);
+> +	msg->hdr.compat_version = cpu_to_le16(1);
+> +	msg->hdr.front_len = cpu_to_le32(msg->front.iov_len);
+> +	dout("send metrics to mds%d %p\n", s->s_mds, msg);
+> +	ceph_con_send(&s->s_con, msg);
+> +
+> +	return true;
+> +}
+> +
+>  /*
+>   * delayed work -- periodically trim expired leases, renew caps with mds
+>   */
+> +#define CEPH_WORK_DELAY_DEF 5
+>  static void schedule_delayed(struct ceph_mds_client *mdsc)
+>  {
+> -	int delay = 5;
+> -	unsigned hz = round_jiffies_relative(HZ * delay);
+> +	unsigned int hz;
+> +	int delay = CEPH_WORK_DELAY_DEF;
+> +
+> +	mutex_lock(&mdsc->mutex);
+> +	if (mdsc->sending_metrics)
+> +		delay = 1;
+> +	mutex_unlock(&mdsc->mutex);
+> +
+
+The mdsc->mutex is dropped in the callers a little before this is
+called, so this is a little too mutex-thrashy. I think you'd be better
+off changing this function to be called with the mutex still held.
+
+> +	hz = round_jiffies_relative(HZ * delay);
+>  	schedule_delayed_work(&mdsc->delayed_work, hz);
+>  }
+>  
+> @@ -4121,18 +4264,28 @@ static void delayed_work(struct work_struct *work)
+>  		container_of(work, struct ceph_mds_client, delayed_work.work);
+>  	int renew_interval;
+>  	int renew_caps;
+> +	bool metric_only;
+> +	bool sending_metrics;
+> +	bool g_skip = false;
+>  
+>  	dout("mdsc delayed_work\n");
+>  
+>  	mutex_lock(&mdsc->mutex);
+> -	renew_interval = mdsc->mdsmap->m_session_timeout >> 2;
+> -	renew_caps = time_after_eq(jiffies, HZ*renew_interval +
+> -				   mdsc->last_renew_caps);
+> -	if (renew_caps)
+> -		mdsc->last_renew_caps = jiffies;
+> +	sending_metrics = !!mdsc->sending_metrics;
+> +	metric_only = mdsc->sending_metrics &&
+> +		(mdsc->ticks++ % CEPH_WORK_DELAY_DEF);
+> +
+> +	if (!metric_only) {
+> +		renew_interval = mdsc->mdsmap->m_session_timeout >> 2;
+> +		renew_caps = time_after_eq(jiffies, HZ*renew_interval +
+> +					   mdsc->last_renew_caps);
+> +		if (renew_caps)
+> +			mdsc->last_renew_caps = jiffies;
+> +	}
+>  
+>  	for (i = 0; i < mdsc->max_sessions; i++) {
+>  		struct ceph_mds_session *s = __ceph_lookup_mds_session(mdsc, i);
+> +
+>  		if (!s)
+>  			continue;
+>  		if (s->s_state == CEPH_MDS_SESSION_CLOSING) {
+> @@ -4158,13 +4311,20 @@ static void delayed_work(struct work_struct *work)
+>  		mutex_unlock(&mdsc->mutex);
+>  
+>  		mutex_lock(&s->s_mutex);
+> -		if (renew_caps)
+> -			send_renew_caps(mdsc, s);
+> -		else
+> -			ceph_con_keepalive(&s->s_con);
+> -		if (s->s_state == CEPH_MDS_SESSION_OPEN ||
+> -		    s->s_state == CEPH_MDS_SESSION_HUNG)
+> -			ceph_send_cap_releases(mdsc, s);
+> +
+> +		if (sending_metrics)
+> +			g_skip = ceph_mdsc_send_metrics(mdsc, s, g_skip);
+> +
+> +		if (!metric_only) {
+> +			if (renew_caps)
+> +				send_renew_caps(mdsc, s);
+> +			else
+> +				ceph_con_keepalive(&s->s_con);
+> +			if (s->s_state == CEPH_MDS_SESSION_OPEN ||
+> +					s->s_state == CEPH_MDS_SESSION_HUNG)
+> +				ceph_send_cap_releases(mdsc, s);
+> +		}
+> +
+>  		mutex_unlock(&s->s_mutex);
+>  		ceph_put_mds_session(s);
+>  
+> @@ -4172,6 +4332,9 @@ static void delayed_work(struct work_struct *work)
+>  	}
+>  	mutex_unlock(&mdsc->mutex);
+>  
+> +	if (metric_only)
+> +		goto delay_work;
+> +
+>  	ceph_check_delayed_caps(mdsc);
+>  
+>  	ceph_queue_cap_reclaim_work(mdsc);
+> @@ -4180,11 +4343,13 @@ static void delayed_work(struct work_struct *work)
+>  
+>  	maybe_recover_session(mdsc);
+>  
+> +delay_work:
+>  	schedule_delayed(mdsc);
+>  }
+>  
+> -static int ceph_mdsc_metric_init(struct ceph_client_metric *metric)
+> +static int ceph_mdsc_metric_init(struct ceph_mds_client *mdsc)
+>  {
+> +	struct ceph_client_metric *metric = &mdsc->metric;
+>  	int ret;
+>  
+>  	if (!metric)
+> @@ -4222,7 +4387,9 @@ static int ceph_mdsc_metric_init(struct ceph_client_metric *metric)
+>  	if (ret)
+>  		goto err_metadata_latency_sum;
+>  
+> -	return ret;
+> +	mdsc->sending_metrics = 0;
+> +	mdsc->ticks = 0;
+> +	return 0;
+>  err_metadata_latency_sum:
+>  	percpu_counter_destroy(&metric->total_metadatas);
+>  err_total_metadatas:
+> @@ -4294,7 +4461,7 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
+>  	init_waitqueue_head(&mdsc->cap_flushing_wq);
+>  	INIT_WORK(&mdsc->cap_reclaim_work, ceph_cap_reclaim_work);
+>  	atomic_set(&mdsc->cap_reclaim_pending, 0);
+> -	err = ceph_mdsc_metric_init(&mdsc->metric);
+> +	err = ceph_mdsc_metric_init(mdsc);
+>  	if (err)
+>  		goto err_mdsmap;
 >  
 > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index ba74ff74c59c..574d4e5a5de2 100644
+> index 574d4e5a5de2..a0ece55d987c 100644
 > --- a/fs/ceph/mds_client.h
 > +++ b/fs/ceph/mds_client.h
-> @@ -16,6 +16,8 @@
->  #include <linux/ceph/mdsmap.h>
->  #include <linux/ceph/auth.h>
+> @@ -451,6 +451,9 @@ struct ceph_mds_client {
+>  	struct list_head  dentry_leases;     /* fifo list */
+>  	struct list_head  dentry_dir_leases; /* lru list */
 >  
-> +#include "metric.h"
-> +
->  /* The first 8 bits are reserved for old ceph releases */
->  enum ceph_feature_type {
->  	CEPHFS_FEATURE_MIMIC = 8,
-> @@ -361,13 +363,6 @@ struct cap_wait {
->  	int			want;
->  };
+> +	/* metrics */
+> +	unsigned int		  sending_metrics;
+> +	unsigned int		  ticks;
+>  	struct ceph_client_metric metric;
 >  
-> -/* This is the global metrics */
-> -struct ceph_client_metric {
-> -	atomic64_t		total_dentries;
-> -	struct percpu_counter	d_lease_hit;
-> -	struct percpu_counter	d_lease_mis;
-> -};
-> -
->  /*
->   * mds client state
->   */
+>  	spinlock_t		snapid_map_lock;
 > diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
-> new file mode 100644
-> index 000000000000..2a7b8f3fe6a4
-> --- /dev/null
+> index 3cda616ba594..352eb753ce25 100644
+> --- a/fs/ceph/metric.h
 > +++ b/fs/ceph/metric.h
-> @@ -0,0 +1,30 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _FS_CEPH_MDS_METRIC_H
-> +#define _FS_CEPH_MDS_METRIC_H
+> @@ -4,6 +4,82 @@
+>  
+>  #include <linux/ceph/osd_client.h>
+>  
+> +enum ceph_metric_type {
+> +	CLIENT_METRIC_TYPE_CAP_INFO,
+> +	CLIENT_METRIC_TYPE_READ_LATENCY,
+> +	CLIENT_METRIC_TYPE_WRITE_LATENCY,
+> +	CLIENT_METRIC_TYPE_METADATA_LATENCY,
+> +	CLIENT_METRIC_TYPE_DENTRY_LEASE,
 > +
-> +#include <linux/ceph/osd_client.h>
-> +
-> +/* This is the global metrics */
-> +struct ceph_client_metric {
-> +	atomic64_t		total_dentries;
-> +	struct percpu_counter	d_lease_hit;
-> +	struct percpu_counter	d_lease_mis;
-> +
-> +	struct percpu_counter	total_reads;
-> +	struct percpu_counter	read_latency_sum;
+> +	CLIENT_METRIC_TYPE_MAX = CLIENT_METRIC_TYPE_DENTRY_LEASE,
 > +};
 > +
-> +static inline void ceph_update_read_latency(struct ceph_client_metric *m,
-> +					    struct ceph_osd_request *req,
-> +					    int rc)
-> +{
-> +	if (!m || !req)
-> +		return;
+> +/* metric caps header */
+> +struct ceph_metric_cap {
+> +	__le32 type;     /* ceph metric type */
 > +
-> +	if (rc >= 0 || rc == -ENOENT || rc == -ETIMEDOUT) {
-> +		s64 latency = req->r_end_stamp - req->r_start_stamp;
-> +		percpu_counter_inc(&m->total_reads);
-> +		percpu_counter_add(&m->read_latency_sum, latency);
-> +	}
-> +}
-> +#endif
+> +	__u8  ver;
+> +	__u8  campat;
+
+I think you meant "compat" here.
+
+> +
+> +	__le32 data_len; /* length of sizeof(hit + mis + total) */
+> +	__le64 hit;
+> +	__le64 mis;
+> +	__le64 total;
+> +} __attribute__ ((packed));
+> +
+> +/* metric dentry lease header */
+> +struct ceph_metric_dentry_lease {
+> +	__le32 type;     /* ceph metric type */
+> +
+> +	__u8  ver;
+> +	__u8  campat;
+> +
+> +	__le32 data_len; /* length of sizeof(hit + mis + total) */
+> +	__le64 hit;
+> +	__le64 mis;
+> +	__le64 total;
+> +} __attribute__ ((packed));
+> +
+> +/* metric read latency header */
+> +struct ceph_metric_read_latency {
+> +	__le32 type;     /* ceph metric type */
+> +
+> +	__u8  ver;
+> +	__u8  campat;
+> +
+> +	__le32 data_len; /* length of sizeof(sec + nsec) */
+> +	__le32 sec;
+> +	__le32 nsec;
+> +} __attribute__ ((packed));
+> +
+> +/* metric write latency header */
+> +struct ceph_metric_write_latency {
+> +	__le32 type;     /* ceph metric type */
+> +
+> +	__u8  ver;
+> +	__u8  campat;
+> +
+> +	__le32 data_len; /* length of sizeof(sec + nsec) */
+> +	__le32 sec;
+> +	__le32 nsec;
+> +} __attribute__ ((packed));
+> +
+> +/* metric metadata latency header */
+> +struct ceph_metric_metadata_latency {
+> +	__le32 type;     /* ceph metric type */
+> +
+> +	__u8  ver;
+> +	__u8  campat;
+> +
+> +	__le32 data_len; /* length of sizeof(sec + nsec) */
+> +	__le32 sec;
+> +	__le32 nsec;
+> +} __attribute__ ((packed));
+> +
+> +struct ceph_metric_head {
+> +	__le32 num;	/* the number of metrics will be sent */
+
+"the number of metrics that will be sent"
+
+> +} __attribute__ ((packed));
+> +
+>  /* This is the global metrics */
+>  struct ceph_client_metric {
+>  	atomic64_t		total_dentries;
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 3f4829222528..a91431e9bdf7 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -128,6 +128,7 @@ struct ceph_fs_client {
+>  	struct dentry *debugfs_congestion_kb;
+>  	struct dentry *debugfs_bdi;
+>  	struct dentry *debugfs_mdsc, *debugfs_mdsmap;
+> +	struct dentry *debugfs_sending_metrics;
+>  	struct dentry *debugfs_metric;
+>  	struct dentry *debugfs_mds_sessions;
+>  #endif
+> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+> index a099f60feb7b..6028d3e865e4 100644
+> --- a/include/linux/ceph/ceph_fs.h
+> +++ b/include/linux/ceph/ceph_fs.h
+> @@ -130,6 +130,7 @@ struct ceph_dir_layout {
+>  #define CEPH_MSG_CLIENT_REQUEST         24
+>  #define CEPH_MSG_CLIENT_REQUEST_FORWARD 25
+>  #define CEPH_MSG_CLIENT_REPLY           26
+> +#define CEPH_MSG_CLIENT_METRICS         29
+>  #define CEPH_MSG_CLIENT_CAPS            0x310
+>  #define CEPH_MSG_CLIENT_LEASE           0x311
+>  #define CEPH_MSG_CLIENT_SNAP            0x312
 
 -- 
 Jeff Layton <jlayton@kernel.org>
