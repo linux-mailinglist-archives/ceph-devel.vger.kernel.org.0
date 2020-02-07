@@ -2,176 +2,192 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55324154FCE
-	for <lists+ceph-devel@lfdr.de>; Fri,  7 Feb 2020 01:38:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA6FF155152
+	for <lists+ceph-devel@lfdr.de>; Fri,  7 Feb 2020 04:48:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbgBGAiK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 6 Feb 2020 19:38:10 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59731 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726597AbgBGAiK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 6 Feb 2020 19:38:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581035889;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WGWxCkishTCc/vZaMKKSK7JddDuBfSGm53sulHpza9U=;
-        b=UfgjaSFeb+ET6JE4voz+7u4yoA7eYOTNjo2XI3cPw+ejMAtdjIhwrtJsmfpO/umYJbXgzm
-        Iv88GEc4jq9sEQAu28zjm02SR+UslcMq07JSmVADN9zVaoM1bmZ6KlBGwEeEzVs2XUzBwa
-        eIR9EPGzFUHDhQ//r/hw5WV/hYSq4Z4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-255-7q1B5-v3PGSAsI5vKWQpTQ-1; Thu, 06 Feb 2020 19:38:07 -0500
-X-MC-Unique: 7q1B5-v3PGSAsI5vKWQpTQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 14F7814E0;
-        Fri,  7 Feb 2020 00:38:06 +0000 (UTC)
-Received: from [10.72.12.34] (ovpn-12-34.pek2.redhat.com [10.72.12.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 30FD5790E4;
-        Fri,  7 Feb 2020 00:38:00 +0000 (UTC)
-Subject: Re: [PATCH resend v5 08/11] ceph: periodically send perf metrics to
- MDS
-To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com,
-        zyan@redhat.com
-Cc:     sage@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-References: <20200129082715.5285-1-xiubli@redhat.com>
- <20200129082715.5285-9-xiubli@redhat.com>
- <57de3eb2f2009aec0ba086bb9d95a2936a7d1d9f.camel@kernel.org>
- <d4b8f9a5-b2f7-ec71-c8fe-528ec24d8695@redhat.com>
- <1cf98f0bd2bda7eef3f6b8f5bfd42188ee74ef38.camel@kernel.org>
- <6010186e-6b3d-8664-b4e9-b6a015b6cca2@redhat.com>
- <e78f9a17667240c8f0da02e3913444dec9e0911c.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <6c98cc89-a396-2047-b622-61442f2209f8@redhat.com>
-Date:   Fri, 7 Feb 2020 08:37:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727317AbgBGDsT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 6 Feb 2020 22:48:19 -0500
+Received: from mail-il1-f200.google.com ([209.85.166.200]:33294 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbgBGDsT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 6 Feb 2020 22:48:19 -0500
+Received: by mail-il1-f200.google.com with SMTP id s9so510796ilk.0
+        for <ceph-devel@vger.kernel.org>; Thu, 06 Feb 2020 19:48:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Gpj439YuL5OBJHJARKwV1DOQm+d7b45Zou3yW231quI=;
+        b=AMOyJTuf8BBsKAnukqrJvQBcW7EzFy1XaVcfBJ0f9qAacupBc0Aj+1JnanwQcR9Xr+
+         DvKdKXU490vymnYB7P0RT1CSBNFK1tK8NzIUSAxrJyhFsrGzXUmCLqj5pbWwptv6EqVE
+         eCoCi/be5nLEHm89WY4UNIKapaWDDIy+RervxR4NpxyVDsjJ1pqRbU60RexQziVF9ccy
+         816wG3944d5U121KplHPD3Xu6MTJ/DsgJUcLy6wroQGRV8XVsoIhQ2EE71wfKDYhclu7
+         epO8QNleKleQKJqUNFNZwaMG5DUCO2dBdhXkrydtJ3Sg+t01aHmiA5FNSwN3NfCtcDb6
+         OxSA==
+X-Gm-Message-State: APjAAAWfi4y/ZY0jc5ICeNP/734PCFhLfPNFVErFLSeTtqcLkC6PizVz
+        nqiDlQxfsHflBMnpAepa2QH2YiLsITobY7vqNVjdlt5zMrEN
+X-Google-Smtp-Source: APXvYqz7wFpzoXVy256kEgZ4WKf4hZrVYsh1sJA11Et2hNsV86G3sN012ji4qzOKYzb4Hnft9qHq2XXaFEwqZhAM/Qyj+GciGbWA
 MIME-Version: 1.0
-In-Reply-To: <e78f9a17667240c8f0da02e3913444dec9e0911c.camel@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Received: by 2002:a05:6602:242c:: with SMTP id g12mr1341457iob.193.1581047297212;
+ Thu, 06 Feb 2020 19:48:17 -0800 (PST)
+Date:   Thu, 06 Feb 2020 19:48:17 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000860811059df44228@google.com>
+Subject: KASAN: slab-out-of-bounds Read in suffix_kstrtoint
+From:   syzbot <syzbot+c23efa0cc68e79d551fc@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, ceph-devel@vger.kernel.org,
+        darrick.wong@oracle.com, dhowells@redhat.com,
+        dongsheng.yang@easystack.cn, gregkh@linuxfoundation.org,
+        idryomov@gmail.com, kstewart@linuxfoundation.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        sage@redhat.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020/2/6 23:21, Jeff Layton wrote:
-> On Thu, 2020-02-06 at 20:26 +0800, Xiubo Li wrote:
->> On 2020/2/6 19:31, Jeff Layton wrote:
->>> On Thu, 2020-02-06 at 10:36 +0800, Xiubo Li wrote:
->>>> On 2020/2/6 5:43, Jeff Layton wrote:
->>>>> On Wed, 2020-01-29 at 03:27 -0500, xiubli@redhat.com wrote:
->>>> [...]
->>>>>> +
->>>>>> +static int sending_metrics_get(void *data, u64 *val)
->>>>>> +{
->>>>>> +	struct ceph_fs_client *fsc = (struct ceph_fs_client *)data;
->>>>>> +	struct ceph_mds_client *mdsc = fsc->mdsc;
->>>>>> +
->>>>>> +	mutex_lock(&mdsc->mutex);
->>>>>> +	*val = (u64)mdsc->sending_metrics;
->>>>>> +	mutex_unlock(&mdsc->mutex);
->>>>>> +
->>>>>> +	return 0;
->>>>>> +}
->>>>>> +DEFINE_SIMPLE_ATTRIBUTE(sending_metrics_fops, sending_metrics_get,
->>>>>> +			sending_metrics_set, "%llu\n");
->>>>>> +
->>>>> I'd like to hear more about how we expect users to use this facility.
->>>>> This debugfs file doesn't seem consistent with the rest of the UI, and I
->>>>> imagine if the box reboots you'd have to (manually) re-enable it after
->>>>> mount, right? Maybe this should be a mount option instead?
->>>> A mount option means we must do the unmounting to disable it.
->>>>
->>> Technically, no. You could wire it up so that you could enable and
->>> disable it via -o remount. For example:
->>>
->>>       # mount -o remount,metrics=disabled
->> Yeah, this is cool.
->>
->>> Another option might be a module parameter if this is something that you
->>> really want to be global (and not per-mount or per-session).
->>>
->>>> I was thinking with the debugfs file we can do the debug or tuning even
->>>> in the product setups at any time, usually this should be disabled since
->>>> it will send it per second.
->>>>
->>> Meh, one frame per second doesn't seem like it'll add much overhead.
->> Okay.
->>> Also, why one update per second? Should that interval be tunable?
->> Per second just keep it the same with the fuse client.
->>
-> Ok.
->
->>>> Or we could merge the "sending_metric" to "metrics" UI, just writing
->>>> "enable"/"disable" to enable/disable sending the metrics to ceph, and
->>>> just like the "reset" does to clean the metrics.
->>>>
->>>> Then the "/sys/kernel/debug/ceph/XXX.clientYYY/metrics" could be
->>>> writable with:
->>>>
->>>> "reset"  --> to clean and reset the metrics counters
->>>>
->>>> "enable" --> enable sending metrics to ceph cluster
->>>>
->>>> "disable" --> disable sending metrics to ceph cluster
->>>>
->>>> Will this be better ?
->>>>
->>> I guess it's not clear to me how you intend for this to be used.
->>>
->>> A debugfs switch means that this is being enabled and disabled on a per-
->>> session basis. Is the user supposed to turn this on for all, or just one
->>> session? How do they know?
->> Not for all, just per-superblock.
->>
-> If it's per-superblock, then a debugfs-based switch seems particularly
-> ill-suited for this, as that's really a per-session interface.
->
->>> Is this something we expect people to just turn on briefly when they are
->>> experiencing a problem, or is this something that we expect to be turned
->>> on and left on for long periods of time?
->> If this won't add much overhead even per second, let's keep sending the
->> metrics to ceph always and the mount option for this switch is not
->> needed any more.
->>
-> Note that I don't really _know_ that it won't be a problem, just that it
-> doesn't sound too bad. I think we probably will want some mechanism to
-> enable/disable this until we have some experience with it in the field.
->
->> And there is already a switch to enable/disable showing the metrics in
->> the ceph side, if here add another switch per client, it will be also
->> yucky for admins .
->>
->> Let's make the update interval tunable and per second as default. Maybe
->> we should make this as a global UI for all clients ?
->>
-> If you want a global setting for the interval that would take effect on
-> all ceph mounts, then maybe a "metric_send_interval" module parameter
-> would be best. Make it an unsigned int, and allow the admin to set it to
-> 0 to turn off stats transmission in the client.
->
-> We have a well-defined interface for setting module parameters on most
-> distros (via /etc/modprobe.d/), so that would be better than monkeying
-> around with debugfs here, IMO.
->
-> As to the default, it might be best to have this default to 0 initially.
-> Once we have more experience with it we could make it default to 1 in a
-> later release.
+Hello,
 
-Yeah, this makes sense.
+syzbot found the following crash on:
 
-Let's switch to the module parameter "metric_send_interval", at the same 
-time this will also act as a switch.
+HEAD commit:    a0c61bf1 Add linux-next specific files for 20200206
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13925e6ee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7d320d6d9afdaecd
+dashboard link: https://syzkaller.appspot.com/bug?extid=c23efa0cc68e79d551fc
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1725bad9e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15ac3c5ee00000
 
-0 means off, >0 will be the interval.
+The bug was bisected to:
 
-Thanks,
+commit 61dff92158775e70c0183f4f52c3a5a071dbc24b
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Tue Dec 17 19:15:04 2019 +0000
+
+    Pass consistent param->type to fs_parse()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11fa020de00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=13fa020de00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15fa020de00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c23efa0cc68e79d551fc@syzkaller.appspotmail.com
+Fixes: 61dff9215877 ("Pass consistent param->type to fs_parse()")
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in suffix_kstrtoint.constprop.0+0x214/0x250 fs/xfs/xfs_super.c:1083
+Read of size 1 at addr ffff8880a4b5b3ff by task syz-executor933/9793
+
+CPU: 0 PID: 9793 Comm: syz-executor933 Not tainted 5.5.0-next-20200206-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x197/0x210 lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+ __kasan_report.cold+0x1b/0x32 mm/kasan/report.c:506
+ kasan_report+0x12/0x20 mm/kasan/common.c:641
+ __asan_report_load1_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+ suffix_kstrtoint.constprop.0+0x214/0x250 fs/xfs/xfs_super.c:1083
+ xfs_fc_parse_param+0x991/0xcd0 fs/xfs/xfs_super.c:1127
+ vfs_parse_fs_param+0x2b4/0x610 fs/fs_context.c:147
+ vfs_parse_fs_string+0x10a/0x170 fs/fs_context.c:191
+ generic_parse_monolithic+0x181/0x200 fs/fs_context.c:231
+ parse_monolithic_mount_data+0x69/0x90 fs/fs_context.c:679
+ do_new_mount fs/namespace.c:2818 [inline]
+ do_mount+0x1310/0x1b50 fs/namespace.c:3107
+ __do_sys_mount fs/namespace.c:3316 [inline]
+ __se_sys_mount fs/namespace.c:3293 [inline]
+ __x64_sys_mount+0x192/0x230 fs/namespace.c:3293
+ do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x446a8a
+Code: b8 08 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 7d ae fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 5a ae fb ff c3 66 0f 1f 84 00 00 00 00 00
+RSP: 002b:00007ffc8d9430c8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffc8d9430d0 RCX: 0000000000446a8a
+RDX: 00007ffc8d9430d0 RSI: 0000000020000080 RDI: 00007ffc8d9430f0
+RBP: 0000000000000003 R08: 00007ffc8d943130 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffc8d943130
+R13: 0000000000000004 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 9791:
+ save_stack+0x23/0x90 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ __kasan_kmalloc mm/kasan/common.c:515 [inline]
+ __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:488
+ kasan_kmalloc+0x9/0x10 mm/kasan/common.c:529
+ __do_kmalloc mm/slab.c:3656 [inline]
+ __kmalloc+0x163/0x770 mm/slab.c:3665
+ kmalloc include/linux/slab.h:560 [inline]
+ kzalloc include/linux/slab.h:669 [inline]
+ tomoyo_encode2.part.0+0xf5/0x400 security/tomoyo/realpath.c:44
+ tomoyo_encode2 security/tomoyo/realpath.c:30 [inline]
+ tomoyo_encode+0x2b/0x50 security/tomoyo/realpath.c:79
+ tomoyo_realpath_from_path+0x19c/0x660 security/tomoyo/realpath.c:286
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_path_perm+0x230/0x430 security/tomoyo/file.c:822
+ tomoyo_inode_getattr+0x1d/0x30 security/tomoyo/tomoyo.c:129
+ security_inode_getattr+0xf2/0x150 security/security.c:1254
+ vfs_getattr+0x25/0x70 fs/stat.c:117
+ vfs_statx_fd+0x71/0xc0 fs/stat.c:147
+ vfs_fstat include/linux/fs.h:3287 [inline]
+ __do_sys_newfstat+0x9b/0x120 fs/stat.c:388
+ __se_sys_newfstat fs/stat.c:385 [inline]
+ __x64_sys_newfstat+0x54/0x80 fs/stat.c:385
+ do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 9791:
+ save_stack+0x23/0x90 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ kasan_set_free_info mm/kasan/common.c:337 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/common.c:476
+ kasan_slab_free+0xe/0x10 mm/kasan/common.c:485
+ __cache_free mm/slab.c:3426 [inline]
+ kfree+0x10a/0x2c0 mm/slab.c:3757
+ tomoyo_path_perm+0x24e/0x430 security/tomoyo/file.c:842
+ tomoyo_inode_getattr+0x1d/0x30 security/tomoyo/tomoyo.c:129
+ security_inode_getattr+0xf2/0x150 security/security.c:1254
+ vfs_getattr+0x25/0x70 fs/stat.c:117
+ vfs_statx_fd+0x71/0xc0 fs/stat.c:147
+ vfs_fstat include/linux/fs.h:3287 [inline]
+ __do_sys_newfstat+0x9b/0x120 fs/stat.c:388
+ __se_sys_newfstat fs/stat.c:385 [inline]
+ __x64_sys_newfstat+0x54/0x80 fs/stat.c:385
+ do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8880a4b5b3c0
+ which belongs to the cache kmalloc-32 of size 32
+The buggy address is located 31 bytes to the right of
+ 32-byte region [ffff8880a4b5b3c0, ffff8880a4b5b3e0)
+The buggy address belongs to the page:
+page:ffffea000292d6c0 refcount:1 mapcount:0 mapping:ffff8880aa4001c0 index:0xffff8880a4b5bfc1
+flags: 0xfffe0000000200(slab)
+raw: 00fffe0000000200 ffffea0002a15908 ffffea00025c80c8 ffff8880aa4001c0
+raw: ffff8880a4b5bfc1 ffff8880a4b5b000 0000000100000028 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8880a4b5b280: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+ ffff8880a4b5b300: 00 03 fc fc fc fc fc fc fb fb fb fb fc fc fc fc
+>ffff8880a4b5b380: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+                                                                ^
+ ffff8880a4b5b400: 01 fc fc fc fc fc fc fc fb fb fb fb fc fc fc fc
+ ffff8880a4b5b480: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+==================================================================
 
 
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
