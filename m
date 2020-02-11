@@ -2,94 +2,125 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10FA7158DED
-	for <lists+ceph-devel@lfdr.de>; Tue, 11 Feb 2020 13:07:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8165C159258
+	for <lists+ceph-devel@lfdr.de>; Tue, 11 Feb 2020 15:54:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbgBKMHg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 11 Feb 2020 07:07:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46064 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727936AbgBKMHf (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:07:35 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729812AbgBKOyw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 11 Feb 2020 09:54:52 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:25611 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729592AbgBKOyw (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 11 Feb 2020 09:54:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581432890;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=0YUzZnkarEa6bwVMk3v8ZN2pEUoH6kCQ39AfUyygGq4=;
+        b=i0hWQO7iU33yGmHWL9Trtt7jArD1o8/08V5i/7e7cTJOZ7/wXzJCGr9zCkuA8vOov2+H3k
+        wpdJZD2/RW+EFKC6F7lsCB9dhXPVK0l4XSrTVDQk+ZXv5yG6eIMmIRDI8o4olQUqf48yN2
+        a2dQgwaVN0LHQzU/ZKV2WN+46Ev6z+U=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-362-6kphe866PbShz_N96boOWg-1; Tue, 11 Feb 2020 09:54:49 -0500
+X-MC-Unique: 6kphe866PbShz_N96boOWg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9242F206D7;
-        Tue, 11 Feb 2020 12:07:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581422855;
-        bh=/VNcQyyp12iu2xZC+axMbPkU6adrgfHMvHBZNDGt1e0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=DncVi/pMh9hfpDdMVTxeEUfp/VOS337j3DWsZlApZAerroAzH7VOTD+e59hjXtbsh
-         xGRDDw+FHpVzG4yGLdMO2FDuFgith7RGmotDGcSCBOUBV48kbRd6+g3I4HCgGIaDMr
-         pgryJT4IA7wPQHRur0QWIDFusoM/bJ1NquxD64dc=
-Message-ID: <f3ad3f84d460e0c9b69490e9d53671303f586a83.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: fix posix acl couldn't be settable
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com, idryomov@gmail.com
-Cc:     sage@redhat.com, zyan@redhat.com, dhowells@redhat.com,
-        pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Tue, 11 Feb 2020 07:07:33 -0500
-In-Reply-To: <20200211065316.59091-1-xiubli@redhat.com>
-References: <20200211065316.59091-1-xiubli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1B85E477;
+        Tue, 11 Feb 2020 14:54:48 +0000 (UTC)
+Received: from zhyan-laptop.redhat.com (ovpn-13-118.pek2.redhat.com [10.72.13.118])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 569325C10D;
+        Tue, 11 Feb 2020 14:54:45 +0000 (UTC)
+From:   "Yan, Zheng" <zyan@redhat.com>
+To:     jlayton@kernel.org, ceph-devel@vger.kernel.org
+Cc:     "Yan, Zheng" <zyan@redhat.com>
+Subject: [PATCH v2] ceph: check if file lock exists before sending unlock request
+Date:   Tue, 11 Feb 2020 22:54:43 +0800
+Message-Id: <20200211145443.40988-1-zyan@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2020-02-11 at 01:53 -0500, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> For the old mount API, the module parameters parseing function will
-> be called in ceph_mount() and also just after the default posix acl
-> flag set, so we can control to enable/disable it via the mount option.
-> 
-> But for the new mount API, it will call the module parameters
-> parseing function before ceph_get_tree(), so the posix acl will always
-> be enabled.
-> 
-> Fixes: 82995cc6c5ae ("libceph, rbd, ceph: convert to use the new mount API")
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
-> 
-> Changed in V2:
-> - move default fc->sb_flags setting to ceph_init_fs_context().
-> 
->  fs/ceph/super.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index 5fef4f59e13e..c3d9ac768cec 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -1089,10 +1089,6 @@ static int ceph_get_tree(struct fs_context *fc)
->  	if (!fc->source)
->  		return invalf(fc, "ceph: No source");
->  
-> -#ifdef CONFIG_CEPH_FS_POSIX_ACL
-> -	fc->sb_flags |= SB_POSIXACL;
-> -#endif
-> -
->  	/* create client (which we may/may not use) */
->  	fsc = create_fs_client(pctx->opts, pctx->copts);
->  	pctx->opts = NULL;
-> @@ -1215,6 +1211,10 @@ static int ceph_init_fs_context(struct fs_context *fc)
->  	fsopt->max_readdir_bytes = CEPH_MAX_READDIR_BYTES_DEFAULT;
->  	fsopt->congestion_kb = default_congestion_kb();
->  
-> +#ifdef CONFIG_CEPH_FS_POSIX_ACL
-> +	fc->sb_flags |= SB_POSIXACL;
-> +#endif
-> +
->  	fc->fs_private = pctx;
->  	fc->ops = &ceph_context_ops;
->  	return 0;
+When a process exits, kernel closes its files. locks_remove_file()
+is called to remove file locks on these files. locks_remove_file()
+tries unlocking files even there is no file lock.
 
-Nice catch.
+Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+---
+ fs/ceph/locks.c | 31 +++++++++++++++++++++++++++++--
+ 1 file changed, 29 insertions(+), 2 deletions(-)
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
+index 544e9e85b120..d6b9166e71e4 100644
+--- a/fs/ceph/locks.c
++++ b/fs/ceph/locks.c
+@@ -210,6 +210,21 @@ static int ceph_lock_wait_for_completion(struct ceph=
+_mds_client *mdsc,
+ 	return 0;
+ }
+=20
++static int try_unlock_file(struct file *file, struct file_lock *fl)
++{
++	int err;
++	unsigned int orig_flags =3D fl->fl_flags;
++	fl->fl_flags |=3D FL_EXISTS;
++	err =3D locks_lock_file_wait(file, fl);
++	fl->fl_flags =3D orig_flags;
++	if (err =3D=3D -ENOENT) {
++		if (!(orig_flags & FL_EXISTS))
++			err =3D 0;
++		return err;
++	}
++	return 1;
++}
++
+ /**
+  * Attempt to set an fcntl lock.
+  * For now, this just goes away to the server. Later it may be more awes=
+ome.
+@@ -255,9 +270,15 @@ int ceph_lock(struct file *file, int cmd, struct fil=
+e_lock *fl)
+ 	else
+ 		lock_cmd =3D CEPH_LOCK_UNLOCK;
+=20
++	if (op =3D=3D CEPH_MDS_OP_SETFILELOCK && F_UNLCK =3D=3D fl->fl_type) {
++		err =3D try_unlock_file(file, fl);
++		if (err <=3D 0)
++			return err;
++	}
++
+ 	err =3D ceph_lock_message(CEPH_LOCK_FCNTL, op, inode, lock_cmd, wait, f=
+l);
+ 	if (!err) {
+-		if (op =3D=3D CEPH_MDS_OP_SETFILELOCK) {
++		if (op =3D=3D CEPH_MDS_OP_SETFILELOCK && F_UNLCK !=3D fl->fl_type) {
+ 			dout("mds locked, locking locally\n");
+ 			err =3D posix_lock_file(file, fl, NULL);
+ 			if (err) {
+@@ -311,9 +332,15 @@ int ceph_flock(struct file *file, int cmd, struct fi=
+le_lock *fl)
+ 	else
+ 		lock_cmd =3D CEPH_LOCK_UNLOCK;
+=20
++	if (F_UNLCK =3D=3D fl->fl_type) {
++		err =3D try_unlock_file(file, fl);
++		if (err <=3D 0)
++			return err;
++	}
++
+ 	err =3D ceph_lock_message(CEPH_LOCK_FLOCK, CEPH_MDS_OP_SETFILELOCK,
+ 				inode, lock_cmd, wait, fl);
+-	if (!err) {
++	if (!err && F_UNLCK !=3D fl->fl_type) {
+ 		err =3D locks_lock_file_wait(file, fl);
+ 		if (err) {
+ 			ceph_lock_message(CEPH_LOCK_FLOCK,
+--=20
+2.21.1
 
