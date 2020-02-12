@@ -2,118 +2,473 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3AE715A735
-	for <lists+ceph-devel@lfdr.de>; Wed, 12 Feb 2020 11:59:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E9D115A78E
+	for <lists+ceph-devel@lfdr.de>; Wed, 12 Feb 2020 12:17:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbgBLK7Z (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 12 Feb 2020 05:59:25 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:44982 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725821AbgBLK7Y (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 12 Feb 2020 05:59:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581505163;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1wWs3AW6y8lE5TwJCJ2ppY67pjWhRdhMeg/j2iS2Rgs=;
-        b=IRTyv1RdWqD79PBWWNI8fV/Br/8MiIvZGQxu+YRMg94GGH/72hgFtnzU83uzXUSkWeBVyR
-        2E43XNMLroDJXJ6/dTs2EMaIXjAytEmZxDZm8qXD5O4H28hItX/ncdbkBhjREv2udFNuXE
-        /6Tc/JAmcaW4XWj22Bl95wi2mh329HA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-323-C8bx2NfuMnWEi2LOg6SWng-1; Wed, 12 Feb 2020 05:59:22 -0500
-X-MC-Unique: C8bx2NfuMnWEi2LOg6SWng-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B69ED800D48;
-        Wed, 12 Feb 2020 10:59:20 +0000 (UTC)
-Received: from [10.72.12.209] (ovpn-12-209.pek2.redhat.com [10.72.12.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7EFEA1001B09;
-        Wed, 12 Feb 2020 10:59:15 +0000 (UTC)
-Subject: Re: [RFC PATCH] ceph: fix description of some mount options
-To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com
-Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
-        ceph-devel@vger.kernel.org, linux-doc@vger.kernel.org,
-        corbet@lwn.net
-References: <20200211153120.21369-1-xiubli@redhat.com>
- <537a2c4a37f601fe402fa7b893061fd9f4270f56.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <473f2e9b-93af-c232-aef7-49ab9fa1efa6@redhat.com>
-Date:   Wed, 12 Feb 2020 18:59:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1727054AbgBLLRh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 12 Feb 2020 06:17:37 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:46836 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbgBLLRg (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 12 Feb 2020 06:17:36 -0500
+Received: by mail-il1-f196.google.com with SMTP id t17so1369541ilm.13
+        for <ceph-devel@vger.kernel.org>; Wed, 12 Feb 2020 03:17:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hYF/ci2kZWYNR2gFiBNGQTu5hcqnQjBSYZ5u3BbTLyQ=;
+        b=jOEME1eolSHUPgmEpr4TdI2XnMvkPCnD8Uf3KOUUMu1SZSWMnjNS5NSQJa9yvRQzaS
+         fmmPuNh7A9fpCCG7axzh1IaNNugDoxeCtiGkMSKBttu8hdnLYKrlKeCS6Zf1VJW4/p8U
+         zs8axHKkY99q45+Zo2s3+PVXxf/8tAaJFddMMRx5HuipiIyc+goIKsx1sN8m2ihpa7Gg
+         nd3I/frhBFzbuEDn3sp4Jfi6S31oq0NYjXILHjoPmBlyTZYUPRw3nq0vUiXSTf00yQxt
+         v1w+pNdtANiy13ZK62acMMcVANCyNRVkE6Ga5bjqhmJPXVwMSvJvcQujBhDi0sPQyKAb
+         QMUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hYF/ci2kZWYNR2gFiBNGQTu5hcqnQjBSYZ5u3BbTLyQ=;
+        b=tEaG3MvaUQ5ztw1q6zq8GhNU9idbKceFLmpHWz9ujehxI9Nka5re/fPzBYYXC93nDS
+         YwKQk7eXlEtaqJ8SIAuOaL+GUnlE0k5R59hvPqCOvrxP41NmIbhalMErfKBp7wTWZgA0
+         Z152GEFV9rq654OV7PrRKFrWK2mAcEt3wZ/dXfhQDoydiKwF+Qcupfm8v7PovJgHc93S
+         5p3Qh3nBZlgMRoT86UPIuBewtTVBDHhxRtjQQi4U16wUqSvWZhkqoLafpu23D0ZA/bfR
+         PBUpMfR+w+tys9UTyt5y2m/hV+bZfNEEs2MBcDbiN+KEIC1Xtydj1AP/U8mQ0w6O+oT+
+         JrUA==
+X-Gm-Message-State: APjAAAV0p8/7UgrbQ8R6xhSFMiS/K0w0/doQQAfMrXg5cI5JZ3FFSoGA
+        iAux3FWssOZ0hKB3/+vpD/nj4oVP9DRMpEoFX1Y=
+X-Google-Smtp-Source: APXvYqwbgiFKflpoDj+WMzRI1iWzIXDh0/2gk0Dhm5yKFkiHrwVU4oE8BjcrH05ILOTzvmBKkx42AdUwuNJ16/g2eI0=
+X-Received: by 2002:a92:ccd0:: with SMTP id u16mr9911606ilq.215.1581506254859;
+ Wed, 12 Feb 2020 03:17:34 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <537a2c4a37f601fe402fa7b893061fd9f4270f56.camel@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <20200212085454.35665-1-xiubli@redhat.com>
+In-Reply-To: <20200212085454.35665-1-xiubli@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Wed, 12 Feb 2020 12:17:53 +0100
+Message-ID: <CAOi1vP_GJ99XW-ncn2WD1GwvkZ4MU2HqXAbQiuGm3hqmg3otPQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fs add reconfiguring superblock parameters support
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        "Yan, Zheng" <zyan@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020/2/12 0:48, Jeff Layton wrote:
-> On Tue, 2020-02-11 at 10:31 -0500, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> Based on the latest code, the default value for wsize/rsize is
->> 64MB and the default value for the mount_timeout is 60 seconds.
->>
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>
->> Checked the history of the code, I am a little confused about the
->> default values for wsize/rsize, there never been 16MB as the default,
->> and for the mount_timeout, never seen 30 as default.
->>
->> So did I miss something important about this ?
->>
-> It looks like the default rsize/wsize were 16M prior to 94e6992bb560b.
-> It then went to 32 and then 64 a little while afterward.
+On Wed, Feb 12, 2020 at 9:55 AM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> This will enable the remount and reconfiguring superblock params
+> for the fs. Currently some mount options are not allowed to be
+> reconfigured.
+>
+> It will working like:
+> $ mount.ceph :/ /mnt/cephfs -o remount,mount_timeout=100
+>
+> URL:https://tracker.ceph.com/issues/44071
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  block/bfq-cgroup.c           |   1 +
+>  drivers/block/rbd.c          |   2 +-
+>  fs/ceph/caps.c               |   2 +
+>  fs/ceph/mds_client.c         |   5 +-
+>  fs/ceph/super.c              | 126 +++++++++++++++++++++++++++++------
+>  fs/ceph/super.h              |   2 +
+>  include/linux/ceph/libceph.h |   4 +-
+>  net/ceph/ceph_common.c       |  83 ++++++++++++++++++++---
+>  8 files changed, 192 insertions(+), 33 deletions(-)
+>
+> diff --git a/block/bfq-cgroup.c b/block/bfq-cgroup.c
+> index e1419edde2ec..b3d42200182e 100644
+> --- a/block/bfq-cgroup.c
+> +++ b/block/bfq-cgroup.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/ioprio.h>
+>  #include <linux/sbitmap.h>
+>  #include <linux/delay.h>
+> +#include <linux/rbtree.h>
 
-Yeah, it is.
+Hi Xiubo,
+
+This hunk touches the block layer.
+
+>
+>  #include "bfq-iosched.h"
+>
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index 4e494d5600cc..470de27cf809 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -6573,7 +6573,7 @@ static int rbd_add_parse_args(const char *buf,
+>         *(snap_name + len) = '\0';
+>         pctx.spec->snap_name = snap_name;
+>
+> -       pctx.copts = ceph_alloc_options();
+> +       pctx.copts = ceph_alloc_options(NULL);
+>         if (!pctx.copts)
+>                 goto out_mem;
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index b4f122eb74bb..020f83186f94 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -491,10 +491,12 @@ static void __cap_set_timeouts(struct ceph_mds_client *mdsc,
+>  {
+>         struct ceph_mount_options *opt = mdsc->fsc->mount_options;
+>
+> +       spin_lock(&opt->ceph_opt_lock);
+>         ci->i_hold_caps_min = round_jiffies(jiffies +
+>                                             opt->caps_wanted_delay_min * HZ);
+>         ci->i_hold_caps_max = round_jiffies(jiffies +
+>                                             opt->caps_wanted_delay_max * HZ);
+> +       spin_unlock(&opt->ceph_opt_lock);
+>         dout("__cap_set_timeouts %p min %lu max %lu\n", &ci->vfs_inode,
+>              ci->i_hold_caps_min - jiffies, ci->i_hold_caps_max - jiffies);
+>  }
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 376e7cf1685f..451c3727cd0b 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -2099,6 +2099,7 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds_request *req,
+>         struct ceph_inode_info *ci = ceph_inode(dir);
+>         struct ceph_mds_reply_info_parsed *rinfo = &req->r_reply_info;
+>         struct ceph_mount_options *opt = req->r_mdsc->fsc->mount_options;
+> +       unsigned int max_readdir = opt->max_readdir;
+>         size_t size = sizeof(struct ceph_mds_reply_dir_entry);
+>         unsigned int num_entries;
+>         int order;
+> @@ -2107,7 +2108,7 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds_request *req,
+>         num_entries = ci->i_files + ci->i_subdirs;
+>         spin_unlock(&ci->i_ceph_lock);
+>         num_entries = max(num_entries, 1U);
+> -       num_entries = min(num_entries, opt->max_readdir);
+> +       num_entries = min(num_entries, max_readdir);
+>
+>         order = get_order(size * num_entries);
+>         while (order >= 0) {
+> @@ -2122,7 +2123,7 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds_request *req,
+>                 return -ENOMEM;
+>
+>         num_entries = (PAGE_SIZE << order) / size;
+> -       num_entries = min(num_entries, opt->max_readdir);
+> +       num_entries = min(num_entries, max_readdir);
+>
+>         rinfo->dir_buf_size = PAGE_SIZE << order;
+>         req->r_num_caps = num_entries + 1;
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index 9a21054059f2..8df506dd9039 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -1175,7 +1175,57 @@ static void ceph_free_fc(struct fs_context *fc)
+>
+>  static int ceph_reconfigure_fc(struct fs_context *fc)
+>  {
+> -       sync_filesystem(fc->root->d_sb);
+> +       struct super_block *sb = fc->root->d_sb;
+> +       struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
+> +       struct ceph_mount_options *fsopt = fsc->mount_options;
+> +       struct ceph_parse_opts_ctx *pctx = fc->fs_private;
+> +       struct ceph_mount_options *new_fsopt = pctx->opts;
+> +       int ret;
+> +
+> +       sync_filesystem(sb);
+> +
+> +       ret = ceph_reconfigure_copts(fc, pctx->copts, fsc->client->options);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (new_fsopt->snapdir_name != fsopt->snapdir_name)
+> +               return invalf(fc, "ceph: reconfiguration of snapdir_name not allowed");
+> +
+> +       if (new_fsopt->mds_namespace != fsopt->mds_namespace)
+> +               return invalf(fc, "ceph: reconfiguration of mds_namespace not allowed");
+> +
+> +       if (new_fsopt->wsize != fsopt->wsize)
+> +               return invalf(fc, "ceph: reconfiguration of wsize not allowed");
+> +       if (new_fsopt->rsize != fsopt->rsize)
+> +               return invalf(fc, "ceph: reconfiguration of rsize not allowed");
+> +       if (new_fsopt->rasize != fsopt->rasize)
+> +               return invalf(fc, "ceph: reconfiguration of rasize not allowed");
+> +
+> +#ifdef CONFIG_CEPH_FSCACHE
+> +       if (strcmp_null(new_fsopt->fscache_uniq, fsopt->fscache_uniq))
+> +               return invalf(fc, "ceph: reconfiguration of fscache not allowed");
+> +#endif
+> +
+> +       fsopt->flags = new_fsopt->flags;
+> +
+> +       spin_lock(&fsopt->ceph_opt_lock);
+> +       fsopt->caps_wanted_delay_min = new_fsopt->caps_wanted_delay_min;
+> +       fsopt->caps_wanted_delay_max = new_fsopt->caps_wanted_delay_max;
+> +       spin_unlock(&fsopt->ceph_opt_lock);
+> +
+> +       fsopt->max_readdir_bytes = new_fsopt->max_readdir_bytes;
+> +       fsopt->congestion_kb = new_fsopt->congestion_kb;
+> +
+> +       fsopt->caps_max = new_fsopt->caps_max;
+> +       fsopt->max_readdir = new_fsopt->max_readdir;
+> +       ceph_adjust_caps_max_min(fsc->mdsc, fsopt);
+> +
+> +#ifdef CONFIG_CEPH_FS_POSIX_ACL
+> +       if (fc->sb_flags & SB_POSIXACL)
+> +               sb->s_flags |= SB_POSIXACL;
+> +       else
+> +               sb->s_flags &= ~SB_POSIXACL;
+> +#endif
+>         return 0;
+>  }
+>
+> @@ -1193,38 +1243,77 @@ static int ceph_init_fs_context(struct fs_context *fc)
+>  {
+>         struct ceph_parse_opts_ctx *pctx;
+>         struct ceph_mount_options *fsopt;
+> +       struct ceph_options *copts = NULL;
+>
+>         pctx = kzalloc(sizeof(*pctx), GFP_KERNEL);
+>         if (!pctx)
+>                 return -ENOMEM;
+>
+> -       pctx->copts = ceph_alloc_options();
+> -       if (!pctx->copts)
+> -               goto nomem;
+> -
+>         pctx->opts = kzalloc(sizeof(*pctx->opts), GFP_KERNEL);
+>         if (!pctx->opts)
+>                 goto nomem;
+>
+>         fsopt = pctx->opts;
+> -       fsopt->flags = CEPH_MOUNT_OPT_DEFAULT;
+>
+> -       fsopt->wsize = CEPH_MAX_WRITE_SIZE;
+> -       fsopt->rsize = CEPH_MAX_READ_SIZE;
+> -       fsopt->rasize = CEPH_RASIZE_DEFAULT;
+> -       fsopt->snapdir_name = kstrdup(CEPH_SNAPDIRNAME_DEFAULT, GFP_KERNEL);
+> -       if (!fsopt->snapdir_name)
+> -               goto nomem;
+> +#ifdef CONFIG_CEPH_FS_POSIX_ACL
+> +       fc->sb_flags |= SB_POSIXACL;
+> +#endif
+> +
+> +       if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
+> +               struct super_block *sb = fc->root->d_sb;
+> +               struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
+> +               struct ceph_mount_options *old = fsc->mount_options;
+> +
+> +               copts = fsc->client->options;
+> +
+> +               fsopt->flags = old->flags;
+>
+> -       fsopt->caps_wanted_delay_min = CEPH_CAPS_WANTED_DELAY_MIN_DEFAULT;
+> -       fsopt->caps_wanted_delay_max = CEPH_CAPS_WANTED_DELAY_MAX_DEFAULT;
+> -       fsopt->max_readdir = CEPH_MAX_READDIR_DEFAULT;
+> -       fsopt->max_readdir_bytes = CEPH_MAX_READDIR_BYTES_DEFAULT;
+> -       fsopt->congestion_kb = default_congestion_kb();
+> +               fsopt->wsize = old->wsize;
+> +               fsopt->rsize = old->rsize;
+> +               fsopt->rasize = old->rasize;
+> +
+> +               fsopt->fscache_uniq = kstrdup(old->fscache_uniq, GFP_KERNEL);
+> +               if (!fsopt->fscache_uniq)
+> +                       goto nomem;
+> +
+> +               fsopt->snapdir_name = kstrdup(old->snapdir_name, GFP_KERNEL);
+> +               if (!fsopt->snapdir_name)
+> +                       goto nomem;
+> +
+> +               fsopt->caps_wanted_delay_min = old->caps_wanted_delay_min;
+> +               fsopt->caps_wanted_delay_max = old->caps_wanted_delay_max;
+> +               fsopt->max_readdir = old->max_readdir;
+> +               fsopt->max_readdir_bytes = old->max_readdir_bytes;
+> +               fsopt->congestion_kb = old->congestion_kb;
+> +               fsopt->caps_max = old->caps_max;
+> +               fsopt->max_readdir = old->max_readdir;
+>
+>  #ifdef CONFIG_CEPH_FS_POSIX_ACL
+> -       fc->sb_flags |= SB_POSIXACL;
+> +               if (!(sb->s_flags & SB_POSIXACL))
+> +                       fc->sb_flags &= ~SB_POSIXACL;
+>  #endif
+> +       } else {
+> +               fsopt->flags = CEPH_MOUNT_OPT_DEFAULT;
+> +
+> +               fsopt->wsize = CEPH_MAX_WRITE_SIZE;
+> +               fsopt->rsize = CEPH_MAX_READ_SIZE;
+> +               fsopt->rasize = CEPH_RASIZE_DEFAULT;
+> +
+> +               fsopt->snapdir_name = kstrdup(CEPH_SNAPDIRNAME_DEFAULT, GFP_KERNEL);
+> +               if (!fsopt->snapdir_name)
+> +                       goto nomem;
+> +
+> +               fsopt->caps_wanted_delay_min = CEPH_CAPS_WANTED_DELAY_MIN_DEFAULT;
+> +               fsopt->caps_wanted_delay_max = CEPH_CAPS_WANTED_DELAY_MAX_DEFAULT;
+> +               fsopt->max_readdir = CEPH_MAX_READDIR_DEFAULT;
+> +               fsopt->max_readdir_bytes = CEPH_MAX_READDIR_BYTES_DEFAULT;
+> +               fsopt->congestion_kb = default_congestion_kb();
+> +               spin_lock_init(&fsopt->ceph_opt_lock);
+> +       }
+> +
+> +       pctx->copts = ceph_alloc_options(copts);
+> +       if (!pctx->copts)
+> +               goto nomem;
+>
+>         fc->fs_private = pctx;
+>         fc->ops = &ceph_context_ops;
+> @@ -1232,7 +1321,6 @@ static int ceph_init_fs_context(struct fs_context *fc)
+>
+>  nomem:
+>         destroy_mount_options(pctx->opts);
+> -       ceph_destroy_options(pctx->copts);
+>         kfree(pctx);
+>         return -ENOMEM;
+>  }
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 2acb09980432..ad44b98f3c3b 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -95,6 +95,8 @@ struct ceph_mount_options {
+>         char *mds_namespace;  /* default NULL */
+>         char *server_path;    /* default  "/" */
+>         char *fscache_uniq;   /* default NULL */
+> +
+> +       spinlock_t ceph_opt_lock;
+>  };
+>
+>  struct ceph_fs_client {
+> diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
+> index 8fe9b80e80a5..407645adb2ad 100644
+> --- a/include/linux/ceph/libceph.h
+> +++ b/include/linux/ceph/libceph.h
+> @@ -281,11 +281,13 @@ extern int ceph_check_fsid(struct ceph_client *client, struct ceph_fsid *fsid);
+>  extern void *ceph_kvmalloc(size_t size, gfp_t flags);
+>
+>  struct fs_parameter;
+> -struct ceph_options *ceph_alloc_options(void);
+> +struct ceph_options *ceph_alloc_options(struct ceph_options *old);
+>  int ceph_parse_mon_ips(const char *buf, size_t len, struct ceph_options *opt,
+>                        struct fs_context *fc);
+>  int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
+>                      struct fs_context *fc);
+> +int ceph_reconfigure_copts(struct fs_context *fc, struct ceph_options *new_opts,
+> +                          struct ceph_options *opts);
+>  int ceph_print_client_options(struct seq_file *m, struct ceph_client *client,
+>                               bool show_all);
+>  extern void ceph_destroy_options(struct ceph_options *opt);
+> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> index a9d6c97b5b0d..39e628996595 100644
+> --- a/net/ceph/ceph_common.c
+> +++ b/net/ceph/ceph_common.c
+> @@ -295,7 +295,7 @@ static const struct fs_parameter_description ceph_parameters = {
+>          .specs          = ceph_param_specs,
+>  };
+>
+> -struct ceph_options *ceph_alloc_options(void)
+> +struct ceph_options *ceph_alloc_options(struct ceph_options *old)
+>  {
+>         struct ceph_options *opt;
+>
+> @@ -305,17 +305,49 @@ struct ceph_options *ceph_alloc_options(void)
+>
+>         opt->mon_addr = kcalloc(CEPH_MAX_MON, sizeof(*opt->mon_addr),
+>                                 GFP_KERNEL);
+> -       if (!opt->mon_addr) {
+> -               kfree(opt);
+> -               return NULL;
+> -       }
+> +       if (!opt->mon_addr)
+> +               goto err;
+> +
+> +       if (old) {
+> +               memcpy(&opt->my_addr, &old->my_addr, sizeof(opt->my_addr));
+> +               memcpy(&opt->fsid, &old->fsid, sizeof(opt->fsid));
+> +               if (old->name) {
+> +                       opt->name = kstrdup(old->name, GFP_KERNEL);
+> +                       if (!opt->name)
+> +                               goto err;
+> +               }
+>
+> -       opt->flags = CEPH_OPT_DEFAULT;
+> -       opt->osd_keepalive_timeout = CEPH_OSD_KEEPALIVE_DEFAULT;
+> -       opt->mount_timeout = CEPH_MOUNT_TIMEOUT_DEFAULT;
+> -       opt->osd_idle_ttl = CEPH_OSD_IDLE_TTL_DEFAULT;
+> -       opt->osd_request_timeout = CEPH_OSD_REQUEST_TIMEOUT_DEFAULT;
+> +               if (old->key) {
+> +                       opt->key = kmalloc(sizeof(*opt->key), GFP_KERNEL);
+> +                       if (!opt->key)
+> +                               goto err;
+> +
+> +                       opt->key->type = old->key->type;
+> +                       opt->key->created.tv_sec = old->key->created.tv_sec;
+> +                       opt->key->created.tv_nsec = old->key->created.tv_nsec;
+> +                       opt->key->len = old->key->len;
+> +                       memcpy(opt->key->key, old->key->key, old->key->len);
+> +               }
+> +
+> +               opt->osd_keepalive_timeout = old->osd_keepalive_timeout;
+> +               opt->osd_idle_ttl = old->osd_idle_ttl;
+> +               opt->mount_timeout = old->mount_timeout;
+> +               opt->osd_request_timeout = old->osd_request_timeout;
+> +               opt->flags = old->flags;
+> +       } else {
+> +               opt->flags = CEPH_OPT_DEFAULT;
+> +               opt->osd_keepalive_timeout = CEPH_OSD_KEEPALIVE_DEFAULT;
+> +               opt->mount_timeout = CEPH_MOUNT_TIMEOUT_DEFAULT;
+> +               opt->osd_idle_ttl = CEPH_OSD_IDLE_TTL_DEFAULT;
+> +               opt->osd_request_timeout = CEPH_OSD_REQUEST_TIMEOUT_DEFAULT;
+> +       }
+>         return opt;
+> +
+> +err:
+> +       kfree(opt->name);
+> +       kfree(opt->mon_addr);
+> +       kfree(opt);
+> +       return NULL;
+>  }
+>  EXPORT_SYMBOL(ceph_alloc_options);
+>
+> @@ -534,6 +566,37 @@ int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
+>  }
+>  EXPORT_SYMBOL(ceph_parse_param);
+>
+> +int ceph_reconfigure_copts(struct fs_context *fc, struct ceph_options *new_opts,
+> +                          struct ceph_options *opts)
+> +{
+> +       if (memcmp(&new_opts->my_addr, &opts->my_addr,
+> +                  sizeof(opts->my_addr)))
+> +               return invalf(fc, "ceph: reconfiguration of ip not allowed");
+> +
+> +       if (memcmp(&new_opts->fsid, &opts->fsid, sizeof(opts->fsid)))
+> +               return invalf(fc, "ceph: reconfiguration of fsid not allowed");
+> +
+> +       if (strcmp_null(new_opts->name, opts->name))
+> +               return invalf(fc, "ceph: reconfiguration of name not allowed");
+> +
+> +       if (new_opts->key && (!opts->key ||
+> +               new_opts->key->type != opts->key->type ||
+> +               new_opts->key->created.tv_sec != opts->key->created.tv_sec ||
+> +               new_opts->key->created.tv_nsec != opts->key->created.tv_nsec ||
+> +               new_opts->key->len != opts->key->len ||
+> +               memcmp(new_opts->key->key, opts->key->key, opts->key->len)))
+> +               return invalf(fc, "ceph: reconfiguration of secret not allowed");
+> +
+> +       opts->osd_keepalive_timeout = new_opts->osd_keepalive_timeout;
+> +       opts->osd_idle_ttl = new_opts->osd_idle_ttl;
+> +       opts->mount_timeout = new_opts->mount_timeout;
+> +       opts->osd_request_timeout = new_opts->osd_request_timeout;
+
+What is the use case for reconfiguring any of these options?  They are
+all low level and aren't really meant to be reconfigured.
+
+> +       opts->flags = new_opts->flags;
+
+This is particularly true for flags.  Reconfiguring tcp_nodelay will
+not have effect on sockets that are already open, reconfiguring noshare
+will not unshare the client instance, etc.  Messing with crc or
+cephx_sign_messages is very likely to hang the client.
 
 Thanks,
 
-BRs
-
->   I don't see
-> where the mount_timeout was ever 30s though.
->
-> Merged into testing branch since this seems obviously correct.
->
->>   Documentation/filesystems/ceph.txt | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/filesystems/ceph.txt b/Documentation/filesystems/ceph.txt
->> index b19b6a03f91c..92ffc9b3b018 100644
->> --- a/Documentation/filesystems/ceph.txt
->> +++ b/Documentation/filesystems/ceph.txt
->> @@ -103,17 +103,17 @@ Mount Options
->>   	address its connection to the monitor originates from.
->>   
->>     wsize=X
->> -	Specify the maximum write size in bytes.  Default: 16 MB.
->> +	Specify the maximum write size in bytes.  Default: 64 MB.
->>   
->>     rsize=X
->> -	Specify the maximum read size in bytes.  Default: 16 MB.
->> +	Specify the maximum read size in bytes.  Default: 64 MB.
->>   
->>     rasize=X
->>   	Specify the maximum readahead size in bytes.  Default: 8 MB.
->>   
->>     mount_timeout=X
->>   	Specify the timeout value for mount (in seconds), in the case
->> -	of a non-responsive Ceph file system.  The default is 30
->> +	of a non-responsive Ceph file system.  The default is 60
->>   	seconds.
->>   
->>     caps_max=X
-
-
+                Ilya
