@@ -2,34 +2,34 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DA3D15AEAA
-	for <lists+ceph-devel@lfdr.de>; Wed, 12 Feb 2020 18:27:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EEB915AEAC
+	for <lists+ceph-devel@lfdr.de>; Wed, 12 Feb 2020 18:27:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728715AbgBLR1g (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 12 Feb 2020 12:27:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35532 "EHLO mail.kernel.org"
+        id S1728728AbgBLR1h (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 12 Feb 2020 12:27:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727680AbgBLR1g (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 12 Feb 2020 12:27:36 -0500
+        id S1728673AbgBLR1h (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 12 Feb 2020 12:27:37 -0500
 Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53DD12168B;
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FEB82173E;
         Wed, 12 Feb 2020 17:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581528455;
-        bh=IkFdjgiectCRwAVIAKe5XDpFaQMYrrVNFfvE4q7vL0w=;
+        s=default; t=1581528456;
+        bh=+G2V7QvM049oDq3L1YY4M6OxgiOhq7b/Tm3WcJqX2iw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x9tMY4eaGEP+9x1c2zJVXrR1hL/5hSYQR+0EJ1vFn7xd1LM6X9f7zIkdMQCsJ0NTV
-         Q9D/uSh4DKVUzADHTrdc2iwpdbhJBu9qAi7Ujph2NZITJrM/+c5j+fgSWvuf7wFJEN
-         xR8jcTJ+T8frHoSmxm8KmYlez6eO2hJTGCNWPxxM=
+        b=zYF2uLHJ+Q35KAx0G/I4vN9NpJUpwDRpRLljWpLDcp+zhA69XOyn+JCa7vSwxlnpc
+         h/KEVyQM9tZrsgm3mLuXQ/m2Grhs6tKdB3YCBNkUV2NGcVhrJBhQfrTq6fi13YDhAx
+         HA4S4aIYt2znuRAE1kOzPKyRPZ7PYL74KvRl/yYA=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     idridryomov@gmail.com, sage@redhat.com, zyan@redhat.com,
         pdonnell@redhat.com
-Subject: [PATCH v4 6/9] ceph: add infrastructure for waiting for async create to complete
-Date:   Wed, 12 Feb 2020 12:27:26 -0500
-Message-Id: <20200212172729.260752-7-jlayton@kernel.org>
+Subject: [PATCH v4 7/9] ceph: add new MDS req field to hold delegated inode number
+Date:   Wed, 12 Feb 2020 12:27:27 -0500
+Message-Id: <20200212172729.260752-8-jlayton@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200212172729.260752-1-jlayton@kernel.org>
 References: <20200212172729.260752-1-jlayton@kernel.org>
@@ -40,141 +40,48 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-When we issue an async create, we must ensure that any later on-the-wire
-requests involving it wait for the create reply.
-
-Expand i_ceph_flags to be an unsigned long, and add a new bit that
-MDS requests can wait on. If the bit is set in the inode when sending
-caps, then don't send it and just return that it has been delayed.
+Add new request field to hold the delegated inode number. Encode that
+into the message when it's set.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/caps.c       | 13 ++++++++++++-
- fs/ceph/dir.c        |  2 +-
- fs/ceph/mds_client.c | 18 ++++++++++++++++++
- fs/ceph/mds_client.h |  8 ++++++++
- fs/ceph/super.h      |  4 +++-
- 5 files changed, 42 insertions(+), 3 deletions(-)
+ fs/ceph/mds_client.c | 3 +--
+ fs/ceph/mds_client.h | 1 +
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index c983990acb75..869e2102e827 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -511,7 +511,7 @@ static void __cap_delay_requeue(struct ceph_mds_client *mdsc,
- 				struct ceph_inode_info *ci,
- 				bool set_timeout)
- {
--	dout("__cap_delay_requeue %p flags %d at %lu\n", &ci->vfs_inode,
-+	dout("__cap_delay_requeue %p flags 0x%lx at %lu\n", &ci->vfs_inode,
- 	     ci->i_ceph_flags, ci->i_hold_caps_max);
- 	if (!mdsc->stopping) {
- 		spin_lock(&mdsc->cap_delay_lock);
-@@ -1298,6 +1298,13 @@ static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
- 	int delayed = 0;
- 	int ret;
- 
-+	/* Don't send anything if it's still being created. Return delayed */
-+	if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE) {
-+		spin_unlock(&ci->i_ceph_lock);
-+		dout("%s async create in flight for %p\n", __func__, inode);
-+		return 1;
-+	}
-+
- 	held = cap->issued | cap->implemented;
- 	revoking = cap->implemented & ~cap->issued;
- 	retain &= ~revoking;
-@@ -2257,6 +2264,10 @@ int ceph_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- 	if (datasync)
- 		goto out;
- 
-+	ret = ceph_wait_on_async_create(inode);
-+	if (ret)
-+		goto out;
-+
- 	dirty = try_flush_caps(inode, &flush_tid);
- 	dout("fsync dirty caps are %s\n", ceph_cap_string(dirty));
- 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 46314ccf48c5..4e695f2a9347 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -752,7 +752,7 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
- 		struct ceph_dentry_info *di = ceph_dentry(dentry);
- 
- 		spin_lock(&ci->i_ceph_lock);
--		dout(" dir %p flags are %d\n", dir, ci->i_ceph_flags);
-+		dout(" dir %p flags are 0x%lx\n", dir, ci->i_ceph_flags);
- 		if (strncmp(dentry->d_name.name,
- 			    fsc->mount_options->snapdir_name,
- 			    dentry->d_name.len) &&
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 91c5f999da7d..314dd0f6f5a9 100644
+index 314dd0f6f5a9..2321c955439b 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -2829,6 +2829,24 @@ int ceph_mdsc_submit_request(struct ceph_mds_client *mdsc, struct inode *dir,
- 		ceph_get_cap_refs(ceph_inode(req->r_old_dentry_dir),
- 				  CEPH_CAP_PIN);
+@@ -2464,7 +2464,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_client *mdsc,
+ 	head->op = cpu_to_le32(req->r_op);
+ 	head->caller_uid = cpu_to_le32(from_kuid(&init_user_ns, req->r_uid));
+ 	head->caller_gid = cpu_to_le32(from_kgid(&init_user_ns, req->r_gid));
+-	head->ino = 0;
++	head->ino = cpu_to_le64(req->r_deleg_ino);
+ 	head->args = req->r_args;
  
-+	if (req->r_inode) {
-+		err = ceph_wait_on_async_create(req->r_inode);
-+		if (err) {
-+			dout("%s: wait for async create returned: %d\n",
-+			     __func__, err);
-+			return err;
-+		}
-+	}
-+
-+	if (req->r_old_inode) {
-+		err = ceph_wait_on_async_create(req->r_old_inode);
-+		if (err) {
-+			dout("%s: wait for async create returned: %d\n",
-+			     __func__, err);
-+			return err;
-+		}
-+	}
-+
- 	dout("submit_request on %p for inode %p\n", req, dir);
- 	mutex_lock(&mdsc->mutex);
- 	__register_request(mdsc, req, dir);
+ 	ceph_encode_filepath(&p, end, ino1, path1);
+@@ -2625,7 +2625,6 @@ static int __prepare_send_request(struct ceph_mds_client *mdsc,
+ 	rhead->flags = cpu_to_le32(flags);
+ 	rhead->num_fwd = req->r_num_fwd;
+ 	rhead->num_retry = req->r_attempts - 1;
+-	rhead->ino = 0;
+ 
+ 	dout(" r_parent = %p\n", req->r_parent);
+ 	return 0;
 diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 31f68897bc87..acad9adca0af 100644
+index acad9adca0af..4f25fd6df3f9 100644
 --- a/fs/ceph/mds_client.h
 +++ b/fs/ceph/mds_client.h
-@@ -543,4 +543,12 @@ extern int ceph_trim_caps(struct ceph_mds_client *mdsc,
- 			  int max_caps);
+@@ -308,6 +308,7 @@ struct ceph_mds_request {
+ 	int               r_num_fwd;    /* number of forward attempts */
+ 	int               r_resend_mds; /* mds to resend to next, if any*/
+ 	u32               r_sent_on_mseq; /* cap mseq request was sent at*/
++	u64		  r_deleg_ino;
  
- extern u64 ceph_get_deleg_ino(struct ceph_mds_session *session);
-+
-+static inline int ceph_wait_on_async_create(struct inode *inode)
-+{
-+	struct ceph_inode_info *ci = ceph_inode(inode);
-+
-+	return wait_on_bit(&ci->i_ceph_flags, CEPH_ASYNC_CREATE_BIT,
-+			   TASK_INTERRUPTIBLE);
-+}
- #endif
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index ea68eef977ef..47fb6e022339 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -319,7 +319,7 @@ struct ceph_inode_info {
- 	u64 i_inline_version;
- 	u32 i_time_warp_seq;
- 
--	unsigned i_ceph_flags;
-+	unsigned long i_ceph_flags;
- 	atomic64_t i_release_count;
- 	atomic64_t i_ordered_count;
- 	atomic64_t i_complete_seq[2];
-@@ -527,6 +527,8 @@ static inline struct inode *ceph_find_inode(struct super_block *sb,
- #define CEPH_I_ERROR_WRITE	(1 << 10) /* have seen write errors */
- #define CEPH_I_ERROR_FILELOCK	(1 << 11) /* have seen file lock errors */
- #define CEPH_I_ODIRECT		(1 << 12) /* inode in direct I/O mode */
-+#define CEPH_ASYNC_CREATE_BIT	(13)	  /* async create in flight for this */
-+#define CEPH_I_ASYNC_CREATE	(1 << CEPH_ASYNC_CREATE_BIT)
- 
- /*
-  * Masks of ceph inode work.
+ 	struct list_head  r_wait;
+ 	struct completion r_completion;
 -- 
 2.24.1
 
