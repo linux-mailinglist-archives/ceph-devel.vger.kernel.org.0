@@ -2,53 +2,60 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DCDC15CD9F
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2020 22:55:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20CEB15CDE8
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2020 23:13:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbgBMVzq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 13 Feb 2020 16:55:46 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:44260 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728062AbgBMVzp (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 13 Feb 2020 16:55:45 -0500
-Received: by mail-oi1-f196.google.com with SMTP id d62so7386313oia.11
-        for <ceph-devel@vger.kernel.org>; Thu, 13 Feb 2020 13:55:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=z8J20ZWRYjJLx4OrBjPwCdQFfsEMdQSJ01O7lEOjxZo=;
-        b=F1xegbAyYzHbm9KqL0KhEmliUOmEEjS41vdwqg436YBfsW1lLEYxA3HK9mNFawDjho
-         lIymLjiomYtdCH5OQdr2V1Au6+1CMAQCmKdbBcxgpZQvbh+ItHHbKitZsAnhjORA+lEF
-         +itl1lrrMsvkX1GTqG2ZJHD8zcObE7aHvd8jmr0J5zRUcMy18e4rZKJL/ucO3EC/fFpa
-         0AShguwsLNTN5uvkv3qztzKD01grzQbx4Mbt/CF9KgiioSIvovXe+65fo6ZZSQylZUy1
-         c6yfy9f5t0GQP1CIaYYc/0rqzUCPDBDgyEdI3xaPeVdwN1EyOHAjLLKa4NAWD9rzOAe8
-         XKBw==
+        id S1727594AbgBMWN1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 13 Feb 2020 17:13:27 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:54693 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726282AbgBMWN1 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 13 Feb 2020 17:13:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581632006;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mo9kwlZesfX/uJ5Pz7L/5AcUAyZ4C75G3w2MV/QOXvs=;
+        b=B5mIoJCn5oBBzagJDxk5UVWm59Qug+Qh1xSobEDOweG1557Bej5pr1gYDCEFnpZ9Fy5A9f
+        pcblSYa8se5grv9MsoD/jIjzCYhP4EWAfaDjzHzCjZqBDP1aijRCBiNB/GJHkDyWT3l/sA
+        0Ht16ZtaC8TROMryM/P4HHc7Ae2NVBk=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-156-gLCo2XwgNq2mdfGU2xe_FA-1; Thu, 13 Feb 2020 17:13:23 -0500
+X-MC-Unique: gLCo2XwgNq2mdfGU2xe_FA-1
+Received: by mail-qt1-f198.google.com with SMTP id r9so4705425qtc.4
+        for <ceph-devel@vger.kernel.org>; Thu, 13 Feb 2020 14:13:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=z8J20ZWRYjJLx4OrBjPwCdQFfsEMdQSJ01O7lEOjxZo=;
-        b=a+A5L1yhE48Bs3G70+O1C8od2PmgdzyTQPoljzIwacT0N04MLtSsUp42Y17o7ZzyzI
-         4Bjs0cEx2CtOt5yJ9/nwaXxPeYNkCybMYXHlDaHiccWTXeUanrMaL1f/PpMSDXzi2wQy
-         Ey3m8sdb6300IYmLJt73Ni3XALfsysBnMDdCSoDR4wI9j7bEcaB84PbAHVM1TfL/ECt8
-         oJbJUIIkfI+NnS0KP66QI1EJMeiyaV4pyb0agiK7Lap+HEXRcOLXF8xHlzPiXSN4Bg+0
-         cCwYKSdS6rKRk894pJAXFKaf1fb31KFKiGPdiLL4yFAtS50ZryjEF2P5oYzDnHS+5ATq
-         DMFQ==
-X-Gm-Message-State: APjAAAXVyADvN9P87/QJZHNSocRAlEaFVPD4mFevWhzp3ShIt5hBeWs3
-        uqAWnqS1ZvcpzglPkS8E2p39OxvRSU4Qg1OFLlE=
-X-Google-Smtp-Source: APXvYqzQlGqAAfOg7DwYJNWJnz27kb0YQCVtwnA4MyDSF1bJoJSROJpI76Sw9by24r5WSxYvHW87LVak8mTmhl6F6UE=
-X-Received: by 2002:aca:ad11:: with SMTP id w17mr4537951oie.85.1581630943807;
- Thu, 13 Feb 2020 13:55:43 -0800 (PST)
+        bh=mo9kwlZesfX/uJ5Pz7L/5AcUAyZ4C75G3w2MV/QOXvs=;
+        b=JToQU5jHaH51eaHy+YURuA7lfmykPCgI04B33ZzuEf6k0VT90NMNWMH4Pe3n0cz22f
+         yZXv/PPa3B27zeSnMife3rnutD3v8FIc79Riqsciaa8KKErWP7s7roJenCfqzx8ElelU
+         as89fJq+DYXBfimBOjgTqHh2YJGgJp7xSjcIgslcE++2dLAJ6+1LWhRkHpgWc+tKpTx8
+         nRMtYprVfJtz4gXq5UA3yVAaNYNfz56/tpAsCgfjuRRO05pcHI5l3Aj9UsEBO34HvtlW
+         85KaOIouc3EdeX/jg6kN2kb26lby8RWFjKbR77kFiPGG3R0aNC9LD15Yw1zucOU6Sr1c
+         BSbw==
+X-Gm-Message-State: APjAAAWN7A1cwu2EqzCSwEzcglMPW6tmuPJSeYNKNXUcIljFJE/RYR9G
+        qWaamy9oCF+bP0YuLWZUtqYefPNx/m3yju+CNOD+HQRv8WVnqygdZRTvNGNjk9TF+96bY1ess8C
+        bPqUvP801iplThgPrNf4pN9zcSdJdug+quc9ELQ==
+X-Received: by 2002:ac8:6b4f:: with SMTP id x15mr219955qts.152.1581632003471;
+        Thu, 13 Feb 2020 14:13:23 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz53qvMBf7ZuhxC8bbYqr1PKkk572dB3NEBXz8YZiTXJGbup3vJTNHXmYr1ZX1+vtnoC2R8kXgmj47Z3jw6XkE=
+X-Received: by 2002:ac8:6b4f:: with SMTP id x15mr219915qts.152.1581632003260;
+ Thu, 13 Feb 2020 14:13:23 -0800 (PST)
 MIME-Version: 1.0
 References: <CAMMFjmGWrhC_gd3wY5SfqfSB6O=0Tp_QRAu0ibMTDPVrja2HSg@mail.gmail.com>
- <CAKn7kBnRSm0NX5Z0sfZneG98jz_pP+aH-qQJrAwkumJihpBdTQ@mail.gmail.com> <CAMMFjmHr2R1wynMEiELYPY1R0c0mAG7GZstbFVxhF5ZvLwzCRg@mail.gmail.com>
-In-Reply-To: <CAMMFjmHr2R1wynMEiELYPY1R0c0mAG7GZstbFVxhF5ZvLwzCRg@mail.gmail.com>
-From:   Nathan Cutler <presnypreklad@gmail.com>
-Date:   Thu, 13 Feb 2020 22:55:31 +0100
-Message-ID: <CABNx+P8L++MhGkdqZ5U4HxL4hoEDF7MRCYiERP-VwHEfgjtENA@mail.gmail.com>
+ <CAKn7kBnRSm0NX5Z0sfZneG98jz_pP+aH-qQJrAwkumJihpBdTQ@mail.gmail.com>
+ <CAMMFjmHr2R1wynMEiELYPY1R0c0mAG7GZstbFVxhF5ZvLwzCRg@mail.gmail.com> <CABNx+P8L++MhGkdqZ5U4HxL4hoEDF7MRCYiERP-VwHEfgjtENA@mail.gmail.com>
+In-Reply-To: <CABNx+P8L++MhGkdqZ5U4HxL4hoEDF7MRCYiERP-VwHEfgjtENA@mail.gmail.com>
+From:   Yuri Weinstein <yweinste@redhat.com>
+Date:   Thu, 13 Feb 2020 14:13:12 -0800
+Message-ID: <CAMMFjmE=3jEq1Gneox5uZD=-AeOsSy4p2tDgYOz04P5Bk2-jjQ@mail.gmail.com>
 Subject: Re: Readiness for 14.2.8 ?
-To:     Yuri Weinstein <yweinste@redhat.com>
+To:     Nathan Cutler <presnypreklad@gmail.com>
 Cc:     Neha Ojha <nojha@redhat.com>, dev@ceph.io,
         "Development, Ceph" <ceph-devel@vger.kernel.org>,
         Abhishek Lekshmanan <abhishek@suse.com>,
@@ -80,18 +87,25 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-> I see more PRs tagged
-> https://github.com/ceph/ceph/pulls?utf8=%E2%9C%93&q=is%3Aopen+label%3Anautilus-batch-1+label%3Aneeds-qa+
+If you say so yes !
+:)
+
+On Thu, Feb 13, 2020 at 1:55 PM Nathan Cutler <presnypreklad@gmail.com> wrote:
 >
-> Casey, are those newley tagged rgw PRs a must for 14.2.8?
+> > I see more PRs tagged
+> > https://github.com/ceph/ceph/pulls?utf8=%E2%9C%93&q=is%3Aopen+label%3Anautilus-batch-1+label%3Aneeds-qa+
+> >
+> > Casey, are those newley tagged rgw PRs a must for 14.2.8?
+> >
+> > All - pls remove "needs-qa" for PRs that may wait till next point
+> > release, otherwise we are shooting at moving targets.
 >
-> All - pls remove "needs-qa" for PRs that may wait till next point
-> release, otherwise we are shooting at moving targets.
+> Sorry for putting the tags on more PRs today - it wasn't my intention
+> to delay start of 14.2.8 QE.
+>
+> Can't we just start QE testing on what is already merged into
+> Nautilus? Does it really matter which PRs are tagged?
+>
+> Nathan
+>
 
-Sorry for putting the tags on more PRs today - it wasn't my intention
-to delay start of 14.2.8 QE.
-
-Can't we just start QE testing on what is already merged into
-Nautilus? Does it really matter which PRs are tagged?
-
-Nathan
