@@ -2,126 +2,121 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A82715C113
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2020 16:09:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FE9A15C813
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2020 17:26:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbgBMPJZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 13 Feb 2020 10:09:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57986 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbgBMPJZ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:09:25 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CD2420873;
-        Thu, 13 Feb 2020 15:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581606564;
-        bh=U1KINI9OJBvUmMJBpPPE3pz8Xrjd4IMwbZjNzbHcgrE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=kQ3JjnR9XqQeGOAkConCcGRcZXMwQ4sYMw/B8cCojWkV/B7ngd+Rq77zD9aTpqVEz
-         BU3dmwSKHlArvmWgcXYiSwVshN1ZC7GtTWps83SSFwqujLa8HfQDJ4jvPP6XjBrrnE
-         AztgxwxbgfiI2OAu5/H7QHU2Ab+dcAqGLc2uwzt8=
-Message-ID: <cce1f6201480922cfb492b3099562baa2c89ab11.camel@kernel.org>
-Subject: Re: [PATCH v4 0/9] ceph: add support for asynchronous directory
- operations
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "Yan, Zheng" <ukernel@gmail.com>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>, idridryomov@gmail.com,
-        Sage Weil <sage@redhat.com>, Zheng Yan <zyan@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>
-Date:   Thu, 13 Feb 2020 10:09:23 -0500
-In-Reply-To: <CAAM7YA=h-xR3WDYFkPw27mBiaYtPXRqyftvbg4LT3tzSm14TBw@mail.gmail.com>
-References: <20200212172729.260752-1-jlayton@kernel.org>
-         <CAAM7YAmz9U4TmBMNhFV+4xiDRNM5GVwhe94wZmedwp7g4RgFoQ@mail.gmail.com>
-         <079aab73e6d189de419dce98057c687b734134fc.camel@kernel.org>
-         <CAAM7YA=h-xR3WDYFkPw27mBiaYtPXRqyftvbg4LT3tzSm14TBw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
+        id S1728261AbgBMQSX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 13 Feb 2020 11:18:23 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.202]:49874 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727725AbgBMQSW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 13 Feb 2020 11:18:22 -0500
+X-Greylist: delayed 1246 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Feb 2020 11:18:22 EST
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 80AF110AB93
+        for <ceph-devel@vger.kernel.org>; Thu, 13 Feb 2020 09:57:36 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 2GrwjMCj9vBMd2GrwjKhB2; Thu, 13 Feb 2020 09:57:36 -0600
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Um+rb49HzTPy3aKPHN4PPBR2MnF7JZXlZxEpVoL80Og=; b=Xcayo0azDhxE8evk6zOzISkC+a
+        UscPK1V/D7cNNgwGTSzhFGcAR6B2WrjvRP93mpb1Fsqi39h5TwWNN7kYUxsA9xxk2jTF4oe+m+KCH
+        9OpmMN246fJjGVFyIIuuhA1sncn0YcQZQawhW6nwozqMMX601tRPFklDF9QfWDzV0Fp9cKDew2DLf
+        1KfjoNGmHVAxdn32wiwQrlGG1Y8/wuSTQdicz+Xsnd5vlxfck+R99EWzPCxVlIMbEdFj7CBrBPbiy
+        iD9Obr+ZVl2DYbXVsAwUr2fjAvZcRZIVvallDEYMJQIxw4Y9pqerWkoVFamVJrjKPGcVQK8XTe+6V
+        texiosAA==;
+Received: from [200.68.140.15] (port=18357 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1j2Gru-003WPh-M4; Thu, 13 Feb 2020 09:57:34 -0600
+Date:   Thu, 13 Feb 2020 10:00:04 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ceph: cache: Replace zero-length array with flexible-array
+ member
+Message-ID: <20200213160004.GA4334@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 200.68.140.15
+X-Source-L: No
+X-Exim-ID: 1j2Gru-003WPh-M4
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [200.68.140.15]:18357
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 34
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2020-02-13 at 22:43 +0800, Yan, Zheng wrote:
-> On Thu, Feb 13, 2020 at 9:20 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > On Thu, 2020-02-13 at 21:05 +0800, Yan, Zheng wrote:
-> > > On Thu, Feb 13, 2020 at 1:29 AM Jeff Layton <jlayton@kernel.org> wrote:
-> > > > I've dropped the async unlink patch from testing branch and am
-> > > > resubmitting it here along with the rest of the create patches.
-> > > > 
-> > > > Zheng had pointed out that DIR_* caps should be cleared when the session
-> > > > is reconnected. The underlying submission code needed changes to
-> > > > handle that so it needed a bit of rework (along with the create code).
-> > > > 
-> > > > Since v3:
-> > > > - rework async request submission to never queue the request when the
-> > > >   session isn't open
-> > > > - clean out DIR_* caps, layouts and delegated inodes when session goes down
-> > > > - better ordering for dependent requests
-> > > > - new mount options (wsync/nowsync) instead of module option
-> > > > - more comprehensive error handling
-> > > > 
-> > > > Jeff Layton (9):
-> > > >   ceph: add flag to designate that a request is asynchronous
-> > > >   ceph: perform asynchronous unlink if we have sufficient caps
-> > > >   ceph: make ceph_fill_inode non-static
-> > > >   ceph: make __take_cap_refs non-static
-> > > >   ceph: decode interval_sets for delegated inos
-> > > >   ceph: add infrastructure for waiting for async create to complete
-> > > >   ceph: add new MDS req field to hold delegated inode number
-> > > >   ceph: cache layout in parent dir on first sync create
-> > > >   ceph: attempt to do async create when possible
-> > > > 
-> > > >  fs/ceph/caps.c               |  73 +++++++---
-> > > >  fs/ceph/dir.c                | 101 +++++++++++++-
-> > > >  fs/ceph/file.c               | 253 +++++++++++++++++++++++++++++++++--
-> > > >  fs/ceph/inode.c              |  58 ++++----
-> > > >  fs/ceph/mds_client.c         | 156 +++++++++++++++++++--
-> > > >  fs/ceph/mds_client.h         |  17 ++-
-> > > >  fs/ceph/super.c              |  20 +++
-> > > >  fs/ceph/super.h              |  21 ++-
-> > > >  include/linux/ceph/ceph_fs.h |  17 ++-
-> > > >  9 files changed, 637 insertions(+), 79 deletions(-)
-> > > > 
-> > > 
-> > > Please implement something like
-> > > https://github.com/ceph/ceph/pull/32576/commits/e9aa5ec062fab8324e13020ff2f583537e326a0b.
-> > > MDS may revoke Fx when replaying unsafe/async requests. Make mds not
-> > > do this is quite complex.
-> > > 
-> > 
-> > I added this in reconnect_caps_cb in the latest set:
-> > 
-> >         /* These are lost when the session goes away */
-> >         if (S_ISDIR(inode->i_mode)) {
-> >                 if (cap->issued & CEPH_CAP_DIR_CREATE) {
-> >                         ceph_put_string(rcu_dereference_raw(ci->i_cached_layout.pool_ns));
-> >                         memset(&ci->i_cached_layout, 0, sizeof(ci->i_cached_layout));
-> >                 }
-> >                 cap->issued &= ~(CEPH_CAP_DIR_CREATE|CEPH_CAP_DIR_UNLINK);
-> >         }
-> > 
-> 
-> It's not enough.  for async create/unlink, we need to call
-> 
-> ceph_put_cap_refs(..., CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_FOO) to release caps
-> 
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-That sounds really wrong.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-The call holds references to these caps. We can't just drop them here,
-as we could be racing with reply handling.
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-What exactly is the problem with waiting until r_callback fires to drop
-the references? We're clearing them out of the "issued" field in the
-cap, so we won't be handing out any new references. The fact that there
-are still outstanding references doesn't seem like it ought to cause any
-problem.
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
 
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/ceph/cache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
+index 270b769607a2..2f5cb6bc78e1 100644
+--- a/fs/ceph/cache.c
++++ b/fs/ceph/cache.c
+@@ -32,7 +32,7 @@ struct ceph_fscache_entry {
+ 	size_t uniq_len;
+ 	/* The following members must be last */
+ 	struct ceph_fsid fsid;
+-	char uniquifier[0];
++	char uniquifier[];
+ };
+ 
+ static const struct fscache_cookie_def ceph_fscache_fsid_object_def = {
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.25.0
 
