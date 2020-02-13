@@ -2,98 +2,92 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E87C15C82C
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2020 17:26:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 503DF15CB1B
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2020 20:25:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbgBMQY0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 13 Feb 2020 11:24:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34620 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728434AbgBMQYZ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 13 Feb 2020 11:24:25 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D651217F4;
-        Thu, 13 Feb 2020 16:24:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581611064;
-        bh=vNy+M5T5esradAFa6CisEsvfvCDB35E7jpx/Ta5uOhw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=JiXTxnOvaI+Ex9taESWBKXQEEqY+L5jZGn/Weoi/Na/NjcqcStGAfM8MgnVRDUHAa
-         isFjMY7TjALLLLlbJwiHAh5Py5yFV65k1h9O/48rhD/cI5kxtmCZmCNBvK7If95w64
-         8XkXqhQ9ZSRQx0a4o2paQleNUsVBgGtmlHIphhG0=
-Message-ID: <85db1f27d661fb24bd825b241f9d5ca3a94a1efa.camel@kernel.org>
-Subject: Re: [PATCH] ceph: cache: Replace zero-length array with
- flexible-array member
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 13 Feb 2020 11:24:23 -0500
-In-Reply-To: <20200213160004.GA4334@embeddedor>
-References: <20200213160004.GA4334@embeddedor>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
+        id S1728389AbgBMTZo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 13 Feb 2020 14:25:44 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44802 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728075AbgBMTZn (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 13 Feb 2020 14:25:43 -0500
+Received: by mail-wr1-f68.google.com with SMTP id m16so8084214wrx.11
+        for <ceph-devel@vger.kernel.org>; Thu, 13 Feb 2020 11:25:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+H2JnSpbbdauotPaYqz1xI3Rvxm6COXZjcJmu2xxVQ0=;
+        b=Z2l8OXsWBt9UQjpLSZIudr4dsHqDYlFJlxeOxarfXz/OxGSKTEfqqmdu5nPFNPp/Sb
+         aTLzbfI+30pOCLzTOsiWF5I9o6KA1Tl8VkqKWKm7+h1epot/oExCilHgLoyiqQwn+BA1
+         bbkEWJo9Xy+lery7D2OXCjWOjjI9lx/K3Jv+sB/VFGyF5HUzxhzZ3qaAGpPOemZk07s8
+         BFm9uct0g0Uqhr8gb/ZA6Mi8YJbaCeL/omFP2m1JJ/g0aMUNGKVTp0n1dyPszIU9iGos
+         gEJ/HO+ktO7L1LT/UhSNjOghJP3Lz2EQseXU4q+KhQU03f+VgbcFUKUUYY8cbgO6FzUM
+         oweA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+H2JnSpbbdauotPaYqz1xI3Rvxm6COXZjcJmu2xxVQ0=;
+        b=i3vq/m3zDcXyFXU2ZJI0TIhgalOAxWeinkEZdvKTUeuzYuVz4DMbuAoBqI0R6enDY2
+         cXxNcNbHfdIhgDpl9UtR/rs0lJWz7togfu2exVshnskGnyFC6KhlAomsDOSl3aSxVbxn
+         vAntEOwRdm35s4peTsJYp/XFk0MYmVR1Og+UjDI7hNNZO0UZUIO6uKyAXm4V7uuYZo+O
+         cOfkwmS5I5sNgRk8oms/p8nzSGSZWpWyp4E6UZHsDKIRUUlK2By3nyw4wKzd+GqdsZl4
+         1zG/fTHMFB4jV39tN57L5zjqj26Ut6LgcpugpLBsAJrSiMHmegeizQ6/Z5r5nLFSJsXm
+         jV+g==
+X-Gm-Message-State: APjAAAWcpeIRUEHk1XEmjXqm404RdYER9kpTR4l2Gc2pqiKdoyLCiNjT
+        9gpPrlz7ERzhhULTnh2dAPEAUBuYIww=
+X-Google-Smtp-Source: APXvYqyli0xT8mA6//O0iu4ORUiL4ALS93mVQPHMtayyiV+ijVdOuKLtov23spQ4GBAAvf7E7F0b5w==
+X-Received: by 2002:adf:df8f:: with SMTP id z15mr22540715wrl.282.1581621941296;
+        Thu, 13 Feb 2020 11:25:41 -0800 (PST)
+Received: from kwango.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 21sm4326227wmo.8.2020.02.13.11.25.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 11:25:40 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     Hannes Reinecke <hare@suse.de>
+Subject: [PATCH 0/5] rbd: enable multiple blk-mq queues
+Date:   Thu, 13 Feb 2020 20:26:01 +0100
+Message-Id: <20200213192606.31194-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2020-02-13 at 10:00 -0600, Gustavo A. R. Silva wrote:
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
-> 
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
-> 
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
-> 
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
-> 
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
-> 
-> This issue was found with the help of Coccinelle.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  fs/ceph/cache.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
-> index 270b769607a2..2f5cb6bc78e1 100644
-> --- a/fs/ceph/cache.c
-> +++ b/fs/ceph/cache.c
-> @@ -32,7 +32,7 @@ struct ceph_fscache_entry {
->  	size_t uniq_len;
->  	/* The following members must be last */
->  	struct ceph_fsid fsid;
-> -	char uniquifier[0];
-> +	char uniquifier[];
->  };
->  
->  static const struct fscache_cookie_def ceph_fscache_fsid_object_def = {
+Hi Hannes,
 
-Meh, ok. Merged into the ceph-client/testing branch. Should make v5.7
-barring unforseen issues.
+Here is what I intend to queue for 5.7.  I didn't hear from you on
+the need to protect the object request list, the impact of image
+request state_mutex on performance or the problem with queue_rq(),
+so I concentrated on the tail of your series and reworked the payload
+patch to avoid acquiring header_rwsem at least twice for each I/O.
+
+I observed the same ~25-30% improvement in some rough synthetic tests
+on a laptop (random 4k reads with very high queue depth in particular).
+I assume you did your testing on real hardware -- it would be great if
+you could share some details.
 
 Thanks,
+
+                Ilya
+
+
+Hannes Reinecke (2):
+  rbd: kill img_request kref
+  rbd: enable multiple blk-mq queues
+
+Ilya Dryomov (3):
+  rbd: get rid of img_request_layered_clear()
+  rbd: acquire header_rwsem just once in rbd_queue_workfn()
+  rbd: embed image request in blk-mq pdu
+
+ drivers/block/rbd.c | 212 +++++++++++++++++---------------------------
+ 1 file changed, 79 insertions(+), 133 deletions(-)
+
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.19.2
 
