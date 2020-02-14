@@ -2,38 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CC5115DFDE
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2020 17:11:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A06D915E106
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2020 17:16:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391661AbgBNQKy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 Feb 2020 11:10:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36614 "EHLO mail.kernel.org"
+        id S2404316AbgBNQQi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 Feb 2020 11:16:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391614AbgBNQKx (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:10:53 -0500
+        id S2404308AbgBNQQh (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:16:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED2A22467E;
-        Fri, 14 Feb 2020 16:10:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7818324698;
+        Fri, 14 Feb 2020 16:16:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696643;
-        bh=/dNbojVtO2nJ5mDwyxW1lvQ+BYNWbSmSuinIw8T0NfI=;
+        s=default; t=1581696997;
+        bh=alg3hx0ZsAVDxehLFVHesumGzR/P6vdWyx9Oo5Cvnrc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nyKkBjkha/h2c5FcviJyCJ6ERFmvyI0MproT7h+ohH2/89EjTbIH2mwy9GbK1XhGl
-         YLIQviG4DnM2xQyV2iYEbtDmivodwfcAnfKe8C9p5MtU7YFCbBSGvMxRM7Ij+EYJMC
-         URjTKOD1fgI8GBmrDKaN2Su/KpY+C64ONJk7Ngcg=
+        b=WNK5il/V09FrjRUBslZBhYAAMXBmM3UuKD7Zyh//RkSDKp8UGJ0oRnDL4x5rNwKaU
+         QOJW3W14pkcnapsXEXCkXLBktD1ulOLbxf9ecHTGslC4Zi3JM/8u2nv/9yuPVTGfle
+         Pd80mOLy9/b7E5GOS/FtXhg/txhFh1hPnFmIYN74=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org,
         linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 420/459] rbd: work around -Wuninitialized warning
-Date:   Fri, 14 Feb 2020 11:01:10 -0500
-Message-Id: <20200214160149.11681-420-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 230/252] rbd: work around -Wuninitialized warning
+Date:   Fri, 14 Feb 2020 11:11:25 -0500
+Message-Id: <20200214161147.15842-230-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
-References: <20200214160149.11681-1-sashal@kernel.org>
+In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
+References: <20200214161147.15842-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -67,10 +67,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 13527a0b4e448..a67315786db47 100644
+index b942f4c8cea8c..d3ad1b8c133e6 100644
 --- a/drivers/block/rbd.c
 +++ b/drivers/block/rbd.c
-@@ -2739,7 +2739,7 @@ static int rbd_img_fill_nodata(struct rbd_img_request *img_req,
+@@ -2097,7 +2097,7 @@ static int rbd_img_fill_nodata(struct rbd_img_request *img_req,
  			       u64 off, u64 len)
  {
  	struct ceph_file_extent ex = { off, len };
