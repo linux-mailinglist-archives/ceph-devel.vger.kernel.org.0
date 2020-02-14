@@ -2,149 +2,371 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3ED815CFB1
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2020 03:10:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0635E15CFD8
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2020 03:18:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbgBNCKn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 13 Feb 2020 21:10:43 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44614 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728141AbgBNCKn (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 13 Feb 2020 21:10:43 -0500
-Received: by mail-qt1-f193.google.com with SMTP id k7so5975008qth.11
-        for <ceph-devel@vger.kernel.org>; Thu, 13 Feb 2020 18:10:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0P1ytdldFmBUhD5+r87pMWpIIIMms6t0kAq9cpfZNEc=;
-        b=RQlwJOZbpn5AoBFUsLBMzQLv1WDoNZSNxv9F9XimWjfsUEYiJ+78K7GhsNCCAe6eyB
-         gZLY5iQ+mxmh3cYOCLOSUpNsWp8hiyV//qjvIxVjOTv5fwTxfib964eWiIWoISpbIBkw
-         cyvC1g9NaIOpG/MMYciDW2rU4UusXLhKe10Q2AwkN9auOOoL5NzJuPNd5Qxaa564fNgt
-         +XCl1/cYY8wnzN5Rq5cad321Tnq3+Ppr2IMY/ZhMA5Fq0y4BsxSHIq4H+xtQVOHLo4FN
-         RsTzQLg89hEE89OigGVWhEuE8JktCwh33utFiy4yDS1RgfQVxbuCuaRnDiSKjitKQSux
-         Q1XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0P1ytdldFmBUhD5+r87pMWpIIIMms6t0kAq9cpfZNEc=;
-        b=sT6JwjVdQ4fJTyd4bMTRXXTO6hVDHL9nk/vQHVaRIkkZpcS4voYYch978JCKmJASQf
-         w3x8PV3jwFd1Z0FUxRxlNd7/DUlOZ/czUiw5KiDl0Qf7dotVY9adRcvb9ot7LBcXpC1Z
-         wQBFZw23a6ggkgLQIQHq0ov67JPPJ0n5Dg8Fp24d4BcFmQhqenSUMxwRcqfZcH1GDSyU
-         CyWCH6tzAPzNvQs8pLjEKGOMSiFMkb4a+/MobZ/l7FomYjU+xCfz6CR/q9N6H/7xfovs
-         wgF2EDtOjT3FeHwu/tFRqwCHRoKK9Vp6ZQh+8eW24S9seaKNZW6yVUaDiC7rU527dFlr
-         TUkw==
-X-Gm-Message-State: APjAAAUqzfoCb0KKvHrbTYwyioDjgnMgdsDwxD0MF8XB4EDJ14u/26Di
-        XaAJrOjgiYHcTBCptO7/yMurxth7QIwiBfQvNXI=
-X-Google-Smtp-Source: APXvYqzc0HQMnWpPWBKcnIzAn6vXNFLAMj3y/9bSLjnkyK9YJ/keTdSN429z1NI1PWDqdJdsPbfbk0IA1Pm3o9i6Fik=
-X-Received: by 2002:ac8:602:: with SMTP id d2mr816484qth.245.1581646240860;
- Thu, 13 Feb 2020 18:10:40 -0800 (PST)
+        id S1728242AbgBNCSs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 13 Feb 2020 21:18:48 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:53766 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728173AbgBNCSs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 13 Feb 2020 21:18:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581646726;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=QkQkaNlrRwVgRkQ/tIK4xRipsPgxeU3FlBJ0Hp9L9Hs=;
+        b=YRydVwFhkZOfcfGjzMtBuhtSANmzg3OWhRNkyi/TLaG/tsT5OVOOZudd3VN3C3p5r+xKmU
+        LRwnE0Mskc+Bdzx8JJi6/OZha7PoJywVmDFNdBWfQe9b7QF9N7yYnyMmGgEe35SUP29QVr
+        A8Y2SlYkbTTwOch2GVIWoPOROhw1Ai8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-189-wKnLdRCNMp6vOqitjU108g-1; Thu, 13 Feb 2020 21:18:38 -0500
+X-MC-Unique: wKnLdRCNMp6vOqitjU108g-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1DEEA1005516;
+        Fri, 14 Feb 2020 02:18:37 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-209.pek2.redhat.com [10.72.12.209])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 017045C12E;
+        Fri, 14 Feb 2020 02:18:31 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org, idryomov@gmail.com
+Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v2] ceph: fs add reconfiguring superblock parameters support
+Date:   Thu, 13 Feb 2020 21:18:25 -0500
+Message-Id: <20200214021825.1799-1-xiubli@redhat.com>
 MIME-Version: 1.0
-References: <20200212172729.260752-1-jlayton@kernel.org> <CAAM7YAmz9U4TmBMNhFV+4xiDRNM5GVwhe94wZmedwp7g4RgFoQ@mail.gmail.com>
- <079aab73e6d189de419dce98057c687b734134fc.camel@kernel.org>
- <CAAM7YA=h-xR3WDYFkPw27mBiaYtPXRqyftvbg4LT3tzSm14TBw@mail.gmail.com> <cce1f6201480922cfb492b3099562baa2c89ab11.camel@kernel.org>
-In-Reply-To: <cce1f6201480922cfb492b3099562baa2c89ab11.camel@kernel.org>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Fri, 14 Feb 2020 10:10:28 +0800
-Message-ID: <CAAM7YAn8MR4tO3Q5dKkYKhz-ubN7+_3Voj4dzXU3dTw=001PkA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/9] ceph: add support for asynchronous directory operations
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>, idridryomov@gmail.com,
-        Sage Weil <sage@redhat.com>, Zheng Yan <zyan@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 11:09 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> On Thu, 2020-02-13 at 22:43 +0800, Yan, Zheng wrote:
-> > On Thu, Feb 13, 2020 at 9:20 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > On Thu, 2020-02-13 at 21:05 +0800, Yan, Zheng wrote:
-> > > > On Thu, Feb 13, 2020 at 1:29 AM Jeff Layton <jlayton@kernel.org> wrote:
-> > > > > I've dropped the async unlink patch from testing branch and am
-> > > > > resubmitting it here along with the rest of the create patches.
-> > > > >
-> > > > > Zheng had pointed out that DIR_* caps should be cleared when the session
-> > > > > is reconnected. The underlying submission code needed changes to
-> > > > > handle that so it needed a bit of rework (along with the create code).
-> > > > >
-> > > > > Since v3:
-> > > > > - rework async request submission to never queue the request when the
-> > > > >   session isn't open
-> > > > > - clean out DIR_* caps, layouts and delegated inodes when session goes down
-> > > > > - better ordering for dependent requests
-> > > > > - new mount options (wsync/nowsync) instead of module option
-> > > > > - more comprehensive error handling
-> > > > >
-> > > > > Jeff Layton (9):
-> > > > >   ceph: add flag to designate that a request is asynchronous
-> > > > >   ceph: perform asynchronous unlink if we have sufficient caps
-> > > > >   ceph: make ceph_fill_inode non-static
-> > > > >   ceph: make __take_cap_refs non-static
-> > > > >   ceph: decode interval_sets for delegated inos
-> > > > >   ceph: add infrastructure for waiting for async create to complete
-> > > > >   ceph: add new MDS req field to hold delegated inode number
-> > > > >   ceph: cache layout in parent dir on first sync create
-> > > > >   ceph: attempt to do async create when possible
-> > > > >
-> > > > >  fs/ceph/caps.c               |  73 +++++++---
-> > > > >  fs/ceph/dir.c                | 101 +++++++++++++-
-> > > > >  fs/ceph/file.c               | 253 +++++++++++++++++++++++++++++++++--
-> > > > >  fs/ceph/inode.c              |  58 ++++----
-> > > > >  fs/ceph/mds_client.c         | 156 +++++++++++++++++++--
-> > > > >  fs/ceph/mds_client.h         |  17 ++-
-> > > > >  fs/ceph/super.c              |  20 +++
-> > > > >  fs/ceph/super.h              |  21 ++-
-> > > > >  include/linux/ceph/ceph_fs.h |  17 ++-
-> > > > >  9 files changed, 637 insertions(+), 79 deletions(-)
-> > > > >
-> > > >
-> > > > Please implement something like
-> > > > https://github.com/ceph/ceph/pull/32576/commits/e9aa5ec062fab8324e13020ff2f583537e326a0b.
-> > > > MDS may revoke Fx when replaying unsafe/async requests. Make mds not
-> > > > do this is quite complex.
-> > > >
-> > >
-> > > I added this in reconnect_caps_cb in the latest set:
-> > >
-> > >         /* These are lost when the session goes away */
-> > >         if (S_ISDIR(inode->i_mode)) {
-> > >                 if (cap->issued & CEPH_CAP_DIR_CREATE) {
-> > >                         ceph_put_string(rcu_dereference_raw(ci->i_cached_layout.pool_ns));
-> > >                         memset(&ci->i_cached_layout, 0, sizeof(ci->i_cached_layout));
-> > >                 }
-> > >                 cap->issued &= ~(CEPH_CAP_DIR_CREATE|CEPH_CAP_DIR_UNLINK);
-> > >         }
-> > >
-> >
-> > It's not enough.  for async create/unlink, we need to call
-> >
-> > ceph_put_cap_refs(..., CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_FOO) to release caps
-> >
->
-> That sounds really wrong.
->
-> The call holds references to these caps. We can't just drop them here,
-> as we could be racing with reply handling.
->
-> What exactly is the problem with waiting until r_callback fires to drop
-> the references? We're clearing them out of the "issued" field in the
-> cap, so we won't be handing out any new references. The fact that there
-> are still outstanding references doesn't seem like it ought to cause any
-> problem.
->
+From: Xiubo Li <xiubli@redhat.com>
 
-see https://github.com/ceph/ceph/pull/32576/commits/e9aa5ec062fab8324e13020ff2f583537e326a0b.
+This will enable the remount and reconfiguring superblock params
+for the fs. Currently some mount options are not allowed to be
+reconfigured.
 
-Also need to make r_callback not release cap refs if cap ref is
-already release at reconnect.  The problem is that mds may want to
-revoke Fx when replaying unsafe/async requests. (same reason that we
-can't send getattr to fetch inline data while holding Fr cap)
+It will working like:
+$ mount.ceph :/ /mnt/cephfs -o remount,mount_timeout=3D100
 
-> --
-> Jeff Layton <jlayton@kernel.org>
->
+URL:https://tracker.ceph.com/issues/44071
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+
+Changed in V2:
+- remove low level options from reconfiguration.
+- switch to seqlock
+
+ fs/ceph/addr.c       |  10 +++-
+ fs/ceph/caps.c       |  14 +++--
+ fs/ceph/mds_client.c |   5 +-
+ fs/ceph/super.c      | 137 ++++++++++++++++++++++++++++++++++++-------
+ fs/ceph/super.h      |   2 +
+ 5 files changed, 138 insertions(+), 30 deletions(-)
+
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index d14392b58f16..5c0e6c2d3fde 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -882,6 +882,7 @@ static int ceph_writepages_start(struct address_space=
+ *mapping,
+ 	struct ceph_writeback_ctl ceph_wbc;
+ 	bool should_loop, range_whole =3D false;
+ 	bool done =3D false;
++	unsigned int seq;
+=20
+ 	dout("writepages_start %p (mode=3D%s)\n", inode,
+ 	     wbc->sync_mode =3D=3D WB_SYNC_NONE ? "NONE" :
+@@ -896,8 +897,13 @@ static int ceph_writepages_start(struct address_spac=
+e *mapping,
+ 		mapping_set_error(mapping, -EIO);
+ 		return -EIO; /* we're in a forced umount, don't write! */
+ 	}
+-	if (fsc->mount_options->wsize < wsize)
+-		wsize =3D fsc->mount_options->wsize;
++
++	do {
++		seq =3D read_seqbegin(&fsc->mount_options->opt_seqlock);
++
++		if (fsc->mount_options->wsize < wsize)
++			wsize =3D fsc->mount_options->wsize;
++	} while (read_seqretry(&fsc->mount_options->opt_seqlock, seq));
+=20
+ 	pagevec_init(&pvec);
+=20
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index b4f122eb74bb..daa7eef13e3a 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -490,11 +490,17 @@ static void __cap_set_timeouts(struct ceph_mds_clie=
+nt *mdsc,
+ 			       struct ceph_inode_info *ci)
+ {
+ 	struct ceph_mount_options *opt =3D mdsc->fsc->mount_options;
++	unsigned int seq;
++
++	do {
++		seq =3D read_seqbegin(&opt->opt_seqlock);
++
++		ci->i_hold_caps_min =3D round_jiffies(jiffies +
++					opt->caps_wanted_delay_min * HZ);
++		ci->i_hold_caps_max =3D round_jiffies(jiffies +
++					opt->caps_wanted_delay_max * HZ);
++	} while (read_seqretry(&opt->opt_seqlock, seq));
+=20
+-	ci->i_hold_caps_min =3D round_jiffies(jiffies +
+-					    opt->caps_wanted_delay_min * HZ);
+-	ci->i_hold_caps_max =3D round_jiffies(jiffies +
+-					    opt->caps_wanted_delay_max * HZ);
+ 	dout("__cap_set_timeouts %p min %lu max %lu\n", &ci->vfs_inode,
+ 	     ci->i_hold_caps_min - jiffies, ci->i_hold_caps_max - jiffies);
+ }
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 376e7cf1685f..451c3727cd0b 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2099,6 +2099,7 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds=
+_request *req,
+ 	struct ceph_inode_info *ci =3D ceph_inode(dir);
+ 	struct ceph_mds_reply_info_parsed *rinfo =3D &req->r_reply_info;
+ 	struct ceph_mount_options *opt =3D req->r_mdsc->fsc->mount_options;
++	unsigned int max_readdir =3D opt->max_readdir;
+ 	size_t size =3D sizeof(struct ceph_mds_reply_dir_entry);
+ 	unsigned int num_entries;
+ 	int order;
+@@ -2107,7 +2108,7 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds=
+_request *req,
+ 	num_entries =3D ci->i_files + ci->i_subdirs;
+ 	spin_unlock(&ci->i_ceph_lock);
+ 	num_entries =3D max(num_entries, 1U);
+-	num_entries =3D min(num_entries, opt->max_readdir);
++	num_entries =3D min(num_entries, max_readdir);
+=20
+ 	order =3D get_order(size * num_entries);
+ 	while (order >=3D 0) {
+@@ -2122,7 +2123,7 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds=
+_request *req,
+ 		return -ENOMEM;
+=20
+ 	num_entries =3D (PAGE_SIZE << order) / size;
+-	num_entries =3D min(num_entries, opt->max_readdir);
++	num_entries =3D min(num_entries, max_readdir);
+=20
+ 	rinfo->dir_buf_size =3D PAGE_SIZE << order;
+ 	req->r_num_caps =3D num_entries + 1;
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 7cb62d4cf812..500c0209041f 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -271,8 +271,14 @@ static int ceph_parse_mount_param(struct fs_context =
+*fc,
+ 	int token, ret;
+=20
+ 	ret =3D ceph_parse_param(param, pctx->copts, fc);
+-	if (ret !=3D -ENOPARAM)
+-		return ret;
++	if (ret !=3D -ENOPARAM) {
++		/* Low level options are not reconfigurable */
++		if (fc->purpose =3D=3D FS_CONTEXT_FOR_RECONFIGURE)
++			return invalf(fc, "ceph: reconfiguration of %s not allowed",
++				      param->key);
++		else
++			return ret;
++	}
+=20
+ 	token =3D fs_parse(fc, &ceph_mount_parameters, param, &result);
+ 	dout("%s fs_parse '%s' token %d\n", __func__, param->key, token);
+@@ -1070,14 +1076,17 @@ static int ceph_compare_super(struct super_block =
+*sb, struct fs_context *fc)
+  */
+ static atomic_long_t bdi_seq =3D ATOMIC_LONG_INIT(0);
+=20
+-static int ceph_setup_bdi(struct super_block *sb, struct ceph_fs_client =
+*fsc)
++static int ceph_setup_bdi(struct super_block *sb, struct ceph_fs_client =
+*fsc,
++			  bool update)
+ {
+ 	int err;
+=20
+-	err =3D super_setup_bdi_name(sb, "ceph-%ld",
+-				   atomic_long_inc_return(&bdi_seq));
+-	if (err)
+-		return err;
++	if (!update) {
++		err =3D super_setup_bdi_name(sb, "ceph-%ld",
++					   atomic_long_inc_return(&bdi_seq));
++		if (err)
++			return err;
++	}
+=20
+ 	/* set ra_pages based on rasize mount option? */
+ 	sb->s_bdi->ra_pages =3D fsc->mount_options->rasize >> PAGE_SHIFT;
+@@ -1133,7 +1142,7 @@ static int ceph_get_tree(struct fs_context *fc)
+ 		dout("get_sb got existing client %p\n", fsc);
+ 	} else {
+ 		dout("get_sb using new client %p\n", fsc);
+-		err =3D ceph_setup_bdi(sb, fsc);
++		err =3D ceph_setup_bdi(sb, fsc, false);
+ 		if (err < 0)
+ 			goto out_splat;
+ 	}
+@@ -1178,7 +1187,52 @@ static void ceph_free_fc(struct fs_context *fc)
+=20
+ static int ceph_reconfigure_fc(struct fs_context *fc)
+ {
+-	sync_filesystem(fc->root->d_sb);
++	struct super_block *sb =3D fc->root->d_sb;
++	struct ceph_fs_client *fsc =3D ceph_sb_to_client(sb);
++	struct ceph_mount_options *fsopt =3D fsc->mount_options;
++	struct ceph_parse_opts_ctx *pctx =3D fc->fs_private;
++	struct ceph_mount_options *new_fsopt =3D pctx->opts;
++
++	sync_filesystem(sb);
++
++	if (strcmp_null(new_fsopt->snapdir_name, fsopt->snapdir_name))
++		return invalf(fc, "ceph: reconfiguration of snapdir_name not allowed")=
+;
++
++	if (strcmp_null(new_fsopt->mds_namespace, fsopt->mds_namespace))
++		return invalf(fc, "ceph: reconfiguration of mds_namespace not allowed"=
+);
++
++	fsopt->rsize =3D new_fsopt->rsize;
++	fsopt->rasize =3D new_fsopt->rasize;
++	ceph_setup_bdi(sb, fsc, true);
++
++	write_seqlock(&fsopt->opt_seqlock);
++	fsopt->wsize =3D new_fsopt->wsize;
++	fsopt->caps_wanted_delay_min =3D new_fsopt->caps_wanted_delay_min;
++	fsopt->caps_wanted_delay_max =3D new_fsopt->caps_wanted_delay_max;
++	write_sequnlock(&fsopt->opt_seqlock);
++
++#ifdef CONFIG_CEPH_FSCACHE
++	if (strcmp_null(new_fsopt->fscache_uniq, fsopt->fscache_uniq) ||
++	    ((new_fsopt->flags & CEPH_MOUNT_OPT_FSCACHE) !=3D
++	     (fsopt->flags & CEPH_MOUNT_OPT_FSCACHE)))
++		return invalf(fc, "ceph: reconfiguration of fscache not allowed");
++#endif
++
++	fsopt->flags =3D new_fsopt->flags;
++
++	fsopt->max_readdir_bytes =3D new_fsopt->max_readdir_bytes;
++	fsopt->congestion_kb =3D new_fsopt->congestion_kb;
++
++	fsopt->caps_max =3D new_fsopt->caps_max;
++	fsopt->max_readdir =3D new_fsopt->max_readdir;
++	ceph_adjust_caps_max_min(fsc->mdsc, fsopt);
++
++#ifdef CONFIG_CEPH_FS_POSIX_ACL
++	if (fc->sb_flags & SB_POSIXACL)
++		sb->s_flags |=3D SB_POSIXACL;
++	else
++		sb->s_flags &=3D ~SB_POSIXACL;
++#endif
+ 	return 0;
+ }
+=20
+@@ -1209,25 +1263,64 @@ static int ceph_init_fs_context(struct fs_context=
+ *fc)
+ 	if (!pctx->opts)
+ 		goto nomem;
+=20
++#ifdef CONFIG_CEPH_FS_POSIX_ACL
++	fc->sb_flags |=3D SB_POSIXACL;
++#endif
++
+ 	fsopt =3D pctx->opts;
+-	fsopt->flags =3D CEPH_MOUNT_OPT_DEFAULT;
+=20
+-	fsopt->wsize =3D CEPH_MAX_WRITE_SIZE;
+-	fsopt->rsize =3D CEPH_MAX_READ_SIZE;
+-	fsopt->rasize =3D CEPH_RASIZE_DEFAULT;
+-	fsopt->snapdir_name =3D kstrdup(CEPH_SNAPDIRNAME_DEFAULT, GFP_KERNEL);
+-	if (!fsopt->snapdir_name)
+-		goto nomem;
++	if (fc->purpose =3D=3D FS_CONTEXT_FOR_RECONFIGURE) {
++		struct super_block *sb =3D fc->root->d_sb;
++		struct ceph_fs_client *fsc =3D ceph_sb_to_client(sb);
++		struct ceph_mount_options *old =3D fsc->mount_options;
+=20
+-	fsopt->caps_wanted_delay_min =3D CEPH_CAPS_WANTED_DELAY_MIN_DEFAULT;
+-	fsopt->caps_wanted_delay_max =3D CEPH_CAPS_WANTED_DELAY_MAX_DEFAULT;
+-	fsopt->max_readdir =3D CEPH_MAX_READDIR_DEFAULT;
+-	fsopt->max_readdir_bytes =3D CEPH_MAX_READDIR_BYTES_DEFAULT;
+-	fsopt->congestion_kb =3D default_congestion_kb();
++		fsopt->flags =3D old->flags;
++
++		fsopt->wsize =3D old->wsize;
++		fsopt->rsize =3D old->rsize;
++		fsopt->rasize =3D old->rasize;
++
++		if (old->fscache_uniq) {
++			fsopt->fscache_uniq =3D kstrdup(old->fscache_uniq,
++						      GFP_KERNEL);
++			if (!fsopt->fscache_uniq)
++				goto nomem;
++		}
++
++		fsopt->snapdir_name =3D kstrdup(old->snapdir_name, GFP_KERNEL);
++		if (!fsopt->snapdir_name)
++			goto nomem;
++
++		fsopt->caps_wanted_delay_min =3D old->caps_wanted_delay_min;
++		fsopt->caps_wanted_delay_max =3D old->caps_wanted_delay_max;
++		fsopt->max_readdir =3D old->max_readdir;
++		fsopt->max_readdir_bytes =3D old->max_readdir_bytes;
++		fsopt->congestion_kb =3D old->congestion_kb;
++		fsopt->caps_max =3D old->caps_max;
++		fsopt->max_readdir =3D old->max_readdir;
+=20
+ #ifdef CONFIG_CEPH_FS_POSIX_ACL
+-	fc->sb_flags |=3D SB_POSIXACL;
++		if (!(sb->s_flags & SB_POSIXACL))
++			fc->sb_flags &=3D ~SB_POSIXACL;
+ #endif
++	} else {
++		fsopt->flags =3D CEPH_MOUNT_OPT_DEFAULT;
++
++		fsopt->wsize =3D CEPH_MAX_WRITE_SIZE;
++		fsopt->rsize =3D CEPH_MAX_READ_SIZE;
++		fsopt->rasize =3D CEPH_RASIZE_DEFAULT;
++
++		fsopt->snapdir_name =3D kstrdup(CEPH_SNAPDIRNAME_DEFAULT, GFP_KERNEL);
++		if (!fsopt->snapdir_name)
++			goto nomem;
++
++		fsopt->caps_wanted_delay_min =3D CEPH_CAPS_WANTED_DELAY_MIN_DEFAULT;
++		fsopt->caps_wanted_delay_max =3D CEPH_CAPS_WANTED_DELAY_MAX_DEFAULT;
++		fsopt->max_readdir =3D CEPH_MAX_READDIR_DEFAULT;
++		fsopt->max_readdir_bytes =3D CEPH_MAX_READDIR_BYTES_DEFAULT;
++		fsopt->congestion_kb =3D default_congestion_kb();
++		seqlock_init(&fsopt->opt_seqlock);
++	}
+=20
+ 	fc->fs_private =3D pctx;
+ 	fc->ops =3D &ceph_context_ops;
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 2acc9cc2d23a..aa0e7217a62f 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -96,6 +96,8 @@ struct ceph_mount_options {
+ 	char *mds_namespace;  /* default NULL */
+ 	char *server_path;    /* default  "/" */
+ 	char *fscache_uniq;   /* default NULL */
++
++	seqlock_t opt_seqlock;
+ };
+=20
+ struct ceph_fs_client {
+--=20
+2.21.0
+
