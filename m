@@ -2,98 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1258D15E668
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2020 17:47:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17C2815E6B6
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2020 17:50:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392902AbgBNQrv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 Feb 2020 11:47:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54862 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392905AbgBNQUv (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:20:51 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3559A24746;
-        Fri, 14 Feb 2020 16:20:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697251;
-        bh=M5ag27vgaXE6PPGIrbvGYM2pabD/lISu0sr/LYU9ZL8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=foey/sF3rfZJSkJ9d4F8YSPyRetGu5+nqnZkpwAlEj6NbAaEECikNzImA5BpyXaWC
-         WPBgGaARD77YtMQDHOMu14UtsV5o0g4/PBO5vDT9UrNdur1nG4TOQUsFINuc1B/N43
-         5a1WcwbGYkPCrUznZPIhyRKP2HrdYL4qA/51pllg=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 168/186] ceph: check availability of mds cluster on mount after wait timeout
-Date:   Fri, 14 Feb 2020 11:16:57 -0500
-Message-Id: <20200214161715.18113-168-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
-References: <20200214161715.18113-1-sashal@kernel.org>
+        id S1730060AbgBNQtl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 Feb 2020 11:49:41 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43112 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729672AbgBNQte (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 Feb 2020 11:49:34 -0500
+Received: by mail-wr1-f65.google.com with SMTP id r11so11619500wrq.10;
+        Fri, 14 Feb 2020 08:49:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qPIxBcWGN8qvI0FZX+szZRmMvh0tAzoO6Zgc4GjqA8Y=;
+        b=p74thIN9AMW7PkIxOxQwb7BJoWY4i+0US7GZ29w+1JxqJf6SUPlZGUYhJo5iANvdPU
+         mqYdNx14sNyhSIlvxOZJY0Xs7WH7+aW4222JXhKcWqKuzd1mOzuLjVWllgtO+dbxqij5
+         +VLavUpjBIl79UXSY4+fMIbE1lOqEYnec9C5gOjPXHzc3XjSUcgzoJiTSiV2wOd75fUv
+         iCatxvIS1tRKmMYM5p5IG0isXX2YGO6QT4Fh2lgbfCOhuAFQI2SiRtKzTv428dMisoRO
+         kkuUK5Z7M7Lu3JSkUNi0FERorj6iOTE/0dmd5Ake+eu8S5XkFn/FLVhpU0kCXANQ23PD
+         phSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qPIxBcWGN8qvI0FZX+szZRmMvh0tAzoO6Zgc4GjqA8Y=;
+        b=cKu6Th3ZZuXuCS/A1nwe7cVHm1at2GqlIg80Z2lIt4YD4s3ZjniXILTpgGW7vPftEa
+         5h+nVGt6Af1LhgJr+rTEWhGS8nlPnNsPoC8vpch2mnwpTKrJ1KV5MmAZRxZ6NkQyIPgF
+         PFkL6UTsNqMlekL34b4KPMLFRIKQPX1dEQWrtzbVcqoPeIlHtYKUwaRvx1kGfX2watNm
+         0dY9/GGIJr9cZL2Uk0UgsSuZuL1kK+8CpNaowN0RZ3dvvt4jbbNIM3IiF4auq77b6+Sh
+         3zZmORoZj2M20VHTLNHpv+6hO/p/8bDUYNKf4O2kUl2S0ml7YBRcWI+fO3A8VT792b2Z
+         eESg==
+X-Gm-Message-State: APjAAAXhrUxYImzXs/JsVue6HYN2qK6DqV7DEl1az9woGF+QJz5sQdpR
+        etm+ZCCdxY3EWhR5P2oBsNCWa4rYYTY=
+X-Google-Smtp-Source: APXvYqzOOar2uuq59Crmvf5/mtFOp1naDnTTJMfC1uVazTi98BMDyC5aLvLpSDy7BKveSnawuakKbg==
+X-Received: by 2002:a5d:484d:: with SMTP id n13mr4851285wrs.420.1581698972039;
+        Fri, 14 Feb 2020 08:49:32 -0800 (PST)
+Received: from kwango.local (ip-94-112-129-237.net.upcbroadband.cz. [94.112.129.237])
+        by smtp.gmail.com with ESMTPSA id o9sm4860233wrw.20.2020.02.14.08.49.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2020 08:49:31 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 5.6-rc2
+Date:   Fri, 14 Feb 2020 17:49:44 +0100
+Message-Id: <20200214164944.6044-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+Hi Linus,
 
-[ Upstream commit 97820058fb2831a4b203981fa2566ceaaa396103 ]
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
-If all the MDS daemons are down for some reason, then the first mount
-attempt will fail with EIO after the mount request times out.  A mount
-attempt will also fail with EIO if all of the MDS's are laggy.
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
 
-This patch changes the code to return -EHOSTUNREACH in these situations
-and adds a pr_info error message to help the admin determine the cause.
+are available in the Git repository at:
 
-URL: https://tracker.ceph.com/issues/4386
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ceph/mds_client.c | 3 +--
- fs/ceph/super.c      | 5 +++++
- 2 files changed, 6 insertions(+), 2 deletions(-)
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.6-rc2
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index b968334f841e8..f36ddfea4997e 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2261,8 +2261,7 @@ static int __do_request(struct ceph_mds_client *mdsc,
- 		if (!(mdsc->fsc->mount_options->flags &
- 		      CEPH_MOUNT_OPT_MOUNTWAIT) &&
- 		    !ceph_mdsmap_is_cluster_available(mdsc->mdsmap)) {
--			err = -ENOENT;
--			pr_info("probably no mds server is up\n");
-+			err = -EHOSTUNREACH;
- 			goto finish;
- 		}
- 	}
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 088c4488b4492..6b10b20bfe32b 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -1055,6 +1055,11 @@ static struct dentry *ceph_mount(struct file_system_type *fs_type,
- 	return res;
- 
- out_splat:
-+	if (!ceph_mdsmap_is_cluster_available(fsc->mdsc->mdsmap)) {
-+		pr_info("No mds server is up or the cluster is laggy\n");
-+		err = -EHOSTUNREACH;
-+	}
-+
- 	ceph_mdsc_close_sessions(fsc->mdsc);
- 	deactivate_locked_super(sb);
- 	goto out_final;
--- 
-2.20.1
+for you to fetch changes up to 3b20bc2fe4c0cfd82d35838965dc7ff0b93415c6:
 
+  ceph: noacl mount option is effectively ignored (2020-02-11 17:04:40 +0100)
+
+----------------------------------------------------------------
+A patch to make O_DIRECT | O_APPEND combination work better, a redo
+of server path canonicalization patch that went into -rc1 and a fixup
+for noacl mount option that got broken by the conversion to the new
+mount API in 5.5.
+
+----------------------------------------------------------------
+Ilya Dryomov (1):
+      ceph: canonicalize server path in place
+
+Xiubo Li (2):
+      ceph: do not execute direct write in parallel if O_APPEND is specified
+      ceph: noacl mount option is effectively ignored
+
+ fs/ceph/file.c  |  17 +++++---
+ fs/ceph/super.c | 129 ++++++++++++++------------------------------------------
+ fs/ceph/super.h |   2 +-
+ 3 files changed, 44 insertions(+), 104 deletions(-)
