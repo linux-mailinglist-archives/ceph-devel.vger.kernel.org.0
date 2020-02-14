@@ -2,90 +2,83 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E23715D3D6
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2020 09:32:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CC5115DFDE
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2020 17:11:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728924AbgBNIcl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 Feb 2020 03:32:41 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34899 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728779AbgBNIck (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 Feb 2020 03:32:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581669160;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=1OxTtMu0cxg+c19swd1BYtnnWitDZnJpLOA5rAs7AE8=;
-        b=fCMVLF1WUx9eP9l2g5DGscZyjJ/fdHjFsvSu4ua90mpnZTbzXfoNxOQDhWp0CR2eZX7kRt
-        AJcDEhtgn9G3hji1EBGivGyompWVCsc264BWz4DY3l/cOpJTasp1Y3/pjqsCF99DRIKxvX
-        ghjbFQ2b16hcWwaDEePSnKiemy4TQSI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-357-GIkYSM5EO0WjSiK31EPrBQ-1; Fri, 14 Feb 2020 03:32:37 -0500
-X-MC-Unique: GIkYSM5EO0WjSiK31EPrBQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2391661AbgBNQKy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 Feb 2020 11:10:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36614 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391614AbgBNQKx (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:10:53 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 90224107ACCD;
-        Fri, 14 Feb 2020 08:32:36 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-209.pek2.redhat.com [10.72.12.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6AFF35C1C3;
-        Fri, 14 Feb 2020 08:32:31 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org, idryomov@gmail.com
-Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
-        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: switch to ceph_test_mount_opt helper
-Date:   Fri, 14 Feb 2020 03:32:25 -0500
-Message-Id: <20200214083225.2804-1-xiubli@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id ED2A22467E;
+        Fri, 14 Feb 2020 16:10:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581696643;
+        bh=/dNbojVtO2nJ5mDwyxW1lvQ+BYNWbSmSuinIw8T0NfI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nyKkBjkha/h2c5FcviJyCJ6ERFmvyI0MproT7h+ohH2/89EjTbIH2mwy9GbK1XhGl
+         YLIQviG4DnM2xQyV2iYEbtDmivodwfcAnfKe8C9p5MtU7YFCbBSGvMxRM7Ij+EYJMC
+         URjTKOD1fgI8GBmrDKaN2Su/KpY+C64ONJk7Ngcg=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, Ilya Dryomov <idryomov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 420/459] rbd: work around -Wuninitialized warning
+Date:   Fri, 14 Feb 2020 11:01:10 -0500
+Message-Id: <20200214160149.11681-420-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
+References: <20200214160149.11681-1-sashal@kernel.org>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Clean up the code.
+[ Upstream commit a55e601b2f02df5db7070e9a37bd655c9c576a52 ]
 
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
+gcc -O3 warns about a dummy variable that is passed
+down into rbd_img_fill_nodata without being initialized:
+
+drivers/block/rbd.c: In function 'rbd_img_fill_nodata':
+drivers/block/rbd.c:2573:13: error: 'dummy' is used uninitialized in this function [-Werror=uninitialized]
+  fctx->iter = *fctx->pos;
+
+Since this is a dummy, I assume the warning is harmless, but
+it's better to initialize it anyway and avoid the warning.
+
+Fixes: mmtom ("init/Kconfig: enable -O3 for all arches")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ceph/mds_client.c | 3 +--
- fs/ceph/super.c      | 2 +-
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ drivers/block/rbd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 451c3727cd0b..8a8aaa20699c 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2643,8 +2643,7 @@ static void __do_request(struct ceph_mds_client *md=
-sc,
- 			list_add(&req->r_wait, &mdsc->waiting_for_map);
- 			return;
- 		}
--		if (!(mdsc->fsc->mount_options->flags &
--		      CEPH_MOUNT_OPT_MOUNTWAIT) &&
-+		if (!ceph_test_mount_opt(mdsc->fsc, MOUNTWAIT) &&
- 		    !ceph_mdsmap_is_cluster_available(mdsc->mdsmap)) {
- 			err =3D -EHOSTUNREACH;
- 			goto finish;
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index abdf61909879..c494351e3cc8 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -992,7 +992,7 @@ static struct dentry *ceph_real_mount(struct ceph_fs_=
-client *fsc,
- 			goto out;
-=20
- 		/* setup fscache */
--		if (fsc->mount_options->flags & CEPH_MOUNT_OPT_FSCACHE) {
-+		if (ceph_test_mount_opt(fsc, FSCACHE)) {
- 			err =3D ceph_fscache_register_fs(fsc, fc);
- 			if (err < 0)
- 				goto out;
---=20
-2.21.0
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 13527a0b4e448..a67315786db47 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -2739,7 +2739,7 @@ static int rbd_img_fill_nodata(struct rbd_img_request *img_req,
+ 			       u64 off, u64 len)
+ {
+ 	struct ceph_file_extent ex = { off, len };
+-	union rbd_img_fill_iter dummy;
++	union rbd_img_fill_iter dummy = {};
+ 	struct rbd_img_fill_ctx fctx = {
+ 		.pos_type = OBJ_REQUEST_NODATA,
+ 		.pos = &dummy,
+-- 
+2.20.1
 
