@@ -2,120 +2,98 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E51E15EC40
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2020 18:26:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BCD315EF94
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2020 18:49:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391765AbgBNR0E (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 Feb 2020 12:26:04 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:28709 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2391151AbgBNR0D (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:26:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581701162;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HHRjGZXDTDu7ZJHKzu7nACeb9uwk6TbUa3wEBIyYpm8=;
-        b=VYITqgfx6kWNd8Bd6vO9XEpZ3oI4fbIy/1IiK/Wpy5QHbQ7ydcs09AqhevBqH9CX0/aIib
-        oygFhSc8y9iE3HuDqRPFUK7SMN43GSdfMmBWdMRmqz4acU5uT1/BbUQsEiJUTUu+2sy1oi
-        E6ifh/T0EM+MsvjAI6TucWjYUrXhdZc=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-219-O_XaihTQNeS-Z-ksoYxNDQ-1; Fri, 14 Feb 2020 12:25:58 -0500
-X-MC-Unique: O_XaihTQNeS-Z-ksoYxNDQ-1
-Received: by mail-qk1-f197.google.com with SMTP id 24so6634159qka.16
-        for <ceph-devel@vger.kernel.org>; Fri, 14 Feb 2020 09:25:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=HHRjGZXDTDu7ZJHKzu7nACeb9uwk6TbUa3wEBIyYpm8=;
-        b=HJQim686BJcaOPu7f2+JVDTYfQRKwalKxwXe78sO/XvLT2qqO4+z5+tHbnSsXTzkKW
-         pk8ZuB2IakGqQ8odirn0mBkUXjc7/4S/mg6lt/uDsDg+ujqmrldpRld45BD2Bgq9QurR
-         y3Ve8EpJlRxpNcxbX/Aw7HKi4ydvb7T0vwygjmbxdgnKraKCw1oSS6+7G44y6Edr8uiV
-         h7DpuRx0hY5dFJAk9mtvV0o9T8NymHmCms92fJ1GKe8GOfXyq/BkEaEfvG3FuyMLUflJ
-         9I/h0Uw4SA1EDyI/psaMx9/uDhdXXLmYvS5HJML56y9ZKO7AN+cou6R62ii+V9TluTTB
-         sRXQ==
-X-Gm-Message-State: APjAAAWwb6t/fkJYsqmCCDn5NpRYQJ95OlW7itvJkaqfVBosb3tJtBLt
-        XE74sO25yLAk2SwnHWjsGH9oI73/FQJmaoaCkinr5DX2fVJp2hsQ/p1dEfqUIOYaFHcZO8fD2R4
-        /fQI4USCv8zbF8Yp3CILa2/GCRXhrn87myph1mw==
-X-Received: by 2002:a37:7245:: with SMTP id n66mr3840165qkc.202.1581701158420;
-        Fri, 14 Feb 2020 09:25:58 -0800 (PST)
-X-Google-Smtp-Source: APXvYqy7crzeEeZd1yYtjCPeIbEnNWulSv9aD8XU8rwJJxYdJwQJlFU/z6xy+uLb0u8gF20geWxtXkl1b4WoCLGcbxg=
-X-Received: by 2002:a37:7245:: with SMTP id n66mr3840118qkc.202.1581701158116;
- Fri, 14 Feb 2020 09:25:58 -0800 (PST)
-MIME-Version: 1.0
-References: <CAMMFjmGWrhC_gd3wY5SfqfSB6O=0Tp_QRAu0ibMTDPVrja2HSg@mail.gmail.com>
- <20200214171554.l7ibzoo64uthd2ke@jfsuselaptop>
-In-Reply-To: <20200214171554.l7ibzoo64uthd2ke@jfsuselaptop>
-From:   Yuri Weinstein <yweinste@redhat.com>
-Date:   Fri, 14 Feb 2020 09:25:47 -0800
-Message-ID: <CAMMFjmGDBQf+K5K2Zz4e6-PJS=y1YoUAEm5_X0tTUTre3EmZgA@mail.gmail.com>
-Subject: Re: Readiness for 14.2.7 ?
-To:     Yuri Weinstein <yweinste@redhat.com>, dev@ceph.io,
-        "Development, Ceph" <ceph-devel@vger.kernel.org>,
-        Abhishek Lekshmanan <abhishek@suse.com>,
-        Nathan Cutler <ncutler@suse.cz>,
-        Casey Bodley <cbodley@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Neha Ojha <nojha@redhat.com>,
-        "Durgin, Josh" <jdurgin@redhat.com>,
-        David Zafman <dzafman@redhat.com>,
-        "Weil, Sage" <sweil@redhat.com>,
-        Ramana Venkatesh Raja <rraja@redhat.com>,
-        Tamilarasi Muthamizhan <tmuthami@redhat.com>,
-        "Dillaman, Jason" <dillaman@redhat.com>,
-        "Sadeh-Weinraub, Yehuda" <yehuda@redhat.com>,
-        "Lekshmanan, Abhishek" <abhishek.lekshmanan@gmail.com>,
+        id S2388863AbgBNP7R (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 Feb 2020 10:59:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388856AbgBNP7Q (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:59:16 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C6142187F;
+        Fri, 14 Feb 2020 15:59:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581695956;
+        bh=Q7CroZZksNokKVeVVW++tHM4v3Y1m3dA1Jz0F1+UMXE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=g79hze6jAiKtiM/3st2Od8+9oyHuVmXDqj6AE+kI9P8g2ZtW6E1wS3CqcCw0I7SNl
+         K7DoqqqG7Bm3fd3LXEbCHAsbHWY54SldW4QdjARu+QA5FRaDNCsRZ7iW856Ix2B7Em
+         w8+qobVpNRXL8euLilFMn52SvVY0D8mv0+FeqYAs=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        ceph-qe-team <ceph-qe-team@redhat.com>,
-        Andrew Schoen <aschoen@redhat.com>, ceph-qa <ceph-qa@ceph.com>,
-        Matt Benjamin <mbenjamin@redhat.com>,
-        Sebastien Han <shan@redhat.com>,
-        Brad Hubbard <bhubbard@redhat.com>,
-        Venky Shankar <vshankar@redhat.com>,
-        David Galloway <dgallowa@redhat.com>,
-        Milind Changire <mchangir@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 486/542] ceph: check availability of mds cluster on mount after wait timeout
+Date:   Fri, 14 Feb 2020 10:47:58 -0500
+Message-Id: <20200214154854.6746-486-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
+References: <20200214154854.6746-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Thank you !
+From: Xiubo Li <xiubli@redhat.com>
 
-Correction  - the subject line should say 14.2.7
+[ Upstream commit 97820058fb2831a4b203981fa2566ceaaa396103 ]
 
-On Fri, Feb 14, 2020 at 9:19 AM Jan Fajerski <jfajerski@suse.com> wrote:
->
-> On Mon, Feb 10, 2020 at 11:57:19AM -0800, Yuri Weinstein wrote:
-> >Below is the current queue of PRs:
-> >https://github.com/ceph/ceph/pulls?page=3D2&q=3Dis%3Aopen+label%3Anautil=
-us-batch-1+label%3Aneeds-qa
-> >
-> >Most PRs are being tested.
-> >Unless there are objections, we will start QE validation as soon as
-> >all PRs in this queue were merged.
-> >
-> >Dev leads - pls add and tag all RRs that must be included.
-> ceph-volume is ready, al backports are merged and tested (thank you Natha=
-n!).
-> >
-> >Thx
-> >YuriW
-> >
->
-> --
-> Jan Fajerski
-> Senior Software Engineer Enterprise Storage
-> SUSE Software Solutions Germany GmbH
-> Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-> (HRB 36809, AG N=C3=BCrnberg)
-> Gesch=C3=A4ftsf=C3=BChrer: Felix Imend=C3=B6rffer
->
+If all the MDS daemons are down for some reason, then the first mount
+attempt will fail with EIO after the mount request times out.  A mount
+attempt will also fail with EIO if all of the MDS's are laggy.
+
+This patch changes the code to return -EHOSTUNREACH in these situations
+and adds a pr_info error message to help the admin determine the cause.
+
+URL: https://tracker.ceph.com/issues/4386
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/ceph/mds_client.c | 3 +--
+ fs/ceph/super.c      | 5 +++++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 145d46ba25ae2..816d49aed96bc 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2558,8 +2558,7 @@ static void __do_request(struct ceph_mds_client *mdsc,
+ 		if (!(mdsc->fsc->mount_options->flags &
+ 		      CEPH_MOUNT_OPT_MOUNTWAIT) &&
+ 		    !ceph_mdsmap_is_cluster_available(mdsc->mdsmap)) {
+-			err = -ENOENT;
+-			pr_info("probably no mds server is up\n");
++			err = -EHOSTUNREACH;
+ 			goto finish;
+ 		}
+ 	}
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 29a795f975dfa..430dcf329723a 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -1070,6 +1070,11 @@ static int ceph_get_tree(struct fs_context *fc)
+ 	return 0;
+ 
+ out_splat:
++	if (!ceph_mdsmap_is_cluster_available(fsc->mdsc->mdsmap)) {
++		pr_info("No mds server is up or the cluster is laggy\n");
++		err = -EHOSTUNREACH;
++	}
++
+ 	ceph_mdsc_close_sessions(fsc->mdsc);
+ 	deactivate_locked_super(sb);
+ 	goto out_final;
+-- 
+2.20.1
 
