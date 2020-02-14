@@ -2,38 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31DD215EB50
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2020 18:20:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C3E715E87D
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2020 18:00:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391649AbgBNRTu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 Feb 2020 12:19:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36544 "EHLO mail.kernel.org"
+        id S2394418AbgBNRAa (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 Feb 2020 12:00:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391597AbgBNQKt (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:10:49 -0500
+        id S2404293AbgBNQQg (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:16:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D91B2468D;
-        Fri, 14 Feb 2020 16:10:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 492A5206D7;
+        Fri, 14 Feb 2020 16:16:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696642;
-        bh=6ba7hysJU/gD58jDN/JTv4StRHF+OsBhjNKhN1d0aKc=;
+        s=default; t=1581696996;
+        bh=A7mtqHMBRXmpZws71RLcV6YiKcGVfMgqWoLgobCuYsc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ew9rkqV4Ef9y2RrGoAFP+r9jEcdSK0Ehay2/NtnaoVcXpALxwR7YnDxjmdwKhTDnu
-         Y172aJaEgvEEIVMcdJobypACg+ZNXcsQKbFExdP7XloB7aNoYRW6EC7aTQ86def4RY
-         0WeFpghjohgiFbxBrxQINcOrwIetuw7HH5bkvyRs=
+        b=XhZo+lJ2hmP/ZnMbgJBo9RRWHYKP+SswfIu1r8M6N22DMvNge7WeisAa4HYO8s7bq
+         dHSbYFaSLVVyUwIhzP1sETvoWGgmf4oEB8uxfkptMCVwEnUaIPTOf6wkCky9Sh0GEM
+         7GOaATm6uB6W/fwOq+xpz8fOzeYrhIDWKrEb/4qk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 419/459] ceph: check availability of mds cluster on mount after wait timeout
-Date:   Fri, 14 Feb 2020 11:01:09 -0500
-Message-Id: <20200214160149.11681-419-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 229/252] ceph: check availability of mds cluster on mount after wait timeout
+Date:   Fri, 14 Feb 2020 11:11:24 -0500
+Message-Id: <20200214161147.15842-229-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
-References: <20200214160149.11681-1-sashal@kernel.org>
+In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
+References: <20200214161147.15842-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -65,10 +65,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index ee02a742fff57..8c1f04c3a684c 100644
+index 09db6d08614d2..a2e903203bf9f 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -2552,8 +2552,7 @@ static void __do_request(struct ceph_mds_client *mdsc,
+@@ -2343,8 +2343,7 @@ static void __do_request(struct ceph_mds_client *mdsc,
  		if (!(mdsc->fsc->mount_options->flags &
  		      CEPH_MOUNT_OPT_MOUNTWAIT) &&
  		    !ceph_mdsmap_is_cluster_available(mdsc->mdsmap)) {
@@ -79,10 +79,10 @@ index ee02a742fff57..8c1f04c3a684c 100644
  		}
  	}
 diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index b47f43fc2d688..62fc7d46032e8 100644
+index 2bd0b1ed9708e..c4314f4492401 100644
 --- a/fs/ceph/super.c
 +++ b/fs/ceph/super.c
-@@ -1137,6 +1137,11 @@ static struct dentry *ceph_mount(struct file_system_type *fs_type,
+@@ -1106,6 +1106,11 @@ static struct dentry *ceph_mount(struct file_system_type *fs_type,
  	return res;
  
  out_splat:
