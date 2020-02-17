@@ -2,316 +2,381 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB530161232
-	for <lists+ceph-devel@lfdr.de>; Mon, 17 Feb 2020 13:37:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1025516129F
+	for <lists+ceph-devel@lfdr.de>; Mon, 17 Feb 2020 14:04:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbgBQMgz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 17 Feb 2020 07:36:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35210 "EHLO mx2.suse.de"
+        id S1728124AbgBQNEb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 17 Feb 2020 08:04:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727513AbgBQMgz (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 17 Feb 2020 07:36:55 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 8A3E8AED7;
-        Mon, 17 Feb 2020 12:36:48 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Yan, Zheng" <zyan@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.com>
-Subject: [PATCH] ceph: re-org copy_file_range and fix error handling paths
-Date:   Mon, 17 Feb 2020 12:36:49 +0000
-Message-Id: <20200217123649.12316-1-lhenriques@suse.com>
+        id S1726401AbgBQNEb (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 17 Feb 2020 08:04:31 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6890A20578;
+        Mon, 17 Feb 2020 13:04:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581944670;
+        bh=ydjtpzEffG+9PItisid7H/sAQse3TP/ApaXBKjBWudw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=DF8gfBMHXIVptRuo5kpUKpYMLIlKrI0RburtkdpuqUGsu7Ifx+TacgS033N8tXqzY
+         zZITtOyQm3N+OGpYa+RPYIgyJ2XTeWsZwDRXsQfELnzKz6NzoOO91jPymBfD4llpxc
+         rV0I+sNVAz9qA6iGXGdUjr8Kk8c/xgL/dprHz6NE=
+Message-ID: <78ff80dd12d497be7a6606a60973f7e2d864e910.camel@kernel.org>
+Subject: Re: [PATCH] ceph: add halt mount option support
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com, idryomov@gmail.com
+Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org
+Date:   Mon, 17 Feb 2020 08:04:28 -0500
+In-Reply-To: <20200216064945.61726-1-xiubli@redhat.com>
+References: <20200216064945.61726-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-This patch re-organizes copy_file_range, trying to fix a few issues in
-error handling.  Here's the summary:
+On Sun, 2020-02-16 at 01:49 -0500, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> This will simulate pulling the power cable situation, which will
+> do:
+> 
+> - abort all the inflight osd/mds requests and fail them with -EIO.
+> - reject any new coming osd/mds requests with -EIO.
+> - close all the mds connections directly without doing any clean up
+>   and disable mds sessions recovery routine.
+> - close all the osd connections directly without doing any clean up.
+> - set the msgr as stopped.
+> 
+> URL: https://tracker.ceph.com/issues/44044
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 
-- Abort copy if initial do_splice_direct() returns fewer bytes than
-  requested.
+There is no explanation of how to actually _use_ this feature? I assume
+you have to remount the fs with "-o remount,halt" ? Is it possible to
+reenable the mount as well?  If not, why keep the mount around? Maybe we
+should consider wiring this in to a new umount2() flag instead?
 
-- Move the 'size' initialization (with i_size_read()) further down in the
-  code, after the initial call to do_splice_direct().  This avoids issues
-  with a possibly stale value if a manual copy is done.
+This needs much better documentation.
 
-- Move the object copy loop into a separate function.  This makes it
-  easier to handle errors (e.g, dirtying caps and updating the MDS
-  metadata if only some objects have been copied before an error has
-  occurred).
+In the past, I've generally done this using iptables. Granted that that
+is difficult with a clustered fs like ceph (given that you potentially
+have to set rules for a lot of addresses), but I wonder whether a scheme
+like that might be more viable in the long run.
 
-- Added calls to ceph_oloc_destroy() to avoid leaking memory with src_oloc
-  and dst_oloc
+Note too that this may have interesting effects when superblocks end up
+being shared between vfsmounts.
 
-- After the object copy loop, the new file size to be reported to the MDS
-  (if there's file size change) is now the actual file size, and not the
-  size after an eventual extra manual copy.
+> ---
+>  fs/ceph/mds_client.c            | 12 ++++++++++--
+>  fs/ceph/mds_client.h            |  3 ++-
+>  fs/ceph/super.c                 | 33 ++++++++++++++++++++++++++++-----
+>  fs/ceph/super.h                 |  1 +
+>  include/linux/ceph/libceph.h    |  1 +
+>  include/linux/ceph/mon_client.h |  2 ++
+>  include/linux/ceph/osd_client.h |  1 +
+>  net/ceph/ceph_common.c          | 14 ++++++++++++++
+>  net/ceph/mon_client.c           | 16 ++++++++++++++--
+>  net/ceph/osd_client.c           | 11 +++++++++++
+>  10 files changed, 84 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index b0f34251ad28..b6aa357f7c61 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -4110,6 +4110,9 @@ static void maybe_recover_session(struct ceph_mds_client *mdsc)
+>  {
+>  	struct ceph_fs_client *fsc = mdsc->fsc;
+>  
+> +	if (ceph_test_mount_opt(fsc, HALT))
+> +		return;
+> +
+>  	if (!ceph_test_mount_opt(fsc, CLEANRECOVER))
+>  		return;
+>  
+> @@ -4735,7 +4738,7 @@ void ceph_mdsc_close_sessions(struct ceph_mds_client *mdsc)
+>  	dout("stopped\n");
+>  }
+>  
+> -void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc)
+> +void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc, bool halt)
+>  {
+>  	struct ceph_mds_session *session;
+>  	int mds;
+> @@ -4748,7 +4751,12 @@ void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc)
+>  		if (!session)
+>  			continue;
+>  
+> -		if (session->s_state == CEPH_MDS_SESSION_REJECTED)
+> +		/*
+> +		 * when halting the superblock, it will simulate pulling
+> +		 * the power cable, so here close the connection before
+> +		 * doing any cleanup.
+> +		 */
+> +		if (halt || (session->s_state == CEPH_MDS_SESSION_REJECTED))
+>  			__unregister_session(mdsc, session);
 
-- Added a few dout() to show the number of bytes copied in the two manual
-  copies and in the object copy loop.
+Note that this is not exactly like pulling the power cable. The
+connection will be closed, which will send a FIN to the peer.
 
-Signed-off-by: Luis Henriques <lhenriques@suse.com>
----
-Hi!
+>  		__wake_requests(mdsc, &session->s_waiting);
+>  		mutex_unlock(&mdsc->mutex);
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index c13910da07c4..b66eea830ae1 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -478,7 +478,8 @@ extern int ceph_send_msg_mds(struct ceph_mds_client *mdsc,
+>  
+>  extern int ceph_mdsc_init(struct ceph_fs_client *fsc);
+>  extern void ceph_mdsc_close_sessions(struct ceph_mds_client *mdsc);
+> -extern void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc);
+> +extern void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc,
+> +				   bool halt);
+>  extern void ceph_mdsc_destroy(struct ceph_fs_client *fsc);
+>  
+>  extern void ceph_mdsc_sync(struct ceph_mds_client *mdsc);
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index 8b52bea13273..2a6fd5d2fffa 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -155,6 +155,7 @@ enum {
+>  	Opt_acl,
+>  	Opt_quotadf,
+>  	Opt_copyfrom,
+> +	Opt_halt,
+>  };
+>  
+>  enum ceph_recover_session_mode {
+> @@ -194,6 +195,7 @@ static const struct fs_parameter_spec ceph_mount_param_specs[] = {
+>  	fsparam_string	("snapdirname",			Opt_snapdirname),
+>  	fsparam_string	("source",			Opt_source),
+>  	fsparam_u32	("wsize",			Opt_wsize),
+> +	fsparam_flag	("halt",			Opt_halt),
+>  	{}
+>  };
+>  
+> @@ -435,6 +437,9 @@ static int ceph_parse_mount_param(struct fs_context *fc,
+>  			fc->sb_flags &= ~SB_POSIXACL;
+>  		}
+>  		break;
+> +	case Opt_halt:
+> +		fsopt->flags |= CEPH_MOUNT_OPT_HALT;
+> +		break;
+>  	default:
+>  		BUG();
+>  	}
+> @@ -601,6 +606,8 @@ static int ceph_show_options(struct seq_file *m, struct dentry *root)
+>  	if (m->count == pos)
+>  		m->count--;
+>  
+> +	if (fsopt->flags & CEPH_MOUNT_OPT_HALT)
+> +		seq_puts(m, ",halt");
+>  	if (fsopt->flags & CEPH_MOUNT_OPT_DIRSTAT)
+>  		seq_puts(m, ",dirstat");
+>  	if ((fsopt->flags & CEPH_MOUNT_OPT_RBYTES))
+> @@ -877,22 +884,28 @@ static void destroy_caches(void)
+>  }
+>  
+>  /*
+> - * ceph_umount_begin - initiate forced umount.  Tear down down the
+> - * mount, skipping steps that may hang while waiting for server(s).
+> + * ceph_umount_begin - initiate forced umount.  Tear down the mount,
+> + * skipping steps that may hang while waiting for server(s).
+>   */
+> -static void ceph_umount_begin(struct super_block *sb)
+> +static void __ceph_umount_begin(struct super_block *sb, bool halt)
+>  {
+>  	struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
+>  
+> -	dout("ceph_umount_begin - starting forced umount\n");
+>  	if (!fsc)
+>  		return;
+>  	fsc->mount_state = CEPH_MOUNT_SHUTDOWN;
+>  	ceph_osdc_abort_requests(&fsc->client->osdc, -EIO);
+> -	ceph_mdsc_force_umount(fsc->mdsc);
+> +	ceph_mdsc_force_umount(fsc->mdsc, halt);
+>  	fsc->filp_gen++; // invalidate open files
+>  }
+>  
+> +static void ceph_umount_begin(struct super_block *sb)
+> +{
+> +	dout("%s - starting forced umount\n", __func__);
+> +
+> +	__ceph_umount_begin(sb, false);
+> +}
+> +
+>  static const struct super_operations ceph_super_ops = {
+>  	.alloc_inode	= ceph_alloc_inode,
+>  	.free_inode	= ceph_free_inode,
+> @@ -1193,6 +1206,16 @@ static int ceph_reconfigure_fc(struct fs_context *fc)
+>  	struct ceph_parse_opts_ctx *pctx = fc->fs_private;
+>  	struct ceph_mount_options *new_fsopt = pctx->opts;
+>  
+> +	/* halt the mount point, will ignore other options */
+> +	if (new_fsopt->flags & CEPH_MOUNT_OPT_HALT) {
+> +		dout("halt the mount point\n");
+> +		fsopt->flags |= CEPH_MOUNT_OPT_HALT;
+> +		__ceph_umount_begin(sb, true);
+> +		ceph_halt_client(fsc->client);
+> +
+> +		return 0;
+> +	}
+> +
+>  	sync_filesystem(sb);
+>  
+>  	if (strcmp_null(new_fsopt->snapdir_name, fsopt->snapdir_name))
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 4c40e86ad016..64f16083b216 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -43,6 +43,7 @@
+>  #define CEPH_MOUNT_OPT_MOUNTWAIT       (1<<12) /* mount waits if no mds is up */
+>  #define CEPH_MOUNT_OPT_NOQUOTADF       (1<<13) /* no root dir quota in statfs */
+>  #define CEPH_MOUNT_OPT_NOCOPYFROM      (1<<14) /* don't use RADOS 'copy-from' op */
+> +#define CEPH_MOUNT_OPT_HALT            (1<<15) /* halt the mount point */
+>  
+>  #define CEPH_MOUNT_OPT_DEFAULT			\
+>  	(CEPH_MOUNT_OPT_DCACHE |		\
+> diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
+> index 8fe9b80e80a5..12e9f0cc8501 100644
+> --- a/include/linux/ceph/libceph.h
+> +++ b/include/linux/ceph/libceph.h
+> @@ -295,6 +295,7 @@ struct ceph_client *ceph_create_client(struct ceph_options *opt, void *private);
+>  struct ceph_entity_addr *ceph_client_addr(struct ceph_client *client);
+>  u64 ceph_client_gid(struct ceph_client *client);
+>  extern void ceph_destroy_client(struct ceph_client *client);
+> +void ceph_halt_client(struct ceph_client *client);
+>  extern void ceph_reset_client_addr(struct ceph_client *client);
+>  extern int __ceph_open_session(struct ceph_client *client,
+>  			       unsigned long started);
+> diff --git a/include/linux/ceph/mon_client.h b/include/linux/ceph/mon_client.h
+> index dbb8a6959a73..7718a2e65d07 100644
+> --- a/include/linux/ceph/mon_client.h
+> +++ b/include/linux/ceph/mon_client.h
+> @@ -78,6 +78,7 @@ struct ceph_mon_client {
+>  	struct ceph_msg *m_auth, *m_auth_reply, *m_subscribe, *m_subscribe_ack;
+>  	int pending_auth;
+>  
+> +	bool halt;
+>  	bool hunting;
+>  	int cur_mon;                       /* last monitor i contacted */
+>  	unsigned long sub_renew_after;
+> @@ -109,6 +110,7 @@ extern int ceph_monmap_contains(struct ceph_monmap *m,
+>  
+>  extern int ceph_monc_init(struct ceph_mon_client *monc, struct ceph_client *cl);
+>  extern void ceph_monc_stop(struct ceph_mon_client *monc);
+> +void ceph_monc_halt(struct ceph_mon_client *monc);
+>  extern void ceph_monc_reopen_session(struct ceph_mon_client *monc);
+>  
+>  enum {
+> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+> index 02ff3a302d26..4b9143f7d989 100644
+> --- a/include/linux/ceph/osd_client.h
+> +++ b/include/linux/ceph/osd_client.h
+> @@ -382,6 +382,7 @@ extern void ceph_osdc_cleanup(void);
+>  extern int ceph_osdc_init(struct ceph_osd_client *osdc,
+>  			  struct ceph_client *client);
+>  extern void ceph_osdc_stop(struct ceph_osd_client *osdc);
+> +extern void ceph_osdc_halt(struct ceph_osd_client *osdc);
+>  extern void ceph_osdc_reopen_osds(struct ceph_osd_client *osdc);
+>  
+>  extern void ceph_osdc_handle_reply(struct ceph_osd_client *osdc,
+> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> index a9d6c97b5b0d..c47578ed0546 100644
+> --- a/net/ceph/ceph_common.c
+> +++ b/net/ceph/ceph_common.c
+> @@ -652,6 +652,20 @@ struct ceph_client *ceph_create_client(struct ceph_options *opt, void *private)
+>  }
+>  EXPORT_SYMBOL(ceph_create_client);
+>  
+> +void ceph_halt_client(struct ceph_client *client)
+> +{
+> +	dout("halt_client %p\n", client);
+> +
+> +	atomic_set(&client->msgr.stopping, 1);
+> +
+> +	/* unmount */
+> +	ceph_osdc_halt(&client->osdc);
+> +	ceph_monc_halt(&client->monc);
+> +
+> +	dout("halt_client %p done\n", client);
+> +}
+> +EXPORT_SYMBOL(ceph_halt_client);
+> +
+>  void ceph_destroy_client(struct ceph_client *client)
+>  {
+>  	dout("destroy_client %p\n", client);
+> diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+> index 9d9e4e4ea600..5819a02af7fe 100644
+> --- a/net/ceph/mon_client.c
+> +++ b/net/ceph/mon_client.c
+> @@ -979,14 +979,16 @@ static void delayed_work(struct work_struct *work)
+>  	mutex_lock(&monc->mutex);
+>  	if (monc->hunting) {
+>  		dout("%s continuing hunt\n", __func__);
+> -		reopen_session(monc);
+> +		if (!monc->halt)
+> +			reopen_session(monc);
+>  	} else {
+>  		int is_auth = ceph_auth_is_authenticated(monc->auth);
+>  		if (ceph_con_keepalive_expired(&monc->con,
+>  					       CEPH_MONC_PING_TIMEOUT)) {
+>  			dout("monc keepalive timeout\n");
+>  			is_auth = 0;
+> -			reopen_session(monc);
+> +			if (!monc->halt)
+> +				reopen_session(monc);
+>  		}
+>  
+>  		if (!monc->hunting) {
+> @@ -1115,6 +1117,16 @@ int ceph_monc_init(struct ceph_mon_client *monc, struct ceph_client *cl)
+>  }
+>  EXPORT_SYMBOL(ceph_monc_init);
+>  
+> +void ceph_monc_halt(struct ceph_mon_client *monc)
+> +{
+> +	dout("monc halt\n");
+> +
+> +	mutex_lock(&monc->mutex);
+> +	monc->halt = true;
+> +	ceph_con_close(&monc->con);
+> +	mutex_unlock(&monc->mutex);
+> +}
+> +
 
-Initially I was going to have this patch split in a series, but then I
-decided not to do that as this big patch allows (IMO) to better see the
-whole picture.  But please let me know if you think otherwise and I can
-split it in a few smaller patches.
+The changelog doesn't mention shutting down connections to the mons.
 
-I tried to cover all the issues that have been pointed out by Ilya, but I
-may have missed something or, more likely, introduced new bugs ;-)
+>  void ceph_monc_stop(struct ceph_mon_client *monc)
+>  {
+>  	dout("stop\n");
+> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> index 108c9457d629..161daf35d7f1 100644
+> --- a/net/ceph/osd_client.c
+> +++ b/net/ceph/osd_client.c
+> @@ -5202,6 +5202,17 @@ int ceph_osdc_init(struct ceph_osd_client *osdc, struct ceph_client *client)
+>  	return err;
+>  }
+>  
+> +void ceph_osdc_halt(struct ceph_osd_client *osdc)
+> +{
+> +	down_write(&osdc->lock);
+> +	while (!RB_EMPTY_ROOT(&osdc->osds)) {
+> +		struct ceph_osd *osd = rb_entry(rb_first(&osdc->osds),
+> +						struct ceph_osd, o_node);
+> +		close_osd(osd);
+> +	}
+> +	up_write(&osdc->lock);
+> +}
+> +
+>  void ceph_osdc_stop(struct ceph_osd_client *osdc)
+>  {
+>  	destroy_workqueue(osdc->completion_wq);
 
-Cheers,
---
-Luis
+-- 
+Jeff Layton <jlayton@kernel.org>
 
- fs/ceph/file.c | 169 ++++++++++++++++++++++++++++---------------------
- 1 file changed, 96 insertions(+), 73 deletions(-)
-
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index c3b8e8e0bf17..4d90a275f9a5 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1931,6 +1931,71 @@ static int is_file_size_ok(struct inode *src_inode, struct inode *dst_inode,
- 	return 0;
- }
- 
-+static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off,
-+				    struct ceph_inode_info *dst_ci, u64 *dst_off,
-+				    struct ceph_fs_client *fsc,
-+				    size_t len, unsigned int flags)
-+{
-+	struct ceph_object_locator src_oloc, dst_oloc;
-+	struct ceph_object_id src_oid, dst_oid;
-+	size_t bytes = 0;
-+	u64 src_objnum, src_objoff, dst_objnum, dst_objoff;
-+	u32 src_objlen, dst_objlen;
-+	u32 object_size = src_ci->i_layout.object_size;
-+	int ret;
-+
-+	src_oloc.pool = src_ci->i_layout.pool_id;
-+	src_oloc.pool_ns = ceph_try_get_string(src_ci->i_layout.pool_ns);
-+	dst_oloc.pool = dst_ci->i_layout.pool_id;
-+	dst_oloc.pool_ns = ceph_try_get_string(dst_ci->i_layout.pool_ns);
-+
-+	while (len >= object_size) {
-+		ceph_calc_file_object_mapping(&src_ci->i_layout, *src_off,
-+					      object_size, &src_objnum,
-+					      &src_objoff, &src_objlen);
-+		ceph_calc_file_object_mapping(&dst_ci->i_layout, *dst_off,
-+					      object_size, &dst_objnum,
-+					      &dst_objoff, &dst_objlen);
-+		ceph_oid_init(&src_oid);
-+		ceph_oid_printf(&src_oid, "%llx.%08llx",
-+				src_ci->i_vino.ino, src_objnum);
-+		ceph_oid_init(&dst_oid);
-+		ceph_oid_printf(&dst_oid, "%llx.%08llx",
-+				dst_ci->i_vino.ino, dst_objnum);
-+		/* Do an object remote copy */
-+		ret = ceph_osdc_copy_from(&fsc->client->osdc,
-+					  src_ci->i_vino.snap, 0,
-+					  &src_oid, &src_oloc,
-+					  CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
-+					  CEPH_OSD_OP_FLAG_FADVISE_NOCACHE,
-+					  &dst_oid, &dst_oloc,
-+					  CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
-+					  CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
-+					  dst_ci->i_truncate_seq,
-+					  dst_ci->i_truncate_size,
-+					  CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
-+		if (ret) {
-+			if (ret == -EOPNOTSUPP) {
-+				fsc->have_copy_from2 = false;
-+				pr_notice("OSDs don't support copy-from2; disabling copy offload\n");
-+			}
-+			dout("ceph_osdc_copy_from returned %d\n", ret);
-+			if (!bytes)
-+				bytes = ret;
-+			goto out;
-+		}
-+		len -= object_size;
-+		bytes += object_size;
-+		*src_off += object_size;
-+		*dst_off += object_size;
-+	}
-+
-+out:
-+	ceph_oloc_destroy(&src_oloc);
-+	ceph_oloc_destroy(&dst_oloc);
-+	return bytes;
-+}
-+
- static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 				      struct file *dst_file, loff_t dst_off,
- 				      size_t len, unsigned int flags)
-@@ -1941,14 +2006,11 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 	struct ceph_inode_info *dst_ci = ceph_inode(dst_inode);
- 	struct ceph_cap_flush *prealloc_cf;
- 	struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
--	struct ceph_object_locator src_oloc, dst_oloc;
--	struct ceph_object_id src_oid, dst_oid;
--	loff_t endoff = 0, size;
--	ssize_t ret = -EIO;
-+	loff_t size;
-+	ssize_t ret = -EIO, bytes;
- 	u64 src_objnum, dst_objnum, src_objoff, dst_objoff;
--	u32 src_objlen, dst_objlen, object_size;
-+	u32 src_objlen, dst_objlen;
- 	int src_got = 0, dst_got = 0, err, dirty;
--	bool do_final_copy = false;
- 
- 	if (src_inode->i_sb != dst_inode->i_sb) {
- 		struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
-@@ -2026,22 +2088,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 	if (ret < 0)
- 		goto out_caps;
- 
--	size = i_size_read(dst_inode);
--	endoff = dst_off + len;
--
- 	/* Drop dst file cached pages */
- 	ret = invalidate_inode_pages2_range(dst_inode->i_mapping,
- 					    dst_off >> PAGE_SHIFT,
--					    endoff >> PAGE_SHIFT);
-+					    (dst_off + len) >> PAGE_SHIFT);
- 	if (ret < 0) {
- 		dout("Failed to invalidate inode pages (%zd)\n", ret);
- 		ret = 0; /* XXX */
- 	}
--	src_oloc.pool = src_ci->i_layout.pool_id;
--	src_oloc.pool_ns = ceph_try_get_string(src_ci->i_layout.pool_ns);
--	dst_oloc.pool = dst_ci->i_layout.pool_id;
--	dst_oloc.pool_ns = ceph_try_get_string(dst_ci->i_layout.pool_ns);
--
- 	ceph_calc_file_object_mapping(&src_ci->i_layout, src_off,
- 				      src_ci->i_layout.object_size,
- 				      &src_objnum, &src_objoff, &src_objlen);
-@@ -2060,6 +2114,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 	 * starting at the src_off
- 	 */
- 	if (src_objoff) {
-+		dout("Initial partial copy of %u bytes\n", src_objlen);
-+
- 		/*
- 		 * we need to temporarily drop all caps as we'll be calling
- 		 * {read,write}_iter, which will get caps again.
-@@ -2067,8 +2123,9 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 		put_rd_wr_caps(src_ci, src_got, dst_ci, dst_got);
- 		ret = do_splice_direct(src_file, &src_off, dst_file,
- 				       &dst_off, src_objlen, flags);
--		if (ret < 0) {
--			dout("do_splice_direct returned %d\n", err);
-+		/* Abort on short copies or on error */
-+		if (ret < src_objlen) {
-+			dout("Failed partial copy (%zd)\n", ret);
- 			goto out;
- 		}
- 		len -= ret;
-@@ -2081,62 +2138,29 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 		if (err < 0)
- 			goto out_caps;
- 	}
--	object_size = src_ci->i_layout.object_size;
--	while (len >= object_size) {
--		ceph_calc_file_object_mapping(&src_ci->i_layout, src_off,
--					      object_size, &src_objnum,
--					      &src_objoff, &src_objlen);
--		ceph_calc_file_object_mapping(&dst_ci->i_layout, dst_off,
--					      object_size, &dst_objnum,
--					      &dst_objoff, &dst_objlen);
--		ceph_oid_init(&src_oid);
--		ceph_oid_printf(&src_oid, "%llx.%08llx",
--				src_ci->i_vino.ino, src_objnum);
--		ceph_oid_init(&dst_oid);
--		ceph_oid_printf(&dst_oid, "%llx.%08llx",
--				dst_ci->i_vino.ino, dst_objnum);
--		/* Do an object remote copy */
--		err = ceph_osdc_copy_from(
--			&src_fsc->client->osdc,
--			src_ci->i_vino.snap, 0,
--			&src_oid, &src_oloc,
--			CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
--			CEPH_OSD_OP_FLAG_FADVISE_NOCACHE,
--			&dst_oid, &dst_oloc,
--			CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
--			CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
--			dst_ci->i_truncate_seq, dst_ci->i_truncate_size,
--			CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
--		if (err) {
--			if (err == -EOPNOTSUPP) {
--				src_fsc->have_copy_from2 = false;
--				pr_notice("OSDs don't support copy-from2; disabling copy offload\n");
--			}
--			dout("ceph_osdc_copy_from returned %d\n", err);
--			if (!ret)
--				ret = err;
--			goto out_caps;
--		}
--		len -= object_size;
--		src_off += object_size;
--		dst_off += object_size;
--		ret += object_size;
--	}
- 
--	if (len)
--		/* We still need one final local copy */
--		do_final_copy = true;
-+	size = i_size_read(dst_inode);
-+	bytes = ceph_do_objects_copy(src_ci, &src_off, dst_ci, &dst_off,
-+				     src_fsc, len, flags);
-+	if (bytes <= 0) {
-+		if (!ret)
-+			ret = bytes;
-+		goto out_caps;
-+	}
-+	dout("Copied %zu bytes out of %zu\n", bytes, len);
-+	len -= bytes;
-+	ret += bytes;
- 
- 	file_update_time(dst_file);
- 	inode_inc_iversion_raw(dst_inode);
- 
--	if (endoff > size) {
-+	if (dst_off > size) {
- 		int caps_flags = 0;
- 
- 		/* Let the MDS know about dst file size change */
--		if (ceph_quota_is_max_bytes_approaching(dst_inode, endoff))
-+		if (ceph_quota_is_max_bytes_approaching(dst_inode, dst_off))
- 			caps_flags |= CHECK_CAPS_NODELAY;
--		if (ceph_inode_set_size(dst_inode, endoff))
-+		if (ceph_inode_set_size(dst_inode, dst_off))
- 			caps_flags |= CHECK_CAPS_AUTHONLY;
- 		if (caps_flags)
- 			ceph_check_caps(dst_ci, caps_flags, NULL);
-@@ -2152,15 +2176,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- out_caps:
- 	put_rd_wr_caps(src_ci, src_got, dst_ci, dst_got);
- 
--	if (do_final_copy) {
--		err = do_splice_direct(src_file, &src_off, dst_file,
--				       &dst_off, len, flags);
--		if (err < 0) {
--			dout("do_splice_direct returned %d\n", err);
--			goto out;
--		}
--		len -= err;
--		ret += err;
-+	if (len && (ret >= 0)) {
-+		dout("Final partial copy of %zu bytes\n", len);
-+		bytes = do_splice_direct(src_file, &src_off, dst_file,
-+					 &dst_off, len, flags);
-+		if (bytes > 0)
-+			ret += bytes;
-+		else
-+			dout("Failed partial copy (%zd)\n", bytes);
- 	}
- 
- out:
