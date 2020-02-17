@@ -2,36 +2,37 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1025516129F
-	for <lists+ceph-devel@lfdr.de>; Mon, 17 Feb 2020 14:04:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09255161350
+	for <lists+ceph-devel@lfdr.de>; Mon, 17 Feb 2020 14:27:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbgBQNEb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 17 Feb 2020 08:04:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42662 "EHLO mail.kernel.org"
+        id S1728574AbgBQN16 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 17 Feb 2020 08:27:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbgBQNEb (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 17 Feb 2020 08:04:31 -0500
+        id S1727089AbgBQN16 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 17 Feb 2020 08:27:58 -0500
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6890A20578;
-        Mon, 17 Feb 2020 13:04:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2146D2070B;
+        Mon, 17 Feb 2020 13:27:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581944670;
-        bh=ydjtpzEffG+9PItisid7H/sAQse3TP/ApaXBKjBWudw=;
+        s=default; t=1581946076;
+        bh=TvkJ4y5ATUkCbf4PASpTWGLIq+Hzq8MCRm0hcYogunM=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=DF8gfBMHXIVptRuo5kpUKpYMLIlKrI0RburtkdpuqUGsu7Ifx+TacgS033N8tXqzY
-         zZITtOyQm3N+OGpYa+RPYIgyJ2XTeWsZwDRXsQfELnzKz6NzoOO91jPymBfD4llpxc
-         rV0I+sNVAz9qA6iGXGdUjr8Kk8c/xgL/dprHz6NE=
-Message-ID: <78ff80dd12d497be7a6606a60973f7e2d864e910.camel@kernel.org>
-Subject: Re: [PATCH] ceph: add halt mount option support
+        b=yX0dvfcdo8km7qMEcDRfaatsSFpvtkjz0sFo6V5CrR7hXDnuyA8AB09xFkd0bF7IC
+         ohp0MkPG0cjmGaXZXGAQYgoYpfw7s0+CaVJDs7VN7a92E4femta9k2MozhIxlHLJpT
+         z0XoIL5aXyw558OM4aEmmmr18Kx6mB81HhnbUc5w=
+Message-ID: <c4c0dc74b34e234bef78aca99c1e31e051c1c72d.camel@kernel.org>
+Subject: Re: [PATCH v6 2/9] ceph: add caps perf metric for each session
 From:   Jeff Layton <jlayton@kernel.org>
 To:     xiubli@redhat.com, idryomov@gmail.com
 Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
         ceph-devel@vger.kernel.org
-Date:   Mon, 17 Feb 2020 08:04:28 -0500
-In-Reply-To: <20200216064945.61726-1-xiubli@redhat.com>
-References: <20200216064945.61726-1-xiubli@redhat.com>
+Date:   Mon, 17 Feb 2020 08:27:55 -0500
+In-Reply-To: <20200210053407.37237-3-xiubli@redhat.com>
+References: <20200210053407.37237-1-xiubli@redhat.com>
+         <20200210053407.37237-3-xiubli@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
@@ -41,341 +42,360 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, 2020-02-16 at 01:49 -0500, xiubli@redhat.com wrote:
+On Mon, 2020-02-10 at 00:34 -0500, xiubli@redhat.com wrote:
 > From: Xiubo Li <xiubli@redhat.com>
 > 
-> This will simulate pulling the power cable situation, which will
-> do:
+> This will fulfill the cap hit/mis metric stuff per-superblock,
+> it will count the hit/mis counters based each inode, and if one
+> inode's 'issued & ~revoking == mask' will mean a hit, or a miss.
 > 
-> - abort all the inflight osd/mds requests and fail them with -EIO.
-> - reject any new coming osd/mds requests with -EIO.
-> - close all the mds connections directly without doing any clean up
->   and disable mds sessions recovery routine.
-> - close all the osd connections directly without doing any clean up.
-> - set the msgr as stopped.
+> item          total           miss            hit
+> -------------------------------------------------
+> caps          295             107             4119
 > 
-> URL: https://tracker.ceph.com/issues/44044
+> URL: https://tracker.ceph.com/issues/43215
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
-
-There is no explanation of how to actually _use_ this feature? I assume
-you have to remount the fs with "-o remount,halt" ? Is it possible to
-reenable the mount as well?  If not, why keep the mount around? Maybe we
-should consider wiring this in to a new umount2() flag instead?
-
-This needs much better documentation.
-
-In the past, I've generally done this using iptables. Granted that that
-is difficult with a clustered fs like ceph (given that you potentially
-have to set rules for a lot of addresses), but I wonder whether a scheme
-like that might be more viable in the long run.
-
-Note too that this may have interesting effects when superblocks end up
-being shared between vfsmounts.
-
 > ---
->  fs/ceph/mds_client.c            | 12 ++++++++++--
->  fs/ceph/mds_client.h            |  3 ++-
->  fs/ceph/super.c                 | 33 ++++++++++++++++++++++++++++-----
->  fs/ceph/super.h                 |  1 +
->  include/linux/ceph/libceph.h    |  1 +
->  include/linux/ceph/mon_client.h |  2 ++
->  include/linux/ceph/osd_client.h |  1 +
->  net/ceph/ceph_common.c          | 14 ++++++++++++++
->  net/ceph/mon_client.c           | 16 ++++++++++++++--
->  net/ceph/osd_client.c           | 11 +++++++++++
->  10 files changed, 84 insertions(+), 10 deletions(-)
+>  fs/ceph/acl.c        |  2 ++
+>  fs/ceph/caps.c       | 29 +++++++++++++++++++++++++++++
+>  fs/ceph/debugfs.c    | 16 ++++++++++++++++
+>  fs/ceph/dir.c        |  9 +++++++--
+>  fs/ceph/file.c       |  2 ++
+>  fs/ceph/mds_client.c | 26 ++++++++++++++++++++++----
+>  fs/ceph/metric.h     |  3 +++
+>  fs/ceph/quota.c      |  9 +++++++--
+>  fs/ceph/super.h      |  9 +++++++++
+>  fs/ceph/xattr.c      | 17 ++++++++++++++---
+>  10 files changed, 111 insertions(+), 11 deletions(-)
 > 
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index b0f34251ad28..b6aa357f7c61 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -4110,6 +4110,9 @@ static void maybe_recover_session(struct ceph_mds_client *mdsc)
->  {
->  	struct ceph_fs_client *fsc = mdsc->fsc;
+> diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
+> index 26be6520d3fb..58e119e3519f 100644
+> --- a/fs/ceph/acl.c
+> +++ b/fs/ceph/acl.c
+> @@ -22,6 +22,8 @@ static inline void ceph_set_cached_acl(struct inode *inode,
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
 >  
-> +	if (ceph_test_mount_opt(fsc, HALT))
+>  	spin_lock(&ci->i_ceph_lock);
+> +	__ceph_caps_metric(ci, CEPH_CAP_XATTR_SHARED);
+> +
+>  	if (__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 0))
+>  		set_cached_acl(inode, type, acl);
+>  	else
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 7fc87b693ba4..b4f122eb74bb 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -818,6 +818,32 @@ int __ceph_caps_issued(struct ceph_inode_info *ci, int *implemented)
+>  	return have;
+>  }
+>  
+> +/*
+> + * Counts the cap metric.
+> + *
+> + * This will try to traverse all the ci->i_caps, if we can
+> + * get all the cap 'mask' it will count the hit, or the mis.
+> + */
+> +void __ceph_caps_metric(struct ceph_inode_info *ci, int mask)
+> +{
+> +	struct ceph_mds_client *mdsc =
+> +		ceph_sb_to_client(ci->vfs_inode.i_sb)->mdsc;
+> +	struct ceph_client_metric *metric = &mdsc->metric;
+> +	int issued;
+> +
+> +	lockdep_assert_held(&ci->i_ceph_lock);
+> +
+> +	if (mask <= 0)
 > +		return;
 > +
->  	if (!ceph_test_mount_opt(fsc, CLEANRECOVER))
->  		return;
->  
-> @@ -4735,7 +4738,7 @@ void ceph_mdsc_close_sessions(struct ceph_mds_client *mdsc)
->  	dout("stopped\n");
->  }
->  
-> -void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc)
-> +void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc, bool halt)
->  {
->  	struct ceph_mds_session *session;
->  	int mds;
-> @@ -4748,7 +4751,12 @@ void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc)
->  		if (!session)
->  			continue;
->  
-> -		if (session->s_state == CEPH_MDS_SESSION_REJECTED)
-> +		/*
-> +		 * when halting the superblock, it will simulate pulling
-> +		 * the power cable, so here close the connection before
-> +		 * doing any cleanup.
-> +		 */
-> +		if (halt || (session->s_state == CEPH_MDS_SESSION_REJECTED))
->  			__unregister_session(mdsc, session);
-
-Note that this is not exactly like pulling the power cable. The
-connection will be closed, which will send a FIN to the peer.
-
->  		__wake_requests(mdsc, &session->s_waiting);
->  		mutex_unlock(&mdsc->mutex);
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index c13910da07c4..b66eea830ae1 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -478,7 +478,8 @@ extern int ceph_send_msg_mds(struct ceph_mds_client *mdsc,
->  
->  extern int ceph_mdsc_init(struct ceph_fs_client *fsc);
->  extern void ceph_mdsc_close_sessions(struct ceph_mds_client *mdsc);
-> -extern void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc);
-> +extern void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc,
-> +				   bool halt);
->  extern void ceph_mdsc_destroy(struct ceph_fs_client *fsc);
->  
->  extern void ceph_mdsc_sync(struct ceph_mds_client *mdsc);
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index 8b52bea13273..2a6fd5d2fffa 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -155,6 +155,7 @@ enum {
->  	Opt_acl,
->  	Opt_quotadf,
->  	Opt_copyfrom,
-> +	Opt_halt,
->  };
->  
->  enum ceph_recover_session_mode {
-> @@ -194,6 +195,7 @@ static const struct fs_parameter_spec ceph_mount_param_specs[] = {
->  	fsparam_string	("snapdirname",			Opt_snapdirname),
->  	fsparam_string	("source",			Opt_source),
->  	fsparam_u32	("wsize",			Opt_wsize),
-> +	fsparam_flag	("halt",			Opt_halt),
->  	{}
->  };
->  
-> @@ -435,6 +437,9 @@ static int ceph_parse_mount_param(struct fs_context *fc,
->  			fc->sb_flags &= ~SB_POSIXACL;
->  		}
->  		break;
-> +	case Opt_halt:
-> +		fsopt->flags |= CEPH_MOUNT_OPT_HALT;
-> +		break;
->  	default:
->  		BUG();
->  	}
-> @@ -601,6 +606,8 @@ static int ceph_show_options(struct seq_file *m, struct dentry *root)
->  	if (m->count == pos)
->  		m->count--;
->  
-> +	if (fsopt->flags & CEPH_MOUNT_OPT_HALT)
-> +		seq_puts(m, ",halt");
->  	if (fsopt->flags & CEPH_MOUNT_OPT_DIRSTAT)
->  		seq_puts(m, ",dirstat");
->  	if ((fsopt->flags & CEPH_MOUNT_OPT_RBYTES))
-> @@ -877,22 +884,28 @@ static void destroy_caches(void)
->  }
->  
->  /*
-> - * ceph_umount_begin - initiate forced umount.  Tear down down the
-> - * mount, skipping steps that may hang while waiting for server(s).
-> + * ceph_umount_begin - initiate forced umount.  Tear down the mount,
-> + * skipping steps that may hang while waiting for server(s).
->   */
-> -static void ceph_umount_begin(struct super_block *sb)
-> +static void __ceph_umount_begin(struct super_block *sb, bool halt)
->  {
->  	struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
->  
-> -	dout("ceph_umount_begin - starting forced umount\n");
->  	if (!fsc)
->  		return;
->  	fsc->mount_state = CEPH_MOUNT_SHUTDOWN;
->  	ceph_osdc_abort_requests(&fsc->client->osdc, -EIO);
-> -	ceph_mdsc_force_umount(fsc->mdsc);
-> +	ceph_mdsc_force_umount(fsc->mdsc, halt);
->  	fsc->filp_gen++; // invalidate open files
->  }
->  
-> +static void ceph_umount_begin(struct super_block *sb)
-> +{
-> +	dout("%s - starting forced umount\n", __func__);
+> +	issued = __ceph_caps_issued(ci, NULL);
 > +
-> +	__ceph_umount_begin(sb, false);
+> +	if ((mask & issued) == mask)
+> +		percpu_counter_inc(&metric->i_caps_hit);
+> +	else
+> +		percpu_counter_inc(&metric->i_caps_mis);
 > +}
 > +
->  static const struct super_operations ceph_super_ops = {
->  	.alloc_inode	= ceph_alloc_inode,
->  	.free_inode	= ceph_free_inode,
-> @@ -1193,6 +1206,16 @@ static int ceph_reconfigure_fc(struct fs_context *fc)
->  	struct ceph_parse_opts_ctx *pctx = fc->fs_private;
->  	struct ceph_mount_options *new_fsopt = pctx->opts;
+>  /*
+>   * Get cap bits issued by caps other than @ocap
+>   */
+> @@ -2758,6 +2784,7 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
+>  	BUG_ON(want & ~(CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO |
+>  			CEPH_CAP_FILE_SHARED | CEPH_CAP_FILE_EXCL |
+>  			CEPH_CAP_ANY_DIR_OPS));
+> +	ceph_caps_metric(ceph_inode(inode), need | want);
+>  	ret = try_get_cap_refs(inode, need, want, 0, nonblock, got);
+>  	return ret == -EAGAIN ? 0 : ret;
+>  }
+> @@ -2784,6 +2811,8 @@ int ceph_get_caps(struct file *filp, int need, int want,
+>  	    fi->filp_gen != READ_ONCE(fsc->filp_gen))
+>  		return -EBADF;
 >  
-> +	/* halt the mount point, will ignore other options */
-> +	if (new_fsopt->flags & CEPH_MOUNT_OPT_HALT) {
-> +		dout("halt the mount point\n");
-> +		fsopt->flags |= CEPH_MOUNT_OPT_HALT;
-> +		__ceph_umount_begin(sb, true);
-> +		ceph_halt_client(fsc->client);
+> +	ceph_caps_metric(ci, need | want);
 > +
-> +		return 0;
+>  	while (true) {
+>  		if (endoff > 0)
+>  			check_max_size(inode, endoff);
+> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+> index 15975ba95d9a..c83e52bd9961 100644
+> --- a/fs/ceph/debugfs.c
+> +++ b/fs/ceph/debugfs.c
+> @@ -128,6 +128,7 @@ static int metric_show(struct seq_file *s, void *p)
+>  {
+>  	struct ceph_fs_client *fsc = s->private;
+>  	struct ceph_mds_client *mdsc = fsc->mdsc;
+> +	int i, nr_caps = 0;
+>  
+>  	seq_printf(s, "item          total           miss            hit\n");
+>  	seq_printf(s, "-------------------------------------------------\n");
+> @@ -137,6 +138,21 @@ static int metric_show(struct seq_file *s, void *p)
+>  		   percpu_counter_sum(&mdsc->metric.d_lease_mis),
+>  		   percpu_counter_sum(&mdsc->metric.d_lease_hit));
+>  
+> +	mutex_lock(&mdsc->mutex);
+> +	for (i = 0; i < mdsc->max_sessions; i++) {
+> +		struct ceph_mds_session *s;
+> +
+> +		s = __ceph_lookup_mds_session(mdsc, i);
+> +		if (!s)
+> +			continue;
+> +		nr_caps += s->s_nr_caps;
+> +		ceph_put_mds_session(s);
 > +	}
+> +	mutex_unlock(&mdsc->mutex);
+> +	seq_printf(s, "%-14s%-16d%-16lld%lld\n", "caps", nr_caps,
+> +		   percpu_counter_sum(&mdsc->metric.i_caps_mis),
+> +		   percpu_counter_sum(&mdsc->metric.i_caps_hit));
 > +
->  	sync_filesystem(sb);
+>  	return 0;
+>  }
 >  
->  	if (strcmp_null(new_fsopt->snapdir_name, fsopt->snapdir_name))
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index 4771bf61d562..ffeaff5bf211 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -313,7 +313,7 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+>  	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+>  	struct ceph_mds_client *mdsc = fsc->mdsc;
+>  	int i;
+> -	int err;
+> +	int err, ret = -1;
+>  	unsigned frag = -1;
+>  	struct ceph_mds_reply_info_parsed *rinfo;
+>  
+> @@ -346,13 +346,16 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+>  	    !ceph_test_mount_opt(fsc, NOASYNCREADDIR) &&
+>  	    ceph_snap(inode) != CEPH_SNAPDIR &&
+>  	    __ceph_dir_is_complete_ordered(ci) &&
+> -	    __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1)) {
+> +	    (ret = __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1))) {
+>  		int shared_gen = atomic_read(&ci->i_shared_gen);
+> +		__ceph_caps_metric(ci, CEPH_CAP_XATTR_SHARED);
+
+Why is this dealing with Xs caps when you've checked Fs?
+
+>  		spin_unlock(&ci->i_ceph_lock);
+>  		err = __dcache_readdir(file, ctx, shared_gen);
+>  		if (err != -EAGAIN)
+>  			return err;
+>  	} else {
+> +		if (ret != -1)
+> +			__ceph_caps_metric(ci, CEPH_CAP_XATTR_SHARED);
+
+Ditto.
+
+>  		spin_unlock(&ci->i_ceph_lock);
+>  	}
+>  
+> @@ -757,6 +760,8 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
+>  		struct ceph_dentry_info *di = ceph_dentry(dentry);
+>  
+>  		spin_lock(&ci->i_ceph_lock);
+> +		__ceph_caps_metric(ci, CEPH_CAP_FILE_SHARED);
+> +
+>  		dout(" dir %p flags are %d\n", dir, ci->i_ceph_flags);
+>  		if (strncmp(dentry->d_name.name,
+>  			    fsc->mount_options->snapdir_name,
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 4d1b5cc6dd3b..96803500b712 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -384,6 +384,8 @@ int ceph_open(struct inode *inode, struct file *file)
+>  	 * asynchronously.
+>  	 */
+>  	spin_lock(&ci->i_ceph_lock);
+> +	__ceph_caps_metric(ci, wanted);
+> +
+>  	if (__ceph_is_any_real_caps(ci) &&
+>  	    (((fmode & CEPH_FILE_MODE_WR) == 0) || ci->i_auth_cap)) {
+>  		int mds_wanted = __ceph_caps_mds_wanted(ci, true);
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index a24fd00676b8..1431e52e9558 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -4169,13 +4169,29 @@ static int ceph_mdsc_metric_init(struct ceph_client_metric *metric)
+>  	ret = percpu_counter_init(&metric->d_lease_hit, 0, GFP_KERNEL);
+>  	if (ret)
+>  		return ret;
+> +
+>  	ret = percpu_counter_init(&metric->d_lease_mis, 0, GFP_KERNEL);
+> -	if (ret) {
+> -		percpu_counter_destroy(&metric->d_lease_hit);
+> -		return ret;
+> -	}
+> +	if (ret)
+> +		goto err_d_lease_mis;
+> +
+> +	ret = percpu_counter_init(&metric->i_caps_hit, 0, GFP_KERNEL);
+> +	if (ret)
+> +		goto err_i_caps_hit;
+> +
+> +	ret = percpu_counter_init(&metric->i_caps_mis, 0, GFP_KERNEL);
+> +	if (ret)
+> +		goto err_i_caps_mis;
+>  
+>  	return 0;
+> +
+> +err_i_caps_mis:
+> +	percpu_counter_destroy(&metric->i_caps_hit);
+> +err_i_caps_hit:
+> +	percpu_counter_destroy(&metric->d_lease_mis);
+> +err_d_lease_mis:
+> +	percpu_counter_destroy(&metric->d_lease_hit);
+> +
+> +	return ret;
+>  }
+>  
+>  int ceph_mdsc_init(struct ceph_fs_client *fsc)
+> @@ -4515,6 +4531,8 @@ void ceph_mdsc_destroy(struct ceph_fs_client *fsc)
+>  
+>  	ceph_mdsc_stop(mdsc);
+>  
+> +	percpu_counter_destroy(&mdsc->metric.i_caps_mis);
+> +	percpu_counter_destroy(&mdsc->metric.i_caps_hit);
+>  	percpu_counter_destroy(&mdsc->metric.d_lease_mis);
+>  	percpu_counter_destroy(&mdsc->metric.d_lease_hit);
+>  
+> diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
+> index 998fe2a643cf..e2fceb38a924 100644
+> --- a/fs/ceph/metric.h
+> +++ b/fs/ceph/metric.h
+> @@ -7,5 +7,8 @@ struct ceph_client_metric {
+>  	atomic64_t            total_dentries;
+>  	struct percpu_counter d_lease_hit;
+>  	struct percpu_counter d_lease_mis;
+> +
+> +	struct percpu_counter i_caps_hit;
+> +	struct percpu_counter i_caps_mis;
+>  };
+>  #endif /* _FS_CEPH_MDS_METRIC_H */
+> diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
+> index de56dee60540..4ce2f658e63d 100644
+> --- a/fs/ceph/quota.c
+> +++ b/fs/ceph/quota.c
+> @@ -147,9 +147,14 @@ static struct inode *lookup_quotarealm_inode(struct ceph_mds_client *mdsc,
+>  		return NULL;
+>  	}
+>  	if (qri->inode) {
+> +		struct ceph_inode_info *ci = ceph_inode(qri->inode);
+> +		int ret;
+> +
+> +		ceph_caps_metric(ci, CEPH_STAT_CAP_INODE);
+> +
+>  		/* get caps */
+> -		int ret = __ceph_do_getattr(qri->inode, NULL,
+> -					    CEPH_STAT_CAP_INODE, true);
+> +		ret = __ceph_do_getattr(qri->inode, NULL,
+> +					CEPH_STAT_CAP_INODE, true);
+>  		if (ret >= 0)
+>  			in = qri->inode;
+>  		else
 > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 4c40e86ad016..64f16083b216 100644
+> index 5241efe0f9d0..44b9a971ec9a 100644
 > --- a/fs/ceph/super.h
 > +++ b/fs/ceph/super.h
-> @@ -43,6 +43,7 @@
->  #define CEPH_MOUNT_OPT_MOUNTWAIT       (1<<12) /* mount waits if no mds is up */
->  #define CEPH_MOUNT_OPT_NOQUOTADF       (1<<13) /* no root dir quota in statfs */
->  #define CEPH_MOUNT_OPT_NOCOPYFROM      (1<<14) /* don't use RADOS 'copy-from' op */
-> +#define CEPH_MOUNT_OPT_HALT            (1<<15) /* halt the mount point */
->  
->  #define CEPH_MOUNT_OPT_DEFAULT			\
->  	(CEPH_MOUNT_OPT_DCACHE |		\
-> diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
-> index 8fe9b80e80a5..12e9f0cc8501 100644
-> --- a/include/linux/ceph/libceph.h
-> +++ b/include/linux/ceph/libceph.h
-> @@ -295,6 +295,7 @@ struct ceph_client *ceph_create_client(struct ceph_options *opt, void *private);
->  struct ceph_entity_addr *ceph_client_addr(struct ceph_client *client);
->  u64 ceph_client_gid(struct ceph_client *client);
->  extern void ceph_destroy_client(struct ceph_client *client);
-> +void ceph_halt_client(struct ceph_client *client);
->  extern void ceph_reset_client_addr(struct ceph_client *client);
->  extern int __ceph_open_session(struct ceph_client *client,
->  			       unsigned long started);
-> diff --git a/include/linux/ceph/mon_client.h b/include/linux/ceph/mon_client.h
-> index dbb8a6959a73..7718a2e65d07 100644
-> --- a/include/linux/ceph/mon_client.h
-> +++ b/include/linux/ceph/mon_client.h
-> @@ -78,6 +78,7 @@ struct ceph_mon_client {
->  	struct ceph_msg *m_auth, *m_auth_reply, *m_subscribe, *m_subscribe_ack;
->  	int pending_auth;
->  
-> +	bool halt;
->  	bool hunting;
->  	int cur_mon;                       /* last monitor i contacted */
->  	unsigned long sub_renew_after;
-> @@ -109,6 +110,7 @@ extern int ceph_monmap_contains(struct ceph_monmap *m,
->  
->  extern int ceph_monc_init(struct ceph_mon_client *monc, struct ceph_client *cl);
->  extern void ceph_monc_stop(struct ceph_mon_client *monc);
-> +void ceph_monc_halt(struct ceph_mon_client *monc);
->  extern void ceph_monc_reopen_session(struct ceph_mon_client *monc);
->  
->  enum {
-> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> index 02ff3a302d26..4b9143f7d989 100644
-> --- a/include/linux/ceph/osd_client.h
-> +++ b/include/linux/ceph/osd_client.h
-> @@ -382,6 +382,7 @@ extern void ceph_osdc_cleanup(void);
->  extern int ceph_osdc_init(struct ceph_osd_client *osdc,
->  			  struct ceph_client *client);
->  extern void ceph_osdc_stop(struct ceph_osd_client *osdc);
-> +extern void ceph_osdc_halt(struct ceph_osd_client *osdc);
->  extern void ceph_osdc_reopen_osds(struct ceph_osd_client *osdc);
->  
->  extern void ceph_osdc_handle_reply(struct ceph_osd_client *osdc,
-> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-> index a9d6c97b5b0d..c47578ed0546 100644
-> --- a/net/ceph/ceph_common.c
-> +++ b/net/ceph/ceph_common.c
-> @@ -652,6 +652,20 @@ struct ceph_client *ceph_create_client(struct ceph_options *opt, void *private)
->  }
->  EXPORT_SYMBOL(ceph_create_client);
->  
-> +void ceph_halt_client(struct ceph_client *client)
-> +{
-> +	dout("halt_client %p\n", client);
-> +
-> +	atomic_set(&client->msgr.stopping, 1);
-> +
-> +	/* unmount */
-> +	ceph_osdc_halt(&client->osdc);
-> +	ceph_monc_halt(&client->monc);
-> +
-> +	dout("halt_client %p done\n", client);
-> +}
-> +EXPORT_SYMBOL(ceph_halt_client);
-> +
->  void ceph_destroy_client(struct ceph_client *client)
->  {
->  	dout("destroy_client %p\n", client);
-> diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
-> index 9d9e4e4ea600..5819a02af7fe 100644
-> --- a/net/ceph/mon_client.c
-> +++ b/net/ceph/mon_client.c
-> @@ -979,14 +979,16 @@ static void delayed_work(struct work_struct *work)
->  	mutex_lock(&monc->mutex);
->  	if (monc->hunting) {
->  		dout("%s continuing hunt\n", __func__);
-> -		reopen_session(monc);
-> +		if (!monc->halt)
-> +			reopen_session(monc);
->  	} else {
->  		int is_auth = ceph_auth_is_authenticated(monc->auth);
->  		if (ceph_con_keepalive_expired(&monc->con,
->  					       CEPH_MONC_PING_TIMEOUT)) {
->  			dout("monc keepalive timeout\n");
->  			is_auth = 0;
-> -			reopen_session(monc);
-> +			if (!monc->halt)
-> +				reopen_session(monc);
->  		}
->  
->  		if (!monc->hunting) {
-> @@ -1115,6 +1117,16 @@ int ceph_monc_init(struct ceph_mon_client *monc, struct ceph_client *cl)
->  }
->  EXPORT_SYMBOL(ceph_monc_init);
->  
-> +void ceph_monc_halt(struct ceph_mon_client *monc)
-> +{
-> +	dout("monc halt\n");
-> +
-> +	mutex_lock(&monc->mutex);
-> +	monc->halt = true;
-> +	ceph_con_close(&monc->con);
-> +	mutex_unlock(&monc->mutex);
-> +}
-> +
-
-The changelog doesn't mention shutting down connections to the mons.
-
->  void ceph_monc_stop(struct ceph_mon_client *monc)
->  {
->  	dout("stop\n");
-> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> index 108c9457d629..161daf35d7f1 100644
-> --- a/net/ceph/osd_client.c
-> +++ b/net/ceph/osd_client.c
-> @@ -5202,6 +5202,17 @@ int ceph_osdc_init(struct ceph_osd_client *osdc, struct ceph_client *client)
->  	return err;
+> @@ -641,6 +641,14 @@ static inline bool __ceph_is_any_real_caps(struct ceph_inode_info *ci)
+>  	return !RB_EMPTY_ROOT(&ci->i_caps);
 >  }
 >  
-> +void ceph_osdc_halt(struct ceph_osd_client *osdc)
+> +extern void __ceph_caps_metric(struct ceph_inode_info *ci, int mask);
+> +static inline void ceph_caps_metric(struct ceph_inode_info *ci, int mask)
 > +{
-> +	down_write(&osdc->lock);
-> +	while (!RB_EMPTY_ROOT(&osdc->osds)) {
-> +		struct ceph_osd *osd = rb_entry(rb_first(&osdc->osds),
-> +						struct ceph_osd, o_node);
-> +		close_osd(osd);
-> +	}
-> +	up_write(&osdc->lock);
+> +	spin_lock(&ci->i_ceph_lock);
+> +	__ceph_caps_metric(ci, mask);
+> +	spin_unlock(&ci->i_ceph_lock);
 > +}
 > +
->  void ceph_osdc_stop(struct ceph_osd_client *osdc)
+>  extern int __ceph_caps_issued(struct ceph_inode_info *ci, int *implemented);
+>  extern int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int t);
+>  extern int __ceph_caps_issued_other(struct ceph_inode_info *ci,
+> @@ -927,6 +935,7 @@ extern int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
+>  			     int mask, bool force);
+>  static inline int ceph_do_getattr(struct inode *inode, int mask, bool force)
 >  {
->  	destroy_workqueue(osdc->completion_wq);
+> +	ceph_caps_metric(ceph_inode(inode), mask);
+>  	return __ceph_do_getattr(inode, NULL, mask, force);
+>  }
+>  extern int ceph_permission(struct inode *inode, int mask);
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 7b8a070a782d..9b28e87b6719 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -829,6 +829,7 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
+>  	struct ceph_vxattr *vxattr = NULL;
+>  	int req_mask;
+>  	ssize_t err;
+> +	int ret = -1;
+>  
+>  	/* let's see if a virtual xattr was requested */
+>  	vxattr = ceph_match_vxattr(inode, name);
+> @@ -856,7 +857,9 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
+>  
+>  	if (ci->i_xattrs.version == 0 ||
+>  	    !((req_mask & CEPH_CAP_XATTR_SHARED) ||
+> -	      __ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 1))) {
+> +	      (ret = __ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 1)))) {
+> +		if (ret != -1)
+> +			__ceph_caps_metric(ci, CEPH_CAP_XATTR_SHARED);
+>  		spin_unlock(&ci->i_ceph_lock);
+>  
+>  		/* security module gets xattr while filling trace */
+> @@ -871,6 +874,9 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
+>  		if (err)
+>  			return err;
+>  		spin_lock(&ci->i_ceph_lock);
+> +	} else {
+> +		if (ret != -1)
+> +			__ceph_caps_metric(ci, CEPH_CAP_XATTR_SHARED);
+>  	}
+>  
+>  	err = __build_xattrs(inode);
+> @@ -907,19 +913,24 @@ ssize_t ceph_listxattr(struct dentry *dentry, char *names, size_t size)
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
+>  	bool len_only = (size == 0);
+>  	u32 namelen;
+> -	int err;
+> +	int err, ret = -1;
+>  
+>  	spin_lock(&ci->i_ceph_lock);
+>  	dout("listxattr %p ver=%lld index_ver=%lld\n", inode,
+>  	     ci->i_xattrs.version, ci->i_xattrs.index_version);
+>  
+>  	if (ci->i_xattrs.version == 0 ||
+> -	    !__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 1)) {
+> +	    !(ret = __ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 1))) {
+> +		if (ret != -1)
+> +			__ceph_caps_metric(ci, CEPH_CAP_XATTR_SHARED);
+>  		spin_unlock(&ci->i_ceph_lock);
+>  		err = ceph_do_getattr(inode, CEPH_STAT_CAP_XATTR, true);
+>  		if (err)
+>  			return err;
+>  		spin_lock(&ci->i_ceph_lock);
+> +	} else {
+> +		if (ret != -1)
+> +			__ceph_caps_metric(ci, CEPH_CAP_XATTR_SHARED);
+>  	}
+>  
+>  	err = __build_xattrs(inode);
 
 -- 
 Jeff Layton <jlayton@kernel.org>
