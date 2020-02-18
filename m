@@ -2,171 +2,77 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A71EE163B73
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 Feb 2020 04:40:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12034163C07
+	for <lists+ceph-devel@lfdr.de>; Wed, 19 Feb 2020 05:26:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbgBSDkd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 18 Feb 2020 22:40:33 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:20094 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726403AbgBSDkd (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 18 Feb 2020 22:40:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582083632;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FGwh+mJVd3aU9xgQWNmizDxEhuq6F1hS4iFZ3LUflG8=;
-        b=f7x1djXTGBlIAX77a99yzLF+IF2GCYwJO0u0A+XFXxYzns5M2mFa1Vv/yZ0uw1yuuH6azq
-        VAWKE0CKo3xPpqA1FHJ94OG1tlmJ89hWaRR5AYVvl3TKmJD9j5C00iuo1zikoVeATkJVuZ
-        8Q9etEz0/8/8IGPsvkU0KCzYmz3+8HA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-330-Hk-URr4wMgi8d831l99HTg-1; Tue, 18 Feb 2020 22:40:30 -0500
-X-MC-Unique: Hk-URr4wMgi8d831l99HTg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0BC6B13E4;
-        Wed, 19 Feb 2020 03:40:29 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-94.pek2.redhat.com [10.72.12.94])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9EE8060C81;
-        Wed, 19 Feb 2020 03:40:23 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org, idryomov@gmail.com
-Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
-        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v7 5/5] ceph: add global metadata perf metric support
-Date:   Tue, 18 Feb 2020 22:38:51 -0500
-Message-Id: <20200219033851.6548-6-xiubli@redhat.com>
-In-Reply-To: <20200219033851.6548-1-xiubli@redhat.com>
-References: <20200219033851.6548-1-xiubli@redhat.com>
+        id S1726492AbgBSE0i (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 18 Feb 2020 23:26:38 -0500
+Received: from zmail.nuczu.edu.ua ([91.234.43.158]:53749 "EHLO
+        zmail.nuczu.edu.ua" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726467AbgBSE0i (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 18 Feb 2020 23:26:38 -0500
+X-Greylist: delayed 6432 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Feb 2020 23:26:38 EST
+Received: from localhost (localhost [127.0.0.1])
+        by zmail.nuczu.edu.ua (Postfix) with ESMTP id 1A49D8028FA;
+        Wed, 19 Feb 2020 04:09:41 +0200 (EET)
+Received: from zmail.nuczu.edu.ua ([127.0.0.1])
+        by localhost (zmail.nuczu.edu.ua [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 29DYR351K6FX; Wed, 19 Feb 2020 04:09:40 +0200 (EET)
+Received: from localhost (localhost [127.0.0.1])
+        by zmail.nuczu.edu.ua (Postfix) with ESMTP id A69424FD5C3;
+        Tue, 18 Feb 2020 23:45:59 +0200 (EET)
+DKIM-Filter: OpenDKIM Filter v2.10.3 zmail.nuczu.edu.ua A69424FD5C3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nuczu.edu.ua;
+        s=A52E72AE-E4EF-11E9-9906-53CE3145A657; t=1582062360;
+        bh=o+H3O7n1+zJcXo0FhJs7spyf8HmE4ClnBa/Y2Gk0DL0=;
+        h=MIME-Version:To:From:Date:Message-Id;
+        b=e4a86rnWozfeETZxlN548Nyt+6DeRcOEuQmY1aO0t4NTbuvx8XiHoIImT7iZUv5i/
+         oXW8ut9LlB8XP2+xPbGuu5/ZolQlT312Iq31Gh+JDuUJWkyjSurnGQ1NmfOuMK+/Pz
+         ii688nkQQeIyLTXYGdTF8yi4F65/N3NMJA9Ws2eRP3JCYYNtLsUfIgYNryXrpzmWCB
+         DNkoeRVWaKwU0srXSnGvexoYERDU2uUB74u4BY+MLEAZb9/W15E583GLPZ0oDLjp8b
+         QPqvHg3CtUGLggsmieDjbWspwTJxa4cnMUrVX0Gq6qOYGfc3yEpteHv1BfMD8UY/Im
+         u+gw+91cihU2A==
+X-Virus-Scanned: amavisd-new at nuczu.edu.ua
+Received: from zmail.nuczu.edu.ua ([127.0.0.1])
+        by localhost (zmail.nuczu.edu.ua [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id ts1d2TBM_ltF; Tue, 18 Feb 2020 23:45:59 +0200 (EET)
+Received: from [10.109.183.140] (unknown [105.12.3.161])
+        by zmail.nuczu.edu.ua (Postfix) with ESMTPSA id 4FF4B4FD8C9;
+        Tue, 18 Feb 2020 22:01:30 +0200 (EET)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000_Euro?=
+To:     Recipients <dushkin@nuczu.edu.ua>
+From:   ''Michael weirsky'' <dushkin@nuczu.edu.ua>
+Date:   Tue, 18 Feb 2020 22:01:21 +0200
+Reply-To: mikeweirskyspende@gmail.com
+Message-Id: <20200218200135.4FF4B4FD8C9@zmail.nuczu.edu.ua>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+Lieber Freund,
 
-It will calculate the latency for the metedata requests, which only
-include the time cousumed by network and the ceph.
+Ich bin Herr Mike Weirsky, New Jersey, Vereinigte Staaten von Amerika, der =
+Mega-Gewinner von $ 273million In Mega Millions Jackpot, spende ich an 5 zu=
+f=C3=A4llige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Ma=
+il nach einem Spinball ausgew=C3=A4hlt.Ich habe den gr=C3=B6=C3=9Ften Teil =
+meines Verm=C3=B6gens auf eine Reihe von Wohlt=C3=A4tigkeitsorganisationen =
+und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die =
+Summe von =E2=82=AC 2.000.000,00 an Sie als eine der ausgew=C3=A4hlten 5 zu=
+ spenden, um meine Gewinne zu =C3=BCberpr=C3=BCfen.
+Das ist dein Spendencode: [MW530342019]
+www.youtube.com/watch?v=3Dun8yRTmrYMY
 
-item          total       sum_lat(us)     avg_lat(us)
------------------------------------------------------
-metadata      113         220000          1946
+Antworten Sie mit dem SPENDE-CODE an diese =
 
-URL: https://tracker.ceph.com/issues/43215
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/debugfs.c    |  6 ++++++
- fs/ceph/mds_client.c | 20 ++++++++++++++++++++
- fs/ceph/metric.h     | 13 +++++++++++++
- 3 files changed, 39 insertions(+)
 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 464bfbdb970d..60f3e307fca1 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -146,6 +146,12 @@ static int metric_show(struct seq_file *s, void *p)
- 	avg =3D total ? sum / total : 0;
- 	seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "write", total, sum, avg);
-=20
-+	total =3D percpu_counter_sum(&mdsc->metric.total_metadatas);
-+	sum =3D percpu_counter_sum(&mdsc->metric.metadata_latency_sum);
-+	sum =3D jiffies_to_usecs(sum);
-+	avg =3D total ? sum / total : 0;
-+	seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "metadata", total, sum, avg)=
-;
-+
- 	seq_printf(s, "\n");
- 	seq_printf(s, "item          total           miss            hit\n");
- 	seq_printf(s, "-------------------------------------------------\n");
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 58e97ac004d6..eb494f1aa137 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -3021,6 +3021,12 @@ static void handle_reply(struct ceph_mds_session *=
-session, struct ceph_msg *msg)
-=20
- 	/* kick calling process */
- 	complete_request(mdsc, req);
-+
-+	if (!result || result =3D=3D -ENOENT) {
-+		s64 latency =3D jiffies - req->r_started;
-+
-+		ceph_update_metadata_latency(&mdsc->metric, latency);
-+	}
- out:
- 	ceph_mdsc_put_request(req);
- 	return;
-@@ -4200,8 +4206,20 @@ static int ceph_mdsc_metric_init(struct ceph_clien=
-t_metric *metric)
- 	if (ret)
- 		goto err_write_latency_sum;
-=20
-+	ret =3D percpu_counter_init(&metric->total_metadatas, 0, GFP_KERNEL);
-+	if (ret)
-+		goto err_total_metadatas;
-+
-+	ret =3D percpu_counter_init(&metric->metadata_latency_sum, 0, GFP_KERNE=
-L);
-+	if (ret)
-+		goto err_metadata_latency_sum;
-+
- 	return 0;
-=20
-+err_metadata_latency_sum:
-+	percpu_counter_destroy(&metric->total_metadatas);
-+err_total_metadatas:
-+	percpu_counter_destroy(&metric->write_latency_sum);
- err_write_latency_sum:
- 	percpu_counter_destroy(&metric->total_writes);
- err_total_writes:
-@@ -4557,6 +4575,8 @@ void ceph_mdsc_destroy(struct ceph_fs_client *fsc)
-=20
- 	ceph_mdsc_stop(mdsc);
-=20
-+	percpu_counter_destroy(&mdsc->metric.metadata_latency_sum);
-+	percpu_counter_destroy(&mdsc->metric.total_metadatas);
- 	percpu_counter_destroy(&mdsc->metric.write_latency_sum);
- 	percpu_counter_destroy(&mdsc->metric.total_writes);
- 	percpu_counter_destroy(&mdsc->metric.read_latency_sum);
-diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
-index a87197f3e915..9de8beb436c7 100644
---- a/fs/ceph/metric.h
-+++ b/fs/ceph/metric.h
-@@ -18,6 +18,9 @@ struct ceph_client_metric {
-=20
- 	struct percpu_counter total_writes;
- 	struct percpu_counter write_latency_sum;
-+
-+	struct percpu_counter total_metadatas;
-+	struct percpu_counter metadata_latency_sum;
- };
-=20
- static inline void ceph_update_read_latency(struct ceph_client_metric *m=
-,
-@@ -49,4 +52,14 @@ static inline void ceph_update_write_latency(struct ce=
-ph_client_metric *m,
- 		percpu_counter_add(&m->write_latency_sum, latency);
- 	}
- }
-+
-+static inline void ceph_update_metadata_latency(struct ceph_client_metri=
-c *m,
-+						s64 latency)
-+{
-+	if (!m)
-+		return;
-+
-+	percpu_counter_inc(&m->total_metadatas);
-+	percpu_counter_add(&m->metadata_latency_sum, latency);
-+}
- #endif /* _FS_CEPH_MDS_METRIC_H */
---=20
-2.21.0
+E-Mail:mikeweirskyspende@gmail.com
 
+Ich hoffe, Sie und Ihre Familie gl=C3=BCcklich zu machen.
+
+Gr=C3=BC=C3=9Fe
+Herr Mike Weirsky
