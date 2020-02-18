@@ -2,37 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C29E162479
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Feb 2020 11:27:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88214162497
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Feb 2020 11:31:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbgBRK07 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 18 Feb 2020 05:26:59 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:55079 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726193AbgBRK06 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 18 Feb 2020 05:26:58 -0500
+        id S1726373AbgBRKbT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 18 Feb 2020 05:31:19 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:44331 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726193AbgBRKbT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 18 Feb 2020 05:31:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582021617;
+        s=mimecast20190719; t=1582021877;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Nle0X3qhrsP6FMvS0kD+qA63M0UQVBvTtMOtLoU8fFo=;
-        b=Wl0lcAmiiepSBdVno9SuJOz8iOeKXyfMHL14MRh0xsogZZP8NaVSYjBcJ7lmymxZmJCP9X
-        Hj80n6elzN+jK0XmhmlrYo0QdFiXoSJeXKGb4SNI0C/HEP2Yiuvo7QK2KNFOB3lX3x6d+A
-        jZLF5izMOaPgXIovgtBEC/DnDBWHxSY=
+        bh=riCAPbjUM8W3uCVW0QuCCdgaQdHb6drdA7HocQGXYCw=;
+        b=g+JIKnF5p7A2qEm+T7IMKjWEFc0K8cm60PCgAp8dHiyZHH1rTKPkFVxAbZHkt9fM5R/hzu
+        MEGPQBwtebYtZqlP1CevZPbDlw4cMFuqSBxANiuWUuX8huy8HhHyUyvwn8vphGZLahlWyw
+        1Wisj9ttwlhe6AmkvzHYEkLEnlggmss=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-299-oDiaNTacMpK05-CdWgSzCg-1; Tue, 18 Feb 2020 05:26:50 -0500
-X-MC-Unique: oDiaNTacMpK05-CdWgSzCg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-415-suk-GQR5MVWi6hxSS7tseA-1; Tue, 18 Feb 2020 05:31:14 -0500
+X-MC-Unique: suk-GQR5MVWi6hxSS7tseA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1EC4B800D48;
-        Tue, 18 Feb 2020 10:26:49 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2D12F100F606;
+        Tue, 18 Feb 2020 10:31:13 +0000 (UTC)
 Received: from [10.72.12.94] (ovpn-12-94.pek2.redhat.com [10.72.12.94])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 605548CCC5;
-        Tue, 18 Feb 2020 10:26:44 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 59FCD87058;
+        Tue, 18 Feb 2020 10:31:08 +0000 (UTC)
 Subject: Re: [PATCH] ceph: fix use-after-free for the osdmap memory
 To:     Ilya Dryomov <idryomov@gmail.com>
 Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
@@ -42,8 +43,8 @@ Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
 References: <20200218033042.40047-1-xiubli@redhat.com>
  <CAOi1vP_nFEVUY+O-T_2WinyPGJvS_ciNXXZg3SwiyyfubWdPsw@mail.gmail.com>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <585fc43b-938b-cd5f-b41a-66dc9717a844@redhat.com>
-Date:   Tue, 18 Feb 2020 18:26:41 +0800
+Message-ID: <e8078415-2c0f-3d97-345a-97dab25fa1a3@redhat.com>
+Date:   Tue, 18 Feb 2020 18:31:06 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.2
 MIME-Version: 1.0
@@ -51,7 +52,7 @@ In-Reply-To: <CAOi1vP_nFEVUY+O-T_2WinyPGJvS_ciNXXZg3SwiyyfubWdPsw@mail.gmail.com
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
@@ -175,13 +176,14 @@ On 2020/2/18 18:21, Ilya Dryomov wrote:
 > The monmap pointer is reset the same way, so it needs some locking
 > as well.  And a quick grep shows more places that need to be fixed,
 > some between libceph and rbd.
->
-> I'll treat this patch as a bug report and fix them myself.
 
-Yeah, sure.
+I just checked mdsmap all the other places, they are all in the lock 
+wrappers.
 
 Thanks,
 
+> I'll treat this patch as a bug report and fix them myself.
+>
 > Thanks,
 >
 >                  Ilya
