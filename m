@@ -2,164 +2,121 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D9001628B7
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Feb 2020 15:41:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD26C1628F8
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Feb 2020 15:58:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbgBROlz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 18 Feb 2020 09:41:55 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:49830 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726116AbgBROlz (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:41:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582036913;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ybabQH17wfOhylHldkqA8Z9JdkFW3Q73SkNRJK3khVI=;
-        b=cC1JjEU5cxUKv5HWMX+wiIlScVKRFA/JMfZivz+2ENrlgwWxiYqWsuHMDnqCf8qwFwOfm/
-        wYsND39M+PN+P4gik7dAUJym13XRWQrDDyFjzW2oqgk7/5Rty0VrDfjFjhNJKU7sXXsSba
-        P2nnzNXYrMRxaOGMs9leHIQfI8fpLM4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-194-gzrr5qT-MkS2F-Qdufa2lA-1; Tue, 18 Feb 2020 09:41:51 -0500
-X-MC-Unique: gzrr5qT-MkS2F-Qdufa2lA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AA63E800D54;
-        Tue, 18 Feb 2020 14:41:50 +0000 (UTC)
-Received: from [10.72.12.94] (ovpn-12-94.pek2.redhat.com [10.72.12.94])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CEFB4100164D;
-        Tue, 18 Feb 2020 14:41:45 +0000 (UTC)
-Subject: Re: [PATCH] ceph: fix dout logs for null pointers
-To:     Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>
-Cc:     Sage Weil <sage@redhat.com>, "Yan, Zheng" <zyan@redhat.com>,
+        id S1726655AbgBRO6v (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 18 Feb 2020 09:58:51 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:36408 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726540AbgBRO6v (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 18 Feb 2020 09:58:51 -0500
+Received: by mail-il1-f196.google.com with SMTP id b15so17558704iln.3
+        for <ceph-devel@vger.kernel.org>; Tue, 18 Feb 2020 06:58:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e/knFV9YzRKvOUTq9lpqYBR648gfD1c8/eaCSzoqg94=;
+        b=VmML1NVr1Qv4fI2UiXv4qqqMLB+0skmay0o1Q3TvKTj/yn4KzcCe0TAO25IrD3fe3h
+         E13Ou3rBqcpZMv8MjIJ31V+2TkNEzzo0IZ6D9CpdpeszIver7bBGlsQ4xYIGAJJIhz28
+         kv+RTNCilmR/Kj1Snu8GXtL4MydpGSShcyGuXaLZHTI3E4RhAUKN6Fua6dZEC++kaBGj
+         Q8DDT04qY3wyoKL36zm5unhBX4ya8OECgaMOB/8sLPLzFIa1AQx08fGYI/5q/8dM5Rgf
+         loo0kLBYB7sM+zzfVoiNjCGBJ1/VdSToHjzJ/I2r4Qhqms2Y0RF5K+2MZ6wamJbUtJbA
+         ycxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e/knFV9YzRKvOUTq9lpqYBR648gfD1c8/eaCSzoqg94=;
+        b=QRxLmlxyJkCG5SjKSW6g9K51G1/TfyVmNtx1j0zZgkiuLljq41WcvKc0/qf71teWTw
+         j/1ZDF/fZkGr55v14dsPhidsnFjnDBPm+KQGdmJ4HMl6fxgPoY86nqfcX/8zdIIcq0En
+         l1ewtKi/epJ2PnEhKVFmhCOSpzdteWz9fX7CT1AQUpJCy/OeN3Q1PhLAIlOdulON/iXu
+         xvsOs/ISH0gjj02ydTos6dWFizuq0bE6bPAE/Xa6uuikILHvEiAxzbxE9I0epyrtouWR
+         YginjWPP50OJebfoept84FE21k5bVjkOUbU8yAYe4LA1ebLbCA27D4ozSnrPy8+VfvmG
+         akEQ==
+X-Gm-Message-State: APjAAAUHdXdvTWZw8XBk94t3Emv4VUaFKhuyHn5q+Se1r3oQWUY+w73s
+        o7KownTRrRNJdNGH0CaLgpmAsUxgbAzipAlCCSE=
+X-Google-Smtp-Source: APXvYqx8WZEgx98EiyIuvKtiVtQpmOQFa+6kPGAe08LzI3unGFkld2vAcVVZHEDwKI3QjxCQIDaZjSGcrQabva4pc84=
+X-Received: by 2002:a92:b749:: with SMTP id c9mr19254806ilm.143.1582037930298;
+ Tue, 18 Feb 2020 06:58:50 -0800 (PST)
+MIME-Version: 1.0
+References: <20200216064945.61726-1-xiubli@redhat.com> <78ff80dd12d497be7a6606a60973f7e2d864e910.camel@kernel.org>
+ <36e1f3a9-1688-9eb0-27d7-351a12bca85a@redhat.com> <4a4cfe2a5fc1de6f73fa3f557921c1ad5802add6.camel@kernel.org>
+In-Reply-To: <4a4cfe2a5fc1de6f73fa3f557921c1ad5802add6.camel@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 18 Feb 2020 15:59:15 +0100
+Message-ID: <CAOi1vP_yGJGqkY+QLdQoruJrS3gawEC-_NqDnpucCWfXOHL-aQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: add halt mount option support
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Xiubo Li <xiubli@redhat.com>, Sage Weil <sage@redhat.com>,
+        "Yan, Zheng" <zyan@redhat.com>,
         Patrick Donnelly <pdonnell@redhat.com>,
         Ceph Development <ceph-devel@vger.kernel.org>
-References: <20200217112806.30738-1-xiubli@redhat.com>
- <CAOi1vP_bCGoni+tmvVri6Gcv7QRN4+qvHUrrweHLpnTyAzQw=A@mail.gmail.com>
- <cf786dd6-cb6e-1a3a-a57e-04d9525bb4a4@redhat.com>
- <CAOi1vP9sLLUhuBAP7UZ1Mbjjx4uh0Rt0PwgAuD_qBevQoSOeHA@mail.gmail.com>
- <0637b6ba-b411-6ddd-2703-d0f96a65a796@redhat.com>
- <53b7ad01ba884004209e86bb028dc628ae0d12db.camel@kernel.org>
- <CAOi1vP_h=0y7_VFC_BMtNMTMWv1z5RGge0CH+sT0eYkUvND1OA@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <b2be6214-8efd-db70-3cfc-dafbc7b4eabd@redhat.com>
-Date:   Tue, 18 Feb 2020 22:41:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <CAOi1vP_h=0y7_VFC_BMtNMTMWv1z5RGge0CH+sT0eYkUvND1OA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020/2/18 22:10, Ilya Dryomov wrote:
-> On Tue, Feb 18, 2020 at 2:51 PM Jeff Layton <jlayton@kernel.org> wrote:
->> On Mon, 2020-02-17 at 23:42 +0800, Xiubo Li wrote:
->>> On 2020/2/17 23:27, Ilya Dryomov wrote:
->>>> On Mon, Feb 17, 2020 at 4:02 PM Xiubo Li <xiubli@redhat.com> wrote:
->>>>> On 2020/2/17 22:52, Ilya Dryomov wrote:
->>>>>> On Mon, Feb 17, 2020 at 12:28 PM <xiubli@redhat.com> wrote:
->>>>>>> From: Xiubo Li <xiubli@redhat.com>
->>>>>>>
->>>>>>> For example, if dentry and inode is NULL, the log will be:
->>>>>>> ceph:  lookup result=000000007a1ca695
->>>>>>> ceph:  submit_request on 0000000041d5070e for inode 000000007a1ca695
->>>>>>>
->>>>>>> The will be confusing without checking the corresponding code carefully.
->>>>>>>
->>>>>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>>>>>> ---
->>>>>>>     fs/ceph/dir.c        | 2 +-
->>>>>>>     fs/ceph/mds_client.c | 6 +++++-
->>>>>>>     2 files changed, 6 insertions(+), 2 deletions(-)
->>>>>>>
->>>>>>> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
->>>>>>> index ffeaff5bf211..245a262ec198 100644
->>>>>>> --- a/fs/ceph/dir.c
->>>>>>> +++ b/fs/ceph/dir.c
->>>>>>> @@ -798,7 +798,7 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
->>>>>>>            err = ceph_handle_snapdir(req, dentry, err);
->>>>>>>            dentry = ceph_finish_lookup(req, dentry, err);
->>>>>>>            ceph_mdsc_put_request(req);  /* will dput(dentry) */
->>>>>>> -       dout("lookup result=%p\n", dentry);
->>>>>>> +       dout("lookup result=%d\n", err);
->>>>>>>            return dentry;
->>>>>>>     }
->>>>>>>
->>>>>>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
->>>>>>> index b6aa357f7c61..e34f159d262b 100644
->>>>>>> --- a/fs/ceph/mds_client.c
->>>>>>> +++ b/fs/ceph/mds_client.c
->>>>>>> @@ -2772,7 +2772,11 @@ int ceph_mdsc_submit_request(struct ceph_mds_client *mdsc, struct inode *dir,
->>>>>>>                    ceph_get_cap_refs(ceph_inode(req->r_old_dentry_dir),
->>>>>>>                                      CEPH_CAP_PIN);
->>>>>>>
->>>>>>> -       dout("submit_request on %p for inode %p\n", req, dir);
->>>>>>> +       if (dir)
->>>>>>> +               dout("submit_request on %p for inode %p\n", req, dir);
->>>>>>> +       else
->>>>>>> +               dout("submit_request on %p\n", req);
->>>>>> Hi Xiubo,
->>>>>>
->>>>>> It's been this way for a couple of years now.  There are a lot more
->>>>>> douts in libceph, ceph and rbd that are sometimes fed NULL pointers.
->>>>>> I don't think replacing them with conditionals is the way forward.
->>>>>>
->>>>>> I honestly don't know what security concern is addressed by hashing
->>>>>> NULL pointers, but that is what we have...  Ultimately, douts are just
->>>>>> for developers, and when you find yourself having to chase individual
->>>>>> pointers, you usually have a large enough piece of log to figure out
->>>>>> what the NULL hash is.
->>>>> Hi Ilya
->>>>>
->>>>> For the ceph_lookup(). The dentry will be NULL(when the directory exists
->>>>> or -ENOENT) or ERR_PTR(-errno) in most cases here, it seems for the
->>>>> rename case it will be the old dentry returned.
->>>>>
->>>>> So today I was trying to debug and get some logs from it, the
->>>>> 000000007a1ca695 really confused me for a long time before I dig into
->>>>> the source code.
->>>> I was reacting to ceph_mdsc_submit_request() hunk.  Feel free to tweak
->>>> ceph_lookup() or refactor it so that err is not threaded through three
->>>> different functions as Jeff suggested.
->>> Hi Ilya
->>>
->>> Oh okay. You are right we can figure out what we need via many other
->>> dout logs.
->>>
->>> I just saw some very confusing logs that the "dentry" in cpeh_lookup()
->>> and the "inode" in _submit_ are all 000000007a1ca695, so I addressed
->>> them both here.
->>>
->> Since Ilya objected to this patch, I'll drop it from testing for now.
->> Please send a v2 that addresses his concerns if you still want this in.
-> I have submitted a patch to fix printk to not obfuscate NULL and
-> error pointers and haven't heard any objections yet, so hopefully
-> this issue will become moot soon.
-
-Hi Jeff, Ilya
-
-Yeah, this is very cool for me. This will just work like the string 
-pointer formating, if it is NULL it then will be formated as 
-"null"/"nil" or something instead.
-
-Thanks
-
-BRs
-
-
-> Thanks,
+On Tue, Feb 18, 2020 at 1:01 PM Jeff Layton <jlayton@kernel.org> wrote:
 >
->                  Ilya
+> On Tue, 2020-02-18 at 15:19 +0800, Xiubo Li wrote:
+> > On 2020/2/17 21:04, Jeff Layton wrote:
+> > > On Sun, 2020-02-16 at 01:49 -0500, xiubli@redhat.com wrote:
+> > > > From: Xiubo Li <xiubli@redhat.com>
+> > > >
+> > > > This will simulate pulling the power cable situation, which will
+> > > > do:
+> > > >
+> > > > - abort all the inflight osd/mds requests and fail them with -EIO.
+> > > > - reject any new coming osd/mds requests with -EIO.
+> > > > - close all the mds connections directly without doing any clean up
+> > > >    and disable mds sessions recovery routine.
+> > > > - close all the osd connections directly without doing any clean up.
+> > > > - set the msgr as stopped.
+> > > >
+> > > > URL: https://tracker.ceph.com/issues/44044
+> > > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > > There is no explanation of how to actually _use_ this feature? I assume
+> > > you have to remount the fs with "-o remount,halt" ? Is it possible to
+> > > reenable the mount as well?  If not, why keep the mount around? Maybe we
+> > > should consider wiring this in to a new umount2() flag instead?
+> > >
+> > > This needs much better documentation.
+> > >
+> > > In the past, I've generally done this using iptables. Granted that that
+> > > is difficult with a clustered fs like ceph (given that you potentially
+> > > have to set rules for a lot of addresses), but I wonder whether a scheme
+> > > like that might be more viable in the long run.
+> > >
+> > How about fulfilling the DROP iptable rules in libceph ? Could you
+> > foresee any problem ? This seems the one approach could simulate pulling
+> > the power cable.
+> >
 >
+> Yeah, I've mostly done this using DROP rules when I needed to test things.
+> But, I think I was probably just guilty of speculating out loud here.
 
+I'm not sure what exactly Xiubo meant by "fulfilling" iptables rules
+in libceph, but I will say that any kind of iptables manipulation from
+within libceph is probably out of the question.
+
+>
+> I think doing this by just closing down the sockets is probably fine. I
+> wouldn't pursue anything relating to to iptables here, unless we have
+> some larger reason to go that route.
+
+IMO investing into a set of iptables and tc helpers for teuthology
+makes a _lot_ of sense.  It isn't exactly the same as a cable pull,
+but it's probably the next best thing.  First, it will be external to
+the system under test.  Second, it can be made selective -- you can
+cut a single session or all of them, simulate packet loss and latency
+issues, etc.  Third, it can be used for recovery and failover/fencing
+testing -- what happens when these packets get delivered two minutes
+later?  None of this is possible with something that just attempts to
+wedge the mount and acts as a point of no return.
+
+Thanks,
+
+                Ilya
