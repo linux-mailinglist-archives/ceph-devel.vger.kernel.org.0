@@ -2,81 +2,189 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D1E9161D94
-	for <lists+ceph-devel@lfdr.de>; Mon, 17 Feb 2020 23:49:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83B6D161F8B
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Feb 2020 04:31:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725927AbgBQWs7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 17 Feb 2020 17:48:59 -0500
-Received: from mail.hlhs.hlc.edu.tw ([210.62.247.253]:43436 "EHLO
-        mail.hlhs.hlc.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725853AbgBQWs7 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 17 Feb 2020 17:48:59 -0500
-X-Greylist: delayed 1098 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Feb 2020 17:48:57 EST
-Received: from mail.hlhs.hlc.edu.tw (mail.hlhs.hlc.edu.tw [127.0.0.1])
-        by mail.hlhs.hlc.edu.tw (8.14.4/8.14.4) with ESMTP id 01DF6VOQ027204;
-        Thu, 13 Feb 2020 23:06:31 +0800
-From:   "Telekom Malaysia Berhad" <tm@hlc.edu.tw>
-Reply-To: tm.com.2020@outlook.my
-Subject: TMB BONUS
-Date:   Thu, 13 Feb 2020 23:06:31 +0800
-Message-Id: <20200213120145.M7295@mail.hlhs.hlc.edu.tw>
-X-Mailer: OpenWebMail 2.53 
-X-OriginatingIP: 196.52.38.24 (wendy222)
+        id S1726338AbgBRDbC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 17 Feb 2020 22:31:02 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:53911 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726245AbgBRDbB (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 17 Feb 2020 22:31:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581996659;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=B7/JdSjZaijdr5YDbGfyHuxt30voPVrdNrr1gXkaEu0=;
+        b=LpC5O6dCuMGEAVOC/gXs2C9jTux8k/0tzqvp53mxZD9WmlWPhv2fWX8U9FdnxWb0V98nGU
+        dYcVmJzLx0To9JVQo4fgbtMwYcTzbIE0KQX+w8/R+qONt+3Ph1Ty4ddguNgRiLiuFR3Khm
+        ykyxR04uXMHbgAJEz8M5z0orOYCBdYs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-288-djd4r9TyP_SRBsLlV_eBpQ-1; Mon, 17 Feb 2020 22:30:53 -0500
+X-MC-Unique: djd4r9TyP_SRBsLlV_eBpQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6F9E9100551A;
+        Tue, 18 Feb 2020 03:30:52 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-23.pek2.redhat.com [10.72.12.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4C7B510013A1;
+        Tue, 18 Feb 2020 03:30:47 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org, idryomov@gmail.com
+Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: fix use-after-free for the osdmap memory
+Date:   Mon, 17 Feb 2020 22:30:42 -0500
+Message-Id: <20200218033042.40047-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset=utf-8
-To:     unlisted-recipients:; (no To-header on input)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Telekom Malaysia Berhad
-Level 51, North Wing, Menara TM,
-Jalan Pantai Baru, 50672,
-Kuala Lumpur,
-WP Kuala Lumpur,
-Malaysia.
+From: Xiubo Li <xiubli@redhat.com>
 
-Hadiah Bonus Tahun Baru.
+When there has new osdmap comes, it will replace and release
+the old osdmap memory, but if the mount is still on the way
+without the osdc->lock wrappers, we will hit use after free
+bug, like:
 
-Pihak Telekom Malaysia @Program Kemenangan yang telah diadakan pada 1 Januari 2020 di 
-mana alamat email anda yang disertakan beraama Tiket Kemenangan nombor 2 - 4 -16-37 -89 
-- 40 -85 dengan siri nombor 2268/02 telah memenangi loteri kategori hadiah kedua khas 
-keluarga Telekom Malaysia.Untuk menuntut hadiah kemenangan ini anda dikehendaki 
-menghubungi melalui e mail Bahagian Tuntutan untuk tujuan pemerosesan dan pembayaran 
-hadiah wang tunai kepada anda.
+<3>[ 3797.775970] BUG: KASAN: use-after-free in __ceph_open_session+0x2a9=
+/0x370 [libceph]
+<3>[ 3797.775974] Read of size 4 at addr ffff8883d8b8a110 by task mount.c=
+eph/64782
+<3>[ 3797.775975]
+<4>[ 3797.775980] CPU: 0 PID: 64782 Comm: mount.ceph Tainted: G          =
+  E     5.5.0+ #16
+<4>[ 3797.775982] Hardware name: VMware, Inc. VMware Virtual Platform/440=
+BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[ 3797.775984] Call Trace:
+<4>[ 3797.775992]  dump_stack+0x8c/0xc0
+<4>[ 3797.775997]  print_address_description.constprop.0+0x1b/0x210
+<4>[ 3797.776029]  ? __ceph_open_session+0x2a9/0x370 [libceph]
+<4>[ 3797.776062]  ? __ceph_open_session+0x2a9/0x370 [libceph]
+<4>[ 3797.776065]  __kasan_report.cold+0x1a/0x33
+<4>[ 3797.776098]  ? __ceph_open_session+0x2a9/0x370 [libceph]
+<4>[ 3797.776101]  kasan_report+0xe/0x20
+<4>[ 3797.776133]  __ceph_open_session+0x2a9/0x370 [libceph]
+<4>[ 3797.776170]  ? ceph_reset_client_addr+0x30/0x30 [libceph]
+<4>[ 3797.776173]  ? _raw_spin_lock+0x7a/0xd0
+<4>[ 3797.776178]  ? finish_wait+0x100/0x100
+<4>[ 3797.776182]  ? __mutex_lock_slowpath+0x10/0x10
+<4>[ 3797.776227]  ceph_get_tree+0x65b/0xa40 [ceph]
+<4>[ 3797.776236]  vfs_get_tree+0x46/0x120
+<4>[ 3797.776240]  do_mount+0xa2c/0xd70
+<4>[ 3797.776245]  ? __list_add_valid+0x2f/0x60
+<4>[ 3797.776249]  ? copy_mount_string+0x20/0x20
+<4>[ 3797.776254]  ? __kasan_kmalloc.constprop.0+0xc2/0xd0
+<4>[ 3797.776258]  __x64_sys_mount+0xbe/0x100
+<4>[ 3797.776263]  do_syscall_64+0x73/0x210
+<4>[ 3797.776268]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[ 3797.776271] RIP: 0033:0x7f8f026e5b8e
+<4>[ 3797.776275] Code: 48 8b 0d fd 42 0c 00 f7 d8 64 89 01 48 83 c8 ff c=
+3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f=
+ 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d ca 42 0c 00 f7 d8 64 89 01 48
+<4>[ 3797.776277] RSP: 002b:00007ffc2d7cccd8 EFLAGS: 00000206 ORIG_RAX: 0=
+0000000000000a5
+<4>[ 3797.776281] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f=
+8f026e5b8e
+<4>[ 3797.776283] RDX: 00005582afb2a558 RSI: 00007ffc2d7cef0d RDI: 000055=
+82b01707a0
+<4>[ 3797.776285] RBP: 00007ffc2d7ccda0 R08: 00005582b0173250 R09: 000000=
+0000000067
+<4>[ 3797.776287] R10: 0000000000000000 R11: 0000000000000206 R12: 000055=
+82afb043a0
+<4>[ 3797.776289] R13: 00007ffc2d7cce80 R14: 0000000000000000 R15: 000000=
+0000000000
+<3>[ 3797.776293]
+<3>[ 3797.776295] Allocated by task 64782:
+<4>[ 3797.776299]  save_stack+0x1b/0x80
+<4>[ 3797.776302]  __kasan_kmalloc.constprop.0+0xc2/0xd0
+<4>[ 3797.776336]  ceph_osdmap_alloc+0x29/0xd0 [libceph]
+<4>[ 3797.776368]  ceph_osdc_init+0x1ff/0x490 [libceph]
+<4>[ 3797.776399]  ceph_create_client+0x154/0x1b0 [libceph]
+<4>[ 3797.776427]  ceph_get_tree+0x97/0xa40 [ceph]
+<4>[ 3797.776430]  vfs_get_tree+0x46/0x120
+<4>[ 3797.776433]  do_mount+0xa2c/0xd70
+<4>[ 3797.776436]  __x64_sys_mount+0xbe/0x100
+<4>[ 3797.776439]  do_syscall_64+0x73/0x210
+<4>[ 3797.776443]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<3>[ 3797.776443]
+<3>[ 3797.776445] Freed by task 55184:
+<4>[ 3797.776461]  save_stack+0x1b/0x80
+<4>[ 3797.776464]  __kasan_slab_free+0x12c/0x170
+<4>[ 3797.776467]  kfree+0xa3/0x290
+<4>[ 3797.776500]  handle_one_map+0x1f4/0x3c0 [libceph]
+<4>[ 3797.776533]  ceph_osdc_handle_map+0x910/0xa90 [libceph]
+<4>[ 3797.776567]  dispatch+0x826/0xde0 [libceph]
+<4>[ 3797.776599]  ceph_con_workfn+0x18c1/0x3b30 [libceph]
+<4>[ 3797.776603]  process_one_work+0x3b1/0x6a0
+<4>[ 3797.776606]  worker_thread+0x78/0x5d0
+<4>[ 3797.776609]  kthread+0x191/0x1e0
+<4>[ 3797.776612]  ret_from_fork+0x35/0x40
+<3>[ 3797.776613]
+<3>[ 3797.776616] The buggy address belongs to the object at ffff8883d8b8=
+a100
+<3>[ 3797.776616]  which belongs to the cache kmalloc-192 of size 192
+<3>[ 3797.776836] The buggy address is located 16 bytes inside of
+<3>[ 3797.776836]  192-byte region [ffff8883d8b8a100, ffff8883d8b8a1c0)
+<3>[ 3797.776838] The buggy address belongs to the page:
+<4>[ 3797.776842] page:ffffea000f62e280 refcount:1 mapcount:0 mapping:fff=
+f8883ec80f000 index:0xffff8883d8b8bf00 compound_mapcount: 0
+<4>[ 3797.776847] raw: 0017ffe000010200 ffffea000f6c6780 0000000200000002=
+ ffff8883ec80f000
+<4>[ 3797.776851] raw: ffff8883d8b8bf00 000000008020001b 00000001ffffffff=
+ 0000000000000000
+<4>[ 3797.776852] page dumped because: kasan: bad access detected
+<3>[ 3797.776853]
+<3>[ 3797.776854] Memory state around the buggy address:
+<3>[ 3797.776857]  ffff8883d8b8a000: 00 00 00 00 00 00 00 00 00 00 00 00 =
+00 00 00 00
+<3>[ 3797.776859]  ffff8883d8b8a080: 00 00 00 00 00 00 00 00 fc fc fc fc =
+fc fc fc fc
+<3>[ 3797.776862] >ffff8883d8b8a100: fb fb fb fb fb fb fb fb fb fb fb fb =
+fb fb fb fb
+<3>[ 3797.776863]                          ^
+<3>[ 3797.776866]  ffff8883d8b8a180: fb fb fb fb fb fb fb fb fc fc fc fc =
+fc fc fc fc
+<3>[ 3797.776868]  ffff8883d8b8a200: fb fb fb fb fb fb fb fb fb fb fb fb =
+fb fb fb fb
+<3>[ 3797.776869] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-Di sepanjang program Khas Keluarga Telekom yang telah diadakan di Ibupejabat di Kuala 
-Lumpur sejumlah RM270,000.00 (Ringgit Malaysia : Dua Ratus Tujuh Puluh Ribu) telah 
-dianugerahkan kepada anda oleh Telekom Malaysia Berhad kepada anda dan keluarga anda 
-sempena sambutsn Hari Raya 2020 ini.
+URL: https://tracker.ceph.com/issues/44177
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ net/ceph/ceph_common.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Program ini turut dibiayai bersama oleh Toyota Malaysia dan Tenaga Nasional sebagai 
-pakej istimewa Telekom 2020 dan anda perlu memahami bahawa e mail ini adalah 100% sah 
-dan diiktiraf kerana program ini kebiasaannya diadakan sekali dalam masa lima tahun.
+diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+index a0e97f6c1072..5c6230b56e02 100644
+--- a/net/ceph/ceph_common.c
++++ b/net/ceph/ceph_common.c
+@@ -682,8 +682,14 @@ EXPORT_SYMBOL(ceph_reset_client_addr);
+  */
+ static bool have_mon_and_osd_map(struct ceph_client *client)
+ {
++	bool have_osd_map =3D false;
++
++	down_read(&client->osdc.lock);
++	have_osd_map =3D !!(client->osdc.osdmap && client->osdc.osdmap->epoch);
++	up_read(&client->osdc.lock);
++
+ 	return client->monc.monmap && client->monc.monmap->epoch &&
+-	       client->osdc.osdmap && client->osdc.osdmap->epoch;
++	       have_osd_map;
+ }
+=20
+ /*
+--=20
+2.21.0
 
-Sila hubungi agen kami untuk menuntut hadiah ini :
-
-EN SHAFIE BIN HASSAN
-Pengarah Bahagian Tuntutan
-E-mail: tm.com.2020@outlook.my
-
-
-Untuk tujuan pemerosesan sila hubungi agen kami dengan maklumat-maklumat berikut :
-1). Nama Penuh:
-2). Umur:
-3). Pekerjaan:
-4). Telefon:
-5). Negeri/Bandar:
-
-Perlu diingatkan bahawa hadiah akhir tahun Telekom Malaysia Berhad 2020 ini adalah 
-diberikan khas kepada anda dan keluarga anda dan anda hendaklah membuat tunttan ini 
-sebelum 29 Februari 2020.
-
-Terima kasih.
-
-Mrs Nadia binti Rafik
-Pengurus Eksekutif
-Anugerah Telekom Malaysia
-Ibupejabat telekom Malaysia.
