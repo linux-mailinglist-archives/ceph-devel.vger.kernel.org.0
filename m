@@ -2,125 +2,103 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1920B164488
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 Feb 2020 13:44:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DF0E16454A
+	for <lists+ceph-devel@lfdr.de>; Wed, 19 Feb 2020 14:25:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbgBSMoH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 19 Feb 2020 07:44:07 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:33303 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726491AbgBSMoH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 19 Feb 2020 07:44:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582116245;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KTCXOxkGwei2N9CqK9DpJSsxlDO0Dj8CyqxGlPrhXPo=;
-        b=hBxEKpjkrTNYWwsxuutByvv4Em07yNbTUHB/vuo3C9T8dYyu9x68xdFPv3XGkivJzx//jm
-        ZHuQ44d4f71cwErdNQU9xDQ6Dy+bis6sgn/FJdl26si5v/w+Pj8dZ5IBujQ/NFJrRpGWP0
-        VdFklE9/nrIw+GFn6YAtZbSe6Qa+Vxs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-324-KWbqyH4jNeKUI3d-2Yc_OQ-1; Wed, 19 Feb 2020 07:44:02 -0500
-X-MC-Unique: KWbqyH4jNeKUI3d-2Yc_OQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727705AbgBSNZ2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 19 Feb 2020 08:25:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33602 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726725AbgBSNZ2 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 19 Feb 2020 08:25:28 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AF621DBE8;
-        Wed, 19 Feb 2020 12:44:01 +0000 (UTC)
-Received: from [10.72.12.94] (ovpn-12-94.pek2.redhat.com [10.72.12.94])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AC6DE1001B00;
-        Wed, 19 Feb 2020 12:43:58 +0000 (UTC)
-Subject: Re: BUG: ceph_inode_cachep and ceph_dentry_cachep caches are not
- clean when destroying
-To:     Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     Patrick Donnelly <pdonnell@redhat.com>,
-        "Yan, Zheng" <zyan@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-References: <23e2b9a7-5ff6-1f07-ff03-08abcbf1457f@redhat.com>
- <CAOi1vP8b1aCph3NkAENEtAKfPDa8J03cNxwOZ+KSn1-te=6g0w@mail.gmail.com>
- <bed8db55-50e1-a787-c9d4-a7c0f3c6c9d2@redhat.com>
- <CAOi1vP_=t+ppv2Ob1O44-zQz69Y5au2G+5XHvqQ8vvxLUee_2g@mail.gmail.com>
- <ee0c1043-b0b8-5107-3c78-c4a7b8fca4dc@redhat.com>
- <1efef7a514b31b731d031a788e4bc89f508343a9.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <09a76a4e-8596-87a7-94a2-53102af8e4f0@redhat.com>
-Date:   Wed, 19 Feb 2020 20:43:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        by mail.kernel.org (Postfix) with ESMTPSA id A99F124654;
+        Wed, 19 Feb 2020 13:25:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582118728;
+        bh=dBb3IxuxmNE8l02AwJ97SFNsPSd8HB3llUd6N4WqMtM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BNV43IfcBGhd+k9E5k+fuHgMS1kMDrY5044ZYgFABWSCT7mieeqMhtzXJKCiI5FXa
+         xLITHsipb6dL6p3/7crQ+10U3GPOlp2xk8tO2pnzgp3f/VNhMo5tZUoKxJag/NyrG2
+         Z3Z2mFtOSNnbU7FLvzCvwcDVub4rt/FStoXNc5R0=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, sage@redhat.com, zyan@redhat.com,
+        pdonnell@redhat.com, xiubli@redhat.com
+Subject: [PATCH v5 00/12] ceph: async directory operations support
+Date:   Wed, 19 Feb 2020 08:25:14 -0500
+Message-Id: <20200219132526.17590-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <1efef7a514b31b731d031a788e4bc89f508343a9.camel@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020/2/19 20:33, Jeff Layton wrote:
-> On Wed, 2020-02-19 at 19:29 +0800, Xiubo Li wrote:
->> On 2020/2/19 19:27, Ilya Dryomov wrote:
->>> On Wed, Feb 19, 2020 at 12:01 PM Xiubo Li <xiubli@redhat.com> wrote:
->>>> On 2020/2/19 18:53, Ilya Dryomov wrote:
->>>>> On Wed, Feb 19, 2020 at 10:39 AM Xiubo Li <xiubli@redhat.com> wrote:
->>>>>> Hi Jeff, Ilya and all
->>>>>>
->>>>>> I hit this call traces by running some test cases when unmounting the fs
->>>>>> mount points.
->>>>>>
->>>>>> It seems there still have some inodes or dentries are not destroyed.
->>>>>>
->>>>>> Will this be a problem ? Any idea ?
->>>>> Hi Xiubo,
->>>>>
->>>>> Of course it is a problem ;)
->>>>>
->>>>> These are all in ceph_inode_info and ceph_dentry_info caches, but
->>>>> I see traces of rbd mappings as well.  Could you please share your
->>>>> test cases?  How are you unloading modules?
->>>> I am not sure exactly in which one, mostly I was running the following
->>>> commands.
->>>>
->>>> 1, ./bin/rbd map share -o mount_timeout=30
->>>>
->>>> 2, ./bin/rbd unmap share
->>>>
->>>> 3, ./bin/mount.ceph :/ /mnt/cephfs/
->>>>
->>>> 4, `for i in {0..1000}; do mkdir /mnt/cephfs/dir$0; done` and `for i in
->>>> {0..1000}; do rm -rf /mnt/cephfs/dir$0; done`
->>>>
->>>> 5, umount /mnt/cephfs/
->>>>
->>>> 6, rmmod ceph; rmmod rbd; rmmod libceph
->>>>
->>>> This it seems none business with the rbd mappings.
->>> Is this on more or less plain upstream or with async unlink and
->>> possibly other filesystem patches applied?
->> Using the latest test branch:
->> https://github.com/ceph/ceph-client/tree/testing.
->>
->> thanks
->>
-> I've run a lot of tests like this and haven't see this at all. Did you
-> see any "Busy inodes after umount" messages in dmesg?
->
-> I note that your kernel is tainted -- sometimes if you're plugging in
-> modules that have subtle ABI incompatibilities, you can end up with
-> memory corruption like this.
->
-> What would be ideal would be to come up with a reliable reproducer if
-> possible.
+A lot of changes in this set -- some highlights:
 
-The code is clean from the testing branch pulled yesterday, but hit it 
-only once locally, just encounter it in the dmesg when checking other logs.
+v5: reorganize patchset for easier review and better bisectability
+    rework how dir caps are acquired and tracked in requests
+    preemptively release cap refs when reconnecting session
+    restore inode number back to pool when fall back to sync create
+    rework unlink cap acquisition to be lighter weight
+    new "nowsync" mount opt, patterned after xfs "wsync" mount opt
 
-Thanks.
+Performance is on par with earlier sets.
 
+I previously pulled the async unlink patch from ceph-client/testing, so
+this set includes a revised version of that as well, and orders it
+some other changes. I also broke that one up into several patches.
 
+This should (hopefully) address Zheng's concerns about releasing the
+caps when the session is lost. Those are preemptively released now
+when the session is reconnected. 
+
+This adds a new mount option too. xfs has a "wsync" mount option which
+makes it wait for namespaced directory operations to be journalled
+before returning. This patchset adds "wsync" and "nowsync" options, so
+it can now be enabled/disabled on a per-sb-basis.
+
+The default for xfs is "nowsync". For ceph though, I'm leaving it as
+"wsync" for now, so you need to mount with "nowsync" to enable async
+dirops.
+
+We may not actually need patch #6 here. Zheng had that delta in one
+of the earlier patches, but I'm not sure it's really needed now. It
+may make sense to just take it on its own merits though.
+
+Comments and suggestions welcome.
+
+Jeff Layton (11):
+  ceph: add flag to designate that a request is asynchronous
+  ceph: track primary dentry link
+  ceph: add infrastructure for waiting for async create to complete
+  ceph: make __take_cap_refs non-static
+  ceph: cap tracking for async directory operations
+  ceph: perform asynchronous unlink if we have sufficient caps
+  ceph: make ceph_fill_inode non-static
+  ceph: decode interval_sets for delegated inos
+  ceph: add new MDS req field to hold delegated inode number
+  ceph: cache layout in parent dir on first sync create
+  ceph: attempt to do async create when possible
+
+Yan, Zheng (1):
+  ceph: don't take refs to want mask unless we have all bits
+
+ fs/ceph/caps.c               |  72 +++++++---
+ fs/ceph/dir.c                | 106 +++++++++++++-
+ fs/ceph/file.c               | 270 +++++++++++++++++++++++++++++++++--
+ fs/ceph/inode.c              |  58 ++++----
+ fs/ceph/mds_client.c         | 196 ++++++++++++++++++++++---
+ fs/ceph/mds_client.h         |  24 +++-
+ fs/ceph/super.c              |  20 +++
+ fs/ceph/super.h              |  21 ++-
+ include/linux/ceph/ceph_fs.h |  17 ++-
+ 9 files changed, 701 insertions(+), 83 deletions(-)
+
+-- 
+2.24.1
 
