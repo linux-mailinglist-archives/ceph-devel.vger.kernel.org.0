@@ -2,131 +2,133 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 986B6163A6F
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 Feb 2020 03:46:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03E9A163B27
+	for <lists+ceph-devel@lfdr.de>; Wed, 19 Feb 2020 04:25:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728221AbgBSCqX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 18 Feb 2020 21:46:23 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:43487 "EHLO
+        id S1726492AbgBSDZy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 18 Feb 2020 22:25:54 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:24270 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728180AbgBSCqW (ORCPT
+        by vger.kernel.org with ESMTP id S1726446AbgBSDZy (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 18 Feb 2020 21:46:22 -0500
+        Tue, 18 Feb 2020 22:25:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582080381;
+        s=mimecast20190719; t=1582082752;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ipJiIcUgttythxyaQwek/E3HvXKFjz8pYTIT+47z5uw=;
-        b=BKqpRM2lhrk4rdlY7f5OkcZAh/G8lqCO1y+lLKd9VKgZNSQ8qWXpRL3fGc8znXBQbXTEVV
-        1HQmhQiXG3sUwJQvgMr6++FeT+4OKyeQtZNwSG5FjYHy779Sy1EciEUbe4ZjS+ue7jznhR
-        +W1IuvehLwafUPhbRCz6lLe7zhfpnck=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-263-RxECCHRoMA-uS_AtROQyrw-1; Tue, 18 Feb 2020 21:46:15 -0500
-X-MC-Unique: RxECCHRoMA-uS_AtROQyrw-1
-Received: by mail-qt1-f199.google.com with SMTP id c10so14510351qtk.18
-        for <ceph-devel@vger.kernel.org>; Tue, 18 Feb 2020 18:46:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ipJiIcUgttythxyaQwek/E3HvXKFjz8pYTIT+47z5uw=;
-        b=PTUFl/McFsZOZWnnB42DULkmQdU4AbPv66ZHyz0Z44r/fNpCP+reJ0IsObtKnmySyn
-         djjX7rr11IT2/DD9vcf87svhQvjATOZmh5F8Z9SIXJdGDV4O3iwbWUvtMNIBEDM9XKGs
-         Jw1f2WCD1JHptLf+xgpt2uH5tE4FDskfv/Bkz3+dyYGhCj9NuedNwxZ42gNT4jLUrSnx
-         apU7KMxKfMEgSHUsnTY9GJag+LvLEpAKtOHaciYCU8OaQRAOvhkdPUU7FVioRaO3KAQz
-         fJCX9Cl/DovuInwWXusI7jnagMy7O/FK/P+0dXRSmKaNJtiKSl37Veg9XQlermqqjw1H
-         Gd0g==
-X-Gm-Message-State: APjAAAX91EBPFtfiHB69jMd0CaNvU780aLtUEizan1jbJIE9MR/oBZtR
-        s6y+2PfFwVfnaxx7vtIYr4rsn9QfaWN+YKQktAzGXKRhEEdprXVfGDJ9qu5gQ5U5m1O9xuIQMdy
-        aFdCqACjR2TXTACrM5RpSSG1jV9620oYgcdLooA==
-X-Received: by 2002:ac8:530c:: with SMTP id t12mr18989918qtn.83.1582080375389;
-        Tue, 18 Feb 2020 18:46:15 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwiFQYKqagr02tOaMQX/hyDASknV6sLJmG8fI3zlaj5S2JAI+mFqlPduNSArAq33snxm3lA6fwNOVX1mSXP7MU=
-X-Received: by 2002:ac8:530c:: with SMTP id t12mr18989911qtn.83.1582080375123;
- Tue, 18 Feb 2020 18:46:15 -0800 (PST)
-MIME-Version: 1.0
-References: <CAMMFjmE4wyKcP0KkudhTu2zeZF+SswZ=kN_k-Xaq1aC6o4vWkQ@mail.gmail.com>
- <CAMMFjmGOqAoBYmmFOWFHTw9NrGQEwNLeUPmw2+5RE+LzVMsuYw@mail.gmail.com>
- <alpine.DEB.2.21.2002142006120.18815@piezo.novalocal> <CAMMFjmExNzhWDwRNfYkrmJf45p=z1fc+v00nfr=KVx6wmCDnSA@mail.gmail.com>
-In-Reply-To: <CAMMFjmExNzhWDwRNfYkrmJf45p=z1fc+v00nfr=KVx6wmCDnSA@mail.gmail.com>
-From:   Neha Ojha <nojha@redhat.com>
-Date:   Tue, 18 Feb 2020 18:46:04 -0800
-Message-ID: <CAKn7kBmU50hxfVqqUzR-YJf1PJnYpGeMhDZpVpGLi_vZr2MMgA@mail.gmail.com>
-Subject: Re: FYI nautilus branch is locked
-To:     Yuri Weinstein <yweinste@redhat.com>
-Cc:     Sage Weil <sweil@redhat.com>, dev@ceph.io,
-        "Development, Ceph" <ceph-devel@vger.kernel.org>,
-        Abhishek Lekshmanan <abhishek@suse.com>,
-        Nathan Cutler <ncutler@suse.cz>,
-        Casey Bodley <cbodley@redhat.com>,
+        bh=2aExjW7fcrGAtlqrUQaLtP9zzCQUzYyw+jSxpIJsLHk=;
+        b=W2zOSXFyzpCKrH2p/yeKmpBOfbt4e0ZKVeALwLgFp36vsZugOHC8yEpCL9ySdW6bzuORAx
+        tbFouaZCmHQ1QoN/hTc2kfDftXoRo2e5f75f64X8OR4nfkpnExDKKG0hEIKFzSjLF+Tda+
+        60uhIAwNCsCMoT57BNQUvVUpE2CeA8c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-130-biYzeO_qOW6gopyHzqGwuQ-1; Tue, 18 Feb 2020 22:25:44 -0500
+X-MC-Unique: biYzeO_qOW6gopyHzqGwuQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5F519107ACC4;
+        Wed, 19 Feb 2020 03:25:43 +0000 (UTC)
+Received: from [10.72.12.94] (ovpn-12-94.pek2.redhat.com [10.72.12.94])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A19D719757;
+        Wed, 19 Feb 2020 03:25:35 +0000 (UTC)
+Subject: Re: [PATCH] ceph: add halt mount option support
+To:     Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>
+Cc:     Sage Weil <sage@redhat.com>, "Yan, Zheng" <zyan@redhat.com>,
         Patrick Donnelly <pdonnell@redhat.com>,
-        "Durgin, Josh" <jdurgin@redhat.com>,
-        David Zafman <dzafman@redhat.com>,
-        Ramana Venkatesh Raja <rraja@redhat.com>,
-        Tamilarasi Muthamizhan <tmuthami@redhat.com>,
-        "Dillaman, Jason" <dillaman@redhat.com>,
-        "Sadeh-Weinraub, Yehuda" <yehuda@redhat.com>,
-        "Lekshmanan, Abhishek" <abhishek.lekshmanan@gmail.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        ceph-qe-team <ceph-qe-team@redhat.com>,
-        Andrew Schoen <aschoen@redhat.com>, ceph-qa <ceph-qa@ceph.com>,
-        Matt Benjamin <mbenjamin@redhat.com>,
-        Sebastien Han <shan@redhat.com>,
-        Brad Hubbard <bhubbard@redhat.com>,
-        Venky Shankar <vshankar@redhat.com>,
-        David Galloway <dgallowa@redhat.com>,
-        Milind Changire <mchangir@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Ceph Development <ceph-devel@vger.kernel.org>
+References: <20200216064945.61726-1-xiubli@redhat.com>
+ <78ff80dd12d497be7a6606a60973f7e2d864e910.camel@kernel.org>
+ <36e1f3a9-1688-9eb0-27d7-351a12bca85a@redhat.com>
+ <4a4cfe2a5fc1de6f73fa3f557921c1ad5802add6.camel@kernel.org>
+ <CAOi1vP_yGJGqkY+QLdQoruJrS3gawEC-_NqDnpucCWfXOHL-aQ@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <0d72bb98-f306-75de-f0db-60cf315b5ce4@redhat.com>
+Date:   Wed, 19 Feb 2020 11:25:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
+MIME-Version: 1.0
+In-Reply-To: <CAOi1vP_yGJGqkY+QLdQoruJrS3gawEC-_NqDnpucCWfXOHL-aQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 8:21 AM Yuri Weinstein <yweinste@redhat.com> wrote:
+On 2020/2/18 22:59, Ilya Dryomov wrote:
+> On Tue, Feb 18, 2020 at 1:01 PM Jeff Layton <jlayton@kernel.org> wrote:
+>> On Tue, 2020-02-18 at 15:19 +0800, Xiubo Li wrote:
+>>> On 2020/2/17 21:04, Jeff Layton wrote:
+>>>> On Sun, 2020-02-16 at 01:49 -0500, xiubli@redhat.com wrote:
+>>>>> From: Xiubo Li <xiubli@redhat.com>
+>>>>>
+>>>>> This will simulate pulling the power cable situation, which will
+>>>>> do:
+>>>>>
+>>>>> - abort all the inflight osd/mds requests and fail them with -EIO.
+>>>>> - reject any new coming osd/mds requests with -EIO.
+>>>>> - close all the mds connections directly without doing any clean up
+>>>>>     and disable mds sessions recovery routine.
+>>>>> - close all the osd connections directly without doing any clean up.
+>>>>> - set the msgr as stopped.
+>>>>>
+>>>>> URL: https://tracker.ceph.com/issues/44044
+>>>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>>>> There is no explanation of how to actually _use_ this feature? I assume
+>>>> you have to remount the fs with "-o remount,halt" ? Is it possible to
+>>>> reenable the mount as well?  If not, why keep the mount around? Maybe we
+>>>> should consider wiring this in to a new umount2() flag instead?
+>>>>
+>>>> This needs much better documentation.
+>>>>
+>>>> In the past, I've generally done this using iptables. Granted that that
+>>>> is difficult with a clustered fs like ceph (given that you potentially
+>>>> have to set rules for a lot of addresses), but I wonder whether a scheme
+>>>> like that might be more viable in the long run.
+>>>>
+>>> How about fulfilling the DROP iptable rules in libceph ? Could you
+>>> foresee any problem ? This seems the one approach could simulate pulling
+>>> the power cable.
+>>>
+>> Yeah, I've mostly done this using DROP rules when I needed to test things.
+>> But, I think I was probably just guilty of speculating out loud here.
+> I'm not sure what exactly Xiubo meant by "fulfilling" iptables rules
+> in libceph, but I will say that any kind of iptables manipulation from
+> within libceph is probably out of the question.
+
+Sorry for confusing here.
+
+I meant in libceph add some helpers to enable/disable dropping the any 
+new coming packet on the floor without responding anything to the ceph 
+cluster for a specified session.
+
+
 >
-> Sage, I am resuming QE validation as
-> https://github.com/ceph/ceph/pull/33339 merged
+>> I think doing this by just closing down the sockets is probably fine. I
+>> wouldn't pursue anything relating to to iptables here, unless we have
+>> some larger reason to go that route.
+> IMO investing into a set of iptables and tc helpers for teuthology
+> makes a _lot_ of sense.  It isn't exactly the same as a cable pull,
+> but it's probably the next best thing.  First, it will be external to
+> the system under test.  Second, it can be made selective -- you can
+> cut a single session or all of them, simulate packet loss and latency
+> issues, etc.  Third, it can be used for recovery and failover/fencing
+> testing -- what happens when these packets get delivered two minutes
+> later?  None of this is possible with something that just attempts to
+> wedge the mount and acts as a point of no return.
 
-This PR fixed an upgrade bug for
-octopus(https://tracker.ceph.com/issues/44156) and should not be
-mistaken for https://tracker.ceph.com/issues/43048, which we continue
-to investigate.
+Yeah, cool and this is what the tracker#44044 intends to.
 
-Thanks,
-Neha
-
+Thanks
+BRs
+Xiubo
+> Thanks,
 >
-> On Fri, Feb 14, 2020 at 12:07 PM Sage Weil <sweil@redhat.com> wrote:
-> >
-> > Just a note, we need to sort out the mimic->nautilus upgrade failure
-> > before getting too far along here
-> >
-> >
-> >
-> >
-> > On Fri, 14 Feb 2020, Yuri Weinstein wrote:
-> >
-> > > Sorry correction again - 14.2.8
-> > >
-> > > On Fri, Feb 14, 2020 at 11:30 AM Yuri Weinstein <yweinste@redhat.com> wrote:
-> > > >
-> > > > We are getting ready to test 14.2.9 and nautilus branch is locked for
-> > > > merges until it's done.
-> > > >
-> > > > sah1 - 4d5b84085009968f557baaa4209183f1374773cd
-> > > >
-> > > > Nathan, Abhishek pls confirm.
-> > > >
-> > > > Thank you
-> > > > YuriW
-> > > _______________________________________________
-> > > Dev mailing list -- dev@ceph.io
-> > > To unsubscribe send an email to dev-leave@ceph.io
-> > >
-> > >
-> >
+>                  Ilya
 >
 
