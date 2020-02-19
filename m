@@ -2,34 +2,34 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2FF516454B
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 Feb 2020 14:25:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 542F616454C
+	for <lists+ceph-devel@lfdr.de>; Wed, 19 Feb 2020 14:25:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbgBSNZa (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        id S1727775AbgBSNZa (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
         Wed, 19 Feb 2020 08:25:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33608 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:33614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726725AbgBSNZ3 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 19 Feb 2020 08:25:29 -0500
+        id S1726725AbgBSNZa (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 19 Feb 2020 08:25:30 -0500
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F4AA24656;
-        Wed, 19 Feb 2020 13:25:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 547B52465D;
+        Wed, 19 Feb 2020 13:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1582118729;
-        bh=hCNh3A51RsaOQ5uvDR9XoNVirpRxgRUPthBQBPdHpPA=;
+        bh=SBl7u79Zw/3cghaZRQQ7tE31FQXNNbIFXMxIWWjeZbs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qYL5zhLjeCFivx/THyyVDAZG85hHvWJMMWQ3fXdV4ceev4MwCA+LHL+RIS1LggfrY
-         rJxJMVRe0V61gBYtNLd642Lxla9MfMkI4U2KF3y0V4XBfPmGLVvwlmSvC3DRbZcs+9
-         jpPQTNIx1X6Q0g7APFhmEG4/E7pBd8u6X86yncfw=
+        b=oW+U76HRi4KZNTr5XD3rlkgcIUKZEk2DZ/htcq5hfzhRgSU9pqiIGg4ihNeVCCALO
+         aZTnHnuMS49XdHU5qWoDQl2SYzgIFlX5bymAyvqiPEtSqBnBRKfZVWSJ4ifYAHLPrK
+         JReP5d16KiwOj7oaMiSKEjQsLuuorTyVCBb/Ecro=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     idryomov@gmail.com, sage@redhat.com, zyan@redhat.com,
         pdonnell@redhat.com, xiubli@redhat.com
-Subject: [PATCH v5 01/12] ceph: add flag to designate that a request is asynchronous
-Date:   Wed, 19 Feb 2020 08:25:15 -0500
-Message-Id: <20200219132526.17590-2-jlayton@kernel.org>
+Subject: [PATCH v5 02/12] ceph: track primary dentry link
+Date:   Wed, 19 Feb 2020 08:25:16 -0500
+Message-Id: <20200219132526.17590-3-jlayton@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200219132526.17590-1-jlayton@kernel.org>
 References: <20200219132526.17590-1-jlayton@kernel.org>
@@ -40,106 +40,82 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-...and ensure that such requests are never queued. The MDS has need to
-know that a request is asynchronous so add flags and proper
-infrastructure for that.
-
-Also, delegated inode numbers and directory caps are associated with the
-session, so ensure that async requests are always transmitted on the
-first attempt and are never queued to wait for session reestablishment.
-
-If it does end up looking like we'll need to queue the request, then
-have it return -EJUKEBOX so the caller can reattempt with a synchronous
-request.
+Newer versions of the MDS will flag a dentry as "primary". In later
+patches, we'll need to consult this info, so track it in di->flags.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/inode.c              |  1 +
- fs/ceph/mds_client.c         | 15 +++++++++++++++
- fs/ceph/mds_client.h         |  1 +
- include/linux/ceph/ceph_fs.h |  5 +++--
- 4 files changed, 20 insertions(+), 2 deletions(-)
+ fs/ceph/dir.c                | 1 +
+ fs/ceph/inode.c              | 8 +++++++-
+ fs/ceph/super.h              | 1 +
+ include/linux/ceph/ceph_fs.h | 3 +++
+ 4 files changed, 12 insertions(+), 1 deletion(-)
 
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index d0cd0aba5843..a87274935a09 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1411,6 +1411,7 @@ void ceph_invalidate_dentry_lease(struct dentry *dentry)
+ 	spin_lock(&dentry->d_lock);
+ 	di->time = jiffies;
+ 	di->lease_shared_gen = 0;
++	di->flags &= ~CEPH_DENTRY_PRIMARY_LINK;
+ 	__dentry_lease_unlist(di);
+ 	spin_unlock(&dentry->d_lock);
+ }
 diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 094b8fc37787..9869ec101e88 100644
+index 9869ec101e88..7478bd0283c1 100644
 --- a/fs/ceph/inode.c
 +++ b/fs/ceph/inode.c
-@@ -1311,6 +1311,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 		err = fill_inode(in, req->r_locked_page, &rinfo->targeti, NULL,
- 				session,
- 				(!test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags) &&
-+				 !test_bit(CEPH_MDS_R_ASYNC, &req->r_req_flags) &&
- 				 rinfo->head->result == 0) ?  req->r_fmode : -1,
- 				&req->r_caps_reservation);
- 		if (err < 0) {
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index fab9d6461a65..94d18e643a3d 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2528,6 +2528,8 @@ static int __prepare_send_request(struct ceph_mds_client *mdsc,
- 	rhead->oldest_client_tid = cpu_to_le64(__get_oldest_tid(mdsc));
- 	if (test_bit(CEPH_MDS_R_GOT_UNSAFE, &req->r_req_flags))
- 		flags |= CEPH_MDS_FLAG_REPLAY;
-+	if (test_bit(CEPH_MDS_R_ASYNC, &req->r_req_flags))
-+		flags |= CEPH_MDS_FLAG_ASYNC;
- 	if (req->r_parent)
- 		flags |= CEPH_MDS_FLAG_WANT_DENTRY;
- 	rhead->flags = cpu_to_le32(flags);
-@@ -2611,6 +2613,10 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 	mds = __choose_mds(mdsc, req, &random);
- 	if (mds < 0 ||
- 	    ceph_mdsmap_get_state(mdsc->mdsmap, mds) < CEPH_MDS_STATE_ACTIVE) {
-+		if (test_bit(CEPH_MDS_R_ASYNC, &req->r_req_flags)) {
-+			err = -EJUKEBOX;
-+			goto finish;
-+		}
- 		dout("do_request no mds or not active, waiting for map\n");
- 		list_add(&req->r_wait, &mdsc->waiting_for_map);
+@@ -1051,6 +1051,7 @@ static void __update_dentry_lease(struct inode *dir, struct dentry *dentry,
+ 				  struct ceph_mds_session **old_lease_session)
+ {
+ 	struct ceph_dentry_info *di = ceph_dentry(dentry);
++	unsigned mask = le16_to_cpu(lease->mask);
+ 	long unsigned duration = le32_to_cpu(lease->duration_ms);
+ 	long unsigned ttl = from_time + (duration * HZ) / 1000;
+ 	long unsigned half_ttl = from_time + (duration * HZ / 2) / 1000;
+@@ -1062,8 +1063,13 @@ static void __update_dentry_lease(struct inode *dir, struct dentry *dentry,
+ 	if (ceph_snap(dir) != CEPH_NOSNAP)
  		return;
-@@ -2635,6 +2641,15 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 			err = -EACCES;
- 			goto out_session;
- 		}
-+		/*
-+		 * We cannot queue async requests since the caps and delegated
-+		 * inodes are bound to the session. Just return -EJUKEBOX and
-+		 * let the caller retry a sync request in that case.
-+		 */
-+		if (test_bit(CEPH_MDS_R_ASYNC, &req->r_req_flags)) {
-+			err = -EJUKEBOX;
-+			goto out_session;
-+		}
- 		if (session->s_state == CEPH_MDS_SESSION_NEW ||
- 		    session->s_state == CEPH_MDS_SESSION_CLOSING) {
- 			__open_session(mdsc, session);
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index a0918d00117c..95ac00e59e66 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -255,6 +255,7 @@ struct ceph_mds_request {
- #define CEPH_MDS_R_GOT_RESULT		(5) /* got a result */
- #define CEPH_MDS_R_DID_PREPOPULATE	(6) /* prepopulated readdir */
- #define CEPH_MDS_R_PARENT_LOCKED	(7) /* is r_parent->i_rwsem wlocked? */
-+#define CEPH_MDS_R_ASYNC		(8) /* async request */
- 	unsigned long	r_req_flags;
  
- 	struct mutex r_fill_mutex;
++	if (mask & CEPH_LEASE_PRIMARY_LINK)
++		di->flags |= CEPH_DENTRY_PRIMARY_LINK;
++	else
++		di->flags &= ~CEPH_DENTRY_PRIMARY_LINK;
++
+ 	di->lease_shared_gen = atomic_read(&ceph_inode(dir)->i_shared_gen);
+-	if (duration == 0) {
++	if (!(mask & CEPH_LEASE_VALID)) {
+ 		__ceph_dentry_dir_lease_touch(di);
+ 		return;
+ 	}
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 37dc1ac8f6c3..3430d7ffe8f7 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -284,6 +284,7 @@ struct ceph_dentry_info {
+ #define CEPH_DENTRY_REFERENCED		1
+ #define CEPH_DENTRY_LEASE_LIST		2
+ #define CEPH_DENTRY_SHRINK_LIST		4
++#define CEPH_DENTRY_PRIMARY_LINK	8
+ 
+ struct ceph_inode_xattrs_info {
+ 	/*
 diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-index cb21c5cf12c3..9f747a1b8788 100644
+index 9f747a1b8788..94cc4b047987 100644
 --- a/include/linux/ceph/ceph_fs.h
 +++ b/include/linux/ceph/ceph_fs.h
-@@ -444,8 +444,9 @@ union ceph_mds_request_args {
- 	} __attribute__ ((packed)) lookupino;
+@@ -531,6 +531,9 @@ struct ceph_mds_reply_lease {
+ 	__le32 seq;
  } __attribute__ ((packed));
  
--#define CEPH_MDS_FLAG_REPLAY        1  /* this is a replayed op */
--#define CEPH_MDS_FLAG_WANT_DENTRY   2  /* want dentry in reply */
-+#define CEPH_MDS_FLAG_REPLAY		1 /* this is a replayed op */
-+#define CEPH_MDS_FLAG_WANT_DENTRY	2 /* want dentry in reply */
-+#define CEPH_MDS_FLAG_ASYNC		4 /* request is asynchronous */
- 
- struct ceph_mds_request_head {
- 	__le64 oldest_client_tid;
++#define CEPH_LEASE_VALID        (1 | 2) /* old and new bit values */
++#define CEPH_LEASE_PRIMARY_LINK 4       /* primary linkage */
++
+ struct ceph_mds_reply_dirfrag {
+ 	__le32 frag;            /* fragment */
+ 	__le32 auth;            /* auth mds, if this is a delegation point */
 -- 
 2.24.1
 
