@@ -2,324 +2,836 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03B5C163FFC
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 Feb 2020 10:09:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58E0C16408A
+	for <lists+ceph-devel@lfdr.de>; Wed, 19 Feb 2020 10:39:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726297AbgBSJJS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 19 Feb 2020 04:09:18 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51045 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726163AbgBSJJS (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 19 Feb 2020 04:09:18 -0500
+        id S1726512AbgBSJjN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 19 Feb 2020 04:39:13 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:28539 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbgBSJjM (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 19 Feb 2020 04:39:12 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582103356;
+        s=mimecast20190719; t=1582105150;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding;
-        bh=HMhCiDdxdjFLS1TWaqTDNJ0BisTiIpy6IWlqh+z7yiU=;
-        b=Nf9+O8bMKHqv2iZCmjpHJm12AeaKNGdvsLfh6h4B5of/4MdnUPtg56AcfgeF9Hwb5uAtDb
-        uhYKLcp57gelGbp92Wmtn2UxIxoPy8iEYzmNQP03CqngD9xcnUGxZGnew6aoXnL8KPSQIm
-        C4HJ25AmRWdw9dticlnbe3HyT++2NJ0=
+        bh=pRwL+SLj1BR9vXhDUPHXVEQoFvvr2IaxhCNBk8GkP/c=;
+        b=bOmxEYODdULyuaw7QH6V8rdVxa7r+XQgAJmGWuIhWALovhgacAwS/6+O2Aew6ve0mbzfKL
+        Hucge/8HlsabeWhEDzxZyq66jSaJqSpOJLhOKRCzlk/Zd3CdNAwRLblnCdhUm1bkFZO/KS
+        dlnPEeX379+1ytAXVW2L5xJRMMZLLPU=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-41-0TKSnafXP9WQv81DEyfwlA-1; Wed, 19 Feb 2020 04:09:10 -0500
-X-MC-Unique: 0TKSnafXP9WQv81DEyfwlA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-14-9Q2hV7vdMJOWZ8Po8q5TXA-1; Wed, 19 Feb 2020 04:38:54 -0500
+X-MC-Unique: 9Q2hV7vdMJOWZ8Po8q5TXA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1842C800EB2;
-        Wed, 19 Feb 2020 09:09:09 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-94.pek2.redhat.com [10.72.12.94])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EA85410027A8;
-        Wed, 19 Feb 2020 09:09:03 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org, idryomov@gmail.com
-Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
-        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v2] ceph: fix use-after-free for the osdmap memory
-Date:   Wed, 19 Feb 2020 04:08:53 -0500
-Message-Id: <20200219090853.33117-1-xiubli@redhat.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D46C618C43C0;
+        Wed, 19 Feb 2020 09:38:53 +0000 (UTC)
+Received: from [10.72.12.94] (ovpn-12-94.pek2.redhat.com [10.72.12.94])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 39E1B19756;
+        Wed, 19 Feb 2020 09:38:50 +0000 (UTC)
+To:     Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>
+Cc:     Patrick Donnelly <pdonnell@redhat.com>,
+        "Yan, Zheng" <zyan@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Subject: BUG: ceph_inode_cachep and ceph_dentry_cachep caches are not clean
+ when destroying
+Message-ID: <23e2b9a7-5ff6-1f07-ff03-08abcbf1457f@redhat.com>
+Date:   Wed, 19 Feb 2020 17:38:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+Hi Jeff, Ilya and all
 
-When there has new {osd/mon/mds}map comes, it will replace
-and release the old maps' memory, so without the lock wrappers
-it may continue to use the freed ones. The call trace likes:
+I hit this call traces by running some test cases when unmounting the fs=20
+mount points.
 
-<3>[ 3797.775970] BUG: KASAN: use-after-free in __ceph_open_session+0x2a9=
-/0x370 [libceph]
-<3>[ 3797.775974] Read of size 4 at addr ffff8883d8b8a110 by task mount.c=
-eph/64782
-<3>[ 3797.775975]
-<4>[ 3797.775980] CPU: 0 PID: 64782 Comm: mount.ceph Tainted: G          =
-  E     5.5.0+ #16
-<4>[ 3797.775982] Hardware name: VMware, Inc. VMware Virtual Platform/440=
-BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-<4>[ 3797.775984] Call Trace:
-<4>[ 3797.775992]  dump_stack+0x8c/0xc0
-<4>[ 3797.775997]  print_address_description.constprop.0+0x1b/0x210
-<4>[ 3797.776029]  ? __ceph_open_session+0x2a9/0x370 [libceph]
-<4>[ 3797.776062]  ? __ceph_open_session+0x2a9/0x370 [libceph]
-<4>[ 3797.776065]  __kasan_report.cold+0x1a/0x33
-<4>[ 3797.776098]  ? __ceph_open_session+0x2a9/0x370 [libceph]
-<4>[ 3797.776101]  kasan_report+0xe/0x20
-<4>[ 3797.776133]  __ceph_open_session+0x2a9/0x370 [libceph]
-<4>[ 3797.776170]  ? ceph_reset_client_addr+0x30/0x30 [libceph]
-<4>[ 3797.776173]  ? _raw_spin_lock+0x7a/0xd0
-<4>[ 3797.776178]  ? finish_wait+0x100/0x100
-<4>[ 3797.776182]  ? __mutex_lock_slowpath+0x10/0x10
-<4>[ 3797.776227]  ceph_get_tree+0x65b/0xa40 [ceph]
-<4>[ 3797.776236]  vfs_get_tree+0x46/0x120
-<4>[ 3797.776240]  do_mount+0xa2c/0xd70
-<4>[ 3797.776245]  ? __list_add_valid+0x2f/0x60
-<4>[ 3797.776249]  ? copy_mount_string+0x20/0x20
-<4>[ 3797.776254]  ? __kasan_kmalloc.constprop.0+0xc2/0xd0
-<4>[ 3797.776258]  __x64_sys_mount+0xbe/0x100
-<4>[ 3797.776263]  do_syscall_64+0x73/0x210
-<4>[ 3797.776268]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-<4>[ 3797.776271] RIP: 0033:0x7f8f026e5b8e
-<4>[ 3797.776275] Code: 48 8b 0d fd 42 0c 00 f7 d8 64 89 01 48 83 c8 ff c=
-3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f=
- 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d ca 42 0c 00 f7 d8 64 89 01 48
-<4>[ 3797.776277] RSP: 002b:00007ffc2d7cccd8 EFLAGS: 00000206 ORIG_RAX: 0=
-0000000000000a5
-<4>[ 3797.776281] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f=
-8f026e5b8e
-<4>[ 3797.776283] RDX: 00005582afb2a558 RSI: 00007ffc2d7cef0d RDI: 000055=
-82b01707a0
-<4>[ 3797.776285] RBP: 00007ffc2d7ccda0 R08: 00005582b0173250 R09: 000000=
-0000000067
-<4>[ 3797.776287] R10: 0000000000000000 R11: 0000000000000206 R12: 000055=
-82afb043a0
-<4>[ 3797.776289] R13: 00007ffc2d7cce80 R14: 0000000000000000 R15: 000000=
-0000000000
-<3>[ 3797.776293]
-<3>[ 3797.776295] Allocated by task 64782:
-<4>[ 3797.776299]  save_stack+0x1b/0x80
-<4>[ 3797.776302]  __kasan_kmalloc.constprop.0+0xc2/0xd0
-<4>[ 3797.776336]  ceph_osdmap_alloc+0x29/0xd0 [libceph]
-<4>[ 3797.776368]  ceph_osdc_init+0x1ff/0x490 [libceph]
-<4>[ 3797.776399]  ceph_create_client+0x154/0x1b0 [libceph]
-<4>[ 3797.776427]  ceph_get_tree+0x97/0xa40 [ceph]
-<4>[ 3797.776430]  vfs_get_tree+0x46/0x120
-<4>[ 3797.776433]  do_mount+0xa2c/0xd70
-<4>[ 3797.776436]  __x64_sys_mount+0xbe/0x100
-<4>[ 3797.776439]  do_syscall_64+0x73/0x210
-<4>[ 3797.776443]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-<3>[ 3797.776443]
-<3>[ 3797.776445] Freed by task 55184:
-<4>[ 3797.776461]  save_stack+0x1b/0x80
-<4>[ 3797.776464]  __kasan_slab_free+0x12c/0x170
-<4>[ 3797.776467]  kfree+0xa3/0x290
-<4>[ 3797.776500]  handle_one_map+0x1f4/0x3c0 [libceph]
-<4>[ 3797.776533]  ceph_osdc_handle_map+0x910/0xa90 [libceph]
-<4>[ 3797.776567]  dispatch+0x826/0xde0 [libceph]
-<4>[ 3797.776599]  ceph_con_workfn+0x18c1/0x3b30 [libceph]
-<4>[ 3797.776603]  process_one_work+0x3b1/0x6a0
-<4>[ 3797.776606]  worker_thread+0x78/0x5d0
-<4>[ 3797.776609]  kthread+0x191/0x1e0
-<4>[ 3797.776612]  ret_from_fork+0x35/0x40
-<3>[ 3797.776613]
-<3>[ 3797.776616] The buggy address belongs to the object at ffff8883d8b8=
-a100
-<3>[ 3797.776616]  which belongs to the cache kmalloc-192 of size 192
-<3>[ 3797.776836] The buggy address is located 16 bytes inside of
-<3>[ 3797.776836]  192-byte region [ffff8883d8b8a100, ffff8883d8b8a1c0)
-<3>[ 3797.776838] The buggy address belongs to the page:
-<4>[ 3797.776842] page:ffffea000f62e280 refcount:1 mapcount:0 mapping:fff=
-f8883ec80f000 index:0xffff8883d8b8bf00 compound_mapcount: 0
-<4>[ 3797.776847] raw: 0017ffe000010200 ffffea000f6c6780 0000000200000002=
- ffff8883ec80f000
-<4>[ 3797.776851] raw: ffff8883d8b8bf00 000000008020001b 00000001ffffffff=
- 0000000000000000
-<4>[ 3797.776852] page dumped because: kasan: bad access detected
-<3>[ 3797.776853]
-<3>[ 3797.776854] Memory state around the buggy address:
-<3>[ 3797.776857]  ffff8883d8b8a000: 00 00 00 00 00 00 00 00 00 00 00 00 =
-00 00 00 00
-<3>[ 3797.776859]  ffff8883d8b8a080: 00 00 00 00 00 00 00 00 fc fc fc fc =
-fc fc fc fc
-<3>[ 3797.776862] >ffff8883d8b8a100: fb fb fb fb fb fb fb fb fb fb fb fb =
-fb fb fb fb
-<3>[ 3797.776863]                          ^
-<3>[ 3797.776866]  ffff8883d8b8a180: fb fb fb fb fb fb fb fb fc fc fc fc =
-fc fc fc fc
-<3>[ 3797.776868]  ffff8883d8b8a200: fb fb fb fb fb fb fb fb fb fb fb fb =
-fb fb fb fb
-<3>[ 3797.776869] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+It seems there still have some inodes or dentries are not destroyed.
+
+Will this be a problem ? Any idea ?
+
+
+<6>[ 3336.729015] libceph: mon1 (1)192.168.195.165:40291 session establis=
+hed
+<6>[ 3336.732380] libceph: client4297 fsid=20
+f7621edd-ef06-4ca3-8a5b-1ba8c52ae15f
+<6>[ 3336.768752] rbd: rbd0: capacity 209715200 features 0x3d
+<6>[ 3571.749795] libceph: mon1 (1)192.168.195.165:40291 session establis=
+hed
+<6>[ 3571.758259] libceph: client4300 fsid=20
+f7621edd-ef06-4ca3-8a5b-1ba8c52ae15f
+<6>[ 3571.792768] rbd: rbd0: capacity 209715200 features 0x3d
+<6>[ 3927.396784] libceph: mon2 (1)192.168.195.165:40293 session establis=
+hed
+<6>[ 3927.397900] libceph: client4307 fsid=20
+f7621edd-ef06-4ca3-8a5b-1ba8c52ae15f
+<3>[ 3943.896176]=20
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+<3>[ 3943.896179] BUG ceph_inode_info (Tainted: G E=C2=A0=C2=A0=C2=A0 ): =
+Objects=20
+remaining in ceph_inode_info on __kmem_cache_shutdown()
+<3>[ 3943.896180]=20
+-------------------------------------------------------------------------=
+----
+<3>[ 3943.896180]
+<4>[ 3943.896181] Disabling lock debugging due to kernel taint
+<3>[ 3943.896184] INFO: Slab 0x0000000005d371ba objects=3D23 used=3D1=20
+fp=3D0x00000000347baa56 flags=3D0x17ffe000010200
+<4>[ 3943.896187] CPU: 0 PID: 26423 Comm: rmmod Tainted: G=C2=A0=C2=A0=C2=
+=A0 B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+E=C2=A0=C2=A0=C2=A0=C2=A0 5.6.0-rc1+ #23
+<4>[ 3943.896188] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[ 3943.896189] Call Trace:
+<4>[ 3943.896197]=C2=A0 dump_stack+0x66/0x90
+<4>[ 3943.896201]=C2=A0 slab_err+0xb7/0xdc
+<4>[ 3943.896205]=C2=A0 ? ksm_migrate_page+0xe0/0xe0
+<4>[ 3943.896207]=C2=A0 ? slub_cpu_dead+0xb0/0xb0
+<4>[ 3943.896209]=C2=A0 __kmem_cache_shutdown.cold+0x29/0x153
+<4>[ 3943.896213]=C2=A0 shutdown_cache+0x13/0x1b0
+<4>[ 3943.896215]=C2=A0 kmem_cache_destroy+0x239/0x260
+<4>[ 3943.896310]=C2=A0 destroy_caches+0x16/0x57 [ceph]
+<4>[ 3943.896316]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[ 3943.896320]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[ 3943.896323]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[ 3943.896327]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[ 3943.896329] RIP: 0033:0x7fbbb91fc97b
+<4>[ 3943.896332] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[ 3943.896334] RSP: 002b:00007ffef23f7368 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[ 3943.896336] RAX: ffffffffffffffda RBX: 000055f423b5e7a0 RCX:=20
+00007fbbb91fc97b
+<4>[ 3943.896336] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+000055f423b5e808
+<4>[ 3943.896337] RBP: 00007ffef23f73b8 R08: 000000000000000a R09:=20
+00007ffef23f62e1
+<4>[ 3943.896338] R10: 00007fbbb9271ac0 R11: 0000000000000206 R12:=20
+00007ffef23f7580
+<4>[ 3943.896339] R13: 00007ffef23f8f17 R14: 000055f423b5e260 R15:=20
+00007ffef23f73c0
+<3>[ 3943.896346] INFO: Object 0x000000005792a1ca @offset=3D14080
+<3>[ 3943.896348]=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+<3>[ 3943.896349] BUG ceph_inode_info (Tainted: G=C2=A0=C2=A0=C2=A0 B E=C2=
+=A0=C2=A0=C2=A0 ): Objects=20
+remaining in ceph_inode_info on __kmem_cache_shutdown()
+<3>[ 3943.896350]=20
+-------------------------------------------------------------------------=
+----
+<3>[ 3943.896350]
+<3>[ 3943.896352] INFO: Slab 0x0000000048f8188c objects=3D23 used=3D1=20
+fp=3D0x00000000a5d1ff93 flags=3D0x17ffe000010200
+<4>[ 3943.896354] CPU: 0 PID: 26423 Comm: rmmod Tainted: G=C2=A0=C2=A0=C2=
+=A0 B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+E=C2=A0=C2=A0=C2=A0=C2=A0 5.6.0-rc1+ #23
+<4>[ 3943.896354] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[ 3943.896355] Call Trace:
+<4>[ 3943.896358]=C2=A0 dump_stack+0x66/0x90
+<4>[ 3943.896360]=C2=A0 slab_err+0xb7/0xdc
+<4>[ 3943.896364]=C2=A0 ? printk+0x58/0x6f
+<4>[ 3943.896366]=C2=A0 ? slub_cpu_dead+0xb0/0xb0
+<4>[ 3943.896368]=C2=A0 __kmem_cache_shutdown.cold+0x29/0x153
+<4>[ 3943.896371]=C2=A0 shutdown_cache+0x13/0x1b0
+<4>[ 3943.896374]=C2=A0 kmem_cache_destroy+0x239/0x260
+<4>[ 3943.896388]=C2=A0 destroy_caches+0x16/0x57 [ceph]
+<4>[ 3943.896391]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[ 3943.896393]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[ 3943.896396]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[ 3943.896398]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[ 3943.896400] RIP: 0033:0x7fbbb91fc97b
+<4>[ 3943.896401] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[ 3943.896402] RSP: 002b:00007ffef23f7368 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[ 3943.896404] RAX: ffffffffffffffda RBX: 000055f423b5e7a0 RCX:=20
+00007fbbb91fc97b
+<4>[ 3943.896405] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+000055f423b5e808
+<4>[ 3943.896406] RBP: 00007ffef23f73b8 R08: 000000000000000a R09:=20
+00007ffef23f62e1
+<4>[ 3943.896407] R10: 00007fbbb9271ac0 R11: 0000000000000206 R12:=20
+00007ffef23f7580
+<4>[ 3943.896407] R13: 00007ffef23f8f17 R14: 000055f423b5e260 R15:=20
+00007ffef23f73c0
+<3>[ 3943.896412] INFO: Object 0x00000000376f6bfe @offset=3D15488
+<3>[ 3943.896429]=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+<3>[ 3943.896431] BUG ceph_inode_info (Tainted: G=C2=A0=C2=A0=C2=A0 B E=C2=
+=A0=C2=A0=C2=A0 ): Objects=20
+remaining in ceph_inode_info on __kmem_cache_shutdown()
+<3>[ 3943.896431]=20
+-------------------------------------------------------------------------=
+----
+<3>[ 3943.896431]
+<3>[ 3943.896433] INFO: Slab 0x00000000b9901e11 objects=3D23 used=3D1=20
+fp=3D0x0000000039e61a30 flags=3D0x17ffe000010200
+<4>[ 3943.896434] CPU: 0 PID: 26423 Comm: rmmod Tainted: G=C2=A0=C2=A0=C2=
+=A0 B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+E=C2=A0=C2=A0=C2=A0=C2=A0 5.6.0-rc1+ #23
+<4>[ 3943.896435] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[ 3943.896436] Call Trace:
+<4>[ 3943.896439]=C2=A0 dump_stack+0x66/0x90
+<4>[ 3943.896441]=C2=A0 slab_err+0xb7/0xdc
+<4>[ 3943.896445]=C2=A0 ? printk+0x58/0x6f
+<4>[ 3943.896446]=C2=A0 ? slub_cpu_dead+0xb0/0xb0
+<4>[ 3943.896448]=C2=A0 __kmem_cache_shutdown.cold+0x29/0x153
+<4>[ 3943.896451]=C2=A0 shutdown_cache+0x13/0x1b0
+<4>[ 3943.896452]=C2=A0 kmem_cache_destroy+0x239/0x260
+<4>[ 3943.896466]=C2=A0 destroy_caches+0x16/0x57 [ceph]
+<4>[ 3943.896469]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[ 3943.896472]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[ 3943.896474]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[ 3943.896477]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[ 3943.896478] RIP: 0033:0x7fbbb91fc97b
+<4>[ 3943.896479] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[ 3943.896480] RSP: 002b:00007ffef23f7368 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[ 3943.896482] RAX: ffffffffffffffda RBX: 000055f423b5e7a0 RCX:=20
+00007fbbb91fc97b
+<4>[ 3943.896483] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+000055f423b5e808
+<4>[ 3943.896483] RBP: 00007ffef23f73b8 R08: 000000000000000a R09:=20
+00007ffef23f62e1
+<4>[ 3943.896484] R10: 00007fbbb9271ac0 R11: 0000000000000206 R12:=20
+00007ffef23f7580
+<4>[ 3943.896485] R13: 00007ffef23f8f17 R14: 000055f423b5e260 R15:=20
+00007ffef23f73c0
+<3>[ 3943.896489] INFO: Object 0x0000000090e93ce6 @offset=3D16896
+<3>[ 3943.896550] kmem_cache_destroy ceph_inode_info: Slab cache still=20
+has objects
+<4>[ 3943.896553] CPU: 0 PID: 26423 Comm: rmmod Tainted: G=C2=A0=C2=A0=C2=
+=A0 B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+E=C2=A0=C2=A0=C2=A0=C2=A0 5.6.0-rc1+ #23
+<4>[ 3943.896554] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[ 3943.896554] Call Trace:
+<4>[ 3943.896558]=C2=A0 dump_stack+0x66/0x90
+<4>[ 3943.896560]=C2=A0 kmem_cache_destroy.cold+0x15/0x1a
+<4>[ 3943.896575]=C2=A0 destroy_caches+0x16/0x57 [ceph]
+<4>[ 3943.896578]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[ 3943.896581]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[ 3943.896583]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[ 3943.896586]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[ 3943.896589] RIP: 0033:0x7fbbb91fc97b
+<4>[ 3943.896593] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[ 3943.896595] RSP: 002b:00007ffef23f7368 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[ 3943.896597] RAX: ffffffffffffffda RBX: 000055f423b5e7a0 RCX:=20
+00007fbbb91fc97b
+<4>[ 3943.896600] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+000055f423b5e808
+<4>[ 3943.896601] RBP: 00007ffef23f73b8 R08: 000000000000000a R09:=20
+00007ffef23f62e1
+<4>[ 3943.896606] R10: 00007fbbb9271ac0 R11: 0000000000000206 R12:=20
+00007ffef23f7580
+<4>[ 3943.896609] R13: 00007ffef23f8f17 R14: 000055f423b5e260 R15:=20
+00007ffef23f73c0
+<3>[ 3943.914328]=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+<3>[ 3943.914330] BUG ceph_dentry_info (Tainted: G B=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 E=C2=A0=C2=A0=C2=A0 ):=20
+Objects remaining in ceph_dentry_info on __kmem_cache_shutdown()
+<3>[ 3943.914331]=20
+-------------------------------------------------------------------------=
+----
+<3>[ 3943.914331]
+<3>[ 3943.914333] INFO: Slab 0x00000000713366a2 objects=3D51 used=3D2=20
+fp=3D0x00000000c5c96d72 flags=3D0x17ffe000000200
+<4>[ 3943.914335] CPU: 0 PID: 26423 Comm: rmmod Tainted: G=C2=A0=C2=A0=C2=
+=A0 B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+E=C2=A0=C2=A0=C2=A0=C2=A0 5.6.0-rc1+ #23
+<4>[ 3943.914336] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[ 3943.914336] Call Trace:
+<4>[ 3943.914343]=C2=A0 dump_stack+0x66/0x90
+<4>[ 3943.914345]=C2=A0 slab_err+0xb7/0xdc
+<4>[ 3943.914349]=C2=A0 ? ksm_migrate_page+0xe0/0xe0
+<4>[ 3943.914350]=C2=A0 ? slub_cpu_dead+0xb0/0xb0
+<4>[ 3943.914351]=C2=A0 __kmem_cache_shutdown.cold+0x29/0x153
+<4>[ 3943.914353]=C2=A0 shutdown_cache+0x13/0x1b0
+<4>[ 3943.914354]=C2=A0 kmem_cache_destroy+0x239/0x260
+<4>[ 3943.914367]=C2=A0 destroy_caches+0x3a/0x57 [ceph]
+<4>[ 3943.914370]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[ 3943.914373]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[ 3943.914374]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[ 3943.914376]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[ 3943.914378] RIP: 0033:0x7fbbb91fc97b
+<4>[ 3943.914380] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[ 3943.914381] RSP: 002b:00007ffef23f7368 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[ 3943.914382] RAX: ffffffffffffffda RBX: 000055f423b5e7a0 RCX:=20
+00007fbbb91fc97b
+<4>[ 3943.914383] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+000055f423b5e808
+<4>[ 3943.914383] RBP: 00007ffef23f73b8 R08: 000000000000000a R09:=20
+00007ffef23f62e1
+<4>[ 3943.914383] R10: 00007fbbb9271ac0 R11: 0000000000000206 R12:=20
+00007ffef23f7580
+<4>[ 3943.914384] R13: 00007ffef23f8f17 R14: 000055f423b5e260 R15:=20
+00007ffef23f73c0
+<3>[ 3943.914387] INFO: Object 0x000000000917f90f @offset=3D2800
+<3>[ 3943.914387] INFO: Object 0x00000000cea9f98e @offset=3D2880
+<3>[ 3943.914388]=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+<3>[ 3943.914389] BUG ceph_dentry_info (Tainted: G B=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 E=C2=A0=C2=A0=C2=A0 ):=20
+Objects remaining in ceph_dentry_info on __kmem_cache_shutdown()
+<3>[ 3943.914389]=20
+-------------------------------------------------------------------------=
+----
+<3>[ 3943.914389]
+<3>[ 3943.914390] INFO: Slab 0x00000000d49f198a objects=3D51 used=3D1=20
+fp=3D0x000000007a03922c flags=3D0x17ffe000000200
+<4>[ 3943.914391] CPU: 0 PID: 26423 Comm: rmmod Tainted: G=C2=A0=C2=A0=C2=
+=A0 B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+E=C2=A0=C2=A0=C2=A0=C2=A0 5.6.0-rc1+ #23
+<4>[ 3943.914391] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[ 3943.914392] Call Trace:
+<4>[ 3943.914393]=C2=A0 dump_stack+0x66/0x90
+<4>[ 3943.914394]=C2=A0 slab_err+0xb7/0xdc
+<4>[ 3943.914397]=C2=A0 ? printk+0x58/0x6f
+<4>[ 3943.914397]=C2=A0 ? slub_cpu_dead+0xb0/0xb0
+<4>[ 3943.914398]=C2=A0 __kmem_cache_shutdown.cold+0x29/0x153
+<4>[ 3943.914400]=C2=A0 shutdown_cache+0x13/0x1b0
+<4>[ 3943.914401]=C2=A0 kmem_cache_destroy+0x239/0x260
+<4>[ 3943.914409]=C2=A0 destroy_caches+0x3a/0x57 [ceph]
+<4>[ 3943.914411]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[ 3943.914413]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[ 3943.914414]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[ 3943.914416]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[ 3943.914416] RIP: 0033:0x7fbbb91fc97b
+<4>[ 3943.914417] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[ 3943.914418] RSP: 002b:00007ffef23f7368 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[ 3943.914418] RAX: ffffffffffffffda RBX: 000055f423b5e7a0 RCX:=20
+00007fbbb91fc97b
+<4>[ 3943.914419] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+000055f423b5e808
+<4>[ 3943.914419] RBP: 00007ffef23f73b8 R08: 000000000000000a R09:=20
+00007ffef23f62e1
+<4>[ 3943.914419] R10: 00007fbbb9271ac0 R11: 0000000000000206 R12:=20
+00007ffef23f7580
+<4>[ 3943.914420] R13: 00007ffef23f8f17 R14: 000055f423b5e260 R15:=20
+00007ffef23f73c0
+<3>[ 3943.914422] INFO: Object 0x00000000a465a019 @offset=3D240
+<3>[ 3943.914423] kmem_cache_destroy ceph_dentry_info: Slab cache still=20
+has objects
+<4>[ 3943.914424] CPU: 0 PID: 26423 Comm: rmmod Tainted: G=C2=A0=C2=A0=C2=
+=A0 B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+E=C2=A0=C2=A0=C2=A0=C2=A0 5.6.0-rc1+ #23
+<4>[ 3943.914425] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[ 3943.914425] Call Trace:
+<4>[ 3943.914426]=C2=A0 dump_stack+0x66/0x90
+<4>[ 3943.914427]=C2=A0 kmem_cache_destroy.cold+0x15/0x1a
+<4>[ 3943.914434]=C2=A0 destroy_caches+0x3a/0x57 [ceph]
+<4>[ 3943.914436]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[ 3943.914437]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[ 3943.914438]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[ 3943.914440]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[ 3943.914440] RIP: 0033:0x7fbbb91fc97b
+<4>[ 3943.914441] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[ 3943.914441] RSP: 002b:00007ffef23f7368 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[ 3943.914442] RAX: ffffffffffffffda RBX: 000055f423b5e7a0 RCX:=20
+00007fbbb91fc97b
+<4>[ 3943.914442] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+000055f423b5e808
+<4>[ 3943.914442] RBP: 00007ffef23f73b8 R08: 000000000000000a R09:=20
+00007ffef23f62e1
+<4>[ 3943.914443] R10: 00007fbbb9271ac0 R11: 0000000000000206 R12:=20
+00007ffef23f7580
+<4>[ 3943.914443] R13: 00007ffef23f8f17 R14: 000055f423b5e260 R15:=20
+00007ffef23f73c0
+<5>[ 3943.923089] FS-Cache: Netfs 'ceph' unregistered from caching
+<5>[ 4022.394090] Key type ceph unregistered
+<5>[ 4028.645127] Key type ceph registered
+<6>[ 4028.645522] libceph: loaded (mon/osd proto 15/24)
+<5>[ 4028.658549] FS-Cache: Netfs 'ceph' registered for caching
+<6>[ 4028.658558] ceph: loaded (mds proto 32)
+<6>[ 4028.662334] libceph: mon1 (1)192.168.195.165:40291 session establis=
+hed
+<6>[ 4028.663998] libceph: client4303 fsid=20
+f7621edd-ef06-4ca3-8a5b-1ba8c52ae15f
+<3>[11275.766909]=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+<3>[11275.766910] BUG ceph_dentry_info (Tainted: G B=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 E=C2=A0=C2=A0=C2=A0 ):=20
+Objects remaining in ceph_dentry_info on __kmem_cache_shutdown()
+<3>[11275.766911]=20
+-------------------------------------------------------------------------=
+----
+<3>[11275.766911]
+<3>[11275.766912] INFO: Slab 0x00000000d49f198a objects=3D51 used=3D1=20
+fp=3D0x000000007a03922c flags=3D0x17ffe000000200
+<4>[11275.766915] CPU: 0 PID: 40095 Comm: rmmod Tainted: G=C2=A0=C2=A0=C2=
+=A0 B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+E=C2=A0=C2=A0=C2=A0=C2=A0 5.6.0-rc1+ #23
+<4>[11275.766916] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[11275.766916] Call Trace:
+<4>[11275.767023]=C2=A0 dump_stack+0x66/0x90
+<4>[11275.767043]=C2=A0 slab_err+0xb7/0xdc
+<4>[11275.767046]=C2=A0 ? ksm_migrate_page+0xe0/0xe0
+<4>[11275.767047]=C2=A0 ? slub_cpu_dead+0xb0/0xb0
+<4>[11275.767048]=C2=A0 __kmem_cache_shutdown.cold+0x29/0x153
+<4>[11275.767050]=C2=A0 shutdown_cache+0x13/0x1b0
+<4>[11275.767051]=C2=A0 kmem_cache_destroy+0x239/0x260
+<4>[11275.767083]=C2=A0 destroy_caches+0x3a/0x57 [ceph]
+<4>[11275.767086]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[11275.767108]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[11275.767109]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[11275.767129]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[11275.767164] RIP: 0033:0x7f6da227797b
+<4>[11275.767167] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[11275.767168] RSP: 002b:00007ffdb75aa098 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[11275.767169] RAX: ffffffffffffffda RBX: 000055de019007a0 RCX:=20
+00007f6da227797b
+<4>[11275.767169] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+000055de01900808
+<4>[11275.767170] RBP: 00007ffdb75aa0e8 R08: 000000000000000a R09:=20
+00007ffdb75a9011
+<4>[11275.767170] R10: 00007f6da22ecac0 R11: 0000000000000206 R12:=20
+00007ffdb75aa2b0
+<4>[11275.767171] R13: 00007ffdb75abf17 R14: 000055de01900260 R15:=20
+00007ffdb75aa0f0
+<3>[11275.767175] INFO: Object 0x00000000a465a019 @offset=3D240
+<3>[11275.767177]=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+<3>[11275.767177] BUG ceph_dentry_info (Tainted: G B=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 E=C2=A0=C2=A0=C2=A0 ):=20
+Objects remaining in ceph_dentry_info on __kmem_cache_shutdown()
+<3>[11275.767178]=20
+-------------------------------------------------------------------------=
+----
+<3>[11275.767178]
+<3>[11275.767178] INFO: Slab 0x00000000713366a2 objects=3D51 used=3D2=20
+fp=3D0x0000000062e48697 flags=3D0x17ffe000000200
+<4>[11275.767180] CPU: 0 PID: 40095 Comm: rmmod Tainted: G=C2=A0=C2=A0=C2=
+=A0 B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+E=C2=A0=C2=A0=C2=A0=C2=A0 5.6.0-rc1+ #23
+<4>[11275.767180] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[11275.767180] Call Trace:
+<4>[11275.767182]=C2=A0 dump_stack+0x66/0x90
+<4>[11275.767183]=C2=A0 slab_err+0xb7/0xdc
+<4>[11275.767185]=C2=A0 ? printk+0x58/0x6f
+<4>[11275.767186]=C2=A0 ? slub_cpu_dead+0xb0/0xb0
+<4>[11275.767188]=C2=A0 __kmem_cache_shutdown.cold+0x29/0x153
+<4>[11275.767189]=C2=A0 shutdown_cache+0x13/0x1b0
+<4>[11275.767190]=C2=A0 kmem_cache_destroy+0x239/0x260
+<4>[11275.767198]=C2=A0 destroy_caches+0x3a/0x57 [ceph]
+<4>[11275.767200]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[11275.767202]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[11275.767203]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[11275.767205]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[11275.767205] RIP: 0033:0x7f6da227797b
+<4>[11275.767206] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[11275.767207] RSP: 002b:00007ffdb75aa098 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[11275.767208] RAX: ffffffffffffffda RBX: 000055de019007a0 RCX:=20
+00007f6da227797b
+<4>[11275.767208] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+000055de01900808
+<4>[11275.767208] RBP: 00007ffdb75aa0e8 R08: 000000000000000a R09:=20
+00007ffdb75a9011
+<4>[11275.767209] R10: 00007f6da22ecac0 R11: 0000000000000206 R12:=20
+00007ffdb75aa2b0
+<4>[11275.767209] R13: 00007ffdb75abf17 R14: 000055de01900260 R15:=20
+00007ffdb75aa0f0
+<3>[11275.767212] INFO: Object 0x000000000917f90f @offset=3D2800
+<3>[11275.767212] INFO: Object 0x00000000cea9f98e @offset=3D2880
+<3>[11275.767213] kmem_cache_destroy ceph_dentry_info: Slab cache still=20
+has objects
+<4>[11275.767214] CPU: 0 PID: 40095 Comm: rmmod Tainted: G=C2=A0=C2=A0=C2=
+=A0 B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+E=C2=A0=C2=A0=C2=A0=C2=A0 5.6.0-rc1+ #23
+<4>[11275.767214] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[11275.767215] Call Trace:
+<4>[11275.767215]=C2=A0 dump_stack+0x66/0x90
+<4>[11275.767217]=C2=A0 kmem_cache_destroy.cold+0x15/0x1a
+<4>[11275.767223]=C2=A0 destroy_caches+0x3a/0x57 [ceph]
+<4>[11275.767225]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[11275.767226]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[11275.767227]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[11275.767229]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[11275.767229] RIP: 0033:0x7f6da227797b
+<4>[11275.767230] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[11275.767230] RSP: 002b:00007ffdb75aa098 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[11275.767231] RAX: ffffffffffffffda RBX: 000055de019007a0 RCX:=20
+00007f6da227797b
+<4>[11275.767231] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+000055de01900808
+<4>[11275.767232] RBP: 00007ffdb75aa0e8 R08: 000000000000000a R09:=20
+00007ffdb75a9011
+<4>[11275.767232] R10: 00007f6da22ecac0 R11: 0000000000000206 R12:=20
+00007ffdb75aa2b0
+<4>[11275.767232] R13: 00007ffdb75abf17 R14: 000055de01900260 R15:=20
+00007ffdb75aa0f0
+<5>[11275.767361] FS-Cache: Netfs 'ceph' unregistered from caching
+<5>[11275.807037] Key type ceph unregistered
+<4>[11594.856257] hrtimer: interrupt took 3786932 ns
+<5>[11842.570801] Key type ceph registered
+<6>[11842.571477] libceph: loaded (mon/osd proto 15/24)
+<5>[11842.671795] FS-Cache: Netfs 'ceph' registered for caching
+<6>[11842.671803] ceph: loaded (mds proto 32)
+<6>[11842.705475] libceph: mon2 (1)192.168.195.165:40293 session establis=
+hed
+<6>[11842.708894] libceph: client4310 fsid=20
+f7621edd-ef06-4ca3-8a5b-1ba8c52ae15f
+<3>[12247.488188]=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+<3>[12247.488189] BUG ceph_dentry_info (Tainted: G B=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 E=C2=A0=C2=A0=C2=A0 ):=20
+Objects remaining in ceph_dentry_info on __kmem_cache_shutdown()
+<3>[12247.488228]=20
+-------------------------------------------------------------------------=
+----
+<3>[12247.488228]
+<3>[12247.488231] INFO: Slab 0x00000000713366a2 objects=3D51 used=3D2=20
+fp=3D0x0000000062e48697 flags=3D0x17ffe000000200
+<4>[12247.488233] CPU: 2 PID: 42854 Comm: rmmod Tainted: G=C2=A0=C2=A0=C2=
+=A0 B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+E=C2=A0=C2=A0=C2=A0=C2=A0 5.6.0-rc1+ #23
+<4>[12247.488234] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[12247.488234] Call Trace:
+<4>[12247.488241]=C2=A0 dump_stack+0x66/0x90
+<4>[12247.488244]=C2=A0 slab_err+0xb7/0xdc
+<4>[12247.488246]=C2=A0 ? ksm_migrate_page+0xe0/0xe0
+<4>[12247.488247]=C2=A0 ? slub_cpu_dead+0xb0/0xb0
+<4>[12247.488249]=C2=A0 __kmem_cache_shutdown.cold+0x29/0x153
+<4>[12247.488251]=C2=A0 shutdown_cache+0x13/0x1b0
+<4>[12247.488252]=C2=A0 kmem_cache_destroy+0x239/0x260
+<4>[12247.488265]=C2=A0 destroy_caches+0x3a/0x57 [ceph]
+<4>[12247.488268]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[12247.488271]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[12247.488272]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[12247.488299]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[12247.488301] RIP: 0033:0x7fd1c5bb797b
+<4>[12247.488304] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[12247.488304] RSP: 002b:00007ffd37a293f8 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[12247.488306] RAX: ffffffffffffffda RBX: 0000559e2ce707a0 RCX:=20
+00007fd1c5bb797b
+<4>[12247.488306] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+0000559e2ce70808
+<4>[12247.488307] RBP: 00007ffd37a29448 R08: 000000000000000a R09:=20
+00007ffd37a28371
+<4>[12247.488307] R10: 00007fd1c5c2cac0 R11: 0000000000000206 R12:=20
+00007ffd37a29610
+<4>[12247.488307] R13: 00007ffd37a2af17 R14: 0000559e2ce70260 R15:=20
+00007ffd37a29450
+<3>[12247.488312] INFO: Object 0x000000000917f90f @offset=3D2800
+<3>[12247.488313] INFO: Object 0x00000000cea9f98e @offset=3D2880
+<3>[12247.488314]=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+<3>[12247.488315] BUG ceph_dentry_info (Tainted: G B=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 E=C2=A0=C2=A0=C2=A0 ):=20
+Objects remaining in ceph_dentry_info on __kmem_cache_shutdown()
+<3>[12247.488315]=20
+-------------------------------------------------------------------------=
+----
+<3>[12247.488315]
+<3>[12247.488316] INFO: Slab 0x00000000d49f198a objects=3D51 used=3D1=20
+fp=3D0x000000001b4111af flags=3D0x17ffe000000200
+<4>[12247.488317] CPU: 2 PID: 42854 Comm: rmmod Tainted: G=C2=A0=C2=A0=C2=
+=A0 B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+E=C2=A0=C2=A0=C2=A0=C2=A0 5.6.0-rc1+ #23
+<4>[12247.488317] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[12247.488318] Call Trace:
+<4>[12247.488319]=C2=A0 dump_stack+0x66/0x90
+<4>[12247.488321]=C2=A0 slab_err+0xb7/0xdc
+<4>[12247.488324]=C2=A0 ? printk+0x58/0x6f
+<4>[12247.488324]=C2=A0 ? slub_cpu_dead+0xb0/0xb0
+<4>[12247.488326]=C2=A0 __kmem_cache_shutdown.cold+0x29/0x153
+<4>[12247.488327]=C2=A0 shutdown_cache+0x13/0x1b0
+<4>[12247.488329]=C2=A0 kmem_cache_destroy+0x239/0x260
+<4>[12247.488337]=C2=A0 destroy_caches+0x3a/0x57 [ceph]
+<4>[12247.488339]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[12247.488341]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[12247.488342]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[12247.488344]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[12247.488345] RIP: 0033:0x7fd1c5bb797b
+<4>[12247.488346] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[12247.488346] RSP: 002b:00007ffd37a293f8 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[12247.488347] RAX: ffffffffffffffda RBX: 0000559e2ce707a0 RCX:=20
+00007fd1c5bb797b
+<4>[12247.488347] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+0000559e2ce70808
+<4>[12247.488348] RBP: 00007ffd37a29448 R08: 000000000000000a R09:=20
+00007ffd37a28371
+<4>[12247.488348] R10: 00007fd1c5c2cac0 R11: 0000000000000206 R12:=20
+00007ffd37a29610
+<4>[12247.488349] R13: 00007ffd37a2af17 R14: 0000559e2ce70260 R15:=20
+00007ffd37a29450
+<3>[12247.488352] INFO: Object 0x00000000a465a019 @offset=3D240
+<3>[12247.488353] kmem_cache_destroy ceph_dentry_info: Slab cache still=20
+has objects
+<4>[12247.488354] CPU: 2 PID: 42854 Comm: rmmod Tainted: G=C2=A0=C2=A0=C2=
+=A0 B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=20
+E=C2=A0=C2=A0=C2=A0=C2=A0 5.6.0-rc1+ #23
+<4>[12247.488354] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[12247.488354] Call Trace:
+<4>[12247.488355]=C2=A0 dump_stack+0x66/0x90
+<4>[12247.488357]=C2=A0 kmem_cache_destroy.cold+0x15/0x1a
+<4>[12247.488364]=C2=A0 destroy_caches+0x3a/0x57 [ceph]
+<4>[12247.488366]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[12247.488367]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[12247.488369]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[12247.488370]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[12247.488371] RIP: 0033:0x7fd1c5bb797b
+<4>[12247.488372] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[12247.488372] RSP: 002b:00007ffd37a293f8 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[12247.488373] RAX: ffffffffffffffda RBX: 0000559e2ce707a0 RCX:=20
+00007fd1c5bb797b
+<4>[12247.488373] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+0000559e2ce70808
+<4>[12247.488374] RBP: 00007ffd37a29448 R08: 000000000000000a R09:=20
+00007ffd37a28371
+<4>[12247.488374] R10: 00007fd1c5c2cac0 R11: 0000000000000206 R12:=20
+00007ffd37a29610
+<4>[12247.488375] R13: 00007ffd37a2af17 R14: 0000559e2ce70260 R15:=20
+00007ffd37a29450
+<5>[12247.499349] FS-Cache: Netfs 'ceph' unregistered from caching
+<5>[12247.524579] Key type ceph unregistered
+<5>[12403.035063] Key type ceph registered
+<6>[12403.040353] libceph: loaded (mon/osd proto 15/24)
+<5>[12403.100932] FS-Cache: Netfs 'ceph' registered for caching
+<6>[12403.100939] ceph: loaded (mds proto 32)
+<6>[12403.117931] libceph: mon1 (1)192.168.195.165:40291 session establis=
+hed
+<6>[12403.124988] libceph: client4306 fsid=20
+f7621edd-ef06-4ca3-8a5b-1ba8c52ae15f
+<3>[12577.319568]=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+<3>[12577.319572] BUG ceph_dentry_info (Tainted: G B=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 E=C2=A0=C2=A0=C2=A0 ):=20
+Objects remaining in ceph_dentry_info on __kmem_cache_shutdown()
+<3>[12577.319572]=20
+-------------------------------------------------------------------------=
+----
+<3>[12577.319572]
+<3>[12577.319575] INFO: Slab 0x00000000d49f198a objects=3D51 used=3D1=20
+fp=3D0x000000001b4111af flags=3D0x17ffe000000200
+<4>[12577.319579] CPU: 1 PID: 1919 Comm: rmmod Tainted: G B=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 E=C2=A0=C2=A0=C2=A0=C2=A0=20
+5.6.0-rc1+ #23
+<4>[12577.319580] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[12577.319581] Call Trace:
+<4>[12577.319590]=C2=A0 dump_stack+0x66/0x90
+<4>[12577.319593]=C2=A0 slab_err+0xb7/0xdc
+<4>[12577.319596]=C2=A0 ? slub_cpu_dead+0xb0/0xb0
+<4>[12577.319599]=C2=A0 ? ksm_migrate_page+0xe0/0xe0
+<4>[12577.319601]=C2=A0 ? ksm_migrate_page+0xe0/0xe0
+<4>[12577.319603]=C2=A0 __kmem_cache_shutdown.cold+0x29/0x153
+<4>[12577.319606]=C2=A0 shutdown_cache+0x13/0x1b0
+<4>[12577.319609]=C2=A0 kmem_cache_destroy+0x239/0x260
+<4>[12577.319628]=C2=A0 destroy_caches+0x3a/0x57 [ceph]
+<4>[12577.319632]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[12577.319636]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[12577.319638]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[12577.319641]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[12577.319644] RIP: 0033:0x7eff79c6997b
+<4>[12577.319647] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[12577.319648] RSP: 002b:00007ffd9d0f24c8 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[12577.319650] RAX: ffffffffffffffda RBX: 000055a5357457a0 RCX:=20
+00007eff79c6997b
+<4>[12577.319651] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+000055a535745808
+<4>[12577.319652] RBP: 00007ffd9d0f2518 R08: 000000000000000a R09:=20
+00007ffd9d0f1441
+<4>[12577.319653] R10: 00007eff79cdeac0 R11: 0000000000000206 R12:=20
+00007ffd9d0f26e0
+<4>[12577.319654] R13: 00007ffd9d0f3f17 R14: 000055a535745260 R15:=20
+00007ffd9d0f2520
+<3>[12577.319660] INFO: Object 0x00000000a465a019 @offset=3D240
+<3>[12577.319662]=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+<3>[12577.319664] BUG ceph_dentry_info (Tainted: G B=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 E=C2=A0=C2=A0=C2=A0 ):=20
+Objects remaining in ceph_dentry_info on __kmem_cache_shutdown()
+<3>[12577.319664]=20
+-------------------------------------------------------------------------=
+----
+<3>[12577.319664]
+<3>[12577.319666] INFO: Slab 0x00000000713366a2 objects=3D51 used=3D2=20
+fp=3D0x00000000c5c96d72 flags=3D0x17ffe000000200
+<4>[12577.319668] CPU: 1 PID: 1919 Comm: rmmod Tainted: G B=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 E=C2=A0=C2=A0=C2=A0=C2=A0=20
+5.6.0-rc1+ #23
+<4>[12577.319669] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[12577.319669] Call Trace:
+<4>[12577.319671]=C2=A0 dump_stack+0x66/0x90
+<4>[12577.319673]=C2=A0 slab_err+0xb7/0xdc
+<4>[12577.319677]=C2=A0 ? printk+0x58/0x6f
+<4>[12577.319679]=C2=A0 ? ksm_migrate_page+0xe0/0xe0
+<4>[12577.319682]=C2=A0 __kmem_cache_shutdown.cold+0x29/0x153
+<4>[12577.319684]=C2=A0 shutdown_cache+0x13/0x1b0
+<4>[12577.319687]=C2=A0 kmem_cache_destroy+0x239/0x260
+<4>[12577.319701]=C2=A0 destroy_caches+0x3a/0x57 [ceph]
+<4>[12577.319703]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[12577.319706]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[12577.319709]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[12577.319711]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[12577.319712] RIP: 0033:0x7eff79c6997b
+<4>[12577.319714] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[12577.319715] RSP: 002b:00007ffd9d0f24c8 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[12577.319716] RAX: ffffffffffffffda RBX: 000055a5357457a0 RCX:=20
+00007eff79c6997b
+<4>[12577.319717] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+000055a535745808
+<4>[12577.319718] RBP: 00007ffd9d0f2518 R08: 000000000000000a R09:=20
+00007ffd9d0f1441
+<4>[12577.319719] R10: 00007eff79cdeac0 R11: 0000000000000206 R12:=20
+00007ffd9d0f26e0
+<4>[12577.319720] R13: 00007ffd9d0f3f17 R14: 000055a535745260 R15:=20
+00007ffd9d0f2520
+<3>[12577.319724] INFO: Object 0x000000000917f90f @offset=3D2800
+<3>[12577.319725] INFO: Object 0x00000000cea9f98e @offset=3D2880
+<3>[12577.319727] kmem_cache_destroy ceph_dentry_info: Slab cache still=20
+has objects
+<4>[12577.319728] CPU: 1 PID: 1919 Comm: rmmod Tainted: G B=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 E=C2=A0=C2=A0=C2=A0=C2=A0=20
+5.6.0-rc1+ #23
+<4>[12577.319729] Hardware name: VMware, Inc. VMware Virtual=20
+Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+<4>[12577.319729] Call Trace:
+<4>[12577.319731]=C2=A0 dump_stack+0x66/0x90
+<4>[12577.319733]=C2=A0 kmem_cache_destroy.cold+0x15/0x1a
+<4>[12577.319747]=C2=A0 destroy_caches+0x3a/0x57 [ceph]
+<4>[12577.319750]=C2=A0 __x64_sys_delete_module+0x13d/0x290
+<4>[12577.319752]=C2=A0 ? exit_to_usermode_loop+0x94/0xd0
+<4>[12577.319754]=C2=A0 do_syscall_64+0x5b/0x1b0
+<4>[12577.319757]=C2=A0 entry_SYSCALL_64_after_hwframe+0x44/0xa9
+<4>[12577.319758] RIP: 0033:0x7eff79c6997b
+<4>[12577.319759] Code: 73 01 c3 48 8b 0d 0d 45 0c 00 f7 d8 64 89 01 48=20
+83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00=20
+0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d dd 44 0c 00 f7 d8 64 89 01 48
+<4>[12577.319760] RSP: 002b:00007ffd9d0f24c8 EFLAGS: 00000206 ORIG_RAX:=20
+00000000000000b0
+<4>[12577.319761] RAX: ffffffffffffffda RBX: 000055a5357457a0 RCX:=20
+00007eff79c6997b
+<4>[12577.319762] RDX: 000000000000000a RSI: 0000000000000800 RDI:=20
+000055a535745808
+<4>[12577.319763] RBP: 00007ffd9d0f2518 R08: 000000000000000a R09:=20
+00007ffd9d0f1441
+<4>[12577.319764] R10: 00007eff79cdeac0 R11: 0000000000000206 R12:=20
+00007ffd9d0f26e0
+<4>[12577.319765] R13: 00007ffd9d0f3f17 R14: 000055a535745260 R15:=20
+00007ffd9d0f2520
+<5>[12577.343429] FS-Cache: Netfs 'ceph' unregistered from caching
+<5>[12577.377374] Key type ceph unregistered
+<5>[12824.742825] Key type ceph registered
+<6>[12824.743522] libceph: loaded (mon/osd proto 15/24)
+<5>[12824.754924] FS-Cache: Netfs 'ceph' registered for caching
+<6>[12824.754931] ceph: loaded (mds proto 32)
+<6>[12824.759841] libceph: mon0 (1)192.168.195.165:40289 session establis=
+hed
+<6>[12824.762760] libceph: client4296 fsid=20
+f7621edd-ef06-4ca3-8a5b-1ba8c52ae15f
+<4>[12891.829780] ceph: mdsmap_decode got incorrect state(up:creating)
+<4>[12892.874795] ceph: mdsmap_decode got incorrect state(up:creating)
+<6>[13362.740912] libceph: mon2 (1)192.168.195.165:40293 session establis=
+hed
+<6>[13362.743519] libceph: client4316 fsid=20
+f7621edd-ef06-4ca3-8a5b-1ba8c52ae15f
+<6>[13480.045907] libceph: mon2 (1)192.168.195.165:40293 session establis=
+hed
+<6>[13480.046889] libceph: client4319 fsid=20
+f7621edd-ef06-4ca3-8a5b-1ba8c52ae15f
 
-URL: https://tracker.ceph.com/issues/44177
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/debugfs.c      | 13 +++++++++++--
- fs/ceph/super.c        |  4 ++++
- net/ceph/ceph_common.c | 20 +++++++++++++++++---
- net/ceph/debugfs.c     | 15 +++++++++++----
- 4 files changed, 43 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 60f3e307fca1..0873791a3f77 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -23,11 +23,18 @@ static int mdsmap_show(struct seq_file *s, void *p)
- {
- 	int i;
- 	struct ceph_fs_client *fsc =3D s->private;
-+	struct ceph_mds_client *mdsc =3D fsc->mdsc;
- 	struct ceph_mdsmap *mdsmap;
-=20
--	if (!fsc->mdsc || !fsc->mdsc->mdsmap)
-+	if (!mdsc)
-+	       return 0;
-+
-+	mutex_lock(&mdsc->mutex);
-+	mdsmap =3D mdsc->mdsmap;
-+	if (!mdsmap) {
-+		mutex_unlock(&mdsc->mutex);
- 		return 0;
--	mdsmap =3D fsc->mdsc->mdsmap;
-+	}
- 	seq_printf(s, "epoch %d\n", mdsmap->m_epoch);
- 	seq_printf(s, "root %d\n", mdsmap->m_root);
- 	seq_printf(s, "max_mds %d\n", mdsmap->m_max_mds);
-@@ -40,6 +47,8 @@ static int mdsmap_show(struct seq_file *s, void *p)
- 			       ceph_pr_addr(addr),
- 			       ceph_mds_state_name(state));
- 	}
-+	mutex_unlock(&mdsc->mutex);
-+
- 	return 0;
- }
-=20
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index f9a9a2038c6e..2856389c352f 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -53,11 +53,13 @@ static int ceph_statfs(struct dentry *dentry, struct =
-kstatfs *buf)
- 	int err;
- 	u64 data_pool;
-=20
-+	mutex_lock(&fsc->mdsc->mutex);
- 	if (fsc->mdsc->mdsmap->m_num_data_pg_pools =3D=3D 1) {
- 		data_pool =3D fsc->mdsc->mdsmap->m_data_pg_pools[0];
- 	} else {
- 		data_pool =3D CEPH_NOPOOL;
- 	}
-+	mutex_unlock(&fsc->mdsc->mutex);
-=20
- 	dout("statfs\n");
- 	err =3D ceph_monc_do_statfs(monc, data_pool, &st);
-@@ -1087,10 +1089,12 @@ static int ceph_get_tree(struct fs_context *fc)
- 	return 0;
-=20
- out_splat:
-+	mutex_lock(&fsc->mdsc->mutex);
- 	if (!ceph_mdsmap_is_cluster_available(fsc->mdsc->mdsmap)) {
- 		pr_info("No mds server is up or the cluster is laggy\n");
- 		err =3D -EHOSTUNREACH;
- 	}
-+	mutex_unlock(&fsc->mdsc->mutex);
-=20
- 	ceph_mdsc_close_sessions(fsc->mdsc);
- 	deactivate_locked_super(sb);
-diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-index a0e97f6c1072..69e505ca80fe 100644
---- a/net/ceph/ceph_common.c
-+++ b/net/ceph/ceph_common.c
-@@ -177,11 +177,15 @@ int ceph_compare_options(struct ceph_options *new_o=
-pt,
- 	}
-=20
- 	/* any matching mon ip implies a match */
-+	mutex_lock(&client->monc.mutex);
- 	for (i =3D 0; i < opt1->num_mon; i++) {
- 		if (ceph_monmap_contains(client->monc.monmap,
--				 &opt1->mon_addr[i]))
-+				 &opt1->mon_addr[i])) {
-+			mutex_unlock(&client->monc.mutex);
- 			return 0;
-+		}
- 	}
-+	mutex_unlock(&client->monc.mutex);
- 	return -1;
- }
- EXPORT_SYMBOL(ceph_compare_options);
-@@ -682,8 +686,18 @@ EXPORT_SYMBOL(ceph_reset_client_addr);
-  */
- static bool have_mon_and_osd_map(struct ceph_client *client)
- {
--	return client->monc.monmap && client->monc.monmap->epoch &&
--	       client->osdc.osdmap && client->osdc.osdmap->epoch;
-+	bool have_osd_map =3D false;
-+	bool have_mon_map =3D false;
-+
-+	down_read(&client->osdc.lock);
-+	have_osd_map =3D !!(client->osdc.osdmap && client->osdc.osdmap->epoch);
-+	up_read(&client->osdc.lock);
-+
-+	mutex_lock(&client->monc.mutex);
-+	have_mon_map =3D !!(client->monc.monmap && client->monc.monmap->epoch);
-+	mutex_unlock(&client->monc.mutex);
-+
-+	return have_mon_map && have_osd_map;
- }
-=20
- /*
-diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
-index 1344f232ecc5..a9d5c9de0070 100644
---- a/net/ceph/debugfs.c
-+++ b/net/ceph/debugfs.c
-@@ -36,8 +36,11 @@ static int monmap_show(struct seq_file *s, void *p)
- 	int i;
- 	struct ceph_client *client =3D s->private;
-=20
--	if (client->monc.monmap =3D=3D NULL)
-+	mutex_lock(&client->monc.mutex);
-+	if (client->monc.monmap =3D=3D NULL) {
-+		mutex_unlock(&client->monc.mutex);
- 		return 0;
-+	}
-=20
- 	seq_printf(s, "epoch %d\n", client->monc.monmap->epoch);
- 	for (i =3D 0; i < client->monc.monmap->num_mon; i++) {
-@@ -48,6 +51,7 @@ static int monmap_show(struct seq_file *s, void *p)
- 			   ENTITY_NAME(inst->name),
- 			   ceph_pr_addr(&inst->addr));
- 	}
-+	mutex_unlock(&client->monc.mutex);
- 	return 0;
- }
-=20
-@@ -56,13 +60,16 @@ static int osdmap_show(struct seq_file *s, void *p)
- 	int i;
- 	struct ceph_client *client =3D s->private;
- 	struct ceph_osd_client *osdc =3D &client->osdc;
--	struct ceph_osdmap *map =3D osdc->osdmap;
-+	struct ceph_osdmap *map;
- 	struct rb_node *n;
-=20
--	if (map =3D=3D NULL)
-+	down_read(&osdc->lock);
-+	map =3D osdc->osdmap;
-+	if (map =3D=3D NULL) {
-+		up_read(&osdc->lock);
- 		return 0;
-+	}
-=20
--	down_read(&osdc->lock);
- 	seq_printf(s, "epoch %u barrier %u flags 0x%x\n", map->epoch,
- 			osdc->epoch_barrier, map->flags);
-=20
---=20
-2.21.0
+Thanks,
+
+BRs
+
 
