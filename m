@@ -2,251 +2,261 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AC771655C7
-	for <lists+ceph-devel@lfdr.de>; Thu, 20 Feb 2020 04:42:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F4951657EA
+	for <lists+ceph-devel@lfdr.de>; Thu, 20 Feb 2020 07:42:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbgBTDmt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 19 Feb 2020 22:42:49 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40011 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727370AbgBTDms (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 19 Feb 2020 22:42:48 -0500
-Received: by mail-io1-f67.google.com with SMTP id x1so3085422iop.7
-        for <ceph-devel@vger.kernel.org>; Wed, 19 Feb 2020 19:42:48 -0800 (PST)
+        id S1726801AbgBTGmT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 20 Feb 2020 01:42:19 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37256 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbgBTGmS (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 20 Feb 2020 01:42:18 -0500
+Received: by mail-qt1-f194.google.com with SMTP id w47so2156794qtk.4
+        for <ceph-devel@vger.kernel.org>; Wed, 19 Feb 2020 22:42:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3hmDa7RSzzxaVnUd+q6lTgjiAlZzNdaAaESJ/ndTcMs=;
-        b=L4ar8/bLfxm4SoBHZ3jvKbYOvnn8cSzJSAwSlZhhvrt35w+ryhRsowd0xkNt20s7V8
-         6VAkbnlL3PWb0T7ZFsFrrZiqdEeYo+Sa/rryUgDMZrV4eD22tti0ROkQl3/HkigH3tiB
-         S6sK+l6OVJ9cdfZqmh4z/GJDizuxleNI+UOBZNL7TeVGoW078udKvBqXIK64vhvfFJax
-         rJQf7/Icn8OSYHxgShNVo/BBaKYS8YUzMdV6mnG6eK7jd9ytQFJSUcrf+1ps+01FOua9
-         hQyQqtkoT1WDbFlP37+Gz15IjW6Rq3sXtkG8zCM/67xOL16Ud+h07BphhGGVxd9ipFWa
-         bJGw==
+        bh=4s+uxk/6/Kz3LwU5mM6ljQUill1fIOJBktpSVkpyA8k=;
+        b=BCf/1p0Z5PbYGnFPG2+H1LWPZoY25mzZVmtCarWItrId/kQV7VX+LcMTmBzdQAj/YJ
+         1Cqf1aAIEb4kDnydUxP3sXDlVkbRyAFE60jxvqC0W/B1ljSlB5wf/5EbNlxSzjS25izM
+         T47Nt/zRbHfLIJ8IKuP1jjfBzeGz09s2VACg1+r8SUnGSaq9Qzqp4GBsZQVG4A8lAGPk
+         RufydNinnWAhIDPWgUox8mR2kwQCO5oEe9bEa3G4V1DPcG3foL95SsUZbc70C6kJSOqC
+         2DGFKeKvArpYA1vC8lULwihf0Q5FO6htP5TzUvasMvuAKJeAgrE4v7so3OnqgsRHbS9+
+         72ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3hmDa7RSzzxaVnUd+q6lTgjiAlZzNdaAaESJ/ndTcMs=;
-        b=lAYcBcgx0QdcNQFXcu7fbGoPwKoFFizX40I/Xipig7bonIFvSTl1Uw3yjvZO9E8/3v
-         v+7dFXdnXIhVipzhxPvEtthsCVJzZpdobxCkKtsOillBZTE7hoWwmy+WWKzj9NvtThZZ
-         tfgrYWa0oqAng9afAlygFKGH1/dz84TvREvoFv4+Y5NHhjO/U29vAzsZvkuB0hpOrHqG
-         LbyuXG+DKpscfUXVZisFVAYnKyMgp8oD6utjdSGGJ1+V1MgtR7OHm/4l7o5w0KgscgHx
-         pDxhH6RlJW9boXr77QnCnR/OvSLlVjbZ9aWfy7RLk/EtRLEoCYS4BDc1QesOD8iiDaGB
-         h4qg==
-X-Gm-Message-State: APjAAAU3ft5wiKNHLNnrjwsgx+aEkuEnkK3IoGZeZZs571LgZlLNCk/p
-        ddMjNbigoxx0ttHhs0SGfKBjCpxspHYP5D+l1vU=
-X-Google-Smtp-Source: APXvYqwG0AW3A93WsoNkoYNxictLDrxB75gugqlw3GcBZE6Px9kk1+/BVnUhNPPSlx4x4k5RBi5XojtZd7/BU4q8Ntg=
-X-Received: by 2002:a02:334f:: with SMTP id k15mr7931133jak.96.1582170167732;
- Wed, 19 Feb 2020 19:42:47 -0800 (PST)
+        bh=4s+uxk/6/Kz3LwU5mM6ljQUill1fIOJBktpSVkpyA8k=;
+        b=XCu1OI7Rsv+L7/0EF3y49gvilfoLCz5xdmhqqvTtmM99PH0pBBTj/JrNT0nZU2Q4LU
+         m25dKrp5hL10vPH/P7WF/0r4xEAYbF7qdzQWPrGewa6p1/vqhQ350i9SH5KiSKUEfx2n
+         LWCw6Rd4y9upN+2rfj90ahN3bO4PK4PQsS2oggjuU2FtveJqAnGWMTp88HQgYnNjSt01
+         wSVoq4WaSiPRfyitztMCq0n2i98GMhG745/obx8sOi99F3Q9IEwkQtKwd8+IYUmHH3La
+         vrljszEEogh2tXKkliyCkoMgt/8wttHPaC83lpKdmKKiivEHVzC8ZeVgpyv1OsS9EKgM
+         7MHA==
+X-Gm-Message-State: APjAAAVVvqaXQFRud+vYJU2+eDjONkb9YY/d2Uvu0Ifl9vfPCuOmM6LS
+        l52bvmerjmRxZ4zXhat9genTbEgdcgBhNsVSYoo=
+X-Google-Smtp-Source: APXvYqycSzjSSjE0UG19fNtS9A5y5krVNhQVgqkyVhOJfhb8r7UVX4rhts3ztFPUQezFb7V0jE06mQhmZXAhdg4Ua1c=
+X-Received: by 2002:ac8:4b70:: with SMTP id g16mr25014987qts.296.1582180936866;
+ Wed, 19 Feb 2020 22:42:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20200216064945.61726-1-xiubli@redhat.com> <78ff80dd12d497be7a6606a60973f7e2d864e910.camel@kernel.org>
- <36e1f3a9-1688-9eb0-27d7-351a12bca85a@redhat.com> <4a4cfe2a5fc1de6f73fa3f557921c1ad5802add6.camel@kernel.org>
- <CAOi1vP_yGJGqkY+QLdQoruJrS3gawEC-_NqDnpucCWfXOHL-aQ@mail.gmail.com>
- <CA+2bHPZmjvbtFBNzviR6uYsM=bF92qC-Xkgm2uucBe6KJHjJbg@mail.gmail.com>
- <CAOi1vP9GEt89=RWbwPJ+X172DJL7=R49iBxWfOerARch-VYJDg@mail.gmail.com>
- <cdc79a1163b506813b1adfdc8b2387f9bb9c0609.camel@kernel.org>
- <CA+2bHPb=9Z0nM_innY2bkcuCiKG9BVevonzxktWgzLPe=K8y1w@mail.gmail.com> <83d4aa168fbc9e0c2e1d7b1337e5ecd74d1a0fae.camel@kernel.org>
-In-Reply-To: <83d4aa168fbc9e0c2e1d7b1337e5ecd74d1a0fae.camel@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 20 Feb 2020 04:43:13 +0100
-Message-ID: <CAOi1vP_rf7e_6NHM3=YaukaLfRs=niTb0EdKGaxGnhtooEWV+A@mail.gmail.com>
-Subject: Re: [PATCH] ceph: add halt mount option support
+References: <20200219132526.17590-1-jlayton@kernel.org> <20200219132526.17590-6-jlayton@kernel.org>
+In-Reply-To: <20200219132526.17590-6-jlayton@kernel.org>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Thu, 20 Feb 2020 14:42:05 +0800
+Message-ID: <CAAM7YAk-cjnPqH0UhBRvzvZdk4JTXwuVzxBD8ObunQqVxm2NuQ@mail.gmail.com>
+Subject: Re: [PATCH v5 05/12] ceph: cap tracking for async directory operations
 To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Patrick Donnelly <pdonnell@redhat.com>,
-        Xiubo Li <xiubli@redhat.com>, Sage Weil <sage@redhat.com>,
-        "Yan, Zheng" <zyan@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
+        Zheng Yan <zyan@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Xiubo Li <xiubli@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 12:49 AM Jeff Layton <jlayton@kernel.org> wrote:
+On Wed, Feb 19, 2020 at 9:27 PM Jeff Layton <jlayton@kernel.org> wrote:
 >
-> On Wed, 2020-02-19 at 14:49 -0800, Patrick Donnelly wrote:
-> > Responding to you and Ilya both:
-> >
-> > On Wed, Feb 19, 2020 at 1:21 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > On Wed, 2020-02-19 at 21:42 +0100, Ilya Dryomov wrote:
-> > > > On Wed, Feb 19, 2020 at 8:22 PM Patrick Donnelly <pdonnell@redhat.com> wrote:
-> > > > > On Tue, Feb 18, 2020 at 6:59 AM Ilya Dryomov <idryomov@gmail.com> wrote:
-> > > > > > > Yeah, I've mostly done this using DROP rules when I needed to test things.
-> > > > > > > But, I think I was probably just guilty of speculating out loud here.
-> > > > > >
-> > > > > > I'm not sure what exactly Xiubo meant by "fulfilling" iptables rules
-> > > > > > in libceph, but I will say that any kind of iptables manipulation from
-> > > > > > within libceph is probably out of the question.
-> > > > >
-> > > > > I think we're getting confused about two thoughts on iptables: (1) to
-> > > > > use iptables to effectively partition the mount instead of this new
-> > > > > halt option; (2) use iptables in concert with halt to prevent FIN
-> > > > > packets from being sent when the sockets are closed. I think we all
-> > > > > agree (2) is not going to happen.
-> > > >
-> > > > Right.
-> > > >
-> > > > > > > I think doing this by just closing down the sockets is probably fine. I
-> > > > > > > wouldn't pursue anything relating to to iptables here, unless we have
-> > > > > > > some larger reason to go that route.
-> > > > > >
-> > > > > > IMO investing into a set of iptables and tc helpers for teuthology
-> > > > > > makes a _lot_ of sense.  It isn't exactly the same as a cable pull,
-> > > > > > but it's probably the next best thing.  First, it will be external to
-> > > > > > the system under test.  Second, it can be made selective -- you can
-> > > > > > cut a single session or all of them, simulate packet loss and latency
-> > > > > > issues, etc.  Third, it can be used for recovery and failover/fencing
-> > > > > > testing -- what happens when these packets get delivered two minutes
-> > > > > > later?  None of this is possible with something that just attempts to
-> > > > > > wedge the mount and acts as a point of no return.
-> > > > >
-> > > > > This sounds attractive but it does require each mount to have its own
-> > > > > IP address? Or are there options? Maybe the kernel driver could mark
-> > > > > the connection with a mount ID we could do filtering on it? From a
-> > > > > quick Google, maybe [1] could be used for this purpose. I wonder
-> > > > > however if the kernel driver would have to do that marking of the
-> > > > > connection... and then we have iptables dependencies in the driver
-> > > > > again which we don't want to do.
-> > > >
-> > > > As I said yesterday, I think it should be doable with no kernel
-> > > > changes -- either with IP aliases or with the help of some virtual
-> > > > interface.  Exactly how, I'm not sure because I use VMs for my tests
-> > > > and haven't had to touch iptables in a while, but I would be surprised
-> > > > to learn otherwise given the myriad of options out there.
-> > > >
-> > >
-> > > ...and really, doing this sort of testing with the kernel client outside
-> > > of a vm is sort of a mess anyway, IMO.
-> >
-> > Testing often involves making a mess :) I disagree in principle that
-> > having a mechanism for stopping a netfs mount without pulling the plug
-> > (virtually or otherwise) is unnecessary.
-> >
+> Track and correctly handle directory caps for asynchronous operations.
+> Add aliases for Frc caps that we now designate at Dcu caps (when dealing
+> with directories).
 >
-> Ok, here are some more concerns:
+> Unlike file caps, we don't reclaim these when the session goes away, and
+> instead preemptively release them. In-flight async dirops are instead
+> handled during reconnect phase. The client needs to re-do a synchronous
+> operation in order to re-get directory caps.
 >
-> I'm not clear on what value this new mount option really adds. Once you
-> do this, the client is hosed, so this is really only useful for testing
-> the MDS. If your goal is to test the MDS with dying clients, then why
-> not use a synthetic userland client to take state and do whatever you
-> want?
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/caps.c               | 29 ++++++++++++++++++++---------
+>  fs/ceph/mds_client.c         | 31 ++++++++++++++++++++++++++-----
+>  fs/ceph/mds_client.h         |  6 +++++-
+>  include/linux/ceph/ceph_fs.h |  6 ++++++
+>  4 files changed, 57 insertions(+), 15 deletions(-)
 >
-> It could be I'm missing some value in using a kclient for this. If you
-> did want to do this after all, then why are you keeping the mount around
-> at all? It's useless after the remount, so you might as well just umount
-> it.
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 295837215a3a..d6c5ee33f30f 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -992,7 +992,11 @@ int __ceph_caps_file_wanted(struct ceph_inode_info *ci)
+>  int __ceph_caps_wanted(struct ceph_inode_info *ci)
+>  {
+>         int w = __ceph_caps_file_wanted(ci) | __ceph_caps_used(ci);
+> -       if (!S_ISDIR(ci->vfs_inode.i_mode)) {
+> +       if (S_ISDIR(ci->vfs_inode.i_mode)) {
+> +               /* we want EXCL if holding caps of dir ops */
+> +               if (w & CEPH_CAP_ANY_DIR_OPS)
+> +                       w |= CEPH_CAP_FILE_EXCL;
+> +       } else {
+>                 /* we want EXCL if dirty data */
+>                 if (w & CEPH_CAP_FILE_BUFFER)
+>                         w |= CEPH_CAP_FILE_EXCL;
+> @@ -1890,10 +1894,13 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+>                          * revoking the shared cap on every create/unlink
+>                          * operation.
+>                          */
+> -                       if (IS_RDONLY(inode))
+> +                       if (IS_RDONLY(inode)) {
+>                                 want = CEPH_CAP_ANY_SHARED;
+> -                       else
+> -                               want = CEPH_CAP_ANY_SHARED | CEPH_CAP_FILE_EXCL;
+> +                       } else {
+> +                               want = CEPH_CAP_ANY_SHARED |
+> +                                      CEPH_CAP_FILE_EXCL |
+> +                                      CEPH_CAP_ANY_DIR_OPS;
+> +                       }
+>                         retain |= want;
+>                 } else {
 >
-> If you really want to make it just shut down the sockets, then you could
-> add a new flag to umount2/sys_umount (UMOUNT_KILL or something) that
-> would kill off the mount w/o talking to the MDS. That seems like a much
-> cleaner interface than doing this.
+> @@ -2750,13 +2757,17 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
+>         int ret;
 >
-> > > That said, I think we might need a way to match up a superblock with the
-> > > sockets associated with it -- so mon, osd and mds socket info,
-> > > basically. That could be a very simple thing in debugfs though, in the
-> > > existing directory hierarchy there. With that info, you could reasonably
-> > > do something with iptables like we're suggesting.
-> >
-> > That's certainly useful information to expose but I don't see how that
-> > would help with constructing iptable rules. The kernel may reconnect
-> > to any Ceph service at any time, especially during potential network
-> > disruption (like an iptables rule dropping packets). Any rules you
-> > construct for those connections would no longer apply. You cannot
-> > construct rules that broadly apply to e.g. the entire ceph cluster as
-> > a destination because it would interfere with other kernel client
-> > mounts. I believe this is why Ilya is suggesting the use of virtual ip
-> > addresses as a unique source address for each mount.
-> >
+>         BUG_ON(need & ~CEPH_CAP_FILE_RD);
+> -       BUG_ON(want & ~(CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO|CEPH_CAP_FILE_SHARED));
+> -       ret = ceph_pool_perm_check(inode, need);
+> -       if (ret < 0)
+> -               return ret;
+> +       if (need) {
+> +               ret = ceph_pool_perm_check(inode, need);
+> +               if (ret < 0)
+> +                       return ret;
+> +       }
 >
-> Sorry, braino -- sunrpc clients keep their source ports in most cases
-> (for legacy reasons). I don't think libceph msgr does though. You're
-> right that a debugfs info file won't really help.
+> +       BUG_ON(want & ~(CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO |
+> +                       CEPH_CAP_FILE_SHARED | CEPH_CAP_FILE_EXCL |
+> +                       CEPH_CAP_ANY_DIR_OPS));
+>         ret = try_get_cap_refs(inode, need, want, 0,
+> -                              (nonblock ? NON_BLOCKING : 0), got);
+> +                              nonblock ? NON_BLOCKING : 0, got);
+>         return ret == -EAGAIN ? 0 : ret;
+>  }
 >
-> You could roll some sort of deep packet inspection to discern this but
-> that's more difficult. I wonder if you could do it with BPF these days
-> though...
->
-> > > > > From my perspective, this halt patch looks pretty simple and doesn't
-> > > > > appear to be a huge maintenance burden. Is it really so objectionable?
-> > > >
-> > > > Well, this patch is simple only because it isn't even remotely
-> > > > equivalent to a cable pull.  I mean, it aborts in-flight requests
-> > > > with EIO, closes sockets, etc.  Has it been tested against the test
-> > > > cases that currently cold reset the node through the BMC?
-> >
-> > Of course not, this is the initial work soliciting feedback on the concept.
-> >
->
-> Yep. Don't get discouraged, I think we can do something to better
-> accommodate testing, but I don't think this is the correct direction for
-> it.
->
-> > > > If it has been tested and the current semantics are sufficient,
-> > > > are you sure they will remain so in the future?  What happens when
-> > > > a new test gets added that needs a harder shutdown?  We won't be
-> > > > able to reuse existing "umount -f" infrastructure anymore...  What
-> > > > if a new test needs to _actually_ kill the client?
-> > > >
-> > > > And then a debugging knob that permanently wedges the client sure
-> > > > can't be a mount option for all the obvious reasons.  This bit is easy
-> > > > to fix, but the fact that it is submitted as a mount option makes me
-> > > > suspect that the whole thing hasn't been thought through very well.
-> >
-> > Or, Xiubo needs advice on a better way to do it. In the tracker ticket
-> > I suggested a sysfs control file. Would that be appropriate?
-> >
->
-> I'm not a fan of adding fault injection code to the client. I'd prefer
-> doing this via some other mechanism. If you really do want something
-> like this in the kernel, then you may want to consider something like
-> BPF.
->
-> > > Agreed on all points. This sort of fault injection is really best done
-> > > via other means. Otherwise, it's really hard to know whether it'll
-> > > behave the way you expect in other situations.
-> > >
-> > > I'll add too that I think experience shows that these sorts of
-> > > interfaces end up bitrotted because they're too specialized to use
-> > > outside of anything but very specific environments. We need to think
-> > > larger than just teuthology's needs here.
-> >
-> > I doubt they'd become bitrotted with regular use in teuthology.
-> >
->
-> Well, certainly some uses of them might not, but interfaces like this
-> need to be generically useful across a range of environments. I'm not
-> terribly interested in plumbing something in that is _only_ used for
-> teuthology, even as important as that use-case is.
->
-> > I get that you both see VMs or virtual interfaces would obviate this
-> > PR. VMs are not an option in teuthology. We can try to spend some time
-> > on seeing if something like a bridged virtual network will work. Will
-> > the kernel driver operate in the network namespace of the container
-> > that mounts the volume?
-> >
->
-> That, I'm not sure about. I'm not sure if the sockets end up inheriting
-> the net namespace of the mounting process. It'd be good to investigate
-> this. You may be able to just get crafty with the unshare command to
-> test it out.
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 38eb9dd5062b..ef3dd6fe2f4d 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -699,6 +699,7 @@ void ceph_mdsc_release_request(struct kref *kref)
+>         struct ceph_mds_request *req = container_of(kref,
+>                                                     struct ceph_mds_request,
+>                                                     r_kref);
+> +       ceph_mdsc_release_dir_caps(req);
 
-It will -- I added that several years ago when docker started gaining
-popularity.
+I think we can do this in complete_request()
 
-This is why I keep mentioning virtual interfaces.  One thing that
-will most likely work without any hiccups is a veth pair with one
-interface in the namespace and one in the host plus a simple iptables
-masquerading rule to NAT between the veth network and the world.
-For cutting all sessions, you won't even need to touch iptables any
-further: just down either end of the veth pair.
-
-Doing it from the container would obviously work too, but further
-iptables manipulation might be trickier because of more parts involved:
-additional interfaces, bridge, iptables rules installed by the
-container runtime, etc.
-
-Thanks,
-
-                Ilya
+>         destroy_reply_info(&req->r_reply_info);
+>         if (req->r_request)
+>                 ceph_msg_put(req->r_request);
+> @@ -3280,6 +3281,17 @@ static void handle_session(struct ceph_mds_session *session,
+>         return;
+>  }
+>
+> +void ceph_mdsc_release_dir_caps(struct ceph_mds_request *req)
+> +{
+> +       int dcaps;
+> +
+> +       dcaps = xchg(&req->r_dir_caps, 0);
+> +       if (dcaps) {
+> +               dout("releasing r_dir_caps=%s\n", ceph_cap_string(dcaps));
+> +               ceph_put_cap_refs(ceph_inode(req->r_parent), dcaps);
+> +       }
+> +}
+> +
+>  /*
+>   * called under session->mutex.
+>   */
+> @@ -3307,9 +3319,14 @@ static void replay_unsafe_requests(struct ceph_mds_client *mdsc,
+>                         continue;
+>                 if (req->r_attempts == 0)
+>                         continue; /* only old requests */
+> -               if (req->r_session &&
+> -                   req->r_session->s_mds == session->s_mds)
+> -                       __send_request(mdsc, session, req, true);
+> +               if (!req->r_session)
+> +                       continue;
+> +               if (req->r_session->s_mds != session->s_mds)
+> +                       continue;
+> +
+> +               ceph_mdsc_release_dir_caps(req);
+> +
+> +               __send_request(mdsc, session, req, true);
+>         }
+>         mutex_unlock(&mdsc->mutex);
+>  }
+> @@ -3393,7 +3410,7 @@ static int send_reconnect_partial(struct ceph_reconnect_state *recon_state)
+>  /*
+>   * Encode information about a cap for a reconnect with the MDS.
+>   */
+> -static int encode_caps_cb(struct inode *inode, struct ceph_cap *cap,
+> +static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
+>                           void *arg)
+>  {
+>         union {
+> @@ -3416,6 +3433,10 @@ static int encode_caps_cb(struct inode *inode, struct ceph_cap *cap,
+>         cap->mseq = 0;       /* and migrate_seq */
+>         cap->cap_gen = cap->session->s_cap_gen;
+>
+> +       /* These are lost when the session goes away */
+> +       if (S_ISDIR(inode->i_mode))
+> +               cap->issued &= ~CEPH_CAP_ANY_DIR_OPS;
+> +
+>         if (recon_state->msg_version >= 2) {
+>                 rec.v2.cap_id = cpu_to_le64(cap->cap_id);
+>                 rec.v2.wanted = cpu_to_le32(__ceph_caps_wanted(ci));
+> @@ -3712,7 +3733,7 @@ static void send_mds_reconnect(struct ceph_mds_client *mdsc,
+>                 recon_state.msg_version = 2;
+>         }
+>         /* trsaverse this session's caps */
+> -       err = ceph_iterate_session_caps(session, encode_caps_cb, &recon_state);
+> +       err = ceph_iterate_session_caps(session, reconnect_caps_cb, &recon_state);
+>
+>         spin_lock(&session->s_cap_lock);
+>         session->s_cap_reconnect = 0;
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 8043f2b439b1..f10d342ea585 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -284,8 +284,11 @@ struct ceph_mds_request {
+>         struct ceph_msg  *r_request;  /* original request */
+>         struct ceph_msg  *r_reply;
+>         struct ceph_mds_reply_info_parsed r_reply_info;
+> -       struct page *r_locked_page;
+>         int r_err;
+> +
+> +
+> +       struct page *r_locked_page;
+> +       int r_dir_caps;
+>         int r_num_caps;
+>         u32               r_readdir_offset;
+>
+> @@ -489,6 +492,7 @@ extern int ceph_mdsc_submit_request(struct ceph_mds_client *mdsc,
+>  extern int ceph_mdsc_do_request(struct ceph_mds_client *mdsc,
+>                                 struct inode *dir,
+>                                 struct ceph_mds_request *req);
+> +extern void ceph_mdsc_release_dir_caps(struct ceph_mds_request *req);
+>  static inline void ceph_mdsc_get_request(struct ceph_mds_request *req)
+>  {
+>         kref_get(&req->r_kref);
+> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+> index 94cc4b047987..91d09cf37649 100644
+> --- a/include/linux/ceph/ceph_fs.h
+> +++ b/include/linux/ceph/ceph_fs.h
+> @@ -663,6 +663,12 @@ int ceph_flags_to_mode(int flags);
+>  #define CEPH_CAP_LOCKS (CEPH_LOCK_IFILE | CEPH_LOCK_IAUTH | CEPH_LOCK_ILINK | \
+>                         CEPH_LOCK_IXATTR)
+>
+> +/* cap masks async dir operations */
+> +#define CEPH_CAP_DIR_CREATE    CEPH_CAP_FILE_CACHE
+> +#define CEPH_CAP_DIR_UNLINK    CEPH_CAP_FILE_RD
+> +#define CEPH_CAP_ANY_DIR_OPS   (CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_RD | \
+> +                                CEPH_CAP_FILE_WREXTEND | CEPH_CAP_FILE_LAZYIO)
+> +
+>  int ceph_caps_for_mode(int mode);
+>
+>  enum {
+> --
+> 2.24.1
+>
