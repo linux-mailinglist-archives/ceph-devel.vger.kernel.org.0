@@ -2,45 +2,45 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7816166FFB
-	for <lists+ceph-devel@lfdr.de>; Fri, 21 Feb 2020 08:07:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AD0E166FFD
+	for <lists+ceph-devel@lfdr.de>; Fri, 21 Feb 2020 08:07:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbgBUHHD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 21 Feb 2020 02:07:03 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:40869 "EHLO
+        id S1727141AbgBUHHE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 21 Feb 2020 02:07:04 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:33994 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726278AbgBUHHD (ORCPT
+        by vger.kernel.org with ESMTP id S1726278AbgBUHHE (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 21 Feb 2020 02:07:03 -0500
+        Fri, 21 Feb 2020 02:07:04 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582268821;
+        s=mimecast20190719; t=1582268823;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=/ecDtiNoFMYf6LSBgYluPiW4EJ96BILY+6+z1iL9UjY=;
-        b=INBClKmdBz6q59Ivi+QJzWP1L/mguyIGo6VQztUjNWB9Hn7+ebMA7ujShwCZEC1WQoGtx0
-        5uSS86mumj6doWE1UPxyk/qNpoVW0K8WvXexKqyWkDmbP4A2DxaKm/ENs7qAqPNexWs03G
-        T/xTYkxA1hntigCOIP8olTvIG10Dr9o=
+        bh=J5ErDN1RZk0/0t+MICM5JwB18y48MkAWcsbLnFOv47k=;
+        b=OQ+AhvawLaHb5zOvosRqM1udIU8UJ4fo9iOERLvDA/GjrpaF+GHKsm035Jtqg03IU0RHZz
+        zvwAaU6gcWCjuZM68c1ZuZdRuXOGZ5FyFPaXA15BqdhrCNxNSDFmZra3uZuTlCRJUaM0fl
+        VK9VrJ9x0CvaqEtRwFhcW97JMk4Wkd4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-44-cl0dI6abMyeheqf7zoifow-1; Fri, 21 Feb 2020 02:06:55 -0500
-X-MC-Unique: cl0dI6abMyeheqf7zoifow-1
+ us-mta-79-zhpzTgKyM2W8jI_EW71Wxw-1; Fri, 21 Feb 2020 02:06:59 -0500
+X-MC-Unique: zhpzTgKyM2W8jI_EW71Wxw-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B05CE8018C5;
-        Fri, 21 Feb 2020 07:06:54 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E224C108442A;
+        Fri, 21 Feb 2020 07:06:57 +0000 (UTC)
 Received: from localhost.localdomain (ovpn-12-94.pek2.redhat.com [10.72.12.94])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 734845D9E2;
-        Fri, 21 Feb 2020 07:06:51 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 42DF35D9E2;
+        Fri, 21 Feb 2020 07:06:54 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     jlayton@kernel.org, idryomov@gmail.com
 Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
         ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v8 2/5] ceph: add caps perf metric for each session
-Date:   Fri, 21 Feb 2020 02:05:53 -0500
-Message-Id: <20200221070556.18922-3-xiubli@redhat.com>
+Subject: [PATCH v8 3/5] ceph: add global read latency metric support
+Date:   Fri, 21 Feb 2020 02:05:54 -0500
+Message-Id: <20200221070556.18922-4-xiubli@redhat.com>
 In-Reply-To: <20200221070556.18922-1-xiubli@redhat.com>
 References: <20200221070556.18922-1-xiubli@redhat.com>
 MIME-Version: 1.0
@@ -53,294 +53,247 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Xiubo Li <xiubli@redhat.com>
 
-This will fulfill the cap hit/mis metric stuff per-superblock,
-it will count the hit/mis counters based each inode, and if one
-inode's 'issued & ~revoking =3D=3D mask' will mean a hit, or a miss.
+It will calculate the latency for the read osd requests, which only
+include the time cousumed by network and the ceph osd.
 
-item          total           miss            hit
--------------------------------------------------
-caps          295             107             4119
+item          total       sum_lat(us)     avg_lat(us)
+-----------------------------------------------------
+read          1036        848000          818
 
 URL: https://tracker.ceph.com/issues/43215
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/ceph/acl.c        |  2 +-
- fs/ceph/caps.c       | 19 +++++++++++++++++++
- fs/ceph/debugfs.c    | 16 ++++++++++++++++
- fs/ceph/dir.c        |  5 +++--
- fs/ceph/inode.c      |  4 ++--
- fs/ceph/mds_client.c | 26 ++++++++++++++++++++++----
- fs/ceph/metric.h     | 19 +++++++++++++++++++
- fs/ceph/super.h      |  8 +++++---
- fs/ceph/xattr.c      |  4 ++--
- 9 files changed, 89 insertions(+), 14 deletions(-)
+ fs/ceph/addr.c                  |  6 ++++++
+ fs/ceph/debugfs.c               | 11 +++++++++++
+ fs/ceph/file.c                  | 13 +++++++++++++
+ fs/ceph/mds_client.c            | 14 ++++++++++++++
+ fs/ceph/metric.h                | 20 ++++++++++++++++++++
+ include/linux/ceph/osd_client.h |  1 +
+ net/ceph/osd_client.c           |  2 ++
+ 7 files changed, 67 insertions(+)
 
-diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
-index 26be6520d3fb..e0465741c591 100644
---- a/fs/ceph/acl.c
-+++ b/fs/ceph/acl.c
-@@ -22,7 +22,7 @@ static inline void ceph_set_cached_acl(struct inode *in=
-ode,
- 	struct ceph_inode_info *ci =3D ceph_inode(inode);
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 6f4678d98df7..16573a13ffee 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -216,6 +216,8 @@ static int ceph_sync_readpages(struct ceph_fs_client =
+*fsc,
+ 	if (!rc)
+ 		rc =3D ceph_osdc_wait_request(osdc, req);
 =20
- 	spin_lock(&ci->i_ceph_lock);
--	if (__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 0))
-+	if (__ceph_caps_issued_mask_metric(ci, CEPH_CAP_XATTR_SHARED, 0))
- 		set_cached_acl(inode, type, acl);
- 	else
- 		forget_cached_acl(inode, type);
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index d05717397c2a..fe2ae41f2ec1 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -920,6 +920,20 @@ int __ceph_caps_issued_mask(struct ceph_inode_info *=
-ci, int mask, int touch)
- 	return 0;
++	ceph_update_read_latency(&fsc->mdsc->metric, req, rc);
++
+ 	ceph_osdc_put_request(req);
+ 	dout("readpages result %d\n", rc);
+ 	return rc;
+@@ -299,6 +301,7 @@ static int ceph_readpage(struct file *filp, struct pa=
+ge *page)
+ static void finish_read(struct ceph_osd_request *req)
+ {
+ 	struct inode *inode =3D req->r_inode;
++	struct ceph_fs_client *fsc =3D ceph_inode_to_client(inode);
+ 	struct ceph_osd_data *osd_data;
+ 	int rc =3D req->r_result <=3D 0 ? req->r_result : 0;
+ 	int bytes =3D req->r_result >=3D 0 ? req->r_result : 0;
+@@ -336,6 +339,9 @@ static void finish_read(struct ceph_osd_request *req)
+ 		put_page(page);
+ 		bytes -=3D PAGE_SIZE;
+ 	}
++
++	ceph_update_read_latency(&fsc->mdsc->metric, req, rc);
++
+ 	kfree(osd_data->pages);
  }
 =20
-+int __ceph_caps_issued_mask_metric(struct ceph_inode_info *ci, int mask,
-+				   int touch)
-+{
-+	struct ceph_fs_client *fsc =3D ceph_sb_to_client(ci->vfs_inode.i_sb);
-+	int r;
-+
-+	r =3D __ceph_caps_issued_mask(ci, mask, touch);
-+	if (r)
-+		ceph_update_cap_hit(&fsc->mdsc->metric);
-+	else
-+		ceph_update_cap_mis(&fsc->mdsc->metric);
-+	return r;
-+}
-+
- /*
-  * Return true if mask caps are currently being revoked by an MDS.
-  */
-@@ -2700,6 +2714,11 @@ static int try_get_cap_refs(struct inode *inode, i=
-nt need, int want,
- 	if (snap_rwsem_locked)
- 		up_read(&mdsc->snap_rwsem);
-=20
-+	if (!ret)
-+		ceph_update_cap_mis(&mdsc->metric);
-+	else if (ret =3D=3D 1)
-+		ceph_update_cap_hit(&mdsc->metric);
-+
- 	dout("get_cap_refs %p ret %d got %s\n", inode,
- 	     ret, ceph_cap_string(*got));
- 	return ret;
 diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 15975ba95d9a..c83e52bd9961 100644
+index c83e52bd9961..d814a3a27611 100644
 --- a/fs/ceph/debugfs.c
 +++ b/fs/ceph/debugfs.c
-@@ -128,6 +128,7 @@ static int metric_show(struct seq_file *s, void *p)
- {
+@@ -129,7 +129,18 @@ static int metric_show(struct seq_file *s, void *p)
  	struct ceph_fs_client *fsc =3D s->private;
  	struct ceph_mds_client *mdsc =3D fsc->mdsc;
-+	int i, nr_caps =3D 0;
+ 	int i, nr_caps =3D 0;
++	s64 total, sum, avg =3D 0;
 =20
++	seq_printf(s, "item          total       sum_lat(us)     avg_lat(us)\n"=
+);
++	seq_printf(s, "-----------------------------------------------------\n"=
+);
++
++	total =3D percpu_counter_sum(&mdsc->metric.total_reads);
++	sum =3D percpu_counter_sum(&mdsc->metric.read_latency_sum);
++	sum =3D jiffies_to_usecs(sum);
++	avg =3D total ? sum / total : 0;
++	seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "read", total, sum, avg);
++
++	seq_printf(s, "\n");
  	seq_printf(s, "item          total           miss            hit\n");
  	seq_printf(s, "-------------------------------------------------\n");
-@@ -137,6 +138,21 @@ static int metric_show(struct seq_file *s, void *p)
- 		   percpu_counter_sum(&mdsc->metric.d_lease_mis),
- 		   percpu_counter_sum(&mdsc->metric.d_lease_hit));
 =20
-+	mutex_lock(&mdsc->mutex);
-+	for (i =3D 0; i < mdsc->max_sessions; i++) {
-+		struct ceph_mds_session *s;
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 7e0190b1f821..d51375c4627e 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -658,6 +658,9 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, str=
+uct iov_iter *to,
+ 		ret =3D ceph_osdc_start_request(osdc, req, false);
+ 		if (!ret)
+ 			ret =3D ceph_osdc_wait_request(osdc, req);
 +
-+		s =3D __ceph_lookup_mds_session(mdsc, i);
-+		if (!s)
-+			continue;
-+		nr_caps +=3D s->s_nr_caps;
-+		ceph_put_mds_session(s);
-+	}
-+	mutex_unlock(&mdsc->mutex);
-+	seq_printf(s, "%-14s%-16d%-16lld%lld\n", "caps", nr_caps,
-+		   percpu_counter_sum(&mdsc->metric.i_caps_mis),
-+		   percpu_counter_sum(&mdsc->metric.i_caps_hit));
++		ceph_update_read_latency(&fsc->mdsc->metric, req, ret);
 +
- 	return 0;
- }
+ 		ceph_osdc_put_request(req);
 =20
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index ff1714fe03aa..227949c3deb8 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -346,8 +346,9 @@ static int ceph_readdir(struct file *file, struct dir=
-_context *ctx)
- 	    !ceph_test_mount_opt(fsc, NOASYNCREADDIR) &&
- 	    ceph_snap(inode) !=3D CEPH_SNAPDIR &&
- 	    __ceph_dir_is_complete_ordered(ci) &&
--	    __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1)) {
-+	    __ceph_caps_issued_mask_metric(ci, CEPH_CAP_FILE_SHARED, 1)) {
- 		int shared_gen =3D atomic_read(&ci->i_shared_gen);
+ 		i_size =3D i_size_read(inode);
+@@ -796,6 +799,8 @@ static void ceph_aio_complete_req(struct ceph_osd_req=
+uest *req)
+ 	struct inode *inode =3D req->r_inode;
+ 	struct ceph_aio_request *aio_req =3D req->r_priv;
+ 	struct ceph_osd_data *osd_data =3D osd_req_op_extent_osd_data(req, 0);
++	struct ceph_fs_client *fsc =3D ceph_inode_to_client(inode);
++	struct ceph_client_metric *metric =3D &fsc->mdsc->metric;
+=20
+ 	BUG_ON(osd_data->type !=3D CEPH_OSD_DATA_TYPE_BVECS);
+ 	BUG_ON(!osd_data->num_bvecs);
+@@ -803,6 +808,10 @@ static void ceph_aio_complete_req(struct ceph_osd_re=
+quest *req)
+ 	dout("ceph_aio_complete_req %p rc %d bytes %u\n",
+ 	     inode, rc, osd_data->bvec_pos.iter.bi_size);
+=20
++	/* r_start_stamp =3D=3D 0 means the request was not submitted */
++	if (req->r_start_stamp && !aio_req->write)
++		ceph_update_read_latency(metric, req, rc);
 +
- 		spin_unlock(&ci->i_ceph_lock);
- 		err =3D __dcache_readdir(file, ctx, shared_gen);
- 		if (err !=3D -EAGAIN)
-@@ -764,7 +765,7 @@ static struct dentry *ceph_lookup(struct inode *dir, =
-struct dentry *dentry,
- 		    !is_root_ceph_dentry(dir, dentry) &&
- 		    ceph_test_mount_opt(fsc, DCACHE) &&
- 		    __ceph_dir_is_complete(ci) &&
--		    (__ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1))) {
-+		    __ceph_caps_issued_mask_metric(ci, CEPH_CAP_FILE_SHARED, 1)) {
- 			spin_unlock(&ci->i_ceph_lock);
- 			dout(" dir %p complete, -ENOENT\n", dir);
- 			d_add(dentry, NULL);
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 094b8fc37787..8dc10196e3a1 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -2273,8 +2273,8 @@ int __ceph_do_getattr(struct inode *inode, struct p=
-age *locked_page,
+ 	if (rc =3D=3D -EOLDSNAPC) {
+ 		struct ceph_aio_work *aio_work;
+ 		BUG_ON(!aio_req->write);
+@@ -931,6 +940,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov=
+_iter *iter,
+ 	struct inode *inode =3D file_inode(file);
+ 	struct ceph_inode_info *ci =3D ceph_inode(inode);
+ 	struct ceph_fs_client *fsc =3D ceph_inode_to_client(inode);
++	struct ceph_client_metric *metric =3D &fsc->mdsc->metric;
+ 	struct ceph_vino vino;
+ 	struct ceph_osd_request *req;
+ 	struct bio_vec *bvecs;
+@@ -1047,6 +1057,9 @@ ceph_direct_read_write(struct kiocb *iocb, struct i=
+ov_iter *iter,
+ 		if (!ret)
+ 			ret =3D ceph_osdc_wait_request(&fsc->client->osdc, req);
 =20
- 	dout("do_getattr inode %p mask %s mode 0%o\n",
- 	     inode, ceph_cap_string(mask), inode->i_mode);
--	if (!force && ceph_caps_issued_mask(ceph_inode(inode), mask, 1))
--		return 0;
-+	if (!force && ceph_caps_issued_mask_metric(ceph_inode(inode), mask, 1))
-+			return 0;
-=20
- 	mode =3D (mask & CEPH_STAT_RSTAT) ? USE_AUTH_MDS : USE_ANY_MDS;
- 	req =3D ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETATTR, mode);
++		if (!write)
++			ceph_update_read_latency(metric, req, ret);
++
+ 		size =3D i_size_read(inode);
+ 		if (!write) {
+ 			if (ret =3D=3D -ENOENT)
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 82060afd5dca..cd31bcb4e563 100644
+index cd31bcb4e563..18f018b3bd53 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -4167,13 +4167,29 @@ static int ceph_mdsc_metric_init(struct ceph_clie=
-nt_metric *metric)
- 	ret =3D percpu_counter_init(&metric->d_lease_hit, 0, GFP_KERNEL);
+@@ -4180,8 +4180,20 @@ static int ceph_mdsc_metric_init(struct ceph_clien=
+t_metric *metric)
  	if (ret)
- 		return ret;
-+
- 	ret =3D percpu_counter_init(&metric->d_lease_mis, 0, GFP_KERNEL);
--	if (ret) {
--		percpu_counter_destroy(&metric->d_lease_hit);
--		return ret;
--	}
-+	if (ret)
-+		goto err_d_lease_mis;
-+
-+	ret =3D percpu_counter_init(&metric->i_caps_hit, 0, GFP_KERNEL);
-+	if (ret)
-+		goto err_i_caps_hit;
-+
-+	ret =3D percpu_counter_init(&metric->i_caps_mis, 0, GFP_KERNEL);
-+	if (ret)
-+		goto err_i_caps_mis;
+ 		goto err_i_caps_mis;
 =20
++	ret =3D percpu_counter_init(&metric->total_reads, 0, GFP_KERNEL);
++	if (ret)
++		goto err_total_reads;
++
++	ret =3D percpu_counter_init(&metric->read_latency_sum, 0, GFP_KERNEL);
++	if (ret)
++		goto err_read_latency_sum;
++
  	return 0;
-+
-+err_i_caps_mis:
-+	percpu_counter_destroy(&metric->i_caps_hit);
-+err_i_caps_hit:
-+	percpu_counter_destroy(&metric->d_lease_mis);
-+err_d_lease_mis:
-+	percpu_counter_destroy(&metric->d_lease_hit);
-+
-+	return ret;
- }
 =20
- int ceph_mdsc_init(struct ceph_fs_client *fsc)
-@@ -4513,6 +4529,8 @@ void ceph_mdsc_destroy(struct ceph_fs_client *fsc)
++err_read_latency_sum:
++	percpu_counter_destroy(&metric->total_reads);
++err_total_reads:
++	percpu_counter_destroy(&metric->i_caps_mis);
+ err_i_caps_mis:
+ 	percpu_counter_destroy(&metric->i_caps_hit);
+ err_i_caps_hit:
+@@ -4529,6 +4541,8 @@ void ceph_mdsc_destroy(struct ceph_fs_client *fsc)
 =20
  	ceph_mdsc_stop(mdsc);
 =20
-+	percpu_counter_destroy(&mdsc->metric.i_caps_mis);
-+	percpu_counter_destroy(&mdsc->metric.i_caps_hit);
++	percpu_counter_destroy(&mdsc->metric.read_latency_sum);
++	percpu_counter_destroy(&mdsc->metric.total_reads);
+ 	percpu_counter_destroy(&mdsc->metric.i_caps_mis);
+ 	percpu_counter_destroy(&mdsc->metric.i_caps_hit);
  	percpu_counter_destroy(&mdsc->metric.d_lease_mis);
- 	percpu_counter_destroy(&mdsc->metric.d_lease_hit);
-=20
 diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
-index 998fe2a643cf..40eb58f9f43e 100644
+index 40eb58f9f43e..86a479da307e 100644
 --- a/fs/ceph/metric.h
 +++ b/fs/ceph/metric.h
-@@ -7,5 +7,24 @@ struct ceph_client_metric {
+@@ -2,6 +2,8 @@
+ #ifndef _FS_CEPH_MDS_METRIC_H
+ #define _FS_CEPH_MDS_METRIC_H
+=20
++#include <linux/ceph/osd_client.h>
++
+ /* This is the global metrics */
+ struct ceph_client_metric {
  	atomic64_t            total_dentries;
- 	struct percpu_counter d_lease_hit;
- 	struct percpu_counter d_lease_mis;
+@@ -10,6 +12,9 @@ struct ceph_client_metric {
+=20
+ 	struct percpu_counter i_caps_hit;
+ 	struct percpu_counter i_caps_mis;
 +
-+	struct percpu_counter i_caps_hit;
-+	struct percpu_counter i_caps_mis;
++	struct percpu_counter total_reads;
++	struct percpu_counter read_latency_sum;
  };
+=20
+ static inline void ceph_update_cap_hit(struct ceph_client_metric *m)
+@@ -27,4 +32,19 @@ static inline void ceph_update_cap_mis(struct ceph_cli=
+ent_metric *m)
+=20
+ 	percpu_counter_inc(&m->i_caps_mis);
+ }
 +
-+static inline void ceph_update_cap_hit(struct ceph_client_metric *m)
++static inline void ceph_update_read_latency(struct ceph_client_metric *m=
+,
++					    struct ceph_osd_request *req,
++					    int rc)
 +{
-+	if (!m)
++	if (!m || !req)
 +		return;
 +
-+	percpu_counter_inc(&m->i_caps_hit);
-+}
++	if (rc >=3D 0 || rc =3D=3D -ENOENT || rc =3D=3D -ETIMEDOUT) {
++		s64 latency =3D req->r_end_stamp - req->r_start_stamp;
 +
-+static inline void ceph_update_cap_mis(struct ceph_client_metric *m)
-+{
-+	if (!m)
-+		return;
-+
-+	percpu_counter_inc(&m->i_caps_mis);
++		percpu_counter_inc(&m->total_reads);
++		percpu_counter_add(&m->read_latency_sum, latency);
++	}
 +}
  #endif /* _FS_CEPH_MDS_METRIC_H */
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index ebcf7612eac9..4b269dc845bb 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -639,6 +639,8 @@ static inline bool __ceph_is_any_real_caps(struct cep=
-h_inode_info *ci)
+diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_cli=
+ent.h
+index 9d9f745b98a1..02ff3a302d26 100644
+--- a/include/linux/ceph/osd_client.h
++++ b/include/linux/ceph/osd_client.h
+@@ -213,6 +213,7 @@ struct ceph_osd_request {
+ 	/* internal */
+ 	unsigned long r_stamp;                /* jiffies, send or check time */
+ 	unsigned long r_start_stamp;          /* jiffies */
++	unsigned long r_end_stamp;            /* jiffies */
+ 	int r_attempts;
+ 	u32 r_map_dne_bound;
 =20
- extern int __ceph_caps_issued(struct ceph_inode_info *ci, int *implement=
-ed);
- extern int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask,=
- int t);
-+extern int __ceph_caps_issued_mask_metric(struct ceph_inode_info *ci, in=
-t mask,
-+					  int t);
- extern int __ceph_caps_issued_other(struct ceph_inode_info *ci,
- 				    struct ceph_cap *cap);
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index 8ff2856e2d52..108c9457d629 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -2389,6 +2389,8 @@ static void finish_request(struct ceph_osd_request =
+*req)
+ 	WARN_ON(lookup_request_mc(&osdc->map_checks, req->r_tid));
+ 	dout("%s req %p tid %llu\n", __func__, req, req->r_tid);
 =20
-@@ -651,12 +653,12 @@ static inline int ceph_caps_issued(struct ceph_inod=
-e_info *ci)
- 	return issued;
- }
-=20
--static inline int ceph_caps_issued_mask(struct ceph_inode_info *ci, int =
-mask,
--					int touch)
-+static inline int ceph_caps_issued_mask_metric(struct ceph_inode_info *c=
-i,
-+					       int mask, int touch)
- {
- 	int r;
- 	spin_lock(&ci->i_ceph_lock);
--	r =3D __ceph_caps_issued_mask(ci, mask, touch);
-+	r =3D __ceph_caps_issued_mask_metric(ci, mask, touch);
- 	spin_unlock(&ci->i_ceph_lock);
- 	return r;
- }
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index 7b8a070a782d..71ee34d160c3 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -856,7 +856,7 @@ ssize_t __ceph_getxattr(struct inode *inode, const ch=
-ar *name, void *value,
-=20
- 	if (ci->i_xattrs.version =3D=3D 0 ||
- 	    !((req_mask & CEPH_CAP_XATTR_SHARED) ||
--	      __ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 1))) {
-+	      __ceph_caps_issued_mask_metric(ci, CEPH_CAP_XATTR_SHARED, 1))) {
- 		spin_unlock(&ci->i_ceph_lock);
-=20
- 		/* security module gets xattr while filling trace */
-@@ -914,7 +914,7 @@ ssize_t ceph_listxattr(struct dentry *dentry, char *n=
-ames, size_t size)
- 	     ci->i_xattrs.version, ci->i_xattrs.index_version);
-=20
- 	if (ci->i_xattrs.version =3D=3D 0 ||
--	    !__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 1)) {
-+	    !__ceph_caps_issued_mask_metric(ci, CEPH_CAP_XATTR_SHARED, 1)) {
- 		spin_unlock(&ci->i_ceph_lock);
- 		err =3D ceph_do_getattr(inode, CEPH_STAT_CAP_XATTR, true);
- 		if (err)
++	req->r_end_stamp =3D jiffies;
++
+ 	if (req->r_osd)
+ 		unlink_request(req->r_osd, req);
+ 	atomic_dec(&osdc->num_requests);
 --=20
 2.21.0
 
