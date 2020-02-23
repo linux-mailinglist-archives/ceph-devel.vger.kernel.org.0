@@ -2,68 +2,197 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 337411691D1
-	for <lists+ceph-devel@lfdr.de>; Sat, 22 Feb 2020 21:53:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 772DD169312
+	for <lists+ceph-devel@lfdr.de>; Sun, 23 Feb 2020 03:15:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbgBVUxy convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Sat, 22 Feb 2020 15:53:54 -0500
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.69]:36243 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726817AbgBVUxy (ORCPT
+        id S1727163AbgBWCPF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 22 Feb 2020 21:15:05 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:60787 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726884AbgBWCPF (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Sat, 22 Feb 2020 15:53:54 -0500
-Received: from [100.112.199.4] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-5.bemta.az-b.eu-west-1.aws.symcld.net id 84/AD-06294-BD4915E5; Sat, 22 Feb 2020 20:53:47 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOJsWRWlGSWpSXmKPExsVi93Vmku7tKYF
-  xBh2T2C3ezrrBbvHh5iQmiwOH57BYTD58nsmi/ZajxZ2Z/9ktWs8+Y7F4e3c5u8WL3ttMFl1X
-  upksTn37wmbxbtMpJosVayYwWjRPWwQ0pOMUo8WNOw+ZLA6ta2C26HrwmNVi3veZLBbfb9Y4i
-  Hh83iTn8fbtRXaPv++msHg8fPyYzePeiq8sHk8XP2b2+Dyngc3j77YpjB7zL+xn9nj0+iO7x+
-  Mnn5kCuKNYM/OS8isSWDN6dl9gK2CoAFENjAxdjFwcQgJbGSV2HnjO3sXIycEsoCdxY+oUNhC
-  bV0BQ4uTMJywQcW2JZQtfM3cxcgDZahJfu0pAwsICdhLv/s0DaxURUJX4umcmK4jNJiAj8fPo
-  brA4C1B8w5ajYHEhAUWJt+s2soGM4RXwk/ixpRQm3Ny0AmyrBJC99FobC4RtJbFtSTs7hK0ps
-  f7dcnaQVgkBBYnPM4whwvISHy/MYJzAKDgLyf2zkNw/C8n9sxDuX8DIsorRIqkoMz2jJDcxM0
-  fX0MBA19DQSNfQ0kLX0MJEL7FKN0kvtVS3PLW4RNdQL7G8WK+4Mjc5J0UvL7VkEyMw/lMKju3
-  YwXhk+Xu9Q4ySHExKory6EwPjhPiS8lMqMxKLM+KLSnNSiw8xmnBwCHQ+/7CaUeDC2YefGAWu
-  fPjUxCTFkpefl6okwWs5GahHsCg1PbUiLTMHmLpg2iQ4eJREeNlARvIWFyTmFmemQ6ROMVpy3
-  HsydxEzx8aj84Dk7O2LFzELgc2TEud9DTJPAKQhozQPbhwsvV5ilJUS5mVkYGAQ4ilILcrNLE
-  GVf8UozsGoJMx7CGQKT2ZeCdzWV0AHMQEdpMwRAHJQSSJCSqqByeD9w9JVr6e8e3uz5Mmh5Ff
-  u2yS3dXGvMC7y27TX5fC0AxrZa5c8+BLNlf1aNSbLf3lnIdtP+aNFbz22LzaK6nr9d8ZmhZhA
-  1hcCL1f07nh+9vjPi1dO3XfLPJD3MpdZO63mrd/zY14dhXu07jxz2GJ04eECNvutz65mmujOl
-  jebc8vXn/+a8drJih////4U9FH7vpZV8Yq9q7uWhF+0+X+0K6rtZFLGtENPrm0QkfDOfJ4r/U
-  XPJGJPyFyRnypNiTvX+0w9XPZos5HouzOXlx2/PHfiNo0Dfx7pmxqazAgrXMy47KIhd+6rVk3
-  DwltFojLRk1uWljinL/loM6eXh+vW4crz9w6XbX/wg8VE/ReXEktxRqKhFnNRcSIAH52/jCoE
-  AAA=
-X-Env-Sender: michael.larcher@rothof.de
-X-Msg-Ref: server-12.tower-288.messagelabs.com!1582404820!1797956!17
-X-Originating-IP: [62.245.153.98]
-X-SYMC-ESS-Client-Auth: outbound-route-from=fail
-X-StarScan-Received: 
-X-StarScan-Version: 9.44.25; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 29176 invoked from network); 22 Feb 2020 20:53:47 -0000
-Received: from host-62-245-153-98.customer.m-online.net (HELO Sport-Exchange.ROTHOF.local) (62.245.153.98)
-  by server-12.tower-288.messagelabs.com with ECDHE-RSA-AES256-SHA encrypted SMTP; 22 Feb 2020 20:53:47 -0000
-Received: from jmapnzin.host-stage-dns.com (188.165.89.95) by
- Sport-Exchange.ROTHOF.local (192.168.100.3) with Microsoft SMTP Server id
- 14.3.123.3; Sat, 22 Feb 2020 21:53:36 +0100
-Content-Type: text/plain; charset="iso-8859-1"
+        Sat, 22 Feb 2020 21:15:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582424102;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Cf6M7RTMd4mg9bf4aZVr+tKfjem3IA0aVWIcs96R25c=;
+        b=QLUg50IT9n6mQ8UvKUQyp6QVPXc1LQFcn+y/GFHuD0L+wHH4Em7eo4wT8pll5Hdi/XiX6G
+        KxV8+N/TQ+NnAYHKqIse9Tdxe8+riT4ELGrU0KrVdvHkZrO9Se78QOC6v7+9CgYnH16kO+
+        erdUnwHnVclBVh0IT/HsBpR35Q7XnSA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-337-f3FagKxFOV6tl3pHNBxhow-1; Sat, 22 Feb 2020 21:14:56 -0500
+X-MC-Unique: f3FagKxFOV6tl3pHNBxhow-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8FDE9100550E;
+        Sun, 23 Feb 2020 02:14:55 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-94.pek2.redhat.com [10.72.12.94])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 39DFB5C114;
+        Sun, 23 Feb 2020 02:14:49 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org, idryomov@gmail.com
+Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: add 'fs' mount option support
+Date:   Sat, 22 Feb 2020 21:14:40 -0500
+Message-Id: <20200223021440.40257-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Re: I have a business for you, if you are interested!
-To:     Recipients <michael@ROTHOF.local>
-From:   <michael@ROTHOF.local>
-Date:   Sun, 23 Feb 2020 04:53:36 +0800
-Reply-To: <lizawong@infohsbc.net>
-Message-ID: <50a903d7-0454-42bb-96b4-9fd482e3d868@SPORT-EXCHANGE.ROTHOF.local>
-X-Originating-IP: [188.165.89.95]
-X-TM-AS-Product-Ver: SMEX-11.7.0.1065-8.500.1020-25246.005
-X-TM-AS-Result: Yes-48.583700-5.000000-31
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+From: Xiubo Li <xiubli@redhat.com>
+
+The 'fs' here will be cleaner when specifying the ceph fs name,
+and we can easily get the corresponding name from the `ceph fs
+dump`:
+
+[...]
+Filesystem 'a' (1)
+fs_name	a
+epoch	12
+flags	12
+[...]
+
+The 'fs' here just an alias name for 'mds_namespace' mount options,
+and we will keep 'mds_namespace' for backwards compatibility.
+
+URL: https://tracker.ceph.com/issues/44214
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/mds_client.c |  8 ++++----
+ fs/ceph/super.c      | 21 +++++++++++----------
+ fs/ceph/super.h      |  2 +-
+ 3 files changed, 16 insertions(+), 15 deletions(-)
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 3e792eca6af7..82f63ef2694c 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -4590,7 +4590,7 @@ void ceph_mdsc_destroy(struct ceph_fs_client *fsc)
+ void ceph_mdsc_handle_fsmap(struct ceph_mds_client *mdsc, struct ceph_ms=
+g *msg)
+ {
+ 	struct ceph_fs_client *fsc =3D mdsc->fsc;
+-	const char *mds_namespace =3D fsc->mount_options->mds_namespace;
++	const char *fs_name =3D fsc->mount_options->fs_name;
+ 	void *p =3D msg->front.iov_base;
+ 	void *end =3D p + msg->front.iov_len;
+ 	u32 epoch;
+@@ -4634,9 +4634,9 @@ void ceph_mdsc_handle_fsmap(struct ceph_mds_client =
+*mdsc, struct ceph_msg *msg)
+ 		namelen =3D ceph_decode_32(&info_p);
+ 		ceph_decode_need(&info_p, info_end, namelen, bad);
+=20
+-		if (mds_namespace &&
+-		    strlen(mds_namespace) =3D=3D namelen &&
+-		    !strncmp(mds_namespace, (char *)info_p, namelen)) {
++		if (fs_name &&
++		    strlen(fs_name) =3D=3D namelen &&
++		    !strncmp(fs_name, (char *)info_p, namelen)) {
+ 			mount_fscid =3D fscid;
+ 			break;
+ 		}
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index c7f150686a53..31acb4fe1f2c 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -140,7 +140,7 @@ enum {
+ 	Opt_congestion_kb,
+ 	/* int args above */
+ 	Opt_snapdirname,
+-	Opt_mds_namespace,
++	Opt_fs,
+ 	Opt_recover_session,
+ 	Opt_source,
+ 	/* string args above */
+@@ -181,7 +181,8 @@ static const struct fs_parameter_spec ceph_mount_para=
+meters[] =3D {
+ 	fsparam_flag_no	("fsc",				Opt_fscache), // fsc|nofsc
+ 	fsparam_string	("fsc",				Opt_fscache), // fsc=3D...
+ 	fsparam_flag_no ("ino32",			Opt_ino32),
+-	fsparam_string	("mds_namespace",		Opt_mds_namespace),
++	fsparam_string	("mds_namespace",		Opt_fs), // backwards compatibility
++	fsparam_string	("fs",				Opt_fs), // new alias for mds_namespace
+ 	fsparam_flag_no ("poolperm",			Opt_poolperm),
+ 	fsparam_flag_no ("quotadf",			Opt_quotadf),
+ 	fsparam_u32	("rasize",			Opt_rasize),
+@@ -300,9 +301,9 @@ static int ceph_parse_mount_param(struct fs_context *=
+fc,
+ 		fsopt->snapdir_name =3D param->string;
+ 		param->string =3D NULL;
+ 		break;
+-	case Opt_mds_namespace:
+-		kfree(fsopt->mds_namespace);
+-		fsopt->mds_namespace =3D param->string;
++	case Opt_fs:
++		kfree(fsopt->fs_name);
++		fsopt->fs_name =3D param->string;
+ 		param->string =3D NULL;
+ 		break;
+ 	case Opt_recover_session:
+@@ -460,7 +461,7 @@ static void destroy_mount_options(struct ceph_mount_o=
+ptions *args)
+ 		return;
+=20
+ 	kfree(args->snapdir_name);
+-	kfree(args->mds_namespace);
++	kfree(args->fs_name);
+ 	kfree(args->server_path);
+ 	kfree(args->fscache_uniq);
+ 	kfree(args);
+@@ -494,7 +495,7 @@ static int compare_mount_options(struct ceph_mount_op=
+tions *new_fsopt,
+ 	if (ret)
+ 		return ret;
+=20
+-	ret =3D strcmp_null(fsopt1->mds_namespace, fsopt2->mds_namespace);
++	ret =3D strcmp_null(fsopt1->fs_name, fsopt2->fs_name);
+ 	if (ret)
+ 		return ret;
+=20
+@@ -561,8 +562,8 @@ static int ceph_show_options(struct seq_file *m, stru=
+ct dentry *root)
+ 	if ((fsopt->flags & CEPH_MOUNT_OPT_NOCOPYFROM) =3D=3D 0)
+ 		seq_puts(m, ",copyfrom");
+=20
+-	if (fsopt->mds_namespace)
+-		seq_show_option(m, "mds_namespace", fsopt->mds_namespace);
++	if (fsopt->fs_name)
++		seq_show_option(m, "fs", fsopt->fs_name);
+=20
+ 	if (fsopt->flags & CEPH_MOUNT_OPT_CLEANRECOVER)
+ 		seq_show_option(m, "recover_session", "clean");
+@@ -643,7 +644,7 @@ static struct ceph_fs_client *create_fs_client(struct=
+ ceph_mount_options *fsopt,
+ 	fsc->client->extra_mon_dispatch =3D extra_mon_dispatch;
+ 	ceph_set_opt(fsc->client, ABORT_ON_FULL);
+=20
+-	if (!fsopt->mds_namespace) {
++	if (!fsopt->fs_name) {
+ 		ceph_monc_want_map(&fsc->client->monc, CEPH_SUB_MDSMAP,
+ 				   0, true);
+ 	} else {
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 4b269dc845bb..fc4c125b42fb 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -90,7 +90,7 @@ struct ceph_mount_options {
+ 	 */
+=20
+ 	char *snapdir_name;   /* default ".snap" */
+-	char *mds_namespace;  /* default NULL */
++	char *fs_name;        /* default NULL */
+ 	char *server_path;    /* default NULL (means "/") */
+ 	char *fscache_uniq;   /* default NULL */
+ };
+--=20
+2.21.0
 
