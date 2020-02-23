@@ -2,38 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DE9D16932F
-	for <lists+ceph-devel@lfdr.de>; Sun, 23 Feb 2020 03:21:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA4E116936A
+	for <lists+ceph-devel@lfdr.de>; Sun, 23 Feb 2020 03:23:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbgBWCVp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 22 Feb 2020 21:21:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50252 "EHLO mail.kernel.org"
+        id S1728417AbgBWCXA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 22 Feb 2020 21:23:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727689AbgBWCVp (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:21:45 -0500
+        id S1728397AbgBWCXA (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Sat, 22 Feb 2020 21:23:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CF8C208C3;
-        Sun, 23 Feb 2020 02:21:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AFDB20702;
+        Sun, 23 Feb 2020 02:22:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582424504;
+        s=default; t=1582424579;
         bh=+0DCorTTN4tjWO1sG8JADOF2c+tIaEeqv2Mh+42zHBw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IxA18fuBodYKiu3El6YEdKUjCg7J4cbCvXLlNqNL4a+E5eR1R6qy/K1MefShIpyn0
-         pc/fBvs3TaoQNQmuG6dlxg049tnZSNQZlqGVd1SqjIbUbdynz9DWwMVBo+qzhmHoE/
-         oxviOgk+UFL1PrHiNKt5swj/YXu6ePyRV/LflQHA=
+        b=Pl4lr3zFxJYIJ39MyST4GOLKM/jsovVFMXTXzBranAcu5RZUhwjfpyHpTIGnY/qP8
+         glxbkHmaF4ERxMhjnFrD5M1/4S6ZvaS4Q2oZHV6yAq7v5mh9nVGQMV/MBXPjMzXTlQ
+         DmQFb+X6lBhEFar+D9Krlc4V5fXosqsalKlGxKuk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 20/58] ceph: do not execute direct write in parallel if O_APPEND is specified
-Date:   Sat, 22 Feb 2020 21:20:41 -0500
-Message-Id: <20200223022119.707-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 19/50] ceph: do not execute direct write in parallel if O_APPEND is specified
+Date:   Sat, 22 Feb 2020 21:22:04 -0500
+Message-Id: <20200223022235.1404-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200223022119.707-1-sashal@kernel.org>
-References: <20200223022119.707-1-sashal@kernel.org>
+In-Reply-To: <20200223022235.1404-1-sashal@kernel.org>
+References: <20200223022235.1404-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
