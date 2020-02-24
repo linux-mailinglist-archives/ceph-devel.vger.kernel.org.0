@@ -2,254 +2,152 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE42169EEC
-	for <lists+ceph-devel@lfdr.de>; Mon, 24 Feb 2020 08:09:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D79E16A33F
+	for <lists+ceph-devel@lfdr.de>; Mon, 24 Feb 2020 10:56:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbgBXHJL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 24 Feb 2020 02:09:11 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:24746 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725895AbgBXHJK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 24 Feb 2020 02:09:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582528149;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wuk0xNkOKGb8TElORbD7TxsVpvjZ9GgSZDJi8lzLte4=;
-        b=VyVf9/Z/66FUYdWlGOkBaeOXdOQ7MEUsVz7GJmbY8vVuEwXfe4f7GmbheNT8nTocE7Giee
-        eOQoj7WfLP+hk5+hLwPd9Vx18Sd7cAj5SmIQrtwBvJgF4Q2kLUqOaKd3Gz+/gHEOwRXql7
-        COasVctOv/2UgGtq60oQjvQlQf9r7LQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-465-OO_T3pPdOGmv10uwZvewdQ-1; Mon, 24 Feb 2020 02:09:07 -0500
-X-MC-Unique: OO_T3pPdOGmv10uwZvewdQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4994F8010E3;
-        Mon, 24 Feb 2020 07:09:06 +0000 (UTC)
-Received: from [10.72.13.249] (ovpn-13-249.pek2.redhat.com [10.72.13.249])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B6BCF91855;
-        Mon, 24 Feb 2020 07:09:04 +0000 (UTC)
-Subject: Re: [PATCH v2 2/4] ceph: consider inode's last read/write when
- calculating wanted caps
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-References: <20200221131659.87777-1-zyan@redhat.com>
- <20200221131659.87777-3-zyan@redhat.com>
- <1d77fa7876ba37df07c3a8c9dc4c3d8ce4f2538d.camel@kernel.org>
- <21448792f55a51f2b5b0652390ec6e04cbd311af.camel@kernel.org>
-From:   "Yan, Zheng" <zyan@redhat.com>
-Message-ID: <4cdb8f3a-b9f4-9c7d-7ae0-633c0576e0d2@redhat.com>
-Date:   Mon, 24 Feb 2020 15:09:02 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727321AbgBXJ4Q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Feb 2020 04:56:16 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:42533 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbgBXJ4P (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 24 Feb 2020 04:56:15 -0500
+Received: by mail-il1-f196.google.com with SMTP id x2so7193658ila.9
+        for <ceph-devel@vger.kernel.org>; Mon, 24 Feb 2020 01:56:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4wv/KefsssF4ZAgGRmJ0v/aNWjDKOmpU4Z/VjcgFtbk=;
+        b=n6xaQu16406oC/XM47oP7AjGQS299102zv1xv9nRgKum6d5dNMb8cN2s9urqjrI3oW
+         KYcfseR+mrRlrZ3dhycE90z+cQLGFKSrN0qaWRLCmguVR8hXOQMdQtmDH2LwoKqj0KCG
+         ZWkjHotHggAbkjim30H1iTv95ona8lktEsnnsQcpPJxVmkkUUFuaMmKvKywYUNlhOJIn
+         ky+/2mtifV8MyqOH9mp148YepI6q8NXO08oQQT2PS79obDIeYckh7ikoqFTloIy0t6kI
+         N3XR1CYAapxCVSbO/6pSXpMfUVbQ/Sp9u1E6uANJdSHQ7PCp7XPaPKcQjE/o3eV5kIfc
+         SIPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4wv/KefsssF4ZAgGRmJ0v/aNWjDKOmpU4Z/VjcgFtbk=;
+        b=o/asI8VW4zfa4nMUPOV5NBzzQFY+xlW8rh5RfhgDro8GCZ3LIi6dhbS4Sgrcz4ldtr
+         2pj7WXWCQLhMyHPXEWsPL2XDM7u9ETRzkPOUES2k3cWOiokRgxcYx6e379bV504bhBYM
+         /6KpTOFpOqzb0JqOO68soTQtkrnHAlklLNMQCd2NMvfGjIiSozXJLFfOQoVrSa1MgOC5
+         Gakx8u1Vnrqp89mEE3mBImuO4a4ezNvx60DBvf/WNOyu5GK/a4oXC/UeYuL4Sb4Qtt0r
+         o2ZNxpgr0wiQY5wLtXh29jNTZIIUgg07IGej2GKBW2mE0SiVQuogJo5gm6z/uXjL0MTD
+         KFkQ==
+X-Gm-Message-State: APjAAAX8bPP4z7icZgUa7AfgKorn/k0qditEI7jYnb+lnPC+2JwRzi6x
+        bQgEVgT6wEZhpojOGnE41JiFe1vTQLVJ1QGYaDU=
+X-Google-Smtp-Source: APXvYqygsyhwAJby69u6/rf20cBu7FEP6DKVPG8oa8azmWGOTO+8VOYBP+5H/poTicOHVGVGABVih8Pj0eWpeT5ok/g=
+X-Received: by 2002:a92:3a8d:: with SMTP id i13mr60491909ilf.112.1582538174886;
+ Mon, 24 Feb 2020 01:56:14 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <21448792f55a51f2b5b0652390ec6e04cbd311af.camel@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+References: <20200221070556.18922-1-xiubli@redhat.com> <20200221070556.18922-6-xiubli@redhat.com>
+ <68e496bca563ed6439c16f0de04d7daeb17f718a.camel@kernel.org>
+ <CAOi1vP92XUaOfQ_xJFZDXuH4r9D07fW6ckEyd2csr7EhUSRkpg@mail.gmail.com> <8d977d6a-da80-5900-aead-395b9b4eaa76@redhat.com>
+In-Reply-To: <8d977d6a-da80-5900-aead-395b9b4eaa76@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 24 Feb 2020 10:56:05 +0100
+Message-ID: <CAOi1vP_w_uNRjqWpQUN6L5_Zk6QT23o1EfBTNKU1oJRz=5Oq7w@mail.gmail.com>
+Subject: Re: [PATCH v8 5/5] ceph: add global metadata perf metric support
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        "Yan, Zheng" <zyan@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2/21/20 10:35 PM, Jeff Layton wrote:
-> On Fri, 2020-02-21 at 09:27 -0500, Jeff Layton wrote:
->> On Fri, 2020-02-21 at 21:16 +0800, Yan, Zheng wrote:
->>> Add i_last_rd and i_last_wr to ceph_inode_info. These two fields are
->>> used to track inode's last read/write, they are updated when getting
->>> caps for read/write.
->>>
->>> If there is no read/write on an inode for 'caps_wanted_delay_max'
->>> seconds, __ceph_caps_file_wanted() does not request caps for read/write
->>> even there are open files.
->>>
->>> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
->>> ---
->>>   fs/ceph/caps.c               | 152 ++++++++++++++++++++++++-----------
->>>   fs/ceph/file.c               |  21 ++---
->>>   fs/ceph/inode.c              |  10 ++-
->>>   fs/ceph/ioctl.c              |   2 +
->>>   fs/ceph/super.h              |  13 ++-
->>>   include/linux/ceph/ceph_fs.h |   1 +
->>>   6 files changed, 139 insertions(+), 60 deletions(-)
->>>
->>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
->>> index 293920d013ff..2a9df235286d 100644
->>> --- a/fs/ceph/caps.c
->>> +++ b/fs/ceph/caps.c
->>> @@ -971,18 +971,49 @@ int __ceph_caps_used(struct ceph_inode_info *ci)
->>>   	return used;
->>>   }
->>>   
->>> +#define FMODE_WAIT_BIAS 1000
->>> +
->>>   /*
->>>    * wanted, by virtue of open file modes
->>>    */
->>>   int __ceph_caps_file_wanted(struct ceph_inode_info *ci)
->>>   {
->>> -	int i, bits = 0;
->>> -	for (i = 0; i < CEPH_FILE_MODE_BITS; i++) {
->>> -		if (ci->i_nr_by_mode[i])
->>> -			bits |= 1 << i;
->>> +	struct ceph_mount_options *opt =
->>> +		ceph_inode_to_client(&ci->vfs_inode)->mount_options;
->>> +	unsigned long used_cutoff =
->>> +		round_jiffies(jiffies - opt->caps_wanted_delay_max * HZ);
->>> +	unsigned long idle_cutoff =
->>> +		round_jiffies(jiffies - opt->caps_wanted_delay_min * HZ);
->>> +	int bits = 0;
->>> +
->>> +	if (ci->i_nr_by_mode[0] > 0)
->>> +		bits |= CEPH_FILE_MODE_PIN;
->>> +
->>> +	if (ci->i_nr_by_mode[1] > 0) {
->>> +		if (ci->i_nr_by_mode[1] >= FMODE_WAIT_BIAS ||
->>> +		    time_after(ci->i_last_rd, used_cutoff))
->>> +			bits |= CEPH_FILE_MODE_RD;
->>> +	} else if (time_after(ci->i_last_rd, idle_cutoff)) {
->>> +		bits |= CEPH_FILE_MODE_RD;
->>> +	}
->>> +
->>> +	if (ci->i_nr_by_mode[2] > 0) {
->>> +		if (ci->i_nr_by_mode[2] >= FMODE_WAIT_BIAS ||
->>> +		    time_after(ci->i_last_wr, used_cutoff))
->>> +			bits |= CEPH_FILE_MODE_WR;
->>> +	} else if (time_after(ci->i_last_wr, idle_cutoff)) {
->>> +		bits |= CEPH_FILE_MODE_WR;
->>>   	}
->>> +
->>> +	/* check lazyio only when read/write is wanted */
->>> +	if ((bits & CEPH_FILE_MODE_RDWR) && ci->i_nr_by_mode[3] > 0)
->>
->> LAZY is 4. Shouldn't this be?
->>
->>      if ((bits & CEPH_FILE_MODE_RDWR) && ci->i_nr_by_mode[CEPH_FILE_MODE_LAZY] > 0)
->>
-> 
-> Nope, that value was right, but I think we should phrase this in terms
-> of symbolic constants. Maybe we can squash this patch into your series?
-> 
-> -----------------------8<-----------------------
-> 
-> [PATCH] SQUASH: use symbolic constants in __ceph_caps_file_wanted()
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/ceph/caps.c | 15 ++++++++-------
->   1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index ad365cf870f6..1b450f2195fe 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -971,19 +971,19 @@ int __ceph_caps_file_wanted(struct ceph_inode_info *ci)
->   		round_jiffies(jiffies - opt->caps_wanted_delay_min * HZ);
->   	int bits = 0;
->   
-> -	if (ci->i_nr_by_mode[0] > 0)
-> +	if (ci->i_nr_by_mode[CEPH_FILE_MODE_PIN] > 0)
->   		bits |= CEPH_FILE_MODE_PIN;
->   
-> -	if (ci->i_nr_by_mode[1] > 0) {
-> -		if (ci->i_nr_by_mode[1] >= FMODE_WAIT_BIAS ||
-> +	if (ci->i_nr_by_mode[CEPH_FILE_MODE_RD] > 0) {
-> +		if (ci->i_nr_by_mode[CEPH_FILE_MODE_RD] >= FMODE_WAIT_BIAS ||
->   		    time_after(ci->i_last_rd, used_cutoff))
->   			bits |= CEPH_FILE_MODE_RD;
->   	} else if (time_after(ci->i_last_rd, idle_cutoff)) {
->   		bits |= CEPH_FILE_MODE_RD;
->   	}
->   
-> -	if (ci->i_nr_by_mode[2] > 0) {
-> -		if (ci->i_nr_by_mode[2] >= FMODE_WAIT_BIAS ||
-> +	if (ci->i_nr_by_mode[CEPH_FILE_MODE_WR] > 0) {
-> +		if (ci->i_nr_by_mode[CEPH_FILE_MODE_WR] >= FMODE_WAIT_BIAS ||
->   		    time_after(ci->i_last_wr, used_cutoff))
->   			bits |= CEPH_FILE_MODE_WR;
->   	} else if (time_after(ci->i_last_wr, idle_cutoff)) {
-> @@ -991,12 +991,13 @@ int __ceph_caps_file_wanted(struct ceph_inode_info *ci)
->   	}
->   
->   	/* check lazyio only when read/write is wanted */
-> -	if ((bits & CEPH_FILE_MODE_RDWR) && ci->i_nr_by_mode[3] > 0)
-> +	if ((bits & CEPH_FILE_MODE_RDWR) &&
-> +	    ci->i_nr_by_mode[ffs(CEPH_FILE_MODE_LAZY)] > 0)
->   		bits |= CEPH_FILE_MODE_LAZY;
->   
->   	if (bits == 0)
->   		return 0;
-> -	if (bits == 1 && !S_ISDIR(ci->vfs_inode.i_mode))
-> +	if (bits == (1 << CEPH_FILE_MODE_PIN) && !S_ISDIR(ci->vfs_inode.i_mode))
->   		return 0;
->   
->   	return ceph_caps_for_mode(bits >> 1);
-> 
+On Sat, Feb 22, 2020 at 2:21 AM Xiubo Li <xiubli@redhat.com> wrote:
+>
+> On 2020/2/21 22:56, Ilya Dryomov wrote:
+> > On Fri, Feb 21, 2020 at 1:03 PM Jeff Layton <jlayton@kernel.org> wrote:
+> >> On Fri, 2020-02-21 at 02:05 -0500, xiubli@redhat.com wrote:
+> >>> From: Xiubo Li <xiubli@redhat.com>
+> >>>
+> >>> It will calculate the latency for the metedata requests, which only
+> >>> include the time cousumed by network and the ceph.
+> >>>
+> >> "and the ceph MDS" ?
+> >>
+> >>> item          total       sum_lat(us)     avg_lat(us)
+> >>> -----------------------------------------------------
+> >>> metadata      113         220000          1946
+> >>>
+> >>> URL: https://tracker.ceph.com/issues/43215
+> >>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> >>> ---
+> >>>   fs/ceph/debugfs.c    |  6 ++++++
+> >>>   fs/ceph/mds_client.c | 20 ++++++++++++++++++++
+> >>>   fs/ceph/metric.h     | 13 +++++++++++++
+> >>>   3 files changed, 39 insertions(+)
+> >>>
+> >>> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+> >>> index 464bfbdb970d..60f3e307fca1 100644
+> >>> --- a/fs/ceph/debugfs.c
+> >>> +++ b/fs/ceph/debugfs.c
+> >>> @@ -146,6 +146,12 @@ static int metric_show(struct seq_file *s, void *p)
+> >>>        avg = total ? sum / total : 0;
+> >>>        seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "write", total, sum, avg);
+> >>>
+> >>> +     total = percpu_counter_sum(&mdsc->metric.total_metadatas);
+> >>> +     sum = percpu_counter_sum(&mdsc->metric.metadata_latency_sum);
+> >>> +     sum = jiffies_to_usecs(sum);
+> >>> +     avg = total ? sum / total : 0;
+> >>> +     seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "metadata", total, sum, avg);
+> >>> +
+> >>>        seq_printf(s, "\n");
+> >>>        seq_printf(s, "item          total           miss            hit\n");
+> >>>        seq_printf(s, "-------------------------------------------------\n");
+> >>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> >>> index 0a3447966b26..3e792eca6af7 100644
+> >>> --- a/fs/ceph/mds_client.c
+> >>> +++ b/fs/ceph/mds_client.c
+> >>> @@ -3017,6 +3017,12 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
+> >>>
+> >>>        /* kick calling process */
+> >>>        complete_request(mdsc, req);
+> >>> +
+> >>> +     if (!result || result == -ENOENT) {
+> >>> +             s64 latency = jiffies - req->r_started;
+> >>> +
+> >>> +             ceph_update_metadata_latency(&mdsc->metric, latency);
+> >>> +     }
+> >> Should we add an r_end_stamp field to the mds request struct and use
+> >> that to calculate this? Many jiffies may have passed between the reply
+> >> coming in and this point. If you really want to measure the latency that
+> >> would be more accurate, I think.
+> > Yes, capturing it after invoking the callback is inconsistent
+> > with what is done for OSD requests (the new r_end_stamp is set in
+> > finish_request()).
+> >
+> > It looks like this is the only place where MDS r_end_stamp would be
+> > needed, so perhaps just move this before complete_request() call?
+>
+> Currently for the OSD requests, they are almost in the same place where
+> at the end of the handle_reply.
 
-how about something like below. when compile with -O2, gcc optimize out 
-ffs() functions.
+For OSD requests, r_end_request is captured _before_ the supplied
+callback is invoked.  I suggest to do the same for MDS requests.
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 2a9df235286d..e1d38ef9478b 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -985,33 +985,38 @@ int __ceph_caps_file_wanted(struct ceph_inode_info 
-*ci)
-         unsigned long idle_cutoff =
-                 round_jiffies(jiffies - opt->caps_wanted_delay_min * HZ);
-         int bits = 0;
-+       const int PIN_SHIFT = ffs(CEPH_FILE_MODE_PIN);
-+       const int RD_SHIFT = ffs(CEPH_FILE_MODE_RD);
-+       const int WR_SHIFT= ffs(CEPH_FILE_MODE_WR);
-+       const int LAZY_SHIFT = ffs(CEPH_FILE_MODE_LAZY);
+>
+> If we don't want to calculate the consumption by the most of
+> handle_reply code, we may set the r_end_stamp in the begin of it for
+> both OSD/MDS requests ?
+>
+> I'm thinking since in the handle_reply, it may also wait for the mutex
+> locks and then sleeps, so move the r_end_stamp to the beginning should
+> make sense...
 
--       if (ci->i_nr_by_mode[0] > 0)
--               bits |= CEPH_FILE_MODE_PIN;
-+       if (ci->i_nr_by_mode[PIN_SHIFT] > 0)
-+               bits |= 1 << PIN_SHIFT;
+No, the time spent in handle_reply() must be included, just like the
+time spent in submit_request() is included.  If you look at the code,
+you will see that there is a case where handle_reply() drops the reply
+on the floor and resubmits the OSD request.  Further, on many errors,
+handle_reply() isn't even called, so finish_request() is the only place
+where r_end_stamp can be captured in a consistent manner.
 
--       if (ci->i_nr_by_mode[1] > 0) {
--               if (ci->i_nr_by_mode[1] >= FMODE_WAIT_BIAS ||
-+       if (ci->i_nr_by_mode[RD_SHIFT] > 0) {
-+               if (ci->i_nr_by_mode[RD_SHIFT] >= FMODE_WAIT_BIAS ||
-                     time_after(ci->i_last_rd, used_cutoff))
--                       bits |= CEPH_FILE_MODE_RD;
-+                       bits |= 1 << RD_SHIFT;
-         } else if (time_after(ci->i_last_rd, idle_cutoff)) {
--               bits |= CEPH_FILE_MODE_RD;
-+               bits |= 1 << RD_SHIFT;
-         }
+Thanks,
 
--       if (ci->i_nr_by_mode[2] > 0) {
--               if (ci->i_nr_by_mode[2] >= FMODE_WAIT_BIAS ||
-+       if (ci->i_nr_by_mode[WR_SHIFT] > 0) {
-+               if (ci->i_nr_by_mode[WR_SHIFT] >= FMODE_WAIT_BIAS ||
-                     time_after(ci->i_last_wr, used_cutoff))
--                       bits |= CEPH_FILE_MODE_WR;
-+                       bits |= 1 << WR_SHIFT;
-         } else if (time_after(ci->i_last_wr, idle_cutoff)) {
--               bits |= CEPH_FILE_MODE_WR;
-+               bits |= 1 << WR_SHIFT;
-         }
-
-         /* check lazyio only when read/write is wanted */
--       if ((bits & CEPH_FILE_MODE_RDWR) && ci->i_nr_by_mode[3] > 0)
--               bits |= CEPH_FILE_MODE_LAZY;
-+       if ((bits & (CEPH_FILE_MODE_RDWR << 1)) &&
-+           ci->i_nr_by_mode[LAZY_SHIFT] > 0)
-+               bits |= 1 << LAZY_SHIFT;
-
-         if (bits == 0)
-                 return 0;
--       if (bits == 1 && !S_ISDIR(ci->vfs_inode.i_mode))
-+       if (bits == (1 << PIN_SHIFT) && !S_ISDIR(ci->vfs_inode.i_mode))
-                 return 0;
-
-         return ceph_caps_for_mode(bits >> 1);
-
-
+                Ilya
