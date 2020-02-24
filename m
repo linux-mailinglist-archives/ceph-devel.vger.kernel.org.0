@@ -2,319 +2,224 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B8F16A786
-	for <lists+ceph-devel@lfdr.de>; Mon, 24 Feb 2020 14:44:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3177A16A9C5
+	for <lists+ceph-devel@lfdr.de>; Mon, 24 Feb 2020 16:17:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbgBXNob (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 24 Feb 2020 08:44:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47080 "EHLO mx2.suse.de"
+        id S1727743AbgBXPR3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Feb 2020 10:17:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725535AbgBXNob (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 24 Feb 2020 08:44:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 02C22AC67;
-        Mon, 24 Feb 2020 13:44:28 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.com>
-To:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Yan, Zheng" <zyan@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.com>
-Subject: [PATCH v2] ceph: re-org copy_file_range and fix some error paths
-Date:   Mon, 24 Feb 2020 13:44:32 +0000
-Message-Id: <20200224134432.25888-1-lhenriques@suse.com>
+        id S1727448AbgBXPR3 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 24 Feb 2020 10:17:29 -0500
+Received: from vulkan (unknown [4.28.11.157])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BC302082F;
+        Mon, 24 Feb 2020 15:17:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582557448;
+        bh=64endsEfyR71cGkO35yeQBxylK/Z89TDigoYnc2d9qc=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=CaVRMxO2eer6Iz4zAH8cbIUNEFT6haOq1CDfuaKeiZC679QBLCdTEPXceV4h1Fpj0
+         gSl1DnP11r8f5zhXPO4DJ7V7qagqPq8WwcDSyERrshV3F2CkbZy0UcYDJbaPrRbHUr
+         sgAMDJQ8AuF5WN8t82zfmPSZ747vl+6UXLPm074U=
+Message-ID: <256363c4d8f3c71973e14911a2b39d8ff9996a98.camel@kernel.org>
+Subject: Re: [PATCH v2 1/4] ceph: always renew caps if mds_wanted is
+ insufficient
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org
+Date:   Mon, 24 Feb 2020 07:17:26 -0800
+In-Reply-To: <8126e83a-0732-b44a-6858-4c9cc13c3231@redhat.com>
+References: <20200221131659.87777-1-zyan@redhat.com>
+         <20200221131659.87777-2-zyan@redhat.com>
+         <f1e5924fb183b738e4103130ec1197cacea0047e.camel@kernel.org>
+         <8126e83a-0732-b44a-6858-4c9cc13c3231@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-This patch re-organizes copy_file_range, trying to fix a few issues in the
-error handling.  Here's the summary:
+On Mon, 2020-02-24 at 11:17 +0800, Yan, Zheng wrote:
+> On 2/22/20 1:17 AM, Jeff Layton wrote:
+> > On Fri, 2020-02-21 at 21:16 +0800, Yan, Zheng wrote:
+> > > original code only renews caps for inodes with CEPH_I_CAP_DROPPED flags.
+> > > The flag indicates that mds closed session and caps were dropped. This
+> > > patch is preparation for not requesting caps for idle open files.
+> > > 
+> > > CEPH_I_CAP_DROPPED is no longer tested by anyone, so this patch also
+> > > remove it.
+> > > 
+> > > Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+> > > ---
+> > >   fs/ceph/caps.c       | 36 +++++++++++++++---------------------
+> > >   fs/ceph/mds_client.c |  5 -----
+> > >   fs/ceph/super.h      | 11 +++++------
+> > >   3 files changed, 20 insertions(+), 32 deletions(-)
+> > > 
+> > > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> > > index d05717397c2a..293920d013ff 100644
+> > > --- a/fs/ceph/caps.c
+> > > +++ b/fs/ceph/caps.c
+> > > @@ -2659,6 +2659,7 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
+> > >   		}
+> > >   	} else {
+> > >   		int session_readonly = false;
+> > > +		int mds_wanted;
+> > >   		if (ci->i_auth_cap &&
+> > >   		    (need & (CEPH_CAP_FILE_WR | CEPH_CAP_FILE_EXCL))) {
+> > >   			struct ceph_mds_session *s = ci->i_auth_cap->session;
+> > > @@ -2667,32 +2668,27 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
+> > >   			spin_unlock(&s->s_cap_lock);
+> > >   		}
+> > >   		if (session_readonly) {
+> > > -			dout("get_cap_refs %p needed %s but mds%d readonly\n",
+> > > +			dout("get_cap_refs %p need %s but mds%d readonly\n",
+> > >   			     inode, ceph_cap_string(need), ci->i_auth_cap->mds);
+> > >   			ret = -EROFS;
+> > >   			goto out_unlock;
+> > >   		}
+> > >   
+> > > -		if (ci->i_ceph_flags & CEPH_I_CAP_DROPPED) {
+> > > -			int mds_wanted;
+> > > -			if (READ_ONCE(mdsc->fsc->mount_state) ==
+> > > -			    CEPH_MOUNT_SHUTDOWN) {
+> > > -				dout("get_cap_refs %p forced umount\n", inode);
+> > > -				ret = -EIO;
+> > > -				goto out_unlock;
+> > > -			}
+> > > -			mds_wanted = __ceph_caps_mds_wanted(ci, false);
+> > > -			if (need & ~(mds_wanted & need)) {
+> > > -				dout("get_cap_refs %p caps were dropped"
+> > > -				     " (session killed?)\n", inode);
+> > > -				ret = -ESTALE;
+> > > -				goto out_unlock;
+> > > -			}
+> > > -			if (!(file_wanted & ~mds_wanted))
+> > > -				ci->i_ceph_flags &= ~CEPH_I_CAP_DROPPED;
+> > > +		if (READ_ONCE(mdsc->fsc->mount_state) == CEPH_MOUNT_SHUTDOWN) {
+> > > +			dout("get_cap_refs %p forced umount\n", inode);
+> > > +			ret = -EIO;
+> > > +			goto out_unlock;
+> > > +		}
+> > > +		mds_wanted = __ceph_caps_mds_wanted(ci, false);
+> > > +		if (need & ~mds_wanted) {
+> > > +			dout("get_cap_refs %p need %s > mds_wanted %s\n",
+> > > +			     inode, ceph_cap_string(need),
+> > > +			     ceph_cap_string(mds_wanted));
+> > > +			ret = -ESTALE;
+> > > +			goto out_unlock;
+> > >   		}
+> > >   
+> > 
+> > I was able to reproduce softlockups with xfstests reliably for a little
+> > while, but it doesn't always happen. I bisected it down to this patch
+> > though. I suspect the problem is in the hunk above. It looks like it's
+> > getting into a situation where this is continually returning ESTALE.
+> > 
+> > I cranked up debug logging in this function and I see this:
+> > 
+> > [  259.284839] ceph:  get_cap_refs 000000003d7d65fa ret -116 got -
+> > [  259.284848] ceph:  get_cap_refs 000000003d7d65fa ret -116 got -
+> > [  259.284855] ceph:  get_cap_refs 000000003d7d65fa ret -116 got -
+> > [  259.284863] ceph:  get_cap_refs 000000003d7d65fa need Fr want Fc
+> > [  259.284868] ceph:  get_cap_refs 000000003d7d65fa need Fr > mds_wanted -
+> > [  259.284877] ceph:  get_cap_refs 000000003d7d65fa need Fr want Fc
+> > [  259.284885] ceph:  get_cap_refs 000000003d7d65fa need Fr want Fc
+> > [  259.284890] ceph:  get_cap_refs 000000003d7d65fa need Fr want Fc
+> > [  259.284899] ceph:  get_cap_refs 000000003d7d65fa ret -116 got -
+> > [  259.284908] ceph:  get_cap_refs 000000003d7d65fa need Fr > mds_wanted -
+> > [  259.284918] ceph:  get_cap_refs 000000003d7d65fa need Fr want Fc
+> > [  259.284926] ceph:  get_cap_refs 000000003d7d65fa need Fr want Fc
+> > [  259.284945] ceph:  get_cap_refs 000000003d7d65fa need Fr > mds_wanted -
+> > [  259.284950] ceph:  get_cap_refs 000000003d7d65fa need Fr want Fc
+> > [  259.284961] ceph:  get_cap_refs 000000003d7d65fa need Fr want Fc
+> > [  259.284969] ceph:  get_cap_refs 000000003d7d65fa need Fr want Fc
+> > [  259.284975] ceph:  get_cap_refs 000000003d7d65fa ret -116 got -
+> > [  259.284984] ceph:  get_cap_refs 000000003d7d65fa need Fr > mds_wanted -
+> > [  259.284994] ceph:  get_cap_refs 000000003d7d65fa ret -116 got -
+> > [  259.285003] ceph:  get_cap_refs 000000003d7d65fa need Fr want Fc
+> > 
+> 
+> Looks like ceph_check_caps did update caps' mds_wanted. Did you test 
+> this patch with async dirops patches? please try reproducing this issue 
+> again with debug log of try_get_cap_refs(), ceph_check_caps() and 
+> ceph_renew_caps().
+> 
+> 
 
-- Abort copy if initial do_splice_direct() returns fewer bytes than
-  requested.
+I tried with and without async dirops and was able to reproduce it
+either way. It seems like the issue is that the mds_wanted set is not
+being updated properly when we end up in in get_cap_refs.
 
-- Move the 'size' initialization (with i_size_read()) further down in the
-  code, after the initial call to do_splice_direct().  This avoids issues
-  with a possibly stale value if a manual copy is done.
+I'm traveling at the moment though and won't be able to reproduce this
+until I'm back at work (Thursday).
 
-- Move the object copy loop into a separate function.  This makes it
-  easier to handle errors (e.g, dirtying caps and updating the MDS
-  metadata if only some objects have been copied before an error has
-  occurred).
 
-- Added calls to ceph_oloc_destroy() to avoid leaking memory with src_oloc
-  and dst_oloc
+> 
+> > ...not sure I understand the logical flow in this function well enough
+> > to suggest a fix yet though.
+> > 
+> > > -		dout("get_cap_refs %p have %s needed %s\n", inode,
+> > > +		dout("get_cap_refs %p have %s need %s\n", inode,
+> > >   		     ceph_cap_string(have), ceph_cap_string(need));
+> > >   	}
+> > >   out_unlock:
+> > > @@ -3646,8 +3642,6 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
+> > >   		goto out_unlock;
+> > >   
+> > >   	if (target < 0) {
+> > > -		if (cap->mds_wanted | cap->issued)
+> > > -			ci->i_ceph_flags |= CEPH_I_CAP_DROPPED;
+> > >   		__ceph_remove_cap(cap, false);
+> > >   		goto out_unlock;
+> > >   	}
+> > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > > index fab9d6461a65..98d746b3bb53 100644
+> > > --- a/fs/ceph/mds_client.c
+> > > +++ b/fs/ceph/mds_client.c
+> > > @@ -1411,8 +1411,6 @@ static int remove_session_caps_cb(struct inode *inode, struct ceph_cap *cap,
+> > >   	dout("removing cap %p, ci is %p, inode is %p\n",
+> > >   	     cap, ci, &ci->vfs_inode);
+> > >   	spin_lock(&ci->i_ceph_lock);
+> > > -	if (cap->mds_wanted | cap->issued)
+> > > -		ci->i_ceph_flags |= CEPH_I_CAP_DROPPED;
+> > >   	__ceph_remove_cap(cap, false);
+> > >   	if (!ci->i_auth_cap) {
+> > >   		struct ceph_cap_flush *cf;
+> > > @@ -1578,9 +1576,6 @@ static int wake_up_session_cb(struct inode *inode, struct ceph_cap *cap,
+> > >   			/* mds did not re-issue stale cap */
+> > >   			spin_lock(&ci->i_ceph_lock);
+> > >   			cap->issued = cap->implemented = CEPH_CAP_PIN;
+> > > -			/* make sure mds knows what we want */
+> > > -			if (__ceph_caps_file_wanted(ci) & ~cap->mds_wanted)
+> > > -				ci->i_ceph_flags |= CEPH_I_CAP_DROPPED;
+> > >   			spin_unlock(&ci->i_ceph_lock);
+> > >   		}
+> > >   	} else if (ev == FORCE_RO) {
+> > > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > > index 37dc1ac8f6c3..48e84d7f48a0 100644
+> > > --- a/fs/ceph/super.h
+> > > +++ b/fs/ceph/super.h
+> > > @@ -517,12 +517,11 @@ static inline struct inode *ceph_find_inode(struct super_block *sb,
+> > >   #define CEPH_I_POOL_RD		(1 << 4)  /* can read from pool */
+> > >   #define CEPH_I_POOL_WR		(1 << 5)  /* can write to pool */
+> > >   #define CEPH_I_SEC_INITED	(1 << 6)  /* security initialized */
+> > > -#define CEPH_I_CAP_DROPPED	(1 << 7)  /* caps were forcibly dropped */
+> > > -#define CEPH_I_KICK_FLUSH	(1 << 8)  /* kick flushing caps */
+> > > -#define CEPH_I_FLUSH_SNAPS	(1 << 9)  /* need flush snapss */
+> > > -#define CEPH_I_ERROR_WRITE	(1 << 10) /* have seen write errors */
+> > > -#define CEPH_I_ERROR_FILELOCK	(1 << 11) /* have seen file lock errors */
+> > > -#define CEPH_I_ODIRECT		(1 << 12) /* inode in direct I/O mode */
+> > > +#define CEPH_I_KICK_FLUSH	(1 << 7)  /* kick flushing caps */
+> > > +#define CEPH_I_FLUSH_SNAPS	(1 << 8)  /* need flush snapss */
+> > > +#define CEPH_I_ERROR_WRITE	(1 << 9)  /* have seen write errors */
+> > > +#define CEPH_I_ERROR_FILELOCK	(1 << 10) /* have seen file lock errors */
+> > > +#define CEPH_I_ODIRECT		(1 << 11) /* inode in direct I/O mode */
+> > >   
+> > >   /*
+> > >    * Masks of ceph inode work.
 
-- After the object copy loop, the new file size to be reported to the MDS
-  (if there's file size change) is now the actual file size, and not the
-  size after an eventual extra manual copy.
-
-- Added a few dout() to show the number of bytes copied in the two manual
-  copies and in the object copy loop.
-
-Signed-off-by: Luis Henriques <lhenriques@suse.com>
----
-Hi,
-
-Just a respin including Jeff's suggestions from initial post.
-
-Changes since v1:
-
-- Don't bother trying a second splice once we fail during the remote
-  object copies; let user-space retry instead.
-
-Cheers,
---
-Luis
-
- fs/ceph/file.c | 173 ++++++++++++++++++++++++++++---------------------
- 1 file changed, 100 insertions(+), 73 deletions(-)
-
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index c3b8e8e0bf17..e0bae6b71d7b 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1931,6 +1931,71 @@ static int is_file_size_ok(struct inode *src_inode, struct inode *dst_inode,
- 	return 0;
- }
- 
-+static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off,
-+				    struct ceph_inode_info *dst_ci, u64 *dst_off,
-+				    struct ceph_fs_client *fsc,
-+				    size_t len, unsigned int flags)
-+{
-+	struct ceph_object_locator src_oloc, dst_oloc;
-+	struct ceph_object_id src_oid, dst_oid;
-+	size_t bytes = 0;
-+	u64 src_objnum, src_objoff, dst_objnum, dst_objoff;
-+	u32 src_objlen, dst_objlen;
-+	u32 object_size = src_ci->i_layout.object_size;
-+	int ret;
-+
-+	src_oloc.pool = src_ci->i_layout.pool_id;
-+	src_oloc.pool_ns = ceph_try_get_string(src_ci->i_layout.pool_ns);
-+	dst_oloc.pool = dst_ci->i_layout.pool_id;
-+	dst_oloc.pool_ns = ceph_try_get_string(dst_ci->i_layout.pool_ns);
-+
-+	while (len >= object_size) {
-+		ceph_calc_file_object_mapping(&src_ci->i_layout, *src_off,
-+					      object_size, &src_objnum,
-+					      &src_objoff, &src_objlen);
-+		ceph_calc_file_object_mapping(&dst_ci->i_layout, *dst_off,
-+					      object_size, &dst_objnum,
-+					      &dst_objoff, &dst_objlen);
-+		ceph_oid_init(&src_oid);
-+		ceph_oid_printf(&src_oid, "%llx.%08llx",
-+				src_ci->i_vino.ino, src_objnum);
-+		ceph_oid_init(&dst_oid);
-+		ceph_oid_printf(&dst_oid, "%llx.%08llx",
-+				dst_ci->i_vino.ino, dst_objnum);
-+		/* Do an object remote copy */
-+		ret = ceph_osdc_copy_from(&fsc->client->osdc,
-+					  src_ci->i_vino.snap, 0,
-+					  &src_oid, &src_oloc,
-+					  CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
-+					  CEPH_OSD_OP_FLAG_FADVISE_NOCACHE,
-+					  &dst_oid, &dst_oloc,
-+					  CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
-+					  CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
-+					  dst_ci->i_truncate_seq,
-+					  dst_ci->i_truncate_size,
-+					  CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
-+		if (ret) {
-+			if (ret == -EOPNOTSUPP) {
-+				fsc->have_copy_from2 = false;
-+				pr_notice("OSDs don't support copy-from2; disabling copy offload\n");
-+			}
-+			dout("ceph_osdc_copy_from returned %d\n", ret);
-+			if (!bytes)
-+				bytes = ret;
-+			goto out;
-+		}
-+		len -= object_size;
-+		bytes += object_size;
-+		*src_off += object_size;
-+		*dst_off += object_size;
-+	}
-+
-+out:
-+	ceph_oloc_destroy(&src_oloc);
-+	ceph_oloc_destroy(&dst_oloc);
-+	return bytes;
-+}
-+
- static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 				      struct file *dst_file, loff_t dst_off,
- 				      size_t len, unsigned int flags)
-@@ -1941,14 +2006,11 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 	struct ceph_inode_info *dst_ci = ceph_inode(dst_inode);
- 	struct ceph_cap_flush *prealloc_cf;
- 	struct ceph_fs_client *src_fsc = ceph_inode_to_client(src_inode);
--	struct ceph_object_locator src_oloc, dst_oloc;
--	struct ceph_object_id src_oid, dst_oid;
--	loff_t endoff = 0, size;
--	ssize_t ret = -EIO;
-+	loff_t size;
-+	ssize_t ret = -EIO, bytes;
- 	u64 src_objnum, dst_objnum, src_objoff, dst_objoff;
--	u32 src_objlen, dst_objlen, object_size;
-+	u32 src_objlen, dst_objlen;
- 	int src_got = 0, dst_got = 0, err, dirty;
--	bool do_final_copy = false;
- 
- 	if (src_inode->i_sb != dst_inode->i_sb) {
- 		struct ceph_fs_client *dst_fsc = ceph_inode_to_client(dst_inode);
-@@ -2026,22 +2088,14 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 	if (ret < 0)
- 		goto out_caps;
- 
--	size = i_size_read(dst_inode);
--	endoff = dst_off + len;
--
- 	/* Drop dst file cached pages */
- 	ret = invalidate_inode_pages2_range(dst_inode->i_mapping,
- 					    dst_off >> PAGE_SHIFT,
--					    endoff >> PAGE_SHIFT);
-+					    (dst_off + len) >> PAGE_SHIFT);
- 	if (ret < 0) {
- 		dout("Failed to invalidate inode pages (%zd)\n", ret);
- 		ret = 0; /* XXX */
- 	}
--	src_oloc.pool = src_ci->i_layout.pool_id;
--	src_oloc.pool_ns = ceph_try_get_string(src_ci->i_layout.pool_ns);
--	dst_oloc.pool = dst_ci->i_layout.pool_id;
--	dst_oloc.pool_ns = ceph_try_get_string(dst_ci->i_layout.pool_ns);
--
- 	ceph_calc_file_object_mapping(&src_ci->i_layout, src_off,
- 				      src_ci->i_layout.object_size,
- 				      &src_objnum, &src_objoff, &src_objlen);
-@@ -2060,6 +2114,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 	 * starting at the src_off
- 	 */
- 	if (src_objoff) {
-+		dout("Initial partial copy of %u bytes\n", src_objlen);
-+
- 		/*
- 		 * we need to temporarily drop all caps as we'll be calling
- 		 * {read,write}_iter, which will get caps again.
-@@ -2067,8 +2123,9 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 		put_rd_wr_caps(src_ci, src_got, dst_ci, dst_got);
- 		ret = do_splice_direct(src_file, &src_off, dst_file,
- 				       &dst_off, src_objlen, flags);
--		if (ret < 0) {
--			dout("do_splice_direct returned %d\n", err);
-+		/* Abort on short copies or on error */
-+		if (ret < src_objlen) {
-+			dout("Failed partial copy (%zd)\n", ret);
- 			goto out;
- 		}
- 		len -= ret;
-@@ -2081,62 +2138,29 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 		if (err < 0)
- 			goto out_caps;
- 	}
--	object_size = src_ci->i_layout.object_size;
--	while (len >= object_size) {
--		ceph_calc_file_object_mapping(&src_ci->i_layout, src_off,
--					      object_size, &src_objnum,
--					      &src_objoff, &src_objlen);
--		ceph_calc_file_object_mapping(&dst_ci->i_layout, dst_off,
--					      object_size, &dst_objnum,
--					      &dst_objoff, &dst_objlen);
--		ceph_oid_init(&src_oid);
--		ceph_oid_printf(&src_oid, "%llx.%08llx",
--				src_ci->i_vino.ino, src_objnum);
--		ceph_oid_init(&dst_oid);
--		ceph_oid_printf(&dst_oid, "%llx.%08llx",
--				dst_ci->i_vino.ino, dst_objnum);
--		/* Do an object remote copy */
--		err = ceph_osdc_copy_from(
--			&src_fsc->client->osdc,
--			src_ci->i_vino.snap, 0,
--			&src_oid, &src_oloc,
--			CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
--			CEPH_OSD_OP_FLAG_FADVISE_NOCACHE,
--			&dst_oid, &dst_oloc,
--			CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
--			CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
--			dst_ci->i_truncate_seq, dst_ci->i_truncate_size,
--			CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
--		if (err) {
--			if (err == -EOPNOTSUPP) {
--				src_fsc->have_copy_from2 = false;
--				pr_notice("OSDs don't support copy-from2; disabling copy offload\n");
--			}
--			dout("ceph_osdc_copy_from returned %d\n", err);
--			if (!ret)
--				ret = err;
--			goto out_caps;
--		}
--		len -= object_size;
--		src_off += object_size;
--		dst_off += object_size;
--		ret += object_size;
--	}
- 
--	if (len)
--		/* We still need one final local copy */
--		do_final_copy = true;
-+	size = i_size_read(dst_inode);
-+	bytes = ceph_do_objects_copy(src_ci, &src_off, dst_ci, &dst_off,
-+				     src_fsc, len, flags);
-+	if (bytes <= 0) {
-+		if (!ret)
-+			ret = bytes;
-+		goto out_caps;
-+	}
-+	dout("Copied %zu bytes out of %zu\n", bytes, len);
-+	len -= bytes;
-+	ret += bytes;
- 
- 	file_update_time(dst_file);
- 	inode_inc_iversion_raw(dst_inode);
- 
--	if (endoff > size) {
-+	if (dst_off > size) {
- 		int caps_flags = 0;
- 
- 		/* Let the MDS know about dst file size change */
--		if (ceph_quota_is_max_bytes_approaching(dst_inode, endoff))
-+		if (ceph_quota_is_max_bytes_approaching(dst_inode, dst_off))
- 			caps_flags |= CHECK_CAPS_NODELAY;
--		if (ceph_inode_set_size(dst_inode, endoff))
-+		if (ceph_inode_set_size(dst_inode, dst_off))
- 			caps_flags |= CHECK_CAPS_AUTHONLY;
- 		if (caps_flags)
- 			ceph_check_caps(dst_ci, caps_flags, NULL);
-@@ -2152,15 +2176,18 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- out_caps:
- 	put_rd_wr_caps(src_ci, src_got, dst_ci, dst_got);
- 
--	if (do_final_copy) {
--		err = do_splice_direct(src_file, &src_off, dst_file,
--				       &dst_off, len, flags);
--		if (err < 0) {
--			dout("do_splice_direct returned %d\n", err);
--			goto out;
--		}
--		len -= err;
--		ret += err;
-+	/*
-+	 * Do the final manual copy if we still have some bytes left, unless
-+	 * there were errors in remote object copies (len >= object_size).
-+	 */
-+	if (len && (len < src_ci->i_layout.object_size)) {
-+		dout("Final partial copy of %zu bytes\n", len);
-+		bytes = do_splice_direct(src_file, &src_off, dst_file,
-+					 &dst_off, len, flags);
-+		if (bytes > 0)
-+			ret += bytes;
-+		else
-+			dout("Failed partial copy (%zd)\n", bytes);
- 	}
- 
- out:
