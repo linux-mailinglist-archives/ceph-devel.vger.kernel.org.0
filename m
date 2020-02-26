@@ -2,99 +2,131 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C76AC16F5CF
-	for <lists+ceph-devel@lfdr.de>; Wed, 26 Feb 2020 03:51:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2D8616F5EF
+	for <lists+ceph-devel@lfdr.de>; Wed, 26 Feb 2020 04:05:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730172AbgBZCve (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 25 Feb 2020 21:51:34 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:36043 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730170AbgBZCvd (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 25 Feb 2020 21:51:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582685492;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=pgn4ofpE9wLIFk9/mHDza87x5AQbyQlFBwDVgRmiFXQ=;
-        b=HoifNaCvhxj9Iug2Z30lMZmNARET/4YkeJBGrG0T3ExPnwA5o9LZVmpR+rIhNatqWljpJG
-        9k1IHPPsQqcSFG2W2aLf+3bcd3JDUMiVaJNm/kutbbRT8wsZBIs+h2sQ7fdkCKb/L6hyJX
-        xa6NsRiEVmjGJ80DNRCWcaTUYThD3UY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-425-gtku5HK-NKSC4klajntH3g-1; Tue, 25 Feb 2020 21:51:26 -0500
-X-MC-Unique: gtku5HK-NKSC4klajntH3g-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1730228AbgBZDFh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 25 Feb 2020 22:05:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59980 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727880AbgBZDFg (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 25 Feb 2020 22:05:36 -0500
+Received: from vulkan (unknown [4.28.11.157])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 786CB107ACCA;
-        Wed, 26 Feb 2020 02:51:25 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-13-186.pek2.redhat.com [10.72.13.186])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C58599079D;
-        Wed, 26 Feb 2020 02:51:17 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org, idryomov@gmail.com
+        by mail.kernel.org (Postfix) with ESMTPSA id D5D8821744;
+        Wed, 26 Feb 2020 03:05:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582686336;
+        bh=uVEjOOphXTnE6SIPjhBfacAI7LjN41gjFod5feeVYyI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=dgZhlF4/zdrOdkG8R8C1odWnPLINt0QR09roTnhSkZ55XaYZhbBD5NXNlQlDyrCrf
+         czOZ9i61TPDkoRa2vEXKjPAm1OODhIVIOH1zUWgxOdBk2J+O4Wegc7sMqPGXzfO4Hn
+         EeZFrs8cOAucwQW7geLhoH41SpG+s2s9KtOvHY54=
+Message-ID: <d1edfa6b2713b63d8f6832ebb376b60a22ee2f69.camel@kernel.org>
+Subject: Re: [PATCH v8 2/5] ceph: add caps perf metric for each session
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, idryomov@gmail.com
 Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
-        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v3] ceph: show more detail logs during mount
-Date:   Tue, 25 Feb 2020 21:51:12 -0500
-Message-Id: <20200226025112.3839-1-xiubli@redhat.com>
+        ceph-devel@vger.kernel.org
+Date:   Tue, 25 Feb 2020 19:05:33 -0800
+In-Reply-To: <ff394699-2de4-c3ba-9b11-0730acf7d4df@redhat.com>
+References: <20200221070556.18922-1-xiubli@redhat.com>
+         <20200221070556.18922-3-xiubli@redhat.com>
+         <a654d3d4765741594e9c49ef62ba1d0ab41e3960.camel@kernel.org>
+         <ff394699-2de4-c3ba-9b11-0730acf7d4df@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Sat, 2020-02-22 at 09:51 +0800, Xiubo Li wrote:
+> On 2020/2/21 20:00, Jeff Layton wrote:
+> > On Fri, 2020-02-21 at 02:05 -0500, xiubli@redhat.com wrote:
+> > > From: Xiubo Li <xiubli@redhat.com>
+> > > 
+> > > This will fulfill the cap hit/mis metric stuff per-superblock,
+> > > it will count the hit/mis counters based each inode, and if one
+> > > inode's 'issued & ~revoking == mask' will mean a hit, or a miss.
+> > > 
+> > > item          total           miss            hit
+> > > -------------------------------------------------
+> > > caps          295             107             4119
+> > > 
+> > > URL: https://tracker.ceph.com/issues/43215
+> > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > > ---
+> > >   fs/ceph/acl.c        |  2 +-
+> > >   fs/ceph/caps.c       | 19 +++++++++++++++++++
+> > >   fs/ceph/debugfs.c    | 16 ++++++++++++++++
+> > >   fs/ceph/dir.c        |  5 +++--
+> > >   fs/ceph/inode.c      |  4 ++--
+> > >   fs/ceph/mds_client.c | 26 ++++++++++++++++++++++----
+> > >   fs/ceph/metric.h     | 19 +++++++++++++++++++
+> > >   fs/ceph/super.h      |  8 +++++---
+> > >   fs/ceph/xattr.c      |  4 ++--
+> > >   9 files changed, 89 insertions(+), 14 deletions(-)
+> > > 
+> > > diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
+> > > index 26be6520d3fb..e0465741c591 100644
+> > > --- a/fs/ceph/acl.c
+> > > +++ b/fs/ceph/acl.c
+> > > @@ -22,7 +22,7 @@ static inline void ceph_set_cached_acl(struct inode *inode,
+> > >   	struct ceph_inode_info *ci = ceph_inode(inode);
+> > >   
+> > >   	spin_lock(&ci->i_ceph_lock);
+> > > -	if (__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 0))
+> > > +	if (__ceph_caps_issued_mask_metric(ci, CEPH_CAP_XATTR_SHARED, 0))
+> > >   		set_cached_acl(inode, type, acl);
+> > >   	else
+> > >   		forget_cached_acl(inode, type);
+> > nit: calling __ceph_caps_issued_mask_metric means that you have an extra
+> > branch. One to set/forget acl and one to update the counter.
+> > 
+> > This would be (very slightly) more efficient if you just put the cap
+> > hit/miss calls inside the existing if block above. IOW, you could just
+> > do:
+> > 
+> > if (__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 0)) {
+> > 	set_cached_acl(inode, type, acl);
+> > 	ceph_update_cap_hit(&fsc->mdsc->metric);
+> > } else {
+> > 	forget_cached_acl(inode, type);
+> > 	ceph_update_cap_mis(&fsc->mdsc->metric);
+> > }
+> 
+> Yeah, this will works well here.
+> 
+> 
+> > > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> > > index ff1714fe03aa..227949c3deb8 100644
+> > > --- a/fs/ceph/dir.c
+> > > +++ b/fs/ceph/dir.c
+> > > @@ -346,8 +346,9 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+> > >   	    !ceph_test_mount_opt(fsc, NOASYNCREADDIR) &&
+> > >   	    ceph_snap(inode) != CEPH_SNAPDIR &&
+> > >   	    __ceph_dir_is_complete_ordered(ci) &&
+> > > -	    __ceph_caps_issued_mask(ci, CEPH_CAP_FILE_SHARED, 1)) {
+> > > +	    __ceph_caps_issued_mask_metric(ci, CEPH_CAP_FILE_SHARED, 1)) {
+> > These could also just be cap_hit/mis calls inside the existing if
+> > blocks.
+> 
+> Yeah, right in the if branch we can be sure that the 
+> __ceph_caps_issued_mask() is called. But in the else branch we still 
+> need to get the return value from (rc = __ceph_caps_issued_mask()), and 
+> only when "rc == 0" cap_mis will need. This could simplify the code here 
+> and below.
+> 
+> This is main reason to add the __ceph_caps_issued_mask_metric() here. 
+> And if you do not like this approach I will switch it back :-)
+> 
 
-Print the logs in error level to give a helpful hint to make it
-more user-friendly to do debug.
+Ok, good point. Let's leave this one as-is.
 
-URL: https://tracker.ceph.com/issues/44215
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/super.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index c7f150686a53..0768e1bbd22e 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -905,8 +905,11 @@ static struct dentry *ceph_real_mount(struct ceph_fs=
-_client *fsc,
- 				     fsc->mount_options->server_path + 1 : "";
-=20
- 		err =3D __ceph_open_session(fsc->client, started);
--		if (err < 0)
-+		if (err < 0) {
-+			errorfc(fc, "mount joining the ceph cluster fail %d",
-+				err);
- 			goto out;
-+		}
-=20
- 		/* setup fscache */
- 		if (fsc->mount_options->flags & CEPH_MOUNT_OPT_FSCACHE) {
-@@ -922,6 +925,8 @@ static struct dentry *ceph_real_mount(struct ceph_fs_=
-client *fsc,
- 		root =3D open_root_dentry(fsc, path, started);
- 		if (IS_ERR(root)) {
- 			err =3D PTR_ERR(root);
-+			errorfc(fc, "mount opening the root directory fail %d",
-+				err);
- 			goto out;
- 		}
- 		fsc->sb->s_root =3D dget(root);
-@@ -1079,7 +1084,7 @@ static int ceph_get_tree(struct fs_context *fc)
-=20
- out_splat:
- 	if (!ceph_mdsmap_is_cluster_available(fsc->mdsc->mdsmap)) {
--		pr_info("No mds server is up or the cluster is laggy\n");
-+		errorfc(fc, "No mds server is up or the cluster is laggy");
- 		err =3D -EHOSTUNREACH;
- 	}
-=20
---=20
-2.21.0
+-- 
+Jeff Layton <jlayton@kernel.org>
 
