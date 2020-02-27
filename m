@@ -2,103 +2,89 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9763117043E
-	for <lists+ceph-devel@lfdr.de>; Wed, 26 Feb 2020 17:23:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA232170CF3
+	for <lists+ceph-devel@lfdr.de>; Thu, 27 Feb 2020 01:07:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727902AbgBZQXD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 26 Feb 2020 11:23:03 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39414 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726583AbgBZQXC (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 26 Feb 2020 11:23:02 -0500
-Received: by mail-wm1-f65.google.com with SMTP id c84so3872373wme.4
-        for <ceph-devel@vger.kernel.org>; Wed, 26 Feb 2020 08:23:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7IU02G2SCH5E+ATDz9hd+zgG8PRvB3leghHbtZysVp0=;
-        b=eCQfNf/zWH9Qhorueub5/eJQ81mZmvWHU1q1ZeG3FZSPI4GT1MvLziAnxr8MO790B3
-         yhOeIqtXna4NxEiMIVjkaYZWuAK4k47/7cjkolULk6eFA1QofsjMp1hUAUqgbk2Y9CvY
-         K0UpTxo0yTrJzwapX4K1lgIL7Q+gBBd61X4dgw0tNRibfm/xQfffFvgLZKz2ELc6/bWb
-         c5aaAF24619pAw/PjQSRoO/eUdIWfNa8pW85Zgyoxx/+HMCEU/PRn4XtM+D65eB1jRI0
-         uSwSgStlAIgdb9M/FkhsvmDUMCOpacKd6BXFdi4Y4ArPUoXWmuhYd8nEN0gYTrr//n3/
-         /ZvA==
+        id S1728032AbgB0AHo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 26 Feb 2020 19:07:44 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:26887 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726413AbgB0AHo (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 26 Feb 2020 19:07:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582762063;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=lvfBxxRVXkV5hcBasOnA/07EoTrtbF59B5IHvDBc2eQ=;
+        b=FuI6P/Y66J7LH7qR374oZYYHJEeSJ6X2kimiFg9wvK7c+LbEWTzE5LOM3sZc+BmG58nSdh
+        xLYmoGGQvjRMb1cYueGnsCHjx7ry0NbrA4dnxvV0ndIzRw+TZHIdYKOyGc+Zoc5MIIAH2d
+        Vvm6yO6ThVmWG85ZTWSldCn2kGvD0os=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-119-0bLTlqiDPo-8_Ynq6SbQ-w-1; Wed, 26 Feb 2020 19:07:40 -0500
+X-MC-Unique: 0bLTlqiDPo-8_Ynq6SbQ-w-1
+Received: by mail-qt1-f200.google.com with SMTP id r19so1072643qtb.10
+        for <ceph-devel@vger.kernel.org>; Wed, 26 Feb 2020 16:07:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7IU02G2SCH5E+ATDz9hd+zgG8PRvB3leghHbtZysVp0=;
-        b=SBix8Q8wv8DhmJHHU3/PtwPPsEDnisW1Q7YYCFetixl3JUfmzBxWNFFaiiWL+HQ0HI
-         LIiTAx3UTeNn35+Pmc+rn3SV//1FXgJMDJ2O4Tq+5cJ+2UpTWJNdQECQU0j1zXNui35A
-         PNvbe8A1jIvgFCNWyUgBINVY3xDLG+X1D1GTdlpWX9WWMDvMUiFzE2o5n+AhFLY+PLDQ
-         vAWi2zRYyY/92mGDrMqUUPAxK8n5xa74tj9NjQ/YayUkvxTZY3OgnFxKmBfJjtspEBeK
-         HVRQAq2NthclGYPForMrARfOXMY3YXgL1ZpYPkmx88kD/70hx+nKs1WVaaK5GeIoaIam
-         rx/w==
-X-Gm-Message-State: APjAAAXtD1FSE8HN0H6vF90neGdadK+taR2sSzyo2A98QMKa+LpHWvx8
-        23VIVXdb1N50SdQFQ/QVAVFeUj9O4pM=
-X-Google-Smtp-Source: APXvYqxsEOdI/TbviU+t1mY4ze8YjVAazSnJNErbC0plvZ8x7DPW2OqqiCoEdZvv/biHxUMFzeHnRQ==
-X-Received: by 2002:a05:600c:2c4d:: with SMTP id r13mr5530014wmg.112.1582734181103;
-        Wed, 26 Feb 2020 08:23:01 -0800 (PST)
-Received: from kwango.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id z133sm3588222wmb.7.2020.02.26.08.22.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 08:23:00 -0800 (PST)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     ceph-devel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH] libceph: simplify ceph_monc_handle_map()
-Date:   Wed, 26 Feb 2020 17:22:43 +0100
-Message-Id: <20200226162243.12028-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=lvfBxxRVXkV5hcBasOnA/07EoTrtbF59B5IHvDBc2eQ=;
+        b=ZAvOfyx0zWKRPIh6DKd4RJpDCxBGgfBkkYpTFGWLdx8U8ff5V3GecR8f3NC21BQYea
+         duT2roci+Col6hVCFbvivlC+Vcck+jJr97XR+bctg0jYDX8aGNkKg3mZf4NCIpmhV3Ks
+         5BBwc8S636ZZjiizLoTUEUP+oPpezQ+wFkAq9kaYtU2Rj89VYqMGt9VitJONIABFD/cK
+         FGraLHGLiW4ZK4TQ7PGGhSydaLi85SPDAchk0cebqaGd7hZO/XfNXs4PhhiV8RT4uJY7
+         vFEUx1C2/X+RRxC/wkD2YC59oAGoLr3DIun1LtQwI+xWa2H+F72R0Dv3liIpqUuV2mxy
+         J4Nw==
+X-Gm-Message-State: APjAAAVOT+2fl8F/t/V72cFgMgg+RVyp0I+J5+0i7qHKxYno0/XaM4MN
+        rnEB3iFHU6vI53jy9EBpQC9/rTO+BL+t/8Xj3yVqhN3n/ZCrnBdk5lgSp5+byOYKhmE1appDxdg
+        Zlw2KFeWavYDgx/rHr0y8FpPpA5rf3ZZgNA74qA==
+X-Received: by 2002:a37:93c3:: with SMTP id v186mr2202276qkd.456.1582762060368;
+        Wed, 26 Feb 2020 16:07:40 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxwk5L8DWcBjTFEw9hwtNmNuQRRvPfeOW7WseGl57wcpup017h7HNmetGYYG1wwjSXiiB4EMqXbC45QWXjkby8=
+X-Received: by 2002:a37:93c3:: with SMTP id v186mr2202247qkd.456.1582762060068;
+ Wed, 26 Feb 2020 16:07:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Yuri Weinstein <yweinste@redhat.com>
+Date:   Wed, 26 Feb 2020 16:07:28 -0800
+Message-ID: <CAMMFjmFAB2E_h7VhrCOBz-EUHHk0nrB=JSudfcOhCpA7FwNd6w@mail.gmail.com>
+Subject: Readiness for v13.2.9?
+To:     dev@ceph.io, "Development, Ceph" <ceph-devel@vger.kernel.org>,
+        Abhishek Lekshmanan <abhishek@suse.com>,
+        Nathan Cutler <ncutler@suse.cz>,
+        Casey Bodley <cbodley@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Neha Ojha <nojha@redhat.com>,
+        "Durgin, Josh" <jdurgin@redhat.com>,
+        David Zafman <dzafman@redhat.com>,
+        "Weil, Sage" <sweil@redhat.com>,
+        Ramana Venkatesh Raja <rraja@redhat.com>,
+        Tamilarasi Muthamizhan <tmuthami@redhat.com>,
+        "Dillaman, Jason" <dillaman@redhat.com>,
+        "Sadeh-Weinraub, Yehuda" <yehuda@redhat.com>,
+        "Lekshmanan, Abhishek" <abhishek.lekshmanan@gmail.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        ceph-qe-team <ceph-qe-team@redhat.com>,
+        Andrew Schoen <aschoen@redhat.com>, ceph-qa <ceph-qa@ceph.com>,
+        Matt Benjamin <mbenjamin@redhat.com>,
+        Sebastien Han <shan@redhat.com>,
+        Brad Hubbard <bhubbard@redhat.com>,
+        Venky Shankar <vshankar@redhat.com>,
+        David Galloway <dgallowa@redhat.com>,
+        Jan Fajerski <jfajerski@suse.com>,
+        Milind Changire <mchangir@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-ceph_monc_handle_map() confuses static checkers which report a
-false use-after-free on monc->monmap, missing that monc->monmap and
-client->monc.monmap is the same pointer.
+Below is the current queue of PRs:
+https://github.com/ceph/ceph/pulls?q=is%3Aopen+label%3Amimic-batch-1+label%3Aneeds-qa
 
-Use monc->monmap consistently and get rid of "old", which is redundant.
+Dev leads - pls add and tag all RRs that must be included.
 
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
----
- net/ceph/mon_client.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
-index 9d9e4e4ea600..3d8c8015e976 100644
---- a/net/ceph/mon_client.c
-+++ b/net/ceph/mon_client.c
-@@ -467,7 +467,7 @@ static void ceph_monc_handle_map(struct ceph_mon_client *monc,
- 				 struct ceph_msg *msg)
- {
- 	struct ceph_client *client = monc->client;
--	struct ceph_monmap *monmap = NULL, *old = monc->monmap;
-+	struct ceph_monmap *monmap;
- 	void *p, *end;
- 
- 	mutex_lock(&monc->mutex);
-@@ -484,13 +484,13 @@ static void ceph_monc_handle_map(struct ceph_mon_client *monc,
- 		goto out;
- 	}
- 
--	if (ceph_check_fsid(monc->client, &monmap->fsid) < 0) {
-+	if (ceph_check_fsid(client, &monmap->fsid) < 0) {
- 		kfree(monmap);
- 		goto out;
- 	}
- 
--	client->monc.monmap = monmap;
--	kfree(old);
-+	kfree(monc->monmap);
-+	monc->monmap = monmap;
- 
- 	__ceph_monc_got_map(monc, CEPH_SUB_MONMAP, monc->monmap->epoch);
- 	client->have_fsid = true;
--- 
-2.19.2
+Thx
+YuriW
 
