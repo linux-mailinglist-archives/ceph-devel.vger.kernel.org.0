@@ -2,129 +2,145 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97B78173960
-	for <lists+ceph-devel@lfdr.de>; Fri, 28 Feb 2020 15:07:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1035C173991
+	for <lists+ceph-devel@lfdr.de>; Fri, 28 Feb 2020 15:13:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbgB1OCE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 28 Feb 2020 09:02:04 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:46457 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbgB1OCE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 28 Feb 2020 09:02:04 -0500
-Received: by mail-il1-f194.google.com with SMTP id t17so2735507ilm.13;
-        Fri, 28 Feb 2020 06:02:03 -0800 (PST)
+        id S1726831AbgB1ONj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 28 Feb 2020 09:13:39 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:37310 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbgB1ONj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 28 Feb 2020 09:13:39 -0500
+Received: by mail-il1-f196.google.com with SMTP id a6so2823810ilc.4;
+        Fri, 28 Feb 2020 06:13:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=pWC6hUGSYTvKGmvspilEVbUqriHozG3huRtnRptYN7k=;
-        b=CL9iaiJX4jVWm0t6py+rKHh6pdcu5gyKwJRrMtGHpgMZi145sJNBYXihHNDyac/03g
-         e1z6KcUyjk9Z8d3GKt2Gjyy9MWP/SUXcRsqxZjK92/Mmur3u11EOQIACt8dCqe8wQF07
-         mhvTm9Txebr5p4rSvd4A1JInMNFuU8cdTcvt24bWYxRs1Cgw2a40s6WHz9sOwUTAfk4S
-         LgcNqXkeS2OONibFl5eN+k44de5K15NMenTt+L2efou1krG2rVi8xCEKIa1CzALKr3NH
-         YmkR/U4ssm1MxThEza9F+zfv/wh9UW/1nUKf4QNEbkkVUY9nRjn9mdeSUcwmearxAyeO
-         dqug==
+        bh=1vX3IGGP77c2b/3UBHdZdGDWsxibLNsHOtAy3Rk4ea4=;
+        b=eb5jF9862cw9ZNPWS2BvKJuITHtXepRuabw7mxV7xRO+8D+2SngMexFxgDTVD+V35t
+         oHVN6Ce4xkmFc7ISDc7IMIBCBYRIIwmYsx3NSZqeTVvi9eYu4/zkw81aHP8+AOrfb4aT
+         hDmO9chY/TibE2rw06l2pOvmQ5ncep1JWCow0G9ag2U53lTNDYvkL7CHv9726DMOz0GN
+         N3J0GghJvjRzRlLex3aSibA70NvsVJo2uw0MCdVVqvR4mThQRMca2LtykoMtRYw1WPPN
+         oPGV0iMjabGSrkTDOhgV/0kPT5qNaacw1iGqUPR6TgRk0rTBhiwCx8OYJJJG3pvgHSIe
+         SgVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pWC6hUGSYTvKGmvspilEVbUqriHozG3huRtnRptYN7k=;
-        b=oG5bx8T6W9OQwHn9AYGUYj4oXQFoKlDfmtZ15eRJXSgDSCl9rHZgRIVPDMViihKU/P
-         WlnB5cXubHbGiiiSBq91pu3qkPRTIrzBmSt5gmvFjb/809d1FywYbxaQSPcEMkhywQ80
-         dOCvpB9HvQIzKZqkfv/iBJs6O3dAeUXvYxsLBAziSZuH0wWgdnn7R1KZ1lu3sHqaUFIo
-         gYtp1mDV8Mb+GlVpkctu7ooNm0z5CA2p1X/6J8VplpP/xL4NHrdUYEZEivnxZtRMzSdf
-         PkLbqw3O6PZ2a0zunffjaM8ifOWBS6s3mXzcpHOaAFLJUpnTSEjonmCEVDnaQ024lEc1
-         UgZg==
-X-Gm-Message-State: APjAAAU9uF/P19KsE5S57E7KBk55l2HE/NLc316Xz1uIqskbqXXN9Ynv
-        DJ8OwSq/GxKWBEvJnARx8Mgx2l3zm9kNj3/9MkqtohyB+mw=
-X-Google-Smtp-Source: APXvYqzpizMXzoB3+5TWvVXyeS0Arlh5AwX7bFUMwjwM78tpaENzJ68sgFyqQcY1mE799R1L7Cnw1e0fq1moKsAd8zU=
-X-Received: by 2002:a92:3991:: with SMTP id h17mr4670801ilf.131.1582898523278;
- Fri, 28 Feb 2020 06:02:03 -0800 (PST)
+        bh=1vX3IGGP77c2b/3UBHdZdGDWsxibLNsHOtAy3Rk4ea4=;
+        b=edR4c6MCdhMp2VjeEBa2bbC01g/CwLU0XHrH2OW3GlYwT5WLdrIegAN+ITOfbUD+iO
+         LyfGP6ra7lP25bSQZn9g7FiJOAygDRAYyjZ6bWD+uq6wn/M76wijfumomlN+caLNz6iL
+         Fa6s5CxXhYNpoK87WuZMHz1fbdytpkCPocvkxqpCP2clkNk6HAA8uIW5vNK9gbMFFe7+
+         Gxjn99cAATSmVFjr6YPFiqjKsEtd51y3V9kapT4xzrf8DOzqBuu6n3Dr4gXRUx0QQbjL
+         PbfaXqTDVUkgJxWdSAz8AsdQ3Cw29Vcc8L4eQ8IS6zCEis2Aa4gWntxL5X3DmiZA3cmk
+         KD4g==
+X-Gm-Message-State: APjAAAV+sXyUHvlAuoNBXY2cH+8D2f//3g7HqMwbKxAKJqagdttHtud+
+        NatzMV/H6uWOH7acQB1pbgRIm8nsj+mnwaIZIWo=
+X-Google-Smtp-Source: APXvYqxv4pjc0mDsPsYIF8OsFcm97Hn8jLb7CSA55Nkj4jwxNpC4wckooDbw1Z4EEjs5UBMaly87MDsrWBLMiCvEa7A=
+X-Received: by 2002:a05:6e02:4c:: with SMTP id i12mr4248350ilr.112.1582899217185;
+ Fri, 28 Feb 2020 06:13:37 -0800 (PST)
 MIME-Version: 1.0
-References: <20200228044518.20314-1-gmayyyha@gmail.com> <CAOi1vP-K+e0N26qpthLcst8HLE-FAMGSE9XwBhj1dPBiLyN-iA@mail.gmail.com>
- <CAB9OAC0dURDHgqGDVCg_Gd+EhH-9_n4-mycgsqfxS64GRgd4Og@mail.gmail.com>
-In-Reply-To: <CAB9OAC0dURDHgqGDVCg_Gd+EhH-9_n4-mycgsqfxS64GRgd4Og@mail.gmail.com>
+References: <6ea7e486-a3f3-7def-1f88-2e645e3b9780@canonical.com> <6567c8fa690d9f9a0682ee22e528fcd5e3b51212.camel@kernel.org>
+In-Reply-To: <6567c8fa690d9f9a0682ee22e528fcd5e3b51212.camel@kernel.org>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Fri, 28 Feb 2020 15:01:56 +0100
-Message-ID: <CAOi1vP_opdc=OP70T2eiamMWa-o71nU8t_LYyTCytqT5BT8gdQ@mail.gmail.com>
-Subject: Re: [PATCH] ceph: using POOL FULL flag instead of OSDMAP FULL flag
-To:     Yanhu Cao <gmayyyha@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>, kuba@kernel.org,
+Date:   Fri, 28 Feb 2020 15:13:30 +0100
+Message-ID: <CAOi1vP8wYvmngMCig3nJg45J93D2Ah=m3J91YpgRZ9hhscLe6w@mail.gmail.com>
+Subject: Re: libceph: follow redirect replies from osds
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Sage Weil <sage@redhat.co>,
         Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 12:41 PM Yanhu Cao <gmayyyha@gmail.com> wrote:
+On Fri, Feb 28, 2020 at 3:01 PM Jeff Layton <jlayton@kernel.org> wrote:
 >
-> On Fri, Feb 28, 2020 at 6:23 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+> On Fri, 2020-02-28 at 12:46 +0000, Colin Ian King wrote:
+> > Hi,
 > >
-> > On Fri, Feb 28, 2020 at 5:45 AM Yanhu Cao <gmayyyha@gmail.com> wrote:
-> > >
-> > > OSDMAP_FULL and OSDMAP_NEARFULL are deprecated since mimic.
-> > >
-> > > Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
-> > > ---
-> > >  fs/ceph/file.c                  |  6 ++++--
-> > >  include/linux/ceph/osd_client.h |  2 ++
-> > >  include/linux/ceph/osdmap.h     |  3 ++-
-> > >  net/ceph/osd_client.c           | 23 +++++++++++++----------
-> > >  4 files changed, 21 insertions(+), 13 deletions(-)
-> > >
-> > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > > index 7e0190b1f821..60ea1eed1b84 100644
-> > > --- a/fs/ceph/file.c
-> > > +++ b/fs/ceph/file.c
-> > > @@ -1482,7 +1482,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> > >         }
-> > >
-> > >         /* FIXME: not complete since it doesn't account for being at quota */
-> > > -       if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_FULL)) {
-> > > +       if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
-> > > +                               CEPH_POOL_FLAG_FULL)) {
-> > >                 err = -ENOSPC;
-> > >                 goto out;
-> > >         }
-> > > @@ -1575,7 +1576,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> > >         }
-> > >
-> > >         if (written >= 0) {
-> > > -               if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
-> > > +               if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
-> > > +                                       CEPH_POOL_FLAG_NEARFULL))
+> > Static analysis with Coverity has detected a potential issue in the
+> > following commit in function ceph_redirect_decode():
 > >
-> > Hi Yanhu,
+> > commit 205ee1187a671c3b067d7f1e974903b44036f270
+> > Author: Ilya Dryomov <ilya.dryomov@inktank.com>
+> > Date:   Mon Jan 27 17:40:20 2014 +0200
 > >
-> > Have you considered pre-mimic clusters here?  They are still supported
-> > (and will continue to be supported for the foreseeable future).
+> >     libceph: follow redirect replies from osds
 > >
-> > Thanks,
+> > The issue is as follows:
 > >
-> >                 Ilya
+> >
+> > 3486        len = ceph_decode_32(p);
+> >
+> > Unused value (UNUSED_VALUE)
+> > assigned_pointer: Assigning value from len to *p here, but that stored
+> > value is overwritten before it can be used.
+> >
+> > 3487        *p += len; /* skip osd_instructions */
+> > 3488
+> > 3489        /* skip the rest */
+> >
+> > value_overwrite: Overwriting previous write to *p with value from
+> > struct_end.
+> >
+> > 3490        *p = struct_end;
+> >
+> > The *p assignment in line 3487 is effectively being overwritten by the
+> > *p assignment in 3490.  Maybe the following is correct:
+> >
+> >         len = ceph_decode_32(p);
+> > -       p += len; /* skip osd_instructions */
+> > +       struct_end = *p + len;  /* skip osd_instructions */
+> >
+> >         /* skip the rest */
+> >         *p = struct_end;
+> >
+> > I'm not familiar with the ceph structure here, so I'm not sure what the
+> > correct fix would be.
+> >
 >
-> I have tested it work on Luminous, I think it work too since
-> ceph-v0.80(https://github.com/ceph/ceph/blob/b78644e7dee100e48dfeca32c9270a6b210d3003/src/osd/osd_types.h#L815)
-> alread have pool FLAG_FULL.
-
-But not FLAG_NEARFULL, which appeared in mimic.
-
+> Probably something like this? (untested, of course)
 >
-> CephFS doesn't write synchronously even if CEPH_OSDMAP_NEARFULL is
-> used, then should fixed by CEPH_POOL_FLAG_NEARFULL.
+> ----------------------
+>
+> [PATCH] libceph: fix up Coverity warning in ceph_redirect_decode
+>
+> We're going to skip to the end of the msg after checking the
+> object_name anyway, so there is no need to separately decode
+> the osd instructions that follow it.
+>
+> Reported-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  net/ceph/osd_client.c | 3 ---
+>  1 file changed, 3 deletions(-)
+>
+> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> index 8ff2856e2d52..51810db4130a 100644
+> --- a/net/ceph/osd_client.c
+> +++ b/net/ceph/osd_client.c
+> @@ -3483,9 +3483,6 @@ static int ceph_redirect_decode(void **p, void
+> *end,
+>                 goto e_inval;
+>         }
+>
+> -       len = ceph_decode_32(p);
+> -       *p += len; /* skip osd_instructions */
+> -
+>         /* skip the rest */
+>         *p = struct_end;
+>  out:
 
-I'm not sure I follow.
+Yeah, I have had the same patch in a local branch here since last year:
 
--    if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
-+    if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
-+                            CEPH_POOL_FLAG_NEARFULL))
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg2092861.html
 
-AFAICT this change would effectively disable this branch for pre-mimic
-clusters.  Are you saying this branch is already broken?
+I'll make sure to push it out this time ;)
 
 Thanks,
 
