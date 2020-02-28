@@ -2,52 +2,52 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D512173534
-	for <lists+ceph-devel@lfdr.de>; Fri, 28 Feb 2020 11:23:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69D27173644
+	for <lists+ceph-devel@lfdr.de>; Fri, 28 Feb 2020 12:42:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbgB1KXd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 28 Feb 2020 05:23:33 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:40331 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726614AbgB1KXc (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 28 Feb 2020 05:23:32 -0500
-Received: by mail-io1-f66.google.com with SMTP id x1so2842829iop.7;
-        Fri, 28 Feb 2020 02:23:32 -0800 (PST)
+        id S1726451AbgB1Ll4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 28 Feb 2020 06:41:56 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:39011 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbgB1Ll4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 28 Feb 2020 06:41:56 -0500
+Received: by mail-ua1-f68.google.com with SMTP id c21so849651uam.6;
+        Fri, 28 Feb 2020 03:41:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=IHJZiLPZ3d84yInYn+06VlShgDYFte97xEhqlxTF18E=;
-        b=fdr2DIkB8LHJz9/EjmLx9Q7PWWivAJOWiGOjqHdyhtpkd67QTw1bG8Y8JsDvd9O0kT
-         3COh6VCFUO9h6ir3Rb1V5a4ZH9VbnV4HpTfZPV1i6ZTZn9EWNpE4Hp4TOz9JGwB7kuZj
-         MnuD+wywq3Q58rCRkg+Ty5og4chuYSvR9lww9m7gbq8ztkGlC1RHozLDAH3ev7PKofwf
-         zFLPbG/alRlb1087Dn86bo4NpHY31zlxMLx+Dh9M33yl8+zRapIP+mRKUe8FvOq3V+YO
-         PTAbUPTFpxP+QjoFCicgfA2BGRaQR4VytaNJJc6KnCOjvQKQ7MUMslH/Vn0xpMQdAvZN
-         IpIg==
+        bh=qgRBXu3UXujfUu/YLJD5NKUPvJ1HubicGzZMJLwxdxg=;
+        b=IAEW3CVv+KdBq/tsDmXVgbaGMpkVLw+nS6/uh+feLTX2l/1du9WV8lusAvjmcEmOIV
+         bNu2OCsnBP45jQuDGoCKbt9l5pmQE8rHCL3QyU0kWtTKlSWNdfw8NzPLglFuHqGjA4of
+         eWRId6NmuKmUVV4FBVpvpsKuH2jKQMyqVoYkZ792Gn63fWXY7177B2UB469VAukJ3/Yn
+         zGHrRZBilpo6WHVZtm465Eth9XVfMRS/9d7NjqyIVBoKtXA9qvyAKaWaYw7isPvoHRNW
+         jzU1nMB430hd4068R/xsTj59X4e47eyMJOsC3Vf51CwwRs+P8z7eqRL4NawHSJPXYN8Z
+         yigg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=IHJZiLPZ3d84yInYn+06VlShgDYFte97xEhqlxTF18E=;
-        b=dv6k+tbvCb4gz0+ZJ7Ly1ip6rMZTMIZ4Yw0fVFJF+iEQNgNBGrzjytnv6+h6Gzzwnd
-         VzpYSAyAHv6Kg4We5rR3Si9/0FVcw3pbh8mXP02yqI2l5lZlhxDIfVn/CAsVMPrf0PhN
-         1E1OZYuM6XAmFAzQvS15hvE25neht4cko0y9K3l9IU0VXV1uUG5BOMO8uNeTW+uynRCn
-         sPrSgj6RvjRXxkXVGEG9fZt751nerbbefh+U91f0pqxOFanzOUH4toI2nhuaf0IiFlr8
-         C2Mq19O+Bz1NlkgUuZ0XFXq6AQeM/Tk4cVya4O3CpcxwIvo3r4RtQqzIZ2nzVJ9huwoP
-         h1RA==
-X-Gm-Message-State: APjAAAVuhOIc3k+F+pImqb3K0lxH1bgo1pLczLgLdeZMlvvkgPjg5HWA
-        D2OapSsH1iCIwZ1uq0dHAzfT9P0UIR/4EJAYN9A=
-X-Google-Smtp-Source: APXvYqxMrFonMOeeWgF3H4kyIbFxNkNfxuh6QUZc4eEnjbUcCaH4zISiGpEczOH1OFW7Fp0285tV6vjUB4n6kx37qhQ=
-X-Received: by 2002:a6b:9188:: with SMTP id t130mr2801012iod.215.1582885411923;
- Fri, 28 Feb 2020 02:23:31 -0800 (PST)
+        bh=qgRBXu3UXujfUu/YLJD5NKUPvJ1HubicGzZMJLwxdxg=;
+        b=CidnHKZXUjNIDdsJbKGsHViptlw2bO+921uqoo5JgE66zGNVPsveB3qRyROUH36O07
+         rjS+Qg4mD78O1dDIJ2m/rD9ricykbUlIRlethFE99VzKZea7/C0lm6o6dhwE7W8Bsb8f
+         ys0yKNVNgdRCWTdjroJyDzRYLoPTi2KZg2G9x9yRAoGOEYBthgOXtD8j+EHHWRs2aSX6
+         /p5yc1R/2Wx6I+pEMYtdg4rwTgdTMMkHpv7kHiFB2DWMH5p32rvjHFiRQam3qvIdAVsa
+         vQ2l5x4tPE+q/h2Jajl84PciNimbQTBNCKdsPmbsm6A4NXIMUDMlYVDDF2mYwBJ8YR9g
+         1G9A==
+X-Gm-Message-State: ANhLgQ2iXziaWLLLYnNCHOBbG75iZBgFvQJtAMXNwMCzUVAvK99IDRxe
+        +UltbXMauKF8Q6Ur/AU+wa2jLZVN0r4urAY7qeDlzdOtsw4=
+X-Google-Smtp-Source: ADFU+vviIyKdulGmcFSh6KBXyhcte0zMAWs0zR8cPkGD3oMYMNar1XHGJ2FhVykv3IvpNgamMnEP8S9KxVjPWCkDT7I=
+X-Received: by 2002:a9f:3b02:: with SMTP id i2mr1670019uah.33.1582890115091;
+ Fri, 28 Feb 2020 03:41:55 -0800 (PST)
 MIME-Version: 1.0
-References: <20200228044518.20314-1-gmayyyha@gmail.com>
-In-Reply-To: <20200228044518.20314-1-gmayyyha@gmail.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Fri, 28 Feb 2020 11:23:25 +0100
-Message-ID: <CAOi1vP-K+e0N26qpthLcst8HLE-FAMGSE9XwBhj1dPBiLyN-iA@mail.gmail.com>
+References: <20200228044518.20314-1-gmayyyha@gmail.com> <CAOi1vP-K+e0N26qpthLcst8HLE-FAMGSE9XwBhj1dPBiLyN-iA@mail.gmail.com>
+In-Reply-To: <CAOi1vP-K+e0N26qpthLcst8HLE-FAMGSE9XwBhj1dPBiLyN-iA@mail.gmail.com>
+From:   Yanhu Cao <gmayyyha@gmail.com>
+Date:   Fri, 28 Feb 2020 19:41:44 +0800
+Message-ID: <CAB9OAC0dURDHgqGDVCg_Gd+EhH-9_n4-mycgsqfxS64GRgd4Og@mail.gmail.com>
 Subject: Re: [PATCH] ceph: using POOL FULL flag instead of OSDMAP FULL flag
-To:     Yanhu Cao <gmayyyha@gmail.com>
+To:     Ilya Dryomov <idryomov@gmail.com>
 Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
         "David S. Miller" <davem@davemloft.net>, kuba@kernel.org,
         Ceph Development <ceph-devel@vger.kernel.org>,
@@ -59,45 +59,54 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 5:45 AM Yanhu Cao <gmayyyha@gmail.com> wrote:
+On Fri, Feb 28, 2020 at 6:23 PM Ilya Dryomov <idryomov@gmail.com> wrote:
 >
-> OSDMAP_FULL and OSDMAP_NEARFULL are deprecated since mimic.
+> On Fri, Feb 28, 2020 at 5:45 AM Yanhu Cao <gmayyyha@gmail.com> wrote:
+> >
+> > OSDMAP_FULL and OSDMAP_NEARFULL are deprecated since mimic.
+> >
+> > Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> > ---
+> >  fs/ceph/file.c                  |  6 ++++--
+> >  include/linux/ceph/osd_client.h |  2 ++
+> >  include/linux/ceph/osdmap.h     |  3 ++-
+> >  net/ceph/osd_client.c           | 23 +++++++++++++----------
+> >  4 files changed, 21 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > index 7e0190b1f821..60ea1eed1b84 100644
+> > --- a/fs/ceph/file.c
+> > +++ b/fs/ceph/file.c
+> > @@ -1482,7 +1482,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> >         }
+> >
+> >         /* FIXME: not complete since it doesn't account for being at quota */
+> > -       if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_FULL)) {
+> > +       if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
+> > +                               CEPH_POOL_FLAG_FULL)) {
+> >                 err = -ENOSPC;
+> >                 goto out;
+> >         }
+> > @@ -1575,7 +1576,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> >         }
+> >
+> >         if (written >= 0) {
+> > -               if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
+> > +               if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
+> > +                                       CEPH_POOL_FLAG_NEARFULL))
 >
-> Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
-> ---
->  fs/ceph/file.c                  |  6 ++++--
->  include/linux/ceph/osd_client.h |  2 ++
->  include/linux/ceph/osdmap.h     |  3 ++-
->  net/ceph/osd_client.c           | 23 +++++++++++++----------
->  4 files changed, 21 insertions(+), 13 deletions(-)
+> Hi Yanhu,
 >
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 7e0190b1f821..60ea1eed1b84 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1482,7 +1482,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
->         }
+> Have you considered pre-mimic clusters here?  They are still supported
+> (and will continue to be supported for the foreseeable future).
 >
->         /* FIXME: not complete since it doesn't account for being at quota */
-> -       if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_FULL)) {
-> +       if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
-> +                               CEPH_POOL_FLAG_FULL)) {
->                 err = -ENOSPC;
->                 goto out;
->         }
-> @@ -1575,7 +1576,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
->         }
+> Thanks,
 >
->         if (written >= 0) {
-> -               if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
-> +               if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
-> +                                       CEPH_POOL_FLAG_NEARFULL))
+>                 Ilya
 
-Hi Yanhu,
+I have tested it work on Luminous, I think it work too since
+ceph-v0.80(https://github.com/ceph/ceph/blob/b78644e7dee100e48dfeca32c9270a6b210d3003/src/osd/osd_types.h#L815)
+alread have pool FLAG_FULL.
 
-Have you considered pre-mimic clusters here?  They are still supported
-(and will continue to be supported for the foreseeable future).
-
-Thanks,
-
-                Ilya
+CephFS doesn't write synchronously even if CEPH_OSDMAP_NEARFULL is
+used, then should fixed by CEPH_POOL_FLAG_NEARFULL.
