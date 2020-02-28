@@ -2,111 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69D27173644
-	for <lists+ceph-devel@lfdr.de>; Fri, 28 Feb 2020 12:42:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB7291736AA
+	for <lists+ceph-devel@lfdr.de>; Fri, 28 Feb 2020 12:56:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726451AbgB1Ll4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 28 Feb 2020 06:41:56 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:39011 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbgB1Ll4 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 28 Feb 2020 06:41:56 -0500
-Received: by mail-ua1-f68.google.com with SMTP id c21so849651uam.6;
-        Fri, 28 Feb 2020 03:41:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qgRBXu3UXujfUu/YLJD5NKUPvJ1HubicGzZMJLwxdxg=;
-        b=IAEW3CVv+KdBq/tsDmXVgbaGMpkVLw+nS6/uh+feLTX2l/1du9WV8lusAvjmcEmOIV
-         bNu2OCsnBP45jQuDGoCKbt9l5pmQE8rHCL3QyU0kWtTKlSWNdfw8NzPLglFuHqGjA4of
-         eWRId6NmuKmUVV4FBVpvpsKuH2jKQMyqVoYkZ792Gn63fWXY7177B2UB469VAukJ3/Yn
-         zGHrRZBilpo6WHVZtm465Eth9XVfMRS/9d7NjqyIVBoKtXA9qvyAKaWaYw7isPvoHRNW
-         jzU1nMB430hd4068R/xsTj59X4e47eyMJOsC3Vf51CwwRs+P8z7eqRL4NawHSJPXYN8Z
-         yigg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qgRBXu3UXujfUu/YLJD5NKUPvJ1HubicGzZMJLwxdxg=;
-        b=CidnHKZXUjNIDdsJbKGsHViptlw2bO+921uqoo5JgE66zGNVPsveB3qRyROUH36O07
-         rjS+Qg4mD78O1dDIJ2m/rD9ricykbUlIRlethFE99VzKZea7/C0lm6o6dhwE7W8Bsb8f
-         ys0yKNVNgdRCWTdjroJyDzRYLoPTi2KZg2G9x9yRAoGOEYBthgOXtD8j+EHHWRs2aSX6
-         /p5yc1R/2Wx6I+pEMYtdg4rwTgdTMMkHpv7kHiFB2DWMH5p32rvjHFiRQam3qvIdAVsa
-         vQ2l5x4tPE+q/h2Jajl84PciNimbQTBNCKdsPmbsm6A4NXIMUDMlYVDDF2mYwBJ8YR9g
-         1G9A==
-X-Gm-Message-State: ANhLgQ2iXziaWLLLYnNCHOBbG75iZBgFvQJtAMXNwMCzUVAvK99IDRxe
-        +UltbXMauKF8Q6Ur/AU+wa2jLZVN0r4urAY7qeDlzdOtsw4=
-X-Google-Smtp-Source: ADFU+vviIyKdulGmcFSh6KBXyhcte0zMAWs0zR8cPkGD3oMYMNar1XHGJ2FhVykv3IvpNgamMnEP8S9KxVjPWCkDT7I=
-X-Received: by 2002:a9f:3b02:: with SMTP id i2mr1670019uah.33.1582890115091;
- Fri, 28 Feb 2020 03:41:55 -0800 (PST)
+        id S1726661AbgB1L4A (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 28 Feb 2020 06:56:00 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:20286 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726631AbgB1L4A (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 28 Feb 2020 06:56:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582890959;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=WsNfg4ZiCIQ4+sf3HaTPwSrgnKTc3A8/MlgelaERrk4=;
+        b=O3vWb12QV90NfQjmBIZsHKUOeeINrmE/0RY4vjHUTQm7NXh2lZIM7H0wIb40fe7lOukZ/p
+        v1z5ZEasGVLooZgvJsv/9DxuDtaVLUt2IXw9NEvIimsr2FWg4ho0tXVYEebACzTSjlKhEb
+        A1McmdVKtUEVwmUS08ezydQF5PMN8xE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-256-teb8JpgtN4qQFT0sI_idRg-1; Fri, 28 Feb 2020 06:55:56 -0500
+X-MC-Unique: teb8JpgtN4qQFT0sI_idRg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 203A713E4;
+        Fri, 28 Feb 2020 11:55:55 +0000 (UTC)
+Received: from zhyan-laptop.redhat.com (ovpn-12-212.pek2.redhat.com [10.72.12.212])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 408275C54A;
+        Fri, 28 Feb 2020 11:55:52 +0000 (UTC)
+From:   "Yan, Zheng" <zyan@redhat.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     jlayton@kernel.org, "Yan, Zheng" <zyan@redhat.com>
+Subject: [PATCH v3 0/6] ceph: don't request caps for idle open files
+Date:   Fri, 28 Feb 2020 19:55:44 +0800
+Message-Id: <20200228115550.6904-1-zyan@redhat.com>
 MIME-Version: 1.0
-References: <20200228044518.20314-1-gmayyyha@gmail.com> <CAOi1vP-K+e0N26qpthLcst8HLE-FAMGSE9XwBhj1dPBiLyN-iA@mail.gmail.com>
-In-Reply-To: <CAOi1vP-K+e0N26qpthLcst8HLE-FAMGSE9XwBhj1dPBiLyN-iA@mail.gmail.com>
-From:   Yanhu Cao <gmayyyha@gmail.com>
-Date:   Fri, 28 Feb 2020 19:41:44 +0800
-Message-ID: <CAB9OAC0dURDHgqGDVCg_Gd+EhH-9_n4-mycgsqfxS64GRgd4Og@mail.gmail.com>
-Subject: Re: [PATCH] ceph: using POOL FULL flag instead of OSDMAP FULL flag
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>, kuba@kernel.org,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 6:23 PM Ilya Dryomov <idryomov@gmail.com> wrote:
->
-> On Fri, Feb 28, 2020 at 5:45 AM Yanhu Cao <gmayyyha@gmail.com> wrote:
-> >
-> > OSDMAP_FULL and OSDMAP_NEARFULL are deprecated since mimic.
-> >
-> > Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
-> > ---
-> >  fs/ceph/file.c                  |  6 ++++--
-> >  include/linux/ceph/osd_client.h |  2 ++
-> >  include/linux/ceph/osdmap.h     |  3 ++-
-> >  net/ceph/osd_client.c           | 23 +++++++++++++----------
-> >  4 files changed, 21 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > index 7e0190b1f821..60ea1eed1b84 100644
-> > --- a/fs/ceph/file.c
-> > +++ b/fs/ceph/file.c
-> > @@ -1482,7 +1482,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> >         }
-> >
-> >         /* FIXME: not complete since it doesn't account for being at quota */
-> > -       if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_FULL)) {
-> > +       if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
-> > +                               CEPH_POOL_FLAG_FULL)) {
-> >                 err = -ENOSPC;
-> >                 goto out;
-> >         }
-> > @@ -1575,7 +1576,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> >         }
-> >
-> >         if (written >= 0) {
-> > -               if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
-> > +               if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
-> > +                                       CEPH_POOL_FLAG_NEARFULL))
->
-> Hi Yanhu,
->
-> Have you considered pre-mimic clusters here?  They are still supported
-> (and will continue to be supported for the foreseeable future).
->
-> Thanks,
->
->                 Ilya
+This series make cephfs client not request caps for open files that
+idle for a long time. For the case that one active client and multiple
+standby clients open the same file, this increase the possibility that
+mds issues exclusive caps to the active client.
 
-I have tested it work on Luminous, I think it work too since
-ceph-v0.80(https://github.com/ceph/ceph/blob/b78644e7dee100e48dfeca32c9270a6b210d3003/src/osd/osd_types.h#L815)
-alread have pool FLAG_FULL.
+Yan, Zheng (4):
+  ceph: always renew caps if mds_wanted is insufficient
+  ceph: consider inode's last read/write when calculating wanted caps
+  ceph: simplify calling of ceph_get_fmode()
+  ceph: remove delay check logic from ceph_check_caps()
 
-CephFS doesn't write synchronously even if CEPH_OSDMAP_NEARFULL is
-used, then should fixed by CEPH_POOL_FLAG_NEARFULL.
+ fs/ceph/caps.c               | 324 +++++++++++++++--------------------
+ fs/ceph/file.c               |  39 ++---
+ fs/ceph/inode.c              |  19 +-
+ fs/ceph/ioctl.c              |   2 +
+ fs/ceph/mds_client.c         |   5 -
+ fs/ceph/super.h              |  35 ++--
+ include/linux/ceph/ceph_fs.h |   1 +
+ 7 files changed, 188 insertions(+), 237 deletions(-)
+
+changes since v2
+ - make __ceph_caps_file_wanted more readable
+ - add patch 5 and 6, which fix hung write during testing patch 1~4
+
+--=20
+2.21.1
+
