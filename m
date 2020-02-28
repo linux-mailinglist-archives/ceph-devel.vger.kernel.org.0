@@ -2,95 +2,121 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E4091736B2
-	for <lists+ceph-devel@lfdr.de>; Fri, 28 Feb 2020 12:57:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06801173779
+	for <lists+ceph-devel@lfdr.de>; Fri, 28 Feb 2020 13:46:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbgB1L4Q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 28 Feb 2020 06:56:16 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:51869 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726809AbgB1L4Q (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 28 Feb 2020 06:56:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582890975;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DPJvPIuYIol3U7Gd+gFzJM5jAe3kfjGmfYJSZVYcyZw=;
-        b=ZIvjgzwbvDSnrPN1GgSwMtQPgHBqmnXRaAUHeG3CXzJpbRzoTFEL2F9JuuFg9p+sElSwTd
-        Pc9scxLTrOLmdx3ElZOHawX3bDh8lraWg4sm5oA0GteYS0Zx6FsrxtGmgOrSMH4vQqRxhx
-        BRuPnaOQpUOaiFveuc+1yitdpJ5kxIE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-47-dtsZl6ACMaq1iKNho7FsIQ-1; Fri, 28 Feb 2020 06:56:11 -0500
-X-MC-Unique: dtsZl6ACMaq1iKNho7FsIQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7936C13F6;
-        Fri, 28 Feb 2020 11:56:10 +0000 (UTC)
-Received: from zhyan-laptop.redhat.com (ovpn-12-212.pek2.redhat.com [10.72.12.212])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1857E5C54A;
-        Fri, 28 Feb 2020 11:56:07 +0000 (UTC)
-From:   "Yan, Zheng" <zyan@redhat.com>
-To:     ceph-devel@vger.kernel.org
-Cc:     jlayton@kernel.org, "Yan, Zheng" <zyan@redhat.com>
-Subject: [PATCH v3 6/6] ceph: check all mds' caps after page writeback
-Date:   Fri, 28 Feb 2020 19:55:50 +0800
-Message-Id: <20200228115550.6904-7-zyan@redhat.com>
-In-Reply-To: <20200228115550.6904-1-zyan@redhat.com>
-References: <20200228115550.6904-1-zyan@redhat.com>
+        id S1726584AbgB1MqP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 28 Feb 2020 07:46:15 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:45246 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbgB1MqO (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 28 Feb 2020 07:46:14 -0500
+Received: from [82.43.126.140] (helo=[192.168.0.11])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1j7f1w-0005r1-H0; Fri, 28 Feb 2020 12:46:12 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.co>,
+        ceph-devel@vger.kernel.org
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Colin Ian King <colin.king@canonical.com>
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Subject: re: libceph: follow redirect replies from osds
+Message-ID: <6ea7e486-a3f3-7def-1f88-2e645e3b9780@canonical.com>
+Date:   Fri, 28 Feb 2020 12:46:11 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-If an inode has caps from multiple mds, following case can happen.
+Hi,
 
-- non-auth mds revokes Fsc. Fcb is used, so page writeback is queued.
-- when writeback finishes, ceph_check_caps() is called with auth only
-  flag. ceph_check_caps() invalidates pagecache, but skip checking any
-  non-auth caps.
+Static analysis with Coverity has detected a potential issue in the
+following commit in function ceph_redirect_decode():
 
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
----
- fs/ceph/caps.c  | 2 +-
- fs/ceph/inode.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+commit 205ee1187a671c3b067d7f1e974903b44036f270
+Author: Ilya Dryomov <ilya.dryomov@inktank.com>
+Date:   Mon Jan 27 17:40:20 2014 +0200
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 49f773247044..9b3d5816c109 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -3018,7 +3018,7 @@ void ceph_put_wrbuffer_cap_refs(struct ceph_inode_i=
-nfo *ci, int nr,
- 	spin_unlock(&ci->i_ceph_lock);
-=20
- 	if (last) {
--		ceph_check_caps(ci, CHECK_CAPS_AUTHONLY, NULL);
-+		ceph_check_caps(ci, 0, NULL);
- 	} else if (flush_snaps) {
- 		ceph_flush_snaps(ci, NULL);
- 	}
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 5a8fa8a2d3cf..896d30820035 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1974,7 +1974,7 @@ void __ceph_do_pending_vmtruncate(struct inode *ino=
-de)
- 	mutex_unlock(&ci->i_truncate_mutex);
-=20
- 	if (wrbuffer_refs =3D=3D 0)
--		ceph_check_caps(ci, CHECK_CAPS_AUTHONLY, NULL);
-+		ceph_check_caps(ci, 0, NULL);
-=20
- 	wake_up_all(&ci->i_cap_wq);
- }
---=20
-2.21.1
+    libceph: follow redirect replies from osds
 
+The issue is as follows:
+
+
+3486        len = ceph_decode_32(p);
+
+Unused value (UNUSED_VALUE)
+assigned_pointer: Assigning value from len to *p here, but that stored
+value is overwritten before it can be used.
+
+3487        *p += len; /* skip osd_instructions */
+3488
+3489        /* skip the rest */
+
+value_overwrite: Overwriting previous write to *p with value from
+struct_end.
+
+3490        *p = struct_end;
+
+The *p assignment in line 3487 is effectively being overwritten by the
+*p assignment in 3490.  Maybe the following is correct:
+
+        len = ceph_decode_32(p);
+-       p += len; /* skip osd_instructions */
++       struct_end = *p + len;  /* skip osd_instructions */
+
+        /* skip the rest */
+        *p = struct_end;
+
+I'm not familiar with the ceph structure here, so I'm not sure what the
+correct fix would be.
+
+Colin
