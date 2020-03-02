@@ -2,184 +2,96 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CA74175D19
-	for <lists+ceph-devel@lfdr.de>; Mon,  2 Mar 2020 15:31:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CB2D175EB7
+	for <lists+ceph-devel@lfdr.de>; Mon,  2 Mar 2020 16:51:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbgCBObK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 2 Mar 2020 09:31:10 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37026 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbgCBObK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 2 Mar 2020 09:31:10 -0500
-Received: by mail-io1-f66.google.com with SMTP id c17so11729771ioc.4;
-        Mon, 02 Mar 2020 06:31:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wNDSV7AjbdqMEhUgCnb4ZuCmcZN7e3FtRa4jkdhZHu8=;
-        b=TzfWHSevbJijEnbliKINPPMg40x/XzP4ahC4HyWJpU30I6VOKIH1dQjL4ZuRS/u6Xz
-         rxjjLWRK/bYLv2TATxNvxF3jvuaMgJaJl/ecmNli2zfZa6VsAJF3VezG1D+AX7AL/xiG
-         Xv81DrrjD18/VAQtU/SS60ZHWxAIZAUMCA0FzhhDfVB6d1Szq8GqWe2dXtNjZA2wCR+N
-         PFCBtOE/t6ATgo1Ybp1pjBB8snb494IZV8vkFKIHw+7BDpVPcTbM5z2PeabCsAzJ/Suf
-         zpPN7eQNxIlzEsII0yKrH57QPyCBqAmckcrqB8SiFX2IjP9njpw8CQVH8GwuDBrmGSFZ
-         71Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wNDSV7AjbdqMEhUgCnb4ZuCmcZN7e3FtRa4jkdhZHu8=;
-        b=D6/GtOex+sgq0sgVQWy7bMSRFmzT8k3E9lHHTJtFRvlUeF/XKZiUxgQY8fkka//O/Z
-         nOw4iGDOCMa/fB7Ki+yyqYoaT4YSt2yK59G8OBMPIPkhTu7lZ/Lay2MuK5qvlckINrsy
-         ws0+gCN9KeMh0c4g8Dh3w0nHGc3E1N+Y2y4QrfYvvsf8eBrWhgojrKrf4NGw7lKbK5xl
-         8e45uIb1+KIHW4e9haXHj2SJnXGoq4P1euEq6Rmkr2Bw6TqQV+ODlLQvLffp05SmHzlU
-         f5d3jbWwVG2S20VXQvgFnKYLox/GTGsmPf2fPenVAWfX39tkdACItQXfrLGgwgazafrg
-         mWiw==
-X-Gm-Message-State: APjAAAWAOE1pUeHtm/CDDOvcdv7c8l31LBMgTCZosWsy/37TLTzSh7wE
-        EGfy3GQZjRMv1QFx2KLRuXwam8kpXaAP2CJpgsE=
-X-Google-Smtp-Source: APXvYqyI+IIhMaA4ITSAgpXc457FXgTOfGrGtZu/tW7/5RcVxWLxNcEa7FQA/aCZWNrRQCQZirVl0jxxDm9vqbFfKY4=
-X-Received: by 2002:a6b:17c4:: with SMTP id 187mr7610670iox.143.1583159467602;
- Mon, 02 Mar 2020 06:31:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20200228044518.20314-1-gmayyyha@gmail.com> <CAOi1vP-K+e0N26qpthLcst8HLE-FAMGSE9XwBhj1dPBiLyN-iA@mail.gmail.com>
- <CAB9OAC0dURDHgqGDVCg_Gd+EhH-9_n4-mycgsqfxS64GRgd4Og@mail.gmail.com>
- <CAOi1vP_opdc=OP70T2eiamMWa-o71nU8t_LYyTCytqT5BT8gdQ@mail.gmail.com>
- <CAB9OAC08TGgXGFJsZCNpMzqnorn=jw1S_i8Ux2euaG=4-=JGwg@mail.gmail.com>
- <CAOi1vP-BKfaL-d2GMWDHf7tD=LpDLEug0-NY9dgT=qEi00gpLQ@mail.gmail.com> <CAB9OAC2YtvbmKAnPS83eCO+vZxwnMrBQP=9X2dTKywyM87PZvw@mail.gmail.com>
-In-Reply-To: <CAB9OAC2YtvbmKAnPS83eCO+vZxwnMrBQP=9X2dTKywyM87PZvw@mail.gmail.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 2 Mar 2020 15:31:03 +0100
-Message-ID: <CAOi1vP_Gnd2m2yjTWuwyJ-FFJ1yPNr8NawyXw93kYmjoS2Q75w@mail.gmail.com>
-Subject: Re: [PATCH] ceph: using POOL FULL flag instead of OSDMAP FULL flag
-To:     Yanhu Cao <gmayyyha@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>, kuba@kernel.org,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
+        id S1727210AbgCBPvE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 2 Mar 2020 10:51:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34528 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726751AbgCBPvE (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 2 Mar 2020 10:51:04 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30D3E21556;
+        Mon,  2 Mar 2020 15:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583164263;
+        bh=oekm8FVEuC0Ctsj/eADaaYKbz0pjIujvkf20uN8bPtc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Qz7sE6iAYhWY+EVd8txtL/ClYdekp+bYdXhavG3wBgHtZXGeKezvI+lTjGBTRroUX
+         Lke4Cb53U/GKfpT8LBL6JHK9O1we3KX3sJgqS7x8PwvKFRjG1XrGnldVbF+AXV/tiS
+         R75YAHdaH/5B2o0HM5oi4cglXfsRUMG+Nfv4XJKg=
+Message-ID: <0e0f4380d874a6b0a04322f47afbf6746dd36853.camel@kernel.org>
+Subject: Re: unsafe list walking in __kick_flushing_caps?
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "Yan, Zheng" <zyan@redhat.com>
+Cc:     Ilya Dryomov <idryomov@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Date:   Mon, 02 Mar 2020 10:51:02 -0500
+In-Reply-To: <30fddf35-49ff-3009-f6a8-fd4ea6c65e05@redhat.com>
+References: <4a4d32dc5c4a44cca4ed31bb66d9cfcb0b1092c7.camel@kernel.org>
+         <30fddf35-49ff-3009-f6a8-fd4ea6c65e05@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Mar 2, 2020 at 12:02 PM Yanhu Cao <gmayyyha@gmail.com> wrote:
->
-> On Mon, Mar 2, 2020 at 6:09 PM Ilya Dryomov <idryomov@gmail.com> wrote:
-> >
-> > On Mon, Mar 2, 2020 at 3:30 AM Yanhu Cao <gmayyyha@gmail.com> wrote:
-> > >
-> > > On Fri, Feb 28, 2020 at 10:02 PM Ilya Dryomov <idryomov@gmail.com> wrote:
-> > > >
-> > > > On Fri, Feb 28, 2020 at 12:41 PM Yanhu Cao <gmayyyha@gmail.com> wrote:
-> > > > >
-> > > > > On Fri, Feb 28, 2020 at 6:23 PM Ilya Dryomov <idryomov@gmail.com> wrote:
-> > > > > >
-> > > > > > On Fri, Feb 28, 2020 at 5:45 AM Yanhu Cao <gmayyyha@gmail.com> wrote:
-> > > > > > >
-> > > > > > > OSDMAP_FULL and OSDMAP_NEARFULL are deprecated since mimic.
-> > > > > > >
-> > > > > > > Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
-> > > > > > > ---
-> > > > > > >  fs/ceph/file.c                  |  6 ++++--
-> > > > > > >  include/linux/ceph/osd_client.h |  2 ++
-> > > > > > >  include/linux/ceph/osdmap.h     |  3 ++-
-> > > > > > >  net/ceph/osd_client.c           | 23 +++++++++++++----------
-> > > > > > >  4 files changed, 21 insertions(+), 13 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > > > > > > index 7e0190b1f821..60ea1eed1b84 100644
-> > > > > > > --- a/fs/ceph/file.c
-> > > > > > > +++ b/fs/ceph/file.c
-> > > > > > > @@ -1482,7 +1482,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> > > > > > >         }
-> > > > > > >
-> > > > > > >         /* FIXME: not complete since it doesn't account for being at quota */
-> > > > > > > -       if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_FULL)) {
-> > > > > > > +       if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
-> > > > > > > +                               CEPH_POOL_FLAG_FULL)) {
-> > > > > > >                 err = -ENOSPC;
-> > > > > > >                 goto out;
-> > > > > > >         }
-> > > > > > > @@ -1575,7 +1576,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> > > > > > >         }
-> > > > > > >
-> > > > > > >         if (written >= 0) {
-> > > > > > > -               if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
-> > > > > > > +               if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
-> > > > > > > +                                       CEPH_POOL_FLAG_NEARFULL))
-> > > > > >
-> > > > > > Hi Yanhu,
-> > > > > >
-> > > > > > Have you considered pre-mimic clusters here?  They are still supported
-> > > > > > (and will continue to be supported for the foreseeable future).
-> > > > > >
-> > > > > > Thanks,
-> > > > > >
-> > > > > >                 Ilya
-> > > > >
-> > > > > I have tested it work on Luminous, I think it work too since
-> > > > > ceph-v0.80(https://github.com/ceph/ceph/blob/b78644e7dee100e48dfeca32c9270a6b210d3003/src/osd/osd_types.h#L815)
-> > > > > alread have pool FLAG_FULL.
-> > > >
-> > > > But not FLAG_NEARFULL, which appeared in mimic.
-> > > FLAG_NEARFULL appeared in Luminous.
-> >
-> > Well, it appeared in mimic in v13.0.1 and was backported to luminous
-> > in v12.2.2.  So technically, some luminous releases don't have it.
-> >
-> > >
-> > > >
-> > > > >
-> > > > > CephFS doesn't write synchronously even if CEPH_OSDMAP_NEARFULL is
-> > > > > used, then should fixed by CEPH_POOL_FLAG_NEARFULL.
-> > > >
-> > > > I'm not sure I follow.
-> > > >
-> > > > -    if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
-> > > > +    if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
-> > > > +                            CEPH_POOL_FLAG_NEARFULL))
-> > > >
-> > > > AFAICT this change would effectively disable this branch for pre-mimic
-> > > > clusters.  Are you saying this branch is already broken?
-> > > >
-> > > > Thanks,
-> > > >
-> > > >                 Ilya
-> > > CEPH_OSDMAP_NEARFULL is not set in Jewel, so it has no effect. And in
-> > > Luminous version, this flag is cleared as a legacy and has no effect
-> > > too.
-> >
-> > Are you sure?  What about this code in OSDMonitor::tick() that showed
-> > up in kraken in v11.0.1 and was backported to jewel in v10.2.4?
-> >
-> >   if (!mon->pgmon()->pg_map.nearfull_osds.empty()) {
-> >     ...
-> >     add_flag(CEPH_OSDMAP_NEARFULL);
-> >   } else if (osdmap.test_flag(CEPH_OSDMAP_NEARFULL)){
-> >     ...
-> >     remove_flag(CEPH_OSDMAP_NEARFULL);
-> >   }
-> >   if (pending_inc.new_flags != -1 &&
-> >      (pending_inc.new_flags ^ osdmap.flags) & (CEPH_OSDMAP_FULL |
-> >                                                CEPH_OSDMAP_NEARFULL)) {
-> >     ...
-> >     do_propose = true;
-> >
-> > It's there in v10.2.11 (the final jewel release).  It's also there
-> > in hammer since v0.94.10...
-> >
-> > Thanks,
-> >
-> >                 Ilya
->
-> Sorry for not seeing all version changes, I will submit plus
-> CEPH_OSDMAP_FULL/NEARFULL.
-> How to check if the feature is backported?
+On Sat, 2020-02-29 at 10:34 +0800, Yan, Zheng wrote:
+> On 2/29/20 5:39 AM, Jeff Layton wrote:
+> > Hi Zheng,
+> > 
+> > I've been going over the cap handling code, and noticed some sketchy
+> > looking locking in __kick_flushing_caps that was added by this patch:
+> > 
+> > 
+> > commit e4500b5e35c213e0f97be7cb69328c0877203a79
+> > Author: Yan, Zheng <zyan@redhat.com>
+> > Date:   Wed Jul 6 11:12:56 2016 +0800
+> > 
+> >      ceph: use list instead of rbtree to track cap flushes
+> >      
+> >      We don't have requirement of searching cap flush by TID. In most cases,
+> >      we just need to know TID of the oldest cap flush. List is ideal for this
+> >      usage.
+> >      
+> >      Signed-off-by: Yan, Zheng <zyan@redhat.com>
+> > 
+> > While walking ci->i_cap_flush_list, __kick_flushing_caps drops and
+> > reacquires the i_ceph_lock on each iteration. It looks like
+> > __kick_flushing_caps could (e.g.) race with a reply from the MDS that
+> > removes the entry from the list. Is there something that prevents that
+> > that I'm not seeing?
+> > 
+> 
+> I think it's protected by s_mutex. I checked the code only
+> ceph_kick_flushing_caps() is not protected by s_mutex. it should be 
+> easy to fix.
+> 
 
-Look through release notes and git history.  It's the only source of
-truth ;)
+What does the i_ceph_lock actually protect here then? Does this mean
+that this code doesn't actually need the i_ceph_lock?
 
-Thanks,
+That sounds ok as a possible stopgap fix, but longer term I'd really
+like to see us reduce the coverage of the session and mdsc mutexes.
+Maybe we can rework this code to queue up the cap flushes in some
+fashion while holding the spinlock, and then send them off later once
+we've released it?
 
-                Ilya
+Looking at ceph_kick_flushing_caps...
+
+AFAICT, the s_cap_flushing list should be protected by mdsc-
+>cap_dirty_lock, but it's not held while walking it in
+ceph_kick_flushing_caps or ceph_early_kick_flushing_caps. There is some
+effort to track certain tids in there, but it's not clear to me that
+that is enough to protect from concurrent list manipulation. Does it
+somehow?
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
