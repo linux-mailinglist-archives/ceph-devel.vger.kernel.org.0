@@ -2,366 +2,184 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C404175CB9
-	for <lists+ceph-devel@lfdr.de>; Mon,  2 Mar 2020 15:14:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CA74175D19
+	for <lists+ceph-devel@lfdr.de>; Mon,  2 Mar 2020 15:31:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbgCBOOs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 2 Mar 2020 09:14:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39110 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727237AbgCBOOq (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 2 Mar 2020 09:14:46 -0500
-Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8929A21D56;
-        Mon,  2 Mar 2020 14:14:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583158486;
-        bh=Yhmf0WaxKA9/Y0hLdkWyIKpmlDcYSIwFwIQNxPVIfG4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RTnhRL8ojBVYLO0J2WiY64tWrNh1uZNGhbZybe58sWLX3BfmlAckTkHAbvDrKXv0s
-         cWX/u4GDJz7oU3e+mwap2XZuxO/OqMBKTlPk4q0XigRaUUZQvXXNCmMdsHJ5PZByAB
-         56vQY9IdS3gwlg9z8W3Zu410dbK/xWmnLW8U6vSA=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, sage@redhat.com, zyan@redhat.com,
-        pdonnell@redhat.com
-Subject: [PATCH v6 13/13] ceph: attempt to do async create when possible
-Date:   Mon,  2 Mar 2020 09:14:34 -0500
-Message-Id: <20200302141434.59825-14-jlayton@kernel.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200302141434.59825-1-jlayton@kernel.org>
-References: <20200302141434.59825-1-jlayton@kernel.org>
+        id S1727335AbgCBObK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 2 Mar 2020 09:31:10 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37026 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727085AbgCBObK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 2 Mar 2020 09:31:10 -0500
+Received: by mail-io1-f66.google.com with SMTP id c17so11729771ioc.4;
+        Mon, 02 Mar 2020 06:31:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wNDSV7AjbdqMEhUgCnb4ZuCmcZN7e3FtRa4jkdhZHu8=;
+        b=TzfWHSevbJijEnbliKINPPMg40x/XzP4ahC4HyWJpU30I6VOKIH1dQjL4ZuRS/u6Xz
+         rxjjLWRK/bYLv2TATxNvxF3jvuaMgJaJl/ecmNli2zfZa6VsAJF3VezG1D+AX7AL/xiG
+         Xv81DrrjD18/VAQtU/SS60ZHWxAIZAUMCA0FzhhDfVB6d1Szq8GqWe2dXtNjZA2wCR+N
+         PFCBtOE/t6ATgo1Ybp1pjBB8snb494IZV8vkFKIHw+7BDpVPcTbM5z2PeabCsAzJ/Suf
+         zpPN7eQNxIlzEsII0yKrH57QPyCBqAmckcrqB8SiFX2IjP9njpw8CQVH8GwuDBrmGSFZ
+         71Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wNDSV7AjbdqMEhUgCnb4ZuCmcZN7e3FtRa4jkdhZHu8=;
+        b=D6/GtOex+sgq0sgVQWy7bMSRFmzT8k3E9lHHTJtFRvlUeF/XKZiUxgQY8fkka//O/Z
+         nOw4iGDOCMa/fB7Ki+yyqYoaT4YSt2yK59G8OBMPIPkhTu7lZ/Lay2MuK5qvlckINrsy
+         ws0+gCN9KeMh0c4g8Dh3w0nHGc3E1N+Y2y4QrfYvvsf8eBrWhgojrKrf4NGw7lKbK5xl
+         8e45uIb1+KIHW4e9haXHj2SJnXGoq4P1euEq6Rmkr2Bw6TqQV+ODlLQvLffp05SmHzlU
+         f5d3jbWwVG2S20VXQvgFnKYLox/GTGsmPf2fPenVAWfX39tkdACItQXfrLGgwgazafrg
+         mWiw==
+X-Gm-Message-State: APjAAAWAOE1pUeHtm/CDDOvcdv7c8l31LBMgTCZosWsy/37TLTzSh7wE
+        EGfy3GQZjRMv1QFx2KLRuXwam8kpXaAP2CJpgsE=
+X-Google-Smtp-Source: APXvYqyI+IIhMaA4ITSAgpXc457FXgTOfGrGtZu/tW7/5RcVxWLxNcEa7FQA/aCZWNrRQCQZirVl0jxxDm9vqbFfKY4=
+X-Received: by 2002:a6b:17c4:: with SMTP id 187mr7610670iox.143.1583159467602;
+ Mon, 02 Mar 2020 06:31:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200228044518.20314-1-gmayyyha@gmail.com> <CAOi1vP-K+e0N26qpthLcst8HLE-FAMGSE9XwBhj1dPBiLyN-iA@mail.gmail.com>
+ <CAB9OAC0dURDHgqGDVCg_Gd+EhH-9_n4-mycgsqfxS64GRgd4Og@mail.gmail.com>
+ <CAOi1vP_opdc=OP70T2eiamMWa-o71nU8t_LYyTCytqT5BT8gdQ@mail.gmail.com>
+ <CAB9OAC08TGgXGFJsZCNpMzqnorn=jw1S_i8Ux2euaG=4-=JGwg@mail.gmail.com>
+ <CAOi1vP-BKfaL-d2GMWDHf7tD=LpDLEug0-NY9dgT=qEi00gpLQ@mail.gmail.com> <CAB9OAC2YtvbmKAnPS83eCO+vZxwnMrBQP=9X2dTKywyM87PZvw@mail.gmail.com>
+In-Reply-To: <CAB9OAC2YtvbmKAnPS83eCO+vZxwnMrBQP=9X2dTKywyM87PZvw@mail.gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 2 Mar 2020 15:31:03 +0100
+Message-ID: <CAOi1vP_Gnd2m2yjTWuwyJ-FFJ1yPNr8NawyXw93kYmjoS2Q75w@mail.gmail.com>
+Subject: Re: [PATCH] ceph: using POOL FULL flag instead of OSDMAP FULL flag
+To:     Yanhu Cao <gmayyyha@gmail.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>, kuba@kernel.org,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-With the Octopus release, the MDS will hand out directory create caps.
+On Mon, Mar 2, 2020 at 12:02 PM Yanhu Cao <gmayyyha@gmail.com> wrote:
+>
+> On Mon, Mar 2, 2020 at 6:09 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+> >
+> > On Mon, Mar 2, 2020 at 3:30 AM Yanhu Cao <gmayyyha@gmail.com> wrote:
+> > >
+> > > On Fri, Feb 28, 2020 at 10:02 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+> > > >
+> > > > On Fri, Feb 28, 2020 at 12:41 PM Yanhu Cao <gmayyyha@gmail.com> wrote:
+> > > > >
+> > > > > On Fri, Feb 28, 2020 at 6:23 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+> > > > > >
+> > > > > > On Fri, Feb 28, 2020 at 5:45 AM Yanhu Cao <gmayyyha@gmail.com> wrote:
+> > > > > > >
+> > > > > > > OSDMAP_FULL and OSDMAP_NEARFULL are deprecated since mimic.
+> > > > > > >
+> > > > > > > Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> > > > > > > ---
+> > > > > > >  fs/ceph/file.c                  |  6 ++++--
+> > > > > > >  include/linux/ceph/osd_client.h |  2 ++
+> > > > > > >  include/linux/ceph/osdmap.h     |  3 ++-
+> > > > > > >  net/ceph/osd_client.c           | 23 +++++++++++++----------
+> > > > > > >  4 files changed, 21 insertions(+), 13 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > > > > > > index 7e0190b1f821..60ea1eed1b84 100644
+> > > > > > > --- a/fs/ceph/file.c
+> > > > > > > +++ b/fs/ceph/file.c
+> > > > > > > @@ -1482,7 +1482,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> > > > > > >         }
+> > > > > > >
+> > > > > > >         /* FIXME: not complete since it doesn't account for being at quota */
+> > > > > > > -       if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_FULL)) {
+> > > > > > > +       if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
+> > > > > > > +                               CEPH_POOL_FLAG_FULL)) {
+> > > > > > >                 err = -ENOSPC;
+> > > > > > >                 goto out;
+> > > > > > >         }
+> > > > > > > @@ -1575,7 +1576,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> > > > > > >         }
+> > > > > > >
+> > > > > > >         if (written >= 0) {
+> > > > > > > -               if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
+> > > > > > > +               if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
+> > > > > > > +                                       CEPH_POOL_FLAG_NEARFULL))
+> > > > > >
+> > > > > > Hi Yanhu,
+> > > > > >
+> > > > > > Have you considered pre-mimic clusters here?  They are still supported
+> > > > > > (and will continue to be supported for the foreseeable future).
+> > > > > >
+> > > > > > Thanks,
+> > > > > >
+> > > > > >                 Ilya
+> > > > >
+> > > > > I have tested it work on Luminous, I think it work too since
+> > > > > ceph-v0.80(https://github.com/ceph/ceph/blob/b78644e7dee100e48dfeca32c9270a6b210d3003/src/osd/osd_types.h#L815)
+> > > > > alread have pool FLAG_FULL.
+> > > >
+> > > > But not FLAG_NEARFULL, which appeared in mimic.
+> > > FLAG_NEARFULL appeared in Luminous.
+> >
+> > Well, it appeared in mimic in v13.0.1 and was backported to luminous
+> > in v12.2.2.  So technically, some luminous releases don't have it.
+> >
+> > >
+> > > >
+> > > > >
+> > > > > CephFS doesn't write synchronously even if CEPH_OSDMAP_NEARFULL is
+> > > > > used, then should fixed by CEPH_POOL_FLAG_NEARFULL.
+> > > >
+> > > > I'm not sure I follow.
+> > > >
+> > > > -    if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
+> > > > +    if (pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
+> > > > +                            CEPH_POOL_FLAG_NEARFULL))
+> > > >
+> > > > AFAICT this change would effectively disable this branch for pre-mimic
+> > > > clusters.  Are you saying this branch is already broken?
+> > > >
+> > > > Thanks,
+> > > >
+> > > >                 Ilya
+> > > CEPH_OSDMAP_NEARFULL is not set in Jewel, so it has no effect. And in
+> > > Luminous version, this flag is cleared as a legacy and has no effect
+> > > too.
+> >
+> > Are you sure?  What about this code in OSDMonitor::tick() that showed
+> > up in kraken in v11.0.1 and was backported to jewel in v10.2.4?
+> >
+> >   if (!mon->pgmon()->pg_map.nearfull_osds.empty()) {
+> >     ...
+> >     add_flag(CEPH_OSDMAP_NEARFULL);
+> >   } else if (osdmap.test_flag(CEPH_OSDMAP_NEARFULL)){
+> >     ...
+> >     remove_flag(CEPH_OSDMAP_NEARFULL);
+> >   }
+> >   if (pending_inc.new_flags != -1 &&
+> >      (pending_inc.new_flags ^ osdmap.flags) & (CEPH_OSDMAP_FULL |
+> >                                                CEPH_OSDMAP_NEARFULL)) {
+> >     ...
+> >     do_propose = true;
+> >
+> > It's there in v10.2.11 (the final jewel release).  It's also there
+> > in hammer since v0.94.10...
+> >
+> > Thanks,
+> >
+> >                 Ilya
+>
+> Sorry for not seeing all version changes, I will submit plus
+> CEPH_OSDMAP_FULL/NEARFULL.
+> How to check if the feature is backported?
 
-If we have Fxc caps on the directory, and complete directory information
-or a known negative dentry, then we can return without waiting on the
-reply, allowing the open() call to return very quickly to userland.
+Look through release notes and git history.  It's the only source of
+truth ;)
 
-We use the normal ceph_fill_inode() routine to fill in the inode, so we
-have to gin up some reply inode information with what we'd expect the
-newly-created inode to have. The client assumes that it has a full set
-of caps on the new inode, and that the MDS will revoke them when there
-is conflicting access.
+Thanks,
 
-This functionality is gated on the wsync/nowsync mount options.
-
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/file.c               | 247 ++++++++++++++++++++++++++++++++++-
- include/linux/ceph/ceph_fs.h |   3 +
- 2 files changed, 243 insertions(+), 7 deletions(-)
-
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 57a3960ffeb7..d6653e385adb 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -441,6 +441,216 @@ cache_file_layout(struct inode *dst, struct inode *src)
- 	spin_unlock(&cdst->i_ceph_lock);
- }
- 
-+/*
-+ * Try to set up an async create. We need caps, a file layout, and inode number,
-+ * and either a lease on the dentry or complete dir info. If any of those
-+ * criteria are not satisfied, then return false and the caller can go
-+ * synchronous.
-+ */
-+static int try_prep_async_create(struct inode *dir, struct dentry *dentry,
-+				 struct ceph_file_layout *lo, u64 *pino)
-+{
-+	struct ceph_inode_info *ci = ceph_inode(dir);
-+	struct ceph_dentry_info *di = ceph_dentry(dentry);
-+	int got = 0, want = CEPH_CAP_FILE_EXCL | CEPH_CAP_DIR_CREATE;
-+	u64 ino;
-+
-+	spin_lock(&ci->i_ceph_lock);
-+	/* No auth cap means no chance for Dc caps */
-+	if (!ci->i_auth_cap)
-+		goto no_async;
-+
-+	/* Any delegated inos? */
-+	if (xa_empty(&ci->i_auth_cap->session->s_delegated_inos))
-+		goto no_async;
-+
-+	if (!ceph_file_layout_is_valid(&ci->i_cached_layout))
-+		goto no_async;
-+
-+	if ((__ceph_caps_issued(ci, NULL) & want) != want)
-+		goto no_async;
-+
-+	if (d_in_lookup(dentry)) {
-+		if (!__ceph_dir_is_complete(ci))
-+			goto no_async;
-+	} else if (atomic_read(&ci->i_shared_gen) !=
-+		   READ_ONCE(di->lease_shared_gen)) {
-+		goto no_async;
-+	}
-+
-+	ino = ceph_get_deleg_ino(ci->i_auth_cap->session);
-+	if (!ino)
-+		goto no_async;
-+
-+	*pino = ino;
-+	ceph_take_cap_refs(ci, want, false);
-+	memcpy(lo, &ci->i_cached_layout, sizeof(*lo));
-+	rcu_assign_pointer(lo->pool_ns,
-+			   ceph_try_get_string(ci->i_cached_layout.pool_ns));
-+	got = want;
-+no_async:
-+	spin_unlock(&ci->i_ceph_lock);
-+	return got;
-+}
-+
-+static void restore_deleg_ino(struct inode *dir, u64 ino)
-+{
-+	struct ceph_inode_info *ci = ceph_inode(dir);
-+	struct ceph_mds_session *s = NULL;
-+
-+	spin_lock(&ci->i_ceph_lock);
-+	if (ci->i_auth_cap)
-+		s = ceph_get_mds_session(ci->i_auth_cap->session);
-+	spin_unlock(&ci->i_ceph_lock);
-+	if (s) {
-+		int err = ceph_restore_deleg_ino(s, ino);
-+		if (err)
-+			pr_warn("ceph: unable to restore delegated ino 0x%llx to session: %d\n",
-+				ino, err);
-+		ceph_put_mds_session(s);
-+	}
-+}
-+
-+static void ceph_async_create_cb(struct ceph_mds_client *mdsc,
-+                                 struct ceph_mds_request *req)
-+{
-+	int result = req->r_err ? req->r_err :
-+			le32_to_cpu(req->r_reply_info.head->result);
-+
-+	if (result == -EJUKEBOX)
-+		goto out;
-+
-+	mapping_set_error(req->r_parent->i_mapping, result);
-+
-+	if (result) {
-+		struct dentry *dentry = req->r_dentry;
-+		int pathlen;
-+		u64 base;
-+		char *path = ceph_mdsc_build_path(req->r_dentry, &pathlen,
-+						  &base, 0);
-+
-+		ceph_dir_clear_complete(req->r_parent);
-+		if (!d_unhashed(dentry))
-+			d_drop(dentry);
-+
-+		/* FIXME: start returning I/O errors on all accesses? */
-+		pr_warn("ceph: async create failure path=(%llx)%s result=%d!\n",
-+			base, IS_ERR(path) ? "<<bad>>" : path, result);
-+		ceph_mdsc_free_path(path, pathlen);
-+	}
-+
-+	if (req->r_target_inode) {
-+		struct ceph_inode_info *ci = ceph_inode(req->r_target_inode);
-+		u64 ino = ceph_vino(req->r_target_inode).ino;
-+
-+		if (req->r_deleg_ino != ino)
-+			pr_warn("%s: inode number mismatch! err=%d deleg_ino=0x%llx target=0x%llx\n",
-+				__func__, req->r_err, req->r_deleg_ino, ino);
-+		mapping_set_error(req->r_target_inode->i_mapping, result);
-+
-+		spin_lock(&ci->i_ceph_lock);
-+		WARN_ON_ONCE(!(ci->i_ceph_flags & CEPH_I_ASYNC_CREATE));
-+		ci->i_ceph_flags &= ~CEPH_I_ASYNC_CREATE;
-+		wake_up_bit(&ci->i_ceph_flags, CEPH_ASYNC_CREATE_BIT);
-+		spin_unlock(&ci->i_ceph_lock);
-+
-+		ceph_check_caps(ci, 0, req->r_session);
-+	} else {
-+		pr_warn("%s: no req->r_target_inode for 0x%llx\n", __func__,
-+			req->r_deleg_ino);
-+	}
-+out:
-+	ceph_mdsc_release_dir_caps(req);
-+}
-+
-+static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
-+				    struct file *file, umode_t mode,
-+				    struct ceph_mds_request *req,
-+				    struct ceph_acl_sec_ctx *as_ctx,
-+				    struct ceph_file_layout *lo)
-+{
-+	int ret;
-+	char xattr_buf[4];
-+	struct ceph_mds_reply_inode in = { };
-+	struct ceph_mds_reply_info_in iinfo = { .in = &in };
-+	struct ceph_inode_info *ci = ceph_inode(dir);
-+	struct inode *inode;
-+	struct timespec64 now;
-+	struct ceph_vino vino = { .ino = req->r_deleg_ino,
-+				  .snap = CEPH_NOSNAP };
-+
-+	ktime_get_real_ts64(&now);
-+
-+	inode = ceph_get_inode(dentry->d_sb, vino);
-+	if (IS_ERR(inode))
-+		return PTR_ERR(inode);
-+
-+	iinfo.inline_version = CEPH_INLINE_NONE;
-+	iinfo.change_attr = 1;
-+	ceph_encode_timespec64(&iinfo.btime, &now);
-+
-+	iinfo.xattr_len = ARRAY_SIZE(xattr_buf);
-+	iinfo.xattr_data = xattr_buf;
-+	memset(iinfo.xattr_data, 0, iinfo.xattr_len);
-+
-+	in.ino = cpu_to_le64(vino.ino);
-+	in.snapid = cpu_to_le64(CEPH_NOSNAP);
-+	in.version = cpu_to_le64(1);	// ???
-+	in.cap.caps = in.cap.wanted = cpu_to_le32(CEPH_CAP_ALL_FILE);
-+	in.cap.cap_id = cpu_to_le64(1);
-+	in.cap.realm = cpu_to_le64(ci->i_snap_realm->ino);
-+	in.cap.flags = CEPH_CAP_FLAG_AUTH;
-+	in.ctime = in.mtime = in.atime = iinfo.btime;
-+	in.mode = cpu_to_le32((u32)mode);
-+	in.truncate_seq = cpu_to_le32(1);
-+	in.truncate_size = cpu_to_le64(-1ULL);
-+	in.xattr_version = cpu_to_le64(1);
-+	in.uid = cpu_to_le32(from_kuid(&init_user_ns, current_fsuid()));
-+	in.gid = cpu_to_le32(from_kgid(&init_user_ns, dir->i_mode & S_ISGID ?
-+				dir->i_gid : current_fsgid()));
-+	in.nlink = cpu_to_le32(1);
-+	in.max_size = cpu_to_le64(lo->stripe_unit);
-+
-+	ceph_file_layout_to_legacy(lo, &in.layout);
-+
-+	ret = ceph_fill_inode(inode, NULL, &iinfo, NULL, req->r_session,
-+			      req->r_fmode, NULL);
-+	if (ret) {
-+		dout("%s failed to fill inode: %d\n", __func__, ret);
-+		ceph_dir_clear_complete(dir);
-+		if (!d_unhashed(dentry))
-+			d_drop(dentry);
-+		if (inode->i_state & I_NEW)
-+			discard_new_inode(inode);
-+	} else {
-+		struct dentry *dn;
-+
-+		dout("%s d_adding new inode 0x%llx to 0x%lx/%s\n", __func__,
-+			vino.ino, dir->i_ino, dentry->d_name.name);
-+		ceph_dir_clear_ordered(dir);
-+		ceph_init_inode_acls(inode, as_ctx);
-+		if (inode->i_state & I_NEW) {
-+			/*
-+			 * If it's not I_NEW, then someone created this before
-+			 * we got here. Assume the server is aware of it at
-+			 * that point and don't worry about setting
-+			 * CEPH_I_ASYNC_CREATE.
-+			 */
-+			ceph_inode(inode)->i_ceph_flags = CEPH_I_ASYNC_CREATE;
-+			unlock_new_inode(inode);
-+		}
-+		if (d_in_lookup(dentry) || d_really_is_negative(dentry)) {
-+			if (!d_unhashed(dentry))
-+				d_drop(dentry);
-+			dn = d_splice_alias(inode, dentry);
-+			WARN_ON_ONCE(dn && dn != dentry);
-+		}
-+		file->f_mode |= FMODE_CREATED;
-+		ret = finish_open(file, dentry, ceph_open);
-+	}
-+	return ret;
-+}
-+
- /*
-  * Do a lookup + open with a single request.  If we get a non-existent
-  * file or symlink, return 1 so the VFS can retry.
-@@ -453,6 +663,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 	struct ceph_mds_request *req;
- 	struct dentry *dn;
- 	struct ceph_acl_sec_ctx as_ctx = {};
-+	bool try_async = ceph_test_mount_opt(fsc, ASYNC_DIROPS);
- 	int mask;
- 	int err;
- 
-@@ -476,7 +687,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 		/* If it's not being looked up, it's negative */
- 		return -ENOENT;
- 	}
--
-+retry:
- 	/* do the open */
- 	req = prepare_open_request(dir->i_sb, flags, mode);
- 	if (IS_ERR(req)) {
-@@ -485,21 +696,43 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 	}
- 	req->r_dentry = dget(dentry);
- 	req->r_num_caps = 2;
-+	mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
-+	if (ceph_security_xattr_wanted(dir))
-+		mask |= CEPH_CAP_XATTR_SHARED;
-+	req->r_args.open.mask = cpu_to_le32(mask);
-+	req->r_parent = dir;
-+
- 	if (flags & O_CREAT) {
-+		struct ceph_file_layout lo;
-+
- 		req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
- 		req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
- 		if (as_ctx.pagelist) {
- 			req->r_pagelist = as_ctx.pagelist;
- 			as_ctx.pagelist = NULL;
- 		}
-+		if (try_async &&
-+		    (req->r_dir_caps =
-+		      try_prep_async_create(dir, dentry, &lo,
-+					    &req->r_deleg_ino))) {
-+			set_bit(CEPH_MDS_R_ASYNC, &req->r_req_flags);
-+			req->r_args.open.flags |= cpu_to_le32(CEPH_O_EXCL);
-+			req->r_callback = ceph_async_create_cb;
-+			err = ceph_mdsc_submit_request(mdsc, dir, req);
-+			if (!err) {
-+				err = ceph_finish_async_create(dir, dentry,
-+							file, mode, req,
-+							&as_ctx, &lo);
-+			} else if (err == -EJUKEBOX) {
-+				restore_deleg_ino(dir, req->r_deleg_ino);
-+				ceph_mdsc_put_request(req);
-+				try_async = false;
-+				goto retry;
-+			}
-+			goto out_req;
-+		}
- 	}
- 
--       mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
--       if (ceph_security_xattr_wanted(dir))
--               mask |= CEPH_CAP_XATTR_SHARED;
--       req->r_args.open.mask = cpu_to_le32(mask);
--
--	req->r_parent = dir;
- 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
- 	err = ceph_mdsc_do_request(mdsc,
- 				   (flags & (O_CREAT|O_TRUNC)) ? dir : NULL,
-diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-index e63a5c0b6d62..ebf5ba62b772 100644
---- a/include/linux/ceph/ceph_fs.h
-+++ b/include/linux/ceph/ceph_fs.h
-@@ -660,6 +660,9 @@ int ceph_flags_to_mode(int flags);
- #define CEPH_CAP_ANY      (CEPH_CAP_ANY_RD | CEPH_CAP_ANY_EXCL | \
- 			   CEPH_CAP_ANY_FILE_WR | CEPH_CAP_FILE_LAZYIO | \
- 			   CEPH_CAP_PIN)
-+#define CEPH_CAP_ALL_FILE (CEPH_CAP_PIN | CEPH_CAP_ANY_SHARED | \
-+			   CEPH_CAP_AUTH_EXCL | CEPH_CAP_XATTR_EXCL | \
-+			   CEPH_CAP_ANY_FILE_RD | CEPH_CAP_ANY_FILE_WR)
- 
- #define CEPH_CAP_LOCKS (CEPH_LOCK_IFILE | CEPH_LOCK_IAUTH | CEPH_LOCK_ILINK | \
- 			CEPH_LOCK_IXATTR)
--- 
-2.24.1
-
+                Ilya
