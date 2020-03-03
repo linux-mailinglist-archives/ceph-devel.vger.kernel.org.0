@@ -2,97 +2,104 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7F4F177BCB
-	for <lists+ceph-devel@lfdr.de>; Tue,  3 Mar 2020 17:22:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86D7B177BCE
+	for <lists+ceph-devel@lfdr.de>; Tue,  3 Mar 2020 17:24:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730349AbgCCQVo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 3 Mar 2020 11:21:44 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38561 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730293AbgCCQVo (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 Mar 2020 11:21:44 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p7so1525426pli.5;
-        Tue, 03 Mar 2020 08:21:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YUcw1KG3qrvpleqzqQ7xyhNdpovGgPoy1w9JlReaGGk=;
-        b=BC+IQYQA/hBOYJ9q/YG9kdpBsF9+tMbOpFAGLQ2bWvsY4KF4P8Q+dmAdfU78cGhWRP
-         0Yxb8itlOvfnGtQaxf24HMBU0W14RPWxsokNwDs/dq76dyyJgqpvzw/D1xUxklvYK2we
-         UsS7KyvnvsXHaryzWGaxrGsMMrMsuArNfDU0h2E5R/sSvDtC3mvWmFUgPefDylr8UM2H
-         2cFqcrsibwblgR/8oYvQv+l7vIoaFxAfssROdh/0L9Icc0f6zwhhXRu0AkbmV5qw4RuL
-         6/M0mmbl7EATwVYKzZKzISeWeoPWdR7ObS2z2FHaZU8Issvet4l7kGGWOWQ6w2xKeV+i
-         GwwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YUcw1KG3qrvpleqzqQ7xyhNdpovGgPoy1w9JlReaGGk=;
-        b=tfIzW6LnKwTjOAixXxjIrJLerLv7si7NgB6v3p5CoOxh1/Yur5ff5ysvy7hKa9PGFy
-         5VJAo69JRopUW/ibKH6p++4I4djx3EfA1pcGQt+ocD57ucHoK14obbvwMhE2wocgNmuk
-         y2YbabGQYexUDDBEYnNlQJWzYRlXmtNSF19D35+4x5wTBCrYq95UDeoMHx5IOgfhiEAc
-         1qh3QeOCyHIh2v4eAeph2yBXctSnJdHlAtwVkD4piOQY9TWN6w72TcVNQbRar6x7KXMq
-         C//WqAALBDrPz4+EtYcb7Ts+g+sPzdbmuwbMjos4Ou58rQKrOcvWA/lK0DAlnVFxvkF8
-         Mt1A==
-X-Gm-Message-State: ANhLgQ1JCtDsLoPVTbG77CHz9yzLp0Buai5oiRWx/lga7IRes1DnqIkx
-        LZz95nO4RcdIy+7JEGUrWPg=
-X-Google-Smtp-Source: ADFU+vuQE+daBK6NDgfu/5VCFw3gGgq2P1GTkZidJo5iBwRZDSbepe/pFLzyshwwWENLrs60uTEfdw==
-X-Received: by 2002:a17:902:c086:: with SMTP id j6mr5071986pld.46.1583252503458;
-        Tue, 03 Mar 2020 08:21:43 -0800 (PST)
-Received: from VM_0_35_centos.localdomain ([150.109.62.251])
-        by smtp.gmail.com with ESMTPSA id i5sm6833123pfo.173.2020.03.03.08.21.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Mar 2020 08:21:42 -0800 (PST)
-From:   Qiujun Huang <hqjagain@gmail.com>
-To:     jlayton@kernel.org
-Cc:     sage@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Qiujun Huang <hqjagain@gmail.com>
-Subject: [PATCH] fs/ceph/export: remove unused variable 'err'
-Date:   Wed,  4 Mar 2020 00:21:39 +0800
-Message-Id: <1583252499-16078-1-git-send-email-hqjagain@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1730115AbgCCQX7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 3 Mar 2020 11:23:59 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:55055 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729508AbgCCQX7 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 Mar 2020 11:23:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583252638;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YafcUk3xXeZnyK4HIgbhUff2eET7NzAK8VKreCHjRqQ=;
+        b=JFSgEdkQaqE8ItRobXaCPOEZmP0VWdDu7p/l4HjTR0Wp39p0BQiUOuF6De9cG8RKI9rmTe
+        nSHTeiiCMA6+L8yVlge+b3G7kz9FN9i+hG1pylKxhP5fbTPs7fNVEFmmP05pqhGKUXWMk/
+        CSUvVXn4P7aDnn2tWlXW8laYnYuHztw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-428-o-wGHgjuMwuDfwSnufkU7g-1; Tue, 03 Mar 2020 11:23:54 -0500
+X-MC-Unique: o-wGHgjuMwuDfwSnufkU7g-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E17B78017DF;
+        Tue,  3 Mar 2020 16:23:52 +0000 (UTC)
+Received: from [10.72.13.234] (ovpn-13-234.pek2.redhat.com [10.72.13.234])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CF69C10013A1;
+        Tue,  3 Mar 2020 16:23:50 +0000 (UTC)
+Subject: Re: [PATCH v3 0/6] ceph: don't request caps for idle open files
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Patrick Donnelly <pdonnell@redhat.com>
+References: <20200228115550.6904-1-zyan@redhat.com>
+ <186bfc2278dbdd4eac21f6ce03108c53e3f574b3.camel@kernel.org>
+From:   "Yan, Zheng" <zyan@redhat.com>
+Message-ID: <a226d5b6-2371-5c94-97ee-6bc5b273b21d@redhat.com>
+Date:   Wed, 4 Mar 2020 00:23:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <186bfc2278dbdd4eac21f6ce03108c53e3f574b3.camel@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-fix gcc '-Wunused-but-set-variable' warning:
-fs/ceph/export.c: In function ‘__get_parent’:
-fs/ceph/export.c:294:6: warning: variable ‘err’ set but not used [-Wunused-but-set-variable]
-  int err;
+On 3/3/20 3:53 AM, Jeff Layton wrote:
+> On Fri, 2020-02-28 at 19:55 +0800, Yan, Zheng wrote:
+>> This series make cephfs client not request caps for open files that
+>> idle for a long time. For the case that one active client and multiple
+>> standby clients open the same file, this increase the possibility that
+>> mds issues exclusive caps to the active client.
+>>
+>> Yan, Zheng (4):
+>>    ceph: always renew caps if mds_wanted is insufficient
+>>    ceph: consider inode's last read/write when calculating wanted caps
+>>    ceph: simplify calling of ceph_get_fmode()
+>>    ceph: remove delay check logic from ceph_check_caps()
+>>
+>>   fs/ceph/caps.c               | 324 +++++++++++++++--------------------
+>>   fs/ceph/file.c               |  39 ++---
+>>   fs/ceph/inode.c              |  19 +-
+>>   fs/ceph/ioctl.c              |   2 +
+>>   fs/ceph/mds_client.c         |   5 -
+>>   fs/ceph/super.h              |  35 ++--
+>>   include/linux/ceph/ceph_fs.h |   1 +
+>>   7 files changed, 188 insertions(+), 237 deletions(-)
+>>
+>> changes since v2
+>>   - make __ceph_caps_file_wanted more readable
+>>   - add patch 5 and 6, which fix hung write during testing patch 1~4
+>>
+> 
+> This patch series causes some serious slowdown in the async dirops
+> patches that I've not yet fully tracked down, and I suspect that they
+> may also be the culprit in these bugs:
+> 
 
-and needn't use the return value of ceph_mdsc_create_request.
+slow down which tests?
 
-Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
----
- fs/ceph/export.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+>      https://tracker.ceph.com/issues/44381
 
-diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-index b6bfa94..b7bb41c 100644
---- a/fs/ceph/export.c
-+++ b/fs/ceph/export.c
-@@ -291,7 +291,6 @@ static struct dentry *__get_parent(struct super_block *sb,
- 	struct ceph_mds_request *req;
- 	struct inode *inode;
- 	int mask;
--	int err;
- 
- 	req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_LOOKUPPARENT,
- 				       USE_ANY_MDS);
-@@ -314,7 +313,7 @@ static struct dentry *__get_parent(struct super_block *sb,
- 	req->r_args.getattr.mask = cpu_to_le32(mask);
- 
- 	req->r_num_caps = 1;
--	err = ceph_mdsc_do_request(mdsc, NULL, req);
-+	ceph_mdsc_do_request(mdsc, NULL, req);
- 	inode = req->r_target_inode;
- 	if (inode)
- 		ihold(inode);
--- 
-1.8.3.1
+this is because I forgot to check if inode is snap when queue delayed 
+check. But it can't explain slow down.
+
+>      https://tracker.ceph.com/issues/44382
+> 
+> I'm going to drop this series from the testing branch for now, until we
+> can track down the issue.
+> 
+> Thanks,
+> 
+
 
