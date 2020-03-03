@@ -2,66 +2,133 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 233591781BC
-	for <lists+ceph-devel@lfdr.de>; Tue,  3 Mar 2020 20:02:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1390E1783D0
+	for <lists+ceph-devel@lfdr.de>; Tue,  3 Mar 2020 21:17:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733229AbgCCSFq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 3 Mar 2020 13:05:46 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41857 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732433AbgCCSFq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 Mar 2020 13:05:46 -0500
-Received: by mail-io1-f67.google.com with SMTP id m25so4600155ioo.8
-        for <ceph-devel@vger.kernel.org>; Tue, 03 Mar 2020 10:05:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=42VRx4KA+cD1ZZnhz/34yl/kjJSKnU+ahvHX6e7S6BM=;
-        b=Dwixi1EI1CdoSCBPh9ZUJ9H2SUS7/DPuKnXPo1wyGO9pr2ipz4cVpqXcYk0YHDaPL3
-         3pTXqOs4ikNBL8xPpW2n2VpHFjsIVwZiPoIHHK8i3vNy9p1eweAi6Ca43U+R3aNjbZ9c
-         wkp354n4E7GmevQVvkHz38JLxUmX0KNb0GRIaTMXjUN7N438Ax0yyGedcE1D/1AafxiR
-         9ndDlt/UPpo0mDFX5JrivT5nhKHLQuTiPj6EUW510eSCpkBr34N7QtkhYs9lKkC17Do3
-         CjuNRjHP4NFfgOTr7407rrSfshPJxHsCHbSX3kl5FRmsmAqNF/I2pRVgSYOFu9zo3X2F
-         0XXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=42VRx4KA+cD1ZZnhz/34yl/kjJSKnU+ahvHX6e7S6BM=;
-        b=F+zaHO5K3/2yqIm1T+hZ/n4xqOO1X0y+USDC9XCmI59llOU8iw1xU2QXeqF5KkJIN+
-         Hb1Nx2++yTujPSUhpX9ksKuFuQ9kiV9w7i4+VWBMkulaHh5ux7skr6q0n07qbkByVwPs
-         c0BaHAc5/OOS7pdE3dLDnAs3h/IOg+FA2zCX2n5yHuZjbwBW18rYw17lxox20kb6DaEs
-         ACOHqLEVfXNoR75Vi4MBKmFucfdKb8FOO4Pxi7PEBT0n3zEAwxz7bUzQQ8SsIjpPC+OK
-         FqZv9E0ER5C4Nbqd+ko9bpCu8WfnRDQAhcIIaADwjj2PUmZbQaOprJzWAMYZhesBF7bI
-         xYmw==
-X-Gm-Message-State: ANhLgQ2Ua6jLA/ljrMwEJIEJASla5RpAHxGzpK1FT+EJk4IpZL9+ZAtf
-        YGuKlLfM/7ePuWxnEcru7hATFVESlY0nTt4X83A=
-X-Google-Smtp-Source: ADFU+vsDbJ7xM6wnLpFq/EqIXCZvUijxXGceyBvGjhFZ/y6H6zjACEZyH87k1qoZmjXpB7j1RK7GCvfhxSG6teNgU+A=
-X-Received: by 2002:a6b:6011:: with SMTP id r17mr4813343iog.220.1583258745203;
- Tue, 03 Mar 2020 10:05:45 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a02:9f04:0:0:0:0:0 with HTTP; Tue, 3 Mar 2020 10:05:44 -0800 (PST)
-Reply-To: dr.challynoah@gmail.com
-From:   DR CHALLY NOAH <mayorabrahamedge404@gmail.com>
-Date:   Tue, 3 Mar 2020 19:05:44 +0100
-Message-ID: <CALqVJWcXz6HkkCnC_QjXoWyB_0KG64G_ZUwkcrgf7s1EVnprLQ@mail.gmail.com>
-Subject: Hello Dear
-To:     undisclosed-recipients:;
+        id S1731555AbgCCURm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 3 Mar 2020 15:17:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34898 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730862AbgCCURm (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 3 Mar 2020 15:17:42 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F68620CC7;
+        Tue,  3 Mar 2020 20:17:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583266661;
+        bh=3VCgZR0tbUxWIo72L+wrdyksOHEIyKupWSlK7neFCqc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=OA6Tuhc1r7sQ4is2RSvRlYHU5yicdVYKPfbo83NTitipQA84KYeEv183u/xqPwxmR
+         ow5mxHVCDgCqNLrgYr+eUPXc/Bsj1f4za7fkfOZigryo6sT0JR+a0bK+Ox79R/2bRN
+         /XysaQ02axeOCrjs9IQ5TbYkNhrOdMTRkhXJPcio=
+Message-ID: <523329cc1778972c17ada75b19478a1444c65638.camel@kernel.org>
+Subject: Re: [PATCH v3 0/6] ceph: don't request caps for idle open files
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Patrick Donnelly <pdonnell@redhat.com>
+Date:   Tue, 03 Mar 2020 15:17:39 -0500
+In-Reply-To: <a226d5b6-2371-5c94-97ee-6bc5b273b21d@redhat.com>
+References: <20200228115550.6904-1-zyan@redhat.com>
+         <186bfc2278dbdd4eac21f6ce03108c53e3f574b3.camel@kernel.org>
+         <a226d5b6-2371-5c94-97ee-6bc5b273b21d@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hello Dear,
-What Have Kept You Waiting To Claim Your $600,000.00 USD Compensation Award?
-This said fund was issued out by the UNITED NATIONS To compensate
-you.Please If You Have Not Claim Your Fund (Award),Kindly contact me
-at   DR.CHALLYNOAH@GMAIL.COM   for further details on how to proceed your
-fund (award)release to you or better still reply back Immediately You
-Receive This Information For An Urgent Confirmation And Release Of Your
-Fund To You Without Delays, as your email was listed among those to be
-compensated this year.Congratulations..
-Best Regards,
-Dr Chally Noah.
-Minister Of Finance On Foreign Remittance:
+On Wed, 2020-03-04 at 00:23 +0800, Yan, Zheng wrote:
+> On 3/3/20 3:53 AM, Jeff Layton wrote:
+> > On Fri, 2020-02-28 at 19:55 +0800, Yan, Zheng wrote:
+> > > This series make cephfs client not request caps for open files that
+> > > idle for a long time. For the case that one active client and multiple
+> > > standby clients open the same file, this increase the possibility that
+> > > mds issues exclusive caps to the active client.
+> > > 
+> > > Yan, Zheng (4):
+> > >    ceph: always renew caps if mds_wanted is insufficient
+> > >    ceph: consider inode's last read/write when calculating wanted caps
+> > >    ceph: simplify calling of ceph_get_fmode()
+> > >    ceph: remove delay check logic from ceph_check_caps()
+> > > 
+> > >   fs/ceph/caps.c               | 324 +++++++++++++++--------------------
+> > >   fs/ceph/file.c               |  39 ++---
+> > >   fs/ceph/inode.c              |  19 +-
+> > >   fs/ceph/ioctl.c              |   2 +
+> > >   fs/ceph/mds_client.c         |   5 -
+> > >   fs/ceph/super.h              |  35 ++--
+> > >   include/linux/ceph/ceph_fs.h |   1 +
+> > >   7 files changed, 188 insertions(+), 237 deletions(-)
+> > > 
+> > > changes since v2
+> > >   - make __ceph_caps_file_wanted more readable
+> > >   - add patch 5 and 6, which fix hung write during testing patch 1~4
+> > > 
+> > 
+> > This patch series causes some serious slowdown in the async dirops
+> > patches that I've not yet fully tracked down, and I suspect that they
+> > may also be the culprit in these bugs:
+> > 
+> 
+> slow down which tests?
+> 
+
+Most of the simple tests I was doing to sanity check async dirops.
+Basically, this script was not seeing speed gain with async dirops
+enabled:
+
+-----------------8<-------------------
+#!/bin/sh
+
+MOUNTPOINT=/mnt/cephfs
+TESTDIR=$MOUNTPOINT/test-dirops.$$
+
+mkdir $TESTDIR
+stat $TESTDIR
+echo "Creating files in $TESTDIR"
+time for i in `seq 1 10000`; do
+    echo "foobarbaz" > $TESTDIR/$i
+done
+echo; echo "sync"
+time sync
+echo "Starting rm"
+time rm -f $TESTDIR/*
+echo; echo "rmdir"
+time rmdir $TESTDIR
+echo; echo "sync"
+time sync
+-----------------8<-------------------
+
+It mostly seemed like it was just not getting caps in some cases.
+Cranking up dynamic_debug seemed to make the problem go away, which led
+me to believe there was probably a race condition in there.
+
+At this point, I've gone ahead and merged the async dirops patches into
+testing, so if you could rebase this on top of the current testing
+branch and repost, I'll test them out again.
+
+> >      https://tracker.ceph.com/issues/44381
+> 
+> this is because I forgot to check if inode is snap when queue delayed 
+> check. But it can't explain slow down.
+>
+
+Ok, good to know.
+
+> >      https://tracker.ceph.com/issues/44382
+> > 
+> > I'm going to drop this series from the testing branch for now, until we
+> > can track down the issue.
+> > 
+> > 
+
+Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
