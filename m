@@ -2,100 +2,79 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0352A177BCF
-	for <lists+ceph-devel@lfdr.de>; Tue,  3 Mar 2020 17:24:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37309177BE8
+	for <lists+ceph-devel@lfdr.de>; Tue,  3 Mar 2020 17:28:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbgCCQYE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 3 Mar 2020 11:24:04 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:49075 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729508AbgCCQYE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 Mar 2020 11:24:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583252644;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=17eCclzoCj2Z2qW8lCyI2MfSVWymDq79bmI+rkb67kE=;
-        b=b3fQ9qW6gcSM7A3zARRNLm6DnOVPf6DALZD9PSbrmUbRBH2vS5Zie/mjB4U+6+BxkCRnPw
-        H+LQudJ5mHFqxScaBnkS+FwsWRwg/aQjDmG7OwgX5+Udu11eSf9C7pYTqMYoLF8Hy2WO/B
-        c3FoaSjA0KRV4o/ysqj+Vo1ZwTrWK+g=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-133-QcWU_C7GOfG3ynXmoN8thg-1; Tue, 03 Mar 2020 11:24:02 -0500
-X-MC-Unique: QcWU_C7GOfG3ynXmoN8thg-1
-Received: by mail-qk1-f198.google.com with SMTP id z124so2475871qkd.20
-        for <ceph-devel@vger.kernel.org>; Tue, 03 Mar 2020 08:24:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=17eCclzoCj2Z2qW8lCyI2MfSVWymDq79bmI+rkb67kE=;
-        b=Tsk094i/aSN+NNGSOxyiG/C2AWsmFIY5CQGlR6BOxdckaZCR9y+KePUNAx1uzEBHO4
-         Dse6y6gBkvDzd0PR11rXIrndpOGOkp5STAg50/du15AGICoI6hquUcMEjJB7dpCoxN8J
-         ZJFkPrKXe94rCJCKEXpfvm/oCAoEWPw2a97bcVvKWQWCbjJq8hUHPr9eHda/pWEQX8hK
-         X02487G+kNrn1Gks/6EVxC2t6s7ohvsjafS1K/YxJdsgFeYqhXA3je7YeKVAhcKgw66T
-         3oJb9NjD/4VIYKGImZOMFHSSPCZ7SARp1dd8x8bKY97DlVkmB2uA9TwSCBL77xWi0tw2
-         cnqw==
-X-Gm-Message-State: ANhLgQ3xjw71kVndvitGeXQdMKSdHoyq+5elT2EeJskr+zQXGsKAjUrw
-        t25FI5Zs6kki/P+RdbBoUy7jisK+wT/XJYxcgayC4PCTwEWc//Q53TZrRU6wY4Svpq+TOVI5COT
-        PZabzTxx5ylr5yXgHMkpPlHAYXrWxTcmDoOJTLA==
-X-Received: by 2002:a05:620a:13ca:: with SMTP id g10mr4613757qkl.385.1583252641855;
-        Tue, 03 Mar 2020 08:24:01 -0800 (PST)
-X-Google-Smtp-Source: ADFU+vsbNLZTwlBQclTWt58MR1TpByVTneBNk3WT+59x+ehMcCOO5dlMFtk3f7vZdHiGUdVz8v6dF0WlDgQIoig/8Ro=
-X-Received: by 2002:a05:620a:13ca:: with SMTP id g10mr4613728qkl.385.1583252641450;
- Tue, 03 Mar 2020 08:24:01 -0800 (PST)
-MIME-Version: 1.0
-References: <56829C2A36C2E542B0CCB9854828E4D8562BAEEB@CDSMSX102.ccr.corp.intel.com>
-In-Reply-To: <56829C2A36C2E542B0CCB9854828E4D8562BAEEB@CDSMSX102.ccr.corp.intel.com>
-From:   Gregory Farnum <gfarnum@redhat.com>
-Date:   Tue, 3 Mar 2020 08:23:50 -0800
-Message-ID: <CAJ4mKGZR2Vrbc=OhR-i3bo7US544fRQ+2=W92JdqCsYED_oAWg@mail.gmail.com>
-Subject: Re: question for ceph study
-To:     "Chen, Haochuan Z" <haochuan.z.chen@intel.com>
-Cc:     "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        id S1730362AbgCCQ2r (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 3 Mar 2020 11:28:47 -0500
+Received: from mga14.intel.com ([192.55.52.115]:47368 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730115AbgCCQ2r (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 3 Mar 2020 11:28:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 08:28:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,511,1574150400"; 
+   d="scan'208";a="287035804"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by FMSMGA003.fm.intel.com with ESMTP; 03 Mar 2020 08:28:33 -0800
+Received: from FMSMSX109.amr.corp.intel.com (10.18.116.9) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 3 Mar 2020 08:28:33 -0800
+Received: from cdsmsx152.ccr.corp.intel.com (172.17.4.41) by
+ fmsmsx109.amr.corp.intel.com (10.18.116.9) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 3 Mar 2020 08:28:32 -0800
+Received: from cdsmsx102.ccr.corp.intel.com ([169.254.2.116]) by
+ CDSMSX152.ccr.corp.intel.com ([169.254.6.127]) with mapi id 14.03.0439.000;
+ Wed, 4 Mar 2020 00:28:30 +0800
+From:   "Chen, Haochuan Z" <haochuan.z.chen@intel.com>
+To:     Gregory Farnum <gfarnum@redhat.com>
+CC:     "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
         "dev@ceph.io" <dev@ceph.io>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: RE: question for ceph study
+Thread-Topic: question for ceph study
+Thread-Index: AdXxd290JfXpZ+igRgeZvlpwmk4HDv//e0MA//94y7A=
+Date:   Tue, 3 Mar 2020 16:28:29 +0000
+Message-ID: <56829C2A36C2E542B0CCB9854828E4D8562BAF24@CDSMSX102.ccr.corp.intel.com>
+References: <56829C2A36C2E542B0CCB9854828E4D8562BAEEB@CDSMSX102.ccr.corp.intel.com>
+ <CAJ4mKGZR2Vrbc=OhR-i3bo7US544fRQ+2=W92JdqCsYED_oAWg@mail.gmail.com>
+In-Reply-To: <CAJ4mKGZR2Vrbc=OhR-i3bo7US544fRQ+2=W92JdqCsYED_oAWg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [172.17.6.105]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-It's just an arbitrary value to try and identify the store is really
-there. I *think* it's mostly about guaranteeing that the monitor store
-has been completely set up (ie, the store is fully created and you can
-use it), but I may be forgetting something.
-
-But it's of very little importance in the ordinary course of events.
--Greg
-
-On Tue, Mar 3, 2020 at 8:20 AM Chen, Haochuan Z
-<haochuan.z.chen@intel.com> wrote:
->
-> Hi
->
->
->
-> I am a rookie, one question. what's magic in monitor data? What=E2=80=99s=
- the usage of magic?
->
->
->
-> Thanks
->
->
->
-> Martin, Chen
->
-> IOTG, Software Engineer
->
-> 021-61164330
->
->
->
-> _______________________________________________
-> Dev mailing list -- dev@ceph.io
-> To unsubscribe send an email to dev-leave@ceph.io
-
+R3JlYXQgdGhhbmtzIEdyZWchDQoNCk9uZSBtb3JlIHF1ZXN0aW9uLCBtYWdpYyBpcyBjcmVhdGVk
+IGJ5IGNlcGgtbW9uIC0tbWtmcz8gDQoNCk1hcnRpbiwgQ2hlbg0KSU9URywgU29mdHdhcmUgRW5n
+aW5lZXINCjAyMS02MTE2NDMzMA0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTog
+R3JlZ29yeSBGYXJudW0gPGdmYXJudW1AcmVkaGF0LmNvbT4gDQpTZW50OiBXZWRuZXNkYXksIE1h
+cmNoIDQsIDIwMjAgMTI6MjQgQU0NClRvOiBDaGVuLCBIYW9jaHVhbiBaIDxoYW9jaHVhbi56LmNo
+ZW5AaW50ZWwuY29tPg0KQ2M6IGNlcGgtZGV2ZWxAdmdlci5rZXJuZWwub3JnOyBkZXZAY2VwaC5p
+bw0KU3ViamVjdDogUmU6IHF1ZXN0aW9uIGZvciBjZXBoIHN0dWR5DQoNCkl0J3MganVzdCBhbiBh
+cmJpdHJhcnkgdmFsdWUgdG8gdHJ5IGFuZCBpZGVudGlmeSB0aGUgc3RvcmUgaXMgcmVhbGx5IHRo
+ZXJlLiBJICp0aGluayogaXQncyBtb3N0bHkgYWJvdXQgZ3VhcmFudGVlaW5nIHRoYXQgdGhlIG1v
+bml0b3Igc3RvcmUgaGFzIGJlZW4gY29tcGxldGVseSBzZXQgdXAgKGllLCB0aGUgc3RvcmUgaXMg
+ZnVsbHkgY3JlYXRlZCBhbmQgeW91IGNhbiB1c2UgaXQpLCBidXQgSSBtYXkgYmUgZm9yZ2V0dGlu
+ZyBzb21ldGhpbmcuDQoNCkJ1dCBpdCdzIG9mIHZlcnkgbGl0dGxlIGltcG9ydGFuY2UgaW4gdGhl
+IG9yZGluYXJ5IGNvdXJzZSBvZiBldmVudHMuDQotR3JlZw0KDQpPbiBUdWUsIE1hciAzLCAyMDIw
+IGF0IDg6MjAgQU0gQ2hlbiwgSGFvY2h1YW4gWiA8aGFvY2h1YW4uei5jaGVuQGludGVsLmNvbT4g
+d3JvdGU6DQo+DQo+IEhpDQo+DQo+DQo+DQo+IEkgYW0gYSByb29raWUsIG9uZSBxdWVzdGlvbi4g
+d2hhdCdzIG1hZ2ljIGluIG1vbml0b3IgZGF0YT8gV2hhdOKAmXMgdGhlIHVzYWdlIG9mIG1hZ2lj
+Pw0KPg0KPg0KPg0KPiBUaGFua3MNCj4NCj4NCj4NCj4gTWFydGluLCBDaGVuDQo+DQo+IElPVEcs
+IFNvZnR3YXJlIEVuZ2luZWVyDQo+DQo+IDAyMS02MTE2NDMzMA0KPg0KPg0KPg0KPiBfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KPiBEZXYgbWFpbGluZyBs
+aXN0IC0tIGRldkBjZXBoLmlvDQo+IFRvIHVuc3Vic2NyaWJlIHNlbmQgYW4gZW1haWwgdG8gZGV2
+LWxlYXZlQGNlcGguaW8NCg0K
