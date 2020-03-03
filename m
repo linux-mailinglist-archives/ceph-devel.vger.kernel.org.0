@@ -2,106 +2,139 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 648BE177629
-	for <lists+ceph-devel@lfdr.de>; Tue,  3 Mar 2020 13:36:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34FB81776AD
+	for <lists+ceph-devel@lfdr.de>; Tue,  3 Mar 2020 14:09:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbgCCMgD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Tue, 3 Mar 2020 07:36:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38284 "EHLO mx2.suse.de"
+        id S1728320AbgCCNIq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 3 Mar 2020 08:08:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35986 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727993AbgCCMgD (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 3 Mar 2020 07:36:03 -0500
+        id S1728124AbgCCNIp (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 3 Mar 2020 08:08:45 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 19A3FAE99;
-        Tue,  3 Mar 2020 12:36:00 +0000 (UTC)
-From:   Abhishek Lekshmanan <abhishek@suse.com>
-To:     ceph-announce@ceph.io, ceph-users@ceph.io, dev@ceph.io,
-        ceph-devel@vger.kernel.org
-Subject: v14.2.8 Nautilus released 
-Date:   Tue, 03 Mar 2020 13:36:00 +0100
-Message-ID: <87sgipaa4v.fsf@suse.com>
+        by mx2.suse.de (Postfix) with ESMTP id 519DEB019;
+        Tue,  3 Mar 2020 13:08:44 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 03 Mar 2020 14:08:44 +0100
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     ceph-devel@vger.kernel.org, dev@ceph.io
+Subject: Pech OSD as a userspace experiment based on Ceph sources from Linux
+ kernel
+Message-ID: <c939186786a66800e1050b62f709d017@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Hi all,
 
-This is the eighth update to the Ceph Nautilus release series. This release
-fixes issues across a range of subsystems. We recommend that all users upgrade
-to this release. Please note the following important changes in this
-release; as always the full changelog is posted at:
-https://ceph.io/releases/v14-2-8-nautilus-released
+Couple of weeks ago I started an experimental Pech OSD project [1]
+for several reasons: I need easy hackable OSD in C with IO path only,
+without fail-over, log-based replication, PG layer and all other
+things. I want to test performance on different replication strategies
+(client-based, primary-copy, chain) having simplest and fastest file
+storage (yes, step back to filestore) which reads and writes directly
+to files without any journals involved.
 
-Notable Changes
----------------
+Eventually this Pech OSD can be a starting point to something
+different, something which is not RADOS, which is fast, with minimum
+IO ordering requirements and acts as a RAID 1 cluster, e.g. something
+which is described here [2].
 
-* The default value of `bluestore_min_alloc_size_ssd` has been changed
-  to 4K to improve performance across all workloads.
+Q: What is this name, Pech?
+A: Just an anagram created from Ceph. Also this is a German word which
+    perfectly describes this work. Pronounced exactly the same [peh].
 
-* The following OSD memory config options related to bluestore cache autotuning can now
-  be configured during runtime:
+Q: Why C, why Linux kernel sources?
+A: I found more comfortable to hack Ceph, analyzing protocol
+    implementation, monitor and OSD client code reading Linux kernel
+    C code, instead of legacy OSD C++ code or Crimson project.
 
-    - osd_memory_base (default: 768 MB)
-    - osd_memory_cache_min (default: 128 MB)
-    - osd_memory_expected_fragmentation (default: 0.15)
-    - osd_memory_target (default: 4 GB)
+    Linux kernel path net/ceph has everything I need: monitor client,
+    v1 messenger, osdmap, monmap, all headers and defines. Since by
+    default kernel sources is cleansed of external library dependencies
+    this is just a homework exercise to provide a layer of kernel API
+    in order to build all sources from net/ceph path as a userspace
+    application with no modifications made.
 
-  The above options can be set with::
+    I also really like the idea of code unification: same sources
+    can be compiled and used on both sides.
 
-    ceph config set osd <option> <value>
+    Continuing this hackary madness IMO it is possible to compile
+    drivers/block/rbd.c in userspace and use it as a separate very
+    light rbd client. Why? Same 1 thread architecture (see next
+    question for details) can be a win in terms of performance for
+    a client, at the same time it may be interesting for debug
+    purposes or fast prototypes.
 
-* The MGR now accepts `profile rbd` and `profile rbd-read-only` user caps.
-  These caps can be used to provide users access to MGR-based RBD functionality
-  such as `rbd perf image iostat` an `rbd perf image iotop`.
+Q: What is the architecture?
+A: I do not use threads, I use cooperative scheduling and jump from
+    task contexts using setjmp()/longjmp() calls. This model perfectly
+    fits UP kernel with disabled preemption, thus reworked scheduling
+    (sched.c), workqueue.c and timer.c code runs the event loop.
 
-* The configuration value `osd_calc_pg_upmaps_max_stddev` used for upmap
-  balancing has been removed. Instead use the mgr balancer config
-  `upmap_max_deviation` which now is an integer number of PGs of deviation
-  from the target PGs per OSD.  This can be set with a command like
-  `ceph config set mgr mgr/balancer/upmap_max_deviation 2`.  The default
-  `upmap_max_deviation` is 1.  There are situations where crush rules
-  would not allow a pool to ever have completely balanced PGs.  For example, if
-  crush requires 1 replica on each of 3 racks, but there are fewer OSDs in 1 of
-  the racks.  In those cases, the configuration value can be increased.
+    So again, no atomic operations, no locks, everything is one thread.
+    In future number of event loops can be equal to a number of
+    physical CPUs, where each event loop is executed from a dedicated
+    pthread context and pinned to a particular CPU.
 
-* RGW: a mismatch between the bucket notification documentation and the actual
-  message format was fixed. This means that any endpoints receiving bucket
-  notification, will now receive the same notifications inside a JSON array
-  named 'Records'. Note that this does not affect pulling bucket notification
-  from a subscription in a 'pubsub' zone, as these are already wrapped inside
-  that array.
+    Does that sound similar to Crimson and can be described in all the
+    same buzzy words from advertising brochures? Absolutely.
 
-* CephFS: multiple active MDS forward scrub is now rejected. Scrub currently
-  only is permitted on a file system with a single rank. Reduce the ranks to one
-  via `ceph fs set <fs_name> max_mds 1`.
+Q: What this noop OSD can do now?
+A: Now it can only:
 
-* Ceph now refuses to create a file system with a default EC data pool. For
-  further explanation, see:
-  https://docs.ceph.com/docs/nautilus/cephfs/createfs/#creating-pools
+    o Connect to monitors and "boot" OSD, i.e. mark it as UP.
+    o On Ctrl+C mark OSD on monitors as DOWN and gracefully exit.
 
-* Ceph will now issue a health warning if a RADOS pool has a `pg_num`
-  value that is not a power of two. This can be fixed by adjusting
-  the pool to a nearby power of two::
+Q: What is not yet ported from kernel sources?
+A: Crypto part is noop now, thus monitors should be run with
+    auth=none.  To make cephx work direct copy-paste of kernel crypto
+    sources has to be done, or a wrapper over openssl lib should be
+    written, see src/ceph/crypto.c interface empty stubs for details.
 
-    ceph osd pool set <pool-name> pg_num <new-pg-num>
+Q: What are the instructions to build and start Pech OSD?
+A: Make:
 
-  Alternatively, the warning can be silenced with::
+      $ make -j8
 
-    ceph config set global mon_warn_on_pool_pg_num_not_power_of_two false
+    Start new Ceph cluster with 1 OSD and then stop everything.  We
+    start monitors on specified port and witg -X option, i.e. auth=none.
 
-Getting Ceph
-------------
+      $ CEPH_PORT=50000 MON=1 MDS=0 OSD=1 MGR=0 ../src/vstart.sh 
+--memstore -n -X
+      $ ../src/stop.sh
 
-* Git at git://github.com/ceph/ceph.git
-* Tarball at http://download.ceph.com/tarballs/ceph-14.2.8.tar.gz
-* For packages, see http://docs.ceph.com/docs/master/install/get-packages/
-* Release git sha1: 2d095e947a02261ce61424021bb43bd3022d35cb
+    Restart only Ceph monitor(s):
 
--- 
-Abhishek Lekshmanan
-SUSE Software Solutions Germany GmbH
-GF: Felix Imendörffer HRB 21284 (AG Nürnberg)
+      $ MON=1 MDS=0 OSD=0 MGR=0 ../src/vstart.sh
+
+    Start pech-osd accessing monitor over v1 protocol:
+
+      $ ./pech-osd mon_addrs=ip.ip.ip.ip:50001 name=0 fsid=`cat 
+./osd0/fsid` log_level=5
+
+    For DEBUG purposes maximum output log level can be specified: 
+log_level=7
+
+    In order not to confuse valgrind with stack allocations/deallocations
+    USE_VALGRIND=1 option can be passed to make:
+
+      $ make USE_VALGRIND=1
+
+
+Have fun!
+
+[1] https://github.com/rouming/pech
+[2] 
+https://lists.ceph.io/hyperkitty/list/dev@ceph.io/thread/N46NR7NBHWBQL4B2ASU7Y2LMKZZPK3IX/
+
+--
+Roman
+
