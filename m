@@ -2,133 +2,76 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1390E1783D0
-	for <lists+ceph-devel@lfdr.de>; Tue,  3 Mar 2020 21:17:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 983F51786C3
+	for <lists+ceph-devel@lfdr.de>; Wed,  4 Mar 2020 00:58:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731555AbgCCURm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 3 Mar 2020 15:17:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34898 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730862AbgCCURm (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 3 Mar 2020 15:17:42 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F68620CC7;
-        Tue,  3 Mar 2020 20:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583266661;
-        bh=3VCgZR0tbUxWIo72L+wrdyksOHEIyKupWSlK7neFCqc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=OA6Tuhc1r7sQ4is2RSvRlYHU5yicdVYKPfbo83NTitipQA84KYeEv183u/xqPwxmR
-         ow5mxHVCDgCqNLrgYr+eUPXc/Bsj1f4za7fkfOZigryo6sT0JR+a0bK+Ox79R/2bRN
-         /XysaQ02axeOCrjs9IQ5TbYkNhrOdMTRkhXJPcio=
-Message-ID: <523329cc1778972c17ada75b19478a1444c65638.camel@kernel.org>
-Subject: Re: [PATCH v3 0/6] ceph: don't request caps for idle open files
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        Patrick Donnelly <pdonnell@redhat.com>
-Date:   Tue, 03 Mar 2020 15:17:39 -0500
-In-Reply-To: <a226d5b6-2371-5c94-97ee-6bc5b273b21d@redhat.com>
-References: <20200228115550.6904-1-zyan@redhat.com>
-         <186bfc2278dbdd4eac21f6ce03108c53e3f574b3.camel@kernel.org>
-         <a226d5b6-2371-5c94-97ee-6bc5b273b21d@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        id S1727870AbgCCX5z (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 3 Mar 2020 18:57:55 -0500
+Received: from host247-215-36-89.serverdedicati.aruba.it ([89.36.215.247]:42388
+        "EHLO betuchin.ml" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1727274AbgCCX5z (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 Mar 2020 18:57:55 -0500
+X-Greylist: delayed 82882 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Mar 2020 18:57:54 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=betuchin.ml
+        ; s=mail; h=Message-Id:Content-Type:MIME-Version:Date:Subject:From:Reply-To:
+        Sender:To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=E1HgJWCIhAvA0F14rETYPpgbn+gv5iM7AZQjcMEJ5Vo=; b=U7VJ9hhHtsVuuvCMvGY9E34jMs
+        QoS1GYFCLqaYKktReKXcKi1wlFyBlDZiwi9P3Umx4NfEQ2nVJwPZ+ojH27d66KdzP1lG3nR3nvrg9
+        vvO0FFq4bGUwlqoouvEmEuUQcCW66h/t+vwP4QCZi+p93ODzx1miHvrLjfxPe0W0e/J8=;
+Received: from [185.234.218.222] (helo=User)
+        by betuchin.ml with esmtpa (Exim 4.92.3)
+        (envelope-from <admin@betuchin.ml>)
+        id 1j8vqg-000EwM-9n; Mon, 02 Mar 2020 19:55:50 -0500
+Reply-To: <e.m.7.abogados@gmail.com>
+From:   "Auszahlungsprozess" <admin@betuchin.ml>
+Subject: Auszahlungsprozess
+Date:   Tue, 3 Mar 2020 16:54:09 -0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+        boundary="----=_NextPart_000_0077_01C2A9A6.2B425F1C"
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 6.00.2600.0000
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
+Message-Id: <E1j8vqg-000EwM-9n@betuchin.ml>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2020-03-04 at 00:23 +0800, Yan, Zheng wrote:
-> On 3/3/20 3:53 AM, Jeff Layton wrote:
-> > On Fri, 2020-02-28 at 19:55 +0800, Yan, Zheng wrote:
-> > > This series make cephfs client not request caps for open files that
-> > > idle for a long time. For the case that one active client and multiple
-> > > standby clients open the same file, this increase the possibility that
-> > > mds issues exclusive caps to the active client.
-> > > 
-> > > Yan, Zheng (4):
-> > >    ceph: always renew caps if mds_wanted is insufficient
-> > >    ceph: consider inode's last read/write when calculating wanted caps
-> > >    ceph: simplify calling of ceph_get_fmode()
-> > >    ceph: remove delay check logic from ceph_check_caps()
-> > > 
-> > >   fs/ceph/caps.c               | 324 +++++++++++++++--------------------
-> > >   fs/ceph/file.c               |  39 ++---
-> > >   fs/ceph/inode.c              |  19 +-
-> > >   fs/ceph/ioctl.c              |   2 +
-> > >   fs/ceph/mds_client.c         |   5 -
-> > >   fs/ceph/super.h              |  35 ++--
-> > >   include/linux/ceph/ceph_fs.h |   1 +
-> > >   7 files changed, 188 insertions(+), 237 deletions(-)
-> > > 
-> > > changes since v2
-> > >   - make __ceph_caps_file_wanted more readable
-> > >   - add patch 5 and 6, which fix hung write during testing patch 1~4
-> > > 
-> > 
-> > This patch series causes some serious slowdown in the async dirops
-> > patches that I've not yet fully tracked down, and I suspect that they
-> > may also be the culprit in these bugs:
-> > 
-> 
-> slow down which tests?
-> 
+This is a multi-part message in MIME format.
 
-Most of the simple tests I was doing to sanity check async dirops.
-Basically, this script was not seeing speed gain with async dirops
-enabled:
+------=_NextPart_000_0077_01C2A9A6.2B425F1C
+Content-Type: text/plain;
+	charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
 
------------------8<-------------------
-#!/bin/sh
+Sehr geehrter Gewinner,
 
-MOUNTPOINT=/mnt/cephfs
-TESTDIR=$MOUNTPOINT/test-dirops.$$
 
-mkdir $TESTDIR
-stat $TESTDIR
-echo "Creating files in $TESTDIR"
-time for i in `seq 1 10000`; do
-    echo "foobarbaz" > $TESTDIR/$i
-done
-echo; echo "sync"
-time sync
-echo "Starting rm"
-time rm -f $TESTDIR/*
-echo; echo "rmdir"
-time rmdir $TESTDIR
-echo; echo "sync"
-time sync
------------------8<-------------------
+Anbei erhalten sie die Finale Notifikation für die Auszahlung ihres Gewinnes.
 
-It mostly seemed like it was just not getting caps in some cases.
-Cranking up dynamic_debug seemed to make the problem go away, which led
-me to believe there was probably a race condition in there.
+Setzen Sie sich bitte umgehend mit uns in Verbindung, damit wir den Auszahlungsprozess 
+in die Wege leiten können.
 
-At this point, I've gone ahead and merged the async dirops patches into
-testing, so if you could rebase this on top of the current testing
-branch and repost, I'll test them out again.
+Um ihren Anspruch zu erheben, füllen Sie bitte das Antragsformular aus, 
+faxen oder mailen es mir zurück. Ich kann den Auszahlungsprozess bei der Auslandsabteilung 
+der Lotteriefirma nur mit Ihrer Genehmigung und Vollmacht einleitet.
 
-> >      https://tracker.ceph.com/issues/44381
-> 
-> this is because I forgot to check if inode is snap when queue delayed 
-> check. But it can't explain slow down.
->
 
-Ok, good to know.
+Mit freundlichen Grüßen
+Dr. Eva Mendez
 
-> >      https://tracker.ceph.com/issues/44382
-> > 
-> > I'm going to drop this series from the testing branch for now, until we
-> > can track down the issue.
-> > 
-> > 
+Email: e.m.7.abogados@gmail.com
+Fax: 0034 917 915 205     
+Tel:  0034 602 159 209
 
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
 
+*** diese E-Mail enthält vertrauliche und/oder rechtlich geschützte Informationen, die nur 
+für die oben angeführte(n) Person(en) bestimmt ist/sind. Jede andere Verwendung, Weitergabe oder 
+Kopie ist untersagt. Wenn Sie dieses E-Mail irrtümlich erhalten haben, bitte ich Sie, mich 
+unverzüglich anzurufen, das E-Mail an mich ohne Anfertigung von Kopien zurückzuschicken und es zu löschen.***
