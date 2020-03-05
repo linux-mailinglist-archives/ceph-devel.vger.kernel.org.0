@@ -2,88 +2,86 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84DEF179E2B
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Mar 2020 04:17:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B67317A3C1
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Mar 2020 12:11:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725852AbgCEDRI convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Wed, 4 Mar 2020 22:17:08 -0500
-Received: from ln-static-139-0-11-50.link.net.id ([139.0.11.50]:36085 "EHLO
-        mail.bankbhi.co.id" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbgCEDRI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 Mar 2020 22:17:08 -0500
-X-Greylist: delayed 18858 seconds by postgrey-1.27 at vger.kernel.org; Wed, 04 Mar 2020 22:17:07 EST
+        id S1726874AbgCELLC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 5 Mar 2020 06:11:02 -0500
+Received: from ulan.pagasa.dost.gov.ph ([202.90.128.205]:46382 "EHLO
+        mailgw.pagasa.dost.gov.ph" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727322AbgCELLB (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Mar 2020 06:11:01 -0500
+X-Greylist: delayed 1309 seconds by postgrey-1.27 at vger.kernel.org; Thu, 05 Mar 2020 06:11:00 EST
+Received: from webmail.pagasa.dost.int ([10.10.11.8])
+        by mailgw.pagasa.dost.gov.ph  with ESMTP id 025Alwuf006367-025Alwuh006367
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 5 Mar 2020 18:47:58 +0800
 Received: from localhost (localhost [127.0.0.1])
-        by mail.bankbhi.co.id (Postfix) with ESMTP id 451FA409B79;
-        Thu,  5 Mar 2020 04:22:10 +0700 (WIT)
-X-Virus-Scanned: amavisd-new at bankbhi.co.id
-Received: from mail.bankbhi.co.id ([127.0.0.1])
-        by localhost (mail.bankbhi.co.id [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id FX3r0mEE1uSL; Thu,  5 Mar 2020 04:22:09 +0700 (WIT)
+        by webmail.pagasa.dost.int (Postfix) with ESMTP id 4A7912981C2F;
+        Thu,  5 Mar 2020 18:47:58 +0800 (PST)
+Received: from webmail.pagasa.dost.int ([127.0.0.1])
+        by localhost (webmail.pagasa.dost.int [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id GbHgjfMOWW41; Thu,  5 Mar 2020 18:47:57 +0800 (PST)
 Received: from localhost (localhost [127.0.0.1])
-        by mail.bankbhi.co.id (Postfix) with ESMTP id BC563409CC1;
-        Thu,  5 Mar 2020 04:21:52 +0700 (WIT)
-X-Amavis-Modified: Mail body modified (using disclaimer) - mail.bankbhi.co.id
-X-Virus-Scanned: amavisd-new at bankbhi.co.id
-Received: from mail.bankbhi.co.id ([127.0.0.1])
-        by localhost (mail.bankbhi.co.id [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ybXvsGJG4X9Z; Thu,  5 Mar 2020 04:21:52 +0700 (WIT)
-Received: from mail.bankbhi.co.id (mail.bankbhi.co.id [10.1.1.47])
-        by mail.bankbhi.co.id (Postfix) with ESMTP id 2075E409B5F;
-        Thu,  5 Mar 2020 04:21:14 +0700 (WIT)
-Date:   Thu, 5 Mar 2020 04:21:14 +0700 (WIT)
-From:   DIRECTION ACF CANADA <indra@bankbhi.co.id>
-Reply-To: DIRECTION ACF CANADA <directionacf@gmail.com>
-Message-ID: <1202690502.166651.1583356874084.JavaMail.root@bankbhi.co.id>
-Subject: Programme de Recrutement ACF 2020!!!
+        by webmail.pagasa.dost.int (Postfix) with ESMTP id 39FFF2981C2D;
+        Thu,  5 Mar 2020 18:47:57 +0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 webmail.pagasa.dost.int 39FFF2981C2D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pagasa.dost.gov.ph;
+        s=96B9A03E-48B0-11EA-A7E8-92F42F537CE2; t=1583405277;
+        bh=RC75T5p3JPNk7JUNB+lH0UfaFQO1Ac584gPL3SIL6h8=;
+        h=Date:From:Message-ID:MIME-Version;
+        b=JZYpvdvTt5CbJkit04pA5NkbKT7xfWQNTw8OqYeZGItzSHoGlQp67gP7+ZlcmaNgp
+         ALg1zWU9Kol1u6TrlwS+54JNx4z1acuc10Mx4tu0rtLA7Yk1LQexoD1JS32uUBHunN
+         0zrcOWmtTjsSioY464/v1DYc5NNPC6WuIhkROf4o=
+X-Virus-Scanned: amavisd-new at pagasa.dost.int
+Received: from webmail.pagasa.dost.int ([127.0.0.1])
+        by localhost (webmail.pagasa.dost.int [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id GLfI9DOEPLUY; Thu,  5 Mar 2020 18:47:57 +0800 (PST)
+Received: from webmail.pagasa.dost.int (webmail.pagasa.dost.int [10.11.1.8])
+        by webmail.pagasa.dost.int (Postfix) with ESMTP id 594B32981BFF;
+        Thu,  5 Mar 2020 18:47:55 +0800 (PST)
+Date:   Thu, 5 Mar 2020 18:47:55 +0800 (PST)
+From:   "Juanito S. Galang" <juanito.galang@pagasa.dost.gov.ph>
+Message-ID: <2031491795.3575199.1583405275334.JavaMail.zimbra@pagasa.dost.gov.ph>
+Subject: 
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [197.234.221.102]
-X-Mailer: Zimbra 8.0.2_GA_5569 (zclient/8.0.2_GA_5569)
-Thread-Topic: Programme de Recrutement ACF 2020!!!
-Thread-Index: BvlBGy2d9DCx3tGABjouwhRCk8SYew==
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.15_GA_3899 (ZimbraWebClient - GC79 (Win)/8.8.15_GA_3895)
+Thread-Index: XACCu5+60kc7HJNpbBRvJEwj7zB6bA==
+Thread-Topic: 
+X-FEAS-DKIM: Valid
+Authentication-Results: mailgw.pagasa.dost.gov.ph;
+        dkim=pass header.i=@pagasa.dost.gov.ph
 To:     unlisted-recipients:; (no To-header on input)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-ACTION CONTRE LA FAIM CANADA / ACF CANADA-USA.
-Siège Social: 304 Rue Saint Antoine E, Montreal, QC H2Y 1A3, Canada.
-ÉMAIL: directionacf@gmail.com
-RECRUTEMENT  internationales ACF États-Unis-CANADA 2019
-***********************************************************
-ACTION CONTRE LA FAIM (ACF USA-CANADA) est une organisation international reconnue d'utilité publique fondée en 1994.
-il met en œuvre des programmes de transferts monétaires depuis les années 1990.
-Vous êtes libre, vous avez des diplômes, vous voulez vous installez au
-États-Unis ou CANADA, pour servir l’humanité, voila une possibilité.
-Dans le cadre de son programme de travail édition 2020, le Corps commun d’
-inspection (C.C.I)"ACF USA-CANADA" a effectué un examen de recrutement du
-personnel dans les organismes du système des Nations Unies. Ce thème
-avait été proposé par le Secrétariat de l’ONU et approuvé par plusieurs
-autres organisations participantes. Ainsi pour la promotion de l'emploi
-et l'insertion professionnelle des jeunes diplômés pour atteindre les
-objectifs du PNUD, "ACF USA-CANADA" lance un programme d'avis de recrutement de
-personnels de toutes catégories confondus de part le monde entier sans
-distinction de race, de nationalité et ni de sexe.
-            Pièces à fournir:
-- Un CURRICULUM VITAE (CV)
-- Une Lettre de motivation
-- Une Photo d'identité
-- les copies des diplômes
-- les attestations de travail ou les certificats des services rendus
-              ACF CANADA-USA
-DISCLAIMER
-_____________________________________________________________________
 
-This email (including all attachments) is intended solely for the named recipients. You should only read, transmit, 
-distribute or act in reliance on this email, or communicate all or any part of its content, if you are the intended recipient 
-and are authorised by the sender to do so.
 
-This email is confidential and may be subject to legal or other professional privilege. Any confidentiality or privilege 
-is not waived or lost because this email has been sent to you by mistake. This email may also include personal information 
-which is subject to requirements of the Privacy Act 1988 (Cth).
-
-If you have received this email in error, please let us know by reply email, delete it from your system and destroy any copies.
-You should be aware that emails may contain computer viruses or other defects and may not be successfully replicated 
-on other systems. Neither PT. Bank Harda Internasional nor the sender of this email gives any warranties in relation to these matters.
+Herzlichen Gl=C3=BCckwunsch Lieber Beg=C3=BCnstigter,Sie erhalten diese E-M=
+ail von der Robert Bailey Foundation. Ich bin ein pensionierter Regierungsa=
+ngestellter aus Harlem und ein Gewinner des Powerball Lottery Jackpot im We=
+rt von 343,8 Millionen US-Dollar. Ich bin der gr=C3=B6=C3=9Fte Jackpot-Gewi=
+nner in der Geschichte der New Yorker Lotterie im US-Bundesstaat Amerika. I=
+ch habe diese Lotterie am 27. Oktober 2018 gewonnen und m=C3=B6chte Sie dar=
+=C3=BCber informieren, dass Google in Zusammenarbeit mit Microsoft Ihre "E-=
+Mail-Adresse" auf meine Bitte, einen Spendenbetrag von 3.000.000,00 Million=
+en Euro zu erhalten, =C3=BCbermittelt hat. Ich spende diese 3 Millionen Eur=
+o an Sie, um den Wohlt=C3=A4tigkeitsheimen und armen Menschen in Ihrer Geme=
+inde zu helfen, damit wir die Welt f=C3=BCr alle verbessern k=C3=B6nnen.Wei=
+tere Informationen finden Sie auf der folgenden Website, damit Sie nicht sk=
+eptisch sind
+Diese Spende von 3 Mio. EUR.https://nypost.com/2018/11/14/meet-the-winner-o=
+f-the-biggest-lottery-jackpot-in-new-york-history/Sie k=C3=B6nnen auch mein=
+ YouTube f=C3=BCr mehr Best=C3=A4tigung aufpassen:
+https://www.youtube.com/watch?v=3DH5vT18Ysavc
+Bitte beachten Sie, dass alle Antworten an (robertdonation7@gmail.com=C2=A0=
+ ) gesendet werden, damit wir das k=C3=B6nnen
+Fahren Sie fort, um das gespendete Geld an Sie zu =C3=BCberweisen.E-Mail: r=
+obertdonation7@gmail.comFreundliche Gr=C3=BC=C3=9Fe,
+Robert Bailey
+* * * * * * * * * * * * * * * *
+Powerball Jackpot Gewinner
