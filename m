@@ -2,72 +2,79 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30FC017BC79
-	for <lists+ceph-devel@lfdr.de>; Fri,  6 Mar 2020 13:13:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABF4E17D226
+	for <lists+ceph-devel@lfdr.de>; Sun,  8 Mar 2020 08:06:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbgCFMNn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 6 Mar 2020 07:13:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726194AbgCFMNn (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 6 Mar 2020 07:13:43 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B82D2072D;
-        Fri,  6 Mar 2020 12:13:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583496823;
-        bh=qrjGOZLa4Lp6Zr15HcoiifExkEM//CEZFS/Eyg7eolE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Wwv10ATU0KcOHrfRY1pSKnH/t9BjEtwdk4f1JMQQtjcEgRN2M30AC5L+FF1dvdXcN
-         Ol18A62LgESFeW9iUyQuEnqK0ABevGygQrS+UINMKguF+etrW/ctxPZXuCDz+7FhDq
-         HbmGpAEIfxZUOpIUuz+QoctO1X0ILQXDRjxaoiic=
-Message-ID: <f7318d47df2074a7a00ea3a8580bc973a8c0b206.camel@kernel.org>
-Subject: Re: [PATCH] fs/ceph: return errcode in __get_parent().
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Qiujun Huang <hqjagain@gmail.com>
-Cc:     sage@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 06 Mar 2020 07:13:41 -0500
-In-Reply-To: <1583458460-31917-1-git-send-email-hqjagain@gmail.com>
-References: <1583458460-31917-1-git-send-email-hqjagain@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726169AbgCHHFn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 8 Mar 2020 03:05:43 -0400
+Received: from pv50p00im-zteg10011401.me.com ([17.58.6.41]:49912 "EHLO
+        pv50p00im-zteg10011401.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725854AbgCHHFn (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 8 Mar 2020 03:05:43 -0400
+X-Greylist: delayed 413 seconds by postgrey-1.27 at vger.kernel.org; Sun, 08 Mar 2020 03:05:43 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
+        t=1583650728; bh=c99mhR7KjOLOjdnPnFV5nAXfB49rhguZSbk1FcK6GrY=;
+        h=Content-Type:Subject:From:Date:Message-Id:To;
+        b=A1UtKZ0OcLO/utAn3BJ/ehlkwpIVSey6ps6iaiSO/coAupMhOudEuYL9wJFCA3hnC
+         Ge4grjpJ0h7OyiH9b2MT0ed5Daqx9tXgotXPuNT4rowVFSIwj3m3HNTL00NLeBZIV+
+         Nz6EovazAyN3g5HhFNbelF5LQBqrwOSh8HQdSKqhJdJqzp2bqZCF0n/jx2GpOZrArz
+         zn6hwXHEOVQle1ZJO9zSvlzKotFIbq0KNysV9cvUMHwkZ0FEkm2MjG3nQTDl2jdwsU
+         eBYwSnlkjuU64Y5LRVlsuIX63pHqw/UwA/x+9ZE7O1OZ6AtM8J3o/cbplSOQJTvsff
+         mEcmahqkKcwjg==
+Received: from [127.0.0.1] (n112120205186.netvigator.com [112.120.205.186])
+        by pv50p00im-zteg10011401.me.com (Postfix) with ESMTPSA id B2CD1900215;
+        Sun,  8 Mar 2020 06:58:45 +0000 (UTC)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.60.0.2.5\))
+Subject: Re: [ceph-users] ceph rbd volumes/images IO details
+From:   XuYun <yunxu@me.com>
+In-Reply-To: <CANA9Uk5eR41ZBYU_XGpgQoLwO8MnGTFuu6L+OKKvEBhs2YXCiA@mail.gmail.com>
+Date:   Sun, 8 Mar 2020 14:58:42 +0800
+Cc:     ceph-users <ceph-users@lists.ceph.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Brad Hubbard <bhubbard@redhat.com>,
+        Robert LeBlanc <robert@leblancnet.us>,
+        ceph-users <ceph-users@ceph.com>,
+        Ceph Community <ceph-community@lists.ceph.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B6D7DD2C-7F32-40D0-A24B-CE955B33438F@me.com>
+References: <CANA9Uk54Ygo98sjozbU_HcAGjocSV2ui=-=imrDTCpdLOHhx6Q@mail.gmail.com>
+ <CANA9Uk5eR41ZBYU_XGpgQoLwO8MnGTFuu6L+OKKvEBhs2YXCiA@mail.gmail.com>
+To:     M Ranga Swami Reddy <swamireddy@gmail.com>
+X-Mailer: Apple Mail (2.3608.60.0.2.5)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2020-03-08_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1011 mlxscore=0
+ mlxlogscore=673 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-2003080054
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2020-03-06 at 09:34 +0800, Qiujun Huang wrote:
-> return real errcode when it's different from ENOENT.
-> 
-> Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
-> ---
->  fs/ceph/export.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-> index b6bfa94..79dc068 100644
-> --- a/fs/ceph/export.c
-> +++ b/fs/ceph/export.c
-> @@ -315,6 +315,11 @@ static struct dentry *__get_parent(struct super_block *sb,
->  
->  	req->r_num_caps = 1;
->  	err = ceph_mdsc_do_request(mdsc, NULL, req);
-> +	if (err) {
-> +		ceph_mdsc_put_request(req);
-> +		return ERR_PTR(err);
-> +	}
-> +
->  	inode = req->r_target_inode;
->  	if (inode)
->  		ihold(inode);
+You can enable prometheus module of mgr if you are running Nautilus.
 
-Looks good! Merged into the ceph-client/testing branch and should make
-5.7. Thanks for the patch!
--- 
-Jeff Layton <jlayton@kernel.org>
+> 2020=E5=B9=B43=E6=9C=888=E6=97=A5 =E4=B8=8A=E5=8D=882:15=EF=BC=8CM =
+Ranga Swami Reddy <swamireddy@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> On Fri, Mar 6, 2020 at 1:06 AM M Ranga Swami Reddy =
+<swamireddy@gmail.com>
+> wrote:
+>=20
+>> Hello,
+>> Can we get the IOPs of any rbd image/volume?
+>>=20
+>> For ex: I have created volumes via OpenStack Cinder. Want to know
+>> the IOPs of these volumes.
+>>=20
+>> In general - we can get pool stats, but not seen the per volumes =
+stats.
+>>=20
+>> Any hint here? Appreciated.
+>>=20
+> _______________________________________________
+> ceph-users mailing list -- ceph-users@ceph.io
+> To unsubscribe send an email to ceph-users-leave@ceph.io
 
