@@ -2,101 +2,125 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8438A17DD3E
-	for <lists+ceph-devel@lfdr.de>; Mon,  9 Mar 2020 11:17:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8FF817DF07
+	for <lists+ceph-devel@lfdr.de>; Mon,  9 Mar 2020 12:51:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbgCIKRW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 9 Mar 2020 06:17:22 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:38351 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbgCIKRW (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 9 Mar 2020 06:17:22 -0400
-Received: by mail-io1-f65.google.com with SMTP id s24so8537866iog.5
-        for <ceph-devel@vger.kernel.org>; Mon, 09 Mar 2020 03:17:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=c1rVE+mWPYtAenBfSSkODGcC5oUe1N/p1Ag9T2ZurAQ=;
-        b=aCbtTCZf3ojzMRuDQn6DeT/9dxOWvD25zbdXJrVE4D6/xPL3mDByVcVjqbzv2Bzjw9
-         TNkTMx+tSrtsQtJjkFvNgEukO0FOwUS6/4fgESOE1yL6RrYJCP61kzmxQEGAmfZCSHlh
-         cU+eYtxBMquKodCq5ZOuzX023CAE52YTABh5ajCRFVz9TH8lCPrpzdcVBhFtADi8lFCR
-         wzTIhgZ0qkbCZt2Tn5O/SCkzRua7cCPFmRjK/Py8XN5XRHs7mI3eAC+3CEYCZ4nKCZ3G
-         1jSCnpP9z494N2f5zM37nmQqMBlde6PCc7j6Ilb4Yiqt+Muq3HJocnMrTbvWCN8OJFZN
-         V7hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=c1rVE+mWPYtAenBfSSkODGcC5oUe1N/p1Ag9T2ZurAQ=;
-        b=HLRQEaO/ufJgmmQbR10zfjqVHWpPjGFgzeQMFusBB7mgiHIB95KgmMCZvr6mdoSp/H
-         EcsikgnQk7EtkvMc7sGcuUflD4WbR2+qYpd+S3n0LkbcTjsZu6TOLR77nP9GR4OArynu
-         zMnCKqHhFtSbT1DbEWvr9IVI1W4DgLCPHpv4cYG5Qp8SWrt5TiHGxyem2oEWlLY1BwK5
-         Uq0td7zDoOlS9BtakuZhT+JHOVnooJkGI40G8quf00HmLtwdNqU7Zh9242XDSBbBVkKs
-         IqB6BYltZ/FpkLIPS+MWLp4dPrvW8wzYlMgHqKPPfQJWpLlflMyetPH28NOvcE6YWJHi
-         0d5Q==
-X-Gm-Message-State: ANhLgQ1/Zfaqt99f2NV0SM8p/ugAOZF4m2OjZy4uqxHDlJ+hKYYSo/w0
-        D+wY6bhVRPtsuIGV0YsHcCSIelzg41/gavPtfZ8=
-X-Google-Smtp-Source: ADFU+vvkW0mmTRAY63bUI5W2pkLXOGZ8KXpJOo4+fkyws5WUJzLbFCViCW+iLGY/3QftmcGF3TTzBxZuVsOhcIA/dX8=
-X-Received: by 2002:a5d:8555:: with SMTP id b21mr12571682ios.200.1583749041538;
- Mon, 09 Mar 2020 03:17:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <CANA9Uk54Ygo98sjozbU_HcAGjocSV2ui=-=imrDTCpdLOHhx6Q@mail.gmail.com>
- <CANA9Uk5eR41ZBYU_XGpgQoLwO8MnGTFuu6L+OKKvEBhs2YXCiA@mail.gmail.com>
- <B6D7DD2C-7F32-40D0-A24B-CE955B33438F@me.com> <CANA9Uk76E6D-nznLF+ij9aoJgbpckKqc5gtUu0p4jfPOWCGWbA@mail.gmail.com>
-In-Reply-To: <CANA9Uk76E6D-nznLF+ij9aoJgbpckKqc5gtUu0p4jfPOWCGWbA@mail.gmail.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 9 Mar 2020 11:17:22 +0100
-Message-ID: <CAOi1vP_WNn2eSqwm-9Nvo+Gzv9MUYGmPaMGRpAsd3EKSdHBb3Q@mail.gmail.com>
-Subject: Re: [ceph-users] Re: ceph rbd volumes/images IO details
-To:     M Ranga Swami Reddy <swamireddy@gmail.com>
-Cc:     XuYun <yunxu@me.com>, ceph-users <ceph-users@lists.ceph.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        ceph-users <ceph-users@ceph.com>,
-        Ceph Community <ceph-community@lists.ceph.com>
+        id S1726463AbgCILvl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 9 Mar 2020 07:51:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39004 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725796AbgCILvl (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 9 Mar 2020 07:51:41 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12C6B2051A;
+        Mon,  9 Mar 2020 11:51:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583754700;
+        bh=cRPhnh/Qv+Br+tgb6dnvHXKbCxbV8yc46hTfucrzQjU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=svQmzJgV37YZIrOQe9lHQZ6z5WeqFPT8L/Air+ME4+dQ6BYRazrIjXlYSIdZPq9uV
+         ryN0YZWVpCo7IPZUNKH/Ir7OzJ0lSYH3MkCjwH499AXNJUsCZrPTyeXJwYCthOBGRP
+         beXpo8IYLXTF8ACqMl1QWHxabnzVV6vwWKNED86E=
+Message-ID: <16b9a2a5bfbd8802ce2f2c435aba7331cd1adb35.camel@kernel.org>
+Subject: Re: [PATCH v9 2/5] ceph: add caps perf metric for each session
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com, idryomov@gmail.com
+Cc:     sage@redhat.com, zyan@redhat.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org
+Date:   Mon, 09 Mar 2020 07:51:38 -0400
+In-Reply-To: <1583739430-4928-3-git-send-email-xiubli@redhat.com>
+References: <1583739430-4928-1-git-send-email-xiubli@redhat.com>
+         <1583739430-4928-3-git-send-email-xiubli@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, Mar 8, 2020 at 5:13 PM M Ranga Swami Reddy <swamireddy@gmail.com> w=
-rote:
->
-> Iam using the Luminous 12.2.11 version with prometheus.
->
-> On Sun, Mar 8, 2020 at 12:28 PM XuYun <yunxu@me.com> wrote:
->
-> > You can enable prometheus module of mgr if you are running Nautilus.
-> >
-> > > 2020=E5=B9=B43=E6=9C=888=E6=97=A5 =E4=B8=8A=E5=8D=882:15=EF=BC=8CM Ra=
-nga Swami Reddy <swamireddy@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
-> > >
-> > > On Fri, Mar 6, 2020 at 1:06 AM M Ranga Swami Reddy <swamireddy@gmail.=
-com
-> > >
-> > > wrote:
-> > >
-> > >> Hello,
-> > >> Can we get the IOPs of any rbd image/volume?
-> > >>
-> > >> For ex: I have created volumes via OpenStack Cinder. Want to know
-> > >> the IOPs of these volumes.
-> > >>
-> > >> In general - we can get pool stats, but not seen the per volumes sta=
-ts.
-> > >>
-> > >> Any hint here? Appreciated.
+On Mon, 2020-03-09 at 03:37 -0400, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> This will fulfill the cap hit/mis metric stuff per-superblock,
+> it will count the hit/mis counters based each inode, and if one
+> inode's 'issued & ~revoking == mask' will mean a hit, or a miss.
+> 
+> item          total           miss            hit
+> -------------------------------------------------
+> caps          295             107             4119
+> 
+> URL: https://tracker.ceph.com/issues/43215
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/acl.c        |  2 +-
+>  fs/ceph/caps.c       | 19 +++++++++++++++++++
+>  fs/ceph/debugfs.c    | 16 ++++++++++++++++
+>  fs/ceph/dir.c        |  5 +++--
+>  fs/ceph/inode.c      |  4 ++--
+>  fs/ceph/mds_client.c | 26 ++++++++++++++++++++++----
+>  fs/ceph/metric.h     | 13 +++++++++++++
+>  fs/ceph/super.h      |  8 +++++---
+>  fs/ceph/xattr.c      |  4 ++--
+>  9 files changed, 83 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
+> index 26be652..e046574 100644
+> --- a/fs/ceph/acl.c
+> +++ b/fs/ceph/acl.c
+> @@ -22,7 +22,7 @@ static inline void ceph_set_cached_acl(struct inode *inode,
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
+>  
+>  	spin_lock(&ci->i_ceph_lock);
+> -	if (__ceph_caps_issued_mask(ci, CEPH_CAP_XATTR_SHARED, 0))
+> +	if (__ceph_caps_issued_mask_metric(ci, CEPH_CAP_XATTR_SHARED, 0))
+>  		set_cached_acl(inode, type, acl);
+>  	else
+>  		forget_cached_acl(inode, type);
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 342a32c..efaeb67 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -912,6 +912,20 @@ int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch)
+>  	return 0;
+>  }
+>  
+> +int __ceph_caps_issued_mask_metric(struct ceph_inode_info *ci, int mask,
+> +				   int touch)
+> +{
+> +	struct ceph_fs_client *fsc = ceph_sb_to_client(ci->vfs_inode.i_sb);
+> +	int r;
+> +
+> +	r = __ceph_caps_issued_mask(ci, mask, touch);
+> +	if (r)
+> +		ceph_update_cap_hit(&fsc->mdsc->metric);
+> +	else
+> +		ceph_update_cap_mis(&fsc->mdsc->metric);
+> +	return r;
+> +}
+> +
+>  /*
+>   * Return true if mask caps are currently being revoked by an MDS.
+>   */
+> @@ -2680,6 +2694,11 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
+>  	if (snap_rwsem_locked)
+>  		up_read(&mdsc->snap_rwsem);
+>  
+> +	if (!ret)
+> +		ceph_update_cap_mis(&mdsc->metric);
 
-Per image/volume stats are available since nautilus [1].  There is
-no automated way to do it in luminous.  Since you are using openstack,
-you can probably set up some generic I/O monitoring at instance level
-(i.e. external to ceph) and possibly apply disk I/O limits (again at
-instance level, enforced in qemu).
+Should a negative error code here also mean a miss?
 
-[1] https://ceph.io/rbd/new-in-nautilus-rbd-performance-monitoring/
+> +	else if (ret == 1)
+> +		ceph_update_cap_hit(&mdsc->metric);
+> +
+>  	dout("get_cap_refs %p ret %d got %s\n", inode,
+>  	     ret, ceph_cap_string(*got));
+>  	return ret;
 
-Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-                Ilya
