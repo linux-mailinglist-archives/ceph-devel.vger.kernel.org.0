@@ -2,91 +2,86 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D93BF17FE6C
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Mar 2020 14:35:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 976D717FF58
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Mar 2020 14:46:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbgCJMo7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Mar 2020 08:44:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36442 "EHLO mx2.suse.de"
+        id S1727993AbgCJNqR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Mar 2020 09:46:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48160 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727541AbgCJMo5 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:44:57 -0400
+        id S1727327AbgCJNqQ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:46:16 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B7D95AC67;
-        Tue, 10 Mar 2020 12:44:55 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id D9DACAC22;
+        Tue, 10 Mar 2020 13:46:14 +0000 (UTC)
+Received: from localhost (webern.olymp [local])
+        by webern.olymp (OpenSMTPD) with ESMTPA id e1a12c44;
+        Tue, 10 Mar 2020 13:46:13 +0000 (WET)
+Date:   Tue, 10 Mar 2020 13:46:13 +0000
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Marc Roos <M.Roos@f1-outsourcing.eu>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-users <ceph-users@ceph.io>, ceph-devel@vger.kernel.org
+Subject: Re: [ceph-users] cephfs snap mkdir strange timestamp
+Message-ID: <20200310134613.GA74810@suse.com>
+References: <"H000007100163fdf.1583792359.sx.f1-outsourcing.eu*"@MHS>
+ <"H000007100164304.1583836879.sx.f1-outsourcing.eu*"@MHS>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 10 Mar 2020 13:44:55 +0100
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] libceph: fix memory leak for messages allocated with
- CEPH_MSG_DATA_PAGES
-In-Reply-To: <CAOi1vP8S6xTpbNaeRHZ=pKOf4vbw03LxT5RbheDMSHidDPGr+w@mail.gmail.com>
-References: <20200310090924.49788-1-rpenyaev@suse.de>
- <CAOi1vP9chc5PZD8SpSKXWMec2jMgESQuoAqkwy5GpF61Qs2Uhg@mail.gmail.com>
- <9998629d1021eb8c2bd3a1bd5c2d87c8@suse.de>
- <CAOi1vP8S6xTpbNaeRHZ=pKOf4vbw03LxT5RbheDMSHidDPGr+w@mail.gmail.com>
-Message-ID: <5e1f57d6f17b43ea99052a082b584190@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <"H000007100164304.1583836879.sx.f1-outsourcing.eu*"@MHS>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020-03-10 11:40, Ilya Dryomov wrote:
+[ CC'ing Jeff and ceph-devel@ ]
 
-[skip]
-
->> And seems if the ownership of the ->pages is transferred to
->> the handle_watch_notify() and freed there, then it should be
->> fixed by having release in one place: here or there.
+On Tue, Mar 10, 2020 at 11:41:19AM +0100, Marc Roos wrote:
+>  
 > 
-> The problem is that at least at one point CEPH_MSG_DATA_PAGES needed
-> a reference count -- it couldn't be freed it in one place.  pagelists
-> are reference counted, but can't be easily swapped in, hence that TODO.
-> 
-> Thanks for reminding me about this.  I'll take a look -- perhaps the
-> reference count is no longer required and we can get away with a simple
-> flag.
+> If I make a directory in linux the directory has the date of now, why is 
+> this not with creating a snap dir? Is this not a bug? One expects this 
+> to be the same as in linux not????
 
-To my shallow understanding handle_watch_notify() also has an error
-path which eventually does not free or take ownership of data->pages,
-e.g. callers of 'goto out_unlock_osdc'. Probably code relies on the
-fact, that sender knows what is doing and never sends ->data with
-wrong cookie or opcode, but looks very suspicious to me.
+I've noticed that long time ago, but I never checked the fuse client
+behaviour, which turns out to be different.  The fuse client seems to set
+ctime and atime to the same value as the parent directory (see
+Client::open_snapdir()).
 
-Seems for this particular DATA_PAGES case it is possible just to
-take an ownership by zeroing out data->pages and data->length,
-which prevents double free, something as the following:
+The patch below mimics that behaviour, by simply copying those timestamps
+from the parent inode.
 
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index b68b376d8c2f..15ae6377c461 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -4440,6 +4440,8 @@ static void handle_watch_notify(struct 
-ceph_osd_client *osdc,
-                                         
-ceph_release_page_vector(data->pages,
-                                                calc_pages_for(0, 
-data->length));
-                                 }
-+                               data->pages = NULL;
-+                               data->length = 0;
-                         }
-                         lreq->notify_finish_error = return_code;
-
-
-and keeping the current patch with explicit call of
-ceph_release_page_vector from ceph_msg_data_destroy() from
-messenger.c.
-
+Cheers,
 --
-Roman
+Luis
 
+From 2c8e06e66e5453ddf8b634cf1689a812dc05a0c6 Mon Sep 17 00:00:00 2001
+From: Luis Henriques <lhenriques@suse.com>
+Date: Tue, 10 Mar 2020 13:35:11 +0000
+Subject: [PATCH] ceph: fix snapshot dir ctime and mtime
 
+The .snap directory timestamps are kept at 0 (1970-01-01 00:00), which
+isn't consistent with what the fuse client does.  This patch makes the
+behaviour consistent, by setting these timestamps to those of the parent
+directory.
+
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
+---
+ fs/ceph/inode.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index d01710a16a4a..f4e78ade0871 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -82,6 +82,8 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+ 	inode->i_mode = parent->i_mode;
+ 	inode->i_uid = parent->i_uid;
+ 	inode->i_gid = parent->i_gid;
++	inode->i_mtime = parent->i_mtime;
++	inode->i_ctime = parent->i_ctime;
+ 	inode->i_op = &ceph_snapdir_iops;
+ 	inode->i_fop = &ceph_snapdir_fops;
+ 	ci->i_snap_caps = CEPH_CAP_PIN; /* so we can open */
