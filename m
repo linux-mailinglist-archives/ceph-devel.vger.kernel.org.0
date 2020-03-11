@@ -2,381 +2,278 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E26A180E31
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Mar 2020 03:54:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ACED18155D
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Mar 2020 10:55:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbgCKCy1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Mar 2020 22:54:27 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41978 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727685AbgCKCy1 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Mar 2020 22:54:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583895265;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=kFnduoFT4OTlbGGTIMjB9A5R7JOSMufqnAoTFmPCjtc=;
-        b=a3kQvOchlFic9MIGFECVZ9dkSKH1vi5AfWdkT7ukqYk4gYy0ZD8LnUA6jspy4nIIeqSLx/
-        cROfLjeLdkLzH8Nzk2pqtaf7r/dKJGQglkZOhUFbk6EVoGCQL2EVxDI+SqIKQ/1k51llHr
-        bz/7LNHZNRPZqMR/N/hxtq9E8tm+08A=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-98-7mlZUuCtPw6h6da1Ng7lVA-1; Tue, 10 Mar 2020 22:54:21 -0400
-X-MC-Unique: 7mlZUuCtPw6h6da1Ng7lVA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D563C8017CC;
-        Wed, 11 Mar 2020 02:54:20 +0000 (UTC)
-Received: from lxbceph0.gsslab.pek2.redhat.com (vm36-245.gsslab.pek2.redhat.com [10.72.36.245])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A199360C18;
-        Wed, 11 Mar 2020 02:54:18 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org
-Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
-        pdonnell@redhat.com, ceph-devel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH 2/2] ceph: add standard deviation support for read/write/metadata perf metric
-Date:   Tue, 10 Mar 2020 22:54:07 -0400
-Message-Id: <1583895247-17312-3-git-send-email-xiubli@redhat.com>
-In-Reply-To: <1583895247-17312-1-git-send-email-xiubli@redhat.com>
-References: <1583895247-17312-1-git-send-email-xiubli@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+        id S1728653AbgCKJzd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 11 Mar 2020 05:55:33 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:42856 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbgCKJzd (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 Mar 2020 05:55:33 -0400
+Received: by mail-ua1-f68.google.com with SMTP id p2so479543uao.9;
+        Wed, 11 Mar 2020 02:55:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gOgtIbKyNpgTiYxd9upKHF8kXwRIknTOBVABsNn+TZ8=;
+        b=a+QLrkgbRZV/TWq5aNFxODHT8hfZpyncjMcuVYdq3g4yvclKIypoZwv8GQbJxa465w
+         8FQ0hjutIxFcozxrjjJjGCjVvv9C/zjlg0YvkrgIQyUIy4qu+elcxluy7ulPmk19327C
+         Oi1DU+iZl5Qq052+9R++oxFlVgsu+P7Q+YX2cHjJ4aecgYzSeOuQ/ctfo2hjD0oySAgO
+         KmCCsKst20OyzGa8qMLCCTXGSYIQieLYJ1dLlPaUML1HmCUnzv/BZS53kYIW9Hf61KF9
+         fgsr2Dlhn/s0xnZyesX7+3XSZJQ6XwpaXI78uqANVaTEuSFz+jcHY9GqP+2y151D1F2R
+         Y6Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gOgtIbKyNpgTiYxd9upKHF8kXwRIknTOBVABsNn+TZ8=;
+        b=YBBW+o0SyZFYJzlVQ02mjUGBw773/RJrWoYgz1PNEQwviEsF4BV4ouDU8QXHPCiaLA
+         ickTrI1aoeoznMFEHvmqZxomOB2uZ9BgbNpCSrxoT7I9+jE4oGdIHKq5bx2pXbAYPrZ5
+         mHBKk7d1VFF+qC9IjObBXJejfjFvbPnZOohm/PNwg74YlhFoluoVgeI0nRvXBaKSBI60
+         AP3TY3zUSsI/n2CcorKmQcgT0swEqxDX3BEPwgSyp4sN2wgref8IHTH7OQ6ie3FXaMfo
+         pWQkaVucgHnoF3Qyul5a6NkRw0M0gzCnl8Q7QeE6sOkwVBezn6HLCpnCkI9MCtKFD7pP
+         etVQ==
+X-Gm-Message-State: ANhLgQ2dnug9JHq8aOehDhqZ/eq658dI3W1dnNbGkPgH5+2NRuU+C2UH
+        xBcHtph7sknAjcxLS5LfY5jXrYH3srPO7/ON8e8=
+X-Google-Smtp-Source: ADFU+vtDQCGNC63oTUVkE96Ddc7reZJm9cqBOiLSaNyN2bKIqZsqXm2crBnYWW4kNuyoG+1++ELB1K3FlZ0ttufLiGI=
+X-Received: by 2002:ab0:6e6:: with SMTP id g93mr1163450uag.105.1583920531149;
+ Wed, 11 Mar 2020 02:55:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200303093327.8720-1-gmayyyha@gmail.com> <CAOi1vP8jZ2tX_dg90uZY5G8cKX2Lzyu2vrGT_Ew0gVsnK4DDMA@mail.gmail.com>
+In-Reply-To: <CAOi1vP8jZ2tX_dg90uZY5G8cKX2Lzyu2vrGT_Ew0gVsnK4DDMA@mail.gmail.com>
+From:   Yanhu Cao <gmayyyha@gmail.com>
+Date:   Wed, 11 Mar 2020 17:55:19 +0800
+Message-ID: <CAB9OAC1+OOgaLF33bSrQ3WeKZyU0qwBqUQzi9MOXwzGta_b2XA@mail.gmail.com>
+Subject: Re: [v2] ceph: using POOL FULL flag instead of OSDMAP FULL flag
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>, kuba@kernel.org,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Tue, Mar 10, 2020 at 4:43 AM Ilya Dryomov <idryomov@gmail.com> wrote:
+>
+> On Tue, Mar 3, 2020 at 10:33 AM Yanhu Cao <gmayyyha@gmail.com> wrote:
+> >
+> > CEPH_OSDMAP_FULL/NEARFULL has been deprecated since mimic, so it
+> > does not work well in new versions, added POOL flags to handle it.
+> >
+> > Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> > ---
+> >  fs/ceph/file.c                  |  9 +++++++--
+> >  include/linux/ceph/osd_client.h |  2 ++
+> >  include/linux/ceph/osdmap.h     |  3 ++-
+> >  net/ceph/osd_client.c           | 23 +++++++++++++----------
+> >  4 files changed, 24 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > index 7e0190b1f821..84ec44f9d77a 100644
+> > --- a/fs/ceph/file.c
+> > +++ b/fs/ceph/file.c
+> > @@ -1482,7 +1482,9 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> >         }
+> >
+> >         /* FIXME: not complete since it doesn't account for being at quota */
+> > -       if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_FULL)) {
+> > +       if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_FULL) ||
+> > +           pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
+> > +                                               CEPH_POOL_FLAG_FULL)) {
+> >                 err = -ENOSPC;
+> >                 goto out;
+> >         }
+> > @@ -1575,7 +1577,10 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> >         }
+> >
+> >         if (written >= 0) {
+> > -               if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
+> > +               if (ceph_osdmap_flag(&fsc->client->osdc,
+> > +                                       CEPH_OSDMAP_NEARFULL) ||
+> > +                   pool_flag(&fsc->client->osdc, ci->i_layout.pool_id,
+> > +                                       CEPH_POOL_FLAG_NEARFULL))
+> >                         iocb->ki_flags |= IOCB_DSYNC;
+> >                 written = generic_write_sync(iocb, written);
+> >         }
+> > diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+> > index 5a62dbd3f4c2..be9007b93862 100644
+> > --- a/include/linux/ceph/osd_client.h
+> > +++ b/include/linux/ceph/osd_client.h
+> > @@ -375,6 +375,8 @@ static inline bool ceph_osdmap_flag(struct ceph_osd_client *osdc, int flag)
+> >         return osdc->osdmap->flags & flag;
+> >  }
+> >
+> > +bool pool_flag(struct ceph_osd_client *osdc, s64 pool_id, int flag);
+> > +
+> >  extern int ceph_osdc_setup(void);
+> >  extern void ceph_osdc_cleanup(void);
+> >
+> > diff --git a/include/linux/ceph/osdmap.h b/include/linux/ceph/osdmap.h
+> > index e081b56f1c1d..88faacc11f55 100644
+> > --- a/include/linux/ceph/osdmap.h
+> > +++ b/include/linux/ceph/osdmap.h
+> > @@ -36,7 +36,8 @@ int ceph_spg_compare(const struct ceph_spg *lhs, const struct ceph_spg *rhs);
+> >
+> >  #define CEPH_POOL_FLAG_HASHPSPOOL      (1ULL << 0) /* hash pg seed and pool id
+> >                                                        together */
+> > -#define CEPH_POOL_FLAG_FULL            (1ULL << 1) /* pool is full */
+> > +#define CEPH_POOL_FLAG_FULL            (1ULL << 1)  /* pool is full */
+> > +#define CEPH_POOL_FLAG_NEARFULL        (1ULL << 11) /* pool is nearfull */
+> >
+> >  struct ceph_pg_pool_info {
+> >         struct rb_node node;
+> > diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> > index b68b376d8c2f..9ad2b96c3e78 100644
+> > --- a/net/ceph/osd_client.c
+> > +++ b/net/ceph/osd_client.c
+> > @@ -1447,9 +1447,9 @@ static void unlink_request(struct ceph_osd *osd, struct ceph_osd_request *req)
+> >                 atomic_dec(&osd->o_osdc->num_homeless);
+> >  }
+> >
+> > -static bool __pool_full(struct ceph_pg_pool_info *pi)
+> > +static bool __pool_flag(struct ceph_pg_pool_info *pi, int flag)
+> >  {
+> > -       return pi->flags & CEPH_POOL_FLAG_FULL;
+> > +       return pi->flags & flag;
+> >  }
+> >
+> >  static bool have_pool_full(struct ceph_osd_client *osdc)
+> > @@ -1460,14 +1460,14 @@ static bool have_pool_full(struct ceph_osd_client *osdc)
+> >                 struct ceph_pg_pool_info *pi =
+> >                     rb_entry(n, struct ceph_pg_pool_info, node);
+> >
+> > -               if (__pool_full(pi))
+> > +               if (__pool_flag(pi, CEPH_POOL_FLAG_FULL))
+> >                         return true;
+> >         }
+> >
+> >         return false;
+> >  }
+> >
+> > -static bool pool_full(struct ceph_osd_client *osdc, s64 pool_id)
+> > +bool pool_flag(struct ceph_osd_client *osdc, s64 pool_id, int flag)
+> >  {
+> >         struct ceph_pg_pool_info *pi;
+> >
+> > @@ -1475,8 +1475,10 @@ static bool pool_full(struct ceph_osd_client *osdc, s64 pool_id)
+> >         if (!pi)
+> >                 return false;
+> >
+> > -       return __pool_full(pi);
+> > +       return __pool_flag(pi, flag);
+> >  }
+> > +EXPORT_SYMBOL(pool_flag);
+> > +
+> >
+> >  /*
+> >   * Returns whether a request should be blocked from being sent
+> > @@ -1489,7 +1491,7 @@ static bool target_should_be_paused(struct ceph_osd_client *osdc,
+> >         bool pauserd = ceph_osdmap_flag(osdc, CEPH_OSDMAP_PAUSERD);
+> >         bool pausewr = ceph_osdmap_flag(osdc, CEPH_OSDMAP_PAUSEWR) ||
+> >                        ceph_osdmap_flag(osdc, CEPH_OSDMAP_FULL) ||
+> > -                      __pool_full(pi);
+> > +                      __pool_flag(pi, CEPH_POOL_FLAG_FULL);
+> >
+> >         WARN_ON(pi->id != t->target_oloc.pool);
+> >         return ((t->flags & CEPH_OSD_FLAG_READ) && pauserd) ||
+> > @@ -2320,7 +2322,8 @@ static void __submit_request(struct ceph_osd_request *req, bool wrlocked)
+> >                    !(req->r_flags & (CEPH_OSD_FLAG_FULL_TRY |
+> >                                      CEPH_OSD_FLAG_FULL_FORCE)) &&
+> >                    (ceph_osdmap_flag(osdc, CEPH_OSDMAP_FULL) ||
+> > -                   pool_full(osdc, req->r_t.base_oloc.pool))) {
+> > +                  pool_flag(osdc, req->r_t.base_oloc.pool,
+> > +                            CEPH_POOL_FLAG_FULL))) {
+> >                 dout("req %p full/pool_full\n", req);
+> >                 if (ceph_test_opt(osdc->client, ABORT_ON_FULL)) {
+> >                         err = -ENOSPC;
+> > @@ -2539,7 +2542,7 @@ static int abort_on_full_fn(struct ceph_osd_request *req, void *arg)
+> >
+> >         if ((req->r_flags & CEPH_OSD_FLAG_WRITE) &&
+> >             (ceph_osdmap_flag(osdc, CEPH_OSDMAP_FULL) ||
+> > -            pool_full(osdc, req->r_t.base_oloc.pool))) {
+> > +            pool_flag(osdc, req->r_t.base_oloc.pool, CEPH_POOL_FLAG_FULL))) {
+> >                 if (!*victims) {
+> >                         update_epoch_barrier(osdc, osdc->osdmap->epoch);
+> >                         *victims = true;
+> > @@ -3707,7 +3710,7 @@ static void set_pool_was_full(struct ceph_osd_client *osdc)
+> >                 struct ceph_pg_pool_info *pi =
+> >                     rb_entry(n, struct ceph_pg_pool_info, node);
+> >
+> > -               pi->was_full = __pool_full(pi);
+> > +               pi->was_full = __pool_flag(pi, CEPH_POOL_FLAG_FULL);
+> >         }
+> >  }
+> >
+> > @@ -3719,7 +3722,7 @@ static bool pool_cleared_full(struct ceph_osd_client *osdc, s64 pool_id)
+> >         if (!pi)
+> >                 return false;
+> >
+> > -       return pi->was_full && !__pool_full(pi);
+> > +       return pi->was_full && !__pool_flag(pi, CEPH_POOL_FLAG_FULL);
+> >  }
+> >
+> >  static enum calc_target_result
+>
+> Hi Yanhu,
+>
+> Sorry for a late reply.
+>
+> This adds some unnecessary churn and also exposes a helper that
+> must be called under osdc->lock without making that obvious.  How
+> about the attached instead?
+>
+> ceph_pg_pool_flags() takes osdmap instead of osdc, making it clear
+> that the caller is resposibile for keeping the map stable.
+>
+> Thanks,
+>
+>                 Ilya
 
-This could help us to understand the perf issue better.
+net/ceph/osdmap.c
+--------------------------
+bool ceph_pg_pool_flags(struct ceph_osdmap *map, s64 pool_id, int flag)
+{
+        struct ceph_pg_pool_info *pi;
 
-URL: https://tracker.ceph.com/issues/44534
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/debugfs.c | 70 ++++++++++++++++++++++++++++---------------
- fs/ceph/metric.c  | 89 +++++++++++++++++++++++++++++++++++++++----------------
- fs/ceph/metric.h  | 12 ++++++--
- 3 files changed, 118 insertions(+), 53 deletions(-)
+        /* CEPH_OSDMAP_FULL|CEPH_OSDMAP_NEARFULL deprecated since mimic */
+        if (flag & (CEPH_POOL_FLAG_FULL|CEPH_POOL_FLAG_NEARFULL))
+                if (map->flags & (CEPH_OSDMAP_FULL|CEPH_OSDMAP_NEARFULL))
+                        return true;
 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 9ef0ffe..dca751e 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/ceph/ceph_debug.h>
- 
-+#include <linux/kernel.h>
- #include <linux/device.h>
- #include <linux/slab.h>
- #include <linux/module.h>
-@@ -129,43 +130,64 @@ static int metric_show(struct seq_file *s, void *p)
- 	struct ceph_fs_client *fsc = s->private;
- 	struct ceph_mds_client *mdsc = fsc->mdsc;
- 	int i, nr_caps = 0;
--	s64 total, sum, avg = 0, min, max;
-+	s64 total, sum, avg = 0, min, max, sq;
- 
--	seq_printf(s, "item          total       sum_lat(us)     avg_lat(us)     min_lat(us)     max_lat(us)\n");
--	seq_printf(s, "-------------------------------------------------------------------------------------\n");
-+	seq_printf(s, "item          total       sum_lat(us)     avg_lat(us)     min_lat(us)     max_lat(us)     stdev(us)\n");
-+	seq_printf(s, "---------------------------------------------------------------------------------------------------\n");
- 
--	total = percpu_counter_sum(&mdsc->metric.total_reads);
--	sum = percpu_counter_sum(&mdsc->metric.read_latency_sum);
--	sum = jiffies_to_usecs(sum);
--	avg = total ? sum / total : 0;
-+	spin_lock(&mdsc->metric.read_latency_lock);
-+	total = atomic64_read(&mdsc->metric.total_reads);
-+	avg = atomic64_read(&mdsc->metric.read_latency_avg);
- 	min = atomic64_read(&mdsc->metric.read_latency_min);
--	min = jiffies_to_usecs(min == S64_MAX ? 0 : min);
- 	max = atomic64_read(&mdsc->metric.read_latency_max);
--	max = jiffies_to_usecs(max);
--	seq_printf(s, "%-14s%-12lld%-16lld%-16lld%-16lld%lld\n", "read",
--		   total, sum, avg, min, max);
-+	spin_unlock(&mdsc->metric.read_latency_lock);
- 
--	total = percpu_counter_sum(&mdsc->metric.total_writes);
--	sum = percpu_counter_sum(&mdsc->metric.write_latency_sum);
-+	sum = percpu_counter_sum(&mdsc->metric.read_latency_sum);
-+	sq = percpu_counter_sum(&mdsc->metric.read_latency_sq_sum);
-+
-+	avg = jiffies_to_usecs(avg);
-+	min = jiffies_to_usecs(min == S64_MAX ? 0 : min);
-+	max = jiffies_to_usecs(max);
- 	sum = jiffies_to_usecs(sum);
--	avg = total ? sum / total : 0;
-+	sq = jiffies_to_usecs(total > 1 ? sq / (total - 1) : 0);
-+	seq_printf(s, "%-14s%-12lld%-16lld%-16lld%-16lld%-16lld%u\n",
-+		   "read", total, sum, avg, min, max, int_sqrt64(sq));
-+
-+	spin_lock(&mdsc->metric.write_latency_lock);
-+	total = atomic64_read(&mdsc->metric.total_writes);
-+	avg = atomic64_read(&mdsc->metric.write_latency_avg);
- 	min = atomic64_read(&mdsc->metric.write_latency_min);
--	min = jiffies_to_usecs(min == S64_MAX ? 0 : min);
- 	max = atomic64_read(&mdsc->metric.write_latency_max);
--	max = jiffies_to_usecs(max);
--	seq_printf(s, "%-14s%-12lld%-16lld%-16lld%-16lld%lld\n", "write",
--		   total, sum, avg, min, max);
-+	spin_unlock(&mdsc->metric.write_latency_lock);
- 
--	total = percpu_counter_sum(&mdsc->metric.total_metadatas);
--	sum = percpu_counter_sum(&mdsc->metric.metadata_latency_sum);
-+	sum = percpu_counter_sum(&mdsc->metric.write_latency_sum);
-+	sq = percpu_counter_sum(&mdsc->metric.write_latency_sq_sum);
-+
-+	avg = jiffies_to_usecs(avg);
-+	min = jiffies_to_usecs(min == S64_MAX ? 0 : min);
-+	max = jiffies_to_usecs(max);
- 	sum = jiffies_to_usecs(sum);
--	avg = total ? sum / total : 0;
-+	sq = jiffies_to_usecs(total > 1 ? sq / (total - 1) : 0);
-+	seq_printf(s, "%-14s%-12lld%-16lld%-16lld%-16lld%-16lld%u\n",
-+		   "write", total, sum, avg, min, max, int_sqrt64(sq));
-+
-+	spin_lock(&mdsc->metric.metadata_latency_lock);
-+	total = atomic64_read(&mdsc->metric.total_metadatas);
-+	avg = atomic64_read(&mdsc->metric.metadata_latency_avg);
- 	min = atomic64_read(&mdsc->metric.metadata_latency_min);
--	min = jiffies_to_usecs(min == S64_MAX ? 0 : min);
- 	max = atomic64_read(&mdsc->metric.metadata_latency_max);
-+	spin_unlock(&mdsc->metric.metadata_latency_lock);
-+
-+	sum = percpu_counter_sum(&mdsc->metric.metadata_latency_sum);
-+	sq = percpu_counter_sum(&mdsc->metric.metadata_latency_sq_sum);
-+
-+	avg = jiffies_to_usecs(avg);
-+	min = jiffies_to_usecs(min == S64_MAX ? 0 : min);
- 	max = jiffies_to_usecs(max);
--	seq_printf(s, "%-14s%-12lld%-16lld%-16lld%-16lld%lld\n", "metadata",
--		   total, sum, avg, min, max);
-+	sum = jiffies_to_usecs(sum);
-+	sq = jiffies_to_usecs(total > 1 ? sq / (total - 1) : 0);
-+	seq_printf(s, "%-14s%-12lld%-16lld%-16lld%-16lld%-16lld%u\n",
-+		   "metadata", total, sum, avg, min, max, int_sqrt64(sq));
- 
- 	seq_printf(s, "\n");
- 	seq_printf(s, "item          total           miss            hit\n");
-diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
-index 4a1bf27..17bf278 100644
---- a/fs/ceph/metric.c
-+++ b/fs/ceph/metric.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- 
-+#include <linux/kernel.h>
- #include <linux/atomic.h>
- #include <linux/percpu_counter.h>
- #include <linux/spinlock.h>
-@@ -27,55 +28,61 @@ int ceph_mdsc_metric_init(struct ceph_client_metric *m)
- 	if (ret)
- 		goto err_i_caps_mis;
- 
--	ret = percpu_counter_init(&m->total_reads, 0, GFP_KERNEL);
--	if (ret)
--		goto err_total_reads;
--
- 	ret = percpu_counter_init(&m->read_latency_sum, 0, GFP_KERNEL);
- 	if (ret)
- 		goto err_read_latency_sum;
- 
-+	ret = percpu_counter_init(&m->read_latency_sq_sum, 0, GFP_KERNEL);
-+	if (ret)
-+		goto err_read_latency_sq_sum;
-+
- 	spin_lock_init(&m->read_latency_lock);
-+	atomic64_set(&m->total_reads, 0);
- 	atomic64_set(&m->read_latency_min, S64_MAX);
- 	atomic64_set(&m->read_latency_max, 0);
--
--	ret = percpu_counter_init(&m->total_writes, 0, GFP_KERNEL);
--	if (ret)
--		goto err_total_writes;
-+	atomic64_set(&m->read_latency_avg, 0);
- 
- 	ret = percpu_counter_init(&m->write_latency_sum, 0, GFP_KERNEL);
- 	if (ret)
- 		goto err_write_latency_sum;
- 
-+	ret = percpu_counter_init(&m->write_latency_sq_sum, 0, GFP_KERNEL);
-+	if (ret)
-+		goto err_write_latency_sq_sum;
-+
- 	spin_lock_init(&m->write_latency_lock);
-+	atomic64_set(&m->total_writes, 0);
- 	atomic64_set(&m->write_latency_min, S64_MAX);
- 	atomic64_set(&m->write_latency_max, 0);
--
--	ret = percpu_counter_init(&m->total_metadatas, 0, GFP_KERNEL);
--	if (ret)
--		goto err_total_metadatas;
-+	atomic64_set(&m->write_latency_avg, 0);
- 
- 	ret = percpu_counter_init(&m->metadata_latency_sum, 0, GFP_KERNEL);
- 	if (ret)
- 		goto err_metadata_latency_sum;
- 
-+	ret = percpu_counter_init(&m->metadata_latency_sq_sum, 0, GFP_KERNEL);
-+	if (ret)
-+		goto err_metadata_latency_sq_sum;
-+
- 	spin_lock_init(&m->metadata_latency_lock);
-+	atomic64_set(&m->total_metadatas, 0);
- 	atomic64_set(&m->metadata_latency_min, S64_MAX);
- 	atomic64_set(&m->metadata_latency_max, 0);
-+	atomic64_set(&m->metadata_latency_avg, 0);
- 
- 	return 0;
- 
-+err_metadata_latency_sq_sum:
-+	percpu_counter_destroy(&m->metadata_latency_sum);
- err_metadata_latency_sum:
--	percpu_counter_destroy(&m->total_metadatas);
--err_total_metadatas:
-+	percpu_counter_destroy(&m->write_latency_sq_sum);
-+err_write_latency_sq_sum:
- 	percpu_counter_destroy(&m->write_latency_sum);
- err_write_latency_sum:
--	percpu_counter_destroy(&m->total_writes);
--err_total_writes:
-+	percpu_counter_destroy(&m->read_latency_sq_sum);
-+err_read_latency_sq_sum:
- 	percpu_counter_destroy(&m->read_latency_sum);
- err_read_latency_sum:
--	percpu_counter_destroy(&m->total_reads);
--err_total_reads:
- 	percpu_counter_destroy(&m->i_caps_mis);
- err_i_caps_mis:
- 	percpu_counter_destroy(&m->i_caps_hit);
-@@ -89,12 +96,12 @@ int ceph_mdsc_metric_init(struct ceph_client_metric *m)
- 
- void ceph_mdsc_metric_destroy(struct ceph_client_metric *m)
- {
-+	percpu_counter_destroy(&m->metadata_latency_sq_sum);
- 	percpu_counter_destroy(&m->metadata_latency_sum);
--	percpu_counter_destroy(&m->total_metadatas);
-+	percpu_counter_destroy(&m->write_latency_sq_sum);
- 	percpu_counter_destroy(&m->write_latency_sum);
--	percpu_counter_destroy(&m->total_writes);
-+	percpu_counter_destroy(&m->read_latency_sq_sum);
- 	percpu_counter_destroy(&m->read_latency_sum);
--	percpu_counter_destroy(&m->total_reads);
- 	percpu_counter_destroy(&m->i_caps_mis);
- 	percpu_counter_destroy(&m->i_caps_hit);
- 	percpu_counter_destroy(&m->d_lease_mis);
-@@ -107,11 +114,21 @@ void ceph_update_read_latency(struct ceph_client_metric *m,
- 			      int rc)
- {
- 	unsigned long lat = r_end - r_start;
-+	s64 sum, avg, sq, tmp;
- 
- 	if (rc < 0 && rc != -ENOENT && rc != -ETIMEDOUT)
- 		return;
- 
--	percpu_counter_inc(&m->total_reads);
-+	spin_lock(&m->read_latency_lock);
-+	sum = atomic64_inc_return(&m->total_reads);
-+	avg = atomic64_read(&m->read_latency_avg);
-+	sq = lat - avg;
-+	tmp = sq > 0 ? sq + (sum - 1) : sq - (sum - 1);
-+	avg = atomic64_add_return(tmp / sum, &m->read_latency_avg);
-+	spin_unlock(&m->read_latency_lock);
-+
-+	sq = sq * (lat - avg);
-+	percpu_counter_add(&m->read_latency_sq_sum, sq);
- 	percpu_counter_add(&m->read_latency_sum, lat);
- 
- 	if (lat >= atomic64_read(&m->read_latency_min) &&
-@@ -132,12 +149,22 @@ void ceph_update_write_latency(struct ceph_client_metric *m,
- 			       int rc)
- {
- 	unsigned long lat = r_end - r_start;
-+	s64 sum, avg, sq, tmp;
- 
- 	if (rc && rc != -ETIMEDOUT)
- 		return;
- 
--	percpu_counter_inc(&m->total_writes);
--	percpu_counter_add(&m->write_latency_sum, r_end - r_start);
-+	spin_lock(&m->write_latency_lock);
-+	sum = atomic64_inc_return(&m->total_writes);
-+	avg = atomic64_read(&m->write_latency_avg);
-+	sq = lat - avg;
-+	tmp = sq > 0 ? sq + (sum - 1) : sq - (sum - 1);
-+	avg = atomic64_add_return(tmp / sum, &m->write_latency_avg);
-+	spin_unlock(&m->write_latency_lock);
-+
-+	sq = sq * (lat - avg);
-+	percpu_counter_add(&m->write_latency_sq_sum, sq);
-+	percpu_counter_add(&m->write_latency_sum, lat);
- 
- 	if (lat >= atomic64_read(&m->write_latency_min) &&
- 	    lat <= atomic64_read(&m->write_latency_max))
-@@ -157,12 +184,22 @@ void ceph_update_metadata_latency(struct ceph_client_metric *m,
- 				  int rc)
- {
- 	unsigned long lat = r_end - r_start;
-+	s64 sum, avg, sq, tmp;
- 
- 	if (rc && rc != -ENOENT)
- 		return;
- 
--	percpu_counter_inc(&m->total_metadatas);
--	percpu_counter_add(&m->metadata_latency_sum, r_end - r_start);
-+	spin_lock(&m->metadata_latency_lock);
-+	sum = atomic64_inc_return(&m->total_metadatas);
-+	avg = atomic64_read(&m->metadata_latency_avg);
-+	sq = lat - avg;
-+	tmp = sq > 0 ? sq + (sum - 1) : sq - (sum - 1);
-+	avg = atomic64_add_return(tmp / sum, &m->metadata_latency_avg);
-+	spin_unlock(&m->metadata_latency_lock);
-+
-+	sq = sq * (lat - avg);
-+	percpu_counter_add(&m->metadata_latency_sq_sum, sq);
-+	percpu_counter_add(&m->metadata_latency_sum, lat);
- 
- 	if (lat >= atomic64_read(&m->metadata_latency_min) &&
- 	    lat <= atomic64_read(&m->metadata_latency_max))
-diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
-index 493e787..35d26e7 100644
---- a/fs/ceph/metric.h
-+++ b/fs/ceph/metric.h
-@@ -15,23 +15,29 @@ struct ceph_client_metric {
- 	struct percpu_counter i_caps_hit;
- 	struct percpu_counter i_caps_mis;
- 
--	struct percpu_counter total_reads;
- 	struct percpu_counter read_latency_sum;
-+	struct percpu_counter read_latency_sq_sum;
- 	spinlock_t read_latency_lock;
-+	atomic64_t total_reads;
- 	atomic64_t read_latency_min;
- 	atomic64_t read_latency_max;
-+	atomic64_t read_latency_avg;
- 
--	struct percpu_counter total_writes;
- 	struct percpu_counter write_latency_sum;
-+	struct percpu_counter write_latency_sq_sum;
- 	spinlock_t write_latency_lock;
-+	atomic64_t total_writes;
- 	atomic64_t write_latency_min;
- 	atomic64_t write_latency_max;
-+	atomic64_t write_latency_avg;
- 
--	struct percpu_counter total_metadatas;
- 	struct percpu_counter metadata_latency_sum;
-+	struct percpu_counter metadata_latency_sq_sum;
- 	spinlock_t metadata_latency_lock;
-+	atomic64_t total_metadatas;
- 	atomic64_t metadata_latency_min;
- 	atomic64_t metadata_latency_max;
-+	atomic64_t metadata_latency_avg;
- };
- 
- static inline void ceph_update_cap_hit(struct ceph_client_metric *m)
--- 
-1.8.3.1
+        pi = ceph_pg_pool_by_id(map, pool_id);
+        if (!pi)
+                return false;
 
+        return pi->flags & flag;
+}
+
+fs/ceph/file.c
+-----------------
+ceph_write_iter() {
+...
+        down_read(&osdc->lock);
+        if (ceph_pg_pool_flags(osdc->osdmap, ci->i_layout.pool_id,
+                               CEPH_POOL_FLAG_FULL|CEPH_POOL_FLAG_FULL_QUOTA)) {
+                err = -ENOSPC;
+                up_read(&osdc->lock);
+                goto out;
+        }
+        up_read(&osdc->lock);
+...
+         down_read(&osdc->lock);
+          if (ceph_pg_pool_flags(osdc->osdmap, ci->i_layout.pool_id,
+                                        CEPH_POOL_FLAG_NEARFULL))
+              iocb->ki_flags |= IOCB_DSYNC;
+          up_read(&osdc->lock);
+...
+}
+
+how about this?
+
+Thanks.
