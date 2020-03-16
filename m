@@ -2,176 +2,161 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A627186DAE
-	for <lists+ceph-devel@lfdr.de>; Mon, 16 Mar 2020 15:45:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F194186E78
+	for <lists+ceph-devel@lfdr.de>; Mon, 16 Mar 2020 16:26:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731617AbgCPOpx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 16 Mar 2020 10:45:53 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:54784 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731608AbgCPOpx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Mar 2020 10:45:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584369952;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lREgHkq2EYfy4v0f1NNzB3DjTcgPRb5FTi+LO0AoPEA=;
-        b=PbFA4nBM40DTUYENf80ffCDN0Rg6AVVMwEAksSERhBIUWo6YNj3I6u2SJYWq4uoT6Z7Uf9
-        PJyNZFhaV7AMZEmMIXQM2xVom54Qffnl55vAtY4lIeq0Gv92/TFRwxSXnFMl9pOOs6pXej
-        s9JlDLpSZKua6T0NviWT8bmog7WmBSc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-284-4FhFXZmlOsW9rM9BnghjwQ-1; Mon, 16 Mar 2020 10:45:48 -0400
-X-MC-Unique: 4FhFXZmlOsW9rM9BnghjwQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 10129800D54;
-        Mon, 16 Mar 2020 14:45:47 +0000 (UTC)
-Received: from [10.72.12.126] (ovpn-12-126.pek2.redhat.com [10.72.12.126])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43BEC92F8E;
-        Mon, 16 Mar 2020 14:45:41 +0000 (UTC)
-Subject: Re: [PATCH] ceph: add min/max latency support for read/write/metadata
- metrics
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
-        gfarnum@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-References: <1583807817-5571-1-git-send-email-xiubli@redhat.com>
- <b5ec20ab1fc00315603c462124501d919cecacc8.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <381ac866-630e-cd4b-7320-5993e6b5003a@redhat.com>
-Date:   Mon, 16 Mar 2020 22:45:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1731594AbgCPP0N (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 16 Mar 2020 11:26:13 -0400
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:36375 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731483AbgCPP0M (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Mar 2020 11:26:12 -0400
+Received: by mail-qv1-f67.google.com with SMTP id z13so2885769qvw.3
+        for <ceph-devel@vger.kernel.org>; Mon, 16 Mar 2020 08:26:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Opch2Knk/P2+Z1rztpsF9wm4usulLww3uUyX4IzO9eY=;
+        b=tdNgy34x71BAWzygLjhTd90APuS1dHkbrKs/KAfTdaZdNMyaYyIe4j/CqBUjsx4054
+         Rx3ipeg0efxPebdBBO8IhGruBj2HUWKwcugFNBPBwLVWuCRyY5PP2+duQ2eWcbh9PK9o
+         sIemFHWxUFOu8wfwWG74/7iBkIYmW4WsQZUNEn8eaMVbRqwszvVawLJzT0KrAvOdXNKo
+         T6ykwIjI8aFsPclqocrOYLild8aqBZ0CTLhno8ULxiy32WivVgxNT2tSo4MY1dkcSjha
+         NfeRt4hp+a7/EpDS039kdukqVaU5pA6AgIJSeG4dZcVOj1w3A3AY0rV9bo7/7lBoPF9u
+         CgjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Opch2Knk/P2+Z1rztpsF9wm4usulLww3uUyX4IzO9eY=;
+        b=lbr3SKKPVjSA0V4Euu/IqUBSv4U6pBSdKgyT9QBi7LBGvHALpNnUZeo2NOEtzOPa6M
+         AwuFkKv/DX268TB+8EmvHVOx95Mhw9n1PEvXxp8ocfOoN8kPoJWn6Ofod9F8v2kuyooj
+         pbKp7OitRZVWY/o8U2iTDMuA3z6uN0viI/MLw4GT0Ql1ytBnhHD6DKyFLVeosXe9peJ/
+         9jRTyvdEHU/M3DAHt05q6cJn7ik7hQgEA8bnjxr8W/wyxVXHAUV8xCSfOAYmXJ7orbwV
+         neqMXdyIf0QyQs5kh88ET405N8hHGf813dzynwCnpZOyrMr2Wx3339wTFjrspV/YR0xO
+         EbzQ==
+X-Gm-Message-State: ANhLgQ0ZcVa/myiwL2K21cO7IX4zvqdiJZQxdjyFeRMcUQid6S+Bjouh
+        gH3y66mS2REQ9/PYfwFnwwOuhmLyHJcQ3SMubL8=
+X-Google-Smtp-Source: ADFU+vuPZ+8uatuX9koyfKJIuRVarvK3CzjiN0Ktp/oBgXWJ9+8GqSxkJi+qMUmy7EFqtPhCUj1b+ggGpNWCW5EVqnk=
+X-Received: by 2002:a05:6214:188d:: with SMTP id cx13mr368632qvb.50.1584372371418;
+ Mon, 16 Mar 2020 08:26:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <b5ec20ab1fc00315603c462124501d919cecacc8.camel@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <20200310113421.174873-1-zyan@redhat.com> <20200310113421.174873-2-zyan@redhat.com>
+ <25eaece7ad299eef0e7418f2b9acce900460baed.camel@kernel.org>
+In-Reply-To: <25eaece7ad299eef0e7418f2b9acce900460baed.camel@kernel.org>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Mon, 16 Mar 2020 23:26:00 +0800
+Message-ID: <CAAM7YAnmXf4QbfMd4Qv=AhSKisagj118G2zfNubAdcZEjZrTqQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] ceph: cleanup return error of try_get_cap_refs()
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     "Yan, Zheng" <zyan@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020/3/16 22:21, Jeff Layton wrote:
-> On Mon, 2020-03-09 at 22:36 -0400, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> These will be very useful help diagnose problems.
->>
->> URL: https://tracker.ceph.com/issues/44533
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>
->> The output will be like:
->>
->> # cat /sys/kernel/debug/ceph/19e31430-fc65-4aa1-99cf-2c8eaaafd451.client4347/metrics
->> item          total       sum_lat(us)     avg_lat(us)     min_lat(us)     max_lat(us)
->> -------------------------------------------------------------------------------------
->> read          27          297000          11000           2000            27000
->> write         16          3860000         241250          175000          263000
->> metadata      3           30000           10000           2000            16000
->>
->> item          total           miss            hit
->> -------------------------------------------------
->> d_lease       2               0               1
->> caps          2               0               3078
->>
->>
->>
->>   fs/ceph/debugfs.c    | 27 ++++++++++++++++++++------
->>   fs/ceph/mds_client.c | 12 ++++++++++++
->>   fs/ceph/metric.h     | 54 +++++++++++++++++++++++++++++++++++++++++++++++++++-
->>   3 files changed, 86 insertions(+), 7 deletions(-)
->>
->>
->> diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
->> index faba142..9f0d050 100644
->> --- a/fs/ceph/metric.h
->> +++ b/fs/ceph/metric.h
->> @@ -2,6 +2,10 @@
->>   #ifndef _FS_CEPH_MDS_METRIC_H
->>   #define _FS_CEPH_MDS_METRIC_H
->>   
->> +#include <linux/atomic.h>
->> +#include <linux/percpu.h>
->> +#include <linux/spinlock.h>
->> +
->>   /* This is the global metrics */
->>   struct ceph_client_metric {
->>   	atomic64_t            total_dentries;
->> @@ -13,12 +17,21 @@ struct ceph_client_metric {
->>   
->>   	struct percpu_counter total_reads;
->>   	struct percpu_counter read_latency_sum;
->> +	spinlock_t read_latency_lock;
->> +	atomic64_t read_latency_min;
->> +	atomic64_t read_latency_max;
->>   
->>   	struct percpu_counter total_writes;
->>   	struct percpu_counter write_latency_sum;
->> +	spinlock_t write_latency_lock;
->> +	atomic64_t write_latency_min;
->> +	atomic64_t write_latency_max;
->>   
->>   	struct percpu_counter total_metadatas;
->>   	struct percpu_counter metadata_latency_sum;
->> +	spinlock_t metadata_latency_lock;
->> +	atomic64_t metadata_latency_min;
->> +	atomic64_t metadata_latency_max;
->>   };
->>   
->>   static inline void ceph_update_cap_hit(struct ceph_client_metric *m)
->> @@ -36,11 +49,24 @@ static inline void ceph_update_read_latency(struct ceph_client_metric *m,
->>   					    unsigned long r_end,
->>   					    int rc)
->>   {
->> +	unsigned long lat = r_end - r_start;
->> +
->>   	if (rc < 0 && rc != -ENOENT && rc != -ETIMEDOUT)
->>   		return;
->>   
->>   	percpu_counter_inc(&m->total_reads);
->> -	percpu_counter_add(&m->read_latency_sum, r_end - r_start);
->> +	percpu_counter_add(&m->read_latency_sum, lat);
->> +
->> +	if (lat >= atomic64_read(&m->read_latency_min) &&
->> +	    lat <= atomic64_read(&m->read_latency_max))
->> +		return;
->> +
->> +	spin_lock(&m->read_latency_lock);
->> +	if (lat < atomic64_read(&m->read_latency_min))
->> +		atomic64_set(&m->read_latency_min, lat);
->> +	if (lat > atomic64_read(&m->read_latency_max))
->> +		atomic64_set(&m->read_latency_max, lat);
->> +	spin_unlock(&m->read_latency_lock);
->>   }
->>   
-> Looks reasonable overall. I do sort of wonder if we really need
-> spinlocks for these though. Might it be more efficient to use cmpxchg
-> instead? i.e.:
+On Mon, Mar 16, 2020 at 8:50 PM Jeff Layton <jlayton@kernel.org> wrote:
 >
-> cur = atomic64_read(&m->read_latency_min);
-> do {
-> 	old = cur;
-> 	if (likely(lat >= old))
-> 		break;
-> } while ((cur = atomic_long_cmpxchg(&m->read_latency_min, old, lat)) != old);
-
-IMO the above case should be more efficient here.
-
-Let me post the V2 to fix it.
-
-BRs
-
-
-> ...another idea might be to use a seqlock and non-atomic vars.
+> On Tue, 2020-03-10 at 19:34 +0800, Yan, Zheng wrote:
+> > Returns 0 if caps were not able to be acquired (yet), 1 if succeed,
+> > or a negative error code. There are 3 speical error codes:
+> >
+> > -EAGAIN: need to sleep but non-blocking is specified
+> > -EFBIG:  ask caller to call check_max_size() and try again.
+> > -ESTALE: ask caller to call ceph_renew_caps() and try again.
+> >
+> > Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+> > ---
+> >  fs/ceph/caps.c | 25 ++++++++++++++-----------
+> >  1 file changed, 14 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> > index 342a32c74c64..804f4c65251a 100644
+> > --- a/fs/ceph/caps.c
+> > +++ b/fs/ceph/caps.c
+> > @@ -2530,10 +2530,11 @@ void ceph_take_cap_refs(struct ceph_inode_info *ci, int got,
+> >   * Note that caller is responsible for ensuring max_size increases are
+> >   * requested from the MDS.
+> >   *
+> > - * Returns 0 if caps were not able to be acquired (yet), a 1 if they were,
+> > - * or a negative error code.
+> > - *
+> > - * FIXME: how does a 0 return differ from -EAGAIN?
+> > + * Returns 0 if caps were not able to be acquired (yet), 1 if succeed,
+> > + * or a negative error code. There are 3 speical error codes:
+> > + *  -EAGAIN: need to sleep but non-blocking is specified
+> > + *  -EFBIG:  ask caller to call check_max_size() and try again.
+> > + *  -ESTALE: ask caller to call ceph_renew_caps() and try again.
+> >   */
+> >  enum {
+> >       /* first 8 bits are reserved for CEPH_FILE_MODE_FOO */
+> > @@ -2581,7 +2582,7 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
+> >                       dout("get_cap_refs %p endoff %llu > maxsize %llu\n",
+> >                            inode, endoff, ci->i_max_size);
+> >                       if (endoff > ci->i_requested_max_size)
+> > -                             ret = -EAGAIN;
+> > +                             ret = -EFBIG;
+> >                       goto out_unlock;
+> >               }
+> >               /*
+> > @@ -2743,7 +2744,10 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
+> >               flags |= NON_BLOCKING;
+> >
+> >       ret = try_get_cap_refs(inode, need, want, 0, flags, got);
+> > -     return ret == -EAGAIN ? 0 : ret;
+> > +     /* three special error codes */
+> > +     if (ret == -EAGAIN || ret == -EFBIG || ret == -EAGAIN)
+> > +             ret = 0;
+> > +     return ret;
+> >  }
+> >
+> >  /*
+> > @@ -2771,17 +2775,12 @@ int ceph_get_caps(struct file *filp, int need, int want,
+> >       flags = get_used_fmode(need | want);
+> >
+> >       while (true) {
+> > -             if (endoff > 0)
+> > -                     check_max_size(inode, endoff);
+> > -
+> >               flags &= CEPH_FILE_MODE_MASK;
+> >               if (atomic_read(&fi->num_locks))
+> >                       flags |= CHECK_FILELOCK;
+> >               _got = 0;
+> >               ret = try_get_cap_refs(inode, need, want, endoff,
+> >                                      flags, &_got);
+> > -             if (ret == -EAGAIN)
+> > -                     continue;
 >
-> Mostly this shouldn't matter much though as we'll almost always be
-> hitting the non-locking fastpath. I'll plan to merge this as-is unless
-> you want to rework it.
+> Ok, so I guess we don't expect to see this error here since we didn't
+> set NON_BLOCKING. The error returns from try_get_cap_refs are pretty
+> complex, and I worry a little about future changes subtly breaking some
+> of these assumptions.
+>
+> Maybe a WARN_ON_ONCE(ret == -EAGAIN) here would be good?
+>
 
+make sense. Please edit the patch if you don't have other comments.
 
+Regards
+Yan, Zheng
+
+> >               if (!ret) {
+> >                       struct ceph_mds_client *mdsc = fsc->mdsc;
+> >                       struct cap_wait cw;
+> > @@ -2829,6 +2828,10 @@ int ceph_get_caps(struct file *filp, int need, int want,
+> >               }
+> >
+> >               if (ret < 0) {
+> > +                     if (ret == -EFBIG) {
+> > +                             check_max_size(inode, endoff);
+> > +                             continue;
+> > +                     }
+> >                       if (ret == -ESTALE) {
+> >                               /* session was killed, try renew caps */
+> >                               ret = ceph_renew_caps(inode, flags);
+>
+> --
+> Jeff Layton <jlayton@kernel.org>
+>
