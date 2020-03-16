@@ -2,161 +2,280 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F194186E78
-	for <lists+ceph-devel@lfdr.de>; Mon, 16 Mar 2020 16:26:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAD54186F7F
+	for <lists+ceph-devel@lfdr.de>; Mon, 16 Mar 2020 17:00:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731594AbgCPP0N (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 16 Mar 2020 11:26:13 -0400
-Received: from mail-qv1-f67.google.com ([209.85.219.67]:36375 "EHLO
-        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731483AbgCPP0M (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Mar 2020 11:26:12 -0400
-Received: by mail-qv1-f67.google.com with SMTP id z13so2885769qvw.3
-        for <ceph-devel@vger.kernel.org>; Mon, 16 Mar 2020 08:26:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Opch2Knk/P2+Z1rztpsF9wm4usulLww3uUyX4IzO9eY=;
-        b=tdNgy34x71BAWzygLjhTd90APuS1dHkbrKs/KAfTdaZdNMyaYyIe4j/CqBUjsx4054
-         Rx3ipeg0efxPebdBBO8IhGruBj2HUWKwcugFNBPBwLVWuCRyY5PP2+duQ2eWcbh9PK9o
-         sIemFHWxUFOu8wfwWG74/7iBkIYmW4WsQZUNEn8eaMVbRqwszvVawLJzT0KrAvOdXNKo
-         T6ykwIjI8aFsPclqocrOYLild8aqBZ0CTLhno8ULxiy32WivVgxNT2tSo4MY1dkcSjha
-         NfeRt4hp+a7/EpDS039kdukqVaU5pA6AgIJSeG4dZcVOj1w3A3AY0rV9bo7/7lBoPF9u
-         CgjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Opch2Knk/P2+Z1rztpsF9wm4usulLww3uUyX4IzO9eY=;
-        b=lbr3SKKPVjSA0V4Euu/IqUBSv4U6pBSdKgyT9QBi7LBGvHALpNnUZeo2NOEtzOPa6M
-         AwuFkKv/DX268TB+8EmvHVOx95Mhw9n1PEvXxp8ocfOoN8kPoJWn6Ofod9F8v2kuyooj
-         pbKp7OitRZVWY/o8U2iTDMuA3z6uN0viI/MLw4GT0Ql1ytBnhHD6DKyFLVeosXe9peJ/
-         9jRTyvdEHU/M3DAHt05q6cJn7ik7hQgEA8bnjxr8W/wyxVXHAUV8xCSfOAYmXJ7orbwV
-         neqMXdyIf0QyQs5kh88ET405N8hHGf813dzynwCnpZOyrMr2Wx3339wTFjrspV/YR0xO
-         EbzQ==
-X-Gm-Message-State: ANhLgQ0ZcVa/myiwL2K21cO7IX4zvqdiJZQxdjyFeRMcUQid6S+Bjouh
-        gH3y66mS2REQ9/PYfwFnwwOuhmLyHJcQ3SMubL8=
-X-Google-Smtp-Source: ADFU+vuPZ+8uatuX9koyfKJIuRVarvK3CzjiN0Ktp/oBgXWJ9+8GqSxkJi+qMUmy7EFqtPhCUj1b+ggGpNWCW5EVqnk=
-X-Received: by 2002:a05:6214:188d:: with SMTP id cx13mr368632qvb.50.1584372371418;
- Mon, 16 Mar 2020 08:26:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200310113421.174873-1-zyan@redhat.com> <20200310113421.174873-2-zyan@redhat.com>
- <25eaece7ad299eef0e7418f2b9acce900460baed.camel@kernel.org>
-In-Reply-To: <25eaece7ad299eef0e7418f2b9acce900460baed.camel@kernel.org>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Mon, 16 Mar 2020 23:26:00 +0800
-Message-ID: <CAAM7YAnmXf4QbfMd4Qv=AhSKisagj118G2zfNubAdcZEjZrTqQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] ceph: cleanup return error of try_get_cap_refs()
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     "Yan, Zheng" <zyan@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1731920AbgCPQAK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 16 Mar 2020 12:00:10 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:45420 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731636AbgCPQAK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 16 Mar 2020 12:00:10 -0400
+X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Mar 2020 12:00:07 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584374407;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=k8jckT1NlGdms4OUyYZHfa726UIHkJpGLf69NZnV1Xs=;
+        b=bdNY9OQgMPZpa8cqRkj7JO+1oODb3UBRFLvEyOju2CCUZ4VRaHJzynhk39JXadX/i9IQJ2
+        gTYkOcU272TWa2vOk53NlOvzHOe1vVG39BFAmCs5uTBDOMyCiqJiIlqSVSpMXOPVIxy9Bm
+        poYPMylcLUnIJNaFUOPmryUBz4wFoyc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-63-kAAmv5GuPD23nTAL1PgfZw-1; Mon, 16 Mar 2020 11:53:10 -0400
+X-MC-Unique: kAAmv5GuPD23nTAL1PgfZw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B27D0A3EAD0;
+        Mon, 16 Mar 2020 15:53:09 +0000 (UTC)
+Received: from lxbceph0.gsslab.pek2.redhat.com (vm36-245.gsslab.pek2.redhat.com [10.72.36.245])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 46FEB94966;
+        Mon, 16 Mar 2020 15:52:54 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com, gfarnum@redhat.com,
+        zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v2] ceph: add min/max latency support for read/write/metadata metrics
+Date:   Mon, 16 Mar 2020 11:52:51 -0400
+Message-Id: <1584373971-21654-1-git-send-email-xiubli@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 8:50 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> On Tue, 2020-03-10 at 19:34 +0800, Yan, Zheng wrote:
-> > Returns 0 if caps were not able to be acquired (yet), 1 if succeed,
-> > or a negative error code. There are 3 speical error codes:
-> >
-> > -EAGAIN: need to sleep but non-blocking is specified
-> > -EFBIG:  ask caller to call check_max_size() and try again.
-> > -ESTALE: ask caller to call ceph_renew_caps() and try again.
-> >
-> > Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-> > ---
-> >  fs/ceph/caps.c | 25 ++++++++++++++-----------
-> >  1 file changed, 14 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > index 342a32c74c64..804f4c65251a 100644
-> > --- a/fs/ceph/caps.c
-> > +++ b/fs/ceph/caps.c
-> > @@ -2530,10 +2530,11 @@ void ceph_take_cap_refs(struct ceph_inode_info *ci, int got,
-> >   * Note that caller is responsible for ensuring max_size increases are
-> >   * requested from the MDS.
-> >   *
-> > - * Returns 0 if caps were not able to be acquired (yet), a 1 if they were,
-> > - * or a negative error code.
-> > - *
-> > - * FIXME: how does a 0 return differ from -EAGAIN?
-> > + * Returns 0 if caps were not able to be acquired (yet), 1 if succeed,
-> > + * or a negative error code. There are 3 speical error codes:
-> > + *  -EAGAIN: need to sleep but non-blocking is specified
-> > + *  -EFBIG:  ask caller to call check_max_size() and try again.
-> > + *  -ESTALE: ask caller to call ceph_renew_caps() and try again.
-> >   */
-> >  enum {
-> >       /* first 8 bits are reserved for CEPH_FILE_MODE_FOO */
-> > @@ -2581,7 +2582,7 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
-> >                       dout("get_cap_refs %p endoff %llu > maxsize %llu\n",
-> >                            inode, endoff, ci->i_max_size);
-> >                       if (endoff > ci->i_requested_max_size)
-> > -                             ret = -EAGAIN;
-> > +                             ret = -EFBIG;
-> >                       goto out_unlock;
-> >               }
-> >               /*
-> > @@ -2743,7 +2744,10 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
-> >               flags |= NON_BLOCKING;
-> >
-> >       ret = try_get_cap_refs(inode, need, want, 0, flags, got);
-> > -     return ret == -EAGAIN ? 0 : ret;
-> > +     /* three special error codes */
-> > +     if (ret == -EAGAIN || ret == -EFBIG || ret == -EAGAIN)
-> > +             ret = 0;
-> > +     return ret;
-> >  }
-> >
-> >  /*
-> > @@ -2771,17 +2775,12 @@ int ceph_get_caps(struct file *filp, int need, int want,
-> >       flags = get_used_fmode(need | want);
-> >
-> >       while (true) {
-> > -             if (endoff > 0)
-> > -                     check_max_size(inode, endoff);
-> > -
-> >               flags &= CEPH_FILE_MODE_MASK;
-> >               if (atomic_read(&fi->num_locks))
-> >                       flags |= CHECK_FILELOCK;
-> >               _got = 0;
-> >               ret = try_get_cap_refs(inode, need, want, endoff,
-> >                                      flags, &_got);
-> > -             if (ret == -EAGAIN)
-> > -                     continue;
->
-> Ok, so I guess we don't expect to see this error here since we didn't
-> set NON_BLOCKING. The error returns from try_get_cap_refs are pretty
-> complex, and I worry a little about future changes subtly breaking some
-> of these assumptions.
->
-> Maybe a WARN_ON_ONCE(ret == -EAGAIN) here would be good?
->
+From: Xiubo Li <xiubli@redhat.com>
 
-make sense. Please edit the patch if you don't have other comments.
+These will be very useful help diagnose problems.
 
-Regards
-Yan, Zheng
+URL: https://tracker.ceph.com/issues/44533
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
 
-> >               if (!ret) {
-> >                       struct ceph_mds_client *mdsc = fsc->mdsc;
-> >                       struct cap_wait cw;
-> > @@ -2829,6 +2828,10 @@ int ceph_get_caps(struct file *filp, int need, int want,
-> >               }
-> >
-> >               if (ret < 0) {
-> > +                     if (ret == -EFBIG) {
-> > +                             check_max_size(inode, endoff);
-> > +                             continue;
-> > +                     }
-> >                       if (ret == -ESTALE) {
-> >                               /* session was killed, try renew caps */
-> >                               ret = ceph_renew_caps(inode, flags);
->
-> --
-> Jeff Layton <jlayton@kernel.org>
->
+Changed in V2:
+- switch spin lock to cmpxchg
+
+ fs/ceph/debugfs.c    | 26 ++++++++++++++++----
+ fs/ceph/mds_client.c |  9 +++++++
+ fs/ceph/metric.h     | 69 +++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 98 insertions(+), 6 deletions(-)
+
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index 60f3e307..bcf7215 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -130,27 +130,43 @@ static int metric_show(struct seq_file *s, void *p)
+ 	struct ceph_mds_client *mdsc = fsc->mdsc;
+ 	int i, nr_caps = 0;
+ 	s64 total, sum, avg = 0;
++	unsigned long min, max;
+ 
+-	seq_printf(s, "item          total       sum_lat(us)     avg_lat(us)\n");
+-	seq_printf(s, "-----------------------------------------------------\n");
++	seq_printf(s, "item          total       sum_lat(us)     avg_lat(us)     min_lat(us)     max_lat(us)\n");
++	seq_printf(s, "-------------------------------------------------------------------------------------\n");
+ 
+ 	total = percpu_counter_sum(&mdsc->metric.total_reads);
+ 	sum = percpu_counter_sum(&mdsc->metric.read_latency_sum);
+ 	sum = jiffies_to_usecs(sum);
+ 	avg = total ? sum / total : 0;
+-	seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "read", total, sum, avg);
++	min = atomic_long_read(&mdsc->metric.read_latency_min);
++	min = jiffies_to_usecs(min == ULONG_MAX ? 0 : min);
++	max = atomic_long_read(&mdsc->metric.read_latency_max);
++	max = jiffies_to_usecs(max);
++	seq_printf(s, "%-14s%-12lld%-16lld%-16lld%-16ld%ld\n", "read",
++		   total, sum, avg, min, max);
+ 
+ 	total = percpu_counter_sum(&mdsc->metric.total_writes);
+ 	sum = percpu_counter_sum(&mdsc->metric.write_latency_sum);
+ 	sum = jiffies_to_usecs(sum);
+ 	avg = total ? sum / total : 0;
+-	seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "write", total, sum, avg);
++	min = atomic_long_read(&mdsc->metric.write_latency_min);
++	min = jiffies_to_usecs(min == ULONG_MAX ? 0 : min);
++	max = atomic_long_read(&mdsc->metric.write_latency_max);
++	max = jiffies_to_usecs(max);
++	seq_printf(s, "%-14s%-12lld%-16lld%-16lld%-16ld%ld\n", "write",
++		   total, sum, avg, min, max);
+ 
+ 	total = percpu_counter_sum(&mdsc->metric.total_metadatas);
+ 	sum = percpu_counter_sum(&mdsc->metric.metadata_latency_sum);
+ 	sum = jiffies_to_usecs(sum);
+ 	avg = total ? sum / total : 0;
+-	seq_printf(s, "%-14s%-12lld%-16lld%lld\n", "metadata", total, sum, avg);
++	min = atomic_long_read(&mdsc->metric.metadata_latency_min);
++	min = jiffies_to_usecs(min == ULONG_MAX ? 0 : min);
++	max = atomic_long_read(&mdsc->metric.metadata_latency_max);
++	max = jiffies_to_usecs(max);
++	seq_printf(s, "%-14s%-12lld%-16lld%-16lld%-16ld%ld\n", "metadata",
++		   total, sum, avg, min, max);
+ 
+ 	seq_printf(s, "\n");
+ 	seq_printf(s, "item          total           miss            hit\n");
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 5c03ed3..7844aa6 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -4358,6 +4358,9 @@ static int ceph_mdsc_metric_init(struct ceph_client_metric *metric)
+ 	if (ret)
+ 		goto err_read_latency_sum;
+ 
++	atomic_long_set(&metric->read_latency_min, ULONG_MAX);
++	atomic_long_set(&metric->read_latency_max, 0);
++
+ 	ret = percpu_counter_init(&metric->total_writes, 0, GFP_KERNEL);
+ 	if (ret)
+ 		goto err_total_writes;
+@@ -4366,6 +4369,9 @@ static int ceph_mdsc_metric_init(struct ceph_client_metric *metric)
+ 	if (ret)
+ 		goto err_write_latency_sum;
+ 
++	atomic_long_set(&metric->write_latency_min, ULONG_MAX);
++	atomic_long_set(&metric->write_latency_max, 0);
++
+ 	ret = percpu_counter_init(&metric->total_metadatas, 0, GFP_KERNEL);
+ 	if (ret)
+ 		goto err_total_metadatas;
+@@ -4374,6 +4380,9 @@ static int ceph_mdsc_metric_init(struct ceph_client_metric *metric)
+ 	if (ret)
+ 		goto err_metadata_latency_sum;
+ 
++	atomic_long_set(&metric->metadata_latency_min, ULONG_MAX);
++	atomic_long_set(&metric->metadata_latency_max, 0);
++
+ 	return 0;
+ 
+ err_metadata_latency_sum:
+diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
+index faba142..a399201 100644
+--- a/fs/ceph/metric.h
++++ b/fs/ceph/metric.h
+@@ -2,6 +2,10 @@
+ #ifndef _FS_CEPH_MDS_METRIC_H
+ #define _FS_CEPH_MDS_METRIC_H
+ 
++#include <linux/atomic.h>
++#include <linux/percpu.h>
++#include <linux/spinlock.h>
++
+ /* This is the global metrics */
+ struct ceph_client_metric {
+ 	atomic64_t            total_dentries;
+@@ -13,12 +17,18 @@ struct ceph_client_metric {
+ 
+ 	struct percpu_counter total_reads;
+ 	struct percpu_counter read_latency_sum;
++	atomic_long_t read_latency_min;
++	atomic_long_t read_latency_max;
+ 
+ 	struct percpu_counter total_writes;
+ 	struct percpu_counter write_latency_sum;
++	atomic_long_t write_latency_min;
++	atomic_long_t write_latency_max;
+ 
+ 	struct percpu_counter total_metadatas;
+ 	struct percpu_counter metadata_latency_sum;
++	atomic_long_t metadata_latency_min;
++	atomic_long_t metadata_latency_max;
+ };
+ 
+ static inline void ceph_update_cap_hit(struct ceph_client_metric *m)
+@@ -36,11 +46,30 @@ static inline void ceph_update_read_latency(struct ceph_client_metric *m,
+ 					    unsigned long r_end,
+ 					    int rc)
+ {
++	unsigned long lat = r_end - r_start;
++	unsigned long cur, old;
++
+ 	if (rc < 0 && rc != -ENOENT && rc != -ETIMEDOUT)
+ 		return;
+ 
+ 	percpu_counter_inc(&m->total_reads);
+-	percpu_counter_add(&m->read_latency_sum, r_end - r_start);
++	percpu_counter_add(&m->read_latency_sum, lat);
++
++	cur = atomic_long_read(&m->read_latency_min);
++	do {
++		old = cur;
++		if (likely(lat > old))
++			break;
++		cur = atomic_long_cmpxchg(&m->read_latency_min, old, lat);
++	} while (cur != old);
++
++	cur = atomic_long_read(&m->read_latency_max);
++	do {
++		old = cur;
++		if (likely(lat < old))
++			break;
++		cur = atomic_long_cmpxchg(&m->read_latency_max, old, lat);
++	} while (cur != old);
+ }
+ 
+ static inline void ceph_update_write_latency(struct ceph_client_metric *m,
+@@ -48,11 +77,30 @@ static inline void ceph_update_write_latency(struct ceph_client_metric *m,
+ 					     unsigned long r_end,
+ 					     int rc)
+ {
++	unsigned long lat = r_end - r_start;
++	unsigned long cur, old;
++
+ 	if (rc && rc != -ETIMEDOUT)
+ 		return;
+ 
+ 	percpu_counter_inc(&m->total_writes);
+ 	percpu_counter_add(&m->write_latency_sum, r_end - r_start);
++
++	cur = atomic_long_read(&m->write_latency_min);
++	do {
++		old = cur;
++		if (likely(lat > old))
++			break;
++		cur = atomic_long_cmpxchg(&m->write_latency_min, old, lat);
++	} while (cur != old);
++
++	cur = atomic_long_read(&m->write_latency_max);
++	do {
++		old = cur;
++		if (likely(lat < old))
++			break;
++		cur = atomic_long_cmpxchg(&m->write_latency_max, old, lat);
++	} while (cur != old);
+ }
+ 
+ static inline void ceph_update_metadata_latency(struct ceph_client_metric *m,
+@@ -60,10 +108,29 @@ static inline void ceph_update_metadata_latency(struct ceph_client_metric *m,
+ 						unsigned long r_end,
+ 						int rc)
+ {
++	unsigned long lat = r_end - r_start;
++	unsigned long cur, old;
++
+ 	if (rc && rc != -ENOENT)
+ 		return;
+ 
+ 	percpu_counter_inc(&m->total_metadatas);
+ 	percpu_counter_add(&m->metadata_latency_sum, r_end - r_start);
++
++	cur = atomic_long_read(&m->metadata_latency_min);
++	do {
++		old = cur;
++		if (likely(lat > old))
++			break;
++		cur = atomic_long_cmpxchg(&m->metadata_latency_min, old, lat);
++	} while (cur != old);
++
++	cur = atomic_long_read(&m->metadata_latency_max);
++	do {
++		old = cur;
++		if (likely(lat < old))
++			break;
++		cur = atomic_long_cmpxchg(&m->metadata_latency_max, old, lat);
++	} while (cur != old);
+ }
+ #endif /* _FS_CEPH_MDS_METRIC_H */
+-- 
+1.8.3.1
+
