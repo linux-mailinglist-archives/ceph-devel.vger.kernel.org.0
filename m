@@ -2,35 +2,37 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C646A186B59
-	for <lists+ceph-devel@lfdr.de>; Mon, 16 Mar 2020 13:48:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D467F186CF1
+	for <lists+ceph-devel@lfdr.de>; Mon, 16 Mar 2020 15:21:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731003AbgCPMsZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 16 Mar 2020 08:48:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35758 "EHLO mail.kernel.org"
+        id S1731437AbgCPOVn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 16 Mar 2020 10:21:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730919AbgCPMsZ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 16 Mar 2020 08:48:25 -0400
+        id S1731144AbgCPOVm (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 16 Mar 2020 10:21:42 -0400
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 931AA205ED;
-        Mon, 16 Mar 2020 12:48:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD9E3206E2;
+        Mon, 16 Mar 2020 14:21:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584362904;
-        bh=k7iCNTJvdVtnEzrS8mMMaFQRDep6AouW0U28JLox75s=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=GoebwdmEM91jyEMHR2dF5WSIfs4upnvOEYlAvq11vdg0VAG/G3OyzwgBXlLu68h27
-         VGVjfyHWVICjqE7jh9Kc6pajvAmJI4o2QOwI5rupKnj32BQdzSsWKTtaau/QTcApR9
-         wWCiAaZdxRGI9mGzChteQsaSMdks5i2Xwl6DGyfg=
-Message-ID: <25eaece7ad299eef0e7418f2b9acce900460baed.camel@kernel.org>
-Subject: Re: [PATCH 1/4] ceph: cleanup return error of try_get_cap_refs()
+        s=default; t=1584368501;
+        bh=Ini9LY1U5sb7ucYDLJP9ZkdTnSFqrJ12J1RUqCI2W/8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=1BjAsDmGkGflGiAlbJmEK+uyQNHZAp7ke8GWITRqaDmj4zNEemaDMl4AJQy0hJK7V
+         UyyV8EKJT2mmzIsBPOpUBkMeMNJQpiBVNqNT3NgHzyB+z5SIO8ptncX/uDICiEeFa8
+         3LBiThC15bazMF3E2PJlzSsFe05BIywpkWEmefWc=
+Message-ID: <b5ec20ab1fc00315603c462124501d919cecacc8.camel@kernel.org>
+Subject: Re: [PATCH] ceph: add min/max latency support for
+ read/write/metadata metrics
 From:   Jeff Layton <jlayton@kernel.org>
-To:     "Yan, Zheng" <zyan@redhat.com>, ceph-devel@vger.kernel.org
-Date:   Mon, 16 Mar 2020 08:48:23 -0400
-In-Reply-To: <20200310113421.174873-2-zyan@redhat.com>
-References: <20200310113421.174873-1-zyan@redhat.com>
-         <20200310113421.174873-2-zyan@redhat.com>
+To:     xiubli@redhat.com
+Cc:     sage@redhat.com, idryomov@gmail.com, zyan@redhat.com,
+        gfarnum@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Mon, 16 Mar 2020 10:21:39 -0400
+In-Reply-To: <1583807817-5571-1-git-send-email-xiubli@redhat.com>
+References: <1583807817-5571-1-git-send-email-xiubli@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
@@ -40,98 +42,116 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2020-03-10 at 19:34 +0800, Yan, Zheng wrote:
-> Returns 0 if caps were not able to be acquired (yet), 1 if succeed,
-> or a negative error code. There are 3 speical error codes:
+On Mon, 2020-03-09 at 22:36 -0400, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
 > 
-> -EAGAIN: need to sleep but non-blocking is specified
-> -EFBIG:  ask caller to call check_max_size() and try again.
-> -ESTALE: ask caller to call ceph_renew_caps() and try again.
+> These will be very useful help diagnose problems.
 > 
-> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+> URL: https://tracker.ceph.com/issues/44533
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  fs/ceph/caps.c | 25 ++++++++++++++-----------
->  1 file changed, 14 insertions(+), 11 deletions(-)
 > 
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index 342a32c74c64..804f4c65251a 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -2530,10 +2530,11 @@ void ceph_take_cap_refs(struct ceph_inode_info *ci, int got,
->   * Note that caller is responsible for ensuring max_size increases are
->   * requested from the MDS.
->   *
-> - * Returns 0 if caps were not able to be acquired (yet), a 1 if they were,
-> - * or a negative error code.
-> - *
-> - * FIXME: how does a 0 return differ from -EAGAIN?
-> + * Returns 0 if caps were not able to be acquired (yet), 1 if succeed,
-> + * or a negative error code. There are 3 speical error codes:
-> + *  -EAGAIN: need to sleep but non-blocking is specified
-> + *  -EFBIG:  ask caller to call check_max_size() and try again.
-> + *  -ESTALE: ask caller to call ceph_renew_caps() and try again.
->   */
->  enum {
->  	/* first 8 bits are reserved for CEPH_FILE_MODE_FOO */
-> @@ -2581,7 +2582,7 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
->  			dout("get_cap_refs %p endoff %llu > maxsize %llu\n",
->  			     inode, endoff, ci->i_max_size);
->  			if (endoff > ci->i_requested_max_size)
-> -				ret = -EAGAIN;
-> +				ret = -EFBIG;
->  			goto out_unlock;
->  		}
->  		/*
-> @@ -2743,7 +2744,10 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
->  		flags |= NON_BLOCKING;
+> The output will be like:
+> 
+> # cat /sys/kernel/debug/ceph/19e31430-fc65-4aa1-99cf-2c8eaaafd451.client4347/metrics 
+> item          total       sum_lat(us)     avg_lat(us)     min_lat(us)     max_lat(us)
+> -------------------------------------------------------------------------------------
+> read          27          297000          11000           2000            27000
+> write         16          3860000         241250          175000          263000
+> metadata      3           30000           10000           2000            16000
+> 
+> item          total           miss            hit
+> -------------------------------------------------
+> d_lease       2               0               1
+> caps          2               0               3078
+> 
+> 
+> 
+>  fs/ceph/debugfs.c    | 27 ++++++++++++++++++++------
+>  fs/ceph/mds_client.c | 12 ++++++++++++
+>  fs/ceph/metric.h     | 54 +++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 86 insertions(+), 7 deletions(-)
+> 
+> 
+> diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
+> index faba142..9f0d050 100644
+> --- a/fs/ceph/metric.h
+> +++ b/fs/ceph/metric.h
+> @@ -2,6 +2,10 @@
+>  #ifndef _FS_CEPH_MDS_METRIC_H
+>  #define _FS_CEPH_MDS_METRIC_H
 >  
->  	ret = try_get_cap_refs(inode, need, want, 0, flags, got);
-> -	return ret == -EAGAIN ? 0 : ret;
-> +	/* three special error codes */
-> +	if (ret == -EAGAIN || ret == -EFBIG || ret == -EAGAIN)
-> +		ret = 0;
-> +	return ret;
+> +#include <linux/atomic.h>
+> +#include <linux/percpu.h>
+> +#include <linux/spinlock.h>
+> +
+>  /* This is the global metrics */
+>  struct ceph_client_metric {
+>  	atomic64_t            total_dentries;
+> @@ -13,12 +17,21 @@ struct ceph_client_metric {
+>  
+>  	struct percpu_counter total_reads;
+>  	struct percpu_counter read_latency_sum;
+> +	spinlock_t read_latency_lock;
+> +	atomic64_t read_latency_min;
+> +	atomic64_t read_latency_max;
+>  
+>  	struct percpu_counter total_writes;
+>  	struct percpu_counter write_latency_sum;
+> +	spinlock_t write_latency_lock;
+> +	atomic64_t write_latency_min;
+> +	atomic64_t write_latency_max;
+>  
+>  	struct percpu_counter total_metadatas;
+>  	struct percpu_counter metadata_latency_sum;
+> +	spinlock_t metadata_latency_lock;
+> +	atomic64_t metadata_latency_min;
+> +	atomic64_t metadata_latency_max;
+>  };
+>  
+>  static inline void ceph_update_cap_hit(struct ceph_client_metric *m)
+> @@ -36,11 +49,24 @@ static inline void ceph_update_read_latency(struct ceph_client_metric *m,
+>  					    unsigned long r_end,
+>  					    int rc)
+>  {
+> +	unsigned long lat = r_end - r_start;
+> +
+>  	if (rc < 0 && rc != -ENOENT && rc != -ETIMEDOUT)
+>  		return;
+>  
+>  	percpu_counter_inc(&m->total_reads);
+> -	percpu_counter_add(&m->read_latency_sum, r_end - r_start);
+> +	percpu_counter_add(&m->read_latency_sum, lat);
+> +
+> +	if (lat >= atomic64_read(&m->read_latency_min) &&
+> +	    lat <= atomic64_read(&m->read_latency_max))
+> +		return;
+> +
+> +	spin_lock(&m->read_latency_lock);
+> +	if (lat < atomic64_read(&m->read_latency_min))
+> +		atomic64_set(&m->read_latency_min, lat);
+> +	if (lat > atomic64_read(&m->read_latency_max))
+> +		atomic64_set(&m->read_latency_max, lat);
+> +	spin_unlock(&m->read_latency_lock);
 >  }
 >  
->  /*
-> @@ -2771,17 +2775,12 @@ int ceph_get_caps(struct file *filp, int need, int want,
->  	flags = get_used_fmode(need | want);
->  
->  	while (true) {
-> -		if (endoff > 0)
-> -			check_max_size(inode, endoff);
-> -
->  		flags &= CEPH_FILE_MODE_MASK;
->  		if (atomic_read(&fi->num_locks))
->  			flags |= CHECK_FILELOCK;
->  		_got = 0;
->  		ret = try_get_cap_refs(inode, need, want, endoff,
->  				       flags, &_got);
-> -		if (ret == -EAGAIN)
-> -			continue;
 
-Ok, so I guess we don't expect to see this error here since we didn't
-set NON_BLOCKING. The error returns from try_get_cap_refs are pretty
-complex, and I worry a little about future changes subtly breaking some
-of these assumptions.
+Looks reasonable overall. I do sort of wonder if we really need
+spinlocks for these though. Might it be more efficient to use cmpxchg
+instead? i.e.:
 
-Maybe a WARN_ON_ONCE(ret == -EAGAIN) here would be good? 
+cur = atomic64_read(&m->read_latency_min);
+do {
+	old = cur;
+	if (likely(lat >= old))
+		break;
+} while ((cur = atomic_long_cmpxchg(&m->read_latency_min, old, lat)) != old);
 
->  		if (!ret) {
->  			struct ceph_mds_client *mdsc = fsc->mdsc;
->  			struct cap_wait cw;
-> @@ -2829,6 +2828,10 @@ int ceph_get_caps(struct file *filp, int need, int want,
->  		}
->  
->  		if (ret < 0) {
-> +			if (ret == -EFBIG) {
-> +				check_max_size(inode, endoff);
-> +				continue;
-> +			}
->  			if (ret == -ESTALE) {
->  				/* session was killed, try renew caps */
->  				ret = ceph_renew_caps(inode, flags);
+...another idea might be to use a seqlock and non-atomic vars.
 
+Mostly this shouldn't matter much though as we'll almost always be
+hitting the non-locking fastpath. I'll plan to merge this as-is unless
+you want to rework it.
 -- 
 Jeff Layton <jlayton@kernel.org>
 
