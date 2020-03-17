@@ -2,62 +2,88 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFF50188320
-	for <lists+ceph-devel@lfdr.de>; Tue, 17 Mar 2020 13:09:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAEE0188803
+	for <lists+ceph-devel@lfdr.de>; Tue, 17 Mar 2020 15:48:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbgCQMJx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 17 Mar 2020 08:09:53 -0400
-Received: from sonic316-53.consmr.mail.ne1.yahoo.com ([66.163.187.179]:37465
-        "EHLO sonic316-53.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726664AbgCQMJx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 17 Mar 2020 08:09:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1584446992; bh=kcevCRoll2+Bsa3FDERpIV72LVcB1A4YV1b5N2AWYBk=; h=Date:From:Reply-To:Subject:References:From:Subject; b=R2hxu2RQ8hOyhS7sTKSo4jdv8WKwY6BR3khPfDSFYvuuuAfycY9D3AVw95K7tnHBux7FY/hdMiwfl5jLAj+Ktj/ZiHW7nTZFT6UErMO7c7e0KiE4kQRQc111ifcQnl/C56ASe/K2jhelpwQs0+PIbRd0clWII8pqRHHIOeZ0YpMiWIr4Ltr2zCsqzONK39bcZ0s0hAc3ll4QdDxc46ptRQ/Ti7W7pRVV4l3nKFY43httbQeO9QESXxEHmGGu6N66RUELyo6Zrt0h3knrgycG2gcmAhW16M0mshHoYVqeB+nstqnZ01ecbgjKhV/ldzX68I9rcShGbzAtSRxpBqn0Kw==
-X-YMail-OSG: qdCr2PsVM1nIwIx1AKy.e0FCS.rAd5ac4MxA9hTyV2WuoJ1XEsqzJcIb9i4xyJa
- JzIp.EWFG0G7AGEzQCj.2mq4TQWDNbguQgmjs7p9k6O5aFvfST.A.ssV88.k_2ER1CE08MXbWGq9
- cjSA_M19ZjX17gMVCIHzAhMg0XsT0nWMAju52QIT1uf6m8UOb75.tfWWPupeOMaXV2Fjfy3t6N9Y
- ABBVwXHy7Kpl0yEREGRbWZ2NUdvI_DO.cFlzQ7Xwfc2V0SGhHNjGjRqZLi5CekKLnnc1HOyRG7sI
- g7Zblgddn8N9zQgkTr6G2T3uu1aBQMXiGWCsw_z6zY7LfbPlxliLCk7skpP5BhJEwWSBnoy38u6S
- fBCCylvXr5Ou56L2cqtFEEVb6aSFfrzxZGkAZ6wxPu5ntI__tL8QYiLet6.I0ZWVgGJbuQqQ8zU9
- 9B7UH4zgBSdBexTtLk3Wn8QprmcYHgJ_Aplmr2.TokMfdTXynEnU2SiocvUnFDC9sZrVG_unO2gn
- YMOwlpa9d9WbmsswieS6PR6OEWjhGTZrj_6DP0iWnE5lq5gXt1Qu0ztD6H75TDjZY6ckR.3y3TcR
- 4mpdwDsehReD2BkyjQcYarsuNZNY92.2XQesOMmPaQGmR9lMp.z8PXHe8l02GeCcycyNfPISpwil
- QcM6PX0Fe8_4CDS3Cj7_zzcL3LnmvqTJLSntRRcKfzNuAGd4p.ri3Yk_usTs8ykC7bjtZLoCa1TB
- NwcYhq70JpJ5IRRuQLKsEpITWLCSYr5eDjCin8iUW4dCYntT1nwjl5p.bigHYbRR4W5sCE6rd9nz
- aMcqagDJHNc5waXavXbVsy27ncfi8giW9ZIwXFSiDDoiWvHNRR3H5ArSEOjFeX6modl2ks.JWeXv
- JxquImzCsr1WmJc8fOuu9yBsQVaPVfutUZjGLfZVRFVYCgXCgeBsoQdVq04sxTnzgsrZ5CXxLf8u
- RIjT5xqD9W88z6.MCDM7rcQUsmJwA8UKINsVHGA9K2fFetL1D0VODMZOqAx5IUc0rwsYaB3G13Yv
- X6G.hWRHbOiH546X7ZjP_Xli7EMoLYAGVJoC_a0U3F2mXOWhA1NyAGt0SpmG72VTDX6N.z1PkK.K
- ifEt0nunX8cHgTPVIlJ8G8owOLFlZuQTCGGmzi5etW9pZBNckyKcXi5VEi5dHd_7Vs0m4mPEVgfV
- RrrvmAJ.Sf_X23bhvIKllBqqkrYSslD5HB9LzuCEp_aZek9qb6ulxCwVi99neD.Ho2Au4Nk9E8FS
- K4SWvuaPKNb7.avL9W0mtC1ExSW4YKs5aCPbnmIWeSZVBynhRZQfulD9YFVngEP2J2plifXjqzVz
- LF0Cs3pMJQ7QIj9YuNX3M8pLxtOWKycpa
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 17 Mar 2020 12:09:52 +0000
-Date:   Tue, 17 Mar 2020 12:07:51 +0000 (UTC)
-From:   Stephen Li <stenn7@gabg.net>
-Reply-To: stephli947701@gmail.com
-Message-ID: <442828441.1833677.1584446871712@mail.yahoo.com>
-Subject: REF
+        id S1726345AbgCQOsn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 17 Mar 2020 10:48:43 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46503 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbgCQOsn (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 17 Mar 2020 10:48:43 -0400
+Received: by mail-wr1-f65.google.com with SMTP id w16so9638318wrv.13
+        for <ceph-devel@vger.kernel.org>; Tue, 17 Mar 2020 07:48:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=onTjRtqDOzng69gH+kRX//NNGai7U0gQhqy+u2lZuRA=;
+        b=j2TP9M8rG7qYNtVNx1S7wIY5En+xdH2BwyRp142wo12Xa/392oHLNG1cG1D0rclK7Q
+         fyfQMZy3Sf4KhgY+wo1G+hjKVdGGmBTLESKiYeJgLS6VglT8lPPcPhWHzbwkac23FIlO
+         2+RjuOBwySabOgIn3JdzkDF55Ozn5IW199lGWvZ6vVovXS/GNgLdrlbJxKbawV/3GxF/
+         jCsz4/AJMcgpbZbQNfUtvZZkP6IzPmj4MwBhD5VK1bN4YgpPF8w38luPjtDEEKCbrQFV
+         ZRlWIkWDI+WKmfsl4gId+sXzIHZGO8tirNkhWDK3kgNEy2yVxlQuMurUomjMnfDrsKQG
+         5VsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=onTjRtqDOzng69gH+kRX//NNGai7U0gQhqy+u2lZuRA=;
+        b=HNwaPPjb4ZYX+Fma/Rokdjiq5L5p31xSt/FdM/SpTeJUeM1ddUzumphoj+bxcMHP5z
+         UYAM/oTvSEAK2tRo5+/UN1tEdn6ZV/eFTT+oC3hbSz5e1LFlJ1HrADcg+v5V30O4zKdD
+         35/YFau1xbcpV+INQwepDsgnQLXFR1dxRXyQQNXTH2zX5FIefuq2gnLaVv2hbQaOSwjy
+         +AbejP8rAuT02QrOYBwsxxfaOU/yUk8bCBHvTJEA3iVweNXO0Caq7Wgo6jgX+34ur2zm
+         g+mtkDaGgjgGj++IpPoALmljRa/03e9PZs9NLEW+EuniNdGc7hQTHsO1aLd2lgupQWTr
+         Y6mw==
+X-Gm-Message-State: ANhLgQ1y6pM+HEBoQjIsMs07iDKWlbjACRpD2+rsXMFepi4amMx/UWv1
+        V0fohf1SSFJvlqlmI7a79oTgXAzQUCw=
+X-Google-Smtp-Source: ADFU+vs5498TA7Za2GRkuVLQsGQswBScj9X23Q1kwJXgAcyAvE65rkwplKMyXm2UNJ0w9ej8FyKNhA==
+X-Received: by 2002:adf:db49:: with SMTP id f9mr6191086wrj.145.1584456521144;
+        Tue, 17 Mar 2020 07:48:41 -0700 (PDT)
+Received: from kwango.redhat.com (ip-94-112-129-237.net.upcbroadband.cz. [94.112.129.237])
+        by smtp.gmail.com with ESMTPSA id i21sm4300348wmb.23.2020.03.17.07.48.39
+        for <ceph-devel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2020 07:48:40 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     ceph-devel@vger.kernel.org
+Subject: [PATCH] rbd: don't mess with a page vector in rbd_notify_op_lock()
+Date:   Tue, 17 Mar 2020 15:48:47 +0100
+Message-Id: <20200317144847.10913-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <442828441.1833677.1584446871712.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.15342 YMailNodin Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+rbd_notify_op_lock() isn't interested in a notify reply.  Instead of
+accepting that page vector just to free it, have watch-notify code take
+care of it.
 
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+---
+ drivers/block/rbd.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Greetings,
-I was searching through a local business directory when I found your
-profile. I am Soliciting On-Behalf of my private client who is
-interested in having a serious business investment in your country. If
-you have a valid business, investment or project he can invest
-back to me for more details. Your swift response is highly needed.
-Sincerely
-Stephen Li
-Please response back to me with is my private email below for more details
-stephli947701@gmail.com
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index f44ce9ccadd6..acafdae16be2 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -3754,11 +3754,7 @@ static int __rbd_notify_op_lock(struct rbd_device *rbd_dev,
+ static void rbd_notify_op_lock(struct rbd_device *rbd_dev,
+ 			       enum rbd_notify_op notify_op)
+ {
+-	struct page **reply_pages;
+-	size_t reply_len;
+-
+-	__rbd_notify_op_lock(rbd_dev, notify_op, &reply_pages, &reply_len);
+-	ceph_release_page_vector(reply_pages, calc_pages_for(0, reply_len));
++	__rbd_notify_op_lock(rbd_dev, notify_op, NULL, NULL);
+ }
+ 
+ static void rbd_notify_acquired_lock(struct work_struct *work)
+-- 
+2.19.2
+
