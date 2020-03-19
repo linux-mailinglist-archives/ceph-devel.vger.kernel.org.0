@@ -2,142 +2,112 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABE7E18B700
-	for <lists+ceph-devel@lfdr.de>; Thu, 19 Mar 2020 14:31:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 946E918B8A1
+	for <lists+ceph-devel@lfdr.de>; Thu, 19 Mar 2020 15:07:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729916AbgCSNTm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 19 Mar 2020 09:19:42 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:21870 "EHLO
+        id S1727341AbgCSOHM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 19 Mar 2020 10:07:12 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:44251 "EHLO
         us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729770AbgCSNTk (ORCPT
+        by vger.kernel.org with ESMTP id S1726988AbgCSOHM (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:19:40 -0400
+        Thu, 19 Mar 2020 10:07:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584623979;
+        s=mimecast20190719; t=1584626831;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Cc4QT2fcELsAND2DYAF0Eqn5bZtWazK/n5G3I1E/QtQ=;
-        b=XYI1+vNWur268xH/TI4VaE/nyresEPYrSL0V2EQQYJ5Tr0LklnCGx42orlQjsnJDjPT/a1
-        +eyYYmWkIYH2Uyonn6rBXb+lrKcOMVkyvS4C7Cq2KSPbpXctECkgVUeMrYECudxIKSLLp9
-        27hRt9LnSMDIeImh7nRamaPriH7KGSE=
+         to:to:cc:cc; bh=f7gs2NfHog55NHit4GUxZMJLjHa7QfK/zDqss+CcZgQ=;
+        b=Gi2+lf6/2ya3WwpZy6FI0GdU/0l/OyfpY82I/x6jP/duGIAUeh5ZVxd7KjFddWEzZM0G4J
+        NN+Ld7a56tFU7Q4f2H4UubI9ScAAYo6nLXfXnn79Omsl1YUGjnxYIm7QMmi+w6eH9dz5x9
+        JeXhMX8iN0yGwB5ABEt5z6jWrjILo0k=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-29-bzl9oCDmP_uhw-4qhrCoPg-1; Thu, 19 Mar 2020 09:19:35 -0400
-X-MC-Unique: bzl9oCDmP_uhw-4qhrCoPg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-28-nA44iO5rO3uZX2bv69BM7g-1; Thu, 19 Mar 2020 10:07:09 -0400
+X-MC-Unique: nA44iO5rO3uZX2bv69BM7g-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 630BC802B68;
-        Thu, 19 Mar 2020 13:19:16 +0000 (UTC)
-Received: from [10.72.12.253] (ovpn-12-253.pek2.redhat.com [10.72.12.253])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 97C70BBBC8;
-        Thu, 19 Mar 2020 13:19:08 +0000 (UTC)
-Subject: Re: [PATCH v11 3/4] ceph: add read/write latency metric support
-To:     Jeff Layton <jlayton@kernel.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3881D8017CC;
+        Thu, 19 Mar 2020 14:07:08 +0000 (UTC)
+Received: from lxbceph0.gsslab.pek2.redhat.com (vm36-245.gsslab.pek2.redhat.com [10.72.36.245])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CCB1F84D90;
+        Thu, 19 Mar 2020 14:07:00 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
 Cc:     sage@redhat.com, idryomov@gmail.com, gfarnum@redhat.com,
-        zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-References: <1584597626-11127-1-git-send-email-xiubli@redhat.com>
- <1584597626-11127-4-git-send-email-xiubli@redhat.com>
- <f093e7c9769f6c4accedb7fa6d7ac8d9c3e62418.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <bd85498b-d4f3-0327-851c-d630deb188a9@redhat.com>
-Date:   Thu, 19 Mar 2020 21:19:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <f093e7c9769f6c4accedb7fa6d7ac8d9c3e62418.camel@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+        zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v12 0/4] ceph: add perf metrics support
+Date:   Thu, 19 Mar 2020 10:06:48 -0400
+Message-Id: <1584626812-21323-1-git-send-email-xiubli@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020/3/19 20:38, Jeff Layton wrote:
-> On Thu, 2020-03-19 at 02:00 -0400, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> Calculate the latency for OSD read requests. Add a new r_end_stamp
->> field to struct ceph_osd_request that will hold the time of that
->> the reply was received. Use that to calculate the RTT for each call,
->> and divide the sum of those by number of calls to get averate RTT.
->>
->> Keep a tally of RTT for OSD writes and number of calls to track average
->> latency of OSD writes.
->>
->> URL: https://tracker.ceph.com/issues/43215
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>   fs/ceph/addr.c                  |  18 +++++++
->>   fs/ceph/debugfs.c               |  61 +++++++++++++++++++++-
->>   fs/ceph/file.c                  |  26 ++++++++++
->>   fs/ceph/metric.c                | 109 ++++++++++++++++++++++++++++++++++++++++
->>   fs/ceph/metric.h                |  23 +++++++++
->>   include/linux/ceph/osd_client.h |   1 +
->>   net/ceph/osd_client.c           |   2 +
->>   7 files changed, 239 insertions(+), 1 deletion(-)
->>
-> [...]
->
->> +static inline void __update_avg_and_sq(atomic64_t *totalp, atomic64_t *lat_sump,
->> +				       struct percpu_counter *sq_sump,
->> +				       spinlock_t *lockp, unsigned long lat)
->> +{
->> +	s64 total, avg, sq, lsum;
->> +
->> +	spin_lock(lockp);
->> +	total = atomic64_inc_return(totalp);
->> +	lsum = atomic64_add_return(lat, lat_sump);
->> +	spin_unlock(lockp);
->> +
->> +	if (unlikely(total == 1))
->> +		return;
->> +
->> +	/* the sq is (lat - old_avg) * (lat - new_avg) */
->> +	avg = DIV64_U64_ROUND_CLOSEST((lsum - lat), (total - 1));
->> +	sq = lat - avg;
->> +	avg = DIV64_U64_ROUND_CLOSEST(lsum, total);
->> +	sq = sq * (lat - avg);
->> +	percpu_counter_add(sq_sump, sq);
->> +}
->> +
->> +void ceph_update_read_latency(struct ceph_client_metric *m,
->> +			      unsigned long r_start,
->> +			      unsigned long r_end,
->> +			      int rc)
->> +{
->> +	unsigned long lat = r_end - r_start;
->> +
->> +	if (unlikely(rc < 0 && rc != -ENOENT && rc != -ETIMEDOUT))
->> +		return;
->> +
->> +	__update_min_latency(&m->read_latency_min, lat);
->> +	__update_max_latency(&m->read_latency_max, lat);
->> +	__update_avg_and_sq(&m->total_reads, &m->read_latency_sum,
->> +			    &m->read_latency_sq_sum,
->> +			    &m->read_latency_lock,
->> +			    lat);
->> +
-> Thanks for refactoring the set, Xiubo.
->
-> This makes something very evident though. __update_avg_and_sq takes a
-> spinlock and we have to hit it every time we update the other values, so
-> there really is no reason to use atomic or percpu values for any of
-> this.
->
-> I think it would be best to just make all of these be normal variables,
-> and simply take the spinlock when you fetch or update them.
->
-> Thoughts?
+From: Xiubo Li <xiubli@redhat.com>
 
-Yeah, It's true, before I test this without the spin lock, it will make 
-the stdev not very correct, so add the spin lock and when folding the 
-factors forgot to fix them.
+Changed in V12:
+- [3/4] and [4/4] switch atomic64_t type to u64 for lat sum and total numbers
 
-Thanks.
+Changed in V11:
+- [3/4] and [4/4] fold the min/max/stdev factors
 
+Changed in V10:
+- rebase to the latest testing branch
+- merge all the metric related patches into one
+- [1/6] move metric helpers into a new file metric.c
+- [2/6] move metric helpers into metric.c
+- [3/6] merge the read/write patches into a signal patch and move metric helpers to metric.c
+- [4/6] move metric helpers to metric.c
+- [5/6] min/max latency support
+- [6/6] standard deviation support
+
+Changed in V9:
+- add an r_ended field to the mds request struct and use that to calculate the metric
+- fix some commit comments
+
+# cat /sys/kernel/debug/ceph/9a972bfc-68cb-4d52-a610-7cd9a9adbbdd.client52904/metrics
+item          total       avg_lat(us)     min_lat(us)     max_lat(us)     stdev(us)
+-----------------------------------------------------------------------------------
+read          798         32000           4000            196000          560.3
+write         2394        588000          28000           4812000         36673.9
+metadata      7           116000          2000            707000          8282.8
+
+item          total           miss            hit
+-------------------------------------------------
+d_lease       2               0               0
+caps          2               14              546500
+
+
+
+
+Xiubo Li (4):
+  ceph: add dentry lease metric support
+  ceph: add caps perf metric for each superblock
+  ceph: add read/write latency metric support
+  ceph: add metadata perf metric support
+
+ fs/ceph/Makefile                |   2 +-
+ fs/ceph/acl.c                   |   2 +-
+ fs/ceph/addr.c                  |  18 ++++
+ fs/ceph/caps.c                  |  19 ++++
+ fs/ceph/debugfs.c               | 116 +++++++++++++++++++++++-
+ fs/ceph/dir.c                   |  17 +++-
+ fs/ceph/file.c                  |  26 ++++++
+ fs/ceph/inode.c                 |   4 +-
+ fs/ceph/mds_client.c            |  21 ++++-
+ fs/ceph/mds_client.h            |   7 +-
+ fs/ceph/metric.c                | 194 ++++++++++++++++++++++++++++++++++++++++
+ fs/ceph/metric.h                |  64 +++++++++++++
+ fs/ceph/super.h                 |   9 +-
+ fs/ceph/xattr.c                 |   4 +-
+ include/linux/ceph/osd_client.h |   1 +
+ net/ceph/osd_client.c           |   2 +
+ 16 files changed, 488 insertions(+), 18 deletions(-)
+ create mode 100644 fs/ceph/metric.c
+ create mode 100644 fs/ceph/metric.h
+
+-- 
+1.8.3.1
 
