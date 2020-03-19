@@ -2,206 +2,86 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6C6518AC9B
-	for <lists+ceph-devel@lfdr.de>; Thu, 19 Mar 2020 07:01:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C3DB18B27F
+	for <lists+ceph-devel@lfdr.de>; Thu, 19 Mar 2020 12:43:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbgCSGBB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 19 Mar 2020 02:01:01 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:26731 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727032AbgCSGBB (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 19 Mar 2020 02:01:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584597660;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=BtIXkoYu5KhsVhWWBZjFV7EhHTS5SzvrV1tQ/056GH8=;
-        b=QoFSDXWGJ4qGEjMJSbvT7OvNnTC+05duA+jQghv/OWz+za0MMWYDf9En9uoBWTY85+IYrv
-        SgkFeBVrr459MHGcDlvIWkfZVCFXWhjF2HWD1zQkEAwOZQM2vJeQulkM7GPZAP+0j9Xvwr
-        27eMkSOFusiWmElZpAy2uUtLDZSLwHE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-401-_NPPnCijPMehgU0MfP29Ew-1; Thu, 19 Mar 2020 02:00:57 -0400
-X-MC-Unique: _NPPnCijPMehgU0MfP29Ew-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E55D610CE789;
-        Thu, 19 Mar 2020 06:00:55 +0000 (UTC)
-Received: from lxbceph0.gsslab.pek2.redhat.com (vm36-245.gsslab.pek2.redhat.com [10.72.36.245])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C3D3A5C1A1;
-        Thu, 19 Mar 2020 06:00:45 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org
-Cc:     sage@redhat.com, idryomov@gmail.com, gfarnum@redhat.com,
-        zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v11 4/4] ceph: add metadata perf metric support
-Date:   Thu, 19 Mar 2020 02:00:26 -0400
-Message-Id: <1584597626-11127-5-git-send-email-xiubli@redhat.com>
-In-Reply-To: <1584597626-11127-1-git-send-email-xiubli@redhat.com>
-References: <1584597626-11127-1-git-send-email-xiubli@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+        id S1726947AbgCSLnw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 19 Mar 2020 07:43:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39338 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726188AbgCSLnv (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 19 Mar 2020 07:43:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id E0501AD10;
+        Thu, 19 Mar 2020 11:43:49 +0000 (UTC)
+Received: from localhost (webern.olymp [local])
+        by webern.olymp (OpenSMTPD) with ESMTPA id e75a8fbe;
+        Thu, 19 Mar 2020 11:43:48 +0000 (WET)
+Date:   Thu, 19 Mar 2020 11:43:48 +0000
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        "Yan, Zheng" <zyan@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lhenriques@suse.com
+Subject: [PATCH] ceph: fix memory leak in ceph_cleanup_snapid_map
+Message-ID: <20200319114348.GA72449@suse.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+kmemleak reports the following memory leak:
 
-Add a new "r_ended" field to struct ceph_mds_request and use that to
-maintain the average latency of MDS requests.
+unreferenced object 0xffff88821feac8a0 (size 96):
+  comm "kworker/1:0", pid 17, jiffies 4294896362 (age 20.512s)
+  hex dump (first 32 bytes):
+    a0 c8 ea 1f 82 88 ff ff 00 c9 ea 1f 82 88 ff ff  ................
+    00 00 00 00 00 00 00 00 00 01 00 00 00 00 ad de  ................
+  backtrace:
+    [<00000000b3ea77fb>] ceph_get_snapid_map+0x75/0x2a0
+    [<00000000d4060942>] fill_inode+0xb26/0x1010
+    [<0000000049da6206>] ceph_readdir_prepopulate+0x389/0xc40
+    [<00000000e2fe2549>] dispatch+0x11ab/0x1521
+    [<000000007700b894>] ceph_con_workfn+0xf3d/0x3240
+    [<0000000039138a41>] process_one_work+0x24d/0x590
+    [<00000000eb751f34>] worker_thread+0x4a/0x3d0
+    [<000000007e8f0d42>] kthread+0xfb/0x130
+    [<00000000d49bd1fa>] ret_from_fork+0x3a/0x50
 
-URL: https://tracker.ceph.com/issues/43215
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
+A kfree was missing in commit 75c9627efb72 ("ceph: map snapid to anonymous
+bdev ID"), while looping the 'to_free' list of ceph_snapid_map objects.
+
+Fixes: 75c9627efb72 ("ceph: map snapid to anonymous bdev ID")
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
 ---
- fs/ceph/debugfs.c    |  9 +++++++++
- fs/ceph/mds_client.c |  5 +++++
- fs/ceph/mds_client.h |  3 ++-
- fs/ceph/metric.c     | 31 +++++++++++++++++++++++++++++++
- fs/ceph/metric.h     | 11 +++++++++++
- 5 files changed, 58 insertions(+), 1 deletion(-)
+Hi!
 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index e50499c..657f2f1 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -189,6 +189,15 @@ static int metric_show(struct seq_file *s, void *p)
- 	sq = percpu_counter_sum(&m->write_latency_sq_sum);
- 	CEPH_METRIC_SHOW("write", total, avg, min, max, sq);
- 
-+	avg = get_avg(&m->total_metadatas,
-+		      &m->metadata_latency_sum,
-+		      &m->metadata_latency_lock,
-+		      &total);
-+	min = atomic64_read(&m->metadata_latency_min);
-+	max = atomic64_read(&m->metadata_latency_max);
-+	sq = percpu_counter_sum(&m->metadata_latency_sq_sum);
-+	CEPH_METRIC_SHOW("metadata", total, avg, min, max, sq);
-+
- 	seq_printf(s, "\n");
- 	seq_printf(s, "item          total           miss            hit\n");
- 	seq_printf(s, "-------------------------------------------------\n");
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 1e242d8..b3f985a 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2547,6 +2547,8 @@ static struct ceph_msg *create_request_message(struct ceph_mds_client *mdsc,
- static void complete_request(struct ceph_mds_client *mdsc,
- 			     struct ceph_mds_request *req)
- {
-+	req->r_ended = jiffies;
-+
- 	if (req->r_callback)
- 		req->r_callback(mdsc, req);
- 	complete_all(&req->r_completion);
-@@ -3155,6 +3157,9 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
- 
- 	/* kick calling process */
- 	complete_request(mdsc, req);
-+
-+	ceph_update_metadata_latency(&mdsc->metric, req->r_started,
-+				     req->r_ended, err);
- out:
- 	ceph_mdsc_put_request(req);
- 	return;
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index ae1d01c..9018fa7 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -298,7 +298,8 @@ struct ceph_mds_request {
- 	u32               r_readdir_offset;
- 
- 	unsigned long r_timeout;  /* optional.  jiffies, 0 is "wait forever" */
--	unsigned long r_started;  /* start time to measure timeout against */
-+	unsigned long r_started;  /* start time to measure timeout against and latency */
-+	unsigned long r_ended;    /* finish time to measure latency */
- 	unsigned long r_request_started; /* start time for mds request only,
- 					    used to measure lease durations */
- 
-diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
-index 4bf461d..23ceeb2 100644
---- a/fs/ceph/metric.c
-+++ b/fs/ceph/metric.c
-@@ -50,8 +50,20 @@ int ceph_metric_init(struct ceph_client_metric *m)
- 	atomic64_set(&m->write_latency_min, S64_MAX);
- 	atomic64_set(&m->write_latency_max, 0);
- 
-+	ret = percpu_counter_init(&m->metadata_latency_sq_sum, 0, GFP_KERNEL);
-+	if (ret)
-+		goto err_metadata_latency_sq_sum;
-+
-+	spin_lock_init(&m->metadata_latency_lock);
-+	atomic64_set(&m->total_metadatas, 0);
-+	atomic64_set(&m->metadata_latency_sum, 0);
-+	atomic64_set(&m->metadata_latency_min, S64_MAX);
-+	atomic64_set(&m->metadata_latency_max, 0);
-+
- 	return 0;
- 
-+err_metadata_latency_sq_sum:
-+	percpu_counter_destroy(&m->write_latency_sq_sum);
- err_write_latency_sq_sum:
- 	percpu_counter_destroy(&m->read_latency_sq_sum);
- err_read_latency_sq_sum:
-@@ -71,6 +83,7 @@ void ceph_metric_destroy(struct ceph_client_metric *m)
- 	if (!m)
- 		return;
- 
-+	percpu_counter_destroy(&m->metadata_latency_sq_sum);
- 	percpu_counter_destroy(&m->write_latency_sq_sum);
- 	percpu_counter_destroy(&m->read_latency_sq_sum);
- 	percpu_counter_destroy(&m->i_caps_mis);
-@@ -160,3 +173,21 @@ void ceph_update_write_latency(struct ceph_client_metric *m,
- 			    &m->write_latency_lock,
- 			    lat);
+A bit of mailing-list archaeology shows that v1 of this patch actually
+included this kfree [1], and was lost on v2 [2].
+
+[1] https://patchwork.kernel.org/patch/10114319/
+[2] https://patchwork.kernel.org/patch/10749907/
+
+Cheers,
+--
+Luis
+
+fs/ceph/snap.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index ccfcc66aaf44..923be9399b21 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -1155,5 +1155,6 @@ void ceph_cleanup_snapid_map(struct ceph_mds_client *mdsc)
+ 			pr_err("snapid map %llx -> %x still in use\n",
+ 			       sm->snap, sm->dev);
+ 		}
++		kfree(sm);
+ 	}
  }
-+
-+void ceph_update_metadata_latency(struct ceph_client_metric *m,
-+				  unsigned long r_start,
-+				  unsigned long r_end,
-+				  int rc)
-+{
-+	unsigned long lat = r_end - r_start;
-+
-+	if (unlikely(rc && rc != -ENOENT))
-+		return;
-+
-+	__update_min_latency(&m->metadata_latency_min, lat);
-+	__update_max_latency(&m->metadata_latency_max, lat);
-+	__update_avg_and_sq(&m->total_metadatas, &m->metadata_latency_sum,
-+			    &m->metadata_latency_sq_sum,
-+			    &m->metadata_latency_lock,
-+			    lat);
-+}
-diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
-index a24482e..fc1ffb1 100644
---- a/fs/ceph/metric.h
-+++ b/fs/ceph/metric.h
-@@ -27,6 +27,13 @@ struct ceph_client_metric {
- 	atomic64_t write_latency_sum;
- 	atomic64_t write_latency_min;
- 	atomic64_t write_latency_max;
-+
-+	struct percpu_counter metadata_latency_sq_sum;
-+	spinlock_t metadata_latency_lock;
-+	atomic64_t total_metadatas;
-+	atomic64_t metadata_latency_sum;
-+	atomic64_t metadata_latency_min;
-+	atomic64_t metadata_latency_max;
- };
- 
- extern int ceph_metric_init(struct ceph_client_metric *m);
-@@ -50,4 +57,8 @@ extern void ceph_update_write_latency(struct ceph_client_metric *m,
- 				      unsigned long r_start,
- 				      unsigned long r_end,
- 				      int rc);
-+extern void ceph_update_metadata_latency(struct ceph_client_metric *m,
-+					 unsigned long r_start,
-+					 unsigned long r_end,
-+					 int rc);
- #endif /* _FS_CEPH_MDS_METRIC_H */
--- 
-1.8.3.1
-
