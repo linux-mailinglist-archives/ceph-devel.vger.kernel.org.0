@@ -2,36 +2,62 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 212EA18CD82
-	for <lists+ceph-devel@lfdr.de>; Fri, 20 Mar 2020 13:10:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55ECD18D20F
+	for <lists+ceph-devel@lfdr.de>; Fri, 20 Mar 2020 15:57:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbgCTMKG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 20 Mar 2020 08:10:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbgCTMKF (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 20 Mar 2020 08:10:05 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 796AE20732;
-        Fri, 20 Mar 2020 12:10:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584706205;
-        bh=V1k6qhAVvzqk7qI1wWiqPrg1NDOX5mVESL5a40sW/ec=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=QJ8LH1cXHxqGAjESJHX/es33tPDeeqdekUJuBYsHA35en7DVRVIPaX8ceu5elB3iF
-         DgRmzec1LbrhOFR/G3KiJ1u+uqgXjNBGppAoA7pCDxaexmZDJvZbIicstiGzsij0yQ
-         P1PKM31SFn35r6kOTGlr1fwEb4w7odNrj+CV6IpQ=
-Message-ID: <3616dfb1ee735e59e2c3a087bc0acf98e021d1c3.camel@kernel.org>
-Subject: Re: [PATCH v13 0/4] ceph: add perf metrics support
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     sage@redhat.com, idryomov@gmail.com, gfarnum@redhat.com,
-        zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Fri, 20 Mar 2020 08:10:03 -0400
-In-Reply-To: <1584675902-16493-1-git-send-email-xiubli@redhat.com>
-References: <1584675902-16493-1-git-send-email-xiubli@redhat.com>
+        id S1727321AbgCTO5p (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 20 Mar 2020 10:57:45 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:34850 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727133AbgCTO5p (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 20 Mar 2020 10:57:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584716264;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=yHX5tu4L+wafVrGADIIPcvwfpWGpmsK/2PIeQC9t1nM=;
+        b=UczvDOAjz0vP9gS2pdrp6W6awuzx+o9gmuRSO+dPHNEKHUA7Z7KkEbDnd1TpqtXbaKAld5
+        PJDl3lHVcVRaqRBnfHqijl4Pst/YKnla1/Cm9VrK8e1KmRCLTJ3df9c468Kk1LGW1Be4pW
+        /HRWzJVCmxLmStWZsAHnWpDkpjEZD8c=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-182-swbQNaZWMJuQDPDH6GdoZQ-1; Fri, 20 Mar 2020 10:57:41 -0400
+X-MC-Unique: swbQNaZWMJuQDPDH6GdoZQ-1
+Received: by mail-qt1-f197.google.com with SMTP id t6so5945359qtj.12
+        for <ceph-devel@vger.kernel.org>; Fri, 20 Mar 2020 07:57:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=yHX5tu4L+wafVrGADIIPcvwfpWGpmsK/2PIeQC9t1nM=;
+        b=trx5gOfemle9iLbNrNTtw7xi+P2q5+gZFmxWGgw1qoaOHdg6eBBPEZChpYu7J/5GJT
+         u07IjXINN1Vbe26QhBE5iZ0vk4aqvGRWgwz1fSkRQTWM+/iuoClXxchOiyNBjFHoIwrd
+         N/CbnU8KjD5qBM9fOvKxmXpewc3/i+SuulJP2UKGZhA/3A1Y3j8VivSS38mYQDJ58rRf
+         Z94wdIfK42/a5mEsHh4Kdlxp+iyJ4D8Rzb0SUvUDHb7aUjiAyuNzZVSMnRi7Ic2NLydQ
+         kcJHE6TkMTujYmb8BSow9QzIfTq4LwsUjK+hGAcDVtW1IINYTYiPkIqiPUG5UmFH6lhy
+         syRA==
+X-Gm-Message-State: ANhLgQ0nUqpFxR3fv1IhLnMDMDcvpse7PkZibdKJcewn+uQFXJF85BEE
+        yNDYJeRPXfe/0/efPBKHovN+08vULFmDS/YvGmcwnujHJ4GW+Kln4CtOlI5fYLswEBZXzI4AWbc
+        r08HVTQrkudMGmA9tWEzNNA==
+X-Received: by 2002:a05:6214:a73:: with SMTP id ef19mr8365976qvb.98.1584716260003;
+        Fri, 20 Mar 2020 07:57:40 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vvCSClv53FTAGmeKM9zfUDYuDJ+lpUrxjGZcWF5ViaRSPoPrxKSe702G0oWRZKFbIrdhiI3bw==
+X-Received: by 2002:a05:6214:a73:: with SMTP id ef19mr8365948qvb.98.1584716259736;
+        Fri, 20 Mar 2020 07:57:39 -0700 (PDT)
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id f185sm1304248qkb.50.2020.03.20.07.57.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Mar 2020 07:57:39 -0700 (PDT)
+Message-ID: <833eb05d54ca8338843566a1fce9afee9283bdb2.camel@redhat.com>
+Subject: extend cephadm to do minimal client setup for kcephfs (and maybe
+ krbd)?
+From:   Jeff Layton <jlayton@redhat.com>
+To:     "dev@ceph.io" <dev@ceph.io>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Cc:     Sage Weil <sage@newdream.net>
+Date:   Fri, 20 Mar 2020 10:57:38 -0400
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
@@ -41,84 +67,23 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2020-03-19 at 23:44 -0400, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> # cat /sys/kernel/debug/ceph/9a972bfc-68cb-4d52-a610-7cd9a9adbbdd.client52904/metrics
-> item          total       avg_lat(us)     min_lat(us)     max_lat(us)     stdev(us)
-> -----------------------------------------------------------------------------------
-> read          21979       2093            765             248778          2771
-> write         1129        45184           30252           368629          20437
-> metadata      3           6462            1674            14260           6811
-> 
-> item          total           miss            hit
-> -------------------------------------------------
-> d_lease       2               0               1
-> caps          2               4               24248
-> 
-> 
-> Chnaged in V13:
-> - [3/4] and [4/4] switch jiffies to ktime_t for the start/end time stamp, which
->   will make it much preciser, such as when the IO latency(end - start) < 1ms and
->   if the HZ==1000, then we will always get end == start in jiffies, and the min
->   will always be 0, actually it should be in range (0, 1000)us.
-> - [3/4] since by using ktime helpers we are calculating the stdev in nanosecond,
->   then switch to us, so to compute the reminder make no sense any more, remove it
->   from stdev.
-> 
-> Changed in V12:
-> - [3/4] and [4/4] switch atomic64_t type to u64 for lat sum and total numbers
-> 
-> Changed in V11:
-> - [3/4] and [4/4] fold the min/max/stdev factors
-> 
-> Changed in V10:
-> - rebase to the latest testing branch
-> - merge all the metric related patches into one
-> - [1/6] move metric helpers into a new file metric.c
-> - [2/6] move metric helpers into metric.c
-> - [3/6] merge the read/write patches into a signal patch and move metric helpers to metric.c
-> - [4/6] move metric helpers to metric.c
-> - [5/6] min/max latency support
-> - [6/6] standard deviation support
-> 
-> Changed in V9:
-> - add an r_ended field to the mds request struct and use that to calculate the metric
-> - fix some commit comments
-> 
-> Xiubo Li (4):
->   ceph: add dentry lease metric support
->   ceph: add caps perf metric for each superblock
->   ceph: add read/write latency metric support
->   ceph: add metadata perf metric support
-> 
->  fs/ceph/Makefile                |   2 +-
->  fs/ceph/acl.c                   |   2 +-
->  fs/ceph/addr.c                  |  20 ++++++
->  fs/ceph/caps.c                  |  19 ++++++
->  fs/ceph/debugfs.c               | 100 +++++++++++++++++++++++++--
->  fs/ceph/dir.c                   |  17 ++++-
->  fs/ceph/file.c                  |  30 ++++++++
->  fs/ceph/inode.c                 |   4 +-
->  fs/ceph/mds_client.c            |  23 ++++++-
->  fs/ceph/mds_client.h            |   7 ++
->  fs/ceph/metric.c                | 148 ++++++++++++++++++++++++++++++++++++++++
->  fs/ceph/metric.h                |  62 +++++++++++++++++
->  fs/ceph/super.h                 |   9 ++-
->  fs/ceph/xattr.c                 |   4 +-
->  include/linux/ceph/osd_client.h |   3 +
->  net/ceph/osd_client.c           |   3 +
->  16 files changed, 436 insertions(+), 17 deletions(-)
->  create mode 100644 fs/ceph/metric.c
->  create mode 100644 fs/ceph/metric.h
-> 
+I've had this PR sitting around for a while:
 
-Thanks Xiubo,
+    https://github.com/ceph/ceph/pull/31885
 
-I think this looks good now. I'm going to do a bit of testing and merge
-it later today.
+It's bitrotted a bit, and I'll clean that up soon, but after looking
+over cephadm, I wonder if it would make sense to also extend it to do
+these actions on machines that are just intended to be kcephfs or krbd
+clients.
 
-Thanks again!
+We typically don't need to do a full-blown install on the clients, so
+being able to install just the minimum packages needed and do a minimal
+conf/keyring setup would be nice.
+
+Does this make sense? I'll open a tracker if the principal cephadm devs
+are OK with it.
+
+Thanks,
 -- 
-Jeff Layton <jlayton@kernel.org>
+Jeff Layton <jlayton@redhat.com>
 
