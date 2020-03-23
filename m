@@ -2,79 +2,64 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A8FE18EEE4
-	for <lists+ceph-devel@lfdr.de>; Mon, 23 Mar 2020 05:34:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C76D218F94B
+	for <lists+ceph-devel@lfdr.de>; Mon, 23 Mar 2020 17:07:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725830AbgCWEeV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 23 Mar 2020 00:34:21 -0400
-Received: from mail-qt1-f170.google.com ([209.85.160.170]:45557 "EHLO
-        mail-qt1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725208AbgCWEeV (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 23 Mar 2020 00:34:21 -0400
-Received: by mail-qt1-f170.google.com with SMTP id t17so506006qtn.12
-        for <ceph-devel@vger.kernel.org>; Sun, 22 Mar 2020 21:34:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DWkZ2TVc24x98jxu7TzYFjjes0wpeTX1lUJrSu7LONo=;
-        b=UJcOZ08fCQ1VJgqeo0fFoAy/jacpvliPzc4ReMy+oIcLs9cGpmYqYoWGwecuR263v2
-         yKhIzuI5RcWHeAvwlV8nwoDcn5PCQFi5hL7zsFiL6Y8YEb4VOraZ5XURQFyfLiICzHMP
-         3gPGMEs+wz8C7DuKoPGlKMqjubzZJqsG4vad/VfSo6PpXzKIP9/9SPjjJwXNlYu7zpct
-         Dt+3w8TyxW9/yvd4i6wqDiRsTz8Mjy6VdImO0dvACzLR2loRyfOARJTmDUYVBgHu6YrU
-         2A0ep9fu00XM8+yHh4DCLn8UcXvugjf3ev5PHmX/+PyFBZipLIjjCyLCS8olUhsnFUXr
-         BMOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DWkZ2TVc24x98jxu7TzYFjjes0wpeTX1lUJrSu7LONo=;
-        b=s59L+t+szn/uWeaSzgZv1hXdBFbi2xVVoIgR+iVF0D2RNq22b82TCBHEF1nl0T2ii3
-         Oru/zqSJfhnUoZwxmYPNoO0W9qViNjBUI7UPYAhlqkLRyDn1QUvKg8ldWiRb9BO9zUXa
-         O016KAJUj7JYm6zboz0s+sCBHEROKHL8FRcfEvumSofy6halR2OoV7fNr9z2okBMlfex
-         jQK+jkogn/GYh6sEAGtSrOf8ZBf3iPiR8a4xb+PI6/jADHopYAyt3VhnekESXMwZLTz9
-         dVREVJuzMDFw32pn4xd8vCg07XyHendMQToMfaBGpDv9iA+ILFQDbcwoPOU2LWyjlfuD
-         ElfA==
-X-Gm-Message-State: ANhLgQ0WTT9bGLHs4hldT0NZUm46Ut/CvrIaYJiVgOpXxbJfOFBOTKVd
-        YZh8iOuIKDbsUvqO+XYSPZYVYq4/6TvvfP/s7tX94Uob5MM=
-X-Google-Smtp-Source: ADFU+vteP3g8C5XKyclAg9k9xF6B9WGyRWbPkHmczmjslzrE6pYsDArylOc3tKypY5V5txTREs07nItvoaYUvYMK47s=
-X-Received: by 2002:aed:3461:: with SMTP id w88mr19718052qtd.143.1584938060309;
- Sun, 22 Mar 2020 21:34:20 -0700 (PDT)
+        id S1727357AbgCWQHL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 23 Mar 2020 12:07:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727282AbgCWQHL (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 23 Mar 2020 12:07:11 -0400
+Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5211720637;
+        Mon, 23 Mar 2020 16:07:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584979630;
+        bh=o95RzpTAiQw/tYrbSicrUDg7YuHGkbOceJZ3hi5JCA4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VvYh1Tl6ZxadSYy1zWQ0+sOVSS8/AAOefsXtfrjptpEo7J2IOPO2pZ0mZs7tuG0mN
+         WHBQWuj8ykbRK5qH9TLCmyhl6NLYgEqLZTCS5YAbeFfW74Pe9GWZbid+CKc+slO/H6
+         BqMtYpZvXgWcavpIZjBstgPIE9L8iTR3/BzHswks=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     ukernel@gmail.com, idryomov@gmail.com, sage@redhat.com
+Subject: [PATCH 0/8] ceph: cap handling code fixes, cleanups and comments
+Date:   Mon, 23 Mar 2020 12:07:00 -0400
+Message-Id: <20200323160708.104152-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <CAMWWNq-8H8JJsPdL1JC9pOKMQY9LawZDRxfKa7Ag8MWGJbBY5A@mail.gmail.com>
-In-Reply-To: <CAMWWNq-8H8JJsPdL1JC9pOKMQY9LawZDRxfKa7Ag8MWGJbBY5A@mail.gmail.com>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Mon, 23 Mar 2020 12:34:08 +0800
-Message-ID: <CAAM7YAnSxY8QkZWPLT=mDjjf4PVNd=vsi3zb3DEKKhEdivFXVA@mail.gmail.com>
-Subject: Re: mds: where is mdr->slave_commit called?
-To:     Xinying Song <songxinying.ftd@gmail.com>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, Mar 22, 2020 at 3:40 PM Xinying Song <songxinying.ftd@gmail.com> wrote:
->
-> Hi, everyone:
-> Could anybody give some tips about how `mdr->slave_commit` is called?
->
-> As for `link_remote()`, steps are as follows:
-> 1. master mds sends OP_(UN)LINKPREP to salve mds.
-> 2. slave mds replys OP_LINKPREPACK to master mds after its journal has
-> been flushed.
-> 3. master mds continues to process the client request.
->
-> I only find out there is a chance in MDCache::request_finish() that
-> `mdr->slave_commit` will be called. However, after a successful
-> journal flush, slave mds only sends an ACK to master mds and bypasses
-> MDCache::request_finish().
-> So when or where is `mdr->slave_commit` called?
->
-> Thanks!
+I've been going over the cap handling code with an aim toward
+simplifying the locking. There's one fix for a potential use-after-free
+race in here. This also eliminates a number of __acquires and __releases
+annotations by reorganizing the code, and adds some (hopefully helpful)
+comments.
 
-master calls MDCache::request_finsih(),
-MDCache::request_drop_foreign_locks() sends
-MMDSSlaveRequest::OP_FINISH message to slaves.  slaves call
-MDCache::request_finsih() when receiving the message.
+There should be no behavioral changes with this set.
+
+Jeff Layton (8):
+  ceph: reorganize __send_cap for less spinlock abuse
+  ceph: split up __finish_cap_flush
+  ceph: add comments for handle_cap_flush_ack logic
+  ceph: don't release i_ceph_lock in handle_cap_trunc
+  ceph: don't take i_ceph_lock in handle_cap_import
+  ceph: document what protects i_dirty_item and i_flushing_item
+  ceph: fix potential race in ceph_check_caps
+  ceph: throw a warning if we destroy session with mutex still locked
+
+ fs/ceph/caps.c       | 292 ++++++++++++++++++++++++-------------------
+ fs/ceph/mds_client.c |   1 +
+ fs/ceph/super.h      |   4 +-
+ 3 files changed, 170 insertions(+), 127 deletions(-)
+
+-- 
+2.25.1
+
