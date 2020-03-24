@@ -2,641 +2,378 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C4CF190C9A
-	for <lists+ceph-devel@lfdr.de>; Tue, 24 Mar 2020 12:38:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6170B191391
+	for <lists+ceph-devel@lfdr.de>; Tue, 24 Mar 2020 15:50:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbgCXLii convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Tue, 24 Mar 2020 07:38:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51010 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727112AbgCXLih (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 24 Mar 2020 07:38:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 9D4FCAC52;
-        Tue, 24 Mar 2020 11:38:33 +0000 (UTC)
-From:   Abhishek Lekshmanan <abhishek@suse.com>
-To:     ceph-announce@ceph.io, ceph-users@ceph.io, dev@ceph.io,
-        ceph-devel@vger.kernel.org, ceph-maintainers@ceph.io
-Subject: v15.2.0 Octopus released
-Date:   Tue, 24 Mar 2020 12:38:33 +0100
-Message-ID: <878sjqc79i.fsf@suse.com>
+        id S1727798AbgCXOsl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 24 Mar 2020 10:48:41 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37469 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727065AbgCXOsl (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 24 Mar 2020 10:48:41 -0400
+Received: by mail-qt1-f194.google.com with SMTP id d12so12668069qtj.4
+        for <ceph-devel@vger.kernel.org>; Tue, 24 Mar 2020 07:48:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B16dVImMc0rm/KxV0D1nwHmyAAdMN+R/tlW741qAhCw=;
+        b=upXIWR4ZvBSKXO6yPiCH3/n4vjgCctl2oZ2A7hee4jX5WffisVuA2Zi4H/xoxyMBqM
+         YQzT3iYsIDPexdFsA0lRLeP1OicxT/B7SbqtAhpa+2uhWVSNCKnPqJgpTUJwYLoF4pLy
+         SOwJkPpwZQ5cHg05hYcHR86gTGRWESwqMkA4aZHQswhXlbpCf3hW9pFq4ViP84Uhp1RC
+         5Qm6dOUVhAfdq2WGtXlTJsCXIsPZ0/TzUfwDVwiF7whlERxY1Ui0qRMUu2DKraSwP5m2
+         UxoWHu6Fxs9hk3npTUAQ4VksfLJv0y6v8V/YlRd99Lp7ZHYDb1V7JRCGbwORmcpZG7xv
+         0pIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B16dVImMc0rm/KxV0D1nwHmyAAdMN+R/tlW741qAhCw=;
+        b=Ue4ikK35CjJAbP4ArtvQt/fmPDx/XqYxusDRjPx1ukKSoickfCuaLqx1sRJ77Gpl+y
+         aC51wC6r08rnjkkObhpHwLDNTgc7KTkGbOkO2wz6wL6LPPYnm4AoZZaYCR3cdxyC6OX0
+         DU28VJsdyNtLIu5IC5BKmvB5o7NXv/HgGKJROT82t6XZZ0xfaVk/pHFvR4Lt81ZG3MT9
+         dZbQetOPnLTTh2tKRweeimTqCJ2Vldp82uYixBOacrYvsJBylihPv3KEE4flIimQ1tuz
+         E/QDaWIiOzMTx7ftmcAUvRnjq+wjDa0w2Ayikg8fJS9yeflMMNLFcxsfPvGt6f8vQB/J
+         MmGw==
+X-Gm-Message-State: ANhLgQ2fOZh8fbF7phF++TipLADAP8H9UTleLsbsxW0/VtBpvlHbMVkG
+        2xaYaGZGiUIhDu5nv/dRQ/rnIdGFmt5AbcHehu36vIpxTLQ=
+X-Google-Smtp-Source: ADFU+vuKIMVgq9ap1q9r4xX0hhUdbjoQ6n+5PGMKNTM3IVMndH8jfCwFVPjusVTNPqW4buBFLiJ4WhVSq1R5274K890=
+X-Received: by 2002:ac8:18f3:: with SMTP id o48mr27577115qtk.368.1585061317275;
+ Tue, 24 Mar 2020 07:48:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+References: <20200323160708.104152-1-jlayton@kernel.org> <20200323160708.104152-2-jlayton@kernel.org>
+In-Reply-To: <20200323160708.104152-2-jlayton@kernel.org>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Tue, 24 Mar 2020 22:48:25 +0800
+Message-ID: <CAAM7YAkEpEzxjMTjgjbRRoZ95hqUX-SULYxkPof3aEgd+EqDuA@mail.gmail.com>
+Subject: Re: [PATCH 1/8] ceph: reorganize __send_cap for less spinlock abuse
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-
-We're happy to announce the first stable release of Octopus v15.2.0.
-There are a lot of changes and new features added, we advise everyone to
-read the release notes carefully, and in particular the upgrade notes,
-before upgrading. Please refer to the official blog entry
-https://ceph.io/releases/v15-2-0-octopus-released/ for a detailed
-version with links & changelog.
-
-This release wouldn't have been possible without the support of the
-community, this release saw contributions from over 330 developers & 80
-organizations, and we thank everyone for making this release happen.
-
-Major Changes from Nautilus
----------------------------
-General
-~~~~~~~
-* A new deployment tool called **cephadm** has been introduced that
-  integrates Ceph daemon deployment and management via containers
-  into the orchestration layer. 
-* Health alerts can now be muted, either temporarily or permanently.
-* Health alerts are now raised for recent Ceph daemons crashes.
-* A simple 'alerts' module has been introduced to send email
-  health alerts for clusters deployed without the benefit of an
-  existing external monitoring infrastructure.
-* Packages are built for the following distributions:
-  - CentOS 8
-  - CentOS 7 (partial--see below)
-  - Ubuntu 18.04 (Bionic)
-  - Debian Buster
-  - Container images (based on CentOS 8)
-
-  Note that the dashboard, prometheus, and restful manager modules
-  will not work on the CentOS 7 build due to Python 3 module
-  dependencies that are missing in CentOS 7.
-
-  Besides this packages built by the community will also available for the
-  following distros:
-  - Fedora (33/rawhide)
-  - openSUSE (15.2, Tumbleweed)
-
-Dashboard
-~~~~~~~~~
-The mgr-dashboard has gained a lot of new features and functionality:
-
-* UI Enhancements
-  - New vertical navigation bar
-  - New unified sidebar: better background task and events notification
-  - Shows all progress mgr module notifications
-  - Multi-select on tables to perform bulk operations
-
-* Dashboard user account security enhancements
-  - Disabling/enabling existing user accounts
-  - Clone an existing user role
-  - Users can change their own password
-  - Configurable password policies: Minimum password complexity/length
-    requirements
-  - Configurable password expiration
-  - Change password after first login
-
-New and enhanced management of Ceph features/services:
-
-* OSD/device management
-  - List all disks associated with an OSD
-  - Add support for blinking enclosure LEDs via the orchestrator
-  - List all hosts known by the orchestrator
-  - List all disks and their properties attached to a node
-  - Display disk health information (health prediction and SMART data)
-  - Deploy new OSDs on new disks/hosts
-  - Display and allow sorting by an OSD's default device class in the OSD
-    table
-  - Explicitly set/change the device class of an OSD, display and sort OSDs by
-    device class
-
-* Pool management
-  - Viewing and setting pool quotas
-  - Define and change per-pool PG autoscaling mode
-
-* RGW management enhancements
-  - Enable bucket versioning
-  - Enable MFA support
-  - Select placement target on bucket creation
-
-* CephFS management enhancements
-  - CephFS client eviction
-  - CephFS snapshot management
-  - CephFS quota management
-  - Browse CephFS directory
-
-* iSCSI management enhancements
-  - Show iSCSI GW status on landing page
-  - Prevent deletion of IQNs with open sessions
-  - Display iSCSI "logged in" info
-
-* Prometheus alert management
-  - List configured Prometheus alerts
-
-RADOS
-~~~~~  
-* Objects can now be brought in sync during recovery by copying only
-  the modified portion of the object, reducing tail latencies during
-  recovery.
-* Ceph will allow recovery below *min_size* for Erasure coded pools,
-  wherever possible.
-* The PG autoscaler feature introduced in Nautilus is enabled for
-  new pools by default, allowing new clusters to autotune *pg num*
-  without any user intervention.  The default values for new pools
-  and RGW/CephFS metadata pools have also been adjusted to perform
-  well for most users.
-* BlueStore has received several improvements and performance
-  updates, including improved accounting for "omap" (key/value)
-  object data by pool, improved cache memory management, and a
-  reduced allocation unit size for SSD devices.  (Note that by
-  default, the first time each OSD starts after upgrading to octopus
-  it will trigger a conversion that may take from a few minutes to a
-  few hours, depending on the amount of stored "omap" data.)
-* Snapshot trimming metadata is now managed in a more efficient and
-  scalable fashion.
-
-RBD block storage
-~~~~~~~~~~~~~~~~~  
-* Mirroring now supports a new snapshot-based mode that no longer requires
-  the journaling feature and its related impacts in exchange for the loss
-  of point-in-time consistency (it remains crash consistent).
-* Clone operations now preserve the sparseness of the underlying RBD image.
-* The trash feature has been improved to (optionally) automatically
-  move old parent images to the trash when their children are all
-  deleted or flattened.
-* The trash can be configured to automatically purge on a defined schedule.
-* Images can be online re-sparsified to reduce the usage of zeroed extents.
-* The `rbd-nbd` tool has been improved to use more modern kernel interfaces.
-* Caching has been improved to be more efficient and performant.
-* `rbd-mirror` automatically adjusts its per-image memory usage based
-  upon its memory target.
-* A new persistent read-only caching daemon is available to offload reads from
-  shared parent images.
-
-RGW object storage
-~~~~~~~~~~~~~~~~~~  
-* New `Multisite Sync Policy` primitives for per-bucket replication. (EXPERIMENTAL)
-* S3 feature support:
-    - Bucket Replication (EXPERIMENTAL)
-    - `Bucket Notifications`_ via HTTP/S, AMQP and Kafka
-    - Bucket Tagging
-    - Object Lock
-    - Public Access Block for buckets
-* Bucket sharding:
-    - Significantly improved listing performance on buckets with many shards.
-    - Dynamic resharding prefers prime shard counts for improved distribution.
-    - Raised the default number of bucket shards to 11.
-* Added `HashiCorp Vault Integration`_ for SSE-KMS.
-* Added Keystone token cache for S3 requests.
-
-CephFS distributed file system
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* Inline data support in CephFS has been deprecated and will likely be
-  removed in a future release.
-* MDS daemons can now be assigned to manage a particular file system via the
-  new `mds_join_fs` option.
-* MDS now aggressively asks idle clients to trim caps which improves stability
-  when file system load changes.
-* The mgr volumes plugin has received numerous improvements to support CephFS
-  via CSI, including snapshots and cloning.
-* cephfs-shell has had numerous incremental improvements and bug fixes.
-
-
-Upgrading from Mimic or Nautilus
---------------------------------
-  You can monitor the progress of your upgrade at each stage with the
-  `ceph versions` command, which will tell you what ceph version(s) are
-  running for each type of daemon.
-
-Instructions
-~~~~~~~~~~~~
-#. Make sure your cluster is stable and healthy (no down or
-   recovering OSDs).  (Optional, but recommended.)
-
-#. Set the `noout` flag for the duration of the upgrade. (Optional,
-   but recommended.)::
-
-     # ceph osd set noout
-
-#. Upgrade monitors by installing the new packages and restarting the
-   monitor daemons.  For example, on each monitor host,::
-
-     # systemctl restart ceph-mon.target
-
-   Once all monitors are up, verify that the monitor upgrade is
-   complete by looking for the `octopus` string in the mon
-   map.  The command::
-
-     # ceph mon dump | grep min_mon_release
-
-   should report::
-
-     min_mon_release 15 (nautilus)
-
-   If it doesn't, that implies that one or more monitors hasn't been
-   upgraded and restarted and/or the quorum does not include all monitors.
-
-#. Upgrade `ceph-mgr` daemons by installing the new packages and
-   restarting all manager daemons.  For example, on each manager host,::
-
-     # systemctl restart ceph-mgr.target
-
-   Verify the `ceph-mgr` daemons are running by checking `ceph
-   -s`::
-
-     # ceph -s
-
-     ...
-       services:
-        mon: 3 daemons, quorum foo,bar,baz
-        mgr: foo(active), standbys: bar, baz
-     ...
-
-#. Upgrade all OSDs by installing the new packages and restarting the
-   ceph-osd daemons on all OSD hosts::
-
-     # systemctl restart ceph-osd.target
-
-   Note that the first time each OSD starts, it will do a format
-   conversion to improve the accounting for "omap" data.  This may
-   take a few minutes to as much as a few hours (for an HDD with lots
-   of omap data).  You can disable this automatic conversion with::
-
-     # ceph config set osd bluestore_fsck_quick_fix_on_mount false
-
-   You can monitor the progress of the OSD upgrades with the
-   `ceph versions` or `ceph osd versions` commands::
-
-     # ceph osd versions
-     {
-        "ceph version 13.2.5 (...) mimic (stable)": 12,
-        "ceph version 15.2.0 (...) octopus (stable)": 22,
-     }
-
-#. Upgrade all CephFS MDS daemons.  For each CephFS file system,
-
-   #. Reduce the number of ranks to 1.  (Make note of the original
-      number of MDS daemons first if you plan to restore it later.)::
-
-	# ceph status
-	# ceph fs set <fs_name> max_mds 1
-
-   #. Wait for the cluster to deactivate any non-zero ranks by
-      periodically checking the status::
-
-	# ceph status
-
-   #. Take all standby MDS daemons offline on the appropriate hosts with::
-
-	# systemctl stop ceph-mds@<daemon_name>
-
-   #. Confirm that only one MDS is online and is rank 0 for your FS::
-
-	# ceph status
-
-   #. Upgrade the last remaining MDS daemon by installing the new
-      packages and restarting the daemon::
-
-        # systemctl restart ceph-mds.target
-
-   #. Restart all standby MDS daemons that were taken offline::
-
-	# systemctl start ceph-mds.target
-
-   #. Restore the original value of `max_mds` for the volume::
-
-	# ceph fs set <fs_name> max_mds <original_max_mds>
-
-#. Upgrade all radosgw daemons by upgrading packages and restarting
-   daemons on all hosts::
-
-     # systemctl restart ceph-radosgw.target
-
-#. Complete the upgrade by disallowing pre-Octopus OSDs and enabling
-   all new Octopus-only functionality::
-
-     # ceph osd require-osd-release octopus
-
-#. If you set `noout` at the beginning, be sure to clear it with::
-
-     # ceph osd unset noout
-
-#. Verify the cluster is healthy with `ceph health`.
-
-   If your CRUSH tunables are older than Hammer, Ceph will now issue a
-   health warning.  If you see a health alert to that effect, you can
-   revert this change with::
-
-     ceph config set mon mon_crush_min_required_version firefly
-
-   If Ceph does not complain, however, then we recommend you also
-   switch any existing CRUSH buckets to straw2, which was added back
-   in the Hammer release.  If you have any 'straw' buckets, this will
-   result in a modest amount of data movement, but generally nothing
-   too severe.::
-
-     ceph osd getcrushmap -o backup-crushmap
-     ceph osd crush set-all-straw-buckets-to-straw2
-
-   If there are problems, you can easily revert with::
-
-     ceph osd setcrushmap -i backup-crushmap
-
-   Moving to 'straw2' buckets will unlock a few recent features, like
-   the `crush-compat` :ref:`balancer <balancer>` mode added back in Luminous.
-
-#. If you are upgrading from Mimic, or did not already do so when you
-   upgraded to Nautlius, we recommened you enable the new :ref:`v2
-   network protocol <msgr2>`, issue the following command::
-
-     ceph mon enable-msgr2
-
-   This will instruct all monitors that bind to the old default port
-   6789 for the legacy v1 protocol to also bind to the new 3300 v2
-   protocol port.  To see if all monitors have been updated,::
-
-     ceph mon dump
-
-   and verify that each monitor has both a `v2:` and `v1:` address
-   listed.
-
-#. Consider enabling the :ref:`telemetry module <telemetry>` to send
-   anonymized usage statistics and crash information to the Ceph
-   upstream developers.  To see what would be reported (without actually
-   sending any information to anyone),::
-
-     ceph mgr module enable telemetry
-     ceph telemetry show
-
-   If you are comfortable with the data that is reported, you can opt-in to
-   automatically report the high-level cluster metadata with::
-
-     ceph telemetry on
-
-   For more information about the telemetry module, see :ref:`the
-   documentation <telemetry>`.
-
-
-Upgrading from pre-Mimic releases (like Luminous)
--------------------------------------------------
-You *must* first upgrade to Mimic (13.2.z) or Nautilus (14.2.z) before
-upgrading to Octopus.
-
-
-Upgrade compatibility notes
----------------------------
-* Starting with Octopus, there is now a separate repository directory
-  for each version on `download.ceph.com` (e.g., `rpm-15.2.0` and
-  `debian-15.2.0`).  The traditional package directory that is named
-  after the release (e.g., `rpm-octopus` and `debian-octopus`) is
-  now a symlink to the most recently bug fix version for that release.
-  We no longer generate a single repository that combines all bug fix
-  versions for a single named release.
-
-* The RGW "num_rados_handles" has been removed.
-  If you were using a value of "num_rados_handles" greater than 1
-  multiply your current "objecter_inflight_ops" and
-  "objecter_inflight_op_bytes" paramaeters by the old
-  "num_rados_handles" to get the same throttle behavior.
-
-* Ceph now packages python bindings for python3.6 instead of
-  python3.4, because python3 in EL7/EL8 is now using python3.6
-  as the native python3. see the `announcement`_
-  for more details on the background of this change.
-
-* librbd now uses a write-around cache policy be default,
-  replacing the previous write-back cache policy default.
-  This cache policy allows librbd to immediately complete
-  write IOs while they are still in-flight to the OSDs.
-  Subsequent flush requests will ensure all in-flight
-  write IOs are completed prior to completing. The
-  librbd cache policy can be controlled via a new
-  "rbd_cache_policy" configuration option.
-
-* librbd now includes a simple IO scheduler which attempts to
-  batch together multiple IOs against the same backing RBD
-  data block object. The librbd IO scheduler policy can be
-  controlled via a new "rbd_io_scheduler" configuration
-  option.
-
-* RGW: radosgw-admin introduces two subcommands that allow the
-  managing of expire-stale objects that might be left behind after a
-  bucket reshard in earlier versions of RGW. One subcommand lists such
-  objects and the other deletes them. Read the troubleshooting section
-  of the dynamic resharding docs for details.
-
-* RGW: Bucket naming restrictions have changed and likely to cause
-  InvalidBucketName errors. We recommend to set `rgw_relaxed_s3_bucket_names`
-  option to true as a workaround.
-
-* In the Zabbix Mgr Module there was a typo in the key being send
-  to Zabbix for PGs in backfill_wait state. The key that was sent
-  was 'wait_backfill' and the correct name is 'backfill_wait'.
-  Update your Zabbix template accordingly so that it accepts the
-  new key being send to Zabbix.
-
-* zabbix plugin for ceph manager now includes osd and pool
-  discovery. Update of zabbix_template.xml is needed
-  to receive per-pool (read/write throughput, diskspace usage)
-  and per-osd (latency, status, pgs) statistics
-
-* The format of all date + time stamps has been modified to fully
-  conform to ISO 8601.  The old format (`YYYY-MM-DD
-  HH:MM:SS.ssssss`) excluded the `T` separator between the date and
-  time and was rendered using the local time zone without any explicit
-  indication.  The new format includes the separator as well as a
-  `+nnnn` or `-nnnn` suffix to indicate the time zone, or a `Z`
-  suffix if the time is UTC.  For example,
-  `2019-04-26T18:40:06.225953+0100`.
-
-  Any code or scripts that was previously parsing date and/or time
-  values from the JSON or XML structure CLI output should be checked
-  to ensure it can handle ISO 8601 conformant values.  Any code
-  parsing date or time values from the unstructured human-readable
-  output should be modified to parse the structured output instead, as
-  the human-readable output may change without notice.
-
-* The `bluestore_no_per_pool_stats_tolerance` config option has been
-  replaced with `bluestore_fsck_error_on_no_per_pool_stats`
-  (default: false).  The overall default behavior has not changed:
-  fsck will warn but not fail on legacy stores, and repair will
-  convert to per-pool stats.
-
-* The disaster-recovery related 'ceph mon sync force' command has been
-  replaced with 'ceph daemon <...> sync_force'.
-
-* The `osd_recovery_max_active` option now has
-  `osd_recovery_max_active_hdd` and `osd_recovery_max_active_ssd`
-  variants, each with different default values for HDD and SSD-backed
-  OSDs, respectively.  By default `osd_recovery_max_active` now
-  defaults to zero, which means that the OSD will conditionally use
-  the HDD or SSD option values.  Administrators who have customized
-  this value may want to consider whether they have set this to a
-  value similar to the new defaults (3 for HDDs and 10 for SSDs) and,
-  if so, remove the option from their configuration entirely.
-
-* monitors now have a `ceph osd info` command that will provide information
-  on all osds, or provided osds, thus simplifying the process of having to
-  parse `osd dump` for the same information.
-
-* The structured output of `ceph status` or `ceph -s` is now more
-  concise, particularly the `mgrmap` and `monmap` sections, and the
-  structure of the `osdmap` section has been cleaned up.
-
-* A health warning is now generated if the average osd heartbeat ping
-  time exceeds a configurable threshold for any of the intervals
-  computed.  The OSD computes 1 minute, 5 minute and 15 minute
-  intervals with average, minimum and maximum values.  New
-  configuration option `mon_warn_on_slow_ping_ratio` specifies a
-  percentage of `osd_heartbeat_grace` to determine the threshold.  A
-  value of zero disables the warning.  New configuration option
-  `mon_warn_on_slow_ping_time` specified in milliseconds over-rides
-  the computed value, causes a warning when OSD heartbeat pings take
-  longer than the specified amount.  New admin command `ceph daemon
-  mgr.# dump_osd_network [threshold]` command will list all
-  connections with a ping time longer than the specified threshold or
-  value determined by the config options, for the average for any of
-  the 3 intervals.  New admin command `ceph daemon osd.#
-  dump_osd_network [threshold]` will do the same but only including
-  heartbeats initiated by the specified OSD.
-
-* Inline data support for CephFS has been deprecated. When setting the flag,
-  users will see a warning to that effect, and enabling it now requires the
-  `--yes-i-really-really-mean-it` flag. If the MDS is started on a
-  filesystem that has it enabled, a health warning is generated. Support for
-  this feature will be removed in a future release.
-
-* `ceph {set,unset} full` is not supported anymore. We have been using
-  `full` and `nearfull` flags in OSD map for tracking the fullness status
-  of a cluster back since the Hammer release, if the OSD map is marked `full`
-  all write operations will be blocked until this flag is removed. In the
-  Infernalis release and Linux kernel 4.7 client, we introduced the per-pool
-  full/nearfull flags to track the status for a finer-grained control, so the
-  clients will hold the write operations if either the cluster-wide `full`
-  flag or the per-pool `full` flag is set. This was a compromise, as we
-  needed to support the cluster with and without per-pool `full` flags
-  support. But this practically defeated the purpose of introducing the
-  per-pool flags. So, in the Mimic release, the new flags finally took the
-  place of their cluster-wide counterparts, as the monitor started removing
-  these two flags from OSD map. So the clients of Infernalis and up can benefit
-  from this change, as they won't be blocked by the full pools which they are
-  not writing to. In this release, `ceph {set,unset} full` is now considered
-  as an invalid command. And the clients will continue honoring both the
-  cluster-wide and per-pool flags to be backward comaptible with pre-infernalis
-  clusters.
-
-* The telemetry module now reports more information.
-
-  First, there is a new 'device' channel, enabled by default, that
-  will report anonymized hard disk and SSD health metrics to
-  telemetry.ceph.com in order to build and improve device failure
-  prediction algorithms.  If you are not comfortable sharing device
-  metrics, you can disable that channel first before re-opting-in::
-
-    ceph config set mgr mgr/telemetry/channel_device false
-
-  Second, we now report more information about CephFS file systems,
-  including:
-
-  - how many MDS daemons (in total and per file system)
-  - which features are (or have been) enabled
-  - how many data pools
-  - approximate file system age (year + month of creation)
-  - how many files, bytes, and snapshots
-  - how much metadata is being cached
-
-  We have also added:
-
-  - which Ceph release the monitors are running
-  - whether msgr v1 or v2 addresses are used for the monitors
-  - whether IPv4 or IPv6 addresses are used for the monitors
-  - whether RADOS cache tiering is enabled (and which mode)
-  - whether pools are replicated or erasure coded, and
-    which erasure code profile plugin and parameters are in use
-  - how many hosts are in the cluster, and how many hosts have each type of daemon
-  - whether a separate OSD cluster network is being used
-  - how many RBD pools and images are in the cluster, and how many pools have RBD mirroring enabled
-  - how many RGW daemons, zones, and zonegroups are present; which RGW frontends are in use
-  - aggregate stats about the CRUSH map, like which algorithms are used, how
-    big buckets are, how many rules are defined, and what tunables are in
-    use
-
-  If you had telemetry enabled, you will need to re-opt-in with::
-
-    ceph telemetry on
-
-  You can view exactly what information will be reported first with::
-
-    $ ceph telemetry show        # see everything
-    $ ceph telemetry show basic  # basic cluster info (including all of the new info)
-
-* Following invalid settings now are not tolerated anymore
-  for the command `ceph osd erasure-code-profile set xxx`.
-  * invalid `m` for "reed_sol_r6_op" erasure technique
-  * invalid `m` and invalid `w` for "liber8tion" erasure technique
-
-* New OSD daemon command dump_recovery_reservations which reveals the
-  recovery locks held (in_progress) and waiting in priority queues.
-
-* New OSD daemon command dump_scrub_reservations which reveals the
-  scrub reservations that are held for local (primary) and remote (replica) PGs.
-
-* Previously, `ceph tell mgr ...` could be used to call commands
-  implemented by mgr modules.  This is no longer supported.  Since
-  luminous, using `tell` has not been necessary: those same commands
-  are also accessible without the `tell mgr` portion (e.g., `ceph
-  tell mgr influx foo` is the same as `ceph influx foo`.  `ceph
-  tell mgr ...` will now call admin commands--the same set of
-  commands accessible via `ceph daemon ...` when you are logged into
-  the appropriate host.
-
-* The `ceph tell` and `ceph daemon` commands have been unified,
-  such that all such commands are accessible via either interface.
-  Note that ceph-mgr tell commands are accessible via either `ceph
-  tell mgr ...` or `ceph tell mgr.<id> ...`, and it is only
-  possible to send tell commands to the active daemon (the standbys do
-  not accept incoming connections over the network).
-
-* Ceph will now issue a health warning if a RADOS pool as a `pg_num`
-  value that is not a power of two.  This can be fixed by adjusting
-  the pool to a nearby power of two::
-
-    ceph osd pool set <pool-name> pg_num <new-pg-num>
-
-  Alternatively, the warning can be silenced with::
-
-    ceph config set global mon_warn_on_pool_pg_num_not_power_of_two false
-
-* The format of MDSs in `ceph fs dump` has changed.
-
-* The `mds_cache_size` config option is completely removed. Since luminous,
-  the `mds_cache_memory_limit` config option has been preferred to configure
-  the MDS's cache limits.
-
-* The `pg_autoscale_mode` is now set to `on` by default for newly
-  created pools, which means that Ceph will automatically manage the
-  number of PGs.  To change this behavior, or to learn more about PG
-  autoscaling, see :ref:`pg-autoscaler`.  Note that existing pools in
-  upgraded clusters will still be set to `warn` by default.
-
-* The `upmap_max_iterations` config option of mgr/balancer has been
-  renamed to `upmap_max_optimizations` to better match its behaviour.
-
-* `mClockClientQueue` and `mClockClassQueue` OpQueue
-  implementations have been removed in favor of of a single
-  `mClockScheduler` implementation of a simpler OSD interface.
-  Accordingly, the `osd_op_queue_mclock*` family of config options
-  has been removed in favor of the `osd_mclock_scheduler*` family
-  of options.
-
-* The config subsystem now searches dot ('.') delimited prefixes for
-  options.  That means for an entity like `client.foo.bar`, its
-  overall configuration will be a combination of the global options,
-  `client`, `client.foo`, and `client.foo.bar`.  Previously,
-  only global, `client`, and `client.foo.bar` options would apply.
-  This change may affect the configuration for clients that include a
-  `.` in their name.
-
-Getting Ceph
-------------
-* Git at git://github.com/ceph/ceph.git
-* Tarball at http://download.ceph.com/tarballs/ceph-15.2.0.tar.gz
-* For packages, see http://docs.ceph.com/docs/master/install/get-packages/
-* Release git sha1: dc6a0b5c3cbf6a5e1d6d4f20b5ad466d76b96247
-
---
-Abhishek Lekshmanan
-SUSE Software Solutions Germany GmbH
-GF: Felix Imendörffer
+On Tue, Mar 24, 2020 at 12:07 AM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> Get rid of the __releases annotation by breaking it up into two
+> functions: __prep_cap which is done under the spinlock and __send_cap
+> that is done outside it.
+>
+> Nothing checks the return value from __send_cap, so make it void
+> return.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/caps.c | 193 ++++++++++++++++++++++++++++---------------------
+>  1 file changed, 110 insertions(+), 83 deletions(-)
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 779433847f20..5bdca0da58a4 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -1318,44 +1318,27 @@ void __ceph_remove_caps(struct ceph_inode_info *ci)
+>  }
+>
+>  /*
+> - * Send a cap msg on the given inode.  Update our caps state, then
+> - * drop i_ceph_lock and send the message.
+> - *
+> - * Make note of max_size reported/requested from mds, revoked caps
+> - * that have now been implemented.
+> - *
+> - * Return non-zero if delayed release, or we experienced an error
+> - * such that the caller should requeue + retry later.
+> - *
+> - * called with i_ceph_lock, then drops it.
+> - * caller should hold snap_rwsem (read), s_mutex.
+> + * Prepare to send a cap message to an MDS. Update the cap state, and populate
+> + * the arg struct with the parameters that will need to be sent. This should
+> + * be done under the i_ceph_lock to guard against changes to cap state.
+>   */
+> -static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
+> -                     int op, int flags, int used, int want, int retain,
+> -                     int flushing, u64 flush_tid, u64 oldest_flush_tid)
+> -       __releases(cap->ci->i_ceph_lock)
+> +static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
+> +                      int op, int flags, int used, int want, int retain,
+> +                      int flushing, u64 flush_tid, u64 oldest_flush_tid,
+> +                      struct ceph_buffer **old_blob)
+>  {
+>         struct ceph_inode_info *ci = cap->ci;
+>         struct inode *inode = &ci->vfs_inode;
+> -       struct ceph_buffer *old_blob = NULL;
+> -       struct cap_msg_args arg;
+>         int held, revoking;
+> -       int wake = 0;
+> -       int ret;
+>
+> -       /* Don't send anything if it's still being created. Return delayed */
+> -       if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE) {
+> -               spin_unlock(&ci->i_ceph_lock);
+> -               dout("%s async create in flight for %p\n", __func__, inode);
+> -               return 1;
+> -       }
+> +       lockdep_assert_held(&ci->i_ceph_lock);
+>
+>         held = cap->issued | cap->implemented;
+>         revoking = cap->implemented & ~cap->issued;
+>         retain &= ~revoking;
+>
+> -       dout("__send_cap %p cap %p session %p %s -> %s (revoking %s)\n",
+> -            inode, cap, cap->session,
+> +       dout("%s %p cap %p session %p %s -> %s (revoking %s)\n",
+> +            __func__, inode, cap, cap->session,
+>              ceph_cap_string(held), ceph_cap_string(held & retain),
+>              ceph_cap_string(revoking));
+>         BUG_ON((retain & CEPH_CAP_PIN) == 0);
+> @@ -1363,60 +1346,51 @@ static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
+>         ci->i_ceph_flags &= ~CEPH_I_FLUSH;
+>
+>         cap->issued &= retain;  /* drop bits we don't want */
+> -       if (cap->implemented & ~cap->issued) {
+> -               /*
+> -                * Wake up any waiters on wanted -> needed transition.
+> -                * This is due to the weird transition from buffered
+> -                * to sync IO... we need to flush dirty pages _before_
+> -                * allowing sync writes to avoid reordering.
+> -                */
+> -               wake = 1;
+> -       }
+>         cap->implemented &= cap->issued | used;
+>         cap->mds_wanted = want;
+>
+> -       arg.session = cap->session;
+> -       arg.ino = ceph_vino(inode).ino;
+> -       arg.cid = cap->cap_id;
+> -       arg.follows = flushing ? ci->i_head_snapc->seq : 0;
+> -       arg.flush_tid = flush_tid;
+> -       arg.oldest_flush_tid = oldest_flush_tid;
+> +       arg->session = cap->session;
+> +       arg->ino = ceph_vino(inode).ino;
+> +       arg->cid = cap->cap_id;
+> +       arg->follows = flushing ? ci->i_head_snapc->seq : 0;
+> +       arg->flush_tid = flush_tid;
+> +       arg->oldest_flush_tid = oldest_flush_tid;
+>
+> -       arg.size = inode->i_size;
+> -       ci->i_reported_size = arg.size;
+> -       arg.max_size = ci->i_wanted_max_size;
+> +       arg->size = inode->i_size;
+> +       ci->i_reported_size = arg->size;
+> +       arg->max_size = ci->i_wanted_max_size;
+>         if (cap == ci->i_auth_cap)
+> -               ci->i_requested_max_size = arg.max_size;
+> +               ci->i_requested_max_size = arg->max_size;
+>
+>         if (flushing & CEPH_CAP_XATTR_EXCL) {
+> -               old_blob = __ceph_build_xattrs_blob(ci);
+> -               arg.xattr_version = ci->i_xattrs.version;
+> -               arg.xattr_buf = ci->i_xattrs.blob;
+> +               *old_blob = __ceph_build_xattrs_blob(ci);
+> +               arg->xattr_version = ci->i_xattrs.version;
+> +               arg->xattr_buf = ci->i_xattrs.blob;
+>         } else {
+> -               arg.xattr_buf = NULL;
+> +               arg->xattr_buf = NULL;
+>         }
+>
+> -       arg.mtime = inode->i_mtime;
+> -       arg.atime = inode->i_atime;
+> -       arg.ctime = inode->i_ctime;
+> -       arg.btime = ci->i_btime;
+> -       arg.change_attr = inode_peek_iversion_raw(inode);
+> +       arg->mtime = inode->i_mtime;
+> +       arg->atime = inode->i_atime;
+> +       arg->ctime = inode->i_ctime;
+> +       arg->btime = ci->i_btime;
+> +       arg->change_attr = inode_peek_iversion_raw(inode);
+>
+> -       arg.op = op;
+> -       arg.caps = cap->implemented;
+> -       arg.wanted = want;
+> -       arg.dirty = flushing;
+> +       arg->op = op;
+> +       arg->caps = cap->implemented;
+> +       arg->wanted = want;
+> +       arg->dirty = flushing;
+>
+> -       arg.seq = cap->seq;
+> -       arg.issue_seq = cap->issue_seq;
+> -       arg.mseq = cap->mseq;
+> -       arg.time_warp_seq = ci->i_time_warp_seq;
+> +       arg->seq = cap->seq;
+> +       arg->issue_seq = cap->issue_seq;
+> +       arg->mseq = cap->mseq;
+> +       arg->time_warp_seq = ci->i_time_warp_seq;
+>
+> -       arg.uid = inode->i_uid;
+> -       arg.gid = inode->i_gid;
+> -       arg.mode = inode->i_mode;
+> +       arg->uid = inode->i_uid;
+> +       arg->gid = inode->i_gid;
+> +       arg->mode = inode->i_mode;
+>
+> -       arg.inline_data = ci->i_inline_version != CEPH_INLINE_NONE;
+> +       arg->inline_data = ci->i_inline_version != CEPH_INLINE_NONE;
+>         if (!(flags & CEPH_CLIENT_CAPS_PENDING_CAPSNAP) &&
+>             !list_empty(&ci->i_cap_snaps)) {
+>                 struct ceph_cap_snap *capsnap;
+> @@ -1429,18 +1403,46 @@ static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
+>                         }
+>                 }
+>         }
+> -       arg.flags = flags;
+> +       arg->flags = flags;
+> +}
+>
+> -       spin_unlock(&ci->i_ceph_lock);
+> +/*
+> + * Wake up any waiters on wanted -> needed transition. This is due to the weird
+> + * transition from buffered to sync IO... we need to flush dirty pages _before_
+> + * allowing sync writes to avoid reordering.
+> + */
+> +static inline bool should_wake_cap_waiters(struct ceph_cap *cap)
+> +{
+> +       lockdep_assert_held(&cap->ci->i_ceph_lock);
+>
+> -       ceph_buffer_put(old_blob);
+> +       return cap->implemented & ~cap->issued;
+> +}
+>
+> -       ret = send_cap_msg(&arg);
+> +/*
+> + * Send a cap msg on the given inode.  Update our caps state, then
+> + * drop i_ceph_lock and send the message.
+> + *
+> + * Make note of max_size reported/requested from mds, revoked caps
+> + * that have now been implemented.
+> + *
+> + * Return non-zero if delayed release, or we experienced an error
+> + * such that the caller should requeue + retry later.
+> + *
+> + * called with i_ceph_lock, then drops it.
+> + * caller should hold snap_rwsem (read), s_mutex.
+> + */
+> +static void __send_cap(struct ceph_mds_client *mdsc, struct cap_msg_args *arg,
+> +                      struct ceph_inode_info *ci, bool wake)
+> +{
+> +       struct inode *inode = &ci->vfs_inode;
+> +       int ret;
+> +
+> +       ret = send_cap_msg(arg);
+>         if (ret < 0) {
+>                 pr_err("error sending cap msg, ino (%llx.%llx) "
+>                        "flushing %s tid %llu, requeue\n",
+> -                      ceph_vinop(inode), ceph_cap_string(flushing),
+> -                      flush_tid);
+> +                      ceph_vinop(inode), ceph_cap_string(arg->dirty),
+> +                      arg->flush_tid);
+>                 spin_lock(&ci->i_ceph_lock);
+>                 __cap_delay_requeue(mdsc, ci);
+>                 spin_unlock(&ci->i_ceph_lock);
+> @@ -1448,8 +1450,6 @@ static int __send_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap,
+>
+>         if (wake)
+>                 wake_up_all(&ci->i_cap_wq);
+> -
+> -       return ret;
+>  }
+>
+>  static inline int __send_flush_snap(struct inode *inode,
+> @@ -1967,6 +1967,10 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+>         }
+>
+>         for (p = rb_first(&ci->i_caps); p; p = rb_next(p)) {
+> +               struct cap_msg_args arg;
+> +               struct ceph_buffer *old_blob = NULL;
+> +               bool wake;
+> +
+
+how about defining 'wake' and 'old_blob' into cap_msg_args, move
+should_wake_cap_waiters() code into __prep_cap.
+
+>                 cap = rb_entry(p, struct ceph_cap, ci_node);
+>
+>                 /* avoid looping forever */
+> @@ -2094,9 +2098,15 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+>
+>                 mds = cap->mds;  /* remember mds, so we don't repeat */
+>
+> -               /* __send_cap drops i_ceph_lock */
+> -               __send_cap(mdsc, cap, CEPH_CAP_OP_UPDATE, 0, cap_used, want,
+> -                          retain, flushing, flush_tid, oldest_flush_tid);
+> +               __prep_cap(&arg, cap, CEPH_CAP_OP_UPDATE, 0, cap_used, want,
+> +                          retain, flushing, flush_tid, oldest_flush_tid,
+> +                          &old_blob);
+> +               wake = should_wake_cap_waiters(cap);
+> +               spin_unlock(&ci->i_ceph_lock);
+> +
+> +               ceph_buffer_put(old_blob);
+> +               __send_cap(mdsc, &arg, ci, wake);
+> +
+>                 goto retry; /* retake i_ceph_lock and restart our cap scan. */
+>         }
+>
+> @@ -2135,6 +2145,9 @@ static int try_flush_caps(struct inode *inode, u64 *ptid)
+>  retry_locked:
+>         if (ci->i_dirty_caps && ci->i_auth_cap) {
+>                 struct ceph_cap *cap = ci->i_auth_cap;
+> +               struct ceph_buffer *old_blob = NULL;
+> +               struct cap_msg_args arg;
+> +               bool wake;
+>
+>                 if (session != cap->session) {
+>                         spin_unlock(&ci->i_ceph_lock);
+> @@ -2162,11 +2175,15 @@ static int try_flush_caps(struct inode *inode, u64 *ptid)
+>                 flush_tid = __mark_caps_flushing(inode, session, true,
+>                                                  &oldest_flush_tid);
+>
+> -               /* __send_cap drops i_ceph_lock */
+> -               __send_cap(mdsc, cap, CEPH_CAP_OP_FLUSH, CEPH_CLIENT_CAPS_SYNC,
+> +               __prep_cap(&arg, cap, CEPH_CAP_OP_FLUSH, CEPH_CLIENT_CAPS_SYNC,
+>                            __ceph_caps_used(ci), __ceph_caps_wanted(ci),
+>                            (cap->issued | cap->implemented),
+> -                          flushing, flush_tid, oldest_flush_tid);
+> +                          flushing, flush_tid, oldest_flush_tid, &old_blob);
+> +               wake = should_wake_cap_waiters(cap);
+> +               spin_unlock(&ci->i_ceph_lock);
+> +
+> +               ceph_buffer_put(old_blob);
+> +               __send_cap(mdsc, &arg, ci, wake);
+>         } else {
+>                 if (!list_empty(&ci->i_cap_flush_list)) {
+>                         struct ceph_cap_flush *cf =
+> @@ -2368,15 +2385,25 @@ static void __kick_flushing_caps(struct ceph_mds_client *mdsc,
+>                 first_tid = cf->tid + 1;
+>
+>                 if (cf->caps) {
+> +                       struct ceph_buffer *old_blob = NULL;
+> +                       struct cap_msg_args arg;
+> +                       bool wake;
+> +
+>                         dout("kick_flushing_caps %p cap %p tid %llu %s\n",
+>                              inode, cap, cf->tid, ceph_cap_string(cf->caps));
+> -                       __send_cap(mdsc, cap, CEPH_CAP_OP_FLUSH,
+> +                       __prep_cap(&arg, cap, CEPH_CAP_OP_FLUSH,
+>                                          (cf->tid < last_snap_flush ?
+>                                           CEPH_CLIENT_CAPS_PENDING_CAPSNAP : 0),
+>                                           __ceph_caps_used(ci),
+>                                           __ceph_caps_wanted(ci),
+>                                           (cap->issued | cap->implemented),
+> -                                         cf->caps, cf->tid, oldest_flush_tid);
+> +                                         cf->caps, cf->tid, oldest_flush_tid,
+> +                                         &old_blob);
+> +                       wake = should_wake_cap_waiters(cap);
+> +                       spin_unlock(&ci->i_ceph_lock);
+> +
+> +                       ceph_buffer_put(old_blob);
+> +                       __send_cap(mdsc, &arg, ci, wake);
+>                 } else {
+>                         struct ceph_cap_snap *capsnap =
+>                                         container_of(cf, struct ceph_cap_snap,
+> --
+> 2.25.1
+>
