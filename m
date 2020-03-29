@@ -2,104 +2,99 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 793E41962EF
-	for <lists+ceph-devel@lfdr.de>; Sat, 28 Mar 2020 02:46:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53119196DC8
+	for <lists+ceph-devel@lfdr.de>; Sun, 29 Mar 2020 16:00:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbgC1Bqo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 27 Mar 2020 21:46:44 -0400
-Received: from mail-oi1-f174.google.com ([209.85.167.174]:35320 "EHLO
-        mail-oi1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbgC1Bqo (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 27 Mar 2020 21:46:44 -0400
-Received: by mail-oi1-f174.google.com with SMTP id t25so10581117oij.2
-        for <ceph-devel@vger.kernel.org>; Fri, 27 Mar 2020 18:46:42 -0700 (PDT)
+        id S1728147AbgC2OAX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 29 Mar 2020 10:00:23 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45373 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727903AbgC2OAX (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 29 Mar 2020 10:00:23 -0400
+Received: by mail-lf1-f65.google.com with SMTP id v4so11652909lfo.12
+        for <ceph-devel@vger.kernel.org>; Sun, 29 Mar 2020 07:00:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=BixQoglgfcykdCNOmnPlwfTKhiRXOGp0DFvYlPOOD5g=;
-        b=hMr8cj2VjdO4q8NfpJfn2W2mgLW5zEESqxaGK7Wjp/aXKRaG+wJyVR7giQtEDAyNHU
-         +4d1vSxYK375v6/Jhf1PLCRCPNupZwVX3YOIjUa1eHdQZTgZ0UOjpXZ6No3NLYR9BGid
-         1p2N647WemoIVLrWr+qDJZ8Z3hG/56dVNuQb8U2zQfrKpZng5sAmAzP+UCbQ4rLNlu0l
-         SqT9t+oRnv53IhfoiXGHvgpHIs+V6HRY26g/RPpou90AxNG/Gyh2+qB3ZKwI0ddF6x68
-         /W4RnMLJRC7hS9XqFhLKqmN/odvf9c9KiZqGZVnotq2cLGVZX49YLzZVw02pw9GKdXNr
-         M0zg==
+         :cc;
+        bh=jwud2fBt9zPg80cfeUIGvN5KfssFMp3A2QN4+ZzV0FI=;
+        b=R0m2jcwBLoumdNAH+1jA6HpN2mj0scNAvhMBmVWOVto892HTYFxBZCfbwYWwm9fcCh
+         pySHnp9FvZ6BZZia/YiPkR4dLeHwyMQlBG0bIMNqQgQoU6qKb+e3K8x5NR3+xdx/HWtB
+         UpyEUEA0gKYBRvReyZb9M4iXgC31wjkpz6/ReVN1IZc7uIV53ojHX1tPzfH7K5woUODR
+         GjOfjC8ND6S0LetG6Opof+Cz7Xbnu2u2Ih/nTNkXV5wlIXOK0TmHjZMzsagPkN8z6J3S
+         k+FOIaXv4KwKNNy/jpcABdUzfWWGIlrDBiD+/zRaCVY79Xmbmr/cnGUusT623roh/XXy
+         tH/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=BixQoglgfcykdCNOmnPlwfTKhiRXOGp0DFvYlPOOD5g=;
-        b=TOVSPXo4A7mRi7LzF3srZEXANHeMrMFqH5jUNx+C6/Q41NrkE1F9iAcAAbjEli/ADt
-         4Tk1WQ9yQVx0Q6e8AVXGeBISratnnCKOe8BkTpU6yvOr1YWecSwZ2LBL3qrw2e9HcKNA
-         1X34i6hNGgOpLkZhlg0K9jKT7HeBu3FaPhpxDb6G+o6mF0m1fNJsRATiSSkqoyrByeE8
-         pglu7rRGKhn/7h9lndpEUSpH6kOpOnHEimbTb0QE6EMWJ0S2stvccNX7Mv+BRk0MthEy
-         Jp3SMbwRjkSGVvtITlYrt6mzuOtiJdhUGxp8i6hfyeW2LHz1I7QDagiOxr3mew22n5bd
-         nC6A==
-X-Gm-Message-State: ANhLgQ2lcfVhsSLEKVLEIbThDOZpk4FR4OftWEx53iLPIs2YY3Xahi2c
-        zrPg+F9MoCa4JYllEWlxTrZ1fbSgTV+g/ZZr0xA=
-X-Google-Smtp-Source: ADFU+vu3Gm78fdfPT/a0FTXC8WiaMGcQmrAyl/6z+3/BoX34QEFgA2a7uBpTSeCSTMIO8fdy+FtBY+wz3PzKJ7VZUoo=
-X-Received: by 2002:aca:af12:: with SMTP id y18mr1195935oie.78.1585360001648;
- Fri, 27 Mar 2020 18:46:41 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=jwud2fBt9zPg80cfeUIGvN5KfssFMp3A2QN4+ZzV0FI=;
+        b=jT5d49g2W7CSBmVmN/sroSwlHTE1CTBHvIiynGdiT2Q4usXyTIII9FZaZAw420ko1k
+         iRESxr5GzLt2/OA3jpzsUmSkPJygggptHRev0Q1YfaPr8yDm23VPU+h9QAFTR0q7/sWX
+         HrBuDOob02Hdo8buZDRY1cJgu/jIUnGS+OkLoPF9KO/QxnaNypfV/qXricNLwpxSkLms
+         EwLc4tiL1dJJo3IygYPDW9ySAELjibwPJz8w0uBNK//pxH4ErXmqtDpNcpfMSrzyIWf8
+         qMPZo2JNzycGZQet60kfp2skpco3vfxaUF8aFw+hQx3Z3YNaQzpriIaWLsbrP3quvom1
+         ty5g==
+X-Gm-Message-State: AGi0PuaM6PsYTYK6rt+5Oc60hP3/DA0tKZE2vF3ja/f3aklCikzWXpz0
+        NjHMsTsy6cXHlosb4JdG6PjVe5OqoQUmck5+cXQ=
+X-Google-Smtp-Source: APiQypLyg8koogtmKpwhV4D4myZ1ffdpBXc86HE1lr9TW+vos0/RIUy2TRIqLY+C1rbTOG7qdIXgZqe/OhCFfev+bnY=
+X-Received: by 2002:a19:ad47:: with SMTP id s7mr5434523lfd.165.1585490421252;
+ Sun, 29 Mar 2020 07:00:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAMWWNq-8H8JJsPdL1JC9pOKMQY9LawZDRxfKa7Ag8MWGJbBY5A@mail.gmail.com>
- <CAAM7YAnSxY8QkZWPLT=mDjjf4PVNd=vsi3zb3DEKKhEdivFXVA@mail.gmail.com>
-In-Reply-To: <CAAM7YAnSxY8QkZWPLT=mDjjf4PVNd=vsi3zb3DEKKhEdivFXVA@mail.gmail.com>
-From:   Xinying Song <songxinying.ftd@gmail.com>
-Date:   Sat, 28 Mar 2020 09:46:30 +0800
-Message-ID: <CAMWWNq-4eMR_AJHaNLEABRyYLZUzKajPKttvXoPpQ2mCB+b9rA@mail.gmail.com>
-Subject: Re: mds: where is mdr->slave_commit called?
-To:     "Yan, Zheng" <ukernel@gmail.com>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>
+References: <878sjqc79i.fsf@suse.com> <alpine.DEB.2.21.2003271410190.4773@piezo.novalocal>
+ <CAPPYiwpOOAnNwfPiFMx2zxj7Eh0DCUG+zfALp+8sJSLENDN-Og@mail.gmail.com>
+In-Reply-To: <CAPPYiwpOOAnNwfPiFMx2zxj7Eh0DCUG+zfALp+8sJSLENDN-Og@mail.gmail.com>
+From:   kefu chai <tchaikov@gmail.com>
+Date:   Sun, 29 Mar 2020 22:00:10 +0800
+Message-ID: <CAJE9aOMsBp3xq2Ed1UYyBH0On2uOy1_ED_o4_niKE-Mmb8BcHQ@mail.gmail.com>
+Subject: Re: [ceph-users] Re: v15.2.0 Octopus released
+To:     Mazzystr <mazzystr@gmail.com>
+Cc:     Sage Weil <sage@newdream.net>, ceph-announce@ceph.io,
+        ceph-users@ceph.io, dev <dev@ceph.io>,
+        The Esoteric Order of the Squid Cybernetic 
+        <ceph-devel@vger.kernel.org>, ceph-maintainers@ceph.io
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Thanks for your reply, Yan!
-Could you give more explanation about the mechanism for how an
-ESlaveUpdate::OP_PREPARE log event is prevented from being trimmed
-before slave mds receiving  MMDSSlaveRequest::OP_FINISH message from
-master? It seems only when doing replay can an ESlaveUpdate log event
-be added to LogSegment::slave_updates, which helps to prevent the log
-event from being trimmed. Suppose a scenario that slave mds has
-journaled log event, sent an OP_LINKPRPEACK to master, then trimmed
-the log event, and crashed. The master also crashed before receiving
-the ACK message. So there will no log events to be replayed for both
-master and slave, but slave mds has modified the inode link count, and
-no way to rollback.
+On Sat, Mar 28, 2020 at 1:29 AM Mazzystr <mazzystr@gmail.com> wrote:
+>
+> What about the missing dependencies for octopus on el8?  (looking at yoooou
+> ceph-mgr!)
 
-I have been stuck in this question for a few days, can't figure it
-out. Sincerely hoping you or anyone else can give some tips.
-
-Thanks!
-
-Yan, Zheng <ukernel@gmail.com> =E4=BA=8E2020=E5=B9=B43=E6=9C=8823=E6=97=A5=
-=E5=91=A8=E4=B8=80 =E4=B8=8B=E5=8D=8812:34=E5=86=99=E9=81=93=EF=BC=9A
+FWIW, leveldb for el8 is pending on review at
+https://bodhi.fedoraproject.org/updates/FEDORA-EPEL-2020-3171aba6be,
+if you could help test it. that'd be great!
 
 >
-> On Sun, Mar 22, 2020 at 3:40 PM Xinying Song <songxinying.ftd@gmail.com> =
-wrote:
-> >
-> > Hi, everyone:
-> > Could anybody give some tips about how `mdr->slave_commit` is called?
-> >
-> > As for `link_remote()`, steps are as follows:
-> > 1. master mds sends OP_(UN)LINKPREP to salve mds.
-> > 2. slave mds replys OP_LINKPREPACK to master mds after its journal has
-> > been flushed.
-> > 3. master mds continues to process the client request.
-> >
-> > I only find out there is a chance in MDCache::request_finish() that
-> > `mdr->slave_commit` will be called. However, after a successful
-> > journal flush, slave mds only sends an ACK to master mds and bypasses
-> > MDCache::request_finish().
-> > So when or where is `mdr->slave_commit` called?
-> >
-> > Thanks!
+> On Fri, Mar 27, 2020 at 7:15 AM Sage Weil <sage@newdream.net> wrote:
 >
-> master calls MDCache::request_finsih(),
-> MDCache::request_drop_foreign_locks() sends
-> MMDSSlaveRequest::OP_FINISH message to slaves.  slaves call
-> MDCache::request_finsih() when receiving the message.
+> > One word of caution: there is one known upgrade issue if you
+> >
+> >  - upgrade from luminous to nautilus, and then
+> >  - run nautilus for a very short period of time (hours), and then
+> >  - upgrade from nautilus to octopus
+> >
+> > that prevents OSDs from starting.  We have a fix that will be in 15.2.1,
+> > but until that is out, I would recommend against the double-upgrade.  If
+> > you have been running nautilus for a while (days) you should be fine.
+> >
+> > sage
+> >
+> >
+> > https://tracker.ceph.com/issues/44770
+> > _______________________________________________
+> > ceph-users mailing list -- ceph-users@ceph.io
+> > To unsubscribe send an email to ceph-users-leave@ceph.io
+> >
+> _______________________________________________
+> ceph-users mailing list -- ceph-users@ceph.io
+> To unsubscribe send an email to ceph-users-leave@ceph.io
+
+
+
+-- 
+Regards
+Kefu Chai
