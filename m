@@ -2,140 +2,107 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28EDA19AB45
-	for <lists+ceph-devel@lfdr.de>; Wed,  1 Apr 2020 14:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9843C19AB8E
+	for <lists+ceph-devel@lfdr.de>; Wed,  1 Apr 2020 14:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732267AbgDAMIE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 1 Apr 2020 08:08:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33322 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726804AbgDAMID (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 1 Apr 2020 08:08:03 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFC8E20776;
-        Wed,  1 Apr 2020 12:08:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585742882;
-        bh=BIlp8gq2dWJFAYEHPLLkx4OrC/HXUMMAIqST7SGRIzs=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=vRt98nRHC2xD6LPY5/8iG60wiSIdbeAZMbFA+W7rWkgMMRg6YnuUs6X++2tgatRms
-         qMnxOuxbeNk7/EugnDyzvMfKFb/icG1Ag2oubhyHnbExB7rfUMO29Yt9o7V1IgB3oX
-         RETqC0hQOBJmmIjZW17FWJJXlEN4QMPIJDvCk0EY=
-Message-ID: <7c3ab3cdda4abae4e43a8bae15cb98c689b0f717.camel@kernel.org>
-Subject: Re: [PATCH] ceph: request expedited service when flushing caps
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "Yan, Zheng" <ukernel@gmail.com>
-Cc:     Gregory Farnum <gfarnum@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
-        Jan Fajerski <jfajerski@suse.com>
-Date:   Wed, 01 Apr 2020 08:08:00 -0400
-In-Reply-To: <CAAM7YAmwduzm6kWw7rv62TMgJoZCqstZWOiQTVoP8LhxutHUuw@mail.gmail.com>
-References: <20200331105223.9610-1-jlayton@kernel.org>
-         <CAAM7YAmzyYrREBtmX+JrEQMMuo9LhZ2J2c-PyahQaAiVVEn2fQ@mail.gmail.com>
-         <CAJ4mKGbMgoQ6tgsiQchR2QirxOW_oPOuNo5X26YKpy66yHD+FA@mail.gmail.com>
-         <924ac730ea35f3a10c3828f3b532a2b7642776dc.camel@kernel.org>
-         <CAAM7YAmwduzm6kWw7rv62TMgJoZCqstZWOiQTVoP8LhxutHUuw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        id S1732503AbgDAMUs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 1 Apr 2020 08:20:48 -0400
+Received: from mail-yb1-f174.google.com ([209.85.219.174]:44105 "EHLO
+        mail-yb1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732169AbgDAMUs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Apr 2020 08:20:48 -0400
+Received: by mail-yb1-f174.google.com with SMTP id 11so13074100ybj.11
+        for <ceph-devel@vger.kernel.org>; Wed, 01 Apr 2020 05:20:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kMWxZk3hkomdlMto1ou6SOL8O9wl6axHiLjsMFNpH8M=;
+        b=iVlt7/GEcyHPcWf/1H5x0SdmgY7KT5PAq6S3u3kJ/Czw8mVX+KxNcsmkbV/KQ+y4P1
+         8bDtBX5vYA1UGkJvrF6IMI6DE/U0cjK1tHbBVtieWI8sM6A4FN3Uhn8SJWlMonSRwEAM
+         N4kJCjkJM7tcCfQ7nK0yb8dXvrt6Mwfb5VwD9JO8NGBkR8vsy0J1/JdomVSlD6/USM+D
+         1oFhfbQRkNRfxfsZL7fi/lGwg4qIJh4+Z9BDRV+AuqkktrIhAYs4mDKyLFgmZ8vfQ1SG
+         d1rWsis9JEWG0fBwJFY44vVEKs1ddUEZ19+yTPOPJLEd1co9tSphC23OnYxapKUd9QBR
+         g8jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kMWxZk3hkomdlMto1ou6SOL8O9wl6axHiLjsMFNpH8M=;
+        b=K6XJIZOMKLMNrZYs1BIyOFquBDoMYqXPfEJailMEbdAQDfKFGE9DsDPl2tIHErJpXk
+         sBbVU+LvSW6WyBUGeFvA76LK9UaT+urcYKfoPnpEky1pvzGP4jPms+/oSOB90EeqB1jq
+         Es/SATp3/ERybDY9Nr6tZeAzVzq09/8HMMjN46EPBz7Ava43S+hMHsioUXqlUK8NSAxO
+         25bYpT8xXrw36OQwmmC0eb3K3X7HMCp47kYtsKa4lOj0FbLySODXOVtJOZt8/8cLIFJg
+         wxxruHr9OIWVxVsOtCRL57N6jF9mk7PmZaNCj+KHi+jBOq9D2GH4+6T9mLL87YKJFVmm
+         rpEg==
+X-Gm-Message-State: ANhLgQ3qbpiR6HsGMKAWVzZkRh/YmW+B7cyg7ExrBCfT7l4LOtC5s108
+        wZVxnnZdxXSHUgWYOHeA1ASvTv5N20o5HoG1EaahJFaHPbLDBA==
+X-Google-Smtp-Source: ADFU+vuQ3BKtIcsXC2llpptgwxGDyn8Mf01Oi+X/tB4p+ny8zfEq7blyZ1oiFNvI0k69qOCHCmhNCKiFEzPF99Z/UKE=
+X-Received: by 2002:a25:b90a:: with SMTP id x10mr26203535ybj.334.1585743647422;
+ Wed, 01 Apr 2020 05:20:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <878sjqc79i.fsf@suse.com> <alpine.DEB.2.21.2003271410190.4773@piezo.novalocal>
+ <CAPPYiwpOOAnNwfPiFMx2zxj7Eh0DCUG+zfALp+8sJSLENDN-Og@mail.gmail.com> <CAJE9aOMsBp3xq2Ed1UYyBH0On2uOy1_ED_o4_niKE-Mmb8BcHQ@mail.gmail.com>
+In-Reply-To: <CAJE9aOMsBp3xq2Ed1UYyBH0On2uOy1_ED_o4_niKE-Mmb8BcHQ@mail.gmail.com>
+From:   Theofilos Mouratidis <mtheofilos@gmail.com>
+Date:   Wed, 1 Apr 2020 14:20:36 +0200
+Message-ID: <CA+9pRwSBV_1Mn7q0YHB0Qn_8A3bX7TqHfLYmJUypwoduq+3tcQ@mail.gmail.com>
+Subject: Re: [ceph-users] Re: v15.2.0 Octopus released
+To:     kefu chai <tchaikov@gmail.com>
+Cc:     Mazzystr <mazzystr@gmail.com>, ceph-announce@ceph.io,
+        ceph-users@ceph.io, dev <dev@ceph.io>,
+        The Esoteric Order of the Squid Cybernetic 
+        <ceph-devel@vger.kernel.org>, ceph-maintainers@ceph.io
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2020-04-01 at 19:04 +0800, Yan, Zheng wrote:
-> On Tue, Mar 31, 2020 at 10:56 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > On Tue, 2020-03-31 at 07:00 -0700, Gregory Farnum wrote:
-> > > On Tue, Mar 31, 2020 at 6:49 AM Yan, Zheng <ukernel@gmail.com> wrote:
-> > > > On Tue, Mar 31, 2020 at 6:52 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > > > Jan noticed some long stalls when flushing caps using sync() after
-> > > > > doing small file creates. For instance, running this:
-> > > > > 
-> > > > >     $ time for i in $(seq -w 11 30); do echo "Hello World" > hello-$i.txt; sync -f ./hello-$i.txt; done
-> > > > > 
-> > > > > Could take more than 90s in some cases. The sync() will flush out caps,
-> > > > > but doesn't tell the MDS that it's waiting synchronously on the
-> > > > > replies.
-> > > > > 
-> > > > > When ceph_check_caps finds that CHECK_CAPS_FLUSH is set, then set the
-> > > > > CEPH_CLIENT_CAPS_SYNC bit in the cap update request. This clues the MDS
-> > > > > into that fact and it can then expedite the reply.
-> > > > > 
-> > > > > URL: https://tracker.ceph.com/issues/44744
-> > > > > Reported-and-Tested-by: Jan Fajerski <jfajerski@suse.com>
-> > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > > ---
-> > > > >  fs/ceph/caps.c | 7 +++++--
-> > > > >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > > > > 
-> > > > > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > > > > index 61808793e0c0..6403178f2376 100644
-> > > > > --- a/fs/ceph/caps.c
-> > > > > +++ b/fs/ceph/caps.c
-> > > > > @@ -2111,8 +2111,11 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
-> > > > > 
-> > > > >                 mds = cap->mds;  /* remember mds, so we don't repeat */
-> > > > > 
-> > > > > -               __prep_cap(&arg, cap, CEPH_CAP_OP_UPDATE, 0, cap_used, want,
-> > > > > -                          retain, flushing, flush_tid, oldest_flush_tid);
-> > > > > +               __prep_cap(&arg, cap, CEPH_CAP_OP_UPDATE,
-> > > > > +                          (flags & CHECK_CAPS_FLUSH) ?
-> > > > > +                           CEPH_CLIENT_CAPS_SYNC : 0,
-> > > > > +                          cap_used, want, retain, flushing, flush_tid,
-> > > > > +                          oldest_flush_tid);
-> > > > >                 spin_unlock(&ci->i_ceph_lock);
-> > > > > 
-> > > > 
-> > > > this is too expensive for syncfs case. mds needs to flush journal for
-> > > > each dirty inode.  we'd better to track dirty inodes by session, and
-> > > > only set the flag when flushing the last inode in session dirty list.
-> > 
-> > I think this will be more difficult than that...
-> > 
-> > > Yeah, see the userspace Client::_sync_fs() where we have an internal
-> > > flags argument which is set on the last cap in the dirty set and tells
-> > > the actual cap message flushing code to set FLAG_SYNC on the
-> > > MClientCaps message. I presume the kernel is operating on a similar
-> > > principle here?
-> > 
-> > Not today, but we need it to.
-> > 
-> > The caps are not tracked on a per-session basis (as Zheng points out),
-> > and the locking and ordering of these requests is not as straightforward
-> > as it is in the (trivial) libcephfs case. Fixing this will be a lot more
-> > invasive than I had originally hoped.
-> > 
-> > It's also not 100% clear to me how we'll gauge which cap will be
-> > "last".  As we move the last cap on the session's list from dirty to
-> > flushing state, we can mark it so that it sets the SYNC flag when it
-> > goes out, but what happens if we have a process that is actively
-> > dirtying other inodes during this? You might never see the per-session
-> > list go empty.
-> > 
-> 
-> It's not necessary to be strict 'last'.  just the one before exiting the loop
-> 
+I've been trying to use drivegroups on 15.2.0 to setup osds, but with
+no luck, is this implemented?
 
-What loop?
-
-I added a little debugging code and ran Jan's reproducer, and it turns
-out that we generally move the inode to flushing state in
-ceph_put_wrbuffer_cap_refs while doing writeback under the sync syscall.
-By the time we get to any sort of looping in the ceph code, the cap
-flushes have already been issued.
-
-My tentative idea was to just check whether this was the last dirty cap
-associated with the session and set the flag on it if so, but we don't
-really have visibility into that info, because we don't determine the
-session until we move the inode from dirty->flushing.
-
-So at this point, I'm still looking at options for fixing this. I really
-don't want to just hack this in, as the technical debt in this code is
-already substantial and that'll just make it worse.
--- 
-Jeff Layton <jlayton@kernel.org>
-
+On Sun, 29 Mar 2020 at 16:01, kefu chai <tchaikov@gmail.com> wrote:
+>
+> On Sat, Mar 28, 2020 at 1:29 AM Mazzystr <mazzystr@gmail.com> wrote:
+> >
+> > What about the missing dependencies for octopus on el8?  (looking at yoooou
+> > ceph-mgr!)
+>
+> FWIW, leveldb for el8 is pending on review at
+> https://bodhi.fedoraproject.org/updates/FEDORA-EPEL-2020-3171aba6be,
+> if you could help test it. that'd be great!
+>
+> >
+> > On Fri, Mar 27, 2020 at 7:15 AM Sage Weil <sage@newdream.net> wrote:
+> >
+> > > One word of caution: there is one known upgrade issue if you
+> > >
+> > >  - upgrade from luminous to nautilus, and then
+> > >  - run nautilus for a very short period of time (hours), and then
+> > >  - upgrade from nautilus to octopus
+> > >
+> > > that prevents OSDs from starting.  We have a fix that will be in 15.2.1,
+> > > but until that is out, I would recommend against the double-upgrade.  If
+> > > you have been running nautilus for a while (days) you should be fine.
+> > >
+> > > sage
+> > >
+> > >
+> > > https://tracker.ceph.com/issues/44770
+> > > _______________________________________________
+> > > ceph-users mailing list -- ceph-users@ceph.io
+> > > To unsubscribe send an email to ceph-users-leave@ceph.io
+> > >
+> > _______________________________________________
+> > ceph-users mailing list -- ceph-users@ceph.io
+> > To unsubscribe send an email to ceph-users-leave@ceph.io
+>
+>
+>
+> --
+> Regards
+> Kefu Chai
+> _______________________________________________
+> ceph-users mailing list -- ceph-users@ceph.io
+> To unsubscribe send an email to ceph-users-leave@ceph.io
