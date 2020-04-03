@@ -2,120 +2,52 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5574419D970
-	for <lists+ceph-devel@lfdr.de>; Fri,  3 Apr 2020 16:47:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B220419DE50
+	for <lists+ceph-devel@lfdr.de>; Fri,  3 Apr 2020 21:02:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403971AbgDCOry (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 3 Apr 2020 10:47:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58568 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728235AbgDCOrx (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 3 Apr 2020 10:47:53 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED9A12078C;
-        Fri,  3 Apr 2020 14:47:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585925273;
-        bh=fUwpqQg9GLbXILuc+ghqsZBOovFsgO+xrYXUAQiotgs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BcWSB3lrYv//NtPLOK7D777tZPQF2bXjm8MD8rJTeBEecRxlIEVdzMKbKcfbGIFPP
-         Jb7PyLU6I4fjGACBC3OX7ZqAm34jN/drqLEovI/Y60Hu27EM37MtU0eNjKp4I7/AsK
-         dNDOUY3St42XfZQDDWJgs75aS0kwcwzDzy+3+6Pg=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     ukernel@gmail.com, idryomov@gmail.com, sage@redhat.com
-Subject: [PATCH] ceph: unify i_dirty_item and i_flushing_item handling when auth caps change
-Date:   Fri,  3 Apr 2020 10:47:51 -0400
-Message-Id: <20200403144751.23977-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.25.1
+        id S1728268AbgDCTCm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 3 Apr 2020 15:02:42 -0400
+Received: from gfdefer006.mail.goo.jp ([153.149.229.136]:57760 "EHLO
+        gfdefer006.mail.goo.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727167AbgDCTCm (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 3 Apr 2020 15:02:42 -0400
+Received: from gogw0304.mail.goo.jp (gogw0304.mail.goo.jp [153.153.64.5])
+        by gfdefer006.mail.goo.jp (Postfix) with ESMTP id C105F900242
+        for <ceph-devel@vger.kernel.org>; Sat,  4 Apr 2020 04:02:40 +0900 (JST)
+Received: from mas-vc-mts-102c1.ocn.ad.jp (mas-vc-mts-102c1.ocn.ad.jp [153.138.237.87])
+        by gogw0304.mail.goo.jp (Postfix) with ESMTP id AA28710023F;
+        Sat,  4 Apr 2020 04:02:37 +0900 (JST)
+Received: from vcwebmail.mail.goo.jp ([153.149.140.114])
+        by mas-vc-mts-102c1.ocn.ad.jp with ESMTP
+        id KRaNj9HQleCSjKRaNj0nMw; Sat, 04 Apr 2020 04:02:37 +0900
+Received: from md-app-cb005.noc-chibaminato.ocn.ad.jp (md-app-cb005.ocn.ad.jp [153.138.211.201])
+        by vcwebmail.mail.goo.jp (Postfix) with ESMTP;
+        Sat,  4 Apr 2020 04:02:35 +0900 (JST)
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+To:     undisclosed-recipients:;
+Subject: INVESTMENT PLAN
+From:   "Erik C. Gonzalez " <hanahana_87310_happ@mail.goo.ne.jp>
+Reply-To: "Erik C. Gonzalez " <capt.gonzalezerik44@gmail.com>
+Message-ID: <158594055446.58413.17135715983797037435@mail.goo.ne.jp>
+X-Originating-IP: [104.37.190.246]
+Date:   Sat, 04 Apr 2020 04:02:35 +0900
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Suggested-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/caps.c | 47 +++++++++++++++++++++++++----------------------
- 1 file changed, 25 insertions(+), 22 deletions(-)
+URGENT AND CONFIDENTIAL 
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index eb190e4e203c..b3460d52a305 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -3700,6 +3700,27 @@ static bool handle_cap_trunc(struct inode *inode,
- 	return queue_trunc;
- }
- 
-+/**
-+ * transplant_auth_cap - move inode to appropriate lists when auth caps change
-+ * @ci: inode to be moved
-+ * @session: new auth caps session
-+ */
-+static void transplant_auth_ses(struct ceph_inode_info *ci,
-+				struct ceph_mds_session *session)
-+{
-+	lockdep_assert_held(&ci->i_ceph_lock);
-+
-+	if (list_empty(&ci->i_dirty_item) && list_empty(&ci->i_flushing_item))
-+		return;
-+
-+	spin_lock(&session->s_mdsc->cap_dirty_lock);
-+	if (!list_empty(&ci->i_dirty_item))
-+		list_move(&ci->i_dirty_item, &session->s_cap_dirty);
-+	if (!list_empty(&ci->i_flushing_item))
-+		list_move_tail(&ci->i_flushing_item, &session->s_cap_flushing);
-+	spin_unlock(&session->s_mdsc->cap_dirty_lock);
-+}
-+
- /*
-  * Handle EXPORT from MDS.  Cap is being migrated _from_ this mds to a
-  * different one.  If we are the most recent migration we've seen (as
-@@ -3771,22 +3792,9 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
- 			tcap->issue_seq = t_seq - 1;
- 			tcap->issued |= issued;
- 			tcap->implemented |= issued;
--			if (cap == ci->i_auth_cap)
-+			if (cap == ci->i_auth_cap) {
- 				ci->i_auth_cap = tcap;
--
--			if (!list_empty(&ci->i_dirty_item)) {
--				spin_lock(&mdsc->cap_dirty_lock);
--				list_move(&ci->i_dirty_item,
--					  &tcap->session->s_cap_dirty);
--				spin_unlock(&mdsc->cap_dirty_lock);
--			}
--
--			if (!list_empty(&ci->i_cap_flush_list) &&
--			    ci->i_auth_cap == tcap) {
--				spin_lock(&mdsc->cap_dirty_lock);
--				list_move_tail(&ci->i_flushing_item,
--					       &tcap->session->s_cap_flushing);
--				spin_unlock(&mdsc->cap_dirty_lock);
-+				transplant_auth_ses(ci, tcap->session);
- 			}
- 		}
- 		__ceph_remove_cap(cap, false);
-@@ -3798,13 +3806,8 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
- 		ceph_add_cap(inode, tsession, t_cap_id, issued, 0,
- 			     t_seq - 1, t_mseq, (u64)-1, flag, &new_cap);
- 
--		if (!list_empty(&ci->i_cap_flush_list) &&
--		    ci->i_auth_cap == tcap) {
--			spin_lock(&mdsc->cap_dirty_lock);
--			list_move_tail(&ci->i_flushing_item,
--				       &tcap->session->s_cap_flushing);
--			spin_unlock(&mdsc->cap_dirty_lock);
--		}
-+		if (ci->i_auth_cap == tcap)
-+			transplant_auth_ses(ci, tcap->session);
- 
- 		__ceph_remove_cap(cap, false);
- 		goto out_unlock;
--- 
-2.25.1
 
+Greetings,
+
+I am a captain with the United Nations troop in Iraq, on war against terrorism.in Iraq Based on the United States legislative and executive decision for withdrawing troops from Iraq this year, I want to know if you can help me handle an in investment, I want to invest on real estate and properties or any lucrative business you have an idea of handling well. 
+
+On the other hand I want to inform you that I have in my possession the sum of 18.2 Million USD which I got from crude oil deal here in Iraq.
+
+I have already secretly moved this fund out of Iraq to a Bank in Europe. This is a deal. But the question is can i trust you when the funds get to you? You will take your 30% for the assistance and keep the remaining for me in a safe custody which i will use to buy property in ur country. 
+
+Wait Your Reply
+Capt.Erik C. Gonzalez
