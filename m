@@ -2,105 +2,105 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0619719CFBC
-	for <lists+ceph-devel@lfdr.de>; Fri,  3 Apr 2020 07:25:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2925E19D4FA
+	for <lists+ceph-devel@lfdr.de>; Fri,  3 Apr 2020 12:23:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732350AbgDCFZ0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 3 Apr 2020 01:25:26 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:35666 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732038AbgDCFZ0 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 3 Apr 2020 01:25:26 -0400
-Received: by mail-lf1-f65.google.com with SMTP id r17so1159911lff.2
-        for <ceph-devel@vger.kernel.org>; Thu, 02 Apr 2020 22:25:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JFx5MDD1lF1WhQe9o8jIFckrz5tTvdxNUFCSgMQ/pPo=;
-        b=shlufwgPONYSRhskkPvBl5J2pTXHQVbPqoxNceZArvvDEvebKL0GLVuNIQ+sRBDDZj
-         RBp5aN1h2twH28xUujevE2DkpCRlVSh93DIaBjf+2s2nEqmIpE/tEI/fwXU1Dmgc8vRr
-         Y7gc4xRNqxqc/bfMvhbnQ3/sVz10R4TgfcZkUa93ErYNK3hqHWtJWgQiMF4eYXWP7Xjn
-         LNCeWuQy94kEkKGp478RwjTVYRWXyL0DcC4LK+uuKBAQmoNQ4c2OwsQ8RtyOkDRBiP7X
-         BSUOHsFArWrypTUy8WrlOLW7HBfNN1IzAEUHwY4Ojtl1VK6J7p/idG7URt+Xwb4Mmi9g
-         YFMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JFx5MDD1lF1WhQe9o8jIFckrz5tTvdxNUFCSgMQ/pPo=;
-        b=hahMAB3Rh9dBtKN1zbjMcFdICKUzikdQk+kzNdOyV6X09u0U3Bc66qq9xEbOiq+tzg
-         oRGHhb9Q4B2/zU6LROK5IHM6irOy5sj7pdP/92GwX5RU2d9cNzSZ02GlBvAYQNhE4Ix1
-         I+pEIJksbxUeM+XFRXp8sFJClVxU5vDfvq25G2tRAGZZJZzVBppE2s+OHdffg7xZ3iFL
-         Vop72p43BjhV4cpNw+DAP8mf1BQmXQ/nbVdkR9a7JGXujqkqMbnlpxgR7RK39Vx1cm3X
-         AGkA6XB40C5hrGzykq1LP7HgWNAiJ2PuXJi9YT8XEHwCDW+TIVaXheDaFrwh1AtH4DyF
-         wmWA==
-X-Gm-Message-State: AGi0PuaYTVKpqsz3Bui80EVdqbVMAIyoIrbbN3ZOzVfoOz2TpojRWjuo
-        NOQdH33DVxK71MX8SSbxfe29T+ELVTR9a+F76rg=
-X-Google-Smtp-Source: APiQypKxU8D6tc3id+uXLR9xJD8EsQbTHPEsNLfzTsTw50FWzkYdzv/pbRkMRkedOsb4NlrCzlqk8bENqnoDgKg6e5M=
-X-Received: by 2002:a05:6512:21b:: with SMTP id a27mr4261329lfo.55.1585891524033;
- Thu, 02 Apr 2020 22:25:24 -0700 (PDT)
+        id S1727895AbgDCKXU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 3 Apr 2020 06:23:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56204 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727792AbgDCKXU (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 3 Apr 2020 06:23:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 477F6ACB1;
+        Fri,  3 Apr 2020 10:23:18 +0000 (UTC)
+Received: from localhost (webern.olymp [local])
+        by webern.olymp (OpenSMTPD) with ESMTPA id 03610e6e;
+        Fri, 3 Apr 2020 11:23:17 +0100 (WEST)
+Date:   Fri, 3 Apr 2020 11:23:17 +0100
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, ukernel@gmail.com, idryomov@gmail.com,
+        sage@redhat.com, jfajerski@suse.com, gfarnum@redhat.com
+Subject: Re: [PATCH v2 2/2] ceph: request expedited service on session's last
+ cap flush
+Message-ID: <20200403102317.GA1066@suse.com>
+References: <20200402112911.17023-1-jlayton@kernel.org>
+ <20200402112911.17023-3-jlayton@kernel.org>
 MIME-Version: 1.0
-References: <878sjqc79i.fsf@suse.com> <alpine.DEB.2.21.2003271410190.4773@piezo.novalocal>
- <CAPPYiwpOOAnNwfPiFMx2zxj7Eh0DCUG+zfALp+8sJSLENDN-Og@mail.gmail.com>
-In-Reply-To: <CAPPYiwpOOAnNwfPiFMx2zxj7Eh0DCUG+zfALp+8sJSLENDN-Og@mail.gmail.com>
-From:   kefu chai <tchaikov@gmail.com>
-Date:   Fri, 3 Apr 2020 13:25:12 +0800
-Message-ID: <CAJE9aONskkr15LQyhchKP_y8vmsD5sgw6NvuhvCwhFS_v5r7SA@mail.gmail.com>
-Subject: Re: [ceph-users] Re: v15.2.0 Octopus released
-To:     Mazzystr <mazzystr@gmail.com>
-Cc:     Sage Weil <sage@newdream.net>, ceph-announce@ceph.io,
-        ceph-users@ceph.io, dev <dev@ceph.io>,
-        The Esoteric Order of the Squid Cybernetic 
-        <ceph-devel@vger.kernel.org>, ceph-maintainers@ceph.io,
-        Ken Dreyer <kdreyer@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200402112911.17023-3-jlayton@kernel.org>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sat, Mar 28, 2020 at 1:29 AM Mazzystr <mazzystr@gmail.com> wrote:
->
-> What about the missing dependencies for octopus on el8?  (looking at yoooou
-> ceph-mgr!)
+On Thu, Apr 02, 2020 at 07:29:11AM -0400, Jeff Layton wrote:
+> When flushing a lot of caps to the MDS's at once (e.g. for syncfs),
+> we can end up waiting a substantial amount of time for MDS replies, due
+> to the fact that it may delay some of them so that it can batch them up
+> together in a single journal transaction. This can lead to stalls when
+> calling sync or syncfs.
+> 
+> What we'd really like to do is request expedited service on the _last_
+> cap we're flushing back to the server. If the CHECK_CAPS_FLUSH flag is
+> set on the request and the current inode was the last one on the
+> session->s_cap_dirty list, then mark the request with
+> CEPH_CLIENT_CAPS_SYNC.
+> 
+> Note that this heuristic is not perfect. New inodes can race onto the
+> list after we've started flushing, but it does seem to fix some common
+> use cases.
+> 
+> Reported-by: Jan Fajerski <jfajerski@suse.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/caps.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 95c9b25e45a6..3630f05993b3 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -1987,6 +1987,7 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+>  	}
+>  
+>  	for (p = rb_first(&ci->i_caps); p; p = rb_next(p)) {
+> +		int mflags = 0;
+>  		struct cap_msg_args arg;
+>  
+>  		cap = rb_entry(p, struct ceph_cap, ci_node);
+> @@ -2118,6 +2119,9 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+>  			flushing = ci->i_dirty_caps;
+>  			flush_tid = __mark_caps_flushing(inode, session, false,
+>  							 &oldest_flush_tid);
+> +			if (flags & CHECK_CAPS_FLUSH &&
+> +			    list_empty(&session->s_cap_dirty))
+> +				mflags |= CEPH_CLIENT_CAPS_SYNC;
+>  		} else {
+>  			flushing = 0;
+>  			flush_tid = 0;
+> @@ -2128,8 +2132,8 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+>  
+>  		mds = cap->mds;  /* remember mds, so we don't repeat */
+>  
+> -		__prep_cap(&arg, cap, CEPH_CAP_OP_UPDATE, 0, cap_used, want,
+> -			   retain, flushing, flush_tid, oldest_flush_tid);
+> +		__prep_cap(&arg, cap, CEPH_CAP_OP_UPDATE, mflags, cap_used,
+> +			   want, retain, flushing, flush_tid, oldest_flush_tid);
+>  		spin_unlock(&ci->i_ceph_lock);
+>  
+>  		__send_cap(mdsc, &arg, ci);
+> -- 
+> 2.25.1
+> 
 
-hi Mazzystr,
+FWIW, it looks good to me.  I've also tested it and I confirm it improves
+(a lot!) the testcase reported by Jan.  Maybe it's worth adding the URL to
+the tracker.
 
-regarding to the dependencies of ceph-mgr, probably you could enable
-the corp repo[0] for installing them, before they are included by
-EPEL8.
-
----
-[0] https://copr.fedorainfracloud.org/coprs/ktdreyer/ceph-el8/
-
->
-> On Fri, Mar 27, 2020 at 7:15 AM Sage Weil <sage@newdream.net> wrote:
->
-> > One word of caution: there is one known upgrade issue if you
-> >
-> >  - upgrade from luminous to nautilus, and then
-> >  - run nautilus for a very short period of time (hours), and then
-> >  - upgrade from nautilus to octopus
-> >
-> > that prevents OSDs from starting.  We have a fix that will be in 15.2.1,
-> > but until that is out, I would recommend against the double-upgrade.  If
-> > you have been running nautilus for a while (days) you should be fine.
-> >
-> > sage
-> >
-> >
-> > https://tracker.ceph.com/issues/44770
-> > _______________________________________________
-> > ceph-users mailing list -- ceph-users@ceph.io
-> > To unsubscribe send an email to ceph-users-leave@ceph.io
-> >
-> _______________________________________________
-> ceph-users mailing list -- ceph-users@ceph.io
-> To unsubscribe send an email to ceph-users-leave@ceph.io
-
-
-
--- 
-Regards
-Kefu Chai
+Cheers,
+--
+Luis
