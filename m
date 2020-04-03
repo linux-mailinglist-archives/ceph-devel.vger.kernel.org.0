@@ -2,184 +2,294 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B51F19C6DE
-	for <lists+ceph-devel@lfdr.de>; Thu,  2 Apr 2020 18:17:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A80819CEDB
+	for <lists+ceph-devel@lfdr.de>; Fri,  3 Apr 2020 05:22:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389786AbgDBQQ6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 2 Apr 2020 12:16:58 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:33258 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389573AbgDBQQ6 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 2 Apr 2020 12:16:58 -0400
-Received: by mail-qk1-f194.google.com with SMTP id v7so4598347qkc.0
-        for <ceph-devel@vger.kernel.org>; Thu, 02 Apr 2020 09:16:57 -0700 (PDT)
+        id S2390204AbgDCDWG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 2 Apr 2020 23:22:06 -0400
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:38997 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388951AbgDCDWG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 2 Apr 2020 23:22:06 -0400
+Received: by mail-qv1-f66.google.com with SMTP id v38so2947935qvf.6
+        for <ceph-devel@vger.kernel.org>; Thu, 02 Apr 2020 20:22:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poochiereds-net.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=yu0mqbKjrAAmMkGb16ZrxMRkFo6dHUGEtRy1dS7h2q0=;
-        b=pTu0+8EKFiGfoR3F6mJTfB2qSYLEDpMtIIe8/7hsx0GSfajLWYg2/oEPWPqTdAwEUj
-         MT7VY2nVvYe7cR1A5y6fS99ckX9vABoypAPRTSbIYi1SDGxqs3GIdKRacHxeUtxpS3xc
-         6deUjO0v3vR0ddZqZwdVf7oM2mFtvcgiQ/mc+MKendS1H00wpbI/IG2xBZP0CuTMUE72
-         xeorTdoAIBdMbmRExGTo4rfMG5XqLjoHFbCQ7gq+KYQGaD6CnIjpjm7fH809O3x4l5l/
-         rKEwb37b5REQ73k/nbo+12RmUJStBPkqWYbzoywGnjZLgCW2K7SlDLvMOW1B4rAOafdV
-         luDw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5rU1akUn68A6Wc6Upk7LYX7ztCyRJ9IQtZlblr0vQHw=;
+        b=iwqLs8Tvzfmiq2hDuXvC8ZzZo+4H3DTX6fezpzFUlKh9P4v+fqOYgQyrIWSi51L2a5
+         P4ioRNjHb9q8UZdyit4TSPIHWlOtjRuIKYNL4VODTkEQzS79WVodvw0wHhTOFpcEkur8
+         3x+iy1wYRPFVE59ktAAEARP9wr7mhXOExK8s8JCE9SeAgFwcd+Bl5xZeNBVnComRxEuJ
+         aWyxiF3nAYhWhoP7A2CgwMrKLo9srKxiYJtf3UYyoKSW0hYieJMaZQ1ZlP6Gs8sbq2eE
+         jtsa3F0uuvj14pfzGjqkBih7lf6NKSvZ0Ktdy09TBucgJMFz7gfUywc2ImT2f0xREV8G
+         yqkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=yu0mqbKjrAAmMkGb16ZrxMRkFo6dHUGEtRy1dS7h2q0=;
-        b=nFDL3p8d5xudvP5YHSeXFj3tu0Ol1G5TYt/OW2JjpCQHrOFSieFWL46eJbalRahMfx
-         cVou5UfK/KGjxpTJigWT7/zS4fAjUC5tnClutV+DSi/6/0ImI5F72lyA0R2As3u+eQMc
-         ysm7SRgrmAJ0KTuPxVCVPK3H6oXM2OaKkv7v10Ca271pXDDqkPwuF5xBsSkgPANt9/3u
-         Axfgesk+x7l9mbo9+JTbDfw+JaIvlF2dDOwuklAGRvP62Z+/nUzplbqAAMgnTkUWQKE7
-         QMYerVeVc91zw2xKSXBFhh8sCERuOq339OkIChBJsUVrukODlJAk5uw8bCoL8oRutLbv
-         A2Ag==
-X-Gm-Message-State: AGi0PuYZDfJ5NJBHQsjKElQ0aBR8bUmBb3UxVDwDAY5CGeJ8Wbwe5gK1
-        qCdnUqbw8+gxtvxKapSzhfZX4tl6QDUfoA==
-X-Google-Smtp-Source: APiQypIXKIVBLijvWo9oykDDsxapznT26Sr5cWj6eYWClb4ZcFCAFQv2x4r6dU1odiyYCBadcGb5TQ==
-X-Received: by 2002:a37:490:: with SMTP id 138mr4382526qke.378.1585844217237;
-        Thu, 02 Apr 2020 09:16:57 -0700 (PDT)
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id 18sm3752975qkk.84.2020.04.02.09.16.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Apr 2020 09:16:55 -0700 (PDT)
-Message-ID: <bec9b206b0806887098eb1d255ad42cfb769c92f.camel@poochiereds.net>
-Subject: Re: Stacktrace from 5.4.26 kernel.
-From:   Jeff Layton <jlayton@poochiereds.net>
-To:     jesper@krogh.cc, ceph-devel@vger.kernel.org
-Cc:     "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>
-Date:   Thu, 02 Apr 2020 12:16:55 -0400
-In-Reply-To: <1fe23046f3d1a68b82beaaebe04465cf.squirrel@shrek.krogh.cc>
-References: <1fe23046f3d1a68b82beaaebe04465cf.squirrel@shrek.krogh.cc>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5rU1akUn68A6Wc6Upk7LYX7ztCyRJ9IQtZlblr0vQHw=;
+        b=oyV89THTG+fblYEusNBtQ1MTLOBqqLB4If/So98MSfM1KelGXM6f7aHQU8YKmb6dGx
+         i7wrnMYXsjRKQTxEx+6wAD+oO9JHhDqL9ozk/dWf2l4+uc8IL8gF0HB8Ji8Nx0gzHO9k
+         eJDziDJYO6/l+Nl1FazNbPD1XJynWui3Ap5Bw1ayzU50aVfn9tZbocwEZm/urnWnCI3F
+         tV+w1oi19izfdA5UCoFish+6bzOPhR5Sd2MHm7RWZnYKtKnEGLeEdXHV0Dt4hvNI+WL+
+         A4hgE5I35RgP+uuXPRJ+ecH3DddvIzE1nBONWHLsq5DGHJ+n1yNmVMRuZoandDP7ktiN
+         RIdw==
+X-Gm-Message-State: AGi0PuYYLWsrJ/XrksUqvLZNBYqKU1DuJrXaAwSZL3bju8vyyn0aecF6
+        owElsu50ChgGCRpb07st5CQmJHjSORq3F9QfRJQ=
+X-Google-Smtp-Source: APiQypJh0S6/1oOUOaFt+wHE4gIM9kOCJjg2T8PqkbKB++fuCH8b/AJbhdDWa1uPQDaJbqAZAYUtMOG9go+oBn9ESFc=
+X-Received: by 2002:ad4:4851:: with SMTP id t17mr6470989qvy.33.1585884124494;
+ Thu, 02 Apr 2020 20:22:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20200402112911.17023-1-jlayton@kernel.org> <20200402112911.17023-2-jlayton@kernel.org>
+In-Reply-To: <20200402112911.17023-2-jlayton@kernel.org>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Fri, 3 Apr 2020 11:21:52 +0800
+Message-ID: <CAAM7YAkDdyxuyMgideN7JQYgntMSKoDLHhJQgoG5+C9QVHde0Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] ceph: convert mdsc->cap_dirty to a per-session list
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
+        Jan Fajerski <jfajerski@suse.com>,
+        Luis Henriques <lhenriques@suse.com>,
+        Gregory Farnum <gfarnum@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2020-04-02 at 17:35 +0200, jesper@krogh.cc wrote:
-> Kernel. 5.4.26 and Ceph Luminous
-> 
-> Seem to be working still but I got this after putting load on it.
-> 
-> [  785.581198] kworker/3:2: page allocation failure: order:0,
-> mode:0xa20(GFP_ATOMIC), nodemask=(null),cpuset=/,mems_allowed=0
+On Thu, Apr 2, 2020 at 7:29 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> This is a per-sb list now, but that makes it difficult to tell when
+> the cap is the last dirty one associated with the session. Switch
+> this to be a per-session list, but continue using the
+> mdsc->cap_dirty_lock to protect the lists.
+>
+> This list is only ever walked in ceph_flush_dirty_caps, so change that
+> to walk the sessions array and then flush the caps for inodes on each
+> session's list.
+>
+> If the auth cap ever changes while the inode has dirty caps, then
+> move the inode to the appropriate session for the new auth_cap. Also,
+> ensure that we never remove an auth cap while the inode is still on the
+> s_cap_dirty list.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/caps.c       | 64 ++++++++++++++++++++++++++++++++++++++++----
+>  fs/ceph/mds_client.c |  2 +-
+>  fs/ceph/mds_client.h |  5 ++--
+>  fs/ceph/super.h      | 21 ++++++++++++---
+>  4 files changed, 81 insertions(+), 11 deletions(-)
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 61808793e0c0..95c9b25e45a6 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -727,6 +727,19 @@ void ceph_add_cap(struct inode *inode,
+>         if (flags & CEPH_CAP_FLAG_AUTH) {
+>                 if (!ci->i_auth_cap ||
+>                     ceph_seq_cmp(ci->i_auth_cap->mseq, mseq) < 0) {
+> +                       if (ci->i_auth_cap &&
+> +                           ci->i_auth_cap->session != cap->session) {
+> +                               /*
+> +                                * If auth cap session changed, and the cap is
+> +                                * dirty, move it to the correct session's list
+> +                                */
+> +                               if (!list_empty(&ci->i_dirty_item)) {
+> +                                       spin_lock(&mdsc->cap_dirty_lock);
+> +                                       list_move(&ci->i_dirty_item,
+> +                                                 &cap->session->s_cap_dirty);
+> +                                       spin_unlock(&mdsc->cap_dirty_lock);
+> +                               }
+> +                       }
+>                         ci->i_auth_cap = cap;
+>                         cap->mds_wanted = wanted;
+>                 }
+> @@ -1123,8 +1136,10 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
+>
+>         /* remove from inode's cap rbtree, and clear auth cap */
+>         rb_erase(&cap->ci_node, &ci->i_caps);
+> -       if (ci->i_auth_cap == cap)
+> +       if (ci->i_auth_cap == cap) {
+> +               WARN_ON_ONCE(!list_empty(&ci->i_dirty_item));
+>                 ci->i_auth_cap = NULL;
+> +       }
+>
+>         /* remove from session list */
+>         spin_lock(&session->s_cap_lock);
+> @@ -1690,6 +1705,8 @@ int __ceph_mark_dirty_caps(struct ceph_inode_info *ci, int mask,
+>              ceph_cap_string(was | mask));
+>         ci->i_dirty_caps |= mask;
+>         if (was == 0) {
+> +               struct ceph_mds_session *session = ci->i_auth_cap->session;
+> +
+>                 WARN_ON_ONCE(ci->i_prealloc_cap_flush);
+>                 swap(ci->i_prealloc_cap_flush, *pcf);
+>
+> @@ -1702,7 +1719,7 @@ int __ceph_mark_dirty_caps(struct ceph_inode_info *ci, int mask,
+>                      &ci->vfs_inode, ci->i_head_snapc, ci->i_auth_cap);
+>                 BUG_ON(!list_empty(&ci->i_dirty_item));
+>                 spin_lock(&mdsc->cap_dirty_lock);
+> -               list_add(&ci->i_dirty_item, &mdsc->cap_dirty);
+> +               list_add(&ci->i_dirty_item, &session->s_cap_dirty);
+>                 spin_unlock(&mdsc->cap_dirty_lock);
+>                 if (ci->i_flushing_caps == 0) {
+>                         ihold(inode);
+> @@ -3753,6 +3770,13 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
+>                         if (cap == ci->i_auth_cap)
+>                                 ci->i_auth_cap = tcap;
+>
+> +                       if (!list_empty(&ci->i_dirty_item)) {
+> +                               spin_lock(&mdsc->cap_dirty_lock);
+> +                               list_move(&ci->i_dirty_item,
+> +                                         &tcap->session->s_cap_dirty);
+> +                               spin_unlock(&mdsc->cap_dirty_lock);
+> +                       }
+> +
+>                         if (!list_empty(&ci->i_cap_flush_list) &&
+>                             ci->i_auth_cap == tcap) {
+>                                 spin_lock(&mdsc->cap_dirty_lock);
+> @@ -4176,15 +4200,16 @@ void ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
+>  /*
+>   * Flush all dirty caps to the mds
+>   */
+> -void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc)
+> +static void flush_dirty_session_caps(struct ceph_mds_session *s)
+>  {
+> +       struct ceph_mds_client *mdsc = s->s_mdsc;
+>         struct ceph_inode_info *ci;
+>         struct inode *inode;
+>
+>         dout("flush_dirty_caps\n");
+>         spin_lock(&mdsc->cap_dirty_lock);
+> -       while (!list_empty(&mdsc->cap_dirty)) {
+> -               ci = list_first_entry(&mdsc->cap_dirty, struct ceph_inode_info,
+> +       while (!list_empty(&s->s_cap_dirty)) {
+> +               ci = list_first_entry(&s->s_cap_dirty, struct ceph_inode_info,
+>                                       i_dirty_item);
+>                 inode = &ci->vfs_inode;
+>                 ihold(inode);
+> @@ -4198,6 +4223,35 @@ void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc)
+>         dout("flush_dirty_caps done\n");
+>  }
+>
+> +static void iterate_sessions(struct ceph_mds_client *mdsc,
+> +                            void (*cb)(struct ceph_mds_session *))
+> +{
+> +       int mds = 0;
+> +
+> +       mutex_lock(&mdsc->mutex);
+> +       for (mds = 0; mds < mdsc->max_sessions; ++mds) {
+> +               struct ceph_mds_session *s;
+> +
+> +               if (!mdsc->sessions[mds])
+> +                       continue;
+> +
+> +               s = ceph_get_mds_session(mdsc->sessions[mds]);
+> +               if (!s)
+> +                       continue;
+> +
+> +               mutex_unlock(&mdsc->mutex);
+> +               cb(s);
+> +               ceph_put_mds_session(s);
+> +               mutex_lock(&mdsc->mutex);
+> +       };
+> +       mutex_unlock(&mdsc->mutex);
+> +}
+> +
+> +void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc)
+> +{
+> +       iterate_sessions(mdsc, flush_dirty_session_caps);
+> +}
+> +
+>  void __ceph_touch_fmode(struct ceph_inode_info *ci,
+>                         struct ceph_mds_client *mdsc, int fmode)
+>  {
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 9a8e7013aca1..be4ad7d28e3a 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -755,6 +755,7 @@ static struct ceph_mds_session *register_session(struct ceph_mds_client *mdsc,
+>         INIT_LIST_HEAD(&s->s_cap_releases);
+>         INIT_WORK(&s->s_cap_release_work, ceph_cap_release_work);
+>
+> +       INIT_LIST_HEAD(&s->s_cap_dirty);
+>         INIT_LIST_HEAD(&s->s_cap_flushing);
+>
+>         mdsc->sessions[mds] = s;
+> @@ -4375,7 +4376,6 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
+>         spin_lock_init(&mdsc->snap_flush_lock);
+>         mdsc->last_cap_flush_tid = 1;
+>         INIT_LIST_HEAD(&mdsc->cap_flush_list);
+> -       INIT_LIST_HEAD(&mdsc->cap_dirty);
+>         INIT_LIST_HEAD(&mdsc->cap_dirty_migrating);
+>         mdsc->num_cap_flushing = 0;
+>         spin_lock_init(&mdsc->cap_dirty_lock);
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 8065863321fc..bd20257fb4c2 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -199,8 +199,10 @@ struct ceph_mds_session {
+>         struct list_head  s_cap_releases; /* waiting cap_release messages */
+>         struct work_struct s_cap_release_work;
+>
+> -       /* protected by mutex */
+> +       /* both protected by s_mdsc->cap_dirty_lock */
+> +       struct list_head  s_cap_dirty;        /* inodes w/ dirty caps */
+>         struct list_head  s_cap_flushing;     /* inodes w/ flushing caps */
+> +
+>         unsigned long     s_renew_requested; /* last time we sent a renew req */
+>         u64               s_renew_seq;
+>
+> @@ -424,7 +426,6 @@ struct ceph_mds_client {
+>
+>         u64               last_cap_flush_tid;
+>         struct list_head  cap_flush_list;
+> -       struct list_head  cap_dirty;        /* inodes with dirty caps */
+>         struct list_head  cap_dirty_migrating; /* ...that are migration... */
+>         int               num_cap_flushing; /* # caps we are flushing */
+>         spinlock_t        cap_dirty_lock;   /* protects above items */
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index bb372859c0ad..3235c7e3bde7 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -351,9 +351,24 @@ struct ceph_inode_info {
+>         struct rb_root i_caps;           /* cap list */
+>         struct ceph_cap *i_auth_cap;     /* authoritative cap, if any */
+>         unsigned i_dirty_caps, i_flushing_caps;     /* mask of dirtied fields */
+> -       struct list_head i_dirty_item, i_flushing_item; /* protected by
+> -                                                        * mdsc->cap_dirty_lock
+> -                                                        */
+> +
+> +       /*
+> +        * Link to the the auth cap's session's s_cap_dirty list. s_cap_dirty
+> +        * is protected by the mdsc->cap_dirty_lock, but each individual item
+> +        * is also protected by the inode's i_ceph_lock. Walking s_cap_dirty
+> +        * requires the mdsc->cap_dirty_lock. List presence for an item can
+> +        * be tested under the i_ceph_lock. Changing anything requires both.
+> +        */
+> +       struct list_head i_dirty_item;
+> +
+> +       /* Link to session's s_cap_flushing list. Protected by
+> +        * mdsc->cap_dirty_lock.
+> +        *
+> +        * FIXME: this list is sometimes walked without the spinlock being
+> +        *        held. What really protects it?
+> +        */
+> +       struct list_head i_flushing_item;
+> +
+>         /* we need to track cap writeback on a per-cap-bit basis, to allow
+>          * overlapping, pipelined cap flushes to the mds.  we can probably
+>          * reduce the tid to 8 bits if we're concerned about inode size. */
+> --
+> 2.25.1
+>
 
-(cc'ing virtualization mailing list)
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
 
-Basically, looks like the kernel needed to allocate a page (4k) of
-memory in order to handle a receive, and wasn't able to do so. This is a
-GFP_ATOMIC allocation down inside the networking code, so it couldn't do
-anything like reclaim memory to satisfy the allocation.
-
-Looks like the box was just critically out of memory, but maybe the
-problem is something else.
-
-> [  785.581211] CPU: 3 PID: 332 Comm: kworker/3:2 Not tainted 5.4.26 #4
-> [  785.581212] Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
-> [  785.581251] Workqueue: ceph-msgr ceph_con_workfn [libceph]
-> [  785.581252] Call Trace:
-> [  785.581255]  <IRQ>
-> [  785.581271]  dump_stack+0x6d/0x95
-> [  785.581275]  warn_alloc+0xfe/0x160
-> [  785.581277]  __alloc_pages_slowpath+0xe07/0xe40
-> [  785.581282]  ? dev_gro_receive+0x626/0x690
-> [  785.581284]  __alloc_pages_nodemask+0x2cd/0x320
-> [  785.581287]  alloc_pages_current+0x6a/0xe0
-> [  785.581298]  skb_page_frag_refill+0xd4/0x100
-> [  785.581302]  try_fill_recv+0x3ed/0x740 [virtio_net]
-> [  785.581304]  virtnet_poll+0x31f/0x349 [virtio_net]
-> [  785.581306]  net_rx_action+0x140/0x3c0
-> [  785.581313]  __do_softirq+0xe4/0x2da
-> [  785.581318]  irq_exit+0xae/0xb0
-> [  785.581320]  do_IRQ+0x59/0xe0
-> [  785.581322]  common_interrupt+0xf/0xf
-> [  785.581322]  </IRQ>
-> [  785.581332] RIP: 0010:tcp_rcv_space_adjust+0x56/0x1c0
-> [  785.581333] Code: 06 00 00 bf 00 00 00 00 89 d1 48 89 f0 c1 e9 03 48 2b
-> 83 50 08 00 00 48 0f 48 c7 39 c1 77 04 85 d2 75 4a 5b 41 5c 41 5d 41 5e
-> <41> 5f 5d c3 65 8b 05 ff 40 09 5b 89 c0 48 0f a3 05 05 2f ec 00 73
-> [  785.581334] RSP: 0018:ffffa47c40267bf0 EFLAGS: 00000202 ORIG_RAX:
-> ffffffffffffffdd
-> [  785.581335] RAX: 0000000000000002 RBX: 0000000000005437 RCX:
-> 00000000000004fd
-> [  785.581336] RDX: 00000000000027eb RSI: 000000002ed30b4b RDI:
-> 0000000000000000
-> [  785.581336] RBP: ffffa47c40267bf8 R08: 0000011c5ab9d567 R09:
-> 0000000000000001
-> [  785.581337] R10: ffffa47c40267d38 R11: 0000000000000000 R12:
-> ffff94854d06d400
-> [  785.581338] R13: ffff948711b64600 R14: ffff948711b64b74 R15:
-> 0000000000000000
-> [  785.581340]  tcp_recvmsg+0x297/0xb70
-> [  785.581344]  ? _cond_resched+0x19/0x40
-> [  785.581347]  ? aa_sk_perm+0x43/0x190
-> [  785.581351]  inet_recvmsg+0x5e/0xe0
-> [  785.581353]  sock_recvmsg+0x66/0x70
-> [  785.581357]  ceph_tcp_recvpage+0x76/0xa0 [libceph]
-> [  785.581363]  ceph_con_workfn+0x1a33/0x2be0 [libceph]
-> [  785.581365]  process_one_work+0x20f/0x400
-> [  785.581366]  worker_thread+0x34/0x410
-> [  785.581369]  kthread+0x121/0x140
-> [  785.581370]  ? process_one_work+0x400/0x400
-> [  785.581371]  ? kthread_park+0x90/0x90
-> [  785.581372]  ret_from_fork+0x35/0x40
-> [  785.581374] Mem-Info:
-> [  785.581379] active_anon:5599 inactive_anon:7153 isolated_anon:0
-> [  785.581382] Node 0 active_anon:22396kB inactive_anon:28612kB
-> active_file:31252kB inactive_file:7673984kB unevictable:0kB
-> isolated(anon):0kB isolated(file):64kB mapped:28112kB dirty:0kB
-> writeback:0kB shmem:2384kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp:
-> 0kB writeback_tmp:0kB unstable:0kB all_unreclaimable? no
-> [  785.581383] Node 0 DMA free:15908kB min:132kB low:164kB high:196kB
-> active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB
-> unevictable:0kB writepending:0kB present:15992kB managed:15908kB
-> mlocked:0kB kernel_stack:0kB pagetables:0kB bounce:0kB free_pcp:0kB
-> local_pcp:0kB free_cma:0kB
-> [  785.581386] lowmem_reserve[]: 0 3444 7878 7878 7878
-> [  785.581387] Node 0 DMA32 free:31476kB min:37680kB low:45052kB
-> high:52424kB active_anon:792kB inactive_anon:1216kB active_file:2316kB
-> inactive_file:3427096kB unevictable:0kB writepending:0kB present:3653608kB
-> managed:3588072kB mlocked:0kB kernel_stack:80kB pagetables:36kB bounce:0kB
-> free_pcp:808kB local_pcp:696kB free_cma:0kB
-> [  785.581390] lowmem_reserve[]: 0 0 4433 4433 4433
-> [  785.581391] Node 0 Normal free:20672kB min:56392kB low:65880kB
-> high:75368kB active_anon:21604kB inactive_anon:27396kB active_file:28936kB
-> inactive_file:4246864kB unevictable:0kB writepending:0kB present:4718592kB
-> managed:4548188kB mlocked:0kB kernel_stack:3280kB pagetables:4208kB
-> bounce:0kB free_pcp:1168kB local_pcp:1168kB free_cma:0kB
-> [  785.581393] lowmem_reserve[]: 0 0 0 0 0
-> [  785.581395] Node 0 DMA: 1*4kB (U) 0*8kB 0*16kB 1*32kB (U) 2*64kB (U)
-> 1*128kB (U) 1*256kB (U) 0*512kB 1*1024kB (U) 1*2048kB (M) 3*4096kB (M) =
-> 15908kB
-> [  785.581399] Node 0 DMA32: 35*4kB (UMEH) 109*8kB (UMEH) 372*16kB (UMEH)
-> 144*32kB (MEH) 28*64kB (MEH) 37*128kB (ME) 55*256kB (UME) 0*512kB 0*1024kB
-> 0*2048kB 0*4096kB = 32180kB
-> [  785.581404] Node 0 Normal: 347*4kB (UMEH) 250*8kB (UMEH) 655*16kB
-> (UMEH) 80*32kB (UMEH) 29*64kB (ME) 7*128kB (MEH) 6*256kB (MEH) 0*512kB
-> 0*1024kB 0*2048kB 0*4096kB = 20716kB
-> [  785.581409] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0
-> hugepages_size=1048576kB
-> [  785.581409] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0
-> hugepages_size=2048kB
-> [  785.581410] 1926939 total pagecache pages
-> [  785.581413] 38 pages in swap cache
-> [  785.581413] Swap cache stats: add 994, delete 956, find 81/89
-> [  785.581414] Free swap  = 4033776kB
-> [  785.581414] Total swap = 4038652kB
-> [  785.581415] 2097048 pages RAM
-> [  785.581415] 0 pages HighMem/MovableOnly
-> [  785.581416] 59006 pages reserved
-> [  785.581416] 0 pages cma reserved
-> [  785.581417] 0 pages hwpoisoned
-> 
-> 
-
--- 
-Jeff Layton <jlayton@poochiereds.net>
-
+I think it's better to unify i_dirty_item and i_flushing_item
+handling.  how about add a new patch that puts code that move
+i_flushing to new  auth session together with the code that move
+i_dirty_item.
