@@ -2,51 +2,52 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E622E19F846
-	for <lists+ceph-devel@lfdr.de>; Mon,  6 Apr 2020 16:54:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6381A19F855
+	for <lists+ceph-devel@lfdr.de>; Mon,  6 Apr 2020 16:55:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728795AbgDFOyC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 6 Apr 2020 10:54:02 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:35990 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728781AbgDFOyC (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 6 Apr 2020 10:54:02 -0400
-Received: by mail-qt1-f194.google.com with SMTP id m33so13053262qtb.3
-        for <ceph-devel@vger.kernel.org>; Mon, 06 Apr 2020 07:54:02 -0700 (PDT)
+        id S1728801AbgDFOz0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 6 Apr 2020 10:55:26 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:45390 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728776AbgDFOzZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 6 Apr 2020 10:55:25 -0400
+Received: by mail-qk1-f196.google.com with SMTP id o18so13586901qko.12
+        for <ceph-devel@vger.kernel.org>; Mon, 06 Apr 2020 07:55:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3UUEGMwXzX4zOx0nLtk2OoLRV5RsJq7BeWNblh/QMtY=;
-        b=dKj+vfJNHFGrSMc0cgWXzsUOlSgWGS/ZheUoRvlDAyj6qn87nS6+LHbF9q/SbO/lVH
-         WfLuu8Ve26Evv5bDIfWU+fHn230SGjq9/IPcMX9VP+RR204EWaiioIZwOhoeYvuIo7jd
-         AMD8U2vG931CcvlfwHwUwFRIIn1xBU6On0hIHY937UAhKvRcjvw/2/hJES586xP8Ockn
-         ks/1FXsYJWWSxkv8TlKX1Ai8aTh2L5aEx3H9GtxYT84o2JmZY9NPVyR4C/7vt2WLkIWp
-         rlxlfOfSS3SDP8MmGq4hpPtwQt7wM6a8Xx+FmGX6Aqzk3EuHIcXPOpb1oUUTbGVFUF2N
-         3cIQ==
+        bh=RHkzy7Iby94ptDNu2PvEMOlJ4MVcKSEK2UBUQuozWxM=;
+        b=KgwiD/wUpPD/43lciH+bb96kJM3XhyxFC070R1pDehK8gKWMBgSHqNT5L8CBnnRbEw
+         wLisMbQ21xYlJlopCnv+ECsxgMmlvDA9RWIWJbEgHcdQPI8eC9iIsMoaq97aZYkcytPZ
+         dd/PXiQ8GYqMOSe+OexDSXIvnu8snMdMi3Pp3GptwINBGOdWzh0/IYRVX56EsU7JEcyQ
+         UC+hjwEJeAZpbIW5B1apnocglOMHmZA+22OKbwv3oXdCeqtm1M3usVJkerg5SSpnXCaf
+         CvtL2nFQ8OkOR4y7a80xadmNqALhpHVGX9EwV05XArZO12G6vbZN6zzR5QSaJIodo3em
+         xteA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3UUEGMwXzX4zOx0nLtk2OoLRV5RsJq7BeWNblh/QMtY=;
-        b=S5FyEtCqy47IKAMewJCCwBhaRz7QizOKfcombCJUuVG6jZKWC9yXxQPMMrvxw6ho78
-         odZWfBOf6p823YAoW00HNaurUuzTHWpsJv1vre0pLkI4UNNc2RZ9gvkNPoojLKoIrPW+
-         6FH+Kz0tBhHMvDuW+LM9jgCq0npmG9pLJNNhdBAKlzn4lmdJcVcU+DSBgjHtQq3iNAOb
-         zt8TDr7zXZ1vqcCN85zpYzW0hHOYqMAWSIwsTPUnH7unZKSB/UpZfdgOzpFIU1Mh3tAe
-         dE+dXCnq6PsHt0bERgmuanvWqRF7mVDbpg3GiE+LqtyKJRBTOyz6CNTcEdmJ/DoV/iEC
-         lIVQ==
-X-Gm-Message-State: AGi0PuagXW7eWVUM0EB3wJQP0ntBkIHqYq0ZzduDlYORZMTHkQKQG76V
-        wbqKYZ5Eq8pVIxFGPA5WC1R85cYsetCvCIhMrfmGEohDAOc=
-X-Google-Smtp-Source: APiQypJ4bzdY/vVT/T14JLWM2h6FMLKj9r5DDNJldsjTowLWl8iFlLhdzm3N2qitojYzsIRm5Y6TYY5gnQ/CQagx/VA=
-X-Received: by 2002:ac8:478e:: with SMTP id k14mr6513050qtq.296.1586184841601;
- Mon, 06 Apr 2020 07:54:01 -0700 (PDT)
+        bh=RHkzy7Iby94ptDNu2PvEMOlJ4MVcKSEK2UBUQuozWxM=;
+        b=AKxVp8Fn0nmQ9jNV2KjnObe4bLZjdOroSmUKuVyo5LiA+0SCbnFlYKeMJt9OwYt6oR
+         yoGFdpJEW/otXlPLr3bK0UNkRcZkYZWjwFr1NU08z1Rs9RgyeEQZDjCiBxiz4vFzHG6Q
+         cqDuos0SjDn/J0v8LMp5e5l9dCaU5Q54zhJL2vX6iUfQNnbPgOErvTbHcroSgUFFTMvL
+         66kFFjmKNAsFbmmU673G7cNNHczUL9pUMqKjylP7bH46i+iuf3uMiFBQXIqNri0Q06YU
+         lH0rdE4b/zE5VSv67RfSUIdtLFttnQbFPQdLPVLrZ1yINtT+Hc8deJ5ggsOSUqChn34j
+         tlVQ==
+X-Gm-Message-State: AGi0PuY83yjAo0gS76NeAu4EerUD804BRdcLatEtWotI8wsNTI8d/V+8
+        l+BeQO3rBo5h9v5/TWQjlwOn5Tmfobxjh/ucYvU=
+X-Google-Smtp-Source: APiQypJvAkpmt5/yf4mcwFMrg98riUs6pu5NFrji3APwlmwoqp1N6BpvNd4xaVmpXXoFXRi6qpFLhpklUv6xnsSCipE=
+X-Received: by 2002:a37:a2d7:: with SMTP id l206mr21662403qke.141.1586184924943;
+ Mon, 06 Apr 2020 07:55:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200403191423.40938-1-jlayton@kernel.org>
-In-Reply-To: <20200403191423.40938-1-jlayton@kernel.org>
+References: <20200403144751.23977-1-jlayton@kernel.org>
+In-Reply-To: <20200403144751.23977-1-jlayton@kernel.org>
 From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Mon, 6 Apr 2020 22:53:50 +0800
-Message-ID: <CAAM7YAnW_20a3seYJk_yPfYt+00izT+83Y72prdOgXwwwrt25w@mail.gmail.com>
-Subject: Re: [PATCH] ceph: ceph_kick_flushing_caps needs the s_mutex
+Date:   Mon, 6 Apr 2020 22:55:13 +0800
+Message-ID: <CAAM7YAnrw9B1dqXsNCZKGb-AwjmCTc7O2=XBEjB91kcWxAyy8Q@mail.gmail.com>
+Subject: Re: [PATCH] ceph: unify i_dirty_item and i_flushing_item handling
+ when auth caps change
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>
@@ -56,92 +57,91 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sat, Apr 4, 2020 at 3:14 AM Jeff Layton <jlayton@kernel.org> wrote:
+On Fri, Apr 3, 2020 at 10:47 PM Jeff Layton <jlayton@kernel.org> wrote:
 >
-> The mdsc->cap_dirty_lock is not held while walking the list in
-> ceph_kick_flushing_caps, which is not safe.
->
-> ceph_early_kick_flushing_caps does something similar, but the
-> s_mutex is held while it's called and I think that guards against
-> changes to the list.
->
-> Ensure we hold the s_mutex when calling ceph_kick_flushing_caps,
-> and add some clarifying comments.
->
+> Suggested-by: "Yan, Zheng" <zyan@redhat.com>
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  fs/ceph/caps.c       |  2 ++
->  fs/ceph/mds_client.c |  2 ++
->  fs/ceph/mds_client.h |  4 +++-
->  fs/ceph/super.h      | 11 ++++++-----
->  4 files changed, 13 insertions(+), 6 deletions(-)
+>  fs/ceph/caps.c | 47 +++++++++++++++++++++++++----------------------
+>  1 file changed, 25 insertions(+), 22 deletions(-)
 >
 > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index ba6e11810877..f5b37842cdcd 100644
+> index eb190e4e203c..b3460d52a305 100644
 > --- a/fs/ceph/caps.c
 > +++ b/fs/ceph/caps.c
-> @@ -2508,6 +2508,8 @@ void ceph_kick_flushing_caps(struct ceph_mds_client *mdsc,
->         struct ceph_cap *cap;
->         u64 oldest_flush_tid;
+> @@ -3700,6 +3700,27 @@ static bool handle_cap_trunc(struct inode *inode,
+>         return queue_trunc;
+>  }
 >
-> +       lockdep_assert_held(session->s_mutex);
+> +/**
+> + * transplant_auth_cap - move inode to appropriate lists when auth caps change
+> + * @ci: inode to be moved
+> + * @session: new auth caps session
+> + */
+> +static void transplant_auth_ses(struct ceph_inode_info *ci,
+> +                               struct ceph_mds_session *session)
+> +{
+> +       lockdep_assert_held(&ci->i_ceph_lock);
 > +
->         dout("kick_flushing_caps mds%d\n", session->s_mds);
->
->         spin_lock(&mdsc->cap_dirty_lock);
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index be4ad7d28e3a..a8a5b98148ec 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -4026,7 +4026,9 @@ static void check_new_map(struct ceph_mds_client *mdsc,
->                             oldstate != CEPH_MDS_STATE_STARTING)
->                                 pr_info("mds%d recovery completed\n", s->s_mds);
->                         kick_requests(mdsc, i);
-> +                       mutex_lock(&s->s_mutex);
->                         ceph_kick_flushing_caps(mdsc, s);
-> +                       mutex_unlock(&s->s_mutex);
->                         wake_up_session_caps(s, RECONNECT);
+> +       if (list_empty(&ci->i_dirty_item) && list_empty(&ci->i_flushing_item))
+> +               return;
+> +
+> +       spin_lock(&session->s_mdsc->cap_dirty_lock);
+> +       if (!list_empty(&ci->i_dirty_item))
+> +               list_move(&ci->i_dirty_item, &session->s_cap_dirty);
+> +       if (!list_empty(&ci->i_flushing_item))
+> +               list_move_tail(&ci->i_flushing_item, &session->s_cap_flushing);
+> +       spin_unlock(&session->s_mdsc->cap_dirty_lock);
+> +}
+> +
+>  /*
+>   * Handle EXPORT from MDS.  Cap is being migrated _from_ this mds to a
+>   * different one.  If we are the most recent migration we've seen (as
+> @@ -3771,22 +3792,9 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
+>                         tcap->issue_seq = t_seq - 1;
+>                         tcap->issued |= issued;
+>                         tcap->implemented |= issued;
+> -                       if (cap == ci->i_auth_cap)
+> +                       if (cap == ci->i_auth_cap) {
+>                                 ci->i_auth_cap = tcap;
+> -
+> -                       if (!list_empty(&ci->i_dirty_item)) {
+> -                               spin_lock(&mdsc->cap_dirty_lock);
+> -                               list_move(&ci->i_dirty_item,
+> -                                         &tcap->session->s_cap_dirty);
+> -                               spin_unlock(&mdsc->cap_dirty_lock);
+> -                       }
+> -
+> -                       if (!list_empty(&ci->i_cap_flush_list) &&
+> -                           ci->i_auth_cap == tcap) {
+> -                               spin_lock(&mdsc->cap_dirty_lock);
+> -                               list_move_tail(&ci->i_flushing_item,
+> -                                              &tcap->session->s_cap_flushing);
+> -                               spin_unlock(&mdsc->cap_dirty_lock);
+> +                               transplant_auth_ses(ci, tcap->session);
+>                         }
 >                 }
->         }
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index bd20257fb4c2..1b40f30e0a8e 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -199,8 +199,10 @@ struct ceph_mds_session {
->         struct list_head  s_cap_releases; /* waiting cap_release messages */
->         struct work_struct s_cap_release_work;
+>                 __ceph_remove_cap(cap, false);
+> @@ -3798,13 +3806,8 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
+>                 ceph_add_cap(inode, tsession, t_cap_id, issued, 0,
+>                              t_seq - 1, t_mseq, (u64)-1, flag, &new_cap);
 >
-> -       /* both protected by s_mdsc->cap_dirty_lock */
-> +       /* See ceph_inode_info->i_dirty_item. */
->         struct list_head  s_cap_dirty;        /* inodes w/ dirty caps */
-> +
-> +       /* See ceph_inode_info->i_flushing_item. */
->         struct list_head  s_cap_flushing;     /* inodes w/ flushing caps */
+> -               if (!list_empty(&ci->i_cap_flush_list) &&
+> -                   ci->i_auth_cap == tcap) {
+> -                       spin_lock(&mdsc->cap_dirty_lock);
+> -                       list_move_tail(&ci->i_flushing_item,
+> -                                      &tcap->session->s_cap_flushing);
+> -                       spin_unlock(&mdsc->cap_dirty_lock);
+> -               }
+> +               if (ci->i_auth_cap == tcap)
+> +                       transplant_auth_ses(ci, tcap->session);
 >
->         unsigned long     s_renew_requested; /* last time we sent a renew req */
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 3235c7e3bde7..b82f82d8213a 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -361,11 +361,12 @@ struct ceph_inode_info {
->          */
->         struct list_head i_dirty_item;
->
-> -       /* Link to session's s_cap_flushing list. Protected by
-> -        * mdsc->cap_dirty_lock.
-> -        *
-> -        * FIXME: this list is sometimes walked without the spinlock being
-> -        *        held. What really protects it?
-> +       /*
-> +        * Link to session's s_cap_flushing list. Protected in a similar
-> +        * fashion to i_dirty_item, but also by the s_mutex for changes. The
-> +        * s_cap_flushing list can be walked while holding either the s_mutex
-> +        * or msdc->cap_dirty_lock. List presence can also be checked while
-> +        * holding the i_ceph_lock for this inode.
->          */
->         struct list_head i_flushing_item;
->
+
+why not call transplant_auth_ses() inside ceph_add_cap() (replace code
+added by "ceph: convert mdsc->cap_dirty to a per-session list")
+
+>                 __ceph_remove_cap(cap, false);
+>                 goto out_unlock;
 > --
 > 2.25.1
 >
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
