@@ -2,124 +2,97 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BEFC19DE71
-	for <lists+ceph-devel@lfdr.de>; Fri,  3 Apr 2020 21:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC77819F148
+	for <lists+ceph-devel@lfdr.de>; Mon,  6 Apr 2020 10:05:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbgDCTOZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 3 Apr 2020 15:14:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58208 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728296AbgDCTOZ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 3 Apr 2020 15:14:25 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F56120737;
-        Fri,  3 Apr 2020 19:14:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585941264;
-        bh=isI2wQq71iH3Q3EVuIqF5xfQJo00eZgYceUdXGQ+Fdc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=YAEartBSJpfqIORH03gF8zk5gdpQBwFabQsFvPy93R6BK7Kxwg9hmQcGYqLQn2Q+d
-         TdKqjWg8USfFzy4A0gOtWWOOKMrsFAi+iH089Oc8uk7c0OoIerqDF56z4uNK9HJOqm
-         pC7R3twQBCnrI8TcbePgh1BwrbLRZQk3ZFlBqC/4=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     ukernel@gmail.com, idryomov@gmail.com, sage@redhat.com
-Subject: [PATCH] ceph: ceph_kick_flushing_caps needs the s_mutex
-Date:   Fri,  3 Apr 2020 15:14:23 -0400
-Message-Id: <20200403191423.40938-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.25.1
+        id S1726578AbgDFIE6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 6 Apr 2020 04:04:58 -0400
+Received: from mail-lf1-f54.google.com ([209.85.167.54]:46327 "EHLO
+        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbgDFIE5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 6 Apr 2020 04:04:57 -0400
+Received: by mail-lf1-f54.google.com with SMTP id q5so11016457lfb.13
+        for <ceph-devel@vger.kernel.org>; Mon, 06 Apr 2020 01:04:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=l0u0fe2X5uJHRq0SjOGJX47JyvNSOR4RLmAu5+Jv6v0=;
+        b=QRe2sbgjRRVojb7Pb/BTScgVtrsuR3Mv+js9ZYRftIiQ0OUGLlo075QVSIYiU5DEq6
+         7eKJR+FILYBLoLsIjQ7/7n+ZoFdIa6/42fVumHbIgMncgSms31/tiniHrXT3lYwNt6w9
+         kn3VZpx7H0emW54G2jfIr0Fri32z3hz+V6wAWDdZRnnIqioBIcJ6s/fo6zZv2W9kdbmW
+         RdaEavPKi1PdiDJN6JMeFea60IEWIPmmStKLdqIBWIZpc4LlkuaTNbOsxEnr2onP9BGH
+         bBpyEKU3erI+sLnOO1gEdW799ujI2FmYabSjL/abY3W5TYEbzBAAugqealZPe6fmRh5P
+         SYkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=l0u0fe2X5uJHRq0SjOGJX47JyvNSOR4RLmAu5+Jv6v0=;
+        b=VQiAk9LoDwBeZbFNM+5yd1Bpghgie/u/MZmbfDhNu8AOJ9CeC9TbzdAuF/TGRsvfBI
+         brTd7IRd3EMJU4HIu1UxWMakFYfspwvQQ5Z/fM7AppY56ZjlljKjuBmnvgevu/MB/btx
+         IsKr20OZarmGNnSXDRHHSvTPrvkHp9aHv6ulA9hUArnxwjFwr+dVhK5Zn3FY8E+RFGhV
+         om2F/CpCTf1rj/Y6RJYVKI+3oQ8BEJ1J8RS61Jv4IA+l24UuQ02LkTDu8DwJ9uKj1CtE
+         b2YnRo13ErKQHmgCTteJpGKRfW3VDTj7RDU+TusOaA5K4t/aALPdQQphIQST+FkvYaOD
+         m2AA==
+X-Gm-Message-State: AGi0PuYfW0ozgv4qUm5Q65/bAakKHGF/isj42g0TvQRddyel+XRRa/z3
+        kbuBdpwUeYwPPpoaHOxZidEbcE7xpq7ZssuAWcneLXQEV4E=
+X-Google-Smtp-Source: APiQypJkKc392gIxhgSn7O216+wkw9PNF4SE4l3EIcFiX/XhohU4v2Y9l08/3a0TiGp0Dac20YMnberQBdTfeSRnX0M=
+X-Received: by 2002:ac2:53a6:: with SMTP id j6mr5176611lfh.153.1586160295430;
+ Mon, 06 Apr 2020 01:04:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Jesper Krogh <jesper.krogh@gmail.com>
+Date:   Mon, 6 Apr 2020 10:04:44 +0200
+Message-ID: <CAED-sidS3jt5f0nTvLp6_xL+sgk0FFJGaX-X7cCDav-8nwj4TA@mail.gmail.com>
+Subject: 5.4.20 - high load - lots of incoming data - small data read.
+To:     ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The mdsc->cap_dirty_lock is not held while walking the list in
-ceph_kick_flushing_caps, which is not safe.
+This is a CephFS client - its only purpose is to run the "filedaemon" of bacula
+and transport data to the tape-library from CephFS - below 2 threads is
+essentially doing something equivalent to
 
-ceph_early_kick_flushing_caps does something similar, but the
-s_mutex is held while it's called and I think that guards against
-changes to the list.
+find /cephfs/ -type f | xargs cat | nc server
 
-Ensure we hold the s_mutex when calling ceph_kick_flushing_caps,
-and add some clarifying comments.
+2 threads only, load exploding and the "net read vs net write" has
+more than 100x difference.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/caps.c       |  2 ++
- fs/ceph/mds_client.c |  2 ++
- fs/ceph/mds_client.h |  4 +++-
- fs/ceph/super.h      | 11 ++++++-----
- 4 files changed, 13 insertions(+), 6 deletions(-)
+Can anyone explain this as "normal" behaviour?
+Server is a  VM with 16 "vCPU" and 16GB memory running libvirt/qemu
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index ba6e11810877..f5b37842cdcd 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -2508,6 +2508,8 @@ void ceph_kick_flushing_caps(struct ceph_mds_client *mdsc,
- 	struct ceph_cap *cap;
- 	u64 oldest_flush_tid;
- 
-+	lockdep_assert_held(session->s_mutex);
-+
- 	dout("kick_flushing_caps mds%d\n", session->s_mds);
- 
- 	spin_lock(&mdsc->cap_dirty_lock);
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index be4ad7d28e3a..a8a5b98148ec 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -4026,7 +4026,9 @@ static void check_new_map(struct ceph_mds_client *mdsc,
- 			    oldstate != CEPH_MDS_STATE_STARTING)
- 				pr_info("mds%d recovery completed\n", s->s_mds);
- 			kick_requests(mdsc, i);
-+			mutex_lock(&s->s_mutex);
- 			ceph_kick_flushing_caps(mdsc, s);
-+			mutex_unlock(&s->s_mutex);
- 			wake_up_session_caps(s, RECONNECT);
- 		}
- 	}
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index bd20257fb4c2..1b40f30e0a8e 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -199,8 +199,10 @@ struct ceph_mds_session {
- 	struct list_head  s_cap_releases; /* waiting cap_release messages */
- 	struct work_struct s_cap_release_work;
- 
--	/* both protected by s_mdsc->cap_dirty_lock */
-+	/* See ceph_inode_info->i_dirty_item. */
- 	struct list_head  s_cap_dirty;	      /* inodes w/ dirty caps */
-+
-+	/* See ceph_inode_info->i_flushing_item. */
- 	struct list_head  s_cap_flushing;     /* inodes w/ flushing caps */
- 
- 	unsigned long     s_renew_requested; /* last time we sent a renew req */
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 3235c7e3bde7..b82f82d8213a 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -361,11 +361,12 @@ struct ceph_inode_info {
- 	 */
- 	struct list_head i_dirty_item;
- 
--	/* Link to session's s_cap_flushing list. Protected by
--	 * mdsc->cap_dirty_lock.
--	 *
--	 * FIXME: this list is sometimes walked without the spinlock being
--	 *	  held. What really protects it?
-+	/*
-+	 * Link to session's s_cap_flushing list. Protected in a similar
-+	 * fashion to i_dirty_item, but also by the s_mutex for changes. The
-+	 * s_cap_flushing list can be walked while holding either the s_mutex
-+	 * or msdc->cap_dirty_lock. List presence can also be checked while
-+	 * holding the i_ceph_lock for this inode.
- 	 */
- 	struct list_head i_flushing_item;
- 
--- 
-2.25.1
+jk@wombat:~$ w
+ 07:50:33 up 11:25,  1 user,  load average: 206.43, 76.23, 50.58
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+jk       pts/0    10.194.133.42    06:54    0.00s  0.05s  0.00s w
+jk@wombat:~$ dstat -ar
+--total-cpu-usage-- -dsk/total- -net/total- ---paging-- ---system-- --io/total-
+usr sys idl wai stl| read  writ| recv  send|  in   out | int   csw | read  writ
+  0   0  98   1   0|  14k   34k|   0     0 |   3B   27B| 481   294 |0.55  0.73
+  1   1   0  98   0|   0     0 |  60M  220k|   0     0 |6402  6182 |   0     0
+  0   1   0  98   0|   0     0 |  69M  255k|   0     0 |7305  4339 |   0     0
+  1   2   0  98   0|   0     0 |  76M  282k|   0     0 |7914  4886 |   0     0
+  1   1   0  99   0|   0     0 |  70M  260k|   0     0 |7293  4444 |   0     0
+  1   1   0  98   0|   0     0 |  80M  278k|   0     0 |8018  4931 |   0     0
+  0   1   0  98   0|   0     0 |  60M  221k|   0     0 |6435  5951 |   0     0
+  0   1   0  99   0|   0     0 |  59M  211k|   0     0 |6163  3584 |   0     0
+  0   1   0  98   0|   0     0 |  64M  323k|   0     0 |6653  3881 |   0     0
+  1   0   0  99   0|   0     0 |  61M  243k|   0     0 |6822  4401 |   0     0
+  0   1   0  99   0|   0     0 |  55M  205k|   0     0 |5975  3518 |   0     0
+  1   1   0  98   0|   0     0 |  68M  242k|   0     0 |7094  6544 |   0     0
+  0   1   0  99   0|   0     0 |  58M  230k|   0     0 |6639  4178 |   0     0
+  1   2   0  98   0|   0     0 |  61M  243k|   0     0 |7117  4477 |   0     0
+  0   1   0  99   0|   0     0 |  61M  228k|   0     0 |6500  4078 |   0     0
+  0   1   0  99   0|   0     0 |  65M  234k|   0     0 |6595  3914 |   0     0
+  0   1   0  98   0|   0     0 |  64M  219k|   0     0 |6507  5755 |   0     0
+  1   1   0  99   0|   0     0 |  64M  233k|   0     0 |6869  4153 |   0     0
+  1   2   0  98   0|   0     0 |  63M  232k|   0     0 |6632  3907 |
+0     0 ^C
+jk@wombat:~$ w
+ 07:50:56 up 11:25,  1 user,  load average: 221.35, 88.07, 55.02
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+jk       pts/0    10.194.133.42    06:54    0.00s  0.05s  0.00s w
+jk@wombat:~$
 
+Thanks.
