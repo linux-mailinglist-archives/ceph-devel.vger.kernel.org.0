@@ -2,171 +2,280 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47CCB1A0BEF
-	for <lists+ceph-devel@lfdr.de>; Tue,  7 Apr 2020 12:30:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFA101A0EA7
+	for <lists+ceph-devel@lfdr.de>; Tue,  7 Apr 2020 15:51:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728706AbgDGKaF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 7 Apr 2020 06:30:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48774 "EHLO mx2.suse.de"
+        id S1728915AbgDGNvr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 7 Apr 2020 09:51:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35078 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728555AbgDGKaE (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 7 Apr 2020 06:30:04 -0400
+        id S1728555AbgDGNvq (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 7 Apr 2020 09:51:46 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 86FDEAF23;
-        Tue,  7 Apr 2020 10:30:01 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 9D41DAD06;
+        Tue,  7 Apr 2020 13:51:43 +0000 (UTC)
+Date:   Tue, 7 Apr 2020 14:52:04 +0100
 From:   Luis Henriques <lhenriques@suse.com>
-To:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        Zheng Yan <zyan@redhat.com>
-Cc:     Frank Schilder <frans@dtu.dk>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luis Henriques <lhenriques@suse.com>
-Subject: [PATCH v2 2/2] ceph: allow rename operation under different quota realms
-Date:   Tue,  7 Apr 2020 11:30:20 +0100
-Message-Id: <20200407103020.22588-3-lhenriques@suse.com>
-In-Reply-To: <20200407103020.22588-1-lhenriques@suse.com>
-References: <20200407103020.22588-1-lhenriques@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: Re: [PATCH] ceph: canonicalize server path in place
+Message-ID: <20200407135204.GA31471@suse.com>
+References: <20200211095314.28931-1-idryomov@gmail.com>
+ <4adab4636c62b614d8460ecac70225c9ce485b37.camel@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <4adab4636c62b614d8460ecac70225c9ce485b37.camel@kernel.org>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Returning -EXDEV when trying to 'mv' files/directories from different
-quota realms results in copy+unlink operations instead of the faster
-CEPH_MDS_OP_RENAME.  This will occur even when there aren't any quotas
-set in the destination directory, or if there's enough space left for
-the new file(s).
+On Tue, Feb 11, 2020 at 07:06:11AM -0500, Jeff Layton wrote:
+> On Tue, 2020-02-11 at 10:53 +0100, Ilya Dryomov wrote:
+> > syzbot reported that 4fbc0c711b24 ("ceph: remove the extra slashes in
+> > the server path") had caused a regression where an allocation could be
+> > done under a spinlock -- compare_mount_options() is called by sget_fc()
+> > with sb_lock held.
+> > 
+> > We don't really need the supplied server path, so canonicalize it
+> > in place and compare it directly.  To make this work, the leading
+> > slash is kept around and the logic in ceph_real_mount() to skip it
+> > is restored.  CEPH_MSG_CLIENT_SESSION now reports the same (i.e.
+> > canonicalized) path, with the leading slash of course.
+> > 
+> > Fixes: 4fbc0c711b24 ("ceph: remove the extra slashes in the server path")
 
-This patch adds a new helper function to be called on rename operations
-which will allow these operations if they can be executed.  This patch
-mimics userland fuse client commit b8954e5734b3 ("client:
-optimize rename operation under different quota root").
+I think both this fix and the original patch that introduced this should
+go into stable kernels, because the original issue [1] can be easily
+reproducible in the LTS kernels.
 
-Since ceph_quota_is_same_realm() is now called only from this new
-helper, make it static.
+[1] https://tracker.ceph.com/issues/42771
 
-URL: https://tracker.ceph.com/issues/44791
-Signed-off-by: Luis Henriques <lhenriques@suse.com>
----
- fs/ceph/dir.c   |  9 ++++----
- fs/ceph/quota.c | 58 ++++++++++++++++++++++++++++++++++++++++++++++++-
- fs/ceph/super.h |  3 ++-
- 3 files changed, 64 insertions(+), 6 deletions(-)
+I've done a quick attempt at backporting these patches to 5.4 and attached
+them to the tracker issue.  I can send them to the stable mailing-list if
+you guys think the backports are OK (the new mount API conversion moved
+things around and it's not a clean cherry-pick).
 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index d0cd0aba5843..23f0345611a3 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1099,11 +1099,12 @@ static int ceph_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			op = CEPH_MDS_OP_RENAMESNAP;
- 		else
- 			return -EROFS;
-+	} else if (old_dir != new_dir) {
-+		err = ceph_quota_check_rename(mdsc, d_inode(old_dentry),
-+					      new_dir);
-+		if (err)
-+			return err;
- 	}
--	/* don't allow cross-quota renames */
--	if ((old_dir != new_dir) &&
--	    (!ceph_quota_is_same_realm(old_dir, new_dir)))
--		return -EXDEV;
- 
- 	dout("rename dir %p dentry %p to dir %p dentry %p\n",
- 	     old_dir, old_dentry, new_dir, new_dentry);
-diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-index c5c8050f0f99..9e82704a9f7b 100644
---- a/fs/ceph/quota.c
-+++ b/fs/ceph/quota.c
-@@ -264,7 +264,7 @@ static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
- 	return NULL;
- }
- 
--bool ceph_quota_is_same_realm(struct inode *old, struct inode *new)
-+static bool ceph_quota_is_same_realm(struct inode *old, struct inode *new)
- {
- 	struct ceph_mds_client *mdsc = ceph_inode_to_client(old)->mdsc;
- 	struct ceph_snap_realm *old_realm, *new_realm;
-@@ -516,3 +516,59 @@ bool ceph_quota_update_statfs(struct ceph_fs_client *fsc, struct kstatfs *buf)
- 	return is_updated;
- }
- 
-+/*
-+ * ceph_quota_check_rename - check if a rename can be executed
-+ * @mdsc:	MDS client instance
-+ * @old:	inode to be copied
-+ * @new:	destination inode (directory)
-+ *
-+ * This function verifies if a rename (e.g. moving a file or directory) can be
-+ * executed.  It forces an rstat update in the @new target directory (and in the
-+ * source @old as well, if it's a directory).  The actual check is done both for
-+ * max_files and max_bytes.
-+ *
-+ * This function returns 0 if it's OK to do the rename, or, if quotas are
-+ * exceeded, -EXDEV (if @old is a directory) or -EDQUOT.
-+ */
-+int ceph_quota_check_rename(struct ceph_mds_client *mdsc,
-+			    struct inode *old, struct inode *new)
-+{
-+	struct ceph_inode_info *ci_old = ceph_inode(old);
-+	int ret = 0;
-+
-+	if (ceph_quota_is_same_realm(old, new))
-+		return 0;
-+
-+	/*
-+	 * Get the latest rstat for target directory (and for source, if a
-+	 * directory)
-+	 */
-+	ret = ceph_do_getattr(new, CEPH_STAT_RSTAT, false);
-+	if (ret)
-+		return ret;
-+
-+	if (S_ISDIR(old->i_mode)) {
-+		ret = ceph_do_getattr(old, CEPH_STAT_RSTAT, false);
-+		if (ret)
-+			return ret;
-+		ret = check_quota_exceeded(new, QUOTA_CHECK_MAX_BYTES_OP,
-+					   ci_old->i_rbytes);
-+		if (!ret)
-+			ret = check_quota_exceeded(new,
-+						   QUOTA_CHECK_MAX_FILES_OP,
-+						   ci_old->i_rfiles +
-+						   ci_old->i_rsubdirs);
-+		if (ret)
-+			ret = -EXDEV;
-+	} else {
-+		ret = check_quota_exceeded(new, QUOTA_CHECK_MAX_BYTES_OP,
-+					   i_size_read(old));
-+		if (!ret)
-+			ret = check_quota_exceeded(new,
-+						   QUOTA_CHECK_MAX_FILES_OP, 1);
-+		if (ret)
-+			ret = -EDQUOT;
-+	}
-+
-+	return ret;
-+}
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 037cdfb2ad4f..d5853831a6b5 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1175,13 +1175,14 @@ extern void ceph_handle_quota(struct ceph_mds_client *mdsc,
- 			      struct ceph_mds_session *session,
- 			      struct ceph_msg *msg);
- extern bool ceph_quota_is_max_files_exceeded(struct inode *inode);
--extern bool ceph_quota_is_same_realm(struct inode *old, struct inode *new);
- extern bool ceph_quota_is_max_bytes_exceeded(struct inode *inode,
- 					     loff_t newlen);
- extern bool ceph_quota_is_max_bytes_approaching(struct inode *inode,
- 						loff_t newlen);
- extern bool ceph_quota_update_statfs(struct ceph_fs_client *fsc,
- 				     struct kstatfs *buf);
-+extern int ceph_quota_check_rename(struct ceph_mds_client *mdsc,
-+				   struct inode *old, struct inode *new);
- extern void ceph_cleanup_quotarealms_inodes(struct ceph_mds_client *mdsc);
- 
- #endif /* _FS_CEPH_SUPER_H */
+Cheers,
+--
+Luís
+
+> > Reported-by: syzbot+98704a51af8e3d9425a9@syzkaller.appspotmail.com
+> > Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+> > ---
+> >  fs/ceph/super.c | 121 +++++++++++-------------------------------------
+> >  fs/ceph/super.h |   2 +-
+> >  2 files changed, 29 insertions(+), 94 deletions(-)
+> > 
+> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > index 1d9f083b8a11..64ea34ac330b 100644
+> > --- a/fs/ceph/super.c
+> > +++ b/fs/ceph/super.c
+> > @@ -202,6 +202,26 @@ struct ceph_parse_opts_ctx {
+> >  	struct ceph_mount_options	*opts;
+> >  };
+> >  
+> > +/*
+> > + * Remove adjacent slashes and then the trailing slash, unless it is
+> > + * the only remaining character.
+> > + *
+> > + * E.g. "//dir1////dir2///" --> "/dir1/dir2", "///" --> "/".
+> > + */
+> > +static void canonicalize_path(char *path)
+> > +{
+> > +	int i, j = 0;
+> > +
+> > +	for (i = 0; path[i] != '\0'; i++) {
+> > +		if (path[i] != '/' || j < 1 || path[j - 1] != '/')
+> > +			path[j++] = path[i];
+> > +	}
+> > +
+> > +	if (j > 1 && path[j - 1] == '/')
+> > +		j--;
+> > +	path[j] = '\0';
+> > +}
+> > +
+> >  /*
+> >   * Parse the source parameter.  Distinguish the server list from the path.
+> >   *
+> > @@ -224,15 +244,16 @@ static int ceph_parse_source(struct fs_parameter *param, struct fs_context *fc)
+> >  
+> >  	dev_name_end = strchr(dev_name, '/');
+> >  	if (dev_name_end) {
+> > -		kfree(fsopt->server_path);
+> > -
+> >  		/*
+> >  		 * The server_path will include the whole chars from userland
+> >  		 * including the leading '/'.
+> >  		 */
+> > +		kfree(fsopt->server_path);
+> >  		fsopt->server_path = kstrdup(dev_name_end, GFP_KERNEL);
+> >  		if (!fsopt->server_path)
+> >  			return -ENOMEM;
+> > +
+> > +		canonicalize_path(fsopt->server_path);
+> >  	} else {
+> >  		dev_name_end = dev_name + strlen(dev_name);
+> >  	}
+> > @@ -456,73 +477,6 @@ static int strcmp_null(const char *s1, const char *s2)
+> >  	return strcmp(s1, s2);
+> >  }
+> >  
+> > -/**
+> > - * path_remove_extra_slash - Remove the extra slashes in the server path
+> > - * @server_path: the server path and could be NULL
+> > - *
+> > - * Return NULL if the path is NULL or only consists of "/", or a string
+> > - * without any extra slashes including the leading slash(es) and the
+> > - * slash(es) at the end of the server path, such as:
+> > - * "//dir1////dir2///" --> "dir1/dir2"
+> > - */
+> > -static char *path_remove_extra_slash(const char *server_path)
+> > -{
+> > -	const char *path = server_path;
+> > -	const char *cur, *end;
+> > -	char *buf, *p;
+> > -	int len;
+> > -
+> > -	/* if the server path is omitted */
+> > -	if (!path)
+> > -		return NULL;
+> > -
+> > -	/* remove all the leading slashes */
+> > -	while (*path == '/')
+> > -		path++;
+> > -
+> > -	/* if the server path only consists of slashes */
+> > -	if (*path == '\0')
+> > -		return NULL;
+> > -
+> > -	len = strlen(path);
+> > -
+> > -	buf = kmalloc(len + 1, GFP_KERNEL);
+> > -	if (!buf)
+> > -		return ERR_PTR(-ENOMEM);
+> > -
+> > -	end = path + len;
+> > -	p = buf;
+> > -	do {
+> > -		cur = strchr(path, '/');
+> > -		if (!cur)
+> > -			cur = end;
+> > -
+> > -		len = cur - path;
+> > -
+> > -		/* including one '/' */
+> > -		if (cur != end)
+> > -			len += 1;
+> > -
+> > -		memcpy(p, path, len);
+> > -		p += len;
+> > -
+> > -		while (cur <= end && *cur == '/')
+> > -			cur++;
+> > -		path = cur;
+> > -	} while (path < end);
+> > -
+> > -	*p = '\0';
+> > -
+> > -	/*
+> > -	 * remove the last slash if there has and just to make sure that
+> > -	 * we will get something like "dir1/dir2"
+> > -	 */
+> > -	if (*(--p) == '/')
+> > -		*p = '\0';
+> > -
+> > -	return buf;
+> > -}
+> > -
+> >  static int compare_mount_options(struct ceph_mount_options *new_fsopt,
+> >  				 struct ceph_options *new_opt,
+> >  				 struct ceph_fs_client *fsc)
+> > @@ -530,7 +484,6 @@ static int compare_mount_options(struct ceph_mount_options *new_fsopt,
+> >  	struct ceph_mount_options *fsopt1 = new_fsopt;
+> >  	struct ceph_mount_options *fsopt2 = fsc->mount_options;
+> >  	int ofs = offsetof(struct ceph_mount_options, snapdir_name);
+> > -	char *p1, *p2;
+> >  	int ret;
+> >  
+> >  	ret = memcmp(fsopt1, fsopt2, ofs);
+> > @@ -540,21 +493,12 @@ static int compare_mount_options(struct ceph_mount_options *new_fsopt,
+> >  	ret = strcmp_null(fsopt1->snapdir_name, fsopt2->snapdir_name);
+> >  	if (ret)
+> >  		return ret;
+> > +
+> >  	ret = strcmp_null(fsopt1->mds_namespace, fsopt2->mds_namespace);
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > -	p1 = path_remove_extra_slash(fsopt1->server_path);
+> > -	if (IS_ERR(p1))
+> > -		return PTR_ERR(p1);
+> > -	p2 = path_remove_extra_slash(fsopt2->server_path);
+> > -	if (IS_ERR(p2)) {
+> > -		kfree(p1);
+> > -		return PTR_ERR(p2);
+> > -	}
+> > -	ret = strcmp_null(p1, p2);
+> > -	kfree(p1);
+> > -	kfree(p2);
+> > +	ret = strcmp_null(fsopt1->server_path, fsopt2->server_path);
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > @@ -957,7 +901,9 @@ static struct dentry *ceph_real_mount(struct ceph_fs_client *fsc,
+> >  	mutex_lock(&fsc->client->mount_mutex);
+> >  
+> >  	if (!fsc->sb->s_root) {
+> > -		const char *path, *p;
+> > +		const char *path = fsc->mount_options->server_path ?
+> > +				     fsc->mount_options->server_path + 1 : "";
+> > +
+> >  		err = __ceph_open_session(fsc->client, started);
+> >  		if (err < 0)
+> >  			goto out;
+> > @@ -969,22 +915,11 @@ static struct dentry *ceph_real_mount(struct ceph_fs_client *fsc,
+> >  				goto out;
+> >  		}
+> >  
+> > -		p = path_remove_extra_slash(fsc->mount_options->server_path);
+> > -		if (IS_ERR(p)) {
+> > -			err = PTR_ERR(p);
+> > -			goto out;
+> > -		}
+> > -		/* if the server path is omitted or just consists of '/' */
+> > -		if (!p)
+> > -			path = "";
+> > -		else
+> > -			path = p;
+> >  		dout("mount opening path '%s'\n", path);
+> >  
+> >  		ceph_fs_debugfs_init(fsc);
+> >  
+> >  		root = open_root_dentry(fsc, path, started);
+> > -		kfree(p);
+> >  		if (IS_ERR(root)) {
+> >  			err = PTR_ERR(root);
+> >  			goto out;
+> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > index 1e456a9011bb..037cdfb2ad4f 100644
+> > --- a/fs/ceph/super.h
+> > +++ b/fs/ceph/super.h
+> > @@ -91,7 +91,7 @@ struct ceph_mount_options {
+> >  
+> >  	char *snapdir_name;   /* default ".snap" */
+> >  	char *mds_namespace;  /* default NULL */
+> > -	char *server_path;    /* default  "/" */
+> > +	char *server_path;    /* default NULL (means "/") */
+> >  	char *fscache_uniq;   /* default NULL */
+> >  };
+> >  
+> 
+> Nice work.
+> 
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> 
