@@ -2,77 +2,309 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ABC91A067D
-	for <lists+ceph-devel@lfdr.de>; Tue,  7 Apr 2020 07:20:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20DEF1A0890
+	for <lists+ceph-devel@lfdr.de>; Tue,  7 Apr 2020 09:45:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbgDGFUn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 7 Apr 2020 01:20:43 -0400
-Received: from mga11.intel.com ([192.55.52.93]:11919 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbgDGFUm (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 7 Apr 2020 01:20:42 -0400
-IronPort-SDR: +IfHd28giUvs5wJs4nfREay4YuU0nZVo8h/4jjcdS42Z4drAnsW/xAR4jI2PGKjqU/55D4mMPX
- Xhw+r+KtN9Wg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2020 22:20:43 -0700
-IronPort-SDR: I106xWPkjOHJ2Ybt95X6FR+Fyb4ueCJlro4IJlSAi3kaXcv3TWKy5tbw+L9iegNTiMxvHxr2Bt
- v21xG+LXtwZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,353,1580803200"; 
-   d="scan'208";a="452319746"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 06 Apr 2020 22:20:36 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1jLgf5-0009y2-C8; Tue, 07 Apr 2020 13:20:35 +0800
-Date:   Tue, 7 Apr 2020 13:19:51 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     kbuild-all@lists.01.org, ceph-devel@vger.kernel.org
-Subject: [PATCH] ceph: fix semicolon.cocci warnings
-Message-ID: <20200407051949.GA5310@80add8c6127c>
-References: <202004071337.Kr4o9xHr%lkp@intel.com>
+        id S1726720AbgDGHpu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 7 Apr 2020 03:45:50 -0400
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:35356 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726687AbgDGHpu (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Apr 2020 03:45:50 -0400
+Received: by mail-qv1-f65.google.com with SMTP id q73so1401003qvq.2
+        for <ceph-devel@vger.kernel.org>; Tue, 07 Apr 2020 00:45:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tetBs5UP/z18SkYZbgkL9uWdO7kh9FQndWOkfV2hBTs=;
+        b=iMg7kNENDI5skgjQ7vFiACAKvm/RxUH3F71LE6DZz0tiGOqzEGlZ8nMmZcOYtXLtVq
+         AYqa0d1pDPH51+UDUKPbRPvrsgkfH8Cu7SSv3J91fIS/U/cdDVtj7nF8bGypNL2h7xke
+         wTpyipbmwbYo4VM+9LXkUG9i4aDBuHCVbowwIjPw7vVi8dwOo/vX+R8dUxZAtQ4keV3o
+         QeABP74egXIGNAn23hxX0wuChyaf8lEZcXdY283fgHTsIUs4UVtecBEZcxUaKG66ep/h
+         32SIPSTLlBtdXseK5abeB/FS1+h6mmYmOaAW2oCWwuBOIyRM6GR/+VWpFNCzBQxX1WFU
+         jMkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tetBs5UP/z18SkYZbgkL9uWdO7kh9FQndWOkfV2hBTs=;
+        b=liXUNC+ZMv5vd4CYB0lrgZGtUgIjQcrfq4quIUBlifiw4HN8EvSzRrew1rTBXYiAdP
+         Sd/UCUz3KELVgdAcxp9y/onqdyKu8uvmCTfc+cIGT0EzmV7PEpv64o1qL02iM4YwD1FF
+         +Gkc5E0CGuKtbyawxfGaLMGAtF/ONPZyGpulIRrBGk3DC/4IwkYAyAwkr7jbf3CwMpaG
+         bidXemKlReYVnE4T8sE5dg6MmC3KOcCY3eaBmE+LOvLCvwL3q8dUiZD0b6Ori6gG8TSL
+         hVSQyy00uo1HPdgNxP+ylkxEEN6T+irkOua5OOt8fX0h7fnRSWJqbARuTSUT/3t7k8py
+         q4kA==
+X-Gm-Message-State: AGi0PuaeSasR2eHL4DfqZGf6rHCYhxpc8y4P4KJT2FdfhdFSPLB+DCzn
+        k/H/rmmLl02ZGnliBGZT4IqpOr8sy5WJztZW5l5BwzyJMTU=
+X-Google-Smtp-Source: APiQypJcLDxtO2kbQwfUiWLr343ysXst47IK4Q23DTAyH4SUyOwAZFWYqW3lctlaWK1qTv6p7SFolz5QHel+bf+HJ84=
+X-Received: by 2002:a0c:d786:: with SMTP id z6mr947376qvi.50.1586245548344;
+ Tue, 07 Apr 2020 00:45:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202004071337.Kr4o9xHr%lkp@intel.com>
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200406194228.52418-1-jlayton@kernel.org> <20200406194228.52418-2-jlayton@kernel.org>
+In-Reply-To: <20200406194228.52418-2-jlayton@kernel.org>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Tue, 7 Apr 2020 15:45:36 +0800
+Message-ID: <CAAM7YA=ZQCRFAW_idcPPEDWXOu4BKrKNGvuKijaQhnOEW=_M+g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] ceph: convert mdsc->cap_dirty to a per-session list
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
+        Jan Fajerski <jfajerski@suse.com>,
+        Luis Henriques <lhenriques@suse.com>,
+        Gregory Farnum <gfarnum@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: kbuild test robot <lkp@intel.com>
+On Tue, Apr 7, 2020 at 3:42 AM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> This is a per-sb list now, but that makes it difficult to tell when
+> the cap is the last dirty one associated with the session. Switch
+> this to be a per-session list, but continue using the
+> mdsc->cap_dirty_lock to protect the lists.
+>
+> This list is only ever walked in ceph_flush_dirty_caps, so change that
+> to walk the sessions array and then flush the caps for inodes on each
+> session's list.
+>
+> If the auth cap ever changes while the inode has dirty caps, then
+> move the inode to the appropriate session for the new auth_cap. Also,
+> ensure that we never remove an auth cap while the inode is still on the
+> s_cap_dirty list.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/caps.c       | 78 ++++++++++++++++++++++++++++++++++++--------
+>  fs/ceph/mds_client.c |  2 +-
+>  fs/ceph/mds_client.h |  5 +--
+>  fs/ceph/super.h      | 19 +++++++++--
+>  4 files changed, 85 insertions(+), 19 deletions(-)
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 61808793e0c0..b27bca0e9651 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -597,6 +597,27 @@ static void __check_cap_issue(struct ceph_inode_info *ci, struct ceph_cap *cap,
+>         }
+>  }
+>
+> +/**
+> + * change_auth_cap_ses - move inode to appropriate lists when auth caps change
+> + * @ci: inode to be moved
+> + * @session: new auth caps session
+> + */
+> +static void change_auth_cap_ses(struct ceph_inode_info *ci,
+> +                               struct ceph_mds_session *session)
+> +{
+> +       lockdep_assert_held(&ci->i_ceph_lock);
+> +
+> +       if (list_empty(&ci->i_dirty_item) && list_empty(&ci->i_flushing_item))
+> +               return;
+> +
+> +       spin_lock(&session->s_mdsc->cap_dirty_lock);
+> +       if (!list_empty(&ci->i_dirty_item))
+> +               list_move(&ci->i_dirty_item, &session->s_cap_dirty);
+> +       if (!list_empty(&ci->i_flushing_item))
+> +               list_move_tail(&ci->i_flushing_item, &session->s_cap_flushing);
+> +       spin_unlock(&session->s_mdsc->cap_dirty_lock);
+> +}
+> +
+>  /*
+>   * Add a capability under the given MDS session.
+>   *
+> @@ -727,6 +748,9 @@ void ceph_add_cap(struct inode *inode,
+>         if (flags & CEPH_CAP_FLAG_AUTH) {
+>                 if (!ci->i_auth_cap ||
+>                     ceph_seq_cmp(ci->i_auth_cap->mseq, mseq) < 0) {
+> +                       if (ci->i_auth_cap &&
+> +                           ci->i_auth_cap->session != cap->session)
+> +                               change_auth_cap_ses(ci, cap->session);
+>                         ci->i_auth_cap = cap;
+>                         cap->mds_wanted = wanted;
+>                 }
+> @@ -1123,8 +1147,10 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
+>
+>         /* remove from inode's cap rbtree, and clear auth cap */
+>         rb_erase(&cap->ci_node, &ci->i_caps);
+> -       if (ci->i_auth_cap == cap)
+> +       if (ci->i_auth_cap == cap) {
+> +               WARN_ON_ONCE(!list_empty(&ci->i_dirty_item));
+>                 ci->i_auth_cap = NULL;
+> +       }
+>
+>         /* remove from session list */
+>         spin_lock(&session->s_cap_lock);
+> @@ -1690,6 +1716,8 @@ int __ceph_mark_dirty_caps(struct ceph_inode_info *ci, int mask,
+>              ceph_cap_string(was | mask));
+>         ci->i_dirty_caps |= mask;
+>         if (was == 0) {
+> +               struct ceph_mds_session *session = ci->i_auth_cap->session;
+> +
+>                 WARN_ON_ONCE(ci->i_prealloc_cap_flush);
+>                 swap(ci->i_prealloc_cap_flush, *pcf);
+>
+> @@ -1702,7 +1730,7 @@ int __ceph_mark_dirty_caps(struct ceph_inode_info *ci, int mask,
+>                      &ci->vfs_inode, ci->i_head_snapc, ci->i_auth_cap);
+>                 BUG_ON(!list_empty(&ci->i_dirty_item));
+>                 spin_lock(&mdsc->cap_dirty_lock);
+> -               list_add(&ci->i_dirty_item, &mdsc->cap_dirty);
+> +               list_add(&ci->i_dirty_item, &session->s_cap_dirty);
+>                 spin_unlock(&mdsc->cap_dirty_lock);
+>                 if (ci->i_flushing_caps == 0) {
+>                         ihold(inode);
+> @@ -3750,15 +3778,9 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
+>                         tcap->issue_seq = t_seq - 1;
+>                         tcap->issued |= issued;
+>                         tcap->implemented |= issued;
+> -                       if (cap == ci->i_auth_cap)
+> +                       if (cap == ci->i_auth_cap) {
+>                                 ci->i_auth_cap = tcap;
+> -
+> -                       if (!list_empty(&ci->i_cap_flush_list) &&
+> -                           ci->i_auth_cap == tcap) {
+> -                               spin_lock(&mdsc->cap_dirty_lock);
+> -                               list_move_tail(&ci->i_flushing_item,
+> -                                              &tcap->session->s_cap_flushing);
+> -                               spin_unlock(&mdsc->cap_dirty_lock);
+> +                               change_auth_cap_ses(ci, tcap->session);
+>                         }
+>                 }
+>                 __ceph_remove_cap(cap, false);
+> @@ -4176,15 +4198,16 @@ void ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
+>  /*
+>   * Flush all dirty caps to the mds
+>   */
+> -void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc)
+> +static void flush_dirty_session_caps(struct ceph_mds_session *s)
+>  {
+> +       struct ceph_mds_client *mdsc = s->s_mdsc;
+>         struct ceph_inode_info *ci;
+>         struct inode *inode;
+>
+>         dout("flush_dirty_caps\n");
+>         spin_lock(&mdsc->cap_dirty_lock);
+> -       while (!list_empty(&mdsc->cap_dirty)) {
+> -               ci = list_first_entry(&mdsc->cap_dirty, struct ceph_inode_info,
+> +       while (!list_empty(&s->s_cap_dirty)) {
+> +               ci = list_first_entry(&s->s_cap_dirty, struct ceph_inode_info,
+>                                       i_dirty_item);
+>                 inode = &ci->vfs_inode;
+>                 ihold(inode);
+> @@ -4198,6 +4221,35 @@ void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc)
+>         dout("flush_dirty_caps done\n");
+>  }
+>
+> +static void iterate_sessions(struct ceph_mds_client *mdsc,
+> +                            void (*cb)(struct ceph_mds_session *))
+> +{
+> +       int mds;
+> +
+> +       mutex_lock(&mdsc->mutex);
+> +       for (mds = 0; mds < mdsc->max_sessions; ++mds) {
+> +               struct ceph_mds_session *s;
+> +
+> +               if (!mdsc->sessions[mds])
+> +                       continue;
+> +
+> +               s = ceph_get_mds_session(mdsc->sessions[mds]);
+> +               if (!s)
+> +                       continue;
+> +
+> +               mutex_unlock(&mdsc->mutex);
+> +               cb(s);
+> +               ceph_put_mds_session(s);
+> +               mutex_lock(&mdsc->mutex);
+> +       };
+> +       mutex_unlock(&mdsc->mutex);
+> +}
+> +
+> +void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc)
+> +{
+> +       iterate_sessions(mdsc, flush_dirty_session_caps);
+> +}
+> +
+>  void __ceph_touch_fmode(struct ceph_inode_info *ci,
+>                         struct ceph_mds_client *mdsc, int fmode)
+>  {
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 9a8e7013aca1..be4ad7d28e3a 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -755,6 +755,7 @@ static struct ceph_mds_session *register_session(struct ceph_mds_client *mdsc,
+>         INIT_LIST_HEAD(&s->s_cap_releases);
+>         INIT_WORK(&s->s_cap_release_work, ceph_cap_release_work);
+>
+> +       INIT_LIST_HEAD(&s->s_cap_dirty);
+>         INIT_LIST_HEAD(&s->s_cap_flushing);
+>
+>         mdsc->sessions[mds] = s;
+> @@ -4375,7 +4376,6 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
+>         spin_lock_init(&mdsc->snap_flush_lock);
+>         mdsc->last_cap_flush_tid = 1;
+>         INIT_LIST_HEAD(&mdsc->cap_flush_list);
+> -       INIT_LIST_HEAD(&mdsc->cap_dirty);
+>         INIT_LIST_HEAD(&mdsc->cap_dirty_migrating);
+>         mdsc->num_cap_flushing = 0;
+>         spin_lock_init(&mdsc->cap_dirty_lock);
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 8065863321fc..bd20257fb4c2 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -199,8 +199,10 @@ struct ceph_mds_session {
+>         struct list_head  s_cap_releases; /* waiting cap_release messages */
+>         struct work_struct s_cap_release_work;
+>
+> -       /* protected by mutex */
+> +       /* both protected by s_mdsc->cap_dirty_lock */
+> +       struct list_head  s_cap_dirty;        /* inodes w/ dirty caps */
+>         struct list_head  s_cap_flushing;     /* inodes w/ flushing caps */
+> +
+>         unsigned long     s_renew_requested; /* last time we sent a renew req */
+>         u64               s_renew_seq;
+>
+> @@ -424,7 +426,6 @@ struct ceph_mds_client {
+>
+>         u64               last_cap_flush_tid;
+>         struct list_head  cap_flush_list;
+> -       struct list_head  cap_dirty;        /* inodes with dirty caps */
+>         struct list_head  cap_dirty_migrating; /* ...that are migration... */
+>         int               num_cap_flushing; /* # caps we are flushing */
+>         spinlock_t        cap_dirty_lock;   /* protects above items */
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index bb372859c0ad..3a95395a4217 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -351,9 +351,22 @@ struct ceph_inode_info {
+>         struct rb_root i_caps;           /* cap list */
+>         struct ceph_cap *i_auth_cap;     /* authoritative cap, if any */
+>         unsigned i_dirty_caps, i_flushing_caps;     /* mask of dirtied fields */
+> -       struct list_head i_dirty_item, i_flushing_item; /* protected by
+> -                                                        * mdsc->cap_dirty_lock
+> -                                                        */
+> +
+> +       /*
+> +        * Link to the the auth cap's session's s_cap_dirty list. s_cap_dirty
+> +        * is protected by the mdsc->cap_dirty_lock, but each individual item
+> +        * is also protected by the inode's i_ceph_lock. Walking s_cap_dirty
+> +        * requires the mdsc->cap_dirty_lock. List presence for an item can
+> +        * be tested under the i_ceph_lock. Changing anything requires both.
+> +        */
+> +       struct list_head i_dirty_item;
+> +
+> +       /*
+> +        * Link to session's s_cap_flushing list. Protected by
+> +        * mdsc->cap_dirty_lock.
+> +        */
+> +       struct list_head i_flushing_item;
+> +
+>         /* we need to track cap writeback on a per-cap-bit basis, to allow
+>          * overlapping, pipelined cap flushes to the mds.  we can probably
+>          * reduce the tid to 8 bits if we're concerned about inode size. */
+> --
+> 2.25.1
+>
 
-fs/ceph/caps.c:4244:2-3: Unneeded semicolon
-
-
- Remove unneeded semicolon.
-
-Generated by: scripts/coccinelle/misc/semicolon.cocci
-
-Fixes: ed8895ddd103 ("ceph: convert mdsc->cap_dirty to a per-session list")
-Signed-off-by: kbuild test robot <lkp@intel.com>
----
-
-tree:   https://github.com/ceph/ceph-client.git testing
-head:   35d3521ea33df79af4358eb1e75f4d89316bf879
-commit: ed8895ddd103b886380f70cae1592dd2332278c2 [2/4] ceph: convert mdsc->cap_dirty to a per-session list
-
- caps.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -4241,7 +4241,7 @@ static void iterate_sessions(struct ceph
- 		cb(s);
- 		ceph_put_mds_session(s);
- 		mutex_lock(&mdsc->mutex);
--	};
-+	}
- 	mutex_unlock(&mdsc->mutex);
- }
- 
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
