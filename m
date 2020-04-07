@@ -2,309 +2,224 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20DEF1A0890
-	for <lists+ceph-devel@lfdr.de>; Tue,  7 Apr 2020 09:45:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE7141A0ACB
+	for <lists+ceph-devel@lfdr.de>; Tue,  7 Apr 2020 12:08:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbgDGHpu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 7 Apr 2020 03:45:50 -0400
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:35356 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726687AbgDGHpu (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Apr 2020 03:45:50 -0400
-Received: by mail-qv1-f65.google.com with SMTP id q73so1401003qvq.2
-        for <ceph-devel@vger.kernel.org>; Tue, 07 Apr 2020 00:45:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tetBs5UP/z18SkYZbgkL9uWdO7kh9FQndWOkfV2hBTs=;
-        b=iMg7kNENDI5skgjQ7vFiACAKvm/RxUH3F71LE6DZz0tiGOqzEGlZ8nMmZcOYtXLtVq
-         AYqa0d1pDPH51+UDUKPbRPvrsgkfH8Cu7SSv3J91fIS/U/cdDVtj7nF8bGypNL2h7xke
-         wTpyipbmwbYo4VM+9LXkUG9i4aDBuHCVbowwIjPw7vVi8dwOo/vX+R8dUxZAtQ4keV3o
-         QeABP74egXIGNAn23hxX0wuChyaf8lEZcXdY283fgHTsIUs4UVtecBEZcxUaKG66ep/h
-         32SIPSTLlBtdXseK5abeB/FS1+h6mmYmOaAW2oCWwuBOIyRM6GR/+VWpFNCzBQxX1WFU
-         jMkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tetBs5UP/z18SkYZbgkL9uWdO7kh9FQndWOkfV2hBTs=;
-        b=liXUNC+ZMv5vd4CYB0lrgZGtUgIjQcrfq4quIUBlifiw4HN8EvSzRrew1rTBXYiAdP
-         Sd/UCUz3KELVgdAcxp9y/onqdyKu8uvmCTfc+cIGT0EzmV7PEpv64o1qL02iM4YwD1FF
-         +Gkc5E0CGuKtbyawxfGaLMGAtF/ONPZyGpulIRrBGk3DC/4IwkYAyAwkr7jbf3CwMpaG
-         bidXemKlReYVnE4T8sE5dg6MmC3KOcCY3eaBmE+LOvLCvwL3q8dUiZD0b6Ori6gG8TSL
-         hVSQyy00uo1HPdgNxP+ylkxEEN6T+irkOua5OOt8fX0h7fnRSWJqbARuTSUT/3t7k8py
-         q4kA==
-X-Gm-Message-State: AGi0PuaeSasR2eHL4DfqZGf6rHCYhxpc8y4P4KJT2FdfhdFSPLB+DCzn
-        k/H/rmmLl02ZGnliBGZT4IqpOr8sy5WJztZW5l5BwzyJMTU=
-X-Google-Smtp-Source: APiQypJcLDxtO2kbQwfUiWLr343ysXst47IK4Q23DTAyH4SUyOwAZFWYqW3lctlaWK1qTv6p7SFolz5QHel+bf+HJ84=
-X-Received: by 2002:a0c:d786:: with SMTP id z6mr947376qvi.50.1586245548344;
- Tue, 07 Apr 2020 00:45:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200406194228.52418-1-jlayton@kernel.org> <20200406194228.52418-2-jlayton@kernel.org>
-In-Reply-To: <20200406194228.52418-2-jlayton@kernel.org>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Tue, 7 Apr 2020 15:45:36 +0800
-Message-ID: <CAAM7YA=ZQCRFAW_idcPPEDWXOu4BKrKNGvuKijaQhnOEW=_M+g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] ceph: convert mdsc->cap_dirty to a per-session list
+        id S1728180AbgDGKIZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 7 Apr 2020 06:08:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38660 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726562AbgDGKIZ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 7 Apr 2020 06:08:25 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 48708AE09;
+        Tue,  7 Apr 2020 10:08:21 +0000 (UTC)
+Date:   Tue, 7 Apr 2020 11:08:42 +0100
+From:   Luis Henriques <lhenriques@suse.com>
 To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
-        Jan Fajerski <jfajerski@suse.com>,
-        Luis Henriques <lhenriques@suse.com>,
-        Gregory Farnum <gfarnum@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Gregory Farnum <gfarnum@redhat.com>,
+        Zheng Yan <zyan@redhat.com>, Frank Schilder <frans@dtu.dk>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ceph: allow rename operation under different quota
+ realms
+Message-ID: <20200407100842.GA19111@suse.com>
+References: <20200406151201.32432-1-lhenriques@suse.com>
+ <20200406151201.32432-3-lhenriques@suse.com>
+ <538e31d9f231fbc09500c92929ef7a3cc516377f.camel@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <538e31d9f231fbc09500c92929ef7a3cc516377f.camel@kernel.org>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Apr 7, 2020 at 3:42 AM Jeff Layton <jlayton@kernel.org> wrote:
->
-> This is a per-sb list now, but that makes it difficult to tell when
-> the cap is the last dirty one associated with the session. Switch
-> this to be a per-session list, but continue using the
-> mdsc->cap_dirty_lock to protect the lists.
->
-> This list is only ever walked in ceph_flush_dirty_caps, so change that
-> to walk the sessions array and then flush the caps for inodes on each
-> session's list.
->
-> If the auth cap ever changes while the inode has dirty caps, then
-> move the inode to the appropriate session for the new auth_cap. Also,
-> ensure that we never remove an auth cap while the inode is still on the
-> s_cap_dirty list.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/caps.c       | 78 ++++++++++++++++++++++++++++++++++++--------
->  fs/ceph/mds_client.c |  2 +-
->  fs/ceph/mds_client.h |  5 +--
->  fs/ceph/super.h      | 19 +++++++++--
->  4 files changed, 85 insertions(+), 19 deletions(-)
->
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index 61808793e0c0..b27bca0e9651 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -597,6 +597,27 @@ static void __check_cap_issue(struct ceph_inode_info *ci, struct ceph_cap *cap,
->         }
->  }
->
-> +/**
-> + * change_auth_cap_ses - move inode to appropriate lists when auth caps change
-> + * @ci: inode to be moved
-> + * @session: new auth caps session
-> + */
-> +static void change_auth_cap_ses(struct ceph_inode_info *ci,
-> +                               struct ceph_mds_session *session)
-> +{
-> +       lockdep_assert_held(&ci->i_ceph_lock);
-> +
-> +       if (list_empty(&ci->i_dirty_item) && list_empty(&ci->i_flushing_item))
-> +               return;
-> +
-> +       spin_lock(&session->s_mdsc->cap_dirty_lock);
-> +       if (!list_empty(&ci->i_dirty_item))
-> +               list_move(&ci->i_dirty_item, &session->s_cap_dirty);
-> +       if (!list_empty(&ci->i_flushing_item))
-> +               list_move_tail(&ci->i_flushing_item, &session->s_cap_flushing);
-> +       spin_unlock(&session->s_mdsc->cap_dirty_lock);
-> +}
-> +
->  /*
->   * Add a capability under the given MDS session.
->   *
-> @@ -727,6 +748,9 @@ void ceph_add_cap(struct inode *inode,
->         if (flags & CEPH_CAP_FLAG_AUTH) {
->                 if (!ci->i_auth_cap ||
->                     ceph_seq_cmp(ci->i_auth_cap->mseq, mseq) < 0) {
-> +                       if (ci->i_auth_cap &&
-> +                           ci->i_auth_cap->session != cap->session)
-> +                               change_auth_cap_ses(ci, cap->session);
->                         ci->i_auth_cap = cap;
->                         cap->mds_wanted = wanted;
->                 }
-> @@ -1123,8 +1147,10 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
->
->         /* remove from inode's cap rbtree, and clear auth cap */
->         rb_erase(&cap->ci_node, &ci->i_caps);
-> -       if (ci->i_auth_cap == cap)
-> +       if (ci->i_auth_cap == cap) {
-> +               WARN_ON_ONCE(!list_empty(&ci->i_dirty_item));
->                 ci->i_auth_cap = NULL;
-> +       }
->
->         /* remove from session list */
->         spin_lock(&session->s_cap_lock);
-> @@ -1690,6 +1716,8 @@ int __ceph_mark_dirty_caps(struct ceph_inode_info *ci, int mask,
->              ceph_cap_string(was | mask));
->         ci->i_dirty_caps |= mask;
->         if (was == 0) {
-> +               struct ceph_mds_session *session = ci->i_auth_cap->session;
-> +
->                 WARN_ON_ONCE(ci->i_prealloc_cap_flush);
->                 swap(ci->i_prealloc_cap_flush, *pcf);
->
-> @@ -1702,7 +1730,7 @@ int __ceph_mark_dirty_caps(struct ceph_inode_info *ci, int mask,
->                      &ci->vfs_inode, ci->i_head_snapc, ci->i_auth_cap);
->                 BUG_ON(!list_empty(&ci->i_dirty_item));
->                 spin_lock(&mdsc->cap_dirty_lock);
-> -               list_add(&ci->i_dirty_item, &mdsc->cap_dirty);
-> +               list_add(&ci->i_dirty_item, &session->s_cap_dirty);
->                 spin_unlock(&mdsc->cap_dirty_lock);
->                 if (ci->i_flushing_caps == 0) {
->                         ihold(inode);
-> @@ -3750,15 +3778,9 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
->                         tcap->issue_seq = t_seq - 1;
->                         tcap->issued |= issued;
->                         tcap->implemented |= issued;
-> -                       if (cap == ci->i_auth_cap)
-> +                       if (cap == ci->i_auth_cap) {
->                                 ci->i_auth_cap = tcap;
-> -
-> -                       if (!list_empty(&ci->i_cap_flush_list) &&
-> -                           ci->i_auth_cap == tcap) {
-> -                               spin_lock(&mdsc->cap_dirty_lock);
-> -                               list_move_tail(&ci->i_flushing_item,
-> -                                              &tcap->session->s_cap_flushing);
-> -                               spin_unlock(&mdsc->cap_dirty_lock);
-> +                               change_auth_cap_ses(ci, tcap->session);
->                         }
->                 }
->                 __ceph_remove_cap(cap, false);
-> @@ -4176,15 +4198,16 @@ void ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
->  /*
->   * Flush all dirty caps to the mds
->   */
-> -void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc)
-> +static void flush_dirty_session_caps(struct ceph_mds_session *s)
->  {
-> +       struct ceph_mds_client *mdsc = s->s_mdsc;
->         struct ceph_inode_info *ci;
->         struct inode *inode;
->
->         dout("flush_dirty_caps\n");
->         spin_lock(&mdsc->cap_dirty_lock);
-> -       while (!list_empty(&mdsc->cap_dirty)) {
-> -               ci = list_first_entry(&mdsc->cap_dirty, struct ceph_inode_info,
-> +       while (!list_empty(&s->s_cap_dirty)) {
-> +               ci = list_first_entry(&s->s_cap_dirty, struct ceph_inode_info,
->                                       i_dirty_item);
->                 inode = &ci->vfs_inode;
->                 ihold(inode);
-> @@ -4198,6 +4221,35 @@ void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc)
->         dout("flush_dirty_caps done\n");
->  }
->
-> +static void iterate_sessions(struct ceph_mds_client *mdsc,
-> +                            void (*cb)(struct ceph_mds_session *))
-> +{
-> +       int mds;
-> +
-> +       mutex_lock(&mdsc->mutex);
-> +       for (mds = 0; mds < mdsc->max_sessions; ++mds) {
-> +               struct ceph_mds_session *s;
-> +
-> +               if (!mdsc->sessions[mds])
-> +                       continue;
-> +
-> +               s = ceph_get_mds_session(mdsc->sessions[mds]);
-> +               if (!s)
-> +                       continue;
-> +
-> +               mutex_unlock(&mdsc->mutex);
-> +               cb(s);
-> +               ceph_put_mds_session(s);
-> +               mutex_lock(&mdsc->mutex);
-> +       };
-> +       mutex_unlock(&mdsc->mutex);
-> +}
-> +
-> +void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc)
-> +{
-> +       iterate_sessions(mdsc, flush_dirty_session_caps);
-> +}
-> +
->  void __ceph_touch_fmode(struct ceph_inode_info *ci,
->                         struct ceph_mds_client *mdsc, int fmode)
->  {
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 9a8e7013aca1..be4ad7d28e3a 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -755,6 +755,7 @@ static struct ceph_mds_session *register_session(struct ceph_mds_client *mdsc,
->         INIT_LIST_HEAD(&s->s_cap_releases);
->         INIT_WORK(&s->s_cap_release_work, ceph_cap_release_work);
->
-> +       INIT_LIST_HEAD(&s->s_cap_dirty);
->         INIT_LIST_HEAD(&s->s_cap_flushing);
->
->         mdsc->sessions[mds] = s;
-> @@ -4375,7 +4376,6 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
->         spin_lock_init(&mdsc->snap_flush_lock);
->         mdsc->last_cap_flush_tid = 1;
->         INIT_LIST_HEAD(&mdsc->cap_flush_list);
-> -       INIT_LIST_HEAD(&mdsc->cap_dirty);
->         INIT_LIST_HEAD(&mdsc->cap_dirty_migrating);
->         mdsc->num_cap_flushing = 0;
->         spin_lock_init(&mdsc->cap_dirty_lock);
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index 8065863321fc..bd20257fb4c2 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -199,8 +199,10 @@ struct ceph_mds_session {
->         struct list_head  s_cap_releases; /* waiting cap_release messages */
->         struct work_struct s_cap_release_work;
->
-> -       /* protected by mutex */
-> +       /* both protected by s_mdsc->cap_dirty_lock */
-> +       struct list_head  s_cap_dirty;        /* inodes w/ dirty caps */
->         struct list_head  s_cap_flushing;     /* inodes w/ flushing caps */
-> +
->         unsigned long     s_renew_requested; /* last time we sent a renew req */
->         u64               s_renew_seq;
->
-> @@ -424,7 +426,6 @@ struct ceph_mds_client {
->
->         u64               last_cap_flush_tid;
->         struct list_head  cap_flush_list;
-> -       struct list_head  cap_dirty;        /* inodes with dirty caps */
->         struct list_head  cap_dirty_migrating; /* ...that are migration... */
->         int               num_cap_flushing; /* # caps we are flushing */
->         spinlock_t        cap_dirty_lock;   /* protects above items */
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index bb372859c0ad..3a95395a4217 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -351,9 +351,22 @@ struct ceph_inode_info {
->         struct rb_root i_caps;           /* cap list */
->         struct ceph_cap *i_auth_cap;     /* authoritative cap, if any */
->         unsigned i_dirty_caps, i_flushing_caps;     /* mask of dirtied fields */
-> -       struct list_head i_dirty_item, i_flushing_item; /* protected by
-> -                                                        * mdsc->cap_dirty_lock
-> -                                                        */
-> +
-> +       /*
-> +        * Link to the the auth cap's session's s_cap_dirty list. s_cap_dirty
-> +        * is protected by the mdsc->cap_dirty_lock, but each individual item
-> +        * is also protected by the inode's i_ceph_lock. Walking s_cap_dirty
-> +        * requires the mdsc->cap_dirty_lock. List presence for an item can
-> +        * be tested under the i_ceph_lock. Changing anything requires both.
-> +        */
-> +       struct list_head i_dirty_item;
-> +
-> +       /*
-> +        * Link to session's s_cap_flushing list. Protected by
-> +        * mdsc->cap_dirty_lock.
-> +        */
-> +       struct list_head i_flushing_item;
-> +
->         /* we need to track cap writeback on a per-cap-bit basis, to allow
->          * overlapping, pipelined cap flushes to the mds.  we can probably
->          * reduce the tid to 8 bits if we're concerned about inode size. */
-> --
-> 2.25.1
->
+On Mon, Apr 06, 2020 at 04:05:01PM -0400, Jeff Layton wrote:
+> On Mon, 2020-04-06 at 16:12 +0100, Luis Henriques wrote:
+> > Returning -EXDEV when trying to 'mv' files/directories from different
+> > quota realms results in copy+unlink operations instead of the faster
+> > CEPH_MDS_OP_RENAME.  This will occur even when there aren't any quotas
+> > set in the destination directory, or if there's enough space left for
+> > the new file(s).
+> > 
+> > This patch adds a new helper function to be called on rename operations
+> > which will allow these operations if they can be executed.  This patch
+> > mimics userland fuse client commit b8954e5734b3 ("client:
+> > optimize rename operation under different quota root").
+> > 
+> > Since ceph_quota_is_same_realm() is now called only from this new
+> > helper, make it static.
+> > 
+> > URL: https://tracker.ceph.com/issues/44791
+> > Signed-off-by: Luis Henriques <lhenriques@suse.com>
+> > ---
+> >  fs/ceph/dir.c   |  9 ++++----
+> >  fs/ceph/quota.c | 58 ++++++++++++++++++++++++++++++++++++++++++++++++-
+> >  fs/ceph/super.h |  3 ++-
+> >  3 files changed, 64 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> > index d0cd0aba5843..9d3f0062d800 100644
+> > --- a/fs/ceph/dir.c
+> > +++ b/fs/ceph/dir.c
+> > @@ -1099,11 +1099,12 @@ static int ceph_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >  			op = CEPH_MDS_OP_RENAMESNAP;
+> >  		else
+> >  			return -EROFS;
+> > +	} else {
+> > +		err = ceph_quota_check_rename(mdsc, d_inode(old_dentry),
+> > +					      new_dir);
+> 
+> I was wondering why not use "old_dir" here, but I think this is more
+> correct. I guess a directory could have a different quotarealm from its
+> parent?
 
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Yes, you can set, for example, ceph.quota.max_files to in a directory, and
+set it again in a subdirectory; this subdirectory will now be on a
+different quotarealm.
+
+> 
+> > +		if (err)
+> > +			return err;
+> >  	}
+> > -	/* don't allow cross-quota renames */
+> > -	if ((old_dir != new_dir) &&
+> > -	    (!ceph_quota_is_same_realm(old_dir, new_dir)))
+> > -		return -EXDEV;
+> >  
+> >  	dout("rename dir %p dentry %p to dir %p dentry %p\n",
+> >  	     old_dir, old_dentry, new_dir, new_dentry);
+> > diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
+> > index c5c8050f0f99..a6dd1a528c70 100644
+> > --- a/fs/ceph/quota.c
+> > +++ b/fs/ceph/quota.c
+> > @@ -264,7 +264,7 @@ static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
+> >  	return NULL;
+> >  }
+> >  
+> > -bool ceph_quota_is_same_realm(struct inode *old, struct inode *new)
+> > +static bool ceph_quota_is_same_realm(struct inode *old, struct inode *new)
+> >  {
+> >  	struct ceph_mds_client *mdsc = ceph_inode_to_client(old)->mdsc;
+> >  	struct ceph_snap_realm *old_realm, *new_realm;
+> > @@ -516,3 +516,59 @@ bool ceph_quota_update_statfs(struct ceph_fs_client *fsc, struct kstatfs *buf)
+> >  	return is_updated;
+> >  }
+> >  
+> > +/*
+> > + * ceph_quota_check_rename - check if a rename can be executed
+> > + * @mdsc:	MDS client instance
+> > + * @old:	inode to be copied
+> > + * @new:	destination inode (directory)
+> > + *
+> > + * This function verifies if a rename (e.g. moving a file or directory) can be
+> > + * executed.  It forces an rstat update in the @new target directory (and in the
+> > + * source @old as well, if it's a directory).  The actual check is done both for
+> > + * max_files and max_bytes.
+> > + *
+> > + * This function returns 0 if it's OK to do the rename, or, if quotas are
+> > + * exceeded, -EXDEV (if @old is a directory) or -EDQUOT.
+> > + */
+> > +int ceph_quota_check_rename(struct ceph_mds_client *mdsc,
+> > +			    struct inode *old, struct inode *new)
+> > +{
+> > +	struct ceph_inode_info *ci_old = ceph_inode(old);
+> > +	int ret = 0;
+> > +
+> > +	if ((old == new) || (ceph_quota_is_same_realm(old, new)))
+> > +		return 0;
+> > +
+> 
+> "old" represents the old dentry being moved. "new" is the new parent
+> dir. Do we need to test for old == new? The vfs won't allow the source
+> to be the ancestor of the target (or vice versa). From vfs_rename():
+> 
+>         /* source should not be ancestor of target */
+>         error = -EINVAL;
+>         if (old_dentry == trap)
+>                 goto exit5;
+>         /* target should not be an ancestor of source */
+>         if (!(flags & RENAME_EXCHANGE))
+>                 error = -ENOTEMPTY;
+> 
+
+Err... yeah, that 'old == new' is a mistake.  I just wanted to keep the
+optimization in the original code:
+
+	if ((old_dir != new_dir) &&
+	    (!ceph_quota_is_same_realm(old_dir, new_dir)))
+		return -EXDEV;
+
+I'll send out v2 in a minute with the following change to ceph_rename:
+
+	} else if (old_dir != new_dir) {
+		err = ceph_quota_check_rename(mdsc, d_inode(old_dentry),
+					      new_dir);
+
+Cheers,
+--
+Luís
+
+
+> > +	/*
+> > +	 * Get the latest rstat for target directory (and for source, if a
+> > +	 * directory)
+> > +	 */
+> > +	ret = ceph_do_getattr(new, CEPH_STAT_RSTAT, false);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (S_ISDIR(old->i_mode)) {
+> > +		ret = ceph_do_getattr(old, CEPH_STAT_RSTAT, false);
+> > +		if (ret)
+> > +			return ret;
+> > +		ret = check_quota_exceeded(new, QUOTA_CHECK_MAX_BYTES_OP,
+> > +					   ci_old->i_rbytes);
+> > +		if (!ret)
+> > +			ret = check_quota_exceeded(new,
+> > +						   QUOTA_CHECK_MAX_FILES_OP,
+> > +						   ci_old->i_rfiles +
+> > +						   ci_old->i_rsubdirs);
+> > +		if (ret)
+> > +			ret = -EXDEV;
+> > +	} else {
+> > +		ret = check_quota_exceeded(new, QUOTA_CHECK_MAX_BYTES_OP,
+> > +					   i_size_read(old));
+> > +		if (!ret)
+> > +			ret = check_quota_exceeded(new,
+> > +						   QUOTA_CHECK_MAX_FILES_OP, 1);
+> > +		if (ret)
+> > +			ret = -EDQUOT;
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > index 037cdfb2ad4f..d5853831a6b5 100644
+> > --- a/fs/ceph/super.h
+> > +++ b/fs/ceph/super.h
+> > @@ -1175,13 +1175,14 @@ extern void ceph_handle_quota(struct ceph_mds_client *mdsc,
+> >  			      struct ceph_mds_session *session,
+> >  			      struct ceph_msg *msg);
+> >  extern bool ceph_quota_is_max_files_exceeded(struct inode *inode);
+> > -extern bool ceph_quota_is_same_realm(struct inode *old, struct inode *new);
+> >  extern bool ceph_quota_is_max_bytes_exceeded(struct inode *inode,
+> >  					     loff_t newlen);
+> >  extern bool ceph_quota_is_max_bytes_approaching(struct inode *inode,
+> >  						loff_t newlen);
+> >  extern bool ceph_quota_update_statfs(struct ceph_fs_client *fsc,
+> >  				     struct kstatfs *buf);
+> > +extern int ceph_quota_check_rename(struct ceph_mds_client *mdsc,
+> > +				   struct inode *old, struct inode *new);
+> >  extern void ceph_cleanup_quotarealms_inodes(struct ceph_mds_client *mdsc);
+> >  
+> >  #endif /* _FS_CEPH_SUPER_H */
+> 
+> Looks good otherwise. Nice work!
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
