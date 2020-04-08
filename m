@@ -2,83 +2,73 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A4B91A23F1
-	for <lists+ceph-devel@lfdr.de>; Wed,  8 Apr 2020 16:21:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A87FA1A2416
+	for <lists+ceph-devel@lfdr.de>; Wed,  8 Apr 2020 16:31:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728568AbgDHOV3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 8 Apr 2020 10:21:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46754 "EHLO mail.kernel.org"
+        id S1728828AbgDHObN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 8 Apr 2020 10:31:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727486AbgDHOV3 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 8 Apr 2020 10:21:29 -0400
+        id S1728908AbgDHObM (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 8 Apr 2020 10:31:12 -0400
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 526A420857;
-        Wed,  8 Apr 2020 14:21:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7191F20B1F;
+        Wed,  8 Apr 2020 14:31:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586355688;
-        bh=MVgQ/zfcKvN2INdj0qt5axdnSVv+K7sV5pB7sBXnZtg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U9HqXeqW0yhUGEULu9vhmayBD70lK2Cps7jMu+72VJZaXi6JUOFbGJd022ISSpeHr
-         qNCZaKDZZDycSNXML7CQA8eyEvudX15C6J0aY2Xyg5rPM3XesaXYmlJhfKjhBiPGCH
-         kh0+6sjjYa9fDQ6DqhyqbCXNSo+p/ApfTh8si/9c=
+        s=default; t=1586356272;
+        bh=tdUriesX2lwl8y1Yv0Uys2nb8BK6YfXv8InWY36V8uI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=tmMzdEbWKbrVqIOCaJYZwfP9Wovaf2rqvxkxUssc4w0XcmFoUuI2BaUfOjZlXPlD2
+         gGYXo03sfm9rlHanGavJW7T+pVCtGNBQnlkKN7cr5Wih4JsIrn32HmcK0lSHVFMZTD
+         s3cUx73dpmBx4kwyBIgZ4YXTg4DDWGSWn/RQsc0Y=
+Message-ID: <c0942c61c37e3f79dcc88ddba94d65aca2ca9a2c.camel@kernel.org>
+Subject: Re: [PATCH v2 0/2] ceph: support cross-quota-tree renames
 From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, dan.carpenter@oracle.com, sage@redhat.com
-Subject: [PATCH 2/2] ceph: initialize base and pathlen variables in async dirops cb's
-Date:   Wed,  8 Apr 2020 10:21:25 -0400
-Message-Id: <20200408142125.52908-3-jlayton@kernel.org>
-X-Mailer: git-send-email 2.25.2
-In-Reply-To: <20200408142125.52908-1-jlayton@kernel.org>
-References: <20200408142125.52908-1-jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.com>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Gregory Farnum <gfarnum@redhat.com>,
+        Zheng Yan <zyan@redhat.com>
+Cc:     Frank Schilder <frans@dtu.dk>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 08 Apr 2020 10:31:10 -0400
+In-Reply-To: <20200407103020.22588-1-lhenriques@suse.com>
+References: <20200407103020.22588-1-lhenriques@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Ensure that the pr_warn messages look sane even if ceph_mdsc_build_path
-fails.
+On Tue, 2020-04-07 at 11:30 +0100, Luis Henriques wrote:
+> Hi!
+> 
+> The following patches will make the cephfs kernel client behave the same
+> way as the fuse client when doing renames across different quota realms.
+> 
+> Changes since v1:
+> 
+> - Dropped 'old == new' check in ceph_quota_check_rename() and added back
+>   optimization in ceph_rename(), to only check realms if old_dir and
+>   new_dir are different.
+> 
+> Luis Henriques (2):
+>   ceph: normalize 'delta' parameter usage in check_quota_exceeded
+>   ceph: allow rename operation under different quota realms
+> 
+>  fs/ceph/dir.c   |  9 +++----
+>  fs/ceph/quota.c | 62 +++++++++++++++++++++++++++++++++++++++++++++----
+>  fs/ceph/super.h |  3 ++-
+>  3 files changed, 65 insertions(+), 9 deletions(-)
+> 
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/dir.c  | 4 ++--
- fs/ceph/file.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Looks good. Merged into ceph-client/testing.
 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 10d528a455d5..93476d447a4b 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1057,8 +1057,8 @@ static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
- 
- 	/* If op failed, mark everyone involved for errors */
- 	if (result) {
--		int pathlen;
--		u64 base;
-+		int pathlen = 0;
-+		u64 base = 0;
- 		char *path = ceph_mdsc_build_path(req->r_dentry, &pathlen,
- 						  &base, 0);
- 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 3a1bd13de84f..160644ddaeed 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -529,8 +529,8 @@ static void ceph_async_create_cb(struct ceph_mds_client *mdsc,
- 
- 	if (result) {
- 		struct dentry *dentry = req->r_dentry;
--		int pathlen;
--		u64 base;
-+		int pathlen = 0;
-+		u64 base = 0;
- 		char *path = ceph_mdsc_build_path(req->r_dentry, &pathlen,
- 						  &base, 0);
- 
+Thanks!
 -- 
-2.25.2
+Jeff Layton <jlayton@kernel.org>
 
