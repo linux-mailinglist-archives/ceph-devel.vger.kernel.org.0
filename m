@@ -2,56 +2,56 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDA6C1A4455
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 Apr 2020 11:14:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14BC91A451D
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 Apr 2020 12:20:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725990AbgDJJOM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 10 Apr 2020 05:14:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43582 "EHLO mail.kernel.org"
+        id S1726142AbgDJKUk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 10 Apr 2020 06:20:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46772 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725897AbgDJJOM (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 10 Apr 2020 05:14:12 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12B2E206F7;
-        Fri, 10 Apr 2020 09:14:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586510052;
-        bh=PTZBy+t6fKfHwGwwwUASVhbIbdAP1k2z3aDuQjx3OoQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wCWK8uNf2+0P4p9pgt4skgm2ZpoGwLNMkmU3jI7f6jdWc58duWB7ebK7tjKCff4Bl
-         SB5WcBrglEAqDwmlR3MfsTukCIPIEsOWfcJicoaIgAR8egxN9ujL40Hn2nGxFRPJPk
-         62wqb5sFQV8R0MbgWFmQaBMtwCE3K0b/gB6cKOUI=
-Date:   Fri, 10 Apr 2020 11:14:10 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Luis Henriques <lhenriques@suse.com>
+        id S1725930AbgDJKUk (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 10 Apr 2020 06:20:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 59D04ABAD;
+        Fri, 10 Apr 2020 10:20:38 +0000 (UTC)
+Date:   Fri, 10 Apr 2020 11:20:59 +0100
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Sasha Levin <sashal@kernel.org>, Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
         stable@vger.kernel.org
 Subject: Re: [PATCH 0/2] stable CephFS backports
-Message-ID: <20200410091410.GF1691838@kroah.com>
+Message-ID: <20200410102059.GA18283@suse.com>
 References: <20200408105844.21840-1-lhenriques@suse.com>
+ <20200410091410.GF1691838@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200408105844.21840-1-lhenriques@suse.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200410091410.GF1691838@kroah.com>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Apr 08, 2020 at 11:58:38AM +0100, Luis Henriques wrote:
-> Hi!
+On Fri, Apr 10, 2020 at 11:14:10AM +0200, Greg Kroah-Hartman wrote:
+> On Wed, Apr 08, 2020 at 11:58:38AM +0100, Luis Henriques wrote:
+> > Hi!
+> > 
+> > Please pick the backports for the following upstream commits:
+> > 
+> >   4fbc0c711b24 "ceph: remove the extra slashes in the server path"
+> >   b27a939e8376 "ceph: canonicalize server path in place"
+> > 
+> > They fix an ancient bug that can be reproduced in kernels as old as 4.9 (I
+> > couldn't reproduced it with 4.4).
 > 
-> Please pick the backports for the following upstream commits:
-> 
->   4fbc0c711b24 "ceph: remove the extra slashes in the server path"
->   b27a939e8376 "ceph: canonicalize server path in place"
-> 
-> They fix an ancient bug that can be reproduced in kernels as old as 4.9 (I
-> couldn't reproduced it with 4.4).
+> All now queued up, including for 5.5.y, thanks.
 
-All now queued up, including for 5.5.y, thanks.
+Awesome, thanks.  And sorry, I forgot to mention in the cover-letter that
+5.5 was a clean cherry-pick.
 
-greg k-h
+Cheers,
+--
+Luís
