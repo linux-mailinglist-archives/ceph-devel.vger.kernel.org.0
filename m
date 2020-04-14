@@ -2,85 +2,73 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD1B51A78B8
-	for <lists+ceph-devel@lfdr.de>; Tue, 14 Apr 2020 12:47:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1F471A7F83
+	for <lists+ceph-devel@lfdr.de>; Tue, 14 Apr 2020 16:21:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438494AbgDNKqj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 14 Apr 2020 06:46:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50272 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438529AbgDNKnP (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 14 Apr 2020 06:43:15 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2389779AbgDNOUh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 14 Apr 2020 10:20:37 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:40662 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389710AbgDNOUX (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 14 Apr 2020 10:20:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1586874021;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=NYWOZo6GSM1gl5Dpdc7Qc14rRCkPfmWgzyLfnqiKprc=;
+        b=UCfWfEh53Rp3NWQm7CvQWqY8KtHEiOH6sz2bll3G2JHdIkjLmesdZo6OtLQ/Bs+wy1ZqsV
+        1GHF0JZptcxjPlhojtiMAihp1QpqXvmPmi7dKw5nlKIguLeVtMbT+f4x/Pt7ycGoHfQP3x
+        wFI5E3/rHyNNkWemM4jaJuVsbLQKqFM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-463-95ZOvXX8MsyxzBYsrtgbiQ-1; Tue, 14 Apr 2020 10:20:14 -0400
+X-MC-Unique: 95ZOvXX8MsyxzBYsrtgbiQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 248D520644;
-        Tue, 14 Apr 2020 10:43:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586860995;
-        bh=5IUAk3KsI/tk9Tw23WQsjipr5cuVynsx9WLVlBSWLdw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=x6hta4FF74MX+VE7BAZVD32QS9EWjL/rbBNRXDILqAAJAjSuaTWqgLNHIVAj7ASqy
-         WfQ5Qbc9DIstx+6gRl6TwQAQ/gLupdBeNibnvYd+H3HaK9+IKrWFeQrZuUO2npRm8e
-         AyuB2p3zgs+sEzoc2au6p/jc7TJOVkq91SiID3g4=
-Message-ID: <dbbf8ac2491089a864bab08a83ca89ca2fd65d5f.camel@kernel.org>
-Subject: Re: [PATCH 1/2] ceph: have ceph_mdsc_free_path ignore ERR_PTR values
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        Sage Weil <sage@redhat.com>
-Date:   Tue, 14 Apr 2020 06:43:14 -0400
-In-Reply-To: <20200413194153.GD14511@kadam>
-References: <20200408142125.52908-1-jlayton@kernel.org>
-         <20200408142125.52908-2-jlayton@kernel.org>
-         <CAOi1vP99BbHFrrg+0HAbZrZV7DQ7EG7euTY6cbtdWajsdyN3jQ@mail.gmail.com>
-         <ded1b71dcda70e3a249df21c294607dac6545694.camel@kernel.org>
-         <CAOi1vP9mZTShECrVVohuj4p=Yr+rWvWnXNY03c85CuO4fGNSyQ@mail.gmail.com>
-         <55c47d66b579fcf5749376c73d681d0273095f6d.camel@kernel.org>
-         <20200413194153.GD14511@kadam>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6FA47801A12;
+        Tue, 14 Apr 2020 14:20:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-113-129.rdu2.redhat.com [10.10.113.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B89C260BE1;
+        Tue, 14 Apr 2020 14:20:11 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org
+cc:     dhowells@redhat.com, keyrings@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        fweimer@redhat.com
+Subject: What's a good default TTL for DNS keys in the kernel
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3865907.1586874010.1@warthog.procyon.org.uk>
+Date:   Tue, 14 Apr 2020 15:20:10 +0100
+Message-ID: <3865908.1586874010@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2020-04-13 at 22:41 +0300, Dan Carpenter wrote:
-> On Mon, Apr 13, 2020 at 09:23:22AM -0400, Jeff Layton wrote:
-> > > > I don't see a problem with having a "free" routine ignore IS_ERR values
-> > > > just like it does NULL values. How about I just trim off the other
-> > > > deltas in this patch? Something like this?
-> > > 
-> > > I think it encourages fragile code.  Less so than functions that
-> > > return pointer, NULL or IS_ERR pointer, but still.  You yourself
-> > > almost fell into one of these traps while editing debugfs.c ;)
-> > > 
-> > 
-> > We'll have to agree to disagree here. Having a free routine ignore
-> > ERR_PTR values seems perfectly reasonable to me.
-> 
-> Freeing things which haven't been allocated is a constant source bugs.
-> 
-> err:
-> 	kfree(foo->bar);
-> 	kfree(foo);
-> 
-> Oops...  "foo" wasn't allocated so the first line will crash.  Every
-> other day someone commits code like that.
-> 
+Since key.dns_resolver isn't given a TTL for the address information obtained
+for getaddrinfo(), no expiry is set on dns_resolver keys in the kernel for
+NFS, CIFS or Ceph.  AFS gets one if it looks up a cell SRV or AFSDB record
+because that is looked up in the DNS directly, but it doesn't look up A or
+AAAA records, so doesn't get an expiry for the addresses themselves.
 
-It's not clear to me whether you're advocating for Ilya's approach or
-mine (neither? both?). Which approach do you think is best?
+I've previously asked the libc folks if there's a way to get this information
+exposed in struct addrinfo, but I don't think that ended up going anywhere -
+and, in any case, would take a few years to work through the system.
 
-FWIW, my rationale for doing it this way is that the "allocator" for
-ceph_mdsc_free_path is ceph_mdsc_build_path. That routine returns an
-ERR_PTR value on failure, not a NULL pointer, so it makes sense to me
-to have the free routine accept and ignore those values.
+For the moment, I think I should put a default on any dns_resolver keys and
+have it applied either by the kernel (configurable with a /proc/sys/ setting)
+or by the key.dnf_resolver program (configurable with an /etc file).
 
-I don't quite follow the rationale that that encourages fragile code.
--- 
-Jeff Layton <jlayton@kernel.org>
+Any suggestion as to the preferred default TTL?  10 minutes?
+
+David
 
