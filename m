@@ -2,91 +2,77 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DE5A1ADA19
-	for <lists+ceph-devel@lfdr.de>; Fri, 17 Apr 2020 11:38:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7DBE1ADB48
+	for <lists+ceph-devel@lfdr.de>; Fri, 17 Apr 2020 12:42:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730291AbgDQJhQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 17 Apr 2020 05:37:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46296 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730131AbgDQJhP (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 17 Apr 2020 05:37:15 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B80D2C061A0C;
-        Fri, 17 Apr 2020 02:37:15 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id p8so852847pgi.5;
-        Fri, 17 Apr 2020 02:37:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8s/oCPK4WL2hZq8jZKgDQsrUlYP9Rih4kTn1YbLdhyY=;
-        b=IoD1s1Pm5TgClqU+qaJ499vn9G9Ss3sJxKlhQlqEOQ/X0SWCvAkxRdBkX6Ad/quAUy
-         lOwcGmWAIbv+B/8LNvqvvTEH4ojvCd55r7OMOVZGKotEzongZBq8wedbkEGntznmXZos
-         u2KQdRiJGW+phBf7Aqv3tEBHWEeUYwChH1UPgYvoXXwvsmrJ23iSRTpxhBb5wueWwAP3
-         DC2YGkaWhkgqy/eWFA6E6z+FEIq8qyWgHDJVB22V2vEuu/2dC7hxE7ChHmRXAoQzPrBE
-         sHXcseHzrK9ofDjDtJ81RTdUI3J0U/EoD24rElddOX3lzB8FaRhbZTHrLTh3MJA2KjUU
-         ujOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8s/oCPK4WL2hZq8jZKgDQsrUlYP9Rih4kTn1YbLdhyY=;
-        b=hoUHo7/1xhpqBhPy93uQZaTcrOoWytR4eeS9HtyfkG1qiMEV1V1vRvsWkR+P5miy7L
-         LDvxVwxoiiOV/2u6ttg70gbjGtEE9mBKc3la4LGFV3861Q5haIQC5s3dAy5gFveVfOJr
-         3hhccmFu/EdJIdLoAYlFb2CeZwJ0Hq1Dk/8hQLUbBL3oanWK1rOtUpIsMW6HeVThet1k
-         WXmgKy4td8N+tiRKpY/Ktr7w3jodGrxt3oxkDpwI3sGhG9Q8ljPa3ZK9gwfknCsWjhIu
-         PxFedUZCjGVJmETV/k9bSxmeTxLDj7s8AifmXWufW9j3kQHGSM9YAuZEo7vA3I4AgAZl
-         Bgcg==
-X-Gm-Message-State: AGi0PuYyLd48d+0n1MJzq1aKKN9q0lMQpW4nhCy/s/Y0ywZTHNQy1EEZ
-        t1GGWI1yOZAxcx8Za5DzxY4=
-X-Google-Smtp-Source: APiQypLL/2ihqphswfksyAaYitVMbud/Lkf3A6TDuyBvvgwaeM4JkyVm0IcSBYciFTrzPtfK8aZReg==
-X-Received: by 2002:a65:64d0:: with SMTP id t16mr2061265pgv.415.1587116235268;
-        Fri, 17 Apr 2020 02:37:15 -0700 (PDT)
-Received: from MacBook-Pro.mshome.net ([122.224.153.228])
-        by smtp.googlemail.com with ESMTPSA id g197sm17788539pfb.54.2020.04.17.02.37.12
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Apr 2020 02:37:14 -0700 (PDT)
-From:   Yanhu Cao <gmayyyha@gmail.com>
-To:     jlayton@kernel.org
+        id S1729144AbgDQKl3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 17 Apr 2020 06:41:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53616 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726469AbgDQKl3 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 17 Apr 2020 06:41:29 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A14D2221EA;
+        Fri, 17 Apr 2020 10:41:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587120089;
+        bh=lHB1NoiGfUWFSxW01s7mCG3LNiTaqRJg8T1vS2BHcBU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=k9CleFO05+Sm/1UuSuKkUY01NFgjtGs8zgfK6CZmawo5OAMlytqJ1y8tTLaF8f/P7
+         rfvZgNdpms/NGDCdtzzaPuDkMNZRFidrG48GgEHLPrajOIkVgY3rpKNL/xHoQd1qkI
+         oSOrdTGsOqrgs34zI5+WXpEe0n7tPmmGd/121aFU=
+Message-ID: <faaf27530cafc9b00e81de58fb4ad153a1687622.camel@kernel.org>
+Subject: Re: [v2] ceph: if we are blacklisted, __do_request returns directly
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Yanhu Cao <gmayyyha@gmail.com>
 Cc:     sage@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yanhu Cao <gmayyyha@gmail.com>
-Subject: [v2] ceph: if we are blacklisted, __do_request returns directly
-Date:   Fri, 17 Apr 2020 17:36:26 +0800
-Message-Id: <20200417093626.10892-1-gmayyyha@gmail.com>
-X-Mailer: git-send-email 2.24.2 (Apple Git-127)
+        linux-kernel@vger.kernel.org
+Date:   Fri, 17 Apr 2020 06:41:27 -0400
+In-Reply-To: <20200417093626.10892-1-gmayyyha@gmail.com>
+References: <20200417093626.10892-1-gmayyyha@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-If we mount cephfs by the recover_session option,
-__do_request can return directly until the client automatically reconnects.
+On Fri, 2020-04-17 at 17:36 +0800, Yanhu Cao wrote:
+> If we mount cephfs by the recover_session option,
+> __do_request can return directly until the client automatically reconnects.
+> 
+> Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> ---
+>  fs/ceph/mds_client.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 486f91f9685b..e6cda256b136 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -2708,6 +2708,12 @@ static void __do_request(struct ceph_mds_client *mdsc,
+>  
+>  	put_request_session(req);
+>  
+> +	if (mdsc->fsc->blacklisted &&
+> +	    ceph_test_mount_opt(mdsc->fsc, CLEANRECOVER)) {
+> +		err = -EACCES;
+> +		goto finish;
+> +	}
+> +
+>  	mds = __choose_mds(mdsc, req, &random);
+>  	if (mds < 0 ||
+>  	    ceph_mdsmap_get_state(mdsc->mdsmap, mds) < CEPH_MDS_STATE_ACTIVE) {
 
-Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
----
- fs/ceph/mds_client.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+We do have an EBLACKLISTED error defined, which is the same as
+ESHUTDOWN. The read and write code can return that when the client is
+blacklisted. Same for cap handling (in __ceph_pool_perm_get. Should this
+return -EBLACKLISTED instead?
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 486f91f9685b..e6cda256b136 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2708,6 +2708,12 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 
- 	put_request_session(req);
- 
-+	if (mdsc->fsc->blacklisted &&
-+	    ceph_test_mount_opt(mdsc->fsc, CLEANRECOVER)) {
-+		err = -EACCES;
-+		goto finish;
-+	}
-+
- 	mds = __choose_mds(mdsc, req, &random);
- 	if (mds < 0 ||
- 	    ceph_mdsmap_get_state(mdsc->mdsmap, mds) < CEPH_MDS_STATE_ACTIVE) {
 -- 
-2.24.2 (Apple Git-127)
+Jeff Layton <jlayton@kernel.org>
 
