@@ -2,89 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 164C41AD9A2
-	for <lists+ceph-devel@lfdr.de>; Fri, 17 Apr 2020 11:19:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DE5A1ADA19
+	for <lists+ceph-devel@lfdr.de>; Fri, 17 Apr 2020 11:38:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730199AbgDQJSl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 17 Apr 2020 05:18:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43368 "EHLO
+        id S1730291AbgDQJhQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 17 Apr 2020 05:37:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729987AbgDQJSk (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 17 Apr 2020 05:18:40 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF154C061A0C;
-        Fri, 17 Apr 2020 02:18:40 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id b18so1503034ilf.2;
-        Fri, 17 Apr 2020 02:18:40 -0700 (PDT)
+        with ESMTP id S1730131AbgDQJhP (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 17 Apr 2020 05:37:15 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B80D2C061A0C;
+        Fri, 17 Apr 2020 02:37:15 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id p8so852847pgi.5;
+        Fri, 17 Apr 2020 02:37:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iRWCVuq8TR2XzOv4hPXtI5URv7oqkeobScmDBMw46jU=;
-        b=I3NV9c53UUyM+RaFHpaI3ddEqtHTMNLrpnXEObfjp0e0mHLbguamjM20GafXHlc3ed
-         ZGR/ZJCgwJokyUJglSd8c8jXSWA9HKTJ5lwa7PCJGUsB+lbLZmvaasQt2pPpdEdT/WVm
-         frwUxDFnqxiS7bXG3yIqc7hmziyca70GVFOoKiSxseXhjKCcjYhqorn/jTqZKBdNQisF
-         AeOgu2i9w8/V6FSnr1gn2bOVuP+2Wb4uUtQbOD0DoqJnrGEWqRAPh/4CZ5DsYZFZNPc1
-         ns/6haYvqe0+gX3iZFgzvO7T8he9vfmOpoEeCOXB4RCCed9cEq0+7mVvTssFlwcKrxWV
-         E+Lg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8s/oCPK4WL2hZq8jZKgDQsrUlYP9Rih4kTn1YbLdhyY=;
+        b=IoD1s1Pm5TgClqU+qaJ499vn9G9Ss3sJxKlhQlqEOQ/X0SWCvAkxRdBkX6Ad/quAUy
+         lOwcGmWAIbv+B/8LNvqvvTEH4ojvCd55r7OMOVZGKotEzongZBq8wedbkEGntznmXZos
+         u2KQdRiJGW+phBf7Aqv3tEBHWEeUYwChH1UPgYvoXXwvsmrJ23iSRTpxhBb5wueWwAP3
+         DC2YGkaWhkgqy/eWFA6E6z+FEIq8qyWgHDJVB22V2vEuu/2dC7hxE7ChHmRXAoQzPrBE
+         sHXcseHzrK9ofDjDtJ81RTdUI3J0U/EoD24rElddOX3lzB8FaRhbZTHrLTh3MJA2KjUU
+         ujOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iRWCVuq8TR2XzOv4hPXtI5URv7oqkeobScmDBMw46jU=;
-        b=S+tbhKWbJSjXesJXz5yxGpoUh6INbLcps+urWhFEglaLTS3ZJ09EjiNB04At5Trak6
-         Tl3OKhzlKwxxmPmxpxtT4ZGFt/3o7rucoVKNn3xDbizWb1nISvD+SQtuz9Gz+Vuo8hxn
-         dF8/6pxhoA9jKi6Qwsy2K8unb9tqZDVENFcq+FreDN/QiF1+zUy/ujF9kYkaxremdRM6
-         CwNJEeUb+H4166V/NQpi02Mzlf/V1nCVTBf6sHfq81yBPHZVjJVmDIEFfZImPdEr8jO8
-         v3BRC0IshiYGjldsVwfYj7r1nMLPE2tMEpsWMkzfgKGkj1evKB9KrlSoF0s5bHa5inIz
-         FUSA==
-X-Gm-Message-State: AGi0Pua6bIdlZ2Fe/iIKjJcBTSXJDl1tS0qx4HBbqzsRVC6jitgSLFQV
-        yuJcz7jLtEU4fYLWj662x3GfSXEgJy+UIGVnrN8=
-X-Google-Smtp-Source: APiQypKLyZ1z8R9Bx3IFvmWATyK0p8QJ4t3dDqh+zoZfH4RuQzi8Op4IhAENVB998tQ83oZfu05nhEp28YrHD9cq+bY=
-X-Received: by 2002:a92:dc8d:: with SMTP id c13mr1915098iln.278.1587115120296;
- Fri, 17 Apr 2020 02:18:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200417083448.9122-1-gmayyyha@gmail.com>
-In-Reply-To: <20200417083448.9122-1-gmayyyha@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8s/oCPK4WL2hZq8jZKgDQsrUlYP9Rih4kTn1YbLdhyY=;
+        b=hoUHo7/1xhpqBhPy93uQZaTcrOoWytR4eeS9HtyfkG1qiMEV1V1vRvsWkR+P5miy7L
+         LDvxVwxoiiOV/2u6ttg70gbjGtEE9mBKc3la4LGFV3861Q5haIQC5s3dAy5gFveVfOJr
+         3hhccmFu/EdJIdLoAYlFb2CeZwJ0Hq1Dk/8hQLUbBL3oanWK1rOtUpIsMW6HeVThet1k
+         WXmgKy4td8N+tiRKpY/Ktr7w3jodGrxt3oxkDpwI3sGhG9Q8ljPa3ZK9gwfknCsWjhIu
+         PxFedUZCjGVJmETV/k9bSxmeTxLDj7s8AifmXWufW9j3kQHGSM9YAuZEo7vA3I4AgAZl
+         Bgcg==
+X-Gm-Message-State: AGi0PuYyLd48d+0n1MJzq1aKKN9q0lMQpW4nhCy/s/Y0ywZTHNQy1EEZ
+        t1GGWI1yOZAxcx8Za5DzxY4=
+X-Google-Smtp-Source: APiQypLL/2ihqphswfksyAaYitVMbud/Lkf3A6TDuyBvvgwaeM4JkyVm0IcSBYciFTrzPtfK8aZReg==
+X-Received: by 2002:a65:64d0:: with SMTP id t16mr2061265pgv.415.1587116235268;
+        Fri, 17 Apr 2020 02:37:15 -0700 (PDT)
+Received: from MacBook-Pro.mshome.net ([122.224.153.228])
+        by smtp.googlemail.com with ESMTPSA id g197sm17788539pfb.54.2020.04.17.02.37.12
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 17 Apr 2020 02:37:14 -0700 (PDT)
 From:   Yanhu Cao <gmayyyha@gmail.com>
-Date:   Fri, 17 Apr 2020 17:18:29 +0800
-Message-ID: <CAB9OAC2VvwM5+L=N09Y-usxyXFRnzWFs8iN-zLHyEz7-twPOmQ@mail.gmail.com>
-Subject: Re: [PATCH] ceph: if we are blacklisted, __do_request returns directly
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     jlayton@kernel.org
+Cc:     sage@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yanhu Cao <gmayyyha@gmail.com>
+Subject: [v2] ceph: if we are blacklisted, __do_request returns directly
+Date:   Fri, 17 Apr 2020 17:36:26 +0800
+Message-Id: <20200417093626.10892-1-gmayyyha@gmail.com>
+X-Mailer: git-send-email 2.24.2 (Apple Git-127)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-DNM. will add test mount option recover_session.
+If we mount cephfs by the recover_session option,
+__do_request can return directly until the client automatically reconnects.
 
-On Fri, Apr 17, 2020 at 4:35 PM Yanhu Cao <gmayyyha@gmail.com> wrote:
->
-> Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
-> ---
->  fs/ceph/mds_client.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 486f91f9685b..d2ea755b7c02 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -2708,6 +2708,11 @@ static void __do_request(struct ceph_mds_client *mdsc,
->
->         put_request_session(req);
->
-> +       if (mdsc->fsc->blacklisted) {
-> +               err = -EACCES;
-> +               goto finish;
-> +       }
-> +
->         mds = __choose_mds(mdsc, req, &random);
->         if (mds < 0 ||
->             ceph_mdsmap_get_state(mdsc->mdsmap, mds) < CEPH_MDS_STATE_ACTIVE) {
-> --
-> 2.24.2 (Apple Git-127)
->
+Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+---
+ fs/ceph/mds_client.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 486f91f9685b..e6cda256b136 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2708,6 +2708,12 @@ static void __do_request(struct ceph_mds_client *mdsc,
+ 
+ 	put_request_session(req);
+ 
++	if (mdsc->fsc->blacklisted &&
++	    ceph_test_mount_opt(mdsc->fsc, CLEANRECOVER)) {
++		err = -EACCES;
++		goto finish;
++	}
++
+ 	mds = __choose_mds(mdsc, req, &random);
+ 	if (mds < 0 ||
+ 	    ceph_mdsmap_get_state(mdsc->mdsmap, mds) < CEPH_MDS_STATE_ACTIVE) {
+-- 
+2.24.2 (Apple Git-127)
+
