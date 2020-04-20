@@ -2,61 +2,87 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 56AD51B0D32
-	for <lists+ceph-devel@lfdr.de>; Mon, 20 Apr 2020 15:47:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FDC01B0D07
+	for <lists+ceph-devel@lfdr.de>; Mon, 20 Apr 2020 15:44:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728700AbgDTNrY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 20 Apr 2020 09:47:24 -0400
-Received: from mail-4.de-punkt.de ([93.190.64.233]:51350 "EHLO
-        mail-4.de-punkt.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726817AbgDTNrY (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 20 Apr 2020 09:47:24 -0400
-X-Greylist: delayed 465 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 Apr 2020 09:47:23 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail-4.de-punkt.de (Postfix) with ESMTP id 39B361F188;
-        Mon, 20 Apr 2020 15:39:37 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at mail-4.de-punkt.de
-Received: from mail-4.de-punkt.de ([127.0.0.1])
-        by localhost (mail-4.de-punkt.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Z9ElYWGlV9V9; Mon, 20 Apr 2020 15:39:37 +0200 (CEST)
-Received: from MacBook-Pro-2.local (p200300DD970913004D5920F30331BB35.dip0.t-ipconnect.de [IPv6:2003:dd:9709:1300:4d59:20f3:331:bb35])
-        (Authenticated sender: chrislist@de-punkt.de)
-        by mail-4.de-punkt.de (Postfix) with ESMTPSA id F3ECA1F187;
-        Mon, 20 Apr 2020 15:39:36 +0200 (CEST)
-To:     ceph-users <ceph-users@ceph.io>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-From:   Christopher Kunz <chrislist@de-punkt.de>
-Subject: Goodbye and thanks for all the cuttlefish!
-Message-ID: <dd25fcff-5f8f-187d-0530-a94ec8ade8af@de-punkt.de>
-Date:   Mon, 20 Apr 2020 15:39:36 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.6.0
+        id S1727024AbgDTNoi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 20 Apr 2020 09:44:38 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:23380 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726081AbgDTNoi (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 20 Apr 2020 09:44:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1587390277;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=DeO1bWLn5C1PDseIUHBGmgkwOWAnibPK4fmDmUnKwZM=;
+        b=JK2TRjtkgS4GlagtiHiC3GV3GqO0kV/3wDaQIV9bs9zpLrlhIUs1TCu3kPj53Y4kfpPhuO
+        0Ll638iX47qnUKm0joFdG6ZgfHa8MACJCR6O2LwL32zBLj9sOBtE4dBwbQDlHh0xpM+Nep
+        mvvVWKiMV1vGnU+KN5nRtx4YtNbIvJg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-490-AsjRhcXENnGAptf90W0LEw-1; Mon, 20 Apr 2020 09:44:29 -0400
+X-MC-Unique: AsjRhcXENnGAptf90W0LEw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 804E2190A7A4
+        for <ceph-devel@vger.kernel.org>; Mon, 20 Apr 2020 13:44:28 +0000 (UTC)
+Received: from [10.3.128.3] (unknown [10.3.128.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0FCEA58
+        for <ceph-devel@vger.kernel.org>; Mon, 20 Apr 2020 13:44:27 +0000 (UTC)
+Date:   Mon, 20 Apr 2020 13:44:25 +0000 (UTC)
+From:   Sage Weil <sweil@redhat.com>
+X-X-Sender: sage@piezo.novalocal
+To:     ceph-devel@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: remove myself as ceph co-maintainer 
+Message-ID: <alpine.DEB.2.21.2004201343420.29831@piezo.novalocal>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hello ceph-{users,devel},
+Jeff, Ilya, and Dongsheng are doing all of the Ceph maintainance
+these days.
 
-most of you might not know me, but I've been around a while.
-I've been on these lists since probably 2012, when my company, Filoo,
-started operating one of the early Ceph clusters for VM images. Much has
-changed since then, and today we shut down our biggest Ceph cluster.
+Signed-off-by: Sage Weil <sage@redhat.com>
+---
+ MAINTAINERS | 3 ---
+ 1 file changed, 3 deletions(-)
 
-This was not for technical reasons, but purely for operational and
-commercial reasons. I still think Ceph is a superior concept and I'm
-sure it will continue to evolve and mature.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b816a453b10e..7a691c8fc76d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3937,7 +3937,6 @@ F:        arch/powerpc/platforms/cell/
+ CEPH COMMON CODE (LIBCEPH)
+ M:     Ilya Dryomov <idryomov@gmail.com>
+ M:     Jeff Layton <jlayton@kernel.org>
+-M:     Sage Weil <sage@redhat.com>
+ L:     ceph-devel@vger.kernel.org
+ S:     Supported
+ W:     http://ceph.com/
+@@ -3949,7 +3948,6 @@ F:        net/ceph/
+ 
+ CEPH DISTRIBUTED FILE SYSTEM CLIENT (CEPH)
+ M:     Jeff Layton <jlayton@kernel.org>
+-M:     Sage Weil <sage@redhat.com>
+ M:     Ilya Dryomov <idryomov@gmail.com>
+ L:     ceph-devel@vger.kernel.org
+ S:     Supported
+@@ -14096,7 +14094,6 @@ F:      drivers/media/radio/radio-tea5777.c
+ 
+ RADOS BLOCK DEVICE (RBD)
+ M:     Ilya Dryomov <idryomov@gmail.com>
+-M:     Sage Weil <sage@redhat.com>
+ R:     Dongsheng Yang <dongsheng.yang@easystack.cn>
+ L:     ceph-devel@vger.kernel.org
+ S:     Supported
+-- 
+2.24.1
 
-The interactions on and off the Ceph lists, especially by Sage and many
-of the original Inktank team, have helped us tremendously, thanks a lot
-for that!
 
-I wish you all the best for the future of Ceph and will unsubscribe now.
-See you around!
-
-Best regads,
-
-Chris
