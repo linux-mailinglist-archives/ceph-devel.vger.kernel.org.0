@@ -2,70 +2,93 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E653B1AFF65
-	for <lists+ceph-devel@lfdr.de>; Mon, 20 Apr 2020 03:06:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B40F41B0120
+	for <lists+ceph-devel@lfdr.de>; Mon, 20 Apr 2020 07:47:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726012AbgDTBGK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 19 Apr 2020 21:06:10 -0400
-Received: from mx.cjr.nz ([51.158.111.142]:30162 "EHLO mx.cjr.nz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725949AbgDTBGJ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Sun, 19 Apr 2020 21:06:09 -0400
-X-Greylist: delayed 455 seconds by postgrey-1.27 at vger.kernel.org; Sun, 19 Apr 2020 21:06:08 EDT
-Received: from authenticated-user (mx.cjr.nz [51.158.111.142])
-        (Authenticated sender: pc)
-        by mx.cjr.nz (Postfix) with ESMTPSA id 4D1BC7FCFC;
-        Mon, 20 Apr 2020 00:58:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjr.nz; s=dkim;
-        t=1587344312;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UAr7dQ1lkh5Q0MOSA+C5E6a/FibwZsB/6txDi0hUANQ=;
-        b=NDBi3jMq9coPi8YRdzSeQB0Y1zLZ5hA6rcD82Eutcxbaudjs5HacYYdLbi6/XFiHiW6JRa
-        xjQLgknfdLihkIdqkp0WpVPftqBnWUtiIIxrPn+F+Wf/3dMwavyxXObm3+jjxI+Va6Hhvh
-        U2FQE/cL0C4A+YZJnwXe0GMtk/HbCTg5XJ9hqhj1QketlwCv9ANViPQF66gOvZD3Nli1Kj
-        EcyM3gGEZ6JHL0qzfei5TjQ73DVLh5pQJ0Z6OLuCUogsIsjcILpPR2vJzOlNqnIkpewArk
-        TuiohUvQfc08jNbN9FPzp2dA5vcdK/vskwY+ueQhovb/36hVqlUgPs1IKPmm1Q==
-From:   Paulo Alcantara <pc@cjr.nz>
-To:     David Howells <dhowells@redhat.com>,
-        Steve French <smfrench@gmail.com>
-Cc:     dhowells@redhat.com, linux-nfs <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
-        ceph-devel@vger.kernel.org, keyrings@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, fweimer@redhat.com
-Subject: Re: What's a good default TTL for DNS keys in the kernel
-In-Reply-To: <927453.1587285472@warthog.procyon.org.uk>
-References: <CAH2r5mv5p=WJQu2SbTn53FeTsXyN6ke_CgEjVARQ3fX8QAtK_w@mail.gmail.com>
- <3865908.1586874010@warthog.procyon.org.uk>
- <927453.1587285472@warthog.procyon.org.uk>
-Date:   Sun, 19 Apr 2020 21:58:25 -0300
-Message-ID: <87imhvj7m6.fsf@cjr.nz>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1726036AbgDTFrG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 20 Apr 2020 01:47:06 -0400
+Received: from mail.fudan.edu.cn ([202.120.224.73]:41038 "EHLO fudan.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725971AbgDTFrF (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 20 Apr 2020 01:47:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fudan.edu.cn; s=dkim; h=Received:From:To:Cc:Subject:Date:
+        Message-Id; bh=uzKBpRqWqrL68DjlrMLrFbymZnh9Mm1O4zM1L55rFDM=; b=i
+        jNJwWS9MAEI9JD1IO0CNdyHUIpjdCp5dQvv+ORw2Jkjxzh7t1SbxiAOXTN76OEHx
+        0m0OLF9y0UgWYedL1ITpz6MlrtmzmDOg+NyiN8VVYOmxEKftCe4gQ3rBlv6mnyMH
+        wVZxHKN3NUXlrCY8eHDipk/ySmBr3YhNixXSk5GfCk=
+Received: from localhost.localdomain (unknown [120.229.255.67])
+        by app2 (Coremail) with SMTP id XQUFCgCnWOH6NZ1eM_odAA--.12310S3;
+        Mon, 20 Apr 2020 13:41:16 +0800 (CST)
+From:   Xiyu Yang <xiyuyang19@fudan.edu.cn>
+To:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     yuanxzhang@fudan.edu.cn, kjlu@umn.edu,
+        Xiyu Yang <xiyuyang19@fudan.edu.cn>,
+        Xin Tan <tanxin.ctf@gmail.com>
+Subject: [PATCH] ceph: Fix potential ceph_osd_request refcnt leak
+Date:   Mon, 20 Apr 2020 13:40:43 +0800
+Message-Id: <1587361243-83431-1-git-send-email-xiyuyang19@fudan.edu.cn>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: XQUFCgCnWOH6NZ1eM_odAA--.12310S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZrW5JFy5Cr47GryrJF1DKFg_yoW8Gryfpr
+        47Cw4UtrsYq3W8XF4kJ398W348ua18ZrWSyr1FgFy8CFn5Xa9IyF1Fq3sIqr47AFyxJr95
+        trs09r4DZa42yFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvm14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
+        JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+        0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
+        1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+        rcIFxwCY02Avz4vE14v_GrWl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+        1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+        14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+        IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2
+        z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
+        UI43ZEXa7VU1U5r7UUUUU==
+X-CM-SenderInfo: irzsiiysuqikmy6i3vldqovvfxof0/
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> writes:
+ceph_writepages_start() invokes ceph_osdc_start_request(), which
+increases the refcount of the ceph_osd_request object "req" and then
+submit the request.
 
-> Steve French <smfrench@gmail.com> wrote:
->
->> For SMB3/CIFS mounts, Paulo added support last year for automatic
->> reconnect if the IP address of the server changes.  It also is helpful
->> when DFS (global name space) addresses change.
->
-> What happens if the IP address the superblock is going to changes, then
-> another mount is made back to the original IP address?  Does the second mount
-> just pick the original superblock?
+When ceph_writepages_start() returns or a new object is assigned to
+"req", the original local reference of "req" becomes invalid, so the
+refcount should be decreased to keep refcount balanced.
 
-It is going to transparently reconnect to the new ip address, SMB share,
-and cifs superblock is kept unchanged.  We, however, update internal
-TCP_Server_Info structure to reflect new destination ip address.
+The reference counting issue happens in a normal path of
+ceph_writepages_start(). Before NULL assigned to "req", the function
+forgets to decrease its refcnt increased by ceph_osdc_start_request()
+and will cause a refcnt leak.
 
-For the second mount, since the hostname (extracted out of the UNC path
-at mount time) resolves to a new ip address and that address was saved earlier
-in TCP_Server_Info structure during reconnect, we will end up
-reusing same cifs superblock as per fs/cifs/connect.c:cifs_match_super().
+Fix this issue by calling ceph_osdc_put_request() before the original
+object pointed by "req" becomes invalid.
+
+Fixes: 1d3576fd10f0 ("ceph: address space operations")
+Signed-off-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
+Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
+---
+ fs/ceph/addr.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 7ab616601141..b02c050a3418 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1126,6 +1126,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 		req->r_mtime = inode->i_mtime;
+ 		rc = ceph_osdc_start_request(&fsc->client->osdc, req, true);
+ 		BUG_ON(rc);
++		ceph_osdc_put_request(req);
+ 		req = NULL;
+ 
+ 		wbc->nr_to_write -= i;
+-- 
+2.7.4
+
