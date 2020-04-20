@@ -2,79 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E15C71B0924
-	for <lists+ceph-devel@lfdr.de>; Mon, 20 Apr 2020 14:17:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBBB01B0C52
+	for <lists+ceph-devel@lfdr.de>; Mon, 20 Apr 2020 15:13:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbgDTMQy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 20 Apr 2020 08:16:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52274 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726936AbgDTMQr (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 20 Apr 2020 08:16:47 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726825AbgDTNNw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 20 Apr 2020 09:13:52 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23251 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726827AbgDTNNv (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 20 Apr 2020 09:13:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1587388430;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IYew2ybNbEYlxnWhOLAX8rprgalSjY8htLDKj7llLh0=;
+        b=hYlw2D1tV44WpLt5dXs6nFhk03CyswctRpY8v7IMRCIJydF0IJihJiFE3j8Gl1M1Z5hKkf
+        RYfmrjxWC1E21Q6hqCCoPSVVNIiyqQF3ysUVW6BFkXmDWI7lCfrO74eQo+EoQDm9xgYRwm
+        PDZdszXjI9u2GH7EAT2+B1Tq4XobJMQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-109-8q1U0xdCNU2fff9u2tmIGQ-1; Mon, 20 Apr 2020 09:13:45 -0400
+X-MC-Unique: 8q1U0xdCNU2fff9u2tmIGQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 923C42072B;
-        Mon, 20 Apr 2020 12:16:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587385007;
-        bh=mVVhiLWYoJYsxwNunGtZw2deVsVqQX5hegxPcF8jXEc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=gP4Cr4Z5ZHEb4bcJyPTJt5zBQurdyOt5Fiy1sNYvMkyVSghB2nOZcVmkGmRrnurK0
-         amnRBOLxSY+3m02vnE0K8ToD8XBKtmk4DrTUroEeKN/dsk2KIQm9UVh9+zwnskujS0
-         zEBMk7tbQCn0dRMbtmjpddQ8WkKjn799bVzeZtJU=
-Message-ID: <ad6ca41f601d4feb2c3bd2850aeab95c3187bf2d.camel@kernel.org>
-Subject: Re: [v3] ceph: if we are blacklisted, __do_request returns directly
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Yanhu Cao <gmayyyha@gmail.com>
-Cc:     sage@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 20 Apr 2020 08:16:45 -0400
-In-Reply-To: <20200417110723.12235-1-gmayyyha@gmail.com>
-References: <20200417110723.12235-1-gmayyyha@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 80352149C1;
+        Mon, 20 Apr 2020 13:13:43 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-113-129.rdu2.redhat.com [10.10.113.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0BDD510013A1;
+        Mon, 20 Apr 2020 13:13:40 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <87imhvj7m6.fsf@cjr.nz>
+References: <87imhvj7m6.fsf@cjr.nz> <CAH2r5mv5p=WJQu2SbTn53FeTsXyN6ke_CgEjVARQ3fX8QAtK_w@mail.gmail.com> <3865908.1586874010@warthog.procyon.org.uk> <927453.1587285472@warthog.procyon.org.uk>
+To:     Paulo Alcantara <pc@cjr.nz>
+Cc:     dhowells@redhat.com, Steve French <smfrench@gmail.com>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
+        ceph-devel@vger.kernel.org, keyrings@vger.kernel.org,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, fweimer@redhat.com
+Subject: Re: What's a good default TTL for DNS keys in the kernel
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1136023.1587388420.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 20 Apr 2020 14:13:40 +0100
+Message-ID: <1136024.1587388420@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2020-04-17 at 19:07 +0800, Yanhu Cao wrote:
-> If we mount cephfs by the recover_session option,
-> __do_request can return directly until the client automatically reconnects.
-> 
-> Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
-> ---
->  fs/ceph/mds_client.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 486f91f9685b..16ac5e5f7f79 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -2708,6 +2708,12 @@ static void __do_request(struct ceph_mds_client *mdsc,
->  
->  	put_request_session(req);
->  
-> +	if (mdsc->fsc->blacklisted &&
-> +	    ceph_test_mount_opt(mdsc->fsc, CLEANRECOVER)) {
-> +		err = -EBLACKLISTED;
-> +		goto finish;
-> +	}
-> +
+Paulo Alcantara <pc@cjr.nz> wrote:
 
-Why check for CLEANRECOVER? If we're mounted with recover_session=no
-wouldn't we want to do the same thing here?
+> >> For SMB3/CIFS mounts, Paulo added support last year for automatic
+> >> reconnect if the IP address of the server changes.  It also is helpfu=
+l
+> >> when DFS (global name space) addresses change.
+> >
+> > What happens if the IP address the superblock is going to changes, the=
+n
+> > another mount is made back to the original IP address?  Does the secon=
+d mount
+> > just pick the original superblock?
+> =
 
-Either way, it's still blacklisted. The only difference is that it won't
-attempt to automatically recover the session that way.
+> It is going to transparently reconnect to the new ip address, SMB share,
+> and cifs superblock is kept unchanged.  We, however, update internal
+> TCP_Server_Info structure to reflect new destination ip address.
+> =
 
+> For the second mount, since the hostname (extracted out of the UNC path
+> at mount time) resolves to a new ip address and that address was saved e=
+arlier
+> in TCP_Server_Info structure during reconnect, we will end up
+> reusing same cifs superblock as per fs/cifs/connect.c:cifs_match_super()=
+.
 
->  	mds = __choose_mds(mdsc, req, &random);
->  	if (mds < 0 ||
->  	    ceph_mdsmap_get_state(mdsc->mdsmap, mds) < CEPH_MDS_STATE_ACTIVE) {
--- 
-Jeff Layton <jlayton@kernel.org>
+Would that be a bug?
+
+David
 
