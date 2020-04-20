@@ -2,87 +2,60 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FDC01B0D07
-	for <lists+ceph-devel@lfdr.de>; Mon, 20 Apr 2020 15:44:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 049D01B0E34
+	for <lists+ceph-devel@lfdr.de>; Mon, 20 Apr 2020 16:21:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbgDTNoi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 20 Apr 2020 09:44:38 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:23380 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726081AbgDTNoi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 20 Apr 2020 09:44:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1587390277;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type;
-        bh=DeO1bWLn5C1PDseIUHBGmgkwOWAnibPK4fmDmUnKwZM=;
-        b=JK2TRjtkgS4GlagtiHiC3GV3GqO0kV/3wDaQIV9bs9zpLrlhIUs1TCu3kPj53Y4kfpPhuO
-        0Ll638iX47qnUKm0joFdG6ZgfHa8MACJCR6O2LwL32zBLj9sOBtE4dBwbQDlHh0xpM+Nep
-        mvvVWKiMV1vGnU+KN5nRtx4YtNbIvJg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-490-AsjRhcXENnGAptf90W0LEw-1; Mon, 20 Apr 2020 09:44:29 -0400
-X-MC-Unique: AsjRhcXENnGAptf90W0LEw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729762AbgDTOVP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 20 Apr 2020 10:21:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727890AbgDTOVO (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 20 Apr 2020 10:21:14 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 804E2190A7A4
-        for <ceph-devel@vger.kernel.org>; Mon, 20 Apr 2020 13:44:28 +0000 (UTC)
-Received: from [10.3.128.3] (unknown [10.3.128.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0FCEA58
-        for <ceph-devel@vger.kernel.org>; Mon, 20 Apr 2020 13:44:27 +0000 (UTC)
-Date:   Mon, 20 Apr 2020 13:44:25 +0000 (UTC)
-From:   Sage Weil <sweil@redhat.com>
-X-X-Sender: sage@piezo.novalocal
-To:     ceph-devel@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: remove myself as ceph co-maintainer 
-Message-ID: <alpine.DEB.2.21.2004201343420.29831@piezo.novalocal>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB84B20722;
+        Mon, 20 Apr 2020 14:21:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587392474;
+        bh=vsjKdAH7UkbL47Ql4HW+M0eWWOjY4LdGovS6OoGv2JI=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=2cIb+Dy+xdXJ7VxUOoHIItiXOfqDTGbuG2JTzvxhdwww5VFcAmYdHPCj9ew3VRakn
+         ekARHSJGv9L4+tZhJWmKfe+beWWjFhUQKbRJFEvm74qnoLWVaTL+dvSAyrjHvQ2yee
+         Vl7iK+Kg7K+x39uOpFDcyqDylFfLuhHnLmDg0hDY=
+Message-ID: <cc2b7b3f2601aa6ab3698bd9d12a6c4c34076e9d.camel@kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: remove myself as ceph co-maintainer
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Sage Weil <sweil@redhat.com>, ceph-devel@vger.kernel.org
+Date:   Mon, 20 Apr 2020 10:21:12 -0400
+In-Reply-To: <alpine.DEB.2.21.2004201343420.29831@piezo.novalocal>
+References: <alpine.DEB.2.21.2004201343420.29831@piezo.novalocal>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff, Ilya, and Dongsheng are doing all of the Ceph maintainance
-these days.
+On Mon, 2020-04-20 at 13:44 +0000, Sage Weil wrote:
+> Jeff, Ilya, and Dongsheng are doing all of the Ceph maintainance
+> these days.
+> 
+> Signed-off-by: Sage Weil <sage@redhat.com>
+> ---
+>  MAINTAINERS | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
 
-Signed-off-by: Sage Weil <sage@redhat.com>
----
- MAINTAINERS | 3 ---
- 1 file changed, 3 deletions(-)
+Merged -- should make v5.8 (or could go in sooner if we have follow-on
+fixes).
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b816a453b10e..7a691c8fc76d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3937,7 +3937,6 @@ F:        arch/powerpc/platforms/cell/
- CEPH COMMON CODE (LIBCEPH)
- M:     Ilya Dryomov <idryomov@gmail.com>
- M:     Jeff Layton <jlayton@kernel.org>
--M:     Sage Weil <sage@redhat.com>
- L:     ceph-devel@vger.kernel.org
- S:     Supported
- W:     http://ceph.com/
-@@ -3949,7 +3948,6 @@ F:        net/ceph/
- 
- CEPH DISTRIBUTED FILE SYSTEM CLIENT (CEPH)
- M:     Jeff Layton <jlayton@kernel.org>
--M:     Sage Weil <sage@redhat.com>
- M:     Ilya Dryomov <idryomov@gmail.com>
- L:     ceph-devel@vger.kernel.org
- S:     Supported
-@@ -14096,7 +14094,6 @@ F:      drivers/media/radio/radio-tea5777.c
- 
- RADOS BLOCK DEVICE (RBD)
- M:     Ilya Dryomov <idryomov@gmail.com>
--M:     Sage Weil <sage@redhat.com>
- R:     Dongsheng Yang <dongsheng.yang@easystack.cn>
- L:     ceph-devel@vger.kernel.org
- S:     Supported
+Thanks for all the contributions over the years! Any time you want to
+get back into kernel work, just let us know. ;)
+
+Cheers,
 -- 
-2.24.1
-
+Jeff Layton <jlayton@kernel.org>
 
