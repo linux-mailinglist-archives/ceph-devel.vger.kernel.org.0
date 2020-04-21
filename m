@@ -2,26 +2,26 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A8E0E1B2777
-	for <lists+ceph-devel@lfdr.de>; Tue, 21 Apr 2020 15:19:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8224E1B277B
+	for <lists+ceph-devel@lfdr.de>; Tue, 21 Apr 2020 15:19:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728519AbgDUNTD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 21 Apr 2020 09:19:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50118 "EHLO mx2.suse.de"
+        id S1729004AbgDUNTH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 21 Apr 2020 09:19:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50210 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728970AbgDUNTC (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        id S1728990AbgDUNTC (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
         Tue, 21 Apr 2020 09:19:02 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id DE968AE65;
-        Tue, 21 Apr 2020 13:18:59 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 1DC2DAE6D;
+        Tue, 21 Apr 2020 13:19:00 +0000 (UTC)
 From:   Roman Penyaev <rpenyaev@suse.de>
 Cc:     Ilya Dryomov <idryomov@gmail.com>,
         Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
         Roman Penyaev <rpenyaev@suse.de>
-Subject: [PATCH 13/16] libceph: switch bio cursor to iov_iter for messenger
-Date:   Tue, 21 Apr 2020 15:18:47 +0200
-Message-Id: <20200421131850.443228-14-rpenyaev@suse.de>
+Subject: [PATCH 14/16] libceph: switch pages cursor to iov_iter for messenger
+Date:   Tue, 21 Apr 2020 15:18:48 +0200
+Message-Id: <20200421131850.443228-15-rpenyaev@suse.de>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200421131850.443228-1-rpenyaev@suse.de>
 References: <20200421131850.443228-1-rpenyaev@suse.de>
@@ -33,86 +33,99 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Data cursor of bio type uses bio->bi_io_vec directly.
+Though it still uses pages, ceph_msg_data_pages_next() is noop now.
 
 Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
 ---
- net/ceph/messenger.c | 33 ++++++++++++++++++++++++---------
- 1 file changed, 24 insertions(+), 9 deletions(-)
+ include/linux/ceph/messenger.h |  1 -
+ net/ceph/messenger.c           | 33 ++++++++++++++-------------------
+ 2 files changed, 14 insertions(+), 20 deletions(-)
 
+diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenger.h
+index 89874fe7153b..822182ac4386 100644
+--- a/include/linux/ceph/messenger.h
++++ b/include/linux/ceph/messenger.h
+@@ -201,7 +201,6 @@ struct ceph_msg_data_cursor {
+ 		struct ceph_bio_iter	bio_iter;
+ #endif /* CONFIG_BLOCK */
+ 		struct {				/* pages */
+-			unsigned int	page_offset;	/* offset in page */
+ 			unsigned short	page_index;	/* index in array */
+ 			unsigned short	page_count;	/* pages in array */
+ 		};
 diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-index 19f85bb85340..ea91f94096f1 100644
+index ea91f94096f1..288f3c66a4d1 100644
 --- a/net/ceph/messenger.c
 +++ b/net/ceph/messenger.c
-@@ -829,6 +829,22 @@ static void ceph_msg_data_set_iter(struct ceph_msg_data_cursor *cursor,
+@@ -929,6 +929,7 @@ static void ceph_msg_data_pages_cursor_init(struct ceph_msg_data_cursor *cursor,
+ 					size_t length)
+ {
+ 	struct ceph_msg_data *data = cursor->data;
++	unsigned int page_offset;
+ 	int page_count;
  
- #ifdef CONFIG_BLOCK
+ 	BUG_ON(data->type != CEPH_MSG_DATA_PAGES);
+@@ -938,26 +939,20 @@ static void ceph_msg_data_pages_cursor_init(struct ceph_msg_data_cursor *cursor,
  
-+static void set_bio_iter_to_iov_iter(struct ceph_msg_data_cursor *cursor)
-+{
-+	struct ceph_bio_iter *it = &cursor->bio_iter;
+ 	cursor->resid = min(length, data->length);
+ 	page_count = calc_pages_for(data->alignment, (u64)data->length);
+-	cursor->page_offset = data->alignment & ~PAGE_MASK;
++	page_offset = data->alignment & ~PAGE_MASK;
+ 	cursor->page_index = 0;
+ 	BUG_ON(page_count > (int)USHRT_MAX);
+ 	cursor->page_count = (unsigned short)page_count;
+-	BUG_ON(length > SIZE_MAX - cursor->page_offset);
++	BUG_ON(length > SIZE_MAX - page_offset);
 +
-+	iov_iter_bvec(&cursor->iter, cursor->direction,
-+		      it->bio->bi_io_vec + it->iter.bi_idx,
-+		      it->bio->bi_vcnt - it->iter.bi_idx,
-+		      it->iter.bi_size);
-+	/*
-+	 * Careful here: use multipage offset, because we need an offset
-+	 * in the whole bvec, not in a page
-+	 */
-+	cursor->iter.iov_offset =
-+		mp_bvec_iter_offset(cursor->iter.bvec, it->iter);
-+}
-+
- /*
-  * For a bio data item, a piece is whatever remains of the next
-  * entry in the current bio iovec, or the first entry in the next
-@@ -846,15 +862,12 @@ static void ceph_msg_data_bio_cursor_init(struct ceph_msg_data_cursor *cursor,
- 		it->iter.bi_size = cursor->resid;
- 
- 	BUG_ON(cursor->resid < bio_iter_len(it->bio, it->iter));
-+	set_bio_iter_to_iov_iter(cursor);
++	ceph_msg_data_set_iter(cursor, data->pages[cursor->page_index],
++			       page_offset, min(PAGE_SIZE - page_offset,
++						cursor->resid));
  }
  
- static void ceph_msg_data_bio_next(struct ceph_msg_data_cursor *cursor)
+ static void ceph_msg_data_pages_next(struct ceph_msg_data_cursor *cursor)
  {
--	struct bio_vec bv = bio_iter_iovec(cursor->bio_iter.bio,
--					   cursor->bio_iter.iter);
+-	struct ceph_msg_data *data = cursor->data;
 -
--	ceph_msg_data_set_iter(cursor, bv.bv_page,
--			       bv.bv_offset, bv.bv_len);
+-	BUG_ON(data->type != CEPH_MSG_DATA_PAGES);
+-
+-	BUG_ON(cursor->page_index >= cursor->page_count);
+-	BUG_ON(cursor->page_offset >= PAGE_SIZE);
+-
+-	ceph_msg_data_set_iter(cursor, data->pages[cursor->page_index],
+-			       cursor->page_offset,
+-			       min(PAGE_SIZE - cursor->page_offset,
+-				   cursor->resid));
 +	/* Nothing here */
  }
  
- static void ceph_msg_data_bio_advance(struct ceph_msg_data_cursor *cursor,
-@@ -863,21 +876,23 @@ static void ceph_msg_data_bio_advance(struct ceph_msg_data_cursor *cursor,
- 	struct ceph_bio_iter *it = &cursor->bio_iter;
+ static void ceph_msg_data_pages_advance(struct ceph_msg_data_cursor *cursor,
+@@ -965,13 +960,10 @@ static void ceph_msg_data_pages_advance(struct ceph_msg_data_cursor *cursor,
+ {
+ 	BUG_ON(cursor->data->type != CEPH_MSG_DATA_PAGES);
  
- 	BUG_ON(bytes > cursor->resid);
--	BUG_ON(bytes > bio_iter_len(it->bio, it->iter));
-+	BUG_ON(bytes > iov_iter_count(&cursor->iter));
+-	BUG_ON(cursor->page_offset + bytes > PAGE_SIZE);
+-
+-	/* Advance the cursor page offset */
+-
++	/* Advance the cursor iter */
  	cursor->resid -= bytes;
--	bio_advance_iter(it->bio, &it->iter, bytes);
+-	cursor->page_offset = (cursor->page_offset + bytes) & ~PAGE_MASK;
+-	if (!bytes || cursor->page_offset)
 +	iov_iter_advance(&cursor->iter, bytes);
++	if (!bytes || iov_iter_count(&cursor->iter))
+ 		return;	/* more bytes to process in the current page */
  
- 	if (!bytes || !cursor->resid)
- 		return;   /* no more data */
+ 	if (!cursor->resid)
+@@ -981,6 +973,9 @@ static void ceph_msg_data_pages_advance(struct ceph_msg_data_cursor *cursor,
  
--	if (!it->iter.bi_size) {
-+	if (!iov_iter_count(&cursor->iter)) {
- 		it->bio = it->bio->bi_next;
- 		it->iter = it->bio->bi_iter;
- 		if (cursor->resid < it->iter.bi_size)
- 			it->iter.bi_size = cursor->resid;
+ 	BUG_ON(cursor->page_index >= cursor->page_count);
+ 	cursor->page_index++;
 +
-+		set_bio_iter_to_iov_iter(cursor);
- 	}
- 
--	BUG_ON(cursor->resid < bio_iter_len(it->bio, it->iter));
-+	BUG_ON(cursor->resid != iov_iter_count(&cursor->iter));
++	ceph_msg_data_set_iter(cursor, cursor->data->pages[cursor->page_index],
++			       0, min(PAGE_SIZE, cursor->resid));
  }
- #endif /* CONFIG_BLOCK */
  
+ /*
 -- 
 2.24.1
 
