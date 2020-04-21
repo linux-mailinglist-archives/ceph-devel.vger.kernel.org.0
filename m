@@ -2,137 +2,196 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7B9F1B25D2
-	for <lists+ceph-devel@lfdr.de>; Tue, 21 Apr 2020 14:21:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 682B51B2772
+	for <lists+ceph-devel@lfdr.de>; Tue, 21 Apr 2020 15:19:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728725AbgDUMVO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 21 Apr 2020 08:21:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56952 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726018AbgDUMVO (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 21 Apr 2020 08:21:14 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09620C061A10;
-        Tue, 21 Apr 2020 05:21:14 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id f3so14804783ioj.1;
-        Tue, 21 Apr 2020 05:21:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b/8T5wwR3PMa9N6liO9GWTkbu2dihCt9vjyDRvk3GS0=;
-        b=OwiS7DXzmpdlF70BZr/fbVHJU1wK0azISAA6trEqB2ANs9Q3Z3xbbFGM2MKrRJdyeN
-         TJgaL/VjwFm68yV9Hv+zWnBPyUKr9zPoyOYY6TtCgDXjzAI96EV0urqKCybqAFWYNfza
-         KJ7M0NnC/jCT3MlFuqaCmdj6AbvQ/3g9wXhb2fDZkUhBs84Z69ad9NgJ83l5HYLGVYKw
-         /gbmJKUmNwFWXAXoPEIb1IPDlObSQWeb8sR/MoWbDMa5pg9bS+sG4dksf0w4OcYb+vYP
-         Qkg8dwZO7Onwi5RVkkGOnfvzGinfPwj8hX2E9dym7bMAngp3F5SlIfCby2Hj2L6CSRS6
-         7YmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b/8T5wwR3PMa9N6liO9GWTkbu2dihCt9vjyDRvk3GS0=;
-        b=h9TOg/xZOB7man/kEjE9HtkbD80M/hiu4xmkFecz2/OYteHWUUc4Nij8PSnx/gNkZK
-         UIYI6fnc3rAgG86F1N5n1cwvOo5VZPgUE9uUELNtR49aSdQh7PTFpvoVPRl8wJ9BcxeA
-         URAgYFQSaV6FpOCoRM5QIGcMc35ojPmuS4W8lwyEHkwkV7xsOMhEcIxDUuJZ/iZtcJAU
-         PjzToq4tW8VGyduUF+SsdRbBU+neJwmPQZ4cjvq03IxSs5ygGxiSQvPKpj3xLnEY8jDp
-         hd5mt/dHRzx/MPfezzOdOQCKq1gXOHL6M2WUdWHyZ4OSX4hsrEmO+OfQz8AD7cHnyJiE
-         RB3w==
-X-Gm-Message-State: AGi0Pubr04oWQq5GIw2s2LQacrzVGazxXZnNvmkLHTmphjrfPP/gcXSf
-        7hrV6Qzf4ypz2QFnDa4mu5E92fSBmN6P+oC6nOk=
-X-Google-Smtp-Source: APiQypLBR+NbFXdPwrJNEdcWqatZsLoK2hEM+WIkah3ebWp6bcdCdijoPDHZzCpRea9vlQzsJ615qcL+sdC9EW/9HdE=
-X-Received: by 2002:a05:6638:44f:: with SMTP id r15mr20852899jap.84.1587471673454;
- Tue, 21 Apr 2020 05:21:13 -0700 (PDT)
+        id S1728944AbgDUNS7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 21 Apr 2020 09:18:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49992 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726018AbgDUNS6 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 21 Apr 2020 09:18:58 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C3D45ABF6;
+        Tue, 21 Apr 2020 13:18:55 +0000 (UTC)
+From:   Roman Penyaev <rpenyaev@suse.de>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        Roman Penyaev <rpenyaev@suse.de>
+Subject: [PATCH 00/16] libceph: messenger: send/recv data at one go
+Date:   Tue, 21 Apr 2020 15:18:34 +0200
+Message-Id: <20200421131850.443228-1-rpenyaev@suse.de>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <20200417110723.12235-1-gmayyyha@gmail.com> <ad6ca41f601d4feb2c3bd2850aeab95c3187bf2d.camel@kernel.org>
- <CAB9OAC1+E6Qs=hr0naT73MNQ5scKOck4vF2gzsCS=0fQMLvG8A@mail.gmail.com> <86562f7eca48dd13a6cbafa4c6465d3a731fab88.camel@kernel.org>
-In-Reply-To: <86562f7eca48dd13a6cbafa4c6465d3a731fab88.camel@kernel.org>
-From:   Yanhu Cao <gmayyyha@gmail.com>
-Date:   Tue, 21 Apr 2020 20:21:02 +0800
-Message-ID: <CAB9OAC3fqvm9oigQour-jYuaSoh9Ny6Botk9Ls+ie-uKap19AQ@mail.gmail.com>
-Subject: Re: [v3] ceph: if we are blacklisted, __do_request returns directly
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Apr 21, 2020 at 6:15 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> On Tue, 2020-04-21 at 10:13 +0800, Yanhu Cao wrote:
-> > On Mon, Apr 20, 2020 at 8:16 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > On Fri, 2020-04-17 at 19:07 +0800, Yanhu Cao wrote:
-> > > > If we mount cephfs by the recover_session option,
-> > > > __do_request can return directly until the client automatically reconnects.
-> > > >
-> > > > Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
-> > > > ---
-> > > >  fs/ceph/mds_client.c | 6 ++++++
-> > > >  1 file changed, 6 insertions(+)
-> > > >
-> > > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > > > index 486f91f9685b..16ac5e5f7f79 100644
-> > > > --- a/fs/ceph/mds_client.c
-> > > > +++ b/fs/ceph/mds_client.c
-> > > > @@ -2708,6 +2708,12 @@ static void __do_request(struct ceph_mds_client *mdsc,
-> > > >
-> > > >       put_request_session(req);
-> > > >
-> > > > +     if (mdsc->fsc->blacklisted &&
-> > > > +         ceph_test_mount_opt(mdsc->fsc, CLEANRECOVER)) {
-> > > > +             err = -EBLACKLISTED;
-> > > > +             goto finish;
-> > > > +     }
-> > > > +
-> > >
-> > > Why check for CLEANRECOVER? If we're mounted with recover_session=no
-> > > wouldn't we want to do the same thing here?
-> > >
-> > > Either way, it's still blacklisted. The only difference is that it won't
-> > > attempt to automatically recover the session that way.
-> >
-> > I think mds will clear the blacklist. In addition to loading cephfs
-> > via recover_session=clean, I didn't find a location where
-> > fsc->blacklisted is set to false. If the client has been blacklisted,
-> > should it always be blacklisted (fsc->blacklisted=true)? Or is there
-> > another way to set fsc->blacklised to false?
-> >
->
-> Basically, this patch is just changing it so that when the client is
-> blacklisted and the mount is done with recover_session=clean, we'll
-> shortcut the rest of the __do_request and just return -EBLACKLISTED.
->
-> My question is: why do we need to test for recover_session=clean here?
+Hi folks,
 
-I thought that fsc->blacklisted is related to recovery_session=clean.
-If we test it, the client can do the rest of __do_request. It seems
-useless now because kcephfs cannot resume the session like ceph-fuse
-when mds cleared the blacklist.
+While experimenting with messenger code in userspace [1] I noticed
+that send and receive socket calls always operate with 4k, even bvec
+length is larger (for example when bvec is contructed from bio, where
+multi-page is used for big IOs). This is an attempt to speed up send
+and receive for large IO.
 
->
-> If the client _knows_ that it is blacklisted, why would it want to
-> continue with __do_request in the recover_session=no case? Would it make
-> more sense to always return early in __do_request when the client is
-> blacklisted?
+First 3 patches are cleanups. I remove unused code and get rid of
+ceph_osd_data structure. I found that ceph_osd_data duplicates
+ceph_msg_data and it seems unified API looks better for similar
+things.
 
-Makes sense. if there is no problem. I will patch the next commit and
-return -EBLACKLISTED only when fsc->blacklisted=true.
+In the following patches ceph_msg_data_cursor is switched to iov_iter,
+which seems is more suitable for such kind of things (when we
+basically do socket IO). This gives us the possibility to use the
+whole iov_iter for sendmsg() and recvmsg() calls instead of iterating
+page by page. sendpage() call also benefits from this, because now if
+bvec is constructed from multi-page, then we can 0-copy the whole
+bvec in one go.
 
->
->
-> > >
-> > > >       mds = __choose_mds(mdsc, req, &random);
-> > > >       if (mds < 0 ||
-> > > >           ceph_mdsmap_get_state(mdsc->mdsmap, mds) < CEPH_MDS_STATE_ACTIVE) {
-> > > --
-> > > Jeff Layton <jlayton@kernel.org>
-> > >
->
-> --
-> Jeff Layton <jlayton@kernel.org>
->
+I also allowed myself to get rid of ->last_piece and ->need_crc
+members and ceph_msg_data_next() call. Now CRC is calculated not on
+page basis, but according to the size of processed chunk.  I found
+ceph_msg_data_next() is a bit redundant, since we always can set the
+next cursor chunk on cursor init or on advance.
+
+How I tested the performance? I used rbd.fio load on 1 OSD in memory
+with the following fio configuration:
+
+  direct=1
+  time_based=1
+  runtime=10
+  ioengine=io_uring
+  size=256m
+
+  rw=rand{read|write}
+  numjobs=32
+  iodepth=32
+
+  [job1]
+  filename=/dev/rbd0
+
+RBD device is mapped with 'nocrc' option set.  For writes OSD completes
+requests immediately, without touching the memory simulating null block
+device, that's why write throughput in my results is much higher than
+for reads.
+
+I tested on loopback interface only, in Vm, have not yet setup the
+cluster on real machines, so sendpage() on a big multi-page shows
+indeed good results, as expected. But I found an interesting comment
+in drivers/infiniband/sw/siw/siw_qp_tc.c:siw_tcp_sendpages(), which
+says:
+
+ "Using sendpage to push page by page appears to be less efficient
+  than using sendmsg, even if data are copied.
+ 
+  A general performance limitation might be the extra four bytes
+  trailer checksum segment to be pushed after user data."
+
+I could not prove or disprove since have tested on loopback interface
+only.  So it might be that sendmsg() in on go is faster than
+sendpage() for bvecs with many segments.
+
+Here is the output of the rbd fio load for various block sizes:
+
+==== WRITE ===
+
+current master, rw=randwrite, numjobs=32 iodepth=32
+
+  4k  IOPS=92.7k, BW=362MiB/s, Lat=11033.30usec
+  8k  IOPS=85.6k, BW=669MiB/s, Lat=11956.74usec
+ 16k  IOPS=76.8k, BW=1200MiB/s, Lat=13318.24usec
+ 32k  IOPS=56.7k, BW=1770MiB/s, Lat=18056.92usec
+ 64k  IOPS=34.0k, BW=2186MiB/s, Lat=29.23msec
+128k  IOPS=21.8k, BW=2720MiB/s, Lat=46.96msec
+256k  IOPS=14.4k, BW=3596MiB/s, Lat=71.03msec
+512k  IOPS=8726, BW=4363MiB/s, Lat=116.34msec
+  1m  IOPS=4799, BW=4799MiB/s, Lat=211.15msec
+
+this patchset,  rw=randwrite, numjobs=32 iodepth=32
+
+  4k  IOPS=94.7k, BW=370MiB/s, Lat=10802.43usec
+  8k  IOPS=91.2k, BW=712MiB/s, Lat=11221.00usec
+ 16k  IOPS=80.4k, BW=1257MiB/s, Lat=12715.56usec
+ 32k  IOPS=61.2k, BW=1912MiB/s, Lat=16721.33usec
+ 64k  IOPS=40.9k, BW=2554MiB/s, Lat=24993.31usec
+128k  IOPS=25.7k, BW=3216MiB/s, Lat=39.72msec
+256k  IOPS=17.3k, BW=4318MiB/s, Lat=59.15msec
+512k  IOPS=11.1k, BW=5559MiB/s, Lat=91.39msec
+  1m  IOPS=6696, BW=6696MiB/s, Lat=151.25msec
+
+
+=== READ ===
+
+current master, rw=randread, numjobs=32 iodepth=32
+
+  4k  IOPS=62.5k, BW=244MiB/s, Lat=16.38msec
+  8k  IOPS=55.5k, BW=433MiB/s, Lat=18.44msec
+ 16k  IOPS=40.6k, BW=635MiB/s, Lat=25.18msec
+ 32k  IOPS=24.6k, BW=768MiB/s, Lat=41.61msec
+ 64k  IOPS=14.8k, BW=925MiB/s, Lat=69.06msec
+128k  IOPS=8687, BW=1086MiB/s, Lat=117.59msec
+256k  IOPS=4733, BW=1183MiB/s, Lat=214.76msec
+512k  IOPS=3156, BW=1578MiB/s, Lat=320.54msec
+  1m  IOPS=1901, BW=1901MiB/s, Lat=528.22msec
+
+this patchset,  rw=randread, numjobs=32 iodepth=32
+
+  4k  IOPS=62.6k, BW=244MiB/s, Lat=16342.89usec
+  8k  IOPS=55.5k, BW=434MiB/s, Lat=18.42msec
+ 16k  IOPS=43.2k, BW=675MiB/s, Lat=23.68msec
+ 32k  IOPS=28.4k, BW=887MiB/s, Lat=36.04msec
+ 64k  IOPS=20.2k, BW=1263MiB/s, Lat=50.54msec
+128k  IOPS=11.7k, BW=1465MiB/s, Lat=87.01msec
+256k  IOPS=6813, BW=1703MiB/s, Lat=149.30msec
+512k  IOPS=5363, BW=2682MiB/s, Lat=189.37msec
+  1m  IOPS=2220, BW=2221MiB/s, Lat=453.92msec
+
+
+Results for small blocks are not interesting, since there should not
+be any difference. But starting from 32k block benefits of doing IO
+for the whole message at once starts to prevail.
+
+I'm open to test any other loads, I just usually stick to fio rbd,
+since it is pretty simple and pumps the IOs quite well.
+
+[1] https://github.com/rouming/pech
+
+Roman Penyaev (16):
+  libceph: remove unused ceph_pagelist_cursor
+  libceph: extend ceph_msg_data API in order to switch on it
+  libceph,rbd,cephfs: switch from ceph_osd_data to ceph_msg_data
+  libceph: remove ceph_osd_data completely
+  libceph: remove unused last_piece out parameter from
+    ceph_msg_data_next()
+  libceph: switch data cursor from page to iov_iter for messenger
+  libceph: use new tcp_sendiov() instead of tcp_sendmsg() for messenger
+  libceph: remove unused tcp wrappers, now iov_iter is used for
+    messenger
+  libceph: no need for cursor->need_crc for messenger
+  libceph: remove ->last_piece member for message data cursor
+  libceph: remove not necessary checks on doing advance on bio and bvecs
+    cursor
+  libceph: switch bvecs cursor to iov_iter for messenger
+  libceph: switch bio cursor to iov_iter for messenger
+  libceph: switch pages cursor to iov_iter for messenger
+  libceph: switch pageslist cursor to iov_iter for messenger
+  libceph: remove ceph_msg_data_*_next() from messenger
+
+ drivers/block/rbd.c             |   4 +-
+ fs/ceph/addr.c                  |  10 +-
+ fs/ceph/file.c                  |   4 +-
+ include/linux/ceph/messenger.h  |  42 ++-
+ include/linux/ceph/osd_client.h |  58 +---
+ include/linux/ceph/pagelist.h   |  12 -
+ net/ceph/messenger.c            | 558 +++++++++++++++-----------------
+ net/ceph/osd_client.c           | 251 ++++----------
+ net/ceph/pagelist.c             |  38 ---
+ 9 files changed, 390 insertions(+), 587 deletions(-)
+
+-- 
+2.24.1
+
