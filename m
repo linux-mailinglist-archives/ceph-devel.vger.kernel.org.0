@@ -2,109 +2,69 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 814D01BC1A9
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 Apr 2020 16:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C04D31BCD20
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 Apr 2020 22:11:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727931AbgD1OsN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 28 Apr 2020 10:48:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727079AbgD1OsM (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 28 Apr 2020 10:48:12 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6680D206B9;
-        Tue, 28 Apr 2020 14:48:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588085292;
-        bh=wwPgZNGUMJkBXCHDH1r/tigwDvRty2wH177V7+Ns0W4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Dgod49VSlqxpGshicvovMDfREGpxLC1t6lGRgtZtVHNWglRXLB5qLra42dNrYfBEU
-         ebFx9zt28jyyst+DqdIBOZ1AhHY6tDsmF4h7qPSvJgFwLC3asQpUHq07vzjY4t0mDS
-         hhq+cfprMCwe7JSaj+rDTDVw0b/+B1bEwr3hFANs=
-Message-ID: <e89bd817c69422c85f1945041dd83fbe8d534805.camel@kernel.org>
-Subject: Re: [PATCH V2] fs/ceph:fix double unlock in handle_cap_export()
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Wu Bo <wubo40@huawei.com>, sage@redhat.com, idryomov@gmail.com
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        liuzhiqiang26@huawei.com, linfeilong@huawei.com
-Date:   Tue, 28 Apr 2020 10:48:10 -0400
-In-Reply-To: <1588079622-423774-1-git-send-email-wubo40@huawei.com>
-References: <1588079622-423774-1-git-send-email-wubo40@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.1 (3.36.1-1.fc32) 
-MIME-Version: 1.0
+        id S1726543AbgD1ULt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 28 Apr 2020 16:11:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59564 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726180AbgD1ULs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 28 Apr 2020 16:11:48 -0400
+Received: from shards.monkeyblade.net (shards.monkeyblade.net [IPv6:2620:137:e000::1:9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D9F9C03C1AB;
+        Tue, 28 Apr 2020 13:11:46 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1A5C3120ED563;
+        Tue, 28 Apr 2020 13:11:45 -0700 (PDT)
+Date:   Tue, 28 Apr 2020 13:11:43 -0700 (PDT)
+Message-Id: <20200428.131143.378850463944291442.davem@davemloft.net>
+To:     mchehab+huawei@kernel.org
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, netdev@vger.kernel.org, linux-hams@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org,
+        linux-decnet-user@lists.sourceforge.net,
+        ceph-devel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-atm-general@lists.sourceforge.net, lvs-devel@vger.kernel.org
+Subject: Re: [PATCH 00/38] net: manually convert files to ReST format -
+ part 1
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <cover.1588024424.git.mchehab+huawei@kernel.org>
+References: <cover.1588024424.git.mchehab+huawei@kernel.org>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 28 Apr 2020 13:11:45 -0700 (PDT)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2020-04-28 at 21:13 +0800, Wu Bo wrote:
-> if the ceph_mdsc_open_export_target_session() return fails,
-> should add a lock to avoid twice unlocking.
-> Because the lock will be released at the retry or out_unlock tag.
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Date: Tue, 28 Apr 2020 00:01:15 +0200
+
+> There are very few documents upstream that aren't converted upstream.
 > 
-
-The problem looks real, but...
-
-> --
-> v1 -> v2:
-> add spin_lock(&ci->i_ceph_lock) before goto out_unlock tag. 
+> This series convert part of the networking text files into ReST.
+> It is part of a bigger set of patches, which were split on parts,
+> in order to make reviewing task easier.
 > 
-> Signed-off-by: Wu Bo <wubo40@huawei.com>
-> ---
->  fs/ceph/caps.c | 27 +++++++++++++++------------
->  1 file changed, 15 insertions(+), 12 deletions(-)
+> The full series (including those ones) are at:
 > 
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index 185db76..414c0e2 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -3731,22 +3731,25 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
->  
->  	/* open target session */
->  	tsession = ceph_mdsc_open_export_target_session(mdsc, target);
-> -	if (!IS_ERR(tsession)) {
-> -		if (mds > target) {
-> -			mutex_lock(&session->s_mutex);
-> -			mutex_lock_nested(&tsession->s_mutex,
-> -					  SINGLE_DEPTH_NESTING);
-> -		} else {
-> -			mutex_lock(&tsession->s_mutex);
-> -			mutex_lock_nested(&session->s_mutex,
-> -					  SINGLE_DEPTH_NESTING);
-> -		}
-> -		new_cap = ceph_get_cap(mdsc, NULL);
-> -	} else {
-> +	if (IS_ERR(tsession)) {
->  		WARN_ON(1);
->  		tsession = NULL;
->  		target = -1;
-> +		mutex_lock(&session->s_mutex);
-> +		spin_lock(&ci->i_ceph_lock);
-> +		goto out_unlock;
+> 	https://git.linuxtv.org/mchehab/experimental.git/log/?h=net-docs
+> 
+> And the documents, converted to HTML via the building system
+> are at:
+> 
+> 	https://www.infradead.org/~mchehab/kernel_docs/networking/
 
-Why did you make this case goto out_unlock instead of retrying as it did
-before?
+These look good as far as I can tell.
 
-> +	}
-> +
-> +	if (mds > target) {
-> +		mutex_lock(&session->s_mutex);
-> +		mutex_lock_nested(&tsession->s_mutex,
-> +					SINGLE_DEPTH_NESTING);
-> +	} else {
-> +		mutex_lock(&tsession->s_mutex);
-> +		mutex_lock_nested(&session->s_mutex,
-> +					SINGLE_DEPTH_NESTING);
->  	}
-> +	new_cap = ceph_get_cap(mdsc, NULL);
->  	goto retry;
->  
->  out_unlock:
+Jon, do you mind if I merge this via the networking tree?
 
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Thanks.
