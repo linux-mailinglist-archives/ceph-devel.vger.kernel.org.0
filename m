@@ -2,264 +2,141 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F36C1BB132
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 Apr 2020 00:04:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A40241BBD78
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 Apr 2020 14:23:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbgD0WET (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 27 Apr 2020 18:04:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48008 "EHLO mail.kernel.org"
+        id S1726785AbgD1MXM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 28 Apr 2020 08:23:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726357AbgD0WCA (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 27 Apr 2020 18:02:00 -0400
-Received: from mail.kernel.org (ip5f5ad5c5.dynamic.kabel-deutschland.de [95.90.213.197])
+        id S1726448AbgD1MXM (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 28 Apr 2020 08:23:12 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FB6021D94;
-        Mon, 27 Apr 2020 22:01:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00C1A20737;
+        Tue, 28 Apr 2020 12:23:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588024916;
-        bh=aarcxQWdZt/n5HSYEjYUvaw9zZE/lyV3YlS/MBeup0c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OsIWeIzpY6JePcU8MVUFaefm+5TQhlHA2T/C2btSM5RSCVFW+QwQIzyfvHco5KK2K
-         U7pdhfd3/h0SgsQ/EGLnZE6NkKwLT25GsxUcwgh9dgludO6YE+GwuS86P0CRaaAYc7
-         MlWQRgbNegEvCRC3pr9gE3Be8GXzqU8kecEMKsXA=
-Received: from mchehab by mail.kernel.org with local (Exim 4.92.3)
-        (envelope-from <mchehab@kernel.org>)
-        id 1jTBp4-000Ioz-Ur; Tue, 28 Apr 2020 00:01:54 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        netdev@vger.kernel.org, ceph-devel@vger.kernel.org
-Subject: [PATCH 17/38] docs: networking: convert dns_resolver.txt to ReST
-Date:   Tue, 28 Apr 2020 00:01:32 +0200
-Message-Id: <99fb4641432ac8b51e58bbcf93664e9efb19ec9f.1588024424.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.25.4
-In-Reply-To: <cover.1588024424.git.mchehab+huawei@kernel.org>
-References: <cover.1588024424.git.mchehab+huawei@kernel.org>
+        s=default; t=1588076591;
+        bh=vJCZCK3Ra5ppN3H89/HpxnMxXQ9pSuYMJ2+EOufRWnY=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=mb2eofp7+7N6w3WCdlS3iGfBcy6IVTWHIgpvQPgbT6KnuX5bMx8N8GbJvHXrcoByr
+         4GKV0pPFIYk/QACQevsfdVsGkcMvrDpq95rrLUOkxSRQEA5rZmdKwzc6PvSIFjN6Pt
+         swD+XcoBs7WMeIdIR2XUKWDcLXGWN2saxVOAyULk=
+Message-ID: <f36451800e4656f99483f4d47487a40ea5f942cd.camel@kernel.org>
+Subject: Re: [PATCH] ceph: fix up endian bug in managing feature bits
+From:   Jeff Layton <jlayton@kernel.org>
+To:     edward6@linux.ibm.com, ceph-devel@vger.kernel.org
+Cc:     Ulrich.Weigand@de.ibm.com, Tuan.Hoang1@ibm.com,
+        "Yan, Zheng" <ukernel@gmail.com>
+Date:   Tue, 28 Apr 2020 08:23:09 -0400
+In-Reply-To: <1588023986-23672-1-git-send-email-edward6@linux.ibm.com>
+References: <1588023986-23672-1-git-send-email-edward6@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.1 (3.36.1-1.fc32) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-- add SPDX header;
-- adjust titles and chapters, adding proper markups;
-- comment out text-only TOC from html/pdf output;
+On Mon, 2020-04-27 at 23:46 +0200, edward6@linux.ibm.com wrote:
+> From: Eduard Shishkin <edward6@linux.ibm.com>
+> 
+> In the function handle_session() variable @features always
+> contains little endian order of bytes. Just because the feature
+> bits are packed bytewise from left to right in
+> encode_supported_features().
+> 
+> However, test_bit(), called to check features availability, assumes
+> the host order of bytes in that variable. This leads to problems on
+> big endian architectures. Specifically it is impossible to mount
+> ceph volume on s390.
+> 
+> This patch adds conversion from little endian to the host order
+> of bytes, thus fixing the problem.
+> 
+> Signed-off-by: Eduard Shishkin <edward6@linux.ibm.com>
+> ---
+>  fs/ceph/mds_client.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 486f91f..190598d 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -3252,7 +3252,7 @@ static void handle_session(struct ceph_mds_session *session,
+>  	struct ceph_mds_session_head *h;
+>  	u32 op;
+>  	u64 seq;
+> -	unsigned long features = 0;
+> +	__le64 features = 0;
+>  	int wake = 0;
+>  	bool blacklisted = false;
+>  
+> @@ -3301,7 +3301,7 @@ static void handle_session(struct ceph_mds_session *session,
+>  		if (session->s_state == CEPH_MDS_SESSION_RECONNECTING)
+>  			pr_info("mds%d reconnect success\n", session->s_mds);
+>  		session->s_state = CEPH_MDS_SESSION_OPEN;
+> -		session->s_features = features;
+> +		session->s_features = le64_to_cpu(features);
+>  		renewed_caps(mdsc, session, 0);
+>  		wake = 1;
+>  		if (mdsc->stopping)
 
-- mark code blocks and literals as such;
+(cc'ing Zheng since he did the original patches here)
 
-- adjust identation, whitespaces and blank lines;
-- add to networking/index.rst.
+Thanks Eduard. The problem is real, but I think we can just do the
+conversion during the decode.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+The feature mask words sent by the MDS are 64 bits, so if it's smaller
+we can assume that it's malformed. So, I don't think we need to handle
+the case where it's smaller than 8 bytes.
+
+How about this patch instead?
+
+--------------------------8<-----------------------------
+
+ceph: fix endianness bug when handling MDS session feature bits
+
+Eduard reported a problem mounting cephfs on s390 arch. The feature
+mask sent by the MDS is little-endian, so we need to convert it
+before storing and testing against it.
+
+Reported-by: Eduard Shishkin <edward6@linux.ibm.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- .../{dns_resolver.txt => dns_resolver.rst}    | 52 +++++++++----------
- Documentation/networking/index.rst            |  1 +
- net/ceph/Kconfig                              |  2 +-
- net/dns_resolver/Kconfig                      |  2 +-
- net/dns_resolver/dns_key.c                    |  2 +-
- net/dns_resolver/dns_query.c                  |  2 +-
- 6 files changed, 30 insertions(+), 31 deletions(-)
- rename Documentation/networking/{dns_resolver.txt => dns_resolver.rst} (89%)
+ fs/ceph/mds_client.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/networking/dns_resolver.txt b/Documentation/networking/dns_resolver.rst
-similarity index 89%
-rename from Documentation/networking/dns_resolver.txt
-rename to Documentation/networking/dns_resolver.rst
-index eaa8f9a6fd5d..add4d59a99a5 100644
---- a/Documentation/networking/dns_resolver.txt
-+++ b/Documentation/networking/dns_resolver.rst
-@@ -1,8 +1,10 @@
--			     ===================
--			     DNS Resolver Module
--			     ===================
-+.. SPDX-License-Identifier: GPL-2.0
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index a8a5b98148ec..6c283c52d401 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -3260,8 +3260,7 @@ static void handle_session(struct ceph_mds_session *session,
+ 	void *end = p + msg->front.iov_len;
+ 	struct ceph_mds_session_head *h;
+ 	u32 op;
+-	u64 seq;
+-	unsigned long features = 0;
++	u64 seq, features = 0;
+ 	int wake = 0;
+ 	bool blacklisted = false;
  
--Contents:
-+===================
-+DNS Resolver Module
-+===================
-+
-+.. Contents:
+@@ -3280,9 +3279,8 @@ static void handle_session(struct ceph_mds_session *session,
+ 			goto bad;
+ 		/* version >= 3, feature bits */
+ 		ceph_decode_32_safe(&p, end, len, bad);
+-		ceph_decode_need(&p, end, len, bad);
+-		memcpy(&features, p, min_t(size_t, len, sizeof(features)));
+-		p += len;
++		ceph_decode_64_safe(&p, end, features, bad);
++		p += len - sizeof(features);
+ 	}
  
-  - Overview.
-  - Compilation.
-@@ -12,8 +14,7 @@ Contents:
-  - Debugging.
- 
- 
--========
--OVERVIEW
-+Overview
- ========
- 
- The DNS resolver module provides a way for kernel services to make DNS queries
-@@ -33,50 +34,50 @@ It does not yet support the following AFS features:
- This code is extracted from the CIFS filesystem.
- 
- 
--===========
--COMPILATION
-+Compilation
- ===========
- 
--The module should be enabled by turning on the kernel configuration options:
-+The module should be enabled by turning on the kernel configuration options::
- 
- 	CONFIG_DNS_RESOLVER	- tristate "DNS Resolver support"
- 
- 
--==========
--SETTING UP
-+Setting up
- ==========
- 
- To set up this facility, the /etc/request-key.conf file must be altered so that
- /sbin/request-key can appropriately direct the upcalls.  For example, to handle
- basic dname to IPv4/IPv6 address resolution, the following line should be
--added:
-+added::
-+
- 
- 	#OP	TYPE		DESC	CO-INFO	PROGRAM ARG1 ARG2 ARG3 ...
- 	#======	============	=======	=======	==========================
- 	create	dns_resolver  	*	*	/usr/sbin/cifs.upcall %k
- 
- To direct a query for query type 'foo', a line of the following should be added
--before the more general line given above as the first match is the one taken.
-+before the more general line given above as the first match is the one taken::
- 
- 	create	dns_resolver  	foo:*	*	/usr/sbin/dns.foo %k
- 
- 
--=====
--USAGE
-+Usage
- =====
- 
- To make use of this facility, one of the following functions that are
--implemented in the module can be called after doing:
-+implemented in the module can be called after doing::
- 
- 	#include <linux/dns_resolver.h>
- 
-- (1) int dns_query(const char *type, const char *name, size_t namelen,
--		   const char *options, char **_result, time_t *_expiry);
-+     ::
-+
-+	int dns_query(const char *type, const char *name, size_t namelen,
-+		     const char *options, char **_result, time_t *_expiry);
- 
-      This is the basic access function.  It looks for a cached DNS query and if
-      it doesn't find it, it upcalls to userspace to make a new DNS query, which
-      may then be cached.  The key description is constructed as a string of the
--     form:
-+     form::
- 
- 		[<type>:]<name>
- 
-@@ -107,16 +108,14 @@ This can be cleared by any process that has the CAP_SYS_ADMIN capability by
- the use of KEYCTL_KEYRING_CLEAR on the keyring ID.
- 
- 
--===============================
--READING DNS KEYS FROM USERSPACE
-+Reading DNS Keys from Userspace
- ===============================
- 
- Keys of dns_resolver type can be read from userspace using keyctl_read() or
- "keyctl read/print/pipe".
- 
- 
--=========
--MECHANISM
-+Mechanism
- =========
- 
- The dnsresolver module registers a key type called "dns_resolver".  Keys of
-@@ -147,11 +146,10 @@ See <file:Documentation/security/keys/request-key.rst> for further
- information about request-key function.
- 
- 
--=========
--DEBUGGING
-+Debugging
- =========
- 
- Debugging messages can be turned on dynamically by writing a 1 into the
--following file:
-+following file::
- 
--        /sys/module/dnsresolver/parameters/debug
-+	/sys/module/dnsresolver/parameters/debug
-diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
-index c893127004b9..55746038a7e9 100644
---- a/Documentation/networking/index.rst
-+++ b/Documentation/networking/index.rst
-@@ -52,6 +52,7 @@ Contents:
-    dctcp
-    decnet
-    defza
-+   dns_resolver
- 
- .. only::  subproject and html
- 
-diff --git a/net/ceph/Kconfig b/net/ceph/Kconfig
-index 2e8e6f904920..d7bec7adc267 100644
---- a/net/ceph/Kconfig
-+++ b/net/ceph/Kconfig
-@@ -39,6 +39,6 @@ config CEPH_LIB_USE_DNS_RESOLVER
- 	  be resolved using the CONFIG_DNS_RESOLVER facility.
- 
- 	  For information on how to use CONFIG_DNS_RESOLVER consult
--	  Documentation/networking/dns_resolver.txt
-+	  Documentation/networking/dns_resolver.rst
- 
- 	  If unsure, say N.
-diff --git a/net/dns_resolver/Kconfig b/net/dns_resolver/Kconfig
-index 0a1c2238b4bd..255df9b6e9e8 100644
---- a/net/dns_resolver/Kconfig
-+++ b/net/dns_resolver/Kconfig
-@@ -19,7 +19,7 @@ config DNS_RESOLVER
- 	  SMB2 later.  DNS Resolver is supported by the userspace upcall
- 	  helper "/sbin/dns.resolver" via /etc/request-key.conf.
- 
--	  See <file:Documentation/networking/dns_resolver.txt> for further
-+	  See <file:Documentation/networking/dns_resolver.rst> for further
- 	  information.
- 
- 	  To compile this as a module, choose M here: the module will be called
-diff --git a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
-index ad53eb31d40f..3aced951d5ab 100644
---- a/net/dns_resolver/dns_key.c
-+++ b/net/dns_resolver/dns_key.c
-@@ -1,6 +1,6 @@
- /* Key type used to cache DNS lookups made by the kernel
-  *
-- * See Documentation/networking/dns_resolver.txt
-+ * See Documentation/networking/dns_resolver.rst
-  *
-  *   Copyright (c) 2007 Igor Mammedov
-  *   Author(s): Igor Mammedov (niallain@gmail.com)
-diff --git a/net/dns_resolver/dns_query.c b/net/dns_resolver/dns_query.c
-index cab4e0df924f..82b084cc1cc6 100644
---- a/net/dns_resolver/dns_query.c
-+++ b/net/dns_resolver/dns_query.c
-@@ -1,7 +1,7 @@
- /* Upcall routine, designed to work as a key type and working through
-  * /sbin/request-key to contact userspace when handling DNS queries.
-  *
-- * See Documentation/networking/dns_resolver.txt
-+ * See Documentation/networking/dns_resolver.rst
-  *
-  *   Copyright (c) 2007 Igor Mammedov
-  *   Author(s): Igor Mammedov (niallain@gmail.com)
+ 	mutex_lock(&mdsc->mutex);
 -- 
-2.25.4
+2.26.1
+
 
