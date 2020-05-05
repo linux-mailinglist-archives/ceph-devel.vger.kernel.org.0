@@ -2,68 +2,76 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 55DF81C54F3
-	for <lists+ceph-devel@lfdr.de>; Tue,  5 May 2020 14:00:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CDEE1C5610
+	for <lists+ceph-devel@lfdr.de>; Tue,  5 May 2020 14:59:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728849AbgEEL76 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 5 May 2020 07:59:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55732 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727090AbgEEL76 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 5 May 2020 07:59:58 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AC6AC061A0F;
-        Tue,  5 May 2020 04:59:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=REPCft4TfvdeWRVXri2o1wuqZJcFojbavxrdrjtttCI=; b=NWIHP2gLwMqhCrrP0wSUBPv/7z
-        G7dxQhOCiYv0w/rVrLpvagaryypM4WVVrVT3d96a0dX4gHH3uH/bISMCDo7chbiqvapAgCfGxdYWB
-        5OWaNHLX4wYaHdJN6OvdzMnl2MxU+AceWTvhlzlHxfc+9+bmYyZ7Bfu37w0Iy9zZhNpucB4vmTHaJ
-        z563vHi53bukqAgYai33YDQikFMZsdCs1yPrbEso6bhPlyXfHA7ebfkSIz74UByYomhc8DfMmIcqj
-        30SF4G+p9UdMv/jzsXFgM5E0I3y4YLfe2uwd5KP1StlJI+y9n0aOA0bYljdtXbftau0rzofUJZwno
-        XQhNFf8A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jVwEk-0004lb-81; Tue, 05 May 2020 11:59:46 +0000
-Date:   Tue, 5 May 2020 04:59:46 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 54/61] afs: Wait on PG_fscache before
- modifying/releasing a page
-Message-ID: <20200505115946.GF16070@bombadil.infradead.org>
-References: <158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk>
- <158861253957.340223.7465334678444521655.stgit@warthog.procyon.org.uk>
+        id S1728968AbgEEM7G (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 5 May 2020 08:59:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54034 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728268AbgEEM7F (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 5 May 2020 08:59:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 554D9ACCC;
+        Tue,  5 May 2020 12:59:06 +0000 (UTC)
+Received: from localhost (webern.olymp [local])
+        by webern.olymp (OpenSMTPD) with ESMTPA id 1ffc28eb;
+        Tue, 5 May 2020 13:59:02 +0100 (WEST)
+Date:   Tue, 5 May 2020 13:59:02 +0100
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Gregory Farnum <gfarnum@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ceph: demote quotarealm lookup warning to a debug message
+Message-ID: <20200505125902.GA10381@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <158861253957.340223.7465334678444521655.stgit@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, May 04, 2020 at 06:15:39PM +0100, David Howells wrote:
-> PG_fscache is going to be used to indicate that a page is being written to
-> the cache, and that the page should not be modified or released until it's
-> finished.
-> 
-> Make afs_invalidatepage() and afs_releasepage() wait for it.
+A misconfigured cephx can easily result in having the kernel client
+flooding the logs with:
 
-Well, why?  Keeping a refcount on the page will prevent it from going
-away while it's being written to storage.  And the fact that it's
-being written to this cache is no reason to delay the truncate of a file
-(is it?)  Similarly, I don't see why we need to wait for the page to make
-it to the cache before we start to modify it.  Certainly we'll need to
-re-write it to the cache since the cache is now stale, but why should
-we wait for the now-stale write to complete?
+  ceph: Can't lookup inode 1 (err: -13)
+
+Change his message to debug level.
+
+Link: https://tracker.ceph.com/issues/44546
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
+---
+Hi!
+
+This patch should fix some harmless warnings when using cephx to restrict
+users access to certain filesystem paths.  I've added a comment to the
+tracker where removing this warning could result (unlikely, IMHO!) in an
+admin to miss not-so-harmless bogus configurations.
+
+Cheers,
+--
+Luís
+
+ fs/ceph/quota.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
+index de56dee60540..19507e2fdb57 100644
+--- a/fs/ceph/quota.c
++++ b/fs/ceph/quota.c
+@@ -159,8 +159,8 @@ static struct inode *lookup_quotarealm_inode(struct ceph_mds_client *mdsc,
+ 	}
+ 
+ 	if (IS_ERR(in)) {
+-		pr_warn("Can't lookup inode %llx (err: %ld)\n",
+-			realm->ino, PTR_ERR(in));
++		dout("Can't lookup inode %llx (err: %ld)\n",
++		     realm->ino, PTR_ERR(in));
+ 		qri->timeout = jiffies + msecs_to_jiffies(60 * 1000); /* XXX */
+ 	} else {
+ 		qri->timeout = 0;
 
