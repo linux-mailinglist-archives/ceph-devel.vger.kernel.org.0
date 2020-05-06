@@ -2,45 +2,34 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB46D1C6AA6
-	for <lists+ceph-devel@lfdr.de>; Wed,  6 May 2020 09:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4EAF1C6EF4
+	for <lists+ceph-devel@lfdr.de>; Wed,  6 May 2020 13:10:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728494AbgEFH6M (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 6 May 2020 03:58:12 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:46776 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728478AbgEFH6M (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 6 May 2020 03:58:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588751891;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3XSAt+Mkup/SofBBKUCYx2i7ecGmmjnSIl1ryVz58Ao=;
-        b=RdzmCiik0QQ2MCLzl6AESa1zQD3kk9f/KaMA1xntinlnJVefKXXi6mwwuDk/iFlGXt1Xb/
-        GD3LAj6uCrzsaK9ApSAAbdUV0sCnxAH5yNveZ529MI+mV/yyoYxshbkTrvgiyIMSU15Wwp
-        4czdUHfYyuuzea/yUc/qbwCOHG99LQ8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-459--Q3klqpZNS2sU59OYqcCAQ-1; Wed, 06 May 2020 03:58:03 -0400
-X-MC-Unique: -Q3klqpZNS2sU59OYqcCAQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A672B835B49;
-        Wed,  6 May 2020 07:58:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-225.rdu2.redhat.com [10.10.118.225])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 014C45D9DA;
-        Wed,  6 May 2020 07:57:58 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200505115946.GF16070@bombadil.infradead.org>
-References: <20200505115946.GF16070@bombadil.infradead.org> <158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk> <158861253957.340223.7465334678444521655.stgit@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
+        id S1728104AbgEFLJ5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 6 May 2020 07:09:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47094 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728052AbgEFLJx (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 6 May 2020 07:09:53 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 333F3C061A0F;
+        Wed,  6 May 2020 04:09:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=vfQ2xLQJnaSv4eyB6fGBnkHjNO7cWTECMxbc0VqkGy0=; b=tnbyHqNTBqyLYSKmKdfmPbRTZu
+        0HU8rZ2kSJ85KuTjgAOzhh5mBjRJtnCSyCsyRTHJNBkezNrvw6JjyT0hN0fsiuFMt/D0UO31Uyaj0
+        Cgq0Sw1/9ekun8nxOq73YMn6DKuegBmQUMVFceY3ns5sH4A2w7nmsZSU9yyFRxn4RU0wd5y92VABJ
+        GmnF3fk82h8xF2i+MYQIIVq4xzP2IxGNvBw+dZjWza8mm9PoG+zEq+011Yr6Sp1f7lcANyvzI0rP8
+        Z2SwZzJrOqp27iZuKDrosbbRxVeY1qJo5KFDsLVNR0PHbg199RyKT8jQ9eIg1uMIdx2ASMaCO0f60
+        3McnRVTw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jWHvq-0005ga-Fj; Wed, 06 May 2020 11:09:42 +0000
+Date:   Wed, 6 May 2020 04:09:42 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <sfrench@samba.org>,
         Jeff Layton <jlayton@redhat.com>,
@@ -49,33 +38,45 @@ Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 54/61] afs: Wait on PG_fscache before modifying/releasing a page
+Subject: Re: [RFC PATCH 54/61] afs: Wait on PG_fscache before
+ modifying/releasing a page
+Message-ID: <20200506110942.GL16070@bombadil.infradead.org>
+References: <20200505115946.GF16070@bombadil.infradead.org>
+ <158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk>
+ <158861253957.340223.7465334678444521655.stgit@warthog.procyon.org.uk>
+ <683739.1588751878@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <683738.1588751878.1@warthog.procyon.org.uk>
-Date:   Wed, 06 May 2020 08:57:58 +0100
-Message-ID: <683739.1588751878@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <683739.1588751878@warthog.procyon.org.uk>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
-
-> > PG_fscache is going to be used to indicate that a page is being written to
-> > the cache, and that the page should not be modified or released until it's
-> > finished.
-> > 
-> > Make afs_invalidatepage() and afs_releasepage() wait for it.
+On Wed, May 06, 2020 at 08:57:58AM +0100, David Howells wrote:
+> Matthew Wilcox <willy@infradead.org> wrote:
 > 
-> Well, why?  Keeping a refcount on the page will prevent it from going
-> away while it's being written to storage.  And the fact that it's
-> being written to this cache is no reason to delay the truncate of a file
-> (is it?)
+> > > PG_fscache is going to be used to indicate that a page is being written to
+> > > the cache, and that the page should not be modified or released until it's
+> > > finished.
+> > > 
+> > > Make afs_invalidatepage() and afs_releasepage() wait for it.
+> > 
+> > Well, why?  Keeping a refcount on the page will prevent it from going
+> > away while it's being written to storage.  And the fact that it's
+> > being written to this cache is no reason to delay the truncate of a file
+> > (is it?)
+> 
+> Won't that screw up ITER_MAPPING?  Does that mean that ITER_MAPPING isn't
+> viable?
 
-Won't that screw up ITER_MAPPING?  Does that mean that ITER_MAPPING isn't
-viable?
+Can you remind me why ITER_MAPPING needs:
 
-David
+"The caller must guarantee that the pages are all present and they must be
+locked using PG_locked, PG_writeback or PG_fscache to prevent them from
+going away or being migrated whilst they're being accessed."
 
+An elevated refcount prevents migration, and it also prevents the pages
+from being freed.  It doesn't prevent them from being truncated out of
+the file, but it does ensure the pages aren't reallocated.
