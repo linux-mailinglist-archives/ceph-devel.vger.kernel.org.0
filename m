@@ -2,92 +2,80 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97FF11C5A26
-	for <lists+ceph-devel@lfdr.de>; Tue,  5 May 2020 16:55:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB46D1C6AA6
+	for <lists+ceph-devel@lfdr.de>; Wed,  6 May 2020 09:58:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729574AbgEEOzT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 5 May 2020 10:55:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53156 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729065AbgEEOzT (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 5 May 2020 10:55:19 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728494AbgEFH6M (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 6 May 2020 03:58:12 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:46776 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728478AbgEFH6M (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 6 May 2020 03:58:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588751891;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3XSAt+Mkup/SofBBKUCYx2i7ecGmmjnSIl1ryVz58Ao=;
+        b=RdzmCiik0QQ2MCLzl6AESa1zQD3kk9f/KaMA1xntinlnJVefKXXi6mwwuDk/iFlGXt1Xb/
+        GD3LAj6uCrzsaK9ApSAAbdUV0sCnxAH5yNveZ529MI+mV/yyoYxshbkTrvgiyIMSU15Wwp
+        4czdUHfYyuuzea/yUc/qbwCOHG99LQ8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-459--Q3klqpZNS2sU59OYqcCAQ-1; Wed, 06 May 2020 03:58:03 -0400
+X-MC-Unique: -Q3klqpZNS2sU59OYqcCAQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B2C220735;
-        Tue,  5 May 2020 14:55:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588690518;
-        bh=Azr1vvaVE+dpgsB2aF/71FqLe9dlhB5Rzk/5TXfEeuE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=a5T8EinthUvJYRSr+mDUEaHJpiDGT5FyYKSGeJgqQgPB9yzzJ/bZqKndMr8dmmZk+
-         G/+2kcFH/j8Q3frXdg/sV12LGzLgzwohBNdnh7k3qpqtxY5gguiTX0y/DuZD/h2Rfa
-         BRuAWlKLuiClUuDIsOmttZKI3VAVLYTii0CAf3Dg=
-Message-ID: <e7d94046a8e2e9c9603b8ff2c69aabcb50ff5ce1.camel@kernel.org>
-Subject: Re: [PATCH] ceph: demote quotarealm lookup warning to a debug
- message
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Gregory Farnum <gfarnum@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 05 May 2020 10:55:17 -0400
-In-Reply-To: <20200505125902.GA10381@suse.com>
-References: <20200505125902.GA10381@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.2 (3.36.2-1.fc32) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A672B835B49;
+        Wed,  6 May 2020 07:58:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-225.rdu2.redhat.com [10.10.118.225])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 014C45D9DA;
+        Wed,  6 May 2020 07:57:58 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200505115946.GF16070@bombadil.infradead.org>
+References: <20200505115946.GF16070@bombadil.infradead.org> <158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk> <158861253957.340223.7465334678444521655.stgit@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 54/61] afs: Wait on PG_fscache before modifying/releasing a page
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <683738.1588751878.1@warthog.procyon.org.uk>
+Date:   Wed, 06 May 2020 08:57:58 +0100
+Message-ID: <683739.1588751878@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2020-05-05 at 13:59 +0100, Luis Henriques wrote:
-> A misconfigured cephx can easily result in having the kernel client
-> flooding the logs with:
-> 
->   ceph: Can't lookup inode 1 (err: -13)
-> 
-> Change his message to debug level.
-> 
-> Link: https://tracker.ceph.com/issues/44546
-> Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> ---
-> Hi!
-> 
-> This patch should fix some harmless warnings when using cephx to restrict
-> users access to certain filesystem paths.  I've added a comment to the
-> tracker where removing this warning could result (unlikely, IMHO!) in an
-> admin to miss not-so-harmless bogus configurations.
-> 
-> Cheers,
-> --
-> Luís
-> 
->  fs/ceph/quota.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-> index de56dee60540..19507e2fdb57 100644
-> --- a/fs/ceph/quota.c
-> +++ b/fs/ceph/quota.c
-> @@ -159,8 +159,8 @@ static struct inode *lookup_quotarealm_inode(struct ceph_mds_client *mdsc,
->  	}
->  
->  	if (IS_ERR(in)) {
-> -		pr_warn("Can't lookup inode %llx (err: %ld)\n",
-> -			realm->ino, PTR_ERR(in));
-> +		dout("Can't lookup inode %llx (err: %ld)\n",
-> +		     realm->ino, PTR_ERR(in));
->  		qri->timeout = jiffies + msecs_to_jiffies(60 * 1000); /* XXX */
->  	} else {
->  		qri->timeout = 0;
-> 
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Merged into testing.
+> > PG_fscache is going to be used to indicate that a page is being written to
+> > the cache, and that the page should not be modified or released until it's
+> > finished.
+> > 
+> > Make afs_invalidatepage() and afs_releasepage() wait for it.
+> 
+> Well, why?  Keeping a refcount on the page will prevent it from going
+> away while it's being written to storage.  And the fact that it's
+> being written to this cache is no reason to delay the truncate of a file
+> (is it?)
 
-Thanks Luis!
--- 
-Jeff Layton <jlayton@kernel.org>
+Won't that screw up ITER_MAPPING?  Does that mean that ITER_MAPPING isn't
+viable?
+
+David
 
