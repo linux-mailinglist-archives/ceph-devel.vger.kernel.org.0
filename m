@@ -2,86 +2,95 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25BE61C72BA
-	for <lists+ceph-devel@lfdr.de>; Wed,  6 May 2020 16:24:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8A531C8CCF
+	for <lists+ceph-devel@lfdr.de>; Thu,  7 May 2020 15:44:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728936AbgEFOYm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 6 May 2020 10:24:42 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:44554 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728740AbgEFOYm (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 6 May 2020 10:24:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588775080;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dbddwc8AWoCH822EokkiRcp0XFOdJXpCOboNl38sqMs=;
-        b=Ec5egBY7MQtrsi+HfvGFiG2yB8hL0u9v8a4bF5O/swX57l8qXcM0uz5IfUF3zW+cZRb0mU
-        C/1Q7ZJNNxpNrh77XnxbywI7c7IJrssKx79dghteYOjUw8jnvgVm2jmxXedVuankpOC2+p
-        MIeHNlCwKM0MnNKfWuQNIkGQSheYbtk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-308-7dSlh3iYM9GY009Ms9gsRQ-1; Wed, 06 May 2020 10:24:39 -0400
-X-MC-Unique: 7dSlh3iYM9GY009Ms9gsRQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726701AbgEGNoR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 7 May 2020 09:44:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40120 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725939AbgEGNoP (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 7 May 2020 09:44:15 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E1CE281CBE1;
-        Wed,  6 May 2020 14:24:36 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-225.rdu2.redhat.com [10.10.118.225])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2557E6299C;
-        Wed,  6 May 2020 14:24:32 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200506110942.GL16070@bombadil.infradead.org>
-References: <20200506110942.GL16070@bombadil.infradead.org> <20200505115946.GF16070@bombadil.infradead.org> <158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk> <158861253957.340223.7465334678444521655.stgit@warthog.procyon.org.uk> <683739.1588751878@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 54/61] afs: Wait on PG_fscache before modifying/releasing a page
+        by mail.kernel.org (Postfix) with ESMTPSA id 31C4720708;
+        Thu,  7 May 2020 13:44:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1588859054;
+        bh=A65o93oA659l57qzQi9fqA4AboQSPcBGUlmqBXf4idw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=PewNcwmRKjnGMBjIGfgAnKwirjB3T4i2ZPq+UeTHSwJQwbXh5D3eAat83UthrFHFA
+         GgU+4LBi8mKBn9RN2Nr2bEr4e6Iui63bMoKOore/wu7ZPocv0QNnLLvHol2uE9KFz0
+         aZ0HBjg7k/kb77cVdL71h1LNh5Q0ihWOcrdaVGIE=
+Message-ID: <e5839bffe4939c6290d74ca2fb39310bd4916c16.camel@kernel.org>
+Subject: Re: [PATCH] ceph: demote quotarealm lookup warning to a debug
+ message
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Gregory Farnum <gfarnum@redhat.com>,
+        Luis Henriques <lhenriques@suse.com>
+Date:   Thu, 07 May 2020 09:44:13 -0400
+In-Reply-To: <20200505125902.GA10381@suse.com>
+References: <20200505125902.GA10381@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.2 (3.36.2-1.fc32) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <713140.1588775072.1@warthog.procyon.org.uk>
-Date:   Wed, 06 May 2020 15:24:32 +0100
-Message-ID: <713141.1588775072@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
-
-> > Won't that screw up ITER_MAPPING?  Does that mean that ITER_MAPPING isn't
-> > viable?
+On Tue, 2020-05-05 at 13:59 +0100, Luis Henriques wrote:
+> A misconfigured cephx can easily result in having the kernel client
+> flooding the logs with:
 > 
-> Can you remind me why ITER_MAPPING needs:
+>   ceph: Can't lookup inode 1 (err: -13)
 > 
-> "The caller must guarantee that the pages are all present and they must be
-> locked using PG_locked, PG_writeback or PG_fscache to prevent them from
-> going away or being migrated whilst they're being accessed."
+> Change his message to debug level.
 > 
-> An elevated refcount prevents migration, and it also prevents the pages
-> from being freed.  It doesn't prevent them from being truncated out of
-> the file, but it does ensure the pages aren't reallocated.
+> Link: https://tracker.ceph.com/issues/44546
+> Signed-off-by: Luis Henriques <lhenriques@suse.com>
+> ---
+> Hi!
+> 
+> This patch should fix some harmless warnings when using cephx to restrict
+> users access to certain filesystem paths.  I've added a comment to the
+> tracker where removing this warning could result (unlikely, IMHO!) in an
+> admin to miss not-so-harmless bogus configurations.
+> 
+> Cheers,
+> --
+> Luís
+> 
+>  fs/ceph/quota.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
+> index de56dee60540..19507e2fdb57 100644
+> --- a/fs/ceph/quota.c
+> +++ b/fs/ceph/quota.c
+> @@ -159,8 +159,8 @@ static struct inode *lookup_quotarealm_inode(struct ceph_mds_client *mdsc,
+>  	}
+>  
+>  	if (IS_ERR(in)) {
+> -		pr_warn("Can't lookup inode %llx (err: %ld)\n",
+> -			realm->ino, PTR_ERR(in));
+> +		dout("Can't lookup inode %llx (err: %ld)\n",
+> +		     realm->ino, PTR_ERR(in));
+>  		qri->timeout = jiffies + msecs_to_jiffies(60 * 1000); /* XXX */
+>  	} else {
+>  		qri->timeout = 0;
+> 
 
-ITER_MAPPING relies on the mapping to maintain the pointers to the pages so
-that it can find them rather than being like ITER_BVEC where there's a
-separate list.
+Ilya,
 
-Truncate removes the pages from the mapping - at which point ITER_MAPPING can
-no longer find them.
+We've had a number of reports where people get a ton of kernel log spam
+when they hit this problem. I think we probably ought to mark this patch
+for stable and go ahead and send it to Linus for v5.7 -- any objection?
 
-David
+-- 
+Jeff Layton <jlayton@kernel.org>
 
