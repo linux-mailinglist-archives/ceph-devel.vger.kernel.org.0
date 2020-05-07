@@ -2,122 +2,108 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D34101C966F
-	for <lists+ceph-devel@lfdr.de>; Thu,  7 May 2020 18:26:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 881891C999B
+	for <lists+ceph-devel@lfdr.de>; Thu,  7 May 2020 20:47:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbgEGQ0E (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 7 May 2020 12:26:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39330 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726470AbgEGQ0E (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 May 2020 12:26:04 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36330C05BD43;
-        Thu,  7 May 2020 09:26:04 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id d7so2738953ioq.5;
-        Thu, 07 May 2020 09:26:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=DxrpDcEowC2nWijqj13bXtMWCGzq2IqmtnQs3KgvsXI=;
-        b=ljddwFgYm/EfJhn50K7SOmOsqWqMR5j/cLfNW11NDz81cwXUjaKQ3mBtGQ0MQ3Czrw
-         iuA5Z0o4BBm/uHkO5FszeGeNA+lwcliuRrtyTSNCyA7WnfiTotNo1cZ1xdkstRgvuBVT
-         1DSjFDO49P0i88RsSEF4mkyNjxYQ7hWE7Ng5hk+xWZoI3ephe6o2w+ZkFaDMwIzieeWu
-         d/CRl5/FdlyfTKiH84PY4GoSBW8ixz1Mc8KdERpywIo2RHCRKiMROAroNg8v+iCgqpY8
-         Z9SI8SJa1MVZuiflc2gS6fTvO/a+mu+UZnIfdszf6vcRXvddN37f9+yEO6GnINjpFeE4
-         O5rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=DxrpDcEowC2nWijqj13bXtMWCGzq2IqmtnQs3KgvsXI=;
-        b=chOZ0qW3SuKH6nvwzTsy/7kfWhv6HlPYxjFF0cvtTlrb7A9GhIOjBngIJnkoVKS8da
-         Pr3V1DdIdxB7OBHA+p08UosrkJ4EUo8WAKsQ05sl0naqolTLLD4OyHX02avCZPAj7on1
-         DWDFePoOxY9Ll6PTrJ/R1I/4Rc8T6rd6yLGKovH9GkSK6S2ShUYgiISI9HBvIfb6CVXT
-         KL5TU2JN+Zl1jA8trFPu0KF9600c296+TiWOoLa5EMKh98YPJs+iEoMXbHA7tLi5p6al
-         ywTw///947qqY/UpEUMF04H4OIddblCzbAt9OmUV72vNX8TFzlFHTMW10DEuxL75gIMg
-         E4ZA==
-X-Gm-Message-State: AGi0PuZLaQHPB01Dwpkg1U84sriVA9RTy5nlNGx3PzAFoNbIvR8gP3Hn
-        0v1b5FOGJ/cQ0OpbGHlLJGaI5bVerBv3H7vW1Nk=
-X-Google-Smtp-Source: APiQypKDF58jn4byCgHHNjiVKd2T2f04YumBuTEle19S+IjBAzkjZmg/zOArb9caTa4uMTFbNgwyIY+epItZP9R8RoM=
-X-Received: by 2002:a5e:a607:: with SMTP id q7mr14744359ioi.109.1588868762638;
- Thu, 07 May 2020 09:26:02 -0700 (PDT)
+        id S1728485AbgEGSrN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 7 May 2020 14:47:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47650 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726467AbgEGSrN (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 7 May 2020 14:47:13 -0400
+Received: from embeddedor (unknown [189.207.59.248])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05D1421835;
+        Thu,  7 May 2020 18:47:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1588877232;
+        bh=f+LUv1Y7A4BpaBDHCwe6DTNBpqkkYTWihjXsRz71OLM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=e54Ef6Dxw35dosckI9n+IIoNelf/NcaMvUZzlp44lRwX+kmktdYylj9TVGR1o1h0Q
+         bVAPouqFdqyNXBnlCsTWz9Mu1+aA3bIYB5j2uqIi0J8ABL9wRepsAL9owWSFcnLI+i
+         EEU3kC5WCWnCyBmMQ5VykK/HzqNbmiSMImUslmgM=
+Date:   Thu, 7 May 2020 13:51:38 -0500
+From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To:     Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] libceph: Replace zero-length array with flexible-array
+Message-ID: <20200507185138.GA14076@embeddedor>
 MIME-Version: 1.0
-References: <20200505125902.GA10381@suse.com> <e5839bffe4939c6290d74ca2fb39310bd4916c16.camel@kernel.org>
-In-Reply-To: <e5839bffe4939c6290d74ca2fb39310bd4916c16.camel@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 7 May 2020 18:26:03 +0200
-Message-ID: <CAOi1vP8oO156ZH0Ge3d5V0fu+NTW6LO12bxgy1h-W5X4+9zN=w@mail.gmail.com>
-Subject: Re: [PATCH] ceph: demote quotarealm lookup warning to a debug message
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        Luis Henriques <lhenriques@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, May 7, 2020 at 3:44 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> On Tue, 2020-05-05 at 13:59 +0100, Luis Henriques wrote:
-> > A misconfigured cephx can easily result in having the kernel client
-> > flooding the logs with:
-> >
-> >   ceph: Can't lookup inode 1 (err: -13)
-> >
-> > Change his message to debug level.
-> >
-> > Link: https://tracker.ceph.com/issues/44546
-> > Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> > ---
-> > Hi!
-> >
-> > This patch should fix some harmless warnings when using cephx to restri=
-ct
-> > users access to certain filesystem paths.  I've added a comment to the
-> > tracker where removing this warning could result (unlikely, IMHO!) in a=
-n
-> > admin to miss not-so-harmless bogus configurations.
-> >
-> > Cheers,
-> > --
-> > Lu=C3=ADs
-> >
-> >  fs/ceph/quota.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-> > index de56dee60540..19507e2fdb57 100644
-> > --- a/fs/ceph/quota.c
-> > +++ b/fs/ceph/quota.c
-> > @@ -159,8 +159,8 @@ static struct inode *lookup_quotarealm_inode(struct=
- ceph_mds_client *mdsc,
-> >       }
-> >
-> >       if (IS_ERR(in)) {
-> > -             pr_warn("Can't lookup inode %llx (err: %ld)\n",
-> > -                     realm->ino, PTR_ERR(in));
-> > +             dout("Can't lookup inode %llx (err: %ld)\n",
-> > +                  realm->ino, PTR_ERR(in));
-> >               qri->timeout =3D jiffies + msecs_to_jiffies(60 * 1000); /=
-* XXX */
-> >       } else {
-> >               qri->timeout =3D 0;
-> >
->
-> Ilya,
->
-> We've had a number of reports where people get a ton of kernel log spam
-> when they hit this problem. I think we probably ought to mark this patch
-> for stable and go ahead and send it to Linus for v5.7 -- any objection?
+The current codebase makes use of the zero-length array language
+extension to the C90 standard, but the preferred mechanism to declare
+variable-length types such as these ones is a flexible array member[1][2],
+introduced in C99:
 
-Sure, I'll queue it up.
+struct foo {
+        int stuff;
+        struct boo array[];
+};
 
-Thanks,
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last in the structure, which
+will help us prevent some kind of undefined behavior bugs from being
+inadvertently introduced[3] to the codebase from now on.
 
-                Ilya
+Also, notice that, dynamic memory allocations won't be affected by
+this change:
+
+"Flexible array members have incomplete type, and so the sizeof operator
+may not be applied. As a quirk of the original implementation of
+zero-length arrays, sizeof evaluates to zero."[1]
+
+sizeof(flexible-array-member) triggers a warning because flexible array
+members have incomplete type[1]. There are some instances of code in
+which the sizeof operator is being incorrectly/erroneously applied to
+zero-length arrays and the result is zero. Such instances may be hiding
+some bugs. So, this work (flexible-array member conversions) will also
+help to get completely rid of those sorts of issues.
+
+This issue was found with the help of Coccinelle.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
+[2] https://github.com/KSPP/linux/issues/21
+[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ include/linux/ceph/mon_client.h |    2 +-
+ include/linux/crush/crush.h     |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/ceph/mon_client.h b/include/linux/ceph/mon_client.h
+index dbb8a6959a73..ce4ffeb384d7 100644
+--- a/include/linux/ceph/mon_client.h
++++ b/include/linux/ceph/mon_client.h
+@@ -19,7 +19,7 @@ struct ceph_monmap {
+ 	struct ceph_fsid fsid;
+ 	u32 epoch;
+ 	u32 num_mon;
+-	struct ceph_entity_inst mon_inst[0];
++	struct ceph_entity_inst mon_inst[];
+ };
+ 
+ struct ceph_mon_client;
+diff --git a/include/linux/crush/crush.h b/include/linux/crush/crush.h
+index 54741295c70b..38b0e4d50ed9 100644
+--- a/include/linux/crush/crush.h
++++ b/include/linux/crush/crush.h
+@@ -87,7 +87,7 @@ struct crush_rule_mask {
+ struct crush_rule {
+ 	__u32 len;
+ 	struct crush_rule_mask mask;
+-	struct crush_rule_step steps[0];
++	struct crush_rule_step steps[];
+ };
+ 
+ #define crush_rule_size(len) (sizeof(struct crush_rule) + \
+
