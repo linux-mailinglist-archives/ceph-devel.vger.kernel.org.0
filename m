@@ -2,125 +2,109 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D2C61CA579
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 May 2020 09:54:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B76451CB1ED
+	for <lists+ceph-devel@lfdr.de>; Fri,  8 May 2020 16:40:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbgEHHyK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 8 May 2020 03:54:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42850 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbgEHHyJ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 8 May 2020 03:54:09 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE08EC05BD43;
-        Fri,  8 May 2020 00:54:09 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id k18so965536ion.0;
-        Fri, 08 May 2020 00:54:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sH1/EwEHGHbP5BYtym63KlE+5F5oheVphD+4Sqk6xQQ=;
-        b=EVTnPH8joPJaveY1ikXPkz7L1es/ikQpHM8yiA7JgNcKq8z4jpk+gZpWBjqb/k3Rdx
-         AhFT7r6Vecr3bB/axM3bH7dX8O+4u/ZnHAei0ImYdpstW96irI684wTQnV81XFLKhwU7
-         y+4I8cYyavVP24x4Niyx2Bzb/f1+2U5E+CDBWy1TqaWOcP/SwpuTkpGesVc9Pt+uZFau
-         GX8CiUIbG6NJfGmnpF04gkjlfMlleX+PRJFC5bO4V7k7kf2q3lDQ9auMiSk7wGD/cbPb
-         erdiYjNs3Myemd5B++MawugL7mWQ9rSYtRYjuH5wX2RUZ2qoA54VGKcmXyxTdFq8RlcH
-         sPIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sH1/EwEHGHbP5BYtym63KlE+5F5oheVphD+4Sqk6xQQ=;
-        b=k8tJxvSSrIlTiWBFDK69bsiht1olhbXulfkRSBRSbIDU1FOzY6KaYNGcC4hqE6AsSs
-         q2V1QrbBU+s2zxnb2it+a5tPVrvQf435T7ls1AOyIVWgpeUR2UQesReCq5ibOYPKPHf9
-         jxM66zv3ckQpJWJFeKbDCCNQ93rDb2+O4qPGvvt8xW6ytg80AYDcClXsEGGqKtZ+DJvb
-         468HZcUuM5m8oViLP9xY5DxtsN7z86egswrx+TY8RW1j/PIFyIf5Zq9xCSd6deMfo6vC
-         LDl3iDz1N5fL8ddJGkiX6//VocSxs2vlvQxWxqtMIy/3uZexh0BWyOaIzc76BkuCXaXu
-         RKGg==
-X-Gm-Message-State: AGi0PuZZwWE96gj2mim8drTE0KS50cAY2cJAFLyUr3OFR3LfFd/yrMph
-        O3ZD/VuFM9aXH4ixhAOeQqtKq2wrQ2UlbPWIY0w=
-X-Google-Smtp-Source: APiQypKJurGCBU0LVQvLyoL70z019mfp9z4r2YrgH+FWJYsAFv1TCyRjsO0Wub9HSfW/8oD1WnmSxjiZIN4J+xiGl/c=
-X-Received: by 2002:a02:3f44:: with SMTP id c4mr1322316jaf.144.1588924449157;
- Fri, 08 May 2020 00:54:09 -0700 (PDT)
+        id S1727918AbgEHOj7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 8 May 2020 10:39:59 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33715 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726689AbgEHOj7 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 8 May 2020 10:39:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588948798;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hEKOJFeBe0XhjAsTACvee48OxZfeBzXxgNIQnHiBGQA=;
+        b=Gl4lNuj7Ki9pavwxpT7H1K3PsTz9f9XvJI3PAsJqmdFwhxlzQJrrVkeWprMV/N67y4bQ8j
+        Mt/W21+61NlFx5L5A01EcezdhZ2E+zJ2DzWuBm8tzlAeJx0aawbnTxdzJccdHHT+QhZrJE
+        1DXe4LFBr1KhzSPKr06oPKYBS4DYP84=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-204-uSDcl7BqPWCt8KdWQCXcuA-1; Fri, 08 May 2020 10:39:54 -0400
+X-MC-Unique: uSDcl7BqPWCt8KdWQCXcuA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2D86B464;
+        Fri,  8 May 2020 14:39:52 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-225.rdu2.redhat.com [10.10.118.225])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 42DCE707A6;
+        Fri,  8 May 2020 14:39:49 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <713141.1588775072@warthog.procyon.org.uk>
+References: <713141.1588775072@warthog.procyon.org.uk> <20200506110942.GL16070@bombadil.infradead.org> <20200505115946.GF16070@bombadil.infradead.org> <158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk> <158861253957.340223.7465334678444521655.stgit@warthog.procyon.org.uk> <683739.1588751878@warthog.procyon.org.uk>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 54/61] afs: Wait on PG_fscache before modifying/releasing a page
 MIME-Version: 1.0
-References: <20200507191932.GA15991@embeddedor>
-In-Reply-To: <20200507191932.GA15991@embeddedor>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Fri, 8 May 2020 09:54:12 +0200
-Message-ID: <CAOi1vP9GfENfy_D_iOeUrweUk2CTcz+2GXGg3M6y+bvQs_zqMw@mail.gmail.com>
-Subject: Re: [PATCH] rbd: Replace zero-length array with flexible-array
-To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc:     Sage Weil <sage@redhat.com>,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1040570.1588948788.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Fri, 08 May 2020 15:39:48 +0100
+Message-ID: <1040571.1588948788@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+To:     unlisted-recipients:; (no To-header on input)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, May 7, 2020 at 9:15 PM Gustavo A. R. Silva
-<gustavoars@kernel.org> wrote:
->
-> The current codebase makes use of the zero-length array language
-> extension to the C90 standard, but the preferred mechanism to declare
-> variable-length types such as these ones is a flexible array member[1][2],
-> introduced in C99:
->
-> struct foo {
->         int stuff;
->         struct boo array[];
-> };
->
-> By making use of the mechanism above, we will get a compiler warning
-> in case the flexible array does not occur last in the structure, which
-> will help us prevent some kind of undefined behavior bugs from being
-> inadvertently introduced[3] to the codebase from now on.
->
-> Also, notice that, dynamic memory allocations won't be affected by
-> this change:
->
-> "Flexible array members have incomplete type, and so the sizeof operator
-> may not be applied. As a quirk of the original implementation of
-> zero-length arrays, sizeof evaluates to zero."[1]
->
-> sizeof(flexible-array-member) triggers a warning because flexible array
-> members have incomplete type[1]. There are some instances of code in
-> which the sizeof operator is being incorrectly/erroneously applied to
-> zero-length arrays and the result is zero. Such instances may be hiding
-> some bugs. So, this work (flexible-array member conversions) will also
-> help to get completely rid of those sorts of issues.
->
-> This issue was found with the help of Coccinelle.
->
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-> [2] https://github.com/KSPP/linux/issues/21
-> [3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
->
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
->  drivers/block/rbd_types.h |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/block/rbd_types.h b/drivers/block/rbd_types.h
-> index ac98ab6ccd3b..a600e0eb6b6f 100644
-> --- a/drivers/block/rbd_types.h
-> +++ b/drivers/block/rbd_types.h
-> @@ -93,7 +93,7 @@ struct rbd_image_header_ondisk {
->         __le32 snap_count;
->         __le32 reserved;
->         __le64 snap_names_len;
-> -       struct rbd_image_snap_ondisk snaps[0];
-> +       struct rbd_image_snap_ondisk snaps[];
->  } __attribute__((packed));
->
->
->
+David Howells <dhowells@redhat.com> wrote:
 
-Applied (folded into libceph patch).
+> ITER_MAPPING relies on the mapping to maintain the pointers to the pages=
+ so
+> that it can find them rather than being like ITER_BVEC where there's a
+> separate list.
+> =
 
-Thanks,
+> Truncate removes the pages from the mapping - at which point ITER_MAPPIN=
+G can
+> no longer find them.
 
-                Ilya
+It looks like ITER_MAPPING is fine with truncate, provided the invalidatio=
+n
+waits for the iterator to complete first:
+
+	int truncate_inode_page(struct address_space *mapping, struct page *page)
+	{
+		VM_BUG_ON_PAGE(PageTail(page), page);
+
+		if (page->mapping !=3D mapping)
+			return -EIO;
+
+		truncate_cleanup_page(mapping, page);
+		delete_from_page_cache(page);
+		return 0;
+	}
+
+In which case, ->invalidatepage() needs to wait for PG_fscache.
+
+Similarly, it looks like ->releasepage() is fine, provided it waits for
+PG_fscache also.
+
+If I have to use ITER_BVEC, what's the advisability of using vmalloc() to
+allocate the bio_vec array for a transient op?  Such an array can referenc=
+e up
+to 1MiB on a 64-bit machine with 4KiB non-compound pages if it only alloca=
+tes
+up to a single page.  I'm wondering what the teardown cost is, though, if =
+all
+the corresponding PTEs have to be erased from all CPUs.
+
+David
+
