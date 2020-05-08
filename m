@@ -2,109 +2,100 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B76451CB1ED
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 May 2020 16:40:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2DB1CB5AA
+	for <lists+ceph-devel@lfdr.de>; Fri,  8 May 2020 19:17:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbgEHOj7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 8 May 2020 10:39:59 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33715 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726689AbgEHOj7 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 8 May 2020 10:39:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588948798;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hEKOJFeBe0XhjAsTACvee48OxZfeBzXxgNIQnHiBGQA=;
-        b=Gl4lNuj7Ki9pavwxpT7H1K3PsTz9f9XvJI3PAsJqmdFwhxlzQJrrVkeWprMV/N67y4bQ8j
-        Mt/W21+61NlFx5L5A01EcezdhZ2E+zJ2DzWuBm8tzlAeJx0aawbnTxdzJccdHHT+QhZrJE
-        1DXe4LFBr1KhzSPKr06oPKYBS4DYP84=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-204-uSDcl7BqPWCt8KdWQCXcuA-1; Fri, 08 May 2020 10:39:54 -0400
-X-MC-Unique: uSDcl7BqPWCt8KdWQCXcuA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2D86B464;
-        Fri,  8 May 2020 14:39:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-225.rdu2.redhat.com [10.10.118.225])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 42DCE707A6;
-        Fri,  8 May 2020 14:39:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <713141.1588775072@warthog.procyon.org.uk>
-References: <713141.1588775072@warthog.procyon.org.uk> <20200506110942.GL16070@bombadil.infradead.org> <20200505115946.GF16070@bombadil.infradead.org> <158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk> <158861253957.340223.7465334678444521655.stgit@warthog.procyon.org.uk> <683739.1588751878@warthog.procyon.org.uk>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 54/61] afs: Wait on PG_fscache before modifying/releasing a page
+        id S1727107AbgEHRQW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 8 May 2020 13:16:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45726 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726756AbgEHRQW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 8 May 2020 13:16:22 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EABA8C061A0C;
+        Fri,  8 May 2020 10:16:21 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id h9so2772971wrt.0;
+        Fri, 08 May 2020 10:16:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nEx7VWUEE5CS/7MRII1BtXnU4gjE+aVUwjHid+Nm0Kc=;
+        b=MiGzKwDSoc9PlgUPs6sZC1firZIaNgaQQNEf7spMf50dnlhJeYzZ59BSprQj3laLfH
+         uvYRTTgUhfIab+eUXvBTEkvb8I7o5xPXvSknJE9PjOAPqesk0s2LlA/siQHjQIoLbTM7
+         Dzr8feJ8u4Ifo3rli4/JNvxXgVtSX96Ml0cn3M4m7hBqOK4UNtIQI50WaArpdL4I13ot
+         k8Yc+LTcBKbMypfACeTNXlk4FP4iCcsOMZ3ZYtRGyI4vvBNsGyZcD20JDT6mHuqclbr4
+         gl9S3sHMkdq5oWHi89tBqLKYzBIv6RjckI3mcxjN0PnNFabSy/Z24VC2JT+KFoo6OUQg
+         3c3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nEx7VWUEE5CS/7MRII1BtXnU4gjE+aVUwjHid+Nm0Kc=;
+        b=nF06th7R1HxfeEwi9goDCIYcMM6n3c/VJQUyfilXneX3D4TfRB9PdNaJ0lAp48GaSc
+         fiOvAxFywnDNN+yjg6/97paez0CFcJp90JpwUaqmsnuNFLba7tyOFkNNvT8NpyzPPOwA
+         kbU0MehchMcQM5xXdtwPOqY90bFObzgDDEYRk1e1uaWzik21PwbMt5pxuLaFpQdIu1/e
+         oMWD53fRSTJ83G6W+mj2gXd/ljNEMYS0pBRgM4IWokXqQ4d9+KrAz9Wvzn5uPgQSnW26
+         5XAfw3/7+dpNc15fJpKaYVqOYEJFgaXu4eivahdazaBaDelPmOpyGjArnxPgIq9qEu+e
+         wTgQ==
+X-Gm-Message-State: AGi0PuawREVx1oTfEhfna0QX7DqacVeTX+3SDUZcJS9CAnb9WaRAHap4
+        ysUQkDdjfMZbuyQOnXG/tLSZa/KJ
+X-Google-Smtp-Source: APiQypI3RKIhnbHTS3W+/EeF1X2blbLwhwFUzrh91OmXRN/tq/LSpfxNgB1Vd4OZ+uSpNeVnPGE9jA==
+X-Received: by 2002:a5d:6a85:: with SMTP id s5mr4001053wru.122.1588958180684;
+        Fri, 08 May 2020 10:16:20 -0700 (PDT)
+Received: from kwango.redhat.com (ip-94-112-129-237.net.upcbroadband.cz. [94.112.129.237])
+        by smtp.gmail.com with ESMTPSA id s18sm4392616wra.94.2020.05.08.10.16.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 May 2020 10:16:20 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 5.7-rc5
+Date:   Fri,  8 May 2020 19:16:13 +0200
+Message-Id: <20200508171613.27097-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1040570.1588948788.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Fri, 08 May 2020 15:39:48 +0100
-Message-ID: <1040571.1588948788@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+Hi Linus,
 
-> ITER_MAPPING relies on the mapping to maintain the pointers to the pages=
- so
-> that it can find them rather than being like ITER_BVEC where there's a
-> separate list.
-> =
+The following changes since commit 0e698dfa282211e414076f9dc7e83c1c288314fd:
 
-> Truncate removes the pages from the mapping - at which point ITER_MAPPIN=
-G can
-> no longer find them.
+  Linux 5.7-rc4 (2020-05-03 14:56:04 -0700)
 
-It looks like ITER_MAPPING is fine with truncate, provided the invalidatio=
-n
-waits for the iterator to complete first:
+are available in the Git repository at:
 
-	int truncate_inode_page(struct address_space *mapping, struct page *page)
-	{
-		VM_BUG_ON_PAGE(PageTail(page), page);
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.7-rc5
 
-		if (page->mapping !=3D mapping)
-			return -EIO;
+for you to fetch changes up to 12ae44a40a1be891bdc6463f8c7072b4ede746ef:
 
-		truncate_cleanup_page(mapping, page);
-		delete_from_page_cache(page);
-		return 0;
-	}
+  ceph: demote quotarealm lookup warning to a debug message (2020-05-08 18:44:40 +0200)
 
-In which case, ->invalidatepage() needs to wait for PG_fscache.
+----------------------------------------------------------------
+Fixes for an endianness handling bug that prevented mounts on
+big-endian arches, a spammy log message and a couple error paths.
+Also included a MAINTAINERS update.
 
-Similarly, it looks like ->releasepage() is fine, provided it waits for
-PG_fscache also.
+----------------------------------------------------------------
+Jeff Layton (1):
+      ceph: fix endianness bug when handling MDS session feature bits
 
-If I have to use ITER_BVEC, what's the advisability of using vmalloc() to
-allocate the bio_vec array for a transient op?  Such an array can referenc=
-e up
-to 1MiB on a 64-bit machine with 4KiB non-compound pages if it only alloca=
-tes
-up to a single page.  I'm wondering what the teardown cost is, though, if =
-all
-the corresponding PTEs have to be erased from all CPUs.
+Luis Henriques (1):
+      ceph: demote quotarealm lookup warning to a debug message
 
-David
+Sage Weil (1):
+      MAINTAINERS: remove myself as ceph co-maintainer
 
+Wu Bo (2):
+      ceph: fix special error code in ceph_try_get_caps()
+      ceph: fix double unlock in handle_cap_export()
+
+ MAINTAINERS          | 6 ------
+ fs/ceph/caps.c       | 3 ++-
+ fs/ceph/mds_client.c | 8 +++-----
+ fs/ceph/quota.c      | 4 ++--
+ 4 files changed, 7 insertions(+), 14 deletions(-)
