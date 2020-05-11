@@ -2,84 +2,90 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1F171CB8AF
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 May 2020 21:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D15CB1CD3C2
+	for <lists+ceph-devel@lfdr.de>; Mon, 11 May 2020 10:25:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727071AbgEHT4k (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 8 May 2020 15:56:40 -0400
-Received: from freas.net ([62.173.152.33]:43298 "EHLO host.securessvsmail.xyz"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726811AbgEHT4k (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 8 May 2020 15:56:40 -0400
-X-Greylist: delayed 516 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 May 2020 15:56:40 EDT
-Received: from securessvsmail.xyz (2rt7.w.time4vps.cloud [89.40.10.200])
-        by host.securessvsmail.xyz (Postfix) with ESMTPA id 60F88300DF149
-        for <ceph-devel@vger.kernel.org>; Fri,  8 May 2020 22:48:03 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 host.securessvsmail.xyz 60F88300DF149
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=securessvsmail.xyz;
-        s=default; t=1588967283;
-        bh=TOUrQtNA/9Lcm9zkDMeg72zVB746Q4FAPUpPflwTIWQ=;
-        h=Reply-To:From:To:Subject:Date:From;
-        b=H0m7wXJvK/53lGp+Bpbjz7CSSU7eM1fhaU40C/C26x+ek8JSmH9KX4kUISE8LyKb1
-         Z0dbScFSx6AxoOfY/HFcS+wsPrATpRGdBD+0qigiqGmBsSpzjuyd7KrSuN5Nh5iZQI
-         4/bL9/+iLJWgGx1bpr1X8DxQSqt0LXBeau/Lm4lk=
-DKIM-Filter: OpenDKIM Filter v2.11.0 host.securessvsmail.xyz 60F88300DF149
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=securessvsmail.xyz;
-        s=default; t=1588967283;
-        bh=TOUrQtNA/9Lcm9zkDMeg72zVB746Q4FAPUpPflwTIWQ=;
-        h=Reply-To:From:To:Subject:Date:From;
-        b=H0m7wXJvK/53lGp+Bpbjz7CSSU7eM1fhaU40C/C26x+ek8JSmH9KX4kUISE8LyKb1
-         Z0dbScFSx6AxoOfY/HFcS+wsPrATpRGdBD+0qigiqGmBsSpzjuyd7KrSuN5Nh5iZQI
-         4/bL9/+iLJWgGx1bpr1X8DxQSqt0LXBeau/Lm4lk=
-Reply-To: labdellatif@securesvsmail.com
-From:   Laghouili <labdellatif@securessvsmail.xyz>
+        id S1728573AbgEKIZW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 11 May 2020 04:25:22 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:44780 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728556AbgEKIZW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 11 May 2020 04:25:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1589185521;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=8fk6CBxS3ygqOX9mJxDLcsRMKDbm71vhJXYycG1uW3o=;
+        b=ON0AlGMGOQ7TYgQHGCxEjy9aN5E4zdQ5YwVxXeg9SFRWDJ4djTFV1Y/1jgxOzQ0ZG3H6XR
+        E9B2Ws5YppEQWJazbqgRISaOBzjwd9s5H6ZadqCC3tnfQ4cbs7Q0LU09kp7kqEa8lyDZAF
+        qJ3GIDMXsMolPzj7OUoEbflPwPm3sJM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-418-tzHaUwAxOiilL-HOaNBaqw-1; Mon, 11 May 2020 04:25:19 -0400
+X-MC-Unique: tzHaUwAxOiilL-HOaNBaqw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 56732107ACCD;
+        Mon, 11 May 2020 08:25:17 +0000 (UTC)
+Received: from zhyan-laptop.redhat.com (ovpn-12-194.pek2.redhat.com [10.72.12.194])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 456FB5D9DA;
+        Mon, 11 May 2020 08:25:14 +0000 (UTC)
+From:   "Yan, Zheng" <zyan@redhat.com>
 To:     ceph-devel@vger.kernel.org
-Subject: Collaboration
-Date:   08 May 2020 20:48:03 +0100
-Message-ID: <20200508204803.8AF27BD71188A5B2@securessvsmail.xyz>
-Mime-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Cc:     jlayton@kernel.org, "Yan, Zheng" <zyan@redhat.com>
+Subject: [PATCH] ceph: properly wake up cap waiter after releasing revoked caps
+Date:   Mon, 11 May 2020 16:25:12 +0800
+Message-Id: <20200511082512.4375-1-zyan@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hello there,
+arg->wake can never be true. the bug was introduced by commit
+0c4b255369bcf "ceph: reorganize __send_cap for less spinlock abuse"
 
-I am Laghouili Abdellatif. I am contacting you because I have a=20
-proposal that I think may be interested in. I represent the=20
-interest of my brother in-law who was a minister in the Syrian=20
-Government. As you probably know, there is a lot of crisis going=20
-on currently in Syria and my brother in-law has fallen out with=20
-the ruling Junta and the president because of his foreign=20
-policies and the senseless war and killings that has been going=20
-on for a while. Everybody in Syria is fed up and want a change=20
-but the president is too powerfull and he simply kills anyone=20
-that tries to oppose him. My brother in-law belives that he is at=20
-risk and he is now very scared for the safety of his family=20
-especially his kids. In order to ensure that his family is taken=20
-care of and protected incase anything happens to him, he has=20
-asked me to help him find a foreign investor who can help him=20
-accommodate and invest 100 MUSD privately that he has secured in=20
-Europe. He wants these funds safely invested so that the future=20
-and safety of his family can be secured.
+Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+---
+ fs/ceph/caps.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-I am contacting you with the hope that you will be interested in=20
-helping us. We need your help to accommodate the funds in the=20
-banking system in your country and also invest it in a lucrative=20
-projects that will yeild good profits. We will handle all the=20
-logistics involved in the movement of the funds to you. The funds=20
-is already in Europe so you have nothing to worry about because=20
-this transaction will be executed in a legal way. My brother in-
-law has also promised to compensate you for your help. He wants=20
-this to be done discretely so I will be acting as his eyes and=20
-ears during the course of this transaction.
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index b3e65c89ba6e..a2a2cda117e0 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -1376,6 +1376,12 @@ static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
+ 	ci->i_ceph_flags &= ~CEPH_I_FLUSH;
+ 
+ 	cap->issued &= retain;  /* drop bits we don't want */
++	/*
++	 * Wake up any waiters on wanted -> needed transition. This is due to
++	 * the weird transition from buffered to sync IO... we need to flush
++	 * dirty pages _before_ allowing sync writes to avoid reordering.
++	 */
++	arg->wake = cap->implemented & ~cap->issued;
+ 	cap->implemented &= cap->issued | used;
+ 	cap->mds_wanted = want;
+ 
+@@ -1439,13 +1445,6 @@ static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
+ 		}
+ 	}
+ 	arg->flags = flags;
+-
+-	/*
+-	 * Wake up any waiters on wanted -> needed transition. This is due to
+-	 * the weird transition from buffered to sync IO... we need to flush
+-	 * dirty pages _before_ allowing sync writes to avoid reordering.
+-	 */
+-	arg->wake = cap->implemented & ~cap->issued;
+ }
+ 
+ /*
+-- 
+2.21.3
 
-If this proposal interests you, please kindly respond so that I=20
-can give you more details.
-
-Regards,
-
-Laghouili.
