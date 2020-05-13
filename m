@@ -2,54 +2,74 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D5DAD1CFCDB
-	for <lists+ceph-devel@lfdr.de>; Tue, 12 May 2020 20:10:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CCD11D07B3
+	for <lists+ceph-devel@lfdr.de>; Wed, 13 May 2020 08:33:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730712AbgELSKM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 12 May 2020 14:10:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54502 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725938AbgELSKM (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 12 May 2020 14:10:12 -0400
-Received: from embeddedor (unknown [189.207.59.248])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90EBD20673;
-        Tue, 12 May 2020 18:10:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589307012;
-        bh=61xlZrbWPX41z1uM+eXXyvV3cA4LQt15Qefbitoigw0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JJHdGC9ygYypPUd1I+twur74mNYaZUQ5pYNNqdx9tjuuIEU2GYaDeDZZTRVkUQC50
-         uDfivLe3wue3jJ1Ew65GmFha1KGg+MnX3VHgfI1sqh/yCETzZXRjuAXDG0hYbcoujs
-         xrPLaO40i+XM3BsbP644u01c4jv06U8Kz0jAChGA=
-Date:   Tue, 12 May 2020 13:14:46 -0500
-From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Sage Weil <sage@redhat.com>,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rbd: Replace zero-length array with flexible-array
-Message-ID: <20200512181446.GJ4897@embeddedor>
-References: <20200507191932.GA15991@embeddedor>
- <CAOi1vP9GfENfy_D_iOeUrweUk2CTcz+2GXGg3M6y+bvQs_zqMw@mail.gmail.com>
+        id S1730014AbgEMG2W (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 13 May 2020 02:28:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46056 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729992AbgEMG2T (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 May 2020 02:28:19 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89577C061A0E;
+        Tue, 12 May 2020 23:28:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=AG2RtlJ7y9O44y7CM+5Y55kgsqMdi5zmGGc+3SDRxq8=; b=WCEMuVgh4ZCeigkMFy94+mId1g
+        gh0Igbk9vi9s0Nf0anxjWE8uw6ABaQK+5+LaKpNFUHA+zf0D919KpO4aJY2VWo7p1QEdzsWYbfYE1
+        ONYsiXd9fdvHslF9UXMZqp6QUOnmxAYZwP2dn34xAmDZzON/e8nSVNnr721D+sw/O5rHr7UcsK6mO
+        HSxECWTkiypKRzFQFHzArwuIE38ZopK9LEyh7+kEKbL+4aJLTGj2I5cW3gZ22+vmtXtEY9Pl73HhN
+        vcT29xWjHPMXK5XFCdsQA+ZaH+xRK6mUJGYid122hF4Ce47/IUMWYtLRChUrGSjyNKanSSQmBUX9v
+        ypmYTpGg==;
+Received: from [2001:4bb8:180:9d3f:c70:4a89:bc61:2] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jYkqx-0003lt-48; Wed, 13 May 2020 06:26:51 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     Eric Dumazet <edumazet@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Jon Maloy <jmaloy@redhat.com>,
+        Ying Xue <ying.xue@windriver.com>, drbd-dev@lists.linbit.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org,
+        target-devel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cifs@vger.kernel.org, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, netdev@vger.kernel.org,
+        linux-sctp@vger.kernel.org, ceph-devel@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-nfs@vger.kernel.org
+Subject: remove kernel_setsockopt and kernel_getsockopt
+Date:   Wed, 13 May 2020 08:26:15 +0200
+Message-Id: <20200513062649.2100053-1-hch@lst.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOi1vP9GfENfy_D_iOeUrweUk2CTcz+2GXGg3M6y+bvQs_zqMw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, May 08, 2020 at 09:54:12AM +0200, Ilya Dryomov wrote:
-> 
-> Applied (folded into libceph patch).
-> 
+Hi Dave,
 
-Thanks, Ilya. 
+this series removes the kernel_setsockopt and kernel_getsockopt
+functions, and instead switches their users to small functions that
+implement setting (or in one case getting) a sockopt directly using
+a normal kernel function call with type safety and all the other
+benefits of not having a function call.
 
---
-Gustavo
+In some cases these functions seem pretty heavy handed as they do
+a lock_sock even for just setting a single variable, but this mirrors
+the real setsockopt implementation - counter to that a few kernel
+drivers just set the fields directly already.
+
+Nevertheless the diffstat looks quite promising:
+
+ 42 files changed, 721 insertions(+), 799 deletions(-)
