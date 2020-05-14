@@ -2,112 +2,103 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 134F11D2FBA
-	for <lists+ceph-devel@lfdr.de>; Thu, 14 May 2020 14:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CD6A1D3045
+	for <lists+ceph-devel@lfdr.de>; Thu, 14 May 2020 14:48:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726471AbgENMaW convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Thu, 14 May 2020 08:30:22 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:42484 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726388AbgENMaV (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 14 May 2020 08:30:21 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-254-IsdhEyj2MaapF7FHDwegSA-1; Thu, 14 May 2020 13:30:18 +0100
-X-MC-Unique: IsdhEyj2MaapF7FHDwegSA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 14 May 2020 13:30:17 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 14 May 2020 13:30:17 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Marcelo Ricardo Leitner' <marcelo.leitner@gmail.com>,
-        'Christoph Hellwig' <hch@lst.de>
-CC:     "'David S. Miller'" <davem@davemloft.net>,
-        'Jakub Kicinski' <kuba@kernel.org>,
-        'Eric Dumazet' <edumazet@google.com>,
-        'Alexey Kuznetsov' <kuznet@ms2.inr.ac.ru>,
-        'Hideaki YOSHIFUJI' <yoshfuji@linux-ipv6.org>,
-        "'Vlad Yasevich'" <vyasevich@gmail.com>,
-        'Neil Horman' <nhorman@tuxdriver.com>,
-        "'Jon Maloy'" <jmaloy@redhat.com>,
-        'Ying Xue' <ying.xue@windriver.com>,
-        "'drbd-dev@lists.linbit.com'" <drbd-dev@lists.linbit.com>,
-        "'linux-block@vger.kernel.org'" <linux-block@vger.kernel.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'linux-rdma@vger.kernel.org'" <linux-rdma@vger.kernel.org>,
-        "'linux-nvme@lists.infradead.org'" <linux-nvme@lists.infradead.org>,
-        "'target-devel@vger.kernel.org'" <target-devel@vger.kernel.org>,
-        "'linux-afs@lists.infradead.org'" <linux-afs@lists.infradead.org>,
-        "'linux-cifs@vger.kernel.org'" <linux-cifs@vger.kernel.org>,
-        "'cluster-devel@redhat.com'" <cluster-devel@redhat.com>,
-        "'ocfs2-devel@oss.oracle.com'" <ocfs2-devel@oss.oracle.com>,
-        "'netdev@vger.kernel.org'" <netdev@vger.kernel.org>,
-        "'linux-sctp@vger.kernel.org'" <linux-sctp@vger.kernel.org>,
-        "'ceph-devel@vger.kernel.org'" <ceph-devel@vger.kernel.org>,
-        "'rds-devel@oss.oracle.com'" <rds-devel@oss.oracle.com>,
-        "'linux-nfs@vger.kernel.org'" <linux-nfs@vger.kernel.org>
-Subject: RE: [PATCH 32/33] sctp: add sctp_sock_get_primary_addr
-Thread-Topic: [PATCH 32/33] sctp: add sctp_sock_get_primary_addr
-Thread-Index: AQHWKVDpRRlTTX4YZEat3HB6AYvqqainVRxwgAAtMyA=
-Date:   Thu, 14 May 2020 12:30:17 +0000
-Message-ID: <c66e0309572345f5b0f32d078701f2d7@AcuMS.aculab.com>
-References: <20200513062649.2100053-1-hch@lst.de>
- <20200513062649.2100053-33-hch@lst.de>
- <20200513180302.GC2491@localhost.localdomain>
- <d112e18bfbdd40dfb219ed2c1f2082d4@AcuMS.aculab.com>
-In-Reply-To: <d112e18bfbdd40dfb219ed2c1f2082d4@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1726707AbgENMsu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 14 May 2020 08:48:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49622 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725955AbgENMst (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 14 May 2020 08:48:49 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0A41CABD1;
+        Thu, 14 May 2020 12:48:49 +0000 (UTC)
+Received: from localhost (webern.olymp [local])
+        by webern.olymp (OpenSMTPD) with ESMTPA id 63e4366f;
+        Thu, 14 May 2020 13:48:45 +0100 (WEST)
+Date:   Thu, 14 May 2020 13:48:45 +0100
+From:   Luis Henriques <lhenriques@suse.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ceph: don't return -ESTALE if there's still an open file
+Message-ID: <20200514124845.GA12559@suse.com>
+References: <20200514111453.GA99187@suse.com>
+ <8497fe9a11ac1837813ee5f14b6ebae8fa6bf707.camel@kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8497fe9a11ac1837813ee5f14b6ebae8fa6bf707.camel@kernel.org>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: David Laight
-> Sent: 14 May 2020 10:51
-> From: Marcelo Ricardo Leitner
-> > Sent: 13 May 2020 19:03
-> >
-> > On Wed, May 13, 2020 at 08:26:47AM +0200, Christoph Hellwig wrote:
-> > > Add a helper to directly get the SCTP_PRIMARY_ADDR sockopt from kernel
-> > > space without going through a fake uaccess.
-> >
-> > Same comment as on the other dlm/sctp patch.
+On Thu, May 14, 2020 at 08:10:09AM -0400, Jeff Layton wrote:
+> On Thu, 2020-05-14 at 12:14 +0100, Luis Henriques wrote:
+> > Similarly to commit 03f219041fdb ("ceph: check i_nlink while converting
+> > a file handle to dentry"), this fixes another corner case with
+> > name_to_handle_at/open_by_handle_at.  The issue has been detected by
+> > xfstest generic/467, when doing:
+> > 
+> >  - name_to_handle_at("/cephfs/myfile")
+> >  - open("/cephfs/myfile")
+> >  - unlink("/cephfs/myfile")
+> >  - open_by_handle_at()
+> > 
+> > The call to open_by_handle_at should not fail because the file still
+> > exists and we do have a valid handle to it.
+> > 
+> > Signed-off-by: Luis Henriques <lhenriques@suse.com>
+> > ---
+> >  fs/ceph/export.c | 13 +++++++++++--
+> >  1 file changed, 11 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+> > index 79dc06881e78..8556df9d94d0 100644
+> > --- a/fs/ceph/export.c
+> > +++ b/fs/ceph/export.c
+> > @@ -171,12 +171,21 @@ struct inode *ceph_lookup_inode(struct super_block *sb, u64 ino)
+> >  
+> >  static struct dentry *__fh_to_dentry(struct super_block *sb, u64 ino)
+> >  {
+> > +	struct ceph_inode_info *ci;
+> >  	struct inode *inode = __lookup_inode(sb, ino);
+> > +
+> >  	if (IS_ERR(inode))
+> >  		return ERR_CAST(inode);
+> >  	if (inode->i_nlink == 0) {
+> > -		iput(inode);
+> > -		return ERR_PTR(-ESTALE);
+> > +		bool is_open;
+> > +		ci = ceph_inode(inode);
+> > +		spin_lock(&ci->i_ceph_lock);
+> > +		is_open = __ceph_is_file_opened(ci);
+> > +		spin_unlock(&ci->i_ceph_lock);
+> > +		if (!is_open) {
+> > +			iput(inode);
+> > +			return ERR_PTR(-ESTALE);
+> > +		}
+> >  	}
+> >  	return d_obtain_alias(inode);
+> >  }
 > 
-> Wouldn't it be best to write sctp_[gs]etsockotp() that
-> use a kernel buffer and then implement the user-space
-> calls using a wrapper that does the copies to an on-stack
-> (or malloced if big) buffer.
+> Thanks Luis. Out of curiousity, is there any reason we shouldn't ignore
+> the i_nlink value here? Does anything obviously break if we do?
 
-Actually looking at __sys_setsockopt() it calls
-BPF_CGROUP_RUN_PROG_SETSOCKOPT() which (by the look of it)
-can copy the user buffer into malloc()ed memory and
-cause set_fs(KERNEL_DS) be called.
+Yes, the scenario described in commit 03f219041fdb is still valid, which
+is basically the same but without the extra open(2):
 
-The only way to get rid of that set_fs() is to always
-have the buffer in kernel memory when the underlying
-setsockopt() code is called.
+  - name_to_handle_at("/cephfs/myfile")
+  - unlink("/cephfs/myfile")
+  - open_by_handle_at()
 
-The comment above __sys_[sg]etsockopt() about not knowing
-the length is just wrong.
-It probably applied to getsockopt() in the dim and distant
-past before it was made read-update.
+The open_by_handle_at man page isn't really clear about these 2 scenarios,
+but generic/426 will fail if -ESTALE isn't returned.  Want me to add a
+comment to the code, describing these 2 scenarios?
 
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Cheers,
+--
+Luis
