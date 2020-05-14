@@ -2,38 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42ECD1D3B1C
-	for <lists+ceph-devel@lfdr.de>; Thu, 14 May 2020 21:05:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57D0A1D3AC2
+	for <lists+ceph-devel@lfdr.de>; Thu, 14 May 2020 20:59:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729457AbgENSzm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 14 May 2020 14:55:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56284 "EHLO mail.kernel.org"
+        id S1729498AbgENS6w (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 14 May 2020 14:58:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729446AbgENSzl (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 14 May 2020 14:55:41 -0400
+        id S1728373AbgENS4S (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 14 May 2020 14:56:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F4652076A;
-        Thu, 14 May 2020 18:55:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED01920727;
+        Thu, 14 May 2020 18:56:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589482540;
-        bh=4zIpcCXF6mOwa7JcGshnJHN7vHRqZxuFzWlbLOYLqz4=;
+        s=default; t=1589482578;
+        bh=V35YNjbOdGZXgdd3JuMWahHuUK6bn++dc51WjtobLbY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IarTvLVRGW5MLbDz12khV9m+Xqeqf3VWTj3ehO4bCbhz+T2/NrWrBf3P9edXusoNh
-         1EeCwEnbOkUUqOA6Jg38EjJ3VPvLYo2Lt/KYS4kLaucL/Rq8/K3TUVp81iOUn4f74f
-         bF/Z+t2eyMIjjB4fTfKCjNy/R7spoxPatgzjcajs=
+        b=qA1aQWW3K7+CkABAAoNjjp9126LkpQkIz7mmqcejdUWCd5aLX7N6TY4GTWEwy5FQP
+         RIJQPpm5WjOVnXbBF2dBoIHBrZoak/b+yktLzCah5nhMtPQ7nrYZxxcSQXgwBpF2AR
+         cwdpGdeWh52T8fD34HL7BCNQN/BAosIvqi1RgnF0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Wu Bo <wubo40@huawei.com>, "Yan, Zheng" <zyan@redhat.com>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 33/39] ceph: fix double unlock in handle_cap_export()
-Date:   Thu, 14 May 2020 14:54:50 -0400
-Message-Id: <20200514185456.21060-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 22/27] ceph: fix double unlock in handle_cap_export()
+Date:   Thu, 14 May 2020 14:55:45 -0400
+Message-Id: <20200514185550.21462-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200514185456.21060-1-sashal@kernel.org>
-References: <20200514185456.21060-1-sashal@kernel.org>
+In-Reply-To: <20200514185550.21462-1-sashal@kernel.org>
+References: <20200514185550.21462-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -61,10 +61,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 1b5a50848b5be..589cfe3ed873b 100644
+index 617e9ae67f506..e11aacb35d6b5 100644
 --- a/fs/ceph/caps.c
 +++ b/fs/ceph/caps.c
-@@ -3502,6 +3502,7 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
+@@ -3394,6 +3394,7 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
  		WARN_ON(1);
  		tsession = NULL;
  		target = -1;
