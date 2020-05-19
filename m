@@ -2,142 +2,121 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 75C791D948C
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 May 2020 12:43:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C35521D97D1
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 May 2020 15:32:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728611AbgESKnN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 19 May 2020 06:43:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47658 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725911AbgESKnN (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 19 May 2020 06:43:13 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D16F20674;
-        Tue, 19 May 2020 10:43:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589884992;
-        bh=L/14AxOpD03Run3O+IBY+gN9A7FJED5ePKYXqAc56ws=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=yu54AhMcabq+AvDj6KUaIZzm3VsU3sxprdYjdyBn4/dTgi6hv+V+fb5zg98nfd0c7
-         S4KRXKLI2BF7HS9+UnY87jbiO+9sb5WkqjNckH6HhvEHhOsL4iBfllNifxeTl4GyFq
-         m9nsqEJDYV8sFa4C82IJh/xWQU8YATQrG1pz8cqM=
-Message-ID: <cc459ce1b7314919eaa506a82b9c28df6f41a169.camel@kernel.org>
-Subject: Re: [PATCH] ceph: don't return -ESTALE if there's still an open file
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Gregory Farnum <gfarnum@redhat.com>
-Cc:     Luis Henriques <lhenriques@suse.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        fstests <fstests@vger.kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 19 May 2020 06:43:10 -0400
-In-Reply-To: <CAOQ4uxjdu7=wXNBHZBQmtNexcG3qfu=XQov9HsRNi=os+QHAUg@mail.gmail.com>
-References: <20200514111453.GA99187@suse.com>
-         <8497fe9a11ac1837813ee5f14b6ebae8fa6bf707.camel@kernel.org>
-         <20200514124845.GA12559@suse.com>
-         <4e5bf0e3bf055e53a342b19d168f6cf441781973.camel@kernel.org>
-         <CAOQ4uxhireZBRvcPQzTS8yOoO4gQt78M0ktZo-9yQ-zcaLZbow@mail.gmail.com>
-         <20200515111548.GA54598@suse.com>
-         <61b1f19edcc349641b5383c2ac70cbf9a15ba4bd.camel@kernel.org>
-         <CAOQ4uxiWZoSj3Pjwskd_hu-ErV9096hLt13CDcW6nEEvcwDNVA@mail.gmail.com>
-         <e227d42fdc91587e34bc64ac252970d39d9b4eee.camel@kernel.org>
-         <CAJ4mKGbahd8CbkEauBHBX6o93jipkCVoYe9O-1rAJQJFZkqDsQ@mail.gmail.com>
-         <CAOQ4uxjdu7=wXNBHZBQmtNexcG3qfu=XQov9HsRNi=os+QHAUg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.2 (3.36.2-1.fc32) 
+        id S1728968AbgESNcM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 19 May 2020 09:32:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47732 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728857AbgESNcL (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 19 May 2020 09:32:11 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67CF5C08C5C0
+        for <ceph-devel@vger.kernel.org>; Tue, 19 May 2020 06:32:11 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id j3so13343051ilk.11
+        for <ceph-devel@vger.kernel.org>; Tue, 19 May 2020 06:32:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZizdxviH2TXk0BT61IPizX530BARmSbGV5SdG3o9lGo=;
+        b=FxEt3iJUl04dszDhZHOTNl9r4Mo51R8OzjebmRkq05Qi4KFDrw8gnBWgm6Iu13tR5h
+         SJ3CReF8Rundo1c5ZbYshscwgvgsesVL+Ytcjy+m3RLwp39Mem1OqD651ZJRu5fRWEm1
+         vxNkhDEj1RDFa9rbSyRL/va6XFR7CEhGe5W21Y8ctPnj/b11L5TBnx47OpDS9TwLrBSN
+         rV2ItOCiYZK0+66HMHMN0DX3bEw0mxZNXrNTu8esGNnrJcXd7VbUmUlFqXdAL93G/03W
+         hwkTfLp59U1OkBv+tCc3cLmxR6xfKHmfrrc/Uxt7xaurDmNWHzfvK1NpUdOSOakptSex
+         KSUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZizdxviH2TXk0BT61IPizX530BARmSbGV5SdG3o9lGo=;
+        b=CNjqSPvUKP81tkUIlIuFsK1YHJ8OCWhimGCz7y5pwAgO8GpJPRyLk/DlvDFfbxGwqf
+         hYHY5EiaoGmwaBjOozN0bBbfnPbA20UXMeKNG3sFkqU4v2NRCbkNhYuMAJYm3OflL+jG
+         96lNSXOt34CUZ/J4dtmNN648bkoQWCDZ6dJ9vRMBUfPCRe7Mg5DWTGCfReVm7jjQztXJ
+         qf3rVFsnqmlVB/BEUxo75KmIMRisgWqQbQHDHX/mGYx1SvDje8gOdhzg1A8j0iDxB++b
+         7dTe8DDtJDLwt+pOVp0DzN9kQBheUXpAjhqYI/oz/Z/fhX03B10g4ycJQeragSpaS7eF
+         UrTA==
+X-Gm-Message-State: AOAM532nu0F5tuxIK1vtKwyhS7dSD5VVxPqsAr0mDCnjrhSXF92uf98T
+        CmTOtF0hxaR7VWiT/I0xyrZGktkJh0kXE5kds/XpHqGv
+X-Google-Smtp-Source: ABdhPJxU13vRL+PkaFxwUgCZnx7nZfkh0hs3o+XlyTQz604stCV/jD/Y/SS40ZBs4StM3+ktUNM4E+ckjwswrTUxfsY=
+X-Received: by 2002:a92:9f4e:: with SMTP id u75mr20468426ili.282.1589895130728;
+ Tue, 19 May 2020 06:32:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <CAKQB+fug_Y4y8wYe-vG=itf+0BmYFPfDm-ch7DTobtkipQz-yw@mail.gmail.com>
+ <CAOi1vP-uF1_0R=5LApR=rdTXSzDWJq3LzuOYPrPmC_TPL909qA@mail.gmail.com> <CAKQB+ftbtXv0ET6OmUMsqKUoz5sRHQA35EprTY82_GC34b10XA@mail.gmail.com>
+In-Reply-To: <CAKQB+ftbtXv0ET6OmUMsqKUoz5sRHQA35EprTY82_GC34b10XA@mail.gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 19 May 2020 15:32:15 +0200
+Message-ID: <CAOi1vP-oMe2SsbuXQ9oeF+nZaCD87Een5Q1=kNPTeXeLAyHH_w@mail.gmail.com>
+Subject: Re: [PATCH] libceph: add ignore cache/overlay flag if got redirect reply
+To:     Jerry Lee <leisurelysw24@gmail.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Jeff Layton <jlayton@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2020-05-19 at 07:00 +0300, Amir Goldstein wrote:
-> On Tue, May 19, 2020 at 1:30 AM Gregory Farnum <gfarnum@redhat.com> wrote:
-> > Maybe we resolved this conversation; I can't quite tell...
-> 
-> I think v2 patch wraps it up...
-> 
-> [...]
-> 
+On Tue, May 19, 2020 at 12:30 PM Jerry Lee <leisurelysw24@gmail.com> wrote:
+>
+> On Tue, 19 May 2020 at 17:14, Ilya Dryomov <idryomov@gmail.com> wrote:
+> >
+> > On Mon, May 18, 2020 at 10:03 AM Jerry Lee <leisurelysw24@gmail.com> wrote:
+> > >
+> > > osd client should ignore cache/overlay flag if got redirect reply.
+> > > Otherwise, the client hangs when the cache tier is in forward mode.
+> > >
+> > > Similar issues:
+> > >    https://tracker.ceph.com/issues/23296
+> > >    https://tracker.ceph.com/issues/36406
+> > >
+> > > Signed-off-by: Jerry Lee <leisurelysw24@gmail.com>
+> > > ---
+> > >  net/ceph/osd_client.c | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> > > index 998e26b..1d4973f 100644
+> > > --- a/net/ceph/osd_client.c
+> > > +++ b/net/ceph/osd_client.c
+> > > @@ -3649,7 +3649,9 @@ static void handle_reply(struct ceph_osd *osd,
+> > > struct ceph_msg *msg)
+> > >                  * supported.
+> > >                  */
+> > >                 req->r_t.target_oloc.pool = m.redirect.oloc.pool;
+> > > -               req->r_flags |= CEPH_OSD_FLAG_REDIRECTED;
+> > > +               req->r_flags |= CEPH_OSD_FLAG_REDIRECTED |
+> > > +                               CEPH_OSD_FLAG_IGNORE_OVERLAY |
+> > > +                               CEPH_OSD_FLAG_IGNORE_CACHE;
+> > >                 req->r_tid = 0;
+> > >                 __submit_request(req, false);
+> > >                 goto out_unlock_osdc;
+> >
+> > Hi Jerry,
+> >
+> > Looks good (although the patch was whitespace damaged).  I've fixed
+> > it up, but check out Documentation/process/email-clients.rst.
+> Thanks for sharing the doc!
+> >
+> > Also, out of curiosity, are you actually using the forward cache mode?
+> No, we accidentally found the issue when removing a writeback cache.
+> The kernel client got blocked when the cache mode switched from
+> writeback to forward and waited for the cache pool to be flushed.
+>
+> BTW, a warning (Error EPERM: 'forward' is not a well-supported cache
+> mode and may corrupt your data.) is shown when the cache mode is
+> changed to forward mode.  Does it mean that the data integrity and IO
+> ordering cannot be ensured in this mode?
 
-Agreed.
+Yes.  The problem with redirects is that they can mess up the order
+of requests.  The forward mode is based on redirects and therefore
+inherently flawed.
 
-> > > > Questions:
-> > > > 1. Does sync() result in fully purging inodes on MDS?
-> > > 
-> > > I don't think so, but again, that code is not trivial to follow. I do
-> > > know that the MDS keeps around a "strays directory" which contains
-> > > unlinked inodes that are lazily cleaned up. My suspicion is that it's
-> > > satisfying lookups out of this cache as well.
-> > > 
-> > > Which may be fine...the MDS is not required to be POSIX compliant after
-> > > all. Only the fs drivers are.
-> > 
-> > I don't think this is quite that simple. Yes, the MDS is certainly
-> > giving back stray inodes in response to a lookup-by-ino request. But
-> > that's for a specific purpose: we need to be able to give back caps on
-> > unlinked-but-open files. For NFS specifically, I don't know what the
-> > rules are on NFS file handles and unlinked files, but the Ceph MDS
-> > won't know when files are closed everywhere, and it translates from
-> > NFS fh to Ceph inode using that lookup-by-ino functionality.
-> > 
-> 
-> There is no protocol rule that NFS server MUST return ESTALE
-> for file handle of a deleted file, but there is a rule that it MAY return
-> ESTALE for deleted file. For example, on server restart and traditional
-> block filesystem, there is not much choice.
-> 
-> So returning ESTALE when file is deleted but opened on another ceph
-> client is definitely allowed by the protocol standard, the question is
-> whether changing the behavior will break any existing workloads...
-> 
+Use proxy and readproxy modes instead of forward and readforward.
 
-Right -- that was sort of the point of my original question about the
-xfstest. The fact that ceph wasn't returning ESTALE in this situation
-didn't seem to be technically _wrong_ to me, but the xfstest treated
-that as a failure. It's probably best to return ESTALE since that's the
-conventional behavior, but I don't think it's necessarily required for
-correct operation in general.
+Thanks,
 
-FWIW, if we ever implement O_TMPFILE in ceph, then we may need to
-revisit this code. With that, you can do a 0->1 transition on i_nlink,
-which blows some of the assumptions we're making here out of the water.
-
-> > > > 2. Is i_nlink synchronized among nodes on deferred delete?
-> > > > IWO, can inode come back from the dead on client if another node
-> > > > has linked it before i_nlink 0 was observed?
-> > > 
-> > > No, that shouldn't happen. The caps mechanism should ensure that it
-> > > can't be observed by other clients until after the change.
-> > > 
-> > > That said, Luis' current patch doesn't ensure we have the correct caps
-> > > to check the i_nlink. We may need to add that in before we can roll with
-> > > this.
-> > > 
-> > > > 3. Can an NFS client be "migrated" from one ceph node to another
-> > > > with an open but unlinked file?
-> > > > 
-> > > 
-> > > No. Open files in ceph are generally per-client. You can't pass around a
-> > > fd (or equivalent).
-> > 
-> > But the NFS file handles I think do work across clients, right?
-> > 
-> 
-> Maybe they can, but that would be like NFS server restart, so
-> all bets are off w.r.t open but deleted files.
-> 
-
-They do work across clients, but a file handle is just an identifier for
-an inode. That's completely orthogonal to whether the file is open.
-
--- 
-Jeff Layton <jlayton@kernel.org>
-
+                Ilya
