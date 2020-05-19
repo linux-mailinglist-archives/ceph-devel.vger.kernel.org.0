@@ -2,74 +2,94 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DAEA91D9940
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 May 2020 16:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ED7B1D99F1
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 May 2020 16:36:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729059AbgESOSE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 19 May 2020 10:18:04 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:25374 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728967AbgESOSE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 19 May 2020 10:18:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1589897883;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=FNB/aoMyF4TGVvRymSR3/vRA73Z6PL62rY+8MIyJp3Y=;
-        b=AkHpk8kFipO1xRAjGjwquE/5U9qij6Jtrn89mU9Rp81ira1mkgDypH2uc209Qgc/syux1P
-        D7hzypCj7MmfBkY0OzTE4ndLnu3OEkTlMII8PpIPqf34BGGOmKeLmXTSYZ8UzB/NicHxNh
-        yfvWoQQe1HYS8JJTwH8yAEDGBoytWIg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-17-159IX1CAOkG4oJ0ZYsciJw-1; Tue, 19 May 2020 10:18:00 -0400
-X-MC-Unique: 159IX1CAOkG4oJ0ZYsciJw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D10E939342;
-        Tue, 19 May 2020 14:17:58 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (ovpn-113-18.ams2.redhat.com [10.36.113.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C3C85707DF;
-        Tue, 19 May 2020 14:17:56 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        keyrings@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dns: Apply a default TTL to records obtained from getaddrinfo()
-References: <158981176590.872823.11683683537698750702.stgit@warthog.procyon.org.uk>
-Date:   Tue, 19 May 2020 16:17:55 +0200
-In-Reply-To: <158981176590.872823.11683683537698750702.stgit@warthog.procyon.org.uk>
-        (David Howells's message of "Mon, 18 May 2020 15:22:45 +0100")
-Message-ID: <87blmkgga4.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        id S1728995AbgESOgC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 19 May 2020 10:36:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57698 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728775AbgESOgC (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 19 May 2020 10:36:02 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE48CC08C5C0
+        for <ceph-devel@vger.kernel.org>; Tue, 19 May 2020 07:36:01 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id s10so14742000iog.7
+        for <ceph-devel@vger.kernel.org>; Tue, 19 May 2020 07:36:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=8rDOi/S2GzjXMz+VtVMpPlJ21BydV7dzfMKViio4thk=;
+        b=aU8yBVLZS2R6x4FTDSXd3bUatwpaG+02Xvfq7cdVhSc7UkLmv7tLP1iuJQStTWnr6E
+         whV3OoSlWddxz06m22RVS2AEHfTpf4sYnmNWGwEnX9vpvxYY6v2V6rN533eKmMHJ5XrL
+         N2cEAUI32kxsH6ANkupqTyb7eGHkRHhllM6uW5mmNj950ijV2AT5JSN9oZ+wXOeuBnJH
+         CNux8AdBIuZSDomb5vjNPiRVUehab4bojdOgsjb3ibWMxEt6zy5QvhOS66rKiO2UUdeV
+         wTB/WbikjKk2la+vlMP85v2dh13A1yC7RBTCNdHH2kGWWyokXRVrpfB6q52T/Yrsxzi0
+         n62g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=8rDOi/S2GzjXMz+VtVMpPlJ21BydV7dzfMKViio4thk=;
+        b=I159E4sS4FV0UtF8pfEomhWFItZQAmQOFZJHZ7y2KlhmLh30cuOzn7qg4MXOsETYBJ
+         egGXWmEBwl39pw5AAxxfMTnkBd1dyxo6iJa8MXtQJKagHbQu+4sHz1On+Oz5GBhOsIAh
+         8ElaE7zT5xZiJ59L4M7Xz1Awofq6+t3nWYCoRVNYDr4sxT9uSklWIyOSSFhz+6KXHjvb
+         KDtJjjGrNiLLvxhJcNrCOVjhiNyXYhPFJDXU9khJ6bHMNsGebguYCT+rNm8MNtu9v1Qk
+         rGM4BD6N80iWMj7jDHIEdyCVTc8dpKv4LnffjfTPIpnPbGIhiqvMp7fgaIZimjRuMlLT
+         x3Mg==
+X-Gm-Message-State: AOAM532FhJuJk9fk1UbMzZZlc+2FB1fyRa25AJ7ewJObNbhmgDjqN1a9
+        pyRwUaSUbjk1dXkXZ7HY3RTajMXE7nGC3j+JylU=
+X-Google-Smtp-Source: ABdhPJxAJi3eFeXn11x9YrK8/VlQP+cSALwgwOJj9ncu/LCkJqixxYSoEulkWt78wL3JeXyP3mxaBjeaZmfjhY7b4vk=
+X-Received: by 2002:a05:6638:12d4:: with SMTP id v20mr9141933jas.96.1589898960845;
+ Tue, 19 May 2020 07:36:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <6n.cjI5.4P7G519BQ1k.1Um{AC@seznam.cz>
+In-Reply-To: <6n.cjI5.4P7G519BQ1k.1Um{AC@seznam.cz>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 19 May 2020 16:36:05 +0200
+Message-ID: <CAOi1vP9HvJd-Cdm4TnfEjNN-PooZCAPBwANpS88UfinkhJuUsg@mail.gmail.com>
+Subject: Re: ceph kernel client orientation
+To:     Michal.Plsek@seznam.cz
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-* David Howells:
-
-> Fix this to apply a default TTL of 10mins in the event that we haven't got
-> one.  This can be configured in /etc/keyutils/key.dns_resolver.conf by
-> adding the line:
+On Tue, May 19, 2020 at 3:44 PM <Michal.Plsek@seznam.cz> wrote:
 >
-> 	default_ttl: <number-of-seconds>
+> Hello,
 >
-> to the file.
+> I am trying to get to functions responsible for reading/writing to/openin=
+g RBD blocks in ceph client kernel module (alternatives to librbd=E2=80=99s=
+ rbd_read(), rbd_write() etc.). I presume it should be located somewhere ar=
+ound drivers/block/, but until now I=E2=80=99ve been without luck. My idea =
+is to edit these functions, rebuild the ceph kernel =E2=80=98rbd=E2=80=99 m=
+odule and replace it. Since comments are pretty much missing everywhere, it=
+ would be nice to narrow my searching area.
+>
+> If you know anything about it, please let me know. Thanks, M.
 
-If the name resolution is not needed continuously, but only for the
-connection attempt, I suggest to use a much shorter TTL, like five
-seconds or so.
+Hi Michal,
 
-I'm worried that if the implied TTL is too long, some system
-administrators will have to figure out how to invalidate the DNS cache.
+Everything is in drivers/block/rbd.c.  The entry point is
+rbd_queue_rq(), this is where all rbd requests are dispatched from.
+After setting up where data is to be written from (for writes) or read
+to (for reads), the details specific to each type of request (read,
+write, discard or zeroout) are handled in __rbd_img_fill_request()
+and then later on the respective state machine is kicked off.
+
+The job of the state machine is to submit requests to the OSDs and
+handle replies from the OSDs.  As in librbd, satisfying a single
+user I/O request can require sending multiple OSDs requests, in some
+cases sequentially.
+
+Unfortunately, there is no one function to edit.  I might be able
+to help more if you explain what you are trying to achieve.
 
 Thanks,
-Florian
 
+                Ilya
