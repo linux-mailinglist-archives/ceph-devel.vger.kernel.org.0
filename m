@@ -2,137 +2,111 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E2921DAC5E
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 May 2020 09:36:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB60F1DAC94
+	for <lists+ceph-devel@lfdr.de>; Wed, 20 May 2020 09:51:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726375AbgETHgQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 May 2020 03:36:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47970 "EHLO
+        id S1726823AbgETHvB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 May 2020 03:51:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbgETHgQ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 20 May 2020 03:36:16 -0400
-Received: from mxb1.seznam.cz (mxb1.seznam.cz [IPv6:2a02:598:a::78:89])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 896F6C061A0E
-        for <ceph-devel@vger.kernel.org>; Wed, 20 May 2020 00:36:15 -0700 (PDT)
-Received: from email.seznam.cz
-        by email-smtpc2b.ko.seznam.cz (email-smtpc2b.ko.seznam.cz [10.53.13.45])
-        id 65c2f4f4b8fd2d7a6558b284;
-        Wed, 20 May 2020 09:36:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
-        t=1589960173; bh=Os7/CFuh5Xv7LfIwhhGbI2QUWgONp4EITRVTwcmARis=;
-        h=Received:From:To:Subject:Date:Message-Id:References:Mime-Version:
-         X-Mailer:Content-Type:Content-Transfer-Encoding;
-        b=mcsnNck7ALQB378YAs7l4W+QrkXEKSsNTEo+0Q4E/y/gvs5ndaSOcJXIM/fA6bahl
-         im6Kzgxk+075tf3nzpIqP5WwhG9TybE0hElxYiYyhiA0xvPZ6J0L9Eon1DmeZv/kzW
-         Q05BPCgU0IJwmXQWiwrU5FNMwI5DFIvG5MGNMIYE=
-Received: from unknown ([::ffff:88.146.49.155])
-        by email.seznam.cz (szn-ebox-5.0.29) with HTTP;
-        Wed, 20 May 2020 09:36:07 +0200 (CEST)
-From:   <Michal.Plsek@seznam.cz>
-To:     <ceph-devel@vger.kernel.org>
-Subject: Re: ceph kernel client orientation
-Date:   Wed, 20 May 2020 09:36:07 +0200 (CEST)
-Message-Id: <da.cjLX.3v4GDfOKIZE.1UnDtd@seznam.cz>
-References: <6n.cjI5.4P7G519BQ1k.1Um{AC@seznam.cz>
-        <CAOi1vP9HvJd-Cdm4TnfEjNN-PooZCAPBwANpS88UfinkhJuUsg@mail.gmail.com>
-Mime-Version: 1.0 (szn-mime-2.0.57)
-X-Mailer: szn-ebox-5.0.29
-Content-Type: text/plain;
-        charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S1726403AbgETHvA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 20 May 2020 03:51:00 -0400
+Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87857C061A0E
+        for <ceph-devel@vger.kernel.org>; Wed, 20 May 2020 00:51:00 -0700 (PDT)
+Received: by mail-qk1-x729.google.com with SMTP id 142so2663728qkl.6
+        for <ceph-devel@vger.kernel.org>; Wed, 20 May 2020 00:51:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=leblancnet-us.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=R/whvifzYo3ArWPOes6uHQ0ypJoY1rfMlelEST+k+34=;
+        b=ujECdzOm+t5jRYozjoz/9E2VlZ775ig9fvC3lWhaZzG4w4tc8hngoeWpvFmUYDkyks
+         QNphUShqxt3PnEps4qBHeh+00JXIinFVHJL9OPYRr+3k+DW3f8xSpTAf43crR9oohHMd
+         Sg/+GOxcMCtEZoTxeyeYfRAVIHfU2XTc6OvEAQ3kH+kIUGMOlU8pDdJnldyeXaWV0V6D
+         wtuowWc6/mZ/GsDBavnDWSEmgSlpzE41vDS7NknB2oGCz7D8TnV6sZXOb3y1Z1LlELUf
+         Y0s7pzDz0aH1OJY0xjTNmtnXp2i2KIT5cYG8zRDI6NhUpaWva59g2Azwlt+EnXfYFXms
+         jorg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=R/whvifzYo3ArWPOes6uHQ0ypJoY1rfMlelEST+k+34=;
+        b=cP0CgwgxdGE/YYeGIbYloh4wJ+vuF9ocn0lsmmfu8O/tVCjdCHfoTP3Giz8lGC5HaM
+         EQqT890B5GV+anRBq0564TfeJq6HQLi1x/r4TTPQ831tenpA9vYtWHhorJov7+/uWxUQ
+         XPLF6sdwLy1SN6Vs0+VCAFtNpiWpquET+ngxJYJLF0kxZP8bgf6yg7xwXCpXZXfmj3ol
+         C/oHkIj3yUZwgmcbJXEhQHFWPeMbqr8cP22UJs/lRkTUp+gsoZxrJPuzt+Ufom0li/L1
+         eVlRSXY+TKfN6M1jzTsmXUNM2FwIpAxZdIGALISy6XWZOFdQayCZklywcPpK7nC02UJM
+         XfpA==
+X-Gm-Message-State: AOAM5309mbUO0hVn7ICZe1U4eppRIZ6X6RPcE11+rVU0SZo3gYfzl0WD
+        BKMBVHD+aBSyTiGfHiKXs0kVJNbq8rxIYj7VHqridDEt
+X-Google-Smtp-Source: ABdhPJzM7D+1wN9ud5OFMvrstsidTV0H9n7xJocxO3TR0nne1mexlaeRcmmi5lvYHtW7qXNO0hhHDBxmSPgKnEzXd94=
+X-Received: by 2002:a05:620a:146a:: with SMTP id j10mr3576107qkl.333.1589961059365;
+ Wed, 20 May 2020 00:50:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAANLjFqkgn86Oa=70jHqHB-4o0saL9Q+AGPuGyyj94x7EiSi2Q@mail.gmail.com>
+In-Reply-To: <CAANLjFqkgn86Oa=70jHqHB-4o0saL9Q+AGPuGyyj94x7EiSi2Q@mail.gmail.com>
+From:   Robert LeBlanc <robert@leblancnet.us>
+Date:   Wed, 20 May 2020 00:50:48 -0700
+Message-ID: <CAANLjFo5fc3NZwV1MzxwXg6myDJv5iWGwY1TKAjbNPLp_kxhPA@mail.gmail.com>
+Subject: Fwd: Possible bug in op path?
+To:     ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Thanks for swift answer.
-
-(This is my usage in librbd.cc)
-
-Basically there is a folder with symmetric keys used for block encryption,=
- one key for one disk in some pool. For identification of key I need (pool=
-_id, disk_id) of block. I am temporarily saving key to librbd::ImageCtx st=
-ructure, so I don't have to get it from file every time. I use this key to=
- encrypt/decrypt block data. Encrypt/decrypt is primitive, I'm not gonna m=
-ention it here, but it is done over the data provided by functions rbd_rea=
-d() and rbd_write().
-
-If you could point how to edit rbd.c content to achieve similar behaviour,=
- I would be much obliged.
-
-M.
+De-HTMLified
+----------------
+Robert LeBlanc
+PGP Fingerprint 79A2 9CA4 6CC4 45DD A904  C70E E654 3BB2 FA62 B9F1
 
 
-
----------- P=C5=AFvodn=C3=AD e-mail ----------
-
-Od: Ilya Dryomov <idryomov@gmail.com>
-
-Komu: Michal.Plsek@seznam.cz
-
-Datum: 19. 5. 2020 16:36:05
-
-P=C5=99edm=C4=9Bt: Re: ceph kernel client orientation
-
-On Tue, May 19, 2020 at 3:44 PM <Michal.Plsek@seznam.cz> wrote:
-
->
-
-> Hello,
-
->
-
-> I am trying to get to functions responsible for reading/writing to/openi=
-ng RBD blocks in ceph client kernel module (alternatives to librbd=
-=E2=80=99s rbd_read(), rbd_write() etc.). I presume it should be located s=
-omewhere around drivers/block/, but until now I=E2=80=99ve been without lu=
-ck. My idea is to edit these functions, rebuild the ceph kernel =E2=80=98r=
-bd=E2=80=99 module and replace it. Since comments are pretty much missing =
-everywhere, it would be nice to narrow my searching area.
-
->
-
-> If you know anything about it, please let me know. Thanks, M.
+---------- Forwarded message ---------
+From: Robert LeBlanc <robert@leblancnet.us>
+Date: Wed, May 20, 2020 at 12:40 AM
+Subject: Possible bug in op path?
+To: ceph-users <ceph-users@ceph.io>, ceph-devel <ceph-devel@vger.kernel.org>
 
 
+We upgraded our Jewel cluster to Nautilus a few months ago and I've
+noticed that op behavior has changed. This is an HDD cluster (NVMe
+journals and NVMe CephFS metadata pool) with about 800 OSDs. When on
+Jewel and running WPQ with the high cut-off, it was rock solid. When
+we had recoveries going on it barely dented the client ops and when
+the client ops on the cluster went down the backfills would run as
+fast as the cluster could go. I could have max_backfills set to 10 and
+the cluster performed admirably.
+After upgrading to Nautilus the cluster struggles with any kind of
+recovery and if there is any significant client write load the cluster
+can get into a death spiral. Even heavy client write bandwidth (3-4
+GB/s) can cause the heartbeat checks to raise, blocked IO and even
+OSDs becoming unresponsive.
+As the person who wrote the WPQ code initially, I know that it was
+fair and proportional to the op priority and in Jewel it worked. It's
+not working in Nautilus. I've tweaked a lot of things trying to
+troubleshoot the issue and setting the recovery priority to 1 or zero
+barely makes any difference. My best estimation is that the op
+priority is getting lost before reaching the WPQ scheduler and is thus
+not prioritizing and dispatching ops correctly. It's almost as if all
+ops are being treated the same and there is no priority at all.
+Unfortunately, I do not have the time to set up the dev/testing
+environment to track this down and we will be moving away from Ceph.
+But I really like Ceph and want to see it succeed. I strongly suggest
+that someone look into this because I think it will resolve a lot of
+problems people have had on the mailing list. I'm not sure if a bug
+was introduced with the other queues that touches more of the op path
+or if something in the op path restructuring that changed how things
+work (I know that was being discussed around the time that Jewel was
+released). But my guess is that it is somewhere between the op being
+created and being received into the queue.
+I really hope that this helps in the search for this regression. I
+spent a lot of time studying the issue to come up with WPQ and saw it
+work great when I switched this cluster from PRIO to WPQ. I've also
+spent countless hours studying how it's changed in Nautilus.
 
-Hi Michal,
-
-
-
-Everything is in drivers/block/rbd.c.  The entry point is
-
-rbd_queue_rq(), this is where all rbd requests are dispatched from.
-
-After setting up where data is to be written from (for writes) or read
-
-to (for reads), the details specific to each type of request (read,
-
-write, discard or zeroout) are handled in __rbd_img_fill_request()
-
-and then later on the respective state machine is kicked off.
-
-
-
-The job of the state machine is to submit requests to the OSDs and
-
-handle replies from the OSDs.  As in librbd, satisfying a single
-
-user I/O request can require sending multiple OSDs requests, in some
-
-cases sequentially.
-
-
-
-Unfortunately, there is no one function to edit.  I might be able
-
-to help more if you explain what you are trying to achieve.
-
-
-
-Thanks,
-
-
-
-                Ilya
-
+Thank you,
+Robert LeBlanc
+----------------
+Robert LeBlanc
+PGP Fingerprint 79A2 9CA4 6CC4 45DD A904  C70E E654 3BB2 FA62 B9F1
