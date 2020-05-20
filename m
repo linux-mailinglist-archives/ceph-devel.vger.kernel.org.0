@@ -2,134 +2,137 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 794071DA81A
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 May 2020 04:36:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E2921DAC5E
+	for <lists+ceph-devel@lfdr.de>; Wed, 20 May 2020 09:36:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728395AbgETCgF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 19 May 2020 22:36:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57806 "EHLO
+        id S1726375AbgETHgQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 May 2020 03:36:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbgETCgE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 19 May 2020 22:36:04 -0400
-Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5E6C061A0E
-        for <ceph-devel@vger.kernel.org>; Tue, 19 May 2020 19:36:02 -0700 (PDT)
-Received: by mail-oi1-x241.google.com with SMTP id j145so1666670oib.5
-        for <ceph-devel@vger.kernel.org>; Tue, 19 May 2020 19:36:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uNNvsxTOKbbkovzdTsfqK5sQFnpWYKEsk5xYvaNEbow=;
-        b=N7+KGYC8aQ0ziZM+UslKvjHAC+tEWUqY0ronDsgzmON99RG++ZSLtAEVaEvpsweOb4
-         9jRJ0lGLKS/OrSuP5xxKwJOt4Ha6ZSAuGzYR9kpgcukOClEsJ5dTOaRbOmU+H59j57PX
-         WWTe4KVSDRyL2MUb/Mbkp1DWp+7is2WPkiu30c+lEFb4OVRMUqqf2xwBUCj5s88Rzxf7
-         9vLN1JE90K9O19B4viEVHD3/j5/Xls6gkvW4258yt8yjrmNtRyt1LKslbUHQ8QNA6ae6
-         PCUldTRuYYOX77LUcmN4g1SNE5YEEsUF5mvcDL60YdKm0BzKi0pIvwK4EvBfxvZGpj/M
-         8veQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uNNvsxTOKbbkovzdTsfqK5sQFnpWYKEsk5xYvaNEbow=;
-        b=oHTVeDN8bAZ4FWkuW32JZj2KL/uwbq9OnvqZDRSgAGqg09EJaiqP+QXXfaRecPH1y+
-         q9C8b3T0gmakJaERitRJIu6uGLNgDcSRA/obMG5qE4dWgU3p30HZQg0L2iHTTSBa3xxt
-         whtBYsWdcYtf0kA7LjvAK9cPAMcEPm/jpxhIC9NWaeuf86FE/6K5kxGTpocdCYo8+2Jk
-         FRyuYyQMQEPv/0gExNRUKduDWsNFU7F8t0atvqudtwl0B8CwnYoHRjyIxyta7z6NITn9
-         UNgm3S6QCh8V1cFhEhqiJpx9hj0vLDN0tre6+EEPPzY2UyiwaDrHq5xvUweHTtOFbd6H
-         Bcng==
-X-Gm-Message-State: AOAM530zJM1R4pjnEbJj6mxGgfBU2kJZOjfN3BQNmxJd4F2aVxrNhL58
-        lhglj3Y3IkHmm33Ra23HH7YP1bD/73evVzxwzoo=
-X-Google-Smtp-Source: ABdhPJzY1DwJ+ZTQ4iYDUWYDKXKEYgb8dOwQU+T3kKKGu097N6py2g+f3MxVP4RWGj8VJWmgYineuI82ANfY/ltI1DM=
-X-Received: by 2002:aca:c34f:: with SMTP id t76mr1803009oif.95.1589942161655;
- Tue, 19 May 2020 19:36:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAKQB+fug_Y4y8wYe-vG=itf+0BmYFPfDm-ch7DTobtkipQz-yw@mail.gmail.com>
- <CAOi1vP-uF1_0R=5LApR=rdTXSzDWJq3LzuOYPrPmC_TPL909qA@mail.gmail.com>
- <CAKQB+ftbtXv0ET6OmUMsqKUoz5sRHQA35EprTY82_GC34b10XA@mail.gmail.com> <CAOi1vP-oMe2SsbuXQ9oeF+nZaCD87Een5Q1=kNPTeXeLAyHH_w@mail.gmail.com>
-In-Reply-To: <CAOi1vP-oMe2SsbuXQ9oeF+nZaCD87Een5Q1=kNPTeXeLAyHH_w@mail.gmail.com>
-From:   Jerry Lee <leisurelysw24@gmail.com>
-Date:   Wed, 20 May 2020 10:35:50 +0800
-Message-ID: <CAKQB+ftke+gqQQ9OHG9mNvgHJeMbVAN9kKQacgV_Li-B5KWnCw@mail.gmail.com>
-Subject: Re: [PATCH] libceph: add ignore cache/overlay flag if got redirect reply
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
-        Jeff Layton <jlayton@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        with ESMTP id S1726224AbgETHgQ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 20 May 2020 03:36:16 -0400
+Received: from mxb1.seznam.cz (mxb1.seznam.cz [IPv6:2a02:598:a::78:89])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 896F6C061A0E
+        for <ceph-devel@vger.kernel.org>; Wed, 20 May 2020 00:36:15 -0700 (PDT)
+Received: from email.seznam.cz
+        by email-smtpc2b.ko.seznam.cz (email-smtpc2b.ko.seznam.cz [10.53.13.45])
+        id 65c2f4f4b8fd2d7a6558b284;
+        Wed, 20 May 2020 09:36:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
+        t=1589960173; bh=Os7/CFuh5Xv7LfIwhhGbI2QUWgONp4EITRVTwcmARis=;
+        h=Received:From:To:Subject:Date:Message-Id:References:Mime-Version:
+         X-Mailer:Content-Type:Content-Transfer-Encoding;
+        b=mcsnNck7ALQB378YAs7l4W+QrkXEKSsNTEo+0Q4E/y/gvs5ndaSOcJXIM/fA6bahl
+         im6Kzgxk+075tf3nzpIqP5WwhG9TybE0hElxYiYyhiA0xvPZ6J0L9Eon1DmeZv/kzW
+         Q05BPCgU0IJwmXQWiwrU5FNMwI5DFIvG5MGNMIYE=
+Received: from unknown ([::ffff:88.146.49.155])
+        by email.seznam.cz (szn-ebox-5.0.29) with HTTP;
+        Wed, 20 May 2020 09:36:07 +0200 (CEST)
+From:   <Michal.Plsek@seznam.cz>
+To:     <ceph-devel@vger.kernel.org>
+Subject: Re: ceph kernel client orientation
+Date:   Wed, 20 May 2020 09:36:07 +0200 (CEST)
+Message-Id: <da.cjLX.3v4GDfOKIZE.1UnDtd@seznam.cz>
+References: <6n.cjI5.4P7G519BQ1k.1Um{AC@seznam.cz>
+        <CAOi1vP9HvJd-Cdm4TnfEjNN-PooZCAPBwANpS88UfinkhJuUsg@mail.gmail.com>
+Mime-Version: 1.0 (szn-mime-2.0.57)
+X-Mailer: szn-ebox-5.0.29
+Content-Type: text/plain;
+        charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 19 May 2020 at 21:32, Ilya Dryomov <idryomov@gmail.com> wrote:
->
-> On Tue, May 19, 2020 at 12:30 PM Jerry Lee <leisurelysw24@gmail.com> wrote:
-> >
-> > On Tue, 19 May 2020 at 17:14, Ilya Dryomov <idryomov@gmail.com> wrote:
-> > >
-> > > On Mon, May 18, 2020 at 10:03 AM Jerry Lee <leisurelysw24@gmail.com> wrote:
-> > > >
-> > > > osd client should ignore cache/overlay flag if got redirect reply.
-> > > > Otherwise, the client hangs when the cache tier is in forward mode.
-> > > >
-> > > > Similar issues:
-> > > >    https://tracker.ceph.com/issues/23296
-> > > >    https://tracker.ceph.com/issues/36406
-> > > >
-> > > > Signed-off-by: Jerry Lee <leisurelysw24@gmail.com>
-> > > > ---
-> > > >  net/ceph/osd_client.c | 4 +++-
-> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> > > > index 998e26b..1d4973f 100644
-> > > > --- a/net/ceph/osd_client.c
-> > > > +++ b/net/ceph/osd_client.c
-> > > > @@ -3649,7 +3649,9 @@ static void handle_reply(struct ceph_osd *osd,
-> > > > struct ceph_msg *msg)
-> > > >                  * supported.
-> > > >                  */
-> > > >                 req->r_t.target_oloc.pool = m.redirect.oloc.pool;
-> > > > -               req->r_flags |= CEPH_OSD_FLAG_REDIRECTED;
-> > > > +               req->r_flags |= CEPH_OSD_FLAG_REDIRECTED |
-> > > > +                               CEPH_OSD_FLAG_IGNORE_OVERLAY |
-> > > > +                               CEPH_OSD_FLAG_IGNORE_CACHE;
-> > > >                 req->r_tid = 0;
-> > > >                 __submit_request(req, false);
-> > > >                 goto out_unlock_osdc;
-> > >
-> > > Hi Jerry,
-> > >
-> > > Looks good (although the patch was whitespace damaged).  I've fixed
-> > > it up, but check out Documentation/process/email-clients.rst.
-> > Thanks for sharing the doc!
-> > >
-> > > Also, out of curiosity, are you actually using the forward cache mode?
-> > No, we accidentally found the issue when removing a writeback cache.
-> > The kernel client got blocked when the cache mode switched from
-> > writeback to forward and waited for the cache pool to be flushed.
-> >
-> > BTW, a warning (Error EPERM: 'forward' is not a well-supported cache
-> > mode and may corrupt your data.) is shown when the cache mode is
-> > changed to forward mode.  Does it mean that the data integrity and IO
-> > ordering cannot be ensured in this mode?
->
-> Yes.  The problem with redirects is that they can mess up the order
-> of requests.  The forward mode is based on redirects and therefore
-> inherently flawed.
->
-> Use proxy and readproxy modes instead of forward and readforward.
+Thanks for swift answer.
+
+(This is my usage in librbd.cc)
+
+Basically there is a folder with symmetric keys used for block encryption,=
+ one key for one disk in some pool. For identification of key I need (pool=
+_id, disk_id) of block. I am temporarily saving key to librbd::ImageCtx st=
+ructure, so I don't have to get it from file every time. I use this key to=
+ encrypt/decrypt block data. Encrypt/decrypt is primitive, I'm not gonna m=
+ention it here, but it is done over the data provided by functions rbd_rea=
+d() and rbd_write().
+
+If you could point how to edit rbd.c content to achieve similar behaviour,=
+ I would be much obliged.
+
+M.
+
+
+
+---------- P=C5=AFvodn=C3=AD e-mail ----------
+
+Od: Ilya Dryomov <idryomov@gmail.com>
+
+Komu: Michal.Plsek@seznam.cz
+
+Datum: 19. 5. 2020 16:36:05
+
+P=C5=99edm=C4=9Bt: Re: ceph kernel client orientation
+
+On Tue, May 19, 2020 at 3:44 PM <Michal.Plsek@seznam.cz> wrote:
+
 >
 
-Thanks for the clarification.  I refer to the mimic version
-cache-tering configuration guide which states that forward mode is
-configured when removing a writeback cache.  However, in the
-up-to-date doc (master), proxy mode is recommended.  I'll use proxy
-mode instead.
+> Hello,
+
+>
+
+> I am trying to get to functions responsible for reading/writing to/openi=
+ng RBD blocks in ceph client kernel module (alternatives to librbd=
+=E2=80=99s rbd_read(), rbd_write() etc.). I presume it should be located s=
+omewhere around drivers/block/, but until now I=E2=80=99ve been without lu=
+ck. My idea is to edit these functions, rebuild the ceph kernel =E2=80=98r=
+bd=E2=80=99 module and replace it. Since comments are pretty much missing =
+everywhere, it would be nice to narrow my searching area.
+
+>
+
+> If you know anything about it, please let me know. Thanks, M.
+
+
+
+Hi Michal,
+
+
+
+Everything is in drivers/block/rbd.c.  The entry point is
+
+rbd_queue_rq(), this is where all rbd requests are dispatched from.
+
+After setting up where data is to be written from (for writes) or read
+
+to (for reads), the details specific to each type of request (read,
+
+write, discard or zeroout) are handled in __rbd_img_fill_request()
+
+and then later on the respective state machine is kicked off.
+
+
+
+The job of the state machine is to submit requests to the OSDs and
+
+handle replies from the OSDs.  As in librbd, satisfying a single
+
+user I/O request can require sending multiple OSDs requests, in some
+
+cases sequentially.
+
+
+
+Unfortunately, there is no one function to edit.  I might be able
+
+to help more if you explain what you are trying to achieve.
+
+
 
 Thanks,
-- Jerry
 
-> Thanks,
->
->                 Ilya
+
+
+                Ilya
+
