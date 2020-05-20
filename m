@@ -2,121 +2,80 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E8481DBA61
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 May 2020 18:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5592F1DBF89
+	for <lists+ceph-devel@lfdr.de>; Wed, 20 May 2020 22:02:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbgETQ5D (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 May 2020 12:57:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51050 "EHLO
+        id S1727997AbgETT4L (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 May 2020 15:56:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbgETQ5D (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 20 May 2020 12:57:03 -0400
-Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B2C2C061A0E
-        for <ceph-devel@vger.kernel.org>; Wed, 20 May 2020 09:57:03 -0700 (PDT)
-Received: by mail-qt1-x830.google.com with SMTP id p12so3065938qtn.13
-        for <ceph-devel@vger.kernel.org>; Wed, 20 May 2020 09:57:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=leblancnet-us.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VDBiDd1hrLX7cLKTNCCCT75Ye6NMS7cRz8/9qHQE8RA=;
-        b=P0/rRqPYQGjjfz0lrxzk91xjlorsvjwolvN3GEDzimImL/Tl5ct3MztZLjumwukuFa
-         Qj7HOyrEskThwMCESswMx3m8bJZT/9Xrpc7tY8CfKrahe4pE6BsKkNeRZ/4/1xJrC4cZ
-         WXpzhQsD7ODJUsUFdrPfK7xekfHYIUYxn7V0R98SjOdq+G/b/G5zD1M3YDbynxehRjML
-         iR4uBPAR6vOWauQnpbLgcLMswp6LMrChHkdbqDRYJOyF7bNIln6+mi+VEWUmbfAykonA
-         /7YdVFB4VG3hyjahIsN7Bz/0g1M1pL/29p+qDz/10rY+jPbo7wzTCAShwuQ7P0OlZAjk
-         KOjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VDBiDd1hrLX7cLKTNCCCT75Ye6NMS7cRz8/9qHQE8RA=;
-        b=fugu0xVwmtiq6eHqopb9upXTOOmAMjIO4hFZlE89UlafRlGJ7/iptpdRIUqybrankn
-         R+M3seE6d2/8a7IcUhD5afomED7Sl4Nuy0iJq58FfjVhxawmbo4IxfRfnuEhl2Lvti02
-         JOxf8FR42E0rsXcUoF+7ZcSmC2gUHYwXvG0qDZYN2+6RuxYz24Izol5/FQ7SVh2dn+hP
-         T8yp7d3DCt4qOnf9yQbI1b5qCZ02qD9i1J3nOrChrte8k8axBGfakZt26VFGHatOzzs8
-         zKDnoNDcBDr+ksCknifOmJ7zpOReeypF62NP77jH5xWJEP+1syHO/bgOVEINiwjcuSwv
-         LVWw==
-X-Gm-Message-State: AOAM5334GryvT3LcQItYkMLjyjoMF3xhG9OE3KGRzawfGctP4szP25fu
-        4jchS1tZ6mpJIX7hYSJKcV1z7XDnYPY4gFrp+4G09t62
-X-Google-Smtp-Source: ABdhPJyHg6oDkVIyUbf5AO9AhSTgR6xQReq0XahR4mDSD4DJUWO9JnMZhvzPqVia20PYflkwW0TJJtwbRYHpAbZ+3aY=
-X-Received: by 2002:aed:2565:: with SMTP id w34mr6358239qtc.54.1589993822103;
- Wed, 20 May 2020 09:57:02 -0700 (PDT)
+        with ESMTP id S1726964AbgETT4H (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 20 May 2020 15:56:07 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2A15C08C5C0;
+        Wed, 20 May 2020 12:56:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=AvcdAD8zTTSJDfWEpIpfpetvjQ99drHMp3Vtm1fZek8=; b=ma/DUEc/VfLIdSMqChe6fBXtRM
+        KFPIi0kExGxuMcY7MKuOHO7HDRL3fZTdRlVLkDNs7CIr3Y81qhwST3zP5iggrt/WXayW1EKMqqag1
+        AvC/YCGpoRtlOhSsCppb9mDB78KuJpoGGXo5TuGPK9ngfY+jniQETGjxwv6oE9IfQ7Ni40xZ36pxh
+        qAk7tK35dbFwZz+5SSeM6/7oFaHXTh9RiaDcOrrmB/wNmgFnkW3elg7zIJsYQTCrm5fdS8GdfQvzi
+        bQ35oJTYDm0DTjgxdbe5Rw1DYcKft1UsNPhk9zD9I1wl67ev9qL0kSTZBwuDqU1mwQI7FPc3zZzm4
+        zSwwU/3A==;
+Received: from [2001:4bb8:188:1506:c70:4a89:bc61:2] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jbUo3-0001ns-KW; Wed, 20 May 2020 19:55:12 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     Eric Dumazet <edumazet@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Jon Maloy <jmaloy@redhat.com>,
+        Ying Xue <ying.xue@windriver.com>, drbd-dev@lists.linbit.com,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-nvme@lists.infradead.org, target-devel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+        cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com,
+        netdev@vger.kernel.org, linux-sctp@vger.kernel.org,
+        ceph-devel@vger.kernel.org, rds-devel@oss.oracle.com,
+        linux-nfs@vger.kernel.org
+Subject: remove kernel_setsockopt and kernel_getsockopt v2
+Date:   Wed, 20 May 2020 21:54:36 +0200
+Message-Id: <20200520195509.2215098-1-hch@lst.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-References: <CAANLjFqkgn86Oa=70jHqHB-4o0saL9Q+AGPuGyyj94x7EiSi2Q@mail.gmail.com>
- <CABZ+qqn7DwiDO1Ecynx8zY_JuEP81AKemoesSE4F8dkhLtAmLg@mail.gmail.com>
-In-Reply-To: <CABZ+qqn7DwiDO1Ecynx8zY_JuEP81AKemoesSE4F8dkhLtAmLg@mail.gmail.com>
-From:   Robert LeBlanc <robert@leblancnet.us>
-Date:   Wed, 20 May 2020 09:56:51 -0700
-Message-ID: <CAANLjFq+EerkocoYN0MW4VaGRHOWdNPs2HLsROLtcu374B6sMg@mail.gmail.com>
-Subject: Re: [ceph-users] Possible bug in op path?
-To:     Dan van der Ster <dan@vanderster.com>
-Cc:     ceph-users <ceph-users@ceph.io>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-We are using high and the people on the list that have also changed
-have not seen the improvements that I would expect.
-----------------
-Robert LeBlanc
-PGP Fingerprint 79A2 9CA4 6CC4 45DD A904  C70E E654 3BB2 FA62 B9F1
+Hi Dave,
 
-On Wed, May 20, 2020 at 1:38 AM Dan van der Ster <dan@vanderster.com> wrote:
->
-> Hi Robert,
->
-> Since you didn't mention -- are you using osd_op_queue_cut_off low or
-> high? I know you are usually advocating high, but the default is still
-> low and most users don't change this setting.
->
-> Cheers, Dan
->
->
-> On Wed, May 20, 2020 at 9:41 AM Robert LeBlanc <robert@leblancnet.us> wrote:
-> >
-> > We upgraded our Jewel cluster to Nautilus a few months ago and I've noticed
-> > that op behavior has changed. This is an HDD cluster (NVMe journals and
-> > NVMe CephFS metadata pool) with about 800 OSDs. When on Jewel and running
-> > WPQ with the high cut-off, it was rock solid. When we had recoveries going
-> > on it barely dented the client ops and when the client ops on the cluster
-> > went down the backfills would run as fast as the cluster could go. I could
-> > have max_backfills set to 10 and the cluster performed admirably.
-> > After upgrading to Nautilus the cluster struggles with any kind of recovery
-> > and if there is any significant client write load the cluster can get into
-> > a death spiral. Even heavy client write bandwidth (3-4 GB/s) can cause the
-> > heartbeat checks to raise, blocked IO and even OSDs becoming unresponsive.
-> > As the person who wrote the WPQ code initially, I know that it was fair and
-> > proportional to the op priority and in Jewel it worked. It's not working in
-> > Nautilus. I've tweaked a lot of things trying to troubleshoot the issue and
-> > setting the recovery priority to 1 or zero barely makes any difference. My
-> > best estimation is that the op priority is getting lost before reaching the
-> > WPQ scheduler and is thus not prioritizing and dispatching ops correctly.
-> > It's almost as if all ops are being treated the same and there is no
-> > priority at all.
-> > Unfortunately, I do not have the time to set up the dev/testing environment
-> > to track this down and we will be moving away from Ceph. But I really like
-> > Ceph and want to see it succeed. I strongly suggest that someone look into
-> > this because I think it will resolve a lot of problems people have had on
-> > the mailing list. I'm not sure if a bug was introduced with the other
-> > queues that touches more of the op path or if something in the op path
-> > restructuring that changed how things work (I know that was being discussed
-> > around the time that Jewel was released). But my guess is that it is
-> > somewhere between the op being created and being received into the queue.
-> > I really hope that this helps in the search for this regression. I spent a
-> > lot of time studying the issue to come up with WPQ and saw it work great
-> > when I switched this cluster from PRIO to WPQ. I've also spent countless
-> > hours studying how it's changed in Nautilus.
-> >
-> > Thank you,
-> > Robert LeBlanc
-> > ----------------
-> > Robert LeBlanc
-> > PGP Fingerprint 79A2 9CA4 6CC4 45DD A904  C70E E654 3BB2 FA62 B9F1
-> > _______________________________________________
-> > ceph-users mailing list -- ceph-users@ceph.io
-> > To unsubscribe send an email to ceph-users-leave@ceph.io
+this series removes the kernel_setsockopt and kernel_getsockopt
+functions, and instead switches their users to small functions that
+implement setting (or in one case getting) a sockopt directly using
+a normal kernel function call with type safety and all the other
+benefits of not having a function call.
+
+In some cases these functions seem pretty heavy handed as they do
+a lock_sock even for just setting a single variable, but this mirrors
+the real setsockopt implementation unlike a few drivers that just set
+set the fields directly.
+
+
+Changes since v1:
+ - use ->getname for sctp sockets in dlm
+ - add a new ->bind_add struct proto method for dlm/sctp
+ - switch the ipv6 and remaining sctp helpers to inline function so that
+   the ipv6 and sctp modules are not pulled in by any module that could
+   potentially use ipv6 or sctp connections
+ - remove arguments to various sock_* helpers that are always used with
+   the same constant arguments
