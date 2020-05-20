@@ -2,141 +2,58 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB88D1DB210
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 May 2020 13:44:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E84291DB615
+	for <lists+ceph-devel@lfdr.de>; Wed, 20 May 2020 16:18:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbgETLof (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 May 2020 07:44:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43600 "EHLO mail.kernel.org"
+        id S1726576AbgETOSg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 May 2020 10:18:36 -0400
+Received: from verein.lst.de ([213.95.11.211]:50062 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727018AbgETLoc (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 20 May 2020 07:44:32 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEC85207F9;
-        Wed, 20 May 2020 11:44:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589975071;
-        bh=xFpidjyvCoTsTUuVoifVRVvNHTl7h2uNcEkKRBPmPbw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=IQ38wFYRclb6hCj3hlLP8gSFU4AOPKLAOw7lBjwltO5tZair57XyFAujPQezgEH/0
-         LhtELw4agDaO//VQt3iv7AdmKNuJgEPSnngbkqjtQqeGIcq6lJlas18b4n8bwk/Kv/
-         qcXpl4j01DCUKdAC85QTf7OGZ8am6mc4oCxV3S4Y=
-Message-ID: <17832c6b42a2f3876190d8e85ce0380a0f38f541.camel@kernel.org>
-Subject: Re: [PATCH] ceph: make sure the mdsc->mutex is nested in s->s_mutex
- to fix dead lock
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com, idryomov@gmail.com, zyan@redhat.com
-Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Wed, 20 May 2020 07:44:29 -0400
-In-Reply-To: <1589961079-27932-1-git-send-email-xiubli@redhat.com>
-References: <1589961079-27932-1-git-send-email-xiubli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.2 (3.36.2-1.fc32) 
+        id S1726436AbgETOSf (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 20 May 2020 10:18:35 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 9508368C4E; Wed, 20 May 2020 16:18:30 +0200 (CEST)
+Date:   Wed, 20 May 2020 16:18:30 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Joe Perches <joe@perches.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Jon Maloy <jmaloy@redhat.com>,
+        Ying Xue <ying.xue@windriver.com>, drbd-dev@lists.linbit.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org,
+        target-devel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cifs@vger.kernel.org, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, netdev@vger.kernel.org,
+        linux-sctp@vger.kernel.org, ceph-devel@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 20/33] ipv4: add ip_sock_set_recverr
+Message-ID: <20200520141830.GA28867@lst.de>
+References: <20200513062649.2100053-1-hch@lst.de> <20200513062649.2100053-21-hch@lst.de> <0ee5acfaca4cf32d4efad162046b858981a4dae3.camel@perches.com> <20200514103025.GB12680@lst.de> <9992a1fe768a0b1e9bb9470d2728ba25dbe042db.camel@perches.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9992a1fe768a0b1e9bb9470d2728ba25dbe042db.camel@perches.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2020-05-20 at 03:51 -0400, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
+On Thu, May 14, 2020 at 04:51:26AM -0700, Joe Perches wrote:
+> > Mostly to keep it symmetric with the sockopt.  I could probably remove
+> > a few arguments in the series if we want to be strict.
 > 
-> The call trace:
-> 
-> <6>[15981.740583] libceph: mon2 (1)10.72.36.245:40083 session lost, hunting for new mon
-> <3>[16097.960293] INFO: task kworker/18:1:32111 blocked for more than 122 seconds.
-> <3>[16097.960860]       Tainted: G            E     5.7.0-rc5+ #80
-> <3>[16097.961332] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> <6>[16097.961868] kworker/18:1    D    0 32111      2 0x80004080
-> <6>[16097.962151] Workqueue: ceph-msgr ceph_con_workfn [libceph]
-> <4>[16097.962188] Call Trace:
-> <4>[16097.962353]  ? __schedule+0x276/0x6e0
-> <4>[16097.962359]  ? schedule+0x40/0xb0
-> <4>[16097.962364]  ? schedule_preempt_disabled+0xa/0x10
-> <4>[16097.962368]  ? __mutex_lock.isra.8+0x2b5/0x4a0
-> <4>[16097.962460]  ? kick_requests+0x21/0x100 [ceph]
-> <4>[16097.962485]  ? ceph_mdsc_handle_mdsmap+0x19c/0x5f0 [ceph]
-> <4>[16097.962503]  ? extra_mon_dispatch+0x34/0x40 [ceph]
-> <4>[16097.962523]  ? extra_mon_dispatch+0x34/0x40 [ceph]
-> <4>[16097.962580]  ? dispatch+0x77/0x930 [libceph]
-> <4>[16097.962602]  ? try_read+0x78b/0x11e0 [libceph]
-> <4>[16097.962619]  ? __switch_to_asm+0x40/0x70
-> <4>[16097.962623]  ? __switch_to_asm+0x34/0x70
-> <4>[16097.962627]  ? __switch_to_asm+0x40/0x70
-> <4>[16097.962631]  ? __switch_to_asm+0x34/0x70
-> <4>[16097.962635]  ? __switch_to_asm+0x40/0x70
-> <4>[16097.962654]  ? ceph_con_workfn+0x130/0x5e0 [libceph]
-> <4>[16097.962713]  ? process_one_work+0x1ad/0x370
-> <4>[16097.962717]  ? worker_thread+0x30/0x390
-> <4>[16097.962722]  ? create_worker+0x1a0/0x1a0
-> <4>[16097.962737]  ? kthread+0x112/0x130
-> <4>[16097.962742]  ? kthread_park+0x80/0x80
-> <4>[16097.962747]  ? ret_from_fork+0x35/0x40
-> <3>[16097.962758] INFO: task kworker/25:1:1747 blocked for more than 122 seconds.
-> <3>[16097.963233]       Tainted: G            E     5.7.0-rc5+ #80
-> <3>[16097.963792] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> <6>[16097.964298] kworker/25:1    D    0  1747      2 0x80004080
-> <6>[16097.964325] Workqueue: ceph-msgr ceph_con_workfn [libceph]
-> <4>[16097.964331] Call Trace:
-> <4>[16097.964340]  ? __schedule+0x276/0x6e0
-> <4>[16097.964344]  ? schedule+0x40/0xb0
-> <4>[16097.964347]  ? schedule_preempt_disabled+0xa/0x10
-> <4>[16097.964351]  ? __mutex_lock.isra.8+0x2b5/0x4a0
-> <4>[16097.964376]  ? handle_reply+0x33f/0x6f0 [ceph]
-> <4>[16097.964407]  ? dispatch+0xa6/0xbc0 [ceph]
-> <4>[16097.964429]  ? read_partial_message+0x214/0x770 [libceph]
-> <4>[16097.964449]  ? try_read+0x78b/0x11e0 [libceph]
-> <4>[16097.964454]  ? __switch_to_asm+0x40/0x70
-> <4>[16097.964458]  ? __switch_to_asm+0x34/0x70
-> <4>[16097.964461]  ? __switch_to_asm+0x40/0x70
-> <4>[16097.964465]  ? __switch_to_asm+0x34/0x70
-> <4>[16097.964470]  ? __switch_to_asm+0x40/0x70
-> <4>[16097.964489]  ? ceph_con_workfn+0x130/0x5e0 [libceph]
-> <4>[16097.964494]  ? process_one_work+0x1ad/0x370
-> <4>[16097.964498]  ? worker_thread+0x30/0x390
-> <4>[16097.964501]  ? create_worker+0x1a0/0x1a0
-> <4>[16097.964506]  ? kthread+0x112/0x130
-> <4>[16097.964511]  ? kthread_park+0x80/0x80
-> <4>[16097.964516]  ? ret_from_fork+0x35/0x40
-> 
-> URL: https://tracker.ceph.com/issues/45609
-> Reported-by: "Yan, Zheng" <zyan@redhat.com>
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/mds_client.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 6c283c5..0e0ab01 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -3769,8 +3769,6 @@ static int encode_snap_realms(struct ceph_mds_client *mdsc,
->   * recovering MDS might have.
->   *
->   * This is a relatively heavyweight operation, but it's rare.
-> - *
-> - * called with mdsc->mutex held.
->   */
->  static void send_mds_reconnect(struct ceph_mds_client *mdsc,
->  			       struct ceph_mds_session *session)
-> @@ -4024,7 +4022,9 @@ static void check_new_map(struct ceph_mds_client *mdsc,
->  			    oldstate != CEPH_MDS_STATE_STARTING)
->  				pr_info("mds%d recovery completed\n", s->s_mds);
->  			kick_requests(mdsc, i);
-> +			mutex_unlock(&mdsc->mutex);
->  			mutex_lock(&s->s_mutex);
-> +			mutex_lock(&mdsc->mutex);
->  			ceph_kick_flushing_caps(mdsc, s);
->  			mutex_unlock(&s->s_mutex);
->  			wake_up_session_caps(s, RECONNECT);
+> My preference would use strict and add
+> arguments only when necessary.
 
-
-Good catch. Merged into testing branch.
-
-Thanks!
--- 
-Jeff Layton <jlayton@kernel.org>
-
+In a few cases that would create confusion as the arguments are rather
+overloaded.  But for a lot of the cases where it doesn't and there isn't
+really much use for other arguments I've done that now.
