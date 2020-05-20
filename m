@@ -2,90 +2,134 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B6A0D1D9C72
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 May 2020 18:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 794071DA81A
+	for <lists+ceph-devel@lfdr.de>; Wed, 20 May 2020 04:36:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729363AbgESQZA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 19 May 2020 12:25:00 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:51041 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728689AbgESQZA (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 19 May 2020 12:25:00 -0400
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7CBCF5C00D1;
-        Tue, 19 May 2020 12:24:58 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Tue, 19 May 2020 12:24:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=benboeckel.net;
-         h=date:from:to:cc:subject:message-id:reply-to:references
-        :mime-version:content-type:in-reply-to; s=fm1; bh=7/52dq5GxyiFcd
-        dCLps86QCxmzKufuJnLl7OH1657qI=; b=c1zsJqiWBgruzDh/25LryFc4I/tJS+
-        KejzuOJ1efDWpsQMaT/iI4KAnDS8jXkboxzHQy4d076P8VZSYja7C1lqXzJAxwOU
-        /hHqX9Vh52Pk30pdFhFxBvtUvWJnCkP/6ZXnwYHBHf/wv8gK+uHbv3hQusJ8DlUB
-        tJgDY6o2zq2Rqj2G0aw14HNItLTKTgwuZCvTalwVu09DNN+r39xi3yiS0Fu4am2u
-        TfYm1o6nbLAxFMsajd7qy/8HN6kEkoapPVwE2rrpHeNfQntfA85cDt453wuUY2nc
-        4QmbMa00jCapZPZ8WeUbwAMb1HZBpHhCVqxFjQuXmt/PfKVCz/8cjO0A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:reply-to:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=7/52dq5GxyiFcddCLps86QCxmzKufuJnLl7OH1657qI=; b=fZkGF6+s
-        2NFay7YhJ+tKBb+twAe0shLDdn1FlFIJBQuxiomMjsGpQ/K8Vfjw7b8lrfWLGyAl
-        ASpfsxFhO1xrM3d/4JB2/9oQl7GK0irtWZY4mvvQFOGTKR3qLeATNUztzFFkG9hj
-        mJ3vXnWYEyhcD1gj+PJ/ijWHDqJpjpC7du7daw3nn+lGpeREw/9mjYfHF5MJMevQ
-        W9+49sDoDe2ddx0oK72Pr/S30OX5LWMdFSoN+pM6Ge8CFhZoQIp1gtAr2Y+zWUY3
-        gDuv/2jlCR3X3zZXxA3jj2W0qMeJMvTo2VfhJnb++3fCWmWkExulf7TzjItqUtM0
-        MufBtLPvlovf7A==
-X-ME-Sender: <xms:VQjEXlRLzugsFLKbHpleHm2R5P4Xz3dzQH6kstjIiDtNAwXKpJnfTQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedruddtjedgleelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhrfhggtggujggfsehttdertddtreejnecuhfhrohhmpeeuvghn
-    uceuohgvtghkvghluceomhgvsegsvghnsghovggtkhgvlhdrnhgvtheqnecuggftrfgrth
-    htvghrnhepjedtvdffheetgfektdehvefgieelgeefheejvdehtdduieetgedtfedtleev
-    vdffnecukfhppeeiledrvddtgedrudeikedrvdeffeenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmvgessggvnhgsohgvtghkvghlrdhnvght
-X-ME-Proxy: <xmx:VQjEXuym6QgehtMSmMpoV9E7TnaLg9GXaX3mTvL85qC7i3EAwGH9uQ>
-    <xmx:VQjEXq1yZDifEBgM-BnSBJ_sg8hMsS0yLWT_4Yka9-rkqVDOO7U70w>
-    <xmx:VQjEXtCtK0SpOh7vIKzJBJRtA5Rsv4RchA3niV5yLgsDwRm_jqcpyw>
-    <xmx:WgjEXga2rAiJlnRndipxaz5S5Xibw8t-qKafQBRhmbZN_wm9Ok0GLw>
-Received: from localhost (cpe-69-204-168-233.nycap.res.rr.com [69.204.168.233])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 63B91306643B;
-        Tue, 19 May 2020 12:24:53 -0400 (EDT)
-Date:   Tue, 19 May 2020 12:24:52 -0400
-From:   Ben Boeckel <me@benboeckel.net>
-To:     David Howells <dhowells@redhat.com>
-Cc:     fweimer@redhat.com, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-afs@lists.infradead.org,
-        ceph-devel@vger.kernel.org, keyrings@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dns: Apply a default TTL to records obtained from
- getaddrinfo()
-Message-ID: <20200519162452.GA3010828@erythro.dev.benboeckel.internal>
-Reply-To: me@benboeckel.net
-References: <20200519141432.GA2949457@erythro.dev.benboeckel.internal>
- <20200518155148.GA2595638@erythro.dev.benboeckel.internal>
- <158981176590.872823.11683683537698750702.stgit@warthog.procyon.org.uk>
- <1080378.1589895580@warthog.procyon.org.uk>
- <1512927.1589904409@warthog.procyon.org.uk>
+        id S1728395AbgETCgF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 19 May 2020 22:36:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57806 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbgETCgE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 19 May 2020 22:36:04 -0400
+Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5E6C061A0E
+        for <ceph-devel@vger.kernel.org>; Tue, 19 May 2020 19:36:02 -0700 (PDT)
+Received: by mail-oi1-x241.google.com with SMTP id j145so1666670oib.5
+        for <ceph-devel@vger.kernel.org>; Tue, 19 May 2020 19:36:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uNNvsxTOKbbkovzdTsfqK5sQFnpWYKEsk5xYvaNEbow=;
+        b=N7+KGYC8aQ0ziZM+UslKvjHAC+tEWUqY0ronDsgzmON99RG++ZSLtAEVaEvpsweOb4
+         9jRJ0lGLKS/OrSuP5xxKwJOt4Ha6ZSAuGzYR9kpgcukOClEsJ5dTOaRbOmU+H59j57PX
+         WWTe4KVSDRyL2MUb/Mbkp1DWp+7is2WPkiu30c+lEFb4OVRMUqqf2xwBUCj5s88Rzxf7
+         9vLN1JE90K9O19B4viEVHD3/j5/Xls6gkvW4258yt8yjrmNtRyt1LKslbUHQ8QNA6ae6
+         PCUldTRuYYOX77LUcmN4g1SNE5YEEsUF5mvcDL60YdKm0BzKi0pIvwK4EvBfxvZGpj/M
+         8veQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uNNvsxTOKbbkovzdTsfqK5sQFnpWYKEsk5xYvaNEbow=;
+        b=oHTVeDN8bAZ4FWkuW32JZj2KL/uwbq9OnvqZDRSgAGqg09EJaiqP+QXXfaRecPH1y+
+         q9C8b3T0gmakJaERitRJIu6uGLNgDcSRA/obMG5qE4dWgU3p30HZQg0L2iHTTSBa3xxt
+         whtBYsWdcYtf0kA7LjvAK9cPAMcEPm/jpxhIC9NWaeuf86FE/6K5kxGTpocdCYo8+2Jk
+         FRyuYyQMQEPv/0gExNRUKduDWsNFU7F8t0atvqudtwl0B8CwnYoHRjyIxyta7z6NITn9
+         UNgm3S6QCh8V1cFhEhqiJpx9hj0vLDN0tre6+EEPPzY2UyiwaDrHq5xvUweHTtOFbd6H
+         Bcng==
+X-Gm-Message-State: AOAM530zJM1R4pjnEbJj6mxGgfBU2kJZOjfN3BQNmxJd4F2aVxrNhL58
+        lhglj3Y3IkHmm33Ra23HH7YP1bD/73evVzxwzoo=
+X-Google-Smtp-Source: ABdhPJzY1DwJ+ZTQ4iYDUWYDKXKEYgb8dOwQU+T3kKKGu097N6py2g+f3MxVP4RWGj8VJWmgYineuI82ANfY/ltI1DM=
+X-Received: by 2002:aca:c34f:: with SMTP id t76mr1803009oif.95.1589942161655;
+ Tue, 19 May 2020 19:36:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1512927.1589904409@warthog.procyon.org.uk>
-User-Agent: Mutt/1.13.3 (2020-01-12)
+References: <CAKQB+fug_Y4y8wYe-vG=itf+0BmYFPfDm-ch7DTobtkipQz-yw@mail.gmail.com>
+ <CAOi1vP-uF1_0R=5LApR=rdTXSzDWJq3LzuOYPrPmC_TPL909qA@mail.gmail.com>
+ <CAKQB+ftbtXv0ET6OmUMsqKUoz5sRHQA35EprTY82_GC34b10XA@mail.gmail.com> <CAOi1vP-oMe2SsbuXQ9oeF+nZaCD87Een5Q1=kNPTeXeLAyHH_w@mail.gmail.com>
+In-Reply-To: <CAOi1vP-oMe2SsbuXQ9oeF+nZaCD87Een5Q1=kNPTeXeLAyHH_w@mail.gmail.com>
+From:   Jerry Lee <leisurelysw24@gmail.com>
+Date:   Wed, 20 May 2020 10:35:50 +0800
+Message-ID: <CAKQB+ftke+gqQQ9OHG9mNvgHJeMbVAN9kKQacgV_Li-B5KWnCw@mail.gmail.com>
+Subject: Re: [PATCH] libceph: add ignore cache/overlay flag if got redirect reply
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Jeff Layton <jlayton@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, May 19, 2020 at 17:06:49 +0100, David Howells wrote:
-> Okay, how about this incremental change, then?  If fixes the typo, only prints
-> the "READ CONFIG" line in verbose mode, filters escape chars in the config
-> file and reduces the expiration time to 5s.
+On Tue, 19 May 2020 at 21:32, Ilya Dryomov <idryomov@gmail.com> wrote:
+>
+> On Tue, May 19, 2020 at 12:30 PM Jerry Lee <leisurelysw24@gmail.com> wrote:
+> >
+> > On Tue, 19 May 2020 at 17:14, Ilya Dryomov <idryomov@gmail.com> wrote:
+> > >
+> > > On Mon, May 18, 2020 at 10:03 AM Jerry Lee <leisurelysw24@gmail.com> wrote:
+> > > >
+> > > > osd client should ignore cache/overlay flag if got redirect reply.
+> > > > Otherwise, the client hangs when the cache tier is in forward mode.
+> > > >
+> > > > Similar issues:
+> > > >    https://tracker.ceph.com/issues/23296
+> > > >    https://tracker.ceph.com/issues/36406
+> > > >
+> > > > Signed-off-by: Jerry Lee <leisurelysw24@gmail.com>
+> > > > ---
+> > > >  net/ceph/osd_client.c | 4 +++-
+> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> > > > index 998e26b..1d4973f 100644
+> > > > --- a/net/ceph/osd_client.c
+> > > > +++ b/net/ceph/osd_client.c
+> > > > @@ -3649,7 +3649,9 @@ static void handle_reply(struct ceph_osd *osd,
+> > > > struct ceph_msg *msg)
+> > > >                  * supported.
+> > > >                  */
+> > > >                 req->r_t.target_oloc.pool = m.redirect.oloc.pool;
+> > > > -               req->r_flags |= CEPH_OSD_FLAG_REDIRECTED;
+> > > > +               req->r_flags |= CEPH_OSD_FLAG_REDIRECTED |
+> > > > +                               CEPH_OSD_FLAG_IGNORE_OVERLAY |
+> > > > +                               CEPH_OSD_FLAG_IGNORE_CACHE;
+> > > >                 req->r_tid = 0;
+> > > >                 __submit_request(req, false);
+> > > >                 goto out_unlock_osdc;
+> > >
+> > > Hi Jerry,
+> > >
+> > > Looks good (although the patch was whitespace damaged).  I've fixed
+> > > it up, but check out Documentation/process/email-clients.rst.
+> > Thanks for sharing the doc!
+> > >
+> > > Also, out of curiosity, are you actually using the forward cache mode?
+> > No, we accidentally found the issue when removing a writeback cache.
+> > The kernel client got blocked when the cache mode switched from
+> > writeback to forward and waited for the cache pool to be flushed.
+> >
+> > BTW, a warning (Error EPERM: 'forward' is not a well-supported cache
+> > mode and may corrupt your data.) is shown when the cache mode is
+> > changed to forward mode.  Does it mean that the data integrity and IO
+> > ordering cannot be ensured in this mode?
+>
+> Yes.  The problem with redirects is that they can mess up the order
+> of requests.  The forward mode is based on redirects and therefore
+> inherently flawed.
+>
+> Use proxy and readproxy modes instead of forward and readforward.
+>
 
-Thanks! Looks good to me.
+Thanks for the clarification.  I refer to the mimic version
+cache-tering configuration guide which states that forward mode is
+configured when removing a writeback cache.  However, in the
+up-to-date doc (master), proxy mode is recommended.  I'll use proxy
+mode instead.
 
-Reviewed-by: Ben Boeckel <me@benboeckel.net>
+Thanks,
+- Jerry
 
---Ben
+> Thanks,
+>
+>                 Ilya
