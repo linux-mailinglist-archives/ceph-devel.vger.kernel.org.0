@@ -2,119 +2,141 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 80D761DADAE
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 May 2020 10:38:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB88D1DB210
+	for <lists+ceph-devel@lfdr.de>; Wed, 20 May 2020 13:44:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbgETIi2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 May 2020 04:38:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57704 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbgETIi2 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 20 May 2020 04:38:28 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17127C061A0E
-        for <ceph-devel@vger.kernel.org>; Wed, 20 May 2020 01:38:28 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id s3so2579033eji.6
-        for <ceph-devel@vger.kernel.org>; Wed, 20 May 2020 01:38:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vanderster.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GHcua224BUZ+YrEjYca1YTt4PbLXR7o65UI1AVBV6TQ=;
-        b=Hos5oSsIP363TEX+PSnLpZ2xxKQ3CHeN/HrMoUKC1EOY8Hf6zL11HR+ZMjsiMTGtzK
-         jjgsXVTT4wf/almKt/+0tjwM0wNcqJeF5fiUo2c2Z7SpDeWD6FdLIG3dGq/paQz1eqX5
-         +ZaLyuqmmlxF0H97zU9DpqS9t0S8eZjpkyPq4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GHcua224BUZ+YrEjYca1YTt4PbLXR7o65UI1AVBV6TQ=;
-        b=ouvsWtRG4XNRFGayS3NX8Z0ASXphqzSq491x7HQ+M3V3OHNjY8iczX2d0UKvjs52XW
-         RtrlIuRvQEu8ATyeL5sOGFi7X8O2cdQgssBSWptJ7vNSOwy42nvZbQilwRHZ4W5q3Ler
-         cBNKD9ZL50IHSMbzOZi7pZr43O6mztNVebV/s4JVuY8QnSl6GLXYrhDxZv73WsVdJ79s
-         9cwCh7uGaJwQ+JNgscwbraeyjJ82yWdmjtetgCHoKTKfKOjU8QbK2xtGqfCiVITLuTyt
-         hGC9acOPP5YW0KDVqZXOCruQJ2Rze0w0Wn2wVQ6Dn9TJkzCkjhL/KNX1/HcaoiCA48pa
-         ly5Q==
-X-Gm-Message-State: AOAM531uV8hWQBFzvzsD52vBcZItI3V6z7I30nvKesKy9+bY0nrHs/7+
-        +fAE3uYVtLfpUCjuLXGTpiAvPegnYRw=
-X-Google-Smtp-Source: ABdhPJzImrJhWUIe3lN65klC1/q34o01TWKb9mOS70Az+TIpNGB1kYUeRuOVgygfzxJ+ziGBwM0rtw==
-X-Received: by 2002:a17:907:39b:: with SMTP id ss27mr2687951ejb.209.1589963905888;
-        Wed, 20 May 2020 01:38:25 -0700 (PDT)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com. [209.85.128.41])
-        by smtp.gmail.com with ESMTPSA id 25sm1328206ejy.32.2020.05.20.01.38.24
-        for <ceph-devel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 May 2020 01:38:25 -0700 (PDT)
-Received: by mail-wm1-f41.google.com with SMTP id m12so1759009wmc.0
-        for <ceph-devel@vger.kernel.org>; Wed, 20 May 2020 01:38:24 -0700 (PDT)
-X-Received: by 2002:a1c:de05:: with SMTP id v5mr3463878wmg.1.1589963904467;
- Wed, 20 May 2020 01:38:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAANLjFqkgn86Oa=70jHqHB-4o0saL9Q+AGPuGyyj94x7EiSi2Q@mail.gmail.com>
-In-Reply-To: <CAANLjFqkgn86Oa=70jHqHB-4o0saL9Q+AGPuGyyj94x7EiSi2Q@mail.gmail.com>
-From:   Dan van der Ster <dan@vanderster.com>
-Date:   Wed, 20 May 2020 10:37:48 +0200
-X-Gmail-Original-Message-ID: <CABZ+qqn7DwiDO1Ecynx8zY_JuEP81AKemoesSE4F8dkhLtAmLg@mail.gmail.com>
-Message-ID: <CABZ+qqn7DwiDO1Ecynx8zY_JuEP81AKemoesSE4F8dkhLtAmLg@mail.gmail.com>
-Subject: Re: [ceph-users] Possible bug in op path?
-To:     Robert LeBlanc <robert@leblancnet.us>
-Cc:     ceph-users <ceph-users@ceph.io>,
-        ceph-devel <ceph-devel@vger.kernel.org>
+        id S1727039AbgETLof (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 May 2020 07:44:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43600 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727018AbgETLoc (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 20 May 2020 07:44:32 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEC85207F9;
+        Wed, 20 May 2020 11:44:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1589975071;
+        bh=xFpidjyvCoTsTUuVoifVRVvNHTl7h2uNcEkKRBPmPbw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=IQ38wFYRclb6hCj3hlLP8gSFU4AOPKLAOw7lBjwltO5tZair57XyFAujPQezgEH/0
+         LhtELw4agDaO//VQt3iv7AdmKNuJgEPSnngbkqjtQqeGIcq6lJlas18b4n8bwk/Kv/
+         qcXpl4j01DCUKdAC85QTf7OGZ8am6mc4oCxV3S4Y=
+Message-ID: <17832c6b42a2f3876190d8e85ce0380a0f38f541.camel@kernel.org>
+Subject: Re: [PATCH] ceph: make sure the mdsc->mutex is nested in s->s_mutex
+ to fix dead lock
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com, idryomov@gmail.com, zyan@redhat.com
+Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Wed, 20 May 2020 07:44:29 -0400
+In-Reply-To: <1589961079-27932-1-git-send-email-xiubli@redhat.com>
+References: <1589961079-27932-1-git-send-email-xiubli@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.2 (3.36.2-1.fc32) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Robert,
+On Wed, 2020-05-20 at 03:51 -0400, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> The call trace:
+> 
+> <6>[15981.740583] libceph: mon2 (1)10.72.36.245:40083 session lost, hunting for new mon
+> <3>[16097.960293] INFO: task kworker/18:1:32111 blocked for more than 122 seconds.
+> <3>[16097.960860]       Tainted: G            E     5.7.0-rc5+ #80
+> <3>[16097.961332] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> <6>[16097.961868] kworker/18:1    D    0 32111      2 0x80004080
+> <6>[16097.962151] Workqueue: ceph-msgr ceph_con_workfn [libceph]
+> <4>[16097.962188] Call Trace:
+> <4>[16097.962353]  ? __schedule+0x276/0x6e0
+> <4>[16097.962359]  ? schedule+0x40/0xb0
+> <4>[16097.962364]  ? schedule_preempt_disabled+0xa/0x10
+> <4>[16097.962368]  ? __mutex_lock.isra.8+0x2b5/0x4a0
+> <4>[16097.962460]  ? kick_requests+0x21/0x100 [ceph]
+> <4>[16097.962485]  ? ceph_mdsc_handle_mdsmap+0x19c/0x5f0 [ceph]
+> <4>[16097.962503]  ? extra_mon_dispatch+0x34/0x40 [ceph]
+> <4>[16097.962523]  ? extra_mon_dispatch+0x34/0x40 [ceph]
+> <4>[16097.962580]  ? dispatch+0x77/0x930 [libceph]
+> <4>[16097.962602]  ? try_read+0x78b/0x11e0 [libceph]
+> <4>[16097.962619]  ? __switch_to_asm+0x40/0x70
+> <4>[16097.962623]  ? __switch_to_asm+0x34/0x70
+> <4>[16097.962627]  ? __switch_to_asm+0x40/0x70
+> <4>[16097.962631]  ? __switch_to_asm+0x34/0x70
+> <4>[16097.962635]  ? __switch_to_asm+0x40/0x70
+> <4>[16097.962654]  ? ceph_con_workfn+0x130/0x5e0 [libceph]
+> <4>[16097.962713]  ? process_one_work+0x1ad/0x370
+> <4>[16097.962717]  ? worker_thread+0x30/0x390
+> <4>[16097.962722]  ? create_worker+0x1a0/0x1a0
+> <4>[16097.962737]  ? kthread+0x112/0x130
+> <4>[16097.962742]  ? kthread_park+0x80/0x80
+> <4>[16097.962747]  ? ret_from_fork+0x35/0x40
+> <3>[16097.962758] INFO: task kworker/25:1:1747 blocked for more than 122 seconds.
+> <3>[16097.963233]       Tainted: G            E     5.7.0-rc5+ #80
+> <3>[16097.963792] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> <6>[16097.964298] kworker/25:1    D    0  1747      2 0x80004080
+> <6>[16097.964325] Workqueue: ceph-msgr ceph_con_workfn [libceph]
+> <4>[16097.964331] Call Trace:
+> <4>[16097.964340]  ? __schedule+0x276/0x6e0
+> <4>[16097.964344]  ? schedule+0x40/0xb0
+> <4>[16097.964347]  ? schedule_preempt_disabled+0xa/0x10
+> <4>[16097.964351]  ? __mutex_lock.isra.8+0x2b5/0x4a0
+> <4>[16097.964376]  ? handle_reply+0x33f/0x6f0 [ceph]
+> <4>[16097.964407]  ? dispatch+0xa6/0xbc0 [ceph]
+> <4>[16097.964429]  ? read_partial_message+0x214/0x770 [libceph]
+> <4>[16097.964449]  ? try_read+0x78b/0x11e0 [libceph]
+> <4>[16097.964454]  ? __switch_to_asm+0x40/0x70
+> <4>[16097.964458]  ? __switch_to_asm+0x34/0x70
+> <4>[16097.964461]  ? __switch_to_asm+0x40/0x70
+> <4>[16097.964465]  ? __switch_to_asm+0x34/0x70
+> <4>[16097.964470]  ? __switch_to_asm+0x40/0x70
+> <4>[16097.964489]  ? ceph_con_workfn+0x130/0x5e0 [libceph]
+> <4>[16097.964494]  ? process_one_work+0x1ad/0x370
+> <4>[16097.964498]  ? worker_thread+0x30/0x390
+> <4>[16097.964501]  ? create_worker+0x1a0/0x1a0
+> <4>[16097.964506]  ? kthread+0x112/0x130
+> <4>[16097.964511]  ? kthread_park+0x80/0x80
+> <4>[16097.964516]  ? ret_from_fork+0x35/0x40
+> 
+> URL: https://tracker.ceph.com/issues/45609
+> Reported-by: "Yan, Zheng" <zyan@redhat.com>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/mds_client.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 6c283c5..0e0ab01 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -3769,8 +3769,6 @@ static int encode_snap_realms(struct ceph_mds_client *mdsc,
+>   * recovering MDS might have.
+>   *
+>   * This is a relatively heavyweight operation, but it's rare.
+> - *
+> - * called with mdsc->mutex held.
+>   */
+>  static void send_mds_reconnect(struct ceph_mds_client *mdsc,
+>  			       struct ceph_mds_session *session)
+> @@ -4024,7 +4022,9 @@ static void check_new_map(struct ceph_mds_client *mdsc,
+>  			    oldstate != CEPH_MDS_STATE_STARTING)
+>  				pr_info("mds%d recovery completed\n", s->s_mds);
+>  			kick_requests(mdsc, i);
+> +			mutex_unlock(&mdsc->mutex);
+>  			mutex_lock(&s->s_mutex);
+> +			mutex_lock(&mdsc->mutex);
+>  			ceph_kick_flushing_caps(mdsc, s);
+>  			mutex_unlock(&s->s_mutex);
+>  			wake_up_session_caps(s, RECONNECT);
 
-Since you didn't mention -- are you using osd_op_queue_cut_off low or
-high? I know you are usually advocating high, but the default is still
-low and most users don't change this setting.
 
-Cheers, Dan
+Good catch. Merged into testing branch.
 
+Thanks!
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-On Wed, May 20, 2020 at 9:41 AM Robert LeBlanc <robert@leblancnet.us> wrote:
->
-> We upgraded our Jewel cluster to Nautilus a few months ago and I've noticed
-> that op behavior has changed. This is an HDD cluster (NVMe journals and
-> NVMe CephFS metadata pool) with about 800 OSDs. When on Jewel and running
-> WPQ with the high cut-off, it was rock solid. When we had recoveries going
-> on it barely dented the client ops and when the client ops on the cluster
-> went down the backfills would run as fast as the cluster could go. I could
-> have max_backfills set to 10 and the cluster performed admirably.
-> After upgrading to Nautilus the cluster struggles with any kind of recovery
-> and if there is any significant client write load the cluster can get into
-> a death spiral. Even heavy client write bandwidth (3-4 GB/s) can cause the
-> heartbeat checks to raise, blocked IO and even OSDs becoming unresponsive.
-> As the person who wrote the WPQ code initially, I know that it was fair and
-> proportional to the op priority and in Jewel it worked. It's not working in
-> Nautilus. I've tweaked a lot of things trying to troubleshoot the issue and
-> setting the recovery priority to 1 or zero barely makes any difference. My
-> best estimation is that the op priority is getting lost before reaching the
-> WPQ scheduler and is thus not prioritizing and dispatching ops correctly.
-> It's almost as if all ops are being treated the same and there is no
-> priority at all.
-> Unfortunately, I do not have the time to set up the dev/testing environment
-> to track this down and we will be moving away from Ceph. But I really like
-> Ceph and want to see it succeed. I strongly suggest that someone look into
-> this because I think it will resolve a lot of problems people have had on
-> the mailing list. I'm not sure if a bug was introduced with the other
-> queues that touches more of the op path or if something in the op path
-> restructuring that changed how things work (I know that was being discussed
-> around the time that Jewel was released). But my guess is that it is
-> somewhere between the op being created and being received into the queue.
-> I really hope that this helps in the search for this regression. I spent a
-> lot of time studying the issue to come up with WPQ and saw it work great
-> when I switched this cluster from PRIO to WPQ. I've also spent countless
-> hours studying how it's changed in Nautilus.
->
-> Thank you,
-> Robert LeBlanc
-> ----------------
-> Robert LeBlanc
-> PGP Fingerprint 79A2 9CA4 6CC4 45DD A904  C70E E654 3BB2 FA62 B9F1
-> _______________________________________________
-> ceph-users mailing list -- ceph-users@ceph.io
-> To unsubscribe send an email to ceph-users-leave@ceph.io
