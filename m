@@ -2,105 +2,147 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2460C1DCB41
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 May 2020 12:46:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B71CE1DCBBB
+	for <lists+ceph-devel@lfdr.de>; Thu, 21 May 2020 13:10:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbgEUKqj convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Thu, 21 May 2020 06:46:39 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:46461 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728882AbgEUKqi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 21 May 2020 06:46:38 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-221-qFd0NAKZNGeARFK-F-oKaQ-1; Thu, 21 May 2020 11:46:34 +0100
-X-MC-Unique: qFd0NAKZNGeARFK-F-oKaQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 21 May 2020 11:46:33 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 21 May 2020 11:46:33 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christoph Hellwig' <hch@lst.de>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        "Marcelo Ricardo Leitner" <marcelo.leitner@gmail.com>,
-        Jon Maloy <jmaloy@redhat.com>,
-        Ying Xue <ying.xue@windriver.com>,
-        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "linux-afs@lists.infradead.org" <linux-afs@lists.infradead.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-sctp@vger.kernel.org" <linux-sctp@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "rds-devel@oss.oracle.com" <rds-devel@oss.oracle.com>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Subject: RE: remove kernel_setsockopt and kernel_getsockopt v2
-Thread-Topic: remove kernel_setsockopt and kernel_getsockopt v2
-Thread-Index: AQHWL0EWFDRlmpM/90uRt9jvD36P/KiyKtMAgAAFoACAACnvQA==
-Date:   Thu, 21 May 2020 10:46:33 +0000
-Message-ID: <b7c7cf98999f4167b821f4425896e4e8@AcuMS.aculab.com>
-References: <20200520195509.2215098-1-hch@lst.de>
- <138a17dfff244c089b95f129e4ea2f66@AcuMS.aculab.com>
- <20200521091150.GA8401@lst.de>
-In-Reply-To: <20200521091150.GA8401@lst.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1729076AbgEULJ5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 21 May 2020 07:09:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41496 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729017AbgEULJy (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 21 May 2020 07:09:54 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75F7120721;
+        Thu, 21 May 2020 11:09:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1590059393;
+        bh=CYq5LvpdIkzN5Q2ml6NSFNeLsYGmkIUAGsU26W6nIUE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=sSAB0ijeU/zJF/ltw7k79k69ZikOCsnrNtoPtdEHHISk+BhL7kaXFLaQnxh43Jn/I
+         tazH3muCMsoFMJFPkE9Q5fCGKRGV+jrFzHJrghjznDxlFd2aEIMENW8sFFQu38VCUh
+         p4hJhm+i8jSZMA8ZrNQ4SXXOjUFTkDI/whSvkEzU=
+Message-ID: <cad949df361b68a1c929f9053bce34d1892c8291.camel@kernel.org>
+Subject: Re: [PATCH] ceph: show max caps in debugfs caps file
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Yanhu Cao <gmayyyha@gmail.com>
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 21 May 2020 07:09:52 -0400
+In-Reply-To: <20200521093845.15101-1-gmayyyha@gmail.com>
+References: <20200521093845.15101-1-gmayyyha@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.2 (3.36.2-1.fc32) 
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: 'Christoph Hellwig'
-> Sent: 21 May 2020 10:12
-...
-> > I worried about whether getsockopt() should read the entire
-> > user buffer first. SCTP needs the some of it often (including a
-> > sockaddr_storage in one case), TCP needs it once.
-> > However the cost of reading a few words is small, and a big
-> > buffer probably needs setting to avoid leaking kernel
-> > memory if the structure has holes or fields that don't get set.
-> > Reading from userspace solves both issues.
+On Thu, 2020-05-21 at 17:38 +0800, Yanhu Cao wrote:
+>         before
+>         ------
+>         total           1026
+>         avail           1024
+>         used            2
+>         reserved        0
+>         min             1024
 > 
-> As mention in the thread on the last series:  That was my first idea, but
-> we have way to many sockopts, especially in obscure protocols that just
-> hard code the size.  The chance of breaking userspace in a way that can't
-> be fixed without going back to passing user pointers to get/setsockopt
-> is way to high to commit to such a change unfortunately.
+>         after
+>         ------
+>         total           1026
+>         avail           1024
+>         used            2
+>         max             2048
+>         reserved        0
+>         min             1024
+> 
+> Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> ---
+>  fs/ceph/caps.c    | 6 ++++--
+>  fs/ceph/debugfs.c | 7 ++++---
+>  fs/ceph/super.h   | 2 +-
+>  3 files changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 5f3aa4d607de..e2c759a2ef35 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -404,8 +404,8 @@ void ceph_put_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap)
+>  }
+>  
+>  void ceph_reservation_status(struct ceph_fs_client *fsc,
+> -			     int *total, int *avail, int *used, int *reserved,
+> -			     int *min)
+> +			     int *total, int *avail, int *used, int *max,
+> +			     int *reserved, int *min)
+>  {
+>  	struct ceph_mds_client *mdsc = fsc->mdsc;
+>  
+> @@ -417,6 +417,8 @@ void ceph_reservation_status(struct ceph_fs_client *fsc,
+>  		*avail = mdsc->caps_avail_count;
+>  	if (used)
+>  		*used = mdsc->caps_use_count;
+> +	if (max)
+> +		*max = mdsc->caps_use_max;
 
-Right the syscall stubs probably can't do it.
-But the per-protocol ones can for the main protocols.
+Can you lay out what value this will provide? I'm not convinced that
+this information is really that helpful:
 
-I posted a patch for SCTP yesterday that removes 800 lines
-of source and 8k of object code.
-Even that needs a horrid bodge for one request where the
-length returned has to be less than the data copied!
+mdsc->caps_use_max is just set to the value of the "caps_max" mount
+option, and that information is displayed in /proc/mounts if it's not
+set to the default.
 
-	David
+What might be more interesting is to track the most recent "max_caps"
+value sent by the MDS (see the CEPH_SESSION_RECALL_STATE message
+handling). Tracking that would give us a more dynamic view of the
+current maximum requested by the MDS, which is often going to be less
+than what "caps_max" was set to at mount time.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+>  	if (reserved)
+>  		*reserved = mdsc->caps_reserve_count;
+>  	if (min)
+> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+> index 481ac97b4d25..942004376588 100644
+> --- a/fs/ceph/debugfs.c
+> +++ b/fs/ceph/debugfs.c
+> @@ -138,16 +138,17 @@ static int caps_show(struct seq_file *s, void *p)
+>  {
+>  	struct ceph_fs_client *fsc = s->private;
+>  	struct ceph_mds_client *mdsc = fsc->mdsc;
+> -	int total, avail, used, reserved, min, i;
+> +	int total, avail, used, max, reserved, min, i;
+>  	struct cap_wait	*cw;
+>  
+> -	ceph_reservation_status(fsc, &total, &avail, &used, &reserved, &min);
+> +	ceph_reservation_status(fsc, &total, &avail, &used, &max,
+> +				&reserved, &min);
+>  	seq_printf(s, "total\t\t%d\n"
+>  		   "avail\t\t%d\n"
+>  		   "used\t\t%d\n"
+>  		   "reserved\t%d\n"
+>  		   "min\t\t%d\n\n",
+> -		   total, avail, used, reserved, min);
+> +		   total, avail, used, max, reserved, min);
+>  	seq_printf(s, "ino                issued           implemented\n");
+>  	seq_printf(s, "-----------------------------------------------\n");
+>  
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 60aac3aee055..79aa42d9336c 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -700,7 +700,7 @@ extern void ceph_unreserve_caps(struct ceph_mds_client *mdsc,
+>  			       struct ceph_cap_reservation *ctx);
+>  extern void ceph_reservation_status(struct ceph_fs_client *client,
+>  				    int *total, int *avail, int *used,
+> -				    int *reserved, int *min);
+> +				    int *max, int *reserved, int *min);
+>  
+>  
+>  
+
+-- 
+Jeff Layton <jlayton@kernel.org>
 
