@@ -2,120 +2,198 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8B6C1DCE26
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 May 2020 15:34:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23DB91DCE8B
+	for <lists+ceph-devel@lfdr.de>; Thu, 21 May 2020 15:49:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729572AbgEUNdy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 21 May 2020 09:33:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46074 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729536AbgEUNdw (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 21 May 2020 09:33:52 -0400
-Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C825C061A0E;
-        Thu, 21 May 2020 06:33:52 -0700 (PDT)
-Received: by mail-qt1-x843.google.com with SMTP id z18so5466338qto.2;
-        Thu, 21 May 2020 06:33:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=EQm3KwRvgaHxQ5d1Q4EsqwYQDDPz8ESa9iFyt4vvvfU=;
-        b=A1yY0pcUPS8ck0PV+oiK0L7Xz4/CMf99HFvZLNGUwtkmJl1HZgyPoRsWMMpkPViZh0
-         g5zjGf3xBdccjZCBDrDAtY8wQjaBZ20OxMUJOX2ygsAZmQ7FAOTD578Pi8cO/AGsz/0k
-         +6GEYqQqrDeTvrPiNG4dFgi17HrIhPWpILlQe2Haz/tBvylaHUHhtLMH1x1JgMBfFxbG
-         dVhzC9D5lQnZ9bUPGy2DvBKfUkckuBYamDN1KFet5x5I1KxpS/Xd/0nP+OBlUFjYmTJ3
-         d3tseyuZBcS/wV3owA0JIbRvtw028OV+O6ZJMOkqyJt0SMGeOHIN4l7beBYArRlnUqQR
-         Cj1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=EQm3KwRvgaHxQ5d1Q4EsqwYQDDPz8ESa9iFyt4vvvfU=;
-        b=dsv0KKILWi1qP2fyzqRMUc2fyifuGsvTA5in5LUhKPDhnz6ko3ILxneAtEXyfQgm8j
-         3//eoOl7Ut974Wig/Iyotsop7GBmCGnK+L68wj2C9qFebfUkQVwLkyCjDHaqd727Vf0t
-         OZCRHW1IH+uSl3x/77aaX2AOf2KcZAhdxT9OLU827GEd41m4dTVEPra/MYrfYm0R1bEm
-         WWkDkGiLGuLpQQQJTXWD/XPPLd7OMgaW97NDyPhz95RJyGCvllaEMWV27YijHwlXXuWK
-         8F9z0gOjusZ0ymiSksdhgPQiaf5JvycnAdqxikGdqvyEQRxa9WTOROFRcDz7lgRltW/T
-         Q5+g==
-X-Gm-Message-State: AOAM531z8CQX+KVgcu2DS1axo/V1ovH/zd/mJyElUyi+srRstGc5h46g
-        cWIDJ+sMm4hO3/wPyTDCTFBm8GkCEDjsdA==
-X-Google-Smtp-Source: ABdhPJzWBT98PJLkbYawA91UQ6OHszxicgo3NkwFTGAv08qIHw76JSy/EnOeEfPbcxMUsuNECRy/Lw==
-X-Received: by 2002:aed:2bc4:: with SMTP id e62mr11045622qtd.263.1590068031488;
-        Thu, 21 May 2020 06:33:51 -0700 (PDT)
-Received: from localhost.localdomain ([168.181.48.225])
-        by smtp.gmail.com with ESMTPSA id l184sm4861282qke.115.2020.05.21.06.33.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 May 2020 06:33:50 -0700 (PDT)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id 3AF26C0BEB; Thu, 21 May 2020 10:33:48 -0300 (-03)
-Date:   Thu, 21 May 2020 10:33:48 -0300
-From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     David Miller <davem@davemloft.net>, kuba@kernel.org,
-        edumazet@google.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        vyasevich@gmail.com, nhorman@tuxdriver.com, jmaloy@redhat.com,
-        ying.xue@windriver.com, drbd-dev@lists.linbit.com,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-nvme@lists.infradead.org, target-devel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-        cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com,
-        netdev@vger.kernel.org, linux-sctp@vger.kernel.org,
-        ceph-devel@vger.kernel.org, rds-devel@oss.oracle.com,
-        linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 31/33] sctp: add sctp_sock_set_nodelay
-Message-ID: <20200521133348.GX2491@localhost.localdomain>
-References: <20200520195509.2215098-1-hch@lst.de>
- <20200520195509.2215098-32-hch@lst.de>
- <20200520231001.GU2491@localhost.localdomain>
- <20200520.162355.2212209708127373208.davem@davemloft.net>
- <20200520233913.GV2491@localhost.localdomain>
- <20200521083442.GA7771@lst.de>
+        id S1729531AbgEUNtY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 21 May 2020 09:49:24 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:49792 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729197AbgEUNtW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 21 May 2020 09:49:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590068960;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fVdhAWxaVIq9FKXRntk3CfenZmEBt4QZjCZJ/Lo0aG8=;
+        b=AHdfxmIUVEyl3HrCJqf0h/IdU+SwaRMiWN/4twTCtwEHEKp3Tdgtb8Wrnqk3ER5EBWHeT9
+        yZTXcgpiVdWptC3GMQz/de5wuqFCOv8qDGKS+9VLoQ71WgZau4XOZ9p14i1EeQZa3fkixY
+        fQkjfe9jHbNNzYPWrOK5cHpTWgzKmII=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-52-5CXkL4mNMEiO7MYcOwTeiA-1; Thu, 21 May 2020 09:49:16 -0400
+X-MC-Unique: 5CXkL4mNMEiO7MYcOwTeiA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 89B2B80B71E;
+        Thu, 21 May 2020 13:49:15 +0000 (UTC)
+Received: from [10.72.12.125] (ovpn-12-125.pek2.redhat.com [10.72.12.125])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 325BF5C1D0;
+        Thu, 21 May 2020 13:49:12 +0000 (UTC)
+Subject: Re: [PATCH] ceph: add ceph_async_check_caps() to avoid double lock
+ and deadlock
+To:     "Yan, Zheng" <ukernel@gmail.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, Zheng Yan <zyan@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+References: <1590046576-1262-1-git-send-email-xiubli@redhat.com>
+ <CAAM7YAmoCHXB1fLSXt0fqOczqbm9s_2yfWbyAaaMuQRCNR5+3Q@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <88e418bd-36ab-a668-75e9-022b305be28a@redhat.com>
+Date:   Thu, 21 May 2020 21:49:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200521083442.GA7771@lst.de>
+In-Reply-To: <CAAM7YAmoCHXB1fLSXt0fqOczqbm9s_2yfWbyAaaMuQRCNR5+3Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, May 21, 2020 at 10:34:42AM +0200, Christoph Hellwig wrote:
-> On Wed, May 20, 2020 at 08:39:13PM -0300, Marcelo Ricardo Leitner wrote:
-> > On Wed, May 20, 2020 at 04:23:55PM -0700, David Miller wrote:
-> > > From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-> > > Date: Wed, 20 May 2020 20:10:01 -0300
-> > > 
-> > > > The duplication with sctp_setsockopt_nodelay() is quite silly/bad.
-> > > > Also, why have the 'true' hardcoded? It's what dlm uses, yes, but the
-> > > > API could be a bit more complete than that.
-> > > 
-> > > The APIs are being designed based upon what in-tree users actually
-> > > make use of.  We can expand things later if necessary.
-> > 
-> > Sometimes expanding things later can be though, thus why the worry.
-> > But ok, I get it. Thanks.
-> > 
-> > The comment still applies, though. (re the duplication)
-> 
-> Where do you see duplication?
-> 
-> sctp_setsockopt_nodelay does the following things:
-> 
->  - verifies optlen, returns -EINVAL if it doesn't match
->  - calls get_user, returns -EFAULT on error
->  - converts the value from get_user to a boolean and assigns it
->    to sctp_sk(sk)->nodelay
->  - returns 0.
-> 
-> sctp_sock_set_nodelay does:
-> 
->  - call lock_sock
->  - assign true to sctp_sk(sk)->nodelay
->  - call release_sock
->  - does not return an error code
+On 2020/5/21 16:45, Yan, Zheng wrote:
+> On Thu, May 21, 2020 at 3:39 PM <xiubli@redhat.com> wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> In the ceph_check_caps() it may call the session lock/unlock stuff.
+>>
+>> There have some deadlock cases, like:
+>> handle_forward()
+>> ...
+>> mutex_lock(&mdsc->mutex)
+>> ...
+>> ceph_mdsc_put_request()
+>>    --> ceph_mdsc_release_request()
+>>      --> ceph_put_cap_request()
+>>        --> ceph_put_cap_refs()
+>>          --> ceph_check_caps()
+>> ...
+>> mutex_unlock(&mdsc->mutex)
+> For this case, it's better to call ceph_mdsc_put_request() after
+> unlock mdsc->mutex
 
-With the patch there are now two ways of enabling nodelay. It may be
-just a boolean set today, but if one wants to probe on it or if we
-want to extend it with anything, say a debug msg, we have to do it in
-two (very different) places.
+Let me check whether there has other place is doing the similar stuff.
+
+>> And also there maybe has some double session lock cases, like:
+>>
+>> send_mds_reconnect()
+>> ...
+>> mutex_lock(&session->s_mutex);
+>> ...
+>>    --> replay_unsafe_requests()
+>>      --> ceph_mdsc_release_dir_caps()
+>>        --> ceph_put_cap_refs()
+>>          --> ceph_check_caps()
+>> ...
+>> mutex_unlock(&session->s_mutex);
+> There is no point to check_caps() and send cap message while
+> reconnecting caps. So I think it's better to just skip calling
+> ceph_check_caps() for this case.
+
+Okay, will fix it.
+
+BRs
+
+Thanks
+
+>
+> Regards
+> Yan, Zheng
+>
+>> URL: https://tracker.ceph.com/issues/45635
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/ceph/caps.c  |  2 +-
+>>   fs/ceph/inode.c | 10 ++++++++++
+>>   fs/ceph/super.h | 12 ++++++++++++
+>>   3 files changed, 23 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+>> index 27c2e60..08194c4 100644
+>> --- a/fs/ceph/caps.c
+>> +++ b/fs/ceph/caps.c
+>> @@ -3073,7 +3073,7 @@ void ceph_put_cap_refs(struct ceph_inode_info *ci, int had)
+>>               last ? " last" : "", put ? " put" : "");
+>>
+>>          if (last)
+>> -               ceph_check_caps(ci, 0, NULL);
+>> +               ceph_async_check_caps(ci);
+>>          else if (flushsnaps)
+>>                  ceph_flush_snaps(ci, NULL);
+>>          if (wake)
+>> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+>> index 357c937..84a61d4 100644
+>> --- a/fs/ceph/inode.c
+>> +++ b/fs/ceph/inode.c
+>> @@ -35,6 +35,7 @@
+>>   static const struct inode_operations ceph_symlink_iops;
+>>
+>>   static void ceph_inode_work(struct work_struct *work);
+>> +static void ceph_check_caps_work(struct work_struct *work);
+>>
+>>   /*
+>>    * find or create an inode, given the ceph ino number
+>> @@ -518,6 +519,7 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
+>>          INIT_LIST_HEAD(&ci->i_snap_flush_item);
+>>
+>>          INIT_WORK(&ci->i_work, ceph_inode_work);
+>> +       INIT_WORK(&ci->check_caps_work, ceph_check_caps_work);
+>>          ci->i_work_mask = 0;
+>>          memset(&ci->i_btime, '\0', sizeof(ci->i_btime));
+>>
+>> @@ -2012,6 +2014,14 @@ static void ceph_inode_work(struct work_struct *work)
+>>          iput(inode);
+>>   }
+>>
+>> +static void ceph_check_caps_work(struct work_struct *work)
+>> +{
+>> +       struct ceph_inode_info *ci = container_of(work, struct ceph_inode_info,
+>> +                                                 check_caps_work);
+>> +
+>> +       ceph_check_caps(ci, 0, NULL);
+>> +}
+>> +
+>>   /*
+>>    * symlinks
+>>    */
+>> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+>> index 226f19c..96d0e41 100644
+>> --- a/fs/ceph/super.h
+>> +++ b/fs/ceph/super.h
+>> @@ -421,6 +421,8 @@ struct ceph_inode_info {
+>>          struct timespec64 i_btime;
+>>          struct timespec64 i_snap_btime;
+>>
+>> +       struct work_struct check_caps_work;
+>> +
+>>          struct work_struct i_work;
+>>          unsigned long  i_work_mask;
+>>
+>> @@ -1102,6 +1104,16 @@ extern void ceph_flush_snaps(struct ceph_inode_info *ci,
+>>   extern bool __ceph_should_report_size(struct ceph_inode_info *ci);
+>>   extern void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+>>                              struct ceph_mds_session *session);
+>> +static void inline
+>> +ceph_async_check_caps(struct ceph_inode_info *ci)
+>> +{
+>> +       struct inode *inode = &ci->vfs_inode;
+>> +
+>> +       /* It's okay if queue_work fails */
+>> +       queue_work(ceph_inode_to_client(inode)->inode_wq,
+>> +                  &ceph_inode(inode)->check_caps_work);
+>> +}
+>> +
+>>   extern void ceph_check_delayed_caps(struct ceph_mds_client *mdsc);
+>>   extern void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc);
+>>   extern int  ceph_drop_caps_for_unlink(struct inode *inode);
+>> --
+>> 1.8.3.1
+>>
+
