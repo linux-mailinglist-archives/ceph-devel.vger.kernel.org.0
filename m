@@ -2,98 +2,120 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FFBC1DCDC9
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 May 2020 15:15:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8B6C1DCE26
+	for <lists+ceph-devel@lfdr.de>; Thu, 21 May 2020 15:34:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbgEUNPj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 21 May 2020 09:15:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43238 "EHLO
+        id S1729572AbgEUNdy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 21 May 2020 09:33:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727846AbgEUNPi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 21 May 2020 09:15:38 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80B61C061A0E
-        for <ceph-devel@vger.kernel.org>; Thu, 21 May 2020 06:15:38 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id f3so7400281ioj.1
-        for <ceph-devel@vger.kernel.org>; Thu, 21 May 2020 06:15:38 -0700 (PDT)
+        with ESMTP id S1729536AbgEUNdw (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 21 May 2020 09:33:52 -0400
+Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C825C061A0E;
+        Thu, 21 May 2020 06:33:52 -0700 (PDT)
+Received: by mail-qt1-x843.google.com with SMTP id z18so5466338qto.2;
+        Thu, 21 May 2020 06:33:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=FOV9sluA/ltu2/UuazV272NrLLALmpyoY+vLVtuD6w4=;
-        b=vftBprYnKgikxgRIWa6y8Q2/fMbFDdtDiZKyMTyLv6HiK3YEeG53GEvNhiCzSAY6qd
-         HdoU0mvUdSO2UbAfE0szucqz8Tjh6XwtELn1kyIk/Zv1JQnfidKTnAXgPI61fn3bDH6c
-         wlljWzd88zH106qEqzkL2kv9P7o87yNOByHVZ8SawosH7g07jWK6bMt/BvwikX3d3h8b
-         kRtF/AsSms0mQPkD89Ok3hZjrWLUFKFDToVLvHoeINoj/kdrwQQtAmjXVQjuDn06I+UL
-         jPnf2RzcK6ROFdaWm/MrFDBP8/Zl7gvYhhzQSg6kdehauf96yY+G0odhpwUel8rF+o4i
-         hW2Q==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=EQm3KwRvgaHxQ5d1Q4EsqwYQDDPz8ESa9iFyt4vvvfU=;
+        b=A1yY0pcUPS8ck0PV+oiK0L7Xz4/CMf99HFvZLNGUwtkmJl1HZgyPoRsWMMpkPViZh0
+         g5zjGf3xBdccjZCBDrDAtY8wQjaBZ20OxMUJOX2ygsAZmQ7FAOTD578Pi8cO/AGsz/0k
+         +6GEYqQqrDeTvrPiNG4dFgi17HrIhPWpILlQe2Haz/tBvylaHUHhtLMH1x1JgMBfFxbG
+         dVhzC9D5lQnZ9bUPGy2DvBKfUkckuBYamDN1KFet5x5I1KxpS/Xd/0nP+OBlUFjYmTJ3
+         d3tseyuZBcS/wV3owA0JIbRvtw028OV+O6ZJMOkqyJt0SMGeOHIN4l7beBYArRlnUqQR
+         Cj1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=FOV9sluA/ltu2/UuazV272NrLLALmpyoY+vLVtuD6w4=;
-        b=oO+5OZwtji1tLMk6FvY8ArrYriNP55yRplAUrnmKfaZ8b3W/Z75PNbNiMjd6rhOUKQ
-         1QJxh0EAFS2sChj+Whv1a81+MKkYjHMs9VII/vTfH8Bz5zRt8btRDLcL65qO1myg3i2X
-         TgpT4pNoL15JCJZ6UZlxQJ9bsWzKGGHcCEn+kYeUUtcLpCKetFWey+YCRkcWbEyZAHzk
-         wsABQBoY7bbVbdWV9Sqm9p80vk4aJ2z8h+uwjSEOl1a97srTEp+LxtTBwsqD74CLczHa
-         E8hjw0RUNZMB3SSV9nrIJw61vbUVJHfhqSA0Gl+hBzAX253QA9BpRMQO8PnY7v2eGZ20
-         P17A==
-X-Gm-Message-State: AOAM532oVSJpXY0GmCCIWb++YCGiHj7kvBXTZgIxITrffyNP5E5Heagd
-        Fmk/7zWM+qkE6Dinl3ECOZykZ+KP0gwVIoWeV4M=
-X-Google-Smtp-Source: ABdhPJz7k7BQwwUnqA1IVxp83SkdiTmYU/iG0khdAEsJSafUalLrv7CNmzxOvV4m9oi+gK/UW7yFZbZnPRE4q0s6XPk=
-X-Received: by 2002:a02:cf17:: with SMTP id q23mr3647153jar.39.1590066937787;
- Thu, 21 May 2020 06:15:37 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=EQm3KwRvgaHxQ5d1Q4EsqwYQDDPz8ESa9iFyt4vvvfU=;
+        b=dsv0KKILWi1qP2fyzqRMUc2fyifuGsvTA5in5LUhKPDhnz6ko3ILxneAtEXyfQgm8j
+         3//eoOl7Ut974Wig/Iyotsop7GBmCGnK+L68wj2C9qFebfUkQVwLkyCjDHaqd727Vf0t
+         OZCRHW1IH+uSl3x/77aaX2AOf2KcZAhdxT9OLU827GEd41m4dTVEPra/MYrfYm0R1bEm
+         WWkDkGiLGuLpQQQJTXWD/XPPLd7OMgaW97NDyPhz95RJyGCvllaEMWV27YijHwlXXuWK
+         8F9z0gOjusZ0ymiSksdhgPQiaf5JvycnAdqxikGdqvyEQRxa9WTOROFRcDz7lgRltW/T
+         Q5+g==
+X-Gm-Message-State: AOAM531z8CQX+KVgcu2DS1axo/V1ovH/zd/mJyElUyi+srRstGc5h46g
+        cWIDJ+sMm4hO3/wPyTDCTFBm8GkCEDjsdA==
+X-Google-Smtp-Source: ABdhPJzWBT98PJLkbYawA91UQ6OHszxicgo3NkwFTGAv08qIHw76JSy/EnOeEfPbcxMUsuNECRy/Lw==
+X-Received: by 2002:aed:2bc4:: with SMTP id e62mr11045622qtd.263.1590068031488;
+        Thu, 21 May 2020 06:33:51 -0700 (PDT)
+Received: from localhost.localdomain ([168.181.48.225])
+        by smtp.gmail.com with ESMTPSA id l184sm4861282qke.115.2020.05.21.06.33.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 May 2020 06:33:50 -0700 (PDT)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id 3AF26C0BEB; Thu, 21 May 2020 10:33:48 -0300 (-03)
+Date:   Thu, 21 May 2020 10:33:48 -0300
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     David Miller <davem@davemloft.net>, kuba@kernel.org,
+        edumazet@google.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        vyasevich@gmail.com, nhorman@tuxdriver.com, jmaloy@redhat.com,
+        ying.xue@windriver.com, drbd-dev@lists.linbit.com,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-nvme@lists.infradead.org, target-devel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+        cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com,
+        netdev@vger.kernel.org, linux-sctp@vger.kernel.org,
+        ceph-devel@vger.kernel.org, rds-devel@oss.oracle.com,
+        linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 31/33] sctp: add sctp_sock_set_nodelay
+Message-ID: <20200521133348.GX2491@localhost.localdomain>
+References: <20200520195509.2215098-1-hch@lst.de>
+ <20200520195509.2215098-32-hch@lst.de>
+ <20200520231001.GU2491@localhost.localdomain>
+ <20200520.162355.2212209708127373208.davem@davemloft.net>
+ <20200520233913.GV2491@localhost.localdomain>
+ <20200521083442.GA7771@lst.de>
 MIME-Version: 1.0
-References: <6n.cjI5.4P7G519BQ1k.1Um{AC@seznam.cz> <CAOi1vP9HvJd-Cdm4TnfEjNN-PooZCAPBwANpS88UfinkhJuUsg@mail.gmail.com>
- <da.cjLX.3v4GDfOKIZE.1UnDtd@seznam.cz>
-In-Reply-To: <da.cjLX.3v4GDfOKIZE.1UnDtd@seznam.cz>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 21 May 2020 15:15:43 +0200
-Message-ID: <CAOi1vP8kz0PpBDwpp78pHP-gT5-FpcNcQ7L6omd_pj8fyOZLFw@mail.gmail.com>
-Subject: Re: ceph kernel client orientation
-To:     Michal.Plsek@seznam.cz
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200521083442.GA7771@lst.de>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, May 20, 2020 at 9:36 AM <Michal.Plsek@seznam.cz> wrote:
->
-> Thanks for swift answer.
->
-> (This is my usage in librbd.cc)
->
-> Basically there is a folder with symmetric keys used for block encryption=
-, one key for one disk in some pool. For identification of key I need (pool=
-_id, disk_id) of block. I am temporarily saving key to librbd::ImageCtx str=
-ucture, so I don't have to get it from file every time. I use this key to e=
-ncrypt/decrypt block data. Encrypt/decrypt is primitive, I'm not gonna ment=
-ion it here, but it is done over the data provided by functions rbd_read() =
-and rbd_write().
->
-> If you could point how to edit rbd.c content to achieve similar behaviour=
-, I would be much obliged.
+On Thu, May 21, 2020 at 10:34:42AM +0200, Christoph Hellwig wrote:
+> On Wed, May 20, 2020 at 08:39:13PM -0300, Marcelo Ricardo Leitner wrote:
+> > On Wed, May 20, 2020 at 04:23:55PM -0700, David Miller wrote:
+> > > From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+> > > Date: Wed, 20 May 2020 20:10:01 -0300
+> > > 
+> > > > The duplication with sctp_setsockopt_nodelay() is quite silly/bad.
+> > > > Also, why have the 'true' hardcoded? It's what dlm uses, yes, but the
+> > > > API could be a bit more complete than that.
+> > > 
+> > > The APIs are being designed based upon what in-tree users actually
+> > > make use of.  We can expand things later if necessary.
+> > 
+> > Sometimes expanding things later can be though, thus why the worry.
+> > But ok, I get it. Thanks.
+> > 
+> > The comment still applies, though. (re the duplication)
+> 
+> Where do you see duplication?
+> 
+> sctp_setsockopt_nodelay does the following things:
+> 
+>  - verifies optlen, returns -EINVAL if it doesn't match
+>  - calls get_user, returns -EFAULT on error
+>  - converts the value from get_user to a boolean and assigns it
+>    to sctp_sk(sk)->nodelay
+>  - returns 0.
+> 
+> sctp_sock_set_nodelay does:
+> 
+>  - call lock_sock
+>  - assign true to sctp_sk(sk)->nodelay
+>  - call release_sock
+>  - does not return an error code
 
-I'm not sure what exactly you mean by disk id, but I assume image
-id (displayed by "rbd info" in block_name_prefix field) is probably
-part of that.  It is looked up in rbd_dev_image_id(), called from
-rbd_dev_image_probe().  More generally, do_rbd_add() is roughly
-equivalent to rbd_open() in librbd.  Everything related to "opening"
-the image is done in or under do_rbd_add().
-
-struct rbd_device is passed pretty much everywhere, so if you are
-storing a key in librbd::ImageCtx, struct rbd_device is probably
-the place to put it.
-
-As for encryption, the easiest would probably be to stick it into
-__rbd_img_fill_request().  But I want to stress that bolting on
-your own crypto is very error-prone and highly unlikely to produce
-anything remotely secure.  Unless you are doing it to get familiar
-with the codebase or just for fun, I would advise against it.
-
-Thanks,
-
-                Ilya
+With the patch there are now two ways of enabling nodelay. It may be
+just a boolean set today, but if one wants to probe on it or if we
+want to extend it with anything, say a debug msg, we have to do it in
+two (very different) places.
