@@ -2,258 +2,180 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 690C41E1C4D
-	for <lists+ceph-devel@lfdr.de>; Tue, 26 May 2020 09:31:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 439A11E294F
+	for <lists+ceph-devel@lfdr.de>; Tue, 26 May 2020 19:45:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbgEZHbA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 26 May 2020 03:31:00 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:59288 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727857AbgEZHbA (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 26 May 2020 03:31:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1590478258;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ecVDaLazrsZB91Rg9V6+ZYuS384ksruNYUfsMvmg+Jc=;
-        b=S+pWqLXssBOt5JmXY0rEWD73KM8Oq8krvk53Pc4HYlaxRw6b4zr14ZDJulh2Pt1M0pRyjf
-        nno+gobg0E9nD+rME2akpd5rj/2eQKJ3wTfVASydxxd6LuXorMcxXDbExv/uAuLOrUb0I2
-        eiBNKjLDKkah6z9IEOtvEhAVlHb3PBA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-134-Y0cj8EueO2i3cQq2dznmIg-1; Tue, 26 May 2020 03:30:54 -0400
-X-MC-Unique: Y0cj8EueO2i3cQq2dznmIg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2388975AbgEZRps (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 26 May 2020 13:45:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54156 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388794AbgEZRps (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 26 May 2020 13:45:48 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7F73C100CCC3;
-        Tue, 26 May 2020 07:30:53 +0000 (UTC)
-Received: from [10.72.12.125] (ovpn-12-125.pek2.redhat.com [10.72.12.125])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1B2C660E1C;
-        Tue, 26 May 2020 07:30:50 +0000 (UTC)
-Subject: Re: [PATCH v2 1/2] ceph: add ceph_async_put_cap_refs to avoid double
- lock and deadlock
-To:     "Yan, Zheng" <ukernel@gmail.com>
-Cc:     "Yan, Zheng" <zyan@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-References: <1590405385-27406-1-git-send-email-xiubli@redhat.com>
- <1590405385-27406-2-git-send-email-xiubli@redhat.com>
- <23e444d7-49f7-8c5e-f179-00354d4b9b68@redhat.com>
- <06291af5-0b19-aee7-c802-9020ef0f931a@redhat.com>
- <CAAM7YAnoufQ18Yqxnp8SdgV2JBnXdsSakx1rege-6DxM8DkRiA@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <f15a6974-42f9-d773-8f0e-d1cd4f5e418a@redhat.com>
-Date:   Tue, 26 May 2020 15:30:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 4412220704;
+        Tue, 26 May 2020 17:45:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1590515147;
+        bh=Ps4DhrKP7xuN3oWvf+n24VJztP7gLUxaV3Hx/CAeoDo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=UmXibeH5wL2z8iL7Ot453yspY2o+JCqMpr/AH4BGKXjjKEgXjNNCUjCwRmV/Gaddq
+         PTRJjOz/y+E3oFjXIu7XpxYOISMUZbF1OQ6sXO3S3reZx//Og/xaCPborKojoUckfm
+         hQayLH9DvhWQKma9pAXNZm4FYRGTbPF+8JViDtmc=
+Message-ID: <3860895382201ae7a2eb687070724872e77e347a.camel@kernel.org>
+Subject: Re: [v2] ceph: show max caps in debugfs caps file
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Yanhu Cao <gmayyyha@gmail.com>
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yanhu Cao <jrcaoyanhu@jd.com>,
+        kbuild test robot <lkp@intel.com>
+Date:   Tue, 26 May 2020 13:45:46 -0400
+In-Reply-To: <20200525025049.4292-1-gmayyyha@gmail.com>
+References: <20200525025049.4292-1-gmayyyha@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.2 (3.36.2-1.fc32) 
 MIME-Version: 1.0
-In-Reply-To: <CAAM7YAnoufQ18Yqxnp8SdgV2JBnXdsSakx1rege-6DxM8DkRiA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020/5/26 14:29, Yan, Zheng wrote:
-> On Tue, May 26, 2020 at 11:42 AM Xiubo Li <xiubli@redhat.com> wrote:
->> On 2020/5/26 11:11, Yan, Zheng wrote:
->>> On 5/25/20 7:16 PM, xiubli@redhat.com wrote:
->>>> From: Xiubo Li <xiubli@redhat.com>
->>>>
->>>> In the ceph_check_caps() it may call the session lock/unlock stuff.
->>>>
->>>> There have some deadlock cases, like:
->>>> handle_forward()
->>>> ...
->>>> mutex_lock(&mdsc->mutex)
->>>> ...
->>>> ceph_mdsc_put_request()
->>>>     --> ceph_mdsc_release_request()
->>>>       --> ceph_put_cap_request()
->>>>         --> ceph_put_cap_refs()
->>>>           --> ceph_check_caps()
->>>> ...
->>>> mutex_unlock(&mdsc->mutex)
->>>>
->>>> And also there maybe has some double session lock cases, like:
->>>>
->>>> send_mds_reconnect()
->>>> ...
->>>> mutex_lock(&session->s_mutex);
->>>> ...
->>>>     --> replay_unsafe_requests()
->>>>       --> ceph_mdsc_release_dir_caps()
->>>>         --> ceph_put_cap_refs()
->>>>           --> ceph_check_caps()
->>>> ...
->>>> mutex_unlock(&session->s_mutex);
->>>>
->>>> URL: https://tracker.ceph.com/issues/45635
->>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>>> ---
->>>>    fs/ceph/caps.c       | 29 +++++++++++++++++++++++++++++
->>>>    fs/ceph/inode.c      |  3 +++
->>>>    fs/ceph/mds_client.c | 12 +++++++-----
->>>>    fs/ceph/super.h      |  5 +++++
->>>>    4 files changed, 44 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
->>>> index 27c2e60..aea66c1 100644
->>>> --- a/fs/ceph/caps.c
->>>> +++ b/fs/ceph/caps.c
->>>> @@ -3082,6 +3082,35 @@ void ceph_put_cap_refs(struct ceph_inode_info
->>>> *ci, int had)
->>>>            iput(inode);
->>>>    }
->>>>    +void ceph_async_put_cap_refs_work(struct work_struct *work)
->>>> +{
->>>> +    struct ceph_inode_info *ci = container_of(work, struct
->>>> ceph_inode_info,
->>>> +                          put_cap_refs_work);
->>>> +    int caps;
->>>> +
->>>> +    spin_lock(&ci->i_ceph_lock);
->>>> +    caps = xchg(&ci->pending_put_caps, 0);
->>>> +    spin_unlock(&ci->i_ceph_lock);
->>>> +
->>>> +    ceph_put_cap_refs(ci, caps);
->>>> +}
->>>> +
->>>> +void ceph_async_put_cap_refs(struct ceph_inode_info *ci, int had)
->>>> +{
->>>> +    struct inode *inode = &ci->vfs_inode;
->>>> +
->>>> +    spin_lock(&ci->i_ceph_lock);
->>>> +    if (ci->pending_put_caps & had) {
->>>> +            spin_unlock(&ci->i_ceph_lock);
->>>> +        return;
->>>> +    }
->>> this will cause cap ref leak.
->> Ah, yeah, right.
->>
->>
->>> I thought about this again. all the trouble is caused by calling
->>> ceph_mdsc_release_dir_caps() inside ceph_mdsc_release_request().
->> And also in ceph_mdsc_release_request() it is calling
->> ceph_put_cap_refs() directly in other 3 places.
->>
-> putting CEPH_CAP_PIN does not trigger check_caps(). So only
-> ceph_mdsc_release_dir_caps() matters.
+On Mon, 2020-05-25 at 10:50 +0800, Yanhu Cao wrote:
+> before
+> ------
+> total		1286
+> avail		1005
+> used		281
+> reserved	0
+> min		1024
+> 
+> after
+> -----
+> total		1286
+> avail		1005
+> used		281
+> limit		261
+> reserved	0
+> min		1024
+> 
 
-Yeah. Right. I will fix this.
+The description should explain what this new field actually _means_.
 
-Thanks
+> Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> Signed-off-by: Yanhu Cao <jrcaoyanhu@jd.com>
+> Reported-by: kbuild test robot <lkp@intel.com>
+> ---
+>  fs/ceph/caps.c       | 6 ++++--
+>  fs/ceph/debugfs.c    | 8 +++++---
+>  fs/ceph/mds_client.c | 1 +
+>  fs/ceph/mds_client.h | 4 +++-
+>  fs/ceph/super.h      | 2 +-
+>  5 files changed, 14 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 5f3aa4d607de..17191d6cd3b5 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -404,8 +404,8 @@ void ceph_put_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap)
+>  }
+>  
+>  void ceph_reservation_status(struct ceph_fs_client *fsc,
+> -			     int *total, int *avail, int *used, int *reserved,
+> -			     int *min)
+> +			     int *total, int *avail, int *used, int *limit,
+> +			     int *reserved, int *min)
+>  {
+>  	struct ceph_mds_client *mdsc = fsc->mdsc;
+>  
+> @@ -417,6 +417,8 @@ void ceph_reservation_status(struct ceph_fs_client *fsc,
+>  		*avail = mdsc->caps_avail_count;
+>  	if (used)
+>  		*used = mdsc->caps_use_count;
+> +	if (limit)
+> +		*limit = mdsc->caps_limit;
+>  	if (reserved)
+>  		*reserved = mdsc->caps_reserve_count;
+>  	if (min)
+> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+> index 481ac97b4d25..617020261902 100644
+> --- a/fs/ceph/debugfs.c
+> +++ b/fs/ceph/debugfs.c
+> @@ -138,16 +138,18 @@ static int caps_show(struct seq_file *s, void *p)
+>  {
+>  	struct ceph_fs_client *fsc = s->private;
+>  	struct ceph_mds_client *mdsc = fsc->mdsc;
+> -	int total, avail, used, reserved, min, i;
+> +	int total, avail, used, limit, reserved, min, i;
+>  	struct cap_wait	*cw;
+>  
+> -	ceph_reservation_status(fsc, &total, &avail, &used, &reserved, &min);
+> +	ceph_reservation_status(fsc, &total, &avail, &used,
+> +				&limit, &reserved, &min);
+>  	seq_printf(s, "total\t\t%d\n"
+>  		   "avail\t\t%d\n"
+>  		   "used\t\t%d\n"
+> +		   "limit\t\t%d\n"
+>  		   "reserved\t%d\n"
+>  		   "min\t\t%d\n\n",
+> -		   total, avail, used, reserved, min);
+> +		   total, avail, used, limit, reserved, min);
+>  	seq_printf(s, "ino                issued           implemented\n");
+>  	seq_printf(s, "-----------------------------------------------\n");
+>  
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 7c63abf5bea9..d26bc065f5f5 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -1920,6 +1920,7 @@ int ceph_trim_caps(struct ceph_mds_client *mdsc,
+>  		   int max_caps)
+>  {
+>  	int trim_caps = session->s_nr_caps - max_caps;
+> +	mdsc->caps_limit = max_caps;
+>  
 
-BRs
+I was thinking that you'd track this in handle_session. Note that
+ceph_trim_caps is called from ceph_reserve_caps as well. There's also
+some delay between calling ceph_trim_caps and actually releasing them,
+so it's not clear to me how one should interpret mdsc->caps_limit. 
 
->> BRs
->>
->> Xiubo
->>
->>> We already call ceph_mdsc_release_dir_caps() in ceph_async_foo_cb()
->>> for normal circumdtance. We just need to call
->>> ceph_mdsc_release_dir_caps() in 'session closed' case (we never abort
->>> async request). In the 'session closed' case, we can use
->>> ceph_put_cap_refs_no_check_caps()
->>>
->>> Regards
->>> Yan, Zheng
->>>
->>>> +
->>>> +    ci->pending_put_caps |= had;
->>>> +    spin_unlock(&ci->i_ceph_lock);
->>>> +
->>>> +    queue_work(ceph_inode_to_client(inode)->inode_wq,
->>>> +           &ci->put_cap_refs_work);
->>>> +}
->>>>    /*
->>>>     * Release @nr WRBUFFER refs on dirty pages for the given @snapc snap
->>>>     * context.  Adjust per-snap dirty page accounting as appropriate.
->>>> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
->>>> index 357c937..303276a 100644
->>>> --- a/fs/ceph/inode.c
->>>> +++ b/fs/ceph/inode.c
->>>> @@ -517,6 +517,9 @@ struct inode *ceph_alloc_inode(struct super_block
->>>> *sb)
->>>>        INIT_LIST_HEAD(&ci->i_snap_realm_item);
->>>>        INIT_LIST_HEAD(&ci->i_snap_flush_item);
->>>>    +    INIT_WORK(&ci->put_cap_refs_work, ceph_async_put_cap_refs_work);
->>>> +    ci->pending_put_caps = 0;
->>>> +
->>>>        INIT_WORK(&ci->i_work, ceph_inode_work);
->>>>        ci->i_work_mask = 0;
->>>>        memset(&ci->i_btime, '\0', sizeof(ci->i_btime));
->>>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
->>>> index 0e0ab01..40b31da 100644
->>>> --- a/fs/ceph/mds_client.c
->>>> +++ b/fs/ceph/mds_client.c
->>>> @@ -811,12 +811,14 @@ void ceph_mdsc_release_request(struct kref *kref)
->>>>        if (req->r_reply)
->>>>            ceph_msg_put(req->r_reply);
->>>>        if (req->r_inode) {
->>>> -        ceph_put_cap_refs(ceph_inode(req->r_inode), CEPH_CAP_PIN);
->>>> +        ceph_async_put_cap_refs(ceph_inode(req->r_inode),
->>>> +                    CEPH_CAP_PIN);
->>>>            /* avoid calling iput_final() in mds dispatch threads */
->>>>            ceph_async_iput(req->r_inode);
->>>>        }
->>>>        if (req->r_parent) {
->>>> -        ceph_put_cap_refs(ceph_inode(req->r_parent), CEPH_CAP_PIN);
->>>> +        ceph_async_put_cap_refs(ceph_inode(req->r_parent),
->>>> +                    CEPH_CAP_PIN);
->>>>            ceph_async_iput(req->r_parent);
->>>>        }
->>>>        ceph_async_iput(req->r_target_inode);
->>>> @@ -831,8 +833,8 @@ void ceph_mdsc_release_request(struct kref *kref)
->>>>             * changed between the dir mutex being dropped and
->>>>             * this request being freed.
->>>>             */
->>>> -        ceph_put_cap_refs(ceph_inode(req->r_old_dentry_dir),
->>>> -                  CEPH_CAP_PIN);
->>>> + ceph_async_put_cap_refs(ceph_inode(req->r_old_dentry_dir),
->>>> +                    CEPH_CAP_PIN);
->>>>            ceph_async_iput(req->r_old_dentry_dir);
->>>>        }
->>>>        kfree(req->r_path1);
->>>> @@ -3398,7 +3400,7 @@ void ceph_mdsc_release_dir_caps(struct
->>>> ceph_mds_request *req)
->>>>        dcaps = xchg(&req->r_dir_caps, 0);
->>>>        if (dcaps) {
->>>>            dout("releasing r_dir_caps=%s\n", ceph_cap_string(dcaps));
->>>> -        ceph_put_cap_refs(ceph_inode(req->r_parent), dcaps);
->>>> +        ceph_async_put_cap_refs(ceph_inode(req->r_parent), dcaps);
->>>>        }
->>>>    }
->>>>    diff --git a/fs/ceph/super.h b/fs/ceph/super.h
->>>> index 226f19c..01d206f 100644
->>>> --- a/fs/ceph/super.h
->>>> +++ b/fs/ceph/super.h
->>>> @@ -421,6 +421,9 @@ struct ceph_inode_info {
->>>>        struct timespec64 i_btime;
->>>>        struct timespec64 i_snap_btime;
->>>>    +    struct work_struct put_cap_refs_work;
->>>> +    int pending_put_caps;
->>>> +
->>>>        struct work_struct i_work;
->>>>        unsigned long  i_work_mask;
->>>>    @@ -1095,6 +1098,8 @@ extern void ceph_take_cap_refs(struct
->>>> ceph_inode_info *ci, int caps,
->>>>                    bool snap_rwsem_locked);
->>>>    extern void ceph_get_cap_refs(struct ceph_inode_info *ci, int caps);
->>>>    extern void ceph_put_cap_refs(struct ceph_inode_info *ci, int had);
->>>> +extern void ceph_async_put_cap_refs(struct ceph_inode_info *ci, int
->>>> had);
->>>> +extern void ceph_async_put_cap_refs_work(struct work_struct *work);
->>>>    extern void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci,
->>>> int nr,
->>>>                           struct ceph_snap_context *snapc);
->>>>    extern void ceph_flush_snaps(struct ceph_inode_info *ci,
->>>>
+What does that value actually _mean_? I think it would be a lot more
+straightforward to have this be the limit sent by the MDS (if any). If
+there is value in tracking it this way then we need to carefully
+document what it means and how it should be interpreted.
+
+>  	dout("trim_caps mds%d start: %d / %d, trim %d\n",
+>  	     session->s_mds, session->s_nr_caps, max_caps, trim_caps);
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 903d9edfd4bf..840d47976dbb 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -445,7 +445,9 @@ struct ceph_mds_client {
+>  	struct		list_head cap_wait_list;
+>  	int		caps_total_count;    /* total caps allocated */
+>  	int		caps_use_count;      /* in use */
+> -	int		caps_use_max;	     /* max used caps */
+> +	int		caps_use_max;	     /* max used caps,
+> +						limited by client */
+> +	int		caps_limit;          /* limited by mds */
+>  	int		caps_reserve_count;  /* unused, reserved */
+>  	int		caps_avail_count;    /* unused, unreserved */
+>  	int		caps_min_count;      /* keep at least this many
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 60aac3aee055..052d7725761d 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -700,7 +700,7 @@ extern void ceph_unreserve_caps(struct ceph_mds_client *mdsc,
+>  			       struct ceph_cap_reservation *ctx);
+>  extern void ceph_reservation_status(struct ceph_fs_client *client,
+>  				    int *total, int *avail, int *used,
+> -				    int *reserved, int *min);
+> +				    int *limit, int *reserved, int *min);
+>  
+>  
+>  
+
+-- 
+Jeff Layton <jlayton@kernel.org>
 
