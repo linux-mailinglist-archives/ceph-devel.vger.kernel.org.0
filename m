@@ -2,38 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 624FB1E1A09
-	for <lists+ceph-devel@lfdr.de>; Tue, 26 May 2020 05:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DECD1E1A14
+	for <lists+ceph-devel@lfdr.de>; Tue, 26 May 2020 05:52:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388571AbgEZDiq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 25 May 2020 23:38:46 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:53925 "EHLO
+        id S1725535AbgEZDwl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 25 May 2020 23:52:41 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:47666 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388497AbgEZDiq (ORCPT
+        by vger.kernel.org with ESMTP id S1725263AbgEZDwl (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 25 May 2020 23:38:46 -0400
+        Mon, 25 May 2020 23:52:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1590464323;
+        s=mimecast20190719; t=1590465159;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=rx3mXT/dmDkiRX7oilk07cEsKZ/bHoqIyyBqNo5kDCU=;
-        b=db5lcTkTSunwDE1kBKek8tO4SrQTvYdqNB8NDhus0jn5wc8lsgAlJwmRGrtjywOXIAdGBe
-        +UNXwnpJWg+JYkWkslliY40Kn8bpLlCdZLg0fx63r1jjiI73IrUXG9VP2JIh+qNVv5Im/N
-        ASFE7V/JmILKN7vEYpuWutux2/qJmp4=
+        bh=kHWVjy6h06TAlKNwfZeaon7DO+w5uEV5RFeUbv/PT80=;
+        b=JyhPk1NS7dFXgJJbRXmm4tTzdhyHdqOKnnGzeA6wrbpJT/ZZem8526uD5SAXWDR2e4lGj+
+        Xmb7F94kLmaOYUrfZI3p5iXZ1dLi5qQR3+mPLzqmY3QXmya3c2yC6vDLZAYkJZT8IGbFcT
+        vjWrAd7m5E9Ehd7htynmNfGJW23g/04=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-218-m0YudxkaMDuWUFRAdqb-cg-1; Mon, 25 May 2020 23:38:41 -0400
-X-MC-Unique: m0YudxkaMDuWUFRAdqb-cg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-235-mDpbqDLtMxSFGb6z2p1dMg-1; Mon, 25 May 2020 23:52:35 -0400
+X-MC-Unique: mDpbqDLtMxSFGb6z2p1dMg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C033218FF661;
-        Tue, 26 May 2020 03:38:40 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 460E3800688;
+        Tue, 26 May 2020 03:52:34 +0000 (UTC)
 Received: from [10.72.12.125] (ovpn-12-125.pek2.redhat.com [10.72.12.125])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A5EFF1CA;
-        Tue, 26 May 2020 03:38:38 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9674E10013D5;
+        Tue, 26 May 2020 03:52:30 +0000 (UTC)
 Subject: Re: [PATCH v2 1/2] ceph: add ceph_async_put_cap_refs to avoid double
  lock and deadlock
 To:     "Yan, Zheng" <zyan@redhat.com>, jlayton@kernel.org,
@@ -43,8 +43,8 @@ References: <1590405385-27406-1-git-send-email-xiubli@redhat.com>
  <1590405385-27406-2-git-send-email-xiubli@redhat.com>
  <23e444d7-49f7-8c5e-f179-00354d4b9b68@redhat.com>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <06291af5-0b19-aee7-c802-9020ef0f931a@redhat.com>
-Date:   Tue, 26 May 2020 11:38:33 +0800
+Message-ID: <db3cd4c0-fdb7-fed7-ab0d-af0a9ff22f07@redhat.com>
+Date:   Tue, 26 May 2020 11:52:26 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.8.1
 MIME-Version: 1.0
@@ -52,7 +52,7 @@ In-Reply-To: <23e444d7-49f7-8c5e-f179-00354d4b9b68@redhat.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
@@ -132,27 +132,38 @@ On 2020/5/26 11:11, Yan, Zheng wrote:
 >> +    }
 >
 > this will cause cap ref leak.
-
-Ah, yeah, right.
-
-
 >
 > I thought about this again. all the trouble is caused by calling 
 > ceph_mdsc_release_dir_caps() inside ceph_mdsc_release_request().
-
-And also in ceph_mdsc_release_request() it is calling 
-ceph_put_cap_refs() directly in other 3 places.
-
-BRs
-
-Xiubo
-
 > We already call ceph_mdsc_release_dir_caps() in ceph_async_foo_cb() 
 > for normal circumdtance. We just need to call 
 > ceph_mdsc_release_dir_caps() in 'session closed' case (we never abort 
 > async request). In the 'session closed' case, we can use 
 > ceph_put_cap_refs_no_check_caps()
 >
+IMO, this ceph_async_put_cap_refs helper still needed, such as there 
+have many other cases like:
+
+cleanup_session_requests()
+
+{
+
+...
+    --> mutex_lock(&mdsc->mutex)
+...
+    --> __unregister_request()
+        --> ceph_mdsc_put_request()
+            --> ceph_mdsc_release_request()
+                --> ceph_put_cap_request()
+                    --> ceph_put_cap_refs()
+                        --> ceph_check_caps()  ===> will do the 
+session->s_mutex lock/unlock
+...
+    --> mutex_unlock(&mdsc->mutex)
+
+}
+
+
 > Regards
 > Yan, Zheng
 >
