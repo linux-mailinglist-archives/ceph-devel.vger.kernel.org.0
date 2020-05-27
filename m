@@ -2,167 +2,121 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F36651E4232
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 May 2020 14:25:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ADDE1E4297
+	for <lists+ceph-devel@lfdr.de>; Wed, 27 May 2020 14:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730015AbgE0MZj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 27 May 2020 08:25:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53342 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729731AbgE0MZi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 27 May 2020 08:25:38 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E557C08C5C1
-        for <ceph-devel@vger.kernel.org>; Wed, 27 May 2020 05:25:38 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id q8so24259241iow.7
-        for <ceph-devel@vger.kernel.org>; Wed, 27 May 2020 05:25:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=F7hATqcHO8oIoNlc6449IDGleJQQ7uFaYCmZzr9pJXE=;
-        b=c2M4GFJTtlmdD3YvPrYuPZfPidO0d2VCs78s7Z4GwvvduZ49ophnMLStsWImt/HaVN
-         LFdQrRUm8el95tyB7CcgAkryDrJtEnYmW+sUjoZBg9/7Whl1I6uAfTFBEV1qOSxQBHVH
-         tnWyF+ZnI6Tib5FpqXlhvpA0rQPlkyV5zxLqialGmikj3VUVIprpIuZja1GPzNAhz9sk
-         jLrDFLsD5s5IZkG/bdj4Q+ri96iK0IrncGX3TMThjCZJcqfJtjkZLQBW0g6k1V/E2wMx
-         thhsEiM6ktkFpnBdwahrOEhQd6bZMcKGIwaCFQzo7uBVJFKD/vwMBwWSJr1LBUwoiD3B
-         D7iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F7hATqcHO8oIoNlc6449IDGleJQQ7uFaYCmZzr9pJXE=;
-        b=jpiDC/YCjLy4Od3Ffk+UHhOw1axzFi8bEckajyBxo1/5YIFrif5ZFOGvynVqLsdVY6
-         n1xw9mCIsMsbhdveneYKgrpRAGm29IWbWiR5qHTxCRVx0iDIW2DkTc+Sf2OrK5BaJADx
-         xX4P8c9lTCmG2mhovfNIdZgrCblDx7gwAeTOYfQ9d532RhSHsb1o3JzOGB8Znv8Nehbg
-         RfvKtGQGC7IAMmnxgFa+QFa+H6JnPCzktVDkg+j3tSR/lCjOmphKrjpXo7d6OtwDvByg
-         DF9wjN+XzpU/9RuQ39WovXaMN/TjanrNTCfWBvJ/36HvP+DhiG/gxSSH+snkkCuMSnlX
-         mSrg==
-X-Gm-Message-State: AOAM532+ZDUZAgH1t390UNTyh/eT9VicS4O2h54bH24z5vTMd030qtcm
-        GCjngXr6xRj3l/IUfdtuE8klC7jEqpLdb9JNEcfaD2sy
-X-Google-Smtp-Source: ABdhPJzvWlhjt/LiDmdusRgi94IhwD4QOEXfUhUkVcagjSYugu9xArY2TNuAYjimRQihL01xA4Xu49H34Vbz3rUumLY=
-X-Received: by 2002:a6b:6414:: with SMTP id t20mr20721698iog.32.1590582337523;
- Wed, 27 May 2020 05:25:37 -0700 (PDT)
+        id S1730077AbgE0Mpd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 27 May 2020 08:45:33 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:44119 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728513AbgE0Mpc (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 27 May 2020 08:45:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590583530;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZuRYtpg/w/wKtv3q2GHRKntjkLXhZCHuUaNL/pLcGqo=;
+        b=TNwRKBmSkQh11BrQXQ5UkggkgDokIxzL2Av1W4gABYoI8qJhzELHlCoOfcLkpZ6CbmDy7K
+        +IBDMP+7xefYZTMLFoaWRrvUuQHkSjqbDruwMgv/mBlJSzIKNF/u76Diqivni/wYrhkJkp
+        YYlAYOPBvUGKyGYFrVPogK46vup16jM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-258-eSgQ45xCO3GgM-iLPYPLnw-1; Wed, 27 May 2020 08:45:27 -0400
+X-MC-Unique: eSgQ45xCO3GgM-iLPYPLnw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0A599107B46F;
+        Wed, 27 May 2020 12:45:26 +0000 (UTC)
+Received: from [10.72.12.125] (ovpn-12-125.pek2.redhat.com [10.72.12.125])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4625D5C1B0;
+        Wed, 27 May 2020 12:45:23 +0000 (UTC)
+Subject: Re: [PATCH v4] ceph: skip checking the caps when session reconnecting
+ and releasing reqs
+To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com,
+        zyan@redhat.com
+Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org
+References: <1590562634-29610-1-git-send-email-xiubli@redhat.com>
+ <a271a1f31b98caa26f634ddc23930ccb7973543c.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <32467f5a-26e3-4042-84de-dfaf57bf1977@redhat.com>
+Date:   Wed, 27 May 2020 20:45:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.1
 MIME-Version: 1.0
-References: <1589961079-27932-1-git-send-email-xiubli@redhat.com> <17832c6b42a2f3876190d8e85ce0380a0f38f541.camel@kernel.org>
-In-Reply-To: <17832c6b42a2f3876190d8e85ce0380a0f38f541.camel@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 27 May 2020 14:25:42 +0200
-Message-ID: <CAOi1vP906qkoK=QvSB=R4iVfmeN9JjFXLNsPqNxohj3bpK8JpQ@mail.gmail.com>
-Subject: Re: [PATCH] ceph: make sure the mdsc->mutex is nested in s->s_mutex
- to fix dead lock
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Xiubo Li <xiubli@redhat.com>, "Yan, Zheng" <zyan@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <a271a1f31b98caa26f634ddc23930ccb7973543c.camel@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, May 20, 2020 at 1:44 PM Jeff Layton <jlayton@kernel.org> wrote:
+On 2020/5/27 20:19, Jeff Layton wrote:
+> On Wed, 2020-05-27 at 02:57 -0400, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> It make no sense to check the caps when reconnecting to mds. And
+>> for the async dirop caps, they will be put by its _cb() function,
+>> so when releasing the requests, it will make no sense too.
+>>
+>> URL: https://tracker.ceph.com/issues/45635
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>
+>> Changed in V2:
+>> - do not check the caps when reconnecting to mds
+>> - switch ceph_async_check_caps() to ceph_async_put_cap_refs()
+>>
+>> Changed in V3:
+>> - fix putting the cap refs leak
+>>
+>> Changed in V4:
+>> - drop ceph_async_check_caps() stuff.
+>>
+>>
+> Sigh. I guess this will fix the original issue, but it's just more
+> evidence that the locking in this code are an absolute shitshow,
+> particularly when it comes to the session mutex.
 >
-> On Wed, 2020-05-20 at 03:51 -0400, xiubli@redhat.com wrote:
-> > From: Xiubo Li <xiubli@redhat.com>
-> >
-> > The call trace:
-> >
-> > <6>[15981.740583] libceph: mon2 (1)10.72.36.245:40083 session lost, hunting for new mon
-> > <3>[16097.960293] INFO: task kworker/18:1:32111 blocked for more than 122 seconds.
-> > <3>[16097.960860]       Tainted: G            E     5.7.0-rc5+ #80
-> > <3>[16097.961332] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > <6>[16097.961868] kworker/18:1    D    0 32111      2 0x80004080
-> > <6>[16097.962151] Workqueue: ceph-msgr ceph_con_workfn [libceph]
-> > <4>[16097.962188] Call Trace:
-> > <4>[16097.962353]  ? __schedule+0x276/0x6e0
-> > <4>[16097.962359]  ? schedule+0x40/0xb0
-> > <4>[16097.962364]  ? schedule_preempt_disabled+0xa/0x10
-> > <4>[16097.962368]  ? __mutex_lock.isra.8+0x2b5/0x4a0
-> > <4>[16097.962460]  ? kick_requests+0x21/0x100 [ceph]
-> > <4>[16097.962485]  ? ceph_mdsc_handle_mdsmap+0x19c/0x5f0 [ceph]
-> > <4>[16097.962503]  ? extra_mon_dispatch+0x34/0x40 [ceph]
-> > <4>[16097.962523]  ? extra_mon_dispatch+0x34/0x40 [ceph]
-> > <4>[16097.962580]  ? dispatch+0x77/0x930 [libceph]
-> > <4>[16097.962602]  ? try_read+0x78b/0x11e0 [libceph]
-> > <4>[16097.962619]  ? __switch_to_asm+0x40/0x70
-> > <4>[16097.962623]  ? __switch_to_asm+0x34/0x70
-> > <4>[16097.962627]  ? __switch_to_asm+0x40/0x70
-> > <4>[16097.962631]  ? __switch_to_asm+0x34/0x70
-> > <4>[16097.962635]  ? __switch_to_asm+0x40/0x70
-> > <4>[16097.962654]  ? ceph_con_workfn+0x130/0x5e0 [libceph]
-> > <4>[16097.962713]  ? process_one_work+0x1ad/0x370
-> > <4>[16097.962717]  ? worker_thread+0x30/0x390
-> > <4>[16097.962722]  ? create_worker+0x1a0/0x1a0
-> > <4>[16097.962737]  ? kthread+0x112/0x130
-> > <4>[16097.962742]  ? kthread_park+0x80/0x80
-> > <4>[16097.962747]  ? ret_from_fork+0x35/0x40
-> > <3>[16097.962758] INFO: task kworker/25:1:1747 blocked for more than 122 seconds.
-> > <3>[16097.963233]       Tainted: G            E     5.7.0-rc5+ #80
-> > <3>[16097.963792] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > <6>[16097.964298] kworker/25:1    D    0  1747      2 0x80004080
-> > <6>[16097.964325] Workqueue: ceph-msgr ceph_con_workfn [libceph]
-> > <4>[16097.964331] Call Trace:
-> > <4>[16097.964340]  ? __schedule+0x276/0x6e0
-> > <4>[16097.964344]  ? schedule+0x40/0xb0
-> > <4>[16097.964347]  ? schedule_preempt_disabled+0xa/0x10
-> > <4>[16097.964351]  ? __mutex_lock.isra.8+0x2b5/0x4a0
-> > <4>[16097.964376]  ? handle_reply+0x33f/0x6f0 [ceph]
-> > <4>[16097.964407]  ? dispatch+0xa6/0xbc0 [ceph]
-> > <4>[16097.964429]  ? read_partial_message+0x214/0x770 [libceph]
-> > <4>[16097.964449]  ? try_read+0x78b/0x11e0 [libceph]
-> > <4>[16097.964454]  ? __switch_to_asm+0x40/0x70
-> > <4>[16097.964458]  ? __switch_to_asm+0x34/0x70
-> > <4>[16097.964461]  ? __switch_to_asm+0x40/0x70
-> > <4>[16097.964465]  ? __switch_to_asm+0x34/0x70
-> > <4>[16097.964470]  ? __switch_to_asm+0x40/0x70
-> > <4>[16097.964489]  ? ceph_con_workfn+0x130/0x5e0 [libceph]
-> > <4>[16097.964494]  ? process_one_work+0x1ad/0x370
-> > <4>[16097.964498]  ? worker_thread+0x30/0x390
-> > <4>[16097.964501]  ? create_worker+0x1a0/0x1a0
-> > <4>[16097.964506]  ? kthread+0x112/0x130
-> > <4>[16097.964511]  ? kthread_park+0x80/0x80
-> > <4>[16097.964516]  ? ret_from_fork+0x35/0x40
-> >
-> > URL: https://tracker.ceph.com/issues/45609
-> > Reported-by: "Yan, Zheng" <zyan@redhat.com>
-> > Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> > ---
-> >  fs/ceph/mds_client.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index 6c283c5..0e0ab01 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -3769,8 +3769,6 @@ static int encode_snap_realms(struct ceph_mds_client *mdsc,
-> >   * recovering MDS might have.
-> >   *
-> >   * This is a relatively heavyweight operation, but it's rare.
-> > - *
-> > - * called with mdsc->mutex held.
-> >   */
-> >  static void send_mds_reconnect(struct ceph_mds_client *mdsc,
-> >                              struct ceph_mds_session *session)
-> > @@ -4024,7 +4022,9 @@ static void check_new_map(struct ceph_mds_client *mdsc,
-> >                           oldstate != CEPH_MDS_STATE_STARTING)
-> >                               pr_info("mds%d recovery completed\n", s->s_mds);
-> >                       kick_requests(mdsc, i);
-> > +                     mutex_unlock(&mdsc->mutex);
-> >                       mutex_lock(&s->s_mutex);
-> > +                     mutex_lock(&mdsc->mutex);
-> >                       ceph_kick_flushing_caps(mdsc, s);
-> >                       mutex_unlock(&s->s_mutex);
-> >                       wake_up_session_caps(s, RECONNECT);
+> Rather than working around it like this, we ought to be coming up with
+> ways to reduce the need for the session mutex altogether, particularly
+> in the cap handling code. Doing that means that we need to identify what
+> the session mutex actually protects of course, and so far I've not been
+> very successful in determining that.
 >
+> Mostly, it looks like it's used to provide high-level serialization much
+> like the client mutex in libcephfs, but it's per-session, and ends up
+> having to be inverted wrt the mdsc mutex all over the place.
 >
-> Good catch. Merged into testing branch.
+> Maybe instead of this, we ought to look at getting rid of the session
+> mutex altogether -- fold the existing usage of it into the mdsc->mutex.
+> We'd end up serializing things even more that way, but the session mutex
+> is already so coarse-grained that it'd probably not affect performance
+> that much. It would certainly make the locking a _lot_ simpler.
 
-These stack traces take up the entire screen and provide very
-little information.  Since this is a simple lock ordering issue,
-could they be replaced with a short description and perhaps a
-reference to mds_client.h where lock dependencies are documented?
+Yeah, this sound good, but it will be a great amount of work IMO.
 
-Thanks,
 
-                Ilya
+[...]
+>>   
+>> -void ceph_mdsc_release_dir_caps(struct ceph_mds_request *req)
+>> +void ceph_mdsc_release_dir_caps(struct ceph_mds_request *req,
+>> +				bool skip_checking_caps)
+> Can we add a ceph_mdsc_release_dir_caps_no_check() instead of a boolean
+> argument? That at least better communicates what the function does to
+> someone reading the code.
+>
+> Those can just be wrappers around the function that does take a boolean
+> if need be (similar to ceph_put_cap_refs[_no_check_caps]).
+
+Yeah, sure. Will fix it.
+
+Thanks
+BRs
+Xiubo
+
