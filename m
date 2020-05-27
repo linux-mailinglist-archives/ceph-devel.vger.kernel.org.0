@@ -2,180 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 439A11E294F
-	for <lists+ceph-devel@lfdr.de>; Tue, 26 May 2020 19:45:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 752EC1E34D7
+	for <lists+ceph-devel@lfdr.de>; Wed, 27 May 2020 03:43:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388975AbgEZRps (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 26 May 2020 13:45:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54156 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388794AbgEZRps (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 26 May 2020 13:45:48 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726742AbgE0Bms (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 26 May 2020 21:42:48 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:59629 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725801AbgE0Bms (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 26 May 2020 21:42:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1590543767;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=G+TnoTC7+pqsgRaNWiLgWtxMh3t0rMMQulbRHmwNI9o=;
+        b=czf8yY3Sf3sk0WXoPruaKRLo4VAFRGGV8uUl2x/zR3twccQma5TdPrJDiTlC/FndiWCt7H
+        SDzPj4gkxP+HIEMqMb6TVHqgzVaFznua/LWpJujl9TEtDtU86yrYsDb4Mx/Vj1LlyNSivt
+        iEJ+Np0B8CizXoL3KJsDUm/pYXvkAGE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-117-zN9VViaSNl2Cz_FBRC3d8A-1; Tue, 26 May 2020 21:42:44 -0400
+X-MC-Unique: zN9VViaSNl2Cz_FBRC3d8A-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4412220704;
-        Tue, 26 May 2020 17:45:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590515147;
-        bh=Ps4DhrKP7xuN3oWvf+n24VJztP7gLUxaV3Hx/CAeoDo=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=UmXibeH5wL2z8iL7Ot453yspY2o+JCqMpr/AH4BGKXjjKEgXjNNCUjCwRmV/Gaddq
-         PTRJjOz/y+E3oFjXIu7XpxYOISMUZbF1OQ6sXO3S3reZx//Og/xaCPborKojoUckfm
-         hQayLH9DvhWQKma9pAXNZm4FYRGTbPF+8JViDtmc=
-Message-ID: <3860895382201ae7a2eb687070724872e77e347a.camel@kernel.org>
-Subject: Re: [v2] ceph: show max caps in debugfs caps file
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Yanhu Cao <gmayyyha@gmail.com>
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yanhu Cao <jrcaoyanhu@jd.com>,
-        kbuild test robot <lkp@intel.com>
-Date:   Tue, 26 May 2020 13:45:46 -0400
-In-Reply-To: <20200525025049.4292-1-gmayyyha@gmail.com>
-References: <20200525025049.4292-1-gmayyyha@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.2 (3.36.2-1.fc32) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 951EB107ACF5;
+        Wed, 27 May 2020 01:42:43 +0000 (UTC)
+Received: from lxbceph0.gsslab.pek2.redhat.com (vm36-245.gsslab.pek2.redhat.com [10.72.36.245])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7462C60C47;
+        Wed, 27 May 2020 01:42:41 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org, idryomov@gmail.com, zyan@redhat.com
+Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v3 0/2] ceph: fix dead lock and double lock
+Date:   Tue, 26 May 2020 21:42:34 -0400
+Message-Id: <1590543756-26773-1-git-send-email-xiubli@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2020-05-25 at 10:50 +0800, Yanhu Cao wrote:
-> before
-> ------
-> total		1286
-> avail		1005
-> used		281
-> reserved	0
-> min		1024
-> 
-> after
-> -----
-> total		1286
-> avail		1005
-> used		281
-> limit		261
-> reserved	0
-> min		1024
-> 
+From: Xiubo Li <xiubli@redhat.com>
 
-The description should explain what this new field actually _means_.
+Changed in V2:
+- do not check the caps when reconnecting to mds
+- switch ceph_async_check_caps() to ceph_async_put_cap_refs()
 
-> Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
-> Signed-off-by: Yanhu Cao <jrcaoyanhu@jd.com>
-> Reported-by: kbuild test robot <lkp@intel.com>
-> ---
->  fs/ceph/caps.c       | 6 ++++--
->  fs/ceph/debugfs.c    | 8 +++++---
->  fs/ceph/mds_client.c | 1 +
->  fs/ceph/mds_client.h | 4 +++-
->  fs/ceph/super.h      | 2 +-
->  5 files changed, 14 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index 5f3aa4d607de..17191d6cd3b5 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -404,8 +404,8 @@ void ceph_put_cap(struct ceph_mds_client *mdsc, struct ceph_cap *cap)
->  }
->  
->  void ceph_reservation_status(struct ceph_fs_client *fsc,
-> -			     int *total, int *avail, int *used, int *reserved,
-> -			     int *min)
-> +			     int *total, int *avail, int *used, int *limit,
-> +			     int *reserved, int *min)
->  {
->  	struct ceph_mds_client *mdsc = fsc->mdsc;
->  
-> @@ -417,6 +417,8 @@ void ceph_reservation_status(struct ceph_fs_client *fsc,
->  		*avail = mdsc->caps_avail_count;
->  	if (used)
->  		*used = mdsc->caps_use_count;
-> +	if (limit)
-> +		*limit = mdsc->caps_limit;
->  	if (reserved)
->  		*reserved = mdsc->caps_reserve_count;
->  	if (min)
-> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-> index 481ac97b4d25..617020261902 100644
-> --- a/fs/ceph/debugfs.c
-> +++ b/fs/ceph/debugfs.c
-> @@ -138,16 +138,18 @@ static int caps_show(struct seq_file *s, void *p)
->  {
->  	struct ceph_fs_client *fsc = s->private;
->  	struct ceph_mds_client *mdsc = fsc->mdsc;
-> -	int total, avail, used, reserved, min, i;
-> +	int total, avail, used, limit, reserved, min, i;
->  	struct cap_wait	*cw;
->  
-> -	ceph_reservation_status(fsc, &total, &avail, &used, &reserved, &min);
-> +	ceph_reservation_status(fsc, &total, &avail, &used,
-> +				&limit, &reserved, &min);
->  	seq_printf(s, "total\t\t%d\n"
->  		   "avail\t\t%d\n"
->  		   "used\t\t%d\n"
-> +		   "limit\t\t%d\n"
->  		   "reserved\t%d\n"
->  		   "min\t\t%d\n\n",
-> -		   total, avail, used, reserved, min);
-> +		   total, avail, used, limit, reserved, min);
->  	seq_printf(s, "ino                issued           implemented\n");
->  	seq_printf(s, "-----------------------------------------------\n");
->  
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 7c63abf5bea9..d26bc065f5f5 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -1920,6 +1920,7 @@ int ceph_trim_caps(struct ceph_mds_client *mdsc,
->  		   int max_caps)
->  {
->  	int trim_caps = session->s_nr_caps - max_caps;
-> +	mdsc->caps_limit = max_caps;
->  
+Changed in V3:
+- fix putting the cap refs leak
 
-I was thinking that you'd track this in handle_session. Note that
-ceph_trim_caps is called from ceph_reserve_caps as well. There's also
-some delay between calling ceph_trim_caps and actually releasing them,
-so it's not clear to me how one should interpret mdsc->caps_limit. 
+By adding the put_cap_refs's queue work we can avoid the 'mdsc->mutex' and
+'session->s_mutex' double lock issue and also the dead lock issue of them.
+There at least 10+ places have the above issues and most of them are caused
+by calling the ceph_mdsc_put_request() when releasing the 'req'.
 
-What does that value actually _mean_? I think it would be a lot more
-straightforward to have this be the limit sent by the MDS (if any). If
-there is value in tracking it this way then we need to carefully
-document what it means and how it should be interpreted.
+Xiubo Li (2):
+  ceph: add ceph_async_put_cap_refs to avoid double lock and deadlock
+  ceph: do not check the caps when reconnecting to mds
 
->  	dout("trim_caps mds%d start: %d / %d, trim %d\n",
->  	     session->s_mds, session->s_nr_caps, max_caps, trim_caps);
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index 903d9edfd4bf..840d47976dbb 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -445,7 +445,9 @@ struct ceph_mds_client {
->  	struct		list_head cap_wait_list;
->  	int		caps_total_count;    /* total caps allocated */
->  	int		caps_use_count;      /* in use */
-> -	int		caps_use_max;	     /* max used caps */
-> +	int		caps_use_max;	     /* max used caps,
-> +						limited by client */
-> +	int		caps_limit;          /* limited by mds */
->  	int		caps_reserve_count;  /* unused, reserved */
->  	int		caps_avail_count;    /* unused, unreserved */
->  	int		caps_min_count;      /* keep at least this many
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 60aac3aee055..052d7725761d 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -700,7 +700,7 @@ extern void ceph_unreserve_caps(struct ceph_mds_client *mdsc,
->  			       struct ceph_cap_reservation *ctx);
->  extern void ceph_reservation_status(struct ceph_fs_client *client,
->  				    int *total, int *avail, int *used,
-> -				    int *reserved, int *min);
-> +				    int *limit, int *reserved, int *min);
->  
->  
->  
+ fs/ceph/caps.c       | 98 +++++++++++++++++++++++++++++++++++++++++++++-------
+ fs/ceph/dir.c        |  2 +-
+ fs/ceph/file.c       |  2 +-
+ fs/ceph/inode.c      |  3 ++
+ fs/ceph/mds_client.c | 14 +++++---
+ fs/ceph/mds_client.h |  3 +-
+ fs/ceph/super.h      |  7 ++++
+ 7 files changed, 110 insertions(+), 19 deletions(-)
 
 -- 
-Jeff Layton <jlayton@kernel.org>
+1.8.3.1
 
