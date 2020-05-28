@@ -2,62 +2,44 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C92B81E691E
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 May 2020 20:12:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C0E21E6F38
+	for <lists+ceph-devel@lfdr.de>; Fri, 29 May 2020 00:36:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405749AbgE1SML (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 28 May 2020 14:12:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48544 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405688AbgE1SMK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 28 May 2020 14:12:10 -0400
-Received: from shards.monkeyblade.net (shards.monkeyblade.net [IPv6:2620:137:e000::1:9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 127E2C08C5C6;
-        Thu, 28 May 2020 11:12:09 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8FA40129191D0;
-        Thu, 28 May 2020 11:12:06 -0700 (PDT)
-Date:   Thu, 28 May 2020 11:12:05 -0700 (PDT)
-Message-Id: <20200528.111205.608949763790224771.davem@davemloft.net>
-To:     hch@lst.de
-Cc:     kuba@kernel.org, edumazet@google.com, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org, jmaloy@redhat.com, ying.xue@windriver.com,
-        drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org,
-        target-devel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-cifs@vger.kernel.org, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, netdev@vger.kernel.org,
-        ceph-devel@vger.kernel.org, rds-devel@oss.oracle.com,
-        linux-nfs@vger.kernel.org, tipc-discussion@lists.sourceforge.net
-Subject: Re: remove most callers of kernel_setsockopt v3
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200528051236.620353-1-hch@lst.de>
-References: <20200528051236.620353-1-hch@lst.de>
-X-Mailer: Mew version 6.8 on Emacs 26.3
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 28 May 2020 11:12:07 -0700 (PDT)
+        id S2437142AbgE1Wg0 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Thu, 28 May 2020 18:36:26 -0400
+Received: from mail.bnv.gob.ve ([201.249.200.115]:41054 "EHLO
+        correo.bnv.gob.ve" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2436945AbgE1WgZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 28 May 2020 18:36:25 -0400
+Received: from localhost (localhost.bnv.gob.ve [127.0.0.1])
+        by correo.bnv.gob.ve (Postfix) with ESMTP id 55D4638E1633;
+        Thu, 28 May 2020 13:46:07 -0400 (-04)
+Received: from correo.bnv.gob.ve ([127.0.0.1])
+        by localhost (correo.bnv.gob.ve [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id KM59XLvCdKfB; Thu, 28 May 2020 13:46:07 -0400 (-04)
+Received: from localhost (localhost.bnv.gob.ve [127.0.0.1])
+        by correo.bnv.gob.ve (Postfix) with ESMTP id CA12338E47A1;
+        Thu, 28 May 2020 13:25:53 -0400 (-04)
+X-Virus-Scanned: amavisd-new at bnv.gob.ve
+Received: from correo.bnv.gob.ve ([127.0.0.1])
+        by localhost (correo.bnv.gob.ve [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id T1njm829gWbX; Thu, 28 May 2020 13:25:53 -0400 (-04)
+Received: from [10.19.23.127] (unknown [105.0.4.230])
+        by correo.bnv.gob.ve (Postfix) with ESMTPSA id DC10A38A2F86;
+        Thu, 28 May 2020 12:22:11 -0400 (-04)
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Spende von 2.000.000,00 Euro
+To:     Recipients <manuel@info.com>
+From:   "manuel franco" <manuel@info.com>
+Date:   Thu, 28 May 2020 18:22:01 +0200
+Reply-To: manuelfrancospende11@gmail.com
+Message-Id: <20200528162211.DC10A38A2F86@correo.bnv.gob.ve>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
-Date: Thu, 28 May 2020 07:12:08 +0200
-
-> this series removes most callers of the kernel_setsockopt functions, and
-> instead switches their users to small functions that implement setting a
-> sockopt directly using a normal kernel function call with type safety and
-> all the other benefits of not having a function call.
-> 
-> In some cases these functions seem pretty heavy handed as they do
-> a lock_sock even for just setting a single variable, but this mirrors
-> the real setsockopt implementation unlike a few drivers that just set
-> set the fields directly.
- ...
-
-Series applied, thanks Christoph.
+Ich bin Manuel Franco, ich spende Ihnen 2.000.000,00 Euro. Nehmen Sie jetzt Kontakt mit mir auf, damit wir fortfahren können.
