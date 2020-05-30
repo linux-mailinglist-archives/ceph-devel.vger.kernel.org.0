@@ -2,70 +2,99 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33F111E8CF9
-	for <lists+ceph-devel@lfdr.de>; Sat, 30 May 2020 03:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5731B1E9259
+	for <lists+ceph-devel@lfdr.de>; Sat, 30 May 2020 17:34:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728642AbgE3B5M (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 29 May 2020 21:57:12 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:57140 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727876AbgE3B5M (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 29 May 2020 21:57:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1590803831;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=ympSXWIhISyEA8uJMerd2Af01Yo0V+7YTRWvv4gV0XA=;
-        b=DLXa4LKyz3H42hqAq27UfL9x3+MA4xwQYDV+V/DQ/OnbFOeAAf24ox1tztbwCJ/W9VyRlZ
-        I0ULzncmPlCdkrwLKLPxRdSB11RdgmXMxzxfMgPvHOVo7rHt0uDoNnBiM1aJapmVd5bRlU
-        zLxAQKG7Qkm1LKmpGFxQimWF4hNIpeE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-356-4R9q-yNKPU2-xw7VBKvxdg-1; Fri, 29 May 2020 21:56:49 -0400
-X-MC-Unique: 4R9q-yNKPU2-xw7VBKvxdg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6EE6B107ACCD;
-        Sat, 30 May 2020 01:56:48 +0000 (UTC)
-Received: from [10.3.114.246] (ovpn-114-246.phx2.redhat.com [10.3.114.246])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2FF0B78366;
-        Sat, 30 May 2020 01:56:48 +0000 (UTC)
-To:     ceph-announce@ceph.io, ceph-users@ceph.io, dev@ceph.io,
-        ceph-devel <ceph-devel@vger.kernel.org>, ceph-maintainers@ceph.io
-From:   Josh Durgin <jdurgin@redhat.com>
-Subject: v15.2.3 Octopus released
-Message-ID: <0d1374f4-981a-30c4-a992-07b6c8f0db1c@redhat.com>
-Date:   Fri, 29 May 2020 18:56:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1729029AbgE3Pem (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 30 May 2020 11:34:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48990 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728999AbgE3Pel (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 30 May 2020 11:34:41 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70499C03E969
+        for <ceph-devel@vger.kernel.org>; Sat, 30 May 2020 08:34:40 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id x14so7190098wrp.2
+        for <ceph-devel@vger.kernel.org>; Sat, 30 May 2020 08:34:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=b/872xH0vYt4MNBBYaw8CUl/rWJy5DRYbRDkch4fCKc=;
+        b=UcW237IVJbGHRtskHnYKbrSS2q3N7Lj1Ll64+KhUYa2VC844h3+5RLGljDtW5LX7Tr
+         sNiFlbZcODeIe59d0OrStk/puCaZokQWGrqIMt/2015TQpUou2WDnb6YOGGQHZGOLc12
+         pn384CjHGg0t7o3PCvLv+bVu2CxQx5jncf0389g7ZGtcBXcJiuQT4VwNvWS5tKO3ED6W
+         CZPBRzaIusKuSEbR70FJmnUFxY/d5q8V7xfiqwbMLSer6qBkvX9dkgiw32OEuabuBoFm
+         hyd3Ac5YEJVV8kJOOmH2DgQCPkzZvGE+8VwNeIOSM6LHztQaqGg58qDpCYvfClZEw73u
+         yM2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=b/872xH0vYt4MNBBYaw8CUl/rWJy5DRYbRDkch4fCKc=;
+        b=W/dPLdljDnvPNkanRC98lyJi7rgK5MK2/Eib+07FigXmKMDYJCjW/Lw5fBo4gFxNOW
+         Qa6TPUbXNIYOGZMTlHSRCvfcd7rCg8pxQIUE3ufAPq/1QmfFLR3Z7yDYUbpiEqYD7fuV
+         jGKlYvYKl7lnyACMtgXGZP5qcHV+rcHVmwBm5UwOuexmIuGKdFgMNlCoKJs/iX6+ZgW+
+         5MYyV7FWHaAxJfC1o19+Y+PvWwXhl8KerI4iaO9+6SVrlUEn8DpyyW+Jq5Gspo4dc6eC
+         9DJ3xow97egjrzadOGcjQcWT++CjKXQmA5ss5RCysWqjzYPPDV9xCbbN0bCr7H0ntity
+         BPNw==
+X-Gm-Message-State: AOAM530HzFVl31TymrE3QJ+25oso25NQlmLbHLF2YFctjCEzg+ZTZBvO
+        LzX2qTAmdb4KOCUMhQDx3E04MKzBNV4=
+X-Google-Smtp-Source: ABdhPJyEUCZxcZ8ybHVqRIRsJ21ITiT1k8ydYbuVGKpCA8ay2M3QQVruM9jsNa8ZXp+6wwqBM9bKcQ==
+X-Received: by 2002:adf:a41a:: with SMTP id d26mr14241831wra.324.1590852878660;
+        Sat, 30 May 2020 08:34:38 -0700 (PDT)
+Received: from kwango.local (ip-94-112-129-237.net.upcbroadband.cz. [94.112.129.237])
+        by smtp.gmail.com with ESMTPSA id z132sm4835068wmc.29.2020.05.30.08.34.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 May 2020 08:34:37 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v2 0/5] libceph: support for replica reads
+Date:   Sat, 30 May 2020 17:34:34 +0200
+Message-Id: <20200530153439.31312-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-We’re happy to announce the availability of the third Octopus stable
-release series. This release mainly is a workaround for a potential OSD
-corruption in v15.2.2. We advise users to upgrade to v15.2.3 directly.
-For users running v15.2.2 please execute the following::
+Hello,
 
-     ceph config set osd bluefs_preextend_wal_files false
+This adds support for replica reads (balanced and localized reads)
+to rbd and ceph.  crush_location syntax is slightly different, see
+patch 3 for details.
 
-Changelog
-~~~~~~~~~
-  * bluestore: common/options.cc: disable bluefs_preextend_wal_files
+v1 -> v2:
+- change crush_location syntax
+- rename read_policy to read_from_replica, add read_from_replica=no
+- crush_location and read_from_replica are now overridable
 
-Getting Ceph
-------------
-* Git at git://github.com/ceph/ceph.git
-* Tarball at http://download.ceph.com/tarballs/ceph-15.2.3.tar.gz
-* For packages, see
-http://docs.ceph.com/docs/master/install/get-packages/
-* Release git sha1: d289bbdec69ed7c1f516e0a093594580a76b78d0
+Thanks,
+
+                Ilya
+
+
+Ilya Dryomov (5):
+  libceph: add non-asserting rbtree insertion helper
+  libceph: decode CRUSH device/bucket types and names
+  libceph: crush_location infrastructure
+  libceph: support for balanced and localized reads
+  libceph: read_from_replica option
+
+ include/linux/ceph/libceph.h    |  13 +-
+ include/linux/ceph/osd_client.h |   1 +
+ include/linux/ceph/osdmap.h     |  19 +-
+ include/linux/crush/crush.h     |   6 +
+ net/ceph/ceph_common.c          |  75 +++++++
+ net/ceph/crush/crush.c          |   3 +
+ net/ceph/debugfs.c              |   6 +-
+ net/ceph/osd_client.c           |  92 +++++++-
+ net/ceph/osdmap.c               | 363 +++++++++++++++++++++++++++-----
+ 9 files changed, 517 insertions(+), 61 deletions(-)
+
+-- 
+2.19.2
 
