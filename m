@@ -2,57 +2,57 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C7831EAFE2
-	for <lists+ceph-devel@lfdr.de>; Mon,  1 Jun 2020 22:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39A0F1EAFDF
+	for <lists+ceph-devel@lfdr.de>; Mon,  1 Jun 2020 22:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbgFAT7H (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 1 Jun 2020 15:59:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55170 "EHLO
+        id S1728167AbgFAT6k (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 1 Jun 2020 15:58:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726667AbgFAT7G (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 1 Jun 2020 15:59:06 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D97C061A0E
-        for <ceph-devel@vger.kernel.org>; Mon,  1 Jun 2020 12:59:06 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id x13so1074370wrv.4
-        for <ceph-devel@vger.kernel.org>; Mon, 01 Jun 2020 12:59:06 -0700 (PDT)
+        with ESMTP id S1726176AbgFAT6j (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 1 Jun 2020 15:58:39 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51F48C061A0E
+        for <ceph-devel@vger.kernel.org>; Mon,  1 Jun 2020 12:58:39 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id u13so697601wml.1
+        for <ceph-devel@vger.kernel.org>; Mon, 01 Jun 2020 12:58:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XefNu3cAANpDAmh5iIPpei+af6Cbh8Rh1tUvDSLLwYM=;
-        b=uikmrpFQ0wBr3xE4b2qEaItf0jFHVmdYyuuPMnVAGA5hxB8WqWDWBb9mkAXVgMhDb/
-         AGDHfFALQMhKdfmPKza8I98JZzO6VqtOBvyWP4k2raq75dgmR12NQKV9IQdljznK48EG
-         R9t+T6AesrASRJ7rFL6aTY+tDOmuoQ1Vjjdo9OWAsD4wuOycxpSubnwfFaoeKBf7uKR4
-         sxqLaUbTton3voxKBSOC7bv9EoKUcfZW/qVNQyi49iRQO4JXEjWUn6ulqf3tq8zkmK60
-         6mguHKAPc/teJu/PzKCPyzGZDiI4CfgOLPH9LYtXABPV+5x+qqqYyu6Jju03HA1p7nNO
-         6uHQ==
+        bh=Mozm5+Qn2jQellCDzvz0rjWbKVUgZJBYwUvfCMCVwo8=;
+        b=Sox/sQt7jWe8TvB+6kNxSm3CnNkiDA1h5APAJDt/FEndqsvw1peLbgjm7WP03PlGly
+         TWxSA0WJTVv4loeZvVqfpujBTk57ZM7ciTqukf4araO7OQCt655ybyw+F1BTMuFe4LBg
+         jPRLtiir+FRLHlEe8aVwx+6dzpYbqeGG/HP9YqTewXBxkFlh86j8vgjOh24jK1nuf1Ym
+         z/sxQM/ab9fgIpNnbczBrpjYD2fVzO/BZLMUaCTsjO1wGGEN6KS5GzJ3LF25VjbjRkef
+         zORF3dHLBlhTSJ+WyDY19YRl149vpKXt40yX9IQ+jCgwafCo1I6an3OJTO+XrKABWRKn
+         /WFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XefNu3cAANpDAmh5iIPpei+af6Cbh8Rh1tUvDSLLwYM=;
-        b=J2BGxEm1e6MIQTkuMc0LYRFWKZWyES3q/42S+yi1bG9asALJ/zgwo3bZAAbYnQ5u6R
-         HINL8hRtPcxsURkp73p9TAICONlo3T5aY3PQ/MyGp829OucrUKi3TvsKgA0KwljwMeCU
-         xpPMzqAV//2OXljyCQsf2uy5/SquY7nlgjJDR8LwKFD49TvTft8RBWWfwCBs5ckCrIcx
-         nl4NZ+3kAaChhg7kRuMQ7/FyGLUqCHnmN9a86G4736HxgIwdjQlUq1NQ7zSXnaYEkvjr
-         PGi769bG+AP+GIMQuaHUkmCR0dsLtLB531SnPl9CYqFAd11Qj3PygpGu8fbv7XbMvwUu
-         4l/Q==
-X-Gm-Message-State: AOAM5328VfSCTrFtDqs6/WjCAKWMO0941Kxn3nPfTeoe73hfPq3Ynxgw
-        U5V793fsYo9UhEHVOmweZwaQCn7mFYY=
-X-Google-Smtp-Source: ABdhPJxp6JJp0mJ8xK3aZVKEO6zwFlw50DKRMPlHhghyK1Kx8OwB+g3oq7zxYHaJlMuKtuQaebTp1Q==
-X-Received: by 2002:a5d:4e8c:: with SMTP id e12mr22410076wru.194.1591041516802;
-        Mon, 01 Jun 2020 12:58:36 -0700 (PDT)
+        bh=Mozm5+Qn2jQellCDzvz0rjWbKVUgZJBYwUvfCMCVwo8=;
+        b=SKt6oJFZC8QY7HnGxCUSpI6r4/BT1rBpiIYHMopSjP//xGCbRQQDVOPmfl3SY0biqA
+         oicnC72gUDzyNak6LCSe4tGjcTgjCwQdBVIKGgTfoZyiXg2b9JjJnMcI7dRyxoKtS0w7
+         imTeo3AF/9FHBmCWOkwMwZkGUOOXX/U2sZacJMoflP1uELzY4uTNAWpatSYmOvfG8sna
+         lgkBTkPEs8cziHStlCRHiW6pNKxVe5apWqXVn+mAaeafCF5r3rmSHKt+XmEUoEv9ZHyo
+         CdBeO3OXgrJDNG0IUz/OrSgHXqbZC7LvIffsLB/rG3pmzi4aeJQiWxB89UMLgab1FCPA
+         l85Q==
+X-Gm-Message-State: AOAM530gk8vQNCF7S9MHdWMuvcoNYUWYVNMsLvz8g0/1JJgc6s0dp9gx
+        Jic466m3e7R9Nk0V0QJysn/f1K5ovi4=
+X-Google-Smtp-Source: ABdhPJyeyKY2u3tvmMtgJDRp8AptOnoFfQZmCPKy3cBYcchKgPBnJPkmaeMSJ/QkL7YOFD04DomSJw==
+X-Received: by 2002:a7b:cc71:: with SMTP id n17mr825902wmj.148.1591041517615;
+        Mon, 01 Jun 2020 12:58:37 -0700 (PDT)
 Received: from kwango.local (ip-94-112-129-237.net.upcbroadband.cz. [94.112.129.237])
-        by smtp.gmail.com with ESMTPSA id t189sm574008wma.4.2020.06.01.12.58.35
+        by smtp.gmail.com with ESMTPSA id t189sm574008wma.4.2020.06.01.12.58.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jun 2020 12:58:36 -0700 (PDT)
+        Mon, 01 Jun 2020 12:58:37 -0700 (PDT)
 From:   Ilya Dryomov <idryomov@gmail.com>
 To:     ceph-devel@vger.kernel.org
 Cc:     Jason Dillaman <jdillama@redhat.com>
-Subject: [PATCH 1/2] libceph: support for alloc hint flags
-Date:   Mon,  1 Jun 2020 21:58:25 +0200
-Message-Id: <20200601195826.17159-2-idryomov@gmail.com>
+Subject: [PATCH 2/2] rbd: compression_hint option
+Date:   Mon,  1 Jun 2020 21:58:26 +0200
+Message-Id: <20200601195826.17159-3-idryomov@gmail.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20200601195826.17159-1-idryomov@gmail.com>
 References: <20200601195826.17159-1-idryomov@gmail.com>
@@ -63,122 +63,98 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Allow indicating future I/O pattern via flags.  This is supported since
-Kraken (and bluestore persists flags together with expected_object_size
-and expected_write_size).
+Allow hinting to bluestore if the data should/should not be compressed.
+The default is to not hint (compression_hint=none).
 
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 ---
- drivers/block/rbd.c             |  3 ++-
- include/linux/ceph/osd_client.h |  4 +++-
- include/linux/ceph/rados.h      | 14 ++++++++++++++
- net/ceph/osd_client.c           |  8 +++++++-
- 4 files changed, 26 insertions(+), 3 deletions(-)
+ drivers/block/rbd.c | 43 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 74b2f00199ac..b1cd41e671d1 100644
+index b1cd41e671d1..e02089d550a4 100644
 --- a/drivers/block/rbd.c
 +++ b/drivers/block/rbd.c
-@@ -2253,7 +2253,8 @@ static void __rbd_osd_setup_write_ops(struct ceph_osd_request *osd_req,
- 	    !(obj_req->flags & RBD_OBJ_FLAG_MAY_EXIST)) {
+@@ -836,6 +836,7 @@ enum {
+ 	Opt_lock_timeout,
+ 	/* int args above */
+ 	Opt_pool_ns,
++	Opt_compression_hint,
+ 	/* string args above */
+ 	Opt_read_only,
+ 	Opt_read_write,
+@@ -844,8 +845,23 @@ enum {
+ 	Opt_notrim,
+ };
+ 
++enum {
++	Opt_compression_hint_none,
++	Opt_compression_hint_compressible,
++	Opt_compression_hint_incompressible,
++};
++
++static const struct constant_table rbd_param_compression_hint[] = {
++	{"none",		Opt_compression_hint_none},
++	{"compressible",	Opt_compression_hint_compressible},
++	{"incompressible",	Opt_compression_hint_incompressible},
++	{}
++};
++
+ static const struct fs_parameter_spec rbd_parameters[] = {
+ 	fsparam_u32	("alloc_size",			Opt_alloc_size),
++	fsparam_enum	("compression_hint",		Opt_compression_hint,
++			 rbd_param_compression_hint),
+ 	fsparam_flag	("exclusive",			Opt_exclusive),
+ 	fsparam_flag	("lock_on_read",		Opt_lock_on_read),
+ 	fsparam_u32	("lock_timeout",		Opt_lock_timeout),
+@@ -867,6 +883,8 @@ struct rbd_options {
+ 	bool	lock_on_read;
+ 	bool	exclusive;
+ 	bool	trim;
++
++	u32 alloc_hint_flags;  /* CEPH_OSD_OP_ALLOC_HINT_FLAG_* */
+ };
+ 
+ #define RBD_QUEUE_DEPTH_DEFAULT	BLKDEV_MAX_RQ
+@@ -2254,7 +2272,7 @@ static void __rbd_osd_setup_write_ops(struct ceph_osd_request *osd_req,
  		osd_req_op_alloc_hint_init(osd_req, which++,
  					   rbd_dev->layout.object_size,
--					   rbd_dev->layout.object_size);
-+					   rbd_dev->layout.object_size,
-+					   0);
+ 					   rbd_dev->layout.object_size,
+-					   0);
++					   rbd_dev->opts->alloc_hint_flags);
  	}
  
  	if (rbd_obj_is_entire(obj_req))
-diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-index 671fb93e8c60..c60b59e9291b 100644
---- a/include/linux/ceph/osd_client.h
-+++ b/include/linux/ceph/osd_client.h
-@@ -136,6 +136,7 @@ struct ceph_osd_req_op {
- 		struct {
- 			u64 expected_object_size;
- 			u64 expected_write_size;
-+			u32 flags;  /* CEPH_OSD_OP_ALLOC_HINT_FLAG_* */
- 		} alloc_hint;
- 		struct {
- 			u64 snapid;
-@@ -472,7 +473,8 @@ extern int osd_req_op_xattr_init(struct ceph_osd_request *osd_req, unsigned int
- extern void osd_req_op_alloc_hint_init(struct ceph_osd_request *osd_req,
- 				       unsigned int which,
- 				       u64 expected_object_size,
--				       u64 expected_write_size);
-+				       u64 expected_write_size,
-+				       u32 flags);
- 
- extern struct ceph_osd_request *ceph_osdc_alloc_request(struct ceph_osd_client *osdc,
- 					       struct ceph_snap_context *snapc,
-diff --git a/include/linux/ceph/rados.h b/include/linux/ceph/rados.h
-index 88ed3c5c04c5..3a518fd0eaad 100644
---- a/include/linux/ceph/rados.h
-+++ b/include/linux/ceph/rados.h
-@@ -464,6 +464,19 @@ enum {
- 
- const char *ceph_osd_watch_op_name(int o);
- 
-+enum {
-+	CEPH_OSD_ALLOC_HINT_FLAG_SEQUENTIAL_WRITE = 1,
-+	CEPH_OSD_ALLOC_HINT_FLAG_RANDOM_WRITE = 2,
-+	CEPH_OSD_ALLOC_HINT_FLAG_SEQUENTIAL_READ = 4,
-+	CEPH_OSD_ALLOC_HINT_FLAG_RANDOM_READ = 8,
-+	CEPH_OSD_ALLOC_HINT_FLAG_APPEND_ONLY = 16,
-+	CEPH_OSD_ALLOC_HINT_FLAG_IMMUTABLE = 32,
-+	CEPH_OSD_ALLOC_HINT_FLAG_SHORTLIVED = 64,
-+	CEPH_OSD_ALLOC_HINT_FLAG_LONGLIVED = 128,
-+	CEPH_OSD_ALLOC_HINT_FLAG_COMPRESSIBLE = 256,
-+	CEPH_OSD_ALLOC_HINT_FLAG_INCOMPRESSIBLE = 512,
-+};
-+
- enum {
- 	CEPH_OSD_BACKOFF_OP_BLOCK = 1,
- 	CEPH_OSD_BACKOFF_OP_ACK_BLOCK = 2,
-@@ -517,6 +530,7 @@ struct ceph_osd_op {
- 		struct {
- 			__le64 expected_object_size;
- 			__le64 expected_write_size;
-+			__le32 flags;  /* CEPH_OSD_OP_ALLOC_HINT_FLAG_* */
- 		} __attribute__ ((packed)) alloc_hint;
- 		struct {
- 			__le64 snapid;
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index 22733e844be1..4fea3c33af2a 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -932,10 +932,14 @@ static void osd_req_op_watch_init(struct ceph_osd_request *req, int which,
- 	op->watch.gen = 0;
- }
- 
-+/*
-+ * @flags: CEPH_OSD_OP_ALLOC_HINT_FLAG_*
-+ */
- void osd_req_op_alloc_hint_init(struct ceph_osd_request *osd_req,
- 				unsigned int which,
- 				u64 expected_object_size,
--				u64 expected_write_size)
-+				u64 expected_write_size,
-+				u32 flags)
- {
- 	struct ceph_osd_req_op *op = _osd_req_op_init(osd_req, which,
- 						      CEPH_OSD_OP_SETALLOCHINT,
-@@ -943,6 +947,7 @@ void osd_req_op_alloc_hint_init(struct ceph_osd_request *osd_req,
- 
- 	op->alloc_hint.expected_object_size = expected_object_size;
- 	op->alloc_hint.expected_write_size = expected_write_size;
-+	op->alloc_hint.flags = flags;
- 
- 	/*
- 	 * CEPH_OSD_OP_SETALLOCHINT op is advisory and therefore deemed
-@@ -1018,6 +1023,7 @@ static u32 osd_req_encode_op(struct ceph_osd_op *dst,
- 		    cpu_to_le64(src->alloc_hint.expected_object_size);
- 		dst->alloc_hint.expected_write_size =
- 		    cpu_to_le64(src->alloc_hint.expected_write_size);
-+		dst->alloc_hint.flags = cpu_to_le32(src->alloc_hint.flags);
+@@ -6332,6 +6350,29 @@ static int rbd_parse_param(struct fs_parameter *param,
+ 		pctx->spec->pool_ns = param->string;
+ 		param->string = NULL;
  		break;
- 	case CEPH_OSD_OP_SETXATTR:
- 	case CEPH_OSD_OP_CMPXATTR:
++	case Opt_compression_hint:
++		switch (result.uint_32) {
++		case Opt_compression_hint_none:
++			opt->alloc_hint_flags &=
++			    ~(CEPH_OSD_ALLOC_HINT_FLAG_COMPRESSIBLE |
++			      CEPH_OSD_ALLOC_HINT_FLAG_INCOMPRESSIBLE);
++			break;
++		case Opt_compression_hint_compressible:
++			opt->alloc_hint_flags |=
++			    CEPH_OSD_ALLOC_HINT_FLAG_COMPRESSIBLE;
++			opt->alloc_hint_flags &=
++			    ~CEPH_OSD_ALLOC_HINT_FLAG_INCOMPRESSIBLE;
++			break;
++		case Opt_compression_hint_incompressible:
++			opt->alloc_hint_flags |=
++			    CEPH_OSD_ALLOC_HINT_FLAG_INCOMPRESSIBLE;
++			opt->alloc_hint_flags &=
++			    ~CEPH_OSD_ALLOC_HINT_FLAG_COMPRESSIBLE;
++			break;
++		default:
++			BUG();
++		}
++		break;
+ 	case Opt_read_only:
+ 		opt->read_only = true;
+ 		break;
 -- 
 2.19.2
 
