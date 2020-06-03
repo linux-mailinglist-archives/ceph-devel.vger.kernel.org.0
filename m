@@ -2,101 +2,101 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A1E91EBD5B
-	for <lists+ceph-devel@lfdr.de>; Tue,  2 Jun 2020 15:51:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C6031ED0DB
+	for <lists+ceph-devel@lfdr.de>; Wed,  3 Jun 2020 15:32:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726320AbgFBNve (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 2 Jun 2020 09:51:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51604 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725940AbgFBNve (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 2 Jun 2020 09:51:34 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69A692074B;
-        Tue,  2 Jun 2020 13:51:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591105893;
-        bh=7WJxaW6Za6eJsimqdzpwe641SMXVhIMtilsD6S1TLT8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=mKKnHGQnlvZcc4KngbPhfQRGo24Lr6xfR0hs+x7opa8pcEkIU2JDegZah1b8E+vR9
-         OjK2XRvM0R1heulsxxsn1jxstCX+r0i2DjUqr5Zy3nio3Jwd9DZ5AWNKF/vnQLEYm3
-         4jw66HzdzDy/9eeqqFqwcwSaWDZ/7Io4O0LFhVTY=
-Message-ID: <c66e1eb422662fabc10afed7d175f65067fec1c1.camel@kernel.org>
-Subject: Re: [ceph-client:testing 9/30] include/linux/spinlock.h:353:9:
- sparse: sparse: context imbalance in 'ceph_handle_caps' - unexpected unlock
-From:   Jeff Layton <jlayton@kernel.org>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, ceph-devel@vger.kernel.org,
-        Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 02 Jun 2020 09:51:32 -0400
-In-Reply-To: <202006021202.ox5WWela%lkp@intel.com>
-References: <202006021202.ox5WWela%lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.2 (3.36.2-1.fc32) 
+        id S1725884AbgFCNcu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 3 Jun 2020 09:32:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47542 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725836AbgFCNct (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 3 Jun 2020 09:32:49 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51468C08C5C1
+        for <ceph-devel@vger.kernel.org>; Wed,  3 Jun 2020 06:32:49 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id y17so2372155wrn.11
+        for <ceph-devel@vger.kernel.org>; Wed, 03 Jun 2020 06:32:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=H8rDQEJouwBJIElP/Vpqq+PrvTZxQQy2H7A/MvyMMB0=;
+        b=q+nnIMOV8QPLuimjJR+FSv9a9Hdhy9ho4/8fHMAopTvh1Ny0KFTWdnudIzTDklc5PB
+         9SshMMU6nDgahhiEW1cK4xUhUemT7lhXlQguy59r7khMA6uG7c7YyMapoERtJ1zXpxVC
+         Bc9YU/P5cf+tQXq29HrvH25QDkx1vX2Np2avosp3kcIjf5dUVXCHXRU/DvpRfGFgiWiE
+         rAOAEiX3EVAkk2Iv8vJKAgXQRhCzyOykN7XV8CsQGJHf0+QmkSlTWCi7FdYiGAtitmZf
+         k8thGP39CyHFAm2q5IdfPkd3lZVigLFdcMdRpz+DIJr1r6uufmQMngKijtQo2ZYphOP9
+         qPlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=H8rDQEJouwBJIElP/Vpqq+PrvTZxQQy2H7A/MvyMMB0=;
+        b=IkVdOL5MJfaSFMlYdB2JrSB626Rsu2aEEI0X4rndL9SM433imAnsd2EOH8PlymOrhm
+         oR9QvFdigC+7Ya2iIU3B7bIqb8za8XwOSv5BrHS+qIqPzUuDCNGNi5DE/ZQzbE02wXz3
+         QPq0chvwlZMtW1+Ga1SVJ6QKooRS4mTDXqAxw4E3Ma+LW8LyKeH6T+5xEkze81ALTfb8
+         eLFYM3SwZximlAXJoDW7DaGu8QghvJl/yqbD0Ct+Fyqgdp3ZjC/AhnIqZueyC6dg0JOe
+         gm9yZGe5MjJc/7euRmWzBD9NzU+L87JreWwI/LPjAsnnASI+4oSlG447kSnQejDfD/6E
+         eNyg==
+X-Gm-Message-State: AOAM532Mr4X+a5kS5usT8FsSA9QG1MuYtYQrXL3mTiNwfMeQ4qSei/YS
+        3jE5ctc1ZiIu2dTFRZPjUCpqHDPv6Xy8cmYtrLk=
+X-Google-Smtp-Source: ABdhPJynP2KZI5XhkFA9zkLHQZ1uEj62UDn8MKK1YNSuTLKQDNuzmex0HWzLnmDStXCXRG5PK0eTuAPEiWypx2HAteY=
+X-Received: by 2002:adf:a396:: with SMTP id l22mr20537577wrb.24.1591191168018;
+ Wed, 03 Jun 2020 06:32:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Reply-To: susanjones.wife@gmail.com
+Received: by 2002:adf:f112:0:0:0:0:0 with HTTP; Wed, 3 Jun 2020 06:32:47 -0700 (PDT)
+From:   "Mrs.Susan Jones" <sus.wifejones@gmail.com>
+Date:   Wed, 3 Jun 2020 14:32:47 +0100
+X-Google-Sender-Auth: ugQNlP48brp64rhp8zmuJMZC8R8
+Message-ID: <CAAxb+3w=_+QhwD_MCfN4MxEagbuwe7urLu439Cx0FguZOqR8aQ@mail.gmail.com>
+Subject: HELLO: I AM MRS SUSAN JONES
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2020-06-02 at 12:38 +0800, kbuild test robot wrote:
-> tree:   https://github.com/ceph/ceph-client.git testing
-> head:   9c4e2af200ffe80d2f917b75f92ab57f0a091a17
-> commit: 7833323363233c75fd8d10b5ceefbb9515cb3e32 [9/30] ceph: don't take i_ceph_lock in handle_cap_import
-> config: microblaze-randconfig-s031-20200602 (attached as .config)
-> compiler: microblaze-linux-gcc (GCC) 9.3.0
-> reproduce:
->         # apt-get install sparse
->         # sparse version: v0.6.1-243-gc100a7ab-dirty
->         git checkout 7833323363233c75fd8d10b5ceefbb9515cb3e32
->         # save the attached .config to linux build tree
->         make W=1 C=1 ARCH=microblaze CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-> 
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> 
-> sparse warnings: (new ones prefixed by >>)
-> 
->    fs/ceph/caps.c:3443:9: sparse: sparse: context imbalance in 'handle_cap_grant' - wrong count at exit
-> > > include/linux/spinlock.h:353:9: sparse: sparse: context imbalance in 'ceph_handle_caps' - unexpected unlock
-> 
-> vim +/ceph_handle_caps +353 include/linux/spinlock.h
-> 
-> de8f5e4f2dc1f0 Peter Zijlstra  2020-03-21  350  
-> 3490565b633c70 Denys Vlasenko  2015-07-13  351  static __always_inline void spin_lock(spinlock_t *lock)
-> c2f21ce2e31286 Thomas Gleixner 2009-12-02  352  {
-> c2f21ce2e31286 Thomas Gleixner 2009-12-02 @353  	raw_spin_lock(&lock->rlock);
-> c2f21ce2e31286 Thomas Gleixner 2009-12-02  354  }
-> c2f21ce2e31286 Thomas Gleixner 2009-12-02  355  
-> 
-> :::::: The code at line 353 was first introduced by commit
-> :::::: c2f21ce2e31286a0a32f8da0a7856e9ca1122ef3 locking: Implement new raw_spinlock
-> 
-> :::::: TO: Thomas Gleixner <tglx@linutronix.de>
-> :::::: CC: Thomas Gleixner <tglx@linutronix.de>
-> 
-> ---
-> 0-DAY CI Kernel Test Service, Intel Corporation
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
-
-I think this is a false-positive, but I'd welcome someone else to sanity
-check me here (Ilya?). My sparse says something a little different:
-
-    fs/ceph/caps.c:4052:26: warning: context imbalance in 'ceph_handle_caps' - unexpected unlock
-
-...and I get a similar warning when I move to the commit ahead of
-7833323363233c as well.
-
-All that patch does is push the i_ceph_lock acquisition from
-handle_cap_import to ceph_handle_caps. I don't see how it would have
-introduced a locking imbalance, but the locking in this code really is
-quite confusing, so please do point it out if I'm wrong here.
-
-Thanks,
 -- 
-Jeff Layton <jlayton@kernel.org>
+OUR GOLDEN OPPORTUNITY
 
+Hello Dear Friend,
+
+Complement of the day, i hope you are doing great today. However, I am
+Mrs.Susan Jones, an auditor with one of the new generation banks here
+in Burkina Faso.
+
+I am writing you this letter based on the latest development at my
+Department. i discovered some abandoned huge amount of money, Ten
+Million, Five hundred thousand  United States Dollars.($10.500.000).
+Now I am only contacting you as a foreigner because this money cannot
+be approved to a local bank account here, but can only be approved to
+any foreign account and foreign beneficiary because the money is in US
+dollars
+
+This will be  a legitimate transaction once you accept to build trust
+with me and follow simple instruction doing the transfer process,
+until the total sum transfer out of the bank here to your own bank
+account any where in the world, and I agreed to share the total money
+50/50 with you once you successful confirmed it in your bank account.
+But any expenses doing the transfer process will be deduct from the
+amount before sharing, If you are interested to work with me and
+provide a good receiving bank account, get back to me as soon as
+possible with the following details below.
+
+Your full name
+Your Profession
+Your direct mobile phone number
+Your Scanned International passport or any of your identity
+
+NOTE: PLEASE IT YOU ARE NOT INTERESTED DON'T BORDER TO RESPOND BACK TO
+AVOID TIME WASTED.
+
+As soon as I receive these data's, I will forward to you the
+application form which you will send to the bank for the claim and
+transfer of the fund into your bank account as the  new beneficial.
+
+I am waiting to hear from you soon
+
+Yours
+Mrs.Susan Jones
