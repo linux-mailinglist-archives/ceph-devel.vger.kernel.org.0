@@ -2,89 +2,77 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 288031F2BA8
-	for <lists+ceph-devel@lfdr.de>; Tue,  9 Jun 2020 02:18:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD1761F5065
+	for <lists+ceph-devel@lfdr.de>; Wed, 10 Jun 2020 10:38:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730691AbgFHXSr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 8 Jun 2020 19:18:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41152 "EHLO mail.kernel.org"
+        id S1726874AbgFJIiK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 10 Jun 2020 04:38:10 -0400
+Received: from mout.gmx.net ([212.227.15.15]:58897 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728395AbgFHXSp (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:18:45 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2362620823;
-        Mon,  8 Jun 2020 23:18:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591658325;
-        bh=sn8Keq0WlrH2oMOMaqzuef1suUNEu90hJWl2+RdW0To=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lz+X0UzdbPgLWiR3vCKPD2v4+VAoYznhAOGMECW6TDFv/2wzfxorCDyr2Dd4mHeud
-         2tjkXrMsNnKKv9IusGEKjJtky1ia86xR72srLGpN1elGvN/QlWwHViMXnSX83g+RQ0
-         mPxd5Vo9pft9ZDIKJuIzArBwQ+/LEJNOCwUSz1aE=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jerry Lee <leisurelysw24@gmail.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 325/606] libceph: ignore pool overlay and cache logic on redirects
-Date:   Mon,  8 Jun 2020 19:07:30 -0400
-Message-Id: <20200608231211.3363633-325-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200608231211.3363633-1-sashal@kernel.org>
-References: <20200608231211.3363633-1-sashal@kernel.org>
+        id S1726753AbgFJIiG (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 10 Jun 2020 04:38:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1591778283;
+        bh=AAyw6K3L1nVM2jF++8IVvqUOFDyON45CTMg1l39mfVc=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=NlBghSVYKzNZq6WH8VN2DJs7tkLK6YYM6kuERFZezkndq8aW9lEUlbZyFmC+slrcx
+         trkd+ASQQB6LU2O3LHVJMBznlCgMz/cMzpytbVZ+wLfLVCnI7CmIwzKGi/54+g7qVo
+         RoIryRHE4qSbMY3+u3dq7yGTzJQxJvihIU5no9T4=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [10.10.212.219] ([103.59.50.2]) by mail.gmx.com (mrgmx004
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MWics-1jPDUp13MW-00X4CW; Wed, 10
+ Jun 2020 10:38:03 +0200
+From:   norman <norman.kern@gmx.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     sage@redhat.com
+Subject: Questions of QoS on ceph
+Message-ID: <b8eca4d9-e368-0f35-f3dc-6049d9a213fd@gmx.com>
+Date:   Wed, 10 Jun 2020 16:38:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Provags-ID: V03:K1:MwA28IrtqRTvjrlUek2qW/AxpIrHH51aQVZxtt61uNFFaMOhCZi
+ H+cguikFmarfYKriUV+e0y0rNClScGmWZYReXtIdC3fIM38nKYFd+kiCPcwNmfN8XDYrUD6
+ Gid5YAETs1E+SBWLQSEDz9KRciX4r031x15x8rzBwxazI1uz1Q0vB1y1CBRo/CcXQvg1hrG
+ CoHBt+wfbs7ECOQh2TRXQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:wTlw5klMuAs=:rnij3bgLVPn64L5Lk6uF9v
+ E7YCLvJfQhCN3SMmr1MBRcXuhFLKH6Hza72tWRUCexiphh8aL6XZRQuHYWW3HkTt7KvAm1Nms
+ eseauo9sCHfHkdbfDYYciWaOBDVaSjRVqXVEmJUUs7CG9tyI+JFVOKhY8CtGdVFFUVASZgmHs
+ M0pJOtzqWE831yWdn1guxSXE0goGxUEkmTp7FgJmIqGBH20RUt1/CAbAxlr7wb7kVi/D36k/b
+ fOZ76/Gn6IktDt1c1PU5NQ9+j/4avc0DHBOu0lImg+5dqlOKxCnRKS+Ttefhp8PKfPV9LL6qJ
+ B1OdnP4XI/3rK7dUyVZN5JvpKGXMI4cyOiU9m3ruKRxag7AGzelPGAzUF39Vel5xPnuYEGzF6
+ 4/gF6fnimUCGadbt+m6EFHqOhX8MXeLN2kWfMwnhayugQd1GU0OzTOrn61+NxKPpn1BBaJ6P8
+ LFiiiQQO2HrKDh6S1jCPHgzyZEX7zilmmE0DYalQsuHoHsZba8j4QCdwI9nM8insCeG2+/bos
+ rsFWBlU8iIktasv3rgOd4dgHCfL4eKCjj5IycEtC2mvcDtuVmXSPE51+YhL7i1v57dQya0q+U
+ YlQ8kq6S/Dk0OKbxAGvfEQwpB67Rz3TrBwwictNCIDqmspvKemSamIJjxpvQ4ZKUu7LO//vT/
+ o3iR5exe1jTzCgRhToPPKQqoCZXOMglEot8ZWWOjjHfzB9PSf5IfPndgwPmCLh6jjSTJiGXtR
+ /d76+NL/hHYKy9rrHBxncZ5vriCbYd23MlmEGOLmXqoMJ82TGp6sIpZHvw1uWgNWVU3aeLpe/
+ IlAMOeRkydDTCQKDMu62G+7jE1sc/ker4XWXOWip6BvIcJaikObS0Xd0qEiuVvVplv7R9DQuJ
+ fW5oYZS4nGqXgndmZ1Cbj0AoQ7CB8IRJyx2CozK3wUAHWk6k9ANo2YQMiGzAv1TNiThCimbR3
+ Nl0oOWcQzZgkPuukbmPaXTPZl8CmlK0WILepdOs/b3c4nRMch0NUg/FYMaKR/h+Hv79eh+UJw
+ 9P8XxKob5c1EPskKN80WlZCS2aNnsfKjLzpRqObPHeCXizN/wvC72dMyiOBgQ8xsEGmHeQ7h1
+ 3X90rMmf2csODg4aIKazd9lL6YUaLcOsYcHwsBWfoTTxSawr1tZHbjKg9S900BFRLMV7cVrUl
+ 3ZPHU65gKg8ZyZackLgrBIRqnOCp7eHE4Q/sldcgcGO+HYtO3JGhZGxud93jFBVr8w6TZIuV3
+ q+rAjPMZEKlawm68S
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Jerry Lee <leisurelysw24@gmail.com>
+Hi guys,
 
-[ Upstream commit 890bd0f8997ae6ac0a367dd5146154a3963306dd ]
+I want to setup a=C2=A0 ceph cluster for teams, using fs and s3 interface.=
+ I
+met a problem about the QoS: How can I limit the
 
-OSD client should ignore cache/overlay flag if got redirect reply.
-Otherwise, the client hangs when the cache tier is in forward mode.
+bw or qps of a client to avoid the someone blocking others by running
+lots of threads?
 
-[ idryomov: Redirects are effectively deprecated and no longer
-  used or tested.  The original tiering modes based on redirects
-  are inherently flawed because redirects can race and reorder,
-  potentially resulting in data corruption.  The new proxy and
-  readproxy tiering modes should be used instead of forward and
-  readforward.  Still marking for stable as obviously correct,
-  though. ]
+Best regards,
 
-Cc: stable@vger.kernel.org
-URL: https://tracker.ceph.com/issues/23296
-URL: https://tracker.ceph.com/issues/36406
-Signed-off-by: Jerry Lee <leisurelysw24@gmail.com>
-Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/ceph/osd_client.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index af868d3923b9..834019dbc6b1 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -3652,7 +3652,9 @@ static void handle_reply(struct ceph_osd *osd, struct ceph_msg *msg)
- 		 * supported.
- 		 */
- 		req->r_t.target_oloc.pool = m.redirect.oloc.pool;
--		req->r_flags |= CEPH_OSD_FLAG_REDIRECTED;
-+		req->r_flags |= CEPH_OSD_FLAG_REDIRECTED |
-+				CEPH_OSD_FLAG_IGNORE_OVERLAY |
-+				CEPH_OSD_FLAG_IGNORE_CACHE;
- 		req->r_tid = 0;
- 		__submit_request(req, false);
- 		goto out_unlock_osdc;
--- 
-2.25.1
+Norman Kern
 
