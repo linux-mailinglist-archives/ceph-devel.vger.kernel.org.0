@@ -2,36 +2,34 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 47ACA1FB252
-	for <lists+ceph-devel@lfdr.de>; Tue, 16 Jun 2020 15:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 938231FB32A
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Jun 2020 16:00:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbgFPNkR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 16 Jun 2020 09:40:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51850 "EHLO mail.kernel.org"
+        id S1729147AbgFPOAm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 16 Jun 2020 10:00:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726799AbgFPNkR (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 16 Jun 2020 09:40:17 -0400
+        id S1726606AbgFPOAh (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 16 Jun 2020 10:00:37 -0400
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 329AA20663;
-        Tue, 16 Jun 2020 13:40:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72023207C3;
+        Tue, 16 Jun 2020 14:00:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592314816;
-        bh=FAsjhKk2RuPAlC+J2k2t1i+5hBK3CDUZU0M15sKPNU8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=yuAIOz9horJ4uttRMCutWrRig3bMYameHAl7MCWk1a8OWD3BkntZrsRWem2KacS99
-         5n834oLQ+9rKIJFoKLqAJ8Hh7/KVV4rYtG3P2HRCfKM/dUQy6j4kyY1JTBybhTYISp
-         dMNge2AMoW0ajJc2olF7idwE/O4A9meLi4SMZrCc=
-Message-ID: <dc4ad07be7a3c6764e751e0a41ba5d818594b84f.camel@kernel.org>
-Subject: Re: [PATCH 1/2] ceph: periodically send perf metrics to ceph
+        s=default; t=1592316037;
+        bh=zoV4CquxyTg6pcJ8SeW0EWrSqv+YChKRWt7wNbyorkc=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=sF0uv/Kl9wprvipTY7qcP7CKaBBwaEJSA8Lczajow+TcQhp1llc3qma7f8j87FEF9
+         H61FBi5YdVJ/+HARcN4DlJZqQF4Qm90kKsgExjLW9V6vGIEKdSGGE04+xU1cwQKjui
+         zGc8BG0vTIR5dhCM9DnUSUdfOMDUssQ9BU+Mgd6A=
+Message-ID: <8d7ea3bf8b7d26dea1aae30054676d1309838784.camel@kernel.org>
+Subject: Re: [PATCH] libceph: move away from global osd_req_flags
 From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com, idryomov@gmail.com
-Cc:     zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Tue, 16 Jun 2020 09:40:15 -0400
-In-Reply-To: <1592311950-17623-2-git-send-email-xiubli@redhat.com>
-References: <1592311950-17623-1-git-send-email-xiubli@redhat.com>
-         <1592311950-17623-2-git-send-email-xiubli@redhat.com>
+To:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+Date:   Tue, 16 Jun 2020 10:00:36 -0400
+In-Reply-To: <20200608075603.29053-1-idryomov@gmail.com>
+References: <20200608075603.29053-1-idryomov@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.3 (3.36.3-1.fc32) 
 MIME-Version: 1.0
@@ -41,120 +39,34 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2020-06-16 at 08:52 -0400, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
+On Mon, 2020-06-08 at 09:56 +0200, Ilya Dryomov wrote:
+> osd_req_flags is overly general and doesn't suit its only user
+> (read_from_replica option) well:
 > 
-> This will send the caps/read/write/metadata metrics to any available
-> MDS only once per second as default, which will be the same as the
-> userland client, or every metric_send_interval seconds, which is a
-> module parameter.
+> - applying osd_req_flags in account_request() affects all OSD
+>   requests, including linger (i.e. watch and notify).  However,
+>   linger requests should always go to the primary even though
+>   some of them are reads (e.g. notify has side effects but it
+>   is a read because it doesn't result in mutation on the OSDs).
 > 
-> URL: https://tracker.ceph.com/issues/43215
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> - calls to class methods that are reads are allowed to go to
+>   the replica, but most such calls issued for "rbd map" and/or
+>   exclusive lock transitions are requested to be resent to the
+>   primary via EAGAIN, doubling the latency.
+> 
+> Get rid of global osd_req_flags and set read_from_replica flag
+> only on specific OSD requests instead.
+> 
+> Fixes: 8ad44d5e0d1e ("libceph: read_from_replica option")
+> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 > ---
->  fs/ceph/mds_client.c         |  46 +++++++++------
->  fs/ceph/mds_client.h         |   4 ++
->  fs/ceph/metric.c             | 133 +++++++++++++++++++++++++++++++++++++++++++
->  fs/ceph/metric.h             |  78 +++++++++++++++++++++++++
->  fs/ceph/super.c              |  29 ++++++++++
->  include/linux/ceph/ceph_fs.h |   1 +
->  6 files changed, 274 insertions(+), 17 deletions(-)
-> 
+>  drivers/block/rbd.c          |  4 +++-
+>  include/linux/ceph/libceph.h |  4 ++--
+>  net/ceph/ceph_common.c       | 14 ++++++--------
+>  net/ceph/osd_client.c        |  3 +--
+>  4 files changed, 12 insertions(+), 13 deletions(-)
 
-Long patch! Might not hurt to break out some of the cleanups into
-separate patches, but they're fairly straighforward so I won't require
-it.
+Looks reasonable:
 
-[...]
-
->  /* This is the global metrics */
->  struct ceph_client_metric {
->  	atomic64_t            total_dentries;
-> @@ -35,8 +100,21 @@ struct ceph_client_metric {
->  	ktime_t metadata_latency_sq_sum;
->  	ktime_t metadata_latency_min;
->  	ktime_t metadata_latency_max;
-> +
-> +	struct delayed_work delayed_work;  /* delayed work */
->  };
->  
-> +static inline void metric_schedule_delayed(struct ceph_client_metric *m)
-> +{
-> +	/* per second as default */
-> +	unsigned int hz = round_jiffies_relative(HZ * metric_send_interval);
-> +
-> +	if (!metric_send_interval)
-> +		return;
-> +
-> +	schedule_delayed_work(&m->delayed_work, hz);
-> +}
-> +
-
-Should this also be gated on a MDS feature bit or anything? What happens
-if we're running against a really old MDS that doesn't support these
-stats? Does it just drop them on the floor? Should we disable sending
-them in that case?
-
->  extern int ceph_metric_init(struct ceph_client_metric *m);
->  extern void ceph_metric_destroy(struct ceph_client_metric *m);
->  
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index c9784eb1..66a940c 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -1282,6 +1282,35 @@ static void __exit exit_ceph(void)
->  	destroy_caches();
->  }
->  
-> +static int param_set_metric_interval(const char *val, const struct kernel_param *kp)
-> +{
-> +	int ret;
-> +	unsigned int interval;
-> +
-> +	ret = kstrtouint(val, 0, &interval);
-> +	if (ret < 0) {
-> +		pr_err("Failed to parse metric interval '%s'\n", val);
-> +		return ret;
-> +	}
-> +
-> +	if (interval > 5 || interval < 1) {
-> +		pr_err("Invalid metric interval %u\n", interval);
-> +		return -EINVAL;
-> +	}
-> +
-> +	metric_send_interval = interval;
-> +	return 0;
-> +}
-> +
-> +static const struct kernel_param_ops param_ops_metric_interval = {
-> +	.set = param_set_metric_interval,
-> +	.get = param_get_uint,
-> +};
-> +
-> +unsigned int metric_send_interval = 1;
-> +module_param_cb(metric_send_interval, &param_ops_metric_interval, &metric_send_interval, 0644);
-> +MODULE_PARM_DESC(metric_send_interval, "Interval (in seconds) of sending perf metric to ceph cluster, valid values are 1~5 (default: 1)");
-> +
-
-Aren't valid values 0-5, with 0 disabling this feature? That's
-what metric_schedule_delayed() seems to indicate...
-
->  module_init(init_ceph);
->  module_exit(exit_ceph);
->  
-> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-> index ebf5ba6..455e9b9 100644
-> --- a/include/linux/ceph/ceph_fs.h
-> +++ b/include/linux/ceph/ceph_fs.h
-> @@ -130,6 +130,7 @@ struct ceph_dir_layout {
->  #define CEPH_MSG_CLIENT_REQUEST         24
->  #define CEPH_MSG_CLIENT_REQUEST_FORWARD 25
->  #define CEPH_MSG_CLIENT_REPLY           26
-> +#define CEPH_MSG_CLIENT_METRICS         29
->  #define CEPH_MSG_CLIENT_CAPS            0x310
->  #define CEPH_MSG_CLIENT_LEASE           0x311
->  #define CEPH_MSG_CLIENT_SNAP            0x312
-
--- 
-Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
