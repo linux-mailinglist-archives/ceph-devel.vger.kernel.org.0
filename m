@@ -2,60 +2,58 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 10A731FAA44
-	for <lists+ceph-devel@lfdr.de>; Tue, 16 Jun 2020 09:44:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D40D91FAAAC
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Jun 2020 10:04:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbgFPHot (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 16 Jun 2020 03:44:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56216 "EHLO
+        id S1726405AbgFPIEK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 16 Jun 2020 04:04:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727090AbgFPHos (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 16 Jun 2020 03:44:48 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E1E2C03E96A
-        for <ceph-devel@vger.kernel.org>; Tue, 16 Jun 2020 00:44:46 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id y6so8247908edi.3
-        for <ceph-devel@vger.kernel.org>; Tue, 16 Jun 2020 00:44:46 -0700 (PDT)
+        with ESMTP id S1726222AbgFPIEJ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 16 Jun 2020 04:04:09 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 480F5C05BD43
+        for <ceph-devel@vger.kernel.org>; Tue, 16 Jun 2020 01:04:09 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id k11so20464525ejr.9
+        for <ceph-devel@vger.kernel.org>; Tue, 16 Jun 2020 01:04:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ZbM1RYndbIseJODt2duRRRs16tKrRP5ZgVNKGiZJAV0=;
-        b=U7vmVd9saIpqvVJY7ya3F1goaOX6pdQg0sREJfndexeZAilitffFHEBtcpK18F6UVj
-         M/jLmBcaMsPEbCcFGZG8kg84yCijeZHLqfT4gZoF3l/zjFTx3ke1HtnWFVAUHTSJ0Doy
-         TP+gRYxtgcyyLEfj2mqGxMUb1jBFm4WL9ya0VMK/CwevpSZG2VyGGR7QObCjVPQdwCLc
-         nNLmixEQoZS/8KaSKI87SSEg/WofNU3T051b2nVQ0Kba0vFIlqjtcQrJC/cfNG68O+7s
-         aIc3CWxlKDTgHk7oLRoDIPmYpXzkHsAh4LgWf+ia2QA5YRdRQTjiyDqSsEQuB+Y9NE4+
-         bXtQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CDQ0WhHGM4VPKLvbiSs1JCCOa74rODgNmXBrB9AOcvI=;
+        b=rtw4dPH235v7kC4bsaxMjmI5yQ+KTbpd5GSKDNT0Mw34NO/oYFBLRJXGvpEcfaI4AO
+         vGCub0JbcLITrFE2YBxP+HLesjfZnCg0TkmhHC1cAp+wbVPZVVsirKxLrih46r+7ZQ7P
+         DFsfDfhUNYVRJ/T71V2P6kduvsKZo2QP1lO8ZGVGfXzxFzSdPS7KbIIj/Bp/8dvDvJCP
+         P6X0RO0HoayOfjfSdb6esj3aykpm990yfeCVfxkm1cK/1y6HliPphAaCuiddOj0BAHy2
+         dHh1g0di5lrbt++Mo1Ah4Qf8sXls2HEGbPRLzBPuZLdKciPHpZS8hGe7+amLUaIk7ZMi
+         jtIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZbM1RYndbIseJODt2duRRRs16tKrRP5ZgVNKGiZJAV0=;
-        b=pvqEWTPKgSP9y2AzFFLyk22H2Vxb8kgeUUuiws6cHUuHtdKCR0f5uvfaBl0KneF+4a
-         IKGdzU/Lvk7qNLE1d9fZZ4kFkQ2hCargCgxTFfTuOchmuqjr/zdc4CvLrT1XJRKf9ZZh
-         LvSnDgyMhJlEJcVsrQ1aePiVQgkPFlHDg2crdEMp+feAVixkvsPyT8A+zAU0P4/Wsg2X
-         /Swk8yHSxd39rNSnYpxdNvBPvXfVceLgynZDL79rcJkq9flV+gfjJXzrsOa5090Pinam
-         v9JufD0z8gfbhQL5Y0YqU34S2pZS2mObdikISVfMe7VFhL7wA8p1M3c6Q510HEmyib/h
-         Cj3Q==
-X-Gm-Message-State: AOAM531eAWcf1dXc2aDWM273Lyk32cYdLq9XJs3GzzrIusEvibyBKNhj
-        DLz7QOX5sCCp4Q7BYpYsrh1GWuf2Gic=
-X-Google-Smtp-Source: ABdhPJyjr8Qymw7tvDb5XyETBT0X3ctql5uj1nTyGW/ImAobNd/cVcfD30K7AcmlF+UubVfiAczerw==
-X-Received: by 2002:a05:6402:6c6:: with SMTP id n6mr1322242edy.277.1592293484896;
-        Tue, 16 Jun 2020 00:44:44 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CDQ0WhHGM4VPKLvbiSs1JCCOa74rODgNmXBrB9AOcvI=;
+        b=iiGxChC9v4l8MlKPzfQ6dSE9VsPLSE2vVbj0+ZJ+T51RDu3dafhZtHjYp6CVC6UmmJ
+         m94SnBNEYm8Lsfj5/NudNm7ynYpmOrFWo3y5Yq2paggFScxOZGt7gorW+VkXfm9qByCD
+         8M821W954EyOIOZPHAsLcv+kfFnBUnkW/1EMcpyZyxS4GY4J7cg8rtXKlDnRFp5lLVm+
+         NSdMIFZ9Ot4DC4WW1PWvreTCE8ondPypfTiusoKDYoPeezrzgLCvbVxATPVrU0eOk2Uu
+         3Rz2ObPnrfXD1JveIkT3Qg8sDPm1KWKSAuigFjuf8Lqh/F8DLYwFc5G8P33/E4k8zxNl
+         T+tw==
+X-Gm-Message-State: AOAM531V+RAkEl8FrBJfnaE8eh8JvgH92X+pR0QgWRWYDOQ+fI8QLmVc
+        uqZMSLi2/HbGT2IUuUFKTYSLFv4n+1Q=
+X-Google-Smtp-Source: ABdhPJwg4Xlt4JYKDf9hoWOg/Kia/gnOjQujYuJxWGX16TH1MOUD6hfNudiVkjFXvsex8749G/a/JA==
+X-Received: by 2002:a17:906:66d0:: with SMTP id k16mr1672653ejp.293.1592294647780;
+        Tue, 16 Jun 2020 01:04:07 -0700 (PDT)
 Received: from kwango.local (ip-94-112-129-237.net.upcbroadband.cz. [94.112.129.237])
-        by smtp.gmail.com with ESMTPSA id j2sm9684562edn.30.2020.06.16.00.44.44
+        by smtp.gmail.com with ESMTPSA id dm1sm10614977ejc.99.2020.06.16.01.04.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2020 00:44:44 -0700 (PDT)
+        Tue, 16 Jun 2020 01:04:07 -0700 (PDT)
 From:   Ilya Dryomov <idryomov@gmail.com>
 To:     ceph-devel@vger.kernel.org
 Cc:     Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH 3/3] libceph: use target_copy() in send_linger()
-Date:   Tue, 16 Jun 2020 09:44:15 +0200
-Message-Id: <20200616074415.9989-4-idryomov@gmail.com>
+Subject: [PATCH] libceph: dump class and method names on method calls
+Date:   Tue, 16 Jun 2020 10:04:14 +0200
+Message-Id: <20200616080414.15534-1-idryomov@gmail.com>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20200616074415.9989-1-idryomov@gmail.com>
-References: <20200616074415.9989-1-idryomov@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
@@ -63,32 +61,25 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Instead of copying just oloc, oid and flags, copy the entire
-linger target.  This is more for consistency than anything else,
-as send_linger() -> submit_request() -> __submit_request() sends
-the request regardless of what calc_target() says (i.e. both on
-CALC_TARGET_NO_ACTION and CALC_TARGET_NEED_RESEND).
-
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 ---
- net/ceph/osd_client.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/ceph/debugfs.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index 2db8b44e70c2..db6abb5a5511 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -3076,9 +3076,7 @@ static void send_linger(struct ceph_osd_linger_request *lreq)
- 		cancel_linger_request(req);
+diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
+index 409d505ff320..2110439f8a24 100644
+--- a/net/ceph/debugfs.c
++++ b/net/ceph/debugfs.c
+@@ -223,6 +223,9 @@ static void dump_request(struct seq_file *s, struct ceph_osd_request *req)
+ 		if (op->op == CEPH_OSD_OP_WATCH)
+ 			seq_printf(s, "-%s",
+ 				   ceph_osd_watch_op_name(op->watch.op));
++		else if (op->op == CEPH_OSD_OP_CALL)
++			seq_printf(s, "-%s/%s", op->cls.class_name,
++				   op->cls.method_name);
+ 	}
  
- 	request_reinit(req);
--	ceph_oid_copy(&req->r_base_oid, &lreq->t.base_oid);
--	ceph_oloc_copy(&req->r_base_oloc, &lreq->t.base_oloc);
--	req->r_flags = lreq->t.flags;
-+	target_copy(&req->r_t, &lreq->t);
- 	req->r_mtime = lreq->mtime;
- 
- 	mutex_lock(&lreq->lock);
+ 	seq_putc(s, '\n');
 -- 
 2.19.2
 
