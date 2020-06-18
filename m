@@ -2,27 +2,27 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 18BDB1FDBCF
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 Jun 2020 03:15:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40F191FE3B6
+	for <lists+ceph-devel@lfdr.de>; Thu, 18 Jun 2020 04:14:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729396AbgFRBOy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 17 Jun 2020 21:14:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44632 "EHLO mail.kernel.org"
+        id S1730474AbgFRBVQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 17 Jun 2020 21:21:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729387AbgFRBOx (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:14:53 -0400
+        id S1729734AbgFRBVM (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:21:12 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F54520EDD;
-        Thu, 18 Jun 2020 01:14:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7623214DB;
+        Thu, 18 Jun 2020 01:21:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442893;
+        s=default; t=1592443270;
         bh=WFhN86/8PgIVAw+/GByvJEeVx2pstmpPDYtGP6ft++4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aT14QmD7lNRKD7lFcF6CquDExA1aDyFNK3t2YiQ2UqntBlrtUxpJ3aTD5gnXqp3HN
-         YYF5EsA25DJKOegDUQTFWERCuBbQ8Jf6wF10nwAeDhTg8Bd1aWxNaNavq+cfq6SxsC
-         NSTlOmQPp4j0iZe197gK6RXeYXGjzbCzN9YldSuw=
+        b=L480iq4Qyq3l+fk06aSRUDNESa8Ce0ilsjEr+lI2qstVz+1+ACafi+Br7v4un05fc
+         jWfpUmnjA/dte9l1BpO5aQzVinczKYDRVEDy9LdMmnX6un8IXT1KWTtcLdfr/cKkci
+         KOBvxjhPxyrBraNTsUAEP1FHZO0JRHxJcwhW//7s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Luis Henriques <lhenriques@suse.com>,
@@ -30,12 +30,12 @@ Cc:     Luis Henriques <lhenriques@suse.com>,
         Amir Goldstein <amir73il@gmail.com>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 315/388] ceph: don't return -ESTALE if there's still an open file
-Date:   Wed, 17 Jun 2020 21:06:52 -0400
-Message-Id: <20200618010805.600873-315-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 216/266] ceph: don't return -ESTALE if there's still an open file
+Date:   Wed, 17 Jun 2020 21:15:41 -0400
+Message-Id: <20200618011631.604574-216-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
-References: <20200618010805.600873-1-sashal@kernel.org>
+In-Reply-To: <20200618011631.604574-1-sashal@kernel.org>
+References: <20200618011631.604574-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
