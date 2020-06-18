@@ -2,102 +2,90 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40F191FE3B6
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 Jun 2020 04:14:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76C811FF119
+	for <lists+ceph-devel@lfdr.de>; Thu, 18 Jun 2020 14:01:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730474AbgFRBVQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 17 Jun 2020 21:21:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53578 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729734AbgFRBVM (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:21:12 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728361AbgFRMBG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 18 Jun 2020 08:01:06 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:46212 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728085AbgFRMBE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 18 Jun 2020 08:01:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1592481663;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=2FsjXwKkiOgYgmeqomgLHQBpVBMSNkMMhA9QfWNow1M=;
+        b=YIn5VhGCVJTceyQRIihhgKPNGmHpDhxHnn/GhrNXGqLUTT52rs4x7VHuRgkOqKfdSkzBW2
+        7GkjE+encoYk+layYb1jeXzTJ+PcaKRAmpRkDjI9b8yXb25dHcamTyguBkw0qxuaNISIaX
+        H7GOsLr5fiRRhlSnlh+0LNHVBHO6f4Q=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-390-snDvZczbO8WkfNaXvihP-Q-1; Thu, 18 Jun 2020 08:00:52 -0400
+X-MC-Unique: snDvZczbO8WkfNaXvihP-Q-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7623214DB;
-        Thu, 18 Jun 2020 01:21:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592443270;
-        bh=WFhN86/8PgIVAw+/GByvJEeVx2pstmpPDYtGP6ft++4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L480iq4Qyq3l+fk06aSRUDNESa8Ce0ilsjEr+lI2qstVz+1+ACafi+Br7v4un05fc
-         jWfpUmnjA/dte9l1BpO5aQzVinczKYDRVEDy9LdMmnX6un8IXT1KWTtcLdfr/cKkci
-         KOBvxjhPxyrBraNTsUAEP1FHZO0JRHxJcwhW//7s=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Luis Henriques <lhenriques@suse.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 216/266] ceph: don't return -ESTALE if there's still an open file
-Date:   Wed, 17 Jun 2020 21:15:41 -0400
-Message-Id: <20200618011631.604574-216-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200618011631.604574-1-sashal@kernel.org>
-References: <20200618011631.604574-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 933C0801503;
+        Thu, 18 Jun 2020 12:00:51 +0000 (UTC)
+Received: from lxbceph0.gsslab.pek2.redhat.com (vm37-55.gsslab.pek2.redhat.com [10.72.37.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BB57B7A01A;
+        Thu, 18 Jun 2020 12:00:49 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org, idryomov@gmail.com
+Cc:     zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v2 0/5] ceph: periodically send perf metrics to ceph
+Date:   Thu, 18 Jun 2020 07:59:54 -0400
+Message-Id: <1592481599-7851-1-git-send-email-xiubli@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Luis Henriques <lhenriques@suse.com>
+From: Xiubo Li <xiubli@redhat.com>
 
-[ Upstream commit 878dabb64117406abd40977b87544d05bb3031fc ]
+This series is based the previous patches of the metrics in kceph[1]
+and mds daemons record and forward client side metrics to manager[2][3].
 
-Similarly to commit 03f219041fdb ("ceph: check i_nlink while converting
-a file handle to dentry"), this fixes another corner case with
-name_to_handle_at/open_by_handle_at.  The issue has been detected by
-xfstest generic/467, when doing:
+This will send the caps/read/write/metadata metrics to any available
+MDS only once per second as default, which will be the same as the
+userland client, or every metric_send_interval seconds, which is a
+module parameter, the valid values for metric_send_interval will be
+0~5 seconds, 0 means disabled.
 
- - name_to_handle_at("/cephfs/myfile")
- - open("/cephfs/myfile")
- - unlink("/cephfs/myfile")
- - sync; sync;
- - drop caches
- - open_by_handle_at()
+And will also send the metric flags to MDS, currently it supports the
+cap, read latency, write latency and metadata latency.
 
-The call to open_by_handle_at should not fail because the file hasn't been
-deleted yet (only unlinked) and we do have a valid handle to it.  -ESTALE
-shall be returned only if i_nlink is 0 *and* i_count is 1.
+Also have pushed this series to github [4].
 
-This patch also makes sure we have LINK caps before checking i_nlink.
+[1] https://patchwork.kernel.org/project/ceph-devel/list/?series=238907 [Merged]
+[2] https://github.com/ceph/ceph/pull/26004 [Merged]
+[3] https://github.com/ceph/ceph/pull/35608 [Merged]
+[4] https://github.com/lxbsz/ceph-client/commits/perf_metric2
 
-Signed-off-by: Luis Henriques <lhenriques@suse.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Acked-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ceph/export.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-index 79dc06881e78..e088843a7734 100644
---- a/fs/ceph/export.c
-+++ b/fs/ceph/export.c
-@@ -172,9 +172,16 @@ struct inode *ceph_lookup_inode(struct super_block *sb, u64 ino)
- static struct dentry *__fh_to_dentry(struct super_block *sb, u64 ino)
- {
- 	struct inode *inode = __lookup_inode(sb, ino);
-+	int err;
-+
- 	if (IS_ERR(inode))
- 		return ERR_CAST(inode);
--	if (inode->i_nlink == 0) {
-+	/* We need LINK caps to reliably check i_nlink */
-+	err = ceph_do_getattr(inode, CEPH_CAP_LINK_SHARED, false);
-+	if (err)
-+		return ERR_PTR(err);
-+	/* -ESTALE if inode as been unlinked and no file is open */
-+	if ((inode->i_nlink == 0) && (atomic_read(&inode->i_count) == 1)) {
- 		iput(inode);
- 		return ERR_PTR(-ESTALE);
- 	}
+Changed in V2:
+- split the patches into small ones as possible.
+- check the METRIC_COLLECT feature before sending metrics
+- switch to WARN_ON and bubble up errnos to the callers
+
+Xiubo Li (5):
+  ceph: add check_session_state helper and make it global
+  ceph: periodically send perf metrics to ceph
+  ceph: check the METRIC_COLLECT feature before sending metrics
+  ceph: switch to WARN_ON and bubble up errnos to the callers
+  ceph: send client provided metric flags in client metadata
+
+ fs/ceph/mds_client.c         | 147 ++++++++++++++++++++++++++++++++++---------
+ fs/ceph/mds_client.h         |   8 ++-
+ fs/ceph/metric.c             | 142 +++++++++++++++++++++++++++++++++++++++++
+ fs/ceph/metric.h             |  91 +++++++++++++++++++++++++++
+ fs/ceph/super.c              |  49 +++++++++++++++
+ fs/ceph/super.h              |   2 +
+ include/linux/ceph/ceph_fs.h |   1 +
+ 7 files changed, 410 insertions(+), 30 deletions(-)
+
 -- 
-2.25.1
+1.8.3.1
 
