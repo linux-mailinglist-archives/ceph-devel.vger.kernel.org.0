@@ -2,159 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 19996200890
-	for <lists+ceph-devel@lfdr.de>; Fri, 19 Jun 2020 14:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B052B2008C3
+	for <lists+ceph-devel@lfdr.de>; Fri, 19 Jun 2020 14:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732909AbgFSMWG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 19 Jun 2020 08:22:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40828 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731186AbgFSMWD (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 19 Jun 2020 08:22:03 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03DD620809;
-        Fri, 19 Jun 2020 12:22:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592569322;
-        bh=wZ2eQjYZYfkCo5F3WxaCUB5bUgWSPPF1tVsfNqRvBhw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=zisCw7KKxl8lUtnRnMG308nWWNgW6Q0CW7J8N91o0qv0j/21OB/9wDOLtxoiyMJ61
-         Im9X8sbgrqMIl/2BYEakDSXCbRmPrace4bVyIUX7KipaHTK+7AMWB+wwGX5Dz67lfi
-         q0v/iJGh43heEXvV2Xu7Y3I/SCHYPZO7fFKxo9D0=
-Message-ID: <5f985d1c59ad5e562bcf4c19514137d5041ddc80.camel@kernel.org>
-Subject: Re: [PATCH v2 2/5] ceph: periodically send perf metrics to ceph
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>
-Cc:     "Yan, Zheng" <zyan@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        Venky Shankar <vshankar@redhat.com>
-Date:   Fri, 19 Jun 2020 08:22:01 -0400
-In-Reply-To: <CAOi1vP81JshWEX7Ja1hqA4512ZBCVNiZX=204ijH15RrVeiT1Q@mail.gmail.com>
-References: <1592481599-7851-1-git-send-email-xiubli@redhat.com>
-         <1592481599-7851-3-git-send-email-xiubli@redhat.com>
-         <0b035117f68e00be64569021e10e202371589205.camel@kernel.org>
-         <f15a5885-3a9b-f308-bb5f-585f14e8ad19@redhat.com>
-         <CAOi1vP81JshWEX7Ja1hqA4512ZBCVNiZX=204ijH15RrVeiT1Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.3 (3.36.3-1.fc32) 
+        id S1732295AbgFSMfj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 19 Jun 2020 08:35:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33246 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730721AbgFSMfj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 19 Jun 2020 08:35:39 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99B8FC06174E;
+        Fri, 19 Jun 2020 05:35:38 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id y13so10037075eju.2;
+        Fri, 19 Jun 2020 05:35:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cGk94kqlaz+It7mAczUwCb778qzoBgZjifJczd8x0xQ=;
+        b=ljgPT/Zh5oiWswbruuHm0fkAFiJmBoLMYg/fb0Esdw4f9NxbEymaZaiJ4pkQ/6AV3x
+         P0iOR6iVjufv2FMNPXD8gh0nx52xakn7LUP4Psqiw1uOb4P+DFIzd5gdssmMqEJVC86C
+         zDC0SqSKb2Oc1Gc/UVggj/FfJcjvzll6OG3gomTzHtnW6+QMFEGQG9gG4Tn+SQ78vvQ4
+         Zh35p9rGw6tIMrtud49EcsDzwJJPeZUlNrWatjS1sY70466xklqkQKypIE0RERpPdaDp
+         gGp/Q1KAZGfv93e79hZdxfZ+K4/8E23g1+XyMDpof6yGHG1ody9T5Bg2NgykS4vDiIdl
+         6Nuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cGk94kqlaz+It7mAczUwCb778qzoBgZjifJczd8x0xQ=;
+        b=qosRJNXk9g1VUmeCdeM3TQeygdZHIobZpttjSJ1MggkhATHsF9Gtx8qfH+YGkgSXtR
+         cwAGIYjIt9G19ZCxzrENq76EQJ9JKRJH80x4Vek3ubZOxzVYCPQPKVj1nzgjNJZof0h1
+         MFsn21e+hTeMvHjQHPzeLye0/LBMMn7/o0oBcTRTKU5V4DmbnkUerP8dBrsPldb9vcar
+         IUJOkJu1QbXCdyAwOJ0ZG5qwf+r66H14LFWsLvUmL3Z0XTgQh64Aoi+7MxTZg7mAmKTv
+         UINpJGKv63JbiMKv2Iwp5mq33cKCbvH5OVL+4jxknYMrb8EisZ8nXhEIK3jcmsknySxE
+         epQQ==
+X-Gm-Message-State: AOAM530AQ9xjnXrCJzKc6MrDLYzxc00fCOhr8Ltj1iaVkkFi1O8NAl+D
+        XBLx69q9tZnNyf7XWeBwLcs4xgc7SiC4Vg==
+X-Google-Smtp-Source: ABdhPJyPEGrbnqv1eD/mrcEcqZKRfP+urvoDUQ3QBKXEeTdn3/nCrPnP+FCbZEdFkVKNY+zmUyWb3Q==
+X-Received: by 2002:a17:906:ce31:: with SMTP id sd17mr3386742ejb.255.1592570137390;
+        Fri, 19 Jun 2020 05:35:37 -0700 (PDT)
+Received: from kwango.local (ip-94-112-129-237.net.upcbroadband.cz. [94.112.129.237])
+        by smtp.gmail.com with ESMTPSA id n25sm4572231edo.56.2020.06.19.05.35.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jun 2020 05:35:36 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 5.8-rc2
+Date:   Fri, 19 Jun 2020 14:35:47 +0200
+Message-Id: <20200619123547.14353-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2020-06-19 at 11:35 +0200, Ilya Dryomov wrote:
-> On Fri, Jun 19, 2020 at 2:38 AM Xiubo Li <xiubli@redhat.com> wrote:
-> > On 2020/6/18 22:42, Jeff Layton wrote:
-> > > On Thu, 2020-06-18 at 07:59 -0400, xiubli@redhat.com wrote:
-> > > > From: Xiubo Li <xiubli@redhat.com>
-> > > > 
-> > > > This will send the caps/read/write/metadata metrics to any available
-> > > > MDS only once per second as default, which will be the same as the
-> > > > userland client, or every metric_send_interval seconds, which is a
-> > > > module parameter.
-> > > > 
-> > > > URL: https://tracker.ceph.com/issues/43215
-> > > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> > > > ---
-> > > >   fs/ceph/mds_client.c         |   3 +
-> > > >   fs/ceph/metric.c             | 134 +++++++++++++++++++++++++++++++++++++++++++
-> > > >   fs/ceph/metric.h             |  78 +++++++++++++++++++++++++
-> > > >   fs/ceph/super.c              |  49 ++++++++++++++++
-> > > >   fs/ceph/super.h              |   2 +
-> > > >   include/linux/ceph/ceph_fs.h |   1 +
-> > > >   6 files changed, 267 insertions(+)
-> > > > 
-> > > > 
-> > > I think 3/5 needs to moved ahead of this one or folded into it, as we'll
-> > > have a temporary regression otherwise.
-> > > 
-> > > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> > > > index c9784eb1..5f409dd 100644
-> > > > --- a/fs/ceph/super.c
-> > > > +++ b/fs/ceph/super.c
-> > > > @@ -27,6 +27,9 @@
-> > > >   #include <linux/ceph/auth.h>
-> > > >   #include <linux/ceph/debugfs.h>
-> > > > 
-> > > > +static DEFINE_MUTEX(ceph_fsc_lock);
-> > > > +static LIST_HEAD(ceph_fsc_list);
-> > > > +
-> > > >   /*
-> > > >    * Ceph superblock operations
-> > > >    *
-> > > > @@ -691,6 +694,10 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
-> > > >      if (!fsc->wb_pagevec_pool)
-> > > >              goto fail_cap_wq;
-> > > > 
-> > > > +    mutex_lock(&ceph_fsc_lock);
-> > > > +    list_add_tail(&fsc->list, &ceph_fsc_list);
-> > > > +    mutex_unlock(&ceph_fsc_lock);
-> > > > +
-> > > >      return fsc;
-> > > > 
-> > > >   fail_cap_wq:
-> > > > @@ -717,6 +724,10 @@ static void destroy_fs_client(struct ceph_fs_client *fsc)
-> > > >   {
-> > > >      dout("destroy_fs_client %p\n", fsc);
-> > > > 
-> > > > +    mutex_lock(&ceph_fsc_lock);
-> > > > +    list_del(&fsc->list);
-> > > > +    mutex_unlock(&ceph_fsc_lock);
-> > > > +
-> > > >      ceph_mdsc_destroy(fsc);
-> > > >      destroy_workqueue(fsc->inode_wq);
-> > > >      destroy_workqueue(fsc->cap_wq);
-> > > > @@ -1282,6 +1293,44 @@ static void __exit exit_ceph(void)
-> > > >      destroy_caches();
-> > > >   }
-> > > > 
-> > > > +static int param_set_metric_interval(const char *val, const struct kernel_param *kp)
-> > > > +{
-> > > > +    struct ceph_fs_client *fsc;
-> > > > +    unsigned int interval;
-> > > > +    int ret;
-> > > > +
-> > > > +    ret = kstrtouint(val, 0, &interval);
-> > > > +    if (ret < 0) {
-> > > > +            pr_err("Failed to parse metric interval '%s'\n", val);
-> > > > +            return ret;
-> > > > +    }
-> > > > +
-> > > > +    if (interval > 5) {
-> > > > +            pr_err("Invalid metric interval %u\n", interval);
-> > > > +            return -EINVAL;
-> > > > +    }
-> > > > +
-> > > Why do we want to reject an interval larger than 5s? Is that problematic
-> > > for some reason?
-> > 
-> > IMO, a larger interval doesn't make much sense, to limit the interval
-> > value in 5s to make sure that the ceph side could show the client real
-> > metrics in time. Is this okay ? Or should we use a larger limit ?
-> 
+Hi Linus,
 
-5s may seem like a lot now, but in 5-10 years we might be wishing we had
-the ability to change this to something else (e.g.: maybe we find that
-stats every 5s cause undue load on the MDS, and need to increase it).
+The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c7407:
 
-> I wonder if providing the option to tune the interval makes sense
-> at all then.  Since most clients will be sending their metrics every
-> second, the MDS may eventually start relying on that in some way.
-> Would a simple on/off switch, to be used if sending metrics causes
-> unforeseen trouble, work?
-> 
+  Linux 5.8-rc1 (2020-06-14 12:45:04 -0700)
 
-Yeah, I'm leery of grabbing values out of our nether regions like this,
-and it doesn't seem like making this that configurable has many
-benefits.
+are available in the Git repository at:
 
-Perhaps the preferred interval should be something advertised by the MDS
-in some way? New field in the mdsmap, perhaps?
--- 
-Jeff Layton <jlayton@kernel.org>
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.8-rc2
 
+for you to fetch changes up to 7ed286f3e061ee394782bd9fb4ed96bff0b5a021:
+
+  libceph: don't omit used_replica in target_copy() (2020-06-16 16:02:08 +0200)
+
+----------------------------------------------------------------
+An important follow-up for replica reads support that went into -rc1
+and two target_copy() fixups.
+
+----------------------------------------------------------------
+Ilya Dryomov (3):
+      libceph: move away from global osd_req_flags
+      libceph: don't omit recovery_deletes in target_copy()
+      libceph: don't omit used_replica in target_copy()
+
+ drivers/block/rbd.c          |  4 +++-
+ include/linux/ceph/libceph.h |  4 ++--
+ net/ceph/ceph_common.c       | 14 ++++++--------
+ net/ceph/osd_client.c        |  9 ++++-----
+ 4 files changed, 15 insertions(+), 16 deletions(-)
