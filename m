@@ -2,41 +2,44 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FD8D2037E1
-	for <lists+ceph-devel@lfdr.de>; Mon, 22 Jun 2020 15:25:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 456502037DE
+	for <lists+ceph-devel@lfdr.de>; Mon, 22 Jun 2020 15:25:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728623AbgFVNZX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 22 Jun 2020 09:25:23 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:26157 "EHLO
+        id S1728240AbgFVNZO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 22 Jun 2020 09:25:14 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:42694 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727963AbgFVNZX (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 22 Jun 2020 09:25:23 -0400
+        with ESMTP id S1726308AbgFVNZO (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 22 Jun 2020 09:25:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1592832321;
+        s=mimecast20190719; t=1592832312;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=C0ky4QX0aRnwI9L12+7f+tA2germAv8UKM8s1LKz/ts=;
-        b=Wc8WKlp6fRoWdC6NzdzY1bPKbOUJGWK44O/vBcYJWJIhile1xOwi0H/3RZw8CAesfLNlGw
-        E89DyqLnEEVmfzNaSpMeJwBii9P3TNZ6CL0EJYOkLrfl4tie4m+u8bJp4lB4pNytYkW6ou
-        K1k1Fdz0MchNuHZiI/sWEbGOIBUzXsw=
+         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
+        bh=0m8kZ4gRdQmZ7XYTCzz5brAZXZHRJSvphFqKqSIPNOY=;
+        b=Yg/NYz1EJ2wHQHeGcyA+qv82YB2q5JOQP5LxgFYqvZRMYmgX2KnvF6axi+DWp8ZLVzU4Vf
+        ZpMb66UHjge2Lhwj9EaN1piNSQndCDvrZ8b2xUpfFNypE99ngxd0QfXkLxXSAPdaCqBpNn
+        P4w2zPW37C99RHKRDRhapReLl/zYwHw=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-184-62ZpvJUpNHOScBEFlJK7XQ-1; Mon, 22 Jun 2020 09:25:05 -0400
-X-MC-Unique: 62ZpvJUpNHOScBEFlJK7XQ-1
+ us-mta-395-elceC_TbMee71jWFhI_MQQ-1; Mon, 22 Jun 2020 09:25:08 -0400
+X-MC-Unique: elceC_TbMee71jWFhI_MQQ-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9B4938014D4;
-        Mon, 22 Jun 2020 13:25:04 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0189881E22C;
+        Mon, 22 Jun 2020 13:25:07 +0000 (UTC)
 Received: from lxbceph0.gsslab.pek2.redhat.com (vm37-55.gsslab.pek2.redhat.com [10.72.37.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BCBED7C1E3;
-        Mon, 22 Jun 2020 13:25:02 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2336E7C1E3;
+        Mon, 22 Jun 2020 13:25:04 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     jlayton@kernel.org, idryomov@gmail.com
 Cc:     zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
         Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v3 0/4] ceph: periodically send perf metrics to ceph
-Date:   Mon, 22 Jun 2020 09:24:56 -0400
-Message-Id: <1592832300-29109-1-git-send-email-xiubli@redhat.com>
+Subject: [PATCH v3 1/4] ceph: add check_session_state helper and make it global
+Date:   Mon, 22 Jun 2020 09:24:57 -0400
+Message-Id: <1592832300-29109-2-git-send-email-xiubli@redhat.com>
+In-Reply-To: <1592832300-29109-1-git-send-email-xiubli@redhat.com>
+References: <1592832300-29109-1-git-send-email-xiubli@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
@@ -45,50 +48,98 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Xiubo Li <xiubli@redhat.com>
 
-This series is based the previous patches of the metrics in kceph[1]
-and mds daemons record and forward client side metrics to manager[2][3].
+This will be used by followed sending metrics patches.
 
-This will send the caps/read/write/metadata metrics to any available
-MDS only once per second as default, which will be the same as the
-userland client, or every metric_send_interval seconds, which is a
-module parameter, the valid values for metric_send_interval will be
-0~5 seconds, 0 means disabled.
+URL: https://tracker.ceph.com/issues/43215
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/mds_client.c | 43 ++++++++++++++++++++++++++-----------------
+ fs/ceph/mds_client.h |  4 ++++
+ 2 files changed, 30 insertions(+), 17 deletions(-)
 
-And will also send the metric flags to MDS, currently it supports the
-cap, read latency, write latency and metadata latency.
-
-Also have pushed this series to github [4].
-
-[1] https://patchwork.kernel.org/project/ceph-devel/list/?series=238907 [Merged]
-[2] https://github.com/ceph/ceph/pull/26004 [Merged]
-[3] https://github.com/ceph/ceph/pull/35608 [Merged]
-[4] https://github.com/lxbsz/ceph-client/commits/perf_metric2
-
-Changed in V3:
-- fold "check the METRIC_COLLECT feature before sending metrics" into previous one
-- use `enable_send_metrics` on/off switch instead
-
-Changed in V2:
-- split the patches into small ones as possible.
-- check the METRIC_COLLECT feature before sending metrics
-- switch to WARN_ON and bubble up errnos to the callers
-
-
-Xiubo Li (4):
-  ceph: add check_session_state helper and make it global
-  ceph: periodically send perf metrics to ceph
-  ceph: switch to WARN_ON and bubble up errnos to the callers
-  ceph: send client provided metric flags in client metadata
-
- fs/ceph/mds_client.c         | 152 ++++++++++++++++++++++++++++++++++---------
- fs/ceph/mds_client.h         |   8 ++-
- fs/ceph/metric.c             | 142 ++++++++++++++++++++++++++++++++++++++++
- fs/ceph/metric.h             |  91 ++++++++++++++++++++++++++
- fs/ceph/super.c              |  42 ++++++++++++
- fs/ceph/super.h              |   2 +
- include/linux/ceph/ceph_fs.h |   1 +
- 7 files changed, 407 insertions(+), 31 deletions(-)
-
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index a504971..608fb5c 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -4263,6 +4263,30 @@ static void maybe_recover_session(struct ceph_mds_client *mdsc)
+ 	ceph_force_reconnect(fsc->sb);
+ }
+ 
++bool check_session_state(struct ceph_mds_client *mdsc,
++			 struct ceph_mds_session *s)
++{
++	if (s->s_state == CEPH_MDS_SESSION_CLOSING) {
++		dout("resending session close request for mds%d\n",
++				s->s_mds);
++		request_close_session(mdsc, s);
++		return false;
++	}
++	if (s->s_ttl && time_after(jiffies, s->s_ttl)) {
++		if (s->s_state == CEPH_MDS_SESSION_OPEN) {
++			s->s_state = CEPH_MDS_SESSION_HUNG;
++			pr_info("mds%d hung\n", s->s_mds);
++		}
++	}
++	if (s->s_state == CEPH_MDS_SESSION_NEW ||
++	    s->s_state == CEPH_MDS_SESSION_RESTARTING ||
++	    s->s_state == CEPH_MDS_SESSION_REJECTED)
++		/* this mds is failed or recovering, just wait */
++		return false;
++
++	return true;
++}
++
+ /*
+  * delayed work -- periodically trim expired leases, renew caps with mds
+  */
+@@ -4294,23 +4318,8 @@ static void delayed_work(struct work_struct *work)
+ 		struct ceph_mds_session *s = __ceph_lookup_mds_session(mdsc, i);
+ 		if (!s)
+ 			continue;
+-		if (s->s_state == CEPH_MDS_SESSION_CLOSING) {
+-			dout("resending session close request for mds%d\n",
+-			     s->s_mds);
+-			request_close_session(mdsc, s);
+-			ceph_put_mds_session(s);
+-			continue;
+-		}
+-		if (s->s_ttl && time_after(jiffies, s->s_ttl)) {
+-			if (s->s_state == CEPH_MDS_SESSION_OPEN) {
+-				s->s_state = CEPH_MDS_SESSION_HUNG;
+-				pr_info("mds%d hung\n", s->s_mds);
+-			}
+-		}
+-		if (s->s_state == CEPH_MDS_SESSION_NEW ||
+-		    s->s_state == CEPH_MDS_SESSION_RESTARTING ||
+-		    s->s_state == CEPH_MDS_SESSION_REJECTED) {
+-			/* this mds is failed or recovering, just wait */
++
++		if (!check_session_state(mdsc, s)) {
+ 			ceph_put_mds_session(s);
+ 			continue;
+ 		}
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index 5e0c407..bcb3892 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -18,6 +18,7 @@
+ #include <linux/ceph/auth.h>
+ 
+ #include "metric.h"
++#include "super.h"
+ 
+ /* The first 8 bits are reserved for old ceph releases */
+ enum ceph_feature_type {
+@@ -476,6 +477,9 @@ struct ceph_mds_client {
+ 
+ extern const char *ceph_mds_op_name(int op);
+ 
++extern bool check_session_state(struct ceph_mds_client *mdsc,
++				struct ceph_mds_session *s);
++
+ extern struct ceph_mds_session *
+ __ceph_lookup_mds_session(struct ceph_mds_client *, int mds);
+ 
 -- 
 1.8.3.1
 
