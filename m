@@ -2,90 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A7C620B553
-	for <lists+ceph-devel@lfdr.de>; Fri, 26 Jun 2020 17:53:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13D0220C0A9
+	for <lists+ceph-devel@lfdr.de>; Sat, 27 Jun 2020 12:17:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbgFZPxY convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Fri, 26 Jun 2020 11:53:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41670 "EHLO mx2.suse.de"
+        id S1726534AbgF0KRD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 27 Jun 2020 06:17:03 -0400
+Received: from smtp.cnam.nat.tn ([41.224.9.130]:3355 "EHLO smtp.cnam.nat.tn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727062AbgFZPxX (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 26 Jun 2020 11:53:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 90D4DAEA7;
-        Fri, 26 Jun 2020 15:53:22 +0000 (UTC)
-From:   Abhishek Lekshmanan <abhishek@suse.com>
-To:     ceph-announce@ceph.io, ceph-users@ceph.io, dev@ceph.io,
-        ceph-devel@vger.kernel.org, ceph-maintainers@ceph.io
-Subject: v14.2.10 Nautilus released
-Date:   Fri, 26 Jun 2020 17:51:35 +0200
-Message-ID: <87a70pzuyg.fsf@suse.com>
+        id S1726356AbgF0KRD (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Sat, 27 Jun 2020 06:17:03 -0400
+Received: from User ([185.36.81.174])
+        by smtp.cnam.nat.tn  with SMTP id 05QJG5jg016408-05QJG5ji016408;
+        Fri, 26 Jun 2020 21:16:05 +0200
+Message-Id: <202006261916.05QJG5jg016408-05QJG5ji016408@smtp.cnam.nat.tn>
+Reply-To: <makatiemeka101@yahoo.com>
+From:   "Mr Peter Owen" <achref.ghorbel@cnam.nat.tn>
+Subject: <<<<Mr Peter Owen Writes To You>>>
+Date:   Fri, 26 Jun 2020 21:20:04 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain;
+        charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 6.00.2600.0000
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
+To:     unlisted-recipients:; (no To-header on input)
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-
-We're happy to announce the tenth release in the Nautilus series. In
-addition to fixing a security-related bug in RGW, this release brings a
-number of bugfixes across all major components of Ceph. We recommend
-that all Nautilus users upgrade to this release. For a detailed
-changelog please refer to the ceph release blog at:
-https://ceph.io/releases/v14-2-10-nautilus-released
-
-Notable Changes
----------------
-* CVE-2020-10753: rgw: sanitize newlines in s3 CORSConfiguration's ExposeHeader
-  (William Bowling, Adam Mohammed, Casey Bodley)
-
-* RGW: Bucket notifications now support Kafka endpoints. This requires librdkafka of
-  version 0.9.2 and up. Note that Ubuntu 16.04.6 LTS (Xenial Xerus) has an older
-  version of librdkafka, and would require an update to the library.
-
-* The pool parameter `target_size_ratio`, used by the pg autoscaler,
-  has changed meaning. It is now normalized across pools, rather than
-  specifying an absolute ratio. For details, see :ref:`pg-autoscaler`.
-  If you have set target size ratios on any pools, you may want to set
-  these pools to autoscale `warn` mode to avoid data movement during
-  the upgrade::
-
-    ceph osd pool set <pool-name> pg_autoscale_mode warn
-
-* The behaviour of the `-o` argument to the rados tool has been reverted to
-  its orignal behaviour of indicating an output file. This reverts it to a more
-  consistent behaviour when compared to other tools. Specifying object size is now
-  accomplished by using an upper case O `-O`.
-
-* The format of MDSs in `ceph fs dump` has changed.
-
-* Ceph will issue a health warning if a RADOS pool's `size` is set to 1
-  or in other words the pool is configured with no redundancy. This can
-  be fixed by setting the pool size to the minimum recommended value
-  with::
-
-    ceph osd pool set <pool-name> size <num-replicas>
-
-  The warning can be silenced with::
-
-    ceph config set global mon_warn_on_pool_no_redundancy false
-
-* RGW: bucket listing performance on sharded bucket indexes has been
-  notably improved by heuristically -- and significantly, in many
-  cases -- reducing the number of entries requested from each bucket
-  index shard.
-
-Getting Ceph
-------------
-* Git at git://github.com/ceph/ceph.git
-* Tarball at http://download.ceph.com/tarballs/ceph-14.2.10.tar.gz
-* For packages, see http://docs.ceph.com/docs/master/install/get-packages/
-* Release git sha1: b340acf629a010a74d90da5782a2c5fe0b54ac20
-
---
-Abhishek Lekshmanan
-SUSE Software Solutions Germany GmbH
-GF: Felix Imendörffer, HRB 36809 (AG Nürnberg)
+Good Day,
+Hope you are doing great Today.I have a proposed business deal that will benefit both parties. This is legitimate,legal and your REPUTATION will not be compromised.I am confident that both of us can work out this transaction perfectly well to the benefit of both parties. Reach to me for further details.
+Sincerely,
+Peter OWEN
