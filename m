@@ -2,42 +2,43 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A3E20C717
-	for <lists+ceph-devel@lfdr.de>; Sun, 28 Jun 2020 10:42:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB58120C716
+	for <lists+ceph-devel@lfdr.de>; Sun, 28 Jun 2020 10:42:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbgF1Imf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 28 Jun 2020 04:42:35 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:46229 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726156AbgF1Imf (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 28 Jun 2020 04:42:35 -0400
+        id S1726139AbgF1Ime (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 28 Jun 2020 04:42:34 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:43546 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726105AbgF1Ime (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Sun, 28 Jun 2020 04:42:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1593333754;
+        s=mimecast20190719; t=1593333752;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=0m8kZ4gRdQmZ7XYTCzz5brAZXZHRJSvphFqKqSIPNOY=;
-        b=cusBPgC0vBC4KKujnlc4j3mmtJ4ga+3H7Mce4LV4ILlmXX5vrSX2GGS2A+isl7tQs0NMKo
-        u/EcVp6faIJE4Si3ughBYw8RaAqxqnKTkocR6yniuAJoO5dtJWDD03nXgvQW2Y4CYiaMMk
-        xAxlt+KKQTotxvs2xEq0okuXpvW8Zbs=
+        bh=XJvCYta9kvuo2nFld2eAMUgvnv4oS9CcRBzrSGcWMuo=;
+        b=KoWyPthAP4scKC3dUC0+RBe2Hjb0e4mHFQJWiQsi/WBfNilY3LcCbVrDvs+qeC6MpNjYfl
+        wMajLBi/H4p57PJw4YRSIoYDk9tjZps/EmP/ZfIyyCTop3pZ/8n6J0BN+6i/shrKG8D9Ve
+        jFkZshadHghEetlslGKVmRiZnFq++VU=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-10-N0jXpK8SPF6H9POrhXXPxQ-1; Sun, 28 Jun 2020 04:42:24 -0400
-X-MC-Unique: N0jXpK8SPF6H9POrhXXPxQ-1
+ us-mta-277-Ihpq9HcUNKijl8g3ppI9mQ-1; Sun, 28 Jun 2020 04:42:27 -0400
+X-MC-Unique: Ihpq9HcUNKijl8g3ppI9mQ-1
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C432C1005512;
-        Sun, 28 Jun 2020 08:42:23 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6338480183C;
+        Sun, 28 Jun 2020 08:42:26 +0000 (UTC)
 Received: from lxbceph0.gsslab.pek2.redhat.com (vm37-55.gsslab.pek2.redhat.com [10.72.37.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E9D9B1944D;
-        Sun, 28 Jun 2020 08:42:21 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4AA141944D;
+        Sun, 28 Jun 2020 08:42:24 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     jlayton@kernel.org, idryomov@gmail.com
 Cc:     zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
         Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v4 1/5] ceph: add check_session_state helper and make it global
-Date:   Sun, 28 Jun 2020 04:42:10 -0400
-Message-Id: <1593333734-27480-2-git-send-email-xiubli@redhat.com>
+Subject: [PATCH v4 2/5] ceph: add global total_caps to count the mdsc's total caps number
+Date:   Sun, 28 Jun 2020 04:42:11 -0400
+Message-Id: <1593333734-27480-3-git-send-email-xiubli@redhat.com>
 In-Reply-To: <1593333734-27480-1-git-send-email-xiubli@redhat.com>
 References: <1593333734-27480-1-git-send-email-xiubli@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
@@ -48,97 +49,106 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Xiubo Li <xiubli@redhat.com>
 
-This will be used by followed sending metrics patches.
+This will help to reduce using the global mdsc->metux lock in many
+places.
 
 URL: https://tracker.ceph.com/issues/43215
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/ceph/mds_client.c | 43 ++++++++++++++++++++++++++-----------------
- fs/ceph/mds_client.h |  4 ++++
- 2 files changed, 30 insertions(+), 17 deletions(-)
+ fs/ceph/caps.c       |  2 ++
+ fs/ceph/debugfs.c    | 14 ++------------
+ fs/ceph/mds_client.c |  1 +
+ fs/ceph/metric.c     |  1 +
+ fs/ceph/metric.h     |  1 +
+ 5 files changed, 7 insertions(+), 12 deletions(-)
 
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 972c13a..5f48940 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -668,6 +668,7 @@ void ceph_add_cap(struct inode *inode,
+ 		spin_lock(&session->s_cap_lock);
+ 		list_add_tail(&cap->session_caps, &session->s_caps);
+ 		session->s_nr_caps++;
++		atomic64_inc(&mdsc->metric.total_caps);
+ 		spin_unlock(&session->s_cap_lock);
+ 	} else {
+ 		spin_lock(&session->s_cap_lock);
+@@ -1161,6 +1162,7 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
+ 	} else {
+ 		list_del_init(&cap->session_caps);
+ 		session->s_nr_caps--;
++		atomic64_dec(&mdsc->metric.total_caps);
+ 		cap->session = NULL;
+ 		removed = 1;
+ 	}
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index 070ed84..3030f55 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -145,7 +145,7 @@ static int metric_show(struct seq_file *s, void *p)
+ 	struct ceph_fs_client *fsc = s->private;
+ 	struct ceph_mds_client *mdsc = fsc->mdsc;
+ 	struct ceph_client_metric *m = &mdsc->metric;
+-	int i, nr_caps = 0;
++	int nr_caps = 0;
+ 	s64 total, sum, avg, min, max, sq;
+ 
+ 	seq_printf(s, "item          total       avg_lat(us)     min_lat(us)     max_lat(us)     stdev(us)\n");
+@@ -190,17 +190,7 @@ static int metric_show(struct seq_file *s, void *p)
+ 		   percpu_counter_sum(&m->d_lease_mis),
+ 		   percpu_counter_sum(&m->d_lease_hit));
+ 
+-	mutex_lock(&mdsc->mutex);
+-	for (i = 0; i < mdsc->max_sessions; i++) {
+-		struct ceph_mds_session *s;
+-
+-		s = __ceph_lookup_mds_session(mdsc, i);
+-		if (!s)
+-			continue;
+-		nr_caps += s->s_nr_caps;
+-		ceph_put_mds_session(s);
+-	}
+-	mutex_unlock(&mdsc->mutex);
++	nr_caps = atomic64_read(&m->total_caps);
+ 	seq_printf(s, "%-14s%-16d%-16lld%lld\n", "caps", nr_caps,
+ 		   percpu_counter_sum(&m->i_caps_mis),
+ 		   percpu_counter_sum(&m->i_caps_hit));
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index a504971..608fb5c 100644
+index 608fb5c..2eeab10 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -4263,6 +4263,30 @@ static void maybe_recover_session(struct ceph_mds_client *mdsc)
- 	ceph_force_reconnect(fsc->sb);
- }
+@@ -1485,6 +1485,7 @@ int ceph_iterate_session_caps(struct ceph_mds_session *session,
+ 			cap->session = NULL;
+ 			list_del_init(&cap->session_caps);
+ 			session->s_nr_caps--;
++			atomic64_dec(&session->s_mdsc->metric.total_caps);
+ 			if (cap->queue_release)
+ 				__ceph_queue_cap_release(session, cap);
+ 			else
+diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
+index 9217f35..269eacb 100644
+--- a/fs/ceph/metric.c
++++ b/fs/ceph/metric.c
+@@ -22,6 +22,7 @@ int ceph_metric_init(struct ceph_client_metric *m)
+ 	if (ret)
+ 		goto err_d_lease_mis;
  
-+bool check_session_state(struct ceph_mds_client *mdsc,
-+			 struct ceph_mds_session *s)
-+{
-+	if (s->s_state == CEPH_MDS_SESSION_CLOSING) {
-+		dout("resending session close request for mds%d\n",
-+				s->s_mds);
-+		request_close_session(mdsc, s);
-+		return false;
-+	}
-+	if (s->s_ttl && time_after(jiffies, s->s_ttl)) {
-+		if (s->s_state == CEPH_MDS_SESSION_OPEN) {
-+			s->s_state = CEPH_MDS_SESSION_HUNG;
-+			pr_info("mds%d hung\n", s->s_mds);
-+		}
-+	}
-+	if (s->s_state == CEPH_MDS_SESSION_NEW ||
-+	    s->s_state == CEPH_MDS_SESSION_RESTARTING ||
-+	    s->s_state == CEPH_MDS_SESSION_REJECTED)
-+		/* this mds is failed or recovering, just wait */
-+		return false;
-+
-+	return true;
-+}
-+
- /*
-  * delayed work -- periodically trim expired leases, renew caps with mds
-  */
-@@ -4294,23 +4318,8 @@ static void delayed_work(struct work_struct *work)
- 		struct ceph_mds_session *s = __ceph_lookup_mds_session(mdsc, i);
- 		if (!s)
- 			continue;
--		if (s->s_state == CEPH_MDS_SESSION_CLOSING) {
--			dout("resending session close request for mds%d\n",
--			     s->s_mds);
--			request_close_session(mdsc, s);
--			ceph_put_mds_session(s);
--			continue;
--		}
--		if (s->s_ttl && time_after(jiffies, s->s_ttl)) {
--			if (s->s_state == CEPH_MDS_SESSION_OPEN) {
--				s->s_state = CEPH_MDS_SESSION_HUNG;
--				pr_info("mds%d hung\n", s->s_mds);
--			}
--		}
--		if (s->s_state == CEPH_MDS_SESSION_NEW ||
--		    s->s_state == CEPH_MDS_SESSION_RESTARTING ||
--		    s->s_state == CEPH_MDS_SESSION_REJECTED) {
--			/* this mds is failed or recovering, just wait */
-+
-+		if (!check_session_state(mdsc, s)) {
- 			ceph_put_mds_session(s);
- 			continue;
- 		}
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 5e0c407..bcb3892 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -18,6 +18,7 @@
- #include <linux/ceph/auth.h>
++	atomic64_set(&m->total_caps, 0);
+ 	ret = percpu_counter_init(&m->i_caps_hit, 0, GFP_KERNEL);
+ 	if (ret)
+ 		goto err_i_caps_hit;
+diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
+index ccd8128..23a3373 100644
+--- a/fs/ceph/metric.h
++++ b/fs/ceph/metric.h
+@@ -12,6 +12,7 @@ struct ceph_client_metric {
+ 	struct percpu_counter d_lease_hit;
+ 	struct percpu_counter d_lease_mis;
  
- #include "metric.h"
-+#include "super.h"
- 
- /* The first 8 bits are reserved for old ceph releases */
- enum ceph_feature_type {
-@@ -476,6 +477,9 @@ struct ceph_mds_client {
- 
- extern const char *ceph_mds_op_name(int op);
- 
-+extern bool check_session_state(struct ceph_mds_client *mdsc,
-+				struct ceph_mds_session *s);
-+
- extern struct ceph_mds_session *
- __ceph_lookup_mds_session(struct ceph_mds_client *, int mds);
++	atomic64_t            total_caps;
+ 	struct percpu_counter i_caps_hit;
+ 	struct percpu_counter i_caps_mis;
  
 -- 
 1.8.3.1
