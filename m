@@ -2,55 +2,58 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1735D20C489
-	for <lists+ceph-devel@lfdr.de>; Sun, 28 Jun 2020 00:04:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C232E20C5B6
+	for <lists+ceph-devel@lfdr.de>; Sun, 28 Jun 2020 06:23:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbgF0WEL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 27 Jun 2020 18:04:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50898 "EHLO
+        id S1726084AbgF1EXr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 28 Jun 2020 00:23:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbgF0WEK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 27 Jun 2020 18:04:10 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFBD7C061794
-        for <ceph-devel@vger.kernel.org>; Sat, 27 Jun 2020 15:04:10 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id x3so695515pfo.9
-        for <ceph-devel@vger.kernel.org>; Sat, 27 Jun 2020 15:04:10 -0700 (PDT)
+        with ESMTP id S1725988AbgF1EXq (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 28 Jun 2020 00:23:46 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EFAAC061794
+        for <ceph-devel@vger.kernel.org>; Sat, 27 Jun 2020 21:23:46 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id v6so136569iob.4
+        for <ceph-devel@vger.kernel.org>; Sat, 27 Jun 2020 21:23:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=hDm0J70xfMLbVvceQHwxPddZCp69UMTk2d0jtKg2a8s=;
-        b=N6kPulua2YSlM8imcShAj91mdG3FVs3SsXSz87fb1+u3nd7u7PFa6MKJ279dIRDWxh
-         0Ldfj86Lh7w+Xrc1R5Ac12lp/bi6BKorqLlDMWYld1qOBhdJB4N7Na0XiYaHB8nKtBEn
-         57C/Tzw6MUWAOIXcOnRxxN4MeNm7iQhU/hvtXzHXK0vqQBasxFJE8WhTf5ke+LZ6XEZm
-         /oWHd42QW3NLQJh3kf1TRlauenW2jL1Poq5HUYmLYngCGGUW3fX0WLGx3ldU3AhEukyR
-         HJCMoV5irc6uSRF+aDmFQnYTlSn+N9B5n6b9ltoSvd3dHTYHCaXSwIr77k6vqrwMxy85
-         lwfQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=nj7z2p8V9TM3ZqsJpXR82bspyfrx0bzfcu7b/n0ERnk=;
+        b=dj7Pp2nosWhKmXhAQrZBcGarbllbk9MbkJTUjk8K0i8ATN0qmfcBc/oDA2FDpV1lDV
+         sPT1EOTZSHJ7OY/h0S0qVop6z1JxfDIUj+zKcHUyM/7B8a2kOxfO+F5MTN2Sh98a9NuW
+         3WbHWyvSRlkJ+SB6JWc5rz41fwj/rw4nAyK090xB7R9g7QhN2a+sTSJGOhb5gsrgZ7eV
+         UK0Qj/dNC/PyN3A10GuBPLZg8k3LILo9kCPW/CxtivgaTNis84BpGo3V7Y82Fe5aU5nP
+         Ji/QNoX/gR5IvC46TjA3CyMctdcPFrmYjWs92i7gu8uif1sexs+VSnlr08CR7wzYJ5Pk
+         OprA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=hDm0J70xfMLbVvceQHwxPddZCp69UMTk2d0jtKg2a8s=;
-        b=AWMZAibyQ/6wAQE2XbVDQfB9m5MM88cofY162WzxpUo0MOoR9f1YlzsHHJhLXFYr5A
-         SQ0W2DjbX8vZnkkUWZv7FuAthN+FEjUpJegKDzDpE9t9GytoMCQ2k3QT2lJHmtMfBASM
-         XTwJffyXN4Msio6DRET6cywP+zJ4n/wWYVmmdPSD8Kt88OcnUjXKmxZmjxLKpZXk63T7
-         RZawvxW0HceH/sTEGxXEJ2h/NCFw4xNG4R/e7F8xE4dwiRLI4fKdbpsk91Rg6/x49f2r
-         pPhWRu1soO7hjcizBoPgCGmMDbdye43KF0zzGRI3fwN0H7HfWjwCi06XC7Nr95yy1bMX
-         5L0A==
-X-Gm-Message-State: AOAM530vuIbwJoQozSVOxYnWEQRhkdqUJjrG7xgi4gIpL+DwLf49Lr38
-        gT3EcQRZLeAl85+40pOSoMdyXCM8jFR0LxfHXodOkMOmoOc=
-X-Google-Smtp-Source: ABdhPJwHv45zwmNuK/YSX2uBVAIqQ2zLOwtA+ngiZqoTP9Rs9Xn2gCCD3OWXiVcvkiJ+PU31Rp2ZvkRVy2hsrxlhX9g=
-X-Received: by 2002:a92:7749:: with SMTP id s70mr10069248ilc.259.1593295098567;
- Sat, 27 Jun 2020 14:58:18 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=nj7z2p8V9TM3ZqsJpXR82bspyfrx0bzfcu7b/n0ERnk=;
+        b=dKrkEikRA70thkkfsvHinPFXFUaoUY5RBgaJ62yQuEozZZTKt4UD1YrtoU1jfabQMj
+         tqrTg9awNiKh3jH81VsMmEpJ+eNAbTE4EGLJdLb6k47EAhj0wbW8ZtwzaEiN1LfywkDp
+         0CqZhOITt7FsDh6p4Kzz5SqbFZHe7dofSfraf+LST5tVZtAl/4ypHlj+p2RMesmzSm03
+         hkKcQnyRlZmw4uDnKzPawE3xSmNfpMZadkp6pJrVHx0jwZ2loUjeH27UzKE/O3/KA99Y
+         ckz/vD7nBCPiLVhVg1yYNO5JfL7Xv6kMHVv77pZ4SWSaScijFWw47NeR/UGL3UU1t9mz
+         2jLA==
+X-Gm-Message-State: AOAM530nK2ltzK+AlcXZOrPFfSPoKfFAzwQ8GTK5bJuELCx/K7gBbD9v
+        64BX3Wsoj7YDGJyVJU2UY/JY77UrRi4PGqAYPQw=
+X-Google-Smtp-Source: ABdhPJz2dqhofL1boo9+aKkRpWgL55ZicdWsNLuLX/YiyaMPDqMm+m7RbWHJRcp0pROzDp/i0+A25MTLicWEVK7Ogh0=
+X-Received: by 2002:a02:c043:: with SMTP id u3mr11618299jam.39.1593318225890;
+ Sat, 27 Jun 2020 21:23:45 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a4f:4e46:0:0:0:0:0 with HTTP; Sat, 27 Jun 2020 14:58:17
- -0700 (PDT)
-From:   lookman joe <mrlookmanjoe@gmail.com>
-Date:   Sat, 27 Jun 2020 22:58:17 +0100
-Message-ID: <CAG9X5Hfvk-fmbqs9+RtHRqyUu35f9-A5+EbwjPrw9eVNH09ftg@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
+References: <CALZt5jy7G3e7+bibmNXeqxsRuoSwwE-U7G=cu5KvwAbsEiAmKQ@mail.gmail.com>
+In-Reply-To: <CALZt5jy7G3e7+bibmNXeqxsRuoSwwE-U7G=cu5KvwAbsEiAmKQ@mail.gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Sun, 28 Jun 2020 06:23:53 +0200
+Message-ID: <CAOi1vP8Ppr300Ag7FvRRg6mY1+4+dvXUkLsD4CYogv9aEsZbkQ@mail.gmail.com>
+Subject: Re: why cephfs kernel module does not support fallocate with default mode?
+To:     Ning Yao <zay11022@gmail.com>
+Cc:     dev <dev@ceph.io>, "Yan, Zheng" <zyan@redhat.com>,
+        "Yan, Zheng" <ukernel@gmail.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
@@ -58,32 +61,33 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-MONEY-GRAM TRANSFERRED PAYMENT INFO:
+On Sat, Jun 27, 2020 at 6:02 PM Ning Yao <zay11022@gmail.com> wrote:
+>
+> Hi, all
+>
+> I find the in cephfs kernel module fs/ceph/file.c, the function ceph_fall=
+ocate return -EOPNOTSUPP=EF=BC=8Cwhen mode !=3D (FALLOC_FL_KEEP_SIZE | FALL=
+OC_FL_PUNCH_HOLE)=E3=80=82
+>
+> Recently=EF=BC=8Cwe try to use cephfs but need supporting fallocate sysca=
+ll to generate the file writing not failed after reserved space. But we fin=
+d the cephfs kernel module does not support this right now. Can anyone expl=
+ain why we don't implement this now?
 
-Below is the sender=E2=80=99s information
+It used to be supported (as in it wasn't rejected with EOPNOTSUPP),
+but never actually worked.  There is no easy way to preallocate/reserve
+space in the cluster without explicitly zeroing it.  If the space isn't
+actually reserved, subsequent writes could fail with ENOSPC which would
+violate POSIX and break applications, so we chose to disable it.
 
+>
+> We also find out ceph-fuse can support the falllocate syscall but endwith=
+ a pool writing performance vs cephfs kernel mount. There is a large perfor=
+mance gap under fio.cfg below:
 
+ceph-fuse is broken in the same way and it should be disabled there
+as well.
 
-1. MG. REFERENCE NO#: 36360857
+Thanks,
 
-2. SENDER'S NAME: Johnson Williams
-
-3. AMOUNT TO PICKUP: US$10,000
-
-
-
-Go to any Money Gram office near you and pick up the payment Track the
-
-Reference Number by visiting and click the link below
-
-(https://secure.moneygram.com/embed/track) and enter the Reference
-
-Number: 36360857 and the Last Name: Williams, you will find the payment
-
-available for pickup instantly.
-
-Yours Sincerely,
-
-Mrs. Helen Marvis
-United Nations Liaison Office
-Directorate for International Payments
+                Ilya
