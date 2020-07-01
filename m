@@ -2,391 +2,163 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2DC0210FD7
-	for <lists+ceph-devel@lfdr.de>; Wed,  1 Jul 2020 17:55:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7647721125E
+	for <lists+ceph-devel@lfdr.de>; Wed,  1 Jul 2020 20:08:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732255AbgGAPyx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 1 Jul 2020 11:54:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36908 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732247AbgGAPyu (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 1 Jul 2020 11:54:50 -0400
-Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BFA22083E;
-        Wed,  1 Jul 2020 15:54:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593618889;
-        bh=7m6c4SrS2KinsfNszEwMXhKwT9h0CeYe2V5GdlXEOMw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=To/eiMAvM933/pGM7MS7o+hSd+JUI8n+RPpYx0fyDgxzZznmVtmFCPdZloPcB9Ag1
-         T1gsw5pJHulcZrAJnXBXrz2KP/5V85sxHM/29qX37C/OfFA9bEkwC+OiXWdhvrDk6g
-         65cGW0N+sfUr9rc+v1L7MPT3DbvSJ5lJIXnD04Ao=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com
-Subject: [PATCH 4/4] libceph/ceph: move ceph_osdc_new_request into ceph.ko
-Date:   Wed,  1 Jul 2020 11:54:46 -0400
-Message-Id: <20200701155446.41141-5-jlayton@kernel.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200701155446.41141-1-jlayton@kernel.org>
-References: <20200701155446.41141-1-jlayton@kernel.org>
+        id S1732674AbgGASIk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 1 Jul 2020 14:08:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56748 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729871AbgGASIj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Jul 2020 14:08:39 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 966ACC08C5C1
+        for <ceph-devel@vger.kernel.org>; Wed,  1 Jul 2020 11:08:39 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id i18so21881319ilk.10
+        for <ceph-devel@vger.kernel.org>; Wed, 01 Jul 2020 11:08:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=20e7KxVW/I7c5k2nhzP9hhFgzdDWtbrKrihjhvDK1EU=;
+        b=DlQHlXY7OQbbQMpY6cCjGPI3Ih1hQQrMGdDLaCeKfoHZFqHkE9Mz3r9YiRRBQzCohR
+         R4nWtltkdFzqQy3h/M0k+05BLvdBUzDD49gM3beRAVC6Gryuv/VN/s4e3INh5frs4z0M
+         Ph60tMb2oiZKwMEMC9YbmN/ODiS8nmybDy83X/zKME8pmYTX8EQOxDizEVyQci2JUqhR
+         kfUSeKRmdzf9tmPHAthicZidZ0FLqKiGWIHspNktP6HI+fzqCBdrSVlFwYhLWI5yCegE
+         542//L7tW48lok2QVtMaf6Y1FSBGUmAYNQV7frHlBh0u/5OTrgh3OpqH83388rRbRtTj
+         UzYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=20e7KxVW/I7c5k2nhzP9hhFgzdDWtbrKrihjhvDK1EU=;
+        b=FKkd/ZQncsvhDrt7G4IhI+XPkXm9NZ56rvzUpBxGVOojwzbBbtb90IjWdib/1srCAU
+         cIY5ymBWh4LuuYPYKCKs6E6j8cgI8AxKmnPbvqrBEYUC36bMdSdaI4pyguKVqW4HH8nL
+         KDB6OFPc4/lGaWUN8fgcwTwDxypEUyhbmz2L8MeOLc7ePvT6/hAoO0xjTYy9XCJsYOba
+         jtU5ho5YsaQZshOE5DyL2uF8ys49LHi2F1MrETLsSSzHvXaOZkvKMGj9A23laj6723FT
+         imSusNNeGUmIqv0cost52TD4suTYjSDPGCWnPyBjWjeU00NlkDTqdiDBxcWFctwQoh1D
+         S6Ug==
+X-Gm-Message-State: AOAM532LSIeL/RqSENERMIQXdTK9w0K9woHGR6Cusnj8uBdG3uJOOQRZ
+        kMubtYx1Zyn0gt3228TiFkirWOPQzGeH63h8ATEQLZPkzFs=
+X-Google-Smtp-Source: ABdhPJz1+O8SmszXEkA9SockUTvuuFJClTVptrvymjYxKxUQxdC3buTiz+6F7n9NOOfSdqtU/xI9uHOe3X82bAu5c0c=
+X-Received: by 2002:a92:794f:: with SMTP id u76mr8284534ilc.215.1593626918824;
+ Wed, 01 Jul 2020 11:08:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200701155446.41141-1-jlayton@kernel.org> <20200701155446.41141-3-jlayton@kernel.org>
+In-Reply-To: <20200701155446.41141-3-jlayton@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Wed, 1 Jul 2020 20:08:44 +0200
+Message-ID: <CAOi1vP-o16swX+oHd0Xj30jdTqYUUrm5Fk4O7rA2LwNBKne5QQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] libceph: refactor osdc request initialization
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-ceph_osdc_new_request is cephfs specific. Move it and calc_layout into
-ceph.ko. Also, calc_layout can be void return.
+On Wed, Jul 1, 2020 at 5:54 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> Turn the request_init helper into a more full-featured initialization
+> routine that we can use to initialize an already-allocated request.
+> Make it a public and exported function so we can use it from ceph.ko.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  include/linux/ceph/osd_client.h |  4 ++++
+>  net/ceph/osd_client.c           | 28 +++++++++++++++-------------
+>  2 files changed, 19 insertions(+), 13 deletions(-)
+>
+> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+> index 8d63dc22cb36..40a08c4e5d8d 100644
+> --- a/include/linux/ceph/osd_client.h
+> +++ b/include/linux/ceph/osd_client.h
+> @@ -495,6 +495,10 @@ extern struct ceph_osd_request *ceph_osdc_new_request(struct ceph_osd_client *,
+>
+>  extern void ceph_osdc_get_request(struct ceph_osd_request *req);
+>  extern void ceph_osdc_put_request(struct ceph_osd_request *req);
+> +void ceph_osdc_init_request(struct ceph_osd_request *req,
+> +                           struct ceph_osd_client *osdc,
+> +                           struct ceph_snap_context *snapc,
+> +                           unsigned int num_ops);
+>
+>  extern int ceph_osdc_start_request(struct ceph_osd_client *osdc,
+>                                    struct ceph_osd_request *req,
+> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> index 3cff29d38b9f..4ddf23120b1a 100644
+> --- a/net/ceph/osd_client.c
+> +++ b/net/ceph/osd_client.c
+> @@ -523,7 +523,10 @@ void ceph_osdc_put_request(struct ceph_osd_request *req)
+>  }
+>  EXPORT_SYMBOL(ceph_osdc_put_request);
+>
+> -static void request_init(struct ceph_osd_request *req)
+> +void ceph_osdc_init_request(struct ceph_osd_request *req,
+> +                           struct ceph_osd_client *osdc,
+> +                           struct ceph_snap_context *snapc,
+> +                           unsigned int num_ops)
+>  {
+>         /* req only, each op is zeroed in osd_req_op_init() */
+>         memset(req, 0, sizeof(*req));
+> @@ -535,7 +538,13 @@ static void request_init(struct ceph_osd_request *req)
+>         INIT_LIST_HEAD(&req->r_private_item);
+>
+>         target_init(&req->r_t);
+> +
+> +       req->r_osdc = osdc;
+> +       req->r_num_ops = num_ops;
+> +       req->r_snapid = CEPH_NOSNAP;
+> +       req->r_snapc = ceph_get_snap_context(snapc);
+>  }
+> +EXPORT_SYMBOL(ceph_osdc_init_request);
+>
+>  /*
+>   * This is ugly, but it allows us to reuse linger registration and ping
+> @@ -563,12 +572,9 @@ static void request_reinit(struct ceph_osd_request *req)
+>         WARN_ON(kref_read(&reply_msg->kref) != 1);
+>         target_destroy(&req->r_t);
+>
+> -       request_init(req);
+> -       req->r_osdc = osdc;
+> +       ceph_osdc_init_request(req, osdc, snapc, num_ops);
+>         req->r_mempool = mempool;
+> -       req->r_num_ops = num_ops;
+>         req->r_snapid = snapid;
+> -       req->r_snapc = snapc;
+>         req->r_linger = linger;
+>         req->r_request = request_msg;
+>         req->r_reply = reply_msg;
+> @@ -591,15 +597,11 @@ struct ceph_osd_request *ceph_osdc_alloc_request(struct ceph_osd_client *osdc,
+>                 BUG_ON(num_ops > CEPH_OSD_MAX_OPS);
+>                 req = kmalloc(struct_size(req, r_ops, num_ops), gfp_flags);
+>         }
+> -       if (unlikely(!req))
+> -               return NULL;
+>
+> -       request_init(req);
+> -       req->r_osdc = osdc;
+> -       req->r_mempool = use_mempool;
+> -       req->r_num_ops = num_ops;
+> -       req->r_snapid = CEPH_NOSNAP;
+> -       req->r_snapc = ceph_get_snap_context(snapc);
+> +       if (likely(req)) {
+> +               req->r_mempool = use_mempool;
+> +               ceph_osdc_init_request(req, osdc, snapc, num_ops);
+> +       }
+>
+>         dout("%s req %p\n", __func__, req);
+>         return req;
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/Makefile                |   2 +-
- fs/ceph/addr.c                  |   1 +
- fs/ceph/file.c                  |   1 +
- fs/ceph/osdc.c                  | 113 +++++++++++++++++++++++++++++++
- fs/ceph/osdc.h                  |  16 +++++
- include/linux/ceph/osd_client.h |  10 ---
- net/ceph/osd_client.c           | 115 --------------------------------
- 7 files changed, 132 insertions(+), 126 deletions(-)
- create mode 100644 fs/ceph/osdc.c
- create mode 100644 fs/ceph/osdc.h
+What is going to use ceph_osdc_init_request()?
 
-diff --git a/fs/ceph/Makefile b/fs/ceph/Makefile
-index 50c635dc7f71..f2ec52fa8d37 100644
---- a/fs/ceph/Makefile
-+++ b/fs/ceph/Makefile
-@@ -8,7 +8,7 @@ obj-$(CONFIG_CEPH_FS) += ceph.o
- ceph-y := super.o inode.o dir.o file.o locks.o addr.o ioctl.o \
- 	export.o caps.o snap.o xattr.o quota.o io.o \
- 	mds_client.o mdsmap.o strings.o ceph_frag.o \
--	debugfs.o util.o metric.o
-+	debugfs.o util.o metric.o osdc.o
- 
- ceph-$(CONFIG_CEPH_FSCACHE) += cache.o
- ceph-$(CONFIG_CEPH_FS_POSIX_ACL) += acl.o
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 01ad09733ac7..1a3cc1875a31 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -19,6 +19,7 @@
- #include "metric.h"
- #include <linux/ceph/osd_client.h>
- #include <linux/ceph/striper.h>
-+#include "osdc.h"
- 
- /*
-  * Ceph address space ops.
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 160644ddaeed..b697a1f3c56e 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -18,6 +18,7 @@
- #include "cache.h"
- #include "io.h"
- #include "metric.h"
-+#include "osdc.h"
- 
- static __le32 ceph_flags_sys2wire(u32 flags)
- {
-diff --git a/fs/ceph/osdc.c b/fs/ceph/osdc.c
-new file mode 100644
-index 000000000000..303e39fce3d4
---- /dev/null
-+++ b/fs/ceph/osdc.c
-@@ -0,0 +1,113 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/ceph/ceph_debug.h>
-+#include <linux/ceph/libceph.h>
-+#include <linux/ceph/osd_client.h>
-+#include <linux/ceph/striper.h>
-+#include "osdc.h"
-+
-+/*
-+ * calculate the mapping of a file extent onto an object, and fill out the
-+ * request accordingly.  shorten extent as necessary if it crosses an
-+ * object boundary.
-+ *
-+ * fill osd op in request message.
-+ */
-+static void calc_layout(struct ceph_file_layout *layout, u64 off, u64 *plen,
-+			u64 *objnum, u64 *objoff, u64 *objlen)
-+{
-+	u64 orig_len = *plen;
-+	u32 xlen;
-+
-+	/* object extent? */
-+	ceph_calc_file_object_mapping(layout, off, orig_len, objnum,
-+					  objoff, &xlen);
-+	*objlen = xlen;
-+	if (*objlen < orig_len) {
-+		*plen = *objlen;
-+		dout(" skipping last %llu, final file extent %llu~%llu\n",
-+		     orig_len - *plen, off, *plen);
-+	}
-+
-+	dout("calc_layout objnum=%llx %llu~%llu\n", *objnum, *objoff, *objlen);
-+}
-+
-+/*
-+ * build new request AND message, calculate layout, and adjust file
-+ * extent as needed.
-+ *
-+ * if the file was recently truncated, we include information about its
-+ * old and new size so that the object can be updated appropriately.  (we
-+ * avoid synchronously deleting truncated objects because it's slow.)
-+ */
-+struct ceph_osd_request *ceph_osdc_new_request(struct ceph_osd_client *osdc,
-+					       struct ceph_file_layout *layout,
-+					       struct ceph_vino vino,
-+					       u64 off, u64 *plen,
-+					       unsigned int which, int num_ops,
-+					       int opcode, int flags,
-+					       struct ceph_snap_context *snapc,
-+					       u32 truncate_seq,
-+					       u64 truncate_size,
-+					       bool use_mempool)
-+{
-+	struct ceph_osd_request *req;
-+	u64 objnum = 0;
-+	u64 objoff = 0;
-+	u64 objlen = 0;
-+	int r;
-+
-+	BUG_ON(opcode != CEPH_OSD_OP_READ && opcode != CEPH_OSD_OP_WRITE &&
-+	       opcode != CEPH_OSD_OP_ZERO && opcode != CEPH_OSD_OP_TRUNCATE &&
-+	       opcode != CEPH_OSD_OP_CREATE && opcode != CEPH_OSD_OP_DELETE);
-+
-+	req = ceph_osdc_alloc_request(osdc, snapc, num_ops, use_mempool,
-+					GFP_NOFS);
-+	if (!req)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/* calculate max write size */
-+	calc_layout(layout, off, plen, &objnum, &objoff, &objlen);
-+
-+	if (opcode == CEPH_OSD_OP_CREATE || opcode == CEPH_OSD_OP_DELETE) {
-+		osd_req_op_init(req, which, opcode, 0);
-+	} else {
-+		u32 object_size = layout->object_size;
-+		u32 object_base = off - objoff;
-+		if (!(truncate_seq == 1 && truncate_size == -1ULL)) {
-+			if (truncate_size <= object_base) {
-+				truncate_size = 0;
-+			} else {
-+				truncate_size -= object_base;
-+				if (truncate_size > object_size)
-+					truncate_size = object_size;
-+			}
-+		}
-+		osd_req_op_extent_init(req, which, opcode, objoff, objlen,
-+				       truncate_size, truncate_seq);
-+	}
-+
-+	req->r_base_oloc.pool = layout->pool_id;
-+	req->r_base_oloc.pool_ns = ceph_try_get_string(layout->pool_ns);
-+	req->r_flags = flags | osdc->client->options->read_from_replica;
-+	ceph_oid_printf(&req->r_base_oid, "%llx.%08llx", vino.ino, objnum);
-+
-+	req->r_snapid = vino.snap;
-+	if (flags & CEPH_OSD_FLAG_WRITE)
-+		req->r_data_offset = off;
-+
-+	if (num_ops > 1)
-+		/*
-+		 * This is a special case for ceph_writepages_start(), but it
-+		 * also covers ceph_uninline_data().  If more multi-op request
-+		 * use cases emerge, we will need a separate helper.
-+		 */
-+		r = ceph_osdc_alloc_num_messages(req, GFP_NOFS, num_ops, 0);
-+	else
-+		r = ceph_osdc_alloc_messages(req, GFP_NOFS);
-+	if (r) {
-+		ceph_osdc_put_request(req);
-+		return ERR_PTR(r);
-+	}
-+
-+	return req;
-+}
-diff --git a/fs/ceph/osdc.h b/fs/ceph/osdc.h
-new file mode 100644
-index 000000000000..b03e5f9ef733
---- /dev/null
-+++ b/fs/ceph/osdc.h
-@@ -0,0 +1,16 @@
-+#ifndef _FS_CEPH_OSDC_H
-+#define _FS_CEPH_OSDC_H
-+
-+#include <linux/ceph/osd_client.h>
-+
-+struct ceph_osd_request *ceph_osdc_new_request(struct ceph_osd_client *osdc,
-+					       struct ceph_file_layout *layout,
-+					       struct ceph_vino vino,
-+					       u64 off, u64 *plen,
-+					       unsigned int which, int num_ops,
-+					       int opcode, int flags,
-+					       struct ceph_snap_context *snapc,
-+					       u32 truncate_seq,
-+					       u64 truncate_size,
-+					       bool use_mempool);
-+#endif /* _FS_CEPH_OSDC_H */
-diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-index 71b7610c3a3c..f59eb192c472 100644
---- a/include/linux/ceph/osd_client.h
-+++ b/include/linux/ceph/osd_client.h
-@@ -486,16 +486,6 @@ int ceph_osdc_alloc_num_messages(struct ceph_osd_request *req, gfp_t gfp,
- 				 int num_reply_data_items);
- int ceph_osdc_alloc_messages(struct ceph_osd_request *req, gfp_t gfp);
- 
--extern struct ceph_osd_request *ceph_osdc_new_request(struct ceph_osd_client *,
--				      struct ceph_file_layout *layout,
--				      struct ceph_vino vino,
--				      u64 offset, u64 *len,
--				      unsigned int which, int num_ops,
--				      int opcode, int flags,
--				      struct ceph_snap_context *snapc,
--				      u32 truncate_seq, u64 truncate_size,
--				      bool use_mempool);
--
- extern void ceph_osdc_get_request(struct ceph_osd_request *req);
- extern void ceph_osdc_put_request(struct ceph_osd_request *req);
- void ceph_osdc_init_request(struct ceph_osd_request *req,
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index 7be78fa6e2c3..5e54971bb7b2 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -93,33 +93,6 @@ static inline void verify_osd_locked(struct ceph_osd *osd) { }
- static inline void verify_lreq_locked(struct ceph_osd_linger_request *lreq) { }
- #endif
- 
--/*
-- * calculate the mapping of a file extent onto an object, and fill out the
-- * request accordingly.  shorten extent as necessary if it crosses an
-- * object boundary.
-- *
-- * fill osd op in request message.
-- */
--static int calc_layout(struct ceph_file_layout *layout, u64 off, u64 *plen,
--			u64 *objnum, u64 *objoff, u64 *objlen)
--{
--	u64 orig_len = *plen;
--	u32 xlen;
--
--	/* object extent? */
--	ceph_calc_file_object_mapping(layout, off, orig_len, objnum,
--					  objoff, &xlen);
--	*objlen = xlen;
--	if (*objlen < orig_len) {
--		*plen = *objlen;
--		dout(" skipping last %llu, final file extent %llu~%llu\n",
--		     orig_len - *plen, off, *plen);
--	}
--
--	dout("calc_layout objnum=%llx %llu~%llu\n", *objnum, *objoff, *objlen);
--	return 0;
--}
--
- static void ceph_osd_data_init(struct ceph_osd_data *osd_data)
- {
- 	memset(osd_data, 0, sizeof (*osd_data));
-@@ -1056,94 +1029,6 @@ static u32 osd_req_encode_op(struct ceph_osd_op *dst,
- 	return src->indata_len;
- }
- 
--/*
-- * build new request AND message, calculate layout, and adjust file
-- * extent as needed.
-- *
-- * if the file was recently truncated, we include information about its
-- * old and new size so that the object can be updated appropriately.  (we
-- * avoid synchronously deleting truncated objects because it's slow.)
-- */
--struct ceph_osd_request *ceph_osdc_new_request(struct ceph_osd_client *osdc,
--					       struct ceph_file_layout *layout,
--					       struct ceph_vino vino,
--					       u64 off, u64 *plen,
--					       unsigned int which, int num_ops,
--					       int opcode, int flags,
--					       struct ceph_snap_context *snapc,
--					       u32 truncate_seq,
--					       u64 truncate_size,
--					       bool use_mempool)
--{
--	struct ceph_osd_request *req;
--	u64 objnum = 0;
--	u64 objoff = 0;
--	u64 objlen = 0;
--	int r;
--
--	BUG_ON(opcode != CEPH_OSD_OP_READ && opcode != CEPH_OSD_OP_WRITE &&
--	       opcode != CEPH_OSD_OP_ZERO && opcode != CEPH_OSD_OP_TRUNCATE &&
--	       opcode != CEPH_OSD_OP_CREATE && opcode != CEPH_OSD_OP_DELETE);
--
--	req = ceph_osdc_alloc_request(osdc, snapc, num_ops, use_mempool,
--					GFP_NOFS);
--	if (!req) {
--		r = -ENOMEM;
--		goto fail;
--	}
--
--	/* calculate max write size */
--	r = calc_layout(layout, off, plen, &objnum, &objoff, &objlen);
--	if (r)
--		goto fail;
--
--	if (opcode == CEPH_OSD_OP_CREATE || opcode == CEPH_OSD_OP_DELETE) {
--		osd_req_op_init(req, which, opcode, 0);
--	} else {
--		u32 object_size = layout->object_size;
--		u32 object_base = off - objoff;
--		if (!(truncate_seq == 1 && truncate_size == -1ULL)) {
--			if (truncate_size <= object_base) {
--				truncate_size = 0;
--			} else {
--				truncate_size -= object_base;
--				if (truncate_size > object_size)
--					truncate_size = object_size;
--			}
--		}
--		osd_req_op_extent_init(req, which, opcode, objoff, objlen,
--				       truncate_size, truncate_seq);
--	}
--
--	req->r_base_oloc.pool = layout->pool_id;
--	req->r_base_oloc.pool_ns = ceph_try_get_string(layout->pool_ns);
--	ceph_oid_printf(&req->r_base_oid, "%llx.%08llx", vino.ino, objnum);
--	req->r_flags = flags | osdc->client->options->read_from_replica;
--
--	req->r_snapid = vino.snap;
--	if (flags & CEPH_OSD_FLAG_WRITE)
--		req->r_data_offset = off;
--
--	if (num_ops > 1)
--		/*
--		 * This is a special case for ceph_writepages_start(), but it
--		 * also covers ceph_uninline_data().  If more multi-op request
--		 * use cases emerge, we will need a separate helper.
--		 */
--		r = ceph_osdc_alloc_num_messages(req, GFP_NOFS, num_ops, 0);
--	else
--		r = ceph_osdc_alloc_messages(req, GFP_NOFS);
--	if (r)
--		goto fail;
--
--	return req;
--
--fail:
--	ceph_osdc_put_request(req);
--	return ERR_PTR(r);
--}
--EXPORT_SYMBOL(ceph_osdc_new_request);
--
- /*
-  * We keep osd requests in an rbtree, sorted by ->r_tid.
-  */
--- 
-2.26.2
+Given that OSD request allocation is non-trivial, exporting a
+routine for initializing already allocated requests doesn't seem
+like a good idea.  How do you ensure that the OSD request to be
+initialized has enough room for passed num_ops?  What about calling
+this routine on a request that has already been initialized?
+None of these issues exist today...
 
+Thanks,
+
+                Ilya
