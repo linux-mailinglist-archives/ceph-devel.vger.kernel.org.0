@@ -2,33 +2,33 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A6AF210FD4
-	for <lists+ceph-devel@lfdr.de>; Wed,  1 Jul 2020 17:54:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BFBA210FD5
+	for <lists+ceph-devel@lfdr.de>; Wed,  1 Jul 2020 17:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732257AbgGAPyv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        id S1732258AbgGAPyv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
         Wed, 1 Jul 2020 11:54:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36890 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:36902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732242AbgGAPyt (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        id S1732244AbgGAPyt (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
         Wed, 1 Jul 2020 11:54:49 -0400
 Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7015520809;
+        by mail.kernel.org (Postfix) with ESMTPSA id E7C352080D;
         Wed,  1 Jul 2020 15:54:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593618888;
-        bh=6SUZB+ZpSqDaogUqwn6a+ZSM0NiIayXEdhiYSP9EssI=;
+        s=default; t=1593618889;
+        bh=/3+GVsjn7vhyVn9Cm/royUfnOHGEjNmn+/w0sYtEAJs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fkvWPvnswLnRIQZrLrdvS/bcXli5yDOsuJE3ZSSBfggDiTor2PgEvriQcTvGgdw4r
-         lZ4AD79PvapnJ6fJPXnMV9ONui2WQmi3PENhx9sz3VoS8DRrSTPen1x5g2J5dtjuBT
-         +gJZbkqEu3a1FZf0MsTbzHr/WwgYQjV5sgVK5ku0=
+        b=htjeT401Xxz//zyRisnGSVUgbf4OqT5cxUg4oEPg5aGbjagH/iXJEI8lrr8tdU023
+         pzOIFo8ehO3ccKZvD0bGq9niyxo7ghlQVLlfCEt9yU6xe+7n1p8zFOMG88R8KpcrIk
+         qUB4we50X2UsqPG0mqcOUHfWXkIqRVAuEPr6HuNs=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     idryomov@gmail.com
-Subject: [PATCH 2/4] libceph: refactor osdc request initialization
-Date:   Wed,  1 Jul 2020 11:54:44 -0400
-Message-Id: <20200701155446.41141-3-jlayton@kernel.org>
+Subject: [PATCH 3/4] libceph: rename __ceph_osdc_alloc_messages to ceph_osdc_alloc_num_messages
+Date:   Wed,  1 Jul 2020 11:54:45 -0400
+Message-Id: <20200701155446.41141-4-jlayton@kernel.org>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200701155446.41141-1-jlayton@kernel.org>
 References: <20200701155446.41141-1-jlayton@kernel.org>
@@ -39,95 +39,73 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Turn the request_init helper into a more full-featured initialization
-routine that we can use to initialize an already-allocated request.
-Make it a public and exported function so we can use it from ceph.ko.
+...and make it public and export it.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- include/linux/ceph/osd_client.h |  4 ++++
- net/ceph/osd_client.c           | 28 +++++++++++++++-------------
- 2 files changed, 19 insertions(+), 13 deletions(-)
+ include/linux/ceph/osd_client.h |  3 +++
+ net/ceph/osd_client.c           | 13 +++++++------
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
 diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-index 8d63dc22cb36..40a08c4e5d8d 100644
+index 40a08c4e5d8d..71b7610c3a3c 100644
 --- a/include/linux/ceph/osd_client.h
 +++ b/include/linux/ceph/osd_client.h
-@@ -495,6 +495,10 @@ extern struct ceph_osd_request *ceph_osdc_new_request(struct ceph_osd_client *,
+@@ -481,6 +481,9 @@ extern struct ceph_osd_request *ceph_osdc_alloc_request(struct ceph_osd_client *
+ 					       unsigned int num_ops,
+ 					       bool use_mempool,
+ 					       gfp_t gfp_flags);
++int ceph_osdc_alloc_num_messages(struct ceph_osd_request *req, gfp_t gfp,
++				 int num_request_data_items,
++				 int num_reply_data_items);
+ int ceph_osdc_alloc_messages(struct ceph_osd_request *req, gfp_t gfp);
  
- extern void ceph_osdc_get_request(struct ceph_osd_request *req);
- extern void ceph_osdc_put_request(struct ceph_osd_request *req);
-+void ceph_osdc_init_request(struct ceph_osd_request *req,
-+			    struct ceph_osd_client *osdc,
-+			    struct ceph_snap_context *snapc,
-+			    unsigned int num_ops);
- 
- extern int ceph_osdc_start_request(struct ceph_osd_client *osdc,
- 				   struct ceph_osd_request *req,
+ extern struct ceph_osd_request *ceph_osdc_new_request(struct ceph_osd_client *,
 diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index 3cff29d38b9f..4ddf23120b1a 100644
+index 4ddf23120b1a..7be78fa6e2c3 100644
 --- a/net/ceph/osd_client.c
 +++ b/net/ceph/osd_client.c
-@@ -523,7 +523,10 @@ void ceph_osdc_put_request(struct ceph_osd_request *req)
+@@ -613,9 +613,9 @@ static int ceph_oloc_encoding_size(const struct ceph_object_locator *oloc)
+ 	return 8 + 4 + 4 + 4 + (oloc->pool_ns ? oloc->pool_ns->len : 0);
  }
- EXPORT_SYMBOL(ceph_osdc_put_request);
  
--static void request_init(struct ceph_osd_request *req)
-+void ceph_osdc_init_request(struct ceph_osd_request *req,
-+			    struct ceph_osd_client *osdc,
-+			    struct ceph_snap_context *snapc,
-+			    unsigned int num_ops)
+-static int __ceph_osdc_alloc_messages(struct ceph_osd_request *req, gfp_t gfp,
+-				      int num_request_data_items,
+-				      int num_reply_data_items)
++int ceph_osdc_alloc_num_messages(struct ceph_osd_request *req, gfp_t gfp,
++				 int num_request_data_items,
++				 int num_reply_data_items)
  {
- 	/* req only, each op is zeroed in osd_req_op_init() */
- 	memset(req, 0, sizeof(*req));
-@@ -535,7 +538,13 @@ static void request_init(struct ceph_osd_request *req)
- 	INIT_LIST_HEAD(&req->r_private_item);
+ 	struct ceph_osd_client *osdc = req->r_osdc;
+ 	struct ceph_msg *msg;
+@@ -672,6 +672,7 @@ static int __ceph_osdc_alloc_messages(struct ceph_osd_request *req, gfp_t gfp,
  
- 	target_init(&req->r_t);
-+
-+	req->r_osdc = osdc;
-+	req->r_num_ops = num_ops;
-+	req->r_snapid = CEPH_NOSNAP;
-+	req->r_snapc = ceph_get_snap_context(snapc);
+ 	return 0;
  }
-+EXPORT_SYMBOL(ceph_osdc_init_request);
++EXPORT_SYMBOL(ceph_osdc_alloc_num_messages);
  
- /*
-  * This is ugly, but it allows us to reuse linger registration and ping
-@@ -563,12 +572,9 @@ static void request_reinit(struct ceph_osd_request *req)
- 	WARN_ON(kref_read(&reply_msg->kref) != 1);
- 	target_destroy(&req->r_t);
+ static bool osd_req_opcode_valid(u16 opcode)
+ {
+@@ -738,8 +739,8 @@ int ceph_osdc_alloc_messages(struct ceph_osd_request *req, gfp_t gfp)
+ 	int num_request_data_items, num_reply_data_items;
  
--	request_init(req);
--	req->r_osdc = osdc;
-+	ceph_osdc_init_request(req, osdc, snapc, num_ops);
- 	req->r_mempool = mempool;
--	req->r_num_ops = num_ops;
- 	req->r_snapid = snapid;
--	req->r_snapc = snapc;
- 	req->r_linger = linger;
- 	req->r_request = request_msg;
- 	req->r_reply = reply_msg;
-@@ -591,15 +597,11 @@ struct ceph_osd_request *ceph_osdc_alloc_request(struct ceph_osd_client *osdc,
- 		BUG_ON(num_ops > CEPH_OSD_MAX_OPS);
- 		req = kmalloc(struct_size(req, r_ops, num_ops), gfp_flags);
- 	}
--	if (unlikely(!req))
--		return NULL;
+ 	get_num_data_items(req, &num_request_data_items, &num_reply_data_items);
+-	return __ceph_osdc_alloc_messages(req, gfp, num_request_data_items,
+-					  num_reply_data_items);
++	return ceph_osdc_alloc_num_messages(req, gfp, num_request_data_items,
++						  num_reply_data_items);
+ }
+ EXPORT_SYMBOL(ceph_osdc_alloc_messages);
  
--	request_init(req);
--	req->r_osdc = osdc;
--	req->r_mempool = use_mempool;
--	req->r_num_ops = num_ops;
--	req->r_snapid = CEPH_NOSNAP;
--	req->r_snapc = ceph_get_snap_context(snapc);
-+	if (likely(req)) {
-+		req->r_mempool = use_mempool;
-+		ceph_osdc_init_request(req, osdc, snapc, num_ops);
-+	}
- 
- 	dout("%s req %p\n", __func__, req);
- 	return req;
+@@ -1129,7 +1130,7 @@ struct ceph_osd_request *ceph_osdc_new_request(struct ceph_osd_client *osdc,
+ 		 * also covers ceph_uninline_data().  If more multi-op request
+ 		 * use cases emerge, we will need a separate helper.
+ 		 */
+-		r = __ceph_osdc_alloc_messages(req, GFP_NOFS, num_ops, 0);
++		r = ceph_osdc_alloc_num_messages(req, GFP_NOFS, num_ops, 0);
+ 	else
+ 		r = ceph_osdc_alloc_messages(req, GFP_NOFS);
+ 	if (r)
 -- 
 2.26.2
 
