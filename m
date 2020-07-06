@@ -2,196 +2,120 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D61E215C06
-	for <lists+ceph-devel@lfdr.de>; Mon,  6 Jul 2020 18:41:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EFFC2161BA
+	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jul 2020 00:56:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729503AbgGFQlJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 6 Jul 2020 12:41:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36918 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729441AbgGFQlI (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 6 Jul 2020 12:41:08 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726805AbgGFW4F (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 6 Jul 2020 18:56:05 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:36844 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726280AbgGFW4F (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 6 Jul 2020 18:56:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594076163;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Piot0nYhj5t5GZrLKTk5nixvg33t6O+51w3azuwHCGI=;
+        b=HAJSKPgR7fo/90ruBZV14+tq1Dv6rb8F/DhMElVGdCYiTWz9sTfqyUXxve4+qqgnRnnKP5
+        3f5viiOdt/ehJixeEK2olH+8qbqkCyu+TMThDedk1oq5TTVjjMREPqaLX07n76N5SIus3R
+        ZdIIyPQyV0aWaunMjzJeeKThDk/cMtw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-363-5w8WBLm7OwqkOwKmf3c56w-1; Mon, 06 Jul 2020 18:55:59 -0400
+X-MC-Unique: 5w8WBLm7OwqkOwKmf3c56w-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A260D206CD;
-        Mon,  6 Jul 2020 16:41:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594053667;
-        bh=VFZaxmpDnE5c/xSERcHFWHT/nx79QYt+HzZJImrhGCI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=t3etd0pMZo9smo466zLH2aep4DTRv2tjIJwu2kJc9fLp5j1NhVZnRbqWwFHy8qqCM
-         +WMA/rwR65Ph1sbXbl50PSJ7ut8dkBYMwOHZ3MeD516r02xuWCJ91g4DI8sMRzCle8
-         5nU6GHao3YOZV71CmbNBw4rtIsNFPGJpG67nsW0Q=
-Message-ID: <c331c66935cbeab95bd7e32198afb2bc72186df6.camel@kernel.org>
-Subject: Re: [PATCH 1/4] libceph: just have osd_req_op_init return a pointer
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
-Date:   Mon, 06 Jul 2020 12:41:06 -0400
-In-Reply-To: <20200701155446.41141-2-jlayton@kernel.org>
-References: <20200701155446.41141-1-jlayton@kernel.org>
-         <20200701155446.41141-2-jlayton@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.3 (3.36.3-1.fc32) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 65EA9461;
+        Mon,  6 Jul 2020 22:55:57 +0000 (UTC)
+Received: from [10.72.12.116] (ovpn-12-116.pek2.redhat.com [10.72.12.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 995457B41E;
+        Mon,  6 Jul 2020 22:55:52 +0000 (UTC)
+Subject: Re: [PATCH] ceph: do not access the kiocb after aio reqeusts
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     idryomov@gmail.com, zyan@redhat.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org
+References: <20200706125135.23511-1-xiubli@redhat.com>
+ <ae2bc42cc3434f62ea99f1df32729360a27e487c.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <012e8448-bd4f-26f8-b9e2-690c80b6f01d@redhat.com>
+Date:   Tue, 7 Jul 2020 06:55:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
+In-Reply-To: <ae2bc42cc3434f62ea99f1df32729360a27e487c.camel@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2020-07-01 at 11:54 -0400, Jeff Layton wrote:
-> The caller can just ignore the return. No need for this wrapper that
-> just casts the other function to void.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  include/linux/ceph/osd_client.h |  2 +-
->  net/ceph/osd_client.c           | 31 ++++++++++++-------------------
->  2 files changed, 13 insertions(+), 20 deletions(-)
-> 
-> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> index c60b59e9291b..8d63dc22cb36 100644
-> --- a/include/linux/ceph/osd_client.h
-> +++ b/include/linux/ceph/osd_client.h
-> @@ -404,7 +404,7 @@ void ceph_osdc_clear_abort_err(struct ceph_osd_client *osdc);
->  	&__oreq->r_ops[__whch].typ.fld;					\
->  })
->  
-> -extern void osd_req_op_init(struct ceph_osd_request *osd_req,
-> +extern struct ceph_osd_req_op *osd_req_op_init(struct ceph_osd_request *osd_req,
->  			    unsigned int which, u16 opcode, u32 flags);
->  
->  extern void osd_req_op_raw_data_in_pages(struct ceph_osd_request *,
-> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> index db6abb5a5511..3cff29d38b9f 100644
-> --- a/net/ceph/osd_client.c
-> +++ b/net/ceph/osd_client.c
-> @@ -525,7 +525,7 @@ EXPORT_SYMBOL(ceph_osdc_put_request);
->  
->  static void request_init(struct ceph_osd_request *req)
->  {
-> -	/* req only, each op is zeroed in _osd_req_op_init() */
-> +	/* req only, each op is zeroed in osd_req_op_init() */
->  	memset(req, 0, sizeof(*req));
->  
->  	kref_init(&req->r_kref);
-> @@ -746,8 +746,8 @@ EXPORT_SYMBOL(ceph_osdc_alloc_messages);
->   * other information associated with them.  It also serves as a
->   * common init routine for all the other init functions, below.
->   */
-> -static struct ceph_osd_req_op *
-> -_osd_req_op_init(struct ceph_osd_request *osd_req, unsigned int which,
-> +struct ceph_osd_req_op *
-> +osd_req_op_init(struct ceph_osd_request *osd_req, unsigned int which,
->  		 u16 opcode, u32 flags)
->  {
->  	struct ceph_osd_req_op *op;
-> @@ -762,12 +762,6 @@ _osd_req_op_init(struct ceph_osd_request *osd_req, unsigned int which,
->  
->  	return op;
->  }
-> -
-> -void osd_req_op_init(struct ceph_osd_request *osd_req,
-> -		     unsigned int which, u16 opcode, u32 flags)
-> -{
-> -	(void)_osd_req_op_init(osd_req, which, opcode, flags);
-> -}
->  EXPORT_SYMBOL(osd_req_op_init);
->  
->  void osd_req_op_extent_init(struct ceph_osd_request *osd_req,
-> @@ -775,8 +769,7 @@ void osd_req_op_extent_init(struct ceph_osd_request *osd_req,
->  				u64 offset, u64 length,
->  				u64 truncate_size, u32 truncate_seq)
->  {
-> -	struct ceph_osd_req_op *op = _osd_req_op_init(osd_req, which,
-> -						      opcode, 0);
-> +	struct ceph_osd_req_op *op = osd_req_op_init(osd_req, which, opcode, 0);
->  	size_t payload_len = 0;
->  
->  	BUG_ON(opcode != CEPH_OSD_OP_READ && opcode != CEPH_OSD_OP_WRITE &&
-> @@ -822,7 +815,7 @@ void osd_req_op_extent_dup_last(struct ceph_osd_request *osd_req,
->  	BUG_ON(which + 1 >= osd_req->r_num_ops);
->  
->  	prev_op = &osd_req->r_ops[which];
-> -	op = _osd_req_op_init(osd_req, which + 1, prev_op->op, prev_op->flags);
-> +	op = osd_req_op_init(osd_req, which + 1, prev_op->op, prev_op->flags);
->  	/* dup previous one */
->  	op->indata_len = prev_op->indata_len;
->  	op->outdata_len = prev_op->outdata_len;
-> @@ -845,7 +838,7 @@ int osd_req_op_cls_init(struct ceph_osd_request *osd_req, unsigned int which,
->  	size_t size;
->  	int ret;
->  
-> -	op = _osd_req_op_init(osd_req, which, CEPH_OSD_OP_CALL, 0);
-> +	op = osd_req_op_init(osd_req, which, CEPH_OSD_OP_CALL, 0);
->  
->  	pagelist = ceph_pagelist_alloc(GFP_NOFS);
->  	if (!pagelist)
-> @@ -883,7 +876,7 @@ int osd_req_op_xattr_init(struct ceph_osd_request *osd_req, unsigned int which,
->  			  u16 opcode, const char *name, const void *value,
->  			  size_t size, u8 cmp_op, u8 cmp_mode)
->  {
-> -	struct ceph_osd_req_op *op = _osd_req_op_init(osd_req, which,
-> +	struct ceph_osd_req_op *op = osd_req_op_init(osd_req, which,
->  						      opcode, 0);
->  	struct ceph_pagelist *pagelist;
->  	size_t payload_len;
-> @@ -928,7 +921,7 @@ static void osd_req_op_watch_init(struct ceph_osd_request *req, int which,
->  {
->  	struct ceph_osd_req_op *op;
->  
-> -	op = _osd_req_op_init(req, which, CEPH_OSD_OP_WATCH, 0);
-> +	op = osd_req_op_init(req, which, CEPH_OSD_OP_WATCH, 0);
->  	op->watch.cookie = cookie;
->  	op->watch.op = watch_opcode;
->  	op->watch.gen = 0;
-> @@ -943,7 +936,7 @@ void osd_req_op_alloc_hint_init(struct ceph_osd_request *osd_req,
->  				u64 expected_write_size,
->  				u32 flags)
->  {
-> -	struct ceph_osd_req_op *op = _osd_req_op_init(osd_req, which,
-> +	struct ceph_osd_req_op *op = osd_req_op_init(osd_req, which,
->  						      CEPH_OSD_OP_SETALLOCHINT,
->  						      0);
->  
-> @@ -4799,7 +4792,7 @@ static int osd_req_op_notify_ack_init(struct ceph_osd_request *req, int which,
->  	struct ceph_pagelist *pl;
->  	int ret;
->  
-> -	op = _osd_req_op_init(req, which, CEPH_OSD_OP_NOTIFY_ACK, 0);
-> +	op = osd_req_op_init(req, which, CEPH_OSD_OP_NOTIFY_ACK, 0);
->  
->  	pl = ceph_pagelist_alloc(GFP_NOIO);
->  	if (!pl)
-> @@ -4868,7 +4861,7 @@ static int osd_req_op_notify_init(struct ceph_osd_request *req, int which,
->  	struct ceph_pagelist *pl;
->  	int ret;
->  
-> -	op = _osd_req_op_init(req, which, CEPH_OSD_OP_NOTIFY, 0);
-> +	op = osd_req_op_init(req, which, CEPH_OSD_OP_NOTIFY, 0);
->  	op->notify.cookie = cookie;
->  
->  	pl = ceph_pagelist_alloc(GFP_NOIO);
-> @@ -5332,7 +5325,7 @@ static int osd_req_op_copy_from_init(struct ceph_osd_request *req,
->  	if (IS_ERR(pages))
->  		return PTR_ERR(pages);
->  
-> -	op = _osd_req_op_init(req, 0, CEPH_OSD_OP_COPY_FROM2,
-> +	op = osd_req_op_init(req, 0, CEPH_OSD_OP_COPY_FROM2,
->  			      dst_fadvise_flags);
->  	op->copy_from.snapid = src_snapid;
->  	op->copy_from.src_version = src_version;
+On 2020/7/7 0:17, Jeff Layton wrote:
+> On Mon, 2020-07-06 at 08:51 -0400, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> In aio case, if the completion comes very fast just before the
+>> ceph_read_iter() returns to fs/aio.c, the kiocb will be freed in
+>> the completion callback, then if ceph_read_iter() access again
+>> we will potentially hit the use-after-free bug.
+>>
+>> URL: https://tracker.ceph.com/issues/45649
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/ceph/file.c | 9 ++++++---
+>>   1 file changed, 6 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>> index 160644ddaeed..704bae794054 100644
+>> --- a/fs/ceph/file.c
+>> +++ b/fs/ceph/file.c
+>> @@ -1538,6 +1538,7 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>   	struct inode *inode = file_inode(filp);
+>>   	struct ceph_inode_info *ci = ceph_inode(inode);
+>>   	struct page *pinned_page = NULL;
+>> +	bool direct_lock = false;
+> Looks good. I made a slight change to this patch and had it initialize
+> this variable to iocb->ki_flags & IOCB_DIRECT, and then use that rather
+> than setting direct_lock in the true case. Merged into testing.
 
-Hi Ilya,
+Okay, looks good to me.
 
-This patch was part of the series that I sent last week. I know you
-nacked the other patches, but were you also opposed to this one? It's a
-fairly straightforward cleanup that gets rid of some unnecessary (and
-odd) casting.
+Thanks Jeff.
 
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
+
+> Thanks!
+>
+>>   	ssize_t ret;
+>>   	int want, got = 0;
+>>   	int retry_op = 0, read = 0;
+>> @@ -1546,10 +1547,12 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>   	dout("aio_read %p %llx.%llx %llu~%u trying to get caps on %p\n",
+>>   	     inode, ceph_vinop(inode), iocb->ki_pos, (unsigned)len, inode);
+>>   
+>> -	if (iocb->ki_flags & IOCB_DIRECT)
+>> +	if (iocb->ki_flags & IOCB_DIRECT) {
+>>   		ceph_start_io_direct(inode);
+>> -	else
+>> +		direct_lock = true;
+>> +	} else {
+>>   		ceph_start_io_read(inode);
+>> +	}
+>>   
+>>   	if (fi->fmode & CEPH_FILE_MODE_LAZY)
+>>   		want = CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO;
+>> @@ -1603,7 +1606,7 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>   	}
+>>   	ceph_put_cap_refs(ci, got);
+>>   
+>> -	if (iocb->ki_flags & IOCB_DIRECT)
+>> +	if (direct_lock)
+>>   		ceph_end_io_direct(inode);
+>>   	else
+>>   		ceph_end_io_read(inode);
+
 
