@@ -2,57 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8232221851B
-	for <lists+ceph-devel@lfdr.de>; Wed,  8 Jul 2020 12:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18D8921860E
+	for <lists+ceph-devel@lfdr.de>; Wed,  8 Jul 2020 13:25:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728466AbgGHKip (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 8 Jul 2020 06:38:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42162 "EHLO
+        id S1728849AbgGHLZ2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 8 Jul 2020 07:25:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728104AbgGHKip (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 8 Jul 2020 06:38:45 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 384B9C08C5DC;
-        Wed,  8 Jul 2020 03:38:45 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id y2so46442192ioy.3;
-        Wed, 08 Jul 2020 03:38:45 -0700 (PDT)
+        with ESMTP id S1728688AbgGHLZ2 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 8 Jul 2020 07:25:28 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02CEFC08C5DC;
+        Wed,  8 Jul 2020 04:25:28 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id t27so33770619ill.9;
+        Wed, 08 Jul 2020 04:25:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6qWNT5vkRAAUNzv0WOBodcpzUwaDLty7hLhEuvqFBkc=;
-        b=EoqZw5382zK9BTlSQNE7IE941IXXEIXheKUVzhVejDBsW0CLb24j6RFlb//YN3eepJ
-         ut+3Ox+0EYt2s4Cjbo4nbwb+pmnNvE7VW1eZG5sz54ysRX35/osZzBC90qrt3CzgR1/V
-         WT1FUZby+pRU8vVKIzHxHb+8K8qus+B4hmVHOyZhBVoSP0mAvtUEk9jk6TYYq/hKTo93
-         nKwdCrEFkxgtG6HStMKLKZOaWlTCdDU5lrL8mRaOiAepfQlfaWrbQ3JBPEfsxmWnxbaD
-         c/9cUw8anxgR6ZcgOIqyzadyyxP2o6nVX3Kdnpf7KuZ8rkDzYK+gHoXatziHp8cSidhV
-         xTkw==
+        bh=7ROJmAmlrv2K7BTumTUPVQDyi0qWehgUULex/JMDOtg=;
+        b=T4l4YxNUQK6zjbqIgyyPtPtZPhbJWv5nwD043lVas5RIHsEkMkqLf18GCAo456tjCY
+         pgIUPDiCZ29hNKcbB+hZHNz2IWLNnE9pPWGP6eL3UStzgv658p7s6m1QkOKSwxX5lA0c
+         ce8gKWBj4/qIG6CjeFJvv7qRoZJ0Q/8oeGY6F82dHYI+kHL7tmmN4T0zkT8dbgSHYOxe
+         peD7J79Dr01tgJb9WzCeZjMgJN3gTuv8N05wUGJO8GdFSFqxKG7k//APWJyxnF9dZv3Q
+         SB+uQySi+sQqWqqhKASLHLbR9+q07gokqztvN4K/9qtDMNOtlUUsuhK3Mm58fN0ScW3V
+         by9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6qWNT5vkRAAUNzv0WOBodcpzUwaDLty7hLhEuvqFBkc=;
-        b=nXcrsBBUP6BTsEvUrGvpCMl+5Pt/ixDg8SRtVqnxtwPAleza7hJxLFF/Czrm2mqyRu
-         tMf4q7m5otCSzpJJ5bGJ1HaPptaaegIE58YCbp8NgEAnT+jQzQrI7SIW2dVAjuo2VzEG
-         wgOy0Q0sLZjcZ/I4wnZTRdkVE/d8JrPamf1+dOTNMJ7ng9QQL4dL9aOICIX9GfxtdZGv
-         o+zFpF6RSuKUQhwwdUqawyUSiQehjdlGxiWcievsbFsNI1wY6kar+io3fECZW1iNzo7t
-         nL0SBZSN4Pt7kGj53izFnAq7WcwHsy0E06K+kwQtdSu3jAEYzuXYhC4Sp1/ZM949GVlC
-         5ccg==
-X-Gm-Message-State: AOAM532ITNRAju2GZ999rSSWdINlTF6nVyN/aabKKIWaRzW6pp8nFR8h
-        Ag6lxBUV1ZwIoQQZMcZ2TdIryWcVOFmol6qo2aM=
-X-Google-Smtp-Source: ABdhPJz/oUUfmOWTOBNWon1k8pdhutv1qQxNda1lvQi+wUp9zsIDxgzT4dmhRBhTg7sKsYDOxsN9HugxU14qxHkFZAQ=
-X-Received: by 2002:a05:6602:164c:: with SMTP id y12mr36358432iow.143.1594204724534;
- Wed, 08 Jul 2020 03:38:44 -0700 (PDT)
+        bh=7ROJmAmlrv2K7BTumTUPVQDyi0qWehgUULex/JMDOtg=;
+        b=PFPgFWGGlKvNcgeKmAUgyQrqg+17GOMaCIsiYCPXj1kCPbMehSs6WFJdxV5T7/mRF7
+         ku0hUPm3hh9Ynlb8CNHURmIRXvh590evuKWzqYGrivMLMTomfirG4C85nXW9NFU8NFnu
+         +ZU7v4oMIXhghEulvEgxs1Zq8hN/AUoYGwYJth+ZU//pJS59b1TGPnZoChXAFdPM7Lk3
+         HjBm1764anpXkGvWDB2aAG+wkdVxRpUeaduwoY12lEj4Eh7QjwPgI4TnCyvsFVp6kkPH
+         Uvy9KaqWfxehzfTc/h7SJ8VBSY25HixZTevbHt/RN5Vda+f5jSDUtTJ0K03zhcpNOboY
+         OSAg==
+X-Gm-Message-State: AOAM532CaPNDV8uu8qTw1QwAZH9GGQcBZU9FTp2BAKIw1OY2EU3o1fLe
+        D58Klchuvnp36Q4FeG6YOyuqpp1hulGQ+y5AnkqsccUMTHo=
+X-Google-Smtp-Source: ABdhPJyxDeLrfCflP+Xy4iTpQCHzKv+AsR6M56vWlh6bN5a1kfAxmpQpB1A3ivVpGAbrlZ4kYCjZG9sLcHwA0nTcuFQ=
+X-Received: by 2002:a05:6e02:970:: with SMTP id q16mr30878956ilt.112.1594207526418;
+ Wed, 08 Jul 2020 04:25:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200708070322.30695-1-vulab@iscas.ac.cn>
-In-Reply-To: <20200708070322.30695-1-vulab@iscas.ac.cn>
+References: <20200708065328.13031-1-grandmaster@al2klimov.de>
+In-Reply-To: <20200708065328.13031-1-grandmaster@al2klimov.de>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 8 Jul 2020 12:38:53 +0200
-Message-ID: <CAOi1vP-+raGXYPkumWSbO-YdcMw_hw7VR=K2npPc3NAQC1_J2A@mail.gmail.com>
-Subject: Re: [PATCH] fs: ceph: Remove unnecessary cast in kfree()
-To:     Xu Wang <vulab@iscas.ac.cn>
+Date:   Wed, 8 Jul 2020 13:25:35 +0200
+Message-ID: <CAOi1vP_vS-nNMXuo4n8njx=pRVUQd-C8LAeSTpVTufqiHsCS-g@mail.gmail.com>
+Subject: Re: [PATCH] Replace HTTP links with HTTPS ones: CEPH COMMON CODE (LIBCEPH)
+To:     "Alexander A. Klimov" <grandmaster@al2klimov.de>
 Cc:     Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, kuba@kernel.org,
         Ceph Development <ceph-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
@@ -60,58 +62,86 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jul 8, 2020 at 9:27 AM Xu Wang <vulab@iscas.ac.cn> wrote:
+On Wed, Jul 8, 2020 at 8:53 AM Alexander A. Klimov
+<grandmaster@al2klimov.de> wrote:
 >
-> Remove unnecassary casts in the argument to kfree.
+> Rationale:
+> Reduces attack surface on kernel devs opening the links for MITM
+> as HTTPS traffic is much harder to manipulate.
 >
-> Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
+> Deterministic algorithm:
+> For each file:
+>   If not .svg:
+>     For each line:
+>       If doesn't contain `\bxmlns\b`:
+>         For each link, `\bhttp://[^# \t\r\n]*(?:\w|/)`:
+>           If neither `\bgnu\.org/license`, nor `\bmozilla\.org/MPL\b`:
+>             If both the HTTP and HTTPS versions
+>             return 200 OK and serve the same content:
+>               Replace HTTP with HTTPS.
+>
+> Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
 > ---
->  fs/ceph/xattr.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  Continuing my work started at 93431e0607e5.
+>  See also: git log --oneline '--author=Alexander A. Klimov <grandmaster@al2klimov.de>' v5.7..master
+>  (Actually letting a shell for loop submit all this stuff for me.)
 >
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index 71ee34d160c3..3a733ac33d9b 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -497,10 +497,10 @@ static int __set_xattr(struct ceph_inode_info *ci,
->                 kfree(*newxattr);
->                 *newxattr = NULL;
->                 if (xattr->should_free_val)
-> -                       kfree((void *)xattr->val);
-> +                       kfree(xattr->val);
+>  If there are any URLs to be removed completely or at least not HTTPSified:
+>  Just clearly say so and I'll *undo my change*.
+>  See also: https://lkml.org/lkml/2020/6/27/64
 >
->                 if (update_xattr) {
-> -                       kfree((void *)name);
-> +                       kfree(name);
->                         name = xattr->name;
->                 }
->                 ci->i_xattrs.names_size -= xattr->name_len;
-> @@ -566,9 +566,9 @@ static void __free_xattr(struct ceph_inode_xattr *xattr)
->         BUG_ON(!xattr);
+>  If there are any valid, but yet not changed URLs:
+>  See: https://lkml.org/lkml/2020/6/26/837
 >
->         if (xattr->should_free_name)
-> -               kfree((void *)xattr->name);
-> +               kfree(xattr->name);
->         if (xattr->should_free_val)
-> -               kfree((void *)xattr->val);
-> +               kfree(xattr->val);
+>  If you apply the patch, please let me know.
 >
->         kfree(xattr);
->  }
-> @@ -582,9 +582,9 @@ static int __remove_xattr(struct ceph_inode_info *ci,
->         rb_erase(&xattr->node, &ci->i_xattrs.index);
 >
->         if (xattr->should_free_name)
-> -               kfree((void *)xattr->name);
-> +               kfree(xattr->name);
->         if (xattr->should_free_val)
-> -               kfree((void *)xattr->val);
-> +               kfree(xattr->val);
+>  net/ceph/ceph_hash.c    | 2 +-
+>  net/ceph/crush/hash.c   | 2 +-
+>  net/ceph/crush/mapper.c | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 >
->         ci->i_xattrs.names_size -= xattr->name_len;
->         ci->i_xattrs.vals_size -= xattr->val_len;
+> diff --git a/net/ceph/ceph_hash.c b/net/ceph/ceph_hash.c
+> index 9a5850f264ed..81e1e006c540 100644
+> --- a/net/ceph/ceph_hash.c
+> +++ b/net/ceph/ceph_hash.c
+> @@ -4,7 +4,7 @@
+>
+>  /*
+>   * Robert Jenkin's hash function.
+> - * http://burtleburtle.net/bob/hash/evahash.html
+> + * https://burtleburtle.net/bob/hash/evahash.html
+>   * This is in the public domain.
+>   */
+>  #define mix(a, b, c)                                           \
+> diff --git a/net/ceph/crush/hash.c b/net/ceph/crush/hash.c
+> index e5cc603cdb17..fe79f6d2d0db 100644
+> --- a/net/ceph/crush/hash.c
+> +++ b/net/ceph/crush/hash.c
+> @@ -7,7 +7,7 @@
+>
+>  /*
+>   * Robert Jenkins' function for mixing 32-bit values
+> - * http://burtleburtle.net/bob/hash/evahash.html
+> + * https://burtleburtle.net/bob/hash/evahash.html
+>   * a, b = random bits, c = input and output
+>   */
+>  #define crush_hashmix(a, b, c) do {                    \
+> diff --git a/net/ceph/crush/mapper.c b/net/ceph/crush/mapper.c
+> index 3f323ed9df52..07e5614eb3f1 100644
+> --- a/net/ceph/crush/mapper.c
+> +++ b/net/ceph/crush/mapper.c
+> @@ -298,7 +298,7 @@ static __u64 crush_ln(unsigned int xin)
+>   *
+>   * for reference, see:
+>   *
+> - * http://en.wikipedia.org/wiki/Exponential_distribution#Distribution_of_the_minimum_of_exponential_random_variables
+> + * https://en.wikipedia.org/wiki/Exponential_distribution#Distribution_of_the_minimum_of_exponential_random_variables
+>   *
+>   */
+>
 
-Applied.
+Applied with a couple more link fixes folded in.
 
 Thanks,
 
