@@ -2,147 +2,94 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 18D8921860E
-	for <lists+ceph-devel@lfdr.de>; Wed,  8 Jul 2020 13:25:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6FFD21AE1F
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jul 2020 06:38:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728849AbgGHLZ2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 8 Jul 2020 07:25:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49458 "EHLO
+        id S1725943AbgGJEid (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 10 Jul 2020 00:38:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728688AbgGHLZ2 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 8 Jul 2020 07:25:28 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02CEFC08C5DC;
-        Wed,  8 Jul 2020 04:25:28 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id t27so33770619ill.9;
-        Wed, 08 Jul 2020 04:25:27 -0700 (PDT)
+        with ESMTP id S1725777AbgGJEic (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 10 Jul 2020 00:38:32 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A717EC08C5CE
+        for <ceph-devel@vger.kernel.org>; Thu,  9 Jul 2020 21:38:32 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id k5so2063105pjg.3
+        for <ceph-devel@vger.kernel.org>; Thu, 09 Jul 2020 21:38:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7ROJmAmlrv2K7BTumTUPVQDyi0qWehgUULex/JMDOtg=;
-        b=T4l4YxNUQK6zjbqIgyyPtPtZPhbJWv5nwD043lVas5RIHsEkMkqLf18GCAo456tjCY
-         pgIUPDiCZ29hNKcbB+hZHNz2IWLNnE9pPWGP6eL3UStzgv658p7s6m1QkOKSwxX5lA0c
-         ce8gKWBj4/qIG6CjeFJvv7qRoZJ0Q/8oeGY6F82dHYI+kHL7tmmN4T0zkT8dbgSHYOxe
-         peD7J79Dr01tgJb9WzCeZjMgJN3gTuv8N05wUGJO8GdFSFqxKG7k//APWJyxnF9dZv3Q
-         SB+uQySi+sQqWqqhKASLHLbR9+q07gokqztvN4K/9qtDMNOtlUUsuhK3Mm58fN0ScW3V
-         by9A==
+        h=from:to:cc:subject:date:message-id;
+        bh=ZI5yB8NC3FXlTdch1Ac7w+3ZlVRkOei25ObYEJlVfuw=;
+        b=ZdN3CH5IiVS+AB1aeT7XsIOU/Zll+Pzl/A2KTdAG1gQdl+2Ry/D0YYUkT5ENr7dWLc
+         7KIRdXcym1JbSHgqeYUs9YIZdKOf7tJl5Uz6ci6YI6NPrnPN9SwuIutIbWIO7SI4EjQW
+         Mvmy6xONm2feJIu1OVmIJNu95xTNJKBHQTEnfxynF+uifT2STouC8x+pWgDwceLWgEg+
+         ju01ZYwXHXZ8pDU4FithfwuT0QUv7eHoEewnRQh6ohSwzsGV3MSt/8fh9ycaEZy4hpli
+         DmeHRzkcubl6grA5BMRnhmNnkLMCd+VLDMWwMy94JRGad5fBvw4U1qlHmmJ8PvkKSFX7
+         cXJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7ROJmAmlrv2K7BTumTUPVQDyi0qWehgUULex/JMDOtg=;
-        b=PFPgFWGGlKvNcgeKmAUgyQrqg+17GOMaCIsiYCPXj1kCPbMehSs6WFJdxV5T7/mRF7
-         ku0hUPm3hh9Ynlb8CNHURmIRXvh590evuKWzqYGrivMLMTomfirG4C85nXW9NFU8NFnu
-         +ZU7v4oMIXhghEulvEgxs1Zq8hN/AUoYGwYJth+ZU//pJS59b1TGPnZoChXAFdPM7Lk3
-         HjBm1764anpXkGvWDB2aAG+wkdVxRpUeaduwoY12lEj4Eh7QjwPgI4TnCyvsFVp6kkPH
-         Uvy9KaqWfxehzfTc/h7SJ8VBSY25HixZTevbHt/RN5Vda+f5jSDUtTJ0K03zhcpNOboY
-         OSAg==
-X-Gm-Message-State: AOAM532CaPNDV8uu8qTw1QwAZH9GGQcBZU9FTp2BAKIw1OY2EU3o1fLe
-        D58Klchuvnp36Q4FeG6YOyuqpp1hulGQ+y5AnkqsccUMTHo=
-X-Google-Smtp-Source: ABdhPJyxDeLrfCflP+Xy4iTpQCHzKv+AsR6M56vWlh6bN5a1kfAxmpQpB1A3ivVpGAbrlZ4kYCjZG9sLcHwA0nTcuFQ=
-X-Received: by 2002:a05:6e02:970:: with SMTP id q16mr30878956ilt.112.1594207526418;
- Wed, 08 Jul 2020 04:25:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200708065328.13031-1-grandmaster@al2klimov.de>
-In-Reply-To: <20200708065328.13031-1-grandmaster@al2klimov.de>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 8 Jul 2020 13:25:35 +0200
-Message-ID: <CAOi1vP_vS-nNMXuo4n8njx=pRVUQd-C8LAeSTpVTufqiHsCS-g@mail.gmail.com>
-Subject: Re: [PATCH] Replace HTTP links with HTTPS ones: CEPH COMMON CODE (LIBCEPH)
-To:     "Alexander A. Klimov" <grandmaster@al2klimov.de>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>, kuba@kernel.org,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ZI5yB8NC3FXlTdch1Ac7w+3ZlVRkOei25ObYEJlVfuw=;
+        b=r4625zxuc5Vz1HSxQPWPesk1Hnz9OWefdJQbpvFi6bZemfJgs1/e+jABm8MqnuL+U9
+         wWk4mdC0duWS10Ik940CYOwEIZFNiIMFnzqIS2uYQOK+wrAb63/bGy9GLk9aggMEg5Dv
+         1TbXIDhu1Hdu/OPaDt9GpT8jXdbZ//sn0lrorcGuYmEP9yuPJv2a2xX945oIUtPzIP7o
+         TSwdUvCn/6dzZR4CmDysa2z25SnCEg/Kz6em7buHUaWN31J1eXDGeeBuZuHG5ueNI/Za
+         sQNME9eh+Do/ictSkcRMW5qoo5RkqXRne9fDamOWa3gBAO3L0w1ZybFT6Bv1yTbIl84I
+         7ZLw==
+X-Gm-Message-State: AOAM531+EcRgBgsIiz6Gyk/zwa4arbkmWdx36g3xqZMLu6RH5sF64JB5
+        XANNJSygvu61+0sP6whGK/GEO0o6Rh8=
+X-Google-Smtp-Source: ABdhPJz4IhZeN3TusPcg1FJtEg0t+HVQqb4Q/lZkSsJ11izbY6sMxXpuX6ph/PtGrsjSDouxvMXgaA==
+X-Received: by 2002:a17:90b:3684:: with SMTP id mj4mr3826610pjb.66.1594355912008;
+        Thu, 09 Jul 2020 21:38:32 -0700 (PDT)
+Received: from centos7.localdomain ([117.11.124.207])
+        by smtp.gmail.com with ESMTPSA id t184sm4473901pfd.49.2020.07.09.21.38.30
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Jul 2020 21:38:31 -0700 (PDT)
+From:   simon gao <simon29rock@gmail.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     simon gao <simon29rock@gmail.com>
+Subject: [PATCH] net : client only want latest osdmap.  If the gap with the latest version exceeds the threshold, mon will send the fullosdmap instead of incremental osdmap
+Date:   Fri, 10 Jul 2020 00:39:04 -0400
+Message-Id: <1594355944-7137-1-git-send-email-simon29rock@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jul 8, 2020 at 8:53 AM Alexander A. Klimov
-<grandmaster@al2klimov.de> wrote:
->
-> Rationale:
-> Reduces attack surface on kernel devs opening the links for MITM
-> as HTTPS traffic is much harder to manipulate.
->
-> Deterministic algorithm:
-> For each file:
->   If not .svg:
->     For each line:
->       If doesn't contain `\bxmlns\b`:
->         For each link, `\bhttp://[^# \t\r\n]*(?:\w|/)`:
->           If neither `\bgnu\.org/license`, nor `\bmozilla\.org/MPL\b`:
->             If both the HTTP and HTTPS versions
->             return 200 OK and serve the same content:
->               Replace HTTP with HTTPS.
->
-> Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
-> ---
->  Continuing my work started at 93431e0607e5.
->  See also: git log --oneline '--author=Alexander A. Klimov <grandmaster@al2klimov.de>' v5.7..master
->  (Actually letting a shell for loop submit all this stuff for me.)
->
->  If there are any URLs to be removed completely or at least not HTTPSified:
->  Just clearly say so and I'll *undo my change*.
->  See also: https://lkml.org/lkml/2020/6/27/64
->
->  If there are any valid, but yet not changed URLs:
->  See: https://lkml.org/lkml/2020/6/26/837
->
->  If you apply the patch, please let me know.
->
->
->  net/ceph/ceph_hash.c    | 2 +-
->  net/ceph/crush/hash.c   | 2 +-
->  net/ceph/crush/mapper.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/net/ceph/ceph_hash.c b/net/ceph/ceph_hash.c
-> index 9a5850f264ed..81e1e006c540 100644
-> --- a/net/ceph/ceph_hash.c
-> +++ b/net/ceph/ceph_hash.c
-> @@ -4,7 +4,7 @@
->
->  /*
->   * Robert Jenkin's hash function.
-> - * http://burtleburtle.net/bob/hash/evahash.html
-> + * https://burtleburtle.net/bob/hash/evahash.html
->   * This is in the public domain.
->   */
->  #define mix(a, b, c)                                           \
-> diff --git a/net/ceph/crush/hash.c b/net/ceph/crush/hash.c
-> index e5cc603cdb17..fe79f6d2d0db 100644
-> --- a/net/ceph/crush/hash.c
-> +++ b/net/ceph/crush/hash.c
-> @@ -7,7 +7,7 @@
->
->  /*
->   * Robert Jenkins' function for mixing 32-bit values
-> - * http://burtleburtle.net/bob/hash/evahash.html
-> + * https://burtleburtle.net/bob/hash/evahash.html
->   * a, b = random bits, c = input and output
->   */
->  #define crush_hashmix(a, b, c) do {                    \
-> diff --git a/net/ceph/crush/mapper.c b/net/ceph/crush/mapper.c
-> index 3f323ed9df52..07e5614eb3f1 100644
-> --- a/net/ceph/crush/mapper.c
-> +++ b/net/ceph/crush/mapper.c
-> @@ -298,7 +298,7 @@ static __u64 crush_ln(unsigned int xin)
->   *
->   * for reference, see:
->   *
-> - * http://en.wikipedia.org/wiki/Exponential_distribution#Distribution_of_the_minimum_of_exponential_random_variables
-> + * https://en.wikipedia.org/wiki/Exponential_distribution#Distribution_of_the_minimum_of_exponential_random_variables
->   *
->   */
->
+Fix: https://tracker.ceph.com/issues/43421
+Signed-off-by: simon gao <simon29rock@gmail.com>
+---
+ include/linux/ceph/ceph_fs.h | 1 +
+ net/ceph/mon_client.c        | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-Applied with a couple more link fixes folded in.
+diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+index ebf5ba6..9dcc132 100644
+--- a/include/linux/ceph/ceph_fs.h
++++ b/include/linux/ceph/ceph_fs.h
+@@ -208,6 +208,7 @@ struct ceph_client_mount {
+ } __attribute__ ((packed));
+ 
+ #define CEPH_SUBSCRIBE_ONETIME    1  /* i want only 1 update after have */
++#define CEPH_SUBSCRIBE_LATEST_OSDMAP   2  /* i want the latest fullmap, for client */ 
+ 
+ struct ceph_mon_subscribe_item {
+ 	__le64 start;
+diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+index 3d8c801..b0d1ce6 100644
+--- a/net/ceph/mon_client.c
++++ b/net/ceph/mon_client.c
+@@ -349,7 +349,8 @@ static bool __ceph_monc_want_map(struct ceph_mon_client *monc, int sub,
+ {
+ 	__le64 start = cpu_to_le64(epoch);
+ 	u8 flags = !continuous ? CEPH_SUBSCRIBE_ONETIME : 0;
+-
++    if (CEPH_SUB_OSDMAP == sub)
++        flags |= CEPH_SUBSCRIBE_LATEST_OSDMAP
+ 	dout("%s %s epoch %u continuous %d\n", __func__, ceph_sub_str[sub],
+ 	     epoch, continuous);
+ 
+-- 
+1.8.3.1
 
-Thanks,
-
-                Ilya
