@@ -2,53 +2,54 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 08A9F21FFD8
-	for <lists+ceph-devel@lfdr.de>; Tue, 14 Jul 2020 23:17:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BB742214D5
+	for <lists+ceph-devel@lfdr.de>; Wed, 15 Jul 2020 21:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbgGNVQZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 14 Jul 2020 17:16:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33552 "EHLO
+        id S1726660AbgGOTEO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 15 Jul 2020 15:04:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727981AbgGNVQZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 14 Jul 2020 17:16:25 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 484F2C061755
-        for <ceph-devel@vger.kernel.org>; Tue, 14 Jul 2020 14:16:25 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id c16so18863170ioi.9
-        for <ceph-devel@vger.kernel.org>; Tue, 14 Jul 2020 14:16:25 -0700 (PDT)
+        with ESMTP id S1726465AbgGOTEN (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 Jul 2020 15:04:13 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF099C061755
+        for <ceph-devel@vger.kernel.org>; Wed, 15 Jul 2020 12:04:12 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id s21so2945873ilk.5
+        for <ceph-devel@vger.kernel.org>; Wed, 15 Jul 2020 12:04:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=SFWiBZHsid+MYc/j1B6r4IDq9E8ePYOkdYVwyryI9js=;
-        b=pdRq434y5cmjVAJUNoUBlObZgdqoXdqvAsH/d2UaDEoNZAdnVFTDYTaoqjB4g0NFiW
-         SJCiBrx7XlAn4alqto3224u3eSQx/oGeY6s0kLXoKPub5+2Oj+Qu1o4cedaIo6DYBDq7
-         43wvKG+FPlLRfVMXcHnJFyzyQ1IULDshRoKdjodCdGO2EoeCM9+Fyh4x5kDuP98iDnR3
-         bS1rL+EWB3F4bzENG0U5Sc287FPvuUa9Fssf9c687VjrRzHJzvhDm5TWq2MaNrT9SHqW
-         4SToNxZzUIAWkCcxVLPSxsQGFRinoMoa7YEiNDXWqZqma1Zs3KycidV5F5bronT4tgKg
-         HJQA==
+        bh=ZLcI0zq5l35aWSO0JMxzEOm+pHYliaddoG2LH8QsM+s=;
+        b=UsNoPM7pVuQHzVCXU3ghn/gsSqJZ3GzlqiikO8X+uQG27irmVfapyF/codBpT7xC6Q
+         v+GjflQzRucg3DjdWM736WOyOZ84L/aUn3qg7LBY86P1HwCsaCPqUr6PL0hpbenBLT9Y
+         Aual022bbPBmBSPC3RIyLRFohOc9uWredOvfd92Axb4B3NjGzUnVnU6lQwPlHjxnjSfb
+         3lG1QvwfCXGLk5ut7tXPzy3gXLXVSKStCyOqYAoZrGkl/agAOia1tHT5VngQ5TZYx8Zz
+         64fE0Eo9fRs7XEx1DFeUbv7kf4K21zNl6H303rXivSJBQnJkpoB9bPNd5QSuYj1hGuWH
+         WlrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=SFWiBZHsid+MYc/j1B6r4IDq9E8ePYOkdYVwyryI9js=;
-        b=oSh+xbDki2/IyzdZvcuQD+dG5JAwHpOaoYAHysGB2gOsVn85zJKlttSx5Lcn544D0R
-         WI7Lj6AQe0eO9hLVfouQU37vwgQNklQXczG6yDb/EMR/yNxrtAiCvwpPqbSuOS1M2fhF
-         ghg1R426SJO5UPDu7LJGHyTgBJR9Tp338Toy1PKaP7aMPsStD1zMGzEyFp1kchUfaxI+
-         BpI8MIo0r0I2oiybYguuJ3PC8EKKIUbkdfmTu1RyxPDyRI1Y0QMz8f83XrpGqNFR3PVz
-         DE8yTJG4wJH8emewUxEsor7NlyNQ+tocWDhxvSMoPDorLhdltSmL2lg9Nd3BaX3TcPl2
-         yKvA==
-X-Gm-Message-State: AOAM532B4U4gx6GfA0EXcLagk0FH0YJkFzM4vFI2Fshd9f2XXauXR7uY
-        ZrJXyfDnefgaSIhJF3vZlpgShKKgBS8eopkQdP0=
-X-Google-Smtp-Source: ABdhPJwRF4sFKJkdOeql5j/PsdmncliSmNg7Dfovu2de0hi2ITpX//cGlmYOWridf5JPQHaDXVnmXa3rsteorvD2/NE=
-X-Received: by 2002:a5d:9c0e:: with SMTP id 14mr6977680ioe.109.1594761384705;
- Tue, 14 Jul 2020 14:16:24 -0700 (PDT)
+        bh=ZLcI0zq5l35aWSO0JMxzEOm+pHYliaddoG2LH8QsM+s=;
+        b=AGlK/ZUfXiSwjY4M9PvZO1Rw42alRfDliQQigCTaSc1y0/JUqOLWyUAey8M/dY7eZm
+         2DccquZmmMB3YtgGMptRRwtNPvhzgcc4jZYoMmn+ChMrJbSG4P5+eaDM8VGOAkVcE2Bu
+         7xyDoBX3HEos4XKjQVJf8hezH4QuuHrkmvoGLKiFRMK10J1ilmCp/vhcOfoF8Udy7TFv
+         E/C08qE8ItjtdUQtrgo0Z+P4+pCJlisobkz9VZWi4H96n3pbkdO/5O8SAkdTCyvD9R2D
+         uhd5bM6Qz2Q5dJRf77UaLo42ORfBLmkihu3BdiX/Au6XHfcqsxpC1ep3O5MUTMKYLZ21
+         rMFg==
+X-Gm-Message-State: AOAM530SNoQk1dnagAlyLpY9nYmbS8v+hgcGZ0yapWlOIv5+LOm7306R
+        pfgngvLzWtUfqHLdmz15c3TctoPo6Ih33yIc7JdKJT8AM4I=
+X-Google-Smtp-Source: ABdhPJyUeHs+6pGdWNLCGJhVHZY3x0v7dmi+DgLbncPt//PaUYb18sDmkYD6KJGkYWmfi6DM2lP7jvG4qYMkOn+Umd8=
+X-Received: by 2002:a05:6e02:48e:: with SMTP id b14mr887157ils.143.1594839852303;
+ Wed, 15 Jul 2020 12:04:12 -0700 (PDT)
 MIME-Version: 1.0
 References: <CA+xD70OJhkhH=+5W7M8NM54VPh42FmbD3O0yqKe1p-+=yd9zXQ@mail.gmail.com>
-In-Reply-To: <CA+xD70OJhkhH=+5W7M8NM54VPh42FmbD3O0yqKe1p-+=yd9zXQ@mail.gmail.com>
+ <CAOi1vP-hmzEkkUWGOwxksQn8ny1HzgNURtnf1D33KQq4-49xgQ@mail.gmail.com> <CA+xD70Neac2hpzu-Tg7s+1NCDegwzKs-zdTk8DYTWZPjNaexaA@mail.gmail.com>
+In-Reply-To: <CA+xD70Neac2hpzu-Tg7s+1NCDegwzKs-zdTk8DYTWZPjNaexaA@mail.gmail.com>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 14 Jul 2020 23:16:28 +0200
-Message-ID: <CAOi1vP-hmzEkkUWGOwxksQn8ny1HzgNURtnf1D33KQq4-49xgQ@mail.gmail.com>
+Date:   Wed, 15 Jul 2020 21:04:15 +0200
+Message-ID: <CAOi1vP9yz7hLuSRWnDtj3wdKZD1qTiF+84_o5F91bw3wZam=0g@mail.gmail.com>
 Subject: Re: [Ceph-qa] multiple BLK-MQ queues for Ceph's RADOS Block Device
  (RBD) and CephFS
 To:     Bobby <italienisch1987@gmail.com>
@@ -60,39 +61,43 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Jul 13, 2020 at 8:40 PM Bobby <italienisch1987@gmail.com> wrote:
+On Wed, Jul 15, 2020 at 12:47 AM Bobby <italienisch1987@gmail.com> wrote:
 >
 >
-> Hi,
 >
-> I have a question regarding support for multiple BLK-MQ queues for Ceph's=
- RADOS Block Device (RBD). The below given link says that the driver has be=
-en using the BLK-MQ interface for a while but not actually multiple queues =
-until now with having a queue per-CPU. A change to not hold onto caps that =
-aren't actually needed.  These improvements and more can be found as part o=
-f the Ceph changes for Linux 5.7, which should be released as stable in ear=
-ly June.
+> Hi Ilya,
 >
-> https://www.phoronix.com/scan.php?page=3Dnews_item&px=3DLinux-5.7-Ceph-Pe=
-rformance
+> Thanks for the reply. It's basically both i.e. I have a specific project =
+currently and also I am looking to make ceph-fuse faster.
 >
-> My question is: Is it possible that through Ceph FS (Filesystem in User S=
-pace) I can develop a multi-queue driver for Ceph? Asking because this way =
-I can avoid kernel space. (https://docs.ceph.com/docs/nautilus/start/quick-=
-cephfs/)
+> But for now, let me ask specifically the project based question. In the p=
+roject I have to write a blk-mq kernel driver for the Ceph client machine. =
+The Ceph client machine will transfer the data to HBA or lets say any embed=
+ded device.
 
-[ trimming CCs to dev and ceph-devel ]
+What is a "Ceph client machine"?
 
-Hi Bobby,
+A Ceph client (or more specifically a RADOS client) speaks RADOS
+protocol and transfers data to OSD daemons.  It can't transfer data
+directly to a physical device because something has to take care of
+replication, ensure consistency and self healing, etc.  This is the
+job of the OSD.
 
-I'm not sure what you mean by a "multi-queue driver for Ceph".
-blk-mq is the block layer framework, it has nothing to do with
-filesystems, whether local sitting on top of a block device (such
-as ext4 or XFS) or distributed sitting on top of a network stack
-(such as CephFS).
+>
+> My hope is that there can be an alternative and that alternative is to no=
+t implement a blk-mq kernel driver and instead do the stuff in userspace. I=
+ am trying to avoid writing a blk-mq kernel driver and yet achieve the mult=
+i-queue implementation through userspace. Is it possible?
+>
+> Also AFAIK, the Ceph=E2=80=99s block storage implementation uses a client=
+ module and this client module has two implementations librbd (user-space) =
+and krbd (kernel module). I have not gone deep into these client modules. b=
+ut can librbd help me with this?
 
-Do you have a specific project in mind or are you just looking to
-make ceph-fuse faster?
+I guess I don't understand the goal of your project.  A multi-queue
+implementation of what exactly?  A Ceph block device, a Ceph filesystem
+or something else entirely?  It would help if you were more specific
+because "a multi-queue driver for Ceph" is really vague.
 
 Thanks,
 
