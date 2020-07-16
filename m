@@ -2,184 +2,136 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F27422224D8
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jul 2020 16:07:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A760222C84
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jul 2020 22:12:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728932AbgGPOHE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 16 Jul 2020 10:07:04 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:59036 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727044AbgGPOHE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 Jul 2020 10:07:04 -0400
+        id S1729344AbgGPUMD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 16 Jul 2020 16:12:03 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:30566 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728907AbgGPUMD (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 16 Jul 2020 16:12:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594908422;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+        s=mimecast20190719; t=1594930321;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=k3Pl3nim7d7yStxn/8i+M5i8QW7CiLkNopSTGCDDFI4=;
-        b=UIsRE+nflNzHaXMPDq39zRHRv+/LGH776PcwyyZzF92Odk7tsp88A+rriDbkKFWK4uEcXw
-        QylPxe5ObOr1ls3cdXUHB49BU9Of4+i7+n4Pz2JB6awFnqqu2/Dc8V29LgAfx1Rq3tK2bZ
-        xQT1fKzrVo3FRyXdaFO61O86pK7zL34=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-236-FOWn2pxNPpKCwrTsaa28ZA-1; Thu, 16 Jul 2020 10:06:34 -0400
-X-MC-Unique: FOWn2pxNPpKCwrTsaa28ZA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 160821008302;
-        Thu, 16 Jul 2020 14:06:33 +0000 (UTC)
-Received: from lxbceph0.gsslab.pek2.redhat.com (vm37-55.gsslab.pek2.redhat.com [10.72.37.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EBED35C1D4;
-        Thu, 16 Jul 2020 14:06:17 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, zyan@redhat.com,
-        pdonnell@redhat.com, vshankar@redhat.com,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v6 2/2] ceph: send client provided metric flags in client metadata
-Date:   Thu, 16 Jul 2020 10:05:58 -0400
-Message-Id: <20200716140558.5185-3-xiubli@redhat.com>
-In-Reply-To: <20200716140558.5185-1-xiubli@redhat.com>
-References: <20200716140558.5185-1-xiubli@redhat.com>
+        bh=r7AAC5oWeR5WzjGWea/TPx0iC5Sl0To7nylLVV9/lj4=;
+        b=XMdhoAHpsXRRPcEMSSDLfrK08+SQKxj1ibqcBP8NGte4nFEnhMeZBl6Jpz3FGcLWXR5N4O
+        Hhy/poSSQXhvR4VJVk5Kx7uCfCuuqEfjn6cLEBDvrfNe2e/9lg0rNn6Uf+JAdA5wKKXgOn
+        C3Depm7Z8I/8NthD0zG8yRwWbZS1Knc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-442-lCotb0y1M7iXWJjUL4dhvQ-1; Thu, 16 Jul 2020 16:11:59 -0400
+X-MC-Unique: lCotb0y1M7iXWJjUL4dhvQ-1
+Received: by mail-wm1-f72.google.com with SMTP id z74so5347471wmc.4
+        for <ceph-devel@vger.kernel.org>; Thu, 16 Jul 2020 13:11:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=r7AAC5oWeR5WzjGWea/TPx0iC5Sl0To7nylLVV9/lj4=;
+        b=NLITGP5yUJAHyZFDD20RuqiceOsufRXhUC9VkETK+wyWJVD7eLayeb13gyK1qDYXD7
+         +GC9QLrRbmBRna0p0IN+Af3kPvSOfjEsBBJohoDWo0fAT5cjJqz6RN5lvDiclz5HxXtn
+         ZtGImEFZw+tUevi7nAo6bgvTc5Gq/DI2eUTq0Gq/jYh2eZoZch5d6EMRn4ffwRO0Pasl
+         f231aHiGPOXDZk/5yIbYdSUWgoW90kHZBXw+LQVzmTyhwXc6CgTXpsYOioUyeadWgnHE
+         XRNwlAYvzddchtS8UHeO73z2TY6pH5ZGwp8ubHWlPYRW1cgT3iyElGdRmjSWXHQ5rnu1
+         v/Lw==
+X-Gm-Message-State: AOAM533HnFNBB/M0M4sTbtOnmH4JBmyNayfgzqi5fqaXoq13esgES4Yd
+        ZjqB3irrp8mE4vleRJrzZLcW9YBxClYANyNGTL1KWBJKVTAFziijKu9VJVoausi7YZKROxEJBIQ
+        JsjXuA1hZSntMLa/V+WkOt1sPZCYA1K1PjOc4xA==
+X-Received: by 2002:adf:f18c:: with SMTP id h12mr6278673wro.375.1594930318300;
+        Thu, 16 Jul 2020 13:11:58 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxvI25wBjnqu/z8ENHozbiJJjj/ihTE0NXNnGIXUzAXAkGqIL/Y+dyGYa2aW6agUWVh8So/+4ucNQVx7cmY4II=
+X-Received: by 2002:adf:f18c:: with SMTP id h12mr6278654wro.375.1594930317970;
+ Thu, 16 Jul 2020 13:11:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <CA+xD70OJhkhH=+5W7M8NM54VPh42FmbD3O0yqKe1p-+=yd9zXQ@mail.gmail.com>
+ <CAOi1vP-hmzEkkUWGOwxksQn8ny1HzgNURtnf1D33KQq4-49xgQ@mail.gmail.com>
+ <CA+xD70Neac2hpzu-Tg7s+1NCDegwzKs-zdTk8DYTWZPjNaexaA@mail.gmail.com>
+ <CAOi1vP9yz7hLuSRWnDtj3wdKZD1qTiF+84_o5F91bw3wZam=0g@mail.gmail.com> <CA+xD70MyfKgn5m3=JvgFfg+Ww=T8eJ2b9bogdbS4ogYAifNCTw@mail.gmail.com>
+In-Reply-To: <CA+xD70MyfKgn5m3=JvgFfg+Ww=T8eJ2b9bogdbS4ogYAifNCTw@mail.gmail.com>
+Reply-To: dillaman@redhat.com
+From:   Jason Dillaman <jdillama@redhat.com>
+Date:   Thu, 16 Jul 2020 16:11:45 -0400
+Message-ID: <CA+aFP1Am-dQCrd-itiZo5CKEJK44PQzgZR2YuEKkLqU5v_XW=w@mail.gmail.com>
+Subject: Re: multiple BLK-MQ queues for Ceph's RADOS Block Device (RBD) and CephFS
+To:     Bobby <italienisch1987@gmail.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>, dev <dev@ceph.io>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Thu, Jul 16, 2020 at 3:19 PM Bobby <italienisch1987@gmail.com> wrote:
+>
+> Hi,
+>
+> I completely agree to what you said regarding Ceph client. This is exactl=
+y my understanding of a Ceph client.
+>
+> And regarding blk-mq, I meant for a block device. A multi-queue implement=
+ation of a block device.
 
-Will send the metric flags to MDS, currently it supports the cap,
-read latency, write latency and metadata latency.
+krbd is a blk-mq implementation of a block device. So is the nbd block
+device driver -- which can be combined w/ rbd-nbd (or any other NBD
+server) to utilize librbd in user-space.
 
-URL: https://tracker.ceph.com/issues/43435
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/mds_client.c | 60 ++++++++++++++++++++++++++++++++++++++++++--
- fs/ceph/metric.h     | 13 ++++++++++
- 2 files changed, 71 insertions(+), 2 deletions(-)
+> On Wednesday, July 15, 2020, Ilya Dryomov <idryomov@gmail.com> wrote:
+> > On Wed, Jul 15, 2020 at 12:47 AM Bobby <italienisch1987@gmail.com> wrot=
+e:
+> >>
+> >>
+> >>
+> >> Hi Ilya,
+> >>
+> >> Thanks for the reply. It's basically both i.e. I have a specific proje=
+ct currently and also I am looking to make ceph-fuse faster.
+> >>
+> >> But for now, let me ask specifically the project based question. In th=
+e project I have to write a blk-mq kernel driver for the Ceph client machin=
+e. The Ceph client machine will transfer the data to HBA or lets say any em=
+bedded device.
+> >
+> > What is a "Ceph client machine"?
+> >
+> > A Ceph client (or more specifically a RADOS client) speaks RADOS
+> > protocol and transfers data to OSD daemons.  It can't transfer data
+> > directly to a physical device because something has to take care of
+> > replication, ensure consistency and self healing, etc.  This is the
+> > job of the OSD.
+> >
+> >>
+> >> My hope is that there can be an alternative and that alternative is to=
+ not implement a blk-mq kernel driver and instead do the stuff in userspace=
+. I am trying to avoid writing a blk-mq kernel driver and yet achieve the m=
+ulti-queue implementation through userspace. Is it possible?
+> >>
+> >> Also AFAIK, the Ceph=E2=80=99s block storage implementation uses a cli=
+ent module and this client module has two implementations librbd (user-spac=
+e) and krbd (kernel module). I have not gone deep into these client modules=
+. but can librbd help me with this?
+> >
+> > I guess I don't understand the goal of your project.  A multi-queue
+> > implementation of what exactly?  A Ceph block device, a Ceph filesystem
+> > or something else entirely?  It would help if you were more specific
+> > because "a multi-queue driver for Ceph" is really vague.
+> >
+> > Thanks,
+> >
+> >                 Ilya
+> > _______________________________________________
+> Dev mailing list -- dev@ceph.io
+> To unsubscribe send an email to dev-leave@ceph.io
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index cf4c2ba2311f..929778625ea5 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -1194,6 +1194,48 @@ static int encode_supported_features(void **p, void *end)
- 	return 0;
- }
- 
-+static const unsigned char metric_bits[] = CEPHFS_METRIC_SPEC_CLIENT_SUPPORTED;
-+#define METRIC_BYTES(cnt) (DIV_ROUND_UP((size_t)metric_bits[cnt - 1] + 1, 64) * 8)
-+static int encode_metric_spec(void **p, void *end)
-+{
-+	static const size_t count = ARRAY_SIZE(metric_bits);
-+
-+	/* header */
-+	if (WARN_ON_ONCE(*p + 2 > end))
-+		return -ERANGE;
-+
-+	ceph_encode_8(p, 1); /* version */
-+	ceph_encode_8(p, 1); /* compat */
-+
-+	if (count > 0) {
-+		size_t i;
-+		size_t size = METRIC_BYTES(count);
-+
-+		if (WARN_ON_ONCE(*p + 4 + 4 + size > end))
-+			return -ERANGE;
-+
-+		/* metric spec info length */
-+		ceph_encode_32(p, 4 + size);
-+
-+		/* metric spec */
-+		ceph_encode_32(p, size);
-+		memset(*p, 0, size);
-+		for (i = 0; i < count; i++)
-+			((unsigned char *)(*p))[i / 8] |= BIT(metric_bits[i] % 8);
-+		*p += size;
-+	} else {
-+		if (WARN_ON_ONCE(*p + 4 + 4 > end))
-+			return -ERANGE;
-+
-+		/* metric spec info length */
-+		ceph_encode_32(p, 4);
-+		/* metric spec */
-+		ceph_encode_32(p, 0);
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * session message, specialization for CEPH_SESSION_REQUEST_OPEN
-  * to include additional client metadata fields.
-@@ -1234,6 +1276,13 @@ static struct ceph_msg *create_session_open_msg(struct ceph_mds_client *mdsc, u6
- 		size = FEATURE_BYTES(count);
- 	extra_bytes += 4 + size;
- 
-+	/* metric spec */
-+	size = 0;
-+	count = ARRAY_SIZE(metric_bits);
-+	if (count > 0)
-+		size = METRIC_BYTES(count);
-+	extra_bytes += 2 + 4 + 4 + size;
-+
- 	/* Allocate the message */
- 	msg = ceph_msg_new(CEPH_MSG_CLIENT_SESSION, sizeof(*h) + extra_bytes,
- 			   GFP_NOFS, false);
-@@ -1252,9 +1301,9 @@ static struct ceph_msg *create_session_open_msg(struct ceph_mds_client *mdsc, u6
- 	 * Serialize client metadata into waiting buffer space, using
- 	 * the format that userspace expects for map<string, string>
- 	 *
--	 * ClientSession messages with metadata are v3
-+	 * ClientSession messages with metadata are v4
- 	 */
--	msg->hdr.version = cpu_to_le16(3);
-+	msg->hdr.version = cpu_to_le16(4);
- 	msg->hdr.compat_version = cpu_to_le16(1);
- 
- 	/* The write pointer, following the session_head structure */
-@@ -1283,6 +1332,13 @@ static struct ceph_msg *create_session_open_msg(struct ceph_mds_client *mdsc, u6
- 		return ERR_PTR(ret);
- 	}
- 
-+	ret = encode_metric_spec(&p, end);
-+	if (ret) {
-+		pr_err("encode_metric_spec failed!\n");
-+		ceph_msg_put(msg);
-+		return ERR_PTR(ret);
-+	}
-+
- 	msg->front.iov_len = p - msg->front.iov_base;
- 	msg->hdr.front_len = cpu_to_le32(msg->front.iov_len);
- 
-diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
-index fe5d07d2e63a..1d0959d669d7 100644
---- a/fs/ceph/metric.h
-+++ b/fs/ceph/metric.h
-@@ -18,6 +18,19 @@ enum ceph_metric_type {
- 	CLIENT_METRIC_TYPE_MAX = CLIENT_METRIC_TYPE_DENTRY_LEASE,
- };
- 
-+/*
-+ * This will always have the highest metric bit value
-+ * as the last element of the array.
-+ */
-+#define CEPHFS_METRIC_SPEC_CLIENT_SUPPORTED {	\
-+	CLIENT_METRIC_TYPE_CAP_INFO,		\
-+	CLIENT_METRIC_TYPE_READ_LATENCY,	\
-+	CLIENT_METRIC_TYPE_WRITE_LATENCY,	\
-+	CLIENT_METRIC_TYPE_METADATA_LATENCY,	\
-+						\
-+	CLIENT_METRIC_TYPE_MAX,			\
-+}
-+
- /* metric caps header */
- struct ceph_metric_cap {
- 	__le32 type;     /* ceph metric type */
--- 
-2.27.0.221.ga08a83d.dirty
+
+
+--=20
+Jason
 
