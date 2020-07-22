@@ -2,33 +2,33 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F5E72296AD
-	for <lists+ceph-devel@lfdr.de>; Wed, 22 Jul 2020 12:56:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C7A62296B0
+	for <lists+ceph-devel@lfdr.de>; Wed, 22 Jul 2020 12:56:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbgGVKzP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 22 Jul 2020 06:55:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53564 "EHLO mail.kernel.org"
+        id S1728217AbgGVKzR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 22 Jul 2020 06:55:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726161AbgGVKzP (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 22 Jul 2020 06:55:15 -0400
+        id S1726028AbgGVKzQ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 22 Jul 2020 06:55:16 -0400
 Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CDAD207DD;
+        by mail.kernel.org (Postfix) with ESMTPSA id 09B3F2080D;
         Wed, 22 Jul 2020 10:55:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595415314;
-        bh=i39jCRslmtaHtS8qWHs57FWuJ+JtRYV/uegGrpO3XG4=;
+        s=default; t=1595415315;
+        bh=dF/L2R8dM3Lcho2Tdr7HLE3XgrLFRD3uO/A1vAFRqrk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LSqzPv/5L7PlBvAm777gev0Y1eDTW0BTlDoRn4+3G5AsLyscEGrt53/F9wo+qFseC
-         Dm48tJLR7gpgG++KvV5W7ZBwZy0QJTUOtbl717Rg9Hl1oQRa+15ZgXhOlC0o7uSmHP
-         EPywPwV9uIiUbLtxtIaI3Qy91zOuCUD6myJw8UCo=
+        b=ubU2LgPRbG1l8acCAftjRa84BnhX0oQqAazYb994dMIUtnRtXwEW2q/Z+ttNT/pE6
+         br66o7Uchcyt/UG0Q1Q8NmF8VCMtZbJBc1gXyrxqjg0vHXuILFL+MpnTPSZpfr6D56
+         qXmMrmFPk9P2APOFwkc2QVS8FhuKFOiwemMwFth8=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     dhowells@redhat.com, dwysocha@redhat.com, smfrench@gmail.com
-Subject: [RFC PATCH 02/11] ceph: don't call ceph_update_writeable_page from page_mkwrite
-Date:   Wed, 22 Jul 2020 06:55:02 -0400
-Message-Id: <20200722105511.11187-3-jlayton@kernel.org>
+Subject: [RFC PATCH 03/11] ceph: fold ceph_sync_readpages into ceph_readpage
+Date:   Wed, 22 Jul 2020 06:55:03 -0400
+Message-Id: <20200722105511.11187-4-jlayton@kernel.org>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200722105511.11187-1-jlayton@kernel.org>
 References: <20200722105511.11187-1-jlayton@kernel.org>
@@ -39,57 +39,122 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-page_mkwrite should only be called with Uptodate pages, so we should
-only need to flush incompatible snap contexts.
+It's the only caller and this will make reorg easier.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/addr.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ fs/ceph/addr.c | 79 ++++++++++++++++----------------------------------
+ 1 file changed, 25 insertions(+), 54 deletions(-)
 
 diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 4057725e1864..4f017d552196 100644
+index 4f017d552196..3b464b8c7ce6 100644
 --- a/fs/ceph/addr.c
 +++ b/fs/ceph/addr.c
-@@ -1693,6 +1693,8 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
- 	inode_inc_iversion_raw(inode);
+@@ -182,58 +182,15 @@ static int ceph_releasepage(struct page *page, gfp_t g)
+ 	return !PagePrivate(page);
+ }
  
- 	do {
-+		struct ceph_snap_context *snapc;
-+
- 		lock_page(page);
+-/*
+- * Read some contiguous pages.  If we cross a stripe boundary, shorten
+- * *plen.  Return number of bytes read, or error.
+- */
+-static int ceph_sync_readpages(struct ceph_fs_client *fsc,
+-			       struct ceph_vino vino,
+-			       struct ceph_file_layout *layout,
+-			       u64 off, u64 *plen,
+-			       u32 truncate_seq, u64 truncate_size,
+-			       struct page **pages, int num_pages,
+-			       int page_align)
+-{
+-	struct ceph_osd_client *osdc = &fsc->client->osdc;
+-	struct ceph_osd_request *req;
+-	int rc = 0;
+-
+-	dout("readpages on ino %llx.%llx on %llu~%llu\n", vino.ino,
+-	     vino.snap, off, *plen);
+-	req = ceph_osdc_new_request(osdc, layout, vino, off, plen, 0, 1,
+-				    CEPH_OSD_OP_READ, CEPH_OSD_FLAG_READ,
+-				    NULL, truncate_seq, truncate_size,
+-				    false);
+-	if (IS_ERR(req))
+-		return PTR_ERR(req);
+-
+-	/* it may be a short read due to an object boundary */
+-	osd_req_op_extent_osd_data_pages(req, 0,
+-				pages, *plen, page_align, false, false);
+-
+-	dout("readpages  final extent is %llu~%llu (%llu bytes align %d)\n",
+-	     off, *plen, *plen, page_align);
+-
+-	rc = ceph_osdc_start_request(osdc, req, false);
+-	if (!rc)
+-		rc = ceph_osdc_wait_request(osdc, req);
+-
+-	ceph_update_read_latency(&fsc->mdsc->metric, req->r_start_latency,
+-				 req->r_end_latency, rc);
+-
+-	ceph_osdc_put_request(req);
+-	dout("readpages result %d\n", rc);
+-	return rc;
+-}
+-
+-/*
+- * read a single page, without unlocking it.
+- */
++/* read a single page, without unlocking it. */
+ static int ceph_do_readpage(struct file *filp, struct page *page)
+ {
+ 	struct inode *inode = file_inode(filp);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
++	struct ceph_osd_client *osdc = &fsc->client->osdc;
++	struct ceph_osd_request *req;
++	struct ceph_vino vino = ceph_vino(inode);
+ 	int err = 0;
+ 	u64 off = page_offset(page);
+ 	u64 len = PAGE_SIZE;
+@@ -260,12 +217,27 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
+ 	if (err == 0)
+ 		return -EINPROGRESS;
  
- 		if (page_mkwrite_check_truncate(page, inode) < 0) {
-@@ -1701,13 +1703,26 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
- 			break;
- 		}
+-	dout("readpage inode %p file %p page %p index %lu\n",
+-	     inode, filp, page, page->index);
+-	err = ceph_sync_readpages(fsc, ceph_vino(inode),
+-				  &ci->i_layout, off, &len,
+-				  ci->i_truncate_seq, ci->i_truncate_size,
+-				  &page, 1, 0);
++	dout("readpage ino %llx.%llx file %p off %llu len %llu page %p index %lu\n",
++	     vino.ino, vino.snap, filp, off, len, page, page->index);
++	req = ceph_osdc_new_request(osdc, &ci->i_layout, vino, off, &len, 0, 1,
++				    CEPH_OSD_OP_READ, CEPH_OSD_FLAG_READ, NULL,
++				    ci->i_truncate_seq, ci->i_truncate_size,
++				    false);
++	if (IS_ERR(req))
++		return PTR_ERR(req);
++
++	osd_req_op_extent_osd_data_pages(req, 0, &page, len, 0, false, false);
++
++	err = ceph_osdc_start_request(osdc, req, false);
++	if (!err)
++		err = ceph_osdc_wait_request(osdc, req);
++
++	ceph_update_read_latency(&fsc->mdsc->metric, req->r_start_latency,
++				 req->r_end_latency, err);
++
++	ceph_osdc_put_request(req);
++	dout("readpage result %d\n", err);
++
+ 	if (err == -ENOENT)
+ 		err = 0;
+ 	if (err < 0) {
+@@ -283,7 +255,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
  
--		err = ceph_update_writeable_page(vma->vm_file, off, len, page);
--		if (err >= 0) {
-+		snapc = ceph_find_incompatible(inode, page);
-+		if (!snapc) {
- 			/* success.  we'll keep the page locked. */
- 			set_page_dirty(page);
- 			ret = VM_FAULT_LOCKED;
-+			break;
- 		}
--	} while (err == -EAGAIN);
-+
-+		unlock_page(page);
-+
-+		if (IS_ERR(snapc)) {
-+			ret = VM_FAULT_SIGBUS;
-+			break;
-+		}
-+
-+		ceph_queue_writeback(inode);
-+		err = wait_event_killable(ci->i_cap_wq,
-+				context_is_writeable_or_written(inode, snapc));
-+		ceph_put_snap_context(snapc);
-+	} while (err == 0);
- 
- 	if (ret == VM_FAULT_LOCKED ||
- 	    ci->i_inline_version != CEPH_INLINE_NONE) {
+ 	SetPageUptodate(page);
+ 	ceph_readpage_to_fscache(inode, page);
+-
+ out:
+ 	return err < 0 ? err : 0;
+ }
 -- 
 2.26.2
 
