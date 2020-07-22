@@ -2,61 +2,117 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F23F52296B6
-	for <lists+ceph-devel@lfdr.de>; Wed, 22 Jul 2020 12:56:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2969822988E
+	for <lists+ceph-devel@lfdr.de>; Wed, 22 Jul 2020 14:50:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728597AbgGVKzZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 22 Jul 2020 06:55:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53614 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728277AbgGVKzV (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 22 Jul 2020 06:55:21 -0400
-Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63EBB20771;
-        Wed, 22 Jul 2020 10:55:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595415320;
-        bh=dOc715JVh7iKo4HwGuHSp6cKvvlHjVAE8oF8KIZtpH0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hj/sYtrzSpzw3I34o5B6LhUN28JzosvwRvzr/Bg9FshMOCWmRmNItqtl0FSTQHBDE
-         +wt2PUEMwkW2VrwCnK9vaTjKQLfd4oF2gnoJm2X8hc7U2BAa5mG7mqsuBH36EDJh50
-         10LoqueSOHSJE0bHM3XDjxogkLgeDIxQTVo+/oTg=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     dhowells@redhat.com, dwysocha@redhat.com, smfrench@gmail.com
-Subject: [RFC PATCH 11/11] ceph: re-enable fscache support
-Date:   Wed, 22 Jul 2020 06:55:11 -0400
-Message-Id: <20200722105511.11187-12-jlayton@kernel.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200722105511.11187-1-jlayton@kernel.org>
-References: <20200722105511.11187-1-jlayton@kernel.org>
+        id S1732402AbgGVMuj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 22 Jul 2020 08:50:39 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:2987 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732393AbgGVMuh (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 22 Jul 2020 08:50:37 -0400
+Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.54])
+        by Forcepoint Email with ESMTP id 932BA15591EA1313251F;
+        Wed, 22 Jul 2020 20:50:34 +0800 (CST)
+Received: from dggeme716-chm.china.huawei.com (10.1.199.112) by
+ DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
+ id 14.3.487.0; Wed, 22 Jul 2020 20:50:34 +0800
+Received: from [10.174.177.240] (10.174.177.240) by
+ dggeme716-chm.china.huawei.com (10.1.199.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Wed, 22 Jul 2020 20:50:34 +0800
+Subject: Re: [PATCH] fs:ceph: Remove unused variables in ceph_mdsmap_decode()
+To:     Jeff Layton <jlayton@kernel.org>, <idryomov@gmail.com>
+CC:     <ceph-devel@vger.kernel.org>
+References: <20200720114017.24869-1-jiayang5@huawei.com>
+ <028c75cdba6faf15ede3ef38937614694a0945d1.camel@kernel.org>
+From:   Jia Yang <jiayang5@huawei.com>
+Message-ID: <41f8bd4a-fcca-b142-35f4-a2af73c97c02@huawei.com>
+Date:   Wed, 22 Jul 2020 20:50:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
+In-Reply-To: <028c75cdba6faf15ede3ef38937614694a0945d1.camel@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.177.240]
+X-ClientProxiedBy: dggeme708-chm.china.huawei.com (10.1.199.104) To
+ dggeme716-chm.china.huawei.com (10.1.199.112)
+X-CFilter-Loop: Reflected
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks a lot!
 
-diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
-index 734d08b57ef9..bc5656966aca 100644
---- a/fs/ceph/Kconfig
-+++ b/fs/ceph/Kconfig
-@@ -21,7 +21,7 @@ config CEPH_FS
- if CEPH_FS
- config CEPH_FSCACHE
- 	bool "Enable Ceph client caching support"
--	depends on CEPH_FS=m && FSCACHE_OLD || CEPH_FS=y && FSCACHE_OLD=y
-+	depends on CEPH_FS=m && FSCACHE || CEPH_FS=y && FSCACHE=y
- 	help
- 	  Choose Y here to enable persistent, read-only local
- 	  caching support for Ceph clients using FS-Cache
--- 
-2.26.2
-
+On 2020/7/21 4:24, Jeff Layton wrote:
+> On Mon, 2020-07-20 at 19:40 +0800, Jia Yang wrote:
+>> Fix build warnings:
+>>
+>> fs/ceph/mdsmap.c: In function ‘ceph_mdsmap_decode’:
+>> fs/ceph/mdsmap.c:192:7: warning:
+>> variable ‘info_cv’ set but not used [-Wunused-but-set-variable]
+>> fs/ceph/mdsmap.c:177:7: warning:
+>> variable ‘state_seq’ set but not used [-Wunused-but-set-variable]
+>> fs/ceph/mdsmap.c:123:15: warning:
+>> variable ‘mdsmap_cv’ set but not used [-Wunused-but-set-variable]
+>>
+>> Signed-off-by: Jia Yang <jiayang5@huawei.com>
+>> ---
+>>  fs/ceph/mdsmap.c | 7 +------
+>>  1 file changed, 1 insertion(+), 6 deletions(-)
+>>
+>> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+>> index 889627817e52..9496287f2071 100644
+>> --- a/fs/ceph/mdsmap.c
+>> +++ b/fs/ceph/mdsmap.c
+>> @@ -120,7 +120,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
+>>  	const void *start = *p;
+>>  	int i, j, n;
+>>  	int err;
+>> -	u8 mdsmap_v, mdsmap_cv;
+>> +	u8 mdsmap_v;
+>>  	u16 mdsmap_ev;
+>>  
+>>  	m = kzalloc(sizeof(*m), GFP_NOFS);
+>> @@ -129,7 +129,6 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
+>>  
+>>  	ceph_decode_need(p, end, 1 + 1, bad);
+>>  	mdsmap_v = ceph_decode_8(p);
+>> -	mdsmap_cv = ceph_decode_8(p);
+> 
+> These decode calls have the side effect of incrementing "p", so this
+> will break decoding. You can still get rid of them, but you'll want to
+> convert them to ceph_decode_skip_* calls.
+> 
+>>  	if (mdsmap_v >= 4) {
+>>  	       u32 mdsmap_len;
+>>  	       ceph_decode_32_safe(p, end, mdsmap_len, bad);
+>> @@ -174,7 +173,6 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
+>>  		u64 global_id;
+>>  		u32 namelen;
+>>  		s32 mds, inc, state;
+>> -		u64 state_seq;
+>>  		u8 info_v;
+>>  		void *info_end = NULL;
+>>  		struct ceph_entity_addr addr;
+>> @@ -189,9 +187,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
+>>  		info_v= ceph_decode_8(p);
+>>  		if (info_v >= 4) {
+>>  			u32 info_len;
+>> -			u8 info_cv;
+>>  			ceph_decode_need(p, end, 1 + sizeof(u32), bad);
+>> -			info_cv = ceph_decode_8(p);
+>>  			info_len = ceph_decode_32(p);
+>>  			info_end = *p + info_len;
+>>  			if (info_end > end)
+>> @@ -210,7 +206,6 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end)
+>>  		mds = ceph_decode_32(p);
+>>  		inc = ceph_decode_32(p);
+>>  		state = ceph_decode_32(p);
+>> -		state_seq = ceph_decode_64(p);
+>>  		err = ceph_decode_entity_addr(p, end, &addr);
+>>  		if (err)
+>>  			goto corrupt;
+> 
