@@ -2,140 +2,119 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CFF7229D11
-	for <lists+ceph-devel@lfdr.de>; Wed, 22 Jul 2020 18:25:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13CC7229F5D
+	for <lists+ceph-devel@lfdr.de>; Wed, 22 Jul 2020 20:41:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbgGVQXv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 22 Jul 2020 12:23:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41470 "EHLO
+        id S1730843AbgGVSlZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 22 Jul 2020 14:41:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbgGVQXv (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 22 Jul 2020 12:23:51 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CE76C0619DC
-        for <ceph-devel@vger.kernel.org>; Wed, 22 Jul 2020 09:23:51 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id z6so3183119iow.6
-        for <ceph-devel@vger.kernel.org>; Wed, 22 Jul 2020 09:23:51 -0700 (PDT)
+        with ESMTP id S1726535AbgGVSlZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 22 Jul 2020 14:41:25 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F1E2C0619DC
+        for <ceph-devel@vger.kernel.org>; Wed, 22 Jul 2020 11:41:25 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id bm28so2442993edb.2
+        for <ceph-devel@vger.kernel.org>; Wed, 22 Jul 2020 11:41:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5Ku9XIIpyMSVV1kPXoKaarL9WLuUdEhzno6w4cYMo5M=;
-        b=n6I3jnmCxZgWfGVM9zL8kdCgXTSuw+wIRCRAUZ+CV69S8J0sWuqEpMdL7euBXLlS7l
-         0oLqw5i6QdGiQbUiZHC/sh1Gdwa+riN5Xo0zJx8/Sdgh+7OJY5O3ullMjZY2Q4e7MRNO
-         c2IcG6r6z/Gcz2tfbaue3FczfrslzORRCRbAYKjdJ+bmgCSJJRC7yzCVwNtzzhkQlFf7
-         d0kOecVbxRwxPahN+MnF6RCeR2TxjGsBeVKzcuSxT0bhUDxPRlDBE+ZMcd8Z+aJXmHFe
-         XT+iQB5JRXFcH90jupHOUwX/GCge2LiFaPtaAWpSVcPST1yvS/2DB9IseHcjuxpDzfgj
-         3oAQ==
+        h=from:to:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=tmEP0SohNG29M5Jt8DWdjq3wWUlw86k9FCvdX7iITDg=;
+        b=kubLmbUw83647yiFqBhziYsw5VNfMzJVfrfABCskEdfZSr52aWajfAZgIpouipAM0O
+         t1+vXoB3uzGoijQHhCwUti74feAJqKAdauoiLjqyJFf91n8tTuEODDZsF4KNBY/8sP7A
+         SNKzViMKgmUYhkB6K3Hd//D1SOc5YLqqjVgKpTyTMdRvgKbuhX4JbOcb2jHxj9DyhHbc
+         6t2pqGUOJoy3ua50vNeK5+6AZjMf4cQBS4VRm9H1In6q9VjBgpwgSVzSrRyYqa0Gvxvk
+         D2hzk7L6vPRAzVjf68B2qNgSTFehxJCSbUu3h5v6Wd5Rs0qFJ2GyNQ42kFGr6VboOQpc
+         r2Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5Ku9XIIpyMSVV1kPXoKaarL9WLuUdEhzno6w4cYMo5M=;
-        b=fjzP0/+oU1J34hc83ffgtqMCbeEwIXpAhMUy3Ps8aMavAfewED3lAdcoGYWZlKX5St
-         AgllvpiQYNWFiJLTVqew5uuY2TMO5tcrYLiFKINf4gFP2bvc2Q8juOBahBIUQXrouyho
-         4wWoCsc42jRzKOTAmBAYN5omLkiqgytUbkEmbKYOVSqpy7axVZYCigbUDcb9H/RdlkYR
-         6udV8t9NKkg8JfVZdDHdPzm4JLd3WKSydSYnbhnpYmFGJqlq7vZpBAr8S7nc/UhsbvRd
-         De0EL0WuPXEljpjhI/evb82QAqhmr+/lNKhucqnw7bJaqPemGF28fvndjq0+Ey0TUq+d
-         CeOw==
-X-Gm-Message-State: AOAM533MWMp4pIHAnBOHk/dDSGN2q3+TOw+2BjtMPpK5iwefYLDTO/W9
-        epNXrQ0/IF0GpfxRc3RDVBWXAz73FQUpdDc6H0qB6dFpctA=
-X-Google-Smtp-Source: ABdhPJwAiwP59z006qGtYaI3QFZWZiU+LmCfRrS225HIylWr2djF4KiT3bt2seFXJNCPdAPzqhG+nxF4i37Oplx9uSA=
-X-Received: by 2002:a5d:9c0e:: with SMTP id 14mr523573ioe.109.1595435030546;
- Wed, 22 Jul 2020 09:23:50 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=tmEP0SohNG29M5Jt8DWdjq3wWUlw86k9FCvdX7iITDg=;
+        b=pfuaG9PUMh7J45SzcgNMqLuJWRTbovdYcMR9m7hxPG7Ee8LeW+dWaKyaRcYK4+RbAb
+         8miR+MLlnRfw9QYSgSqjhuyRmane0rUK0j+1+KhCT7qhMXzng0i9+9VY9KDtiOvfzn9v
+         NJ7tb1s4CXoGrA4Vjn2sGc6Ud1Mg9zZkpN5L4Y6vePvPdVLAUNEvyaKAMWVh9onkUHPq
+         jJGD963Fit7w2v6X9IomZ4DnLJ8KXdk7DBMMUfpF8YDfaH0S2kvazsfEruueVGYVeAUl
+         bMO3B0zpuN3/V11YC28Z9Ogzyc8ikId3uqJREAhnYH6dXaGccN/uL/xa1pIhwid/Npk8
+         SzpQ==
+X-Gm-Message-State: AOAM532M+85yC8PVvYqLOY1TIxjd2XX6D57GIXT5vIXmqEU48KViteTz
+        0NcOXrhg9+lC4GrC4QbefCxNrSdya2riag==
+X-Google-Smtp-Source: ABdhPJwg1NFPBaZU5Fjo1qzcesrxiPnouSMPX+HDQZhwRGOPx54YW3G7qae89K2a3f5irs8um9zFxA==
+X-Received: by 2002:a50:e385:: with SMTP id b5mr812838edm.130.1595443283454;
+        Wed, 22 Jul 2020 11:41:23 -0700 (PDT)
+Received: from oc4278210638.ibm.com ([2a02:8070:a1a5:8400:7e7:ba1f:70a9:f64e])
+        by smtp.gmail.com with ESMTPSA id e8sm302353eja.101.2020.07.22.11.41.22
+        for <ceph-devel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Jul 2020 11:41:22 -0700 (PDT)
+From:   Ezra Ulembeck <ulembeck@gmail.com>
+To:     ceph-devel@vger.kernel.org
+Subject: Problems with building/installing ceph from sources (git repo) on
+ x86_64 (ubuntu 20.04)
+Message-ID: <cda63c29-bf9a-635f-df95-38cd04de2ced@gmail.com>
+Date:   Wed, 22 Jul 2020 20:41:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-References: <20200722134604.3026-1-jiayang5@huawei.com> <CAOi1vP9kMKVTr4K0WzEpr1cjvguuH-gOy8vnOrMm3ELdiBfk_A@mail.gmail.com>
- <a2264c76c59e6bcb39acc7704fb169856d28f7b4.camel@kernel.org>
-In-Reply-To: <a2264c76c59e6bcb39acc7704fb169856d28f7b4.camel@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 22 Jul 2020 18:23:47 +0200
-Message-ID: <CAOi1vP9avh+h0d7vqLeLMfojzN8nWVk9OrnBZwUppMOQpDDm1w@mail.gmail.com>
-Subject: Re: [PATCH V2] fs:ceph: Remove unused variables in ceph_mdsmap_decode()
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Jia Yang <jiayang5@huawei.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jul 22, 2020 at 5:59 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> On Wed, 2020-07-22 at 15:53 +0200, Ilya Dryomov wrote:
-> > On Wed, Jul 22, 2020 at 3:39 PM Jia Yang <jiayang5@huawei.com> wrote:
-> > > Fix build warnings:
-> > >
-> > > fs/ceph/mdsmap.c: In function =E2=80=98ceph_mdsmap_decode=E2=80=99:
-> > > fs/ceph/mdsmap.c:192:7: warning:
-> > > variable =E2=80=98info_cv=E2=80=99 set but not used [-Wunused-but-set=
--variable]
-> > > fs/ceph/mdsmap.c:177:7: warning:
-> > > variable =E2=80=98state_seq=E2=80=99 set but not used [-Wunused-but-s=
-et-variable]
-> > > fs/ceph/mdsmap.c:123:15: warning:
-> > > variable =E2=80=98mdsmap_cv=E2=80=99 set but not used [-Wunused-but-s=
-et-variable]
-> > >
-> > > Use ceph_decode_skip_* instead of ceph_decode_*, because p is
-> > > increased in ceph_decode_*.
-> > >
-> > > Signed-off-by: Jia Yang <jiayang5@huawei.com>
-> > > ---
-> > >  fs/ceph/mdsmap.c | 10 ++++------
-> > >  1 file changed, 4 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
-> > > index 889627817e52..7455ba83822a 100644
-> > > --- a/fs/ceph/mdsmap.c
-> > > +++ b/fs/ceph/mdsmap.c
-> > > @@ -120,7 +120,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, =
-void *end)
-> > >         const void *start =3D *p;
-> > >         int i, j, n;
-> > >         int err;
-> > > -       u8 mdsmap_v, mdsmap_cv;
-> > > +       u8 mdsmap_v;
-> > >         u16 mdsmap_ev;
-> > >
-> > >         m =3D kzalloc(sizeof(*m), GFP_NOFS);
-> > > @@ -129,7 +129,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, =
-void *end)
-> > >
-> > >         ceph_decode_need(p, end, 1 + 1, bad);
-> > >         mdsmap_v =3D ceph_decode_8(p);
-> > > -       mdsmap_cv =3D ceph_decode_8(p);
-> > > +       ceph_decode_skip_8(p, end, bad);
-> >
-> > Hi Jia,
-> >
-> > The bounds are already checked in ceph_decode_need(), so using
-> > ceph_decode_skip_*() is unnecessary.  Just increment the position
-> > with *p +=3D 1, staying consistent with ceph_decode_8(), which does
-> > not bounds check.
-> >
->
-> I suggested using ceph_decode_skip_*, mostly just because it's more
-> self-documenting and I didn't think it that significant an overhead.
-> Just incrementing the pointer will also work too, of course.
+Hi all,
 
-Either is fine (the overhead is negligible), but I prefer to be
-consistent: either ceph_decode_need() + unsafe variants or safe
-variants (i.e. ceph_decode_*_safe / ceph_decode_skip_*).
+While following the instructions in
+https://docs.ceph.com/docs/master/install/build-ceph/
 
->
-> While you're doing that though, please also make note of what would have
-> been decoded there too. So in this case, something like this is what I'd
-> suggest:
->
->         *p +=3D 1;        /* mdsmap_cv */
->
-> These sorts of comments are helpful later, esp. with a protocol like
-> ceph that continually has fields being deprecated.
+1) I am not able to build packages
+2) I encounter problems after building/installing in user-space
 
-Yup, definitely useful and done in many other places.
+Details:
+
+$ git clone --recursive https://github.com/ceph/ceph.git
+$ cd ceph
+$ git checkout octopus
+$ ./install-deps.sh
+
+1. Building packages
+
+$ sudo dpkg-buildpackage -j4
+...
+/usr/bin/cc -g -O2 -fdebug-prefix-map=/home/eduard/ceph=. 
+-fstack-protector-strong -Wformat -Werror=format-security -Wdate-time 
+-D_FORTIFY_SOURCE=2 -DCMAKE_HAVE_LIBC_PTHREAD  -Wl,-Bsymbolic-functions 
+-Wl,-z,relro  CMakeFiles/cmTC_277b6.dir/src.c.o  -o cmTC_277b6
+/usr/bin/ld: CMakeFiles/cmTC_277b6.dir/src.c.o: in function `main':
+./obj-x86_64-linux-gnu/CMakeFiles/CMakeTmp/./obj-x86_64-linux-gnu/CMakeFiles/CMakeTmp/src.c:11: 
+undefined reference to `pthread_create'
+/usr/bin/ld: 
+./obj-x86_64-linux-gnu/CMakeFiles/CMakeTmp/./obj-x86_64-linux-gnu/CMakeFiles/CMakeTmp/src.c:12: 
+undefined reference to `pthread_detach'
+/usr/bin/ld: 
+./obj-x86_64-linux-gnu/CMakeFiles/CMakeTmp/./obj-x86_64-linux-gnu/CMakeFiles/CMakeTmp/src.c:13: 
+undefined reference to `pthread_join'
+collect2: error: ld returned 1 exit status
+
+2. Building/installing in user-space
+
+$ ./do_cmake.sh
+$ cd build
+$ make
+$ sudo make install
+
+$ ceph -s
+Traceback (most recent call last):
+   File "/usr/local/bin/ceph", line 140, in <module>
+     import rados
+ImportError: librados.so.2: cannot open shared object file: No such file 
+or directory
+
+
+I will be very thankful for any hints on how to get to success,
 
 Thanks,
-
-                Ilya
+Ezra
