@@ -2,73 +2,79 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD13722B4C7
-	for <lists+ceph-devel@lfdr.de>; Thu, 23 Jul 2020 19:24:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EAB222BAFC
+	for <lists+ceph-devel@lfdr.de>; Fri, 24 Jul 2020 02:26:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbgGWRYN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 23 Jul 2020 13:24:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47378 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726650AbgGWRYN (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 23 Jul 2020 13:24:13 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4878D20714;
-        Thu, 23 Jul 2020 17:24:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595525052;
-        bh=n8He92OqM4NMOaTK+dVegiNwVJnHaueaVcLgMEhs3ws=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=b2QUR6Y7RdiKbmLf3KmUa+zkKTXOgAsPsdE1URJ07SZvOkW5X/MqPH+OGJTwPaZHQ
-         29tL6G0O8JhoqskvPRIwYyT4QSXcXkrugdqA8iwza37Swc1AtBb+Z+RLHK1XA5Iv2d
-         BAqPFhargN7zsuqlleh4DtdxtG11uYGPLbs7G3R4=
-Message-ID: <853430a6bb4216a5e4a0d734a18b8401b89e7f4b.camel@kernel.org>
-Subject: Re: [PATCH] ceph: remove redundant initialization of variable mds
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Colin King <colin.king@canonical.com>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 23 Jul 2020 13:24:11 -0400
-In-Reply-To: <20200723152240.992946-1-colin.king@canonical.com>
-References: <20200723152240.992946-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.3 (3.36.3-1.fc32) 
+        id S1728324AbgGXA0l (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 23 Jul 2020 20:26:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57302 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727982AbgGXA0l (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 23 Jul 2020 20:26:41 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F31C4C0619D3;
+        Thu, 23 Jul 2020 17:26:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=vhOqR9Gr3btEKPJ9ZiQD72w1Ieu2CnG1iBwxaYm/s0c=; b=VEYEIjzSxhOy772aPTMdX2Hes/
+        tbsO5Ak0tcX5qupK1rvRph3kn/2jBuqKwyS4HgqoVaT+YSO7+vmBjxThzviuRvLZbHNFM3MTgBfuD
+        aSPdbzNLSW114PMCL8CyBLf7unY4dEFgdAEQ2mvAWvPtjj3WT9VXwyiFE85Vz23tFz+EGfrxqdKOU
+        /09zOXh2etUO3lRsT20rh6p2pcZF23wtsvsGAWGv1TZwyUqb9RWPuCHTdPEl8XUNcSz1oQCcLO6xE
+        7xuftRZxiZlHarUSR9t8Lcs7a6Uqi63AEtpJK0kShdY+bJx3zy4vH5ZfVeoXwgu/gGtOS8HH9a0GS
+        cWzTSXgg==;
+Received: from [2601:1c0:6280:3f0::19c2] (helo=smtpauth.infradead.org)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jylXq-0007dG-1f; Fri, 24 Jul 2020 00:26:39 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Subject: [PATCH] ceph: delete repeated words in fs/ceph/
+Date:   Thu, 23 Jul 2020 17:26:34 -0700
+Message-Id: <20200724002634.2545-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2020-07-23 at 16:22 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable mds is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/ceph/debugfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-> index 070ed8481340..48f5afb56c91 100644
-> --- a/fs/ceph/debugfs.c
-> +++ b/fs/ceph/debugfs.c
-> @@ -272,7 +272,7 @@ static int mds_sessions_show(struct seq_file *s, void *ptr)
->  	struct ceph_mds_client *mdsc = fsc->mdsc;
->  	struct ceph_auth_client *ac = fsc->client->monc.auth;
->  	struct ceph_options *opt = fsc->client->options;
-> -	int mds = -1;
-> +	int mds;
->  
->  	mutex_lock(&mdsc->mutex);
->  
+Drop duplicated words "down" and "the" in fs/ceph/super.[ch].
 
-Thanks, merged into testing branch.
--- 
-Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Ilya Dryomov <idryomov@gmail.com>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: ceph-devel@vger.kernel.org
+---
+Jeff, this is last of the duplicate words patches for ceph.
 
+ fs/ceph/super.c |    2 +-
+ fs/ceph/super.h |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--- linux-next-20200723.orig/fs/ceph/super.c
++++ linux-next-20200723/fs/ceph/super.c
+@@ -828,7 +828,7 @@ static void destroy_caches(void)
+ }
+ 
+ /*
+- * ceph_umount_begin - initiate forced umount.  Tear down down the
++ * ceph_umount_begin - initiate forced umount.  Tear down the
+  * mount, skipping steps that may hang while waiting for server(s).
+  */
+ static void ceph_umount_begin(struct super_block *sb)
+--- linux-next-20200723.orig/fs/ceph/super.h
++++ linux-next-20200723/fs/ceph/super.h
+@@ -353,7 +353,7 @@ struct ceph_inode_info {
+ 	unsigned i_dirty_caps, i_flushing_caps;     /* mask of dirtied fields */
+ 
+ 	/*
+-	 * Link to the the auth cap's session's s_cap_dirty list. s_cap_dirty
++	 * Link to the auth cap's session's s_cap_dirty list. s_cap_dirty
+ 	 * is protected by the mdsc->cap_dirty_lock, but each individual item
+ 	 * is also protected by the inode's i_ceph_lock. Walking s_cap_dirty
+ 	 * requires the mdsc->cap_dirty_lock. List presence for an item can
