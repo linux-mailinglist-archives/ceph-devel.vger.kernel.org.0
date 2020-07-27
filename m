@@ -2,56 +2,81 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FCC522E2B5
-	for <lists+ceph-devel@lfdr.de>; Sun, 26 Jul 2020 23:15:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BDCD22EBE7
+	for <lists+ceph-devel@lfdr.de>; Mon, 27 Jul 2020 14:17:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbgGZVPi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 26 Jul 2020 17:15:38 -0400
-Received: from [125.140.134.231] ([125.140.134.231]:59548 "EHLO
-        WIN-DAONO245HJF" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726663AbgGZVPi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 26 Jul 2020 17:15:38 -0400
-Received: from User ([185.191.231.247]) by WIN-DAONO245HJF with Microsoft SMTPSVC(8.5.9600.16384);
-         Mon, 27 Jul 2020 06:13:08 +0900
-Reply-To: <williiamrichard2999@yahoo.com>
-From:   "williams richard" <richardwilliamsrichard355@gmail.com>
-Subject: INVESTMENT PARTNER
-Date:   Sun, 26 Jul 2020 14:13:06 -0700
+        id S1728141AbgG0MRG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 27 Jul 2020 08:17:06 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:49318 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726555AbgG0MRF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 27 Jul 2020 08:17:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1595852224;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JZxHAk7kEKjN0o0IL1o8d9CHQ/KWoWwljjYPk+Y3O8c=;
+        b=f5ncXUT5KsPItyQqrMSNabHR150yIVD467BhmOL1rUlC4eeTYgWSNkAM9lmb017TP7dGLN
+        VbrQdm7OsmH3X2Nea8StZd/V214G26Ll4efp6TIo0ZqlN2dKpklWenMNEZ6Nktv8LMwCQ2
+        FohKMbzVdCNxhPW0IghOrZZR5lQaf3Y=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-199-BfR_E0PSOvqcWapIB-grFQ-1; Mon, 27 Jul 2020 08:16:58 -0400
+X-MC-Unique: BfR_E0PSOvqcWapIB-grFQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 51ECB102C7EE;
+        Mon, 27 Jul 2020 12:16:57 +0000 (UTC)
+Received: from [10.72.12.116] (ovpn-12-116.pek2.redhat.com [10.72.12.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5CFB2712CF;
+        Mon, 27 Jul 2020 12:16:56 +0000 (UTC)
+Subject: Re: [PATCH] ceph: fix memory leak when reallocating pages array for
+ writepages
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+References: <20200726122804.16008-1-jlayton@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <3c8fb2aa-834b-a202-24b4-7eb29cd9b7c3@redhat.com>
+Date:   Mon, 27 Jul 2020 20:16:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-Message-ID: <WIN-DAONO245HJFcUDw00937f00@WIN-DAONO245HJF>
-X-OriginalArrivalTime: 26 Jul 2020 21:13:09.0287 (UTC) FILETIME=[90176B70:01D66391]
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <20200726122804.16008-1-jlayton@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dear Sir/Madam
+On 2020/7/26 20:28, Jeff Layton wrote:
+> Once we've replaced it, we don't want to keep the old one around
+> anymore.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>   fs/ceph/addr.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 01ad09733ac7..01e167efa104 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -1212,6 +1212,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+>   			       locked_pages * sizeof(*pages));
+>   			memset(data_pages + i, 0,
+>   			       locked_pages * sizeof(*pages));
+
+BTW， do we still need to memset() the data_pages ?
+
+> +			kfree(data_pages);
+>   		} else {
+>   			BUG_ON(num_ops != req->r_num_ops);
+>   			index = pages[i - 1]->index + 1;
 
 
-I work as an agent to some Investors. Do you need a business loan or
-funds for a business idea or want to expand but need huge funding? We
-are expanding our investment presence by granting debt loan to fund
-viable and lucrative projects. If you have any project that needs
-funding, kindly revert to me with your business plan and if we find
-your business to be worthy of investment, you will be promptly
-contacted and both parties will meet face to face and have a
-round-table meeting together.
-
-Good documentation will be carried out between you and the Investor
-before putting down his funds.
-
-Regards
-
-
-
-williams richard 
-
-via  williiamrichard2999@yahoo.com
