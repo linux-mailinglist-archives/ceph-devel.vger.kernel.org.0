@@ -2,246 +2,92 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BEB952335FF
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 Jul 2020 17:48:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 616B023370F
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 Jul 2020 18:46:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729775AbgG3PsI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 30 Jul 2020 11:48:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40246 "EHLO mail.kernel.org"
+        id S1730025AbgG3QqH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 30 Jul 2020 12:46:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729091AbgG3PsH (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 30 Jul 2020 11:48:07 -0400
-Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        id S1728494AbgG3QqH (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 30 Jul 2020 12:46:07 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A20D2082E;
-        Thu, 30 Jul 2020 15:48:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85D87207F5;
+        Thu, 30 Jul 2020 16:46:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596124086;
-        bh=dGnUNIBsM9E5IcOgKry8NbZAbAfDSgG42tcYmwFwd8Q=;
-        h=From:To:Cc:Subject:Date:From;
-        b=rPHG48BSHhNVifCARJwECf7wORYwdoOTNnEoKMfFFRJB3VGcBiDMtySvW6k2NoxCu
-         FuwJe/sPgkn4RA9QILTKNqY7BGv/RZRwdG2kfse+dDr2/KBe4jdLpNcqS3/J3CHDzZ
-         OETLgHpVEdv/LI7aDz3djVY94/vGzkkji2bQqqU4=
+        s=default; t=1596127567;
+        bh=sjUWVqnlQSPnCmcVzA42xZKTz0MB5WjOwvqExeXK3mo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=zeVcJuWMC8bamVJMQkvT6IfOjFGZuWxs2cr/6aNCxkH2resEQjdycMwMAncyVobfy
+         05iueRVkIJNhyHWDGkEA8xD92ellgYMZpHxV4vkiB8F3niObue+iLH63HT5jZFyBDR
+         /htjNTIAm5BL8bNF129w25bbpTsYCYvrJHMOV5fU=
+Message-ID: <e9c69117a1ce870c2a96565d2a2d64d066a6604f.camel@kernel.org>
+Subject: Re: [PATCH] ceph: use frag's MDS in either mode
 From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, ukernel@gmail.com
-Subject: [PATCH] ceph: move sb->wb_pagevec_pool to be a global mempool
-Date:   Thu, 30 Jul 2020 11:48:04 -0400
-Message-Id: <20200730154804.1048188-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.26.2
+To:     Yanhu Cao <gmayyyha@gmail.com>
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 30 Jul 2020 12:46:05 -0400
+In-Reply-To: <20200730112242.31648-1-gmayyyha@gmail.com>
+References: <20200730112242.31648-1-gmayyyha@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.4 (3.36.4-1.fc32) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-When doing some testing recently, I hit some page allocation failures
-on mount, when creating the wb_pagevec_pool for the mount. That
-requires 128k (32 contiguous pages), and after thrashing the memory
-during an xfstests run, sometimes that would fail.
+On Thu, 2020-07-30 at 19:22 +0800, Yanhu Cao wrote:
+> if frag.mds != cap->session->s_mds, the client's req will be resent.
+> 
+> e.g.
+> 
+> file: mnt/cephfs/dir03/dir003 (0x10000000003)
+> ceph.dir.pin="1"
+> 
+> echo 'aaa' > /mnt/cephfs/dir03/dir003/file29
+> 
+> kernel: ceph:  __choose_mds 00000000ca362c7a is_hash=1 (0x7c768b89) mode 2
+> kernel: ceph:  __choose_mds 00000000ca362c7a 10000000003.fffffffffffffffe frag 0 mds1 (auth)
+> kernel: ceph:  __choose_mds 00000000ca362c7a 10000000003.fffffffffffffffe mds0 (auth cap 00000000679c38e2)
+> kernel: ceph:  __choose_mds using resend_mds mds1
+> 
+> Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> ---
+>  fs/ceph/mds_client.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
 
-128k for each mount seems like a lot to hold in reserve for a rainy
-day, so let's change this to a global mempool that gets allocated
-when the module is plugged in.
+I think you're right that there is a bug here, but this patch
+description is not terribly descriptive. Can you explain the problem and
+solution a bit better?
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/addr.c               | 23 +++++++++++------------
- fs/ceph/super.c              | 22 ++++++++--------------
- fs/ceph/super.h              |  2 --
- include/linux/ceph/libceph.h |  1 +
- 4 files changed, 20 insertions(+), 28 deletions(-)
+A good patch description should walk me through the problem and your
+reasoning to fix it. Why is this wrong now, and how does your change
+address it?
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 01ad09733ac7..6ea761c84494 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -862,8 +862,7 @@ static void writepages_finish(struct ceph_osd_request *req)
- 
- 	osd_data = osd_req_op_extent_osd_data(req, 0);
- 	if (osd_data->pages_from_pool)
--		mempool_free(osd_data->pages,
--			     ceph_sb_to_client(inode->i_sb)->wb_pagevec_pool);
-+		mempool_free(osd_data->pages, ceph_wb_pagevec_pool);
- 	else
- 		kfree(osd_data->pages);
- 	ceph_osdc_put_request(req);
-@@ -955,10 +954,10 @@ static int ceph_writepages_start(struct address_space *mapping,
- 		int num_ops = 0, op_idx;
- 		unsigned i, pvec_pages, max_pages, locked_pages = 0;
- 		struct page **pages = NULL, **data_pages;
--		mempool_t *pool = NULL;	/* Becomes non-null if mempool used */
- 		struct page *page;
- 		pgoff_t strip_unit_end = 0;
- 		u64 offset = 0, len = 0;
-+		bool from_pool = false;
- 
- 		max_pages = wsize >> PAGE_SHIFT;
- 
-@@ -1057,16 +1056,16 @@ static int ceph_writepages_start(struct address_space *mapping,
- 						      sizeof(*pages),
- 						      GFP_NOFS);
- 				if (!pages) {
--					pool = fsc->wb_pagevec_pool;
--					pages = mempool_alloc(pool, GFP_NOFS);
-+					from_pool = true;
-+					pages = mempool_alloc(ceph_wb_pagevec_pool, GFP_NOFS);
- 					BUG_ON(!pages);
- 				}
- 
- 				len = 0;
- 			} else if (page->index !=
- 				   (offset + len) >> PAGE_SHIFT) {
--				if (num_ops >= (pool ?  CEPH_OSD_SLAB_OPS :
--							CEPH_OSD_MAX_OPS)) {
-+				if (num_ops >= (from_pool ?  CEPH_OSD_SLAB_OPS :
-+							     CEPH_OSD_MAX_OPS)) {
- 					redirty_page_for_writepage(wbc, page);
- 					unlock_page(page);
- 					break;
-@@ -1161,7 +1160,7 @@ static int ceph_writepages_start(struct address_space *mapping,
- 				     offset, len);
- 				osd_req_op_extent_osd_data_pages(req, op_idx,
- 							data_pages, len, 0,
--							!!pool, false);
-+							from_pool, false);
- 				osd_req_op_extent_update(req, op_idx, len);
- 
- 				len = 0;
-@@ -1188,12 +1187,12 @@ static int ceph_writepages_start(struct address_space *mapping,
- 		dout("writepages got pages at %llu~%llu\n", offset, len);
- 
- 		osd_req_op_extent_osd_data_pages(req, op_idx, data_pages, len,
--						 0, !!pool, false);
-+						 0, from_pool, false);
- 		osd_req_op_extent_update(req, op_idx, len);
- 
- 		BUG_ON(op_idx + 1 != req->r_num_ops);
- 
--		pool = NULL;
-+		from_pool = false;
- 		if (i < locked_pages) {
- 			BUG_ON(num_ops <= req->r_num_ops);
- 			num_ops -= req->r_num_ops;
-@@ -1204,8 +1203,8 @@ static int ceph_writepages_start(struct address_space *mapping,
- 			pages = kmalloc_array(locked_pages, sizeof(*pages),
- 					      GFP_NOFS);
- 			if (!pages) {
--				pool = fsc->wb_pagevec_pool;
--				pages = mempool_alloc(pool, GFP_NOFS);
-+				from_pool = true;
-+				pages = mempool_alloc(ceph_wb_pagevec_pool, GFP_NOFS);
- 				BUG_ON(!pages);
- 			}
- 			memcpy(pages, data_pages + i,
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 585aecea5cad..7ec0e6d03d10 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -637,8 +637,6 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
- 					struct ceph_options *opt)
- {
- 	struct ceph_fs_client *fsc;
--	int page_count;
--	size_t size;
- 	int err;
- 
- 	fsc = kzalloc(sizeof(*fsc), GFP_KERNEL);
-@@ -686,22 +684,12 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
- 	if (!fsc->cap_wq)
- 		goto fail_inode_wq;
- 
--	/* set up mempools */
--	err = -ENOMEM;
--	page_count = fsc->mount_options->wsize >> PAGE_SHIFT;
--	size = sizeof (struct page *) * (page_count ? page_count : 1);
--	fsc->wb_pagevec_pool = mempool_create_kmalloc_pool(10, size);
--	if (!fsc->wb_pagevec_pool)
--		goto fail_cap_wq;
--
- 	spin_lock(&ceph_fsc_lock);
- 	list_add_tail(&fsc->metric_wakeup, &ceph_fsc_list);
- 	spin_unlock(&ceph_fsc_lock);
- 
- 	return fsc;
- 
--fail_cap_wq:
--	destroy_workqueue(fsc->cap_wq);
- fail_inode_wq:
- 	destroy_workqueue(fsc->inode_wq);
- fail_client:
-@@ -732,8 +720,6 @@ static void destroy_fs_client(struct ceph_fs_client *fsc)
- 	destroy_workqueue(fsc->inode_wq);
- 	destroy_workqueue(fsc->cap_wq);
- 
--	mempool_destroy(fsc->wb_pagevec_pool);
--
- 	destroy_mount_options(fsc->mount_options);
- 
- 	ceph_destroy_client(fsc->client);
-@@ -752,6 +738,7 @@ struct kmem_cache *ceph_dentry_cachep;
- struct kmem_cache *ceph_file_cachep;
- struct kmem_cache *ceph_dir_file_cachep;
- struct kmem_cache *ceph_mds_request_cachep;
-+mempool_t *ceph_wb_pagevec_pool;
- 
- static void ceph_inode_init_once(void *foo)
- {
-@@ -796,6 +783,10 @@ static int __init init_caches(void)
- 	if (!ceph_mds_request_cachep)
- 		goto bad_mds_req;
- 
-+	ceph_wb_pagevec_pool = mempool_create_kmalloc_pool(10, CEPH_MAX_WRITE_SIZE >> PAGE_SHIFT);
-+	if (!ceph_wb_pagevec_pool)
-+		goto bad_pagevec_pool;
-+
- 	error = ceph_fscache_register();
- 	if (error)
- 		goto bad_fscache;
-@@ -804,6 +795,8 @@ static int __init init_caches(void)
- 
- bad_fscache:
- 	kmem_cache_destroy(ceph_mds_request_cachep);
-+bad_pagevec_pool:
-+	mempool_destroy(ceph_wb_pagevec_pool);
- bad_mds_req:
- 	kmem_cache_destroy(ceph_dir_file_cachep);
- bad_dir_file:
-@@ -834,6 +827,7 @@ static void destroy_caches(void)
- 	kmem_cache_destroy(ceph_file_cachep);
- 	kmem_cache_destroy(ceph_dir_file_cachep);
- 	kmem_cache_destroy(ceph_mds_request_cachep);
-+	mempool_destroy(ceph_wb_pagevec_pool);
- 
- 	ceph_fscache_unregister();
- }
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 9001a896ae8c..4c3c964b1c54 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -118,8 +118,6 @@ struct ceph_fs_client {
- 
- 	struct ceph_mds_client *mdsc;
- 
--	/* writeback */
--	mempool_t *wb_pagevec_pool;
- 	atomic_long_t writeback_count;
- 
- 	struct workqueue_struct *inode_wq;
-diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
-index e5ed1c541e7f..c8645f0b797d 100644
---- a/include/linux/ceph/libceph.h
-+++ b/include/linux/ceph/libceph.h
-@@ -282,6 +282,7 @@ extern struct kmem_cache *ceph_dentry_cachep;
- extern struct kmem_cache *ceph_file_cachep;
- extern struct kmem_cache *ceph_dir_file_cachep;
- extern struct kmem_cache *ceph_mds_request_cachep;
-+extern mempool_t *ceph_wb_pagevec_pool;
- 
- /* ceph_common.c */
- extern bool libceph_compatible(void *data);
+Thanks,
+Jeff
+
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index a50497142e59..b2255a9be7c0 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -1103,8 +1103,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
+>  				     frag.frag, mds);
+>  				if (ceph_mdsmap_get_state(mdsc->mdsmap, mds) >=
+>  				    CEPH_MDS_STATE_ACTIVE) {
+> -					if (mode == USE_ANY_MDS &&
+> -					    !ceph_mdsmap_is_laggy(mdsc->mdsmap,
+> +					if (!ceph_mdsmap_is_laggy(mdsc->mdsmap,
+>  								  mds))
+>  						goto out;
+>  				}
+
 -- 
-2.26.2
+Jeff Layton <jlayton@kernel.org>
 
