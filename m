@@ -2,99 +2,191 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 72F342330E2
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 Jul 2020 13:22:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85292233145
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 Jul 2020 13:51:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbgG3LWv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 30 Jul 2020 07:22:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54658 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726367AbgG3LWu (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 Jul 2020 07:22:50 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F614C061794;
-        Thu, 30 Jul 2020 04:22:49 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id e22so4215400pjt.3;
-        Thu, 30 Jul 2020 04:22:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IwjGvmHYj5CwlmD5GYkZzUlslsm23kbi+AR0fiLStwE=;
-        b=F2kDh3qK24YMvm0UIFUHs0oJeGnSx1evitnSLdEc4wCp4My/XY/gWcjDpepy6i7aAr
-         +8Q4o9H3WCTovoZg4EjjWXR1CDlZ5cQvHzmmacQz2aK4wEbJqcpYMp5NAFqkxZ1iTgqG
-         S58omo0hZLudRuScRY1JOq4F9mZ/U22nBLDt7amC4eaCqTb8VdeysD5VHT5epWSfoZrO
-         jWc5n8SCpg8m+GzDDmeYPWYGsb8vk42IICG+4P0UKvQYqk6ZbO34Jmq5+4pyWBwpxmQy
-         syDofhr9aKFyThw+oOSv5AGcq3Vw9+DJ6NIuJTyX/g4hzzEITwC2fOdlkrJlb5pBcxfB
-         3hDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IwjGvmHYj5CwlmD5GYkZzUlslsm23kbi+AR0fiLStwE=;
-        b=lTbD4w2FnBUwUmhxn+uoOWv2ZMq4Cm8im2Po7ZOE4pyy/mJb2ZeNsh2QNCdfL36H2t
-         RKS9tE6V7vgePbZn77VGSfv6kVk9oqCZbRrnWjc/ZCmHNAEu72wXBjQbBp6U4CYjqsII
-         EwqK6WNsuTlyNWqrcfNvAdlPfleC6v4dIBpe7MVsLHh+T++pFTGjjDV+cSyssa9wSZ8Z
-         d+MmGxRAT7+Bwdn8Gsi58d7yu8fJg4zAa1rSOGZj91pPScbKWXUtxGihDycicfY/ufH1
-         rDF7x2E6pgp8DDeKoz+9udPns8U7gBmtHb2gih1atCNLEoX32Gc8hCTTcm9iLjIw/0US
-         tzgg==
-X-Gm-Message-State: AOAM530a8rXjfXp+hfF9yDwVO4TW/H3meQKCGr0/NlI1smJ9fkvnAC08
-        jdTyrn+6SyvWkhqz1EDcZPzxuQ9/aQc=
-X-Google-Smtp-Source: ABdhPJzTziGmekPWyfescjKyJeiO2PR5tcws6T0uYoASSTkChMWbCnIJguIFL05p9WI6j/3pXu3YeQ==
-X-Received: by 2002:a17:902:bd8a:: with SMTP id q10mr33500723pls.236.1596108168933;
-        Thu, 30 Jul 2020 04:22:48 -0700 (PDT)
-Received: from localhost.localdomain ([122.224.153.227])
-        by smtp.gmail.com with ESMTPSA id s22sm351176pfh.16.2020.07.30.04.22.46
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 Jul 2020 04:22:48 -0700 (PDT)
-From:   Yanhu Cao <gmayyyha@gmail.com>
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yanhu Cao <gmayyyha@gmail.com>
-Subject: [PATCH] ceph: use frag's MDS in either mode
-Date:   Thu, 30 Jul 2020 19:22:42 +0800
-Message-Id: <20200730112242.31648-1-gmayyyha@gmail.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+        id S1727816AbgG3Lvn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 30 Jul 2020 07:51:43 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:54308 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726774AbgG3Lvm (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 30 Jul 2020 07:51:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1596109900;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=XbbtDAwlbqFbl9LRgvVvqdOJ/w6Qt8l6sHZuVLApgCc=;
+        b=gijn+ddDKO7VUjWNXjX5bm7MrLrMcBIiQDhbubTn4vw8/NdR+tH0AZheIOeglSqaeBHYUn
+        00O8fyaZP3yqTR0ZsXaUnVKq9yVDpTFxbgJRwuJW0bqlIW8ZlFqMGkQPAy9S/Iomo37/Q5
+        FB1RwQMKvoC5KykXCJcx5VQxFWPXyb8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-446-lpsWJq8MMBO5dqJYqQQUdg-1; Thu, 30 Jul 2020 07:51:37 -0400
+X-MC-Unique: lpsWJq8MMBO5dqJYqQQUdg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0FB6D79EDC;
+        Thu, 30 Jul 2020 11:51:34 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ABF8B10002CA;
+        Thu, 30 Jul 2020 11:51:16 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Jeff Layton <jlayton@redhat.com>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Upcoming: fscache rewrite
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <447451.1596109876.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 30 Jul 2020 12:51:16 +0100
+Message-ID: <447452.1596109876@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-if frag.mds != cap->session->s_mds, the client's req will be resent.
+Hi Linus, Trond/Anna, Steve, Eric,
 
-e.g.
+I have an fscache rewrite that I'm tempted to put in for the next merge
+window:
 
-file: mnt/cephfs/dir03/dir003 (0x10000000003)
-ceph.dir.pin="1"
+	https://lore.kernel.org/linux-fsdevel/159465784033.1376674.18106463693989=
+811037.stgit@warthog.procyon.org.uk/
 
-echo 'aaa' > /mnt/cephfs/dir03/dir003/file29
+It improves the code by:
 
-kernel: ceph:  __choose_mds 00000000ca362c7a is_hash=1 (0x7c768b89) mode 2
-kernel: ceph:  __choose_mds 00000000ca362c7a 10000000003.fffffffffffffffe frag 0 mds1 (auth)
-kernel: ceph:  __choose_mds 00000000ca362c7a 10000000003.fffffffffffffffe mds0 (auth cap 00000000679c38e2)
-kernel: ceph:  __choose_mds using resend_mds mds1
+ (*) Ripping out the stuff that uses page cache snooping and kernel_write(=
+)
+     and using kiocb instead.  This gives multiple wins: uses async DIO ra=
+ther
+     than snooping for updated pages and then copying them, less VM overhe=
+ad.
 
-Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
----
- fs/ceph/mds_client.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ (*) Object management is also simplified, getting rid of the state machin=
+e
+     that was managing things and using a much simplified thread pool inst=
+ead.
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index a50497142e59..b2255a9be7c0 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -1103,8 +1103,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
- 				     frag.frag, mds);
- 				if (ceph_mdsmap_get_state(mdsc->mdsmap, mds) >=
- 				    CEPH_MDS_STATE_ACTIVE) {
--					if (mode == USE_ANY_MDS &&
--					    !ceph_mdsmap_is_laggy(mdsc->mdsmap,
-+					if (!ceph_mdsmap_is_laggy(mdsc->mdsmap,
- 								  mds))
- 						goto out;
- 				}
--- 
-2.24.3 (Apple Git-128)
+ (*) Object invalidation creates a tmpfile and diverts new activity to tha=
+t so
+     that it doesn't have to synchronise in-flight ADIO.
+
+ (*) Using a bitmap stored in an xattr rather than using bmap to find out =
+if
+     a block is present in the cache.  Probing the backing filesystem's
+     metadata to find out is not reliable in modern extent-based filesyste=
+ms
+     as them may insert or remove blocks of zeros.  Even SEEK_HOLE/SEEK_DA=
+TA
+     are problematic since they don't distinguish transparently inserted
+     bridging.
+
+I've provided a read helper that handles ->readpage, ->readpages, and
+preparatory writes in ->write_begin.  Willy is looking at using this as a =
+way
+to roll his new ->readahead op out into filesystems.  A good chunk of this
+will move into MM code.
+
+The code is simpler, and this is nice too:
+
+ 67 files changed, 5947 insertions(+), 8294 deletions(-)
+
+not including documentation changes, which I need to convert to rst format
+yet.  That removes a whole bunch more lines.
+
+But there are reasons you might not want to take it yet:
+
+ (1) It starts off by disabling fscache support in all the filesystems tha=
+t
+     use it: afs, nfs, cifs, ceph and 9p.  I've taken care of afs, Dave
+     Wysochanski has patches for nfs:
+
+	https://lore.kernel.org/linux-nfs/1596031949-26793-1-git-send-email-dwyso=
+cha@redhat.com/
+
+     but they haven't been reviewed by Trond or Anna yet, and Jeff Layton =
+has
+     patches for ceph:
+
+	https://marc.info/?l=3Dceph-devel&m=3D159541538914631&w=3D2
+
+     and I've briefly discussed cifs with Steve, but nothing has started t=
+here
+     yet.  9p I've not looked at yet.
+
+     Now, if we're okay for going a kernel release with 4/5 filesystems wi=
+th
+     caching disabled and then pushing the changes for individual filesyst=
+ems
+     through their respective trees, it might be easier.
+
+     Unfortunately, I wasn't able to get together with Trond and Anna at L=
+SF
+     to discuss this.
+
+ (2) The patched afs fs passed xfstests -g quick (unlike the upstream code
+     that oopses pretty quickly with caching enabled).  Dave and Jeff's nf=
+s
+     and ceph code is getting close, but not quite there yet.
+
+ (3) Al has objections to the ITER_MAPPING iov_iter type that I added
+
+	https://lore.kernel.org/linux-fsdevel/20200719014436.GG2786714@ZenIV.linu=
+x.org.uk/
+
+     but note that iov_iter_for_each_range() is not actually used by anyth=
+ing.
+
+     However, Willy likes it and would prefer to make it ITER_XARRAY inste=
+ad
+     as he might be able to use it in other places, though there's an issu=
+e
+     where I'm calling find_get_pages_contig() which takes a mapping (thou=
+gh
+     all it does is then get the xarray out of it).
+
+     Instead I would have to use ITER_BVEC, which has quite a high overhea=
+d,
+     though it would mean that the RCU read lock wouldn't be necessary.  T=
+his
+     would require 1K of memory for every 256K block the cache wants to re=
+ad;
+     for any read >1M, I'd have to use vmalloc() instead.
+
+     I'd also prefer not to use ITER_BVEC because the offset and length ar=
+e
+     superfluous here.  If ITER_MAPPING is not good, would it be possible =
+to
+     have an ITER_PAGEARRAY that just takes a page array instead?  Or, eve=
+n,
+     create a transient xarray?
+
+ (4) The way object culling is managed needs overhauling too, but that's a
+     whole 'nother patchset.  We could wait till that's done too, but its =
+lack
+     doesn't prevent what we have now being used.
+
+Thoughts?
+
+David
 
