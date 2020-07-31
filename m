@@ -2,33 +2,33 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A0CDE234688
-	for <lists+ceph-devel@lfdr.de>; Fri, 31 Jul 2020 15:05:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8745A23468A
+	for <lists+ceph-devel@lfdr.de>; Fri, 31 Jul 2020 15:05:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733181AbgGaNEc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 31 Jul 2020 09:04:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33670 "EHLO mail.kernel.org"
+        id S1733197AbgGaNEd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 31 Jul 2020 09:04:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732313AbgGaNE2 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        id S1732349AbgGaNE2 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
         Fri, 31 Jul 2020 09:04:28 -0400
 Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7045122B42;
+        by mail.kernel.org (Postfix) with ESMTPSA id 0807C22B40;
         Fri, 31 Jul 2020 13:04:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596200667;
-        bh=qLp41zQcAzd+F7St5wIbt9m9pHysUNK1JZQe6ep7DrM=;
+        s=default; t=1596200668;
+        bh=FuyGhzEQnEfUUzwfUpasCX1FoivvKi52xLBDfUx990k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SW2Y2I9Yoq/oizqBa/+BYuty1a39JNjlb4J/FF2zLLGQodu4OrWOv0OSqc3NwGBtT
-         00Zgi3VgTorvwxzBB44TfuhU2JXTwoG8rZMoePFKJ3rddgP7EfaeqJtuMzdIQ+zj46
-         3lLzHw84x9lLmglxjgRUaCq244ourGlZoOl+QaU0=
+        b=UEIyTMllrE86cHcf77BjsKLln3Ru57gcg/UC32H6Hd0PAOVSGuYF7CYl6ehyj2vvo
+         l5SJacfZh8848yDUsTAWgRld3RjvtXr1ZtnMN2X0E+4+m1Y1gcp6loTetZeFxSug4a
+         3xDfyp/tXorfVTNlVUAA0HPxSHFC3n5bTzyrY5NQ=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     linux-cachefs@redhat.com, idryomov@gmail.com
-Subject: [RFC PATCH v2 08/11] ceph: plug write_begin into read helper
-Date:   Fri, 31 Jul 2020 09:04:18 -0400
-Message-Id: <20200731130421.127022-9-jlayton@kernel.org>
+Subject: [RFC PATCH v2 09/11] ceph: convert readpages to fscache_read_helper
+Date:   Fri, 31 Jul 2020 09:04:19 -0400
+Message-Id: <20200731130421.127022-10-jlayton@kernel.org>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200731130421.127022-1-jlayton@kernel.org>
 References: <20200731130421.127022-1-jlayton@kernel.org>
@@ -39,321 +39,257 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Plug write_begin into the read helper routine. This requires adding a
-new is_req_valid op that we can use to vet whether there is an
-incompatible snap context that needs to be flushed before we can fill
-the page.
+Convert ceph_readpages to use the fscache_read_helper. With this we can
+rip out a lot of the old readpage/readpages infrastructure.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/addr.c | 253 ++++++++++++++++++++++++++-----------------------
- 1 file changed, 132 insertions(+), 121 deletions(-)
+ fs/ceph/addr.c | 209 +++++++------------------------------------------
+ 1 file changed, 28 insertions(+), 181 deletions(-)
 
 diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 75cdd35f1d2e..cee497c108bb 100644
+index cee497c108bb..8905fe4a0930 100644
 --- a/fs/ceph/addr.c
 +++ b/fs/ceph/addr.c
-@@ -185,6 +185,7 @@ static int ceph_releasepage(struct page *page, gfp_t g)
- 
- struct ceph_fscache_req {
- 	struct fscache_io_request	fscache_req;
-+	struct ceph_snap_context	*snapc;
- 	refcount_t			ref;
- };
- 
-@@ -376,77 +377,6 @@ static int ceph_readpage(struct file *filp, struct page *page)
+@@ -377,76 +377,23 @@ static int ceph_readpage(struct file *filp, struct page *page)
  	return err;
  }
  
--/* read a single page, without unlocking it. */
--static int ceph_do_readpage(struct file *filp, struct page *page)
+-/*
+- * Finish an async read(ahead) op.
+- */
+-static void finish_read(struct ceph_osd_request *req)
 -{
--	struct inode *inode = file_inode(filp);
--	struct ceph_inode_info *ci = ceph_inode(inode);
+-	struct inode *inode = req->r_inode;
 -	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
--	struct ceph_osd_client *osdc = &fsc->client->osdc;
--	struct ceph_osd_request *req;
--	struct ceph_vino vino = ceph_vino(inode);
--	int err = 0;
--	u64 off = page_offset(page);
--	u64 len = PAGE_SIZE;
+-	struct ceph_osd_data *osd_data;
+-	int rc = req->r_result <= 0 ? req->r_result : 0;
+-	int bytes = req->r_result >= 0 ? req->r_result : 0;
+-	int num_pages;
+-	int i;
 -
--	if (off >= i_size_read(inode)) {
--		zero_user_segment(page, 0, PAGE_SIZE);
+-	dout("finish_read %p req %p rc %d bytes %d\n", inode, req, rc, bytes);
+-	if (rc == -EBLACKLISTED)
+-		ceph_inode_to_client(inode)->blacklisted = true;
+-
+-	/* unlock all pages, zeroing any data we didn't read */
+-	osd_data = osd_req_op_extent_osd_data(req, 0);
+-	BUG_ON(osd_data->type != CEPH_OSD_DATA_TYPE_PAGES);
+-	num_pages = calc_pages_for((u64)osd_data->alignment,
+-					(u64)osd_data->length);
+-	for (i = 0; i < num_pages; i++) {
+-		struct page *page = osd_data->pages[i];
+-
+-		if (rc < 0 && rc != -ENOENT)
+-			goto unlock;
+-		if (bytes < (int)PAGE_SIZE) {
+-			/* zero (remainder of) page */
+-			int s = bytes < 0 ? 0 : bytes;
+-			zero_user_segment(page, s, PAGE_SIZE);
+-		}
+- 		dout("finish_read %p uptodate %p idx %lu\n", inode, page,
+-		     page->index);
+-		flush_dcache_page(page);
 -		SetPageUptodate(page);
--		return 0;
+-unlock:
+-		unlock_page(page);
+-		put_page(page);
+-		bytes -= PAGE_SIZE;
 -	}
--
--	if (ci->i_inline_version != CEPH_INLINE_NONE) {
--		/*
--		 * Uptodate inline data should have been added
--		 * into page cache while getting Fcr caps.
--		 */
--		if (off == 0)
--			return -EINVAL;
--		zero_user_segment(page, 0, PAGE_SIZE);
--		SetPageUptodate(page);
--		return 0;
--	}
--
--	dout("readpage ino %llx.%llx file %p off %llu len %llu page %p index %lu\n",
--	     vino.ino, vino.snap, filp, off, len, page, page->index);
--	req = ceph_osdc_new_request(osdc, &ci->i_layout, vino, off, &len, 0, 1,
--				    CEPH_OSD_OP_READ, CEPH_OSD_FLAG_READ, NULL,
--				    ci->i_truncate_seq, ci->i_truncate_size,
--				    false);
--	if (IS_ERR(req))
--		return PTR_ERR(req);
--
--	osd_req_op_extent_osd_data_pages(req, 0, &page, len, 0, false, false);
--
--	err = ceph_osdc_start_request(osdc, req, false);
--	if (!err)
--		err = ceph_osdc_wait_request(osdc, req);
 -
 -	ceph_update_read_latency(&fsc->mdsc->metric, req->r_start_latency,
--				 req->r_end_latency, err);
+-				 req->r_end_latency, rc);
 -
--	ceph_osdc_put_request(req);
--	dout("readpage result %d\n", err);
--
--	if (err == -ENOENT)
--		err = 0;
--	if (err < 0) {
--		SetPageError(page);
--		if (err == -EBLACKLISTED)
--			fsc->blacklisted = true;
--		goto out;
--	}
--	if (err < PAGE_SIZE)
--		/* zero fill remainder of page */
--		zero_user_segment(page, err, PAGE_SIZE);
--	else
--		flush_dcache_page(page);
--
--	SetPageUptodate(page);
--out:
--	return err < 0 ? err : 0;
+-	kfree(osd_data->pages);
 -}
 -
- /*
-  * Finish an async read(ahead) op.
-  */
-@@ -1472,6 +1402,30 @@ ceph_find_incompatible(struct inode *inode, struct page *page)
- 	return NULL;
- }
- 
-+static int ceph_fsreq_is_req_valid(struct fscache_io_request *fsreq)
-+{
-+	struct ceph_snap_context *snapc;
-+	struct ceph_fscache_req *req = container_of(fsreq, struct ceph_fscache_req, fscache_req);
-+
-+	snapc = ceph_find_incompatible(fsreq->mapping->host, fsreq->no_unlock_page);
-+	if (snapc) {
-+		if (IS_ERR(snapc))
-+			return PTR_ERR(snapc);
-+		req->snapc = snapc;
-+		return -EAGAIN;
-+	}
-+	return 0;
-+}
-+
-+const struct fscache_io_request_ops ceph_read_for_write_fsreq_ops = {
-+	.issue_op	= ceph_fsreq_issue_op,
-+	.reshape	= ceph_fsreq_reshape,
-+	.is_req_valid	= ceph_fsreq_is_req_valid,
-+	.done		= ceph_fsreq_done,
-+	.get		= ceph_fsreq_get,
-+	.put		= ceph_fsreq_put,
-+};
-+
- /*
-  * We are only allowed to write into/dirty the page if the page is
-  * clean, or already dirty within the same snap context.
-@@ -1482,76 +1436,133 @@ static int ceph_write_begin(struct file *file, struct address_space *mapping,
+-/*
+- * start an async read(ahead) operation.  return nr_pages we submitted
+- * a read for on success, or negative error code.
+- */
+-static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
+-		      struct list_head *page_list, int max)
++static int ceph_readpages(struct file *file, struct address_space *mapping,
++			  struct list_head *page_list, unsigned nr_pages)
  {
- 	struct inode *inode = file_inode(file);
+-	struct ceph_osd_client *osdc =
+-		&ceph_inode_to_client(inode)->client->osdc;
++	struct inode *inode = file_inode(file);
  	struct ceph_inode_info *ci = ceph_inode(inode);
--	struct ceph_snap_context *snapc;
+-	struct page *page = lru_to_page(page_list);
+-	struct ceph_vino vino;
+-	struct ceph_osd_request *req;
+-	u64 off;
+-	u64 len;
+-	int i;
+-	struct page **pages;
+-	pgoff_t next_index;
+-	int nr_pages = 0;
 +	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
++	struct ceph_file_info *fi = file->private_data;
++	struct ceph_rw_context *rw_ctx;
 +	struct fscache_cookie *cookie = ceph_fscache_cookie(ci);
- 	struct page *page = NULL;
- 	pgoff_t index = pos >> PAGE_SHIFT;
--	loff_t page_off = pos & PAGE_MASK;
- 	int pos_in_page = pos & ~PAGE_MASK;
--	int end_in_page = pos_in_page + len;
--	loff_t i_size;
- 	int r;
--refind:
--	/* get a page */
--	page = grab_cache_page_write_begin(mapping, index, 0);
--	if (!page)
--		return -ENOMEM;
+ 	int got = 0;
+ 	int ret = 0;
++	int max = fsc->mount_options->rsize >> PAGE_SHIFT;
++
++	if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
++		return -EINVAL;
  
--	dout("write_begin file %p inode %p page %p %d~%d\n", file,
--	     inode, page, (int)pos, (int)len);
-+	if (ci->i_inline_version != CEPH_INLINE_NONE) {
-+		/*
-+		 * In principle, we should never get here, as the inode should have been uninlined
-+		 * before we're allowed to write to the page (in write_iter or page_mkwrite).
-+		 */
-+		WARN_ONCE(1, "ceph: write_begin called on still-inlined inode!\n");
++	rw_ctx = ceph_find_rw_context(fi);
+ 	if (!rw_ctx) {
+ 		/* caller of readpages does not hold buffer and read caps
+ 		 * (fadvise, madvise and readahead cases) */
+@@ -459,133 +406,33 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
+ 			dout("start_read %p, no cache cap\n", inode);
+ 			ret = 0;
+ 		}
+-		if (ret <= 0) {
+-			if (got)
+-				ceph_put_cap_refs(ci, got);
+-			while (!list_empty(page_list)) {
+-				page = lru_to_page(page_list);
+-				list_del(&page->lru);
+-				put_page(page);
+-			}
+-			return ret;
+-		}
++		if (ret <= 0)
++			goto out;
+ 	}
  
--	for (;;) {
--		snapc = ceph_find_incompatible(inode, page);
--		if (snapc) {
--			if (IS_ERR(snapc)) {
--				r = PTR_ERR(snapc);
+-	off = (u64) page_offset(page);
++	dout("readpages %p file %p ctx %p nr_pages %d max %d\n",
++	     inode, file, rw_ctx, nr_pages, max);
+ 
+-	/* count pages */
+-	next_index = page->index;
+-	list_for_each_entry_reverse(page, page_list, lru) {
+-		if (page->index != next_index)
+-			break;
+-		nr_pages++;
+-		next_index++;
+-		if (max && nr_pages == max)
+-			break;
+-	}
+-	len = nr_pages << PAGE_SHIFT;
+-	dout("start_read %p nr_pages %d is %lld~%lld\n", inode, nr_pages,
+-	     off, len);
+-	vino = ceph_vino(inode);
+-	req = ceph_osdc_new_request(osdc, &ci->i_layout, vino, off, &len,
+-				    0, 1, CEPH_OSD_OP_READ,
+-				    CEPH_OSD_FLAG_READ, NULL,
+-				    ci->i_truncate_seq, ci->i_truncate_size,
+-				    false);
+-	if (IS_ERR(req)) {
+-		ret = PTR_ERR(req);
+-		goto out;
+-	}
++	while (ret >= 0 && !list_empty(page_list)) {
++		struct ceph_fscache_req *req = ceph_fsreq_alloc();
+ 
+-	/* build page vector */
+-	nr_pages = calc_pages_for(0, len);
+-	pages = kmalloc_array(nr_pages, sizeof(*pages), GFP_KERNEL);
+-	if (!pages) {
+-		ret = -ENOMEM;
+-		goto out_put;
+-	}
+-	for (i = 0; i < nr_pages; ++i) {
+-		page = list_entry(page_list->prev, struct page, lru);
+-		BUG_ON(PageLocked(page));
+-		list_del(&page->lru);
+-
+- 		dout("start_read %p adding %p idx %lu\n", inode, page,
+-		     page->index);
+-		if (add_to_page_cache_lru(page, &inode->i_data, page->index,
+-					  GFP_KERNEL)) {
+-			put_page(page);
+-			dout("start_read %p add_to_page_cache failed %p\n",
+-			     inode, page);
+-			nr_pages = i;
+-			if (nr_pages > 0) {
+-				len = nr_pages << PAGE_SHIFT;
+-				osd_req_op_extent_update(req, 0, len);
 -				break;
 -			}
--			unlock_page(page);
--			ceph_queue_writeback(inode);
--			r = wait_event_killable(ci->i_cap_wq,
--						context_is_writeable_or_written(inode, snapc));
--			ceph_put_snap_context(snapc);
--			put_page(page);
--			goto refind;
-+		/*
-+		 * Uptodate inline data should have been added
-+		 * into page cache while getting Fcr caps.
-+		 */
-+		if (index == 0) {
-+			r = -EINVAL;
-+			goto out;
- 		}
- 
--		if (PageUptodate(page)) {
--			dout(" page %p already uptodate\n", page);
--			break;
-+		page = grab_cache_page_write_begin(mapping, index, 0);
-+		if (!page)
-+			return -ENOMEM;
-+
-+		zero_user_segment(page, 0, PAGE_SIZE);
-+		SetPageUptodate(page);
-+		r = 0;
-+		goto out;
-+	}
-+
-+	do {
-+		struct ceph_fscache_req *req;
-+		struct ceph_snap_context *snapc = NULL;
-+
-+		page = pagecache_get_page(mapping, index, FGP_WRITE, 0);
-+		if (page) {
-+			r = 0;
-+			if (PageUptodate(page)) {
-+				lock_page(page);
-+				if (PageUptodate(page))
-+					goto out;
-+				unlock_page(page);
-+			}
- 		}
- 
--		/* full page? */
--		if (pos_in_page == 0 && len == PAGE_SIZE)
--			break;
-+		/*
-+		 * In some cases we don't need to read at all:
-+		 * - full page write
-+		 * - write that lies completely beyond EOF
-+		 * - write that covers the the page from start to EOF or beyond it
-+		 */
-+		if ((pos_in_page == 0 && len == PAGE_SIZE) ||
-+		    (pos >= i_size_read(inode)) ||
-+		    (pos_in_page == 0 && (pos + len) >= i_size_read(inode))) {
-+			if (!page) {
-+				page = grab_cache_page_write_begin(mapping, index, 0);
-+				if (!page) {
-+					r = -ENOMEM;
-+					break;
-+				}
-+			} else {
-+				lock_page(page);
-+			}
-+
-+			snapc = ceph_find_incompatible(inode, page);
-+			if (!snapc) {
-+				zero_user_segments(page, 0, pos_in_page,
-+							 pos_in_page + len, PAGE_SIZE);
-+				r = 0;
-+				goto out;
-+			}
-+
-+			unlock_page(page);
-+
-+			if (IS_ERR(snapc)) {
-+				r = PTR_ERR(snapc);
-+				goto out;
-+			}
-+			goto flush_incompat;
-+		}
- 
--		/* past end of file? */
--		i_size = i_size_read(inode);
--		if (page_off >= i_size ||
--		    (pos_in_page == 0 && (pos+len) >= i_size &&
--		     end_in_page - pos_in_page != PAGE_SIZE)) {
--			dout(" zeroing %p 0 - %d and %d - %d\n",
--			     page, pos_in_page, end_in_page, (int)PAGE_SIZE);
--			zero_user_segments(page,
--					   0, pos_in_page,
--					   end_in_page, PAGE_SIZE);
-+		req = ceph_fsreq_alloc();
+-			goto out_pages;
 +		if (!req) {
-+			unlock_page(page);
-+			r = -ENOMEM;
- 			break;
++			ret = -ENOMEM;
++			break;
  		}
- 
--		/* we need to read it. */
--		r = ceph_do_readpage(file, page);
--		if (r) {
--			if (r == -EINPROGRESS)
--				continue;
-+		/*
-+		 * Do the read. If we find out that we need to wait on writeback, then kick that
-+		 * off, wait for it and then resubmit the read.
-+		 */
-+		fscache_init_io_request(&req->fscache_req, cookie, &ceph_read_for_write_fsreq_ops);
-+		req->fscache_req.mapping = inode->i_mapping;
-+
-+		r = fscache_read_helper_for_write(&req->fscache_req, &page, index,
-+						  fsc->mount_options->rsize >> PAGE_SHIFT, 0);
-+		if (r != -EAGAIN) {
-+			if (r == 0) {
-+				r = wait_on_bit(&req->fscache_req.flags,
-+						FSCACHE_IO_READ_IN_PROGRESS, TASK_KILLABLE);
-+				ceph_wait_on_page_fscache(page);
-+			}
-+			ceph_fsreq_put(&req->fscache_req);
- 			break;
- 		}
+-		pages[i] = page;
 -	}
+-	osd_req_op_extent_osd_data_pages(req, 0, pages, len, 0, false, false);
+-	req->r_callback = finish_read;
+-	req->r_inode = inode;
+-
+-	dout("start_read %p starting %p %lld~%lld\n", inode, req, off, len);
+-	ret = ceph_osdc_start_request(osdc, req, false);
+-	if (ret < 0)
+-		goto out_pages;
+-	ceph_osdc_put_request(req);
+-
+-	/* After adding locked pages to page cache, the inode holds cache cap.
+-	 * So we can drop our cap refs. */
+-	if (got)
+-		ceph_put_cap_refs(ci, got);
+-
+-	return nr_pages;
++		fscache_init_io_request(&req->fscache_req, cookie, &ceph_readpage_fsreq_ops);
++		req->fscache_req.mapping = inode->i_mapping;
  
-+		BUG_ON(!req->snapc);
-+		snapc = ceph_get_snap_context(req->snapc);
+-out_pages:
+-	for (i = 0; i < nr_pages; ++i) {
+-		unlock_page(pages[i]);
++		ret = fscache_read_helper_page_list(&req->fscache_req, page_list, max);
 +		ceph_fsreq_put(&req->fscache_req);
-+flush_incompat:
-+		put_page(page);
-+		page = NULL;
-+		ceph_queue_writeback(inode);
-+		r = wait_event_killable(ci->i_cap_wq,
-+					context_is_writeable_or_written(inode, snapc));
-+		ceph_put_snap_context(snapc);
-+	} while (r == 0);
-+out:
- 	if (r < 0) {
--		if (page) {
--			unlock_page(page);
-+		if (page)
- 			put_page(page);
--		}
- 	} else {
-+		WARN_ON_ONCE(!PageLocked(page));
- 		*pagep = page;
  	}
- 	return r;
+-	ceph_put_page_vector(pages, nr_pages, false);
+-out_put:
+-	ceph_osdc_put_request(req);
+ out:
++	/* After adding locked pages to page cache, the inode holds Fc refs. We can drop ours. */
+ 	if (got)
+ 		ceph_put_cap_refs(ci, got);
+-	return ret;
+-}
+ 
+-
+-/*
+- * Read multiple pages.  Leave pages we don't read + unlock in page_list;
+- * the caller (VM) cleans them up.
+- */
+-static int ceph_readpages(struct file *file, struct address_space *mapping,
+-			  struct list_head *page_list, unsigned nr_pages)
+-{
+-	struct inode *inode = file_inode(file);
+-	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+-	struct ceph_file_info *fi = file->private_data;
+-	struct ceph_rw_context *rw_ctx;
+-	int rc = 0;
+-	int max = 0;
+-
+-	if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
+-		return -EINVAL;
+-
+-	rw_ctx = ceph_find_rw_context(fi);
+-	max = fsc->mount_options->rsize >> PAGE_SHIFT;
+-	dout("readpages %p file %p ctx %p nr_pages %d max %d\n",
+-	     inode, file, rw_ctx, nr_pages, max);
+-	while (!list_empty(page_list)) {
+-		rc = start_read(inode, rw_ctx, page_list, max);
+-		if (rc < 0)
+-			goto out;
+-	}
+-out:
+-	dout("readpages %p file %p ret %d\n", inode, file, rc);
+-	return rc;
++	dout("readpages %p file %p ret %d\n", inode, file, ret);
++	return ret;
+ }
+ 
+ struct ceph_writeback_ctl
 -- 
 2.26.2
 
