@@ -2,33 +2,33 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBCC1234680
-	for <lists+ceph-devel@lfdr.de>; Fri, 31 Jul 2020 15:05:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54C80234681
+	for <lists+ceph-devel@lfdr.de>; Fri, 31 Jul 2020 15:05:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732194AbgGaNEY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 31 Jul 2020 09:04:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33606 "EHLO mail.kernel.org"
+        id S1732231AbgGaNEZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 31 Jul 2020 09:04:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730217AbgGaNEY (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        id S1727040AbgGaNEY (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
         Fri, 31 Jul 2020 09:04:24 -0400
 Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7108722B3F;
+        by mail.kernel.org (Postfix) with ESMTPSA id 079B622B40;
         Fri, 31 Jul 2020 13:04:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596200663;
-        bh=MPhdW5mCQ32XbEFh+DjxFfN/Pdd6U2pQAWuyF9F7yEg=;
+        s=default; t=1596200664;
+        bh=O4t97FgR7N23GxLBiEupusM71PRlr0lnkvxpd59RM9Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nwiC7tLzdF9V3P5qtvJErXPJ64UzJUtCjLd6H6JRdNYyuRiH6L3aLRIkhn/nK/nBM
-         0gv5Zg09xeWltrhIx9IZhM+z3r2bpWA26o8MOTE/NILJuHiOmVIFiMPAgs1rrXXfrY
-         UTZbSjGKejWdx+fnLBsAK27a5K29cCwFIGNf/8jk=
+        b=ajDcdFCI5mx8K5eIhgauYpN1+0PlS/esiyK8JWIUu7uPUDBKKpa1Rx9MBs7XHc1oT
+         01Ynxbwrjt1rBqH0Waib058roSONRl8FH0GXiHnIarmSgkvvjLFjT3U1vkQ4SVmov8
+         VyiwiYwe3xownxDi6hVvxm9X+XBHmhVLrbczwo2E=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     linux-cachefs@redhat.com, idryomov@gmail.com
-Subject: [RFC PATCH v2 01/11] ceph: break out writeback of incompatible snap context to separate function
-Date:   Fri, 31 Jul 2020 09:04:11 -0400
-Message-Id: <20200731130421.127022-2-jlayton@kernel.org>
+Subject: [RFC PATCH v2 02/11] ceph: don't call ceph_update_writeable_page from page_mkwrite
+Date:   Fri, 31 Jul 2020 09:04:12 -0400
+Message-Id: <20200731130421.127022-3-jlayton@kernel.org>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200731130421.127022-1-jlayton@kernel.org>
 References: <20200731130421.127022-1-jlayton@kernel.org>
@@ -39,146 +39,57 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-When dirtying a page, we have to flush incompatible contexts. Move that
-into a separate function.
+page_mkwrite should only be called with Uptodate pages, so we should
+only need to flush incompatible snap contexts.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/addr.c | 96 +++++++++++++++++++++++++++++++-------------------
- 1 file changed, 60 insertions(+), 36 deletions(-)
+ fs/ceph/addr.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
 diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 6ea761c84494..d8a8803f0e65 100644
+index d8a8803f0e65..e02d8915376f 100644
 --- a/fs/ceph/addr.c
 +++ b/fs/ceph/addr.c
-@@ -1299,40 +1299,34 @@ static int context_is_writeable_or_written(struct inode *inode,
- 	return ret;
- }
+@@ -1692,6 +1692,8 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+ 	inode_inc_iversion_raw(inode);
  
--/*
-- * We are only allowed to write into/dirty the page if the page is
-- * clean, or already dirty within the same snap context.
-+/**
-+ * ceph_find_incompatible - find an incompatible context and return it
-+ * @inode: inode associated with page
-+ * @page: page being dirtied
-  *
-- * called with page locked.
-- * return success with page locked,
-- * or any failure (incl -EAGAIN) with page unlocked.
-+ * Returns NULL on success, negative error code on error, and a snapc ref that should be
-+ * waited on otherwise.
-  */
--static int ceph_update_writeable_page(struct file *file,
--			    loff_t pos, unsigned len,
--			    struct page *page)
-+static struct ceph_snap_context *
-+ceph_find_incompatible(struct inode *inode, struct page *page)
- {
--	struct inode *inode = file_inode(file);
- 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
- 	struct ceph_inode_info *ci = ceph_inode(inode);
--	loff_t page_off = pos & PAGE_MASK;
--	int pos_in_page = pos & ~PAGE_MASK;
--	int end_in_page = pos_in_page + len;
--	loff_t i_size;
--	int r;
--	struct ceph_snap_context *snapc, *oldest;
- 
- 	if (READ_ONCE(fsc->mount_state) == CEPH_MOUNT_SHUTDOWN) {
- 		dout(" page %p forced umount\n", page);
--		unlock_page(page);
--		return -EIO;
-+		return ERR_PTR(-EIO);
- 	}
- 
--retry_locked:
--	/* writepages currently holds page lock, but if we change that later, */
--	wait_on_page_writeback(page);
-+	for (;;) {
-+		struct ceph_snap_context *snapc, *oldest;
+ 	do {
++		struct ceph_snap_context *snapc;
 +
-+		wait_on_page_writeback(page);
-+
-+		snapc = page_snap_context(page);
-+		if (!snapc || snapc == ci->i_head_snapc)
-+			break;
+ 		lock_page(page);
  
--	snapc = page_snap_context(page);
--	if (snapc && snapc != ci->i_head_snapc) {
- 		/*
- 		 * this page is already dirty in another (older) snap
- 		 * context!  is it writeable now?
-@@ -1347,26 +1341,56 @@ static int ceph_update_writeable_page(struct file *file,
- 			 * be writeable or written
- 			 */
- 			snapc = ceph_get_snap_context(snapc);
--			unlock_page(page);
--			ceph_queue_writeback(inode);
--			r = wait_event_killable(ci->i_cap_wq,
--			       context_is_writeable_or_written(inode, snapc));
--			ceph_put_snap_context(snapc);
--			if (r == -ERESTARTSYS)
--				return r;
--			return -EAGAIN;
-+			return snapc;
+ 		if (page_mkwrite_check_truncate(page, inode) < 0) {
+@@ -1700,13 +1702,26 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+ 			break;
  		}
- 		ceph_put_snap_context(oldest);
  
- 		/* yay, writeable, do it now (without dropping page lock) */
- 		dout(" page %p snapc %p not current, but oldest\n",
- 		     page, snapc);
--		if (!clear_page_dirty_for_io(page))
--			goto retry_locked;
--		r = writepage_nounlock(page, NULL);
--		if (r < 0)
-+		if (clear_page_dirty_for_io(page)) {
-+			int r = writepage_nounlock(page, NULL);
-+			if (r < 0)
-+				return ERR_PTR(r);
-+		}
-+	}
-+	return NULL;
-+}
+-		err = ceph_update_writeable_page(vma->vm_file, off, len, page);
+-		if (err >= 0) {
++		snapc = ceph_find_incompatible(inode, page);
++		if (!snapc) {
+ 			/* success.  we'll keep the page locked. */
+ 			set_page_dirty(page);
+ 			ret = VM_FAULT_LOCKED;
++			break;
+ 		}
+-	} while (err == -EAGAIN);
 +
-+/*
-+ * We are only allowed to write into/dirty the page if the page is
-+ * clean, or already dirty within the same snap context.
-+ *
-+ * called with page locked.
-+ * return success with page locked,
-+ * or any failure (incl -EAGAIN) with page unlocked.
-+ */
-+static int ceph_update_writeable_page(struct file *file,
-+			    loff_t pos, unsigned len,
-+			    struct page *page)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct ceph_inode_info *ci = ceph_inode(inode);
-+	struct ceph_snap_context *snapc;
-+	loff_t page_off = pos & PAGE_MASK;
-+	int pos_in_page = pos & ~PAGE_MASK;
-+	int end_in_page = pos_in_page + len;
-+	loff_t i_size;
-+	int r;
-+
-+retry_locked:
-+	snapc = ceph_find_incompatible(inode, page);
-+	if (snapc) {
-+		if (IS_ERR(snapc)) {
-+			r = PTR_ERR(snapc);
- 			goto fail_unlock;
--		goto retry_locked;
-+		}
 +		unlock_page(page);
++
++		if (IS_ERR(snapc)) {
++			ret = VM_FAULT_SIGBUS;
++			break;
++		}
++
 +		ceph_queue_writeback(inode);
-+		r = wait_event_killable(ci->i_cap_wq,
-+					context_is_writeable_or_written(inode, snapc));
++		err = wait_event_killable(ci->i_cap_wq,
++				context_is_writeable_or_written(inode, snapc));
 +		ceph_put_snap_context(snapc);
-+		return -EAGAIN;
- 	}
++	} while (err == 0);
  
- 	if (PageUptodate(page)) {
+ 	if (ret == VM_FAULT_LOCKED ||
+ 	    ci->i_inline_version != CEPH_INLINE_NONE) {
 -- 
 2.26.2
 
