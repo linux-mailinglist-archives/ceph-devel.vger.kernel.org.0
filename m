@@ -2,65 +2,57 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81F2623C45D
-	for <lists+ceph-devel@lfdr.de>; Wed,  5 Aug 2020 06:21:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2319D23EF47
+	for <lists+ceph-devel@lfdr.de>; Fri,  7 Aug 2020 16:50:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725920AbgHEEVv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 5 Aug 2020 00:21:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43952 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbgHEEVv (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 5 Aug 2020 00:21:51 -0400
-X-Greylist: delayed 2323 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 04 Aug 2020 21:21:50 PDT
-Received: from dockerbox (unknown [IPv6:2001:4800:7817:101:be76:4eff:fe04:a215])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DF429C06174A
-        for <ceph-devel@vger.kernel.org>; Tue,  4 Aug 2020 21:21:50 -0700 (PDT)
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-        by dockerbox (Postfix) with SMTP id 5CB347784D;
-        Wed,  9 Oct 2019 23:23:23 -0500 (CDT)
-Received: from [100.75.253.171] by 127.0.0.1 with ESMTP id 57687952; Wed, 09 Oct 2019 21:18:28 -0700
-Message-ID: <0tdu7caajmz3@dtthizh>
-From:   "Mr Barrister Hans Erich" <dave@dbsoundfactory.com>
-Reply-To: "Mr Barrister Hans Erich" <dave@dbsoundfactory.com>
-To:     cedpckjb@gmail.com
-Subject: RE:PERSONAL LETTER FROM MRS RASHIA AMIRA
-Date:   Wed, 09 Oct 19 21:18:28 GMT
-X-Mailer: Microsoft Outlook, Build 10.0.2627
+        id S1726595AbgHGOt6 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Fri, 7 Aug 2020 10:49:58 -0400
+Received: from mail.furshetcrimea.ru ([193.27.243.220]:51882 "EHLO
+        furshetcrimea.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726542AbgHGOt5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 7 Aug 2020 10:49:57 -0400
+X-Greylist: delayed 4977 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Aug 2020 10:49:55 EDT
+Received: from [154.118.61.214] (account info@furshetcrimea.ru HELO [192.168.8.100])
+  by furshetcrimea.ru (CommuniGate Pro SMTP 6.1.10)
+  with ESMTPA id 11097409; Fri, 07 Aug 2020 16:34:36 +0300
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: multipart/alternative;
-        boundary="7FE33.7_8EAEF6982F"
-X-Priority: 3
-X-MSMail-Priority: Normal
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Bei Interesse antworten.
+To:     Recipients <info@furshetcrimea.ru>
+From:   info@furshetcrimea.ru
+Date:   Fri, 07 Aug 2020 14:21:59 +0100
+Reply-To: mattiassjoborg751@gmail.com
+X-Antivirus: Avast (VPS 200807-0, 08/07/2020), Outbound message
+X-Antivirus-Status: Clean
+Message-ID: <auto-000011097409@furshetcrimea.ru>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Schöne Grüße,
 
---7FE33.7_8EAEF6982F
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+Mein Name ist MATTIAS SJOBORG, ich bin Schweizer Staatsbürger und (Vorsitzender des Vergütungs- und Nominierungsausschusses) von Tethys Petroleum, einem multinationalen Ölkonzern mit Sitz in London-England, Großbritannien. Ich bitte Sie um Ihre Hilfe, um die Summe von vierzig Millionen Dollar abzurufen, die aus zwei Sendungsboxen besteht.
 
-Greetings
+Dieses Geld wurde von der Firma erworben und von einem Diplomaten begleitet und korrekt in einer Sicherheitsfirma in Amerika hinterlegt. Mein Grund dafür ist, dass ich von der Firma zu lange um meine Ansprüche betrogen wurde, nur weil ich kein bin Britisch. Die Kontaktdaten des Diplomaten erhalten Sie, wenn Sie Ihr Interesse bekunden, mir zu helfen.
 
-My name is Barrister Hans Erich.
+Jede der Schachteln enthält 20 Mio. USD. Für Ihre Hilfe bin ich bereit, 40% an Sie freizugeben. Aus Sicherheitsgründen wurde die Sendung als VERTRAULICHE DIPLOMATISCHE DOKUMENTE registriert, und ich kann erklären, warum dies so erklärt wurde. Denken Sie daran, dass der Diplomat den Inhalt der Sendung nicht kennt. Er ist seit einem Monat dort, während ich nach einem zuverlässigen Partner suchen möchte. Ich werde das Land verlassen, sobald die Sendung für Sie an Sie geliefert wird Private Investitionen und ich haben geschworen, niemals nach London zurückzukehren. Bitte, ich brauche Ihre dringende Antwort, bevor meine Pläne, das Unternehmen zu verlassen, entdeckt werden.
 
-I have a client who is interested to invest in your country, she is a well=
- known politician in her country and deserve a lucrative investment partne=
-rship with you outside her country without any delay   Please can you mana=
-ge such investment please Kindly reply for further details.
+www.tethyspetroleum.com/tethys/static/EN_US/au_seniormanagement.html
 
-Your full nameS -----------
+Im Moment ist die sicherste Form der Korrespondenz meine eigene E-Mail-Adresse. Bitte antworten Sie im Interesse der Vertraulichkeit nur über meine direkte E-Mail-Adresse. Antworten Sie zusammen mit Ihrer direkten Telefon- und Faxnummer, unter der ich Sie alternativ erreichen kann.
 
+Bitte, wenn Sie nicht bereit und interessiert sind, mir zu helfen, löschen Sie bitte diese E-Mail aus Ihrer E-Mail und tun Sie so, als hätten Sie sie nie erhalten.
 
-Your urgent response will be appreciated
+Freundliche Grüße,
+Mr.Mattias Sjoborg
+(Vorsitzender des Vergütungs- und Nominierungsausschusses)
+Tethys Petroleum.
+London, England
 
-Thank you and God bless you.
-
-Barrister Hans Erich
-
-Yours sincerely,
-Barrister Hans Erich
-
---7FE33.7_8EAEF6982F--
+-- 
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
 
