@@ -2,56 +2,361 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 44E7F23F098
-	for <lists+ceph-devel@lfdr.de>; Fri,  7 Aug 2020 18:10:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E72DF23FEF9
+	for <lists+ceph-devel@lfdr.de>; Sun,  9 Aug 2020 17:10:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbgHGQKH convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Fri, 7 Aug 2020 12:10:07 -0400
-Received: from mail.furshetcrimea.ru ([193.27.243.220]:40572 "EHLO
-        furshetcrimea.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbgHGQKB (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 7 Aug 2020 12:10:01 -0400
-Received: from [154.118.61.214] (account info@furshetcrimea.ru HELO [192.168.8.100])
-  by furshetcrimea.ru (CommuniGate Pro SMTP 6.1.10)
-  with ESMTPA id 11168836; Fri, 07 Aug 2020 19:21:46 +0300
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1726207AbgHIPKL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 9 Aug 2020 11:10:11 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:33445 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726070AbgHIPKK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 9 Aug 2020 11:10:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1596985806;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=A8yY4UrgEyySKzrlE+1ERiv4HG6a//xTjUPoaU2Bgis=;
+        b=XaYUq+AVckUf7hy3HyPfXQnabxubh9jteTVFbcOt+Iv0X27dQgePkDXuUpanfPF+SFYydK
+        ZR2e05ZtOHfPStxPLIvxMwH6ip2aEyQcSpizh3iU+oQDuEKaB+zQEBGm4wXglaTjbDWaNH
+        Dc5YSnzBNFGiECf5SmWfPC3dpJx+UIk=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-257-vNEl0H19Nd2XNNQvHQiAtw-1; Sun, 09 Aug 2020 11:10:04 -0400
+X-MC-Unique: vNEl0H19Nd2XNNQvHQiAtw-1
+Received: by mail-ed1-f69.google.com with SMTP id b23so2404306edj.14
+        for <ceph-devel@vger.kernel.org>; Sun, 09 Aug 2020 08:10:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A8yY4UrgEyySKzrlE+1ERiv4HG6a//xTjUPoaU2Bgis=;
+        b=uEeD2hvYh6wlhiAVgkoVCemejseVh3u+f6XTb9Y7j5Xf6C7qhnIp42yr8AcIUngPc6
+         /IxHAYPWcNjgDs+GhJIrI9jZW++BHd+1Brpu+LFnYZlm/ypszpOkm+Ljr/5fISxbBE7S
+         8SzhiYED+mDpwLgHSyBjtP4yg7kRRa2TQkjHMuE2+3Mmj0vHY0ePLK1e4puwODtL5BEe
+         VgqWsNf+kMAk4KX7/M5V4MT49tvzeBrM96TGVrBkN98gmvDA4Zwt0lxU2mSiYPGZrGZp
+         QwfRYVa1qUScvKtSjWxOSfNwSbsu8yJY9BQ+BNAS18/ySx0qdyyAV0hfBJBvTRf2fk3d
+         rMBw==
+X-Gm-Message-State: AOAM532dxfeLuKMu36o/J/IjMW24jaLKG7bZxAoqw6lfsxolME7E89N7
+        fndPj6RIAGx6WQ16KJYZF+fxkmsRVu13u7fLKJ3vZTYr2VzkwhQcY7dt2xYUw6dTcMSDFtKINJc
+        eLDwxXU96FuNovtjXcvzLmGRlq8Nh8rER2Md6pg==
+X-Received: by 2002:a05:6402:308e:: with SMTP id de14mr17033985edb.344.1596985802421;
+        Sun, 09 Aug 2020 08:10:02 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwEy386SBI1AcRVFWc876mZO2cVA9SJUEsxNFKEOe0itssEO9bxK5jj7h+vaIP5QSr7iwkXqYDZQzlyy2NNZNo=
+X-Received: by 2002:a05:6402:308e:: with SMTP id de14mr17033948edb.344.1596985802033;
+ Sun, 09 Aug 2020 08:10:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Bei Interesse antworten.
-To:     Recipients <info@furshetcrimea.ru>
-From:   info@furshetcrimea.ru
-Date:   Fri, 07 Aug 2020 17:09:09 +0100
-Reply-To: mattiassjoborg751@gmail.com
-X-Antivirus: Avast (VPS 200807-2, 08/07/2020), Outbound message
-X-Antivirus-Status: Clean
-Message-ID: <auto-000011168836@furshetcrimea.ru>
+References: <20200731130421.127022-1-jlayton@kernel.org> <20200731130421.127022-10-jlayton@kernel.org>
+In-Reply-To: <20200731130421.127022-10-jlayton@kernel.org>
+From:   David Wysochanski <dwysocha@redhat.com>
+Date:   Sun, 9 Aug 2020 11:09:26 -0400
+Message-ID: <CALF+zOnS9faaap1pZ_HfPzy2q4R_+HP84S02GxhrzWMD1WOYtg@mail.gmail.com>
+Subject: Re: [Linux-cachefs] [RFC PATCH v2 09/11] ceph: convert readpages to fscache_read_helper
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com,
+        linux-cachefs@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Schöne Grüße,
+On Fri, Jul 31, 2020 at 9:05 AM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> Convert ceph_readpages to use the fscache_read_helper. With this we can
+> rip out a lot of the old readpage/readpages infrastructure.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/addr.c | 209 +++++++------------------------------------------
+>  1 file changed, 28 insertions(+), 181 deletions(-)
+>
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index cee497c108bb..8905fe4a0930 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -377,76 +377,23 @@ static int ceph_readpage(struct file *filp, struct page *page)
+>         return err;
+>  }
+>
+> -/*
+> - * Finish an async read(ahead) op.
+> - */
+> -static void finish_read(struct ceph_osd_request *req)
+> -{
+> -       struct inode *inode = req->r_inode;
+> -       struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> -       struct ceph_osd_data *osd_data;
+> -       int rc = req->r_result <= 0 ? req->r_result : 0;
+> -       int bytes = req->r_result >= 0 ? req->r_result : 0;
+> -       int num_pages;
+> -       int i;
+> -
+> -       dout("finish_read %p req %p rc %d bytes %d\n", inode, req, rc, bytes);
+> -       if (rc == -EBLACKLISTED)
+> -               ceph_inode_to_client(inode)->blacklisted = true;
+> -
+> -       /* unlock all pages, zeroing any data we didn't read */
+> -       osd_data = osd_req_op_extent_osd_data(req, 0);
+> -       BUG_ON(osd_data->type != CEPH_OSD_DATA_TYPE_PAGES);
+> -       num_pages = calc_pages_for((u64)osd_data->alignment,
+> -                                       (u64)osd_data->length);
+> -       for (i = 0; i < num_pages; i++) {
+> -               struct page *page = osd_data->pages[i];
+> -
+> -               if (rc < 0 && rc != -ENOENT)
+> -                       goto unlock;
+> -               if (bytes < (int)PAGE_SIZE) {
+> -                       /* zero (remainder of) page */
+> -                       int s = bytes < 0 ? 0 : bytes;
+> -                       zero_user_segment(page, s, PAGE_SIZE);
+> -               }
+> -               dout("finish_read %p uptodate %p idx %lu\n", inode, page,
+> -                    page->index);
+> -               flush_dcache_page(page);
+> -               SetPageUptodate(page);
+> -unlock:
+> -               unlock_page(page);
+> -               put_page(page);
+> -               bytes -= PAGE_SIZE;
+> -       }
+> -
+> -       ceph_update_read_latency(&fsc->mdsc->metric, req->r_start_latency,
+> -                                req->r_end_latency, rc);
+> -
+> -       kfree(osd_data->pages);
+> -}
+> -
+> -/*
+> - * start an async read(ahead) operation.  return nr_pages we submitted
+> - * a read for on success, or negative error code.
+> - */
+> -static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
+> -                     struct list_head *page_list, int max)
+> +static int ceph_readpages(struct file *file, struct address_space *mapping,
+> +                         struct list_head *page_list, unsigned nr_pages)
+>  {
+> -       struct ceph_osd_client *osdc =
+> -               &ceph_inode_to_client(inode)->client->osdc;
+> +       struct inode *inode = file_inode(file);
+>         struct ceph_inode_info *ci = ceph_inode(inode);
+> -       struct page *page = lru_to_page(page_list);
+> -       struct ceph_vino vino;
+> -       struct ceph_osd_request *req;
+> -       u64 off;
+> -       u64 len;
+> -       int i;
+> -       struct page **pages;
+> -       pgoff_t next_index;
+> -       int nr_pages = 0;
+> +       struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> +       struct ceph_file_info *fi = file->private_data;
+> +       struct ceph_rw_context *rw_ctx;
+> +       struct fscache_cookie *cookie = ceph_fscache_cookie(ci);
+>         int got = 0;
+>         int ret = 0;
+> +       int max = fsc->mount_options->rsize >> PAGE_SHIFT;
 
-Mein Name ist MATTIAS SJOBORG, ich bin Schweizer Staatsbürger und (Vorsitzender des Vergütungs- und Nominierungsausschusses) von Tethys Petroleum, einem multinationalen Ölkonzern mit Sitz in London-England, Großbritannien. Ich bitte Sie um Ihre Hilfe, um die Summe von vierzig Millionen Dollar abzurufen, die aus zwei Sendungsboxen besteht.
+Have you ran tests with different values of rsize?
+Specifically, rsize < readahead_size == size_of_readpages
 
-Dieses Geld wurde von der Firma erworben und von einem Diplomaten begleitet und korrekt in einer Sicherheitsfirma in Amerika hinterlegt. Mein Grund dafür ist, dass ich von der Firma zu lange um meine Ansprüche betrogen wurde, nur weil ich kein bin Britisch. Die Kontaktdaten des Diplomaten erhalten Sie, wenn Sie Ihr Interesse bekunden, mir zu helfen.
+I'm seeing a lot of problems with NFS when varying rsize are used wrt
+readahead values.  Specifically I'm seeing panics because fscache
+expects a 1:1 mapping of issue_op() to io_done() calls, and I get
+panics because multiple read completions are trying to unlock the
+same pages inside fscache_read_done().
 
-Jede der Schachteln enthält 20 Mio. USD. Für Ihre Hilfe bin ich bereit, 40% an Sie freizugeben. Aus Sicherheitsgründen wurde die Sendung als VERTRAULICHE DIPLOMATISCHE DOKUMENTE registriert, und ich kann erklären, warum dies so erklärt wurde. Denken Sie daran, dass der Diplomat den Inhalt der Sendung nicht kennt. Er ist seit einem Monat dort, während ich nach einem zuverlässigen Partner suchen möchte. Ich werde das Land verlassen, sobald die Sendung für Sie an Sie geliefert wird Private Investitionen und ich haben geschworen, niemals nach London zurückzukehren. Bitte, ich brauche Ihre dringende Antwort, bevor meine Pläne, das Unternehmen zu verlassen, entdeckt werden.
+My understanding is afs does not have such 'rsize' limitation, so it
+may not be an area that is well tested.  It could be my implementation
+of the NFS conversion though, as I thinkwhat needs to happen is the
+respect the above 1:1 mapping of issue_op() to io_done() calls, and my
+initial implementation did not do that.
 
-www.tethyspetroleum.com/tethys/static/EN_US/au_seniormanagement.html
+FWIW, specifically this unit test was originally failing for me with a panic.
+Sun 09 Aug 2020 11:03:22 AM EDT: 1. On NFS client, install and enable
+cachefilesd
+Sun 09 Aug 2020 11:03:22 AM EDT: 2. On NFS client, mount -o
+vers=4.1,fsc,rsize=16384 127.0.0.1:/export/dir1 /mnt/dir1
+Sun 09 Aug 2020 11:03:22 AM EDT: 3. On NFS client, dd if=/dev/zero
+of=/mnt/dir1/file1.bin bs=65536 count=1
+Sun 09 Aug 2020 11:03:22 AM EDT: 4. On NFS client, echo 3 >
+/proc/sys/vm/drop_caches
+Sun 09 Aug 2020 11:03:22 AM EDT: 5. On NFS client, ./nfs-readahead.sh
+set /mnt/dir1 65536
+Sun 09 Aug 2020 11:03:23 AM EDT: 6. On NFS client, dd
+if=/mnt/dir1/file1.bin of=/dev/null
+Sun 09 Aug 2020 11:03:23 AM EDT: 8. On NFS client, echo 3 >
+/proc/sys/vm/drop_caches
+Sun 09 Aug 2020 11:03:23 AM EDT: 9. On NFS client, dd
+if=/mnt/dir1/file1.bin of=/dev/null
 
-Im Moment ist die sicherste Form der Korrespondenz meine eigene E-Mail-Adresse. Bitte antworten Sie im Interesse der Vertraulichkeit nur über meine direkte E-Mail-Adresse. Antworten Sie zusammen mit Ihrer direkten Telefon- und Faxnummer, unter der ich Sie alternativ erreichen kann.
 
-Bitte, wenn Sie nicht bereit und interessiert sind, mir zu helfen, löschen Sie bitte diese E-Mail aus Ihrer E-Mail und tun Sie so, als hätten Sie sie nie erhalten.
 
-Freundliche Grüße,
-Mr.Mattias Sjoborg
-(Vorsitzender des Vergütungs- und Nominierungsausschusses)
-Tethys Petroleum.
-London, England
-
--- 
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+> +
+> +       if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
+> +               return -EINVAL;
+>
+> +       rw_ctx = ceph_find_rw_context(fi);
+>         if (!rw_ctx) {
+>                 /* caller of readpages does not hold buffer and read caps
+>                  * (fadvise, madvise and readahead cases) */
+> @@ -459,133 +406,33 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
+>                         dout("start_read %p, no cache cap\n", inode);
+>                         ret = 0;
+>                 }
+> -               if (ret <= 0) {
+> -                       if (got)
+> -                               ceph_put_cap_refs(ci, got);
+> -                       while (!list_empty(page_list)) {
+> -                               page = lru_to_page(page_list);
+> -                               list_del(&page->lru);
+> -                               put_page(page);
+> -                       }
+> -                       return ret;
+> -               }
+> +               if (ret <= 0)
+> +                       goto out;
+>         }
+>
+> -       off = (u64) page_offset(page);
+> +       dout("readpages %p file %p ctx %p nr_pages %d max %d\n",
+> +            inode, file, rw_ctx, nr_pages, max);
+>
+> -       /* count pages */
+> -       next_index = page->index;
+> -       list_for_each_entry_reverse(page, page_list, lru) {
+> -               if (page->index != next_index)
+> -                       break;
+> -               nr_pages++;
+> -               next_index++;
+> -               if (max && nr_pages == max)
+> -                       break;
+> -       }
+> -       len = nr_pages << PAGE_SHIFT;
+> -       dout("start_read %p nr_pages %d is %lld~%lld\n", inode, nr_pages,
+> -            off, len);
+> -       vino = ceph_vino(inode);
+> -       req = ceph_osdc_new_request(osdc, &ci->i_layout, vino, off, &len,
+> -                                   0, 1, CEPH_OSD_OP_READ,
+> -                                   CEPH_OSD_FLAG_READ, NULL,
+> -                                   ci->i_truncate_seq, ci->i_truncate_size,
+> -                                   false);
+> -       if (IS_ERR(req)) {
+> -               ret = PTR_ERR(req);
+> -               goto out;
+> -       }
+> +       while (ret >= 0 && !list_empty(page_list)) {
+> +               struct ceph_fscache_req *req = ceph_fsreq_alloc();
+>
+> -       /* build page vector */
+> -       nr_pages = calc_pages_for(0, len);
+> -       pages = kmalloc_array(nr_pages, sizeof(*pages), GFP_KERNEL);
+> -       if (!pages) {
+> -               ret = -ENOMEM;
+> -               goto out_put;
+> -       }
+> -       for (i = 0; i < nr_pages; ++i) {
+> -               page = list_entry(page_list->prev, struct page, lru);
+> -               BUG_ON(PageLocked(page));
+> -               list_del(&page->lru);
+> -
+> -               dout("start_read %p adding %p idx %lu\n", inode, page,
+> -                    page->index);
+> -               if (add_to_page_cache_lru(page, &inode->i_data, page->index,
+> -                                         GFP_KERNEL)) {
+> -                       put_page(page);
+> -                       dout("start_read %p add_to_page_cache failed %p\n",
+> -                            inode, page);
+> -                       nr_pages = i;
+> -                       if (nr_pages > 0) {
+> -                               len = nr_pages << PAGE_SHIFT;
+> -                               osd_req_op_extent_update(req, 0, len);
+> -                               break;
+> -                       }
+> -                       goto out_pages;
+> +               if (!req) {
+> +                       ret = -ENOMEM;
+> +                       break;
+>                 }
+> -               pages[i] = page;
+> -       }
+> -       osd_req_op_extent_osd_data_pages(req, 0, pages, len, 0, false, false);
+> -       req->r_callback = finish_read;
+> -       req->r_inode = inode;
+> -
+> -       dout("start_read %p starting %p %lld~%lld\n", inode, req, off, len);
+> -       ret = ceph_osdc_start_request(osdc, req, false);
+> -       if (ret < 0)
+> -               goto out_pages;
+> -       ceph_osdc_put_request(req);
+> -
+> -       /* After adding locked pages to page cache, the inode holds cache cap.
+> -        * So we can drop our cap refs. */
+> -       if (got)
+> -               ceph_put_cap_refs(ci, got);
+> -
+> -       return nr_pages;
+> +               fscache_init_io_request(&req->fscache_req, cookie, &ceph_readpage_fsreq_ops);
+> +               req->fscache_req.mapping = inode->i_mapping;
+>
+> -out_pages:
+> -       for (i = 0; i < nr_pages; ++i) {
+> -               unlock_page(pages[i]);
+> +               ret = fscache_read_helper_page_list(&req->fscache_req, page_list, max);
+> +               ceph_fsreq_put(&req->fscache_req);
+>         }
+> -       ceph_put_page_vector(pages, nr_pages, false);
+> -out_put:
+> -       ceph_osdc_put_request(req);
+>  out:
+> +       /* After adding locked pages to page cache, the inode holds Fc refs. We can drop ours. */
+>         if (got)
+>                 ceph_put_cap_refs(ci, got);
+> -       return ret;
+> -}
+>
+> -
+> -/*
+> - * Read multiple pages.  Leave pages we don't read + unlock in page_list;
+> - * the caller (VM) cleans them up.
+> - */
+> -static int ceph_readpages(struct file *file, struct address_space *mapping,
+> -                         struct list_head *page_list, unsigned nr_pages)
+> -{
+> -       struct inode *inode = file_inode(file);
+> -       struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> -       struct ceph_file_info *fi = file->private_data;
+> -       struct ceph_rw_context *rw_ctx;
+> -       int rc = 0;
+> -       int max = 0;
+> -
+> -       if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
+> -               return -EINVAL;
+> -
+> -       rw_ctx = ceph_find_rw_context(fi);
+> -       max = fsc->mount_options->rsize >> PAGE_SHIFT;
+> -       dout("readpages %p file %p ctx %p nr_pages %d max %d\n",
+> -            inode, file, rw_ctx, nr_pages, max);
+> -       while (!list_empty(page_list)) {
+> -               rc = start_read(inode, rw_ctx, page_list, max);
+> -               if (rc < 0)
+> -                       goto out;
+> -       }
+> -out:
+> -       dout("readpages %p file %p ret %d\n", inode, file, rc);
+> -       return rc;
+> +       dout("readpages %p file %p ret %d\n", inode, file, ret);
+> +       return ret;
+>  }
+>
+>  struct ceph_writeback_ctl
+> --
+> 2.26.2
+>
+>
+> --
+> Linux-cachefs mailing list
+> Linux-cachefs@redhat.com
+> https://www.redhat.com/mailman/listinfo/linux-cachefs
+>
 
