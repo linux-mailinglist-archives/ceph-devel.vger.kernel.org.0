@@ -2,83 +2,60 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 166F724479F
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Aug 2020 12:03:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 034A02449A7
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Aug 2020 14:13:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726868AbgHNKDc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 Aug 2020 06:03:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43442 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726012AbgHNKDc (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 14 Aug 2020 06:03:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3E244AD1B;
-        Fri, 14 Aug 2020 10:03:53 +0000 (UTC)
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id fc9ad6f5;
-        Fri, 14 Aug 2020 10:03:28 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ceph: remove unnecessary return in switch statement
-References: <20200814093822.GA293898@suse.de>
-        <a1a68d9a887148ae9a80ca103d112e6b@AcuMS.aculab.com>
-Date:   Fri, 14 Aug 2020 11:03:28 +0100
-In-Reply-To: <a1a68d9a887148ae9a80ca103d112e6b@AcuMS.aculab.com> (David
-        Laight's message of "Fri, 14 Aug 2020 09:52:38 +0000")
-Message-ID: <877du1h7db.fsf@suse.de>
+        id S1726943AbgHNMNr convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Fri, 14 Aug 2020 08:13:47 -0400
+Received: from mail.munisurquillo.gob.pe ([190.187.155.157]:52776 "EHLO
+        mail.munisurquillo.gob.pe" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726270AbgHNMNq (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 14 Aug 2020 08:13:46 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mail.munisurquillo.gob.pe (Postfix) with ESMTP id 7957D405346AF;
+        Fri, 14 Aug 2020 02:03:56 -0500 (-05)
+Received: from mail.munisurquillo.gob.pe ([127.0.0.1])
+        by localhost (mail.munisurquillo.gob.pe [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Pk1ucezwsEWq; Fri, 14 Aug 2020 02:03:56 -0500 (-05)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mail.munisurquillo.gob.pe (Postfix) with ESMTP id 4C0C14060CA42;
+        Fri, 14 Aug 2020 02:03:55 -0500 (-05)
+X-Virus-Scanned: amavisd-new at munisurquillo.gob.pe
+Received: from mail.munisurquillo.gob.pe ([127.0.0.1])
+        by localhost (mail.munisurquillo.gob.pe [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id xEHl06SSikFd; Fri, 14 Aug 2020 02:03:55 -0500 (-05)
+Received: from [10.54.17.114] (unknown [105.4.7.153])
+        by mail.munisurquillo.gob.pe (Postfix) with ESMTPSA id F36CE4060CA71;
+        Fri, 14 Aug 2020 02:03:44 -0500 (-05)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Covid_19_Wohlt=C3=A4tigkeitsfonds?=
+To:     Recipients <lu.marin@munisurquillo.gob.pe>
+From:   ''charles jackson'' <lu.marin@munisurquillo.gob.pe>
+Date:   Fri, 14 Aug 2020 09:03:34 +0200
+Reply-To: charlesjacksonjr001@gmail.com
+Message-Id: <20200814070345.F36CE4060CA71@mail.munisurquillo.gob.pe>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-David Laight <David.Laight@ACULAB.COM> writes:
+Hallo
 
-> From: Luis Henriques
->> Sent: 14 August 2020 10:38
->> 
->> Since there's a return immediately after the 'break', there's no need for
->> this extra 'return' in the S_IFDIR case.
->> 
->> Signed-off-by: Luis Henriques <lhenriques@suse.de>
->> ---
->>  fs/ceph/file.c | 2 --
->>  1 file changed, 2 deletions(-)
->> 
->> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
->> index d51c3f2fdca0..04ab99c0223a 100644
->> --- a/fs/ceph/file.c
->> +++ b/fs/ceph/file.c
->> @@ -256,8 +256,6 @@ static int ceph_init_file(struct inode *inode, struct file *file, int fmode)
->>  	case S_IFDIR:
->>  		ret = ceph_init_file_info(inode, file, fmode,
->>  						S_ISDIR(inode->i_mode));
->> -		if (ret)
->> -			return ret;
->>  		break;
->> 
->>  	case S_IFLNK:
->
-> I'd move the other way and just do:
-> 		return ceph_init_file_info(...);
+Ich bin Charles W. Jackson aus North Carolina, Vereinigte Staaten von Amerika, und ich bin der Gewinner des Mega-Millionen-Jackpots von 344 Millionen US-Dollar. Ich spende die Summe von 2.000.000 Millionen Euro als Teil der Hilfsgelder für das Corona-Virus.
 
-Sure, that would work too, although my preference would be to have a
-single function exit point.  But I'll leave that decision to Jeff :-)
+Dies ist Ihr Spendencode: [CJ530342019]
 
-Cheers,
--- 
-Luis
+www.youtube.com/watch?v=BSr8myiLPMQ
 
->
-> 	David
->
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
->
+Bitte antworten Sie auf diese E-Mail mit dem SPENDERCODE:
+
+charlesjacksonjr001@gmail.com
+
+Ich hoffe, dass Sie und Ihre Familie dies durchkommen
+
+
+Herr Charles Jackson
