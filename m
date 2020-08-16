@@ -2,91 +2,73 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 794F32457D9
-	for <lists+ceph-devel@lfdr.de>; Sun, 16 Aug 2020 16:00:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE8832459CA
+	for <lists+ceph-devel@lfdr.de>; Mon, 17 Aug 2020 00:10:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729168AbgHPOAu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 16 Aug 2020 10:00:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54016 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729140AbgHPOAt (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Sun, 16 Aug 2020 10:00:49 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F67A20735;
-        Sun, 16 Aug 2020 14:00:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597586448;
-        bh=ORDdZnkhKIIphacByBZiqCEauCeJidLk3JuuxwwjEsw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=BauJmnr+Ay7ZfeobNWDZKa4kywlEYkqYdZV49veJ62xlKhT2Myiz8WlwtWXZiWc5T
-         koa78xoPs3sc8L352uU2pHXzruE61QOrYF+H/9Svjr4M0ZS+O5TijS0ePovpeSJ4II
-         Z2a3ijRkc7+QWoncRCvQe1ZZmlOsZdX9uOqnG7Lc=
-Message-ID: <116297e8efab260d8dd61e9dcc36aa3414e9b1d9.camel@kernel.org>
-Subject: Re: [PATCH] ceph: remove unnecessary return in switch statement
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>,
-        David Laight <David.Laight@ACULAB.COM>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Sun, 16 Aug 2020 10:00:46 -0400
-In-Reply-To: <877du1h7db.fsf@suse.de>
-References: <20200814093822.GA293898@suse.de>
-         <a1a68d9a887148ae9a80ca103d112e6b@AcuMS.aculab.com>
-         <877du1h7db.fsf@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        id S1729086AbgHPWKu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 16 Aug 2020 18:10:50 -0400
+Received: from smtprelay0185.hostedemail.com ([216.40.44.185]:41170 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726114AbgHPWKu (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Sun, 16 Aug 2020 18:10:50 -0400
+X-Greylist: delayed 348 seconds by postgrey-1.27 at vger.kernel.org; Sun, 16 Aug 2020 18:10:49 EDT
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave02.hostedemail.com (Postfix) with ESMTP id 4C0E31801629E
+        for <ceph-devel@vger.kernel.org>; Sun, 16 Aug 2020 22:05:02 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 1ED8F182CED2A;
+        Sun, 16 Aug 2020 22:05:01 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:69:355:379:541:968:988:989:1260:1311:1314:1345:1437:1515:1534:1541:1711:1730:1747:1777:1792:1981:2194:2198:2199:2200:2393:2559:2562:3138:3139:3140:3141:3142:3352:3867:3868:4605:5007:6261:10004:10848:11658:11914:12043:12296:12297:12679:12683:12895:13069:13095:13311:13357:13894:14096:14110:14384:14394:14721:21080:21325:21433:21451:21627:21965:30030:30054,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: stamp42_5612a0827011
+X-Filterd-Recvd-Size: 1779
+Received: from joe-laptop.perches.com (unknown [47.151.133.149])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 16 Aug 2020 22:05:00 +0000 (UTC)
+From:   Joe Perches <joe@perches.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] ceph: Neaten debugging
+Date:   Sun, 16 Aug 2020 15:04:51 -0700
+Message-Id: <cover.1597615399.git.joe@perches.com>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2020-08-14 at 11:03 +0100, Luis Henriques wrote:
-> David Laight <David.Laight@ACULAB.COM> writes:
-> 
-> > From: Luis Henriques
-> > > Sent: 14 August 2020 10:38
-> > > 
-> > > Since there's a return immediately after the 'break', there's no need for
-> > > this extra 'return' in the S_IFDIR case.
-> > > 
-> > > Signed-off-by: Luis Henriques <lhenriques@suse.de>
-> > > ---
-> > >  fs/ceph/file.c | 2 --
-> > >  1 file changed, 2 deletions(-)
-> > > 
-> > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > > index d51c3f2fdca0..04ab99c0223a 100644
-> > > --- a/fs/ceph/file.c
-> > > +++ b/fs/ceph/file.c
-> > > @@ -256,8 +256,6 @@ static int ceph_init_file(struct inode *inode, struct file *file, int fmode)
-> > >  	case S_IFDIR:
-> > >  		ret = ceph_init_file_info(inode, file, fmode,
-> > >  						S_ISDIR(inode->i_mode));
-> > > -		if (ret)
-> > > -			return ret;
-> > >  		break;
-> > > 
-> > >  	case S_IFLNK:
-> > 
-> > I'd move the other way and just do:
-> > 		return ceph_init_file_info(...);
-> 
-> Sure, that would work too, although my preference would be to have a
-> single function exit point.  But I'll leave that decision to Jeff :-)
-> 
+Convert special case dout macro to pr_debug and neatening.
 
-I think I agree with Luis here (though it's really a bit subjective). I
-don't think it'll matter much to the compiled result either way, and
-that will probably be better if this function grows in complexity.
+Joe Perches (2):
+  ceph: Use generic debugging facility
+  ceph: Remove embedded function names from pr_debug uses
 
-I'll plan to merge this patch in the next day or so.
+ fs/ceph/addr.c                  | 266 ++++++++--------
+ fs/ceph/cache.c                 |  22 +-
+ fs/ceph/caps.c                  | 533 ++++++++++++++++----------------
+ fs/ceph/debugfs.c               |   4 +-
+ fs/ceph/dir.c                   | 141 ++++-----
+ fs/ceph/export.c                |  36 +--
+ fs/ceph/file.c                  | 170 +++++-----
+ fs/ceph/inode.c                 | 338 ++++++++++----------
+ fs/ceph/ioctl.c                 |   6 +-
+ fs/ceph/locks.c                 |  42 +--
+ fs/ceph/mds_client.c            | 374 +++++++++++-----------
+ fs/ceph/mdsmap.c                |  16 +-
+ fs/ceph/metric.c                |   4 +-
+ fs/ceph/quota.c                 |   4 +-
+ fs/ceph/snap.c                  | 135 ++++----
+ fs/ceph/super.c                 |  67 ++--
+ fs/ceph/xattr.c                 |  64 ++--
+ include/linux/ceph/ceph_debug.h |  30 --
+ include/linux/ceph/messenger.h  |   2 +-
+ 19 files changed, 1139 insertions(+), 1115 deletions(-)
 
-Thanks!
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.26.0
 
