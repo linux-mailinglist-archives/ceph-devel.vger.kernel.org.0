@@ -2,171 +2,118 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE0DB2484B9
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Aug 2020 14:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60F79248513
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Aug 2020 14:48:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbgHRM15 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 18 Aug 2020 08:27:57 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9836 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726336AbgHRM1z (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 18 Aug 2020 08:27:55 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id C640E5F3FC3BC6CABC40;
-        Tue, 18 Aug 2020 20:27:51 +0800 (CST)
-Received: from huawei.com (10.175.104.175) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.487.0; Tue, 18 Aug 2020
- 20:27:41 +0800
-From:   Miaohe Lin <linmiaohe@huawei.com>
-To:     <idryomov@gmail.com>, <jlayton@kernel.org>, <davem@davemloft.net>,
-        <kuba@kernel.org>, <grandmaster@al2klimov.de>
-CC:     <ceph-devel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linmiaohe@huawei.com>
-Subject: [PATCH] libceph: Convert to use the preferred fallthrough macro
-Date:   Tue, 18 Aug 2020 08:26:37 -0400
-Message-ID: <20200818122637.21449-1-linmiaohe@huawei.com>
-X-Mailer: git-send-email 2.19.1
+        id S1726778AbgHRMr4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 18 Aug 2020 08:47:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48308 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726635AbgHRMr4 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 18 Aug 2020 08:47:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 69CAAAD60;
+        Tue, 18 Aug 2020 12:48:19 +0000 (UTC)
+From:   Coly Li <colyli@suse.de>
+To:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        netdev@vger.kernel.org, open-iscsi@googlegroups.com,
+        linux-scsi@vger.kernel.org, ceph-devel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Chris Leech <cleech@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Cong Wang <amwang@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Hannes Reinecke <hare@suse.de>,
+        Ilya Dryomov <idryomov@gmail.com>, Jan Kara <jack@suse.com>,
+        Jeff Layton <jlayton@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Lee Duncan <lduncan@suse.com>,
+        Mike Christie <michaelc@cs.wisc.edu>,
+        Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Sagi Grimberg <sagi@grimberg.me>, stable@vger.kernel.org,
+        Vasily Averin <vvs@virtuozzo.com>,
+        Vlastimil Babka <vbabka@suse.com>
+Subject: [PATCH v6 0/6] Introduce sendpage_ok() to detect misused sendpage in network related drivers
+Date:   Tue, 18 Aug 2020 20:47:30 +0800
+Message-Id: <20200818124736.5790-1-colyli@suse.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.104.175]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Convert the uses of fallthrough comments to fallthrough macro.
+This series was original by a bug fix in nvme-over-tcp driver which only
+checked whether a page was allocated from slab allcoator, but forgot to
+check its page_count: The page handled by sendpage should be neither a
+Slab page nor 0 page_count page.
 
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+As Sagi Grimberg suggested, the original fix is refind to a more common
+inline routine:
+    static inline bool sendpage_ok(struct page *page)
+    {
+    	return  (!PageSlab(page) && page_count(page) >= 1);
+    }
+If sendpage_ok() returns true, the checking page can be handled by the
+zero copy sendpage method in network layer.
+
+The first patch in this series introduces sendpage_ok() in header file
+include/linux/net.h, the second patch fixes the page checking issue in
+nvme-over-tcp driver, the third patch adds page_count check by using
+sendpage_ok() in do_tcp_sendpages() as Eric Dumazet suggested, and all
+rested patches just replace existing open coded checks with the inline
+sendpage_ok() routine.
+
+Coly Li
+
+Cc: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Cc: Chris Leech <cleech@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Cong Wang <amwang@redhat.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Hannes Reinecke <hare@suse.de>
+Cc: Ilya Dryomov <idryomov@gmail.com>
+Cc: Jan Kara <jack@suse.com>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Lee Duncan <lduncan@suse.com>
+Cc: Mike Christie <michaelc@cs.wisc.edu>
+Cc: Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>
+Cc: Philipp Reisner <philipp.reisner@linbit.com>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Cc: stable@vger.kernel.org
+Cc: Vasily Averin <vvs@virtuozzo.com>
+Cc: Vlastimil Babka <vbabka@suse.com>
 ---
- net/ceph/ceph_hash.c    | 20 ++++++++++----------
- net/ceph/crush/mapper.c |  2 +-
- net/ceph/messenger.c    |  4 ++--
- net/ceph/mon_client.c   |  2 +-
- net/ceph/osd_client.c   |  4 ++--
- 5 files changed, 16 insertions(+), 16 deletions(-)
+Changelog:
+v6: fix page check in do_tcp_sendpages(), and replace other open coded
+    checks with sendpage_ok() in libceph, iscsi drivers.
+v5, include linux/mm.h in include/linux/net.h
+v4, change sendpage_ok() as an inline helper, and post it as
+    separate patch.
+v3, introduce a more common sendpage_ok()
+v2, fix typo in patch subject
+v1, the initial version.
 
-diff --git a/net/ceph/ceph_hash.c b/net/ceph/ceph_hash.c
-index 81e1e006c540..16a47c0eef37 100644
---- a/net/ceph/ceph_hash.c
-+++ b/net/ceph/ceph_hash.c
-@@ -50,35 +50,35 @@ unsigned int ceph_str_hash_rjenkins(const char *str, unsigned int length)
- 	switch (len) {
- 	case 11:
- 		c = c + ((__u32)k[10] << 24);
--		/* fall through */
-+		fallthrough;
- 	case 10:
- 		c = c + ((__u32)k[9] << 16);
--		/* fall through */
-+		fallthrough;
- 	case 9:
- 		c = c + ((__u32)k[8] << 8);
- 		/* the first byte of c is reserved for the length */
--		/* fall through */
-+		fallthrough;
- 	case 8:
- 		b = b + ((__u32)k[7] << 24);
--		/* fall through */
-+		fallthrough;
- 	case 7:
- 		b = b + ((__u32)k[6] << 16);
--		/* fall through */
-+		fallthrough;
- 	case 6:
- 		b = b + ((__u32)k[5] << 8);
--		/* fall through */
-+		fallthrough;
- 	case 5:
- 		b = b + k[4];
--		/* fall through */
-+		fallthrough;
- 	case 4:
- 		a = a + ((__u32)k[3] << 24);
--		/* fall through */
-+		fallthrough;
- 	case 3:
- 		a = a + ((__u32)k[2] << 16);
--		/* fall through */
-+		fallthrough;
- 	case 2:
- 		a = a + ((__u32)k[1] << 8);
--		/* fall through */
-+		fallthrough;
- 	case 1:
- 		a = a + k[0];
- 		/* case 0: nothing left to add */
-diff --git a/net/ceph/crush/mapper.c b/net/ceph/crush/mapper.c
-index 07e5614eb3f1..7057f8db4f99 100644
---- a/net/ceph/crush/mapper.c
-+++ b/net/ceph/crush/mapper.c
-@@ -987,7 +987,7 @@ int crush_do_rule(const struct crush_map *map,
- 		case CRUSH_RULE_CHOOSELEAF_FIRSTN:
- 		case CRUSH_RULE_CHOOSE_FIRSTN:
- 			firstn = 1;
--			/* fall through */
-+			fallthrough;
- 		case CRUSH_RULE_CHOOSELEAF_INDEP:
- 		case CRUSH_RULE_CHOOSE_INDEP:
- 			if (wsize == 0)
-diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-index 27d6ab11f9ee..bdfd66ba3843 100644
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -412,7 +412,7 @@ static void ceph_sock_state_change(struct sock *sk)
- 	switch (sk->sk_state) {
- 	case TCP_CLOSE:
- 		dout("%s TCP_CLOSE\n", __func__);
--		/* fall through */
-+		fallthrough;
- 	case TCP_CLOSE_WAIT:
- 		dout("%s TCP_CLOSE_WAIT\n", __func__);
- 		con_sock_state_closing(con);
-@@ -2751,7 +2751,7 @@ static int try_read(struct ceph_connection *con)
- 			switch (ret) {
- 			case -EBADMSG:
- 				con->error_msg = "bad crc/signature";
--				/* fall through */
-+				fallthrough;
- 			case -EBADE:
- 				ret = -EIO;
- 				break;
-diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
-index 3d8c8015e976..d633a0aeaa55 100644
---- a/net/ceph/mon_client.c
-+++ b/net/ceph/mon_client.c
-@@ -1307,7 +1307,7 @@ static struct ceph_msg *mon_alloc_msg(struct ceph_connection *con,
- 		 * request had a non-zero tid.  Work around this weirdness
- 		 * by allocating a new message.
- 		 */
--		/* fall through */
-+		fallthrough;
- 	case CEPH_MSG_MON_MAP:
- 	case CEPH_MSG_MDS_MAP:
- 	case CEPH_MSG_OSD_MAP:
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index e4fbcad6e7d8..7901ab6c79fd 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -3854,7 +3854,7 @@ static void scan_requests(struct ceph_osd *osd,
- 			if (!force_resend && !force_resend_writes)
- 				break;
- 
--			/* fall through */
-+			fallthrough;
- 		case CALC_TARGET_NEED_RESEND:
- 			cancel_linger_map_check(lreq);
- 			/*
-@@ -3891,7 +3891,7 @@ static void scan_requests(struct ceph_osd *osd,
- 			     !force_resend_writes))
- 				break;
- 
--			/* fall through */
-+			fallthrough;
- 		case CALC_TARGET_NEED_RESEND:
- 			cancel_map_check(req);
- 			unlink_request(osd, req);
+Coly Li (6):
+  net: introduce helper sendpage_ok() in include/linux/net.h
+  nvme-tcp: check page by sendpage_ok() before calling kernel_sendpage()
+  tcp: use sendpage_ok() to detect misused .sendpage
+  drbd: code cleanup by using sendpage_ok() to check page for
+    kernel_sendpage()
+  scsi: libiscsi: use sendpage_ok() in iscsi_tcp_segment_map()
+  libceph: use sendpage_ok() in ceph_tcp_sendpage()
+
+ drivers/block/drbd/drbd_main.c |  2 +-
+ drivers/nvme/host/tcp.c        |  7 +++----
+ drivers/scsi/libiscsi_tcp.c    |  2 +-
+ include/linux/net.h            | 16 ++++++++++++++++
+ net/ceph/messenger.c           |  2 +-
+ net/ipv4/tcp.c                 |  3 ++-
+ 6 files changed, 24 insertions(+), 8 deletions(-)
+
 -- 
-2.19.1
+2.26.2
 
