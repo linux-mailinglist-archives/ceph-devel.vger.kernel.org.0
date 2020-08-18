@@ -2,84 +2,77 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF16A248F74
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Aug 2020 22:10:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D871248FA8
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Aug 2020 22:40:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726745AbgHRUKd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 18 Aug 2020 16:10:33 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:57566 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725903AbgHRUKb (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 18 Aug 2020 16:10:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597781430;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wShkIyLXu8CJzYOMGxc9s2TN/9+dHHRotgHNc6b5I/U=;
-        b=TlVHoyvsA5sbb4FyYHalNL8A8oBVj/O28XcUAlPQwIw31m5titfvcN1uH9IeSTFvPd4kx/
-        ybhqScgz5ArE2GyxohwPw0nQWiYRFnBl3GehX3ChJ+T3+FjoP+GoEc/x23MteCSp3BIkNE
-        /Ej6F+dcU7e0eoi9J0f8O6keLPwg65M=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-263-LSZhESb-PTqyN2abRO84ww-1; Tue, 18 Aug 2020 16:10:29 -0400
-X-MC-Unique: LSZhESb-PTqyN2abRO84ww-1
-Received: by mail-il1-f198.google.com with SMTP id 65so15105130ilb.12
-        for <ceph-devel@vger.kernel.org>; Tue, 18 Aug 2020 13:10:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wShkIyLXu8CJzYOMGxc9s2TN/9+dHHRotgHNc6b5I/U=;
-        b=uD0CoCW9KIlharFk9GIyPYMjcLhqbHNAh3szki+iFLXWRr6b5ujvvCDXC8OnbjyOPb
-         kkHRuB7IRM/fA2ZC8kIpug/l+6aiagZ4h+hrKk0OjKILTVbAdBbQAkvG9tGPIJO2cd1U
-         uOFGoKOV96afVtJVzZt1qr7d01N5b2zznNXs3F79BV06Ws3+Q+lRbLoo+5VqcMWpSACN
-         Z9XyclPdb3gkyKuUEtPVEaKpkkBOC80rl9vWmNMtOOdJkiqcVbW6/QChYiEx8G2ZNeDW
-         jyoeA6gAHTQedOBr/dfuRtqL+x97nHxPsTSGSh72HEBNLJ2bfoSuuDI7T167NOT7HUQj
-         GSFw==
-X-Gm-Message-State: AOAM533kh244SJDgV6vSmBZjrLNakG7HASIIg0FsVWBI6RKPpjKfh+58
-        ytL9/+LV4MwC9GuJbQUEAtKirQCx5Sj+4D/mawbclYyDD/iMZNrcMHtghZew127oUby7tNxxl+J
-        UHvWHl3e9BvdN00Z+09N3BcPpyMqVjMQU48gGyQ==
-X-Received: by 2002:a05:6e02:be4:: with SMTP id d4mr19635357ilu.140.1597781428289;
-        Tue, 18 Aug 2020 13:10:28 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxLBDG3d7AspUnfNNN6RHZZnrhQhqY57ltUCbG2yI+ymkfrz5JI3UyWYzlX1cW0BFV15NGWA2yFPcBsHdQQXLU=
-X-Received: by 2002:a05:6e02:be4:: with SMTP id d4mr19635342ilu.140.1597781428076;
- Tue, 18 Aug 2020 13:10:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200818115317.104579-1-xiubli@redhat.com> <7b1e716346aee082cd1ff426faf6b9bff0276ae0.camel@kernel.org>
-In-Reply-To: <7b1e716346aee082cd1ff426faf6b9bff0276ae0.camel@kernel.org>
-From:   Patrick Donnelly <pdonnell@redhat.com>
-Date:   Tue, 18 Aug 2020 13:10:01 -0700
-Message-ID: <CA+2bHPZoHhaEBKBKGiR6=Ui7NYnLyT-fMUYHvCcXtT2-oWXRdg@mail.gmail.com>
+        id S1726778AbgHRUkz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 18 Aug 2020 16:40:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50556 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725554AbgHRUky (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 18 Aug 2020 16:40:54 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2B632063A;
+        Tue, 18 Aug 2020 20:40:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597783254;
+        bh=zAH41hFBjiSMGVAQpjlGTarZM5EJs0jmXNUtCJ3gLiE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=nBkBvkmGsr+z7g+TyXMK1AfFmy1ReJXKs0tmZsV/mv0EKJntcGBbohVTX5Zqe6lRB
+         JWHnW8MScYgKg5bLUp0MIlOVEDHdgESx7E1vslw2itbQ907r7JDzBCYbH8Ph0uFGCp
+         qCghbBab+nRVZ/oXQ8YbKAXggAinosCwg+gT4FHA=
+Message-ID: <efd26c69851fbe37a1cd3b07ba18092e4631b4b3.camel@kernel.org>
 Subject: Re: [PATCH] ceph: add dirs/files' opened/opening metric support
-To:     Jeff Layton <jlayton@kernel.org>
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Patrick Donnelly <pdonnell@redhat.com>
 Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
         Zheng Yan <zyan@redhat.com>,
         Ceph Development <ceph-devel@vger.kernel.org>
+Date:   Tue, 18 Aug 2020 16:40:52 -0400
+In-Reply-To: <CA+2bHPZoHhaEBKBKGiR6=Ui7NYnLyT-fMUYHvCcXtT2-oWXRdg@mail.gmail.com>
+References: <20200818115317.104579-1-xiubli@redhat.com>
+         <7b1e716346aee082cd1ff426faf6b9bff0276ae0.camel@kernel.org>
+         <CA+2bHPZoHhaEBKBKGiR6=Ui7NYnLyT-fMUYHvCcXtT2-oWXRdg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Aug 18, 2020 at 1:05 PM Jeff Layton <jlayton@kernel.org> wrote:
-> Bear in mind that if the same file has been opened several times, then
-> you'll get an increment for each.
+On Tue, 2020-08-18 at 13:10 -0700, Patrick Donnelly wrote:
+> On Tue, Aug 18, 2020 at 1:05 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > Bear in mind that if the same file has been opened several times, then
+> > you'll get an increment for each.
+> 
+> Having an open file count (even for the same inode) and a count of
+> inodes opened sounds useful to me. The latter would require some kind
+> of refcounting for each inode? Maybe that's too expensive though.
+> 
 
-Having an open file count (even for the same inode) and a count of
-inodes opened sounds useful to me. The latter would require some kind
-of refcounting for each inode? Maybe that's too expensive though.
+It might be useful. It really depends on what you want to do with this
+info.
 
-> Would it potentially be more useful to report the number of inodes that
-> have open file descriptions associated with them? It's hard for me to
-> know as I'm not clear on the intended use-case for this.
+The MDS is generally interested in inodes and their caps, and it usually
+knows how many opens we have, except in the case where we have
+sufficient caps and can make the attempt w/o having to talk to it. Is
+knowing an official number of actual open file descriptions helpful?
+Why?
 
-Use-case is more information available via `fs top`.
+> > Would it potentially be more useful to report the number of inodes that
+> > have open file descriptions associated with them? It's hard for me to
+> > know as I'm not clear on the intended use-case for this.
+> 
+> Use-case is more information available via `fs top`.
+> 
 
+Which is, again, vague. What do you expect to do with this info? Why is
+it useful? Articulating that up front will help us determine whether
+we're measuring what we need to measure.
 -- 
-Patrick Donnelly, Ph.D.
-He / Him / His
-Principal Software Engineer
-Red Hat Sunnyvale, CA
-GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+Jeff Layton <jlayton@kernel.org>
 
