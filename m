@@ -2,88 +2,96 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7E952498D3
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 Aug 2020 10:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDAF72498E7
+	for <lists+ceph-devel@lfdr.de>; Wed, 19 Aug 2020 10:58:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727910AbgHSI4N (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 19 Aug 2020 04:56:13 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9846 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726931AbgHSIyZ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 19 Aug 2020 04:54:25 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 67E7A8AE543F7D26D4D6;
-        Wed, 19 Aug 2020 16:54:17 +0800 (CST)
-Received: from huawei.com (10.175.104.175) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.487.0; Wed, 19 Aug 2020
- 16:54:09 +0800
-From:   Miaohe Lin <linmiaohe@huawei.com>
-To:     <idryomov@gmail.com>, <axboe@kernel.dk>,
-        <dongsheng.yang@easystack.cn>
-CC:     <ceph-devel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linmiaohe@huawei.com>
-Subject: [PATCH] rbd: Convert to use the preferred fallthrough macro
-Date:   Wed, 19 Aug 2020 04:53:04 -0400
-Message-ID: <20200819085304.43653-1-linmiaohe@huawei.com>
-X-Mailer: git-send-email 2.19.1
+        id S1727113AbgHSI6D (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 19 Aug 2020 04:58:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55312 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726992AbgHSI53 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 19 Aug 2020 04:57:29 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2392C061347
+        for <ceph-devel@vger.kernel.org>; Wed, 19 Aug 2020 01:57:28 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id jp10so25411344ejb.0
+        for <ceph-devel@vger.kernel.org>; Wed, 19 Aug 2020 01:57:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HX205tRG8ZHJcvDKDnqPUKsIjXFVc3RObdikFIjb31s=;
+        b=Q9ZsmRZCPLgixq+Z4fzykk+1jmj5x9IlFbqCLMD3on/THKZLp0slvi5sSLa993qalv
+         s66mVKzMDolOpsxEB/IyJvAXgru1r52NAqxdhR+LvEmgDIQ0yJXQZIVv3x6vmbUpoCm+
+         Rfn+V6PCgPN+QBzLhJxKVuA973P5TVUauK6fFFoxerc3VVgWlaR1jdO5YSXjZ9V/BAAQ
+         STp+wZ1G6HFNh8ujcjKvRgyI3UpJjFiu3zXHhsinGSh2tJvxT+02vBz1augRn1qf7ZjV
+         jQcr6JChZHoCs5qTAeXWgrhdy4YHdgQGiywWTSPoWOWyWQdH98ig2ab+S17rcTJC6vM9
+         yoJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HX205tRG8ZHJcvDKDnqPUKsIjXFVc3RObdikFIjb31s=;
+        b=Ht6mJo5UV6RR5FjD2EOqfMq1WhnkuPVpUMQysBWM2iS2SujmThL8hDm9qU1HvJhzbi
+         anqR/QY2tfa4E10QLkrwCe0MK+soUEZwbi3USp/IK+QRv6qmkoOJWbVPXkNZNMJNjPKI
+         9ZCm1zjY8s/WqzG+PFFmYYPMKxuo2XxkPqO1BRNLTJEdiYLlv+tls3OTSSp5ZUK+3U01
+         AIoZ804iT0NldgRJDD5mVgp1e/yFdsjTgR5nDyiQy+jUgHwvtctQm6kTKobQRc3DGSa7
+         xCkR5SYo4zgORCxUZGLfSsr9xD32y3cbv77h0h1EuB7MCSNkXJuymnoUsBuznIzBI+/B
+         DcRQ==
+X-Gm-Message-State: AOAM533gJQdsQ9B3jumgFIzaWS+fjowxkzCvzRvpa6XspDZJiGwuf7GL
+        cHwuvO8vxKYSqaichXCT2iio1UP68Wc=
+X-Google-Smtp-Source: ABdhPJxQ+ebtdUO6KbW147ao0cvMPnes+8HalLD/WsgaMM11u0Qt2Hl8KY5aZPUfichKtbNX9niX0Q==
+X-Received: by 2002:a17:907:42cd:: with SMTP id nz21mr24433151ejb.395.1597827447079;
+        Wed, 19 Aug 2020 01:57:27 -0700 (PDT)
+Received: from kwango.local (ip-94-112-132-16.net.upcbroadband.cz. [94.112.132.16])
+        by smtp.gmail.com with ESMTPSA id y13sm17233114eds.64.2020.08.19.01.57.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Aug 2020 01:57:26 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     Leon Romanovsky <leonro@nvidia.com>
+Subject: [PATCH] libceph: add __maybe_unused to DEFINE_CEPH_FEATURE
+Date:   Wed, 19 Aug 2020 10:57:36 +0200
+Message-Id: <20200819085736.21718-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.104.175]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Convert the uses of fallthrough comments to fallthrough macro.
+Avoid -Wunused-const-variable warnings for "make W=1".
 
-Signed-off-by: Hongxiang Lou <louhongxiang@huawei.com>
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+Reported-by: Leon Romanovsky <leonro@nvidia.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 ---
- drivers/block/rbd.c | 8 ++++----
+ include/linux/ceph/ceph_features.h | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index d9c0e7d154f9..011539039693 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3293,7 +3293,7 @@ static bool rbd_obj_advance_copyup(struct rbd_obj_request *obj_req, int *result)
- 	case __RBD_OBJ_COPYUP_OBJECT_MAPS:
- 		if (!pending_result_dec(&obj_req->pending, result))
- 			return false;
--		/* fall through */
-+		fallthrough;
- 	case RBD_OBJ_COPYUP_OBJECT_MAPS:
- 		if (*result) {
- 			rbd_warn(rbd_dev, "snap object map update failed: %d",
-@@ -3312,7 +3312,7 @@ static bool rbd_obj_advance_copyup(struct rbd_obj_request *obj_req, int *result)
- 	case __RBD_OBJ_COPYUP_WRITE_OBJECT:
- 		if (!pending_result_dec(&obj_req->pending, result))
- 			return false;
--		/* fall through */
-+		fallthrough;
- 	case RBD_OBJ_COPYUP_WRITE_OBJECT:
- 		return true;
- 	default:
-@@ -3399,7 +3399,7 @@ static bool rbd_obj_advance_write(struct rbd_obj_request *obj_req, int *result)
- 	case __RBD_OBJ_WRITE_COPYUP:
- 		if (!rbd_obj_advance_copyup(obj_req, result))
- 			return false;
--		/* fall through */
-+		fallthrough;
- 	case RBD_OBJ_WRITE_COPYUP:
- 		if (*result) {
- 			rbd_warn(rbd_dev, "copyup failed: %d", *result);
-@@ -3592,7 +3592,7 @@ static bool rbd_img_advance(struct rbd_img_request *img_req, int *result)
- 	case __RBD_IMG_OBJECT_REQUESTS:
- 		if (!pending_result_dec(&img_req->pending, result))
- 			return false;
--		/* fall through */
-+		fallthrough;
- 	case RBD_IMG_OBJECT_REQUESTS:
- 		return true;
- 	default:
+diff --git a/include/linux/ceph/ceph_features.h b/include/linux/ceph/ceph_features.h
+index fcd84e8d88f4..999636d53cf2 100644
+--- a/include/linux/ceph/ceph_features.h
++++ b/include/linux/ceph/ceph_features.h
+@@ -11,14 +11,14 @@
+ #define CEPH_FEATURE_INCARNATION_2 (1ull<<57) // CEPH_FEATURE_SERVER_JEWEL
+ 
+ #define DEFINE_CEPH_FEATURE(bit, incarnation, name)			\
+-	static const uint64_t CEPH_FEATURE_##name = (1ULL<<bit);		\
+-	static const uint64_t CEPH_FEATUREMASK_##name =			\
++	static const uint64_t __maybe_unused CEPH_FEATURE_##name = (1ULL<<bit);		\
++	static const uint64_t __maybe_unused CEPH_FEATUREMASK_##name =			\
+ 		(1ULL<<bit | CEPH_FEATURE_INCARNATION_##incarnation);
+ 
+ /* this bit is ignored but still advertised by release *when* */
+ #define DEFINE_CEPH_FEATURE_DEPRECATED(bit, incarnation, name, when) \
+-	static const uint64_t DEPRECATED_CEPH_FEATURE_##name = (1ULL<<bit); \
+-	static const uint64_t DEPRECATED_CEPH_FEATUREMASK_##name =		\
++	static const uint64_t __maybe_unused DEPRECATED_CEPH_FEATURE_##name = (1ULL<<bit);	\
++	static const uint64_t __maybe_unused DEPRECATED_CEPH_FEATUREMASK_##name =		\
+ 		(1ULL<<bit | CEPH_FEATURE_INCARNATION_##incarnation);
+ 
+ /*
 -- 
-2.19.1
+2.19.2
 
