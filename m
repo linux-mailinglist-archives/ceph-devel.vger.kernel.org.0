@@ -2,55 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBBDD249917
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 Aug 2020 11:12:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53BF6249961
+	for <lists+ceph-devel@lfdr.de>; Wed, 19 Aug 2020 11:34:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbgHSJMF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 19 Aug 2020 05:12:05 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:3484 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726630AbgHSJME (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 19 Aug 2020 05:12:04 -0400
-Received: from dggeme701-chm.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id 494607D03E04ADF6B140;
-        Wed, 19 Aug 2020 17:12:02 +0800 (CST)
-Received: from dggeme753-chm.china.huawei.com (10.3.19.99) by
- dggeme701-chm.china.huawei.com (10.1.199.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Wed, 19 Aug 2020 17:12:02 +0800
-Received: from dggeme753-chm.china.huawei.com ([10.7.64.70]) by
- dggeme753-chm.china.huawei.com ([10.7.64.70]) with mapi id 15.01.1913.007;
- Wed, 19 Aug 2020 17:12:01 +0800
-From:   linmiaohe <linmiaohe@huawei.com>
+        id S1727053AbgHSJeF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 19 Aug 2020 05:34:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41774 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726835AbgHSJeE (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 19 Aug 2020 05:34:04 -0400
+Received: from localhost (unknown [213.57.247.131])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B67C4206FA;
+        Wed, 19 Aug 2020 09:34:03 +0000 (UTC)
+Date:   Wed, 19 Aug 2020 12:34:00 +0300
+From:   Leon Romanovsky <leonro@nvidia.com>
 To:     Ilya Dryomov <idryomov@gmail.com>
-CC:     Jeff Layton <jlayton@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ceph: Convert to use the preferred fallthrough macro
-Thread-Topic: [PATCH] ceph: Convert to use the preferred fallthrough macro
-Thread-Index: AdZ2CIBSTTAHQIOHYEu6sY48YQCZSg==
-Date:   Wed, 19 Aug 2020 09:12:01 +0000
-Message-ID: <20c98648546841528d72bdd62308b415@huawei.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.174.176.142]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc:     ceph-devel@vger.kernel.org
+Subject: Re: [PATCH] libceph: add __maybe_unused to DEFINE_CEPH_FEATURE
+Message-ID: <20200819093400.GR7555@unreal>
+References: <20200819085736.21718-1-idryomov@gmail.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200819085736.21718-1-idryomov@gmail.com>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-SWx5YSBEcnlvbW92IDxpZHJ5b21vdkBnbWFpbC5jb20+IHdyb3RlOg0KPk9uIFdlZCwgQXVnIDE5
-LCAyMDIwIGF0IDEwOjUzIEFNIE1pYW9oZSBMaW4gPGxpbm1pYW9oZUBodWF3ZWkuY29tPiB3cm90
-ZToNCj4+DQo+PiBDb252ZXJ0IHRoZSB1c2VzIG9mIGZhbGx0aHJvdWdoIGNvbW1lbnRzIHRvIGZh
-bGx0aHJvdWdoIG1hY3JvLg0KPj4NCj4NCj5IaSBNaWFvaGUsDQo+DQo+SSd2ZSBhbHJlYWR5IGRv
-bmUgdGhhdCwgZm9sZGluZyBpbnRvIHlvdXIgcHJldmlvdXMgcGF0Y2g6DQo+DQo+ICBodHRwczov
-L2dpdGh1Yi5jb20vY2VwaC9jZXBoLWNsaWVudC9jb21taXQvM2YxOWFlODk1NDdkZjFiOGNjYmEz
-NTlhMmY3ZGRiYTBmMTA4ZmZiZA0KPg0KPlRoYW5rcywNCj4NCj4gICAgICAgICAgICAgICAgSWx5
-YQ0KDQpNYW55IHRoYW5rcy4gSSB0aG91Z2h0IEkgd2FzIHJlcXVlc3RlZCB0byBkbyB0aGlzLiBN
-eSBtaXN0YWtlLiA6KQ0KDQo=
+On Wed, Aug 19, 2020 at 10:57:36AM +0200, Ilya Dryomov wrote:
+> Avoid -Wunused-const-variable warnings for "make W=1".
+>
+> Reported-by: Leon Romanovsky <leonro@nvidia.com>
+> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+> ---
+>  include/linux/ceph/ceph_features.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+
+Even better,
+It will be great to see this patch in -rc pull request.
+
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
