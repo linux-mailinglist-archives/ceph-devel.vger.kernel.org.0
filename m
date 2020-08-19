@@ -2,298 +2,514 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D38CC249F1C
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 Aug 2020 15:07:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C06FA249FD6
+	for <lists+ceph-devel@lfdr.de>; Wed, 19 Aug 2020 15:28:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728715AbgHSNHG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 19 Aug 2020 09:07:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37470 "EHLO
+        id S1728063AbgHSN2F (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 19 Aug 2020 09:28:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728708AbgHSNG5 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 19 Aug 2020 09:06:57 -0400
+        with ESMTP id S1727992AbgHSN2E (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 19 Aug 2020 09:28:04 -0400
 Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA840C061757
-        for <ceph-devel@vger.kernel.org>; Wed, 19 Aug 2020 06:06:56 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id t4so20566483iln.1
-        for <ceph-devel@vger.kernel.org>; Wed, 19 Aug 2020 06:06:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D17FC061757
+        for <ceph-devel@vger.kernel.org>; Wed, 19 Aug 2020 06:28:03 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id c6so20585121ilo.13
+        for <ceph-devel@vger.kernel.org>; Wed, 19 Aug 2020 06:28:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Hl3CH1y3gpS1LkA3BRX4igPWdUFis9urrbf3FL329Nc=;
-        b=huVP8NiYObRH0MAE+X2MYZlr1T3oNekmvxx7ale7oNa3QHHsAmPJwn0wtn8r2qYLFB
-         F1Rw35LZRb+6pl6C+clkYFTx8eSDmNNyQE+Hr/4BEbjdIp+Iu8j8v+kyD73HlIKJ2i8F
-         h0jQg+w1HjvKoEo2g6bkIuoWh+2kwV7PwFuW+eyumiPn36I8/q4TZtHHQ0DG88j4vnkH
-         DC6T55PpTFYZAr3t+C1seK1tqwe81Nz0AgW45s1JzBkvsvEPtEnzWdWHbKigWJQXm76U
-         Oyniy7GFOhuhBnL4gCrRtd8sOLbUWf2YxmGWAkHxF+5gtmEwK96s2yHIqGwwjJJcNviS
-         mFiw==
+        bh=KaYtluuf/Pw1pZPMVFV2/WZlFUXjrABpuSwG8RYHrvU=;
+        b=EIK8Uy/MLWdGo0DXZUd7mBxl6nej4vE9aZdxdEZOJ0HMgnVKgZaFLtgCfMFjWFOUZT
+         PWlmizMRmCe5LCsmCv8O/YbWzT2FR/xPLTS8lVRcN56COiK8ljKO7UvhRw9ju/nMATx7
+         NWJdnjwIWXycI5sh+P4ZK/BnIsb1BqHjDxhsqmgWJyNWC1w8aH/EloJqs2b6UGBTXhD6
+         k2reX9raTlyfMkOOfyVdOQ5QGxFjOywi9ZnwL1n7FJbrO6b+J2jx2ujAgjbS3jht933U
+         Nnsw/pGR07rrD+vXPX1Zif4Xw52R6L7FzgwvyY5Nw8BaB676j1DPAYMCrhmXTcJqCMge
+         pXFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Hl3CH1y3gpS1LkA3BRX4igPWdUFis9urrbf3FL329Nc=;
-        b=Q5dDHZBLETf3Djjob/4meZyIJf2lpaLo24/ezZU2VRvqOYyV5V2hH3wDCdT0fr/AUH
-         EdBPanYnwdGwxEVvtcwoEm0vaFqssFaPay2QO7h4FyFu8j/i+ENr/VLUXH4r4yiQKukd
-         MufMLvH561gDer+pR/YuOe2tvzbyNWDTKuw1oAFGNywp3wHZU0vFJlPts8N9bjIb421c
-         NmX1RFl7XxP00bgsNBELiKPukQ5xt0XV1R07Ozl7094zo4Z+dJnBiWmLbCKRvJW5RnSn
-         l8glpoRPA/B7bAnDC1Tdnfk58M8MDqmaPQCyAD6xPzJNL85khcjSewjCF5RBVUdL1K9r
-         BErg==
-X-Gm-Message-State: AOAM530xCMo8oPfG0sqcbWcSYQg6sF3sLXv9kTqhHwta7D8ROwUtljj/
-        Pcwmcf3UbYMoEnTjRlXCXFp/nJhpm3y4hjLIq/BSs0HiOqw=
-X-Google-Smtp-Source: ABdhPJwuH+cvOwMgpkxCVqlZiSnG+5KCyU+3o9hkcd37AOAjXjtKVM0dn2wtQcnZDs7wWlOlI+RpPQvdatDWdJ7bp1M=
-X-Received: by 2002:a05:6e02:86:: with SMTP id l6mr13724084ilm.281.1597842414271;
- Wed, 19 Aug 2020 06:06:54 -0700 (PDT)
+        bh=KaYtluuf/Pw1pZPMVFV2/WZlFUXjrABpuSwG8RYHrvU=;
+        b=akusFmHLQ18yRDGhKrsaioYoGCZLDeH1sNtEEgzV7PjLD6UPeIBThQ+bDtuFp1Bud8
+         wAvc6Zbf7Bw144CJ4vsObR9DFe0nflcrKNM1WpALZ6KqCJII2fKGUK73C9SNmYvuci4f
+         vg39l4rLTGpvHbMQL3YBiNEbCX/qEIEPdNRsMlSQ2wiWIGQ9HkHPqHhbk0J63I0qehaW
+         WFpTX8fY4RPLwFa8cIPctNG7uVSEdsEpQ1MvArV+huRirhKPKfQ8zrqgN8oO7sjwQ11w
+         REKlLnn8mK7BkMUT2CjrB/8EfiUeviqKi60FJEd4eH0sVhSVC8kZFR2lwlzJ5CxIxfah
+         qdnQ==
+X-Gm-Message-State: AOAM533k6jKFrXhXrtDM92QSI6fj6IavwVgmqUHajLX8g+A1njXK8cHq
+        CqZRbxwZ/G5diOcePIKpGrzKFlw0pLywJw2V7Do=
+X-Google-Smtp-Source: ABdhPJxAxOs6h8gUL8lIhcFoTm00eyuJMBYGTW7vkurrMGpOsY4joDR2SoElOS+yoA9YD0qR6TN+H3WwIk7fOHuZdmU=
+X-Received: by 2002:a92:c84f:: with SMTP id b15mr23232081ilq.100.1597843682206;
+ Wed, 19 Aug 2020 06:28:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200819093614.22774-1-idryomov@gmail.com> <621fd8c3449930aef3ff8eb9542dc32c760afed5.camel@kernel.org>
-In-Reply-To: <621fd8c3449930aef3ff8eb9542dc32c760afed5.camel@kernel.org>
+References: <20200818162316.389462-1-jlayton@kernel.org> <20200818194904.706003-1-jlayton@kernel.org>
+ <CAOi1vP94-LOwxAob5yxJLYoi_JRvkjdN7tYCR3W3PBw1edX1tg@mail.gmail.com> <152daf1454ba8d945abd47f7c918808b2302b80a.camel@kernel.org>
+In-Reply-To: <152daf1454ba8d945abd47f7c918808b2302b80a.camel@kernel.org>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 19 Aug 2020 15:07:01 +0200
-Message-ID: <CAOi1vP86LGSLDjGdpw7Qf_MgoNt4+a-7pbXa_G=q68RuzeggaA@mail.gmail.com>
-Subject: Re: [PATCH] libceph: multiple workspaces for CRUSH computations
+Date:   Wed, 19 Aug 2020 15:28:09 +0200
+Message-ID: <CAOi1vP9KrgF--2iB5+ckpgoeiJx9WQxNC_sCW9oKe+dHm688hA@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: fix inode number handling on arches with 32-bit ino_t
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        Robin Geuze <robing@nl.team.blue>
+        Ulrich.Weigand@de.ibm.com, Tuan.Hoang1@ibm.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Aug 19, 2020 at 2:25 PM Jeff Layton <jlayton@kernel.org> wrote:
+On Wed, Aug 19, 2020 at 1:25 PM Jeff Layton <jlayton@kernel.org> wrote:
 >
-> On Wed, 2020-08-19 at 11:36 +0200, Ilya Dryomov wrote:
-> > Replace a global map->crush_workspace (protected by a global mutex)
-> > with a list of workspaces, up to the number of CPUs + 1.
+> On Wed, 2020-08-19 at 09:17 +0200, Ilya Dryomov wrote:
+> > On Tue, Aug 18, 2020 at 9:49 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > > Tuan and Ulrich mentioned that they were hitting a problem on s390x,
+> > > which has a 32-bit ino_t value, even though it's a 64-bit arch (for
+> > > historical reasons).
+> > >
+> > > I think the current handling of inode numbers in the ceph driver is
+> > > wrong. It tries to use 32-bit inode numbers on 32-bit arches, but that's
+> > > actually not a problem. 32-bit arches can deal with 64-bit inode numbers
+> > > just fine when userland code is compiled with LFS support (the common
+> > > case these days).
+> > >
+> > > What we really want to do is just use 64-bit numbers everywhere, unless
+> > > someone has mounted with the ino32 mount option. In that case, we want
+> > > to ensure that we hash the inode number down to something that will fit
+> > > in 32 bits before presenting the value to userland.
+> > >
+> > > Add new helper functions that do this, and only do the conversion before
+> > > presenting these values to userland in getattr, readdir, debugfs, and
+> > > (some) debug log messages.
+> > >
+> > > The inode table hashvalue is changed to just cast the inode number to
+> > > unsigned long, as low-order bits are the most likely to vary anyway.
+> > >
+> > > While it's not strictly required, we do want to put something in
+> > > inode->i_ino. Instead of basing it on BITS_PER_LONG, however, base it on
+> > > the size of the ino_t type.
+> > >
+> > > Reported-by: Tuan Hoang1 <Tuan.Hoang1@ibm.com>
+> > > Reported-by: Ulrich Weigand <Ulrich.Weigand@de.ibm.com>
+> > > URL: https://tracker.ceph.com/issues/46828
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/ceph/caps.c       | 14 +++++-----
+> > >  fs/ceph/debugfs.c    |  4 +--
+> > >  fs/ceph/dir.c        | 31 +++++++++-------------
+> > >  fs/ceph/file.c       |  4 +--
+> > >  fs/ceph/inode.c      | 18 +++++++------
+> > >  fs/ceph/mds_client.h |  2 +-
+> > >  fs/ceph/quota.c      |  4 +--
+> > >  fs/ceph/super.h      | 63 +++++++++++++++++++-------------------------
+> > >  8 files changed, 64 insertions(+), 76 deletions(-)
+> > >
+> > > v2:
+> > > - fix dir_emit inode number for ".."
+> > > - fix ino_t size test
+> > >
+> > > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> > > index 55ccccf77cea..d5b1f781f398 100644
+> > > --- a/fs/ceph/caps.c
+> > > +++ b/fs/ceph/caps.c
+> > > @@ -887,8 +887,8 @@ int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch)
+> > >         int have = ci->i_snap_caps;
+> > >
+> > >         if ((have & mask) == mask) {
+> > > -               dout("__ceph_caps_issued_mask ino 0x%lx snap issued %s"
+> > > -                    " (mask %s)\n", ci->vfs_inode.i_ino,
+> > > +               dout("__ceph_caps_issued_mask ino 0x%llx snap issued %s"
+> > > +                    " (mask %s)\n", ceph_present_inode(&ci->vfs_inode),
 > >
-> > This is based on a patch from Robin Geuze <robing@nl.team.blue>.
-> > Robin and his team have observed a 10-20% increase in IOPS on all
-> > queue depths and lower CPU usage as well on a high-end all-NVMe
-> > 100GbE cluster.
+> > Hi Jeff,
 > >
-> > Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-> > ---
-> >  include/linux/ceph/osdmap.h |  14 ++-
-> >  include/linux/crush/crush.h |   3 +
-> >  net/ceph/osdmap.c           | 166 ++++++++++++++++++++++++++++++++----
-> >  3 files changed, 166 insertions(+), 17 deletions(-)
+> > I agree with Zheng.  douts should output the real 64-bit values.
+> > If the presentation value is of interest in some places, they should
+> > output it alongside the real value.
 > >
-> > diff --git a/include/linux/ceph/osdmap.h b/include/linux/ceph/osdmap.h
-> > index 3f4498fef6ad..cad9acfbc320 100644
-> > --- a/include/linux/ceph/osdmap.h
-> > +++ b/include/linux/ceph/osdmap.h
-> > @@ -137,6 +137,17 @@ int ceph_oid_aprintf(struct ceph_object_id *oid, gfp_t gfp,
-> >                    const char *fmt, ...);
-> >  void ceph_oid_destroy(struct ceph_object_id *oid);
-> >
-> > +struct workspace_manager {
-> > +     struct list_head idle_ws;
-> > +     spinlock_t ws_lock;
-> > +     /* Number of free workspaces */
-> > +     int free_ws;
-> > +     /* Total number of allocated workspaces */
-> > +     atomic_t total_ws;
-> > +     /* Waiters for a free workspace */
-> > +     wait_queue_head_t ws_wait;
-> > +};
-> > +
-> >  struct ceph_pg_mapping {
-> >       struct rb_node node;
-> >       struct ceph_pg pgid;
-> > @@ -184,8 +195,7 @@ struct ceph_osdmap {
-> >        * the list of osds that store+replicate them. */
-> >       struct crush_map *crush;
-> >
-> > -     struct mutex crush_workspace_mutex;
-> > -     void *crush_workspace;
-> > +     struct workspace_manager crush_wsm;
-> >  };
-> >
-> >  static inline bool ceph_osd_exists(struct ceph_osdmap *map, int osd)
-> > diff --git a/include/linux/crush/crush.h b/include/linux/crush/crush.h
-> > index 2f811baf78d2..30dba392b730 100644
-> > --- a/include/linux/crush/crush.h
-> > +++ b/include/linux/crush/crush.h
-> > @@ -346,6 +346,9 @@ struct crush_work_bucket {
-> >
-> >  struct crush_work {
-> >       struct crush_work_bucket **work; /* Per-bucket working store */
-> > +#ifdef __KERNEL__
-> > +     struct list_head item;
-> > +#endif
-> >  };
-> >
-> >  #ifdef __KERNEL__
-> > diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-> > index 96c25f5e064a..fa08c15be0c0 100644
-> > --- a/net/ceph/osdmap.c
-> > +++ b/net/ceph/osdmap.c
-> > @@ -964,6 +964,143 @@ static int decode_pool_names(void **p, void *end, struct ceph_osdmap *map)
-> >       return -EINVAL;
-> >  }
-> >
-> > +/*
-> > + * CRUSH workspaces
-> > + *
-> > + * workspace_manager framework borrowed from fs/btrfs/compression.c.
-> > + * Two simplifications: there is only one type of workspace and there
-> > + * is always at least one workspace.
-> > + */
-> > +static struct crush_work *alloc_workspace(const struct crush_map *c)
-> > +{
-> > +     struct crush_work *work;
-> > +     size_t work_size;
-> > +
-> > +     WARN_ON(!c->working_size);
-> > +     work_size = crush_work_size(c, CEPH_PG_MAX_SIZE);
-> > +     dout("%s work_size %zu bytes\n", __func__, work_size);
-> > +
-> > +     work = ceph_kvmalloc(work_size, GFP_NOIO);
-> > +     if (!work)
-> > +             return NULL;
-> > +
 >
-> In general, how big are these allocations? They're all uniform so you
-> could make a dedicated slabcache for this. Granted you'll only have one
-> a max of per cpu, but some boxes have a lot of CPUs these days.
-
-Hi Jeff,
-
-They are going to vary in size from CRUSH map to CRUSH map and need
-a vmalloc fallback, so a dedicated cache wouldn't work.
-
+> Ok.
 >
-> > +     INIT_LIST_HEAD(&work->item);
-> > +     crush_init_workspace(c, work);
-> > +     return work;
-> > +}
-> > +
-> > +static void free_workspace(struct crush_work *work)
-> > +{
-> > +     WARN_ON(!list_empty(&work->item));
-> > +     kvfree(work);
-> > +}
-> > +
-> > +static void init_workspace_manager(struct workspace_manager *wsm)
-> > +{
-> > +     INIT_LIST_HEAD(&wsm->idle_ws);
-> > +     spin_lock_init(&wsm->ws_lock);
-> > +     atomic_set(&wsm->total_ws, 0);
-> > +     wsm->free_ws = 0;
-> > +     init_waitqueue_head(&wsm->ws_wait);
-> > +}
-> > +
-> > +static void add_initial_workspace(struct workspace_manager *wsm,
-> > +                               struct crush_work *work)
-> > +{
-> > +     WARN_ON(!list_empty(&wsm->idle_ws));
-> > +
-> > +     list_add(&work->item, &wsm->idle_ws);
-> > +     atomic_set(&wsm->total_ws, 1);
-> > +     wsm->free_ws = 1;
-> > +}
-> > +
-> > +static void cleanup_workspace_manager(struct workspace_manager *wsm)
-> > +{
-> > +     struct crush_work *work;
-> > +
-> > +     while (!list_empty(&wsm->idle_ws)) {
-> > +             work = list_first_entry(&wsm->idle_ws, struct crush_work,
-> > +                                     item);
-> > +             list_del_init(&work->item);
-> > +             free_workspace(work);
-> > +     }
-> > +     atomic_set(&wsm->total_ws, 0);
-> > +     wsm->free_ws = 0;
-> > +}
-> > +
-> > +/*
-> > + * Finds an available workspace or allocates a new one.  If it's not
-> > + * possible to allocate a new one, waits until there is one.
-> > + */
-> > +static struct crush_work *get_workspace(struct workspace_manager *wsm,
-> > +                                     const struct crush_map *c)
-> > +{
-> > +     struct crush_work *work;
-> > +     int cpus = num_online_cpus();
-> > +
-> > +again:
-> > +     spin_lock(&wsm->ws_lock);
-> > +     if (!list_empty(&wsm->idle_ws)) {
-> > +             work = list_first_entry(&wsm->idle_ws, struct crush_work,
-> > +                                     item);
-> > +             list_del_init(&work->item);
-> > +             wsm->free_ws--;
-> > +             spin_unlock(&wsm->ws_lock);
-> > +             return work;
-> > +
-> > +     }
-> > +     if (atomic_read(&wsm->total_ws) > cpus) {
-> > +             DEFINE_WAIT(wait);
-> > +
-> > +             spin_unlock(&wsm->ws_lock);
-> > +             prepare_to_wait(&wsm->ws_wait, &wait, TASK_UNINTERRUPTIBLE);
-> > +             if (atomic_read(&wsm->total_ws) > cpus && !wsm->free_ws)
-> > +                     schedule();
-> > +             finish_wait(&wsm->ws_wait, &wait);
-> > +             goto again;
-> > +     }
-> > +     atomic_inc(&wsm->total_ws);
-> > +     spin_unlock(&wsm->ws_lock);
-> > +
-> > +     work = alloc_workspace(c);
-> > +     if (!work) {
-> > +             atomic_dec(&wsm->total_ws);
-> > +             wake_up(&wsm->ws_wait);
-> > +
-> > +             /*
-> > +              * Do not return the error but go back to waiting.  We
-> > +              * have the inital workspace and the CRUSH computation
-> > +              * time is bounded so we will get it eventually.
-> > +              */
-> > +             WARN_ON(atomic_read(&wsm->total_ws) < 1);
-> > +             goto again;
-> > +     }
-> > +     return work;
-> > +}
-> > +
-> > +/*
-> > + * Puts a workspace back on the list or frees it if we have enough
-> > + * idle ones sitting around.
-> > + */
-> > +static void put_workspace(struct workspace_manager *wsm,
-> > +                       struct crush_work *work)
-> > +{
-> > +     spin_lock(&wsm->ws_lock);
-> > +     if (wsm->free_ws <= num_online_cpus()) {
-> > +             list_add(&work->item, &wsm->idle_ws);
-> > +             wsm->free_ws++;
-> > +             spin_unlock(&wsm->ws_lock);
-> > +             goto wake;
-> > +     }
-> > +     spin_unlock(&wsm->ws_lock);
-> > +
-> > +     free_workspace(work);
-> > +     atomic_dec(&wsm->total_ws);
-> > +wake:
-> > +     if (wq_has_sleeper(&wsm->ws_wait))
-> > +             wake_up(&wsm->ws_wait);
+> FWIW, the rationale for using ceph_present_inode in these is that the
+> values would better match what stat() reports in st_ino. The debug
+> messages are really inconsistent here though, so I'm fine with moving
+> them to always print the 64-bit values. My guess is that hardly anyone
+> uses -o ino32 in this day and age anyway...
 >
-> Is this racy? Could you end up missing a wakeup because something began
-> waiting between the check and wake_up? This is not being checked under
-> any sort of lock, so you could end up preempted between the two.
 >
-> It might be better to just unconditionally call wake_up. In principle,
-> that should be a no-op if there is nothing waiting.
+> > >                      ceph_cap_string(have),
+> > >                      ceph_cap_string(mask));
+> > >                 return 1;
+> > > @@ -899,8 +899,8 @@ int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch)
+> > >                 if (!__cap_is_valid(cap))
+> > >                         continue;
+> > >                 if ((cap->issued & mask) == mask) {
+> > > -                       dout("__ceph_caps_issued_mask ino 0x%lx cap %p issued %s"
+> > > -                            " (mask %s)\n", ci->vfs_inode.i_ino, cap,
+> > > +                       dout("__ceph_caps_issued_mask ino 0x%llx cap %p issued %s"
+> > > +                            " (mask %s)\n", ceph_present_inode(&ci->vfs_inode), cap,
+> > >                              ceph_cap_string(cap->issued),
+> > >                              ceph_cap_string(mask));
+> > >                         if (touch)
+> > > @@ -911,8 +911,8 @@ int __ceph_caps_issued_mask(struct ceph_inode_info *ci, int mask, int touch)
+> > >                 /* does a combination of caps satisfy mask? */
+> > >                 have |= cap->issued;
+> > >                 if ((have & mask) == mask) {
+> > > -                       dout("__ceph_caps_issued_mask ino 0x%lx combo issued %s"
+> > > -                            " (mask %s)\n", ci->vfs_inode.i_ino,
+> > > +                       dout("__ceph_caps_issued_mask ino 0x%llx combo issued %s"
+> > > +                            " (mask %s)\n", ceph_present_inode(&ci->vfs_inode),
+> > >                              ceph_cap_string(cap->issued),
+> > >                              ceph_cap_string(mask));
+> > >                         if (touch) {
+> > > @@ -2872,7 +2872,7 @@ int ceph_get_caps(struct file *filp, int need, int want,
+> > >                         struct cap_wait cw;
+> > >                         DEFINE_WAIT_FUNC(wait, woken_wake_function);
+> > >
+> > > -                       cw.ino = inode->i_ino;
+> > > +                       cw.ino = ceph_present_inode(inode);
+> > >                         cw.tgid = current->tgid;
+> > >                         cw.need = need;
+> > >                         cw.want = want;
+> > > diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+> > > index 20043382d825..5eeca7987717 100644
+> > > --- a/fs/ceph/debugfs.c
+> > > +++ b/fs/ceph/debugfs.c
+> > > @@ -211,7 +211,7 @@ static int caps_show_cb(struct inode *inode, struct ceph_cap *cap, void *p)
+> > >  {
+> > >         struct seq_file *s = p;
+> > >
+> > > -       seq_printf(s, "0x%-17lx%-17s%-17s\n", inode->i_ino,
+> > > +       seq_printf(s, "0x%-17llx%-17s%-17s\n", ceph_present_inode(inode),
+> > >                    ceph_cap_string(cap->issued),
+> > >                    ceph_cap_string(cap->implemented));
+> > >         return 0;
+> > > @@ -256,7 +256,7 @@ static int caps_show(struct seq_file *s, void *p)
+> > >
+> > >         spin_lock(&mdsc->caps_list_lock);
+> > >         list_for_each_entry(cw, &mdsc->cap_wait_list, list) {
+> > > -               seq_printf(s, "%-13d0x%-17lx%-17s%-17s\n", cw->tgid, cw->ino,
+> > > +               seq_printf(s, "%-13d0x%-17llx%-17s%-17s\n", cw->tgid, cw->ino,
+> > >                                 ceph_cap_string(cw->need),
+> > >                                 ceph_cap_string(cw->want));
+> > >         }
+> > > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> > > index 060bdcc5ce32..1a61a435a1cd 100644
+> > > --- a/fs/ceph/dir.c
+> > > +++ b/fs/ceph/dir.c
+> > > @@ -259,9 +259,7 @@ static int __dcache_readdir(struct file *file,  struct dir_context *ctx,
+> > >                              dentry, dentry, d_inode(dentry));
+> > >                         ctx->pos = di->offset;
+> > >                         if (!dir_emit(ctx, dentry->d_name.name,
+> > > -                                     dentry->d_name.len,
+> > > -                                     ceph_translate_ino(dentry->d_sb,
+> > > -                                                        d_inode(dentry)->i_ino),
+> > > +                                     dentry->d_name.len, ceph_present_inode(d_inode(dentry)),
+> > >                                       d_inode(dentry)->i_mode >> 12)) {
+> > >                                 dput(dentry);
+> > >                                 err = 0;
+> > > @@ -324,18 +322,21 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+> > >         /* always start with . and .. */
+> > >         if (ctx->pos == 0) {
+> > >                 dout("readdir off 0 -> '.'\n");
+> > > -               if (!dir_emit(ctx, ".", 1,
+> > > -                           ceph_translate_ino(inode->i_sb, inode->i_ino),
+> > > +               if (!dir_emit(ctx, ".", 1, ceph_present_inode(inode),
+> > >                             inode->i_mode >> 12))
+> > >                         return 0;
+> > >                 ctx->pos = 1;
+> > >         }
+> > >         if (ctx->pos == 1) {
+> > > -               ino_t ino = parent_ino(file->f_path.dentry);
+> > > +               u64 ino;
+> > > +               struct dentry *dentry = file->f_path.dentry;
+> > > +
+> > > +               spin_lock(&dentry->d_lock);
+> > > +               ino = ceph_present_inode(dentry->d_parent->d_inode);
+> > > +               spin_unlock(&dentry->d_lock);
+> > > +
+> > >                 dout("readdir off 1 -> '..'\n");
+> > > -               if (!dir_emit(ctx, "..", 2,
+> > > -                           ceph_translate_ino(inode->i_sb, ino),
+> > > -                           inode->i_mode >> 12))
+> > > +               if (!dir_emit(ctx, "..", 2, ino, inode->i_mode >> 12))
+> > >                         return 0;
+> > >                 ctx->pos = 2;
+> > >         }
+> > > @@ -507,9 +508,6 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+> > >         }
+> > >         for (; i < rinfo->dir_nr; i++) {
+> > >                 struct ceph_mds_reply_dir_entry *rde = rinfo->dir_entries + i;
+> > > -               struct ceph_vino vino;
+> > > -               ino_t ino;
+> > > -               u32 ftype;
+> > >
+> > >                 BUG_ON(rde->offset < ctx->pos);
+> > >
+> > > @@ -519,13 +517,10 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+> > >                      rde->name_len, rde->name, &rde->inode.in);
+> > >
+> > >                 BUG_ON(!rde->inode.in);
+> > > -               ftype = le32_to_cpu(rde->inode.in->mode) >> 12;
+> > > -               vino.ino = le64_to_cpu(rde->inode.in->ino);
+> > > -               vino.snap = le64_to_cpu(rde->inode.in->snapid);
+> > > -               ino = ceph_vino_to_ino(vino);
+> > >
+> > >                 if (!dir_emit(ctx, rde->name, rde->name_len,
+> > > -                             ceph_translate_ino(inode->i_sb, ino), ftype)) {
+> > > +                             ceph_present_ino(inode->i_sb, le64_to_cpu(rde->inode.in->ino)),
+> > > +                             le32_to_cpu(rde->inode.in->mode) >> 12)) {
+> > >                         dout("filldir stopping us...\n");
+> > >                         return 0;
+> > >                 }
+> > > @@ -1161,7 +1156,7 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
+> > >
+> > >         if (try_async && op == CEPH_MDS_OP_UNLINK &&
+> > >             (req->r_dir_caps = get_caps_for_async_unlink(dir, dentry))) {
+> > > -               dout("async unlink on %lu/%.*s caps=%s", dir->i_ino,
+> > > +               dout("async unlink on %llu/%.*s caps=%s", ceph_present_inode(dir),
+> > >                      dentry->d_name.len, dentry->d_name.name,
+> > >                      ceph_cap_string(req->r_dir_caps));
+> > >                 set_bit(CEPH_MDS_R_ASYNC, &req->r_req_flags);
+> > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > > index 5fa28a620932..20e0c6f1d8f2 100644
+> > > --- a/fs/ceph/file.c
+> > > +++ b/fs/ceph/file.c
+> > > @@ -642,8 +642,8 @@ static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
+> > >         } else {
+> > >                 struct dentry *dn;
+> > >
+> > > -               dout("%s d_adding new inode 0x%llx to 0x%lx/%s\n", __func__,
+> > > -                       vino.ino, dir->i_ino, dentry->d_name.name);
+> > > +               dout("%s d_adding new inode 0x%llx to 0x%llx/%s\n", __func__,
+> > > +                       vino.ino, ceph_ino(dir), dentry->d_name.name);
+> > >                 ceph_dir_clear_ordered(dir);
+> > >                 ceph_init_inode_acls(inode, as_ctx);
+> > >                 if (inode->i_state & I_NEW) {
+> > > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > > index 357c937699d5..8dbb56d2edef 100644
+> > > --- a/fs/ceph/inode.c
+> > > +++ b/fs/ceph/inode.c
+> > > @@ -41,8 +41,10 @@ static void ceph_inode_work(struct work_struct *work);
+> > >   */
+> > >  static int ceph_set_ino_cb(struct inode *inode, void *data)
+> > >  {
+> > > -       ceph_inode(inode)->i_vino = *(struct ceph_vino *)data;
+> > > -       inode->i_ino = ceph_vino_to_ino(*(struct ceph_vino *)data);
+> > > +       struct ceph_inode_info *ci = ceph_inode(inode);
+> > > +
+> > > +       ci->i_vino = *(struct ceph_vino *)data;
+> > > +       inode->i_ino = ceph_vino_to_ino(ci->i_vino);
+> > >         inode_set_iversion_raw(inode, 0);
+> > >         return 0;
+> > >  }
+> > > @@ -50,17 +52,17 @@ static int ceph_set_ino_cb(struct inode *inode, void *data)
+> > >  struct inode *ceph_get_inode(struct super_block *sb, struct ceph_vino vino)
+> > >  {
+> > >         struct inode *inode;
+> > > -       ino_t t = ceph_vino_to_ino(vino);
+> > >
+> > > -       inode = iget5_locked(sb, t, ceph_ino_compare, ceph_set_ino_cb, &vino);
+> > > +       inode = iget5_locked(sb, (unsigned long)vino.ino, ceph_ino_compare,
+> > > +                            ceph_set_ino_cb, &vino);
+> > >         if (!inode)
+> > >                 return ERR_PTR(-ENOMEM);
+> > >         if (inode->i_state & I_NEW)
+> > >                 dout("get_inode created new inode %p %llx.%llx ino %llx\n",
+> > > -                    inode, ceph_vinop(inode), (u64)inode->i_ino);
+> > > +                    inode, ceph_vinop(inode), ceph_present_inode(inode));
+> > >
+> > > -       dout("get_inode on %lu=%llx.%llx got %p\n", inode->i_ino, vino.ino,
+> > > -            vino.snap, inode);
+> > > +       dout("get_inode on %llu=%llx.%llx got %p\n", ceph_present_inode(inode),
+> > > +            vino.ino, vino.snap, inode);
+> > >         return inode;
+> > >  }
+> > >
+> > > @@ -2378,7 +2380,7 @@ int ceph_getattr(const struct path *path, struct kstat *stat,
+> > >         }
+> > >
+> > >         generic_fillattr(inode, stat);
+> > > -       stat->ino = ceph_translate_ino(inode->i_sb, inode->i_ino);
+> > > +       stat->ino = ceph_present_inode(inode);
+> > >
+> > >         /*
+> > >          * btime on newly-allocated inodes is 0, so if this is still set to
+> > > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> > > index bc9e95937d7c..658800605bfb 100644
+> > > --- a/fs/ceph/mds_client.h
+> > > +++ b/fs/ceph/mds_client.h
+> > > @@ -372,7 +372,7 @@ struct ceph_quotarealm_inode {
+> > >
+> > >  struct cap_wait {
+> > >         struct list_head        list;
+> > > -       unsigned long           ino;
+> > > +       u64                     ino;
+> > >         pid_t                   tgid;
+> > >         int                     need;
+> > >         int                     want;
+> > > diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
+> > > index 198ddde5c1e6..cc2c4d40b022 100644
+> > > --- a/fs/ceph/quota.c
+> > > +++ b/fs/ceph/quota.c
+> > > @@ -23,12 +23,12 @@ static inline bool ceph_has_realms_with_quotas(struct inode *inode)
+> > >  {
+> > >         struct ceph_mds_client *mdsc = ceph_inode_to_client(inode)->mdsc;
+> > >         struct super_block *sb = mdsc->fsc->sb;
+> > > +       struct inode *root = d_inode(sb->s_root);
+> > >
+> > >         if (atomic64_read(&mdsc->quotarealms_count) > 0)
+> > >                 return true;
+> > >         /* if root is the real CephFS root, we don't have quota realms */
+> > > -       if (sb->s_root->d_inode &&
+> > > -           (sb->s_root->d_inode->i_ino == CEPH_INO_ROOT))
+> > > +       if (root && ceph_ino(root) == CEPH_INO_ROOT)
+> > >                 return false;
+> > >         /* otherwise, we can't know for sure */
+> > >         return true;
+> > > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > > index 4c3c964b1c54..0dd272a4a410 100644
+> > > --- a/fs/ceph/super.h
+> > > +++ b/fs/ceph/super.h
+> > > @@ -457,15 +457,7 @@ ceph_vino(const struct inode *inode)
+> > >         return ceph_inode(inode)->i_vino;
+> > >  }
+> > >
+> > > -/*
+> > > - * ino_t is <64 bits on many architectures, blech.
+> > > - *
+> > > - *               i_ino (kernel inode)   st_ino (userspace)
+> > > - * i386          32                     32
+> > > - * x86_64+ino32  64                     32
+> > > - * x86_64        64                     64
+> > > - */
+> > > -static inline u32 ceph_ino_to_ino32(__u64 vino)
+> > > +static inline u32 ceph_ino_to_ino32(u64 vino)
+> > >  {
+> > >         u32 ino = vino & 0xffffffff;
+> > >         ino ^= vino >> 32;
+> > > @@ -474,36 +466,13 @@ static inline u32 ceph_ino_to_ino32(__u64 vino)
+> > >         return ino;
+> > >  }
+> > >
+> > > -/*
+> > > - * kernel i_ino value
+> > > - */
+> > >  static inline ino_t ceph_vino_to_ino(struct ceph_vino vino)
+> > >  {
+> > > -#if BITS_PER_LONG == 32
+> > > -       return ceph_ino_to_ino32(vino.ino);
+> > > -#else
+> > > +       if (sizeof(ino_t) == sizeof(u32))
+> > > +               return ceph_ino_to_ino32(vino.ino);
+> > >         return (ino_t)vino.ino;
+> > > -#endif
+> > >  }
+> > >
+> > > -/*
+> > > - * user-visible ino (stat, filldir)
+> > > - */
+> > > -#if BITS_PER_LONG == 32
+> > > -static inline ino_t ceph_translate_ino(struct super_block *sb, ino_t ino)
+> > > -{
+> > > -       return ino;
+> > > -}
+> > > -#else
+> > > -static inline ino_t ceph_translate_ino(struct super_block *sb, ino_t ino)
+> > > -{
+> > > -       if (ceph_test_mount_opt(ceph_sb_to_client(sb), INO32))
+> > > -               ino = ceph_ino_to_ino32(ino);
+> > > -       return ino;
+> > > -}
+> > > -#endif
+> > > -
+> > > -
+> > >  /* for printf-style formatting */
+> > >  #define ceph_vinop(i) ceph_inode(i)->i_vino.ino, ceph_inode(i)->i_vino.snap
+> > >
+> > > @@ -511,11 +480,34 @@ static inline u64 ceph_ino(struct inode *inode)
+> > >  {
+> > >         return ceph_inode(inode)->i_vino.ino;
+> > >  }
+> > > +
+> > >  static inline u64 ceph_snap(struct inode *inode)
+> > >  {
+> > >         return ceph_inode(inode)->i_vino.snap;
+> > >  }
+> > >
+> > > +/**
+> > > + * ceph_present_ino - format an inode number for presentation to userland
+> > > + * @sb: superblock where the inode lives
+> > > + * @ino: inode number to (possibly) convert
+> > > + *
+> > > + * If the user mounted with the ino32 option, then the 64-bit value needs
+> > > + * to be converted to something that can fit inside 32 bits. Note that
+> > > + * internal kernel code never uses this value, so this is entirely for
+> > > + * userland consumption.
+> > > + */
+> > > +static inline u64 ceph_present_ino(struct super_block *sb, u64 ino)
+> > > +{
+> > > +       if (unlikely(ceph_test_mount_opt(ceph_sb_to_client(sb), INO32)))
+> > > +               return ceph_ino_to_ino32(ino);
+> > > +       return ino;
+> > > +}
+> > > +
+> > > +static inline u64 ceph_present_inode(struct inode *inode)
+> > > +{
+> > > +       return ceph_present_ino(inode->i_sb, ceph_ino(inode));
+> > > +}
+> > > +
+> > >  static inline int ceph_ino_compare(struct inode *inode, void *data)
+> > >  {
+> > >         struct ceph_vino *pvino = (struct ceph_vino *)data;
+> > > @@ -527,8 +519,7 @@ static inline int ceph_ino_compare(struct inode *inode, void *data)
+> > >  static inline struct inode *ceph_find_inode(struct super_block *sb,
+> > >                                             struct ceph_vino vino)
+> > >  {
+> > > -       ino_t t = ceph_vino_to_ino(vino);
+> > > -       return ilookup5(sb, t, ceph_ino_compare, &vino);
+> > > +       return ilookup5(sb, (unsigned long)vino.ino, ceph_ino_compare, &vino);
+> >
+> > What is the rationale for this bit?  There is a paragraph in the
+> > changelog that mentions that "low-order bits are the most likely
+> > to vary anyway", but this way we seem to have three sets of values
+> > instead of two: the real 64-bit values, the ino_t values and the
+> > truncated values.
+> >
+>
+> Yep. It's a bit confusing, but we have:
+>
+> 1) the real 64-bit values: these are what we generally want to use
+> everywhere internally in ceph.ko
+>
+> 2) the presentation value: the values that get reported in getattr and
+> readdir to userland. This is usually the same as the real 64-bit value
+> unless you mount with -o ino32.
+>
+> 3) inode->i_ino: we'll no longer use this value for anything in ceph,
+> but we want to put _something_ in there so things like tracepoints that
+> display inode->i_ino don't show all 0's.
+>
+> The second arg to ilookup5 is just the value that the ilookup5/iget5 use
+> to determine the hash bucket to use. This value won't ever be used for
+> anything beyond that. Most existing filesystems just use the inode
+> number for this.
+>
+> So the rationale is that while we could just use the same value as what
+> ends up in inode->i_ino, that would mean that arches like s390x would
+> end up passing down a 32-bit value here when they could pass in the full
+> 64 bits. 32 bit arches might end up just sending the low-order bits, but
+> this gets run through hash() anyway, so I doubt it will harm anything.
 
-Yeah, it raised my eyebrows as well (and !wsm->free_ws test without
-a lock in get_workspace() too).  This is a straight up cut-and-paste
-from Btrfs through, so I decided to leave it as is.  This is pretty
-old code and it survived there for over ten years, although I'm not
-sure how many people actually enable compression in the field.
+I guess I still I don't see a good reason to special case this for
+64-bit arches with 32-bit ino_t (just s390x?) and I'd keep it as is.
+It's just more consistent and less to keep in mind.
 
-If we hit issues, I'd just reimplement the whole thing from scratch
-rather than attempting to tweak a cut-and-paste that is not entirely
-straightforward.
+This is just a feeling and not a strong opinion though, ultimately
+it doesn't seem to matter too much.  If you go ahead with truncating
+to BITS_PER_LONG, I'd suggest turning your last paragraph into a
+comment for ceph_find_inode().
 
 Thanks,
 
