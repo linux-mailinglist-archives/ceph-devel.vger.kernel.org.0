@@ -2,83 +2,111 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 488F52492A7
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 Aug 2020 04:01:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35BFF2493D1
+	for <lists+ceph-devel@lfdr.de>; Wed, 19 Aug 2020 06:22:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727961AbgHSCB1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 18 Aug 2020 22:01:27 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38225 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727955AbgHSCBV (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 18 Aug 2020 22:01:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597802480;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=e7yUsvd0/CDCJmA6+2TfThyX2t6/kq8wfcwNJtFMxBw=;
-        b=dReZRj3v65AcSAed08irh0nie1Cpb4EO0QV4EJR9h09b6rlgPOZAxysufk76O/M4HSbTw/
-        StA01rlRoj6vIvZqEfMhU95EHTWRk32JmB115zhKRnOFm/Tu9DR0/RW6khIWyDVLpq/Mbx
-        HSC2gTETCwV1vbMDs4rfRO0MoKNYatw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-143-Cn8kuZ5mMHyvslLP56IgOg-1; Tue, 18 Aug 2020 22:01:16 -0400
-X-MC-Unique: Cn8kuZ5mMHyvslLP56IgOg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7E0F81019628;
-        Wed, 19 Aug 2020 02:01:15 +0000 (UTC)
-Received: from [10.72.12.38] (ovpn-12-38.pek2.redhat.com [10.72.12.38])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E027E6CE4E;
-        Wed, 19 Aug 2020 02:01:07 +0000 (UTC)
-Subject: Re: [PATCH] ceph: add dirs/files' opened/opening metric support
-To:     Patrick Donnelly <pdonnell@redhat.com>,
-        Jeff Layton <jlayton@kernel.org>
-Cc:     Ilya Dryomov <idryomov@gmail.com>, Zheng Yan <zyan@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-References: <20200818115317.104579-1-xiubli@redhat.com>
- <7b1e716346aee082cd1ff426faf6b9bff0276ae0.camel@kernel.org>
- <CA+2bHPZoHhaEBKBKGiR6=Ui7NYnLyT-fMUYHvCcXtT2-oWXRdg@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <d2bb621f-5bfa-c936-b589-e13ae13cc6d9@redhat.com>
-Date:   Wed, 19 Aug 2020 10:01:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        id S1726435AbgHSEWU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 19 Aug 2020 00:22:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44916 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725275AbgHSEWS (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 19 Aug 2020 00:22:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 2DEBAB7E7;
+        Wed, 19 Aug 2020 04:22:41 +0000 (UTC)
+Subject: Re: [PATCH v7 1/6] net: introduce helper sendpage_ok() in
+ include/linux/net.h
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        netdev@vger.kernel.org, open-iscsi@googlegroups.com,
+        linux-scsi@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Hannes Reinecke <hare@suse.de>, Jan Kara <jack@suse.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Vlastimil Babka <vbabka@suse.com>, stable@vger.kernel.org
+References: <20200818131227.37020-1-colyli@suse.de>
+ <20200818131227.37020-2-colyli@suse.de> <20200818162404.GA27196@lst.de>
+ <217ec0ec-3c5a-a8ed-27d9-c634f0b9a045@suse.de>
+ <20200818194930.GA31966@lst.de>
+From:   Coly Li <colyli@suse.de>
+Autocrypt: addr=colyli@suse.de; keydata=
+ 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
+Message-ID: <04408ff6-f765-8f3e-ead9-aec55043e469@suse.de>
+Date:   Wed, 19 Aug 2020 12:22:05 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <CA+2bHPZoHhaEBKBKGiR6=Ui7NYnLyT-fMUYHvCcXtT2-oWXRdg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200818194930.GA31966@lst.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020/8/19 4:10, Patrick Donnelly wrote:
-> On Tue, Aug 18, 2020 at 1:05 PM Jeff Layton <jlayton@kernel.org> wrote:
->> Bear in mind that if the same file has been opened several times, then
->> you'll get an increment for each.
-> Having an open file count (even for the same inode) and a count of
-> inodes opened sounds useful to me. The latter would require some kind
-> of refcounting for each inode? Maybe that's too expensive though.
+On 2020/8/19 03:49, Christoph Hellwig wrote:
+> On Wed, Aug 19, 2020 at 12:33:37AM +0800, Coly Li wrote:
+>> On 2020/8/19 00:24, Christoph Hellwig wrote:
+>>> I think we should go for something simple like this instead:
+>>
+>> This idea is fine to me. Should a warning message be through here? IMHO
+>> the driver still sends an improper page in, fix it in silence is too
+>> kind or over nice to the buggy driver(s).
+> 
+> I don't think a warning is a good idea.  An API that does the right
+> thing underneath and doesn't require boiler plate code in most callers
+> is the right API.
+> 
 
-For the second, yes, we need one percpu refcount, which can be add in 
-ceph_get_fmode() when increasing any entry of the 
-ci->i_nr_by_mode[fmode] for the first time, to decrease it in 
-ceph_put_fmode() when the ci->i_nr_by_mode[fmode] is empty. IMO, it 
-should be okay and won't cost too much.
+Then I don't have more comment.
 
-Thanks
+Thanks.
 
-BRs
-
->
->> Would it potentially be more useful to report the number of inodes that
->> have open file descriptions associated with them? It's hard for me to
->> know as I'm not clear on the intended use-case for this.
-> Use-case is more information available via `fs top`.
->
-
+Coly Li
