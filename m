@@ -2,92 +2,86 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6483D24A002
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 Aug 2020 15:32:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C26A324A03F
+	for <lists+ceph-devel@lfdr.de>; Wed, 19 Aug 2020 15:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbgHSNcl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 19 Aug 2020 09:32:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41380 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728479AbgHSNcL (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 19 Aug 2020 09:32:11 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D776C061383
-        for <ceph-devel@vger.kernel.org>; Wed, 19 Aug 2020 06:32:10 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id g15so6930149plj.6
-        for <ceph-devel@vger.kernel.org>; Wed, 19 Aug 2020 06:32:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vMNQ6WK7crIn272Njmors6Hr7L8KSr+wNL70fKp0QVw=;
-        b=ER65C1q9ts0AvzjOkb5ItKsKgaGf+Stame9zTWvpH+W/eE3pfo8xbS5mVPX+ux1tp4
-         NnqiJa1D6gM8lTIj0O0HudUaGnj0E72mbY46MdQo0gUKnYT/X7JR2uBAfGJ6BX73fswg
-         mz+ZnPuT//vA4XteJ1mIJJfslSpiUu/LMXb14SvmTVML0uYnjnbvtvxYQqaHsO+HxWBS
-         IsOX8kKXxfhQyYqVMKMcX58hvz9rTRCncpiIVTpkjkvttRIwOJnxucHhfMfHPPOiYIrs
-         2NppMs6yKeZg/M2sJLG2KbPtsdsP7PKPWqP6giZHx6k1lh8oM+b8D8GrCwmeMnffJjmR
-         2ZTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vMNQ6WK7crIn272Njmors6Hr7L8KSr+wNL70fKp0QVw=;
-        b=ee0ptzMfQ6/sZXzt2titL3RM9RU0YPKDimWcsqz8NjtnjNfzSJ8oucBth7XMml8TVr
-         bUGSuJ2h/ehGnNgBnJNBCD486U9Itdvh9wzMVBfgTN+d8A23RoIa8kO+m5jSooY7/yvC
-         vT/hi90gBjofMeyXsb/CEVUJizBw/hgUTUO6/v3FhcZ5eyCPXEXDpT8sbRAcYf9Abe8z
-         Flmk0kiiXnmLpF9aNqP/IfcpG99M0GNF8hkeN91I0FS0JswNDIw+itWMOzmlTQ1vrkfG
-         GsNz5oN90oPaXMztq/JVkIGax4O3K1JVfafmOeliNfZNgB9Pu5Jf1Md6tmKBl0X89T+O
-         ksYQ==
-X-Gm-Message-State: AOAM533DtLS4gZffekuLTNehGueCtsHtrC11sOQuWBSAl9Mvi6SWeTT/
-        MAqpxCEiYAfkLBha+h6B8qaxlw==
-X-Google-Smtp-Source: ABdhPJykv40VOJjwPlf0c0xhI2b3f3WFmQQZcnLGRKru6GMjGBGKeeJCa2+T+ArRdO1dlue8HV8LYw==
-X-Received: by 2002:a17:902:6a8b:: with SMTP id n11mr5310699plk.75.1597843929467;
-        Wed, 19 Aug 2020 06:32:09 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id fa14sm2190486pjb.14.2020.08.19.06.32.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Aug 2020 06:32:08 -0700 (PDT)
-Subject: Re: [PATCH] rbd: Convert to use the preferred fallthrough macro
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Miaohe Lin <linmiaohe@huawei.com>,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20200819085304.43653-1-linmiaohe@huawei.com>
- <1968d5b6-3543-a213-4118-9c36f9a48343@kernel.dk>
- <CAOi1vP85Jkc51LStsg9Mz0Q0W-s17LcOmvavc=k_X9KF9ML_2A@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <338ecba5-c0ea-bdc0-1bcb-5b739f90cf9f@kernel.dk>
-Date:   Wed, 19 Aug 2020 07:32:07 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1728343AbgHSNlp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 19 Aug 2020 09:41:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54106 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727046AbgHSNlo (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 19 Aug 2020 09:41:44 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AF1020639;
+        Wed, 19 Aug 2020 13:41:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597844504;
+        bh=Vd0m5wT9GlpjTuN34y6//T1FTZGfsOxcbiAsUGBpTzU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=kE6hGvt3kb7wSTvTJHVNjGgo+rkGixR9jI2jcB1m3mcAQBkYA+FEqMfCNI00XhWvt
+         xgR8hwnE74z6aPDgMaFjgpyPxtGwV/Ot647nXlznFwafDE4iqhDaMEaTptjwZ5IWL9
+         q1qHdF8OkzAcn2myo8NIUnvtuuTr9uiEkPHMfRA0=
+Message-ID: <ec2fe8a11a0c47774fa52a1beb38ebe5fe12a68b.camel@kernel.org>
+Subject: Re: [PATCH] ceph: add dirs/files' opened/opening metric support
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>, Zheng Yan <zyan@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Date:   Wed, 19 Aug 2020 09:41:42 -0400
+In-Reply-To: <d2bb621f-5bfa-c936-b589-e13ae13cc6d9@redhat.com>
+References: <20200818115317.104579-1-xiubli@redhat.com>
+         <7b1e716346aee082cd1ff426faf6b9bff0276ae0.camel@kernel.org>
+         <CA+2bHPZoHhaEBKBKGiR6=Ui7NYnLyT-fMUYHvCcXtT2-oWXRdg@mail.gmail.com>
+         <d2bb621f-5bfa-c936-b589-e13ae13cc6d9@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-In-Reply-To: <CAOi1vP85Jkc51LStsg9Mz0Q0W-s17LcOmvavc=k_X9KF9ML_2A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 8/19/20 6:31 AM, Ilya Dryomov wrote:
-> On Wed, Aug 19, 2020 at 3:03 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 8/19/20 1:53 AM, Miaohe Lin wrote:
->>> Convert the uses of fallthrough comments to fallthrough macro.
->>
->> Applied, thanks.
+On Wed, 2020-08-19 at 10:01 +0800, Xiubo Li wrote:
+> On 2020/8/19 4:10, Patrick Donnelly wrote:
+> > On Tue, Aug 18, 2020 at 1:05 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > > Bear in mind that if the same file has been opened several times, then
+> > > you'll get an increment for each.
+> > Having an open file count (even for the same inode) and a count of
+> > inodes opened sounds useful to me. The latter would require some kind
+> > of refcounting for each inode? Maybe that's too expensive though.
 > 
-> Hi Jens,
+> For the second, yes, we need one percpu refcount, which can be add in 
+> ceph_get_fmode() when increasing any entry of the 
+> ci->i_nr_by_mode[fmode] for the first time, to decrease it in 
+> ceph_put_fmode() when the ci->i_nr_by_mode[fmode] is empty. IMO, it 
+> should be okay and won't cost too much.
 > 
-> This has already been folded into another patch in ceph-client.git.
-> Please drop it.
+> Thanks
+> 
+> BRs
+> 
 
-Dropped.
+Sure.
+
+To be clear, I'm not _really_ disputing the usefulness of these stats,
+but I think if we're going to measure stuff like this, the changelog
+needs to justify it in some way.
+
+We may find in 2-3 years that some of these are not as useful as we
+first thought, and if we don't have any of the original justification in
+the changelog for it, it's harder to determine whether removing them is
+ok.
+
+> > > Would it potentially be more useful to report the number of inodes that
+> > > have open file descriptions associated with them? It's hard for me to
+> > > know as I'm not clear on the intended use-case for this.
+> > Use-case is more information available via `fs top`.
+> > 
 
 -- 
-Jens Axboe
+Jeff Layton <jlayton@kernel.org>
 
