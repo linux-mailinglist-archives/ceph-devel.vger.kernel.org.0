@@ -2,38 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23F3E24DC17
-	for <lists+ceph-devel@lfdr.de>; Fri, 21 Aug 2020 18:54:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91AA524DBBF
+	for <lists+ceph-devel@lfdr.de>; Fri, 21 Aug 2020 18:47:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728781AbgHUQwk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 21 Aug 2020 12:52:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50114 "EHLO mail.kernel.org"
+        id S1728661AbgHUQqp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 21 Aug 2020 12:46:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728312AbgHUQTm (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 21 Aug 2020 12:19:42 -0400
+        id S1727123AbgHUQUb (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 21 Aug 2020 12:20:31 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C95CD22D6E;
-        Fri, 21 Aug 2020 16:18:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 687C222CBB;
+        Fri, 21 Aug 2020 16:19:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598026733;
-        bh=1v4KHE1+YA41Db40668v7f3dhI/gEuZHXs9BUxbBK0I=;
+        s=default; t=1598026774;
+        bh=1yPzK9t3GFlkQwdBVi7C7ZW6wopToJk1Y05XWH4ziTA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IIbhi5t7GAxSlIW9deowyFcOn0xJAlU8i6kOxh2vySfP+Velrx0Q8B2sba2hQq1hP
-         CB5Qbw2B24LWAUNTR6aYVK3hLzXtf2B7ly9p5ps8Nz403v37pHZGO743UxAAuFTQ2o
-         gooaqq/2o8p/5Y1hKhAJ/ulbcxnkxmcU5KlW3CDc=
+        b=PdQQJRUd1DTgjm4UukzaVUwcttnvH+w72edgG95+B80WkaMrjlXFN+qMF3V00cyXK
+         dlTW34MUxa3FuKdrqZU9mSTv9Wp06XqO6D3StITwmLoyAwaGyFKXK0M93KZbv9KJul
+         7Lqd7K+uqktVPBZrygTufbmceuKkp5Q7gnDOFVaQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 36/38] ceph: fix potential mdsc use-after-free crash
-Date:   Fri, 21 Aug 2020 12:18:05 -0400
-Message-Id: <20200821161807.348600-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 28/30] ceph: fix potential mdsc use-after-free crash
+Date:   Fri, 21 Aug 2020 12:18:55 -0400
+Message-Id: <20200821161857.348955-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200821161807.348600-1-sashal@kernel.org>
-References: <20200821161807.348600-1-sashal@kernel.org>
+In-Reply-To: <20200821161857.348955-1-sashal@kernel.org>
+References: <20200821161857.348955-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -68,10 +68,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index a2e903203bf9f..ff2022b07d1de 100644
+index f36ddfea4997e..06109314d93c8 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -3615,6 +3615,9 @@ static void delayed_work(struct work_struct *work)
+@@ -3518,6 +3518,9 @@ static void delayed_work(struct work_struct *work)
  	dout("mdsc delayed_work\n");
  	ceph_check_delayed_caps(mdsc);
  
@@ -81,7 +81,7 @@ index a2e903203bf9f..ff2022b07d1de 100644
  	mutex_lock(&mdsc->mutex);
  	renew_interval = mdsc->mdsmap->m_session_timeout >> 2;
  	renew_caps = time_after_eq(jiffies, HZ*renew_interval +
-@@ -3949,7 +3952,16 @@ void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc)
+@@ -3851,7 +3854,16 @@ void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc)
  static void ceph_mdsc_stop(struct ceph_mds_client *mdsc)
  {
  	dout("stop\n");
