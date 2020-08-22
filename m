@@ -2,135 +2,180 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A40524E4AC
-	for <lists+ceph-devel@lfdr.de>; Sat, 22 Aug 2020 04:34:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2B9924E521
+	for <lists+ceph-devel@lfdr.de>; Sat, 22 Aug 2020 06:22:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbgHVCen (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 21 Aug 2020 22:34:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54210 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725991AbgHVCen (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 21 Aug 2020 22:34:43 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 083FF20735;
-        Sat, 22 Aug 2020 02:34:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598063682;
-        bh=VdTEnShx+GV6E9gjj9TupPVHBN8F/ejyaL4g7GX/E7k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PczGZOibddHQvDlsc7SPxjPTfBJtknhVnmJq7jnaIAl1IgU6l1FRU/jocXT8m3slc
-         Tu5VQ2ABESJHHd1yC9SzFjmEQXqc5tsQ0iAVdyc+c3b4xso4UMOdRPfnfcHYr7XxD9
-         L/auklVd9DIbixmV/3NTbaLEjDKYwPJoKr8I+Oa8=
-Date:   Fri, 21 Aug 2020 19:34:40 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org
-Subject: Re: [RFC PATCH 00/14] ceph+fscrypt: together at last (contexts and
- filenames)
-Message-ID: <20200822023440.GD834@sol.localdomain>
-References: <20200821182813.52570-1-jlayton@kernel.org>
- <20200822002301.GA834@sol.localdomain>
- <2a6b92f25325fa95164f418c669883f73a291b77.camel@kernel.org>
+        id S1726497AbgHVEVQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 22 Aug 2020 00:21:16 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14458 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbgHVEVG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 22 Aug 2020 00:21:06 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f409cbd0000>; Fri, 21 Aug 2020 21:19:10 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 21 Aug 2020 21:21:06 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 21 Aug 2020 21:21:06 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 22 Aug
+ 2020 04:21:05 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Sat, 22 Aug 2020 04:21:05 +0000
+Received: from sandstorm.nvidia.com (Not Verified[10.2.94.162]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5f409d310002>; Fri, 21 Aug 2020 21:21:05 -0700
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <ceph-devel@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 0/5] bio: Direct IO: convert to pin_user_pages_fast()
+Date:   Fri, 21 Aug 2020 21:20:54 -0700
+Message-ID: <20200822042059.1805541-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2a6b92f25325fa95164f418c669883f73a291b77.camel@kernel.org>
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598069950; bh=iXBAhlDsGHGJ0BL2z0xZCdQ0KPj09q9n3S14YFuk7Lw=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
+         Content-Type;
+        b=CR22qrcQtjZToR+Y4AXxJBXCfRczkFv9gLGIEHhDFMLUu4lf6rgLvtPhciCvG0fvf
+         8JMCctIFdDTWGAzXzUKbKnyYt6PwVt10412J6p/kV+Y0t4d87XeRWNvV7rAJ2JgP31
+         d/5x/ygntRNdZv7aMmnGbKeHHcc0OCfwjSwvgZMX+1lVs78tO1hDzy8fykG7Hz3ok1
+         mw6vWF1LW8LjO7d+e41OQ4iw21XaLGKwEc023ZXuR+EN1hRFez1kp1TmDXy5s91Yv8
+         Yy8oSMjNVP/9FDFofUWl7D5rayjXLwB32kN+Y8cF+l0u4qTOBIqNxYvbqe1Xo9DjGq
+         kGQPDLQF/puTQ==
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Aug 21, 2020 at 08:58:35PM -0400, Jeff Layton wrote:
-> > > Ceph (and most other netfs') will need to pre-create a crypto context
-> > > when creating a new inode as we'll need to encrypt some things before we
-> > > have an inode. This patchset stores contexts in an xattr, but that's
-> > > probably not ideal for the final implementation [1].
-> > 
-> > Coincidentally, I've currently working on solving a similar problem.  On ext4,
-> > the inode number can't be assigned, and the encryption xattr can't be set, until
-> > the jbd2 transaction which creates the inode.  Also, if the new inode is a
-> > symlink, then fscrypt_encrypt_symlink() has to be called during the transaction.
-> > Together, these imply that fscrypt_get_encryption_info() has to be called during
-> > the transaction.
-> > 
-> 
-> Yes, similar problem. I started looking at symlinks today, and got a
-> little ways into a patchset to refactor some fscrypt code to handle
-> them, but I don't think it's quite right yet. A more general solution
-> would be nice.
-> 
-> > That's what we do, currently.  However, it's technically wrong and can deadlock,
-> > since fscrypt_get_encryption_info() isn't GFP_NOFS-safe (and it can't be).
-> > 
-> > f2fs appears to have a similar problem, though I'm still investigating.
-> > 
-> > To fix this, I'm planning to add new functions:
-> > 
-> >    - fscrypt_prepare_new_inode() will set up the fscrypt_info for a new
-> >      'struct inode' which hasn't necessarily had an inode number assigned yet.
-> >      It won't set the encryption xattr yet.
-> > 
-> 
-> I more or less have that in 02/14, I think, but if you have something
-> else in mind, I'm happy to follow suit.
-[...]
-> > > Symlink handling in fscrypt will also need to be refactored a bit, as we
-> > > won't have an inode before we'll need to encrypt its contents.
-> > 
-> > Will there be an in-memory inode allocated yet (a 'struct inode'), just with no
-> > inode number assigned yet?  If so, my work-in-progress patchset I mentioned
-> > earlier should be sufficient to address this.  The order would be:
-> > 
-> > 	1. fscrypt_prepare_new_inode()
-> > 	2. fscrypt_encrypt_symlink()
-> > 	3. Assign inode number
-> > 
-> > 
-> > Or does ceph not have a 'struct inode' at all until step (3)?
-> 
-> No, generally ceph doesn't create an inode until the reply comes in. I
-> think we'll need to be able to create a context and encrypt the symlink
-> before we issue the call to the server. I started hacking at the fscrypt
-> code for this today, but I didn't get very far.
-> 
-> FWIW, ceph is a bit of an odd netfs protocol in that there is a standard
-> "trace" that holds info about dentries and inodes that are created or
-> modified as a result of an operation. Most of the dentry/inode cache
-> manipulation is done at that point, which is done as part of the reply
-> processing.
+Hi,
 
-Your patch "fscrypt: add fscrypt_new_context_from_parent" takes in a directory
-and generates an fscrypt_context (a.k.a. an encryption xattr) for a new file
-that will be created in that directory.
+This converts the Direct IO block/bio layer over to use FOLL_PIN pages
+(those acquired via pin_user_pages*()). This effectively converts
+several file systems (ext4, for example) that use the common Direct IO
+routines. See "Remaining work", below for a bit more detail there.
 
-fscrypt_prepare_new_inode() from my work-in-progress patches would do a bit more
-than that.  It would actually set up a "struct fscrypt_info" for a new inode.
-That includes the encryption key and all information needed to build the
-fscrypt_context.  So, afterwards it will be possible to call
-fscrypt_encrypt_symlink() before the fscrypt_context is "saved to disk".
-IIUC, that's part of what ceph will need.
+Quite a few approaches have been considered over the years. This one is
+inspired by Christoph Hellwig's July, 2019 observation that there are
+only 5 ITER_ types, and we can simplify handling of them for Direct IO
+[1]. After working through how bio submission and completion works, I
+became convinced that this is the simplest and cleanest approach to
+conversion.
 
-The catch is that there will still have to be a 'struct inode' to associate the
-'struct fscrypt_info' with.  It won't have to have ->i_ino set yet, but some
-other fields (at least ->i_mode and ->i_sb) will have to be set, since lots of
-code in fs/crypto/ uses those fields.
+Not content to let well enough alone, I then continued on to the
+unthinkable: adding a new flag to struct bio, whose "short int" flags
+field was full, thuse triggering an expansion of the field from 16, to
+32 bits. This allows for a nice assertion in bio_release_pages(), that
+the bio page release mechanism matches the page acquisition mechanism.
+This is especially welcome for a change that affects a lot of callers
+and could really make a mess if there is a bug somewhere.
 
-I think it would be possible to refactor things to make 'struct fscrypt_info'
-more separate from 'struct inode', so that filesystems could create a
-'struct fscrypt_info' that isn't associated with an inode yet, then encrypt a
-symlink target using it (not caching it in ->i_link as we currently do).
+I'm unable to spot any performance implications, either theoretically or
+via (rather light) performance testing, from enlarging bio.bi_flags, but
+I suspect that there are maybe still valid reasons for having such a
+tiny bio.bi_flags field. I just have no idea what they are. (Hardware
+that knows the size of a bio? No, because there would be obvious
+build-time assertions, and comments about such a constraint.) Anyway, I
+can drop that patch if it seems like too much cost for too little
+benefit.
 
-However, it would require a lot of changes.
+And finally, as long as we're all staring at the iter_iov code, I'm
+including a nice easy ceph patch, that removes one more caller of
+iter_iov_get_pages().
 
-So I'm wondering if it would be easier to instead change ceph to create and
-start initializing the 'struct inode' earlier.  It doesn't have to have an inode
-number assigned or be added to the inode cache yet; it just needs to be
-allocated in memory and some basic fields need to be initialized.  In theory
-it's possible, right?  I'd expect that local filesystems aren't even that much
-different, in principle; they start initializing a new 'struct inode' in memory
-first, and only later do they *really* create the inode by allocating an inode
-number and saving the changes to disk.
+Design notes =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-- Eric
+This whole approach depends on certain concepts:
+
+1) Each struct bio instance must not mix different types of pages:
+FOLL_PIN and non-FOLL_PIN pages. (By FOLL_PIN I'm referring to pages
+that were acquired and pinned via pin_user_page*() routines.)
+Fortunately, this is already an enforced constraint for bio's, as
+evidenced by the existence and use of BIO_NO_PAGE_REF.
+
+2) Christoph Hellwig's July, 2019 observation that there are
+only 5 ITER_ types, and we can simplify handling of them for Direct IO
+[1]. Accordingly, this series implements the following pseudocode:
+
+Direct IO behavior:
+
+    ITER_IOVEC:
+        pin_user_pages_fast();
+        break;
+
+    ITER_KVEC:    // already elevated page refcount, leave alone
+    ITER_BVEC:    // already elevated page refcount, leave alone
+    ITER_PIPE:    // just, no :)
+    ITER_DISCARD: // discard
+        return -EFAULT or -ENVALID;
+
+...which works for callers that already have sorted out which case they
+are in. Such as, Direct IO in the block/bio layers.
+
+Now, this does leave ITER_KVEC and ITER_BVEC unconverted, but on the
+other hand, it's not clear that these are actually affected in the real
+world, by the get_user_pages()+filesystem interaction problems of [2].
+If it turns out to matter, then those can be handled too, but it's just
+more refactoring and surgery to do so.
+
+Testing
+=3D=3D=3D=3D=3D=3D=3D
+
+Performance: no obvious regressions from running fio (direct=3D1: Direct
+IO) on both SSD and NVMe drives.
+
+Functionality: selected non-destructive bare metal xfstests on xfs,
+ext4, btrfs, orangefs filesystems, plus LTP tests.
+
+Note that I have only a single x86 64-bit test machine, though.
+
+Remaining work
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Non-converted call sites for iter_iov_get_pages*() at the
+moment include: net, crypto, cifs, ceph, vhost, fuse, nfs/direct,
+vhost/scsi.
+
+About-to-be-converted sites (in a subsequent patch) are: Direct IO for
+filesystems that use the generic read/write functions.
+
+[1] https://lore.kernel.org/kvm/20190724061750.GA19397@infradead.org/
+
+[2] "Explicit pinning of user-space pages":
+    https://lwn.net/Articles/807108/
+
+
+John Hubbard (5):
+  iov_iter: introduce iov_iter_pin_user_pages*() routines
+  mm/gup: introduce pin_user_page()
+  bio: convert get_user_pages_fast() --> pin_user_pages_fast()
+  bio: introduce BIO_FOLL_PIN flag
+  fs/ceph: use pipe_get_pages_alloc() for pipe
+
+ block/bio.c               | 29 +++++++------
+ block/blk-map.c           |  7 +--
+ fs/ceph/file.c            |  3 +-
+ fs/direct-io.c            | 30 ++++++-------
+ fs/iomap/direct-io.c      |  2 +-
+ include/linux/blk_types.h |  5 ++-
+ include/linux/mm.h        |  2 +
+ include/linux/uio.h       |  9 +++-
+ lib/iov_iter.c            | 91 +++++++++++++++++++++++++++++++++++++--
+ mm/gup.c                  | 30 +++++++++++++
+ 10 files changed, 169 insertions(+), 39 deletions(-)
+
+--=20
+2.28.0
+
