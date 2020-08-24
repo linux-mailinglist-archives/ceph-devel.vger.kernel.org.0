@@ -2,293 +2,102 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C529024F2E5
-	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 09:02:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CE1524F329
+	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 09:36:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726051AbgHXHCF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 24 Aug 2020 03:02:05 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:51389 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725730AbgHXHCD (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 24 Aug 2020 03:02:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1598252521;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=QT03D8vDCACoTuWptjF8x2EwAd+GCyKiJi3KJvqRbVI=;
-        b=g+akARZbk5+fQa/mOvqMQ9xkZWTxbf02ZTo6+6b6fbAO2Lr+zcWTb/vfggjvlD2oRfCER1
-        Vc6g6F02B8+VMv4ki0lPKQjgxXq9IdSpNq2qMpjnvVcGWrj2/9KX/wevROwdZ9WnyMi++I
-        aTf8duEbYwJIAwlA43UvNwk2P6mdcfg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-272-yGMZrFPIOq2DiQ2FAFBWoA-1; Mon, 24 Aug 2020 03:01:55 -0400
-X-MC-Unique: yGMZrFPIOq2DiQ2FAFBWoA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D1ACD81F006;
-        Mon, 24 Aug 2020 07:01:54 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (vm37-202.gsslab.pek2.redhat.com [10.72.37.202])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B0B8C54595;
-        Mon, 24 Aug 2020 07:01:52 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, zyan@redhat.com, pdonnell@redhat.com,
-        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v2] ceph: metrics for opened files, pinned caps and opened inodes
-Date:   Mon, 24 Aug 2020 03:01:35 -0400
-Message-Id: <20200824070135.2195228-1-xiubli@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+        id S1726513AbgHXHgv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Aug 2020 03:36:51 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:4109 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbgHXHgu (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 24 Aug 2020 03:36:50 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f436e040000>; Mon, 24 Aug 2020 00:36:36 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 24 Aug 2020 00:36:50 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 24 Aug 2020 00:36:50 -0700
+Received: from [10.2.58.8] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Aug
+ 2020 07:36:50 +0000
+Subject: Re: [PATCH 4/5] bio: introduce BIO_FOLL_PIN flag
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <ceph-devel@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20200822042059.1805541-1-jhubbard@nvidia.com>
+ <20200822042059.1805541-5-jhubbard@nvidia.com>
+ <20200823062559.GA32480@infradead.org>
+ <efa2519d-53b7-7b08-bf85-a5c2d725282c@nvidia.com>
+Message-ID: <f1a9b9b8-3e88-04d1-d08e-bed77330dbd8@nvidia.com>
+Date:   Mon, 24 Aug 2020 00:36:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
+MIME-Version: 1.0
+In-Reply-To: <efa2519d-53b7-7b08-bf85-a5c2d725282c@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598254596; bh=fQ0+/D92POi8rmal7APmpF3lFhiWzQJgt3U4odcmElw=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=UV544x6f4CXUb/fHE54BG1U42/SuaxsG3R0ElzOYOUdOSMuiqvtCuidVYHHjzyIMy
+         +TNKLp8WRtC1YPrGnUIyVO4l3Ak0txN7EYgioe8Tt1GLiT8i2AjHhTmC8tlqtb1OAF
+         LQWM9jV5qpdGrvyseDbElmej/SjlKTTCqf4RMdJye+19uKyfGvjz6nhXwZ0l5NhIoc
+         Rr8zAmc4r0GkKRkofYrevq6oCxI+6DulxvIH85AK9iXEgg16KKFYR1zrFK0gy8WQQL
+         Fbwka4WzfAsKVD0tOuigoAm3Bn2ZziF69E2Kpf81igaHmnJnCr34NBtA7NTUh0tdab
+         FVE3jqr/+vyHw==
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On 8/22/20 11:57 PM, John Hubbard wrote:
+> On 8/22/20 11:25 PM, Christoph Hellwig wrote:
+>> On Fri, Aug 21, 2020 at 09:20:58PM -0700, John Hubbard wrote:
+>>> Add a new BIO_FOLL_PIN flag to struct bio, whose "short int" flags field
+>>> was full, thuse triggering an expansion of the field from 16, to 32
+>>> bits. This allows for a nice assertion in bio_release_pages(), that the
+>>> bio page release mechanism matches the page acquisition mechanism.
+>>>
+>>> Set BIO_FOLL_PIN whenever pin_user_pages_fast() is used, and check for
+>>> BIO_FOLL_PIN before using unpin_user_page().
+>>
+>> When would the flag not be set when BIO_NO_PAGE_REF is not set?
+> 
+> Well, I don't *think* you can get there. However, I've only been studying
+> bio/block for a fairly short time, and the scattering of get_page() and
+> put_page() calls in some of the paths made me wonder if, for example,
+> someone was using get_page() to acquire ITER_BVEC or ITER_KVEC via
+> get_page(), and release them via bio_release_pages(). It's hard to tell.
+> 
+> It seems like that shouldn't be part of the design. I'm asserting that
+> it isn't, with this new flag. But if you're sure that this assertion is
+> unnecessary, then let's just drop this patch, of course.
+> 
 
-In client for each inode, it may have many opened files and may
-have been pinned in more than one MDS servers. And some inodes
-are idle, which have no any opened files.
+Also, I should have done a few more subsystem conversions, before
+concluding that BIO_FOLL_PIN was a good idea. Now, as I'm working through mopping
+up those other subsystems, I see that nfs/direct.c for example does not have access
+to a bio instance, and so the whole thing is not really a great move, at least not
+for adding to the iov_iter_pin_user_pages*() APIs.
 
-This patch will show these metrics in the debugfs, likes:
-
-item                               total
------------------------------------------
-opened files  / total inodes       14 / 5
-pinned i_caps / total inodes       7  / 5
-opened inodes / total inodes       3  / 5
-
-Will send these metrics to ceph, which will be used by the `fs top`,
-later.
-
-URL: https://tracker.ceph.com/issues/47005
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
-
-Changed in V2:
-- Add number of inodes that have opened files.
-- Remove the dir metrics and fold into files.
+Let's just drop this patch, after all.
 
 
- fs/ceph/caps.c    | 27 +++++++++++++++++++++++++--
- fs/ceph/debugfs.c | 11 +++++++++++
- fs/ceph/file.c    |  5 +++--
- fs/ceph/inode.c   |  7 +++++++
- fs/ceph/metric.c  | 14 ++++++++++++++
- fs/ceph/metric.h  |  7 +++++++
- fs/ceph/super.h   |  1 +
- 7 files changed, 68 insertions(+), 4 deletions(-)
-
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index ad69c411afba..6916def40b3d 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -4283,13 +4283,23 @@ void __ceph_touch_fmode(struct ceph_inode_info *ci,
- 
- void ceph_get_fmode(struct ceph_inode_info *ci, int fmode, int count)
- {
--	int i;
-+	struct ceph_mds_client *mdsc = ceph_ci_to_mdsc(ci);
- 	int bits = (fmode << 1) | 1;
-+	int i;
-+
-+	if (count == 1)
-+		atomic64_inc(&mdsc->metric.opened_files);
-+
- 	spin_lock(&ci->i_ceph_lock);
- 	for (i = 0; i < CEPH_FILE_MODE_BITS; i++) {
- 		if (bits & (1 << i))
- 			ci->i_nr_by_mode[i] += count;
- 	}
-+
-+	if (!ci->is_opened && fmode) {
-+		ci->is_opened = true;
-+		percpu_counter_inc(&mdsc->metric.opened_inodes);
-+	}
- 	spin_unlock(&ci->i_ceph_lock);
- }
- 
-@@ -4300,15 +4310,28 @@ void ceph_get_fmode(struct ceph_inode_info *ci, int fmode, int count)
-  */
- void ceph_put_fmode(struct ceph_inode_info *ci, int fmode, int count)
- {
--	int i;
-+	struct ceph_mds_client *mdsc = ceph_ci_to_mdsc(ci);
- 	int bits = (fmode << 1) | 1;
-+	bool empty = true;
-+	int i;
-+
-+	if (count == 1)
-+		atomic64_dec(&mdsc->metric.opened_files);
-+
- 	spin_lock(&ci->i_ceph_lock);
- 	for (i = 0; i < CEPH_FILE_MODE_BITS; i++) {
- 		if (bits & (1 << i)) {
- 			BUG_ON(ci->i_nr_by_mode[i] < count);
- 			ci->i_nr_by_mode[i] -= count;
-+			if (ci->i_nr_by_mode[i] && i) /* Skip the pin ref */
-+				empty = false;
- 		}
- 	}
-+
-+	if (ci->is_opened && empty && fmode) {
-+		ci->is_opened = false;
-+		percpu_counter_dec(&mdsc->metric.opened_inodes);
-+	}
- 	spin_unlock(&ci->i_ceph_lock);
- }
- 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 97539b497e4c..9efd3982230d 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -148,6 +148,17 @@ static int metric_show(struct seq_file *s, void *p)
- 	int nr_caps = 0;
- 	s64 total, sum, avg, min, max, sq;
- 
-+	sum = percpu_counter_sum(&m->total_inodes);
-+	seq_printf(s, "item                               total\n");
-+	seq_printf(s, "------------------------------------------\n");
-+	seq_printf(s, "%-35s%lld / %lld\n", "opened files  / total inodes",
-+		   atomic64_read(&m->opened_files), sum);
-+	seq_printf(s, "%-35s%lld / %lld\n", "pinned i_caps / total inodes",
-+		   atomic64_read(&m->total_caps), sum);
-+	seq_printf(s, "%-35s%lld / %lld\n", "opened inodes / total inodes",
-+		   percpu_counter_sum(&m->opened_inodes), sum);
-+
-+	seq_printf(s, "\n");
- 	seq_printf(s, "item          total       avg_lat(us)     min_lat(us)     max_lat(us)     stdev(us)\n");
- 	seq_printf(s, "-----------------------------------------------------------------------------------\n");
- 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index c788cce7885b..6e2aed0f7f75 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -211,8 +211,9 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
- 	BUG_ON(inode->i_fop->release != ceph_release);
- 
- 	if (isdir) {
--		struct ceph_dir_file_info *dfi =
--			kmem_cache_zalloc(ceph_dir_file_cachep, GFP_KERNEL);
-+		struct ceph_dir_file_info *dfi;
-+
-+		dfi = kmem_cache_zalloc(ceph_dir_file_cachep, GFP_KERNEL);
- 		if (!dfi)
- 			return -ENOMEM;
- 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 39b1007903d9..1bedbe4737ec 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -426,6 +426,7 @@ static int ceph_fill_fragtree(struct inode *inode,
-  */
- struct inode *ceph_alloc_inode(struct super_block *sb)
- {
-+	struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(sb);
- 	struct ceph_inode_info *ci;
- 	int i;
- 
-@@ -485,6 +486,7 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
- 	ci->i_last_rd = ci->i_last_wr = jiffies - 3600 * HZ;
- 	for (i = 0; i < CEPH_FILE_MODE_BITS; i++)
- 		ci->i_nr_by_mode[i] = 0;
-+	ci->is_opened = false;
- 
- 	mutex_init(&ci->i_truncate_mutex);
- 	ci->i_truncate_seq = 0;
-@@ -525,6 +527,8 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
- 
- 	ci->i_meta_err = 0;
- 
-+	percpu_counter_inc(&mdsc->metric.total_inodes);
-+
- 	return &ci->vfs_inode;
- }
- 
-@@ -539,6 +543,7 @@ void ceph_free_inode(struct inode *inode)
- void ceph_evict_inode(struct inode *inode)
- {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
-+	struct ceph_mds_client *mdsc = ceph_inode_to_mdsc(inode);
- 	struct ceph_inode_frag *frag;
- 	struct rb_node *n;
- 
-@@ -592,6 +597,8 @@ void ceph_evict_inode(struct inode *inode)
- 
- 	ceph_put_string(rcu_dereference_raw(ci->i_layout.pool_ns));
- 	ceph_put_string(rcu_dereference_raw(ci->i_cached_layout.pool_ns));
-+
-+	percpu_counter_dec(&mdsc->metric.total_inodes);
- }
- 
- static inline blkcnt_t calc_inode_blocks(u64 size)
-diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
-index 2466b261fba2..c7c6fe6a383b 100644
---- a/fs/ceph/metric.c
-+++ b/fs/ceph/metric.c
-@@ -192,11 +192,23 @@ int ceph_metric_init(struct ceph_client_metric *m)
- 	m->total_metadatas = 0;
- 	m->metadata_latency_sum = 0;
- 
-+	atomic64_set(&m->opened_files, 0);
-+	ret = percpu_counter_init(&m->opened_inodes, 0, GFP_KERNEL);
-+	if (ret)
-+		goto err_opened_inodes;
-+	ret = percpu_counter_init(&m->opened_inodes, 0, GFP_KERNEL);
-+	if (ret)
-+		goto err_total_inodes;
-+
- 	m->session = NULL;
- 	INIT_DELAYED_WORK(&m->delayed_work, metric_delayed_work);
- 
- 	return 0;
- 
-+err_total_inodes:
-+	percpu_counter_destroy(&m->opened_inodes);
-+err_opened_inodes:
-+	percpu_counter_destroy(&m->i_caps_mis);
- err_i_caps_mis:
- 	percpu_counter_destroy(&m->i_caps_hit);
- err_i_caps_hit:
-@@ -212,6 +224,8 @@ void ceph_metric_destroy(struct ceph_client_metric *m)
- 	if (!m)
- 		return;
- 
-+	percpu_counter_destroy(&m->total_inodes);
-+	percpu_counter_destroy(&m->opened_inodes);
- 	percpu_counter_destroy(&m->i_caps_mis);
- 	percpu_counter_destroy(&m->i_caps_hit);
- 	percpu_counter_destroy(&m->d_lease_mis);
-diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
-index 1d0959d669d7..710f3f1dceab 100644
---- a/fs/ceph/metric.h
-+++ b/fs/ceph/metric.h
-@@ -115,6 +115,13 @@ struct ceph_client_metric {
- 	ktime_t metadata_latency_min;
- 	ktime_t metadata_latency_max;
- 
-+	/* The total number of directories and files that are opened */
-+	atomic64_t opened_files;
-+
-+	/* The total number of inodes that have opened files or directories */
-+	struct percpu_counter opened_inodes;
-+	struct percpu_counter total_inodes;
-+
- 	struct ceph_mds_session *session;
- 	struct delayed_work delayed_work;  /* delayed work */
- };
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 476d182c2ff0..852b755e2224 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -387,6 +387,7 @@ struct ceph_inode_info {
- 	unsigned long i_last_rd;
- 	unsigned long i_last_wr;
- 	int i_nr_by_mode[CEPH_FILE_MODE_BITS];  /* open file counts */
-+	bool is_opened; /* has opened files or directors */
- 
- 	struct mutex i_truncate_mutex;
- 	u32 i_truncate_seq;        /* last truncate to smaller size */
+thanks,
 -- 
-2.18.4
-
+John Hubbard
+NVIDIA
