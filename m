@@ -2,84 +2,105 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C63C32508AC
-	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 21:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC35925098E
+	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 21:43:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbgHXTCa (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 24 Aug 2020 15:02:30 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:19347 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbgHXTCa (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 24 Aug 2020 15:02:30 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f440e880000>; Mon, 24 Aug 2020 12:01:28 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 24 Aug 2020 12:02:30 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 24 Aug 2020 12:02:30 -0700
-Received: from [10.2.58.8] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Aug
- 2020 19:02:29 +0000
-Subject: Re: [PATCH 5/5] fs/ceph: use pipe_get_pages_alloc() for pipe
-To:     Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, <linux-xfs@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <ceph-devel@vger.kernel.org>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20200822042059.1805541-1-jhubbard@nvidia.com>
- <20200822042059.1805541-6-jhubbard@nvidia.com>
- <048e78f2b440820d936eb67358495cc45ba579c3.camel@kernel.org>
- <c943337b-1c1e-9c85-4ded-39931986c6a3@nvidia.com>
- <af70d334271913a6b09bfd818bc3d81eef5a19b2.camel@kernel.org>
- <20200824185400.GE17456@casper.infradead.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <16ccf2d8-824f-8c8b-201c-95da8790c524@nvidia.com>
-Date:   Mon, 24 Aug 2020 12:02:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        id S1726723AbgHXTnC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Aug 2020 15:43:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49194 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726519AbgHXTnC (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 24 Aug 2020 15:43:02 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FAE2206BE;
+        Mon, 24 Aug 2020 19:43:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598298181;
+        bh=VP9TI9b+TMTDGH5jknxTSQWn2OukpwVeWj0+r1HqH9k=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=xYKqzs5QWDMbOcSpjdJ5hplae+9Z0vbrgF8oQVls4VZxEvXDtLz1rDHee1VCMj0yy
+         wWp+DdCWfkMxn4HxEREPzXoFf7y/7ki4WDeYYOZ+fH/bbI13V8Ynr463JJJJi4O0C2
+         5hV76sqDY0yat2OsJtZTF1PRuaBLl2cBX2WSMyxg=
+Message-ID: <fe81c713ed827b91004b0e2838800684da33e60c.camel@kernel.org>
+Subject: Re: [RFC PATCH 1/8] fscrypt: add fscrypt_prepare_new_inode() and
+ fscrypt_set_context()
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, ceph-devel@vger.kernel.org
+Date:   Mon, 24 Aug 2020 15:42:59 -0400
+In-Reply-To: <20200824190221.GC1650861@gmail.com>
+References: <20200824061712.195654-1-ebiggers@kernel.org>
+         <20200824061712.195654-2-ebiggers@kernel.org>
+         <0cf5638796e7cddacc38dcd1e967368b99f0069a.camel@kernel.org>
+         <20200824182114.GB1650861@gmail.com>
+         <06a7d9562b84354eb72bd67c9d4b7262dac53457.camel@kernel.org>
+         <20200824190221.GC1650861@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-In-Reply-To: <20200824185400.GE17456@casper.infradead.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 8/24/20 11:54 AM, Matthew Wilcox wrote:
-> On Mon, Aug 24, 2020 at 02:47:53PM -0400, Jeff Layton wrote:
->> Ok, I'll plan to pick it up providing no one has issues with exporting that symbol.
+On Mon, 2020-08-24 at 12:02 -0700, Eric Biggers wrote:
+> On Mon, Aug 24, 2020 at 02:47:07PM -0400, Jeff Layton wrote:
+> > On Mon, 2020-08-24 at 11:21 -0700, Eric Biggers wrote:
+> > > On Mon, Aug 24, 2020 at 12:48:48PM -0400, Jeff Layton wrote:
+> > > > > +void fscrypt_hash_inode_number(struct fscrypt_info *ci,
+> > > > > +			       const struct fscrypt_master_key *mk)
+> > > > > +{
+> > > > > +	WARN_ON(ci->ci_inode->i_ino == 0);
+> > > > > +	WARN_ON(!mk->mk_ino_hash_key_initialized);
+> > > > > +
+> > > > > +	ci->ci_hashed_ino = (u32)siphash_1u64(ci->ci_inode->i_ino,
+> > > > > +					      &mk->mk_ino_hash_key);
+> > > > 
+> > > > i_ino is an unsigned long. Will this produce a consistent results on
+> > > > arches with 32 and 64 bit long values? I think it'd be nice to ensure
+> > > > that we can access an encrypted directory created on a 32-bit host from
+> > > > (e.g.) a 64-bit host.
+> > > 
+> > > The result is the same regardless of word size and endianness.
+> > > siphash_1u64(v, k) is equivalent to:
+> > > 
+> > > 	__le64 x = cpu_to_le64(v);
+> > > 	siphash(&x, 8, k);
+> > > 
+> > 
+> > In the case where you have an (on-storage) inode number that is larger
+> > than 2^32, x will almost certainly be different on a 32 vs. 64-bit
+> > wordsize.
+> > 
+> > On the box with the 32-bit wordsize, you'll end up promoting i_ino to a
+> > 64-bit word and the upper 32 bits will be zeroed out. So it seems like
+> > this means that if you're using inline hardware you're going to end up
+> > with a result that won't work correctly across different wordsizes.
 > 
-> _GPL, perhaps?
+> That's only possible if the VFS is truncating the inode number, which would also
+> break userspace in lots of ways like making applications think that files are
+> hard-linked together when they aren't.  Also, IV_INO_LBLK_64 would break.
 > 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-	t=1598295688; bh=TGtHrKY9YE9vgbD3P6YUTHn7yhP+gCmFr3Z8XIdh17s=;
-	h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-	 User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-	 X-ClientProxiedBy:Content-Type:Content-Language:
-	 Content-Transfer-Encoding;
-	b=KWZ+bMZ8RXIxd4CMBL8Dn6hn0ggsojx1vJaaueo+/+Xwe0yKBa+bMZfnn1XUDWvJs
-	 KMZJ22FgEdc+HO/8Mx0JKVQsLfKj74dwj3kGjs1z0KA5Vcnx93pzd/iMXDFhClf3uz
-	 KmyGEdar0p6poBaBOlsapOb59acP6ot16rhi7ZbTch+7ErO/Rupx6VinU1A2Ydc3OP
-	 mBYXZqz35DZ/H5eqhoE84MuOFj8Ti/Wpen637pLLa5dmtXjSMRmYTQXMRygUmQXdaw
-	 g9XLuqaxKRxp2lnuoVdFK0T90Hfu/71T+S8asZZYhH9zHY2Wzhgp1VkR07ZtXmMNqI
-	 W/lB00RAVtj3Q==
+> The correct fix for that would be to make inode::i_ino 64-bit.
+> 
 
-I looked at that, and the equivalent iov_iter_get_pages* and related stuff was
-just EXPORT_SYMBOL, so I tried to match that. But if it needs to be _GPL then
-that's fine too...
+...or just ask the filesystem for the 64-bit inode number via ->getattr
+or a new op. You could also just truncate it down to 32 bits or xor the
+top and bottom bits together first, etc...
 
-thanks,
+> Note that ext4 and f2fs (currently the only filesystems that support the
+> IV_INO_LBLK_* flags) only support 32-bit inode numbers.
+> 
+
+Ahh, ok. That explains why it's not been an issue so far. Still, if
+you're reworking this code anyway, you might want to consider avoiding
+i_ino here.
+
 -- 
-John Hubbard
-NVIDIA
+Jeff Layton <jlayton@kernel.org>
+
