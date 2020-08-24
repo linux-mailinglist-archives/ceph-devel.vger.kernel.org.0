@@ -2,97 +2,99 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B9224EBE5
-	for <lists+ceph-devel@lfdr.de>; Sun, 23 Aug 2020 08:58:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 839CA24F158
+	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 05:01:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbgHWG5a (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 23 Aug 2020 02:57:30 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:19974 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbgHWG53 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 23 Aug 2020 02:57:29 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f42134a0003>; Sat, 22 Aug 2020 23:57:15 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sat, 22 Aug 2020 23:57:29 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sat, 22 Aug 2020 23:57:29 -0700
-Received: from [10.2.94.162] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 23 Aug
- 2020 06:57:28 +0000
-Subject: Re: [PATCH 4/5] bio: introduce BIO_FOLL_PIN flag
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <ceph-devel@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20200822042059.1805541-1-jhubbard@nvidia.com>
- <20200822042059.1805541-5-jhubbard@nvidia.com>
- <20200823062559.GA32480@infradead.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <efa2519d-53b7-7b08-bf85-a5c2d725282c@nvidia.com>
-Date:   Sat, 22 Aug 2020 23:57:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        id S1728131AbgHXDBK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 23 Aug 2020 23:01:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38918 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727999AbgHXDBJ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 23 Aug 2020 23:01:09 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DD4BC061573;
+        Sun, 23 Aug 2020 20:01:09 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id y6so3518980plk.10;
+        Sun, 23 Aug 2020 20:01:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Sd+e9mqpssttKPHG4Vmc6RWj6G6G48PRDU4F/RVT5Ho=;
+        b=ZdGyEdWrQTveFGjbRMDO8OjW4bOlMQM5qKDRp3leiKZ51A4hPjROMAfDMggtFBqpZK
+         d7C/TwKkIM4h46aPUIB9e48MiECI07EnmmfpcmlEFkZg6XTVmXN525aXeFItEqlyfKh6
+         p5p4/FknIqY4PvcSJeeCmvW9bogn4f63HDddphzkShoSLoUnPN886F5kpZCYQRmTcL7Z
+         YYsZ4wnP7Idwi5itH2j6BYsGBm6ZMKRxcFlTEkE/byZQvNYCQIEs8A1F4M+49RX9wDB9
+         zDwIr0r8b2NLhY0cLNxKWHdvqRVsoeWs59go1QwpgeYBv0bNddx4m2jLG1M0495anJj8
+         35lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Sd+e9mqpssttKPHG4Vmc6RWj6G6G48PRDU4F/RVT5Ho=;
+        b=liUqLiOZSKJstgpPrfvXzYfIPlY3ZlVcnThQBMF9n7tOOtuuU1RY8/34pO8oNpjmSZ
+         OxRmWkbLwDFlp9UnMZcomlh0wfq57lm0qw9sek0Wn1xQMgP4qzHY+xeA7BABE6Ug2tOj
+         nmzsEk82QF1yG/VFKsxjzm03yHdhQHeLOFyPJ1m1fZ0EBpQmEcd3cy9gsH6aNTTbm/IE
+         UXccOcEPmu0I7COvJSHiAhdxhL4isjAbErKWJn0qHsSPxqWAYSCcYBuy/0P4szYbg2KX
+         CMlzU86VfDu7+/dOtImEAQ8XL7CRZrPumI0i4Dkk8rjRmiob6Gz2fCRD0zCPD3MhnEQB
+         0Urw==
+X-Gm-Message-State: AOAM530QY2iLwCEfFk/PBpX1/YwytIujcLMHL2Ka/zYJ+nJ+ldGw+76t
+        +jxbKJ3+C2gqgRwsqtMF+vk=
+X-Google-Smtp-Source: ABdhPJzeyhiSO1vJo2MHuImYOXNbsVyKEJazgLqADtaMajhDvY5Q6r8/3E2YNHow3p8CiRT1+AIZjA==
+X-Received: by 2002:a17:90a:c394:: with SMTP id h20mr3092215pjt.22.1598238069049;
+        Sun, 23 Aug 2020 20:01:09 -0700 (PDT)
+Received: from localhost.localdomain ([122.224.153.227])
+        by smtp.gmail.com with ESMTPSA id y65sm9328813pfb.155.2020.08.23.20.01.05
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 23 Aug 2020 20:01:08 -0700 (PDT)
+From:   Yanhu Cao <gmayyyha@gmail.com>
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yanhu Cao <gmayyyha@gmail.com>
+Subject: [PATCH] ceph: add column 'mds' to show caps in more user friendly
+Date:   Mon, 24 Aug 2020 11:00:58 +0800
+Message-Id: <20200824030058.37786-1-gmayyyha@gmail.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 MIME-Version: 1.0
-In-Reply-To: <20200823062559.GA32480@infradead.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598165835; bh=kB8FzCW7DtQaUtPovVv0+HKVzVDdBHBMlKCnKbkxrMg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=BrUhEcP2N++kRHfl+zn7vDD/FlQ/3V2H/XgPoyKwbIdXc2SCUUSumiENqN7cJHfVK
-         ZbkgfCj6OLx+CXHj8eM1/7+jc0ro3HzWRPLmxjKxc2RNOVXT5tORXdZinwrKaItaaq
-         uygoVGHfGf5kDiATAsmUPuPK5q+iTOViZNwt7J27vitQCIVd1+qybDu8jYLh7sQfed
-         X/Vpz7gURyRC6DpYj/2onKg32L5/uYmrGMAKvcltCs8K6bIwVtm+pGOn+qJmerTXrd
-         RZ7OESoORKJrVEhKFDF1rhSrGhurBpHh+2Onm9Rn1gHlesoEDzJfJtRu7bsOBF08Po
-         cACGMbyUwt2Ww==
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 8/22/20 11:25 PM, Christoph Hellwig wrote:
-> On Fri, Aug 21, 2020 at 09:20:58PM -0700, John Hubbard wrote:
->> Add a new BIO_FOLL_PIN flag to struct bio, whose "short int" flags field
->> was full, thuse triggering an expansion of the field from 16, to 32
->> bits. This allows for a nice assertion in bio_release_pages(), that the
->> bio page release mechanism matches the page acquisition mechanism.
->>
->> Set BIO_FOLL_PIN whenever pin_user_pages_fast() is used, and check for
->> BIO_FOLL_PIN before using unpin_user_page().
-> 
-> When would the flag not be set when BIO_NO_PAGE_REF is not set?
+In multi-mds, the 'caps' debugfs file will have duplicate ino,
+add the 'mds' column to indicate which mds session the cap belongs to.
 
-Well, I don't *think* you can get there. However, I've only been studying
-bio/block for a fairly short time, and the scattering of get_page() and
-put_page() calls in some of the paths made me wonder if, for example,
-someone was using get_page() to acquire ITER_BVEC or ITER_KVEC via
-get_page(), and release them via bio_release_pages(). It's hard to tell.
+Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+---
+ fs/ceph/debugfs.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-It seems like that shouldn't be part of the design. I'm asserting that
-it isn't, with this new flag. But if you're sure that this assertion is
-unnecessary, then let's just drop this patch, of course.
-
-> 
-> Also I don't think we can't just expand the flags field, but I can send
-> a series to kill off two flags.
-> 
-
-Good to know, just in case we do want this flag. Great!
-
-thanks,
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index 97539b497e4c..47f8971a9c52 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -202,7 +202,8 @@ static int caps_show_cb(struct inode *inode, struct ceph_cap *cap, void *p)
+ {
+ 	struct seq_file *s = p;
+ 
+-	seq_printf(s, "0x%-17lx%-17s%-17s\n", inode->i_ino,
++	seq_printf(s, "0x%-17lx%-3d%-17s%-17s\n", inode->i_ino,
++		   cap->session->s_mds,
+ 		   ceph_cap_string(cap->issued),
+ 		   ceph_cap_string(cap->implemented));
+ 	return 0;
+@@ -222,8 +223,8 @@ static int caps_show(struct seq_file *s, void *p)
+ 		   "reserved\t%d\n"
+ 		   "min\t\t%d\n\n",
+ 		   total, avail, used, reserved, min);
+-	seq_printf(s, "ino                issued           implemented\n");
+-	seq_printf(s, "-----------------------------------------------\n");
++	seq_printf(s, "ino              mds  issued           implemented\n");
++	seq_printf(s, "--------------------------------------------------\n");
+ 
+ 	mutex_lock(&mdsc->mutex);
+ 	for (i = 0; i < mdsc->max_sessions; i++) {
 -- 
-John Hubbard
-NVIDIA
+2.24.3 (Apple Git-128)
+
