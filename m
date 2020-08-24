@@ -2,84 +2,86 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42FF6250700
-	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 19:54:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B46FB25074F
+	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 20:21:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbgHXRyv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 24 Aug 2020 13:54:51 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:3976 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726645AbgHXRyt (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 24 Aug 2020 13:54:49 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f43fe720000>; Mon, 24 Aug 2020 10:52:50 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 24 Aug 2020 10:54:49 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 24 Aug 2020 10:54:49 -0700
-Received: from [10.2.58.8] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Aug
- 2020 17:54:48 +0000
-Subject: Re: [PATCH 5/5] fs/ceph: use pipe_get_pages_alloc() for pipe
-To:     Jeff Layton <jlayton@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, <linux-xfs@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <ceph-devel@vger.kernel.org>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20200822042059.1805541-1-jhubbard@nvidia.com>
- <20200822042059.1805541-6-jhubbard@nvidia.com>
- <048e78f2b440820d936eb67358495cc45ba579c3.camel@kernel.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <c943337b-1c1e-9c85-4ded-39931986c6a3@nvidia.com>
-Date:   Mon, 24 Aug 2020 10:54:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        id S1726858AbgHXSVR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Aug 2020 14:21:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57756 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726222AbgHXSVQ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 24 Aug 2020 14:21:16 -0400
+Received: from gmail.com (unknown [104.132.1.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96FA820738;
+        Mon, 24 Aug 2020 18:21:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598293275;
+        bh=BPd9FqfRK57acJvZfHNixoCcKstFE02QTmcYRlfCq7s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gSO2JDEBH2du9sVIqRO/ccvceJM7cC9d3CT0/1d7x0lyj5q9qdZRvB77EudGgmLBP
+         DDXy3fjKwWLf31wIq1ym4KVx7/HdPpObHPD4gbEQTGggArK1CPr0EOlxDk/XQs4GGp
+         MxEUAJwlx/5dWcs35/gGQek/09sGDl96J76TPivQ=
+Date:   Mon, 24 Aug 2020 11:21:14 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, ceph-devel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/8] fscrypt: add fscrypt_prepare_new_inode() and
+ fscrypt_set_context()
+Message-ID: <20200824182114.GB1650861@gmail.com>
+References: <20200824061712.195654-1-ebiggers@kernel.org>
+ <20200824061712.195654-2-ebiggers@kernel.org>
+ <0cf5638796e7cddacc38dcd1e967368b99f0069a.camel@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <048e78f2b440820d936eb67358495cc45ba579c3.camel@kernel.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598291570; bh=CWuYw5dH/VtBpvI19yHqq86doR7B2zJKPzasfKT65u4=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=ZFQsTjXMbeI3odHvWyyv+avDBH8AbQfdk/U759B5HohE1mwGHvlrewSpb+kAzQUcn
-         qpiBh79ZgoT3BgBaR/4K0luta3Fhw12TGTDKBytzb3xqjfW20BFGBgoOHfJpD6V6pl
-         RQQdVWIB+0HeeHIGKU1yGgj3CT15cw/Oy4hmHeaC4JeB57jy8gOWrl5eFh0BGw2J1N
-         /hHEDha+UU+2OIE8uS2UiYiUVAvev6rDInJrCQUDmMu07atPRtlsbaFICCCuiZUrJc
-         nlCtkrPZVDxFy+ch0xB2yJGUibXU4EjwgOxn1J1wNNPSFwA4NNat5nH5siKxTScwDt
-         BZdUfY32nEviA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0cf5638796e7cddacc38dcd1e967368b99f0069a.camel@kernel.org>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 8/24/20 3:53 AM, Jeff Layton wrote:
+On Mon, Aug 24, 2020 at 12:48:48PM -0400, Jeff Layton wrote:
+> > +void fscrypt_hash_inode_number(struct fscrypt_info *ci,
+> > +			       const struct fscrypt_master_key *mk)
+> > +{
+> > +	WARN_ON(ci->ci_inode->i_ino == 0);
+> > +	WARN_ON(!mk->mk_ino_hash_key_initialized);
+> > +
+> > +	ci->ci_hashed_ino = (u32)siphash_1u64(ci->ci_inode->i_ino,
+> > +					      &mk->mk_ino_hash_key);
 > 
-> This looks fine to me. Let me know if you need this merged via the ceph
-> tree. Thanks!
-> 
-> Acked-by: Jeff Layton <jlayton@kernel.org>
-> 
+> i_ino is an unsigned long. Will this produce a consistent results on
+> arches with 32 and 64 bit long values? I think it'd be nice to ensure
+> that we can access an encrypted directory created on a 32-bit host from
+> (e.g.) a 64-bit host.
 
-Yes, please! It will get proper testing that way, and it doesn't have
-any prerequisites, despite being part of this series. So it would be
-great to go in via the ceph tree.
+The result is the same regardless of word size and endianness.
+siphash_1u64(v, k) is equivalent to:
 
-For the main series here, I'll send a v2 with only patches 1-3, once
-enough feedback has happened.
+	__le64 x = cpu_to_le64(v);
+	siphash(&x, 8, k);
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+> It may be better to base this on something besides i_ino
+
+This code that hashes the inode number is only used when userspace used
+FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32 for the directory.  IV_INO_LBLK_32 modifies
+the encryption to be optimized for eMMC inline encryption hardware.  For more
+details, see commit e3b1078bedd3 which added this feature.
+
+We actually could have hashed the file nonce instead of the inode number.  But I
+wanted to make the eMMC-optimized format similar to IV_INO_LBLK_64, which is the
+format optimized for UFS inline encryption hardware.
+
+Both of these flags have very specific use cases; they make it feasible to use
+inline encryption hardware
+(https://www.kernel.org/doc/html/latest/block/inline-encryption.html)
+that only supports a small number of keyslots and that limits the IV length.
+
+You don't need to worry about these flags at all for ceph, since there won't be
+any use case to use them on ceph, and ceph won't be declaring support for them.
+
+- Eric
