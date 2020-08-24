@@ -2,41 +2,45 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D2F625086A
-	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 20:47:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9E4325086F
+	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 20:48:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbgHXSrK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 24 Aug 2020 14:47:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49126 "EHLO mail.kernel.org"
+        id S1726839AbgHXSr6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Aug 2020 14:47:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725904AbgHXSrJ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 24 Aug 2020 14:47:09 -0400
+        id S1725946AbgHXSrz (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 24 Aug 2020 14:47:55 -0400
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3950E2065F;
-        Mon, 24 Aug 2020 18:47:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8884820738;
+        Mon, 24 Aug 2020 18:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598294828;
-        bh=Q7rmqcK2cO9kRc9mX2R6752q1QKh7uDgYP8Nhp7kyZI=;
+        s=default; t=1598294875;
+        bh=LrBvL/lvgaw9oM+bfag92o0XOBwU/bnJJbi2/vNaqgM=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=jW/d0Pp4ABd3WvH2jRkyX22o8nNqFLAVEM/VSskJLw2gvHHnZXrjOHSDgr3mVdwG0
-         dV4128xFP6onTskk79j4bPFBm6QXO20H6zHsikIukfmpAWaXp/Gm48/7ic85qV5ZZQ
-         GftdbOJTX3YHxf3lfJum6XjMMK0spCkkUxBerdlE=
-Message-ID: <06a7d9562b84354eb72bd67c9d4b7262dac53457.camel@kernel.org>
-Subject: Re: [RFC PATCH 1/8] fscrypt: add fscrypt_prepare_new_inode() and
- fscrypt_set_context()
+        b=g/kN+3NBLlEe62ILTawYQsb0fceIegB6ymJBDZCBntruwEFQRK1siflzwOcb/gOEG
+         /nEKc2+l1vOKTSplNt0BHG2F/NZ40meo3/Uwzzs5IA59tYV2Ufft7g9d3jgtSy/opH
+         8I8uNUIft0ianKn10BsEc5P2U8TQOOztH6aGJnBk=
+Message-ID: <af70d334271913a6b09bfd818bc3d81eef5a19b2.camel@kernel.org>
+Subject: Re: [PATCH 5/5] fs/ceph: use pipe_get_pages_alloc() for pipe
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, ceph-devel@vger.kernel.org
-Date:   Mon, 24 Aug 2020 14:47:07 -0400
-In-Reply-To: <20200824182114.GB1650861@gmail.com>
-References: <20200824061712.195654-1-ebiggers@kernel.org>
-         <20200824061712.195654-2-ebiggers@kernel.org>
-         <0cf5638796e7cddacc38dcd1e967368b99f0069a.camel@kernel.org>
-         <20200824182114.GB1650861@gmail.com>
+To:     John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Mon, 24 Aug 2020 14:47:53 -0400
+In-Reply-To: <c943337b-1c1e-9c85-4ded-39931986c6a3@nvidia.com>
+References: <20200822042059.1805541-1-jhubbard@nvidia.com>
+         <20200822042059.1805541-6-jhubbard@nvidia.com>
+         <048e78f2b440820d936eb67358495cc45ba579c3.camel@kernel.org>
+         <c943337b-1c1e-9c85-4ded-39931986c6a3@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
@@ -46,61 +50,25 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2020-08-24 at 11:21 -0700, Eric Biggers wrote:
-> On Mon, Aug 24, 2020 at 12:48:48PM -0400, Jeff Layton wrote:
-> > > +void fscrypt_hash_inode_number(struct fscrypt_info *ci,
-> > > +			       const struct fscrypt_master_key *mk)
-> > > +{
-> > > +	WARN_ON(ci->ci_inode->i_ino == 0);
-> > > +	WARN_ON(!mk->mk_ino_hash_key_initialized);
-> > > +
-> > > +	ci->ci_hashed_ino = (u32)siphash_1u64(ci->ci_inode->i_ino,
-> > > +					      &mk->mk_ino_hash_key);
+On Mon, 2020-08-24 at 10:54 -0700, John Hubbard wrote:
+> On 8/24/20 3:53 AM, Jeff Layton wrote:
+> > This looks fine to me. Let me know if you need this merged via the ceph
+> > tree. Thanks!
 > > 
-> > i_ino is an unsigned long. Will this produce a consistent results on
-> > arches with 32 and 64 bit long values? I think it'd be nice to ensure
-> > that we can access an encrypted directory created on a 32-bit host from
-> > (e.g.) a 64-bit host.
+> > Acked-by: Jeff Layton <jlayton@kernel.org>
+> > 
 > 
-> The result is the same regardless of word size and endianness.
-> siphash_1u64(v, k) is equivalent to:
+> Yes, please! It will get proper testing that way, and it doesn't have
+> any prerequisites, despite being part of this series. So it would be
+> great to go in via the ceph tree.
 > 
-> 	__le64 x = cpu_to_le64(v);
-> 	siphash(&x, 8, k);
+> For the main series here, I'll send a v2 with only patches 1-3, once
+> enough feedback has happened.
 > 
 
-In the case where you have an (on-storage) inode number that is larger
-than 2^32, x will almost certainly be different on a 32 vs. 64-bit
-wordsize.
+Ok, I'll plan to pick it up providing no one has issues with exporting that symbol.
 
-On the box with the 32-bit wordsize, you'll end up promoting i_ino to a
-64-bit word and the upper 32 bits will be zeroed out. So it seems like
-this means that if you're using inline hardware you're going to end up
-with a result that won't work correctly across different wordsizes.
-
-Maybe that's ok, but it seems like something that could be handled by
-hashing a different value.
-
-> > It may be better to base this on something besides i_ino
-> 
-> This code that hashes the inode number is only used when userspace used
-> FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32 for the directory.  IV_INO_LBLK_32 modifies
-> the encryption to be optimized for eMMC inline encryption hardware.  For more
-> details, see commit e3b1078bedd3 which added this feature.
-> 
-> We actually could have hashed the file nonce instead of the inode number.  But I
-> wanted to make the eMMC-optimized format similar to IV_INO_LBLK_64, which is the
-> format optimized for UFS inline encryption hardware.
-> 
-> Both of these flags have very specific use cases; they make it feasible to use
-> inline encryption hardware
-> (https://www.kernel.org/doc/html/latest/block/inline-encryption.html)
-> that only supports a small number of keyslots and that limits the IV length.
-> 
-> You don't need to worry about these flags at all for ceph, since there won't be
-> any use case to use them on ceph, and ceph won't be declaring support for them.
-
-Ahh, good to know. Thanks!
+Thanks!
 -- 
 Jeff Layton <jlayton@kernel.org>
 
