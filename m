@@ -2,59 +2,90 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 690F3250882
-	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 20:54:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 594662508A8
+	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 21:02:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbgHXSyM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 24 Aug 2020 14:54:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47002 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbgHXSyI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 24 Aug 2020 14:54:08 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A37ECC061573;
-        Mon, 24 Aug 2020 11:54:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=/RZ8lu4GLqWgx2SJy7gstpvyOrfX+P6Ib1IzLL5uMvU=; b=r4GUC126jrVcHWcAK7iDriIIMT
-        xQQdHj1FiRNXVRnXsSD5TnlV5iKg0relX2TxVrk5gKJfT+iz/+PelC7p5NpgeOhKHPK4UKVPdj0/1
-        GUO9GYv2mQ9+x0RQ6kElcjX4wwgs8J+qm2KROL3HH2GDwNlQZfghoaGk94YF9b+9a1G2yRa2rKn1H
-        y8OB50lIr/isEArR1LHELITcDAwYBB+aJWzDAphJ64foh07hSD9sdklDUBA4Tbs3Xb5ueEno8/IJK
-        vA1p4/W5ihT0FpBgEYptG6cvRIfeFYw0CSupxEcgVmeG9AfKtWS2YhvdGbdVJBY6jg6Xm+if97dVK
-        3cPWSzDA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kAHbU-0002Xb-SQ; Mon, 24 Aug 2020 18:54:00 +0000
-Date:   Mon, 24 Aug 2020 19:54:00 +0100
-From:   Matthew Wilcox <willy@infradead.org>
+        id S1726673AbgHXTCY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Aug 2020 15:02:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54444 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725963AbgHXTCX (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 24 Aug 2020 15:02:23 -0400
+Received: from gmail.com (unknown [104.132.1.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02E3B2074D;
+        Mon, 24 Aug 2020 19:02:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598295743;
+        bh=4xcF3VJfP2pWkLD1MnKiWLH5hBlNe6WvpXlcG9/bUNk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pdjxD/lwTwBs8AMDefIpz33YuP0AtYiNyavtRQr7lkpfBZj7RlqkpM378485De4nk
+         WH0Io2eXyxKz4zDfMcK7dt1yFN7UttRHrNEce14Xwaq8moKGEBPL4gFCn/kyTHytpj
+         W4soZI4coKBqQkVSP1hI08dnY7nJ+NgIw/mSNY5g=
+Date:   Mon, 24 Aug 2020 12:02:21 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
 To:     Jeff Layton <jlayton@kernel.org>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/5] fs/ceph: use pipe_get_pages_alloc() for pipe
-Message-ID: <20200824185400.GE17456@casper.infradead.org>
-References: <20200822042059.1805541-1-jhubbard@nvidia.com>
- <20200822042059.1805541-6-jhubbard@nvidia.com>
- <048e78f2b440820d936eb67358495cc45ba579c3.camel@kernel.org>
- <c943337b-1c1e-9c85-4ded-39931986c6a3@nvidia.com>
- <af70d334271913a6b09bfd818bc3d81eef5a19b2.camel@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, ceph-devel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/8] fscrypt: add fscrypt_prepare_new_inode() and
+ fscrypt_set_context()
+Message-ID: <20200824190221.GC1650861@gmail.com>
+References: <20200824061712.195654-1-ebiggers@kernel.org>
+ <20200824061712.195654-2-ebiggers@kernel.org>
+ <0cf5638796e7cddacc38dcd1e967368b99f0069a.camel@kernel.org>
+ <20200824182114.GB1650861@gmail.com>
+ <06a7d9562b84354eb72bd67c9d4b7262dac53457.camel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <af70d334271913a6b09bfd818bc3d81eef5a19b2.camel@kernel.org>
+In-Reply-To: <06a7d9562b84354eb72bd67c9d4b7262dac53457.camel@kernel.org>
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 02:47:53PM -0400, Jeff Layton wrote:
-> Ok, I'll plan to pick it up providing no one has issues with exporting that symbol.
+On Mon, Aug 24, 2020 at 02:47:07PM -0400, Jeff Layton wrote:
+> On Mon, 2020-08-24 at 11:21 -0700, Eric Biggers wrote:
+> > On Mon, Aug 24, 2020 at 12:48:48PM -0400, Jeff Layton wrote:
+> > > > +void fscrypt_hash_inode_number(struct fscrypt_info *ci,
+> > > > +			       const struct fscrypt_master_key *mk)
+> > > > +{
+> > > > +	WARN_ON(ci->ci_inode->i_ino == 0);
+> > > > +	WARN_ON(!mk->mk_ino_hash_key_initialized);
+> > > > +
+> > > > +	ci->ci_hashed_ino = (u32)siphash_1u64(ci->ci_inode->i_ino,
+> > > > +					      &mk->mk_ino_hash_key);
+> > > 
+> > > i_ino is an unsigned long. Will this produce a consistent results on
+> > > arches with 32 and 64 bit long values? I think it'd be nice to ensure
+> > > that we can access an encrypted directory created on a 32-bit host from
+> > > (e.g.) a 64-bit host.
+> > 
+> > The result is the same regardless of word size and endianness.
+> > siphash_1u64(v, k) is equivalent to:
+> > 
+> > 	__le64 x = cpu_to_le64(v);
+> > 	siphash(&x, 8, k);
+> > 
+> 
+> In the case where you have an (on-storage) inode number that is larger
+> than 2^32, x will almost certainly be different on a 32 vs. 64-bit
+> wordsize.
+> 
+> On the box with the 32-bit wordsize, you'll end up promoting i_ino to a
+> 64-bit word and the upper 32 bits will be zeroed out. So it seems like
+> this means that if you're using inline hardware you're going to end up
+> with a result that won't work correctly across different wordsizes.
 
-_GPL, perhaps?
+That's only possible if the VFS is truncating the inode number, which would also
+break userspace in lots of ways like making applications think that files are
+hard-linked together when they aren't.  Also, IV_INO_LBLK_64 would break.
+
+The correct fix for that would be to make inode::i_ino 64-bit.
+
+Note that ext4 and f2fs (currently the only filesystems that support the
+IV_INO_LBLK_* flags) only support 32-bit inode numbers.
+
+- Eric
