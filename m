@@ -2,59 +2,36 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 839CA24F158
-	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 05:01:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2327224F255
+	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 08:18:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728131AbgHXDBK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 23 Aug 2020 23:01:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38918 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727999AbgHXDBJ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 23 Aug 2020 23:01:09 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DD4BC061573;
-        Sun, 23 Aug 2020 20:01:09 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id y6so3518980plk.10;
-        Sun, 23 Aug 2020 20:01:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Sd+e9mqpssttKPHG4Vmc6RWj6G6G48PRDU4F/RVT5Ho=;
-        b=ZdGyEdWrQTveFGjbRMDO8OjW4bOlMQM5qKDRp3leiKZ51A4hPjROMAfDMggtFBqpZK
-         d7C/TwKkIM4h46aPUIB9e48MiECI07EnmmfpcmlEFkZg6XTVmXN525aXeFItEqlyfKh6
-         p5p4/FknIqY4PvcSJeeCmvW9bogn4f63HDddphzkShoSLoUnPN886F5kpZCYQRmTcL7Z
-         YYsZ4wnP7Idwi5itH2j6BYsGBm6ZMKRxcFlTEkE/byZQvNYCQIEs8A1F4M+49RX9wDB9
-         zDwIr0r8b2NLhY0cLNxKWHdvqRVsoeWs59go1QwpgeYBv0bNddx4m2jLG1M0495anJj8
-         35lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Sd+e9mqpssttKPHG4Vmc6RWj6G6G48PRDU4F/RVT5Ho=;
-        b=liUqLiOZSKJstgpPrfvXzYfIPlY3ZlVcnThQBMF9n7tOOtuuU1RY8/34pO8oNpjmSZ
-         OxRmWkbLwDFlp9UnMZcomlh0wfq57lm0qw9sek0Wn1xQMgP4qzHY+xeA7BABE6Ug2tOj
-         nmzsEk82QF1yG/VFKsxjzm03yHdhQHeLOFyPJ1m1fZ0EBpQmEcd3cy9gsH6aNTTbm/IE
-         UXccOcEPmu0I7COvJSHiAhdxhL4isjAbErKWJn0qHsSPxqWAYSCcYBuy/0P4szYbg2KX
-         CMlzU86VfDu7+/dOtImEAQ8XL7CRZrPumI0i4Dkk8rjRmiob6Gz2fCRD0zCPD3MhnEQB
-         0Urw==
-X-Gm-Message-State: AOAM530QY2iLwCEfFk/PBpX1/YwytIujcLMHL2Ka/zYJ+nJ+ldGw+76t
-        +jxbKJ3+C2gqgRwsqtMF+vk=
-X-Google-Smtp-Source: ABdhPJzeyhiSO1vJo2MHuImYOXNbsVyKEJazgLqADtaMajhDvY5Q6r8/3E2YNHow3p8CiRT1+AIZjA==
-X-Received: by 2002:a17:90a:c394:: with SMTP id h20mr3092215pjt.22.1598238069049;
-        Sun, 23 Aug 2020 20:01:09 -0700 (PDT)
-Received: from localhost.localdomain ([122.224.153.227])
-        by smtp.gmail.com with ESMTPSA id y65sm9328813pfb.155.2020.08.23.20.01.05
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Aug 2020 20:01:08 -0700 (PDT)
-From:   Yanhu Cao <gmayyyha@gmail.com>
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yanhu Cao <gmayyyha@gmail.com>
-Subject: [PATCH] ceph: add column 'mds' to show caps in more user friendly
-Date:   Mon, 24 Aug 2020 11:00:58 +0800
-Message-Id: <20200824030058.37786-1-gmayyyha@gmail.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+        id S1726037AbgHXGSS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Aug 2020 02:18:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49688 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725770AbgHXGSS (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 24 Aug 2020 02:18:18 -0400
+Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD6CF206B5;
+        Mon, 24 Aug 2020 06:18:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598249898;
+        bh=5Cg/F/P1MsSIqNAEKm5EcA85tMzmQDFgxtq+BwsOiXY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=f893nZOHOk74YywNd+s2c7KM7U+ApkFK+G5wAxPqs247sQ2FcptH0qP9EtwzvEYBf
+         LROjPrF6b7H17wnj5KGsZaPkgvTF6yctFlLpC0zde7Uvt1Qfhq8ilvE8jBprCzObNr
+         jbaGalIhOAIFifcUwA2qyoWoyI0iCcGdq4CofU6w=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, ceph-devel@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>
+Subject: [RFC PATCH 0/8] fscrypt: avoid GFP_NOFS-unsafe key setup during transaction
+Date:   Sun, 23 Aug 2020 23:17:04 -0700
+Message-Id: <20200824061712.195654-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
@@ -62,39 +39,51 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-In multi-mds, the 'caps' debugfs file will have duplicate ino,
-add the 'mds' column to indicate which mds session the cap belongs to.
+This series fixes some deadlocks which are theoretically possible due to
+fscrypt_get_encryption_info() being GFP_NOFS-unsafe, and thus not safe
+to be called from within an ext4 transaction or under f2fs_lock_op().
 
-Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
----
- fs/ceph/debugfs.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+The problem is solved by new helper functions which allow setting up the
+key for new inodes earlier.  Patch 1 adds these helper functions.  Also
+see that patch for a more detailed description of this problem.
 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 97539b497e4c..47f8971a9c52 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -202,7 +202,8 @@ static int caps_show_cb(struct inode *inode, struct ceph_cap *cap, void *p)
- {
- 	struct seq_file *s = p;
- 
--	seq_printf(s, "0x%-17lx%-17s%-17s\n", inode->i_ino,
-+	seq_printf(s, "0x%-17lx%-3d%-17s%-17s\n", inode->i_ino,
-+		   cap->session->s_mds,
- 		   ceph_cap_string(cap->issued),
- 		   ceph_cap_string(cap->implemented));
- 	return 0;
-@@ -222,8 +223,8 @@ static int caps_show(struct seq_file *s, void *p)
- 		   "reserved\t%d\n"
- 		   "min\t\t%d\n\n",
- 		   total, avail, used, reserved, min);
--	seq_printf(s, "ino                issued           implemented\n");
--	seq_printf(s, "-----------------------------------------------\n");
-+	seq_printf(s, "ino              mds  issued           implemented\n");
-+	seq_printf(s, "--------------------------------------------------\n");
- 
- 	mutex_lock(&mdsc->mutex);
- 	for (i = 0; i < mdsc->max_sessions; i++) {
+Patches 2-6 then convert ext4, f2fs, and ubifs to use these new helpers.
+
+Patch 7-8 then clean up a few things afterwards.
+
+Coincidentally, this also solves some of the ordering problems that
+ceph fscrypt support will have.  For more details about this, see the
+discussion on Jeff Layton's RFC patchset for ceph fscrypt support
+(https://lkml.kernel.org/linux-fscrypt/20200821182813.52570-1-jlayton@kernel.org/T/#u)
+However, fscrypt_prepare_new_inode() still requires that the new
+'struct inode' exist already, so it might not be enough for ceph yet.
+
+This patchset applies to v5.9-rc2.
+
+Eric Biggers (8):
+  fscrypt: add fscrypt_prepare_new_inode() and fscrypt_set_context()
+  ext4: factor out ext4_xattr_credits_for_new_inode()
+  ext4: remove some #ifdefs in ext4_xattr_credits_for_new_inode()
+  ext4: use fscrypt_prepare_new_inode() and fscrypt_set_context()
+  f2fs: use fscrypt_prepare_new_inode() and fscrypt_set_context()
+  ubifs: use fscrypt_prepare_new_inode() and fscrypt_set_context()
+  fscrypt: remove fscrypt_inherit_context()
+  fscrypt: stop pretending that key setup is nofs-safe
+
+ fs/crypto/fscrypt_private.h |   3 +
+ fs/crypto/hooks.c           |  10 +-
+ fs/crypto/inline_crypt.c    |   7 +-
+ fs/crypto/keysetup.c        | 190 ++++++++++++++++++++++++++++--------
+ fs/crypto/keysetup_v1.c     |   8 +-
+ fs/crypto/policy.c          |  64 +++++++-----
+ fs/ext4/ialloc.c            | 118 +++++++++++-----------
+ fs/f2fs/dir.c               |   2 +-
+ fs/f2fs/f2fs.h              |  16 ---
+ fs/f2fs/namei.c             |   7 +-
+ fs/ubifs/dir.c              |  26 ++---
+ include/linux/fscrypt.h     |  18 +++-
+ 12 files changed, 293 insertions(+), 176 deletions(-)
+
 -- 
-2.24.3 (Apple Git-128)
+2.28.0
 
