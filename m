@@ -2,102 +2,122 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D18A24F7B6
-	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 11:20:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94D7024FBFC
+	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 12:53:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729815AbgHXJUj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 24 Aug 2020 05:20:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41638 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730500AbgHXJUa (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 24 Aug 2020 05:20:30 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29522C061575
-        for <ceph-devel@vger.kernel.org>; Mon, 24 Aug 2020 02:20:29 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id q93so3094631pjq.0
-        for <ceph-devel@vger.kernel.org>; Mon, 24 Aug 2020 02:20:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KQzdEJUadSVD+lgD6sVSSDMTvkRGkwdel+4+TdgeUE4=;
-        b=S1z/AmmNOCH9afSNr/qrDInALgK0j4q5VYp45vGoszL08gQOq77XWvhovm91maa4+P
-         FqKO0IvQQ1zgFOTeD7xwiYdXCC4eSy866y0i4iOHUdhtIcu9OyTLXqq9sIjITeHIlDP/
-         TqDQL3++BGqzXH8U95cUEVFQg9f7Oyelz1pTusAebmjo7UGy1iK4oNwyu8zu1fDcAfPX
-         nbF7uSCxB/11Zqo85kx55hx/wYlWNGXWIUW2MXqUz8acgYZGRkoKmiKOAMbN76qrQ5Ur
-         CsLY7wA5OwEKSwWBknbMM6OhsOsgmjQ3BQKlOzM52TKrjGMbACD7aubcslrIXV21mpIp
-         D4Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KQzdEJUadSVD+lgD6sVSSDMTvkRGkwdel+4+TdgeUE4=;
-        b=mo7Gx7P+Cub25VtW3pe1sSf+65P5BOv7pozECmk8XzAp1/dhVUrwWvPkOpkMVOCvzR
-         I9AWKJO4IZSyGbUfhWO8u/k7GxP8upYhqTiNKBM0KXddmDn3xk0bFKKwhJyg+8Bdgi4z
-         Ih9cyJ6l0/hsGvLA5ebJRlig3xK5p9gY5MwCVW0sP4ill4Hy2cHpiLir79iUCf+cWL8Q
-         P3o5FhrGXdMMkT0cZFw5A1PUgembmYYk+6NCJuNn4zZngXxzMCiFqueJv/SpFqBQq8cG
-         3srdFtB8yrjKNF+wLWhL1y9lKXi87cAKG8+yh9BNS1GASpHfx0QrLPCyVIb4m5qVeiA1
-         862A==
-X-Gm-Message-State: AOAM532/j3rYkdnkmUbDhqRl6OYQWjOFtQexjd2FhXVuZnoSdSfSyZvZ
-        C2r/+fK17M/iTDQXjkehdjfWVA==
-X-Google-Smtp-Source: ABdhPJyCrZvD6mxlThjGGxFBbEkhy5RNyLB5+uuwXeW5h1XhNu5PQ5mV/pcyDAllrzYkYjEheHn/mA==
-X-Received: by 2002:a17:90a:f994:: with SMTP id cq20mr3717444pjb.229.1598260828641;
-        Mon, 24 Aug 2020 02:20:28 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id x144sm897257pfc.82.2020.08.24.02.20.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Aug 2020 02:20:27 -0700 (PDT)
-Subject: Re: [PATCH 4/5] bio: introduce BIO_FOLL_PIN flag
-To:     Christoph Hellwig <hch@infradead.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        id S1727047AbgHXKxm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Aug 2020 06:53:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44164 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727022AbgHXKxi (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 24 Aug 2020 06:53:38 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCF082071E;
+        Mon, 24 Aug 2020 10:53:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598266416;
+        bh=qH9tu8/66AnvcmnbDrUOe52jE1Smh8r+3XYyB4XlwpE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=HqjPVk4t1jp1MayrpuV57WmBoGVegaoD8GrQl82u/Vio8K/GP/BCgrbESv+PT51ur
+         wu4x1lBLs17gp9cWFVnCtWfwZvtiJCI6bokKbwMD2upcCCNi9Sw7eEBKS8BFbYRQCx
+         BOo0ClFbxA7dS2oWLRAo1OC7wqhkSTeCI39L6tmg=
+Message-ID: <048e78f2b440820d936eb67358495cc45ba579c3.camel@kernel.org>
+Subject: Re: [PATCH 5/5] fs/ceph: use pipe_get_pages_alloc() for pipe
+From:   Jeff Layton <jlayton@kernel.org>
+To:     John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
         Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         ceph-devel@vger.kernel.org, linux-mm@kvack.org,
         LKML <linux-kernel@vger.kernel.org>
+Date:   Mon, 24 Aug 2020 06:53:34 -0400
+In-Reply-To: <20200822042059.1805541-6-jhubbard@nvidia.com>
 References: <20200822042059.1805541-1-jhubbard@nvidia.com>
- <20200822042059.1805541-5-jhubbard@nvidia.com>
- <20200823062559.GA32480@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d75ce230-6c8d-8623-49a2-500835f6cdfc@kernel.dk>
-Date:   Mon, 24 Aug 2020 03:20:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+         <20200822042059.1805541-6-jhubbard@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-In-Reply-To: <20200823062559.GA32480@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 8/23/20 12:25 AM, Christoph Hellwig wrote:
-> On Fri, Aug 21, 2020 at 09:20:58PM -0700, John Hubbard wrote:
->> Add a new BIO_FOLL_PIN flag to struct bio, whose "short int" flags field
->> was full, thuse triggering an expansion of the field from 16, to 32
->> bits. This allows for a nice assertion in bio_release_pages(), that the
->> bio page release mechanism matches the page acquisition mechanism.
->>
->> Set BIO_FOLL_PIN whenever pin_user_pages_fast() is used, and check for
->> BIO_FOLL_PIN before using unpin_user_page().
+On Fri, 2020-08-21 at 21:20 -0700, John Hubbard wrote:
+> This reduces, by one, the number of callers of iov_iter_get_pages().
+> That's helpful because these calls are being audited and converted over
+> to use iov_iter_pin_user_pages(), where applicable. And this one here is
+> already known by the caller to be only for ITER_PIPE, so let's just
+> simplify it now.
 > 
-> When would the flag not be set when BIO_NO_PAGE_REF is not set?
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  fs/ceph/file.c      | 3 +--
+>  include/linux/uio.h | 3 ++-
+>  lib/iov_iter.c      | 6 +++---
+>  3 files changed, 6 insertions(+), 6 deletions(-)
 > 
-> Also I don't think we can't just expand the flags field, but I can send
-> a series to kill off two flags.
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index d51c3f2fdca0..d3d7dd957390 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -879,8 +879,7 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
+>  		more = len < iov_iter_count(to);
+>  
+>  		if (unlikely(iov_iter_is_pipe(to))) {
+> -			ret = iov_iter_get_pages_alloc(to, &pages, len,
+> -						       &page_off);
+> +			ret = pipe_get_pages_alloc(to, &pages, len, &page_off);
+>  			if (ret <= 0) {
+>  				ceph_osdc_put_request(req);
+>  				ret = -ENOMEM;
+> diff --git a/include/linux/uio.h b/include/linux/uio.h
+> index 62bcf5e45f2b..76cd47ab3dfd 100644
+> --- a/include/linux/uio.h
+> +++ b/include/linux/uio.h
+> @@ -227,7 +227,8 @@ ssize_t iov_iter_get_pages(struct iov_iter *i, struct page **pages,
+>  ssize_t iov_iter_get_pages_alloc(struct iov_iter *i, struct page ***pages,
+>  			size_t maxsize, size_t *start);
+>  int iov_iter_npages(const struct iov_iter *i, int maxpages);
+> -
+> +ssize_t pipe_get_pages_alloc(struct iov_iter *i, struct page ***pages,
+> +			     size_t maxsize, size_t *start);
+>  const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t flags);
+>  
+>  ssize_t iov_iter_pin_user_pages(struct bio *bio, struct iov_iter *i, struct page **pages,
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index a4bc1b3a3fda..f571fe3ddbe8 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -1396,9 +1396,8 @@ static struct page **get_pages_array(size_t n)
+>  	return kvmalloc_array(n, sizeof(struct page *), GFP_KERNEL);
+>  }
+>  
+> -static ssize_t pipe_get_pages_alloc(struct iov_iter *i,
+> -		   struct page ***pages, size_t maxsize,
+> -		   size_t *start)
+> +ssize_t pipe_get_pages_alloc(struct iov_iter *i, struct page ***pages,
+> +			     size_t maxsize, size_t *start)
+>  {
+>  	struct page **p;
+>  	unsigned int iter_head, npages;
+> @@ -1428,6 +1427,7 @@ static ssize_t pipe_get_pages_alloc(struct iov_iter *i,
+>  		kvfree(p);
+>  	return n;
+>  }
+> +EXPORT_SYMBOL(pipe_get_pages_alloc);
+>  
+>  ssize_t iov_iter_pin_user_pages_alloc(struct bio *bio, struct iov_iter *i,
+>  		   struct page ***pages, size_t maxsize,
 
-(not relevant to this series as this patch has thankfully already been
-dropped, just in general - but yes, definitely need a *strong* justification
-to bump the bio size).
 
-Would actually be nice to kill off a few flags, if possible, so the
-flags space isn't totally full.
+This looks fine to me. Let me know if you need this merged via the ceph
+tree. Thanks!
 
--- 
-Jens Axboe
+Acked-by: Jeff Layton <jlayton@kernel.org>
 
