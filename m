@@ -2,103 +2,84 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5496F2504FC
-	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 19:10:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42FF6250700
+	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 19:54:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727980AbgHXRKU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 24 Aug 2020 13:10:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728407AbgHXQh5 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 24 Aug 2020 12:37:57 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E697A22D73;
-        Mon, 24 Aug 2020 16:37:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598287040;
-        bh=08B5xmuciC9Qn8N+HTCgixsvYWj3l7brqWHYJ+TxcVE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=deGWWJhZAq4dokVKcfYWi2Pu9SXoxrVDFlagiK5cq+HthvINSrn3eQMFwAbvOMerh
-         qHzZByW65HXQv6WYX8QjPunFOkGG72afmkHo18xgNfC2TVvRxbDVUa4tdqwEtGsOzh
-         aVOx1u1vE6RpMRzDen7Qg5ad8uU5p3plKjn59zLo=
-Message-ID: <1d1f9e52634ca43ac018935fcfa0ac8c5fe57bfe.camel@kernel.org>
-Subject: Re: [PATCH] ceph: don't allow setlease on cephfs
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
-Date:   Mon, 24 Aug 2020 12:37:18 -0400
-In-Reply-To: <CAOi1vP-s7RwdndJ9T0=YLNJ+CQMQDgn9ODHKHjxo2foe_rNu=w@mail.gmail.com>
-References: <20200820151349.60203-1-jlayton@kernel.org>
-         <CAOi1vP_i67NVgb_sef1ZS0K_ZHP5J_H=Op+LGs3n5CJbhR_95w@mail.gmail.com>
-         <17e14441da0f636e3b0b5244a27865645b168297.camel@kernel.org>
-         <CAOi1vP-s7RwdndJ9T0=YLNJ+CQMQDgn9ODHKHjxo2foe_rNu=w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        id S1726834AbgHXRyv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Aug 2020 13:54:51 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:3976 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726645AbgHXRyt (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 24 Aug 2020 13:54:49 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f43fe720000>; Mon, 24 Aug 2020 10:52:50 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 24 Aug 2020 10:54:49 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 24 Aug 2020 10:54:49 -0700
+Received: from [10.2.58.8] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Aug
+ 2020 17:54:48 +0000
+Subject: Re: [PATCH 5/5] fs/ceph: use pipe_get_pages_alloc() for pipe
+To:     Jeff Layton <jlayton@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, <linux-xfs@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <ceph-devel@vger.kernel.org>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20200822042059.1805541-1-jhubbard@nvidia.com>
+ <20200822042059.1805541-6-jhubbard@nvidia.com>
+ <048e78f2b440820d936eb67358495cc45ba579c3.camel@kernel.org>
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <c943337b-1c1e-9c85-4ded-39931986c6a3@nvidia.com>
+Date:   Mon, 24 Aug 2020 10:54:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
+In-Reply-To: <048e78f2b440820d936eb67358495cc45ba579c3.camel@kernel.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598291570; bh=CWuYw5dH/VtBpvI19yHqq86doR7B2zJKPzasfKT65u4=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=ZFQsTjXMbeI3odHvWyyv+avDBH8AbQfdk/U759B5HohE1mwGHvlrewSpb+kAzQUcn
+         qpiBh79ZgoT3BgBaR/4K0luta3Fhw12TGTDKBytzb3xqjfW20BFGBgoOHfJpD6V6pl
+         RQQdVWIB+0HeeHIGKU1yGgj3CT15cw/Oy4hmHeaC4JeB57jy8gOWrl5eFh0BGw2J1N
+         /hHEDha+UU+2OIE8uS2UiYiUVAvev6rDInJrCQUDmMu07atPRtlsbaFICCCuiZUrJc
+         nlCtkrPZVDxFy+ch0xB2yJGUibXU4EjwgOxn1J1wNNPSFwA4NNat5nH5siKxTScwDt
+         BZdUfY32nEviA==
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2020-08-24 at 18:35 +0200, Ilya Dryomov wrote:
-> On Mon, Aug 24, 2020 at 6:03 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > On Mon, 2020-08-24 at 17:38 +0200, Ilya Dryomov wrote:
-> > > On Thu, Aug 20, 2020 at 5:13 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > > Leases don't currently work correctly on kcephfs, as they are not broken
-> > > > when caps are revoked. They could eventually be implemented similarly to
-> > > > how we did them in libcephfs, but for now don't allow them.
-> > > > 
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > ---
-> > > >  fs/ceph/dir.c  | 2 ++
-> > > >  fs/ceph/file.c | 1 +
-> > > >  2 files changed, 3 insertions(+)
-> > > > 
-> > > > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> > > > index 040eaad9d063..34f669220a8b 100644
-> > > > --- a/fs/ceph/dir.c
-> > > > +++ b/fs/ceph/dir.c
-> > > > @@ -1935,6 +1935,7 @@ const struct file_operations ceph_dir_fops = {
-> > > >         .compat_ioctl = compat_ptr_ioctl,
-> > > >         .fsync = ceph_fsync,
-> > > >         .lock = ceph_lock,
-> > > > +       .setlease = simple_nosetlease,
-> > > >         .flock = ceph_flock,
-> > > >  };
-> > > > 
-> > > > @@ -1943,6 +1944,7 @@ const struct file_operations ceph_snapdir_fops = {
-> > > >         .llseek = ceph_dir_llseek,
-> > > >         .open = ceph_open,
-> > > >         .release = ceph_release,
-> > > > +       .setlease = simple_nosetlease,
-> > > 
-> > > Hi Jeff,
-> > > 
-> > > Isn't this redundant for directories?
-> > > 
-> > > Thanks,
-> > > 
-> > >                 Ilya
-> > 
-> > generic_setlease does currently return -EINVAL if you try to set it on
-> > anything but a regular file. But, there is nothing that prevents that at
-> > a higher level. A filesystem can implement a ->setlease op that allows
-> > it.
-> > 
-> > So yeah, that doesn't really have of an effect since you'd likely get
-> > back -EINVAL anyway, but adding this line in it makes that explicit.
+On 8/24/20 3:53 AM, Jeff Layton wrote:
 > 
-> It looks like gfs2 and nfs only set simple_nosetlease for file fops,
-> so it might be more consistent if we did this only for ceph_file_fops
-> as well.
+> This looks fine to me. Let me know if you need this merged via the ceph
+> tree. Thanks!
+> 
+> Acked-by: Jeff Layton <jlayton@kernel.org>
 > 
 
-Fair enough. Do you want to just fix it up, or would you rather I send a v2?
+Yes, please! It will get proper testing that way, and it doesn't have
+any prerequisites, despite being part of this series. So it would be
+great to go in via the ceph tree.
 
-Thanks,
+For the main series here, I'll send a v2 with only patches 1-3, once
+enough feedback has happened.
+
+thanks,
 -- 
-Jeff Layton <jlayton@kernel.org>
-
+John Hubbard
+NVIDIA
