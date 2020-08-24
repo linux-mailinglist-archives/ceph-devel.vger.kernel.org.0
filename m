@@ -2,64 +2,84 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EE2C25000B
-	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 16:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65A472500B7
+	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 17:16:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbgHXOmR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 24 Aug 2020 10:42:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35790 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbgHXOmQ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 24 Aug 2020 10:42:16 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDCCBC061573;
-        Mon, 24 Aug 2020 07:42:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Sm/ikGBMT7yXr66/WCvwl+PKMe6pOWKqSkgLkHzx4Lc=; b=fMe0QfTQ4FBKF7HgdD2AKcKJDy
-        jpK1GN1HR/22cjzUb0XYK5lfB6YRhA9AfdqZKo0uLpe7Blh31bdMq37c40i/jLxm2YkB3oSX4/OJj
-        TYv0GzPrdpMG7xkBSyFews/4uSp3ImPuE96kVv3zjIy/ZJFPZYnz7VWg6HULLbJltSIvqekw/b8b9
-        RKFdsxEV8Q7OHuVh4OwAwpT0NBPSZaAQrlwvPHCYOXl7XNO9BQI5IlfSGfYJnUzs81goecyjvlHWy
-        9Qkayszt+5jdBZtaXYqsqcOD0WGuP7wjZvlXkdmYMgkDqfXsDlz962mCjUAE50IjJRRlxUchCKDhL
-        4u3jkxrw==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kADff-00027L-AM; Mon, 24 Aug 2020 14:42:03 +0000
-Date:   Mon, 24 Aug 2020 15:42:03 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/5] bio: introduce BIO_FOLL_PIN flag
-Message-ID: <20200824144203.GA8070@infradead.org>
-References: <20200822042059.1805541-1-jhubbard@nvidia.com>
- <20200822042059.1805541-5-jhubbard@nvidia.com>
- <20200823062559.GA32480@infradead.org>
- <d75ce230-6c8d-8623-49a2-500835f6cdfc@kernel.dk>
+        id S1727021AbgHXPQC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Aug 2020 11:16:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39172 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727068AbgHXPN2 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 24 Aug 2020 11:13:28 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B441206B5;
+        Mon, 24 Aug 2020 15:12:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598281975;
+        bh=yO9W1Kc0RdGpWZmeTxsnbWWXCS+9065Inn/90nZH8S4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=P1OE/CS8PxQYqFGUCpqEisH8/zh3qJNGTtpsU6Euxa2780rFG9iiDIZTS4AEfRC3K
+         YGgqyg0WSsIs23QtW1LkKT8x5UwfFYQL8Jj5v1E2yxogukGObENk0h/D7bpKUjbIFN
+         djdqwoEw4kxSS40Z2aXyYUvOrxzcq0URhp+ObUhg=
+Message-ID: <9b6b670245ae0ca8eab16263c01f6a6d1bd94e4b.camel@kernel.org>
+Subject: Re: [PATCH] ceph: add column 'mds' to show caps in more user
+ friendly
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Yanhu Cao <gmayyyha@gmail.com>
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 24 Aug 2020 11:12:54 -0400
+In-Reply-To: <20200824030058.37786-1-gmayyyha@gmail.com>
+References: <20200824030058.37786-1-gmayyyha@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d75ce230-6c8d-8623-49a2-500835f6cdfc@kernel.dk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 7bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 03:20:26AM -0600, Jens Axboe wrote:
-> (not relevant to this series as this patch has thankfully already been
-> dropped, just in general - but yes, definitely need a *strong* justification
-> to bump the bio size).
+On Mon, 2020-08-24 at 11:00 +0800, Yanhu Cao wrote:
+> In multi-mds, the 'caps' debugfs file will have duplicate ino,
+> add the 'mds' column to indicate which mds session the cap belongs to.
 > 
-> Would actually be nice to kill off a few flags, if possible, so the
-> flags space isn't totally full.
+> Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> ---
+>  fs/ceph/debugfs.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+> index 97539b497e4c..47f8971a9c52 100644
+> --- a/fs/ceph/debugfs.c
+> +++ b/fs/ceph/debugfs.c
+> @@ -202,7 +202,8 @@ static int caps_show_cb(struct inode *inode, struct ceph_cap *cap, void *p)
+>  {
+>  	struct seq_file *s = p;
+>  
+> -	seq_printf(s, "0x%-17lx%-17s%-17s\n", inode->i_ino,
+> +	seq_printf(s, "0x%-17lx%-3d%-17s%-17s\n", inode->i_ino,
+> +		   cap->session->s_mds,
+>  		   ceph_cap_string(cap->issued),
+>  		   ceph_cap_string(cap->implemented));
+>  	return 0;
+> @@ -222,8 +223,8 @@ static int caps_show(struct seq_file *s, void *p)
+>  		   "reserved\t%d\n"
+>  		   "min\t\t%d\n\n",
+>  		   total, avail, used, reserved, min);
+> -	seq_printf(s, "ino                issued           implemented\n");
+> -	seq_printf(s, "-----------------------------------------------\n");
+> +	seq_printf(s, "ino              mds  issued           implemented\n");
+> +	seq_printf(s, "--------------------------------------------------\n");
+>  
+>  	mutex_lock(&mdsc->mutex);
+>  	for (i = 0; i < mdsc->max_sessions; i++) {
 
-I have a series to kill two flags that I need to resurrect and post.
+Looks good. Merged.
+
+Thanks!
+-- 
+Jeff Layton <jlayton@kernel.org>
+
