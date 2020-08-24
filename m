@@ -2,158 +2,293 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 111E524F26B
-	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 08:18:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C529024F2E5
+	for <lists+ceph-devel@lfdr.de>; Mon, 24 Aug 2020 09:02:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725730AbgHXGSj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 24 Aug 2020 02:18:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49986 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726075AbgHXGS2 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 24 Aug 2020 02:18:28 -0400
-Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726051AbgHXHCF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Aug 2020 03:02:05 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:51389 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725730AbgHXHCD (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 24 Aug 2020 03:02:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598252521;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=QT03D8vDCACoTuWptjF8x2EwAd+GCyKiJi3KJvqRbVI=;
+        b=g+akARZbk5+fQa/mOvqMQ9xkZWTxbf02ZTo6+6b6fbAO2Lr+zcWTb/vfggjvlD2oRfCER1
+        Vc6g6F02B8+VMv4ki0lPKQjgxXq9IdSpNq2qMpjnvVcGWrj2/9KX/wevROwdZ9WnyMi++I
+        aTf8duEbYwJIAwlA43UvNwk2P6mdcfg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-272-yGMZrFPIOq2DiQ2FAFBWoA-1; Mon, 24 Aug 2020 03:01:55 -0400
+X-MC-Unique: yGMZrFPIOq2DiQ2FAFBWoA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9733422BEA;
-        Mon, 24 Aug 2020 06:18:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598249900;
-        bh=FIdPAQ4uVgqepfVvwpPtlAMJGJ/BCwZf2dDwk5M0shA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aOFOzAVN6aex+LS5Y2deYUb9Qjxp+H46wBD4Q4HDvUhaKg92JKU/CLVURb4LyzBUw
-         2+WvbtU7sO6GQxDGsaEnuYSknW0lS3fpbkqF4Evz/SyGisvOuCd6oEkWg/7aYH/ioI
-         8+eqiG/nQFxpH2RSz/7EstoUxgliPnfNi17KeKtQ=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, ceph-devel@vger.kernel.org,
-        Jeff Layton <jlayton@kernel.org>
-Subject: [RFC PATCH 8/8] fscrypt: stop pretending that key setup is nofs-safe
-Date:   Sun, 23 Aug 2020 23:17:12 -0700
-Message-Id: <20200824061712.195654-9-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200824061712.195654-1-ebiggers@kernel.org>
-References: <20200824061712.195654-1-ebiggers@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D1ACD81F006;
+        Mon, 24 Aug 2020 07:01:54 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (vm37-202.gsslab.pek2.redhat.com [10.72.37.202])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B0B8C54595;
+        Mon, 24 Aug 2020 07:01:52 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, zyan@redhat.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v2] ceph: metrics for opened files, pinned caps and opened inodes
+Date:   Mon, 24 Aug 2020 03:01:35 -0400
+Message-Id: <20200824070135.2195228-1-xiubli@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Xiubo Li <xiubli@redhat.com>
 
-fscrypt_get_encryption_info() has never actually been safe to call in a
-context that needs GFP_NOFS, since it calls crypto_alloc_skcipher().
+In client for each inode, it may have many opened files and may
+have been pinned in more than one MDS servers. And some inodes
+are idle, which have no any opened files.
 
-crypto_alloc_skcipher() isn't GFP_NOFS-safe, even if called under
-memalloc_nofs_save().  This is because it may load kernel modules, and
-also because it internally takes crypto_alg_sem.  Other tasks can do
-GFP_KERNEL allocations while holding crypto_alg_sem for write.
+This patch will show these metrics in the debugfs, likes:
 
-The use of fscrypt_init_mutex isn't GFP_NOFS-safe either.
+item                               total
+-----------------------------------------
+opened files  / total inodes       14 / 5
+pinned i_caps / total inodes       7  / 5
+opened inodes / total inodes       3  / 5
 
-So, stop pretending that fscrypt_get_encryption_info() is nofs-safe.
-I.e., when it allocates memory, just use GFP_KERNEL instead of GFP_NOFS.
+Will send these metrics to ceph, which will be used by the `fs top`,
+later.
 
-Note, another reason to do this is that GFP_NOFS is deprecated in favor
-of using memalloc_nofs_save() in the proper places.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+URL: https://tracker.ceph.com/issues/47005
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/crypto/inline_crypt.c | 7 ++-----
- fs/crypto/keysetup.c     | 2 +-
- fs/crypto/keysetup_v1.c  | 8 ++++----
- 3 files changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
-index faa25541ccb68..89bffa82ed74a 100644
---- a/fs/crypto/inline_crypt.c
-+++ b/fs/crypto/inline_crypt.c
-@@ -106,7 +106,7 @@ int fscrypt_select_encryption_impl(struct fscrypt_info *ci)
- 	crypto_cfg.data_unit_size = sb->s_blocksize;
- 	crypto_cfg.dun_bytes = fscrypt_get_dun_bytes(ci);
- 	num_devs = fscrypt_get_num_devices(sb);
--	devs = kmalloc_array(num_devs, sizeof(*devs), GFP_NOFS);
-+	devs = kmalloc_array(num_devs, sizeof(*devs), GFP_KERNEL);
- 	if (!devs)
- 		return -ENOMEM;
- 	fscrypt_get_devices(sb, num_devs, devs);
-@@ -135,9 +135,8 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
- 	struct fscrypt_blk_crypto_key *blk_key;
- 	int err;
- 	int i;
--	unsigned int flags;
+Changed in V2:
+- Add number of inodes that have opened files.
+- Remove the dir metrics and fold into files.
+
+
+ fs/ceph/caps.c    | 27 +++++++++++++++++++++++++--
+ fs/ceph/debugfs.c | 11 +++++++++++
+ fs/ceph/file.c    |  5 +++--
+ fs/ceph/inode.c   |  7 +++++++
+ fs/ceph/metric.c  | 14 ++++++++++++++
+ fs/ceph/metric.h  |  7 +++++++
+ fs/ceph/super.h   |  1 +
+ 7 files changed, 68 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index ad69c411afba..6916def40b3d 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -4283,13 +4283,23 @@ void __ceph_touch_fmode(struct ceph_inode_info *ci,
  
--	blk_key = kzalloc(struct_size(blk_key, devs, num_devs), GFP_NOFS);
-+	blk_key = kzalloc(struct_size(blk_key, devs, num_devs), GFP_KERNEL);
- 	if (!blk_key)
- 		return -ENOMEM;
- 
-@@ -166,10 +165,8 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
- 		}
- 		queue_refs++;
- 
--		flags = memalloc_nofs_save();
- 		err = blk_crypto_start_using_key(&blk_key->base,
- 						 blk_key->devs[i]);
--		memalloc_nofs_restore(flags);
- 		if (err) {
- 			fscrypt_err(inode,
- 				    "error %d starting to use blk-crypto", err);
-diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-index 6ac816d3e8478..ad64525ec6800 100644
---- a/fs/crypto/keysetup.c
-+++ b/fs/crypto/keysetup.c
-@@ -477,7 +477,7 @@ fscrypt_setup_encryption_info(struct inode *inode,
- 	struct key *master_key = NULL;
- 	int res;
- 
--	crypt_info = kmem_cache_zalloc(fscrypt_info_cachep, GFP_NOFS);
-+	crypt_info = kmem_cache_zalloc(fscrypt_info_cachep, GFP_KERNEL);
- 	if (!crypt_info)
- 		return -ENOMEM;
- 
-diff --git a/fs/crypto/keysetup_v1.c b/fs/crypto/keysetup_v1.c
-index a3cb52572b05c..2762c53504323 100644
---- a/fs/crypto/keysetup_v1.c
-+++ b/fs/crypto/keysetup_v1.c
-@@ -60,7 +60,7 @@ static int derive_key_aes(const u8 *master_key,
- 		goto out;
+ void ceph_get_fmode(struct ceph_inode_info *ci, int fmode, int count)
+ {
+-	int i;
++	struct ceph_mds_client *mdsc = ceph_ci_to_mdsc(ci);
+ 	int bits = (fmode << 1) | 1;
++	int i;
++
++	if (count == 1)
++		atomic64_inc(&mdsc->metric.opened_files);
++
+ 	spin_lock(&ci->i_ceph_lock);
+ 	for (i = 0; i < CEPH_FILE_MODE_BITS; i++) {
+ 		if (bits & (1 << i))
+ 			ci->i_nr_by_mode[i] += count;
  	}
- 	crypto_skcipher_set_flags(tfm, CRYPTO_TFM_REQ_FORBID_WEAK_KEYS);
--	req = skcipher_request_alloc(tfm, GFP_NOFS);
-+	req = skcipher_request_alloc(tfm, GFP_KERNEL);
- 	if (!req) {
- 		res = -ENOMEM;
- 		goto out;
-@@ -99,7 +99,7 @@ find_and_lock_process_key(const char *prefix,
- 	const struct user_key_payload *ukp;
- 	const struct fscrypt_key *payload;
++
++	if (!ci->is_opened && fmode) {
++		ci->is_opened = true;
++		percpu_counter_inc(&mdsc->metric.opened_inodes);
++	}
+ 	spin_unlock(&ci->i_ceph_lock);
+ }
  
--	description = kasprintf(GFP_NOFS, "%s%*phN", prefix,
-+	description = kasprintf(GFP_KERNEL, "%s%*phN", prefix,
- 				FSCRYPT_KEY_DESCRIPTOR_SIZE, descriptor);
- 	if (!description)
- 		return ERR_PTR(-ENOMEM);
-@@ -228,7 +228,7 @@ fscrypt_get_direct_key(const struct fscrypt_info *ci, const u8 *raw_key)
- 		return dk;
+@@ -4300,15 +4310,28 @@ void ceph_get_fmode(struct ceph_inode_info *ci, int fmode, int count)
+  */
+ void ceph_put_fmode(struct ceph_inode_info *ci, int fmode, int count)
+ {
+-	int i;
++	struct ceph_mds_client *mdsc = ceph_ci_to_mdsc(ci);
+ 	int bits = (fmode << 1) | 1;
++	bool empty = true;
++	int i;
++
++	if (count == 1)
++		atomic64_dec(&mdsc->metric.opened_files);
++
+ 	spin_lock(&ci->i_ceph_lock);
+ 	for (i = 0; i < CEPH_FILE_MODE_BITS; i++) {
+ 		if (bits & (1 << i)) {
+ 			BUG_ON(ci->i_nr_by_mode[i] < count);
+ 			ci->i_nr_by_mode[i] -= count;
++			if (ci->i_nr_by_mode[i] && i) /* Skip the pin ref */
++				empty = false;
+ 		}
+ 	}
++
++	if (ci->is_opened && empty && fmode) {
++		ci->is_opened = false;
++		percpu_counter_dec(&mdsc->metric.opened_inodes);
++	}
+ 	spin_unlock(&ci->i_ceph_lock);
+ }
  
- 	/* Nope, allocate one. */
--	dk = kzalloc(sizeof(*dk), GFP_NOFS);
-+	dk = kzalloc(sizeof(*dk), GFP_KERNEL);
- 	if (!dk)
- 		return ERR_PTR(-ENOMEM);
- 	refcount_set(&dk->dk_refcount, 1);
-@@ -272,7 +272,7 @@ static int setup_v1_file_key_derived(struct fscrypt_info *ci,
- 	 * This cannot be a stack buffer because it will be passed to the
- 	 * scatterlist crypto API during derive_key_aes().
- 	 */
--	derived_key = kmalloc(ci->ci_mode->keysize, GFP_NOFS);
-+	derived_key = kmalloc(ci->ci_mode->keysize, GFP_KERNEL);
- 	if (!derived_key)
- 		return -ENOMEM;
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index 97539b497e4c..9efd3982230d 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -148,6 +148,17 @@ static int metric_show(struct seq_file *s, void *p)
+ 	int nr_caps = 0;
+ 	s64 total, sum, avg, min, max, sq;
  
++	sum = percpu_counter_sum(&m->total_inodes);
++	seq_printf(s, "item                               total\n");
++	seq_printf(s, "------------------------------------------\n");
++	seq_printf(s, "%-35s%lld / %lld\n", "opened files  / total inodes",
++		   atomic64_read(&m->opened_files), sum);
++	seq_printf(s, "%-35s%lld / %lld\n", "pinned i_caps / total inodes",
++		   atomic64_read(&m->total_caps), sum);
++	seq_printf(s, "%-35s%lld / %lld\n", "opened inodes / total inodes",
++		   percpu_counter_sum(&m->opened_inodes), sum);
++
++	seq_printf(s, "\n");
+ 	seq_printf(s, "item          total       avg_lat(us)     min_lat(us)     max_lat(us)     stdev(us)\n");
+ 	seq_printf(s, "-----------------------------------------------------------------------------------\n");
+ 
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index c788cce7885b..6e2aed0f7f75 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -211,8 +211,9 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
+ 	BUG_ON(inode->i_fop->release != ceph_release);
+ 
+ 	if (isdir) {
+-		struct ceph_dir_file_info *dfi =
+-			kmem_cache_zalloc(ceph_dir_file_cachep, GFP_KERNEL);
++		struct ceph_dir_file_info *dfi;
++
++		dfi = kmem_cache_zalloc(ceph_dir_file_cachep, GFP_KERNEL);
+ 		if (!dfi)
+ 			return -ENOMEM;
+ 
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 39b1007903d9..1bedbe4737ec 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -426,6 +426,7 @@ static int ceph_fill_fragtree(struct inode *inode,
+  */
+ struct inode *ceph_alloc_inode(struct super_block *sb)
+ {
++	struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(sb);
+ 	struct ceph_inode_info *ci;
+ 	int i;
+ 
+@@ -485,6 +486,7 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
+ 	ci->i_last_rd = ci->i_last_wr = jiffies - 3600 * HZ;
+ 	for (i = 0; i < CEPH_FILE_MODE_BITS; i++)
+ 		ci->i_nr_by_mode[i] = 0;
++	ci->is_opened = false;
+ 
+ 	mutex_init(&ci->i_truncate_mutex);
+ 	ci->i_truncate_seq = 0;
+@@ -525,6 +527,8 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
+ 
+ 	ci->i_meta_err = 0;
+ 
++	percpu_counter_inc(&mdsc->metric.total_inodes);
++
+ 	return &ci->vfs_inode;
+ }
+ 
+@@ -539,6 +543,7 @@ void ceph_free_inode(struct inode *inode)
+ void ceph_evict_inode(struct inode *inode)
+ {
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
++	struct ceph_mds_client *mdsc = ceph_inode_to_mdsc(inode);
+ 	struct ceph_inode_frag *frag;
+ 	struct rb_node *n;
+ 
+@@ -592,6 +597,8 @@ void ceph_evict_inode(struct inode *inode)
+ 
+ 	ceph_put_string(rcu_dereference_raw(ci->i_layout.pool_ns));
+ 	ceph_put_string(rcu_dereference_raw(ci->i_cached_layout.pool_ns));
++
++	percpu_counter_dec(&mdsc->metric.total_inodes);
+ }
+ 
+ static inline blkcnt_t calc_inode_blocks(u64 size)
+diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
+index 2466b261fba2..c7c6fe6a383b 100644
+--- a/fs/ceph/metric.c
++++ b/fs/ceph/metric.c
+@@ -192,11 +192,23 @@ int ceph_metric_init(struct ceph_client_metric *m)
+ 	m->total_metadatas = 0;
+ 	m->metadata_latency_sum = 0;
+ 
++	atomic64_set(&m->opened_files, 0);
++	ret = percpu_counter_init(&m->opened_inodes, 0, GFP_KERNEL);
++	if (ret)
++		goto err_opened_inodes;
++	ret = percpu_counter_init(&m->opened_inodes, 0, GFP_KERNEL);
++	if (ret)
++		goto err_total_inodes;
++
+ 	m->session = NULL;
+ 	INIT_DELAYED_WORK(&m->delayed_work, metric_delayed_work);
+ 
+ 	return 0;
+ 
++err_total_inodes:
++	percpu_counter_destroy(&m->opened_inodes);
++err_opened_inodes:
++	percpu_counter_destroy(&m->i_caps_mis);
+ err_i_caps_mis:
+ 	percpu_counter_destroy(&m->i_caps_hit);
+ err_i_caps_hit:
+@@ -212,6 +224,8 @@ void ceph_metric_destroy(struct ceph_client_metric *m)
+ 	if (!m)
+ 		return;
+ 
++	percpu_counter_destroy(&m->total_inodes);
++	percpu_counter_destroy(&m->opened_inodes);
+ 	percpu_counter_destroy(&m->i_caps_mis);
+ 	percpu_counter_destroy(&m->i_caps_hit);
+ 	percpu_counter_destroy(&m->d_lease_mis);
+diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
+index 1d0959d669d7..710f3f1dceab 100644
+--- a/fs/ceph/metric.h
++++ b/fs/ceph/metric.h
+@@ -115,6 +115,13 @@ struct ceph_client_metric {
+ 	ktime_t metadata_latency_min;
+ 	ktime_t metadata_latency_max;
+ 
++	/* The total number of directories and files that are opened */
++	atomic64_t opened_files;
++
++	/* The total number of inodes that have opened files or directories */
++	struct percpu_counter opened_inodes;
++	struct percpu_counter total_inodes;
++
+ 	struct ceph_mds_session *session;
+ 	struct delayed_work delayed_work;  /* delayed work */
+ };
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 476d182c2ff0..852b755e2224 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -387,6 +387,7 @@ struct ceph_inode_info {
+ 	unsigned long i_last_rd;
+ 	unsigned long i_last_wr;
+ 	int i_nr_by_mode[CEPH_FILE_MODE_BITS];  /* open file counts */
++	bool is_opened; /* has opened files or directors */
+ 
+ 	struct mutex i_truncate_mutex;
+ 	u32 i_truncate_seq;        /* last truncate to smaller size */
 -- 
-2.28.0
+2.18.4
 
