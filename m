@@ -2,289 +2,142 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 89EE1250DEE
-	for <lists+ceph-devel@lfdr.de>; Tue, 25 Aug 2020 02:55:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53188250E24
+	for <lists+ceph-devel@lfdr.de>; Tue, 25 Aug 2020 03:20:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbgHYAzS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 24 Aug 2020 20:55:18 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45729 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728074AbgHYAzS (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 24 Aug 2020 20:55:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1598316916;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=avg4b5cFmGCDD1DFFW+2w990EkSynw700IiGFLJzL9M=;
-        b=Ro+pklZB39Bo4r79FaV+nlOaZ1DXEKM9nTGRLYEDq+pP0yJvLe0BJSgdv3EX3eBBq0VI/r
-        7p3n8NfpWhEUon8KmpgEhf3RGeiz9I6ksCEqNiP8pG/rO8etVxo7zUxzbj1K4NG1PAG3J0
-        z3E3z9TAaEj1U4GW5ech77ilzq2TIaQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-328-aCu3s603MIqn66ga_667dQ-1; Mon, 24 Aug 2020 20:55:11 -0400
-X-MC-Unique: aCu3s603MIqn66ga_667dQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D4D1F81F01A;
-        Tue, 25 Aug 2020 00:55:10 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (vm37-202.gsslab.pek2.redhat.com [10.72.37.202])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BBBED19C58;
-        Tue, 25 Aug 2020 00:55:08 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, zyan@redhat.com, pdonnell@redhat.com,
-        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v3 2/2] ceph: metrics for opened files, pinned caps and opened inodes
-Date:   Mon, 24 Aug 2020 20:54:54 -0400
-Message-Id: <20200825005454.2222920-3-xiubli@redhat.com>
-In-Reply-To: <20200825005454.2222920-1-xiubli@redhat.com>
-References: <20200825005454.2222920-1-xiubli@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+        id S1728400AbgHYBUl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Aug 2020 21:20:41 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5098 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726041AbgHYBUj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 24 Aug 2020 21:20:39 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f4466ef0000>; Mon, 24 Aug 2020 18:18:39 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 24 Aug 2020 18:20:38 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 24 Aug 2020 18:20:38 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 25 Aug
+ 2020 01:20:38 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 25 Aug 2020 01:20:38 +0000
+Received: from sandstorm.nvidia.com (Not Verified[10.2.53.36]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5f4467660001>; Mon, 24 Aug 2020 18:20:38 -0700
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     <willy@infradead.org>, <jlayton@kernel.org>
+CC:     <akpm@linux-foundation.org>, <axboe@kernel.dk>,
+        <ceph-devel@vger.kernel.org>, <hch@infradead.org>,
+        <idryomov@gmail.com>, <jhubbard@nvidia.com>,
+        <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-xfs@vger.kernel.org>, <viro@zeniv.linux.org.uk>
+Subject: [PATCH v2] fs/ceph: use pipe_get_pages_alloc() for pipe
+Date:   Mon, 24 Aug 2020 18:20:34 -0700
+Message-ID: <20200825012034.1962362-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200824185400.GE17456@casper.infradead.org>
+References: <20200824185400.GE17456@casper.infradead.org>
+MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598318319; bh=LeU6AwNAplziQ2ZfUIYvJCauSoR/ekxkghoX0Pth920=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
+         Content-Transfer-Encoding:Content-Type;
+        b=dJbhxmWVHB+ywuKvGhuzf3w1LZCEDf94YUwqDRfe9Q2Hr5/ds8ADrW5U+JzneKhXj
+         npXXJ055Qgt5hE0X44gz/QtrW2vXHRX9yuixWIiZnaM1olwc9O8Yj5U/4KTZmfiHeY
+         L/FC1LzwJsP6oTtzCYXH7Db7JrI54OthDvtnrk9EEJyg0tFZEpjiCU63NhQ/VmmuLE
+         uBZO7o5iBq6kpernShLqsNSEUmioemlhLvSfLCu2/2OAFEmodXF1Hn3H8cJaiEzrOx
+         OJWeBkzB6k6g6xYbUbzW/gBylQgHQAh367suhEv6p2S93O5intO7INmut3vnXhXTAp
+         IMSDCnFxRuYcw==
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+This reduces, by one, the number of callers of iov_iter_get_pages().
+That's helpful because these calls are being audited and converted over
+to use iov_iter_pin_user_pages(), where applicable. And this one here is
+already known by the caller to be only for ITER_PIPE, so let's just
+simplify it now.
 
-In client for each inode, it may have many opened files and may
-have been pinned in more than one MDS servers. And some inodes
-are idle, which have no any opened files.
-
-This patch will show these metrics in the debugfs, likes:
-
-item                               total
------------------------------------------
-opened files  / total inodes       14 / 5
-pinned i_caps / total inodes       7  / 5
-opened inodes / total inodes       3  / 5
-
-Will send these metrics to ceph, which will be used by the `fs top`,
-later.
-
-URL: https://tracker.ceph.com/issues/47005
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- fs/ceph/caps.c    | 27 +++++++++++++++++++++++++--
- fs/ceph/debugfs.c | 11 +++++++++++
- fs/ceph/file.c    |  5 +++--
- fs/ceph/inode.c   |  7 +++++++
- fs/ceph/metric.c  | 14 ++++++++++++++
- fs/ceph/metric.h  |  7 +++++++
- fs/ceph/super.h   |  1 +
- 7 files changed, 68 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index ad69c411afba..6916def40b3d 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -4283,13 +4283,23 @@ void __ceph_touch_fmode(struct ceph_inode_info *ci,
- 
- void ceph_get_fmode(struct ceph_inode_info *ci, int fmode, int count)
- {
--	int i;
-+	struct ceph_mds_client *mdsc = ceph_ci_to_mdsc(ci);
- 	int bits = (fmode << 1) | 1;
-+	int i;
-+
-+	if (count == 1)
-+		atomic64_inc(&mdsc->metric.opened_files);
-+
- 	spin_lock(&ci->i_ceph_lock);
- 	for (i = 0; i < CEPH_FILE_MODE_BITS; i++) {
- 		if (bits & (1 << i))
- 			ci->i_nr_by_mode[i] += count;
- 	}
-+
-+	if (!ci->is_opened && fmode) {
-+		ci->is_opened = true;
-+		percpu_counter_inc(&mdsc->metric.opened_inodes);
-+	}
- 	spin_unlock(&ci->i_ceph_lock);
- }
- 
-@@ -4300,15 +4310,28 @@ void ceph_get_fmode(struct ceph_inode_info *ci, int fmode, int count)
-  */
- void ceph_put_fmode(struct ceph_inode_info *ci, int fmode, int count)
- {
--	int i;
-+	struct ceph_mds_client *mdsc = ceph_ci_to_mdsc(ci);
- 	int bits = (fmode << 1) | 1;
-+	bool empty = true;
-+	int i;
-+
-+	if (count == 1)
-+		atomic64_dec(&mdsc->metric.opened_files);
-+
- 	spin_lock(&ci->i_ceph_lock);
- 	for (i = 0; i < CEPH_FILE_MODE_BITS; i++) {
- 		if (bits & (1 << i)) {
- 			BUG_ON(ci->i_nr_by_mode[i] < count);
- 			ci->i_nr_by_mode[i] -= count;
-+			if (ci->i_nr_by_mode[i] && i) /* Skip the pin ref */
-+				empty = false;
- 		}
- 	}
-+
-+	if (ci->is_opened && empty && fmode) {
-+		ci->is_opened = false;
-+		percpu_counter_dec(&mdsc->metric.opened_inodes);
-+	}
- 	spin_unlock(&ci->i_ceph_lock);
- }
- 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 97539b497e4c..9efd3982230d 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -148,6 +148,17 @@ static int metric_show(struct seq_file *s, void *p)
- 	int nr_caps = 0;
- 	s64 total, sum, avg, min, max, sq;
- 
-+	sum = percpu_counter_sum(&m->total_inodes);
-+	seq_printf(s, "item                               total\n");
-+	seq_printf(s, "------------------------------------------\n");
-+	seq_printf(s, "%-35s%lld / %lld\n", "opened files  / total inodes",
-+		   atomic64_read(&m->opened_files), sum);
-+	seq_printf(s, "%-35s%lld / %lld\n", "pinned i_caps / total inodes",
-+		   atomic64_read(&m->total_caps), sum);
-+	seq_printf(s, "%-35s%lld / %lld\n", "opened inodes / total inodes",
-+		   percpu_counter_sum(&m->opened_inodes), sum);
-+
-+	seq_printf(s, "\n");
- 	seq_printf(s, "item          total       avg_lat(us)     min_lat(us)     max_lat(us)     stdev(us)\n");
- 	seq_printf(s, "-----------------------------------------------------------------------------------\n");
- 
+OK, here's a v2 that does EXPORT_SYMBOL_GPL, instead of EXPORT_SYMBOL,
+that's the only change from v1. That should help give this patch a
+clear bill of passage. :)
+
+thanks,
+John Hubbard
+NVIDIA
+
+ fs/ceph/file.c      | 3 +--
+ include/linux/uio.h | 3 ++-
+ lib/iov_iter.c      | 6 +++---
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
 diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index c788cce7885b..6e2aed0f7f75 100644
+index d51c3f2fdca0..d3d7dd957390 100644
 --- a/fs/ceph/file.c
 +++ b/fs/ceph/file.c
-@@ -211,8 +211,9 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
- 	BUG_ON(inode->i_fop->release != ceph_release);
- 
- 	if (isdir) {
--		struct ceph_dir_file_info *dfi =
--			kmem_cache_zalloc(ceph_dir_file_cachep, GFP_KERNEL);
-+		struct ceph_dir_file_info *dfi;
-+
-+		dfi = kmem_cache_zalloc(ceph_dir_file_cachep, GFP_KERNEL);
- 		if (!dfi)
- 			return -ENOMEM;
- 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 39b1007903d9..1bedbe4737ec 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -426,6 +426,7 @@ static int ceph_fill_fragtree(struct inode *inode,
-  */
- struct inode *ceph_alloc_inode(struct super_block *sb)
- {
-+	struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(sb);
- 	struct ceph_inode_info *ci;
- 	int i;
- 
-@@ -485,6 +486,7 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
- 	ci->i_last_rd = ci->i_last_wr = jiffies - 3600 * HZ;
- 	for (i = 0; i < CEPH_FILE_MODE_BITS; i++)
- 		ci->i_nr_by_mode[i] = 0;
-+	ci->is_opened = false;
- 
- 	mutex_init(&ci->i_truncate_mutex);
- 	ci->i_truncate_seq = 0;
-@@ -525,6 +527,8 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
- 
- 	ci->i_meta_err = 0;
- 
-+	percpu_counter_inc(&mdsc->metric.total_inodes);
-+
- 	return &ci->vfs_inode;
+@@ -879,8 +879,7 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struc=
+t iov_iter *to,
+ 		more =3D len < iov_iter_count(to);
+=20
+ 		if (unlikely(iov_iter_is_pipe(to))) {
+-			ret =3D iov_iter_get_pages_alloc(to, &pages, len,
+-						       &page_off);
++			ret =3D pipe_get_pages_alloc(to, &pages, len, &page_off);
+ 			if (ret <=3D 0) {
+ 				ceph_osdc_put_request(req);
+ 				ret =3D -ENOMEM;
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 3835a8a8e9ea..270a4dcf5453 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -226,7 +226,8 @@ ssize_t iov_iter_get_pages(struct iov_iter *i, struct p=
+age **pages,
+ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i, struct page ***pages,
+ 			size_t maxsize, size_t *start);
+ int iov_iter_npages(const struct iov_iter *i, int maxpages);
+-
++ssize_t pipe_get_pages_alloc(struct iov_iter *i, struct page ***pages,
++			     size_t maxsize, size_t *start);
+ const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t fla=
+gs);
+=20
+ static inline size_t iov_iter_count(const struct iov_iter *i)
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 5e40786c8f12..6290998df480 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1355,9 +1355,8 @@ static struct page **get_pages_array(size_t n)
+ 	return kvmalloc_array(n, sizeof(struct page *), GFP_KERNEL);
  }
- 
-@@ -539,6 +543,7 @@ void ceph_free_inode(struct inode *inode)
- void ceph_evict_inode(struct inode *inode)
+=20
+-static ssize_t pipe_get_pages_alloc(struct iov_iter *i,
+-		   struct page ***pages, size_t maxsize,
+-		   size_t *start)
++ssize_t pipe_get_pages_alloc(struct iov_iter *i, struct page ***pages,
++			     size_t maxsize, size_t *start)
  {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
-+	struct ceph_mds_client *mdsc = ceph_inode_to_mdsc(inode);
- 	struct ceph_inode_frag *frag;
- 	struct rb_node *n;
- 
-@@ -592,6 +597,8 @@ void ceph_evict_inode(struct inode *inode)
- 
- 	ceph_put_string(rcu_dereference_raw(ci->i_layout.pool_ns));
- 	ceph_put_string(rcu_dereference_raw(ci->i_cached_layout.pool_ns));
-+
-+	percpu_counter_dec(&mdsc->metric.total_inodes);
+ 	struct page **p;
+ 	unsigned int iter_head, npages;
+@@ -1387,6 +1386,7 @@ static ssize_t pipe_get_pages_alloc(struct iov_iter *=
+i,
+ 		kvfree(p);
+ 	return n;
  }
- 
- static inline blkcnt_t calc_inode_blocks(u64 size)
-diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
-index 2466b261fba2..c7c6fe6a383b 100644
---- a/fs/ceph/metric.c
-+++ b/fs/ceph/metric.c
-@@ -192,11 +192,23 @@ int ceph_metric_init(struct ceph_client_metric *m)
- 	m->total_metadatas = 0;
- 	m->metadata_latency_sum = 0;
- 
-+	atomic64_set(&m->opened_files, 0);
-+	ret = percpu_counter_init(&m->opened_inodes, 0, GFP_KERNEL);
-+	if (ret)
-+		goto err_opened_inodes;
-+	ret = percpu_counter_init(&m->opened_inodes, 0, GFP_KERNEL);
-+	if (ret)
-+		goto err_total_inodes;
-+
- 	m->session = NULL;
- 	INIT_DELAYED_WORK(&m->delayed_work, metric_delayed_work);
- 
- 	return 0;
- 
-+err_total_inodes:
-+	percpu_counter_destroy(&m->opened_inodes);
-+err_opened_inodes:
-+	percpu_counter_destroy(&m->i_caps_mis);
- err_i_caps_mis:
- 	percpu_counter_destroy(&m->i_caps_hit);
- err_i_caps_hit:
-@@ -212,6 +224,8 @@ void ceph_metric_destroy(struct ceph_client_metric *m)
- 	if (!m)
- 		return;
- 
-+	percpu_counter_destroy(&m->total_inodes);
-+	percpu_counter_destroy(&m->opened_inodes);
- 	percpu_counter_destroy(&m->i_caps_mis);
- 	percpu_counter_destroy(&m->i_caps_hit);
- 	percpu_counter_destroy(&m->d_lease_mis);
-diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
-index 1d0959d669d7..710f3f1dceab 100644
---- a/fs/ceph/metric.h
-+++ b/fs/ceph/metric.h
-@@ -115,6 +115,13 @@ struct ceph_client_metric {
- 	ktime_t metadata_latency_min;
- 	ktime_t metadata_latency_max;
- 
-+	/* The total number of directories and files that are opened */
-+	atomic64_t opened_files;
-+
-+	/* The total number of inodes that have opened files or directories */
-+	struct percpu_counter opened_inodes;
-+	struct percpu_counter total_inodes;
-+
- 	struct ceph_mds_session *session;
- 	struct delayed_work delayed_work;  /* delayed work */
- };
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 476d182c2ff0..852b755e2224 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -387,6 +387,7 @@ struct ceph_inode_info {
- 	unsigned long i_last_rd;
- 	unsigned long i_last_wr;
- 	int i_nr_by_mode[CEPH_FILE_MODE_BITS];  /* open file counts */
-+	bool is_opened; /* has opened files or directors */
- 
- 	struct mutex i_truncate_mutex;
- 	u32 i_truncate_seq;        /* last truncate to smaller size */
--- 
-2.18.4
++EXPORT_SYMBOL_GPL(pipe_get_pages_alloc);
+=20
+ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+ 		   struct page ***pages, size_t maxsize,
+--=20
+2.28.0
 
