@@ -2,166 +2,159 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 55F0B251D1C
-	for <lists+ceph-devel@lfdr.de>; Tue, 25 Aug 2020 18:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6725F2521B3
+	for <lists+ceph-devel@lfdr.de>; Tue, 25 Aug 2020 22:13:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbgHYQWX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 25 Aug 2020 12:22:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54614 "EHLO mail.kernel.org"
+        id S1726391AbgHYUNa (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 25 Aug 2020 16:13:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725805AbgHYQWV (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 25 Aug 2020 12:22:21 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        id S1726149AbgHYUN3 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 25 Aug 2020 16:13:29 -0400
+Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 204672076C;
-        Tue, 25 Aug 2020 16:22:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 039D720738;
+        Tue, 25 Aug 2020 20:13:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598372540;
-        bh=Ob6Ya4sG/9TFYtRrP6g9VXPseZ2X38wAlcrlrPayfhY=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=yj+xSLQWrJYsteoxUDzI4203SRM4N7vwTUF/ZLxu3kZZTD61PsVNefCJ2heTYdXez
-         ZjUPhgm7YB7fwVIZoz++Avg+NgquXhY3ARdasGto7IuSRSJT7cNRqt1af9BdF/Zw0o
-         sQQn//fM6Q7RI/4QY5VStkEfy1CYo69EUGd8g2to=
-Message-ID: <578fb1e557d1990f768b7fdf5c6e4505db4c24e6.camel@kernel.org>
-Subject: Re: [PATCH v2] fs/ceph: use pipe_get_pages_alloc() for pipe
+        s=default; t=1598386408;
+        bh=dDKr53+7ttUJeZVS9IPyfzZqUJRglBH1P8qpU+3WGKg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BnqtAFcGT9p72ooyNcTYbP7UWw3pEPUBu4qSjA/DNrkRwVadQcOvUOxFtOvpW8hBZ
+         S02dpXGSZFKBNAsrYE0+gFWIeLoY7ul8DtXt4/oAJPLyZtFnrR0PxZA9aubK0sAbRk
+         DMJhyMnHR2FTjJ+P5mpZSYPJBe4Jp0pu64XlQPD0=
 From:   Jeff Layton <jlayton@kernel.org>
-To:     John Hubbard <jhubbard@nvidia.com>, willy@infradead.org
-Cc:     akpm@linux-foundation.org, axboe@kernel.dk,
-        ceph-devel@vger.kernel.org, hch@infradead.org, idryomov@gmail.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk,
-        "Yan, Zheng" <ukernel@gmail.com>
-Date:   Tue, 25 Aug 2020 12:22:17 -0400
-In-Reply-To: <20200825012034.1962362-1-jhubbard@nvidia.com>
-References: <20200824185400.GE17456@casper.infradead.org>
-         <20200825012034.1962362-1-jhubbard@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, ukernel@gmail.com, jhubbard@nvidia.com,
+        viro@zeniv.linux.org.uk
+Subject: [PATCH] ceph: drop special-casing for ITER_PIPE in ceph_sync_read
+Date:   Tue, 25 Aug 2020 16:13:26 -0400
+Message-Id: <20200825201326.286242-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2020-08-24 at 18:20 -0700, John Hubbard wrote:
-> This reduces, by one, the number of callers of iov_iter_get_pages().
-> That's helpful because these calls are being audited and converted over
-> to use iov_iter_pin_user_pages(), where applicable. And this one here is
-> already known by the caller to be only for ITER_PIPE, so let's just
-> simplify it now.
-> 
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
-> 
-> OK, here's a v2 that does EXPORT_SYMBOL_GPL, instead of EXPORT_SYMBOL,
-> that's the only change from v1. That should help give this patch a
-> clear bill of passage. :)
-> 
-> thanks,
-> John Hubbard
-> NVIDIA
-> 
->  fs/ceph/file.c      | 3 +--
->  include/linux/uio.h | 3 ++-
->  lib/iov_iter.c      | 6 +++---
->  3 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index d51c3f2fdca0..d3d7dd957390 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -879,8 +879,7 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
->  		more = len < iov_iter_count(to);
->  
->  		if (unlikely(iov_iter_is_pipe(to))) {
-> -			ret = iov_iter_get_pages_alloc(to, &pages, len,
-> -						       &page_off);
-> +			ret = pipe_get_pages_alloc(to, &pages, len, &page_off);
->  			if (ret <= 0) {
->  				ceph_osdc_put_request(req);
->  				ret = -ENOMEM;
-> diff --git a/include/linux/uio.h b/include/linux/uio.h
-> index 3835a8a8e9ea..270a4dcf5453 100644
-> --- a/include/linux/uio.h
-> +++ b/include/linux/uio.h
-> @@ -226,7 +226,8 @@ ssize_t iov_iter_get_pages(struct iov_iter *i, struct page **pages,
->  ssize_t iov_iter_get_pages_alloc(struct iov_iter *i, struct page ***pages,
->  			size_t maxsize, size_t *start);
->  int iov_iter_npages(const struct iov_iter *i, int maxpages);
-> -
-> +ssize_t pipe_get_pages_alloc(struct iov_iter *i, struct page ***pages,
-> +			     size_t maxsize, size_t *start);
->  const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t flags);
->  
->  static inline size_t iov_iter_count(const struct iov_iter *i)
-> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-> index 5e40786c8f12..6290998df480 100644
-> --- a/lib/iov_iter.c
-> +++ b/lib/iov_iter.c
-> @@ -1355,9 +1355,8 @@ static struct page **get_pages_array(size_t n)
->  	return kvmalloc_array(n, sizeof(struct page *), GFP_KERNEL);
->  }
->  
-> -static ssize_t pipe_get_pages_alloc(struct iov_iter *i,
-> -		   struct page ***pages, size_t maxsize,
-> -		   size_t *start)
-> +ssize_t pipe_get_pages_alloc(struct iov_iter *i, struct page ***pages,
-> +			     size_t maxsize, size_t *start)
->  {
->  	struct page **p;
->  	unsigned int iter_head, npages;
-> @@ -1387,6 +1386,7 @@ static ssize_t pipe_get_pages_alloc(struct iov_iter *i,
->  		kvfree(p);
->  	return n;
->  }
-> +EXPORT_SYMBOL_GPL(pipe_get_pages_alloc);
->  
->  ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
->  		   struct page ***pages, size_t maxsize,
+From: John Hubbard <jhubbard@nvidia.com>
 
-Thanks. I've got a v1 of this in the ceph-client/testing branch and it
-seems fine so far.
+This special casing was added in 7ce469a53e71 (ceph: fix splice
+read for no Fc capability case). The confirm callback for ITER_PIPE
+expects that the page is Uptodate or a pagecache page and and returns
+an error otherwise.
 
-I'd prefer an ack from Al on one or the other though, since I'm not sure
-he wants to expose this primitive, and in the past he hasn't been
-enamored with EXPORT_SYMBOL_GPL, because its meaning wasn't well
-defined. Maybe that's changed since.
+A simpler workaround is just to use the Uptodate bit, which has no
+meaning for anonymous pages. Rip out the special casing for ITER_PIPE
+and just SetPageUptodate before we copy to the iter.
 
-As a side note, Al also asked privately why ceph special cases
-ITER_PIPE. I wasn't sure either, so I did a bit of git-archaeology. The
-change was added here:
+Cc: "Yan, Zheng" <ukernel@gmail.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ fs/ceph/file.c | 71 +++++++++++++++++---------------------------------
+ 1 file changed, 24 insertions(+), 47 deletions(-)
 
----------------------------8<---------------------------
-commit
-7ce469a53e7106acdaca2e25027941d0f7c12a8e
-Author: Yan, Zheng <zyan@redhat.com>
-Date:   Tue Nov 8 21:54:34 2016 +0800
-
-    ceph: fix splice read for no Fc capability case
-    
-    When iov_iter type is ITER_PIPE, copy_page_to_iter() increases
-    the page's reference and add the page to a pipe_buffer. It also
-    set the pipe_buffer's ops to page_cache_pipe_buf_ops. The comfirm
-    callback in page_cache_pipe_buf_ops expects the page is from page
-    cache and uptodate, otherwise it return error.
-    
-    For ceph_sync_read() case, pages are not from page cache. So we
-    can't call copy_page_to_iter() when iov_iter type is ITER_PIPE.
-    The fix is using iov_iter_get_pages_alloc() to allocate pages
-    for the pipe. (the code is similar to default_file_splice_read)
-    
-    Signed-off-by: Yan, Zheng <zyan@redhat.com>
----------------------------8<---------------------------
-
-If we don't have Fc (FILE_CACHE) caps then the client's not allowed to
-cache data and so we can't use the pagecache. I'm not certain special
-casing pipes in ceph, is the best approach to handle that, but the
-confirm callback still seems to work the same way today.
-
-Cheers,
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index fb3ea715a19d..ed8fbfe3bddc 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -863,6 +863,8 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
+ 		size_t page_off;
+ 		u64 i_size;
+ 		bool more;
++		int idx;
++		size_t left;
+ 
+ 		req = ceph_osdc_new_request(osdc, &ci->i_layout,
+ 					ci->i_vino, off, &len, 0, 1,
+@@ -876,29 +878,13 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
+ 
+ 		more = len < iov_iter_count(to);
+ 
+-		if (unlikely(iov_iter_is_pipe(to))) {
+-			ret = iov_iter_get_pages_alloc(to, &pages, len,
+-						       &page_off);
+-			if (ret <= 0) {
+-				ceph_osdc_put_request(req);
+-				ret = -ENOMEM;
+-				break;
+-			}
+-			num_pages = DIV_ROUND_UP(ret + page_off, PAGE_SIZE);
+-			if (ret < len) {
+-				len = ret;
+-				osd_req_op_extent_update(req, 0, len);
+-				more = false;
+-			}
+-		} else {
+-			num_pages = calc_pages_for(off, len);
+-			page_off = off & ~PAGE_MASK;
+-			pages = ceph_alloc_page_vector(num_pages, GFP_KERNEL);
+-			if (IS_ERR(pages)) {
+-				ceph_osdc_put_request(req);
+-				ret = PTR_ERR(pages);
+-				break;
+-			}
++		num_pages = calc_pages_for(off, len);
++		page_off = off & ~PAGE_MASK;
++		pages = ceph_alloc_page_vector(num_pages, GFP_KERNEL);
++		if (IS_ERR(pages)) {
++			ceph_osdc_put_request(req);
++			ret = PTR_ERR(pages);
++			break;
+ 		}
+ 
+ 		osd_req_op_extent_osd_data_pages(req, 0, pages, len, page_off,
+@@ -929,32 +915,23 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
+ 			ret += zlen;
+ 		}
+ 
+-		if (unlikely(iov_iter_is_pipe(to))) {
+-			if (ret > 0) {
+-				iov_iter_advance(to, ret);
+-				off += ret;
+-			} else {
+-				iov_iter_advance(to, 0);
+-			}
+-			ceph_put_page_vector(pages, num_pages, false);
+-		} else {
+-			int idx = 0;
+-			size_t left = ret > 0 ? ret : 0;
+-			while (left > 0) {
+-				size_t len, copied;
+-				page_off = off & ~PAGE_MASK;
+-				len = min_t(size_t, left, PAGE_SIZE - page_off);
+-				copied = copy_page_to_iter(pages[idx++],
+-							   page_off, len, to);
+-				off += copied;
+-				left -= copied;
+-				if (copied < len) {
+-					ret = -EFAULT;
+-					break;
+-				}
++		idx = 0;
++		left = ret > 0 ? ret : 0;
++		while (left > 0) {
++			size_t len, copied;
++			page_off = off & ~PAGE_MASK;
++			len = min_t(size_t, left, PAGE_SIZE - page_off);
++			SetPageUptodate(pages[idx]);
++			copied = copy_page_to_iter(pages[idx++],
++						   page_off, len, to);
++			off += copied;
++			left -= copied;
++			if (copied < len) {
++				ret = -EFAULT;
++				break;
+ 			}
+-			ceph_release_page_vector(pages, num_pages);
+ 		}
++		ceph_release_page_vector(pages, num_pages);
+ 
+ 		if (ret < 0) {
+ 			if (ret == -EBLACKLISTED)
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.26.2
 
