@@ -2,163 +2,80 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ABD32540E1
-	for <lists+ceph-devel@lfdr.de>; Thu, 27 Aug 2020 10:31:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1192825496B
+	for <lists+ceph-devel@lfdr.de>; Thu, 27 Aug 2020 17:29:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbgH0Ia7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 27 Aug 2020 04:30:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58220 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726395AbgH0Ia5 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 27 Aug 2020 04:30:57 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78DE1C061264;
-        Thu, 27 Aug 2020 01:30:57 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id kx11so2221377pjb.5;
-        Thu, 27 Aug 2020 01:30:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tm5UyWFyhKPtuv3cWQrYQMoHEt8xl5m5RQNN6i1Hdws=;
-        b=RWRAKdEtzJXdCfFt/TgZnRjFh/MtUqq6ka6vfUrC6BLyjEeXCztTrFXj2iRm3qdBO8
-         PbsZmq7O4Qg163Ln0PLdRPFGr/iamWqrdU0+A0DVJYDd1yfhq+DKEeFdkx2+VqOudkqI
-         d9bnPOdot2M6hlM8+O3VWGN5SuqStxM/ahvymM2PAyUHKvoh7oaSTf/IzgBw4DvL2uhU
-         F7RgBbCVn2rUxJt1zJu5e2c8ksZfOempfObxue6ftX4iC+/JAdYW/7NG1Z3YIJ3ytN84
-         BVbKhtcu4nYaWmgf3HSaBFicUT2u/+ARKF5RNc9jILNN7dhG/4lOH4yHzMjNF0slUi0i
-         oxQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tm5UyWFyhKPtuv3cWQrYQMoHEt8xl5m5RQNN6i1Hdws=;
-        b=jfU37++vI+nYEAVOlnNoFBI6ucPwhQedTPPFswtsOUx+VaJyeZHeWyf/aTvqNuGAv9
-         ITHzE+ILQ+Cun5ZFEQBnzndGlshdje9mqktwMhh8l5+fMdAbfAB05FumzaOTXMcMk1XL
-         Cm2WpEqTxAJBZKVBRGlOc2uBRr/KcTPXE6LPMiur6Q8MPdNNhwCEYT2h5eFLGPVVcvbM
-         Rp20ERapBFrgQQMiBBN0tIWi8NWpgk0aSYxw8bcgZy+24y7dd4hTB9JgCTEZULIMX+pC
-         /Ir5mp7kLvEDVLV9XUfKsZD7nRy6EnkTG6BuKodP0MR96Ddk2/tgfWvw6gKfh29FA77Y
-         L0mg==
-X-Gm-Message-State: AOAM530Z8bmSa6IEBDyBBpbkyIZ0JwnVBXKyzn3IQnsSGUZuxpLHmbc3
-        kB9iKWRaipIlb0sBhZGFHNVVTsN7q5uMcA==
-X-Google-Smtp-Source: ABdhPJyqinOe9Iy+KegRclSEt8DWA2/+13Ip+X015ifKPrrLe8XLUgJMHWHeJtvxNtUKgGL1RMhMKQ==
-X-Received: by 2002:a17:90a:f48e:: with SMTP id bx14mr9233135pjb.233.1598517056869;
-        Thu, 27 Aug 2020 01:30:56 -0700 (PDT)
-Received: from localhost.localdomain ([122.224.153.227])
-        by smtp.gmail.com with ESMTPSA id l13sm1529068pgq.33.2020.08.27.01.30.53
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Aug 2020 01:30:56 -0700 (PDT)
-From:   Yanhu Cao <gmayyyha@gmail.com>
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yanhu Cao <gmayyyha@gmail.com>
-Subject: [PATCH] ceph: support getting ceph.dir.rsnaps vxattr
-Date:   Thu, 27 Aug 2020 16:30:47 +0800
-Message-Id: <20200827083047.9478-1-gmayyyha@gmail.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+        id S1726867AbgH0P3J (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 27 Aug 2020 11:29:09 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59809 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726825AbgH0P3I (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 27 Aug 2020 11:29:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598542146;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+kaDLLF1f55NCIko0/llJRLFGMqoBN4rwHWmAV1FCCk=;
+        b=F2cJBMMYJY73NsbdUIafpW3IKZP3ILqr91GfzK6tOgeMZAY5/T6anXHMvKE/stNzAqrzyh
+        8ybzke+A24Dr9eb9Oy2E+o6YnMoOtvf89Kln3LM9e/SJSXT9n6bJHk23mSVuC1euayhekT
+        1Xd5DRMqc7vjljfA/bSpsNOWbqmZVf0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-425-9dtdZprBOgSEsWY5L1TUOg-1; Thu, 27 Aug 2020 11:29:05 -0400
+X-MC-Unique: 9dtdZprBOgSEsWY5L1TUOg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 56CE310ABDC2;
+        Thu, 27 Aug 2020 15:29:02 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 14FE85C1C2;
+        Thu, 27 Aug 2020 15:28:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200810164044.GA31753@lst.de>
+References: <20200810164044.GA31753@lst.de> <1851200.1596472222@warthog.procyon.org.uk> <447452.1596109876@warthog.procyon.org.uk> <667820.1597072619@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] fscache rewrite -- please drop for now
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1428310.1598542135.1@warthog.procyon.org.uk>
+Date:   Thu, 27 Aug 2020 16:28:55 +0100
+Message-ID: <1428311.1598542135@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-It's easy to know how many snapshots have been created.
+Christoph Hellwig <hch@lst.de> wrote:
 
-Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
----
- fs/ceph/inode.c      | 1 +
- fs/ceph/mds_client.c | 4 +++-
- fs/ceph/mds_client.h | 1 +
- fs/ceph/super.h      | 2 +-
- fs/ceph/xattr.c      | 7 +++++++
- 5 files changed, 13 insertions(+), 2 deletions(-)
+> FYI, a giant rewrite dropping support for existing consumer is always
+> rather awkward.  Is there any way you could pre-stage some infrastructure
+> changes, and then do a temporary fscache2, which could then be renamed
+> back to fscache once everyone switched over?
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 357c937699d5..650cad4b3ecb 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -891,6 +891,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
- 			ci->i_rfiles = le64_to_cpu(info->rfiles);
- 			ci->i_rsubdirs = le64_to_cpu(info->rsubdirs);
- 			ci->i_dir_pin = iinfo->dir_pin;
-+			ci->i_rsnaps = iinfo->rsnaps;
- 			ceph_decode_timespec64(&ci->i_rctime, &info->rctime);
- 		}
- 	}
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 4a26862d7667..35fdbefa676e 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -172,8 +172,10 @@ static int parse_reply_info_in(void **p, void *end,
- 			ceph_decode_need(p, end, sizeof(info->snap_btime), bad);
- 			ceph_decode_copy(p, &info->snap_btime,
- 					 sizeof(info->snap_btime));
-+			ceph_decode_64_safe(p, end, info->rsnaps, bad);
- 		} else {
- 			memset(&info->snap_btime, 0, sizeof(info->snap_btime));
-+			info->rsnaps = 0;
- 		}
- 
- 		*p = end;
-@@ -214,7 +216,7 @@ static int parse_reply_info_in(void **p, void *end,
- 		}
- 
- 		info->dir_pin = -ENODATA;
--		/* info->snap_btime remains zero */
-+		/* info->snap_btime and info->rsnaps remain zero */
- 	}
- 	return 0;
- bad:
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index bc9e95937d7c..76f2ed1a7cbf 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -88,6 +88,7 @@ struct ceph_mds_reply_info_in {
- 	s32 dir_pin;
- 	struct ceph_timespec btime;
- 	struct ceph_timespec snap_btime;
-+	u64 rsnaps;
- 	u64 change_attr;
- };
- 
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 4c3c964b1c54..eb108b69da71 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -332,7 +332,7 @@ struct ceph_inode_info {
- 
- 	/* for dirs */
- 	struct timespec64 i_rctime;
--	u64 i_rbytes, i_rfiles, i_rsubdirs;
-+	u64 i_rbytes, i_rfiles, i_rsubdirs, i_rsnaps;
- 	u64 i_files, i_subdirs;
- 
- 	/* quotas */
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index 3a733ac33d9b..c7d8ecc3d04b 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -231,6 +231,12 @@ static ssize_t ceph_vxattrcb_dir_rsubdirs(struct ceph_inode_info *ci, char *val,
- 	return ceph_fmt_xattr(val, size, "%lld", ci->i_rsubdirs);
- }
- 
-+static ssize_t ceph_vxattrcb_dir_rsnaps(struct ceph_inode_info *ci, char *val,
-+					  size_t size)
-+{
-+	return ceph_fmt_xattr(val, size, "%lld", ci->i_rsnaps);
-+}
-+
- static ssize_t ceph_vxattrcb_dir_rbytes(struct ceph_inode_info *ci, char *val,
- 					size_t size)
- {
-@@ -352,6 +358,7 @@ static struct ceph_vxattr ceph_dir_vxattrs[] = {
- 	XATTR_RSTAT_FIELD(dir, rentries),
- 	XATTR_RSTAT_FIELD(dir, rfiles),
- 	XATTR_RSTAT_FIELD(dir, rsubdirs),
-+	XATTR_RSTAT_FIELD(dir, rsnaps),
- 	XATTR_RSTAT_FIELD(dir, rbytes),
- 	XATTR_RSTAT_FIELD(dir, rctime),
- 	{
--- 
-2.24.3 (Apple Git-128)
+That's a bit tricky.  There are three points that would have to be shared: the
+userspace miscdev interface, the backing filesystem and the single index tree.
+
+It's probably easier to just have a go at converting 9P and cifs.  Making the
+old and new APIs share would be a fairly hefty undertaking in its own right.
+
+David
 
