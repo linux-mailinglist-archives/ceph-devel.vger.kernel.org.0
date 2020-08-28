@@ -2,84 +2,167 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F341B254BD2
-	for <lists+ceph-devel@lfdr.de>; Thu, 27 Aug 2020 19:15:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE2EA255289
+	for <lists+ceph-devel@lfdr.de>; Fri, 28 Aug 2020 03:29:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbgH0RPM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 27 Aug 2020 13:15:12 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:46988 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727049AbgH0RPD (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 27 Aug 2020 13:15:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1598548502;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=GrVYnBCf9kRNkO91LHLOEFgKkaeauQRklIlZEj330sM=;
-        b=QDTsnzF6glDB6U9NwZEtovO4Ag33K2BfBZQMJfUVlHxMfMYN/7dCZRgxmv0LQXQfCS1vrs
-        C5r/KHm2yAj739uYtnvlhatbOhiuAmxTtpdOegQgn2dVMDglQi3o2GmWX9PjpxXXbsTKzE
-        d3hEUgqiRTNHCCD2QYVqj9r7obUUlNE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-128-TWlJB8AvNcWZABSKUagUMQ-1; Thu, 27 Aug 2020 13:14:59 -0400
-X-MC-Unique: TWlJB8AvNcWZABSKUagUMQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8FA2D425D6;
-        Thu, 27 Aug 2020 17:14:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 826CC610AF;
-        Thu, 27 Aug 2020 17:14:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200827161824.GC31016@nautica>
-References: <20200827161824.GC31016@nautica> <20200810164044.GA31753@lst.de> <1851200.1596472222@warthog.procyon.org.uk> <447452.1596109876@warthog.procyon.org.uk> <667820.1597072619@warthog.procyon.org.uk> <1428311.1598542135@warthog.procyon.org.uk>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     dhowells@redhat.com, Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] fscache rewrite -- please drop for now
+        id S1727972AbgH1B3E (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 27 Aug 2020 21:29:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47828 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726147AbgH1B3C (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 27 Aug 2020 21:29:02 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449A1C061264;
+        Thu, 27 Aug 2020 18:29:02 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id o68so1067432pfg.2;
+        Thu, 27 Aug 2020 18:29:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Rnno2/T7wXNQk8LQzZCrOzlnI6hdthPrV/zV4qtrmt8=;
+        b=MPj+EbW1lhUSca2A5cNXiwKkMgiFGKouf0AYN6Mrq3tqOJPsenpfSYALWqEQ2N3a/E
+         IZkW0t5bTDDxdBmxTaXBFbdw2ETaKWh5/N6RBRot107qPV4rMqMNNnJiJZdlvkjkGh+0
+         EMrWR14frsWLJYNX5MWODFeT04pWq3kpBbK0BPdh4urOgBtBc6P+SNNlWRN9nStYOF9c
+         xcAEw6vZLSFgnk//ScMeb8z1DbXAvuaD4Kr7O7EY0yggkvGtHAtRNcd+XI1InE1LU4DP
+         VnahHGU1egrOogI1NL/j4X5097LTX636BKfcHvDU9w3Gqi4/efdn///hgCZFClUvkcZD
+         NXUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Rnno2/T7wXNQk8LQzZCrOzlnI6hdthPrV/zV4qtrmt8=;
+        b=PQwlWLQsLVBv/4MSn/1N6lg8xpi2Q+S2DuuHHKN5mabaZSdZAlL07AneJ2kRBEshYl
+         +iOdoMwx7YwpxGR+g75aXDhMrMIaxwKovvIL86NJsS8iNARuFipL4MLvDf3peelKfC7L
+         SHYCudzUQ/EoYNPZyzQ/pg0STxWaV75B346I50+2qEG9QR7Dl+K2gubF8/DLCImFOg2w
+         FNX8nzY5qSHP3O2ER/ON8QBPSjZrW69O5r9fcpB+99oIqAsinKWNvsQ0xW0wCptS0c9s
+         NA7Hd3scx4cirNKZZ2+xodMj9UPEhJxffdwcRYd4FxY4IPz/WyuKBSRjP8q1JRahTNQ3
+         9xaA==
+X-Gm-Message-State: AOAM532BLu5SwTa8DeHv4EzigOfaJA6A4KB7xZnkMQQ3Yxey4ZUAsILt
+        VJHaHtzPkzlAuFXwpVhDMn1k6nouF43gpQ==
+X-Google-Smtp-Source: ABdhPJwLIO8/F4+zfjENIhbPR96oB4UTud2Dx8+j1bEmApg/0JQ2VOJYQuRHxEKCK5fCH04WrprYyw==
+X-Received: by 2002:a17:902:b282:: with SMTP id u2mr12741468plr.47.1598578141662;
+        Thu, 27 Aug 2020 18:29:01 -0700 (PDT)
+Received: from localhost.localdomain ([122.224.153.227])
+        by smtp.gmail.com with ESMTPSA id i11sm3730715pjg.50.2020.08.27.18.28.59
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Aug 2020 18:29:00 -0700 (PDT)
+From:   Yanhu Cao <gmayyyha@gmail.com>
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yanhu Cao <gmayyyha@gmail.com>
+Subject: [v2] ceph: support getting ceph.dir.rsnaps vxattr
+Date:   Fri, 28 Aug 2020 09:28:44 +0800
+Message-Id: <20200828012844.18937-1-gmayyyha@gmail.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1442568.1598548486.1@warthog.procyon.org.uk>
-Date:   Thu, 27 Aug 2020 18:14:46 +0100
-Message-ID: <1442569.1598548486@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dominique Martinet <asmadeus@codewreck.org> wrote:
+It's easy to know how many snapshots have been created.
 
-> Should I submit patches to you or wait until Linus merges it next cycle
-> and send them directly?
-> 
-> I see Jeff's ceph patches are still in his tree's ceph-fscache-iter
-> branch and I don't see them anywhere in your tree.
+Link: https://tracker.ceph.com/issues/47168
+Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+---
+ fs/ceph/inode.c      | 1 +
+ fs/ceph/mds_client.c | 9 ++++++++-
+ fs/ceph/mds_client.h | 1 +
+ fs/ceph/super.h      | 2 +-
+ fs/ceph/xattr.c      | 7 +++++++
+ 5 files changed, 18 insertions(+), 2 deletions(-)
 
-I really want them to all go in the same window, but there may be a
-requirement for some filesystem-specific sets (eg. NFS) to go via the
-maintainer tree.
-
-Btw, at the moment, I'm looking at making the fscache read helper support the
-new ->readahead() op.
-
-David
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 357c937699d5..650cad4b3ecb 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -891,6 +891,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+ 			ci->i_rfiles = le64_to_cpu(info->rfiles);
+ 			ci->i_rsubdirs = le64_to_cpu(info->rsubdirs);
+ 			ci->i_dir_pin = iinfo->dir_pin;
++			ci->i_rsnaps = iinfo->rsnaps;
+ 			ceph_decode_timespec64(&ci->i_rctime, &info->rctime);
+ 		}
+ 	}
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 4a26862d7667..3466845c0179 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -176,6 +176,13 @@ static int parse_reply_info_in(void **p, void *end,
+ 			memset(&info->snap_btime, 0, sizeof(info->snap_btime));
+ 		}
+ 
++		/* snapshot count, remains zero for v<=3 */
++		if (struct_v >= 4) {
++			ceph_decode_64_safe(p, end, info->rsnaps, bad);
++		} else {
++			info->rsnaps = 0;
++		}
++
+ 		*p = end;
+ 	} else {
+ 		if (features & CEPH_FEATURE_MDS_INLINE_DATA) {
+@@ -214,7 +221,7 @@ static int parse_reply_info_in(void **p, void *end,
+ 		}
+ 
+ 		info->dir_pin = -ENODATA;
+-		/* info->snap_btime remains zero */
++		/* info->snap_btime and info->rsnaps remain zero */
+ 	}
+ 	return 0;
+ bad:
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index bc9e95937d7c..76f2ed1a7cbf 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -88,6 +88,7 @@ struct ceph_mds_reply_info_in {
+ 	s32 dir_pin;
+ 	struct ceph_timespec btime;
+ 	struct ceph_timespec snap_btime;
++	u64 rsnaps;
+ 	u64 change_attr;
+ };
+ 
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 4c3c964b1c54..eb108b69da71 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -332,7 +332,7 @@ struct ceph_inode_info {
+ 
+ 	/* for dirs */
+ 	struct timespec64 i_rctime;
+-	u64 i_rbytes, i_rfiles, i_rsubdirs;
++	u64 i_rbytes, i_rfiles, i_rsubdirs, i_rsnaps;
+ 	u64 i_files, i_subdirs;
+ 
+ 	/* quotas */
+diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+index 3a733ac33d9b..c7d8ecc3d04b 100644
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -231,6 +231,12 @@ static ssize_t ceph_vxattrcb_dir_rsubdirs(struct ceph_inode_info *ci, char *val,
+ 	return ceph_fmt_xattr(val, size, "%lld", ci->i_rsubdirs);
+ }
+ 
++static ssize_t ceph_vxattrcb_dir_rsnaps(struct ceph_inode_info *ci, char *val,
++					  size_t size)
++{
++	return ceph_fmt_xattr(val, size, "%lld", ci->i_rsnaps);
++}
++
+ static ssize_t ceph_vxattrcb_dir_rbytes(struct ceph_inode_info *ci, char *val,
+ 					size_t size)
+ {
+@@ -352,6 +358,7 @@ static struct ceph_vxattr ceph_dir_vxattrs[] = {
+ 	XATTR_RSTAT_FIELD(dir, rentries),
+ 	XATTR_RSTAT_FIELD(dir, rfiles),
+ 	XATTR_RSTAT_FIELD(dir, rsubdirs),
++	XATTR_RSTAT_FIELD(dir, rsnaps),
+ 	XATTR_RSTAT_FIELD(dir, rbytes),
+ 	XATTR_RSTAT_FIELD(dir, rctime),
+ 	{
+-- 
+2.24.3 (Apple Git-128)
 
