@@ -2,38 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5345A257D95
-	for <lists+ceph-devel@lfdr.de>; Mon, 31 Aug 2020 17:39:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07B36257D41
+	for <lists+ceph-devel@lfdr.de>; Mon, 31 Aug 2020 17:36:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729270AbgHaPi4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 31 Aug 2020 11:38:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39480 "EHLO mail.kernel.org"
+        id S1729077AbgHaPfu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 31 Aug 2020 11:35:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728550AbgHaPaO (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 31 Aug 2020 11:30:14 -0400
+        id S1728782AbgHaPbB (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 31 Aug 2020 11:31:01 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7AC2B20767;
-        Mon, 31 Aug 2020 15:30:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1AEC207EA;
+        Mon, 31 Aug 2020 15:30:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598887814;
-        bh=enPaakcvPoIVnN5PoXGGX7Ex4yMClA/+TEGHC+05xf0=;
+        s=default; t=1598887860;
+        bh=Dcf93mKEgs5Nb0juHs3Z+zzdewK0LmOFRf8HwPR6m0U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SpUsS9h59eRyWCiWfYxY1/llhcIZi+OTLbzc2BHD3mOaxPYzliIO4wMIjWYd3Yfwr
-         aliK2vMe8VHdJ8doAltYZ8NVDC+1FdJGvDuglwX5XEbTUZsTmQGjG6TOXsPzvQ8UGN
-         ZicyYFumvibmi+20QgZbdgvEq7OCAfjNCAKCC5Qw=
+        b=wyZFp+OqcEkzumtQu17kvXxwjY/0SQAwHMRhGn4ai+oYaZyUC1NMVcUyxkbEGb/tr
+         YzIcFFXMW0c443jGDyy0o2IcOLp1nTyOsSgkShmd9irUSq3I3W013me7W/TglAMN8E
+         XzVD+uySuf7o2EJhCGhy4URa7BpZSw0OnL629Fds=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.8 26/42] ceph: don't allow setlease on cephfs
-Date:   Mon, 31 Aug 2020 11:29:18 -0400
-Message-Id: <20200831152934.1023912-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 13/23] ceph: don't allow setlease on cephfs
+Date:   Mon, 31 Aug 2020 11:30:29 -0400
+Message-Id: <20200831153039.1024302-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200831152934.1023912-1-sashal@kernel.org>
-References: <20200831152934.1023912-1-sashal@kernel.org>
+In-Reply-To: <20200831153039.1024302-1-sashal@kernel.org>
+References: <20200831153039.1024302-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -63,10 +63,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 26172bb90a459..c53c1499f7c58 100644
+index ce54a1b12819b..dc97a7fd81315 100644
 --- a/fs/ceph/file.c
 +++ b/fs/ceph/file.c
-@@ -2506,6 +2506,7 @@ const struct file_operations ceph_file_fops = {
+@@ -2197,6 +2197,7 @@ const struct file_operations ceph_file_fops = {
  	.mmap = ceph_mmap,
  	.fsync = ceph_fsync,
  	.lock = ceph_lock,
