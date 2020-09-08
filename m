@@ -2,39 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C4E4261285
-	for <lists+ceph-devel@lfdr.de>; Tue,  8 Sep 2020 16:20:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67F922614C8
+	for <lists+ceph-devel@lfdr.de>; Tue,  8 Sep 2020 18:36:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729941AbgIHOTm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 8 Sep 2020 10:19:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38076 "EHLO mail.kernel.org"
+        id S1732003AbgIHQgp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 8 Sep 2020 12:36:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729767AbgIHOSk (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 8 Sep 2020 10:18:40 -0400
+        id S1732020AbgIHQbi (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 8 Sep 2020 12:31:38 -0400
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7C60221F1;
-        Tue,  8 Sep 2020 12:51:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2522821532;
+        Tue,  8 Sep 2020 12:09:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599569485;
-        bh=Lq/m2LPdqnwOctTs+nOjofy+rsfGEQCpMl8dlnIOh4c=;
+        s=default; t=1599566955;
+        bh=zqEJfVUqeIO7gcyXpU/RQrWv768uPLWmdl436rYkjNc=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=yZdpr/ddGJxxizY9JVsTKHxaWDmuANe0cl9Rjj+BRzUSiRf0fO8mtvGikccKpJX4q
-         36QLsG5rZXH+BdXQq1sElgt6bxjxwtjq/WFETHMOb4ng3fwzK4LZy1havGANOEINQe
-         yvxaYF0RFa9gIV5+ZIUFAjI5ZQ9g6lW3JJvOfs9w=
-Message-ID: <e176e6263a0da72bfbef5f373bff18e46be173ae.camel@kernel.org>
-Subject: Re: [RFC PATCH v2 07/18] lib: lift fscrypt base64 conversion into
- lib/
+        b=r9MkgzRhGCgNzfrsZE+kpQFUDyFuFOrz2OR0FWyHBwTO4LxMOkcSNzC3d7+5tPFiJ
+         1dy/zgm27I9gPVSxdDLb5x7mtq0x55XpOtkZQkWfXLkyILImR/J06QW8FDa4VegxBc
+         G9G5UKPR47OUmugugGbU3Y9WaSyowIwN9Wb6Dh+4=
+Message-ID: <b71271c9573032c74eca352fdf4a9db2d2fbec3e.camel@kernel.org>
+Subject: Re: [RFC PATCH v2 00/18] ceph+fscrypt: context, filename and
+ symlink support
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Eric Biggers <ebiggers@kernel.org>
 Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-fscrypt@vger.kernel.org
-Date:   Tue, 08 Sep 2020 08:51:23 -0400
-In-Reply-To: <20200908035956.GH68127@sol.localdomain>
+Date:   Tue, 08 Sep 2020 08:09:14 -0400
+In-Reply-To: <20200908055446.GP68127@sol.localdomain>
 References: <20200904160537.76663-1-jlayton@kernel.org>
-         <20200904160537.76663-8-jlayton@kernel.org>
-         <20200908035956.GH68127@sol.localdomain>
+         <20200908055446.GP68127@sol.localdomain>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
@@ -44,61 +43,44 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2020-09-07 at 20:59 -0700, Eric Biggers wrote:
-> On Fri, Sep 04, 2020 at 12:05:26PM -0400, Jeff Layton wrote:
-> > Once we allow encrypted filenames on ceph we'll end up with names that
-> > may have illegal characters in them (embedded '\0' or '/'), or
-> > characters that aren't printable.
-> > 
-> > It will be safer to use strings that are printable. It turns out that the
-> > MDS doesn't really care about the length of filenames, so we can just
-> > base64 encode and decode filenames before writing and reading them.
-> > 
-> > Lift the base64 implementation that's in fscrypt into lib/. Make fscrypt
-> > select it when it's enabled.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/crypto/Kconfig            |  1 +
-> >  fs/crypto/fname.c            | 64 ++------------------------------
-> >  include/linux/base64_fname.h | 11 ++++++
-> >  lib/Kconfig                  |  3 ++
-> >  lib/Makefile                 |  1 +
-> >  lib/base64_fname.c           | 71 ++++++++++++++++++++++++++++++++++++
-> >  6 files changed, 90 insertions(+), 61 deletions(-)
-> >  create mode 100644 include/linux/base64_fname.h
-> >  create mode 100644 lib/base64_fname.c
-> > 
+On Mon, 2020-09-07 at 22:54 -0700, Eric Biggers wrote:
+> On Fri, Sep 04, 2020 at 12:05:19PM -0400, Jeff Layton wrote:
+> > This is a second posting of the ceph+fscrypt integration work that I've
+> > been experimenting with. The main change with this patch is that I've
+> > based this on top of Eric's fscrypt-pending set. That necessitated a
+> > change to allocate inodes much earlier than we have traditionally, prior
+> > to sending an RPC instead of waiting on the reply.
 > 
-> I'm still concerned that this functionality is too specific to belong in lib/ at
-> the moment, given that it's not the most commonly used variant of base64.  How
-> about keeping these functions in fs/crypto/ for now?  You can call them
-> fscrypt_base64_encode() and fscrypt_base64_decode() and export them for ceph to
-> use.
+> FWIW, if possible you should create a git tag or branch for your patchset.
+> While just the mailed patches work fine for *me* for this particular patchset,
+> other people may not be able to figure out what the patchset applies to.
+> (In particular, it depends on another patchset:
+> https://lkml.kernel.org/r/20200824061712.195654-1-ebiggers@kernel.org)
 > 
 
-Ok, will do.
+I've tagged this out as 'ceph-fscrypt-rfc.2' in my kernel.org tree (the
+first posting is ceph-fscrypt-rfc.1).
 
-> > diff --git a/lib/base64_fname.c b/lib/base64_fname.c
-> > new file mode 100644
-> > index 000000000000..7638c45e4035
-> > --- /dev/null
-> > +++ b/lib/base64_fname.c
-> > @@ -0,0 +1,71 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Modified base64 encode/decode functions, suitable for use as filename components.
-> > + *
-> > + * Originally lifted from fs/crypto/fname.c
-> > + *
-> > + * Copyright (C) 2015, Jaegeuk Kim
-> > + * Copyright (C) 2015, Eric Biggers
-> > + */
+Note that this also is layered on top of David Howell's fscache rework,
+and the work I've done to adapt cephfs to that.
+
+> > Note that this just covers the crypto contexts and filenames. I've also
+> > added a patch to encrypt symlink contents as well, but it doesn't seem to
+> > be working correctly.
 > 
-> Please don't change the copyright statements.  The original file had:
-> 
->  * Copyright (C) 2015, Google, Inc.
->  * Copyright (C) 2015, Motorola Mobility
+> What about symlink encryption isn't working correctly?
+
+What I was seeing is that after unmounting and mounting, the symlink
+contents would be gibberish when read by readlink(). I confirmed that
+the same crypttext that came out of fscrypt_encrypt_symlink() was being
+fed into fscrypt_get_symlink(), but the result from that came back as
+gibberish.
+
+I need to do a bit more troubleshooting, but I now wonder if it's due to
+the context handling being wrong when dummy encryption is enabled. I'll
+have a look at that soon.
+
+Thanks for the review so far!
 -- 
 Jeff Layton <jlayton@kernel.org>
 
