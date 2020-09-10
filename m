@@ -2,101 +2,127 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA613263A52
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Sep 2020 04:27:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F9EA263AD7
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Sep 2020 04:47:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730180AbgIJC07 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 9 Sep 2020 22:26:59 -0400
-Received: from smtprelay0192.hostedemail.com ([216.40.44.192]:41384 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729413AbgIJCYQ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 9 Sep 2020 22:24:16 -0400
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave01.hostedemail.com (Postfix) with ESMTP id 55AC918027FA3;
-        Wed,  9 Sep 2020 22:47:33 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id A42B7181D337B;
-        Wed,  9 Sep 2020 22:47:32 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:2898:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:4321:5007:6742:6743:8700:10004:10400:10848:11232:11658:11914:12043:12297:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21433:21627:21939:30054:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: sort28_6003546270e1
-X-Filterd-Recvd-Size: 3292
-Received: from XPS-9350.home (unknown [47.151.133.149])
-        (Authenticated sender: joe@perches.com)
-        by omf20.hostedemail.com (Postfix) with ESMTPA;
-        Wed,  9 Sep 2020 22:47:25 +0000 (UTC)
-Message-ID: <b3d6f71aea87f4bb88554f1a3fdaee0b2feb158c.camel@perches.com>
-Subject: Re: [trivial PATCH] treewide: Convert switch/case fallthrough; to
- break;
-From:   Joe Perches <joe@perches.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Jiri Kosina <trivial@kernel.org>,
-        Kees Cook <kees.cook@canonical.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, linux-input@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-rdma@vger.kernel.org,
-        iommu@lists.linux-foundation.org, dm-devel@redhat.com,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, intel-wired-lan@lists.osuosl.org,
-        oss-drivers@netronome.com, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-nvme@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-scsi@vger.kernel.org,
-        storagedev@microchip.com, sparclinux@vger.kernel.org,
-        linux-serial@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-parisc@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, bpf@vger.kernel.org,
-        dccp@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, linux-sctp@vger.kernel.org,
-        alsa-devel <alsa-devel@alsa-project.org>
-Date:   Wed, 09 Sep 2020 15:47:24 -0700
-In-Reply-To: <20200909223602.GJ87483@ziepe.ca>
-References: <e6387578c75736d61b2fe70d9783d91329a97eb4.camel@perches.com>
-         <20200909223602.GJ87483@ziepe.ca>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.36.4-0ubuntu1 
+        id S1729479AbgIJCrU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 9 Sep 2020 22:47:20 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:49534 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730388AbgIJCAR (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 9 Sep 2020 22:00:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1599703214;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FNqVfZquE93GYB1jXToAyy/BThfc9EBqsh9+LW0xdZk=;
+        b=VkYU+FaCcgnKsTDU+C1glUiBZ5FX5eWKvSF2VtahnL3PFTYsjLlNpqeO3BHBTx2vbO5q+d
+        eDt7Gk85HhAIjK0AI8d3EI27fesC9zz2Ybp9SKqLdOztZxjy8n0/YS0UEMLbIoCdDpPRBU
+        ktu/jxuNt3wl7XGPORs5i65iP87x0AI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-483-CZvH8HKVOfyBxCx-5y5vag-1; Wed, 09 Sep 2020 20:59:33 -0400
+X-MC-Unique: CZvH8HKVOfyBxCx-5y5vag-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 27DBF1882FAD;
+        Thu, 10 Sep 2020 00:59:32 +0000 (UTC)
+Received: from [10.72.12.33] (ovpn-12-33.pek2.redhat.com [10.72.12.33])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 32DF05D9EF;
+        Thu, 10 Sep 2020 00:59:29 +0000 (UTC)
+Subject: Re: [PATCH v5 0/2] ceph: metrics for opened files, pinned caps and
+ opened inodes
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, "Yan, Zheng" <zyan@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+References: <20200903130140.799392-1-xiubli@redhat.com>
+ <449a56624f3dd4e2a4a4cf95cd24d69c53700b6d.camel@kernel.org>
+ <ad35f2f8-6692-3918-6137-adc8e95607c6@redhat.com>
+ <CAOi1vP-8rbzZ=-Apir2B4Z6U10ZKrp41d6+BYgvGsyL+ND-JnQ@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <cdf40ea5-ecd0-0df6-7db4-7897aa3a5ad0@redhat.com>
+Date:   Thu, 10 Sep 2020 08:59:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
+In-Reply-To: <CAOi1vP-8rbzZ=-Apir2B4Z6U10ZKrp41d6+BYgvGsyL+ND-JnQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2020-09-09 at 19:36 -0300, Jason Gunthorpe wrote:
-> On Wed, Sep 09, 2020 at 01:06:39PM -0700, Joe Perches wrote:
-> > fallthrough to a separate case/default label break; isn't very readable.
-> > 
-> > Convert pseudo-keyword fallthrough; statements to a simple break; when
-> > the next label is case or default and the only statement in the next
-> > label block is break;
-> > 
-> > Found using:
-> > 
-> > $ grep-2.5.4 -rP --include=*.[ch] -n "fallthrough;(\s*(case\s+\w+|default)\s*:\s*){1,7}break;" *
-> > 
-> > Miscellanea:
-> > 
-> > o Move or coalesce a couple label blocks above a default: block.
-> > 
-> > Signed-off-by: Joe Perches <joe@perches.com>
-> > ---
-> > 
-> > Compiled allyesconfig x86-64 only.
-> > A few files for other arches were not compiled.
-> 
-> IB part looks OK, I prefer it like this
-> 
-> You could do the same for continue as well, I saw a few of those..
+On 2020/9/10 4:34, Ilya Dryomov wrote:
+> On Thu, Sep 3, 2020 at 4:22 PM Xiubo Li <xiubli@redhat.com> wrote:
+>> On 2020/9/3 22:18, Jeff Layton wrote:
+>>> On Thu, 2020-09-03 at 09:01 -0400, xiubli@redhat.com wrote:
+>>>> From: Xiubo Li <xiubli@redhat.com>
+>>>>
+>>>> Changed in V5:
+>>>> - Remove mdsc parsing helpers except the ceph_sb_to_mdsc()
+>>>> - Remove the is_opened member.
+>>>>
+>>>> Changed in V4:
+>>>> - A small fix about the total_inodes.
+>>>>
+>>>> Changed in V3:
+>>>> - Resend for V2 just forgot one patch, which is adding some helpers
+>>>> support to simplify the code.
+>>>>
+>>>> Changed in V2:
+>>>> - Add number of inodes that have opened files.
+>>>> - Remove the dir metrics and fold into files.
+>>>>
+>>>>
+>>>>
+>>>> Xiubo Li (2):
+>>>>     ceph: add ceph_sb_to_mdsc helper support to parse the mdsc
+>>>>     ceph: metrics for opened files, pinned caps and opened inodes
+>>>>
+>>>>    fs/ceph/caps.c    | 41 +++++++++++++++++++++++++++++++++++++----
+>>>>    fs/ceph/debugfs.c | 11 +++++++++++
+>>>>    fs/ceph/dir.c     | 20 +++++++-------------
+>>>>    fs/ceph/file.c    | 13 ++++++-------
+>>>>    fs/ceph/inode.c   | 11 ++++++++---
+>>>>    fs/ceph/locks.c   |  2 +-
+>>>>    fs/ceph/metric.c  | 14 ++++++++++++++
+>>>>    fs/ceph/metric.h  |  7 +++++++
+>>>>    fs/ceph/quota.c   | 10 +++++-----
+>>>>    fs/ceph/snap.c    |  2 +-
+>>>>    fs/ceph/super.h   |  6 ++++++
+>>>>    11 files changed, 103 insertions(+), 34 deletions(-)
+>>>>
+>>> Looks good. I went ahead and merge this into testing.
+>>>
+>>> Small merge conflict in quota.c, which I guess is probably due to not
+>>> basing this on testing branch. I also dropped what looks like an
+>>> unrelated hunk in the second patch.
+>>>
+>>> In the future, if you can be sure that patches you post apply cleanly to
+>>> testing branch then that would make things easier.
+>> Okay, will do it.
+> Hi Xiubo,
+>
+> There is a problem with lifetimes here.  mdsc isn't guaranteed to exist
+> when ->free_inode() is called.  This can lead to crashes on a NULL mdsc
+> in ceph_free_inode() in case of e.g. "umount -f".  I know it was Jeff's
+> suggestion to move the decrement of total_inodes into ceph_free_inode(),
+> but it doesn't look like it can be easily deferred past ->evict_inode().
 
-I saw some continue uses as well but wasn't sure
-and didn't look to see if the switch/case with
-continue was in a for/while loop.
+Okay, I will take a look.
 
+Thanks Ilya.
+
+
+> Thanks,
+>
+>                  Ilya
+>
 
