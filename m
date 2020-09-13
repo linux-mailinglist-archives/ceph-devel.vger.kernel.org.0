@@ -2,243 +2,115 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 881DC267F3F
-	for <lists+ceph-devel@lfdr.de>; Sun, 13 Sep 2020 12:43:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A7D2267F68
+	for <lists+ceph-devel@lfdr.de>; Sun, 13 Sep 2020 14:00:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725945AbgIMKk0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 13 Sep 2020 06:40:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36166 "EHLO
+        id S1725949AbgIMMAq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 13 Sep 2020 08:00:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725927AbgIMKkZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 13 Sep 2020 06:40:25 -0400
+        with ESMTP id S1725919AbgIMMAp (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 13 Sep 2020 08:00:45 -0400
 Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEE3AC061573
-        for <ceph-devel@vger.kernel.org>; Sun, 13 Sep 2020 03:40:24 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id g128so15585068iof.11
-        for <ceph-devel@vger.kernel.org>; Sun, 13 Sep 2020 03:40:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 246B8C061573
+        for <ceph-devel@vger.kernel.org>; Sun, 13 Sep 2020 05:00:42 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id j2so15729075ioj.7
+        for <ceph-devel@vger.kernel.org>; Sun, 13 Sep 2020 05:00:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=xqjLVIINUrOLA9J5u/WQxLejxzXxwvU5EXptmFWVCUI=;
-        b=V7nCWdtwxqTJznXtyjZ3T4a2nnEPWIZHWekZ0/sS4Yd0QoYl5OCdp5JYrMjx6HfrFv
-         Q4uY3sCB9I4dZKf2imztwBX5blxH+zcVoPemS2WU/BRu3X0RIwDH/dLWhBsYn5J9snjH
-         P5XdGTsG9RjUd9HfgY4CUy5eyf/GsxWqOf7/xyYIuo/k3tlME78rUsZZmdMFwm+J5rdg
-         Q+S0ucuhX7NVsjkoiGvtKNjFChJIenfUWyppmoQ7C3Ge8n39T22UorAsNn9LVqi563ci
-         C5QDhO4x2CI9kfwWH5ybhUySjfxaJgnVxlzkmYU/KCee4O4Xxy/k2/5eG19O40ORN5RA
-         78cQ==
+        bh=/RJFisIhIKxOIfA07vM7ZRGdjJjBzAzIwjsqDLSpcQU=;
+        b=So5bHBap5mvnf/5TrjxWkN3irCJtG5/YxVFsQxCRW9Aj+UI6peEmoqHUuNX6R92drw
+         s3PeUslkTH9xLW+fMtTE/JkfgFhbgWz6o1t8nUO2K4cL4s4jarselojMMjlVJBMFuMqA
+         HJfYOfB/OkjPJIZHZAfpVDbfwmCxv35Zqc4ggYV5VzEQXvPnVHxidDHfoTGOGKEgvHQd
+         o0eAQnwW93BODKxMvp2iQJO2/Q8gn0htnKwqIOTLBX/g5mXNxOYvbsBsblms3uRx+cVB
+         52GKMHXDVoUB7cOqPftcFMlFwT2tvSS7sRkeezPb7HXldJVVJD6w6kNmAv8jdqBD218L
+         1KZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xqjLVIINUrOLA9J5u/WQxLejxzXxwvU5EXptmFWVCUI=;
-        b=eBiYiOc11ig2qAB9hDPYCiufGuV17Nq/bpMsXG4wDU7bFXFix30F75AdvwVjthMHMj
-         Sfmq44DoHBhr33b4bZiJwBTywgVS9ViFY84h0nxQIZqzsUZk5i6oMuWGPFLaVdjJB1PY
-         ebNFbvEmYN7wOX2Yi9DaWlBr2lTB//swnS6Wtp0uAIQTsx28nhUM9HDHHaGoeEPOPBqt
-         Jv0N11dT/ZsCJGfkgPdlp/bI848L3n1eeS3mp3+GjlC3htD307JhvP2amvJgc6ZTNzPh
-         Z1n67UkY4QIpHHtg3CKfxQ45zVRwl3YB5tkZv0CfZdJUQqJ8sLSv4mIbS5XQFtNmDoyS
-         dKDg==
-X-Gm-Message-State: AOAM531j86ZZVMijDb/84L2W9QGu2lW4CuX2Avx3eMNWHl3+ihVMQxI3
-        CXUemrEfXc1Y1aPQ0T/0p0VaFd3nR47+rarm47U=
-X-Google-Smtp-Source: ABdhPJyfYy3c9FPNNftFoKopi9cD95QKEYZjyh5RotqYjoNvNNG0bneaHVPLakFInHXG3FgLv58NFVJdzi3Pk98fTqg=
-X-Received: by 2002:a02:76d5:: with SMTP id z204mr8546993jab.93.1599993623019;
- Sun, 13 Sep 2020 03:40:23 -0700 (PDT)
+        bh=/RJFisIhIKxOIfA07vM7ZRGdjJjBzAzIwjsqDLSpcQU=;
+        b=cgiKYFttbG0iLxvPleoov800HqP/8Su75ZaMeBprlomWABvrgL3J9y0uQbqLVMUsyQ
+         b1z5TslLvs3wcpc+E9tc4A3iyDjNfxDsFhTx8aFFJSgC+PUqGxEDh1zWfdtTO7AR6Wkc
+         Qh+zUIULfQeSddhMuBUd/sBWpqQdSjLeLYdwcw7pYif5Qya7CJ3PclTTab2SfXo0+Qwk
+         U53Gfgr1hYLq9vy4zpFza32jO3L/Lj38Pb3dV9qc4v2ykYX1uTfz9zm2aqYmNYW8IPPE
+         TH9JeMdWUKTlC0E8Nb7n2szgWgWelDPQTrq1LmD1vBkS0SMO/B1INDpNMcm/sY75lFLI
+         0Nng==
+X-Gm-Message-State: AOAM531HfVPKq12zavwL8hrv+B10vEdNbZTK/mnG2RvKLb7FOjSO04h8
+        NCyEeAa7fV+Gf1BZp4aMO2abPjVJPr++6CF5XDs=
+X-Google-Smtp-Source: ABdhPJzvnTHQWbVwW3YQNlq46cce1TC+7IJkaMsbaJym2AQb9zrnUaUUaNaoJfu5qOG8rhiPGjg0H3eUNuOopAfW+ko=
+X-Received: by 2002:a02:76d5:: with SMTP id z204mr8735973jab.93.1599998435593;
+ Sun, 13 Sep 2020 05:00:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200903130140.799392-1-xiubli@redhat.com> <449a56624f3dd4e2a4a4cf95cd24d69c53700b6d.camel@kernel.org>
- <ad35f2f8-6692-3918-6137-adc8e95607c6@redhat.com> <CAOi1vP-8rbzZ=-Apir2B4Z6U10ZKrp41d6+BYgvGsyL+ND-JnQ@mail.gmail.com>
- <cdf40ea5-ecd0-0df6-7db4-7897aa3a5ad0@redhat.com> <CAOi1vP-XxXVcvyZgQF7mWaxm-21hiY5fF4tRYkua-F9ikof7UA@mail.gmail.com>
- <e291d899acee9f9218fe9a62f7300ab82592c459.camel@kernel.org>
- <9a5c5d2f-d105-21c4-327e-5ad18bf49518@redhat.com> <a281843181d1c97d099a2dd88c216ca94cf8d544.camel@kernel.org>
- <d174f7f99b4da9a2959b93bad622792fb693e495.camel@kernel.org>
-In-Reply-To: <d174f7f99b4da9a2959b93bad622792fb693e495.camel@kernel.org>
+References: <20200912101424.5659-1-jlayton@kernel.org>
+In-Reply-To: <20200912101424.5659-1-jlayton@kernel.org>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Sun, 13 Sep 2020 12:40:13 +0200
-Message-ID: <CAOi1vP8me7Lda0OZH1297nFqewH5sh0yODF97bqykXPOCkwfuA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/2] ceph: metrics for opened files, pinned caps and
- opened inodes
+Date:   Sun, 13 Sep 2020 14:00:25 +0200
+Message-ID: <CAOi1vP9=wJNo0vywfBUnGz7qhJegTS=-bRWyqnJ=z7_54A+0vQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: use kill_anon_super helper
 To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Xiubo Li <xiubli@redhat.com>, "Yan, Zheng" <zyan@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Sep 11, 2020 at 9:46 PM Jeff Layton <jlayton@kernel.org> wrote:
+On Sat, Sep 12, 2020 at 12:14 PM Jeff Layton <jlayton@kernel.org> wrote:
 >
-> On Fri, 2020-09-11 at 07:49 -0400, Jeff Layton wrote:
-> > On Fri, 2020-09-11 at 11:43 +0800, Xiubo Li wrote:
-> > > On 2020/9/10 20:13, Jeff Layton wrote:
-> > > > On Thu, 2020-09-10 at 08:00 +0200, Ilya Dryomov wrote:
-> > > > > On Thu, Sep 10, 2020 at 2:59 AM Xiubo Li <xiubli@redhat.com> wrote:
-> > > > > > On 2020/9/10 4:34, Ilya Dryomov wrote:
-> > > > > > > On Thu, Sep 3, 2020 at 4:22 PM Xiubo Li <xiubli@redhat.com> wrote:
-> > > > > > > > On 2020/9/3 22:18, Jeff Layton wrote:
-> > > > > > > > > On Thu, 2020-09-03 at 09:01 -0400, xiubli@redhat.com wrote:
-> > > > > > > > > > From: Xiubo Li <xiubli@redhat.com>
-> > > > > > > > > >
-> > > > > > > > > > Changed in V5:
-> > > > > > > > > > - Remove mdsc parsing helpers except the ceph_sb_to_mdsc()
-> > > > > > > > > > - Remove the is_opened member.
-> > > > > > > > > >
-> > > > > > > > > > Changed in V4:
-> > > > > > > > > > - A small fix about the total_inodes.
-> > > > > > > > > >
-> > > > > > > > > > Changed in V3:
-> > > > > > > > > > - Resend for V2 just forgot one patch, which is adding some helpers
-> > > > > > > > > > support to simplify the code.
-> > > > > > > > > >
-> > > > > > > > > > Changed in V2:
-> > > > > > > > > > - Add number of inodes that have opened files.
-> > > > > > > > > > - Remove the dir metrics and fold into files.
-> > > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > Xiubo Li (2):
-> > > > > > > > > >      ceph: add ceph_sb_to_mdsc helper support to parse the mdsc
-> > > > > > > > > >      ceph: metrics for opened files, pinned caps and opened inodes
-> > > > > > > > > >
-> > > > > > > > > >     fs/ceph/caps.c    | 41 +++++++++++++++++++++++++++++++++++++----
-> > > > > > > > > >     fs/ceph/debugfs.c | 11 +++++++++++
-> > > > > > > > > >     fs/ceph/dir.c     | 20 +++++++-------------
-> > > > > > > > > >     fs/ceph/file.c    | 13 ++++++-------
-> > > > > > > > > >     fs/ceph/inode.c   | 11 ++++++++---
-> > > > > > > > > >     fs/ceph/locks.c   |  2 +-
-> > > > > > > > > >     fs/ceph/metric.c  | 14 ++++++++++++++
-> > > > > > > > > >     fs/ceph/metric.h  |  7 +++++++
-> > > > > > > > > >     fs/ceph/quota.c   | 10 +++++-----
-> > > > > > > > > >     fs/ceph/snap.c    |  2 +-
-> > > > > > > > > >     fs/ceph/super.h   |  6 ++++++
-> > > > > > > > > >     11 files changed, 103 insertions(+), 34 deletions(-)
-> > > > > > > > > >
-> > > > > > > > > Looks good. I went ahead and merge this into testing.
-> > > > > > > > >
-> > > > > > > > > Small merge conflict in quota.c, which I guess is probably due to not
-> > > > > > > > > basing this on testing branch. I also dropped what looks like an
-> > > > > > > > > unrelated hunk in the second patch.
-> > > > > > > > >
-> > > > > > > > > In the future, if you can be sure that patches you post apply cleanly to
-> > > > > > > > > testing branch then that would make things easier.
-> > > > > > > > Okay, will do it.
-> > > > > > > Hi Xiubo,
-> > > > > > >
-> > > > > > > There is a problem with lifetimes here.  mdsc isn't guaranteed to exist
-> > > > > > > when ->free_inode() is called.  This can lead to crashes on a NULL mdsc
-> > > > > > > in ceph_free_inode() in case of e.g. "umount -f".  I know it was Jeff's
-> > > > > > > suggestion to move the decrement of total_inodes into ceph_free_inode(),
-> > > > > > > but it doesn't look like it can be easily deferred past ->evict_inode().
-> > > > > > Okay, I will take a look.
-> > > > > Given that it's just a counter which we don't care about if the
-> > > > > mount is going away, some form of "if (mdsc)" check might do, but
-> > > > > need to make sure that it covers possible races, if any.
-> > > > >
-> > > > Good catch, Ilya.
-> > > >
-> > > > What may be best is to move the increment out of ceph_alloc_inode and
-> > > > instead put it in ceph_set_ino_cb. Then the decrement can go back into
-> > > > ceph_evict_inode.
-> > >
-> > > Hi Jeff, Ilya
-> > >
-> > > Checked the code, it seems in the ceph_evict_inode() we will also hit
-> > > the same issue .
-> > >
-> > > With the '-f' options when umounting, it will skip the inodes whose
-> > > i_count ref > 0. And then free the fsc/mdsc in ceph. And later the
-> > > iput_final() will call the ceph_evict_inode() and then ceph_free_inode().
-> > >
-> > > Could we just check if !!(sb->s_flags & SB_ACTIVE) is false will we skip
-> > > the counting ?
-> > >
-> >
-> > Note that umount -f (MNT_FORCE) just means that ceph_umount_begin is
-> > called before unmounting.
-> >
-> > If what you're saying it true, then we have bigger problems.
-> > ceph_evict_inode does this today when ci->i_snap_realm is set:
-> >
-> >     struct ceph_mds_client *mdsc = ceph_inode_to_client(inode)->mdsc;
-> >
-> > ...and then goes on to use that mdsc pointer.
-> >
+> ceph open-codes this around some other activity and the rationale
+> for it isn't clear. There is no need to delay free_anon_bdev until
+> the end of kill_sb.
 >
-> Now that I look, I don't think that this is a problem. ceph_kill_sb
-> calls generic_shutdown_super, which calls evict_inodes before the client
-> is torn down. That should ensure that the mdsc is still good when evict
-> is called.
->
-> We will need to move the increment into the iget5_locked "set" function.
-> Maybe we can squash the patch below into yours?
->
-> ----------------------8<---------------------------
->
-> ceph: use total_inodes to count hashed inodes instead of allocated ones
->
-> We can't guarantee that the mdsc will still be around when free_inode is
-> called, so move this into evict_inode instead. The increment then will
-> need to be moved when the thing is hashed, so move that into the set
-> callback.
->
-> Reported-by: Ilya Dryomov <idryomov@gmail.com>
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  fs/ceph/inode.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  fs/ceph/super.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 >
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 5b9d2ff8af34..39c13fefba8a 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -42,10 +42,13 @@ static void ceph_inode_work(struct work_struct *work);
->  static int ceph_set_ino_cb(struct inode *inode, void *data)
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index 7ec0e6d03d10..b3fc9bb61afc 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -1205,14 +1205,13 @@ static int ceph_init_fs_context(struct fs_context *fc)
+>  static void ceph_kill_sb(struct super_block *s)
 >  {
->         struct ceph_inode_info *ci = ceph_inode(inode);
-> +       struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(inode->i_sb);
+>         struct ceph_fs_client *fsc = ceph_sb_to_client(s);
+> -       dev_t dev = s->s_dev;
 >
->         ci->i_vino = *(struct ceph_vino *)data;
->         inode->i_ino = ceph_vino_to_ino_t(ci->i_vino);
->         inode_set_iversion_raw(inode, 0);
-> +       percpu_counter_inc(&mdsc->metric.total_inodes);
-> +
->         return 0;
+>         dout("kill_sb %p\n", s);
+>
+>         ceph_mdsc_pre_umount(fsc->mdsc);
+>         flush_fs_workqueues(fsc);
+>
+> -       generic_shutdown_super(s);
+> +       kill_anon_super(s);
+>
+>         fsc->client->extra_mon_dispatch = NULL;
+>         ceph_fs_debugfs_cleanup(fsc);
+> @@ -1220,7 +1219,6 @@ static void ceph_kill_sb(struct super_block *s)
+>         ceph_fscache_unregister_fs(fsc);
+>
+>         destroy_fs_client(fsc);
+> -       free_anon_bdev(dev);
 >  }
 >
-> @@ -425,7 +428,6 @@ static int ceph_fill_fragtree(struct inode *inode,
->   */
->  struct inode *ceph_alloc_inode(struct super_block *sb)
->  {
-> -       struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(sb);
->         struct ceph_inode_info *ci;
->         int i;
+>  static struct file_system_type ceph_fs_type = {
+> --
+> 2.26.2
 >
-> @@ -525,17 +527,12 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
->
->         ci->i_meta_err = 0;
->
-> -       percpu_counter_inc(&mdsc->metric.total_inodes);
-> -
->         return &ci->vfs_inode;
->  }
->
->  void ceph_free_inode(struct inode *inode)
->  {
->         struct ceph_inode_info *ci = ceph_inode(inode);
-> -       struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(inode->i_sb);
-> -
-> -       percpu_counter_dec(&mdsc->metric.total_inodes);
->
->         kfree(ci->i_symlink);
->         kmem_cache_free(ceph_inode_cachep, ci);
-> @@ -544,11 +541,14 @@ void ceph_free_inode(struct inode *inode)
->  void ceph_evict_inode(struct inode *inode)
->  {
->         struct ceph_inode_info *ci = ceph_inode(inode);
-> +       struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(inode->i_sb);
 
-I'd also remove a duplicate mdsc variable declared in ci->i_snap_realm
-branch.
+Hi Jeff,
+
+Just curious, did you attempt to figure out why it used to be
+necessary?  Looks like it goes back to a very old commit 5dfc589a8467
+("ceph: unregister bdi before kill_anon_super releases device name"),
+but it's not obvious to me at first sight...
+
+A lot has changed in the bdi area since then, so if not, it probably
+doesn't matter much -- AFAICT bdi would still get unregistered before
+the minor number is released with this patch.
 
 Thanks,
 
