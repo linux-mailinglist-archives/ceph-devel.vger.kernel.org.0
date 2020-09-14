@@ -2,108 +2,119 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71B11269527
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Sep 2020 20:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B6AD269560
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Sep 2020 21:17:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725953AbgINSp5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Sep 2020 14:45:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49446 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726020AbgINSph (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Sep 2020 14:45:37 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66971C06174A
-        for <ceph-devel@vger.kernel.org>; Mon, 14 Sep 2020 11:45:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Wslww/E2BpMntIv+oixbMkhUhTyO0tkYpL+xlblkrEU=; b=Gd1KC6MipF1SvQzckpI0flSo8q
-        sJqY6eWpWlwRNicNX5q8X0JDUUh1cx8cuKudNTKgc54Ta108bsycZSmf12E0RwTWhWAaC08XJuChN
-        k36pdTO77HkisOb8eSfqWQzACmQUwpQdg4gZfuYoOQaoEmZeevuW80ekRRfL0vlEtR7PrSNb8m65T
-        mpt27bdtMBz+/hz9jdNZFTsjiknvB378X0Slgc6mhVzcF13nNssAgJb2SydAejKGFJLmsaSs3iGTk
-        NBpeSBU6h1Cn86CqShftEirg2486QtCrES+e2mVugdQSY/qkhD0BioYZXwx+wh70tOzCY0tg6nb0B
-        3hmeHPlw==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kHtTn-0001do-0z; Mon, 14 Sep 2020 18:45:31 +0000
-Date:   Mon, 14 Sep 2020 19:45:30 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org
-Subject: Re: [PATCH] ceph: have ceph_writepages_start call
- pagevec_lookup_range_tag
-Message-ID: <20200914184530.GV6583@casper.infradead.org>
-References: <20200914183452.378189-1-jlayton@kernel.org>
+        id S1725990AbgINTR3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Sep 2020 15:17:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38940 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725914AbgINTRL (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 14 Sep 2020 15:17:11 -0400
+Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A1B0208E4;
+        Mon, 14 Sep 2020 19:17:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600111030;
+        bh=ODgC0pauYDlLRX/uoPHe+zarHUVYZig+XStM01WP09Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Qr5iUWnGzP+8huPAjKpPrch8QGC+h/D0m01nbcyb4/bqEp/suObzzg24BY2Jurvj1
+         Ns/MVA3nfR2v/spSyNMyVloyO/Z0zepVTxhYUMWVfQXvINp6MXGIHhC/UZhWmsiFQ9
+         r/FiBK+mu9XITFq8W/KQ3SWqxJDnRemTmtmsSFLs=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH v3 00/16] ceph+fscrypt: context, filename and symlink support
+Date:   Mon, 14 Sep 2020 15:16:51 -0400
+Message-Id: <20200914191707.380444-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200914183452.378189-1-jlayton@kernel.org>
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Sep 14, 2020 at 02:34:52PM -0400, Jeff Layton wrote:
-> Ceph is also the only caller of pagevec_lookup_range_nr_tag(), so
-> changing this code to use pagevec_lookup_range_tag() should allow us to
-> eliminate that call as well. That may mean that we sometimes find more
-> pages than are needed, but the extra references will just get put at the
-> end regardless.
+This is the third posting of the ceph+fscrypt integration work. This
+just covers context handling, filename and symlink support.
 
-That was the part I wasn't clear about!
+The main changes since the last set are mainly to address Eric's review
+comments. Hopefully this will be much closer to mergeable. Some highlights:
 
-So, let's suppose max_pages is 10 and we get 15 pages back.
+1/ rebase onto Eric's fscrypt-file-creation-v2 tag
 
-We'll run the
+2/ fscrypt_context_for_new_inode now takes a void * to hold the context
 
-for (i = 0; i < pvec_pages && locked_pages < max_pages; i++) {
-}
-loop ten times, then hit:
+3/ make fscrypt_fname_disk_to_usr designate whether the returned name
+   is a nokey name. This is necessary to close a potential race in
+   readdir support
 
-if (i) {
-	for (j = 0; j < pvec_pages; j++) {
-		if (!pvec.pages[j])
-			continue;
-OK, we do that ten times, then
-		if (n < j)
-			pvec.pages[n] = pvec.pages[j];
-so we now have five pages clustered at the bottom of pvec
-                        pvec.nr = n;
-... then we do the new_request: stanza ...
-ah, and then we call pagevec_release(&pvec);
-and everything is good!
+4/ fscrypt_base64_encode/decode remain in fs/crypto (not moved into lib/)
 
-Excellent.  I was overwhelmed by the amount of code in this function.
-Glad to see the patch was so simple in the end.
+5/ test_dummy_encryption handling is moved into a separate patch, and
+   several bugs fixed that resulted in context not being set up
+   properly.
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+6/ symlink handling now works
 
-> Reported-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/addr.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> I'm still testing this, but it looks good so far. If it's OK, we'll get
-> this in for v5.10, and then I'll send a patch to remove
-> pagevec_lookup_range_nr_tag.
-> 
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 6ea761c84494..b03dbaa9d345 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -962,9 +962,8 @@ static int ceph_writepages_start(struct address_space *mapping,
->  		max_pages = wsize >> PAGE_SHIFT;
->  
->  get_more_pages:
-> -		pvec_pages = pagevec_lookup_range_nr_tag(&pvec, mapping, &index,
-> -						end, PAGECACHE_TAG_DIRTY,
-> -						max_pages - locked_pages);
-> +		pvec_pages = pagevec_lookup_range_tag(&pvec, mapping, &index,
-> +						end, PAGECACHE_TAG_DIRTY);
->  		dout("pagevec_lookup_range_tag got %d\n", pvec_pages);
->  		if (!pvec_pages && !locked_pages)
->  			break;
-> -- 
-> 2.26.2
-> 
+Content encryption is the next step, but I want to get the fscache
+rework done first. It would be nice if we were able to store encrypted
+files in the cache, for instance.
+
+This set has been tagged as "ceph-fscrypt-rfc.3" in my tree here:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git
+
+Note that this is still quite preliminary, but my goal is to get a set
+merged for v5.11.
+
+Jeff Layton (16):
+  vfs: export new_inode_pseudo
+  fscrypt: export fscrypt_base64_encode and fscrypt_base64_decode
+  fscrypt: export fscrypt_d_revalidate
+  fscrypt: add fscrypt_context_for_new_inode
+  fscrypt: make fscrypt_fname_disk_to_usr return whether result is nokey
+    name
+  ceph: add fscrypt ioctls
+  ceph: crypto context handling for ceph
+  ceph: implement -o test_dummy_encryption mount option
+  ceph: preallocate inode for ops that may create one
+  ceph: add routine to create context prior to RPC
+  ceph: make ceph_msdc_build_path use ref-walk
+  ceph: add encrypted fname handling to ceph_mdsc_build_path
+  ceph: make d_revalidate call fscrypt revalidator for encrypted
+    dentries
+  ceph: add support to readdir for encrypted filenames
+  ceph: add fscrypt support to ceph_fill_trace
+  ceph: create symlinks with encrypted and base64-encoded targets
+
+ fs/ceph/Makefile        |   1 +
+ fs/ceph/crypto.c        | 156 ++++++++++++++++++++++++++++++
+ fs/ceph/crypto.h        |  67 +++++++++++++
+ fs/ceph/dir.c           | 141 ++++++++++++++++++++-------
+ fs/ceph/file.c          |  56 +++++++----
+ fs/ceph/inode.c         | 204 ++++++++++++++++++++++++++++++++++------
+ fs/ceph/ioctl.c         |  25 +++++
+ fs/ceph/mds_client.c    |  94 +++++++++++++-----
+ fs/ceph/mds_client.h    |   1 +
+ fs/ceph/super.c         |  73 +++++++++++++-
+ fs/ceph/super.h         |  18 +++-
+ fs/ceph/xattr.c         |  32 +++++++
+ fs/crypto/fname.c       |  67 ++++++++++---
+ fs/crypto/hooks.c       |   4 +-
+ fs/crypto/policy.c      |  35 +++++--
+ fs/ext4/dir.c           |   3 +-
+ fs/ext4/namei.c         |   6 +-
+ fs/f2fs/dir.c           |   3 +-
+ fs/inode.c              |   1 +
+ fs/ubifs/dir.c          |   4 +-
+ include/linux/fscrypt.h |  10 +-
+ 21 files changed, 860 insertions(+), 141 deletions(-)
+ create mode 100644 fs/ceph/crypto.c
+ create mode 100644 fs/ceph/crypto.h
+
+-- 
+2.26.2
+
