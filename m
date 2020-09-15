@@ -2,155 +2,97 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E3CBA26A6C7
-	for <lists+ceph-devel@lfdr.de>; Tue, 15 Sep 2020 16:07:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECF6426AEB8
+	for <lists+ceph-devel@lfdr.de>; Tue, 15 Sep 2020 22:34:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbgIOOGw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 15 Sep 2020 10:06:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56262 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726748AbgIOOFz (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 15 Sep 2020 10:05:55 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84076206A1;
-        Tue, 15 Sep 2020 14:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600178755;
-        bh=WN/QqxErWebXTJi5I5vXL5r6WSAz9r37RH/cAQ3I5Wo=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=h0tpSe8pJNaC0/c087YTJPu3ap6lZ8/1juxsuzlQ5B2A5CFrXj4IrYpmTRaht2Gsi
-         Rlo7U+Udi/RFveE9rLdgEGcckKfwHPDryT/Am348XF8LB26bceRhhMOl8YMBwEbC+g
-         lV/SYiB5sLfWufPbvOEGh5VjW//dUaHRijBRC8ww=
-Message-ID: <5bdc7608df4ff480c07eb6a0e85514ebd986e5d9.camel@kernel.org>
-Subject: Re: [RFC PATCH v3 16/16] ceph: create symlinks with encrypted and
- base64-encoded targets
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Tue, 15 Sep 2020 10:05:53 -0400
-In-Reply-To: <20200915020725.GM899@sol.localdomain>
-References: <20200914191707.380444-1-jlayton@kernel.org>
-         <20200914191707.380444-17-jlayton@kernel.org>
-         <20200915020725.GM899@sol.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        id S1727729AbgIOUeN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 15 Sep 2020 16:34:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34978 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726454AbgIOUdd (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Sep 2020 16:33:33 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E899FC06174A
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Sep 2020 13:33:32 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id l9so774290wme.3
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Sep 2020 13:33:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xSoZV2D0Od0c4AAf4y2a3kGtY0Sz7ktAkmMp4U6IdD0=;
+        b=MWeELQfPA8utZ8cegGNmfuLl4P+gA+GBWn8pUXs2K7mpstceo/RHmDFihDahP1wP5W
+         Z53XkBLX6DgRGmP9v4aKsp444YbexJzynE8A29kFDNMIHJ9YzRaOKaQnqmoIMBjH23gf
+         cbFVe92WaOH36+k7kJOm8YmKqYm+3sf2xk8sddVSvtdzNK9NgWEwnmj6DhbxF5Nz3Bco
+         vvlyySVhMzlfO29iHBJFl+ks9aphZOpfQxtp/UPSIzG4jLh321Tj4HZ/n8KtZ5mXucw4
+         zU7gJM0bDN27lCT9bMQGKVr3COk7NKsz2YMvkyRAclkpHPFjIDtW6NFOqh4vVAi2hG87
+         BYVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xSoZV2D0Od0c4AAf4y2a3kGtY0Sz7ktAkmMp4U6IdD0=;
+        b=j+H+OKn+B/y3XWqbTmV0xwa0Fu+wUiUaTusnjLKxJWV4MsCFNVm2qfWgZC2nshSutj
+         nv+ClfE7ohL8sbBUvLCI57avDGcosWXQn6Et9mX4dSMdCpFYJ4HrdmzKE50UQDEl1Zjp
+         iZmkF+WigZy+tH280eQoxQfU/sE4ihcXEW3VLoot/o6Xz37O8BNqbeqra4BwJQoBSyft
+         iRBBdYiteJ8BirxeYwrlW8jfkWR3/5v+G1yvPWQ93sB94uazxbU5dlxDxenCWAuPj/KD
+         rSu8ErSMP6i8ATQYaNGTo4dqIPkKw11HIrdeZIcbtHSrDLBf+CBcCB9Ow0QXU05csBAo
+         3VaA==
+X-Gm-Message-State: AOAM533ZPje4VEhduRNyqtIfoaxc11QgMWAXQJSDHkH9NyT1/OKBPYKk
+        eXiN3bD7ZvLUGTb8B0F9W8TM4uWevK1TsQ==
+X-Google-Smtp-Source: ABdhPJxCK1XB1lLcWpF8X9KiTXO3tNO3HkfumFrdJ93ZbwiVaEB31PtTSLq3Wka5bJcaS+QWqfUbuQ==
+X-Received: by 2002:a1c:81c9:: with SMTP id c192mr1069766wmd.2.1600202011288;
+        Tue, 15 Sep 2020 13:33:31 -0700 (PDT)
+Received: from kwango.redhat.com (ip-94-112-132-16.net.upcbroadband.cz. [94.112.132.16])
+        by smtp.gmail.com with ESMTPSA id q12sm27487250wrs.48.2020.09.15.13.33.30
+        for <ceph-devel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Sep 2020 13:33:30 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     ceph-devel@vger.kernel.org
+Subject: [PATCH 0/3] libceph, rbd, ceph: "blacklist" -> "blocklist"
+Date:   Tue, 15 Sep 2020 22:33:20 +0200
+Message-Id: <20200915203323.4688-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2020-09-14 at 19:07 -0700, Eric Biggers wrote:
-> On Mon, Sep 14, 2020 at 03:17:07PM -0400, Jeff Layton wrote:
-> > +	if (IS_ENCRYPTED(req->r_new_inode)) {
-> > +		int len = strlen(dest);
-> > +
-> > +		err = fscrypt_prepare_symlink(dir, dest, len, PATH_MAX, &osd_link);
-> > +		if (err)
-> > +			goto out_req;
-> > +
-> > +		err = fscrypt_encrypt_symlink(req->r_new_inode, dest, len, &osd_link);
-> > +		if (err)
-> > +			goto out_req;
-> > +
-> > +		req->r_path2 = kmalloc(FSCRYPT_BASE64_CHARS(osd_link.len) + 1, GFP_KERNEL);
-> 
-> osd_link.len includes a null terminator.  It seems that's not what's wanted
-> here, and you should be subtracting 1 here.
-> 
-> (fscrypt_prepare_symlink() maybe should exclude the null terminator from the
-> length instead.  But for the other filesystems it was easier to include it...)
-> 
+Hello,
 
-Got it. Fixed.
+This switches the kernel client to the conscious language.  Two
+instances of "blacklist" remain because they are part of the on-wire
+format: the "osd blacklist add" monitor command used as a fallback
+and the session reject error string.  The latter is to be addressed
+in the near future:
 
-> > @@ -996,26 +995,39 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
-> >  		inode->i_fop = &ceph_file_fops;
-> >  		break;
-> >  	case S_IFLNK:
-> > -		inode->i_op = &ceph_symlink_iops;
-> >  		if (!ci->i_symlink) {
-> >  			u32 symlen = iinfo->symlink_len;
-> >  			char *sym;
-> >  
-> >  			spin_unlock(&ci->i_ceph_lock);
-> >  
-> > -			if (symlen != i_size_read(inode)) {
-> > -				pr_err("%s %llx.%llx BAD symlink "
-> > -					"size %lld\n", __func__,
-> > -					ceph_vinop(inode),
-> > -					i_size_read(inode));
-> > +			if (IS_ENCRYPTED(inode)) {
-> > +				/* Do base64 decode so that we get the right size (maybe?) */
-> > +				err = -ENOMEM;
-> > +				sym = kmalloc(symlen + 1, GFP_NOFS);
-> > +				if (!sym)
-> > +					goto out;
-> > +
-> > +				symlen = fscrypt_base64_decode(iinfo->symlink, symlen, sym);
-> > +				/*
-> > +				 * i_size as reported by the MDS may be wrong, due to base64
-> > +				 * inflation and padding. Fix it up here.
-> > +				 */
-> >  				i_size_write(inode, symlen);
-> 
-> Note that fscrypt_base64_decode() can fail (return -1) if the input is not valid
-> base64.  That isn't being handled here.
-> 
+  https://tracker.ceph.com/issues/47450
 
-Thanks, fixed. It'll return -EIO in that case now.
+Thanks,
 
-> > +static const char *ceph_encrypted_get_link(struct dentry *dentry, struct inode *inode,
-> > +					   struct delayed_call *done)
-> > +{
-> > +	struct ceph_inode_info *ci = ceph_inode(inode);
-> > +
-> > +	if (!dentry)
-> > +		return ERR_PTR(-ECHILD);
-> > +
-> > +	return fscrypt_get_symlink(inode, ci->i_symlink, ksize(ci->i_symlink), done);
-> 
-> Using ksize() seems wrong here, since that would allow fscrypt_get_symlink() to
-> read beyond the part of the buffer that is actually initialized.
-> 
+                Ilya
 
-Is that actually a problem? I did have an earlier patch that carried
-around the length, but it didn't seem to be necessary.
 
-ISTM that that might end up decrypting more data than is actually
-needed, but eventually there will be a NULL terminator in the data and
-the rest would be ignored.
+Ilya Dryomov (3):
+  libceph, rbd, ceph: "blacklist" -> "blocklist"
+  libceph: switch to the new "osd blocklist add" command
+  ceph: add a note explaining session reject error string
 
-If it is a problem, then we should probably change the comment header
-over fscrypt_get_symlink. It currently says:
+ Documentation/filesystems/ceph.rst |  6 +--
+ drivers/block/rbd.c                |  8 ++--
+ fs/ceph/addr.c                     | 24 +++++------
+ fs/ceph/file.c                     |  4 +-
+ fs/ceph/mds_client.c               | 20 +++++----
+ fs/ceph/super.c                    |  4 +-
+ fs/ceph/super.h                    |  4 +-
+ include/linux/ceph/mon_client.h    |  2 +-
+ include/linux/ceph/rados.h         |  2 +-
+ net/ceph/mon_client.c              | 67 +++++++++++++++++++++++-------
+ 10 files changed, 90 insertions(+), 51 deletions(-)
 
-   * @max_size: size of @caddr buffer
-
-...which is another reason why I figured using ksize there was OK.
-
-> > -static const struct inode_operations ceph_symlink_iops = {
-> > +const struct inode_operations ceph_symlink_iops = {
-> >  	.get_link = simple_get_link,
-> >  	.setattr = ceph_setattr,
-> >  	.getattr = ceph_getattr,
-> >  	.listxattr = ceph_listxattr,
-> >  };
-> >  
-> > +const struct inode_operations ceph_encrypted_symlink_iops = {
-> > +	.get_link = ceph_encrypted_get_link,
-> > +	.setattr = ceph_setattr,
-> > +	.getattr = ceph_getattr,
-> > +	.listxattr = ceph_listxattr,
-> > +};
-> 
-> These don't need to be made global, as they're only used in fs/ceph/inode.c.
-> 
-
-Thanks, fixed.
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.19.2
 
