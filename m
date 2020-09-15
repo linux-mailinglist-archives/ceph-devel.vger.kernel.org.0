@@ -2,90 +2,93 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B443269BD3
-	for <lists+ceph-devel@lfdr.de>; Tue, 15 Sep 2020 04:13:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 573A926A188
+	for <lists+ceph-devel@lfdr.de>; Tue, 15 Sep 2020 11:06:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbgIOCNi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Sep 2020 22:13:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34118 "EHLO mail.kernel.org"
+        id S1726402AbgIOJGh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 15 Sep 2020 05:06:37 -0400
+Received: from mga03.intel.com ([134.134.136.65]:35019 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726019AbgIOCNg (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 14 Sep 2020 22:13:36 -0400
-Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C838720678;
-        Tue, 15 Sep 2020 02:13:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600136015;
-        bh=PT45RPaOLGWOL8F6GJRhsMvmzvAXjKMef+PBoi1VEbw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jpZjLrVo4UfZPHNUZwUHkPd4KOFvicd6owUm9te0YEuKy4IXgEZuKT6OJo7pA5hsx
-         L77nnvpdYVBwsEK54obpgANf7cYqiUgeqTnNV5RQuVM7LS61J8Rl11NCru9WJO8Dvn
-         Etr4+7DwBR7aGgDOyyEZkTBpszWegTIRvOUeC+GU=
-Date:   Mon, 14 Sep 2020 19:13:34 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v3 00/16] ceph+fscrypt: context, filename and symlink
- support
-Message-ID: <20200915021334.GN899@sol.localdomain>
-References: <20200914191707.380444-1-jlayton@kernel.org>
+        id S1726269AbgIOJGe (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 15 Sep 2020 05:06:34 -0400
+IronPort-SDR: RZD/fFWTjvWyaYIJCtNMDzEdl4brC47SlQmB8DC403Dr6vIA5u/jFu0AFJj/JoHYnbKKWwa4bw
+ iw1Jurkpfvfw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9744"; a="159272034"
+X-IronPort-AV: E=Sophos;i="5.76,429,1592895600"; 
+   d="scan'208";a="159272034"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2020 02:06:31 -0700
+IronPort-SDR: JN6muYTQqB3wm3kCXqk1xsORqKL94poqyPOQLwwV9SSOFBG1M/RLedvNq9ruyR1KSefDfAWvPJ
+ brvH/uTc728w==
+X-IronPort-AV: E=Sophos;i="5.76,429,1592895600"; 
+   d="scan'208";a="482690707"
+Received: from emoriart-mobl.ger.corp.intel.com (HELO localhost) ([10.252.7.208])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2020 02:06:16 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Joe Perches <joe@perches.com>, LKML <linux-kernel@vger.kernel.org>,
+        Jiri Kosina <trivial@kernel.org>
+Cc:     linux-wireless@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        oss-drivers@netronome.com, nouveau@lists.freedesktop.org,
+        alsa-devel <alsa-devel@alsa-project.org>,
+        dri-devel@lists.freedesktop.org, linux-ide@vger.kernel.org,
+        dm-devel@redhat.com, linux-mtd@lists.infradead.org,
+        linux-i2c@vger.kernel.org, sparclinux@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, linux-rtc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dccp@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-atm-general@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, coreteam@netfilter.org,
+        intel-wired-lan@lists.osuosl.org, linux-serial@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-mmc@vger.kernel.org,
+        Kees Cook <kees.cook@canonical.com>,
+        linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-sctp@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-nvme@lists.infradead.org,
+        storagedev@microchip.com, ceph-devel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-parisc@vger.kernel.org, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-mips@vger.kernel.org, iommu@lists.linux-foundation.org,
+        netfilter-devel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [Intel-gfx] [trivial PATCH] treewide: Convert switch/case fallthrough; to break;
+In-Reply-To: <e6387578c75736d61b2fe70d9783d91329a97eb4.camel@perches.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <e6387578c75736d61b2fe70d9783d91329a97eb4.camel@perches.com>
+Date:   Tue, 15 Sep 2020 12:06:21 +0300
+Message-ID: <87d02nxvci.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200914191707.380444-1-jlayton@kernel.org>
+Content-Type: text/plain
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Sep 14, 2020 at 03:16:51PM -0400, Jeff Layton wrote:
-> This is the third posting of the ceph+fscrypt integration work. This
-> just covers context handling, filename and symlink support.
-> 
-> The main changes since the last set are mainly to address Eric's review
-> comments. Hopefully this will be much closer to mergeable. Some highlights:
-> 
-> 1/ rebase onto Eric's fscrypt-file-creation-v2 tag
-> 
-> 2/ fscrypt_context_for_new_inode now takes a void * to hold the context
-> 
-> 3/ make fscrypt_fname_disk_to_usr designate whether the returned name
->    is a nokey name. This is necessary to close a potential race in
->    readdir support
-> 
-> 4/ fscrypt_base64_encode/decode remain in fs/crypto (not moved into lib/)
-> 
-> 5/ test_dummy_encryption handling is moved into a separate patch, and
->    several bugs fixed that resulted in context not being set up
->    properly.
-> 
-> 6/ symlink handling now works
-> 
-> Content encryption is the next step, but I want to get the fscache
-> rework done first. It would be nice if we were able to store encrypted
-> files in the cache, for instance.
-> 
-> This set has been tagged as "ceph-fscrypt-rfc.3" in my tree here:
-> 
->     https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git
-> 
-> Note that this is still quite preliminary, but my goal is to get a set
-> merged for v5.11.
+On Wed, 09 Sep 2020, Joe Perches <joe@perches.com> wrote:
+> diff --git a/drivers/gpu/drm/i915/display/intel_sprite.c b/drivers/gpu/drm/i915/display/intel_sprite.c
+> index 5ac0dbf0e03d..35ac539cc2b1 100644
+> --- a/drivers/gpu/drm/i915/display/intel_sprite.c
+> +++ b/drivers/gpu/drm/i915/display/intel_sprite.c
+> @@ -2861,7 +2861,7 @@ static bool gen12_plane_format_mod_supported(struct drm_plane *_plane,
+>  	case I915_FORMAT_MOD_Y_TILED_GEN12_MC_CCS:
+>  		if (!gen12_plane_supports_mc_ccs(dev_priv, plane->id))
+>  			return false;
+> -		fallthrough;
+> +		break;
+>  	case DRM_FORMAT_MOD_LINEAR:
+>  	case I915_FORMAT_MOD_X_TILED:
+>  	case I915_FORMAT_MOD_Y_TILED:
 
-A few comments that didn't fit anywhere else:
+Acked-by: Jani Nikula <jani.nikula@intel.com>
 
-I'm looking forward to contents encryption, as that's the most important part.
+for merging via whichever tree seems best.
 
-Is there any possibility that the fscrypt xfstests can be run on ceph?
-See: https://www.kernel.org/doc/html/latest/filesystems/fscrypt.html#tests
+BR,
+Jani.
 
-In fs/ceph/Kconfig, CEPH_FS needs:
 
-	select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
-
-There are compile errors when !CONFIG_FS_ENCRYPTION.
-
-- Eric
+-- 
+Jani Nikula, Intel Open Source Graphics Center
