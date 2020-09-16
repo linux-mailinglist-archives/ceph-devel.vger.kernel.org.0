@@ -2,82 +2,183 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B4EE226C6A4
-	for <lists+ceph-devel@lfdr.de>; Wed, 16 Sep 2020 19:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0D5926C638
+	for <lists+ceph-devel@lfdr.de>; Wed, 16 Sep 2020 19:40:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbgIPR5B (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 16 Sep 2020 13:57:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48880 "EHLO mx2.suse.de"
+        id S1727298AbgIPRj7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 16 Sep 2020 13:39:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727647AbgIPRyS (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:54:18 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=cantorsusede;
-        t=1600269011;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=Jo/X5/Dvrczw/R8zqhUAJUBzfEHzT8xfSgrsPXBLduc=;
-        b=bkw2NcmdqUzQ6stK0guvCtHrNhDrC50Aggo4bds9bGCdESpxuMD7vMAILE904eZZm+5fs1
-        l9lVp+Rssd/sLU3X64D1gh3N/woIPfsdaZq/5VYUoKZVHZERZJvOebxOn+stCGx8WP+tn6
-        3p1dVA4oFRkkW1e3/ZwA5JMHAyTtupo1leausldEfFtOLCeSc75WBspwt3nENuFvlceQgq
-        e7Kaw42Tt4wI86QySYCLchoXAtUTjasWk5BDc9GX94UKZzjD5CE3zQQE61yarFb5p/Whmd
-        IceIRHuDvW+UhifmgmXLfUV6Umnse5+9fmzuZSTcXcDkphcqaA9SyENh2MC08w==
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id AA3E1ABCC;
-        Wed, 16 Sep 2020 15:10:26 +0000 (UTC)
-From:   Abhishek Lekshmanan <abhishek@suse.com>
-To:     ceph-announce@ceph.io, ceph-users@ceph.io, dev@ceph.io,
-        ceph-devel@vger.kernel.org, ceph-maintainers@ceph.io
-Subject: v15.2.5 octopus released
-Date:   Wed, 16 Sep 2020 17:10:11 +0200
-Message-ID: <87een1g3l8.fsf@suse.com>
+        id S1727288AbgIPRi7 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 16 Sep 2020 13:38:59 -0400
+Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81A8520708;
+        Wed, 16 Sep 2020 17:38:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600277937;
+        bh=NKPwYfkTayb562ch4wj6BLB2o+wJeNyJD02fPOTq5Fw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FcVG05W2URtQZcGM4eimFBEmbECUq2Cg2Z7O2RoR9eEyW0I2zfSqSUheNfdbO++2H
+         WUHeDgJmjCoDYh0k1AY8umvdcu94PimmW+0GEUuc2YXEmBIgUzB1MAWziocld6vWsP
+         2kavUDIR6cEjJKo3eLSpgJ8ui8pkCqzwBH5IO+7g=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     ukernel@gmail.com, idryomov@gmail.com
+Subject: [PATCH 1/5] ceph: break out writeback of incompatible snap context to separate function
+Date:   Wed, 16 Sep 2020 13:38:50 -0400
+Message-Id: <20200916173854.330265-2-jlayton@kernel.org>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200916173854.330265-1-jlayton@kernel.org>
+References: <20200916173854.330265-1-jlayton@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+When dirtying a page, we have to flush incompatible contexts. Move that
+into a separate function.
 
-This is the fifth backport release of the Ceph Octopus stable release
-series. This release brings a range of fixes across all components. We
-recommend that all Octopus users upgrade to this release.=20
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/addr.c | 96 +++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 60 insertions(+), 36 deletions(-)
 
-Notable Changes
----------------
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 7b1f3dad576f..c8e98fee8164 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1298,40 +1298,34 @@ static int context_is_writeable_or_written(struct inode *inode,
+ 	return ret;
+ }
+ 
+-/*
+- * We are only allowed to write into/dirty the page if the page is
+- * clean, or already dirty within the same snap context.
++/**
++ * ceph_find_incompatible - find an incompatible context and return it
++ * @inode: inode associated with page
++ * @page: page being dirtied
+  *
+- * called with page locked.
+- * return success with page locked,
+- * or any failure (incl -EAGAIN) with page unlocked.
++ * Returns NULL on success, negative error code on error, and a snapc ref that should be
++ * waited on otherwise.
+  */
+-static int ceph_update_writeable_page(struct file *file,
+-			    loff_t pos, unsigned len,
+-			    struct page *page)
++static struct ceph_snap_context *
++ceph_find_incompatible(struct inode *inode, struct page *page)
+ {
+-	struct inode *inode = file_inode(file);
+ 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+-	loff_t page_off = pos & PAGE_MASK;
+-	int pos_in_page = pos & ~PAGE_MASK;
+-	int end_in_page = pos_in_page + len;
+-	loff_t i_size;
+-	int r;
+-	struct ceph_snap_context *snapc, *oldest;
+ 
+ 	if (READ_ONCE(fsc->mount_state) == CEPH_MOUNT_SHUTDOWN) {
+ 		dout(" page %p forced umount\n", page);
+-		unlock_page(page);
+-		return -EIO;
++		return ERR_PTR(-EIO);
+ 	}
+ 
+-retry_locked:
+-	/* writepages currently holds page lock, but if we change that later, */
+-	wait_on_page_writeback(page);
++	for (;;) {
++		struct ceph_snap_context *snapc, *oldest;
++
++		wait_on_page_writeback(page);
++
++		snapc = page_snap_context(page);
++		if (!snapc || snapc == ci->i_head_snapc)
++			break;
+ 
+-	snapc = page_snap_context(page);
+-	if (snapc && snapc != ci->i_head_snapc) {
+ 		/*
+ 		 * this page is already dirty in another (older) snap
+ 		 * context!  is it writeable now?
+@@ -1346,26 +1340,56 @@ static int ceph_update_writeable_page(struct file *file,
+ 			 * be writeable or written
+ 			 */
+ 			snapc = ceph_get_snap_context(snapc);
+-			unlock_page(page);
+-			ceph_queue_writeback(inode);
+-			r = wait_event_killable(ci->i_cap_wq,
+-			       context_is_writeable_or_written(inode, snapc));
+-			ceph_put_snap_context(snapc);
+-			if (r == -ERESTARTSYS)
+-				return r;
+-			return -EAGAIN;
++			return snapc;
+ 		}
+ 		ceph_put_snap_context(oldest);
+ 
+ 		/* yay, writeable, do it now (without dropping page lock) */
+ 		dout(" page %p snapc %p not current, but oldest\n",
+ 		     page, snapc);
+-		if (!clear_page_dirty_for_io(page))
+-			goto retry_locked;
+-		r = writepage_nounlock(page, NULL);
+-		if (r < 0)
++		if (clear_page_dirty_for_io(page)) {
++			int r = writepage_nounlock(page, NULL);
++			if (r < 0)
++				return ERR_PTR(r);
++		}
++	}
++	return NULL;
++}
++
++/*
++ * We are only allowed to write into/dirty the page if the page is
++ * clean, or already dirty within the same snap context.
++ *
++ * called with page locked.
++ * return success with page locked,
++ * or any failure (incl -EAGAIN) with page unlocked.
++ */
++static int ceph_update_writeable_page(struct file *file,
++			    loff_t pos, unsigned len,
++			    struct page *page)
++{
++	struct inode *inode = file_inode(file);
++	struct ceph_inode_info *ci = ceph_inode(inode);
++	struct ceph_snap_context *snapc;
++	loff_t page_off = pos & PAGE_MASK;
++	int pos_in_page = pos & ~PAGE_MASK;
++	int end_in_page = pos_in_page + len;
++	loff_t i_size;
++	int r;
++
++retry_locked:
++	snapc = ceph_find_incompatible(inode, page);
++	if (snapc) {
++		if (IS_ERR(snapc)) {
++			r = PTR_ERR(snapc);
+ 			goto fail_unlock;
+-		goto retry_locked;
++		}
++		unlock_page(page);
++		ceph_queue_writeback(inode);
++		r = wait_event_killable(ci->i_cap_wq,
++					context_is_writeable_or_written(inode, snapc));
++		ceph_put_snap_context(snapc);
++		return -EAGAIN;
+ 	}
+ 
+ 	if (PageUptodate(page)) {
+-- 
+2.26.2
 
-* CephFS: Automatic static subtree partitioning policies may now be configu=
-red
-  using the new distributed and random ephemeral pinning extended attribute=
-s on
-  directories. See the documentation for more information:
-  https://docs.ceph.com/docs/master/cephfs/multimds/
-
-* Monitors now have a config option `mon_osd_warn_num_repaired`, 10 by defa=
-ult.
-  If any OSD has repaired more than this many I/O errors in stored data a
-  `OSD_TOO_MANY_REPAIRS` health warning is generated.
-
-* Now when noscrub and/or no deep-scrub flags are set globally or per pool,
-  scheduled scrubs of the type disabled will be aborted. All user initiated
-  scrubs are NOT interrupted.
-
-* Fix an issue with osdmaps not being trimmed in a healthy cluster (
-  issue#47297, pr#36981)
-
-For the detailed changelog please refer to the blog entry at
-https://ceph.io/releases/v15-2-5-octopus-released/
-
-Getting Ceph
-------------
-* Git at git://github.com/ceph/ceph.git
-* Tarball at http://download.ceph.com/tarballs/ceph-15.2.5.tar.gz
-* For packages, see http://docs.ceph.com/docs/master/install/get-packages/
-* Release git sha1: 2c93eff00150f0cc5f106a559557a58d3d7b6f1f
-
---=20
-Abhishek Lekshmanan
-SUSE Software Solutions Germany GmbH
-GF: Felix Imend=C3=B6rffer, HRB 36809 (AG N=C3=BCrnberg)
