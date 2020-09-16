@@ -2,153 +2,82 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B30D26C67E
-	for <lists+ceph-devel@lfdr.de>; Wed, 16 Sep 2020 19:52:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4EE226C6A4
+	for <lists+ceph-devel@lfdr.de>; Wed, 16 Sep 2020 19:57:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbgIPRwT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 16 Sep 2020 13:52:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42044 "EHLO mail.kernel.org"
+        id S1727648AbgIPR5B (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 16 Sep 2020 13:57:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48880 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727554AbgIPRvX (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:51:23 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1ACC922227;
-        Wed, 16 Sep 2020 12:49:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600260588;
-        bh=ViIzrXI8juxz4GpUaQgw0altL7fO7zi+9yar4pkYCNE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=rWxficUsCHLeQ3JhySbZbqNY9IEiAlEoMoDwazd3cGJzxLQaXogCAswAm3McrBInm
-         JK4ptxbaoSNprHqI3UsP+idhj/J5BVPhgBdOH9/DRgLfbJvbiwVISiqEMNt6J8sTiV
-         1hzG0mv2hRi3YAHbsMqt8DXxU6dTOTSCvOS0+SH8=
-Message-ID: <611ba5851c4d528dd06e21348ec31d0970069431.camel@kernel.org>
-Subject: Re: [RFC PATCH v3 08/16] ceph: implement -o test_dummy_encryption
- mount option
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Wed, 16 Sep 2020 08:49:47 -0400
-In-Reply-To: <20200915012307.GH899@sol.localdomain>
-References: <20200914191707.380444-1-jlayton@kernel.org>
-         <20200914191707.380444-9-jlayton@kernel.org>
-         <20200915012307.GH899@sol.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        id S1727647AbgIPRyS (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 16 Sep 2020 13:54:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=cantorsusede;
+        t=1600269011;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Jo/X5/Dvrczw/R8zqhUAJUBzfEHzT8xfSgrsPXBLduc=;
+        b=bkw2NcmdqUzQ6stK0guvCtHrNhDrC50Aggo4bds9bGCdESpxuMD7vMAILE904eZZm+5fs1
+        l9lVp+Rssd/sLU3X64D1gh3N/woIPfsdaZq/5VYUoKZVHZERZJvOebxOn+stCGx8WP+tn6
+        3p1dVA4oFRkkW1e3/ZwA5JMHAyTtupo1leausldEfFtOLCeSc75WBspwt3nENuFvlceQgq
+        e7Kaw42Tt4wI86QySYCLchoXAtUTjasWk5BDc9GX94UKZzjD5CE3zQQE61yarFb5p/Whmd
+        IceIRHuDvW+UhifmgmXLfUV6Umnse5+9fmzuZSTcXcDkphcqaA9SyENh2MC08w==
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id AA3E1ABCC;
+        Wed, 16 Sep 2020 15:10:26 +0000 (UTC)
+From:   Abhishek Lekshmanan <abhishek@suse.com>
+To:     ceph-announce@ceph.io, ceph-users@ceph.io, dev@ceph.io,
+        ceph-devel@vger.kernel.org, ceph-maintainers@ceph.io
+Subject: v15.2.5 octopus released
+Date:   Wed, 16 Sep 2020 17:10:11 +0200
+Message-ID: <87een1g3l8.fsf@suse.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: ceph-devel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2020-09-14 at 18:23 -0700, Eric Biggers wrote:
-> On Mon, Sep 14, 2020 at 03:16:59PM -0400, Jeff Layton wrote:
-> > +	case Opt_test_dummy_encryption:
-> > +		kfree(fsopt->test_dummy_encryption);
-> > +#ifdef CONFIG_FS_ENCRYPTION
-> > +		fsopt->test_dummy_encryption = param->string;
-> > +		param->string = NULL;
-> > +		fsopt->flags |= CEPH_MOUNT_OPT_TEST_DUMMY_ENC;
-> > +#else
-> > +		warnfc(fc, "FS encryption not supported: test_dummy_encryption mount option ignored");
-> > +#endif
-> 
-> Seems that the kfree() should go in the CONFIG_FS_ENCRYPTION=y block.
-> 
-> Also, is there much reason to have the CEPH_MOUNT_OPT_TEST_DUMMY_ENC flag
-> instead of just checking fsopt->test_dummy_encryption != NULL?
-> 
 
-Yes. That distinguishes between the case where someone has used
--o test_dummy_encryption and -o test_dummy_encryption=v2.
+This is the fifth backport release of the Ceph Octopus stable release
+series. This release brings a range of fixes across all components. We
+recommend that all Octopus users upgrade to this release.=20
 
-> > +#ifdef CONFIG_FS_ENCRYPTION
-> > +static int ceph_set_test_dummy_encryption(struct super_block *sb, struct fs_context *fc,
-> > +						struct ceph_mount_options *fsopt)
-> > +{
-> > +	struct ceph_fs_client *fsc = sb->s_fs_info;
-> > +
-> > +	if (fsopt->flags & CEPH_MOUNT_OPT_TEST_DUMMY_ENC) {
-> > +		substring_t arg = { };
-> > +
-> > +		/*
-> > +		 * No changing encryption context on remount. Note that
-> > +		 * fscrypt_set_test_dummy_encryption will validate the version
-> > +		 * string passed in (if any).
-> > +		 */
-> > +		if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE && !fsc->dummy_enc_policy.policy)
-> > +			return -EEXIST;
-> 
-> Maybe show an error message here, with errorfc()?
-> See the message that ext4_set_test_dummy_encryption() shows.
-> 
+Notable Changes
+---------------
 
-Good idea. I've rolled in error messages similar to the ones in ext4.
+* CephFS: Automatic static subtree partitioning policies may now be configu=
+red
+  using the new distributed and random ephemeral pinning extended attribute=
+s on
+  directories. See the documentation for more information:
+  https://docs.ceph.com/docs/master/cephfs/multimds/
 
-> > +
-> > +		/* Ewwwwwwww */
-> > +		if (fsc->mount_options->test_dummy_encryption) {
-> > +			arg.from = fsc->mount_options->test_dummy_encryption;
-> > +			arg.to = arg.from + strlen(arg.from) - 1;
-> > +		}
-> 
-> We should probably make fscrypt_set_test_dummy_encryption() take a
-> 'const char *' to avoid having to create a substring_t here.
-> 
+* Monitors now have a config option `mon_osd_warn_num_repaired`, 10 by defa=
+ult.
+  If any OSD has repaired more than this many I/O errors in stored data a
+  `OSD_TOO_MANY_REPAIRS` health warning is generated.
 
-Yes, please. I didn't want to do that with most of the current fscrypt-
-enabled fs using the old mount API. Some of them may need to copy the
-argument so that it's properly terminated.
+* Now when noscrub and/or no deep-scrub flags are set globally or per pool,
+  scheduled scrubs of the type disabled will be aborted. All user initiated
+  scrubs are NOT interrupted.
 
-We could also just add a wrapper that turns the const char * into a
-substring_t before calling fscrypt_set_test_dummy_encryption.
+* Fix an issue with osdmaps not being trimmed in a healthy cluster (
+  issue#47297, pr#36981)
 
-> > +		return fscrypt_set_test_dummy_encryption(sb, &arg, &fsc->dummy_enc_policy);
-> 
-> Likewise, maybe show an error message if this fails.
-> 
-> > +	} else {
-> > +		if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE && fsc->dummy_enc_policy.policy)
-> > +			return -EEXIST;
-> 
-> If remount on ceph behaves as "don't change options that aren't specified",
-> similar to ext4, then there's no need for this hunk here.
-> 
+For the detailed changelog please refer to the blog entry at
+https://ceph.io/releases/v15-2-5-octopus-released/
 
-Good point.
+Getting Ceph
+------------
+* Git at git://github.com/ceph/ceph.git
+* Tarball at http://download.ceph.com/tarballs/ceph-15.2.5.tar.gz
+* For packages, see http://docs.ceph.com/docs/master/install/get-packages/
+* Release git sha1: 2c93eff00150f0cc5f106a559557a58d3d7b6f1f
 
-> >  static int ceph_reconfigure_fc(struct fs_context *fc)
-> >  {
-> > +	int err;
-> >  	struct ceph_parse_opts_ctx *pctx = fc->fs_private;
-> >  	struct ceph_mount_options *fsopt = pctx->opts;
-> > -	struct ceph_fs_client *fsc = ceph_sb_to_client(fc->root->d_sb);
-> > +	struct super_block *sb = fc->root->d_sb;
-> > +	struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
-> >  
-> >  	if (fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS)
-> >  		ceph_set_mount_opt(fsc, ASYNC_DIROPS);
-> >  	else
-> >  		ceph_clear_mount_opt(fsc, ASYNC_DIROPS);
-> >  
-> > -	sync_filesystem(fc->root->d_sb);
-> > +	err = ceph_set_test_dummy_encryption(sb, fc, fsopt);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	sync_filesystem(sb);
-> >  	return 0;
-> >  }
-> 
-> Seems that ceph_set_test_dummy_encryption() should go at the beginning, since
-> otherwise it can fail after something was already changed.
-> 
-
-Good catch. Fixed.
-
--- 
-Jeff Layton <jlayton@kernel.org>
-
+--=20
+Abhishek Lekshmanan
+SUSE Software Solutions Germany GmbH
+GF: Felix Imend=C3=B6rffer, HRB 36809 (AG N=C3=BCrnberg)
