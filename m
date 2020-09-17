@@ -2,141 +2,188 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF12B26D774
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Sep 2020 11:16:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCFDA26DC75
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Sep 2020 15:07:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726318AbgIQJQh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Sep 2020 05:16:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38492 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbgIQJQf (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Sep 2020 05:16:35 -0400
-Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF479C06174A
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Sep 2020 02:16:34 -0700 (PDT)
-Received: by mail-il1-x132.google.com with SMTP id h2so1542844ilo.12
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Sep 2020 02:16:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3hX9WIJ93Hx7pW2OqifIhkigBlDw3PE5r8CbRztZfxY=;
-        b=SDnnw2K1SKpalKVBddJ/plnNBxgJg8hR6Trwve6dnJYEuFIObr/gjtYT1MwaHj3TX5
-         EhZQ5Cuabrt8Neu0v3IdV9GHWJQ9O/oCWru164BIIbPzzu3CEhtAG5URjyuCzaist3Kh
-         SpBxriuK2dkk3Uu0N6KdFfLP2bWmJ+rB7JJOMrIU3iAIJJSuO0BF/92kUfREJ0j1RKFp
-         oLn6Nubfuf9VHiG9GwqFIqqgTP8vvQdZ6pljXL2s9lQyyFKjHYkkh4Ql7dIIVFnNs4wt
-         DyAxDdFeQCDs+mrlLWUGoYLq9aaxhIcJKw/i8YBzOEBycN5OUHaRpFErS9FRXT3IkaoS
-         zNAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3hX9WIJ93Hx7pW2OqifIhkigBlDw3PE5r8CbRztZfxY=;
-        b=CGCOgppcXGvdrgxiiBZIpiP0fkgKEDjxgKCHlAB6Tv5zzlYfTP/lZt2wXiOHAQuJwO
-         1iCWfmQSeYFWjAFGWNUFiTLOVZF+hYPlvOQJwOgquGgW33HA5j6+ARkPxPVDPMFU3V3p
-         a0ciXgLhUzAEK9eMAl1Pb/EWVqvTx8v+4kICGv1NgOKENWW3f2Wz9HuU0tsYaDvjDv4F
-         IMKcjecU8qhZX2ZNMpMPlPFNX5jgwEUAqE8qSce6f4SJDTbAZimErNMEfgHzcC7CVSHB
-         E6Jjg8eaj10HvjRz9LfMVxbr0yxnc4tFXARcUwYATTCXhWMqhx80l1KUjhN3M5bmVFed
-         Snzw==
-X-Gm-Message-State: AOAM533UpbPw3StB3MVbVrpq4biE6PDyLQDLbkBkbFcprUaQ5VakWoP+
-        KocKUKVfOTvHQ+y0VVtJuhPfXZJDq1YEz0qls1M=
-X-Google-Smtp-Source: ABdhPJyvft7WsYNUaSZXozMezlBNTikxd4IfSiOUL3YIH/Ap43ggSX5uP4hR1ScdlCmofouhlQEW2zIdNa5uybXuMsw=
-X-Received: by 2002:a92:dc81:: with SMTP id c1mr20059463iln.220.1600334193140;
- Thu, 17 Sep 2020 02:16:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <202009170513.sIUVS6IQ%lkp@intel.com>
-In-Reply-To: <202009170513.sIUVS6IQ%lkp@intel.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 17 Sep 2020 11:16:22 +0200
-Message-ID: <CAOi1vP8RYp-wngs2JeuHxcwbeFkRApD3YVGuQN-dN95AZN5U6Q@mail.gmail.com>
-Subject: Re: [ceph-client:testing 2/3] net/ceph/mon_client.c:928:2: warning:
- function 'do_mon_command_vargs' might be a candidate for 'gnu_printf' format attribute
-To:     kernel test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org,
-        Ceph Development <ceph-devel@vger.kernel.org>
+        id S1727085AbgIQNHc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Sep 2020 09:07:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51554 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726765AbgIQMc5 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 17 Sep 2020 08:32:57 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E03D02087D;
+        Thu, 17 Sep 2020 12:32:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600345961;
+        bh=olPA59AHeALmdazeYKWfpYsBo4J0J6ZWIIQE72g2Yac=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=QBsfQLFvyNNo7AazxeBdsvgrBNu/5E0ANikO/MgA+2DaZ8Hy+kVN+DnzTkA331w9R
+         F99L+XLGUhz5QfB0i3mLuEVhal68EbIHv3IyFk1bRT/k04PDMksWsrW9xN8pUPc555
+         8JmVCKQIahp87c2ulFoeqvulKpTDYSeXTHOvjuQc=
+Message-ID: <41ad3cd50f4d213455bef4e7c42143c289690222.camel@kernel.org>
+Subject: Re: [PATCH v3 13/13] fscrypt: make
+ fscrypt_set_test_dummy_encryption() take a 'const char *'
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, ceph-devel@vger.kernel.org,
+        Daniel Rosenberg <drosen@google.com>
+Date:   Thu, 17 Sep 2020 08:32:39 -0400
+In-Reply-To: <20200917041136.178600-14-ebiggers@kernel.org>
+References: <20200917041136.178600-1-ebiggers@kernel.org>
+         <20200917041136.178600-14-ebiggers@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Sep 16, 2020 at 11:11 PM kernel test robot <lkp@intel.com> wrote:
->
-> tree:   https://github.com/ceph/ceph-client.git testing
-> head:   a274f50dee76e2182580cafeb908d95bda2cac70
-> commit: c3e9a9f0a4b9178a5c4068b73d6579e8346cd3f3 [2/3] libceph: switch to the new "osd blocklist add" command
-> config: arm-randconfig-r012-20200916 (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (GCC) 9.3.0
-> reproduce (this is a W=1 build):
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         git checkout c3e9a9f0a4b9178a5c4068b73d6579e8346cd3f3
->         # save the attached .config to linux build tree
->         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=arm
->
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kernel test robot <lkp@intel.com>
->
-> All warnings (new ones prefixed by >>):
->
->    net/ceph/mon_client.c: In function 'do_mon_command_vargs':
-> >> net/ceph/mon_client.c:928:2: warning: function 'do_mon_command_vargs' might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
->      928 |  len = vsprintf(h->str, fmt, ap);
->          |  ^~~
->
-> # https://github.com/ceph/ceph-client/commit/c3e9a9f0a4b9178a5c4068b73d6579e8346cd3f3
-> git remote add ceph-client https://github.com/ceph/ceph-client.git
-> git fetch --no-tags ceph-client testing
-> git checkout c3e9a9f0a4b9178a5c4068b73d6579e8346cd3f3
-> vim +928 net/ceph/mon_client.c
->
->    898
->    899  static int do_mon_command_vargs(struct ceph_mon_client *monc,
->    900                                  const char *fmt, va_list ap)
->    901  {
->    902          struct ceph_mon_generic_request *req;
->    903          struct ceph_mon_command *h;
->    904          int ret = -ENOMEM;
->    905          int len;
->    906
->    907          req = alloc_generic_request(monc, GFP_NOIO);
->    908          if (!req)
->    909                  goto out;
->    910
->    911          req->request = ceph_msg_new(CEPH_MSG_MON_COMMAND, 256, GFP_NOIO, true);
->    912          if (!req->request)
->    913                  goto out;
->    914
->    915          req->reply = ceph_msg_new(CEPH_MSG_MON_COMMAND_ACK, 512, GFP_NOIO,
->    916                                    true);
->    917          if (!req->reply)
->    918                  goto out;
->    919
->    920          mutex_lock(&monc->mutex);
->    921          register_generic_request(req);
->    922          h = req->request->front.iov_base;
->    923          h->monhdr.have_version = 0;
->    924          h->monhdr.session_mon = cpu_to_le16(-1);
->    925          h->monhdr.session_mon_tid = 0;
->    926          h->fsid = monc->monmap->fsid;
->    927          h->num_strs = cpu_to_le32(1);
->  > 928          len = vsprintf(h->str, fmt, ap);
->    929          h->str_len = cpu_to_le32(len);
->    930          send_generic_request(monc, req);
->    931          mutex_unlock(&monc->mutex);
->    932
->    933          ret = wait_generic_request(req);
->    934  out:
->    935          put_generic_request(req);
->    936          return ret;
->    937  }
->    938
->
+On Wed, 2020-09-16 at 21:11 -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> fscrypt_set_test_dummy_encryption() requires that the optional argument
+> to the test_dummy_encryption mount option be specified as a substring_t.
+> That doesn't work well with filesystems that use the new mount API,
+> since the new way of parsing mount options doesn't use substring_t.
+> 
+> Make it take the argument as a 'const char *' instead.
+> 
+> Instead of moving the match_strdup() into the callers in ext4 and f2fs,
+> make them just use arg->from directly.  Since the pattern is
+> "test_dummy_encryption=%s", the argument will be null-terminated.
+> 
+
+Are you sure about that? I thought the point of substring_t was to give
+you a token from the string without null terminating it.
+
+ISTM that when you just pass in ->from, you might end up with trailing
+arguments in your string like this. e.g.:
+
+    "v2,foo,bar,baz"
+
+...and then that might fail to match properly
+in fscrypt_set_test_dummy_encryption.
+
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 > ---
-> 0-DAY CI Kernel Test Service, Intel Corporation
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+>  fs/crypto/policy.c      | 20 ++++++--------------
+>  fs/ext4/super.c         |  2 +-
+>  fs/f2fs/super.c         |  2 +-
+>  include/linux/fscrypt.h |  5 +----
+>  4 files changed, 9 insertions(+), 20 deletions(-)
+> 
+> diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+> index 97cf07543651f..4441d9944b9ef 100644
+> --- a/fs/crypto/policy.c
+> +++ b/fs/crypto/policy.c
+> @@ -697,8 +697,7 @@ EXPORT_SYMBOL_GPL(fscrypt_set_context);
+>  /**
+>   * fscrypt_set_test_dummy_encryption() - handle '-o test_dummy_encryption'
+>   * @sb: the filesystem on which test_dummy_encryption is being specified
+> - * @arg: the argument to the test_dummy_encryption option.
+> - *	 If no argument was specified, then @arg->from == NULL.
+> + * @arg: the argument to the test_dummy_encryption option.  May be NULL.
+>   * @dummy_policy: the filesystem's current dummy policy (input/output, see
+>   *		  below)
+>   *
+> @@ -712,29 +711,23 @@ EXPORT_SYMBOL_GPL(fscrypt_set_context);
+>   *         -EEXIST if a different dummy policy is already set;
+>   *         or another -errno value.
+>   */
+> -int fscrypt_set_test_dummy_encryption(struct super_block *sb,
+> -				      const substring_t *arg,
+> +int fscrypt_set_test_dummy_encryption(struct super_block *sb, const char *arg,
+>  				      struct fscrypt_dummy_policy *dummy_policy)
+>  {
+> -	const char *argstr = "v2";
+> -	const char *argstr_to_free = NULL;
+>  	struct fscrypt_key_specifier key_spec = { 0 };
+>  	int version;
+>  	union fscrypt_policy *policy = NULL;
+>  	int err;
+>  
+> -	if (arg->from) {
+> -		argstr = argstr_to_free = match_strdup(arg);
+> -		if (!argstr)
+> -			return -ENOMEM;
+> -	}
+> +	if (!arg)
+> +		arg = "v2";
+>  
+> -	if (!strcmp(argstr, "v1")) {
+> +	if (!strcmp(arg, "v1")) {
+>  		version = FSCRYPT_POLICY_V1;
+>  		key_spec.type = FSCRYPT_KEY_SPEC_TYPE_DESCRIPTOR;
+>  		memset(key_spec.u.descriptor, 0x42,
+>  		       FSCRYPT_KEY_DESCRIPTOR_SIZE);
+> -	} else if (!strcmp(argstr, "v2")) {
+> +	} else if (!strcmp(arg, "v2")) {
+>  		version = FSCRYPT_POLICY_V2;
+>  		key_spec.type = FSCRYPT_KEY_SPEC_TYPE_IDENTIFIER;
+>  		/* key_spec.u.identifier gets filled in when adding the key */
+> @@ -785,7 +778,6 @@ int fscrypt_set_test_dummy_encryption(struct super_block *sb,
+>  	err = 0;
+>  out:
+>  	kfree(policy);
+> -	kfree(argstr_to_free);
+>  	return err;
+>  }
+>  EXPORT_SYMBOL_GPL(fscrypt_set_test_dummy_encryption);
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 7e77722406e2f..ed5624285a475 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -1893,7 +1893,7 @@ static int ext4_set_test_dummy_encryption(struct super_block *sb,
+>  			 "Can't set test_dummy_encryption on remount");
+>  		return -1;
+>  	}
+> -	err = fscrypt_set_test_dummy_encryption(sb, arg,
+> +	err = fscrypt_set_test_dummy_encryption(sb, arg->from,
+>  						&sbi->s_dummy_enc_policy);
+>  	if (err) {
+>  		if (err == -EEXIST)
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index f2b3d1a279fb7..c72d22c0c52e7 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -438,7 +438,7 @@ static int f2fs_set_test_dummy_encryption(struct super_block *sb,
+>  		return -EINVAL;
+>  	}
+>  	err = fscrypt_set_test_dummy_encryption(
+> -		sb, arg, &F2FS_OPTION(sbi).dummy_enc_policy);
+> +		sb, arg->from, &F2FS_OPTION(sbi).dummy_enc_policy);
+>  	if (err) {
+>  		if (err == -EEXIST)
+>  			f2fs_warn(sbi,
+> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+> index b3b0c5675c6b1..fc67c4cbaa968 100644
+> --- a/include/linux/fscrypt.h
+> +++ b/include/linux/fscrypt.h
+> @@ -15,7 +15,6 @@
+>  
+>  #include <linux/fs.h>
+>  #include <linux/mm.h>
+> -#include <linux/parser.h>
+>  #include <linux/slab.h>
+>  #include <uapi/linux/fscrypt.h>
+>  
+> @@ -153,9 +152,7 @@ struct fscrypt_dummy_policy {
+>  	const union fscrypt_policy *policy;
+>  };
+>  
+> -int fscrypt_set_test_dummy_encryption(
+> -				struct super_block *sb,
+> -				const substring_t *arg,
+> +int fscrypt_set_test_dummy_encryption(struct super_block *sb, const char *arg,
+>  				struct fscrypt_dummy_policy *dummy_policy);
+>  void fscrypt_show_test_dummy_encryption(struct seq_file *seq, char sep,
+>  					struct super_block *sb);
 
-Yup, missed that.  Now fixed.
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-Thanks,
-
-                Ilya
