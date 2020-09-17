@@ -2,188 +2,101 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CCFDA26DC75
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Sep 2020 15:07:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 718B026DF52
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Sep 2020 17:14:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbgIQNHc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Sep 2020 09:07:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51554 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726765AbgIQMc5 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 17 Sep 2020 08:32:57 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E03D02087D;
-        Thu, 17 Sep 2020 12:32:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600345961;
-        bh=olPA59AHeALmdazeYKWfpYsBo4J0J6ZWIIQE72g2Yac=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=QBsfQLFvyNNo7AazxeBdsvgrBNu/5E0ANikO/MgA+2DaZ8Hy+kVN+DnzTkA331w9R
-         F99L+XLGUhz5QfB0i3mLuEVhal68EbIHv3IyFk1bRT/k04PDMksWsrW9xN8pUPc555
-         8JmVCKQIahp87c2ulFoeqvulKpTDYSeXTHOvjuQc=
-Message-ID: <41ad3cd50f4d213455bef4e7c42143c289690222.camel@kernel.org>
-Subject: Re: [PATCH v3 13/13] fscrypt: make
- fscrypt_set_test_dummy_encryption() take a 'const char *'
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, ceph-devel@vger.kernel.org,
-        Daniel Rosenberg <drosen@google.com>
-Date:   Thu, 17 Sep 2020 08:32:39 -0400
-In-Reply-To: <20200917041136.178600-14-ebiggers@kernel.org>
-References: <20200917041136.178600-1-ebiggers@kernel.org>
-         <20200917041136.178600-14-ebiggers@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        id S1728036AbgIQPNt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Sep 2020 11:13:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37390 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727959AbgIQPLm (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Sep 2020 11:11:42 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36A60C06121D;
+        Thu, 17 Sep 2020 08:11:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=lu11y1IB6qPsE9QG9F+oQMlPRPTZIY05Da6y3WAX60M=; b=GPkxwUMdgSb1OJ4/VmsY06Tw3d
+        wGaBexmE5C59ZCk9mEQrvh9oEg9vXINOmQweMRoeaKlDN+2g7USOiJ7p9L6bGvMTgyOEzZOtR669A
+        jIht28BCCCPOx7e6FE0aFJU+a0OyffBNocDLpE1149X17KE2LrFn/XIZhTexixrbCr/7fuXh5bEIC
+        5+5CsSw56eGm4LgIdvEOovoEjzYZrFmqYQ0NKJCGq7JspTlxSRfyl5i2MbjOV1DdvtIMrAzZjoYaL
+        ynre9v/sxNEHLDS79EF6RrWV5KTmLFDCVpjgtJr0LUrFEcYXA87AZmSArmQz3cvHn2mHKHdPH2VNi
+        a4wd79ow==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kIvYi-0001PE-2q; Thu, 17 Sep 2020 15:10:52 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, v9fs-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
+        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ecryptfs@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>
+Subject: [PATCH 00/13] Allow readpage to return a locked page
+Date:   Thu, 17 Sep 2020 16:10:37 +0100
+Message-Id: <20200917151050.5363-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2020-09-16 at 21:11 -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> fscrypt_set_test_dummy_encryption() requires that the optional argument
-> to the test_dummy_encryption mount option be specified as a substring_t.
-> That doesn't work well with filesystems that use the new mount API,
-> since the new way of parsing mount options doesn't use substring_t.
-> 
-> Make it take the argument as a 'const char *' instead.
-> 
-> Instead of moving the match_strdup() into the callers in ext4 and f2fs,
-> make them just use arg->from directly.  Since the pattern is
-> "test_dummy_encryption=%s", the argument will be null-terminated.
-> 
+Linus recently made the page lock more fair.  That means that the old
+pattern where we returned from ->readpage with the page unlocked and
+then attempted to re-lock it will send us to the back of the queue for
+this page's lock.
 
-Are you sure about that? I thought the point of substring_t was to give
-you a token from the string without null terminating it.
+Ideally all filesystems would return from ->readpage with the
+page Uptodate and Locked, but it's a bit painful to convert all the
+asynchronous readpage implementations to synchronous.  These ones are
+already synchronous, so convert them while I work on iomap.
 
-ISTM that when you just pass in ->from, you might end up with trailing
-arguments in your string like this. e.g.:
+A further benefit is that a synchronous readpage implementation allows
+us to return an error to someone who might actually care about it.
+There's no need to SetPageError, but I don't want to learn about how
+a dozen filesystems handle I/O errors (hint: they're all different),
+so I have not attempted to change that.
 
-    "v2,foo,bar,baz"
+Please review your filesystem carefully.  I've tried to catch all the
+places where a filesystem calls its own internal readpage implementation
+without going through ->readpage, but I may have missed some.
 
-...and then that might fail to match properly
-in fscrypt_set_test_dummy_encryption.
+Matthew Wilcox (Oracle) (13):
+  mm: Add AOP_UPDATED_PAGE return value
+  9p: Tell the VFS that readpage was synchronous
+  afs: Tell the VFS that readpage was synchronous
+  ceph: Tell the VFS that readpage was synchronous
+  cifs: Tell the VFS that readpage was synchronous
+  cramfs: Tell the VFS that readpage was synchronous
+  ecryptfs: Tell the VFS that readpage was synchronous
+  fuse: Tell the VFS that readpage was synchronous
+  hostfs: Tell the VFS that readpage was synchronous
+  jffs2: Tell the VFS that readpage was synchronous
+  ubifs: Tell the VFS that readpage was synchronous
+  udf: Tell the VFS that readpage was synchronous
+  vboxsf: Tell the VFS that readpage was synchronous
 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  fs/crypto/policy.c      | 20 ++++++--------------
->  fs/ext4/super.c         |  2 +-
->  fs/f2fs/super.c         |  2 +-
->  include/linux/fscrypt.h |  5 +----
->  4 files changed, 9 insertions(+), 20 deletions(-)
-> 
-> diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
-> index 97cf07543651f..4441d9944b9ef 100644
-> --- a/fs/crypto/policy.c
-> +++ b/fs/crypto/policy.c
-> @@ -697,8 +697,7 @@ EXPORT_SYMBOL_GPL(fscrypt_set_context);
->  /**
->   * fscrypt_set_test_dummy_encryption() - handle '-o test_dummy_encryption'
->   * @sb: the filesystem on which test_dummy_encryption is being specified
-> - * @arg: the argument to the test_dummy_encryption option.
-> - *	 If no argument was specified, then @arg->from == NULL.
-> + * @arg: the argument to the test_dummy_encryption option.  May be NULL.
->   * @dummy_policy: the filesystem's current dummy policy (input/output, see
->   *		  below)
->   *
-> @@ -712,29 +711,23 @@ EXPORT_SYMBOL_GPL(fscrypt_set_context);
->   *         -EEXIST if a different dummy policy is already set;
->   *         or another -errno value.
->   */
-> -int fscrypt_set_test_dummy_encryption(struct super_block *sb,
-> -				      const substring_t *arg,
-> +int fscrypt_set_test_dummy_encryption(struct super_block *sb, const char *arg,
->  				      struct fscrypt_dummy_policy *dummy_policy)
->  {
-> -	const char *argstr = "v2";
-> -	const char *argstr_to_free = NULL;
->  	struct fscrypt_key_specifier key_spec = { 0 };
->  	int version;
->  	union fscrypt_policy *policy = NULL;
->  	int err;
->  
-> -	if (arg->from) {
-> -		argstr = argstr_to_free = match_strdup(arg);
-> -		if (!argstr)
-> -			return -ENOMEM;
-> -	}
-> +	if (!arg)
-> +		arg = "v2";
->  
-> -	if (!strcmp(argstr, "v1")) {
-> +	if (!strcmp(arg, "v1")) {
->  		version = FSCRYPT_POLICY_V1;
->  		key_spec.type = FSCRYPT_KEY_SPEC_TYPE_DESCRIPTOR;
->  		memset(key_spec.u.descriptor, 0x42,
->  		       FSCRYPT_KEY_DESCRIPTOR_SIZE);
-> -	} else if (!strcmp(argstr, "v2")) {
-> +	} else if (!strcmp(arg, "v2")) {
->  		version = FSCRYPT_POLICY_V2;
->  		key_spec.type = FSCRYPT_KEY_SPEC_TYPE_IDENTIFIER;
->  		/* key_spec.u.identifier gets filled in when adding the key */
-> @@ -785,7 +778,6 @@ int fscrypt_set_test_dummy_encryption(struct super_block *sb,
->  	err = 0;
->  out:
->  	kfree(policy);
-> -	kfree(argstr_to_free);
->  	return err;
->  }
->  EXPORT_SYMBOL_GPL(fscrypt_set_test_dummy_encryption);
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 7e77722406e2f..ed5624285a475 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1893,7 +1893,7 @@ static int ext4_set_test_dummy_encryption(struct super_block *sb,
->  			 "Can't set test_dummy_encryption on remount");
->  		return -1;
->  	}
-> -	err = fscrypt_set_test_dummy_encryption(sb, arg,
-> +	err = fscrypt_set_test_dummy_encryption(sb, arg->from,
->  						&sbi->s_dummy_enc_policy);
->  	if (err) {
->  		if (err == -EEXIST)
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index f2b3d1a279fb7..c72d22c0c52e7 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -438,7 +438,7 @@ static int f2fs_set_test_dummy_encryption(struct super_block *sb,
->  		return -EINVAL;
->  	}
->  	err = fscrypt_set_test_dummy_encryption(
-> -		sb, arg, &F2FS_OPTION(sbi).dummy_enc_policy);
-> +		sb, arg->from, &F2FS_OPTION(sbi).dummy_enc_policy);
->  	if (err) {
->  		if (err == -EEXIST)
->  			f2fs_warn(sbi,
-> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-> index b3b0c5675c6b1..fc67c4cbaa968 100644
-> --- a/include/linux/fscrypt.h
-> +++ b/include/linux/fscrypt.h
-> @@ -15,7 +15,6 @@
->  
->  #include <linux/fs.h>
->  #include <linux/mm.h>
-> -#include <linux/parser.h>
->  #include <linux/slab.h>
->  #include <uapi/linux/fscrypt.h>
->  
-> @@ -153,9 +152,7 @@ struct fscrypt_dummy_policy {
->  	const union fscrypt_policy *policy;
->  };
->  
-> -int fscrypt_set_test_dummy_encryption(
-> -				struct super_block *sb,
-> -				const substring_t *arg,
-> +int fscrypt_set_test_dummy_encryption(struct super_block *sb, const char *arg,
->  				struct fscrypt_dummy_policy *dummy_policy);
->  void fscrypt_show_test_dummy_encryption(struct seq_file *seq, char sep,
->  					struct super_block *sb);
+ Documentation/filesystems/locking.rst |  7 ++++---
+ Documentation/filesystems/vfs.rst     | 21 ++++++++++++++-------
+ fs/9p/vfs_addr.c                      |  6 +++++-
+ fs/afs/file.c                         |  3 ++-
+ fs/ceph/addr.c                        |  9 +++++----
+ fs/cifs/file.c                        |  8 ++++++--
+ fs/cramfs/inode.c                     |  5 ++---
+ fs/ecryptfs/mmap.c                    | 11 ++++++-----
+ fs/fuse/file.c                        |  2 ++
+ fs/hostfs/hostfs_kern.c               |  2 ++
+ fs/jffs2/file.c                       |  6 ++++--
+ fs/ubifs/file.c                       | 16 ++++++++++------
+ fs/udf/file.c                         |  3 +--
+ fs/vboxsf/file.c                      |  2 ++
+ include/linux/fs.h                    |  5 +++++
+ mm/filemap.c                          | 12 ++++++++++--
+ 16 files changed, 80 insertions(+), 38 deletions(-)
 
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.28.0
 
