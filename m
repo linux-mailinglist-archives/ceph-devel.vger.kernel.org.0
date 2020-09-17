@@ -2,82 +2,78 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2A0B26E4AB
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Sep 2020 20:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D743926E592
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Sep 2020 21:54:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbgIQSyb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Sep 2020 14:54:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37062 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728429AbgIQQU3 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 17 Sep 2020 12:20:29 -0400
-Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9F632224A;
-        Thu, 17 Sep 2020 15:29:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600356549;
-        bh=dsrHqCpL2En5vdo8EKO9ihwbSqFxqTvchyF3EQmBx8M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pLRXIPMU+ebvvDik5sg9LeQLxfPqJ2VfS43CgFM7HSeOTANsZGnTFTJTgezDNSjOp
-         JQbxMoBBOjqjx84cP7GtBdk6eGD1U5VV+fNacoBl4rBzEKoFw3oeRWyqZ36HmyXEdw
-         DLqkCLEPIBXNzP2ARkC0eEXzCYDCBwGOA5LkiyJw=
-Date:   Thu, 17 Sep 2020 08:29:07 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, ceph-devel@vger.kernel.org,
-        Daniel Rosenberg <drosen@google.com>
-Subject: Re: [PATCH v3 13/13] fscrypt: make
- fscrypt_set_test_dummy_encryption() take a 'const char *'
-Message-ID: <20200917152907.GB855@sol.localdomain>
-References: <20200917041136.178600-1-ebiggers@kernel.org>
- <20200917041136.178600-14-ebiggers@kernel.org>
- <41ad3cd50f4d213455bef4e7c42143c289690222.camel@kernel.org>
+        id S1727993AbgIQPMx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Sep 2020 11:12:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37338 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727457AbgIQPL0 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Sep 2020 11:11:26 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E28ABC06178B;
+        Thu, 17 Sep 2020 08:10:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=MTLlKe719mgAVscm2w1Ql0nN7cIRPfZQnUskn6+25OA=; b=hL1cKoF+6/UAQwKZIfKnU0NZqr
+        5yu8M7+7C5AX6w2ZPJR/qCXtNh7fJv27Z77Vzg8+rgPWUUAccXm6tDAc3RAjURPkde7Zqjc5//Z0p
+        46Fkcm7nzOM2P9Av5IqEb5DBysNZXaLpSIFI0VmfJzpsEzy4k1mlNLIFBwXItEIIMuEfqHOhCFmD6
+        N9w4+E/bGdCcr5t/UEf/772f/WOi+W3pu/0ob1SVwmgYAGtuCpTkHyVzp2Eii+eUkpm7Y2RVYO8Jh
+        weQ8jbJAdSxLrmFKCtZL5WTufs7vOcOru0MJvs/IwIS8jD/oQYRu/fi5yOyFxJl0fkYD/uFdDqAe/
+        Mdqo87Jg==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kIvYi-0001Pa-Tk; Thu, 17 Sep 2020 15:10:52 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, v9fs-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
+        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ecryptfs@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>
+Subject: [PATCH 04/13] ceph: Tell the VFS that readpage was synchronous
+Date:   Thu, 17 Sep 2020 16:10:41 +0100
+Message-Id: <20200917151050.5363-5-willy@infradead.org>
+X-Mailer: git-send-email 2.21.3
+In-Reply-To: <20200917151050.5363-1-willy@infradead.org>
+References: <20200917151050.5363-1-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <41ad3cd50f4d213455bef4e7c42143c289690222.camel@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 08:32:39AM -0400, Jeff Layton wrote:
-> On Wed, 2020-09-16 at 21:11 -0700, Eric Biggers wrote:
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > fscrypt_set_test_dummy_encryption() requires that the optional argument
-> > to the test_dummy_encryption mount option be specified as a substring_t.
-> > That doesn't work well with filesystems that use the new mount API,
-> > since the new way of parsing mount options doesn't use substring_t.
-> > 
-> > Make it take the argument as a 'const char *' instead.
-> > 
-> > Instead of moving the match_strdup() into the callers in ext4 and f2fs,
-> > make them just use arg->from directly.  Since the pattern is
-> > "test_dummy_encryption=%s", the argument will be null-terminated.
-> > 
-> 
-> Are you sure about that? I thought the point of substring_t was to give
-> you a token from the string without null terminating it.
-> 
-> ISTM that when you just pass in ->from, you might end up with trailing
-> arguments in your string like this. e.g.:
-> 
->     "v2,foo,bar,baz"
-> 
-> ...and then that might fail to match properly
-> in fscrypt_set_test_dummy_encryption.
-> 
+The ceph readpage implementation was already synchronous, so use
+AOP_UPDATED_PAGE to avoid cycling the page lock.
 
-Yes I'm sure, and I had also tested it.  The use of match_token() here is to
-parse one null-terminated mount option at a time.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/ceph/addr.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-The reason that match_token() can return multiple substrings is that the pattern
-might be something like "foo=%d:%d".
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 6ea761c84494..b2bf8bf7a312 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -291,10 +291,11 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
+ static int ceph_readpage(struct file *filp, struct page *page)
+ {
+ 	int r = ceph_do_readpage(filp, page);
+-	if (r != -EINPROGRESS)
+-		unlock_page(page);
+-	else
+-		r = 0;
++	if (r == -EINPROGRESS)
++		return 0;
++	if (r == 0)
++		return AOP_UPDATED_PAGE;
++	unlock_page(page);
+ 	return r;
+ }
+ 
+-- 
+2.28.0
 
-But here it's just "test_dummy_encryption=%s". "%s" matches until end-of-string.
-
-- Eric
