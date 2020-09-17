@@ -2,30 +2,30 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5981926DF61
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Sep 2020 17:15:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A612F26DF56
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Sep 2020 17:14:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbgIQPP3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Sep 2020 11:15:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37458 "EHLO
+        id S1727483AbgIQPOW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Sep 2020 11:14:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727961AbgIQPLm (ORCPT
+        with ESMTP id S1727955AbgIQPLm (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Sep 2020 11:11:42 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50087C06121C;
-        Thu, 17 Sep 2020 08:10:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9725C061353;
+        Thu, 17 Sep 2020 08:10:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=7PovnjudVvfMFRelS0S3FBS5rSwGm8lIgwb2+HktnS4=; b=D645jx3+cFCsRRamnPvY93SEZp
-        5idHKpebB8d3ADFC2w4jUoevXr+eTIRxNa5kP7rmXI6dNgJMDifFkNUwyxkfzlOpmnvRWxVU5jou6
-        Xw3Ux6iN9o3h3kHwgElGrUzy3LHDgVNd3s5BPl5exxvz1fUpq9hJvXiR37faoM+sF3w8SWjVVHpn7
-        XgSvgnOD/jvaGa9gFE7xBAHrq5dHmW9PfWz6ML6kWQtUWTATDyCEZSzBC/OaokwaNH9edWskgRnmd
-        ND+y1E4RMQjT3HXerG2yb2g3MloOlpPyn3rFXB+gng2IT5jOzDOkDYvVy7UnUbP3VIkuuaEa5JGWf
-        4qy4un+Q==;
+        bh=5bMB1AIyFb3Uo5KQX9JPM+gHHI0JgEg44Zm96s2wWSw=; b=rBA3BEedGxTEi6jjWgdFgG9hWD
+        rAtzju3sIMBKwrAld+mQATn7QaELiGbXVXmda93yYxh+yGS2+0GwA617L8+TIuo3Jk8ylfnIXk1LL
+        H0TvouglbVTFDzhXbSrLLJR8GAx9F0XOhb7d7HXvbImpXSlYZ+WbfMfJ7KLJgKaDDRuyCUS26Oz12
+        KxWnZX+HUeYpcjcOv6pJRJj8WdPq//IKqqm0bFb6zeal4AaAU3BZ/IPEj68NH4x1qS98+Qp9MtRPu
+        cADf27TdVH4fZZTEQTThue/nS5onCBKmS8Q73H+9r1P8RaGh4WeCO+yzsvRmbQR5olV5anJvC0EkL
+        rdhWhOtg==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kIvYi-0001PN-HJ; Thu, 17 Sep 2020 15:10:52 +0000
+        id 1kIvYk-0001QE-67; Thu, 17 Sep 2020 15:10:54 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -34,9 +34,9 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
         ecryptfs@vger.kernel.org, linux-um@lists.infradead.org,
         linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>
-Subject: [PATCH 02/13] 9p: Tell the VFS that readpage was synchronous
-Date:   Thu, 17 Sep 2020 16:10:39 +0100
-Message-Id: <20200917151050.5363-3-willy@infradead.org>
+Subject: [PATCH 09/13] hostfs: Tell the VFS that readpage was synchronous
+Date:   Thu, 17 Sep 2020 16:10:46 +0100
+Message-Id: <20200917151050.5363-10-willy@infradead.org>
 X-Mailer: git-send-email 2.21.3
 In-Reply-To: <20200917151050.5363-1-willy@infradead.org>
 References: <20200917151050.5363-1-willy@infradead.org>
@@ -46,38 +46,27 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The 9p readpage implementation was already synchronous, so use
+The hostfs readpage implementation was already synchronous, so use
 AOP_UPDATED_PAGE to avoid cycling the page lock.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/9p/vfs_addr.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/hostfs/hostfs_kern.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-index cce9ace651a2..506ca0ba2ec7 100644
---- a/fs/9p/vfs_addr.c
-+++ b/fs/9p/vfs_addr.c
-@@ -65,7 +65,7 @@ static int v9fs_fid_readpage(void *data, struct page *page)
- 	SetPageUptodate(page);
- 
- 	v9fs_readpage_to_fscache(inode, page);
--	retval = 0;
-+	return AOP_UPDATED_PAGE;
- 
- done:
+diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
+index c070c0d8e3e9..c49221c09c4b 100644
+--- a/fs/hostfs/hostfs_kern.c
++++ b/fs/hostfs/hostfs_kern.c
+@@ -455,6 +455,8 @@ static int hostfs_readpage(struct file *file, struct page *page)
+  out:
+ 	flush_dcache_page(page);
+ 	kunmap(page);
++	if (!ret)
++		return AOP_UPDATED_PAGE;
  	unlock_page(page);
-@@ -280,6 +280,10 @@ static int v9fs_write_begin(struct file *filp, struct address_space *mapping,
- 		goto out;
- 
- 	retval = v9fs_fid_readpage(v9inode->writeback_fid, page);
-+	if (retval == AOP_UPDATED_PAGE) {
-+		retval = 0;
-+		goto out;
-+	}
- 	put_page(page);
- 	if (!retval)
- 		goto start;
+ 	return ret;
+ }
 -- 
 2.28.0
 
