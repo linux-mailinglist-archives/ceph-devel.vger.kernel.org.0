@@ -2,111 +2,77 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A79926E7DC
-	for <lists+ceph-devel@lfdr.de>; Fri, 18 Sep 2020 00:03:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEFA626EB20
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Sep 2020 04:04:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbgIQWDK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Sep 2020 18:03:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44638 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbgIQWDK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Sep 2020 18:03:10 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 331EEC06174A;
-        Thu, 17 Sep 2020 15:03:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ubJtVk08jzU3J8YPE2lJLRaYSsnYYHZKYdrpjiW6yU4=; b=ICDUnkL72CW96WATA+3jxM5vWb
-        6oYT1enLOn3O4Ag28G+e5sc4FqNNUy2Ikgxnpx/LhvjaiBKvrZWAbYzkaYIkc/NjzWtAUaMsW8kTk
-        Yue6qkZhlQb9iYXfoXv9v9sKs+He0hXzIgOzvhGW01abuVdlCsLu5ep5X71lnTxbrbq9ljbXhS2jN
-        fZS2WZ9OlwwNROzSqPlT2fhEu7ifLnDLSIWkeEha9ouk+MkogWQ6Zy5o5FAh5nDVbZ7+o9C1tZcrW
-        sIbCrABL5nerc0GAMK3sNquTExIDELUO/f3nddMDsbHnosACnqilx6WvwEtmQbtPzdCn8oS1kPCcM
-        eCOrz5Qw==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kJ1zf-0003eq-8d; Thu, 17 Sep 2020 22:03:07 +0000
-Date:   Thu, 17 Sep 2020 23:03:07 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-mm@kvack.org, v9fs-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ecryptfs@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>
-Subject: Re: [PATCH 01/13] mm: Add AOP_UPDATED_PAGE return value
-Message-ID: <20200917220307.GX5449@casper.infradead.org>
-References: <20200917151050.5363-1-willy@infradead.org>
- <20200917151050.5363-2-willy@infradead.org>
+        id S1727055AbgIRCDW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Sep 2020 22:03:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49494 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727044AbgIRCDV (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 17 Sep 2020 22:03:21 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5ACEF22211;
+        Fri, 18 Sep 2020 02:03:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600394601;
+        bh=C/vWB/HWvbBoRq5OnbqfMnbsQfBPae8evloq2/dctHY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=tJlDyPsY9EwGWOqvSKU0xkrEEcp1kNJqQxJWG3McESt4FwV8QG+NGNeZ+Fvhbvf74
+         mcaQ0eCibnkT4kmCG+cpIT975yrHF8ZrmAqoro14o3yv40in6/72eVcLvcLqFzUTH3
+         gbs9pEudcUTpXNw8Ie2BNut8PQ5UqZdFpA8ljPOI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 108/330] ceph: ensure we have a new cap before continuing in fill_inode
+Date:   Thu, 17 Sep 2020 21:57:28 -0400
+Message-Id: <20200918020110.2063155-108-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200918020110.2063155-1-sashal@kernel.org>
+References: <20200918020110.2063155-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200917151050.5363-2-willy@infradead.org>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 04:10:38PM +0100, Matthew Wilcox (Oracle) wrote:
-> +++ b/mm/filemap.c
-> @@ -2254,8 +2254,10 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
->  		 * PG_error will be set again if readpage fails.
->  		 */
->  		ClearPageError(page);
-> -		/* Start the actual read. The read will unlock the page. */
-> +		/* Start the actual read. The read may unlock the page. */
->  		error = mapping->a_ops->readpage(filp, page);
-> +		if (error == AOP_UPDATED_PAGE)
-> +			goto page_ok;
->  
->  		if (unlikely(error)) {
->  			if (error == AOP_TRUNCATED_PAGE) {
+From: Jeff Layton <jlayton@kernel.org>
 
-If anybody wants to actually test this, this hunk is wrong.
+[ Upstream commit 9a6bed4fe0c8bf57785cbc4db9f86086cb9b193d ]
 
-+++ b/mm/filemap.c
-@@ -2256,8 +2256,11 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
-                ClearPageError(page);
-                /* Start the actual read. The read may unlock the page. */
-                error = mapping->a_ops->readpage(filp, page);
--               if (error == AOP_UPDATED_PAGE)
-+               if (error == AOP_UPDATED_PAGE) {
-+                       unlock_page(page);
-+                       error = 0;
-                        goto page_ok;
-+               }
+If the caller passes in a NULL cap_reservation, and we can't allocate
+one then ensure that we fail gracefully.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/ceph/inode.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index c07407586ce87..660a878e20ef2 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -754,8 +754,11 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
+ 	info_caps = le32_to_cpu(info->cap.caps);
  
-                if (unlikely(error)) {
-                        if (error == AOP_TRUNCATED_PAGE) {
+ 	/* prealloc new cap struct */
+-	if (info_caps && ceph_snap(inode) == CEPH_NOSNAP)
++	if (info_caps && ceph_snap(inode) == CEPH_NOSNAP) {
+ 		new_cap = ceph_get_cap(mdsc, caps_reservation);
++		if (!new_cap)
++			return -ENOMEM;
++	}
+ 
+ 	/*
+ 	 * prealloc xattr data, if it looks like we'll need it.  only
+-- 
+2.25.1
 
-> @@ -2619,7 +2621,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
->  	 */
->  	if (unlikely(!PageUptodate(page)))
->  		goto page_not_uptodate;
-> -
-> +page_ok:
->  	/*
->  	 * We've made it this far and we had to drop our mmap_lock, now is the
->  	 * time to return to the upper layer and have it re-find the vma and
-> @@ -2654,6 +2656,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
->  	ClearPageError(page);
->  	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
->  	error = mapping->a_ops->readpage(file, page);
-> +	if (error == AOP_UPDATED_PAGE)
-> +		goto page_ok;
->  	if (!error) {
->  		wait_on_page_locked(page);
->  		if (!PageUptodate(page))
-> @@ -2867,6 +2871,10 @@ static struct page *do_read_cache_page(struct address_space *mapping,
->  			err = filler(data, page);
->  		else
->  			err = mapping->a_ops->readpage(data, page);
-> +		if (err == AOP_UPDATED_PAGE) {
-> +			unlock_page(page);
-> +			goto out;
-> +		}
->  
->  		if (err < 0) {
->  			put_page(page);
-> -- 
-> 2.28.0
-> 
