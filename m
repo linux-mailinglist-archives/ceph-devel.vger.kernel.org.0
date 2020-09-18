@@ -2,38 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DE5E26EBD3
-	for <lists+ceph-devel@lfdr.de>; Fri, 18 Sep 2020 04:10:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 148F526EC0C
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Sep 2020 04:10:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727937AbgIRCHa (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Sep 2020 22:07:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57788 "EHLO mail.kernel.org"
+        id S1728268AbgIRCJV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Sep 2020 22:09:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbgIRCH3 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 17 Sep 2020 22:07:29 -0400
+        id S1727393AbgIRCJQ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 17 Sep 2020 22:09:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5D21238E5;
-        Fri, 18 Sep 2020 02:07:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 108872395A;
+        Fri, 18 Sep 2020 02:09:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600394848;
-        bh=Gj8OXTifKI0qrXicRK/yWep/4PdfhSThsuwHq6DVKVc=;
+        s=default; t=1600394955;
+        bh=z615ymZ/Om4N2G36QTxSXe6ZDUUfnlbl5HQD/4ZM9f4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2GtUpe1/OOSQiG4kHGBnefSgdeeJPDM1ERS3xm6t0c/VzbXWknKVbadRcD6rAUS0M
-         moY8uk5O2ZJiJAYMdhcdYKLWs4VE/O0i8l+F1MiGFKXG86dRL+jTEiKXaMTMwW6Z3j
-         XXo10HPRaSM+9CX9wYGaEl+IgO0HDMMQJrCDgDKs=
+        b=LLk8mMOAUHjK0p/EmZwhLHOV8A3Qg0Z5hmWVvdXxJBOtx1DPNV7KIuASMJ9b7Nbpx
+         B1HZHMJnyH5GuST1kdpG46hshgIohN+IC66jxwnCOZMc1dHktv0vZ5AoCDPOUapVzq
+         429PbRyfv/WjgCDxnJC0H3SpfaMOfLrJ7+NgtI3E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 305/330] ceph: fix potential race in ceph_check_caps
-Date:   Thu, 17 Sep 2020 22:00:45 -0400
-Message-Id: <20200918020110.2063155-305-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 062/206] ceph: ensure we have a new cap before continuing in fill_inode
+Date:   Thu, 17 Sep 2020 22:05:38 -0400
+Message-Id: <20200918020802.2065198-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200918020110.2063155-1-sashal@kernel.org>
-References: <20200918020110.2063155-1-sashal@kernel.org>
+In-Reply-To: <20200918020802.2065198-1-sashal@kernel.org>
+References: <20200918020802.2065198-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -44,51 +44,35 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Jeff Layton <jlayton@kernel.org>
 
-[ Upstream commit dc3da0461cc4b76f2d0c5b12247fcb3b520edbbf ]
+[ Upstream commit 9a6bed4fe0c8bf57785cbc4db9f86086cb9b193d ]
 
-Nothing ensures that session will still be valid by the time we
-dereference the pointer. Take and put a reference.
-
-In principle, we should always be able to get a reference here, but
-throw a warning if that's ever not the case.
+If the caller passes in a NULL cap_reservation, and we can't allocate
+one then ensure that we fail gracefully.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ceph/caps.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ fs/ceph/inode.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index b2695919435e8..af563d73d252c 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -2013,12 +2013,24 @@ ack:
- 			if (mutex_trylock(&session->s_mutex) == 0) {
- 				dout("inverting session/ino locks on %p\n",
- 				     session);
-+				session = ceph_get_mds_session(session);
- 				spin_unlock(&ci->i_ceph_lock);
- 				if (took_snap_rwsem) {
- 					up_read(&mdsc->snap_rwsem);
- 					took_snap_rwsem = 0;
- 				}
--				mutex_lock(&session->s_mutex);
-+				if (session) {
-+					mutex_lock(&session->s_mutex);
-+					ceph_put_mds_session(session);
-+				} else {
-+					/*
-+					 * Because we take the reference while
-+					 * holding the i_ceph_lock, it should
-+					 * never be NULL. Throw a warning if it
-+					 * ever is.
-+					 */
-+					WARN_ON_ONCE(true);
-+				}
- 				goto retry;
- 			}
- 		}
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 1e438e0faf77e..3c24fb77ef325 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -764,8 +764,11 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
+ 	info_caps = le32_to_cpu(info->cap.caps);
+ 
+ 	/* prealloc new cap struct */
+-	if (info_caps && ceph_snap(inode) == CEPH_NOSNAP)
++	if (info_caps && ceph_snap(inode) == CEPH_NOSNAP) {
+ 		new_cap = ceph_get_cap(mdsc, caps_reservation);
++		if (!new_cap)
++			return -ENOMEM;
++	}
+ 
+ 	/*
+ 	 * prealloc xattr data, if it looks like we'll need it.  only
 -- 
 2.25.1
 
