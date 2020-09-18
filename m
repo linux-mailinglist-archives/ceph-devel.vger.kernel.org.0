@@ -2,72 +2,92 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A058E26F96F
-	for <lists+ceph-devel@lfdr.de>; Fri, 18 Sep 2020 11:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D98426FB46
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Sep 2020 13:19:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726185AbgIRJiT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 18 Sep 2020 05:38:19 -0400
-Received: from pdx1-sub0-mail-fallback-mx1.dreamhost.com ([64.90.62.139]:51564
-        "EHLO pdx1-sub0-mail-fallback-mx1.dreamhost.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726109AbgIRJiT (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 18 Sep 2020 05:38:19 -0400
-X-Greylist: delayed 21694 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Sep 2020 05:38:19 EDT
-Received: from pdx1-sub0-mail-mx40.g.dreamhost.com (pdx1-sub0-mail-mx40.dreamhost.com [10.35.43.74])
-        by pdx1-sub0-mail-fallback-mx1.dreamhost.com (Postfix) with ESMTP id 18C6618A9A6
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Sep 2020 20:36:46 -0700 (PDT)
-Received: from vade-backend8.dreamhost.com (fltr-in1.mail.dreamhost.com [66.33.205.212])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by pdx1-sub0-mail-mx40.g.dreamhost.com (Postfix) with ESMTPS id F1B3CA82E2;
-        Thu, 17 Sep 2020 20:36:44 -0700 (PDT)
-Received: from si100.idev.cl (unknown [200.75.10.86])
-        by vade-backend8.dreamhost.com (Postfix) with ESMTP id 3E3CA438E1488;
-        Thu, 17 Sep 2020 20:36:44 -0700 (PDT)
-Received: from User ([129.205.124.71])
-        (authenticated bits=0)
-        by si100.idev.cl (8.14.4/8.14.4) with ESMTP id 08I3VtPx010169;
-        Fri, 18 Sep 2020 00:31:59 -0300
-Message-Id: <202009180331.08I3VtPx010169@si100.idev.cl>
-Reply-To: <mrsjoan2020gates@gmail.com>
-From:   "JOAN GATES" <cardeb@sda.it>
-Subject: DEAR BELOVED
-Date:   Fri, 18 Sep 2020 04:32:35 +0100
+        id S1726375AbgIRLTV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 18 Sep 2020 07:19:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54696 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbgIRLTV (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 18 Sep 2020 07:19:21 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0DF9C06174A;
+        Fri, 18 Sep 2020 04:19:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=D2ju8jMz6rNG3JDmyLzknrnz9KKFGg0PYq+DeMuVZKY=; b=OhWnaBzrqkDRbzOwxxDZrAitsW
+        uGCQAikASHjYa/PMPuiPlUOcliemRBZlSc/1RLXgVWxgpXKT26jnRaH2hmTM72gxSVdhOPqu6kQPd
+        h+y2nYjcOI/MK6CMWwhrlZi9ICHnkGIztdyZsb1kUMTfkP470jFOrvRJfyuy8uYVb1UtlcOcYJKpU
+        E5Rm9//Op9Yh9xVsMJdzShSN0jO9N6AGwLLD/O1r3P9sdUd2Ic22Cm/qIxyYzHn5gT/lwgN84usJW
+        ACafXKejemQbxTWMfkPL3z3ucBuijE/zG8VKPfz4WQt3m2mP+hkouoscs89VtGRxh2HUUy/mInKXY
+        PZ8Gd81Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kJEQ9-0002ra-1H; Fri, 18 Sep 2020 11:19:17 +0000
+Date:   Fri, 18 Sep 2020 12:19:16 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>, ecryptfs@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-mtd@lists.infradead.org,
+        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
+        linux-afs@lists.infradead.org
+Subject: Re: [V9fs-developer] [PATCH 02/13] 9p: Tell the VFS that readpage
+ was synchronous
+Message-ID: <20200918111916.GA32101@casper.infradead.org>
+References: <20200917151050.5363-1-willy@infradead.org>
+ <20200917151050.5363-3-willy@infradead.org>
+ <20200918055919.GA30929@nautica>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.4.3 (si100.idev.cl [10.0.60.100]); Fri, 18 Sep 2020 00:32:36 -0300 (-03)
-X-Virus-Scanned: clamav-milter 0.98.4 at si100.idev.cl
-X-Virus-Status: Clean
-X-VR-STATUS: SPAM
-X-VR-SCORE: 500
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedujedrtdehgdejfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucggtfgfnhhsuhgsshgtrhhisggvpdfftffgtefojffquffvnecuuegrihhlohhuthemuceftddtnecuogfhohhrsghiugguvghngfhmrghilhculdehtddtmdenucfjughrpehrhffuffggtgfgrfgioffqsehtjedttddutdefnecuhfhrohhmpedflffqtefpucfitefvgffufdeotggrrhguvggssehsuggrrdhitheqnecuggftrfgrthhtvghrnhepiedutdfhtdethfevteeljefguddtveefgeefgeehleevheelvdfhvdehvddtgfejnecukfhppedvtddtrdejhedruddtrdekiedpuddvledrvddthedruddvgedrjedunecuufhprghmkfhppedvtddtrdejhedruddtrdekiedpuddvledrvddthedruddvgedrjedunecuhfhorhgsihguuggvnhfgmhgrihhlpegtrghruggvsgesshgurgdrihhtnecuvehluhhsthgvrhfuihiivgepieenucfrrghrrghmpehmohguvgepshhmthhppdhhvghlohepshhiuddttddrihguvghvrdgtlhdpihhnvghtpedvtddtrdejhedruddtrdekiedprhgvthhurhhnqdhprghthhepfdflqfetpfcuifetvffgufdfoegtrghruggvsgesshgurgdrihhtqedpmhgrihhlfhhrohhmpegtrghruggvsgesshgurgdrihhtpdhnrhgtphhtthhopegtvghphhdqrghnnhhouhhntggvsegtvghphhdrtghomh
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200918055919.GA30929@nautica>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-DEAR BELOVED
+On Fri, Sep 18, 2020 at 07:59:19AM +0200, Dominique Martinet wrote:
+> Matthew Wilcox (Oracle) wrote on Thu, Sep 17, 2020:
+> > diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+> > index cce9ace651a2..506ca0ba2ec7 100644
+> > --- a/fs/9p/vfs_addr.c
+> > +++ b/fs/9p/vfs_addr.c
+> > @@ -280,6 +280,10 @@ static int v9fs_write_begin(struct file *filp, struct address_space *mapping,
+> >  		goto out;
+> >  
+> >  	retval = v9fs_fid_readpage(v9inode->writeback_fid, page);
+> > +	if (retval == AOP_UPDATED_PAGE) {
+> > +		retval = 0;
+> > +		goto out;
+> > +	}
+> 
+> FWIW this is a change of behaviour; for some reason the code used to
+> loop back to grab_cache_page_write_begin() and bail out on
+> PageUptodate() I suppose; some sort of race check?
+> The whole pattern is a bit weird to me and 9p has no guarantee on
+> concurrent writes to a file with cache enabled (except that it will
+> corrupt something), so this part is fine with me.
+> 
+> What I'm curious about is the page used to be both unlocked and put, but
+> now isn't either and the return value hasn't changed for the caller to
+> make a difference on write_begin / I don't see any code change in the
+> vfs  to handle that.
+> What did I miss?
 
+The page cache is kind of subtle.  The grab_cache_page_write_begin()
+will return a Locked page with an increased refcount.  If it's Uptodate,
+that's exactly what we want, and we return it.  If we have to read the
+page, readpage used to unlock the page before returning, and rather than
+re-lock it, we would drop the reference to the page and look it up again.
+It's possible that after dropping the lock on that page that the page
+was replaced in the page cache and so we'd get a different page.
 
-PLEASE ACCEPT MY UNRESERVED APOLOGY IF THIS SHORT HUMANITARIAN PROPOSITION OFFENDS YOUR SENSITIVITY. I INTEND NO INSULT OR HARM. MY NAMES IS MRS. JOAN GATES UNITED KINGDOM,  69 YEARS OLD.
-
-I HAVE A PROPOSITION WHICH I AM CONVINCED WITHIN ME THAT YOU CAN HANDLE IT.DEPOSITED THE SUM OF $5.5M. (FIVE MILLION FIVE HUNDRED THOUSAND U.S. DOLLARS) WANT A PERSON WHO IS TRUSTWORTHY THAT I WILL MAKE THE BENEFICIARY OF MY LATE HUSBAND'S FUND DEPOSITED WITH THE BANK SO THAT THE PERSON CAN GET THE MONEY AND UTILIZE 70% OF THIS MONEY TO FUND CHURCHES, ORPHANAGES AND WIDOWS AROUND THE WORLD AND KEEP THE REMAINING 30% FOR HIS EFFORT.
-
-I AM CHRISTIAN AND WOULD LOVE TO REACH OUT TO THOSE IN NEED BUT I NEED YOUR HELP SINCE I AM NOT TOTALLY STRONG TO SUSTAIN THE STRESS AND HANDLE THE PROCESS OF THIS PROJECT HENCE I AM HONESTLY SOLICITING FOR YOUR HELP BELIEVING THAT BY THE MERCY OF GOD, YOU WILL NOT DECLINE MY PROPOSAL.
-
-I WILL GIVE YOU MORE DETAILS AS SOON AS I READ FROM YOU WITH THE FOLLOWING PARTICULARS. 
-
-YOUR FULL NAME
-YOUR CONTACT ADDRESS
-PHONE NUMBER
-YOUR AGE
-YOUR OCCUPATION
-
-RESPECTFULLY YOURS,
-MRS. JOAN GATES
+Anyway, now (unless fscache is involved), v9fs_fid_readpage will return
+the page without unlocking it.  So we don't need to do the dance of
+dropping the lock, putting the refcount and looking the page back up
+again.  We can just return the page.  The VFS doesn't need a special
+return code because nothing has changed from the VFS's point of view --
+it asked you to get a page and you got the page.
