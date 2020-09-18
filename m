@@ -2,93 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4ED326EFF8
-	for <lists+ceph-devel@lfdr.de>; Fri, 18 Sep 2020 04:39:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6684426F595
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Sep 2020 07:59:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729015AbgIRCji (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Sep 2020 22:39:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37876 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728191AbgIRCL5 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 17 Sep 2020 22:11:57 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0F1B23899;
-        Fri, 18 Sep 2020 02:11:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600395117;
-        bh=oFUnuwBODfm1xVNGIRhJSrXk9mqoYKZ92KDhQm6/BS4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vv/ck1Y4T1AOnZhd1xlFNtv2gw/0cIs/yO0bCBYvd6qKZ7tt3bG61lmjNnkKRz9if
-         u82/6L5nanBn4TuWv7Al4u5YZyeUyl/aUafpJYFjh1Ww6j+1MSuqqg638dIMkZqaMc
-         7zUPpWhoMBFvit8NBiPE6fugG1xy9deDvvcA0EK0=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 190/206] ceph: fix potential race in ceph_check_caps
-Date:   Thu, 17 Sep 2020 22:07:46 -0400
-Message-Id: <20200918020802.2065198-190-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200918020802.2065198-1-sashal@kernel.org>
-References: <20200918020802.2065198-1-sashal@kernel.org>
+        id S1726637AbgIRF7j (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 18 Sep 2020 01:59:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33408 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbgIRF7i (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 18 Sep 2020 01:59:38 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91853C06174A;
+        Thu, 17 Sep 2020 22:59:38 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 5EAEFC01B; Fri, 18 Sep 2020 07:59:34 +0200 (CEST)
+Date:   Fri, 18 Sep 2020 07:59:19 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>, ecryptfs@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-mtd@lists.infradead.org,
+        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
+        linux-afs@lists.infradead.org
+Subject: Re: [V9fs-developer] [PATCH 02/13] 9p: Tell the VFS that readpage
+ was synchronous
+Message-ID: <20200918055919.GA30929@nautica>
+References: <20200917151050.5363-1-willy@infradead.org>
+ <20200917151050.5363-3-willy@infradead.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200917151050.5363-3-willy@infradead.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Jeff Layton <jlayton@kernel.org>
+Matthew Wilcox (Oracle) wrote on Thu, Sep 17, 2020:
+> diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+> index cce9ace651a2..506ca0ba2ec7 100644
+> --- a/fs/9p/vfs_addr.c
+> +++ b/fs/9p/vfs_addr.c
+> @@ -280,6 +280,10 @@ static int v9fs_write_begin(struct file *filp, struct address_space *mapping,
+>  		goto out;
+>  
+>  	retval = v9fs_fid_readpage(v9inode->writeback_fid, page);
+> +	if (retval == AOP_UPDATED_PAGE) {
+> +		retval = 0;
+> +		goto out;
+> +	}
 
-[ Upstream commit dc3da0461cc4b76f2d0c5b12247fcb3b520edbbf ]
+FWIW this is a change of behaviour; for some reason the code used to
+loop back to grab_cache_page_write_begin() and bail out on
+PageUptodate() I suppose; some sort of race check?
+The whole pattern is a bit weird to me and 9p has no guarantee on
+concurrent writes to a file with cache enabled (except that it will
+corrupt something), so this part is fine with me.
 
-Nothing ensures that session will still be valid by the time we
-dereference the pointer. Take and put a reference.
+What I'm curious about is the page used to be both unlocked and put, but
+now isn't either and the return value hasn't changed for the caller to
+make a difference on write_begin / I don't see any code change in the
+vfs  to handle that.
+What did I miss?
 
-In principle, we should always be able to get a reference here, but
-throw a warning if that's ever not the case.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ceph/caps.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+(FWIW at least cifs in the series has the same pattern change; didn't
+check all of them)
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index a2d4eed27f804..c0dbf8b7762b4 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -2015,12 +2015,24 @@ ack:
- 			if (mutex_trylock(&session->s_mutex) == 0) {
- 				dout("inverting session/ino locks on %p\n",
- 				     session);
-+				session = ceph_get_mds_session(session);
- 				spin_unlock(&ci->i_ceph_lock);
- 				if (took_snap_rwsem) {
- 					up_read(&mdsc->snap_rwsem);
- 					took_snap_rwsem = 0;
- 				}
--				mutex_lock(&session->s_mutex);
-+				if (session) {
-+					mutex_lock(&session->s_mutex);
-+					ceph_put_mds_session(session);
-+				} else {
-+					/*
-+					 * Because we take the reference while
-+					 * holding the i_ceph_lock, it should
-+					 * never be NULL. Throw a warning if it
-+					 * ever is.
-+					 */
-+					WARN_ON_ONCE(true);
-+				}
- 				goto retry;
- 			}
- 		}
+
+Thanks,
 -- 
-2.25.1
-
+Dominique
