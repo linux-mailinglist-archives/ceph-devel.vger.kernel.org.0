@@ -2,56 +2,61 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BA3B2741D9
-	for <lists+ceph-devel@lfdr.de>; Tue, 22 Sep 2020 14:13:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6569274379
+	for <lists+ceph-devel@lfdr.de>; Tue, 22 Sep 2020 15:51:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbgIVMNd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 22 Sep 2020 08:13:33 -0400
-Received: from panda.postix.net ([159.69.207.141]:57406 "EHLO panda.postix.net"
+        id S1726605AbgIVNu7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 22 Sep 2020 09:50:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726505AbgIVMNc (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 22 Sep 2020 08:13:32 -0400
-X-Greylist: delayed 539 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Sep 2020 08:13:32 EDT
+        id S1726473AbgIVNu7 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 22 Sep 2020 09:50:59 -0400
+Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9067720936;
+        Tue, 22 Sep 2020 13:50:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600782658;
+        bh=ah1oRV9AwF+HOR2QyLQpuVaKZLQO4RCWcJodnzc0oZg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lFnv75YWIDQtPV1/37RjVPZCmc+w2raAzyDf/lBUX1xGdOF8/y+Of5HNgNyEuZYLq
+         xs9upAb8I7B4MYDl7BdVbpmP9X/DKc9mF/70oyWM03GRglhaS8264ijKmOZchSpuYs
+         fmOc1tLmvl8aKCckC1nqPNCydNFXGW3Um2IiQCWY=
+Date:   Tue, 22 Sep 2020 06:50:57 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org,
+        Daniel Rosenberg <drosen@google.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 00/13] fscrypt: improve file creation flow
+Message-ID: <20200922135057.GA5599@sol.localdomain>
+References: <20200917041136.178600-1-ebiggers@kernel.org>
+ <20200921223509.GB844@sol.localdomain>
+ <da7f608e01cd8725d8da668f1c4a847b29b9de68.camel@kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postix.net; s=mail;
-        t=1600776269;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YlezEfpgqyX5VSnu1BrhTfLvj2WxrSlaWopYNp21yY8=;
-        b=HqCX9YChMU/Ya0S1qGAy2R9FWT+HDXhjfgTzRJ5tXRAtLLsxz7tYqz5UyUxwZrMpyfwj4d
-        1fTNWsClKCEYGNEaATiA44d+uq4avNG1e+j+wppBKsZk3HGKu77Uqnatqli/y8tT6e0Woh
-        tAgrcz4iZc8LtUIDOHdtqMFkw2EMVp0=
-Date:   Tue, 22 Sep 2020 12:04:29 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-From:   tri@postix.net
-Message-ID: <cc1fd8b50bf1a0ede129bf0f5f47906e@postix.net>
-Subject: Re: [ceph-users] Re: Understanding what ceph-volume does, with
- bootstrap-osd/ceph.keyring, tmpfs
-To:     "Janne Johansson" <icepic.dz@gmail.com>,
-        "Marc Roos" <M.Roos@f1-outsourcing.eu>
-Cc:     "ceph-devel" <ceph-devel@vger.kernel.org>,
-        "ceph-users" <ceph-users@ceph.io>
-In-Reply-To: <CAA6-MF_47O1p0Rd-_jhKfwW6s1LKYrnj7tgu07=i8NQzUzCSZQ@mail.gmail.com>
-References: <CAA6-MF_47O1p0Rd-_jhKfwW6s1LKYrnj7tgu07=i8NQzUzCSZQ@mail.gmail.com>
- <H00000710017cb1c.1600697698.sx.f1-outsourcing.eu*@MHS>
-Authentication-Results: ORIGINATING;
-        auth=pass smtp.auth=tri@postix.net smtp.mailfrom=tri@postix.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <da7f608e01cd8725d8da668f1c4a847b29b9de68.camel@kernel.org>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The key is stored in the ceph cluster config db. It can be retrieved by=
-=0A=0AKEY=3D`/usr/bin/ceph --cluster ceph --name client.osd-lockbox.${OSD=
-_FSID} --keyring $OSD_PATH/lockbox.keyring config-key get dm-crypt/osd/$O=
-SD_FSID/luks`=0A=0ASeptember 22, 2020 2:25 AM, "Janne Johansson" <icepic.=
-dz@gmail.com> wrote:=0A=0A> Den m=C3=A5n 21 sep. 2020 kl 16:15 skrev Marc=
- Roos <M.Roos@f1-outsourcing.eu>:=0A> =0A>> When I create a new encrypted=
- osd with ceph volume[1]=0A>> =0A>> Q4: Where is this luks passphrase sto=
-red?=0A> =0A> I think the OSD asks the mon for it after auth:ing, so "in =
-the mon DBs"=0A> somewhere.=0A> =0A> --=0A> May the most significant bit =
-of your life be positive.=0A> ___________________________________________=
-____=0A> ceph-users mailing list -- ceph-users@ceph.io=0A> To unsubscribe=
- send an email to ceph-users-leave@ceph.io
+On Tue, Sep 22, 2020 at 07:29:45AM -0400, Jeff Layton wrote:
+> > 
+> > All applied to fscrypt.git#master for 5.10.
+> > 
+> > I'd still really appreciate more reviews and acks, though.
+> > 
+> 
+> You can add this to all of the fscrypt: patches. I've tested this under
+> the ceph patchset and it seems to do the right thing:
+> 
+> Acked-by: Jeff Layton <jlayton@kernel.org>
+> 
+
+Thanks, added.
+
+- Eric
