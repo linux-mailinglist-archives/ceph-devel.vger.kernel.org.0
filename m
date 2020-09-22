@@ -2,92 +2,93 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EAFA22746C8
-	for <lists+ceph-devel@lfdr.de>; Tue, 22 Sep 2020 18:39:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C1E52748F4
+	for <lists+ceph-devel@lfdr.de>; Tue, 22 Sep 2020 21:18:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbgIVQjM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 22 Sep 2020 12:39:12 -0400
-Received: from mx.byet.net ([82.163.176.250]:47266 "EHLO mx.byet.net"
+        id S1726607AbgIVTST convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Tue, 22 Sep 2020 15:18:19 -0400
+Received: from out.roosit.eu ([212.26.193.44]:45594 "EHLO out.roosit.eu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726558AbgIVQjL (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 22 Sep 2020 12:39:11 -0400
-X-Greylist: delayed 591 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Sep 2020 12:39:10 EDT
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by mx.byet.net (Postfix) with ESMTP id CE75722C14BA;
-        Tue, 22 Sep 2020 20:29:16 +0400 (MSD)
-Received: from mx.byet.net ([127.0.0.1])
-        by localhost (mx.byet.net [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 95Enx8Ny0jg4; Tue, 22 Sep 2020 20:29:16 +0400 (MSD)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by mx.byet.net (Postfix) with ESMTP id 6807E22C24BE;
-        Tue, 22 Sep 2020 20:29:16 +0400 (MSD)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mx.byet.net 6807E22C24BE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ifastnet.com;
-        s=45AB4D8C-726C-11E6-A1AA-0624B6FC591E; t=1600792156;
-        bh=Kh8yR/LgYrJum1y/x0ojmSj6aEAVeDuGfKnAJWP/0II=;
-        h=From:Mime-Version:Date:Message-Id:To;
-        b=Ey+HzQiZMv748bBpulTu3ev5udMe4j3pLCaN7G+8evMQbUbQgJVgBgS+QYPw4JWpw
-         rwefD5GUG8opiFI66pwt60dwcojjvWPX4nPkaIwAKGJbMftBc8RWQeZKXqlg9P5nrs
-         YIjrE1GaKWRdhag9hWO00yE7KCVImcXTUU01N7zRC2jKmxSLMFhmm4l0gkrLJm3vy5
-         x3GqPu/d/aXiMDNu/W5TGHeD/JL/vJ0FZbREbt61WDVxz3t239aAgr4x4z0XTT4yZA
-         g6K9rQ3qN+IRYi99khTaLeNc86rbgh13dBDVSJ5f+6G/9OnfPoq2Xnvnr0hqi0Hpqh
-         NIcuLyGvVSpzQ==
-Received: from mx.byet.net ([127.0.0.1])
-        by localhost (mx.byet.net [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id zIo5sKZIjK6M; Tue, 22 Sep 2020 20:29:16 +0400 (MSD)
-Received: from localhost.localdomain (unknown [213.205.241.242])
-        by mx.byet.net (Postfix) with ESMTPSA id 41DA522C14BA;
-        Tue, 22 Sep 2020 20:29:16 +0400 (MSD)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Kevin Myers <response@ifastnet.com>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [ceph-users] Re: Understanding what ceph-volume does, with bootstrap-osd/ceph.keyring, tmpfs
-Date:   Tue, 22 Sep 2020 17:29:15 +0100
-Message-Id: <856E0EEA-F867-48D4-9A2B-57182BE28208@ifastnet.com>
-References: <cc1fd8b50bf1a0ede129bf0f5f47906e@postix.net>
-Cc:     Janne Johansson <icepic.dz@gmail.com>,
-        Marc Roos <M.Roos@f1-outsourcing.eu>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        ceph-users <ceph-users@ceph.io>
-In-Reply-To: <cc1fd8b50bf1a0ede129bf0f5f47906e@postix.net>
-To:     tri@postix.net
-X-Mailer: iPad Mail (18A373)
+        id S1726563AbgIVTSS (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 22 Sep 2020 15:18:18 -0400
+Received: from sx.f1-outsourcing.eu (host-213.189.39.136.telnetsolutions.pl [213.189.39.136])
+        by out.roosit.eu (8.14.7/8.14.7) with ESMTP id 08MJHt0D117025
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 22 Sep 2020 21:17:56 +0200
+Received: from sx.f1-outsourcing.eu (localhost.localdomain [127.0.0.1])
+        by sx.f1-outsourcing.eu (8.13.8/8.13.8) with ESMTP id 08MJHsdF030051;
+        Tue, 22 Sep 2020 21:17:54 +0200
+Date:   Tue, 22 Sep 2020 21:17:54 +0200
+From:   "Marc Roos" <M.Roos@f1-outsourcing.eu>
+To:     response <response@ifastnet.com>, tri <tri@postix.net>
+cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        ceph-users <ceph-users@ceph.io>,
+        "icepic.dz" <icepic.dz@gmail.com>
+Message-ID: <"H00000710017cef1.1600802274.sx.f1-outsourcing.eu*"@MHS>
+Subject: RE: [ceph-users] Re: Understanding what ceph-volume does, with bootstrap-osd/ceph.keyring, tmpfs
+x-scalix-Hops: 1
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
+
+ 
+At least ceph thought you the essence of doing first proper testing ;) 
+Because if you test your use case you either get a positive or negative 
+result and not a problem. 
+However I do have to admit that ceph could be more transparent with 
+publishing testing and performance results. I have already discussed 
+this with them on such a ceph day. It does not make sense to have to do 
+everything yourself eg the luks overhead and putting the db/wal on ssd, 
+rbd performance on hdds etc. Those can quickly show if ceph can be a 
+candidate or not.
+
+
+-----Original Message-----
+From: Kevin Myers [mailto:response@ifastnet.com] 
+Cc: Janne Johansson; Marc Roos; ceph-devel; ceph-users
+Subject: Re: [ceph-users] Re: Understanding what ceph-volume does, with 
+bootstrap-osd/ceph.keyring, tmpfs
 
 Tbh ceph caused us more problems than it tried to fix ymmv good luck
 
 
 > On 22 Sep 2020, at 13:04, tri@postix.net wrote:
->=20
-> =EF=BB=BFThe key is stored in the ceph cluster config db. It can be retrie=
-ved by
->=20
-> KEY=3D`/usr/bin/ceph --cluster ceph --name client.osd-lockbox.${OSD_FSID} -=
--keyring $OSD_PATH/lockbox.keyring config-key get dm-crypt/osd/$OSD_FSID/luk=
-s`
->=20
-> September 22, 2020 2:25 AM, "Janne Johansson" <icepic.dz@gmail.com> wrote:=
+> 
+> ﻿The key is stored in the ceph cluster config db. It can be retrieved 
 
->=20
->> Den m=C3=A5n 21 sep. 2020 kl 16:15 skrev Marc Roos <M.Roos@f1-outsourcing=
-.eu>:
->>=20
+> by
+> 
+> KEY=`/usr/bin/ceph --cluster ceph --name 
+> client.osd-lockbox.${OSD_FSID} --keyring $OSD_PATH/lockbox.keyring 
+> config-key get dm-crypt/osd/$OSD_FSID/luks`
+> 
+> September 22, 2020 2:25 AM, "Janne Johansson" <icepic.dz@gmail.com> 
+wrote:
+> 
+>> Den mån 21 sep. 2020 kl 16:15 skrev Marc Roos 
+<M.Roos@f1-outsourcing.eu>:
+>> 
 >>> When I create a new encrypted osd with ceph volume[1]
->>>=20
+>>> 
 >>> Q4: Where is this luks passphrase stored?
->>=20
->> I think the OSD asks the mon for it after auth:ing, so "in the mon DBs"
+>> 
+>> I think the OSD asks the mon for it after auth:ing, so "in the mon 
+DBs"
 >> somewhere.
->>=20
+>> 
 >> --
 >> May the most significant bit of your life be positive.
 >> _______________________________________________
->> ceph-users mailing list -- ceph-users@ceph.io
->> To unsubscribe send an email to ceph-users-leave@ceph.io
+>> ceph-users mailing list -- ceph-users@ceph.io To unsubscribe send an 
+>> email to ceph-users-leave@ceph.io
 > _______________________________________________
-> ceph-users mailing list -- ceph-users@ceph.io
-> To unsubscribe send an email to ceph-users-leave@ceph.io
+> ceph-users mailing list -- ceph-users@ceph.io To unsubscribe send an 
+> email to ceph-users-leave@ceph.io
+
+
 
