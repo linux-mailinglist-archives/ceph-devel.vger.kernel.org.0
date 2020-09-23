@@ -2,72 +2,61 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54BCD2751E5
-	for <lists+ceph-devel@lfdr.de>; Wed, 23 Sep 2020 08:52:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4EFF275385
+	for <lists+ceph-devel@lfdr.de>; Wed, 23 Sep 2020 10:43:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbgIWGwR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 23 Sep 2020 02:52:17 -0400
-Received: from hermes.cta.br ([161.24.235.5]:48074 "EHLO hermes.cta.br"
+        id S1726590AbgIWInI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 23 Sep 2020 04:43:08 -0400
+Received: from verein.lst.de ([213.95.11.211]:47725 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726448AbgIWGwR (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 23 Sep 2020 02:52:17 -0400
-X-Greylist: delayed 3041 seconds by postgrey-1.27 at vger.kernel.org; Wed, 23 Sep 2020 02:52:16 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by hermes.cta.br (Postfix) with ESMTP id CCEFC1704432;
-        Wed, 23 Sep 2020 02:38:59 -0300 (-03)
-Received: from hermes.cta.br ([127.0.0.1])
-        by localhost (hermes.cta.br [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id ISXxhtUDh9cJ; Wed, 23 Sep 2020 02:38:59 -0300 (-03)
-Received: from localhost (localhost [127.0.0.1])
-        by hermes.cta.br (Postfix) with ESMTP id 8A04F16296F1;
-        Wed, 23 Sep 2020 01:42:41 -0300 (-03)
-DKIM-Filter: OpenDKIM Filter v2.10.3 hermes.cta.br 8A04F16296F1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cta.br;
-        s=50824260-A46F-11E8-B5E3-16F5207DEC71; t=1600836161;
-        bh=PEgy+RpcsckcVXxslQn6d+tc//P81+6V7lvSU9dRFp0=;
-        h=MIME-Version:To:From:Date:Message-Id;
-        b=PwHLIMbRFZVGdkg/3jEffcZ44udKDwWxQGig1cnEBdwoSjjV9Jwb7OAXPDaREPAsg
-         KTcBFMvRaTU1AfoVUDE39Bx1lWGtz5EiOGdWO7/G8HSe6eTWr/8V8q5T2xF9b/FYio
-         vlFTx/2CNgsIuK0fj8fPJqJ+3p/z8qPIUsA+nVvrY+GnEh5yH35JOaJzXOReUUZvoE
-         Lu+JTaYrLJJNVFuZpK7mKwLWHgZjQYyn8ca1F2v5L4ckdo609ECrj/izrxSX+1/MD1
-         1lYwoTj7Iu/mOlnfyh93boaa9+4vtad0MA99fass8Bqx5++hQKHfff9kNEttJDtZr2
-         l3h2Z2Xv5C/7w==
-X-Virus-Scanned: amavisd-new at cta.br
-Received: from hermes.cta.br ([127.0.0.1])
-        by localhost (hermes.cta.br [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id pkcqhZKrp_0h; Wed, 23 Sep 2020 01:42:41 -0300 (-03)
-Received: from [10.120.212.214] (unknown [105.12.3.179])
-        by hermes.cta.br (Postfix) with ESMTPSA id 5A2FE16E6AEC;
-        Wed, 23 Sep 2020 01:21:12 -0300 (-03)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1726328AbgIWInH (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 23 Sep 2020 04:43:07 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 813D367357; Wed, 23 Sep 2020 10:43:03 +0200 (CEST)
+Date:   Wed, 23 Sep 2020 10:43:03 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Coly Li <colyli@suse.de>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, netdev@vger.kernel.org,
+        open-iscsi@googlegroups.com, linux-scsi@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Hannes Reinecke <hare@suse.de>, Jan Kara <jack@suse.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Vlastimil Babka <vbabka@suse.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v7 1/6] net: introduce helper sendpage_ok() in
+ include/linux/net.h
+Message-ID: <20200923084303.GA21657@lst.de>
+References: <20200818131227.37020-1-colyli@suse.de> <20200818131227.37020-2-colyli@suse.de> <20200818162404.GA27196@lst.de> <217ec0ec-3c5a-a8ed-27d9-c634f0b9a045@suse.de> <20200818194930.GA31966@lst.de> <04408ff6-f765-8f3e-ead9-aec55043e469@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: spende von 2,000,000 euro
-To:     Recipients <scco@cta.br>
-From:   ''Tayeb souami'' <scco@cta.br>
-Date:   Wed, 23 Sep 2020 06:23:32 +0200
-Reply-To: Tayebsouam.spende@gmail.com
-Message-Id: <20200923042113.5A2FE16E6AEC@hermes.cta.br>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <04408ff6-f765-8f3e-ead9-aec55043e469@suse.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hallo mein lieber Freund
-                                  Mein Name ist Tayeb Souami aus New Jersey=
- in Amerika und ich habe den America Lottery Jackpot von 315 Millionen Euro=
- gewonnen. Ich habe mich entschlossen, die Summe von 2.000.000 Euro an f=FC=
-nf gl=FCckliche Personen zu spenden, und Sie wurden als einer der Beg=FCnst=
-igten ausgew=E4hlt. Bitte klicken Sie auf diesen Link, um mehr =FCber meine=
-n Gewinn zu erfahren.
+On Wed, Aug 19, 2020 at 12:22:05PM +0800, Coly Li wrote:
+> On 2020/8/19 03:49, Christoph Hellwig wrote:
+> > On Wed, Aug 19, 2020 at 12:33:37AM +0800, Coly Li wrote:
+> >> On 2020/8/19 00:24, Christoph Hellwig wrote:
+> >>> I think we should go for something simple like this instead:
+> >>
+> >> This idea is fine to me. Should a warning message be through here? IMHO
+> >> the driver still sends an improper page in, fix it in silence is too
+> >> kind or over nice to the buggy driver(s).
+> > 
+> > I don't think a warning is a good idea.  An API that does the right
+> > thing underneath and doesn't require boiler plate code in most callers
+> > is the right API.
+> > 
+> 
+> Then I don't have more comment.
 
-
-UHR MICH HIER: https://www.youtube.com/watch?v=3DZ6ui8ZDQ6Ks
-
-Bitte kontaktieren Sie mich =FCber diese E-Mail: Tayebsouam.spende@gmail.com
-
-
-Ich hoffe, Sie und Ihre Familie gl=FCcklich zu machen.
-
-Gr=FC=DFe
-Herr Tayeb Souami
+So given the feedback from Dave I suspect we should actually resurrect
+this series, sorry for the noise.  And in this case I think we do need
+the warning in kernel_sendpage.
