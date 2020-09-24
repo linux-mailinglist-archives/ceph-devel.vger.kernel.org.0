@@ -2,127 +2,76 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FDB0276F20
-	for <lists+ceph-devel@lfdr.de>; Thu, 24 Sep 2020 12:57:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36A962772F0
+	for <lists+ceph-devel@lfdr.de>; Thu, 24 Sep 2020 15:45:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbgIXK5a (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 24 Sep 2020 06:57:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36262 "EHLO mail.kernel.org"
+        id S1728137AbgIXNpk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 24 Sep 2020 09:45:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59776 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726483AbgIXK53 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 24 Sep 2020 06:57:29 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2A732395B;
-        Thu, 24 Sep 2020 10:57:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600945048;
-        bh=ReNUjh2+4CXtsorEynITi+cDn6rHbuOX6gukuZuCGXI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=a6rOZfN2v4qDIA7c079QPI66GmKpOEsCWxnxKgw2RbhqSDA1HsVDqgYgAm0I+C+t4
-         QNnLU9xw1Pv7zs5P67nh9IA66wgWrf1jFeumaRWvMFjUhs1FoXqRyIJGQlEtvvI++4
-         iL1I7aGO4aWakAy/iDW73AvJWyQbHpKWwTAjGvF8=
-Message-ID: <ca5f64b6fdfd8ff2dde489d7cc8590e63da7c306.camel@kernel.org>
-Subject: Re: [PATCH] fscrypt: export fscrypt_d_revalidate()
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        ceph-devel@vger.kernel.org, Daniel Rosenberg <drosen@google.com>
-Date:   Thu, 24 Sep 2020 06:57:26 -0400
-In-Reply-To: <20200924054721.187797-1-ebiggers@kernel.org>
-References: <20200924054721.187797-1-ebiggers@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        id S1727973AbgIXNpk (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 24 Sep 2020 09:45:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 856DEACF5;
+        Thu, 24 Sep 2020 13:45:38 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id EEFC11E12F7; Thu, 24 Sep 2020 11:00:21 +0200 (CEST)
+Date:   Thu, 24 Sep 2020 11:00:21 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ecryptfs@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-mtd@lists.infradead.org,
+        Richard Weinberger <richard@nod.at>
+Subject: Re: [PATCH 12/13] udf: Tell the VFS that readpage was synchronous
+Message-ID: <20200924090021.GE27019@quack2.suse.cz>
+References: <20200917151050.5363-1-willy@infradead.org>
+ <20200917151050.5363-13-willy@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200917151050.5363-13-willy@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2020-09-23 at 22:47 -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On Thu 17-09-20 16:10:49, Matthew Wilcox (Oracle) wrote:
+> The udf inline data readpage implementation was already synchronous,
+> so use AOP_UPDATED_PAGE to avoid cycling the page lock.
 > 
-> Dentries that represent no-key names must have a dentry_operations that
-> includes fscrypt_d_revalidate().  Currently, this is handled by
-> fscrypt_prepare_lookup() installing fscrypt_d_ops.
-> 
-> However, ceph support for encryption
-> (https://lore.kernel.org/r/20200914191707.380444-1-jlayton@kernel.org)
-> can't use fscrypt_d_ops, since ceph already has its own
-> dentry_operations.
-> 
-> Similarly, ext4 and f2fs support for directories that are both encrypted
-> and casefolded
-> (https://lore.kernel.org/r/20200923010151.69506-1-drosen@google.com)
-> can't use fscrypt_d_ops either, since casefolding requires some dentry
-> operations too.
-> 
-> To satisfy both users, we need to move the responsibility of installing
-> the dentry_operations to filesystems.
-> 
-> In preparation for this, export fscrypt_d_revalidate() and give it a
-> !CONFIG_FS_ENCRYPTION stub.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+Looks good. You can add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
 > ---
+>  fs/udf/file.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> Compared to the versions of this patch from Jeff and Daniel, I've
-> improved the commit message and added a !CONFIG_FS_ENCRYPTION stub,
-> which was missing.  I'm planning to apply this for 5.10 in preparation
-> for both the ceph patchset and the encrypt+casefold patchset.
-> 
-> 
->  fs/crypto/fname.c       | 3 ++-
->  include/linux/fscrypt.h | 7 +++++++
->  2 files changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-> index c65979452844..1fbe6c24d705 100644
-> --- a/fs/crypto/fname.c
-> +++ b/fs/crypto/fname.c
-> @@ -530,7 +530,7 @@ EXPORT_SYMBOL_GPL(fscrypt_fname_siphash);
->   * Validate dentries in encrypted directories to make sure we aren't potentially
->   * caching stale dentries after a key has been added.
->   */
-> -static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
-> +int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
+> diff --git a/fs/udf/file.c b/fs/udf/file.c
+> index 628941a6b79a..52bbe92d7c43 100644
+> --- a/fs/udf/file.c
+> +++ b/fs/udf/file.c
+> @@ -61,9 +61,8 @@ static int udf_adinicb_readpage(struct file *file, struct page *page)
 >  {
->  	struct dentry *dir;
->  	int err;
-> @@ -569,6 +569,7 @@ static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
+>  	BUG_ON(!PageLocked(page));
+>  	__udf_adinicb_readpage(page);
+> -	unlock_page(page);
 >  
->  	return valid;
->  }
-> +EXPORT_SYMBOL_GPL(fscrypt_d_revalidate);
->  
->  const struct dentry_operations fscrypt_d_ops = {
->  	.d_revalidate = fscrypt_d_revalidate,
-> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-> index f1757e73162d..a8f7a43f031b 100644
-> --- a/include/linux/fscrypt.h
-> +++ b/include/linux/fscrypt.h
-> @@ -197,6 +197,7 @@ int fscrypt_fname_disk_to_usr(const struct inode *inode,
->  bool fscrypt_match_name(const struct fscrypt_name *fname,
->  			const u8 *de_name, u32 de_name_len);
->  u64 fscrypt_fname_siphash(const struct inode *dir, const struct qstr *name);
-> +int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags);
->  
->  /* bio.c */
->  void fscrypt_decrypt_bio(struct bio *bio);
-> @@ -454,6 +455,12 @@ static inline u64 fscrypt_fname_siphash(const struct inode *dir,
->  	return 0;
+> -	return 0;
+> +	return AOP_UPDATED_PAGE;
 >  }
 >  
-> +static inline int fscrypt_d_revalidate(struct dentry *dentry,
-> +				       unsigned int flags)
-> +{
-> +	return 1;
-> +}
-> +
->  /* bio.c */
->  static inline void fscrypt_decrypt_bio(struct bio *bio)
->  {
-
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-
+>  static int udf_adinicb_writepage(struct page *page,
+> -- 
+> 2.28.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
