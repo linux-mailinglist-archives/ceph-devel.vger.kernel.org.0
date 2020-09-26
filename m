@@ -2,97 +2,171 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A78572792B8
-	for <lists+ceph-devel@lfdr.de>; Fri, 25 Sep 2020 22:54:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69E852799AD
+	for <lists+ceph-devel@lfdr.de>; Sat, 26 Sep 2020 15:28:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbgIYUyi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 25 Sep 2020 16:54:38 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:44806 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725272AbgIYUyh (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 25 Sep 2020 16:54:37 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08PKn2cc039197;
-        Fri, 25 Sep 2020 20:54:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : message-id : references : date : in-reply-to : mime-version :
- content-type; s=corp-2020-01-29;
- bh=KE/6frUW0qLJ4yGqJjxsOBztcMMvJKPi7N6S9765s1A=;
- b=t0qzyxZi0dl+YKzXtuDuHrMGqOKgH5fIMmpwIJWVMm/U3dTu+P1SS3kJTlx79mD5uwMC
- A2Edf31HXh7Zjrho5JXRQeOv1ImV1hVmEUYsbtNFLoJL4bYLIxAyhjP+J/0Zp7ifDQzk
- 3Nx9/VbQNAqiGj7LS7WXYR2mfogIVEGEDnYRbjzFJkRbq3WNPTTAj2pLS3zagmxoYMTV
- iw0TWXITzP/XF5OpedI74kVNFQzbK4Xkz4lunnpJPRW1Rg6Stg2474URqb04tp+XNqiJ
- CwLxCCi7uoZ8T0Vakvb3aUzZrxZh3Nt0KvQ9mrqnvOxELTIQV/CUCoVWCkaNPXyc2d99 Xw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 33ndnuysne-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 25 Sep 2020 20:54:14 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08PKoEmv040658;
-        Fri, 25 Sep 2020 20:54:13 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 33r28yufem-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Sep 2020 20:54:13 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 08PKsBj6030876;
-        Fri, 25 Sep 2020 20:54:11 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 25 Sep 2020 13:54:10 -0700
-To:     Coly Li <colyli@suse.de>
+        id S1728861AbgIZN2P (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 26 Sep 2020 09:28:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45634 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725208AbgIZN2P (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Sat, 26 Sep 2020 09:28:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id CAFBAACB7;
+        Sat, 26 Sep 2020 13:28:12 +0000 (UTC)
+To:     Greg KH <gregkh@linuxfoundation.org>
 Cc:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
         netdev@vger.kernel.org, open-iscsi@googlegroups.com,
         linux-scsi@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Cong Wang <amwang@redhat.com>,
-        Mike Christie <michaelc@cs.wisc.edu>,
-        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH v8 6/7] scsi: libiscsi: use sendpage_ok() in
- iscsi_tcp_segment_map()
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <yq18scxinmw.fsf@ca-mkp.ca.oracle.com>
+        linux-kernel@vger.kernel.org,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
+        Jan Kara <jack@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Vlastimil Babka <vbabka@suse.com>, stable@vger.kernel.org
 References: <20200925150119.112016-1-colyli@suse.de>
-        <20200925150119.112016-7-colyli@suse.de>
-Date:   Fri, 25 Sep 2020 16:54:07 -0400
-In-Reply-To: <20200925150119.112016-7-colyli@suse.de> (Coly Li's message of
-        "Fri, 25 Sep 2020 23:01:18 +0800")
+ <20200925150119.112016-2-colyli@suse.de> <20200925151812.GA3182427@kroah.com>
+From:   Coly Li <colyli@suse.de>
+Autocrypt: addr=colyli@suse.de; keydata=
+ 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
+Subject: Re: [PATCH v8 1/7] net: introduce helper sendpage_ok() in
+ include/linux/net.h
+Message-ID: <7b0d4f63-2fe5-9032-3b88-97619d8c5081@suse.de>
+Date:   Sat, 26 Sep 2020 21:28:03 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9755 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=845
- suspectscore=1 adultscore=0 bulkscore=0 malwarescore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009250150
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9755 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- lowpriorityscore=0 phishscore=0 adultscore=0 suspectscore=1 bulkscore=0
- clxscore=1011 impostorscore=0 mlxlogscore=827 mlxscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009250150
+In-Reply-To: <20200925151812.GA3182427@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On 2020/9/25 23:18, Greg KH wrote:
+> On Fri, Sep 25, 2020 at 11:01:13PM +0800, Coly Li wrote:
+>> The original problem was from nvme-over-tcp code, who mistakenly uses
+>> kernel_sendpage() to send pages allocated by __get_free_pages() without
+>> __GFP_COMP flag. Such pages don't have refcount (page_count is 0) on
+>> tail pages, sending them by kernel_sendpage() may trigger a kernel panic
+>> from a corrupted kernel heap, because these pages are incorrectly freed
+>> in network stack as page_count 0 pages.
+>>
+>> This patch introduces a helper sendpage_ok(), it returns true if the
+>> checking page,
+>> - is not slab page: PageSlab(page) is false.
+>> - has page refcount: page_count(page) is not zero
+>>
+>> All drivers who want to send page to remote end by kernel_sendpage()
+>> may use this helper to check whether the page is OK. If the helper does
+>> not return true, the driver should try other non sendpage method (e.g.
+>> sock_no_sendpage()) to handle the page.
+>>
+>> Signed-off-by: Coly Li <colyli@suse.de>
+>> Cc: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+>> Cc: Christoph Hellwig <hch@lst.de>
+>> Cc: Hannes Reinecke <hare@suse.de>
+>> Cc: Jan Kara <jack@suse.com>
+>> Cc: Jens Axboe <axboe@kernel.dk>
+>> Cc: Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>
+>> Cc: Philipp Reisner <philipp.reisner@linbit.com>
+>> Cc: Sagi Grimberg <sagi@grimberg.me>
+>> Cc: Vlastimil Babka <vbabka@suse.com>
+>> Cc: stable@vger.kernel.org
+>> ---
+>>  include/linux/net.h | 16 ++++++++++++++++
+>>  1 file changed, 16 insertions(+)
+>>
+>> diff --git a/include/linux/net.h b/include/linux/net.h
+>> index d48ff1180879..05db8690f67e 100644
+>> --- a/include/linux/net.h
+>> +++ b/include/linux/net.h
+>> @@ -21,6 +21,7 @@
+>>  #include <linux/rcupdate.h>
+>>  #include <linux/once.h>
+>>  #include <linux/fs.h>
+>> +#include <linux/mm.h>
+>>  #include <linux/sockptr.h>
+>>  
+>>  #include <uapi/linux/net.h>
+>> @@ -286,6 +287,21 @@ do {									\
+>>  #define net_get_random_once_wait(buf, nbytes)			\
+>>  	get_random_once_wait((buf), (nbytes))
+>>  
+>> +/*
+>> + * E.g. XFS meta- & log-data is in slab pages, or bcache meta
+>> + * data pages, or other high order pages allocated by
+>> + * __get_free_pages() without __GFP_COMP, which have a page_count
+>> + * of 0 and/or have PageSlab() set. We cannot use send_page for
+>> + * those, as that does get_page(); put_page(); and would cause
+>> + * either a VM_BUG directly, or __page_cache_release a page that
+>> + * would actually still be referenced by someone, leading to some
+>> + * obscure delayed Oops somewhere else.
+>> + */
+>> +static inline bool sendpage_ok(struct page *page)
+>> +{
+>> +	return  !PageSlab(page) && page_count(page) >= 1;
+> 
+> Do you have one extra ' ' after "return" there?
 
-Coly,
+It should be fixed in next version.
 
-> In iscsci driver, iscsi_tcp_segment_map() uses the following code to
-> check whether the page should or not be handled by sendpage:
->     if (!recv && page_count(sg_page(sg)) >= 1 && !PageSlab(sg_page(sg)))
->
-> The "page_count(sg_page(sg)) >= 1 && !PageSlab(sg_page(sg)" part is to
-> make sure the page can be sent to network layer's zero copy path. This
-> part is exactly what sendpage_ok() does.
->
-> This patch uses  use sendpage_ok() in iscsi_tcp_segment_map() to replace
-> the original open coded checks.
+> 
+> And this feels like a mm thing, why put it in net.h and not mm.h?
 
-Looks fine to me.
+This check is specific for kernel_sendpage(), so I want to place it
+closer to where kernel_sendpage() is declared.
 
-Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
+And indeed there was similar discussion about why this helper is not in
+mm code in v5 series. Christoph supported to place sendpage_ok() in
+net.h, an uncompleted piece of his opinion was "It is not a mm bug, it
+is a networking quirk."
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Thanks.
+
+Coly Li
