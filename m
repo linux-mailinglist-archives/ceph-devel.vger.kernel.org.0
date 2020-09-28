@@ -2,136 +2,81 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6065527A0DA
-	for <lists+ceph-devel@lfdr.de>; Sun, 27 Sep 2020 14:21:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45D1927B7C6
+	for <lists+ceph-devel@lfdr.de>; Tue, 29 Sep 2020 01:15:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbgI0MVG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 27 Sep 2020 08:21:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36964 "EHLO mail.kernel.org"
+        id S1727353AbgI1XPc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 28 Sep 2020 19:15:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726185AbgI0MVG (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Sun, 27 Sep 2020 08:21:06 -0400
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
+        id S1727145AbgI1XPb (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 28 Sep 2020 19:15:31 -0400
+Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74316208FE;
-        Sun, 27 Sep 2020 12:21:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C032B21D41;
+        Mon, 28 Sep 2020 21:55:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601209265;
-        bh=FdSjEiIOfosty1A1hNpYjx+LCe0c93peV/xVsFD6r/o=;
+        s=default; t=1601330159;
+        bh=6z91mKn6qjuem7zZtYDzbCSm4BYLZg64yE8VCJOoMxw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FtJG2gRJohbsXmjTGZLvssQG1XF1/EDPa+Sxt7uDN386HN/YFfrvpzrv4+5S2OGee
-         WwgbRJn5W6gVfWdvXi4OwSNypTgoQvpwd2ypZNN7rw+jr66jN5W1yoJ984HbBn313O
-         5EwO+4+ECjBUiIjNR1+7fPf+BlbKDjiL9nYij4XI=
-Date:   Sun, 27 Sep 2020 14:21:15 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Coly Li <colyli@suse.de>
-Cc:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-        netdev@vger.kernel.org, open-iscsi@googlegroups.com,
-        linux-scsi@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
-        Jan Kara <jack@suse.com>, Jens Axboe <axboe@kernel.dk>,
-        Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Vlastimil Babka <vbabka@suse.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v8 1/7] net: introduce helper sendpage_ok() in
- include/linux/net.h
-Message-ID: <20200927122115.GA178781@kroah.com>
-References: <20200925150119.112016-1-colyli@suse.de>
- <20200925150119.112016-2-colyli@suse.de>
- <20200925151812.GA3182427@kroah.com>
- <7b0d4f63-2fe5-9032-3b88-97619d8c5081@suse.de>
+        b=PjVti+/d6/LARjkYevcmTfmDAbtEZwPm5zllEgC+l1/f3jnBjeRBhkbxdDhtbZwsD
+         M9iaw83EBAmwBx920b7jFyftZLQ3qF9s2nENfvDC/lr595X7CjWN9fd3DBp92cO9Ru
+         MgWunJMvRxRGUCBbbn7UNs1IaCDXfauboH8LY7co=
+Date:   Mon, 28 Sep 2020 14:55:58 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        ceph-devel@vger.kernel.org, Daniel Rosenberg <drosen@google.com>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH] fscrypt: export fscrypt_d_revalidate()
+Message-ID: <20200928215558.GD1340@sol.localdomain>
+References: <20200924054721.187797-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7b0d4f63-2fe5-9032-3b88-97619d8c5081@suse.de>
+In-Reply-To: <20200924054721.187797-1-ebiggers@kernel.org>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sat, Sep 26, 2020 at 09:28:03PM +0800, Coly Li wrote:
-> On 2020/9/25 23:18, Greg KH wrote:
-> > On Fri, Sep 25, 2020 at 11:01:13PM +0800, Coly Li wrote:
-> >> The original problem was from nvme-over-tcp code, who mistakenly uses
-> >> kernel_sendpage() to send pages allocated by __get_free_pages() without
-> >> __GFP_COMP flag. Such pages don't have refcount (page_count is 0) on
-> >> tail pages, sending them by kernel_sendpage() may trigger a kernel panic
-> >> from a corrupted kernel heap, because these pages are incorrectly freed
-> >> in network stack as page_count 0 pages.
-> >>
-> >> This patch introduces a helper sendpage_ok(), it returns true if the
-> >> checking page,
-> >> - is not slab page: PageSlab(page) is false.
-> >> - has page refcount: page_count(page) is not zero
-> >>
-> >> All drivers who want to send page to remote end by kernel_sendpage()
-> >> may use this helper to check whether the page is OK. If the helper does
-> >> not return true, the driver should try other non sendpage method (e.g.
-> >> sock_no_sendpage()) to handle the page.
-> >>
-> >> Signed-off-by: Coly Li <colyli@suse.de>
-> >> Cc: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
-> >> Cc: Christoph Hellwig <hch@lst.de>
-> >> Cc: Hannes Reinecke <hare@suse.de>
-> >> Cc: Jan Kara <jack@suse.com>
-> >> Cc: Jens Axboe <axboe@kernel.dk>
-> >> Cc: Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>
-> >> Cc: Philipp Reisner <philipp.reisner@linbit.com>
-> >> Cc: Sagi Grimberg <sagi@grimberg.me>
-> >> Cc: Vlastimil Babka <vbabka@suse.com>
-> >> Cc: stable@vger.kernel.org
-> >> ---
-> >>  include/linux/net.h | 16 ++++++++++++++++
-> >>  1 file changed, 16 insertions(+)
-> >>
-> >> diff --git a/include/linux/net.h b/include/linux/net.h
-> >> index d48ff1180879..05db8690f67e 100644
-> >> --- a/include/linux/net.h
-> >> +++ b/include/linux/net.h
-> >> @@ -21,6 +21,7 @@
-> >>  #include <linux/rcupdate.h>
-> >>  #include <linux/once.h>
-> >>  #include <linux/fs.h>
-> >> +#include <linux/mm.h>
-> >>  #include <linux/sockptr.h>
-> >>  
-> >>  #include <uapi/linux/net.h>
-> >> @@ -286,6 +287,21 @@ do {									\
-> >>  #define net_get_random_once_wait(buf, nbytes)			\
-> >>  	get_random_once_wait((buf), (nbytes))
-> >>  
-> >> +/*
-> >> + * E.g. XFS meta- & log-data is in slab pages, or bcache meta
-> >> + * data pages, or other high order pages allocated by
-> >> + * __get_free_pages() without __GFP_COMP, which have a page_count
-> >> + * of 0 and/or have PageSlab() set. We cannot use send_page for
-> >> + * those, as that does get_page(); put_page(); and would cause
-> >> + * either a VM_BUG directly, or __page_cache_release a page that
-> >> + * would actually still be referenced by someone, leading to some
-> >> + * obscure delayed Oops somewhere else.
-> >> + */
-> >> +static inline bool sendpage_ok(struct page *page)
-> >> +{
-> >> +	return  !PageSlab(page) && page_count(page) >= 1;
-> > 
-> > Do you have one extra ' ' after "return" there?
+On Wed, Sep 23, 2020 at 10:47:21PM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> It should be fixed in next version.
+> Dentries that represent no-key names must have a dentry_operations that
+> includes fscrypt_d_revalidate().  Currently, this is handled by
+> fscrypt_prepare_lookup() installing fscrypt_d_ops.
 > 
-> > 
-> > And this feels like a mm thing, why put it in net.h and not mm.h?
+> However, ceph support for encryption
+> (https://lore.kernel.org/r/20200914191707.380444-1-jlayton@kernel.org)
+> can't use fscrypt_d_ops, since ceph already has its own
+> dentry_operations.
 > 
-> This check is specific for kernel_sendpage(), so I want to place it
-> closer to where kernel_sendpage() is declared.
+> Similarly, ext4 and f2fs support for directories that are both encrypted
+> and casefolded
+> (https://lore.kernel.org/r/20200923010151.69506-1-drosen@google.com)
+> can't use fscrypt_d_ops either, since casefolding requires some dentry
+> operations too.
 > 
-> And indeed there was similar discussion about why this helper is not in
-> mm code in v5 series. Christoph supported to place sendpage_ok() in
-> net.h, an uncompleted piece of his opinion was "It is not a mm bug, it
-> is a networking quirk."
+> To satisfy both users, we need to move the responsibility of installing
+> the dentry_operations to filesystems.
+> 
+> In preparation for this, export fscrypt_d_revalidate() and give it a
+> !CONFIG_FS_ENCRYPTION stub.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+> 
+> Compared to the versions of this patch from Jeff and Daniel, I've
+> improved the commit message and added a !CONFIG_FS_ENCRYPTION stub,
+> which was missing.  I'm planning to apply this for 5.10 in preparation
+> for both the ceph patchset and the encrypt+casefold patchset.
+> 
+> 
+>  fs/crypto/fname.c       | 3 ++-
+>  include/linux/fscrypt.h | 7 +++++++
+>  2 files changed, 9 insertions(+), 1 deletion(-)
 
-Ah, nevermind then, sorry for the noise :)
+Applied to fscrypt.git#master for 5.10.
 
-greg k-h
+- Eric
