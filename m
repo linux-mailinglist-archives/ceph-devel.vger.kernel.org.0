@@ -2,147 +2,119 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3835D27B7FA
-	for <lists+ceph-devel@lfdr.de>; Tue, 29 Sep 2020 01:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8493327BF22
+	for <lists+ceph-devel@lfdr.de>; Tue, 29 Sep 2020 10:20:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727245AbgI1XUh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 28 Sep 2020 19:20:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726477AbgI1XUc (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 28 Sep 2020 19:20:32 -0400
-Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01F79221E7;
-        Mon, 28 Sep 2020 22:03:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601330632;
-        bh=+la2/ba1fbR/KduJfr7qyzhlTAxzIaNEzTTFfAf8ZoI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=sZxIUzGHPMKzP8+AH/G8nraeJIq8z5sMA2fC8maTeZaJwS6W+3dQZeNUVPj+tp5Y4
-         8fI3eTbVDPbkcC53PhZ/5y3VS472Gtd+zNg/avUwC1wEvwkfhT5ueCny8p9kk7tBgV
-         Pw2xT+IpcEDVhXSj1z+qOKJ/BBkrTlmoO+Srp/3o=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     pdonnell@redhat.com, ukernel@gmail.com, idryomov@gmail.com
-Subject: [PATCH] ceph: retransmit REQUEST_CLOSE every second if we don't get a response
-Date:   Mon, 28 Sep 2020 18:03:49 -0400
-Message-Id: <20200928220349.584709-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.26.2
+        id S1727727AbgI2IUT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 29 Sep 2020 04:20:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35590 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727740AbgI2IUN (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 29 Sep 2020 04:20:13 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEEE2C061755
+        for <ceph-devel@vger.kernel.org>; Tue, 29 Sep 2020 01:20:12 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id o9so3983044ils.9
+        for <ceph-devel@vger.kernel.org>; Tue, 29 Sep 2020 01:20:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p2fUYfzFUpxqE9+CQAnoynp8wP5mF9/aPJjum44j7/A=;
+        b=BOout97pnftk+59lnSlZ365Mk7hHzTdNhZMnlLIK7YHeNKo9KhVACiN/rtCzgcuzw8
+         uJsHMNW+Hi8G5yqSz8hNtFoGycmQVfNfkDzJMhclkYexO+UhYvRuDXVcOdn7igyrrLUf
+         HTjWb3xTmWWLgn2A5N515DTCeDB4pZpFMDLrx3s/O9QJuNZqerA8dkxWv7NahB9tWwOs
+         MpjPhEJ7qI4cExiyIQthJHxBWCJmmsgSUw1SaLkhrsvOGsYjoMetf/Rfod1gqORiBe30
+         ZJYIegNL7iEZcB09jfOoxpvyFSjPWbSf1RgVjAzg6n9Ud7xId9CFbqng9zkYeOChqlZ0
+         oEqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p2fUYfzFUpxqE9+CQAnoynp8wP5mF9/aPJjum44j7/A=;
+        b=ihb/OQK60H5oVlhpGajIkH+W0uBxgC5eo/oJgisg+6OZLWfkJn9q3mto2k9l86jc6h
+         CKC8WKog0FyLM+wrKj+3yYMhB1o46TdEpXwWXJyhUTfSnLiIhGymRw5/ygFCtaCEk1Ha
+         VBl4KqYN5ubqNBCWRb5Bc3bhRtSRcXewaW9UJpCKR1YTWK5Td5UVpJbw76akKomxxRbc
+         r77dDjQfezfNS7Iw7Sl+YRc/Si6cuHRAMX98/vmkhIc5tZtl17yVyNNUlF8iKEZL55sR
+         xFlJcLbS+ujYxCRSQqPoJwIHCaDWHmpCRkpGuTtlxySzHkmDrkeDwYFpiUYRxlP0fAKr
+         z+Jg==
+X-Gm-Message-State: AOAM530Meuy2c1U31BO49vnWqopEuE+fJr9Fwpyf+DaW4v0aOONJ2hRD
+        AnNXqS/c47BY1f6biPJdhxQKYKvK6wdozvLzOw8=
+X-Google-Smtp-Source: ABdhPJxkltTrNibaZqznEybJd2srrtflrevlnnIL7GyF31aXdtBYm4GXvs8rVw0d14RCpATh2d9BauBbGd7O7BOUf1o=
+X-Received: by 2002:a05:6e02:8a:: with SMTP id l10mr2166279ilm.130.1601367611997;
+ Tue, 29 Sep 2020 01:20:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200925140851.320673-1-jlayton@kernel.org> <20200925140851.320673-3-jlayton@kernel.org>
+In-Reply-To: <20200925140851.320673-3-jlayton@kernel.org>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Tue, 29 Sep 2020 16:20:00 +0800
+Message-ID: <CAAM7YAm834Kbf1YYcNa0XGR7EYMnAH4eYs0uBbCr3KNaHccCcQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/4] ceph: don't mark mount as SHUTDOWN when
+ recovering session
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Patrick Donnelly <pdonnell@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Patrick reported a case where the MDS and client client had racing
-session messages to one anothe. The MDS was sending caps to the client
-and the client was sending a CEPH_SESSION_REQUEST_CLOSE message in order
-to unmount.
+On Fri, Sep 25, 2020 at 10:08 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> When recovering a session (a'la recover_session=clean), we want to do
+> all of the operations that we do on a forced umount, but changing the
+> mount state to SHUTDOWN is wrong and can cause queued MDS requests to
+> fail when the session comes back.
+>
 
-Because they were sending at the same time, the REQUEST_CLOSE had too
-old a sequence number, and the MDS dropped it on the floor. On the
-client, this would have probably manifested as a 60s hang during umount.
-The MDS ended up blocklisting the client.
+code that cleanup page cache check the SHUTDOWN state.
 
-Once we've decided to issue a REQUEST_CLOSE, we're finished with the
-session, so just keep sending them until the MDS acknowledges that.
-
-Change the code to retransmit a REQUEST_CLOSE every second if the
-session hasn't changed state yet. Give up and throw a warning after
-mount_timeout elapses if we haven't gotten a response.
-
-URL: https://tracker.ceph.com/issues/47563
-Reported-by: Patrick Donnelly <pdonnell@redhat.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/mds_client.c | 53 ++++++++++++++++++++++++++------------------
- 1 file changed, 32 insertions(+), 21 deletions(-)
-
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index b07e7adf146f..d9cb74e3d5e3 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -1878,7 +1878,7 @@ static int request_close_session(struct ceph_mds_session *session)
- static int __close_session(struct ceph_mds_client *mdsc,
- 			 struct ceph_mds_session *session)
- {
--	if (session->s_state >= CEPH_MDS_SESSION_CLOSING)
-+	if (session->s_state > CEPH_MDS_SESSION_CLOSING)
- 		return 0;
- 	session->s_state = CEPH_MDS_SESSION_CLOSING;
- 	return request_close_session(session);
-@@ -4692,38 +4692,49 @@ static bool done_closing_sessions(struct ceph_mds_client *mdsc, int skipped)
- 	return atomic_read(&mdsc->num_sessions) <= skipped;
- }
- 
-+static bool umount_timed_out(unsigned long timeo)
-+{
-+	if (time_before(jiffies, timeo))
-+		return false;
-+	pr_warn("ceph: unable to close all sessions\n");
-+	return true;
-+}
-+
- /*
-  * called after sb is ro.
-  */
- void ceph_mdsc_close_sessions(struct ceph_mds_client *mdsc)
- {
--	struct ceph_options *opts = mdsc->fsc->client->options;
- 	struct ceph_mds_session *session;
--	int i;
--	int skipped = 0;
-+	int i, ret;
-+	int skipped;
-+	unsigned long timeo = jiffies +
-+			      ceph_timeout_jiffies(mdsc->fsc->client->options->mount_timeout);
- 
- 	dout("close_sessions\n");
- 
- 	/* close sessions */
--	mutex_lock(&mdsc->mutex);
--	for (i = 0; i < mdsc->max_sessions; i++) {
--		session = __ceph_lookup_mds_session(mdsc, i);
--		if (!session)
--			continue;
--		mutex_unlock(&mdsc->mutex);
--		mutex_lock(&session->s_mutex);
--		if (__close_session(mdsc, session) <= 0)
--			skipped++;
--		mutex_unlock(&session->s_mutex);
--		ceph_put_mds_session(session);
-+	do {
-+		skipped = 0;
- 		mutex_lock(&mdsc->mutex);
--	}
--	mutex_unlock(&mdsc->mutex);
-+		for (i = 0; i < mdsc->max_sessions; i++) {
-+			session = __ceph_lookup_mds_session(mdsc, i);
-+			if (!session)
-+				continue;
-+			mutex_unlock(&mdsc->mutex);
-+			mutex_lock(&session->s_mutex);
-+			if (__close_session(mdsc, session) <= 0)
-+				skipped++;
-+			mutex_unlock(&session->s_mutex);
-+			ceph_put_mds_session(session);
-+			mutex_lock(&mdsc->mutex);
-+		}
-+		mutex_unlock(&mdsc->mutex);
- 
--	dout("waiting for sessions to close\n");
--	wait_event_timeout(mdsc->session_close_wq,
--			   done_closing_sessions(mdsc, skipped),
--			   ceph_timeout_jiffies(opts->mount_timeout));
-+		dout("waiting for sessions to close\n");
-+		ret = wait_event_timeout(mdsc->session_close_wq,
-+					 done_closing_sessions(mdsc, skipped), HZ);
-+	} while (!ret && !umount_timed_out(timeo));
- 
- 	/* tear down remaining sessions */
- 	mutex_lock(&mdsc->mutex);
--- 
-2.26.2
-
+> Only mark it as SHUTDOWN when umount_begin is called.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/super.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index 2516304379d3..46a0e4e1b177 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -832,6 +832,13 @@ static void destroy_caches(void)
+>         ceph_fscache_unregister();
+>  }
+>
+> +static void __ceph_umount_begin(struct ceph_fs_client *fsc)
+> +{
+> +       ceph_osdc_abort_requests(&fsc->client->osdc, -EIO);
+> +       ceph_mdsc_force_umount(fsc->mdsc);
+> +       fsc->filp_gen++; // invalidate open files
+> +}
+> +
+>  /*
+>   * ceph_umount_begin - initiate forced umount.  Tear down the
+>   * mount, skipping steps that may hang while waiting for server(s).
+> @@ -844,9 +851,7 @@ static void ceph_umount_begin(struct super_block *sb)
+>         if (!fsc)
+>                 return;
+>         fsc->mount_state = CEPH_MOUNT_SHUTDOWN;
+> -       ceph_osdc_abort_requests(&fsc->client->osdc, -EIO);
+> -       ceph_mdsc_force_umount(fsc->mdsc);
+> -       fsc->filp_gen++; // invalidate open files
+> +       __ceph_umount_begin(fsc);
+>  }
+>
+>  static const struct super_operations ceph_super_ops = {
+> @@ -1235,7 +1240,7 @@ int ceph_force_reconnect(struct super_block *sb)
+>         struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
+>         int err = 0;
+>
+> -       ceph_umount_begin(sb);
+> +       __ceph_umount_begin(fsc);
+>
+>         /* Make sure all page caches get invalidated.
+>          * see remove_session_caps_cb() */
+> --
+> 2.26.2
+>
