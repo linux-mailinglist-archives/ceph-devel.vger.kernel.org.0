@@ -2,100 +2,112 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDCD327C2FB
-	for <lists+ceph-devel@lfdr.de>; Tue, 29 Sep 2020 12:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7DFE27CBC8
+	for <lists+ceph-devel@lfdr.de>; Tue, 29 Sep 2020 14:31:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728126AbgI2K6r (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 29 Sep 2020 06:58:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60176 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbgI2K6r (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 29 Sep 2020 06:58:47 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B15BC061755
-        for <ceph-devel@vger.kernel.org>; Tue, 29 Sep 2020 03:58:46 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id o9so4369759ils.9
-        for <ceph-devel@vger.kernel.org>; Tue, 29 Sep 2020 03:58:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ggiYrtfDxSDd09DJUSpgLyYpiVQbwdPHmK8mNDnhMnU=;
-        b=jsjTcyoHDHh4sGAQ+ABFy9OCUGUCGyiyctoK2ABB2anAWUVtLpqbhdCujJdeIpCtSu
-         D72uO7lGlKDSMtviu4Oy9dajFGvQR29cwxGbkDLzN6GwIfDfKIhOg3p2/i1p8wyvzBYN
-         i7qQ/Xs+qYob2uLrJtSxCqmYwZ8o0ENaWbyjJDj+56W35tbXRPVfEBxeHJqTA0JRI9aI
-         Mg2MC6USN4ucouiSwwiw0Rztk/NinjnvyrxsQc5BZc6+mkiBUQIwn8Tysv+/maCEfCBW
-         mhEuGo2oDH4+8aDaAL9IAtriyblxB7r3bVL+GjJ97CTRIuDm/PTW6tcuDxs0iIxI4Y1c
-         iJ+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ggiYrtfDxSDd09DJUSpgLyYpiVQbwdPHmK8mNDnhMnU=;
-        b=Whlx+i5tt8bVbYU/cRDFTUqaJfuoI9c1wuni+TcM7pO+nqLfC0+q33R6NB++SY/nZl
-         tS/X7D6oKOY/4zJGOYX4T4jKuWm4J5YgT4+P4hLskY1dIybNUCsS3L0k6YnLkmd93VEf
-         +qYtSRS7qNlaRABDiDzBBR5tVpvc7IZEcj7CnNUsYbYamGssMv4eZA74HqFElqIohiZY
-         WmVcLYRUFWZSTwLTVIctNDWiSbX33efPEcOsa37KOD0k2jRSh27x+zehjFfPxy3F1sYF
-         02Su/KIrj6M0mZYOXpPVFrEvP3P79U/YgWnvX2opbylf6zvZjPhFmqqePI778nCVeh+G
-         vGUw==
-X-Gm-Message-State: AOAM533BtOOJjYuhT/f8OAvTlSEt6brOdtpkX+ffQQ4qd9Y3ecPwu3EZ
-        cXR8YyA/fd4Vs2YyTgZzT2GGnTqt7N/+xLtT2CI=
-X-Google-Smtp-Source: ABdhPJygI00er6mgQsyd5Kw9TJ/13UID1g2qkYfT44MlfrGpMpOuuePN0oG3sqjsHAXCUouJQqdYRg0bo5S3Yz/5oYs=
-X-Received: by 2002:a05:6e02:5cf:: with SMTP id l15mr2398026ils.281.1601377125510;
- Tue, 29 Sep 2020 03:58:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200925140851.320673-1-jlayton@kernel.org> <CAAM7YAmJfNCbt4ON5c44FFVYOUhXu0ipK858aLJK22ZX2E-FdA@mail.gmail.com>
- <CAOi1vP9Nz2Art=rq06qBuU3DvKzZs+RR7pf+qsGxYZkrbSB-1Q@mail.gmail.com> <CAAM7YA=bo-pdnLuxFAyChtZCoP6VZ3oUJEX_+Sn5r6i6bO_+8Q@mail.gmail.com>
-In-Reply-To: <CAAM7YA=bo-pdnLuxFAyChtZCoP6VZ3oUJEX_+Sn5r6i6bO_+8Q@mail.gmail.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 29 Sep 2020 12:58:34 +0200
-Message-ID: <CAOi1vP_E9he3RaTHAZ3qeXGe1xgcSkEXdrCYOY7rjab4-vr=6w@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] ceph: fix spurious recover_session=clean errors
+        id S1732939AbgI2Man (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 29 Sep 2020 08:30:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43654 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732807AbgI2MaY (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 29 Sep 2020 08:30:24 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 784E6208B8;
+        Tue, 29 Sep 2020 12:30:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1601382624;
+        bh=QJRidVy9dSk4TYwH+Ryb+0eZgSXzN934rTM79uyIp20=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=pSjraPhkfe01aCQlhoMISnEqzu03X5C8MAxR/yIhwNrWKYgPTWISDujdx2+fr5dzm
+         iDkenWtzd4Ab2KPzXY0a0WQLVJfdtAy4HJCAJnRn9lS574FFioxcU325X3uWtAiiET
+         EfibzlhwORm21Ho7alGvoKWIdwM1KGhHhB/i9Ecg=
+Message-ID: <2246f010fe5a697f0694fe769fd1fe131b46ba35.camel@kernel.org>
+Subject: Re: [RFC PATCH 2/4] ceph: don't mark mount as SHUTDOWN when
+ recovering session
+From:   Jeff Layton <jlayton@kernel.org>
 To:     "Yan, Zheng" <ukernel@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
         Patrick Donnelly <pdonnell@redhat.com>
+Date:   Tue, 29 Sep 2020 08:30:22 -0400
+In-Reply-To: <CAAM7YAm834Kbf1YYcNa0XGR7EYMnAH4eYs0uBbCr3KNaHccCcQ@mail.gmail.com>
+References: <20200925140851.320673-1-jlayton@kernel.org>
+         <20200925140851.320673-3-jlayton@kernel.org>
+         <CAAM7YAm834Kbf1YYcNa0XGR7EYMnAH4eYs0uBbCr3KNaHccCcQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Sep 29, 2020 at 12:44 PM Yan, Zheng <ukernel@gmail.com> wrote:
->
-> On Tue, Sep 29, 2020 at 4:55 PM Ilya Dryomov <idryomov@gmail.com> wrote:
-> >
-> > On Tue, Sep 29, 2020 at 10:28 AM Yan, Zheng <ukernel@gmail.com> wrote:
-> > >
-> > > On Fri, Sep 25, 2020 at 10:08 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > >
-> > > > Ilya noticed that he would get spurious EACCES errors on calls done just
-> > > > after blocklisting the client on mounts with recover_session=clean. The
-> > > > session would get marked as REJECTED and that caused in-flight calls to
-> > > > die with EACCES. This patchset seems to smooth over the problem, but I'm
-> > > > not fully convinced it's the right approach.
-> > > >
-> > >
-> > > the root is cause is that client does not recover session instantly
-> > > after getting rejected by mds. Before session gets recovered, client
-> > > continues to return error.
-> >
-> > Hi Zheng,
-> >
-> > I don't think it's about whether that happens instantly or not.
-> > In the example from [1], the first "ls" would fail even if issued
-> > minutes after the session reject message and the reconnect.  From
-> > the user's POV it is well after the automatic recovery promised by
-> > recover_session=clean.
-> >
-> > [1] https://tracker.ceph.com/issues/47385
->
-> Reconnect should close all old session. It's likely because that
-> client didn't detect it's blacklisted.
+On Tue, 2020-09-29 at 16:20 +0800, Yan, Zheng wrote:
+> On Fri, Sep 25, 2020 at 10:08 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > When recovering a session (a'la recover_session=clean), we want to do
+> > all of the operations that we do on a forced umount, but changing the
+> > mount state to SHUTDOWN is wrong and can cause queued MDS requests to
+> > fail when the session comes back.
+> > 
+> 
+> code that cleanup page cache check the SHUTDOWN state.
+> 
 
-Sorry, I should have pasted dmesg there as well.  It _does_ detect
-blacklisting -- notice that I wrote "after the session reject message
-and the reconnect".
+Ok, so we do need to do something else there if we don't mark the thing
+SHUTDOWN. Maybe we ought to declare a new mount_state for
+this...CEPH_MOUNT_RECOVERING ?
 
-Thanks,
+> > Only mark it as SHUTDOWN when umount_begin is called.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/ceph/super.c | 13 +++++++++----
+> >  1 file changed, 9 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > index 2516304379d3..46a0e4e1b177 100644
+> > --- a/fs/ceph/super.c
+> > +++ b/fs/ceph/super.c
+> > @@ -832,6 +832,13 @@ static void destroy_caches(void)
+> >         ceph_fscache_unregister();
+> >  }
+> > 
+> > +static void __ceph_umount_begin(struct ceph_fs_client *fsc)
+> > +{
+> > +       ceph_osdc_abort_requests(&fsc->client->osdc, -EIO);
+> > +       ceph_mdsc_force_umount(fsc->mdsc);
+> > +       fsc->filp_gen++; // invalidate open files
+> > +}
+> > +
+> >  /*
+> >   * ceph_umount_begin - initiate forced umount.  Tear down the
+> >   * mount, skipping steps that may hang while waiting for server(s).
+> > @@ -844,9 +851,7 @@ static void ceph_umount_begin(struct super_block *sb)
+> >         if (!fsc)
+> >                 return;
+> >         fsc->mount_state = CEPH_MOUNT_SHUTDOWN;
+> > -       ceph_osdc_abort_requests(&fsc->client->osdc, -EIO);
+> > -       ceph_mdsc_force_umount(fsc->mdsc);
+> > -       fsc->filp_gen++; // invalidate open files
+> > +       __ceph_umount_begin(fsc);
+> >  }
+> > 
+> >  static const struct super_operations ceph_super_ops = {
+> > @@ -1235,7 +1240,7 @@ int ceph_force_reconnect(struct super_block *sb)
+> >         struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
+> >         int err = 0;
+> > 
+> > -       ceph_umount_begin(sb);
+> > +       __ceph_umount_begin(fsc);
+> > 
+> >         /* Make sure all page caches get invalidated.
+> >          * see remove_session_caps_cb() */
+> > --
+> > 2.26.2
+> > 
 
-                Ilya
+-- 
+Jeff Layton <jlayton@kernel.org>
+
