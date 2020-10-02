@@ -2,87 +2,98 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DEC0281E6A
-	for <lists+ceph-devel@lfdr.de>; Sat,  3 Oct 2020 00:34:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4019281F53
+	for <lists+ceph-devel@lfdr.de>; Sat,  3 Oct 2020 01:44:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725787AbgJBWeo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 2 Oct 2020 18:34:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45278 "EHLO
+        id S1725788AbgJBXo0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 2 Oct 2020 19:44:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbgJBWem (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 2 Oct 2020 18:34:42 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA27BC0613E2
-        for <ceph-devel@vger.kernel.org>; Fri,  2 Oct 2020 15:34:42 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id u19so3237705ion.3
-        for <ceph-devel@vger.kernel.org>; Fri, 02 Oct 2020 15:34:42 -0700 (PDT)
+        with ESMTP id S1725562AbgJBXoZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 2 Oct 2020 19:44:25 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9499AC0613E2
+        for <ceph-devel@vger.kernel.org>; Fri,  2 Oct 2020 16:44:25 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id z19so2442059pfn.8
+        for <ceph-devel@vger.kernel.org>; Fri, 02 Oct 2020 16:44:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=SNgn8x1LkfWdEu78urJXFZ286D0Tvx+PX/T+D1sl55U=;
-        b=IgmqgaillHjRBupgPlS/rSxa5A4fvBoOAPxR/09Buwozw/CJXgOMLlVlyu9fV5DRxD
-         4FMLLkHTmDZbD7GeVCUjqksK9Cy57YLEJGijS1eUWscNukBe4lR9lkxStIYg80iLqFA9
-         npnoG63y8xTf7DkRnuZ8Y/2Mgc0hiKPuuQTDw=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=T60HK5Q7D6JLnVa3qZA2HNweMkJrSWboQgR5a+8Fct8=;
+        b=B7XEXV9M0OT5GTpwanKbTTtkEHvMmPsHY4Kc7Ve698U93E0ptn3c8qz/HZJolqb9WW
+         ZVXA20ktYRV7UVpQawMwuWelUEcX+xC5JKh8aB516hjPPBcN1KwSA27VRE4+zDeNS+oj
+         RlsLXbKdeqaVViYts3zepnnC2hXkvPT5vdR6tV888MJcNz37BhMLDa+lE8xC6wDZPDov
+         jI4faa4jzKxRdl+NJwTrTA1PAwqghUpmKqtN/O8BIZP6pPhAqepFrk3Gilya1OzYOe7r
+         BIE93gUTaxKkNfr9d4oJ++Sgmf9+RqqsdpL+4qRi8lPllSkY3Hw0lKvP27gAXblL5l5a
+         OmVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=SNgn8x1LkfWdEu78urJXFZ286D0Tvx+PX/T+D1sl55U=;
-        b=CnAL2ivk28zyQynJsM8jZg9qL6o77ewm7/6mEsKsylPxOdoZvUaZ1GPUITDCT3xxI/
-         T0D92MgBCfm4teyiAoTr5Xk4WRKDtR6NVBjWx9tqihiTBBwgO0szEUmqwUMDlrFJ/z1E
-         AE+YXxu/Xp5RMeUYFKhQpgi7Y6k6QouTjNuQMU0GIMmvDdYM+tjQmFsd4KK3G0xxxVqH
-         RYbIlAkAAckDF7pYDuH2LhZzXiRYiyAUT2dVzCsEzMkrqufJCYMt0n1htIaRnxiR6IJx
-         cF5kv5W5KNcPsF3gNsX7ySLWZKPnIKkDxiIjpecJLhwVWHyB4idTJUVqIKBQp/bq2lbH
-         4qlg==
-X-Gm-Message-State: AOAM532xvKwxGA7Q7YQmapkoLrqF32Z/xXBlnxC7xhw9Tt656388lDpq
-        dMmzM6l1R0UMI8My8s4y5aX12g==
-X-Google-Smtp-Source: ABdhPJwukQiQGLC2KjOLkywVvqlG84GArIKDCLqoPt6By4T5ltR9BkuCqpbnNN815yJFlbhwBJUcGw==
-X-Received: by 2002:a02:6cd0:: with SMTP id w199mr3937328jab.121.1601678081920;
-        Fri, 02 Oct 2020 15:34:41 -0700 (PDT)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id t2sm1454893ilf.75.2020.10.02.15.34.41
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=T60HK5Q7D6JLnVa3qZA2HNweMkJrSWboQgR5a+8Fct8=;
+        b=raKbtPEioVzFfjmIoKT7UdxKQ+RJWqFvePkQoD8lN+Uzy6wyp1UIpmtWxFsJXF/tRC
+         DWJb9EGQDf2JM6ywyUsEheL08VCK6B1WL7ZHdmEsIgV0na+YkewRrS7BDSOtwGp6EKR7
+         Aou9wQZGn8otVYxPKvD0sBotzBGyZBMaS3nHbYnjsodLtdzM4NHTA9ujP13QasLF7xwH
+         TmF9s3v8hO5Wq+slPgIh+k+3vOh+uUmZ9c6hyixM7tWjFnMIzi7WPBEqc8hIMuG7FtOt
+         cgksm/R+sscq412wOV3tEt8TQvG1m9/2wt9rtSzmBpxL12jNDljZyLB2DDGvSowE12Dv
+         HzWw==
+X-Gm-Message-State: AOAM533mClNGfgXNtanChpJvTfzWBWAk4m32Nt5M0HrBQqA2NdWXbzY1
+        prP2QHLv3YjJSoHynFZQG/8tIw==
+X-Google-Smtp-Source: ABdhPJy0ZnLQs/bW0VZEl2sOXT3MyOLLZHiNoz0Wo/r5F+upgVHDHgaFm1w6+JvrEjyJBICPM3MyXA==
+X-Received: by 2002:a63:f006:: with SMTP id k6mr4331497pgh.88.1601682264925;
+        Fri, 02 Oct 2020 16:44:24 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id gw1sm2783871pjb.36.2020.10.02.16.44.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Oct 2020 15:34:41 -0700 (PDT)
-To:     idryomov@gmail.com, dongsheng.yang@easystack.cn, axboe@kernel.dk
+        Fri, 02 Oct 2020 16:44:24 -0700 (PDT)
+Subject: Re: drivers/block/rbd.c: atomic_inc_return_safe() &
+ atomic_dec_return_safe()
+To:     Shuah Khan <skhan@linuxfoundation.org>, idryomov@gmail.com,
+        dongsheng.yang@easystack.cn
 Cc:     ceph-devel@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kees Cook <keescook@chromium.org>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Subject: drivers/block/rbd.c: atomic_inc_return_safe() &
- atomic_dec_return_safe()
-Message-ID: <ce2dbec5-00f8-831b-3138-cc4f3b8fdb51@linuxfoundation.org>
-Date:   Fri, 2 Oct 2020 16:34:40 -0600
+References: <ce2dbec5-00f8-831b-3138-cc4f3b8fdb51@linuxfoundation.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <c2dd3223-bda1-be8c-fbc4-9c0eec63bc9d@kernel.dk>
+Date:   Fri, 2 Oct 2020 17:44:22 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <ce2dbec5-00f8-831b-3138-cc4f3b8fdb51@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-All,
+On 10/2/20 4:34 PM, Shuah Khan wrote:
+> All,
+> 
+> I came across these atomic_inc_return_safe() & atomic_dec_return_safe()
+> functions that hold the counters at safe values.
+> 
+> atomic_inc_return_safe()
+> 
+> If the counter is already 0 it will not be incremented.
+> If the counter is already at its maximum value returns
+> -EINVAL without updating it.
+> 
+> atomic_dec_return_safe()
+> 
+> Decrement the counter.  Return the resulting value, or -EINVAL
+> 
+> These two routines are static and only used in rbd.c.
+> 
+> Can these become part of atomic_t ops?
 
-I came across these atomic_inc_return_safe() & atomic_dec_return_safe()
-functions that hold the counters at safe values.
+I think you just want to use refcount_t for this use case. They
+have safe guards for under/overflow.
 
-atomic_inc_return_safe()
+-- 
+Jens Axboe
 
-If the counter is already 0 it will not be incremented.
-If the counter is already at its maximum value returns
--EINVAL without updating it.
-
-atomic_dec_return_safe()
-
-Decrement the counter.  Return the resulting value, or -EINVAL
-
-These two routines are static and only used in rbd.c.
-
-Can these become part of atomic_t ops?
-
-thanks,
--- Shuah
