@@ -2,21 +2,21 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 573002823A9
-	for <lists+ceph-devel@lfdr.de>; Sat,  3 Oct 2020 12:43:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F245282871
+	for <lists+ceph-devel@lfdr.de>; Sun,  4 Oct 2020 05:39:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725782AbgJCKnK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 3 Oct 2020 06:43:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48952 "EHLO mx2.suse.de"
+        id S1726352AbgJDDjE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 3 Oct 2020 23:39:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35212 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725681AbgJCKm5 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Sat, 3 Oct 2020 06:42:57 -0400
+        id S1726263AbgJDDjD (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Sat, 3 Oct 2020 23:39:03 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 12058B2B6;
-        Sat,  3 Oct 2020 10:42:55 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-Subject: ...
+        by mx2.suse.de (Postfix) with ESMTP id 491A0AC54;
+        Sun,  4 Oct 2020 03:39:01 +0000 (UTC)
+Subject: Re: [PATCH v10 0/7] Introduce sendpage_ok() to detect misused
+ sendpage in network related drivers
 To:     David Miller <davem@davemloft.net>
 Cc:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
         netdev@vger.kernel.org, open-iscsi@googlegroups.com,
@@ -30,6 +30,7 @@ Cc:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
         sagi@grimberg.me, vvs@virtuozzo.com, vbabka@suse.com
 References: <20201002082734.13925-1-colyli@suse.de>
  <20201002.152829.1002796270145913943.davem@davemloft.net>
+From:   Coly Li <colyli@suse.de>
 Autocrypt: addr=colyli@suse.de; keydata=
  mQINBFYX6S8BEAC9VSamb2aiMTQREFXK4K/W7nGnAinca7MRuFUD4JqWMJ9FakNRd/E0v30F
  qvZ2YWpidPjaIxHwu3u9tmLKqS+2vnP0k7PRHXBYbtZEMpy3kCzseNfdrNqwJ54A430BHf2S
@@ -73,8 +74,8 @@ Autocrypt: addr=colyli@suse.de; keydata=
  K0Jx4CEZubakJe+894sX6pvNFiI7qUUdB882i5GR3v9ijVPhaMr8oGuJ3kvwBIA8lvRBGVGn
  9xvzkQ8Prpbqh30I4NMp8MjFdkwCN6znBKPHdjNTwE5PRZH0S9J0o67IEIvHfH0eAWAsgpTz
  +jwc7VKH7vkvgscUhq/v1/PEWCAqh9UHy7R/jiUxwzw/288OpgO+i+2l11Y=
-Message-ID: <7dcb7b57-9313-0a78-0bf1-be799c0efa52@suse.de>
-Date:   Sat, 3 Oct 2020 18:42:45 +0800
+Message-ID: <e4482d6a-ee44-04e4-42d0-bb9ab6fc23c7@suse.de>
+Date:   Sun, 4 Oct 2020 11:38:49 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
  Gecko/20100101 Thunderbird/68.12.0
 MIME-Version: 1.0
@@ -165,5 +166,3 @@ inefficiently occupy maintainer's time by such silly mess up.
 Thanks for your review and the thorough maintenance.
 
 Coly Li
-
-
