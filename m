@@ -2,62 +2,77 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D98C6283189
-	for <lists+ceph-devel@lfdr.de>; Mon,  5 Oct 2020 10:09:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC5C2284AE9
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Oct 2020 13:29:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725917AbgJEIJw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 5 Oct 2020 04:09:52 -0400
-Received: from mail.fastestway24.com ([5.249.159.217]:34798 "EHLO
-        mail.fastestway24.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725885AbgJEIJv (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 5 Oct 2020 04:09:51 -0400
-X-Greylist: delayed 435 seconds by postgrey-1.27 at vger.kernel.org; Mon, 05 Oct 2020 04:09:51 EDT
-Received: by mail.fastestway24.com (Postfix, from userid 1001)
-        id 3C73AA2905; Mon,  5 Oct 2020 09:02:18 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fastestway24.com;
-        s=mail; t=1601884955;
-        bh=YGOlxoddnI3PXnh41XMWUfU0z9xsorZLZcAPNbcZr/c=;
-        h=Date:From:To:Subject:From;
-        b=ibp4/HnbDyerc78PnE4vC3lRGU2NHSjMe0wVfpS9AepdBzxq6O6B0VTWWiQifwvkG
-         BaXxqmW6xeiE7jMcRDQYoIZOenjRACQ86sKX5QWE1KWK99TfVYptC3qQRJ1BUyo1DC
-         WZ9aarpQc+1NwAprmzBbVj2haiVnPP9JFaxPB07VICBiYffCe/Vc2wzfysEboalK6f
-         ASEoaWURC8F4QNBltdpBh9Hxdtn3RWFz7WGrNFlq1915IptHfbreG6liqP0gjG6uAi
-         PeEuM5fbIo5Acr94FrAezt5h0V/UKDI1S1bXuxsQV9fpgt0nJnDW48Hjp8z+N/9qVf
-         kbaBzL79p6cjQ==
-Received: by mail.fastestway24.com for <ceph-devel@vger.kernel.org>; Mon,  5 Oct 2020 08:02:06 GMT
-Message-ID: <20201005074501-0.1.47.8kfq.0.b2v669jreo@fastestway24.com>
-Date:   Mon,  5 Oct 2020 08:02:06 GMT
-From:   "William Jones" <william.jones@fastestway24.com>
-To:     <ceph-devel@vger.kernel.org>
-Subject: Disinfectant
-X-Mailer: mail.fastestway24.com
-MIME-Version: 1.0
+        id S1726442AbgJFL3E (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 6 Oct 2020 07:29:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38396 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725946AbgJFL3D (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 6 Oct 2020 07:29:03 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8ECD62078E;
+        Tue,  6 Oct 2020 11:29:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1601983743;
+        bh=vV/cWTk5oZ3xCfPmOW1JyTYnqQAJ5XkLf+0bV/y1Ito=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Jlhl4S6lFeJYtGWHmUA4l515wPAaDd/izhoqUtrYXjms0ElqbF3M1ArUgFO1ky40k
+         zer6Zj9SWbb2ipxs05ptZWJ6MDYoZRPh+rtKtTZ8YbwdQuR8Z44fKxafme5xp9Yxo5
+         ryw9iFW4AEoas3dmsQFu+N/Z05Z69uSV6dPaytRg=
+Message-ID: <c00f08a9891c878ee9483aa9d05b4e28c2a5791a.camel@kernel.org>
+Subject: Re: [PATCH 3/7] ceph: Promote to unsigned long long before shifting
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     ericvh@gmail.com, lucho@ionkov.net, viro@zeniv.linux.org.uk,
+        idryomov@gmail.com, mark@fasheh.com, jlbec@evilplan.org,
+        joseph.qi@linux.alibaba.com, v9fs-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, linux-btrfs@vger.kernel.org,
+        clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        stable@vger.kernel.org
+Date:   Tue, 06 Oct 2020 07:29:00 -0400
+In-Reply-To: <20201004180428.14494-4-willy@infradead.org>
+References: <20201004180428.14494-1-willy@infradead.org>
+         <20201004180428.14494-4-willy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Good morning,
+On Sun, 2020-10-04 at 19:04 +0100, Matthew Wilcox (Oracle) wrote:
+> On 32-bit systems, this shift will overflow for files larger than 4GB.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 61f68816211e ("ceph: check caps in filemap_fault and page_mkwrite")
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/ceph/addr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 6ea761c84494..970e5a094035 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -1522,7 +1522,7 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
+>  	struct ceph_file_info *fi = vma->vm_file->private_data;
+>  	struct page *pinned_page = NULL;
+> -	loff_t off = vmf->pgoff << PAGE_SHIFT;
+> +	loff_t off = (loff_t)vmf->pgoff << PAGE_SHIFT;
+>  	int want, got, err;
+>  	sigset_t oldset;
+>  	vm_fault_t ret = VM_FAULT_SIGBUS;
 
-looking for companies interested in raising additional capital by diversi=
-fying their offer in soaps, liquids and gels for hand disinfection and co=
-smetics for body and hair care.
+Good catch! Would you like us to take this in via the ceph tree, or are
+you planning to submit altogether upstream? Either way:
 
-The distribution of innovative products corresponding to the current pref=
-erences of customers in the field of hygiene and preventive healthcare al=
-lows our partners to gain new markets and achieve better economic results=
-=2E
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
-In addition to products with bactericidal action, our range includes show=
-er gels, shampoos and hair conditioners, as well as efficient, concentrat=
-ed detergents.
-
-The versatility (suitable for all skin types) combined with an affordable=
- price means that customers make an informed choice of a product among ot=
-hers available on the market.
-
-Are you interested in cooperation?
-
-
-William Jones
