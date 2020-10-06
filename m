@@ -2,96 +2,80 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D43D2284E59
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Oct 2020 16:55:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 638BC2850A4
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Oct 2020 19:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726364AbgJFOzf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 6 Oct 2020 10:55:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38254 "EHLO mail.kernel.org"
+        id S1726483AbgJFRUq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 6 Oct 2020 13:20:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbgJFOze (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 6 Oct 2020 10:55:34 -0400
-Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        id S1725902AbgJFRUq (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 6 Oct 2020 13:20:46 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D54F2078E;
-        Tue,  6 Oct 2020 14:55:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B991F20760;
+        Tue,  6 Oct 2020 17:20:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601996133;
-        bh=U4J8eGm0R/9hjPzUbbQUvlzzv/eH4RUSWC9qdVgd0w0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VeTG6xse+JU4wPo+1Loash/PGAO1vyAGUv55KuBfk1HiCLqcPsdd4UgE7RG1Bc8Yi
-         s3MeO6tKZVzLKwLndpsSo7wWK2da39cyHDPIfPdSXD5wxO6/i8PNQDCPgeckDCOVPK
-         pTa0DUwK9mXeuuAEzFfeaYuZ6npYEOZmPLCHVN9c=
+        s=default; t=1602004845;
+        bh=4Foc+jU1k/rvfrsLBs93aOS5mcxlAz0t1W5dlS01hRo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=yfq1ofdv7rZJ5+ORDfeANL1fIsq8QvuchUDnxEjqXkiwUkrM7f+jjDjX5qOtiLO5H
+         KgoJQ7KK3SEr6FYxnD9spCEDZHYO6JW2VHKg3xA8vU0tmZENoeSzu13L85e+BVMqfp
+         TIMjQvJyW9M69GHv5p0s87KXy50U736GRLHqcUY8=
+Message-ID: <f10381885b6e3ea8af828f1b7be5c2f7035e82df.camel@kernel.org>
+Subject: Re: [PATCH 3/7] ceph: Promote to unsigned long long before shifting
 From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, ukernel@gmail.com, pdonnell@redhat.com
-Subject: [PATCH v3 5/5] ceph: queue MDS requests to REJECTED sessions when CLEANRECOVER is set
-Date:   Tue,  6 Oct 2020 10:55:26 -0400
-Message-Id: <20201006145526.313151-6-jlayton@kernel.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20201006145526.313151-1-jlayton@kernel.org>
-References: <20201006145526.313151-1-jlayton@kernel.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
+Cc:     ericvh@gmail.com, lucho@ionkov.net, viro@zeniv.linux.org.uk,
+        idryomov@gmail.com, mark@fasheh.com, jlbec@evilplan.org,
+        joseph.qi@linux.alibaba.com, v9fs-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, linux-btrfs@vger.kernel.org,
+        clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        stable@vger.kernel.org
+Date:   Tue, 06 Oct 2020 13:20:42 -0400
+In-Reply-To: <20201004180428.14494-4-willy@infradead.org>
+References: <20201004180428.14494-1-willy@infradead.org>
+         <20201004180428.14494-4-willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Ilya noticed that the first access to a blacklisted mount would often
-get back -EACCES, but then subsequent calls would be OK. The problem is
-in __do_request. If the session is marked as REJECTED, a hard error is
-returned instead of waiting for a new session to come into being.
+On Sun, 2020-10-04 at 19:04 +0100, Matthew Wilcox (Oracle) wrote:
+> On 32-bit systems, this shift will overflow for files larger than 4GB.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 61f68816211e ("ceph: check caps in filemap_fault and page_mkwrite")
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/ceph/addr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 6ea761c84494..970e5a094035 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -1522,7 +1522,7 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
+>  	struct ceph_file_info *fi = vma->vm_file->private_data;
+>  	struct page *pinned_page = NULL;
+> -	loff_t off = vmf->pgoff << PAGE_SHIFT;
+> +	loff_t off = (loff_t)vmf->pgoff << PAGE_SHIFT;
+>  	int want, got, err;
+>  	sigset_t oldset;
+>  	vm_fault_t ret = VM_FAULT_SIGBUS;
 
-When the session is REJECTED and the mount was done with
-recover_session=clean, queue the request to the waiting_for_map queue,
-which will be awoken after tearing down the old session. We can only
-do this for sync requests though, so check for async ones first and
-just let the callers redrive a sync request.
 
-URL: https://tracker.ceph.com/issues/47385
-Reported-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/mds_client.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 1727931248b5..048eb69be29e 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2818,10 +2818,6 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 	     ceph_session_state_name(session->s_state));
- 	if (session->s_state != CEPH_MDS_SESSION_OPEN &&
- 	    session->s_state != CEPH_MDS_SESSION_HUNG) {
--		if (session->s_state == CEPH_MDS_SESSION_REJECTED) {
--			err = -EACCES;
--			goto out_session;
--		}
- 		/*
- 		 * We cannot queue async requests since the caps and delegated
- 		 * inodes are bound to the session. Just return -EJUKEBOX and
-@@ -2831,6 +2827,20 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 			err = -EJUKEBOX;
- 			goto out_session;
- 		}
-+
-+		/*
-+		 * If the session has been REJECTED, then return a hard error,
-+		 * unless it's a CLEANRECOVER mount, in which case we'll queue
-+		 * it to the mdsc queue.
-+		 */
-+		if (session->s_state == CEPH_MDS_SESSION_REJECTED) {
-+			if (ceph_test_mount_opt(mdsc->fsc, CLEANRECOVER))
-+				list_add(&req->r_wait, &mdsc->waiting_for_map);
-+			else
-+				err = -EACCES;
-+			goto out_session;
-+		}
-+
- 		if (session->s_state == CEPH_MDS_SESSION_NEW ||
- 		    session->s_state == CEPH_MDS_SESSION_CLOSING) {
- 			err = __open_session(mdsc, session);
+I went ahead and merged this into the ceph-client/testing branch. Given
+how old this bug is, I don't see a real need to rush this into v5.9, but
+if we have any other patches going in before that ships, then it might
+be good to send this one along too.
 -- 
-2.26.2
+Jeff Layton <jlayton@kernel.org>
 
