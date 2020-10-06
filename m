@@ -2,75 +2,82 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 78D5A284E51
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Oct 2020 16:52:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 483CB284E5A
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Oct 2020 16:55:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725995AbgJFOwg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 6 Oct 2020 10:52:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39172 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbgJFOwg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Oct 2020 10:52:36 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C8A1C061755
-        for <ceph-devel@vger.kernel.org>; Tue,  6 Oct 2020 07:52:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Oec1CGwqELypNA1ej9IuVU/OSeJYgIiL7MqIj7n6QmE=; b=sUlepyq/ntExqVvyy6p2JvZoN4
-        vTZmgV5VUhlFTJVvlQ75Ku9X2M6489hMet8kX8vUWp/oOm4QD7PBEOl7AnocTn5k+djMrfQw0TvVr
-        Eo45LgQemhab9MVj5bhcuEue0SiFGZopXU0vafIoJGqquO4D4iwRQ5QviOSmu60VMh0ChheXX2ryZ
-        WAfhbJ6igUBwBrZ+2bE/0qg93EGHsrMrBJl+TwBvNGCJgBCPk0MCPNGOyjQNrmWaiqr9QwEHYRm11
-        8IBOtML3xcLUjhHVt0GPfKw38hbeacvz+8dQrz9z0Gho0pT4Rh6zsKQYO3rbhyTvcJ2atswsVqhSx
-        SAurL8Hw==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kPoKQ-0007NF-FN; Tue, 06 Oct 2020 14:52:34 +0000
-Date:   Tue, 6 Oct 2020 15:52:34 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com, ukernel@gmail.com,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH] ceph: don't SetPageError on readpage errors
-Message-ID: <20201006145234.GR20115@casper.infradead.org>
-References: <20201006141307.309650-1-jlayton@kernel.org>
+        id S1725996AbgJFOzc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 6 Oct 2020 10:55:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725902AbgJFOza (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 6 Oct 2020 10:55:30 -0400
+Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71F98206CB;
+        Tue,  6 Oct 2020 14:55:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1601996130;
+        bh=g8qf5ohxC5cRlgN+iulqXPNYylMwbC7CeErv9DlG0jI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=glIi8hqobWgeyB1Pg+EW/ndYiwFHBipXNu6sXWFB7rujtPNBJCaGnPZbKx1UvjQ12
+         2vdTwvZrS4yahgtQBER7VoZ9l+o8wT76ynbamP5J7VAGIxBRWxxsdgk/ykzYB2+Fwy
+         SQuGr6kmhuNem71kmFzGIeCcS2yoVjMOhGQBwI0k=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, ukernel@gmail.com, pdonnell@redhat.com
+Subject: [PATCH v3 0/5] ceph: fix spurious recover_session=clean errors
+Date:   Tue,  6 Oct 2020 10:55:21 -0400
+Message-Id: <20201006145526.313151-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201006141307.309650-1-jlayton@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Oct 06, 2020 at 10:13:07AM -0400, Jeff Layton wrote:
-> PageError really only has meaning within a particular subsystem. Nothing
-> looks at this bit in the core kernel code, and ceph itself doesn't care
-> about it. Don't bother setting the PageError bit on error.
+v3: add RECOVER mount_state and allow dumping pagecache when it's set
+    shrink size of mount_state field
+v2: fix handling of async requests in patch to queue requests
 
-I wondered if fscache might be interested, but it seems like it doesn't
-particularly care.  It's still interested in PageError for backing
-store pages, but not for the filesystem being cached.
+This is the third revision of this patchset and should hopefully address
+comments from Zheng and Ilya.
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Original cover letter:
 
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/addr.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 97827f68a3e7..137c0a5a2a0d 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -241,7 +241,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
->  	if (err == -ENOENT)
->  		err = 0;
->  	if (err < 0) {
-> -		SetPageError(page);
->  		ceph_fscache_readpage_cancel(inode, page);
->  		if (err == -EBLOCKLISTED)
->  			fsc->blocklisted = true;
-> -- 
-> 2.26.2
-> 
+Ilya noticed that he would get spurious EACCES errors on calls done just
+after blocklisting the client on mounts with recover_session=clean. The
+session would get marked as REJECTED and that caused in-flight calls to
+die with EACCES. This patchset seems to smooth over the problem, but I'm
+not fully convinced it's the right approach.
+
+The potential issue I see is that the client could take cap references to
+do a call on a session that has been blocklisted. We then queue the
+message and reestablish the session, but we may not have been granted
+the same caps by the MDS at that point.
+
+If this is a problem, then we probably need to rework it so that we
+return a distinct error code in this situation and have the upper layers
+issue a completely new mds request (with new cap refs, etc.)
+
+Obviously, that's a much more invasive approach though, so it would be
+nice to avoid that if this would suffice.
+
+Jeff Layton (5):
+  ceph: don't WARN when removing caps due to blocklisting
+  ceph: make fsc->mount_state an int
+  ceph: don't mark mount as SHUTDOWN when recovering session
+  ceph: remove timeout on allowing reconnect after blocklisting
+  ceph: queue MDS requests to REJECTED sessions when CLEANRECOVER is set
+
+ fs/ceph/caps.c               |  2 +-
+ fs/ceph/inode.c              |  2 +-
+ fs/ceph/mds_client.c         | 25 +++++++++++++++----------
+ fs/ceph/super.c              | 14 ++++++++++----
+ fs/ceph/super.h              |  3 +--
+ include/linux/ceph/libceph.h |  1 +
+ 6 files changed, 29 insertions(+), 18 deletions(-)
+
+-- 
+2.26.2
+
