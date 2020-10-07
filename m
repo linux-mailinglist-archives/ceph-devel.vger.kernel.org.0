@@ -2,155 +2,77 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3020E286654
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Oct 2020 19:55:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D66942867B3
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Oct 2020 20:47:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbgJGRzf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 7 Oct 2020 13:55:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52498 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728469AbgJGRzf (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 7 Oct 2020 13:55:35 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C3B42173E;
-        Wed,  7 Oct 2020 17:55:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602093334;
-        bh=rXnfFXaL4x/s4j3HU17U4XoZDFp0tfaBlQ+apdQ8Emw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=SMBE51taJuyCasLGhPOMLFkXqMC7kNy46vvaZEVkGD7RD+8R9atxd0GA0sICHIOEf
-         E/EUTYYoL/AjbA6UHdbDSYT3xAISY7WaSmYdfAiuvorQJiXuLLO/WTX6BSGQ+e2FmU
-         qKfXd7ZxEsQPvJxXnp1856oT9n4dA0w/phlWaCTw=
-Message-ID: <66cf13245fe6684d2f81dd848c7cfe1256790a6e.camel@kernel.org>
-Subject: Re: [PATCH] ceph: break up send_cap_msg
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        "Yan, Zheng" <ukernel@gmail.com>
-Date:   Wed, 07 Oct 2020 13:55:32 -0400
-In-Reply-To: <CAOi1vP-uJnznmKLSSRymj1FDXWKf4uD1NLuGVse5Nokr=4JQ=w@mail.gmail.com>
-References: <20201007122536.13354-1-jlayton@kernel.org>
-         <CAOi1vP-uJnznmKLSSRymj1FDXWKf4uD1NLuGVse5Nokr=4JQ=w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        id S1728244AbgJGSrf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 7 Oct 2020 14:47:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43764 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728119AbgJGSre (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Oct 2020 14:47:34 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86D2CC061755;
+        Wed,  7 Oct 2020 11:47:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Fd9c7NnGlZlQsPoX32Y7E0H7T+E2rrcfUhUeaY9NVV4=; b=ZTQCinhxmjer2B4rWKjYH5Zt45
+        jkp9CrbpI7giGfDFPrQO8yS1DANnlbqytLhjgJ6zCKxt4PPjzryYAjRdzaIjwIqteaaegdVmBd3rh
+        7l2GniIcTZNK7ZOgUdn8kgeSejFLP89v0sDQhBWa0B+LyRp8CYVQzwzreuLIG8oa5X+HzvwVn+qaD
+        NwkEw5W7uMFUQTWmuuNHkHtJjIyJWCRIET5Rf5PfhTb4wBbqN/64JntPZtIkBQ7TPsh4vfIUgqVsx
+        7qdChRAM994JJ0YjxFO5EKOdi3LaeniRItdUqu9KH5Q0BRuHkEErw5JKLkv9RZ67yFfYET6J96ebw
+        oesKFOSQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kQETK-0004O9-Q8; Wed, 07 Oct 2020 18:47:30 +0000
+Date:   Wed, 7 Oct 2020 19:47:30 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, ericvh@gmail.com, lucho@ionkov.net,
+        viro@zeniv.linux.org.uk, jlayton@kernel.org, idryomov@gmail.com,
+        mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
+        dsterba@suse.com, stable@vger.kernel.org
+Subject: Re: [PATCH 1/7] 9P: Cast to loff_t before multiplying
+Message-ID: <20201007184730.GW20115@casper.infradead.org>
+References: <20201004180428.14494-1-willy@infradead.org>
+ <20201004180428.14494-2-willy@infradead.org>
+ <20201007054849.GA16556@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201007054849.GA16556@infradead.org>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2020-10-07 at 19:33 +0200, Ilya Dryomov wrote:
-> On Wed, Oct 7, 2020 at 2:25 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > Push the allocation of the msg and the send into the caller. Rename
-> > the function to marshal_cap_msg and make it void return.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/ceph/caps.c | 61 +++++++++++++++++++++++++-------------------------
-> >  1 file changed, 30 insertions(+), 31 deletions(-)
-> > 
-> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > index 4e84b39a6ebd..6f4adfaf761f 100644
-> > --- a/fs/ceph/caps.c
-> > +++ b/fs/ceph/caps.c
-> > @@ -1222,36 +1222,29 @@ struct cap_msg_args {
-> >  };
-> > 
-> >  /*
-> > - * Build and send a cap message to the given MDS.
-> > - *
-> > - * Caller should be holding s_mutex.
-> > + * cap struct size + flock buffer size + inline version + inline data size +
-> > + * osd_epoch_barrier + oldest_flush_tid
-> >   */
-> > -static int send_cap_msg(struct cap_msg_args *arg)
-> > +#define CAP_MSG_SIZE (sizeof(struct ceph_mds_caps) + \
-> > +                     4 + 8 + 4 + 4 + 8 + 4 + 4 + 4 + 8 + 8 + 4)
-> > +
-> > +/* Marshal up the cap msg to the MDS */
-> > +static void marshal_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
+On Wed, Oct 07, 2020 at 06:48:49AM +0100, Christoph Hellwig wrote:
+> > -		.range_start = vma->vm_pgoff * PAGE_SIZE,
+> > +		.range_start = (loff_t)vma->vm_pgoff * PAGE_SIZE,
 > 
-> Nit: functions like this usually have "encode" or "build" in their
-> names across the codebase, so I'd go with "encode_cap_msg".
-> 
-> 
-> >  {
-> >         struct ceph_mds_caps *fc;
-> > -       struct ceph_msg *msg;
-> >         void *p;
-> > -       size_t extra_len;
-> >         struct ceph_osd_client *osdc = &arg->session->s_mdsc->fsc->client->osdc;
-> > 
-> > -       dout("send_cap_msg %s %llx %llx caps %s wanted %s dirty %s"
-> > +       dout("%s %s %llx %llx caps %s wanted %s dirty %s"
-> >              " seq %u/%u tid %llu/%llu mseq %u follows %lld size %llu/%llu"
-> > -            " xattr_ver %llu xattr_len %d\n", ceph_cap_op_name(arg->op),
-> > -            arg->cid, arg->ino, ceph_cap_string(arg->caps),
-> > -            ceph_cap_string(arg->wanted), ceph_cap_string(arg->dirty),
-> > -            arg->seq, arg->issue_seq, arg->flush_tid, arg->oldest_flush_tid,
-> > -            arg->mseq, arg->follows, arg->size, arg->max_size,
-> > -            arg->xattr_version,
-> > +            " xattr_ver %llu xattr_len %d\n", __func__,
-> > +            ceph_cap_op_name(arg->op), arg->cid, arg->ino,
-> > +            ceph_cap_string(arg->caps), ceph_cap_string(arg->wanted),
-> > +            ceph_cap_string(arg->dirty), arg->seq, arg->issue_seq,
-> > +            arg->flush_tid, arg->oldest_flush_tid, arg->mseq, arg->follows,
-> > +            arg->size, arg->max_size, arg->xattr_version,
-> >              arg->xattr_buf ? (int)arg->xattr_buf->vec.iov_len : 0);
-> > 
-> > -       /* flock buffer size + inline version + inline data size +
-> > -        * osd_epoch_barrier + oldest_flush_tid */
-> > -       extra_len = 4 + 8 + 4 + 4 + 8 + 4 + 4 + 4 + 8 + 8 + 4;
-> > -       msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, sizeof(*fc) + extra_len,
-> > -                          GFP_NOFS, false);
-> > -       if (!msg)
-> > -               return -ENOMEM;
-> > -
-> >         msg->hdr.version = cpu_to_le16(10);
-> >         msg->hdr.tid = cpu_to_le64(arg->flush_tid);
-> > 
-> > @@ -1323,9 +1316,6 @@ static int send_cap_msg(struct cap_msg_args *arg)
-> > 
-> >         /* Advisory flags (version 10) */
-> >         ceph_encode_32(&p, arg->flags);
-> > -
-> > -       ceph_con_send(&arg->session->s_con, msg);
-> > -       return 0;
-> >  }
-> > 
-> >  /*
-> > @@ -1456,22 +1446,24 @@ static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
-> >   */
-> >  static void __send_cap(struct cap_msg_args *arg, struct ceph_inode_info *ci)
-> >  {
-> > +       struct ceph_msg *msg;
-> >         struct inode *inode = &ci->vfs_inode;
-> > -       int ret;
-> > 
-> > -       ret = send_cap_msg(arg);
-> > -       if (ret < 0) {
-> > -               pr_err("error sending cap msg, ino (%llx.%llx) "
-> > -                      "flushing %s tid %llu, requeue\n",
-> > +       msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, CAP_MSG_SIZE, GFP_NOFS, false);
-> > +       if (!msg) {
-> > +               pr_err("error allocating cap msg: ino (%llx.%llx) "
-> > +                      "flushing %s tid %llu, requeuing cap.\n",
-> 
-> Don't break new user-visible strings.  This makes grepping harder than
-> it should be.
-> 
-> Thanks,
-> 
->                 Ilya
+> Given the may places where this issue shows up I think we really need
+> a vma_offset or similar helper for it.  Much better than chasing missing
+> casts everywhere.
 
-Thanks Ilya,
+Good point.  I think these patches need to go in to fix the bugs in
+the various stable releases, but we should definitely have a helper
+for the future.  Also, several of these patches are for non-VMA
+pgoff_t.
 
-I fixed both issues and pushed the result into testing branch. I won't
-bother re-posting unless there are other changes that I need to make.
+vma_offset() is a bit weird for me -- vmas have all kinds of offsets.
+vma_file_offset() would work or vma_fpos().  I tend to prefer the shorter
+function name ;-)
 
-Cheers,
--- 
-Jeff Layton <jlayton@kernel.org>
+A quick grep shows we probably want a vmf_fpos() too:
+
+arch/powerpc/platforms/cell/spufs/file.c:       unsigned long area, offset = vmf->pgoff << PAGE_SHIFT;
+arch/x86/entry/vdso/vma.c:      sym_offset = (long)(vmf->pgoff << PAGE_SHIFT) +
+drivers/gpu/drm/gma500/framebuffer.c:   address = vmf->address - (vmf->pgoff << PAGE_SHIFT);
+drivers/scsi/cxlflash/ocxl_hw.c:        offset = vmf->pgoff << PAGE_SHIFT;
+
+I'm sure a lot of this will never run on a 32-bit kernel or with a 4GB
+file, but it's not good to have bad code around for people to copy from.
 
