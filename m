@@ -2,29 +2,29 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D118F286643
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Oct 2020 19:52:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 487D7286644
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Oct 2020 19:52:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728637AbgJGRwR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 7 Oct 2020 13:52:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39626 "EHLO mx2.suse.de"
+        id S1728668AbgJGRwW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 7 Oct 2020 13:52:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39650 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728535AbgJGRwR (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 7 Oct 2020 13:52:17 -0400
+        id S1728535AbgJGRwW (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 7 Oct 2020 13:52:22 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 9B11EB2D6;
-        Wed,  7 Oct 2020 17:52:14 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id F2C5CAD04;
+        Wed,  7 Oct 2020 17:52:19 +0000 (UTC)
 Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 50922e21;
-        Wed, 7 Oct 2020 17:52:15 +0000 (UTC)
+        by brahms (OpenSMTPD) with ESMTPA id 92f51191;
+        Wed, 7 Oct 2020 17:52:20 +0000 (UTC)
 From:   Luis Henriques <lhenriques@suse.de>
 To:     fstests@vger.kernel.org
 Cc:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
         Luis Henriques <lhenriques@suse.com>
-Subject: [PATCH 2/3] ceph: test combination of copy_file_range with truncate
-Date:   Wed,  7 Oct 2020 18:52:11 +0100
-Message-Id: <20201007175212.16218-3-lhenriques@suse.de>
+Subject: [PATCH 3/3] ceph: test copy_file_range with infile = outfile
+Date:   Wed,  7 Oct 2020 18:52:12 +0100
+Message-Id: <20201007175212.16218-4-lhenriques@suse.de>
 In-Reply-To: <20201007175212.16218-1-lhenriques@suse.de>
 References: <20201007175212.16218-1-lhenriques@suse.de>
 MIME-Version: 1.0
@@ -35,41 +35,31 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Luis Henriques <lhenriques@suse.com>
 
-This test was motivated by an OSD bug found while testing copy_file_range.
-This bug was an issue with the way the OSDs handled the truncate_seq
-value, which was being copied from the original object into the
-destination object.  This test ensures the kernel client correctly handles
-fixed/non-fixed OSDs.
+This test runs a set of simple checks where the infile file is the same as
+the outfile.
 
-Link: https://tracker.ceph.com/issues/37378
 Signed-off-by: Luis Henriques <lhenriques@suse.com>
 ---
- tests/ceph/002     | 74 ++++++++++++++++++++++++++++++++++++++++++++++
- tests/ceph/002.out |  8 +++++
- tests/ceph/group   |  1 +
- 3 files changed, 83 insertions(+)
- create mode 100644 tests/ceph/002
- create mode 100644 tests/ceph/002.out
+ tests/ceph/003     | 118 +++++++++++++++++++++++++++++++++++++++++++++
+ tests/ceph/003.out |  11 +++++
+ tests/ceph/group   |   1 +
+ 3 files changed, 130 insertions(+)
+ create mode 100644 tests/ceph/003
+ create mode 100644 tests/ceph/003.out
 
-diff --git a/tests/ceph/002 b/tests/ceph/002
+diff --git a/tests/ceph/003 b/tests/ceph/003
 new file mode 100644
-index 000000000000..a2ae6c9629f4
+index 000000000000..6fc5e6812545
 --- /dev/null
-+++ b/tests/ceph/002
-@@ -0,0 +1,74 @@
++++ b/tests/ceph/003
+@@ -0,0 +1,118 @@
 +#!/bin/bash
 +# SPDX-License-Identifier: GPL-2.0
 +# Copyright (C) 2020 SUSE Linux Products GmbH. All Rights Reserved.
 +#
-+# FS QA Test No. ceph/002
++# FS QA Test No. ceph/005
 +#
-+# Test bug found while testing copy_file_range.
-+#
-+# This bug was an issue with how the OSDs handled the truncate_seq, copying it
-+# from the original object into the destination object.  This test ensures the
-+# kernel client correctly handles fixed/non-fixed OSDs.
-+#
-+# https://tracker.ceph.com/issues/37378
++# Test copy_file_range with infile = outfile
 +#
 +seq=`basename $0`
 +seqres=$RESULT_DIR/$seq
@@ -90,6 +80,7 @@ index 000000000000..a2ae6c9629f4
 +. common/rc
 +. common/filter
 +. common/attr
++. common/reflink
 +
 +# real QA test starts here
 +_supported_fs ceph
@@ -103,52 +94,105 @@ index 000000000000..a2ae6c9629f4
 +mkdir $workdir
 +rm -f $seqres.full
 +
-+# Use 4M object size
++check_range()
++{
++	local file=$1
++	local off0=$2
++	local off1=$3
++	local val=$4
++	_read_range $file $off0 $off1 | grep -v -q $val
++	[ $? -eq 0 ] && echo "file $file is not '$val' in [ $off0 $off1 ]"
++}
++
 +objsz=4194304
++halfobj=$(($objsz / 2))
 +file="$workdir/file-$objsz"
++copy="$workdir/copy-$objsz"
 +dest="$workdir/dest-$objsz"
-+touch $file $dest
++backup="$file.backup"
++touch $file $backup
 +
 +# object_size has to be a multiple of stripe_unit
 +$SETFATTR_PROG -n ceph.file.layout \
-+	-v "stripe_unit=$objsz stripe_count=1 object_size=$objsz" \
-+	$file $dest
++	       -v "stripe_unit=$objsz stripe_count=1 object_size=$objsz" \
++	       $file $backup
 +
-+# Create a 3 objects size files
 +$XFS_IO_PROG -c "pwrite -S 0x61 0 $objsz" $file >> $seqres.full 2>&1
 +$XFS_IO_PROG -c "pwrite -S 0x62 $objsz $objsz" $file >> $seqres.full 2>&1
 +$XFS_IO_PROG -c "pwrite -S 0x63 $(($objsz * 2)) $objsz" $file >> $seqres.full 2>&1
 +
-+$XFS_IO_PROG -c "pwrite -S 0x64 0 $(($objsz * 3))" $dest >> $seqres.full 2>&1
-+# Truncate the destination file (messing up with the truncate_seq)
-+$XFS_IO_PROG -c "truncate 0" $dest >> $seqres.full 2>&1
++cp $file $backup
 +
-+# copy the whole file over
-+$XFS_IO_PROG -c "copy_range -s 0 -d 0 -l $(($objsz * 3)) $file" "$dest"
++echo "  Copy single object to the end:"
++echo "    aaaa|bbbb|cccc => aaaa|bbbb|aaaa"
++$XFS_IO_PROG -c "copy_range -s 0 -d $(($objsz * 2)) -l $objsz $file" "$file"
++check_range $file 0 $objsz 61
++check_range $file $objsz $objsz 62
++check_range $file $(($objsz * 2)) $objsz 61
 +
-+hexdump $dest
++echo "  Copy single object to the beginning:"
++echo "    aaaa|bbbb|aaaa => bbbb|bbbb|aaaa"
++$XFS_IO_PROG -c "copy_range -s $objsz -d 0 -l $objsz $file" "$file"
++check_range $file 0 $(($objsz * 2)) 62
++check_range $file $(($objsz * 2)) $objsz 61
++
++echo "  Copy single object to the middle:"
++echo "    bbbb|bbbb|aaaa => bbbb|aaaa|aaaa"
++$XFS_IO_PROG -c "copy_range -s $(($objsz * 2)) -d $objsz -l $objsz $file" "$file"
++check_range $file 0 $objsz 62
++check_range $file $objsz $(($objsz * 2)) 61
++
++cp $backup $file
++echo "  Cross object boundary (no full object copy)"
++echo "    aaaa|bbbb|cccc => aaaa|bbaa|aacc"
++$XFS_IO_PROG -c "copy_range -s 0 -d $(($objsz + $halfobj)) -l $objsz $file" "$file"
++check_range $file 0 $objsz 61
++check_range $file $objsz $halfobj 62
++check_range $file $(($objsz + $halfobj)) $objsz 61
++check_range $file $(($objsz * 2 + $halfobj)) $halfobj 63
++
++cp $backup $file
++echo "    aaaa|bbbb|cccc => aaaa|bbaa|bbcc"
++$XFS_IO_PROG -c "copy_range -s $halfobj -d $(($objsz + $halfobj)) -l $objsz $file" "$file"
++check_range $file 0 $objsz 61
++check_range $file $objsz $halfobj 62
++check_range $file $(($objsz + $halfobj)) $halfobj 61
++check_range $file $(($objsz * 2)) $halfobj 62
++check_range $file $(($objsz * 2 + $halfobj)) $halfobj 63
++
++cp $backup $file
++echo "    aaaa|bbbb|cccc => aaaa|bbbb|aabb"
++$XFS_IO_PROG -c "copy_range -s $halfobj -d $(($objsz * 2)) -l $objsz $file" "$file"
++check_range $file 0 $objsz 61
++check_range $file $objsz $objsz 62
++check_range $file $(($objsz * 2)) $halfobj 61
++check_range $file $(($objsz * 2 + $halfobj)) $halfobj 62
 +
 +#success, all done
 +status=0
 +exit
-diff --git a/tests/ceph/002.out b/tests/ceph/002.out
+diff --git a/tests/ceph/003.out b/tests/ceph/003.out
 new file mode 100644
-index 000000000000..6f067250afff
+index 000000000000..76c83b265253
 --- /dev/null
-+++ b/tests/ceph/002.out
-@@ -0,0 +1,8 @@
-+QA output created by 002
-+0000000 6161 6161 6161 6161 6161 6161 6161 6161
-+*
-+0400000 6262 6262 6262 6262 6262 6262 6262 6262
-+*
-+0800000 6363 6363 6363 6363 6363 6363 6363 6363
-+*
-+0c00000
++++ b/tests/ceph/003.out
+@@ -0,0 +1,11 @@
++QA output created by 003
++  Copy single object to the end:
++    aaaa|bbbb|cccc => aaaa|bbbb|aaaa
++  Copy single object to the beginning:
++    aaaa|bbbb|aaaa => bbbb|bbbb|aaaa
++  Copy single object to the middle:
++    bbbb|bbbb|aaaa => bbbb|aaaa|aaaa
++  Cross object boundary (no full object copy)
++    aaaa|bbbb|cccc => aaaa|bbaa|aacc
++    aaaa|bbbb|cccc => aaaa|bbaa|bbcc
++    aaaa|bbbb|cccc => aaaa|bbbb|aabb
 diff --git a/tests/ceph/group b/tests/ceph/group
-index 11f0b9ad03d3..c28fe473c1a4 100644
+index c28fe473c1a4..adbf61547766 100644
 --- a/tests/ceph/group
 +++ b/tests/ceph/group
-@@ -1 +1,2 @@
+@@ -1,2 +1,3 @@
  001 auto quick copy
-+002 auto quick copy
+ 002 auto quick copy
++003 auto quick copy
