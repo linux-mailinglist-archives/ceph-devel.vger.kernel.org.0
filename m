@@ -2,75 +2,129 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B2728583D
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Oct 2020 07:48:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD323285A64
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Oct 2020 10:24:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbgJGFsy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 7 Oct 2020 01:48:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35970 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725970AbgJGFsx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Oct 2020 01:48:53 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 888C7C061755;
-        Tue,  6 Oct 2020 22:48:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=BBGqLkpiWOAukT4cGbe+ekpiE16tTJaZW03Gt7ynzdI=; b=t/QSLeG7RQBiWYRnopnrssXYFK
-        n3vc0rGv17CNvb8Y/WkwuC/SxjNbRnzsh5m9BRlD8G6GX7t98k1d/y8cbqRO3l5L1aMv6Ydc0Mlg5
-        mI7i+pJQhT+VDALgc36DA0L/rTkp3ekxv+5aT/QsLlOv6P0LrPlMneAQMxZv5s2RdPz9PrRCSBa+T
-        mSbtHJTbLCF/3NY+XJ95FcoXB62OM28dlVXti3pxX4KlwMT2J1tLLDuKyTyp1gXlUOrs/GWjXG7M9
-        YPio7RcXP51/avKaLimQVw1+JGWGKFzzAB90Z4jGDaZdw3MOOzI9IPKUfE6nNI5jJkBF/BQQWeSoh
-        mzhEKVAg==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kQ2Jl-0004NF-9U; Wed, 07 Oct 2020 05:48:49 +0000
-Date:   Wed, 7 Oct 2020 06:48:49 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, ericvh@gmail.com, lucho@ionkov.net,
-        viro@zeniv.linux.org.uk, jlayton@kernel.org, idryomov@gmail.com,
-        mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
-        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
-        dsterba@suse.com, stable@vger.kernel.org
-Subject: Re: [PATCH 1/7] 9P: Cast to loff_t before multiplying
-Message-ID: <20201007054849.GA16556@infradead.org>
-References: <20201004180428.14494-1-willy@infradead.org>
- <20201004180428.14494-2-willy@infradead.org>
+        id S1727862AbgJGIYE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 7 Oct 2020 04:24:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:38317 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726605AbgJGIYD (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Oct 2020 04:24:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1602059042;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Zl8D4KVpxLMDNxAi2ILD6WWMQ77PlQXzH2MBTjd0z/s=;
+        b=h14ZnWYKEP68S/yq4kSQyljA8tpEkUM+N7D1YKWX+RfWEpv6vSJllhAW+oAQSVxywADYzM
+        6TpnIoHs9aq3o038eDEKcFAZL4fpRyLKTGC58zyIlOqun9KnDKt5wlI4sla9dqT8lfnH0h
+        p0zhk6WjaGt3gRHH5FjXTiATmJMrVeM=
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
+ [209.85.166.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-494-mlI1lblVN52ts9Fy6-l2lg-1; Wed, 07 Oct 2020 04:24:00 -0400
+X-MC-Unique: mlI1lblVN52ts9Fy6-l2lg-1
+Received: by mail-il1-f200.google.com with SMTP id m1so964707iln.19
+        for <ceph-devel@vger.kernel.org>; Wed, 07 Oct 2020 01:24:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=Zl8D4KVpxLMDNxAi2ILD6WWMQ77PlQXzH2MBTjd0z/s=;
+        b=LiU1e/nPUV2xKdZAuG6B1fQCybHlAxGAwCMuDN1x/NEIJap6s/N6KbV+p1o2r4l9k2
+         Dn1COqabhLUuXHPqASvlIm7OnvV6K2VMhXa4GtMV9WuijZ8oBu2v3tHbBYy7QRj3NQYs
+         ZupwMjQb5vns+3gbmhVz4LplEctL0PBVldK/1ldDVrNgD4WJdDLHyBTZPexUD+hwlPKO
+         teYTYjU/ZNHNh9f9z0w07yir/n2uTsGJQ7my8cdIgvzySIHZiOCz5ZLC4/DXYRXo96DQ
+         uGOQaoLbRYpg+/auzdWga01RzpRDMDk8mE9y11P02M49Ge52145uKIinW264PSQsec/w
+         NO8g==
+X-Gm-Message-State: AOAM532KcU+Ecg56vfwYVCmZnbMN9aaT3RsjuEsOnnIvR/hu4liQGgcr
+        gLIiaoxN1X02DOIwWEbY312mbPgJod3rQELo4Hg/YQrrfgprAodT/SKfSSxweNL7061PWwsWECX
+        BiO31WFP/L2+3Zalgd8ycKfw03VWjQqWGSktotA==
+X-Received: by 2002:a92:c949:: with SMTP id i9mr1775628ilq.252.1602059039180;
+        Wed, 07 Oct 2020 01:23:59 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy3rYfWD4+Z3p8J18dJ9yvogUeDQW26LmTv6g/dg4ujeno9Ia+NSXxHNfbEeUqpkW/vkV7NVh7t8fJuwDynfuM=
+X-Received: by 2002:a92:c949:: with SMTP id i9mr1775618ilq.252.1602059038936;
+ Wed, 07 Oct 2020 01:23:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201004180428.14494-2-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+From:   Alfonso Martinez Hidalgo <almartin@redhat.com>
+Date:   Wed, 7 Oct 2020 10:23:48 +0200
+Message-ID: <CAE6AcscPK6DZ+OnTaRQ6WUpKWwzdD5H+v05uf4qEbquHOhmS=w@mail.gmail.com>
+Subject: "Signed-off-by" jenkins job for PRs now failing
+To:     Ceph Devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, Oct 04, 2020 at 07:04:22PM +0100, Matthew Wilcox (Oracle) wrote:
-> On 32-bit systems, this multiplication will overflow for files larger
-> than 4GB.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: fb89b45cdfdc ("9P: introduction of a new cache=mmap model.")
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/9p/vfs_file.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-> index 3576123d8299..6d97b6b4d34b 100644
-> --- a/fs/9p/vfs_file.c
-> +++ b/fs/9p/vfs_file.c
-> @@ -612,9 +612,9 @@ static void v9fs_mmap_vm_close(struct vm_area_struct *vma)
->  	struct writeback_control wbc = {
->  		.nr_to_write = LONG_MAX,
->  		.sync_mode = WB_SYNC_ALL,
-> -		.range_start = vma->vm_pgoff * PAGE_SIZE,
-> +		.range_start = (loff_t)vma->vm_pgoff * PAGE_SIZE,
+Hi All,
 
-Given the may places where this issue shows up I think we really need
-a vma_offset or similar helper for it.  Much better than chasing missing
-casts everywhere.
+It seems that this job has started to fail on several PRs.
+Does anyone have privileges to fix this error?
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D test session starts =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+platform linux2 -- Python 2.7.12, pytest-4.6.11, py-1.9.0,
+pluggy-0.13.1 -- /tmp/venv.4M9HM0FOIP/bin/python2.7
+cachedir: .pytest_cache
+rootdir: /home/jenkins-build/build/workspace/ceph-pr-commits
+collecting ... collected 2 items / 1 deselected / 1 selected
+
+ceph-build/ceph-pr-commits/build/test_commits.py::TestCommits::test_signed_=
+off_by
+Running command: git fetch origin
++refs/heads/master:refs/remotes/origin/master
+Running command: git log -z --no-merges origin/master..HEAD
+FAILED
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D FAILURES =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+________________________ TestCommits.test_signed_off_by ___________________=
+_____
+
+self =3D <test_commits.TestCommits object at 0x7f95779c8190>
+
+    @pytest.mark.code_test
+    def test_signed_off_by(self):
+        signed_off_regex =3D r'Signed-off-by: \S.* <[^@]+@[^@]+\.[^@]+>'
+        # '-z' puts a '\0' between commits, see later split('\0')
+        check_signed_off_commits =3D 'git log -z --no-merges origin/%s..%s'=
+ % (
+            self.target_branch, self.source_branch)
+        wrong_commits =3D list(filterfalse(
+            re.compile(signed_off_regex).search,
+>           self.command(check_signed_off_commits).split('\0')))
+
+ceph-build/ceph-pr-commits/build/test_commits.py:63:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _=
+ _ _
+
+cls =3D <class 'test_commits.TestCommits'>
+command =3D 'git log -z --no-merges origin/master..HEAD'
+
+    @classmethod
+    def command(cls, command):
+        print("Running command:", command)
+>       return check_output(shlex.split(command), cwd=3Dcls.ceph_checkout).=
+decode()
+E       UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in
+position 68: ordinal not in range(128)
+
+ceph-build/ceph-pr-commits/build/test_commits.py:29: UnicodeDecodeError
+- generated xml file:
+/home/jenkins-build/build/workspace/ceph-pr-commits/report.xml -
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D 1 failed, 1 de=
+selected in 0.60 seconds =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+Build step 'Execute shell' marked build as failure
+
+
+Regards,
+--=20
+
+Alfonso Mart=C3=ADnez
+Senior Software Engineer, Ceph Storage
+Red Hat
+
