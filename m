@@ -2,111 +2,187 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BC62287A6D
-	for <lists+ceph-devel@lfdr.de>; Thu,  8 Oct 2020 18:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1612287AF6
+	for <lists+ceph-devel@lfdr.de>; Thu,  8 Oct 2020 19:27:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731447AbgJHQ6P (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 8 Oct 2020 12:58:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51692 "EHLO
+        id S1732045AbgJHR15 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 8 Oct 2020 13:27:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730434AbgJHQ6P (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 8 Oct 2020 12:58:15 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DB81C061755
-        for <ceph-devel@vger.kernel.org>; Thu,  8 Oct 2020 09:58:15 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id e18so7387679wrw.9
-        for <ceph-devel@vger.kernel.org>; Thu, 08 Oct 2020 09:58:15 -0700 (PDT)
+        with ESMTP id S1731089AbgJHR15 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 8 Oct 2020 13:27:57 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24E0EC061755
+        for <ceph-devel@vger.kernel.org>; Thu,  8 Oct 2020 10:27:57 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id l16so6443138ilt.13
+        for <ceph-devel@vger.kernel.org>; Thu, 08 Oct 2020 10:27:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HRjOi5KwEs3g7OGy/03qH3X+eHomsFQVy91IFixjuPo=;
-        b=CbiGAH8rgNSvWaWF+X/Oq5Vn40AaYy6aKgfXXIaNLbbpnHLs27le58pZ/FTH+0/gQs
-         TGi8gUzPvxvTKCfl/gCVt9BQNRTrC3tloxVUNNSZ3XTvZODqok97GKxK89YKFoTM+207
-         O8AdgNMpKu+/FLbrWLkw12kFrNl2b2GlxK2gPFSAn5XZTA4Wu0coLEqoxR+iSxrvoliG
-         yImBRGVBsJJOFCqH3B2xJO9+1baDubPtSXjqtGiimAhUqD3rtm7fPz1bQSus8SYCYEOR
-         /GZDYeeZMq9x5AMPytgM2BNdBm4SxDYrf3f+n66+miMdfxwDbCGcV6LdL9w8oFCVWts1
-         OQUw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=beGd4uCU55CCDdD41AHUKF6EXUq6YeZlm9MflxHl06s=;
+        b=lwdgULzvadkBtxcTyG+0aywqicD6Cny/hnBW42RxJSD9eqJLDcbWsycohTuPCLp2an
+         12CtHB1WjSuxlEoscM5uFCNGzFAF+3L6TY9YzBeW0Wfo+iv2DjkvqpyDBhuhsO7OhdyJ
+         gYmkz0GvNUVoCqgzljdfZai3F/eY3nmZtKy8+9MGjRhiQFHi1IPah6uk/NdXvYWBXNc2
+         4mj6H5dePzuka9uajngxQgdUL5hc1DaU5KDNfMtcTkrFkXsS3aoCGChQXVCPh10fdI4v
+         9c0lH5PqiY2QFdLHMWv8+dczBHxVlgEo2lA9mNOchaccBLpet4X6p6yI84fjWGdv+WfV
+         VvuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HRjOi5KwEs3g7OGy/03qH3X+eHomsFQVy91IFixjuPo=;
-        b=Xho1YPY08KkG6QJMs/gK0rrf/fwpKmJavYN9hYYRI6rat/VktJ3+1YbfAF8yM0D6Zr
-         LBES1ZukKMvxf1tK+vgOnqG3bRubCTqylWzVZEONhWmXdZJb25QW7jdQIEMoLIGCnopY
-         7HWOqlcOmL+WCzRfyPqP1KTshsvgOAwi1z3SozbSfSCF4gTUU6Q67Lb+aHCWxnHPBdR0
-         q755Wu6hx7FvMCL1hMeCAgvyAsn+4uAU7teXSpsqX1ALYpSPWdmEAEggYogEjsDY5uDC
-         MLnFoMnUznmw90Clx1ydykrfHjqlcy3e4f8qRnP+HvF9G/OCJXVzJXVWRstmjrvTgFt8
-         SKzw==
-X-Gm-Message-State: AOAM530EDsglnBGpBwvKNt/m47SY4kHWVT+lu+BLbteqvVPwvMN9ys8J
-        d2XC9XVmTEvAvd/LFAH871JrMYD5DSI=
-X-Google-Smtp-Source: ABdhPJye9JDMEdP7QeMzXZpqbWpDvOdW6HC1NEMWj+vIFB+v/J6+MsEDcure6e8wQJjjN8UnN6QRKA==
-X-Received: by 2002:a5d:44cb:: with SMTP id z11mr10108494wrr.290.1602176293482;
-        Thu, 08 Oct 2020 09:58:13 -0700 (PDT)
-Received: from kwango.redhat.com (ip-94-112-132-16.net.upcbroadband.cz. [94.112.132.16])
-        by smtp.gmail.com with ESMTPSA id 67sm8008149wmb.31.2020.10.08.09.58.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2020 09:58:12 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     ceph-devel@vger.kernel.org
-Cc:     Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH] libceph: clear con->out_msg on Policy::stateful_server faults
-Date:   Thu,  8 Oct 2020 18:58:00 +0200
-Message-Id: <20201008165800.9494-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=beGd4uCU55CCDdD41AHUKF6EXUq6YeZlm9MflxHl06s=;
+        b=Gpp7Xyr+pMp9+RA6iTArgE/7Ue8FEyI/TrflPPOvcc99thmfS/PxmaWa9rc0VlASvr
+         CTCrB/ij2YFFHzQ0o8AtbjgYXDdLA3Laenf+VzqPkkEzVab6RK8iXbOESLnbIW2VU2fg
+         Dbt09utuCz/w2I9mhFWkMvf8oumxsrrYThELRpXScJLPqaFN2xioUK0Asl1NMhyC19d3
+         FycUkM/DLPeJJAzaIUSFsn67uQTjNeBOZjR4nAmW8BMHRtDfztrr3NuPhe8WKfqQBpGt
+         vAt3UGhVCAmPuk5GdNm5eZ9cTbl8xwzwqJ0qbggmGN7FbgO+ZrTJLHg0X2GwWN51Ar3Z
+         eYpw==
+X-Gm-Message-State: AOAM532OsQn56UqLYdvgq0KxJndIUD9KRBErIXbQ2ATqJ7FrfHk2epGx
+        b1XZM2RbPZzurKXl8VM3CFiewG2pQmr3TMRKQNQ=
+X-Google-Smtp-Source: ABdhPJxXxdvpGBaep9fNyIA+s2KOyr00fU6Yp1HnooJwhR/UwxuoT1wvJMEO6Qq0kTFoEU9DXzUw988Js5cAfLtXmJU=
+X-Received: by 2002:a92:6711:: with SMTP id b17mr7960375ilc.100.1602178076455;
+ Thu, 08 Oct 2020 10:27:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200928220349.584709-1-jlayton@kernel.org>
+In-Reply-To: <20200928220349.584709-1-jlayton@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 8 Oct 2020 19:27:48 +0200
+Message-ID: <CAOi1vP8zXLGscoa4QjiwW0BtbVnrkamWGzBeqARnVr8Maes3CQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: retransmit REQUEST_CLOSE every second if we don't
+ get a response
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        "Yan, Zheng" <ukernel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-con->out_msg must be cleared on Policy::stateful_server
-(!CEPH_MSG_CONNECT_LOSSY) faults.  Not doing so botches the
-reconnection attempt, because after writing the banner the
-messenger moves on to writing the data section of that message
-(either from where it got interrupted by the connection reset or
-from the beginning) instead of writing struct ceph_msg_connect.
-This results in a bizarre error message because the server
-sends CEPH_MSGR_TAG_BADPROTOVER but we think we wrote struct
-ceph_msg_connect:
+On Tue, Sep 29, 2020 at 12:03 AM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> Patrick reported a case where the MDS and client client had racing
+> session messages to one anothe. The MDS was sending caps to the client
+> and the client was sending a CEPH_SESSION_REQUEST_CLOSE message in order
+> to unmount.
+>
+> Because they were sending at the same time, the REQUEST_CLOSE had too
+> old a sequence number, and the MDS dropped it on the floor. On the
+> client, this would have probably manifested as a 60s hang during umount.
+> The MDS ended up blocklisting the client.
+>
+> Once we've decided to issue a REQUEST_CLOSE, we're finished with the
+> session, so just keep sending them until the MDS acknowledges that.
+>
+> Change the code to retransmit a REQUEST_CLOSE every second if the
+> session hasn't changed state yet. Give up and throw a warning after
+> mount_timeout elapses if we haven't gotten a response.
+>
+> URL: https://tracker.ceph.com/issues/47563
+> Reported-by: Patrick Donnelly <pdonnell@redhat.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/mds_client.c | 53 ++++++++++++++++++++++++++------------------
+>  1 file changed, 32 insertions(+), 21 deletions(-)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index b07e7adf146f..d9cb74e3d5e3 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -1878,7 +1878,7 @@ static int request_close_session(struct ceph_mds_session *session)
+>  static int __close_session(struct ceph_mds_client *mdsc,
+>                          struct ceph_mds_session *session)
+>  {
+> -       if (session->s_state >= CEPH_MDS_SESSION_CLOSING)
+> +       if (session->s_state > CEPH_MDS_SESSION_CLOSING)
+>                 return 0;
+>         session->s_state = CEPH_MDS_SESSION_CLOSING;
+>         return request_close_session(session);
+> @@ -4692,38 +4692,49 @@ static bool done_closing_sessions(struct ceph_mds_client *mdsc, int skipped)
+>         return atomic_read(&mdsc->num_sessions) <= skipped;
+>  }
+>
+> +static bool umount_timed_out(unsigned long timeo)
+> +{
+> +       if (time_before(jiffies, timeo))
+> +               return false;
+> +       pr_warn("ceph: unable to close all sessions\n");
+> +       return true;
+> +}
+> +
+>  /*
+>   * called after sb is ro.
+>   */
+>  void ceph_mdsc_close_sessions(struct ceph_mds_client *mdsc)
+>  {
+> -       struct ceph_options *opts = mdsc->fsc->client->options;
+>         struct ceph_mds_session *session;
+> -       int i;
+> -       int skipped = 0;
+> +       int i, ret;
+> +       int skipped;
+> +       unsigned long timeo = jiffies +
+> +                             ceph_timeout_jiffies(mdsc->fsc->client->options->mount_timeout);
+>
+>         dout("close_sessions\n");
+>
+>         /* close sessions */
+> -       mutex_lock(&mdsc->mutex);
+> -       for (i = 0; i < mdsc->max_sessions; i++) {
+> -               session = __ceph_lookup_mds_session(mdsc, i);
+> -               if (!session)
+> -                       continue;
+> -               mutex_unlock(&mdsc->mutex);
+> -               mutex_lock(&session->s_mutex);
+> -               if (__close_session(mdsc, session) <= 0)
+> -                       skipped++;
+> -               mutex_unlock(&session->s_mutex);
+> -               ceph_put_mds_session(session);
+> +       do {
+> +               skipped = 0;
+>                 mutex_lock(&mdsc->mutex);
+> -       }
+> -       mutex_unlock(&mdsc->mutex);
+> +               for (i = 0; i < mdsc->max_sessions; i++) {
+> +                       session = __ceph_lookup_mds_session(mdsc, i);
+> +                       if (!session)
+> +                               continue;
+> +                       mutex_unlock(&mdsc->mutex);
+> +                       mutex_lock(&session->s_mutex);
+> +                       if (__close_session(mdsc, session) <= 0)
+> +                               skipped++;
+> +                       mutex_unlock(&session->s_mutex);
+> +                       ceph_put_mds_session(session);
+> +                       mutex_lock(&mdsc->mutex);
+> +               }
+> +               mutex_unlock(&mdsc->mutex);
+>
+> -       dout("waiting for sessions to close\n");
+> -       wait_event_timeout(mdsc->session_close_wq,
+> -                          done_closing_sessions(mdsc, skipped),
+> -                          ceph_timeout_jiffies(opts->mount_timeout));
+> +               dout("waiting for sessions to close\n");
+> +               ret = wait_event_timeout(mdsc->session_close_wq,
+> +                                        done_closing_sessions(mdsc, skipped), HZ);
+> +       } while (!ret && !umount_timed_out(timeo));
+>
+>         /* tear down remaining sessions */
+>         mutex_lock(&mdsc->mutex);
+> --
+> 2.26.2
+>
 
-  libceph: mds0 (1)172.21.15.45:6828 socket error on write
-  ceph: mds0 reconnect start
-  libceph: mds0 (1)172.21.15.45:6829 socket closed (con state OPEN)
-  libceph: mds0 (1)172.21.15.45:6829 protocol version mismatch, my 32 != server's 32
-  libceph: mds0 (1)172.21.15.45:6829 protocol version mismatch
+Hi Jeff,
 
-AFAICT this bug goes back to the dawn of the kernel client.
-The reason it survived for so long is that only MDS sessions
-are stateful and only two MDS messages have a data section:
-CEPH_MSG_CLIENT_RECONNECT (always, but reconnecting is rare)
-and CEPH_MSG_CLIENT_REQUEST (only when xattrs are involved).
-The connection has to get reset precisely when such message
-is being sent -- in this case it was the former.
+This seems wrong to me, at least conceptually.  Is the same patch
+getting applied to ceph-fuse?
 
-Cc: stable@vger.kernel.org
-Link: https://tracker.ceph.com/issues/47723
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
----
- net/ceph/messenger.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Pretending to not know anything about the client <-> MDS protocol,
+two questions immediately come to mind.  Why is MDS allowed to drop
+REQUEST_CLOSE?  If the client is really done with the session, why
+does it block on the acknowledgement from the MDS?
 
-diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-index e9e2763a255f..c1f1f85545c3 100644
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -2998,6 +2998,11 @@ static void con_fault(struct ceph_connection *con)
- 		ceph_msg_put(con->in_msg);
- 		con->in_msg = NULL;
- 	}
-+	if (con->out_msg) {
-+		BUG_ON(con->out_msg->con != con);
-+		ceph_msg_put(con->out_msg);
-+		con->out_msg = NULL;
-+	}
- 
- 	/* Requeue anything that hasn't been acked */
- 	list_splice_init(&con->out_sent, &con->out_queue);
--- 
-2.19.2
+Thanks,
 
+                Ilya
