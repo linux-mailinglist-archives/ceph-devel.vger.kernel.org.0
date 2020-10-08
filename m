@@ -2,142 +2,111 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA294287602
-	for <lists+ceph-devel@lfdr.de>; Thu,  8 Oct 2020 16:28:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BC62287A6D
+	for <lists+ceph-devel@lfdr.de>; Thu,  8 Oct 2020 18:58:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730570AbgJHO24 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 8 Oct 2020 10:28:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:32107 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730508AbgJHO2z (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 8 Oct 2020 10:28:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602167333;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=S6NlMD5Vg2uS7jyGNSYOXJCZbcStHYh1oaEEq/OkGbQ=;
-        b=aQoyf5uhY3DJBOYDt3Vh9JhrBdAfCzDkhbq6LRbnpaV7WY+XQlmEZPnIGHZWcipaCF/B/t
-        eGji1+UQe2P3vY48Am1a9ds+LScaamhgx5czYmWdZr80fKb1+/XFvb/l1U0hjhJRYngwTR
-        NrRqGMAnYZHazljJGrj07sZp+sVHuuo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-198-SJrx4ASSPEKt-DS8v0rsOQ-1; Thu, 08 Oct 2020 10:28:52 -0400
-X-MC-Unique: SJrx4ASSPEKt-DS8v0rsOQ-1
-Received: by mail-wm1-f72.google.com with SMTP id u5so3214509wme.3
-        for <ceph-devel@vger.kernel.org>; Thu, 08 Oct 2020 07:28:51 -0700 (PDT)
+        id S1731447AbgJHQ6P (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 8 Oct 2020 12:58:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51692 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730434AbgJHQ6P (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 8 Oct 2020 12:58:15 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DB81C061755
+        for <ceph-devel@vger.kernel.org>; Thu,  8 Oct 2020 09:58:15 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id e18so7387679wrw.9
+        for <ceph-devel@vger.kernel.org>; Thu, 08 Oct 2020 09:58:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HRjOi5KwEs3g7OGy/03qH3X+eHomsFQVy91IFixjuPo=;
+        b=CbiGAH8rgNSvWaWF+X/Oq5Vn40AaYy6aKgfXXIaNLbbpnHLs27le58pZ/FTH+0/gQs
+         TGi8gUzPvxvTKCfl/gCVt9BQNRTrC3tloxVUNNSZ3XTvZODqok97GKxK89YKFoTM+207
+         O8AdgNMpKu+/FLbrWLkw12kFrNl2b2GlxK2gPFSAn5XZTA4Wu0coLEqoxR+iSxrvoliG
+         yImBRGVBsJJOFCqH3B2xJO9+1baDubPtSXjqtGiimAhUqD3rtm7fPz1bQSus8SYCYEOR
+         /GZDYeeZMq9x5AMPytgM2BNdBm4SxDYrf3f+n66+miMdfxwDbCGcV6LdL9w8oFCVWts1
+         OQUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=S6NlMD5Vg2uS7jyGNSYOXJCZbcStHYh1oaEEq/OkGbQ=;
-        b=QhwW8AbepvO3F6AL9Gf9v2OpWxdWz5FnRD9j2K3WcxJcCIx57Rz4i72CSYbG79QQB0
-         gNEE7wW5VcIDHondQze31rlWXjRjMSYy7528C+r/eKxRZvobo8R0aWhJ22oU6TlpKDwg
-         2XXCuOaAFBNi06vmNNi+ZR4rC7dplUFPfg6gaRTchiY0K3Q3umIOZYf3ugLP26Xhke5j
-         GxJ6P9jJ/Bu/PeYp29xhT7CXaxx7qXLYier5lksBXFs3+xbKJEGv6pOlH5NU/MjlMnRh
-         OtyWAP3dM3a/EIbIlX8gZu+vEL0mko976kNuNJfgAUBz2jztgiE6f+8T3D/ZDa214sUZ
-         x/2g==
-X-Gm-Message-State: AOAM533mD4VyjBFVenfp4O6AWXlX5j1QR8+ENb7vaM0q2siHssus6qnk
-        Pf5l2GoIIi4FPPs0c9OUmj1i4oudVdC5ixY7LS1Kc1bHJoIZFSysZo9lsTBnQ+M7gXGWAXIi1Rx
-        z6LMx3wxvWSbNzhwo7IIvv+Ooms+eim70v9o4Xw==
-X-Received: by 2002:a1c:f415:: with SMTP id z21mr9073965wma.88.1602167330284;
-        Thu, 08 Oct 2020 07:28:50 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwwCQRLfYeQrZCsApa8sBEVd4aZISNY+UZxqAvK+vKFIYtpDP0njT17OhG6SzTTd2+o9md9ZzTGV7oZBNyW3/M=
-X-Received: by 2002:a1c:f415:: with SMTP id z21mr9073937wma.88.1602167329951;
- Thu, 08 Oct 2020 07:28:49 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HRjOi5KwEs3g7OGy/03qH3X+eHomsFQVy91IFixjuPo=;
+        b=Xho1YPY08KkG6QJMs/gK0rrf/fwpKmJavYN9hYYRI6rat/VktJ3+1YbfAF8yM0D6Zr
+         LBES1ZukKMvxf1tK+vgOnqG3bRubCTqylWzVZEONhWmXdZJb25QW7jdQIEMoLIGCnopY
+         7HWOqlcOmL+WCzRfyPqP1KTshsvgOAwi1z3SozbSfSCF4gTUU6Q67Lb+aHCWxnHPBdR0
+         q755Wu6hx7FvMCL1hMeCAgvyAsn+4uAU7teXSpsqX1ALYpSPWdmEAEggYogEjsDY5uDC
+         MLnFoMnUznmw90Clx1ydykrfHjqlcy3e4f8qRnP+HvF9G/OCJXVzJXVWRstmjrvTgFt8
+         SKzw==
+X-Gm-Message-State: AOAM530EDsglnBGpBwvKNt/m47SY4kHWVT+lu+BLbteqvVPwvMN9ys8J
+        d2XC9XVmTEvAvd/LFAH871JrMYD5DSI=
+X-Google-Smtp-Source: ABdhPJye9JDMEdP7QeMzXZpqbWpDvOdW6HC1NEMWj+vIFB+v/J6+MsEDcure6e8wQJjjN8UnN6QRKA==
+X-Received: by 2002:a5d:44cb:: with SMTP id z11mr10108494wrr.290.1602176293482;
+        Thu, 08 Oct 2020 09:58:13 -0700 (PDT)
+Received: from kwango.redhat.com (ip-94-112-132-16.net.upcbroadband.cz. [94.112.132.16])
+        by smtp.gmail.com with ESMTPSA id 67sm8008149wmb.31.2020.10.08.09.58.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Oct 2020 09:58:12 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH] libceph: clear con->out_msg on Policy::stateful_server faults
+Date:   Thu,  8 Oct 2020 18:58:00 +0200
+Message-Id: <20201008165800.9494-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <CAE6AcscPK6DZ+OnTaRQ6WUpKWwzdD5H+v05uf4qEbquHOhmS=w@mail.gmail.com>
-In-Reply-To: <CAE6AcscPK6DZ+OnTaRQ6WUpKWwzdD5H+v05uf4qEbquHOhmS=w@mail.gmail.com>
-From:   Ken Dreyer <kdreyer@redhat.com>
-Date:   Thu, 8 Oct 2020 08:28:39 -0600
-Message-ID: <CALqRxCxeduxdDh=xL4nGqDTEhjJqOgSpUS6F6NqvyYq4NycRfA@mail.gmail.com>
-Subject: Re: "Signed-off-by" jenkins job for PRs now failing
-To:     Alfonso Martinez Hidalgo <almartin@redhat.com>
-Cc:     Ceph Devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-I thought we were going to switch over to https://github.com/apps/dco
-? Is that still the case?
+con->out_msg must be cleared on Policy::stateful_server
+(!CEPH_MSG_CONNECT_LOSSY) faults.  Not doing so botches the
+reconnection attempt, because after writing the banner the
+messenger moves on to writing the data section of that message
+(either from where it got interrupted by the connection reset or
+from the beginning) instead of writing struct ceph_msg_connect.
+This results in a bizarre error message because the server
+sends CEPH_MSGR_TAG_BADPROTOVER but we think we wrote struct
+ceph_msg_connect:
 
-- Ken
+  libceph: mds0 (1)172.21.15.45:6828 socket error on write
+  ceph: mds0 reconnect start
+  libceph: mds0 (1)172.21.15.45:6829 socket closed (con state OPEN)
+  libceph: mds0 (1)172.21.15.45:6829 protocol version mismatch, my 32 != server's 32
+  libceph: mds0 (1)172.21.15.45:6829 protocol version mismatch
 
-On Wed, Oct 7, 2020 at 2:25 AM Alfonso Martinez Hidalgo
-<almartin@redhat.com> wrote:
->
-> Hi All,
->
-> It seems that this job has started to fail on several PRs.
-> Does anyone have privileges to fix this error?
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D test session starts =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> platform linux2 -- Python 2.7.12, pytest-4.6.11, py-1.9.0,
-> pluggy-0.13.1 -- /tmp/venv.4M9HM0FOIP/bin/python2.7
-> cachedir: .pytest_cache
-> rootdir: /home/jenkins-build/build/workspace/ceph-pr-commits
-> collecting ... collected 2 items / 1 deselected / 1 selected
->
-> ceph-build/ceph-pr-commits/build/test_commits.py::TestCommits::test_signe=
-d_off_by
-> Running command: git fetch origin
-> +refs/heads/master:refs/remotes/origin/master
-> Running command: git log -z --no-merges origin/master..HEAD
-> FAILED
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D FAILURES =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> ________________________ TestCommits.test_signed_off_by _________________=
-_______
->
-> self =3D <test_commits.TestCommits object at 0x7f95779c8190>
->
->     @pytest.mark.code_test
->     def test_signed_off_by(self):
->         signed_off_regex =3D r'Signed-off-by: \S.* <[^@]+@[^@]+\.[^@]+>'
->         # '-z' puts a '\0' between commits, see later split('\0')
->         check_signed_off_commits =3D 'git log -z --no-merges origin/%s..%=
-s' % (
->             self.target_branch, self.source_branch)
->         wrong_commits =3D list(filterfalse(
->             re.compile(signed_off_regex).search,
-> >           self.command(check_signed_off_commits).split('\0')))
->
-> ceph-build/ceph-pr-commits/build/test_commits.py:63:
-> _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _=
- _ _ _
->
-> cls =3D <class 'test_commits.TestCommits'>
-> command =3D 'git log -z --no-merges origin/master..HEAD'
->
->     @classmethod
->     def command(cls, command):
->         print("Running command:", command)
-> >       return check_output(shlex.split(command), cwd=3Dcls.ceph_checkout=
-).decode()
-> E       UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in
-> position 68: ordinal not in range(128)
->
-> ceph-build/ceph-pr-commits/build/test_commits.py:29: UnicodeDecodeError
-> - generated xml file:
-> /home/jenkins-build/build/workspace/ceph-pr-commits/report.xml -
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D 1 failed, 1 =
-deselected in 0.60 seconds =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> Build step 'Execute shell' marked build as failure
->
->
-> Regards,
-> --
->
-> Alfonso Mart=C3=ADnez
-> Senior Software Engineer, Ceph Storage
-> Red Hat
->
+AFAICT this bug goes back to the dawn of the kernel client.
+The reason it survived for so long is that only MDS sessions
+are stateful and only two MDS messages have a data section:
+CEPH_MSG_CLIENT_RECONNECT (always, but reconnecting is rare)
+and CEPH_MSG_CLIENT_REQUEST (only when xattrs are involved).
+The connection has to get reset precisely when such message
+is being sent -- in this case it was the former.
+
+Cc: stable@vger.kernel.org
+Link: https://tracker.ceph.com/issues/47723
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+---
+ net/ceph/messenger.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+index e9e2763a255f..c1f1f85545c3 100644
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -2998,6 +2998,11 @@ static void con_fault(struct ceph_connection *con)
+ 		ceph_msg_put(con->in_msg);
+ 		con->in_msg = NULL;
+ 	}
++	if (con->out_msg) {
++		BUG_ON(con->out_msg->con != con);
++		ceph_msg_put(con->out_msg);
++		con->out_msg = NULL;
++	}
+ 
+ 	/* Requeue anything that hasn't been acked */
+ 	list_splice_init(&con->out_sent, &con->out_queue);
+-- 
+2.19.2
 
