@@ -2,87 +2,107 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 96D52288A90
-	for <lists+ceph-devel@lfdr.de>; Fri,  9 Oct 2020 16:18:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A360288B39
+	for <lists+ceph-devel@lfdr.de>; Fri,  9 Oct 2020 16:32:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388672AbgJIOSc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 9 Oct 2020 10:18:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51628 "EHLO
+        id S2389033AbgJIOcU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 9 Oct 2020 10:32:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388654AbgJIOSb (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Oct 2020 10:18:31 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F456C0613D7
-        for <ceph-devel@vger.kernel.org>; Fri,  9 Oct 2020 07:18:31 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id x20so3685240qkn.1
-        for <ceph-devel@vger.kernel.org>; Fri, 09 Oct 2020 07:18:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2Nsozhx6Vbc7+gevBK4suxhbi1tLEGMu37jB4LFRAPw=;
-        b=hxFVkoe9fUSNiPI+uQ12JsKm6OjRLbKc/6lbFpVRDpIhsRf4KNWmimf4Uw4bwdRTz5
-         uQebX3pJKZMtpcnAIYfdaL/HusqLmmVCjy1WhA7fNAyfon0iBRnmnTuq2eXAKWGAKu/g
-         /vTH9xfC6VEOLORYAQpLlpSOhlk9U2mh95fmy7zrpVmL8CpQGirmNAr8bviupqSX4BiN
-         JsjOaIWFbd15tmtcIRr9ygyReyr9DpipdN4qGf3pIBBGAQj2KR4tjY8vTI0zqQxk5GwQ
-         Ocn5+xIj9xtTzKOSYGRzic4/Nq4+1UxKLsdYs+sy/07AkRNYMjjoJc4aPs5x3V89ALRG
-         9rTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2Nsozhx6Vbc7+gevBK4suxhbi1tLEGMu37jB4LFRAPw=;
-        b=c7kGLx0NjeHWt5gTaoITW+knIfsV65pt04P3qYP8MX+78fErbLcW/hzfRxqQ6uWQ9u
-         UP0QwIs3fA1/wVbpf5zAudelOeyWImmPjfyo7JXjHwOIPSVMcwSStzMj4/vixrFpLh3s
-         ajEkKKwtnldvP2SrEY5hlml8vNq1z5Xql1v9U8QdBpMrYnF9wFl+DIjqUCKtYbb3qwV9
-         9YxnU6+bMSDPBoSgw6pzapVzGkMNxS+ori0gVTkUdgMWoZaTs6GeqKz+anQaQ4KlH1jT
-         GFaaUSvZCT00YXFmiWu1BiHVp6WzSTAOxRQZFirgIAMXIoPk0bTyF3fkjgqOiaPC0UP0
-         /iGw==
-X-Gm-Message-State: AOAM532FHoJVvPvnVpRm4VabNIbaA/dfbULF2RyP6DkdcYLm8kkBqaEv
-        NDTJlPFIFX+nXPNKp/zH2MndWQ==
-X-Google-Smtp-Source: ABdhPJwWctAz3Cj788czTSYpVZIZN+OINVRMuTkx431OvmGfAhyvUvX02fo6IXvszZ32Z1TA67pjlA==
-X-Received: by 2002:a37:4587:: with SMTP id s129mr12042169qka.99.1602253110784;
-        Fri, 09 Oct 2020 07:18:30 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c0a8:11e8::107d? ([2620:10d:c091:480::1:f1f8])
-        by smtp.gmail.com with ESMTPSA id t7sm5107903qkm.130.2020.10.09.07.18.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Oct 2020 07:18:29 -0700 (PDT)
-Subject: Re: [PATCH 6/7] btrfs: Promote to unsigned long long before shifting
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org
-Cc:     ericvh@gmail.com, lucho@ionkov.net, viro@zeniv.linux.org.uk,
-        jlayton@kernel.org, idryomov@gmail.com, mark@fasheh.com,
-        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
-        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com,
-        stable@vger.kernel.org
-References: <20201004180428.14494-1-willy@infradead.org>
- <20201004180428.14494-7-willy@infradead.org>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <84f3800c-445e-6dbf-2381-56840d7bba69@toxicpanda.com>
-Date:   Fri, 9 Oct 2020 10:18:27 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.3.1
+        with ESMTP id S2388853AbgJIObL (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Oct 2020 10:31:11 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E8C4C0613D7;
+        Fri,  9 Oct 2020 07:31:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=GeyZChjU8Oj99Pp+9Mi0xQ6/HJ6pKkZb0kZT9pF9iBE=; b=Dq9QSGgeteBqpVdE+hBXk+LzdL
+        I4AVG5F9x8v0QGJ5MRwNuBqwfxHyMo/Io8eUCPuH8g6FiNs6SFWDDC/LaxdgLL9IRmO378buAs0Nd
+        /9fFuziR9D8ptZW2K48QSlR0cl+tAHJWxW9OWT6KzQpFo64yaxYXBs+NwGFwnEH1szT9X5UKIDv9a
+        I4IgyXpNyes45ny+RuOTSQ/+VIMqtrQ/O+Dt6tEE5DLIEE5Bys7Feal0RaDC9hjliaOa48W9e4I15
+        evQwTi1i6I1cP89eget5ZT673r2Hl0R5jp619lb54zyWDhXlpnWQV50yOUzipONAoMNyZ2lMu4spW
+        D5naUVtg==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kQtQI-0005uQ-A9; Fri, 09 Oct 2020 14:31:06 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, v9fs-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
+        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ecryptfs@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
+        linux-xfs@vger.kernel.org
+Subject: [PATCH v2 00/16] Allow readpage to return a locked page
+Date:   Fri,  9 Oct 2020 15:30:48 +0100
+Message-Id: <20201009143104.22673-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.3
 MIME-Version: 1.0
-In-Reply-To: <20201004180428.14494-7-willy@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 10/4/20 2:04 PM, Matthew Wilcox (Oracle) wrote:
-> On 32-bit systems, this shift will overflow for files larger than 4GB.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 53b381b3abeb ("Btrfs: RAID5 and RAID6")
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Linus recently made the page lock more fair.  That means that the old
+pattern where we returned from ->readpage with the page unlocked and
+then attempted to re-lock it will send us to the back of the queue for
+this page's lock.
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+A further benefit is that a synchronous readpage implementation allows
+us to return an error to someone who might actually care about it.
+There's no need to SetPageError, but I don't want to learn about how
+a dozen filesystems handle I/O errors (hint: they're all different),
+so I have not attempted to change that.  Except for iomap.
 
-Thanks,
+Ideally all filesystems would return from ->readpage with the page
+Uptodate and Locked, but it's a bit painful to convert all the
+asynchronous readpage implementations to synchronous.  The first 14
+filesystems converted are already synchronous.  The last two patches
+convert iomap to synchronous readpage.
 
-Josef
+This patchset is against iomap-for-next.  Andrew, it would make merging
+the THP patchset much easier if you could merge at least the first patch
+adding AOP_UPDATED_PAGE during the merge window which opens next week.
+
+Matthew Wilcox (Oracle) (16):
+  mm: Add AOP_UPDATED_PAGE return value
+  mm: Inline wait_on_page_read into its one caller
+  9p: Tell the VFS that readpage was synchronous
+  afs: Tell the VFS that readpage was synchronous
+  ceph: Tell the VFS that readpage was synchronous
+  cifs: Tell the VFS that readpage was synchronous
+  cramfs: Tell the VFS that readpage was synchronous
+  ecryptfs: Tell the VFS that readpage was synchronous
+  fuse: Tell the VFS that readpage was synchronous
+  hostfs: Tell the VFS that readpage was synchronous
+  jffs2: Tell the VFS that readpage was synchronous
+  ubifs: Tell the VFS that readpage was synchronous
+  udf: Tell the VFS that readpage was synchronous
+  vboxsf: Tell the VFS that readpage was synchronous
+  iomap: Inline iomap_iop_set_range_uptodate into its one caller
+  iomap: Make readpage synchronous
+
+ Documentation/filesystems/locking.rst |  7 +-
+ Documentation/filesystems/vfs.rst     | 21 ++++--
+ fs/9p/vfs_addr.c                      |  6 +-
+ fs/afs/file.c                         |  3 +-
+ fs/ceph/addr.c                        |  9 +--
+ fs/cifs/file.c                        |  8 ++-
+ fs/cramfs/inode.c                     |  5 +-
+ fs/ecryptfs/mmap.c                    | 11 ++--
+ fs/fuse/file.c                        |  2 +
+ fs/hostfs/hostfs_kern.c               |  2 +
+ fs/iomap/buffered-io.c                | 92 ++++++++++++++-------------
+ fs/jffs2/file.c                       |  6 +-
+ fs/ubifs/file.c                       | 16 +++--
+ fs/udf/file.c                         |  3 +-
+ fs/vboxsf/file.c                      |  2 +
+ include/linux/fs.h                    |  5 ++
+ mm/filemap.c                          | 33 +++++-----
+ 17 files changed, 135 insertions(+), 96 deletions(-)
+
+-- 
+2.28.0
+
