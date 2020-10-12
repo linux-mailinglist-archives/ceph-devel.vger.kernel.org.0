@@ -2,152 +2,227 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A462728AF55
-	for <lists+ceph-devel@lfdr.de>; Mon, 12 Oct 2020 09:41:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B9BE28B42A
+	for <lists+ceph-devel@lfdr.de>; Mon, 12 Oct 2020 13:52:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728291AbgJLHlP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 12 Oct 2020 03:41:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44468 "EHLO mx2.suse.de"
+        id S2388408AbgJLLwt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 12 Oct 2020 07:52:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727722AbgJLHk4 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 12 Oct 2020 03:40:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3DEE1AC1D;
-        Mon, 12 Oct 2020 07:40:52 +0000 (UTC)
-Subject: Re: [PATCH RFC PKS/PMEM 48/58] drivers/md: Utilize new kmap_thread()
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
-        kexec@lists.infradead.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-efi@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
-        reiserfs-devel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, cluster-devel@redhat.com,
-        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-cachefs@redhat.com,
-        samba-technical@lists.samba.org, intel-wired-lan@lists.osuosl.org
-References: <20201009195033.3208459-1-ira.weiny@intel.com>
- <20201009195033.3208459-49-ira.weiny@intel.com>
- <c802fbf4-f67a-b205-536d-9c71b440f9c8@suse.de>
- <20201012052817.GZ2046448@iweiny-DESK2.sc.intel.com>
-From:   Coly Li <colyli@suse.de>
-Autocrypt: addr=colyli@suse.de; keydata=
- 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
-Message-ID: <026a7658-6c43-6510-a8b5-32f29de7b281@suse.de>
-Date:   Mon, 12 Oct 2020 15:40:27 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.12.1
+        id S2388255AbgJLLwt (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 12 Oct 2020 07:52:49 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C394214D8;
+        Mon, 12 Oct 2020 11:52:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1602503567;
+        bh=sSvZjcVzNOqYi9d9yhpMFwCKpS9rV7R+awXbSGk8T70=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=xJnFx4UQaDlXSn0lMNyzg6BXfK1kpp3lzZBwjCew6qmy6ckK/nCERiCfe8VNvHV9+
+         A2kgz0XidpuLbr0Lhc19zx2xvnR4uEMMUd1Eqhqv2bTDDNSnLHWK+Fnhhz8DNNtme3
+         OsznYiQPf0nZtpixLFcj8r4KlRfRytTyVAN+QR94=
+Message-ID: <5f41bef292d90066c650aa2e960beb5a1b11fbad.camel@kernel.org>
+Subject: Re: [PATCH] ceph: retransmit REQUEST_CLOSE every second if we don't
+ get a response
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        "Yan, Zheng" <ukernel@gmail.com>
+Date:   Mon, 12 Oct 2020 07:52:46 -0400
+In-Reply-To: <b2a93049-969e-f889-e773-e326230b0efb@redhat.com>
+References: <20200928220349.584709-1-jlayton@kernel.org>
+         <CAOi1vP8zXLGscoa4QjiwW0BtbVnrkamWGzBeqARnVr8Maes3CQ@mail.gmail.com>
+         <53e9b5c4635f4aa0f51c0c1870a72fc96d88bd10.camel@kernel.org>
+         <CAOi1vP8w5kfVcsVL0n5UG3Ks4vNOEbW-wX-UMsniKPt5rE6nSA@mail.gmail.com>
+         <b2a93049-969e-f889-e773-e326230b0efb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-In-Reply-To: <20201012052817.GZ2046448@iweiny-DESK2.sc.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020/10/12 13:28, Ira Weiny wrote:
-> On Sat, Oct 10, 2020 at 10:20:34AM +0800, Coly Li wrote:
->> On 2020/10/10 03:50, ira.weiny@intel.com wrote:
->>> From: Ira Weiny <ira.weiny@intel.com>
->>>
->>> These kmap() calls are localized to a single thread.  To avoid the over
->>> head of global PKRS updates use the new kmap_thread() call.
->>>
->>
->> Hi Ira,
->>
->> There were a number of options considered.
->>
->> 1) Attempt to change all the thread local kmap() calls to kmap_atomic()
->> 2) Introduce a flags parameter to kmap() to indicate if the mapping
->> should be global or not
->> 3) Change ~20-30 call sites to 'kmap_global()' to indicate that they
->> require a global mapping of the pages
->> 4) Change ~209 call sites to 'kmap_thread()' to indicate that the
->> mapping is to be used within that thread of execution only
->>
->>
->> I copied the above information from patch 00/58 to this message. The
->> idea behind kmap_thread() is fine to me, but as you said the new api is
->> very easy to be missed in new code (even for me). I would like to be
->> supportive to option 2) introduce a flag to kmap(), then we won't forget
->> the new thread-localized kmap method, and people won't ask why a
->> _thread() function is called but no kthread created.
+On Mon, 2020-10-12 at 14:52 +0800, Xiubo Li wrote:
+> On 2020/10/11 2:49, Ilya Dryomov wrote:
+> > On Thu, Oct 8, 2020 at 8:14 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > > On Thu, 2020-10-08 at 19:27 +0200, Ilya Dryomov wrote:
+> > > > On Tue, Sep 29, 2020 at 12:03 AM Jeff Layton <jlayton@kernel.org> wrote:
+> > > > > Patrick reported a case where the MDS and client client had racing
+> > > > > session messages to one anothe. The MDS was sending caps to the client
+> > > > > and the client was sending a CEPH_SESSION_REQUEST_CLOSE message in order
+> > > > > to unmount.
+> > > > > 
+> > > > > Because they were sending at the same time, the REQUEST_CLOSE had too
+> > > > > old a sequence number, and the MDS dropped it on the floor. On the
+> > > > > client, this would have probably manifested as a 60s hang during umount.
+> > > > > The MDS ended up blocklisting the client.
+> > > > > 
+> > > > > Once we've decided to issue a REQUEST_CLOSE, we're finished with the
+> > > > > session, so just keep sending them until the MDS acknowledges that.
+> > > > > 
+> > > > > Change the code to retransmit a REQUEST_CLOSE every second if the
+> > > > > session hasn't changed state yet. Give up and throw a warning after
+> > > > > mount_timeout elapses if we haven't gotten a response.
+> > > > > 
+> > > > > URL: https://tracker.ceph.com/issues/47563
+> > > > > Reported-by: Patrick Donnelly <pdonnell@redhat.com>
+> > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > > ---
+> > > > >   fs/ceph/mds_client.c | 53 ++++++++++++++++++++++++++------------------
+> > > > >   1 file changed, 32 insertions(+), 21 deletions(-)
+> > > > > 
+> > > > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > > > > index b07e7adf146f..d9cb74e3d5e3 100644
+> > > > > --- a/fs/ceph/mds_client.c
+> > > > > +++ b/fs/ceph/mds_client.c
+> > > > > @@ -1878,7 +1878,7 @@ static int request_close_session(struct ceph_mds_session *session)
+> > > > >   static int __close_session(struct ceph_mds_client *mdsc,
+> > > > >                           struct ceph_mds_session *session)
+> > > > >   {
+> > > > > -       if (session->s_state >= CEPH_MDS_SESSION_CLOSING)
+> > > > > +       if (session->s_state > CEPH_MDS_SESSION_CLOSING)
+> > > > >                  return 0;
+> > > > >          session->s_state = CEPH_MDS_SESSION_CLOSING;
+> > > > >          return request_close_session(session);
+> > > > > @@ -4692,38 +4692,49 @@ static bool done_closing_sessions(struct ceph_mds_client *mdsc, int skipped)
+> > > > >          return atomic_read(&mdsc->num_sessions) <= skipped;
+> > > > >   }
+> > > > > 
+> > > > > +static bool umount_timed_out(unsigned long timeo)
+> > > > > +{
+> > > > > +       if (time_before(jiffies, timeo))
+> > > > > +               return false;
+> > > > > +       pr_warn("ceph: unable to close all sessions\n");
+> > > > > +       return true;
+> > > > > +}
+> > > > > +
+> > > > >   /*
+> > > > >    * called after sb is ro.
+> > > > >    */
+> > > > >   void ceph_mdsc_close_sessions(struct ceph_mds_client *mdsc)
+> > > > >   {
+> > > > > -       struct ceph_options *opts = mdsc->fsc->client->options;
+> > > > >          struct ceph_mds_session *session;
+> > > > > -       int i;
+> > > > > -       int skipped = 0;
+> > > > > +       int i, ret;
+> > > > > +       int skipped;
+> > > > > +       unsigned long timeo = jiffies +
+> > > > > +                             ceph_timeout_jiffies(mdsc->fsc->client->options->mount_timeout);
+> > > > > 
+> > > > >          dout("close_sessions\n");
+> > > > > 
+> > > > >          /* close sessions */
+> > > > > -       mutex_lock(&mdsc->mutex);
+> > > > > -       for (i = 0; i < mdsc->max_sessions; i++) {
+> > > > > -               session = __ceph_lookup_mds_session(mdsc, i);
+> > > > > -               if (!session)
+> > > > > -                       continue;
+> > > > > -               mutex_unlock(&mdsc->mutex);
+> > > > > -               mutex_lock(&session->s_mutex);
+> > > > > -               if (__close_session(mdsc, session) <= 0)
+> > > > > -                       skipped++;
+> > > > > -               mutex_unlock(&session->s_mutex);
+> > > > > -               ceph_put_mds_session(session);
+> > > > > +       do {
+> > > > > +               skipped = 0;
+> > > > >                  mutex_lock(&mdsc->mutex);
+> > > > > -       }
+> > > > > -       mutex_unlock(&mdsc->mutex);
+> > > > > +               for (i = 0; i < mdsc->max_sessions; i++) {
+> > > > > +                       session = __ceph_lookup_mds_session(mdsc, i);
+> > > > > +                       if (!session)
+> > > > > +                               continue;
+> > > > > +                       mutex_unlock(&mdsc->mutex);
+> > > > > +                       mutex_lock(&session->s_mutex);
+> > > > > +                       if (__close_session(mdsc, session) <= 0)
+> > > > > +                               skipped++;
+> > > > > +                       mutex_unlock(&session->s_mutex);
+> > > > > +                       ceph_put_mds_session(session);
+> > > > > +                       mutex_lock(&mdsc->mutex);
+> > > > > +               }
+> > > > > +               mutex_unlock(&mdsc->mutex);
+> > > > > 
+> > > > > -       dout("waiting for sessions to close\n");
+> > > > > -       wait_event_timeout(mdsc->session_close_wq,
+> > > > > -                          done_closing_sessions(mdsc, skipped),
+> > > > > -                          ceph_timeout_jiffies(opts->mount_timeout));
+> > > > > +               dout("waiting for sessions to close\n");
+> > > > > +               ret = wait_event_timeout(mdsc->session_close_wq,
+> > > > > +                                        done_closing_sessions(mdsc, skipped), HZ);
+> > > > > +       } while (!ret && !umount_timed_out(timeo));
+> > > > > 
+> > > > >          /* tear down remaining sessions */
+> > > > >          mutex_lock(&mdsc->mutex);
+> > > > > --
+> > > > > 2.26.2
+> > > > > 
+> > > > Hi Jeff,
+> > > > 
+> > > > This seems wrong to me, at least conceptually.  Is the same patch
+> > > > getting applied to ceph-fuse?
+> > > > 
+> > > It's a grotesque workaround, I will grant you. I'm not sure what we want
+> > > to do for ceph-fuse yet but it does seem to have the same issue.
+> > > Probably, we should plan to do a similar fix there once we settle on the
+> > > right approach.
+> > > 
+> > > > Pretending to not know anything about the client <-> MDS protocol,
+> > > > two questions immediately come to mind.  Why is MDS allowed to drop
+> > > > REQUEST_CLOSE?
+> > > It really seems like a protocol design flaw.
+> > > 
+> > > IIUC, the idea overall with the low-level ceph protocol seems to be that
+> > > the client should retransmit (or reevaluate, in the case of caps) calls
+> > > that were in flight when the seq number changes.
+> > > 
+> > > The REQUEST_CLOSE handling seems to have followed suit on the MDS side,
+> > > but it doesn't really make a lot of sense for that, IMO.
+> > (edit of my reply to https://github.com/ceph/ceph/pull/37619)
+> > 
+> > After taking a look at the MDS code, it really seemed like it
+> > had been written with the expectation that REQUEST_CLOSE would be
+> > resent, so I dug around.  I don't fully understand these "push"
+> > sequence numbers yet, but there is probably some race that requires
+> > the client to confirm that it saw the sequence number, even if the
+> > session is about to go.  Sage is probably the only one who might
+> > remember at this point.
+> > 
+> > The kernel client already has the code to retry REQUEST_CLOSE, only
+> > every five seconds instead every second.  See check_session_state()
+> > which is called from delayed_work() in mds_client.c.  It looks like
+> > it got broken by Xiubo's commit fa9967734227 ("ceph: fix potential
+> > mdsc use-after-free crash") which conditioned delayed_work() on
+> > mdsc->stopping -- hence the misbehaviour.
 > 
-> Thanks for the feedback.
+> Without this commit it will hit this issue too. The umount old code will 
+> try to close sessions asynchronously, and then tries to cancel the 
+> delayed work, during which the last queued delayed_work() timer might be 
+> fired. This commit makes it easier to be reproduced.
 > 
-> I'm going to hold off making any changes until others weigh in.  FWIW, I kind
-> of like option 2 as well.  But there is already kmap_atomic() so it seemed like
-> kmap_XXXX() was more in line with the current API.
 
-I understand it now, the idea is fine to me.
+Fixing the potential races to ensure that this is retransmitted is an
+option, but I'm not sure it's the best one. Here's what I think we
+probably ought to do:
 
-Acked-by: Coly Li <colyli@suse.de>
+1/ fix the MDS to just ignore the sequence number on REQUEST_CLOSE. I
+don't see that the sequence number has any value on that call, as it's
+an indicator that the client is finished with the session, and it's
+never going to change its mind and do something different if the
+sequence is wrong. I have a PR for that here:
 
-Thanks.
+    https://github.com/ceph/ceph/pull/37619
 
-Coly Li
+2/ fix the clients to not wait on the REQUEST_CLOSE reply. As soon as
+the call is sent, tear down the session and proceed with unmounting. The
+client doesn't really care what the MDS has to say after that point, so
+we may as well not wait on it before proceeding. 
+
+Thoughts?
+-- 
+Jeff Layton <jlayton@kernel.org>
+
