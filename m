@@ -2,153 +2,118 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B93328C014
-	for <lists+ceph-devel@lfdr.de>; Mon, 12 Oct 2020 20:54:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB23A28C1BC
+	for <lists+ceph-devel@lfdr.de>; Mon, 12 Oct 2020 21:54:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730086AbgJLSyS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 12 Oct 2020 14:54:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51544 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbgJLSyS (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 12 Oct 2020 14:54:18 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17E6EC0613D0
-        for <ceph-devel@vger.kernel.org>; Mon, 12 Oct 2020 11:54:18 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id j13so13057140ilc.4
-        for <ceph-devel@vger.kernel.org>; Mon, 12 Oct 2020 11:54:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rVhSq0164fU0w+L8L88Ev6pFtAYnBm/1zvsxqyOb/9I=;
-        b=qUosbGW5tIBhxb9cDtchMYP6CP2wznMTAFVzJXw+arbXpaHgznMgLANFoCtARUInjR
-         JE731HgYB98mxpybu8N5mE394HRcjl1q9re9wdKOAemj0jupRuon5eTBZf2bTPk9foRr
-         UWc/L0EfHYsrOej4+RQpx+et1PlbnM1HElYIJM6af4lb3vbUzr5kLWhT4cKBUzkeVG04
-         s/fHm8cC5JigfezibVZNLy2Q/BAAnGXbv3W6rtuN4BB5/VMvIDXxFYh2hG8jycxzdit8
-         80XfFcXpe+Muq7gRLMJxyZ8hCfBk5N95hbXZO8A1s+5mTYL7TkJzVMLjat0eMJV6gnmA
-         YZwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rVhSq0164fU0w+L8L88Ev6pFtAYnBm/1zvsxqyOb/9I=;
-        b=YuXZwERpzXFtO4qCsnr7OB9/PSSMr0q1+ZS35GSmXJjhdhMiuUN2vcR105HZc+T0YO
-         +MBD9zJDHnIcBYGPztK1kQidqYfT/ealFsc5C3K95zeKZkVtXFR0tK0X/kl+nHm1RwO5
-         usssvhQHqT2vxttP7TsH6foesnFXHhpN2S9FILEiuWgz04qZsJky+FO9gOguGXxIWM1P
-         X9sHBonjfEjI3DrsMKcuEeba1PHU7GgZ1KuPVMzaYoYvqL6WKudLu8DVr413eKGze2QS
-         8gjB3QKB0WiAvNLZ13AWKnAZ5MzLkq2doqTUSpRqBgZzushvSIizqSqZ1DPxydjJfI1I
-         JxWQ==
-X-Gm-Message-State: AOAM533zSPUPH1FEinhuZn9HOZx6DJhjLMY5k7dT3ZX8dNCyUP7YdigB
-        /48F89eA8e5ufpB9nj+5rGsDoqAgNSKd0TKmU+TaKBlXZAE=
-X-Google-Smtp-Source: ABdhPJwR8mO58Ig1uR8gdBJdxhtW700sE4s4OLK09Rr/j/HKmHnX8ySPwVQTa+Vihc+qii8vms9Glid0cY9rs9M2utM=
-X-Received: by 2002:a92:d850:: with SMTP id h16mr191387ilq.281.1602528857432;
- Mon, 12 Oct 2020 11:54:17 -0700 (PDT)
+        id S2388136AbgJLTx6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 12 Oct 2020 15:53:58 -0400
+Received: from mga09.intel.com ([134.134.136.24]:29002 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726676AbgJLTx5 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 12 Oct 2020 15:53:57 -0400
+IronPort-SDR: sHEBSwDrhTzQU2S1NEllE7XlTU+xF+PhbrOIMhK+ymP1xuGREJ/BLRLAOafpJKPLRy0iKRj28m
+ +ZZbJv87UD9w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9772"; a="165907662"
+X-IronPort-AV: E=Sophos;i="5.77,367,1596524400"; 
+   d="scan'208";a="165907662"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2020 12:53:55 -0700
+IronPort-SDR: fkO3cV1AstS50IlWJFeIR7IMIWTUvxOVu0RxBH9tBAb2aFjzmjvlioAsa4gAQcEu3X0zxNtHVX
+ KqidbmrXoAPg==
+X-IronPort-AV: E=Sophos;i="5.77,367,1596524400"; 
+   d="scan'208";a="530096227"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2020 12:53:54 -0700
+Date:   Mon, 12 Oct 2020 12:53:54 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, linux-aio@kvack.org,
+        linux-efi@vger.kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        target-devel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-kselftest@vger.kernel.org, samba-technical@lists.samba.org,
+        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        devel@driverdev.osuosl.org, linux-cifs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org,
+        x86@kernel.org, amd-gfx@lists.freedesktop.org,
+        linux-afs@lists.infradead.org, cluster-devel@redhat.com,
+        linux-cachefs@redhat.com, intel-wired-lan@lists.osuosl.org,
+        xen-devel@lists.xenproject.org, linux-ext4@vger.kernel.org,
+        Fenghua Yu <fenghua.yu@intel.com>, ecryptfs@vger.kernel.org,
+        linux-um@lists.infradead.org, intel-gfx@lists.freedesktop.org,
+        linux-erofs@lists.ozlabs.org, reiserfs-devel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        io-uring@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, netdev@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH RFC PKS/PMEM 22/58] fs/f2fs: Utilize new kmap_thread()
+Message-ID: <20201012195354.GC2046448@iweiny-DESK2.sc.intel.com>
+References: <20201009195033.3208459-1-ira.weiny@intel.com>
+ <20201009195033.3208459-23-ira.weiny@intel.com>
+ <20201009213434.GA839@sol.localdomain>
+ <20201010003954.GW20115@casper.infradead.org>
+ <20201010013036.GD1122@sol.localdomain>
+ <20201012065635.GB2046448@iweiny-DESK2.sc.intel.com>
+ <20201012161946.GA858@sol.localdomain>
+ <5d621db9-23d4-e140-45eb-d7fca2093d2b@intel.com>
+ <20201012164438.GA20115@casper.infradead.org>
 MIME-Version: 1.0
-References: <20201012172140.602684-1-jlayton@kernel.org>
-In-Reply-To: <20201012172140.602684-1-jlayton@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 12 Oct 2020 20:54:12 +0200
-Message-ID: <CAOi1vP8m2m4xbuLFM+0WKPQxzE9bur0ywbJLbBeVvL=s2f9u3A@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: check session state after bumping session->s_seq
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        "Yan, Zheng" <ukernel@gmail.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Xiubo Li <xiubli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201012164438.GA20115@casper.infradead.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Oct 12, 2020 at 7:21 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> Some messages sent by the MDS entail a session sequence number
-> increment, and the MDS will drop certain types of requests on the floor
-> when the sequence numbers don't match.
->
-> In particular, a REQUEST_CLOSE message can cross with one of the
-> sequence morphing messages from the MDS which can cause the client to
-> stall, waiting for a response that will never come.
->
-> Originally, this meant an up to 5s delay before the recurring workqueue
-> job kicked in and resent the request, but a recent change made it so
-> that the client would never resend, causing a 60s stall unmounting and
-> sometimes a blockisting event.
->
-> Add a new helper for incrementing the session sequence and then testing
-> to see whether a REQUEST_CLOSE needs to be resent. Change all of the
-> bare sequence counter increments to use the new helper.
->
-> URL: https://tracker.ceph.com/issues/47563
-> Fixes: fa9967734227 ("ceph: fix potential mdsc use-after-free crash")
-> Reported-by: Patrick Donnelly <pdonnell@redhat.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/caps.c       |  2 +-
->  fs/ceph/mds_client.c | 35 +++++++++++++++++++++++++++++------
->  fs/ceph/mds_client.h |  1 +
->  fs/ceph/quota.c      |  2 +-
->  fs/ceph/snap.c       |  2 +-
->  5 files changed, 33 insertions(+), 9 deletions(-)
->
-> v2: move seq increment and check for closed session into new helper
->
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index c00abd7eefc1..ba0e4f44862c 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -4071,7 +4071,7 @@ void ceph_handle_caps(struct ceph_mds_session *session,
->              vino.snap, inode);
->
->         mutex_lock(&session->s_mutex);
-> -       session->s_seq++;
-> +       inc_session_sequence(session);
->         dout(" mds%d seq %lld cap seq %u\n", session->s_mds, session->s_seq,
->              (unsigned)seq);
->
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 0190555b1f9e..17b94f06826a 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -4237,7 +4237,7 @@ static void handle_lease(struct ceph_mds_client *mdsc,
->              dname.len, dname.name);
->
->         mutex_lock(&session->s_mutex);
-> -       session->s_seq++;
-> +       inc_session_sequence(session);
->
->         if (!inode) {
->                 dout("handle_lease no inode %llx\n", vino.ino);
-> @@ -4384,14 +4384,25 @@ static void maybe_recover_session(struct ceph_mds_client *mdsc)
->         ceph_force_reconnect(fsc->sb);
->  }
->
-> +static bool check_session_closing(struct ceph_mds_session *s)
-> +{
-> +       int ret;
-> +
-> +       if (s->s_state != CEPH_MDS_SESSION_CLOSING)
-> +               return true;
-> +
-> +       dout("resending session close request for mds%d\n", s->s_mds);
-> +       ret = request_close_session(s);
-> +       if (ret < 0)
-> +               pr_err("ceph: Unable to close session to mds %d: %d\n", s->s_mds, ret);
-> +       return false;
-> +}
-> +
->  bool check_session_state(struct ceph_mds_session *s)
->  {
-> -       if (s->s_state == CEPH_MDS_SESSION_CLOSING) {
-> -               dout("resending session close request for mds%d\n",
-> -                               s->s_mds);
-> -               request_close_session(s);
-> +       if (!check_session_closing(s))
+On Mon, Oct 12, 2020 at 05:44:38PM +0100, Matthew Wilcox wrote:
+> On Mon, Oct 12, 2020 at 09:28:29AM -0700, Dave Hansen wrote:
+> > kmap_atomic() is always preferred over kmap()/kmap_thread().
+> > kmap_atomic() is _much_ more lightweight since its TLB invalidation is
+> > always CPU-local and never broadcast.
+> > 
+> > So, basically, unless you *must* sleep while the mapping is in place,
+> > kmap_atomic() is preferred.
+> 
+> But kmap_atomic() disables preemption, so the _ideal_ interface would map
+> it only locally, then on preemption make it global.  I don't even know
+> if that _can_ be done.  But this email makes it seem like kmap_atomic()
+> has no downsides.
 
-Do we actually need it in check_session_state() now?  Given that it is
-conditioned on CEPH_MDS_SESSION_CLOSING and we know check_session_state()
-doesn't get called in that case, it seems like dead code to me.
+And that is IIUC what Thomas was trying to solve.
 
-Thanks,
+Also, Linus brought up that kmap_atomic() has quirks in nesting.[1]
 
-                Ilya
+From what I can see all of these discussions support the need to have something
+between kmap() and kmap_atomic().
+
+However, the reason behind converting call sites to kmap_thread() are different
+between Thomas' patch set and mine.  Both require more kmap granularity.
+However, they do so with different reasons and underlying implementations but
+with the _same_ resulting semantics; a thread local mapping which is
+preemptable.[2]  Therefore they each focus on changing different call sites.
+
+While this patch set is huge I think it serves a valuable purpose to identify a
+large number of call sites which are candidates for this new semantic.
+
+Ira
+
+[1] https://lore.kernel.org/lkml/CAHk-=wgbmwsTOKs23Z=71EBTrULoeaH2U3TNqT2atHEWvkBKdw@mail.gmail.com/
+[2] It is important to note these implementations are not incompatible with
+each other.  So I don't see yet another 'kmap_something()' being required.
