@@ -2,52 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A3D28F654
-	for <lists+ceph-devel@lfdr.de>; Thu, 15 Oct 2020 18:03:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9192928F454
+	for <lists+ceph-devel@lfdr.de>; Thu, 15 Oct 2020 16:06:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389505AbgJOQDX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 15 Oct 2020 12:03:23 -0400
-Received: from edge.kilargo.pl ([77.252.52.110]:54141 "EHLO edge.kilargo.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388357AbgJOQDX (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 15 Oct 2020 12:03:23 -0400
-X-Greylist: delayed 376 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Oct 2020 12:02:54 EDT
-Received: from mail.kilargo.pl (77.252.52.107) by edge.kilargo.pl
- (77.252.52.109) with Microsoft SMTP Server (TLS) id 8.3.485.1; Thu, 15 Oct
- 2020 16:02:01 +0200
-Received: from User (185.248.12.71) by MAIL.kilargo.pl (172.22.0.36) with
- Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 15 Oct 2020 15:26:46 +0200
-Reply-To: <kim.leang2011@yahoo.com>
-From:   Kim Leang <mechanik@kilargo.pl>
-Subject: Greeting! !!   
-Date:   Thu, 15 Oct 2020 16:26:50 +0300
+        id S1730608AbgJOOGd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 15 Oct 2020 10:06:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53726 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729647AbgJOOGd (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 15 Oct 2020 10:06:33 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB24C061755;
+        Thu, 15 Oct 2020 07:06:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Y78eONskpyGlU4hGu9lHbAxkXtJjFWlaahMgdLwji6I=; b=B6ppARpmYwCguqRCWuD1mChED9
+        0Ynel8CZX3dIMkGMZoYbet00r1q6dl7TVFrN72W9mH/FpfN+ODef1K3iXilMVq8tYAYphLYb8/VGu
+        PHTN8gt5nuuzPNOguHRpKav6gSgQOjR75Bkg6sv1yH6A+JtGCEHdNIvQvXxScJftqXb1Cl5dJqpXI
+        XWsI4YqRvnmF6acOelUUYNHxNmT1H3xye3fajByyN9b890hcmz5rUOLamoA+B8N262oSAy21FGroD
+        Gd7AJKsJRntHU6MURMWkyIrel4h2vcq0Zx/DOdYSjq3RJ8SZOnH+Pwj1hcWEpBYRjYMOMGMJ2pwi9
+        u502InRA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kT3tn-0004lO-7n; Thu, 15 Oct 2020 14:06:31 +0000
+Date:   Thu, 15 Oct 2020 15:06:31 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ecryptfs@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-mtd@lists.infradead.org,
+        Richard Weinberger <richard@nod.at>, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v2 01/16] mm: Add AOP_UPDATED_PAGE return value
+Message-ID: <20201015140631.GZ20115@casper.infradead.org>
+References: <20201009143104.22673-1-willy@infradead.org>
+ <20201009143104.22673-2-willy@infradead.org>
+ <20201015090651.GB12879@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-Message-ID: <a9522f27fc284b7fa06a9405e9af3b51@mail.kilargo.pl>
-To:     Undisclosed recipients:;
-X-Originating-IP: [185.248.12.71]
-X-ClientProxiedBy: mail.kilargo.pl (172.22.0.36) To MAIL.kilargo.pl
- (172.22.0.36)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A295AAB9B6B647163
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201015090651.GB12879@infradead.org>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Greeting!
+On Thu, Oct 15, 2020 at 10:06:51AM +0100, Christoph Hellwig wrote:
+> Don't we also need to handle the new return value in a few other places
+> like cachefiles_read_reissue swap_readpage?  Maybe those don't get
+> called on the currently converted instances, but just leaving them
+> without handling AOP_UPDATED_PAGE seems like a time bomb.
 
-I am contacting you to receive and share with me an abandoned fund ( $21,537.000.00 ) left in our bank by a deceased customer. I was going through the Internet search when I found your email address. My name is Mr. Kim Leang.
+Er, right.  And nobh_truncate_page(), and read_page().  And then I
+noticed the bug in cachefiles_read_reissue().  Sigh.
 
-I want to utilize this opportunity and make use of this fund if I should present your name to the bank to stand as his business associate/ trustee for the fund to be released to you via Visa card for easy withdrawals in any VISA ATM machine anywhere in the World.
-
-The bank will also give you international online transfer options. With these you can transfer the funds without any risk.
-
-Should you be interested in working with me in this project? Please reply back and let's benefit from this golden opportunity.You are my first contact. I shall wait a few days and if I do not hear from you, I shall look for another person.
-
-Thanks and have a nice day,
-Mr. Kim Leang.
+Updated patch series coming soon.
