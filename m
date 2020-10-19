@@ -2,110 +2,79 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2365292457
-	for <lists+ceph-devel@lfdr.de>; Mon, 19 Oct 2020 11:07:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49A86292474
+	for <lists+ceph-devel@lfdr.de>; Mon, 19 Oct 2020 11:14:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730160AbgJSJH4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 19 Oct 2020 05:07:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44068 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730142AbgJSJH4 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 19 Oct 2020 05:07:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 0D3F6B299;
-        Mon, 19 Oct 2020 09:07:54 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 665c041e;
-        Mon, 19 Oct 2020 09:07:58 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Eryu Guan <guan@eryu.me>
-Cc:     fstests@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        ceph-devel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Initial CephFS tests (take 2)
-References: <20201007175212.16218-1-lhenriques@suse.de>
-        <20201018104740.GZ3853@desktop>
-Date:   Mon, 19 Oct 2020 10:07:57 +0100
-In-Reply-To: <20201018104740.GZ3853@desktop> (Eryu Guan's message of "Sun, 18
-        Oct 2020 18:47:40 +0800")
-Message-ID: <87sgaa60sy.fsf@suse.de>
+        id S1729935AbgJSJOW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 19 Oct 2020 05:14:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48866 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727235AbgJSJOW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 19 Oct 2020 05:14:22 -0400
+Received: from mail-yb1-xb41.google.com (mail-yb1-xb41.google.com [IPv6:2607:f8b0:4864:20::b41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 724F5C0613CE
+        for <ceph-devel@vger.kernel.org>; Mon, 19 Oct 2020 02:14:22 -0700 (PDT)
+Received: by mail-yb1-xb41.google.com with SMTP id h196so4225390ybg.4
+        for <ceph-devel@vger.kernel.org>; Mon, 19 Oct 2020 02:14:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=4YQO4uInn9rj6KBKnPAeahMlaLs+XTmUHmxpo7DsaPw=;
+        b=c791FMrphiTmOWJbVKdAaC+eSIcYy8Zns0jeR/+hQNkoUzPta7ZSnIt/LL33aUXrI7
+         /dCFWiLyBXlF7zCk3bDqj/qSONewyhOy86h9LHnwQ1+ekDGVAoMbSxq/bl94opeDcI54
+         c+aEj/Ah80uJWZJcXRBY+gIVIuf1qRTg1fqeHMpRe6My0hsn0uEKrUEFykxBJkYFgfKM
+         cV3O0cNqOXjKIRtWZh0nYi8qqBQKfIzOtwMqE4scTvK7CVaE/SNqJ9D0+VVy7pTQpVkc
+         4GiESssO4xS/ll4S8S+a6QEQnRjesGjkBMsOU+n5QPBtvOOf77IbGxVDEHECoUGZxea0
+         03Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=4YQO4uInn9rj6KBKnPAeahMlaLs+XTmUHmxpo7DsaPw=;
+        b=BahF29j+Ver6mZ7FW1UWZxuI7rFaxhVcZw2nxQvAEDiLUMNfKCSFfHYv0jOx2Vv1G6
+         vhMG1BshRN6DNxgHIclxxA+W1LNJNL/X+e7FSUYm0AzMPf53rpybNzQRchjiFy0qwIyj
+         ngN5gjyOXKIRy/eMRmAAZ8CRgiDXcwivwe2SWWT6pjo+/LwUuHjt+xlrpHaKTNI+WGDa
+         07XD4uCCaAVa+KpAzcfC7zD1j8VerWOrA7DWxsh2FCAwMN/yv9EMRX2OnoO76d1427AR
+         6Wrdgd6bN1D0t3CgUcq4rFwW8vaOxFx85tNDnGmgZz3jj4dhJnhpTIhpCvryv3zs/RAq
+         /MBA==
+X-Gm-Message-State: AOAM532Dljs7yn3djZQkkwC2/QpMK8fKvplEjWhVX3QNe2GuC+EcGg0F
+        eu2+vRJKniAQM5Tyk1pxQlVxweoOIbC6pq/xyts=
+X-Google-Smtp-Source: ABdhPJyakkEC0G7QEFXqItAtHIfe29QppLf0VS7zNHZGGmxw28GMOzcqVo1RuSeMHKYOpHoVEK9OqxsBvc+8RkpSvaM=
+X-Received: by 2002:a25:b792:: with SMTP id n18mr21985059ybh.93.1603098861531;
+ Mon, 19 Oct 2020 02:14:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+Reply-To: salif.musa211@gmail.com
+Sender: mary.martin701@gmail.com
+Received: by 2002:a0d:d90f:0:0:0:0:0 with HTTP; Mon, 19 Oct 2020 02:14:21
+ -0700 (PDT)
+From:   Salif Musa <salif.musa212@gmail.com>
+Date:   Mon, 19 Oct 2020 10:14:21 +0100
+X-Google-Sender-Auth: qXHHgwYjedsuuIxoJ2Uojcr00PA
+Message-ID: <CAGL4tm433AhWWespDzrrWjqhUEW5AYyuRP=d-onS=DjTQwXEew@mail.gmail.com>
+Subject: TREAT AS URGENT/ REPLY FOR MORE DETAILS
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Eryu Guan <guan@eryu.me> writes:
-
-> On Wed, Oct 07, 2020 at 06:52:09PM +0100, Luis Henriques wrote:
->> This is my second attempt to have an initial set of ceph-specific tests
->> merged into fstests.  In this patchset I'm pushing a different set of
->> tests, focusing on the copy_file_range testing, although I *do* plan to
->> get back to the quota tests soon.
->
-> I have no knowledge about cephfs, I don't have a cephfs test env either,
-> so I can only comment from fstests' perspect of view. It'd be great if
-> other ceph folks could help review this patchset as well.
->
-> From fstests perspect of view, this patchset looks fine to me, just some
-> minor comments go to individual patch.
-
-Thank you Eryu, for taking some time to review these tests.  Much
-appreciated.  I've gone through all your comments and they all make sense
-to me.  I'll send out v2 shortly, addressing your concerns.
-
->> 
->> This syscall has a few peculiarities in ceph as it is able to use remote
->> object copies without the need to download/upload data from the OSDs.
->> However, in order to take advantage of this remote copy, the copy ranges
->> and sizes need to include at least one object.  Thus, all the currently
->> existing generic tests won't actually take advantage of this feature.
->> 
->> Let me know any comments/concerns about this patchset.  Also note that
->> currently, in order to enable copy_file_range in cephfs, the additional
->> 'copyfrom' mount parameter is required.  (Hopefully this additional param
->
-> I assume '_require_xfs_io_command "copy_range"' will _notrun the test if
-> there's no 'copyfrom' mount option provided, and test won't fail.
-
-So, my cover-letter text was a bit confusing and not very clear about this
-mount option.  These tests will run just fine (and won't fail) even
-without the 'copyfrom' mount option.  The difference is that the copy
-won't be done remotely on the OSDs but rather using a local read+write
-loop (i.e. with the generic VFS copy_file_range implementation).
-'copyfrom' is required only to enable the usage of the OSDs 'COPY_FROM'
-operation.  I'm update the cover-letter text in v2 to clarify this.
-
-Cheers,
 -- 
-Luis
+Hi friend
 
->> may be dropped in the future.)
->> 
->> Luis Henriques (3):
->>   ceph: add copy_file_range (remote copy operation) testing
->>   ceph: test combination of copy_file_range with truncate
->>   ceph: test copy_file_range with infile = outfile
->> 
->>  tests/ceph/001     | 233 +++++++++++++++++++++++++++++++++++++++++++++
->>  tests/ceph/001.out | 129 +++++++++++++++++++++++++
->>  tests/ceph/002     |  74 ++++++++++++++
->>  tests/ceph/002.out |   8 ++
->>  tests/ceph/003     | 118 +++++++++++++++++++++++
->>  tests/ceph/003.out |  11 +++
->>  tests/ceph/group   |   3 +
->>  7 files changed, 576 insertions(+)
->>  create mode 100644 tests/ceph/001
->
-> New test should have file mode 755, i.e. with x bit set. The 'new'
-> script should have done this for you.
->
-> Thanks,
-> Eryu
->
->>  create mode 100644 tests/ceph/001.out
->>  create mode 100644 tests/ceph/002
->>  create mode 100644 tests/ceph/002.out
->>  create mode 100644 tests/ceph/003
->>  create mode 100644 tests/ceph/003.out
->>  create mode 100644 tests/ceph/group
+
+I am a banker in ADB BANK. I want to transfer an abandoned sum of
+USD15.6Million to your Bank account. 40/percent will be your share.
+
+No risk involved but keeps it as secret. Contact me for more details.
+
+I will also use my position and influence to effect legal approvals
+for onward transfer of this money to your account with appropriate
+clearance documents from the ministries and foreign exchange
+department.But, only it will cost us small money as to procure such
+back up documents from the ministries concerned
+Please reply me through my alternative email id only (salif.musa211@gmail.com)
+for confidential reasons.
+
+
+Yours
+Dr Salif Musa
