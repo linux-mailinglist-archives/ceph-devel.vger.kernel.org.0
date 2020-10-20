@@ -2,195 +2,104 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E66D292821
-	for <lists+ceph-devel@lfdr.de>; Mon, 19 Oct 2020 15:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67A7229356A
+	for <lists+ceph-devel@lfdr.de>; Tue, 20 Oct 2020 09:03:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbgJSN1w (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 19 Oct 2020 09:27:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55672 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728214AbgJSN1w (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 19 Oct 2020 09:27:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id DCAE4AD6B;
-        Mon, 19 Oct 2020 13:27:50 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id ab6b6be4;
-        Mon, 19 Oct 2020 13:27:54 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     fstests@vger.kernel.org
-Cc:     Eryu Guan <guan@eryu.me>, Jeff Layton <jlayton@kernel.org>,
-        ceph-devel@vger.kernel.org, Luis Henriques <lhenriques@suse.com>
-Subject: [PATCH v2 3/3] ceph: test copy_file_range with infile = outfile
-Date:   Mon, 19 Oct 2020 14:27:50 +0100
-Message-Id: <20201019132750.29293-4-lhenriques@suse.de>
-In-Reply-To: <20201019132750.29293-1-lhenriques@suse.de>
-References: <20201019132750.29293-1-lhenriques@suse.de>
+        id S2404706AbgJTHDp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 20 Oct 2020 03:03:45 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57951 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727623AbgJTHDp (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 20 Oct 2020 03:03:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603177424;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pXz1IvHnW/UY742o70tL2os1W+vK9fLKapZGqHPnQgw=;
+        b=R7Gor+e1PkRWw8hL89o51wvALPOfdk5ZQ3h9K6oknErtpUzv5aX8AcGZJ05396MeRQewyj
+        MAXDeXDx3aZi5lbOvWB1uSCr88LN5Hbs/W97FsUUmoiUIoEoJzU3lYhVZChc6dYQXh287B
+        foNqlqP4k4eRvvGj3okLVRvwcVyCHHo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-97-WcuWZFYOO7KJY_hyu3DGRA-1; Tue, 20 Oct 2020 03:03:42 -0400
+X-MC-Unique: WcuWZFYOO7KJY_hyu3DGRA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 22E46802B79;
+        Tue, 20 Oct 2020 07:03:41 +0000 (UTC)
+Received: from [10.72.12.141] (ovpn-12-141.pek2.redhat.com [10.72.12.141])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 34A966EF6E;
+        Tue, 20 Oct 2020 07:03:38 +0000 (UTC)
+Subject: Re: [PATCH v4 0/5] ceph: fix spurious recover_session=clean errors
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, ukernel@gmail.com, pdonnell@redhat.com
+References: <20201007121700.10489-1-jlayton@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <ea6d5fb1-cbad-0478-e165-b7eb32927ede@redhat.com>
+Date:   Tue, 20 Oct 2020 15:03:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201007121700.10489-1-jlayton@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Luis Henriques <lhenriques@suse.com>
+On 2020/10/7 20:16, Jeff Layton wrote:
+> v4: test for CEPH_MOUNT_RECOVER in more places
+> v3: add RECOVER mount_state and allow dumping pagecache when it's set
+>      shrink size of mount_state field
+> v2: fix handling of async requests in patch to queue requests
+>
+> This is the fourth revision of this patchset. The main difference from
+> v3 is that this one converts more "==" tests for SHUTDOWN state into
+> ">=", so that the RECOVER state is treated the same way.
+>
+> Original cover letter:
+>
+> Ilya noticed that he would get spurious EACCES errors on calls done just
+> after blocklisting the client on mounts with recover_session=clean. The
+> session would get marked as REJECTED and that caused in-flight calls to
+> die with EACCES. This patchset seems to smooth over the problem, but I'm
+> not fully convinced it's the right approach.
+>
+> The potential issue I see is that the client could take cap references to
+> do a call on a session that has been blocklisted. We then queue the
+> message and reestablish the session, but we may not have been granted
+> the same caps by the MDS at that point.
+>
+> If this is a problem, then we probably need to rework it so that we
+> return a distinct error code in this situation and have the upper layers
+> issue a completely new mds request (with new cap refs, etc.)
+>
+> Obviously, that's a much more invasive approach though, so it would be
+> nice to avoid that if this would suffice.
+>
+> Jeff Layton (5):
+>    ceph: don't WARN when removing caps due to blocklisting
+>    ceph: make fsc->mount_state an int
+>    ceph: add new RECOVER mount_state when recovering session
+>    ceph: remove timeout on allowing reconnect after blocklisting
+>    ceph: queue MDS requests to REJECTED sessions when CLEANRECOVER is set
+>
+>   fs/ceph/addr.c               |  4 ++--
+>   fs/ceph/caps.c               |  4 ++--
+>   fs/ceph/inode.c              |  2 +-
+>   fs/ceph/mds_client.c         | 27 ++++++++++++++++-----------
+>   fs/ceph/super.c              | 14 ++++++++++----
+>   fs/ceph/super.h              |  3 +--
+>   include/linux/ceph/libceph.h |  1 +
+>   7 files changed, 33 insertions(+), 22 deletions(-)
+>
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
 
-This runs a set of simple tests where the infile file is the same as the
-outfile.
 
-Signed-off-by: Luis Henriques <lhenriques@suse.com>
----
- tests/ceph/003     | 116 +++++++++++++++++++++++++++++++++++++++++++++
- tests/ceph/003.out |  11 +++++
- tests/ceph/group   |   1 +
- 3 files changed, 128 insertions(+)
- create mode 100755 tests/ceph/003
- create mode 100644 tests/ceph/003.out
 
-diff --git a/tests/ceph/003 b/tests/ceph/003
-new file mode 100755
-index 000000000000..6a5a4ea429f8
---- /dev/null
-+++ b/tests/ceph/003
-@@ -0,0 +1,116 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (C) 2020 SUSE Linux Products GmbH. All Rights Reserved.
-+#
-+# FS QA Test No. ceph/005
-+#
-+# Test copy_file_range with infile = outfile
-+#
-+seq=`basename $0`
-+seqres=$RESULT_DIR/$seq
-+echo "QA output created by $seq"
-+
-+here=`pwd`
-+tmp=/tmp/$$
-+status=1    # failure is the default!
-+trap "_cleanup; exit \$status" 0 1 2 3 15
-+
-+_cleanup()
-+{
-+	cd /
-+	rm -rf $tmp.*
-+}
-+
-+# get standard environment
-+. common/rc
-+. common/filter
-+. common/attr
-+. common/reflink
-+
-+# real QA test starts here
-+_supported_fs ceph
-+
-+_require_xfs_io_command "copy_range"
-+_require_attrs
-+_require_test
-+
-+workdir=$TEST_DIR/test-$seq
-+rm -rf $workdir
-+mkdir $workdir
-+rm -f $seqres.full
-+
-+check_range()
-+{
-+	local file=$1
-+	local off0=$2
-+	local off1=$3
-+	local val=$4
-+	_read_range $file $off0 $off1 | grep -v -q $val
-+	[ $? -eq 0 ] && echo "file $file is not '$val' in [ $off0 $off1 ]"
-+}
-+
-+objsz=4194304
-+halfobj=$(($objsz / 2))
-+file="$workdir/file-$objsz"
-+copy="$workdir/copy-$objsz"
-+dest="$workdir/dest-$objsz"
-+backup="$file.backup"
-+
-+# object_size has to be a multiple of stripe_unit
-+_ceph_create_file_layout $file $objsz 1 $objsz
-+_ceph_create_file_layout $backup $objsz 1 $objsz
-+
-+$XFS_IO_PROG -c "pwrite -S 0x61 0 $objsz" $file >> $seqres.full 2>&1
-+$XFS_IO_PROG -c "pwrite -S 0x62 $objsz $objsz" $file >> $seqres.full 2>&1
-+$XFS_IO_PROG -c "pwrite -S 0x63 $(($objsz * 2)) $objsz" $file >> $seqres.full 2>&1
-+
-+cp $file $backup
-+
-+echo "  Copy single object to the end:"
-+echo "    aaaa|bbbb|cccc => aaaa|bbbb|aaaa"
-+$XFS_IO_PROG -c "copy_range -s 0 -d $(($objsz * 2)) -l $objsz $file" "$file"
-+check_range $file 0 $objsz 61
-+check_range $file $objsz $objsz 62
-+check_range $file $(($objsz * 2)) $objsz 61
-+
-+echo "  Copy single object to the beginning:"
-+echo "    aaaa|bbbb|aaaa => bbbb|bbbb|aaaa"
-+$XFS_IO_PROG -c "copy_range -s $objsz -d 0 -l $objsz $file" "$file"
-+check_range $file 0 $(($objsz * 2)) 62
-+check_range $file $(($objsz * 2)) $objsz 61
-+
-+echo "  Copy single object to the middle:"
-+echo "    bbbb|bbbb|aaaa => bbbb|aaaa|aaaa"
-+$XFS_IO_PROG -c "copy_range -s $(($objsz * 2)) -d $objsz -l $objsz $file" "$file"
-+check_range $file 0 $objsz 62
-+check_range $file $objsz $(($objsz * 2)) 61
-+
-+cp $backup $file
-+echo "  Cross object boundary (no full object copy)"
-+echo "    aaaa|bbbb|cccc => aaaa|bbaa|aacc"
-+$XFS_IO_PROG -c "copy_range -s 0 -d $(($objsz + $halfobj)) -l $objsz $file" "$file"
-+check_range $file 0 $objsz 61
-+check_range $file $objsz $halfobj 62
-+check_range $file $(($objsz + $halfobj)) $objsz 61
-+check_range $file $(($objsz * 2 + $halfobj)) $halfobj 63
-+
-+cp $backup $file
-+echo "    aaaa|bbbb|cccc => aaaa|bbaa|bbcc"
-+$XFS_IO_PROG -c "copy_range -s $halfobj -d $(($objsz + $halfobj)) -l $objsz $file" "$file"
-+check_range $file 0 $objsz 61
-+check_range $file $objsz $halfobj 62
-+check_range $file $(($objsz + $halfobj)) $halfobj 61
-+check_range $file $(($objsz * 2)) $halfobj 62
-+check_range $file $(($objsz * 2 + $halfobj)) $halfobj 63
-+
-+cp $backup $file
-+echo "    aaaa|bbbb|cccc => aaaa|bbbb|aabb"
-+$XFS_IO_PROG -c "copy_range -s $halfobj -d $(($objsz * 2)) -l $objsz $file" "$file"
-+check_range $file 0 $objsz 61
-+check_range $file $objsz $objsz 62
-+check_range $file $(($objsz * 2)) $halfobj 61
-+check_range $file $(($objsz * 2 + $halfobj)) $halfobj 62
-+
-+#success, all done
-+status=0
-+exit
-diff --git a/tests/ceph/003.out b/tests/ceph/003.out
-new file mode 100644
-index 000000000000..76c83b265253
---- /dev/null
-+++ b/tests/ceph/003.out
-@@ -0,0 +1,11 @@
-+QA output created by 003
-+  Copy single object to the end:
-+    aaaa|bbbb|cccc => aaaa|bbbb|aaaa
-+  Copy single object to the beginning:
-+    aaaa|bbbb|aaaa => bbbb|bbbb|aaaa
-+  Copy single object to the middle:
-+    bbbb|bbbb|aaaa => bbbb|aaaa|aaaa
-+  Cross object boundary (no full object copy)
-+    aaaa|bbbb|cccc => aaaa|bbaa|aacc
-+    aaaa|bbbb|cccc => aaaa|bbaa|bbcc
-+    aaaa|bbbb|cccc => aaaa|bbbb|aabb
-diff --git a/tests/ceph/group b/tests/ceph/group
-index c28fe473c1a4..adbf61547766 100644
---- a/tests/ceph/group
-+++ b/tests/ceph/group
-@@ -1,2 +1,3 @@
- 001 auto quick copy
- 002 auto quick copy
-+003 auto quick copy
