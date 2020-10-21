@@ -2,113 +2,142 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99C4329446A
-	for <lists+ceph-devel@lfdr.de>; Tue, 20 Oct 2020 23:16:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BEAD29477C
+	for <lists+ceph-devel@lfdr.de>; Wed, 21 Oct 2020 06:51:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409798AbgJTVQx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 20 Oct 2020 17:16:53 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:25150 "EHLO
+        id S2440251AbgJUEum (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 21 Oct 2020 00:50:42 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:43694 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2409790AbgJTVQw (ORCPT
+        by vger.kernel.org with ESMTP id S2440248AbgJUEul (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 20 Oct 2020 17:16:52 -0400
+        Wed, 21 Oct 2020 00:50:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603228611;
+        s=mimecast20190719; t=1603255839;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=FxZYvtpopXhpuV6m2NWe6jIRFmXZuXG645Bq6d4oQD0=;
-        b=Lf3wumlDqiUk/A6OHiL6Q4VQ0BuNjJaREHuZBYdD0qp3vRacTUR/QJ2WSftrPWSsi20QTf
-        NZbAw8gnJAGjEBROVRMEdQ4lbIe0rhKF6eq5AE5eXbDbqH4889jTO9KR0yWBruEyzfzo1w
-        0LhIYBjD0QmZmP+cDaXDE/I9/UzUfD4=
+         to:to:cc:cc; bh=FJPDeMYPXTTFTriL0M1dOnxYKgacmKn87z/5eYombyU=;
+        b=E9wOy9lXorj8jylImzbf8EmftxkcLAxDCxpWGfrvStSwLiSNOqNagEIPTgaAt5N+UMgLro
+        ofGUi5VyxmD2cnLB2lsR7MqOL0Mr5MqXAozA009INRnJkEA25ElZAzcYvmsAB5NgsCOpP4
+        STYCEV+d+6Z/Qt+wW9YLtSugXfhW+Qw=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-448-4QGa2-rlNUKaRRolosLWDQ-1; Tue, 20 Oct 2020 17:16:43 -0400
-X-MC-Unique: 4QGa2-rlNUKaRRolosLWDQ-1
+ us-mta-327-m_SN_6qnNJmsaRq84x82lA-1; Wed, 21 Oct 2020 00:50:35 -0400
+X-MC-Unique: m_SN_6qnNJmsaRq84x82lA-1
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5D3CE879517;
-        Tue, 20 Oct 2020 21:16:42 +0000 (UTC)
-Received: from [10.10.118.237] (ovpn-118-237.rdu2.redhat.com [10.10.118.237])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BB3665C1C2;
-        Tue, 20 Oct 2020 21:16:41 +0000 (UTC)
-Subject: v14.2.12 Nautilus released
-From:   David Galloway <dgallowa@redhat.com>
-To:     ceph-announce@ceph.io, ceph-users@ceph.io, dev@ceph.io,
-        ceph-devel <ceph-devel@vger.kernel.org>, ceph-maintainers@ceph.io
-References: <d21c2b58-1191-5e5f-3df1-a84d42750b48@redhat.com>
-Autocrypt: addr=dgallowa@redhat.com; prefer-encrypt=mutual; keydata=
- xsBNBE60O2sBCADafZy0luRceto63vARvurZ7oepCBc+yBiDHHcFLmdZLs0nugjyYa1V1WW/
- j/tMPkjmQPGT1IcoXIrhppUXKrwXMkK4JB56GHI3cdximVuRMmHCY45ZbmAL7YnuNXz+5jbs
- iuzarsc9W3SyovQUx9n1lUymk1lASaPfNVdgzxl0/FHpKMhEqJGo0eQPh8o5M+ybZS9zXKNa
- QPiXJKLiHuise1hP4529ZTExjCqk+R3x6y7YwySKSFUhEVwY7ksU0rr/Xv5VVEsrLgS4nENe
- u9UQvJq2hp+RhgBH0ZV9+jLgwoYxjqbifJDlghbDPe7rhAfiD/xvoQFgAy/AOkVPRKHVABEB
- AAHNJERhdmlkIEdhbGxvd2F5IDxkZ2FsbG93YUByZWRoYXQuY29tPsLAdwQTAQgAIQUCVfr6
- SAIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgAAKCRA4J2vQ1bgO+m5hB/kBOH7I2uhhhvGH
- BzGFKSh/1C9NO8ECg5N//b7xu9EtQfoVgNODTYqpG0mhH9phV7Cvld5gAlX3YV/m4lgDwJH9
- 5fcNB2x7M6OEY2kOI20DxBKxVDmamhmQLQzm2ZFqbfHwh/H6zq3jdXWCbp8LQ9uvta5qbsFp
- rU4sVg2AhKAPrvr2JoO7MLVCdNfRhwdJFwvxlc6ltilateChU5dHpy2/2aSM3794VLZXQZkD
- Ei5PIc9XrXOKqqpbwMuizlh/tNA0O1a3jY8ccl9rYpCyELa9nfGw1HxXmfj8hMtndf077Bat
- 7AxNyUoLu8+C9vD2F0oqXGumYCkcXIoSyiDAPY2IzsBNBE60O2sBCADlXsFRIss3rM3IW9dK
- 8084c3kktyOyA0JO4cQtXglGVvmALIaqxLlQ8qabibmRgdozjh5YsYFIQwBasmD+0rZVEi7W
- OMc1pO/dbwAzlhzfmbAvkvzctB4CS2MP6RLkGR9MquiLAAWdfOiRoKeNkgSup8VlSPrvlXwF
- qsolEbH14LJGtJBF3uRUrhieyV+dQ5wE/UJCmuN/m1KWlZmcUeDbTefNM/NaWxSdycu27QyL
- PBMIS9bDHPoPAaPjRKoMr80aYbHLZxiXPXlP3wyfirWiN5jqL2mjcCqGqzAC2IPuWftD4oHr
- P+3w6cBi1noh1ps76iD37IUsU8tZgTX5sE8RABEBAAHCwF8EGAECAAkFAk60O2sCGwwACgkQ
- OCdr0NW4Dvq5ywf/ZEVxP1LOUnkab+B8ZDQs6L66bBMMuWaoUKp9ngdpSqKfSy6YnbmshKaE
- SkNBNlpVpdOweSBPnLx4ss2sksLwDxrQTxW71Zui67mUbdurhlkbsG1pM4c1sAcdqa7xG6nB
- +fkpwgn9bcvv3qQGuKDwit6fdIVnPRJckM1T8w8d0yG+0uNSzOhwKI6h8E0Za2ESLmTyfkr1
- FtSVF86xVAGMI8jMiccCzKfOlkP89ND84r5EDzeATa3Imv7xKCgcIlSuMQKk45506NFPQQlP
- nCTgp61XOM4EWjembxD6lWBXHltcm3K1dXvf3JbAxG7v2BSd0hRhnXfQdZoAzRJwYIHh2Q==
-Message-ID: <e9160fd6-8663-5f3e-7f9f-ef2ac7f2c529@redhat.com>
-Date:   Tue, 20 Oct 2020 17:16:40 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <d21c2b58-1191-5e5f-3df1-a84d42750b48@redhat.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 69FDC8049DF;
+        Wed, 21 Oct 2020 04:50:34 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (vm37-120.gsslab.pek2.redhat.com [10.72.37.120])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 099A75C1BB;
+        Wed, 21 Oct 2020 04:50:31 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, zyan@redhat.com, pdonnell@redhat.com,
+        vshankar@redhat.com, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: send dentry lease metrics to MDS daemon
+Date:   Wed, 21 Oct 2020 00:50:24 -0400
+Message-Id: <20201021045024.44437-1-xiubli@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-This is the 12th backport release in the Nautilus series. This release
-brings a number of bugfixes across all major components of Ceph. We
-recommend that all Nautilus users upgrade to this release. For a
-detailed release notes with links & changelog please
-refer to the official blog entry at
-https://ceph.io/releases/v14-2-12-nautilus-released
+From: Xiubo Li <xiubli@redhat.com>
 
+For the old ceph version, if it received this one metric message
+containing the dentry lease metric info, it will just ignore it.
 
-Notable Changes
----------------
-* The `ceph df` command now lists the number of pgs in each pool.
+URL: https://tracker.ceph.com/issues/43423
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/metric.c | 18 +++++++++++++++---
+ fs/ceph/metric.h | 14 ++++++++++++++
+ 2 files changed, 29 insertions(+), 3 deletions(-)
 
-* Monitors now have a config option `mon_osd_warn_num_repaired`, 10 by
-default. If any OSD has repaired more than this many I/O errors in
-stored data a `OSD_TOO_MANY_REPAIRS` health warning is generated. In
-order to allow clearing of the warning, a new command `ceph tell osd.#
-clear_shards_repaired [count]` has been added. By default it will set
-the repair count to 0. If you wanted to be warned again if additional
-repairs are performed you can provide a value to the command and specify
-the value of `mon_osd_warn_num_repaired`. This command will be replaced
-in future releases by the health mute/unmute feature.
-
-* It is now possible to specify the initial monitor to contact for Ceph
-tools and daemons using the `mon_host_override` config option or
-`--mon-host-override <ip>` command-line switch. This generally should
-only be used for debugging and only affects initial communication with
-Ceph’s monitor cluster.
-
-
-Getting Ceph
-------------
-* Git at git://github.com/ceph/ceph.git
-* Tarball at http://download.ceph.com/tarballs/ceph-14.2.12.tar.gz
-* For packages, see http://docs.ceph.com/docs/master/install/get-packages/
-* Release git sha1: 2f3caa3b8b3d5c5f2719a1e9d8e7deea5ae1a5c6
+diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
+index fee4c4778313..06729cbfabee 100644
+--- a/fs/ceph/metric.c
++++ b/fs/ceph/metric.c
+@@ -16,6 +16,7 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+ 	struct ceph_metric_read_latency *read;
+ 	struct ceph_metric_write_latency *write;
+ 	struct ceph_metric_metadata_latency *meta;
++	struct ceph_metric_dlease *dlease;
+ 	struct ceph_client_metric *m = &mdsc->metric;
+ 	u64 nr_caps = atomic64_read(&m->total_caps);
+ 	struct ceph_msg *msg;
+@@ -25,7 +26,7 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+ 	s32 len;
+ 
+ 	len = sizeof(*head) + sizeof(*cap) + sizeof(*read) + sizeof(*write)
+-	      + sizeof(*meta);
++	      + sizeof(*meta) + sizeof(*dlease);
+ 
+ 	msg = ceph_msg_new(CEPH_MSG_CLIENT_METRICS, len, GFP_NOFS, true);
+ 	if (!msg) {
+@@ -42,8 +43,8 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+ 	cap->ver = 1;
+ 	cap->compat = 1;
+ 	cap->data_len = cpu_to_le32(sizeof(*cap) - 10);
+-	cap->hit = cpu_to_le64(percpu_counter_sum(&mdsc->metric.i_caps_hit));
+-	cap->mis = cpu_to_le64(percpu_counter_sum(&mdsc->metric.i_caps_mis));
++	cap->hit = cpu_to_le64(percpu_counter_sum(&m->i_caps_hit));
++	cap->mis = cpu_to_le64(percpu_counter_sum(&m->i_caps_mis));
+ 	cap->total = cpu_to_le64(nr_caps);
+ 	items++;
+ 
+@@ -83,6 +84,17 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+ 	meta->nsec = cpu_to_le32(ts.tv_nsec);
+ 	items++;
+ 
++	/* encode the dentry lease metric */
++	dlease = (struct ceph_metric_dlease *)(meta + 1);
++	dlease->type = cpu_to_le32(CLIENT_METRIC_TYPE_DENTRY_LEASE);
++	dlease->ver = 1;
++	dlease->compat = 1;
++	dlease->data_len = cpu_to_le32(sizeof(*dlease) - 10);
++	dlease->hit = cpu_to_le64(percpu_counter_sum(&m->d_lease_hit));
++	dlease->mis = cpu_to_le64(percpu_counter_sum(&m->d_lease_mis));
++	dlease->total = atomic64_read(&m->total_dentries),
++	items++;
++
+ 	put_unaligned_le32(items, &head->num);
+ 	msg->front.iov_len = len;
+ 	msg->hdr.version = cpu_to_le16(1);
+diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
+index 710f3f1dceab..af6038ff39d4 100644
+--- a/fs/ceph/metric.h
++++ b/fs/ceph/metric.h
+@@ -27,6 +27,7 @@ enum ceph_metric_type {
+ 	CLIENT_METRIC_TYPE_READ_LATENCY,	\
+ 	CLIENT_METRIC_TYPE_WRITE_LATENCY,	\
+ 	CLIENT_METRIC_TYPE_METADATA_LATENCY,	\
++	CLIENT_METRIC_TYPE_DENTRY_LEASE,	\
+ 						\
+ 	CLIENT_METRIC_TYPE_MAX,			\
+ }
+@@ -80,6 +81,19 @@ struct ceph_metric_metadata_latency {
+ 	__le32 nsec;
+ } __packed;
+ 
++/* metric dentry lease header */
++struct ceph_metric_dlease {
++	__le32 type;     /* ceph metric type */
++
++	__u8  ver;
++	__u8  compat;
++
++	__le32 data_len; /* length of sizeof(hit + mis + total) */
++	__le64 hit;
++	__le64 mis;
++	__le64 total;
++} __packed;
++
+ struct ceph_metric_head {
+ 	__le32 num;	/* the number of metrics that will be sent */
+ } __packed;
+-- 
+2.18.4
 
