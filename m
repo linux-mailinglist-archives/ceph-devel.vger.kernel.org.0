@@ -2,142 +2,159 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BEAD29477C
-	for <lists+ceph-devel@lfdr.de>; Wed, 21 Oct 2020 06:51:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 500D3294DB2
+	for <lists+ceph-devel@lfdr.de>; Wed, 21 Oct 2020 15:37:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440251AbgJUEum (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 21 Oct 2020 00:50:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:43694 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2440248AbgJUEul (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 21 Oct 2020 00:50:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603255839;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=FJPDeMYPXTTFTriL0M1dOnxYKgacmKn87z/5eYombyU=;
-        b=E9wOy9lXorj8jylImzbf8EmftxkcLAxDCxpWGfrvStSwLiSNOqNagEIPTgaAt5N+UMgLro
-        ofGUi5VyxmD2cnLB2lsR7MqOL0Mr5MqXAozA009INRnJkEA25ElZAzcYvmsAB5NgsCOpP4
-        STYCEV+d+6Z/Qt+wW9YLtSugXfhW+Qw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-327-m_SN_6qnNJmsaRq84x82lA-1; Wed, 21 Oct 2020 00:50:35 -0400
-X-MC-Unique: m_SN_6qnNJmsaRq84x82lA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 69FDC8049DF;
-        Wed, 21 Oct 2020 04:50:34 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (vm37-120.gsslab.pek2.redhat.com [10.72.37.120])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 099A75C1BB;
-        Wed, 21 Oct 2020 04:50:31 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, zyan@redhat.com, pdonnell@redhat.com,
-        vshankar@redhat.com, ceph-devel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: send dentry lease metrics to MDS daemon
-Date:   Wed, 21 Oct 2020 00:50:24 -0400
-Message-Id: <20201021045024.44437-1-xiubli@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+        id S2410309AbgJUNhn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 21 Oct 2020 09:37:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57072 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2410096AbgJUNhn (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 21 Oct 2020 09:37:43 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4AEFC0613CE;
+        Wed, 21 Oct 2020 06:37:42 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id x1so2638545eds.1;
+        Wed, 21 Oct 2020 06:37:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=45aC3rTsEhmk30k5J9dX/iwdZ2Yvj9W2pU9MupQKvp8=;
+        b=FSL/MunJ9oduMmUQw7nsehTphMC6L1EzRqhTrQAx9FX92S5VdYp1hsLJqPr08yScC8
+         RNdFZyrT/+BAtxdS0efL5hBHx69rX7Nh4FsysO8BE+00PBZpAvazYnrUSIZxIGiXqXlN
+         s5QA0dFWuBW67p7MOYwHgcqbt43tibLPjZQi3VHHfjxEZR1cxNL/GpiyJ6JqgOKUEwvt
+         vV7r7LTk6CABrHRVOsO+VeI+ZsFzb17J+/Fn+L0JJen2OPRQfJuRwCwgmMEKpVNLo/VY
+         TNzilSzUcFK+ntcPSW0PwhTnDfIbEO+PYaS+aEOSda28gCgsLQ2yPjvO7fAaF/VnkBJF
+         3++A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=45aC3rTsEhmk30k5J9dX/iwdZ2Yvj9W2pU9MupQKvp8=;
+        b=VRNKJBkw4Yfy5A8GpZP85/1Z9qez+VH6SPxwWT3+fHBJrYfbemrXvqlKTNDkROV62V
+         5Vd8jy7EIVA3qlRGP/zfODH36vu8wKU4mAPzcvnUQIalRfNuGpBKD0rXtrTPLxdr6M2Q
+         I4x4n5PMOHtwIm5Vd+FmVARHIH/8L/rT9lTUpNeAmYnMYsOt+KMGxEsHuVtHZTI+UuP3
+         XiDKXG/MhEJeGNnMR7YTbOU/UBnkMnu5pGIjAqTeQEcs7vok7qoRR2XIto7S9cFyxPNR
+         ifli+Bj7IgFHvJq/g7xrsiJYkIvEXOTG6QzEFE+aVgEMFOrmNoaNLZ497hkJjjqUKlOx
+         UcQg==
+X-Gm-Message-State: AOAM530cHI1bDMf9hEWWzze2MN/KKwwwGZSVvCLsCs1BuoytU3SfY7Iz
+        5+/SkjDn0w1MOMxhU2OvII1Uy30MQm0=
+X-Google-Smtp-Source: ABdhPJyp6OU6dRJi4afEq5K94EJocXXl69vjZ+cqkdTDtZaTBf33Dk3hYo5kuoVobUn/ujx/Sdl3uA==
+X-Received: by 2002:aa7:c305:: with SMTP id l5mr3022875edq.364.1603287461558;
+        Wed, 21 Oct 2020 06:37:41 -0700 (PDT)
+Received: from kwango.local (ip-94-112-132-16.net.upcbroadband.cz. [94.112.132.16])
+        by smtp.gmail.com with ESMTPSA id p24sm2078761edq.35.2020.10.21.06.37.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Oct 2020 06:37:40 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph updates for 5.10-rc1
+Date:   Wed, 21 Oct 2020 15:37:33 +0200
+Message-Id: <20201021133733.22298-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+Hi Linus,
 
-For the old ceph version, if it received this one metric message
-containing the dentry lease metric info, it will just ignore it.
+The following changes since commit bbf5c979011a099af5dc76498918ed7df445635b:
 
-URL: https://tracker.ceph.com/issues/43423
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/metric.c | 18 +++++++++++++++---
- fs/ceph/metric.h | 14 ++++++++++++++
- 2 files changed, 29 insertions(+), 3 deletions(-)
+  Linux 5.9 (2020-10-11 14:15:50 -0700)
 
-diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
-index fee4c4778313..06729cbfabee 100644
---- a/fs/ceph/metric.c
-+++ b/fs/ceph/metric.c
-@@ -16,6 +16,7 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
- 	struct ceph_metric_read_latency *read;
- 	struct ceph_metric_write_latency *write;
- 	struct ceph_metric_metadata_latency *meta;
-+	struct ceph_metric_dlease *dlease;
- 	struct ceph_client_metric *m = &mdsc->metric;
- 	u64 nr_caps = atomic64_read(&m->total_caps);
- 	struct ceph_msg *msg;
-@@ -25,7 +26,7 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
- 	s32 len;
- 
- 	len = sizeof(*head) + sizeof(*cap) + sizeof(*read) + sizeof(*write)
--	      + sizeof(*meta);
-+	      + sizeof(*meta) + sizeof(*dlease);
- 
- 	msg = ceph_msg_new(CEPH_MSG_CLIENT_METRICS, len, GFP_NOFS, true);
- 	if (!msg) {
-@@ -42,8 +43,8 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
- 	cap->ver = 1;
- 	cap->compat = 1;
- 	cap->data_len = cpu_to_le32(sizeof(*cap) - 10);
--	cap->hit = cpu_to_le64(percpu_counter_sum(&mdsc->metric.i_caps_hit));
--	cap->mis = cpu_to_le64(percpu_counter_sum(&mdsc->metric.i_caps_mis));
-+	cap->hit = cpu_to_le64(percpu_counter_sum(&m->i_caps_hit));
-+	cap->mis = cpu_to_le64(percpu_counter_sum(&m->i_caps_mis));
- 	cap->total = cpu_to_le64(nr_caps);
- 	items++;
- 
-@@ -83,6 +84,17 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
- 	meta->nsec = cpu_to_le32(ts.tv_nsec);
- 	items++;
- 
-+	/* encode the dentry lease metric */
-+	dlease = (struct ceph_metric_dlease *)(meta + 1);
-+	dlease->type = cpu_to_le32(CLIENT_METRIC_TYPE_DENTRY_LEASE);
-+	dlease->ver = 1;
-+	dlease->compat = 1;
-+	dlease->data_len = cpu_to_le32(sizeof(*dlease) - 10);
-+	dlease->hit = cpu_to_le64(percpu_counter_sum(&m->d_lease_hit));
-+	dlease->mis = cpu_to_le64(percpu_counter_sum(&m->d_lease_mis));
-+	dlease->total = atomic64_read(&m->total_dentries),
-+	items++;
-+
- 	put_unaligned_le32(items, &head->num);
- 	msg->front.iov_len = len;
- 	msg->hdr.version = cpu_to_le16(1);
-diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
-index 710f3f1dceab..af6038ff39d4 100644
---- a/fs/ceph/metric.h
-+++ b/fs/ceph/metric.h
-@@ -27,6 +27,7 @@ enum ceph_metric_type {
- 	CLIENT_METRIC_TYPE_READ_LATENCY,	\
- 	CLIENT_METRIC_TYPE_WRITE_LATENCY,	\
- 	CLIENT_METRIC_TYPE_METADATA_LATENCY,	\
-+	CLIENT_METRIC_TYPE_DENTRY_LEASE,	\
- 						\
- 	CLIENT_METRIC_TYPE_MAX,			\
- }
-@@ -80,6 +81,19 @@ struct ceph_metric_metadata_latency {
- 	__le32 nsec;
- } __packed;
- 
-+/* metric dentry lease header */
-+struct ceph_metric_dlease {
-+	__le32 type;     /* ceph metric type */
-+
-+	__u8  ver;
-+	__u8  compat;
-+
-+	__le32 data_len; /* length of sizeof(hit + mis + total) */
-+	__le64 hit;
-+	__le64 mis;
-+	__le64 total;
-+} __packed;
-+
- struct ceph_metric_head {
- 	__le32 num;	/* the number of metrics that will be sent */
- } __packed;
--- 
-2.18.4
+are available in the Git repository at:
 
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.10-rc1
+
+for you to fetch changes up to 28e1581c3b4ea5f98530064a103c6217bedeea73:
+
+  libceph: clear con->out_msg on Policy::stateful_server faults (2020-10-12 15:29:27 +0200)
+
+----------------------------------------------------------------
+We have:
+
+- a patch that removes crush_workspace_mutex (myself).  CRUSH
+  computations are no longer serialized and can run in parallel.
+
+- a couple new filesystem client metrics for "ceph fs top" command
+  (Xiubo Li)
+
+- a fix for a very old messenger bug that affected the filesystem,
+  marked for stable (myself)
+
+- assorted fixups and cleanups throughout the codebase from Jeff
+  and others.
+
+----------------------------------------------------------------
+Ilya Dryomov (9):
+      libceph: multiple workspaces for CRUSH computations
+      libceph, rbd, ceph: "blacklist" -> "blocklist"
+      libceph: switch to the new "osd blocklist add" command
+      ceph: add a note explaining session reject error string
+      ceph: mark ceph_fmt_xattr() as printf-like for better type checking
+      libceph: move a dout in queue_con_delay()
+      libceph: fix ENTITY_NAME format suggestion
+      libceph: format ceph_entity_addr nonces as unsigned
+      libceph: clear con->out_msg on Policy::stateful_server faults
+
+Jeff Layton (12):
+      ceph: drop special-casing for ITER_PIPE in ceph_sync_read
+      ceph: use kill_anon_super helper
+      ceph: have ceph_writepages_start call pagevec_lookup_range_tag
+      ceph: break out writeback of incompatible snap context to separate function
+      ceph: don't call ceph_update_writeable_page from page_mkwrite
+      ceph: fold ceph_sync_readpages into ceph_readpage
+      ceph: fold ceph_sync_writepages into writepage_nounlock
+      ceph: fold ceph_update_writeable_page into ceph_write_begin
+      ceph: don't SetPageError on readpage errors
+      ceph: drop separate mdsc argument from __send_cap
+      ceph: break up send_cap_msg
+      ceph: comment cleanups and clarifications
+
+Luis Henriques (1):
+      ceph: remove unnecessary return in switch statement
+
+Matthew Wilcox (Oracle) (1):
+      ceph: promote to unsigned long long before shifting
+
+Xiubo Li (2):
+      ceph: add ceph_sb_to_mdsc helper support to parse the mdsc
+      ceph: metrics for opened files, pinned caps and opened inodes
+
+Yan, Zheng (1):
+      ceph: encode inodes' parent/d_name in cap reconnect message
+
+Yanhu Cao (1):
+      ceph: add column 'mds' to show caps in more user friendly
+
+ Documentation/filesystems/ceph.rst |   6 +-
+ drivers/block/rbd.c                |   8 +-
+ fs/ceph/addr.c                     | 416 +++++++++++++++++--------------------
+ fs/ceph/caps.c                     | 128 ++++++++----
+ fs/ceph/debugfs.c                  |  18 +-
+ fs/ceph/dir.c                      |  20 +-
+ fs/ceph/file.c                     |  85 +++-----
+ fs/ceph/inode.c                    |  10 +-
+ fs/ceph/locks.c                    |   2 +-
+ fs/ceph/mds_client.c               | 109 ++++++----
+ fs/ceph/mds_client.h               |   2 +-
+ fs/ceph/metric.c                   |  14 ++
+ fs/ceph/metric.h                   |   7 +
+ fs/ceph/quota.c                    |  10 +-
+ fs/ceph/snap.c                     |   2 +-
+ fs/ceph/super.c                    |   8 +-
+ fs/ceph/super.h                    |  13 +-
+ fs/ceph/xattr.c                    |   3 +-
+ include/linux/ceph/messenger.h     |   2 +-
+ include/linux/ceph/mon_client.h    |   2 +-
+ include/linux/ceph/osdmap.h        |  14 +-
+ include/linux/ceph/rados.h         |   2 +-
+ include/linux/crush/crush.h        |   3 +
+ net/ceph/messenger.c               |  13 +-
+ net/ceph/mon_client.c              |  69 ++++--
+ net/ceph/osdmap.c                  | 166 +++++++++++++--
+ 26 files changed, 689 insertions(+), 443 deletions(-)
