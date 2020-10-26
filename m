@@ -2,107 +2,84 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3942D2978DC
-	for <lists+ceph-devel@lfdr.de>; Fri, 23 Oct 2020 23:29:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0D8F299242
+	for <lists+ceph-devel@lfdr.de>; Mon, 26 Oct 2020 17:23:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756684AbgJWV26 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 23 Oct 2020 17:28:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46554 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1756681AbgJWV25 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 23 Oct 2020 17:28:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603488535;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=G6+mbCT+6miI047Hj2jdGIPSOrJHY4SgfbJTHRF0KNE=;
-        b=V07Mejvwn1SqUxdZOMu44eIrxDILpVmolEu7Pb88D0bKOqbzC1HPV5zt2e68F7KfqbwdEa
-        6uZArUqkKh46VRz9dCFDmTw1Kfva0PsPVqvLPpU6cWT9xe64LbLOc1Pv4BTjm5stBhBc6e
-        aHc2pueLP40OwLNxWPVBBsTaEFLnCXk=
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
- [209.85.166.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-319-L8gMPY90M2--EF5jxyat_g-1; Fri, 23 Oct 2020 17:28:51 -0400
-X-MC-Unique: L8gMPY90M2--EF5jxyat_g-1
-Received: by mail-io1-f71.google.com with SMTP id j21so2459936iog.8
-        for <ceph-devel@vger.kernel.org>; Fri, 23 Oct 2020 14:28:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=G6+mbCT+6miI047Hj2jdGIPSOrJHY4SgfbJTHRF0KNE=;
-        b=r3FBFUle0hih2Xn6ybwDWrFQoQJ/PHaWWcMTd12Hbqhx0RcWobNsi2G9i1D/IgLH9H
-         Y6KdOEK5y1qcHIjCr/GYEeYX7rn5VxCWTeAjlUfksjd0b7N78BjA8OyIpPgSrJhy8X3P
-         iryW25DJYsfrN6wIcmVvuE/l+ApEd/9WhLJqdUCN/qOW2p3C0ZH9PTI6+CCdQ72/uaM8
-         viVrJj3vQt54ZnrbA2G+jmzAADSzIPEWVi9g8Rg5FZpKeh8pO1recMCwYyeTAlip4c0d
-         FNKs4KLUAvzlWq0RxKZrJHQIs8Yk9yOqomQSX2kv3QGGNNbBnh0LMD2vmYbAD9YfyrbC
-         8q/g==
-X-Gm-Message-State: AOAM533U7NDrOHGzrvbPw2XE4wzHP/efO68DTpcCJDu7MhYOD5Oti+yH
-        W6dnpu6g4/KuIkr3B8cTHUkNnxhaEtDNVxpSaSIL7nPxzZY8RvLxUU/y9ZU7JQNj5lQj7qu6KR6
-        l04SGQfPNqQRVVcjPkZI8IA438dNXKSZSGTg6hQ==
-X-Received: by 2002:a02:a181:: with SMTP id n1mr3422378jah.119.1603488531165;
-        Fri, 23 Oct 2020 14:28:51 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwVNRnEfWQ8yKuz/0v7q4S2lxoyhvwbrhEp/1BdOCPE5gzwLk0AEXbuzewvptdOl/RA9pSHgOmGRTqujx8uxPk=
-X-Received: by 2002:a02:a181:: with SMTP id n1mr3422364jah.119.1603488530949;
- Fri, 23 Oct 2020 14:28:50 -0700 (PDT)
+        id S1785752AbgJZQXR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 26 Oct 2020 12:23:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45150 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1775605AbgJZQXQ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 26 Oct 2020 12:23:16 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 8CA9CAB8F;
+        Mon, 26 Oct 2020 16:23:14 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 06C89DA6E2; Mon, 26 Oct 2020 17:21:39 +0100 (CET)
+Date:   Mon, 26 Oct 2020 17:21:39 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, ericvh@gmail.com, lucho@ionkov.net,
+        viro@zeniv.linux.org.uk, jlayton@kernel.org, idryomov@gmail.com,
+        mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
+        dsterba@suse.com, stable@vger.kernel.org
+Subject: Re: [PATCH 7/7] btrfs: Promote to unsigned long long before
+ multiplying
+Message-ID: <20201026162139.GO6756@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, ericvh@gmail.com, lucho@ionkov.net,
+        viro@zeniv.linux.org.uk, jlayton@kernel.org, idryomov@gmail.com,
+        mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
+        dsterba@suse.com, stable@vger.kernel.org
+References: <20201004180428.14494-1-willy@infradead.org>
+ <20201004180428.14494-8-willy@infradead.org>
 MIME-Version: 1.0
-References: <CACo-D_AU21TT6wcuUXTDquUY1UtSb265ga+0SAvU2S-RCWmzTw@mail.gmail.com>
- <CABZ+qq=n8XFYNtrJKThG3OViYa12pVMU4b5eVr58ZFHxbAod=A@mail.gmail.com>
- <CACo-D_DhNDXAyOjJR6W9JYhZP7m9pfbh7q-G1nDMJhHskdtOXQ@mail.gmail.com>
- <CABZ+qqk1ii6sjK4izGb-ReZdUDy4U-7gRj6ywFxzHkpEGuOOHQ@mail.gmail.com>
- <CACo-D_D6abDxhwUY2ZdkFbdwTPduhKbvtK7+7GFL5VWQJbZ7xw@mail.gmail.com>
- <CABZ+qqkB_daQ+yfq+CR3Ye+8t+gv_QuavNWNRJzxP6Og5VKROg@mail.gmail.com>
- <CACo-D_BxGq2-Dq6FahNXPN6rj3BeoKmJuq6j5Nhqzcx74URqHg@mail.gmail.com>
- <CABZ+qqmvn-Yd3ZhPd3q4-RFtqjGgeHLCMwVvjMLJ4fmtxY9-gA@mail.gmail.com>
- <1867678ff367465eb7a6767a62b45764@dtu.dk> <CACo-D_Cjb0TF47ZwYYAXkpnYWN-9eAXtc4K3fGaC=ZLUvHzLRA@mail.gmail.com>
- <CABZ+qqn6FJGU_a7-+Qiqt0YxbfMxN-Bj8X_kcfD+X8P6idRCmA@mail.gmail.com>
- <CACo-D_DCHENXaPntE_T+R7L7yfUVMx9K-KHu40oyd-dKPc_kEg@mail.gmail.com>
- <CABZ+qqkGQKHx=VzvDVjDvG_m7C8PpfbiuRM3+-b5_8yLwgNbFg@mail.gmail.com>
- <29f9da3105b34397bbaf59471a448077@dtu.dk> <CACo-D_BoBo5YdujToR_Tpu9FkUny5B9eTa=vPHHXaHQtPZKv9A@mail.gmail.com>
-In-Reply-To: <CACo-D_BoBo5YdujToR_Tpu9FkUny5B9eTa=vPHHXaHQtPZKv9A@mail.gmail.com>
-From:   Patrick Donnelly <pdonnell@redhat.com>
-Date:   Fri, 23 Oct 2020 14:28:24 -0700
-Message-ID: <CA+2bHPZW0Aoj1bVe6+Q_N9DPMa8pYqz87bExT48STGktZCYn0w@mail.gmail.com>
-Subject: Re: [ceph-users] Re: Urgent help needed please - MDS offline
-To:     David C <dcsysengineer@gmail.com>
-Cc:     Frank Schilder <frans@dtu.dk>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        ceph-users <ceph-users@ceph.io>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201004180428.14494-8-willy@infradead.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Oct 23, 2020 at 9:02 AM David C <dcsysengineer@gmail.com> wrote:
->
-> Success!
->
-> I remembered I had a server I'd taken out of the cluster to
-> investigate some issues, that had some good quality 800GB Intel DC
-> SSDs, dedicated an entire drive to swap, tuned up min_free_kbytes,
-> added an MDS to that server and let it run. Took 3 - 4 hours but
-> eventually came back online. It used the 128GB of RAM and about 250GB
-> of the swap.
->
-> Dan, thanks so much for steering me down this path, I would have more
-> than likely started hacking away at the journal otherwise!
->
-> Frank, thanks for pointing me towards that other thread, I used your
-> min_free_kbytes tip
->
-> I now need to consider updating - I wonder if the risk averse CephFS
-> operator would go for the latest Nautilus or latest Octopus, it used
-> to be that the newer CephFS code meant the most stable but don't know
-> if that's still the case.
+On Sun, Oct 04, 2020 at 07:04:28PM +0100, Matthew Wilcox (Oracle) wrote:
+> On 32-bit systems, these shifts will overflow for files larger than 4GB.
+> Add helper functions to avoid this problem coming back.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 73ff61dbe5ed ("Btrfs: fix device replace of a missing RAID 5/6 device")
+> Fixes: be50a8ddaae1 ("Btrfs: Simplify scrub_setup_recheck_block()'s argument")
+> Fixes: ff023aac3119 ("Btrfs: add code to scrub to copy read data to another disk")
+> Fixes: b5d67f64f9bc ("Btrfs: change scrub to support big blocks")
+> Fixes: a2de733c78fa ("btrfs: scrub")
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/btrfs/scrub.c | 25 ++++++++++++++++---------
+>  1 file changed, 16 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+> index 354ab9985a34..ccbaf9c6e87a 100644
+> --- a/fs/btrfs/scrub.c
+> +++ b/fs/btrfs/scrub.c
+> @@ -1262,12 +1262,17 @@ static inline void scrub_stripe_index_and_offset(u64 logical, u64 map_type,
+>  	}
+>  }
+>  
+> +static u64 sblock_length(struct scrub_block *sblock)
+> +{
+> +	return (u64)sblock->page_count * PAGE_SIZE;
 
-You need to first upgrade to Nautilus in any case. n+2 releases is the
-max delta between upgrades.
-
--- 
-Patrick Donnelly, Ph.D.
-He / Him / His
-Principal Software Engineer
-Red Hat Sunnyvale, CA
-GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
-
+page_count will be 32 at most, the type is int and this will never
+overflow. The value is usualy number of pages in the arrays scrub_bio::pagev or
+scrub_block::pagev bounded by SCRUB_PAGES_PER_WR_BIO (32) or
+SCRUB_MAX_PAGES_PER_BLOCK (16).  The scrub code does not use mappings
+and it reads raw blocks to own pages and does the checksum verification.
