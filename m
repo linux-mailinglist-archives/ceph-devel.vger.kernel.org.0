@@ -2,38 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7972529A052
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Oct 2020 01:31:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23A80299F1F
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Oct 2020 01:21:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409435AbgJZXva (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 26 Oct 2020 19:51:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52252 "EHLO mail.kernel.org"
+        id S2411002AbgJZXz4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 26 Oct 2020 19:55:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409417AbgJZXv2 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 26 Oct 2020 19:51:28 -0400
+        id S2410398AbgJZXyU (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 26 Oct 2020 19:54:20 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BABB20878;
-        Mon, 26 Oct 2020 23:51:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6793D2151B;
+        Mon, 26 Oct 2020 23:54:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603756287;
-        bh=QSc82sGQQyqNVs6kY8ANMDdfEHxLu6FOkqtGhOBcoBY=;
+        s=default; t=1603756459;
+        bh=wFWhx3aeYQB6qGCKp596fTYiTgcNDh0zcMjaICl9Yyw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fb6ivgPpefBzBAjh4aB54+qLWG2jJBsEdG/H1tXrwYLhMUN5ZtUV9druA1GaF0+2r
-         pZA+arXF6vFyuLZjVzT4zEy4UbO1fZJT9D7+6Z6g0nIASWbRDx15GUfgLgLTuT223N
-         OAqLquiqhmMpKdvkzdr+j0UNvbmvme3l+X43k0M4=
+        b=fTh2sZp35fKRnySSjSlFEburSSDId3FmJRlNFwu1WLEBHpD5YlaOTM4ySRUZpUp/D
+         xl9eGniq8mzyHSrWzLoRYxT0NYMEclhW7V1xUdO0hd2N9C0VBB6qpWerZBnWs/TtUZ
+         fnQO8fJXHpfl5za5BVn0xKPech6E4QbLezYUnY40=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     "Yan, Zheng" <zyan@redhat.com>, Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.9 116/147] ceph: encode inodes' parent/d_name in cap reconnect message
-Date:   Mon, 26 Oct 2020 19:48:34 -0400
-Message-Id: <20201026234905.1022767-116-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.8 108/132] ceph: encode inodes' parent/d_name in cap reconnect message
+Date:   Mon, 26 Oct 2020 19:51:40 -0400
+Message-Id: <20201026235205.1023962-108-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201026234905.1022767-1-sashal@kernel.org>
-References: <20201026234905.1022767-1-sashal@kernel.org>
+In-Reply-To: <20201026235205.1023962-1-sashal@kernel.org>
+References: <20201026235205.1023962-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -65,10 +65,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 61 insertions(+), 28 deletions(-)
 
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 4a26862d7667e..76d8d9495d1d4 100644
+index 903b6a35b321b..862a5b10ab0ee 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -3612,6 +3612,39 @@ static int send_reconnect_partial(struct ceph_reconnect_state *recon_state)
+@@ -3531,6 +3531,39 @@ static int send_reconnect_partial(struct ceph_reconnect_state *recon_state)
  	return err;
  }
  
@@ -108,7 +108,7 @@ index 4a26862d7667e..76d8d9495d1d4 100644
  /*
   * Encode information about a cap for a reconnect with the MDS.
   */
-@@ -3625,13 +3658,32 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
+@@ -3544,13 +3577,32 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
  	struct ceph_inode_info *ci = cap->ci;
  	struct ceph_reconnect_state *recon_state = arg;
  	struct ceph_pagelist *pagelist = recon_state->pagelist;
@@ -142,7 +142,7 @@ index 4a26862d7667e..76d8d9495d1d4 100644
  	spin_lock(&ci->i_ceph_lock);
  	cap->seq = 0;        /* reset cap seq */
  	cap->issue_seq = 0;  /* and issue_seq */
-@@ -3652,7 +3704,7 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
+@@ -3571,7 +3623,7 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
  		rec.v2.wanted = cpu_to_le32(__ceph_caps_wanted(ci));
  		rec.v2.issued = cpu_to_le32(cap->issued);
  		rec.v2.snaprealm = cpu_to_le64(ci->i_snap_realm->ino);
@@ -151,7 +151,7 @@ index 4a26862d7667e..76d8d9495d1d4 100644
  		rec.v2.flock_len = (__force __le32)
  			((ci->i_ceph_flags & CEPH_I_ERROR_FILELOCK) ? 0 : 1);
  	} else {
-@@ -3663,7 +3715,7 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
+@@ -3582,7 +3634,7 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
  		ceph_encode_timespec64(&rec.v1.mtime, &inode->i_mtime);
  		ceph_encode_timespec64(&rec.v1.atime, &inode->i_atime);
  		rec.v1.snaprealm = cpu_to_le64(ci->i_snap_realm->ino);
@@ -160,7 +160,7 @@ index 4a26862d7667e..76d8d9495d1d4 100644
  	}
  
  	if (list_empty(&ci->i_cap_snaps)) {
-@@ -3725,7 +3777,7 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
+@@ -3644,7 +3696,7 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
  			    sizeof(struct ceph_filelock);
  		rec.v2.flock_len = cpu_to_le32(struct_len);
  
@@ -169,7 +169,7 @@ index 4a26862d7667e..76d8d9495d1d4 100644
  
  		if (struct_v >= 2)
  			struct_len += sizeof(u64); /* snap_follows */
-@@ -3749,7 +3801,7 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
+@@ -3668,7 +3720,7 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
  			ceph_pagelist_encode_8(pagelist, 1);
  			ceph_pagelist_encode_32(pagelist, struct_len);
  		}
@@ -178,7 +178,7 @@ index 4a26862d7667e..76d8d9495d1d4 100644
  		ceph_pagelist_append(pagelist, &rec, sizeof(rec.v2));
  		ceph_locks_to_pagelist(flocks, pagelist,
  				       num_fcntl_locks, num_flock_locks);
-@@ -3758,39 +3810,20 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
+@@ -3677,39 +3729,20 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
  out_freeflocks:
  		kfree(flocks);
  	} else {
