@@ -2,82 +2,179 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DBE92A076B
-	for <lists+ceph-devel@lfdr.de>; Fri, 30 Oct 2020 15:07:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 996522A0B7F
+	for <lists+ceph-devel@lfdr.de>; Fri, 30 Oct 2020 17:43:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725975AbgJ3OHq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 30 Oct 2020 10:07:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59364 "EHLO
+        id S1727263AbgJ3QnK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 30 Oct 2020 12:43:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbgJ3OHq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 30 Oct 2020 10:07:46 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE7B2C0613CF
-        for <ceph-devel@vger.kernel.org>; Fri, 30 Oct 2020 07:07:45 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id c16so3080909wmd.2
-        for <ceph-devel@vger.kernel.org>; Fri, 30 Oct 2020 07:07:45 -0700 (PDT)
+        with ESMTP id S1725808AbgJ3QnH (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 30 Oct 2020 12:43:07 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BECE7C0613D7
+        for <ceph-devel@vger.kernel.org>; Fri, 30 Oct 2020 09:43:05 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id a20so7013987ilk.13
+        for <ceph-devel@vger.kernel.org>; Fri, 30 Oct 2020 09:43:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=9fkQXWnoPSypfyxvIrXWSyd1r4Ua0eeDJczOBpIf/BU=;
-        b=G8FZ7BpoB7q4MqynB6n0SRxqoSacOXqR5jv3wb/gBamfxsCI25knUqmxqOiBWQPzhL
-         NDfEU2QfFU3msqmZWzowkV0npqWzBYcgqtO+YFnrYVmw0nAkzpwsGzIifVqjERaGo2U/
-         9G/1LBstTV4iBZHAPnsPruR8AZMRIw/4/uQPfttrK+sCRJfxjBbkExImo8qFOA6ZAK04
-         MemGfO+4fdVRJFfHfs1oIIvIFzke/ecpO0JXUjW7v+ukqFjxogyBtCaG+bwUhaqUaLOr
-         waoLYBlgGWd/zbG0YXWY84sNef9NzLRLjnMFvymV6zQ0CF6fLuWAfc+5pwE1D4iyXFez
-         vfQA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NZmqGfCg08N6iXx9q7TVWlSnhQqIDOwOjzOwbvXDxjI=;
+        b=INVfZz/fkvsZivy8jdRFY4jjuumPUnT03fIMmAZxhr2j3OQtTxmqWeMui9FFLMvZFz
+         QB2ePhBsJkuNysGjMHbU9DiLLxlLmss4JFzjBmUNAkJoiiGzYBFH/upOKm0AUQMizu+W
+         okAB9PgkVOM5lyq7RfM3eZWziu4Lw6xFmIPsA3WEdWrepzCLkMsPGFysW4PIdG4Ix46W
+         ABDHiqA089OjzR7YGXqWWnY73UPmGi5ssu5dObic6I8EipSHtDNSFTIEabkYZFtOUw53
+         gKZFvyCe8mIA4cQPQ5Ji/NguzzOPrnGBpJ5jXdtWnz2BLO+k8PETRjkg1JznRZelvTOY
+         uyUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=9fkQXWnoPSypfyxvIrXWSyd1r4Ua0eeDJczOBpIf/BU=;
-        b=T33p6zS3R7TTXhmoow4K3zBR1QEdUeoBXs0oPAAqa/+DCj5t1B2GklNO7NyEF923T1
-         wcfp0ehgZKLC0LgtACLRDzY0Q+Utzcdd80eLExD7QbgsKek0KIDdSkaO2NYCpu5CCgH+
-         Bh8Wl2JV+7LslGVcv98ygEr83DLBanT0fRS4EeJwGvvhRBY+EqZfKZ79XmZbXnAXDFDU
-         cOSGY8GxL3qyoHyjHl4VADI9hSzMf3jp4+3PFdAgCA9+OWVtb7ISw/QtlPACKoGX0Wvv
-         sz6h84pxVgHuM5PjH3wJtDuavMThpZQOyKwbUcKxosOkRdCvWjfqwdtOSg2c08B1DIgO
-         mD1w==
-X-Gm-Message-State: AOAM533SWJ9qU2Cl4nqtaHmCaJeZNh3h4jBDfXiIqWWuf3nyHZvngshf
-        EoIBeRyVhEqoV+UGXDMBmFGF3daKl2KTDMVnkRc=
-X-Google-Smtp-Source: ABdhPJwK5pWer4iNUtIpe1ggX3DNXpZ6fOwnVBWueSI9cxUqNy4++8FxU6VVykfaNq1PwhGDvk7/27nFUe1611gSvyM=
-X-Received: by 2002:a1c:20ce:: with SMTP id g197mr2946211wmg.18.1604066864690;
- Fri, 30 Oct 2020 07:07:44 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NZmqGfCg08N6iXx9q7TVWlSnhQqIDOwOjzOwbvXDxjI=;
+        b=o4LAyabZkj5ORWEu00uU3+jw5eSceSEosHpQr013FtSA+6byMOiYAoZ6mBNJHdPaVG
+         884vrrzmrTLqljRAI7YJGYmiik00tmmjjsythCrJJPS12wy4CeT2P8cDwTNqLR7xt4Zf
+         9cVK+fKmixXSDN/y62R6wJrVl6QAfAADxoMDCiHlCQvbjlNOlv6sYxPbdB4wg2ieL0Ll
+         WR9nOv+f2WLIO3W5/QsyiA9xpDvAFOrSb1yJYXtzCpmRk7v/K2a53cMIcXwuVj0fLM0N
+         Mco9FY+D+h1E53vfm0dD4VqNQUF2Bz7wQari1wB3YT9rlBKKwE0uCEiPYAfrx35zrN1y
+         sR7Q==
+X-Gm-Message-State: AOAM5317LiofK0rdVW5cJeO+ZCK64TtTTDviHjBh9LayxT9KLY7P1GE7
+        QNXthZnCJmaso00tJUOID6Ni2nSlHyaH628S7lMZnw==
+X-Google-Smtp-Source: ABdhPJwYf7SWuKIRh8xsBOBodbVLmuU+KCM1QaVpZsez95JZOYKTbDYung3PLxm+lfmttII+vBXdnzsUUs8NHjrseg0=
+X-Received: by 2002:a92:6403:: with SMTP id y3mr2528711ilb.72.1604076184121;
+ Fri, 30 Oct 2020 09:43:04 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a5d:4748:0:0:0:0:0 with HTTP; Fri, 30 Oct 2020 07:07:44
- -0700 (PDT)
-Reply-To: li.anable85@gmail.com
-From:   Liliane Abel <mark.a.milley2015@gmail.com>
-Date:   Fri, 30 Oct 2020 15:07:44 +0100
-Message-ID: <CAEtW6095SGpf-jQNTkTVGBmmBU53xJ3+W1feeNDitzXT9FUC3g@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
+References: <cover.1604042072.git.mchehab+huawei@kernel.org> <5bc78e5b68ed1e9e39135173857cb2e753be868f.1604042072.git.mchehab+huawei@kernel.org>
+In-Reply-To: <5bc78e5b68ed1e9e39135173857cb2e753be868f.1604042072.git.mchehab+huawei@kernel.org>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Fri, 30 Oct 2020 10:42:53 -0600
+Message-ID: <CANLsYkxc2uzA57Hg5OX31JOx08JCZfynzebjABv=6H01796xGA@mail.gmail.com>
+Subject: Re: [PATCH v2 31/39] docs: ABI: cleanup several ABI documents
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?TWFyZWsgQmVow7pu?= <marek.behun@nic.cz>,
+        =?UTF-8?Q?Marek_Marczykowski=2DG=C3=B3recki?= 
+        <marmarek@invisiblethingslab.com>,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
+        Alexander Antonov <alexander.antonov@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Andreas Klinger <ak@it-klinger.de>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Andy Shevchenko <andriy.shevchenko@intel.com>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Chao Yu <chao@kernel.org>,
+        Christian Gromm <christian.gromm@microchip.com>,
+        Colin Cross <ccross@android.com>, Dan Murphy <dmurphy@ti.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Danil Kipnis <danil.kipnis@cloud.ionos.com>,
+        David Sterba <dsterba@suse.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jack Wang <jinpu.wang@cloud.ionos.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Jonas Meurer <jonas@freesources.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Kajol Jain <kjain@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Kranthi Kuntala <kranthi.kuntala@intel.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee.jones@linaro.org>, Len Brown <lenb@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Mark Gross <mgross@linux.intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        Oded Gabbay <oded.gabbay@gmail.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Oleh Kravchenko <oleg@kaa.org.ua>, Pavel Machek <pavel@ucw.cz>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Peter Chen <peter.chen@nxp.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Roman Sudarikov <roman.sudarikov@linux.intel.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Stefan Achatz <erazor_de@users.sourceforge.net>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Rix <trix@redhat.com>, Tony Luck <tony.luck@intel.com>,
+        Vaibhav Jain <vaibhav@linux.ibm.com>,
+        Vineela Tummalapalli <vineela.tummalapalli@intel.com>,
+        Wu Hao <hao.wu@intel.com>, ceph-devel@vger.kernel.org,
+        Coresight ML <coresight@lists.linaro.org>,
+        dri-devel@lists.freedesktop.org, linux-acpi@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i3c@lists.infradead.org,
+        linux-iio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dearest
+On Fri, 30 Oct 2020 at 01:41, Mauro Carvalho Chehab
+<mchehab+huawei@kernel.org> wrote:
+>
+> There are some ABI documents that, while they don't generate
+> any warnings, they have issues when parsed by get_abi.pl script
+> on its output result.
+>
+> Address them, in order to provide a clean output.
+>
+> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> #for IIO
+> Reviewed-by: Tom Rix <trix@redhat.com> # for fpga-manager
+> Reviewed-By: Kajol Jain<kjain@linux.ibm.com> # for sysfs-bus-event_source-devices-hv_gpci and sysfs-bus-event_source-devices-hv_24x7
+> Acked-by: Oded Gabbay <oded.gabbay@gmail.com> # for Habanalabs
+> Acked-by: Vaibhav Jain <vaibhav@linux.ibm.com> # for sysfs-bus-papr-pmem
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
 
-Greeting my dear, I am Liliane Abel by name, The only daughter of late
-Mr.Benson Abel. My father is one of the top Politician in our country
-and my mother is a farmers and cocoa merchant when they were both
-alive. After the death of my mother, long ago, my father was
-controlling their business until he was poisoned by his business
-associates which he suffered and died.
+>  .../testing/sysfs-bus-coresight-devices-etb10 |   5 +-
 
-Before the death of my father, He told me about (two million five
-hundred thousand united states dollars) which he deposited in the bank
-in Lome-Togo, It was the money he intended to transfer overseas for
-investment before he was poisoned. He also instructed me that I should
-seek for foreign partners in any country of my choice who will assist
-me transfer this money in overseas account where the money will be
-wisely invested.
-I am seeking for your kind assistance in the following ways:  (1) to
-provide a safe bank account into where the money will be transferred
-for investment. (2) To serve as a guardian of this fund since I am a
-girl of 19 years old. (3) To make arrangement for me to come over to
-your country to further my education. This is my reason for writing to
-you. Please if you are willing to assist me I will offer you 25% of
-the total money. Reply if  you are interested
-Best regards.
-Liliane Abel.
+For the CoreSight part:
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
