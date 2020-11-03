@@ -2,173 +2,99 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D4D282A41AA
-	for <lists+ceph-devel@lfdr.de>; Tue,  3 Nov 2020 11:24:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D62992A488E
+	for <lists+ceph-devel@lfdr.de>; Tue,  3 Nov 2020 15:47:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbgKCKY3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 3 Nov 2020 05:24:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37004 "EHLO
+        id S1728160AbgKCOr3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 3 Nov 2020 09:47:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727470AbgKCKY3 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 Nov 2020 05:24:29 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E99E6C0613D1;
-        Tue,  3 Nov 2020 02:24:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=8AaWlBE9Yvo2R2/ZXbUOXEpeEH/l5Fj4MrbBNz6ii3Y=; b=Mb6LGpfkh14+un19YFolpxCFxt
-        a1BUlvjssEidXgzpwzOf9JN7Y4zwQmZsO8mW3BIDixwLRULnH4DT+QA75GdjFrN00dynNTrZCrraV
-        ZOnhV5B+aoZH/ogPs7L0zNwKvMZ1QNFNfa2a5Fhq4hOv/MJpOkeii4UiVXsohnfMy9+XOhk3gnPZz
-        z0v91IAOr+Ot3NlB30L7B1kCySLp+uYx9eE0nA91Z6IvL46f0IxvC4rbsId1SJQKeGQ0LvXVME6un
-        Kn67C6Xe8kJvGgm/+VStGKSE5yx4GY6k2/gc4+M9DYlSVRL1y3Oo3pUP7f2MI3UyyftE72k/ZyOe4
-        bXG9zLiA==;
-Received: from 089144208145.atnat0017.highway.a1.net ([89.144.208.145] helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kZtUD-0001Zu-Kw; Tue, 03 Nov 2020 10:24:22 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Ilya Dryomov <idryomov@gmail.com>, Song Liu <song@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
-Subject: [PATCH 10/10] block: remove __blkdev_driver_ioctl
-Date:   Tue,  3 Nov 2020 11:00:18 +0100
-Message-Id: <20201103100018.683694-11-hch@lst.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201103100018.683694-1-hch@lst.de>
-References: <20201103100018.683694-1-hch@lst.de>
+        with ESMTP id S1727742AbgKCOpQ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 Nov 2020 09:45:16 -0500
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD61CC0613D1
+        for <ceph-devel@vger.kernel.org>; Tue,  3 Nov 2020 06:45:16 -0800 (PST)
+Received: by mail-il1-x12c.google.com with SMTP id g15so1583271ilc.9
+        for <ceph-devel@vger.kernel.org>; Tue, 03 Nov 2020 06:45:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CZ1C1bhGHbLT2J0O03UaNSEHgrUbANBve1dvQ3z9B9o=;
+        b=NNq1zBZp79psiUK8zluCX0Yyc7PH9xO3Et4qPyp2FrjQz7QxFDvN3pyRY75kwFaFwN
+         jz1S2mxkK4aaMjTzMI0bH1xEDwRXiFH6w0hSBwoHZZT7GvyePuskIevFmDcyFDmcuAsd
+         ds+6TVSac2RQFwWGgXVbbJzWL9+f1FOGnceczySA5+zkxhlrOKd4dvgsbb/NImSriRcZ
+         OuVS7kqaUUmF4xwYF+e44Y1OAo9bbma2LoHIkkief2oR/FaB3TRAMoD/Z4GnVXh1ja8W
+         txU9mDMlazeW/QN77y0vzR0cNUEPqfu6C6ViDihRea3MBmAwc1SY5h4lTIt1w0Em3gjb
+         oRfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CZ1C1bhGHbLT2J0O03UaNSEHgrUbANBve1dvQ3z9B9o=;
+        b=giSsKcZZQMsbIOaka/pXWy61u8mH7Z6ohexMuxWrD+tGtbpiSFY/tVxwNDnAS6jph0
+         K99Bt1O7cuxdGOeuQqF84lBKkSGreLvIISOJWb32FVEQ7zurl15CQ3LgWTqh4PxQ+Nlb
+         d/RxGNMYfP3zyW1+ExBU2oe2NaWTI9JPfq5xRVO1OiT+tJFMNiseC56mYyx4nOjIwrjh
+         F4iZV1pVstIwT4VZ8PRVSJfpAz0rFxoHXM/pgybu1z3Nfa0Fug+l2ouGDRni5jR7fXNC
+         QX3hSs77e9oxOqNo6FBVkP/litPZ+y+jj5xC1uPGtVHh8kU4i8+mwW/Cdt6Af2hpe/ir
+         2GJA==
+X-Gm-Message-State: AOAM533SCPbkcUr6N4//lW5LajKzF83ef4jgVBm0VfRFLuPnDT7RHNWj
+        Na0+8ArB4DkNFoBIFkc8Q/r6IAwgrtvn4Dux8W4=
+X-Google-Smtp-Source: ABdhPJxLTM6xGckyhYhsvYhpVP2b71x4JKw+/iv1iBB6wolnhdBxNDFGUp+akWvtFesF8UXzatygDNmH1r7KvsNDB4c=
+X-Received: by 2002:a92:c529:: with SMTP id m9mr14655762ili.195.1604414715103;
+ Tue, 03 Nov 2020 06:45:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+References: <b4726535239f4b0e723d3f45da3a7fcf1412c943.camel@redhat.com> <054c62ca910759e6f49d483363b2177351974663.camel@redhat.com>
+In-Reply-To: <054c62ca910759e6f49d483363b2177351974663.camel@redhat.com>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Tue, 3 Nov 2020 22:45:04 +0800
+Message-ID: <CAAM7YAmU1FQkFjehQcjt16BGSbtd7E1mgf5rkQYss5ZQXKZLZQ@mail.gmail.com>
+Subject: Re: cephfs inode size handling and inode_drop field in struct MetaRequest
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     dev <dev@ceph.io>, Ceph Development <ceph-devel@vger.kernel.org>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Just open code it in the few callers.
+On Fri, Oct 30, 2020 at 12:53 AM Jeff Layton <jlayton@redhat.com> wrote:
+>
+> On Thu, 2020-10-29 at 11:19 -0400, Jeff Layton wrote:
+> > I'm working on a F_SETLEASE implementation for kcephfs, and am hitting a
+> > deadlock of sorts, due to a truncate triggering a cap revoke at an
+> > inopportune time.
+> >
+> > The issue is that truncates to a smaller size are always done via
+> > synchronous call to the MDS, whereas a truncate larger does not if Fx
+> > caps are held. That synchronous call causes the MDS to issue the client
+> > a cap revoke for caps that the lease holds references on (Frw, in
+> > particular).
+> >
+> > The client code has been this way since the inception and I haven't been
+> > able to locate any rationale for it. Some questions about this:
+> >
+> > 1) Why doesn't the client ever buffer a truncate to smaller size? It
+> > seems like that is something that could be done without a synchronous
+> > MDS call if we hold Fx caps.
+> >
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- block/ioctl.c               | 25 +++++--------------------
- drivers/block/pktcdvd.c     |  6 ++++--
- drivers/md/bcache/request.c |  5 +++--
- drivers/md/dm.c             |  5 ++++-
- include/linux/blkdev.h      |  2 --
- 5 files changed, 16 insertions(+), 27 deletions(-)
+because we need to increate truncate_seq. truncate_seq makes OSD drop/adjust
+write operation that were sent before the truncate.
 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index 04255dc5f3bff3..6b785181344fe1 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -219,23 +219,6 @@ static int compat_put_ulong(compat_ulong_t __user *argp, compat_ulong_t val)
- }
- #endif
- 
--int __blkdev_driver_ioctl(struct block_device *bdev, fmode_t mode,
--			unsigned cmd, unsigned long arg)
--{
--	struct gendisk *disk = bdev->bd_disk;
--
--	if (disk->fops->ioctl)
--		return disk->fops->ioctl(bdev, mode, cmd, arg);
--
--	return -ENOTTY;
--}
--/*
-- * For the record: _GPL here is only because somebody decided to slap it
-- * on the previous export.  Sheer idiocy, since it wasn't copyrightable
-- * at all and could be open-coded without any exports by anybody who cares.
-- */
--EXPORT_SYMBOL_GPL(__blkdev_driver_ioctl);
--
- #ifdef CONFIG_COMPAT
- /*
-  * This is the equivalent of compat_ptr_ioctl(), to be used by block
-@@ -594,10 +577,12 @@ int blkdev_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
- 	}
- 
- 	ret = blkdev_common_ioctl(bdev, mode, cmd, arg, argp);
--	if (ret == -ENOIOCTLCMD)
--		return __blkdev_driver_ioctl(bdev, mode, cmd, arg);
-+	if (ret != -ENOIOCTLCMD)
-+		return ret;
- 
--	return ret;
-+	if (!bdev->bd_disk->fops->ioctl)
-+		return -ENOTTY;
-+	return bdev->bd_disk->fops->ioctl(bdev, mode, cmd, arg);
- }
- EXPORT_SYMBOL_GPL(blkdev_ioctl); /* for /dev/raw */
- 
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index 467dbd06b7cdb1..ef1c1f094ea4fc 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -2584,9 +2584,11 @@ static int pkt_ioctl(struct block_device *bdev, fmode_t mode, unsigned int cmd,
- 	case CDROM_LAST_WRITTEN:
- 	case CDROM_SEND_PACKET:
- 	case SCSI_IOCTL_SEND_COMMAND:
--		ret = __blkdev_driver_ioctl(pd->bdev, mode, cmd, arg);
-+		if (!bdev->bd_disk->fops->ioctl)
-+			ret = -ENOTTY;
-+		else
-+			ret = bdev->bd_disk->fops->ioctl(bdev, mode, cmd, arg);
- 		break;
--
- 	default:
- 		pkt_dbg(2, pd, "Unknown ioctl (%x)\n", cmd);
- 		ret = -ENOTTY;
-diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-index 21432638314562..afac8d07c1bd00 100644
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -1230,8 +1230,9 @@ static int cached_dev_ioctl(struct bcache_device *d, fmode_t mode,
- 
- 	if (dc->io_disable)
- 		return -EIO;
--
--	return __blkdev_driver_ioctl(dc->bdev, mode, cmd, arg);
-+	if (!dc->bdev->bd_disk->fops->ioctl)
-+		return -ENOTTY;
-+	return dc->bdev->bd_disk->fops->ioctl(dc->bdev, mode, cmd, arg);
- }
- 
- void bch_cached_dev_request_init(struct cached_dev *dc)
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index c18fc25485186d..6db395c3d28be8 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -570,7 +570,10 @@ static int dm_blk_ioctl(struct block_device *bdev, fmode_t mode,
- 		}
- 	}
- 
--	r =  __blkdev_driver_ioctl(bdev, mode, cmd, arg);
-+	if (!bdev->bd_disk->fops->ioctl)
-+		r = -ENOTTY;
-+	else
-+		r = bdev->bd_disk->fops->ioctl(bdev, mode, cmd, arg);
- out:
- 	dm_unprepare_ioctl(md, srcu_idx);
- 	return r;
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 5c1ba8a8d2bc7e..05b346a68c2eee 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1867,8 +1867,6 @@ extern int blkdev_compat_ptr_ioctl(struct block_device *, fmode_t,
- #define blkdev_compat_ptr_ioctl NULL
- #endif
- 
--extern int __blkdev_driver_ioctl(struct block_device *, fmode_t, unsigned int,
--				 unsigned long);
- extern int bdev_read_page(struct block_device *, sector_t, struct page *);
- extern int bdev_write_page(struct block_device *, sector_t, struct page *,
- 						struct writeback_control *);
--- 
-2.28.0
-
+> > 2) The client setattr implementations set inode_drop values in the
+> > MetaRequest, but as far as I can tell, those values end up being ignored
+> > by the MDS. What purpose does inode_drop actually serve? Is this field
+> > vestigial?
+>
+>
+> I think I answered the second question myself. It _is_ potentially used
+> to encoded a cap release into the call. That's not happening here
+> because of the extra references held by the lease. I think I see a
+> couple of potential fixes for that problem.
+>
+> I think the first question is still valid though.
+> --
+> Jeff Layton <jlayton@redhat.com>
+>
