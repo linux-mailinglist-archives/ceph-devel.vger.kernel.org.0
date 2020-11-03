@@ -2,60 +2,60 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35E542A37A6
-	for <lists+ceph-devel@lfdr.de>; Tue,  3 Nov 2020 01:19:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A61F12A3F59
+	for <lists+ceph-devel@lfdr.de>; Tue,  3 Nov 2020 09:54:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727288AbgKCATt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 2 Nov 2020 19:19:49 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:38785 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbgKCATq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 2 Nov 2020 19:19:46 -0500
-Received: from 1.is.james.uk.vpn ([10.172.254.24] helo=malefic)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <james.troup@canonical.com>)
-        id 1kZk2y-0003dl-1M; Tue, 03 Nov 2020 00:19:36 +0000
-Received: from james by malefic with local (Exim 4.94 #2 (Debian))
-        id 1kZk2w-000Zd6-Vj; Tue, 03 Nov 2020 00:19:34 +0000
-From:   James Troup <james.troup@canonical.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Ilya Dryomov <idryomov@gmail.com>,
-        Song Liu <song@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 06/11] md: implement ->set_read_only to hook into BLKROSET processing
-References: <20201031085810.450489-1-hch@lst.de>
-        <20201031085810.450489-7-hch@lst.de>
-Mail-Copies-To: never
-Date:   Tue, 03 Nov 2020 00:19:34 +0000
-In-Reply-To: <20201031085810.450489-7-hch@lst.de> (Christoph Hellwig's message
-        of "Sat, 31 Oct 2020 09:58:05 +0100")
-Message-ID: <87y2jjpa09.fsf@canonical.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        id S1727742AbgKCIxw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 3 Nov 2020 03:53:52 -0500
+Received: from mail.fullbizgoal.com ([80.211.27.207]:46780 "EHLO
+        server1.mail.fullbizgoal.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726659AbgKCIxv (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 Nov 2020 03:53:51 -0500
+Received: by server1.mail.fullbizgoal.com (Postfix, from userid 1001)
+        id 33048A5F40; Tue,  3 Nov 2020 08:43:00 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fullbizgoal.com;
+        s=mail; t=1604393309;
+        bh=1A+RQztZunBjkjQlXgr2uQY18vlGaIq8j7jGOmWqiI0=;
+        h=Date:From:To:Subject:From;
+        b=xLg/IuTp6rTwFWe8Xeot3BIVMYhwS+yyyvsM2gYSlQgIYxcsnoj3gu2EzRkHU0bTh
+         brQ0R00C3PW0rs1+71MArPsGj9C9RNkYVXGMaQdH3KR4Oqk5nmpZozxYnNgQc2xbny
+         73J2HTcjSnSaAmFEj1463QXqZLhu8v78zL7gVVrSDHhpxWG02cLWYt7q1EAkIkWXEb
+         nNCgV7GUBcYhCcebE1ALUlWgdHul1HYJIOGBl8fqN+tTPVgIYXZwc+N/8QstC9gCR7
+         7aUeIF5LPUWUwwUIe5GMXODokxz5UPI2Ehr1PjA6urhFKFXaKy3xriVaQ+3o9FXIeW
+         yL9kdgbSoaFUw==
+Received: by mail.fullbizgoal.com for <ceph-devel@vger.kernel.org>; Tue,  3 Nov 2020 08:42:48 GMT
+Message-ID: <20201103074501-0.1.2i.du1j.0.4tp7dmjw94@fullbizgoal.com>
+Date:   Tue,  3 Nov 2020 08:42:48 GMT
+From:   "Ethan Smith" <ethan.smith@fullbizgoal.com>
+To:     <ceph-devel@vger.kernel.org>
+Subject: Disinfectant
+X-Mailer: mail.fullbizgoal.com
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> writes:
+Good morning,
 
-> @@ -7809,6 +7778,36 @@ static int md_compat_ioctl(struct block_device *bdev, fmode_t mode,
+looking for companies interested in raising additional capital by diversi=
+fying their offer in soaps, liquids and gels for hand disinfection and co=
+smetics for body and hair care.
 
-[...]
+The distribution of innovative products corresponding to the current pref=
+erences of customers in the field of hygiene and preventive healthcare al=
+lows our partners to gain new markets and achieve better economic results=
+=2E
 
-> +	 * Transitioning to readauto need only happen for arrays that call
-> +	 * md_write_start and which are not ready for writes yet.
+In addition to products with bactericidal action, our range includes show=
+er gels, shampoos and hair conditioners, as well as efficient, concentrat=
+ed detergents.
 
-I realise you're just moving the comment around but perhaps you could
-s/readauto/readonly/ while you're doing so?
+The versatility (suitable for all skin types) combined with an affordable=
+ price means that customers make an informed choice of a product among ot=
+hers available on the market.
 
--- 
-James
+Are you interested in cooperation?
+
+Ethan Smith
