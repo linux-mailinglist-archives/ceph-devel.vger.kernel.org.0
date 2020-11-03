@@ -2,60 +2,60 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B012A2FE1
-	for <lists+ceph-devel@lfdr.de>; Mon,  2 Nov 2020 17:33:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35E542A37A6
+	for <lists+ceph-devel@lfdr.de>; Tue,  3 Nov 2020 01:19:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbgKBQdr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 2 Nov 2020 11:33:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51782 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726587AbgKBQdq (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 2 Nov 2020 11:33:46 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1604334826;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type;
-        bh=1vR1qD3F6QnP9x9mmK5DSHzXQDkXHp471P/cZiyYY3Q=;
-        b=jEJmRaZo7t6Nm7tQOsSFYX5tT7ZuVYQYLS9yO/oB2X/luXRnReiGJ8mXan3lZFNl+0zmxF
-        //ATSSwlPuiqd6aYGYOaQI6/3MOqnseMgE99awwBD0GtRFbPj9eavuIqFof06icK0uZAI8
-        1OP6jmkdU1RrdEo0mtpBWmPO0kogSOk=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id DE4B9ACAA;
-        Mon,  2 Nov 2020 16:33:45 +0000 (UTC)
-From:   Abhishek Lekshmanan <abhishek@suse.com>
-To:     ceph-announce@ceph.io, ceph-users@ceph.io, dev@ceph.io,
-        ceph-devel <ceph-devel@vger.kernel.org>, ceph-maintainers@ceph.io
-Subject: v14.2.13 Nautilus released
-Date:   Mon, 02 Nov 2020 17:33:44 +0100
-Message-ID: <87lffj7m6v.fsf@nautilus.suse.de>
+        id S1727288AbgKCATt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 2 Nov 2020 19:19:49 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:38785 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbgKCATq (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 2 Nov 2020 19:19:46 -0500
+Received: from 1.is.james.uk.vpn ([10.172.254.24] helo=malefic)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <james.troup@canonical.com>)
+        id 1kZk2y-0003dl-1M; Tue, 03 Nov 2020 00:19:36 +0000
+Received: from james by malefic with local (Exim 4.94 #2 (Debian))
+        id 1kZk2w-000Zd6-Vj; Tue, 03 Nov 2020 00:19:34 +0000
+From:   James Troup <james.troup@canonical.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Ilya Dryomov <idryomov@gmail.com>,
+        Song Liu <song@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 06/11] md: implement ->set_read_only to hook into BLKROSET processing
+References: <20201031085810.450489-1-hch@lst.de>
+        <20201031085810.450489-7-hch@lst.de>
+Mail-Copies-To: never
+Date:   Tue, 03 Nov 2020 00:19:34 +0000
+In-Reply-To: <20201031085810.450489-7-hch@lst.de> (Christoph Hellwig's message
+        of "Sat, 31 Oct 2020 09:58:05 +0100")
+Message-ID: <87y2jjpa09.fsf@canonical.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Christoph Hellwig <hch@lst.de> writes:
 
-This is the 13th backport release in the Nautilus series. This release fixes a
-regression introduced in v14.2.12, and a few ceph-volume & RGW fixes. We
-recommend users to update to this release.
+> @@ -7809,6 +7778,36 @@ static int md_compat_ioctl(struct block_device *bdev, fmode_t mode,
 
-Notable Changes
----------------
+[...]
 
-* Fixed a regression that caused breakage in clusters that referred to ceph-mon
-  hosts using dns names instead of ip addresses in the `mon_host` param in
-  `ceph.conf` (issue#47951)
-* ceph-volume: the ``lvm batch`` subcommand received a major rewrite
+> +	 * Transitioning to readauto need only happen for arrays that call
+> +	 * md_write_start and which are not ready for writes yet.
 
-Changelog
----------
-* ceph-volume: major batch refactor (pr#37522, Jan Fajerski)
-* mgr/dashboard: Proper format iSCSI target portals (pr#37060, Volker Theile)
-* rpm: move python-enum34 into rhel 7 conditional (pr#37747, Nathan Cutler)
-* mon/MonMap: fix unconditional failure for init_with_hosts (pr#37816, Nathan Cutler, Patrick Donnelly)
-* rgw: allow rgw-orphan-list to note when rados objects are in namespace (pr#37799, J. Eric Ivancich)
-* rgw: fix setting of namespace in ordered and unordered bucket listing (pr#37798, J. Eric Ivancich)
+I realise you're just moving the comment around but perhaps you could
+s/readauto/readonly/ while you're doing so?
 
---
-Abhishek 
+-- 
+James
