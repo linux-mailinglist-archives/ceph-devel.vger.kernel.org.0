@@ -2,198 +2,189 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F1B492A7EE6
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Nov 2020 13:46:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 582162A8871
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Nov 2020 21:58:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730044AbgKEMqn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 5 Nov 2020 07:46:43 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:48694 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725468AbgKEMqn (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Nov 2020 07:46:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1604580401;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QrO+RcqXg+MDoVHrBftnYr5Bxd4X6PxAyfQcY5hj4UM=;
-        b=Jlm1ls8oue67jfQoR+bbP++6xdwohCvURRkENl6JFGZEEBUKSbaMiyf2qETFxDNFYXn4oX
-        /FLwrhWVA8rRqLzZfXSe5aVs8p6teXlKT+Kcd/xGyxlOFw2PUoWeAfQk8dnkddTpdAqYHS
-        d/QL0yuWx0zZOK/keqtomVzP5SqprNA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-24-q_5bSI-8OM-0quZGvKgy5g-1; Thu, 05 Nov 2020 07:46:38 -0500
-X-MC-Unique: q_5bSI-8OM-0quZGvKgy5g-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 956F01084D87;
-        Thu,  5 Nov 2020 12:46:37 +0000 (UTC)
-Received: from [10.72.12.138] (ovpn-12-138.pek2.redhat.com [10.72.12.138])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2AEA276644;
-        Thu,  5 Nov 2020 12:46:34 +0000 (UTC)
-Subject: Re: [PATCH] ceph: send dentry lease metrics to MDS daemon
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, zyan@redhat.com, pdonnell@redhat.com,
-        vshankar@redhat.com, ceph-devel@vger.kernel.org
-References: <20201021045024.44437-1-xiubli@redhat.com>
- <02e17f5aa26ea24139ab673db034c4de5782dfcc.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <2795c104-9f90-a102-e328-9358a1024a49@redhat.com>
-Date:   Thu, 5 Nov 2020 20:46:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        id S1732192AbgKEU6A (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 5 Nov 2020 15:58:00 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:16442 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726801AbgKEU6A (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Nov 2020 15:58:00 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0A5KuOAk106406;
+        Thu, 5 Nov 2020 15:57:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=uIaPG9KOvlm0C7hDrH8NX5ORxxb/hO/D/dXfsLrewTk=;
+ b=aDt+mWvklXfmHhHG+r46Ld+1w9kYvuX5tZDw4VQ2XINT6U6AL8jkzD7BtLcRmZ41fY5F
+ EvdzpDppKiOthGc2PGcVJ5zo99X5EvjzHpFprz85OGg8QqD1EU7JHi0v/SXHHMP9slZF
+ EaFZlvLbKbJngPv2gUcEmNmWJuB0kmVqOluBupuLD/OkzEi5jSXgO0+mbvsrc7qQfxER
+ T7vWWmCWzuUOlXTzRDcqR0stKq0TgmVar83wN6hlzMSZKwldiE/ZDU3si+IBPZxFLTlL
+ ckzhFCNGXbwoWR01rcNxSYKJkR6nta128L3X9577wTenqsU/HOenT3S9recPyDQEGxl5 Hw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 34mfdgne75-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Nov 2020 15:57:03 -0500
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0A5Kv3IJ108031;
+        Thu, 5 Nov 2020 15:57:03 -0500
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 34mfdgne68-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Nov 2020 15:57:02 -0500
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0A5Kv0qE019035;
+        Thu, 5 Nov 2020 20:57:00 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma06fra.de.ibm.com with ESMTP id 34h01kk0bc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Nov 2020 20:57:00 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0A5Kuwve41484616
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 5 Nov 2020 20:56:58 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4E060A4051;
+        Thu,  5 Nov 2020 20:56:58 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E0026A4040;
+        Thu,  5 Nov 2020 20:56:57 +0000 (GMT)
+Received: from imap.linux.ibm.com (unknown [9.152.85.9])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu,  5 Nov 2020 20:56:57 +0000 (GMT)
+Date:   Thu, 5 Nov 2020 21:56:47 +0100
+From:   Stefan Haberland <sth@linux.ibm.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Ilya Dryomov <idryomov@gmail.com>,
+        Song Liu <song@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 06/10] dasd: implement ->set_read_only to hook into
+ BLKROSET processing
+Message-ID: <20201105205634.GA78869@imap.linux.ibm.com>
+References: <20201103100018.683694-1-hch@lst.de>
+ <20201103100018.683694-7-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <02e17f5aa26ea24139ab673db034c4de5782dfcc.camel@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201103100018.683694-7-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
+ definitions=2020-11-05_14:2020-11-05,2020-11-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 lowpriorityscore=0
+ priorityscore=1501 impostorscore=0 clxscore=1011 phishscore=0 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2011050129
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020/11/5 20:34, Jeff Layton wrote:
-> On Wed, 2020-10-21 at 00:50 -0400, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> For the old ceph version, if it received this one metric message
->> containing the dentry lease metric info, it will just ignore it.
->>
->> URL: https://tracker.ceph.com/issues/43423
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>   fs/ceph/metric.c | 18 +++++++++++++++---
->>   fs/ceph/metric.h | 14 ++++++++++++++
->>   2 files changed, 29 insertions(+), 3 deletions(-)
->>
-> Sorry for the long delay -- this one fell through the cracks somehow...
-
-No worry I was also waiting the ceph PR to be merged.
-
-
->> diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
->> index fee4c4778313..06729cbfabee 100644
->> --- a/fs/ceph/metric.c
->> +++ b/fs/ceph/metric.c
->> @@ -16,6 +16,7 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
->>   	struct ceph_metric_read_latency *read;
->>   	struct ceph_metric_write_latency *write;
->>   	struct ceph_metric_metadata_latency *meta;
->> +	struct ceph_metric_dlease *dlease;
->>   	struct ceph_client_metric *m = &mdsc->metric;
->>   	u64 nr_caps = atomic64_read(&m->total_caps);
->>   	struct ceph_msg *msg;
->> @@ -25,7 +26,7 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
->>   	s32 len;
->>   
->>
->>
->>
->>
->>
->>
->>
->>   	len = sizeof(*head) + sizeof(*cap) + sizeof(*read) + sizeof(*write)
->> -	      + sizeof(*meta);
->> +	      + sizeof(*meta) + sizeof(*dlease);
->>   
->>
->>
->>
->>
->>
->>
->>
->>   	msg = ceph_msg_new(CEPH_MSG_CLIENT_METRICS, len, GFP_NOFS, true);
->>   	if (!msg) {
->> @@ -42,8 +43,8 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
->>   	cap->ver = 1;
->>   	cap->compat = 1;
->>   	cap->data_len = cpu_to_le32(sizeof(*cap) - 10);
->> -	cap->hit = cpu_to_le64(percpu_counter_sum(&mdsc->metric.i_caps_hit));
->> -	cap->mis = cpu_to_le64(percpu_counter_sum(&mdsc->metric.i_caps_mis));
->> +	cap->hit = cpu_to_le64(percpu_counter_sum(&m->i_caps_hit));
->> +	cap->mis = cpu_to_le64(percpu_counter_sum(&m->i_caps_mis));
->>   	cap->total = cpu_to_le64(nr_caps);
->>   	items++;
->>   
->>
->>
->>
->>
->>
->>
->>
->> @@ -83,6 +84,17 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
->>   	meta->nsec = cpu_to_le32(ts.tv_nsec);
->>   	items++;
->>   
->>
->>
->>
->>
->>
->>
->>
->> +	/* encode the dentry lease metric */
->> +	dlease = (struct ceph_metric_dlease *)(meta + 1);
->> +	dlease->type = cpu_to_le32(CLIENT_METRIC_TYPE_DENTRY_LEASE);
->> +	dlease->ver = 1;
->> +	dlease->compat = 1;
->> +	dlease->data_len = cpu_to_le32(sizeof(*dlease) - 10);
->> +	dlease->hit = cpu_to_le64(percpu_counter_sum(&m->d_lease_hit));
->> +	dlease->mis = cpu_to_le64(percpu_counter_sum(&m->d_lease_mis));
->> +	dlease->total = atomic64_read(&m->total_dentries),
-> dlease->total needs to be wrapped in cpu_to_le64().
-
-Yeah, will fix it.
-
-Thanks
-
-BRs
+Christoph Hellwig <hch@lst.de> schrieb am Tue, 03. Nov 11:00:
+> Implement the ->set_read_only method instead of parsing the actual
+> ioctl command.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/s390/block/dasd.c       |  1 +
+>  drivers/s390/block/dasd_int.h   |  3 ++-
+>  drivers/s390/block/dasd_ioctl.c | 27 +++++++++------------------
+>  3 files changed, 12 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/s390/block/dasd.c b/drivers/s390/block/dasd.c
+> index eb17fea8075c6f..db24e04ee9781e 100644
+> --- a/drivers/s390/block/dasd.c
+> +++ b/drivers/s390/block/dasd.c
+> @@ -3394,6 +3394,7 @@ dasd_device_operations = {
+>  	.ioctl		= dasd_ioctl,
+>  	.compat_ioctl	= dasd_ioctl,
+>  	.getgeo		= dasd_getgeo,
+> +	.set_read_only	= dasd_set_read_only,
+>  };
+>  
+>  /*******************************************************************************
+> diff --git a/drivers/s390/block/dasd_int.h b/drivers/s390/block/dasd_int.h
+> index fa552f9f166671..c59a0d63b506e6 100644
+> --- a/drivers/s390/block/dasd_int.h
+> +++ b/drivers/s390/block/dasd_int.h
+> @@ -844,7 +844,8 @@ int dasd_scan_partitions(struct dasd_block *);
+>  void dasd_destroy_partitions(struct dasd_block *);
+>  
+>  /* externals in dasd_ioctl.c */
+> -int  dasd_ioctl(struct block_device *, fmode_t, unsigned int, unsigned long);
+> +int dasd_ioctl(struct block_device *, fmode_t, unsigned int, unsigned long);
+> +int dasd_set_read_only(struct block_device *bdev, bool ro);
+>  
+>  /* externals in dasd_proc.c */
+>  int dasd_proc_init(void);
+> diff --git a/drivers/s390/block/dasd_ioctl.c b/drivers/s390/block/dasd_ioctl.c
+> index cb6427fb9f3d16..3359559517bfcf 100644
+> --- a/drivers/s390/block/dasd_ioctl.c
+> +++ b/drivers/s390/block/dasd_ioctl.c
+> @@ -532,28 +532,22 @@ static int dasd_ioctl_information(struct dasd_block *block, void __user *argp,
+>  /*
+>   * Set read only
+>   */
+> -static int
+> -dasd_ioctl_set_ro(struct block_device *bdev, void __user *argp)
+> +int dasd_set_read_only(struct block_device *bdev, bool ro)
+>  {
+>  	struct dasd_device *base;
+> -	int intval, rc;
+> +	int rc;
+>  
+> -	if (!capable(CAP_SYS_ADMIN))
+> -		return -EACCES;
+> +	/* do not manipulate hardware state for partitions */
+>  	if (bdev_is_partition(bdev))
+> -		// ro setting is not allowed for partitions
+> -		return -EINVAL;
+> -	if (get_user(intval, (int __user *)argp))
+> -		return -EFAULT;
+> +		return 0;
+> +
+>  	base = dasd_device_from_gendisk(bdev->bd_disk);
+>  	if (!base)
+>  		return -ENODEV;
+> -	if (!intval && test_bit(DASD_FLAG_DEVICE_RO, &base->flags)) {
+> -		dasd_put_device(base);
+> -		return -EROFS;
+> -	}
+> -	set_disk_ro(bdev->bd_disk, intval);
 
 
->> +	items++;
->> +
->>   	put_unaligned_le32(items, &head->num);
->>   	msg->front.iov_len = len;
->>   	msg->hdr.version = cpu_to_le16(1);
->> diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
->> index 710f3f1dceab..af6038ff39d4 100644
->> --- a/fs/ceph/metric.h
->> +++ b/fs/ceph/metric.h
->> @@ -27,6 +27,7 @@ enum ceph_metric_type {
->>   	CLIENT_METRIC_TYPE_READ_LATENCY,	\
->>   	CLIENT_METRIC_TYPE_WRITE_LATENCY,	\
->>   	CLIENT_METRIC_TYPE_METADATA_LATENCY,	\
->> +	CLIENT_METRIC_TYPE_DENTRY_LEASE,	\
->>   						\
->>   	CLIENT_METRIC_TYPE_MAX,			\
->>   }
->> @@ -80,6 +81,19 @@ struct ceph_metric_metadata_latency {
->>   	__le32 nsec;
->>   } __packed;
->>   
->>
->>
->>
->> +/* metric dentry lease header */
->> +struct ceph_metric_dlease {
->> +	__le32 type;     /* ceph metric type */
->> +
->> +	__u8  ver;
->> +	__u8  compat;
->> +
->> +	__le32 data_len; /* length of sizeof(hit + mis + total) */
->> +	__le64 hit;
->> +	__le64 mis;
->> +	__le64 total;
->> +} __packed;
->> +
->>   struct ceph_metric_head {
->>   	__le32 num;	/* the number of metrics that will be sent */
->>   } __packed;
+While testing this patch I just noticed that when I set a device readonly this is
+not going to be passed on to the partitions on this device any longer.
 
+This is caused by the removed call to set_disk_ro().
 
+Is this intentional or was this removed by accident?
+
+> -	rc = dasd_set_feature(base->cdev, DASD_FEATURE_READONLY, intval);
+> +	if (!ro && test_bit(DASD_FLAG_DEVICE_RO, &base->flags))
+> +		rc = -EROFS;
+> +	else
+> +		rc = dasd_set_feature(base->cdev, DASD_FEATURE_READONLY, ro);
+>  	dasd_put_device(base);
+>  	return rc;
+>  }
+> @@ -633,9 +627,6 @@ int dasd_ioctl(struct block_device *bdev, fmode_t mode,
+>  	case BIODASDPRRST:
+>  		rc = dasd_ioctl_reset_profile(block);
+>  		break;
+> -	case BLKROSET:
+> -		rc = dasd_ioctl_set_ro(bdev, argp);
+> -		break;
+>  	case DASDAPIVER:
+>  		rc = dasd_ioctl_api_version(argp);
+>  		break;
+> -- 
+> 2.28.0
+> 
