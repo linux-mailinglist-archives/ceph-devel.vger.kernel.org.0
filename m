@@ -2,65 +2,140 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DCD282A8BB9
-	for <lists+ceph-devel@lfdr.de>; Fri,  6 Nov 2020 01:59:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C14C12A8E60
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Nov 2020 05:30:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732706AbgKFA7Q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 5 Nov 2020 19:59:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37866 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729162AbgKFA7Q (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 5 Nov 2020 19:59:16 -0500
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726090AbgKFEat (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 5 Nov 2020 23:30:49 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:41662 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725616AbgKFEat (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Nov 2020 23:30:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1604637047;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=4pGJlqgIaLV0xIJl8xDdsmt7O3lD1DSIpJva6N7SkrA=;
+        b=Cn6JjanHb2LmYRdelJ9Fq5e/vrIEz7QGE+J+jIG0vynX13KkriPNPObCaAryl0DfKg9cw0
+        DbI7teO30ERTjd6lAZ6j9HW+7gkjES2Dya0kpPI2iTgGN1vtwtC4dE9GGnREFfDF9/W9/g
+        4s63PkYXIm8Q6drSz7SialE0NbDkqIE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-436-B5rx2qPcMgK1bubDpzSspg-1; Thu, 05 Nov 2020 23:30:44 -0500
+X-MC-Unique: B5rx2qPcMgK1bubDpzSspg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 874D020B80;
-        Fri,  6 Nov 2020 00:59:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604624355;
-        bh=7ZEnEByVc0R517QJnXpcoY8tP3coLZ3Q0yNiPZUgtgg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=LNpnrV7M/iN+V4ujDAzN/T3tay3OStPr/YwN3bQLZEZRpTgr0YhvNN4iBgBUJLUf3
-         Eyu6tRaITH92HSP28KFJe9mve+CEskk+7qXQLpjeDebpDpVOQUSpkbvXaaONO39bxV
-         IJUM6BAFBL4N5Ww5w31SVrYbaTEzjrMQ+XrSEDIA=
-Received: by mail-lj1-f172.google.com with SMTP id v18so1721207ljc.3;
-        Thu, 05 Nov 2020 16:59:15 -0800 (PST)
-X-Gm-Message-State: AOAM5326MOuS1QQqb4Zj2wC8GUOUq9Lx7YsQGQNBHszlCCCOOEjJS3Mn
-        SXKGJl4UrcRGfajUsf4yyjWZIMcSDtiAMLstp0U=
-X-Google-Smtp-Source: ABdhPJyXOcSc3bNtfvoEDL2fsq2W1tQrSuxExDjK8UvdpyheAJjMXI2e+jMAtLr0Lt7iM9E9hRacrnZUBqM91DJOAeg=
-X-Received: by 2002:a2e:50d:: with SMTP id 13mr1899629ljf.41.1604624353730;
- Thu, 05 Nov 2020 16:59:13 -0800 (PST)
-MIME-Version: 1.0
-References: <20201103100018.683694-1-hch@lst.de> <20201103100018.683694-6-hch@lst.de>
-In-Reply-To: <20201103100018.683694-6-hch@lst.de>
-From:   Song Liu <song@kernel.org>
-Date:   Thu, 5 Nov 2020 16:59:02 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW65Au-wJJo96KF0J3drdriCqHZ9Oa3=bfjfspV3tKByrg@mail.gmail.com>
-Message-ID: <CAPhsuW65Au-wJJo96KF0J3drdriCqHZ9Oa3=bfjfspV3tKByrg@mail.gmail.com>
-Subject: Re: [PATCH 05/10] md: implement ->set_read_only to hook into BLKROSET processing
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Ilya Dryomov <idryomov@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-bcache@vger.kernel.org,
-        linux-raid <linux-raid@vger.kernel.org>,
-        linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1EC1A835B47;
+        Fri,  6 Nov 2020 04:30:43 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (vm37-120.gsslab.pek2.redhat.com [10.72.37.120])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6C78968431;
+        Fri,  6 Nov 2020 04:30:38 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, zyan@redhat.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v2] ceph: send dentry lease metrics to MDS daemon
+Date:   Thu,  5 Nov 2020 23:30:21 -0500
+Message-Id: <20201106043021.966064-1-xiubli@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Nov 3, 2020 at 2:13 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> Implement the ->set_read_only method instead of parsing the actual
-> ioctl command.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+From: Xiubo Li <xiubli@redhat.com>
 
-LGTM!
+For the old ceph version, if it received this one metric message
+containing the dentry lease metric info, it will just ignore it.
 
-Acked-by: Song Liu <song@kernel.org>
+URL: https://tracker.ceph.com/issues/43423
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/metric.c | 18 +++++++++++++++---
+ fs/ceph/metric.h | 14 ++++++++++++++
+ 2 files changed, 29 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
+index fee4c4778313..5ec94bd4c1de 100644
+--- a/fs/ceph/metric.c
++++ b/fs/ceph/metric.c
+@@ -16,6 +16,7 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+ 	struct ceph_metric_read_latency *read;
+ 	struct ceph_metric_write_latency *write;
+ 	struct ceph_metric_metadata_latency *meta;
++	struct ceph_metric_dlease *dlease;
+ 	struct ceph_client_metric *m = &mdsc->metric;
+ 	u64 nr_caps = atomic64_read(&m->total_caps);
+ 	struct ceph_msg *msg;
+@@ -25,7 +26,7 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+ 	s32 len;
+ 
+ 	len = sizeof(*head) + sizeof(*cap) + sizeof(*read) + sizeof(*write)
+-	      + sizeof(*meta);
++	      + sizeof(*meta) + sizeof(*dlease);
+ 
+ 	msg = ceph_msg_new(CEPH_MSG_CLIENT_METRICS, len, GFP_NOFS, true);
+ 	if (!msg) {
+@@ -42,8 +43,8 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+ 	cap->ver = 1;
+ 	cap->compat = 1;
+ 	cap->data_len = cpu_to_le32(sizeof(*cap) - 10);
+-	cap->hit = cpu_to_le64(percpu_counter_sum(&mdsc->metric.i_caps_hit));
+-	cap->mis = cpu_to_le64(percpu_counter_sum(&mdsc->metric.i_caps_mis));
++	cap->hit = cpu_to_le64(percpu_counter_sum(&m->i_caps_hit));
++	cap->mis = cpu_to_le64(percpu_counter_sum(&m->i_caps_mis));
+ 	cap->total = cpu_to_le64(nr_caps);
+ 	items++;
+ 
+@@ -83,6 +84,17 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+ 	meta->nsec = cpu_to_le32(ts.tv_nsec);
+ 	items++;
+ 
++	/* encode the dentry lease metric */
++	dlease = (struct ceph_metric_dlease *)(meta + 1);
++	dlease->type = cpu_to_le32(CLIENT_METRIC_TYPE_DENTRY_LEASE);
++	dlease->ver = 1;
++	dlease->compat = 1;
++	dlease->data_len = cpu_to_le32(sizeof(*dlease) - 10);
++	dlease->hit = cpu_to_le64(percpu_counter_sum(&m->d_lease_hit));
++	dlease->mis = cpu_to_le64(percpu_counter_sum(&m->d_lease_mis));
++	dlease->total = cpu_to_le64(atomic64_read(&m->total_dentries));
++	items++;
++
+ 	put_unaligned_le32(items, &head->num);
+ 	msg->front.iov_len = len;
+ 	msg->hdr.version = cpu_to_le16(1);
+diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
+index 710f3f1dceab..af6038ff39d4 100644
+--- a/fs/ceph/metric.h
++++ b/fs/ceph/metric.h
+@@ -27,6 +27,7 @@ enum ceph_metric_type {
+ 	CLIENT_METRIC_TYPE_READ_LATENCY,	\
+ 	CLIENT_METRIC_TYPE_WRITE_LATENCY,	\
+ 	CLIENT_METRIC_TYPE_METADATA_LATENCY,	\
++	CLIENT_METRIC_TYPE_DENTRY_LEASE,	\
+ 						\
+ 	CLIENT_METRIC_TYPE_MAX,			\
+ }
+@@ -80,6 +81,19 @@ struct ceph_metric_metadata_latency {
+ 	__le32 nsec;
+ } __packed;
+ 
++/* metric dentry lease header */
++struct ceph_metric_dlease {
++	__le32 type;     /* ceph metric type */
++
++	__u8  ver;
++	__u8  compat;
++
++	__le32 data_len; /* length of sizeof(hit + mis + total) */
++	__le64 hit;
++	__le64 mis;
++	__le64 total;
++} __packed;
++
+ struct ceph_metric_head {
+ 	__le32 num;	/* the number of metrics that will be sent */
+ } __packed;
+-- 
+2.18.4
+
