@@ -2,111 +2,109 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F7452AB6D1
-	for <lists+ceph-devel@lfdr.de>; Mon,  9 Nov 2020 12:30:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 111B12ABDDA
+	for <lists+ceph-devel@lfdr.de>; Mon,  9 Nov 2020 14:52:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729159AbgKILaY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 9 Nov 2020 06:30:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:53612 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728927AbgKILaX (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 9 Nov 2020 06:30:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1604921421;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qJPHU79Z9aFII+RXhVTkpUcHO9yLNqjEBCGqyvXY310=;
-        b=V995cmrSEl54zDxw55HTc5LkSVBjkP2bV0TQekN9COsw8YV5x1PRZoXTiOQWYGIU7qeB/F
-        S4Jatc89SsaTrYA2XyRpHprinR8Gwv4zs3Vt/5nvJ4nLkVnzBzM/M3xEYu8X8hmCleZFtk
-        XB3dlRLouPrOoTfOtSq1W/8EfJ7ljA0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-404-hOxFHt7cP9WOXOGIvCxIlw-1; Mon, 09 Nov 2020 06:30:20 -0500
-X-MC-Unique: hOxFHt7cP9WOXOGIvCxIlw-1
-Received: by mail-wm1-f72.google.com with SMTP id z7so1858153wme.8
-        for <ceph-devel@vger.kernel.org>; Mon, 09 Nov 2020 03:30:20 -0800 (PST)
+        id S1729879AbgKINwJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 9 Nov 2020 08:52:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57270 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729320AbgKINwI (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 9 Nov 2020 08:52:08 -0500
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C748C0613CF;
+        Mon,  9 Nov 2020 05:52:08 -0800 (PST)
+Received: by mail-il1-x144.google.com with SMTP id n5so8308398ile.7;
+        Mon, 09 Nov 2020 05:52:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kU2Lz6FCVrZiuEoHabGbCYI8mZi4aQygf2Kr0fLfGG4=;
+        b=Lb/BkUcVIcd6xhv8oVONfECjW/ZB+eIGRHnh0dm3V/Dcve1CHMxGnjqr8op+1v76K7
+         BboZLuIC9lFoWJc8zRN7ckG8JYkUCEMrBXYH3LeqwWaeQw6FiksBZKkC4/rY+nMcbUOP
+         mcyx+jHFLBCXxcHO2RHq4/pyA2nmEefVK9oOy9OsQ2fr8vLqz43v1yvxxZclHh7D+k2N
+         Qw7b/fXaJ5trjyicYsioOneOxQN4Qzfe8MAWER1MvLiN60BX2gzHW6baJIDiu8cGcvYG
+         BbC7br0UMOuvYPQzgHxuAO2xrcgSSEORe8jj2L4/gatFyG+wbhw19VFJICOjyYa/QKXf
+         TWnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qJPHU79Z9aFII+RXhVTkpUcHO9yLNqjEBCGqyvXY310=;
-        b=BjF9IF1MjhQMLoc+ka0aEQObtCOcKy2xrZEHYxNaaMMcKk+ryi7+FIrbnJsDNO8/4B
-         Fml3DvGaeF2nMqRnyeIlkjd9tG4uF9sOjeg5xhBnECJ865LO0mcmp+b2K1Hrvm06+jRe
-         +m1orr8+iT9VIIZ8zmhFUYjPTWw/NhM7lWlEH64OwQecdvPNr5uYAFpTPmX+YKZ8G4Xv
-         VhTXo42RhAty+laYtcT60vKFNqbbr2/kVV0JK8fdHgpxDt+cZemvVJhjI9cH7nV5s48+
-         2TNkgBOTcBVsxnOPFQBIAgZ1AyIWcEIdNn8K9/czdf0ewLmQSI8V9+8eklcFzdGwVUDm
-         usQg==
-X-Gm-Message-State: AOAM532kAcGsx4ez7jHK4qqbgUTWga6AnRGBBj895TVWSPjTSekYdffO
-        riTy1KJKhaAaq4D0RXE0Z8VmFhXgOYgwpmDbVOB2Z0M5i+SNjhIIxnYMwpfgYTisagoZC1hFb7j
-        9cw2DMHakcofRPyk1HxALOg==
-X-Received: by 2002:a05:6000:1005:: with SMTP id a5mr10320344wrx.425.1604921419107;
-        Mon, 09 Nov 2020 03:30:19 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxfMfmWa9Cv9HNLSs0dLMrckBnIhQ+LX5gsNBfqeNBoHRKN7zV/cjWgtINNh6h724r5DlDOEA==
-X-Received: by 2002:a05:6000:1005:: with SMTP id a5mr10320328wrx.425.1604921418961;
-        Mon, 09 Nov 2020 03:30:18 -0800 (PST)
-Received: from redhat.com (bzq-79-181-34-244.red.bezeqint.net. [79.181.34.244])
-        by smtp.gmail.com with ESMTPSA id 35sm10972366wro.71.2020.11.09.03.30.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2020 03:30:17 -0800 (PST)
-Date:   Mon, 9 Nov 2020 06:30:10 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kU2Lz6FCVrZiuEoHabGbCYI8mZi4aQygf2Kr0fLfGG4=;
+        b=D8rIfe5/uWkbC96VbYLZLOB1Be1V6kifmsvMT/yHbyh94Rej9hB8K6xRXfurRtakZk
+         A6dojU4SMDTorGcBtecsRUDl5R/VGT9o7VPYOWOHAMwmfwsH4eZqupQGK8+vCywTNvFk
+         SWBoIqAvWp3qlZE59p3H67kffGiFG3p8oeg+x7rQ2o16d7h6MfscaAv0wvgRU5yuFTTG
+         bxBHBcY674d522JcQNvYxZUkEW+EZ3NyGYwl0ukH3RVwg5RDUBqcV9YIPdupaWdePWTR
+         Sy0yETcTBC4JizmuFwMFJsW5IDLS+RVkuOP15CyFn2Jz4sx6WCJGQjPHw4XnyJNEM6hx
+         kmXA==
+X-Gm-Message-State: AOAM531ZiLGQQ12TVLv7zLhF8uB5Mim/6Af5ikO/eVtKjBQ/zU5KrYsO
+        7eD2SwiVQI44xfhwkrI+lfq6x3B6pcqrmxerMgE=
+X-Google-Smtp-Source: ABdhPJyXm5ijaiShQDd7Xj0k0fsOvCm3U5j3JctcQpIY73kNN30YAUsNc9VfJ5DemzskInCCw4oOffcooZ/r5dSiKD8=
+X-Received: by 2002:a05:6e02:c:: with SMTP id h12mr10623495ilr.177.1604929927708;
+ Mon, 09 Nov 2020 05:52:07 -0800 (PST)
+MIME-Version: 1.0
+References: <20201106190337.1973127-1-hch@lst.de> <20201106190337.1973127-18-hch@lst.de>
+In-Reply-To: <20201106190337.1973127-18-hch@lst.de>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 9 Nov 2020 14:52:08 +0100
+Message-ID: <CAOi1vP83cOt_FOFLXQmgBpDgmaq8o8OQcUYWOb97jzkgOw6r4A@mail.gmail.com>
+Subject: Re: [PATCH 17/24] rbd: use set_capacity_and_notify
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Justin Sanders <justin@coraid.com>,
         Josef Bacik <josef@toxicpanda.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
         Jack Wang <jinpu.wang@cloud.ionos.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
         Jason Wang <jasowang@redhat.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
+        =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
         Minchan Kim <minchan@kernel.org>,
         Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        dm-devel@redhat.com, linux-block@vger.kernel.org,
-        drbd-dev@lists.linbit.com, nbd@other.debian.org,
-        ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 23/24] virtio-blk: remove a spurious call to
- revalidate_disk_size
-Message-ID: <20201109063004-mutt-send-email-mst@kernel.org>
-References: <20201106190337.1973127-1-hch@lst.de>
- <20201106190337.1973127-24-hch@lst.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201106190337.1973127-24-hch@lst.de>
+        dm-devel@redhat.com, linux-block <linux-block@vger.kernel.org>,
+        Lars Ellenberg <drbd-dev@lists.linbit.com>,
+        nbd@other.debian.org,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        xen-devel@lists.xenproject.org, linux-raid@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Nov 06, 2020 at 08:03:35PM +0100, Christoph Hellwig wrote:
-> revalidate_disk_size just updates the block device size from the disk
-> size.  Thus calling it from revalidate_disk_size doesn't actually do
-> anything.
-> 
+On Fri, Nov 6, 2020 at 8:04 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Use set_capacity_and_notify to set the size of both the disk and block
+> device.  This also gets the uevent notifications for the resize for free.
+>
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-
 > ---
->  drivers/block/virtio_blk.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-> index 3e812b4c32e669..145606dc52db1e 100644
-> --- a/drivers/block/virtio_blk.c
-> +++ b/drivers/block/virtio_blk.c
-> @@ -598,7 +598,6 @@ static void virtblk_update_cache_mode(struct virtio_device *vdev)
->  	struct virtio_blk *vblk = vdev->priv;
->  
->  	blk_queue_write_cache(vblk->disk->queue, writeback, false);
-> -	revalidate_disk_size(vblk->disk, true);
+>  drivers/block/rbd.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index f84128abade319..b7a194ffda55b4 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -4920,8 +4920,7 @@ static void rbd_dev_update_size(struct rbd_device *rbd_dev)
+>             !test_bit(RBD_DEV_FLAG_REMOVING, &rbd_dev->flags)) {
+>                 size = (sector_t)rbd_dev->mapping.size / SECTOR_SIZE;
+>                 dout("setting size to %llu sectors", (unsigned long long)size);
+> -               set_capacity(rbd_dev->disk, size);
+> -               revalidate_disk_size(rbd_dev->disk, true);
+> +               set_capacity_and_notify(rbd_dev->disk, size);
+>         }
 >  }
->  
->  static const char *const virtblk_cache_types[] = {
-> -- 
+>
+> --
 > 2.28.0
+>
 
+Acked-by: Ilya Dryomov <idryomov@gmail.com>
+
+Thanks,
+
+                Ilya
