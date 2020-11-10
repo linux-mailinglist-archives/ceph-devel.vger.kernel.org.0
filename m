@@ -2,54 +2,54 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 650282ADAB6
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 16:44:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19CF42ADB0A
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 16:59:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730473AbgKJPoy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Nov 2020 10:44:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44306 "EHLO
+        id S1730988AbgKJP7b (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 10:59:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729909AbgKJPoy (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Nov 2020 10:44:54 -0500
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05313C0613CF
-        for <ceph-devel@vger.kernel.org>; Tue, 10 Nov 2020 07:44:54 -0800 (PST)
-Received: by mail-il1-x141.google.com with SMTP id l12so9817009ilo.1
-        for <ceph-devel@vger.kernel.org>; Tue, 10 Nov 2020 07:44:53 -0800 (PST)
+        with ESMTP id S1730231AbgKJP7b (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Nov 2020 10:59:31 -0500
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 068F4C0613CF
+        for <ceph-devel@vger.kernel.org>; Tue, 10 Nov 2020 07:59:30 -0800 (PST)
+Received: by mail-io1-xd43.google.com with SMTP id m13so1663847ioq.9
+        for <ceph-devel@vger.kernel.org>; Tue, 10 Nov 2020 07:59:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=WaERiuaBFL9EGpo+sbIIePuTMBxlMl/aXMX6BNwGVew=;
-        b=DwY0tjhzl1zedMgOl6HR9Ghk5QThFyPH5S/melgGoMsxjXjowyhx15kSMCfBaAQg29
-         XbGJDvGd8VUE0FuR9WBaRlDhaYt9o8m2JoDNExS1Z5/lw1SjeXB9c0/OUnUWmcTUlQGc
-         0PPPY3geNcQtOS6TzPZzuvrNveMgCsgclb/ngtsXMzXSWbPkwFkHVLk1IDFFoKQKTygl
-         8r4aOwyS2mrvTkSsecCIpZR7fHCXbyIlT1Qnme1WPz1qssQblBbHf1zJALLgQM80xTLp
-         4+lfwX+lxUb0uIfW8v51bazlJH6H5TQ2mRxpJCR7f/PO0jxFmgTSdbVvjpR1Faq/J3Rn
-         UBqw==
+        bh=LOWCr9AtWkJ8at2cQwuS1p1eis8OEmhz9ZWb3tsmujw=;
+        b=RBAoq5bSZqsQy5/y7WwZUxR7hXE/gP0dP8srir5SV4Rai72pJsGdzAxfO0MFj1U2Pd
+         VcCj+5fSqQYmFltZmrkSi7FX0JQ2aT1Ej8nriAyyGRFIDRcySDWkYJ6XC05cuafCfkG2
+         wfWo56q22kmXfElD51gTgu/cF+QpXvjXmiYtOLW3EjNwBGSDy6xFR6OuFguEn16FAerz
+         ezA3+rfD4NSWAMebw+nfyeMeAvRpp43u9zTfdbKrB/1ywk9Bsxbom2TpoV8xEv3ZqUPj
+         +1afUaWBWE0Dbyk0F1FKRf1e+R8kvAWM83LrjE9Z4u0QsySm6v/6msEBEB+ShVWN552L
+         iy5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=WaERiuaBFL9EGpo+sbIIePuTMBxlMl/aXMX6BNwGVew=;
-        b=Dja86XdNHbPQcPeUWLRJ8kqX4Y8M05jGB+oSFnx+IGzNsSXEPslk7/XFZSPZlwVtUa
-         IXJYWgr8q3TCxRUo3M8+um9m8sHD0f5ancEhGGCxENBO6rsaY/KK3ifVBtWfjcjHdT8d
-         bj76+0Wid5TsKKWonPP4Y0vmW1B+oOgZqB/NppISE3SuwDUDx2TYeP2DEYnwsoSmTQ2h
-         kCXoD//CZYb/trAW8y7H4e+23MxrFPHHACthzV1g97ec9ay0bypvZ7IQ6yKE71mt7V+j
-         yLsE44wY7ZcFt2V/VbsC+y8L9CvrN2/4SbZEFrcqVNCgjFdeVMkto/3wcWYtTQkTCL7T
-         F+Cw==
-X-Gm-Message-State: AOAM533ERhJcyyS3Ap6CkZGOz/199cX53OESxFmpEwgKLKgYX/4K12Sa
-        WsAb2/OUwiwouVbrnAoIuishZyGcGO11OMHbRFA=
-X-Google-Smtp-Source: ABdhPJyhoqIyq2vKpTQ748XgwLPE64DJnU97BzsNg6wKlASCu26eP3ClBiMKVetdtxrYGXYutexGsWt28VfMQq4cMWY=
-X-Received: by 2002:a05:6e02:c:: with SMTP id h12mr15458025ilr.177.1605023093372;
- Tue, 10 Nov 2020 07:44:53 -0800 (PST)
+        bh=LOWCr9AtWkJ8at2cQwuS1p1eis8OEmhz9ZWb3tsmujw=;
+        b=uj4beGoYXgVcJTU8Wg/Mau2FUz7LRRhp59y2nhB6qQ7qljmRSLJPJPNRz8J+uVKM0H
+         p9+xBvizY3BgwhQ0HsMKNpG3VUykG1hjaaRPrpoxKJcrYUHkHOkSAL0gpFbcyCF2+iYl
+         SWZWBHFhaXNk7ZDBukLyEF5YqdtsmJXitJSBYPVIHmQRtAfvvXhJqO+fh+SSqQ2Z3o04
+         Z8PeU16YR9jkASFdF64e7d3Nsuc9Lt31QtRrEYvyzo7FM6q6xE6DU+apFQe4KFYJsNhi
+         HH7aYp/AjtHLtm82U8wIptd3W1IX11DN7oJAEnRbrwlyig7CbFpkmgFK+dnslJPcOE4X
+         Iq5w==
+X-Gm-Message-State: AOAM533yDOtNZbN88UQkePET7WXwJBrb0eyVsnA53HHoX9kh62qhy+/O
+        7TlJnnp2k82NqfoNnLs6sbKeKiu3Nr4Ql++RfnE=
+X-Google-Smtp-Source: ABdhPJxSKAL19tUkA4o/VoLogWl9YW0h3UTMIsRV2Dr+g5iX8qdJ1zsDfBub/s7fJNqfddFqwAAH+x+clhBA4PrqqnI=
+X-Received: by 2002:a05:6602:235b:: with SMTP id r27mr15096586iot.123.1605023970359;
+ Tue, 10 Nov 2020 07:59:30 -0800 (PST)
 MIME-Version: 1.0
-References: <20201110141937.414301-1-xiubli@redhat.com>
-In-Reply-To: <20201110141937.414301-1-xiubli@redhat.com>
+References: <20201110141703.414211-1-xiubli@redhat.com> <20201110141703.414211-3-xiubli@redhat.com>
+In-Reply-To: <20201110141703.414211-3-xiubli@redhat.com>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 10 Nov 2020 16:44:52 +0100
-Message-ID: <CAOi1vP-tBRNEgkmhvieUyBzOms-n=vge4XpYSpnU6cnq86SRMQ@mail.gmail.com>
-Subject: Re: [PATCH v3] libceph: add osd op counter metric support
+Date:   Tue, 10 Nov 2020 16:59:30 +0100
+Message-ID: <CAOi1vP-JQbVYdAFfebKWLXPpVSgXFq=5s2_4knWbV9_J9ubxKA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] ceph: add ceph.{clusterid/clientid} vxattrs suppport
 To:     Xiubo Li <xiubli@redhat.com>
 Cc:     Jeff Layton <jlayton@kernel.org>, "Yan, Zheng" <zyan@redhat.com>,
         Patrick Donnelly <pdonnell@redhat.com>,
@@ -59,48 +59,71 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Nov 10, 2020 at 3:19 PM <xiubli@redhat.com> wrote:
+On Tue, Nov 10, 2020 at 3:17 PM <xiubli@redhat.com> wrote:
 >
 > From: Xiubo Li <xiubli@redhat.com>
 >
-> The logic is the same with osdc/Objecter.cc in ceph in user space.
+> These two vxattrs will only exist in local client side, with which
+> we can easily know which mountpoint the file belongs to and also
+> they can help locate the debugfs path quickly.
 >
-> URL: https://tracker.ceph.com/issues/48053
+> URL: https://tracker.ceph.com/issues/48057
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
+>  fs/ceph/xattr.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
 >
-> V3:
-> - typo fixing about oring the _WRITE
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 0fd05d3d4399..4a41db46e191 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -304,6 +304,23 @@ static ssize_t ceph_vxattrcb_snap_btime(struct ceph_inode_info *ci, char *val,
+>                                 ci->i_snap_btime.tv_nsec);
+>  }
 >
->  include/linux/ceph/osd_client.h |  9 ++++++
->  net/ceph/debugfs.c              | 13 ++++++++
->  net/ceph/osd_client.c           | 56 +++++++++++++++++++++++++++++++++
->  3 files changed, 78 insertions(+)
->
-> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> index 83fa08a06507..24301513b186 100644
-> --- a/include/linux/ceph/osd_client.h
-> +++ b/include/linux/ceph/osd_client.h
-> @@ -339,6 +339,13 @@ struct ceph_osd_backoff {
->         struct ceph_hobject_id *end;
+> +static ssize_t ceph_vxattrcb_clusterid(struct ceph_inode_info *ci,
+> +                                      char *val, size_t size)
+> +{
+> +       struct ceph_fs_client *fsc = ceph_sb_to_client(ci->vfs_inode.i_sb);
+> +
+> +       return ceph_fmt_xattr(val, size, "%pU", &fsc->client->fsid);
+> +}
+> +
+> +static ssize_t ceph_vxattrcb_clientid(struct ceph_inode_info *ci,
+> +                                     char *val, size_t size)
+> +{
+> +       struct ceph_fs_client *fsc = ceph_sb_to_client(ci->vfs_inode.i_sb);
+> +
+> +       return ceph_fmt_xattr(val, size, "client%lld",
+> +                             ceph_client_gid(fsc->client));
+> +}
+> +
+>  #define CEPH_XATTR_NAME(_type, _name)  XATTR_CEPH_PREFIX #_type "." #_name
+>  #define CEPH_XATTR_NAME2(_type, _name, _name2) \
+>         XATTR_CEPH_PREFIX #_type "." #_name "." #_name2
+> @@ -407,6 +424,24 @@ static struct ceph_vxattr ceph_file_vxattrs[] = {
+>         { .name = NULL, 0 }     /* Required table terminator */
 >  };
 >
-> +struct ceph_osd_metric {
-> +       struct percpu_counter op_ops;
-> +       struct percpu_counter op_rmw;
-> +       struct percpu_counter op_r;
-> +       struct percpu_counter op_w;
-> +};
+> +static struct ceph_vxattr ceph_vxattrs[] = {
+> +       {
+> +               .name = "ceph.clusterid",
 
-OK, so only reads and writes are really needed.  Why not expose them
-through the existing metrics framework in fs/ceph?  Wouldn't "fs top"
-want to display them?  Exposing latency information without exposing
-overall counts seems rather weird to me anyway.
+I think this should be "ceph.cluster_fsid"
 
-The fundamental problem is that debugfs output format is not stable.
-The tracker mentions test_readahead -- updating some teuthology test
-cases from time to time is not a big deal, but if a user facing tool
-such as "fs top" starts relying on these, it would be bad.
+> +               .name_size = sizeof("ceph.clusterid"),
+> +               .getxattr_cb = ceph_vxattrcb_clusterid,
+> +               .exists_cb = NULL,
+> +               .flags = VXATTR_FLAG_READONLY,
+> +       },
+> +       {
+> +               .name = "ceph.clientid",
+
+and this should be "ceph.client_id".  It's easier to read, consistent
+with "ceph fsid" command and with existing rbd attributes:
+
+  static DEVICE_ATTR(client_id, 0444, rbd_client_id_show, NULL);
+  static DEVICE_ATTR(cluster_fsid, 0444, rbd_cluster_fsid_show, NULL);
 
 Thanks,
 
