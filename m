@@ -2,35 +2,36 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD1CE2AD993
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 16:00:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1DE02ADA8B
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 16:38:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731036AbgKJPAr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Nov 2020 10:00:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49812 "EHLO mail.kernel.org"
+        id S1732411AbgKJPiV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 10:38:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730070AbgKJPAr (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Nov 2020 10:00:47 -0500
+        id S1730511AbgKJPiU (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 10 Nov 2020 10:38:20 -0500
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BB26206B2;
-        Tue, 10 Nov 2020 15:00:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A5DE2076E;
+        Tue, 10 Nov 2020 15:38:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605020446;
-        bh=7W6PY6KnwRWMSFnkLmXP/CGhltfAGzpiuVjvI+3AOxY=;
+        s=default; t=1605022699;
+        bh=tszIh52InYzbHm2jJuK3EJDM2cm9p3Zo127FHVeh45s=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=nByLg4mMkT7dOmUdDkmLHyeUWpu/FVofuDAXbPxCDinFXdwZuD974N+DmenZy8xTB
-         4zTjLvIndvxgy7/yjG0ZhnSO+5ytKzscsa6H1dmVmP69Wsrehu/LQvhrV71AyMPsyU
-         RGe7+Max59y4auzM/Rg4dQo102La/aRtzOOEfVKI=
-Message-ID: <d7296cf97324c7b8934dc3afe9a0a812466eb19d.camel@kernel.org>
-Subject: Re: [PATCH v3] libceph: add osd op counter metric support
+        b=e0dtn/GBjrmNgfye8Oz5ju5OwRsXfZXW4RMafEYVef2Gzoi7e7If0WMm/KrSi/gFT
+         gXr0G1VwIXhSV7QdSDmGyzbqC9eWozl8rNsDcTUIo1YS+eb8DCV3pFxGw9HeYA0M0c
+         tr7YhC161ypzwtfESg6kNRAGMMYTilxSIe1NUE34=
+Message-ID: <c2497a831c8c28b7f5acdc2bf5aee9812b6e5ce1.camel@kernel.org>
+Subject: Re: [PATCH] ceph: ensure we have Fs caps when fetching dir link
+ count
 From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com, idryomov@gmail.com
-Cc:     zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Tue, 10 Nov 2020 10:00:44 -0500
-In-Reply-To: <20201110141937.414301-1-xiubli@redhat.com>
-References: <20201110141937.414301-1-xiubli@redhat.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     pdonnell@redhat.com, Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 10 Nov 2020 10:38:18 -0500
+In-Reply-To: <20201110120302.13992-1-jlayton@kernel.org>
+References: <20201110120302.13992-1-jlayton@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
 MIME-Version: 1.0
@@ -39,199 +40,76 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2020-11-10 at 22:19 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
+On Tue, 2020-11-10 at 07:03 -0500, Jeff Layton wrote:
+> The link count for a directory is defined as inode->i_subdirs + 2,
+> (for "." and ".."). i_subdirs is only populated when Fs caps are held.
+> Ensure we grab Fs caps when fetching the link count for a directory.
 > 
-> The logic is the same with osdc/Objecter.cc in ceph in user space.
-> 
-> URL: https://tracker.ceph.com/issues/48053
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> URL: https://tracker.ceph.com/issues/48125
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
+>  fs/ceph/inode.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
 > 
-> V3:
-> - typo fixing about oring the _WRITE
-> 
->  include/linux/ceph/osd_client.h |  9 ++++++
->  net/ceph/debugfs.c              | 13 ++++++++
->  net/ceph/osd_client.c           | 56 +++++++++++++++++++++++++++++++++
->  3 files changed, 78 insertions(+)
-> 
-> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> index 83fa08a06507..24301513b186 100644
-> --- a/include/linux/ceph/osd_client.h
-> +++ b/include/linux/ceph/osd_client.h
-> @@ -339,6 +339,13 @@ struct ceph_osd_backoff {
->  	struct ceph_hobject_id *end;
->  };
->  
-> 
-> +struct ceph_osd_metric {
-> +	struct percpu_counter op_ops;
-> +	struct percpu_counter op_rmw;
-> +	struct percpu_counter op_r;
-> +	struct percpu_counter op_w;
-> +};
-> +
->  #define CEPH_LINGER_ID_START	0xffff000000000000ULL
->  
-> 
->  struct ceph_osd_client {
-> @@ -371,6 +378,8 @@ struct ceph_osd_client {
->  	struct ceph_msgpool	msgpool_op;
->  	struct ceph_msgpool	msgpool_op_reply;
->  
-> 
-> +	struct ceph_osd_metric  metric;
-> +
->  	struct workqueue_struct	*notify_wq;
->  	struct workqueue_struct	*completion_wq;
->  };
-> diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
-> index 2110439f8a24..af90019386ab 100644
-> --- a/net/ceph/debugfs.c
-> +++ b/net/ceph/debugfs.c
-> @@ -339,6 +339,16 @@ static void dump_backoffs(struct seq_file *s, struct ceph_osd *osd)
->  	mutex_unlock(&osd->lock);
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 7c22bc2ea076..9ba15ca6b010 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -2343,15 +2343,22 @@ int ceph_permission(struct inode *inode, int mask)
 >  }
 >  
 > 
-> +static void dump_op_metric(struct seq_file *s, struct ceph_osd_client *osdc)
-> +{
-> +	struct ceph_osd_metric *m = &osdc->metric;
-> +
-> +	seq_printf(s, "  op_ops: %lld\n", percpu_counter_sum(&m->op_ops));
-> +	seq_printf(s, "  op_rmw: %lld\n", percpu_counter_sum(&m->op_rmw));
-> +	seq_printf(s, "  op_r:   %lld\n", percpu_counter_sum(&m->op_r));
-> +	seq_printf(s, "  op_w:   %lld\n", percpu_counter_sum(&m->op_w));
-> +}
-> +
->  static int osdc_show(struct seq_file *s, void *pp)
+> 
+> 
+>  /* Craft a mask of needed caps given a set of requested statx attrs. */
+> -static int statx_to_caps(u32 want)
+> +static int statx_to_caps(u32 want, umode_t mode)
 >  {
->  	struct ceph_client *client = s->private;
-> @@ -372,6 +382,9 @@ static int osdc_show(struct seq_file *s, void *pp)
->  	}
+>  	int mask = 0;
 >  
 > 
->  	up_read(&osdc->lock);
-> +
-> +	seq_puts(s, "OP METRIC:\n");
-> +	dump_op_metric(s, osdc);
->  	return 0;
->  }
+> 
+> 
+>  	if (want & (STATX_MODE|STATX_UID|STATX_GID|STATX_CTIME|STATX_BTIME))
+>  		mask |= CEPH_CAP_AUTH_SHARED;
 >  
 > 
-> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> index 7901ab6c79fd..0e6e127dd669 100644
-> --- a/net/ceph/osd_client.c
-> +++ b/net/ceph/osd_client.c
-> @@ -2424,6 +2424,21 @@ static void __submit_request(struct ceph_osd_request *req, bool wrlocked)
->  	goto again;
->  }
->  
 > 
-> +static void osd_acount_op_metric(struct ceph_osd_request *req)
-> +{
-> +	struct ceph_osd_metric *m = &req->r_osdc->metric;
-> +
-> +	percpu_counter_inc(&m->op_ops);
-> +
-> +	if ((req->r_flags & (CEPH_OSD_FLAG_READ | CEPH_OSD_FLAG_WRITE))
-> +	    == (CEPH_OSD_FLAG_READ | CEPH_OSD_FLAG_WRITE))
-> +		percpu_counter_inc(&m->op_rmw);
-> +	if (req->r_flags & CEPH_OSD_FLAG_READ)
-> +		percpu_counter_inc(&m->op_r);
-> +	else if (req->r_flags & CEPH_OSD_FLAG_WRITE)
-> +		percpu_counter_inc(&m->op_w);
-> +}
-> +
->  static void account_request(struct ceph_osd_request *req)
->  {
->  	WARN_ON(req->r_flags & (CEPH_OSD_FLAG_ACK | CEPH_OSD_FLAG_ONDISK));
-> @@ -2434,6 +2449,8 @@ static void account_request(struct ceph_osd_request *req)
->  
 > 
->  	req->r_start_stamp = jiffies;
->  	req->r_start_latency = ktime_get();
-> +
-> +	osd_acount_op_metric(req);
->  }
->  
-> 
->  static void submit_request(struct ceph_osd_request *req, bool wrlocked)
-> @@ -5205,6 +5222,39 @@ void ceph_osdc_reopen_osds(struct ceph_osd_client *osdc)
->  	up_write(&osdc->lock);
->  }
->  
-> 
-> +static void ceph_metric_destroy(struct ceph_osd_metric *m)
-> +{
-> +	percpu_counter_destroy(&m->op_ops);
-> +	percpu_counter_destroy(&m->op_rmw);
-> +	percpu_counter_destroy(&m->op_r);
-> +	percpu_counter_destroy(&m->op_w);
-> +}
-> +
-> +static int ceph_metric_init(struct ceph_osd_metric *m)
-> +{
-> +	int ret;
-> +
-> +	memset(m, 0, sizeof(*m));
-> +
-> +	ret = percpu_counter_init(&m->op_ops, 0, GFP_NOIO);
-> +	if (ret)
-> +		return ret;
-> +	ret = percpu_counter_init(&m->op_rmw, 0, GFP_NOIO);
-> +	if (ret)
-> +		goto err;
-> +	ret = percpu_counter_init(&m->op_r, 0, GFP_NOIO);
-> +	if (ret)
-> +		goto err;
-> +	ret = percpu_counter_init(&m->op_w, 0, GFP_NOIO);
-> +	if (ret)
-> +		goto err;
-> +	return 0;
-> +
-> +err:
-> +	ceph_metric_destroy(m);
-> +	return ret;
-> +}
-> +
->  /*
->   * init, shutdown
->   */
-> @@ -5257,6 +5307,9 @@ int ceph_osdc_init(struct ceph_osd_client *osdc, struct ceph_client *client)
->  	if (!osdc->completion_wq)
->  		goto out_notify_wq;
->  
-> 
-> +	if (ceph_metric_init(&osdc->metric) < 0)
-> +		goto out_completion_wq;
-> +
->  	schedule_delayed_work(&osdc->timeout_work,
->  			      osdc->client->options->osd_keepalive_timeout);
->  	schedule_delayed_work(&osdc->osds_timeout_work,
-> @@ -5264,6 +5317,8 @@ int ceph_osdc_init(struct ceph_osd_client *osdc, struct ceph_client *client)
->  
-> 
->  	return 0;
->  
-> 
-> +out_completion_wq:
-> +	destroy_workqueue(osdc->completion_wq);
->  out_notify_wq:
->  	destroy_workqueue(osdc->notify_wq);
->  out_msgpool_reply:
-> @@ -5302,6 +5357,7 @@ void ceph_osdc_stop(struct ceph_osd_client *osdc)
->  	WARN_ON(atomic_read(&osdc->num_requests));
->  	WARN_ON(atomic_read(&osdc->num_homeless));
->  
-> 
-> +	ceph_metric_destroy(&osdc->metric);
->  	ceph_osdmap_destroy(osdc->osdmap);
->  	mempool_destroy(osdc->req_mempool);
->  	ceph_msgpool_destroy(&osdc->msgpool_op);
+> -	if (want & (STATX_NLINK|STATX_CTIME))
+> +	if (want & (STATX_NLINK|STATX_CTIME)) {
+>  		mask |= CEPH_CAP_LINK_SHARED;
+> +		/*
+> +		 * The link count for directories depends on inode->i_subdirs,
+> +		 * and that is only updated when Fs caps are held.
+> +		 */
+> +		if (S_ISDIR(mode))
+> +			mask |= CEPH_CAP_FILE_SHARED;
+> +	}
 
-Looks sane. Merged into testing.
+I think I'm going to make a small change here and make this not set the
+Ls bit on directories. There really is no need for it since only care
+about i_subdirs, and that might prevent having to do a synchronous call
+to the MDS.
+
+>  
+> 
+> 
+> 
+>  	if (want & (STATX_ATIME|STATX_MTIME|STATX_CTIME|STATX_SIZE|
+>  		    STATX_BLOCKS))
+> @@ -2377,7 +2384,7 @@ int ceph_getattr(const struct path *path, struct kstat *stat,
+>  
+> 
+> 
+> 
+>  	/* Skip the getattr altogether if we're asked not to sync */
+>  	if (!(flags & AT_STATX_DONT_SYNC)) {
+> -		err = ceph_do_getattr(inode, statx_to_caps(request_mask),
+> +		err = ceph_do_getattr(inode, statx_to_caps(request_mask, inode->i_mode),
+>  				      flags & AT_STATX_FORCE_SYNC);
+>  		if (err)
+>  			return err;
 
 -- 
 Jeff Layton <jlayton@kernel.org>
