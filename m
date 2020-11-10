@@ -2,103 +2,175 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EFC502ACE89
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 05:28:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A4922ACEC9
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 06:00:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729831AbgKJE2r (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 9 Nov 2020 23:28:47 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:30402 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729243AbgKJE2q (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 9 Nov 2020 23:28:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1604982525;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=j8Xobc5kf4G1Sirt10BQEEJCujaJs66RHIbk8h+TE8c=;
-        b=bIvzltrcjeCfKVgY5I8Gi5LxgQtHt6wVj5bSOzYRF+radKBpgmCIiHwvK2WP/6wVpUjtAI
-        gt4BW5WkJWuIZvwQ0S+9DvVnJbbCaQgg1+A6x2g2Z+dNZtevBj7nkjCGrtOE4pCZLxSV13
-        ylZ2XUhM9pYaTxAfB1riQL4djIBuAEw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-198-h1apwsEpPPuF7JDGKHiUag-1; Mon, 09 Nov 2020 23:28:42 -0500
-X-MC-Unique: h1apwsEpPPuF7JDGKHiUag-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BCCB01007467;
-        Tue, 10 Nov 2020 04:28:41 +0000 (UTC)
-Received: from [10.72.12.62] (ovpn-12-62.pek2.redhat.com [10.72.12.62])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 72C8E10013D9;
-        Tue, 10 Nov 2020 04:28:40 +0000 (UTC)
-Subject: Re: [RFC PATCH] ceph: acquire Fs caps when getting dir stats
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     pdonnell@redhat.com
-References: <20201103191058.1019442-1-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <1321776d-1e94-faad-b94d-9b45f327569b@redhat.com>
-Date:   Tue, 10 Nov 2020 12:28:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        id S1731729AbgKJFAA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 00:00:00 -0500
+Received: from mga17.intel.com ([192.55.52.151]:12625 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729454AbgKJE77 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 9 Nov 2020 23:59:59 -0500
+IronPort-SDR: b21jH+8daNxFd9MhjXJ+hcbKWYaVf+1LuxpUVENj4DuN0lfPZ6JFWJv2XzpSDg/I8fO29ydhkv
+ QgXh15BrSwxQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9800"; a="149768142"
+X-IronPort-AV: E=Sophos;i="5.77,465,1596524400"; 
+   d="scan'208";a="149768142"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 20:59:55 -0800
+IronPort-SDR: hhtGbVHiYEduO62f/jUORNlQE29+PA61IlKuvPXTtZvvOlHxHT75TW+y4i0J9B1O2lrgZ7K2Sp
+ gskiAxl5TCew==
+X-IronPort-AV: E=Sophos;i="5.77,465,1596524400"; 
+   d="scan'208";a="531063331"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 20:59:54 -0800
+Date:   Mon, 9 Nov 2020 20:59:54 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
+        kexec@lists.infradead.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-efi@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
+        reiserfs-devel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, cluster-devel@redhat.com,
+        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-cachefs@redhat.com,
+        samba-technical@lists.samba.org, intel-wired-lan@lists.osuosl.org
+Subject: Re: [PATCH RFC PKS/PMEM 05/58] kmap: Introduce k[un]map_thread
+Message-ID: <20201110045954.GL3976735@iweiny-DESK2.sc.intel.com>
+References: <20201009195033.3208459-1-ira.weiny@intel.com>
+ <20201009195033.3208459-6-ira.weiny@intel.com>
+ <87h7pyhv3f.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20201103191058.1019442-1-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h7pyhv3f.fsf@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020/11/4 3:10, Jeff Layton wrote:
-> We only update the inode's dirstats when we have Fs caps from the MDS.
->
-> Declare a new VXATTR_FLAG_DIRSTAT that we set on all dirstats, and have
-> the vxattr handling code acquire Fs caps when it's set.
->
-> URL: https://tracker.ceph.com/issues/48104
-> Reported-by: Patrick Donnelly <pdonnell@redhat.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/ceph/xattr.c | 9 ++++++---
->   1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index 197cb1234341..0fd05d3d4399 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -42,6 +42,7 @@ struct ceph_vxattr {
->   #define VXATTR_FLAG_READONLY		(1<<0)
->   #define VXATTR_FLAG_HIDDEN		(1<<1)
->   #define VXATTR_FLAG_RSTAT		(1<<2)
-> +#define VXATTR_FLAG_DIRSTAT		(1<<3)
->   
->   /* layouts */
->   
-> @@ -347,9 +348,9 @@ static struct ceph_vxattr ceph_dir_vxattrs[] = {
->   	XATTR_LAYOUT_FIELD(dir, layout, object_size),
->   	XATTR_LAYOUT_FIELD(dir, layout, pool),
->   	XATTR_LAYOUT_FIELD(dir, layout, pool_namespace),
-> -	XATTR_NAME_CEPH(dir, entries, 0),
-> -	XATTR_NAME_CEPH(dir, files, 0),
-> -	XATTR_NAME_CEPH(dir, subdirs, 0),
-> +	XATTR_NAME_CEPH(dir, entries, VXATTR_FLAG_DIRSTAT),
-> +	XATTR_NAME_CEPH(dir, files, VXATTR_FLAG_DIRSTAT),
-> +	XATTR_NAME_CEPH(dir, subdirs, VXATTR_FLAG_DIRSTAT),
->   	XATTR_RSTAT_FIELD(dir, rentries),
->   	XATTR_RSTAT_FIELD(dir, rfiles),
->   	XATTR_RSTAT_FIELD(dir, rsubdirs),
-> @@ -837,6 +838,8 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
->   		int mask = 0;
->   		if (vxattr->flags & VXATTR_FLAG_RSTAT)
->   			mask |= CEPH_STAT_RSTAT;
-> +		if (vxattr->flags & VXATTR_FLAG_DIRSTAT)
-> +			mask |= CEPH_CAP_FILE_SHARED;
->   		err = ceph_do_getattr(inode, mask, true);
->   		if (err)
->   			return err;
+On Tue, Nov 10, 2020 at 02:13:56AM +0100, Thomas Gleixner wrote:
+> Ira,
+> 
+> On Fri, Oct 09 2020 at 12:49, ira weiny wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> >
+> > To correctly support the semantics of kmap() with Kernel protection keys
+> > (PKS), kmap() may be required to set the protections on multiple
+> > processors (globally).  Enabling PKS globally can be very expensive
+> > depending on the requested operation.  Furthermore, enabling a domain
+> > globally reduces the protection afforded by PKS.
+> >
+> > Most kmap() (Aprox 209 of 229) callers use the map within a single thread and
+> > have no need for the protection domain to be enabled globally.  However, the
+> > remaining callers do not follow this pattern and, as best I can tell, expect
+> > the mapping to be 'global' and available to any thread who may access the
+> > mapping.[1]
+> >
+> > We don't anticipate global mappings to pmem, however in general there is a
+> > danger in changing the semantics of kmap().  Effectively, this would cause an
+> > unresolved page fault with little to no information about why the failure
+> > occurred.
+> >
+> > To resolve this a number of options were considered.
+> >
+> > 1) Attempt to change all the thread local kmap() calls to kmap_atomic()[2]
+> > 2) Introduce a flags parameter to kmap() to indicate if the mapping should be
+> >    global or not
+> > 3) Change ~20 call sites to 'kmap_global()' to indicate that they require a
+> >    global enablement of the pages.
+> > 4) Change ~209 call sites to 'kmap_thread()' to indicate that the mapping is to
+> >    be used within that thread of execution only
+> >
+> > Option 1 is simply not feasible.  Option 2 would require all of the call sites
+> > of kmap() to change.  Option 3 seems like a good minimal change but there is a
+> > danger that new code may miss the semantic change of kmap() and not get the
+> > behavior the developer intended.  Therefore, #4 was chosen.
+> 
+> There is Option #5:
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+There is now yes.  :-D
+
+> 
+> Convert the thread local kmap() invocations to the proposed kmap_local()
+> interface which is coming along [1].
+
+I've been trying to follow that thread.
+
+> 
+> That solves a couple of issues:
+> 
+>  1) It relieves the current kmap_atomic() usage sites from the implict
+>     pagefault/preempt disable semantics which apply even when
+>     CONFIG_HIGHMEM is disabled. kmap_local() still can be invoked from
+>     atomic context.
+> 
+>  2) Due to #1 it allows to replace the conditional usage of kmap() and
+>     kmap_atomic() for purely thread local mappings.
+> 
+>  3) It puts the burden on the HIGHMEM inflicted systems
+> 
+>  4) It is actually more efficient for most of the pure thread local use
+>     cases on HIGHMEM inflicted systems because it avoids the overhead of
+>     the global lock and the potential kmap slot exhaustion. A potential
+>     preemption will be more expensive, but that's not really the case we
+>     want to optimize for.
+> 
+>  5) It solves the RT issue vs. kmap_atomic()
+> 
+> So instead of creating yet another variety of kmap() which is just
+> scratching the particular PKRS itch, can we please consolidate all of
+> that on the wider reaching kmap_local() approach?
+
+Yes I agree.  We absolutely don't want more kmap*() calls and I was hoping to
+dovetail into your kmap_local() work.[2]
+
+I've pivoted away from this work a bit to clean up all the
+kmap()/memcpy*()/kunmaps() as discussed elsewhere in the thread first.[3]  I
+was hoping your work would land and then I could s/kmap_thread()/kmap_local()/
+on all of these patches.
+
+Also, we can convert the new memcpy_*_page() calls to kmap_local() as well.
+[For now my patch just uses kmap_atomic().]
+
+I've not looked at all of the patches in your latest version.  Have you
+included converting any of the kmap() call sites?  I thought you were more
+focused on converting the kmap_atomic() to kmap_local()?
+
+Ira
+
+> 
+> Thanks,
+> 
+>         tglx
+>      
+> [1] https://lore.kernel.org/lkml/20201103092712.714480842@linutronix.de/
+
+[2] https://lore.kernel.org/lkml/20201012195354.GC2046448@iweiny-DESK2.sc.intel.com/
+[3] https://lore.kernel.org/lkml/20201009213434.GA839@sol.localdomain/
+    https://lore.kernel.org/lkml/20201013200149.GI3576660@ZenIV.linux.org.uk/
 
