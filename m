@@ -2,38 +2,40 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1FB22ADBB2
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 17:23:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 071792ADC28
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 17:27:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730312AbgKJQXo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Nov 2020 11:23:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52870 "EHLO mail.kernel.org"
+        id S1729819AbgKJQ06 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 11:26:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729992AbgKJQXo (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Nov 2020 11:23:44 -0500
+        id S1726307AbgKJQ06 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 10 Nov 2020 11:26:58 -0500
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDB9020829;
-        Tue, 10 Nov 2020 16:23:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA85520780;
+        Tue, 10 Nov 2020 16:26:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605025423;
-        bh=qzkIzPKuHgExU7xb3UkY1bcV00Q2XwefE6YY+sTf5Cw=;
+        s=default; t=1605025617;
+        bh=QVkj0WqF0caY1yTdKByO8jOjZpcCRqTc0wTuVsnF+D0=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=xtTB0Zz3441t9dkgOkK09wfgqRk60JUWhFjCWZJ1dKMyhC9fgJ5/StGPgUJIzMO++
-         LvazWbwaVKjc5VcD/J4IjMX5KfLpL27EwjLCI0jZhLtxsD5cpTdiuCz2VLyn9H5rVU
-         DYfeeCh0nRsP0s4U+3X1+2ePfqwpOKa4c9Zy8Gvs=
-Message-ID: <d1448816b4acd559bce60dbc3cbec5378d796910.camel@kernel.org>
-Subject: Re: [PATCH] libceph: remove unused defined macro for port
+        b=fcQ0HRA9imwnwDuvTT1275/cezT0hroUsYJhiM4hpY9kaejMfmeNGDxffLDm+45SF
+         ez/fRrj8nzCV2O12e9HTNR0HmIKr2dhqL3YGiIEMd7Dq2ELXJVTZH3hHgZyBXSpGAY
+         bye4T4sYgikczHJi1rvcrRs3Sja6OAIw73nLJ+ls=
+Message-ID: <ca04bd7a8d3af6f4613a804f8b29c4c89a2562a7.camel@kernel.org>
+Subject: Re: [PATCH v3 2/2] ceph: add ceph.{clusterid/clientid} vxattrs
+ suppport
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     "Liu, Changcheng" <changcheng.liu@intel.com>,
+To:     Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>
+Cc:     "Yan, Zheng" <zyan@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
         Ceph Development <ceph-devel@vger.kernel.org>
-Date:   Tue, 10 Nov 2020 11:23:41 -0500
-In-Reply-To: <CAOi1vP9h96K+HFdWUun69pZjwXC9bkbYAELUED1ixaXiA2LzTw@mail.gmail.com>
-References: <20201110135201.GA90549@nstpc>
-         <d8de425bc32a5d26c48494ef71fa93c2c60a9a2c.camel@kernel.org>
-         <CAOi1vP9h96K+HFdWUun69pZjwXC9bkbYAELUED1ixaXiA2LzTw@mail.gmail.com>
+Date:   Tue, 10 Nov 2020 11:26:55 -0500
+In-Reply-To: <CAOi1vP-JQbVYdAFfebKWLXPpVSgXFq=5s2_4knWbV9_J9ubxKA@mail.gmail.com>
+References: <20201110141703.414211-1-xiubli@redhat.com>
+         <20201110141703.414211-3-xiubli@redhat.com>
+         <CAOi1vP-JQbVYdAFfebKWLXPpVSgXFq=5s2_4knWbV9_J9ubxKA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
 MIME-Version: 1.0
@@ -42,48 +44,77 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2020-11-10 at 17:10 +0100, Ilya Dryomov wrote:
-> On Tue, Nov 10, 2020 at 3:00 PM Jeff Layton <jlayton@kernel.org> wrote:
+On Tue, 2020-11-10 at 16:59 +0100, Ilya Dryomov wrote:
+> On Tue, Nov 10, 2020 at 3:17 PM <xiubli@redhat.com> wrote:
 > > 
-> > On Tue, 2020-11-10 at 21:52 +0800, changcheng.liu@intel.com wrote:
-> > > 1. monitor's default port is defined by CEPH_MON_PORT
-> > > 2. CEPH_PORT_START & CEPH_PORT_LAST are not needed.
-> > > 
-> > > Signed-off-by: Changcheng Liu <changcheng.liu@aliyun.com>
-> > > 
-> > > diff --git a/include/linux/ceph/msgr.h b/include/linux/ceph/msgr.h
-> > > index 1c1887206ffa..feff5a2dc33e 100644
-> > > --- a/include/linux/ceph/msgr.h
-> > > +++ b/include/linux/ceph/msgr.h
-> > > @@ -7,15 +7,6 @@
-> > > 
-> > > 
-> > >  #define CEPH_MON_PORT    6789  /* default monitor port */
-> > > 
-> > > 
-> > > -/*
-> > > - * client-side processes will try to bind to ports in this
-> > > - * range, simply for the benefit of tools like nmap or wireshark
-> > > - * that would like to identify the protocol.
-> > > - */
-> > > -#define CEPH_PORT_FIRST  6789
-> > > -#define CEPH_PORT_START  6800  /* non-monitors start here */
-> > > -#define CEPH_PORT_LAST   6900
-> > > -
-> > >  /*
-> > >   * tcp connection banner.  include a protocol version. and adjust
-> > >   * whenever the wire protocol changes.  try to keep this string length
+> > From: Xiubo Li <xiubli@redhat.com>
 > > 
-> > Thanks! Merged into testing branch.
+> > These two vxattrs will only exist in local client side, with which
+> > we can easily know which mountpoint the file belongs to and also
+> > they can help locate the debugfs path quickly.
+> > 
+> > URL: https://tracker.ceph.com/issues/48057
+> > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > ---
+> >  fs/ceph/xattr.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 42 insertions(+)
+> > 
+> > diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> > index 0fd05d3d4399..4a41db46e191 100644
+> > --- a/fs/ceph/xattr.c
+> > +++ b/fs/ceph/xattr.c
+> > @@ -304,6 +304,23 @@ static ssize_t ceph_vxattrcb_snap_btime(struct ceph_inode_info *ci, char *val,
+> >                                 ci->i_snap_btime.tv_nsec);
+> >  }
+> > 
+> > +static ssize_t ceph_vxattrcb_clusterid(struct ceph_inode_info *ci,
+> > +                                      char *val, size_t size)
+> > +{
+> > +       struct ceph_fs_client *fsc = ceph_sb_to_client(ci->vfs_inode.i_sb);
+> > +
+> > +       return ceph_fmt_xattr(val, size, "%pU", &fsc->client->fsid);
+> > +}
+> > +
+> > +static ssize_t ceph_vxattrcb_clientid(struct ceph_inode_info *ci,
+> > +                                     char *val, size_t size)
+> > +{
+> > +       struct ceph_fs_client *fsc = ceph_sb_to_client(ci->vfs_inode.i_sb);
+> > +
+> > +       return ceph_fmt_xattr(val, size, "client%lld",
+> > +                             ceph_client_gid(fsc->client));
+> > +}
+> > +
+> >  #define CEPH_XATTR_NAME(_type, _name)  XATTR_CEPH_PREFIX #_type "." #_name
+> >  #define CEPH_XATTR_NAME2(_type, _name, _name2) \
+> >         XATTR_CEPH_PREFIX #_type "." #_name "." #_name2
+> > @@ -407,6 +424,24 @@ static struct ceph_vxattr ceph_file_vxattrs[] = {
+> >         { .name = NULL, 0 }     /* Required table terminator */
+> >  };
+> > 
+> > +static struct ceph_vxattr ceph_vxattrs[] = {
+> > +       {
+> > +               .name = "ceph.clusterid",
 > 
-> Jeff, the From address doesn't match the SOB address here.  A few
-> weeks ago I asked Changcheng to resend because of this and it looks
-> like he sent two copies of the same patch today.  The other one seems
-> to be in order -- please drop this one.
+> I think this should be "ceph.cluster_fsid"
+> 
+> > +               .name_size = sizeof("ceph.clusterid"),
+> > +               .getxattr_cb = ceph_vxattrcb_clusterid,
+> > +               .exists_cb = NULL,
+> > +               .flags = VXATTR_FLAG_READONLY,
+> > +       },
+> > +       {
+> > +               .name = "ceph.clientid",
+> 
+> and this should be "ceph.client_id".  It's easier to read, consistent
+> with "ceph fsid" command and with existing rbd attributes:
+> 
+>   static DEVICE_ATTR(client_id, 0444, rbd_client_id_show, NULL);
+>   static DEVICE_ATTR(cluster_fsid, 0444, rbd_cluster_fsid_show, NULL);
 > 
 
+That sounds like a good idea. Xiubo, would you mind sending a v4?
 
-Ok, dropped.
+Thanks,
 -- 
 Jeff Layton <jlayton@kernel.org>
 
