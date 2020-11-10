@@ -2,115 +2,106 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1DE02ADA8B
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 16:38:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 650282ADAB6
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 16:44:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732411AbgKJPiV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Nov 2020 10:38:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730511AbgKJPiU (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Nov 2020 10:38:20 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A5DE2076E;
-        Tue, 10 Nov 2020 15:38:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605022699;
-        bh=tszIh52InYzbHm2jJuK3EJDM2cm9p3Zo127FHVeh45s=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=e0dtn/GBjrmNgfye8Oz5ju5OwRsXfZXW4RMafEYVef2Gzoi7e7If0WMm/KrSi/gFT
-         gXr0G1VwIXhSV7QdSDmGyzbqC9eWozl8rNsDcTUIo1YS+eb8DCV3pFxGw9HeYA0M0c
-         tr7YhC161ypzwtfESg6kNRAGMMYTilxSIe1NUE34=
-Message-ID: <c2497a831c8c28b7f5acdc2bf5aee9812b6e5ce1.camel@kernel.org>
-Subject: Re: [PATCH] ceph: ensure we have Fs caps when fetching dir link
- count
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     pdonnell@redhat.com, Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 10 Nov 2020 10:38:18 -0500
-In-Reply-To: <20201110120302.13992-1-jlayton@kernel.org>
-References: <20201110120302.13992-1-jlayton@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
+        id S1730473AbgKJPoy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 10:44:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44306 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729909AbgKJPoy (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Nov 2020 10:44:54 -0500
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05313C0613CF
+        for <ceph-devel@vger.kernel.org>; Tue, 10 Nov 2020 07:44:54 -0800 (PST)
+Received: by mail-il1-x141.google.com with SMTP id l12so9817009ilo.1
+        for <ceph-devel@vger.kernel.org>; Tue, 10 Nov 2020 07:44:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WaERiuaBFL9EGpo+sbIIePuTMBxlMl/aXMX6BNwGVew=;
+        b=DwY0tjhzl1zedMgOl6HR9Ghk5QThFyPH5S/melgGoMsxjXjowyhx15kSMCfBaAQg29
+         XbGJDvGd8VUE0FuR9WBaRlDhaYt9o8m2JoDNExS1Z5/lw1SjeXB9c0/OUnUWmcTUlQGc
+         0PPPY3geNcQtOS6TzPZzuvrNveMgCsgclb/ngtsXMzXSWbPkwFkHVLk1IDFFoKQKTygl
+         8r4aOwyS2mrvTkSsecCIpZR7fHCXbyIlT1Qnme1WPz1qssQblBbHf1zJALLgQM80xTLp
+         4+lfwX+lxUb0uIfW8v51bazlJH6H5TQ2mRxpJCR7f/PO0jxFmgTSdbVvjpR1Faq/J3Rn
+         UBqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WaERiuaBFL9EGpo+sbIIePuTMBxlMl/aXMX6BNwGVew=;
+        b=Dja86XdNHbPQcPeUWLRJ8kqX4Y8M05jGB+oSFnx+IGzNsSXEPslk7/XFZSPZlwVtUa
+         IXJYWgr8q3TCxRUo3M8+um9m8sHD0f5ancEhGGCxENBO6rsaY/KK3ifVBtWfjcjHdT8d
+         bj76+0Wid5TsKKWonPP4Y0vmW1B+oOgZqB/NppISE3SuwDUDx2TYeP2DEYnwsoSmTQ2h
+         kCXoD//CZYb/trAW8y7H4e+23MxrFPHHACthzV1g97ec9ay0bypvZ7IQ6yKE71mt7V+j
+         yLsE44wY7ZcFt2V/VbsC+y8L9CvrN2/4SbZEFrcqVNCgjFdeVMkto/3wcWYtTQkTCL7T
+         F+Cw==
+X-Gm-Message-State: AOAM533ERhJcyyS3Ap6CkZGOz/199cX53OESxFmpEwgKLKgYX/4K12Sa
+        WsAb2/OUwiwouVbrnAoIuishZyGcGO11OMHbRFA=
+X-Google-Smtp-Source: ABdhPJyhoqIyq2vKpTQ748XgwLPE64DJnU97BzsNg6wKlASCu26eP3ClBiMKVetdtxrYGXYutexGsWt28VfMQq4cMWY=
+X-Received: by 2002:a05:6e02:c:: with SMTP id h12mr15458025ilr.177.1605023093372;
+ Tue, 10 Nov 2020 07:44:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201110141937.414301-1-xiubli@redhat.com>
+In-Reply-To: <20201110141937.414301-1-xiubli@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 10 Nov 2020 16:44:52 +0100
+Message-ID: <CAOi1vP-tBRNEgkmhvieUyBzOms-n=vge4XpYSpnU6cnq86SRMQ@mail.gmail.com>
+Subject: Re: [PATCH v3] libceph: add osd op counter metric support
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, "Yan, Zheng" <zyan@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2020-11-10 at 07:03 -0500, Jeff Layton wrote:
-> The link count for a directory is defined as inode->i_subdirs + 2,
-> (for "." and ".."). i_subdirs is only populated when Fs caps are held.
-> Ensure we grab Fs caps when fetching the link count for a directory.
-> 
-> URL: https://tracker.ceph.com/issues/48125
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Tue, Nov 10, 2020 at 3:19 PM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> The logic is the same with osdc/Objecter.cc in ceph in user space.
+>
+> URL: https://tracker.ceph.com/issues/48053
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  fs/ceph/inode.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 7c22bc2ea076..9ba15ca6b010 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -2343,15 +2343,22 @@ int ceph_permission(struct inode *inode, int mask)
->  }
->  
-> 
-> 
-> 
->  /* Craft a mask of needed caps given a set of requested statx attrs. */
-> -static int statx_to_caps(u32 want)
-> +static int statx_to_caps(u32 want, umode_t mode)
->  {
->  	int mask = 0;
->  
-> 
-> 
-> 
->  	if (want & (STATX_MODE|STATX_UID|STATX_GID|STATX_CTIME|STATX_BTIME))
->  		mask |= CEPH_CAP_AUTH_SHARED;
->  
-> 
-> 
-> 
-> -	if (want & (STATX_NLINK|STATX_CTIME))
-> +	if (want & (STATX_NLINK|STATX_CTIME)) {
->  		mask |= CEPH_CAP_LINK_SHARED;
-> +		/*
-> +		 * The link count for directories depends on inode->i_subdirs,
-> +		 * and that is only updated when Fs caps are held.
-> +		 */
-> +		if (S_ISDIR(mode))
-> +			mask |= CEPH_CAP_FILE_SHARED;
-> +	}
+>
+> V3:
+> - typo fixing about oring the _WRITE
+>
+>  include/linux/ceph/osd_client.h |  9 ++++++
+>  net/ceph/debugfs.c              | 13 ++++++++
+>  net/ceph/osd_client.c           | 56 +++++++++++++++++++++++++++++++++
+>  3 files changed, 78 insertions(+)
+>
+> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+> index 83fa08a06507..24301513b186 100644
+> --- a/include/linux/ceph/osd_client.h
+> +++ b/include/linux/ceph/osd_client.h
+> @@ -339,6 +339,13 @@ struct ceph_osd_backoff {
+>         struct ceph_hobject_id *end;
+>  };
+>
+> +struct ceph_osd_metric {
+> +       struct percpu_counter op_ops;
+> +       struct percpu_counter op_rmw;
+> +       struct percpu_counter op_r;
+> +       struct percpu_counter op_w;
+> +};
 
-I think I'm going to make a small change here and make this not set the
-Ls bit on directories. There really is no need for it since only care
-about i_subdirs, and that might prevent having to do a synchronous call
-to the MDS.
+OK, so only reads and writes are really needed.  Why not expose them
+through the existing metrics framework in fs/ceph?  Wouldn't "fs top"
+want to display them?  Exposing latency information without exposing
+overall counts seems rather weird to me anyway.
 
->  
-> 
-> 
-> 
->  	if (want & (STATX_ATIME|STATX_MTIME|STATX_CTIME|STATX_SIZE|
->  		    STATX_BLOCKS))
-> @@ -2377,7 +2384,7 @@ int ceph_getattr(const struct path *path, struct kstat *stat,
->  
-> 
-> 
-> 
->  	/* Skip the getattr altogether if we're asked not to sync */
->  	if (!(flags & AT_STATX_DONT_SYNC)) {
-> -		err = ceph_do_getattr(inode, statx_to_caps(request_mask),
-> +		err = ceph_do_getattr(inode, statx_to_caps(request_mask, inode->i_mode),
->  				      flags & AT_STATX_FORCE_SYNC);
->  		if (err)
->  			return err;
+The fundamental problem is that debugfs output format is not stable.
+The tracker mentions test_readahead -- updating some teuthology test
+cases from time to time is not a big deal, but if a user facing tool
+such as "fs top" starts relying on these, it would be bad.
 
--- 
-Jeff Layton <jlayton@kernel.org>
+Thanks,
 
+                Ilya
