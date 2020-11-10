@@ -2,45 +2,45 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A2F52AD436
+	by mail.lfdr.de (Postfix) with ESMTP id C67862AD437
 	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 11:58:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729555AbgKJK6P (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Nov 2020 05:58:15 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51102 "EHLO
+        id S1729790AbgKJK6R (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 05:58:17 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40120 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726428AbgKJK6O (ORCPT
+        by vger.kernel.org with ESMTP id S1726428AbgKJK6Q (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Nov 2020 05:58:14 -0500
+        Tue, 10 Nov 2020 05:58:16 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605005893;
+        s=mimecast20190719; t=1605005895;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=rDyDrI6A1GOkQAQ7mBkZyj9QjY5RXccBqt5w2IxrHNs=;
-        b=ZeWU7uvSj2Z3JUdcSIi+m3ws80Bs+pgomXbdjn5+Rlj10g4vJk89H9FBQghs6q9ETqc7bk
-        +oE2nQu6LLY09SYvXpUXFdB50c0ufifcA5guY+/h1JC7UlXoe0rE4tcTBpxc+Ot4q0i5qy
-        0PEmgerkDTiVwwzOyYwmx2lzSNYwI88=
+        bh=RT2wWlNOaYj8NxH2jzmDUY0CkPC8wxKE4ZJH66rdTqE=;
+        b=RC0/Uafyv8sI92uuVyn/Gwy0r+iJQYKD0WsBw0a2gl6yp1Hi/f1NdXFmHc4TLzNDZpkj2r
+        JPM2N601MhDVlVTxVbolenG7p3RHf82S72/E6Fp/Mr0tXtzm29ZHoP5AEMyUPV25C8DJAG
+        RIQ5MPZoIlNTKsDIIQeuQzXh8SFmW8o=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-123-D58dJ__eODaXLmxYBPXdJQ-1; Tue, 10 Nov 2020 05:58:10 -0500
-X-MC-Unique: D58dJ__eODaXLmxYBPXdJQ-1
+ us-mta-237-crbQAVQAMaOd4Sojxo4eEw-1; Tue, 10 Nov 2020 05:58:12 -0500
+X-MC-Unique: crbQAVQAMaOd4Sojxo4eEw-1
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2809C186DD33;
-        Tue, 10 Nov 2020 10:58:09 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B0D1C1074654;
+        Tue, 10 Nov 2020 10:58:11 +0000 (UTC)
 Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1AD6B75140;
-        Tue, 10 Nov 2020 10:58:06 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A17B675121;
+        Tue, 10 Nov 2020 10:58:09 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     jlayton@kernel.org, idryomov@gmail.com
 Cc:     zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
         Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v2 1/2] ceph: add status debug file support
-Date:   Tue, 10 Nov 2020 18:57:54 +0800
-Message-Id: <20201110105755.340315-2-xiubli@redhat.com>
+Subject: [PATCH v2 2/2] ceph: add CEPH_IOC_GET_CLUSTER_AND_CLIENT_IDS ioctl cmd support
+Date:   Tue, 10 Nov 2020 18:57:55 +0800
+Message-Id: <20201110105755.340315-3-xiubli@redhat.com>
 In-Reply-To: <20201110105755.340315-1-xiubli@redhat.com>
 References: <20201110105755.340315-1-xiubli@redhat.com>
 MIME-Version: 1.0
@@ -52,71 +52,82 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Xiubo Li <xiubli@redhat.com>
 
-This will help list some useful client side info, like the client
-entity address/name and bloclisted status, etc.
+This ioctl will return the cluster and client ids back to userspace.
+With this we can easily know which mountpoint the file belongs to and
+also they can help locate the debugfs path quickly.
 
-URL: https://tracker.ceph.com/issues/48057
+URL: https://tracker.ceph.com/issues/48124
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/ceph/debugfs.c | 20 ++++++++++++++++++++
- fs/ceph/super.h   |  1 +
- 2 files changed, 21 insertions(+)
+ fs/ceph/ioctl.c | 23 +++++++++++++++++++++++
+ fs/ceph/ioctl.h | 15 +++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 7a8fbe3e4751..4e498a492de4 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -304,11 +304,25 @@ static int mds_sessions_show(struct seq_file *s, void *ptr)
+diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+index 6e061bf62ad4..a4b69c1026ce 100644
+--- a/fs/ceph/ioctl.c
++++ b/fs/ceph/ioctl.c
+@@ -268,6 +268,27 @@ static long ceph_ioctl_syncio(struct file *file)
  	return 0;
  }
  
-+static int status_show(struct seq_file *s, void *p)
++/*
++ * Return the cluster and client ids
++ */
++static long ceph_ioctl_get_fs_ids(struct file *file, void __user *arg)
 +{
-+	struct ceph_fs_client *fsc = s->private;
-+	struct ceph_entity_inst *inst = &fsc->client->msgr.inst;
-+	struct ceph_entity_addr *client_addr = ceph_client_addr(fsc->client);
++	struct inode *inode = file_inode(file);
++	struct ceph_fs_client *fsc = ceph_sb_to_client(inode->i_sb);
++	struct cluster_client_ids ids;
 +
-+	seq_printf(s, "inst_str: %s.%lld %s/%u\n", ENTITY_NAME(inst->name),
-+		   ceph_pr_addr(client_addr), le32_to_cpu(client_addr->nonce));
-+	seq_printf(s, "blocklisted: %s\n", fsc->blocklisted ? "true" : "false");
++	snprintf(ids.cluster_id, sizeof(ids.cluster_id), "%pU",
++		 &fsc->client->fsid);
++	snprintf(ids.client_id, sizeof(ids.client_id), "client%lld",
++		 ceph_client_gid(fsc->client));
++
++	/* send result back to user */
++	if (copy_to_user(arg, &ids, sizeof(ids)))
++		return -EFAULT;
 +
 +	return 0;
 +}
 +
- DEFINE_SHOW_ATTRIBUTE(mdsmap);
- DEFINE_SHOW_ATTRIBUTE(mdsc);
- DEFINE_SHOW_ATTRIBUTE(caps);
- DEFINE_SHOW_ATTRIBUTE(mds_sessions);
- DEFINE_SHOW_ATTRIBUTE(metric);
-+DEFINE_SHOW_ATTRIBUTE(status);
+ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
+ 	dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
+@@ -289,6 +310,8 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
  
+ 	case CEPH_IOC_SYNCIO:
+ 		return ceph_ioctl_syncio(file);
++	case CEPH_IOC_GET_CLUSTER_AND_CLIENT_IDS:
++		return ceph_ioctl_get_fs_ids(file, (void __user *)arg);
+ 	}
  
- /*
-@@ -394,6 +408,12 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
- 						fsc->client->debugfs_dir,
- 						fsc,
- 						&caps_fops);
+ 	return -ENOTTY;
+diff --git a/fs/ceph/ioctl.h b/fs/ceph/ioctl.h
+index 51f7f1d39a94..9879d58854fb 100644
+--- a/fs/ceph/ioctl.h
++++ b/fs/ceph/ioctl.h
+@@ -98,4 +98,19 @@ struct ceph_ioctl_dataloc {
+  */
+ #define CEPH_IOC_SYNCIO _IO(CEPH_IOCTL_MAGIC, 5)
+ 
++/*
++ * CEPH_IOC_GET_CLUSTER_AND_CLIENT_IDS - get the cluster and client ids
++ *
++ * This ioctl will return the cluster and client ids back to user space.
++ * With this we can easily know which mountpoint the file belongs to and
++ * also they can help locate the debugfs path quickly.
++ */
 +
-+	fsc->debugfs_status = debugfs_create_file("status",
-+						  0400,
-+						  fsc->client->debugfs_dir,
-+						  fsc,
-+						  &status_fops);
- }
- 
- 
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index f097237a5ad3..5138b75923f9 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -128,6 +128,7 @@ struct ceph_fs_client {
- 	struct dentry *debugfs_bdi;
- 	struct dentry *debugfs_mdsc, *debugfs_mdsmap;
- 	struct dentry *debugfs_metric;
-+	struct dentry *debugfs_status;
- 	struct dentry *debugfs_mds_sessions;
++struct cluster_client_ids {
++	char cluster_id[40];
++	char client_id[24];
++};
++#define CEPH_IOC_GET_CLUSTER_AND_CLIENT_IDS _IOR(CEPH_IOCTL_MAGIC, 6, \
++					struct cluster_client_ids)
++
  #endif
- 
 -- 
 2.27.0
 
