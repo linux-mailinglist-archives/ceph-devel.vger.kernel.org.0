@@ -2,37 +2,36 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DF6F2AD98F
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 15:59:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E30DC2AD992
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 16:00:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730859AbgKJO7r (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Nov 2020 09:59:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49684 "EHLO mail.kernel.org"
+        id S1730917AbgKJPAQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 10:00:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730070AbgKJO7r (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Nov 2020 09:59:47 -0500
+        id S1730070AbgKJPAQ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 10 Nov 2020 10:00:16 -0500
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6958B20731;
-        Tue, 10 Nov 2020 14:59:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4C6E206B2;
+        Tue, 10 Nov 2020 15:00:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605020386;
-        bh=B+/L0O0vE/qQW5Xp3KNMB+KXNe9jlK9wImxxvSlMyYk=;
+        s=default; t=1605020415;
+        bh=W14qN2szGEO2vUU+wAa9EGh4ZpLcaXkxnvV/I+f0eE0=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=pTtNM5DPiYK/DTigimnbwKDSO/0HewWNXbuopzNw/N35y85d+2J0S9B5j2e4We+Kd
-         VHX5CQtX5r4HR1/L4WyqbPkvIjvT/kK+F1305O1pplohL4pqrtdcyAd8YO5oJsbUXg
-         wYRqVIZi1lukmICRop1aV3wGsDb+GbhICDZj92tI=
-Message-ID: <7818ef6eab2a24646e3547b79ff83f3d2bf1453b.camel@kernel.org>
-Subject: Re: [PATCH v3 2/2] ceph: add ceph.{clusterid/clientid} vxattrs
- suppport
+        b=Z31l4jWxDy5kfo01v0iZwvRyZM4wmu+6km2u+klV1q8moXgVW+zLxI3Z7JanIVfVy
+         MW26qIQ/A2kQ5twSl68DZE/q6BEN+SKvY3Kfne7bLKrbV4qgCVeYSQdlYWIwPXPeVy
+         LDAPZeZfO4fXltdnKVJ1s85DuInvfdhQ6d1IiEpQ=
+Message-ID: <cd7f819b4dba68ed3d3e8f107bcb0088d6305965.camel@kernel.org>
+Subject: Re: [PATCH v3 1/2] ceph: add status debug file support
 From:   Jeff Layton <jlayton@kernel.org>
 To:     xiubli@redhat.com, idryomov@gmail.com
 Cc:     zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Tue, 10 Nov 2020 09:59:44 -0500
-In-Reply-To: <20201110141703.414211-3-xiubli@redhat.com>
+Date:   Tue, 10 Nov 2020 10:00:13 -0500
+In-Reply-To: <20201110141703.414211-2-xiubli@redhat.com>
 References: <20201110141703.414211-1-xiubli@redhat.com>
-         <20201110141703.414211-3-xiubli@redhat.com>
+         <20201110141703.414211-2-xiubli@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
 MIME-Version: 1.0
@@ -44,94 +43,97 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 On Tue, 2020-11-10 at 22:17 +0800, xiubli@redhat.com wrote:
 > From: Xiubo Li <xiubli@redhat.com>
 > 
-> These two vxattrs will only exist in local client side, with which
-> we can easily know which mountpoint the file belongs to and also
-> they can help locate the debugfs path quickly.
+> This will help list some useful client side info, like the client
+> entity address/name and bloclisted status, etc.
 > 
+
+"blocklisted"
+
 > URL: https://tracker.ceph.com/issues/48057
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  fs/ceph/xattr.c | 42 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
+>  fs/ceph/debugfs.c | 20 ++++++++++++++++++++
+>  fs/ceph/super.h   |  1 +
+>  2 files changed, 21 insertions(+)
 > 
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index 0fd05d3d4399..4a41db46e191 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -304,6 +304,23 @@ static ssize_t ceph_vxattrcb_snap_btime(struct ceph_inode_info *ci, char *val,
->  				ci->i_snap_btime.tv_nsec);
+> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+> index 7a8fbe3e4751..4e498a492de4 100644
+> --- a/fs/ceph/debugfs.c
+> +++ b/fs/ceph/debugfs.c
+> @@ -304,11 +304,25 @@ static int mds_sessions_show(struct seq_file *s, void *ptr)
+>  	return 0;
 >  }
 >  
 > 
 > 
 > 
-> +static ssize_t ceph_vxattrcb_clusterid(struct ceph_inode_info *ci,
-> +				       char *val, size_t size)
+> 
+> 
+> 
+> 
+> +static int status_show(struct seq_file *s, void *p)
 > +{
-> +	struct ceph_fs_client *fsc = ceph_sb_to_client(ci->vfs_inode.i_sb);
+> +	struct ceph_fs_client *fsc = s->private;
+> +	struct ceph_entity_inst *inst = &fsc->client->msgr.inst;
+> +	struct ceph_entity_addr *client_addr = ceph_client_addr(fsc->client);
 > +
-> +	return ceph_fmt_xattr(val, size, "%pU", &fsc->client->fsid);
+> +	seq_printf(s, "inst_str: %s.%lld %s/%u\n", ENTITY_NAME(inst->name),
+
+nit: maybe we should call the first field "instance:"
+
+I'll go ahead and fix this up as I merge it. You don't need to resend.
+
+> +		   ceph_pr_addr(client_addr), le32_to_cpu(client_addr->nonce));
+> +	seq_printf(s, "blocklisted: %s\n", fsc->blocklisted ? "true" : "false");
+> +
+> +	return 0;
 > +}
 > +
-> +static ssize_t ceph_vxattrcb_clientid(struct ceph_inode_info *ci,
-> +				      char *val, size_t size)
-> +{
-> +	struct ceph_fs_client *fsc = ceph_sb_to_client(ci->vfs_inode.i_sb);
-> +
-> +	return ceph_fmt_xattr(val, size, "client%lld",
-> +			      ceph_client_gid(fsc->client));
-> +}
-> +
->  #define CEPH_XATTR_NAME(_type, _name)	XATTR_CEPH_PREFIX #_type "." #_name
->  #define CEPH_XATTR_NAME2(_type, _name, _name2)	\
->  	XATTR_CEPH_PREFIX #_type "." #_name "." #_name2
-> @@ -407,6 +424,24 @@ static struct ceph_vxattr ceph_file_vxattrs[] = {
->  	{ .name = NULL, 0 }	/* Required table terminator */
->  };
+>  DEFINE_SHOW_ATTRIBUTE(mdsmap);
+>  DEFINE_SHOW_ATTRIBUTE(mdsc);
+>  DEFINE_SHOW_ATTRIBUTE(caps);
+>  DEFINE_SHOW_ATTRIBUTE(mds_sessions);
+>  DEFINE_SHOW_ATTRIBUTE(metric);
+> +DEFINE_SHOW_ATTRIBUTE(status);
 >  
 > 
 > 
 > 
-> +static struct ceph_vxattr ceph_vxattrs[] = {
-
-I'm going to rename this to "ceph_common_vxattrs".
-
-> +	{
-> +		.name = "ceph.clusterid",
-> +		.name_size = sizeof("ceph.clusterid"),
-> +		.getxattr_cb = ceph_vxattrcb_clusterid,
-> +		.exists_cb = NULL,
-> +		.flags = VXATTR_FLAG_READONLY,
-> +	},
-> +	{
-> +		.name = "ceph.clientid",
-> +		.name_size = sizeof("ceph.clientid"),
-> +		.getxattr_cb = ceph_vxattrcb_clientid,
-> +		.exists_cb = NULL,
-> +		.flags = VXATTR_FLAG_READONLY,
-> +	},
-> +	{ .name = NULL, 0 }	/* Required table terminator */
-> +};
-> +
->  static struct ceph_vxattr *ceph_inode_vxattrs(struct inode *inode)
->  {
->  	if (S_ISDIR(inode->i_mode))
-> @@ -429,6 +464,13 @@ static struct ceph_vxattr *ceph_match_vxattr(struct inode *inode,
->  		}
->  	}
 >  
 > 
 > 
 > 
-> +	vxattr = ceph_vxattrs;
-> +	while (vxattr->name) {
-> +		if (!strcmp(vxattr->name, name))
-> +			return vxattr;
-> +		vxattr++;
-> +	}
+>  /*
+> @@ -394,6 +408,12 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
+>  						fsc->client->debugfs_dir,
+>  						fsc,
+>  						&caps_fops);
 > +
->  	return NULL;
+> +	fsc->debugfs_status = debugfs_create_file("status",
+> +						  0400,
+> +						  fsc->client->debugfs_dir,
+> +						  fsc,
+> +						  &status_fops);
 >  }
+>  
+> 
+> 
+> 
+>  
+> 
+> 
+> 
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index f097237a5ad3..5138b75923f9 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -128,6 +128,7 @@ struct ceph_fs_client {
+>  	struct dentry *debugfs_bdi;
+>  	struct dentry *debugfs_mdsc, *debugfs_mdsmap;
+>  	struct dentry *debugfs_metric;
+> +	struct dentry *debugfs_status;
+>  	struct dentry *debugfs_mds_sessions;
+>  #endif
 >  
 > 
 > 
