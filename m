@@ -2,90 +2,96 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 804642ADC2F
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 17:31:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 593462ADC71
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 17:51:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726737AbgKJQaz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Nov 2020 11:30:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56420 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726152AbgKJQaz (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Nov 2020 11:30:55 -0500
-Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36A1220780;
-        Tue, 10 Nov 2020 16:30:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605025854;
-        bh=Rqs5o3XgIXE7AY9WudOzSXYDCnnjEDVKMCUdxW7dN2k=;
-        h=From:To:Cc:Subject:Date:From;
-        b=r5vkpjM8ppavpgL0lxfqPaF+a64qOZapIh3v4/S3tIFBViOHst8KRl6ZiPQWMo+0u
-         V+fN/yIVd1cA6S5UD+hi8eXH5GseIbKRJjyT32KFVi4I9nF9Z+kzo9eFd+L9EgHn20
-         bxpmQWp2ChETuanPNt73Ez3ctOJylZ1W1UWntByY=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, pdonnell@redhat.com
-Subject: [PATCH v2] ceph: ensure we have Fs caps when fetching dir link count
-Date:   Tue, 10 Nov 2020 11:30:52 -0500
-Message-Id: <20201110163052.482965-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.28.0
+        id S1730542AbgKJQvn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 11:51:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54748 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730530AbgKJQvm (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Nov 2020 11:51:42 -0500
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DC43C0613CF
+        for <ceph-devel@vger.kernel.org>; Tue, 10 Nov 2020 08:51:42 -0800 (PST)
+Received: by mail-io1-xd42.google.com with SMTP id u21so14894318iol.12
+        for <ceph-devel@vger.kernel.org>; Tue, 10 Nov 2020 08:51:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=53k55M+oILGVhs0FSZOmdV6MZoskqqHysedQWRup8I8=;
+        b=u5HQFN/crn9RN5zJHFwAqCCYzdNMMUYBh63o+2SlSjE+SSTc3w+4hUqOPKEPFWToO0
+         tsfBzkdnUwi2UYBrjJcu/sumj0dGPfdej4C6MQeXfmS2g6+wDxaqG9HujkQuDVimWTbU
+         Ds9lGfLOAngrM/qdmozkRrcTP60TkBM/STuoDC2MLvLZs7K3NIF0ERrov8k2pa8mEbcw
+         cbdCDdvOKxgNgmoTEqFFpIOuJQB7WGJ5d0xJdb16ms7otGBdaloSqJDKr+fDHj/iPJOU
+         +iJnf64uu/HqIiAes+mrkOTmWmkIHIIozhBW+Ie7/j4OG0UdPjaYynjd/23Y3txa5DSR
+         1hgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=53k55M+oILGVhs0FSZOmdV6MZoskqqHysedQWRup8I8=;
+        b=gFEql6qQVeGBjDo8JU6lypLbJk8Qgv9fxI+mA1fXcy7kVSIrncmj52PALCKUioQ2RD
+         ZS0eMgHyD8QSfWDSlXKdySwLvl99xSJCwP102imfLVfT22z0fPEqtVdI1FHcwgCAM1o9
+         3ljR6QQP8adqXMt6sf0TUDwU49q/dibm5OEPsbzDuYz0dzQIEtTg8jtru79GJXjCXD8v
+         JLcHIjvrHT+0IYoR9/x2pJ0yrWXQHYfe48+XLfNIn4XPtSdyicSyyAGWurXDFABFvtDM
+         APEyBXCRdFZ0kpsDcLyHUUD65ZEnWQ89jvKlYyCQ16PbUi+4+F5WBbqVEE7W3Q0jb9vN
+         MDiw==
+X-Gm-Message-State: AOAM532CoBjRSEylEtGaK3Fh1dA7MRNiAf+u9iO8ZqE9AHS71iYa22co
+        bUxK+4f9fojpNfBIy59UvQqXPqQZr3KALD03YVU=
+X-Google-Smtp-Source: ABdhPJxxcCDwjindALh3N+VSi31+H51N3ZWTE7LtkPDOTsU8vZF7QcgHI0KlmwxHs/CuxsNYL5dg4v0HLQCwLcpNz/U=
+X-Received: by 2002:a5e:8e01:: with SMTP id a1mr10902408ion.7.1605027101694;
+ Tue, 10 Nov 2020 08:51:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201110132008.GA90192@nstpc>
+In-Reply-To: <20201110132008.GA90192@nstpc>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 10 Nov 2020 17:51:41 +0100
+Message-ID: <CAOi1vP8wYX+P2u9kToucTFW3fMZ4d-G-md02UmUAfGZr9HQQfw@mail.gmail.com>
+Subject: Re: [PATCH] libceph: remove unused defined macro for port
+To:     "Liu, Changcheng" <changcheng.liu@aliyun.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The link count for a directory is defined as inode->i_subdirs + 2,
-(for "." and ".."). i_subdirs is only populated when Fs caps are held.
-Ensure we grab Fs caps when fetching the link count for a directory.
+On Tue, Nov 10, 2020 at 2:20 PM Liu, Changcheng
+<changcheng.liu@aliyun.com> wrote:
+>
+> 1. monitor's default port is defined by CEPH_MON_PORT
+> 2. CEPH_PORT_START & CEPH_PORT_LAST are not needed.
+>
+> Signed-off-by: Changcheng Liu <changcheng.liu@aliyun.com>
+>
+> diff --git a/include/linux/ceph/msgr.h b/include/linux/ceph/msgr.h
+> index 1c1887206ffa..feff5a2dc33e 100644
+> --- a/include/linux/ceph/msgr.h
+> +++ b/include/linux/ceph/msgr.h
+> @@ -7,15 +7,6 @@
+>
+>  #define CEPH_MON_PORT    6789  /* default monitor port */
+>
+> -/*
+> - * client-side processes will try to bind to ports in this
+> - * range, simply for the benefit of tools like nmap or wireshark
+> - * that would like to identify the protocol.
+> - */
+> -#define CEPH_PORT_FIRST  6789
+> -#define CEPH_PORT_START  6800  /* non-monitors start here */
+> -#define CEPH_PORT_LAST   6900
+> -
+>  /*
+>   * tcp connection banner.  include a protocol version. and adjust
+>   * whenever the wire protocol changes.  try to keep this string length
+> --
+> 2.25.1
+>
 
-URL: https://tracker.ceph.com/issues/48125
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/inode.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+Applied.
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 7c22bc2ea076..ab02966ef0a4 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -2343,15 +2343,23 @@ int ceph_permission(struct inode *inode, int mask)
- }
- 
- /* Craft a mask of needed caps given a set of requested statx attrs. */
--static int statx_to_caps(u32 want)
-+static int statx_to_caps(u32 want, umode_t mode)
- {
- 	int mask = 0;
- 
- 	if (want & (STATX_MODE|STATX_UID|STATX_GID|STATX_CTIME|STATX_BTIME))
- 		mask |= CEPH_CAP_AUTH_SHARED;
- 
--	if (want & (STATX_NLINK|STATX_CTIME))
--		mask |= CEPH_CAP_LINK_SHARED;
-+	if (want & (STATX_NLINK|STATX_CTIME)) {
-+		/*
-+		 * The link count for directories depends on inode->i_subdirs,
-+		 * and that is only updated when Fs caps are held.
-+		 */
-+		if (S_ISDIR(mode))
-+			mask |= CEPH_CAP_FILE_SHARED;
-+		else
-+			mask |= CEPH_CAP_LINK_SHARED;
-+	}
- 
- 	if (want & (STATX_ATIME|STATX_MTIME|STATX_CTIME|STATX_SIZE|
- 		    STATX_BLOCKS))
-@@ -2377,7 +2385,7 @@ int ceph_getattr(const struct path *path, struct kstat *stat,
- 
- 	/* Skip the getattr altogether if we're asked not to sync */
- 	if (!(flags & AT_STATX_DONT_SYNC)) {
--		err = ceph_do_getattr(inode, statx_to_caps(request_mask),
-+		err = ceph_do_getattr(inode, statx_to_caps(request_mask, inode->i_mode),
- 				      flags & AT_STATX_FORCE_SYNC);
- 		if (err)
- 			return err;
--- 
-2.28.0
+Thanks,
 
+                Ilya
