@@ -2,119 +2,145 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BCFE2AD0C6
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 09:03:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6DDA2AD0D0
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 09:05:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728966AbgKJIDT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Nov 2020 03:03:19 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28151 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726467AbgKJIDT (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Nov 2020 03:03:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1604995398;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OZeqRBSpMaKDUaoQF61qrx5XFGXp6uffT7BSXE7jhyo=;
-        b=P4B93hY0BbxSFPDSseCs8biFrGtMpNyCUJwQjh7fJdfYBtNDIVj0qxoDbs4gO3wslvj2ov
-        WOY7SLQALqWJjwnsaH6YjemGurmN5wWM/nzF4toEFvm6yjr5X7NuPDEL7OCe0JcWre6yT3
-        qFUR5Bk7/VMHPUFcUCkZGOmIrst7vOc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-505-zCQBg1v4NlqZVS8FEKVSTg-1; Tue, 10 Nov 2020 03:03:14 -0500
-X-MC-Unique: zCQBg1v4NlqZVS8FEKVSTg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ABAA51005504;
-        Tue, 10 Nov 2020 08:03:13 +0000 (UTC)
-Received: from [10.72.12.62] (ovpn-12-62.pek2.redhat.com [10.72.12.62])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C4CF110013D9;
-        Tue, 10 Nov 2020 08:03:11 +0000 (UTC)
-Subject: Re: [PATCH 1/2] ceph: add status debug file support
-To:     Ilya Dryomov <idryomov@gmail.com>
+        id S1728508AbgKJIFu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 03:05:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57366 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbgKJIFu (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Nov 2020 03:05:50 -0500
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17326C0613CF
+        for <ceph-devel@vger.kernel.org>; Tue, 10 Nov 2020 00:05:50 -0800 (PST)
+Received: by mail-il1-x144.google.com with SMTP id y17so11014365ilg.4
+        for <ceph-devel@vger.kernel.org>; Tue, 10 Nov 2020 00:05:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+neLFolF+Mml9RRjqJpiP1IOJeUz9wwj3UJTsNMK7pE=;
+        b=cEIW9dA5S9GcI0mo/vvr4oDEFibEHvwZK4VBg4Lyx3wQQwIavJHUe8TZdRjGGNFXNp
+         BOTqMpc4HoC/VpmZkLwPXR4pHg4tvdlzw2GORexhSncitZjj7QxQvnhs0SpeybQb7l7+
+         5JDa1zXDIqdOgFbkmFSWJyVdXhbMESSWcWmR20ddts1KVa5xDFZFNckzCquDcCOpRd72
+         gD5xPN4zzqfd3BG9BdTNZh0IQkB/8VWdQgWdFXAlPQ+2JIAvipwlRW80uWSE5Ecj6784
+         I7AsqVvkRt/HgC6bgax9QVyTT7skzg8TkAVbdVbK1YXxPxLazjT4OAjAc8Vd0670d+bg
+         sgPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+neLFolF+Mml9RRjqJpiP1IOJeUz9wwj3UJTsNMK7pE=;
+        b=jzErv5jdTIELwUYxDwCbG1tmq2dRUIXSPuO6XI5uuz7aa+CHpvHCGv2oA5nekinngV
+         TxAe5O6921W5+iY6wLZ5UinVExtuhEBwFn+2BxvLJGudBGXxWypXmo92kqrikvtrXK30
+         pfiANgPQQ+YX2fd9lL3IyT5Tvz/q4hLFktcICyj6gY4guaiCpZOWSFPAzFtc2cVWrdvO
+         58U2sjdGq9fH1Sn3o87j70slvxRdgjxjwR88Q47hTYSwXZCjAnTS+Ek5XSuJqd5cYRft
+         WIt47gpxSHU3YyPvqHZ7/oSGoBvnGYJmf0dIUjsj0hvF0e36M5ZB/ImdyHmw2uvJYl9O
+         AKIw==
+X-Gm-Message-State: AOAM533pRVy15KvBldYy+DYofxbZrCXd1Iqll5j61bBGrBqWNAWR9dJi
+        36m02bPyg80QJa/3UttAUcvgQ7Tri58zSbH52G4=
+X-Google-Smtp-Source: ABdhPJx2W4tuIdDX9F2Hs+T36CwCRh070BwQqC4Elt6dNCr+CFY3eEvKo+4/9mJ+jxHhY6is4oIaMHjP5DyfHhHctKM=
+X-Received: by 2002:a92:ba56:: with SMTP id o83mr14121274ili.19.1604995549397;
+ Tue, 10 Nov 2020 00:05:49 -0800 (PST)
+MIME-Version: 1.0
+References: <20201105023703.735882-1-xiubli@redhat.com> <20201105023703.735882-3-xiubli@redhat.com>
+In-Reply-To: <20201105023703.735882-3-xiubli@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 10 Nov 2020 09:05:49 +0100
+Message-ID: <CAOi1vP_kVqsmktmWxoEKOD8JAnGrKM5R+cxToncMb8kgRftCYg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ceph: add CEPH_IOC_GET_FS_CLIENT_IDS ioctl cmd support
+To:     Xiubo Li <xiubli@redhat.com>
 Cc:     Jeff Layton <jlayton@kernel.org>, "Yan, Zheng" <zyan@redhat.com>,
         Patrick Donnelly <pdonnell@redhat.com>,
         Ceph Development <ceph-devel@vger.kernel.org>
-References: <20201105023703.735882-1-xiubli@redhat.com>
- <20201105023703.735882-2-xiubli@redhat.com>
- <CAOi1vP9r5FMaLsO_xZ6UDnq24aAL-L1cc0CK2do5sR61vfy=Ag@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <64e0898d-4d76-6e60-4f21-a7fa0b3d208d@redhat.com>
-Date:   Tue, 10 Nov 2020 16:03:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
-MIME-Version: 1.0
-In-Reply-To: <CAOi1vP9r5FMaLsO_xZ6UDnq24aAL-L1cc0CK2do5sR61vfy=Ag@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020/11/10 15:51, Ilya Dryomov wrote:
-> On Thu, Nov 5, 2020 at 3:37 AM <xiubli@redhat.com> wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> This will help list some useful client side info, like the client
->> entity address/name and bloclisted status, etc.
->>
->> URL: https://tracker.ceph.com/issues/48057
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>   fs/ceph/debugfs.c | 22 ++++++++++++++++++++++
->>   fs/ceph/super.h   |  1 +
->>   2 files changed, 23 insertions(+)
->>
->> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
->> index 7a8fbe3e4751..8b6db73c94ad 100644
->> --- a/fs/ceph/debugfs.c
->> +++ b/fs/ceph/debugfs.c
->> @@ -14,6 +14,7 @@
->>   #include <linux/ceph/mon_client.h>
->>   #include <linux/ceph/auth.h>
->>   #include <linux/ceph/debugfs.h>
->> +#include <linux/ceph/messenger.h>
->>
->>   #include "super.h"
->>
->> @@ -127,6 +128,20 @@ static int mdsc_show(struct seq_file *s, void *p)
->>          return 0;
->>   }
->>
->> +static int status_show(struct seq_file *s, void *p)
->> +{
->> +       struct ceph_fs_client *fsc = s->private;
->> +       struct ceph_messenger *msgr = &fsc->client->msgr;
->> +       struct ceph_entity_inst *inst = &msgr->inst;
->> +
->> +       seq_printf(s, "status:\n\n"),
-> Hi Xiubo,
+On Thu, Nov 5, 2020 at 3:37 AM <xiubli@redhat.com> wrote:
 >
-> This header and leading tabs seem rather useless to me.
-
-Sure, will remove them.
-
-
->> +       seq_printf(s, "\tinst_str:\t%s.%lld  %s/%u\n", ENTITY_NAME(inst->name),
->                                               ^^ two spaces?
+> From: Xiubo Li <xiubli@redhat.com>
 >
->> +                  ceph_pr_addr(&inst->addr), le32_to_cpu(inst->addr.nonce));
->> +       seq_printf(s, "\tblocklisted:\t%s\n", fsc->blocklisted ? "true" : "false");
-> This line is too long.
+> This ioctl will return the dedicated fs and client IDs back to
+> userspace. With this we can easily know which mountpoint the file
+> blongs to and also they can help locate the debugfs path quickly.
 
-Will fix it.
+belongs
 
-Thank Ilya.
-
-
-> Thanks,
 >
->                  Ilya
+> URL: https://tracker.ceph.com/issues/48124
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/ioctl.c | 22 ++++++++++++++++++++++
+>  fs/ceph/ioctl.h | 15 +++++++++++++++
+>  2 files changed, 37 insertions(+)
 >
+> diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+> index 6e061bf62ad4..2498a1df132e 100644
+> --- a/fs/ceph/ioctl.c
+> +++ b/fs/ceph/ioctl.c
+> @@ -268,6 +268,25 @@ static long ceph_ioctl_syncio(struct file *file)
+>         return 0;
+>  }
+>
+> +static long ceph_ioctl_get_client_id(struct file *file, void __user *arg)
+> +{
+> +       struct inode *inode = file_inode(file);
+> +       struct ceph_fs_client *fsc = ceph_sb_to_client(inode->i_sb);
+> +       struct fs_client_ids ids;
+> +       char fsid[40];
+> +
+> +       snprintf(fsid, sizeof(fsid), "%pU", &fsc->client->fsid);
+> +       memcpy(ids.fsid, fsid, sizeof(fsid));
+> +
+> +       ids.global_id = fsc->client->monc.auth->global_id;
 
+Why is fsid returned in text and global_id in binary?  I get that the
+initial use case is constructing "<fsid>.client<global_id>" string, but
+it's probably better to stick to binary.
+
+Use ceph_client_gid() for getting global_id.
+
+> +
+> +       /* send result back to user */
+> +       if (copy_to_user(arg, &ids, sizeof(ids)))
+> +               return -EFAULT;
+> +
+> +       return 0;
+> +}
+> +
+>  long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  {
+>         dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
+> @@ -289,6 +308,9 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>
+>         case CEPH_IOC_SYNCIO:
+>                 return ceph_ioctl_syncio(file);
+> +
+> +       case CEPH_IOC_GET_FS_CLIENT_IDS:
+> +               return ceph_ioctl_get_client_id(file, (void __user *)arg);
+>         }
+>
+>         return -ENOTTY;
+> diff --git a/fs/ceph/ioctl.h b/fs/ceph/ioctl.h
+> index 51f7f1d39a94..59c7479e77b2 100644
+> --- a/fs/ceph/ioctl.h
+> +++ b/fs/ceph/ioctl.h
+> @@ -98,4 +98,19 @@ struct ceph_ioctl_dataloc {
+>   */
+>  #define CEPH_IOC_SYNCIO _IO(CEPH_IOCTL_MAGIC, 5)
+>
+> +/*
+> + * CEPH_IOC_GET_FS_CLIENT_IDS - get the fs and client ids
+> + *
+> + * This ioctl will return the dedicated fs and client IDs back to
+
+The "fsid" you are capturing is really a cluster id, which may be home
+to multiple CephFS filesystems.  Referring to it as a "dedicated fs ID"
+is misleading.
+
+Thanks,
+
+                Ilya
