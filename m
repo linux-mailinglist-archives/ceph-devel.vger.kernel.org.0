@@ -2,132 +2,227 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C67862AD437
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 11:58:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2333F2AD449
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 12:01:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729790AbgKJK6R (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Nov 2020 05:58:17 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40120 "EHLO
+        id S1729604AbgKJLBh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 06:01:37 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:22614 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726428AbgKJK6Q (ORCPT
+        by vger.kernel.org with ESMTP id S1726280AbgKJLBg (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Nov 2020 05:58:16 -0500
+        Tue, 10 Nov 2020 06:01:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605005895;
+        s=mimecast20190719; t=1605006094;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RT2wWlNOaYj8NxH2jzmDUY0CkPC8wxKE4ZJH66rdTqE=;
-        b=RC0/Uafyv8sI92uuVyn/Gwy0r+iJQYKD0WsBw0a2gl6yp1Hi/f1NdXFmHc4TLzNDZpkj2r
-        JPM2N601MhDVlVTxVbolenG7p3RHf82S72/E6Fp/Mr0tXtzm29ZHoP5AEMyUPV25C8DJAG
-        RIQ5MPZoIlNTKsDIIQeuQzXh8SFmW8o=
+         content-transfer-encoding:content-transfer-encoding;
+        bh=HLWO9aZXcNp28aSTkpVhhzE2XRtulnhVEDrPx6CPxG0=;
+        b=J9znk0vvEHMkRrNB0uTtN7TFLaUOGDkuNDdnwvPnKafOurxQpRysKF6aJ6EFzcD++tw8wF
+        +rYAbHL9VPwb6aWSP32IK+4hWEmSDhSAugTbA7cgUEoGH4B7ftQyMTyuchN4/HCv9wmtWR
+        uMQVakMcqImOypA4YPQwifpcTw1dqjw=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-237-crbQAVQAMaOd4Sojxo4eEw-1; Tue, 10 Nov 2020 05:58:12 -0500
-X-MC-Unique: crbQAVQAMaOd4Sojxo4eEw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+ us-mta-374-CTdP7Pi-PmG4JrOIVCYyVw-1; Tue, 10 Nov 2020 06:01:29 -0500
+X-MC-Unique: CTdP7Pi-PmG4JrOIVCYyVw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B0D1C1074654;
-        Tue, 10 Nov 2020 10:58:11 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D4B4A186DD23;
+        Tue, 10 Nov 2020 11:01:28 +0000 (UTC)
 Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A17B675121;
-        Tue, 10 Nov 2020 10:58:09 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BE8EB1002C0E;
+        Tue, 10 Nov 2020 11:01:26 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     jlayton@kernel.org, idryomov@gmail.com
 Cc:     zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
         Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v2 2/2] ceph: add CEPH_IOC_GET_CLUSTER_AND_CLIENT_IDS ioctl cmd support
-Date:   Tue, 10 Nov 2020 18:57:55 +0800
-Message-Id: <20201110105755.340315-3-xiubli@redhat.com>
-In-Reply-To: <20201110105755.340315-1-xiubli@redhat.com>
-References: <20201110105755.340315-1-xiubli@redhat.com>
+Subject: [PATCH v2] libceph: add osd op counter metric support
+Date:   Tue, 10 Nov 2020 19:01:18 +0800
+Message-Id: <20201110110118.340544-1-xiubli@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Xiubo Li <xiubli@redhat.com>
 
-This ioctl will return the cluster and client ids back to userspace.
-With this we can easily know which mountpoint the file belongs to and
-also they can help locate the debugfs path quickly.
+The logic is the same with osdc/Objecter.cc in ceph in user space.
 
-URL: https://tracker.ceph.com/issues/48124
+URL: https://tracker.ceph.com/issues/48053
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/ceph/ioctl.c | 23 +++++++++++++++++++++++
- fs/ceph/ioctl.h | 15 +++++++++++++++
- 2 files changed, 38 insertions(+)
 
-diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
-index 6e061bf62ad4..a4b69c1026ce 100644
---- a/fs/ceph/ioctl.c
-+++ b/fs/ceph/ioctl.c
-@@ -268,6 +268,27 @@ static long ceph_ioctl_syncio(struct file *file)
+V2:
+- remove other not used counter metrics
+
+ include/linux/ceph/osd_client.h |  9 ++++++
+ net/ceph/debugfs.c              | 13 ++++++++
+ net/ceph/osd_client.c           | 56 +++++++++++++++++++++++++++++++++
+ 3 files changed, 78 insertions(+)
+
+diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+index 83fa08a06507..24301513b186 100644
+--- a/include/linux/ceph/osd_client.h
++++ b/include/linux/ceph/osd_client.h
+@@ -339,6 +339,13 @@ struct ceph_osd_backoff {
+ 	struct ceph_hobject_id *end;
+ };
+ 
++struct ceph_osd_metric {
++	struct percpu_counter op_ops;
++	struct percpu_counter op_rmw;
++	struct percpu_counter op_r;
++	struct percpu_counter op_w;
++};
++
+ #define CEPH_LINGER_ID_START	0xffff000000000000ULL
+ 
+ struct ceph_osd_client {
+@@ -371,6 +378,8 @@ struct ceph_osd_client {
+ 	struct ceph_msgpool	msgpool_op;
+ 	struct ceph_msgpool	msgpool_op_reply;
+ 
++	struct ceph_osd_metric  metric;
++
+ 	struct workqueue_struct	*notify_wq;
+ 	struct workqueue_struct	*completion_wq;
+ };
+diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
+index 2110439f8a24..af90019386ab 100644
+--- a/net/ceph/debugfs.c
++++ b/net/ceph/debugfs.c
+@@ -339,6 +339,16 @@ static void dump_backoffs(struct seq_file *s, struct ceph_osd *osd)
+ 	mutex_unlock(&osd->lock);
+ }
+ 
++static void dump_op_metric(struct seq_file *s, struct ceph_osd_client *osdc)
++{
++	struct ceph_osd_metric *m = &osdc->metric;
++
++	seq_printf(s, "  op_ops: %lld\n", percpu_counter_sum(&m->op_ops));
++	seq_printf(s, "  op_rmw: %lld\n", percpu_counter_sum(&m->op_rmw));
++	seq_printf(s, "  op_r:   %lld\n", percpu_counter_sum(&m->op_r));
++	seq_printf(s, "  op_w:   %lld\n", percpu_counter_sum(&m->op_w));
++}
++
+ static int osdc_show(struct seq_file *s, void *pp)
+ {
+ 	struct ceph_client *client = s->private;
+@@ -372,6 +382,9 @@ static int osdc_show(struct seq_file *s, void *pp)
+ 	}
+ 
+ 	up_read(&osdc->lock);
++
++	seq_puts(s, "OP METRIC:\n");
++	dump_op_metric(s, osdc);
  	return 0;
  }
  
-+/*
-+ * Return the cluster and client ids
-+ */
-+static long ceph_ioctl_get_fs_ids(struct file *file, void __user *arg)
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index 7901ab6c79fd..66774b2bc584 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -2424,6 +2424,21 @@ static void __submit_request(struct ceph_osd_request *req, bool wrlocked)
+ 	goto again;
+ }
+ 
++static void osd_acount_op_metric(struct ceph_osd_request *req)
 +{
-+	struct inode *inode = file_inode(file);
-+	struct ceph_fs_client *fsc = ceph_sb_to_client(inode->i_sb);
-+	struct cluster_client_ids ids;
++	struct ceph_osd_metric *m = &req->r_osdc->metric;
 +
-+	snprintf(ids.cluster_id, sizeof(ids.cluster_id), "%pU",
-+		 &fsc->client->fsid);
-+	snprintf(ids.client_id, sizeof(ids.client_id), "client%lld",
-+		 ceph_client_gid(fsc->client));
++	percpu_counter_inc(&m->op_ops);
 +
-+	/* send result back to user */
-+	if (copy_to_user(arg, &ids, sizeof(ids)))
-+		return -EFAULT;
-+
-+	return 0;
++	if ((req->r_flags & (CEPH_OSD_FLAG_READ | CEPH_OSD_FLAG_READ))
++	    == (CEPH_OSD_FLAG_READ | CEPH_OSD_FLAG_READ))
++		percpu_counter_inc(&m->op_rmw);
++	if (req->r_flags & CEPH_OSD_FLAG_READ)
++		percpu_counter_inc(&m->op_r);
++	else if (req->r_flags & CEPH_OSD_FLAG_WRITE)
++		percpu_counter_inc(&m->op_w);
 +}
 +
- long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ static void account_request(struct ceph_osd_request *req)
  {
- 	dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
-@@ -289,6 +310,8 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	WARN_ON(req->r_flags & (CEPH_OSD_FLAG_ACK | CEPH_OSD_FLAG_ONDISK));
+@@ -2434,6 +2449,8 @@ static void account_request(struct ceph_osd_request *req)
  
- 	case CEPH_IOC_SYNCIO:
- 		return ceph_ioctl_syncio(file);
-+	case CEPH_IOC_GET_CLUSTER_AND_CLIENT_IDS:
-+		return ceph_ioctl_get_fs_ids(file, (void __user *)arg);
- 	}
+ 	req->r_start_stamp = jiffies;
+ 	req->r_start_latency = ktime_get();
++
++	osd_acount_op_metric(req);
+ }
  
- 	return -ENOTTY;
-diff --git a/fs/ceph/ioctl.h b/fs/ceph/ioctl.h
-index 51f7f1d39a94..9879d58854fb 100644
---- a/fs/ceph/ioctl.h
-+++ b/fs/ceph/ioctl.h
-@@ -98,4 +98,19 @@ struct ceph_ioctl_dataloc {
+ static void submit_request(struct ceph_osd_request *req, bool wrlocked)
+@@ -5205,6 +5222,39 @@ void ceph_osdc_reopen_osds(struct ceph_osd_client *osdc)
+ 	up_write(&osdc->lock);
+ }
+ 
++static void ceph_metric_destroy(struct ceph_osd_metric *m)
++{
++	percpu_counter_destroy(&m->op_ops);
++	percpu_counter_destroy(&m->op_rmw);
++	percpu_counter_destroy(&m->op_r);
++	percpu_counter_destroy(&m->op_w);
++}
++
++static int ceph_metric_init(struct ceph_osd_metric *m)
++{
++	int ret;
++
++	memset(m, 0, sizeof(*m));
++
++	ret = percpu_counter_init(&m->op_ops, 0, GFP_NOIO);
++	if (ret)
++		return ret;
++	ret = percpu_counter_init(&m->op_rmw, 0, GFP_NOIO);
++	if (ret)
++		goto err;
++	ret = percpu_counter_init(&m->op_r, 0, GFP_NOIO);
++	if (ret)
++		goto err;
++	ret = percpu_counter_init(&m->op_w, 0, GFP_NOIO);
++	if (ret)
++		goto err;
++	return 0;
++
++err:
++	ceph_metric_destroy(m);
++	return ret;
++}
++
+ /*
+  * init, shutdown
   */
- #define CEPH_IOC_SYNCIO _IO(CEPH_IOCTL_MAGIC, 5)
+@@ -5257,6 +5307,9 @@ int ceph_osdc_init(struct ceph_osd_client *osdc, struct ceph_client *client)
+ 	if (!osdc->completion_wq)
+ 		goto out_notify_wq;
  
-+/*
-+ * CEPH_IOC_GET_CLUSTER_AND_CLIENT_IDS - get the cluster and client ids
-+ *
-+ * This ioctl will return the cluster and client ids back to user space.
-+ * With this we can easily know which mountpoint the file belongs to and
-+ * also they can help locate the debugfs path quickly.
-+ */
++	if (ceph_metric_init(&osdc->metric) < 0)
++		goto out_completion_wq;
 +
-+struct cluster_client_ids {
-+	char cluster_id[40];
-+	char client_id[24];
-+};
-+#define CEPH_IOC_GET_CLUSTER_AND_CLIENT_IDS _IOR(CEPH_IOCTL_MAGIC, 6, \
-+					struct cluster_client_ids)
-+
- #endif
+ 	schedule_delayed_work(&osdc->timeout_work,
+ 			      osdc->client->options->osd_keepalive_timeout);
+ 	schedule_delayed_work(&osdc->osds_timeout_work,
+@@ -5264,6 +5317,8 @@ int ceph_osdc_init(struct ceph_osd_client *osdc, struct ceph_client *client)
+ 
+ 	return 0;
+ 
++out_completion_wq:
++	destroy_workqueue(osdc->completion_wq);
+ out_notify_wq:
+ 	destroy_workqueue(osdc->notify_wq);
+ out_msgpool_reply:
+@@ -5302,6 +5357,7 @@ void ceph_osdc_stop(struct ceph_osd_client *osdc)
+ 	WARN_ON(atomic_read(&osdc->num_requests));
+ 	WARN_ON(atomic_read(&osdc->num_homeless));
+ 
++	ceph_metric_destroy(&osdc->metric);
+ 	ceph_osdmap_destroy(osdc->osdmap);
+ 	mempool_destroy(osdc->req_mempool);
+ 	ceph_msgpool_destroy(&osdc->msgpool_op);
 -- 
 2.27.0
 
