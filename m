@@ -2,75 +2,70 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 101EF2AD82E
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 15:00:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D936E2AD87B
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 15:17:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730097AbgKJOAd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Nov 2020 09:00:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56788 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726462AbgKJOAb (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Nov 2020 09:00:31 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730572AbgKJORW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 09:17:22 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:43972 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729898AbgKJORW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 10 Nov 2020 09:17:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1605017841;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=PAQsBSQ0Ap88+sVn15coGR7//7cpIu+2qe62yBQkXBw=;
+        b=AbOuwypTM5M3MCON5u9HimfyhJQ81Wg1MwfnZTMjN7JNXrwq9TSg9e2um7G8HTGjOU8IZx
+        rVXH9LLxx5825ecs6xvhf/Xs6Esf/wF0wEVHm+zoW1m6Kgs/Ko4Yj1wm8TpVU2R+EjYLFP
+        DTOziJssuqGv90r2GWRSInVDGRFKhpc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-512-ub8RGFuFNH-NqmObXeUcLw-1; Tue, 10 Nov 2020 09:17:16 -0500
+X-MC-Unique: ub8RGFuFNH-NqmObXeUcLw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD7A120797;
-        Tue, 10 Nov 2020 14:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605016831;
-        bh=asHKAJd5k7NTZTT0k9tCSQr28iQKi6Cdsn0/dBrChQ4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=RD6npOS3tXsjnEHbVHeMpgEw4j3F1v8EY3enp/Ym1e6UJ1CZrvUNMpy/vpXbjGof7
-         ZsThixMYKqaXC4kfCCZwuwkTzwsX/0vWGQrB/Dpwdgnyx7d7kynQDB6nzX71k0qMqq
-         NgJXjCtbAU6CujIY3bJ/WCgDy2m8vbG6k/EsItGA=
-Message-ID: <d8de425bc32a5d26c48494ef71fa93c2c60a9a2c.camel@kernel.org>
-Subject: Re: [PATCH] libceph: remove unused defined macro for port
-From:   Jeff Layton <jlayton@kernel.org>
-To:     changcheng.liu@intel.com, idryomov@gmail.com
-Cc:     ceph-devel@vger.kernel.org
-Date:   Tue, 10 Nov 2020 09:00:29 -0500
-In-Reply-To: <20201110135201.GA90549@nstpc>
-References: <20201110135201.GA90549@nstpc>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CF4676D24F;
+        Tue, 10 Nov 2020 14:17:13 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5A48C4149;
+        Tue, 10 Nov 2020 14:17:05 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org, idryomov@gmail.com
+Cc:     zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v3 0/2] ceph: add vxattrs to get ids and status debug file support
+Date:   Tue, 10 Nov 2020 22:17:01 +0800
+Message-Id: <20201110141703.414211-1-xiubli@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2020-11-10 at 21:52 +0800, changcheng.liu@intel.com wrote:
-> 1. monitor's default port is defined by CEPH_MON_PORT
-> 2. CEPH_PORT_START & CEPH_PORT_LAST are not needed.
-> 
-> Signed-off-by: Changcheng Liu <changcheng.liu@aliyun.com>
-> 
-> diff --git a/include/linux/ceph/msgr.h b/include/linux/ceph/msgr.h
-> index 1c1887206ffa..feff5a2dc33e 100644
-> --- a/include/linux/ceph/msgr.h
-> +++ b/include/linux/ceph/msgr.h
-> @@ -7,15 +7,6 @@
->  
-> 
->  #define CEPH_MON_PORT    6789  /* default monitor port */
->  
-> 
-> -/*
-> - * client-side processes will try to bind to ports in this
-> - * range, simply for the benefit of tools like nmap or wireshark
-> - * that would like to identify the protocol.
-> - */
-> -#define CEPH_PORT_FIRST  6789
-> -#define CEPH_PORT_START  6800  /* non-monitors start here */
-> -#define CEPH_PORT_LAST   6900
-> -
->  /*
->   * tcp connection banner.  include a protocol version. and adjust
->   * whenever the wire protocol changes.  try to keep this string length
+From: Xiubo Li <xiubli@redhat.com>
 
-Thanks! Merged into testing branch.
+V3:
+- switch ioctl to vxattr.
 
-Cheers,
+V2:
+- some typo fixings
+- switch to use ceph_client_gid() and ceph_client_addr() helpers
+- for ioctl cmd will return in text for cluster/client ids
+
+Xiubo Li (2):
+  ceph: add status debug file support
+  ceph: add ceph.{clusterid/clientid} vxattrs suppport
+
+ fs/ceph/debugfs.c | 20 ++++++++++++++++++++
+ fs/ceph/super.h   |  1 +
+ fs/ceph/xattr.c   | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 63 insertions(+)
+
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.27.0
 
