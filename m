@@ -2,96 +2,100 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 593462ADC71
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 17:51:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 982032ADCA2
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 18:11:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730542AbgKJQvn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Nov 2020 11:51:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54748 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730530AbgKJQvm (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Nov 2020 11:51:42 -0500
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DC43C0613CF
-        for <ceph-devel@vger.kernel.org>; Tue, 10 Nov 2020 08:51:42 -0800 (PST)
-Received: by mail-io1-xd42.google.com with SMTP id u21so14894318iol.12
-        for <ceph-devel@vger.kernel.org>; Tue, 10 Nov 2020 08:51:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=53k55M+oILGVhs0FSZOmdV6MZoskqqHysedQWRup8I8=;
-        b=u5HQFN/crn9RN5zJHFwAqCCYzdNMMUYBh63o+2SlSjE+SSTc3w+4hUqOPKEPFWToO0
-         tsfBzkdnUwi2UYBrjJcu/sumj0dGPfdej4C6MQeXfmS2g6+wDxaqG9HujkQuDVimWTbU
-         Ds9lGfLOAngrM/qdmozkRrcTP60TkBM/STuoDC2MLvLZs7K3NIF0ERrov8k2pa8mEbcw
-         cbdCDdvOKxgNgmoTEqFFpIOuJQB7WGJ5d0xJdb16ms7otGBdaloSqJDKr+fDHj/iPJOU
-         +iJnf64uu/HqIiAes+mrkOTmWmkIHIIozhBW+Ie7/j4OG0UdPjaYynjd/23Y3txa5DSR
-         1hgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=53k55M+oILGVhs0FSZOmdV6MZoskqqHysedQWRup8I8=;
-        b=gFEql6qQVeGBjDo8JU6lypLbJk8Qgv9fxI+mA1fXcy7kVSIrncmj52PALCKUioQ2RD
-         ZS0eMgHyD8QSfWDSlXKdySwLvl99xSJCwP102imfLVfT22z0fPEqtVdI1FHcwgCAM1o9
-         3ljR6QQP8adqXMt6sf0TUDwU49q/dibm5OEPsbzDuYz0dzQIEtTg8jtru79GJXjCXD8v
-         JLcHIjvrHT+0IYoR9/x2pJ0yrWXQHYfe48+XLfNIn4XPtSdyicSyyAGWurXDFABFvtDM
-         APEyBXCRdFZ0kpsDcLyHUUD65ZEnWQ89jvKlYyCQ16PbUi+4+F5WBbqVEE7W3Q0jb9vN
-         MDiw==
-X-Gm-Message-State: AOAM532CoBjRSEylEtGaK3Fh1dA7MRNiAf+u9iO8ZqE9AHS71iYa22co
-        bUxK+4f9fojpNfBIy59UvQqXPqQZr3KALD03YVU=
-X-Google-Smtp-Source: ABdhPJxxcCDwjindALh3N+VSi31+H51N3ZWTE7LtkPDOTsU8vZF7QcgHI0KlmwxHs/CuxsNYL5dg4v0HLQCwLcpNz/U=
-X-Received: by 2002:a5e:8e01:: with SMTP id a1mr10902408ion.7.1605027101694;
- Tue, 10 Nov 2020 08:51:41 -0800 (PST)
-MIME-Version: 1.0
-References: <20201110132008.GA90192@nstpc>
-In-Reply-To: <20201110132008.GA90192@nstpc>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 10 Nov 2020 17:51:41 +0100
-Message-ID: <CAOi1vP8wYX+P2u9kToucTFW3fMZ4d-G-md02UmUAfGZr9HQQfw@mail.gmail.com>
-Subject: Re: [PATCH] libceph: remove unused defined macro for port
-To:     "Liu, Changcheng" <changcheng.liu@aliyun.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
+        id S1726690AbgKJRLI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 12:11:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40484 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726344AbgKJRLH (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 10 Nov 2020 12:11:07 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FE6D206D8;
+        Tue, 10 Nov 2020 17:11:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605028267;
+        bh=PSrGS6WprQNbVL7NlM/3jl/RlYjHVX3KTtmWe13aqfg=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=JCl3iGwTBKrFWpxbCm1/aIX+XmgMjUXfYHC8TrCML5sgmrKVXr4cg7ilFbysUdCB9
+         /EZuXVoy9RUbkq85+KHoGE3lQo3Yj4dzsxfRulY/XVT6JC5zi4Ta6RMxKd/hN4KTdG
+         2yzis/cifg3FblysjZB/PtLPn8e2ub3lWzwSgYcY=
+Message-ID: <0ba63df09fe52cb3f650473f4d005a1abe301e3c.camel@kernel.org>
+Subject: Re: [PATCH v3] libceph: add osd op counter metric support
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>
+Cc:     "Yan, Zheng" <zyan@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
         Ceph Development <ceph-devel@vger.kernel.org>
+Date:   Tue, 10 Nov 2020 12:11:05 -0500
+In-Reply-To: <CAOi1vP-tBRNEgkmhvieUyBzOms-n=vge4XpYSpnU6cnq86SRMQ@mail.gmail.com>
+References: <20201110141937.414301-1-xiubli@redhat.com>
+         <CAOi1vP-tBRNEgkmhvieUyBzOms-n=vge4XpYSpnU6cnq86SRMQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Nov 10, 2020 at 2:20 PM Liu, Changcheng
-<changcheng.liu@aliyun.com> wrote:
->
-> 1. monitor's default port is defined by CEPH_MON_PORT
-> 2. CEPH_PORT_START & CEPH_PORT_LAST are not needed.
->
-> Signed-off-by: Changcheng Liu <changcheng.liu@aliyun.com>
->
-> diff --git a/include/linux/ceph/msgr.h b/include/linux/ceph/msgr.h
-> index 1c1887206ffa..feff5a2dc33e 100644
-> --- a/include/linux/ceph/msgr.h
-> +++ b/include/linux/ceph/msgr.h
-> @@ -7,15 +7,6 @@
->
->  #define CEPH_MON_PORT    6789  /* default monitor port */
->
-> -/*
-> - * client-side processes will try to bind to ports in this
-> - * range, simply for the benefit of tools like nmap or wireshark
-> - * that would like to identify the protocol.
-> - */
-> -#define CEPH_PORT_FIRST  6789
-> -#define CEPH_PORT_START  6800  /* non-monitors start here */
-> -#define CEPH_PORT_LAST   6900
-> -
->  /*
->   * tcp connection banner.  include a protocol version. and adjust
->   * whenever the wire protocol changes.  try to keep this string length
-> --
-> 2.25.1
->
+On Tue, 2020-11-10 at 16:44 +0100, Ilya Dryomov wrote:
+> On Tue, Nov 10, 2020 at 3:19 PM <xiubli@redhat.com> wrote:
+> > 
+> > From: Xiubo Li <xiubli@redhat.com>
+> > 
+> > The logic is the same with osdc/Objecter.cc in ceph in user space.
+> > 
+> > URL: https://tracker.ceph.com/issues/48053
+> > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > ---
+> > 
+> > V3:
+> > - typo fixing about oring the _WRITE
+> > 
+> >  include/linux/ceph/osd_client.h |  9 ++++++
+> >  net/ceph/debugfs.c              | 13 ++++++++
+> >  net/ceph/osd_client.c           | 56 +++++++++++++++++++++++++++++++++
+> >  3 files changed, 78 insertions(+)
+> > 
+> > diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+> > index 83fa08a06507..24301513b186 100644
+> > --- a/include/linux/ceph/osd_client.h
+> > +++ b/include/linux/ceph/osd_client.h
+> > @@ -339,6 +339,13 @@ struct ceph_osd_backoff {
+> >         struct ceph_hobject_id *end;
+> >  };
+> > 
+> > +struct ceph_osd_metric {
+> > +       struct percpu_counter op_ops;
+> > +       struct percpu_counter op_rmw;
+> > +       struct percpu_counter op_r;
+> > +       struct percpu_counter op_w;
+> > +};
+> 
+> OK, so only reads and writes are really needed.  Why not expose them
+> through the existing metrics framework in fs/ceph?  Wouldn't "fs top"
+> want to display them?  Exposing latency information without exposing
+> overall counts seems rather weird to me anyway.
+> 
+> The fundamental problem is that debugfs output format is not stable.
+> The tracker mentions test_readahead -- updating some teuthology test
+> cases from time to time is not a big deal, but if a user facing tool
+> such as "fs top" starts relying on these, it would be bad.
+> 
+> Thanks,
+> 
+>                 Ilya
 
-Applied.
+Those are all good points. The tracker is light on details. I had
+assumed that you'd also be uploading this to the MDS in a later patch.
+Is that also planned?
 
-Thanks,
+I'll also add that it might be nice to keeps stats on copy_from2 as
+well, since we do have a copy_file_range operation in cephfs.
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-                Ilya
