@@ -2,88 +2,146 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF7AF2AD5D1
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 13:03:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A42AD2AD61F
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Nov 2020 13:24:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730117AbgKJMDF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Nov 2020 07:03:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59200 "EHLO mail.kernel.org"
+        id S1726827AbgKJMYp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 07:24:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726462AbgKJMDF (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Nov 2020 07:03:05 -0500
-Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        id S1726690AbgKJMYp (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 10 Nov 2020 07:24:45 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EA46206B2;
-        Tue, 10 Nov 2020 12:03:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC842206B6;
+        Tue, 10 Nov 2020 12:24:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605009784;
-        bh=QK4PYKiA6EWtL1Tvjyh8lXLo9Iq956oRlJeY2nf8uDQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hEQdcGyXMv0/Vx7kDZLclfGdJDErp8be3m81H/smsV0gTSgYwy6DMcQZCZ5EWSsCV
-         EgweZGu04TkawFpukf0KKiUMAFgmgsCuUg4bg2IiyqPTcntUfeq8prawBZNM86WK42
-         e3El169Fn7AZwVY3InhpFmgE1P0ypkhz/i6eNJ7M=
+        s=default; t=1605011084;
+        bh=RGK13axtqtSXlDZwZ/8/6jbRcdAAbJcbwM0Ty3YXBVI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=XPKgGkVNwz4S/Yx6/SjClW4ZCGByZ+3mgvv4oinSoHCgl04ekFRSxGIqldm1dbm1a
+         DvL0lqt0umx/8An112Ms9naXTO0YJdHh62Mc0g8i2zBRuKJ2aIO+TogdveaSbzJUUU
+         /p/gUT4ZzfA9CVbUGdOcaofPHJj5l2SHPkz7pKbw=
+Message-ID: <4e7ca1cec2ad6bc78423fc77ac9295c8740a8601.camel@kernel.org>
+Subject: Re: [PATCH v2 2/2] ceph: add CEPH_IOC_GET_CLUSTER_AND_CLIENT_IDS
+ ioctl cmd support
 From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     pdonnell@redhat.com
-Subject: [PATCH] ceph: ensure we have Fs caps when fetching dir link count
-Date:   Tue, 10 Nov 2020 07:03:02 -0500
-Message-Id: <20201110120302.13992-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.28.0
+To:     xiubli@redhat.com, idryomov@gmail.com
+Cc:     zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Tue, 10 Nov 2020 07:24:42 -0500
+In-Reply-To: <20201110105755.340315-3-xiubli@redhat.com>
+References: <20201110105755.340315-1-xiubli@redhat.com>
+         <20201110105755.340315-3-xiubli@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The link count for a directory is defined as inode->i_subdirs + 2,
-(for "." and ".."). i_subdirs is only populated when Fs caps are held.
-Ensure we grab Fs caps when fetching the link count for a directory.
+On Tue, 2020-11-10 at 18:57 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> This ioctl will return the cluster and client ids back to userspace.
+> With this we can easily know which mountpoint the file belongs to and
+> also they can help locate the debugfs path quickly.
+> 
+> URL: https://tracker.ceph.com/issues/48124
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/ioctl.c | 23 +++++++++++++++++++++++
+>  fs/ceph/ioctl.h | 15 +++++++++++++++
+>  2 files changed, 38 insertions(+)
+> 
 
-URL: https://tracker.ceph.com/issues/48125
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/inode.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+I know I opened this bug and suggested an ioctl for this, but I think
+that this may be better presented as new vxattrs. Driving ioctls from
+scripts is difficult (in particular). An xattr is easier for them to
+deal with. Maybe:
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 7c22bc2ea076..9ba15ca6b010 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -2343,15 +2343,22 @@ int ceph_permission(struct inode *inode, int mask)
- }
- 
- /* Craft a mask of needed caps given a set of requested statx attrs. */
--static int statx_to_caps(u32 want)
-+static int statx_to_caps(u32 want, umode_t mode)
- {
- 	int mask = 0;
- 
- 	if (want & (STATX_MODE|STATX_UID|STATX_GID|STATX_CTIME|STATX_BTIME))
- 		mask |= CEPH_CAP_AUTH_SHARED;
- 
--	if (want & (STATX_NLINK|STATX_CTIME))
-+	if (want & (STATX_NLINK|STATX_CTIME)) {
- 		mask |= CEPH_CAP_LINK_SHARED;
-+		/*
-+		 * The link count for directories depends on inode->i_subdirs,
-+		 * and that is only updated when Fs caps are held.
-+		 */
-+		if (S_ISDIR(mode))
-+			mask |= CEPH_CAP_FILE_SHARED;
-+	}
- 
- 	if (want & (STATX_ATIME|STATX_MTIME|STATX_CTIME|STATX_SIZE|
- 		    STATX_BLOCKS))
-@@ -2377,7 +2384,7 @@ int ceph_getattr(const struct path *path, struct kstat *stat,
- 
- 	/* Skip the getattr altogether if we're asked not to sync */
- 	if (!(flags & AT_STATX_DONT_SYNC)) {
--		err = ceph_do_getattr(inode, statx_to_caps(request_mask),
-+		err = ceph_do_getattr(inode, statx_to_caps(request_mask, inode->i_mode),
- 				      flags & AT_STATX_FORCE_SYNC);
- 		if (err)
- 			return err;
+    ceph.clusterid
+    ceph.clientid
+
+...or you could even make one that gives you the same format as the
+dirnames in /sys/kernel/debug/ceph.
+
+> diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+> index 6e061bf62ad4..a4b69c1026ce 100644
+> --- a/fs/ceph/ioctl.c
+> +++ b/fs/ceph/ioctl.c
+> @@ -268,6 +268,27 @@ static long ceph_ioctl_syncio(struct file *file)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Return the cluster and client ids
+> + */
+> +static long ceph_ioctl_get_fs_ids(struct file *file, void __user *arg)
+> +{
+> +	struct inode *inode = file_inode(file);
+> +	struct ceph_fs_client *fsc = ceph_sb_to_client(inode->i_sb);
+> +	struct cluster_client_ids ids;
+> +
+> +	snprintf(ids.cluster_id, sizeof(ids.cluster_id), "%pU",
+> +		 &fsc->client->fsid);
+> +	snprintf(ids.client_id, sizeof(ids.client_id), "client%lld",
+> +		 ceph_client_gid(fsc->client));
+> +
+> +	/* send result back to user */
+> +	if (copy_to_user(arg, &ids, sizeof(ids)))
+> +		return -EFAULT;
+> +
+> +	return 0;
+> +}
+> +
+>  long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  {
+>  	dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
+> @@ -289,6 +310,8 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>  
+> 
+> 
+> 
+>  	case CEPH_IOC_SYNCIO:
+>  		return ceph_ioctl_syncio(file);
+> +	case CEPH_IOC_GET_CLUSTER_AND_CLIENT_IDS:
+> +		return ceph_ioctl_get_fs_ids(file, (void __user *)arg);
+>  	}
+>  
+> 
+> 
+> 
+>  	return -ENOTTY;
+> diff --git a/fs/ceph/ioctl.h b/fs/ceph/ioctl.h
+> index 51f7f1d39a94..9879d58854fb 100644
+> --- a/fs/ceph/ioctl.h
+> +++ b/fs/ceph/ioctl.h
+> @@ -98,4 +98,19 @@ struct ceph_ioctl_dataloc {
+>   */
+>  #define CEPH_IOC_SYNCIO _IO(CEPH_IOCTL_MAGIC, 5)
+>  
+> 
+> 
+> 
+> +/*
+> + * CEPH_IOC_GET_CLUSTER_AND_CLIENT_IDS - get the cluster and client ids
+> + *
+> + * This ioctl will return the cluster and client ids back to user space.
+> + * With this we can easily know which mountpoint the file belongs to and
+> + * also they can help locate the debugfs path quickly.
+> + */
+> +
+> +struct cluster_client_ids {
+> +	char cluster_id[40];
+> +	char client_id[24];
+> +};
+> +#define CEPH_IOC_GET_CLUSTER_AND_CLIENT_IDS _IOR(CEPH_IOCTL_MAGIC, 6, \
+> +					struct cluster_client_ids)
+> +
+>  #endif
+
 -- 
-2.28.0
+Jeff Layton <jlayton@kernel.org>
 
