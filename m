@@ -2,120 +2,97 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5438C2AE5E6
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Nov 2020 02:37:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD99D2AE75E
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Nov 2020 05:19:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732505AbgKKBhW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Nov 2020 20:37:22 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24943 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731657AbgKKBhV (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Nov 2020 20:37:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605058639;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=72a2kaiKe4x1LEXkdSeZq0vRPoi0wiM4gMSEMntC6BY=;
-        b=Wufb2zOfx3mAEPcY9bKbpldOUB3U/yHyd0H/Lk1oqz8s7T4dDYfkkdRxkIEOsfxS2YWiDp
-        FKnou4iKb1AgGLmdUqgem4ko2cWrFUQafKJKDWzIoXG8hsxlzKNnmDKN//WCxjPFGO3NET
-        1bEyAxq7oJvRu5kvZ4py3YlIn4WOpUI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-239-e37P8qznMm67yPo98qhyCA-1; Tue, 10 Nov 2020 20:37:18 -0500
-X-MC-Unique: e37P8qznMm67yPo98qhyCA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 255B58030D7;
-        Wed, 11 Nov 2020 01:37:17 +0000 (UTC)
-Received: from [10.72.12.102] (ovpn-12-102.pek2.redhat.com [10.72.12.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2998375138;
-        Wed, 11 Nov 2020 01:37:14 +0000 (UTC)
-Subject: Re: [PATCH v3] libceph: add osd op counter metric support
-To:     Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     "Yan, Zheng" <zyan@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-References: <20201110141937.414301-1-xiubli@redhat.com>
- <CAOi1vP-tBRNEgkmhvieUyBzOms-n=vge4XpYSpnU6cnq86SRMQ@mail.gmail.com>
- <0ba63df09fe52cb3f650473f4d005a1abe301e3c.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <4ebc49eb-5f17-14a3-17d5-1f2607d16ad5@redhat.com>
-Date:   Wed, 11 Nov 2020 09:37:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        id S1725904AbgKKETn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 23:19:43 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:56610 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725468AbgKKETm (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Nov 2020 23:19:42 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AB49Tbn187079;
+        Wed, 11 Nov 2020 04:18:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : references : date : in-reply-to : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=EwuOibuX72u5GW/vr3IZET1mbk4Qqp2f1lpQhsZMo3U=;
+ b=rdxx8bfCoz66U7/JxdRXyqosHLyk6104gocou3/pxKr+MBaHN9z+JG22xyBjdFrs/toj
+ u8kyE9Mnx40f+onFhQWnASdg9eewdpqao7JjD8N8PDe0bDGwb4iBUgCzzxwXH2tPfd4b
+ ZewD9ZDiq4ttMBKnV5hFCYBDOG9JBlIzwIQL8q1J/Y6q7a+0GcQKjASc2OGvEo13qqVS
+ YW2PdJ4GC1fZvqx8aM04P1FnQraTmrtlR84Q48lCpCKfWOIJkugsvGV1CkUq/whUbI2D
+ eu9b4yGyWVKNklkWbsL8Eg4w7p+siPP69BiWWD0dUAtW6doZkGUQe3KqPOb7wn/WWPSd sQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 34p72en941-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 11 Nov 2020 04:18:21 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AB4Arf2138947;
+        Wed, 11 Nov 2020 04:18:20 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 34p5g179j7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Nov 2020 04:18:20 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0AB4IBdx000879;
+        Wed, 11 Nov 2020 04:18:11 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 10 Nov 2020 20:18:09 -0800
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Justin Sanders <justin@coraid.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jack Wang <jinpu.wang@cloud.ionos.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Roger Pau =?utf-8?Q?Monn=C3=A9?= <roger.pau@citrix.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        dm-devel@redhat.com, linux-block@vger.kernel.org,
+        drbd-dev@tron.linbit.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/24] sd: update the bdev size in sd_revalidate_disk
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle
+Message-ID: <yq1tutwedcb.fsf@ca-mkp.ca.oracle.com>
+References: <20201106190337.1973127-1-hch@lst.de>
+        <20201106190337.1973127-5-hch@lst.de>
+Date:   Tue, 10 Nov 2020 23:18:05 -0500
+In-Reply-To: <20201106190337.1973127-5-hch@lst.de> (Christoph Hellwig's
+        message of "Fri, 6 Nov 2020 20:03:16 +0100")
 MIME-Version: 1.0
-In-Reply-To: <0ba63df09fe52cb3f650473f4d005a1abe301e3c.camel@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9801 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 malwarescore=0
+ adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=887 suspectscore=1
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011110019
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9801 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=877 mlxscore=0
+ malwarescore=0 suspectscore=1 lowpriorityscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011110019
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2020/11/11 1:11, Jeff Layton wrote:
-> On Tue, 2020-11-10 at 16:44 +0100, Ilya Dryomov wrote:
->> On Tue, Nov 10, 2020 at 3:19 PM <xiubli@redhat.com> wrote:
->>> From: Xiubo Li <xiubli@redhat.com>
->>>
->>> The logic is the same with osdc/Objecter.cc in ceph in user space.
->>>
->>> URL: https://tracker.ceph.com/issues/48053
->>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>> ---
->>>
->>> V3:
->>> - typo fixing about oring the _WRITE
->>>
->>>   include/linux/ceph/osd_client.h |  9 ++++++
->>>   net/ceph/debugfs.c              | 13 ++++++++
->>>   net/ceph/osd_client.c           | 56 +++++++++++++++++++++++++++++++++
->>>   3 files changed, 78 insertions(+)
->>>
->>> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
->>> index 83fa08a06507..24301513b186 100644
->>> --- a/include/linux/ceph/osd_client.h
->>> +++ b/include/linux/ceph/osd_client.h
->>> @@ -339,6 +339,13 @@ struct ceph_osd_backoff {
->>>          struct ceph_hobject_id *end;
->>>   };
->>>
->>> +struct ceph_osd_metric {
->>> +       struct percpu_counter op_ops;
->>> +       struct percpu_counter op_rmw;
->>> +       struct percpu_counter op_r;
->>> +       struct percpu_counter op_w;
->>> +};
->> OK, so only reads and writes are really needed.  Why not expose them
->> through the existing metrics framework in fs/ceph?  Wouldn't "fs top"
->> want to display them?  Exposing latency information without exposing
->> overall counts seems rather weird to me anyway.
->>
->> The fundamental problem is that debugfs output format is not stable.
->> The tracker mentions test_readahead -- updating some teuthology test
->> cases from time to time is not a big deal, but if a user facing tool
->> such as "fs top" starts relying on these, it would be bad.
->>
->> Thanks,
->>
->>                  Ilya
-> Those are all good points. The tracker is light on details. I had
-> assumed that you'd also be uploading this to the MDS in a later patch.
-> Is that also planned?
 
-Yeah, this is on my todo list.
+Christoph,
 
+> This avoids the extra call to revalidate_disk_size in sd_rescan and
+> is otherwise a no-op because the size did not change, or we are in
+> the probe path.
 
-> I'll also add that it might be nice to keeps stats on copy_from2 as
-> well, since we do have a copy_file_range operation in cephfs.
+Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
 
-Make sense and I will add it.
-
-Thanks
-
-BRs
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
