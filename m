@@ -2,84 +2,95 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ABAAA2AEB62
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Nov 2020 09:28:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBEAE2AEDDD
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Nov 2020 10:34:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbgKKI1q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 11 Nov 2020 03:27:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33594 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbgKKI1o (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 Nov 2020 03:27:44 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B544C0613D4;
-        Wed, 11 Nov 2020 00:27:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=qTvXuSKxmUERuRhycJyctBDf7GzVXaeOz2hEmG1jnCY=; b=StdRHq9eqGBzFFXpMKfN8ot2yd
-        jPC1U+22bkuUiJFL3H0mb/9/1vlelGLQvG1hCH467eSdVW15dn8Pibm3EIxJwicffJfGSFU2WZAlL
-        tM76FQA8Mhz7J0Dt012NqxGVof6CBWaiq+71e7SWBXxgz9PGD/HSjyzrq5laC3bHahSJjAdt/YgSg
-        VK5FG4/KAjlBjCF1Mxk5ErE82Aw6rkXyhTwsy/FUzDELWaBKzEkjqbZ7oRMK+Qd8mrTJBHvgsXqEQ
-        R94YnaXqfp4e3S0Qk0xduyFHl/C3X5yAr/DgMPQvmpUp8si6GBSW2z68gBmwcJiLLaIwE1WsQpe7C
-        3Of9U5JA==;
-Received: from [2001:4bb8:180:6600:bcde:334f:863c:27b8] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kclTY-0007gX-LB; Wed, 11 Nov 2020 08:27:33 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Justin Sanders <justin@coraid.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jack Wang <jinpu.wang@cloud.ionos.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        dm-devel@redhat.com, linux-block@vger.kernel.org,
-        drbd-dev@lists.linbit.com, nbd@other.debian.org,
-        ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 24/24] block: unexport revalidate_disk_size
-Date:   Wed, 11 Nov 2020 09:26:58 +0100
-Message-Id: <20201111082658.3401686-25-hch@lst.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201111082658.3401686-1-hch@lst.de>
-References: <20201111082658.3401686-1-hch@lst.de>
+        id S1726992AbgKKJeD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 11 Nov 2020 04:34:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43048 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726011AbgKKJeC (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 11 Nov 2020 04:34:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id B1CEFABD6;
+        Wed, 11 Nov 2020 09:34:01 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 44934b85;
+        Wed, 11 Nov 2020 09:34:14 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com, pdonnell@redhat.com
+Subject: Re: [PATCH v2] ceph: ensure we have Fs caps when fetching dir link
+ count
+References: <20201110163052.482965-1-jlayton@kernel.org>
+Date:   Wed, 11 Nov 2020 09:34:13 +0000
+In-Reply-To: <20201110163052.482965-1-jlayton@kernel.org> (Jeff Layton's
+        message of "Tue, 10 Nov 2020 11:30:52 -0500")
+Message-ID: <877dqsfd9m.fsf@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-revalidate_disk_size is now only called from set_capacity_and_notify,
-so drop the export.
+Jeff Layton <jlayton@kernel.org> writes:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/block_dev.c | 1 -
- 1 file changed, 1 deletion(-)
+> The link count for a directory is defined as inode->i_subdirs + 2,
+> (for "." and ".."). i_subdirs is only populated when Fs caps are held.
+> Ensure we grab Fs caps when fetching the link count for a directory.
+>
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 66ebf594c97f47..d8664f5c1ff669 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1362,7 +1362,6 @@ void revalidate_disk_size(struct gendisk *disk, bool verbose)
- 		bdput(bdev);
- 	}
- }
--EXPORT_SYMBOL(revalidate_disk_size);
- 
- void bd_set_nr_sectors(struct block_device *bdev, sector_t sectors)
- {
+Maybe this would be worth a stable@ tag too...?
+
+Cheers,
 -- 
-2.28.0
+Luis
+
+> URL: https://tracker.ceph.com/issues/48125
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/inode.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 7c22bc2ea076..ab02966ef0a4 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -2343,15 +2343,23 @@ int ceph_permission(struct inode *inode, int mask)
+>  }
+>  
+>  /* Craft a mask of needed caps given a set of requested statx attrs. */
+> -static int statx_to_caps(u32 want)
+> +static int statx_to_caps(u32 want, umode_t mode)
+>  {
+>  	int mask = 0;
+>  
+>  	if (want & (STATX_MODE|STATX_UID|STATX_GID|STATX_CTIME|STATX_BTIME))
+>  		mask |= CEPH_CAP_AUTH_SHARED;
+>  
+> -	if (want & (STATX_NLINK|STATX_CTIME))
+> -		mask |= CEPH_CAP_LINK_SHARED;
+> +	if (want & (STATX_NLINK|STATX_CTIME)) {
+> +		/*
+> +		 * The link count for directories depends on inode->i_subdirs,
+> +		 * and that is only updated when Fs caps are held.
+> +		 */
+> +		if (S_ISDIR(mode))
+> +			mask |= CEPH_CAP_FILE_SHARED;
+> +		else
+> +			mask |= CEPH_CAP_LINK_SHARED;
+> +	}
+>  
+>  	if (want & (STATX_ATIME|STATX_MTIME|STATX_CTIME|STATX_SIZE|
+>  		    STATX_BLOCKS))
+> @@ -2377,7 +2385,7 @@ int ceph_getattr(const struct path *path, struct kstat *stat,
+>  
+>  	/* Skip the getattr altogether if we're asked not to sync */
+>  	if (!(flags & AT_STATX_DONT_SYNC)) {
+> -		err = ceph_do_getattr(inode, statx_to_caps(request_mask),
+> +		err = ceph_do_getattr(inode, statx_to_caps(request_mask, inode->i_mode),
+>  				      flags & AT_STATX_FORCE_SYNC);
+>  		if (err)
+>  			return err;
 
