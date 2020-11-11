@@ -2,77 +2,85 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 315022AF52C
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Nov 2020 16:39:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2565E2AF5E8
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Nov 2020 17:13:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbgKKPjG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 11 Nov 2020 10:39:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47462 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726625AbgKKPjG (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 11 Nov 2020 10:39:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 78173ABD1;
-        Wed, 11 Nov 2020 15:39:04 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 83172c13;
-        Wed, 11 Nov 2020 15:39:16 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.de>
-Subject: [RFC PATCH] ceph: fix cross quota realms renames with new truncated files
-Date:   Wed, 11 Nov 2020 15:39:15 +0000
-Message-Id: <20201111153915.23426-1-lhenriques@suse.de>
+        id S1725955AbgKKQNL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 11 Nov 2020 11:13:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50606 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbgKKQNJ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 Nov 2020 11:13:09 -0500
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0150AC0613D4
+        for <ceph-devel@vger.kernel.org>; Wed, 11 Nov 2020 08:13:07 -0800 (PST)
+Received: by mail-il1-x131.google.com with SMTP id g7so2422854ilr.12
+        for <ceph-devel@vger.kernel.org>; Wed, 11 Nov 2020 08:13:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7yS21c4EDamv1N5jFFAli/djfW/+Q3U+ZJfbXcDD9kI=;
+        b=0mdj8CtO/R56ulgEDkoqOJkeoWn//omJtQsjKRxVAfyHMuD/i84TcxrzvRmjPiwu8d
+         5QHIjv1vEPSxJ7oTOr3oXq08szlvpuUQyhdRv82dm8eKD6yeTe6aZ6F47Ab+TgA8euaS
+         uCAQOWouzIbjPJKUwWzjNHJhlRh+SAuaCVGBS6zxaeSmTlcD93GvFMRBY2JS+rvj9/71
+         62v/XE93mWLRdieAXrh+wRWHWhL/1mkIIJYsWWeoVEyvPFkHo6lRccH7n6CWyIJQ4DnD
+         LGdZYCEGD4DexxHWKSV8QfZBXsJhbXqpD26FOUoZ7CLbUXUFw/+F2whGdyrKEEu1f005
+         +RFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7yS21c4EDamv1N5jFFAli/djfW/+Q3U+ZJfbXcDD9kI=;
+        b=oGDpIl4paOnoOpQ+BfP2tGy1W8PeKDyOUJoNvMw9VouAfezId9pRyJJ/if0aWpaP1I
+         LM+l1/CdHZXCLs6tRGmbtrCm33OgmmgDBk3p3C5VkHRA+BqqQa/Ygvhkj5Gy1tsI5o5s
+         3wFfn68URdFkDwpFxKVM9ZR0XLEu1nxLiRAOHOa2btNSuPbaIrZeYY+wTscCXDghej+Z
+         4nZT1bWcPr3p4MXUHA2GP8YX9klweRJ1qmJCn8xBHgCVoHkKYUSEF5dyRx9mtEbKmEYp
+         FVX6RaxtFyIj7xUwWoNCW+gZG5sgX+pYLVHO2l/pq9elGiXU5aJI4eLaLiYQJVm0tBAa
+         7uNw==
+X-Gm-Message-State: AOAM533jxWQ8LrbVmom6XZJTIy19mg1lmC093dOYOyq6wN2LJt/ssZ4H
+        H+oY5FM3qG7JpY4K+aa2UvdyIw==
+X-Google-Smtp-Source: ABdhPJzwILifX5tSP9gqWXbZq1R8Jv1w+MiHneN+v+U9u5cRPw2dSbsLytSjWr9uVfmYJHN8DBeLZw==
+X-Received: by 2002:a92:8541:: with SMTP id f62mr20043826ilh.9.1605111187075;
+        Wed, 11 Nov 2020 08:13:07 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id j85sm1478517ilg.82.2020.11.11.08.13.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Nov 2020 08:13:06 -0800 (PST)
+Subject: Re: block ioctl cleanups v2
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Ilya Dryomov <idryomov@gmail.com>, Song Liu <song@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
+References: <20201103100018.683694-1-hch@lst.de>
+ <20201111075802.GB23010@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <92a7c6e5-fe8b-e291-0dce-ecd727262a2e@kernel.dk>
+Date:   Wed, 11 Nov 2020 09:13:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201111075802.GB23010@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-When doing a rename across quota realms, there's a corner case that isn't
-handled correctly.  Here's a testcase:
+On 11/11/20 12:58 AM, Christoph Hellwig wrote:
+> Jens, can you take a look and possibly pick this series up?
 
-  mkdir files limit
-  truncate files/file -s 10G
-  setfattr limit -n ceph.quota.max_bytes -v 1000000
-  mv files limit/
+Looks good to me - but what is the final resolution on the BLKROSET
+propagation?
 
-The above will succeed because ftruncate(2) won't result in an immediate
-notification of the MDSs with the new file size, and thus the quota realms
-stats won't be updated.
+-- 
+Jens Axboe
 
-This patch forces a sync with the MDS every time there's an ATTR_SIZE that
-sets a new i_size, even if we have Fx caps.
-
-Cc: stable@vger.kernel.org
-Fixes: dffdcd71458e ("ceph: allow rename operation under different quota realms")
-URL: https://tracker.ceph.com/issues/36593
-Signed-off-by: Luis Henriques <lhenriques@suse.de>
----
- fs/ceph/inode.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
-
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 526faf4778ce..30e3f240ac96 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -2136,15 +2136,8 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
- 	if (ia_valid & ATTR_SIZE) {
- 		dout("setattr %p size %lld -> %lld\n", inode,
- 		     inode->i_size, attr->ia_size);
--		if ((issued & CEPH_CAP_FILE_EXCL) &&
--		    attr->ia_size > inode->i_size) {
--			i_size_write(inode, attr->ia_size);
--			inode->i_blocks = calc_inode_blocks(attr->ia_size);
--			ci->i_reported_size = attr->ia_size;
--			dirtied |= CEPH_CAP_FILE_EXCL;
--			ia_valid |= ATTR_MTIME;
--		} else if ((issued & CEPH_CAP_FILE_SHARED) == 0 ||
--			   attr->ia_size != inode->i_size) {
-+		if ((issued & (CEPH_CAP_FILE_EXCL|CEPH_CAP_FILE_SHARED)) ||
-+		    (attr->ia_size != inode->i_size)) {
- 			req->r_args.setattr.size = cpu_to_le64(attr->ia_size);
- 			req->r_args.setattr.old_size =
- 				cpu_to_le64(inode->i_size);
