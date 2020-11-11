@@ -2,94 +2,98 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C71CB2AF6F4
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Nov 2020 17:53:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1506C2AF777
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Nov 2020 18:40:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbgKKQxj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 11 Nov 2020 11:53:39 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:55940 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725979AbgKKQxi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 Nov 2020 11:53:38 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ABGjcP7055598;
-        Wed, 11 Nov 2020 16:53:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : message-id : references : date : in-reply-to : mime-version :
- content-type; s=corp-2020-01-29;
- bh=rtr9ZwfifFQUB6Xm7rE6zrQB75duW4A6ZUujJWOIcy0=;
- b=exGX3C0qT4hc/xlWa/AIm9ktJgo3Z//a0o4mVgKdeKGmGA/eaFYoQbi800neiStHpB4e
- tFsrnOWmxAuossvNG8Pw+BxUWop8xMBSCqnr7z/BRW8uJVoZbgurNkL3ZGrwGHzwfuA4
- Gs7RSMJIhJKB1v4bnboh+uSU+6W4DiMcXMh1h5xVZ0dpa9hpH3Rl5ykPpFR0of3rZSoX
- +jIlTtURtYo1Dq5KH+0vEOfFvvvdWfCnug14v78NOiYUPi1u0vBpnSjlcACdYBGweMr2
- 1yEDh9l2TA2MZkJqrSGrANe41/rwZrW/lu4+bGwkBt467AYodHuM5qVxksGh9ZXr0qZt /A== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 34p72er0e1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 11 Nov 2020 16:53:11 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ABGitBl102834;
-        Wed, 11 Nov 2020 16:53:11 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 34p5g1x6bh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 Nov 2020 16:53:11 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0ABGr6tR015124;
-        Wed, 11 Nov 2020 16:53:07 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 11 Nov 2020 08:53:05 -0800
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Ilya Dryomov <idryomov@gmail.com>, Song Liu <song@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH, RFC 11/10] block: propagate BLKROSET to all partitions
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <yq1o8k3dei6.fsf@ca-mkp.ca.oracle.com>
-References: <20201106140817.GA23557@lst.de>
-        <yq1imacecwz.fsf@ca-mkp.ca.oracle.com> <20201111080334.GA23062@lst.de>
-Date:   Wed, 11 Nov 2020 11:53:02 -0500
-In-Reply-To: <20201111080334.GA23062@lst.de> (Christoph Hellwig's message of
-        "Wed, 11 Nov 2020 09:03:34 +0100")
+        id S1726973AbgKKRkj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 11 Nov 2020 12:40:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38516 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725916AbgKKRki (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 11 Nov 2020 12:40:38 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C99C206D9;
+        Wed, 11 Nov 2020 17:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605116437;
+        bh=7OP/oaAY/uEOdScS/YzDQ/QRsojV9U51GcolACqa6ZU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=STG85v6lXcKdXvFnNR7eA4uLoV1yYLQiL6CXyc9SeYlWu7us+V/ahL2WOjd0XiuPg
+         mkCYDq33avkurYsWGlYZUA8gLRBHQI0gi22Bkeix5FQezeRPHImovVuxUs+CWzyeGM
+         I1VmFzcjxd+3gN4BqvSuj6TrjyMz7B+7VXiwi8WY=
+Message-ID: <0609b9014d4032e4fc4a8c8b74c935bf0cf4524a.camel@kernel.org>
+Subject: Re: [RFC PATCH] ceph: fix cross quota realms renames with new
+ truncated files
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.de>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 11 Nov 2020 12:40:35 -0500
+In-Reply-To: <20201111153915.23426-1-lhenriques@suse.de>
+References: <20201111153915.23426-1-lhenriques@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9802 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 malwarescore=0
- adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 suspectscore=1
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011110099
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9802 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
- malwarescore=0 suspectscore=1 lowpriorityscore=0 adultscore=0 phishscore=0
- priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011110099
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Wed, 2020-11-11 at 15:39 +0000, Luis Henriques wrote:
+> When doing a rename across quota realms, there's a corner case that isn't
+> handled correctly.  Here's a testcase:
+> 
+>   mkdir files limit
+>   truncate files/file -s 10G
+>   setfattr limit -n ceph.quota.max_bytes -v 1000000
+>   mv files limit/
+> 
+> The above will succeed because ftruncate(2) won't result in an immediate
+> notification of the MDSs with the new file size, and thus the quota realms
+> stats won't be updated.
+> 
+> This patch forces a sync with the MDS every time there's an ATTR_SIZE that
+> sets a new i_size, even if we have Fx caps.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: dffdcd71458e ("ceph: allow rename operation under different quota realms")
+> URL: https://tracker.ceph.com/issues/36593
+> Signed-off-by: Luis Henriques <lhenriques@suse.de>
+> ---
+>  fs/ceph/inode.c | 11 ++---------
+>  1 file changed, 2 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 526faf4778ce..30e3f240ac96 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -2136,15 +2136,8 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
+>  	if (ia_valid & ATTR_SIZE) {
+>  		dout("setattr %p size %lld -> %lld\n", inode,
+>  		     inode->i_size, attr->ia_size);
+> -		if ((issued & CEPH_CAP_FILE_EXCL) &&
+> -		    attr->ia_size > inode->i_size) {
+> -			i_size_write(inode, attr->ia_size);
+> -			inode->i_blocks = calc_inode_blocks(attr->ia_size);
+> -			ci->i_reported_size = attr->ia_size;
+> -			dirtied |= CEPH_CAP_FILE_EXCL;
+> -			ia_valid |= ATTR_MTIME;
+> -		} else if ((issued & CEPH_CAP_FILE_SHARED) == 0 ||
+> -			   attr->ia_size != inode->i_size) {
+> +		if ((issued & (CEPH_CAP_FILE_EXCL|CEPH_CAP_FILE_SHARED)) ||
+> +		    (attr->ia_size != inode->i_size)) {
+>  			req->r_args.setattr.size = cpu_to_le64(attr->ia_size);
+>  			req->r_args.setattr.old_size =
+>  				cpu_to_le64(inode->i_size);
 
-Christoph,
+Hmm...this makes truncates more expensive when we have caps. I'd rather
+not do that if we can help it.
 
-> I actually think your patch that goes further is the right thing to
-> do, and I was going to look into something similar for a problem with
-> hardware read-only namespaces in NVMe.  I think I'll take your patch
-> as a starting point and will work from there.
-
-Sounds good!
-
-I still have the blktests in a branch. Will adjust and resubmit once you
-post your rework.
-
+What about instead having the client mimic a fsync when there is a
+rename across quota realms? If we can't tell that reliably then we could
+also just do an effective fsync ahead of any cross-directory rename?
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Jeff Layton <jlayton@kernel.org>
+
