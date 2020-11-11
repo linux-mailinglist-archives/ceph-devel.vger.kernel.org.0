@@ -2,133 +2,113 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 74AEB2AE5D8
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Nov 2020 02:30:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68B932AE5DC
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Nov 2020 02:33:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732432AbgKKB37 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Nov 2020 20:29:59 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:30154 "EHLO
+        id S1731746AbgKKBdJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Nov 2020 20:33:09 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57895 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727275AbgKKB37 (ORCPT
+        by vger.kernel.org with ESMTP id S1730894AbgKKBdI (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 10 Nov 2020 20:29:59 -0500
+        Tue, 10 Nov 2020 20:33:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605058198;
+        s=mimecast20190719; t=1605058387;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=m6L/RvGXgemD6E0+5c1DAaQqtcKS7s16lfu9iIXk0eY=;
-        b=doEBYeQT1QvOD4c/KtBkKCZD5eil0XRm7EY53VPzpnLEKg9vuv+6cQxtJzm43ga8/3kZ09
-        F23EucGPVncEm4vfpyW9IwoX4IFvNp0xfqZ6pSJcpZZXjxSD29YlYYWAMPBG48yGp5csZ8
-        LeOjlTZJmfDiLB6G2l3gLkh/QmGxcBM=
+        bh=eEDACPC2SOgEQxW8DGvG+9dHRGO+OMe3/wTj/zWWzDw=;
+        b=JA2OjcGC470i7esMnmZdbDduBNB4h4zHSMp5eOvLsYPMBY5Ul0dUerwbosQQHhs5f6UvK0
+        qczX1HfhMhSxr4s6ZIXG8mSGjopDmy2jbPiU2sOce/cNG39oxa77VngsbhVbi1PLhW8Wzu
+        jXNcsQVaFQiKHVpcG2sLaBWoeucW+Ss=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-264-7iMWNiZqP5-srASrzb1VvQ-1; Tue, 10 Nov 2020 20:29:53 -0500
-X-MC-Unique: 7iMWNiZqP5-srASrzb1VvQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+ us-mta-465-zLUDH84zNxOtnzlTqluexg-1; Tue, 10 Nov 2020 20:33:03 -0500
+X-MC-Unique: zLUDH84zNxOtnzlTqluexg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8D7D910074BF;
-        Wed, 11 Nov 2020 01:29:52 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A13A7512B;
-        Wed, 11 Nov 2020 01:29:50 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org, idryomov@gmail.com
-Cc:     zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v4 2/2] ceph: add ceph.{cluster_fsid/client_id} vxattrs suppport
-Date:   Wed, 11 Nov 2020 09:29:40 +0800
-Message-Id: <20201111012940.468289-3-xiubli@redhat.com>
-In-Reply-To: <20201111012940.468289-1-xiubli@redhat.com>
-References: <20201111012940.468289-1-xiubli@redhat.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 80B125F9D6;
+        Wed, 11 Nov 2020 01:33:02 +0000 (UTC)
+Received: from [10.72.12.102] (ovpn-12-102.pek2.redhat.com [10.72.12.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7F50810013D0;
+        Wed, 11 Nov 2020 01:33:00 +0000 (UTC)
+Subject: Re: [PATCH v3] libceph: add osd op counter metric support
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, "Yan, Zheng" <zyan@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+References: <20201110141937.414301-1-xiubli@redhat.com>
+ <CAOi1vP-tBRNEgkmhvieUyBzOms-n=vge4XpYSpnU6cnq86SRMQ@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <96d573ba-c82c-a22a-ee9d-bbc2156910ab@redhat.com>
+Date:   Wed, 11 Nov 2020 09:32:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <CAOi1vP-tBRNEgkmhvieUyBzOms-n=vge4XpYSpnU6cnq86SRMQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On 2020/11/10 23:44, Ilya Dryomov wrote:
+> On Tue, Nov 10, 2020 at 3:19 PM <xiubli@redhat.com> wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> The logic is the same with osdc/Objecter.cc in ceph in user space.
+>>
+>> URL: https://tracker.ceph.com/issues/48053
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>
+>> V3:
+>> - typo fixing about oring the _WRITE
+>>
+>>   include/linux/ceph/osd_client.h |  9 ++++++
+>>   net/ceph/debugfs.c              | 13 ++++++++
+>>   net/ceph/osd_client.c           | 56 +++++++++++++++++++++++++++++++++
+>>   3 files changed, 78 insertions(+)
+>>
+>> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+>> index 83fa08a06507..24301513b186 100644
+>> --- a/include/linux/ceph/osd_client.h
+>> +++ b/include/linux/ceph/osd_client.h
+>> @@ -339,6 +339,13 @@ struct ceph_osd_backoff {
+>>          struct ceph_hobject_id *end;
+>>   };
+>>
+>> +struct ceph_osd_metric {
+>> +       struct percpu_counter op_ops;
+>> +       struct percpu_counter op_rmw;
+>> +       struct percpu_counter op_r;
+>> +       struct percpu_counter op_w;
+>> +};
+> OK, so only reads and writes are really needed.  Why not expose them
+> through the existing metrics framework in fs/ceph?  Wouldn't "fs top"
+> want to display them?  Exposing latency information without exposing
+> overall counts seems rather weird to me anyway.
 
-These two vxattrs will only exist in local client side, with which
-we can easily know which mountpoint the file belongs to and also
-they can help locate the debugfs path quickly.
+Okay, I just thought in future this may also be needed by rbd :-)
 
-URL: https://tracker.ceph.com/issues/48057
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/xattr.c | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
 
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index 0fd05d3d4399..e89750a1f039 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -304,6 +304,23 @@ static ssize_t ceph_vxattrcb_snap_btime(struct ceph_inode_info *ci, char *val,
- 				ci->i_snap_btime.tv_nsec);
- }
- 
-+static ssize_t ceph_vxattrcb_cluster_fsid(struct ceph_inode_info *ci,
-+					  char *val, size_t size)
-+{
-+	struct ceph_fs_client *fsc = ceph_sb_to_client(ci->vfs_inode.i_sb);
-+
-+	return ceph_fmt_xattr(val, size, "%pU", &fsc->client->fsid);
-+}
-+
-+static ssize_t ceph_vxattrcb_client_id(struct ceph_inode_info *ci,
-+				       char *val, size_t size)
-+{
-+	struct ceph_fs_client *fsc = ceph_sb_to_client(ci->vfs_inode.i_sb);
-+
-+	return ceph_fmt_xattr(val, size, "client%lld",
-+			      ceph_client_gid(fsc->client));
-+}
-+
- #define CEPH_XATTR_NAME(_type, _name)	XATTR_CEPH_PREFIX #_type "." #_name
- #define CEPH_XATTR_NAME2(_type, _name, _name2)	\
- 	XATTR_CEPH_PREFIX #_type "." #_name "." #_name2
-@@ -407,6 +424,24 @@ static struct ceph_vxattr ceph_file_vxattrs[] = {
- 	{ .name = NULL, 0 }	/* Required table terminator */
- };
- 
-+static struct ceph_vxattr ceph_common_vxattrs[] = {
-+	{
-+		.name = "ceph.cluster_fsid",
-+		.name_size = sizeof("ceph.cluster_fsid"),
-+		.getxattr_cb = ceph_vxattrcb_cluster_fsid,
-+		.exists_cb = NULL,
-+		.flags = VXATTR_FLAG_READONLY,
-+	},
-+	{
-+		.name = "ceph.client_id",
-+		.name_size = sizeof("ceph.client_id"),
-+		.getxattr_cb = ceph_vxattrcb_client_id,
-+		.exists_cb = NULL,
-+		.flags = VXATTR_FLAG_READONLY,
-+	},
-+	{ .name = NULL, 0 }	/* Required table terminator */
-+};
-+
- static struct ceph_vxattr *ceph_inode_vxattrs(struct inode *inode)
- {
- 	if (S_ISDIR(inode->i_mode))
-@@ -429,6 +464,13 @@ static struct ceph_vxattr *ceph_match_vxattr(struct inode *inode,
- 		}
- 	}
- 
-+	vxattr = ceph_common_vxattrs;
-+	while (vxattr->name) {
-+		if (!strcmp(vxattr->name, name))
-+			return vxattr;
-+		vxattr++;
-+	}
-+
- 	return NULL;
- }
- 
--- 
-2.27.0
+> The fundamental problem is that debugfs output format is not stable.
+> The tracker mentions test_readahead -- updating some teuthology test
+> cases from time to time is not a big deal, but if a user facing tool
+> such as "fs top" starts relying on these, it would be bad.
+
+No problem, let me move it to fs existing metric framework.
+
+Thanks Ilya.
+
+BRs
+
+> Thanks,
+>
+>                  Ilya
+>
 
