@@ -2,120 +2,160 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12CAA2AEE77
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Nov 2020 11:07:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E926A2AEF30
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Nov 2020 12:08:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbgKKKG6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 11 Nov 2020 05:06:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49028 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727357AbgKKKG4 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 Nov 2020 05:06:56 -0500
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42932C0613D6
-        for <ceph-devel@vger.kernel.org>; Wed, 11 Nov 2020 02:06:55 -0800 (PST)
-Received: by mail-ej1-x643.google.com with SMTP id o9so2004084ejg.1
-        for <ceph-devel@vger.kernel.org>; Wed, 11 Nov 2020 02:06:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloud.ionos.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8BVYeCUTuKi3mlr+D1JejV3WQ4DReZqKao2un+osJdI=;
-        b=EWvaurrQLE5Q4yXlmvtPWeVGE0dkpLilBhFACYcpJh5SLgD4k2LHFrfA3fg/phe+gw
-         pOXsWhTko+6vmsPMUys1ydyafND8sfafc/BhJ0cLDqzJH5wv7CFdS4PBi4SJJirndEDo
-         I3sopJwAoMSpcvKBGOBbJDfAHPo19nxrr5mYxmaUjZAtoeSEinoAPgcqf0tp4SGruWUm
-         s+puyVNd/9QM59nJCHGxgwiF4Uhv/qkw3Bh4E6NoIJN/jPJN6bl5siKGHhBBHVdEhBTl
-         i9cN1zoK+m/ZDFXKRJbDKDgS4Hb/xEaLU1cJNAhSo0nBcfuCpt/4xbdL/4qVB2KjPelC
-         haxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8BVYeCUTuKi3mlr+D1JejV3WQ4DReZqKao2un+osJdI=;
-        b=SaRLsSUmCXOv0tK8H22KBYe0rXpe3fp7l2HTxsKS4w6JFRkBOzg6F6nvjusVjxcGTq
-         esyLkkZkretWxfRXUTx2ezK04FINyOsR9TBs/cELzCDk5y2YRzt46SS3iJJotQ1wLF4V
-         MmsGDDyz4ST0npbPpPTroIQYNBMHivOnu9SQ+yJOyP9+CsnRzltblO44gNEkQ57K2fef
-         oOUtd5jVSVBBoALELDYEhh22zlX4iOO8XHD0ap84qrK1tH18ng/lOYI59A+uT64FwLIU
-         Q4hH/u5JZgpUWXsqmWYvUicwC7TT0nfIAjPurB0HsVsc0xIeuMHdszhd6mxvgoPLT7mb
-         0J2w==
-X-Gm-Message-State: AOAM5309PiCFVwWssodOJp6yJa86mItijQ79qARA3CEOcqzfpTTUAVdl
-        K3coIdXubXJgrCgHXfMZUArOtiFZi3eyFDDHmI95eA==
-X-Google-Smtp-Source: ABdhPJzsSG4n+ejxAi7LIm+JtRF2XZ0Zmfdo/Dim1Bn2zjoT1vntwc6k1ciTHUd7GwTXoyYPdOeDF7UWMmfnel/IKPk=
-X-Received: by 2002:a17:907:c05:: with SMTP id ga5mr19170455ejc.212.1605089213881;
- Wed, 11 Nov 2020 02:06:53 -0800 (PST)
+        id S1726157AbgKKLIe (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 11 Nov 2020 06:08:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50092 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725895AbgKKLIe (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 11 Nov 2020 06:08:34 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 91F92ABD6;
+        Wed, 11 Nov 2020 11:08:32 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 57f960c6;
+        Wed, 11 Nov 2020 11:08:44 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     "Yan, Zheng" <ukernel@gmail.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@redhat.com>
+Subject: Re: [RFC PATCH] ceph: guard against __ceph_remove_cap races
+References: <20191212173159.35013-1-jlayton@kernel.org>
+        <CAAM7YAmquOg5ESMAMa5y0gGAR-UAivYF8m+nqrJNmK=SzG6+wA@mail.gmail.com>
+        <64d5a16d920098122144e0df8e03df0cadfb2784.camel@kernel.org>
+Date:   Wed, 11 Nov 2020 11:08:44 +0000
+In-Reply-To: <64d5a16d920098122144e0df8e03df0cadfb2784.camel@kernel.org> (Jeff
+        Layton's message of "Sun, 15 Dec 2019 17:40:21 -0500")
+Message-ID: <871rh0f8w3.fsf@suse.de>
 MIME-Version: 1.0
-References: <20201111082658.3401686-1-hch@lst.de> <20201111082658.3401686-18-hch@lst.de>
- <CAOi1vP-JjnNdAUqd9Gy6YdFgi8Ev4_Jt3zcB9DhAmdAvQhG7Eg@mail.gmail.com>
-In-Reply-To: <CAOi1vP-JjnNdAUqd9Gy6YdFgi8Ev4_Jt3zcB9DhAmdAvQhG7Eg@mail.gmail.com>
-From:   Jinpu Wang <jinpu.wang@cloud.ionos.com>
-Date:   Wed, 11 Nov 2020 11:06:43 +0100
-Message-ID: <CAMGffEmU1ezUo68zF8DS4CRZZMosqhmDw3h7uiWzh2nL8tUs9g@mail.gmail.com>
-Subject: Re: [PATCH 17/24] rbd: use set_capacity_and_notify
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Justin Sanders <justin@coraid.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        Lars Ellenberg <drbd-dev@lists.linbit.com>,
-        nbd@other.debian.org,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        xen-devel@lists.xenproject.org,
-        linux-raid <linux-raid@vger.kernel.org>,
-        linux-nvme@lists.infradead.org,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Nov 11, 2020 at 10:55 AM Ilya Dryomov <idryomov@gmail.com> wrote:
+Jeff Layton <jlayton@kernel.org> writes:
+
+> On Sat, 2019-12-14 at 10:46 +0800, Yan, Zheng wrote:
+>> On Fri, Dec 13, 2019 at 1:32 AM Jeff Layton <jlayton@kernel.org> wrote:
+>> > I believe it's possible that we could end up with racing calls to
+>> > __ceph_remove_cap for the same cap. If that happens, the cap->ci
+>> > pointer will be zereoed out and we can hit a NULL pointer dereference.
+>> > 
+>> > Once we acquire the s_cap_lock, check for the ci pointer being NULL,
+>> > and just return without doing anything if it is.
+>> > 
+>> > URL: https://tracker.ceph.com/issues/43272
+>> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>> > ---
+>> >  fs/ceph/caps.c | 21 ++++++++++++++++-----
+>> >  1 file changed, 16 insertions(+), 5 deletions(-)
+>> > 
+>> > This is the only scenario that made sense to me in light of Ilya's
+>> > analysis on the tracker above. I could be off here though -- the locking
+>> > around this code is horrifically complex, and I could be missing what
+>> > should guard against this scenario.
+>> > 
+>> 
+>> I think the simpler fix is,  in trim_caps_cb, check if cap-ci is
+>> non-null before calling __ceph_remove_cap().  this should work because
+>> __ceph_remove_cap() is always called inside i_ceph_lock
+>> 
 >
-> On Wed, Nov 11, 2020 at 9:27 AM Christoph Hellwig <hch@lst.de> wrote:
-> >
-> > Use set_capacity_and_notify to set the size of both the disk and block
-> > device.  This also gets the uevent notifications for the resize for free.
-> >
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > Acked-by: Jack Wang <jinpu.wang@cloud.ionos.com>
-> > ---
-> >  drivers/block/rbd.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> > index f84128abade319..b7a194ffda55b4 100644
-> > --- a/drivers/block/rbd.c
-> > +++ b/drivers/block/rbd.c
-> > @@ -4920,8 +4920,7 @@ static void rbd_dev_update_size(struct rbd_device *rbd_dev)
-> >             !test_bit(RBD_DEV_FLAG_REMOVING, &rbd_dev->flags)) {
-> >                 size = (sector_t)rbd_dev->mapping.size / SECTOR_SIZE;
-> >                 dout("setting size to %llu sectors", (unsigned long long)size);
-> > -               set_capacity(rbd_dev->disk, size);
-> > -               revalidate_disk_size(rbd_dev->disk, true);
-> > +               set_capacity_and_notify(rbd_dev->disk, size);
-> >         }
-> >  }
-> >
-> > --
-> > 2.28.0
-> >
+> Is that sufficient though? The stack trace in the bug shows it being
+> called by ceph_trim_caps, but I think we could hit the same problem with
+> other __ceph_remove_cap callers, if they happen to race in at the right
+> time.
+
+Sorry for resurrecting this old thread, but we just got a report with this
+issue on a kernel that includes commit d6e47819721a ("ceph: hold
+i_ceph_lock when removing caps for freeing inode").
+
+Looking at the code, I believe Zheng's suggestion should work as I don't
+see any __ceph_remove_cap callers that don't hold the i_ceph_lock.  So,
+would something like the diff bellow be acceptable?
+
+Cheers,
+-- 
+Luis
+
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 8f1d7500a7ec..7dbb73099d2c 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -1960,7 +1960,8 @@ static int trim_caps_cb(struct inode *inode, struct ceph_cap *cap, void *arg)
+ 
+ 	if (oissued) {
+ 		/* we aren't the only cap.. just remove us */
+-		__ceph_remove_cap(cap, true);
++		if (cap->ci)
++			__ceph_remove_cap(cap, true);
+ 		(*remaining)--;
+ 	} else {
+ 		struct dentry *dentry;
+
+
 >
-> Hi Christoph,
 >
-> The Acked-by is wrong here.  I acked this patch (17/24, rbd), and Jack
-> acked the next one (18/24, rnbd).
-right. :)
->
-> Thanks,
->
->                 Ilya
+>> > Thoughts?
+>> > 
+>> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+>> > index 9d09bb53c1ab..7e39ee8eff60 100644
+>> > --- a/fs/ceph/caps.c
+>> > +++ b/fs/ceph/caps.c
+>> > @@ -1046,11 +1046,22 @@ static void drop_inode_snap_realm(struct ceph_inode_info *ci)
+>> >  void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
+>> >  {
+>> >         struct ceph_mds_session *session = cap->session;
+>> > -       struct ceph_inode_info *ci = cap->ci;
+>> > -       struct ceph_mds_client *mdsc =
+>> > -               ceph_sb_to_client(ci->vfs_inode.i_sb)->mdsc;
+>> > +       struct ceph_inode_info *ci;
+>> > +       struct ceph_mds_client *mdsc;
+>> >         int removed = 0;
+>> > 
+>> > +       spin_lock(&session->s_cap_lock);
+>> > +       ci = cap->ci;
+>> > +       if (!ci) {
+>> > +               /*
+>> > +                * Did we race with a competing __ceph_remove_cap call? If
+>> > +                * ci is zeroed out, then just unlock and don't do anything.
+>> > +                * Assume that it's on its way out anyway.
+>> > +                */
+>> > +               spin_unlock(&session->s_cap_lock);
+>> > +               return;
+>> > +       }
+>> > +
+>> >         dout("__ceph_remove_cap %p from %p\n", cap, &ci->vfs_inode);
+>> > 
+>> >         /* remove from inode's cap rbtree, and clear auth cap */
+>> > @@ -1058,13 +1069,12 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
+>> >         if (ci->i_auth_cap == cap)
+>> >                 ci->i_auth_cap = NULL;
+>> > 
+>> > -       /* remove from session list */
+>> > -       spin_lock(&session->s_cap_lock);
+>> >         if (session->s_cap_iterator == cap) {
+>> >                 /* not yet, we are iterating over this very cap */
+>> >                 dout("__ceph_remove_cap  delaying %p removal from session %p\n",
+>> >                      cap, cap->session);
+>> >         } else {
+>> > +               /* remove from session list */
+>> >                 list_del_init(&cap->session_caps);
+>> >                 session->s_nr_caps--;
+>> >                 cap->session = NULL;
+>> > @@ -1072,6 +1082,7 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
+>> >         }
+>> >         /* protect backpointer with s_cap_lock: see iterate_session_caps */
+>> >         cap->ci = NULL;
+>> > +       mdsc = ceph_sb_to_client(ci->vfs_inode.i_sb)->mdsc;
+>> > 
+>> >         /*
+>> >          * s_cap_reconnect is protected by s_cap_lock. no one changes
+>> > --
+>> > 2.23.0
+>> > 
