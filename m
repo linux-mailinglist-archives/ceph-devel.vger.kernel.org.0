@@ -2,122 +2,120 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E50F92AFCE3
-	for <lists+ceph-devel@lfdr.de>; Thu, 12 Nov 2020 02:48:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82C942AFE84
+	for <lists+ceph-devel@lfdr.de>; Thu, 12 Nov 2020 06:38:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728587AbgKLBdV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 11 Nov 2020 20:33:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727980AbgKKXvi (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 11 Nov 2020 18:51:38 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728976AbgKLFin (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 12 Nov 2020 00:38:43 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:58579 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726083AbgKLCaV (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 11 Nov 2020 21:30:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1605148218;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kHjcPin1N01FZMho5xFMaucKCCPKXpTXKCBilFdKtL0=;
+        b=Lt5f6cC3ZL5wgdUlgwrClw+QYgNC1MbFSEvELZIpP8gVYCeDLPCbUCb55uTj3SYb5zGMvY
+        rqd2MZKSC2yNkhKH8OjZgNqk8RdpDJ3GbzBjCZuosSlxLJOAWJ3T1F8LA6nVlzv9FDNwh0
+        usclGBVb/WUEP2PCQOKCpe6anHazxNw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-520-f3yzMYqEPICTEFy20xH3vA-1; Wed, 11 Nov 2020 21:30:13 -0500
+X-MC-Unique: f3yzMYqEPICTEFy20xH3vA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7344F2072E;
-        Wed, 11 Nov 2020 23:51:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605138698;
-        bh=Bnysz1SWZLS1NXyPCnT4+UuJ3xo5lYN3H57fCgkSVeA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=l30fHDl+Osgo3vJ0PjfanjoDNsl17YpUYU10RqYqG6MyIDK/ijTj4Z9F0r0V6OjI2
-         GOhPfzQMiXnbaRKzKv1AYQUl3+8RzqTUP1dXTeQKxY7SQQr+qbZ0MjzkWFXrmmuOvU
-         Ripk5PSpt2lNAxKk1uOoMyq3ligpl++SDMdvdPX4=
-Message-ID: <925dda9b15044c8a19ac2017d4b135209e1f6184.camel@kernel.org>
-Subject: Re: [RFC PATCH] ceph: fix cross quota realms renames with new
- truncated files
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Patrick Donnelly <pdonnell@redhat.com>
-Date:   Wed, 11 Nov 2020 18:51:36 -0500
-In-Reply-To: <87361feojx.fsf@suse.de>
-References: <20201111153915.23426-1-lhenriques@suse.de>
-         <0609b9014d4032e4fc4a8c8b74c935bf0cf4524a.camel@kernel.org>
-         <87361feojx.fsf@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 73C881006CA9;
+        Thu, 12 Nov 2020 02:30:12 +0000 (UTC)
+Received: from [10.72.13.24] (ovpn-13-24.pek2.redhat.com [10.72.13.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6A32C27BD8;
+        Thu, 12 Nov 2020 02:30:10 +0000 (UTC)
+Subject: Re: [PATCH v3] libceph: add osd op counter metric support
+To:     Patrick Donnelly <pdonnell@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, "Yan, Zheng" <zyan@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+References: <20201110141937.414301-1-xiubli@redhat.com>
+ <CAOi1vP-tBRNEgkmhvieUyBzOms-n=vge4XpYSpnU6cnq86SRMQ@mail.gmail.com>
+ <CA+2bHPb1pP-xRGVrKfOqB8D94Nku_s5Kj+kVSzOzg3Zxpypzfg@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <08cde4b0-29b6-5846-56ab-df38268bba04@redhat.com>
+Date:   Thu, 12 Nov 2020 10:30:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+2bHPb1pP-xRGVrKfOqB8D94Nku_s5Kj+kVSzOzg3Zxpypzfg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2020-11-11 at 18:28 +0000, Luis Henriques wrote:
-> Jeff Layton <jlayton@kernel.org> writes:
-> 
-> > On Wed, 2020-11-11 at 15:39 +0000, Luis Henriques wrote:
-> > > When doing a rename across quota realms, there's a corner case that isn't
-> > > handled correctly.  Here's a testcase:
-> > > 
-> > >   mkdir files limit
-> > >   truncate files/file -s 10G
-> > >   setfattr limit -n ceph.quota.max_bytes -v 1000000
-> > >   mv files limit/
-> > > 
-> > > The above will succeed because ftruncate(2) won't result in an immediate
-> > > notification of the MDSs with the new file size, and thus the quota realms
-> > > stats won't be updated.
-> > > 
-> > > This patch forces a sync with the MDS every time there's an ATTR_SIZE that
-> > > sets a new i_size, even if we have Fx caps.
-> > > 
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: dffdcd71458e ("ceph: allow rename operation under different quota realms")
-> > > URL: https://tracker.ceph.com/issues/36593
-> > > Signed-off-by: Luis Henriques <lhenriques@suse.de>
-> > > ---
-> > >  fs/ceph/inode.c | 11 ++---------
-> > >  1 file changed, 2 insertions(+), 9 deletions(-)
-> > > 
-> > > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > > index 526faf4778ce..30e3f240ac96 100644
-> > > --- a/fs/ceph/inode.c
-> > > +++ b/fs/ceph/inode.c
-> > > @@ -2136,15 +2136,8 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
-> > >  	if (ia_valid & ATTR_SIZE) {
-> > >  		dout("setattr %p size %lld -> %lld\n", inode,
-> > >  		     inode->i_size, attr->ia_size);
-> > > -		if ((issued & CEPH_CAP_FILE_EXCL) &&
-> > > -		    attr->ia_size > inode->i_size) {
-> > > -			i_size_write(inode, attr->ia_size);
-> > > -			inode->i_blocks = calc_inode_blocks(attr->ia_size);
-> > > -			ci->i_reported_size = attr->ia_size;
-> > > -			dirtied |= CEPH_CAP_FILE_EXCL;
-> > > -			ia_valid |= ATTR_MTIME;
-> > > -		} else if ((issued & CEPH_CAP_FILE_SHARED) == 0 ||
-> > > -			   attr->ia_size != inode->i_size) {
-> > > +		if ((issued & (CEPH_CAP_FILE_EXCL|CEPH_CAP_FILE_SHARED)) ||
-> > > +		    (attr->ia_size != inode->i_size)) {
-> > >  			req->r_args.setattr.size = cpu_to_le64(attr->ia_size);
-> > >  			req->r_args.setattr.old_size =
-> > >  				cpu_to_le64(inode->i_size);
-> > 
-> > Hmm...this makes truncates more expensive when we have caps. I'd rather
-> > not do that if we can help it.
-> 
-> Yeah, as I mentioned in the tracker, there's indeed a performance impact
-> with this fix.  That's what made me add the RFC in the subject ;-)
-> 
-> > What about instead having the client mimic a fsync when there is a
-> > rename across quota realms? If we can't tell that reliably then we could
-> > also just do an effective fsync ahead of any cross-directory rename?
-> 
-> Ok, thanks for the suggestion.  That may actually work, although it will
-> make the rename more expensive of course.  I'll test that tomorrow and
-> eventually follow-up with a patch.
-> 
+On 2020/11/11 23:18, Patrick Donnelly wrote:
+> On Tue, Nov 10, 2020 at 7:45 AM Ilya Dryomov <idryomov@gmail.com> wrote:
+>> On Tue, Nov 10, 2020 at 3:19 PM <xiubli@redhat.com> wrote:
+>>> From: Xiubo Li <xiubli@redhat.com>
+>>>
+>>> The logic is the same with osdc/Objecter.cc in ceph in user space.
+>>>
+>>> URL: https://tracker.ceph.com/issues/48053
+>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>>> ---
+>>>
+>>> V3:
+>>> - typo fixing about oring the _WRITE
+>>>
+>>>   include/linux/ceph/osd_client.h |  9 ++++++
+>>>   net/ceph/debugfs.c              | 13 ++++++++
+>>>   net/ceph/osd_client.c           | 56 +++++++++++++++++++++++++++++++++
+>>>   3 files changed, 78 insertions(+)
+>>>
+>>> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+>>> index 83fa08a06507..24301513b186 100644
+>>> --- a/include/linux/ceph/osd_client.h
+>>> +++ b/include/linux/ceph/osd_client.h
+>>> @@ -339,6 +339,13 @@ struct ceph_osd_backoff {
+>>>          struct ceph_hobject_id *end;
+>>>   };
+>>>
+>>> +struct ceph_osd_metric {
+>>> +       struct percpu_counter op_ops;
+>>> +       struct percpu_counter op_rmw;
+>>> +       struct percpu_counter op_r;
+>>> +       struct percpu_counter op_w;
+>>> +};
+>> OK, so only reads and writes are really needed.  Why not expose them
+>> through the existing metrics framework in fs/ceph?  Wouldn't "fs top"
+>> want to display them?  Exposing latency information without exposing
+>> overall counts seems rather weird to me anyway.
+> `fs top` may want to eventually display this information but the
+> intention was to have a "perf dump"-like debugfs file that has
+> information about the number of osd op reads/writes. We need that for
+> this test:
+>
+> https://github.com/ceph/ceph/blob/master/qa/tasks/cephfs/test_readahead.py#L20
+>
+> Pulling the information out through `fs top` is not a direction I'd like to go.
+>
+>> The fundamental problem is that debugfs output format is not stable.
+>> The tracker mentions test_readahead -- updating some teuthology test
+>> cases from time to time is not a big deal, but if a user facing tool
+>> such as "fs top" starts relying on these, it would be bad.
+> `fs top` will not rely on debugfs files.
+>
+There has one bug in the "test_readahead.py", I have fixed it in [1]. I 
+think the existing cephfs metric framework is far enough for us to 
+support the readahead qa test for kclient.
 
-Patrick pointed out to me on IRC that since you're moving the parent
-directory of the truncated file, flushing the caps on the directory
-won't really help. You'd need to walk the entire subtree and try to
-flush every dirty inode, or basically do a syncfs() prior to renaming
-the directory across quotarealms.
+[1] https://github.com/ceph/ceph/pull/38016
 
-I think we probably will need to revert the change to allow cross-
-quotarealm renames of directories and make those return EXDEV again.
-Anything else sounds like it's probably going to be too expensive.
--- 
-Jeff Layton <jlayton@kernel.org>
+Thanks
+
+BRs
 
