@@ -2,31 +2,31 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A5B02B47A2
-	for <lists+ceph-devel@lfdr.de>; Mon, 16 Nov 2020 16:06:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16B0C2B4827
+	for <lists+ceph-devel@lfdr.de>; Mon, 16 Nov 2020 16:07:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730981AbgKPO7g (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 16 Nov 2020 09:59:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49144 "EHLO
+        id S1731334AbgKPPCA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 16 Nov 2020 10:02:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730942AbgKPO7b (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Nov 2020 09:59:31 -0500
+        with ESMTP id S1730957AbgKPO7e (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Nov 2020 09:59:34 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BECBC0613D2;
-        Mon, 16 Nov 2020 06:59:31 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAEDFC0617A6;
+        Mon, 16 Nov 2020 06:59:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=EaJZ5ZAOnqbW7jE+L2UIcq37a6pYwqJsY9OEaGa0ZMg=; b=K6aOl6Wl4emIGya7dNO3VK4giB
-        RrLVrsnwciZD9REImiBOJpS2BGk+3cuN8NTeyZW6ZmMA+Ukg9E6g4MhMrK0UXSjMffjzCiXFaNE4M
-        m4oa3O5ssF8kIfuRc5iypBIY7oPwn4MqZ8RIsE00NolXLG9oID81czwJRVsYg++Qn00gT96xEJQUM
-        Ec1vaaBm2mYbzA5lP0j//6Qj5PKpmwe+PEfLM5StATuQF7VH1Qfpk0ZyhDEV4WuoGeO82mUEUBDbW
-        5wEhqM9fHL89MPwukGt/c3OSiaQo7/iQTTTm0h0fIdu3fV/o7VasqFVwsBqQbeYd6zaP2j8kmeyHU
-        dptQrB0w==;
+        bh=B9SmRAKqCfACKKyGENFkBsseQWLE7CqM6G32RVvIzu4=; b=YQQqHRpSkrytYfsEPQgYxForVD
+        ablAk/WRbGXtgxrxwNPGmkrzt1O8iJfhT5R2bc9kw1ILZs2JspT6CnDAtWi6H1YUByvbdA5f9WyhN
+        uCO93gIlHgtuIV9TH2X+F3LmXC0K4QQezeb3WfKxjzE/QxnV9BXZKeQZppJYBgbbWJVaY6WHdV6Wz
+        o3+F4X3jMir+rU9NgAMuiknEYgx5X5aTQ7lEP6wvCebgL1xLVb4qQYSvAXNIGsZclY1CJa85yva1t
+        3ZOV/mD9/yBkT9Ag7uKj999ThoEG+ydI187GuglZeRckSc1dxAQ1vI9VhLWGyx3iMOWxNRPx1e+V1
+        8b8xJE+w==;
 Received: from [2001:4bb8:180:6600:255b:7def:a93:4a09] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kefyS-00042Q-Vn; Mon, 16 Nov 2020 14:59:21 +0000
+        id 1kefyW-00043h-2j; Mon, 16 Nov 2020 14:59:24 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -47,10 +47,11 @@ Cc:     Justin Sanders <justin@coraid.com>,
         ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Hannes Reinecke <hare@suse.de>
-Subject: [PATCH 50/78] z2ram: reindent
-Date:   Mon, 16 Nov 2020 15:57:41 +0100
-Message-Id: <20201116145809.410558-51-hch@lst.de>
+        Hannes Reinecke <hare@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 52/78] block: switch gendisk lookup to a simple xarray
+Date:   Mon, 16 Nov 2020 15:57:43 +0100
+Message-Id: <20201116145809.410558-53-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201116145809.410558-1-hch@lst.de>
 References: <20201116145809.410558-1-hch@lst.de>
@@ -61,616 +62,334 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-reindent the driver using Lident as the code style was far away from
-normal Linux code.
+Now that bdev_map is only used for finding gendisks, we can use
+a simple xarray instead of the regions tracking structure for it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/z2ram.c | 493 ++++++++++++++++++++----------------------
- 1 file changed, 236 insertions(+), 257 deletions(-)
+ block/genhd.c         | 208 ++++++++----------------------------------
+ include/linux/genhd.h |   7 --
+ 2 files changed, 37 insertions(+), 178 deletions(-)
 
-diff --git a/drivers/block/z2ram.c b/drivers/block/z2ram.c
-index 0e734802ee7cc6..eafecc9a72b38d 100644
---- a/drivers/block/z2ram.c
-+++ b/drivers/block/z2ram.c
-@@ -42,7 +42,6 @@
+diff --git a/block/genhd.c b/block/genhd.c
+index dc8690bc281c16..4a224a3c8e1071 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -27,15 +27,7 @@
  
- #include <linux/zorro.h>
+ static struct kobject *block_depr;
  
--
- #define Z2MINOR_COMBINED      (0)
- #define Z2MINOR_Z2ONLY        (1)
- #define Z2MINOR_CHIPONLY      (2)
-@@ -50,17 +49,17 @@
- #define Z2MINOR_MEMLIST2      (5)
- #define Z2MINOR_MEMLIST3      (6)
- #define Z2MINOR_MEMLIST4      (7)
--#define Z2MINOR_COUNT         (8) /* Move this down when adding a new minor */
-+#define Z2MINOR_COUNT         (8)	/* Move this down when adding a new minor */
+-struct bdev_map {
+-	struct bdev_map *next;
+-	dev_t dev;
+-	unsigned long range;
+-	struct module *owner;
+-	struct kobject *(*probe)(dev_t, int *, void *);
+-	int (*lock)(dev_t, void *);
+-	void *data;
+-} *bdev_map[255];
++static DEFINE_XARRAY(bdev_map);
+ static DEFINE_MUTEX(bdev_map_lock);
  
- #define Z2RAM_CHUNK1024       ( Z2RAM_CHUNKSIZE >> 10 )
- 
- static DEFINE_MUTEX(z2ram_mutex);
--static u_long *z2ram_map    = NULL;
--static u_long z2ram_size    = 0;
--static int z2_count         = 0;
--static int chip_count       = 0;
--static int list_count       = 0;
--static int current_device   = -1;
-+static u_long *z2ram_map = NULL;
-+static u_long z2ram_size = 0;
-+static int z2_count = 0;
-+static int chip_count = 0;
-+static int list_count = 0;
-+static int current_device = -1;
- 
- static DEFINE_SPINLOCK(z2ram_lock);
- 
-@@ -71,7 +70,7 @@ static blk_status_t z2_queue_rq(struct blk_mq_hw_ctx *hctx,
- {
- 	struct request *req = bd->rq;
- 	unsigned long start = blk_rq_pos(req) << 9;
--	unsigned long len  = blk_rq_cur_bytes(req);
-+	unsigned long len = blk_rq_cur_bytes(req);
- 
- 	blk_mq_start_request(req);
- 
-@@ -92,7 +91,7 @@ static blk_status_t z2_queue_rq(struct blk_mq_hw_ctx *hctx,
- 
- 		if (len < size)
- 			size = len;
--		addr += z2ram_map[ start >> Z2RAM_CHUNKSHIFT ];
-+		addr += z2ram_map[start >> Z2RAM_CHUNKSHIFT];
- 		if (rq_data_dir(req) == READ)
- 			memcpy(buffer, (char *)addr, size);
- 		else
-@@ -106,228 +105,214 @@ static blk_status_t z2_queue_rq(struct blk_mq_hw_ctx *hctx,
- 	return BLK_STS_OK;
+ /* for extended dynamic devt allocation, currently only one major is used */
+@@ -646,85 +638,26 @@ static char *bdevt_str(dev_t devt, char *buf)
+ 	return buf;
  }
  
--static void
--get_z2ram( void )
-+static void get_z2ram(void)
- {
--    int i;
--
--    for ( i = 0; i < Z2RAM_SIZE / Z2RAM_CHUNKSIZE; i++ )
--    {
--	if ( test_bit( i, zorro_unused_z2ram ) )
--	{
--	    z2_count++;
--	    z2ram_map[z2ram_size++] = (unsigned long)ZTWO_VADDR(Z2RAM_START) +
--				      (i << Z2RAM_CHUNKSHIFT);
--	    clear_bit( i, zorro_unused_z2ram );
-+	int i;
-+
-+	for (i = 0; i < Z2RAM_SIZE / Z2RAM_CHUNKSIZE; i++) {
-+		if (test_bit(i, zorro_unused_z2ram)) {
-+			z2_count++;
-+			z2ram_map[z2ram_size++] =
-+			    (unsigned long)ZTWO_VADDR(Z2RAM_START) +
-+			    (i << Z2RAM_CHUNKSHIFT);
-+			clear_bit(i, zorro_unused_z2ram);
-+		}
- 	}
--    }
- 
--    return;
-+	return;
- }
- 
--static void
--get_chipram( void )
-+static void get_chipram(void)
- {
- 
--    while ( amiga_chip_avail() > ( Z2RAM_CHUNKSIZE * 4 ) )
--    {
--	chip_count++;
--	z2ram_map[ z2ram_size ] =
--	    (u_long)amiga_chip_alloc( Z2RAM_CHUNKSIZE, "z2ram" );
-+	while (amiga_chip_avail() > (Z2RAM_CHUNKSIZE * 4)) {
-+		chip_count++;
-+		z2ram_map[z2ram_size] =
-+		    (u_long) amiga_chip_alloc(Z2RAM_CHUNKSIZE, "z2ram");
- 
--	if ( z2ram_map[ z2ram_size ] == 0 )
--	{
--	    break;
-+		if (z2ram_map[z2ram_size] == 0) {
-+			break;
-+		}
-+
-+		z2ram_size++;
- 	}
- 
--	z2ram_size++;
--    }
--	
--    return;
-+	return;
- }
- 
- static int z2_open(struct block_device *bdev, fmode_t mode)
- {
--    int device;
--    int max_z2_map = ( Z2RAM_SIZE / Z2RAM_CHUNKSIZE ) *
--	sizeof( z2ram_map[0] );
--    int max_chip_map = ( amiga_chip_size / Z2RAM_CHUNKSIZE ) *
--	sizeof( z2ram_map[0] );
--    int rc = -ENOMEM;
--
--    device = MINOR(bdev->bd_dev);
--
--    mutex_lock(&z2ram_mutex);
--    if ( current_device != -1 && current_device != device )
--    {
--	rc = -EBUSY;
--	goto err_out;
--    }
--
--    if ( current_device == -1 )
--    {
--	z2_count   = 0;
--	chip_count = 0;
--	list_count = 0;
--	z2ram_size = 0;
--
--	/* Use a specific list entry. */
--	if (device >= Z2MINOR_MEMLIST1 && device <= Z2MINOR_MEMLIST4) {
--		int index = device - Z2MINOR_MEMLIST1 + 1;
--		unsigned long size, paddr, vaddr;
--
--		if (index >= m68k_realnum_memory) {
--			printk( KERN_ERR DEVICE_NAME
--				": no such entry in z2ram_map\n" );
--		        goto err_out;
--		}
--
--		paddr = m68k_memory[index].addr;
--		size = m68k_memory[index].size & ~(Z2RAM_CHUNKSIZE-1);
--
--#ifdef __powerpc__
--		/* FIXME: ioremap doesn't build correct memory tables. */
--		{
--			vfree(vmalloc (size));
--		}
-+	int device;
-+	int max_z2_map = (Z2RAM_SIZE / Z2RAM_CHUNKSIZE) * sizeof(z2ram_map[0]);
-+	int max_chip_map = (amiga_chip_size / Z2RAM_CHUNKSIZE) *
-+	    sizeof(z2ram_map[0]);
-+	int rc = -ENOMEM;
- 
--		vaddr = (unsigned long)ioremap_wt(paddr, size);
-+	device = MINOR(bdev->bd_dev);
- 
--#else
--		vaddr = (unsigned long)z_remap_nocache_nonser(paddr, size);
--#endif
--		z2ram_map = 
--			kmalloc_array(size / Z2RAM_CHUNKSIZE,
--                                      sizeof(z2ram_map[0]),
--                                      GFP_KERNEL);
--		if ( z2ram_map == NULL )
--		{
--		    printk( KERN_ERR DEVICE_NAME
--			": cannot get mem for z2ram_map\n" );
--		    goto err_out;
--		}
-+	mutex_lock(&z2ram_mutex);
-+	if (current_device != -1 && current_device != device) {
-+		rc = -EBUSY;
-+		goto err_out;
-+	}
- 
--		while (size) {
--			z2ram_map[ z2ram_size++ ] = vaddr;
--			size -= Z2RAM_CHUNKSIZE;
--			vaddr += Z2RAM_CHUNKSIZE;
--			list_count++;
--		}
-+	if (current_device == -1) {
-+		z2_count = 0;
-+		chip_count = 0;
-+		list_count = 0;
-+		z2ram_size = 0;
- 
--		if ( z2ram_size != 0 )
--		    printk( KERN_INFO DEVICE_NAME
--			": using %iK List Entry %d Memory\n",
--			list_count * Z2RAM_CHUNK1024, index );
--	} else
--
--	switch ( device )
--	{
--	    case Z2MINOR_COMBINED:
--
--		z2ram_map = kmalloc( max_z2_map + max_chip_map, GFP_KERNEL );
--		if ( z2ram_map == NULL )
--		{
--		    printk( KERN_ERR DEVICE_NAME
--			": cannot get mem for z2ram_map\n" );
--		    goto err_out;
--		}
-+		/* Use a specific list entry. */
-+		if (device >= Z2MINOR_MEMLIST1 && device <= Z2MINOR_MEMLIST4) {
-+			int index = device - Z2MINOR_MEMLIST1 + 1;
-+			unsigned long size, paddr, vaddr;
- 
--		get_z2ram();
--		get_chipram();
--
--		if ( z2ram_size != 0 )
--		    printk( KERN_INFO DEVICE_NAME 
--			": using %iK Zorro II RAM and %iK Chip RAM (Total %dK)\n",
--			z2_count * Z2RAM_CHUNK1024,
--			chip_count * Z2RAM_CHUNK1024,
--			( z2_count + chip_count ) * Z2RAM_CHUNK1024 );
--
--	    break;
--
--    	    case Z2MINOR_Z2ONLY:
--		z2ram_map = kmalloc( max_z2_map, GFP_KERNEL );
--		if ( z2ram_map == NULL )
--		{
--		    printk( KERN_ERR DEVICE_NAME
--			": cannot get mem for z2ram_map\n" );
--		    goto err_out;
--		}
-+			if (index >= m68k_realnum_memory) {
-+				printk(KERN_ERR DEVICE_NAME
-+				       ": no such entry in z2ram_map\n");
-+				goto err_out;
-+			}
- 
--		get_z2ram();
-+			paddr = m68k_memory[index].addr;
-+			size = m68k_memory[index].size & ~(Z2RAM_CHUNKSIZE - 1);
- 
--		if ( z2ram_size != 0 )
--		    printk( KERN_INFO DEVICE_NAME 
--			": using %iK of Zorro II RAM\n",
--			z2_count * Z2RAM_CHUNK1024 );
-+#ifdef __powerpc__
-+			/* FIXME: ioremap doesn't build correct memory tables. */
-+			{
-+				vfree(vmalloc(size));
-+			}
- 
--	    break;
-+			vaddr = (unsigned long)ioremap_wt(paddr, size);
- 
--	    case Z2MINOR_CHIPONLY:
--		z2ram_map = kmalloc( max_chip_map, GFP_KERNEL );
--		if ( z2ram_map == NULL )
--		{
--		    printk( KERN_ERR DEVICE_NAME
--			": cannot get mem for z2ram_map\n" );
--		    goto err_out;
-+#else
-+			vaddr =
-+			    (unsigned long)z_remap_nocache_nonser(paddr, size);
-+#endif
-+			z2ram_map =
-+			    kmalloc_array(size / Z2RAM_CHUNKSIZE,
-+					  sizeof(z2ram_map[0]), GFP_KERNEL);
-+			if (z2ram_map == NULL) {
-+				printk(KERN_ERR DEVICE_NAME
-+				       ": cannot get mem for z2ram_map\n");
-+				goto err_out;
-+			}
-+
-+			while (size) {
-+				z2ram_map[z2ram_size++] = vaddr;
-+				size -= Z2RAM_CHUNKSIZE;
-+				vaddr += Z2RAM_CHUNKSIZE;
-+				list_count++;
-+			}
-+
-+			if (z2ram_size != 0)
-+				printk(KERN_INFO DEVICE_NAME
-+				       ": using %iK List Entry %d Memory\n",
-+				       list_count * Z2RAM_CHUNK1024, index);
-+		} else
-+			switch (device) {
-+			case Z2MINOR_COMBINED:
-+
-+				z2ram_map =
-+				    kmalloc(max_z2_map + max_chip_map,
-+					    GFP_KERNEL);
-+				if (z2ram_map == NULL) {
-+					printk(KERN_ERR DEVICE_NAME
-+					       ": cannot get mem for z2ram_map\n");
-+					goto err_out;
-+				}
-+
-+				get_z2ram();
-+				get_chipram();
-+
-+				if (z2ram_size != 0)
-+					printk(KERN_INFO DEVICE_NAME
-+					       ": using %iK Zorro II RAM and %iK Chip RAM (Total %dK)\n",
-+					       z2_count * Z2RAM_CHUNK1024,
-+					       chip_count * Z2RAM_CHUNK1024,
-+					       (z2_count +
-+						chip_count) * Z2RAM_CHUNK1024);
-+
-+				break;
-+
-+			case Z2MINOR_Z2ONLY:
-+				z2ram_map = kmalloc(max_z2_map, GFP_KERNEL);
-+				if (z2ram_map == NULL) {
-+					printk(KERN_ERR DEVICE_NAME
-+					       ": cannot get mem for z2ram_map\n");
-+					goto err_out;
-+				}
-+
-+				get_z2ram();
-+
-+				if (z2ram_size != 0)
-+					printk(KERN_INFO DEVICE_NAME
-+					       ": using %iK of Zorro II RAM\n",
-+					       z2_count * Z2RAM_CHUNK1024);
-+
-+				break;
-+
-+			case Z2MINOR_CHIPONLY:
-+				z2ram_map = kmalloc(max_chip_map, GFP_KERNEL);
-+				if (z2ram_map == NULL) {
-+					printk(KERN_ERR DEVICE_NAME
-+					       ": cannot get mem for z2ram_map\n");
-+					goto err_out;
-+				}
-+
-+				get_chipram();
-+
-+				if (z2ram_size != 0)
-+					printk(KERN_INFO DEVICE_NAME
-+					       ": using %iK Chip RAM\n",
-+					       chip_count * Z2RAM_CHUNK1024);
-+
-+				break;
-+
-+			default:
-+				rc = -ENODEV;
-+				goto err_out;
-+
-+				break;
-+			}
-+
-+		if (z2ram_size == 0) {
-+			printk(KERN_NOTICE DEVICE_NAME
-+			       ": no unused ZII/Chip RAM found\n");
-+			goto err_out_kfree;
- 		}
- 
--		get_chipram();
--
--		if ( z2ram_size != 0 )
--		    printk( KERN_INFO DEVICE_NAME 
--			": using %iK Chip RAM\n",
--			chip_count * Z2RAM_CHUNK1024 );
--		    
--	    break;
--
--	    default:
--		rc = -ENODEV;
--		goto err_out;
--	
--	    break;
-+		current_device = device;
-+		z2ram_size <<= Z2RAM_CHUNKSHIFT;
-+		set_capacity(z2ram_gendisk, z2ram_size >> 9);
- 	}
- 
--	if ( z2ram_size == 0 )
--	{
--	    printk( KERN_NOTICE DEVICE_NAME
--		": no unused ZII/Chip RAM found\n" );
--	    goto err_out_kfree;
--	}
--
--	current_device = device;
--	z2ram_size <<= Z2RAM_CHUNKSHIFT;
--	set_capacity(z2ram_gendisk, z2ram_size >> 9);
--    }
--
--    mutex_unlock(&z2ram_mutex);
--    return 0;
-+	mutex_unlock(&z2ram_mutex);
-+	return 0;
- 
- err_out_kfree:
--    kfree(z2ram_map);
-+	kfree(z2ram_map);
- err_out:
--    mutex_unlock(&z2ram_mutex);
--    return rc;
-+	mutex_unlock(&z2ram_mutex);
-+	return rc;
- }
- 
--static void
--z2_release(struct gendisk *disk, fmode_t mode)
-+static void z2_release(struct gendisk *disk, fmode_t mode)
- {
--    mutex_lock(&z2ram_mutex);
--    if ( current_device == -1 ) {
--    	mutex_unlock(&z2ram_mutex);
--    	return;
--    }
--    mutex_unlock(&z2ram_mutex);
--    /*
--     * FIXME: unmap memory
--     */
-+	mutex_lock(&z2ram_mutex);
-+	if (current_device == -1) {
-+		mutex_unlock(&z2ram_mutex);
-+		return;
-+	}
-+	mutex_unlock(&z2ram_mutex);
-+	/*
-+	 * FIXME: unmap memory
-+	 */
- }
- 
--static const struct block_device_operations z2_fops =
+-/*
+- * Register device numbers dev..(dev+range-1)
+- * range must be nonzero
+- * The hash chain is sorted on range, so that subranges can override.
+- */
+-void blk_register_region(dev_t devt, unsigned long range, struct module *module,
+-			 struct kobject *(*probe)(dev_t, int *, void *),
+-			 int (*lock)(dev_t, void *), void *data)
 -{
--	.owner		= THIS_MODULE,
--	.open		= z2_open,
--	.release	= z2_release,
-+static const struct block_device_operations z2_fops = {
-+	.owner = THIS_MODULE,
-+	.open = z2_open,
-+	.release = z2_release,
- };
+-	unsigned n = MAJOR(devt + range - 1) - MAJOR(devt) + 1;
+-	unsigned index = MAJOR(devt);
+-	unsigned i;
+-	struct bdev_map *p;
+-
+-	n = min(n, 255u);
+-	p = kmalloc_array(n, sizeof(struct bdev_map), GFP_KERNEL);
+-	if (p == NULL)
+-		return;
+-
+-	for (i = 0; i < n; i++, p++) {
+-		p->owner = module;
+-		p->probe = probe;
+-		p->lock = lock;
+-		p->dev = devt;
+-		p->range = range;
+-		p->data = data;
+-	}
++static void blk_register_region(struct gendisk *disk)
++{
++	int i;
  
- static struct kobject *z2_find(dev_t dev, int *part, void *data)
-@@ -340,89 +325,83 @@ static struct request_queue *z2_queue;
- static struct blk_mq_tag_set tag_set;
+ 	mutex_lock(&bdev_map_lock);
+-	for (i = 0, p -= n; i < n; i++, p++, index++) {
+-		struct bdev_map **s = &bdev_map[index % 255];
+-		while (*s && (*s)->range < range)
+-			s = &(*s)->next;
+-		p->next = *s;
+-		*s = p;
++	for (i = 0; i < disk->minors; i++) {
++		if (xa_insert(&bdev_map, disk_devt(disk) + i, disk, GFP_KERNEL))
++			WARN_ON_ONCE(1);
+ 	}
+ 	mutex_unlock(&bdev_map_lock);
+ }
+-EXPORT_SYMBOL(blk_register_region);
  
- static const struct blk_mq_ops z2_mq_ops = {
--	.queue_rq	= z2_queue_rq,
-+	.queue_rq = z2_queue_rq,
- };
- 
--static int __init 
--z2_init(void)
-+static int __init z2_init(void)
+-void blk_unregister_region(dev_t devt, unsigned long range)
++static void blk_unregister_region(struct gendisk *disk)
  {
--    int ret;
-+	int ret;
+-	unsigned n = MAJOR(devt + range - 1) - MAJOR(devt) + 1;
+-	unsigned index = MAJOR(devt);
+-	unsigned i;
+-	struct bdev_map *found = NULL;
++	int i;
  
--    if (!MACH_IS_AMIGA)
--	return -ENODEV;
-+	if (!MACH_IS_AMIGA)
-+		return -ENODEV;
- 
--    ret = -EBUSY;
--    if (register_blkdev(Z2RAM_MAJOR, DEVICE_NAME))
--	goto err;
-+	ret = -EBUSY;
-+	if (register_blkdev(Z2RAM_MAJOR, DEVICE_NAME))
-+		goto err;
- 
--    ret = -ENOMEM;
--    z2ram_gendisk = alloc_disk(1);
--    if (!z2ram_gendisk)
--	goto out_disk;
-+	ret = -ENOMEM;
-+	z2ram_gendisk = alloc_disk(1);
-+	if (!z2ram_gendisk)
-+		goto out_disk;
- 
--    z2_queue = blk_mq_init_sq_queue(&tag_set, &z2_mq_ops, 16,
-+	z2_queue = blk_mq_init_sq_queue(&tag_set, &z2_mq_ops, 16,
- 					BLK_MQ_F_SHOULD_MERGE);
--    if (IS_ERR(z2_queue)) {
--	ret = PTR_ERR(z2_queue);
--	z2_queue = NULL;
--	goto out_queue;
--    }
-+	if (IS_ERR(z2_queue)) {
-+		ret = PTR_ERR(z2_queue);
-+		z2_queue = NULL;
-+		goto out_queue;
-+	}
- 
--    z2ram_gendisk->major = Z2RAM_MAJOR;
--    z2ram_gendisk->first_minor = 0;
--    z2ram_gendisk->fops = &z2_fops;
--    sprintf(z2ram_gendisk->disk_name, "z2ram");
-+	z2ram_gendisk->major = Z2RAM_MAJOR;
-+	z2ram_gendisk->first_minor = 0;
-+	z2ram_gendisk->fops = &z2_fops;
-+	sprintf(z2ram_gendisk->disk_name, "z2ram");
- 
--    z2ram_gendisk->queue = z2_queue;
--    add_disk(z2ram_gendisk);
--    blk_register_region(MKDEV(Z2RAM_MAJOR, 0), Z2MINOR_COUNT, THIS_MODULE,
--				z2_find, NULL, NULL);
-+	z2ram_gendisk->queue = z2_queue;
-+	add_disk(z2ram_gendisk);
-+	blk_register_region(MKDEV(Z2RAM_MAJOR, 0), Z2MINOR_COUNT, THIS_MODULE,
-+			    z2_find, NULL, NULL);
- 
--    return 0;
-+	return 0;
- 
- out_queue:
--    put_disk(z2ram_gendisk);
-+	put_disk(z2ram_gendisk);
- out_disk:
--    unregister_blkdev(Z2RAM_MAJOR, DEVICE_NAME);
-+	unregister_blkdev(Z2RAM_MAJOR, DEVICE_NAME);
- err:
--    return ret;
-+	return ret;
+ 	mutex_lock(&bdev_map_lock);
+-	for (i = 0; i < min(n, 255u); i++, index++) {
+-		struct bdev_map **s;
+-		for (s = &bdev_map[index % 255]; *s; s = &(*s)->next) {
+-			struct bdev_map *p = *s;
+-			if (p->dev == devt && p->range == range) {
+-				*s = p->next;
+-				if (!found)
+-					found = p;
+-				break;
+-			}
+-		}
+-	}
++	for (i = 0; i < disk->minors; i++)
++		xa_erase(&bdev_map, disk_devt(disk) + i);
+ 	mutex_unlock(&bdev_map_lock);
+-	kfree(found);
+-}
+-EXPORT_SYMBOL(blk_unregister_region);
+-
+-static struct kobject *exact_match(dev_t devt, int *partno, void *data)
+-{
+-	struct gendisk *p = data;
+-
+-	return &disk_to_dev(p)->kobj;
+-}
+-
+-static int exact_lock(dev_t devt, void *data)
+-{
+-	struct gendisk *p = data;
+-
+-	if (!get_disk_and_module(p))
+-		return -1;
+-	return 0;
  }
  
- static void __exit z2_exit(void)
- {
--    int i, j;
--    blk_unregister_region(MKDEV(Z2RAM_MAJOR, 0), Z2MINOR_COUNT);
--    unregister_blkdev(Z2RAM_MAJOR, DEVICE_NAME);
--    del_gendisk(z2ram_gendisk);
--    put_disk(z2ram_gendisk);
--    blk_cleanup_queue(z2_queue);
--    blk_mq_free_tag_set(&tag_set);
--
--    if ( current_device != -1 )
--    {
--	i = 0;
--
--	for ( j = 0 ; j < z2_count; j++ )
--	{
--	    set_bit( i++, zorro_unused_z2ram ); 
--	}
-+	int i, j;
-+	blk_unregister_region(MKDEV(Z2RAM_MAJOR, 0), Z2MINOR_COUNT);
-+	unregister_blkdev(Z2RAM_MAJOR, DEVICE_NAME);
-+	del_gendisk(z2ram_gendisk);
-+	put_disk(z2ram_gendisk);
-+	blk_cleanup_queue(z2_queue);
-+	blk_mq_free_tag_set(&tag_set);
-+
-+	if (current_device != -1) {
-+		i = 0;
-+
-+		for (j = 0; j < z2_count; j++) {
-+			set_bit(i++, zorro_unused_z2ram);
-+		}
- 
--	for ( j = 0 ; j < chip_count; j++ )
--	{
--	    if ( z2ram_map[ i ] )
--	    {
--		amiga_chip_free( (void *) z2ram_map[ i++ ] );
--	    }
--	}
-+		for (j = 0; j < chip_count; j++) {
-+			if (z2ram_map[i]) {
-+				amiga_chip_free((void *)z2ram_map[i++]);
-+			}
-+		}
- 
--	if ( z2ram_map != NULL )
--	{
--	    kfree( z2ram_map );
-+		if (z2ram_map != NULL) {
-+			kfree(z2ram_map);
-+		}
+ static void disk_scan_partitions(struct gendisk *disk)
+@@ -870,8 +803,7 @@ static void __device_add_disk(struct device *parent, struct gendisk *disk,
+ 		ret = bdi_register(bdi, "%u:%u", MAJOR(devt), MINOR(devt));
+ 		WARN_ON(ret);
+ 		bdi_set_owner(bdi, dev);
+-		blk_register_region(disk_devt(disk), disk->minors, NULL,
+-				    exact_match, exact_lock, disk);
++		blk_register_region(disk);
  	}
--    }
+ 	register_disk(parent, disk, groups);
+ 	if (register_queue)
+@@ -984,7 +916,7 @@ void del_gendisk(struct gendisk *disk)
+ 	blk_unregister_queue(disk);
+ 	
+ 	if (!(disk->flags & GENHD_FL_HIDDEN))
+-		blk_unregister_region(disk_devt(disk), disk->minors);
++		blk_unregister_region(disk);
+ 	/*
+ 	 * Remove gendisk pointer from idr so that it cannot be looked up
+ 	 * while RCU period before freeing gendisk is running to prevent
+@@ -1050,54 +982,22 @@ static void request_gendisk_module(dev_t devt)
+ 		request_module("block-major-%d", MAJOR(devt));
+ }
  
--    return;
--} 
-+	return;
+-static struct gendisk *lookup_gendisk(dev_t dev, int *partno)
++static bool get_disk_and_module(struct gendisk *disk)
+ {
+-	struct kobject *kobj;
+-	struct bdev_map *p;
+-	unsigned long best = ~0UL;
+-
+-retry:
+-	mutex_lock(&bdev_map_lock);
+-	for (p = bdev_map[MAJOR(dev) % 255]; p; p = p->next) {
+-		struct kobject *(*probe)(dev_t, int *, void *);
+-		struct module *owner;
+-		void *data;
+-
+-		if (p->dev > dev || p->dev + p->range - 1 < dev)
+-			continue;
+-		if (p->range - 1 >= best)
+-			break;
+-		if (!try_module_get(p->owner))
+-			continue;
+-		owner = p->owner;
+-		data = p->data;
+-		probe = p->probe;
+-		best = p->range - 1;
+-		*partno = dev - p->dev;
+-
+-		if (!probe) {
+-			mutex_unlock(&bdev_map_lock);
+-			module_put(owner);
+-			request_gendisk_module(dev);
+-			goto retry;
+-		}
++	struct module *owner;
+ 
+-		if (p->lock && p->lock(dev, data) < 0) {
+-			module_put(owner);
+-			continue;
+-		}
+-		mutex_unlock(&bdev_map_lock);
+-		kobj = probe(dev, partno, data);
+-		/* Currently ->owner protects _only_ ->probe() itself. */
++	if (!disk->fops)
++		return false;
++	owner = disk->fops->owner;
++	if (owner && !try_module_get(owner))
++		return false;
++	if (!kobject_get_unless_zero(&disk_to_dev(disk)->kobj)) {
+ 		module_put(owner);
+-		if (kobj)
+-			return dev_to_disk(kobj_to_dev(kobj));
+-		goto retry;
++		return false;
+ 	}
+-	mutex_unlock(&bdev_map_lock);
+-	return NULL;
+-}
++	return true;
+ 
 +}
  
- module_init(z2_init);
- module_exit(z2_exit);
+ /**
+  * get_gendisk - get partitioning information for a given device
+@@ -1116,7 +1016,19 @@ struct gendisk *get_gendisk(dev_t devt, int *partno)
+ 	might_sleep();
+ 
+ 	if (MAJOR(devt) != BLOCK_EXT_MAJOR) {
+-		disk = lookup_gendisk(devt, partno);
++		mutex_lock(&bdev_map_lock);
++		disk = xa_load(&bdev_map, devt);
++		if (!disk) {
++			mutex_unlock(&bdev_map_lock);
++			request_gendisk_module(devt);
++			mutex_lock(&bdev_map_lock);
++			disk = xa_load(&bdev_map, devt);
++		}
++		if (disk && !get_disk_and_module(disk))
++			disk = NULL;
++		if (disk)
++			*partno = devt - disk_devt(disk);
++		mutex_unlock(&bdev_map_lock);
+ 	} else {
+ 		struct hd_struct *part;
+ 
+@@ -1320,21 +1232,6 @@ static const struct seq_operations partitions_op = {
+ };
+ #endif
+ 
+-static void bdev_map_init(void)
+-{
+-	struct bdev_map *base;
+-	int i;
+-
+-	base = kzalloc(sizeof(*base), GFP_KERNEL);
+-	if (!base)
+-		panic("cannot allocate bdev_map");
+-
+-	base->dev = 1;
+-	base->range = ~0 ;
+-	for (i = 0; i < 255; i++)
+-		bdev_map[i] = base;
+-}
+-
+ static int __init genhd_device_init(void)
+ {
+ 	int error;
+@@ -1343,7 +1240,6 @@ static int __init genhd_device_init(void)
+ 	error = class_register(&block_class);
+ 	if (unlikely(error))
+ 		return error;
+-	bdev_map_init();
+ 	blk_dev_init();
+ 
+ 	register_blkdev(BLOCK_EXT_MAJOR, "blkext");
+@@ -1892,35 +1788,6 @@ struct gendisk *__alloc_disk_node(int minors, int node_id)
+ }
+ EXPORT_SYMBOL(__alloc_disk_node);
+ 
+-/**
+- * get_disk_and_module - increments the gendisk and gendisk fops module refcount
+- * @disk: the struct gendisk to increment the refcount for
+- *
+- * This increments the refcount for the struct gendisk, and the gendisk's
+- * fops module owner.
+- *
+- * Context: Any context.
+- */
+-struct kobject *get_disk_and_module(struct gendisk *disk)
+-{
+-	struct module *owner;
+-	struct kobject *kobj;
+-
+-	if (!disk->fops)
+-		return NULL;
+-	owner = disk->fops->owner;
+-	if (owner && !try_module_get(owner))
+-		return NULL;
+-	kobj = kobject_get_unless_zero(&disk_to_dev(disk)->kobj);
+-	if (kobj == NULL) {
+-		module_put(owner);
+-		return NULL;
+-	}
+-	return kobj;
+-
+-}
+-EXPORT_SYMBOL(get_disk_and_module);
+-
+ /**
+  * put_disk - decrements the gendisk refcount
+  * @disk: the struct gendisk to decrement the refcount for
+@@ -1957,7 +1824,6 @@ void put_disk_and_module(struct gendisk *disk)
+ 		module_put(owner);
+ 	}
+ }
+-EXPORT_SYMBOL(put_disk_and_module);
+ 
+ static void set_disk_ro_uevent(struct gendisk *gd, int ro)
+ {
+diff --git a/include/linux/genhd.h b/include/linux/genhd.h
+index 04f6a6bf577a90..46553d6d602563 100644
+--- a/include/linux/genhd.h
++++ b/include/linux/genhd.h
+@@ -338,15 +338,8 @@ int blk_add_partitions(struct gendisk *disk, struct block_device *bdev);
+ int blk_drop_partitions(struct block_device *bdev);
+ 
+ extern struct gendisk *__alloc_disk_node(int minors, int node_id);
+-extern struct kobject *get_disk_and_module(struct gendisk *disk);
+ extern void put_disk(struct gendisk *disk);
+ extern void put_disk_and_module(struct gendisk *disk);
+-extern void blk_register_region(dev_t devt, unsigned long range,
+-			struct module *module,
+-			struct kobject *(*probe)(dev_t, int *, void *),
+-			int (*lock)(dev_t, void *),
+-			void *data);
+-extern void blk_unregister_region(dev_t devt, unsigned long range);
+ 
+ #define alloc_disk_node(minors, node_id)				\
+ ({									\
 -- 
 2.29.2
 
