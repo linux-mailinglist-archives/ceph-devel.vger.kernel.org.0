@@ -2,31 +2,31 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B7F22B46B6
+	by mail.lfdr.de (Postfix) with ESMTP id B7A992B46B7
 	for <lists+ceph-devel@lfdr.de>; Mon, 16 Nov 2020 15:59:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730788AbgKPO7D (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 16 Nov 2020 09:59:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49010 "EHLO
+        id S1730792AbgKPO7E (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 16 Nov 2020 09:59:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730742AbgKPO66 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Nov 2020 09:58:58 -0500
+        with ESMTP id S1730754AbgKPO67 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Nov 2020 09:58:59 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DE5EC0613D1;
-        Mon, 16 Nov 2020 06:58:58 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D51BC0613D2;
+        Mon, 16 Nov 2020 06:58:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=2smnVJT4M8MVl5MGvHMWtgKudyWqsSN/hT8JKVcTkcU=; b=UeKPjR9HaE3H/C6qkhiTe+Rocu
-        9ShxKNi2wYBSK1rbD5wbPkjZToEWHwpbA4XMmV+yrAvhrlb8waEumxcmLoo6UJpHzT0oVsedCaTNL
-        vW0OMgcrFRZWuj9afM+tWViwsKJaqn/qJwmqXTkY1DXr3Udw+lcZ1Jmvd9j5+tvAB+GIbBJjsq0cu
-        EaxCxhsT192EWhx+hhW0l/8Cx9tvBzSIb1ezyuiHE2R3FTysXBl34PHXfUeZshdFbbBjcZGRonRTx
-        gq9eiawuSsc+VqdBITNC40hyduSCiehl7z2/Koo7uijrjtnSFRlmObRyTCoTBE1CTJke9v1CYf9cY
-        zJjjwESg==;
+        bh=lsAXL3hTvnB0lZbP/cBxcA3iF4//0CyS8Nha3XJ9JJw=; b=gRq5Bd6I041r3EGzSNRea27VcV
+        raQcLpJmWj/jK+75OwDsxA43vptbb5bLxmKSp35hPLSybywahfsIEXtmUIrD9ToqHyYTfeCqsn8wJ
+        wQx0MYjiBzcMrM+7ZWQTSUtknggoViJ3wuvotrL9OpbxcIk+6i29Awe1Y+rr6wmnDy5z2lOUyiXz3
+        LW8h++kCUa/3/O3LYkCUURTEpEcW9xBVCEtC0iFWL7xkfc/FqwTqkcVZcvaSmNllVviTiDwS9kVSn
+        J0iO8i2WqgPUw34BttXzbrAtJQsZJyDDz3NhCLwGaOn0B22GTINfKHNlj2O/NnHFU2taSXPwtg2gn
+        SSzCdCgg==;
 Received: from [2001:4bb8:180:6600:255b:7def:a93:4a09] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kefxt-0003sX-50; Mon, 16 Nov 2020 14:58:45 +0000
+        id 1kefxv-0003t5-MO; Mon, 16 Nov 2020 14:58:48 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -47,9 +47,9 @@ Cc:     Justin Sanders <justin@coraid.com>,
         ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 25/78] block: don't call into the driver for BLKFLSBUF
-Date:   Mon, 16 Nov 2020 15:57:16 +0100
-Message-Id: <20201116145809.410558-26-hch@lst.de>
+Subject: [PATCH 27/78] rbd: implement ->set_read_only to hook into BLKROSET processing
+Date:   Mon, 16 Nov 2020 15:57:18 +0100
+Message-Id: <20201116145809.410558-28-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201116145809.410558-1-hch@lst.de>
 References: <20201116145809.410558-1-hch@lst.de>
@@ -60,34 +60,80 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-BLKFLSBUF is entirely contained in the block core, and there is no
-good reason to give the driver a hook into processing it.
+Implement the ->set_read_only method instead of parsing the actual
+ioctl command.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Ilya Dryomov <idryomov@gmail.com>
 ---
- block/ioctl.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/block/rbd.c | 40 ++++------------------------------------
+ 1 file changed, 4 insertions(+), 36 deletions(-)
 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index 3fbc382eb926d4..c6d8863f040945 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -369,15 +369,8 @@ static inline int is_unrecognized_ioctl(int ret)
- static int blkdev_flushbuf(struct block_device *bdev, fmode_t mode,
- 		unsigned cmd, unsigned long arg)
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index b7a194ffda55b4..2ed79b09439a82 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -692,12 +692,9 @@ static void rbd_release(struct gendisk *disk, fmode_t mode)
+ 	put_device(&rbd_dev->dev);
+ }
+ 
+-static int rbd_ioctl_set_ro(struct rbd_device *rbd_dev, unsigned long arg)
++static int rbd_set_read_only(struct block_device *bdev, bool ro)
  {
+-	int ro;
+-
+-	if (get_user(ro, (int __user *)arg))
+-		return -EFAULT;
++	struct rbd_device *rbd_dev = bdev->bd_disk->private_data;
+ 
+ 	/*
+ 	 * Both images mapped read-only and snapshots can't be marked
+@@ -710,43 +707,14 @@ static int rbd_ioctl_set_ro(struct rbd_device *rbd_dev, unsigned long arg)
+ 		rbd_assert(!rbd_is_snap(rbd_dev));
+ 	}
+ 
+-	/* Let blkdev_roset() handle it */
+-	return -ENOTTY;
+-}
+-
+-static int rbd_ioctl(struct block_device *bdev, fmode_t mode,
+-			unsigned int cmd, unsigned long arg)
+-{
+-	struct rbd_device *rbd_dev = bdev->bd_disk->private_data;
 -	int ret;
 -
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EACCES;
+-	switch (cmd) {
+-	case BLKROSET:
+-		ret = rbd_ioctl_set_ro(rbd_dev, arg);
+-		break;
+-	default:
+-		ret = -ENOTTY;
+-	}
 -
--	ret = __blkdev_driver_ioctl(bdev, mode, cmd, arg);
--	if (!is_unrecognized_ioctl(ret))
--		return ret;
+-	return ret;
+-}
 -
- 	fsync_bdev(bdev);
- 	invalidate_bdev(bdev);
- 	return 0;
+-#ifdef CONFIG_COMPAT
+-static int rbd_compat_ioctl(struct block_device *bdev, fmode_t mode,
+-				unsigned int cmd, unsigned long arg)
+-{
+-	return rbd_ioctl(bdev, mode, cmd, arg);
++	return 0;
+ }
+-#endif /* CONFIG_COMPAT */
+ 
+ static const struct block_device_operations rbd_bd_ops = {
+ 	.owner			= THIS_MODULE,
+ 	.open			= rbd_open,
+ 	.release		= rbd_release,
+-	.ioctl			= rbd_ioctl,
+-#ifdef CONFIG_COMPAT
+-	.compat_ioctl		= rbd_compat_ioctl,
+-#endif
++	.set_read_only		= rbd_set_read_only,
+ };
+ 
+ /*
 -- 
 2.29.2
 
