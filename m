@@ -2,31 +2,31 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 604A62B4751
-	for <lists+ceph-devel@lfdr.de>; Mon, 16 Nov 2020 16:05:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5887C2B475D
+	for <lists+ceph-devel@lfdr.de>; Mon, 16 Nov 2020 16:05:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730570AbgKPO6j (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 16 Nov 2020 09:58:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48922 "EHLO
+        id S1730527AbgKPO6l (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 16 Nov 2020 09:58:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730546AbgKPO6g (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Nov 2020 09:58:36 -0500
+        with ESMTP id S1730520AbgKPO6h (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Nov 2020 09:58:37 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AED32C0613D1;
-        Mon, 16 Nov 2020 06:58:36 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51760C0613D3;
+        Mon, 16 Nov 2020 06:58:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=P79Gf++XFU6hHqLQrw0lALqz5dNl+ctbqrznHTPStfQ=; b=FD7Das6TDEjq3rfmXkqaOjbFQ3
-        YfESJ91RJF4/7NTkMH584g6c6YDfnvGQoeWsu171HgLMde/Ltz+y7z9vxMTbM/GcG5qcoNrWFfn4o
-        ecJkINhlGAPVTLeyfzouxKX5BbYnqe4VXZaD61qR0oEVPbcvoQLvAWD4NKQpoy/sNyynJXDWVO3ca
-        dqs8Eq34clhCkpk7c2M876zlKIlTQxn6KvJMSW0IiIB2lNOfm4s1SKx6u3jT3Ri5n8tVOnj2+CgIp
-        CwShMZsSRHCj7jUKXC5s454mqxFeP7xg16Zyd8xVitmw1TSarsnO6hNOF7sNkAFXfVWKjRWpbsAnL
-        tg/055FA==;
+        bh=MbR6eD8Z5sCp9HMp2xRKfZrC0GyX/16idOKOYUQxwmk=; b=lVGpDrCYC4uApK0HXhMfWQu//t
+        v5TNY33739vaVgizhet7Btd0aO7HYFUr4uFDV+hjF3FjzaPwtVUz2Kb7kWA5WHMiCOvV1zLNOLH3Z
+        xYyJ9PyjAQotPS9g4g5yfkhyuQvbAwVKYue6ztUh19mPuVx8DtNsK62BOcbCwnRTuEJ3dvoDg2ldg
+        WeBaZz6b7R0R55We4FXJgz3pLCWNo1XvND1Ep24BS9hOMWi13U/CDCIc7JHWwTXem/0p/fbzf34hi
+        1r3s/4MDxah8TmWEcY0L5xxJ+d6obD1qWfKT/c/iL18LhZNRmRcA2WXg5WAUiLmevTSoEYS+1X/52
+        zWWV8w6g==;
 Received: from [2001:4bb8:180:6600:255b:7def:a93:4a09] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kefxW-0003lB-6P; Mon, 16 Nov 2020 14:58:22 +0000
+        id 1kefxY-0003mO-Ss; Mon, 16 Nov 2020 14:58:25 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -47,9 +47,9 @@ Cc:     Justin Sanders <justin@coraid.com>,
         ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 09/78] nbd: validate the block size in nbd_set_size
-Date:   Mon, 16 Nov 2020 15:57:00 +0100
-Message-Id: <20201116145809.410558-10-hch@lst.de>
+Subject: [PATCH 11/78] aoe: don't call set_capacity from irq context
+Date:   Mon, 16 Nov 2020 15:57:02 +0100
+Message-Id: <20201116145809.410558-12-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201116145809.410558-1-hch@lst.de>
 References: <20201116145809.410558-1-hch@lst.de>
@@ -60,120 +60,58 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Move the validation of the block from the callers into nbd_set_size.
+Updating the block device size from irq context can lead to torn
+writes of the 64-bit value, and prevents us from using normal
+process context locking primitives to serialize access to the 64-bit
+nr_sectors value.  Defer the set_capacity to the already existing
+workqueue handler, where it can be merged with the update of the
+block device size by using set_capacity_and_notify.  As an extra
+bonus this also adds proper uevent notifications for the resize.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 ---
- drivers/block/nbd.c | 47 +++++++++++++++------------------------------
- 1 file changed, 15 insertions(+), 32 deletions(-)
+ drivers/block/aoe/aoecmd.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 6e8f2ff715c661..7478a5e02bc1ed 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -296,16 +296,21 @@ static void nbd_size_clear(struct nbd_device *nbd)
- 	}
- }
- 
--static void nbd_set_size(struct nbd_device *nbd, loff_t bytesize,
-+static int nbd_set_size(struct nbd_device *nbd, loff_t bytesize,
- 		loff_t blksize)
+diff --git a/drivers/block/aoe/aoecmd.c b/drivers/block/aoe/aoecmd.c
+index 313f0b946fe2b3..ac720bdcd983e7 100644
+--- a/drivers/block/aoe/aoecmd.c
++++ b/drivers/block/aoe/aoecmd.c
+@@ -890,19 +890,13 @@ void
+ aoecmd_sleepwork(struct work_struct *work)
  {
- 	struct block_device *bdev;
+ 	struct aoedev *d = container_of(work, struct aoedev, work);
+-	struct block_device *bd;
+-	u64 ssize;
  
-+	if (!blksize)
-+		blksize = NBD_DEF_BLKSIZE;
-+	if (blksize < 512 || blksize > PAGE_SIZE || !is_power_of_2(blksize))
-+		return -EINVAL;
-+
- 	nbd->config->bytesize = bytesize;
- 	nbd->config->blksize = blksize;
+ 	if (d->flags & DEVFL_GDALLOC)
+ 		aoeblk_gdalloc(d);
  
- 	if (!nbd->task_recv)
--		return;
-+		return 0;
- 
- 	if (nbd->config->flags & NBD_FLAG_SEND_TRIM) {
- 		nbd->disk->queue->limits.discard_granularity = blksize;
-@@ -325,6 +330,7 @@ static void nbd_set_size(struct nbd_device *nbd, loff_t bytesize,
- 		bdput(bdev);
- 	}
- 	kobject_uevent(&nbd_to_dev(nbd)->kobj, KOBJ_CHANGE);
-+	return 0;
- }
- 
- static void nbd_complete_rq(struct request *req)
-@@ -1304,8 +1310,7 @@ static int nbd_start_device(struct nbd_device *nbd)
- 		args->index = i;
- 		queue_work(nbd->recv_workq, &args->work);
- 	}
--	nbd_set_size(nbd, config->bytesize, config->blksize);
--	return error;
-+	return nbd_set_size(nbd, config->bytesize, config->blksize);
- }
- 
- static int nbd_start_device_ioctl(struct nbd_device *nbd, struct block_device *bdev)
-@@ -1347,14 +1352,6 @@ static void nbd_clear_sock_ioctl(struct nbd_device *nbd,
- 		nbd_config_put(nbd);
- }
- 
--static bool nbd_is_valid_blksize(unsigned long blksize)
--{
--	if (!blksize || !is_power_of_2(blksize) || blksize < 512 ||
--	    blksize > PAGE_SIZE)
--		return false;
--	return true;
--}
--
- static void nbd_set_cmd_timeout(struct nbd_device *nbd, u64 timeout)
- {
- 	nbd->tag_set.timeout = timeout * HZ;
-@@ -1379,19 +1376,12 @@ static int __nbd_ioctl(struct block_device *bdev, struct nbd_device *nbd,
- 	case NBD_SET_SOCK:
- 		return nbd_add_socket(nbd, arg, false);
- 	case NBD_SET_BLKSIZE:
--		if (!arg)
--			arg = NBD_DEF_BLKSIZE;
--		if (!nbd_is_valid_blksize(arg))
--			return -EINVAL;
--		nbd_set_size(nbd, config->bytesize, arg);
--		return 0;
-+		return nbd_set_size(nbd, config->bytesize, arg);
- 	case NBD_SET_SIZE:
--		nbd_set_size(nbd, arg, config->blksize);
--		return 0;
-+		return nbd_set_size(nbd, arg, config->blksize);
- 	case NBD_SET_SIZE_BLOCKS:
--		nbd_set_size(nbd, arg * config->blksize,
--			     config->blksize);
--		return 0;
-+		return nbd_set_size(nbd, arg * config->blksize,
-+				    config->blksize);
- 	case NBD_SET_TIMEOUT:
- 		nbd_set_cmd_timeout(nbd, arg);
- 		return 0;
-@@ -1809,18 +1799,11 @@ static int nbd_genl_size_set(struct genl_info *info, struct nbd_device *nbd)
- 	if (info->attrs[NBD_ATTR_SIZE_BYTES])
- 		bytes = nla_get_u64(info->attrs[NBD_ATTR_SIZE_BYTES]);
- 
--	if (info->attrs[NBD_ATTR_BLOCK_SIZE_BYTES]) {
-+	if (info->attrs[NBD_ATTR_BLOCK_SIZE_BYTES])
- 		bsize = nla_get_u64(info->attrs[NBD_ATTR_BLOCK_SIZE_BYTES]);
--		if (!bsize)
--			bsize = NBD_DEF_BLKSIZE;
--		if (!nbd_is_valid_blksize(bsize)) {
--			printk(KERN_ERR "Invalid block size %llu\n", bsize);
--			return -EINVAL;
+ 	if (d->flags & DEVFL_NEWSIZE) {
+-		ssize = get_capacity(d->gd);
+-		bd = bdget_disk(d->gd, 0);
+-		if (bd) {
+-			bd_set_nr_sectors(bd, ssize);
+-			bdput(bd);
 -		}
--	}
- 
- 	if (bytes != config->bytesize || bsize != config->blksize)
--		nbd_set_size(nbd, bytes, bsize);
-+		return nbd_set_size(nbd, bytes, bsize);
- 	return 0;
++		set_capacity_and_notify(d->gd, d->ssize);
++
+ 		spin_lock_irq(&d->lock);
+ 		d->flags |= DEVFL_UP;
+ 		d->flags &= ~DEVFL_NEWSIZE;
+@@ -971,10 +965,9 @@ ataid_complete(struct aoedev *d, struct aoetgt *t, unsigned char *id)
+ 	d->geo.start = 0;
+ 	if (d->flags & (DEVFL_GDALLOC|DEVFL_NEWSIZE))
+ 		return;
+-	if (d->gd != NULL) {
+-		set_capacity(d->gd, ssize);
++	if (d->gd != NULL)
+ 		d->flags |= DEVFL_NEWSIZE;
+-	} else
++	else
+ 		d->flags |= DEVFL_GDALLOC;
+ 	schedule_work(&d->work);
  }
- 
 -- 
 2.29.2
 
