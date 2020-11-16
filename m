@@ -2,31 +2,31 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95C892B46DD
-	for <lists+ceph-devel@lfdr.de>; Mon, 16 Nov 2020 15:59:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47CDE2B46E3
+	for <lists+ceph-devel@lfdr.de>; Mon, 16 Nov 2020 15:59:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730885AbgKPO7U (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 16 Nov 2020 09:59:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49086 "EHLO
+        id S1730846AbgKPO70 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 16 Nov 2020 09:59:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730846AbgKPO7S (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Nov 2020 09:59:18 -0500
+        with ESMTP id S1730913AbgKPO7Z (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Nov 2020 09:59:25 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01C12C0613D2;
-        Mon, 16 Nov 2020 06:59:18 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5603FC0613CF;
+        Mon, 16 Nov 2020 06:59:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=9MasGm4sRMlqjIfBzvyRbCzoZ9vCizFcPgSc5rhaRew=; b=uXQm/yyIiJQnYODeCv7tLBroh6
-        arXMrp0Tk+2mkvK5mlMoVYQZhqOzsPFVFoVsNhqaXKjdbjxT6ddIFdHimSsiofqQFd042iVeyoPjf
-        kjJVvZC7dJvRJWgFk5vnXEzcfiS2wRI+9CAHzFb6PaF2pf3aK/Vv/y+iBA3+wNlveiknIb+cM4k72
-        sy6+79pc3yQnXdRLw5qP9MUrMQWCUQr94hrqb0BHYJRuZX0RRf1WPApUNdGnDYjJKsodIy93uSBGl
-        mXFAo94CwxYf32WkNugPW9wMsBEd2E2lCs3nmZ+m6b8g/Nfawh6vTjWCNJv2VNFFCFBCwJLajvHZl
-        HFZ0RH2Q==;
+        bh=O5A83Oi0Xx0wCgZ53MCDk0SimnnpHqXZpeb9/Xjg+3I=; b=E7BcK9hAyDSHxcI7VinrLs/x4+
+        GbPQzDVUV1gmtfeik/ecOJf1xAz9adMm1AlR5n+8pmOFubRvS/7JC38pGCYM9ZwlEJ4zvxSDihrYM
+        JGQCaf5k451aQcjTbxUWntTZRSfcMeTsf8Du7UrxdxqROv2m47Q52OOrWyg+7vXskLoftSze8ezz6
+        aMmgYUku1QWTkRciIOFj5T0KMfHWt98qdMt4QXSWxtgUUImsabTkg/eANqkgiZzmVtnscOj29Xw6f
+        e1x2pMJGB6+SMSCN0E1pYgQM50zCWis0+N6qx617dZwyzoH0THRVg26q4h6UoR9/dNcUrYteSODTY
+        uCKNHu/A==;
 Received: from [2001:4bb8:180:6600:255b:7def:a93:4a09] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kefyA-0003wx-DT; Mon, 16 Nov 2020 14:59:02 +0000
+        id 1kefyN-000402-5y; Mon, 16 Nov 2020 14:59:15 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -48,9 +48,9 @@ Cc:     Justin Sanders <justin@coraid.com>,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Hannes Reinecke <hare@suse.de>
-Subject: [PATCH 37/78] block: split block_class_lock
-Date:   Mon, 16 Nov 2020 15:57:28 +0100
-Message-Id: <20201116145809.410558-38-hch@lst.de>
+Subject: [PATCH 46/78] ide: switch to __register_blkdev for command set probing
+Date:   Mon, 16 Nov 2020 15:57:37 +0100
+Message-Id: <20201116145809.410558-47-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201116145809.410558-1-hch@lst.de>
 References: <20201116145809.410558-1-hch@lst.de>
@@ -61,155 +61,86 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Split the block_class_lock mutex into one each to protect bdev_map
-and major_names.
+ide is the last user of the blk_register_region framework except for the
+tracking of allocated gendisk.  Switch to __register_blkdev, even if that
+doesn't allow us to trivially find out which command set to probe for.
+That means we now always request all modules when a user tries to access
+an unclaimed ide device node, but except for a few potentially loaded
+modules for a fringe use case of a deprecated and soon to be removed
+driver that doesn't make a difference.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 ---
- block/genhd.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+ drivers/ide/ide-probe.c | 34 ++++++----------------------------
+ 1 file changed, 6 insertions(+), 28 deletions(-)
 
-diff --git a/block/genhd.c b/block/genhd.c
-index 482f7b89802010..2a20372756625e 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -25,7 +25,6 @@
+diff --git a/drivers/ide/ide-probe.c b/drivers/ide/ide-probe.c
+index 076d34b381720f..1c1567bb519429 100644
+--- a/drivers/ide/ide-probe.c
++++ b/drivers/ide/ide-probe.c
+@@ -902,31 +902,12 @@ static int init_irq (ide_hwif_t *hwif)
+ 	return 1;
+ }
  
- #include "blk.h"
- 
--static DEFINE_MUTEX(block_class_lock);
- static struct kobject *block_depr;
- 
- struct bdev_map {
-@@ -37,6 +36,7 @@ struct bdev_map {
- 	int (*lock)(dev_t, void *);
- 	void *data;
- } *bdev_map[255];
-+static DEFINE_MUTEX(bdev_map_lock);
- 
- /* for extended dynamic devt allocation, currently only one major is used */
- #define NR_EXT_DEVT		(1 << MINORBITS)
-@@ -400,6 +400,7 @@ static struct blk_major_name {
- 	int major;
- 	char name[16];
- } *major_names[BLKDEV_MAJOR_HASH_SIZE];
-+static DEFINE_MUTEX(major_names_lock);
- 
- /* index in the above - for now: assume no multimajor ranges */
- static inline int major_to_index(unsigned major)
-@@ -412,11 +413,11 @@ void blkdev_show(struct seq_file *seqf, off_t offset)
+-static int ata_lock(dev_t dev, void *data)
++static void ata_probe(dev_t dev)
  {
- 	struct blk_major_name *dp;
- 
--	mutex_lock(&block_class_lock);
-+	mutex_lock(&major_names_lock);
- 	for (dp = major_names[major_to_index(offset)]; dp; dp = dp->next)
- 		if (dp->major == offset)
- 			seq_printf(seqf, "%3d %s\n", dp->major, dp->name);
--	mutex_unlock(&block_class_lock);
-+	mutex_unlock(&major_names_lock);
+-	/* FIXME: we want to pin hwif down */
+-	return 0;
+-}
+-
+-static struct kobject *ata_probe(dev_t dev, int *part, void *data)
+-{
+-	ide_hwif_t *hwif = data;
+-	int unit = *part >> PARTN_BITS;
+-	ide_drive_t *drive = hwif->devices[unit];
+-
+-	if ((drive->dev_flags & IDE_DFLAG_PRESENT) == 0)
+-		return NULL;
+-
+-	if (drive->media == ide_disk)
+-		request_module("ide-disk");
+-	if (drive->media == ide_cdrom || drive->media == ide_optical)
+-		request_module("ide-cd");
+-	if (drive->media == ide_tape)
+-		request_module("ide-tape");
+-	if (drive->media == ide_floppy)
+-		request_module("ide-floppy");
+-
+-	return NULL;
++	request_module("ide-disk");
++	request_module("ide-cd");
++	request_module("ide-tape");
++	request_module("ide-floppy");
  }
- #endif /* CONFIG_PROC_FS */
  
-@@ -445,7 +446,7 @@ int register_blkdev(unsigned int major, const char *name)
- 	struct blk_major_name **n, *p;
- 	int index, ret = 0;
- 
--	mutex_lock(&block_class_lock);
-+	mutex_lock(&major_names_lock);
- 
- 	/* temporary */
- 	if (major == 0) {
-@@ -498,7 +499,7 @@ int register_blkdev(unsigned int major, const char *name)
- 		kfree(p);
+ void ide_init_disk(struct gendisk *disk, ide_drive_t *drive)
+@@ -967,7 +948,7 @@ static int hwif_init(ide_hwif_t *hwif)
+ 		return 0;
  	}
+ 
+-	if (register_blkdev(hwif->major, hwif->name))
++	if (__register_blkdev(hwif->major, hwif->name, ata_probe))
+ 		return 0;
+ 
+ 	if (!hwif->sg_max_nents)
+@@ -989,8 +970,6 @@ static int hwif_init(ide_hwif_t *hwif)
+ 		goto out;
+ 	}
+ 
+-	blk_register_region(MKDEV(hwif->major, 0), MAX_DRIVES << PARTN_BITS,
+-			    THIS_MODULE, ata_probe, ata_lock, hwif);
+ 	return 1;
+ 
  out:
--	mutex_unlock(&block_class_lock);
-+	mutex_unlock(&major_names_lock);
- 	return ret;
- }
- 
-@@ -510,7 +511,7 @@ void unregister_blkdev(unsigned int major, const char *name)
- 	struct blk_major_name *p = NULL;
- 	int index = major_to_index(major);
- 
--	mutex_lock(&block_class_lock);
-+	mutex_lock(&major_names_lock);
- 	for (n = &major_names[index]; *n; n = &(*n)->next)
- 		if ((*n)->major == major)
- 			break;
-@@ -520,7 +521,7 @@ void unregister_blkdev(unsigned int major, const char *name)
- 		p = *n;
- 		*n = p->next;
- 	}
--	mutex_unlock(&block_class_lock);
-+	mutex_unlock(&major_names_lock);
- 	kfree(p);
- }
- 
-@@ -671,7 +672,7 @@ void blk_register_region(dev_t devt, unsigned long range, struct module *module,
- 		p->data = data;
- 	}
- 
--	mutex_lock(&block_class_lock);
-+	mutex_lock(&bdev_map_lock);
- 	for (i = 0, p -= n; i < n; i++, p++, index++) {
- 		struct bdev_map **s = &bdev_map[index % 255];
- 		while (*s && (*s)->range < range)
-@@ -679,7 +680,7 @@ void blk_register_region(dev_t devt, unsigned long range, struct module *module,
- 		p->next = *s;
- 		*s = p;
- 	}
--	mutex_unlock(&block_class_lock);
-+	mutex_unlock(&bdev_map_lock);
- }
- EXPORT_SYMBOL(blk_register_region);
- 
-@@ -690,7 +691,7 @@ void blk_unregister_region(dev_t devt, unsigned long range)
- 	unsigned i;
- 	struct bdev_map *found = NULL;
- 
--	mutex_lock(&block_class_lock);
-+	mutex_lock(&bdev_map_lock);
- 	for (i = 0; i < min(n, 255u); i++, index++) {
- 		struct bdev_map **s;
- 		for (s = &bdev_map[index % 255]; *s; s = &(*s)->next) {
-@@ -703,7 +704,7 @@ void blk_unregister_region(dev_t devt, unsigned long range)
- 			}
- 		}
- 	}
--	mutex_unlock(&block_class_lock);
-+	mutex_unlock(&bdev_map_lock);
- 	kfree(found);
- }
- EXPORT_SYMBOL(blk_unregister_region);
-@@ -1034,7 +1035,7 @@ static struct gendisk *lookup_gendisk(dev_t dev, int *partno)
- 	unsigned long best = ~0UL;
- 
- retry:
--	mutex_lock(&block_class_lock);
-+	mutex_lock(&bdev_map_lock);
- 	for (p = bdev_map[MAJOR(dev) % 255]; p; p = p->next) {
- 		struct kobject *(*probe)(dev_t, int *, void *);
- 		struct module *owner;
-@@ -1055,7 +1056,7 @@ static struct gendisk *lookup_gendisk(dev_t dev, int *partno)
- 			module_put(owner);
- 			continue;
- 		}
--		mutex_unlock(&block_class_lock);
-+		mutex_unlock(&bdev_map_lock);
- 		kobj = probe(dev, partno, data);
- 		/* Currently ->owner protects _only_ ->probe() itself. */
- 		module_put(owner);
-@@ -1063,7 +1064,7 @@ static struct gendisk *lookup_gendisk(dev_t dev, int *partno)
- 			return dev_to_disk(kobj_to_dev(kobj));
- 		goto retry;
- 	}
--	mutex_unlock(&block_class_lock);
-+	mutex_unlock(&bdev_map_lock);
- 	return NULL;
- }
+@@ -1582,7 +1561,6 @@ static void ide_unregister(ide_hwif_t *hwif)
+ 	/*
+ 	 * Remove us from the kernel's knowledge
+ 	 */
+-	blk_unregister_region(MKDEV(hwif->major, 0), MAX_DRIVES<<PARTN_BITS);
+ 	kfree(hwif->sg_table);
+ 	unregister_blkdev(hwif->major, hwif->name);
  
 -- 
 2.29.2
