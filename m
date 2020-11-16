@@ -2,31 +2,31 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 618BC2B46C6
-	for <lists+ceph-devel@lfdr.de>; Mon, 16 Nov 2020 15:59:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A401B2B46CC
+	for <lists+ceph-devel@lfdr.de>; Mon, 16 Nov 2020 15:59:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730813AbgKPO7H (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 16 Nov 2020 09:59:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49040 "EHLO
+        id S1730851AbgKPO7N (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 16 Nov 2020 09:59:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730793AbgKPO7G (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Nov 2020 09:59:06 -0500
+        with ESMTP id S1730793AbgKPO7I (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Nov 2020 09:59:08 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 792F6C0613CF;
-        Mon, 16 Nov 2020 06:59:06 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A55DC0613CF;
+        Mon, 16 Nov 2020 06:59:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=vZNllDaY98uh7PAY/yZSS9lYqgoFil9tZwzrbsUtcc0=; b=V6cl1a79XMcq1v/BBo+f92yrRu
-        liN7F038xmkCdB/Ds3o/rdOf/u8+F4XRDe5XS2+x9GlkDsXh+3U/5bj4wHU5EPMYxp0LOK6ecE1yG
-        m42ASUTh05evcjBqfM2ZWjFjoerZ1E7O62W59SM7OwmwlzPpSqsgSL7GTu8GjI32B/j1fjTcfCCgm
-        EBQXKMs49HKVw8T32KURh6LUgcjPRcK+qacoHPF/BWNvvkKs1x1+S/gsCLMI6svMoxc6IbKljvzPa
-        PrLsxr2OhCYNRnmFqAv4BBDVACpNln8toBTssxbOqENWwwW1v/dXqjAf6HU5UCW36Z4h5dw18Xmhb
-        kRDZEZZw==;
+        bh=yQQZQPCQfQM7CUBXzCMUyqgLnLGQ9YPa8lq6jkcafKI=; b=WtUs/ZHHHWoA+J542Y6mYXW7Ql
+        wMixYk/BvE60aD54t7ExUm0AxV6UzJxr06L6viTlvpgjC2bEe3/zxQDkJkIFlS0bzo78ksny7Nq6W
+        OKlhR7wy5ubVTlN/2Y0WDj6CW0pG+vIu/78iIeWE+YehwQa4BqiEFEcMODKoBOrTVdWrXl0Sdysf+
+        pclwOsbyiCLrKl06HyP8fs+vPQOuBjK9Uq0ldqvVHcha7jCChZf433xQg5wtWEVmIZ0Td1rSjgQ2R
+        mY13xJ5gm6oR6Cum62zjZhpTXXhQHhsumfYYoZ2+ylyEnlTiukpjjXmewaWHdYuHaxhjjM+xQVSh0
+        CxfvNOfw==;
 Received: from [2001:4bb8:180:6600:255b:7def:a93:4a09] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kefy0-0003uJ-BS; Mon, 16 Nov 2020 14:58:52 +0000
+        id 1kefy1-0003uf-KX; Mon, 16 Nov 2020 14:58:53 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -47,9 +47,9 @@ Cc:     Justin Sanders <justin@coraid.com>,
         ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 30/78] block: don't call into the driver for BLKROSET
-Date:   Mon, 16 Nov 2020 15:57:21 +0100
-Message-Id: <20201116145809.410558-31-hch@lst.de>
+Subject: [PATCH 31/78] loop: use set_disk_ro
+Date:   Mon, 16 Nov 2020 15:57:22 +0100
+Message-Id: <20201116145809.410558-32-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201116145809.410558-1-hch@lst.de>
 References: <20201116145809.410558-1-hch@lst.de>
@@ -60,55 +60,27 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Now that all drivers that want to hook into setting or clearing the
-read-only flag use the set_read_only method, this code can be removed.
+Use set_disk_ro instead of set_device_ro to match all other block
+drivers and to ensure all partitions mirror the read-only flag.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/ioctl.c | 23 -----------------------
- 1 file changed, 23 deletions(-)
+ drivers/block/loop.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index a6fa16b9770593..96cb4544736468 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -346,26 +346,6 @@ static int blkdev_pr_clear(struct block_device *bdev,
- 	return ops->pr_clear(bdev, c.key);
- }
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 84a36c242e5550..41caf799df721f 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1134,7 +1134,7 @@ static int loop_configure(struct loop_device *lo, fmode_t mode,
+ 	if (error)
+ 		goto out_unlock;
  
--/*
-- * Is it an unrecognized ioctl? The correct returns are either
-- * ENOTTY (final) or ENOIOCTLCMD ("I don't know this one, try a
-- * fallback"). ENOIOCTLCMD gets turned into ENOTTY by the ioctl
-- * code before returning.
-- *
-- * Confused drivers sometimes return EINVAL, which is wrong. It
-- * means "I understood the ioctl command, but the parameters to
-- * it were wrong".
-- *
-- * We should aim to just fix the broken drivers, the EINVAL case
-- * should go away.
-- */
--static inline int is_unrecognized_ioctl(int ret)
--{
--	return	ret == -EINVAL ||
--		ret == -ENOTTY ||
--		ret == -ENOIOCTLCMD;
--}
--
- static int blkdev_flushbuf(struct block_device *bdev, fmode_t mode,
- 		unsigned cmd, unsigned long arg)
- {
-@@ -384,9 +364,6 @@ static int blkdev_roset(struct block_device *bdev, fmode_t mode,
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EACCES;
+-	set_device_ro(bdev, (lo->lo_flags & LO_FLAGS_READ_ONLY) != 0);
++	set_disk_ro(lo->lo_disk, (lo->lo_flags & LO_FLAGS_READ_ONLY) != 0);
  
--	ret = __blkdev_driver_ioctl(bdev, mode, cmd, arg);
--	if (!is_unrecognized_ioctl(ret))
--		return ret;
- 	if (get_user(n, (int __user *)arg))
- 		return -EFAULT;
- 	if (bdev->bd_disk->fops->set_read_only) {
+ 	lo->use_dio = lo->lo_flags & LO_FLAGS_DIRECT_IO;
+ 	lo->lo_device = bdev;
 -- 
 2.29.2
 
