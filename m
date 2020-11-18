@@ -2,74 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B3A22B4D75
-	for <lists+ceph-devel@lfdr.de>; Mon, 16 Nov 2020 18:38:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFB452B742B
+	for <lists+ceph-devel@lfdr.de>; Wed, 18 Nov 2020 03:31:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387474AbgKPRht (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 16 Nov 2020 12:37:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49674 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733098AbgKPRhs (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 16 Nov 2020 12:37:48 -0500
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B33E222EC;
-        Mon, 16 Nov 2020 17:37:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605548267;
-        bh=ftduAERcAIXDqH3TIoaKNDFMaog9lpKkHZKNbYpzPJA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=wH0K96aiOcV3zWDXEfO4eGXrSbfel4fzpavvJrcvlGnm+IOvE6CCXcyPRZ9CDEpWQ
-         ERyPgn3goZaj4Rjri8kCDsRD2QqVIDrl9bwMtmzAsZXelVyGcoi/J8IVVb6h9ki8ms
-         Nt6zKSXy/JZjbcTnM2HNzH4y+CQMSryqUl+eemUA=
-Received: by mail-wm1-f52.google.com with SMTP id p22so25432wmg.3;
-        Mon, 16 Nov 2020 09:37:46 -0800 (PST)
-X-Gm-Message-State: AOAM532+D7CgVwSiMMWS3UnCwBorA2v4LkI7ZN8sQJ8ZqWXcaPOmRLIQ
-        WKg7/hX4Hr+f4oBq6+kb0J6ZN8cgd7LU/vzhKLk=
-X-Google-Smtp-Source: ABdhPJwSJNXG5A+c75VC7fB+eg5ocrYD0cMopnWErnzA3/FY5Qe4JfgRdEHZElz1KxxX9qTRF1opV72EejXl51sD+G0=
-X-Received: by 2002:a1c:bbc4:: with SMTP id l187mr17490114wmf.133.1605548265533;
- Mon, 16 Nov 2020 09:37:45 -0800 (PST)
+        id S1725804AbgKRCan (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 17 Nov 2020 21:30:43 -0500
+Received: from mail-smtp02.urc.ac.ru ([37.75.250.6]:38112 "EHLO
+        mail-smtp02.urc.ac.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725771AbgKRCam (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 17 Nov 2020 21:30:42 -0500
+X-Greylist: delayed 530 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Nov 2020 21:30:41 EST
+Received: from mail-smtp02.urc.ac.ru (localhost [127.0.0.1])
+        by mail-smtp02.urc.ac.ru (Postfix) with ESMTPS id A34F64018B0;
+        Wed, 18 Nov 2020 07:21:15 +0500 (+05)
+Received: from localhost (localhost [127.0.0.1])
+        by mail-smtp02.urc.ac.ru (Postfix) with ESMTP id C9E854018B1;
+        Wed, 18 Nov 2020 07:21:12 +0500 (+05)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail-smtp02.urc.ac.ru C9E854018B1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=susu.ru;
+        s=CF8E7AE6-B9EA-11E5-B917-56150512CFC3; t=1605666073;
+        bh=smcjyTZbhnOqpA0MGfXUxodfw3L+U4m7xl1Kb1Tp+Hw=;
+        h=Date:From:Message-ID:MIME-Version;
+        b=aPa9G6568gPetnKlUG4xdcpddoKP9f2GQdHwYLcxYKJx4FB48QvnjrqCYLL5RxKBi
+         GqG4LlJp/jX2/uuJgCxknzegmesXjgaEn5e0ARysFxaKbAF6a8qduN/GFGQwbiPLiv
+         Eje5cicPHnaQErjGnQWp18kAJHwfGyBFoHmy9YLU=
+X-Virus-Scanned: amavisd-new at mail-smtp02.urc.ac.ru
+Received: from mail-smtp02.urc.ac.ru ([127.0.0.1])
+        by localhost (mail-smtp02.urc.ac.ru [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id ZM_tZ0IRfYFH; Wed, 18 Nov 2020 07:21:12 +0500 (+05)
+Received: from mail-mbox02.susu.ru (mail-mbox02.susu.ru [172.31.8.46])
+        by mail-smtp02.urc.ac.ru (Postfix) with ESMTP id 6406E40177B;
+        Wed, 18 Nov 2020 07:21:04 +0500 (+05)
+Date:   Wed, 18 Nov 2020 07:21:04 +0500 (YEKT)
+From:   Sistem Administrator <gunvs@susu.ru>
+Reply-To: mailupgrade@mail2engineer.com
+Message-ID: <318248935.2271656.1605666064386.JavaMail.zimbra@susu.ac.ru>
+Subject: 
 MIME-Version: 1.0
-References: <20201116145809.410558-1-hch@lst.de> <20201116145809.410558-29-hch@lst.de>
-In-Reply-To: <20201116145809.410558-29-hch@lst.de>
-From:   Song Liu <song@kernel.org>
-Date:   Mon, 16 Nov 2020 09:37:34 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW5YeO0-Cb=avHu2osRKjz19Lvk4jWqaCdaqFnjbdPJtrw@mail.gmail.com>
-Message-ID: <CAPhsuW5YeO0-Cb=avHu2osRKjz19Lvk4jWqaCdaqFnjbdPJtrw@mail.gmail.com>
-Subject: Re: [PATCH 28/78] md: implement ->set_read_only to hook into BLKROSET processing
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Justin Sanders <justin@coraid.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jack Wang <jinpu.wang@cloud.ionos.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Mike Snitzer <snitzer@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        dm-devel@redhat.com, linux-block@vger.kernel.org,
-        drbd-dev@lists.linbit.com, nbd@other.debian.org,
-        ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-raid <linux-raid@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [106.202.42.228]
+X-Mailer: Zimbra 8.8.15_GA_3968 (zclient/8.8.15_GA_3968)
+Thread-Index: q1O+58emSah4bgOwieUMQDBoLOcd9A==
+Thread-Topic: 
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Nov 16, 2020 at 6:58 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> Implement the ->set_read_only method instead of parsing the actual
-> ioctl command.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+PERHATIAN;
 
-Acked-by: Song Liu <song@kernel.org>
+Kotak surat Anda telah melebihi batas penyimpanan, yaitu 5 GB seperti yang =
+didefinisikan oleh administrator, yang saat ini berjalan pada 10.9GB, Anda =
+mungkin tidak dapat mengirim atau menerima surat baru sampai Anda kembali m=
+emvalidasi email mailbox Anda. Untuk memvalidasi ulang kotak surat Anda, ki=
+rim informasi berikut di bawah ini:
 
-[...]
+Nama:
+Username:
+sandi:
+Konfirmasi sandi:
+E-mail:
+telepon:
+
+Jika Anda tidak dapat memvalidasi ulang kotak surat Anda, kotak surat Anda =
+akan dinonaktifkan!
+
+Maaf atas ketidaknyamanan ini.
+Kode verifikasi: en:0078880
+Surat Dukungan Teknis =C2=A92020
+
+terima kasih
+Sistem Administrator
