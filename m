@@ -2,75 +2,47 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EFB452B742B
-	for <lists+ceph-devel@lfdr.de>; Wed, 18 Nov 2020 03:31:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D0092B7767
+	for <lists+ceph-devel@lfdr.de>; Wed, 18 Nov 2020 08:59:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725804AbgKRCan (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 17 Nov 2020 21:30:43 -0500
-Received: from mail-smtp02.urc.ac.ru ([37.75.250.6]:38112 "EHLO
-        mail-smtp02.urc.ac.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725771AbgKRCam (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 17 Nov 2020 21:30:42 -0500
-X-Greylist: delayed 530 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Nov 2020 21:30:41 EST
-Received: from mail-smtp02.urc.ac.ru (localhost [127.0.0.1])
-        by mail-smtp02.urc.ac.ru (Postfix) with ESMTPS id A34F64018B0;
-        Wed, 18 Nov 2020 07:21:15 +0500 (+05)
-Received: from localhost (localhost [127.0.0.1])
-        by mail-smtp02.urc.ac.ru (Postfix) with ESMTP id C9E854018B1;
-        Wed, 18 Nov 2020 07:21:12 +0500 (+05)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail-smtp02.urc.ac.ru C9E854018B1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=susu.ru;
-        s=CF8E7AE6-B9EA-11E5-B917-56150512CFC3; t=1605666073;
-        bh=smcjyTZbhnOqpA0MGfXUxodfw3L+U4m7xl1Kb1Tp+Hw=;
-        h=Date:From:Message-ID:MIME-Version;
-        b=aPa9G6568gPetnKlUG4xdcpddoKP9f2GQdHwYLcxYKJx4FB48QvnjrqCYLL5RxKBi
-         GqG4LlJp/jX2/uuJgCxknzegmesXjgaEn5e0ARysFxaKbAF6a8qduN/GFGQwbiPLiv
-         Eje5cicPHnaQErjGnQWp18kAJHwfGyBFoHmy9YLU=
-X-Virus-Scanned: amavisd-new at mail-smtp02.urc.ac.ru
-Received: from mail-smtp02.urc.ac.ru ([127.0.0.1])
-        by localhost (mail-smtp02.urc.ac.ru [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ZM_tZ0IRfYFH; Wed, 18 Nov 2020 07:21:12 +0500 (+05)
-Received: from mail-mbox02.susu.ru (mail-mbox02.susu.ru [172.31.8.46])
-        by mail-smtp02.urc.ac.ru (Postfix) with ESMTP id 6406E40177B;
-        Wed, 18 Nov 2020 07:21:04 +0500 (+05)
-Date:   Wed, 18 Nov 2020 07:21:04 +0500 (YEKT)
-From:   Sistem Administrator <gunvs@susu.ru>
-Reply-To: mailupgrade@mail2engineer.com
-Message-ID: <318248935.2271656.1605666064386.JavaMail.zimbra@susu.ac.ru>
-Subject: 
+        id S1726928AbgKRHvb convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Wed, 18 Nov 2020 02:51:31 -0500
+Received: from sw73-70-41.adsl.seed.net.tw ([203.73.70.41]:42735 "EHLO
+        oa.trendtek.com.tw" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1726915AbgKRHvb (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 18 Nov 2020 02:51:31 -0500
+Received: from [156.96.44.214] ([156.96.44.214])
+        (authenticated bits=0)
+        by oa.trendtek.com.tw (8.13.8/8.13.1) with ESMTP id 0AI7orPS020087
+        for <ceph-devel@vger.kernel.org>; Wed, 18 Nov 2020 15:51:28 +0800
+Message-Id: <202011180751.0AI7orPS020087@oa.trendtek.com.tw>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [106.202.42.228]
-X-Mailer: Zimbra 8.8.15_GA_3968 (zclient/8.8.15_GA_3968)
-Thread-Index: q1O+58emSah4bgOwieUMQDBoLOcd9A==
-Thread-Topic: 
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Corporate and Personal Loan *
+To:     ceph-devel@vger.kernel.org
+From:   "Investment  Corporate" <financialcapability6@gmail.com>
+Date:   Tue, 17 Nov 2020 23:51:16 -0800
+Reply-To: hmurrah39@gmail.com
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-PERHATIAN;
+Hello ceph-devel@vger.kernel.org
 
-Kotak surat Anda telah melebihi batas penyimpanan, yaitu 5 GB seperti yang =
-didefinisikan oleh administrator, yang saat ini berjalan pada 10.9GB, Anda =
-mungkin tidak dapat mengirim atau menerima surat baru sampai Anda kembali m=
-emvalidasi email mailbox Anda. Untuk memvalidasi ulang kotak surat Anda, ki=
-rim informasi berikut di bawah ini:
 
-Nama:
-Username:
-sandi:
-Konfirmasi sandi:
-E-mail:
-telepon:
+We are Base Investment Company offering Corporate and Personal Loan at 3% Interest Rate for a duration of 10Years.
 
-Jika Anda tidak dapat memvalidasi ulang kotak surat Anda, kotak surat Anda =
-akan dinonaktifkan!
 
-Maaf atas ketidaknyamanan ini.
-Kode verifikasi: en:0078880
-Surat Dukungan Teknis =C2=A92020
+We also pay 1% commission to brokers, who introduce project owners for finance or other opportunities.
 
-terima kasih
-Sistem Administrator
+
+Please get back to me if you are interested for more
+
+details.
+
+
+Yours faithfully,
+
+Hashim Murrah
