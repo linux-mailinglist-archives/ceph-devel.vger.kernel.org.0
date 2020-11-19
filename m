@@ -2,78 +2,163 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2759C2B905F
-	for <lists+ceph-devel@lfdr.de>; Thu, 19 Nov 2020 11:48:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42BBE2B947E
+	for <lists+ceph-devel@lfdr.de>; Thu, 19 Nov 2020 15:23:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726316AbgKSKrF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 19 Nov 2020 05:47:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57714 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbgKSKrF (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 19 Nov 2020 05:47:05 -0500
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23237C0613CF
-        for <ceph-devel@vger.kernel.org>; Thu, 19 Nov 2020 02:47:05 -0800 (PST)
-Received: by mail-il1-x135.google.com with SMTP id w8so4886875ilg.12
-        for <ceph-devel@vger.kernel.org>; Thu, 19 Nov 2020 02:47:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=67mG5BiVtG26o1rO1Vao56j4O5aeDnx+JUSM05uBmQU=;
-        b=gOsRg310Zx99denqIlc+waaLaAUTv5MJlrBsq9Vwgb0tZIYAqx1vwzQViVjc1fPuNO
-         ZeijpUEwetwB9GL0dK+TSNDzzawcawrlqa6XJhODPL4qEzeyy8wUd3xBKHqgqu4Chhzg
-         qgNdcWaOpjU0USkKykI9pZvy1Jf0eo3+6GW9EFqTF8Inx7M8tPMh8LxwweKBxrs3ueh+
-         QVAXoUSzi9ZS5vG5TA1+qRKriEBmfTyKy9HEhmqJS+8aQwLc1q1+scm/0Pw33GM+ezEV
-         YTxEPHtqlnf8HW4d/oVviJXy1JICoYDt+F4nuFdDcthLaCwJMjsvjzu724vYe8ygDeks
-         HePw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=67mG5BiVtG26o1rO1Vao56j4O5aeDnx+JUSM05uBmQU=;
-        b=CLPgxPulqL/xB6h1MWsyWVqDGYFPqzg3QaLIyXWgKc0W0f5YdGomTD0fOO3asYYY8M
-         JBopR4P0QNoKlcmDOni9neOVKr/2tbC7EesU7jupN7QlyI2nNFx7qi5bl9R1e10UfW9a
-         qN8QsVNL/9Lze7ONTG90gIXAUiAA1eR/lT1p6AhtOUqh0WdYOuWoodBgrpptWF069njC
-         828MMvjXU7CIGfR9NqUgJTJzj4rD63MOUrCrA4CtwqihZ3KSUOZL7MMcpRSiJj9ve+A9
-         PGjkz0Q8GgHdtV4QZdFYZgLO0ZBhRHZrJD/E/OqLXQBBhQvqJ1ca1bcSI4f3hnK9h3Up
-         1JGA==
-X-Gm-Message-State: AOAM530k+9bjUYxlQU+YFXqM7PG93tL/LM/fyWEKRCYMG/jZWa/OqIx5
-        8OBTfUFPTga0ZaNh0U8saKEKkk7tyOyn5pzbYoObticZTpEMsw==
-X-Google-Smtp-Source: ABdhPJzetuePvgnLRhLAOt+kor/QGeaGDJUJlB964XaX5NYXCdJLjjFhgzmUd5twmnyCCSshsJ4TWsY19qIySsQp8gA=
-X-Received: by 2002:a05:6e02:1313:: with SMTP id g19mr22272693ilr.177.1605782824411;
- Thu, 19 Nov 2020 02:47:04 -0800 (PST)
+        id S1727634AbgKSOTp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 19 Nov 2020 09:19:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57192 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727464AbgKSOTo (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 19 Nov 2020 09:19:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 5F65CABD6;
+        Thu, 19 Nov 2020 14:19:42 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id d4284579;
+        Thu, 19 Nov 2020 14:19:57 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     fstests@vger.kernel.org
+Cc:     ceph-devel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Luis Henriques <lhenriques@suse.de>
+Subject: [PATCH] ceph: add a new test for cross quota realms renames
+Date:   Thu, 19 Nov 2020 14:19:56 +0000
+Message-Id: <20201119141956.6488-1-lhenriques@suse.de>
 MIME-Version: 1.0
-References: <9b6eefd1-e6f9-ddc2-2eed-6ecba00fb982@redhat.com>
-In-Reply-To: <9b6eefd1-e6f9-ddc2-2eed-6ecba00fb982@redhat.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 19 Nov 2020 11:47:06 +0100
-Message-ID: <CAOi1vP8k1Bsjgh_iQwcAAT7g9cn2Zp9vcJcxf0urEc8LgcEVOw@mail.gmail.com>
-Subject: Re: [ceph-users] v15.2.6 Octopus released
-To:     David Galloway <dgallowa@redhat.com>
-Cc:     ceph-announce@ceph.io, ceph-users <ceph-users@ceph.io>,
-        dev <dev@ceph.io>, Ceph Development <ceph-devel@vger.kernel.org>,
-        ceph-maintainers@ceph.io
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Nov 19, 2020 at 3:39 AM David Galloway <dgallowa@redhat.com> wrote:
->
-> This is the 6th backport release in the Octopus series. This releases
-> fixes a security flaw affecting Messenger V2 for Octopus & Nautilus. We
-> recommend users to update to this release.
->
-> Notable Changes
-> ---------------
-> * CVE 2020-25660: Fix a regression in Messenger V2 replay attacks
+For the moment cross quota realms renames has been disabled in CephFS
+after a bug has been found while renaming files created and truncated.
+This allowed clients to easily circumvent quotas.
 
-Correction: In Octopus, both Messenger v1 and Messenger v2 are
-affected.  The release note will be fixed in [1].
+Link: https://tracker.ceph.com/issues/48203
+Signed-off-by: Luis Henriques <lhenriques@suse.de>
+---
+ tests/ceph/004     | 94 ++++++++++++++++++++++++++++++++++++++++++++++
+ tests/ceph/004.out |  2 +
+ tests/ceph/group   |  1 +
+ 3 files changed, 97 insertions(+)
+ create mode 100755 tests/ceph/004
+ create mode 100644 tests/ceph/004.out
 
-[1] https://github.com/ceph/ceph/pull/38142
-
-Thanks,
-
-                Ilya
+diff --git a/tests/ceph/004 b/tests/ceph/004
+new file mode 100755
+index 000000000000..4021666b138e
+--- /dev/null
++++ b/tests/ceph/004
+@@ -0,0 +1,94 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (c) 2020 SUSE Linux Products GmbH. All Rights Reserved.
++#
++# FS QA Test 004
++#
++# Tests a bug fix found in cephfs quotas handling.  Here's a simplified testcase
++# that *should* fail:
++#
++#    mkdir files limit
++#    truncate files/file -s 10G
++#    setfattr limit -n ceph.quota.max_bytes -v 1000000
++#    mv files limit/
++#
++# Because we're creating a new file and truncating it, we have Fx caps and thus
++# the truncate operation will be cached.  This prevents the MDSs from updating
++# the quota realms and thus the client will allow the above rename(2) to happen.
++#
++# The bug resulted in dropping support for cross quota-realms renames, reverting
++# kernel commit dffdcd71458e ("ceph: allow rename operation under different
++# quota realms").
++#
++# So, the above test will now fail with a -EXDEV or, in the future (when we have
++# a proper fix), with -EDQUOT.
++#
++# This bug was tracker here:
++#
++#   https://tracker.ceph.com/issues/48203
++#
++seq=`basename $0`
++seqres=$RESULT_DIR/$seq
++echo "QA output created by $seq"
++
++here=`pwd`
++tmp=/tmp/$$
++status=1	# failure is the default!
++trap "_cleanup; exit \$status" 0 1 2 3 15
++
++_cleanup()
++{
++	cd /
++	rm -f $tmp.*
++}
++
++# get standard environment, filters and checks
++. ./common/rc
++. ./common/filter
++. ./common/attr
++
++# remove previous $seqres.full before test
++rm -f $seqres.full
++
++# real QA test starts here
++
++_supported_fs ceph
++_require_attrs
++_require_test
++
++workdir=$TEST_DIR/test-$seq
++
++orig1=$workdir/orig1
++orig2=$workdir/orig2
++file1=$orig1/file
++file2=$orig2/file
++dest=$workdir/dest
++
++rm -rf $workdir
++mkdir $workdir
++mkdir $orig1 $orig2 $dest
++
++# set quota to 1m
++$SETFATTR_PROG -n ceph.quota.max_bytes -v 1000000 $dest
++# set quota to 20g
++$SETFATTR_PROG -n ceph.quota.max_bytes -v 20000000000 $orig2
++
++#
++# The following 2 testcases shall fail with either -EXDEV or -EDQUOT
++#
++
++# from 'root' realm to $dest realm
++$XFS_IO_PROG -f -c "truncate 10G" $file1
++$here/src/rename $orig1 $dest/new1 >> $seqres.full 2>&1
++[ $? -ne 1 ] && _fatal "cross quota realms rename succeeded"
++
++# from $orig2 realm to $dest realm
++$XFS_IO_PROG -f -c "truncate 10G" $file2
++$here/src/rename $orig2 $dest/new2 >> $seqres.full 2>&1
++[ $? -ne 1 ] && _fatal "cross quota realms rename succeeded"
++
++echo "Silence is golden"
++
++# success, all done
++status=0
++exit
+diff --git a/tests/ceph/004.out b/tests/ceph/004.out
+new file mode 100644
+index 000000000000..af8614ae45ac
+--- /dev/null
++++ b/tests/ceph/004.out
+@@ -0,0 +1,2 @@
++QA output created by 004
++Silence is golden
+diff --git a/tests/ceph/group b/tests/ceph/group
+index adbf61547766..47903d21966c 100644
+--- a/tests/ceph/group
++++ b/tests/ceph/group
+@@ -1,3 +1,4 @@
+ 001 auto quick copy
+ 002 auto quick copy
+ 003 auto quick copy
++004 auto quick quota
