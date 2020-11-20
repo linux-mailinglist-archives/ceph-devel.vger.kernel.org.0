@@ -2,20 +2,21 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF5D12BA43E
-	for <lists+ceph-devel@lfdr.de>; Fri, 20 Nov 2020 09:02:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F2AD2BA553
+	for <lists+ceph-devel@lfdr.de>; Fri, 20 Nov 2020 09:59:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726959AbgKTICE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 20 Nov 2020 03:02:04 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50416 "EHLO mx2.suse.de"
+        id S1727340AbgKTI6o (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 20 Nov 2020 03:58:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48036 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725797AbgKTICD (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 20 Nov 2020 03:02:03 -0500
+        id S1727159AbgKTI6o (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 20 Nov 2020 03:58:44 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id C65C0AB3D;
-        Fri, 20 Nov 2020 08:02:01 +0000 (UTC)
-Subject: Re: [PATCH 73/78] block: use put_device in put_disk
+        by mx2.suse.de (Postfix) with ESMTP id 5CAD1AC23;
+        Fri, 20 Nov 2020 08:58:42 +0000 (UTC)
+Subject: Re: [PATCH 74/78] block: merge struct block_device and struct
+ hd_struct
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
         Josef Bacik <josef@toxicpanda.com>,
@@ -36,14 +37,14 @@ Cc:     Justin Sanders <justin@coraid.com>,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
 References: <20201116145809.410558-1-hch@lst.de>
- <20201116145809.410558-74-hch@lst.de>
+ <20201116145809.410558-75-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <a20f546f-6e14-2866-7c50-09fa385fe6f4@suse.de>
-Date:   Fri, 20 Nov 2020 09:02:00 +0100
+Message-ID: <f6e6b948-44c8-50f0-beea-921eb3a268dd@suse.de>
+Date:   Fri, 20 Nov 2020 09:58:40 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <20201116145809.410558-74-hch@lst.de>
+In-Reply-To: <20201116145809.410558-75-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -52,27 +53,51 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 On 11/16/20 3:58 PM, Christoph Hellwig wrote:
-> Use put_device to put the device instead of poking into the internals
-> and using kobject_put.
+> Instead of having two structures that represent each block device with
+> different lift time rules merged them into a single one.  This also
+> greatly simplifies the reference counting rules, as we can use the inode
+> reference count as the main reference count for the new struct
+> block_device, with the device model reference front ending it for device
+> model interaction.  The percpu refcount in struct hd_struct is entirely
+> gone given that struct block_device must be opened and thus valid for
+> the duration of the I/O.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   block/genhd.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/block/genhd.c b/block/genhd.c
-> index 56bc37e98ed852..f1e20ec1b62887 100644
-> --- a/block/genhd.c
-> +++ b/block/genhd.c
-> @@ -1659,7 +1659,7 @@ EXPORT_SYMBOL(__alloc_disk_node);
->   void put_disk(struct gendisk *disk)
->   {
->   	if (disk)
-> -		kobject_put(&disk_to_dev(disk)->kobj);
-> +		put_device(disk_to_dev(disk));
->   }
->   EXPORT_SYMBOL(put_disk);
->   
+>   block/bio.c                        |   6 +-
+>   block/blk-cgroup.c                 |   9 +-
+>   block/blk-core.c                   |  85 +++++-----
+>   block/blk-flush.c                  |   2 +-
+>   block/blk-lib.c                    |   2 +-
+>   block/blk-merge.c                  |   6 +-
+>   block/blk-mq.c                     |  11 +-
+>   block/blk-mq.h                     |   5 +-
+>   block/blk.h                        |  38 ++---
+>   block/genhd.c                      | 242 +++++++++++------------------
+>   block/ioctl.c                      |   4 +-
+>   block/partitions/core.c            | 221 +++++++-------------------
+>   drivers/block/drbd/drbd_receiver.c |   2 +-
+>   drivers/block/drbd/drbd_worker.c   |   2 +-
+>   drivers/block/zram/zram_drv.c      |   2 +-
+>   drivers/md/bcache/request.c        |   4 +-
+>   drivers/md/dm.c                    |   8 +-
+>   drivers/md/md.c                    |   4 +-
+>   drivers/nvme/target/admin-cmd.c    |  20 +--
+>   drivers/s390/block/dasd.c          |   8 +-
+>   fs/block_dev.c                     |  68 +++-----
+>   fs/ext4/super.c                    |  18 +--
+>   fs/ext4/sysfs.c                    |  10 +-
+>   fs/f2fs/checkpoint.c               |   5 +-
+>   fs/f2fs/f2fs.h                     |   2 +-
+>   fs/f2fs/super.c                    |   6 +-
+>   fs/f2fs/sysfs.c                    |   9 --
+>   include/linux/blk_types.h          |  23 ++-
+>   include/linux/blkdev.h             |  13 +-
+>   include/linux/genhd.h              |  67 ++------
+>   include/linux/part_stat.h          |  17 +-
+>   init/do_mounts.c                   |  20 +--
+>   kernel/trace/blktrace.c            |  54 ++-----
+>   33 files changed, 351 insertions(+), 642 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
