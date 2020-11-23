@@ -2,135 +2,178 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB0BA2C0F10
-	for <lists+ceph-devel@lfdr.de>; Mon, 23 Nov 2020 16:40:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F9212C0F88
+	for <lists+ceph-devel@lfdr.de>; Mon, 23 Nov 2020 17:04:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389729AbgKWPjJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 23 Nov 2020 10:39:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38766 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389649AbgKWPjI (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 23 Nov 2020 10:39:08 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        id S2389767AbgKWP6L (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 23 Nov 2020 10:58:11 -0500
+Received: from bedivere.hansenpartnership.com ([96.44.175.130]:35030 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387620AbgKWP6L (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 23 Nov 2020 10:58:11 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 8958812803A6;
+        Mon, 23 Nov 2020 07:58:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1606147090;
+        bh=lBjYTVUJkmNX+Ql1BcMOHCS5uLgrfuyir/PBRp4vAgY=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=tw2BKkTzWzFWEQdrm6zgBKJtIh2PRfv5Mb0TfkjZKqSr5KeTmWZWgl8VEPx5No8bX
+         gdEQ1NYoCzrZ51ueWl3PIAwT19fSirwyiz4cqIKbNqhoqeMTMjHgs4jilQhkGLvH0x
+         +YA09wNIiuW9eCRS9chAzVTlxjJYgA69RXyn6sLU=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id pNOg0X0CRuCM; Mon, 23 Nov 2020 07:58:10 -0800 (PST)
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::527])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C949221E2;
-        Mon, 23 Nov 2020 15:39:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606145947;
-        bh=KLlI77X/cHDSZAb7YW6qwlrNnaDOn2Y2rZB2TuByy1c=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=DK4SAMjkRKmLHZ9PWSZaCHCS0yPVVjPjqDurRFDqUg4kT2kzdMHu3w0kcgzAmzWxC
-         qbq0OwWQxip2f3K9sZ+z2GzSY+EaOa28t7JdhZ+XXJ20Yd4z20jJUgkMn0Hypl3a/P
-         csbc3DQhkQqCbGL4X9cB1uIKihT2wmQDCmomqSaQ=
-Message-ID: <592a539905ba13d26bd12d8fa74cc4942b68c8ea.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: add a new test for cross quota realms renames
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     Eryu Guan <guan@eryu.me>, fstests@vger.kernel.org,
-        ceph-devel@vger.kernel.org
-Date:   Mon, 23 Nov 2020 10:39:05 -0500
-In-Reply-To: <87im9wrv5p.fsf@suse.de>
-References: <87sg90s8el.fsf@suse.de>
-         <20201123103439.27908-1-lhenriques@suse.de>
-         <adf5a0056e11fe2575915a4d416b2f65cba02ded.camel@kernel.org>
-         <87im9wrv5p.fsf@suse.de>
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 1690C12802D9;
+        Mon, 23 Nov 2020 07:58:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1606147090;
+        bh=lBjYTVUJkmNX+Ql1BcMOHCS5uLgrfuyir/PBRp4vAgY=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=tw2BKkTzWzFWEQdrm6zgBKJtIh2PRfv5Mb0TfkjZKqSr5KeTmWZWgl8VEPx5No8bX
+         gdEQ1NYoCzrZ51ueWl3PIAwT19fSirwyiz4cqIKbNqhoqeMTMjHgs4jilQhkGLvH0x
+         +YA09wNIiuW9eCRS9chAzVTlxjJYgA69RXyn6sLU=
+Message-ID: <fc45750b6d0277c401015b7aa11e16cd15f32ab2.camel@HansenPartnership.com>
+Subject: Re: [PATCH 000/141] Fix fall-through warnings for Clang
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        alsa-devel@alsa-project.org, amd-gfx@lists.freedesktop.org,
+        bridge@lists.linux-foundation.org, ceph-devel@vger.kernel.org,
+        cluster-devel@redhat.com, coreteam@netfilter.org,
+        devel@driverdev.osuosl.org, dm-devel@redhat.com,
+        drbd-dev@lists.linbit.com, dri-devel@lists.freedesktop.org,
+        GR-everest-linux-l2@marvell.com, GR-Linux-NIC-Dev@marvell.com,
+        intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org,
+        keyrings@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
+        linux-acpi@vger.kernel.org, linux-afs@lists.infradead.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        linux-atm-general@lists.sourceforge.net,
+        linux-block@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-cifs@vger.kernel.org,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-decnet-user@lists.sourceforge.net,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-fbdev@vger.kernel.org, linux-geode@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-hams@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-i3c@lists.infradead.org,
+        linux-ide@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input <linux-input@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-mmc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org, nouveau@lists.freedesktop.org,
+        op-tee@lists.trustedfirmware.org, oss-drivers@netronome.com,
+        patches@opensource.cirrus.com, rds-devel@oss.oracle.com,
+        reiserfs-devel@vger.kernel.org, samba-technical@lists.samba.org,
+        selinux@vger.kernel.org, target-devel@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net,
+        usb-storage@lists.one-eyed-alien.net,
+        virtualization@lists.linux-foundation.org,
+        wcn36xx@lists.infradead.org,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        xen-devel@lists.xenproject.org, linux-hardening@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Miguel Ojeda <ojeda@kernel.org>, Joe Perches <joe@perches.com>
+Date:   Mon, 23 Nov 2020 07:58:06 -0800
+In-Reply-To: <CANiq72m22Jb5_+62NnwX8xds2iUdWDMAqD8PZw9cuxdHd95W0A@mail.gmail.com>
+References: <cover.1605896059.git.gustavoars@kernel.org>
+         <20201120105344.4345c14e@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+         <202011201129.B13FDB3C@keescook>
+         <20201120115142.292999b2@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+         <202011220816.8B6591A@keescook>
+         <9b57fd4914b46f38d54087d75e072d6e947cb56d.camel@HansenPartnership.com>
+         <CANiq72nZrHWTA4_Msg6MP9snTyenC6-eGfD27CyfNSu7QoVZbw@mail.gmail.com>
+         <1c7d7fde126bc0acf825766de64bf2f9b888f216.camel@HansenPartnership.com>
+         <CANiq72m22Jb5_+62NnwX8xds2iUdWDMAqD8PZw9cuxdHd95W0A@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2020-11-23 at 14:43 +0000, Luis Henriques wrote:
-> Jeff Layton <jlayton@kernel.org> writes:
+On Mon, 2020-11-23 at 15:19 +0100, Miguel Ojeda wrote:
+> On Sun, Nov 22, 2020 at 11:36 PM James Bottomley
+> <James.Bottomley@hansenpartnership.com> wrote:
+> > Well, it seems to be three years of someone's time plus the
+> > maintainer review time and series disruption of nearly a thousand
+> > patches.  Let's be conservative and assume the producer worked
+> > about 30% on the series and it takes about 5-10 minutes per patch
+> > to review, merge and for others to rework existing series.  So
+> > let's say it's cost a person year of a relatively junior engineer
+> > producing the patches and say 100h of review and application
+> > time.  The latter is likely the big ticket item because it's what
+> > we have in least supply in the kernel (even though it's 20x vs the
+> > producer time).
 > 
-> > On Mon, 2020-11-23 at 10:34 +0000, Luis Henriques wrote:
-> > > For the moment cross quota realms renames has been disabled in CephFS
-> > > after a bug has been found while renaming files created and truncated.
-> > > This allowed clients to easily circumvent quotas.
-> > > 
-> > > Link: https://tracker.ceph.com/issues/48203
-> > > Signed-off-by: Luis Henriques <lhenriques@suse.de>
-> > > ---
-> > > v2: implemented Eryu review comments:
-> > > - Added _require_test_program "rename"
-> > > - Use _fail instead of _fatal
-> > > 
-> > >  tests/ceph/004     | 95 ++++++++++++++++++++++++++++++++++++++++++++++
-> > >  tests/ceph/004.out |  2 +
-> > >  tests/ceph/group   |  1 +
-> > >  3 files changed, 98 insertions(+)
-> > >  create mode 100755 tests/ceph/004
-> > >  create mode 100644 tests/ceph/004.out
-> > > 
-> > > diff --git a/tests/ceph/004 b/tests/ceph/004
-> > > new file mode 100755
-> > > index 000000000000..53094d8dfadc
-> > > --- /dev/null
-> > > +++ b/tests/ceph/004
-> > > @@ -0,0 +1,95 @@
-> > > +#! /bin/bash
-> > > +# SPDX-License-Identifier: GPL-2.0
-> > > +# Copyright (c) 2020 SUSE Linux Products GmbH. All Rights Reserved.
-> > > +#
-> > > +# FS QA Test 004
-> > > +#
-> > > +# Tests a bug fix found in cephfs quotas handling.  Here's a simplified testcase
-> > > +# that *should* fail:
-> > > +#
-> > > +#    mkdir files limit
-> > > +#    truncate files/file -s 10G
-> > > +#    setfattr limit -n ceph.quota.max_bytes -v 1000000
-> > > +#    mv files limit/
-> > > +#
-> > > +# Because we're creating a new file and truncating it, we have Fx caps and thus
-> > > +# the truncate operation will be cached.  This prevents the MDSs from updating
-> > > +# the quota realms and thus the client will allow the above rename(2) to happen.
-> > > +#
-> > 
-> > Note that it can be difficult to predict which caps you get from the
-> > MDS. It's not _required_ to pass out anything like Fx if it doesn't want
-> > to, but in general, it does if it can.
-> > 
-> > It's not a blocker for merging this test, but I wonder if we ought to
-> > come up with some way to ensure that the client was given the caps we
-> > expect when testing stuff like this.
-> > 
-> > Maybe we ought to consider adding a new ceph.caps vxattr that shows the
-> > caps we hold for a particular file? Then we could consult that when
-> > doing a test like this to make sure we got what we expected.
+> How are you arriving at such numbers? It is a total of ~200 trivial
+> lines.
+
+Well, I used git.  It says that as of today in Linus' tree we have 889
+patches related to fall throughs and the first series went in in
+october 2017 ... ignoring a couple of outliers back to February.
+
+> > It's not about the risk of the changes it's about the cost of
+> > implementing them.  Even if you discount the producer time (which
+> > someone gets to pay for, and if I were the engineering manager, I'd
+> > be unhappy about), the review/merge/rework time is pretty
+> > significant in exchange for six minor bug fixes.  Fine, when a new
+> > compiler warning comes along it's certainly reasonable to see if we
+> > can benefit from it and the fact that the compiler people think
+> > it's worthwhile is enough evidence to assume this initially.  But
+> > at some point you have to ask whether that assumption is supported
+> > by the evidence we've accumulated over the time we've been using
+> > it.  And if the evidence doesn't support it perhaps it is time to
+> > stop the experiment.
 > 
-> Sure, I can hack a patch for doing that and send it out for review.
-> That's actually trivial, I believe.
-> 
-> This test assumes the caps for the truncated file will be 'Fsxcrwb' but I
-> didn't confirm with the MDS which conditions are actually required for
-> this to happen.  Also, I guess that if the test is executed with several
-> clients, these caps may change pretty quickly (and maybe even with a
-> single very slow client with a very short caps timeout).
-> 
-> Obviously, ensuring the client has the caps we expect at the time we do
-> the actual rename is racy and they can change in the meantime.  Is it
-> worth the trouble?
+> Maintainers routinely review 1-line trivial patches, not to mention
+> internal API changes, etc.
+
+We're also complaining about the inability to recruit maintainers:
+
+https://www.theregister.com/2020/06/30/hard_to_find_linux_maintainers_says_torvalds/
+
+And burn out:
+
+http://antirez.com/news/129
+
+The whole crux of your argument seems to be maintainers' time isn't
+important so we should accept all trivial patches ... I'm pushing back
+on that assumption in two places, firstly the valulessness of the time
+and secondly that all trivial patches are valuable.
+
+> If some company does not want to pay for that, that's fine, but they
+> don't get to be maintainers and claim `Supported`.
+
+What I'm actually trying to articulate is a way of measuring value of
+the patch vs cost ... it has nothing really to do with who foots the
+actual bill.
+
+One thesis I'm actually starting to formulate is that this continual
+devaluing of maintainers is why we have so much difficulty keeping and
+recruiting them.
+
+James
 
 
-I think it's useful. Cap/mds lock handling is an area where we have
-really poor visibility in cephfs.
-
-a/ It's not always 100% clear what metadata is under which cap.
-Sometimes it's really weird. For example, you need Fs to get the link
-count on a directory -- Ls has no meaning there, which is not intuitive
-at all.
-
-b/ Subtle changes in the MDS or client can affect what caps are granted
-or revoked in a given situation. 
-
-Having better visibility into the caps held by the client is potentially
-very useful for troubleshooting _why_ certain tests might fail, and may
-also help us catch subtle changes that prevent problems in the future.
-
--- 
-Jeff Layton <jlayton@kernel.org>
 
