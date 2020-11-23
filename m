@@ -2,121 +2,155 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62F762C10FC
-	for <lists+ceph-devel@lfdr.de>; Mon, 23 Nov 2020 17:48:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BD362C11E8
+	for <lists+ceph-devel@lfdr.de>; Mon, 23 Nov 2020 18:30:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390175AbgKWQnG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 23 Nov 2020 11:43:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60414 "EHLO mail.kernel.org"
+        id S2389964AbgKWRYz convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Mon, 23 Nov 2020 12:24:55 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40958 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388042AbgKWQnF (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 23 Nov 2020 11:43:05 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 799092100A;
-        Mon, 23 Nov 2020 16:43:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606149785;
-        bh=48yrGgOJSfFiFwXNjJgUxD28dU09ZoQpitv1nN78NfY=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=OOdwg3X7qtb0xLRx4ZMFOFyVEDbz8DDxZVb6YXRTLrprTD+7S0iIgIlMRYYtt2O/s
-         ZFj+93FLN3Uu68QtJpuddpAhykPUyqzryxUGKAPo42C+MJTq8S4vnUVZbwLHOCd6F1
-         O7Izr6WqdKFlAH4IJrTIj8LTeYJ1UHQEH3j9dztc=
-Message-ID: <a12a732b67245cc02344405f7dd9fef4f3b47fbc.camel@kernel.org>
-Subject: Re: [RFC PATCH] ceph: add ceph.caps vxattr
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 23 Nov 2020 11:43:03 -0500
-In-Reply-To: <20201123145311.13588-1-lhenriques@suse.de>
-References: <20201123145311.13588-1-lhenriques@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
+        id S1729531AbgKWRYy (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 23 Nov 2020 12:24:54 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id A488DACBD;
+        Mon, 23 Nov 2020 17:24:52 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 49d44100;
+        Mon, 23 Nov 2020 17:25:08 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Eryu Guan <guan@eryu.me>, fstests@vger.kernel.org,
+        ceph-devel@vger.kernel.org
+Subject: Re: [PATCH v2] ceph: add a new test for cross quota realms renames
+References: <87sg90s8el.fsf@suse.de>
+        <20201123103439.27908-1-lhenriques@suse.de>
+        <adf5a0056e11fe2575915a4d416b2f65cba02ded.camel@kernel.org>
+        <87im9wrv5p.fsf@suse.de>
+        <592a539905ba13d26bd12d8fa74cc4942b68c8ea.camel@kernel.org>
+        <87eekkrqhh.fsf@suse.de>
+        <9b69966cfecc66fe1d8ff02909050ceb2f7b1152.camel@kernel.org>
+Date:   Mon, 23 Nov 2020 17:25:08 +0000
+In-Reply-To: <9b69966cfecc66fe1d8ff02909050ceb2f7b1152.camel@kernel.org> (Jeff
+        Layton's message of "Mon, 23 Nov 2020 11:39:35 -0500")
+Message-ID: <87a6v8rnnv.fsf@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2020-11-23 at 14:53 +0000, Luis Henriques wrote:
-> Add a new vxattr that allows userspace to list the caps for a specific
-> directory or file.
-> 
-> Signed-off-by: Luis Henriques <lhenriques@suse.de>
-> ---
->  fs/ceph/xattr.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
-> 
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index 197cb1234341..996512e05513 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -303,6 +303,18 @@ static ssize_t ceph_vxattrcb_snap_btime(struct ceph_inode_info *ci, char *val,
->  				ci->i_snap_btime.tv_nsec);
->  }
->  
-> 
-> 
-> 
-> +static ssize_t ceph_vxattrcb_caps(struct ceph_inode_info *ci, char *val,
-> +					size_t size)
-> +{
-> +	int issued;
-> +
-> +	spin_lock(&ci->i_ceph_lock);
-> +	issued = __ceph_caps_issued(ci, NULL);
-> +	spin_unlock(&ci->i_ceph_lock);
-> +
-> +	return ceph_fmt_xattr(val, size, "%s", ceph_cap_string(issued));
-> +}
+Jeff Layton <jlayton@kernel.org> writes:
 
-I wonder if we ought to print a numerical (hex) representation of the
-cap set here in addition to the ceph_cap_string. A main use-case for
-this will be in testcases, and determining whether (e.g.) Fs is in the
-mask may be easier to do with a bitwise AND rather than having to parse
-a string of text.
+> On Mon, 2020-11-23 at 16:24 +0000, Luis Henriques wrote:
+>> Jeff Layton <jlayton@kernel.org> writes:
+>> 
+>> > On Mon, 2020-11-23 at 14:43 +0000, Luis Henriques wrote:
+>> > > Jeff Layton <jlayton@kernel.org> writes:
+>> > > 
+>> > > > On Mon, 2020-11-23 at 10:34 +0000, Luis Henriques wrote:
+>> > > > > For the moment cross quota realms renames has been disabled in CephFS
+>> > > > > after a bug has been found while renaming files created and truncated.
+>> > > > > This allowed clients to easily circumvent quotas.
+>> > > > > 
+>> > > > > Link: https://tracker.ceph.com/issues/48203
+>> > > > > Signed-off-by: Luis Henriques <lhenriques@suse.de>
+>> > > > > ---
+>> > > > > v2: implemented Eryu review comments:
+>> > > > > - Added _require_test_program "rename"
+>> > > > > - Use _fail instead of _fatal
+>> > > > > 
+>> > > > >  tests/ceph/004     | 95 ++++++++++++++++++++++++++++++++++++++++++++++
+>> > > > >  tests/ceph/004.out |  2 +
+>> > > > >  tests/ceph/group   |  1 +
+>> > > > >  3 files changed, 98 insertions(+)
+>> > > > >  create mode 100755 tests/ceph/004
+>> > > > >  create mode 100644 tests/ceph/004.out
+>> > > > > 
+>> > > > > diff --git a/tests/ceph/004 b/tests/ceph/004
+>> > > > > new file mode 100755
+>> > > > > index 000000000000..53094d8dfadc
+>> > > > > --- /dev/null
+>> > > > > +++ b/tests/ceph/004
+>> > > > > @@ -0,0 +1,95 @@
+>> > > > > +#! /bin/bash
+>> > > > > +# SPDX-License-Identifier: GPL-2.0
+>> > > > > +# Copyright (c) 2020 SUSE Linux Products GmbH. All Rights Reserved.
+>> > > > > +#
+>> > > > > +# FS QA Test 004
+>> > > > > +#
+>> > > > > +# Tests a bug fix found in cephfs quotas handling.  Here's a simplified testcase
+>> > > > > +# that *should* fail:
+>> > > > > +#
+>> > > > > +#    mkdir files limit
+>> > > > > +#    truncate files/file -s 10G
+>> > > > > +#    setfattr limit -n ceph.quota.max_bytes -v 1000000
+>> > > > > +#    mv files limit/
+>> > > > > +#
+>> > > > > +# Because we're creating a new file and truncating it, we have Fx caps and thus
+>> > > > > +# the truncate operation will be cached.  This prevents the MDSs from updating
+>> > > > > +# the quota realms and thus the client will allow the above rename(2) to happen.
+>> > > > > +#
+>> > > > 
+>> > > > Note that it can be difficult to predict which caps you get from the
+>> > > > MDS. It's not _required_ to pass out anything like Fx if it doesn't want
+>> > > > to, but in general, it does if it can.
+>> > > > 
+>> > > > It's not a blocker for merging this test, but I wonder if we ought to
+>> > > > come up with some way to ensure that the client was given the caps we
+>> > > > expect when testing stuff like this.
+>> > > > 
+>> > > > Maybe we ought to consider adding a new ceph.caps vxattr that shows the
+>> > > > caps we hold for a particular file? Then we could consult that when
+>> > > > doing a test like this to make sure we got what we expected.
+>> > > 
+>> > > Sure, I can hack a patch for doing that and send it out for review.
+>> > > That's actually trivial, I believe.
+>> > > 
+>> > > This test assumes the caps for the truncated file will be 'Fsxcrwb' but I
+>> > > didn't confirm with the MDS which conditions are actually required for
+>> > > this to happen.  Also, I guess that if the test is executed with several
+>> > > clients, these caps may change pretty quickly (and maybe even with a
+>> > > single very slow client with a very short caps timeout).
+>> > > 
+>> > > Obviously, ensuring the client has the caps we expect at the time we do
+>> > > the actual rename is racy and they can change in the meantime.  Is it
+>> > > worth the trouble?
+>> > 
+>> > 
+>> > I think it's useful. Cap/mds lock handling is an area where we have
+>> > really poor visibility in cephfs.
+>> > 
+>> > a/ It's not always 100% clear what metadata is under which cap.
+>> > Sometimes it's really weird. For example, you need Fs to get the link
+>> > count on a directory -- Ls has no meaning there, which is not intuitive
+>> > at all.
+>> > 
+>> > b/ Subtle changes in the MDS or client can affect what caps are granted
+>> > or revoked in a given situation. 
+>> > 
+>> > Having better visibility into the caps held by the client is potentially
+>> > very useful for troubleshooting _why_ certain tests might fail, and may
+>> > also help us catch subtle changes that prevent problems in the future.
+>> 
+>> Sure, I completely agree with this.  My question was more about adding an
+>> extra check to the test.  Basically, the new test will be something like:
+>> 
+>>  (0. ensure 'getfattr -n ceph.caps' works; skip test if it doesn't)
+>>   1. truncate file
+>>   2. check that file caps includes Fsxcrwb
+>>   3. do the rename
+>> 
+>
+> Sounds reasonable. You may not even need to test for that whole cap set
+> either. For this test, you probably just need to ensure that it got Fs.
+> I'd be a little leery about failing the test if we got a different set
+> of caps that still happened to contain Fs.
 
-> +
->  #define CEPH_XATTR_NAME(_type, _name)	XATTR_CEPH_PREFIX #_type "." #_name
->  #define CEPH_XATTR_NAME2(_type, _name, _name2)	\
->  	XATTR_CEPH_PREFIX #_type "." #_name "." #_name2
-> @@ -378,6 +390,13 @@ static struct ceph_vxattr ceph_dir_vxattrs[] = {
->  		.exists_cb = ceph_vxattrcb_snap_btime_exists,
->  		.flags = VXATTR_FLAG_READONLY,
->  	},
-> +	{
-> +		.name = "ceph.caps",
-> +		.name_size = sizeof("ceph.caps"),
-> +		.getxattr_cb = ceph_vxattrcb_caps,
-> +		.exists_cb = NULL,
-> +		.flags = VXATTR_FLAG_HIDDEN,
-> +	},
->  	{ .name = NULL, 0 }	/* Required table terminator */
->  };
->  
-> 
-> 
-> 
-> @@ -403,6 +422,13 @@ static struct ceph_vxattr ceph_file_vxattrs[] = {
->  		.exists_cb = ceph_vxattrcb_snap_btime_exists,
->  		.flags = VXATTR_FLAG_READONLY,
->  	},
-> +	{
-> +		.name = "ceph.caps",
-> +		.name_size = sizeof("ceph.caps"),
-> +		.getxattr_cb = ceph_vxattrcb_caps,
-> +		.exists_cb = NULL,
-> +		.flags = VXATTR_FLAG_HIDDEN,
-> +	},
->  	{ .name = NULL, 0 }	/* Required table terminator */
->  };
->  
-> 
-> 
-> 
+Great, thanks for the feedback.  I'll re-submit this test once we have a
+patch for the new vxattr ready.
 
+Cheers,
 -- 
-Jeff Layton <jlayton@kernel.org>
-
+Luis
