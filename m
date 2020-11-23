@@ -2,105 +2,171 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 503102C122A
-	for <lists+ceph-devel@lfdr.de>; Mon, 23 Nov 2020 18:40:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C81B2C1401
+	for <lists+ceph-devel@lfdr.de>; Mon, 23 Nov 2020 20:10:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390425AbgKWRid (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 23 Nov 2020 12:38:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36950 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390423AbgKWRid (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 23 Nov 2020 12:38:33 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id E611AAECB;
-        Mon, 23 Nov 2020 17:38:31 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 714ec47b;
-        Mon, 23 Nov 2020 17:38:47 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.de>
-Subject: [PATCH v2] ceph: add ceph.caps vxattr
-Date:   Mon, 23 Nov 2020 17:38:46 +0000
-Message-Id: <20201123173846.15045-1-lhenriques@suse.de>
-In-Reply-To: <a12a732b67245cc02344405f7dd9fef4f3b47fbc.camel@kernel.org>
-References: <a12a732b67245cc02344405f7dd9fef4f3b47fbc.camel@kernel.org>
+        id S1732682AbgKWS4T (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 23 Nov 2020 13:56:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59120 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728971AbgKWS4O (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 23 Nov 2020 13:56:14 -0500
+Received: from mail-yb1-xb41.google.com (mail-yb1-xb41.google.com [IPv6:2607:f8b0:4864:20::b41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00615C0613CF;
+        Mon, 23 Nov 2020 10:56:12 -0800 (PST)
+Received: by mail-yb1-xb41.google.com with SMTP id r127so13134731yba.10;
+        Mon, 23 Nov 2020 10:56:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KNG9rf3jiBLOHJ1Qe+5HClUHwDC8G2v5PJoNSRMQj2o=;
+        b=ZA1WcoeOdsWbRfOoumZEJTLTRH6V2Lpq2CDbZ0VVs1hbOT/vd/v8/YkJaULhb4MkV5
+         MHmDtgQZ7Y6vQOoRafNcjdab1m8jmYbh8Ox0xcyAJF866JXyArBCoNYzebFkQV1wRZF3
+         r3hM3WSnIq7Ht5VQ2PIwvurJMfamtV7PLgYZxEoHoT74qEv3IGeXPryfDRdu7AW/qetQ
+         L1ocOXaYsoIrsq1AVQ8cgaa4G2qWRkZviQ+mOBHOVW/MFUti3ALLJAr2MKUeWh+s4BW6
+         tAJsdEl41qUIuUvcW5DdLnVlmhWMC8lZFuXyyo4x1R3eX3DaWLHh1JzDrRZDt/CN6qga
+         036w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KNG9rf3jiBLOHJ1Qe+5HClUHwDC8G2v5PJoNSRMQj2o=;
+        b=VbZ3df0KDvvcjS3oqE4FKJaZu54g4MCdauiP/ZXziJ057Qx+7gO7Xq0DclJJwhkD7A
+         V6wIvyE+iMUTqz9Et4Z5swtCvEVohOYgCr45PQIT1naTPGLjdngls6PaxJ+2dTpwG1sS
+         2J24JWWgll1XCaG4p5TRtdZUw6zFy8CD4ZY8+HNTau19MRyRUhc0Rog1oJz/01j+Rfnb
+         WQq0qXGIb+h89MExl9hJwrFqamYs85+hsGdPRw0lifURgwY7tjHV2PXA1XofJs4XbGTP
+         NEC3DNi0ZW4kVx5Dh9aHDLI9NF0b3y4MyZAlGF5HprxmF8/01jZ1NEiPPRMmDsEjbPZl
+         WrcQ==
+X-Gm-Message-State: AOAM530c8BEunJnR0wvAHz7GM7Tlf3BoUFJdhEyagiplOb8fmebtcUxB
+        ATgeO04Jk0JP04fO5wqwIYLVC06oaCpaZhmWiko=
+X-Google-Smtp-Source: ABdhPJyhWLCSkpSmtD0p55Cmpr9Ao1aJs0IYHWLu4Tcyj9q39OBvqgrIxMZMaEy7w1zacpD3mVr5R93EsjzwMBkGuSA=
+X-Received: by 2002:a25:df55:: with SMTP id w82mr977719ybg.135.1606157772316;
+ Mon, 23 Nov 2020 10:56:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1605896059.git.gustavoars@kernel.org> <20201120105344.4345c14e@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+ <202011201129.B13FDB3C@keescook> <20201120115142.292999b2@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+ <202011220816.8B6591A@keescook> <9b57fd4914b46f38d54087d75e072d6e947cb56d.camel@HansenPartnership.com>
+ <CANiq72nZrHWTA4_Msg6MP9snTyenC6-eGfD27CyfNSu7QoVZbw@mail.gmail.com>
+ <1c7d7fde126bc0acf825766de64bf2f9b888f216.camel@HansenPartnership.com>
+ <CANiq72m22Jb5_+62NnwX8xds2iUdWDMAqD8PZw9cuxdHd95W0A@mail.gmail.com> <fc45750b6d0277c401015b7aa11e16cd15f32ab2.camel@HansenPartnership.com>
+In-Reply-To: <fc45750b6d0277c401015b7aa11e16cd15f32ab2.camel@HansenPartnership.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Mon, 23 Nov 2020 19:56:01 +0100
+Message-ID: <CANiq72k5tpDoDPmJ0ZWc1DGqm+81Gi-uEENAtvEs9v3SZcx6_Q@mail.gmail.com>
+Subject: Re: [PATCH 000/141] Fix fall-through warnings for Clang
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        alsa-devel@alsa-project.org, amd-gfx@lists.freedesktop.org,
+        bridge@lists.linux-foundation.org, ceph-devel@vger.kernel.org,
+        cluster-devel@redhat.com, coreteam@netfilter.org,
+        devel@driverdev.osuosl.org, dm-devel@redhat.com,
+        drbd-dev@lists.linbit.com, dri-devel@lists.freedesktop.org,
+        GR-everest-linux-l2@marvell.com, GR-Linux-NIC-Dev@marvell.com,
+        intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org,
+        keyrings@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
+        linux-acpi@vger.kernel.org, linux-afs@lists.infradead.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        linux-atm-general@lists.sourceforge.net,
+        linux-block@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-cifs@vger.kernel.org,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-decnet-user@lists.sourceforge.net,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-fbdev@vger.kernel.org, linux-geode@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-hams@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-i3c@lists.infradead.org,
+        linux-ide@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input <linux-input@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-mmc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        netfilter-devel@vger.kernel.org, nouveau@lists.freedesktop.org,
+        op-tee@lists.trustedfirmware.org, oss-drivers@netronome.com,
+        patches@opensource.cirrus.com, rds-devel@oss.oracle.com,
+        reiserfs-devel@vger.kernel.org, samba-technical@lists.samba.org,
+        selinux@vger.kernel.org, target-devel@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net,
+        usb-storage@lists.one-eyed-alien.net,
+        virtualization@lists.linux-foundation.org,
+        wcn36xx@lists.infradead.org,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        xen-devel@lists.xenproject.org, linux-hardening@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Miguel Ojeda <ojeda@kernel.org>, Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Add a new vxattr that allows userspace to list the caps for a specific
-directory or file.
+On Mon, Nov 23, 2020 at 4:58 PM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> Well, I used git.  It says that as of today in Linus' tree we have 889
+> patches related to fall throughs and the first series went in in
+> october 2017 ... ignoring a couple of outliers back to February.
 
-Signed-off-by: Luis Henriques <lhenriques@suse.de>
----
-Hi!
+I can see ~10k insertions over ~1k commits and 15 years that mention a
+fallthrough in the entire repo. That is including some commits (like
+the biggest one, 960 insertions) that have nothing to do with C
+fallthrough. A single kernel release has an order of magnitude more
+changes than this...
 
-Here's a version that also shows the caps in hexadecimal format, as
-suggested by Jeff.  IMO the parenthesis and the '0x' prefix help the
-readability, but they may make it a bit harder for scripts to parsing the
-output.  I'm OK dropping those.
+But if we do the math, for an author, at even 1 minute per line change
+and assuming nothing can be automated at all, it would take 1 month of
+work. For maintainers, a couple of trivial lines is noise compared to
+many other patches.
+
+In fact, this discussion probably took more time than the time it
+would take to review the 200 lines. :-)
+
+> We're also complaining about the inability to recruit maintainers:
+>
+> https://www.theregister.com/2020/06/30/hard_to_find_linux_maintainers_says_torvalds/
+>
+> And burn out:
+>
+> http://antirez.com/news/129
+
+Accepting trivial and useful 1-line patches is not what makes a
+voluntary maintainer quit... Thankless work with demanding deadlines is.
+
+> The whole crux of your argument seems to be maintainers' time isn't
+> important so we should accept all trivial patches
+
+I have not said that, at all. In fact, I am a voluntary one and I
+welcome patches like this. It takes very little effort on my side to
+review and it helps the kernel overall. Paid maintainers are the ones
+that can take care of big features/reviews.
+
+> What I'm actually trying to articulate is a way of measuring value of
+> the patch vs cost ... it has nothing really to do with who foots the
+> actual bill.
+
+I understand your point, but you were the one putting it in terms of a
+junior FTE. In my view, 1 month-work (worst case) is very much worth
+removing a class of errors from a critical codebase.
+
+> One thesis I'm actually starting to formulate is that this continual
+> devaluing of maintainers is why we have so much difficulty keeping and
+> recruiting them.
+
+That may very well be true, but I don't feel anybody has devalued
+maintainers in this discussion.
 
 Cheers,
--- 
-Luis
-
-fs/ceph/xattr.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index 197cb1234341..aec9bd5c8e77 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -303,6 +303,19 @@ static ssize_t ceph_vxattrcb_snap_btime(struct ceph_inode_info *ci, char *val,
- 				ci->i_snap_btime.tv_nsec);
- }
- 
-+static ssize_t ceph_vxattrcb_caps(struct ceph_inode_info *ci, char *val,
-+					size_t size)
-+{
-+	int issued;
-+
-+	spin_lock(&ci->i_ceph_lock);
-+	issued = __ceph_caps_issued(ci, NULL);
-+	spin_unlock(&ci->i_ceph_lock);
-+
-+	return ceph_fmt_xattr(val, size, "%s (0x%x)",
-+			      ceph_cap_string(issued), issued);
-+}
-+
- #define CEPH_XATTR_NAME(_type, _name)	XATTR_CEPH_PREFIX #_type "." #_name
- #define CEPH_XATTR_NAME2(_type, _name, _name2)	\
- 	XATTR_CEPH_PREFIX #_type "." #_name "." #_name2
-@@ -378,6 +391,13 @@ static struct ceph_vxattr ceph_dir_vxattrs[] = {
- 		.exists_cb = ceph_vxattrcb_snap_btime_exists,
- 		.flags = VXATTR_FLAG_READONLY,
- 	},
-+	{
-+		.name = "ceph.caps",
-+		.name_size = sizeof("ceph.caps"),
-+		.getxattr_cb = ceph_vxattrcb_caps,
-+		.exists_cb = NULL,
-+		.flags = VXATTR_FLAG_HIDDEN,
-+	},
- 	{ .name = NULL, 0 }	/* Required table terminator */
- };
- 
-@@ -403,6 +423,13 @@ static struct ceph_vxattr ceph_file_vxattrs[] = {
- 		.exists_cb = ceph_vxattrcb_snap_btime_exists,
- 		.flags = VXATTR_FLAG_READONLY,
- 	},
-+	{
-+		.name = "ceph.caps",
-+		.name_size = sizeof("ceph.caps"),
-+		.getxattr_cb = ceph_vxattrcb_caps,
-+		.exists_cb = NULL,
-+		.flags = VXATTR_FLAG_HIDDEN,
-+	},
- 	{ .name = NULL, 0 }	/* Required table terminator */
- };
- 
+Miguel
