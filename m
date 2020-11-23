@@ -2,147 +2,212 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF9BA2C0D4A
-	for <lists+ceph-devel@lfdr.de>; Mon, 23 Nov 2020 15:27:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F57C2C0E0D
+	for <lists+ceph-devel@lfdr.de>; Mon, 23 Nov 2020 15:51:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388812AbgKWOUI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 23 Nov 2020 09:20:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44652 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730804AbgKWOUH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 23 Nov 2020 09:20:07 -0500
-Received: from mail-yb1-xb41.google.com (mail-yb1-xb41.google.com [IPv6:2607:f8b0:4864:20::b41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97705C061A4D;
-        Mon, 23 Nov 2020 06:20:06 -0800 (PST)
-Received: by mail-yb1-xb41.google.com with SMTP id r127so12314537yba.10;
-        Mon, 23 Nov 2020 06:20:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WUYMqcUnfpAQa1YuH9tQ3ze5bp2bxaoGLXc9Sg/470Y=;
-        b=b0LkeT2q71Z3peIccxL7MkU5QadaCN3igdEC89IE4ykmdOxIlhuoo/0+H7pQCoNmlh
-         0UX19Z7soasUpz2fDZHX56luUWrH4GLKAJ9K28HwPu9km7qlcvasqfBffaQW+LtXvh6a
-         fVP4J8wQFxbi1QWFB10Wsq9dLONxRShLcqQtcaktrZCy3tSRV5R4FOw2MSdgwNuCxNwd
-         cKQMyE/jYgmlc9Qm972BZKz9xJaasT5iW6gpZgai8YpCh1sxJNgZFzlfCpv21Fvd7rwb
-         akOsznbnFT4mJT95mXFDUPnplTdAJirWAcm8YfzHFRAfOGn9Vk91PuRcq7JipLelDPMB
-         VWgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WUYMqcUnfpAQa1YuH9tQ3ze5bp2bxaoGLXc9Sg/470Y=;
-        b=lKwdUTbbfqoTkTAIgp9mZrmqU0ijWcHp+iS8IAhntH72d3s9iYJuX87xfDva9I4lf3
-         v8fZFrd6A/ZoNnnKI9Ufo/CQd84EPCVmP699vgDnaebb1AOTGh35TDQox+Tjt+Mkl+PO
-         9xhrICCS8DPqhs5qDLfgPBudTzTlVuoCX1zMCGn265RUXoKazk8TNw8gVmCeIWmxjXu0
-         9atl13SD50eRTituupdU7yHj0eeNc1FZy80Dql4f4jClf3PJKAd0dw0fF0iq70BlyjBm
-         D/8h5bsNDzQDKcXJmk5WKbzZmOyiV9nWldAukc3pft/P820sC0PeoGme7yQLVJZl6dNN
-         68lQ==
-X-Gm-Message-State: AOAM533cX8axbPLyO/5uGloelj8h1rp7LshnxgMBjIAQvMSvBl7c7+7W
-        X/53WSk6j6xjolzoHOFypqUhx/48H/iN54UXOIs=
-X-Google-Smtp-Source: ABdhPJyiJqjBIpEzWlk5pyqpoGG3+KpoWdKnlyza2YA6ODhXnRhATytwh5Bq+iGOzNqc5gs+zuqHC8iB1cjfDTXU/ik=
-X-Received: by 2002:a25:bcc7:: with SMTP id l7mr32380985ybm.115.1606141205830;
- Mon, 23 Nov 2020 06:20:05 -0800 (PST)
+        id S1728973AbgKWOnA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Mon, 23 Nov 2020 09:43:00 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47718 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726735AbgKWOnA (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 23 Nov 2020 09:43:00 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 71ABAAC23;
+        Mon, 23 Nov 2020 14:42:58 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 50fdd2a0;
+        Mon, 23 Nov 2020 14:43:14 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Eryu Guan <guan@eryu.me>, fstests@vger.kernel.org,
+        ceph-devel@vger.kernel.org
+Subject: Re: [PATCH v2] ceph: add a new test for cross quota realms renames
+References: <87sg90s8el.fsf@suse.de>
+        <20201123103439.27908-1-lhenriques@suse.de>
+        <adf5a0056e11fe2575915a4d416b2f65cba02ded.camel@kernel.org>
+Date:   Mon, 23 Nov 2020 14:43:14 +0000
+In-Reply-To: <adf5a0056e11fe2575915a4d416b2f65cba02ded.camel@kernel.org> (Jeff
+        Layton's message of "Mon, 23 Nov 2020 07:28:53 -0500")
+Message-ID: <87im9wrv5p.fsf@suse.de>
 MIME-Version: 1.0
-References: <cover.1605896059.git.gustavoars@kernel.org> <20201120105344.4345c14e@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
- <202011201129.B13FDB3C@keescook> <20201120115142.292999b2@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
- <202011220816.8B6591A@keescook> <9b57fd4914b46f38d54087d75e072d6e947cb56d.camel@HansenPartnership.com>
- <CANiq72nZrHWTA4_Msg6MP9snTyenC6-eGfD27CyfNSu7QoVZbw@mail.gmail.com> <1c7d7fde126bc0acf825766de64bf2f9b888f216.camel@HansenPartnership.com>
-In-Reply-To: <1c7d7fde126bc0acf825766de64bf2f9b888f216.camel@HansenPartnership.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Mon, 23 Nov 2020 15:19:55 +0100
-Message-ID: <CANiq72m22Jb5_+62NnwX8xds2iUdWDMAqD8PZw9cuxdHd95W0A@mail.gmail.com>
-Subject: Re: [PATCH 000/141] Fix fall-through warnings for Clang
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        alsa-devel@alsa-project.org, amd-gfx@lists.freedesktop.org,
-        bridge@lists.linux-foundation.org, ceph-devel@vger.kernel.org,
-        cluster-devel@redhat.com, coreteam@netfilter.org,
-        devel@driverdev.osuosl.org, dm-devel@redhat.com,
-        drbd-dev@lists.linbit.com, dri-devel@lists.freedesktop.org,
-        GR-everest-linux-l2@marvell.com, GR-Linux-NIC-Dev@marvell.com,
-        intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org,
-        keyrings@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
-        linux-acpi@vger.kernel.org, linux-afs@lists.infradead.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm@vger.kernel.org,
-        linux-atm-general@lists.sourceforge.net,
-        linux-block@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-cifs@vger.kernel.org,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-decnet-user@lists.sourceforge.net,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-fbdev@vger.kernel.org, linux-geode@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-hams@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-i3c@lists.infradead.org,
-        linux-ide@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input <linux-input@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-mmc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        netfilter-devel@vger.kernel.org, nouveau@lists.freedesktop.org,
-        op-tee@lists.trustedfirmware.org, oss-drivers@netronome.com,
-        patches@opensource.cirrus.com, rds-devel@oss.oracle.com,
-        reiserfs-devel@vger.kernel.org, samba-technical@lists.samba.org,
-        selinux@vger.kernel.org, target-devel@vger.kernel.org,
-        tipc-discussion@lists.sourceforge.net,
-        usb-storage@lists.one-eyed-alien.net,
-        virtualization@lists.linux-foundation.org,
-        wcn36xx@lists.infradead.org,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        xen-devel@lists.xenproject.org, linux-hardening@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Miguel Ojeda <ojeda@kernel.org>, Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, Nov 22, 2020 at 11:36 PM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
+Jeff Layton <jlayton@kernel.org> writes:
+
+> On Mon, 2020-11-23 at 10:34 +0000, Luis Henriques wrote:
+>> For the moment cross quota realms renames has been disabled in CephFS
+>> after a bug has been found while renaming files created and truncated.
+>> This allowed clients to easily circumvent quotas.
+>> 
+>> Link: https://tracker.ceph.com/issues/48203
+>> Signed-off-by: Luis Henriques <lhenriques@suse.de>
+>> ---
+>> v2: implemented Eryu review comments:
+>> - Added _require_test_program "rename"
+>> - Use _fail instead of _fatal
+>> 
+>>  tests/ceph/004     | 95 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  tests/ceph/004.out |  2 +
+>>  tests/ceph/group   |  1 +
+>>  3 files changed, 98 insertions(+)
+>>  create mode 100755 tests/ceph/004
+>>  create mode 100644 tests/ceph/004.out
+>> 
+>> diff --git a/tests/ceph/004 b/tests/ceph/004
+>> new file mode 100755
+>> index 000000000000..53094d8dfadc
+>> --- /dev/null
+>> +++ b/tests/ceph/004
+>> @@ -0,0 +1,95 @@
+>> +#! /bin/bash
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +# Copyright (c) 2020 SUSE Linux Products GmbH. All Rights Reserved.
+>> +#
+>> +# FS QA Test 004
+>> +#
+>> +# Tests a bug fix found in cephfs quotas handling.  Here's a simplified testcase
+>> +# that *should* fail:
+>> +#
+>> +#    mkdir files limit
+>> +#    truncate files/file -s 10G
+>> +#    setfattr limit -n ceph.quota.max_bytes -v 1000000
+>> +#    mv files limit/
+>> +#
+>> +# Because we're creating a new file and truncating it, we have Fx caps and thus
+>> +# the truncate operation will be cached.  This prevents the MDSs from updating
+>> +# the quota realms and thus the client will allow the above rename(2) to happen.
+>> +#
 >
-> Well, it seems to be three years of someone's time plus the maintainer
-> review time and series disruption of nearly a thousand patches.  Let's
-> be conservative and assume the producer worked about 30% on the series
-> and it takes about 5-10 minutes per patch to review, merge and for
-> others to rework existing series.  So let's say it's cost a person year
-> of a relatively junior engineer producing the patches and say 100h of
-> review and application time.  The latter is likely the big ticket item
-> because it's what we have in least supply in the kernel (even though
-> it's 20x vs the producer time).
+> Note that it can be difficult to predict which caps you get from the
+> MDS. It's not _required_ to pass out anything like Fx if it doesn't want
+> to, but in general, it does if it can.
+>
+> It's not a blocker for merging this test, but I wonder if we ought to
+> come up with some way to ensure that the client was given the caps we
+> expect when testing stuff like this.
+>
+> Maybe we ought to consider adding a new ceph.caps vxattr that shows the
+> caps we hold for a particular file? Then we could consult that when
+> doing a test like this to make sure we got what we expected.
 
-How are you arriving at such numbers? It is a total of ~200 trivial lines.
+Sure, I can hack a patch for doing that and send it out for review.
+That's actually trivial, I believe.
 
-> It's not about the risk of the changes it's about the cost of
-> implementing them.  Even if you discount the producer time (which
-> someone gets to pay for, and if I were the engineering manager, I'd be
-> unhappy about), the review/merge/rework time is pretty significant in
-> exchange for six minor bug fixes.  Fine, when a new compiler warning
-> comes along it's certainly reasonable to see if we can benefit from it
-> and the fact that the compiler people think it's worthwhile is enough
-> evidence to assume this initially.  But at some point you have to ask
-> whether that assumption is supported by the evidence we've accumulated
-> over the time we've been using it.  And if the evidence doesn't support
-> it perhaps it is time to stop the experiment.
+This test assumes the caps for the truncated file will be 'Fsxcrwb' but I
+didn't confirm with the MDS which conditions are actually required for
+this to happen.  Also, I guess that if the test is executed with several
+clients, these caps may change pretty quickly (and maybe even with a
+single very slow client with a very short caps timeout).
 
-Maintainers routinely review 1-line trivial patches, not to mention
-internal API changes, etc.
-
-If some company does not want to pay for that, that's fine, but they
-don't get to be maintainers and claim `Supported`.
+Obviously, ensuring the client has the caps we expect at the time we do
+the actual rename is racy and they can change in the meantime.  Is it
+worth the trouble?
 
 Cheers,
-Miguel
+-- 
+Luis
+
+>> +# The bug resulted in dropping support for cross quota-realms renames, reverting
+>> +# kernel commit dffdcd71458e ("ceph: allow rename operation under different
+>> +# quota realms").
+>> +#
+>> +# So, the above test will now fail with a -EXDEV or, in the future (when we have
+>> +# a proper fix), with -EDQUOT.
+>> +#
+>> +# This bug was tracker here:
+>> +#
+>> +#   https://tracker.ceph.com/issues/48203
+>> +#
+>> +seq=`basename $0`
+>> +seqres=$RESULT_DIR/$seq
+>> +echo "QA output created by $seq"
+>> +
+>> +here=`pwd`
+>> +tmp=/tmp/$$
+>> +status=1	# failure is the default!
+>> +trap "_cleanup; exit \$status" 0 1 2 3 15
+>> +
+>> +_cleanup()
+>> +{
+>> +	cd /
+>> +	rm -f $tmp.*
+>> +}
+>> +
+>> +# get standard environment, filters and checks
+>> +. ./common/rc
+>> +. ./common/filter
+>> +. ./common/attr
+>> +
+>> +# remove previous $seqres.full before test
+>> +rm -f $seqres.full
+>> +
+>> +# real QA test starts here
+>> +
+>> +_supported_fs ceph
+>> +_require_attrs
+>> +_require_test
+>> +_require_test_program "rename"
+>> +
+>> +workdir=$TEST_DIR/test-$seq
+>> +
+>> +orig1=$workdir/orig1
+>> +orig2=$workdir/orig2
+>> +file1=$orig1/file
+>> +file2=$orig2/file
+>> +dest=$workdir/dest
+>> +
+>> +rm -rf $workdir
+>> +mkdir $workdir
+>> +mkdir $orig1 $orig2 $dest
+>> +
+>> +# set quota to 1m
+>> +$SETFATTR_PROG -n ceph.quota.max_bytes -v 1000000 $dest
+>> +# set quota to 20g
+>> +$SETFATTR_PROG -n ceph.quota.max_bytes -v 20000000000 $orig2
+>> +
+>> +#
+>> +# The following 2 testcases shall fail with either -EXDEV or -EDQUOT
+>> +#
+>> +
+>> +# from 'root' realm to $dest realm
+>> +$XFS_IO_PROG -f -c "truncate 10G" $file1
+>> +$here/src/rename $orig1 $dest/new1 >> $seqres.full 2>&1
+>> +[ $? -ne 1 ] && _fail "cross quota realms rename succeeded"
+>> +
+>> +# from $orig2 realm to $dest realm
+>> +$XFS_IO_PROG -f -c "truncate 10G" $file2
+>> +$here/src/rename $orig2 $dest/new2 >> $seqres.full 2>&1
+>> +[ $? -ne 1 ] && _fail "cross quota realms rename succeeded"
+>> +
+>> +echo "Silence is golden"
+>> +
+>> +# success, all done
+>> +status=0
+>> +exit
+>> diff --git a/tests/ceph/004.out b/tests/ceph/004.out
+>> new file mode 100644
+>> index 000000000000..af8614ae45ac
+>> --- /dev/null
+>> +++ b/tests/ceph/004.out
+>> @@ -0,0 +1,2 @@
+>> +QA output created by 004
+>> +Silence is golden
+>> diff --git a/tests/ceph/group b/tests/ceph/group
+>> index adbf61547766..47903d21966c 100644
+>> --- a/tests/ceph/group
+>> +++ b/tests/ceph/group
+>> @@ -1,3 +1,4 @@
+>>  001 auto quick copy
+>>  002 auto quick copy
+>>  003 auto quick copy
+>> +004 auto quick quota
+>
+> This looks good to me.
+>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+>
