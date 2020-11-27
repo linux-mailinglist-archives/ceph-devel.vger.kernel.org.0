@@ -2,158 +2,211 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A97272C5A29
-	for <lists+ceph-devel@lfdr.de>; Thu, 26 Nov 2020 18:07:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B2CE2C65CC
+	for <lists+ceph-devel@lfdr.de>; Fri, 27 Nov 2020 13:37:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404198AbgKZRGC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 26 Nov 2020 12:06:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34006 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391545AbgKZRF7 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 26 Nov 2020 12:05:59 -0500
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FC77C0617A7;
-        Thu, 26 Nov 2020 09:05:58 -0800 (PST)
-Received: by mail-yb1-xb34.google.com with SMTP id r127so2177763yba.10;
-        Thu, 26 Nov 2020 09:05:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O/jaIJrbif54isUECHds/J8Ujq0NdoNxUTCCwJWwQ80=;
-        b=YymqsvqKytU8xghgrWvO9q2MBm/qo/QfMLfSKpWw4/r/4uRHhZxuPq9ek+nW3ctzYi
-         vs3zi1yLEuFoGUDgrnF15wpJAK9RqJ1aO9sTXa0PjOzjLe+d4O/pTFiiO013Mx2qKoL4
-         SkUMUUIjag5bjqwHGLYc9f20TwOaOWbGTale/6i8ahvnaZymX26ArF3ReuQKFVdof495
-         iKDDkr6mQvIIbdynQAd2wxd2GUAuBku/vDm4jIdtOw4Ph7wkJ5rD2TxigEVm3yQ5C9tu
-         pJCfZKqtAfLebSyeKrm6VDCN2G4oKvj4TFU9uFOnavPNoLjuB5eIt+ODZ6yyvDDDthAD
-         GeSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O/jaIJrbif54isUECHds/J8Ujq0NdoNxUTCCwJWwQ80=;
-        b=aBKS9dP5F50l3Jly7k9SSc/LK5erhBpycSZOv4wk5BN5RL5nJRXG22JXb51uhHUZXT
-         KIo7NPNuDQAaoFptzyQLY5+V165LaaM4A3SDftsG6r8jUKFTe3kOZlTNhFO98Omgyp9Q
-         a9Nhl4BC3JSKnQNtrA5BlkEEIiNZTXLFXBewv/QXrjtqSWNsWQaFfWQufRE4KuzbXqKR
-         PzrYxYYizDdcU7tHSLlPDoetCmkwwegjts2/MTRKSxYZHry2gE2IZ3EABAxgsDNNKkjr
-         HczI/bTiV/H0UdQWLP6YbSuhnjf+4UX9HDOCvOW26oy0A/Bet4FJA2uZGgwPUNbj9RMn
-         pyQw==
-X-Gm-Message-State: AOAM532cLFujGBf04/OSYyfwCvyItoqdB5R+dfwsdw217khsKAQ0vy+N
-        l26UMdbWZCDXWtXxdN3IQjQv/nw3FiJxL8cvQg0=
-X-Google-Smtp-Source: ABdhPJxMy5ncXEZ6TSWkZ0cAXTnkQ7iw+jjdg+cNNUWTZPlZcmFMrQQcJd2JAoeBontKFrtwmzLazAacI3fdsjx9xvQ=
-X-Received: by 2002:a5b:40e:: with SMTP id m14mr4835621ybp.33.1606410357153;
- Thu, 26 Nov 2020 09:05:57 -0800 (PST)
+        id S1729305AbgK0Mhd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 27 Nov 2020 07:37:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43316 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728740AbgK0Mhd (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 27 Nov 2020 07:37:33 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 01CE9ABD7;
+        Fri, 27 Nov 2020 12:37:31 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 7d5da8c7;
+        Fri, 27 Nov 2020 12:37:44 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Eryu Guan <guan@eryu.me>, Jeff Layton <jlayton@kernel.org>
+Cc:     fstests@vger.kernel.org, ceph-devel@vger.kernel.org,
+        Luis Henriques <lhenriques@suse.de>
+Subject: [PATCH v3] ceph: add a new test for cross quota realms renames
+Date:   Fri, 27 Nov 2020 12:37:42 +0000
+Message-Id: <20201127123742.561-1-lhenriques@suse.de>
 MIME-Version: 1.0
-References: <cover.1605896059.git.gustavoars@kernel.org> <20201120105344.4345c14e@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
- <202011201129.B13FDB3C@keescook> <20201120115142.292999b2@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
- <202011220816.8B6591A@keescook> <9b57fd4914b46f38d54087d75e072d6e947cb56d.camel@HansenPartnership.com>
- <CANiq72nZrHWTA4_Msg6MP9snTyenC6-eGfD27CyfNSu7QoVZbw@mail.gmail.com>
- <1c7d7fde126bc0acf825766de64bf2f9b888f216.camel@HansenPartnership.com>
- <CANiq72m22Jb5_+62NnwX8xds2iUdWDMAqD8PZw9cuxdHd95W0A@mail.gmail.com>
- <fc45750b6d0277c401015b7aa11e16cd15f32ab2.camel@HansenPartnership.com>
- <CANiq72k5tpDoDPmJ0ZWc1DGqm+81Gi-uEENAtvEs9v3SZcx6_Q@mail.gmail.com>
- <4993259d01a0064f8bb22770503490f9252f3659.camel@HansenPartnership.com>
- <CANiq72kqO=bYMJnFS2uYRpgWATJ=uXxZuNUsTXT+3aLtrpnzvQ@mail.gmail.com>
- <44005bde-f6d4-5eaa-39b8-1a5efeedb2d3@gmail.com> <CANiq72nobq=ptWK-qWxU91JHqkKhMcRtJNnw2XJd5-vSJWZd8Q@mail.gmail.com>
- <CAMuHMdV5kOakvZJMWLxbpigFPS+Xuw6DVYsWCWZy7wGsv3idcw@mail.gmail.com>
-In-Reply-To: <CAMuHMdV5kOakvZJMWLxbpigFPS+Xuw6DVYsWCWZy7wGsv3idcw@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Thu, 26 Nov 2020 18:05:45 +0100
-Message-ID: <CANiq72=n4rVvmKt0RCb5aOfQydA8bgDxfntRLDieV8Q2efP8Zg@mail.gmail.com>
-Subject: Re: [PATCH 000/141] Fix fall-through warnings for Clang
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Edward Cree <ecree.xilinx@gmail.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        linux-atm-general@lists.sourceforge.net,
-        reiserfs-devel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-ide@vger.kernel.org, dm-devel@redhat.com,
-        keyrings@vger.kernel.org,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        GR-everest-linux-l2@marvell.com, wcn36xx@lists.infradead.org,
-        samba-technical@lists.samba.org, linux-i3c@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net,
-        linux-afs@lists.infradead.org,
-        usb-storage@lists.one-eyed-alien.net,
-        Lars Ellenberg <drbd-dev@lists.linbit.com>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        linux-cifs@vger.kernel.org, rds-devel@oss.oracle.com,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        scsi <linux-scsi@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        oss-drivers@netronome.com, bridge@lists.linux-foundation.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        linux-stm32@st-md-mailman.stormreply.com, cluster-devel@redhat.com,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        coreteam@netfilter.org, intel-wired-lan@lists.osuosl.org,
-        linux-input <linux-input@vger.kernel.org>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>, selinux@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        linux-geode@lists.infradead.org, linux-can@vger.kernel.org,
-        linux-block@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        op-tee@lists.trustedfirmware.org,
-        linux-mediatek@lists.infradead.org, xen-devel@lists.xenproject.org,
-        Nouveau Dev <nouveau@lists.freedesktop.org>,
-        linux-hams@vger.kernel.org,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-hwmon@vger.kernel.org,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        GR-Linux-NIC-Dev@marvell.com,
-        tipc-discussion@lists.sourceforge.net,
-        Linux-MM <linux-mm@kvack.org>,
-        Network Development <netdev@vger.kernel.org>,
-        linux-decnet-user@lists.sourceforge.net,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        patches@opensource.cirrus.com, Joe Perches <joe@perches.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        target-devel <target-devel@vger.kernel.org>,
-        linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Nov 26, 2020 at 4:28 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> The maintainer is not necessarily the owner/author of the code, and
-> thus may not know the intent of the code.
+For the moment cross quota realms renames has been disabled in CephFS
+after a bug has been found while renaming files created and truncated.
+This allowed clients to easily circumvent quotas.
 
-Agreed, I was not blaming maintainers -- just trying to point out that
-the problem is there :-)
+Link: https://tracker.ceph.com/issues/48203
+Signed-off-by: Luis Henriques <lhenriques@suse.de>
+---
+v3: added file caps check, as suggested by Jeff Layton.
+This required commit "ceph: add ceph.caps vxattr" (not yet in mainline),
+which made me also introduce function _require_ceph_vxattr_caps.
 
-In those cases, it is still very useful: we add the `fallthrough` and
-a comment saying `FIXME: fallthrough intended? Figure this out...`.
-Thus a previous unknown unknown is now a known unknown. And no new
-unknown unknowns will be introduced since we enabled the warning
-globally.
+v2: implemented Eryu review comments:
+- Added _require_test_program "rename"
+- Use _fail instead of _fatal
+common/ceph        |   7 +++
+ tests/ceph/004     | 119 +++++++++++++++++++++++++++++++++++++++++++++
+ tests/ceph/004.out |   2 +
+ tests/ceph/group   |   1 +
+ 4 files changed, 129 insertions(+)
+ create mode 100755 tests/ceph/004
+ create mode 100644 tests/ceph/004.out
 
-> BTW, you cannot mindlessly fix the latter, as you cannot know if
-> "(a == b)" or "((a = b))" was intended, without understanding the code
-> (and the (possibly unavailable) data sheet, and the hardware, ...).
-
-That's right, I was referring to the cases where the compiler saves
-someone time from a typo they just made.
-
-Cheers,
-Miguel
+diff --git a/common/ceph b/common/ceph
+index f80209f98b23..ca756dda8dd3 100644
+--- a/common/ceph
++++ b/common/ceph
+@@ -21,3 +21,10 @@ _ceph_create_file_layout()
+ 		-v "stripe_unit=$objsz stripe_count=1 object_size=$objsz" \
+ 		$fname
+ }
++
++# this test requires to access file capabilities through vxattr 'ceph.caps'.
++_require_ceph_vxattr_caps()
++{
++	$GETFATTR_PROG -n "ceph.caps" $TEST_DIR >/dev/null 2>&1 \
++	  || _notrun "ceph.caps vxattr not supported"
++}
+diff --git a/tests/ceph/004 b/tests/ceph/004
+new file mode 100755
+index 000000000000..1de19b39acb5
+--- /dev/null
++++ b/tests/ceph/004
+@@ -0,0 +1,119 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (c) 2020 SUSE Linux Products GmbH. All Rights Reserved.
++#
++# FS QA Test 004
++#
++# Tests a bug fix found in cephfs quotas handling.  Here's a simplified testcase
++# that *should* fail:
++#
++#    mkdir files limit
++#    truncate files/file -s 10G
++#    setfattr limit -n ceph.quota.max_bytes -v 1000000
++#    mv files limit/
++#
++# Because we're creating a new file and truncating it, we have Fx caps and thus
++# the truncate operation will be cached.  This prevents the MDSs from updating
++# the quota realms and thus the client will allow the above rename(2) to happen.
++#
++# The bug resulted in dropping support for cross quota-realms renames, reverting
++# kernel commit dffdcd71458e ("ceph: allow rename operation under different
++# quota realms").
++#
++# So, the above test will now fail with a -EXDEV or, in the future (when we have
++# a proper fix), with -EDQUOT.
++#
++# This bug was tracker here:
++#
++#   https://tracker.ceph.com/issues/48203
++#
++seq=`basename $0`
++seqres=$RESULT_DIR/$seq
++echo "QA output created by $seq"
++
++here=`pwd`
++tmp=/tmp/$$
++status=1	# failure is the default!
++trap "_cleanup; exit \$status" 0 1 2 3 15
++
++_cleanup()
++{
++	cd /
++	rm -f $tmp.*
++}
++
++# get standard environment, filters and checks
++. ./common/rc
++. ./common/filter
++. ./common/attr
++
++# remove previous $seqres.full before test
++rm -f $seqres.full
++
++# real QA test starts here
++
++_supported_fs ceph
++_require_attrs
++_require_test
++_require_test_program "rename"
++_require_ceph_vxattr_caps # we need to get file capabilities
++
++workdir=$TEST_DIR/test-$seq
++
++orig1=$workdir/orig1
++orig2=$workdir/orig2
++file1=$orig1/file
++file2=$orig2/file
++dest=$workdir/dest
++
++rm -rf $workdir
++mkdir $workdir
++mkdir $orig1 $orig2 $dest
++
++# get only the hexadecimal value of the ceph.caps vxattr, which has the
++# following format:
++#   ceph.caps="pAsLsXsFscr/0xd55"
++get_ceph_caps()
++{
++	$GETFATTR_PROG --only-values -n "ceph.caps" $1 2>/dev/null \
++	    | cut -d / -f2
++}
++
++# check that a file has cephfs capabilities 'Fs'
++check_Fs_caps()
++{
++	caps=`get_ceph_caps $1`
++	# Fs cap is bit (1 << 8)
++	Fs=$((1 << 8))
++	res=$(($caps & $Fs))
++	if [ $res -ne $Fs ]; then
++		_fail "File $1 doesn't have Fs caps ($caps)"
++	fi
++}
++
++# set quota to 1m
++$SETFATTR_PROG -n ceph.quota.max_bytes -v 1000000 $dest
++# set quota to 20g
++$SETFATTR_PROG -n ceph.quota.max_bytes -v 20000000000 $orig2
++
++#
++# The following 2 testcases shall fail with either -EXDEV or -EDQUOT
++#
++
++# from 'root' realm to $dest realm
++$XFS_IO_PROG -f -c "truncate 10G" $file1
++check_Fs_caps $file1
++$here/src/rename $orig1 $dest/new1 >> $seqres.full 2>&1
++[ $? -ne 1 ] && _fail "cross quota realms rename succeeded"
++
++# from $orig2 realm to $dest realm
++$XFS_IO_PROG -f -c "truncate 10G" $file2
++check_Fs_caps $file2
++$here/src/rename $orig2 $dest/new2 >> $seqres.full 2>&1
++[ $? -ne 1 ] && _fail "cross quota realms rename succeeded"
++
++echo "Silence is golden"
++
++# success, all done
++status=0
++exit
+diff --git a/tests/ceph/004.out b/tests/ceph/004.out
+new file mode 100644
+index 000000000000..af8614ae45ac
+--- /dev/null
++++ b/tests/ceph/004.out
+@@ -0,0 +1,2 @@
++QA output created by 004
++Silence is golden
+diff --git a/tests/ceph/group b/tests/ceph/group
+index adbf61547766..47903d21966c 100644
+--- a/tests/ceph/group
++++ b/tests/ceph/group
+@@ -1,3 +1,4 @@
+ 001 auto quick copy
+ 002 auto quick copy
+ 003 auto quick copy
++004 auto quick quota
