@@ -2,87 +2,87 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 813502CF50E
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Dec 2020 20:50:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 265CF2CF607
+	for <lists+ceph-devel@lfdr.de>; Fri,  4 Dec 2020 22:14:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730614AbgLDTun (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 4 Dec 2020 14:50:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59130 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbgLDTun (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Dec 2020 14:50:43 -0500
-Received: from smtp.bit.nl (smtp.bit.nl [IPv6:2001:7b8:3:5::25:1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1104C061A51
-        for <ceph-devel@vger.kernel.org>; Fri,  4 Dec 2020 11:50:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit.nl;
-        s=smtp01; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-        Message-ID:Subject:From:To:Sender:Cc;
-        bh=rCzbLpu4a4/cMpVELGYLhbuuDVMz3nOans3poUXMeNE=; b=r0k7mGjPiq7FZuGs25aT0ZWBwV
-        GNT6nVtWHZ1brQyFTjbg6SHaVWkh7IoM01q7jaTkebzz+9IYV+EXZv02o4CldRB0Ivj9LCW5mfu3x
-        RYQSSelmUr4UKASfoRnxUxxBrs9CiOvXxM5rPlbORk2ZkHcxpga4wmP5aFdTKQWcIYiI65jwd5i8R
-        LzOpvmnpT6wWu/SNG5+VMFca3Em467tZs8mc5/J5u9D1OVLASspsFT/a4puHD3GsX9TgK9JsKxgCr
-        3Y1AaGGFwor4ZJkgbKUGGsXvuiJJEAWQXh9WrTtRzKMe6cL6XuMzwwz1DmueMY6Hnc1ntSedl33Z7
-        g2QfxNBw==;
-Received: from [2001:7b8:3:1002::1003] (port=7448)
-        by smtp1.smtp.dmz.bit.nl with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <stefan@bit.nl>)
-        id 1klH5b-0006Fp-Op; Fri, 04 Dec 2020 20:49:59 +0100
-To:     Jeff Layton <jlayton@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-References: <9afdb763-4cf6-3477-bd32-762840c0c0a5@bit.nl>
- <ac5253d71ea50c8f5b4e50a07a1a0180abd58562.camel@kernel.org>
-From:   Stefan Kooman <stefan@bit.nl>
+        id S1726627AbgLDVOL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 4 Dec 2020 16:14:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726021AbgLDVOL (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 4 Dec 2020 16:14:11 -0500
+Message-ID: <0920eb110e59b6e3090cde8bd1845ee083d7880a.camel@kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607116410;
+        bh=vUECHO+Bdt9z+lFD/ClAAxKgebkXbq7b1VL0AYd8LW0=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=Tza2lCAWaXzK8iw55Wu3Gd5F1MEU0MiEfoA2LmvDvizqh+VBFpcjt6JwaQoLL87ES
+         9JtRq6hL2Uao94FCXmRh7yduQSi7JtV83HPf5Hc6ADJIzcX5xUmdPnX+8nKAL1vuf/
+         CriEBzmRE4peOXTqWrvM+o4rVhMhFTLE8pGkRkfLIIM+C+vBqkxn3uuC8X4kKvYjW2
+         s9jY0opWbuuys3H2vUpLydxuS8LPj7/x7OykHE0iPYRJlsqJOtD+MSrfBmUvUU4bk+
+         1q5qC4PGnCXPTqbdGnURNJqwRVj1JdKVouqBdZ6HlTIpiiDRUlYsj1BGYBNUhz/GsK
+         PnmBM8F1kIJ+A==
 Subject: Re: Investigate busy ceph-msgr worker thread
-Message-ID: <945af793-1425-181a-c334-99e6602bc899@bit.nl>
-Date:   Fri, 4 Dec 2020 20:49:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.3
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Stefan Kooman <stefan@bit.nl>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Date:   Fri, 04 Dec 2020 16:13:29 -0500
+In-Reply-To: <945af793-1425-181a-c334-99e6602bc899@bit.nl>
+References: <9afdb763-4cf6-3477-bd32-762840c0c0a5@bit.nl>
+         <ac5253d71ea50c8f5b4e50a07a1a0180abd58562.camel@kernel.org>
+         <945af793-1425-181a-c334-99e6602bc899@bit.nl>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
 MIME-Version: 1.0
-In-Reply-To: <ac5253d71ea50c8f5b4e50a07a1a0180abd58562.camel@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 12/3/20 5:46 PM, Jeff Layton wrote:
-> On Thu, 2020-12-03 at 12:01 +0100, Stefan Kooman wrote:
->> Hi,
->>
->> We have a cephfs linux kernel (5.4.0-53-generic) workload (rsync) that
->> seems to be limited by a single ceph-msgr thread (doing close to 100%
->> cpu). We would like to investigate what this thread is so busy with.
->> What would be the easiest way to do this? On a related note: what would
->> be the best way to scale cephfs client performance for a single process
->> (if at all possible)?
->>
->> Thanks for any pointers.
->>
+On Fri, 2020-12-04 at 20:49 +0100, Stefan Kooman wrote:
+> On 12/3/20 5:46 PM, Jeff Layton wrote:
+> > On Thu, 2020-12-03 at 12:01 +0100, Stefan Kooman wrote:
+> > > Hi,
+> > > 
+> > > We have a cephfs linux kernel (5.4.0-53-generic) workload (rsync) that
+> > > seems to be limited by a single ceph-msgr thread (doing close to 100%
+> > > cpu). We would like to investigate what this thread is so busy with.
+> > > What would be the easiest way to do this? On a related note: what would
+> > > be the best way to scale cephfs client performance for a single process
+> > > (if at all possible)?
+> > > 
+> > > Thanks for any pointers.
+> > > 
+> > 
+> > Usually kernel profiling (a'la perf) is the way to go about this. You
+> > may want to consider trying more recent kernels and see if they fare any
+> > better. With a new enough MDS and kernel, you can try enabling async
+> > creates as well, and see whether that helps performance any.
 > 
-> Usually kernel profiling (a'la perf) is the way to go about this. You
-> may want to consider trying more recent kernels and see if they fare any
-> better. With a new enough MDS and kernel, you can try enabling async
-> creates as well, and see whether that helps performance any.
+> The thread is mostly busy with "build_snap_context":
+> 
+> 
+> +   94.39%    94.23%  kworker/4:1-cep  [kernel.kallsyms]  [k] 
+> build_snap_context
+> 
+> Do I understand correctly if this code is checking for any potential 
+> snapshots? As grepping through linux cephfs code gives a hit on snap.c
+> 
+> Our cephfs filesystem has been created in Luminous, and upgraded through 
+> Mimic to Nautilus. We have never enabled snapshot support (ceph fs set 
+> cephfs allow_new_snaps true). But the filesystem does seem to support it 
+> (.snap dirs present). The data rsync is processing does contain a lot of 
+> directories. It might explain the amount of time spent in this code path.
+> 
+> Would this be a plausible explanation?
+> 
+> Thanks,
+> 
+> Stefan
 
-The thread is mostly busy with "build_snap_context":
+Yes, that sounds plausible. You probably want to stop rsync from
+recursing down into .snap/ directories altogether if you have it doing
+that.
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-
-+   94.39%    94.23%  kworker/4:1-cep  [kernel.kallsyms]  [k] 
-build_snap_context
-
-Do I understand correctly if this code is checking for any potential 
-snapshots? As grepping through linux cephfs code gives a hit on snap.c
-
-Our cephfs filesystem has been created in Luminous, and upgraded through 
-Mimic to Nautilus. We have never enabled snapshot support (ceph fs set 
-cephfs allow_new_snaps true). But the filesystem does seem to support it 
-(.snap dirs present). The data rsync is processing does contain a lot of 
-directories. It might explain the amount of time spent in this code path.
-
-Would this be a plausible explanation?
-
-Thanks,
-
-Stefan
