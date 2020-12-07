@@ -2,79 +2,123 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E5AE2D11BD
-	for <lists+ceph-devel@lfdr.de>; Mon,  7 Dec 2020 14:23:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 431902D142F
+	for <lists+ceph-devel@lfdr.de>; Mon,  7 Dec 2020 15:59:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbgLGNWn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 7 Dec 2020 08:22:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57808 "EHLO
+        id S1727100AbgLGO6J (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 7 Dec 2020 09:58:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbgLGNWh (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 7 Dec 2020 08:22:37 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC3A8C0613D2;
-        Mon,  7 Dec 2020 05:21:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=F7hUBug/BdYTiR2j7Anf/1DeuPCCgmZdqR6ur3MPmh4=; b=uGd5+FaP3T2QFHwzEtHtmAOjwh
-        pJd5+n0tQP26yFPSJClKkFEM40EfvHY83q2RQUGx5i84Xd4dmMqzfxl8kncvFT2tmHbuR47gIqvau
-        RRcMeklhytSqP2GXqtg4RMn0hhfKDOyw4MA60Anpxe1ZAWAbYfZ+yPrcmDhV+jbIdi7+BzC5qKm2Q
-        I+EdSckTRaiyYhFr8Nsk9hdYYVwL4a0NhZAN6Xp5UoS/0aQiysoLa9k6zEIW6Evjd+N6Z1a/xUueZ
-        yL4w58pV7s0LYpqBBErYV9EDKH1MkTYYQjsJ18Tqtt8g5yMpIKHuoXy9j87vFcj2cSJqf1OITPdIE
-        l4XnSBEg==;
-Received: from [2001:4bb8:188:f36:4fd9:254f:b3b5:5284] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kmGSQ-0006Pe-By; Mon, 07 Dec 2020 13:21:38 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        with ESMTP id S1727089AbgLGO6J (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 7 Dec 2020 09:58:09 -0500
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C0F8C061749;
+        Mon,  7 Dec 2020 06:57:29 -0800 (PST)
+Received: by mail-il1-x141.google.com with SMTP id y9so12448868ilb.0;
+        Mon, 07 Dec 2020 06:57:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BdzMWmghWMnmqJzPNphPqafzWOiOvEaXvaPDnRpTyig=;
+        b=XAbT0sIGBd/lF/JpvMHWnpZhkY6ndEKj+4VNfzBQa+YwFTpXwWhd82chdPi99aEdtR
+         TJfRyYD7rqsjkjYOtmVR9fkbdH3SXZii52oM+mc7xsE2GI5CyRu3lDB5DFVOX0Af3saH
+         0cjWRLbl/3VTVuxnR1/sgozX4ifKxZUAfq4kodrdjf3JSrfLySW6hU2/h036dSXZpwaB
+         18HvdbtEJo5jUs6y+1SKBCyHRXkiQO7CjoMU6QSHtFzOZBSKYKdTczI+DuJa6vgfQbH2
+         Brt5cucKMyHJWrLnvsxu8EpYRjASHs0KY0TzYcT1fT3m7V1bjRnp79R2unvmGEr9iWbw
+         gVRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BdzMWmghWMnmqJzPNphPqafzWOiOvEaXvaPDnRpTyig=;
+        b=UL8X68euvIHcDDz1UE/Hbh7iZ7NqdmC3jgotkGvTqG4vAnfUxJ+Kl/Ey64p34hIv9O
+         60HlJ8/GGUFTLue7jn8NlcpkH4GXe4fdEfNrGMC+wgINlYTMLOI5TAoM83FVywvSVzVS
+         83ouOmNeATWwyZ1PIQHYG7lxQr5qiVHeqlZuj9NQJYrxjGfEB6xlYVy+qXEFFrFEuoMp
+         VnQprKAszDW06I7SUSChzIJjQVpsrYljTp+rj5nQmnZjFfAzD0Lf/0siwbKDt34QzJvA
+         wgJgqSuO+VEcFSIwaXVrajrMnEwAuMPq8Y+KYg/itl5x9ZkevdexkNBzvNGjlZkSWibw
+         6YwA==
+X-Gm-Message-State: AOAM533Y6Vo0ISoYOBYKaM3S3C1yBurbWYoXFsoQJ/JzPH3qX1jF7Ac0
+        r7+dQMsvZeh3Vxs9d/thPxrgrbcykQyYWJsdtd4=
+X-Google-Smtp-Source: ABdhPJzWgUFyUwn4oRQGFwhc7sjEZmk8MIUigwiYjc70guXN2OnSLrKLaIK50f+C57huiWudj+gdKgGdrTXAcHcP4D8=
+X-Received: by 2002:a92:4c3:: with SMTP id 186mr21869621ile.177.1607353048343;
+ Mon, 07 Dec 2020 06:57:28 -0800 (PST)
+MIME-Version: 1.0
+References: <20201207131918.2252553-1-hch@lst.de> <20201207131918.2252553-6-hch@lst.de>
+In-Reply-To: <20201207131918.2252553-6-hch@lst.de>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 7 Dec 2020 15:57:21 +0100
+Message-ID: <CAOi1vP9q7iGLmDryWJ0Duk2uQODr5W=5RCt2GAAxKk+N_k9OOg@mail.gmail.com>
+Subject: Re: [PATCH 5/6] rbd: remove the ->set_read_only method
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Oleksii Kurochko <olkuroch@cisco.com>,
         Sagi Grimberg <sagi@grimberg.me>,
         Mike Snitzer <snitzer@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
         Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        ceph-devel@vger.kernel.org, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: [PATCH 6/6] nvme: allow revalidate to set a namespace read-only
-Date:   Mon,  7 Dec 2020 14:19:18 +0100
-Message-Id: <20201207131918.2252553-7-hch@lst.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201207131918.2252553-1-hch@lst.de>
-References: <20201207131918.2252553-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        dm-devel@redhat.com, linux-block <linux-block@vger.kernel.org>,
+        linux-nvme@lists.infradead.org, Hannes Reinecke <hare@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Unconditionally call set_disk_ro now that it only updates the hardware
-state.  This allows to properly set up the Linux devices read-only when
-the controller turns a previously writable namespace read-only.
+On Mon, Dec 7, 2020 at 2:21 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Now that the hardware read-only state can't be changed by the BLKROSET
+> ioctl, the code in this method is not required anymore.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> ---
+>  drivers/block/rbd.c | 19 -------------------
+>  1 file changed, 19 deletions(-)
+>
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index 2ed79b09439a82..2c64ca15ca079f 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -692,29 +692,10 @@ static void rbd_release(struct gendisk *disk, fmode_t mode)
+>         put_device(&rbd_dev->dev);
+>  }
+>
+> -static int rbd_set_read_only(struct block_device *bdev, bool ro)
+> -{
+> -       struct rbd_device *rbd_dev = bdev->bd_disk->private_data;
+> -
+> -       /*
+> -        * Both images mapped read-only and snapshots can't be marked
+> -        * read-write.
+> -        */
+> -       if (!ro) {
+> -               if (rbd_is_ro(rbd_dev))
+> -                       return -EROFS;
+> -
+> -               rbd_assert(!rbd_is_snap(rbd_dev));
+> -       }
+> -
+> -       return 0;
+> -}
+> -
+>  static const struct block_device_operations rbd_bd_ops = {
+>         .owner                  = THIS_MODULE,
+>         .open                   = rbd_open,
+>         .release                = rbd_release,
+> -       .set_read_only          = rbd_set_read_only,
+>  };
+>
+>  /*
+> --
+> 2.29.2
+>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/nvme/host/core.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+If nothing can mess with read-only state after set_disk_ro(disk, true),
+looks good.
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 24d7f64f14cb15..18cbf92fc4f957 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2114,9 +2114,8 @@ static void nvme_update_disk_info(struct gendisk *disk,
- 	nvme_config_discard(disk, ns);
- 	nvme_config_write_zeroes(disk, ns);
- 
--	if ((id->nsattr & NVME_NS_ATTR_RO) ||
--	    test_bit(NVME_NS_FORCE_RO, &ns->flags))
--		set_disk_ro(disk, true);
-+	set_disk_ro(disk, (id->nsattr & NVME_NS_ATTR_RO) ||
-+		test_bit(NVME_NS_FORCE_RO, &ns->flags));
- }
- 
- static inline bool nvme_first_scan(struct gendisk *disk)
--- 
-2.29.2
+Acked-by: Ilya Dryomov <idryomov@gmail.com>
 
+Thanks,
+
+                Ilya
