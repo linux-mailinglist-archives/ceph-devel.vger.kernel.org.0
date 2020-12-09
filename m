@@ -2,96 +2,109 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 084472D390E
-	for <lists+ceph-devel@lfdr.de>; Wed,  9 Dec 2020 03:58:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A5632D417F
+	for <lists+ceph-devel@lfdr.de>; Wed,  9 Dec 2020 12:58:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbgLIC4r (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 8 Dec 2020 21:56:47 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:23538 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726839AbgLIC4q (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Dec 2020 21:56:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607482520;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0WZQF5SlAEi9+waVA6LQzgtvN5ftR3nM5/xd5tk5h3g=;
-        b=bNZP16f1I6XYP/c+d6wF95QMXWVtyL6fmAJ3aMBDf/BQOdQWefiS0oIhsVT/B0vWytuiZr
-        GItwXQKzZjIA80GuMKR8JqAgwM3UlsjZIP+/BoiTjAFprQTLfvcLtQ14Yg5NDb3sJu/HzJ
-        VcbNfThiU3m5yum1c0c2lgAmYTUUwB4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-374-7xfTxa8XOY-IC20s3V-rdQ-1; Tue, 08 Dec 2020 21:55:19 -0500
-X-MC-Unique: 7xfTxa8XOY-IC20s3V-rdQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4F945107ACE3;
-        Wed,  9 Dec 2020 02:55:17 +0000 (UTC)
-Received: from T590 (ovpn-12-139.pek2.redhat.com [10.72.12.139])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B90D019725;
-        Wed,  9 Dec 2020 02:55:01 +0000 (UTC)
-Date:   Wed, 9 Dec 2020 10:54:56 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Oleksii Kurochko <olkuroch@cisco.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        ceph-devel@vger.kernel.org, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH 6/6] nvme: allow revalidate to set a namespace read-only
-Message-ID: <20201209025456.GF1217988@T590>
-References: <20201208162829.2424563-1-hch@lst.de>
- <20201208162829.2424563-7-hch@lst.de>
+        id S1731123AbgLIL41 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 9 Dec 2020 06:56:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51770 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730695AbgLIL40 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 9 Dec 2020 06:56:26 -0500
+Message-ID: <532b2ccda1ed7d424cf7ebd9869b755a3d998c45.camel@kernel.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607514946;
+        bh=haUlJLU2WptWCa2pqD3qL6oNkEzgEZ9hxUd/e6+Lx44=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=fhIQJnzFW/u2B3EYZ7zOpO+/PDhQ3Nfekl6Jl4Jqbg9vCfdnLFlg3NuARMlS6NCOP
+         mdL5UrMkGqqRer5xHTlKEhhSO4Cjn+kV6jgE+pnYVzFIw9H14TVQX3geS+bnTpZOmK
+         rAaRVxPRUOhXIGVfG39LsyWV4PPbidwJdSYL34pGT2X1d8i0CGmVDWPC8sJIcWRVsr
+         ovk70WFYLCsGjcnLNh8yQxqQWepGcg9zd8uBlBMkQ3EInaseij0WNXwS14d7oM5y9q
+         WJ9jHQYtAz57Y0uQYgK+7jbVqxn4MIHrn+aD5rXO7zuQy7Vawq5ElJlW0OaE8bWbyi
+         TSdCNlrGj9R3Q==
+Subject: Re: [PATCH] ceph: set osdmap epoch for setxattr.
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com, idryomov@gmail.com
+Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Wed, 09 Dec 2020 06:55:44 -0500
+In-Reply-To: <20201209025220.2563698-1-xiubli@redhat.com>
+References: <20201209025220.2563698-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201208162829.2424563-7-hch@lst.de>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Dec 08, 2020 at 05:28:29PM +0100, Christoph Hellwig wrote:
-> Unconditionally call set_disk_ro now that it only updates the hardware
-> state.  This allows to properly set up the Linux devices read-only when
-> the controller turns a previously writable namespace read-only.
+On Wed, 2020-12-09 at 10:52 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Keith Busch <kbusch@kernel.org>
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+> When setting the file/dir layout, it may need data pool info. So
+> in mds server, it needs to check the osdmap. At present, if mds
+> doesn't find the data pool specified, it will try to get the latest
+> osdmap. Now if pass the osd epoch for setxattr, the mds server can
+> only check this epoch of osdmap.
+> 
+> URL: https://tracker.ceph.com/issues/48504
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  drivers/nvme/host/core.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+>  fs/ceph/mds_client.c         | 2 +-
+>  fs/ceph/xattr.c              | 3 +++
+>  include/linux/ceph/ceph_fs.h | 1 +
+>  3 files changed, 5 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index ce1b6151944131..3a0557ccc9fc5d 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -2114,9 +2114,8 @@ static void nvme_update_disk_info(struct gendisk *disk,
->  	nvme_config_discard(disk, ns);
->  	nvme_config_write_zeroes(disk, ns);
->  
-> -	if ((id->nsattr & NVME_NS_ATTR_RO) ||
-> -	    test_bit(NVME_NS_FORCE_RO, &ns->flags))
-> -		set_disk_ro(disk, true);
-> +	set_disk_ro(disk, (id->nsattr & NVME_NS_ATTR_RO) ||
-> +		test_bit(NVME_NS_FORCE_RO, &ns->flags));
->  }
->  
->  static inline bool nvme_first_scan(struct gendisk *disk)
-> -- 
-> 2.29.2
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 4fab37d858ce..9b5e3975b3ad 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -2533,7 +2533,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_client *mdsc,
+>  		goto out_free2;
+>  	}
+>  
 > 
+> -	msg->hdr.version = cpu_to_le16(2);
+> +	msg->hdr.version = cpu_to_le16(3);
+>  	msg->hdr.tid = cpu_to_le64(req->r_tid);
+>  
+> 
+>  	head = msg->front.iov_base;
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index e89750a1f039..a8597cae0ed7 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -995,6 +995,7 @@ static int ceph_sync_setxattr(struct inode *inode, const char *name,
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
+>  	struct ceph_mds_request *req;
+>  	struct ceph_mds_client *mdsc = fsc->mdsc;
+> +	struct ceph_osd_client *osdc = &fsc->client->osdc;
+>  	struct ceph_pagelist *pagelist = NULL;
+>  	int op = CEPH_MDS_OP_SETXATTR;
+>  	int err;
+> @@ -1033,6 +1034,8 @@ static int ceph_sync_setxattr(struct inode *inode, const char *name,
+>  
+> 
+>  	if (op == CEPH_MDS_OP_SETXATTR) {
+>  		req->r_args.setxattr.flags = cpu_to_le32(flags);
+> +		req->r_args.setxattr.osdmap_epoch =
+> +			cpu_to_le32(osdc->osdmap->epoch);
+>  		req->r_pagelist = pagelist;
+>  		pagelist = NULL;
+>  	}
+> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+> index 455e9b9e2adf..c0f1b921ec69 100644
+> --- a/include/linux/ceph/ceph_fs.h
+> +++ b/include/linux/ceph/ceph_fs.h
+> @@ -424,6 +424,7 @@ union ceph_mds_request_args {
+>  	} __attribute__ ((packed)) open;
+>  	struct {
+>  		__le32 flags;
+> +		__le32 osdmap_epoch; /* used for setting file/dir layouts */
+>  	} __attribute__ ((packed)) setxattr;
+>  	struct {
+>  		struct ceph_file_layout_legacy layout;
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-
+Thanks, Xiubo. Merged.
 -- 
-Ming
+Jeff Layton <jlayton@kernel.org>
 
