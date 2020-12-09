@@ -2,57 +2,62 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 92BAA2D4989
+	by mail.lfdr.de (Postfix) with ESMTP id 22CD62D4987
 	for <lists+ceph-devel@lfdr.de>; Wed,  9 Dec 2020 19:55:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387460AbgLISyo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        id S2387462AbgLISyo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
         Wed, 9 Dec 2020 13:54:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47108 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:47122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729345AbgLISyh (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        id S1733290AbgLISyh (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
         Wed, 9 Dec 2020 13:54:37 -0500
 From:   Jeff Layton <jlayton@kernel.org>
 Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
 To:     ceph-devel@vger.kernel.org
 Cc:     pdonnell@redhat.com, xiubli@redhat.com, idryomov@gmail.com
-Subject: [PATCH 0/4] ceph: implement later versions of MClientRequest headers
-Date:   Wed,  9 Dec 2020 13:53:50 -0500
-Message-Id: <20201209185354.29097-1-jlayton@kernel.org>
+Subject: [PATCH 1/4] ceph: don't reach into request header for readdir info
+Date:   Wed,  9 Dec 2020 13:53:51 -0500
+Message-Id: <20201209185354.29097-2-jlayton@kernel.org>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201209185354.29097-1-jlayton@kernel.org>
+References: <20201209185354.29097-1-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-A few years ago, userland ceph added support for changing the birthtime
-via setattr, as well as support for sending supplementary groups in a
-MDS request.
+We already have a pointer to the argument struct in req->r_args. Use that
+instead of groveling around in the ceph_mds_request_head.
 
-This patchset updates the kclient to use the newer protocol. The
-necessary structures are extended and the code is changed to support the
-newer formats when it detects that the MDS will support it.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/inode.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Supplementary groups will now be transmitted in the request, but for now
-the setting of btime is not implemented.
-
-This is a prerequisite step to adding support for the new "alternate
-name" field that Xiubo has been working on, which we'll need for
-proper fscrypt support.
-
-Jeff Layton (4):
-  ceph: don't reach into request header for readdir info
-  ceph: take a cred reference instead of tracking individual uid/gid
-  ceph: clean up argument lists to __prepare_send_request and
-    __send_request
-  ceph: implement updated ceph_mds_request_head structure
-
- fs/ceph/inode.c              |  5 +-
- fs/ceph/mds_client.c         | 98 ++++++++++++++++++++++++++----------
- fs/ceph/mds_client.h         |  3 +-
- include/linux/ceph/ceph_fs.h | 32 +++++++++++-
- 4 files changed, 106 insertions(+), 32 deletions(-)
-
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 9b85d86d8efb..93633cb4a905 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1594,8 +1594,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+ 	struct dentry *dn;
+ 	struct inode *in;
+ 	int err = 0, skipped = 0, ret, i;
+-	struct ceph_mds_request_head *rhead = req->r_request->front.iov_base;
+-	u32 frag = le32_to_cpu(rhead->args.readdir.frag);
++	u32 frag = le32_to_cpu(req->r_args.readdir.frag);
+ 	u32 last_hash = 0;
+ 	u32 fpos_offset;
+ 	struct ceph_readdir_cache_control cache_ctl = {};
+@@ -1612,7 +1611,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+ 		} else if (rinfo->offset_hash) {
+ 			/* mds understands offset_hash */
+ 			WARN_ON_ONCE(req->r_readdir_offset != 2);
+-			last_hash = le32_to_cpu(rhead->args.readdir.offset_hash);
++			last_hash = le32_to_cpu(req->r_args.readdir.offset_hash);
+ 		}
+ 	}
+ 
 -- 
 2.29.2
 
