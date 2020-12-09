@@ -2,22 +2,22 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 129302D498A
-	for <lists+ceph-devel@lfdr.de>; Wed,  9 Dec 2020 19:55:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88F342D4988
+	for <lists+ceph-devel@lfdr.de>; Wed,  9 Dec 2020 19:55:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387448AbgLISyo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        id S2387456AbgLISyo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
         Wed, 9 Dec 2020 13:54:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47132 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:47140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387434AbgLISyi (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 9 Dec 2020 13:54:38 -0500
+        id S2387443AbgLISyj (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 9 Dec 2020 13:54:39 -0500
 From:   Jeff Layton <jlayton@kernel.org>
 Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
 To:     ceph-devel@vger.kernel.org
 Cc:     pdonnell@redhat.com, xiubli@redhat.com, idryomov@gmail.com
-Subject: [PATCH 2/4] ceph: take a cred reference instead of tracking individual uid/gid
-Date:   Wed,  9 Dec 2020 13:53:52 -0500
-Message-Id: <20201209185354.29097-3-jlayton@kernel.org>
+Subject: [PATCH 3/4] ceph: clean up argument lists to __prepare_send_request and __send_request
+Date:   Wed,  9 Dec 2020 13:53:53 -0500
+Message-Id: <20201209185354.29097-4-jlayton@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201209185354.29097-1-jlayton@kernel.org>
 References: <20201209185354.29097-1-jlayton@kernel.org>
@@ -27,67 +27,79 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Replace req->r_uid/r_gid with an r_cred pointer and take a reference to
-that at the point where we previously would sample the two.  Use that to
-populate the uid and gid in the header and release the reference when
-the request is freed.
-
-This should enable us to later add support for sending supplementary
-group lists in MDS requests.
+We can always get the mdsc from the session, so there's no need to pass
+it in as a separate argument. Pass the session to __prepare_send_request
+as well, to prepare for later patches that will need to access it.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/mds_client.c | 8 ++++----
- fs/ceph/mds_client.h | 3 +--
- 2 files changed, 5 insertions(+), 6 deletions(-)
+ fs/ceph/mds_client.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 7d354d4e7933..1f1c5e490596 100644
+index 1f1c5e490596..f76ae9e7d4c1 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -833,6 +833,7 @@ void ceph_mdsc_release_request(struct kref *kref)
+@@ -2634,10 +2634,12 @@ static void complete_request(struct ceph_mds_client *mdsc,
+ /*
+  * called under mdsc->mutex
+  */
+-static int __prepare_send_request(struct ceph_mds_client *mdsc,
++static int __prepare_send_request(struct ceph_mds_session *session,
+ 				  struct ceph_mds_request *req,
+-				  int mds, bool drop_cap_releases)
++				  bool drop_cap_releases)
+ {
++	int mds = session->s_mds;
++	struct ceph_mds_client *mdsc = session->s_mdsc;
+ 	struct ceph_mds_request_head *rhead;
+ 	struct ceph_msg *msg;
+ 	int flags = 0;
+@@ -2721,15 +2723,13 @@ static int __prepare_send_request(struct ceph_mds_client *mdsc,
+ /*
+  * called under mdsc->mutex
+  */
+-static int __send_request(struct ceph_mds_client *mdsc,
+-			  struct ceph_mds_session *session,
++static int __send_request(struct ceph_mds_session *session,
+ 			  struct ceph_mds_request *req,
+ 			  bool drop_cap_releases)
+ {
+ 	int err;
+ 
+-	err = __prepare_send_request(mdsc, req, session->s_mds,
+-				     drop_cap_releases);
++	err = __prepare_send_request(session, req, drop_cap_releases);
+ 	if (!err) {
+ 		ceph_msg_get(req->r_request);
+ 		ceph_con_send(&session->s_con, req->r_request);
+@@ -2856,7 +2856,7 @@ static void __do_request(struct ceph_mds_client *mdsc,
+ 	if (req->r_request_started == 0)   /* note request start time */
+ 		req->r_request_started = jiffies;
+ 
+-	err = __send_request(mdsc, session, req, false);
++	err = __send_request(session, req, false);
+ 
+ out_session:
+ 	ceph_put_mds_session(session);
+@@ -3535,7 +3535,7 @@ static void replay_unsafe_requests(struct ceph_mds_client *mdsc,
+ 
+ 	mutex_lock(&mdsc->mutex);
+ 	list_for_each_entry_safe(req, nreq, &session->s_unsafe, r_unsafe_item)
+-		__send_request(mdsc, session, req, true);
++		__send_request(session, req, true);
+ 
+ 	/*
+ 	 * also re-send old requests when MDS enters reconnect stage. So that MDS
+@@ -3556,7 +3556,7 @@ static void replay_unsafe_requests(struct ceph_mds_client *mdsc,
+ 
+ 		ceph_mdsc_release_dir_caps_no_check(req);
+ 
+-		__send_request(mdsc, session, req, true);
++		__send_request(session, req, true);
  	}
- 	kfree(req->r_path1);
- 	kfree(req->r_path2);
-+	put_cred(req->r_cred);
- 	if (req->r_pagelist)
- 		ceph_pagelist_release(req->r_pagelist);
- 	put_request_session(req);
-@@ -888,8 +889,7 @@ static void __register_request(struct ceph_mds_client *mdsc,
- 	ceph_mdsc_get_request(req);
- 	insert_request(&mdsc->request_tree, req);
- 
--	req->r_uid = current_fsuid();
--	req->r_gid = current_fsgid();
-+	req->r_cred = get_current_cred();
- 
- 	if (mdsc->oldest_tid == 0 && req->r_op != CEPH_MDS_OP_SETFILELOCK)
- 		mdsc->oldest_tid = req->r_tid;
-@@ -2542,8 +2542,8 @@ static struct ceph_msg *create_request_message(struct ceph_mds_client *mdsc,
- 
- 	head->mdsmap_epoch = cpu_to_le32(mdsc->mdsmap->m_epoch);
- 	head->op = cpu_to_le32(req->r_op);
--	head->caller_uid = cpu_to_le32(from_kuid(&init_user_ns, req->r_uid));
--	head->caller_gid = cpu_to_le32(from_kgid(&init_user_ns, req->r_gid));
-+	head->caller_uid = cpu_to_le32(from_kuid(&init_user_ns, req->r_cred->fsuid));
-+	head->caller_gid = cpu_to_le32(from_kgid(&init_user_ns, req->r_cred->fsgid));
- 	head->ino = cpu_to_le64(req->r_deleg_ino);
- 	head->args = req->r_args;
- 
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index f5adbebcb38e..eaa7c5422116 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -275,8 +275,7 @@ struct ceph_mds_request {
- 
- 	union ceph_mds_request_args r_args;
- 	int r_fmode;        /* file mode, if expecting cap */
--	kuid_t r_uid;
--	kgid_t r_gid;
-+	const struct cred *r_cred;
- 	int r_request_release_offset;
- 	struct timespec64 r_stamp;
- 
+ 	mutex_unlock(&mdsc->mutex);
+ }
 -- 
 2.29.2
 
