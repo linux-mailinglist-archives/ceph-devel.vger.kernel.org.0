@@ -2,112 +2,114 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20AC12D3904
-	for <lists+ceph-devel@lfdr.de>; Wed,  9 Dec 2020 03:54:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 142842D3906
+	for <lists+ceph-devel@lfdr.de>; Wed,  9 Dec 2020 03:54:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbgLICxz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 8 Dec 2020 21:53:55 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:33684 "EHLO
+        id S1727011AbgLICyc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 8 Dec 2020 21:54:32 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:47794 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726931AbgLICxz (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Dec 2020 21:53:55 -0500
+        by vger.kernel.org with ESMTP id S1727012AbgLICy3 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Dec 2020 21:54:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607482349;
+        s=mimecast20190719; t=1607482383;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=DLfjBxaYu+0tzlcDsQQxd946NpNX6YQVuplK1/zu2F4=;
-        b=Xyh4C2IFXwsLVRvQn934GJJut844TlDCpaNlbMaOK2yR5wJzGyhXSgNp+m0pzL8oBZMS9S
-        AifR9f406YOoXcb0/JdqO8I6eqsqcqDCQWECYLntXxh6/fRhdzGxVpJaCoHwvIdElo7RpN
-        yncclU3meO7fHPiXBCw+zJMxHcIRh50=
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=cFNY6oR+hixdAWaVKQm4SgGYUWW8X4hMf/ko6NanEgg=;
+        b=Cds9MCj9zTNt580aj687JYv2uwlK5g/aR20yGlmmdtjQQ8+tKgvuFWdJV1LsocXv/28VcK
+        /KYUMnw+oiGqXaPplN3xLz3EK+1EmmIj4t4tCd+opZU5UXKi3tffzp4eiheDtZYt7pmync
+        AZKp5i63jN2t4bM8pUmU+4MGKYGD0m0=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-570-_bvVci44Pz-xBnF-6hk4LQ-1; Tue, 08 Dec 2020 21:52:26 -0500
-X-MC-Unique: _bvVci44Pz-xBnF-6hk4LQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-275-q6C_rUbMONuOm0y1RKtmGw-1; Tue, 08 Dec 2020 21:52:59 -0500
+X-MC-Unique: q6C_rUbMONuOm0y1RKtmGw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BE60C1005504;
-        Wed,  9 Dec 2020 02:52:24 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DCB4D6E406;
-        Wed,  9 Dec 2020 02:52:22 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org, idryomov@gmail.com
-Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: set osdmap epoch for setxattr.
-Date:   Wed,  9 Dec 2020 10:52:20 +0800
-Message-Id: <20201209025220.2563698-1-xiubli@redhat.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7A816107ACE3;
+        Wed,  9 Dec 2020 02:52:57 +0000 (UTC)
+Received: from T590 (ovpn-12-139.pek2.redhat.com [10.72.12.139])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 84BED6064B;
+        Wed,  9 Dec 2020 02:52:41 +0000 (UTC)
+Date:   Wed, 9 Dec 2020 10:52:36 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Oleksii Kurochko <olkuroch@cisco.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        ceph-devel@vger.kernel.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCH 5/6] rbd: remove the ->set_read_only method
+Message-ID: <20201209025236.GE1217988@T590>
+References: <20201208162829.2424563-1-hch@lst.de>
+ <20201208162829.2424563-6-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201208162829.2424563-6-hch@lst.de>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Tue, Dec 08, 2020 at 05:28:28PM +0100, Christoph Hellwig wrote:
+> Now that the hardware read-only state can't be changed by the BLKROSET
+> ioctl, the code in this method is not required anymore.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Acked-by: Ilya Dryomov <idryomov@gmail.com>
+> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+> ---
+>  drivers/block/rbd.c | 19 -------------------
+>  1 file changed, 19 deletions(-)
+> 
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index 2ed79b09439a82..2c64ca15ca079f 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -692,29 +692,10 @@ static void rbd_release(struct gendisk *disk, fmode_t mode)
+>  	put_device(&rbd_dev->dev);
+>  }
+>  
+> -static int rbd_set_read_only(struct block_device *bdev, bool ro)
+> -{
+> -	struct rbd_device *rbd_dev = bdev->bd_disk->private_data;
+> -
+> -	/*
+> -	 * Both images mapped read-only and snapshots can't be marked
+> -	 * read-write.
+> -	 */
+> -	if (!ro) {
+> -		if (rbd_is_ro(rbd_dev))
+> -			return -EROFS;
+> -
+> -		rbd_assert(!rbd_is_snap(rbd_dev));
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static const struct block_device_operations rbd_bd_ops = {
+>  	.owner			= THIS_MODULE,
+>  	.open			= rbd_open,
+>  	.release		= rbd_release,
+> -	.set_read_only		= rbd_set_read_only,
+>  };
+>  
+>  /*
+> -- 
+> 2.29.2
+> 
 
-When setting the file/dir layout, it may need data pool info. So
-in mds server, it needs to check the osdmap. At present, if mds
-doesn't find the data pool specified, it will try to get the latest
-osdmap. Now if pass the osd epoch for setxattr, the mds server can
-only check this epoch of osdmap.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-URL: https://tracker.ceph.com/issues/48504
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/mds_client.c         | 2 +-
- fs/ceph/xattr.c              | 3 +++
- include/linux/ceph/ceph_fs.h | 1 +
- 3 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 4fab37d858ce..9b5e3975b3ad 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2533,7 +2533,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_client *mdsc,
- 		goto out_free2;
- 	}
- 
--	msg->hdr.version = cpu_to_le16(2);
-+	msg->hdr.version = cpu_to_le16(3);
- 	msg->hdr.tid = cpu_to_le64(req->r_tid);
- 
- 	head = msg->front.iov_base;
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index e89750a1f039..a8597cae0ed7 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -995,6 +995,7 @@ static int ceph_sync_setxattr(struct inode *inode, const char *name,
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_mds_request *req;
- 	struct ceph_mds_client *mdsc = fsc->mdsc;
-+	struct ceph_osd_client *osdc = &fsc->client->osdc;
- 	struct ceph_pagelist *pagelist = NULL;
- 	int op = CEPH_MDS_OP_SETXATTR;
- 	int err;
-@@ -1033,6 +1034,8 @@ static int ceph_sync_setxattr(struct inode *inode, const char *name,
- 
- 	if (op == CEPH_MDS_OP_SETXATTR) {
- 		req->r_args.setxattr.flags = cpu_to_le32(flags);
-+		req->r_args.setxattr.osdmap_epoch =
-+			cpu_to_le32(osdc->osdmap->epoch);
- 		req->r_pagelist = pagelist;
- 		pagelist = NULL;
- 	}
-diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-index 455e9b9e2adf..c0f1b921ec69 100644
---- a/include/linux/ceph/ceph_fs.h
-+++ b/include/linux/ceph/ceph_fs.h
-@@ -424,6 +424,7 @@ union ceph_mds_request_args {
- 	} __attribute__ ((packed)) open;
- 	struct {
- 		__le32 flags;
-+		__le32 osdmap_epoch; /* used for setting file/dir layouts */
- 	} __attribute__ ((packed)) setxattr;
- 	struct {
- 		struct ceph_file_layout_legacy layout;
 -- 
-2.27.0
+Ming
 
