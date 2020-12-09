@@ -2,82 +2,83 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34E4E2D3033
-	for <lists+ceph-devel@lfdr.de>; Tue,  8 Dec 2020 17:50:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33EA22D3844
+	for <lists+ceph-devel@lfdr.de>; Wed,  9 Dec 2020 02:25:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730551AbgLHQuC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 8 Dec 2020 11:50:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42522 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730398AbgLHQuC (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 8 Dec 2020 11:50:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id C82D5AD1E;
-        Tue,  8 Dec 2020 16:49:20 +0000 (UTC)
-Subject: Re: [PATCH 6/6] nvme: allow revalidate to set a namespace read-only
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Oleksii Kurochko <olkuroch@cisco.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
+        id S1725910AbgLIBZH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 8 Dec 2020 20:25:07 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:45653 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725789AbgLIBZH (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Dec 2020 20:25:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607477021;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ks3Ply4N96m4k2H0dn1kKwtldUSUQfBTesh+Kzg2SfY=;
+        b=QP4Y65M2xtnSp0GawFA8xDwy/C+Ktg9Gyvi4u3RzO09gbMo7s+t/sllOvjntgJtDWt12Hv
+        0LDmiuQLCpQJ7YN+YeRzTr9G5wR9CJq/sDWUU1ijJHaBB76YsP75C1TCKlcJILk+URlMHc
+        Ah70duf0R443FCh888ztbbMoYmUzcJw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-15-8a_meGOmMGOcPRAitz_oJQ-1; Tue, 08 Dec 2020 20:23:39 -0500
+X-MC-Unique: 8a_meGOmMGOcPRAitz_oJQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 89BB41005513;
+        Wed,  9 Dec 2020 01:23:37 +0000 (UTC)
+Received: from T590 (ovpn-12-139.pek2.redhat.com [10.72.12.139])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EEBD660BE2;
+        Wed,  9 Dec 2020 01:23:21 +0000 (UTC)
+Date:   Wed, 9 Dec 2020 09:23:17 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
         Mike Snitzer <snitzer@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
+        Oleksii Kurochko <olkuroch@cisco.com>,
         Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        ceph-devel@vger.kernel.org, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Keith Busch <kbusch@kernel.org>
-References: <20201208162829.2424563-1-hch@lst.de>
- <20201208162829.2424563-7-hch@lst.de>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <59794c03-e907-f265-2358-b2271b46ec2b@suse.de>
-Date:   Tue, 8 Dec 2020 17:49:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        linux-block@vger.kernel.org, dm-devel@redhat.com,
+        linux-nvme@lists.infradead.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH 4/6] block: propagate BLKROSET on the whole device to all
+ partitions
+Message-ID: <20201209012317.GC1217988@T590>
+References: <20201207131918.2252553-1-hch@lst.de>
+ <20201207131918.2252553-5-hch@lst.de>
+ <20201208102923.GD1202995@T590>
+ <20201208105927.GB21762@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20201208162829.2424563-7-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201208105927.GB21762@lst.de>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 12/8/20 5:28 PM, Christoph Hellwig wrote:
-> Unconditionally call set_disk_ro now that it only updates the hardware
-> state.  This allows to properly set up the Linux devices read-only when
-> the controller turns a previously writable namespace read-only.
+On Tue, Dec 08, 2020 at 11:59:27AM +0100, Christoph Hellwig wrote:
+> On Tue, Dec 08, 2020 at 06:29:23PM +0800, Ming Lei wrote:
+> > > -		test_bit(GD_READ_ONLY, &bdev->bd_disk->state);
+> > > +	return bdev->bd_read_only || get_disk_ro(bdev->bd_disk);
+> > >  }
+> > >  EXPORT_SYMBOL(bdev_read_only);
+> > 
+> > I think this patch should be folded into previous one, otherwise
+> > bdev_read_only(part) may return false even though ioctl(BLKROSET)
+> > has been done on the whole disk.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Keith Busch <kbusch@kernel.org>
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> ---
->   drivers/nvme/host/core.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
+> The above is the existing behavior going back back very far, and I feel
+> much more comfortable having a small self-contained patch that changes
+> this behavior.
 > 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index ce1b6151944131..3a0557ccc9fc5d 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -2114,9 +2114,8 @@ static void nvme_update_disk_info(struct gendisk *disk,
->   	nvme_config_discard(disk, ns);
->   	nvme_config_write_zeroes(disk, ns);
->   
-> -	if ((id->nsattr & NVME_NS_ATTR_RO) ||
-> -	    test_bit(NVME_NS_FORCE_RO, &ns->flags))
-> -		set_disk_ro(disk, true);
-> +	set_disk_ro(disk, (id->nsattr & NVME_NS_ATTR_RO) ||
-> +		test_bit(NVME_NS_FORCE_RO, &ns->flags));
->   }
->   
->   static inline bool nvme_first_scan(struct gendisk *disk)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Cheers,
+OK, then looks fine:
 
-Hannes
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+
 -- 
-Dr. Hannes Reinecke                Kernel Storage Architect
-hare@suse.de                              +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
+Ming
+
