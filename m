@@ -2,38 +2,52 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 299532D54E2
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Dec 2020 08:53:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B4222D5A04
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Dec 2020 13:08:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733123AbgLJHuw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 10 Dec 2020 02:50:52 -0500
-Received: from verein.lst.de ([213.95.11.211]:52949 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727567AbgLJHuv (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 10 Dec 2020 02:50:51 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id DC72568AFE; Thu, 10 Dec 2020 08:50:08 +0100 (CET)
-Date:   Thu, 10 Dec 2020 08:50:08 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Oleksii Kurochko <olkuroch@cisco.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        ceph-devel@vger.kernel.org, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: split hard read-only vs read-only policy v2
-Message-ID: <20201210075008.GA13525@lst.de>
-References: <20201207131918.2252553-1-hch@lst.de>
+        id S1732583AbgLJMHz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 10 Dec 2020 07:07:55 -0500
+Received: from server.kenspensetc.com ([185.148.128.76]:50756 "EHLO
+        server.kenspensetc.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726439AbgLJMHv (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Dec 2020 07:07:51 -0500
+X-Greylist: delayed 1217 seconds by postgrey-1.27 at vger.kernel.org; Thu, 10 Dec 2020 07:07:51 EST
+Received: from localhost ([127.0.0.1]:45998 helo=server.kenspensetc.com)
+        by server.kenspensetc.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <sender@ridecals.com>)
+        id 1knKOC-0005oa-1I; Thu, 10 Dec 2020 06:45:40 -0500
+Received: from [70.32.0.46] ([70.32.0.46]) by ridecals.com (Horde Framework)
+ with HTTPS; Thu, 10 Dec 2020 06:45:39 -0500
+Date:   Thu, 10 Dec 2020 06:45:39 -0500
+Message-ID: <20201210064539.Horde.xot9pjGRojOmZsHJhTW6Ijv@ridecals.com>
+From:   Russell Branting <sender@ridecals.com>
+Subject: Vital
+Reply-to: Goodagent01@gmail.com
+User-Agent: Horde Application Framework 5
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201207131918.2252553-1-hch@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.kenspensetc.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - ridecals.com
+X-Get-Message-Sender-Via: server.kenspensetc.com: authenticated_id: sender9@ridecals.com
+X-Authenticated-Sender: server.kenspensetc.com: sender9@ridecals.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jens, can you pick this up for 5.11?
+
+I am instructed to inform you of your appointment as the next of kin  
+to your deceased relative estate. Kindly indicate your acceptance by  
+reconfirming your Full Name, Address & Phone Number for immediate  
+processing of the funds release to your control OR the deceased  
+deposited funds will be declared unclaimed.
+
+
