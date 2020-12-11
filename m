@@ -2,74 +2,62 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 877C32D757E
-	for <lists+ceph-devel@lfdr.de>; Fri, 11 Dec 2020 13:25:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B4E82D75C7
+	for <lists+ceph-devel@lfdr.de>; Fri, 11 Dec 2020 13:41:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395555AbgLKMYF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 11 Dec 2020 07:24:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60050 "EHLO mail.kernel.org"
+        id S2395210AbgLKMkU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 11 Dec 2020 07:40:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391777AbgLKMXl (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 11 Dec 2020 07:23:41 -0500
-Message-ID: <0cde2f2eecffacc754d09e1f5c2bc338ede6451f.camel@kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607689380;
-        bh=8x5J0R0LH+dxx+SDxob+VZYmxyXVYyVnAAp0ftHs8YM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=RVCHvgRdWAfMqQmlRXbHAaf+5yeGi8f74xrBJ2oGm9VkUl6aCfHzHRxrL+Ml62FD0
-         U8QtYTt1gzDU+d+HMzBy+seEE6OacQxxH5r20ATxVdCMg1cgzwzBecjn+MxUo7T5t7
-         b3wykcL44/Eyjegfx1KPYlyX4tTtclRU95yyw/hQq7aWOJUNmy1vaCHwHayJ2ial+W
-         swAsegh+S8qhsIGaMLcgF87eCAAsEyM4BJ53qlKBXjJGBvEHNtykTU9Hsm3DKEIbJp
-         GziHgjFx+BpZ4CfpSntzl1Q9tI334LrOXb1CTTzxI5HM9T+PvKTYevSOHHvvQiyF+Z
-         V2Ffyc3Ksogqg==
-Subject: Re: [PATCH -next] fs/omfs: convert comma to semicolon
+        id S2436533AbgLKMjl (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 11 Dec 2020 07:39:41 -0500
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Zheng Yongjun <zhengyongjun3@huawei.com>, idryomov@gmail.com
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        me <me@bobcopeland.com>,
-        linux-karma-devel <linux-karma-devel@lists.sourceforge.net>
-Date:   Fri, 11 Dec 2020 07:22:58 -0500
-In-Reply-To: <20201211084013.1878-1-zhengyongjun3@huawei.com>
-References: <20201211084013.1878-1-zhengyongjun3@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
+Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
+To:     ceph-devel@vger.kernel.org
+Cc:     xiubli@redhat.com, idryomov@gmail.com
+Subject: [PATCH 0/3] ceph: don't call ceph_check_caps in page_mkwrite
+Date:   Fri, 11 Dec 2020 07:38:55 -0500
+Message-Id: <20201211123858.7522-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2020-12-11 at 16:40 +0800, Zheng Yongjun wrote:
-> Replace a comma between expression statements by a semicolon.
-> 
-> Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
-> ---
->  fs/omfs/file.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/omfs/file.c b/fs/omfs/file.c
-> index 2c7b70ee1388..fc6828f30f60 100644
-> --- a/fs/omfs/file.c
-> +++ b/fs/omfs/file.c
-> @@ -22,8 +22,8 @@ void omfs_make_empty_table(struct buffer_head *bh, int offset)
->  	struct omfs_extent *oe = (struct omfs_extent *) &bh->b_data[offset];
->  
-> 
->  	oe->e_next = ~cpu_to_be64(0ULL);
-> -	oe->e_extent_count = cpu_to_be32(1),
-> -	oe->e_fill = cpu_to_be32(0x22),
-> +	oe->e_extent_count = cpu_to_be32(1);
-> +	oe->e_fill = cpu_to_be32(0x22);
->  	oe->e_entry.e_cluster = ~cpu_to_be64(0ULL);
->  	oe->e_entry.e_blocks = ~cpu_to_be64(0ULL);
->  }
+I've been working on the fscache rework, and have hit some rather
+complex lockdep circular locking warnings. Most of them involve two
+filesystems (cephfs and the local cachefiles fs), so it's not clear
+to me whether they are false positives.
 
-(cc'ing Bob Copeland and linux-karma mailing list)
+They do involve the mmap_lock though, which is taken up in the vfs. I
+think it would probably be best to not do the ceph_check_caps call with
+that lock held if we can avoid it.
 
-Looks fine, but this patch isn't related to ceph in any way. See
-Documentation/filesystems/omfs.rst for a description of OMFS.
+The first patch in this series fixes what looks like a probable bug to
+me. If we want to avoid checking caps in some cases, then we probably
+also want to avoid flushing the snaps too since that involves the same
+locks.
 
-Cheers,
+The second patch replaces the patch that I sent a few weeks ago to add
+a queue_inode_work helper.
+
+The last patch extends some work that Xiubo did earlier to allow skipping
+the caps check after putting references. It adds a new "flavor" when
+putting caps that instead has the inode work do the check or flush after
+the refcounts have been decremented.
+
+Jeff Layton (3):
+  ceph: fix flush_snap logic after putting caps
+  ceph: clean up inode work queueing
+  ceph: allow queueing cap/snap handling after putting cap references
+
+ fs/ceph/addr.c  |  2 +-
+ fs/ceph/caps.c  | 36 +++++++++++++++++++++++------
+ fs/ceph/inode.c | 61 ++++++++++---------------------------------------
+ fs/ceph/super.h | 40 +++++++++++++++++++++++++++-----
+ 4 files changed, 76 insertions(+), 63 deletions(-)
+
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.29.2
 
