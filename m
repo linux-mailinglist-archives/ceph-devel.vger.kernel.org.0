@@ -2,191 +2,99 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C974D2D75CA
-	for <lists+ceph-devel@lfdr.de>; Fri, 11 Dec 2020 13:41:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA9FC2D9924
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Dec 2020 14:46:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392347AbgLKMkS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 11 Dec 2020 07:40:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436541AbgLKMjn (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 11 Dec 2020 07:39:43 -0500
-From:   Jeff Layton <jlayton@kernel.org>
-Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
-To:     ceph-devel@vger.kernel.org
-Cc:     xiubli@redhat.com, idryomov@gmail.com
-Subject: [PATCH 3/3] ceph: allow queueing cap/snap handling after putting cap references
-Date:   Fri, 11 Dec 2020 07:38:58 -0500
-Message-Id: <20201211123858.7522-4-jlayton@kernel.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201211123858.7522-1-jlayton@kernel.org>
-References: <20201211123858.7522-1-jlayton@kernel.org>
+        id S2439975AbgLNNoh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Dec 2020 08:44:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38028 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407077AbgLNNoS (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Dec 2020 08:44:18 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 720F9C0613CF
+        for <ceph-devel@vger.kernel.org>; Mon, 14 Dec 2020 05:43:38 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id r17so15769935ilo.11
+        for <ceph-devel@vger.kernel.org>; Mon, 14 Dec 2020 05:43:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=KBqKcFnuJCxAdVvLBmgV+qzjkBMjH3zfRT6Ep8BJ+L8=;
+        b=cVlpGyKJkAXg2lYfDH5UhthwLDCbzzzwcXIFFw8WCq16KM8vaxoFDdEPmNCt2nn8Yf
+         Ja3WEHcHSfArjFl/5ktxF3Qjc3AgtjMeTUaNax2vxf9nSv51zRZy9EoOrdXCjyhsaFEH
+         nruDc/YpkCgEBESeM9Zkdmqx3QKrEGYkr6ZOP7q7kFhk0iqaMjCd4t2ADRhuQdGmwtd0
+         5Dr0oj2Ugg7e2TSeaRNg6VGI5nSDz+aEhRDg/NGOR00xaeUZ0dN9e+zVgG5gqMpFTp/4
+         LV03MmMUwCqQo0zeGkL4f3nxWzE0ff/KkXr/f22nJLQMeJ52H9Y0M0Y4UQ8p2zXsRh/0
+         Wr+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=KBqKcFnuJCxAdVvLBmgV+qzjkBMjH3zfRT6Ep8BJ+L8=;
+        b=hNcwhRAODn6AaylBdoqbueh21a8ZwzI5NQzKVHPwiIMYuYP32yID4AkLAFOACX1tLC
+         XPMGusuAa0TYg4dcB7wob9Q//suzJ7D3Vucj09myft5Ez4aTR92iiSHSUL89LHQAlf75
+         DWezK91E7nW6vd7H60zvsy/DmhlF+9LvSd0MM4dEHX5IoGpxuthSxyofeSs4pf+wRqTZ
+         lLTj6xajnQSg7VWXme8V71RQ9r29jhqBZpo10B58LUIsI09B24rCvXMf4cyPU4HUdT1t
+         g2l777qK0rvFpvfljMQOIeu0nOLuaTTitl1dWy/Xni9Lgfcp9F+dYltc/5n/kyVH3a4T
+         YPVQ==
+X-Gm-Message-State: AOAM532taL8GNqTmkUGInV/ImLWRlv/6aYRDNqGvAq7Yv+WHof0NHi43
+        PbkCvWisJppxgy80+YRq4lqFZtVGMN4ns9hbs+A9gu0m/B0=
+X-Google-Smtp-Source: ABdhPJzywmsn6pCUSPdTR9s7ZRQpjcBW5PvfcHOujNzTgq2SvYylnYWvd7zbXvjAm8rukRv6p/r9fkSbhqB3Q9qw+8I=
+X-Received: by 2002:a92:c6c3:: with SMTP id v3mr4451791ilm.281.1607953417845;
+ Mon, 14 Dec 2020 05:43:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 14 Dec 2020 14:43:26 +0100
+Message-ID: <CAOi1vP_gHLrNBe-pU9G+GmE+JF8g2SY7UqgGqzeW5sXXf1jAcQ@mail.gmail.com>
+Subject: wip-msgr2
+To:     Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Testing with the fscache overhaul has triggered some lockdep warnings
-about circular lock dependencies involving page_mkwrite and the
-mmap_lock. It'd be better to do the "real work" without the mmap lock
-being held.
+Hello,
 
-Change the skip_checking_caps parameter in __ceph_put_cap_refs to an
-enum, and use that to determine whether to queue check_caps, do it
-synchronously or not at all. Change ceph_page_mkwrite to do a
-ceph_put_cap_refs_async().
+I've pushed wip-msgr2 and opened a dummy PR in ceph-client:
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/addr.c  |  2 +-
- fs/ceph/caps.c  | 28 ++++++++++++++++++++++++----
- fs/ceph/inode.c |  6 ++++++
- fs/ceph/super.h | 19 ++++++++++++++++---
- 4 files changed, 47 insertions(+), 8 deletions(-)
+  https://github.com/ceph/ceph-client/pull/22
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 950552944436..26e66436f005 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1662,7 +1662,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
- 
- 	dout("page_mkwrite %p %llu~%zd dropping cap refs on %s ret %x\n",
- 	     inode, off, len, ceph_cap_string(got), ret);
--	ceph_put_cap_refs(ci, got);
-+	ceph_put_cap_refs_async(ci, got);
- out_free:
- 	ceph_restore_sigs(&oldset);
- 	sb_end_pagefault(inode->i_sb);
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 336348e733b9..a95ab4c02056 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -3026,6 +3026,12 @@ static int ceph_try_drop_cap_snap(struct ceph_inode_info *ci,
- 	return 0;
- }
- 
-+enum PutCapRefsMode {
-+	PutCapRefsModeSync = 0,
-+	PutCapRefsModeSkip,
-+	PutCapRefsModeAsync,
-+};
-+
- /*
-  * Release cap refs.
-  *
-@@ -3036,7 +3042,7 @@ static int ceph_try_drop_cap_snap(struct ceph_inode_info *ci,
-  * cap_snap, and wake up any waiters.
-  */
- static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
--				bool skip_checking_caps)
-+				enum PutCapRefsMode mode)
- {
- 	struct inode *inode = &ci->vfs_inode;
- 	int last = 0, put = 0, flushsnaps = 0, wake = 0;
-@@ -3092,11 +3098,20 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
- 	dout("put_cap_refs %p had %s%s%s\n", inode, ceph_cap_string(had),
- 	     last ? " last" : "", put ? " put" : "");
- 
--	if (!skip_checking_caps) {
-+	switch(mode) {
-+	default:
-+		break;
-+	case PutCapRefsModeSync:
- 		if (last)
- 			ceph_check_caps(ci, 0, NULL);
- 		else if (flushsnaps)
- 			ceph_flush_snaps(ci, NULL);
-+		break;
-+	case PutCapRefsModeAsync:
-+		if (last)
-+			ceph_queue_check_caps(inode);
-+		else if (flushsnaps)
-+			ceph_queue_flush_snaps(inode);
- 	}
- 	if (wake)
- 		wake_up_all(&ci->i_cap_wq);
-@@ -3106,12 +3121,17 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
- 
- void ceph_put_cap_refs(struct ceph_inode_info *ci, int had)
- {
--	__ceph_put_cap_refs(ci, had, false);
-+	__ceph_put_cap_refs(ci, had, PutCapRefsModeSync);
-+}
-+
-+void ceph_put_cap_refs_async(struct ceph_inode_info *ci, int had)
-+{
-+	__ceph_put_cap_refs(ci, had, PutCapRefsModeAsync);
- }
- 
- void ceph_put_cap_refs_no_check_caps(struct ceph_inode_info *ci, int had)
- {
--	__ceph_put_cap_refs(ci, had, true);
-+	__ceph_put_cap_refs(ci, had, PutCapRefsModeSkip);
- }
- 
- /*
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 9cd8b37e586a..a7ee19e27e26 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1965,6 +1965,12 @@ static void ceph_inode_work(struct work_struct *work)
- 	if (test_and_clear_bit(CEPH_I_WORK_VMTRUNCATE, &ci->i_work_mask))
- 		__ceph_do_pending_vmtruncate(inode);
- 
-+	if (test_and_clear_bit(CEPH_I_WORK_CHECK_CAPS, &ci->i_work_mask))
-+		ceph_check_caps(ci, 0, NULL);
-+
-+	if (test_and_clear_bit(CEPH_I_WORK_FLUSH_SNAPS, &ci->i_work_mask))
-+		ceph_flush_snaps(ci, NULL);
-+
- 	iput(inode);
- }
- 
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 59153ee201c0..13b02887b085 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -562,9 +562,11 @@ static inline struct inode *ceph_find_inode(struct super_block *sb,
- /*
-  * Masks of ceph inode work.
-  */
--#define CEPH_I_WORK_WRITEBACK		0 /* writeback */
--#define CEPH_I_WORK_INVALIDATE_PAGES	1 /* invalidate pages */
--#define CEPH_I_WORK_VMTRUNCATE		2 /* vmtruncate */
-+#define CEPH_I_WORK_WRITEBACK		0
-+#define CEPH_I_WORK_INVALIDATE_PAGES	1
-+#define CEPH_I_WORK_VMTRUNCATE		2
-+#define CEPH_I_WORK_CHECK_CAPS		3
-+#define CEPH_I_WORK_FLUSH_SNAPS		4
- 
- /*
-  * We set the ERROR_WRITE bit when we start seeing write errors on an inode
-@@ -982,6 +984,16 @@ static inline void ceph_queue_writeback(struct inode *inode)
- 	ceph_queue_inode_work(inode, CEPH_I_WORK_WRITEBACK);
- }
- 
-+static inline void ceph_queue_check_caps(struct inode *inode)
-+{
-+	ceph_queue_inode_work(inode, CEPH_I_WORK_CHECK_CAPS);
-+}
-+
-+static inline void ceph_queue_flush_snaps(struct inode *inode)
-+{
-+	ceph_queue_inode_work(inode, CEPH_I_WORK_FLUSH_SNAPS);
-+}
-+
- extern int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
- 			     int mask, bool force);
- static inline int ceph_do_getattr(struct inode *inode, int mask, bool force)
-@@ -1120,6 +1132,7 @@ extern void ceph_take_cap_refs(struct ceph_inode_info *ci, int caps,
- 				bool snap_rwsem_locked);
- extern void ceph_get_cap_refs(struct ceph_inode_info *ci, int caps);
- extern void ceph_put_cap_refs(struct ceph_inode_info *ci, int had);
-+extern void ceph_put_cap_refs_async(struct ceph_inode_info *ci, int had);
- extern void ceph_put_cap_refs_no_check_caps(struct ceph_inode_info *ci,
- 					    int had);
- extern void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int nr,
--- 
-2.29.2
+This set has been through a over a dozen krbd test suite runs with no
+issues other than those with the test suite itself.  The diffstat is
+rather big, so I didn't want to spam the list.  If someone wants it
+posted, let me know.  Any comments are welcome!
 
+ drivers/block/rbd.c                |    8 +-
+ fs/ceph/mds_client.c               |  106 +-
+ fs/ceph/mdsmap.c                   |   21 +-
+ include/linux/ceph/auth.h          |   68 +-
+ include/linux/ceph/ceph_features.h |   11 +-
+ include/linux/ceph/ceph_fs.h       |   11 +
+ include/linux/ceph/decode.h        |    8 +
+ include/linux/ceph/libceph.h       |   10 +-
+ include/linux/ceph/mdsmap.h        |    2 +-
+ include/linux/ceph/messenger.h     |  285 ++-
+ include/linux/ceph/msgr.h          |   57 +-
+ include/linux/ceph/osdmap.h        |    4 +-
+ net/ceph/Kconfig                   |    3 +
+ net/ceph/Makefile                  |    3 +-
+ net/ceph/auth.c                    |  408 ++++-
+ net/ceph/auth_none.c               |    5 +-
+ net/ceph/auth_x.c                  |  298 +++-
+ net/ceph/auth_x_protocol.h         |    3 +-
+ net/ceph/ceph_common.c             |   63 +
+ net/ceph/ceph_strings.c            |   28 +
+ net/ceph/crypto.h                  |    3 +
+ net/ceph/decode.c                  |  101 ++
+ net/ceph/messenger.c               | 2252 +++++------------------
+ net/ceph/messenger_v1.c            | 1506 ++++++++++++++++
+ net/ceph/messenger_v2.c            | 3443 ++++++++++++++++++++++++++++++++
+ net/ceph/mon_client.c              |  320 +++-
+ net/ceph/osd_client.c              |  111 +-
+ net/ceph/osdmap.c                  |   45 +-
+ 28 files changed, 7027 insertions(+), 2156 deletions(-)
+ create mode 100644 net/ceph/messenger_v1.c
+ create mode 100644 net/ceph/messenger_v2.c
+
+Thanks,
+
+                Ilya
