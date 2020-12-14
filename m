@@ -2,138 +2,99 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 98E292D9B80
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Dec 2020 16:53:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF52B2D9B8D
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Dec 2020 16:56:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439541AbgLNPw1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Dec 2020 10:52:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35850 "EHLO mail.kernel.org"
+        id S2439190AbgLNP4L (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Dec 2020 10:56:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43634 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730761AbgLNPwT (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 14 Dec 2020 10:52:19 -0500
-Message-ID: <c66a8ed80a647620a4f9ca837c44bf278d15ca9c.camel@kernel.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607961098;
-        bh=R5Z7kVa+VAhScSsCOMLeyRnradKMB/d0Wkqv9oUf2aA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=BGf5qAkfqlbuqkNQjZtxaTssTdT+iWaA70B9aYUIoa+4rR30tVsFc8MleIKOrNPZ/
-         DtH0dkomTsnPayRuoFuTyxXin+dqBLwA7p3+3IwOaQs1LViUhzeqYf5EOvBtIOC1tp
-         oazKF1ZXD99VZqnjXDAuzmWjTXq3MAgXKmeUfsFwvy6XKRJQs+H8b11/7FEw79PPvp
-         1Jy4gyfbXjxeDovN5xdmIYY2fHaSJZooR6BlklG213pPY9Yl0h3vgtGmXH2+Jjfk2v
-         jrtAxnC8/iko4mLZr8fwgQKHzEITwBFZfw+r4MC9MscQtnjGL5fgKagkBkUsQxqgcZ
-         vCerDOOjUGMmg==
-Subject: Re: [PATCH 2/3] ceph: clean up inode work queueing
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     ceph-devel@vger.kernel.org, xiubli@redhat.com, idryomov@gmail.com
-Date:   Mon, 14 Dec 2020 10:51:36 -0500
-In-Reply-To: <871rfs2yg3.fsf@suse.de>
-References: <20201211123858.7522-1-jlayton@kernel.org>
-         <20201211123858.7522-3-jlayton@kernel.org> <871rfs2yg3.fsf@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.2 (3.38.2-1.fc33) 
+        id S1729091AbgLNPzx (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 14 Dec 2020 10:55:53 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id B1629ACE0;
+        Mon, 14 Dec 2020 15:55:12 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id ec81c699;
+        Mon, 14 Dec 2020 15:55:41 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+Subject: Re: wip-msgr2
+References: <CAOi1vP_gHLrNBe-pU9G+GmE+JF8g2SY7UqgGqzeW5sXXf1jAcQ@mail.gmail.com>
+Date:   Mon, 14 Dec 2020 15:55:41 +0000
+In-Reply-To: <CAOi1vP_gHLrNBe-pU9G+GmE+JF8g2SY7UqgGqzeW5sXXf1jAcQ@mail.gmail.com>
+        (Ilya Dryomov's message of "Mon, 14 Dec 2020 14:43:26 +0100")
+Message-ID: <87wnxk1iwy.fsf@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2020-12-14 at 15:34 +0000, Luis Henriques wrote:
-> Jeff Layton <jlayton@kernel.org> writes:
-> 
-> > Add a generic function for taking an inode reference, setting the I_WORK
-> > bit and queueing i_work. Turn the ceph_queue_* functions into static
-> > inline wrappers that pass in the right bit.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/ceph/inode.c | 55 ++++++-------------------------------------------
-> >  fs/ceph/super.h | 21 ++++++++++++++++---
-> >  2 files changed, 24 insertions(+), 52 deletions(-)
-> > 
-> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > index c870be90d850..9cd8b37e586a 100644
-> > --- a/fs/ceph/inode.c
-> > +++ b/fs/ceph/inode.c
-> > @@ -1816,60 +1816,17 @@ void ceph_async_iput(struct inode *inode)
-> >  	}
-> >  }
-> >  
-> > 
-> > -/*
-> > - * Write back inode data in a worker thread.  (This can't be done
-> > - * in the message handler context.)
-> > - */
-> > -void ceph_queue_writeback(struct inode *inode)
-> > -{
-> > -	struct ceph_inode_info *ci = ceph_inode(inode);
-> > -	set_bit(CEPH_I_WORK_WRITEBACK, &ci->i_work_mask);
-> > -
-> > -	ihold(inode);
-> > -	if (queue_work(ceph_inode_to_client(inode)->inode_wq,
-> > -		       &ci->i_work)) {
-> > -		dout("ceph_queue_writeback %p\n", inode);
-> > -	} else {
-> > -		dout("ceph_queue_writeback %p already queued, mask=%lx\n",
-> > -		     inode, ci->i_work_mask);
-> > -		iput(inode);
-> > -	}
-> > -}
-> > -
-> > -/*
-> > - * queue an async invalidation
-> > - */
-> > -void ceph_queue_invalidate(struct inode *inode)
-> > -{
-> > -	struct ceph_inode_info *ci = ceph_inode(inode);
-> > -	set_bit(CEPH_I_WORK_INVALIDATE_PAGES, &ci->i_work_mask);
-> > -
-> > -	ihold(inode);
-> > -	if (queue_work(ceph_inode_to_client(inode)->inode_wq,
-> > -		       &ceph_inode(inode)->i_work)) {
-> > -		dout("ceph_queue_invalidate %p\n", inode);
-> > -	} else {
-> > -		dout("ceph_queue_invalidate %p already queued, mask=%lx\n",
-> > -		     inode, ci->i_work_mask);
-> > -		iput(inode);
-> > -	}
-> > -}
-> > -
-> > -/*
-> > - * Queue an async vmtruncate.  If we fail to queue work, we will handle
-> > - * the truncation the next time we call __ceph_do_pending_vmtruncate.
-> > - */
-> > -void ceph_queue_vmtruncate(struct inode *inode)
-> > +void ceph_queue_inode_work(struct inode *inode, int work_bit)
-> >  {
-> > +	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-> >  	struct ceph_inode_info *ci = ceph_inode(inode);
-> > -	set_bit(CEPH_I_WORK_VMTRUNCATE, &ci->i_work_mask);
-> > +	set_bit(work_bit, &ci->i_work_mask);
-> >  
-> > 
-> >  	ihold(inode);
-> > -	if (queue_work(ceph_inode_to_client(inode)->inode_wq,
-> > -		       &ci->i_work)) {
-> > -		dout("ceph_queue_vmtruncate %p\n", inode);
-> > +	if (queue_work(fsc->inode_wq, &ceph_inode(inode)->i_work)) {
-> 
-> Nit: since we have ci, it should probably be used here^^ instead of
-> ceph_inode() (this is likely a ceph_queue_invalidate function leftover,
-> which already had this inconsistency).
-> 
-> Other than that, these patches look good although I (obviously) haven't
-> seen the lockdep warning you mention.  Hopefully I'll never see it ever,
-> with these patches applied ;-)
-> 
-> Cheers,
+Ilya Dryomov <idryomov@gmail.com> writes:
 
-Thanks Luis,
+> Hello,
+>
+> I've pushed wip-msgr2 and opened a dummy PR in ceph-client:
+>
+>   https://github.com/ceph/ceph-client/pull/22
+>
+> This set has been through a over a dozen krbd test suite runs with no
+> issues other than those with the test suite itself.  The diffstat is
+> rather big, so I didn't want to spam the list.  If someone wants it
+> posted, let me know.  Any comments are welcome!
 
-I went ahead and made the above change and pushed the set into the
-testing branch (note that this patch supersedes the queue_inode_work
-patch I sent a couple of weeks ago).
- 
+That's *awesome*!  Thanks for sharing, Ilya.  Obviously this will need a
+lot of time to digest but a quick attempt to do a mount using a v2 monitor
+is just showing me a bunch of:
+
+libceph: mon0 (1)192.168.155.1:40898 socket closed (con state V1_BANNER)
+
+Note that this was just me giving it a try with a dummy vstart cluster
+(octopus IIRC), so nothing that could be considered testing.  I'll try to
+find out what I'm doing wrong in the next couple of days or, worst case,
+after EOY vacations.
+
+Cheers,
 -- 
-Jeff Layton <jlayton@kernel.org>
+Luis
+
+>
+>  drivers/block/rbd.c                |    8 +-
+>  fs/ceph/mds_client.c               |  106 +-
+>  fs/ceph/mdsmap.c                   |   21 +-
+>  include/linux/ceph/auth.h          |   68 +-
+>  include/linux/ceph/ceph_features.h |   11 +-
+>  include/linux/ceph/ceph_fs.h       |   11 +
+>  include/linux/ceph/decode.h        |    8 +
+>  include/linux/ceph/libceph.h       |   10 +-
+>  include/linux/ceph/mdsmap.h        |    2 +-
+>  include/linux/ceph/messenger.h     |  285 ++-
+>  include/linux/ceph/msgr.h          |   57 +-
+>  include/linux/ceph/osdmap.h        |    4 +-
+>  net/ceph/Kconfig                   |    3 +
+>  net/ceph/Makefile                  |    3 +-
+>  net/ceph/auth.c                    |  408 ++++-
+>  net/ceph/auth_none.c               |    5 +-
+>  net/ceph/auth_x.c                  |  298 +++-
+>  net/ceph/auth_x_protocol.h         |    3 +-
+>  net/ceph/ceph_common.c             |   63 +
+>  net/ceph/ceph_strings.c            |   28 +
+>  net/ceph/crypto.h                  |    3 +
+>  net/ceph/decode.c                  |  101 ++
+>  net/ceph/messenger.c               | 2252 +++++------------------
+>  net/ceph/messenger_v1.c            | 1506 ++++++++++++++++
+>  net/ceph/messenger_v2.c            | 3443 ++++++++++++++++++++++++++++++++
+>  net/ceph/mon_client.c              |  320 +++-
+>  net/ceph/osd_client.c              |  111 +-
+>  net/ceph/osdmap.c                  |   45 +-
+>  28 files changed, 7027 insertions(+), 2156 deletions(-)
+>  create mode 100644 net/ceph/messenger_v1.c
+>  create mode 100644 net/ceph/messenger_v2.c
+>
+> Thanks,
+>
+>                 Ilya
 
