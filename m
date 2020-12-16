@@ -2,141 +2,318 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E3EC32DC532
-	for <lists+ceph-devel@lfdr.de>; Wed, 16 Dec 2020 18:19:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2013F2DC764
+	for <lists+ceph-devel@lfdr.de>; Wed, 16 Dec 2020 20:52:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbgLPRTM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 16 Dec 2020 12:19:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38276 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726919AbgLPRTM (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 16 Dec 2020 12:19:12 -0500
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B299C061794
-        for <ceph-devel@vger.kernel.org>; Wed, 16 Dec 2020 09:18:32 -0800 (PST)
-Received: by mail-il1-x136.google.com with SMTP id v3so23271912ilo.5
-        for <ceph-devel@vger.kernel.org>; Wed, 16 Dec 2020 09:18:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6tEttOeqprQ5p4CYkMHCFb1h++xjlj2EJF26bKxVQCI=;
-        b=jEAmUJeUvAXKVBTTxNYPPUrgwzqOdQaXLWVqiy4fuC0cZneU4vrvRXpfjSQoFjlv6u
-         djZmhZJL6DQJUxjoYBZVf67VZ+UftWky2jNxTMiiOYxD/4qB45CJsYkNVb6fbzgXzH/n
-         +2ewkqOAaI/LUjT/CA96b8l4tnTCe/kbAzc1uJHLnfM4gH/U6yo2Gg/5AYJ1DNTaRP34
-         3lA2TUpCoWzIIRQDNTFKsujJ83KOMPCW0RSsdSl7QOfSO73GgH79KlNk9HmJrWi/lFPA
-         rmyXp4np2Flss8WsWgM1b51pva5ix4GoVpWS1E8ngJ8es0taK9WM+mhiUdoLMvyXtEuq
-         tPTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6tEttOeqprQ5p4CYkMHCFb1h++xjlj2EJF26bKxVQCI=;
-        b=snI2J6zXFCuQz+Fi32Mrp6wDmD+6LtBWSuJOX3yc0cRDRz3ewRcCb3LC6JL7f+J9ZY
-         OLMSWeTNHC6UGHFR4BmKKKvxmIlSZaQwfdeYObbKbfnflZ0+FyH1Yu4YHTh/JdJa2otr
-         GFGV25AV8irtkkiMVqTWJ62a7E2LJYFCNG8vI38s98/lh1Tr+8US2qUjS0ySCs+2bZdG
-         Gj+Qn98y3GTZOXWOp+Y19FprXLti6vOSkB5rh5NLMr2Iqv/jzGfTNS827SBH+QTwEwpA
-         UouKBhwAqHNc947Tw+vNkWZvgwJ0mAAYYr57feLxzUYHBcU5ZAiOGhljsHQGHxEkEML9
-         yPCg==
-X-Gm-Message-State: AOAM531DLXPPyWFbG+wwup+dtWvaCVP0yoFR9zfSz4Hi9qQ6ZdPykET4
-        GoSXI0CXDvojIdOzh/Ih9W0/MVnwrx5+lYCL0RI=
-X-Google-Smtp-Source: ABdhPJwB6ZfR0Hh7WPUYb2dlGk9j+dLcyzaotSP0g2osCyao7JuitEiNIfywzd38/fWUL/CZf+NXnL/v6Q3+/vUXgjY=
-X-Received: by 2002:a92:8419:: with SMTP id l25mr46687110ild.100.1608139111188;
- Wed, 16 Dec 2020 09:18:31 -0800 (PST)
+        id S1728668AbgLPTv0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 16 Dec 2020 14:51:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60104 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728657AbgLPTv0 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 16 Dec 2020 14:51:26 -0500
+From:   Jeff Layton <jlayton@kernel.org>
+Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
+To:     idryomov@gmail.com
+Cc:     ceph-devel@vger.kernel.org, pdonnell@redhat.com, xiubli@redhat.com
+Subject: [PATCH v2] ceph: implement updated ceph_mds_request_head structure
+Date:   Wed, 16 Dec 2020 14:50:43 -0500
+Message-Id: <20201216195043.385741-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-References: <CAOi1vP_gHLrNBe-pU9G+GmE+JF8g2SY7UqgGqzeW5sXXf1jAcQ@mail.gmail.com>
- <6a870de44a66a6163c8f9a1d7fa5da308b9f8b30.camel@kernel.org>
-In-Reply-To: <6a870de44a66a6163c8f9a1d7fa5da308b9f8b30.camel@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 16 Dec 2020 18:18:18 +0100
-Message-ID: <CAOi1vP_L-+Z_XOLP81hCGg52R_oj_NTdiegZf=-6-EnZyyJv3w@mail.gmail.com>
-Subject: Re: wip-msgr2
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Dec 16, 2020 at 4:31 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> On Mon, 2020-12-14 at 14:43 +0100, Ilya Dryomov wrote:
-> > Hello,
-> >
-> > I've pushed wip-msgr2 and opened a dummy PR in ceph-client:
-> >
-> >   https://github.com/ceph/ceph-client/pull/22
-> >
-> > This set has been through a over a dozen krbd test suite runs with no
-> > issues other than those with the test suite itself.  The diffstat is
-> > rather big, so I didn't want to spam the list.  If someone wants it
-> > posted, let me know.  Any comments are welcome!
-> >
-> >  drivers/block/rbd.c                |    8 +-
-> >  fs/ceph/mds_client.c               |  106 +-
-> >  fs/ceph/mdsmap.c                   |   21 +-
-> >  include/linux/ceph/auth.h          |   68 +-
-> >  include/linux/ceph/ceph_features.h |   11 +-
-> >  include/linux/ceph/ceph_fs.h       |   11 +
-> >  include/linux/ceph/decode.h        |    8 +
-> >  include/linux/ceph/libceph.h       |   10 +-
-> >  include/linux/ceph/mdsmap.h        |    2 +-
-> >  include/linux/ceph/messenger.h     |  285 ++-
-> >  include/linux/ceph/msgr.h          |   57 +-
-> >  include/linux/ceph/osdmap.h        |    4 +-
-> >  net/ceph/Kconfig                   |    3 +
-> >  net/ceph/Makefile                  |    3 +-
-> >  net/ceph/auth.c                    |  408 ++++-
-> >  net/ceph/auth_none.c               |    5 +-
-> >  net/ceph/auth_x.c                  |  298 +++-
-> >  net/ceph/auth_x_protocol.h         |    3 +-
-> >  net/ceph/ceph_common.c             |   63 +
-> >  net/ceph/ceph_strings.c            |   28 +
-> >  net/ceph/crypto.h                  |    3 +
-> >  net/ceph/decode.c                  |  101 ++
-> >  net/ceph/messenger.c               | 2252 +++++------------------
-> >  net/ceph/messenger_v1.c            | 1506 ++++++++++++++++
-> >  net/ceph/messenger_v2.c            | 3443 ++++++++++++++++++++++++++++=
-++++
-> >  net/ceph/mon_client.c              |  320 +++-
-> >  net/ceph/osd_client.c              |  111 +-
-> >  net/ceph/osdmap.c                  |   45 +-
-> >  28 files changed, 7027 insertions(+), 2156 deletions(-)
-> >  create mode 100644 net/ceph/messenger_v1.c
-> >  create mode 100644 net/ceph/messenger_v2.c
-> >
-> > Thanks,
-> >
-> >                 Ilya
->
-> FWIW, I see these warnings when building with this series with W=3D1:
->
-> ./include/linux/ceph/msgr.h:37:24: warning: =E2=80=98CEPH_MSGR2_FEATUREMA=
-SK_REVISION_1=E2=80=99 defined but not used [-Wunused-const-variable=3D]
->    37 |  static const uint64_t CEPH_MSGR2_FEATUREMASK_##name =3D         =
-   \
->       |                        ^~~~~~~~~~~~~~~~~~~~~~~
-> ./include/linux/ceph/msgr.h:43:1: note: in expansion of macro =E2=80=98DE=
-FINE_MSGR2_FEATURE=E2=80=99
->    43 | DEFINE_MSGR2_FEATURE( 0, 1, REVISION_1)   // msgr2.1
->       | ^~~~~~~~~~~~~~~~~~~~
-> ./include/linux/ceph/msgr.h:36:24: warning: =E2=80=98CEPH_MSGR2_FEATURE_R=
-EVISION_1=E2=80=99 defined but not used [-Wunused-const-variable=3D]
->    36 |  static const uint64_t CEPH_MSGR2_FEATURE_##name =3D (1ULL << bit=
-); \
->       |                        ^~~~~~~~~~~~~~~~~~~
-> ./include/linux/ceph/msgr.h:43:1: note: in expansion of macro =E2=80=98DE=
-FINE_MSGR2_FEATURE=E2=80=99
->    43 | DEFINE_MSGR2_FEATURE( 0, 1, REVISION_1)   // msgr2.1
->       | ^~~~~~~~~~~~~~~~~~~~
->
-> It's probably easy to fix, but I haven't looked in detail yet.
+When we added the btime feature in mainline ceph, we had to extend
+struct ceph_mds_request_args so that it could be set. Implement the same
+in the kernel client.
 
-Yeah, consider it fixed.  (I probably need to start building with
-W=3D1, considering that people seem to have started caring about it
-these days...)
+Rename ceph_mds_request_head with a _old extension, and a union
+ceph_mds_request_args_ext to allow for the extended size of the new
+header format.
 
-Thanks,
+Add the appropriate code to handle both formats in struct
+create_request_message and key the behavior on whether the peer supports
+CEPH_FEATURE_FS_BTIME.
 
-                Ilya
+The gid_list field in the payload is now populated from the saved
+credential. For now, we don't add any support for setting the btime via
+setattr, but this does enable us to add that in the future.
+
+[ idryomov: break unnecessarily long lines ]
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/mds_client.c         | 101 ++++++++++++++++++++++++++---------
+ include/linux/ceph/ceph_fs.h |  32 ++++++++++-
+ 2 files changed, 108 insertions(+), 25 deletions(-)
+
+ v2: fix encoding of unsafe request resends
+     add encode_payload_tail helper
+     rework find_old_request_head to take a "legacy" flag argument
+     
+Ilya,
+
+I'll go ahead and merge this into testing, but your call on whether we
+should take this for v5.11, or wait for v5.12. We don't have anything
+blocked on this just yet.
+
+I dropped your SoB and Xiubo Reviewed-by tags as well, as the patch is
+a bit different from the original.
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 0ff76f21466a..cd0cc5d8c4f0 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2475,15 +2475,46 @@ static int set_request_path_attr(struct inode *rinode, struct dentry *rdentry,
+ 	return r;
+ }
+ 
++static struct ceph_mds_request_head_old *
++find_old_request_head(void *p, bool legacy)
++{
++	struct ceph_mds_request_head *new_head;
++
++	if (legacy)
++		return (struct ceph_mds_request_head_old *)p;
++	new_head = (struct ceph_mds_request_head *)p;
++	return (struct ceph_mds_request_head_old *)&new_head->oldest_client_tid;
++}
++
++static void encode_payload_tail(void **p, struct ceph_mds_request *req, bool legacy)
++{
++	struct ceph_timespec ts;
++
++	ceph_encode_timespec64(&ts, &req->r_stamp);
++	ceph_encode_copy(p, &ts, sizeof(ts));
++
++	/* gid list */
++	if (!legacy) {
++		int i;
++
++		ceph_encode_32(p, req->r_cred->group_info->ngroups);
++		for (i = 0; i < req->r_cred->group_info->ngroups; i++)
++			ceph_encode_64(p, from_kgid(&init_user_ns,
++				       req->r_cred->group_info->gid[i]));
++	}
++}
++
+ /*
+  * called under mdsc->mutex
+  */
+-static struct ceph_msg *create_request_message(struct ceph_mds_client *mdsc,
++static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+ 					       struct ceph_mds_request *req,
+-					       int mds, bool drop_cap_releases)
++					       bool drop_cap_releases)
+ {
++	int mds = session->s_mds;
++	struct ceph_mds_client *mdsc = session->s_mdsc;
+ 	struct ceph_msg *msg;
+-	struct ceph_mds_request_head *head;
++	struct ceph_mds_request_head_old *head;
+ 	const char *path1 = NULL;
+ 	const char *path2 = NULL;
+ 	u64 ino1 = 0, ino2 = 0;
+@@ -2493,6 +2524,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_client *mdsc,
+ 	u16 releases;
+ 	void *p, *end;
+ 	int ret;
++	bool legacy = !(session->s_con.peer_features & CEPH_FEATURE_FS_BTIME);
+ 
+ 	ret = set_request_path_attr(req->r_inode, req->r_dentry,
+ 			      req->r_parent, req->r_path1, req->r_ino1.ino,
+@@ -2514,14 +2546,23 @@ static struct ceph_msg *create_request_message(struct ceph_mds_client *mdsc,
+ 		goto out_free1;
+ 	}
+ 
+-	len = sizeof(*head) +
+-		pathlen1 + pathlen2 + 2*(1 + sizeof(u32) + sizeof(u64)) +
++	if (legacy) {
++		/* Old style */
++		len = sizeof(*head);
++	} else {
++		/* New style: add gid_list and any later fields */
++		len = sizeof(struct ceph_mds_request_head) + sizeof(u32) +
++		      (sizeof(u64) * req->r_cred->group_info->ngroups);
++	}
++
++	len += pathlen1 + pathlen2 + 2*(1 + sizeof(u32) + sizeof(u64)) +
+ 		sizeof(struct ceph_timespec);
+ 
+ 	/* calculate (max) length for cap releases */
+ 	len += sizeof(struct ceph_mds_request_release) *
+ 		(!!req->r_inode_drop + !!req->r_dentry_drop +
+ 		 !!req->r_old_inode_drop + !!req->r_old_dentry_drop);
++
+ 	if (req->r_dentry_drop)
+ 		len += pathlen1;
+ 	if (req->r_old_dentry_drop)
+@@ -2533,11 +2574,25 @@ static struct ceph_msg *create_request_message(struct ceph_mds_client *mdsc,
+ 		goto out_free2;
+ 	}
+ 
+-	msg->hdr.version = cpu_to_le16(3);
+ 	msg->hdr.tid = cpu_to_le64(req->r_tid);
+ 
+-	head = msg->front.iov_base;
+-	p = msg->front.iov_base + sizeof(*head);
++	/*
++	 * The old ceph_mds_request_header didn't contain a version field, and
++	 * one was added when we moved the message version from 3->4.
++	 */
++	if (legacy) {
++		msg->hdr.version = cpu_to_le16(3);
++		p = msg->front.iov_base + sizeof(*head);
++	} else {
++		struct ceph_mds_request_head *new_head = msg->front.iov_base;
++
++		msg->hdr.version = cpu_to_le16(4);
++		new_head->version = cpu_to_le16(CEPH_MDS_REQUEST_HEAD_VERSION);
++		p = msg->front.iov_base + sizeof(*new_head);
++	}
++
++	head = find_old_request_head(msg->front.iov_base, legacy);
++
+ 	end = msg->front.iov_base + msg->front.iov_len;
+ 
+ 	head->mdsmap_epoch = cpu_to_le32(mdsc->mdsmap->m_epoch);
+@@ -2583,12 +2638,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_client *mdsc,
+ 
+ 	head->num_releases = cpu_to_le16(releases);
+ 
+-	/* time stamp */
+-	{
+-		struct ceph_timespec ts;
+-		ceph_encode_timespec64(&ts, &req->r_stamp);
+-		ceph_encode_copy(&p, &ts, sizeof(ts));
+-	}
++	encode_payload_tail(&p, req, legacy);
+ 
+ 	if (WARN_ON_ONCE(p > end)) {
+ 		ceph_msg_put(msg);
+@@ -2642,9 +2692,10 @@ static int __prepare_send_request(struct ceph_mds_session *session,
+ {
+ 	int mds = session->s_mds;
+ 	struct ceph_mds_client *mdsc = session->s_mdsc;
+-	struct ceph_mds_request_head *rhead;
++	struct ceph_mds_request_head_old *rhead;
+ 	struct ceph_msg *msg;
+ 	int flags = 0;
++	bool legacy = !(session->s_con.peer_features & CEPH_FEATURE_FS_BTIME);
+ 
+ 	req->r_attempts++;
+ 	if (req->r_inode) {
+@@ -2661,6 +2712,7 @@ static int __prepare_send_request(struct ceph_mds_session *session,
+ 
+ 	if (test_bit(CEPH_MDS_R_GOT_UNSAFE, &req->r_req_flags)) {
+ 		void *p;
++
+ 		/*
+ 		 * Replay.  Do not regenerate message (and rebuild
+ 		 * paths, etc.); just use the original message.
+@@ -2668,7 +2720,7 @@ static int __prepare_send_request(struct ceph_mds_session *session,
+ 		 * d_move mangles the src name.
+ 		 */
+ 		msg = req->r_request;
+-		rhead = msg->front.iov_base;
++		rhead = find_old_request_head(msg->front.iov_base, legacy);
+ 
+ 		flags = le32_to_cpu(rhead->flags);
+ 		flags |= CEPH_MDS_FLAG_REPLAY;
+@@ -2682,13 +2734,14 @@ static int __prepare_send_request(struct ceph_mds_session *session,
+ 		/* remove cap/dentry releases from message */
+ 		rhead->num_releases = 0;
+ 
+-		/* time stamp */
++		/* verify that we haven't got mixed-feature MDSs */
++		if (legacy)
++			WARN_ON_ONCE(le16_to_cpu(msg->hdr.version) >= 4);
++		else
++			WARN_ON_ONCE(le16_to_cpu(msg->hdr.version) < 4);
++
+ 		p = msg->front.iov_base + req->r_request_release_offset;
+-		{
+-			struct ceph_timespec ts;
+-			ceph_encode_timespec64(&ts, &req->r_stamp);
+-			ceph_encode_copy(&p, &ts, sizeof(ts));
+-		}
++		encode_payload_tail(&p, req, legacy);
+ 
+ 		msg->front.iov_len = p - msg->front.iov_base;
+ 		msg->hdr.front_len = cpu_to_le32(msg->front.iov_len);
+@@ -2699,14 +2752,14 @@ static int __prepare_send_request(struct ceph_mds_session *session,
+ 		ceph_msg_put(req->r_request);
+ 		req->r_request = NULL;
+ 	}
+-	msg = create_request_message(mdsc, req, mds, drop_cap_releases);
++	msg = create_request_message(session, req, drop_cap_releases);
+ 	if (IS_ERR(msg)) {
+ 		req->r_err = PTR_ERR(msg);
+ 		return PTR_ERR(msg);
+ 	}
+ 	req->r_request = msg;
+ 
+-	rhead = msg->front.iov_base;
++	rhead = find_old_request_head(msg->front.iov_base, legacy);
+ 	rhead->oldest_client_tid = cpu_to_le64(__get_oldest_tid(mdsc));
+ 	if (test_bit(CEPH_MDS_R_GOT_UNSAFE, &req->r_req_flags))
+ 		flags |= CEPH_MDS_FLAG_REPLAY;
+diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+index 1a4cc7938694..e41a811026f6 100644
+--- a/include/linux/ceph/ceph_fs.h
++++ b/include/linux/ceph/ceph_fs.h
+@@ -457,11 +457,25 @@ union ceph_mds_request_args {
+ 	} __attribute__ ((packed)) lookupino;
+ } __attribute__ ((packed));
+ 
++union ceph_mds_request_args_ext {
++	union ceph_mds_request_args old;
++	struct {
++		__le32 mode;
++		__le32 uid;
++		__le32 gid;
++		struct ceph_timespec mtime;
++		struct ceph_timespec atime;
++		__le64 size, old_size;       /* old_size needed by truncate */
++		__le32 mask;                 /* CEPH_SETATTR_* */
++		struct ceph_timespec btime;
++	} __attribute__ ((packed)) setattr_ext;
++};
++
+ #define CEPH_MDS_FLAG_REPLAY		1 /* this is a replayed op */
+ #define CEPH_MDS_FLAG_WANT_DENTRY	2 /* want dentry in reply */
+ #define CEPH_MDS_FLAG_ASYNC		4 /* request is asynchronous */
+ 
+-struct ceph_mds_request_head {
++struct ceph_mds_request_head_old {
+ 	__le64 oldest_client_tid;
+ 	__le32 mdsmap_epoch;           /* on client */
+ 	__le32 flags;                  /* CEPH_MDS_FLAG_* */
+@@ -474,6 +488,22 @@ struct ceph_mds_request_head {
+ 	union ceph_mds_request_args args;
+ } __attribute__ ((packed));
+ 
++#define CEPH_MDS_REQUEST_HEAD_VERSION  1
++
++struct ceph_mds_request_head {
++	__le16 version;                /* struct version */
++	__le64 oldest_client_tid;
++	__le32 mdsmap_epoch;           /* on client */
++	__le32 flags;                  /* CEPH_MDS_FLAG_* */
++	__u8 num_retry, num_fwd;       /* count retry, fwd attempts */
++	__le16 num_releases;           /* # include cap/lease release records */
++	__le32 op;                     /* mds op code */
++	__le32 caller_uid, caller_gid;
++	__le64 ino;                    /* use this ino for openc, mkdir, mknod,
++					  etc. (if replaying) */
++	union ceph_mds_request_args_ext args;
++} __attribute__ ((packed));
++
+ /* cap/lease release record */
+ struct ceph_mds_request_release {
+ 	__le64 ino, cap_id;            /* ino and unique cap id */
+-- 
+2.29.2
+
