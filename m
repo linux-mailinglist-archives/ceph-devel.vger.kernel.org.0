@@ -2,54 +2,82 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B5EF2DD9C8
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Dec 2020 21:23:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA1322DE395
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Dec 2020 15:00:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730215AbgLQUV6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Dec 2020 15:21:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729978AbgLQUVx (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 17 Dec 2020 15:21:53 -0500
-Subject: Re: [GIT PULL] Ceph updates for 5.11-rc1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608236472;
-        bh=Lieg413S9DPL9nRewgWeOhj5ih3O+Z3qsmV1FGKpv9k=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=PCTX2bxt1jfZzfYYL/Tahke65xxbLgRpwssdepZU8WoFoMsxuwJs6fAbLK2KXwvRk
-         CrFxgqopBGuc2EyvSEiexJPpEGJCXXL2hHfukN4UPBKYSekji8PD54zMH68yzLdQyi
-         Z4xW9LX2I8efEWuK6vehLrAFf2bPq393CeWdjt6eBwVqHjPCNpDwY8ZbC5+rwl193y
-         EhiTxy0CmlU2ClU9B4zU61fLXu/lHFtYsKJRAVGpOBV+BNAauqjEENH899UI7/M2fy
-         EVnrbmW1vHAdDeT/PoOZtMoDLRPtv6rGRq6c5sbLmhSH8grqgsscXr3g+QlIkTGZ9h
-         XsGhtxPpeMrJQ==
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20201217162749.18811-1-idryomov@gmail.com>
-References: <20201217162749.18811-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20201217162749.18811-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-5.11-rc1
-X-PR-Tracked-Commit-Id: 2f0df6cfa325d7106b8a65bc0e02db1086e3f73b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: be695ee29e8fc0af266d9f1882868c47da01a790
-Message-Id: <160823647257.7820.17808407074234173595.pr-tracker-bot@kernel.org>
-Date:   Thu, 17 Dec 2020 20:21:12 +0000
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1726727AbgLRN7a (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 18 Dec 2020 08:59:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55344 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726677AbgLRN73 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 18 Dec 2020 08:59:29 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73DE8C0617A7;
+        Fri, 18 Dec 2020 05:58:49 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id 2so2191102ilg.9;
+        Fri, 18 Dec 2020 05:58:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EDAU6nY9p4JViJ1ZtWWUnNfwjvP6XwdpVGYZtIrcXWQ=;
+        b=PL8VyLbUwqFXlBwLOPUUfJ1KfTBRCO5Tozs9ZKhu6CHYATSFIEhmxWudavUSP5FdY8
+         kzBoek/oX7T0d5EXtCng6zZV4U9lt+bWBIaDovMCBL/UQmjWj8F+3t0BUKo3FpB+LcoT
+         m/VquDR/zEVE5Al88oUileGSIyrY1v6IUvSJ8nLMktp7TPm2ArM6cJRkzIicpOdft1tP
+         TJY8WNwXrZd/JYLpy59vBi5OXtkQmbo9Et9rTo4L1BequnVN2csq9Fc2nI4GiNKKZPtW
+         6qphDDUI4D7dgw6spkxeNaicBMMaDnQCsAxM1Q/CGl3Cmx0fdqMq0RNDFi+FVPhMf4oQ
+         U84w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EDAU6nY9p4JViJ1ZtWWUnNfwjvP6XwdpVGYZtIrcXWQ=;
+        b=Uq9znm2WWMPnwNs7ciwJQ2uN8KNvY7T3RT0PDXENcMYCeqUK9Pgs+IEezpP03Mu2lO
+         JZwjCTlEVVySUuSp733lfoRfo+WRn1nq3z3xOCp0Qlo6LZrcoV2/IWLU6kmfPMmrer4l
+         goa5tOksZFZ4MB+5FQI8OtQmoQV1Igcc7C8gpjomcZwfoYlIqekXqLrrXcbfMHduS7jj
+         vYup0Lcz6HEf2PTYpcSqi0Ovz0zXSFsvp5cZENcnz9AJZX+hjJa2e4DzNGmtQ9ILId0M
+         C2kd5fBYvWlR0Hv0AdAD0Wr7O8hbhhWzlGQy4+7lgn2w9MhxAhqc0jEtzHd6M12KFNNT
+         3I5A==
+X-Gm-Message-State: AOAM531Ec6k3Fxpshl1fY5YZxEYRzmSb4eNTqmULn45Albym7r9YDmjc
+        6nINupst7qmSd94cT/iZDUIRWzqpvkmL2grDeaE=
+X-Google-Smtp-Source: ABdhPJx0+8chZmRyFSFyB+5va1/s+Y2azdW2Sodly9Pzsl2yNzxcuNvlJ4EWcp9eR7qZ19JE/aLMAILIVW/GDMTP8vg=
+X-Received: by 2002:a92:d641:: with SMTP id x1mr3923332ilp.19.1608299928779;
+ Fri, 18 Dec 2020 05:58:48 -0800 (PST)
+MIME-Version: 1.0
+References: <20201216130239.13759-1-zhengyongjun3@huawei.com> <20201216172031.16ef7195@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <20201216172031.16ef7195@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Fri, 18 Dec 2020 14:58:35 +0100
+Message-ID: <CAOi1vP9FCeP_+7KDcTCr-st5bMUi-jJeJ9WCxD9bAPSKAki9yg@mail.gmail.com>
+Subject: Re: [PATCH net-next] ceph: Delete useless kfree code
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     Zheng Yongjun <zhengyongjun3@huawei.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The pull request you sent on Thu, 17 Dec 2020 17:27:49 +0100:
+On Thu, Dec 17, 2020 at 2:25 AM Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> On Wed, 16 Dec 2020 21:02:39 +0800 Zheng Yongjun wrote:
+> > The parameter of kfree function is NULL, so kfree code is useless, delete it.
+> >
+> > Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+>
+> To be clear the subject tags is misleading we're not taking this
+> into the networking tree, ceph folk please go ahead :)
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-5.11-rc1
+I still didn't get the original patch for some reason, but looking at
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/be695ee29e8fc0af266d9f1882868c47da01a790
+  https://lists.openwall.net/netdev/2020/12/16/163
 
-Thank you!
+the kfree is not useless.  If ceph_decode_need() fails, the array needs
+to be freed, so we are not taking this into the ceph tree either ;)
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Thanks,
+
+                Ilya
