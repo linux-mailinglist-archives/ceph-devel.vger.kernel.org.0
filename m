@@ -2,177 +2,195 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 080492DEB2D
-	for <lists+ceph-devel@lfdr.de>; Fri, 18 Dec 2020 22:37:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE5502DEB2E
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Dec 2020 22:38:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726240AbgLRVhN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 18 Dec 2020 16:37:13 -0500
-Received: from mail-qk1-f179.google.com ([209.85.222.179]:33979 "EHLO
-        mail-qk1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725813AbgLRVhN (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 18 Dec 2020 16:37:13 -0500
-Received: by mail-qk1-f179.google.com with SMTP id c7so3520130qke.1
-        for <ceph-devel@vger.kernel.org>; Fri, 18 Dec 2020 13:36:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zY4RrYLLWf6/2rBQfiRyfYj7g1grLM82+6ej15zCWhE=;
-        b=jQDA6VXSNIdzVHJBXeFU9msmzmVTQJ1EyJmHZ3TI5knRMtaFQzOOpzbTtNPkCUHvXA
-         sg/BbjSmDWRbQx1AeweglyeNz9njqdrSa+t6pP0j9oqZ0kRpk/iEJb1rLcIsibbYXH5f
-         cVVsOh5TFft/nT/BcXTZWFaCZ+1hAbjyTnP/XXwZGpA2DRxTkDAEEhLco3lhybLRpYsI
-         1VOTv2GPQrTNbFi3/tTh+rePL62x17EmfOqKOGgDDvNG5bVaAqcqjHgcjrTED4j619Mp
-         j2LIta3zSG7OPq4GhJ0p51Y2OPZ5uM8ibrUmZjVThvHJSxNM/VE9EE8/5Isod71BCtVD
-         jjbw==
-X-Gm-Message-State: AOAM532EfE9Th1S302VYzDx/r8mGuuO6Rnf57jbZ7hIyuu8OXU4ADfc5
-        LfNQvMzanK8OSMihzd4vq5YSHm0ZftDeTg==
-X-Google-Smtp-Source: ABdhPJxoRiJ8uV1/sSpl6msbTzLsWAlmHxlkmRjJ3qg643lWXCldS5WLCa4eFYfixqzw+we3QZwjow==
-X-Received: by 2002:a37:4c05:: with SMTP id z5mr7019286qka.245.1608327392380;
-        Fri, 18 Dec 2020 13:36:32 -0800 (PST)
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id 9sm6474963qtr.64.2020.12.18.13.36.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Dec 2020 13:36:31 -0800 (PST)
-Date:   Fri, 18 Dec 2020 16:36:29 -0500
+        id S1725871AbgLRViR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 18 Dec 2020 16:38:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57870 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725813AbgLRViR (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 18 Dec 2020 16:38:17 -0500
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        Xiubo Li <xiubli@redhat.com>
-Subject: Re: [PATCH 3/3] ceph: allow queueing cap/snap handling after putting
- cap references
-Message-ID: <20201218213629.GA1254519@tleilax.poochiereds.net>
-References: <20201211123858.7522-1-jlayton@kernel.org>
- <20201211123858.7522-4-jlayton@kernel.org>
- <CAOi1vP-qh2YWn_c=zUVB3czepSYau+n2paMZHA2nJDVhwyk-EQ@mail.gmail.com>
+Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
+To:     idryomov@gmail.com
+Cc:     ceph-devel@vger.kernel.org, xiubli@redhat.com
+Subject: [PATCH v2] ceph: allow queueing cap/snap handling after putting cap references
+Date:   Fri, 18 Dec 2020 16:37:34 -0500
+Message-Id: <20201218213734.1335788-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOi1vP-qh2YWn_c=zUVB3czepSYau+n2paMZHA2nJDVhwyk-EQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Dec 18, 2020 at 03:22:51PM +0100, Ilya Dryomov wrote:
-> On Fri, Dec 11, 2020 at 1:39 PM Jeff Layton <jlayton@kernel.org> wrote:
-> >
-> > Testing with the fscache overhaul has triggered some lockdep warnings
-> > about circular lock dependencies involving page_mkwrite and the
-> > mmap_lock. It'd be better to do the "real work" without the mmap lock
-> > being held.
-> >
-> > Change the skip_checking_caps parameter in __ceph_put_cap_refs to an
-> > enum, and use that to determine whether to queue check_caps, do it
-> > synchronously or not at all. Change ceph_page_mkwrite to do a
-> > ceph_put_cap_refs_async().
-> >
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/ceph/addr.c  |  2 +-
-> >  fs/ceph/caps.c  | 28 ++++++++++++++++++++++++----
-> >  fs/ceph/inode.c |  6 ++++++
-> >  fs/ceph/super.h | 19 ++++++++++++++++---
-> >  4 files changed, 47 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> > index 950552944436..26e66436f005 100644
-> > --- a/fs/ceph/addr.c
-> > +++ b/fs/ceph/addr.c
-> > @@ -1662,7 +1662,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
-> >
-> >         dout("page_mkwrite %p %llu~%zd dropping cap refs on %s ret %x\n",
-> >              inode, off, len, ceph_cap_string(got), ret);
-> > -       ceph_put_cap_refs(ci, got);
-> > +       ceph_put_cap_refs_async(ci, got);
-> >  out_free:
-> >         ceph_restore_sigs(&oldset);
-> >         sb_end_pagefault(inode->i_sb);
-> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > index 336348e733b9..a95ab4c02056 100644
-> > --- a/fs/ceph/caps.c
-> > +++ b/fs/ceph/caps.c
-> > @@ -3026,6 +3026,12 @@ static int ceph_try_drop_cap_snap(struct ceph_inode_info *ci,
-> >         return 0;
-> >  }
-> >
-> > +enum PutCapRefsMode {
-> > +       PutCapRefsModeSync = 0,
-> > +       PutCapRefsModeSkip,
-> > +       PutCapRefsModeAsync,
-> > +};
-> 
-> Hi Jeff,
-> 
-> A couple style nits, since mixed case stood out ;)
-> 
-> Let's avoid CamelCase.  Page flags and existing protocol definitions
-> like SMB should be the only exception.  I'd suggest PUT_CAP_REFS_SYNC,
-> etc.
-> 
-> > +
-> >  /*
-> >   * Release cap refs.
-> >   *
-> > @@ -3036,7 +3042,7 @@ static int ceph_try_drop_cap_snap(struct ceph_inode_info *ci,
-> >   * cap_snap, and wake up any waiters.
-> >   */
-> >  static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
-> > -                               bool skip_checking_caps)
-> > +                               enum PutCapRefsMode mode)
-> >  {
-> >         struct inode *inode = &ci->vfs_inode;
-> >         int last = 0, put = 0, flushsnaps = 0, wake = 0;
-> > @@ -3092,11 +3098,20 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
-> >         dout("put_cap_refs %p had %s%s%s\n", inode, ceph_cap_string(had),
-> >              last ? " last" : "", put ? " put" : "");
-> >
-> > -       if (!skip_checking_caps) {
-> > +       switch(mode) {
-> > +       default:
-> > +               break;
-> > +       case PutCapRefsModeSync:
-> >                 if (last)
-> >                         ceph_check_caps(ci, 0, NULL);
-> >                 else if (flushsnaps)
-> >                         ceph_flush_snaps(ci, NULL);
-> > +               break;
-> > +       case PutCapRefsModeAsync:
-> > +               if (last)
-> > +                       ceph_queue_check_caps(inode);
-> > +               else if (flushsnaps)
-> > +                       ceph_queue_flush_snaps(inode);
-> 
-> Add a break here.  I'd also move the default clause to the end.
-> 
-> >         }
-> >         if (wake)
-> >                 wake_up_all(&ci->i_cap_wq);
-> > @@ -3106,12 +3121,17 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
-> >
-> >  void ceph_put_cap_refs(struct ceph_inode_info *ci, int had)
-> >  {
-> > -       __ceph_put_cap_refs(ci, had, false);
-> > +       __ceph_put_cap_refs(ci, had, PutCapRefsModeSync);
-> > +}
-> > +
-> > +void ceph_put_cap_refs_async(struct ceph_inode_info *ci, int had)
-> > +{
-> > +       __ceph_put_cap_refs(ci, had, PutCapRefsModeAsync);
-> >  }
-> >
-> >  void ceph_put_cap_refs_no_check_caps(struct ceph_inode_info *ci, int had)
-> >  {
-> > -       __ceph_put_cap_refs(ci, had, true);
-> > +       __ceph_put_cap_refs(ci, had, PutCapRefsModeSkip);
-> 
-> Perhaps name the enum member PUT_CAP_REFS_NO_CHECK to match the
-> exported function?
-> 
-> Thanks,
-> 
->                 Ilya
+Testing with the fscache overhaul has triggered some lockdep warnings
+about circular lock dependencies involving page_mkwrite and the
+mmap_lock. It'd be better to do the "real work" without the mmap lock
+being held.
 
-That all sounds reasonable. I'll send a v2 patch here in a few mins.
+Change the skip_checking_caps parameter in __ceph_put_cap_refs to an
+enum, and use that to determine whether to queue check_caps, do it
+synchronously or not at all. Change ceph_page_mkwrite to do a
+ceph_put_cap_refs_async().
 
-Thanks,
-Jeff
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/addr.c  |  2 +-
+ fs/ceph/caps.c  | 29 +++++++++++++++++++++++++----
+ fs/ceph/inode.c |  6 ++++++
+ fs/ceph/super.h | 19 ++++++++++++++++---
+ 4 files changed, 48 insertions(+), 8 deletions(-)
+
+v2:
+- get rid of camel case enum labels
+- minor switch rearrangement
+- rename "skip" enum member to PUT_CAP_REFS_NO_CHECK
+
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 950552944436..26e66436f005 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1662,7 +1662,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+ 
+ 	dout("page_mkwrite %p %llu~%zd dropping cap refs on %s ret %x\n",
+ 	     inode, off, len, ceph_cap_string(got), ret);
+-	ceph_put_cap_refs(ci, got);
++	ceph_put_cap_refs_async(ci, got);
+ out_free:
+ 	ceph_restore_sigs(&oldset);
+ 	sb_end_pagefault(inode->i_sb);
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 638d18c198ea..5902e1588228 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -3027,6 +3027,12 @@ static int ceph_try_drop_cap_snap(struct ceph_inode_info *ci,
+ 	return 0;
+ }
+ 
++enum put_cap_refs_mode {
++	PUT_CAP_REFS_SYNC = 0,
++	PUT_CAP_REFS_NO_CHECK,
++	PUT_CAP_REFS_ASYNC,
++};
++
+ /*
+  * Release cap refs.
+  *
+@@ -3037,7 +3043,7 @@ static int ceph_try_drop_cap_snap(struct ceph_inode_info *ci,
+  * cap_snap, and wake up any waiters.
+  */
+ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
+-				bool skip_checking_caps)
++				enum put_cap_refs_mode mode)
+ {
+ 	struct inode *inode = &ci->vfs_inode;
+ 	int last = 0, put = 0, flushsnaps = 0, wake = 0;
+@@ -3093,11 +3099,21 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
+ 	dout("put_cap_refs %p had %s%s%s\n", inode, ceph_cap_string(had),
+ 	     last ? " last" : "", put ? " put" : "");
+ 
+-	if (!skip_checking_caps) {
++	switch(mode) {
++	case PUT_CAP_REFS_SYNC:
+ 		if (last)
+ 			ceph_check_caps(ci, 0, NULL);
+ 		else if (flushsnaps)
+ 			ceph_flush_snaps(ci, NULL);
++		break;
++	case PUT_CAP_REFS_ASYNC:
++		if (last)
++			ceph_queue_check_caps(inode);
++		else if (flushsnaps)
++			ceph_queue_flush_snaps(inode);
++		break;
++	default:
++		break;
+ 	}
+ 	if (wake)
+ 		wake_up_all(&ci->i_cap_wq);
+@@ -3107,12 +3123,17 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
+ 
+ void ceph_put_cap_refs(struct ceph_inode_info *ci, int had)
+ {
+-	__ceph_put_cap_refs(ci, had, false);
++	__ceph_put_cap_refs(ci, had, PUT_CAP_REFS_SYNC);
++}
++
++void ceph_put_cap_refs_async(struct ceph_inode_info *ci, int had)
++{
++	__ceph_put_cap_refs(ci, had, PUT_CAP_REFS_ASYNC);
+ }
+ 
+ void ceph_put_cap_refs_no_check_caps(struct ceph_inode_info *ci, int had)
+ {
+-	__ceph_put_cap_refs(ci, had, true);
++	__ceph_put_cap_refs(ci, had, PUT_CAP_REFS_NO_CHECK);
+ }
+ 
+ /*
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index e64ccd93350f..5d20a620e96c 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1965,6 +1965,12 @@ static void ceph_inode_work(struct work_struct *work)
+ 	if (test_and_clear_bit(CEPH_I_WORK_VMTRUNCATE, &ci->i_work_mask))
+ 		__ceph_do_pending_vmtruncate(inode);
+ 
++	if (test_and_clear_bit(CEPH_I_WORK_CHECK_CAPS, &ci->i_work_mask))
++		ceph_check_caps(ci, 0, NULL);
++
++	if (test_and_clear_bit(CEPH_I_WORK_FLUSH_SNAPS, &ci->i_work_mask))
++		ceph_flush_snaps(ci, NULL);
++
+ 	iput(inode);
+ }
+ 
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 59153ee201c0..13b02887b085 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -562,9 +562,11 @@ static inline struct inode *ceph_find_inode(struct super_block *sb,
+ /*
+  * Masks of ceph inode work.
+  */
+-#define CEPH_I_WORK_WRITEBACK		0 /* writeback */
+-#define CEPH_I_WORK_INVALIDATE_PAGES	1 /* invalidate pages */
+-#define CEPH_I_WORK_VMTRUNCATE		2 /* vmtruncate */
++#define CEPH_I_WORK_WRITEBACK		0
++#define CEPH_I_WORK_INVALIDATE_PAGES	1
++#define CEPH_I_WORK_VMTRUNCATE		2
++#define CEPH_I_WORK_CHECK_CAPS		3
++#define CEPH_I_WORK_FLUSH_SNAPS		4
+ 
+ /*
+  * We set the ERROR_WRITE bit when we start seeing write errors on an inode
+@@ -982,6 +984,16 @@ static inline void ceph_queue_writeback(struct inode *inode)
+ 	ceph_queue_inode_work(inode, CEPH_I_WORK_WRITEBACK);
+ }
+ 
++static inline void ceph_queue_check_caps(struct inode *inode)
++{
++	ceph_queue_inode_work(inode, CEPH_I_WORK_CHECK_CAPS);
++}
++
++static inline void ceph_queue_flush_snaps(struct inode *inode)
++{
++	ceph_queue_inode_work(inode, CEPH_I_WORK_FLUSH_SNAPS);
++}
++
+ extern int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
+ 			     int mask, bool force);
+ static inline int ceph_do_getattr(struct inode *inode, int mask, bool force)
+@@ -1120,6 +1132,7 @@ extern void ceph_take_cap_refs(struct ceph_inode_info *ci, int caps,
+ 				bool snap_rwsem_locked);
+ extern void ceph_get_cap_refs(struct ceph_inode_info *ci, int caps);
+ extern void ceph_put_cap_refs(struct ceph_inode_info *ci, int had);
++extern void ceph_put_cap_refs_async(struct ceph_inode_info *ci, int had);
+ extern void ceph_put_cap_refs_no_check_caps(struct ceph_inode_info *ci,
+ 					    int had);
+ extern void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int nr,
+-- 
+2.29.2
+
