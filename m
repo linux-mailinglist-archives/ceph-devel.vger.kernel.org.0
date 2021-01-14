@@ -2,167 +2,193 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A7812F3DF3
-	for <lists+ceph-devel@lfdr.de>; Wed, 13 Jan 2021 01:44:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE63A2F5F32
+	for <lists+ceph-devel@lfdr.de>; Thu, 14 Jan 2021 11:48:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392300AbhALVte (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 12 Jan 2021 16:49:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44848 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388345AbhALVtc (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 12 Jan 2021 16:49:32 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EFF2D23122;
-        Tue, 12 Jan 2021 21:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610488131;
-        bh=+8aGZ1R8+lonnxCub9hBFNdVpOd2DSl9c0qhpVuXx/Y=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Bm6mSxxcurUDVWvG9wmnnRoTVLUivD/KfM+Ik6Os/I3C+/ygQGIxeAduIb9FjcsFg
-         tynoB+lqQghoWQnnNl93sOVy64RnSSKqnduisScMcXjsgAPQl6iUfFJUt8IUk4hLVz
-         3ErrZrPxtyq5kDr+ls/mwnMsVQBXkcpe9c01EvCWL0BgnA3R7N0d7tUwsbuGwvZLsq
-         csghK8G717oihi1IxHEncr6wtbRn+8Eg6pxDIHVru9xidpMmeh6q/hIajvOiaAn3bY
-         hbromCIUaK1Zswf0GCVI+hbpF4H9aTjCw5guaLR//8PHKDvBocNP+l9fxE4kmnr9rc
-         SqlqA5DLrl9/A==
-Message-ID: <f698d039251d444eec334b119b5ae0b0dd101a21.camel@kernel.org>
-Subject: Re: [PATCH v3] ceph: defer flushing the capsnap if the Fb is used
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Tue, 12 Jan 2021 16:48:49 -0500
-In-Reply-To: <20210110020140.141727-1-xiubli@redhat.com>
-References: <20210110020140.141727-1-xiubli@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
+        id S1728871AbhANKqs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 14 Jan 2021 05:46:48 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35455 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728501AbhANKqr (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 14 Jan 2021 05:46:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1610621120;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=NFAkK5CyoahxNRi5k7hi2fue0ERjnOdXOmjImxzpbMM=;
+        b=Fqm5uy2g0iAPsHVzQEfDSdygROmBUddvQgemhiYYCT7HCl41hwHq7fW+IsKCv41+W72A+P
+        gXbNi2RdQkAZ3nKk1JuTdebvyZWzQOQ+nQQigFCSikFSfmAPKgypvSACAuYIwkza3AO7QC
+        Y3sBE2FuwL8Wj7uXNPIFREThMUrEW94=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-547--bCAKj4MNqC10Gxu7zSNiA-1; Thu, 14 Jan 2021 05:45:16 -0500
+X-MC-Unique: -bCAKj4MNqC10Gxu7zSNiA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1179F80666B;
+        Thu, 14 Jan 2021 10:45:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-8.rdu2.redhat.com [10.10.112.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9402F60C64;
+        Thu, 14 Jan 2021 10:45:06 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com
+cc:     dhowells@redhat.com, jlayton@redhat.com, dwysocha@redhat.com,
+        Matthew Wilcox <willy@infradead.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Steve French <sfrench@samba.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Christoph Hellwig <hch@lst.de>, dchinner@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Redesigning and modernising fscache
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2758810.1610621106.1@warthog.procyon.org.uk>
+Date:   Thu, 14 Jan 2021 10:45:06 +0000
+Message-ID: <2758811.1610621106@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, 2021-01-10 at 10:01 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> If the Fb cap is used it means the current inode is flushing the
-> dirty data to OSD, just defer flushing the capsnap.
-> 
-> URL: https://tracker.ceph.com/issues/48679
-> URL: https://tracker.ceph.com/issues/48640
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
-> 
-> V3:
-> - Add more comments about putting the inode ref
-> - A small change about the code style
-> 
-> V2:
-> - Fix inode reference leak bug
-> 
->  fs/ceph/caps.c | 32 +++++++++++++++++++-------------
->  fs/ceph/snap.c |  6 +++---
->  2 files changed, 22 insertions(+), 16 deletions(-)
-> 
+Hi,
 
-Hi Xiubo,
+I've been working on modernising fscache, primarily with help from Jeff Layton
+and Dave Wysochanski with porting Ceph and NFS to it, and with Willy helpfully
+reinventing the VM I/O interface beneath us;-).
 
-This patch seems to cause hangs in some xfstests (generic/013, in
-particular). I'll take a closer look when I have a chance, but I'm
-dropping this for now.
+However, there've been some objections to the approach I've taken to
+implementing this.  The way I've done it is to disable the use of fscache by
+the five network filesystems that use it, remove much of the old code, put in
+the reimplementation, then cut the filesystems over.  I.e. rip-and-replace.
+It leaves unported filesystems unable to use it - but three of the five are
+done (afs, ceph, nfs), and I've supplied partially-done patches for the other
+two (9p, cifs).
 
--- Jeff
+It's been suggested that it's too hard to review this way and that either I
+should go for a gradual phasing in or build the new one in parallel.  The
+first is difficult because I want to change how almost everything in there
+works - but the parts are tied together; the second is difficult because there
+are areas that would *have* to overlap (the UAPI device file, the cache
+storage, the cache size limits and at least some state for managing these), so
+there would have to be interaction between the two variants.  One refinement
+of the latter would be to make the two implementations mutually exclusive: you
+can build one or the other, but not both.
+
+However.  Given that I want to replace the on-disk format in cachefiles at
+some point, and change what the userspace component does, maybe I should
+create a new, separate UAPI interface and do the on-disk format change at the
+same time.  In which case, it makes sense to build a parallel variant
 
 
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index abbf48fc6230..b00234cf3b04 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -3047,6 +3047,7 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
->  {
->  	struct inode *inode = &ci->vfs_inode;
->  	int last = 0, put = 0, flushsnaps = 0, wake = 0;
-> +	bool check_flushsnaps = false;
->  
-> 
-> 
-> 
->  	spin_lock(&ci->i_ceph_lock);
->  	if (had & CEPH_CAP_PIN)
-> @@ -3063,26 +3064,17 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
->  	if (had & CEPH_CAP_FILE_BUFFER) {
->  		if (--ci->i_wb_ref == 0) {
->  			last++;
-> +			/* put the ref held by ceph_take_cap_refs() */
->  			put++;
-> +			check_flushsnaps = true;
->  		}
->  		dout("put_cap_refs %p wb %d -> %d (?)\n",
->  		     inode, ci->i_wb_ref+1, ci->i_wb_ref);
->  	}
-> -	if (had & CEPH_CAP_FILE_WR)
-> +	if (had & CEPH_CAP_FILE_WR) {
->  		if (--ci->i_wr_ref == 0) {
->  			last++;
-> -			if (__ceph_have_pending_cap_snap(ci)) {
-> -				struct ceph_cap_snap *capsnap =
-> -					list_last_entry(&ci->i_cap_snaps,
-> -							struct ceph_cap_snap,
-> -							ci_item);
-> -				capsnap->writing = 0;
-> -				if (ceph_try_drop_cap_snap(ci, capsnap))
-> -					put++;
-> -				else if (__ceph_finish_cap_snap(ci, capsnap))
-> -					flushsnaps = 1;
-> -				wake = 1;
-> -			}
-> +			check_flushsnaps = true;
->  			if (ci->i_wrbuffer_ref_head == 0 &&
->  			    ci->i_dirty_caps == 0 &&
->  			    ci->i_flushing_caps == 0) {
-> @@ -3094,6 +3086,20 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
->  			if (!__ceph_is_any_real_caps(ci) && ci->i_snap_realm)
->  				drop_inode_snap_realm(ci);
->  		}
-> +	}
-> +	if (check_flushsnaps && __ceph_have_pending_cap_snap(ci)) {
-> +		struct ceph_cap_snap *capsnap =
-> +			list_last_entry(&ci->i_cap_snaps,
-> +					struct ceph_cap_snap,
-> +					ci_item);
-> +		capsnap->writing = 0;
-> +		if (ceph_try_drop_cap_snap(ci, capsnap))
-> +		        /* put the ref held by ceph_queue_cap_snap() */
-> +			put++;
-> +		else if (__ceph_finish_cap_snap(ci, capsnap))
-> +			flushsnaps = 1;
-> +		wake = 1;
-> +	}
->  	spin_unlock(&ci->i_ceph_lock);
->  
-> 
-> 
-> 
->  	dout("put_cap_refs %p had %s%s%s\n", inode, ceph_cap_string(had),
-> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-> index b611f829cb61..639fb91cc9db 100644
-> --- a/fs/ceph/snap.c
-> +++ b/fs/ceph/snap.c
-> @@ -561,10 +561,10 @@ void ceph_queue_cap_snap(struct ceph_inode_info *ci)
->  	capsnap->context = old_snapc;
->  	list_add_tail(&capsnap->ci_item, &ci->i_cap_snaps);
->  
-> 
-> 
-> 
-> -	if (used & CEPH_CAP_FILE_WR) {
-> +	if (used & (CEPH_CAP_FILE_WR | CEPH_CAP_FILE_BUFFER)) {
->  		dout("queue_cap_snap %p cap_snap %p snapc %p"
-> -		     " seq %llu used WR, now pending\n", inode,
-> -		     capsnap, old_snapc, old_snapc->seq);
-> +		     " seq %llu used WR | BUFFFER, now pending\n",
-> +		     inode, capsnap, old_snapc, old_snapc->seq);
->  		capsnap->writing = 1;
->  	} else {
->  		/* note mtime, size NOW. */
+Anyway, a bit of background into the why.  There are a number of things that
+need to be fixed in fscache/cachefiles:
 
--- 
-Jeff Layton <jlayton@kernel.org>
+ (1) The use of bmap to test whether the backing fs contains a cache block.
+     This is not reliable in a modern extent-based filesystem as it can insert
+     and remove bridging blocks of zeros at will.
+
+     Having discussed this with Christoph Hellwig and Dave Chinner, I think I
+     that the cache really needs to keep track of this for itself.
+
+ (2) The use of pagecache waitlist snooping to find out if a backing
+     filesystem page has been updated yet.  I have the feeling that this is
+     not 100% reliable from untrackdownable bugs that seem to relate to this.
+
+     I really would rather be told directly by the backing fs that the op was
+     complete.  Switching over to kiocbs means that can be done.
+
+ (3) Having to go through the pagecache attached to the backing file, copying
+     data from it or using vfs_write() to write into it.  This doubles the
+     amount of pagecache required and adds a bunch of copies for good measure.
+
+     When I wrote the cachefiles caching backend, using direct I/O from within
+     the kernel wasn't possible - but, now that kiocbs are available, I can
+     actually do async DIO from the backing files to/from the netfs pages,
+     cutting out copies in both direction, and using the kiocb completion
+     function to tell me when it's done.
+
+ (4) fscache's structs have a number of pointers back into the netfs, which
+     makes it tricky if the netfs instance goes away whilst the cache is
+     active.
+
+     I really want no pointers back - apart from very transient I/O completion
+     callbacks.  I can store the metadata I need in the cookie.
+
+Modernising this affords the opportunity to make huge simplifications in the
+code (shaving off over 1000 lines, maybe as many as 3000).
+
+One thing I've done is to make a helper library that handles a number of
+features on behalf of a netfs if it wants to use the library:
+
+ (*) Local caching.
+
+ (*) Segmentation and shaping of read operations.
+
+     This takes a ->readahead() request from the VM and translates it into one
+     or more reads against the cache and the netfs, allowing both to
+     adjust/expand the size of the individual subops according to internal
+     alignments.
+
+     Allowing the cache to expand a read request to put it on a larger
+     granularity allows the cache to use less metadata to represent what it
+     contains.
+
+     It also provides a place to retry operations (something that's required
+     if a read against the cache fails and we need to send it to the server
+     instead).
+
+ (*) Transparent huge pages (Willy).
+
+ (*) A place to put fscrypt support (Jeff).
+
+We have the first three working - with some limitations - for afs, nfs and
+ceph, and I've produced partial patches for 9p and cifs. afs, nfs and ceph are
+able to handle xfstests with a cache now - which is something that the old
+fscache code will just explode with.
+
+
+So, as stated, much of that code is written and working.  However, if I do a
+complete replacement all the way out to userspace, there are further changes
+I'm thinking of making:
+
+ (*) Get rid of the ability to remove a cache that's in use.  This accounts
+     for a *lot* of the complexity in fscache.  All the synchronisation
+     required to effect the removal of a live cache at any time whilst it's
+     actually being used.
+
+ (*) Change cachefiles so that it uses an index file and a single data file
+     and perform culling by marking the index rather than deleting data files.
+     Culling would then be moved into the kernel.  cachefilesd is then
+     unnecessary, except to load the config and keep the cache open.
+
+     Moving the culling into an index would also make manual invalidation
+     easier.
+
+ (*) Rather than using cachefilesd to hold the cache open, do something akin
+     to swapon/swapoff to add and remove the cache.
+     
+     Attempting to remove an in-use cache would either fail EBUSY or mark the
+     cache to be removed when it becomes unused and not allow further new
+     users.
+
+ (*) Declare the size of the cache up front rather than declaring that it has
+     to maintain a certain amount of free space, reducing the cache to make
+     more space if the level drops.
+
+ (*) Merge cachefiles into fscache.  Give up the ability to have alternate
+     cache backends.  That would allow a bit more reduction in the complexity
+     and reduce the number of function pointers gone through.
+
+David
 
