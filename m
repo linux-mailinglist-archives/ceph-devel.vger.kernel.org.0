@@ -2,79 +2,93 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48AD02F65A6
-	for <lists+ceph-devel@lfdr.de>; Thu, 14 Jan 2021 17:21:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DA842F9DAB
+	for <lists+ceph-devel@lfdr.de>; Mon, 18 Jan 2021 12:12:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726578AbhANQUk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 14 Jan 2021 11:20:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60706 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbhANQUk (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 14 Jan 2021 11:20:40 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3F13C061575;
-        Thu, 14 Jan 2021 08:19:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=L957m6SCsm4YfRvwt1RQwkHpsqdoGDsxSLN6pjGCXjg=; b=SwgoX4biWiRfNIkgGKBzF1hThh
-        fgohm23xOlFZxJhSLZKiwJXvlpOT7mQ1aERIfxlbDnMSz8cAhA501/6QBLnf5vxFq+Kvg8w7lNzGu
-        lKsu5VUh30ZpNT1bDp4PgQQDOAF2zDky3QBOcd8dN/XGAqJ/p2C2tMdWALZA6gQ+xCzpv+dn065rk
-        2TTrQt7lGJCVnnHfj+gY6z8VUTG1gzIwprxJtAF5iFkyufA4tU7Q2Fuvhh6wXdjjz4/2sT9ZCH6eX
-        Aa9Hq52wo/tTnFG/QpwZVj0ONsXxVxsjndY/W8xQ7Zm0pIhz05bcYui4M6gozuphqFgWnJ9k7MeB2
-        tBm+E3uQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l05LN-007mRF-WF; Thu, 14 Jan 2021 16:19:41 +0000
-Date:   Thu, 14 Jan 2021 16:19:29 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        jlayton@redhat.com, dwysocha@redhat.com,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Steve French <sfrench@samba.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Christoph Hellwig <hch@lst.de>, dchinner@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Redesigning and modernising fscache
-Message-ID: <20210114161929.GQ35215@casper.infradead.org>
-References: <2758811.1610621106@warthog.procyon.org.uk>
+        id S2389909AbhARLJd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 18 Jan 2021 06:09:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54116 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389899AbhARLJ0 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 18 Jan 2021 06:09:26 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B8714221F8;
+        Mon, 18 Jan 2021 11:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610968125;
+        bh=6szuVSnV5MOmY/O/uZpCkdWt31KDBQz1fL3d/ijZuXQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=P9dOV2ezMAMNjtyfAg5+zeIb/+bZRkgQ4BGrj/1cHQhu4DL50IQQfXyfuBi1Mfhxx
+         OpDTk8ymVhijDPBntFY9VHQdGviT0UyDyrJtFOp3OCYT0x0VPrJPTc2Po4K6gVhp0x
+         76sL5PNaqyhO7FmT2RwWucwPBytbNawXpEfe5TJMwuNRSX0jq8IMu1FlSDUKlYyzGK
+         LC0RkWtSHjyExjnxYOiXOnRn62weqc8g/WVX8lHqkD5AKOD1svADzJTCvysbWtcxtA
+         L1g+00CgdoA0ABQslAhpPWAhf5hfRHV9U38kZ1NrD3VApijazPsTu7mlddTgw1q0Bj
+         E8vmpjk5kbWOw==
+Message-ID: <5a6fd5f3ab30fe04332bc4af4ecdeaca7fd501c0.camel@kernel.org>
+Subject: Re: [PATCH v3] ceph: defer flushing the capsnap if the Fb is used
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Mon, 18 Jan 2021 06:08:43 -0500
+In-Reply-To: <376245cf-a60d-6ddb-6ab3-894a491b854e@redhat.com>
+References: <20210110020140.141727-1-xiubli@redhat.com>
+         <f698d039251d444eec334b119b5ae0b0dd101a21.camel@kernel.org>
+         <376245cf-a60d-6ddb-6ab3-894a491b854e@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2758811.1610621106@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jan 14, 2021 at 10:45:06AM +0000, David Howells wrote:
-> However, there've been some objections to the approach I've taken to
-> implementing this.  The way I've done it is to disable the use of fscache by
-> the five network filesystems that use it, remove much of the old code, put in
-> the reimplementation, then cut the filesystems over.  I.e. rip-and-replace.
-> It leaves unported filesystems unable to use it - but three of the five are
-> done (afs, ceph, nfs), and I've supplied partially-done patches for the other
-> two (9p, cifs).
+On Mon, 2021-01-18 at 17:10 +0800, Xiubo Li wrote:
+> On 2021/1/13 5:48, Jeff Layton wrote:
+> > On Sun, 2021-01-10 at 10:01 +0800, xiubli@redhat.com wrote:
+> > > From: Xiubo Li <xiubli@redhat.com>
+> > > 
+> > > If the Fb cap is used it means the current inode is flushing the
+> > > dirty data to OSD, just defer flushing the capsnap.
+> > > 
+> > > URL: https://tracker.ceph.com/issues/48679
+> > > URL: https://tracker.ceph.com/issues/48640
+> > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > > ---
+> > > 
+> > > V3:
+> > > - Add more comments about putting the inode ref
+> > > - A small change about the code style
+> > > 
+> > > V2:
+> > > - Fix inode reference leak bug
+> > > 
+> > >   fs/ceph/caps.c | 32 +++++++++++++++++++-------------
+> > >   fs/ceph/snap.c |  6 +++---
+> > >   2 files changed, 22 insertions(+), 16 deletions(-)
+> > > 
+> > Hi Xiubo,
+> > 
+> > This patch seems to cause hangs in some xfstests (generic/013, in
+> > particular). I'll take a closer look when I have a chance, but I'm
+> > dropping this for now.
 > 
-> It's been suggested that it's too hard to review this way and that either I
-> should go for a gradual phasing in or build the new one in parallel.  The
-> first is difficult because I want to change how almost everything in there
-> works - but the parts are tied together; the second is difficult because there
-> are areas that would *have* to overlap (the UAPI device file, the cache
-> storage, the cache size limits and at least some state for managing these), so
-> there would have to be interaction between the two variants.  One refinement
-> of the latter would be to make the two implementations mutually exclusive: you
-> can build one or the other, but not both.
+> Okay.
+> 
+> BTW, what's your test commands to reproduce it ? I will take a look when 
+> I am free these days or later.
+> 
+> BRs
+> 
 
-My reservation with "build fscache2" is that it's going to take some
-time to do, and I really want rid of ->readpages as soon as possible.
+I set up xfstests to run on cephfs, and then just run:
 
-What I'd like to see is netfs_readahead() existing as soon as possible,
-built on top of the current core.  Then filesystems can implement
-netfs_read_request_ops one by one, and they become insulated from the
-transition.
+    $ sudo ./check generic/013
+
+It wouldn't reliably complete with this patch in place. Setting up
+xfstests is the "hard part". I'll plan to roll up a wiki page on how to
+do that soon (that's good info to have out there anyway).
+> 
+
+Cheers,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
