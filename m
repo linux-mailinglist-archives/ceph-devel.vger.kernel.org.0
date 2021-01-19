@@ -2,128 +2,81 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B817A2FADD3
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Jan 2021 00:40:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B13A2FBAB3
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Jan 2021 16:05:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733015AbhARXid (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 18 Jan 2021 18:38:33 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20872 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726044AbhARXiR (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 18 Jan 2021 18:38:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611013010;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=evmA0OdyD5M8kY9qOkiMZu9GD1M5IQ2ieILxxBsie0w=;
-        b=NECGjpltR2w1zuBKhoVxpcc6//binQYjgCgF3OhBJsayl5MKDoTySHhN9Lzx0ZgG70q7cR
-        rm+Vx/5uuoAKa7jEWxujaSkonCmfhsymMzF6IrDEIuVGrlQ9abf/c+DolD7tfyJ/zWPXmm
-        AxIijtwewgvy6DBnUbNn+L8OlMc+7ZI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-9-7qf1DA_HP76SP8BqpolMWQ-1; Mon, 18 Jan 2021 18:36:49 -0500
-X-MC-Unique: 7qf1DA_HP76SP8BqpolMWQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7CA1359;
-        Mon, 18 Jan 2021 23:36:46 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B6B365D9CD;
-        Mon, 18 Jan 2021 23:36:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <2758811.1610621106@warthog.procyon.org.uk>
-References: <2758811.1610621106@warthog.procyon.org.uk>
-To:     linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com
-Cc:     dhowells@redhat.com, jlayton@redhat.com, dwysocha@redhat.com,
-        Matthew Wilcox <willy@infradead.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Steve French <sfrench@samba.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Christoph Hellwig <hch@lst.de>, dchinner@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Cut down implementation of fscache new API
+        id S1731966AbhASPD7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 19 Jan 2021 10:03:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37250 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389193AbhASOpP (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 19 Jan 2021 09:45:15 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C6A0720DD4
+        for <ceph-devel@vger.kernel.org>; Tue, 19 Jan 2021 14:44:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611067472;
+        bh=dcBMc4caMRpBfpk0nnqbrRWXnYqbTf1YcIr1LHN8bIs=;
+        h=From:To:Subject:Date:From;
+        b=NGAx/oEU+7XYNpY3+VUGA+Vwoj4mUK7/AfoHItPfNuRpJCsG+Bccm8QEdigjabXsk
+         hXZwvVVbwqK0ItAaIPybhy6112QgRFQUVIKmvJf8+1DS9pjeIbRzyQGC51ljsh2LVK
+         birP3CdUxQPVLOzMeUvoN0SvkjaFtcGfA8Y2433TGOWK8ZRg3zVrYWYsMKA0tI+xF+
+         KKmcvs1gVzead5x+zFS02+tY6cYlI34+bZdaPpZ+VoORrqI5dDnFFHAsGubEtTXXQl
+         OZasvCz27jpJZ2ey5jmq8zSv8iLPLoL5XmzwyRQTHddKysJpvdoDe0sdbaGI3JzcF0
+         rvzHo1OPMmbSQ==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Subject: [PATCH] ceph: enable async dirops by default
+Date:   Tue, 19 Jan 2021 09:44:30 -0500
+Message-Id: <20210119144430.337370-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <160654.1611012999.1@warthog.procyon.org.uk>
-Date:   Mon, 18 Jan 2021 23:36:39 +0000
-Message-ID: <160655.1611012999@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Take a look at:
+This has been behaving reasonably well in testing, and enabling this
+offers significant performance benefits. Enable async dirops by default
+in the kclient going forward, and change show_options to add "wsync"
+when they are disabled.
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/super.c | 4 ++--
+ fs/ceph/super.h | 5 +++--
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-I've extracted the netfs helper library from my patch set and built an
-alternative cut-down I/O API for the existing fscache code as a bridge to
-moving to a new fscache implementation.  With this, a netfs now has two
-choices: use the existing API as is or use the netfs lib and the alternative
-API.  You can't mix the two APIs - a netfs has to use one or the other.
-
-It works with AFS, at least for reading data through a cache, and without a
-cache, xfstests is quite happy.  I was able to take a bunch of the AFS patches
-from my fscache-iter branch (the full rewrite) and apply them with minimal
-changes.  Since it goes through the new I/O API in both cases, those changes
-should be the same.  The main differences are in the cookie wrangling API.
-
-The alternative API is different from the current in the following ways:
-
- (1) It uses kiocbs to do async DIO rather than using readpage() with page
-     wake queue snooping and vfs_write().
-
- (2) It uses SEEK_HOLE/SEEK_DATA rather than bmap() to determine the location
-     of data in the file.  This is still broken because we can't rely on this
-     information in the backing filesystem.
-
- (3) It completely changes how PG_fscache is used.  As for the new API, it's
-     used to indicate an in progress write to the cache from a page rather
-     than a page the cache knows about.
-
- (4) It doesn't keep track of the netfs's pages beyond the termination of an
-     I/O operation.  The old API added pages that have outstanding writes to
-     the cache to a radix three for a background writer; now an async kiocb is
-     dispatched.
-
- (5) The netfs needs to call fscache_begin_read_operation() from its
-     ->begin_cache_operation() handler as passed to the netfs helper lib.
-     This tells the netfs helpers how to access the cache.
-
- (6) It relies on the netfs helper lib to reissue a failed cache read to the
-     server.
-
- (7) Handles THPs.
-
- (8) Implements completely ->readahead() and ->readpage() and implements a
-     chunk of ->write_begin().
-
-Things it doesn't address:
-
- (1) Mapping the content independently of the backing filesystem's metadata.
-
- (2) Getting rid of the backpointers into the netfs.
-
- (3) Simplifying the management of cookies and objects and their processing.
-
- (4) Holding an open file to the cache for any great length of time.  It gets
-     a new file struct for each read op it does on the cache and drops it
-     again afterwards.
-
- (5) Pinning the cache context/state required to handle a deferred write to
-     the cache from ->write_begin() as performed by, say, ->writepages().
-
-David
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 9b1b7f4cfdd4..884e2ffabfaf 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -577,8 +577,8 @@ static int ceph_show_options(struct seq_file *m, struct dentry *root)
+ 	if (fsopt->flags & CEPH_MOUNT_OPT_CLEANRECOVER)
+ 		seq_show_option(m, "recover_session", "clean");
+ 
+-	if (fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS)
+-		seq_puts(m, ",nowsync");
++	if (!(fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS))
++		seq_puts(m, ",wsync");
+ 
+ 	if (fsopt->wsize != CEPH_MAX_WRITE_SIZE)
+ 		seq_printf(m, ",wsize=%u", fsopt->wsize);
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 13b02887b085..8ee2745f6257 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -46,8 +46,9 @@
+ #define CEPH_MOUNT_OPT_ASYNC_DIROPS    (1<<15) /* allow async directory ops */
+ 
+ #define CEPH_MOUNT_OPT_DEFAULT			\
+-	(CEPH_MOUNT_OPT_DCACHE |		\
+-	 CEPH_MOUNT_OPT_NOCOPYFROM)
++	(CEPH_MOUNT_OPT_DCACHE		|	\
++	 CEPH_MOUNT_OPT_NOCOPYFROM	|	\
++	 CEPH_MOUNT_OPT_ASYNC_DIROPS)
+ 
+ #define ceph_set_mount_opt(fsc, opt) \
+ 	(fsc)->mount_options->flags |= CEPH_MOUNT_OPT_##opt
+-- 
+2.29.2
 
