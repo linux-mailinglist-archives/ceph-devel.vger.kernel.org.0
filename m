@@ -2,43 +2,44 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE6482FDFE5
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 Jan 2021 04:03:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 110E82FDFE4
+	for <lists+ceph-devel@lfdr.de>; Thu, 21 Jan 2021 04:03:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404701AbhATXzw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 Jan 2021 18:55:52 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48985 "EHLO
+        id S2404768AbhATX4N (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 Jan 2021 18:56:13 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:52426 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732470AbhATW0T (ORCPT
+        by vger.kernel.org with ESMTP id S1732901AbhATW1L (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 20 Jan 2021 17:26:19 -0500
+        Wed, 20 Jan 2021 17:27:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611181484;
+        s=mimecast20190719; t=1611181544;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=LnEtYBUhzI3CX1vikJ0e0ojAT0Lczz7YWxs9VcDeUYY=;
-        b=b8qA2QFkXZ9PZVZPV2yM2mKdLitteCqR/qNlsmLSeSzqR/Pqgnjo3gK1GqK11R9ELQ0ZUQ
-        7T3mLHYrBuK1Jti0eOR7rxflUC0k0K7qFnYnyRcPvASx8YNl4n2I7Hf5ZQKO78BRQduE1F
-        rP1Ah5E8q7fQ5nmpwlSAOlqIMkffBcM=
+        bh=MyiqIKKteHQeOAKiImYJHwBmazbFLi4M9gsQ1oXoZGw=;
+        b=dLGDvyCrL8f8wwlfPPqQBt2WVof1noq740hBsPJHLH3AXMsx5SxI2d6URkAg1V7ZDPTbNN
+        M0PHUGMUxO+nUjA+sFnuzyWfZ0rJrCoBZOTV/FcI7pM8+WRpOqPP80YKwhL8j3/gLWO7ZO
+        cLe3DC6ALieLN2Yh0mflm57A6Fk4kiI=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-589-SVVm6crJOP2tAYNPuXeIrA-1; Wed, 20 Jan 2021 17:24:42 -0500
-X-MC-Unique: SVVm6crJOP2tAYNPuXeIrA-1
+ us-mta-527-jNqnv9hQNNG4tL-1GCvRRg-1; Wed, 20 Jan 2021 17:25:43 -0500
+X-MC-Unique: jNqnv9hQNNG4tL-1GCvRRg-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 763B21804860;
-        Wed, 20 Jan 2021 22:24:40 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D6A1710054FF;
+        Wed, 20 Jan 2021 22:25:40 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A91C660C6C;
-        Wed, 20 Jan 2021 22:24:37 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E458860C6C;
+        Wed, 20 Jan 2021 22:25:37 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 16/25] afs: Move key to afs_read struct
+Subject: [PATCH 21/25] afs: Wait on PG_fscache before modifying/releasing a
+ page
 From:   David Howells <dhowells@redhat.com>
 To:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
@@ -52,8 +53,8 @@ Cc:     dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 20 Jan 2021 22:24:36 +0000
-Message-ID: <161118147693.1232039.13780672951838643842.stgit@warthog.procyon.org.uk>
+Date:   Wed, 20 Jan 2021 22:25:37 +0000
+Message-ID: <161118153708.1232039.3535103645871176749.stgit@warthog.procyon.org.uk>
 In-Reply-To: <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
 References: <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
@@ -65,207 +66,79 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Stash the key used to authenticate read operations in the afs_read struct.
-This will be necessary to reissue the operation against the server if a
-read from the cache fails in upcoming cache changes.
+PG_fscache is going to be used to indicate that a page is being written to
+the cache, and that the page should not be modified or released until it's
+finished.
+
+Make afs_invalidatepage() and afs_releasepage() wait for it.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/afs/dir.c      |    3 ++-
- fs/afs/file.c     |   16 +++++++++-------
- fs/afs/internal.h |    3 ++-
- fs/afs/write.c    |   12 ++++++------
- 4 files changed, 19 insertions(+), 15 deletions(-)
+ fs/afs/file.c  |    9 +++++++++
+ fs/afs/write.c |   10 ++++++++++
+ 2 files changed, 19 insertions(+)
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 7bd659ad959e..96e9e2e60d97 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -241,6 +241,7 @@ static struct afs_read *afs_read_dir(struct afs_vnode *dvnode, struct key *key)
- 		return ERR_PTR(-ENOMEM);
- 
- 	refcount_set(&req->usage, 1);
-+	req->key = key_get(key);
- 	req->nr_pages = nr_pages;
- 	req->actual_len = i_size; /* May change */
- 	req->len = nr_pages * PAGE_SIZE; /* We can ask for more than there is */
-@@ -305,7 +306,7 @@ static struct afs_read *afs_read_dir(struct afs_vnode *dvnode, struct key *key)
- 
- 	if (!test_bit(AFS_VNODE_DIR_VALID, &dvnode->flags)) {
- 		trace_afs_reload_dir(dvnode);
--		ret = afs_fetch_data(dvnode, key, req);
-+		ret = afs_fetch_data(dvnode, req);
- 		if (ret < 0)
- 			goto error_unlock;
- 
 diff --git a/fs/afs/file.c b/fs/afs/file.c
-index 21868bfc3a44..d23192b3b933 100644
+index f1bab69e99d4..acbc21a8c80e 100644
 --- a/fs/afs/file.c
 +++ b/fs/afs/file.c
-@@ -199,6 +199,7 @@ void afs_put_read(struct afs_read *req)
- 			if (req->pages != req->array)
- 				kfree(req->pages);
- 		}
-+		key_put(req->key);
- 		kfree(req);
- 	}
+@@ -594,6 +594,7 @@ static void afs_invalidatepage(struct page *page, unsigned int offset,
+ 	if (PagePrivate(page))
+ 		afs_invalidate_dirty(page, offset, length);
+ 
++	wait_on_page_fscache(page);
+ 	_leave("");
  }
-@@ -229,7 +230,7 @@ static const struct afs_operation_ops afs_fetch_data_operation = {
- /*
-  * Fetch file data from the volume.
-  */
--int afs_fetch_data(struct afs_vnode *vnode, struct key *key, struct afs_read *req)
-+int afs_fetch_data(struct afs_vnode *vnode, struct afs_read *req)
- {
- 	struct afs_operation *op;
  
-@@ -238,9 +239,9 @@ int afs_fetch_data(struct afs_vnode *vnode, struct key *key, struct afs_read *re
- 	       vnode->fid.vid,
- 	       vnode->fid.vnode,
- 	       vnode->fid.unique,
--	       key_serial(key));
-+	       key_serial(req->key));
+@@ -611,6 +612,14 @@ static int afs_releasepage(struct page *page, gfp_t gfp_flags)
  
--	op = afs_alloc_operation(key, vnode->volume);
-+	op = afs_alloc_operation(req->key, vnode->volume);
- 	if (IS_ERR(op))
- 		return PTR_ERR(op);
- 
-@@ -279,6 +280,7 @@ int afs_page_filler(void *data, struct page *page)
- 	 * unmarshalling code will clear the unfilled space.
- 	 */
- 	refcount_set(&req->usage, 1);
-+	req->key = key_get(key);
- 	req->pos = (loff_t)page->index << PAGE_SHIFT;
- 	req->len = PAGE_SIZE;
- 	req->nr_pages = 1;
-@@ -288,7 +290,7 @@ int afs_page_filler(void *data, struct page *page)
- 
- 	/* read the contents of the file from the server into the
- 	 * page */
--	ret = afs_fetch_data(vnode, key, req);
-+	ret = afs_fetch_data(vnode, req);
- 	afs_put_read(req);
- 
- 	if (ret < 0) {
-@@ -373,7 +375,6 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
- 	struct afs_read *req;
- 	struct list_head *p;
- 	struct page *first, *page;
--	struct key *key = afs_file_key(file);
- 	pgoff_t index;
- 	int ret, n, i;
- 
-@@ -397,6 +398,7 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
- 
- 	refcount_set(&req->usage, 1);
- 	req->vnode = vnode;
-+	req->key = key_get(afs_file_key(file));
- 	req->page_done = afs_readpages_page_done;
- 	req->pos = first->index;
- 	req->pos <<= PAGE_SHIFT;
-@@ -426,11 +428,11 @@ static int afs_readpages_one(struct file *file, struct address_space *mapping,
- 	} while (req->nr_pages < n);
- 
- 	if (req->nr_pages == 0) {
--		kfree(req);
-+		afs_put_read(req);
- 		return 0;
- 	}
- 
--	ret = afs_fetch_data(vnode, key, req);
-+	ret = afs_fetch_data(vnode, req);
- 	if (ret < 0)
- 		goto error;
- 
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index cd545e7dbfb8..4b255d10f726 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -204,6 +204,7 @@ struct afs_read {
- 	loff_t			actual_len;	/* How much we're actually getting */
- 	loff_t			remain;		/* Amount remaining */
- 	loff_t			file_size;	/* File size returned by server */
-+	struct key		*key;		/* The key to use to reissue the read */
- 	afs_dataversion_t	data_version;	/* Version number returned by server */
- 	refcount_t		usage;
- 	unsigned int		index;		/* Which page we're reading into */
-@@ -1045,7 +1046,7 @@ extern int afs_cache_wb_key(struct afs_vnode *, struct afs_file *);
- extern void afs_put_wb_key(struct afs_wb_key *);
- extern int afs_open(struct inode *, struct file *);
- extern int afs_release(struct inode *, struct file *);
--extern int afs_fetch_data(struct afs_vnode *, struct key *, struct afs_read *);
-+extern int afs_fetch_data(struct afs_vnode *, struct afs_read *);
- extern int afs_page_filler(void *, struct page *);
- extern void afs_put_read(struct afs_read *);
- 
+ 	/* deny if page is being written to the cache and the caller hasn't
+ 	 * elected to wait */
++#ifdef CONFIG_AFS_FSCACHE
++	if (PageFsCache(page)) {
++		if (!(gfp_flags & __GFP_DIRECT_RECLAIM) || !(gfp_flags & __GFP_FS))
++			return false;
++		wait_on_page_fscache(page);
++	}
++#endif
++
+ 	if (PagePrivate(page)) {
+ 		detach_page_private(page);
+ 		trace_afs_page_dirty(vnode, tracepoint_string("rel"), page);
 diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 9d0cef35ecba..7eba0d3201ba 100644
+index dd4dc1c868b5..e1791de90478 100644
 --- a/fs/afs/write.c
 +++ b/fs/afs/write.c
-@@ -25,9 +25,10 @@ int afs_set_page_dirty(struct page *page)
- /*
-  * partly or wholly fill a page that's under preparation for writing
-  */
--static int afs_fill_page(struct afs_vnode *vnode, struct key *key,
-+static int afs_fill_page(struct file *file,
- 			 loff_t pos, unsigned int len, struct page *page)
- {
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
- 	struct afs_read *req;
- 	size_t p;
- 	void *data;
-@@ -49,6 +50,7 @@ static int afs_fill_page(struct afs_vnode *vnode, struct key *key,
- 		return -ENOMEM;
+@@ -117,6 +117,10 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
+ 		SetPageUptodate(page);
+ 	}
  
- 	refcount_set(&req->usage, 1);
-+	req->key = key_get(afs_file_key(file));
- 	req->pos = pos;
- 	req->len = len;
- 	req->nr_pages = 1;
-@@ -56,7 +58,7 @@ static int afs_fill_page(struct afs_vnode *vnode, struct key *key,
- 	req->pages[0] = page;
- 	get_page(page);
++#ifdef CONFIG_AFS_FSCACHE
++	wait_on_page_fscache(page);
++#endif
++
+ try_again:
+ 	/* See if this page is already partially written in a way that we can
+ 	 * merge the new write with.
+@@ -857,6 +861,11 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
+ 	/* Wait for the page to be written to the cache before we allow it to
+ 	 * be modified.  We then assume the entire page will need writing back.
+ 	 */
++#ifdef CONFIG_AFS_FSCACHE
++	if (PageFsCache(vmf->page) &&
++	    wait_on_page_bit_killable(vmf->page, PG_fscache) < 0)
++		return VM_FAULT_RETRY;
++#endif
  
--	ret = afs_fetch_data(vnode, key, req);
-+	ret = afs_fetch_data(vnode, req);
- 	afs_put_read(req);
- 	if (ret < 0) {
- 		if (ret == -ENOENT) {
-@@ -80,7 +82,6 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
- {
- 	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
- 	struct page *page;
--	struct key *key = afs_file_key(file);
- 	unsigned long priv;
- 	unsigned f, from = pos & (PAGE_SIZE - 1);
- 	unsigned t, to = from + len;
-@@ -95,7 +96,7 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
- 		return -ENOMEM;
+ 	if (PageWriteback(vmf->page) &&
+ 	    wait_on_page_bit_killable(vmf->page, PG_writeback) < 0)
+@@ -948,5 +957,6 @@ int afs_launder_page(struct page *page)
  
- 	if (!PageUptodate(page) && len != PAGE_SIZE) {
--		ret = afs_fill_page(vnode, key, pos & PAGE_MASK, PAGE_SIZE, page);
-+		ret = afs_fill_page(file, pos & PAGE_MASK, PAGE_SIZE, page);
- 		if (ret < 0) {
- 			unlock_page(page);
- 			put_page(page);
-@@ -163,7 +164,6 @@ int afs_write_end(struct file *file, struct address_space *mapping,
- 		  struct page *page, void *fsdata)
- {
- 	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
--	struct key *key = afs_file_key(file);
- 	unsigned long priv;
- 	unsigned int f, from = pos & (PAGE_SIZE - 1);
- 	unsigned int t, to = from + copied;
-@@ -193,7 +193,7 @@ int afs_write_end(struct file *file, struct address_space *mapping,
- 			 * unmarshalling routine will take care of clearing any
- 			 * bits that are beyond the EOF.
- 			 */
--			ret = afs_fill_page(vnode, key, pos + copied,
-+			ret = afs_fill_page(file, pos + copied,
- 					    len - copied, page);
- 			if (ret < 0)
- 				goto out;
+ 	detach_page_private(page);
+ 	trace_afs_page_dirty(vnode, tracepoint_string("laundered"), page);
++	wait_on_page_fscache(page);
+ 	return ret;
+ }
 
 
