@@ -2,139 +2,178 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0D9B2FD038
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 Jan 2021 13:37:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E0342FD11D
+	for <lists+ceph-devel@lfdr.de>; Wed, 20 Jan 2021 14:19:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730671AbhATMhP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 Jan 2021 07:37:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54248 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732337AbhATMYw (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 20 Jan 2021 07:24:52 -0500
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB409C0613CF
-        for <ceph-devel@vger.kernel.org>; Wed, 20 Jan 2021 04:23:56 -0800 (PST)
-Received: by mail-io1-xd2c.google.com with SMTP id u17so46509856iow.1
-        for <ceph-devel@vger.kernel.org>; Wed, 20 Jan 2021 04:23:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6T4MFrKVCMIP3ueSo8Td+vbgimqumwzV0GMiRtczcaU=;
-        b=OdAF6ZOQFEVXyWUZ1t2KHZtAcAcScsbSXd7rBN0HQP8yHGWaS82L1nF5vhX3F3TGj6
-         0OdNXX1vhARwpFx7GLsd6trRc5AokFB4uIEvz+Lmnu23FiFtOR7DWbIuPgIMcRAeJnqu
-         BQt/TPNtRLlx72bHUdHiwflVbAi8nSpRzc/zT91lfNEHEZrEyB2toW5/vvCmYJNyYXU1
-         Br01I4kxbgmLxuZz57eTd5K6e93uX8cZO0LsF8U+94s8C30fDoH4K6M/CDZSCvji1F9k
-         WOPKKicxr6U/GnreZiKUuHDeG22rTuGf9TbN2DEztbOUF+wdC53B8KWZm484eS4rlzPx
-         a24Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6T4MFrKVCMIP3ueSo8Td+vbgimqumwzV0GMiRtczcaU=;
-        b=kVCEcAFkIkub074UjyLqY05i3eqVV2bn88nYoeq7IwpOfW9AV0TwaH6fGRD65sm3pF
-         fam9vrNzz5fPGVhWWtpps2bgzzBpc+S6SHoPN+SvT8BkjfbtX7neBEFY3/fLkxxcTZeA
-         qHS5dKOzOwyFoBu2y3bv0Kv9yn2jPk+DGK+R4gb6yjTm5ekWvbJuX294JoPty9Kj5+RS
-         UXWTWcNK9doNqiZ+5JNToLcjcao5LAnUBWmpByFdRx2ncBvvwTZj8PNFwZGVsadkISqZ
-         YZqZwKtKYR2PFNfg9oUIVzYBl92py82KupKjDZF2O5aISNl/UFP3k1S1pO14vvhbHX+k
-         ivQw==
-X-Gm-Message-State: AOAM531N24Y5kvSFnMvGQ9ZKO0BNUP7o9u1Rj67SYIhlFt1wzdfMmJ4N
-        lPScj2EclCfy/3Um/6Hjr1wd5WQaI5Li7IM836w=
-X-Google-Smtp-Source: ABdhPJxaUjnuPme/VVRlPEq25nu+/aHyxp33BOz7rUbfJ18MKpYOhm81iMNCnQOKq2CQrwHi2dP8hhS0MhNQlGevTY0=
-X-Received: by 2002:a6b:14d:: with SMTP id 74mr6616840iob.182.1611145436070;
- Wed, 20 Jan 2021 04:23:56 -0800 (PST)
+        id S2389578AbhATNFe (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 Jan 2021 08:05:34 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:43666 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390071AbhATMny (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 20 Jan 2021 07:43:54 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10KCegL0103501;
+        Wed, 20 Jan 2021 12:43:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=a0khsQhU5OWikRaBgJ1+ez6gc91NMazuf/VkpLa57kI=;
+ b=LRvcG4dxxsVfnvKUoAAOwsvSX9n1m0mIwrVylzffsI4Z4pFrbt2PpA5RwgftrYsfD9/2
+ 0qCM8gBfJUPaQRxLmIr8hAaYPcFI25MHWjhgkOxqwXfRiKMrXYVwLccFrfm8YHJtn7V/
+ CcaI4+sgOn8HCwm5dSEDMJp+sefFDXzALqJNphYPzeKbV2CukNo9Fp7mCez+HepHXrJG
+ SBMopyHElujt43BLlU779k354q74zFlQHINXgfTbvnk+XlaD955tQxeTLsnf06Eaf6Y0
+ 5gs925zDVQh8JUoXf26uQrmBRnLBX/LCQXSJ5fTQthXkXj19jmiDbZBs/xPUcn4QnkgR AA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2130.oracle.com with ESMTP id 3668qra90w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jan 2021 12:43:08 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10KCZpqM099774;
+        Wed, 20 Jan 2021 12:41:07 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 3668rdv1hg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jan 2021 12:41:07 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 10KCf66m012980;
+        Wed, 20 Jan 2021 12:41:06 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 20 Jan 2021 04:41:05 -0800
+Date:   Wed, 20 Jan 2021 15:40:55 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     kbuild@lists.01.org, kbuild test robot <lkp@intel.com>,
+        kbuild-all@lists.01.org, LKML <linux-kernel@vger.kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Subject: Re: [kbuild] net/ceph/messenger_v1.c:1099:23: warning: Boolean
+ result is used in bitwise operation. Clarify expression with parentheses.
+Message-ID: <20210120124055.GG20820@kadam>
+References: <20210119194646.GA20820@kadam>
+ <CAOi1vP-7AYWiJJganaUROaGiyJA8ejUmbx90uetwsV23KYGNFw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20210119144430.337370-1-jlayton@kernel.org> <CAOi1vP-1_4eHzAKS3BP6_fL6=BgV1NCYy6-+0e+gyhC0ZnUTVw@mail.gmail.com>
- <abc7c5b147e3a6c50dcc2c00b4b39d04d555c66a.camel@kernel.org>
-In-Reply-To: <abc7c5b147e3a6c50dcc2c00b4b39d04d555c66a.camel@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 20 Jan 2021 13:24:09 +0100
-Message-ID: <CAOi1vP_rAzr7GdD_C=X5qjq26eo34BqewC0YgTd_JLjNXOsZPQ@mail.gmail.com>
-Subject: Re: [PATCH] ceph: enable async dirops by default
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        Patrick Donnelly <pdonnell@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOi1vP-7AYWiJJganaUROaGiyJA8ejUmbx90uetwsV23KYGNFw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9869 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 suspectscore=0
+ adultscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101200074
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9869 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0
+ suspectscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0
+ phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101200074
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jan 20, 2021 at 1:00 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> On Wed, 2021-01-20 at 11:46 +0100, Ilya Dryomov wrote:
-> > On Tue, Jan 19, 2021 at 4:06 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > >
-> > > This has been behaving reasonably well in testing, and enabling this
-> > > offers significant performance benefits. Enable async dirops by default
-> > > in the kclient going forward, and change show_options to add "wsync"
-> > > when they are disabled.
-> > >
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  fs/ceph/super.c | 4 ++--
-> > >  fs/ceph/super.h | 5 +++--
-> > >  2 files changed, 5 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> > > index 9b1b7f4cfdd4..884e2ffabfaf 100644
-> > > --- a/fs/ceph/super.c
-> > > +++ b/fs/ceph/super.c
-> > > @@ -577,8 +577,8 @@ static int ceph_show_options(struct seq_file *m, struct dentry *root)
-> > >         if (fsopt->flags & CEPH_MOUNT_OPT_CLEANRECOVER)
-> > >                 seq_show_option(m, "recover_session", "clean");
-> > >
-> > > -       if (fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS)
-> > > -               seq_puts(m, ",nowsync");
-> > > +       if (!(fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS))
-> > > +               seq_puts(m, ",wsync");
-> > >
-> > >         if (fsopt->wsize != CEPH_MAX_WRITE_SIZE)
-> > >                 seq_printf(m, ",wsize=%u", fsopt->wsize);
-> > > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> > > index 13b02887b085..8ee2745f6257 100644
-> > > --- a/fs/ceph/super.h
-> > > +++ b/fs/ceph/super.h
-> > > @@ -46,8 +46,9 @@
-> > >  #define CEPH_MOUNT_OPT_ASYNC_DIROPS    (1<<15) /* allow async directory ops */
-> > >
-> > >  #define CEPH_MOUNT_OPT_DEFAULT                 \
-> > > -       (CEPH_MOUNT_OPT_DCACHE |                \
-> > > -        CEPH_MOUNT_OPT_NOCOPYFROM)
-> > > +       (CEPH_MOUNT_OPT_DCACHE          |       \
-> > > +        CEPH_MOUNT_OPT_NOCOPYFROM      |       \
-> > > +        CEPH_MOUNT_OPT_ASYNC_DIROPS)
-> > >
-> > >  #define ceph_set_mount_opt(fsc, opt) \
-> > >         (fsc)->mount_options->flags |= CEPH_MOUNT_OPT_##opt
-> > > --
-> > > 2.29.2
-> > >
+On Wed, Jan 20, 2021 at 12:01:59PM +0100, Ilya Dryomov wrote:
+> On Tue, Jan 19, 2021 at 8:46 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 > >
-> > Hi Jeff,
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git   master
+> > head:   1e2a199f6ccdc15cf111d68d212e2fd4ce65682e
+> > commit: 2f713615ddd9d805b6c5e79c52e0e11af99d2bf1 libceph: move msgr1 protocol implementation to its own file
+> > compiler: gcc-9 (Debian 9.3.0-15) 9.3.0
 > >
-> > Is it being tested by teuthology?   I see commit 4181742a3ba8 ("qa:
-> > allow arbitrary mount options on kclient mounts"), but nothing beyond
-> > that.  I think "nowsync" needs to be turned on and get at least some
-> > nightly coverage before the default is flipped.
+> > If you fix the issue, kindly add following tag as appropriate
+> > Reported-by: kernel test robot <lkp@intel.com>
 > >
-> > Thanks,
 > >
-> >                 Ilya
->
-> Good point. I had thought Patrick had added a qa variant that turned
-> that on, but I don't think that ever got merged. We definitely need that
-> enabled in QA before we make this the default.
->
-> The catch is that we probably don't _always_ want nowsync enabled, so is
-> there some way to randomize this? Or do we need some sort of yaml file
-> that turns this on by request? What should we be aiming to do for this?
+> > cppcheck possible warnings: (new ones prefixed by >>, may not real problems)
+> >
+> > >> net/ceph/messenger_v1.c:1099:23: warning: Boolean result is used in bitwise operation. Clarify expression with parentheses. [clarifyCondition]
+> >      BUG_ON(!con->in_msg ^ skip);
+> >                          ^
+> >
+> > vim +1099 net/ceph/messenger_v1.c
+> >
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1033  static int read_partial_message(struct ceph_connection *con)
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1034  {
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1035          struct ceph_msg *m = con->in_msg;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1036          int size;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1037          int end;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1038          int ret;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1039          unsigned int front_len, middle_len, data_len;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1040          bool do_datacrc = !ceph_test_opt(from_msgr(con->msgr), NOCRC);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1041          bool need_sign = (con->peer_features & CEPH_FEATURE_MSG_AUTH);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1042          u64 seq;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1043          u32 crc;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1044
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1045          dout("read_partial_message con %p msg %p\n", con, m);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1046
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1047          /* header */
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1048          size = sizeof (con->in_hdr);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1049          end = size;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1050          ret = read_partial(con, end, size, &con->in_hdr);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1051          if (ret <= 0)
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1052                  return ret;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1053
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1054          crc = crc32c(0, &con->in_hdr, offsetof(struct ceph_msg_header, crc));
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1055          if (cpu_to_le32(crc) != con->in_hdr.crc) {
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1056                  pr_err("read_partial_message bad hdr crc %u != expected %u\n",
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1057                         crc, con->in_hdr.crc);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1058                  return -EBADMSG;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1059          }
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1060
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1061          front_len = le32_to_cpu(con->in_hdr.front_len);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1062          if (front_len > CEPH_MSG_MAX_FRONT_LEN)
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1063                  return -EIO;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1064          middle_len = le32_to_cpu(con->in_hdr.middle_len);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1065          if (middle_len > CEPH_MSG_MAX_MIDDLE_LEN)
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1066                  return -EIO;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1067          data_len = le32_to_cpu(con->in_hdr.data_len);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1068          if (data_len > CEPH_MSG_MAX_DATA_LEN)
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1069                  return -EIO;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1070
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1071          /* verify seq# */
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1072          seq = le64_to_cpu(con->in_hdr.seq);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1073          if ((s64)seq - (s64)con->in_seq < 1) {
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1074                  pr_info("skipping %s%lld %s seq %lld expected %lld\n",
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1075                          ENTITY_NAME(con->peer_name),
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1076                          ceph_pr_addr(&con->peer_addr),
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1077                          seq, con->in_seq + 1);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1078                  con->in_base_pos = -front_len - middle_len - data_len -
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1079                          sizeof_footer(con);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1080                  con->in_tag = CEPH_MSGR_TAG_READY;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1081                  return 1;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1082          } else if ((s64)seq - (s64)con->in_seq > 1) {
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1083                  pr_err("read_partial_message bad seq %lld expected %lld\n",
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1084                         seq, con->in_seq + 1);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1085                  con->error_msg = "bad message sequence # for incoming message";
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1086                  return -EBADE;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1087          }
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1088
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1089          /* allocate message? */
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1090          if (!con->in_msg) {
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1091                  int skip = 0;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1092
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1093                  dout("got hdr type %d front %d data %d\n", con->in_hdr.type,
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1094                       front_len, data_len);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1095                  ret = ceph_con_in_msg_alloc(con, &con->in_hdr, &skip);
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1096                  if (ret < 0)
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1097                          return ret;
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1098
+> > 2f713615ddd9d805 Ilya Dryomov 2020-11-12 @1099                  BUG_ON(!con->in_msg ^ skip);
+> >
+> > ! has higher precedence than ^.  It's not clear that was intended
+> > necessarily.
+> 
+> Hi Dan,
+> 
+> This line and the surrounding code date back to 2013, commit
+> 2f713615ddd9 just moved it.  It is correct (we either get a message
+> to work with or get instructed to skip, in the latter case con->in_msg
+> is expected to be NULL), so I'm inclined to leave it as is.
 
-It can be randomized, you can choose to run a particular set of
-jobs with both wsync and nowsync and the rest only with wsync or the
-other way around, etc.  Completely up to you, depending on the sort
-of coverage you want to get (weighted by the number of jobs added to
-the suite).
+You could silence the warning and make the code look more intentional
+by writing it like this:
 
-Thanks,
+	BUG_ON((!con->in_msg) ^ skip);
 
-                Ilya
+regards,
+dan carpenter
+
