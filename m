@@ -2,49 +2,50 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57A9D2FDD6F
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 Jan 2021 00:56:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 243AE2FDD73
+	for <lists+ceph-devel@lfdr.de>; Thu, 21 Jan 2021 00:56:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404321AbhATXyI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 Jan 2021 18:54:08 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20182 "EHLO
+        id S2404397AbhATXyq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 Jan 2021 18:54:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:22650 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729591AbhATWXj (ORCPT
+        by vger.kernel.org with ESMTP id S1730509AbhATWYO (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 20 Jan 2021 17:23:39 -0500
+        Wed, 20 Jan 2021 17:24:14 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611181330;
+        s=mimecast20190719; t=1611181360;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Ta1g480Zfhxsf7RxeAZRD47eVsihdAM3Ih4ZNeZrIos=;
-        b=fM2JXQXO0C2vCyJLZ/MqHLvgNeE/j3oyftwZoAwK8+SrkjEvez9BfFwaKw747TTrWGT04k
-        dqq1ze5uk4XbNWpvVGUBXiARmU1SG1Pf1P6sxwXVVGbw3Y8o7d9rdqXhv3sWpbbyjuiLql
-        mjN/3eGRI9YAkBUxAWQ78zaFW+lwaQ8=
+        bh=YedMCP9lMu2Cnddwp+/wzr1wQ5ddOE8Fl4udQS58Uic=;
+        b=fOazQZkbC5z+6fwYzGR4XMMoAlx/xzrmuXGD5GsJisY4WedcZb84YvqhHXHIi4/qL/Fq5D
+        dtxCCsFMLNGRh8RWbaa4QUYvYEv8h7vS/2WT9essndEKNutaYaFsCJb/1bnwOGvEpQXfTz
+        ctPes4C6bAZABbYwoohFKL5btn/Mf+Q=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-453-PTgFw02xNYK4lmyXW2-Qvw-1; Wed, 20 Jan 2021 17:22:08 -0500
-X-MC-Unique: PTgFw02xNYK4lmyXW2-Qvw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-554-Phb2yheGO86JpjJx1MlyLg-1; Wed, 20 Jan 2021 17:22:33 -0500
+X-MC-Unique: Phb2yheGO86JpjJx1MlyLg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D03E31922021;
-        Wed, 20 Jan 2021 22:22:06 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2A44580A5CB;
+        Wed, 20 Jan 2021 22:22:31 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 75F5910023B5;
-        Wed, 20 Jan 2021 22:21:58 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D7A72C161;
+        Wed, 20 Jan 2021 22:22:25 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 03/25] mm: Implement readahead_control pageset expansion
+Subject: [PATCH 05/25] cachefiles: Drop superfluous readpages aops NULL check
 From:   David Howells <dhowells@redhat.com>
 To:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <sfrench@samba.org>,
         Dominique Martinet <asmadeus@codewreck.org>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+Cc:     Takashi Iwai <tiwai@suse.de>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
         David Wysochanski <dwysocha@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
@@ -53,133 +54,60 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 20 Jan 2021 22:21:57 +0000
-Message-ID: <161118131787.1232039.4863969952441067985.stgit@warthog.procyon.org.uk>
+Date:   Wed, 20 Jan 2021 22:22:24 +0000
+Message-ID: <161118134449.1232039.7782285502855946342.stgit@warthog.procyon.org.uk>
 In-Reply-To: <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
 References: <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Provide a function, readahead_expand(), that expands the set of pages
-specified by a readahead_control object to encompass a revised area with a
-proposed size and length.
+From: Takashi Iwai <tiwai@suse.de>
 
-The proposed area must include all of the old area and may be expanded yet
-more by this function so that the edges align on (transparent huge) page
-boundaries as allocated.
+After the recent actions to convert readpages aops to readahead, the
+NULL checks of readpages aops in cachefiles_read_or_alloc_page() may
+hit falsely.  More badly, it's an ASSERT() call, and this panics.
 
-The expansion will be cut short if a page already exists in either of the
-areas being expanded into.  Note that any expansion made in such a case is
-not rolled back.
+Drop the superfluous NULL checks for fixing this regression.
 
-This will be used by fscache so that reads can be expanded to cache granule
-boundaries, thereby allowing whole granules to be stored in the cache, but
-there are other potential users also.
+[DH: Note that cachefiles never actually used readpages, so this check was
+ never actually necessary]
 
-Suggested-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=208883
+BugLink: https://bugzilla.opensuse.org/show_bug.cgi?id=1175245
+Fixes: 9ae326a69004 ("CacheFiles: A cache that backs onto a mounted filesystem")
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
 
- include/linux/pagemap.h |    2 +
- mm/readahead.c          |   70 +++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 72 insertions(+)
+ fs/cachefiles/rdwr.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 1fa160e682fa..4935ad6171c1 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -774,6 +774,8 @@ extern void __delete_from_page_cache(struct page *page, void *shadow);
- int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask);
- void delete_from_page_cache_batch(struct address_space *mapping,
- 				  struct pagevec *pvec);
-+void readahead_expand(struct readahead_control *ractl,
-+		      loff_t new_start, size_t new_len);
+diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
+index 8bda092e60c5..e027c718ca01 100644
+--- a/fs/cachefiles/rdwr.c
++++ b/fs/cachefiles/rdwr.c
+@@ -413,7 +413,6 @@ int cachefiles_read_or_alloc_page(struct fscache_retrieval *op,
  
- /*
-  * Like add_to_page_cache_locked, but used to add newly allocated pages:
-diff --git a/mm/readahead.c b/mm/readahead.c
-index c5b0457415be..4446dada0bc2 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -638,3 +638,73 @@ SYSCALL_DEFINE3(readahead, int, fd, loff_t, offset, size_t, count)
- {
- 	return ksys_readahead(fd, offset, count);
- }
-+
-+/**
-+ * readahead_expand - Expand a readahead request
-+ * @ractl: The request to be expanded
-+ * @new_start: The revised start
-+ * @new_len: The revised size of the request
-+ *
-+ * Attempt to expand a readahead request outwards from the current size to the
-+ * specified size by inserting locked pages before and after the current window
-+ * to increase the size to the new window.  This may involve the insertion of
-+ * THPs, in which case the window may get expanded even beyond what was
-+ * requested.
-+ *
-+ * The algorithm will stop if it encounters a conflicting page already in the
-+ * pagecache and leave a smaller expansion than requested.
-+ *
-+ * The caller must check for this by examining the revised @ractl object for a
-+ * different expansion than was requested.
-+ */
-+void readahead_expand(struct readahead_control *ractl,
-+		      loff_t new_start, size_t new_len)
-+{
-+	struct address_space *mapping = ractl->mapping;
-+	pgoff_t new_index, new_nr_pages;
-+	gfp_t gfp_mask = readahead_gfp_mask(mapping);
-+
-+	new_index = new_start / PAGE_SIZE;
-+
-+	/* Expand the leading edge downwards */
-+	while (ractl->_index > new_index) {
-+		unsigned long index = ractl->_index - 1;
-+		struct page *page = xa_load(&mapping->i_pages, index);
-+
-+		if (page && !xa_is_value(page))
-+			return; /* Page apparently present */
-+
-+		page = __page_cache_alloc(gfp_mask);
-+		if (!page)
-+			return;
-+		if (add_to_page_cache_lru(page, mapping, index, gfp_mask) < 0) {
-+			put_page(page);
-+			return;
-+		}
-+
-+		ractl->_nr_pages++;
-+		ractl->_index = page->index;
-+	}
-+
-+	new_len += new_start - readahead_pos(ractl);
-+	new_nr_pages = DIV_ROUND_UP(new_len, PAGE_SIZE);
-+
-+	/* Expand the trailing edge upwards */
-+	while (ractl->_nr_pages < new_nr_pages) {
-+		unsigned long index = ractl->_index + ractl->_nr_pages;
-+		struct page *page = xa_load(&mapping->i_pages, index);
-+
-+		if (page && !xa_is_value(page))
-+			return; /* Page apparently present */
-+
-+		page = __page_cache_alloc(gfp_mask);
-+		if (!page)
-+			return;
-+		if (add_to_page_cache_lru(page, mapping, index, gfp_mask) < 0) {
-+			put_page(page);
-+			return;
-+		}
-+		ractl->_nr_pages++;
-+	}
-+}
-+EXPORT_SYMBOL(readahead_expand);
+ 	inode = d_backing_inode(object->backer);
+ 	ASSERT(S_ISREG(inode->i_mode));
+-	ASSERT(inode->i_mapping->a_ops->readpages);
+ 
+ 	/* calculate the shift required to use bmap */
+ 	shift = PAGE_SHIFT - inode->i_sb->s_blocksize_bits;
+@@ -713,7 +712,6 @@ int cachefiles_read_or_alloc_pages(struct fscache_retrieval *op,
+ 
+ 	inode = d_backing_inode(object->backer);
+ 	ASSERT(S_ISREG(inode->i_mode));
+-	ASSERT(inode->i_mapping->a_ops->readpages);
+ 
+ 	/* calculate the shift required to use bmap */
+ 	shift = PAGE_SHIFT - inode->i_sb->s_blocksize_bits;
 
 
