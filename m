@@ -2,139 +2,87 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD6FD2FD868
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 Jan 2021 19:35:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0EAA2FDAB2
+	for <lists+ceph-devel@lfdr.de>; Wed, 20 Jan 2021 21:23:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392071AbhATSfX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 Jan 2021 13:35:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51576 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404651AbhATSbW (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 20 Jan 2021 13:31:22 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F27EF23443;
-        Wed, 20 Jan 2021 18:28:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611167340;
-        bh=xfZW5I38ynOxT82Iq3AJ6iU+XMfwQjUmRTU036TpdaU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TfCXisa1Nu/FsbkchZKdMraCe5ICqePenmBZo0DCGeg2L+0+Nv4REK7HBChW6LWX8
-         C4+SwXobjpL87/NC0hPH3Sw0SRHN4tyJH/F3c3ykWCMKaWa1IKCzme3anFziZjY4z/
-         m/6LKgAHBjNHdfatYNMWmBc9eg2geNs319joEwEpShSZG0HQDCpqTEbkV1yhbSA+AU
-         frHx21w3/a0H4dq2SAlrRqXN2zJKDqhNS3t9Ka/FbxACLgNyRt8fpMwqoJFT3PHzK+
-         W2ity16UCvYX5cHP2vkX1duU+f7knIiv5COFxlLsLwYMeejHi+GEZAx4IitOOYZH0a
-         IGxrvIAy5IrGQ==
-From:   Jeff Layton <jlayton@kernel.org>
+        id S2388946AbhATUWu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 Jan 2021 15:22:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46568 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731437AbhATOAk (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 20 Jan 2021 09:00:40 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EABDDC0613ED
+        for <ceph-devel@vger.kernel.org>; Wed, 20 Jan 2021 05:59:11 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id b21so17030457edy.6
+        for <ceph-devel@vger.kernel.org>; Wed, 20 Jan 2021 05:59:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MXYDFfJfHtZNKaoHz8s5O+gYRG9oeb0oxVARio+bTw0=;
+        b=FmL7upeQnkwnZBVDwIZAWlLFJwdd5D2vRhDdTMnX7qIEfIgpsg37eTiF4hGZu5rh7j
+         mbRI8I8XCtRnxXd0La/i/ckfeTaXTmQfZlyQQNuZMUS8E1LugwdB5kQpwc+Pr5ZGWY3w
+         246fzvPGA4CTxsuEuybyTtO/NJnUZNS5q/LoCMIR4wMRqGslv2NfKt0dEyKVjsTyi8Fh
+         sOY5JprL6TAdkH1PusUPZitcz3gbkVvLsxTKUlvl3dGkfFhnecW0eN0cEex+LNweqT51
+         N643a3dMXiZfRh0RiNPiKb38UjrBqkZUc15AJUTCKvaActLnSgiZN381JxjLo/JGH7L7
+         ge3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MXYDFfJfHtZNKaoHz8s5O+gYRG9oeb0oxVARio+bTw0=;
+        b=pXv9ZacPzzwt3L/1tLvDuwl0OkULNVJnWj+nZ+dY/2RIaEGCAv5oYFitYRxxoa6CMM
+         3G3FArb42Ac0vzxcyWk/MRTqjsujWWTgCrsX4w5CRtnR33jScWh0a7B1EW8eNM71+uRz
+         EGBWst5evZPIr3OpFaXaGkRPLs2x1H66tr2XU7IRAH5V7xcPxy96LGVSaR3suXvWmdZ4
+         /z80xmgpI4T53vzIk8LDOZfyq2qgKGXg9CjDPazOzfmSK5LcnTrMzNe8FD+gmrulYqZ/
+         +whH11yeLykhYK9yErKn52TFe3s0blZ0HFLP9VUuPjExnxq34kxW837J1cFtUGNWPo3w
+         fvZg==
+X-Gm-Message-State: AOAM533SIK3Ko7zrC6ptDhAKX1yBcXjtLGhyCkzg6eUd7urdIGXZcZIp
+        IZ5qm8QRTuU/3DAMbZPrTW4QFO12Br4=
+X-Google-Smtp-Source: ABdhPJxAA0hHwMo3q39LK+BM8bt3O5pLJvJppX1hHpA8aItK/9ciA85Wn94L44j3acKfYGrm2PJ7yg==
+X-Received: by 2002:a50:fb97:: with SMTP id e23mr7672705edq.208.1611151150749;
+        Wed, 20 Jan 2021 05:59:10 -0800 (PST)
+Received: from kwango.local (ip-94-112-132-16.net.upcbroadband.cz. [94.112.132.16])
+        by smtp.gmail.com with ESMTPSA id ko23sm951234ejc.35.2021.01.20.05.59.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Jan 2021 05:59:10 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
 To:     ceph-devel@vger.kernel.org
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH v4 17/17] ceph: add fscrypt ioctls
-Date:   Wed, 20 Jan 2021 13:28:47 -0500
-Message-Id: <20210120182847.644850-18-jlayton@kernel.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210120182847.644850-1-jlayton@kernel.org>
-References: <20210120182847.644850-1-jlayton@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH] libceph: fix "Boolean result is used in bitwise operation" warning
+Date:   Wed, 20 Jan 2021 14:59:25 +0100
+Message-Id: <20210120135925.10119-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Most of the ioctls, we gate on the MDS feature support. The exception is
-the key removal and status functions that we still want to work if the
-MDS's were to (inexplicably) lose the feature.
+This line dates back to 2013, but cppcheck complained because commit
+2f713615ddd9 ("libceph: move msgr1 protocol implementation to its own
+file") moved it.  Add parenthesis to silence the warning.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 ---
- fs/ceph/ioctl.c | 61 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ net/ceph/messenger_v1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
-index 6e061bf62ad4..832909f3eb1b 100644
---- a/fs/ceph/ioctl.c
-+++ b/fs/ceph/ioctl.c
-@@ -6,6 +6,7 @@
- #include "mds_client.h"
- #include "ioctl.h"
- #include <linux/ceph/striper.h>
-+#include <linux/fscrypt.h>
+diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
+index 04f653b3c897..2cb5ffdf071a 100644
+--- a/net/ceph/messenger_v1.c
++++ b/net/ceph/messenger_v1.c
+@@ -1100,7 +1100,7 @@ static int read_partial_message(struct ceph_connection *con)
+ 		if (ret < 0)
+ 			return ret;
  
- /*
-  * ioctls
-@@ -268,8 +269,29 @@ static long ceph_ioctl_syncio(struct file *file)
- 	return 0;
- }
- 
-+static int vet_mds_for_fscrypt(struct file *file)
-+{
-+	int i, ret = -EOPNOTSUPP;
-+	struct ceph_mds_client	*mdsc = ceph_sb_to_mdsc(file_inode(file)->i_sb);
-+
-+	mutex_lock(&mdsc->mutex);
-+	for (i = 0; i < mdsc->max_sessions; i++) {
-+		struct ceph_mds_session *s = __ceph_lookup_mds_session(mdsc, i);
-+
-+		if (!s)
-+			continue;
-+		if (test_bit(CEPHFS_FEATURE_ALTERNATE_NAME, &s->s_features))
-+			ret = 0;
-+		break;
-+	}
-+	mutex_unlock(&mdsc->mutex);
-+	return ret;
-+}
-+
- long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
-+	int ret;
-+
- 	dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
- 	switch (cmd) {
- 	case CEPH_IOC_GET_LAYOUT:
-@@ -289,6 +311,45 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 
- 	case CEPH_IOC_SYNCIO:
- 		return ceph_ioctl_syncio(file);
-+
-+	case FS_IOC_SET_ENCRYPTION_POLICY:
-+		ret = vet_mds_for_fscrypt(file);
-+		if (ret)
-+			return ret;
-+		return fscrypt_ioctl_set_policy(file, (const void __user *)arg);
-+
-+	case FS_IOC_GET_ENCRYPTION_POLICY:
-+		ret = vet_mds_for_fscrypt(file);
-+		if (ret)
-+			return ret;
-+		return fscrypt_ioctl_get_policy(file, (void __user *)arg);
-+
-+	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
-+		ret = vet_mds_for_fscrypt(file);
-+		if (ret)
-+			return ret;
-+		return fscrypt_ioctl_get_policy_ex(file, (void __user *)arg);
-+
-+	case FS_IOC_ADD_ENCRYPTION_KEY:
-+		ret = vet_mds_for_fscrypt(file);
-+		if (ret)
-+			return ret;
-+		return fscrypt_ioctl_add_key(file, (void __user *)arg);
-+
-+	case FS_IOC_REMOVE_ENCRYPTION_KEY:
-+		return fscrypt_ioctl_remove_key(file, (void __user *)arg);
-+
-+	case FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS:
-+		return fscrypt_ioctl_remove_key_all_users(file, (void __user *)arg);
-+
-+	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
-+		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
-+
-+	case FS_IOC_GET_ENCRYPTION_NONCE:
-+		ret = vet_mds_for_fscrypt(file);
-+		if (ret)
-+			return ret;
-+		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
- 	}
- 
- 	return -ENOTTY;
+-		BUG_ON(!con->in_msg ^ skip);
++		BUG_ON((!con->in_msg) ^ skip);
+ 		if (skip) {
+ 			/* skip this message */
+ 			dout("alloc_msg said skip message\n");
 -- 
-2.29.2
+2.19.2
 
