@@ -2,172 +2,114 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 412E72FD276
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 Jan 2021 15:21:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B4F12FD848
+	for <lists+ceph-devel@lfdr.de>; Wed, 20 Jan 2021 19:33:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733206AbhATOPg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 Jan 2021 09:15:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59982 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728260AbhATMxU (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 20 Jan 2021 07:53:20 -0500
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE705C0617A0;
-        Wed, 20 Jan 2021 04:52:31 -0800 (PST)
-Received: by mail-io1-xd2c.google.com with SMTP id q129so1719089iod.0;
-        Wed, 20 Jan 2021 04:52:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mDrqwwi/dX0UvEoclax7LgTw2g4Rm/2kH937xyj0jFY=;
-        b=VRm6nWoKO8BivPQ+PvjXBYFH/JZd/M7ksUviOMgreEa70nRIFLrMcgz+jGnH3pYxBr
-         zC1f8oTrPAPZyUKV/PlOceHtgPiFPUiQPGdaEF5fQjPPMjgh4gp830zpX8hmZ7+q7Gka
-         p2/osE8OiBOgOmeBNM4fcv64NEWmlay8YuimT54vspxX81LkU4+hSm48kagJ824AtbfH
-         SBdA1wbNfGe3hiCN9CONjNegEZg5uS3c/r2WO9+XrPmjaLr9VnpG0T8NgsFqMKkCDY6r
-         BdCfT3kZpBXbZgJ4mUMyHCc3+mE2UKdLntJz705Me/LzN3102sSNVT5M0ooUkipQeYLu
-         sc8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mDrqwwi/dX0UvEoclax7LgTw2g4Rm/2kH937xyj0jFY=;
-        b=eDU6hMdFtYJPGL/IGcp5lwItdEaw6fP/DlEYUrTc0wid1cSO12Q2snTDS/+qArwwXS
-         qqVQ9z2q8MOgq5xC+633rv/6xxRwT8//ZQWZq3JN11oUJELt0djAVbh2dDRZAItWoBn8
-         FBMhYqIOAkL2+anzxJxPkg3EiU3OtfN/mBPPuV2bmMiwVC7s2Mt7/qkk+CmrpMDZ89eY
-         /hQMosFcTpKJYVasPXf1YYDIHzddg1K7PM9tXtEvEnMFlEpBRqDKjPAuFuALK3vsNQ2y
-         YQhVx22V3T9tCUyk7THKnMo48yzpILDy5dureLjEcwhg10penei6vUT6FM5GNhdIVsci
-         P+1g==
-X-Gm-Message-State: AOAM5331qXyEvujsAH4q8qgMzwTMa7J/IwYMD+EaTdOMDNUsiPrnw+r5
-        7JhZz9YUEZeAoF0DildjO6YPHmlFYd61eV1n4qNUKglTO1o=
-X-Google-Smtp-Source: ABdhPJxg1NwPxjor6VKmK+ViC4KtJb5QWaHzv+IAugESAvfZHGHhHEpDv9QNboP7BRa25MqN6G0jJPKDaWXkcT4AdI4=
-X-Received: by 2002:a92:5e04:: with SMTP id s4mr7630802ilb.100.1611147151192;
- Wed, 20 Jan 2021 04:52:31 -0800 (PST)
+        id S2392002AbhATScs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 Jan 2021 13:32:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51458 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404397AbhATS3s (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 20 Jan 2021 13:29:48 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 01941233FA;
+        Wed, 20 Jan 2021 18:28:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611167329;
+        bh=K1YSDxxRPudAo9NFhh4HuZune1Ns0JF8rsnF25PcQdA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pRYgvSwNPhbioE9TkpTCb1CkKWRFF2PM4wJfxfy+7b6FwaiTHLdmNrljPEeLlzxFB
+         18cD3F0d14TVBr6ewsLPgr8hagJGiK262Zlz2zZO2OgcJPJYrye7RKJZiRCRLJqUyZ
+         q8ZDsj88So88w+2LLyua9+pEypHse/xu1J2hwT6dGK1SHwZmbkaEVH1oyc+EwZIsHF
+         /QBQWZTdg3cE7OmBULiZ7XlOAn8vAMEvpNzkIldGf250J69scWTnCQK6/GBcNT+IDA
+         eHmS/JnMD+KwYNb9XOejRnJM2DjnP+i6QwFFv4g/K5c1aQCI8gsfGtm/Di/180o1By
+         pW09sM2fahphA==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH v4 00/17] ceph+fscrypt: context, filename and symlink support
+Date:   Wed, 20 Jan 2021 13:28:30 -0500
+Message-Id: <20210120182847.644850-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-References: <20210119194646.GA20820@kadam> <CAOi1vP-7AYWiJJganaUROaGiyJA8ejUmbx90uetwsV23KYGNFw@mail.gmail.com>
- <20210120124055.GG20820@kadam>
-In-Reply-To: <20210120124055.GG20820@kadam>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 20 Jan 2021 13:52:44 +0100
-Message-ID: <CAOi1vP_Zx2WrujeAa6+n615eFTMSost7qnzjWMQETQvKamKDug@mail.gmail.com>
-Subject: Re: [kbuild] net/ceph/messenger_v1.c:1099:23: warning: Boolean result
- is used in bitwise operation. Clarify expression with parentheses.
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     kbuild@lists.01.org, kbuild test robot <lkp@intel.com>,
-        kbuild-all@lists.01.org, LKML <linux-kernel@vger.kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jan 20, 2021 at 1:43 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Wed, Jan 20, 2021 at 12:01:59PM +0100, Ilya Dryomov wrote:
-> > On Tue, Jan 19, 2021 at 8:46 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > >
-> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git   master
-> > > head:   1e2a199f6ccdc15cf111d68d212e2fd4ce65682e
-> > > commit: 2f713615ddd9d805b6c5e79c52e0e11af99d2bf1 libceph: move msgr1 protocol implementation to its own file
-> > > compiler: gcc-9 (Debian 9.3.0-15) 9.3.0
-> > >
-> > > If you fix the issue, kindly add following tag as appropriate
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > >
-> > >
-> > > cppcheck possible warnings: (new ones prefixed by >>, may not real problems)
-> > >
-> > > >> net/ceph/messenger_v1.c:1099:23: warning: Boolean result is used in bitwise operation. Clarify expression with parentheses. [clarifyCondition]
-> > >      BUG_ON(!con->in_msg ^ skip);
-> > >                          ^
-> > >
-> > > vim +1099 net/ceph/messenger_v1.c
-> > >
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1033  static int read_partial_message(struct ceph_connection *con)
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1034  {
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1035          struct ceph_msg *m = con->in_msg;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1036          int size;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1037          int end;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1038          int ret;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1039          unsigned int front_len, middle_len, data_len;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1040          bool do_datacrc = !ceph_test_opt(from_msgr(con->msgr), NOCRC);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1041          bool need_sign = (con->peer_features & CEPH_FEATURE_MSG_AUTH);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1042          u64 seq;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1043          u32 crc;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1044
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1045          dout("read_partial_message con %p msg %p\n", con, m);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1046
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1047          /* header */
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1048          size = sizeof (con->in_hdr);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1049          end = size;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1050          ret = read_partial(con, end, size, &con->in_hdr);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1051          if (ret <= 0)
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1052                  return ret;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1053
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1054          crc = crc32c(0, &con->in_hdr, offsetof(struct ceph_msg_header, crc));
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1055          if (cpu_to_le32(crc) != con->in_hdr.crc) {
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1056                  pr_err("read_partial_message bad hdr crc %u != expected %u\n",
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1057                         crc, con->in_hdr.crc);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1058                  return -EBADMSG;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1059          }
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1060
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1061          front_len = le32_to_cpu(con->in_hdr.front_len);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1062          if (front_len > CEPH_MSG_MAX_FRONT_LEN)
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1063                  return -EIO;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1064          middle_len = le32_to_cpu(con->in_hdr.middle_len);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1065          if (middle_len > CEPH_MSG_MAX_MIDDLE_LEN)
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1066                  return -EIO;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1067          data_len = le32_to_cpu(con->in_hdr.data_len);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1068          if (data_len > CEPH_MSG_MAX_DATA_LEN)
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1069                  return -EIO;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1070
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1071          /* verify seq# */
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1072          seq = le64_to_cpu(con->in_hdr.seq);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1073          if ((s64)seq - (s64)con->in_seq < 1) {
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1074                  pr_info("skipping %s%lld %s seq %lld expected %lld\n",
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1075                          ENTITY_NAME(con->peer_name),
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1076                          ceph_pr_addr(&con->peer_addr),
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1077                          seq, con->in_seq + 1);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1078                  con->in_base_pos = -front_len - middle_len - data_len -
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1079                          sizeof_footer(con);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1080                  con->in_tag = CEPH_MSGR_TAG_READY;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1081                  return 1;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1082          } else if ((s64)seq - (s64)con->in_seq > 1) {
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1083                  pr_err("read_partial_message bad seq %lld expected %lld\n",
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1084                         seq, con->in_seq + 1);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1085                  con->error_msg = "bad message sequence # for incoming message";
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1086                  return -EBADE;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1087          }
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1088
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1089          /* allocate message? */
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1090          if (!con->in_msg) {
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1091                  int skip = 0;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1092
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1093                  dout("got hdr type %d front %d data %d\n", con->in_hdr.type,
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1094                       front_len, data_len);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1095                  ret = ceph_con_in_msg_alloc(con, &con->in_hdr, &skip);
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1096                  if (ret < 0)
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1097                          return ret;
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12  1098
-> > > 2f713615ddd9d805 Ilya Dryomov 2020-11-12 @1099                  BUG_ON(!con->in_msg ^ skip);
-> > >
-> > > ! has higher precedence than ^.  It's not clear that was intended
-> > > necessarily.
-> >
-> > Hi Dan,
-> >
-> > This line and the surrounding code date back to 2013, commit
-> > 2f713615ddd9 just moved it.  It is correct (we either get a message
-> > to work with or get instructed to skip, in the latter case con->in_msg
-> > is expected to be NULL), so I'm inclined to leave it as is.
->
-> You could silence the warning and make the code look more intentional
-> by writing it like this:
->
->         BUG_ON((!con->in_msg) ^ skip);
+It's been a while (September!) since my last posting of this series.
+Main notable changes since then:
 
-OK, I'll do that.
+- adapt to latest version of fscrypt API in mainline
+- take advantage of alternate_name feature in MDS to handle long names
+- gate ioctls on MDS support
+- many bugfixes
 
-Thanks,
+The set starts by exporting new_inode_pseudo and a few fscrypt
+functions.  Hopefully those aren't too controversial, but please let me
+know if they are. From there, it adds support for crypto contexts in an
+xattr, and then filenames and symlinks.
 
-                Ilya
+The alternate name is just an extra field that gets stored in the dentry
+on the MDS on creation and transmitted to clients as part of the dentry
+lease. For fscrypt, we're using it to store the full binary crypttext
+name when it's too long to store without hashing the last characters in
+the name. This allows us to handle long filenames properly, while still
+making the underlying filesystem accessible to clients that don't
+support fscrypt.
+
+Note that we use our own encoding scheme for "nokey names" that is
+similar to the usual fscrypt one but lacks the dirhash fields (which we
+don't use). We don't want to enshrine the fscrypt_nokey_name format onto
+stable storage, and this scheme allows us to avoid that, and preserve
+compatibility with legacy clients that don't support fscrypt.
+
+For now, this is still a RFC. This all works pretty well so far, but
+I don't want to merge any of it until we can handle encrypting the file
+contents as well. I'll (hopefully!) be working toward that end in the
+near future.
+
+Jeff Layton (17):
+  vfs: export new_inode_pseudo
+  fscrypt: export fscrypt_base64_encode and fscrypt_base64_decode
+  fscrypt: export fscrypt_fname_encrypt and fscrypt_fname_encrypted_size
+  fscrypt: add fscrypt_context_for_new_inode
+  ceph: crypto context handling for ceph
+  ceph: implement -o test_dummy_encryption mount option
+  ceph: preallocate inode for ops that may create one
+  ceph: add routine to create fscrypt context prior to RPC
+  ceph: make ceph_msdc_build_path use ref-walk
+  ceph: add encrypted fname handling to ceph_mdsc_build_path
+  ceph: decode alternate_name in lease info
+  ceph: send altname in MClientRequest
+  ceph: add support to readdir for encrypted filenames
+  ceph: add fscrypt support to ceph_fill_trace
+  ceph: make d_revalidate call fscrypt revalidator for encrypted
+    dentries
+  ceph: create symlinks with encrypted and base64-encoded targets
+  ceph: add fscrypt ioctls
+
+ fs/ceph/Makefile            |   1 +
+ fs/ceph/crypto.c            | 185 ++++++++++++++++++++++++
+ fs/ceph/crypto.h            | 101 +++++++++++++
+ fs/ceph/dir.c               | 161 ++++++++++++++++-----
+ fs/ceph/file.c              |  56 +++++---
+ fs/ceph/inode.c             | 246 +++++++++++++++++++++++++++++---
+ fs/ceph/ioctl.c             |  61 ++++++++
+ fs/ceph/mds_client.c        | 275 ++++++++++++++++++++++++++++++------
+ fs/ceph/mds_client.h        |  14 +-
+ fs/ceph/super.c             |  80 ++++++++++-
+ fs/ceph/super.h             |  16 ++-
+ fs/ceph/xattr.c             |  32 +++++
+ fs/crypto/fname.c           |  53 +++++--
+ fs/crypto/fscrypt_private.h |   9 +-
+ fs/crypto/hooks.c           |   6 +-
+ fs/crypto/policy.c          |  34 ++++-
+ fs/inode.c                  |   1 +
+ include/linux/fscrypt.h     |  10 ++
+ 18 files changed, 1181 insertions(+), 160 deletions(-)
+ create mode 100644 fs/ceph/crypto.c
+ create mode 100644 fs/ceph/crypto.h
+
+-- 
+2.29.2
+
