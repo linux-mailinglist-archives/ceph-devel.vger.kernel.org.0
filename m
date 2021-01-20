@@ -2,43 +2,44 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8E752FDF44
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 Jan 2021 03:31:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AFB92FDFBC
+	for <lists+ceph-devel@lfdr.de>; Thu, 21 Jan 2021 03:57:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404444AbhATXyy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 Jan 2021 18:54:54 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:34587 "EHLO
+        id S2404679AbhATXzu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 Jan 2021 18:55:50 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:29669 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731667AbhATWYQ (ORCPT
+        by vger.kernel.org with ESMTP id S1732465AbhATW0R (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 20 Jan 2021 17:24:16 -0500
+        Wed, 20 Jan 2021 17:26:17 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611181368;
+        s=mimecast20190719; t=1611181475;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=CNISbAF0U5wZ9m9Zrmun/ExJzPSZhngRnt467NlbyL4=;
-        b=Oi/X5BWvSwiePOyWiXoQfp+9glwDlxqYkrOPE4FcGN4mVjVlBR2IcHI5EeOyG3tmzqkaX+
-        RCMIvLgit1LshyocO9OAdyexnckY+y2Gfy41ZuriJhbpzfToU8Ba23OmeFe3qJ+LiZHwYY
-        YrGOsWAvp13NWA4miD+0mj1xDMu54+o=
+        bh=nM2a8DeAh9HxPk5RgsNIX17TXRS7ZHQGpmW+T0T56Vs=;
+        b=Sw2j3+M8lJGDXBGNUpROsoYcFZACnB42kU2AjktVAtbyEfZz5NVEO2yquCo/dy3l/IYN4f
+        +/MRrA/XpFmQP8xIkCNkJKywrjTEVytq9AmzXHlkSHXXKleubVg+VsnjyeF8CEYjYyxC13
+        sDHkuNkTy8fsc6hcqCO8JJyKQSFmqEA=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-450-vWbQ_h3BO6WwPBpr04GqZA-1; Wed, 20 Jan 2021 17:22:45 -0500
-X-MC-Unique: vWbQ_h3BO6WwPBpr04GqZA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-126-S3JNST2HMQ6K7I4xyGpCvQ-1; Wed, 20 Jan 2021 17:24:33 -0500
+X-MC-Unique: S3JNST2HMQ6K7I4xyGpCvQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4720D107ACFE;
-        Wed, 20 Jan 2021 22:22:43 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B4F5D612B3;
+        Wed, 20 Jan 2021 22:24:31 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 78AA710023BA;
-        Wed, 20 Jan 2021 22:22:37 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7F71060C6C;
+        Wed, 20 Jan 2021 22:24:21 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 06/25] netfs: Make a netfs helper module
+Subject: [PATCH 15/25] afs: Print the operation debug_id when logging an
+ unexpected data version
 From:   David Howells <dhowells@redhat.com>
 To:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
@@ -52,43 +53,47 @@ Cc:     dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 20 Jan 2021 22:22:36 +0000
-Message-ID: <161118135638.1232039.1622182202673126285.stgit@warthog.procyon.org.uk>
+Date:   Wed, 20 Jan 2021 22:24:21 +0000
+Message-ID: <161118146111.1232039.11398082422487058312.stgit@warthog.procyon.org.uk>
 In-Reply-To: <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
 References: <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Make a netfs helper module to manage read request segmentation, caching
-support and transparent huge page support on behalf of a network
-filesystem.
+Print the afs_operation debug_id when logging an unexpected change in the
+data version.  This allows the logged message to be matched against
+tracelines.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/netfs/Kconfig |    8 ++++++++
- 1 file changed, 8 insertions(+)
- create mode 100644 fs/netfs/Kconfig
+ fs/afs/inode.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/netfs/Kconfig b/fs/netfs/Kconfig
-new file mode 100644
-index 000000000000..2ebf90e6ca95
---- /dev/null
-+++ b/fs/netfs/Kconfig
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+config NETFS_SUPPORT
-+	tristate "Support for network filesystem high-level I/O"
-+	help
-+	  This option enables support for network filesystems, including
-+	  helpers for high-level buffered I/O, abstracting out read
-+	  segmentation, local caching and transparent huge page support.
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 48edd8d724d2..0bc7273100b8 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -215,11 +215,12 @@ static void afs_apply_status(struct afs_operation *op,
+ 
+ 	if (vp->dv_before + vp->dv_delta != status->data_version) {
+ 		if (test_bit(AFS_VNODE_CB_PROMISED, &vnode->flags))
+-			pr_warn("kAFS: vnode modified {%llx:%llu} %llx->%llx %s\n",
++			pr_warn("kAFS: vnode modified {%llx:%llu} %llx->%llx %s (op=%x)\n",
+ 				vnode->fid.vid, vnode->fid.vnode,
+ 				(unsigned long long)vp->dv_before + vp->dv_delta,
+ 				(unsigned long long)status->data_version,
+-				op->type ? op->type->name : "???");
++				op->type ? op->type->name : "???",
++				op->debug_id);
+ 
+ 		vnode->invalid_before = status->data_version;
+ 		if (vnode->status.type == AFS_FTYPE_DIR) {
 
 
