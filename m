@@ -2,103 +2,76 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5241B2FED0C
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 Jan 2021 15:39:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B591D2FEDB3
+	for <lists+ceph-devel@lfdr.de>; Thu, 21 Jan 2021 15:57:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731590AbhAUOhg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 21 Jan 2021 09:37:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34874 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731556AbhAUOhT (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 21 Jan 2021 09:37:19 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 513F9239D4;
-        Thu, 21 Jan 2021 14:28:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611239301;
-        bh=+mm2U8TY7vXitroD5WIUBhFXucpFW30imPFw4AZllMs=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=VC5EhEW4u58ReQ3Cwn8EGh6mX4QU+7gh2BRH+yhvu/osMD/MtGUDwAWatJsvAJdQ8
-         sgMxdG7IGewresmwBOMGH/n0sWZTb5W5ZNgSvEA1/jHToATeHZW+lG1+UvSjNft6i+
-         cljlxran7xCDp3gtlJFSG3InTHtZFYy8RkjUcCGMq+It2ksDgEToHvBKCypO9aitn0
-         J2PYvw7wZuJEcblU9RRsM1/innJS0HHw0MSpTS0ylhJypZPqjzHg+VDELMMn00PsVo
-         JwUhtTosQHQ8ti/pL3wEcJ+82jg5yraB8f179v6MB/eom6gio4L6y2f8tqQIdvQYeO
-         zqvl6yhrKtlnw==
-Message-ID: <868f0eddf24fcdcb4bdebf93e9200bf699884155.camel@kernel.org>
-Subject: Re: [PATCH v3] ceph: defer flushing the capsnap if the Fb is used
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Thu, 21 Jan 2021 09:28:19 -0500
-In-Reply-To: <376245cf-a60d-6ddb-6ab3-894a491b854e@redhat.com>
-References: <20210110020140.141727-1-xiubli@redhat.com>
-         <f698d039251d444eec334b119b5ae0b0dd101a21.camel@kernel.org>
-         <376245cf-a60d-6ddb-6ab3-894a491b854e@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
+        id S1732178AbhAUO4d (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 21 Jan 2021 09:56:33 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:58081 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732147AbhAUO4N (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 21 Jan 2021 09:56:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611240887;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=afmDN/YwbtUqz/j1cZ3aF4okApTZWuiODMoly6KagV4=;
+        b=b8MG/j2UFPuz/01hPA3eGuKuh+CnAw7aSPm6MYMJBfSd2MO4eryRetTvdl3iJ53X/43qfZ
+        WnZD/FUCh37KTt9mqQTLpGKXkRDxWh1cIKgwVzCSf81V1cwUPonzDhsIL1diXyDRoxq+PQ
+        v7J8Pi2w8ka7im0HFddImtuTqfBLUSc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-192-2mJhBzxPP_CRkRxCUJ_DQw-1; Thu, 21 Jan 2021 09:54:42 -0500
+X-MC-Unique: 2mJhBzxPP_CRkRxCUJ_DQw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D201C1800D42;
+        Thu, 21 Jan 2021 14:54:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 699585C8AB;
+        Thu, 21 Jan 2021 14:54:32 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20210121133406.GP2260413@casper.infradead.org>
+References: <20210121133406.GP2260413@casper.infradead.org> <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk> <161118129703.1232039.17141248432017826976.stgit@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/25] iov_iter: Add ITER_XARRAY
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1668556.1611240871.1@warthog.procyon.org.uk>
+Date:   Thu, 21 Jan 2021 14:54:31 +0000
+Message-ID: <1668557.1611240871@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-01-18 at 17:10 +0800, Xiubo Li wrote:
-> On 2021/1/13 5:48, Jeff Layton wrote:
-> > On Sun, 2021-01-10 at 10:01 +0800, xiubli@redhat.com wrote:
-> > > From: Xiubo Li <xiubli@redhat.com>
-> > > 
-> > > If the Fb cap is used it means the current inode is flushing the
-> > > dirty data to OSD, just defer flushing the capsnap.
-> > > 
-> > > URL: https://tracker.ceph.com/issues/48679
-> > > URL: https://tracker.ceph.com/issues/48640
-> > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> > > ---
-> > > 
-> > > V3:
-> > > - Add more comments about putting the inode ref
-> > > - A small change about the code style
-> > > 
-> > > V2:
-> > > - Fix inode reference leak bug
-> > > 
-> > >   fs/ceph/caps.c | 32 +++++++++++++++++++-------------
-> > >   fs/ceph/snap.c |  6 +++---
-> > >   2 files changed, 22 insertions(+), 16 deletions(-)
-> > > 
-> > Hi Xiubo,
-> > 
-> > This patch seems to cause hangs in some xfstests (generic/013, in
-> > particular). I'll take a closer look when I have a chance, but I'm
-> > dropping this for now.
+Matthew Wilcox <willy@infradead.org> wrote:
+
+> On Wed, Jan 20, 2021 at 10:21:37PM +0000, David Howells wrote:
+> > -#define iterate_all_kinds(i, n, v, I, B, K) {			\
+> > +#define iterate_all_kinds(i, n, v, I, B, K, X) {		\
 > 
-> Okay.
-> 
-> BTW, what's your test commands to reproduce it ? I will take a look when 
-> I am free these days or later.
-> 
+> Do you need to add the X parameter?  It seems to always be the same as B.
 
+It isn't.  See iov_get_pages() for example.
 
-FWIW, I was able to trigger a hang with this patch by running one of the
-tests that this patch was intended to fix (snaptest-git-ceph.sh). Here's
-the stack trace of the hung task:
-
-# cat /proc/1166/stack
-[<0>] wait_woken+0x87/0xb0
-[<0>] ceph_get_caps+0x405/0x6a0 [ceph]
-[<0>] ceph_write_iter+0x2ca/0xd20 [ceph]
-[<0>] new_sync_write+0x10b/0x190
-[<0>] vfs_write+0x240/0x390
-[<0>] ksys_write+0x58/0xd0
-[<0>] do_syscall_64+0x33/0x40
-[<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Without this patch I could run that test in a loop without issue. This
-bug mentions that the original issue occurred during mds thrashing
-though, and I haven't tried reproducing that scenario yet:
-
-    https://tracker.ceph.com/issues/48640
-
-Cheers,
--- 
-Jeff Layton <jlayton@kernel.org>
+David
 
