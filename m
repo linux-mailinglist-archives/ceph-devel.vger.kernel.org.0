@@ -2,143 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 110E82FDFE4
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 Jan 2021 04:03:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 745AE2FEC88
+	for <lists+ceph-devel@lfdr.de>; Thu, 21 Jan 2021 15:01:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404768AbhATX4N (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 Jan 2021 18:56:13 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:52426 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732901AbhATW1L (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 20 Jan 2021 17:27:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611181544;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MyiqIKKteHQeOAKiImYJHwBmazbFLi4M9gsQ1oXoZGw=;
-        b=dLGDvyCrL8f8wwlfPPqQBt2WVof1noq740hBsPJHLH3AXMsx5SxI2d6URkAg1V7ZDPTbNN
-        M0PHUGMUxO+nUjA+sFnuzyWfZ0rJrCoBZOTV/FcI7pM8+WRpOqPP80YKwhL8j3/gLWO7ZO
-        cLe3DC6ALieLN2Yh0mflm57A6Fk4kiI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-527-jNqnv9hQNNG4tL-1GCvRRg-1; Wed, 20 Jan 2021 17:25:43 -0500
-X-MC-Unique: jNqnv9hQNNG4tL-1GCvRRg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D6A1710054FF;
-        Wed, 20 Jan 2021 22:25:40 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E458860C6C;
-        Wed, 20 Jan 2021 22:25:37 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 21/25] afs: Wait on PG_fscache before modifying/releasing a
- page
-From:   David Howells <dhowells@redhat.com>
-To:     Trond Myklebust <trondmy@hammerspace.com>,
+        id S1730622AbhAUOAz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 21 Jan 2021 09:00:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40694 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729539AbhAUNfw (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 21 Jan 2021 08:35:52 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A2F4C061757;
+        Thu, 21 Jan 2021 05:35:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=1Sw5nwOYuq5g6NnJ5/b/NhvW5bYwFEItPBVnvcj4cLI=; b=siJvlqlKMvVSufyZVowaIdIYC4
+        dfpsJF8I9eb1/6jWJrmtKwXVWianXKsl4RB4xjHvoeYXkMrM6M1ESdTIg7PtJaY9SVVwB50gROBqU
+        CVUW683EkzTxRpUaLVIhbEnPBPU5g7R2bJ6Ve6wIKlL6l/Ih8xppYEG9WP3o+mnzJLqgFJG76+jpN
+        GjCvmeN7fzYFcxiJ4SG+kGQ3ImJWOkYYB0mHZzGFGpsB0cS5tga2QadnBRNKSo+OnPg7iDiCA2cf2
+        sZRAAifRoNOUEfmjnGcZYCjp4xOz8JHpZSCx/fVLicrQTnafOuvgIi1yObGwbk9AtJff70DKO9Wrl
+        CmhrItNw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l2a6A-00H6A7-4n; Thu, 21 Jan 2021 13:34:08 +0000
+Date:   Thu, 21 Jan 2021 13:34:06 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>
-Cc:     dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>,
         David Wysochanski <dwysocha@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 20 Jan 2021 22:25:37 +0000
-Message-ID: <161118153708.1232039.3535103645871176749.stgit@warthog.procyon.org.uk>
-In-Reply-To: <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
+Subject: Re: [PATCH 01/25] iov_iter: Add ITER_XARRAY
+Message-ID: <20210121133406.GP2260413@casper.infradead.org>
 References: <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+ <161118129703.1232039.17141248432017826976.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <161118129703.1232039.17141248432017826976.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-PG_fscache is going to be used to indicate that a page is being written to
-the cache, and that the page should not be modified or released until it's
-finished.
+On Wed, Jan 20, 2021 at 10:21:37PM +0000, David Howells wrote:
+> -#define iterate_all_kinds(i, n, v, I, B, K) {			\
+> +#define iterate_all_kinds(i, n, v, I, B, K, X) {		\
 
-Make afs_invalidatepage() and afs_releasepage() wait for it.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- fs/afs/file.c  |    9 +++++++++
- fs/afs/write.c |   10 ++++++++++
- 2 files changed, 19 insertions(+)
-
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index f1bab69e99d4..acbc21a8c80e 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -594,6 +594,7 @@ static void afs_invalidatepage(struct page *page, unsigned int offset,
- 	if (PagePrivate(page))
- 		afs_invalidate_dirty(page, offset, length);
- 
-+	wait_on_page_fscache(page);
- 	_leave("");
- }
- 
-@@ -611,6 +612,14 @@ static int afs_releasepage(struct page *page, gfp_t gfp_flags)
- 
- 	/* deny if page is being written to the cache and the caller hasn't
- 	 * elected to wait */
-+#ifdef CONFIG_AFS_FSCACHE
-+	if (PageFsCache(page)) {
-+		if (!(gfp_flags & __GFP_DIRECT_RECLAIM) || !(gfp_flags & __GFP_FS))
-+			return false;
-+		wait_on_page_fscache(page);
-+	}
-+#endif
-+
- 	if (PagePrivate(page)) {
- 		detach_page_private(page);
- 		trace_afs_page_dirty(vnode, tracepoint_string("rel"), page);
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index dd4dc1c868b5..e1791de90478 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -117,6 +117,10 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
- 		SetPageUptodate(page);
- 	}
- 
-+#ifdef CONFIG_AFS_FSCACHE
-+	wait_on_page_fscache(page);
-+#endif
-+
- try_again:
- 	/* See if this page is already partially written in a way that we can
- 	 * merge the new write with.
-@@ -857,6 +861,11 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
- 	/* Wait for the page to be written to the cache before we allow it to
- 	 * be modified.  We then assume the entire page will need writing back.
- 	 */
-+#ifdef CONFIG_AFS_FSCACHE
-+	if (PageFsCache(vmf->page) &&
-+	    wait_on_page_bit_killable(vmf->page, PG_fscache) < 0)
-+		return VM_FAULT_RETRY;
-+#endif
- 
- 	if (PageWriteback(vmf->page) &&
- 	    wait_on_page_bit_killable(vmf->page, PG_writeback) < 0)
-@@ -948,5 +957,6 @@ int afs_launder_page(struct page *page)
- 
- 	detach_page_private(page);
- 	trace_afs_page_dirty(vnode, tracepoint_string("laundered"), page);
-+	wait_on_page_fscache(page);
- 	return ret;
- }
-
+Do you need to add the X parameter?  It seems to always be the same as B.
 
