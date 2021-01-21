@@ -2,32 +2,47 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 78CC52FF23C
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 Jan 2021 18:44:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BBDD2FF432
+	for <lists+ceph-devel@lfdr.de>; Thu, 21 Jan 2021 20:20:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388794AbhAURnz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 21 Jan 2021 12:43:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38154 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388246AbhAURnr (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 21 Jan 2021 12:43:47 -0500
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FD50C06174A;
-        Thu, 21 Jan 2021 09:43:07 -0800 (PST)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 76FF46E97; Thu, 21 Jan 2021 12:43:06 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 76FF46E97
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1611250986;
-        bh=PB+xzpEUfQlsg5w3ytd7m/NvmGA9LS0ZccMgPVPs9ro=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TaZx3mg2hPpbFINECvqd0XPYdFb2ROMgzcamiqBmYnLl1LUmy4whb8tvaFgHJKxlD
-         dUW8rxyyJ/S0Q1+gsFu+/N5RyNNq0XImHaTJoc+Og2Qizwf1z86MrkLh6xVxL7Dh5S
-         WFc/Bjuyiw0ymgARs6vnuzUiUo+toU1sUvZ/pfH4=
-Date:   Thu, 21 Jan 2021 12:43:06 -0500
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        id S1726642AbhAUTTt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 21 Jan 2021 14:19:49 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42200 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726422AbhAUTI1 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 21 Jan 2021 14:08:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611256021;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8cQVBtElgHkrZu0TCW+Tp+86juePWkkpr+KAAgOabXU=;
+        b=AxZpqlQJb1pHt5uGjm8luNMnTQZTydxW6KIwP9Ong4xVAVsXwJ3CE5sbgI+V689RuOhQoH
+        HKKT0sV4SMuzK38w8tI3LpI7/epeaBOQwkrquCX/Z3MTL+1KI0m6WnF6tnnGem70hppMcn
+        KAicaTNawAi9iD42dY+QSnQuEVjKl1s=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-594-ogR02f57MSGANxw_NhZwKQ-1; Thu, 21 Jan 2021 13:55:23 -0500
+X-MC-Unique: ogR02f57MSGANxw_NhZwKQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 570368066F2;
+        Thu, 21 Jan 2021 18:55:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 810576EF42;
+        Thu, 21 Jan 2021 18:55:14 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20210121174306.GB20964@fieldses.org>
+References: <20210121174306.GB20964@fieldses.org> <20210121164645.GA20964@fieldses.org> <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk> <1794286.1611248577@warthog.procyon.org.uk>
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <sfrench@samba.org>,
         Dominique Martinet <asmadeus@codewreck.org>,
@@ -41,67 +56,41 @@ Cc:     Trond Myklebust <trondmy@hammerspace.com>,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [RFC][PATCH 00/25] Network fs helper library & fscache kiocb API
-Message-ID: <20210121174306.GB20964@fieldses.org>
-References: <20210121164645.GA20964@fieldses.org>
- <161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk>
- <1794286.1611248577@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1794286.1611248577@warthog.procyon.org.uk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1851803.1611255313.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 21 Jan 2021 18:55:13 +0000
+Message-ID: <1851804.1611255313@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 05:02:57PM +0000, David Howells wrote:
-> J. Bruce Fields <bfields@fieldses.org> wrote:
-> 
-> > On Wed, Jan 20, 2021 at 10:21:24PM +0000, David Howells wrote:
-> > >      Note that this uses SEEK_HOLE/SEEK_DATA to locate the data available
-> > >      to be read from the cache.  Whilst this is an improvement from the
-> > >      bmap interface, it still has a problem with regard to a modern
-> > >      extent-based filesystem inserting or removing bridging blocks of
-> > >      zeros.
-> > 
-> > What are the consequences from the point of view of a user?
-> 
-> The cache can get both false positive and false negative results on checks for
-> the presence of data because an extent-based filesystem can, at will, insert
-> or remove blocks of contiguous zeros to make the extents easier to encode
-> (ie. bridge them or split them).
-> 
-> A false-positive means that you get a block of zeros in the middle of your
-> file that very probably shouldn't be there (ie. file corruption); a
-> false-negative means that we go and reload the missing chunk from the server.
-> 
-> The problem exists in cachefiles whether we use bmap or we use
-> SEEK_HOLE/SEEK_DATA.  The only way round it is to keep track of what data is
-> present independently of backing filesystem's metadata.
-> 
-> To this end, it shouldn't (mis)behave differently than the code already there
-> - except that it handles better the case in which the backing filesystem
-> blocksize != PAGE_SIZE (which may not be relevant on an extent-based
-> filesystem anyway if it packs parts of different files together in a single
-> block) because the current implementation only bmaps the first block in a page
-> and doesn't probe for the rest.
-> 
-> Fixing this requires a much bigger overhaul of cachefiles than this patchset
-> performs.
+J. Bruce Fields <bfields@fieldses.org> wrote:
 
-That sounds like "sometimes you may get file corruption and there's
-nothing you can do about it".  But I know people actually use fscache,
-so it must be reliable at least for some use cases.
+> > Fixing this requires a much bigger overhaul of cachefiles than this pa=
+tchset
+> > performs.
+> =
 
-Is it that those "bridging" blocks only show up in certain corner cases
-that users can arrange to avoid?  Or that it's OK as long as you use
-certain specific file systems whose behavior goes beyond what's
-technically required by the bamp or seek interfaces?
+> That sounds like "sometimes you may get file corruption and there's
+> nothing you can do about it".  But I know people actually use fscache,
+> so it must be reliable at least for some use cases.
 
---b.
+Yes.  That's true for the upstream code because that uses bmap.  I'm switc=
+hing
+to use SEEK_HOLE/SEEK_DATA to get rid of the bmap usage, but it doesn't ch=
+ange
+the issue.
 
-> 
-> Also, it works towards getting rid of this use of bmap, but that's not user
-> visible.
-> 
-> David
+> Is it that those "bridging" blocks only show up in certain corner cases
+> that users can arrange to avoid?  Or that it's OK as long as you use
+> certain specific file systems whose behavior goes beyond what's
+> technically required by the bamp or seek interfaces?
+
+That's a question for the xfs, ext4 and btrfs maintainers, and may vary
+between kernel versions and fsck or filesystem packing utility versions.
+
+David
+
