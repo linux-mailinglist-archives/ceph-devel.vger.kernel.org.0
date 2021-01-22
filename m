@@ -2,35 +2,35 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 45AAC300A7A
-	for <lists+ceph-devel@lfdr.de>; Fri, 22 Jan 2021 19:00:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E598300AAF
+	for <lists+ceph-devel@lfdr.de>; Fri, 22 Jan 2021 19:11:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729054AbhAVR5U (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 22 Jan 2021 12:57:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53910 "EHLO mail.kernel.org"
+        id S1729570AbhAVR61 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 22 Jan 2021 12:58:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729591AbhAVRwh (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 22 Jan 2021 12:52:37 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2DD2323AAA;
-        Fri, 22 Jan 2021 17:51:24 +0000 (UTC)
+        id S1729404AbhAVRwD (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 22 Jan 2021 12:52:03 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 975CE23A9A;
+        Fri, 22 Jan 2021 17:51:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611337884;
-        bh=ZmC/Z8c2ub1C7KMD2cN83t8AzeiWrrEekRlNmXdgI38=;
+        s=k20201202; t=1611337882;
+        bh=7c4C0NGnd1ycQrjwFvqo5QhpKG7ptm/awGcqztQqlCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E1YqlOEPWLh6RsaLKJW30ig0iwygO6rNHwEv0OrzmF1jk8OqJe/fkl3LhLs690LPK
-         QDqntWzSA81dGZ/DVJOciw0+jnnVoaM5rp1dD1ed/1tIn4XEuxKb6EQaF5Ytxhl5Cs
-         8i9xsmf9pFVZf7P5xI8zuWhWi/2lsJzt2O8viGapcQsEVr3jlIQQs3HaLegnsD9HE5
-         +swGh42FWvg9qQESA00MMNmo8mgtRrHg01tdIktjcma26LYO2Xn2D6a0YcgPTcLQQg
-         uCAK+fGa7REfU29sjST+D3mxBkANmV7IW9yAC3JowdWZUS5JhZgpss/j/nNLBdcuwg
-         jwucEvoAq+WQA==
+        b=N3g9D5009TZiRfDlatB0eveoJ6x9PmEdzUnDdXYCrJ/gW6qkpsXdGCWTgmhfNFOuQ
+         yzugITHigonLygkrGIn4HWtDHO9X9jcbBfmI5hUZ9qGNEBweh76aP/V6bCk5R94Mgp
+         p3lfanhMdiNFT8Lgrh/YSA40M99dN4KbQxrxC98zA/eKs8TF/+wKA/8QPNC5mdNi1L
+         2HDXBUcmiE0bax87LxHJpTqEUMgmLY6BRsYSMBTuSUf0o+esBKVZ3cQVKWDIYZst8J
+         JuOeijk/3oXRoGDdnJcE+RsImRQhcgwYTjGGAHA0wpdPzht+fpACGz4GD/Gaj2EWCl
+         EqEc3HSCMaS8w==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
         willy@infradead.org, linux-cachefs@redhat.com,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 4/6] ceph: convert readpage to fscache read helper
-Date:   Fri, 22 Jan 2021 12:51:16 -0500
-Message-Id: <20210122175119.364381-5-jlayton@kernel.org>
+Subject: [RFC PATCH 1/6] ceph: disable old fscache readpage handling
+Date:   Fri, 22 Jan 2021 12:51:13 -0500
+Message-Id: <20210122175119.364381-2-jlayton@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210122175119.364381-1-jlayton@kernel.org>
 References: <20210122175119.364381-1-jlayton@kernel.org>
@@ -40,276 +40,423 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Have the ceph KConfig select NETFS_SUPPORT. Add a new netfs ops
-structure and the operations for it. Convert ceph_readpage to use
-the new netfs_readpage helper.
+With the new netfs read helper functions, we won't need a lot of this
+infrastructure as it handles a the pagecache itself. Rip out the read
+handling for now, and much of the old infrastructure that deals in
+individual pages.
+
+The cookie handling is mostly unchanged, however.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/Kconfig |   1 +
- fs/ceph/addr.c  | 149 ++++++++++++++++++++++++++++++++++++++++++++----
- fs/ceph/cache.h |  36 ++++++++++++
- 3 files changed, 176 insertions(+), 10 deletions(-)
+ fs/ceph/addr.c  |  31 +-----------
+ fs/ceph/cache.c | 123 ------------------------------------------------
+ fs/ceph/cache.h |  91 +----------------------------------
+ fs/ceph/caps.c  |   9 ----
+ 4 files changed, 3 insertions(+), 251 deletions(-)
 
-diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
-index 471e40156065..94df854147d3 100644
---- a/fs/ceph/Kconfig
-+++ b/fs/ceph/Kconfig
-@@ -6,6 +6,7 @@ config CEPH_FS
- 	select LIBCRC32C
- 	select CRYPTO_AES
- 	select CRYPTO
-+	select NETFS_SUPPORT
- 	default n
- 	help
- 	  Choose Y or M here to include support for mounting the
 diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index f554667e1e91..986c9c56653f 100644
+index 26e66436f005..e267aa60c8b6 100644
 --- a/fs/ceph/addr.c
 +++ b/fs/ceph/addr.c
-@@ -12,6 +12,7 @@
- #include <linux/signal.h>
- #include <linux/iversion.h>
- #include <linux/ktime.h>
-+#include <linux/netfs.h>
+@@ -155,8 +155,6 @@ static void ceph_invalidatepage(struct page *page, unsigned int offset,
+ 		return;
+ 	}
  
- #include "super.h"
- #include "mds_client.h"
-@@ -182,6 +183,144 @@ static int ceph_releasepage(struct page *page, gfp_t gfp_flags)
+-	ceph_invalidate_fscache_page(inode, page);
+-
+ 	WARN_ON(!PageLocked(page));
+ 	if (!PagePrivate(page))
+ 		return;
+@@ -175,10 +173,6 @@ static int ceph_releasepage(struct page *page, gfp_t g)
+ 	dout("%p releasepage %p idx %lu (%sdirty)\n", page->mapping->host,
+ 	     page, page->index, PageDirty(page) ? "" : "not ");
+ 
+-	/* Can we release the page from the cache? */
+-	if (!ceph_release_fscache_page(page, g))
+-		return 0;
+-
  	return !PagePrivate(page);
  }
  
-+static bool ceph_netfs_clamp_length(struct netfs_read_subrequest *subreq)
-+{
-+	struct inode *inode = subreq->rreq->mapping->host;
-+	struct ceph_inode_info *ci = ceph_inode(inode);
-+	u64 objno, objoff;
-+	u32 xlen;
-+
-+	/* Truncate the extent at the end of the current object */
-+	ceph_calc_file_object_mapping(&ci->i_layout, subreq->start, subreq->len,
-+				      &objno, &objoff, &xlen);
-+	subreq->len = xlen;
-+	return true;
-+}
-+
-+static void finish_netfs_read(struct ceph_osd_request *req)
-+{
-+	struct ceph_fs_client *fsc = ceph_inode_to_client(req->r_inode);
-+	struct ceph_osd_data *osd_data = osd_req_op_extent_osd_data(req, 0);
-+	struct netfs_read_subrequest *subreq = req->r_priv;
-+	int num_pages;
-+	int err = req->r_result;
-+
-+	ceph_update_read_latency(&fsc->mdsc->metric, req->r_start_latency,
-+				 req->r_end_latency, err);
-+
-+	dout("%s: result %d subreq->len=%zu i_size=%lld\n", __func__, req->r_result,
-+	     subreq->len, i_size_read(req->r_inode));
-+
-+	/* no object means success but no data */
-+	if (err == -ENOENT)
-+		err = 0;
-+	else if (err == -EBLOCKLISTED)
-+		fsc->blocklisted = true;
-+
-+	if (err >= 0 && err < subreq->len)
-+		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-+
-+	netfs_subreq_terminated(subreq, err);
-+
-+	num_pages = calc_pages_for(osd_data->alignment, osd_data->length);
-+	ceph_put_page_vector(osd_data->pages, num_pages, false);
-+	iput(req->r_inode);
-+}
-+
-+static void ceph_netfs_issue_op(struct netfs_read_subrequest *subreq)
-+{
-+	struct netfs_read_request *rreq = subreq->rreq;
-+	struct inode *inode = rreq->mapping->host;
-+	struct ceph_inode_info *ci = ceph_inode(inode);
-+	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-+	struct ceph_osd_request *req = NULL;
-+	struct ceph_vino vino = ceph_vino(inode);
-+	struct iov_iter iter;
-+	struct page **pages;
-+	size_t page_off;
-+	int err = 0;
-+	u64 len = subreq->len;
-+
-+	req = ceph_osdc_new_request(&fsc->client->osdc, &ci->i_layout, vino, subreq->start, &len,
-+			0, 1, CEPH_OSD_OP_READ,
-+			CEPH_OSD_FLAG_READ | fsc->client->osdc.client->options->read_from_replica,
-+			NULL, ci->i_truncate_seq, ci->i_truncate_size, false);
-+	if (IS_ERR(req)) {
-+		err = PTR_ERR(req);
-+		goto out;
-+	}
-+
-+	dout("%s: pos=%llu orig_len=%zu len=%llu\n", __func__, subreq->start, subreq->len, len);
-+	iov_iter_xarray(&iter, READ, &rreq->mapping->i_pages, subreq->start, len);
-+	len = iov_iter_get_pages_alloc(&iter, &pages, len, &page_off);
-+	if (len < 0) {
-+		err = len;
-+		dout("%s: iov_ter_get_pages_alloc returned %d\n", __func__, err);
-+		goto out;
-+	}
-+
-+	/* should always give us a page-aligned read */
-+	WARN_ON_ONCE(page_off);
-+
-+	osd_req_op_extent_osd_data_pages(req, 0, pages, len, 0, false, false);
-+	req->r_callback = finish_netfs_read;
-+	req->r_priv = subreq;
-+	req->r_inode = inode;
-+	ihold(inode);
-+
-+	err = ceph_osdc_start_request(req->r_osdc, req, false);
-+	if (err)
-+		iput(inode);
-+out:
-+	if (req)
-+		ceph_osdc_put_request(req);
-+	if (err)
-+		netfs_subreq_terminated(subreq, err);
-+	dout("%s: result %d\n", __func__, err);
-+}
-+
-+static void ceph_init_rreq(struct netfs_read_request *rreq, struct file *file)
-+{
-+}
-+
-+const struct netfs_read_request_ops ceph_readpage_netfs_ops = {
-+	.init_rreq		= ceph_init_rreq,
-+	.is_cache_enabled	= ceph_is_cache_enabled,
-+	.begin_cache_operation	= ceph_begin_cache_operation,
-+	.issue_op		= ceph_netfs_issue_op,
-+	.clamp_length		= ceph_netfs_clamp_length,
-+};
-+
-+/* read a single page, without unlocking it. */
-+static int ceph_readpage(struct file *filp, struct page *page)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct ceph_inode_info *ci = ceph_inode(inode);
-+	struct ceph_vino vino = ceph_vino(inode);
-+	u64 off = page_offset(page);
-+	u64 len = PAGE_SIZE;
-+
-+	if (ci->i_inline_version != CEPH_INLINE_NONE) {
-+		/*
-+		 * Uptodate inline data should have been added
-+		 * into page cache while getting Fcr caps.
-+		 */
-+		if (off == 0) {
-+			unlock_page(page);
-+			return -EINVAL;
-+		}
-+		zero_user_segment(page, 0, PAGE_SIZE);
-+		SetPageUptodate(page);
-+		unlock_page(page);
-+		return 0;
-+	}
-+
-+	dout("readpage ino %llx.%llx file %p off %llu len %llu page %p index %lu\n",
-+	     vino.ino, vino.snap, filp, off, len, page, page->index);
-+
-+	return netfs_readpage(filp, page, &ceph_readpage_netfs_ops, NULL);
-+}
-+
- /* read a single page, without unlocking it. */
- static int ceph_do_readpage(struct file *filp, struct page *page)
- {
-@@ -252,16 +391,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
+@@ -213,10 +207,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
+ 		return 0;
+ 	}
+ 
+-	err = ceph_readpage_from_fscache(inode, page);
+-	if (err == 0)
+-		return -EINPROGRESS;
+-
+ 	dout("readpage ino %llx.%llx file %p off %llu len %llu page %p index %lu\n",
+ 	     vino.ino, vino.snap, filp, off, len, page, page->index);
+ 	req = ceph_osdc_new_request(osdc, &ci->i_layout, vino, off, &len, 0, 1,
+@@ -241,7 +231,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
+ 	if (err == -ENOENT)
+ 		err = 0;
+ 	if (err < 0) {
+-		ceph_fscache_readpage_cancel(inode, page);
+ 		if (err == -EBLOCKLISTED)
+ 			fsc->blocklisted = true;
+ 		goto out;
+@@ -253,8 +242,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
+ 		flush_dcache_page(page);
+ 
+ 	SetPageUptodate(page);
+-	ceph_readpage_to_fscache(inode, page);
+-
+ out:
  	return err < 0 ? err : 0;
  }
+@@ -294,10 +281,8 @@ static void finish_read(struct ceph_osd_request *req)
+ 	for (i = 0; i < num_pages; i++) {
+ 		struct page *page = osd_data->pages[i];
  
--static int ceph_readpage(struct file *filp, struct page *page)
--{
--	int r = ceph_do_readpage(filp, page);
--	if (r != -EINPROGRESS)
--		unlock_page(page);
--	else
--		r = 0;
--	return r;
--}
+-		if (rc < 0 && rc != -ENOENT) {
+-			ceph_fscache_readpage_cancel(inode, page);
++		if (rc < 0 && rc != -ENOENT)
+ 			goto unlock;
+-		}
+ 		if (bytes < (int)PAGE_SIZE) {
+ 			/* zero (remainder of) page */
+ 			int s = bytes < 0 ? 0 : bytes;
+@@ -307,7 +292,6 @@ static void finish_read(struct ceph_osd_request *req)
+ 		     page->index);
+ 		flush_dcache_page(page);
+ 		SetPageUptodate(page);
+-		ceph_readpage_to_fscache(inode, page);
+ unlock:
+ 		unlock_page(page);
+ 		put_page(page);
+@@ -408,7 +392,6 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
+ 		     page->index);
+ 		if (add_to_page_cache_lru(page, &inode->i_data, page->index,
+ 					  GFP_KERNEL)) {
+-			ceph_fscache_uncache_page(inode, page);
+ 			put_page(page);
+ 			dout("start_read %p add_to_page_cache failed %p\n",
+ 			     inode, page);
+@@ -440,10 +423,8 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
+ 	return nr_pages;
+ 
+ out_pages:
+-	for (i = 0; i < nr_pages; ++i) {
+-		ceph_fscache_readpage_cancel(inode, pages[i]);
++	for (i = 0; i < nr_pages; ++i)
+ 		unlock_page(pages[i]);
+-	}
+ 	ceph_put_page_vector(pages, nr_pages, false);
+ out_put:
+ 	ceph_osdc_put_request(req);
+@@ -471,12 +452,6 @@ static int ceph_readpages(struct file *file, struct address_space *mapping,
+ 	if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
+ 		return -EINVAL;
+ 
+-	rc = ceph_readpages_from_fscache(mapping->host, mapping, page_list,
+-					 &nr_pages);
 -
- /*
-  * Finish an async read(ahead) op.
-  */
-diff --git a/fs/ceph/cache.h b/fs/ceph/cache.h
-index 10c21317b62f..1409d6149281 100644
---- a/fs/ceph/cache.h
-+++ b/fs/ceph/cache.h
-@@ -9,6 +9,8 @@
- #ifndef _CEPH_CACHE_H
- #define _CEPH_CACHE_H
- 
-+#include <linux/netfs.h>
-+
- #ifdef CONFIG_CEPH_FSCACHE
- 
- extern struct fscache_netfs ceph_cache_netfs;
-@@ -35,11 +37,31 @@ static inline void ceph_fscache_inode_init(struct ceph_inode_info *ci)
- 	ci->fscache = NULL;
+-	if (rc == 0)
+-		goto out;
+-
+ 	rw_ctx = ceph_find_rw_context(fi);
+ 	max = fsc->mount_options->rsize >> PAGE_SHIFT;
+ 	dout("readpages %p file %p ctx %p nr_pages %d max %d\n",
+@@ -487,8 +462,6 @@ static int ceph_readpages(struct file *file, struct address_space *mapping,
+ 			goto out;
+ 	}
+ out:
+-	ceph_fscache_readpages_cancel(inode, page_list);
+-
+ 	dout("readpages %p file %p ret %d\n", inode, file, rc);
+ 	return rc;
+ }
+diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
+index 2f5cb6bc78e1..bd185faeeb8e 100644
+--- a/fs/ceph/cache.c
++++ b/fs/ceph/cache.c
+@@ -205,108 +205,6 @@ void ceph_fscache_file_set_cookie(struct inode *inode, struct file *filp)
+ 	}
  }
  
-+static inline struct fscache_cookie *ceph_fscache_cookie(struct ceph_inode_info *ci)
-+{
-+	return ci->fscache;
-+}
-+
- static inline void ceph_fscache_invalidate(struct inode *inode)
+-static void ceph_readpage_from_fscache_complete(struct page *page, void *data, int error)
+-{
+-	if (!error)
+-		SetPageUptodate(page);
+-
+-	unlock_page(page);
+-}
+-
+-static inline bool cache_valid(struct ceph_inode_info *ci)
+-{
+-	return ci->i_fscache_gen == ci->i_rdcache_gen;
+-}
+-
+-
+-/* Atempt to read from the fscache,
+- *
+- * This function is called from the readpage_nounlock context. DO NOT attempt to
+- * unlock the page here (or in the callback).
+- */
+-int ceph_readpage_from_fscache(struct inode *inode, struct page *page)
+-{
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-	int ret;
+-
+-	if (!cache_valid(ci))
+-		return -ENOBUFS;
+-
+-	ret = fscache_read_or_alloc_page(ci->fscache, page,
+-					 ceph_readpage_from_fscache_complete, NULL,
+-					 GFP_KERNEL);
+-
+-	switch (ret) {
+-		case 0: /* Page found */
+-			dout("page read submitted\n");
+-			return 0;
+-		case -ENOBUFS: /* Pages were not found, and can't be */
+-		case -ENODATA: /* Pages were not found */
+-			dout("page/inode not in cache\n");
+-			return ret;
+-		default:
+-			dout("%s: unknown error ret = %i\n", __func__, ret);
+-			return ret;
+-	}
+-}
+-
+-int ceph_readpages_from_fscache(struct inode *inode,
+-				  struct address_space *mapping,
+-				  struct list_head *pages,
+-				  unsigned *nr_pages)
+-{
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-	int ret;
+-
+-	if (!cache_valid(ci))
+-		return -ENOBUFS;
+-
+-	ret = fscache_read_or_alloc_pages(ci->fscache, mapping, pages, nr_pages,
+-					  ceph_readpage_from_fscache_complete,
+-					  NULL, mapping_gfp_mask(mapping));
+-
+-	switch (ret) {
+-		case 0: /* All pages found */
+-			dout("all-page read submitted\n");
+-			return 0;
+-		case -ENOBUFS: /* Some pages were not found, and can't be */
+-		case -ENODATA: /* some pages were not found */
+-			dout("page/inode not in cache\n");
+-			return ret;
+-		default:
+-			dout("%s: unknown error ret = %i\n", __func__, ret);
+-			return ret;
+-	}
+-}
+-
+-void ceph_readpage_to_fscache(struct inode *inode, struct page *page)
+-{
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-	int ret;
+-
+-	if (!PageFsCache(page))
+-		return;
+-
+-	if (!cache_valid(ci))
+-		return;
+-
+-	ret = fscache_write_page(ci->fscache, page, i_size_read(inode),
+-				 GFP_KERNEL);
+-	if (ret)
+-		 fscache_uncache_page(ci->fscache, page);
+-}
+-
+-void ceph_invalidate_fscache_page(struct inode* inode, struct page *page)
+-{
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-
+-	if (!PageFsCache(page))
+-		return;
+-
+-	fscache_wait_on_page_write(ci->fscache, page);
+-	fscache_uncache_page(ci->fscache, page);
+-}
+-
+ void ceph_fscache_unregister_fs(struct ceph_fs_client* fsc)
  {
+ 	if (fscache_cookie_valid(fsc->fscache)) {
+@@ -329,24 +227,3 @@ void ceph_fscache_unregister_fs(struct ceph_fs_client* fsc)
+ 	}
+ 	fsc->fscache = NULL;
+ }
+-
+-/*
+- * caller should hold CEPH_CAP_FILE_{RD,CACHE}
+- */
+-void ceph_fscache_revalidate_cookie(struct ceph_inode_info *ci)
+-{
+-	if (cache_valid(ci))
+-		return;
+-
+-	/* resue i_truncate_mutex. There should be no pending
+-	 * truncate while the caller holds CEPH_CAP_FILE_RD */
+-	mutex_lock(&ci->i_truncate_mutex);
+-	if (!cache_valid(ci)) {
+-		if (fscache_check_consistency(ci->fscache, &ci->i_vino))
+-			fscache_invalidate(ci->fscache);
+-		spin_lock(&ci->i_ceph_lock);
+-		ci->i_fscache_gen = ci->i_rdcache_gen;
+-		spin_unlock(&ci->i_ceph_lock);
+-	}
+-	mutex_unlock(&ci->i_truncate_mutex);
+-}
+diff --git a/fs/ceph/cache.h b/fs/ceph/cache.h
+index 89dbdd1eb14a..10c21317b62f 100644
+--- a/fs/ceph/cache.h
++++ b/fs/ceph/cache.h
+@@ -29,13 +29,10 @@ int ceph_readpages_from_fscache(struct inode *inode,
+ 				struct address_space *mapping,
+ 				struct list_head *pages,
+ 				unsigned *nr_pages);
+-void ceph_readpage_to_fscache(struct inode *inode, struct page *page);
+-void ceph_invalidate_fscache_page(struct inode* inode, struct page *page);
+ 
+ static inline void ceph_fscache_inode_init(struct ceph_inode_info *ci)
+ {
+ 	ci->fscache = NULL;
+-	ci->i_fscache_gen = 0;
+ }
+ 
+ static inline void ceph_fscache_invalidate(struct inode *inode)
+@@ -43,40 +40,6 @@ static inline void ceph_fscache_invalidate(struct inode *inode)
  	fscache_invalidate(ceph_inode(inode)->fscache);
  }
  
-+static inline bool ceph_is_cache_enabled(struct inode *inode)
-+{
-+	struct fscache_cookie *cookie = ceph_fscache_cookie(ceph_inode(inode));
-+
-+	if (!cookie)
-+		return false;
-+	return fscache_cookie_enabled(cookie);
-+}
-+
-+static inline int ceph_begin_cache_operation(struct netfs_read_request *rreq)
-+{
-+	struct fscache_cookie *cookie = ceph_fscache_cookie(ceph_inode(rreq->inode));
-+
-+	return fscache_begin_read_operation(rreq, cookie);
-+}
+-static inline void ceph_fscache_uncache_page(struct inode *inode,
+-					     struct page *page)
+-{
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-	return fscache_uncache_page(ci->fscache, page);
+-}
+-
+-static inline int ceph_release_fscache_page(struct page *page, gfp_t gfp)
+-{
+-	struct inode* inode = page->mapping->host;
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-	return fscache_maybe_release_page(ci->fscache, page, gfp);
+-}
+-
+-static inline void ceph_fscache_readpage_cancel(struct inode *inode,
+-						struct page *page)
+-{
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-	if (fscache_cookie_valid(ci->fscache) && PageFsCache(page))
+-		__fscache_uncache_page(ci->fscache, page);
+-}
+-
+-static inline void ceph_fscache_readpages_cancel(struct inode *inode,
+-						 struct list_head *pages)
+-{
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+-	return fscache_readpages_cancel(ci->fscache, pages);
+-}
+-
+-static inline void ceph_disable_fscache_readpage(struct ceph_inode_info *ci)
+-{
+-	ci->i_fscache_gen = ci->i_rdcache_gen - 1;
+-}
+-
  #else
  
  static inline int ceph_fscache_register(void)
-@@ -65,6 +87,11 @@ static inline void ceph_fscache_inode_init(struct ceph_inode_info *ci)
+@@ -115,62 +78,10 @@ static inline void ceph_fscache_file_set_cookie(struct inode *inode,
  {
  }
  
-+static inline struct fscache_cookie *ceph_fscache_cookie(struct ceph_inode_info *ci)
-+{
-+	return NULL;
-+}
-+
- static inline void ceph_fscache_register_inode_cookie(struct inode *inode)
- {
- }
-@@ -82,6 +109,15 @@ static inline void ceph_fscache_invalidate(struct inode *inode)
+-static inline void ceph_fscache_revalidate_cookie(struct ceph_inode_info *ci)
+-{
+-}
+-
+-static inline void ceph_fscache_uncache_page(struct inode *inode,
+-					     struct page *pages)
+-{
+-}
+-
+-static inline int ceph_readpage_from_fscache(struct inode* inode,
+-					     struct page *page)
+-{
+-	return -ENOBUFS;
+-}
+-
+-static inline int ceph_readpages_from_fscache(struct inode *inode,
+-					      struct address_space *mapping,
+-					      struct list_head *pages,
+-					      unsigned *nr_pages)
+-{
+-	return -ENOBUFS;
+-}
+-
+-static inline void ceph_readpage_to_fscache(struct inode *inode,
+-					    struct page *page)
+-{
+-}
+-
+ static inline void ceph_fscache_invalidate(struct inode *inode)
  {
  }
  
-+static inline bool ceph_is_cache_enabled(struct inode *inode)
-+{
-+	return false;
-+}
-+
-+static inline int ceph_begin_cache_operation(struct netfs_read_request *rreq)
-+{
-+	return -ENOBUFS;
-+}
+-static inline void ceph_invalidate_fscache_page(struct inode *inode,
+-						struct page *page)
+-{
+-}
+-
+-static inline int ceph_release_fscache_page(struct page *page, gfp_t gfp)
+-{
+-	return 1;
+-}
+-
+-static inline void ceph_fscache_readpage_cancel(struct inode *inode,
+-						struct page *page)
+-{
+-}
+-
+-static inline void ceph_fscache_readpages_cancel(struct inode *inode,
+-						 struct list_head *pages)
+-{
+-}
+-
+-static inline void ceph_disable_fscache_readpage(struct ceph_inode_info *ci)
+-{
+-}
+-
  #endif
  
- #endif /* _CEPH_CACHE_H */
+-#endif
++#endif /* _CEPH_CACHE_H */
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index abbf48fc6230..21ba949ca2c3 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -2730,10 +2730,6 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
+ 				*got = need | want;
+ 			else
+ 				*got = need;
+-			if (S_ISREG(inode->i_mode) &&
+-			    (need & CEPH_CAP_FILE_RD) &&
+-			    !(*got & CEPH_CAP_FILE_CACHE))
+-				ceph_disable_fscache_readpage(ci);
+ 			ceph_take_cap_refs(ci, *got, true);
+ 			ret = 1;
+ 		}
+@@ -2983,11 +2979,6 @@ int ceph_get_caps(struct file *filp, int need, int want,
+ 		}
+ 		break;
+ 	}
+-
+-	if (S_ISREG(ci->vfs_inode.i_mode) &&
+-	    (_got & CEPH_CAP_FILE_RD) && (_got & CEPH_CAP_FILE_CACHE))
+-		ceph_fscache_revalidate_cookie(ci);
+-
+ 	*got = _got;
+ 	return 0;
+ }
 -- 
 2.29.2
 
