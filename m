@@ -2,58 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F8AB300E14
-	for <lists+ceph-devel@lfdr.de>; Fri, 22 Jan 2021 21:49:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D79E1300F95
+	for <lists+ceph-devel@lfdr.de>; Fri, 22 Jan 2021 23:05:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbhAVUtb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 22 Jan 2021 15:49:31 -0500
-Received: from mail.padangpariamankab.go.id ([103.94.3.123]:60804 "EHLO
-        mail.padangpariamankab.go.id" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730036AbhAVU1Q (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 22 Jan 2021 15:27:16 -0500
-X-Greylist: delayed 956 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Jan 2021 15:27:15 EST
-Received: from localhost (localhost [127.0.0.1])
-        by mail.padangpariamankab.go.id (Postfix) with ESMTP id 5B2C26E630D;
-        Sat, 23 Jan 2021 03:09:38 +0700 (WIB)
-Received: from mail.padangpariamankab.go.id ([127.0.0.1])
-        by localhost (mail.padangpariamankab.go.id [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id YJe05dJORcjo; Sat, 23 Jan 2021 03:09:37 +0700 (WIB)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.padangpariamankab.go.id (Postfix) with ESMTP id 59BFC6E6301;
-        Sat, 23 Jan 2021 03:09:37 +0700 (WIB)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.padangpariamankab.go.id 59BFC6E6301
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=padangpariamankab.go.id; s=D2C6CDEC-3607-11EA-BC8A-EEDE4AB8B776;
-        t=1611346177; bh=4AhSoXRU63EAbbOwseUY/pxjidGey07DskAQ7pZ9AvE=;
-        h=Date:From:Message-ID:MIME-Version;
-        b=Ruhd9Y/tgr+xIWDjfqC/AGV3EH5Hi65cTOWEJoSweJYel8KHDKJkngW6vVUnE76xN
-         e86NqoO4gzRXIjvgW4JaQylb0qVL3pp7itK1doAawnC91dm/5hXUosvlG5GxeFd8zV
-         QCScC6Q5GZDD3WyTljB/b8p84cognM0xocncUnTY=
-X-Virus-Scanned: amavisd-new at padangpariamankab.go.id
-Received: from mail.padangpariamankab.go.id ([127.0.0.1])
-        by localhost (mail.padangpariamankab.go.id [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id JSF9Yxn4sVje; Sat, 23 Jan 2021 03:09:37 +0700 (WIB)
-Received: from mail.padangpariamankab.go.id (mail.padangpariamankab.go.id [103.94.3.123])
-        by mail.padangpariamankab.go.id (Postfix) with ESMTP id 3E6226E62FF;
-        Sat, 23 Jan 2021 03:09:34 +0700 (WIB)
-Date:   Sat, 23 Jan 2021 03:09:33 +0700 (WIB)
-From:   GREENLIGHT <rsud@padangpariamankab.go.id>
-Reply-To: "Greenlight Financial Services " <greenlightservices@usa.com>
-Message-ID: <473682672.14237.1611346173980.JavaMail.zimbra@padangpariamankab.go.id>
-Subject: Update
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [103.94.3.123]
-X-Mailer: Zimbra 8.8.15_GA_3895 (zclient/8.8.15_GA_3895)
-Thread-Index: zUsh4cmLVIND3qi7ztJh9RVPcG39+Q==
-Thread-Topic: Update
-To:     unlisted-recipients:; (no To-header on input)
+        id S1730936AbhAVWEd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 22 Jan 2021 17:04:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34180 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730703AbhAVWBU (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 22 Jan 2021 17:01:20 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id DFDE423B1F;
+        Fri, 22 Jan 2021 22:00:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611352839;
+        bh=Jde4JDN+krmqkjCY3s3Tt+sCpxSUIQjuZG6YsoWqjU4=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=aoOrG+j6XbCuTkdHgN8+UMHiPeW+wNAjJVDh7QhNjp/vGaSBg3Y4A4emfVzZEZp5p
+         vA5HCJL4brO9+oyuAhkS3PYMhvZugruu1O/iEBy4wI9EQUtKHGU2YC/C2LKA8DmiHr
+         6RS3dRknECNew9BvUYeClYqNnaGwXQik9ZK4hm+KgtPLFe/6sW/V35hJi5uv/2YlGj
+         M1yK5g3aeACGxiOuoX/ACAZwa0axXku88jYglZTNXuAQkg6xAkbZshn8nWMqecwM1c
+         S0FCStfZ1+69kZvKiZaaJCZJ3/arovhhcZ6szgag3q3sdwYjbc5DYtiv2v48u4eKDL
+         tZCqkS/0+3jZw==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id DC301652D1;
+        Fri, 22 Jan 2021 22:00:39 +0000 (UTC)
+Subject: Re: [GIT PULL] Ceph fixes for 5.11-rc5
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20210122160605.5939-1-idryomov@gmail.com>
+References: <20210122160605.5939-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20210122160605.5939-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-5.11-rc5
+X-PR-Tracked-Commit-Id: 9d5ae6f3c50a6f718b6d4be3c7b0828966e01b05
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a9034304ff7b3569af4f159d0c1d4ba33d86cf47
+Message-Id: <161135283989.4174.16804179094768483379.pr-tracker-bot@kernel.org>
+Date:   Fri, 22 Jan 2021 22:00:39 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+The pull request you sent on Fri, 22 Jan 2021 17:06:05 +0100:
 
+> https://github.com/ceph/ceph-client.git tags/ceph-for-5.11-rc5
 
-We offer Reliable/Low Interest Rate Financial Services to Companies & Individuals including; Start-Up Business, Loans & Mortgage ETC. Apply Now
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a9034304ff7b3569af4f159d0c1d4ba33d86cf47
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
