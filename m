@@ -2,272 +2,93 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F1B253008DF
-	for <lists+ceph-devel@lfdr.de>; Fri, 22 Jan 2021 17:46:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF8D6300976
+	for <lists+ceph-devel@lfdr.de>; Fri, 22 Jan 2021 18:22:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729028AbhAVQmY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 22 Jan 2021 11:42:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38208 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728710AbhAVQlr (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 22 Jan 2021 11:41:47 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id C2C37B76C;
-        Fri, 22 Jan 2021 16:41:08 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 8c71db06;
-        Fri, 22 Jan 2021 16:41:59 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 05/17] ceph: crypto context handling for ceph
-References: <20210120182847.644850-1-jlayton@kernel.org>
-        <20210120182847.644850-6-jlayton@kernel.org>
-Date:   Fri, 22 Jan 2021 16:41:58 +0000
-In-Reply-To: <20210120182847.644850-6-jlayton@kernel.org> (Jeff Layton's
-        message of "Wed, 20 Jan 2021 13:28:35 -0500")
-Message-ID: <87y2gk53ft.fsf@suse.de>
+        id S1729456AbhAVQHR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 22 Jan 2021 11:07:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44860 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729246AbhAVQG4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 22 Jan 2021 11:06:56 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56E8FC061786;
+        Fri, 22 Jan 2021 08:06:16 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id h16so7137693edt.7;
+        Fri, 22 Jan 2021 08:06:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kkODdF815DQqaUMAqusF0BeWMesmAfyR8ldEcgWvCuE=;
+        b=UPieOxfqjkoQqyLGY45+TFgjpFPDuWKjE4bjmPAH1Y8inP1cw61IJIZu6jP2EIczuz
+         NF+G19ax5NpoA/ezJ9liWItvtP1W47Ddi14GiZYD7ckI7Z+ragNF5cnXHl9zv22c1bN+
+         7/a5Z0N10tPo6Cb7+kSbKNJvt6rALrwsPAmwRqmb/0fp5DUhDcJIR1vl80oQUkYZHG/F
+         jAu4HBjZiHvc3qI2gEjU6L40BnJIvXg3bPSPXNtqBuM7ZXkL8Nk3Jwfrlt7+S1mwn9Xi
+         qQxMvjBS1WW0O42hWUlQD+VkE9ePuPNWtbXGBzmkSXwud6THtcT8j1VJCA7c8rs55wbi
+         PR+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kkODdF815DQqaUMAqusF0BeWMesmAfyR8ldEcgWvCuE=;
+        b=hOjJkoTc+3CDdtgcYC+MLa3oA7nye3cyWAA8Sy+hklVGI7qWKve4t8AJ7Kee0UTEnt
+         6KQfDzNk9c9w6j/ZicbM9j4Lw+t44mCsfzcG8FBR1oW3Llg3liZpc0lgZ0hvGozeA6kS
+         bSE62YZKJWu22HL3kJ9KgFL6W4fdfGz0Ufa8j6x3w74yx6yJCVItP1SVkPf3wwMgTJJt
+         0Pg+e++nQ6a4zD+29jOAEXiZM/Q0KUdmwsAtR5PPphhfhh1QE/Xbwsk7zeGRqzHY+oCI
+         wqLbzAC0HhmM1JFy4yMHXcH54uQqxzyPbK9QSpBqMZW4V/+5VXo77jcSefcMiqljU0OD
+         0UtA==
+X-Gm-Message-State: AOAM531xxj71bVlRgiqEHzTyUL0opxYKlVBI7bL43XMplYfi1d2XSVw+
+        2Mcdhr1uYw9cLhT16suXjP6hGwnQ0qc=
+X-Google-Smtp-Source: ABdhPJxjzOMhqEHkjoZ7Pj311JbBxWdMwPb/bOfqnqbxWfum8CYeJY+ma3ZQROq9SV147jVeeVRLZg==
+X-Received: by 2002:a05:6402:32c:: with SMTP id q12mr3780058edw.145.1611331575162;
+        Fri, 22 Jan 2021 08:06:15 -0800 (PST)
+Received: from kwango.local (ip-94-112-132-16.net.upcbroadband.cz. [94.112.132.16])
+        by smtp.gmail.com with ESMTPSA id f6sm5555117edv.83.2021.01.22.08.06.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Jan 2021 08:06:14 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 5.11-rc5
+Date:   Fri, 22 Jan 2021 17:06:05 +0100
+Message-Id: <20210122160605.5939-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> writes:
+Hi Linus,
 
-> Store the fscrypt context for an inode as an encryption.ctx xattr.
-> When we get a new inode in a trace, set the S_ENCRYPTED bit if
-> the xattr blob has an encryption.ctx xattr.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/Makefile |  1 +
->  fs/ceph/crypto.c | 42 ++++++++++++++++++++++++++++++++++++++++++
->  fs/ceph/crypto.h | 24 ++++++++++++++++++++++++
->  fs/ceph/inode.c  |  6 ++++++
->  fs/ceph/super.c  |  3 +++
->  fs/ceph/super.h  |  1 +
->  fs/ceph/xattr.c  | 32 ++++++++++++++++++++++++++++++++
->  7 files changed, 109 insertions(+)
->  create mode 100644 fs/ceph/crypto.c
->  create mode 100644 fs/ceph/crypto.h
->
-> diff --git a/fs/ceph/Makefile b/fs/ceph/Makefile
-> index 50c635dc7f71..1f77ca04c426 100644
-> --- a/fs/ceph/Makefile
-> +++ b/fs/ceph/Makefile
-> @@ -12,3 +12,4 @@ ceph-y := super.o inode.o dir.o file.o locks.o addr.o ioctl.o \
->  
->  ceph-$(CONFIG_CEPH_FSCACHE) += cache.o
->  ceph-$(CONFIG_CEPH_FS_POSIX_ACL) += acl.o
-> +ceph-$(CONFIG_FS_ENCRYPTION) += crypto.o
-> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-> new file mode 100644
-> index 000000000000..dbe8b60fd1b0
-> --- /dev/null
-> +++ b/fs/ceph/crypto.c
-> @@ -0,0 +1,42 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <linux/ceph/ceph_debug.h>
-> +#include <linux/xattr.h>
-> +#include <linux/fscrypt.h>
-> +
-> +#include "super.h"
-> +#include "crypto.h"
-> +
-> +static int ceph_crypt_get_context(struct inode *inode, void *ctx, size_t len)
-> +{
-> +	return __ceph_getxattr(inode, CEPH_XATTR_NAME_ENCRYPTION_CONTEXT, ctx, len);
-> +}
-> +
-> +static int ceph_crypt_set_context(struct inode *inode, const void *ctx, size_t len, void *fs_data)
-> +{
-> +	int ret;
-> +
-> +	WARN_ON_ONCE(fs_data);
-> +	ret = __ceph_setxattr(inode, CEPH_XATTR_NAME_ENCRYPTION_CONTEXT, ctx, len, XATTR_CREATE);
-> +	if (ret == 0)
-> +		inode_set_flags(inode, S_ENCRYPTED, S_ENCRYPTED);
-> +	return ret;
-> +}
-> +
-> +static bool ceph_crypt_empty_dir(struct inode *inode)
-> +{
-> +	struct ceph_inode_info *ci = ceph_inode(inode);
-> +
-> +	return ci->i_rsubdirs + ci->i_rfiles == 1;
-> +}
+The following changes since commit e71ba9452f0b5b2e8dc8aa5445198cd9214a6a62:
 
-This is very tricky, as this check can't really guaranty that the
-directory is empty.  We need to make sure no other client has access to
-this directory during the whole operation of setting policy.  Would it be
-enough to ensure we have Fxc here?
+  Linux 5.11-rc2 (2021-01-03 15:55:30 -0800)
 
-> +
-> +static struct fscrypt_operations ceph_fscrypt_ops = {
-> +	.get_context		= ceph_crypt_get_context,
-> +	.set_context		= ceph_crypt_set_context,
-> +	.empty_dir		= ceph_crypt_empty_dir,
-> +	.max_namelen		= NAME_MAX,
-> +};
-> +
-> +void ceph_fscrypt_set_ops(struct super_block *sb)
-> +{
-> +	fscrypt_set_ops(sb, &ceph_fscrypt_ops);
-> +}
-> diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
-> new file mode 100644
-> index 000000000000..189bd8424284
-> --- /dev/null
-> +++ b/fs/ceph/crypto.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Ceph fscrypt functionality
-> + */
-> +
-> +#ifndef _CEPH_CRYPTO_H
-> +#define _CEPH_CRYPTO_H
-> +
-> +#include <linux/fscrypt.h>
-> +
-> +#define	CEPH_XATTR_NAME_ENCRYPTION_CONTEXT	"encryption.ctx"
-> +
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +void ceph_fscrypt_set_ops(struct super_block *sb);
-> +
-> +#else /* CONFIG_FS_ENCRYPTION */
-> +
-> +static inline void ceph_fscrypt_set_ops(struct super_block *sb)
-> +{
-> +}
-> +
-> +#endif /* CONFIG_FS_ENCRYPTION */
-> +
-> +#endif
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 5d20a620e96c..d465ad48ade5 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -14,10 +14,12 @@
->  #include <linux/random.h>
->  #include <linux/sort.h>
->  #include <linux/iversion.h>
-> +#include <linux/fscrypt.h>
->  
->  #include "super.h"
->  #include "mds_client.h"
->  #include "cache.h"
-> +#include "crypto.h"
->  #include <linux/ceph/decode.h>
->  
->  /*
-> @@ -553,6 +555,7 @@ void ceph_evict_inode(struct inode *inode)
->  	clear_inode(inode);
->  
->  	ceph_fscache_unregister_inode_cookie(ci);
-> +	fscrypt_put_encryption_info(inode);
->  
->  	__ceph_remove_caps(ci);
->  
-> @@ -912,6 +915,9 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
->  		ceph_forget_all_cached_acls(inode);
->  		ceph_security_invalidate_secctx(inode);
->  		xattr_blob = NULL;
-> +		if ((inode->i_state & I_NEW) &&
-> +		     ceph_inode_has_xattr(ci, CEPH_XATTR_NAME_ENCRYPTION_CONTEXT))
-> +			inode_set_flags(inode, S_ENCRYPTED, S_ENCRYPTED);
->  	}
->  
->  	/* finally update i_version */
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index 9b1b7f4cfdd4..cdac6ff675e2 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -20,6 +20,7 @@
->  #include "super.h"
->  #include "mds_client.h"
->  #include "cache.h"
-> +#include "crypto.h"
->  
->  #include <linux/ceph/ceph_features.h>
->  #include <linux/ceph/decode.h>
-> @@ -988,6 +989,8 @@ static int ceph_set_super(struct super_block *s, struct fs_context *fc)
->  	s->s_time_min = 0;
->  	s->s_time_max = U32_MAX;
->  
-> +	ceph_fscrypt_set_ops(s);
-> +
->  	ret = set_anon_super_fc(s, fc);
->  	if (ret != 0)
->  		fsc->sb = NULL;
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 13b02887b085..efe2e963c631 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -1013,6 +1013,7 @@ extern ssize_t ceph_listxattr(struct dentry *, char *, size_t);
->  extern struct ceph_buffer *__ceph_build_xattrs_blob(struct ceph_inode_info *ci);
->  extern void __ceph_destroy_xattrs(struct ceph_inode_info *ci);
->  extern const struct xattr_handler *ceph_xattr_handlers[];
-> +bool ceph_inode_has_xattr(struct ceph_inode_info *ci, const char *name);
->  
->  struct ceph_acl_sec_ctx {
->  #ifdef CONFIG_CEPH_FS_POSIX_ACL
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index 24997982de01..d0d719b768e4 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -1359,6 +1359,38 @@ void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx)
->  		ceph_pagelist_release(as_ctx->pagelist);
->  }
->  
-> +/* Return true if inode's xattr blob has an xattr named "name" */
-> +bool ceph_inode_has_xattr(struct ceph_inode_info *ci, const char *name)
-> +{
-> +	void *p, *end;
-> +	u32 numattr;
-> +	size_t namelen;
-> +
-> +	lockdep_assert_held(&ci->i_ceph_lock);
-> +
-> +	if (!ci->i_xattrs.blob || ci->i_xattrs.blob->vec.iov_len <= 4)
-> +		return false;
-> +
-> +	namelen = strlen(name);
-> +	p = ci->i_xattrs.blob->vec.iov_base;
-> +	end = p + ci->i_xattrs.blob->vec.iov_len;
-> +	ceph_decode_32_safe(&p, end, numattr, bad);
-> +
-> +	while (numattr--) {
-> +		u32 len;
-> +
-> +		ceph_decode_32_safe(&p, end, len, bad);
-> +		ceph_decode_need(&p, end, len, bad);
-> +		if (len == namelen && !memcmp(p, name, len))
-> +			return true;
-> +		p += len;
-> +		ceph_decode_32_safe(&p, end, len, bad);
-> +		ceph_decode_skip_n(&p, end, len, bad);
-> +	}
-> +bad:
-> +	return false;
-> +}
+are available in the Git repository at:
 
-I wonder if it wouldn't be better have an extra flag in struct
-ceph_inode_info instead of having to go through the xattr list every time
-we update an inode with data from the MDS.
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.11-rc5
 
-> 
-> +
->  /*
->   * List of handlers for synthetic system.* attributes. Other
->   * attributes are handled directly.
-> -- 
->
-> 2.29.2
->
+for you to fetch changes up to 9d5ae6f3c50a6f718b6d4be3c7b0828966e01b05:
 
--- 
-Luis
+  libceph: fix "Boolean result is used in bitwise operation" warning (2021-01-21 16:49:59 +0100)
+
+----------------------------------------------------------------
+A patch to zero out sensitive cryptographic data and two minor cleanups
+prompted by the fact that a bunch of code was moved in this cycle.
+
+----------------------------------------------------------------
+Ilya Dryomov (3):
+      libceph: zero out session key and connection secret
+      libceph, ceph: disambiguate ceph_connection_operations handlers
+      libceph: fix "Boolean result is used in bitwise operation" warning
+
+ fs/ceph/mds_client.c    | 34 ++++++++++++++---------------
+ net/ceph/auth_x.c       | 57 +++++++++++++++++++++++++++++--------------------
+ net/ceph/crypto.c       |  3 ++-
+ net/ceph/messenger_v1.c |  2 +-
+ net/ceph/messenger_v2.c | 45 +++++++++++++++++++++-----------------
+ net/ceph/mon_client.c   | 14 ++++++------
+ net/ceph/osd_client.c   | 40 +++++++++++++++++-----------------
+ 7 files changed, 107 insertions(+), 88 deletions(-)
