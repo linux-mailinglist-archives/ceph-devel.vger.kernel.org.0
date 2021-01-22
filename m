@@ -2,93 +2,208 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF8D6300976
-	for <lists+ceph-devel@lfdr.de>; Fri, 22 Jan 2021 18:22:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5749E3009AF
+	for <lists+ceph-devel@lfdr.de>; Fri, 22 Jan 2021 18:31:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729456AbhAVQHR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 22 Jan 2021 11:07:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44860 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729246AbhAVQG4 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 22 Jan 2021 11:06:56 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56E8FC061786;
-        Fri, 22 Jan 2021 08:06:16 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id h16so7137693edt.7;
-        Fri, 22 Jan 2021 08:06:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kkODdF815DQqaUMAqusF0BeWMesmAfyR8ldEcgWvCuE=;
-        b=UPieOxfqjkoQqyLGY45+TFgjpFPDuWKjE4bjmPAH1Y8inP1cw61IJIZu6jP2EIczuz
-         NF+G19ax5NpoA/ezJ9liWItvtP1W47Ddi14GiZYD7ckI7Z+ragNF5cnXHl9zv22c1bN+
-         7/a5Z0N10tPo6Cb7+kSbKNJvt6rALrwsPAmwRqmb/0fp5DUhDcJIR1vl80oQUkYZHG/F
-         jAu4HBjZiHvc3qI2gEjU6L40BnJIvXg3bPSPXNtqBuM7ZXkL8Nk3Jwfrlt7+S1mwn9Xi
-         qQxMvjBS1WW0O42hWUlQD+VkE9ePuPNWtbXGBzmkSXwud6THtcT8j1VJCA7c8rs55wbi
-         PR+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kkODdF815DQqaUMAqusF0BeWMesmAfyR8ldEcgWvCuE=;
-        b=hOjJkoTc+3CDdtgcYC+MLa3oA7nye3cyWAA8Sy+hklVGI7qWKve4t8AJ7Kee0UTEnt
-         6KQfDzNk9c9w6j/ZicbM9j4Lw+t44mCsfzcG8FBR1oW3Llg3liZpc0lgZ0hvGozeA6kS
-         bSE62YZKJWu22HL3kJ9KgFL6W4fdfGz0Ufa8j6x3w74yx6yJCVItP1SVkPf3wwMgTJJt
-         0Pg+e++nQ6a4zD+29jOAEXiZM/Q0KUdmwsAtR5PPphhfhh1QE/Xbwsk7zeGRqzHY+oCI
-         wqLbzAC0HhmM1JFy4yMHXcH54uQqxzyPbK9QSpBqMZW4V/+5VXo77jcSefcMiqljU0OD
-         0UtA==
-X-Gm-Message-State: AOAM531xxj71bVlRgiqEHzTyUL0opxYKlVBI7bL43XMplYfi1d2XSVw+
-        2Mcdhr1uYw9cLhT16suXjP6hGwnQ0qc=
-X-Google-Smtp-Source: ABdhPJxjzOMhqEHkjoZ7Pj311JbBxWdMwPb/bOfqnqbxWfum8CYeJY+ma3ZQROq9SV147jVeeVRLZg==
-X-Received: by 2002:a05:6402:32c:: with SMTP id q12mr3780058edw.145.1611331575162;
-        Fri, 22 Jan 2021 08:06:15 -0800 (PST)
-Received: from kwango.local (ip-94-112-132-16.net.upcbroadband.cz. [94.112.132.16])
-        by smtp.gmail.com with ESMTPSA id f6sm5555117edv.83.2021.01.22.08.06.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Jan 2021 08:06:14 -0800 (PST)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 5.11-rc5
-Date:   Fri, 22 Jan 2021 17:06:05 +0100
-Message-Id: <20210122160605.5939-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
+        id S1729329AbhAVRZq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 22 Jan 2021 12:25:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56366 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728674AbhAVREX (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 22 Jan 2021 12:04:23 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id BC4ACAF55;
+        Fri, 22 Jan 2021 16:49:12 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id a70283ca;
+        Fri, 22 Jan 2021 16:50:03 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v4 08/17] ceph: add routine to create fscrypt
+ context prior to RPC
+References: <20210120182847.644850-1-jlayton@kernel.org>
+        <20210120182847.644850-9-jlayton@kernel.org>
+Date:   Fri, 22 Jan 2021 16:50:03 +0000
+In-Reply-To: <20210120182847.644850-9-jlayton@kernel.org> (Jeff Layton's
+        message of "Wed, 20 Jan 2021 13:28:38 -0500")
+Message-ID: <87tur8532c.fsf@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
+Jeff Layton <jlayton@kernel.org> writes:
 
-The following changes since commit e71ba9452f0b5b2e8dc8aa5445198cd9214a6a62:
+> After pre-creating a new inode, do an fscrypt prepare on it, fetch a
+> new encryption context and then marshal that into the security context
+> to be sent along with the RPC.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/crypto.c | 61 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/ceph/crypto.h | 12 ++++++++++
+>  fs/ceph/inode.c  |  9 +++++--
+>  fs/ceph/super.h  |  3 +++
+>  4 files changed, 83 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+> index 879d9a0d3751..f037a4939026 100644
+> --- a/fs/ceph/crypto.c
+> +++ b/fs/ceph/crypto.c
+> @@ -46,3 +46,64 @@ void ceph_fscrypt_set_ops(struct super_block *sb)
+>  {
+>  	fscrypt_set_ops(sb, &ceph_fscrypt_ops);
+>  }
+> +
+> +int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
+> +				 struct ceph_acl_sec_ctx *as)
+> +{
+> +	int ret, ctxsize;
+> +	size_t name_len;
+> +	char *name;
+> +	struct ceph_pagelist *pagelist = as->pagelist;
+> +	bool encrypted = false;
+> +
+> +	ret = fscrypt_prepare_new_inode(dir, inode, &encrypted);
+> +	if (ret)
+> +		return ret;
+> +	if (!encrypted)
+> +		return 0;
+> +
+> +	inode->i_flags |= S_ENCRYPTED;
+> +
+> +	ctxsize = fscrypt_context_for_new_inode(&as->fscrypt, inode);
+> +	if (ctxsize < 0)
+> +		return ctxsize;
+> +
+> +	/* marshal it in page array */
+> +	if (!pagelist) {
+> +		pagelist = ceph_pagelist_alloc(GFP_KERNEL);
+> +		if (!pagelist)
+> +			return -ENOMEM;
+> +		ret = ceph_pagelist_reserve(pagelist, PAGE_SIZE);
+> +		if (ret)
+> +			goto out;
+> +		ceph_pagelist_encode_32(pagelist, 1);
+> +	}
+> +
+> +	name = CEPH_XATTR_NAME_ENCRYPTION_CONTEXT;
+> +	name_len = strlen(name);
+> +	ret = ceph_pagelist_reserve(pagelist, 4 * 2 + name_len + ctxsize);
+> +	if (ret)
+> +		goto out;
+> +
+> +	if (as->pagelist) {
+> +		BUG_ON(pagelist->length <= sizeof(__le32));
+> +		if (list_is_singular(&pagelist->head)) {
+> +			le32_add_cpu((__le32*)pagelist->mapped_tail, 1);
+> +		} else {
+> +			struct page *page = list_first_entry(&pagelist->head,
+> +							     struct page, lru);
+> +			void *addr = kmap_atomic(page);
+> +			le32_add_cpu((__le32*)addr, 1);
+> +			kunmap_atomic(addr);
+> +		}
+> +	}
+> +
 
-  Linux 5.11-rc2 (2021-01-03 15:55:30 -0800)
+I've been staring at this function for a bit.  And at this point I would
+expect something like this:
 
-are available in the Git repository at:
+	} else
+		as->pagelist = pagelist;
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-5.11-rc5
+as I'm not seeing pagelist being used anywhere if it's allocated in this
+function.
 
-for you to fetch changes up to 9d5ae6f3c50a6f718b6d4be3c7b0828966e01b05:
+Cheers,
+-- 
+Luis
 
-  libceph: fix "Boolean result is used in bitwise operation" warning (2021-01-21 16:49:59 +0100)
+> 
+> +	ceph_pagelist_encode_32(pagelist, name_len);
+> +	ceph_pagelist_append(pagelist, name, name_len);
+> +	ceph_pagelist_encode_32(pagelist, ctxsize);
+> +	ceph_pagelist_append(pagelist, as->fscrypt, ctxsize);
+> +out:
+> +	if (pagelist && !as->pagelist)
+> +		ceph_pagelist_release(pagelist);
+> +	return ret;
+> +}
+> diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
+> index 0dd043b56096..cc4e481bf13a 100644
+> --- a/fs/ceph/crypto.h
+> +++ b/fs/ceph/crypto.h
+> @@ -18,6 +18,9 @@ static inline void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc)
+>  	fscrypt_free_dummy_policy(&fsc->dummy_enc_policy);
+>  }
+>  
+> +int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
+> +				 struct ceph_acl_sec_ctx *as);
+> +
+>  #else /* CONFIG_FS_ENCRYPTION */
+>  
+>  static inline void ceph_fscrypt_set_ops(struct super_block *sb)
+> @@ -27,6 +30,15 @@ static inline void ceph_fscrypt_set_ops(struct super_block *sb)
+>  static inline void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc)
+>  {
+>  }
+> +
+> +static inline int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
+> +						struct ceph_acl_sec_ctx *as)
+> +{
+> +	if (IS_ENCRYPTED(dir))
+> +		return -EOPNOTSUPP;
+> +	return 0;
+> +}
+> +
+>  #endif /* CONFIG_FS_ENCRYPTION */
+>  
+>  #endif
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index d004f294a256..2854711e8988 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -83,12 +83,17 @@ struct inode *ceph_new_inode(struct inode *dir, struct dentry *dentry,
+>  			goto out_err;
+>  	}
+>  
+> +	inode->i_state = 0;
+> +	inode->i_mode = *mode;
+> +
+>  	err = ceph_security_init_secctx(dentry, *mode, as_ctx);
+>  	if (err < 0)
+>  		goto out_err;
+>  
+> -	inode->i_state = 0;
+> -	inode->i_mode = *mode;
+> +	err = ceph_fscrypt_prepare_context(dir, inode, as_ctx);
+> +	if (err)
+> +		goto out_err;
+> +
+>  	return inode;
+>  out_err:
+>  	iput(inode);
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 7a022c7c38b6..2411813ab552 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -1031,6 +1031,9 @@ struct ceph_acl_sec_ctx {
+>  #ifdef CONFIG_CEPH_FS_SECURITY_LABEL
+>  	void *sec_ctx;
+>  	u32 sec_ctxlen;
+> +#endif
+> +#ifdef CONFIG_FS_ENCRYPTION
+> +	u8	fscrypt[FSCRYPT_SET_CONTEXT_MAX_SIZE];
+>  #endif
+>  	struct ceph_pagelist *pagelist;
+>  };
+> -- 
+>
+> 2.29.2
+>
 
-----------------------------------------------------------------
-A patch to zero out sensitive cryptographic data and two minor cleanups
-prompted by the fact that a bunch of code was moved in this cycle.
-
-----------------------------------------------------------------
-Ilya Dryomov (3):
-      libceph: zero out session key and connection secret
-      libceph, ceph: disambiguate ceph_connection_operations handlers
-      libceph: fix "Boolean result is used in bitwise operation" warning
-
- fs/ceph/mds_client.c    | 34 ++++++++++++++---------------
- net/ceph/auth_x.c       | 57 +++++++++++++++++++++++++++++--------------------
- net/ceph/crypto.c       |  3 ++-
- net/ceph/messenger_v1.c |  2 +-
- net/ceph/messenger_v2.c | 45 +++++++++++++++++++++-----------------
- net/ceph/mon_client.c   | 14 ++++++------
- net/ceph/osd_client.c   | 40 +++++++++++++++++-----------------
- 7 files changed, 107 insertions(+), 88 deletions(-)
