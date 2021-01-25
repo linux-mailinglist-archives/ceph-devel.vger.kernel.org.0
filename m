@@ -2,85 +2,144 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CEEF3042CA
-	for <lists+ceph-devel@lfdr.de>; Tue, 26 Jan 2021 16:42:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFED7304822
+	for <lists+ceph-devel@lfdr.de>; Tue, 26 Jan 2021 20:22:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391777AbhAZPmU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 26 Jan 2021 10:42:20 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29787 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391310AbhAZPgF (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 26 Jan 2021 10:36:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611675278;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+sg4yNwZrAUtqGjsjAIZF/lC9W6Hi56SguvTv3qRusA=;
-        b=AvAimHzoNnyt6HHce6CcX+chG4tX7GRBMoCQqfIxXhqI8JNTZLdVRQ5eCsiWDp3LoQW+Ll
-        BeRU+iGXcpfeyr40dWf/CDbUTRRooyC2d0rayKu4vV7JNCkHFFE87e7d5qPvPql+tPM8IL
-        LMZSLZtAFSNufeHw3Gm8odSA9k8MABg=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-323-vdF978hINlGDTvBXYiXRxg-1; Tue, 26 Jan 2021 10:34:36 -0500
-X-MC-Unique: vdF978hINlGDTvBXYiXRxg-1
-Received: by mail-ed1-f70.google.com with SMTP id a26so9622794edx.8
-        for <ceph-devel@vger.kernel.org>; Tue, 26 Jan 2021 07:34:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+sg4yNwZrAUtqGjsjAIZF/lC9W6Hi56SguvTv3qRusA=;
-        b=LAjrUoiNlhjEf0jH28jgBEBMEo1cyI6iazWL96vcB+4JPgH/PFu4WrMJbUJp3EfLmR
-         0Whrj/KNG8Sfh7hFplYzDt/EavHp3jvYTiD4OX2TPMRdhBkMEMLHTOBNaRhGAv9JZdVr
-         nZH6IOmMqlOsu6ktO0rRvjn1OqDNB4mV5eFf0tRzXuFkW+LtznEqrSVBmvvFWYVxASFO
-         7MCQwLlOaK0OdEBcTp5qesK00AoE0D54Bhxne3D7i5PmRXJgAjM+145ZAynCL857NMyy
-         h/ko1u7wgl5AWdCmKxZgxeWXeqoR/1wvHu/LhiJKtm8HicezNI+ooOXWhQV9Fzz7zVQP
-         R4xA==
-X-Gm-Message-State: AOAM531+XDuqMWQiNVd9+ZAwAh4sqYOpXt3X6LpnR4V8lgW1fJ3CoXDz
-        EBEdTL384yHQRw3Pr+urMSa7GGglwfPDE135rOyl2xIxrj2bISP+LL6hwiiKW+w+hYiunbNOW4Y
-        QgSVHFjD0CA/c1/15fF1c54NoAytMKEQ68NOWJA==
-X-Received: by 2002:a17:906:4451:: with SMTP id i17mr2289512ejp.436.1611675275261;
-        Tue, 26 Jan 2021 07:34:35 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzSasZks4PL3NUJQfxg7We8UW4x28G54NbjOgDuCVAFpi7QKXrub9Pz5L3G6Ovg3Un+JLmrv6pQRbddbpD7RMI=
-X-Received: by 2002:a17:906:4451:: with SMTP id i17mr2289493ejp.436.1611675275099;
- Tue, 26 Jan 2021 07:34:35 -0800 (PST)
+        id S1732080AbhAZFvV convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Tue, 26 Jan 2021 00:51:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48252 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727389AbhAYKQJ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 25 Jan 2021 05:16:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 18B10AD8C;
+        Mon, 25 Jan 2021 10:13:57 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 2dfa81f0;
+        Mon, 25 Jan 2021 10:14:49 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v4 08/17] ceph: add routine to create fscrypt
+ context prior to RPC
+References: <20210120182847.644850-1-jlayton@kernel.org>
+        <20210120182847.644850-9-jlayton@kernel.org> <87tur8532c.fsf@suse.de>
+        <d4f84211f017280cd1dd98bcdee99d11621c5d7f.camel@kernel.org>
+Date:   Mon, 25 Jan 2021 10:14:49 +0000
+In-Reply-To: <d4f84211f017280cd1dd98bcdee99d11621c5d7f.camel@kernel.org> (Jeff
+        Layton's message of "Fri, 22 Jan 2021 12:32:56 -0500")
+Message-ID: <87zh0xuxuu.fsf@suse.de>
 MIME-Version: 1.0
-References: <161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk>
- <161161054970.2537118.5401048451896267742.stgit@warthog.procyon.org.uk> <20210126035928.GJ308988@casper.infradead.org>
-In-Reply-To: <20210126035928.GJ308988@casper.infradead.org>
-From:   David Wysochanski <dwysocha@redhat.com>
-Date:   Tue, 26 Jan 2021 10:33:59 -0500
-Message-ID: <CALF+zOkNMHjtH+cZrGQFqbH5dD5gUpV+y3k-Bt31E35d4kn1oA@mail.gmail.com>
-Subject: Re: [PATCH 25/32] NFS: Clean up nfs_readpage() and nfs_readpages()
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        linux-cifs <linux-cifs@vger.kernel.org>,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 11:01 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Mon, Jan 25, 2021 at 09:35:49PM +0000, David Howells wrote:
-> > -int nfs_readpage(struct file *file, struct page *page)
-> > +int nfs_readpage(struct file *filp, struct page *page)
->
-> I appreciate we're inconsistent between file and filp, but we're actually
-> moving more towards file than filp.
->
-Got it, easy enough to change.
+Jeff Layton <jlayton@kernel.org> writes:
 
+> On Fri, 2021-01-22 at 16:50 +0000, Luis Henriques wrote:
+>> Jeff Layton <jlayton@kernel.org> writes:
+>> 
+>> > After pre-creating a new inode, do an fscrypt prepare on it, fetch a
+>> > new encryption context and then marshal that into the security context
+>> > to be sent along with the RPC.
+>> > 
+>> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>> > ---
+>> >  fs/ceph/crypto.c | 61 ++++++++++++++++++++++++++++++++++++++++++++++++
+>> >  fs/ceph/crypto.h | 12 ++++++++++
+>> >  fs/ceph/inode.c  |  9 +++++--
+>> >  fs/ceph/super.h  |  3 +++
+>> >  4 files changed, 83 insertions(+), 2 deletions(-)
+>> > 
+>> > diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+>> > index 879d9a0d3751..f037a4939026 100644
+>> > --- a/fs/ceph/crypto.c
+>> > +++ b/fs/ceph/crypto.c
+>> > @@ -46,3 +46,64 @@ void ceph_fscrypt_set_ops(struct super_block *sb)
+>> >  {
+>> >  	fscrypt_set_ops(sb, &ceph_fscrypt_ops);
+>> >  }
+>> > +
+>> > +int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
+>> > +				 struct ceph_acl_sec_ctx *as)
+>> > +{
+>> > +	int ret, ctxsize;
+>> > +	size_t name_len;
+>> > +	char *name;
+>> > +	struct ceph_pagelist *pagelist = as->pagelist;
+>> > +	bool encrypted = false;
+>> > +
+>> > +	ret = fscrypt_prepare_new_inode(dir, inode, &encrypted);
+>> > +	if (ret)
+>> > +		return ret;
+>> > +	if (!encrypted)
+>> > +		return 0;
+>> > +
+>> > +	inode->i_flags |= S_ENCRYPTED;
+>> > +
+>> > +	ctxsize = fscrypt_context_for_new_inode(&as->fscrypt, inode);
+>> > +	if (ctxsize < 0)
+>> > +		return ctxsize;
+>> > +
+>> > +	/* marshal it in page array */
+>> > +	if (!pagelist) {
+>> > +		pagelist = ceph_pagelist_alloc(GFP_KERNEL);
+>> > +		if (!pagelist)
+>> > +			return -ENOMEM;
+>> > +		ret = ceph_pagelist_reserve(pagelist, PAGE_SIZE);
+>> > +		if (ret)
+>> > +			goto out;
+>> > +		ceph_pagelist_encode_32(pagelist, 1);
+>> > +	}
+>> > +
+>> > +	name = CEPH_XATTR_NAME_ENCRYPTION_CONTEXT;
+>> > +	name_len = strlen(name);
+>> > +	ret = ceph_pagelist_reserve(pagelist, 4 * 2 + name_len + ctxsize);
+>> > +	if (ret)
+>> > +		goto out;
+>> > +
+>> > +	if (as->pagelist) {
+>> > +		BUG_ON(pagelist->length <= sizeof(__le32));
+>> > +		if (list_is_singular(&pagelist->head)) {
+>> > +			le32_add_cpu((__le32*)pagelist->mapped_tail, 1);
+>> > +		} else {
+>> > +			struct page *page = list_first_entry(&pagelist->head,
+>> > +							     struct page, lru);
+>> > +			void *addr = kmap_atomic(page);
+>> > +			le32_add_cpu((__le32*)addr, 1);
+>> > +			kunmap_atomic(addr);
+>> > +		}
+>> > +	}
+>> > +
+>> 
+>> I've been staring at this function for a bit.  And at this point I would
+>> expect something like this:
+>> 
+>> 	} else
+>> 		as->pagelist = pagelist;
+>> 
+>> as I'm not seeing pagelist being used anywhere if it's allocated in this
+>> function.
+>> 
+>
+> It gets used near the end, in the ceph_pagelist_append calls. Once we've
+> appended the xattr, we don't need the pagelist anymore and can free it.
+
+Doh!  Sorry for the noise ;-)
+
+Cheers,
+-- 
+Luis
+
+> That said, the whole way the ceph_pagelist stuff is managed is weird.
+> I'm not clear why it was done that way, and maybe we ought to rework
+> this, SELinux and ACL handling to not use them.
+>
+> I think that's a cleanup for another day.
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+>
