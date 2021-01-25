@@ -2,291 +2,143 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 925B930276D
-	for <lists+ceph-devel@lfdr.de>; Mon, 25 Jan 2021 17:05:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80F3C302936
+	for <lists+ceph-devel@lfdr.de>; Mon, 25 Jan 2021 18:44:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730008AbhAYQEa (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 25 Jan 2021 11:04:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45060 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729969AbhAYQDd (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 25 Jan 2021 11:03:33 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id EDE8DAE52;
-        Mon, 25 Jan 2021 16:02:51 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 0717047e;
-        Mon, 25 Jan 2021 16:03:44 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 16/17] ceph: create symlinks with encrypted and
- base64-encoded targets
-References: <20210120182847.644850-1-jlayton@kernel.org>
-        <20210120182847.644850-17-jlayton@kernel.org>
-Date:   Mon, 25 Jan 2021 16:03:43 +0000
-In-Reply-To: <20210120182847.644850-17-jlayton@kernel.org> (Jeff Layton's
-        message of "Wed, 20 Jan 2021 13:28:46 -0500")
-Message-ID: <87bldd57hc.fsf@suse.de>
+        id S1731109AbhAYRoA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 25 Jan 2021 12:44:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57086 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730571AbhAYRgN (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 25 Jan 2021 12:36:13 -0500
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E0F4C06174A
+        for <ceph-devel@vger.kernel.org>; Mon, 25 Jan 2021 09:35:32 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id rv9so19221173ejb.13
+        for <ceph-devel@vger.kernel.org>; Mon, 25 Jan 2021 09:35:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=r16rr3PpNJda6H3LTIvIsC+W4mgjo7uSIQiXyzTVjF8=;
+        b=sqZAyIFwt+Ko9Rc6WNxzYpYA3++4RU9r6WvCiyazMmOWkK/nimJgNaIpw6k1+N4BFU
+         grM61+0+Sir3wA6pOkCS3lWkhMWKMHo/zIJXIrwYBXf8dsgvlXreK3tJVye4VG1hOTpx
+         Sskhvq764iIwaMHQK07a4XoHLlFV0PKZlT9ArLukdHDIdxhF9dqxBB8xf1VSWXJ3C5Rf
+         exiXHNenrOmk6Fg1D3cDYAtoP8Gn1srGNheuRidVP1mrhesYyIJDtfnwIiGLaZOZaVuU
+         Nn+yQtMBRBseuOtvZOsssNCkQS+cv1CUwqRhYcI+t0uszT4ORSwVC/jszHlRSNEK0Mci
+         L52g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=r16rr3PpNJda6H3LTIvIsC+W4mgjo7uSIQiXyzTVjF8=;
+        b=MIdxDeiAK9h6DRLWcOO9D2TKbxNPP3cNOy2gXTauVOnEsLTXGFQnD6goppURsHwNCE
+         Og8qK7H6aWUtnqKva1g8WY4Ox3Lxwvzxtcn8BZLrkB1EpGA/9gWQ+8xr2d/hv6cHRbSg
+         x+cq29ObtcUkECJ1LE6uw66FRR1Fa4yQNoQfGikJoQArZq1kMrl5mzQy/sWj8wL6QpmU
+         C5KgjBTd0HuL31QG957Lm+pAImCbOxyvFirM4bLzuqjhLIOctNYnfDTddWQ4Y0PHkOCJ
+         6pMwe47iky6uJVg5Dhgl8BhbvZl2p0HlPjLMcYinnT8Bug0PaMnKdOq2EEggud9HOae5
+         dawg==
+X-Gm-Message-State: AOAM533aqjsZniD15MyvyC1fX1yyKax/kRrcasNc+xbb3PhJzJjT30B9
+        gy/jhDLHqiJehmlQEcK8aiHaN9iQiBA=
+X-Google-Smtp-Source: ABdhPJy99bzr4VQFROpfiKm7UlaKsH+/tjMZqqarjtG6REf1ZxXmbUlJu4oRsJCm9M2UbB6RoYHE3Q==
+X-Received: by 2002:a17:906:1e87:: with SMTP id e7mr1072009ejj.322.1611596131225;
+        Mon, 25 Jan 2021 09:35:31 -0800 (PST)
+Received: from kwango.local (ip-94-112-132-16.net.upcbroadband.cz. [94.112.132.16])
+        by smtp.gmail.com with ESMTPSA id cx6sm11326703edb.53.2021.01.25.09.35.29
+        for <ceph-devel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Jan 2021 09:35:30 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     ceph-devel@vger.kernel.org
+Subject: [PATCH] libceph: deprecate [no]cephx_require_signatures options
+Date:   Mon, 25 Jan 2021 18:35:26 +0100
+Message-Id: <20210125173526.10103-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> writes:
+These options were introduced in 3.19 with support for message signing
+and are rather useless, as explained in commit a51983e4dd2d ("libceph:
+add nocephx_sign_messages option").  Deprecate them.
 
-> When creating symlinks in encrypted directories, encrypt and
-> base64-encode the target with the new inode's key before sending to the
-> MDS.
->
-> When filling a symlinked inode, base64-decode it into a buffer that
-> we'll keep in ci->i_symlink. When get_link is called, decrypt the buffer
-> into a new one that will hang off i_link.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/dir.c   | 50 +++++++++++++++++++++++---
->  fs/ceph/inode.c | 95 ++++++++++++++++++++++++++++++++++++++++++-------
->  2 files changed, 128 insertions(+), 17 deletions(-)
->
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index cb7ff91a243a..1721b70118b9 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -924,6 +924,40 @@ static int ceph_create(struct inode *dir, struct dentry *dentry, umode_t mode,
->  	return ceph_mknod(dir, dentry, mode, 0);
->  }
->  
-> +#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
-> +static int prep_encrypted_symlink_target(struct ceph_mds_request *req, const char *dest)
-> +{
-> +	int err;
-> +	int len = strlen(dest);
-> +	struct fscrypt_str osd_link = FSTR_INIT(NULL, 0);
-> +
-> +	err = fscrypt_prepare_symlink(req->r_parent, dest, len, PATH_MAX, &osd_link);
-> +	if (err)
-> +		goto out;
-> +
-> +	err = fscrypt_encrypt_symlink(req->r_new_inode, dest, len, &osd_link);
-> +	if (err)
-> +		goto out;
-> +
-> +	req->r_path2 = kmalloc(FSCRYPT_BASE64_CHARS(osd_link.len), GFP_KERNEL);
-> +	if (!req->r_path2) {
-> +		err = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	len = fscrypt_base64_encode(osd_link.name, osd_link.len, req->r_path2);
-> +	req->r_path2[len] = '\0';
-> +out:
-> +	fscrypt_fname_free_buffer(&osd_link);
-> +	return err;
-> +}
-> +#else
-> +static int prep_encrypted_symlink_target(struct ceph_mds_request *req, const char *dest)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +#endif
-> +
->  static int ceph_symlink(struct inode *dir, struct dentry *dentry,
->  			    const char *dest)
->  {
-> @@ -955,12 +989,18 @@ static int ceph_symlink(struct inode *dir, struct dentry *dentry,
->  		goto out_req;
->  	}
->  
-> -	req->r_path2 = kstrdup(dest, GFP_KERNEL);
-> -	if (!req->r_path2) {
-> -		err = -ENOMEM;
-> -		goto out_req;
-> -	}
->  	req->r_parent = dir;
-> +
-> +	if (IS_ENCRYPTED(req->r_new_inode)) {
-> +		err = prep_encrypted_symlink_target(req, dest);
+In case there is someone out there with a cluster that lacks support
+for MSG_AUTH feature (very unlikely but has to be considered since we
+haven't formally raised the bar from argonaut to bobtail yet), make
+nocephx_sign_messages also waive MSG_AUTH requirement.  This is probably
+how it should have been done in the first place -- if we aren't going
+to sign, requiring the signing feature makes no sense.
 
-nit: missing the error handling for this branch.
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+---
+ include/linux/ceph/libceph.h |  7 +++----
+ net/ceph/ceph_common.c       | 11 +++++------
+ 2 files changed, 8 insertions(+), 10 deletions(-)
 
-Cheers,
+diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
+index eb9008bb3992..409d8c29bc4f 100644
+--- a/include/linux/ceph/libceph.h
++++ b/include/linux/ceph/libceph.h
+@@ -32,10 +32,9 @@
+ #define CEPH_OPT_NOSHARE          (1<<1) /* don't share client with other sbs */
+ #define CEPH_OPT_MYIP             (1<<2) /* specified my ip */
+ #define CEPH_OPT_NOCRC            (1<<3) /* no data crc on writes (msgr1) */
+-#define CEPH_OPT_NOMSGAUTH	  (1<<4) /* don't require msg signing feat */
+-#define CEPH_OPT_TCP_NODELAY	  (1<<5) /* TCP_NODELAY on TCP sockets */
+-#define CEPH_OPT_NOMSGSIGN	  (1<<6) /* don't sign msgs (msgr1) */
+-#define CEPH_OPT_ABORT_ON_FULL	  (1<<7) /* abort w/ ENOSPC when full */
++#define CEPH_OPT_TCP_NODELAY      (1<<4) /* TCP_NODELAY on TCP sockets */
++#define CEPH_OPT_NOMSGSIGN        (1<<5) /* don't sign msgs (msgr1) */
++#define CEPH_OPT_ABORT_ON_FULL    (1<<6) /* abort w/ ENOSPC when full */
+ 
+ #define CEPH_OPT_DEFAULT   (CEPH_OPT_TCP_NODELAY)
+ 
+diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+index 271287c5ec12..bec181181d41 100644
+--- a/net/ceph/ceph_common.c
++++ b/net/ceph/ceph_common.c
+@@ -307,7 +307,8 @@ static const struct constant_table ceph_param_ms_mode[] = {
+ 
+ static const struct fs_parameter_spec ceph_parameters[] = {
+ 	fsparam_flag	("abort_on_full",		Opt_abort_on_full),
+-	fsparam_flag_no ("cephx_require_signatures",	Opt_cephx_require_signatures),
++	__fsparam	(NULL, "cephx_require_signatures", Opt_cephx_require_signatures,
++			 fs_param_neg_with_no|fs_param_deprecated, NULL),
+ 	fsparam_flag_no ("cephx_sign_messages",		Opt_cephx_sign_messages),
+ 	fsparam_flag_no ("crc",				Opt_crc),
+ 	fsparam_string	("crush_location",		Opt_crush_location),
+@@ -596,9 +597,9 @@ int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
+ 		break;
+ 	case Opt_cephx_require_signatures:
+ 		if (!result.negated)
+-			opt->flags &= ~CEPH_OPT_NOMSGAUTH;
++			warn_plog(&log, "Ignoring cephx_require_signatures");
+ 		else
+-			opt->flags |= CEPH_OPT_NOMSGAUTH;
++			warn_plog(&log, "Ignoring nocephx_require_signatures, use nocephx_sign_messages");
+ 		break;
+ 	case Opt_cephx_sign_messages:
+ 		if (!result.negated)
+@@ -686,8 +687,6 @@ int ceph_print_client_options(struct seq_file *m, struct ceph_client *client,
+ 		seq_puts(m, "noshare,");
+ 	if (opt->flags & CEPH_OPT_NOCRC)
+ 		seq_puts(m, "nocrc,");
+-	if (opt->flags & CEPH_OPT_NOMSGAUTH)
+-		seq_puts(m, "nocephx_require_signatures,");
+ 	if (opt->flags & CEPH_OPT_NOMSGSIGN)
+ 		seq_puts(m, "nocephx_sign_messages,");
+ 	if ((opt->flags & CEPH_OPT_TCP_NODELAY) == 0)
+@@ -756,7 +755,7 @@ struct ceph_client *ceph_create_client(struct ceph_options *opt, void *private)
+ 	client->supported_features = CEPH_FEATURES_SUPPORTED_DEFAULT;
+ 	client->required_features = CEPH_FEATURES_REQUIRED_DEFAULT;
+ 
+-	if (!ceph_test_opt(client, NOMSGAUTH))
++	if (!ceph_test_opt(client, NOMSGSIGN))
+ 		client->required_features |= CEPH_FEATURE_MSG_AUTH;
+ 
+ 	/* msgr */
 -- 
-Luis
+2.19.2
 
-> 
-> +	} else {
-> +		req->r_path2 = kstrdup(dest, GFP_KERNEL);
-> +		if (!req->r_path2) {
-> +			err = -ENOMEM;
-> +			goto out_req;
-> +		}
-> +	}
-> +
->  	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
->  	req->r_dentry = dget(dentry);
->  	req->r_num_caps = 2;
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 063e492ab1da..cb8205d12607 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -35,6 +35,7 @@
->   */
->  
->  static const struct inode_operations ceph_symlink_iops;
-> +static const struct inode_operations ceph_encrypted_symlink_iops;
->  
->  static void ceph_inode_work(struct work_struct *work);
->  
-> @@ -602,6 +603,7 @@ void ceph_free_inode(struct inode *inode)
->  	struct ceph_inode_info *ci = ceph_inode(inode);
->  
->  	kfree(ci->i_symlink);
-> +	fscrypt_free_inode(inode);
->  	kmem_cache_free(ceph_inode_cachep, ci);
->  }
->  
-> @@ -801,6 +803,33 @@ void ceph_fill_file_time(struct inode *inode, int issued,
->  		     inode, time_warp_seq, ci->i_time_warp_seq);
->  }
->  
-> +#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
-> +static int decode_encrypted_symlink(const char *encsym, int enclen, u8 **decsym)
-> +{
-> +	int declen;
-> +	u8 *sym;
-> +
-> +	sym = kmalloc(enclen + 1, GFP_NOFS);
-> +	if (!sym)
-> +		return -ENOMEM;
-> +
-> +	declen = fscrypt_base64_decode(encsym, enclen, sym);
-> +	if (declen < 0) {
-> +		pr_err("%s: can't decode symlink (%d). Content: %.*s\n", __func__, declen, enclen, encsym);
-> +		kfree(sym);
-> +		return -EIO;
-> +	}
-> +	sym[declen + 1] = '\0';
-> +	*decsym = sym;
-> +	return declen;
-> +}
-> +#else
-> +static int decode_encrypted_symlink(const char *encsym, int symlen, u8 **decsym)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +#endif
-> +
->  /*
->   * Populate an inode based on info from mds.  May be called on new or
->   * existing inodes.
-> @@ -1005,26 +1034,39 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
->  		inode->i_fop = &ceph_file_fops;
->  		break;
->  	case S_IFLNK:
-> -		inode->i_op = &ceph_symlink_iops;
->  		if (!ci->i_symlink) {
->  			u32 symlen = iinfo->symlink_len;
->  			char *sym;
->  
->  			spin_unlock(&ci->i_ceph_lock);
->  
-> -			if (symlen != i_size_read(inode)) {
-> -				pr_err("%s %llx.%llx BAD symlink "
-> -					"size %lld\n", __func__,
-> -					ceph_vinop(inode),
-> -					i_size_read(inode));
-> +			if (IS_ENCRYPTED(inode)) {
-> +				if (symlen != i_size_read(inode))
-> +					pr_err("%s %llx.%llx BAD symlink size %lld\n",
-> +						__func__, ceph_vinop(inode), i_size_read(inode));
-> +
-> +				err = decode_encrypted_symlink(iinfo->symlink, symlen, (u8 **)&sym);
-> +				if (err < 0) {
-> +					pr_err("%s decoding encrypted symlink failed: %d\n",
-> +						__func__, err);
-> +					goto out;
-> +				}
-> +				symlen = err;
->  				i_size_write(inode, symlen);
->  				inode->i_blocks = calc_inode_blocks(symlen);
-> -			}
-> +			} else {
-> +				if (symlen != i_size_read(inode)) {
-> +					pr_err("%s %llx.%llx BAD symlink size %lld\n",
-> +						__func__, ceph_vinop(inode), i_size_read(inode));
-> +					i_size_write(inode, symlen);
-> +					inode->i_blocks = calc_inode_blocks(symlen);
-> +				}
->  
-> -			err = -ENOMEM;
-> -			sym = kstrndup(iinfo->symlink, symlen, GFP_NOFS);
-> -			if (!sym)
-> -				goto out;
-> +				err = -ENOMEM;
-> +				sym = kstrndup(iinfo->symlink, symlen, GFP_NOFS);
-> +				if (!sym)
-> +					goto out;
-> +			}
->  
->  			spin_lock(&ci->i_ceph_lock);
->  			if (!ci->i_symlink)
-> @@ -1032,7 +1074,18 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
->  			else
->  				kfree(sym); /* lost a race */
->  		}
-> -		inode->i_link = ci->i_symlink;
-> +
-> +		if (IS_ENCRYPTED(inode)) {
-> +			/*
-> +			 * Encrypted symlinks need to be decrypted before we can
-> +			 * cache their targets in i_link. Leave it blank for now.
-> +			 */
-> +			inode->i_link = NULL;
-> +			inode->i_op = &ceph_encrypted_symlink_iops;
-> +		} else {
-> +			inode->i_link = ci->i_symlink;
-> +			inode->i_op = &ceph_symlink_iops;
-> +		}
->  		break;
->  	case S_IFDIR:
->  		inode->i_op = &ceph_dir_iops;
-> @@ -2103,6 +2156,17 @@ static void ceph_inode_work(struct work_struct *work)
->  	iput(inode);
->  }
->  
-> +static const char *ceph_encrypted_get_link(struct dentry *dentry, struct inode *inode,
-> +					   struct delayed_call *done)
-> +{
-> +	struct ceph_inode_info *ci = ceph_inode(inode);
-> +
-> +	if (!dentry)
-> +		return ERR_PTR(-ECHILD);
-> +
-> +	return fscrypt_get_symlink(inode, ci->i_symlink, i_size_read(inode), done);
-> +}
-> +
->  /*
->   * symlinks
->   */
-> @@ -2113,6 +2177,13 @@ static const struct inode_operations ceph_symlink_iops = {
->  	.listxattr = ceph_listxattr,
->  };
->  
-> +static const struct inode_operations ceph_encrypted_symlink_iops = {
-> +	.get_link = ceph_encrypted_get_link,
-> +	.setattr = ceph_setattr,
-> +	.getattr = ceph_getattr,
-> +	.listxattr = ceph_listxattr,
-> +};
-> +
->  int __ceph_setattr(struct inode *inode, struct iattr *attr)
->  {
->  	struct ceph_inode_info *ci = ceph_inode(inode);
-> -- 
->
-> 2.29.2
->
