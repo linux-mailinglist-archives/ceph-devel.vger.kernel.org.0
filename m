@@ -2,72 +2,71 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2509A3035BA
-	for <lists+ceph-devel@lfdr.de>; Tue, 26 Jan 2021 06:52:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05BED303F76
+	for <lists+ceph-devel@lfdr.de>; Tue, 26 Jan 2021 14:59:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731843AbhAZFwE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 26 Jan 2021 00:52:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52164 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726865AbhAZEHB (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 25 Jan 2021 23:07:01 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21C99C06174A;
-        Mon, 25 Jan 2021 20:06:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=jq3N/pNATTXIAMrmJ6obiwvtVc5gjKpBnS3S5QeZ+pY=; b=k5jINKlmfQbKVkIc/QXlhf3x+a
-        KKgGtH3mPaUaM/OfdSzQ+q/lrTQwHicbG/JKAJXzk0VSiUhlqqPvKPVFRLaBTrRuO1/yfo8oXx4H7
-        l5bG5GO4+RnFNJfsM67J/D3YIEbQJo/k3q5HfWbJUgK5sd+tFUMejnRDHyDxk4LZuWyvCQDnB+gjq
-        zOKsiZ2Lv5B5lLMYuuMKn/gA2xwSBl2THbsXjL87EiEHQ8EhQ2ImbIqpEatXX2aFYhUkw9YYNfLrv
-        aarEqm3k+Xt/QvaRlG8bjW49UmSAtOfxlmHpnv165FYQ6iMzlCp2siLkBG/QSBVFjVvAWTbVZmcGv
-        JFMI27LA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l4Fbo-0053Bl-Gu; Tue, 26 Jan 2021 04:05:43 +0000
-Date:   Tue, 26 Jan 2021 04:05:40 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 27/32] NFS: Refactor nfs_readpage() and
- nfs_readpage_async() to use nfs_readdesc
-Message-ID: <20210126040540.GK308988@casper.infradead.org>
-References: <161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk>
- <161161057357.2537118.6542184374596533032.stgit@warthog.procyon.org.uk>
+        id S2404468AbhAZNlv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 26 Jan 2021 08:41:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45652 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391883AbhAZNlp (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 26 Jan 2021 08:41:45 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AB44D2223D;
+        Tue, 26 Jan 2021 13:41:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611668465;
+        bh=ZJUfk71tJJObelOZ4J7SPYTL7fPCNv6NgKzes1GIDU0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=qGrXHRDgg6fn6UIvd5UXnK2vx7ilw/jbjvq547ROl/sVTrutXmjlrY+nTMJa3Qlgw
+         Y4/FTmRl0yECXaT8waVMb6YVf/oY+TstT4KxVHYisK3W7QL1+7AkXP8YX1D5Hyi81M
+         HcxP6zgXNFRTjKIdo9Nz3OWoJAoha8iw9cKi0NcbH9Pa4IKMyduT12t0ku9ZoLNj/l
+         QmYtp6vzgU88iU0DL/VOdCIiH9K9PdRcB74SSozL1HIp8x9pRnAdSR8ROWJZB/TanB
+         dyFjESqnBngldgr+cLe1RCUGb2WUi8c78vUINnnbHO4TWHeHXOJFn/mZ+3K/r30GTF
+         R8nXUbGnwFqPQ==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org, idryomov@gmail.com, dhowells@redhat.com
+Cc:     willy@infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-cachefs@redhat.com
+Subject: [PATCH 0/6] ceph: convert to new netfs read helpers
+Date:   Tue, 26 Jan 2021 08:40:57 -0500
+Message-Id: <20210126134103.240031-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <161161057357.2537118.6542184374596533032.stgit@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Jan 25, 2021 at 09:36:13PM +0000, David Howells wrote:
-> +int nfs_readpage_async(void *data, struct inode *inode,
->  		       struct page *page)
->  {
-> +	struct nfs_readdesc *desc = (struct nfs_readdesc *)data;
+This patchset converts ceph to use the new netfs readpage, write_begin,
+and readahead helpers to handle buffered reads. This is a substantial
+reduction in code in ceph, but shouldn't really affect functionality in
+any way.
 
-You don't need a cast to cast from void.
+Ilya, if you don't have any objections, I'll plan to let David pull this
+series into his tree to be merged with the netfs API patches themselves.
+I don't see any conflicts with what's currently in the testing or master
+branches. Alternately, we could pull his patches into the ceph master
+branch and then put these on top. Let me know what you'd prefer.
 
-> @@ -440,17 +439,16 @@ int nfs_readpages(struct file *filp, struct address_space *mapping,
->  	if (ret == 0)
->  		goto read_complete; /* all pages were read */
->  
-> -	desc.pgio = &pgio;
-> -	nfs_pageio_init_read(&pgio, inode, false,
-> +	nfs_pageio_init_read(&desc.pgio, inode, false,
+Thanks,
+Jeff
 
-I like what you've done here, embedding the pgio in the desc.
+Jeff Layton (6):
+  ceph: disable old fscache readpage handling
+  ceph: rework PageFsCache handling
+  ceph: fix fscache invalidation
+  ceph: convert readpage to fscache read helper
+  ceph: plug write_begin into read helper
+  ceph: convert ceph_readpages to ceph_readahead
+
+ fs/ceph/Kconfig |   1 +
+ fs/ceph/addr.c  | 535 +++++++++++++++++++-----------------------------
+ fs/ceph/cache.c | 123 -----------
+ fs/ceph/cache.h | 101 +++------
+ fs/ceph/caps.c  |  10 +-
+ fs/ceph/inode.c |   1 +
+ 6 files changed, 236 insertions(+), 535 deletions(-)
+
+-- 
+2.29.2
 
