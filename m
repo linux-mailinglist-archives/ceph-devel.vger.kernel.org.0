@@ -2,151 +2,74 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDC473075DA
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Jan 2021 13:23:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BC99307678
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Jan 2021 13:54:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231462AbhA1MVx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 28 Jan 2021 07:21:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46068 "EHLO mx2.suse.de"
+        id S231776AbhA1MyK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 28 Jan 2021 07:54:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231183AbhA1MVv (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 28 Jan 2021 07:21:51 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 408A5AC45;
-        Thu, 28 Jan 2021 12:21:10 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 855d98e6;
-        Thu, 28 Jan 2021 12:22:03 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 17/17] ceph: add fscrypt ioctls
-References: <20210120182847.644850-1-jlayton@kernel.org>
-        <20210120182847.644850-18-jlayton@kernel.org>
-Date:   Thu, 28 Jan 2021 12:22:02 +0000
-In-Reply-To: <20210120182847.644850-18-jlayton@kernel.org> (Jeff Layton's
-        message of "Wed, 20 Jan 2021 13:28:47 -0500")
-Message-ID: <87y2gdi74l.fsf@suse.de>
+        id S229531AbhA1MxJ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 28 Jan 2021 07:53:09 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3A92D64DDD;
+        Thu, 28 Jan 2021 12:52:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611838348;
+        bh=dpEoeKfLT6HgV0RyHq6DTmjg9VIT96dBb+fWM5H3JtA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Mor5yOfrUuJgYUtqrtR6BOrxZbsJu791BkMxIcEUXSSuNsHf5L8uybQDY9RXTnGGB
+         zegZWqB1tT/+/MuPZmZMv19LIXeqa8Qpls+yKU+3Pt7vUqTq2h4VeKPcT/8etaObqd
+         Gf/nXF7WP0r5kxENIPzyOTSqRE4+jtPzmkb5Rjw5PsMITu5RVdANNu5uKB8bPJxHfS
+         AUHrKiD9gZBg1MgCfVFzdg5ZuCL5SKuSd6kPIoc5Px18LUYa3EftLyRZ3vTexCzWxE
+         jlFVJRgoN8u7VbawWeRsXIoYF2DAGryIZY4Fx2s4i5CfmZUze0JUvpHzSB1Hxn9T04
+         wLF6iqKu3Llwg==
+Message-ID: <2301cde67ae7aa54d860fc3962aeb8ed85744c75.camel@kernel.org>
+Subject: Re: [PATCH 0/6] ceph: convert to new netfs read helpers
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-cachefs@redhat.com
+Date:   Thu, 28 Jan 2021 07:52:27 -0500
+In-Reply-To: <CAOi1vP-3Ma4LdCcu6sPpwVbmrto5HnOAsJ6r9_973hYY3ODBUQ@mail.gmail.com>
+References: <20210126134103.240031-1-jlayton@kernel.org>
+         <CAOi1vP-3Ma4LdCcu6sPpwVbmrto5HnOAsJ6r9_973hYY3ODBUQ@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> writes:
+On Wed, 2021-01-27 at 23:50 +0100, Ilya Dryomov wrote:
+> On Tue, Jan 26, 2021 at 2:41 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > 
+> > This patchset converts ceph to use the new netfs readpage, write_begin,
+> > and readahead helpers to handle buffered reads. This is a substantial
+> > reduction in code in ceph, but shouldn't really affect functionality in
+> > any way.
+> > 
+> > Ilya, if you don't have any objections, I'll plan to let David pull this
+> > series into his tree to be merged with the netfs API patches themselves.
+> 
+> Sure, that works for me.
+> 
+> I would have expected that the new netfs infrastructure is pushed
+> to a public branch that individual filesystems could peruse, but since
+> David's set already includes patches for AFS and NFS, let's tag along.
+> 
+> Thanks,
+> 
+>                 Ilya
 
-> Most of the ioctls, we gate on the MDS feature support. The exception is
-> the key removal and status functions that we still want to work if the
-> MDS's were to (inexplicably) lose the feature.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/ioctl.c | 61 +++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 61 insertions(+)
->
-> diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
-> index 6e061bf62ad4..832909f3eb1b 100644
-> --- a/fs/ceph/ioctl.c
-> +++ b/fs/ceph/ioctl.c
-> @@ -6,6 +6,7 @@
->  #include "mds_client.h"
->  #include "ioctl.h"
->  #include <linux/ceph/striper.h>
-> +#include <linux/fscrypt.h>
->  
->  /*
->   * ioctls
-> @@ -268,8 +269,29 @@ static long ceph_ioctl_syncio(struct file *file)
->  	return 0;
->  }
->  
-> +static int vet_mds_for_fscrypt(struct file *file)
-> +{
-> +	int i, ret = -EOPNOTSUPP;
-> +	struct ceph_mds_client	*mdsc = ceph_sb_to_mdsc(file_inode(file)->i_sb);
-> +
-> +	mutex_lock(&mdsc->mutex);
-> +	for (i = 0; i < mdsc->max_sessions; i++) {
-> +		struct ceph_mds_session *s = __ceph_lookup_mds_session(mdsc, i);
-> +
-> +		if (!s)
-> +			continue;
-> +		if (test_bit(CEPHFS_FEATURE_ALTERNATE_NAME, &s->s_features))
-> +			ret = 0;
+David has a fscache-netfs-lib branch that has all of the infrastructure
+changes. See:
 
-And another one, I believe...?  We need this here:
+    https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-netfs-lib
 
-		ceph_put_mds_session(s);
-
-Also, isn't this logic broken?  Shouldn't we walk through all the sessions
-and return 0 only if they all have that feature bit set?
-
-Cheers,
 -- 
-Luis
+Jeff Layton <jlayton@kernel.org>
 
-> +		break;
-> +	}
-> +	mutex_unlock(&mdsc->mutex);
-> +	return ret;
-> +}
-> +
->  long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  {
-> +	int ret;
-> +
->  	dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
->  	switch (cmd) {
->  	case CEPH_IOC_GET_LAYOUT:
-> @@ -289,6 +311,45 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  
->  	case CEPH_IOC_SYNCIO:
->  		return ceph_ioctl_syncio(file);
-> +
-> +	case FS_IOC_SET_ENCRYPTION_POLICY:
-> +		ret = vet_mds_for_fscrypt(file);
-> +		if (ret)
-> +			return ret;
-> +		return fscrypt_ioctl_set_policy(file, (const void __user *)arg);
-> +
-> +	case FS_IOC_GET_ENCRYPTION_POLICY:
-> +		ret = vet_mds_for_fscrypt(file);
-> +		if (ret)
-> +			return ret;
-> +		return fscrypt_ioctl_get_policy(file, (void __user *)arg);
-> +
-> +	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
-> +		ret = vet_mds_for_fscrypt(file);
-> +		if (ret)
-> +			return ret;
-> +		return fscrypt_ioctl_get_policy_ex(file, (void __user *)arg);
-> +
-> +	case FS_IOC_ADD_ENCRYPTION_KEY:
-> +		ret = vet_mds_for_fscrypt(file);
-> +		if (ret)
-> +			return ret;
-> +		return fscrypt_ioctl_add_key(file, (void __user *)arg);
-> +
-> +	case FS_IOC_REMOVE_ENCRYPTION_KEY:
-> +		return fscrypt_ioctl_remove_key(file, (void __user *)arg);
-> +
-> +	case FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS:
-> +		return fscrypt_ioctl_remove_key_all_users(file, (void __user *)arg);
-> +
-> +	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
-> +		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
-> +
-> +	case FS_IOC_GET_ENCRYPTION_NONCE:
-> +		ret = vet_mds_for_fscrypt(file);
-> +		if (ret)
-> +			return ret;
-> +		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
->  	}
->  
->  	return -ENOTTY;
-> -- 
->
-> 2.29.2
->
