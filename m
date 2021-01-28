@@ -2,40 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BC99307678
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Jan 2021 13:54:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA15E30774F
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Jan 2021 14:42:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231776AbhA1MyK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 28 Jan 2021 07:54:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59218 "EHLO mail.kernel.org"
+        id S232099AbhA1NmG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 28 Jan 2021 08:42:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229531AbhA1MxJ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 28 Jan 2021 07:53:09 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3A92D64DDD;
-        Thu, 28 Jan 2021 12:52:28 +0000 (UTC)
+        id S231932AbhA1NmE (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 28 Jan 2021 08:42:04 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D3C326146D;
+        Thu, 28 Jan 2021 13:41:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611838348;
-        bh=dpEoeKfLT6HgV0RyHq6DTmjg9VIT96dBb+fWM5H3JtA=;
+        s=k20201202; t=1611841283;
+        bh=b+ujw9xo/MjXib3ZXDhj5xvuahMo4CObTSbv4xrzQXM=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Mor5yOfrUuJgYUtqrtR6BOrxZbsJu791BkMxIcEUXSSuNsHf5L8uybQDY9RXTnGGB
-         zegZWqB1tT/+/MuPZmZMv19LIXeqa8Qpls+yKU+3Pt7vUqTq2h4VeKPcT/8etaObqd
-         Gf/nXF7WP0r5kxENIPzyOTSqRE4+jtPzmkb5Rjw5PsMITu5RVdANNu5uKB8bPJxHfS
-         AUHrKiD9gZBg1MgCfVFzdg5ZuCL5SKuSd6kPIoc5Px18LUYa3EftLyRZ3vTexCzWxE
-         jlFVJRgoN8u7VbawWeRsXIoYF2DAGryIZY4Fx2s4i5CfmZUze0JUvpHzSB1Hxn9T04
-         wLF6iqKu3Llwg==
-Message-ID: <2301cde67ae7aa54d860fc3962aeb8ed85744c75.camel@kernel.org>
-Subject: Re: [PATCH 0/6] ceph: convert to new netfs read helpers
+        b=QX79PinPiwiK35mPy6V/sNtMuaJmg0Gq1F/lQ6pkIQ+QOFRCWq4r3603gqcCSnN8H
+         5UhZVI2qGY1Gm65+TF2cHvjdDO7XEJK+YPvWjbOJDXCCvw7Tis7mkhofrv5wFlroWX
+         WKAwAEsqfp7RHEQhWOyQLXJYHtSZPp2Pvbk0sk1kW9r5NgTSt4cndAq0tbv4B/xpjA
+         qyBJSE7tUS2pbmJCbN9NjPkYJqCQn7YxppI74WkX7wIobSfSqlJn0nyH6zzYM6OOs5
+         4u0cgU9uHjZtzweQIuZfLeSOfPibu5a19kJJMFzFppZ/QbLkLVaJ2kpbBYuzGQHwPS
+         vpjnEYScPzcdA==
+Message-ID: <b1a74dcd381d0ac8d460de7352fd0b0ec358fd74.camel@kernel.org>
+Subject: Re: [RFC PATCH v4 13/17] ceph: add support to readdir for encrypted
+ filenames
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-cachefs@redhat.com
-Date:   Thu, 28 Jan 2021 07:52:27 -0500
-In-Reply-To: <CAOi1vP-3Ma4LdCcu6sPpwVbmrto5HnOAsJ6r9_973hYY3ODBUQ@mail.gmail.com>
-References: <20210126134103.240031-1-jlayton@kernel.org>
-         <CAOi1vP-3Ma4LdCcu6sPpwVbmrto5HnOAsJ6r9_973hYY3ODBUQ@mail.gmail.com>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Date:   Thu, 28 Jan 2021 08:41:21 -0500
+In-Reply-To: <8735yljnya.fsf@suse.de>
+References: <20210120182847.644850-1-jlayton@kernel.org>
+         <20210120182847.644850-14-jlayton@kernel.org> <8735yljnya.fsf@suse.de>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
 MIME-Version: 1.0
@@ -44,32 +42,85 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2021-01-27 at 23:50 +0100, Ilya Dryomov wrote:
-> On Tue, Jan 26, 2021 at 2:41 PM Jeff Layton <jlayton@kernel.org> wrote:
+On Thu, 2021-01-28 at 11:33 +0000, Luis Henriques wrote:
+> Jeff Layton <jlayton@kernel.org> writes:
+> 
+> > Add helper functions for buffer management and for decrypting filenames
+> > returned by the MDS. Wire those into the readdir codepaths.
 > > 
-> > This patchset converts ceph to use the new netfs readpage, write_begin,
-> > and readahead helpers to handle buffered reads. This is a substantial
-> > reduction in code in ceph, but shouldn't really affect functionality in
-> > any way.
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/ceph/crypto.c | 76 ++++++++++++++++++++++++++++++++++++++++++++++++
+> >  fs/ceph/crypto.h | 41 ++++++++++++++++++++++++++
+> >  fs/ceph/dir.c    | 62 +++++++++++++++++++++++++++++++--------
+> >  fs/ceph/inode.c  | 38 ++++++++++++++++++++++--
+> >  4 files changed, 202 insertions(+), 15 deletions(-)
 > > 
-> > Ilya, if you don't have any objections, I'll plan to let David pull this
-> > series into his tree to be merged with the netfs API patches themselves.
+> > diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+> > index f037a4939026..7ddd434c5baf 100644
+> > --- a/fs/ceph/crypto.c
+> > +++ b/fs/ceph/crypto.c
+> > @@ -107,3 +107,79 @@ int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
+> >  		ceph_pagelist_release(pagelist);
+> >  	return ret;
+> >  }
+> > +
+> > +/**
+> > + * ceph_fname_to_usr - convert a filename for userland presentation
+> > + * @fname: ceph_fname to be converted
+> > + * @tname: temporary name buffer to use for conversion (may be NULL)
+> > + * @oname: where converted name should be placed
+> > + * @is_nokey: set to true if key wasn't available during conversion (may be NULL)
+> > + *
+> > + * Given a filename (usually from the MDS), format it for presentation to
+> > + * userland. If @parent is not encrypted, just pass it back as-is.
+> > + *
+> > + * Otherwise, base64 decode the string, and then ask fscrypt to format it
+> > + * for userland presentation.
+> > + *
+> > + * Returns 0 on success or negative error code on error.
+> > + */
+> > +int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
+> > +		      struct fscrypt_str *oname, bool *is_nokey)
+> > +{
+> > +	int ret;
+> > +	struct fscrypt_str _tname = FSTR_INIT(NULL, 0);
+> > +	struct fscrypt_str iname;
+> > +
+> > +	if (!IS_ENCRYPTED(fname->dir)) {
+> > +		oname->name = fname->name;
+> > +		oname->len = fname->name_len;
+> > +		return 0;
+> > +	}
+> > +
+> > +	/* Sanity check that the resulting name will fit in the buffer */
+> > +	if (fname->name_len > FSCRYPT_BASE64_CHARS(NAME_MAX))
+> > +		return -EIO;
+> > +
+> > +	ret = __fscrypt_prepare_readdir(fname->dir);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/*
+> > +	 * Use the raw dentry name as sent by the MDS instead of
+> > +	 * generating a nokey name via fscrypt.
+> > +	 */
+> > +	if (!fscrypt_has_encryption_key(fname->dir)) {
 > 
-> Sure, that works for me.
+> While chasing a different the bug (the one I mention yesterday on IRC), I
+> came across this memory leak: oname->name needs to be freed here.  I
+> believe that a
 > 
-> I would have expected that the new netfs infrastructure is pushed
-> to a public branch that individual filesystems could peruse, but since
-> David's set already includes patches for AFS and NFS, let's tag along.
+> 	fscrypt_fname_free_buffer(oname);
 > 
-> Thanks,
+> before the kmemdup() below should be enough.
 > 
->                 Ilya
 
-David has a fscache-netfs-lib branch that has all of the infrastructure
-changes. See:
+Good catch. Thanks.
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-netfs-lib
-
+In hindsight, I'm regretting threading the use of fscrypt_str's through
+this code. It's a rather cumbersome object, and I think I might be
+better served using a different scheme. Let me think on it some...
 -- 
 Jeff Layton <jlayton@kernel.org>
 
