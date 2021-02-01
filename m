@@ -2,58 +2,89 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB5DF30A2E3
-	for <lists+ceph-devel@lfdr.de>; Mon,  1 Feb 2021 08:53:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C535030AB41
+	for <lists+ceph-devel@lfdr.de>; Mon,  1 Feb 2021 16:29:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232305AbhBAHxH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 1 Feb 2021 02:53:07 -0500
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:46253 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232281AbhBAHxG (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 1 Feb 2021 02:53:06 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UNWyeD-_1612165931;
-Received: from j63c13417.sqa.eu95.tbsite.net(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0UNWyeD-_1612165931)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 01 Feb 2021 15:52:22 +0800
-From:   Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Subject: [PATCH] ceph: Replace DEFINE_SIMPLE_ATTRIBUTE with DEFINE_DEBUGFS_ATTRIBUTE
-Date:   Mon,  1 Feb 2021 15:52:10 +0800
-Message-Id: <1612165930-110076-1-git-send-email-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S231150AbhBAP1b (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 1 Feb 2021 10:27:31 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36744 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231774AbhBAP1T (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 1 Feb 2021 10:27:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1612193152;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=BEb2rLftFspGJmXbmXNZKP/pR0mJXCcoYLxWcopTgkE=;
+        b=XZ5CCipfwyyZbs1u2Vu/SWkVkqdd3REQXGYoHA7uyL6SPtoTKzUYR/EMYKfWRU0fqAchng
+        /zsjDGS3ddK321yIW442vcT1dwVYDruQD2SSIvyEWMfS593aPD1K3B1Akuu6fN5BA3p9/R
+        YIJWn7jgwVj/VR/QyzI8uD2mTIQg1p8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-537-4FQFVO3JPaSRNa_zDuxQ_w-1; Mon, 01 Feb 2021 10:25:50 -0500
+X-MC-Unique: 4FQFVO3JPaSRNa_zDuxQ_w-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C0CD6100C661;
+        Mon,  1 Feb 2021 15:25:48 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D2425D749;
+        Mon,  1 Feb 2021 15:25:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAOi1vP_7dfuKgQxFpyeUDMJBGm=cnQSvYHDnU=6YPTzbB9+d6w@mail.gmail.com>
+References: <CAOi1vP_7dfuKgQxFpyeUDMJBGm=cnQSvYHDnU=6YPTzbB9+d6w@mail.gmail.com> <20210126134103.240031-1-jlayton@kernel.org> <CAOi1vP-3Ma4LdCcu6sPpwVbmrto5HnOAsJ6r9_973hYY3ODBUQ@mail.gmail.com> <2301cde67ae7aa54d860fc3962aeb8ed85744c75.camel@kernel.org>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-cachefs@redhat.com
+Subject: Re: [PATCH 0/6] ceph: convert to new netfs read helpers
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4171609.1612193143.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 01 Feb 2021 15:25:43 +0000
+Message-ID: <4171610.1612193143@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Fix the following coccicheck warning:
+Ilya Dryomov <idryomov@gmail.com> wrote:
 
-./fs/ceph/debugfs.c:347:0-23: WARNING: congestion_kb_fops should be
-defined with DEFINE_DEBUGFS_ATTRIBUTE.
+> > David has a fscache-netfs-lib branch that has all of the infrastructur=
+e
+> > changes. See:
+> >
+> >     https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.=
+git/log/?h=3Dfscache-netfs-lib
+> =
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- fs/ceph/debugfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> I saw that, but AFAICS it hasn't been declared public (as in suitable
+> for other people to base their work on, with the promise that history
+> won't get rewritten.
 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 66989c8..617327e 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -344,8 +344,8 @@ static int congestion_kb_get(void *data, u64 *val)
- 	return 0;
- }
- 
--DEFINE_SIMPLE_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
--			congestion_kb_set, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
-+			  congestion_kb_set, "%llu\n");
- 
- 
- void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
--- 
-1.8.3.1
+My intention to avoid modifying it further, except for extra fix patches
+stacked on the end if necessary, as I want to try to avoid jinxing it from
+getting pulled in the next merge window.
+
+> It is branched off of what looks like a random snapshot of Linus' tree
+> instead of a release point, etc.
+
+Yeah, sorry about that.  I took what was current linus/master at the time =
+I
+cut the branch with the intention of trying to get it into linux-next befo=
+re
+-rc5 was tagged (ie. >3 weeks before the merge window), but including the
+X.509 crash fix.
+
+David
 
