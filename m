@@ -2,89 +2,110 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C535030AB41
-	for <lists+ceph-devel@lfdr.de>; Mon,  1 Feb 2021 16:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1553C30AD99
+	for <lists+ceph-devel@lfdr.de>; Mon,  1 Feb 2021 18:18:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231150AbhBAP1b (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 1 Feb 2021 10:27:31 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36744 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231774AbhBAP1T (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 1 Feb 2021 10:27:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612193152;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BEb2rLftFspGJmXbmXNZKP/pR0mJXCcoYLxWcopTgkE=;
-        b=XZ5CCipfwyyZbs1u2Vu/SWkVkqdd3REQXGYoHA7uyL6SPtoTKzUYR/EMYKfWRU0fqAchng
-        /zsjDGS3ddK321yIW442vcT1dwVYDruQD2SSIvyEWMfS593aPD1K3B1Akuu6fN5BA3p9/R
-        YIJWn7jgwVj/VR/QyzI8uD2mTIQg1p8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-537-4FQFVO3JPaSRNa_zDuxQ_w-1; Mon, 01 Feb 2021 10:25:50 -0500
-X-MC-Unique: 4FQFVO3JPaSRNa_zDuxQ_w-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C0CD6100C661;
-        Mon,  1 Feb 2021 15:25:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D2425D749;
-        Mon,  1 Feb 2021 15:25:44 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAOi1vP_7dfuKgQxFpyeUDMJBGm=cnQSvYHDnU=6YPTzbB9+d6w@mail.gmail.com>
-References: <CAOi1vP_7dfuKgQxFpyeUDMJBGm=cnQSvYHDnU=6YPTzbB9+d6w@mail.gmail.com> <20210126134103.240031-1-jlayton@kernel.org> <CAOi1vP-3Ma4LdCcu6sPpwVbmrto5HnOAsJ6r9_973hYY3ODBUQ@mail.gmail.com> <2301cde67ae7aa54d860fc3962aeb8ed85744c75.camel@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-cachefs@redhat.com
-Subject: Re: [PATCH 0/6] ceph: convert to new netfs read helpers
+        id S232040AbhBARSH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 1 Feb 2021 12:18:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58212 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231864AbhBARR7 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 1 Feb 2021 12:17:59 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 5DC5BAC3A;
+        Mon,  1 Feb 2021 17:17:18 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id b2ac17a6;
+        Mon, 1 Feb 2021 17:18:13 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v4 15/17] ceph: make d_revalidate call fscrypt
+ revalidator for encrypted dentries
+References: <20210120182847.644850-1-jlayton@kernel.org>
+        <20210120182847.644850-16-jlayton@kernel.org>
+Date:   Mon, 01 Feb 2021 17:18:07 +0000
+In-Reply-To: <20210120182847.644850-16-jlayton@kernel.org> (Jeff Layton's
+        message of "Wed, 20 Jan 2021 13:28:45 -0500")
+Message-ID: <87zh0nyaeo.fsf@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4171609.1612193143.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 01 Feb 2021 15:25:43 +0000
-Message-ID: <4171610.1612193143@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Ilya Dryomov <idryomov@gmail.com> wrote:
+Jeff Layton <jlayton@kernel.org> writes:
 
-> > David has a fscache-netfs-lib branch that has all of the infrastructur=
-e
-> > changes. See:
-> >
-> >     https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.=
-git/log/?h=3Dfscache-netfs-lib
-> =
+> If we have a dentry which represents a no-key name, then we need to test
+> whether the parent directory's encryption key has since been added.  Do
+> that before we test anything else about the dentry.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/dir.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index 236c381ab6bd..cb7ff91a243a 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -1726,6 +1726,10 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
+>  	dout("d_revalidate %p '%pd' inode %p offset 0x%llx\n", dentry,
+>  	     dentry, inode, ceph_dentry(dentry)->offset);
+>  
+> +	valid = fscrypt_d_revalidate(dentry, flags);
+> +	if (valid <= 0)
+> +		return valid;
+> +
 
-> I saw that, but AFAICS it hasn't been declared public (as in suitable
-> for other people to base their work on, with the promise that history
-> won't get rewritten.
+This one took me a while to figure out, but eventually got there.
+Initially I was seeing this error:
 
-My intention to avoid modifying it further, except for extra fix patches
-stacked on the end if necessary, as I want to try to avoid jinxing it from
-getting pulled in the next merge window.
+crypt: ceph: 1 inode(s) still busy after removing key with identifier f019f4a1c5d5665675218f89fccfa3c7, including ino 1099511627791
 
-> It is branched off of what looks like a random snapshot of Linus' tree
-> instead of a release point, etc.
+and, when umounting the filesystem I would get the warning in
+fs/dcache.c:1623.
 
-Yeah, sorry about that.  I took what was current linus/master at the time =
-I
-cut the branch with the intention of trying to get it into linux-next befo=
-re
--rc5 was tagged (ie. >3 weeks before the merge window), but including the
-X.509 crash fix.
+Anyway, the patch below should fix it.
 
-David
+Unfortunately I didn't had a lot of time to look into the -experimental
+branch yet.  On my TODO list for the next few days.
 
+Cheers,
+-- 
+Luis
+
+
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index ae0890be0c9d..d3ac39c6645f 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1781,7 +1781,7 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 
+ 	valid = fscrypt_d_revalidate(dentry, flags);
+ 	if (valid <= 0)
+-		return valid;
++		goto out;
+ 
+ 	mdsc = ceph_sb_to_client(dir->i_sb)->mdsc;
+ 
+@@ -1853,6 +1853,7 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 	if (!valid)
+ 		ceph_dir_clear_complete(dir);
+ 
++out:
+ 	if (!(flags & LOOKUP_RCU))
+ 		dput(parent);
+ 	return valid;
+
+
+
+>  	mdsc = ceph_sb_to_client(dir->i_sb)->mdsc;
+>  
+>  	/* always trust cached snapped dentries, snapdir dentry */
+> -- 
+>
+> 2.29.2
+>
