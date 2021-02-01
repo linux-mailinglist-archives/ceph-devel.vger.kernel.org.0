@@ -2,64 +2,58 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF1B930D34F
-	for <lists+ceph-devel@lfdr.de>; Wed,  3 Feb 2021 07:14:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB5DF30A2E3
+	for <lists+ceph-devel@lfdr.de>; Mon,  1 Feb 2021 08:53:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230193AbhBCGNb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 3 Feb 2021 01:13:31 -0500
-Received: from [20.39.40.203] ([20.39.40.203]:50503 "EHLO optinix.in"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S229983AbhBCGNa (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 3 Feb 2021 01:13:30 -0500
-dkim-signature: v=1; a=rsa-sha256; d=digitalsol.in; s=dkim;
-        c=relaxed/relaxed; q=dns/txt; h=From:Reply-To:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=wK2neTcOXNiSQ+RBxrnFed+mRrGUU/ndLGEgvo8IMCc=;
-        b=LBOJ6e+KHrLEO6kfeCSVcF32cdwWYS5zIVEB0uO3r41t240W3DfUfWilhxnHpLE89qzrwoAQVTRjtbCdYb9Rr3bdyP5Ze53TeyEdXpL27iiBrsLpfeFC65EgMLXgPlVYMDlgzx6sXiJZA5/yIu4b0/HXFbJ+6xSjDKd0RAyamsxt6uzjJuHpolqzTXXDe5QGAqDu5GJv/LSzWhj81ztoy9cM1H9tvO7Rf3+ALo8tfQIS5k/poQ19Lm9The
-        7QOZNLxY83Mkwhrt84y/QSEtPoJGmr/CsYsb7fXNENzU2cWF2uvqloNnJzqtAYnECyxqRmn50whwJ25X9eoAdhREYkEg==
-Received: from User (Unknown [52.231.31.5])
-        by optinix.in with ESMTP
-        ; Sun, 31 Jan 2021 17:53:00 +0000
-Message-ID: <8428F493-E226-4654-82DD-C8C62318C909@optinix.in>
-Reply-To: <ms.reem@yandex.com>
-From:   "Ms. Reem" <support@digitalsol.in>
-Subject: Re:read
-Date:   Sun, 31 Jan 2021 17:52:58 -0000
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-To:     unlisted-recipients:; (no To-header on input)
+        id S232305AbhBAHxH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 1 Feb 2021 02:53:07 -0500
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:46253 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232281AbhBAHxG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 1 Feb 2021 02:53:06 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UNWyeD-_1612165931;
+Received: from j63c13417.sqa.eu95.tbsite.net(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0UNWyeD-_1612165931)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 01 Feb 2021 15:52:22 +0800
+From:   Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Subject: [PATCH] ceph: Replace DEFINE_SIMPLE_ATTRIBUTE with DEFINE_DEBUGFS_ATTRIBUTE
+Date:   Mon,  1 Feb 2021 15:52:10 +0800
+Message-Id: <1612165930-110076-1-git-send-email-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hello,
+Fix the following coccicheck warning:
 
-My name is Ms. Reem Ebrahim Al-Hashimi, I am the "Minister of state
-and Petroleum" also "Minister of State for International Cooperation"
-in UAE. I write to you on behalf of my other "three (3) colleagues"
-who has approved me to solicit for your "partnership in claiming of
-{us$47=Million}" from a Financial Home in Cambodia on their behalf and
-for our "Mutual Benefits".
+./fs/ceph/debugfs.c:347:0-23: WARNING: congestion_kb_fops should be
+defined with DEFINE_DEBUGFS_ATTRIBUTE.
 
-The Fund {us$47=Million} is our share from the (over-invoiced) Oil/Gas
-deal with Cambodian/Vietnam Government within 2013/2014, however, we
-don't want our government to know about the fund. If this proposal
-interests you, let me know, by sending me an email and I will send to
-you detailed information on how this business would be successfully
-transacted. Be informed that nobody knows about the secret of this
-fund except us, and we know how to carry out the entire transaction.
-So I am compelled to ask, that you will stand on our behalf and
-receive this fund into any account that is solely controlled by you.
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ fs/ceph/debugfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-We will compensate you with 15% of the total amount involved as
-gratification for being our partner in this transaction. Reply to:
-ms.reem@yandex.com
-
-Regards,
-Ms. Reem.
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index 66989c8..617327e 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -344,8 +344,8 @@ static int congestion_kb_get(void *data, u64 *val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
+-			congestion_kb_set, "%llu\n");
++DEFINE_DEBUGFS_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
++			  congestion_kb_set, "%llu\n");
+ 
+ 
+ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
+-- 
+1.8.3.1
 
