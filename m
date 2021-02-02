@@ -2,93 +2,163 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8537F30C18A
-	for <lists+ceph-devel@lfdr.de>; Tue,  2 Feb 2021 15:28:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A50D30C4D2
+	for <lists+ceph-devel@lfdr.de>; Tue,  2 Feb 2021 17:04:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234344AbhBBO0l (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 2 Feb 2021 09:26:41 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:47046 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234095AbhBBOW0 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 2 Feb 2021 09:22:26 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 112EJWVa141442;
-        Tue, 2 Feb 2021 14:20:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=zym7dCMbrQWtny8phtxzYDJHLtNzxPA2RobQi2pE6gk=;
- b=u9a6c0rjvJHP1TzqGUMatcQr7wLCMoC37iw2MKd7wAD5YH4cGba1iriFtZN8nu9EcdQB
- rkGW6ET2wSpWCxi7IVgwaNBrJUpW3A3OhRsnhh/ZFw3LfBVp4Ztz6Qv5QEGVIUm9ZKvG
- Ov4YicUMsyAWP4zxKfly1ibAJhT9+dbQ5lDUuDNXRhbfibqixxiqAMGUG0RPmYUPEUrO
- kPLbMh3YzXoipzIkG2KMePifcmULfzZiCTgbv97ES+2CN4JcBtU+Pq9+mEMJD1gLxBpU
- 5ZkR6g5NvAOiXrae3GXS4o94vYWnf5LmJRuJM2LWhyqYPp7j+CxS4gmfNOIMUgXeMCvv eg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2130.oracle.com with ESMTP id 36cvyau5m9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 02 Feb 2021 14:20:57 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 112EKW1a100431;
-        Tue, 2 Feb 2021 14:20:54 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 36dhcwrdwm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 02 Feb 2021 14:20:54 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 112EKr2H019198;
-        Tue, 2 Feb 2021 14:20:53 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 02 Feb 2021 06:20:52 -0800
-Date:   Tue, 2 Feb 2021 17:20:45 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     dhowells@redhat.com, idryomov@gmail.com,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ceph: fix an oops in error handling in
- ceph_netfs_issue_op
-Message-ID: <20210202142045.GD20820@kadam>
-References: <20210202131041.43977-1-jlayton@kernel.org>
+        id S236024AbhBBQDF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 2 Feb 2021 11:03:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50412 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235838AbhBBQAc (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 2 Feb 2021 11:00:32 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id ED86B64ECE;
+        Tue,  2 Feb 2021 15:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612281591;
+        bh=XbfCS8r9D79/HwOJHuFwd9sZg+kItL2sGtFVodrMWJs=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=DztYFmBWBkzHFUwiTi89aEcaQZQQdTgGD5jcc7tgzjNDVJpOaKce8LV4Aq+P1VY+Y
+         sh7lsrjaca6+gNfRoscJdyH/wxrzes5d7VCdchhhTlboqd1wEDTzZBt5ZVcs8t2tuj
+         hbs1+1yCrQEsVV7Mg/tTep1ygxseiaIoJSpHuusdeiCsC09gjx7/ZCihk9u3g0tD6f
+         l/4mcZooFzyhuI9BDIdGU2O/g7ZFdSIYcFKEfEeF4jS3hwd6Iwwo8niak5nGeX8U/i
+         IOL72CSjVd5Mzq+bS0QpjXr1JlRDbDvcdkpdWWoXvwyzX3pqDzseqqooZbaXjruOuk
+         aWvVdcI6K4YQA==
+Message-ID: <d260d1e6c379dd16168df73003daa88f875bd4d8.camel@kernel.org>
+Subject: Re: [PATCH v4] ceph: defer flushing the capsnap if the Fb is used
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Tue, 02 Feb 2021 10:59:49 -0500
+In-Reply-To: <20210202065453.814859-1-xiubli@redhat.com>
+References: <20210202065453.814859-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.3 (3.38.3-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210202131041.43977-1-jlayton@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9882 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 phishscore=0
- spamscore=0 suspectscore=0 malwarescore=0 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2102020098
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9882 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 impostorscore=0
- mlxscore=0 spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0
- lowpriorityscore=0 malwarescore=0 phishscore=0 mlxlogscore=999
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2102020098
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Feb 02, 2021 at 08:10:41AM -0500, Jeff Layton wrote:
-> Dan reported a potential oops in the cleanup if ceph_osdc_new_request
-> returns an error. Eliminate the unneeded initialization of "req" and
-> then just set it to NULL in the case where it holds an ERR_PTR.
+On Tue, 2021-02-02 at 14:54 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
 > 
-> Also, drop the unneeded NULL check before calling
-> ceph_osdc_put_request.
+> If the Fb cap is used it means the current inode is flushing the
+> dirty data to OSD, just defer flushing the capsnap.
 > 
-> Fixes: 1cf7fdf52d5a ("ceph: convert readpage to fscache read helper")
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Suggested-by: Ilya Dryomov <idryomov@gmail.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> URL: https://tracker.ceph.com/issues/48679
+> URL: https://tracker.ceph.com/issues/48640
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+> 
+> V4:
+> - Fix stuck issue when running the snaptest-git-ceph.sh pointed by Jeff.
+> 
+> V3:
+> - Add more comments about putting the inode ref
+> - A small change about the code style
+> 
+> V2:
+> - Fix inode reference leak bug
+> 
+> 
+>  fs/ceph/caps.c | 33 ++++++++++++++++++++-------------
+>  fs/ceph/snap.c | 10 ++++++++++
+>  2 files changed, 30 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index abbf48fc6230..570731c4d019 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -3047,6 +3047,7 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
+>  {
+>  	struct inode *inode = &ci->vfs_inode;
+>  	int last = 0, put = 0, flushsnaps = 0, wake = 0;
+> +	bool check_flushsnaps = false;
+>  
+> 
+>  	spin_lock(&ci->i_ceph_lock);
+>  	if (had & CEPH_CAP_PIN)
+> @@ -3063,26 +3064,17 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
+>  	if (had & CEPH_CAP_FILE_BUFFER) {
+>  		if (--ci->i_wb_ref == 0) {
+>  			last++;
+> +			/* put the ref held by ceph_take_cap_refs() */
+>  			put++;
+> +			check_flushsnaps = true;
+>  		}
+>  		dout("put_cap_refs %p wb %d -> %d (?)\n",
+>  		     inode, ci->i_wb_ref+1, ci->i_wb_ref);
+>  	}
+> -	if (had & CEPH_CAP_FILE_WR)
+> +	if (had & CEPH_CAP_FILE_WR) {
+>  		if (--ci->i_wr_ref == 0) {
+>  			last++;
+> -			if (__ceph_have_pending_cap_snap(ci)) {
+> -				struct ceph_cap_snap *capsnap =
+> -					list_last_entry(&ci->i_cap_snaps,
+> -							struct ceph_cap_snap,
+> -							ci_item);
+> -				capsnap->writing = 0;
+> -				if (ceph_try_drop_cap_snap(ci, capsnap))
+> -					put++;
+> -				else if (__ceph_finish_cap_snap(ci, capsnap))
+> -					flushsnaps = 1;
+> -				wake = 1;
+> -			}
+> +			check_flushsnaps = true;
+>  			if (ci->i_wrbuffer_ref_head == 0 &&
+>  			    ci->i_dirty_caps == 0 &&
+>  			    ci->i_flushing_caps == 0) {
+> @@ -3094,6 +3086,21 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
+>  			if (!__ceph_is_any_real_caps(ci) && ci->i_snap_realm)
+>  				drop_inode_snap_realm(ci);
+>  		}
+> +	}
+> +	if (check_flushsnaps && __ceph_have_pending_cap_snap(ci)) {
+> +		struct ceph_cap_snap *capsnap =
+> +			list_last_entry(&ci->i_cap_snaps,
+> +					struct ceph_cap_snap,
+> +					ci_item);
+> +
+> +		capsnap->writing = 0;
+> +		if (ceph_try_drop_cap_snap(ci, capsnap))
+> +			/* put the ref held by ceph_queue_cap_snap() */
+> +			put++;
+> +		else if (__ceph_finish_cap_snap(ci, capsnap))
+> +			flushsnaps = 1;
+> +		wake = 1;
+> +	}
+>  	spin_unlock(&ci->i_ceph_lock);
+>  
+> 
+>  	dout("put_cap_refs %p had %s%s%s\n", inode, ceph_cap_string(had),
+> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> index b611f829cb61..0728b01d4d43 100644
+> --- a/fs/ceph/snap.c
+> +++ b/fs/ceph/snap.c
+> @@ -623,6 +623,16 @@ int __ceph_finish_cap_snap(struct ceph_inode_info *ci,
+>  		return 0;
+>  	}
+>  
+> 
+> +	/* Fb cap still in use, delay it */
+> +	if (ci->i_wb_ref) {
+> +		dout("finish_cap_snap %p cap_snap %p snapc %p %llu %s s=%llu "
+> +		     "used WRBUFFER, delaying\n", inode, capsnap,
+> +		     capsnap->context, capsnap->context->seq,
+> +		     ceph_cap_string(capsnap->dirty), capsnap->size);
+> +		capsnap->writing = 1;
+> +		return 0;
+> +	}
+> +
+>  	ci->i_ceph_flags |= CEPH_I_FLUSH_SNAPS;
+>  	dout("finish_cap_snap %p cap_snap %p snapc %p %llu %s s=%llu\n",
+>  	     inode, capsnap, capsnap->context,
 
+Much better. This one seems to behave better. I've gone ahead and taken
+this into testing branch.
 
-Looks good.
-
-Acked-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-regards,
-dan carpenter
+Thanks!
+-- 
+Jeff Layton <jlayton@kernel.org>
 
