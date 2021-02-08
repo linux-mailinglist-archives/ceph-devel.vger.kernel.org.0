@@ -2,69 +2,65 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB5BD311E01
-	for <lists+ceph-devel@lfdr.de>; Sat,  6 Feb 2021 15:52:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B861B312DBB
+	for <lists+ceph-devel@lfdr.de>; Mon,  8 Feb 2021 10:48:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230124AbhBFOwM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 6 Feb 2021 09:52:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54632 "EHLO
+        id S231939AbhBHJr3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 8 Feb 2021 04:47:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230086AbhBFOwJ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 6 Feb 2021 09:52:09 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6F1AC061797
-        for <ceph-devel@vger.kernel.org>; Sat,  6 Feb 2021 06:51:03 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id s5so12881981edw.8
-        for <ceph-devel@vger.kernel.org>; Sat, 06 Feb 2021 06:51:03 -0800 (PST)
+        with ESMTP id S231750AbhBHJos (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 Feb 2021 04:44:48 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 722FBC061793
+        for <ceph-devel@vger.kernel.org>; Mon,  8 Feb 2021 01:42:20 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id t142so9811450wmt.1
+        for <ceph-devel@vger.kernel.org>; Mon, 08 Feb 2021 01:42:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=sY4fgq/DSyThalwU7QX+pWYKs/8sGH7ZznMUn5qQ1EY=;
-        b=YjUzJ6yC4jPKT/17YKqiPpqtCIRDhI9mebLdnj7dOHMZDHIi+JxiJAagAWt4la4SJ/
-         WAUIUKcyDJPfIVPer1g7EBrXzXz9ypTzL4V5d3dhU0oJFs/x/4HjufRmNhgck1hI5M5Y
-         gJHwY2DbkOYw+WmM1N2bdoYPpLEkOqfUWK2KKo6SGnkbAejppGl0b/qkHkhnSVB+LsK1
-         wSEfdGZcdmxQWZwrZMmkl/KtydxTXa6j0JgIczKT0G8kiLLwbRj5BYj/Suj9BP48lQTL
-         xT+yEzmPZEGtL7glGQf0ShMysI1LbGXWC01es9YnxLQ8hZ3uS7tDaGusKcYD/2NBW70V
-         EuZA==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=z7Z/JdX0RhrlgqchmamXWMY47TIIKUp5Zm0+e0J1lMs=;
+        b=NAbaEbMPvL6jSOedCJRmAh3Ui9QZGFWghG0NCvueD83l86uNXJjnmI7PHW35iqizRG
+         9q8aWMxctqHwtbbYs/4TL+SqElE2cseXLJRdkJwitKEvK0go/N8nMtXUmxsIjas7Zqko
+         ath7pI4mcIMabX4QO0EFkVKOFNAV4d9zY4tSuYWk97GdHIOyWbEsDukhRNYspQ4XiJX/
+         jRPaHXzzKcvtI6Wfwj0iiJpakz3O+Dpp9NoqbcEkqrezOfM6GX/FHjqeGUr4XCq2T4gL
+         aiVVpmtuHmGfQIx8TvySRE8XanR5QzQtSLtvhu68OUNxLn6WleBZ0lAEYQ6F2Vcgt02B
+         ar9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=sY4fgq/DSyThalwU7QX+pWYKs/8sGH7ZznMUn5qQ1EY=;
-        b=UBbM6TL+D6HWJ9RMXnPkA7+VeRglJRyM3T25h9fkNr9gY/4XxZ0xkg4tEOQafMnufL
-         oY2iXYKWyOHydhLnaPCpvm00FL8xXvKV85cvDorJIwwnGiiqFvQ4bwTH0NkhLjrYYDO8
-         CPcek7KggvbLEI4sHaFEXl5YJZmmWSP1eaHoIJGpH8Q0RaANvlown6isX9DCvPPGNUXC
-         oY9ImIHIRNmAJl2aHdEudVD+5JfPtEf+0pB9wlVRY9naEymz0ILa//cDEKBBd2Gs/kDp
-         I7y9rTuWr9bvcpgI8CxrmExXHTB9vv0rgFHjaK8c2v4uGQDfxfc5yVT/hEqImHC27W2p
-         PPjg==
-X-Gm-Message-State: AOAM530po9KA5cVF1bagLRVbzlUtv3uDGEc5AnCJ4jyRl0j8yGgDWFJ5
-        EduMsoHFdNxrXRXe4D4WJhrdblXH4uPpchGLbi8=
-X-Google-Smtp-Source: ABdhPJyDo/ebENXvZstdSbBFD5YCVcSmJek6b7Gys5i5VHg1r2wQvrIFYy89vBtR0uY5z1v1Cocz1ZzUNnOFKRC/LJU=
-X-Received: by 2002:a05:6402:13cd:: with SMTP id a13mr8797536edx.87.1612623062643;
- Sat, 06 Feb 2021 06:51:02 -0800 (PST)
+         :subject:to;
+        bh=z7Z/JdX0RhrlgqchmamXWMY47TIIKUp5Zm0+e0J1lMs=;
+        b=jYB1gid0jPwi0FxZw5xoMl3SI8w0Bpa6yoEjhkZ4Y96ywDVTSl+I0+Xw7sJInBBkK7
+         Uh64ecHU6+daYTlkJSmg0MX2ZM1AbWLYZWfT40lVLNQbvVWTjbMnRUVP9j3cMR95zKHU
+         mdcwN34j43PfD3uc98KNsZtTaLIh1xEtFgLPG5gCC3piF78hEmPPUyZ8LIzerzjdI3n6
+         Z2FNLIBPCTXhxVGLfHXzqTBhQDu6KlmD2SytDW9PedTAf6anB4FNMF+m1SB9nMnAbLgo
+         4T4oynJmK/galjsvv/ZyJu//vpH9qeMpzKzBmGFe4JUvDHncJCWGKtUi35gDJ9oBh07g
+         rUgw==
+X-Gm-Message-State: AOAM530MjuG7ByNFfE1zkTdY7Ks45CpEga66uWiKw7Lkyigi8dIqxwD0
+        Upw2RW16In5lIBr9za1zaQ7MmlZLDlT98eESZ3M=
+X-Google-Smtp-Source: ABdhPJyLeuSid7xQ1WYSy2WEY/s99KcVGKViJ411ck/kyCa1+/imh77G9uZI0qPgm26hPEZx8bJyp8B1WJom7JphmjA=
+X-Received: by 2002:a05:600c:4656:: with SMTP id n22mr11333663wmo.130.1612777339124;
+ Mon, 08 Feb 2021 01:42:19 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a17:906:25d0:0:0:0:0 with HTTP; Sat, 6 Feb 2021 06:51:02
- -0800 (PST)
-Reply-To: lawyer.nba@gmail.com
-From:   Barrister Daven Bango <stephennbada9@gmail.com>
-Date:   Sat, 6 Feb 2021 15:51:02 +0100
-Message-ID: <CAGSHw-BWu8eXqChe=qkn2U4kPOiq-PbdfdDJ48VBJkEp+AZ8Pg@mail.gmail.com>
-Subject: 
+Received: by 2002:a1c:2c82:0:0:0:0:0 with HTTP; Mon, 8 Feb 2021 01:42:18 -0800 (PST)
+Reply-To: infowebb@citromail.hu
+From:   "Mr. Richard Thomas" <rictthhomas@gmail.com>
+Date:   Mon, 8 Feb 2021 01:42:18 -0800
+Message-ID: <CAHG73zxmK2nJTox1a0665bCb-zj2YkgGArg395sTvVHQxqbqnA@mail.gmail.com>
+Subject: Re Thanks.
 To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
---=20
-Korisnik fonda =C4=8Destitanja, Va=C5=A1a sredstva za naknadu od 850.000,00
-ameri=C4=8Dkih dolara odobrila je Me=C4=91unarodna monetarna organizacija (=
-MMF)
-u suradnji s (FBI) nakon mnogo istraga. =C4=8Cekamo da se obratimo za
-dodatne informacije
+Dear Friend,
+I will be pleased if you can allow me to invest $104M Dollars in
+Estate Management,in your company or any area you best that will be
+of good profit to both of us
 
-Advokat: Daven Bango
-Telefon: +22891667276
-(URED MMF-a LOME TOGO)
+Please do well to respond including your information for more details.
+
+Thanks.
+Mr.Richard Thomas
