@@ -2,45 +2,46 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BC163158FE
-	for <lists+ceph-devel@lfdr.de>; Tue,  9 Feb 2021 22:54:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3970331594B
+	for <lists+ceph-devel@lfdr.de>; Tue,  9 Feb 2021 23:22:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234180AbhBIVwh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 9 Feb 2021 16:52:37 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:40187 "EHLO
+        id S234068AbhBIWU4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 9 Feb 2021 17:20:56 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:55938 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234340AbhBIVM6 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 9 Feb 2021 16:12:58 -0500
+        by vger.kernel.org with ESMTP id S234164AbhBIWPK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 9 Feb 2021 17:15:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612905053;
+        s=mimecast20190719; t=1612908823;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=GNTsEzyoPupLf8uFnqlZZbYFAgQKr7S0geejlS5p7yc=;
-        b=Ay7euuR9w7yeNisg6K0zODyZ7FZFOU/ZxscQEy5BFxFxxGTDl/VSg9TAKCPHgA+JNz8ISs
-        sl7J1368gXlS6uxDLHmY02vk3EaNkWHcqTos6Reu09KmJQ5jArF8v5Oz4mEk/P7Z8bfekk
-        lNZESASNcVi+d50RLBkR9Pg6LziuqXM=
+        bh=njyj2XCXYGtI5AX/JV14IYXR8Ipi7RDaSVkhJ8oSglg=;
+        b=DHhyTRoeiBLTGmTnWeKpdGUq+JnvnbHrtNRjpqGZ+t982TUIPqiQWxl5yHNsh1f8hQX5Tw
+        +zfk4Qc/BVo9XwG1FgLD98joGKmJMzB5+A+R4ry4SpBQzHSwY3ld0110uASXgZ0IsK1E7Y
+        7XAYJRzBRugz74vl+xi3LHwwspwW6k4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-246-zfMDn4FfM1uj1j28ps60sQ-1; Tue, 09 Feb 2021 16:10:52 -0500
-X-MC-Unique: zfMDn4FfM1uj1j28ps60sQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-166-Ez0mEz_fP32izAfxafFp3w-1; Tue, 09 Feb 2021 16:25:32 -0500
+X-MC-Unique: Ez0mEz_fP32izAfxafFp3w-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 199F0107ACC7;
-        Tue,  9 Feb 2021 21:10:50 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B7E8FCC626;
+        Tue,  9 Feb 2021 21:25:30 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BDE796062F;
-        Tue,  9 Feb 2021 21:10:43 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E044519C78;
+        Tue,  9 Feb 2021 21:25:23 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
 From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com>
-References: <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com> <591237.1612886997@warthog.procyon.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+In-Reply-To: <20210209202134.GA308988@casper.infradead.org>
+References: <20210209202134.GA308988@casper.infradead.org> <591237.1612886997@warthog.procyon.org.uk> <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Jeff Layton <jlayton@redhat.com>,
         David Wysochanski <dwysocha@redhat.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
@@ -57,46 +58,34 @@ Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
 Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <617684.1612905042.1@warthog.procyon.org.uk>
-Date:   Tue, 09 Feb 2021 21:10:42 +0000
-Message-ID: <617685.1612905042@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-ID: <618608.1612905923.1@warthog.procyon.org.uk>
+Date:   Tue, 09 Feb 2021 21:25:23 +0000
+Message-ID: <618609.1612905923@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Matthew Wilcox <willy@infradead.org> wrote:
 
-> The PG_fscache bit waiting functions are completely crazy. The comment
-> about "this will wake up others" is actively wrong,
+> Yeah, I have trouble with the private2 vs fscache bit too.  I've been
+> trying to persuade David that he doesn't actually need an fscache
+> bit at all; he can just increment the page's refcount to prevent it
+> from being freed while he writes data to the cache.
 
-You mean this?
+That's not what the bit is primarily being used for.  It's being used to
+prevent the starting of a second write to the cache whilst the first is in
+progress and also to prevent modification whilst DMA to the cache is in
+progress.  This isn't so obvious in this cut-down patchset, but comes more in
+to play with full caching of local writes in my fscache-iter branch.
 
-/**
- * unlock_page_fscache - Unlock a page pinned with PG_fscache
- * @page: The page
- *
- * Unlocks the page and wakes up sleepers in wait_on_page_fscache().  Also
- * wakes those waiting for the lock and writeback bits because the wakeup
- * mechanism is shared.  But that's OK - those sleepers will just go back to
- * sleep.
- */
+I can't easily share PG_writeback for this because each bit covers a write to
+a different place.  PG_writeback covers the write to the server and PG_fscache
+the write to the cache.  These writes may get split up differently and will
+most likely finish at different times.
 
-Actually, you're right.  The wakeup check func is evaluated by the
-waker-upper.  I can fix the comment with a patch.
-
-> and the waiting function looks insane, because you're mixing the two names
-> for "fscache" which makes the code look totally incomprehensible. Why would
-> we wait for PF_fscache, when PG_private_2 was set? Yes, I know why, but the
-> code looks entirely nonsensical.
-
-IIRC someone insisted that I should make it a generic name and put the
-accessor functions in the fscache headers (which means they aren't available
-to core code), but I don't remember who (maybe Andrew? it was before mid-2007)
-- kind of like PG_checked is an alias for PG_owner_priv_1.
-
-I'd be quite happy to move the accessors for PG_fscache to the
-linux/page-flags.h as that would simplify things.
+If I have to share PG_writeback, that will mean storing both states for each
+page somewhere else and then "OR'ing" them together to drive PG_writeback.
 
 David
 
