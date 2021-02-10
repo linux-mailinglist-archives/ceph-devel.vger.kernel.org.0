@@ -2,78 +2,214 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 987793167C4
-	for <lists+ceph-devel@lfdr.de>; Wed, 10 Feb 2021 14:18:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48FCB316B42
+	for <lists+ceph-devel@lfdr.de>; Wed, 10 Feb 2021 17:31:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231753AbhBJNRl convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Wed, 10 Feb 2021 08:17:41 -0500
-Received: from spam.auroraoh.com ([24.56.89.101]:55842 "EHLO
-        barracuda.auroraoh.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231691AbhBJNRa (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 10 Feb 2021 08:17:30 -0500
-X-ASG-Debug-ID: 1612962980-112c0d6a799d670001-RKzwh1
-Received: from COASRV-MAIL2.auroraoh.loc (coasrv-mail2.auroraoh.loc [10.3.1.15]) by barracuda.auroraoh.com with ESMTP id o85MXCAl0V5REjY1; Wed, 10 Feb 2021 08:16:20 -0500 (EST)
-X-Barracuda-Envelope-From: JanuskaD@auroraoh.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.3.1.15
-Received: from [172.20.10.5] (197.210.29.8) by COASRV-MAIL2.auroraoh.loc
- (10.3.1.15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Tue, 9 Feb 2021
- 02:44:01 -0500
-Content-Type: text/plain; charset="iso-8859-1"
-X-Barracuda-RBL-Trusted-Forwarder: 172.20.10.5
+        id S232263AbhBJQbM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 10 Feb 2021 11:31:12 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:48753 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232314AbhBJQar (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 10 Feb 2021 11:30:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1612974560;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=MizTFqaPr9s83orSxyP4M9HI4/HyznwEJQAwf0cC91A=;
+        b=TmZibWHbb7DvB6E0/P/SyloUADQuyFpEB2ikHXEYPUl447OJcJTRxpoNJyAYTZt6GlOXV/
+        hhLh2wJxNr4sKglGtV4R7JwBuQa61U6oK8dKR+5oizUDHYRuAhwWJsnroiwVQmXERC1nNG
+        SwILLMkkdgqtVJabFs94/Szktn2Htdc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-416-IuDV1FoyPIq_VD0rQY5azw-1; Wed, 10 Feb 2021 11:29:16 -0500
+X-MC-Unique: IuDV1FoyPIq_VD0rQY5azw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8F6421005501;
+        Wed, 10 Feb 2021 16:29:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4622660C0F;
+        Wed, 10 Feb 2021 16:29:08 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com>
+References: <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com> <591237.1612886997@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cachefs@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        v9fs-developer@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: We are a registered Private Loan Investment Company in the United Kingdom,
- we also registered with the Turkish British Chamber of Commerce and Industry
- (TBCCI) we have operations in Europe and Asia.
-To:     Recipients <januskad@auroraoh.com>
-X-ASG-Orig-Subj: We are a registered Private Loan Investment Company in the United Kingdom,
- we also registered with the Turkish British Chamber of Commerce and Industry
- (TBCCI) we have operations in Europe and Asia.
-From:   <januskad@auroraoh.com>
-Date:   Tue, 9 Feb 2021 15:43:15 +0800
-Reply-To: <cfolimiited@gmail.com>
-X-Priority: 1 (High)
-X-Antivirus: Avast (VPS 210207-2, 02/07/2021), Outbound message
-X-Antivirus-Status: Clean
-Message-ID: <67115bd0-7ba7-4a38-8269-fd8c74a9c433@COASRV-MAIL2.auroraoh.loc>
-X-Originating-IP: [197.210.29.8]
-X-ClientProxiedBy: COASRV-MAIL3.auroraoh.loc (10.3.1.13) To
- COASRV-MAIL2.auroraoh.loc (10.3.1.15)
-X-Barracuda-Connect: coasrv-mail2.auroraoh.loc[10.3.1.15]
-X-Barracuda-Start-Time: 1612962980
-X-Barracuda-URL: https://10.3.1.12:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at auroraoh.com
-X-Barracuda-Scan-Msg-Size: 755
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Spam-Score: 1.61
-X-Barracuda-Spam-Status: No, SCORE=1.61 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=5.0 tests=BSF_SC0_SA609_NRN, BSF_SC0_SA912_RP_FR, BSF_SC0_SA_TO_FROM_ADDR_MATCH, NO_REAL_NAME
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.87885
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
-        0.00 NO_REAL_NAME           From: does not include a real name
-        0.01 BSF_SC0_SA912_RP_FR    Custom Rule BSF_SC0_SA912_RP_FR
-        0.50 BSF_SC0_SA_TO_FROM_ADDR_MATCH Sender Address Matches Recipient
-                                   Address
-        1.10 BSF_SC0_SA609_NRN      Custom Rule SA609_NRN
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1330472.1612974547.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 10 Feb 2021 16:29:07 +0000
+Message-ID: <1330473.1612974547@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-We are seeking for beneficiaries who source for fund to expand/relocating their business interest abroad. We are ready to fund projects outside Turkey and United Kingdom in the form of Soft Loan. We grant loans to both corporate and private entities at a low interest rate of 2% R.O.I per annul.
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-We like to grant loan in the following sectors: oil/Gas, banking, real estate, stock speculation and mining, transportation, health sector and tobacco, Communication Services, Agriculture Forestry & Fishing, thus any sector. The terms are very flexible and interesting.
+> The PG_fscache bit waiting functions are completely crazy. The comment
+> about "this will wake up others" is actively wrong, and the waiting
+> function looks insane, because you're mixing the two names for
+> "fscache" which makes the code look totally incomprehensible. Why
+> would we wait for PF_fscache, when PG_private_2 was set? Yes, I know
+> why, but the code looks entirely nonsensical.
 
-Please contact us for more details;
+How about the attached change to make it more coherent and fix the doc
+comment?
 
+David
+---
+commit 9a28f7e68602193ce020a41f855f71cc55f693b9
+Author: David Howells <dhowells@redhat.com>
+Date:   Wed Feb 10 10:53:02 2021 +0000
 
-Kind regards,
+    netfs: Rename unlock_page_fscache() and wait_on_page_fscache()
+    =
 
-Paul McCann
+    Rename unlock_page_fscache() to unlock_page_private_2() and
+    wait_on_page_fscache() to wait_on_page_private_2() and change the
+    references to PG_fscache to PG_private_2 also.  This makes these funct=
+ions
+    look more generic and doesn't mix the terminology.
+    =
 
--- 
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+    Fix the kdoc comment as the wake up mechanism doesn't wake up all the
+    sleepers.  Note the example usage case for the functions in conjunctio=
+n
+    with the cache also.
+    =
+
+    Alias the functions in linux/netfs.h.
+    =
+
+    Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+    Signed-off-by: David Howells <dhowells@redhat.com>
+
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 2ffdef1ded91..d4cb6e6f704c 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -24,6 +24,8 @@
+ #define ClearPageFsCache(page)		ClearPagePrivate2((page))
+ #define TestSetPageFsCache(page)	TestSetPagePrivate2((page))
+ #define TestClearPageFsCache(page)	TestClearPagePrivate2((page))
++#define wait_on_page_fscache(page)	wait_on_page_private_2((page))
++#define unlock_page_fscache(page)	unlock_page_private_2((page))
+ =
+
+ enum netfs_read_source {
+ 	NETFS_FILL_WITH_ZEROES,
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 4935ad6171c1..a88ccc9ab0b1 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -591,7 +591,7 @@ extern int __lock_page_async(struct page *page, struct=
+ wait_page_queue *wait);
+ extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
+ 				unsigned int flags);
+ extern void unlock_page(struct page *page);
+-extern void unlock_page_fscache(struct page *page);
++extern void unlock_page_private_2(struct page *page);
+ =
+
+ /*
+  * Return true if the page was successfully locked
+@@ -683,16 +683,17 @@ static inline int wait_on_page_locked_killable(struc=
+t page *page)
+ }
+ =
+
+ /**
+- * wait_on_page_fscache - Wait for PG_fscache to be cleared on a page
++ * wait_on_page_private_2 - Wait for PG_private_2 to be cleared on a page
+  * @page: The page
+  *
+- * Wait for the fscache mark to be removed from a page, usually signifyin=
+g the
+- * completion of a write from that page to the cache.
++ * Wait for the PG_private_2 page bit to be removed from a page.  This is=
+, for
++ * example, used to handle a netfs page being written to a local disk cac=
+he,
++ * thereby allowing writes to the cache for the same page to be serialise=
+d.
+  */
+-static inline void wait_on_page_fscache(struct page *page)
++static inline void wait_on_page_private_2(struct page *page)
+ {
+ 	if (PagePrivate2(page))
+-		wait_on_page_bit(compound_head(page), PG_fscache);
++		wait_on_page_bit(compound_head(page), PG_private_2);
+ }
+ =
+
+ extern void put_and_wait_on_page_locked(struct page *page);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 91fcae006d64..7d321152d579 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1467,22 +1467,24 @@ void unlock_page(struct page *page)
+ EXPORT_SYMBOL(unlock_page);
+ =
+
+ /**
+- * unlock_page_fscache - Unlock a page pinned with PG_fscache
++ * unlock_page_private_2 - Unlock a page that's locked with PG_private_2
+  * @page: The page
+  *
+- * Unlocks the page and wakes up sleepers in wait_on_page_fscache().  Als=
+o
+- * wakes those waiting for the lock and writeback bits because the wakeup
+- * mechanism is shared.  But that's OK - those sleepers will just go back=
+ to
+- * sleep.
++ * Unlocks a page that's locked with PG_private_2 and wakes up sleepers i=
+n
++ * wait_on_page_private_2().
++ *
++ * This is, for example, used when a netfs page is being written to a loc=
+al
++ * disk cache, thereby allowing writes to the cache for the same page to =
+be
++ * serialised.
+  */
+-void unlock_page_fscache(struct page *page)
++void unlock_page_private_2(struct page *page)
+ {
+ 	page =3D compound_head(page);
+ 	VM_BUG_ON_PAGE(!PagePrivate2(page), page);
+-	clear_bit_unlock(PG_fscache, &page->flags);
+-	wake_up_page_bit(page, PG_fscache);
++	clear_bit_unlock(PG_private_2, &page->flags);
++	wake_up_page_bit(page, PG_private_2);
+ }
+-EXPORT_SYMBOL(unlock_page_fscache);
++EXPORT_SYMBOL(unlock_page_private_2);
+ =
+
+ /**
+  * end_page_writeback - end writeback against a page
 
