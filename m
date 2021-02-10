@@ -2,47 +2,65 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB33E316B79
-	for <lists+ceph-devel@lfdr.de>; Wed, 10 Feb 2021 17:41:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35DC1317195
+	for <lists+ceph-devel@lfdr.de>; Wed, 10 Feb 2021 21:45:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232929AbhBJQkc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 10 Feb 2021 11:40:32 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57617 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232866AbhBJQiO (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 10 Feb 2021 11:38:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612975006;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6q4l5j2A9zC8AOPQY3ki5vFxtQJE10uxKO//gAn5chg=;
-        b=Uk17T2rZ+x8fvFVPoptUr6EQIUoPx4zOhyIMr09/8PFQxqwTTxKJ/Fz7vcGsxtFqBicL6b
-        AesFQ9YNdDyQK5bzif9XV3fLhhxgHrYYGmLqnC5PPt6tNIuNlrLluxmjxie606DRycfQek
-        ueB57D9fx2BRJRGr7Q7RkKUZK3zJHmw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-223-0MlIkmEwOxCxZMmDqzOJ6A-1; Wed, 10 Feb 2021 11:36:42 -0500
-X-MC-Unique: 0MlIkmEwOxCxZMmDqzOJ6A-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 37F8D803F4C;
-        Wed, 10 Feb 2021 16:36:40 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4970D60657;
-        Wed, 10 Feb 2021 16:36:34 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wh+2gbF7XEjYc=HV9w_2uVzVf7vs60BPz0gFA=+pUm3ww@mail.gmail.com>
-References: <CAHk-=wh+2gbF7XEjYc=HV9w_2uVzVf7vs60BPz0gFA=+pUm3ww@mail.gmail.com> <591237.1612886997@warthog.procyon.org.uk> <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com> <20210209202134.GA308988@casper.infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        id S232995AbhBJUo0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 10 Feb 2021 15:44:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37622 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229834AbhBJUoU (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 10 Feb 2021 15:44:20 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCE91C061756
+        for <ceph-devel@vger.kernel.org>; Wed, 10 Feb 2021 12:43:39 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id v30so4551087lfq.6
+        for <ceph-devel@vger.kernel.org>; Wed, 10 Feb 2021 12:43:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bFCBVLmx4m3P8OJ7FexI4xTU+D+dqeOPB5L3zdP1j98=;
+        b=OlXMEGE3+YXDW20u82up+ZZJxFuT5KQPVaOZp56fIviL/ca54YrjE5bQPiM0jLbtr5
+         JephDlBWc6ihBoJg5k8R1M7+hSbeoGkpREvy/8A8Bsg5/X4GhbjclPWfb060aUds7Xkf
+         2bFaMcZ2LOg9RoALDj7udW/xyJ4i9lrqIzZcg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bFCBVLmx4m3P8OJ7FexI4xTU+D+dqeOPB5L3zdP1j98=;
+        b=LUCy4Nh8P8dFEckvB32UNcCg59NDEwKnXO+H/Z/jPZvJPB/q/FR7MXKt5Da5kxsxJG
+         4QOCboa4DU3ZBbyJwabotBVsXkfRHwkcYNUS4TfOL1x9KVw9n9UbgQrZq9neXk16SOP/
+         80ETBQxlwjlfMvdMHGJwb12bnD5LaObqoZ1zsq5A+bjBxTQTzC0IfTICZobUwIhWvpDE
+         ODbGS6yLsUr69ts58gdOgIk1etTwkrh7nNMq2NdimfA1mZYwKDQyIuS+PjiOQyKwLwo3
+         1iAZhSdergDpCdNAHJggmFta7INflAy9M5GQjxtfZzquDOC9wiXo6cKN7ElAAlrao3Wn
+         5qCg==
+X-Gm-Message-State: AOAM533SEFAcMYpLrlxBQh7pcu17Al+TFmLxYbx7Th374GvsuJvbfbLx
+        Ty2Y6tyNkV1v8Kn1995NxQpzG8ilJM9/YA==
+X-Google-Smtp-Source: ABdhPJxk7CsrUifD+CYFhw4RGz5paRyT2AOO2cVHs9R2zRAV2JynrCoEF5NHHQJW1zlpgjwrq1d7/Q==
+X-Received: by 2002:ac2:5a41:: with SMTP id r1mr1055132lfn.558.1612989817965;
+        Wed, 10 Feb 2021 12:43:37 -0800 (PST)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id n15sm446737lfi.146.2021.02.10.12.43.35
+        for <ceph-devel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Feb 2021 12:43:36 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id b2so4941535lfq.0
+        for <ceph-devel@vger.kernel.org>; Wed, 10 Feb 2021 12:43:35 -0800 (PST)
+X-Received: by 2002:a05:6512:a8c:: with SMTP id m12mr2551518lfu.253.1612989815438;
+ Wed, 10 Feb 2021 12:43:35 -0800 (PST)
+MIME-Version: 1.0
+References: <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com>
+ <591237.1612886997@warthog.procyon.org.uk> <1330473.1612974547@warthog.procyon.org.uk>
+ <1330751.1612974783@warthog.procyon.org.uk>
+In-Reply-To: <1330751.1612974783@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 10 Feb 2021 12:43:19 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com>
+Message-ID: <CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com>
+Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
+To:     David Howells <dhowells@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
         Jeff Layton <jlayton@redhat.com>,
         David Wysochanski <dwysocha@redhat.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
@@ -56,98 +74,94 @@ Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
         "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
         v9fs-developer@lists.sourceforge.net,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1331024.1612974993.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 10 Feb 2021 16:36:33 +0000
-Message-ID: <1331025.1612974993@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Wed, Feb 10, 2021 at 8:33 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Then I could follow it up with this patch here, moving towards dropping the
+> PG_fscache alias for the new API.
 
-> Does the code not hold a refcount already?
+So I don't mind the alias per se, but I did mind the odd mixing of
+names for the same thing.
 
-The attached patch will do that.  Note that it's currently based on top of=
- the
-patch that drops the PG_fscache alias, so it refers to PG_private_2.
+So I think your change to make it be named "wait_on_page_private_2()"
+fixed that mixing, but I also think that it's probably then a good
+idea to have aliases in place for filesystems that actually include
+the fscache.h header.
 
-I've run all three patches through xfstests over afs, both with and withou=
-t a
-cache, and Jeff has tested ceph with them.
+Put another way: I think that it would be even better to simply just
+have a function like
 
-David
----
-commit 803a09110b41b9f6091a517fc8f5c4b15475048c
-Author: David Howells <dhowells@redhat.com>
-Date:   Wed Feb 10 11:35:15 2021 +0000
+   static inline void wait_on_page_fscache(struct page *page)
+   {
+        if (PagePrivate2(page))
+                wait_on_page_bit(page, PG_private_2);
+  }
 
-    netfs: Hold a ref on a page when PG_private_2 is set
-    =
+and make that be *not* in <linux/pagemap.h>, but simply be in
+<linux/fscache.h> under that big comment about how PG_private_2 is
+used for the fscache bit. You already have that comment, putting the
+above kind of helper function right there would very much explain why
+a "wait for fscache bit" function then uses the PagePrivate2 function
+to test the bit. Agreed?
 
-    Take a reference on a page when PG_private_2 is set and drop it once t=
-he
-    bit is unlocked.
-    =
+Alternatively, since that header file already has
 
-    Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+    #define PageFsCache(page)               PagePrivate2((page))
+
+you could also just write the above as
+
+   static inline void wait_on_page_fscache(struct page *page)
+   {
+        if (PageFsCache(page))
+                wait_on_page_bit(page, PG_fscache);
+  }
+
+and now it is even more obvious. And there's no odd mixing of
+"fscache" and "private_2", it's all consistent.
+
+IOW, I'm not against "wait_on_page_fscache()" as a function, but I
+*am* against the odd _mixing_ of things without a big explanation,
+where the code itself looks very odd and questionable.
+
+And I think the "fscache" waiting functions should not be visible to
+any core VM or filesystem code - it should be limited explicitly to
+those filesystems that use fscache, and include that header file.
+
+Wouldn't that make sense?
+
+Also, honestly, I really *REALLY* want your commit messages to talk
+about who has been cc'd, who has been part of development, and point
+to the PUBLIC MAILING LISTS WHERE THAT DISCUSSION WAS TAKING PLACE, so
+that I can actually see that "yes, other people were involved"
+
+No, I don't require this in general, but exactly because of the
+history we have, I really really want to see that. I want to see a
+
+   Link: https://lore.kernel.org/r/....
+
+and the Cc's - or better yet, the Reviewed-by's etc - so that when I
+get a pull request, it really is very obvious to me when I look at it
+that others really have been involved.
+
+So if I continue to see just
+
     Signed-off-by: David Howells <dhowells@redhat.com>
 
-diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-index 9018224693e9..043d96ca2aad 100644
---- a/fs/netfs/read_helper.c
-+++ b/fs/netfs/read_helper.c
-@@ -10,6 +10,7 @@
- #include <linux/fs.h>
- #include <linux/mm.h>
- #include <linux/pagemap.h>
-+#include <linux/pagevec.h>
- #include <linux/slab.h>
- #include <linux/uio.h>
- #include <linux/sched/mm.h>
-@@ -230,10 +231,13 @@ static void netfs_rreq_completed(struct netfs_read_r=
-equest *rreq)
- static void netfs_rreq_unmark_after_write(struct netfs_read_request *rreq=
-)
- {
- 	struct netfs_read_subrequest *subreq;
-+	struct pagevec pvec;
- 	struct page *page;
- 	pgoff_t unlocked =3D 0;
- 	bool have_unlocked =3D false;
- =
+at the end of the commit messages, I will not pull.
 
-+	pagevec_init(&pvec);
-+
- 	rcu_read_lock();
- =
+Yes, in this thread a couple of people have piped up and said that
+they were part of the discussion and that they are interested, but if
+I have to start asking around just to see that, then it's too little,
+too late.
 
- 	list_for_each_entry(subreq, &rreq->subrequests, rreq_link) {
-@@ -247,6 +251,8 @@ static void netfs_rreq_unmark_after_write(struct netfs=
-_read_request *rreq)
- 				continue;
- 			unlocked =3D page->index;
- 			unlock_page_private_2(page);
-+			if (pagevec_add(&pvec, page) =3D=3D 0)
-+				pagevec_release(&pvec);
- 			have_unlocked =3D true;
- 		}
- 	}
-@@ -403,8 +409,10 @@ static void netfs_rreq_unlock(struct netfs_read_reque=
-st *rreq)
- 				pg_failed =3D true;
- 				break;
- 			}
--			if (test_bit(NETFS_SREQ_WRITE_TO_CACHE, &subreq->flags))
-+			if (test_bit(NETFS_SREQ_WRITE_TO_CACHE, &subreq->flags)) {
-+				get_page(page);
- 				SetPagePrivate2(page);
-+			}
- 			pg_failed |=3D subreq_failed;
- 			if (pgend < iopos + subreq->len)
- 				break;
+No more of this "it looks like David Howells did things in private". I
+want links I can follow to see the discussion, and I really want to
+see that others really have been involved.
 
+Ok?
+
+                  Linus
