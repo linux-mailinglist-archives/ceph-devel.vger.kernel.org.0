@@ -2,132 +2,100 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE0CB31967E
-	for <lists+ceph-devel@lfdr.de>; Fri, 12 Feb 2021 00:22:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12AE031A200
+	for <lists+ceph-devel@lfdr.de>; Fri, 12 Feb 2021 16:47:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229725AbhBKXWY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 11 Feb 2021 18:22:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:30901 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229662AbhBKXWW (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 11 Feb 2021 18:22:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613085657;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=6IjqWhQ0S9zeiEfAx5Yk7ukP5YPF6bWEm9sEktZ4FzI=;
-        b=Sv2BmASltM7RiVDYVB/AXsRQT6UrKqdNFOnmqKvQeExStUhs2rI/np2x8P/iMw5Ex4m1Jq
-        a9GmjNG3+yuSu+2tGr79x9rsoTQNAj77U0BMbCAsTJt9kPLEWO9dMmT2n64BmzYneFGwRF
-        XYlQb7aYElaa33OizY62ELvt6J8Dzhs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-308-vgOPstjGMz6AfI60Xa_BHQ-1; Thu, 11 Feb 2021 18:20:55 -0500
-X-MC-Unique: vgOPstjGMz6AfI60Xa_BHQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 66AA4107ACC7;
-        Thu, 11 Feb 2021 23:20:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-119-68.rdu2.redhat.com [10.10.119.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2932F60657;
-        Thu, 11 Feb 2021 23:20:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com>
-References: <CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com> <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com> <591237.1612886997@warthog.procyon.org.uk> <1330473.1612974547@warthog.procyon.org.uk> <1330751.1612974783@warthog.procyon.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-cachefs@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
+        id S231922AbhBLPq3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 12 Feb 2021 10:46:29 -0500
+Received: from mail-pl1-f173.google.com ([209.85.214.173]:41505 "EHLO
+        mail-pl1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231708AbhBLPqY (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 12 Feb 2021 10:46:24 -0500
+Received: by mail-pl1-f173.google.com with SMTP id a16so52073plh.8;
+        Fri, 12 Feb 2021 07:46:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M8C1yZZgp4rNPfghNpxWN41GpCK1+InKLAelhxbvplw=;
+        b=hZpgfmnlksgx4IeXq+4uYsXgBiV3Wuv56ZbgzH+aODufu6JzmrkVSl1zfOG+vrp5S2
+         d8GPPaPIMLhL6ospHexo/xpsl4e1XGzbdBRs467jodP7d3MrFjX46vnwsHOVJFChdBH5
+         tseGkI62kfbRh6eWkNbJrqZj1TqWHajscSaxyZpAFu930nQQcWNNG7jiuXXBO5wKxOWN
+         5aGPufUTGO3VyKo2Ffw2oy1g4Bg50PH7mZnxHovAb6qk1MRZhoq3c5t3bKcIF+f5Y/Pl
+         emUwXIdnaEx5GI4J5Bw0SBrBiV3IJzy/DPJ3OmumUL7lyecbVcDUoi0G/9+kjyXRpnwN
+         mx0Q==
+X-Gm-Message-State: AOAM531UnBQkbBwvSl/q2ii7gF5ZoLWAklsVZ4aGXm6S7kaW8j2j+YXQ
+        y98I2MPc0YBWiZ+aANc+U1N7VYl4kLuPrPT4/xI=
+X-Google-Smtp-Source: ABdhPJyYCXBmQgiV5syIf5Cv8mFWKTwy1gjS5Yhyhg4Qi/jYzZasdmgfRgJp2ybsEGtlgybQDIghy8J0Yy2+jaKx2kI=
+X-Received: by 2002:a17:90a:4e1:: with SMTP id g88mr3222886pjg.7.1613144743400;
+ Fri, 12 Feb 2021 07:45:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <27815.1613085646.1@warthog.procyon.org.uk>
-Date:   Thu, 11 Feb 2021 23:20:46 +0000
-Message-ID: <27816.1613085646@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+References: <20201116145809.410558-1-hch@lst.de> <20201116145809.410558-13-hch@lst.de>
+In-Reply-To: <20201116145809.410558-13-hch@lst.de>
+From:   Mike Snitzer <snitzer@redhat.com>
+Date:   Fri, 12 Feb 2021 10:45:32 -0500
+Message-ID: <CAMM=eLfD0_Am3--X+PsKPTfc9qzejxpMNjYwEh=WtjSa-iSncg@mail.gmail.com>
+Subject: Re: [PATCH 12/78] dm: use set_capacity_and_notify
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Justin Sanders <justin@coraid.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jack Wang <jinpu.wang@cloud.ionos.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
+        Minchan Kim <minchan@kernel.org>, Song Liu <song@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        drbd-dev@lists.linbit.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        linux-nvme@lists.infradead.org,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> Also, honestly, I really *REALLY* want your commit messages to talk
-> about who has been cc'd, who has been part of development, and point
-> to the PUBLIC MAILING LISTS WHERE THAT DISCUSSION WAS TAKING PLACE, so
-> that I can actually see that "yes, other people were involved"
-
-Most of the development discussion took place on IRC and waving snippets of
-code about in pastebin rather than email - the latency of email is just too
-high.  There's not a great deal I can do about that now as I haven't kept IRC
-logs.  I can do that in future if you want.
-
-> No, I don't require this in general, but exactly because of the
-> history we have, I really really want to see that. I want to see a
+On Mon, Nov 16, 2020 at 10:05 AM Christoph Hellwig <hch@lst.de> wrote:
 >
->    Link: https://lore.kernel.org/r/....
+> Use set_capacity_and_notify to set the size of both the disk and block
+> device.  This also gets the uevent notifications for the resize for free.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> ---
+>  drivers/md/dm.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> index c18fc25485186d..62ad44925e73ec 100644
+> --- a/drivers/md/dm.c
+> +++ b/drivers/md/dm.c
+> @@ -1971,8 +1971,7 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
+>         if (size != dm_get_size(md))
+>                 memset(&md->geometry, 0, sizeof(md->geometry));
+>
+> -       set_capacity(md->disk, size);
+> -       bd_set_nr_sectors(md->bdev, size);
+> +       set_capacity_and_notify(md->disk, size);
+>
+>         dm_table_event_callback(t, event_callback, md);
+>
 
-I can add links to where I've posted the stuff for review.  Do you want this
-on a per-patch basis or just in the cover for now?
+Not yet pinned down _why_ DM is calling set_capacity_and_notify() with
+a size of 0 but, when running various DM regression tests, I'm seeing
+a lot of noise like:
 
-Also, do you want things like these:
+[  689.240037] dm-2: detected capacity change from 2097152 to 0
 
- https://lore.kernel.org/linux-fsdevel/3326.1579019665@warthog.procyon.org.uk/
- https://lore.kernel.org/linux-fsdevel/4467.1579020509@warthog.procyon.org.uk/
+Is this pr_info really useful?  Should it be moved to below: if
+(!capacity || !size) so that it only prints if a uevent is sent?
 
-which pertain to the overall fscache rewrite, but where the relevant changes
-didn't end up included in this particular patchset?  Or this:
-
- https://listman.redhat.com/archives/linux-cachefs/2020-December/msg00000.html
-
-where someone was testing the overall patchset of which this is a subset?
-
-> and the Cc's - or better yet, the Reviewed-by's etc - so that when I
-> get a pull request, it really is very obvious to me when I look at it
-> that others really have been involved.
-> 
-> So if I continue to see just
-> 
->     Signed-off-by: David Howells <dhowells@redhat.com>
-> 
-> at the end of the commit messages, I will not pull.
-> 
-> Yes, in this thread a couple of people have piped up and said that
-> they were part of the discussion and that they are interested, but if
-> I have to start asking around just to see that, then it's too little,
-> too late.
-> 
-> No more of this "it looks like David Howells did things in private". I
-> want links I can follow to see the discussion, and I really want to
-> see that others really have been involved.
-> 
-> Ok?
-
-Sure.
-
-I can go and edit in link pointers into the existing patches if you want and
-add Jeff's Review-and-tested-by into the appropriate ones.  You would be able
-to compare against the existing tag, so it wouldn't entirely invalidate the
-testing.
-
-Also, do you want links inserting into all the patches of the two keyrings
-pull requests I've sent you?
-
-David
-
+Mike
