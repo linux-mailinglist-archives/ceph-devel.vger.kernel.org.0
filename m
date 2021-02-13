@@ -2,72 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF1B131A308
-	for <lists+ceph-devel@lfdr.de>; Fri, 12 Feb 2021 17:46:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B83B31A94C
+	for <lists+ceph-devel@lfdr.de>; Sat, 13 Feb 2021 02:09:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231251AbhBLQnc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 12 Feb 2021 11:43:32 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:40531 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231248AbhBLQmq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 12 Feb 2021 11:42:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613148078;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ft1B0dmqfZyPUoyDvwnAfTze1mns3d3CFcFjBHQ5YEA=;
-        b=aNRt9Ee3sV2xdj2/G38YJVresg4eVETnPdP9xDWtHOPJMqJe0efT11qDj6gc7WEQExSZGP
-        N7/Y+Gsts8Ww7CUbqTDLJqyaxZ5vprO30+olfCn9kIjcjU4OnFYwHGeWme5ErQJOdiPEfT
-        cJJ9GTyWMLNlBxzi8f30HU2JxnQJd9A=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-440-Aj83BuiYPJGUYpleldGccw-1; Fri, 12 Feb 2021 11:41:16 -0500
-X-MC-Unique: Aj83BuiYPJGUYpleldGccw-1
-Received: by mail-ej1-f71.google.com with SMTP id eb5so187195ejc.6
-        for <ceph-devel@vger.kernel.org>; Fri, 12 Feb 2021 08:41:16 -0800 (PST)
+        id S232318AbhBMBHV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 12 Feb 2021 20:07:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33198 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232345AbhBMBHK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 12 Feb 2021 20:07:10 -0500
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC811C061223
+        for <ceph-devel@vger.kernel.org>; Fri, 12 Feb 2021 17:06:07 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id x1so1142735ljj.11
+        for <ceph-devel@vger.kernel.org>; Fri, 12 Feb 2021 17:06:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L6jTxP9hlbcUR9+3iPNQ9HmsqF25QNS6zvjTzXBH5E4=;
+        b=WUNxTILAYi3Kk+wVUIaUVhIr3oaiaHaDjKr023ekUsCD6VQNr+/uPlhMEL6q29t3EB
+         7gNdhrTjI0bG4chV1tfJBSEWmnvTFlDxKHjMtcZld38+fszGfI/ow6zlOY5oPPFVrq11
+         U9kc9/PviiJUNwLPvQe5fwcbGhKWs2MNkDWS8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ft1B0dmqfZyPUoyDvwnAfTze1mns3d3CFcFjBHQ5YEA=;
-        b=o3EnCb+HTqhE1a1dgOq57o6lfJjjKxiZJvsfMYlxVKb9eM3C8GId9uRmWlocS5ORXZ
-         ijg7WS5/QxmeDFtMOwW208NJ4v0TiqEoTMwNRTStRRgTBiBsGE2lMHNsYnzfEhyyDgjv
-         jTniXWrpfBRVbN0LfcbURX51PU+InKHc809nYsF9iSHDNsnAW1eh2kyJpxicjWLHwtiI
-         X5SoXkmLMcw8HMBUy6svOMQxOsxLeR1bUn2IUfrKPnyraUmh3NtMrM4mFBaJifXdjCkY
-         F63zZmNjXILEP7lh280qneNidGqK0EPMchPpVFfNIGr9yjyzV8Djji5U6DSVHS/iVCAp
-         gBPQ==
-X-Gm-Message-State: AOAM532v3PzMbGgz5h7uq1iXpt0USwVneTf+ng74asGyDlm8gfIVILX4
-        QvRcJXJ2yfv7McI2P56/gTOzCT9sWkxWjSv50gHml1mKy3AUPeccUc2jPfkNWhSKQuC6wFvtbp/
-        T02toyECyFEyY9CCm77s0Zw0xWTt3maVh/wBwBA==
-X-Received: by 2002:a17:906:1681:: with SMTP id s1mr3897281ejd.229.1613148074942;
-        Fri, 12 Feb 2021 08:41:14 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwTIgnx7LJiTFOW+mhqlshoZww0YFi52MiJxBqcnsY+RGcoAoY9xA8AY8Yu0JSD5ZHRlga8wGOKDsNd1QerD6Y=
-X-Received: by 2002:a17:906:1681:: with SMTP id s1mr3897262ejd.229.1613148074745;
- Fri, 12 Feb 2021 08:41:14 -0800 (PST)
+        bh=L6jTxP9hlbcUR9+3iPNQ9HmsqF25QNS6zvjTzXBH5E4=;
+        b=XYukFlq0GeHC2ApwhqNmfywW1NXq54rZp9m2K2jie218E8MUW+LYmGL6DFv6E0+C0H
+         UXV8ZPAd1zGwjqfgLh2e+CYbQ87bTwEGQP8mwR1Cc9KbD0jcf36U5aN34iN8sueVhlOG
+         7RqL7iz2IryE3py4eKFLWX3RZRF/A/G/ZxepcL+Lq+33UPYJG51+SuteJ3oyPtLYohiC
+         4Nhh/yA5eFFYQ591i8N8B2YSIP5X9H9De1krFqtA3MZY+k6KBJonhqO17e2QfI2gmHMP
+         DmlsruAv2clST0uQUrmtfOqhuOhJHKpQOWtlYUm6sVDEfAbcXZHcmOulyd7KgPgFfY98
+         Cuqg==
+X-Gm-Message-State: AOAM532pZoXWdxbOUEYxVJjjP5pnudoGVNPlxzVo7cVmxwkxgLr9Pqk/
+        Le6Hi/2NP8MEsPifI+7wfz5CzuVePWD7Xg==
+X-Google-Smtp-Source: ABdhPJyZCEbmTIRoFZTGB9iZPMmBG1TDPIOygkUt14iD2mIPAK4i5kELwoHPVQCK5ocV5lDo4/OI4g==
+X-Received: by 2002:a2e:7f04:: with SMTP id a4mr2949883ljd.3.1613178366167;
+        Fri, 12 Feb 2021 17:06:06 -0800 (PST)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id v21sm1898278ljk.122.2021.02.12.17.06.04
+        for <ceph-devel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Feb 2021 17:06:04 -0800 (PST)
+Received: by mail-lj1-f169.google.com with SMTP id q14so1190917ljp.4
+        for <ceph-devel@vger.kernel.org>; Fri, 12 Feb 2021 17:06:04 -0800 (PST)
+X-Received: by 2002:a2e:8049:: with SMTP id p9mr3052102ljg.411.1613178363694;
+ Fri, 12 Feb 2021 17:06:03 -0800 (PST)
 MIME-Version: 1.0
 References: <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com>
  <591237.1612886997@warthog.procyon.org.uk> <1330473.1612974547@warthog.procyon.org.uk>
  <1330751.1612974783@warthog.procyon.org.uk> <CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com>
  <27816.1613085646@warthog.procyon.org.uk>
 In-Reply-To: <27816.1613085646@warthog.procyon.org.uk>
-From:   David Wysochanski <dwysocha@redhat.com>
-Date:   Fri, 12 Feb 2021 11:40:38 -0500
-Message-ID: <CALF+zOkRhZ6SfotHbWFMDYJ-qJxxOSMd8SUbrXd4w7rpOMoPKw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 12 Feb 2021 17:05:47 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi68OpbwBm6RCodhNUyg6x8N7vi5ufjRtosQSPy_EYqLA@mail.gmail.com>
+Message-ID: <CAHk-=wi68OpbwBm6RCodhNUyg6x8N7vi5ufjRtosQSPy_EYqLA@mail.gmail.com>
 Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
 To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
+Cc:     Matthew Wilcox <willy@infradead.org>,
         Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Trond Myklebust <trondmy@hammerspace.com>,
         Steve French <sfrench@samba.org>,
         Dominique Martinet <asmadeus@codewreck.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-cachefs <linux-cachefs@redhat.com>,
-        CIFS <linux-cifs@vger.kernel.org>,
+        linux-cachefs@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
         v9fs-developer@lists.sourceforge.net,
@@ -77,95 +80,26 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Feb 11, 2021 at 6:20 PM David Howells <dhowells@redhat.com> wrote:
->
-> Linus Torvalds <torvalds@linux-foundation.org> wrote:
->
-> > Also, honestly, I really *REALLY* want your commit messages to talk
-> > about who has been cc'd, who has been part of development, and point
-> > to the PUBLIC MAILING LISTS WHERE THAT DISCUSSION WAS TAKING PLACE, so
-> > that I can actually see that "yes, other people were involved"
+On Thu, Feb 11, 2021 at 3:21 PM David Howells <dhowells@redhat.com> wrote:
 >
 > Most of the development discussion took place on IRC and waving snippets of
 > code about in pastebin rather than email - the latency of email is just too
 > high.  There's not a great deal I can do about that now as I haven't kept IRC
 > logs.  I can do that in future if you want.
->
-> > No, I don't require this in general, but exactly because of the
-> > history we have, I really really want to see that. I want to see a
-> >
-> >    Link: https://lore.kernel.org/r/....
->
-> I can add links to where I've posted the stuff for review.  Do you want this
-> on a per-patch basis or just in the cover for now?
->
-> Also, do you want things like these:
->
->  https://lore.kernel.org/linux-fsdevel/3326.1579019665@warthog.procyon.org.uk/
->  https://lore.kernel.org/linux-fsdevel/4467.1579020509@warthog.procyon.org.uk/
->
-> which pertain to the overall fscache rewrite, but where the relevant changes
-> didn't end up included in this particular patchset?  Or this:
->
->  https://listman.redhat.com/archives/linux-cachefs/2020-December/msg00000.html
->
-> where someone was testing the overall patchset of which this is a subset?
->
-> > and the Cc's - or better yet, the Reviewed-by's etc - so that when I
-> > get a pull request, it really is very obvious to me when I look at it
-> > that others really have been involved.
-> >
-> > So if I continue to see just
-> >
-> >     Signed-off-by: David Howells <dhowells@redhat.com>
-> >
-> > at the end of the commit messages, I will not pull.
-> >
-> > Yes, in this thread a couple of people have piped up and said that
-> > they were part of the discussion and that they are interested, but if
-> > I have to start asking around just to see that, then it's too little,
-> > too late.
-> >
-> > No more of this "it looks like David Howells did things in private". I
-> > want links I can follow to see the discussion, and I really want to
-> > see that others really have been involved.
-> >
-> > Ok?
->
-> Sure.
->
-> I can go and edit in link pointers into the existing patches if you want and
-> add Jeff's Review-and-tested-by into the appropriate ones.  You would be able
-> to compare against the existing tag, so it wouldn't entirely invalidate the
-> testing.
->
-You can add my Tested-by for your fscache-next branch series ending at
-commit  235299002012 netfs: Hold a ref on a page when PG_private_2 is set
-This series includes your commit c723f0232c9f8928b3b15786499637bda3121f41
-discussed a little earlier in this email thread.
 
-I ran over 24 hours of NFS tests (unit, connectathon, xfstests,
-various servers and all NFS versions) on your latest series
-and it looks good.  Note I did not run against pNFS servers
-due to known issue, and I did not do more advanced tests like
-error injections.  I did get one OOM on xfstest generic/551 on
-one testbed, but that same' test passed on another testbed,
-so it's not clear what is happening there and it could very
-well be testbed or NFS related.
+No, I really don't.
 
-In addition, I reviewed various patches in the series, especially the
-API portions of the netfs patches, so for those, Reviewed-by is
-appropriate as well. I have also reviewed some of the internals
-of the other infrastructure patches, but my review is more limited
-there.
+IRC is fine for discussing ideas about how to solve things.
 
+But no, it's not a replacement for actual code review after the fact.
 
+If you think email has too long latency for review, and can't use
+public mailing lists and cc the people who are maintainers, then I
+simply don't want your patches.
 
+You need to fix your development model. This whole "I need to get
+feedback from whoever still uses irc and is active RIGHT NOW" is not a
+valid model. It's fine for brainstorming for possible approaches, and
+getting ideas, sure.
 
-
-> Also, do you want links inserting into all the patches of the two keyrings
-> pull requests I've sent you?
->
-> David
->
-
+               Linus
