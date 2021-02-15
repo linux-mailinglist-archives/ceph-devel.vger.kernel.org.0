@@ -2,47 +2,67 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A42931B390
-	for <lists+ceph-devel@lfdr.de>; Mon, 15 Feb 2021 01:24:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C50731B3D2
+	for <lists+ceph-devel@lfdr.de>; Mon, 15 Feb 2021 02:03:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229901AbhBOAYj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 14 Feb 2021 19:24:39 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:33556 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229848AbhBOAYi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Sun, 14 Feb 2021 19:24:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613348591;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=icyirenyNVPQ/6+Zc420o3Iw7zjp69we48horNqQpPg=;
-        b=Gm8bdkiMNHIpOdEKvgxUW7pseqmRMOeClH5yiwLBCQ5lnqDHD7wifsxshV72xkKUAfe1Hj
-        dBukpa/PSQEK6kkMY7Nn5OtVPi343sPWs4+zhj1eaJAinfDtYBlfE0KKrSKL3d8ahgUSue
-        wFGmpZy8/1qKvrXcisjjZNy6C1RXjoE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-484-xtPvx-7lP1aR-4qYcHimfw-1; Sun, 14 Feb 2021 19:23:07 -0500
-X-MC-Unique: xtPvx-7lP1aR-4qYcHimfw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6FB8D1005501;
-        Mon, 15 Feb 2021 00:23:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-119-68.rdu2.redhat.com [10.10.119.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 013BD6F986;
-        Mon, 15 Feb 2021 00:22:57 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wi68OpbwBm6RCodhNUyg6x8N7vi5ufjRtosQSPy_EYqLA@mail.gmail.com>
-References: <CAHk-=wi68OpbwBm6RCodhNUyg6x8N7vi5ufjRtosQSPy_EYqLA@mail.gmail.com> <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com> <591237.1612886997@warthog.procyon.org.uk> <1330473.1612974547@warthog.procyon.org.uk> <1330751.1612974783@warthog.procyon.org.uk> <CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com> <27816.1613085646@warthog.procyon.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        id S229948AbhBOBCg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 14 Feb 2021 20:02:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51058 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229818AbhBOBCg (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 14 Feb 2021 20:02:36 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67A6CC061574
+        for <ceph-devel@vger.kernel.org>; Sun, 14 Feb 2021 17:01:55 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id p21so7746981lfu.11
+        for <ceph-devel@vger.kernel.org>; Sun, 14 Feb 2021 17:01:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8oLEqXUvdqy1QH/cRggvF58640ngzAUjBT8Tfk3Wjwg=;
+        b=eb+VDAyVwB6RZ6vXNDSIXjjY5/KGJonBZpcw4InpSNpoqcKC9wCYBknhMsgf9sPklg
+         GzCvnbIRKgTg7gtA7teRfKAGGFk9BR9qw3HHsG7GJ3+trFjsmHXqEUXRQMhyaGXIHFPG
+         +BYG0bBsO6r2Y7DOTssLQQLnPqsDN5e1ysQAo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8oLEqXUvdqy1QH/cRggvF58640ngzAUjBT8Tfk3Wjwg=;
+        b=mZ/pODR9/Z/wUNxmHp+f4NSy59HRju96PswZCl9dOeEqqb8+wO5VrYPOQ38fKYZb1Z
+         mizAT+tAEBk66yt8a+R2zSleuOKhejuAlwTbTY81997DjsnqXfR+++EB9nVBs5uPzJSq
+         ZYb7trq0A3zsc4dtnM7NzO3EvXbhR4QyXHK6ezERfbBPHREvsSIH7PI8K1ag6I94mHpB
+         ys5/tmwEMIVDMwkEOwc2OkW0Onh964Gbld0KVLy3xpsUiqtT7pBypaMFmUHWSwsf1tCi
+         hVwZXXT3f5Y5tPIgm73kcbpSAv1ABNp+dbeyFwe7bekiSZ9zbv9PENSdUKLwTZLNF49X
+         32cA==
+X-Gm-Message-State: AOAM532J2H0MLFUMxNauvkZTIUJgtfgl1KZ/Xf+AxaDukvLk+POxUNd3
+        Vuw94OdpZPQI1wX5cm2Hep5ZxKc0N9Th+w==
+X-Google-Smtp-Source: ABdhPJyC0HCEMM30sSZabhFi49qU4XDJInoR9ttf49GxGgn0Jz+rP5EPVJrTmc0qi15XBr53QLi0sA==
+X-Received: by 2002:ac2:4477:: with SMTP id y23mr7151116lfl.234.1613350913465;
+        Sun, 14 Feb 2021 17:01:53 -0800 (PST)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id u12sm2627196lff.250.2021.02.14.17.01.52
+        for <ceph-devel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 14 Feb 2021 17:01:52 -0800 (PST)
+Received: by mail-lj1-f173.google.com with SMTP id a17so5938409ljq.2
+        for <ceph-devel@vger.kernel.org>; Sun, 14 Feb 2021 17:01:52 -0800 (PST)
+X-Received: by 2002:a05:651c:112:: with SMTP id a18mr8181174ljb.465.1613350911576;
+ Sun, 14 Feb 2021 17:01:51 -0800 (PST)
+MIME-Version: 1.0
+References: <CAHk-=wj-k86FOqAVQ4ScnBkX3YEKuMzqTEB2vixdHgovJpHc9w@mail.gmail.com>
+ <591237.1612886997@warthog.procyon.org.uk> <1330473.1612974547@warthog.procyon.org.uk>
+ <1330751.1612974783@warthog.procyon.org.uk> <CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com>
+ <27816.1613085646@warthog.procyon.org.uk> <CAHk-=wi68OpbwBm6RCodhNUyg6x8N7vi5ufjRtosQSPy_EYqLA@mail.gmail.com>
+ <860729.1613348577@warthog.procyon.org.uk>
+In-Reply-To: <860729.1613348577@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 14 Feb 2021 17:01:35 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh7xY3UF7zEc0BNVNjOox59jYBW-Gfi7=emm+BXPWc6nQ@mail.gmail.com>
+Message-ID: <CAHk-=wh7xY3UF7zEc0BNVNjOox59jYBW-Gfi7=emm+BXPWc6nQ@mail.gmail.com>
+Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
+To:     David Howells <dhowells@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
         Jeff Layton <jlayton@redhat.com>,
         David Wysochanski <dwysocha@redhat.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
@@ -56,129 +76,88 @@ Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
         "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
         v9fs-developer@lists.sourceforge.net,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] fscache: I/O API modernisation and netfs helper library
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <860728.1613348577.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 15 Feb 2021 00:22:57 +0000
-Message-ID: <860729.1613348577@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Sun, Feb 14, 2021 at 4:23 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Anyway, I have posted my fscache modernisation patches multiple times for
+> public review, I have tried to involve the wider community in aspects of the
+> development on public mailing lists and I have been including the maintainers
+> in to/cc.
 
-> But no, it's not a replacement for actual code review after the fact.
-> =
+So then add those links and the cc's to the commit logs, so that I can
+*see* them.
 
-> If you think email has too long latency for review, and can't use
-> public mailing lists and cc the people who are maintainers, then I
-> simply don't want your patches.
+I'm done with this discussion.
 
-I think we were talking at cross-purposes by the term "development" here. =
- I
-was referring to the discussion of how the implementation should be done a=
-nd
-working closely with colleagues - both inside and outside Red Hat - to get
-things working, not specifically the public review side of things.  It's j=
-ust
-that I don't have a complete record of the how-to-implement-it, the
-how-to-get-various-bits-working-together and the why-is-it-not-working?
-discussions.
+If I see a pull request from you, I DO NOT WANT TO HAVE TO HAVE A
+WEEK-LONG EMAIL THREAD ABOUT HOW I CANNOT SEE THAT IT HAS EVER SEEN
+ANY REVIEW.
 
-Anyway, I have posted my fscache modernisation patches multiple times for
-public review, I have tried to involve the wider community in aspects of t=
-he
-development on public mailing lists and I have been including the maintain=
-ers
-in to/cc.
+So if all I see is "Signed-off-by:" from you, I will promptly throw
+that pull request into the garbage, because it's just not worth my
+time to try to have to get you kicking and screaming to show that
+others have been involved.
 
-I've posted the more full patchset for public review a number of times:
+Can you not understand that?
 
-4th May 2020:
-https://lore.kernel.org/linux-fsdevel/158861203563.340223.7585359869938129=
-395.stgit@warthog.procyon.org.uk/
+When I get that pull request, I need to see that yes, this has been
+reviewed, people have been involved, and yes, it's been in linux-next.
 
-13th Jul (split into three subsets):
-https://lore.kernel.org/linux-fsdevel/159465766378.1376105.116199762510392=
-87525.stgit@warthog.procyon.org.uk/
-https://lore.kernel.org/linux-fsdevel/159465784033.1376674.181064636939898=
-11037.stgit@warthog.procyon.org.uk/
-https://lore.kernel.org/linux-fsdevel/159465821598.1377938.204636227022500=
-8168.stgit@warthog.procyon.org.uk/
+I want to see "reviewed-by" and "tested-by", I want to see "cc", and I
+want to see links to submission threads with discussion showing that
+others actually were involved.
 
-20th Nov:
-https://lore.kernel.org/linux-fsdevel/160588455242.3465195.321473385827301=
-9178.stgit@warthog.procyon.org.uk/
+I do *not* want to see just a single signed-off-by line from you, and
+then have to ask for "has anybody else actually seen this and reviewed
+it".
 
-I then cut it down and posted that publically a couple of times:
+Look, here's an entirely unrelated example from a single fairly recent
+trivial one-liner memory leak fix:
 
-20th Jan:
-https://lore.kernel.org/linux-fsdevel/161118128472.1232039.117467998330664=
-25131.stgit@warthog.procyon.org.uk/
+    Fixes: 87c715dcde63 ("scsi: scsi_debug: Add per_host_store option")
+    Link: https://lore.kernel.org/r/20210208111734.34034-1-mlombard@redhat.com
+    Acked-by: Douglas Gilbert <dgilbert@interlog.com>
+    Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
+    Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 
-25th Jan:
-https://lore.kernel.org/linux-fsdevel/161161025063.2537118.200924944468224=
-1405.stgit@warthog.procyon.org.uk/
+that's from a quite a trivial commit. Yes, it's trivial, but it could
+still be wrong, of course. And if somebody ever reports that it causes
+problems despite how simple it was, look at what I have: I have three
+people to contact, and I have a pointer to the actual original
+submission of the patch.
 
-I let you know what was coming here:
-https://lore.kernel.org/linux-fsdevel/447452.1596109876@warthog.procyon.or=
-g.uk/
-https://lore.kernel.org/linux-fsdevel/2522190.1612544534@warthog.procyon.o=
-rg.uk/
+Do we have that for all our commits? No. But it's also not at all
+unusual any more, and in fact many commits have even more, with
+testing etc.
 
-to try and find out whether you were going to have any objections to the
-design in advance, rather than at the last minute.
+And yes, sometimes the test results and acks come back later after
+you've already pushed the changes out etc, and no, it's generally not
+worth rebasing for that - maybe others have now started to rely on
+whatever public branch you have. Which is why the "Link:" is useful,
+so that if things come in later, the discussion can still be found.
+But quite often, you shouldn't have pushed out some final branch
+before you've gotten at least *some* positive response from people, so
+I do kind of expect some "Acked-by" etc in the commit itself.
 
-I've apprised people of what I was up to:
-https://lore.kernel.org/lkml/24942.1573667720@warthog.procyon.org.uk/
-https://lore.kernel.org/linux-fsdevel/2758811.1610621106@warthog.procyon.o=
-rg.uk/
-https://lore.kernel.org/linux-fsdevel/1441311.1598547738@warthog.procyon.o=
-rg.uk/
-https://lore.kernel.org/linux-fsdevel/160655.1611012999@warthog.procyon.or=
-g.uk/
+THAT is what you need to aim for.
 
-Asked for consultation on parts of what I wanted to do:
-https://lore.kernel.org/linux-fsdevel/3326.1579019665@warthog.procyon.org.=
-uk/
-https://lore.kernel.org/linux-fsdevel/4467.1579020509@warthog.procyon.org.=
-uk/
-https://lore.kernel.org/linux-fsdevel/3577430.1579705075@warthog.procyon.o=
-rg.uk/
+And yes, I'm picking on you. Because we've had this problem before.
+I've complained when you've sent me pull requests that don't even
+build, that you in fact had been told by linux-next didn't build, and
+you still sent them to me.
 
-Asked someone who is actually using fscache in production to test the rewr=
-ite:
-https://listman.redhat.com/archives/linux-cachefs/2020-December/msg00000.h=
-tml
+And as a result, I've asked for more involvement from other people before.
 
-I've posted partial patches to try and help 9p and cifs along:
-https://lore.kernel.org/linux-fsdevel/1514086.1605697347@warthog.procyon.o=
-rg.uk/
-https://lore.kernel.org/linux-cifs/1794123.1605713481@warthog.procyon.org.=
-uk/
-https://lore.kernel.org/linux-fsdevel/241017.1612263863@warthog.procyon.or=
-g.uk/
-https://lore.kernel.org/linux-cifs/270998.1612265397@warthog.procyon.org.u=
-k/
+So now I'm clarifying that requirement - I  absolutely need to see
+that it has actually seen testing, that it has seen other people being
+involved, and that it isn't just you throwing spaghetti at the wall to
+see what sticks.
 
-(Jeff has been handling Ceph and Dave NFS).
+And I'm not going to do that for every pull request. I want to see
+that data *in* the pull request itself.
 
-Proposed conference topics related to this:
-https://lore.kernel.org/linux-fsdevel/9608.1575900019@warthog.procyon.org.=
-uk/
-https://lore.kernel.org/linux-fsdevel/14196.1575902815@warthog.procyon.org=
-.uk/
-https://lore.kernel.org/linux-fsdevel/364531.1579265357@warthog.procyon.or=
-g.uk/
-
-though the lockdown put paid to that:-(
-
-Willy has discussed it too:
-https://lore.kernel.org/linux-fsdevel/20200826193116.GU17456@casper.infrad=
-ead.org/
-
-David
-
+            Linus
