@@ -2,210 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 45B7A31C9AC
-	for <lists+ceph-devel@lfdr.de>; Tue, 16 Feb 2021 12:31:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6007031CA24
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Feb 2021 12:50:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230165AbhBPL3u (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 16 Feb 2021 06:29:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39720 "EHLO mail.kernel.org"
+        id S229771AbhBPLtm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 16 Feb 2021 06:49:42 -0500
+Received: from verein.lst.de ([213.95.11.211]:40978 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229907AbhBPL3m (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 16 Feb 2021 06:29:42 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A94BF64DFF;
-        Tue, 16 Feb 2021 11:28:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1613474940;
-        bh=RPjPaTvayhktPzqcqsg1ndjbnlMY4ZXLaVp+CQgT4h4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=btdYIVxrhY203EYeuIVn+hf+O9MCnU4jc3+ifo20WyjTunezcWc/ss5NCNm9kD2yM
-         NiRP82OU5FeL+iR1Mvd+m2h+4eXigLIZK63k3VD2u8bFvrnyL4+rNZRd10a4PFVrtT
-         KAd3AWg1RQAU09Lp2Ite+6kqNCeEtH4cUeyD7KJc=
-Date:   Tue, 16 Feb 2021 12:28:57 +0100
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "drinkcat@chromium.org" <drinkcat@chromium.org>,
-        "iant@google.com" <iant@google.com>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "llozano@chromium.org" <llozano@chromium.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "miklos@szeredi.hu" <miklos@szeredi.hu>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "dchinner@redhat.com" <dchinner@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "sfrench@samba.org" <sfrench@samba.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Subject: Re: [PATCH v2] vfs: prevent copy_file_range to copy across devices
-Message-ID: <YCuseTMyjL+9sWum@kroah.com>
-References: <CAOQ4uxiFGjdvX2-zh5o46pn7RZhvbGHH0wpzLPuPOom91FwWeQ@mail.gmail.com>
- <20210215154317.8590-1-lhenriques@suse.de>
- <CAOQ4uxgjcCrzDkj-0ukhvHRgQ-D+A3zU5EAe0A=s1Gw2dnTJSA@mail.gmail.com>
- <73ab4951f48d69f0183548c7a82f7ae37e286d1c.camel@hammerspace.com>
- <CAOQ4uxgPtqG6eTi2AnAV4jTAaNDbeez+Xi2858mz1KLGMFntfg@mail.gmail.com>
- <92d27397479984b95883197d90318ee76995b42e.camel@hammerspace.com>
- <CAOQ4uxjUf15fDjz11pCzT3GkFmw=2ySXR_6XF-Bf-TfUwpj77Q@mail.gmail.com>
- <87r1lgjm7l.fsf@suse.de>
+        id S230360AbhBPLrY (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 16 Feb 2021 06:47:24 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 5738667373; Tue, 16 Feb 2021 12:46:24 +0100 (CET)
+Date:   Tue, 16 Feb 2021 12:46:24 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Justin Sanders <justin@coraid.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jack Wang <jinpu.wang@cloud.ionos.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
+        Minchan Kim <minchan@kernel.org>, Song Liu <song@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        drbd-dev@lists.linbit.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        linux-nvme@lists.infradead.org,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCH 12/78] dm: use set_capacity_and_notify
+Message-ID: <20210216114624.GA1221@lst.de>
+References: <20201116145809.410558-1-hch@lst.de> <20201116145809.410558-13-hch@lst.de> <CAMM=eLfD0_Am3--X+PsKPTfc9qzejxpMNjYwEh=WtjSa-iSncg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87r1lgjm7l.fsf@suse.de>
+In-Reply-To: <CAMM=eLfD0_Am3--X+PsKPTfc9qzejxpMNjYwEh=WtjSa-iSncg@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Feb 16, 2021 at 11:17:34AM +0000, Luis Henriques wrote:
-> Amir Goldstein <amir73il@gmail.com> writes:
-> 
-> > On Mon, Feb 15, 2021 at 8:57 PM Trond Myklebust <trondmy@hammerspace.com> wrote:
-> >>
-> >> On Mon, 2021-02-15 at 19:24 +0200, Amir Goldstein wrote:
-> >> > On Mon, Feb 15, 2021 at 6:53 PM Trond Myklebust <
-> >> > trondmy@hammerspace.com> wrote:
-> >> > >
-> >> > > On Mon, 2021-02-15 at 18:34 +0200, Amir Goldstein wrote:
-> >> > > > On Mon, Feb 15, 2021 at 5:42 PM Luis Henriques <
-> >> > > > lhenriques@suse.de>
-> >> > > > wrote:
-> >> > > > >
-> >> > > > > Nicolas Boichat reported an issue when trying to use the
-> >> > > > > copy_file_range
-> >> > > > > syscall on a tracefs file.  It failed silently because the file
-> >> > > > > content is
-> >> > > > > generated on-the-fly (reporting a size of zero) and
-> >> > > > > copy_file_range
-> >> > > > > needs
-> >> > > > > to know in advance how much data is present.
-> >> > > > >
-> >> > > > > This commit restores the cross-fs restrictions that existed
-> >> > > > > prior
-> >> > > > > to
-> >> > > > > 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
-> >> > > > > devices")
-> >> > > > > and
-> >> > > > > removes generic_copy_file_range() calls from ceph, cifs, fuse,
-> >> > > > > and
-> >> > > > > nfs.
-> >> > > > >
-> >> > > > > Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
-> >> > > > > devices")
-> >> > > > > Link:
-> >> > > > > https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
-> >> > > > > Cc: Nicolas Boichat <drinkcat@chromium.org>
-> >> > > > > Signed-off-by: Luis Henriques <lhenriques@suse.de>
-> >> > > >
-> >> > > > Code looks ok.
-> >> > > > You may add:
-> >> > > >
-> >> > > > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> >> > > >
-> >> > > > I agree with Trond that the first paragraph of the commit message
-> >> > > > could
-> >> > > > be improved.
-> >> > > > The purpose of this change is to fix the change of behavior that
-> >> > > > caused the regression.
-> >> > > >
-> >> > > > Before v5.3, behavior was -EXDEV and userspace could fallback to
-> >> > > > read.
-> >> > > > After v5.3, behavior is zero size copy.
-> >> > > >
-> >> > > > It does not matter so much what makes sense for CFR to do in this
-> >> > > > case (generic cross-fs copy).  What matters is that nobody asked
-> >> > > > for
-> >> > > > this change and that it caused problems.
-> >> > > >
-> >> > >
-> >> > > No. I'm saying that this patch should be NACKed unless there is a
-> >> > > real
-> >> > > explanation for why we give crap about this tracefs corner case and
-> >> > > why
-> >> > > it can't be fixed.
-> >> > >
-> >> > > There are plenty of reasons why copy offload across filesystems
-> >> > > makes
-> >> > > sense, and particularly when you're doing NAS. Clone just doesn't
-> >> > > cut
-> >> > > it when it comes to disaster recovery (whereas backup to a
-> >> > > different
-> >> > > storage unit does). If the client has to do the copy, then you're
-> >> > > effectively doubling the load on the server, and you're adding
-> >> > > potentially unnecessary network traffic (or at the very least you
-> >> > > are
-> >> > > doubling that traffic).
-> >> > >
-> >> >
-> >> > I don't understand the use case you are describing.
-> >> >
-> >> > Which filesystem types are you talking about for source and target
-> >> > of copy_file_range()?
-> >> >
-> >> > To be clear, the original change was done to support NFS/CIFS server-
-> >> > side
-> >> > copy and those should not be affected by this change.
-> >> >
-> >>
-> >> That is incorrect:
-> >>
-> >> ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file
-> >> *dst,
-> >>  u64 dst_pos, u64 count)
-> >> {
-> >>
-> >>  /*
-> >>  * Limit copy to 4MB to prevent indefinitely blocking an nfsd
-> >>  * thread and client rpc slot. The choice of 4MB is somewhat
-> >>  * arbitrary. We might instead base this on r/wsize, or make it
-> >>  * tunable, or use a time instead of a byte limit, or implement
-> >>  * asynchronous copy. In theory a client could also recognize a
-> >>  * limit like this and pipeline multiple COPY requests.
-> >>  */
-> >>  count = min_t(u64, count, 1 << 22);
-> >>  return vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
-> >> }
-> >>
-> >> You are now explicitly changing the behaviour of knfsd when the source
-> >> and destination filesystem differ.
-> >>
-> >> For one thing, you are disallowing the NFSv4.2 copy offload use case of
-> >> copying from a local filesystem to a remote NFS server. However you are
-> >> also disallowing the copy from, say, an XFS formatted partition to an
-> >> ext4 partition.
-> >>
+On Fri, Feb 12, 2021 at 10:45:32AM -0500, Mike Snitzer wrote:
+> On Mon, Nov 16, 2020 at 10:05 AM Christoph Hellwig <hch@lst.de> wrote:
 > >
-> > Got it.
-> 
-> Ugh.  And I guess overlayfs may have a similar problem.
-> 
-> > This is easy to solve with a flag COPY_FILE_SPLICE (or something) that
-> > is internal to kernel users.
+> > Use set_capacity_and_notify to set the size of both the disk and block
+> > device.  This also gets the uevent notifications for the resize for free.
 > >
-> > FWIW, you may want to look at the loop in ovl_copy_up_data()
-> > for improvements to nfsd_copy_file_range().
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > Reviewed-by: Hannes Reinecke <hare@suse.de>
+> > ---
+> >  drivers/md/dm.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
 > >
-> > We can move the check out to copy_file_range syscall:
+> > diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> > index c18fc25485186d..62ad44925e73ec 100644
+> > --- a/drivers/md/dm.c
+> > +++ b/drivers/md/dm.c
+> > @@ -1971,8 +1971,7 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
+> >         if (size != dm_get_size(md))
+> >                 memset(&md->geometry, 0, sizeof(md->geometry));
 > >
-> >         if (flags != 0)
-> >                 return -EINVAL;
+> > -       set_capacity(md->disk, size);
+> > -       bd_set_nr_sectors(md->bdev, size);
+> > +       set_capacity_and_notify(md->disk, size);
 > >
-> > Leave the fallback from all filesystems and check for the
-> > COPY_FILE_SPLICE flag inside generic_copy_file_range().
+> >         dm_table_event_callback(t, event_callback, md);
+> >
 > 
-> Ok, the diff bellow is just to make sure I understood your suggestion.
+> Not yet pinned down _why_ DM is calling set_capacity_and_notify() with
+> a size of 0 but, when running various DM regression tests, I'm seeing
+> a lot of noise like:
 > 
-> The patch will also need to:
+> [  689.240037] dm-2: detected capacity change from 2097152 to 0
 > 
->  - change nfs and overlayfs calls to vfs_copy_file_range() so that they
->    use the new flag.
-> 
->  - check flags in generic_copy_file_checks() to make sure only valid flags
->    are used (COPY_FILE_SPLICE at the moment).
-> 
-> Also, where should this flag be defined?  include/uapi/linux/fs.h?
+> Is this pr_info really useful?  Should it be moved to below: if
+> (!capacity || !size) so that it only prints if a uevent is sent?
 
-Why would userspace want/need this flag?
-
+In general I suspect such a size change might be interesting to users
+if it e.g. comes from a remote event.  So I'd be curious why this happens
+with DM, and if we can detect some higher level gendisk state to supress
+it if it is indeed spurious.
