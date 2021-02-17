@@ -2,150 +2,205 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 86D4731D3FE
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Feb 2021 03:44:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F57331D4B3
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Feb 2021 05:47:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229916AbhBQCns (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 16 Feb 2021 21:43:48 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:55795 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229480AbhBQCns (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 16 Feb 2021 21:43:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613529741;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xtoBrI8mZMBgjwlbe5bmMzFULP2d1A4vT95wG+ETeFU=;
-        b=X83AmZqntEubW+YbZu9I6OtSa54/YYsdlTLTRm1ihRRSQczxZcJhoBZ34IcnpI27Q+tHFL
-        FxLmP2GIFJRNCNVQEzcYCU0qnz92zkheCTSaM7j43JiNlp03lFoKBN3b/Agm187QeWf0os
-        OLJLMJHHSQdMNqh4vNsiz9q0cdMo5Lo=
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
- [209.85.166.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-298-DucjK2PnOO62zVmzj00n0A-1; Tue, 16 Feb 2021 21:42:18 -0500
-X-MC-Unique: DucjK2PnOO62zVmzj00n0A-1
-Received: by mail-il1-f199.google.com with SMTP id z16so9289393ilz.22
-        for <ceph-devel@vger.kernel.org>; Tue, 16 Feb 2021 18:42:18 -0800 (PST)
+        id S231317AbhBQEqw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 16 Feb 2021 23:46:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37154 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230453AbhBQEqe (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 16 Feb 2021 23:46:34 -0500
+Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C947C061786
+        for <ceph-devel@vger.kernel.org>; Tue, 16 Feb 2021 20:45:54 -0800 (PST)
+Received: by mail-vs1-xe35.google.com with SMTP id k1so1723646vso.6
+        for <ceph-devel@vger.kernel.org>; Tue, 16 Feb 2021 20:45:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uktxjKQwz4TfwBjCYOOJzA5Rs1qSh3+bpu7dP8/xG98=;
+        b=Ob7vhkngcs5SWjWVOtXougGOBUPgdqIiyzX5uKLWMlq6lQTrZ2PUjthoQjHous+cx7
+         d5pWfI4ADzGXpZb/8wNemgCNGcoJK7h2gX/SNiWUbKVfPuoN7gLueEhhCh06bQp2D4kj
+         nO7uch7pPugyX+oLuzb8DPlSpoKToPbcLYd6M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xtoBrI8mZMBgjwlbe5bmMzFULP2d1A4vT95wG+ETeFU=;
-        b=rUZtV8nWbOG5/YWcTLYAxoICQt1c+GmSoP1fqyWbScbAkUqHbOoTn3cOq/dhcaYj3S
-         latVY19mJpvVa5eYSpdya1ZBDNJAKnqK2Fbh+uQwwGDUm02oG1RHX7XiHTJsp6aM98UZ
-         /SSbotb4oNz2pey5nT0RZnEdbvAR14UQ23FvAg6/+Y9gYkEowpEriWroKZp01YUMJvls
-         hbx7nO9xf0VD6pSQY+qkRkDVeO/GLEqhnpwzVmLurAy1wrWwhZZGSb/iW9jQkDf15g/s
-         02BaUKjVVxrY3FnfnBnadLjUxAEOwnFKmejd9tA8bK3G5uEMivKCa1TtKu9pde9QnEui
-         VrVg==
-X-Gm-Message-State: AOAM533YE3wwmOQ4dzR7ByGctnoCk38fONcZj4im6VYNuzYdTKJEK0RJ
-        DNVPZegh8l0ilEK5+I54EoRD6YvBBN3lYTtR3zCWjB67BEo2PXYj/BYrHO1WgXwm0v5X8/h/nlJ
-        ZTyliJG0P4i8S90aW7d70Of6crW3dHmLy7gPuEw==
-X-Received: by 2002:a6b:144c:: with SMTP id 73mr19232862iou.69.1613529737595;
-        Tue, 16 Feb 2021 18:42:17 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyYHc9oHFSOn4la9GUWQpNQr7vA8ygqkGeHqluzP5jkgJswUM7z6N+vqOfmPHP9BNi+W5YbQmjtCJ3OXi6Mbr4=
-X-Received: by 2002:a6b:144c:: with SMTP id 73mr19232852iou.69.1613529737407;
- Tue, 16 Feb 2021 18:42:17 -0800 (PST)
+        bh=uktxjKQwz4TfwBjCYOOJzA5Rs1qSh3+bpu7dP8/xG98=;
+        b=Kf3GoWgG6J9AlArZCm93OjUJQ66lNGmK/fQEdj3Y+eXoW8NwlwVwAUE4SYPwJ7GG3x
+         o3hYR7LYOIEoHDF/fBO2Kv9IWeq/yRPda0tYRz2GesY/Vq9rpu9OIRxkm4EK1nKFJvgf
+         QpbcQTIcqMT1D0Yhx6t06K3tpgV0WlPRAA63RYpIRHOU29wrtbC7dR1pcoJrsEKo5iCi
+         yFfI3wnOgdiRw6rZQWSbmm50xSlRYtgZ8gUSujVsd1vGMDHTKQPW82xaA7VoI9pbVmOS
+         KnRBRXsaBXumhsXThWBcUVWNCF8Wi2XEEX0ke1oHIPL7nymJZ8eq8SyhXbwA6Knu8XN8
+         rkgw==
+X-Gm-Message-State: AOAM530qR/qmxupmJkTEZ1tJf702D8q1p1FaNXyc3FsKkyF9COROMaZC
+        zyKMl6ALmwrojbryLZgnpcwnPne8eM7A3Gn6TZ0Dww==
+X-Google-Smtp-Source: ABdhPJxI8u0RvnOp3BypDJ/HZUdf2uePEnqUeAieLHAvwOaNch0GOwf7JSOHb1NAP4ygE7Ttv2XRYC6P0KVm2+/QFtU=
+X-Received: by 2002:a67:8945:: with SMTP id l66mr13422008vsd.48.1613537153038;
+ Tue, 16 Feb 2021 20:45:53 -0800 (PST)
 MIME-Version: 1.0
-References: <20210119144430.337370-1-jlayton@kernel.org> <CAOi1vP-1_4eHzAKS3BP6_fL6=BgV1NCYy6-+0e+gyhC0ZnUTVw@mail.gmail.com>
- <abc7c5b147e3a6c50dcc2c00b4b39d04d555c66a.camel@kernel.org> <CAOi1vP_rAzr7GdD_C=X5qjq26eo34BqewC0YgTd_JLjNXOsZPQ@mail.gmail.com>
-In-Reply-To: <CAOi1vP_rAzr7GdD_C=X5qjq26eo34BqewC0YgTd_JLjNXOsZPQ@mail.gmail.com>
-From:   Patrick Donnelly <pdonnell@redhat.com>
-Date:   Tue, 16 Feb 2021 18:41:51 -0800
-Message-ID: <CA+2bHPYRzmJ=LVPa+vv8rcN+aLbbBQr4J1r_kEw8XZjyE52RmQ@mail.gmail.com>
-Subject: Re: [PATCH] ceph: enable async dirops by default
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>
+References: <CAOQ4uxiFGjdvX2-zh5o46pn7RZhvbGHH0wpzLPuPOom91FwWeQ@mail.gmail.com>
+ <20210215154317.8590-1-lhenriques@suse.de>
+In-Reply-To: <20210215154317.8590-1-lhenriques@suse.de>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Wed, 17 Feb 2021 12:45:41 +0800
+Message-ID: <CANMq1KCWF=yucGZ_DizvdzytW8RCXKPaQeC9huML2FJkqNWjQw@mail.gmail.com>
+Subject: Re: [PATCH v2] vfs: prevent copy_file_range to copy across devices
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Ian Lance Taylor <iant@google.com>,
+        Luis Lozano <llozano@chromium.org>, ceph-devel@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jan 20, 2021 at 4:24 AM Ilya Dryomov <idryomov@gmail.com> wrote:
+On Mon, Feb 15, 2021 at 11:42 PM Luis Henriques <lhenriques@suse.de> wrote:
 >
-> On Wed, Jan 20, 2021 at 1:00 PM Jeff Layton <jlayton@kernel.org> wrote:
-> >
-> > On Wed, 2021-01-20 at 11:46 +0100, Ilya Dryomov wrote:
-> > > On Tue, Jan 19, 2021 at 4:06 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > >
-> > > > This has been behaving reasonably well in testing, and enabling this
-> > > > offers significant performance benefits. Enable async dirops by default
-> > > > in the kclient going forward, and change show_options to add "wsync"
-> > > > when they are disabled.
-> > > >
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > ---
-> > > >  fs/ceph/super.c | 4 ++--
-> > > >  fs/ceph/super.h | 5 +++--
-> > > >  2 files changed, 5 insertions(+), 4 deletions(-)
-> > > >
-> > > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> > > > index 9b1b7f4cfdd4..884e2ffabfaf 100644
-> > > > --- a/fs/ceph/super.c
-> > > > +++ b/fs/ceph/super.c
-> > > > @@ -577,8 +577,8 @@ static int ceph_show_options(struct seq_file *m, struct dentry *root)
-> > > >         if (fsopt->flags & CEPH_MOUNT_OPT_CLEANRECOVER)
-> > > >                 seq_show_option(m, "recover_session", "clean");
-> > > >
-> > > > -       if (fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS)
-> > > > -               seq_puts(m, ",nowsync");
-> > > > +       if (!(fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS))
-> > > > +               seq_puts(m, ",wsync");
-> > > >
-> > > >         if (fsopt->wsize != CEPH_MAX_WRITE_SIZE)
-> > > >                 seq_printf(m, ",wsize=%u", fsopt->wsize);
-> > > > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> > > > index 13b02887b085..8ee2745f6257 100644
-> > > > --- a/fs/ceph/super.h
-> > > > +++ b/fs/ceph/super.h
-> > > > @@ -46,8 +46,9 @@
-> > > >  #define CEPH_MOUNT_OPT_ASYNC_DIROPS    (1<<15) /* allow async directory ops */
-> > > >
-> > > >  #define CEPH_MOUNT_OPT_DEFAULT                 \
-> > > > -       (CEPH_MOUNT_OPT_DCACHE |                \
-> > > > -        CEPH_MOUNT_OPT_NOCOPYFROM)
-> > > > +       (CEPH_MOUNT_OPT_DCACHE          |       \
-> > > > +        CEPH_MOUNT_OPT_NOCOPYFROM      |       \
-> > > > +        CEPH_MOUNT_OPT_ASYNC_DIROPS)
-> > > >
-> > > >  #define ceph_set_mount_opt(fsc, opt) \
-> > > >         (fsc)->mount_options->flags |= CEPH_MOUNT_OPT_##opt
-> > > > --
-> > > > 2.29.2
-> > > >
-> > >
-> > > Hi Jeff,
-> > >
-> > > Is it being tested by teuthology?   I see commit 4181742a3ba8 ("qa:
-> > > allow arbitrary mount options on kclient mounts"), but nothing beyond
-> > > that.  I think "nowsync" needs to be turned on and get at least some
-> > > nightly coverage before the default is flipped.
-> > >
-> > > Thanks,
-> > >
-> > >                 Ilya
-> >
-> > Good point. I had thought Patrick had added a qa variant that turned
-> > that on, but I don't think that ever got merged. We definitely need that
-> > enabled in QA before we make this the default.
-> >
-> > The catch is that we probably don't _always_ want nowsync enabled, so is
-> > there some way to randomize this? Or do we need some sort of yaml file
-> > that turns this on by request? What should we be aiming to do for this?
+> Nicolas Boichat reported an issue when trying to use the copy_file_range
+> syscall on a tracefs file.  It failed silently because the file content is
+> generated on-the-fly (reporting a size of zero) and copy_file_range needs
+> to know in advance how much data is present.
+
+Not sure if you have the whole history, these links and discussion can
+help if you want to expand on the commit message:
+[1] http://issuetracker.google.com/issues/178332739
+[2] https://lkml.org/lkml/2021/1/25/64
+[3] https://lkml.org/lkml/2021/1/26/1736
+[4] https://patchwork.kernel.org/project/linux-fsdevel/cover/20210212044405.4120619-1-drinkcat@chromium.org/
+
+> This commit restores the cross-fs restrictions that existed prior to
+> 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") and
+> removes generic_copy_file_range() calls from ceph, cifs, fuse, and nfs.
+
+It goes beyond that, I think this also prevents copies within the same
+FS if copy_file_range is not implemented. Which is IMHO a good thing
+since this has been broken on procfs and friends ever since
+copy_file_range was implemented (but I assume that nobody ever hit
+that before cross-fs became available).
+
 >
-> It can be randomized, you can choose to run a particular set of
-> jobs with both wsync and nowsync and the rest only with wsync or the
-> other way around, etc.  Completely up to you, depending on the sort
-> of coverage you want to get (weighted by the number of jobs added to
-> the suite).
+> Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
+> Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
+> Cc: Nicolas Boichat <drinkcat@chromium.org>
 
-I wrote up a quick PR for this: https://github.com/ceph/ceph/pull/39505
+You could replace that with Reported-by: Nicolas Boichat <drinkcat@chromium.org>
 
--- 
-Patrick Donnelly, Ph.D.
-He / Him / His
-Principal Software Engineer
-Red Hat Sunnyvale, CA
-GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+> Signed-off-by: Luis Henriques <lhenriques@suse.de>
+> ---
+> Changes since v1 (after Amir review)
+> - restored do_copy_file_range() helper
+> - return -EOPNOTSUPP if fs doesn't implement CFR
+> - updated commit description
+>
+>  fs/ceph/file.c     | 21 +++-----------------
+>  fs/cifs/cifsfs.c   |  3 ---
+>  fs/fuse/file.c     | 21 +++-----------------
+>  fs/nfs/nfs4file.c  | 20 +++----------------
+>  fs/read_write.c    | 49 ++++++++++------------------------------------
+>  include/linux/fs.h |  3 ---
+>  6 files changed, 19 insertions(+), 98 deletions(-)
+>
+[snip]
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index 75f764b43418..b217cd62ae0d 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -1358,40 +1358,12 @@ COMPAT_SYSCALL_DEFINE4(sendfile64, int, out_fd, int, in_fd,
+>  }
+>  #endif
+>
+> -/**
+> - * generic_copy_file_range - copy data between two files
+> - * @file_in:   file structure to read from
+> - * @pos_in:    file offset to read from
+> - * @file_out:  file structure to write data to
+> - * @pos_out:   file offset to write data to
+> - * @len:       amount of data to copy
+> - * @flags:     copy flags
+> - *
+> - * This is a generic filesystem helper to copy data from one file to another.
+> - * It has no constraints on the source or destination file owners - the files
+> - * can belong to different superblocks and different filesystem types. Short
+> - * copies are allowed.
+> - *
+> - * This should be called from the @file_out filesystem, as per the
+> - * ->copy_file_range() method.
+> - *
+> - * Returns the number of bytes copied or a negative error indicating the
+> - * failure.
+> - */
+> -
+> -ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
+> -                               struct file *file_out, loff_t pos_out,
+> -                               size_t len, unsigned int flags)
+> -{
+> -       return do_splice_direct(file_in, &pos_in, file_out, &pos_out,
+> -                               len > MAX_RW_COUNT ? MAX_RW_COUNT : len, 0);
+> -}
+> -EXPORT_SYMBOL(generic_copy_file_range);
+> -
+>  static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
+>                                   struct file *file_out, loff_t pos_out,
+>                                   size_t len, unsigned int flags)
+>  {
+> +       ssize_t ret = -EXDEV;
+> +
+>         /*
+>          * Although we now allow filesystems to handle cross sb copy, passing
+>          * a file of the wrong filesystem type to filesystem driver can result
+> @@ -1400,14 +1372,14 @@ static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
+>          * several different file_system_type structures, but they all end up
+>          * using the same ->copy_file_range() function pointer.
+>          */
+> -       if (file_out->f_op->copy_file_range &&
+> -           file_out->f_op->copy_file_range == file_in->f_op->copy_file_range)
+> -               return file_out->f_op->copy_file_range(file_in, pos_in,
+> -                                                      file_out, pos_out,
+> -                                                      len, flags);
+> +       if (!file_out->f_op->copy_file_range)
+> +               ret = -EOPNOTSUPP;
 
+This doesn't work as the 0-filesize check is done before that in
+vfs_copy_file_range (so the syscall still returns 0, works fine if you
+comment out `if (len == 0)`).
+
+Also, you need to check for file_in->f_op->copy_file_range instead,
+the problem is if the _input_ filesystem doesn't report sizes or can't
+seek properly.
+
+> +       else if (file_out->f_op->copy_file_range == file_in->f_op->copy_file_range)
+> +               ret = file_out->f_op->copy_file_range(file_in, pos_in,
+> +                                                     file_out, pos_out,
+> +                                                     len, flags);
+>
+> -       return generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+> -                                      flags);
+> +       return ret;
+>  }
+>
+>  /*
+> @@ -1514,8 +1486,7 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+>         }
+>
+>         ret = do_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+> -                               flags);
+> -       WARN_ON_ONCE(ret == -EOPNOTSUPP);
+> +                                flags);
+>  done:
+>         if (ret > 0) {
+>                 fsnotify_access(file_in);
