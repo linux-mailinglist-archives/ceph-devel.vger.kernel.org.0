@@ -2,238 +2,74 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 72CF831F497
-	for <lists+ceph-devel@lfdr.de>; Fri, 19 Feb 2021 06:10:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15DE331F62C
+	for <lists+ceph-devel@lfdr.de>; Fri, 19 Feb 2021 10:03:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229515AbhBSFKn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 19 Feb 2021 00:10:43 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31944 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229481AbhBSFKm (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 19 Feb 2021 00:10:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1613711354;
+        id S229934AbhBSJDM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 19 Feb 2021 04:03:12 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:57160 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229527AbhBSJCW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 19 Feb 2021 04:02:22 -0500
+Date:   Fri, 19 Feb 2021 10:01:38 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1613725300;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=XELPbrSVVRXSQJlygNes1MWCtjXaYPzMTU1cNnIrP7Q=;
-        b=cK3RhlvBf1ViGeox58ri6uy+2NwJXc/ZNr69HbLF5/kG7v1lRe2biNJkPc2OzMLYX2NRds
-        qnMwucHx/b0usTChyBYkMOVj7oePQ3sti2UJ876T58MTsFYzznziZ1JaNn7bF+HzwnuX5q
-        P63/zFQjr/Werr6q2MlJ6XzJX7f/qaQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-105-EDp9afNuMfKQJrNh8oq7ug-1; Fri, 19 Feb 2021 00:09:12 -0500
-X-MC-Unique: EDp9afNuMfKQJrNh8oq7ug-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0C35780196C;
-        Fri, 19 Feb 2021 05:09:11 +0000 (UTC)
-Received: from [10.72.12.190] (ovpn-12-190.pek2.redhat.com [10.72.12.190])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2E3092D035;
-        Fri, 19 Feb 2021 05:09:04 +0000 (UTC)
-Subject: Re: [PATCH v2 1/6] ceph: disable old fscache readpage handling
-To:     Jeff Layton <jlayton@kernel.org>, dhowells@redhat.com,
-        idryomov@gmail.com
-Cc:     ceph-devel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org
-References: <20210217125845.10319-1-jlayton@kernel.org>
- <20210217125845.10319-2-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <d6fcd45c-21eb-d00e-db8a-f2e9441d7f85@redhat.com>
-Date:   Fri, 19 Feb 2021 13:09:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        bh=sYMGdW4tGOh6IMOmWxCR9Phs/sS0FjTOFTf7PQrG6oI=;
+        b=gir2DZ0wP8bxN9dHORw8D3+mvJZh1CTbn86oQQ2TJl4WLkJhoYABpoCKoEzZ1VmA9++KeL
+        JsuVvptcepy6skOBehV0KRVpbQYqzmGC4lkdJ5/KT9R+51sm9nE88lfTys/+NKPBrwF15E
+        J6H54/iLAGX+Nm98w37D7IhYlMFGUplQM+g9Tymtfy4TIm/ORQ3sFmq6CdaHVrkGr0oNDK
+        edD/7xitnMm8poVwB+0CjJp3LOfN0DY53Os+lv1HDE0NCFIfNDK++rQK+BQYpH9EaPy/mg
+        qK0cZ/bOck6QSW7wXl0+BL6eWfvn+w5WF3b7B/FpD6BXCILmDV/yEKyXZVFZsA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1613725300;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sYMGdW4tGOh6IMOmWxCR9Phs/sS0FjTOFTf7PQrG6oI=;
+        b=cnhYW2LGCMeyzE+bK/JwqeT8ncoeasHmG5Ij57QrePvmlINfXPYKRoln4aGihuCrTajOqH
+        CjRRuRuh7C+CzDBw==
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        Jeff Layton <jlayton@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-cachefs@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
+        linux-afs@lists.infradead.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>,
+        David Wysochanski <dwysocha@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 34/33] netfs: Pass flag rather than use in_softirq()
+Message-ID: <20210219090138.c5w7dnf7llaw4rar@linutronix.de>
+References: <20210216093044.GA24615@lst.de>
+ <20210216084230.GA23669@lst.de>
+ <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk>
+ <1376938.1613429183@warthog.procyon.org.uk>
+ <1419965.1613467771@warthog.procyon.org.uk>
+ <2017129.1613656956@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20210217125845.10319-2-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2017129.1613656956@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2021/2/17 20:58, Jeff Layton wrote:
-> With the new netfs read helper functions, we won't need a lot of this
-> infrastructure as it handles the pagecache pages itself. Rip out the
-> read handling for now, and much of the old infrastructure that deals in
-> individual pages.
->
-> The cookie handling is mostly unchanged, however.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> Cc: ceph-devel@vger.kernel.org
-> Cc: linux-cachefs@redhat.com
-> Cc: linux-fsdevel@vger.kernel.org
-> ---
->   fs/ceph/addr.c  |  31 +-----------
->   fs/ceph/cache.c | 125 ------------------------------------------------
->   fs/ceph/cache.h |  91 +----------------------------------
->   fs/ceph/caps.c  |   9 ----
->   4 files changed, 3 insertions(+), 253 deletions(-)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 950552944436..2b17bb36e548 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -155,8 +155,6 @@ static void ceph_invalidatepage(struct page *page, unsigned int offset,
->   		return;
->   	}
->   
-> -	ceph_invalidate_fscache_page(inode, page);
-> -
->   	WARN_ON(!PageLocked(page));
->   	if (!PagePrivate(page))
->   		return;
-> @@ -175,10 +173,6 @@ static int ceph_releasepage(struct page *page, gfp_t g)
->   	dout("%p releasepage %p idx %lu (%sdirty)\n", page->mapping->host,
->   	     page, page->index, PageDirty(page) ? "" : "not ");
->   
-> -	/* Can we release the page from the cache? */
-> -	if (!ceph_release_fscache_page(page, g))
-> -		return 0;
-> -
->   	return !PagePrivate(page);
->   }
->   
-> @@ -213,10 +207,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
->   		return 0;
->   	}
->   
-> -	err = ceph_readpage_from_fscache(inode, page);
-> -	if (err == 0)
-> -		return -EINPROGRESS;
-> -
->   	dout("readpage ino %llx.%llx file %p off %llu len %llu page %p index %lu\n",
->   	     vino.ino, vino.snap, filp, off, len, page, page->index);
->   	req = ceph_osdc_new_request(osdc, &ci->i_layout, vino, off, &len, 0, 1,
-> @@ -241,7 +231,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
->   	if (err == -ENOENT)
->   		err = 0;
->   	if (err < 0) {
-> -		ceph_fscache_readpage_cancel(inode, page);
->   		if (err == -EBLOCKLISTED)
->   			fsc->blocklisted = true;
->   		goto out;
-> @@ -253,8 +242,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
->   		flush_dcache_page(page);
->   
->   	SetPageUptodate(page);
-> -	ceph_readpage_to_fscache(inode, page);
-> -
->   out:
->   	return err < 0 ? err : 0;
->   }
-> @@ -294,10 +281,8 @@ static void finish_read(struct ceph_osd_request *req)
->   	for (i = 0; i < num_pages; i++) {
->   		struct page *page = osd_data->pages[i];
->   
-> -		if (rc < 0 && rc != -ENOENT) {
-> -			ceph_fscache_readpage_cancel(inode, page);
-> +		if (rc < 0 && rc != -ENOENT)
->   			goto unlock;
-> -		}
->   		if (bytes < (int)PAGE_SIZE) {
->   			/* zero (remainder of) page */
->   			int s = bytes < 0 ? 0 : bytes;
-> @@ -307,7 +292,6 @@ static void finish_read(struct ceph_osd_request *req)
->   		     page->index);
->   		flush_dcache_page(page);
->   		SetPageUptodate(page);
-> -		ceph_readpage_to_fscache(inode, page);
->   unlock:
->   		unlock_page(page);
->   		put_page(page);
-> @@ -408,7 +392,6 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
->   		     page->index);
->   		if (add_to_page_cache_lru(page, &inode->i_data, page->index,
->   					  GFP_KERNEL)) {
-> -			ceph_fscache_uncache_page(inode, page);
->   			put_page(page);
->   			dout("start_read %p add_to_page_cache failed %p\n",
->   			     inode, page);
-> @@ -440,10 +423,8 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
->   	return nr_pages;
->   
->   out_pages:
-> -	for (i = 0; i < nr_pages; ++i) {
-> -		ceph_fscache_readpage_cancel(inode, pages[i]);
-> +	for (i = 0; i < nr_pages; ++i)
->   		unlock_page(pages[i]);
-> -	}
->   	ceph_put_page_vector(pages, nr_pages, false);
->   out_put:
->   	ceph_osdc_put_request(req);
-> @@ -471,12 +452,6 @@ static int ceph_readpages(struct file *file, struct address_space *mapping,
->   	if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
->   		return -EINVAL;
->   
-> -	rc = ceph_readpages_from_fscache(mapping->host, mapping, page_list,
-> -					 &nr_pages);
-> -
-> -	if (rc == 0)
-> -		goto out;
-> -
->   	rw_ctx = ceph_find_rw_context(fi);
->   	max = fsc->mount_options->rsize >> PAGE_SHIFT;
->   	dout("readpages %p file %p ctx %p nr_pages %d max %d\n",
-> @@ -487,8 +462,6 @@ static int ceph_readpages(struct file *file, struct address_space *mapping,
->   			goto out;
->   	}
->   out:
-> -	ceph_fscache_readpages_cancel(inode, page_list);
-> -
->   	dout("readpages %p file %p ret %d\n", inode, file, rc);
->   	return rc;
->   }
-> diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
-> index 2f5cb6bc78e1..9cfadbb86568 100644
-> --- a/fs/ceph/cache.c
-> +++ b/fs/ceph/cache.c
-> @@ -173,7 +173,6 @@ void ceph_fscache_unregister_inode_cookie(struct ceph_inode_info* ci)
->   
->   	ci->fscache = NULL;
->   
-> -	fscache_uncache_all_inode_pages(cookie, &ci->vfs_inode);
->   	fscache_relinquish_cookie(cookie, &ci->i_vino, false);
->   }
->   
-> @@ -194,7 +193,6 @@ void ceph_fscache_file_set_cookie(struct inode *inode, struct file *filp)
->   		dout("fscache_file_set_cookie %p %p disabling cache\n",
->   		     inode, filp);
->   		fscache_disable_cookie(ci->fscache, &ci->i_vino, false);
-> -		fscache_uncache_all_inode_pages(ci->fscache, inode);
->   	} else {
->   		fscache_enable_cookie(ci->fscache, &ci->i_vino, i_size_read(inode),
->   				      ceph_fscache_can_enable, inode);
-> @@ -205,108 +203,6 @@ void ceph_fscache_file_set_cookie(struct inode *inode, struct file *filp)
->   	}
->   }
->   
-> -static void ceph_readpage_from_fscache_complete(struct page *page, void *data, int error)
-> -{
-> -	if (!error)
-> -		SetPageUptodate(page);
-> -
-> -	unlock_page(page);
-> -}
-> -
-> -static inline bool cache_valid(struct ceph_inode_info *ci)
-> -{
-> -	return ci->i_fscache_gen == ci->i_rdcache_gen;
-> -}
-> -
+On 2021-02-18 14:02:36 [+0000], David Howells wrote:
+> How about the attached instead?
 
-Hi Jeff,
+Thank you for that flag.
 
-Please delete the "i_fscache_gen" member from the struct ceph_inode_info 
-if we are not using it any more.
+> David
 
-Thanks
-
-Xiubo
-
-
+Sebastian
