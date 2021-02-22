@@ -2,241 +2,337 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 818A5321A86
-	for <lists+ceph-devel@lfdr.de>; Mon, 22 Feb 2021 15:49:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DBDB321CEC
+	for <lists+ceph-devel@lfdr.de>; Mon, 22 Feb 2021 17:29:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230071AbhBVOrs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 22 Feb 2021 09:47:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51670 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229991AbhBVOrr (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 22 Feb 2021 09:47:47 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7676064E32;
-        Mon, 22 Feb 2021 14:47:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614005224;
-        bh=HzplLp2O3fW08T3Ezea3Vba0aB1IfGHNS5Ygv3Ql8u4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=q2M2AyQmofYlzngMHhTvd19537tZ0k3jktsIBYVLVBnJ2ipuG1IndrLdRWnu7ceBu
-         XV7eoOlWiFFvY5V8QpkXI71mJ+N3s05mJLaf0vL1AAypAcpGqZctV0fzYs5z542eF+
-         HNZRF4jGfgeRPQHF6eE8tBviFyx3HPpIpd0PrzimTKOpUA4JId+71Wvq8dt9YqoR/z
-         bpYKP4fYa2QbXN6j8YBXdKrNA+82AgQCiGJG2lv+tKnbuKGlB+U59uHQ5dNHmuyqeR
-         /TJKKILiCwg+ZpUaaD8GC20NEHkmCUqlvDw9fdVtmvvGhPLv5vCHL6OSnWtX4grTmU
-         gibN1AoFAE9mQ==
-Message-ID: <5bb9b183ea568b9fab098c3e8bdd03fba13673df.camel@kernel.org>
-Subject: Re: [PATCH v2 1/6] ceph: disable old fscache readpage handling
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>, dhowells@redhat.com,
-        idryomov@gmail.com
-Cc:     ceph-devel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org
-Date:   Mon, 22 Feb 2021 09:47:02 -0500
-In-Reply-To: <d6fcd45c-21eb-d00e-db8a-f2e9441d7f85@redhat.com>
-References: <20210217125845.10319-1-jlayton@kernel.org>
-         <20210217125845.10319-2-jlayton@kernel.org>
-         <d6fcd45c-21eb-d00e-db8a-f2e9441d7f85@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        id S231899AbhBVQ2K (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 22 Feb 2021 11:28:10 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:41470 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231707AbhBVQ1T (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 22 Feb 2021 11:27:19 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11MGJs0Y142729;
+        Mon, 22 Feb 2021 16:25:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2020-01-29;
+ bh=D0JAex6wc6RESESBHuPeFY2wFRwnb8lGc8BmIRFOcJ4=;
+ b=WcYtJkMHryxfm4LoC6vrpTeHRy2yDWSnmztMWAHxPx1SEnbjm+cCYi2cVs7tZ0SsEM3E
+ qgCq2ihjpRxYWV/jnNH6C4kFOq8nKoHMVO36ETM50of93lXnEss+25ezVR7hbBR6taCx
+ pYkucxLy6M3Elc0AMpZYvlwvSPsB85s9hC09SHEOT6lQopUf+Hzyrdc7MrYXrA3iCtg6
+ ulTKiBDZjcUzIs/9C9u16zqvL2Be74+bMQMpWqyjS3sAX1925UQPhUqnxUKM8L1tqdnb
+ D9fZ5q86Zby0sZNkXq3q/YrFCzWz8GYIYtAt9Pq6BdunDtUs/ErXIdmioyI+TZxDZB9/ Zw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 36ttcm47ey-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Feb 2021 16:25:35 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11MGKIS4116470;
+        Mon, 22 Feb 2021 16:25:35 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
+        by aserp3030.oracle.com with ESMTP id 36v9m3fp8u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Feb 2021 16:25:34 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LX1bT5SU/1r8vhK4EIhbmXRqdVxN7et20vu5Ewy+BqFk6Ex7JJ35gMztU1QJoDIxEU1qo+I9DBP27SYIY625LeLPsbNIxqW7H2DLrzgQ6n2SfwloQfxU4ceB5yIDenx/0bh3hXnlpTwtYjeqi/G8t7rYfEMSb4gxYCy7waQEF0lasKnjGLBOZNp1oe4FhtTgF7I9mhtlDTeZVnddkdOpJJumR5tqrfbrnoxWt1NB8Fj9d3L0UUkMU/kkXgfXNBgRtl5uwYzOG/aM4vHUcZUxaYHntVeAgdLlDaNwzF8aGkT/NgRF8S7slZoQKdoyEEDkxZTXgJ9yBlsW44mBGIeDXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D0JAex6wc6RESESBHuPeFY2wFRwnb8lGc8BmIRFOcJ4=;
+ b=V/fUq6BjeWV93vtIDMKyaEtlh6rxwe/R11tgr+FUIcCgTmwNe4voCOmMcm5uDAIVLobnWLDR642gOll8ncT/qk6K73g66XYagmLljhCPdxZqMUqneiddlXzQvuVmt8Ae7/v/ZxDSUHNxiu3gnMC9w8wwgo6esFKbzVur4kSINYzJAUcshEpmmb4Mbat2ItelV6vug1VrsaVspcLTZjovkYzQO2l1JoZYPaMUiZpdfohy5qTEf+CBdYHhkmy3/uv8FTQIRCPwYbe+xOq9Oy5ZZK2Kg85Q6JVXclMmeMksSXeTZx6IKQY7NTMVtb2wPpxfhgsQtd02Mp+8TD31QcHKQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D0JAex6wc6RESESBHuPeFY2wFRwnb8lGc8BmIRFOcJ4=;
+ b=l6hWJuDfp82eG2gvljrWkNPd4nDgRW+UNC2mK5P73+H/aAiUd2mY2k9iR3Clv+J8IybRudTsdnysf997ybfVK5U9/fcu0gEOt9hnJYQIjRWHIIN/w83cfn7NQfVS333tgSGa0Xd0pkB1W9RVHcef+SNN9S6b6unl6yFuAhCfyQ8=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=oracle.com;
+Received: from BY5PR10MB4257.namprd10.prod.outlook.com (2603:10b6:a03:211::21)
+ by BYAPR10MB2710.namprd10.prod.outlook.com (2603:10b6:a02:b5::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3868.29; Mon, 22 Feb
+ 2021 16:25:32 +0000
+Received: from BY5PR10MB4257.namprd10.prod.outlook.com
+ ([fe80::a5bc:c1ab:3bf1:1fe8]) by BY5PR10MB4257.namprd10.prod.outlook.com
+ ([fe80::a5bc:c1ab:3bf1:1fe8%6]) with mapi id 15.20.3868.033; Mon, 22 Feb 2021
+ 16:25:32 +0000
+Subject: Re: [PATCH v8] vfs: fix copy_file_range regression in cross-fs copies
+To:     Luis Henriques <lhenriques@suse.de>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Ian Lance Taylor <iant@google.com>,
+        Luis Lozano <llozano@chromium.org>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Olga Kornievskaia <aglo@umich.edu>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
+References: <20210221195833.23828-1-lhenriques@suse.de>
+ <20210222102456.6692-1-lhenriques@suse.de>
+From:   dai.ngo@oracle.com
+Message-ID: <26a22719-427a-75cf-92eb-dda10d442ded@oracle.com>
+Date:   Mon, 22 Feb 2021 08:25:27 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.7.1
+In-Reply-To: <20210222102456.6692-1-lhenriques@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [72.219.112.78]
+X-ClientProxiedBy: SA9PR10CA0017.namprd10.prod.outlook.com
+ (2603:10b6:806:a7::22) To BY5PR10MB4257.namprd10.prod.outlook.com
+ (2603:10b6:a03:211::21)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from dhcp-10-154-137-111.vpn.oracle.com (72.219.112.78) by SA9PR10CA0017.namprd10.prod.outlook.com (2603:10b6:806:a7::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3868.27 via Frontend Transport; Mon, 22 Feb 2021 16:25:29 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 89beccc8-cf9c-4915-2281-08d8d74e79ac
+X-MS-TrafficTypeDiagnostic: BYAPR10MB2710:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <BYAPR10MB271041102AC6EA67E66B05F487819@BYAPR10MB2710.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: N1hPMzQsIWjYS3fw/vI3f8WeIKqyH2TFDiNV5fXk9e9hrnbkBA/uRl9Ec2EN92dZudBnfIL9IP4jmmFQv2VgRGn9cv7CkENmIni9kJGxT3LQI1fh2jW15Wp0zcyU/xlc2PBImZJyvKXwrpJomdGrJUqYvTnyWey1xN0tp2E6wcYXRMcz6drgLofxAnnAH/jnV6ygiTPpp+hD/rnB+8buFL33eTAO/XuKg/JnZmWAw4nv74EL1dQc99+TFGiZCXvWhcyXc9YCcaf2fdN2ZU3BZnWhJkTwzuU7d3hgzquCszmiFVrzaAa9Q2nrIfOZxfIbEHjeEnTsw6qa0gL3sQyxEW9P/c1kDU3KfK56eH2qOjH/5wo0Gzi8Bp6LA0M3O7DwvEzuGWMQCjfgdVciWk9hY7NgboIjXDgufP9jfBWLOXCRWpqN+B8mxMHneVAtYQ7mAOHKZEucAyQThx1ZDewj9QESTrKqKvpWEN3zIaHbIBU+Yihvs2wMS+EvFQC/3B+xgBaY6jn2tBUOFM5HE59VPsBCdVtk0to3sddhvfRdKLLl5rfPmAN4IUYocZgaRqRDQz3G1UQei3Enz04fgQn1hBvS3vONt4E7G9pJOZ/8Oj1rD/Cke9pWRQS1Ea1jUTzRmpDS8t3p/FRr2cg98qWidazmgQmiUj26ENN3+vIMtj4=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB4257.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(39860400002)(346002)(396003)(366004)(136003)(66476007)(66946007)(66556008)(921005)(7416002)(53546011)(110136005)(956004)(4326008)(316002)(26005)(8936002)(86362001)(6486002)(186003)(2616005)(966005)(7696005)(478600001)(16526019)(5660300002)(31696002)(36756003)(2906002)(31686004)(9686003)(8676002)(83380400001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?cjdvOFZRYUJFc2ptZy9UZGhQOTAvRnVEbGJxNFM3UTh5LzI2OFlRdGppVG82?=
+ =?utf-8?B?N0QrSVJwL2E4ZGZhSlpBNUprT3RxRFM3aDVHMFF3S3FnMU5yaU45NWpDR2Zh?=
+ =?utf-8?B?cklDL3pZVlpaRHl5OGY0M3JLY3ZvNU1hYXNqanlyd201QmtWeHYveTh0WC9R?=
+ =?utf-8?B?b0NMRXZGaHM2ZTZndXFSWjU3c3BuUzdOcmJoSFRHQmE1YmNpcnJaRy9aaThF?=
+ =?utf-8?B?dUNYaTJwdlErYkV4cmJjOGdQUlU1ZzluQm5zSVBQOGFheTRqZDBGTlhzUEZ3?=
+ =?utf-8?B?ZHZjZktydXRNV3JzS1hJdEVWenFSU1h0L0ZJQzQxczRRTElNUjd2NmpOV2ZN?=
+ =?utf-8?B?YldseFlpUVE5eSs0WnFkbEowZUNJVmppelFBMkZNV2VRU0R3ODdPakcxVXRn?=
+ =?utf-8?B?SnpTTlcvU2pGSTB6NVJoY2h1aTdUZnFmMFBsUEl4MUNNcUdNbENCSFVsUHhu?=
+ =?utf-8?B?NG1UMU1sMVhWZG42RTBUWXdrZEJtNVNkcFpTNzM5bDR1bzg5WTViREcxUElD?=
+ =?utf-8?B?NmpLbWNQYzVkV3V3NVJWeFZZUkNUbGNWWmZjVkFoWjBFQ0Q2Tmx2MFdWWGMw?=
+ =?utf-8?B?eVdMMDNEbE9yMFUrTG84TUhUOXNPOGw3a2lDa3dnb21yZXMwZEprdzlSb05T?=
+ =?utf-8?B?NGh0VXlFa2tkWExNNlI2b2hxVmZCeFhHSU5wRmRRVjBWNDFyczdpK0E4YzFy?=
+ =?utf-8?B?THQ5RkhHR0JOTmVJZHN5YTQwbGZ3Q0VKbk1peDh1bFJBZzBybkFvY1BZYjIr?=
+ =?utf-8?B?U1lwd0k0ams1akFDN3owTXp6TVBwYUJMbGUxRWJIdFBSR2Y5dWZHMFNXSEkr?=
+ =?utf-8?B?MFVNeTRlR2k0c21UWVYyUXVpczJqNTRHTVJQQnd5ZitkbytzNXhHQkhmcElK?=
+ =?utf-8?B?Q3BSaWo0bmhKdGVJd0hCcWdFdEtPUm8yWlVvWHRGMW1ZbjlRbm50Z0JOWERu?=
+ =?utf-8?B?cUNFRUp0QzRIZ1kxS1huaWE4S250TXA1aGZUb2h4VkFvMzdpUmsybnpGS1Rz?=
+ =?utf-8?B?NzR1dnBxNG5EcGphYWZPMTJnZ0FTQlF5OElXOG95Q1JUeDVSQnJ6V1BBVTY3?=
+ =?utf-8?B?WGg4clhndEFkZnpBK252d1VFQzVGcUYvTkk2c2xxSlkzYlNnRFlqRXdVS2dE?=
+ =?utf-8?B?N0F1UWQxZXQvQ2g5WHRmZGRBTnRUNW5KWGh1WitMSWY1K1o5cjNoM3hKMk9p?=
+ =?utf-8?B?My9zNDFkTHROdVU5RTB0VzliMXJzOVBTQTl2WmJtOGZHblNMamd5ZkFLWjJW?=
+ =?utf-8?B?VlpjM3FOL3BmMmRxRzVhOHJPMXZSamo5QTIvUWppZGhGdEdGdlZtdDgxZHBl?=
+ =?utf-8?B?Y0FtaVlXUjdabnRSOU1kVDU2YTF5ZFpTYlFjY1lCL2taZnRybW5pREFmYm9K?=
+ =?utf-8?B?OGY1TEZNcTd0cEJzKzBueUt5REN1WUc5amprb0FUZ3dtZU8zU2dnSEN0VEdl?=
+ =?utf-8?B?aUxjOTd6U25JaXErckZhc1JDUkd5R2lxdENzWGhRQkZpVGJvQ3R3aHg0YWRQ?=
+ =?utf-8?B?Rm42eG5pa3ovVzlFKytpU1oxUDRRNS8yOUJrUEpuMlFZOVZteU0wSXlyYXRw?=
+ =?utf-8?B?b2l1ZHNtYW8vMlhydTQwWXhwK2hEOEprMUJVaHdBTnQ0L0RmT01Pdk5lanpw?=
+ =?utf-8?B?NU43bVJuN0dqTUE5b2NKeitMcXVKa2xOQVJqaGpWS0ZGMXB0UWVjMUpkUnRl?=
+ =?utf-8?B?bXRwQVBpQzlOUnZiSUVZd3J2RjZDNWVjZTAvcVUvQlF2d3BFU3psWjcycytT?=
+ =?utf-8?Q?/Z87VBHxe3I6drihbvoMQbZb+vfKT+rmWdwXJDc?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89beccc8-cf9c-4915-2281-08d8d74e79ac
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR10MB4257.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2021 16:25:32.3552
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QnD/yZJLfTYIcTDa+I5JL1EpEZsNmZfkmGyrXyPfXNwDdZBywqNe5m4ZVOJyizeyQSY8OTsTS7CAfPRn4ggpZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB2710
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9903 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0
+ suspectscore=0 mlxlogscore=999 mlxscore=0 spamscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102220149
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9903 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ lowpriorityscore=0 spamscore=0 mlxscore=0 bulkscore=0 clxscore=1011
+ priorityscore=1501 malwarescore=0 impostorscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102220149
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2021-02-19 at 13:09 +0800, Xiubo Li wrote:
-> On 2021/2/17 20:58, Jeff Layton wrote:
-> > With the new netfs read helper functions, we won't need a lot of this
-> > infrastructure as it handles the pagecache pages itself. Rip out the
-> > read handling for now, and much of the old infrastructure that deals in
-> > individual pages.
-> > 
-> > The cookie handling is mostly unchanged, however.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > Cc: ceph-devel@vger.kernel.org
-> > Cc: linux-cachefs@redhat.com
-> > Cc: linux-fsdevel@vger.kernel.org
-> > ---
-> >   fs/ceph/addr.c  |  31 +-----------
-> >   fs/ceph/cache.c | 125 ------------------------------------------------
-> >   fs/ceph/cache.h |  91 +----------------------------------
-> >   fs/ceph/caps.c  |   9 ----
-> >   4 files changed, 3 insertions(+), 253 deletions(-)
-> > 
-> > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> > index 950552944436..2b17bb36e548 100644
-> > --- a/fs/ceph/addr.c
-> > +++ b/fs/ceph/addr.c
-> > @@ -155,8 +155,6 @@ static void ceph_invalidatepage(struct page *page, unsigned int offset,
-> >   		return;
-> >   	}
-> >   
-> > 
-> > -	ceph_invalidate_fscache_page(inode, page);
-> > -
-> >   	WARN_ON(!PageLocked(page));
-> >   	if (!PagePrivate(page))
-> >   		return;
-> > @@ -175,10 +173,6 @@ static int ceph_releasepage(struct page *page, gfp_t g)
-> >   	dout("%p releasepage %p idx %lu (%sdirty)\n", page->mapping->host,
-> >   	     page, page->index, PageDirty(page) ? "" : "not ");
-> >   
-> > 
-> > -	/* Can we release the page from the cache? */
-> > -	if (!ceph_release_fscache_page(page, g))
-> > -		return 0;
-> > -
-> >   	return !PagePrivate(page);
-> >   }
-> >   
-> > 
-> > @@ -213,10 +207,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
-> >   		return 0;
-> >   	}
-> >   
-> > 
-> > -	err = ceph_readpage_from_fscache(inode, page);
-> > -	if (err == 0)
-> > -		return -EINPROGRESS;
-> > -
-> >   	dout("readpage ino %llx.%llx file %p off %llu len %llu page %p index %lu\n",
-> >   	     vino.ino, vino.snap, filp, off, len, page, page->index);
-> >   	req = ceph_osdc_new_request(osdc, &ci->i_layout, vino, off, &len, 0, 1,
-> > @@ -241,7 +231,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
-> >   	if (err == -ENOENT)
-> >   		err = 0;
-> >   	if (err < 0) {
-> > -		ceph_fscache_readpage_cancel(inode, page);
-> >   		if (err == -EBLOCKLISTED)
-> >   			fsc->blocklisted = true;
-> >   		goto out;
-> > @@ -253,8 +242,6 @@ static int ceph_do_readpage(struct file *filp, struct page *page)
-> >   		flush_dcache_page(page);
-> >   
-> > 
-> >   	SetPageUptodate(page);
-> > -	ceph_readpage_to_fscache(inode, page);
-> > -
-> >   out:
-> >   	return err < 0 ? err : 0;
-> >   }
-> > @@ -294,10 +281,8 @@ static void finish_read(struct ceph_osd_request *req)
-> >   	for (i = 0; i < num_pages; i++) {
-> >   		struct page *page = osd_data->pages[i];
-> >   
-> > 
-> > -		if (rc < 0 && rc != -ENOENT) {
-> > -			ceph_fscache_readpage_cancel(inode, page);
-> > +		if (rc < 0 && rc != -ENOENT)
-> >   			goto unlock;
-> > -		}
-> >   		if (bytes < (int)PAGE_SIZE) {
-> >   			/* zero (remainder of) page */
-> >   			int s = bytes < 0 ? 0 : bytes;
-> > @@ -307,7 +292,6 @@ static void finish_read(struct ceph_osd_request *req)
-> >   		     page->index);
-> >   		flush_dcache_page(page);
-> >   		SetPageUptodate(page);
-> > -		ceph_readpage_to_fscache(inode, page);
-> >   unlock:
-> >   		unlock_page(page);
-> >   		put_page(page);
-> > @@ -408,7 +392,6 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
-> >   		     page->index);
-> >   		if (add_to_page_cache_lru(page, &inode->i_data, page->index,
-> >   					  GFP_KERNEL)) {
-> > -			ceph_fscache_uncache_page(inode, page);
-> >   			put_page(page);
-> >   			dout("start_read %p add_to_page_cache failed %p\n",
-> >   			     inode, page);
-> > @@ -440,10 +423,8 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
-> >   	return nr_pages;
-> >   
-> > 
-> >   out_pages:
-> > -	for (i = 0; i < nr_pages; ++i) {
-> > -		ceph_fscache_readpage_cancel(inode, pages[i]);
-> > +	for (i = 0; i < nr_pages; ++i)
-> >   		unlock_page(pages[i]);
-> > -	}
-> >   	ceph_put_page_vector(pages, nr_pages, false);
-> >   out_put:
-> >   	ceph_osdc_put_request(req);
-> > @@ -471,12 +452,6 @@ static int ceph_readpages(struct file *file, struct address_space *mapping,
-> >   	if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
-> >   		return -EINVAL;
-> >   
-> > 
-> > -	rc = ceph_readpages_from_fscache(mapping->host, mapping, page_list,
-> > -					 &nr_pages);
-> > -
-> > -	if (rc == 0)
-> > -		goto out;
-> > -
-> >   	rw_ctx = ceph_find_rw_context(fi);
-> >   	max = fsc->mount_options->rsize >> PAGE_SHIFT;
-> >   	dout("readpages %p file %p ctx %p nr_pages %d max %d\n",
-> > @@ -487,8 +462,6 @@ static int ceph_readpages(struct file *file, struct address_space *mapping,
-> >   			goto out;
-> >   	}
-> >   out:
-> > -	ceph_fscache_readpages_cancel(inode, page_list);
-> > -
-> >   	dout("readpages %p file %p ret %d\n", inode, file, rc);
-> >   	return rc;
-> >   }
-> > diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
-> > index 2f5cb6bc78e1..9cfadbb86568 100644
-> > --- a/fs/ceph/cache.c
-> > +++ b/fs/ceph/cache.c
-> > @@ -173,7 +173,6 @@ void ceph_fscache_unregister_inode_cookie(struct ceph_inode_info* ci)
-> >   
-> > 
-> >   	ci->fscache = NULL;
-> >   
-> > 
-> > -	fscache_uncache_all_inode_pages(cookie, &ci->vfs_inode);
-> >   	fscache_relinquish_cookie(cookie, &ci->i_vino, false);
-> >   }
-> >   
-> > 
-> > @@ -194,7 +193,6 @@ void ceph_fscache_file_set_cookie(struct inode *inode, struct file *filp)
-> >   		dout("fscache_file_set_cookie %p %p disabling cache\n",
-> >   		     inode, filp);
-> >   		fscache_disable_cookie(ci->fscache, &ci->i_vino, false);
-> > -		fscache_uncache_all_inode_pages(ci->fscache, inode);
-> >   	} else {
-> >   		fscache_enable_cookie(ci->fscache, &ci->i_vino, i_size_read(inode),
-> >   				      ceph_fscache_can_enable, inode);
-> > @@ -205,108 +203,6 @@ void ceph_fscache_file_set_cookie(struct inode *inode, struct file *filp)
-> >   	}
-> >   }
-> >   
-> > 
-> > -static void ceph_readpage_from_fscache_complete(struct page *page, void *data, int error)
-> > -{
-> > -	if (!error)
-> > -		SetPageUptodate(page);
-> > -
-> > -	unlock_page(page);
-> > -}
-> > -
-> > -static inline bool cache_valid(struct ceph_inode_info *ci)
-> > -{
-> > -	return ci->i_fscache_gen == ci->i_rdcache_gen;
-> > -}
-> > -
-> 
-> Hi Jeff,
-> 
-> Please delete the "i_fscache_gen" member from the struct ceph_inode_info 
-> if we are not using it any more.
-> 
 
-Good catch. Fixed in my tree. I'll post an updated set in another day or
-so with this rolled in.
+On 2/22/21 2:24 AM, Luis Henriques wrote:
+> A regression has been reported by Nicolas Boichat, found while using the
+> copy_file_range syscall to copy a tracefs file.  Before commit
+> 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
+> kernel would return -EXDEV to userspace when trying to copy a file across
+> different filesystems.  After this commit, the syscall doesn't fail anymore
+> and instead returns zero (zero bytes copied), as this file's content is
+> generated on-the-fly and thus reports a size of zero.
+>
+> This patch restores some cross-filesystem copy restrictions that existed
+> prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
+> devices").  Filesystems are still allowed to fall-back to the VFS
+> generic_copy_file_range() implementation, but that has now to be done
+> explicitly.
+>
+> nfsd is also modified to fall-back into generic_copy_file_range() in case
+> vfs_copy_file_range() fails with -EOPNOTSUPP or -EXDEV.
+>
+> Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
+> Link: https://urldefense.com/v3/__https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/__;!!GqivPVa7Brio!P1UWThiSkxbjfjFQWNYJmCxGEkiLFyvHjH6cS-G1ZTt1z-TeqwGQgQmi49dC6w$
+> Link: https://urldefense.com/v3/__https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx*BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/__;Kw!!GqivPVa7Brio!P1UWThiSkxbjfjFQWNYJmCxGEkiLFyvHjH6cS-G1ZTt1z-TeqwGQgQmgCmMHzA$
+> Link: https://urldefense.com/v3/__https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid/__;!!GqivPVa7Brio!P1UWThiSkxbjfjFQWNYJmCxGEkiLFyvHjH6cS-G1ZTt1z-TeqwGQgQmzqItkrQ$
+> Reported-by: Nicolas Boichat <drinkcat@chromium.org>
+> Signed-off-by: Luis Henriques <lhenriques@suse.de>
+> ---
+> Changes since v7
+> - set 'ret' to '-EOPNOTSUPP' before the clone 'if' statement so that the
+>    error returned is always related to the 'copy' operation
+> Changes since v6
+> - restored i_sb checks for the clone operation
+> Changes since v5
+> - check if ->copy_file_range is NULL before calling it
+> Changes since v4
+> - nfsd falls-back to generic_copy_file_range() only *if* it gets -EOPNOTSUPP
+>    or -EXDEV.
+> Changes since v3
+> - dropped the COPY_FILE_SPLICE flag
+> - kept the f_op's checks early in generic_copy_file_checks, implementing
+>    Amir's suggestions
+> - modified nfsd to use generic_copy_file_range()
+> Changes since v2
+> - do all the required checks earlier, in generic_copy_file_checks(),
+>    adding new checks for ->remap_file_range
+> - new COPY_FILE_SPLICE flag
+> - don't remove filesystem's fallback to generic_copy_file_range()
+> - updated commit changelog (and subject)
+> Changes since v1 (after Amir review)
+> - restored do_copy_file_range() helper
+> - return -EOPNOTSUPP if fs doesn't implement CFR
+> - updated commit description
+>
+>   fs/nfsd/vfs.c   |  8 +++++++-
+>   fs/read_write.c | 49 ++++++++++++++++++++++++-------------------------
+>   2 files changed, 31 insertions(+), 26 deletions(-)
+>
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index 04937e51de56..23dab0fa9087 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -568,6 +568,7 @@ __be32 nfsd4_clone_file_range(struct nfsd_file *nf_src, u64 src_pos,
+>   ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
+>   			     u64 dst_pos, u64 count)
+>   {
+> +	ssize_t ret;
+>   
+>   	/*
+>   	 * Limit copy to 4MB to prevent indefinitely blocking an nfsd
+> @@ -578,7 +579,12 @@ ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
+>   	 * limit like this and pipeline multiple COPY requests.
+>   	 */
+>   	count = min_t(u64, count, 1 << 22);
+> -	return vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
+> +	ret = vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
+> +
+> +	if (ret == -EOPNOTSUPP || ret == -EXDEV)
+> +		ret = generic_copy_file_range(src, src_pos, dst, dst_pos,
+> +					      count, 0);
+> +	return ret;
+>   }
+>   
+>   __be32 nfsd4_vfs_fallocate(struct svc_rqst *rqstp, struct svc_fh *fhp,
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index 75f764b43418..5a26297fd410 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -1388,28 +1388,6 @@ ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
+>   }
+>   EXPORT_SYMBOL(generic_copy_file_range);
+>   
+> -static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
+> -				  struct file *file_out, loff_t pos_out,
+> -				  size_t len, unsigned int flags)
+> -{
+> -	/*
+> -	 * Although we now allow filesystems to handle cross sb copy, passing
+> -	 * a file of the wrong filesystem type to filesystem driver can result
+> -	 * in an attempt to dereference the wrong type of ->private_data, so
+> -	 * avoid doing that until we really have a good reason.  NFS defines
+> -	 * several different file_system_type structures, but they all end up
+> -	 * using the same ->copy_file_range() function pointer.
+> -	 */
+> -	if (file_out->f_op->copy_file_range &&
+> -	    file_out->f_op->copy_file_range == file_in->f_op->copy_file_range)
+> -		return file_out->f_op->copy_file_range(file_in, pos_in,
+> -						       file_out, pos_out,
+> -						       len, flags);
+> -
+> -	return generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+> -				       flags);
+> -}
+> -
+>   /*
+>    * Performs necessary checks before doing a file copy
+>    *
+> @@ -1427,6 +1405,25 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
+>   	loff_t size_in;
+>   	int ret;
+>   
+> +	/*
+> +	 * Although we now allow filesystems to handle cross sb copy, passing
+> +	 * a file of the wrong filesystem type to filesystem driver can result
+> +	 * in an attempt to dereference the wrong type of ->private_data, so
+> +	 * avoid doing that until we really have a good reason.  NFS defines
+> +	 * several different file_system_type structures, but they all end up
+> +	 * using the same ->copy_file_range() function pointer.
+> +	 */
+> +	if (file_out->f_op->copy_file_range) {
+> +		if (file_in->f_op->copy_file_range !=
+> +		    file_out->f_op->copy_file_range)
+> +			return -EXDEV;
+> +	} else if (file_in->f_op->remap_file_range) {
+> +		if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
+> +			return -EXDEV;
 
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
+I think this check is redundant, it's done in vfs_copy_file_range.
+If this check is removed then the else clause below should be removed
+also. Once this check and the else clause are removed then might as
+well move the the check of copy_file_range from here to vfs_copy_file_range.
 
+-Dai
+
+> +	} else {
+> +                return -EOPNOTSUPP;
+> +	}
+> +
+>   	ret = generic_file_rw_checks(file_in, file_out);
+>   	if (ret)
+>   		return ret;
+> @@ -1495,6 +1492,7 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+>   
+>   	file_start_write(file_out);
+>   
+> +	ret = -EOPNOTSUPP;
+>   	/*
+>   	 * Try cloning first, this is supported by more file systems, and
+>   	 * more efficient if both clone and copy are supported (e.g. NFS).
+> @@ -1513,9 +1511,10 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+>   		}
+>   	}
+>   
+> -	ret = do_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+> -				flags);
+> -	WARN_ON_ONCE(ret == -EOPNOTSUPP);
+> +	if (file_out->f_op->copy_file_range)
+> +		ret = file_out->f_op->copy_file_range(file_in, pos_in,
+> +						      file_out, pos_out,
+> +						      len, flags);
+>   done:
+>   	if (ret > 0) {
+>   		fsnotify_access(file_in);
