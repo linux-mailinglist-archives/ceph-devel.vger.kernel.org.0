@@ -2,108 +2,101 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E18C1321461
-	for <lists+ceph-devel@lfdr.de>; Mon, 22 Feb 2021 11:47:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C860321A50
+	for <lists+ceph-devel@lfdr.de>; Mon, 22 Feb 2021 15:30:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230397AbhBVKrk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 22 Feb 2021 05:47:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39470 "EHLO
+        id S231631AbhBVOZD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 22 Feb 2021 09:25:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230384AbhBVKre (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 22 Feb 2021 05:47:34 -0500
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EC58C06178C;
-        Mon, 22 Feb 2021 02:46:32 -0800 (PST)
-Received: by mail-il1-x134.google.com with SMTP id z18so10338453ile.9;
-        Mon, 22 Feb 2021 02:46:32 -0800 (PST)
+        with ESMTP id S232041AbhBVOV6 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 22 Feb 2021 09:21:58 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46421C06178B;
+        Mon, 22 Feb 2021 06:21:17 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id e13so26413628ejl.8;
+        Mon, 22 Feb 2021 06:21:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FHZQdAl+UcOWFEKhnz51zgke6JFt0Apq4o1l3JnjKAI=;
-        b=BR+j5tJ76HJ/MrYsYUrbRAckIqs5GbHwJGeClmEn6L96g5exlOi5QZeYy7ZvvUq4wG
-         JynsiK3Ygr53wwHj/6xTghe+kBd/tlpV+84eFX7WAr43T3wJM6RxORvPN/SWBOQcmm/V
-         OoKN52LfbVvqCkqFMVdKThs3kIt7ud25jOtaGGi27pwzkLMpfZkfWDMXhO/0XWVxeHNW
-         YNFiJrC+vbItmaQ0DB6DrpAZa5DxlS9iPabxEwCvsI56Fg7CXnHrPIstiiguxxU8trtS
-         UEN2f5vaSNWxCzmhs+clpU2Tne/l4pqXV4nSiWT8T5wYJUusloUdhy2E0X1FJyMMETi5
-         rX9w==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ekjo4rKlS9igYMaQMjtFAKeWa9l9vaEq+4QyGfDGcno=;
+        b=eC360sHskqhl3gwfGLIJnXqlM0GAto3XOC0wi7V7MNj5UX4Aab0YIrrUJweHC950uH
+         sDOt4MrXERUpqGDvNkqaeRsyGha+Rq1cR0mWXT43AQy+iFJwMAxiH0JjzEkVsclBEApJ
+         +k8e7lbjAFtPLSuIsZFxV6cVbyVL2NKw1bNHH3GYM1ivgW0XvvjLwm9W+Mk607oP357f
+         8xcv9wv+RmznsLd5n7X6iCZiuZI4xthYYLC0dy+k6K03IeGUAQECez7AhFtESWoauXi5
+         dA8de99dcI3XLiaIJK4IVXz5BMq/dzsYvjN0CTAbygcjoO0KrNL19d50S1x3f07sb+zv
+         /Bkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FHZQdAl+UcOWFEKhnz51zgke6JFt0Apq4o1l3JnjKAI=;
-        b=LNh4N6sPXV7BizilQviZVG0NxTW+YGvAJV56Vmc0n2Qmf+D47Sz4Imy41Bx3U22brU
-         Bpl5BGl/NNBkGnm+626cTlJB4Kn8ea1J6ostS1O1Cs0Yjaz7O2B1ywdoDiKobLU69W0e
-         3ZUjwZeNnmAn5HxgESxxpu7knlOvjtthAQshTNDankoWYZlleUhA2De7HiTh9YnqUw/I
-         ZrHjfucI1Q84k2DwMzL6UuxMiMe2hbdXtDViBC2jWJAXylBbJrm6WdXf5H3K/8d5Hpz1
-         NxwFuwbbJKWD5FTVlPewX6hT/+fMY9+BQ8KnRszKTZHvnceMexIYwcrjPz1yFTXDcYXF
-         PUAw==
-X-Gm-Message-State: AOAM531mRTTUAgIKBv3SEBJK95koZ2d+cnLrM9y2TxzdDnsN+a6GF8v9
-        qOOTK3/8v7cdNjnQOW5uKwxAMYc8AKYJl6TNSa0=
-X-Google-Smtp-Source: ABdhPJwCt22ShOeNCpiOnTx3JXmkEO2/x+8xvzSi9yrlR8q5F2qEMQngv4H4MSPX9tkAXc2eNDJvntVrkaQKi+YyX+Y=
-X-Received: by 2002:a92:740c:: with SMTP id p12mr1161730ilc.9.1613990791635;
- Mon, 22 Feb 2021 02:46:31 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ekjo4rKlS9igYMaQMjtFAKeWa9l9vaEq+4QyGfDGcno=;
+        b=dPzrRrvIGOeV9QrBQ7ekSaYPUMY0CrLK+7GLeRKyeHi36oCWJmlSEt44Gid2IWfkHS
+         RCf/x+Zv93EZXzXZdjs9gI/krCye4dwl3k5Xvb8LjyM8rxavdo/x2nPiSk+sSe+/25TL
+         wZEMhM+MsVH7UPpXY/8rN4VZnYwJnfrzTc7mAy+CuvgXZ6zArc2mEZgM8ha4cJV8sYF6
+         zl1Yjd3TfG5anaMZD6Ksmu0MjRvoD8lbIWySbK9p/tV6WzWNkHA3diudFRjFVubss9ZW
+         BxhMh0TK8jiZMDs99Zs8D1qpHq7qZIROYLW3ltv30Go+h4YpvR3yzEZ29GjIP9mNd7GJ
+         f65g==
+X-Gm-Message-State: AOAM530PPZvt1TmH/E3UHVrnG+yWYUJceB0QuDpB3HPKHEqQU5eqTIQh
+        2tz8Jt6CSnJxiWkEYcBv90y9xPVlj/U=
+X-Google-Smtp-Source: ABdhPJyUgChX7hXrjLM3oYneyvHJbxCCLXbvnDErOnZBwkDAlFOSp0xs8kIFf30fbJhxUVm3sRYr7A==
+X-Received: by 2002:a17:906:2b4e:: with SMTP id b14mr1896857ejg.467.1614003676095;
+        Mon, 22 Feb 2021 06:21:16 -0800 (PST)
+Received: from kwango.local (ip-94-112-132-16.net.upcbroadband.cz. [94.112.132.16])
+        by smtp.gmail.com with ESMTPSA id l7sm10462072edv.50.2021.02.22.06.21.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Feb 2021 06:21:15 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph updates for 5.12-rc1
+Date:   Mon, 22 Feb 2021 15:21:07 +0100
+Message-Id: <20210222142107.20046-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <20210221195833.23828-1-lhenriques@suse.de> <20210222102456.6692-1-lhenriques@suse.de>
-In-Reply-To: <20210222102456.6692-1-lhenriques@suse.de>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 22 Feb 2021 12:46:20 +0200
-Message-ID: <CAOQ4uxjwEyQkY3WKiWD9X4nJpgjZ9640evoSPRxtw9iPsigGyA@mail.gmail.com>
-Subject: Re: [PATCH v8] vfs: fix copy_file_range regression in cross-fs copies
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     Jeff Layton <jlayton@kernel.org>, Steve French <sfrench@samba.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Olga Kornievskaia <aglo@umich.edu>,
-        Christoph Hellwig <hch@infradead.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Feb 22, 2021 at 12:23 PM Luis Henriques <lhenriques@suse.de> wrote:
->
-> A regression has been reported by Nicolas Boichat, found while using the
-> copy_file_range syscall to copy a tracefs file.  Before commit
-> 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
-> kernel would return -EXDEV to userspace when trying to copy a file across
-> different filesystems.  After this commit, the syscall doesn't fail anymore
-> and instead returns zero (zero bytes copied), as this file's content is
-> generated on-the-fly and thus reports a size of zero.
->
-> This patch restores some cross-filesystem copy restrictions that existed
-> prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
-> devices").  Filesystems are still allowed to fall-back to the VFS
-> generic_copy_file_range() implementation, but that has now to be done
-> explicitly.
->
-> nfsd is also modified to fall-back into generic_copy_file_range() in case
-> vfs_copy_file_range() fails with -EOPNOTSUPP or -EXDEV.
->
-> Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
-> Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
-> Link: https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/
-> Link: https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid/
-> Reported-by: Nicolas Boichat <drinkcat@chromium.org>
-> Signed-off-by: Luis Henriques <lhenriques@suse.de>
-> ---
+Hi Linus,
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+The following changes since commit f40ddce88593482919761f74910f42f4b84c004b:
 
-Thanks,
-Amir.
+  Linux 5.11 (2021-02-14 14:32:24 -0800)
+
+are available in the Git repository at:
+
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.12-rc1
+
+for you to fetch changes up to 558b4510f622a3d96cf9d95050a04e7793d343c7:
+
+  ceph: defer flushing the capsnap if the Fb is used (2021-02-16 12:09:52 +0100)
+
+----------------------------------------------------------------
+With netfs helper library and fscache rework delayed, just a few cap
+handling improvements to avoid grabbing mmap_lock in some code paths
+and deal with capsnaps better and a mount option cleanup.
+
+----------------------------------------------------------------
+Ilya Dryomov (2):
+      libceph: deprecate [no]cephx_require_signatures options
+      libceph: remove osdtimeout option entirely
+
+Jeff Layton (3):
+      ceph: fix flush_snap logic after putting caps
+      ceph: clean up inode work queueing
+      ceph: allow queueing cap/snap handling after putting cap references
+
+Xiubo Li (1):
+      ceph: defer flushing the capsnap if the Fb is used
+
+ fs/ceph/addr.c               |  2 +-
+ fs/ceph/caps.c               | 70 +++++++++++++++++++++++++++++++-------------
+ fs/ceph/inode.c              | 61 ++++++++------------------------------
+ fs/ceph/snap.c               | 10 +++++++
+ fs/ceph/super.h              | 40 +++++++++++++++++++++----
+ include/linux/ceph/libceph.h |  7 ++---
+ net/ceph/ceph_common.c       | 17 ++++-------
+ 7 files changed, 115 insertions(+), 92 deletions(-)
