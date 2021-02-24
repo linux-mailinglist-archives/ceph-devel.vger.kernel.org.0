@@ -2,91 +2,120 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E1E1323B0F
-	for <lists+ceph-devel@lfdr.de>; Wed, 24 Feb 2021 12:10:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2870932408B
+	for <lists+ceph-devel@lfdr.de>; Wed, 24 Feb 2021 16:29:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234940AbhBXLJh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 24 Feb 2021 06:09:37 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34994 "EHLO
+        id S235402AbhBXPLt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 24 Feb 2021 10:11:49 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:26940 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235026AbhBXLHh (ORCPT
+        by vger.kernel.org with ESMTP id S233814AbhBXNge (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 24 Feb 2021 06:07:37 -0500
+        Wed, 24 Feb 2021 08:36:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614164771;
+        s=mimecast20190719; t=1614173669;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=mCwc6nRDm9GGv20OtNC9Z78gm9Rbh/8za4AwSnHSa90=;
-        b=G1mNrIu6y9yJcKohmCtQ7h6HAb+SBq35PqS558wRvAS5MoELKc4nNKU6cmn7pgasxWpk2Y
-        dmOGNdqlQYAyLTPyf0z4AcukQB4dPyziSuPcm4MrtayJDCj1bgFOlZ8yhuSpNaOWznI4Yi
-        nl1Gv1QXwrRg8qG2bsB+eYLC24bwyaY=
+        bh=FGAEWcqi7R+QLdnM9l4hJ0vRCcM6Gnle1kdY4AuWCGU=;
+        b=CMCSsSwcliHumXcoRFNUW/z3PKPpK/QPmlEVkvMDTWW4wfb1fH2MVnhNpXmYsXuT+2ksVn
+        YUIOZ6AmYLr/jrBZmI6pdZYJcfhC3S/SgGL1w1gQf7lBbg/zuSw0bh7WMJhzZ/jA2wrqJD
+        rqrs58uU65aUHxBiDdjD6YPFfNycddQ=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-505-xGIY2WhzPf6hyRVOJ49uNw-1; Wed, 24 Feb 2021 06:06:07 -0500
-X-MC-Unique: xGIY2WhzPf6hyRVOJ49uNw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-540-3MKbxeFLOOeiKKs9HaYL0w-1; Wed, 24 Feb 2021 08:33:46 -0500
+X-MC-Unique: 3MKbxeFLOOeiKKs9HaYL0w-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E10071936B61;
-        Wed, 24 Feb 2021 11:06:05 +0000 (UTC)
-Received: from [10.72.12.156] (ovpn-12-156.pek2.redhat.com [10.72.12.156])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2B41110016F9;
-        Wed, 24 Feb 2021 11:05:59 +0000 (UTC)
-Subject: Re: [PATCH v3 0/6] ceph: convert to netfs helper library
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, dhowells@redhat.com, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, willy@infradead.org
-References: <20210223130629.249546-1-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <aceeb647-f75a-8146-cab5-ecbfce7cd8bc@redhat.com>
-Date:   Wed, 24 Feb 2021 19:05:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 82D3BD547E;
+        Wed, 24 Feb 2021 13:32:07 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-119-68.rdu2.redhat.com [10.10.119.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 320E35D9F1;
+        Wed, 24 Feb 2021 13:32:03 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAH2r5mv=PZk_wn2=b0VQcaom9TEw1MGLz+qB_Ktxxm2bnV9Nig@mail.gmail.com>
+References: <CAH2r5mv=PZk_wn2=b0VQcaom9TEw1MGLz+qB_Ktxxm2bnV9Nig@mail.gmail.com> <161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk> <9e49f96cd80eaf9c8ed267a7fbbcb4c6467ee790.camel@redhat.com> <CAH2r5mvPLivjuE=cbijzGSHOvx-hkWSWbcxpoBnJX-BR9pBskQ@mail.gmail.com> <20210216021015.GH2858050@casper.infradead.org>
+To:     Steve French <smfrench@gmail.com>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        linux-cachefs@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-mm <linux-mm@kvack.org>, linux-afs@lists.infradead.org,
+        v9fs-developer@lists.sourceforge.net,
+        Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Wysochanski <dwysocha@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        William Kucharski <william.kucharski@oracle.com>
+Subject: Re: [PATCH 00/33] Network fs helper library & fscache kiocb API [ver #3]
 MIME-Version: 1.0
-In-Reply-To: <20210223130629.249546-1-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3743318.1614173522.1@warthog.procyon.org.uk>
+Date:   Wed, 24 Feb 2021 13:32:02 +0000
+Message-ID: <3743319.1614173522@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2021/2/23 21:06, Jeff Layton wrote:
-> This is the third posting of this patchset. The main differences between
-> this one and the last are some bugfixes, and cleanups:
->
-> - rebase onto David's latest fscache-netfs-lib set
-> - unify the netfs_read_request_ops into one struct
-> - fix inline_data handling in write_begin
-> - remove the now-unneeded i_fscache_gen field from ceph_inode_info
-> - rename gfp_flags to gfp in releasepage
-> - pass appropriate was_async flag to netfs_subreq_terminated
->
-> This set is currently sitting in the ceph-client/testing branch, so
-> it should get good testing coverage over the next few weeks via in
-> the teuthology lab.
->
-> Jeff Layton (6):
->    ceph: disable old fscache readpage handling
->    ceph: rework PageFsCache handling
->    ceph: fix fscache invalidation
->    ceph: convert readpage to fscache read helper
->    ceph: plug write_begin into read helper
->    ceph: convert ceph_readpages to ceph_readahead
->
->   fs/ceph/Kconfig |   1 +
->   fs/ceph/addr.c  | 541 +++++++++++++++++++-----------------------------
->   fs/ceph/cache.c | 125 -----------
->   fs/ceph/cache.h | 101 +++------
->   fs/ceph/caps.c  |  10 +-
->   fs/ceph/inode.c |   1 +
->   fs/ceph/super.h |   2 +-
->   7 files changed, 242 insertions(+), 539 deletions(-)
->
-This series LGTM.
+Steve French <smfrench@gmail.com> wrote:
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+> This (readahead behavior improvements in Linux, on single large file
+> sequential read workloads like cp or grep) gets particularly interesting
+> with SMB3 as multichannel becomes more common.  With one channel having one
+> readahead request pending on the network is suboptimal - but not as bad as
+> when multichannel is negotiated. Interestingly in most cases two network
+> connections to the same server (different TCP sockets,but the same mount,
+> even in cases where only network adapter) can achieve better performance -
+> but still significantly lags Windows (and probably other clients) as in
+> Linux we don't keep multiple I/Os in flight at one time (unless different
+> files are being read at the same time by different threads).
+
+I think it should be relatively straightforward to make the netfs_readahead()
+function generate multiple read requests.  If I wasn't handed sufficient pages
+by the VM upfront to do two or more read requests, I would need to do extra
+expansion.  There are a couple of ways this could be done:
+
+ (1) I could expand the readahead_control after fully starting a read request
+     and then create another independent read request, and another for how
+     ever many we want.
+
+ (2) I could expand the readahead_control first to cover however many requests
+     I'm going to generate, then chop it up into individual read requests.
+
+However, generating larger requests means we're more likely to run into a
+problem for the cache: if we can't allocate enough pages to fill out a cache
+block, we don't have enough data to write to the cache.  Further, if the pages
+are just unlocked and abandoned, readpage will be called to read them
+individually - which means they likely won't get cached unless the cache
+granularity is PAGE_SIZE.  But that's probably okay if ENOMEM occurred.
+
+There are some other considerations too:
+
+ (*) I would need to query the filesystem to find out if I should create
+     another request.  The fs would have to keep track of how many I/O reqs
+     are in flight and what the limit is.
+
+ (*) How and where should the readahead triggers be emplaced?  I'm guessing
+     that each block would need a trigger and that this should cause more
+     requests to be generated until we hit the limit.
+
+ (*) I would probably need to shuffle the request generation for the second
+     and subsequent blocks in a single netfs_readahead() call to a worker
+     thread because it'll probably be in a userspace kernel-side context and
+     blocking an application from proceeding and consuming the pages already
+     committed.
+
+David
 
