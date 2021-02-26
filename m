@@ -2,31 +2,54 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88AC2326398
-	for <lists+ceph-devel@lfdr.de>; Fri, 26 Feb 2021 15:00:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D55C232696A
+	for <lists+ceph-devel@lfdr.de>; Fri, 26 Feb 2021 22:27:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229598AbhBZOAm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 26 Feb 2021 09:00:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229550AbhBZOAl (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 26 Feb 2021 09:00:41 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 50F5F64EE7;
-        Fri, 26 Feb 2021 13:59:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614347999;
-        bh=BMSFrJi4c0wVHcWkPrJYSSmWsdZe2GehkTFStvm+2Ig=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=VC4Vi//e+SEFROFzp+BPUah0KUtgvvqR8cwUnr9EMVqMV9PZTTSIipqun+8oAnlL3
-         R4Tfk2lumJrYsmSEbfNZk6ycB2mjJ8PVO9b57scDjjqkOAlviLEWCHGtYJOs+n9DW7
-         R67JohGjysNk+rbqhiyIUGPtYEOV7hukucYNTYSpfqqB76/hQ5d7IA5VZY53yWre56
-         tOA+up7IJ+H+OKcWiQV0pNbUXxNTjmTu6cqVnsmgQYIl7xvMyACE4McGQimAFK8zuA
-         9kbMc+SZenqCcZBSaw7BrrCM5rIYPI6s/1u5tt4z3ftRw8NMzDcOq8Jdsdfg+l3YSL
-         +W32agANE0eGQ==
-Message-ID: <5da210ecdf9d01552f1f69f928ce68747a68bf08.camel@kernel.org>
+        id S230124AbhBZV04 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 26 Feb 2021 16:26:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56354 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229745AbhBZV0x (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 26 Feb 2021 16:26:53 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D686DC061574;
+        Fri, 26 Feb 2021 13:26:12 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id k66so8944810wmf.1;
+        Fri, 26 Feb 2021 13:26:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WtfPlX43FY10uur2tSwLAOsOecSUXbzQq7gDehGeFQk=;
+        b=C1f+rfQEmJIcXY/fWrA0CizUUxPGSklId6ZGan2XVBY51iXtn6IvRUtmyvGfUlFTq2
+         ShMYwk0MRyKmdy2+Q/6yzId/XYgv1djCYfhVSADvpaDYXT9Su9skLbeAonU6htnuNoad
+         GOAi5sbItXzPpy1+07iY7T2lvVIrgiakORLvRqIXVpGMiAUD7VNnYImh1DSHZPprQaz0
+         nCxC+rBtbk27ZX2G113tZww3lOJHeVzOuuzoGW3V1YRYRFkGjbS8CENnaQP27TNDtcR/
+         uaSXb/YCefTzCYWYEqPbib+RzWqBxTmNT3JgQWXl1S1fCWgFoJRwMFRNdn1pLtkhvXAs
+         DL6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WtfPlX43FY10uur2tSwLAOsOecSUXbzQq7gDehGeFQk=;
+        b=uJz0+dLnmtQwjB5gsfNBImS0h6skm6ndqQ93WtywRLnDKaGgOlhB2bIthvAuLEiCSK
+         2wjsbMQcqOpfU+Jcj8Kb5a/JWqVpqwEO42PAY/xD7A6QnwPuoDRJ7JWxgH4IFTNXrWy5
+         5IHGRfrBEaY2QW6a18migi8V4YtrqmDwgWysa0cYxWlLmjDl1EM3Pb2VFFP/QbN7y+Uf
+         YdfL6KlaSYlc1kDam8Qii8u8GHSYK4IqCnjMBQIsFr60rgIv9a1vC55TDgbDXnuGH4K6
+         gCsK9w27E/aFq6UeF+kl4GBD3RIsTx4uxfh8pjKwAt1VHOXvnZNSC3tFWKN/GxC41k2/
+         OBUQ==
+X-Gm-Message-State: AOAM533felkZWJ1y1+82/9jXr8P9SHVzomBUpddfKQI3Ls3DTqvmmJL3
+        w9fz4QgzDwELvamQ69mYNfLRuE57Snzi3A==
+X-Google-Smtp-Source: ABdhPJxTzfmIPyTFwFH1G03DQSgJUsasDwqPaNA8iZQ8pV+jSew9oUhcqYy/ycCyIQUj298aV0CZdw==
+X-Received: by 2002:a1c:7c14:: with SMTP id x20mr4440175wmc.17.1614374766631;
+        Fri, 26 Feb 2021 13:26:06 -0800 (PST)
+Received: from [192.168.1.143] ([170.253.51.130])
+        by smtp.gmail.com with ESMTPSA id u4sm6756453wrm.24.2021.02.26.13.26.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Feb 2021 13:26:05 -0800 (PST)
 Subject: Re: [PATCH] copy_file_range.2: Kernel v5.12 updates
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>,
+To:     Jeff Layton <jlayton@kernel.org>,
         Amir Goldstein <amir73il@gmail.com>
 Cc:     Luis Henriques <lhenriques@suse.de>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
@@ -51,52 +74,57 @@ Cc:     Luis Henriques <lhenriques@suse.de>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
         linux-man <linux-man@vger.kernel.org>
-Date:   Fri, 26 Feb 2021 08:59:56 -0500
-In-Reply-To: <abf61760-2099-634a-7519-2138bb75e41b@gmail.com>
 References: <20210222102456.6692-1-lhenriques@suse.de>
-         <20210224142307.7284-1-lhenriques@suse.de>
-         <CAOQ4uxi3-+tOgHV_GUnWtJoQXbV5ZS9qDZsLsd9sJxX5Aftyew@mail.gmail.com>
-         <YDd6EMpvZhHq6ncM@suse.de> <fd5d0d24-35e3-6097-31a9-029475308f15@gmail.com>
-         <CAOQ4uxiVxEwvgFhdHGWLpdCk==NcGXgu52r_mXA+ebbLp_XPzQ@mail.gmail.com>
-         <abf61760-2099-634a-7519-2138bb75e41b@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+ <20210224142307.7284-1-lhenriques@suse.de>
+ <CAOQ4uxi3-+tOgHV_GUnWtJoQXbV5ZS9qDZsLsd9sJxX5Aftyew@mail.gmail.com>
+ <YDd6EMpvZhHq6ncM@suse.de> <fd5d0d24-35e3-6097-31a9-029475308f15@gmail.com>
+ <CAOQ4uxiVxEwvgFhdHGWLpdCk==NcGXgu52r_mXA+ebbLp_XPzQ@mail.gmail.com>
+ <abf61760-2099-634a-7519-2138bb75e41b@gmail.com>
+ <5da210ecdf9d01552f1f69f928ce68747a68bf08.camel@kernel.org>
+From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
+Message-ID: <7469f0a9-216e-599c-e926-bbb5e6142d13@gmail.com>
+Date:   Fri, 26 Feb 2021 22:26:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
+In-Reply-To: <5da210ecdf9d01552f1f69f928ce68747a68bf08.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2021-02-26 at 12:15 +0100, Alejandro Colomar (man-pages) wrote:
-> Hello Amir,
-> 
-> On 2/26/21 11:34 AM, Amir Goldstein wrote:
-> > Is this detailed enough? ;-)
-> > 
-> > https://lwn.net/Articles/846403/
-> 
-> I'm sorry I can't read it yet:
-> 
-> [
-> Subscription required
-> The page you have tried to view (How useful should copy_file_range() 
-> be?) is currently available to LWN subscribers only. Reader 
-> subscriptions are a necessary way to fund the continued existence of LWN 
-> and the quality of its content.
-> [...]
-> (Alternatively, this item will become freely available on March 4, 2021)
-> ]
-> 
+Hello Jeff,
 
+On 2/26/21 2:59 PM, Jeff Layton wrote:
+> Here's a link that should work. I'm probably breaking the rules a bit as
+> a subscriber, but hopefully Jon won't mind too much. FWIW, I've found it
+> to be worthwhile to subscribe to LWN if you're doing a lot of kernel
+> development:
+> 
+>      https://lwn.net/SubscriberLink/846403/0fd639403e629cab/
 
-Here's a link that should work. I'm probably breaking the rules a bit as
-a subscriber, but hopefully Jon won't mind too much. FWIW, I've found it
-to be worthwhile to subscribe to LWN if you're doing a lot of kernel
-development:
+Thanks!  (I already received the link privately some minutes before from 
+various people.)
 
-    https://lwn.net/SubscriberLink/846403/0fd639403e629cab/
+It seems that he considers it fair use :)
+
+[[
+Where is it appropriate to post a subscriber link?
+
+Almost anywhere. Private mail, messages to project mailing lists, and 
+blog entries are all appropriate. As long as people do not use 
+subscriber links as a way to defeat our attempts to gain subscribers, we 
+are happy to see them shared.
+]]
+<https://lwn.net/op/FAQ.lwn#site>
 
 Cheers,
--- 
-Jeff Layton <jlayton@kernel.org>
 
+Alex
+
+-- 
+Alejandro Colomar
+Linux man-pages comaintainer; https://www.kernel.org/doc/man-pages/
+http://www.alejandro-colomar.es/
