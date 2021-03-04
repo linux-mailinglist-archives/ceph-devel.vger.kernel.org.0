@@ -2,210 +2,206 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C67E032C641
-	for <lists+ceph-devel@lfdr.de>; Thu,  4 Mar 2021 02:02:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D8FD32CFE0
+	for <lists+ceph-devel@lfdr.de>; Thu,  4 Mar 2021 10:42:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355403AbhCDA2I (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 3 Mar 2021 19:28:08 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53014 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1355346AbhCDAXb (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 3 Mar 2021 19:23:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614817324;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=gXOtBmgY5MdqpQGzSKCvOP3QkZbnNtvngwVGLI4VAgk=;
-        b=Ko7cgZT+UXhXXj2Ryc6TZpH+61ZK5Kr9uJq0MW8+KPxg4P4rSnrhAzmGDK+OzXK9zH5E4r
-        c96DVSRNeor/yvn/7ms5T96r14JNQ0lSE+tkhkRoeCV0EQoExb4HMeazlf1NVDNMlA+FVK
-        3UrOW2hrPhZYsj24UIBsHspfsdu2rt8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-415-dv_IBc6QNiipp5PAUfyt4w-1; Wed, 03 Mar 2021 18:20:21 -0500
-X-MC-Unique: dv_IBc6QNiipp5PAUfyt4w-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ECB8D193578C;
-        Wed,  3 Mar 2021 23:20:18 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-119-68.rdu2.redhat.com [10.10.119.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E6AC612D7E;
-        Wed,  3 Mar 2021 23:20:12 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     linux-cachefs@redhat.com
-Cc:     dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <dchinner@redhat.com>,
+        id S237759AbhCDJlT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 4 Mar 2021 04:41:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57008 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237792AbhCDJlA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 4 Mar 2021 04:41:00 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0431DC061574;
+        Thu,  4 Mar 2021 01:40:20 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id b18so20376314wrn.6;
+        Thu, 04 Mar 2021 01:40:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=O9B1qRNEkgiYM5e4Rnx0MUxTJfW3B+WFA4nF4a8IG1Q=;
+        b=kqVtZTrb2w1p+loQqs+tswteQ6Z300X2ogL0nfpDZwRrJloEuka6Qw3vbUznk9C/mP
+         vAc+7/i3tCgseKniKiFZ1FEGT5USitOdaHx8q+dlr9Gp0Botig2yuooK/Ga3uM5o7uSW
+         qpU9D7pKZrXxLKa8M9REIDyLjIJZ37+CRU8kz8lRGssHKNu7J2k1uG8GF4xO80RZDvhr
+         fbYoyaFU+22zZHyXCX88e/XZW0Y/TjXyh8wWm0ch3ylVn8cabBUR9rXuPQEzViDMDg7d
+         kQZB2RWb34DjYLTMuQCoJ/iHGnUvORj8TL3mM06a4mhPCETW0ncNxqQ5seEmMo4C2CGA
+         DTpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=O9B1qRNEkgiYM5e4Rnx0MUxTJfW3B+WFA4nF4a8IG1Q=;
+        b=T3HVI2d+hszN9lVlEVDupyluYALtUu7ihUfzjwD+x3XXHFn4gpBvpCW7u5Xp84FmyN
+         36QK0H2aP5ITOljw8/zpdzx/gGUTma5yOxdTUkl/yb/tG4j6FnC4H0HuB7zXjIzKdkSY
+         gNryaruLatfPTZF5XwL4ztx3UqcRVS3vAT/m77dZ3eIvCGFA46ZA5vfv6zDbcIb3A3q9
+         eSPN+KOtVKbZt3+AbOyGlqWc73NLd3UI8Yp765pVTnb/bvEzi8VEjwiaqCyddlpDzPKq
+         liv6tmoRtqYLTjPOAmiruSpKCCbc1Kot5nlS7M3Rmp75KjVJToz/teFANAJ3ygkFPeOz
+         6YxQ==
+X-Gm-Message-State: AOAM531Uo60oam7pmhGi/X9Qvyv8MslIihtOTu4yvPnsxy4oSg/XJqE4
+        eQtRq2FJb4GKwoMFGIeTinX9mhDhQKcz/Q==
+X-Google-Smtp-Source: ABdhPJy5rhRh3oIwq+uQ7c2BFcomsa5X6e0OMtaarr4aRCxsiyv3xNoF5kJaWXKyZ+4A1ooWqFB6Uw==
+X-Received: by 2002:adf:a219:: with SMTP id p25mr3049987wra.400.1614850818747;
+        Thu, 04 Mar 2021 01:40:18 -0800 (PST)
+Received: from localhost.localdomain ([170.253.51.130])
+        by smtp.googlemail.com with ESMTPSA id l2sm6127295wml.38.2021.03.04.01.40.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Mar 2021 01:40:18 -0800 (PST)
+From:   Alejandro Colomar <alx.manpages@gmail.com>
+To:     linux-man@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Luis Henriques <lhenriques@suse.de>,
+        Steve French <sfrench@samba.org>
+Cc:     Alejandro Colomar <alx.manpages@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: fscache: Redesigning the on-disk cache
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Ian Lance Taylor <iant@google.com>,
+        Luis Lozano <llozano@chromium.org>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Olga Kornievskaia <aglo@umich.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Walter Harms <wharms@bfs.de>
+Subject: [RFC v4] copy_file_range.2: Update cross-filesystem support for 5.12
+Date:   Thu,  4 Mar 2021 10:38:07 +0100
+Message-Id: <20210304093806.10589-1-alx.manpages@gmail.com>
+X-Mailer: git-send-email 2.30.1.721.g45526154a5
+In-Reply-To: <20210224142307.7284-1-lhenriques@suse.de>
+References: <20210224142307.7284-1-lhenriques@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2653260.1614813611.1@warthog.procyon.org.uk>
-Date:   Wed, 03 Mar 2021 23:20:11 +0000
-Message-ID: <2653261.1614813611@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-I'm looking at redesigning the on-disk cache format used by fscache's
-cachefiles driver to try and eliminate the number of synchronous metadata
-operations done by the driver, to improve culling performance and to reduce
-the amount of opens/files open.  I also need to stop relying on the backing
-filesystem to track where I have data stored.
+Linux 5.12 fixes a regression.
 
-There are a number of options that I've considered:
+Cross-filesystem (introduced in 5.3) copies were buggy.
 
- (0) The current format lays out a directory tree, with directories for each
-     level of index (so in AFS's terms, you've got an overall "afs" dir
-     containing a dir for each cell.  In each cell dir, there's a dir for each
-     volume and within that there's a file for each afs vnode cached.  Extra
-     levels of directory are also interposed to reduce the number of entries
-     in a directory.
+Move the statements documenting cross-fs to BUGS.
+Kernels 5.3..5.11 should be patched soon.
 
-     - Pathwalk cost to open a cache file.
-     - Netfs coherency data is in xattrs.
-     - Invalidation done by truncate or unlink.
-     - Uses backing filesystem metadata to keep track of present data.
-       - Determined by bmap() on the cache file.
-     - Culling performed by userspace daemon.
-     - Data file opened for every write.
-     - Read done by readpage without file.
+State version information for some errors related to this.
 
- (0a) As (0) but using SEEK_DATA/SEEK_HOLE instead of bmap and opening the
-      file for every whole operation (which may combine reads and writes).
+Reported-by: Luis Henriques <lhenriques@suse.de>
+Reported-by: Amir Goldstein <amir73il@gmail.com>
+Related: <https://lwn.net/Articles/846403/>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: Anna Schumaker <anna.schumaker@netapp.com>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: Steve French <sfrench@samba.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Dave Chinner <dchinner@redhat.com>
+Cc: Nicolas Boichat <drinkcat@chromium.org>
+Cc: Ian Lance Taylor <iant@google.com>
+Cc: Luis Lozano <llozano@chromium.org>
+Cc: Andreas Dilger <adilger@dilger.ca>
+Cc: Olga Kornievskaia <aglo@umich.edu>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: ceph-devel <ceph-devel@vger.kernel.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>
+Cc: CIFS <linux-cifs@vger.kernel.org>
+Cc: samba-technical <samba-technical@lists.samba.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Cc: Walter Harms <wharms@bfs.de>
+Signed-off-by: Alejandro Colomar <alx.manpages@gmail.com>
+---
 
- (1) Structured the same as (0), but keeping an independent content map and
-     not relying on backing fs metadata.  Use a larger blocksize, say 256K, to
-     reduce the size of the content map.
+v3:
+        - Don't remove some important text.
+        - Reword BUGS.
+v4:
+	- Reword.
+	- Link to BUGS.
 
-     - Netfs coherency data in xattrs.
-     - Invalidation done by tmpfile creation and link-replace.
-     - Content bitmap kept in xattr.
-       - Limited capacity.  Could use multiple bitmaps.
-       - Can skip the bitmap for a non-sparse file that we have all of.
-     - "Open" state kept in xattr.
-     - File is kept open
-     - Culling performed by userspace daemon.
-     - Cache file open whilst netfs file is open.
+Thanks, Amir, for all the help and better wordings.
 
- (2) Structured the same as (1), but keeping an extent list instead of a
-     bitmap.
+Cheers,
 
-     - Content extent map kept in xattr.
-       - Limited capacity.
-       - Highly scattered extents use a lot of map space.
+Alex
 
- (3) OpenAFS-style format.  One index file to look up {file_key,block#} and an
-     array of data files, each holding one block (e.g. a 256KiB-aligned chunk
-     of a file).  Each index entry has valid start/end offsets for easy
-     truncation.
+---
+ man2/copy_file_range.2 | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
 
-     The index has a hash to facilitate the lookup and an LRU that allows a
-     block to be recycled at any time.
-
-     - File keys, are highly variable in length and can be rather long,
-       particularly NFS FIDs.
-       - Might want a separate file index that maps file keys to a slot ID
-       	 that can then be used in the block index.
-     - Netfs coherency data in vnode index entry.
-     - Invalidation done by clearing matching entries in the index.
-       - Dead data files can be lazily unlinked or truncated or just
-         overwritten.
-     - Content mapping by lookup in block index hash table.
-       - Fine if the hash table is large and scatter is good.
-     - Potential coherency problem between indices and data file.
-     - Culling performed by block index LRU.
-     - Really want to retain entire block index in RAM.
-     - Data files are opened for every read/write.
-
- (4) Similar format to (3), but could put entirety of data in one file.
-
-     - Data file open entire time cache online.
-     - Unused block bitmap.
-     - Can use fallocate to punch out dead blocks.
-     - Could put data file on blockdev.
-
- (5) Similar idea to (4), but just have a file index and use block pointers
-     and indirection blocks instead.  Use an LRU in the file index and cull
-     whole files only, not individual blocks.
-
-     - File keys, are highly variable in length and can be rather long,
-       particularly NFS FIDs.
-     - Netfs coherency data in vnode index entry.
-     - Unused data block bitmap.
-     - Invalidation done by clearing entries in the file index.
-       - Data blocks must be recycled and returned to bitmap.
-       - Dead data blocks can be lazily punched out with fallocate.
-     - Potential coherency problem between index, pointers/indirection and
-       bitmap.
-     - Culling performed by file index LRU.
-     - Really want to retain entire file index and block bitmap in RAM.
-       - May be less memory than block index.
-     - Data file open entire time cache online.
-     - Could put data file on blockdev.
-     - If the block size is large, lots of dead space in indirection blocks.
-
- (6) Similar to (5), but use extent lists rather than indirection blocks.
-
-     - Requires allocation of contiguous space to be worthwhile.
-     - Buddy allocator approach?
-       - Can always arbitrarily recycle buddies to make larger spaces - if we
-       	 can find them...
-
- (7) Hybrid approach.  Stick the first block of every netfs file in one big
-     cache file.  For a lot of cases, that would suffice for the entire file
-     if the block size is large enough.  Store the tails of larger files in
-     separate files.
-
-     - File index with LRU.
-     - More complicated to manage.
-     - Fewer files open.
-
-So (0) is what's upstream.  I have (0a) implemented in my fscache-netfs-lib
-branch and (1) implemented in my fscache-iter branch.  However, it spends a
-lot of cpu time doing synchronous metadata ops, such as creating tmpfiles,
-link creation and setting xattrs, particularly when unmounting the filesystem
-or disabling the cache - both of which are done during shutdown.
-
-I'm leaning towards (4) or (5).  I could use extent maps, but I don't
-necessarily have a good idea of what access patterns I have to deal with till
-later.  With network filesystems that are going to read and cache large blocks
-(say 2MiB), extents would allow reduction of the metadata, particularly where
-it would span a bitmap.
-
-Using a block index (4) allows me to easily recycle a large chunk of cache in
-one go - even if it means arbitrarily kicking out blocks that weren't near the
-end of the LRU yet.
-
-Using block pointers and indirection blocks (5) means I only need this data in
-RAM when I need it; with the LRU management being done in the file index.
-
-Either way with (4) and (5), at least one index really needs to be resident in
-RAM to make LRU wangling efficient.  Also, I need to decide how to handle
-coherency management - setting an "in use" flag on the file index entry and
-flushing it before making any modifications might work.
-
-On the other hand, sticking with (1) or (2) makes it easier to add extra
-metadata very easily (say to handle disconnected operation), though it's
-harder to manage culling and manage the capacity of the cache.
-
-I have a suspicion that the answer is "it depends" and that the best choice is
-very much going to be workload dependent - and may even vary from volume to
-volume within the same workload.
-
-Any thoughts or better solutions?
-
-David
+diff --git a/man2/copy_file_range.2 b/man2/copy_file_range.2
+index 611a39b80..f58bfea8f 100644
+--- a/man2/copy_file_range.2
++++ b/man2/copy_file_range.2
+@@ -169,6 +169,9 @@ Out of memory.
+ .B ENOSPC
+ There is not enough space on the target filesystem to complete the copy.
+ .TP
++.BR EOPNOTSUPP " (since Linux 5.12)"
++The filesystem does not support this operation.
++.TP
+ .B EOVERFLOW
+ The requested source or destination range is too large to represent in the
+ specified data types.
+@@ -184,10 +187,17 @@ or
+ .I fd_out
+ refers to an active swap file.
+ .TP
+-.B EXDEV
++.BR EXDEV " (before Linux 5.3)"
++The files referred to by
++.IR fd_in " and " fd_out
++are not on the same filesystem.
++.TP
++.BR EXDEV " (since Linux 5.12)"
+ The files referred to by
+ .IR fd_in " and " fd_out
+-are not on the same mounted filesystem (pre Linux 5.3).
++are not on the same filesystem,
++and the source and target filesystems are not of the same type,
++or do not support cross-filesystem copy.
+ .SH VERSIONS
+ The
+ .BR copy_file_range ()
+@@ -200,8 +210,11 @@ Areas of the API that weren't clearly defined were clarified and the API bounds
+ are much more strictly checked than on earlier kernels.
+ Applications should target the behaviour and requirements of 5.3 kernels.
+ .PP
+-First support for cross-filesystem copies was introduced in Linux 5.3.
+-Older kernels will return -EXDEV when cross-filesystem copies are attempted.
++Since Linux 5.12,
++cross-filesystem copies can be achieved
++when both filesystems are of the same type,
++and that filesystem implements support for it.
++See BUGS for behavior prior to 5.12.
+ .SH CONFORMING TO
+ The
+ .BR copy_file_range ()
+@@ -226,6 +239,12 @@ gives filesystems an opportunity to implement "copy acceleration" techniques,
+ such as the use of reflinks (i.e., two or more inodes that share
+ pointers to the same copy-on-write disk blocks)
+ or server-side-copy (in the case of NFS).
++.SH BUGS
++In Linux kernels 5.3 to 5.11,
++cross-filesystem copies were implemented by the kernel,
++if the operation was not supported by individual filesystems.
++However, on some virtual filesystems,
++the call failed to copy, while still reporting success.
+ .SH EXAMPLES
+ .EX
+ #define _GNU_SOURCE
+-- 
+2.30.1.721.g45526154a5
 
