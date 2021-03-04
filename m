@@ -2,114 +2,63 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F365832DE01
-	for <lists+ceph-devel@lfdr.de>; Fri,  5 Mar 2021 00:50:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6DBE32DEFB
+	for <lists+ceph-devel@lfdr.de>; Fri,  5 Mar 2021 02:15:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233288AbhCDXuK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 4 Mar 2021 18:50:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50612 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232543AbhCDXuK (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 4 Mar 2021 18:50:10 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A8F7F64FEA;
-        Thu,  4 Mar 2021 23:50:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614901809;
-        bh=la+/LlUFeQYvhLySDR4vAFpG+8JYc37BPuVHhh/Xkwo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AKCe315TTti7vXaDkftIB9RAiJKo7klEiBS5CoaUGufcb2RT0N6rraHjbpFBjG670
-         zodPbs7P67fX4UvV0tbq0GuaoGMl+f1YGJH0AEnJlMT0VvH9OaDMjs0G7F+djIB13h
-         a0QayLF3Cc7bYfl/Z5x44VhKF8ijlhkS0SIFIfcYQF0tTzhgzvM3R806Sptq/7AztU
-         cSeOmck9FCU63eeS3robzcrzFCv5XDlbI2/l9MdYA8V6nKY80KiwbQ5zc0waiij5NO
-         TkD8cNwNDDV3xmipHZWxB8s3i4hBiAdk6vwUDsVQrT1O3ZqiSHDlshsRU2xFJoEbjj
-         pT3Qz5nwZR4SQ==
-Date:   Thu, 4 Mar 2021 15:50:06 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-Cc:     linux-man@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Luis Henriques <lhenriques@suse.de>,
-        Steve French <sfrench@samba.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Olga Kornievskaia <aglo@umich.edu>,
-        Christoph Hellwig <hch@infradead.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Walter Harms <wharms@bfs.de>
-Subject: Re: [RFC v4] copy_file_range.2: Update cross-filesystem support for
- 5.12
-Message-ID: <20210304235006.GW7269@magnolia>
-References: <20210224142307.7284-1-lhenriques@suse.de>
- <20210304093806.10589-1-alx.manpages@gmail.com>
- <20210304171350.GC7267@magnolia>
- <37df00f9-a88e-3f16-d0b4-3297248aee66@gmail.com>
+        id S229452AbhCEBPr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 4 Mar 2021 20:15:47 -0500
+Received: from mail-kkm-gw.totbroadband.net ([203.113.57.112]:28276 "EHLO
+        mail-kkm-gw3.totbroadband.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229451AbhCEBPq (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 4 Mar 2021 20:15:46 -0500
+X-Greylist: delayed 10798 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Mar 2021 20:15:46 EST
+Received: from pps.filterd (mail-kkm-gw3.totbroadband.net [127.0.0.1])
+        by mail-kkm-gw3.totbroadband.net (8.16.0.42/8.16.0.42) with SMTP id 124MFhMe121435
+        for <ceph-devel@vger.kernel.org>; Fri, 5 Mar 2021 05:15:43 +0700
+Received: from vger.kernel.org (node-1dbg.pool-101-109.dynamic.totinternet.net [101.109.249.172])
+        by mail-kkm-gw3.totbroadband.net with ESMTP id 36y5wfm7fk-1
+        for <ceph-devel@vger.kernel.org>; Fri, 05 Mar 2021 05:15:42 +0700
+Date:   Fri, 05 Mar 2021 01:15:41 +0300
+To:     ceph-devel@vger.kernel.org
+From:   =?utf-8?B?0JzQsNC60LDRgNC+0LIg0JzQuNGF0LDQuNC7ICjQn9C10YDQtdCy0L7Qt9C60LAg0Lgg0YLQsNC80L7QttC10L3QvdC+0LUg0L7RhNC+0YDQvNC70LXQvdC40LU=?= 
+        <whippet@node-1dbg.pool-101-109.dynamic.totinternet.net>
+Subject: =?utf-8?B?0KXQvtGH0YMg0L/RgNC10LTQu9C+0LbQuNGC0Ywg0LjQvdGC0LXRgNC10YHQvdGL0LUg0YHRhdC10LzRgyDQv9C+INC/0LXRgNC10LLQvtC30LrQtQ==?=
+Message-ID: <1614896141.13ff239c7bdda588e269b01a5ba21a72@mailsys>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <37df00f9-a88e-3f16-d0b4-3297248aee66@gmail.com>
+Reply-to: =?utf-8?B?0JzQsNC60LDRgNC+0LIg0JzQuNGF0LDQuNC7ICjQn9C10YDQtdCy0L7Qt9C60LAg0Lgg0YLQsNC80L7QttC10L3QvdC+0LUg0L7RhNC+0YDQvNC70LXQvdC40LU=?= 
+          <rastamogdostavka@mail.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-04_03:2021-03-03,2021-03-04 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 bulkscore=0
+ phishscore=0 mlxlogscore=384 malwarescore=0 spamscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103040066
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Mar 04, 2021 at 07:24:02PM +0100, Alejandro Colomar (man-pages) wrote:
-> Hi Darrick,
-> 
-> On 3/4/21 6:13 PM, Darrick J. Wong wrote:
-> > On Thu, Mar 04, 2021 at 10:38:07AM +0100, Alejandro Colomar wrote:
-> > > +However, on some virtual filesystems,
-> > > +the call failed to copy, while still reporting success.
-> > 
-> > ...success, or merely a short copy?
-> 
-> Okay.
-> 
-> > 
-> > (The rest looks reasonable (at least by c_f_r standards) to me.)
-> 
-> I'm curious, what does "c_f_r standards" mean? :)
+0JfQtNGA0LDQstGB0YLQstGD0LnRgtC1IQoK0KLQvtCy0LDRgNC90YvQuSDQsNGB0YHQvtGA0YLQ
+uNC80LXQvdGCLCDQutC+0YLQvtGA0YvQuSDQv9GA0LXQtNGB0YLQsNCy0LvQtdC9INC90LAg0JLQ
+sNGI0LXQvCB3ZWIg0YHQsNC50YLQtSDRgyDQvNC10L3RjyDQtdGB0YLRjCDQstC+0LfQvNC+0LbQ
+vdC+0YHRgtC4INC00L7RgdGC0LDQstC70Y/RgtGMINC4INGA0LDRgdGC0LDQvNC+0LbQuNCy0LDR
+gtGMINC40Lcg0JrQuNGC0LDRjywg0JXQstGA0L7Qv9GLINC4INCh0KjQkCDQuCAg0L/QviDQvtGH
+0LXQvdGMINC40L3RgtC10YDQtdGB0L3Ri9C8INGG0LXQvdCw0LwuCgrQryDQt9Cw0L3QuNC80LDR
+jtGB0Ywg0L/RgNC+0YTQtdGB0YHQuNC+0L3QsNC70YzQvdC+INC/0LXRgNC10LLQvtC30LrQsNC8
+0Lgg0YLQvtCy0LDRgNC+0LIg0LjQtyDQmtC40YLQsNGPINC4INCV0YDQvtC/0Ysg0L/QviDQvdCw
+0LTQtdC20L3Ri9C8INC90LDQu9Cw0LbQtdC90L3Ri9C8INC4INCy0YvQs9C+0LTQvdGL0Lwg0LrQ
+sNC90LDQu9Cw0LwuCgrQldGB0LvQuCDQktGLINCx0YPQtNC10YLQtSDRgNCw0LHQvtGC0LDRgtGM
+INGB0L4g0LzQvdC+0Lkg0Y8g0L7QsdC10YHQv9C10YfRgyDQtNC+0YHRgtCw0LLQutGDICLQvtGC
+INC00LLQtdGA0Lgg0LTQviDQtNCy0LXRgNC4Iiwg0LLRgdGOINC/0YDQvtGG0LXQtNGD0YDRgyDR
+gNCw0YHRgtCw0LzQvtC20LjQstCw0L3QuNGPIC0g0LPQvtGC0L7QsiDQstC30Y/RgtGMINC90LAg
+0YHQtdCx0Y8uCgrQldGB0LvQuCDQv9GA0LjQvdGG0LjQv9C40LDQu9GM0L3QviDQuNC90YLQtdGA
+0LXRgSDRgyDQktCw0YEg0LLQvtC30L3QuNC6IC0g0L3QsNC/0LjRiNC40YLQtSDQv9C+0LbQsNC7
+0YPQudGB0YLQsCDQutCw0LrQvtC5INGC0L7QstCw0YAg0JLQsNC8INC/0YDQuNC+0YDQuNGC0LXR
+gtC10L0g0LTQu9GPINC/0LXRgNC10LLQvtC30LrQuCDQsiDQtNCw0L3QvdGL0Lkg0LzQvtC80LXQ
+vdGCIC0g0Y8g0L/QvtC00YHRh9C40YLQsNGOINGB0YLQvtC40LzQvtGB0YLRjCDQv9C10YDQtdCy
+0L7Qt9C60Lgg0Lgg0YDQsNGB0YLQsNC80L7QttC40LLQsNC90LjRjyDQuNC80LXQvdC90L4g0LTQ
+sNC90L3QvtCz0L4g0LPRgNGD0LfQsC4KCtChINGD0LLQsNC20LXQvdC40LXQvCwg0JzQsNC60LDR
+gNC+0LIg0JzQuNGF0LDQuNC7LgoK0JHRg9C00YMg0LbQtNCw0YLRjCDQvtGC0LLQtdGC0L3QvtC1
+INC/0LjRgdGM0LzQviDQvtGCINCS0LDRgS4=
 
-c_f_r is shorthand for "copy_file_range".
-
-As for standards... well... I'll just say that this being the /second/
-major shift in behavior reflects our poor community development
-processes.  The door to general cross-fs copies should not have been
-thrown open with as little testing as it did.  There are legendary
-dchinner rants about how obviously broken the generic fallback was when
-it was introduced.
-
-There's a reason why we usually wire up new kernel functionality on an
-opt-in basis, and that is to foster gradual enablement as QA resources
-permit.  It's one thing for maintainers to blow up their own subsystems
-in isolation, and an entirely different thing to do it between projects
-with no coordination.
-
-Did c_f_r work between an ext4 and an xfs?  I have no idea.  It seemed
-to work between xfses of a similar vintage and featureset, at least, but
-that's about as much testing as I have ever managed.
-
---D
-
-> 
-> Cheers,
-> 
-> Alex
-> 
-> -- 
-> Alejandro Colomar
-> Linux man-pages comaintainer; https://www.kernel.org/doc/man-pages/
-> http://www.alejandro-colomar.es/
