@@ -2,100 +2,219 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93B6632ECC0
-	for <lists+ceph-devel@lfdr.de>; Fri,  5 Mar 2021 15:08:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F832330A0F
+	for <lists+ceph-devel@lfdr.de>; Mon,  8 Mar 2021 10:14:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230432AbhCEOHl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 5 Mar 2021 09:07:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57796 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbhCEOHT (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 5 Mar 2021 09:07:19 -0500
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D52CC061574;
-        Fri,  5 Mar 2021 06:07:19 -0800 (PST)
-Received: by mail-io1-xd34.google.com with SMTP id o11so2146434iob.1;
-        Fri, 05 Mar 2021 06:07:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UODsAGsV/T+lomB07oDuRKsrOCpZBxRJM1Y3c8KG2Jw=;
-        b=q2LfV+yiXkB3d1c+Y7ylK+4p4h22FSUF1MWWKd+Vplm7kfp3Gdn1Aiybuox8gV/dPJ
-         JfFzlrgm1en745SzsCylqBGn38Z12L63Fxu7Y3HTT58zRiR5uOC5btka+JlDnk/AKwoi
-         RI7ZUNFE8M9zHW8dZbFHLPkovmUUEu/74Y7ZPgjCloD6Hs4/F717u1Rtk2I267xYPKDK
-         FURPxO/YdGp6x5kDq8f0KZvN0qGBhPsY68mG5tZMZ5sqddJKX3BA+Ruf1YLgjjVc1ALu
-         R5UIm5WcaYUrMrekrcmQDcnJwY2wl+jjouXtGRz6wXU2xWeRAORxy54XnIspZPZJoWWU
-         bPAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UODsAGsV/T+lomB07oDuRKsrOCpZBxRJM1Y3c8KG2Jw=;
-        b=NR1Q+VNaOgq/i66e+ancVgTnPsq3nGXv/bXR0y07m5aAvivn5gNRQIzsfhaLU/kmtj
-         Eq8Qf2wxfp+yhMSQMyUN8maLFFkE6vk6R+y/LlmQVzAoGL4e1Yhb9czH9RBiq/aAeeoQ
-         IoYSvSPGyyojgt30i9j7Q5C8x05iWOvCoubju4bZAprW7Yf/wC5yrCsskI9BA6VWSQLk
-         37HHXvGL975ECvIDunyl+PO8A+sWyJYW/vJZiWVV3F8ZZdGcKMZhrdfAUrSStnKwA9VF
-         w7/dfOIpLQgjSSNt8nIiJi7ia8oEAFMlJdR5020zMq3mX98+mC+96wA8p4/XCY7vsaGm
-         iubQ==
-X-Gm-Message-State: AOAM531UISRC3/DmsDWHmWTH15C3Bq4qBMcesSPBqHQyRNrPu00+4ySX
-        AQyuP8zQlZNKgL6AC163h9TKxeSYAv8v4aFcKiuW2McGI/M=
-X-Google-Smtp-Source: ABdhPJwGYDO38Ll6XtOXwqXQbE22dTy5p4sIkZv5Sjg3pt8l0RcuNOQUMuDli4y2Ti+TEhQHlDw5+FG+D+HSz1idYwk=
-X-Received: by 2002:a5d:8149:: with SMTP id f9mr8410386ioo.191.1614953238616;
- Fri, 05 Mar 2021 06:07:18 -0800 (PST)
+        id S229615AbhCHJOR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 8 Mar 2021 04:14:17 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:52207 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229494AbhCHJOI (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 Mar 2021 04:14:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615194847;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fWnNUTDO1hly14NTXoKrUQ+xczjUU5YkbfVHZZK6bcA=;
+        b=MHKbHGC/1VQ6/6g/ooW/T7uM86qIM0l4OlC8CRhowwZ6zTPgU0x4imH881W82Hjp/Nojq0
+        NxwMYF4/UJ78P5CkeZanuJHUnW5u/vW6MUiKYqcMiEfCpfNJ8OWR7mvI1pveSytQ97Vps2
+        lFfg+XUzPjO1umyyAUKMvT71jSlmdNA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-81-L_eZHGN_Ph2p8Nw_BC8gZQ-1; Mon, 08 Mar 2021 04:14:05 -0500
+X-MC-Unique: L_eZHGN_Ph2p8Nw_BC8gZQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 92E7C1084C95;
+        Mon,  8 Mar 2021 09:14:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-79.rdu2.redhat.com [10.10.112.79])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AE6B36267B;
+        Mon,  8 Mar 2021 09:13:56 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAOQ4uxhxwKHLT559f8v5aFTheKgPUndzGufg0E58rkEqa9oQ3Q@mail.gmail.com>
+References: <CAOQ4uxhxwKHLT559f8v5aFTheKgPUndzGufg0E58rkEqa9oQ3Q@mail.gmail.com> <2653261.1614813611@warthog.procyon.org.uk>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
+        Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-afs@lists.infradead.org,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: fscache: Redesigning the on-disk cache
 MIME-Version: 1.0
-References: <20210305095923.GA142236@embeddedor>
-In-Reply-To: <20210305095923.GA142236@embeddedor>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Fri, 5 Mar 2021 15:07:08 +0100
-Message-ID: <CAOi1vP8UFriFYzzkHs9HQFw=AjJyLayaMfZ2LGJuCoie+FeYaQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND][next] ceph: Fix fall-through warnings for Clang
-To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <517183.1615194835.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 08 Mar 2021 09:13:55 +0000
+Message-ID: <517184.1615194835@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Mar 5, 2021 at 10:59 AM Gustavo A. R. Silva
-<gustavoars@kernel.org> wrote:
->
-> In preparation to enable -Wimplicit-fallthrough for Clang, fix a couple
-> of warnings by explicitly adding a break and a goto statements instead
-> of just letting the code fall through to the next case.
->
-> Link: https://github.com/KSPP/linux/issues/115
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
->  fs/ceph/dir.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index 83d9358854fb..3e575656713e 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -631,10 +631,12 @@ static loff_t ceph_dir_llseek(struct file *file, loff_t offset, int whence)
->         switch (whence) {
->         case SEEK_CUR:
->                 offset += file->f_pos;
-> +               break;
->         case SEEK_SET:
->                 break;
->         case SEEK_END:
->                 retval = -EOPNOTSUPP;
-> +               goto out;
->         default:
->                 goto out;
->         }
-> --
-> 2.27.0
->
+Amir Goldstein <amir73il@gmail.com> wrote:
 
-Applied.
+> >  (0a) As (0) but using SEEK_DATA/SEEK_HOLE instead of bmap and opening=
+ the
+> >       file for every whole operation (which may combine reads and writ=
+es).
+> =
 
-Thanks,
+> I read that NFSv4 supports hole punching, so when using ->bmap() or SEEK=
+_DATA
+> to keep track of present data, it's hard to distinguish between an
+> invalid cached range and a valid "cached hole".
 
-                Ilya
+I wasn't exactly intending to permit caching over NFS.  That leads to fun
+making sure that the superblock you're caching isn't the one that has the
+cache in it.
+
+However, we will need to handle hole-punching being done on a cached netfs=
+,
+even if that's just to completely invalidate the cache for that file.
+
+> With ->fiemap() you can at least make the distinction between a non exis=
+ting
+> and an UNWRITTEN extent.
+
+I can't use that for XFS, Ext4 or btrfs, I suspect.  Christoph and Dave's
+assertion is that the cache can't rely on the backing filesystem's metadat=
+a
+because these can arbitrarily insert or remove blocks of zeros to bridge o=
+r
+split extents.
+
+> You didn't say much about crash consistency or durability requirements o=
+f the
+> cache. Since cachefiles only syncs the cache on shutdown, I guess you
+> rely on the hosting filesystem to provide the required ordering guarante=
+es.
+
+There's an xattr on each file in the cache to record the state.  I use thi=
+s
+mark a cache file "open".  If, when I look up a file, the file is marked o=
+pen,
+it is just discarded at the moment.
+
+Now, there are two types of data stored in the cache: data that has to be
+stored as a single complete blob and is replaced as such (e.g. symlinks an=
+d
+AFS dirs) and data that might be randomly modified (e.g. regular files).
+
+For the former, I have code, though in yet another branch, that writes thi=
+s in
+a tmpfile, sets the xattrs and then uses vfs_link(LINK_REPLACE) to cut ove=
+r.
+
+For the latter, that's harder to do as it would require copying the data t=
+o
+the tmpfile before we're allowed to modify it.  However, if it's possible =
+to
+create a tmpfile that's a CoW version of a data file, I could go down that
+route.
+
+But after I've written and sync'd the data, I set the xattr to mark the fi=
+le
+not open.  At the moment I'm doing this too lazily, only doing it when a n=
+etfs
+file gets evicted or when the cache gets withdrawn, but I really need to a=
+dd a
+queue of objects to be sealed as they're closed.  The balance is working o=
+ut
+how often to do the sealing as something like a shell script can do a lot =
+of
+consecutive open/write/close ops.
+
+> How does this work with write through network fs cache if the client sys=
+tem
+> crashes but the write gets to the server?
+
+The presumption is that the coherency info on the server will change, but
+won't get updated in the cache.
+
+> Client system get restart with older cached data because disk caches wer=
+e
+> not flushed before crash. Correct?  Is that case handled? Are the caches
+> invalidated on unclean shutdown?
+
+The netfs provides some coherency info for the cache to store.  For AFS, f=
+or
+example, this is the data version number (though it should probably includ=
+e
+the volume creation time too).  This is stored with the state info in the =
+same
+xattr and is only updated when the "open" state is cleared.
+
+When the cache file is reopened, if the coherency info doesn't match what
+we're expecting (presumably we queried the server), the file is discarded.
+
+(Note that the coherency info is netfs-specific)
+
+> Anyway, how are those ordering requirements going to be handled when ent=
+ire
+> indexing is in a file? You'd practically need to re-implement a filesyst=
+em
+
+Yes, the though has occurred to me too.  I would be implementing a "simple=
+"
+filesystem - and we have lots of those:-/.  The most obvious solution is t=
+o
+use the backing filesystem's metadata - except that that's not possible.
+
+> journal or only write cache updates to a temp file that can be discarded=
+ at
+> any time?
+
+It might involve keeping a bitmap of "open" blocks.  Those blocks get
+invalidated when the cache restarts.  The simplest solution would be to wi=
+pe
+the entire cache in such a situation, but that goes against one of the
+important features I want out of it.
+
+Actually, a journal of open and closed blocks might be better, though all =
+I
+really need to store for each block is a 32-bit number.
+
+It's a particular problem if I'm doing DIO to the data storage area but
+buffering the changes to the metadata.  Further, the metadata and data mig=
+ht
+be on different media, just to add to the complexity.
+
+Another possibility is only to cull blocks when the parent file is culled.
+That probably makes more sense as, as long as the file is registered culle=
+d on
+disk first and I don't reuse the file slot too quickly, I can write to the
+data store before updating the metadata.
+
+> If you come up with a useful generic implementation of a "file data
+> overlay", overlayfs could also use it for "partial copy up" as well as f=
+or
+> implementation of address space operations, so please keep that in mind.
+
+I'm trying to implement things so that the netfs does look-aside when read=
+ing,
+and multi-destination write-back when writing - but the netfs is in the
+driving seat and the cache is invisible to the user.  I really want to avo=
+id
+overlaying the cache on the netfs so that the cache is the primary access
+point.
+
+David
+
