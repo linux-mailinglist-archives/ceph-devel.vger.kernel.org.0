@@ -2,49 +2,29 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E165D3316FC
-	for <lists+ceph-devel@lfdr.de>; Mon,  8 Mar 2021 20:10:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D97F3319C4
+	for <lists+ceph-devel@lfdr.de>; Mon,  8 Mar 2021 22:56:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230412AbhCHTJc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 8 Mar 2021 14:09:32 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27817 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229650AbhCHTJE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 Mar 2021 14:09:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1615230543;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pBhajOJHrx3P1bFfpTnaW+JD8S792IZZwlNpIQC5Q0g=;
-        b=Wa4JJmEsSW657KZboi0NuNYCQXrcQKQCtgdmsY34DNdoKDodEQNsFhO+K82qcz6gnXw3Am
-        bYFm5nlw2LlXa7zv3+yRNJKop2+0AW3SkmncBdXUTIvmnY6QEqvJD0OH5QYAXX3wWi5faE
-        px3MGm5oi5ZdKAjrcO5E9eXxvseaqnQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-285-mfpi1OsCPjKSNXMW3mY4Qw-1; Mon, 08 Mar 2021 14:09:02 -0500
-X-MC-Unique: mfpi1OsCPjKSNXMW3mY4Qw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E8114801814;
-        Mon,  8 Mar 2021 19:08:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B45F19C79;
-        Mon,  8 Mar 2021 19:08:53 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210308185410.GE7284@fieldses.org>
-References: <20210308185410.GE7284@fieldses.org> <CAOQ4uxhxwKHLT559f8v5aFTheKgPUndzGufg0E58rkEqa9oQ3Q@mail.gmail.com> <2653261.1614813611@warthog.procyon.org.uk> <517184.1615194835@warthog.procyon.org.uk>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     dhowells@redhat.com, Amir Goldstein <amir73il@gmail.com>,
-        linux-cachefs@redhat.com, Jeff Layton <jlayton@redhat.com>,
+        id S231315AbhCHV4U (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 8 Mar 2021 16:56:20 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:56725 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230047AbhCHVzs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 Mar 2021 16:55:48 -0500
+Received: from dread.disaster.area (pa49-181-239-12.pa.nsw.optusnet.com.au [49.181.239.12])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 29E148289A3;
+        Tue,  9 Mar 2021 08:55:36 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1lJNqh-000HG4-6L; Tue, 09 Mar 2021 08:55:35 +1100
+Date:   Tue, 9 Mar 2021 08:55:35 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>, linux-cachefs@redhat.com,
+        Jeff Layton <jlayton@redhat.com>,
         David Wysochanski <dwysocha@redhat.com>,
         "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
         Christoph Hellwig <hch@infradead.org>,
         Dave Chinner <dchinner@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -57,45 +37,68 @@ Cc:     dhowells@redhat.com, Amir Goldstein <amir73il@gmail.com>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>
 Subject: Re: fscache: Redesigning the on-disk cache
+Message-ID: <20210308215535.GA63242@dread.disaster.area>
+References: <CAOQ4uxhxwKHLT559f8v5aFTheKgPUndzGufg0E58rkEqa9oQ3Q@mail.gmail.com>
+ <2653261.1614813611@warthog.procyon.org.uk>
+ <517184.1615194835@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <19638.1615230532.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 08 Mar 2021 19:08:52 +0000
-Message-ID: <19639.1615230532@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <517184.1615194835@warthog.procyon.org.uk>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0 cx=a_idp_d
+        a=gO82wUwQTSpaJfP49aMSow==:117 a=gO82wUwQTSpaJfP49aMSow==:17
+        a=kj9zAlcOel0A:10 a=dESyimp9J3IA:10 a=pGLkceISAAAA:8 a=7-415B0cAAAA:8
+        a=tj5_YPy7viIAn9pg2yAA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-J. Bruce Fields <bfields@fieldses.org> wrote:
+On Mon, Mar 08, 2021 at 09:13:55AM +0000, David Howells wrote:
+> Amir Goldstein <amir73il@gmail.com> wrote:
+> 
+> > >  (0a) As (0) but using SEEK_DATA/SEEK_HOLE instead of bmap and opening the
+> > >       file for every whole operation (which may combine reads and writes).
+> > 
+> > I read that NFSv4 supports hole punching, so when using ->bmap() or SEEK_DATA
+> > to keep track of present data, it's hard to distinguish between an
+> > invalid cached range and a valid "cached hole".
+> 
+> I wasn't exactly intending to permit caching over NFS.  That leads to fun
+> making sure that the superblock you're caching isn't the one that has the
+> cache in it.
+> 
+> However, we will need to handle hole-punching being done on a cached netfs,
+> even if that's just to completely invalidate the cache for that file.
+> 
+> > With ->fiemap() you can at least make the distinction between a non existing
+> > and an UNWRITTEN extent.
+> 
+> I can't use that for XFS, Ext4 or btrfs, I suspect.  Christoph and Dave's
+> assertion is that the cache can't rely on the backing filesystem's metadata
+> because these can arbitrarily insert or remove blocks of zeros to bridge or
+> split extents.
 
-> On Mon, Mar 08, 2021 at 09:13:55AM +0000, David Howells wrote:
-> > Amir Goldstein <amir73il@gmail.com> wrote:
-> > > With ->fiemap() you can at least make the distinction between a non =
-existing
-> > > and an UNWRITTEN extent.
-> > =
+Well, that's not the big problem. The issue that makes FIEMAP
+unusable for determining if there is user data present in a file is
+that on-disk extent maps aren't exactly coherent with in-memory user
+data state.
 
-> > I can't use that for XFS, Ext4 or btrfs, I suspect.  Christoph and Dav=
-e's
-> > assertion is that the cache can't rely on the backing filesystem's met=
-adata
-> > because these can arbitrarily insert or remove blocks of zeros to brid=
-ge or
-> > split extents.
-> =
+That is, we can have a hole on disk with delalloc user data in
+memory.  There's user data in the file, just not on disk. Same goes
+for unwritten extents - there can be dirty data in memory over an
+unwritten extent, and it won't get converted to written until the
+data is written back and the filesystem runs a conversion
+transaction.
 
-> Could you instead make some sort of explicit contract with the
-> filesystem?  Maybe you'd flag it at mkfs time and query for it before
-> allowing a filesystem to be used for fscache.  You don't need every
-> filesystem to support fscache, right, just one acceptable one?
+So, yeah, if you use FIEMAP to determine where data lies in a file
+that is being actively modified, you're going get corrupt data
+sooner rather than later.  SEEK_HOLE/DATA are coherent with in
+memory user data, so don't have this problem.
 
-I've asked about that, but the filesystem maintainers are reluctant to do
-that.
+Cheers,
 
-Something might be possible in ext4 using direct access to jbd2, though I
-don't know exactly what facilities that offers.
-
-David
-
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
