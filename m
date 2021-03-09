@@ -2,37 +2,49 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A51E9331AE9
-	for <lists+ceph-devel@lfdr.de>; Tue,  9 Mar 2021 00:22:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB8BB3321D6
+	for <lists+ceph-devel@lfdr.de>; Tue,  9 Mar 2021 10:22:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230342AbhCHXV2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 8 Mar 2021 18:21:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59676 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbhCHXUw (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 Mar 2021 18:20:52 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FE8EC06174A;
-        Mon,  8 Mar 2021 15:20:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=2C5j2UcjDYW9mYgwyHgqIe6Gz5l4DgveyBW595u9faQ=; b=u+am1ZJapiahZOpG2Rwq/AVvg0
-        oMfCYqTuZ4G+EEFNf60psslnnYYQ0bbgF+NILXiFCOjwDyIgbjxuoiEcZQv00o0WYpJH1isO6VRiC
-        xYhhvDFUoAUq9mIBi134gw3MfadH7JZ8AY9yEPnnUaxdK/iPAhg4iMyVH2wp4QF2zZ8pHolQggvnC
-        xkstHI6NejffxlN2RUIbiVQHfFT1cY1WUrPkEUFw5zfKwYkey4uzhSAMgcQE82RxexMMQ0BxHPpoW
-        X5J5LxbtGQdKzueTczFA09whN8xNZpVy9+J6I+M7eNGql2/XixHhZefyZteV2oaZFdcbjk91b7H/G
-        FOm50ufw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lJPAg-00GbJf-5O; Mon, 08 Mar 2021 23:20:22 +0000
-Date:   Mon, 8 Mar 2021 23:20:18 +0000
-From:   Matthew Wilcox <willy@infradead.org>
+        id S229495AbhCIJWM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 9 Mar 2021 04:22:12 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:50668 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229599AbhCIJWB (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 9 Mar 2021 04:22:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615281720;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JbGQhFsWORLegeM9HGujB/YiUTVMdc6Nb8R30vrP8qg=;
+        b=EjRb/NSBGgGWj1I+5wIOwzQQXbFLKDFG7qUu96ZjDOrhTRV/M/vqUSiqh4/xlfaNqiO4D7
+        RS5AOYCAMTBIecsDToPNz+8rs2yhmJCWWGkKVE3eq2/QhV8+hsbTywn7suAvMKjXKRSNwK
+        3huFLopX9DrXjceiHbpIBsx0qFgxAuo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-566-WXeLrfhUNES_-vEl3omWaQ-1; Tue, 09 Mar 2021 04:21:57 -0500
+X-MC-Unique: WXeLrfhUNES_-vEl3omWaQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 92A4B193F560;
+        Tue,  9 Mar 2021 09:21:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A9F7059458;
+        Tue,  9 Mar 2021 09:21:46 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20210308215535.GA63242@dread.disaster.area>
+References: <20210308215535.GA63242@dread.disaster.area> <CAOQ4uxhxwKHLT559f8v5aFTheKgPUndzGufg0E58rkEqa9oQ3Q@mail.gmail.com> <2653261.1614813611@warthog.procyon.org.uk> <517184.1615194835@warthog.procyon.org.uk>
 To:     Dave Chinner <david@fromorbit.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>, linux-cachefs@redhat.com,
-        Jeff Layton <jlayton@redhat.com>,
+Cc:     dhowells@redhat.com, Amir Goldstein <amir73il@gmail.com>,
+        linux-cachefs@redhat.com, Jeff Layton <jlayton@redhat.com>,
         David Wysochanski <dwysocha@redhat.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         "J. Bruce Fields" <bfields@fieldses.org>,
         Christoph Hellwig <hch@infradead.org>,
         Dave Chinner <dchinner@redhat.com>,
@@ -45,34 +57,64 @@ Cc:     David Howells <dhowells@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: Metadata writtenback notification? -- was Re: fscache:
- Redesigning the on-disk cache
-Message-ID: <20210308232018.GG3479805@casper.infradead.org>
-References: <CAOQ4uxjYWprb7trvamCx+DaP2yn8HCaZeZx1dSvPyFH2My303w@mail.gmail.com>
- <2653261.1614813611@warthog.procyon.org.uk>
- <CAOQ4uxhxwKHLT559f8v5aFTheKgPUndzGufg0E58rkEqa9oQ3Q@mail.gmail.com>
- <517184.1615194835@warthog.procyon.org.uk>
- <584529.1615202921@warthog.procyon.org.uk>
- <20210308223247.GB63242@dread.disaster.area>
+Subject: Re: fscache: Redesigning the on-disk cache
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210308223247.GB63242@dread.disaster.area>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <152280.1615281705.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 09 Mar 2021 09:21:45 +0000
+Message-ID: <152281.1615281705@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Mar 09, 2021 at 09:32:47AM +1100, Dave Chinner wrote:
-> On Mon, Mar 08, 2021 at 11:28:41AM +0000, David Howells wrote:
-> >      Possibly it's sufficient to just clear the excess page space before
-> >      writing, but that doesn't necessarily stop a writable mmap from
-> >      scribbling on it.
-> 
-> We can't stop mmap from scribbling in it. All filesystems have this
-> problem, so to prevent data leaks we have to zero the post-eof tail
-> region on every write of the EOF block, anyway.
+Dave Chinner <david@fromorbit.com> wrote:
 
-That's certainly one approach.  Another would be to zero it during the I/O
-completion handler.  It depends whether you can trust the last writer or
-not (eg what do we do with an isofs file that happens to contain garbage
-after the last byte in the file?)
+> > > With ->fiemap() you can at least make the distinction between a non
+> > > existing and an UNWRITTEN extent.
+> > =
+
+> > I can't use that for XFS, Ext4 or btrfs, I suspect.  Christoph and Dav=
+e's
+> > assertion is that the cache can't rely on the backing filesystem's met=
+adata
+> > because these can arbitrarily insert or remove blocks of zeros to brid=
+ge or
+> > split extents.
+> =
+
+> Well, that's not the big problem. The issue that makes FIEMAP
+> unusable for determining if there is user data present in a file is
+> that on-disk extent maps aren't exactly coherent with in-memory user
+> data state.
+> =
+
+> That is, we can have a hole on disk with delalloc user data in
+> memory.  There's user data in the file, just not on disk. Same goes
+> for unwritten extents - there can be dirty data in memory over an
+> unwritten extent, and it won't get converted to written until the
+> data is written back and the filesystem runs a conversion
+> transaction.
+> =
+
+> So, yeah, if you use FIEMAP to determine where data lies in a file
+> that is being actively modified, you're going get corrupt data
+> sooner rather than later.  SEEK_HOLE/DATA are coherent with in
+> memory user data, so don't have this problem.
+
+I thought you and/or Christoph said it *was* a problem to use the backing
+filesystem's metadata to track presence of data in the cache because the
+filesystem (or its tools) can arbitrarily insert blocks of zeros to
+bridge/break up extents.
+
+If that is the case, then that is a big problem, and SEEK_HOLE/DATA won't
+suffice.
+
+If it's not a problem - maybe if I can set a mark on a file to tell the
+filesystem and tools not to do that - then that would obviate the need for=
+ me
+to store my own maps.
+
+David
+
