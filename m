@@ -2,68 +2,93 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 36F1E333140
-	for <lists+ceph-devel@lfdr.de>; Tue,  9 Mar 2021 22:49:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA0BA333763
+	for <lists+ceph-devel@lfdr.de>; Wed, 10 Mar 2021 09:35:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231859AbhCIVsu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 9 Mar 2021 16:48:50 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40907 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231915AbhCIVsb (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 9 Mar 2021 16:48:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1615326510;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=iwbii2y0aUd6JdTMAjESiwVonfx2aADnJiKOzTNCZ3E=;
-        b=CKWU/c8fXGBm79qzZPBIFWl1QTCwGlmfPw1ax82TyBWjUq2ewBY3f5IuSB71MJw/kTdjcn
-        rXROrZxpCU2KkUWVG76aXn4U5QN/D7Kt1yhPBE5BNRrCIl19g5KqBBVJniSUkbnYFFoZhc
-        TZ8ElBBGpA2wjCpi09EasnmTCdWylsU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-31-C00nYY20OyuwgTz0MAYt6w-1; Tue, 09 Mar 2021 16:48:28 -0500
-X-MC-Unique: C00nYY20OyuwgTz0MAYt6w-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 782BF2F7A2;
-        Tue,  9 Mar 2021 21:48:27 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B6A6D19C46;
-        Tue,  9 Mar 2021 21:48:26 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAOi1vP9g+wFpw6ws5ap9T4nbPxLK0J-KegeoH4HZXQhC=UL2-g@mail.gmail.com>
-References: <CAOi1vP9g+wFpw6ws5ap9T4nbPxLK0J-KegeoH4HZXQhC=UL2-g@mail.gmail.com> <ac3703b3b382cc6e947904238e3dc4c671eb7847.camel@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     dhowells@redhat.com, Ceph Development <ceph-devel@vger.kernel.org>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: ceph-client/testing branch rebased
+        id S232399AbhCJIfH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 10 Mar 2021 03:35:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39036 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232299AbhCJIfA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 10 Mar 2021 03:35:00 -0500
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3F35C06174A
+        for <ceph-devel@vger.kernel.org>; Wed, 10 Mar 2021 00:35:00 -0800 (PST)
+Received: by mail-pf1-x42d.google.com with SMTP id q204so11465526pfq.10
+        for <ceph-devel@vger.kernel.org>; Wed, 10 Mar 2021 00:35:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=OZ4DaFt4QxSyy0SK/6k2uy91V4EOcCTRnBPzflEC95Q=;
+        b=Kr8ssbAAdPkepXAMaKIv1hoyiH8UEw5IXKJ8KOmtkadu1f0zLlnK4pWqDaUCsee+X4
+         sx92eX+iNDKBKVnM0Woxu8wWz3H1kJjNsr1kgDMagNBHLHdWsnSaiGy14Gg80w1r6ZpZ
+         B50bkgPxVm36xWCdYRV9KZfv0518knMjOFTS6WYcuENRq7qMMCF5C24bjq0farQ+ElBS
+         j9X4qQ09LpSBYDKp+DG1s6DttXVpsyFMqayVRSaXOu6A0Ace0jZaTvAAKGSKV+txNDzU
+         98koCqXqwGRbTjmpy2QNbNIXXMzIxIu67maASxiZxai3AKl0rhxhfiUgE9pSYyOit0ZD
+         AeeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=OZ4DaFt4QxSyy0SK/6k2uy91V4EOcCTRnBPzflEC95Q=;
+        b=e3zxtNV4lsp7OdtgArrOzWRHkHtfYr/zULjiNzpTQF+yCkHg4QE6ujE9iUfNff59N1
+         OYeKXxv4YYgSWp0s3LcrijOl3aNs6SVEzsy1iGg4THji6xZCuw9LJUxtT3Y/I3jlMd+y
+         qTDx5i7KLsiSq7skXFz8ZW4yZtgNWpcOdWasa79fXCophNbW8XcFiTm1A6idnrHKQ14a
+         trj0GVKQNDJt+kMtLnlnRDnNcxKu1OVHe9PPhmiPpBYDlkojdcta6gbNHd29CDsNu6Aa
+         otTyLmeR5M7ZvZ3ukE2v4KfEzjNWeBQi0bQMmbtPqSFuCsTJuJVmTLcO13DPN1ID9GEi
+         OB2w==
+X-Gm-Message-State: AOAM5319ylZlf3KoVbMkpg0cPPrb4emzmGYRKdyBZV9WP3yjAKDGhgvb
+        lb+tO/FP+NWWbje89LBV6dFqxPiWGLfxx0/D+gp4/252cGojRA==
+X-Google-Smtp-Source: ABdhPJxE0JKtDZ0yusnzmgC6Q+oW1VjA8yXiG52T/UIGn/BF2mmx8jeLzuVx/XbM9taCZ0ymHjiAEIXJnLTr044rkk8=
+X-Received: by 2002:a65:6641:: with SMTP id z1mr1834269pgv.399.1615365300185;
+ Wed, 10 Mar 2021 00:35:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <201975.1615326505.1@warthog.procyon.org.uk>
-Date:   Tue, 09 Mar 2021 21:48:25 +0000
-Message-ID: <201976.1615326505@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+From:   WeiGuo Ren <rwg1335252904@gmail.com>
+Date:   Wed, 10 Mar 2021 16:34:48 +0800
+Message-ID: <CAPy+zYVsiBspbi28VauMszHRn=a1bqLD06+bTxvvAhXN==5ixQ@mail.gmail.com>
+Subject: In the ceph multisite master-zone, read ,write,delete objects, and
+ the master-zone has data remaining.
+To:     Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Ilya Dryomov <idryomov@gmail.com> wrote:
+In my test environment, the ceph version is v14.2.5, and there are two
+rgws, which are instances of two zones, respectively rgwA
+(master-zone) and rgwB (slave-zone). Cosbench reads, writes, and
+deletes to rgwA. , The final result rgwA has data residue, but rgwB
+has no residue.
 
-> Could you please create a named branch that doesn't include AFS bits
-> (e.g. netfs-next)?  It is going to be needed once we get closer to
-> a merge window and netfs helper library is finalized.  I won't be able
-> to pull a seemingly random SHA (of the commit preceding the first AFS
-> commit) into ceph-client/master.
+Looking at the log later, I found that this happened:
+1. When rgwA deletes the object, the rgwA instance has not yet started
+datasync (or the process is slow) to synchronize the object in the
+slave-zone.
+2. When rgwA starts data synchronization, rgwB has not deleted the object.
+In process 2, rgwA will retrieve the object from the slave-zone, and
+then rgwA will enter the incremental synchronization state to
+synchronize the bilog, but the bilog about the del object will be
+filtered out, because syncs_trace has  master zone.
 
-I will do.  Currently I'm slightly stalled waiting on Willy.  He wants me to
-make some changes and I'm hoping he'll tell me what they should be at some
-point.
+Below I did a similar reproducing operation (both in the master
+version and ceph 14.2.5)
+rgwA and rgwB are two zones of the same zonegroup .rgwA and rgwB is
+running ( set rgw_run_sync_thread=true)
+rgwA and rgwB are two zones of the same zonegroup .rgwA and rgwB is
+running ( set rgw_run_sync_thread=true)
+t1: rgwA set rgw_run_sync_thread=false and restart it for it to take
+effect. We use s3cmd to create a bucket in rgwA. And upload an object1
+in rgwA. We use s3cmd to observe whether object1 has been synchronized
+in rgwB. or  look radosgw-admin bucket sync status is cauht up it. If
+the synchronization has passed, proceed to the next step.
+t2:rgwB set rgw_run_sync_thread=false and restart it for it to take
+effect. rgwA delete object1 .
+t3:rgwA set rgw_run_sync_thread=true and restart it for it to take
+effect. LOOK radosgw-admin bucket sync status is cauht up it.
+t4: rgwB set rgw_run_sync_thread=true and restart it for it to take
+effect. LOOK radosgw-admin bucket sync status is cauht up it .
+The reslut: rgwA has object1,rgwB dosen't have object1.
+This URL mentioned this problem  https://tracker.ceph.com/issues/47555
 
-David
-
+Could someone can help me? or If the bucket about the rgwA instance is
+not in the incremental synchronization state, can we prohibit rgwA
+from deleting object1?
