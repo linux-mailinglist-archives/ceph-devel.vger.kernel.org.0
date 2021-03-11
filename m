@@ -2,305 +2,133 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B988533448E
-	for <lists+ceph-devel@lfdr.de>; Wed, 10 Mar 2021 18:01:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 965703378FA
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 Mar 2021 17:15:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233702AbhCJRBP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 10 Mar 2021 12:01:15 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22905 "EHLO
+        id S234525AbhCKQPI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 11 Mar 2021 11:15:08 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:34273 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233783AbhCJRAx (ORCPT
+        by vger.kernel.org with ESMTP id S234356AbhCKQOn (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 10 Mar 2021 12:00:53 -0500
+        Thu, 11 Mar 2021 11:14:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1615395652;
+        s=mimecast20190719; t=1615479283;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/QrxkL5yU3bNKMVvjsOwNL+2HswH3DuEf3MKoAjRTHw=;
-        b=F6eNcDndFWxpQy87y5L3ZqbLeaCgvFYDrHPQnJb3NT2WS5AuwHDE+YXibs0LnYnq1Htuq7
-        U6nudxWgtCdZMXr1C8XhOO5YAmfL9kOgP67/dBgb7GJb+I57cvlAtBqzSBrYyOQfcvdLX9
-        wIJYBVD7DRYjSaelc6mlBsqwyRNdbXw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-54-qyyWa-4pPuSOIVR5bFKa8A-1; Wed, 10 Mar 2021 12:00:48 -0500
-X-MC-Unique: qyyWa-4pPuSOIVR5bFKa8A-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CEAD757;
-        Wed, 10 Mar 2021 17:00:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ADBA810016FD;
-        Wed, 10 Mar 2021 17:00:33 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v4 28/28] afs: Use the fscache_write_begin() helper
-From:   David Howells <dhowells@redhat.com>
-To:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>
-Cc:     linux-afs@lists.infradead.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 10 Mar 2021 17:00:32 +0000
-Message-ID: <161539563244.286939.16537296241609909980.stgit@warthog.procyon.org.uk>
-In-Reply-To: <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk>
-References: <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=5BdqRRaNJL3W0J+WwpFWzd8HKyojygm61onRnLWcdew=;
+        b=LUAmkOsyjprAXGFdLhYhJy9aCaGP7JRM1CBajp3PnCTSe507wrgllL/ON0FawmaLBARILi
+        9dJc3XpvzF5Xh9MVwPUTKLknqnkAMMqwmtbrh8E41MBj8DbhNhZ0vnqRFhcqDouWE4NttQ
+        NkNfP/SppYZI3Zz6wtLBzSIp/RJES7A=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-362-sVuMgVcfODub_Sn-jsPVeA-1; Thu, 11 Mar 2021 11:14:41 -0500
+X-MC-Unique: sVuMgVcfODub_Sn-jsPVeA-1
+Received: by mail-qk1-f199.google.com with SMTP id k68so15888507qke.2
+        for <ceph-devel@vger.kernel.org>; Thu, 11 Mar 2021 08:14:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:date:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=5BdqRRaNJL3W0J+WwpFWzd8HKyojygm61onRnLWcdew=;
+        b=rH0sINeBnkZC1xdOd8XrxzZZv5Rg3Z4nSLDVeMoSQsOaMjxsHipeSHIHj52QS1fH66
+         iIwKv2IbdIl2X8ous7/8zcR3HyZge1Ew70pg9L2HpyzdAlUwP0vWSDzOQst/Oirjuipi
+         +ja5u43aPsCucsDadwtYyG//TyEH/13pjWqnRoUHELl8H9lwuZP2al6B8K2T0QjBtI4U
+         WEs693k4VGJbHxeoMpvVnKIHoCUM+6BBSbej7rrA2VZhvT8uTYHyMZCvkDKP1nP4G2Bk
+         8fMys9R5qamNEJs9PZyxhKz8AF5ScdaX96F6iJz6gpnZMaAJOxyc0rtP2zJ3vZSNVCfY
+         z/AQ==
+X-Gm-Message-State: AOAM533Gt+mZhZG7Vvy4TtX+zewh0vzTQNHvZ37fDEiDPZWIW6cVq3tm
+        t7G02GSEZ2PirWz7Ebooeq/MrHydr4ltf2Dv3P+G98QCIwC81lja0++LAz5VhuwInL0LOMlVL7m
+        PJG9wOo5Z28EFVnWUlEIzaQ==
+X-Received: by 2002:ac8:7c8d:: with SMTP id y13mr4914164qtv.294.1615479280683;
+        Thu, 11 Mar 2021 08:14:40 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyRMRYfAIV82zGHdXhXruDibk2ojeDJGB6PY10tLTMddbpGcPzmGzW/DSvfWmpDNK+5hw/E/w==
+X-Received: by 2002:ac8:7c8d:: with SMTP id y13mr4914146qtv.294.1615479280418;
+        Thu, 11 Mar 2021 08:14:40 -0800 (PST)
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id g14sm2164823qkm.98.2021.03.11.08.14.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Mar 2021 08:14:39 -0800 (PST)
+Message-ID: <10fa59845ccb872620cc91d8ec7378302cb44cda.camel@redhat.com>
+Subject: fscrypt and file truncation on cephfs
+From:   Jeff Layton <jlayton@redhat.com>
+To:     dev <dev@ceph.io>,
+        "open list:CEPH DISTRIBUTED..." <ceph-devel@vger.kernel.org>
+Date:   Thu, 11 Mar 2021 11:14:39 -0500
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Make AFS use the new fscache_write_begin() helper to do the pre-reading
-required before the write.  If successful, the helper returns with the
-required page filled in and locked.  It may read more than just one page,
-expanding the read to meet cache granularity requirements as necessary.
+tl;dr version: in cephfs, the MDS handles truncating object data when
+inodes are truncated. This is problematic with fscrypt.
 
-Note: A more advanced version of this could be made that does
-generic_perform_write() for a whole cache granule.  This would make it
-easier to avoid doing the download/read for the data to be overwritten.
+Longer version:
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-afs@lists.infradead.org
-cc: linux-cachefs@redhat.com
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/160588546422.3465195.1546354372589291098.stgit@warthog.procyon.org.uk/ # rfc
----
+I've been working on a patchset to add fscrypt support to kcephfs, and
+have hit a problem with the way that truncation is handled. The main
+issue is that fscrypt uses block-based ciphers, so we must ensure that
+we read and write complete crypto blocks on the OSDs.
 
- fs/afs/file.c     |   19 +++++++++
- fs/afs/internal.h |    1 
- fs/afs/write.c    |  108 ++++++-----------------------------------------------
- 3 files changed, 31 insertions(+), 97 deletions(-)
+I'm currently using 4k crypto blocks, but we may want to allow this to
+be tunable eventually (though it will need to be smaller than and align
+with the OSD object size). For simplicity's sake, I'm planning to
+disallow custom layouts on encrypted inodes. We could consider adding
+that later (but it doesn't sound likely to be worthwhile).
 
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index 99bb4649a306..cf2b664a68a5 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -334,6 +334,13 @@ static void afs_init_rreq(struct netfs_read_request *rreq, struct file *file)
- 	rreq->netfs_priv = key_get(afs_file_key(file));
- }
- 
-+static bool afs_is_cache_enabled(struct inode *inode)
-+{
-+	struct fscache_cookie *cookie = afs_vnode_cache(AFS_FS_I(inode));
-+
-+	return fscache_cookie_enabled(cookie) && !hlist_empty(&cookie->backing_objects);
-+}
-+
- static int afs_begin_cache_operation(struct netfs_read_request *rreq)
- {
- 	struct afs_vnode *vnode = AFS_FS_I(rreq->inode);
-@@ -341,14 +348,24 @@ static int afs_begin_cache_operation(struct netfs_read_request *rreq)
- 	return fscache_begin_read_operation(rreq, afs_vnode_cache(vnode));
- }
- 
-+static int afs_check_write_begin(struct file *file, loff_t pos, unsigned len,
-+				 struct page *page, void **_fsdata)
-+{
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
-+
-+	return test_bit(AFS_VNODE_DELETED, &vnode->flags) ? -ESTALE : 0;
-+}
-+
- static void afs_priv_cleanup(struct address_space *mapping, void *netfs_priv)
- {
- 	key_put(netfs_priv);
- }
- 
--static const struct netfs_read_request_ops afs_req_ops = {
-+const struct netfs_read_request_ops afs_req_ops = {
- 	.init_rreq		= afs_init_rreq,
-+	.is_cache_enabled	= afs_is_cache_enabled,
- 	.begin_cache_operation	= afs_begin_cache_operation,
-+	.check_write_begin	= afs_check_write_begin,
- 	.issue_op		= afs_req_issue_op,
- 	.cleanup		= afs_priv_cleanup,
- };
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 96b33d2e3116..9f4040724318 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -1045,6 +1045,7 @@ extern void afs_dynroot_depopulate(struct super_block *);
- extern const struct address_space_operations afs_fs_aops;
- extern const struct inode_operations afs_file_inode_operations;
- extern const struct file_operations afs_file_operations;
-+extern const struct netfs_read_request_ops afs_req_ops;
- 
- extern int afs_cache_wb_key(struct afs_vnode *, struct afs_file *);
- extern void afs_put_wb_key(struct afs_wb_key *);
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index e672833c99bc..b2e03de09c24 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -11,6 +11,8 @@
- #include <linux/pagemap.h>
- #include <linux/writeback.h>
- #include <linux/pagevec.h>
-+#include <linux/netfs.h>
-+#include <linux/fscache.h>
- #include "internal.h"
- 
- /*
-@@ -22,68 +24,6 @@ int afs_set_page_dirty(struct page *page)
- 	return __set_page_dirty_nobuffers(page);
- }
- 
--/*
-- * Handle completion of a read operation to fill a page.
-- */
--static void afs_fill_hole(struct afs_read *req)
--{
--	if (iov_iter_count(req->iter) > 0)
--		/* The read was short - clear the excess buffer. */
--		iov_iter_zero(iov_iter_count(req->iter), req->iter);
--}
--
--/*
-- * partly or wholly fill a page that's under preparation for writing
-- */
--static int afs_fill_page(struct file *file,
--			 loff_t pos, unsigned int len, struct page *page)
--{
--	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
--	struct afs_read *req;
--	size_t p;
--	void *data;
--	int ret;
--
--	_enter(",,%llu", (unsigned long long)pos);
--
--	if (pos >= vnode->vfs_inode.i_size) {
--		p = pos & ~PAGE_MASK;
--		ASSERTCMP(p + len, <=, PAGE_SIZE);
--		data = kmap(page);
--		memset(data + p, 0, len);
--		kunmap(page);
--		return 0;
--	}
--
--	req = kzalloc(sizeof(struct afs_read), GFP_KERNEL);
--	if (!req)
--		return -ENOMEM;
--
--	refcount_set(&req->usage, 1);
--	req->vnode	= vnode;
--	req->done	= afs_fill_hole;
--	req->key	= key_get(afs_file_key(file));
--	req->pos	= pos;
--	req->len	= len;
--	req->nr_pages	= 1;
--	req->iter	= &req->def_iter;
--	iov_iter_xarray(&req->def_iter, READ, &file->f_mapping->i_pages, pos, len);
--
--	ret = afs_fetch_data(vnode, req);
--	afs_put_read(req);
--	if (ret < 0) {
--		if (ret == -ENOENT) {
--			_debug("got NOENT from server"
--			       " - marking file deleted and stale");
--			set_bit(AFS_VNODE_DELETED, &vnode->flags);
--			ret = -ESTALE;
--		}
--	}
--
--	_leave(" = %d", ret);
--	return ret;
--}
--
- /*
-  * prepare to perform part of a write to a page
-  */
-@@ -102,24 +42,14 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
- 	_enter("{%llx:%llu},%llx,%x",
- 	       vnode->fid.vid, vnode->fid.vnode, pos, len);
- 
--	page = grab_cache_page_write_begin(mapping, pos / PAGE_SIZE, flags);
--	if (!page)
--		return -ENOMEM;
--
--	if (!PageUptodate(page) && len != PAGE_SIZE) {
--		ret = afs_fill_page(file, pos & PAGE_MASK, PAGE_SIZE, page);
--		if (ret < 0) {
--			unlock_page(page);
--			put_page(page);
--			_leave(" = %d [prep]", ret);
--			return ret;
--		}
--		SetPageUptodate(page);
--	}
--
--#ifdef CONFIG_AFS_FSCACHE
--	wait_on_page_fscache(page);
--#endif
-+	/* Prefetch area to be written into the cache if we're caching this
-+	 * file.  We need to do this before we get a lock on the page in case
-+	 * there's more than one writer competing for the same cache block.
-+	 */
-+	ret = netfs_write_begin(file, mapping, pos, len, flags, &page, fsdata,
-+				&afs_req_ops, NULL);
-+	if (ret < 0)
-+		return ret;
- 
- 	index = page->index;
- 	from = pos - index * PAGE_SIZE;
-@@ -184,7 +114,6 @@ int afs_write_end(struct file *file, struct address_space *mapping,
- 	unsigned int f, from = pos & (thp_size(page) - 1);
- 	unsigned int t, to = from + copied;
- 	loff_t i_size, maybe_i_size;
--	int ret = 0;
- 
- 	_enter("{%llx:%llu},{%lx}",
- 	       vnode->fid.vid, vnode->fid.vnode, page->index);
-@@ -203,19 +132,7 @@ int afs_write_end(struct file *file, struct address_space *mapping,
- 		write_sequnlock(&vnode->cb_lock);
- 	}
- 
--	if (!PageUptodate(page)) {
--		if (copied < len) {
--			/* Try and load any missing data from the server.  The
--			 * unmarshalling routine will take care of clearing any
--			 * bits that are beyond the EOF.
--			 */
--			ret = afs_fill_page(file, pos + copied,
--					    len - copied, page);
--			if (ret < 0)
--				goto out;
--		}
--		SetPageUptodate(page);
--	}
-+	ASSERT(PageUptodate(page));
- 
- 	if (PagePrivate(page)) {
- 		priv = page_private(page);
-@@ -236,12 +153,11 @@ int afs_write_end(struct file *file, struct address_space *mapping,
- 
- 	if (set_page_dirty(page))
- 		_debug("dirtied %lx", page->index);
--	ret = copied;
- 
- out:
- 	unlock_page(page);
- 	put_page(page);
--	return ret;
-+	return copied;
- }
- 
- /*
+Normally, when a file is truncated (usually via a SETATTR MDS call), the
+MDS handles truncating or deleting objects on the OSDs. This is done
+somewhat lazily in that the MDS replies to the client before this
+process is complete (AFAICT).
 
+Once we add fscrypt support, the MDS handling truncation becomes a
+problem, in that we need to be able to deal with complete crypto blocks.
+Letting the MDS truncate away part of a block will leave us with a block
+that can't be decrypted.
+
+There are a number of possible approaches to fixing this, but ultimately
+the client will have to zero-pad, encrypt and write the blocks at the
+edges since the MDS doesn't have access to the keys.
+
+There are several possible approaches that I've identified:
+
+1/ We could teach the MDS the crypto blocksize, and ensure that it
+doesn't truncate away partial blocks. The client could tell the MDS what
+blocksize it's using on the inode and the MDS could ensure that
+truncates align to the blocks. The client will still need to write
+partial blocks at the edges of holes or at the EOF, and it probably
+shouldn't do that until it gets the unstable reply from the MDS. We
+could handle this by adding a new truncate op or extending the existing
+one.
+
+2/ We could cede the object truncate/delete to the client altogether.
+The MDS is aware when an inode is encrypted so it could just not do it
+for those inodes. We also already handle hole punching completely on the
+client (though the size doesn't change there). Truncate could be a
+special case of that. Probably, the client would issue the truncate and
+then be responsible for deleting/rewriting blocks after that reply comes
+in. We'd have to consider how to handle delinquent clients that don't
+clean up correctly.
+
+3/ We could maintain a separate field in the inode for the real
+inode->i_size that crypto-enabled clients would use. The client would
+always communicate a size to the MDS that is rounded up to the end of
+the last crypto block, such that the "true" size of the inode on disk
+would always be represented in the rstats. Only crypto-enabled clients
+would care about the "realsize" field. In fact, this value could
+_itself_ be encrypted too, so that the i_size of the file is masked from
+clients that don't have keys.
+
+Ceph's truncation machinery is pretty complex in general, so I could
+have missed other approaches or something that makes these ideas
+impossible. I'm leaning toward #3 here since I think it has the most
+benefit and keeps the MDS out of the whole business.
+
+What should we do here?
+-- 
+Jeff Layton <jlayton@redhat.com>
 
