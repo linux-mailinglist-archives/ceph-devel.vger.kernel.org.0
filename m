@@ -2,104 +2,92 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD5D633CB3D
-	for <lists+ceph-devel@lfdr.de>; Tue, 16 Mar 2021 03:05:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4866833D323
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Mar 2021 12:36:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231821AbhCPCEk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 15 Mar 2021 22:04:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60442 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229735AbhCPCET (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 15 Mar 2021 22:04:19 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4E20C06174A
-        for <ceph-devel@vger.kernel.org>; Mon, 15 Mar 2021 19:04:19 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id t18so9799550pjs.3
-        for <ceph-devel@vger.kernel.org>; Mon, 15 Mar 2021 19:04:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=1PRuY3m6h5u5neSonHIwNEywTa/QJX4yZUed4ZcZq4U=;
-        b=VbeGuPhH7L1GwA12RqNNMHfqyYmmZX6tQa0YOt7meKxmVZB8UWRL7MI3HOTk4LS9hF
-         ZXoDsr9/Y2vVfz3G6rVdLWjc5WSzNJYIQFxE0SLblUSYp9AtpQaDJyYwur0YwrHNifvk
-         0Prysl1cuj7ybCmsvTFecpKeYeH6Br/np4LghK0kmFxnRLCddsVjF/EOy1K8eMdRCHv6
-         Up5CS1riVPYgDCxbUHMM4qFSuX7fz9IKYk+zWY4uvPeqh3dUm5r4+lv/keYCfmz5RdZI
-         wsbKoiwysWK8TAPNucbe15+ZqxOby96GrjVmlFHVp2UxPAzz8bhMRXUQIV5M8UJMI+47
-         FOWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=1PRuY3m6h5u5neSonHIwNEywTa/QJX4yZUed4ZcZq4U=;
-        b=m0ThPGAJTpVrTKJlWygmzkJ24VhPRzTssyKO8bI+w8mb/XndhsRBzHg8mv7/CStqsr
-         0GvUwHONG1DdE895r7XNEFZdZRqwybr+HLcvoF/xd6TAam666WoLPTHLEQ4cP09OgSpT
-         yZUH/zlb3KA/F0rcul8rgerYRylvpeh3eGSrHPOYhINg6uVMvAxqw16Hzs/nPvG/1ukd
-         4TN74Us+goiKd88mUidcHIt8ZTviJbbE4PQE+3kZ4K8bpGTl9co+RDumInR4PByv2h5f
-         GmxvvsPsKOIraOYqqoX8bFlQy3gjyqQZxOjq25EMAdffmdO4O2bfdi3xodXsZFfLbN7y
-         p+zQ==
-X-Gm-Message-State: AOAM532XpAEBuo+PaG41i2fAAa4KSnA9EcdNzT9rvS2Q5YrOVzTw5OR1
-        ZzNd8KTwe79kg+qCyyhMjGvGOwtd9eTDKHE79BEyJaczCPU=
-X-Google-Smtp-Source: ABdhPJw7sLXb9LvBLsjf5OxcfGtr5iLPsSXS8fOyBpi6L+NnHSfajwUZGhiZnPap1qDxOUaZIC14bc++UTRd5Jzp7vg=
-X-Received: by 2002:a17:90a:f005:: with SMTP id bt5mr2240303pjb.127.1615860258747;
- Mon, 15 Mar 2021 19:04:18 -0700 (PDT)
+        id S237189AbhCPLf2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 16 Mar 2021 07:35:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:29222 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237233AbhCPLe4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 16 Mar 2021 07:34:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615894495;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vlqsbtT9COsx+yKS+e8hs6ZYyJT5eXMndMhYe5Gjdjo=;
+        b=I6KOQ54f+piOYqpz1iqCssuQVObooTHO6w5JSFAlxoBaOSsxSx6t/1RvgcXe8bJrEOBUwl
+        TI0uWQ2d+NiIJtoNVevOQg8wYgd6p4fY75iJu1lERIDJaQQd1jOJzzVdS6kefPIgOHFB+J
+        AEC/90K6ZgnU4tLTRuRFVHz56lVmnbk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-498-Q4Hxl9DtPsqAVRmB4OjmRQ-1; Tue, 16 Mar 2021 07:34:54 -0400
+X-MC-Unique: Q4Hxl9DtPsqAVRmB4OjmRQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 052CE193F561;
+        Tue, 16 Mar 2021 11:34:52 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 96C3C60C0F;
+        Tue, 16 Mar 2021 11:34:45 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <161539537375.286939.16642940088716990995.stgit@warthog.procyon.org.uk>
+References: <161539537375.286939.16642940088716990995.stgit@warthog.procyon.org.uk> <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk>
+To:     Trond Myklebust <trondmy@hammerspace.com>
+Cc:     dhowells@redhat.com, Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org,
+        David Wysochanski <dwysocha@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 08/28] netfs: Provide readahead and readpage netfs helpers
 MIME-Version: 1.0
-References: <CAPy+zYVsiBspbi28VauMszHRn=a1bqLD06+bTxvvAhXN==5ixQ@mail.gmail.com>
-In-Reply-To: <CAPy+zYVsiBspbi28VauMszHRn=a1bqLD06+bTxvvAhXN==5ixQ@mail.gmail.com>
-From:   WeiGuo Ren <rwg1335252904@gmail.com>
-Date:   Tue, 16 Mar 2021 10:04:05 +0800
-Message-ID: <CAPy+zYW17u=5mnyx33jODXdMyEQ2dnHWRUHtVW_xmu9+zmSnVA@mail.gmail.com>
-Subject: Re: In the ceph multisite master-zone, read ,write,delete objects,
- and the master-zone has data remaining.
-To:     Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3184203.1615894484.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 16 Mar 2021 11:34:44 +0000
+Message-ID: <3184204.1615894484@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Do we need to solve this problem?
+I'm going to make the code generate more information when warning about a
+subread reporting having over-read (see attached).
 
-WeiGuo Ren <rwg1335252904@gmail.com> =E4=BA=8E2021=E5=B9=B43=E6=9C=8810=E6=
-=97=A5=E5=91=A8=E4=B8=89 =E4=B8=8B=E5=8D=884:34=E5=86=99=E9=81=93=EF=BC=9A
->
-> In my test environment, the ceph version is v14.2.5, and there are two
-> rgws, which are instances of two zones, respectively rgwA
-> (master-zone) and rgwB (slave-zone). Cosbench reads, writes, and
-> deletes to rgwA. , The final result rgwA has data residue, but rgwB
-> has no residue.
->
-> Looking at the log later, I found that this happened:
-> 1. When rgwA deletes the object, the rgwA instance has not yet started
-> datasync (or the process is slow) to synchronize the object in the
-> slave-zone.
-> 2. When rgwA starts data synchronization, rgwB has not deleted the object=
-.
-> In process 2, rgwA will retrieve the object from the slave-zone, and
-> then rgwA will enter the incremental synchronization state to
-> synchronize the bilog, but the bilog about the del object will be
-> filtered out, because syncs_trace has  master zone.
->
-> Below I did a similar reproducing operation (both in the master
-> version and ceph 14.2.5)
-> rgwA and rgwB are two zones of the same zonegroup .rgwA and rgwB is
-> running ( set rgw_run_sync_thread=3Dtrue)
-> rgwA and rgwB are two zones of the same zonegroup .rgwA and rgwB is
-> running ( set rgw_run_sync_thread=3Dtrue)
-> t1: rgwA set rgw_run_sync_thread=3Dfalse and restart it for it to take
-> effect. We use s3cmd to create a bucket in rgwA. And upload an object1
-> in rgwA. We use s3cmd to observe whether object1 has been synchronized
-> in rgwB. or  look radosgw-admin bucket sync status is cauht up it. If
-> the synchronization has passed, proceed to the next step.
-> t2:rgwB set rgw_run_sync_thread=3Dfalse and restart it for it to take
-> effect. rgwA delete object1 .
-> t3:rgwA set rgw_run_sync_thread=3Dtrue and restart it for it to take
-> effect. LOOK radosgw-admin bucket sync status is cauht up it.
-> t4: rgwB set rgw_run_sync_thread=3Dtrue and restart it for it to take
-> effect. LOOK radosgw-admin bucket sync status is cauht up it .
-> The reslut: rgwA has object1,rgwB dosen't have object1.
-> This URL mentioned this problem  https://tracker.ceph.com/issues/47555
->
-> Could someone can help me? or If the bucket about the rgwA instance is
-> not in the incremental synchronization state, can we prohibit rgwA
-> from deleting object1?
+David
+---
+diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+index ce11ca4c32e4..765e88ee132d 100644
+--- a/fs/netfs/read_helper.c
++++ b/fs/netfs/read_helper.c
+@@ -641,7 +641,10 @@ void netfs_subreq_terminated(struct netfs_read_subreq=
+uest *subreq,
+ 		goto failed;
+ 	}
+ =
+
+-	if (WARN_ON(transferred_or_error > subreq->len - subreq->transferred))
++	if (WARN(transferred_or_error > subreq->len - subreq->transferred,
++		 "R%x[%x] %zd > %zu - %zu",
++		 rreq->debug_id, subreq->debug_index,
++		 transferred_or_error, subreq->len, subreq->transferred))
+ 		transferred_or_error =3D subreq->len - subreq->transferred;
+ =
+
+ 	subreq->error =3D 0;
+
