@@ -2,92 +2,87 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4866833D323
-	for <lists+ceph-devel@lfdr.de>; Tue, 16 Mar 2021 12:36:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D98133DD82
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Mar 2021 20:29:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237189AbhCPLf2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 16 Mar 2021 07:35:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:29222 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237233AbhCPLe4 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 16 Mar 2021 07:34:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1615894495;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vlqsbtT9COsx+yKS+e8hs6ZYyJT5eXMndMhYe5Gjdjo=;
-        b=I6KOQ54f+piOYqpz1iqCssuQVObooTHO6w5JSFAlxoBaOSsxSx6t/1RvgcXe8bJrEOBUwl
-        TI0uWQ2d+NiIJtoNVevOQg8wYgd6p4fY75iJu1lERIDJaQQd1jOJzzVdS6kefPIgOHFB+J
-        AEC/90K6ZgnU4tLTRuRFVHz56lVmnbk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-498-Q4Hxl9DtPsqAVRmB4OjmRQ-1; Tue, 16 Mar 2021 07:34:54 -0400
-X-MC-Unique: Q4Hxl9DtPsqAVRmB4OjmRQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 052CE193F561;
-        Tue, 16 Mar 2021 11:34:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 96C3C60C0F;
-        Tue, 16 Mar 2021 11:34:45 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <161539537375.286939.16642940088716990995.stgit@warthog.procyon.org.uk>
-References: <161539537375.286939.16642940088716990995.stgit@warthog.procyon.org.uk> <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk>
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     dhowells@redhat.com, Anna Schumaker <anna.schumaker@netapp.com>,
+        id S240474AbhCPT3M (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 16 Mar 2021 15:29:12 -0400
+Received: from casper.infradead.org ([90.155.50.34]:59198 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240460AbhCPT2c (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 16 Mar 2021 15:28:32 -0400
+X-Greylist: delayed 1253 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Mar 2021 15:28:32 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=a+0vOSKhaFyvZ89GWuo3huxCDtu4K+x/0Wx25fIk42U=; b=jt05dHVt86rt/fg//Nd6cO5DVR
+        1G3IYjzp8NmtC3ioV47ZhvEwsVO11uGSJs4d6RoCIe/BcJ/xaLebCaSFyAaRPStsmz5aU3Z0/tTjC
+        i2D7OiygMf3930tWOiLJfa4OdaVC2y2beYtlioE8Uk6T6FlNM29ZnQ8CELwXsvZbjeDKpcF11lhjh
+        fxWoakrSFVJne6ZMS7JRWMDDO0gZO7qnjt44rLaOVOowDrCMDY6XwMEq7NZ3RYp/xCyc/iArZ07hH
+        6dhLiP7mVnkIYcFu7Y/+Bu3gq9ijgn43hiplbkX3GbtJmVLUTJ4dq2oS7nwTEqPpCsU1+5QgJ/TDr
+        8DraJk1w==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lMF23-000UZR-6Y; Tue, 16 Mar 2021 19:07:08 +0000
+Date:   Tue, 16 Mar 2021 19:07:07 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <sfrench@samba.org>,
         Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
         linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>,
         David Wysochanski <dwysocha@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 08/28] netfs: Provide readahead and readpage netfs helpers
+Subject: Re: [PATCH v4 02/28] mm: Add an unlock function for
+ PG_private_2/PG_fscache
+Message-ID: <20210316190707.GD3420@casper.infradead.org>
+References: <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk>
+ <161539528910.286939.1252328699383291173.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3184203.1615894484.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 16 Mar 2021 11:34:44 +0000
-Message-ID: <3184204.1615894484@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <161539528910.286939.1252328699383291173.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-I'm going to make the code generate more information when warning about a
-subread reporting having over-read (see attached).
+On Wed, Mar 10, 2021 at 04:54:49PM +0000, David Howells wrote:
+> Add a function, unlock_page_private_2(), to unlock PG_private_2 analogous
+> to that of PG_lock.  Add a kerneldoc banner to that indicating the example
+> usage case.
 
-David
----
-diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-index ce11ca4c32e4..765e88ee132d 100644
---- a/fs/netfs/read_helper.c
-+++ b/fs/netfs/read_helper.c
-@@ -641,7 +641,10 @@ void netfs_subreq_terminated(struct netfs_read_subreq=
-uest *subreq,
- 		goto failed;
- 	}
- =
+This isn't a problem with this patch per se, but I'm concerned about
+private2 and expected page refcounts.
 
--	if (WARN_ON(transferred_or_error > subreq->len - subreq->transferred))
-+	if (WARN(transferred_or_error > subreq->len - subreq->transferred,
-+		 "R%x[%x] %zd > %zu - %zu",
-+		 rreq->debug_id, subreq->debug_index,
-+		 transferred_or_error, subreq->len, subreq->transferred))
- 		transferred_or_error =3D subreq->len - subreq->transferred;
- =
+static inline int is_page_cache_freeable(struct page *page)
+{
+        /*
+         * A freeable page cache page is referenced only by the caller
+         * that isolated the page, the page cache and optional buffer
+         * heads at page->private.
+         */
+        int page_cache_pins = thp_nr_pages(page);
+        return page_count(page) - page_has_private(page) == 1 + page_cache_pins;
+}
 
- 	subreq->error =3D 0;
+static inline int page_has_private(struct page *page)
+{
+        return !!(page->flags & PAGE_FLAGS_PRIVATE);
+}
+
+#define PAGE_FLAGS_PRIVATE                              \
+        (1UL << PG_private | 1UL << PG_private_2)
+
+So ... a page with both flags cleared should have a refcount of N.
+A page with one or both flags set should have a refcount of N+1.
+
+How is a poor filesystem supposed to make that true?  Also btrfs has this
+problem since it uses private_2 for its own purposes.
 
