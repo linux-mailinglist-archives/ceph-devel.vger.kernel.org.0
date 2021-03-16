@@ -2,151 +2,104 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D7EE33C53D
-	for <lists+ceph-devel@lfdr.de>; Mon, 15 Mar 2021 19:08:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD5D633CB3D
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Mar 2021 03:05:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231646AbhCOSHr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 15 Mar 2021 14:07:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48694 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231444AbhCOSHV (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 15 Mar 2021 14:07:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 484BA64F2B;
-        Mon, 15 Mar 2021 18:07:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1615831640;
-        bh=ExJkSDJZzOihB9xhPHG0ijWVccQ2cA9//wNyKOoa05w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jivERlwLriflGwUsD07KAhUqmc2S0A94JzIQ2zgpDff921o4h9SesZiyJpUVi5SIS
-         5iKlLw5PvTkTHlvgxB3glc15m3PH5EXGCOxNXX8HaA2Z4eXtJro6xmkKUL2T+cEZah
-         WGzVJMcs1CFXBiD6AuBmrehopRqPc0YIubWjZawS8nkuhC4d+C9+vbtUib9Wtd0CGl
-         y/kCDYtLnA9HHj683DMDBVrhayLiw6vLsydgcXFBPv5Aiz4ubaCpOO6NN/Mdh4C47u
-         K6meKM9+2EVJAruPWeXeX8dM0/kj90McvB0f/L9aIBAXaK5iFjwSTQNVPE/6goD757
-         WjaF1zuk8WJRA==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org, idryomov@gmail.com
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: [PATCH 2/2] ceph: don't use d_add in ceph_handle_snapdir
-Date:   Mon, 15 Mar 2021 14:07:17 -0400
-Message-Id: <20210315180717.266155-3-jlayton@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210315180717.266155-1-jlayton@kernel.org>
-References: <20210315180717.266155-1-jlayton@kernel.org>
+        id S231821AbhCPCEk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 15 Mar 2021 22:04:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60442 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229735AbhCPCET (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 15 Mar 2021 22:04:19 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4E20C06174A
+        for <ceph-devel@vger.kernel.org>; Mon, 15 Mar 2021 19:04:19 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id t18so9799550pjs.3
+        for <ceph-devel@vger.kernel.org>; Mon, 15 Mar 2021 19:04:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=1PRuY3m6h5u5neSonHIwNEywTa/QJX4yZUed4ZcZq4U=;
+        b=VbeGuPhH7L1GwA12RqNNMHfqyYmmZX6tQa0YOt7meKxmVZB8UWRL7MI3HOTk4LS9hF
+         ZXoDsr9/Y2vVfz3G6rVdLWjc5WSzNJYIQFxE0SLblUSYp9AtpQaDJyYwur0YwrHNifvk
+         0Prysl1cuj7ybCmsvTFecpKeYeH6Br/np4LghK0kmFxnRLCddsVjF/EOy1K8eMdRCHv6
+         Up5CS1riVPYgDCxbUHMM4qFSuX7fz9IKYk+zWY4uvPeqh3dUm5r4+lv/keYCfmz5RdZI
+         wsbKoiwysWK8TAPNucbe15+ZqxOby96GrjVmlFHVp2UxPAzz8bhMRXUQIV5M8UJMI+47
+         FOWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=1PRuY3m6h5u5neSonHIwNEywTa/QJX4yZUed4ZcZq4U=;
+        b=m0ThPGAJTpVrTKJlWygmzkJ24VhPRzTssyKO8bI+w8mb/XndhsRBzHg8mv7/CStqsr
+         0GvUwHONG1DdE895r7XNEFZdZRqwybr+HLcvoF/xd6TAam666WoLPTHLEQ4cP09OgSpT
+         yZUH/zlb3KA/F0rcul8rgerYRylvpeh3eGSrHPOYhINg6uVMvAxqw16Hzs/nPvG/1ukd
+         4TN74Us+goiKd88mUidcHIt8ZTviJbbE4PQE+3kZ4K8bpGTl9co+RDumInR4PByv2h5f
+         GmxvvsPsKOIraOYqqoX8bFlQy3gjyqQZxOjq25EMAdffmdO4O2bfdi3xodXsZFfLbN7y
+         p+zQ==
+X-Gm-Message-State: AOAM532XpAEBuo+PaG41i2fAAa4KSnA9EcdNzT9rvS2Q5YrOVzTw5OR1
+        ZzNd8KTwe79kg+qCyyhMjGvGOwtd9eTDKHE79BEyJaczCPU=
+X-Google-Smtp-Source: ABdhPJw7sLXb9LvBLsjf5OxcfGtr5iLPsSXS8fOyBpi6L+NnHSfajwUZGhiZnPap1qDxOUaZIC14bc++UTRd5Jzp7vg=
+X-Received: by 2002:a17:90a:f005:: with SMTP id bt5mr2240303pjb.127.1615860258747;
+ Mon, 15 Mar 2021 19:04:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAPy+zYVsiBspbi28VauMszHRn=a1bqLD06+bTxvvAhXN==5ixQ@mail.gmail.com>
+In-Reply-To: <CAPy+zYVsiBspbi28VauMszHRn=a1bqLD06+bTxvvAhXN==5ixQ@mail.gmail.com>
+From:   WeiGuo Ren <rwg1335252904@gmail.com>
+Date:   Tue, 16 Mar 2021 10:04:05 +0800
+Message-ID: <CAPy+zYW17u=5mnyx33jODXdMyEQ2dnHWRUHtVW_xmu9+zmSnVA@mail.gmail.com>
+Subject: Re: In the ceph multisite master-zone, read ,write,delete objects,
+ and the master-zone has data remaining.
+To:     Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-It's possible ceph_get_snapdir could end up finding a (disconnected)
-inode that already exists in the cache. Change the prototype for
-ceph_handle_snapdir to return a dentry pointer and have it use
-d_splice_alias so we don't end up with an aliased dentry in the cache.
+Do we need to solve this problem?
 
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/dir.c   | 30 ++++++++++++++++++------------
- fs/ceph/file.c  |  6 ++++--
- fs/ceph/super.h |  2 +-
- 3 files changed, 23 insertions(+), 15 deletions(-)
-
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 113f669d71dd..4b871b7017a0 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -667,8 +667,8 @@ static loff_t ceph_dir_llseek(struct file *file, loff_t offset, int whence)
- /*
-  * Handle lookups for the hidden .snap directory.
-  */
--int ceph_handle_snapdir(struct ceph_mds_request *req,
--			struct dentry *dentry, int err)
-+struct dentry *ceph_handle_snapdir(struct ceph_mds_request *req,
-+				   struct dentry *dentry, int err)
- {
- 	struct ceph_fs_client *fsc = ceph_sb_to_client(dentry->d_sb);
- 	struct inode *parent = d_inode(dentry->d_parent); /* we hold i_mutex */
-@@ -676,18 +676,19 @@ int ceph_handle_snapdir(struct ceph_mds_request *req,
- 	/* .snap dir? */
- 	if (err == -ENOENT &&
- 	    ceph_snap(parent) == CEPH_NOSNAP &&
--	    strcmp(dentry->d_name.name,
--		   fsc->mount_options->snapdir_name) == 0) {
-+	    strcmp(dentry->d_name.name, fsc->mount_options->snapdir_name) == 0) {
-+		struct dentry *res;
- 		struct inode *inode = ceph_get_snapdir(parent);
-+
- 		if (IS_ERR(inode))
--			return PTR_ERR(inode);
--		dout("ENOENT on snapdir %p '%pd', linking to snapdir %p\n",
--		     dentry, dentry, inode);
--		BUG_ON(!d_unhashed(dentry));
--		d_add(dentry, inode);
--		err = 0;
-+			return ERR_CAST(inode);
-+		res = d_splice_alias(inode, dentry);
-+		dout("ENOENT on snapdir %p '%pd', linking to snapdir %p. Spliced dentry %p\n",
-+		     dentry, dentry, inode, res);
-+		if (res)
-+			dentry = res;
- 	}
--	return err;
-+	return dentry;
- }
- 
- /*
-@@ -743,6 +744,7 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
- 	struct ceph_fs_client *fsc = ceph_sb_to_client(dir->i_sb);
- 	struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(dir->i_sb);
- 	struct ceph_mds_request *req;
-+	struct dentry *res;
- 	int op;
- 	int mask;
- 	int err;
-@@ -793,7 +795,11 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
- 	req->r_parent = dir;
- 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
- 	err = ceph_mdsc_do_request(mdsc, NULL, req);
--	err = ceph_handle_snapdir(req, dentry, err);
-+	res = ceph_handle_snapdir(req, dentry, err);
-+	if (IS_ERR(res))
-+		err = PTR_ERR(res);
-+	else
-+		dentry = res;
- 	dentry = ceph_finish_lookup(req, dentry, err);
- 	ceph_mdsc_put_request(req);  /* will dput(dentry) */
- 	dout("lookup result=%p\n", dentry);
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 209535d5b8d3..847beb9f43dd 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -739,9 +739,11 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 	err = ceph_mdsc_do_request(mdsc,
- 				   (flags & (O_CREAT|O_TRUNC)) ? dir : NULL,
- 				   req);
--	err = ceph_handle_snapdir(req, dentry, err);
--	if (err)
-+	dentry = ceph_handle_snapdir(req, dentry, err);
-+	if (IS_ERR(dentry)) {
-+		err = PTR_ERR(dentry);
- 		goto out_req;
-+	}
- 
- 	if ((flags & O_CREAT) && !req->r_reply_info.head->is_dentry)
- 		err = ceph_handle_notrace_create(dir, dentry);
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 188565d806b2..07a3fb52ae30 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1193,7 +1193,7 @@ extern const struct dentry_operations ceph_dentry_ops;
- 
- extern loff_t ceph_make_fpos(unsigned high, unsigned off, bool hash_order);
- extern int ceph_handle_notrace_create(struct inode *dir, struct dentry *dentry);
--extern int ceph_handle_snapdir(struct ceph_mds_request *req,
-+extern struct dentry *ceph_handle_snapdir(struct ceph_mds_request *req,
- 			       struct dentry *dentry, int err);
- extern struct dentry *ceph_finish_lookup(struct ceph_mds_request *req,
- 					 struct dentry *dentry, int err);
--- 
-2.30.2
-
+WeiGuo Ren <rwg1335252904@gmail.com> =E4=BA=8E2021=E5=B9=B43=E6=9C=8810=E6=
+=97=A5=E5=91=A8=E4=B8=89 =E4=B8=8B=E5=8D=884:34=E5=86=99=E9=81=93=EF=BC=9A
+>
+> In my test environment, the ceph version is v14.2.5, and there are two
+> rgws, which are instances of two zones, respectively rgwA
+> (master-zone) and rgwB (slave-zone). Cosbench reads, writes, and
+> deletes to rgwA. , The final result rgwA has data residue, but rgwB
+> has no residue.
+>
+> Looking at the log later, I found that this happened:
+> 1. When rgwA deletes the object, the rgwA instance has not yet started
+> datasync (or the process is slow) to synchronize the object in the
+> slave-zone.
+> 2. When rgwA starts data synchronization, rgwB has not deleted the object=
+.
+> In process 2, rgwA will retrieve the object from the slave-zone, and
+> then rgwA will enter the incremental synchronization state to
+> synchronize the bilog, but the bilog about the del object will be
+> filtered out, because syncs_trace has  master zone.
+>
+> Below I did a similar reproducing operation (both in the master
+> version and ceph 14.2.5)
+> rgwA and rgwB are two zones of the same zonegroup .rgwA and rgwB is
+> running ( set rgw_run_sync_thread=3Dtrue)
+> rgwA and rgwB are two zones of the same zonegroup .rgwA and rgwB is
+> running ( set rgw_run_sync_thread=3Dtrue)
+> t1: rgwA set rgw_run_sync_thread=3Dfalse and restart it for it to take
+> effect. We use s3cmd to create a bucket in rgwA. And upload an object1
+> in rgwA. We use s3cmd to observe whether object1 has been synchronized
+> in rgwB. or  look radosgw-admin bucket sync status is cauht up it. If
+> the synchronization has passed, proceed to the next step.
+> t2:rgwB set rgw_run_sync_thread=3Dfalse and restart it for it to take
+> effect. rgwA delete object1 .
+> t3:rgwA set rgw_run_sync_thread=3Dtrue and restart it for it to take
+> effect. LOOK radosgw-admin bucket sync status is cauht up it.
+> t4: rgwB set rgw_run_sync_thread=3Dtrue and restart it for it to take
+> effect. LOOK radosgw-admin bucket sync status is cauht up it .
+> The reslut: rgwA has object1,rgwB dosen't have object1.
+> This URL mentioned this problem  https://tracker.ceph.com/issues/47555
+>
+> Could someone can help me? or If the bucket about the rgwA instance is
+> not in the incremental synchronization state, can we prohibit rgwA
+> from deleting object1?
