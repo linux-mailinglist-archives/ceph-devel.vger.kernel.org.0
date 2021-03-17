@@ -2,120 +2,115 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A3F8833E713
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Mar 2021 03:44:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68BDC33E9C9
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Mar 2021 07:36:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229548AbhCQCnw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 16 Mar 2021 22:43:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42690 "EHLO
+        id S230027AbhCQGeM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 17 Mar 2021 02:34:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229571AbhCQCnq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 16 Mar 2021 22:43:46 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C342BC06174A
-        for <ceph-devel@vger.kernel.org>; Tue, 16 Mar 2021 19:43:45 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id p8so132144ejb.10
-        for <ceph-devel@vger.kernel.org>; Tue, 16 Mar 2021 19:43:45 -0700 (PDT)
+        with ESMTP id S229505AbhCQGdd (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 17 Mar 2021 02:33:33 -0400
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C8A7C06175F
+        for <ceph-devel@vger.kernel.org>; Tue, 16 Mar 2021 23:33:33 -0700 (PDT)
+Received: by mail-pg1-x52e.google.com with SMTP id x29so24192814pgk.6
+        for <ceph-devel@vger.kernel.org>; Tue, 16 Mar 2021 23:33:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GvkSjbOflTYrrhQW/IujV+Vj77yNYWLHdlNlegrHH4E=;
-        b=ASGp57d2AB3YJwzE0HztUK7znMoqHLdCpnr808cyahGXOlRg55T2zYUWxFwELsX85a
-         rS35PH4RkUyQRe4gbJq52No3U0lb3SmDBGMBrHHk9qd67i95PxSvEvT+Mngdku3IDOLo
-         nnwpKbepa9C5Dlkm18/FC8Ew/qk9tKjgUsJpA=
+         :content-transfer-encoding;
+        bh=Kk+tqqseB5Nh19m1UTh43i5B0EQ/mLRppUOVT2Ufi0I=;
+        b=nrifkhKqxiWoE2qp810srqEsfKVyVeAF10LD+9TLATM5kCH9HOaqdQoGR5bK+HNXpn
+         48gmHeerg/Akmxn8BSidsynYldg8tMTTuWs+p+yWMJIuuvxYzP+MXhUi+B1GSYimsfHr
+         1bAmCokp00pLzLclNg2FMb29S9OcIgGFW8+goQTTVJmNtCHt+I2YTdoU0BFzwkBY/Lt0
+         rwghAbwmPLWDzVss1pOss55HvAvhwn9vevX+TKL1tbGIWgbk+RZRZwfdNFszeLfA7CPA
+         8bw54X/0C8b7zHELUyNvg4x7KUOmBXdpFRbJ2qxSrRlzfWek8N6J4cFrIh59Z2GKEAms
+         kF3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GvkSjbOflTYrrhQW/IujV+Vj77yNYWLHdlNlegrHH4E=;
-        b=ODxJ+rlb1Xwdr0IqwiXzW1Xd3WavKGORvxrmZfbfN8sRTwzx64yUzYOVaBM0E5afqi
-         lRYIN3GrLNQvgG7scEjP97bD4if2pN/yaVL+Oq7AHe7NSPMTOryEA5keSUb556BZIV3R
-         mVvYfmS/RhUsxm6i4jLTCegOYwls0Wh8h0+6vypiquf0T9OYw+Yy7v6q6mPy/tUKY7DX
-         pSzXVIrBmZyyznVcq6ZUJQ6mfTlWdy1Bs+LGqFYGpkP3lXe+H8EA8iGv6xCx9L0CPgT8
-         wtsDEWo+95bVM1OQeg2J618TIxY3A6rFCuIIUsII4Y+XsvitKbz3ITULrI20rmx74g3z
-         SxHg==
-X-Gm-Message-State: AOAM532XzPHsCSB8Jg2ds6qT+DY3wBD+SAPrysuKrFy0EikD53LkxGZO
-        CGA/JWjDVHJK6O/tQz2SKW7HBj4GnASO8w==
-X-Google-Smtp-Source: ABdhPJwf0IUAYf3CdE1lGDYqN751qi6zFP/iKdDhPP3mKRnnf6yPLTpqhFlwMn4zC6XGfvOHMcDv7g==
-X-Received: by 2002:a17:906:8408:: with SMTP id n8mr31731192ejx.152.1615949024314;
-        Tue, 16 Mar 2021 19:43:44 -0700 (PDT)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id v8sm11492895edx.38.2021.03.16.19.43.43
-        for <ceph-devel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Mar 2021 19:43:44 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id bm21so167771ejb.4
-        for <ceph-devel@vger.kernel.org>; Tue, 16 Mar 2021 19:43:43 -0700 (PDT)
-X-Received: by 2002:a05:6512:398d:: with SMTP id j13mr922688lfu.41.1615948533286;
- Tue, 16 Mar 2021 19:35:33 -0700 (PDT)
+         :message-id:subject:to:content-transfer-encoding;
+        bh=Kk+tqqseB5Nh19m1UTh43i5B0EQ/mLRppUOVT2Ufi0I=;
+        b=sGIvWG9GSdJo8LfAzQHGGh98XLotQ8aY4Uwj41L5sis9tJpTiZ34O39yr9Yx9CWFox
+         TssWEkNfGFl2h5YQ+ySByfdZn4kwO1k/VCbFophsxeg9QxwU5h47YmtZKeOhdtcxWVVK
+         kKCd2SRDmdysvdUpOpOybze/DknQKrioYoWgYL6Zwrl9CE+FnrFpnbjs90pAVvfZ1uWw
+         LVCyqeMMcSfySdR7cagodQG7wWxweIsfQZOpp2ro2e/sIQ5oTMxDXxaKgW45OvQI3Rxa
+         ygoOfAW2RSis8y0PA/Wz2AJmrAhWDMFFyCZeIj/0v1J8/nu9bU/XSZ0aOCHI4tzqW+ys
+         Hasg==
+X-Gm-Message-State: AOAM531cLrpYr1XEJhtklyVt2Xpb+1P1IDLYGIxAUNLTKLUqbDaTLzye
+        JLfO6jjVXPWg6Ulg8c7AMw/yQCATnUTt0FeENvSaHUdO4VIRqg==
+X-Google-Smtp-Source: ABdhPJwx0XxW5grqasP1xrufQ78GXB94IrHj4c3q1wjqevRwAuf0sDcz0/2hdPkDBhI+olNfH7VXUQWB2ccuRGZBcNo=
+X-Received: by 2002:a62:7bc4:0:b029:1f1:58ea:4010 with SMTP id
+ w187-20020a627bc40000b02901f158ea4010mr2894913pfc.70.1615962812813; Tue, 16
+ Mar 2021 23:33:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk>
- <161539528910.286939.1252328699383291173.stgit@warthog.procyon.org.uk>
- <20210316190707.GD3420@casper.infradead.org> <CAHk-=wjSGsRj7xwhSMQ6dAQiz53xA39pOG+XA_WeTgwBBu4uqg@mail.gmail.com>
- <887b9eb7-2764-3659-d0bf-6a034a031618@toxicpanda.com>
-In-Reply-To: <887b9eb7-2764-3659-d0bf-6a034a031618@toxicpanda.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 16 Mar 2021 19:35:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whWoJhGeMn85LOh9FX-5d2-Upzmv1m2ZmYxvD31TKpUTA@mail.gmail.com>
-Message-ID: <CAHk-=whWoJhGeMn85LOh9FX-5d2-Upzmv1m2ZmYxvD31TKpUTA@mail.gmail.com>
-Subject: Re: [PATCH v4 02/28] mm: Add an unlock function for PG_private_2/PG_fscache
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux-MM <linux-mm@kvack.org>, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAPy+zYVsiBspbi28VauMszHRn=a1bqLD06+bTxvvAhXN==5ixQ@mail.gmail.com>
+ <CAPy+zYW17u=5mnyx33jODXdMyEQ2dnHWRUHtVW_xmu9+zmSnVA@mail.gmail.com>
+In-Reply-To: <CAPy+zYW17u=5mnyx33jODXdMyEQ2dnHWRUHtVW_xmu9+zmSnVA@mail.gmail.com>
+From:   WeiGuo Ren <rwg1335252904@gmail.com>
+Date:   Wed, 17 Mar 2021 14:33:19 +0800
+Message-ID: <CAPy+zYVvSROysnYYc+B7TdLMF08U-iHRQD=WHwZJQCE77uf4NA@mail.gmail.com>
+Subject: Re: In the ceph multisite master-zone, read ,write,delete objects,
+ and the master-zone has data remaining.
+To:     Ceph Development <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Mar 16, 2021 at 7:12 PM Josef Bacik <josef@toxicpanda.com> wrote:
+maybe 'If the bucket about the rgwA instance is
+not in the incremental synchronization state, can we prohibit rgwA
+from deleting object1?' is not the way to solve the problem. who can help m=
+e?
+
+WeiGuo Ren <rwg1335252904@gmail.com> =E4=BA=8E2021=E5=B9=B43=E6=9C=8816=E6=
+=97=A5=E5=91=A8=E4=BA=8C =E4=B8=8A=E5=8D=8810:04=E5=86=99=E9=81=93=EF=BC=9A
 >
+> Do we need to solve this problem?
 >
-> Yeah it's just a flag, we use it to tell that the page is part of a range that
-> has been allocated for IO.  The lifetime of the page is independent of the page,
-> but is generally either dirty or under writeback, so either it goes through
-> truncate and we clear PagePrivate2 there, or it actually goes through IO and is
-> cleared before we drop the page in our endio.
-
-Ok, that's what it looked like from my very limited "looking at a
-couple of grep cases", but I didn't go any further than that.
-
-> We _always_ have PG_private set on the page as long as we own it, and
-> PG_private_2 is only set in this IO related context, so we're safe
-> there because of the rules around PG_dirty/PG_writeback. We don't need
-> it to have an extra ref for it being set.
-
-Perfect. That means that at least as far as btrfs is concerned, we
-could trivially remove PG_private_2 from that page_has_private() math
-- you'd always see the same result anyway, exactly because you have
-PG_private set.
-
-And as far as I can tell, fscache doesn't want that PG_private_2 bit
-to interact with the random VM lifetime or migration rules either, and
-should rely entirely on the page count. David?
-
-There's actually a fair number of page_has_private() users, so we'd
-better make sure that's the case. But it's simplified by this but
-really only being used by btrfs (which doesn't care) and fscache, so
-this cleanup would basically be entirely up to the whole fscache
-series.
-
-Hmm? Objections?
-
-            Linus
+> WeiGuo Ren <rwg1335252904@gmail.com> =E4=BA=8E2021=E5=B9=B43=E6=9C=8810=
+=E6=97=A5=E5=91=A8=E4=B8=89 =E4=B8=8B=E5=8D=884:34=E5=86=99=E9=81=93=EF=BC=
+=9A
+> >
+> > In my test environment, the ceph version is v14.2.5, and there are two
+> > rgws, which are instances of two zones, respectively rgwA
+> > (master-zone) and rgwB (slave-zone). Cosbench reads, writes, and
+> > deletes to rgwA. , The final result rgwA has data residue, but rgwB
+> > has no residue.
+> >
+> > Looking at the log later, I found that this happened:
+> > 1. When rgwA deletes the object, the rgwA instance has not yet started
+> > datasync (or the process is slow) to synchronize the object in the
+> > slave-zone.
+> > 2. When rgwA starts data synchronization, rgwB has not deleted the obje=
+ct.
+> > In process 2, rgwA will retrieve the object from the slave-zone, and
+> > then rgwA will enter the incremental synchronization state to
+> > synchronize the bilog, but the bilog about the del object will be
+> > filtered out, because syncs_trace has  master zone.
+> >
+> > Below I did a similar reproducing operation (both in the master
+> > version and ceph 14.2.5)
+> > rgwA and rgwB are two zones of the same zonegroup .rgwA and rgwB is
+> > running ( set rgw_run_sync_thread=3Dtrue)
+> > rgwA and rgwB are two zones of the same zonegroup .rgwA and rgwB is
+> > running ( set rgw_run_sync_thread=3Dtrue)
+> > t1: rgwA set rgw_run_sync_thread=3Dfalse and restart it for it to take
+> > effect. We use s3cmd to create a bucket in rgwA. And upload an object1
+> > in rgwA. We use s3cmd to observe whether object1 has been synchronized
+> > in rgwB. or  look radosgw-admin bucket sync status is cauht up it. If
+> > the synchronization has passed, proceed to the next step.
+> > t2:rgwB set rgw_run_sync_thread=3Dfalse and restart it for it to take
+> > effect. rgwA delete object1 .
+> > t3:rgwA set rgw_run_sync_thread=3Dtrue and restart it for it to take
+> > effect. LOOK radosgw-admin bucket sync status is cauht up it.
+> > t4: rgwB set rgw_run_sync_thread=3Dtrue and restart it for it to take
+> > effect. LOOK radosgw-admin bucket sync status is cauht up it .
+> > The reslut: rgwA has object1,rgwB dosen't have object1.
+> > This URL mentioned this problem  https://tracker.ceph.com/issues/47555
+> >
+> > Could someone can help me? or If the bucket about the rgwA instance is
+> > not in the incremental synchronization state, can we prohibit rgwA
+> > from deleting object1?
