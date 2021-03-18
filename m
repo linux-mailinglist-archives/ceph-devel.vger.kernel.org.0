@@ -2,100 +2,127 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CF28340625
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 Mar 2021 13:54:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82355340B12
+	for <lists+ceph-devel@lfdr.de>; Thu, 18 Mar 2021 18:11:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231325AbhCRMyI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 18 Mar 2021 08:54:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33898 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231279AbhCRMxn (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 18 Mar 2021 08:53:43 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 980F9C06174A
-        for <ceph-devel@vger.kernel.org>; Thu, 18 Mar 2021 05:53:42 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id g1so1258549plg.7
-        for <ceph-devel@vger.kernel.org>; Thu, 18 Mar 2021 05:53:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=LERvXmZUMS1jrO2Qxw6NXr2FBx2xXa4mrMXNs8tOvNM=;
-        b=amgzqYQnz2KlUEv02C5G22uLiYwr/i30+Q2VjcXVjF93iVSgALySZZtgCq2ZBGWwVE
-         jhWyNZ6/oEvWnYVBpCG4ptOB2b+3GeV7PyKhHoEKXDvJO1zu2aJx3f1zSMKnOcRR+qbU
-         4TNpnYt1ADeFs1ACNpJ1o51iPMjPJZlgMjKED6JerYUZdrBT+GNrlA8aRDlIDsaLTkNt
-         ukN0dEomPWfXMCSphGqaKwEWMvoUXmKZzACRl4T2ZwJxQz+X4Wj6i2GbUrCdVilNQVcq
-         39RHfMSRmy4x1ju+ko5/B/iEQHiLzVga6pDXcnQlziUb9QoNhpdxwHqcZ82tMtChzMdM
-         loZw==
+        id S231995AbhCRRKb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 18 Mar 2021 13:10:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23960 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232216AbhCRRK1 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 18 Mar 2021 13:10:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616087424;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2OINpMVQBvtOIEMSvFRT/blX5mHdm75+1aKbMZd05RE=;
+        b=VG3oIAD64OQzwC5nclnZkZtztCkUnh3ae0mtWVXOOpSmHsrw1Kse7M8kRl3zSQHksgvjpP
+        OVcLLZgYrgzX5g6s+MHBSb1aa/vFy6d54gRJL3bHs7viqClyBUsf3j7jk664reN+I/eiML
+        a/GoEo+QaCfwdR9mBsai9MTQ628/PZM=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-455-xsESDnfnMdyA_JASdgRK8g-1; Thu, 18 Mar 2021 13:10:19 -0400
+X-MC-Unique: xsESDnfnMdyA_JASdgRK8g-1
+Received: by mail-wm1-f69.google.com with SMTP id c7so12115483wml.8
+        for <ceph-devel@vger.kernel.org>; Thu, 18 Mar 2021 10:10:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=LERvXmZUMS1jrO2Qxw6NXr2FBx2xXa4mrMXNs8tOvNM=;
-        b=b5tOHnGWW/SrghK1m9NpxzyAmoV3KDBwk5KivWTYvsEwReyRoyhZKMOe9GLLPFMhy0
-         E4Wd3aIAod676F4csYqf4k5rdzdfmyyA3hB6WfSdiKpoLc0SqX4vr321uH9uYDapF++q
-         zlX5Lnr8G55U1jEtRlJhKKmAqr44Jz1g+1pxNobwnbS5bIWRRM2m583AlI4WewhnOvQH
-         Q6+H9j1XNNX4nJZdJdhrJKrI/dYstO42yZ5JSWpLX4qwCglCi6tKNiAuFTOfc8at4Rsj
-         Zh59//9FKykANg48GumuZj/aSYfXdOpSA4los0dye/6Fb79C/IZqs5lXEVkEIsZvy0Nh
-         UI4A==
-X-Gm-Message-State: AOAM530mj2NwSYK9OaAMK8CAF9xvxn7ReOWkecQDRWn3tE/AEePpVInn
-        GmXa6vB/3U4gYF8dhKItFtzzfJu283WQCaOHnBsrXcMclJQ5FQ==
-X-Google-Smtp-Source: ABdhPJxuduDiJaBtEUmkalbmX3VilAoKq/TNfDtyj7Jv18NTUZL1RC0K/6CJ38xvzLp+WUZtvtEooXxXjNsTRaGwa9w=
-X-Received: by 2002:a17:90a:f005:: with SMTP id bt5mr4335829pjb.127.1616072021997;
- Thu, 18 Mar 2021 05:53:41 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=2OINpMVQBvtOIEMSvFRT/blX5mHdm75+1aKbMZd05RE=;
+        b=m1eqy1DxJVxfajKkNzWFSgE62DmRdS/UUhnL1LeyhY5C4JyThV8h2KOYNgUOEKzwZj
+         FrqTd/vex+Oshwpwy6teBlzyDr5uKXPumnvjRs/Qvm4X5WEvVW3g5wiGCydU/XOH8hie
+         MToUOK3JsprUVZBS+7szSvM4XQX+31sSqRxFG7lczqXc5jyUXBXPAYMBN9vukdR6Ainz
+         Lt05Ipzm5dB3GWcv+i1F0QCb+Y+IgIjeTG6wiOcuDk0/jRwdYPOsTPMezLVQ+wE4mxcz
+         MtAI6vOhKbt7TAtXOA8oMvlAi4DKQHDyRjgqDp3IuT7XCgLlY5FLimfW7h5uFf6ahyeO
+         F/bA==
+X-Gm-Message-State: AOAM530pLNOpuEitgBDLVy1Bz1DcBIFbg7zQsrLQoFRnDonFGQd8TrKy
+        QS7fFmwnKxzJOGRrnCnXOJRSx8QoxlLUHF+LpfZsJNXO4VuouTQlxCVV+WupEhxHjjE1FZzMwMj
+        Mj2bmWEKH8oouS3QGHWM0EfTHaF2N6PDBIyqs7w==
+X-Received: by 2002:a05:6000:124f:: with SMTP id j15mr257187wrx.263.1616087417825;
+        Thu, 18 Mar 2021 10:10:17 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJx8Ncrl4uNxU3HqojFyTtknxftTyqxe51NJ19An90Btr1dN+NXVumBNEM8NRali8Z6WMtbv9sQuwr7VrFNl5xs=
+X-Received: by 2002:a05:6000:124f:: with SMTP id j15mr257181wrx.263.1616087417693;
+ Thu, 18 Mar 2021 10:10:17 -0700 (PDT)
 MIME-Version: 1.0
 References: <CAPy+zYWQbVojqLPdcM=Q7kEPx=ju6_efTd0-DSoryVSbiyhJLg@mail.gmail.com>
- <CAPy+zYVhfT5CYFP5=8=C6FrzvvxbGEM_ouMPUkRqUf0Db0Lmhg@mail.gmail.com>
-In-Reply-To: <CAPy+zYVhfT5CYFP5=8=C6FrzvvxbGEM_ouMPUkRqUf0Db0Lmhg@mail.gmail.com>
-From:   WeiGuo Ren <rwg1335252904@gmail.com>
-Date:   Thu, 18 Mar 2021 20:53:28 +0800
-Message-ID: <CAPy+zYUPL76Wj+fdmHX5kHt6Fv336y_G=vdhgahRdmt2EaP_KA@mail.gmail.com>
+ <CAPy+zYVhfT5CYFP5=8=C6FrzvvxbGEM_ouMPUkRqUf0Db0Lmhg@mail.gmail.com> <CAPy+zYUPL76Wj+fdmHX5kHt6Fv336y_G=vdhgahRdmt2EaP_KA@mail.gmail.com>
+In-Reply-To: <CAPy+zYUPL76Wj+fdmHX5kHt6Fv336y_G=vdhgahRdmt2EaP_KA@mail.gmail.com>
+From:   Casey Bodley <cbodley@redhat.com>
+Date:   Thu, 18 Mar 2021 13:09:37 -0400
+Message-ID: <CAF-p1-LNe-nmu55jd2_vvXqzadwU0qv60r6=XmA6hF58BpDXOA@mail.gmail.com>
 Subject: Re: rgw: Is rgw_sync_lease_period=120s set small?
-To:     Ceph Development <ceph-devel@vger.kernel.org>
+To:     WeiGuo Ren <rwg1335252904@gmail.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-radosgw-admin sync error list
-[
-    {
-        "shard_id": 0,
-        "entries": [
-            {
-                "id": "1_1614333890.956965_8080774.1",
-                "section": "data",
-                "name": "user21-bucket23:multi_master-anna.1827103.323:54",
-                "timestamp": "2021-02-26 10:04:50.956965Z",
-                "info": {
-                    "source_zone": "multi_master-anna",
-                    "error_code": 125,
-                    "message": "failed to sync bucket instance: (125)
-Operation canceled"
-                }
-            }
-        ]
-     }
-]
-
-I think this command should be used to determine its parameters, and
-keep increasing, as long as -ECANCLE=EF=BC=88125=EF=BC=89 does not appear, =
-it is
-appropriate.
-
-WeiGuo Ren <rwg1335252904@gmail.com> =E4=BA=8E2021=E5=B9=B43=E6=9C=8818=E6=
-=97=A5=E5=91=A8=E5=9B=9B =E4=B8=8B=E5=8D=887:37=E5=86=99=E9=81=93=EF=BC=9A
+On Thu, Mar 18, 2021 at 8:55 AM WeiGuo Ren <rwg1335252904@gmail.com> wrote:
 >
-> I have an osd ceph cluster, rgw instance often appears to be renewed
-> and not locked
+> radosgw-admin sync error list
+> [
+>     {
+>         "shard_id": 0,
+>         "entries": [
+>             {
+>                 "id": "1_1614333890.956965_8080774.1",
+>                 "section": "data",
+>                 "name": "user21-bucket23:multi_master-anna.1827103.323:54=
+",
+>                 "timestamp": "2021-02-26 10:04:50.956965Z",
+>                 "info": {
+>                     "source_zone": "multi_master-anna",
+>                     "error_code": 125,
+>                     "message": "failed to sync bucket instance: (125)
+> Operation canceled"
+>                 }
+>             }
+>         ]
+>      }
+> ]
+>
+> I think this command should be used to determine its parameters, and
+> keep increasing, as long as -ECANCLE=EF=BC=88125=EF=BC=89 does not appear=
+, it is
+> appropriate.
 >
 > WeiGuo Ren <rwg1335252904@gmail.com> =E4=BA=8E2021=E5=B9=B43=E6=9C=8818=
-=E6=97=A5=E5=91=A8=E5=9B=9B =E4=B8=8B=E5=8D=887:35=E5=86=99=E9=81=93=EF=BC=
+=E6=97=A5=E5=91=A8=E5=9B=9B =E4=B8=8B=E5=8D=887:37=E5=86=99=E9=81=93=EF=BC=
 =9A
 > >
-> > In an rgw multi-site production environment, how many rgw instances
-> > will be started in a single zone? According to my test, multiple rgw
-> > instances will compete for the datalog leaselock, and it is very
-> > likely that the leaselock will not be renewed. Is the default
-> > rgw_sync_lease_period=3D120s a bit small?
+> > I have an osd ceph cluster, rgw instance often appears to be renewed
+> > and not locked
+> >
+> > WeiGuo Ren <rwg1335252904@gmail.com> =E4=BA=8E2021=E5=B9=B43=E6=9C=8818=
+=E6=97=A5=E5=91=A8=E5=9B=9B =E4=B8=8B=E5=8D=887:35=E5=86=99=E9=81=93=EF=BC=
+=9A
+> > >
+> > > In an rgw multi-site production environment, how many rgw instances
+> > > will be started in a single zone?
+
+it depends on the scale, but i'd guess anywhere from 2-8?
+
+if the zone is serving clients (not just DR), it can make sense to
+dedicate some of the rgws to clients (by setting
+rgw_run_sync_thread=3D0, and not including their endpoints in the zone
+configuration), and others just to sync. so i think it's easy enough
+to control how many gateways are contending for these leases
+
+you can raise the lease period, but that means it will take longer for
+sync to recover from a radosgw shutdown/restart. the shard locks it
+held will take longer to expire, preventing other gateways from
+resuming sync on those shards
+
+
+> > > According to my test, multiple rgw
+> > > instances will compete for the datalog leaselock, and it is very
+> > > likely that the leaselock will not be renewed. Is the default
+> > > rgw_sync_lease_period=3D120s a bit small?
+>
+
