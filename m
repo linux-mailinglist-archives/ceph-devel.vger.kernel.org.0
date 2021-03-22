@@ -2,89 +2,223 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B61C5343E96
-	for <lists+ceph-devel@lfdr.de>; Mon, 22 Mar 2021 11:57:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C36D34403A
+	for <lists+ceph-devel@lfdr.de>; Mon, 22 Mar 2021 12:56:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230388AbhCVK5B (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 22 Mar 2021 06:57:01 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:41207 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230361AbhCVK4k (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 22 Mar 2021 06:56:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616410600;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QWqNRl3St0myqfYb/YgoRI1vcQ7ggUTH0MpgdoanYXM=;
-        b=VTADArVRRmxEB/XIq6kpUwXnmrPXLrNwqbUEfXXz3FKCgi/Rdb2S5+qdMEElk26U0EB73J
-        55MmzAb06XgP/aCOhmwa3eKsYD+qz2Cq+IbJmjX0dWe0qre6eBE8w8CeYPdrW+NLytxz8b
-        rpaeAsE3m8aVHU+SJnjx+Ih7EEdajjI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-552-FCLoq-t8N6KUPH3xmAXDmQ-1; Mon, 22 Mar 2021 06:56:36 -0400
-X-MC-Unique: FCLoq-t8N6KUPH3xmAXDmQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 34BE081622;
-        Mon, 22 Mar 2021 10:56:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-58.rdu2.redhat.com [10.10.112.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7152A54478;
-        Mon, 22 Mar 2021 10:56:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210321105309.GG3420@casper.infradead.org>
-References: <20210321105309.GG3420@casper.infradead.org> <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk> <161539528910.286939.1252328699383291173.stgit@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 02/28] mm: Add an unlock function for PG_private_2/PG_fscache
+        id S230178AbhCVLz4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 22 Mar 2021 07:55:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45520 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229979AbhCVLzY (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 22 Mar 2021 07:55:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0DAAB6198D;
+        Mon, 22 Mar 2021 11:55:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616414123;
+        bh=0v85DL5QtqqLt3HkM4H53DgFTvHsbxD4SgWtlMf1TCg=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=es1f9XY2cDbIoPZINCKR+J9HYlV8G0BuJTcAsbmWnZPr5Zv2aza5SAcqIWGNopFXs
+         IFRWJ/ZNUt40GbHZVJYjU8X2R4mLCVks88BhDih8+iuBVLkYreAapepMGYkeCy8p76
+         Z4ctJ7Lcl/yBwwRqWBM+TFYjiMw1iiuVNd6zreu1NoDFiu1FRE6fcQyuqiFNHikzKb
+         dPhNfDwIKWR58R8rbZsQd7c1HObdAMQceY2dgtzR+mOkOBH4zojFbo9N8+vxc6l7tT
+         TyqhlsiLk3WAZBoiwf3nRVPq80FZDX9uq5BZQ2e2LEd0UkGElrRlwjRW/1yQEXMMmW
+         xlvQZDdWtMkng==
+Message-ID: <5c1461d4f7c03f226ed2458f491885cfe9b44841.camel@kernel.org>
+Subject: Re: [PATCH] ceph: send opened files/pinned caps/opened inodes
+ metrics to MDS daemon
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 22 Mar 2021 07:55:21 -0400
+In-Reply-To: <c9ec3257-6067-68a6-e10c-802141e9227b@redhat.com>
+References: <20201126034743.1151342-1-xiubli@redhat.com>
+         <c9ec3257-6067-68a6-e10c-802141e9227b@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1885295.1616410586.1@warthog.procyon.org.uk>
-Date:   Mon, 22 Mar 2021 10:56:26 +0000
-Message-ID: <1885296.1616410586@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
+Oh! I hadn't realized that this patch was still unmerged.
 
-> That also brings up that there is no set_page_private_2().  I think
-> that's OK -- you only set PageFsCache() immediately after reading the
-> page from the server.  But I feel this "unlock_page_private_2" is actually
-> "clear_page_private_2" -- ie it's equivalent to writeback, not to lock.
+Merged into testing branch. I'd have pulled this into testing a while
+ago if I had realized. Let me know if I miss any in the future (or am
+missing any now).
 
-How about I do the following:
+Cheers,
+Jeff
 
- (1) Add set_page_private_2() or mark_page_private_2() to set the PG_fscache_2
-     bit.  It could take a ref on the page here.
+On Mon, 2021-03-22 at 10:30 +0800, Xiubo Li wrote:
+> Hi Jeff,
+> 
+> Ping.
+> 
+> The MDS side patch[1] have been merged.
+> 
+> [1] https://github.com/ceph/ceph/pull/37945
+> 
+> Thanks
+> 
+> 
+> On 2020/11/26 11:47, xiubli@redhat.com wrote:
+> > From: Xiubo Li <xiubli@redhat.com>
+> > 
+> > For the old ceph version, if it received this metric message containing
+> > the send opened files/pinned caps/opened inodes metric info, it will
+> > just ignore them.
+> > 
+> > URL: https://tracker.ceph.com/issues/46866
+> > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > ---
+> >   fs/ceph/metric.c | 38 +++++++++++++++++++++++++++++++++++++-
+> >   fs/ceph/metric.h | 44 +++++++++++++++++++++++++++++++++++++++++++-
+> >   2 files changed, 80 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
+> > index 5ec94bd4c1de..306bd599d940 100644
+> > --- a/fs/ceph/metric.c
+> > +++ b/fs/ceph/metric.c
+> > @@ -17,6 +17,9 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+> >   	struct ceph_metric_write_latency *write;
+> >   	struct ceph_metric_metadata_latency *meta;
+> >   	struct ceph_metric_dlease *dlease;
+> > +	struct ceph_opened_files *files;
+> > +	struct ceph_pinned_icaps *icaps;
+> > +	struct ceph_opened_inodes *inodes;
+> >   	struct ceph_client_metric *m = &mdsc->metric;
+> >   	u64 nr_caps = atomic64_read(&m->total_caps);
+> >   	struct ceph_msg *msg;
+> > @@ -26,7 +29,8 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+> >   	s32 len;
+> >   
+> > 
+> >   	len = sizeof(*head) + sizeof(*cap) + sizeof(*read) + sizeof(*write)
+> > -	      + sizeof(*meta) + sizeof(*dlease);
+> > +	      + sizeof(*meta) + sizeof(*dlease) + sizeof(files) + sizeof(icaps)
+> > +	      + sizeof(inodes);
+> >   
+> > 
+> >   	msg = ceph_msg_new(CEPH_MSG_CLIENT_METRICS, len, GFP_NOFS, true);
+> >   	if (!msg) {
+> > @@ -95,6 +99,38 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+> >   	dlease->total = cpu_to_le64(atomic64_read(&m->total_dentries));
+> >   	items++;
+> >   
+> > 
+> > +	sum = percpu_counter_sum(&m->total_inodes);
+> > +
+> > +	/* encode the opened files metric */
+> > +	files = (struct ceph_opened_files *)(dlease + 1);
+> > +	files->type = cpu_to_le32(CLIENT_METRIC_TYPE_OPENED_FILES);
+> > +	files->ver = 1;
+> > +	files->compat = 1;
+> > +	files->data_len = cpu_to_le32(sizeof(*files) - 10);
+> > +	files->opened_files = cpu_to_le64(atomic64_read(&m->opened_files));
+> > +	files->total = cpu_to_le64(sum);
+> > +	items++;
+> > +
+> > +	/* encode the pinned icaps metric */
+> > +	icaps = (struct ceph_pinned_icaps *)(files + 1);
+> > +	icaps->type = cpu_to_le32(CLIENT_METRIC_TYPE_PINNED_ICAPS);
+> > +	icaps->ver = 1;
+> > +	icaps->compat = 1;
+> > +	icaps->data_len = cpu_to_le32(sizeof(*icaps) - 10);
+> > +	icaps->pinned_icaps = cpu_to_le64(nr_caps);
+> > +	icaps->total = cpu_to_le64(sum);
+> > +	items++;
+> > +
+> > +	/* encode the opened inodes metric */
+> > +	inodes = (struct ceph_opened_inodes *)(icaps + 1);
+> > +	inodes->type = cpu_to_le32(CLIENT_METRIC_TYPE_OPENED_INODES);
+> > +	inodes->ver = 1;
+> > +	inodes->compat = 1;
+> > +	inodes->data_len = cpu_to_le32(sizeof(*inodes) - 10);
+> > +	inodes->opened_inodes = cpu_to_le64(percpu_counter_sum(&m->opened_inodes));
+> > +	inodes->total = cpu_to_le64(sum);
+> > +	items++;
+> > +
+> >   	put_unaligned_le32(items, &head->num);
+> >   	msg->front.iov_len = len;
+> >   	msg->hdr.version = cpu_to_le16(1);
+> > diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
+> > index af6038ff39d4..4ceb462135d7 100644
+> > --- a/fs/ceph/metric.h
+> > +++ b/fs/ceph/metric.h
+> > @@ -14,8 +14,11 @@ enum ceph_metric_type {
+> >   	CLIENT_METRIC_TYPE_WRITE_LATENCY,
+> >   	CLIENT_METRIC_TYPE_METADATA_LATENCY,
+> >   	CLIENT_METRIC_TYPE_DENTRY_LEASE,
+> > +	CLIENT_METRIC_TYPE_OPENED_FILES,
+> > +	CLIENT_METRIC_TYPE_PINNED_ICAPS,
+> > +	CLIENT_METRIC_TYPE_OPENED_INODES,
+> >   
+> > 
+> > -	CLIENT_METRIC_TYPE_MAX = CLIENT_METRIC_TYPE_DENTRY_LEASE,
+> > +	CLIENT_METRIC_TYPE_MAX = CLIENT_METRIC_TYPE_OPENED_INODES,
+> >   };
+> >   
+> > 
+> >   /*
+> > @@ -28,6 +31,9 @@ enum ceph_metric_type {
+> >   	CLIENT_METRIC_TYPE_WRITE_LATENCY,	\
+> >   	CLIENT_METRIC_TYPE_METADATA_LATENCY,	\
+> >   	CLIENT_METRIC_TYPE_DENTRY_LEASE,	\
+> > +	CLIENT_METRIC_TYPE_OPENED_FILES,	\
+> > +	CLIENT_METRIC_TYPE_PINNED_ICAPS,	\
+> > +	CLIENT_METRIC_TYPE_OPENED_INODES,	\
+> >   						\
+> >   	CLIENT_METRIC_TYPE_MAX,			\
+> >   }
+> > @@ -94,6 +100,42 @@ struct ceph_metric_dlease {
+> >   	__le64 total;
+> >   } __packed;
+> >   
+> > 
+> > +/* metric opened files header */
+> > +struct ceph_opened_files {
+> > +	__le32 type;     /* ceph metric type */
+> > +
+> > +	__u8  ver;
+> > +	__u8  compat;
+> > +
+> > +	__le32 data_len; /* length of sizeof(opened_files + total) */
+> > +	__le64 opened_files;
+> > +	__le64 total;
+> > +} __packed;
+> > +
+> > +/* metric pinned i_caps header */
+> > +struct ceph_pinned_icaps {
+> > +	__le32 type;     /* ceph metric type */
+> > +
+> > +	__u8  ver;
+> > +	__u8  compat;
+> > +
+> > +	__le32 data_len; /* length of sizeof(pinned_icaps + total) */
+> > +	__le64 pinned_icaps;
+> > +	__le64 total;
+> > +} __packed;
+> > +
+> > +/* metric opened inodes header */
+> > +struct ceph_opened_inodes {
+> > +	__le32 type;     /* ceph metric type */
+> > +
+> > +	__u8  ver;
+> > +	__u8  compat;
+> > +
+> > +	__le32 data_len; /* length of sizeof(opened_inodes + total) */
+> > +	__le64 opened_inodes;
+> > +	__le64 total;
+> > +} __packed;
+> > +
+> >   struct ceph_metric_head {
+> >   	__le32 num;	/* the number of metrics that will be sent */
+> >   } __packed;
+> 
+> 
 
- (2) Rename unlock_page_private_2() to end_page_private_2().  It could drop
-     the ref on the page here, but that then means I can't use
-     pagevec_release().
-
- (3) Add wait_on_page_private_2() an analogue of wait_on_page_writeback()
-     rather than wait_on_page_locked().
-
- (4) Provide fscache synonyms of the above.
-
-David
+-- 
+Jeff Layton <jlayton@kernel.org>
 
