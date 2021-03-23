@@ -2,66 +2,88 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7387B346A7D
-	for <lists+ceph-devel@lfdr.de>; Tue, 23 Mar 2021 21:55:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79F1F346BB3
+	for <lists+ceph-devel@lfdr.de>; Tue, 23 Mar 2021 23:07:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233400AbhCWUyw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 23 Mar 2021 16:54:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52834 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233354AbhCWUy2 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 23 Mar 2021 16:54:28 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 699ED619C2
-        for <ceph-devel@vger.kernel.org>; Tue, 23 Mar 2021 20:54:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616532868;
-        bh=CJtQ0YqmPH0UGdnZOInAW/QgW2WUZi8NUAK05lwNb3E=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=PclGleDBufLUBJBrR8cshgM7FkfAarNPI4vQ0xkmsuAjCIccqZn4P9GaG8AN4oI4M
-         ZvJFOV2ipiVHQYBTxrOrbmSQQx3WeuqQ/+P3gSmLzi7/TmT2ln2zr+DMZjenHXH31j
-         kxV9z5xi2BVDFWc21V0oC9kNXzhCkEPXTnQOqPkE+QahGpKUxAbL8f/aQuGu2/87mO
-         2DSiCuOR3MqvfKKHZ3IZWUaRXwtW/mb2cxpyuXsCfQOWHHIXH7wYY+a8sT1XdfYryc
-         dt0D9FO6YPEGwuuo18cG3CwGVA1MZAq/3xrpZ95T4g7MVMWHynDpRNk9gx/1LHFnrU
-         +lqGhhEQ3P1Fw==
-Message-ID: <5f8b65aef333a40a91b5d62f7d24b1f05ba02849.camel@kernel.org>
-Subject: Re: [PATCH 1/2] ceph: fix kerneldoc copypasta over
- ceph_start_io_direct
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Date:   Tue, 23 Mar 2021 16:54:27 -0400
-In-Reply-To: <20210323203326.217781-1-jlayton@kernel.org>
-References: <20210323203326.217781-1-jlayton@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        id S233811AbhCWWGe (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 23 Mar 2021 18:06:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:45609 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233835AbhCWWGY (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 23 Mar 2021 18:06:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616537178;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pRq3eZVbRV0oWPAPcRDv0Y/ExsjTvRldW+ZwtCTRY5g=;
+        b=Tp8NjKXIGklgcEYMLogsUQIKvLMvkUl/ENsE2kylwO+mngHPFFduvg5Ho8mIQW++unADKV
+        vTpTjjBArt3boJhreJAKMeqL5pxrngGE7IDbnaVfeVpN/pibgTW/nPlRvVTAISYYFbrG2u
+        g4/8KVL4g867QzVN8knMhjdt2epKYJo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-1-kYdx-kK4MaCmJMrG8tZ3eA-1; Tue, 23 Mar 2021 18:06:15 -0400
+X-MC-Unique: kYdx-kK4MaCmJMrG8tZ3eA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F0FF7800D53;
+        Tue, 23 Mar 2021 22:06:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-58.rdu2.redhat.com [10.10.112.58])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 28FFB50C0E;
+        Tue, 23 Mar 2021 22:06:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <2503810.1616508988@warthog.procyon.org.uk>
+References: <2503810.1616508988@warthog.procyon.org.uk> <20210323135116.GF1719932@casper.infradead.org> <1885296.1616410586@warthog.procyon.org.uk> <20210321105309.GG3420@casper.infradead.org> <161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk> <161539528910.286939.1252328699383291173.stgit@warthog.procyon.org.uk> <2499407.1616505440@warthog.procyon.org.uk>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 02/28] mm: Add an unlock function for PG_private_2/PG_fscache
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2769313.1616537164.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 23 Mar 2021 22:06:04 +0000
+Message-ID: <2769314.1616537164@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2021-03-23 at 16:33 -0400, Jeff Layton wrote:
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/io.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/io.c b/fs/ceph/io.c
-> index 97602ea92ff4..c456509b31c3 100644
-> --- a/fs/ceph/io.c
-> +++ b/fs/ceph/io.c
-> @@ -118,7 +118,7 @@ static void ceph_block_buffered(struct ceph_inode_info *ci, struct inode *inode)
->  }
->  
->  /**
-> - * ceph_end_io_direct - declare the file is being used for direct i/o
-> + * ceph_start_io_direct - declare the file is being used for direct i/o
->   * @inode: file inode
->   *
->   * Declare that a direct I/O operation is about to start, and ensure
+David Howells <dhowells@redhat.com> wrote:
 
-Disregard the 1/2 in the patch subject. This one is standalone.
+> > > -	wait_on_page_writeback(page);
+> > > +	if (wait_on_page_writeback_killable(page) < 0)
+> > > +		return VM_FAULT_RETRY | VM_FAULT_LOCKED;
+> > =
 
-Cheers,
--- 
-Jeff Layton <jlayton@kernel.org>
+> > You forgot to unlock the page.
+> =
+
+> Do I need to?  Doesn't VM_FAULT_LOCKED indicate that to the caller?  Or =
+is it
+> impermissible to do it like that?
+
+Looks like, yes, I do need to.  VM_FAULT_LOCKED is ignored if RETRY is giv=
+en.
+
+David
 
