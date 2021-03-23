@@ -2,40 +2,36 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BEF134694C
-	for <lists+ceph-devel@lfdr.de>; Tue, 23 Mar 2021 20:51:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13A68346956
+	for <lists+ceph-devel@lfdr.de>; Tue, 23 Mar 2021 20:54:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230397AbhCWTvT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 23 Mar 2021 15:51:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42648 "EHLO mail.kernel.org"
+        id S230504AbhCWTx1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 23 Mar 2021 15:53:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230134AbhCWTvD (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 23 Mar 2021 15:51:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6D5E8619C0;
-        Tue, 23 Mar 2021 19:51:02 +0000 (UTC)
+        id S231423AbhCWTwz (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 23 Mar 2021 15:52:55 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0C3A9619C1;
+        Tue, 23 Mar 2021 19:52:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616529062;
-        bh=jg6+9zYPesqwrcyfw0Z3aNynu9eXmjrtcj8VRo0Iii4=;
+        s=k20201202; t=1616529175;
+        bh=gljS1yHGtLuuhvk5QPEmEm7H6K7WC/84/tg+Z6JfxVs=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=HoLPrvGZVgRvfyVnrFD2Sk49Acxppo/vLRXYbJTR+LtIqOz4DLjjsFHRx7STbYwJ1
-         ehpjWB0AY1UI/ttAsoziVAVFHpXRSeCDiiGK9+fRjcT2eiEkZ749I+CHkFr0D/PoCw
-         pfinEi7KGSq05EAcaeddz8qpwjU41lhC9G7ZHy5D+xKU4zcZeqyGQp+FIjDEe/Kf6a
-         YShKH/c0rAetyJ/ZvhYCHMiItV41qO2fB8rPtTOu20djvVnfoKABnnptX+LJ1mdy32
-         SA7W98ixq541o3e/gPii/nN1sOvmcaLf3P7cfTC6kG/8agaMCkb3zKECz4DCbkoy0+
-         qRw/+zN6iZNdA==
-Message-ID: <98f926ff5679182e7b875178af8ff9e2ac7f84f6.camel@kernel.org>
+        b=Q+51Dyj4Bx32PTDBL7gNUT9BT2Gvx3xbQFTnCJ5YjaeDFv90NHMH4y0M03yPCDV4O
+         G6/nVBgJ+XU7i/bU+vuDcyO5/aQ6mO/PNpx84P2cl1PgqLuKBHguCgy92g2XkKhZRA
+         AhysjD240tTrYIJOlNopTK0Yhi5h7WJ+KECDxZlsKljQorXnCG4CCMb00mJkJ+qHix
+         NWGEq4cheJLXRMWDoJjltRZRIhGjXCmTA8AODUumOLh5wQrkdmcfpkTUDa57YMJM9y
+         Pv9IHFDoyKleIfiNw4vDEUxWF0UNQCr4MA4ode9/FGmuhsq87tHO7CQ5e/f7M4uHod
+         pG7vgfvtByMOA==
+Message-ID: <2182b98419e5bcf0e9907668c371b3c23e902da8.camel@kernel.org>
 Subject: Re: [PATCH] ceph: send opened files/pinned caps/opened inodes
  metrics to MDS daemon
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org,
-        Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 23 Mar 2021 15:51:01 -0400
-In-Reply-To: <ee667d67-ddc6-4ddd-46b9-600c77a059ac@redhat.com>
+To:     xiubli@redhat.com, idryomov@gmail.com
+Cc:     zyan@redhat.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Tue, 23 Mar 2021 15:52:54 -0400
+In-Reply-To: <20201126034743.1151342-1-xiubli@redhat.com>
 References: <20201126034743.1151342-1-xiubli@redhat.com>
-         <c9ec3257-6067-68a6-e10c-802141e9227b@redhat.com>
-         <5c1461d4f7c03f226ed2458f491885cfe9b44841.camel@kernel.org>
-         <ee667d67-ddc6-4ddd-46b9-600c77a059ac@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
@@ -44,88 +40,159 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-03-22 at 20:32 +0800, Xiubo Li wrote:
-> On 2021/3/22 19:55, Jeff Layton wrote:
-> > Oh! I hadn't realized that this patch was still unmerged.
+On Thu, 2020-11-26 at 11:47 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
 > 
-> No worry, this patch was waiting the MDS side patch, which was just 
-> merged last week :-)
+> For the old ceph version, if it received this metric message containing
+> the send opened files/pinned caps/opened inodes metric info, it will
+> just ignore them.
 > 
-> I almost forgot this patch too before I saw the ceph tracker today.
+> URL: https://tracker.ceph.com/issues/46866
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/metric.c | 38 +++++++++++++++++++++++++++++++++++++-
+>  fs/ceph/metric.h | 44 +++++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 80 insertions(+), 2 deletions(-)
 > 
-> > Merged into testing branch. I'd have pulled this into testing a while
-> > ago if I had realized. Let me know if I miss any in the future (or am
-> > missing any now).
-> 
-> Sure, np.
-> 
-> BRs
-> 
-> Xiubo
-> 
+> diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
+> index 5ec94bd4c1de..306bd599d940 100644
+> --- a/fs/ceph/metric.c
+> +++ b/fs/ceph/metric.c
+> @@ -17,6 +17,9 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+>  	struct ceph_metric_write_latency *write;
+>  	struct ceph_metric_metadata_latency *meta;
+>  	struct ceph_metric_dlease *dlease;
+> +	struct ceph_opened_files *files;
+> +	struct ceph_pinned_icaps *icaps;
+> +	struct ceph_opened_inodes *inodes;
+>  	struct ceph_client_metric *m = &mdsc->metric;
+>  	u64 nr_caps = atomic64_read(&m->total_caps);
+>  	struct ceph_msg *msg;
+> @@ -26,7 +29,8 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+>  	s32 len;
+>  
+>  	len = sizeof(*head) + sizeof(*cap) + sizeof(*read) + sizeof(*write)
+> -	      + sizeof(*meta) + sizeof(*dlease);
+> +	      + sizeof(*meta) + sizeof(*dlease) + sizeof(files) + sizeof(icaps)
+> +	      + sizeof(inodes);
+>  
 
-After doing some testing with this patch, I hit the following KASAN pop
-today. I've backed this patch out of the testing branch for now:
+These sizeof values look wrong. The buffer requires more than pointers
+for those. You probably want:
 
-[  110.969263] ==================================================================
-[  110.972933] BUG: KASAN: slab-out-of-bounds in metric_delayed_work+0x5e9/0x880 [ceph]
-[  110.976096] Write of size 8 at addr ffff88811b76ab90 by task kworker/7:2/613
-[  110.978972] 
-[  110.979668] CPU: 7 PID: 613 Comm: kworker/7:2 Tainted: G            E     5.12.0-rc2+ #70
-[  110.983015] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-1.fc33 04/01/2014
-[  110.986467] Workqueue: events metric_delayed_work [ceph]
-[  110.988803] Call Trace:
-[  110.989869]  dump_stack+0xa5/0xdc
-[  110.991297]  print_address_description.constprop.0+0x18/0x160
-[  110.993659]  ? metric_delayed_work+0x5e9/0x880 [ceph]
-[  110.995892]  ? metric_delayed_work+0x5e9/0x880 [ceph]
-[  110.998108]  kasan_report.cold+0x7f/0x111
-[  110.999818]  ? _raw_spin_lock_irq+0x61/0x90
-[  111.001563]  ? metric_delayed_work+0x5e9/0x880 [ceph]
-[  111.003814]  kasan_check_range+0xf9/0x1e0
-[  111.005503]  metric_delayed_work+0x5e9/0x880 [ceph]
-[  111.007688]  ? ceph_caps_for_mode+0x40/0x40 [ceph]
-[  111.009855]  process_one_work+0x525/0x9b0
-[  111.011597]  ? pwq_dec_nr_in_flight+0x110/0x110
-[  111.013504]  ? lock_acquired+0x2fe/0x560
-[  111.015230]  worker_thread+0x2ea/0x6e0
-[  111.016840]  ? __kthread_parkme+0xc0/0xe0
-[  111.018534]  ? process_one_work+0x9b0/0x9b0
-[  111.020262]  kthread+0x1fb/0x220
-[  111.021622]  ? __kthread_bind_mask+0x70/0x70
-[  111.023423]  ret_from_fork+0x22/0x30
-[  111.025004] 
-[  111.025687] Allocated by task 613:
-[  111.027105]  kasan_save_stack+0x1b/0x40
-[  111.028740]  __kasan_kmalloc+0x7a/0x90
-[  111.029583]  ceph_kvmalloc+0xc7/0x110 [libceph]
-[  111.030611]  ceph_msg_new2+0x15d/0x270 [libceph]
-[  111.031537]  metric_delayed_work+0x1c5/0x880 [ceph]
-[  111.032414]  process_one_work+0x525/0x9b0
-[  111.033093]  worker_thread+0x2ea/0x6e0
-[  111.033763]  kthread+0x1fb/0x220
-[  111.034329]  ret_from_fork+0x22/0x30
-[  111.038203] 
-[  111.041730] The buggy address belongs to the object at ffff88811b76ab00
-[  111.041730]  which belongs to the cache kmalloc-192 of size 192
-[  111.050535] The buggy address is located 144 bytes inside of
-[  111.050535]  192-byte region [ffff88811b76ab00, ffff88811b76abc0)
-[  111.059194] The buggy address belongs to the page:
-[  111.063348] page:0000000052971d41 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11b76a
-[  111.068337] head:0000000052971d41 order:1 compound_mapcount:0
-[  111.073364] flags: 0x17ffffc0010200(slab|head)
-[  111.078020] raw: 0017ffffc0010200 0000000000000000 0000000100000001 ffff888100042a00
-[  111.083177] raw: 0000000000000000 0000000080200020 00000001ffffffff 0000000000000000
-[  111.088350] page dumped because: kasan: bad access detected
-[  111.093064] 
-[  111.096773] Memory state around the buggy address:
-[  111.101168]  ffff88811b76aa80: 00 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  111.106154]  ffff88811b76ab00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  111.111073] >ffff88811b76ab80: 00 00 06 fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  111.115973]                          ^
-[  111.120219]  ffff88811b76ac00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  111.125263]  ffff88811b76ac80: 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  111.130227] ==================================================================
+ ... + sizeof(*files) + sizeof(*icaps) + sizeof(*inodes);
+
+>  	msg = ceph_msg_new(CEPH_MSG_CLIENT_METRICS, len, GFP_NOFS, true);
+>  	if (!msg) {
+> @@ -95,6 +99,38 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+>  	dlease->total = cpu_to_le64(atomic64_read(&m->total_dentries));
+>  	items++;
+>  
+> +	sum = percpu_counter_sum(&m->total_inodes);
+> +
+> +	/* encode the opened files metric */
+> +	files = (struct ceph_opened_files *)(dlease + 1);
+> +	files->type = cpu_to_le32(CLIENT_METRIC_TYPE_OPENED_FILES);
+> +	files->ver = 1;
+> +	files->compat = 1;
+> +	files->data_len = cpu_to_le32(sizeof(*files) - 10);
+> +	files->opened_files = cpu_to_le64(atomic64_read(&m->opened_files));
+> +	files->total = cpu_to_le64(sum);
+> +	items++;
+> +
+> +	/* encode the pinned icaps metric */
+> +	icaps = (struct ceph_pinned_icaps *)(files + 1);
+> +	icaps->type = cpu_to_le32(CLIENT_METRIC_TYPE_PINNED_ICAPS);
+> +	icaps->ver = 1;
+> +	icaps->compat = 1;
+> +	icaps->data_len = cpu_to_le32(sizeof(*icaps) - 10);
+> +	icaps->pinned_icaps = cpu_to_le64(nr_caps);
+> +	icaps->total = cpu_to_le64(sum);
+> +	items++;
+> +
+> +	/* encode the opened inodes metric */
+> +	inodes = (struct ceph_opened_inodes *)(icaps + 1);
+> +	inodes->type = cpu_to_le32(CLIENT_METRIC_TYPE_OPENED_INODES);
+> +	inodes->ver = 1;
+> +	inodes->compat = 1;
+> +	inodes->data_len = cpu_to_le32(sizeof(*inodes) - 10);
+> +	inodes->opened_inodes = cpu_to_le64(percpu_counter_sum(&m->opened_inodes));
+> +	inodes->total = cpu_to_le64(sum);
+> +	items++;
+> +
+>  	put_unaligned_le32(items, &head->num);
+>  	msg->front.iov_len = len;
+>  	msg->hdr.version = cpu_to_le16(1);
+> diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
+> index af6038ff39d4..4ceb462135d7 100644
+> --- a/fs/ceph/metric.h
+> +++ b/fs/ceph/metric.h
+> @@ -14,8 +14,11 @@ enum ceph_metric_type {
+>  	CLIENT_METRIC_TYPE_WRITE_LATENCY,
+>  	CLIENT_METRIC_TYPE_METADATA_LATENCY,
+>  	CLIENT_METRIC_TYPE_DENTRY_LEASE,
+> +	CLIENT_METRIC_TYPE_OPENED_FILES,
+> +	CLIENT_METRIC_TYPE_PINNED_ICAPS,
+> +	CLIENT_METRIC_TYPE_OPENED_INODES,
+>  
+> -	CLIENT_METRIC_TYPE_MAX = CLIENT_METRIC_TYPE_DENTRY_LEASE,
+> +	CLIENT_METRIC_TYPE_MAX = CLIENT_METRIC_TYPE_OPENED_INODES,
+>  };
+>  
+>  /*
+> @@ -28,6 +31,9 @@ enum ceph_metric_type {
+>  	CLIENT_METRIC_TYPE_WRITE_LATENCY,	\
+>  	CLIENT_METRIC_TYPE_METADATA_LATENCY,	\
+>  	CLIENT_METRIC_TYPE_DENTRY_LEASE,	\
+> +	CLIENT_METRIC_TYPE_OPENED_FILES,	\
+> +	CLIENT_METRIC_TYPE_PINNED_ICAPS,	\
+> +	CLIENT_METRIC_TYPE_OPENED_INODES,	\
+>  						\
+>  	CLIENT_METRIC_TYPE_MAX,			\
+>  }
+> @@ -94,6 +100,42 @@ struct ceph_metric_dlease {
+>  	__le64 total;
+>  } __packed;
+>  
+> +/* metric opened files header */
+> +struct ceph_opened_files {
+> +	__le32 type;     /* ceph metric type */
+> +
+> +	__u8  ver;
+> +	__u8  compat;
+> +
+> +	__le32 data_len; /* length of sizeof(opened_files + total) */
+> +	__le64 opened_files;
+> +	__le64 total;
+> +} __packed;
+> +
+> +/* metric pinned i_caps header */
+> +struct ceph_pinned_icaps {
+> +	__le32 type;     /* ceph metric type */
+> +
+> +	__u8  ver;
+> +	__u8  compat;
+> +
+> +	__le32 data_len; /* length of sizeof(pinned_icaps + total) */
+> +	__le64 pinned_icaps;
+> +	__le64 total;
+> +} __packed;
+> +
+> +/* metric opened inodes header */
+> +struct ceph_opened_inodes {
+> +	__le32 type;     /* ceph metric type */
+> +
+> +	__u8  ver;
+> +	__u8  compat;
+> +
+> +	__le32 data_len; /* length of sizeof(opened_inodes + total) */
+> +	__le64 opened_inodes;
+> +	__le64 total;
+> +} __packed;
+> +
+>  struct ceph_metric_head {
+>  	__le32 num;	/* the number of metrics that will be sent */
+>  } __packed;
 
 -- 
 Jeff Layton <jlayton@kernel.org>
