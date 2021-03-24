@@ -2,35 +2,36 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE28A347B9C
-	for <lists+ceph-devel@lfdr.de>; Wed, 24 Mar 2021 16:05:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC52D347BA2
+	for <lists+ceph-devel@lfdr.de>; Wed, 24 Mar 2021 16:05:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236336AbhCXPEj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 24 Mar 2021 11:04:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45736 "EHLO mail.kernel.org"
+        id S236427AbhCXPFL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 24 Mar 2021 11:05:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236408AbhCXPEM (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 24 Mar 2021 11:04:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D02AA619A4;
-        Wed, 24 Mar 2021 15:04:11 +0000 (UTC)
+        id S236467AbhCXPEx (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 24 Mar 2021 11:04:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 42906619B8;
+        Wed, 24 Mar 2021 15:04:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616598252;
-        bh=x7SH3yA/mzmsnH/hrV2pehEtDfcK1K7ccJXFfQNsj0g=;
+        s=k20201202; t=1616598293;
+        bh=ArGIzMtab2JuU1WpZ1tRZt4GbNDZKMaV+5mtH7nWsNI=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=SEJSAB564QkDcEBxa4kkqRIb3Ik/vUs4bkVbqHvJNbIYe2fSsv7ftrYdpByDO0YGv
-         GUii5Fx2HKPYpvj4cIULD+XTNHy2a/yRCaRlE68CYvx8jKLyoLhFKDsgdWTe74ftrh
-         mIWypR6eZcjRTQ+4SiRjmDOlZQhUPZA6H3yZMe5UGeOp4uVA3zSxjaCEmDq6szv6Uj
-         mLrNVjGmXEJVKUG6Edtff9UAxNiX7xeZ+rUuXdikoFpxDcf3mgeuZXtRRNByf6z+gQ
-         U98Nz1buOAhXJjI0YXJ6vTqPTJi4Dq9skB/1aZbdSInOslz5MfpeWN57kPZmF9jfBB
-         RvFskDn1kpZsw==
-Message-ID: <ffff6f72c5ab4b5916aaeb73435ed8141876ac1f.camel@kernel.org>
-Subject: Re: [PATCH] ceph: convert {n}ref from atomic_t to refcount_t
+        b=pO5YvjqXJZq1h88MbunTszOZEsbDOvzaTZSfY8bZabEEP4asFSsOK8kmC3kEiB511
+         eXknzwNXaXkuoD3oMKP/8VoDjo1AjWE3EymSzJnUV9MuepSctns5hlcYtQPPXXk0wu
+         vkIzUhj9Tl8VZu74/vfTmMYdRoLvvoqVqMlEf/MDFvo88LnpYllz1UhvZkJcxI1QCk
+         mEi0LWgyUgbNg4L4bPraoqf3d8GZdxTcURtBBoSJ15TTmqOwN27rlo5oRI0HRfqPid
+         eUxCLklHQI/6ERz+rjyr2hkO54K+tZU+iAUlTbf8Wa41X+H9GP1ck7jOD2LTxhC2b+
+         C2LjZKHoN1XtQ==
+Message-ID: <f1488afcf8446c4cb7ebf0bad9e21afa5bb9b110.camel@kernel.org>
+Subject: Re: [PATCH v2] ceph: send opened files/pinned caps/opened inodes
+ metrics to MDS daemon
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Yejune Deng <yejune.deng@gmail.com>, idryomov@gmail.com
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 24 Mar 2021 11:04:10 -0400
-In-Reply-To: <20210324102625.112640-1-yejune.deng@gmail.com>
-References: <20210324102625.112640-1-yejune.deng@gmail.com>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Wed, 24 Mar 2021 11:04:52 -0400
+In-Reply-To: <20210324050825.1650763-1-xiubli@redhat.com>
+References: <20210324050825.1650763-1-xiubli@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
@@ -39,146 +40,159 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2021-03-24 at 18:26 +0800, Yejune Deng wrote:
-> refcount_t type should be used instead of atomic_t when the variable
-> is used as a reference counter. This is because the implementation of
-> refcount_t can prevent overflows and detect possible use-after-free.
+On Wed, 2021-03-24 at 13:08 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
 > 
-> Signed-off-by: Yejune Deng <yejune.deng@gmail.com>
+> For the old ceph version, if it received this metric info, it will just
+> ignore them.
+> 
+> URL: https://tracker.ceph.com/issues/46866
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  fs/ceph/mds_client.h |  2 +-
->  fs/ceph/snap.c       | 27 +++++++++++++++------------
->  fs/ceph/super.h      |  2 +-
->  3 files changed, 17 insertions(+), 14 deletions(-)
 > 
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index eaa7c5422116..bf99c5ba47fc 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -351,7 +351,7 @@ struct ceph_pool_perm {
->  struct ceph_snapid_map {
->  	struct rb_node node;
->  	struct list_head lru;
-> -	atomic_t ref;
-> +	refcount_t ref;
->  	u64 snap;
->  	dev_t dev;
->  	unsigned long last_used;
-> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-> index 0728b01d4d43..c0fbbb56b259 100644
-> --- a/fs/ceph/snap.c
-> +++ b/fs/ceph/snap.c
-> @@ -66,14 +66,15 @@ void ceph_get_snap_realm(struct ceph_mds_client *mdsc,
->  			 struct ceph_snap_realm *realm)
->  {
->  	dout("get_realm %p %d -> %d\n", realm,
-> -	     atomic_read(&realm->nref), atomic_read(&realm->nref)+1);
-> +	     refcount_read(&realm->nref), refcount_read(&realm->nref)+1);
->  	/*
->  	 * since we _only_ increment realm refs or empty the empty
->  	 * list with snap_rwsem held, adjusting the empty list here is
->  	 * safe.  we do need to protect against concurrent empty list
->  	 * additions, however.
->  	 */
-> -	if (atomic_inc_return(&realm->nref) == 1) {
-> +	refcount_inc(&realm->nref);
-> +	if (refcount_read(&realm->nref) == 1) {
->  		spin_lock(&mdsc->snap_empty_lock);
->  		list_del_init(&realm->empty_item);
->  		spin_unlock(&mdsc->snap_empty_lock);
-> @@ -117,7 +118,7 @@ static struct ceph_snap_realm *ceph_create_snap_realm(
->  	if (!realm)
->  		return ERR_PTR(-ENOMEM);
+> V2:
+> - fix the crash issue.
+> 
+> 
+>  fs/ceph/metric.c | 38 +++++++++++++++++++++++++++++++++++++-
+>  fs/ceph/metric.h | 44 +++++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 80 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
+> index 5ec94bd4c1de..895eab25d314 100644
+> --- a/fs/ceph/metric.c
+> +++ b/fs/ceph/metric.c
+> @@ -17,6 +17,9 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+>  	struct ceph_metric_write_latency *write;
+>  	struct ceph_metric_metadata_latency *meta;
+>  	struct ceph_metric_dlease *dlease;
+> +	struct ceph_opened_files *files;
+> +	struct ceph_pinned_icaps *icaps;
+> +	struct ceph_opened_inodes *inodes;
+>  	struct ceph_client_metric *m = &mdsc->metric;
+>  	u64 nr_caps = atomic64_read(&m->total_caps);
+>  	struct ceph_msg *msg;
+> @@ -26,7 +29,8 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+>  	s32 len;
 >  
-> -	atomic_set(&realm->nref, 1);    /* for caller */
-> +	refcount_set(&realm->nref, 1);    /* for caller */
->  	realm->ino = ino;
->  	INIT_LIST_HEAD(&realm->children);
->  	INIT_LIST_HEAD(&realm->child_item);
-> @@ -199,8 +200,8 @@ static void __put_snap_realm(struct ceph_mds_client *mdsc,
->  			     struct ceph_snap_realm *realm)
->  {
->  	dout("__put_snap_realm %llx %p %d -> %d\n", realm->ino, realm,
-> -	     atomic_read(&realm->nref), atomic_read(&realm->nref)-1);
-> -	if (atomic_dec_and_test(&realm->nref))
-> +	     refcount_read(&realm->nref), refcount_read(&realm->nref)-1);
-> +	if (refcount_dec_and_test(&realm->nref))
->  		__destroy_snap_realm(mdsc, realm);
+>  	len = sizeof(*head) + sizeof(*cap) + sizeof(*read) + sizeof(*write)
+> -	      + sizeof(*meta) + sizeof(*dlease);
+> +	      + sizeof(*meta) + sizeof(*dlease) + sizeof(*files)
+> +	      + sizeof(*icaps) + sizeof(*inodes);
+>  
+>  	msg = ceph_msg_new(CEPH_MSG_CLIENT_METRICS, len, GFP_NOFS, true);
+>  	if (!msg) {
+> @@ -95,6 +99,38 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+>  	dlease->total = cpu_to_le64(atomic64_read(&m->total_dentries));
+>  	items++;
+>  
+> +	sum = percpu_counter_sum(&m->total_inodes);
+> +
+> +	/* encode the opened files metric */
+> +	files = (struct ceph_opened_files *)(dlease + 1);
+> +	files->type = cpu_to_le32(CLIENT_METRIC_TYPE_OPENED_FILES);
+> +	files->ver = 1;
+> +	files->compat = 1;
+> +	files->data_len = cpu_to_le32(sizeof(*files) - 10);
+> +	files->opened_files = cpu_to_le64(atomic64_read(&m->opened_files));
+> +	files->total = cpu_to_le64(sum);
+> +	items++;
+> +
+> +	/* encode the pinned icaps metric */
+> +	icaps = (struct ceph_pinned_icaps *)(files + 1);
+> +	icaps->type = cpu_to_le32(CLIENT_METRIC_TYPE_PINNED_ICAPS);
+> +	icaps->ver = 1;
+> +	icaps->compat = 1;
+> +	icaps->data_len = cpu_to_le32(sizeof(*icaps) - 10);
+> +	icaps->pinned_icaps = cpu_to_le64(nr_caps);
+> +	icaps->total = cpu_to_le64(sum);
+> +	items++;
+> +
+> +	/* encode the opened inodes metric */
+> +	inodes = (struct ceph_opened_inodes *)(icaps + 1);
+> +	inodes->type = cpu_to_le32(CLIENT_METRIC_TYPE_OPENED_INODES);
+> +	inodes->ver = 1;
+> +	inodes->compat = 1;
+> +	inodes->data_len = cpu_to_le32(sizeof(*inodes) - 10);
+> +	inodes->opened_inodes = cpu_to_le64(percpu_counter_sum(&m->opened_inodes));
+> +	inodes->total = cpu_to_le64(sum);
+> +	items++;
+> +
+>  	put_unaligned_le32(items, &head->num);
+>  	msg->front.iov_len = len;
+>  	msg->hdr.version = cpu_to_le16(1);
+> diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
+> index af6038ff39d4..4ceb462135d7 100644
+> --- a/fs/ceph/metric.h
+> +++ b/fs/ceph/metric.h
+> @@ -14,8 +14,11 @@ enum ceph_metric_type {
+>  	CLIENT_METRIC_TYPE_WRITE_LATENCY,
+>  	CLIENT_METRIC_TYPE_METADATA_LATENCY,
+>  	CLIENT_METRIC_TYPE_DENTRY_LEASE,
+> +	CLIENT_METRIC_TYPE_OPENED_FILES,
+> +	CLIENT_METRIC_TYPE_PINNED_ICAPS,
+> +	CLIENT_METRIC_TYPE_OPENED_INODES,
+>  
+> -	CLIENT_METRIC_TYPE_MAX = CLIENT_METRIC_TYPE_DENTRY_LEASE,
+> +	CLIENT_METRIC_TYPE_MAX = CLIENT_METRIC_TYPE_OPENED_INODES,
+>  };
+>  
+>  /*
+> @@ -28,6 +31,9 @@ enum ceph_metric_type {
+>  	CLIENT_METRIC_TYPE_WRITE_LATENCY,	\
+>  	CLIENT_METRIC_TYPE_METADATA_LATENCY,	\
+>  	CLIENT_METRIC_TYPE_DENTRY_LEASE,	\
+> +	CLIENT_METRIC_TYPE_OPENED_FILES,	\
+> +	CLIENT_METRIC_TYPE_PINNED_ICAPS,	\
+> +	CLIENT_METRIC_TYPE_OPENED_INODES,	\
+>  						\
+>  	CLIENT_METRIC_TYPE_MAX,			\
 >  }
+> @@ -94,6 +100,42 @@ struct ceph_metric_dlease {
+>  	__le64 total;
+>  } __packed;
 >  
-> @@ -211,8 +212,8 @@ void ceph_put_snap_realm(struct ceph_mds_client *mdsc,
->  			 struct ceph_snap_realm *realm)
->  {
->  	dout("put_snap_realm %llx %p %d -> %d\n", realm->ino, realm,
-> -	     atomic_read(&realm->nref), atomic_read(&realm->nref)-1);
-> -	if (!atomic_dec_and_test(&realm->nref))
-> +	     refcount_read(&realm->nref), refcount_read(&realm->nref)-1);
-> +	if (!refcount_dec_and_test(&realm->nref))
->  		return;
->  
->  	if (down_write_trylock(&mdsc->snap_rwsem)) {
-> @@ -1034,7 +1035,8 @@ struct ceph_snapid_map* ceph_get_snapid_map(struct ceph_mds_client *mdsc,
->  		} else if (snap < exist->snap) {
->  			p = &(*p)->rb_right;
->  		} else {
-> -			if (atomic_inc_return(&exist->ref) == 1)
-> +			refcount_inc(&exist->ref);
-> +			if (refcount_read(&exist->ref) == 1)
->  				list_del_init(&exist->lru);
->  			break;
->  		}
-> @@ -1057,7 +1059,7 @@ struct ceph_snapid_map* ceph_get_snapid_map(struct ceph_mds_client *mdsc,
->  	}
->  
->  	INIT_LIST_HEAD(&sm->lru);
-> -	atomic_set(&sm->ref, 1);
-> +	refcount_set(&sm->ref, 1);
->  	sm->snap = snap;
->  
->  	exist = NULL;
-> @@ -1076,7 +1078,8 @@ struct ceph_snapid_map* ceph_get_snapid_map(struct ceph_mds_client *mdsc,
->  		exist = NULL;
->  	}
->  	if (exist) {
-> -		if (atomic_inc_return(&exist->ref) == 1)
-> +		refcount_inc(&exist->ref);
-> +		if (refcount_read(&exist->ref) == 1)
->  			list_del_init(&exist->lru);
->  	} else {
->  		rb_link_node(&sm->node, parent, p);
-> @@ -1099,7 +1102,7 @@ void ceph_put_snapid_map(struct ceph_mds_client* mdsc,
->  {
->  	if (!sm)
->  		return;
-> -	if (atomic_dec_and_lock(&sm->ref, &mdsc->snapid_map_lock)) {
-> +	if (refcount_dec_and_lock(&sm->ref, &mdsc->snapid_map_lock)) {
->  		if (!RB_EMPTY_NODE(&sm->node)) {
->  			sm->last_used = jiffies;
->  			list_add_tail(&sm->lru, &mdsc->snapid_map_lru);
-> @@ -1161,7 +1164,7 @@ void ceph_cleanup_snapid_map(struct ceph_mds_client *mdsc)
->  		sm = list_first_entry(&to_free, struct ceph_snapid_map, lru);
->  		list_del(&sm->lru);
->  		free_anon_bdev(sm->dev);
-> -		if (WARN_ON_ONCE(atomic_read(&sm->ref))) {
-> +		if (WARN_ON_ONCE(refcount_read(&sm->ref))) {
->  			pr_err("snapid map %llx -> %x still in use\n",
->  			       sm->snap, sm->dev);
->  		}
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index c48bb30c8d70..062123a73ef1 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -835,7 +835,7 @@ struct ceph_readdir_cache_control {
->  struct ceph_snap_realm {
->  	u64 ino;
->  	struct inode *inode;
-> -	atomic_t nref;
-> +	refcount_t nref;
->  	struct rb_node node;
->  
->  	u64 created, seq;
+> +/* metric opened files header */
+> +struct ceph_opened_files {
+> +	__le32 type;     /* ceph metric type */
+> +
+> +	__u8  ver;
+> +	__u8  compat;
+> +
+> +	__le32 data_len; /* length of sizeof(opened_files + total) */
+> +	__le64 opened_files;
+> +	__le64 total;
+> +} __packed;
+> +
+> +/* metric pinned i_caps header */
+> +struct ceph_pinned_icaps {
+> +	__le32 type;     /* ceph metric type */
+> +
+> +	__u8  ver;
+> +	__u8  compat;
+> +
+> +	__le32 data_len; /* length of sizeof(pinned_icaps + total) */
+> +	__le64 pinned_icaps;
+> +	__le64 total;
+> +} __packed;
+> +
+> +/* metric opened inodes header */
+> +struct ceph_opened_inodes {
+> +	__le32 type;     /* ceph metric type */
+> +
+> +	__u8  ver;
+> +	__u8  compat;
+> +
+> +	__le32 data_len; /* length of sizeof(opened_inodes + total) */
+> +	__le64 opened_inodes;
+> +	__le64 total;
+> +} __packed;
+> +
+>  struct ceph_metric_head {
+>  	__le32 num;	/* the number of metrics that will be sent */
+>  } __packed;
 
-Thanks, merged into ceph-client/testing branch. This should make v5.13.
+Much better. Merged into ceph-client/testing.
 
 Cheers,
 -- 
