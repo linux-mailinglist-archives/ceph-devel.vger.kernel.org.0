@@ -2,75 +2,105 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 453B4348930
-	for <lists+ceph-devel@lfdr.de>; Thu, 25 Mar 2021 07:38:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93C19349717
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Mar 2021 17:42:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229759AbhCYGhj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 25 Mar 2021 02:37:39 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:14891 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbhCYGhH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 25 Mar 2021 02:37:07 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4F5b2R5jMkzkfY4;
-        Thu, 25 Mar 2021 14:35:27 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.498.0; Thu, 25 Mar 2021
- 14:37:04 +0800
-From:   Lu Wei <luwei32@huawei.com>
-To:     <idryomov@gmail.com>, <jlayton@kernel.org>, <davem@davemloft.net>,
-        <kuba@kernel.org>, <ceph-devel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <xiyou.wangcong@gmail.com>, <ap420073@gmail.com>,
-        <linux-decnet-user@lists.sourceforge.net>, <andrew@lunn.ch>,
-        <vivien.didelot@gmail.com>, <f.fainelli@gmail.com>,
-        <olteanv@gmail.com>, <steffen.klassert@secunet.com>,
-        <herbert@gondor.apana.org.au>, <yoshfuji@linux-ipv6.org>,
-        <dsahern@kernel.org>
-Subject: [PATCH -next 5/5] net: ipv4: Fix some typos
-Date:   Thu, 25 Mar 2021 14:38:25 +0800
-Message-ID: <20210325063825.228167-6-luwei32@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210325063825.228167-1-luwei32@huawei.com>
-References: <20210325063825.228167-1-luwei32@huawei.com>
+        id S229788AbhCYQl5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 25 Mar 2021 12:41:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52080 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229664AbhCYQlZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 25 Mar 2021 12:41:25 -0400
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98FECC06174A;
+        Thu, 25 Mar 2021 09:41:25 -0700 (PDT)
+Received: by mail-io1-xd2d.google.com with SMTP id v26so2515485iox.11;
+        Thu, 25 Mar 2021 09:41:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OdbHY0RnzXW9ln9u58UHELCJWkEnS2LU09uY7jHKHhU=;
+        b=lt3Hqv6lHrHwGZtQRrQ38hRcDah6BT3R+RyYwSI+RZP0u9c/rC6oVratLljSq2SigX
+         H2UxOLfe7Woo6m5o982ut9cTCFvthqQMvwXclLOuqSHaOGyOFM2zLxTNnbBmhM5TYk8D
+         x616ICnc69sZ1QMlbwlZhz+B8JsnbDM/a1vYkg6R2GjUOWWeLKmdFLJ2uVJlYD+iPVhw
+         AeDBQjlYUVKZvnZbODqbTLAZnl3lCd8gaFjdg2HJYxV3FUumtAKMiudPRrqB434EF1pm
+         q47nf8xQPVnhPk6DKzRlK/N04bcmCTWOC22OUZGoMmpBEaS92bznVdEIwKWgWC0xSG+e
+         1Eqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OdbHY0RnzXW9ln9u58UHELCJWkEnS2LU09uY7jHKHhU=;
+        b=EFyP5zy4DIFedsVa3vqPLI7SG3CiPgNIg8akWfwS5ttr58hOorR6Fei4YAnkcya9L1
+         6aRr61NEeWqEUFHMEDSYMZFqyfof4yGYqXsEAbrqYladbMxGYQ21d579mmfY7SjkLtW7
+         aBOw7mXvCidH/ZbcXg5WjXMkZz07RZWkz1t0XjJFQjs5OrR6Ldn44COBqt4OgR48GlZV
+         vioEGhkwLsSn84YckkhqaydV/9Uu9BCl2N1ea2PtPB6esef6HbL0XHQsTOmPJgoqKmIa
+         YR1PC4MZr/DDMsp6tCkThKdhGuMTKO9SM9/vXR/GAeLmiz/K5qoFS9/W8kCbOYZkCF9A
+         j/oA==
+X-Gm-Message-State: AOAM5315bl5Nsj1QENAeynp8cMUvrORlWXKRnb28JqMWlRAEXgQlQCVq
+        pmrDQUWm7MrTmekN5bf7+Tr9w7zZqiYf0q6w4a0=
+X-Google-Smtp-Source: ABdhPJxbrlydndu7n5u97K0HgoGx9Fx7r5H7yg7JN5zcWAYel05Svrjq2W6LDfFYaZts37+Sii4p9iLuRyVB+S8mVS4=
+X-Received: by 2002:a02:8801:: with SMTP id r1mr8496177jai.51.1616690485097;
+ Thu, 25 Mar 2021 09:41:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.101.6]
-X-CFilter-Loop: Reflected
+References: <20210325063825.228167-1-luwei32@huawei.com> <20210325063825.228167-2-luwei32@huawei.com>
+In-Reply-To: <20210325063825.228167-2-luwei32@huawei.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 25 Mar 2021 17:41:16 +0100
+Message-ID: <CAOi1vP9uuaY9OMmW0Xni5iUztyAviFH3N11ohWbb2zqXsGYMiQ@mail.gmail.com>
+Subject: Re: [PATCH -next 1/5] net: ceph: Fix a typo in osdmap.c
+To:     Lu Wei <luwei32@huawei.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, xiyou.wangcong@gmail.com,
+        ap420073@gmail.com, linux-decnet-user@lists.sourceforge.net,
+        Andrew Lunn <andrew@lunn.ch>, vivien.didelot@gmail.com,
+        Florian Fainelli <f.fainelli@gmail.com>, olteanv@gmail.com,
+        steffen.klassert@secunet.com,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        yoshfuji@linux-ipv6.org, dsahern@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Modify "accomodate" to "accommodate" in net/ipv4/esp4.c.
+On Thu, Mar 25, 2021 at 7:37 AM Lu Wei <luwei32@huawei.com> wrote:
+>
+> Modify "inital" to "initial" in net/ceph/osdmap.c.
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Lu Wei <luwei32@huawei.com>
+> ---
+>  net/ceph/osdmap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
+> index 2b1dd252f231..c959320c4775 100644
+> --- a/net/ceph/osdmap.c
+> +++ b/net/ceph/osdmap.c
+> @@ -1069,7 +1069,7 @@ static struct crush_work *get_workspace(struct workspace_manager *wsm,
+>
+>                 /*
+>                  * Do not return the error but go back to waiting.  We
+> -                * have the inital workspace and the CRUSH computation
+> +                * have the initial workspace and the CRUSH computation
+>                  * time is bounded so we will get it eventually.
+>                  */
+>                 WARN_ON(atomic_read(&wsm->total_ws) < 1);
+> --
+> 2.17.1
+>
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Lu Wei <luwei32@huawei.com>
----
- net/ipv4/esp4.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Lu,
 
-diff --git a/net/ipv4/esp4.c b/net/ipv4/esp4.c
-index a3271ec3e162..1ae920b93f39 100644
---- a/net/ipv4/esp4.c
-+++ b/net/ipv4/esp4.c
-@@ -309,7 +309,7 @@ static struct ip_esp_hdr *esp_output_set_extra(struct sk_buff *skb,
- 					       struct esp_output_extra *extra)
- {
- 	/* For ESN we move the header forward by 4 bytes to
--	 * accomodate the high bits.  We will move it back after
-+	 * accommodate the high bits.  We will move it back after
- 	 * encryption.
- 	 */
- 	if ((x->props.flags & XFRM_STATE_ESN)) {
-@@ -854,7 +854,7 @@ static void esp_input_set_header(struct sk_buff *skb, __be32 *seqhi)
- 	struct ip_esp_hdr *esph;
- 
- 	/* For ESN we move the header forward by 4 bytes to
--	 * accomodate the high bits.  We will move it back after
-+	 * accommodate the high bits.  We will move it back after
- 	 * decryption.
- 	 */
- 	if ((x->props.flags & XFRM_STATE_ESN)) {
--- 
-2.17.1
+There is at least one other legit typo in that file: "ambigous".
+I'd rather fix all typos at once, so curious why Hulk Robot didn't
+catch it.
 
+Thanks,
+
+                Ilya
