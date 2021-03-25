@@ -2,105 +2,65 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93C19349717
-	for <lists+ceph-devel@lfdr.de>; Thu, 25 Mar 2021 17:42:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB5C434975B
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Mar 2021 17:57:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229788AbhCYQl5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 25 Mar 2021 12:41:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52080 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229664AbhCYQlZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 25 Mar 2021 12:41:25 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98FECC06174A;
-        Thu, 25 Mar 2021 09:41:25 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id v26so2515485iox.11;
-        Thu, 25 Mar 2021 09:41:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OdbHY0RnzXW9ln9u58UHELCJWkEnS2LU09uY7jHKHhU=;
-        b=lt3Hqv6lHrHwGZtQRrQ38hRcDah6BT3R+RyYwSI+RZP0u9c/rC6oVratLljSq2SigX
-         H2UxOLfe7Woo6m5o982ut9cTCFvthqQMvwXclLOuqSHaOGyOFM2zLxTNnbBmhM5TYk8D
-         x616ICnc69sZ1QMlbwlZhz+B8JsnbDM/a1vYkg6R2GjUOWWeLKmdFLJ2uVJlYD+iPVhw
-         AeDBQjlYUVKZvnZbODqbTLAZnl3lCd8gaFjdg2HJYxV3FUumtAKMiudPRrqB434EF1pm
-         q47nf8xQPVnhPk6DKzRlK/N04bcmCTWOC22OUZGoMmpBEaS92bznVdEIwKWgWC0xSG+e
-         1Eqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OdbHY0RnzXW9ln9u58UHELCJWkEnS2LU09uY7jHKHhU=;
-        b=EFyP5zy4DIFedsVa3vqPLI7SG3CiPgNIg8akWfwS5ttr58hOorR6Fei4YAnkcya9L1
-         6aRr61NEeWqEUFHMEDSYMZFqyfof4yGYqXsEAbrqYladbMxGYQ21d579mmfY7SjkLtW7
-         aBOw7mXvCidH/ZbcXg5WjXMkZz07RZWkz1t0XjJFQjs5OrR6Ldn44COBqt4OgR48GlZV
-         vioEGhkwLsSn84YckkhqaydV/9Uu9BCl2N1ea2PtPB6esef6HbL0XHQsTOmPJgoqKmIa
-         YR1PC4MZr/DDMsp6tCkThKdhGuMTKO9SM9/vXR/GAeLmiz/K5qoFS9/W8kCbOYZkCF9A
-         j/oA==
-X-Gm-Message-State: AOAM5315bl5Nsj1QENAeynp8cMUvrORlWXKRnb28JqMWlRAEXgQlQCVq
-        pmrDQUWm7MrTmekN5bf7+Tr9w7zZqiYf0q6w4a0=
-X-Google-Smtp-Source: ABdhPJxbrlydndu7n5u97K0HgoGx9Fx7r5H7yg7JN5zcWAYel05Svrjq2W6LDfFYaZts37+Sii4p9iLuRyVB+S8mVS4=
-X-Received: by 2002:a02:8801:: with SMTP id r1mr8496177jai.51.1616690485097;
- Thu, 25 Mar 2021 09:41:25 -0700 (PDT)
+        id S229719AbhCYQ4e (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 25 Mar 2021 12:56:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35526 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229547AbhCYQ4I (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 25 Mar 2021 12:56:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D1B0161A1E;
+        Thu, 25 Mar 2021 16:56:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616691368;
+        bh=vtCT04sR/zzYWQUtv9wSIxPGOTKdKlSuKj0we6esZ14=;
+        h=From:To:Cc:Subject:Date:From;
+        b=q2tpnx+frC2R82GB3PbsxtNfzA6RbHtMlIYrjggRVWQRnS9rsajH49t3074s8kTPA
+         Gu3AS1juiMXqUcYOjU6TsKnwbZk3dvPBx+bJoGdMiVmmOElQbqjQJS4Ixo23lw/0+L
+         Up4y06ktaFRn58f/ZgDQU5PJn6Zs1DaWUUKzLrZQUg0mu0iMenH9am0V6XtWFHi8td
+         weCgpNcw6ogCo6hAZ1cRvjyBo17HFyyREekuQLS1tXzoAYlLcb2l5THKipHqzZIU31
+         2A5qw1ylzMB9+lY3ThToU2tYJWjWMX2qkBUx+ea+dVGVJ+VpspLITtelZU7gSDyyTo
+         XPVKvIGEk33xg==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, Luis Henriques <lhenriques@suse.de>
+Subject: [PATCH] ceph: only check pool permissions for regular files
+Date:   Thu, 25 Mar 2021 12:56:06 -0400
+Message-Id: <20210325165606.41943-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20210325063825.228167-1-luwei32@huawei.com> <20210325063825.228167-2-luwei32@huawei.com>
-In-Reply-To: <20210325063825.228167-2-luwei32@huawei.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 25 Mar 2021 17:41:16 +0100
-Message-ID: <CAOi1vP9uuaY9OMmW0Xni5iUztyAviFH3N11ohWbb2zqXsGYMiQ@mail.gmail.com>
-Subject: Re: [PATCH -next 1/5] net: ceph: Fix a typo in osdmap.c
-To:     Lu Wei <luwei32@huawei.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, xiyou.wangcong@gmail.com,
-        ap420073@gmail.com, linux-decnet-user@lists.sourceforge.net,
-        Andrew Lunn <andrew@lunn.ch>, vivien.didelot@gmail.com,
-        Florian Fainelli <f.fainelli@gmail.com>, olteanv@gmail.com,
-        steffen.klassert@secunet.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        yoshfuji@linux-ipv6.org, dsahern@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Mar 25, 2021 at 7:37 AM Lu Wei <luwei32@huawei.com> wrote:
->
-> Modify "inital" to "initial" in net/ceph/osdmap.c.
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Lu Wei <luwei32@huawei.com>
-> ---
->  net/ceph/osdmap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-> index 2b1dd252f231..c959320c4775 100644
-> --- a/net/ceph/osdmap.c
-> +++ b/net/ceph/osdmap.c
-> @@ -1069,7 +1069,7 @@ static struct crush_work *get_workspace(struct workspace_manager *wsm,
->
->                 /*
->                  * Do not return the error but go back to waiting.  We
-> -                * have the inital workspace and the CRUSH computation
-> +                * have the initial workspace and the CRUSH computation
->                  * time is bounded so we will get it eventually.
->                  */
->                 WARN_ON(atomic_read(&wsm->total_ws) < 1);
-> --
-> 2.17.1
->
+There is no need to do a ceph_pool_perm_check() on anything that isn't a
+regular file, as the MDS is what handles talking to the OSD in those
+cases. Just return 0 if it's not a regular file.
 
-Hi Lu,
+Reported-by: Luis Henriques <lhenriques@suse.de>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/addr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-There is at least one other legit typo in that file: "ambigous".
-I'd rather fix all typos at once, so curious why Hulk Robot didn't
-catch it.
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index d26a88aca014..07cbf21099b8 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1940,6 +1940,10 @@ int ceph_pool_perm_check(struct inode *inode, int need)
+ 	s64 pool;
+ 	int ret, flags;
+ 
++	/* Only need to do this for regular files */
++	if (!S_ISREG(inode->i_mode))
++		return 0;
++
+ 	if (ci->i_vino.snap != CEPH_NOSNAP) {
+ 		/*
+ 		 * Pool permission check needs to write to the first object.
+-- 
+2.30.2
 
-Thanks,
-
-                Ilya
