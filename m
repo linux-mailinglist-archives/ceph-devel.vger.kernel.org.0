@@ -2,95 +2,72 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 502E13485F8
-	for <lists+ceph-devel@lfdr.de>; Thu, 25 Mar 2021 01:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D13DC348781
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Mar 2021 04:29:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239353AbhCYAnb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 24 Mar 2021 20:43:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54797 "EHLO
+        id S230362AbhCYD3H (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 24 Mar 2021 23:29:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:56764 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232170AbhCYAnC (ORCPT
+        by vger.kernel.org with ESMTP id S229574AbhCYD2x (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 24 Mar 2021 20:43:02 -0400
+        Wed, 24 Mar 2021 23:28:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616632981;
+        s=mimecast20190719; t=1616642932;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5wgYB37+IBpF1tEvrClHSL5UBINpSv+s23h7a77ZuDM=;
-        b=FINKMk0ya08+M3EXKpQCvi3eFDZBgBqBVBacpunIBuJfcjB08CUveNbreKQXGJ35UlEu11
-        9mjS/QH0vHow44CDJHJ+ib5IwdTHpUmlTUPfgI7cvVxIGRWLSbyefLCDw7wnNDKnBE+fzU
-        8a1Sfgn0Jk3P/kL9d8p6SbsFPhjkDIA=
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=aP9C8cuD0os1GVGVfxQ7w3LIUMBKItpG18MEBJS8lhc=;
+        b=Ll7sGoAznCF7xnSGmONF2cY2PCk0wX+zOwVBgbGwcZbGJ0OXcusTH6KRkUBDzFER93Zef7
+        6dzABY9wx9EirgXOXKbC4Weft78F4zbwnJLFWJP3//nxVtCW9Qh2JNoX0zL5Z1Kbi2SwAE
+        KYOGiFPlufELtDC8Klmj3ip945k2W3g=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-285-BaiKAS_FO4Scyrrtk0Fbvg-1; Wed, 24 Mar 2021 20:42:59 -0400
-X-MC-Unique: BaiKAS_FO4Scyrrtk0Fbvg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-243-pUhy0oAkPFC_W5n3KmWYnA-1; Wed, 24 Mar 2021 23:28:49 -0400
+X-MC-Unique: pUhy0oAkPFC_W5n3KmWYnA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AAF87107B004;
-        Thu, 25 Mar 2021 00:42:58 +0000 (UTC)
-Received: from [10.72.12.53] (ovpn-12-53.pek2.redhat.com [10.72.12.53])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0E2E65B4B0;
-        Thu, 25 Mar 2021 00:42:56 +0000 (UTC)
-Subject: Re: [PATCH 0/4] ceph: add IO size metric support
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-References: <20210322122852.322927-1-xiubli@redhat.com>
- <7c17357ce0b7e9671c133aa1ed3c413b6a100407.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <3f271f89-5cd0-a878-97ff-e3d9696cdf44@redhat.com>
-Date:   Thu, 25 Mar 2021 08:42:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 96393180FCA0;
+        Thu, 25 Mar 2021 03:28:48 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 59A9862951;
+        Thu, 25 Mar 2021 03:28:45 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v2 0/2] ceph: add IO size metric support
+Date:   Thu, 25 Mar 2021 11:28:24 +0800
+Message-Id: <20210325032826.1725667-1-xiubli@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <7c17357ce0b7e9671c133aa1ed3c413b6a100407.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2021/3/24 23:06, Jeff Layton wrote:
-> On Mon, 2021-03-22 at 20:28 +0800, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> Currently it will show as the following:
->>
->> item          total       avg_sz(bytes)   min_sz(bytes)   max_sz(bytes)  total_sz(bytes)
->> ----------------------------------------------------------------------------------------
->> read          1           10240           10240           10240           10240
->> write         1           10240           10240           10240           10240
->>
->>
->>
->> Xiubo Li (4):
->>    ceph: rename the metric helpers
->>    ceph: update the __update_latency helper
->>    ceph: avoid count the same request twice or more
->>    ceph: add IO size metrics support
->>
->>   fs/ceph/addr.c       |  20 +++----
->>   fs/ceph/debugfs.c    |  49 +++++++++++++----
->>   fs/ceph/file.c       |  47 ++++++++--------
->>   fs/ceph/mds_client.c |   2 +-
->>   fs/ceph/metric.c     | 126 ++++++++++++++++++++++++++++++++-----------
->>   fs/ceph/metric.h     |  22 +++++---
->>   6 files changed, 184 insertions(+), 82 deletions(-)
->>
-> I've gone ahead and merged patches 1 and 3 from this series into
-> ceph-client/testing. 1 was just a trivial renaming that we might as well
-> get out of the way, and 3 looked like a (minor) bugfix. The other two
-> still need a bit of work (but nothing major).
+From: Xiubo Li <xiubli@redhat.com>
 
-Sure, will fix them and post the v2 later.
+V2:
+- remove the unused parameters in metric.c
+- a small clean up for the code.
 
-Thanks Jeff.
+For the read/write IO speeds, will leave them to be computed in userspace,
+where it can get a preciser result with float type.
 
 
-> Cheers,
+Xiubo Li (2):
+  ceph: update the __update_latency helper
+  ceph: add IO size metrics support
 
+ fs/ceph/addr.c    |  14 +++---
+ fs/ceph/debugfs.c |  37 ++++++++++++++--
+ fs/ceph/file.c    |  23 +++++-----
+ fs/ceph/metric.c  | 109 ++++++++++++++++++++++++++++++++++++----------
+ fs/ceph/metric.h  |  10 ++++-
+ 5 files changed, 146 insertions(+), 47 deletions(-)
+
+-- 
+2.27.0
 
