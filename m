@@ -2,207 +2,92 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2A433546C8
-	for <lists+ceph-devel@lfdr.de>; Mon,  5 Apr 2021 20:38:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAA7F3549C0
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Apr 2021 02:43:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235036AbhDESir (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 5 Apr 2021 14:38:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232598AbhDESir (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 5 Apr 2021 14:38:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4789E60FD8;
-        Mon,  5 Apr 2021 18:38:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617647920;
-        bh=0BW4dKgtW7yRjnqRROod6RR64heEUKkzivE7Ihl10wQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=fv4LAN0d+QF0htMqnJpI4VOSYeBVcCwquJy+SKxTbMrG2G0ML7Y1udz4jx/wjbSy/
-         BVXdPEybe2dK/tLgXo0LsiiTh+wyr568ML/K7mSNhkhfXZ7ynX+8ZwAP/VxTI4da+K
-         TMY0Uv+/CcLtqBZ+CWUjS1QL3yzjQFQKCkFgGoMElZEAij28qJgzguG8ct8CJ90bPS
-         +g5OFcXhvtWghdzRxUsR7RqYYn8p0F7WsQnQF36iv0fh3or4j99TbHHTkzxRMlAf0u
-         K9FamoaTk0oeqiZJdNkIzLhVsiryuuDwwVV5CVmRTOG7+1CENzA49vhBLJ7lLOOR4V
-         Kq/+lQa+Vqd9g==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com
-Subject: [PATCH] ceph: drop pinned_page parameter from ceph_get_caps
-Date:   Mon,  5 Apr 2021 14:38:38 -0400
-Message-Id: <20210405183838.93073-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.30.2
+        id S232540AbhDFAn0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 5 Apr 2021 20:43:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34390 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229615AbhDFAn0 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 5 Apr 2021 20:43:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617669798;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=sFVGdA2muXir6Auba6iQ3Kd65UfvVOmWhlCJAaqqGAs=;
+        b=XZtLop9Nny3j8Raz1tv3Q5jC4o8g0OFoxrYGjs9yUyMLePziPBUsgB4IlKh5AEEzqnfn+n
+        XFyEw2BbMgCvZnNPXQj+zsegipKUhfPwtv4YsjavEaSzNfrbRvOr6TYdrKnyORVsuGEW3x
+        y5s5m8SOrdCbpZfAQz3DfaH8ghZ8KOY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-211-1PB2Pj_fMPCVi2fFLW-NQw-1; Mon, 05 Apr 2021 20:43:16 -0400
+X-MC-Unique: 1PB2Pj_fMPCVi2fFLW-NQw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 522C11005D4F;
+        Tue,  6 Apr 2021 00:43:15 +0000 (UTC)
+Received: from [10.72.12.53] (ovpn-12-53.pek2.redhat.com [10.72.12.53])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D10135F7D0;
+        Tue,  6 Apr 2021 00:43:13 +0000 (UTC)
+Subject: Re: [PATCH] ceph: fix a typo in comments
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
+References: <20210329045904.135183-1-xiubli@redhat.com>
+ <0d8435629047c4aa1820e51730273eb615a6aaa1.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <7cdb5b39-9249-ce4e-a3ba-f780125f6846@redhat.com>
+Date:   Tue, 6 Apr 2021 08:43:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <0d8435629047c4aa1820e51730273eb615a6aaa1.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-All of the existing callers that don't set this to NULL just drop the
-page reference at some arbitrary point later in processing. There's no
-point in keeping a page reference that we don't use, so just drop the
-reference immediately after checking the Uptodate flag.
+On 2021/4/5 19:30, Jeff Layton wrote:
+> On Mon, 2021-03-29 at 12:59 +0800, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/ceph/addr.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+>> index 57c67180ce5c..5b66f17afe0c 100644
+>> --- a/fs/ceph/addr.c
+>> +++ b/fs/ceph/addr.c
+>> @@ -1945,7 +1945,7 @@ int ceph_pool_perm_check(struct inode *inode, int need)
+>>   	if (ci->i_vino.snap != CEPH_NOSNAP) {
+>>   		/*
+>>   		 * Pool permission check needs to write to the first object.
+>> -		 * But for snapshot, head of the first object may have alread
+>> +		 * But for snapshot, head of the first object may have already
+>>   		 * been deleted. Skip check to avoid creating orphan object.
+>>   		 */
+>>   		return 0;
+> In general, I don't like to merge patches that just change comments
+> without other substantive changes. I did make an exception in this
+> patch:
+>
+>      [PATCH 1/2] ceph: fix kerneldoc copypasta over ceph_start_io_direct
+>
+> ...but that was mainly because that was generating a warning at build-
+> time for me. I'm going to drop this patch for now.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/addr.c  |  9 ++-------
- fs/ceph/caps.c  | 11 +++++------
- fs/ceph/file.c  | 17 +++++------------
- fs/ceph/super.h |  2 +-
- 4 files changed, 13 insertions(+), 26 deletions(-)
+Sure, will fix it in my next patch series.
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 07cbf21099b8..a49f23edae14 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1356,7 +1356,6 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
- 	struct inode *inode = file_inode(vma->vm_file);
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_file_info *fi = vma->vm_file->private_data;
--	struct page *pinned_page = NULL;
- 	loff_t off = (loff_t)vmf->pgoff << PAGE_SHIFT;
- 	int want, got, err;
- 	sigset_t oldset;
-@@ -1372,8 +1371,7 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
- 		want = CEPH_CAP_FILE_CACHE;
- 
- 	got = 0;
--	err = ceph_get_caps(vma->vm_file, CEPH_CAP_FILE_RD, want, -1,
--			    &got, &pinned_page);
-+	err = ceph_get_caps(vma->vm_file, CEPH_CAP_FILE_RD, want, -1, &got);
- 	if (err < 0)
- 		goto out_restore;
- 
-@@ -1392,8 +1390,6 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
- 	} else
- 		err = -EAGAIN;
- 
--	if (pinned_page)
--		put_page(pinned_page);
- 	ceph_put_cap_refs(ci, got);
- 
- 	if (err != -EAGAIN)
-@@ -1487,8 +1483,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
- 		want = CEPH_CAP_FILE_BUFFER;
- 
- 	got = 0;
--	err = ceph_get_caps(vma->vm_file, CEPH_CAP_FILE_WR, want, off + len,
--			    &got, NULL);
-+	err = ceph_get_caps(vma->vm_file, CEPH_CAP_FILE_WR, want, off + len, &got);
- 	if (err < 0)
- 		goto out_free;
- 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index aebd0d78ee59..e712826ea3f1 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -2855,8 +2855,7 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
-  * due to a small max_size, make sure we check_max_size (and possibly
-  * ask the mds) so we don't get hung up indefinitely.
-  */
--int ceph_get_caps(struct file *filp, int need, int want,
--		  loff_t endoff, int *got, struct page **pinned_page)
-+int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got)
- {
- 	struct ceph_file_info *fi = filp->private_data;
- 	struct inode *inode = file_inode(filp);
-@@ -2954,11 +2953,11 @@ int ceph_get_caps(struct file *filp, int need, int want,
- 			struct page *page =
- 				find_get_page(inode->i_mapping, 0);
- 			if (page) {
--				if (PageUptodate(page)) {
--					*pinned_page = page;
--					break;
--				}
-+				bool uptodate = PageUptodate(page);
-+
- 				put_page(page);
-+				if (uptodate)
-+					break;
- 			}
- 			/*
- 			 * drop cap refs first because getattr while
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 31542eac7e59..77fc037d5beb 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1513,7 +1513,6 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	size_t len = iov_iter_count(to);
- 	struct inode *inode = file_inode(filp);
- 	struct ceph_inode_info *ci = ceph_inode(inode);
--	struct page *pinned_page = NULL;
- 	bool direct_lock = iocb->ki_flags & IOCB_DIRECT;
- 	ssize_t ret;
- 	int want, got = 0;
-@@ -1532,8 +1531,7 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		want = CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO;
- 	else
- 		want = CEPH_CAP_FILE_CACHE;
--	ret = ceph_get_caps(filp, CEPH_CAP_FILE_RD, want, -1,
--			    &got, &pinned_page);
-+	ret = ceph_get_caps(filp, CEPH_CAP_FILE_RD, want, -1, &got);
- 	if (ret < 0) {
- 		if (iocb->ki_flags & IOCB_DIRECT)
- 			ceph_end_io_direct(inode);
-@@ -1574,10 +1572,6 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 
- 	dout("aio_read %p %llx.%llx dropping cap refs on %s = %d\n",
- 	     inode, ceph_vinop(inode), ceph_cap_string(got), (int)ret);
--	if (pinned_page) {
--		put_page(pinned_page);
--		pinned_page = NULL;
--	}
- 	ceph_put_cap_refs(ci, got);
- 
- 	if (direct_lock)
-@@ -1756,8 +1750,7 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	else
- 		want = CEPH_CAP_FILE_BUFFER;
- 	got = 0;
--	err = ceph_get_caps(file, CEPH_CAP_FILE_WR, want, pos + count,
--			    &got, NULL);
-+	err = ceph_get_caps(file, CEPH_CAP_FILE_WR, want, pos + count, &got);
- 	if (err < 0)
- 		goto out;
- 
-@@ -2086,7 +2079,7 @@ static long ceph_fallocate(struct file *file, int mode,
- 	else
- 		want = CEPH_CAP_FILE_BUFFER;
- 
--	ret = ceph_get_caps(file, CEPH_CAP_FILE_WR, want, endoff, &got, NULL);
-+	ret = ceph_get_caps(file, CEPH_CAP_FILE_WR, want, endoff, &got);
- 	if (ret < 0)
- 		goto unlock;
- 
-@@ -2124,7 +2117,7 @@ static int get_rd_wr_caps(struct file *src_filp, int *src_got,
- 
- retry_caps:
- 	ret = ceph_get_caps(dst_filp, CEPH_CAP_FILE_WR, CEPH_CAP_FILE_BUFFER,
--			    dst_endoff, dst_got, NULL);
-+			    dst_endoff, dst_got);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -2146,7 +2139,7 @@ static int get_rd_wr_caps(struct file *src_filp, int *src_got,
- 			return ret;
- 		}
- 		ret = ceph_get_caps(src_filp, CEPH_CAP_FILE_RD,
--				    CEPH_CAP_FILE_SHARED, -1, src_got, NULL);
-+				    CEPH_CAP_FILE_SHARED, -1, src_got);
- 		if (ret < 0)
- 			return ret;
- 		/*... drop src_ci caps too, and retry */
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 1fe4cf385481..4808a1458c9b 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1178,7 +1178,7 @@ extern int ceph_encode_dentry_release(void **p, struct dentry *dn,
- 				      int mds, int drop, int unless);
- 
- extern int ceph_get_caps(struct file *filp, int need, int want,
--			 loff_t endoff, int *got, struct page **pinned_page);
-+			 loff_t endoff, int *got);
- extern int ceph_try_get_caps(struct inode *inode,
- 			     int need, int want, bool nonblock, int *got);
- 
--- 
-2.30.2
+Thanks
+
+> Cheers,
+
 
