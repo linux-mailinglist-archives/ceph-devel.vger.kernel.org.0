@@ -2,144 +2,76 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B4E21356C82
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Apr 2021 14:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E7103570C5
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Apr 2021 17:47:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239546AbhDGMsK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 7 Apr 2021 08:48:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233022AbhDGMsJ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 7 Apr 2021 08:48:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BE2676135D;
-        Wed,  7 Apr 2021 12:47:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617799680;
-        bh=IHe3CdrXn9kgyESxdbEaXF0ihv/AkXarmdpQrlmiMHE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=NoRKhJbHcysHMJtNpsm3lEpfikVCmgoXYX/M9GWiGH737ykBudax6Pfnnqw3f+tvJ
-         M+7BjrkYwsIRgVLnwa48RA+d1jPUEiVlzVQT/1NacAABphIG/UQK1xJbPHO3ojjO/1
-         komlBniKiAjRI0BiV4zaRg0L7aF5sPwjH/KyLRJ8lkK9tnkhjHUrhvnWI2hSrEFOkr
-         Jj7I+rj5lANq71U51i43ogHKTvzoWNwyjLLEYx9otvXKlziLX3Zpi0w+snwIji3NaF
-         4JO35YjPySFUE+wi/aryd6yceEA7hNNq2JDMzhp84bByZKISMStWYHVXBHypFu9TrR
-         2u0ixVFUHcRGA==
-Message-ID: <37ab61e4647c44a52947550db75191dc6cc94a30.camel@kernel.org>
-Subject: Re: [RFC PATCH v5 19/19] ceph: add fscrypt ioctls
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Wed, 07 Apr 2021 08:47:58 -0400
-In-Reply-To: <YGyiy1B+BaOQihrM@suse.de>
-References: <20210326173227.96363-1-jlayton@kernel.org>
-         <20210326173227.96363-20-jlayton@kernel.org> <YGyAjn5PcG9J/07/@suse.de>
-         <ee49d17b2087d0f52c38931f13e648ee7a762b4f.camel@kernel.org>
-         <YGyLJcqhpU5gGjsW@suse.de>
-         <dc50279dba2d46921a200fbea8bd59702504adfc.camel@kernel.org>
-         <YGyiy1B+BaOQihrM@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
+        id S1353769AbhDGPrT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 7 Apr 2021 11:47:19 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51250 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1353755AbhDGPrM (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Apr 2021 11:47:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617810421;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=vBa++ylKdM6FaV/AsB3jGOj59UUYHkh6Ww/V2KVEjbY=;
+        b=SMtHi42iIphRFpRMxO4Lgq4RNut5e03uQ6XPrUl1H2soDXHztkPwAX1hg6UFc03n+2Q2Fs
+        XiN1VerMBjSJHMq8W1seesHXHzjxXLJmZ2/Z28PcUIChXyJRedtU3Tv3LYqLnOuxhMpi5r
+        kWTArmcIF+hEODG/vzW+089sTRlpEVE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-291-vJ-WsKDbMdGZLbaNmZzTBw-1; Wed, 07 Apr 2021 11:46:57 -0400
+X-MC-Unique: vJ-WsKDbMdGZLbaNmZzTBw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0D7E51008076;
+        Wed,  7 Apr 2021 15:46:56 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-201.rdu2.redhat.com [10.10.115.201])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 43E9D1893C;
+        Wed,  7 Apr 2021 15:46:54 +0000 (UTC)
+Subject: [PATCH 0/5] netfs: Fixes for the netfs lib
+From:   David Howells <dhowells@redhat.com>
+To:     jlayton@kernel.org
+Cc:     dwysocha@redhat.com, linux-cachefs@redhat.com,
+        v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 07 Apr 2021 16:46:53 +0100
+Message-ID: <161781041339.463527.18139104281901492882.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2021-04-06 at 19:04 +0100, Luis Henriques wrote:
-> On Tue, Apr 06, 2021 at 01:27:21PM -0400, Jeff Layton wrote:
-> <snip>
-> > > > > I've spent a few hours already looking at the bug I reported before, and I
-> > > > > can't really understand this code.  What does it mean to increment
-> > > > > ->i_shared_gen at this point?
-> > > > > 
-> > > > > The reason I'm asking is because it looks like the problem I'm seeing goes
-> > > > > away if I remove this code.  Here's what I'm doing/seeing:
-> > > > > 
-> > > > > # mount ...
-> > > > > # fscrypt unlock d
-> > > > > 
-> > > > >   -> 'd' dentry is eventually pruned at this point *if* ->i_shared_gen was
-> > > > >      incremented by the line above.
-> > > > > 
-> > > > > # cat d/f
-> > > > > 
-> > > > >   -> when ceph_fill_inode() is executed, 'd' isn't *not* set as encrypted
-> > > > >      because both ci->i_xattrs.version and info->xattr_version are both
-> > > > >      set to 0.
-> > > > > 
-> > > > 
-> > > > Interesting. That sounds like it might be the bug right there. "d"
-> > > > should clearly have a fscrypt context in its xattrs at that point. If
-> > > > the MDS isn't passing that back, then that could be a problem.
-> > > > 
-> > > > I had a concern about that when I was developing this, and I *thought*
-> > > > Zheng had assured us that the MDS will always pass along the xattr blob
-> > > > in a trace. Maybe that's not correct?
-> > > 
-> > > Hmm, that's what I thought too.  I was hoping not having to go look at the
-> > > MDS, but seems like I'll have to :-)
-> > > 
-> > 
-> > That'd be good, if possible.
-> > 
-> > > > > cat: d/f: No such file or directory
-> > > > > 
-> > > > > I'm not sure anymore if the issue is on the client or on the MDS side.
-> > > > > Before digging deeper, I wonder if this ring any bell. ;-)
-> > > > > 
-> > > > > 
-> > > > 
-> > > > No, this is not something I've seen before.
-> > > > 
-> > > > Dentries that live in a directory have a copy of the i_shared_gen of the
-> > > > directory when they are instantiated. Bumping that value on a directory
-> > > > should basically ensure that its child dentries end up invalidated,
-> > > > which is what we want once we add the key to the directory. Once we add
-> > > > a key, any old dentries in that directory are no longer valid.
-> > > > 
-> > > > That said, I could certainly have missed some subtlety here.
-> > > 
-> > > Great, thanks for clarifying.  This should help me investigate a little
-> > > bit more.
-> > > 
-> > > [ And I'm also surprised you don't see this behaviour as it's very easy to
-> > >   reproduce. ]
-> > > 
-> > > 
-> > 
-> > It is odd... fwiw, I ran this for 5 mins or so and never saw a problem:
-> > 
-> >     $ while [ $? -eq 0 ]; do sudo umount /mnt/crypt; sudo mount /mnt/crypt; fscrypt unlock --key=/home/jlayton/fscrypt-keyfile /mnt/crypt/d; cat /mnt/crypt/d/f; done
-> > 
-> 
-> TBH I only do this operation once and it almost always fails.  The only
-> difference I see is that I don't really use a keyfile, but a passphrase
-> instead.  Not sure if it makes any difference.  Also, it may be worth
-> adding a delay before the 'cat' to make sure the dentry is pruned.
-> 
 
-No joy. I tried different delays between 1-5s and it didn't change
-anything.
+Hi Jeff,
 
-> > ...do I need some other operations in between? Also, the cluster in this
-> > case is Pacific. It's possible this is a result of changes since then if
-> > you're on a vstart cluster or something.
-> > 
-> > $ sudo ./cephadm version
-> > Using recent ceph image docker.io/ceph/ceph@sha256:9b04c0f15704c49591640a37c7adfd40ffad0a4b42fecb950c3407687cb4f29a
-> > ceph version 16.2.0 (0c2054e95bcd9b30fdd908a79ac1d8bbc3394442) pacific (stable)
-> 
-> I've re-compiled the cluster after hard-resetting it to commit
-> 6a19e303187c which you mentioned in a previous email in this thread.  But
-> the result was the same.
-> 
-> Anyway, using a vstart cluster is also a huge difference I guess.  I'll
-> keep debugging.  Thanks!
-> 
+Here's a bunch of fixes plus a tracepoint for the netfs library.  I'm going
+to roll them into other patches, but I'm posting them here for separate
+review.
 
-I may try to set one up today to see if I can reproduce it. Thanks for
-the testing help so far!
+David
+---
+David Howells (5):
+      netfs: Fix a missing rreq put in netfs_write_begin()
+      netfs: Call trace_netfs_read() after ->begin_cache_operation()
+      netfs: Don't record the copy termination error
+      netfs: Fix copy-to-cache amalgamation
+      netfs: Add a tracepoint to log failures that would be otherwise unseen
 
--- 
-Jeff Layton <jlayton@kernel.org>
+
+ fs/cachefiles/io.c           | 17 ++++++++++
+ fs/netfs/read_helper.c       | 58 +++++++++++++++++++---------------
+ include/linux/netfs.h        |  6 ++++
+ include/trace/events/netfs.h | 60 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 116 insertions(+), 25 deletions(-)
+
 
