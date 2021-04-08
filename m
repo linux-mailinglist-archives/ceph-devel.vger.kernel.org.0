@@ -2,120 +2,73 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62EA9358908
-	for <lists+ceph-devel@lfdr.de>; Thu,  8 Apr 2021 17:57:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EE4A358977
+	for <lists+ceph-devel@lfdr.de>; Thu,  8 Apr 2021 18:18:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231655AbhDHP6A (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 8 Apr 2021 11:58:00 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35465 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232053AbhDHP55 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 8 Apr 2021 11:57:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617897466;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NinlbVPhwGdJcoVcBt2udn4w5X18/v4CvahbnKLeeMI=;
-        b=YEQmUl/FwzdaBaSrJRErp2PkpVKPdwoDA8i5YQtgBPLTv1z6zfT0O3ty68sdGH0ZRmVroz
-        Fbqu8trYwWm+lWdxWHb2P3E72G/50utR7EEb24CLeiNphbtP1fFtwInDsisv4y4uGdx9XY
-        N+5Ou6BGjDQJJiBTvjZzGPfggiBtnT8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-413-0tkXerksNmuLEQR_9ITDFg-1; Thu, 08 Apr 2021 11:57:42 -0400
-X-MC-Unique: 0tkXerksNmuLEQR_9ITDFg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D1B2A107ACC7;
-        Thu,  8 Apr 2021 15:57:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-119-35.rdu2.redhat.com [10.10.119.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3DE165C1C4;
-        Thu,  8 Apr 2021 15:57:32 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210408145057.GN2531743@casper.infradead.org>
-References: <20210408145057.GN2531743@casper.infradead.org> <161789062190.6155.12711584466338493050.stgit@warthog.procyon.org.uk> <161789066013.6155.9816857201817288382.stgit@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 02/30] mm: Add set/end/wait functions for PG_private_2
+        id S232156AbhDHQST (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 8 Apr 2021 12:18:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57558 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231480AbhDHQSS (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 8 Apr 2021 12:18:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 33B8A610CF;
+        Thu,  8 Apr 2021 16:18:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617898686;
+        bh=ou2UhD5Os/RRXcPf0NOI1ZbCPwmpM8WgP8WJMnC5BsM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=DCCC9yDux2rr67KPYtodPYv2w+RSJOBDTke7s0QSEt0PxLK9I3+oz90OQzzMHgbE5
+         ixbiEE98++wbGdz6MSS/VqdlgEeXsbT3QKoVrARXUwIu02ZRQwYTkbrYzlji7WjeEn
+         C4f7j5zyat6OnBWTJEWPuA0fhcq+YqA9zQ2erGQ4fM0TbUA6UbcuNIZamHPp6PrkUh
+         OOTNonI6kkGd1e4FEPKfm55ST34R7g74EXD8PfCYFKd7u5457wwbQty0LP7/4lBPnr
+         SVdxtxSKJzrZYg10X4aCbnhVv0dZBOAqf5LCeU6FsjLkEbJsJTnSPt0ej2ceO8RnYo
+         ylWOREfJUHJfw==
+Message-ID: <a4188c2faa0789b0f04c34a184595d6e79353636.camel@kernel.org>
+Subject: Re: [RFC PATCH v5 01/19] vfs: export new_inode_pseudo
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Date:   Thu, 08 Apr 2021 12:18:05 -0400
+In-Reply-To: <YG5XmL9+ofqnOuzg@gmail.com>
+References: <20210326173227.96363-1-jlayton@kernel.org>
+         <20210326173227.96363-2-jlayton@kernel.org> <YG5XmL9+ofqnOuzg@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <46016.1617897451.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 08 Apr 2021 16:57:31 +0100
-Message-ID: <46017.1617897451@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Here's a partial change, but we still need to deal with the assumption tha=
-t
-page_has_private() makes that its output can be used to count the number o=
-f
-refs held for PG_private *and* PG_private_2 - which isn't true for my code
-here.
+On Wed, 2021-04-07 at 18:08 -0700, Eric Biggers wrote:
+> On Fri, Mar 26, 2021 at 01:32:09PM -0400, Jeff Layton wrote:
+> > Ceph needs to be able to allocate inodes ahead of a create that might
+> > involve a fscrypt-encrypted inode. new_inode() almost fits the bill,
+> > but it puts the inode on the sb->s_inodes list and when we go to hash
+> > it, that might be done again.
+> > 
+> > We could work around that by setting I_CREATING on the new inode, but
+> > that causes ilookup5 to return -ESTALE if something tries to find it
+> > before I_NEW is cleared. To work around all of this, just use
+> > new_inode_pseudo which doesn't add it to the list.
+> > 
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> 
+> IIRC, this looked like a bug in ilookup5().  Did you come to the conclusion that
+> it's not actually a bug?
+> 
 
-David
----
-commit e7c28d83b84b972c3faa0dd86020548aa50eda75
-Author: David Howells <dhowells@redhat.com>
-Date:   Thu Apr 8 16:33:20 2021 +0100
+Yes. Al pointed out that it's desirable behavior for most (simpler)
+filesystems.
 
-    netfs: Fix PG_private_2 helper functions to consistently use compound_=
-head()
+Basically, nothing should have presented the filehandle for this inode
+to a client until after I_NEW has been cleared. So, any attempt to look
+it up should give you back ESTALE at this point.
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index ef511364cc0c..63ca6430aef5 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -699,6 +699,7 @@ void page_endio(struct page *page, bool is_write, int =
-err);
-  */
- static inline void set_page_private_2(struct page *page)
- {
-+	page =3D compound_head(page);
- 	get_page(page);
- 	SetPagePrivate2(page);
- }
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 0ce93c8799ca..46e0321ba87a 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1461,6 +1461,7 @@ EXPORT_SYMBOL(end_page_private_2);
-  */
- void wait_on_page_private_2(struct page *page)
- {
-+	page =3D compound_head(page);
- 	while (PagePrivate2(page))
- 		wait_on_page_bit(page, PG_private_2);
- }
-@@ -1481,6 +1482,7 @@ int wait_on_page_private_2_killable(struct page *pag=
-e)
- {
- 	int ret =3D 0;
- =
-
-+	page =3D compound_head(page);
- 	while (PagePrivate2(page)) {
- 		ret =3D wait_on_page_bit_killable(page, PG_private_2);
- 		if (ret < 0)
+I'm not married to this approach however. If there's a better way to do
+this, then I'm happy to consider it.
+-- 
+Jeff Layton <jlayton@kernel.org>
 
