@@ -2,121 +2,127 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1535E35A004
-	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 15:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43B4335A013
+	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 15:40:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233706AbhDINjk convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Fri, 9 Apr 2021 09:39:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36172 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231638AbhDINjk (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 9 Apr 2021 09:39:40 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 9BEBBB0B7;
-        Fri,  9 Apr 2021 13:39:25 +0000 (UTC)
-Received: from localhost (orpheus.olymp [local])
-        by orpheus.olymp (OpenSMTPD) with ESMTPA id 56fed213;
-        Fri, 9 Apr 2021 14:39:21 +0100 (WEST)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Nicolas Boichat <drinkcat@chromium.org>
-Cc:     Olga Kornievskaia <aglo@umich.edu>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Christoph Hellwig <hch@infradead.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>
-Subject: Re: [PATCH v8] vfs: fix copy_file_range regression in cross-fs copies
-References: <20210221195833.23828-1-lhenriques@suse.de>
-        <20210222102456.6692-1-lhenriques@suse.de>
-        <CAN-5tyELMY7b7CKO-+an47ydq8r_4+SOyhuvdH0qE0-JmdZ44Q@mail.gmail.com>
-        <YDYpHccgM7agpdTQ@suse.de>
-        <CANMq1KBgwEXFh8AxpPW2t1SA0NVsyR45m0paLEU4D4w80dc_fA@mail.gmail.com>
-        <CANMq1KDTgnGtNxWj2XxAT3mdsNjc551uUCg6EWnh=Hd0KcVQKQ@mail.gmail.com>
-Date:   Fri, 09 Apr 2021 14:39:20 +0100
-In-Reply-To: <CANMq1KDTgnGtNxWj2XxAT3mdsNjc551uUCg6EWnh=Hd0KcVQKQ@mail.gmail.com>
-        (Nicolas Boichat's message of "Fri, 9 Apr 2021 13:23:23 +0800")
-Message-ID: <8735vzfugn.fsf@suse.de>
+        id S233661AbhDINky (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 9 Apr 2021 09:40:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45944 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233440AbhDINkv (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Apr 2021 09:40:51 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E41C061764
+        for <ceph-devel@vger.kernel.org>; Fri,  9 Apr 2021 06:40:37 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id q26so5677567wrz.9
+        for <ceph-devel@vger.kernel.org>; Fri, 09 Apr 2021 06:40:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=leblancnet-us.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=RbELviTNHtfCLXB4U2xwH1TA6vfNjox4OrIIy93uFfE=;
+        b=gZCfEvnKJTWhD2WTNdKyvDM1L/ryDPI/zWv7diHybgV7jULT4Q+nXD4WNlUA2YK0o1
+         vgK9jiB1nV2bXmE/ZoYsWzKQfplYgYYBkONPeSPMlY5z30xLYyY+XwzcmtWNHB09yCGg
+         rjisiqYwf8UJP1N3DFU+cQGzH1wl0Ieji8VhttYDNbQ250Biv5Mexgd2NNJUJMvkI4SN
+         B1J1XXO2kCqgJ2ZqGcRtsx8mo3Th5C5jXY1Hs9WPYGR40ibwJIyh9wP1Og1iKIKliLsV
+         oNXodJfRzEOwSZVcje7O3tUlBsBvzO5asFx6A8I8RY5Jwfyw/wGYZY7yFOSCel5iuF+X
+         ecPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=RbELviTNHtfCLXB4U2xwH1TA6vfNjox4OrIIy93uFfE=;
+        b=aona96W2cfRfJzsjKMAxsvPFkUBMd2BiL2Bqq6dKV4+6pSsy7RIwIQqOyDp2DLVHpD
+         qET8I7TfmePsSaccC9iPneiPuG9XakVVLRnkq+CBsdOhEGoGemcDLL0QM9/eoT2Jwr07
+         VcLX27+Ve2m69h86EZVLioH6s4mzLOCncMyAxqzdc2qf/NUi2bwSJtRqsmfsI4wvRKcV
+         tXTbJhHnTLuqMzw0P768DDy1yo9qemZvpI4bF7IQ20nl8GdHKX/bzF98MdUUkjf6oSLG
+         wY5GYbvxiWXGS2Pl09PNtZUtc1Y/pRTdPNbBS7UP3KBZolZGkPIptK9IWjI0FRLZaib7
+         4SRg==
+X-Gm-Message-State: AOAM531qm4kJ23/58KrhRuBxfrsuy9VfWNdEZqTNEv/BswRSdrsEqMBK
+        jaRhlA/hBm0IGXVCBiuv/vBYaPdmgbUVz2xYkJl+xN+y7M8=
+X-Google-Smtp-Source: ABdhPJzeg4MsED7b4o/W8d7hQDwH/NbXe+2rDUtQrgDs3ZOky4oIfyg1rfsgNs+N0/2A8ly/dELogojmSPCNjLAiH0E=
+X-Received: by 2002:adf:e38d:: with SMTP id e13mr17525740wrm.328.1617975636231;
+ Fri, 09 Apr 2021 06:40:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+References: <CAANLjFpjRLtV+GR4WV15iXXCvkig6tJAr_G=_bZpZ=jKnYfvTQ@mail.gmail.com>
+ <68fa3e03-55bd-c9aa-b19a-7cbe44af704e@bit.nl> <CAANLjFos0mFHhKULDD2SjEMN+JAra2x+tdw9gi5M27G_BumXVA@mail.gmail.com>
+ <CAKTRiELqxD+0LtRXan9gMzot3y4A4M4x=km-MB2aET6wP_5mQg@mail.gmail.com> <CAANLjFrhHbuM-jW5HuuyBMFVu3GWnG23Ama8_vKs55GpOCTA-w@mail.gmail.com>
+In-Reply-To: <CAANLjFrhHbuM-jW5HuuyBMFVu3GWnG23Ama8_vKs55GpOCTA-w@mail.gmail.com>
+From:   Robert LeBlanc <robert@leblancnet.us>
+Date:   Fri, 9 Apr 2021 07:40:25 -0600
+Message-ID: <CAANLjFqttbppgtW=n2V04SyD-Lg2NbsNLvfE83Z5OsS=ZirjmQ@mail.gmail.com>
+Subject: Re: [ceph-users] Nautilus 14.2.19 mon 100% CPU
+To:     ceph-devel <ceph-devel@vger.kernel.org>,
+        ceph-users <ceph-users@ceph.io>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Nicolas Boichat <drinkcat@chromium.org> writes:
+I'm attempting to deep scrub all the PGs to see if that helps clear up
+some accounting issues, but that's going to take a really long time on
+2PB of data.
+----------------
+Robert LeBlanc
+PGP Fingerprint 79A2 9CA4 6CC4 45DD A904  C70E E654 3BB2 FA62 B9F1
 
-> On Wed, Feb 24, 2021 at 6:44 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
->>
->> On Wed, Feb 24, 2021 at 6:22 PM Luis Henriques <lhenriques@suse.de> wrote:
->> >
->> > On Tue, Feb 23, 2021 at 08:00:54PM -0500, Olga Kornievskaia wrote:
->> > > On Mon, Feb 22, 2021 at 5:25 AM Luis Henriques <lhenriques@suse.de> wrote:
->> > > >
->> > > > A regression has been reported by Nicolas Boichat, found while using the
->> > > > copy_file_range syscall to copy a tracefs file.  Before commit
->> > > > 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
->> > > > kernel would return -EXDEV to userspace when trying to copy a file across
->> > > > different filesystems.  After this commit, the syscall doesn't fail anymore
->> > > > and instead returns zero (zero bytes copied), as this file's content is
->> > > > generated on-the-fly and thus reports a size of zero.
->> > > >
->> > > > This patch restores some cross-filesystem copy restrictions that existed
->> > > > prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
->> > > > devices").  Filesystems are still allowed to fall-back to the VFS
->> > > > generic_copy_file_range() implementation, but that has now to be done
->> > > > explicitly.
->> > > >
->> > > > nfsd is also modified to fall-back into generic_copy_file_range() in case
->> > > > vfs_copy_file_range() fails with -EOPNOTSUPP or -EXDEV.
->> > > >
->> > > > Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
->> > > > Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
->> > > > Link: https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/
->> > > > Link: https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid/
->> > > > Reported-by: Nicolas Boichat <drinkcat@chromium.org>
->> > > > Signed-off-by: Luis Henriques <lhenriques@suse.de>
->> > >
->> > > I tested v8 and I believe it works for NFS.
->> >
->> > Thanks a lot for the testing.  And to everyone else for reviews,
->> > feedback,... and patience.
->>
->> Thanks so much to you!!!
->>
->> Works here, you can add my
->> Tested-by: Nicolas Boichat <drinkcat@chromium.org>
+On Thu, Apr 8, 2021 at 9:48 PM Robert LeBlanc <robert@leblancnet.us> wrote:
 >
-> What happened to this patch? It does not seem to have been picked up
-> yet? Any reason why?
-
-Hmm... good question.  I'm not actually sure who would be picking it.  Al,
-maybe...?
-
-Cheers,
--- 
-Luis
-
+> Good thought. The storage for the monitor data is a RAID-0 over three
+> NVMe devices. Watching iostat, they are completely idle, maybe 0.8% to
+> 1.4% for a second every minute or so.
+> ----------------
+> Robert LeBlanc
+> PGP Fingerprint 79A2 9CA4 6CC4 45DD A904  C70E E654 3BB2 FA62 B9F1
 >
->> >
->> > I'll now go look into the manpage and see what needs to be changed.
->> >
->> > Cheers,
->> > --
->> > Luís
-
+> On Thu, Apr 8, 2021 at 7:48 PM Zizon Qiu <zzdtsv@gmail.com> wrote:
+> >
+> > Will it be related to some kind of disk issue of that mon located in,which may casually
+> > slow down IO and further the rocksdb?
+> >
+> >
+> > On Fri, Apr 9, 2021 at 4:29 AM Robert LeBlanc <robert@leblancnet.us> wrote:
+> >>
+> >> I found this thread that matches a lot of what I'm seeing. I see the
+> >> ms_dispatch thread going to 100%, but I'm at a single MON, the
+> >> recovery is done and the rocksdb MON database is ~300MB. I've tried
+> >> all the settings mentioned in that thread with no noticeable
+> >> improvement. I was hoping that once the recovery was done (backfills
+> >> to reformatted OSDs) that it would clear up, but not yet. So any other
+> >> ideas would be really helpful. Our MDS is functioning, but stalls a
+> >> lot because the mons miss heartbeats.
+> >>
+> >> mon_compact_on_start = true
+> >> rocksdb_cache_size = 1342177280
+> >> mon_lease = 30
+> >> mon_osd_cache_size = 200000
+> >> mon_sync_max_payload_size = 4096
+> >>
+> >> ----------------
+> >> Robert LeBlanc
+> >> PGP Fingerprint 79A2 9CA4 6CC4 45DD A904  C70E E654 3BB2 FA62 B9F1
+> >>
+> >> On Thu, Apr 8, 2021 at 1:11 PM Stefan Kooman <stefan@bit.nl> wrote:
+> >> >
+> >> > On 4/8/21 6:22 PM, Robert LeBlanc wrote:
+> >> > > I upgraded our Luminous cluster to Nautilus a couple of weeks ago and
+> >> > > converted the last batch of FileStore OSDs to BlueStore about 36 hours
+> >> > > ago. Yesterday our monitor cluster went nuts and started constantly
+> >> > > calling elections because monitor nodes were at 100% and wouldn't
+> >> > > respond to heartbeats. I reduced the monitor cluster to one to prevent
+> >> > > the constant elections and that let the system limp along until the
+> >> > > backfills finished. There are large amounts of time where ceph commands
+> >> > > hang with the CPU is at 100%, when the CPU drops I see a lot of work
+> >> > > getting done in the monitor logs which stops as soon as the CPU is at
+> >> > > 100% again.
+> >> >
+> >> >
+> >> > Try reducing mon_sync_max_payload_size=4096. I have seen Frank Schilder
+> >> > advise this several times because of monitor issues. Also recently for a
+> >> > cluster that got upgraded from Luminous -> Mimic -> Nautilus.
+> >> >
+> >> > Worth a shot.
+> >> >
+> >> > Otherwise I'll try to look in depth and see if I can come up with
+> >> > something smart (for now I need to go catch some sleep).
+> >> >
+> >> > Gr. Stefan
