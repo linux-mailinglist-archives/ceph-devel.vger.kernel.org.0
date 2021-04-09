@@ -2,76 +2,81 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9124035A28F
-	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 18:04:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE49D35A398
+	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 18:41:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233883AbhDIQEK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 9 Apr 2021 12:04:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44452 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233864AbhDIQEH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Apr 2021 12:04:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617984234;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=l/YtRHbaNxAvJJBbIoYtFy0sDOmcZWRbIs4MjOEQB/k=;
-        b=MbrfZzL3UIdk1KlQ+svyyTKMeUegGG/KBL3rYz3j2jDCKEa/nqOQnTHQfWVmflzacwsbJY
-        Wbc1fIs9mFrmSUafO5ymi07fjJpkclY0YgF7xPO/TjBiFPhpKXkHtMPsyWHAWbYx3cV/5S
-        cvZ5dIlEG4XYKCNxKQLrj9jvJnoObFE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-569-VKd9VOlPMEOH6PW381t7Pg-1; Fri, 09 Apr 2021 12:03:50 -0400
-X-MC-Unique: VKd9VOlPMEOH6PW381t7Pg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 54C20801814;
-        Fri,  9 Apr 2021 16:03:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-119-35.rdu2.redhat.com [10.10.119.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E36435C1D5;
-        Fri,  9 Apr 2021 16:03:38 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <625171.1617971734@warthog.procyon.org.uk>
-References: <625171.1617971734@warthog.procyon.org.uk> <20210409111636.GR2531743@casper.infradead.org> <CAHk-=wi_XrtTanTwoKs0jwnjhSvwpMYVDJ477VtjvvTXRjm5wQ@mail.gmail.com> <161796595714.350846.1547688999823745763.stgit@warthog.procyon.org.uk>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        torvalds@linux-foundation.org,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, jlayton@kernel.org, hch@lst.de,
-        linux-cachefs@redhat.com, v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/3] mm: Return bool from pagebit test functions
+        id S234059AbhDIQlg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 9 Apr 2021 12:41:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57438 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229665AbhDIQlf (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Apr 2021 12:41:35 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51ABEC061760
+        for <ceph-devel@vger.kernel.org>; Fri,  9 Apr 2021 09:41:22 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id y20-20020a1c4b140000b029011f294095d3so5076369wma.3
+        for <ceph-devel@vger.kernel.org>; Fri, 09 Apr 2021 09:41:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=leblancnet-us.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UQSeNBoGfP4rYkb6z90VtPIX742BEzuoeezocNHgNVY=;
+        b=xQg8NOsKaQen1nGZsuXvtNl/LkyfFhmKDXBi8P+THs/fy4VxBT17rJMTB8gIKbDnRi
+         Qqg0UwvN+jPYt9honWoqN7M4qWNcu9TmkFPPaZoEZgZsHC9ai4yi4Zyu+XReoADtYBwB
+         +8WihrYmZpNAw4k9k6FxtKnCyTBoHgl7Ofx6Uc1c2MeYFu4RvhxgISQC+AZWbKX5BvEP
+         cdpcFaTHk6QXBNUbYhrWwlMB+Gh488PCDcjPh9sVVvPaTCi6x3A2+yaVKQQ9w0CvF7AT
+         yRAUCBVacrCSbEALjyghbIe9MToCrGlnYhGg5odeCP1RM2YPExQlqoOndO9VbveKx/36
+         yCtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UQSeNBoGfP4rYkb6z90VtPIX742BEzuoeezocNHgNVY=;
+        b=cYxItYm6uSH+mTAui2O4/0BrVth6NXmnU6VDj9PnqBDNt6Iafk/7PpTCdWKsieVFQw
+         Eqf1qpU3V9OnAHTrEptbyf1Bn8VIusmr/BXleyKvYOybPKZn98KeDJDZaeEK47KfrNRR
+         ksZvAboSD79QpiUGolHE5HtmRI7w3ZVyj8pgL/S/5pQ/RNhuGdYWwfhGZZvx+Kp+VY6o
+         LJEo0rebV+XBOsRX2w+7DWDoIFzrVHrtx+KXG/e4x/+coU8rYJ2KWzgfCMZm0ME6OAum
+         Xhb9Dk4Bx1H/1ts86b27Lxg0BE3in2HOfK6qGOhlNVzPlQzdQQ1XMWR7q1aEauJ8mF5H
+         6KKQ==
+X-Gm-Message-State: AOAM5315ED9ORpeHqrEeEZHFTLhZ+NXlUukGGkSc/rhb+RG4wLzlfDwN
+        hRKYdY0xbFtSMKYhiEIZvp0gYQiKI+m8tK+Zqk0syeFfroY=
+X-Google-Smtp-Source: ABdhPJyL/p9fnXGesPBXmU5+mE1f1buK7y/0/9Q/hDH1g+QVYyo7JbObR+aGy33EIsmQFKzDjKjJmXC3kpRJoVzBcO0=
+X-Received: by 2002:a05:600c:289:: with SMTP id 9mr14815554wmk.135.1617986481016;
+ Fri, 09 Apr 2021 09:41:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <838189.1617984218.1@warthog.procyon.org.uk>
-Date:   Fri, 09 Apr 2021 17:03:38 +0100
-Message-ID: <838190.1617984218@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-To:     unlisted-recipients:; (no To-header on input)
+References: <CAANLjFpjRLtV+GR4WV15iXXCvkig6tJAr_G=_bZpZ=jKnYfvTQ@mail.gmail.com>
+ <68fa3e03-55bd-c9aa-b19a-7cbe44af704e@bit.nl> <CAANLjFos0mFHhKULDD2SjEMN+JAra2x+tdw9gi5M27G_BumXVA@mail.gmail.com>
+ <CAKTRiELqxD+0LtRXan9gMzot3y4A4M4x=km-MB2aET6wP_5mQg@mail.gmail.com>
+ <CAANLjFrhHbuM-jW5HuuyBMFVu3GWnG23Ama8_vKs55GpOCTA-w@mail.gmail.com>
+ <CAANLjFqttbppgtW=n2V04SyD-Lg2NbsNLvfE83Z5OsS=ZirjmQ@mail.gmail.com> <8933c3a0-64f7-aaab-6ab7-30e39b76a387@bit.nl>
+In-Reply-To: <8933c3a0-64f7-aaab-6ab7-30e39b76a387@bit.nl>
+From:   Robert LeBlanc <robert@leblancnet.us>
+Date:   Fri, 9 Apr 2021 10:41:09 -0600
+Message-ID: <CAANLjFpKGaKRM+2j6+YfLsufdgQi3jz_Nm5RNsSpbVGmSsFj5g@mail.gmail.com>
+Subject: Re: [ceph-users] Re: Nautilus 14.2.19 mon 100% CPU
+To:     Stefan Kooman <stefan@bit.nl>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        ceph-users <ceph-users@ceph.io>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+On Fri, Apr 9, 2021 at 9:25 AM Stefan Kooman <stefan@bit.nl> wrote:
+> Are you running with 1 mon now? Have you tried adding mons from scratch?
+> So with a fresh database? And then maybe after they have joined, kill
+> the donor mon and start from scratch.
+>
+> You have for sure not missed a step during the upgrade (just checking
+> mode), i.e. ceph osd require-osd-release nautilus.
 
-> add/remove: 2/2 grow/shrink: 15/16 up/down: 408/-599 (-191)
-> Function                                     old     new   delta
-> iomap_write_end_inline                         -     128    +128
+I have tried adding one of the other monitors by removing the data
+directory and starting from scratch, but it would go back to the
+monitor elections and I didn't feel comfortable that it's up to sync
+to fail over to it so I took it back out. I have run `ceph
+osd-require-osd-release nautilus` after the upgrade of all the OSDs.
+I'll go back and double check all the steps, but I think I got them
+all.
 
-I can get rid of the iomap_write_end_inline() increase for my config by
-marking it __always_inline, thereby getting:
-
-add/remove: 1/2 grow/shrink: 15/15 up/down: 280/-530 (-250)
-
-It seems that the decision whether or not to inline iomap_write_end_inline()
-is affected by the switch to bool.
-
-David
-
+Thank you,
+Robert LeBlanc
