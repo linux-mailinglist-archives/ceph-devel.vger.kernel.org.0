@@ -2,124 +2,71 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 65AE43590A7
-	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 01:50:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8537359164
+	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 03:24:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232999AbhDHXvJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 8 Apr 2021 19:51:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34020 "EHLO
+        id S233169AbhDIBYx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 8 Apr 2021 21:24:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232735AbhDHXvJ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 8 Apr 2021 19:51:09 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D682C061761
-        for <ceph-devel@vger.kernel.org>; Thu,  8 Apr 2021 16:50:57 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id l14so1427238ljb.1
-        for <ceph-devel@vger.kernel.org>; Thu, 08 Apr 2021 16:50:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XLF2Hy47tG/NhXLeWFJjwjLlXpGjFs6Bt2Vh546exGI=;
-        b=U1nu8PCKZ2rC+hNkH/1FtHr0pHi1eBFqU8nKatafLTnVUf8YWjf3+Y9lxaTCmPnC6N
-         1maOTah5U5Ugwluf4SbyJDC0T/VIm4gmhPdxCSV5suWLxAoQA6cU1UWIC534ya5fYLAp
-         8IzK2dToo8y36YbKoGVCbAg0EPiSom+ZJL01Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XLF2Hy47tG/NhXLeWFJjwjLlXpGjFs6Bt2Vh546exGI=;
-        b=TN+8xlCio34zc3hE/UeyerSLKhozt1q/nUOJ3CTcgYr03r7P9xna8YWM61XM6gJO1e
-         umdZgIDQYlv6YRVcGJZef+W0mPKrjr8AesB/WhOB30mc6zhRN/TKbnmwoHJLGFaa2TYb
-         hpVDt/l/p6Ezl91IlVzZjmZwr1R+X73nRkFhhtKv7zd0rCGzBYVXjCMid8xnaJg6rxIv
-         rrLTcpfp2E/E44A4GczNfbZi8azFanO7YhiEB+kn/Cbm8U54Ts8L2Uf9tuzog74Jw0Ld
-         ezxJWh09DDbE22tAxyjjIlwcsqRWFdCzotvNXRGThPvO95v1o7xKpV4ThnzOLZr0Nxxo
-         XKKA==
-X-Gm-Message-State: AOAM5306TCls8ospuxUVRgK6sA6x+Pk7EqlqGUS5ZTDYIQu1LAnwvx5/
-        mYUN/G9CcnPoP6sMnrvsswoeadnGDPZeKg==
-X-Google-Smtp-Source: ABdhPJwT5DrNOoW/zseIfl0VLqLiMbv0n+FPxuFNRGxoZzd20+7Naf8FczN/hCKQy/PWx7icqHxW/g==
-X-Received: by 2002:a2e:b4b4:: with SMTP id q20mr7539585ljm.45.1617925855324;
-        Thu, 08 Apr 2021 16:50:55 -0700 (PDT)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id q25sm91751lfn.42.2021.04.08.16.50.54
-        for <ceph-devel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Apr 2021 16:50:54 -0700 (PDT)
-Received: by mail-lf1-f46.google.com with SMTP id 12so6721877lfq.13
-        for <ceph-devel@vger.kernel.org>; Thu, 08 Apr 2021 16:50:54 -0700 (PDT)
-X-Received: by 2002:ac2:5974:: with SMTP id h20mr5012619lfp.40.1617925853980;
- Thu, 08 Apr 2021 16:50:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210408145057.GN2531743@casper.infradead.org>
- <161789062190.6155.12711584466338493050.stgit@warthog.procyon.org.uk>
- <161789066013.6155.9816857201817288382.stgit@warthog.procyon.org.uk>
- <46017.1617897451@warthog.procyon.org.uk> <136646.1617916529@warthog.procyon.org.uk>
-In-Reply-To: <136646.1617916529@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 8 Apr 2021 16:50:38 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi_XrtTanTwoKs0jwnjhSvwpMYVDJ477VtjvvTXRjm5wQ@mail.gmail.com>
-Message-ID: <CAHk-=wi_XrtTanTwoKs0jwnjhSvwpMYVDJ477VtjvvTXRjm5wQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH] mm: Split page_has_private() in two to better handle PG_private_2
+        with ESMTP id S232426AbhDIBYv (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 8 Apr 2021 21:24:51 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA83C061760;
+        Thu,  8 Apr 2021 18:24:40 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lUfsw-003sCi-JE; Fri, 09 Apr 2021 01:24:34 +0000
+Date:   Fri, 9 Apr 2021 01:24:34 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     David Howells <dhowells@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+Cc:     linux-fsdevel@vger.kernel.org,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
         linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 01/30] iov_iter: Add ITER_XARRAY
+Message-ID: <YG+s0iw5o91KQIlW@zeniv-ca.linux.org.uk>
+References: <161789062190.6155.12711584466338493050.stgit@warthog.procyon.org.uk>
+ <161789064740.6155.11932541175173658065.stgit@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <161789064740.6155.11932541175173658065.stgit@warthog.procyon.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Apr 8, 2021 at 2:15 PM David Howells <dhowells@redhat.com> wrote:
->
-> mm: Split page_has_private() in two to better handle PG_private_2
+On Thu, Apr 08, 2021 at 03:04:07PM +0100, David Howells wrote:
+> Add an iterator, ITER_XARRAY, that walks through a set of pages attached to
+> an xarray, starting at a given page and offset and walking for the
+> specified amount of bytes.  The iterator supports transparent huge pages.
+> 
+> The iterate_xarray() macro calls the helper function with rcu_access()
+> helped.  I think that this is only a problem for iov_iter_for_each_range()
+> - and that returns an error for ITER_XARRAY (also, this function does not
+> appear to be called).
 
-From a look through the patch and some (limited) thinking about it, I
-like the patch. I think it clarifies the two very different cases, and
-makes it clear that one is about that page cleanup, and the other is
-about the magical reference counting. The two are separate issues,
-even if for PG_private both happen to be true.
+Unused since lustre had gone away.
 
-So this seems sane to me.
+> +#define iterate_all_kinds(i, n, v, I, B, K, X) {		\
 
-That said, I had a couple of reactions:
+Do you have any users that would pass different B and X?
 
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index 04a34c08e0a6..04cb440ce06e 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -832,14 +832,27 @@ static inline void ClearPageSlabPfmemalloc(struct page *page)
->
->  #define PAGE_FLAGS_PRIVATE                             \
->         (1UL << PG_private | 1UL << PG_private_2)
+> @@ -1440,7 +1665,7 @@ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+>  		return v.bv_len;
+>  	}),({
+>  		return -EFAULT;
+> -	})
+> +	}), 0
 
-I think this should be re-named to be PAGE_FLAGS_CLEANUP, because I
-don't think it makes any other sense to "combine" the two PG_private*
-bits any more. No?
-
-> +static inline int page_private_count(struct page *page)
-> +{
-> +       return test_bit(PG_private, &page->flags) ? 1 : 0;
-> +}
-
-Why is this open-coding the bit test, rather than just doing
-
-        return PagePrivate(page) ? 1 : 0;
-
-instead? In fact, since test_bit() _should_ return a 'bool', I think even just
-
-        return PagePrivate(page);
-
-should work and give the same result, but I could imagine that some
-architecture version of "test_bit()" might return some other non-zero
-value (although honestly, I think that should be fixed if so).
-
-                Linus
+Correction - users that might get that flavour.  This one explicitly checks
+for xarray and doesn't get to iterate_... in that case.
