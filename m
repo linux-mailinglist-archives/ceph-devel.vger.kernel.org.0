@@ -2,139 +2,66 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BDF035A051
-	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 15:50:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D2C435A1F3
+	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 17:25:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233752AbhDINur (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 9 Apr 2021 09:50:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48158 "EHLO
+        id S231756AbhDIPZi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 9 Apr 2021 11:25:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233730AbhDINuo (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Apr 2021 09:50:44 -0400
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E7B3C061760;
-        Fri,  9 Apr 2021 06:50:31 -0700 (PDT)
-Received: by mail-il1-x134.google.com with SMTP id t14so4777251ilu.3;
-        Fri, 09 Apr 2021 06:50:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bGJZmmcmbsbv9Z5e9Ce+SCA5Ta6SrwFKxFJMGIFXocM=;
-        b=L/fZOICd2FDYOYlJ5+IACiFpQDtt/9nYKkNO2VKDV489WDZI7uMvJABgLX4n2kaGcO
-         rG0B4tIgc8fY8mXDyHkIP6/xcnfK/Hr4Qta6mLLIVenLblYrJLS+ol/sJhBmV6gxNUm8
-         AQKgRTaoXYzU/AfWvcapXEtNxO7y4rqFs/mnhh38u+E0PNLxoxM2YE2fbEY3/gh/gQjJ
-         NIQN13qgaRtgz2xbuLy0GgaZkcSIXALXezLF3zy54G6PmKXNhfV7mqtDcrKY6MaEZIR7
-         vEsbU/lSXHEh/ugwb2hpOTJ2TX2LVl515OoNbwwdZz6JWlkQzEoYy3XNYw1QPWtr2QVv
-         cPBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bGJZmmcmbsbv9Z5e9Ce+SCA5Ta6SrwFKxFJMGIFXocM=;
-        b=B4/01HJJA26iiZhXZaoyA2wwe8ner5NCR7HhMhOVukn46CMrClHbczq2BJ9rqLxc5R
-         oLjgKkmffTG5ZLiFzZtaitoUfB5YA7pnF7Fvq6OFQ847PoD3GnWBT3tE+0P7+VdM4WKx
-         FO/28qtN1gD+vuPIv4xrIzM5SyL0yMyuwDoNU+FBFyaghIDd4gZVWf3qW7PbU/Ru+uRK
-         S9o84lcmY0qjzdaih/5KuFcSrBLEcXqca6ZC2n4iBuHiqgX0gsHVPNXx+Py+mkmPOqPC
-         08RNikc+86uCmntLVEz149yzNUiSF2zm/dTArVEPMwSakd0w5OBFuPfrPi+5F54Yhg7E
-         KCgw==
-X-Gm-Message-State: AOAM530EaMVYD4rQp6lwV84XQoq/dfsrYVqnsohwZT3GXhgGLGsIHdFB
-        EnZgy3Okle9lPeoeIDyVjuuO4c5PN1bjT5NdP4k=
-X-Google-Smtp-Source: ABdhPJz2017Mp18Bm1uXNEsYU5jWFsdiPDGjYR8JPCOFQBk6CUIieYzbSBDb8lxl7shrh2bRGvzKOfREcH+f6Cbse0U=
-X-Received: by 2002:a92:cd0d:: with SMTP id z13mr12023431iln.250.1617976230737;
- Fri, 09 Apr 2021 06:50:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210221195833.23828-1-lhenriques@suse.de> <20210222102456.6692-1-lhenriques@suse.de>
- <CAN-5tyELMY7b7CKO-+an47ydq8r_4+SOyhuvdH0qE0-JmdZ44Q@mail.gmail.com>
- <YDYpHccgM7agpdTQ@suse.de> <CANMq1KBgwEXFh8AxpPW2t1SA0NVsyR45m0paLEU4D4w80dc_fA@mail.gmail.com>
- <CANMq1KDTgnGtNxWj2XxAT3mdsNjc551uUCg6EWnh=Hd0KcVQKQ@mail.gmail.com> <8735vzfugn.fsf@suse.de>
-In-Reply-To: <8735vzfugn.fsf@suse.de>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 9 Apr 2021 16:50:19 +0300
-Message-ID: <CAOQ4uxjdVZywBi6=D1eRfBhRk+nobTz4N87jcejDtvzBMMMKXQ@mail.gmail.com>
-Subject: Re: [PATCH v8] vfs: fix copy_file_range regression in cross-fs copies
-To:     Luis Henriques <lhenriques@suse.de>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        Olga Kornievskaia <aglo@umich.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <dchinner@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Christoph Hellwig <hch@infradead.org>,
+        with ESMTP id S229665AbhDIPZi (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Apr 2021 11:25:38 -0400
+Received: from smtp.bit.nl (smtp.bit.nl [IPv6:2001:7b8:3:5::25:1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB6C8C061760
+        for <ceph-devel@vger.kernel.org>; Fri,  9 Apr 2021 08:25:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit.nl;
+        s=smtp01; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+        Message-ID:Subject:From:To:Sender:Cc;
+        bh=qfWW4ag96z2EaD+uMahd3CJVLvtdAMJqbUNl1wBg9dc=; b=ugiGSLNS4QbMwImKkpKqgzxV66
+        YIy2P/c8+INMDJhjih6QwWhjSN5GT8U1KixkBJI5z2y5rSEwGFf4ljnzcztpfwpltxF/c0oF/U4DK
+        +l31+47bTe5T+dzLZCT1KTn3wWUbYkupYNOXW1EfTFc+Ho7LBm3fS+Sfdn5TURrYyns92hxeD7JlW
+        yeEXQPZjrCjA6wCz7ub0aORVMn37b1KDTlsqshZbpNn2V2nS0xNpEJ3dvFtZgzhtYtgieJiBjsOAH
+        c062lLNW5EbGwnyAEoKeWg//Pkkz7IakvSfDNh/JFl/toqCX1dsinzf8iz6kDWtLe6dtaX1tX+ooT
+        Zye729Cg==;
+Received: from [2001:7b8:3:1002::1002] (port=10425)
+        by smtp4.smtp.dmz.bit.nl with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <stefan@bit.nl>)
+        id 1lUt0c-0003Wx-Mg; Fri, 09 Apr 2021 17:25:22 +0200
+To:     Robert LeBlanc <robert@leblancnet.us>,
         ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        ceph-users <ceph-users@ceph.io>
+References: <CAANLjFpjRLtV+GR4WV15iXXCvkig6tJAr_G=_bZpZ=jKnYfvTQ@mail.gmail.com>
+ <68fa3e03-55bd-c9aa-b19a-7cbe44af704e@bit.nl>
+ <CAANLjFos0mFHhKULDD2SjEMN+JAra2x+tdw9gi5M27G_BumXVA@mail.gmail.com>
+ <CAKTRiELqxD+0LtRXan9gMzot3y4A4M4x=km-MB2aET6wP_5mQg@mail.gmail.com>
+ <CAANLjFrhHbuM-jW5HuuyBMFVu3GWnG23Ama8_vKs55GpOCTA-w@mail.gmail.com>
+ <CAANLjFqttbppgtW=n2V04SyD-Lg2NbsNLvfE83Z5OsS=ZirjmQ@mail.gmail.com>
+From:   Stefan Kooman <stefan@bit.nl>
+Subject: Re: [ceph-users] Re: Nautilus 14.2.19 mon 100% CPU
+Message-ID: <8933c3a0-64f7-aaab-6ab7-30e39b76a387@bit.nl>
+Date:   Fri, 9 Apr 2021 17:25:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
+MIME-Version: 1.0
+In-Reply-To: <CAANLjFqttbppgtW=n2V04SyD-Lg2NbsNLvfE83Z5OsS=ZirjmQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Apr 9, 2021 at 4:39 PM Luis Henriques <lhenriques@suse.de> wrote:
->
-> Nicolas Boichat <drinkcat@chromium.org> writes:
->
-> > On Wed, Feb 24, 2021 at 6:44 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
-> >>
-> >> On Wed, Feb 24, 2021 at 6:22 PM Luis Henriques <lhenriques@suse.de> wrote:
-> >> >
-> >> > On Tue, Feb 23, 2021 at 08:00:54PM -0500, Olga Kornievskaia wrote:
-> >> > > On Mon, Feb 22, 2021 at 5:25 AM Luis Henriques <lhenriques@suse.de> wrote:
-> >> > > >
-> >> > > > A regression has been reported by Nicolas Boichat, found while using the
-> >> > > > copy_file_range syscall to copy a tracefs file.  Before commit
-> >> > > > 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
-> >> > > > kernel would return -EXDEV to userspace when trying to copy a file across
-> >> > > > different filesystems.  After this commit, the syscall doesn't fail anymore
-> >> > > > and instead returns zero (zero bytes copied), as this file's content is
-> >> > > > generated on-the-fly and thus reports a size of zero.
-> >> > > >
-> >> > > > This patch restores some cross-filesystem copy restrictions that existed
-> >> > > > prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
-> >> > > > devices").  Filesystems are still allowed to fall-back to the VFS
-> >> > > > generic_copy_file_range() implementation, but that has now to be done
-> >> > > > explicitly.
-> >> > > >
-> >> > > > nfsd is also modified to fall-back into generic_copy_file_range() in case
-> >> > > > vfs_copy_file_range() fails with -EOPNOTSUPP or -EXDEV.
-> >> > > >
-> >> > > > Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
-> >> > > > Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
-> >> > > > Link: https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/
-> >> > > > Link: https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid/
-> >> > > > Reported-by: Nicolas Boichat <drinkcat@chromium.org>
-> >> > > > Signed-off-by: Luis Henriques <lhenriques@suse.de>
-> >> > >
-> >> > > I tested v8 and I believe it works for NFS.
-> >> >
-> >> > Thanks a lot for the testing.  And to everyone else for reviews,
-> >> > feedback,... and patience.
-> >>
-> >> Thanks so much to you!!!
-> >>
-> >> Works here, you can add my
-> >> Tested-by: Nicolas Boichat <drinkcat@chromium.org>
-> >
-> > What happened to this patch? It does not seem to have been picked up
-> > yet? Any reason why?
->
-> Hmm... good question.  I'm not actually sure who would be picking it.  Al,
-> maybe...?
->
+On 4/9/21 3:40 PM, Robert LeBlanc wrote:
+> I'm attempting to deep scrub all the PGs to see if that helps clear up
+> some accounting issues, but that's going to take a really long time on
+> 2PB of data.
 
-Darrick,
+Are you running with 1 mon now? Have you tried adding mons from scratch? 
+So with a fresh database? And then maybe after they have joined, kill 
+the donor mon and start from scratch.
 
-Would you mind taking this through your tree in case Al doesn't pick it up?
+You have for sure not missed a step during the upgrade (just checking 
+mode), i.e. ceph osd require-osd-release nautilus.
 
-Thanks,
-Amir.
+Gr. Stefan
