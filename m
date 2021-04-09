@@ -2,104 +2,155 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D8019359EDF
-	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 14:35:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 315F1359F3F
+	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 14:50:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232615AbhDIMgC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 9 Apr 2021 08:36:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:38275 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231370AbhDIMgA (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Apr 2021 08:36:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617971747;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RQb7qzHISTbizitMiYm8wD/fZ+45DgKONa+egqhiCY0=;
-        b=U7OQrel0DTaGAJPLlRV3kCq1+Jwy7BykGjXltX3kBBviGmYauir8QpiAPv8dmrtsBA/AA9
-        sUjRLCdlryI+5YA6qzNQL4JQinyACFlKKzit8CK1MKN4OGrt/9aCrwRnq385SkhELttLKm
-        dV2va1WkUgf+WsOVUptPZfHabxk4TLo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-159-1VuZXlZMP_qGLOcyqDfQHg-1; Fri, 09 Apr 2021 08:35:43 -0400
-X-MC-Unique: 1VuZXlZMP_qGLOcyqDfQHg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EC5B019251A1;
-        Fri,  9 Apr 2021 12:35:40 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-119-35.rdu2.redhat.com [10.10.119.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E65E55DAA5;
-        Fri,  9 Apr 2021 12:35:34 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210409111636.GR2531743@casper.infradead.org>
-References: <20210409111636.GR2531743@casper.infradead.org> <CAHk-=wi_XrtTanTwoKs0jwnjhSvwpMYVDJ477VtjvvTXRjm5wQ@mail.gmail.com> <161796595714.350846.1547688999823745763.stgit@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, jlayton@kernel.org, hch@lst.de,
-        linux-cachefs@redhat.com, v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        id S233401AbhDIMun (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 9 Apr 2021 08:50:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43330 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232615AbhDIMun (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 9 Apr 2021 08:50:43 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6EF7B610E7;
+        Fri,  9 Apr 2021 12:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617972629;
+        bh=xOv9lDYpXnZrbDx22drj6l3V079be0RY5uWmz/x8Omo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=nYQoktx1Hw++eqQAEwuE5agG02f4hIlyUxtmzq7LHVktqATWAdrBozN4IQdaGSX+D
+         J8mJvIZEK9dabu84AdviUCW31LYy+n8pT19Jds6ye/WtMWpQU565T1KzJZw5SSUsZn
+         Flt54zseUo4YmryLOFv2Gd+9jm/ZD2qxLI4c8Rbd3F1iMOjS56KbtR0aXDkj4SpbZf
+         2CgF7LbnWRa6hnvArq6x0RLJBKEO1fK+0PhjFKcbEXbTGzTQOPk7y+hFgBPC/do319
+         P1LFviTvZzR7JqFHYLDmS5O8RYimxG8wExqLLrLPnNUzK2F/fEI9+svS6s4QZqil/0
+         7SD685UmArSeg==
+Message-ID: <e3830bc562d86e7d82542a3ee3d6ce66c901fda0.camel@kernel.org>
+Subject: Re: [v2] ceph: support getting ceph.dir.rsnaps vxattr
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Yanhu Cao <gmayyyha@gmail.com>
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/3] mm: Return bool from pagebit test functions
+Date:   Fri, 09 Apr 2021 08:50:28 -0400
+In-Reply-To: <20200828012844.18937-1-gmayyyha@gmail.com>
+References: <20200828012844.18937-1-gmayyyha@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <625170.1617971734.1@warthog.procyon.org.uk>
-Date:   Fri, 09 Apr 2021 13:35:34 +0100
-Message-ID: <625171.1617971734@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
+On Fri, 2020-08-28 at 09:28 +0800, Yanhu Cao wrote:
+> It's easy to know how many snapshots have been created.
+> 
+> Link: https://tracker.ceph.com/issues/47168
+> Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
+> ---
+>  fs/ceph/inode.c      | 1 +
+>  fs/ceph/mds_client.c | 9 ++++++++-
+>  fs/ceph/mds_client.h | 1 +
+>  fs/ceph/super.h      | 2 +-
+>  fs/ceph/xattr.c      | 7 +++++++
+>  5 files changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 357c937699d5..650cad4b3ecb 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -891,6 +891,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+>  			ci->i_rfiles = le64_to_cpu(info->rfiles);
+>  			ci->i_rsubdirs = le64_to_cpu(info->rsubdirs);
+>  			ci->i_dir_pin = iinfo->dir_pin;
+> +			ci->i_rsnaps = iinfo->rsnaps;
+>  			ceph_decode_timespec64(&ci->i_rctime, &info->rctime);
+>  		}
+>  	}
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 4a26862d7667..3466845c0179 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -176,6 +176,13 @@ static int parse_reply_info_in(void **p, void *end,
+>  			memset(&info->snap_btime, 0, sizeof(info->snap_btime));
+>  		}
+>  
+> +		/* snapshot count, remains zero for v<=3 */
+> +		if (struct_v >= 4) {
+> +			ceph_decode_64_safe(p, end, info->rsnaps, bad);
+> +		} else {
+> +			info->rsnaps = 0;
+> +		}
+> +
+>  		*p = end;
+>  	} else {
+>  		if (features & CEPH_FEATURE_MDS_INLINE_DATA) {
+> @@ -214,7 +221,7 @@ static int parse_reply_info_in(void **p, void *end,
+>  		}
+>  
+>  		info->dir_pin = -ENODATA;
+> -		/* info->snap_btime remains zero */
+> +		/* info->snap_btime and info->rsnaps remain zero */
+>  	}
+>  	return 0;
+>  bad:
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index bc9e95937d7c..76f2ed1a7cbf 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -88,6 +88,7 @@ struct ceph_mds_reply_info_in {
+>  	s32 dir_pin;
+>  	struct ceph_timespec btime;
+>  	struct ceph_timespec snap_btime;
+> +	u64 rsnaps;
+>  	u64 change_attr;
+>  };
+>  
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 4c3c964b1c54..eb108b69da71 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -332,7 +332,7 @@ struct ceph_inode_info {
+>  
+>  	/* for dirs */
+>  	struct timespec64 i_rctime;
+> -	u64 i_rbytes, i_rfiles, i_rsubdirs;
+> +	u64 i_rbytes, i_rfiles, i_rsubdirs, i_rsnaps;
+>  	u64 i_files, i_subdirs;
+>  
+>  	/* quotas */
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 3a733ac33d9b..c7d8ecc3d04b 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -231,6 +231,12 @@ static ssize_t ceph_vxattrcb_dir_rsubdirs(struct ceph_inode_info *ci, char *val,
+>  	return ceph_fmt_xattr(val, size, "%lld", ci->i_rsubdirs);
+>  }
+>  
+> +static ssize_t ceph_vxattrcb_dir_rsnaps(struct ceph_inode_info *ci, char *val,
+> +					  size_t size)
+> +{
+> +	return ceph_fmt_xattr(val, size, "%lld", ci->i_rsnaps);
+> +}
+> +
+>  static ssize_t ceph_vxattrcb_dir_rbytes(struct ceph_inode_info *ci, char *val,
+>  					size_t size)
+>  {
+> @@ -352,6 +358,7 @@ static struct ceph_vxattr ceph_dir_vxattrs[] = {
+>  	XATTR_RSTAT_FIELD(dir, rentries),
+>  	XATTR_RSTAT_FIELD(dir, rfiles),
+>  	XATTR_RSTAT_FIELD(dir, rsubdirs),
+> +	XATTR_RSTAT_FIELD(dir, rsnaps),
+>  	XATTR_RSTAT_FIELD(dir, rbytes),
+>  	XATTR_RSTAT_FIELD(dir, rctime),
+>  	{
 
-> iirc i looked at doing this as part of the folio work, and it ended up
-> increasing the size of the kernel.  Did you run bloat-o-meter on the
-> result of doing this?
+Sorry we missed this one Yanhu. In the future, please put [PATCH] in the
+subject line in some fashion and we may spot it more easily.
 
-add/remove: 2/2 grow/shrink: 15/16 up/down: 408/-599 (-191)
-Function                                     old     new   delta
-iomap_write_end_inline                         -     128    +128
-try_to_free_swap                              59     179    +120
-page_to_index.part                             -      36     +36
-page_size                                    432     456     +24
-PageTransCompound                            154     175     +21
-truncate_inode_pages_range                   791     807     +16
-invalidate_inode_pages2_range                504     518     +14
-ceph_uninline_data                           969     982     +13
-iomap_read_inline_data.isra                  129     139     +10
-page_cache_pipe_buf_confirm                   85      93      +8
-ceph_writepages_start                       3237    3243      +6
-hpage_pincount_available                      94      97      +3
-__collapse_huge_page_isolate                 768     771      +3
-page_vma_mapped_walk                        1070    1072      +2
-PageHuge                                      39      41      +2
-collapse_file                               2046    2047      +1
-__free_pages_ok                              449     450      +1
-wait_on_page_bit_common                      598     597      -1
-iomap_page_release                           104     103      -1
-change_pte_range                             818     817      -1
-pageblock_skip_persistent                     45      42      -3
-is_transparent_hugepage                       63      60      -3
-nfs_readpage                                 486     482      -4
-ext4_readpage_inline                         155     151      -4
-release_pages                                640     635      -5
-ext4_write_inline_data_end                   286     281      -5
-ext4_mb_load_buddy_gfp                       690     684      -6
-afs_dir_check                                536     529      -7
-page_trans_huge_map_swapcount                374     363     -11
-io_uring_mmap                                199     184     -15
-io_buffer_account_pin                        276     259     -17
-page_to_index                                 50       -     -50
-iomap_write_end                              375     306     -69
-try_to_free_swap.part                        137       -    -137
-PageUptodate                                 716     456    -260
-Total: Before=17207139, After=17206948, chg -0.00%
+This looks fine to me -- merged into ceph-client/testing branch, though
+I did revise the changelog to be a bit more descriptive. Tell me if you
+think it needs changes.
+
+Thanks!
+-- 
+Jeff Layton <jlayton@kernel.org>
 
