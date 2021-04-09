@@ -2,168 +2,123 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07459359532
-	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 08:13:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EDF9359764
+	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 10:14:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233251AbhDIGNo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 9 Apr 2021 02:13:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60354 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229715AbhDIGNo (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Apr 2021 02:13:44 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C8B3C061760;
-        Thu,  8 Apr 2021 23:13:31 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id c15so3850583ilj.1;
-        Thu, 08 Apr 2021 23:13:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OpQXQR3cFzxNIlWyIbGhD0hln9Ms5I3EBXzLQJUJizY=;
-        b=pBJ8x9jDScO0Yl05YfsfRxalTaA3Sdn2UNH6QCiGk3jwBFf5hwnCwuDM+ZCQyk4zxY
-         SibEsTDh+iX0A45QzIT4+y56bES0V1DvH8/AQ7vqhxH6elhGxXJeRqt8aPZVqJGez0AW
-         F2dhRIgK3RrJrlZxEzBye1CcjifhHJ7EP1wSNPfa/YygTFPwzU1jiYg1zF5dAE+zZb/l
-         lKJ/LMmzh/FMOEs0w04eLTydPOvpQKqrUxM3iIpVpFj8hB9hQ0i7vgm2gCQzrVKc7ZQK
-         SOJ/a0brGHp71NRW10ekUzdEuov+TQBcFEy74fRwgCJkEFsI98lebBJQXCEzB53ythUO
-         7bfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OpQXQR3cFzxNIlWyIbGhD0hln9Ms5I3EBXzLQJUJizY=;
-        b=ilN4MgpzDgJLmpPkyrEpd0day2ReXDG2/EjCWlkMDweqIhBq15Sgk5XhKGTwBk2x4Y
-         lO9YeUmoKgEnmxpm78Jj677Jomuk42mcnNt3hhZUtFXqEJulZVgDrXUyqYFzX9me3NTj
-         at32FI17Z/ZlCegAyFctLUiqFbdE9yITfkBgkixa7tejnb8+zkTwEOeCc0awPbao8VKf
-         chtE1wsNuUYWLJCmHY/uP2OUxzbKbk6YFPEy6kNoYObGQeRQs/G83dV0MqsAvbxi/74A
-         OBg38XVfb0lJh1A4INf0f6AEsGAqX5foHRvFcrVVSZ9ZoR7vC+u9P81RlVRHm51icA7h
-         S1Jw==
-X-Gm-Message-State: AOAM532L4MwWA2urUgxB7GEeOwhxQDVTrkps0p5A3QLb0cFR64IBxH30
-        0CLCthdvWXZ/rEI+/mfRgbvK1wvfFvH24lBbDjk=
-X-Google-Smtp-Source: ABdhPJyEK8+Byql7A0tBuqHHoWl83Ii9PjLd5iW6AtCqucuzEWWTvFOgOvC2/40sWN3AyPMLsDiliuUVR0XwAC+zuEw=
-X-Received: by 2002:a05:6e02:b4a:: with SMTP id f10mr9870349ilu.278.1617948810954;
- Thu, 08 Apr 2021 23:13:30 -0700 (PDT)
+        id S232344AbhDIIOu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 9 Apr 2021 04:14:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:21165 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231127AbhDIIOu (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Apr 2021 04:14:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617956077;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6YraNPigCCa2QjWFUNdLS4ExsZNHhjTNhXM21Vxjs0s=;
+        b=QohY6qYwd0uA5XK6l966gmbPjTbovLlOjJUZwaAZLV8eVQGh7EBZqo54LtK8lD8q/KVpk7
+        9uWD9Y7VIAaMnupUDzgsWtLuJYCyQtDnK8XwRxqXjs6pK8cGi+3C0W4gRQEaQV7NP+JDh+
+        bF1GPcuj8J5AbeASqYEIlcD2C7aC/II=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-289-01GEC8DGP-Cp7uL9zOpe3g-1; Fri, 09 Apr 2021 04:14:33 -0400
+X-MC-Unique: 01GEC8DGP-Cp7uL9zOpe3g-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B9A5510054F6;
+        Fri,  9 Apr 2021 08:14:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-119-35.rdu2.redhat.com [10.10.119.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C66C160BE5;
+        Fri,  9 Apr 2021 08:14:25 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wi_XrtTanTwoKs0jwnjhSvwpMYVDJ477VtjvvTXRjm5wQ@mail.gmail.com>
+References: <CAHk-=wi_XrtTanTwoKs0jwnjhSvwpMYVDJ477VtjvvTXRjm5wQ@mail.gmail.com> <20210408145057.GN2531743@casper.infradead.org> <161789062190.6155.12711584466338493050.stgit@warthog.procyon.org.uk> <161789066013.6155.9816857201817288382.stgit@warthog.procyon.org.uk> <46017.1617897451@warthog.procyon.org.uk> <136646.1617916529@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC][PATCH] mm: Split page_has_private() in two to better handle PG_private_2
 MIME-Version: 1.0
-References: <20200828012844.18937-1-gmayyyha@gmail.com>
-In-Reply-To: <20200828012844.18937-1-gmayyyha@gmail.com>
-From:   Yanhu Cao <gmayyyha@gmail.com>
-Date:   Fri, 9 Apr 2021 14:13:20 +0800
-Message-ID: <CAB9OAC0A_=fMGBNMOufMG1n81x4Mn20W1GqPPYGuRuC2MJLWHA@mail.gmail.com>
-Subject: Re: [v2] ceph: support getting ceph.dir.rsnaps vxattr
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <184802.1617956064.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Fri, 09 Apr 2021 09:14:24 +0100
+Message-ID: <184803.1617956064@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-ping @jeff @Ilya
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-On Fri, Aug 28, 2020 at 9:29 AM Yanhu Cao <gmayyyha@gmail.com> wrote:
+> >  #define PAGE_FLAGS_PRIVATE                             \
+> >         (1UL << PG_private | 1UL << PG_private_2)
 >
-> It's easy to know how many snapshots have been created.
+> I think this should be re-named to be PAGE_FLAGS_CLEANUP, because I
+> don't think it makes any other sense to "combine" the two PG_private*
+> bits any more. No?
+
+Sure.  Do we even want it still, or should I just fold it into
+page_needs_cleanup()?  It seems to be the only place it's used.
+
+> > +static inline int page_private_count(struct page *page)
+> > +{
+> > +       return test_bit(PG_private, &page->flags) ? 1 : 0;
+> > +}
 >
-> Link: https://tracker.ceph.com/issues/47168
-> Signed-off-by: Yanhu Cao <gmayyyha@gmail.com>
-> ---
->  fs/ceph/inode.c      | 1 +
->  fs/ceph/mds_client.c | 9 ++++++++-
->  fs/ceph/mds_client.h | 1 +
->  fs/ceph/super.h      | 2 +-
->  fs/ceph/xattr.c      | 7 +++++++
->  5 files changed, 18 insertions(+), 2 deletions(-)
+> Why is this open-coding the bit test, rather than just doing
 >
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 357c937699d5..650cad4b3ecb 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -891,6 +891,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
->                         ci->i_rfiles = le64_to_cpu(info->rfiles);
->                         ci->i_rsubdirs = le64_to_cpu(info->rsubdirs);
->                         ci->i_dir_pin = iinfo->dir_pin;
-> +                       ci->i_rsnaps = iinfo->rsnaps;
->                         ceph_decode_timespec64(&ci->i_rctime, &info->rctime);
->                 }
->         }
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 4a26862d7667..3466845c0179 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -176,6 +176,13 @@ static int parse_reply_info_in(void **p, void *end,
->                         memset(&info->snap_btime, 0, sizeof(info->snap_btime));
->                 }
+>         return PagePrivate(page) ? 1 : 0;
 >
-> +               /* snapshot count, remains zero for v<=3 */
-> +               if (struct_v >= 4) {
-> +                       ceph_decode_64_safe(p, end, info->rsnaps, bad);
-> +               } else {
-> +                       info->rsnaps = 0;
-> +               }
-> +
->                 *p = end;
->         } else {
->                 if (features & CEPH_FEATURE_MDS_INLINE_DATA) {
-> @@ -214,7 +221,7 @@ static int parse_reply_info_in(void **p, void *end,
->                 }
+> instead? In fact, since test_bit() _should_ return a 'bool', I think eve=
+n just
 >
->                 info->dir_pin = -ENODATA;
-> -               /* info->snap_btime remains zero */
-> +               /* info->snap_btime and info->rsnaps remain zero */
->         }
->         return 0;
->  bad:
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index bc9e95937d7c..76f2ed1a7cbf 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -88,6 +88,7 @@ struct ceph_mds_reply_info_in {
->         s32 dir_pin;
->         struct ceph_timespec btime;
->         struct ceph_timespec snap_btime;
-> +       u64 rsnaps;
->         u64 change_attr;
->  };
->
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 4c3c964b1c54..eb108b69da71 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -332,7 +332,7 @@ struct ceph_inode_info {
->
->         /* for dirs */
->         struct timespec64 i_rctime;
-> -       u64 i_rbytes, i_rfiles, i_rsubdirs;
-> +       u64 i_rbytes, i_rfiles, i_rsubdirs, i_rsnaps;
->         u64 i_files, i_subdirs;
->
->         /* quotas */
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index 3a733ac33d9b..c7d8ecc3d04b 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -231,6 +231,12 @@ static ssize_t ceph_vxattrcb_dir_rsubdirs(struct ceph_inode_info *ci, char *val,
->         return ceph_fmt_xattr(val, size, "%lld", ci->i_rsubdirs);
->  }
->
-> +static ssize_t ceph_vxattrcb_dir_rsnaps(struct ceph_inode_info *ci, char *val,
-> +                                         size_t size)
-> +{
-> +       return ceph_fmt_xattr(val, size, "%lld", ci->i_rsnaps);
-> +}
-> +
->  static ssize_t ceph_vxattrcb_dir_rbytes(struct ceph_inode_info *ci, char *val,
->                                         size_t size)
->  {
-> @@ -352,6 +358,7 @@ static struct ceph_vxattr ceph_dir_vxattrs[] = {
->         XATTR_RSTAT_FIELD(dir, rentries),
->         XATTR_RSTAT_FIELD(dir, rfiles),
->         XATTR_RSTAT_FIELD(dir, rsubdirs),
-> +       XATTR_RSTAT_FIELD(dir, rsnaps),
->         XATTR_RSTAT_FIELD(dir, rbytes),
->         XATTR_RSTAT_FIELD(dir, rctime),
->         {
-> --
-> 2.24.3 (Apple Git-128)
->
+>         return PagePrivate(page);
+
+Sorry, yes, it should be that.  I was looking at transforming the "1 <<
+PG_private" and completely overlooked that this should be PagePrivate().
+
+> should work and give the same result, but I could imagine that some
+> architecture version of "test_bit()" might return some other non-zero
+> value (although honestly, I think that should be fixed if so).
+
+Yeah.  I seem to recall that test_bit() on some arches used to return the
+datum just with the other bits masked off, but I may be misremembering.
+
+In asm-generic/bitops/non-atomic.h:
+
+static inline int test_bit(int nr, const volatile unsigned long *addr)
+{
+	return 1UL & (addr[BIT_WORD(nr)] >> (nr & (BITS_PER_LONG-1)));
+}
+
+should perhaps return bool?
+
+I wonder, should:
+
+	static __always_inline int PageTail(struct page *page)
+	static __always_inline int PageCompound(struct page *page)
+	static __always_inline int Page##uname(struct page *page)
+	static __always_inline int TestSetPage##uname(struct page *page)
+	static __always_inline int TestClearPage##uname(struct page *page)
+
+also all return bool?
+
+David
+
