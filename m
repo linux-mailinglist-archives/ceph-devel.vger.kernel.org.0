@@ -2,66 +2,76 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D2C435A1F3
-	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 17:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9124035A28F
+	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 18:04:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231756AbhDIPZi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 9 Apr 2021 11:25:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40718 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229665AbhDIPZi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Apr 2021 11:25:38 -0400
-Received: from smtp.bit.nl (smtp.bit.nl [IPv6:2001:7b8:3:5::25:1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB6C8C061760
-        for <ceph-devel@vger.kernel.org>; Fri,  9 Apr 2021 08:25:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit.nl;
-        s=smtp01; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-        Message-ID:Subject:From:To:Sender:Cc;
-        bh=qfWW4ag96z2EaD+uMahd3CJVLvtdAMJqbUNl1wBg9dc=; b=ugiGSLNS4QbMwImKkpKqgzxV66
-        YIy2P/c8+INMDJhjih6QwWhjSN5GT8U1KixkBJI5z2y5rSEwGFf4ljnzcztpfwpltxF/c0oF/U4DK
-        +l31+47bTe5T+dzLZCT1KTn3wWUbYkupYNOXW1EfTFc+Ho7LBm3fS+Sfdn5TURrYyns92hxeD7JlW
-        yeEXQPZjrCjA6wCz7ub0aORVMn37b1KDTlsqshZbpNn2V2nS0xNpEJ3dvFtZgzhtYtgieJiBjsOAH
-        c062lLNW5EbGwnyAEoKeWg//Pkkz7IakvSfDNh/JFl/toqCX1dsinzf8iz6kDWtLe6dtaX1tX+ooT
-        Zye729Cg==;
-Received: from [2001:7b8:3:1002::1002] (port=10425)
-        by smtp4.smtp.dmz.bit.nl with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <stefan@bit.nl>)
-        id 1lUt0c-0003Wx-Mg; Fri, 09 Apr 2021 17:25:22 +0200
-To:     Robert LeBlanc <robert@leblancnet.us>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        ceph-users <ceph-users@ceph.io>
-References: <CAANLjFpjRLtV+GR4WV15iXXCvkig6tJAr_G=_bZpZ=jKnYfvTQ@mail.gmail.com>
- <68fa3e03-55bd-c9aa-b19a-7cbe44af704e@bit.nl>
- <CAANLjFos0mFHhKULDD2SjEMN+JAra2x+tdw9gi5M27G_BumXVA@mail.gmail.com>
- <CAKTRiELqxD+0LtRXan9gMzot3y4A4M4x=km-MB2aET6wP_5mQg@mail.gmail.com>
- <CAANLjFrhHbuM-jW5HuuyBMFVu3GWnG23Ama8_vKs55GpOCTA-w@mail.gmail.com>
- <CAANLjFqttbppgtW=n2V04SyD-Lg2NbsNLvfE83Z5OsS=ZirjmQ@mail.gmail.com>
-From:   Stefan Kooman <stefan@bit.nl>
-Subject: Re: [ceph-users] Re: Nautilus 14.2.19 mon 100% CPU
-Message-ID: <8933c3a0-64f7-aaab-6ab7-30e39b76a387@bit.nl>
-Date:   Fri, 9 Apr 2021 17:25:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        id S233883AbhDIQEK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 9 Apr 2021 12:04:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44452 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233864AbhDIQEH (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Apr 2021 12:04:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617984234;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=l/YtRHbaNxAvJJBbIoYtFy0sDOmcZWRbIs4MjOEQB/k=;
+        b=MbrfZzL3UIdk1KlQ+svyyTKMeUegGG/KBL3rYz3j2jDCKEa/nqOQnTHQfWVmflzacwsbJY
+        Wbc1fIs9mFrmSUafO5ymi07fjJpkclY0YgF7xPO/TjBiFPhpKXkHtMPsyWHAWbYx3cV/5S
+        cvZ5dIlEG4XYKCNxKQLrj9jvJnoObFE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-569-VKd9VOlPMEOH6PW381t7Pg-1; Fri, 09 Apr 2021 12:03:50 -0400
+X-MC-Unique: VKd9VOlPMEOH6PW381t7Pg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 54C20801814;
+        Fri,  9 Apr 2021 16:03:48 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-119-35.rdu2.redhat.com [10.10.119.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E36435C1D5;
+        Fri,  9 Apr 2021 16:03:38 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <625171.1617971734@warthog.procyon.org.uk>
+References: <625171.1617971734@warthog.procyon.org.uk> <20210409111636.GR2531743@casper.infradead.org> <CAHk-=wi_XrtTanTwoKs0jwnjhSvwpMYVDJ477VtjvvTXRjm5wQ@mail.gmail.com> <161796595714.350846.1547688999823745763.stgit@warthog.procyon.org.uk>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        torvalds@linux-foundation.org,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, jlayton@kernel.org, hch@lst.de,
+        linux-cachefs@redhat.com, v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/3] mm: Return bool from pagebit test functions
 MIME-Version: 1.0
-In-Reply-To: <CAANLjFqttbppgtW=n2V04SyD-Lg2NbsNLvfE83Z5OsS=ZirjmQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <838189.1617984218.1@warthog.procyon.org.uk>
+Date:   Fri, 09 Apr 2021 17:03:38 +0100
+Message-ID: <838190.1617984218@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 4/9/21 3:40 PM, Robert LeBlanc wrote:
-> I'm attempting to deep scrub all the PGs to see if that helps clear up
-> some accounting issues, but that's going to take a really long time on
-> 2PB of data.
+David Howells <dhowells@redhat.com> wrote:
 
-Are you running with 1 mon now? Have you tried adding mons from scratch? 
-So with a fresh database? And then maybe after they have joined, kill 
-the donor mon and start from scratch.
+> add/remove: 2/2 grow/shrink: 15/16 up/down: 408/-599 (-191)
+> Function                                     old     new   delta
+> iomap_write_end_inline                         -     128    +128
 
-You have for sure not missed a step during the upgrade (just checking 
-mode), i.e. ceph osd require-osd-release nautilus.
+I can get rid of the iomap_write_end_inline() increase for my config by
+marking it __always_inline, thereby getting:
 
-Gr. Stefan
+add/remove: 1/2 grow/shrink: 15/15 up/down: 280/-530 (-250)
+
+It seems that the decision whether or not to inline iomap_write_end_inline()
+is affected by the switch to bool.
+
+David
+
