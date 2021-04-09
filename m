@@ -2,90 +2,120 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7569E35A44A
-	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 19:02:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EF0035A55F
+	for <lists+ceph-devel@lfdr.de>; Fri,  9 Apr 2021 20:11:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234049AbhDIRCP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 9 Apr 2021 13:02:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33796 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233332AbhDIRCO (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Apr 2021 13:02:14 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F53CC061760
-        for <ceph-devel@vger.kernel.org>; Fri,  9 Apr 2021 10:02:01 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id w4so2565710wrt.5
-        for <ceph-devel@vger.kernel.org>; Fri, 09 Apr 2021 10:02:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=leblancnet-us.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1o7A9R9nUOiY0oJrVrVq+PlpjLvzioq+/lQ6TS7MOE4=;
-        b=LT8GPfaoy397DfL9rGlXLhG4G+XCyI78tScAfambSmBuvLOyxmrGT8ltRHMLAWjMtG
-         tnNapMkp/rCkw6JiWJ93viVQxBf6KxwDLiHxzCz3LxQcuxRcBiqJizqn2YQpNFV+iQ+g
-         j/+/nw1SknWRWCRnFmKFOHS/w51tCDj9yzFsBxEMLjxKpid2CChEFDWa+rQCIQbsszT3
-         /64ltQBwLQLpNgi2QSVXWXc0MgjgjWyzylkvCpzhryHw6dHRx8FBAKWDc1JKFK9Ub//x
-         MyB3wFeq8OhR1+YLBHUGTkWuFn5JyOHjxj3Y0ZMydWJJQLi2V+9pug1mazDDO7g7nAMq
-         gBmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1o7A9R9nUOiY0oJrVrVq+PlpjLvzioq+/lQ6TS7MOE4=;
-        b=hMNnxvdmvUO/Hf2SeXl7ZZ0X8dP/t2mQl4bnrc6aXAIfUwFjU0rolIldoYnfn6yXA5
-         NgJrZRcoA4meFsDLYVmNuV4PUA6vqXLrxPF3suVIHQO8/8YBWXS0yxBlz7pGy2TgkkjC
-         jRChFi0kUgXWhjlm9bqLs7r0NISg9Sh+dn3gjkUVTk0NB2qpCmQbxruLqFITs16urxks
-         9adPyHKQVBBg3vrSFJQfk7mBjnOaHKty8Ot7R/sWu/boxvPBIz8gjW8+6vCQSSRcciLC
-         rDT2CJeDgjEOoX5v5bqfTsWrq+YzVTmwcfA3uKMxMWA6d0gJbllZR2l4V41md81xkA3m
-         sN3Q==
-X-Gm-Message-State: AOAM532BI5JLd3xssZEZCmWLsYg3rl8TANAQb94RFxgQE8mIG3TNMM6t
-        y6i1Af4ZWXee35Qlo+PvroC0hR9l/TxQ3jmPAkhC+ibJ8yA=
-X-Google-Smtp-Source: ABdhPJxfuYNGB2vPxqlYbIaOLFvnxB3SF6Nm5zS5pB2H1ieNAqMwreXCTt/UYU4PdqZyz8U0dcmMm/uK1P4gR9xVzGs=
-X-Received: by 2002:adf:d219:: with SMTP id j25mr4428180wrh.187.1617987720137;
- Fri, 09 Apr 2021 10:02:00 -0700 (PDT)
+        id S234619AbhDISLY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 9 Apr 2021 14:11:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:45573 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234625AbhDISLV (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Apr 2021 14:11:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617991867;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RgtAbf2LjG2l+2155p4OwWEE/xnbluMbW9xCxJONACw=;
+        b=Vw3k4ERQBxrWQ7798MyJ87x8BGTM/lUR5dfzTI+oWqTkEHmGcl4vIDuC+1uTffwnNmVTrD
+        6HuF0PIyEYPHX7Kl1KqvtCY0XDow2gnlxSDz+SnS9GKTQtrDRxzd7o9SUeOAMQ9wl/L/Yg
+        fPqiJa1q8kcEq2TCDa2FgcRUXYjexyM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-533-TK3YSBC1OvymhxW-Xrgfww-1; Fri, 09 Apr 2021 14:11:03 -0400
+X-MC-Unique: TK3YSBC1OvymhxW-Xrgfww-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6DF2D18766D0;
+        Fri,  9 Apr 2021 18:11:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-119-35.rdu2.redhat.com [10.10.119.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BEDCA10016FD;
+        Fri,  9 Apr 2021 18:10:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [RFC PATCH 1/2] iov_iter: Remove iov_iter_for_each_range()
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, willy@infradead.org, jlayton@kernel.org,
+        hch@lst.de, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com, v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 09 Apr 2021 19:10:53 +0100
+Message-ID: <161799185391.847742.2598422794034740322.stgit@warthog.procyon.org.uk>
+In-Reply-To: <YG+s0iw5o91KQIlW@zeniv-ca.linux.org.uk>
+References: <YG+s0iw5o91KQIlW@zeniv-ca.linux.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <CAANLjFpjRLtV+GR4WV15iXXCvkig6tJAr_G=_bZpZ=jKnYfvTQ@mail.gmail.com>
- <68fa3e03-55bd-c9aa-b19a-7cbe44af704e@bit.nl> <CAANLjFos0mFHhKULDD2SjEMN+JAra2x+tdw9gi5M27G_BumXVA@mail.gmail.com>
- <CAKTRiELqxD+0LtRXan9gMzot3y4A4M4x=km-MB2aET6wP_5mQg@mail.gmail.com>
- <CAANLjFrhHbuM-jW5HuuyBMFVu3GWnG23Ama8_vKs55GpOCTA-w@mail.gmail.com>
- <CAANLjFqttbppgtW=n2V04SyD-Lg2NbsNLvfE83Z5OsS=ZirjmQ@mail.gmail.com>
- <8933c3a0-64f7-aaab-6ab7-30e39b76a387@bit.nl> <CAANLjFpKGaKRM+2j6+YfLsufdgQi3jz_Nm5RNsSpbVGmSsFj5g@mail.gmail.com>
-In-Reply-To: <CAANLjFpKGaKRM+2j6+YfLsufdgQi3jz_Nm5RNsSpbVGmSsFj5g@mail.gmail.com>
-From:   Robert LeBlanc <robert@leblancnet.us>
-Date:   Fri, 9 Apr 2021 11:01:48 -0600
-Message-ID: <CAANLjFqpNEQ2f16FONCURtMGwzQ1=fsePkaxpZ+oVWQfDMgnUg@mail.gmail.com>
-Subject: Re: [ceph-users] Re: Nautilus 14.2.19 mon 100% CPU
-To:     Stefan Kooman <stefan@bit.nl>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
-        ceph-users <ceph-users@ceph.io>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The only step not yet taken was to move to straw2. That was the last
-step we were going to do next.
-----------------
-Robert LeBlanc
-PGP Fingerprint 79A2 9CA4 6CC4 45DD A904  C70E E654 3BB2 FA62 B9F1
+Remove iov_iter_for_each_range() as it's no longer used with the removal of
+lustre.
 
-On Fri, Apr 9, 2021 at 10:41 AM Robert LeBlanc <robert@leblancnet.us> wrote:
->
-> On Fri, Apr 9, 2021 at 9:25 AM Stefan Kooman <stefan@bit.nl> wrote:
-> > Are you running with 1 mon now? Have you tried adding mons from scratch?
-> > So with a fresh database? And then maybe after they have joined, kill
-> > the donor mon and start from scratch.
-> >
-> > You have for sure not missed a step during the upgrade (just checking
-> > mode), i.e. ceph osd require-osd-release nautilus.
->
-> I have tried adding one of the other monitors by removing the data
-> directory and starting from scratch, but it would go back to the
-> monitor elections and I didn't feel comfortable that it's up to sync
-> to fail over to it so I took it back out. I have run `ceph
-> osd-require-osd-release nautilus` after the upgrade of all the OSDs.
-> I'll go back and double check all the steps, but I think I got them
-> all.
->
-> Thank you,
-> Robert LeBlanc
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ include/linux/uio.h |    4 ----
+ lib/iov_iter.c      |   27 ---------------------------
+ 2 files changed, 31 deletions(-)
+
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 5f5ffc45d4aa..221c256304d4 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -295,8 +295,4 @@ ssize_t __import_iovec(int type, const struct iovec __user *uvec,
+ int import_single_range(int type, void __user *buf, size_t len,
+ 		 struct iovec *iov, struct iov_iter *i);
+ 
+-int iov_iter_for_each_range(struct iov_iter *i, size_t bytes,
+-			    int (*f)(struct kvec *vec, void *context),
+-			    void *context);
+-
+ #endif
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index f808c625c11e..93e9838c128d 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -2094,30 +2094,3 @@ int import_single_range(int rw, void __user *buf, size_t len,
+ 	return 0;
+ }
+ EXPORT_SYMBOL(import_single_range);
+-
+-int iov_iter_for_each_range(struct iov_iter *i, size_t bytes,
+-			    int (*f)(struct kvec *vec, void *context),
+-			    void *context)
+-{
+-	struct kvec w;
+-	int err = -EINVAL;
+-	if (!bytes)
+-		return 0;
+-
+-	iterate_all_kinds(i, bytes, v, -EINVAL, ({
+-		w.iov_base = kmap(v.bv_page) + v.bv_offset;
+-		w.iov_len = v.bv_len;
+-		err = f(&w, context);
+-		kunmap(v.bv_page);
+-		err;}), ({
+-		w = v;
+-		err = f(&w, context);}), ({
+-		w.iov_base = kmap(v.bv_page) + v.bv_offset;
+-		w.iov_len = v.bv_len;
+-		err = f(&w, context);
+-		kunmap(v.bv_page);
+-		err;})
+-	)
+-	return err;
+-}
+-EXPORT_SYMBOL(iov_iter_for_each_range);
+
+
