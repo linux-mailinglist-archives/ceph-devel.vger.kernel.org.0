@@ -2,176 +2,95 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2C7935E59D
-	for <lists+ceph-devel@lfdr.de>; Tue, 13 Apr 2021 19:52:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 466F035F02F
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 Apr 2021 10:57:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347494AbhDMRvy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 13 Apr 2021 13:51:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45038 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1347449AbhDMRva (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 13 Apr 2021 13:51:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D805B613B8;
-        Tue, 13 Apr 2021 17:51:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618336267;
-        bh=TviWrPPnC1gTnbi2XdMVlKDC0scJdqGSyrBmZE+Egjw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JMpfszAZ+Dlr58Z/wfc48g+cYnIg/ujuzedlJGTD2CUsEcQLGbpZMvQk3kaucOZp9
-         Vo0bl5LMFwZKmN14Cgp03Th+ebCUwKpXgZQ/t0vs8exV/j6v2mDpNZ0Q85gv1JOB04
-         h77xUrdHEkehSWYXm0uSBrFT7Zvbaf3QmLY3HmL+I008MwK4HeRJm1ef+Ztiag4hsk
-         0UllykpZJua/9mnRfect5KV5xYlCL58MxhfsTdNNGbwZ1t1u5SOPRJ6/+QRkPcgiIJ
-         SX989mwRWPAJlHA7Zx9Y2Gh86e37vTwTFjtqkmjPsnty28gnH/ggmpy6dyX8lNxbA9
-         QSzVulWW9Tkeg==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        lhenriques@suse.de
-Subject: [RFC PATCH v6 20/20] ceph: add fscrypt ioctls
-Date:   Tue, 13 Apr 2021 13:50:52 -0400
-Message-Id: <20210413175052.163865-21-jlayton@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210413175052.163865-1-jlayton@kernel.org>
-References: <20210413175052.163865-1-jlayton@kernel.org>
+        id S1349855AbhDNIvs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 14 Apr 2021 04:51:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44540 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244803AbhDNIvr (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 14 Apr 2021 04:51:47 -0400
+Received: from outbound5.mail.transip.nl (outbound5.mail.transip.nl [IPv6:2a01:7c8:7c9:ca11:136:144:136:9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35328C061574
+        for <ceph-devel@vger.kernel.org>; Wed, 14 Apr 2021 01:51:26 -0700 (PDT)
+Received: from submission5.mail.transip.nl (unknown [10.103.8.156])
+        by outbound5.mail.transip.nl (Postfix) with ESMTP id 4FKx643HHNzHCNd
+        for <ceph-devel@vger.kernel.org>; Wed, 14 Apr 2021 10:51:24 +0200 (CEST)
+Received: from exchange.transipgroup.nl (unknown [81.4.116.215])
+        by submission5.mail.transip.nl (Postfix) with ESMTPSA id 4FKx6221Cnz7tFr
+        for <ceph-devel@vger.kernel.org>; Wed, 14 Apr 2021 10:51:22 +0200 (CEST)
+Received: from VM16171.groupdir.nl (10.131.120.71) by VM16339.groupdir.nl
+ (10.131.120.73) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3; Wed, 14 Apr 2021
+ 10:51:21 +0200
+Received: from VM16171.groupdir.nl ([81.4.116.210]) by VM16171.groupdir.nl
+ ([81.4.116.210]) with mapi id 15.02.0792.013; Wed, 14 Apr 2021 10:51:21 +0200
+From:   Robin Geuze <robin.geuze@nl.team.blue>
+To:     Ceph Development <ceph-devel@vger.kernel.org>
+Subject: All RBD IO stuck after flapping OSD's
+Thread-Topic: All RBD IO stuck after flapping OSD's
+Thread-Index: AQHXMQs7yqmta0olA0ygBmx0d4s7EA==
+Date:   Wed, 14 Apr 2021 08:51:21 +0000
+Message-ID: <47f0a04ce6664116a11cfdb5a458e252@nl.team.blue>
+Accept-Language: en-GB, nl-NL, en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [81.4.116.242]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: ClueGetter at submission5.mail.transip.nl
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=transip-a; d=nl.team.blue; t=1618390282; h=from:subject:to:date:
+ mime-version:content-type;
+ bh=xt1gocxx81ms8j9XFvAPSi0er1OCVxFpIPRLVgUejSA=;
+ b=V2EqqgTjmrHaoKMHQ47GlgLmFv25Rlu73NpVP+pu4bWZ9R4R0KqiFKRg4938dR/910fsE9
+ BAWVNKRu4gxVxgveLfxaYU660qsLC5xWojxzntbRq4j+vptJLcqWS2kGdRWy0ww0wzcNxO
+ OHBTximC3oH/rjgh1RbGCbUzYNvPMWjnaCVN3k58HMOtYMcv7l78REym4DwqhtbGIsou0s
+ 3Dhr/VtVUMX9mszHsjuCKwwCDJYz6m/0YR9SXoamTIc4SchhIlB5X6EuGD110NfR8JAls5
+ KoVsptlwN6Loaun6B3+HV1b3eSIc0MpBS/5hnnur16njehtK70BIom6lMIjyEg==
+X-Report-Abuse-To: abuse@transip.nl
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-We gate most of the ioctls on MDS feature support. The exception is the
-key removal and status functions that we still want to work if the MDS's
-were to (inexplicably) lose the feature.
+Hey,
 
-For the set_policy ioctl, we take Fcx caps to ensure that nothing can
-create files in the directory while the ioctl is running. That should
-be enough to ensure that the "empty_dir" check is reliable.
+We've encountered a weird issue when using the kernel RBD module. It starts=
+ with a bunch of OSD's flapping (in our case because of a network card issu=
+e which caused the LACP to constantly flap), which is logged in dmesg:
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/ioctl.c | 93 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
+Apr 14 05:45:02 hv1 kernel: [647677.112461] libceph: osd56 down
+Apr 14 05:45:03 hv1 kernel: [647678.114962] libceph: osd54 down
+Apr 14 05:45:05 hv1 kernel: [647680.127329] libceph: osd50 down
+(...)
 
-diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
-index 6e061bf62ad4..485be1637fc0 100644
---- a/fs/ceph/ioctl.c
-+++ b/fs/ceph/ioctl.c
-@@ -6,6 +6,7 @@
- #include "mds_client.h"
- #include "ioctl.h"
- #include <linux/ceph/striper.h>
-+#include <linux/fscrypt.h>
- 
- /*
-  * ioctls
-@@ -268,8 +269,55 @@ static long ceph_ioctl_syncio(struct file *file)
- 	return 0;
- }
- 
-+static int vet_mds_for_fscrypt(struct file *file)
-+{
-+	int i, ret = -EOPNOTSUPP;
-+	struct ceph_mds_client	*mdsc = ceph_sb_to_mdsc(file_inode(file)->i_sb);
-+
-+	mutex_lock(&mdsc->mutex);
-+	for (i = 0; i < mdsc->max_sessions; i++) {
-+		struct ceph_mds_session *s = mdsc->sessions[i];
-+
-+		if (!s)
-+			continue;
-+		if (test_bit(CEPHFS_FEATURE_ALTERNATE_NAME, &s->s_features))
-+			ret = 0;
-+		break;
-+	}
-+	mutex_unlock(&mdsc->mutex);
-+	return ret;
-+}
-+
-+static long ceph_set_encryption_policy(struct file *file, unsigned long arg)
-+{
-+	int ret, got = 0;
-+	struct inode *inode = file_inode(file);
-+	struct ceph_inode_info *ci = ceph_inode(inode);
-+
-+	ret = vet_mds_for_fscrypt(file);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Ensure we hold these caps so that we _know_ that the rstats check
-+	 * in the empty_dir check is reliable.
-+	 */
-+	ret = ceph_get_caps(file, CEPH_CAP_FILE_SHARED, 0, -1, &got);
-+	if (ret)
-+		return ret;
-+
-+	ret = fscrypt_ioctl_set_policy(file, (const void __user *)arg);
-+	if (got)
-+		ceph_put_cap_refs(ci, got);
-+
-+	return ret;
-+}
-+
- long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
-+	int ret;
-+	struct ceph_inode_info *ci = ceph_inode(file_inode(file));
-+
- 	dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
- 	switch (cmd) {
- 	case CEPH_IOC_GET_LAYOUT:
-@@ -289,6 +337,51 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 
- 	case CEPH_IOC_SYNCIO:
- 		return ceph_ioctl_syncio(file);
-+
-+	case FS_IOC_SET_ENCRYPTION_POLICY:
-+		return ceph_set_encryption_policy(file, arg);
-+
-+	case FS_IOC_GET_ENCRYPTION_POLICY:
-+		ret = vet_mds_for_fscrypt(file);
-+		if (ret)
-+			return ret;
-+		return fscrypt_ioctl_get_policy(file, (void __user *)arg);
-+
-+	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
-+		ret = vet_mds_for_fscrypt(file);
-+		if (ret)
-+			return ret;
-+		return fscrypt_ioctl_get_policy_ex(file, (void __user *)arg);
-+
-+	case FS_IOC_ADD_ENCRYPTION_KEY:
-+		ret = vet_mds_for_fscrypt(file);
-+		if (ret)
-+			return ret;
-+		atomic_inc(&ci->i_shared_gen);
-+		ceph_dir_clear_ordered(file_inode(file));
-+		ceph_dir_clear_complete(file_inode(file));
-+		return fscrypt_ioctl_add_key(file, (void __user *)arg);
-+
-+	case FS_IOC_REMOVE_ENCRYPTION_KEY:
-+		atomic_inc(&ci->i_shared_gen);
-+		ceph_dir_clear_ordered(file_inode(file));
-+		ceph_dir_clear_complete(file_inode(file));
-+		return fscrypt_ioctl_remove_key(file, (void __user *)arg);
-+
-+	case FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS:
-+		atomic_inc(&ci->i_shared_gen);
-+		ceph_dir_clear_ordered(file_inode(file));
-+		ceph_dir_clear_complete(file_inode(file));
-+		return fscrypt_ioctl_remove_key_all_users(file, (void __user *)arg);
-+
-+	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
-+		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
-+
-+	case FS_IOC_GET_ENCRYPTION_NONCE:
-+		ret = vet_mds_for_fscrypt(file);
-+		if (ret)
-+			return ret;
-+		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
- 	}
- 
- 	return -ENOTTY;
--- 
-2.30.2
+After a while of that we start getting these errors being spammed in dmesg:
 
+Apr 14 05:47:35 hv1 kernel: [647830.671263] rbd: rbd14: pre object map upda=
+te failed: -16
+Apr 14 05:47:35 hv1 kernel: [647830.671268] rbd: rbd14: write at objno 192 =
+2564096~2048 result -16
+Apr 14 05:47:35 hv1 kernel: [647830.671271] rbd: rbd14: write result -16
+
+(In this case for two different RBD mounts)
+
+At this point the IO for these two mounts is completely gone, and the only =
+reason we can still perform IO on the other RBD devices is because we use n=
+oshare. Unfortunately unmounting the other devices is no longer possible, w=
+hich means we cannot migrate our VM's to another HV, since to make the mess=
+ages go away we have to reboot the server.
+
+All of this wouldn't be such a big issue if it recovered once the cluster s=
+tarted behaving normally again, but it doesn't, it just keeps being stuck, =
+and the longer we wait with rebooting this the worse the issue get.
+
+We've seen this multiple times on various different machines and with vario=
+us different clusters with differing problem types, so its not=A0a freak in=
+cident.=A0Does anyone have any ideas on how we can potentially solve this?
+
+Regards,
+
+Robin Geuze=
