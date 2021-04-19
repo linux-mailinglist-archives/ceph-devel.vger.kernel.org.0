@@ -2,40 +2,36 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD1A3364833
-	for <lists+ceph-devel@lfdr.de>; Mon, 19 Apr 2021 18:28:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4DCE364AB5
+	for <lists+ceph-devel@lfdr.de>; Mon, 19 Apr 2021 21:41:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238715AbhDSQ2m (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 19 Apr 2021 12:28:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46086 "EHLO mail.kernel.org"
+        id S241817AbhDSTlo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 19 Apr 2021 15:41:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230063AbhDSQ2l (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 19 Apr 2021 12:28:41 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 81A5E61246;
-        Mon, 19 Apr 2021 16:28:11 +0000 (UTC)
+        id S234946AbhDSTln (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 19 Apr 2021 15:41:43 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C773361363;
+        Mon, 19 Apr 2021 19:41:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1618849691;
-        bh=l7jnMZ2QwMcnrgiR5Usy5PUSfFOBX3ZPMB3ZSnHg5kY=;
+        s=k20201202; t=1618861273;
+        bh=kd5rx11sXBpoAXWQWPr79R7WX661RiUn16tK0sYGSHM=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=XHYxpsi16De+ba8xHRM7wQ05UJPbNiBHStZzqYOjtzGutR9pclLQpSjh9YSN8pX3l
-         JZUNP9aGX3iGkDqh4DXEkl8/EPlhdDDL2bdXvboyLOwFELppC4coTbhUOLv6JBRqQu
-         jZVdSQryUkkSGXIxtEfb7atDgXOryoGEFL7uoFxX+9ku7useWkSD+Gz9GNaw84/BGA
-         ZgN/6GgegPVMysXTXnGCNTgik2gCUf1UtB0dvubzOgkumjLdfB/FdzxvEchvcXkdRz
-         szqssoB7mZGk2FeQidEMVNcwCOOND2TN1ZYwWdeHdgroiCkV8DuLOSy6Uk36YiXW+3
-         nWy7SqjjsUjpw==
-Message-ID: <13750c0b72dccd84e75179d62e9a9038d6f57371.camel@kernel.org>
-Subject: Re: [RFC PATCH v6 00/20] ceph+fscrypt: context, filename and
- symlink support
+        b=qCuDsu7ES2n7CodDrz2bo4g0lv9b5Oik9uMbF0YuOcXyMZB8uPZuXiD3nms1/f+Fj
+         EoHqNN2ejms4OcAJWy95xDy9n8miA9t+3t9tNIrgEgwSjsOT2fg/TU1OrlVBdekxx7
+         /hr6EWmsFqXjuheahagAp4RAexc4kXUkYW6+RkrrvTQpuplOz+2ipzwXXC7VwOQ2y+
+         ty59Wuk0hNN27utuAMZgcML0ZuIbgy1uinSbQPi3tt3OAk9iLuScAf8wcW2oxiPOLU
+         USb5eWzXlZN5Rksk+xekB0OO8heenxgAIsLFPdzsi3xyn4Iaa31vurYQppWbtywdQd
+         rZSLdzmg8Mikg==
+Message-ID: <0b0dc523bf795e78d72c341764a3954f7a7924be.camel@kernel.org>
+Subject: Re: [PATCH] ceph: convert {n}ref from atomic_t to refcount_t
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org
-Date:   Mon, 19 Apr 2021 12:28:10 -0400
-In-Reply-To: <871rb6mfch.fsf@suse.de>
-References: <20210413175052.163865-1-jlayton@kernel.org>
-         <87h7k2murr.fsf@suse.de>
-         <e411e914cd2d329e4b0e335968c21ba85f6e89c7.camel@kernel.org>
-         <871rb6mfch.fsf@suse.de>
+To:     Yejune Deng <yejune.deng@gmail.com>, idryomov@gmail.com
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Patrick Donnelly <pdonnell@redhat.com>
+Date:   Mon, 19 Apr 2021 15:41:11 -0400
+In-Reply-To: <20210324102625.112640-1-yejune.deng@gmail.com>
+References: <20210324102625.112640-1-yejune.deng@gmail.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
 MIME-Version: 1.0
@@ -44,53 +40,160 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-04-19 at 17:03 +0100, Luis Henriques wrote:
-> Jeff Layton <jlayton@kernel.org> writes:
+On Wed, 2021-03-24 at 18:26 +0800, Yejune Deng wrote:
+> refcount_t type should be used instead of atomic_t when the variable
+> is used as a reference counter. This is because the implementation of
+> refcount_t can prevent overflows and detect possible use-after-free.
 > 
-> > On Mon, 2021-04-19 at 11:30 +0100, Luis Henriques wrote:
-> ...
-> > Ouch. That looks like a real bug, alright.
-> > 
-> > Basically when building the path, we occasionally need to fetch the
-> > crypto context for parent inodes and such, and that can cause us to
-> > recurse back into __ceph_getxattr and try to issue another RPC to the
-> > MDS.
-> > 
-> > I'll have to look and see what we can do. Maybe it's safe to drop the
-> > mdsc->mutex while we're building the path? Or maybe this is a good time
-> > to re-think a lot of the really onerous locking in this codepath?
-> > 
-> > I'm open to suggestions here...
+> Signed-off-by: Yejune Deng <yejune.deng@gmail.com>
+> ---
+>  fs/ceph/mds_client.h |  2 +-
+>  fs/ceph/snap.c       | 27 +++++++++++++++------------
+>  fs/ceph/super.h      |  2 +-
+>  3 files changed, 17 insertions(+), 14 deletions(-)
 > 
-> Yeah, I couldn't see a good fix at a first glace.  Dropping the mutex
-> while building the path was my initial thought too but it's not easy to
-> proof that's a safe thing to do.
-> 
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index eaa7c5422116..bf99c5ba47fc 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -351,7 +351,7 @@ struct ceph_pool_perm {
+>  struct ceph_snapid_map {
+>  	struct rb_node node;
+>  	struct list_head lru;
+> -	atomic_t ref;
+> +	refcount_t ref;
+>  	u64 snap;
+>  	dev_t dev;
+>  	unsigned long last_used;
+> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> index 0728b01d4d43..c0fbbb56b259 100644
+> --- a/fs/ceph/snap.c
+> +++ b/fs/ceph/snap.c
+> @@ -66,14 +66,15 @@ void ceph_get_snap_realm(struct ceph_mds_client *mdsc,
+>  			 struct ceph_snap_realm *realm)
+>  {
+>  	dout("get_realm %p %d -> %d\n", realm,
+> -	     atomic_read(&realm->nref), atomic_read(&realm->nref)+1);
+> +	     refcount_read(&realm->nref), refcount_read(&realm->nref)+1);
+>  	/*
+>  	 * since we _only_ increment realm refs or empty the empty
+>  	 * list with snap_rwsem held, adjusting the empty list here is
+>  	 * safe.  we do need to protect against concurrent empty list
+>  	 * additions, however.
+>  	 */
+> -	if (atomic_inc_return(&realm->nref) == 1) {
+> +	refcount_inc(&realm->nref);
+> +	if (refcount_read(&realm->nref) == 1) {
+>  		spin_lock(&mdsc->snap_empty_lock);
+>  		list_del_init(&realm->empty_item);
+>  		spin_unlock(&mdsc->snap_empty_lock);
+> @@ -117,7 +118,7 @@ static struct ceph_snap_realm *ceph_create_snap_realm(
+>  	if (!realm)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	atomic_set(&realm->nref, 1);    /* for caller */
+> +	refcount_set(&realm->nref, 1);    /* for caller */
+>  	realm->ino = ino;
+>  	INIT_LIST_HEAD(&realm->children);
+>  	INIT_LIST_HEAD(&realm->child_item);
+> @@ -199,8 +200,8 @@ static void __put_snap_realm(struct ceph_mds_client *mdsc,
+>  			     struct ceph_snap_realm *realm)
+>  {
+>  	dout("__put_snap_realm %llx %p %d -> %d\n", realm->ino, realm,
+> -	     atomic_read(&realm->nref), atomic_read(&realm->nref)-1);
+> -	if (atomic_dec_and_test(&realm->nref))
+> +	     refcount_read(&realm->nref), refcount_read(&realm->nref)-1);
+> +	if (refcount_dec_and_test(&realm->nref))
+>  		__destroy_snap_realm(mdsc, realm);
+>  }
+>  
+> @@ -211,8 +212,8 @@ void ceph_put_snap_realm(struct ceph_mds_client *mdsc,
+>  			 struct ceph_snap_realm *realm)
+>  {
+>  	dout("put_snap_realm %llx %p %d -> %d\n", realm->ino, realm,
+> -	     atomic_read(&realm->nref), atomic_read(&realm->nref)-1);
+> -	if (!atomic_dec_and_test(&realm->nref))
+> +	     refcount_read(&realm->nref), refcount_read(&realm->nref)-1);
+> +	if (!refcount_dec_and_test(&realm->nref))
+>  		return;
+>  
+>  	if (down_write_trylock(&mdsc->snap_rwsem)) {
+> @@ -1034,7 +1035,8 @@ struct ceph_snapid_map* ceph_get_snapid_map(struct ceph_mds_client *mdsc,
+>  		} else if (snap < exist->snap) {
+>  			p = &(*p)->rb_right;
+>  		} else {
+> -			if (atomic_inc_return(&exist->ref) == 1)
+> +			refcount_inc(&exist->ref);
+> +			if (refcount_read(&exist->ref) == 1)
+>  				list_del_init(&exist->lru);
+>  			break;
+>  		}
+> @@ -1057,7 +1059,7 @@ struct ceph_snapid_map* ceph_get_snapid_map(struct ceph_mds_client *mdsc,
+>  	}
+>  
+>  	INIT_LIST_HEAD(&sm->lru);
+> -	atomic_set(&sm->ref, 1);
+> +	refcount_set(&sm->ref, 1);
+>  	sm->snap = snap;
+>  
+>  	exist = NULL;
+> @@ -1076,7 +1078,8 @@ struct ceph_snapid_map* ceph_get_snapid_map(struct ceph_mds_client *mdsc,
+>  		exist = NULL;
+>  	}
+>  	if (exist) {
+> -		if (atomic_inc_return(&exist->ref) == 1)
+> +		refcount_inc(&exist->ref);
+> +		if (refcount_read(&exist->ref) == 1)
 
-Indeed. It's an extremely coarse-grained mutex and not at all clear what
-it protects here.
+Hi Yejune,
 
-> The other idea I had was to fetch all the needed fscrypt contexts at the
-> end, after building the path.  But I didn't found a way for doing that
-> because to build the path... we need the contexts.
-> 
-> It looks like this leaves us with the locking rethinking option.
-> 
-> /me tries harder to find another way out
-> 
-> Cheers,
+I believe this patch is causing the regression reported here:
 
-The other option I think is to not store the context in an xattr at all,
-and instead make a dedicated field in the inode for it that we can
-ensure is always present for encrypted inodes.  For the most part the
-crypto context is a static thing. The only exception is when we're first
-encrypting an empty dir.
+    https://tracker.ceph.com/issues/50281
 
-We already have the fscrypt bool in the inodestat, and we're going to
-need another field to hold the real size for files. It may be worthwhile
-to just reconsider the design at that level. Maybe we just need to carve
-out a chunk of fscrypt space in the inode for the client and let it
-manage that however it sees fit.
--- 
+Note that the above two operations together aren't atomic like
+atomic_inc_return is, and I suspect this is causing the object to remain
+on the LRU list after its refcount has made a 0->1 transition. Does
+refcount_t allow a 0->1 transition like this code does?
+
+In any case, I'm dropping this patch for now.
+
+>  			list_del_init(&exist->lru);
+>  	} else {
+>  		rb_link_node(&sm->node, parent, p);
+> @@ -1099,7 +1102,7 @@ void ceph_put_snapid_map(struct ceph_mds_client* mdsc,
+>  {
+>  	if (!sm)
+>  		return;
+> -	if (atomic_dec_and_lock(&sm->ref, &mdsc->snapid_map_lock)) {
+> +	if (refcount_dec_and_lock(&sm->ref, &mdsc->snapid_map_lock)) {
+>  		if (!RB_EMPTY_NODE(&sm->node)) {
+>  			sm->last_used = jiffies;
+>  			list_add_tail(&sm->lru, &mdsc->snapid_map_lru);
+> @@ -1161,7 +1164,7 @@ void ceph_cleanup_snapid_map(struct ceph_mds_client *mdsc)
+>  		sm = list_first_entry(&to_free, struct ceph_snapid_map, lru);
+>  		list_del(&sm->lru);
+>  		free_anon_bdev(sm->dev);
+> -		if (WARN_ON_ONCE(atomic_read(&sm->ref))) {
+> +		if (WARN_ON_ONCE(refcount_read(&sm->ref))) {
+>  			pr_err("snapid map %llx -> %x still in use\n",
+>  			       sm->snap, sm->dev);
+>  		}
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index c48bb30c8d70..062123a73ef1 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -835,7 +835,7 @@ struct ceph_readdir_cache_control {
+>  struct ceph_snap_realm {
+>  	u64 ino;
+>  	struct inode *inode;
+> -	atomic_t nref;
+> +	refcount_t nref;
+>  	struct rb_node node;
+>  
+>  	u64 created, seq;
+
+Thanks,
+--
 Jeff Layton <jlayton@kernel.org>
 
