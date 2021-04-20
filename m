@@ -2,161 +2,180 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ADE8365A1E
-	for <lists+ceph-devel@lfdr.de>; Tue, 20 Apr 2021 15:31:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31030365AD0
+	for <lists+ceph-devel@lfdr.de>; Tue, 20 Apr 2021 16:07:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232026AbhDTNau (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 20 Apr 2021 09:30:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:50524 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232094AbhDTNat (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 20 Apr 2021 09:30:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618925417;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=iDb6WrC7VDPZck5aSTT091KDUyAeJbHqV5RPbCPvW3Y=;
-        b=XU+u7rQAoio73dzsKGKbRMeRD4fJ6+h7/DO4fj/AbBbgMbROGj6ZdvkY5AzsojOKol6+Ri
-        60blAmHrCNYDg6w+LAYIia/27wmv0W/c0Y0YTkWHI/q9hdDagEzde3QP8NqD4B7koM2RpR
-        GS6s42js3m6gsF0erzcar2kzEmIgBEM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-250-LAhRnWdqM8KN-UHn1b3fww-1; Tue, 20 Apr 2021 09:30:07 -0400
-X-MC-Unique: LAhRnWdqM8KN-UHn1b3fww-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0CEE28542C8;
-        Tue, 20 Apr 2021 13:30:06 +0000 (UTC)
-Received: from [10.72.13.181] (ovpn-13-181.pek2.redhat.com [10.72.13.181])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F35260CDE;
-        Tue, 20 Apr 2021 13:30:03 +0000 (UTC)
-Subject: Re: [PATCH] ceph: make the lost+found dir accessible by kernel client
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, pdonnell@redhat.com, ukernel@gmail.com,
-        ceph-devel@vger.kernel.org
-References: <20210419023237.1177430-1-xiubli@redhat.com>
- <02cc34a899aab7169ecfdc9b15bb5dcb3d19edd8.camel@kernel.org>
- <294a5c31-f40c-b424-0497-6737c5cd583d@redhat.com>
- <d42cceede1969f4542e01841bd1b2c6b17bc9aa3.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <79a9db17-fc0a-4a9a-0023-03b7c133584a@redhat.com>
-Date:   Tue, 20 Apr 2021 21:30:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+        id S232359AbhDTOHQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 20 Apr 2021 10:07:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40212 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232174AbhDTOHN (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 20 Apr 2021 10:07:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4A353613B0;
+        Tue, 20 Apr 2021 14:06:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1618927601;
+        bh=eoGCzC0ZUuHW4YjL6CnkAU4AuzDY6hjOppkhnjnl03U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LrMQ/uoYqNFICuyspeqe+ZUhIdsB0GH2iF00QVhBKAyau699wPXJ+OKorm41OAsiZ
+         AyzYvwemkj7dKeFK63v521dOvHeftjyn5LdJ4yIALdUS0h2MdfrcVNG2rV+RE7teHb
+         Qi5npk53PgLW1zuWzC0efhD8QHbbXH9o3muFPAKZTONfOwQ722XPuDMlBjsT5dEPW6
+         giuUnrqPXeB9/6yfhNCyxgnLHRLOag19DsLDjeiUX9Wj5Y2qBXQnNGBI77HHQ2yjWC
+         /7jKnMikpTqyEcxj9DvMvM+p74noIXTDPK5fjrj7fJLVaBctT+cNUukfXZRb+UHDQ3
+         VKZY+ZpzlT5cg==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     xiubli@redhat.com, pdonnell@redhat.com, idryomov@redhat.com
+Subject: [PATCH v2] ceph: don't allow access to MDS-private inodes
+Date:   Tue, 20 Apr 2021 10:06:39 -0400
+Message-Id: <20210420140639.33705-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <d42cceede1969f4542e01841bd1b2c6b17bc9aa3.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2021/4/20 20:51, Jeff Layton wrote:
-> On Tue, 2021-04-20 at 10:02 +0800, Xiubo Li wrote:
->> On 2021/4/20 0:09, Jeff Layton wrote:
->>> On Mon, 2021-04-19 at 10:32 +0800, xiubli@redhat.com wrote:
->>>> From: Xiubo Li <xiubli@redhat.com>
->>>>
->>>> Inode number 0x4 is reserved for the lost+found dir, and the app
->>>> or test app need to access it.
->>>>
->>>> URL: https://tracker.ceph.com/issues/50216
->>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>>> ---
->>>>    fs/ceph/super.h              | 3 ++-
->>>>    include/linux/ceph/ceph_fs.h | 7 ++++---
->>>>    2 files changed, 6 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
->>>> index 4808a1458c9b..0f38e6183ff0 100644
->>>> --- a/fs/ceph/super.h
->>>> +++ b/fs/ceph/super.h
->>>> @@ -542,7 +542,8 @@ static inline int ceph_ino_compare(struct inode *inode, void *data)
->>>>    
->>>>
->>>>
->>>>
->>>>    static inline bool ceph_vino_is_reserved(const struct ceph_vino vino)
->>>>    {
->>>> -	if (vino.ino < CEPH_INO_SYSTEM_BASE && vino.ino != CEPH_INO_ROOT) {
->>>> +	if (vino.ino < CEPH_INO_SYSTEM_BASE && vino.ino != CEPH_INO_ROOT &&
->>>> +	    vino.ino != CEPH_INO_LOST_AND_FOUND ) {
->>>>    		WARN_RATELIMIT(1, "Attempt to access reserved inode number 0x%llx", vino.ino);
->>>>    		return true;
->>>>    	}
->>>> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
->>>> index e41a811026f6..57e5bd63fb7a 100644
->>>> --- a/include/linux/ceph/ceph_fs.h
->>>> +++ b/include/linux/ceph/ceph_fs.h
->>>> @@ -27,9 +27,10 @@
->>>>    #define CEPH_MONC_PROTOCOL   15 /* server/client */
->>>>    
->>>>
->>>>
->>>>
->>>>    
->>>>
->>>>
->>>>
->>>> -#define CEPH_INO_ROOT   1
->>>> -#define CEPH_INO_CEPH   2       /* hidden .ceph dir */
->>>> -#define CEPH_INO_DOTDOT 3	/* used by ceph fuse for parent (..) */
->> Hi Jeff,
->>
->> Please fix the "CEPH_INO_DOTDOT" when you folding this patch. The inode
->> number 3 is not _DOTDOT any more. This was introduced by an very old
->> commit(dd6f5e105d85e) but I couldn't find the related change about this
->> in ceph code.
->>
->> It should be:
->>
->> #define CEPH_INO_GLOBAL_SNAPREALM 3
->>
->>
-> Sounds good. I can fold that change into the patch.
->
-> What should we use for a comment there? I took a look at the MDS code
-> and it wasn't clear to me what the global_snaprealm is actually for...
+The MDS reserves a set of inodes for its own usage, and these should
+never be accessible to clients. Add a new helper to vet a proposed
+inode number against that range, and complain loudly and refuse to
+create or look it up if it's in it. We do need to carve out an exception
+for the root and the lost+found directories.
 
-Maybe the commit comment title is a good choice from Zheng's initial commit:
+Also, ensure that the MDS doesn't try to delegate that range to us
+either. Print a warning if it does, and don't save the range in the
+xarray.
 
-commit 0f31d49de20bd40836dceebb06e12763a1def5e0
-Author: Yan, Zheng <ukernel@gmail.com>
-Date:   Thu Oct 26 15:32:29 2017 +0800
+URL: https://tracker.ceph.com/issues/49922
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Xiubo Li<xiubli@redhat.com>
+Reviewed-by: Patrick Donnelly <pdonnell@redhat.com>
+---
+ fs/ceph/export.c             |  8 ++++++++
+ fs/ceph/inode.c              |  3 +++
+ fs/ceph/mds_client.c         |  7 +++++++
+ fs/ceph/super.h              | 24 ++++++++++++++++++++++++
+ include/linux/ceph/ceph_fs.h |  7 ++++---
+ 5 files changed, 46 insertions(+), 3 deletions(-)
 
-     mds: attach inode with multiple hardlinks to dummy global snaprealm
+v2: allow lookups of lost+found dir inodes
+    flesh out and update the CEPH_INO_* definitions
 
-     The dummy global snaprealm includes all snapshots in the filesystem.
-     For any later snapshot, mds will COW the inode and preserve snap data.
-     These snap data will cover any possible snapshot on remote linkages
-     of the inode.
-
-
-
-
->>>> +#define CEPH_INO_ROOT           1
->>>> +#define CEPH_INO_CEPH           2 /* hidden .ceph dir */
->>>> +#define CEPH_INO_DOTDOT         3 /* used by ceph fuse for parent (..) */
->>>> +#define CEPH_INO_LOST_AND_FOUND 4 /* lost+found dir */
->>>>    
->>>>
->>>>
->>>>
->>>>    /* arbitrary limit on max # of monitors (cluster of 3 is typical) */
->>>>    #define CEPH_MAX_MON   31
->>> Thanks Xiubo,
->>>
->>> For some background, apparently cephfs-data-scan can create this
->>> directory, and the clients do need access to it. I'll fold this into the
->>> original patch that makes these inodes inaccessible (ceph: don't allow
->>> access to MDS-private inodes).
->>>
->>> Cheers!
->>
+diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+index 17d8c8f4ec89..65540a4429b2 100644
+--- a/fs/ceph/export.c
++++ b/fs/ceph/export.c
+@@ -129,6 +129,10 @@ static struct inode *__lookup_inode(struct super_block *sb, u64 ino)
+ 
+ 	vino.ino = ino;
+ 	vino.snap = CEPH_NOSNAP;
++
++	if (ceph_vino_is_reserved(vino))
++		return ERR_PTR(-ESTALE);
++
+ 	inode = ceph_find_inode(sb, vino);
+ 	if (!inode) {
+ 		struct ceph_mds_request *req;
+@@ -214,6 +218,10 @@ static struct dentry *__snapfh_to_dentry(struct super_block *sb,
+ 		vino.ino = sfh->ino;
+ 		vino.snap = sfh->snapid;
+ 	}
++
++	if (ceph_vino_is_reserved(vino))
++		return ERR_PTR(-ESTALE);
++
+ 	inode = ceph_find_inode(sb, vino);
+ 	if (inode)
+ 		return d_obtain_alias(inode);
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 14a1f7963625..e1c63adb196d 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -56,6 +56,9 @@ struct inode *ceph_get_inode(struct super_block *sb, struct ceph_vino vino)
+ {
+ 	struct inode *inode;
+ 
++	if (ceph_vino_is_reserved(vino))
++		return ERR_PTR(-EREMOTEIO);
++
+ 	inode = iget5_locked(sb, (unsigned long)vino.ino, ceph_ino_compare,
+ 			     ceph_set_ino_cb, &vino);
+ 	if (!inode)
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 63b53098360c..e5af591d3bd4 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -440,6 +440,13 @@ static int ceph_parse_deleg_inos(void **p, void *end,
+ 
+ 		ceph_decode_64_safe(p, end, start, bad);
+ 		ceph_decode_64_safe(p, end, len, bad);
++
++		/* Don't accept a delegation of system inodes */
++		if (start < CEPH_INO_SYSTEM_BASE) {
++			pr_warn_ratelimited("ceph: ignoring reserved inode range delegation (start=0x%llx len=0x%llx)\n",
++					start, len);
++			continue;
++		}
+ 		while (len--) {
+ 			int err = xa_insert(&s->s_delegated_inos, ino = start++,
+ 					    DELEGATED_INO_AVAILABLE,
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index df0851b9240e..f1745403c9b0 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -529,10 +529,34 @@ static inline int ceph_ino_compare(struct inode *inode, void *data)
+ 		ci->i_vino.snap == pvino->snap;
+ }
+ 
++/*
++ * The MDS reserves a set of inodes for its own usage. These should never
++ * be accessible by clients, and so the MDS has no reason to ever hand these
++ * out.
++ *
++ * These come from src/mds/mdstypes.h in the ceph sources.
++ */
++#define CEPH_MAX_MDS		0x100
++#define CEPH_NUM_STRAY		10
++#define CEPH_INO_SYSTEM_BASE	((6*CEPH_MAX_MDS) + (CEPH_MAX_MDS * CEPH_NUM_STRAY))
++
++static inline bool ceph_vino_is_reserved(const struct ceph_vino vino)
++{
++	if (vino.ino < CEPH_INO_SYSTEM_BASE &&
++	    vino.ino != CEPH_INO_ROOT &&
++	    vino.ino != CEPH_INO_LOST_AND_FOUND) {
++		WARN_RATELIMIT(1, "Attempt to access reserved inode number 0x%llx", vino.ino);
++		return true;
++	}
++	return false;
++}
+ 
+ static inline struct inode *ceph_find_inode(struct super_block *sb,
+ 					    struct ceph_vino vino)
+ {
++	if (ceph_vino_is_reserved(vino))
++		return NULL;
++
+ 	/*
+ 	 * NB: The hashval will be run through the fs/inode.c hash function
+ 	 * anyway, so there is no need to squash the inode number down to
+diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+index e41a811026f6..3c90ae21a7e1 100644
+--- a/include/linux/ceph/ceph_fs.h
++++ b/include/linux/ceph/ceph_fs.h
+@@ -27,9 +27,10 @@
+ #define CEPH_MONC_PROTOCOL   15 /* server/client */
+ 
+ 
+-#define CEPH_INO_ROOT   1
+-#define CEPH_INO_CEPH   2       /* hidden .ceph dir */
+-#define CEPH_INO_DOTDOT 3	/* used by ceph fuse for parent (..) */
++#define CEPH_INO_ROOT			1 /* root inode number for all cephfs's */
++#define CEPH_INO_CEPH			2 /* hidden .ceph dir */
++#define CEPH_INO_GLOBAL_SNAPREALM	3 /* includes all snapshots in the fs */
++#define CEPH_INO_LOST_AND_FOUND		4 /* lost+found dir */
+ 
+ /* arbitrary limit on max # of monitors (cluster of 3 is typical) */
+ #define CEPH_MAX_MON   31
+-- 
+2.31.1
 
