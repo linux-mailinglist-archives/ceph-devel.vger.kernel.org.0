@@ -2,137 +2,96 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 110BB365011
-	for <lists+ceph-devel@lfdr.de>; Tue, 20 Apr 2021 04:02:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1CDA365573
+	for <lists+ceph-devel@lfdr.de>; Tue, 20 Apr 2021 11:32:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbhDTCCr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 19 Apr 2021 22:02:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:59676 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229534AbhDTCCr (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 19 Apr 2021 22:02:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1618884136;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pjn5Jnac03tyPqVB71JyohrEqjg9UzBnWj7k4tQgGP0=;
-        b=LDfFfRkfhWaWx6K4nIdjZC3KLsf3TzirfsIVjkCga7SRa/ZjAZPu/hywAEpnt9z6GLR1uI
-        KIyaDwUuUYAEyVEvE4f2oGuHzyj91mmF2oCSTVJ6FBVVER00/EUdXphz9aEd879N5OKSWX
-        yr5AXsZEdCnilHa6qo4lkJemV4pSbBc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-444-s7rYD8FiOlOYlAdW5eAePA-1; Mon, 19 Apr 2021 22:02:13 -0400
-X-MC-Unique: s7rYD8FiOlOYlAdW5eAePA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6A8571922976;
-        Tue, 20 Apr 2021 02:02:12 +0000 (UTC)
-Received: from [10.72.13.181] (ovpn-13-181.pek2.redhat.com [10.72.13.181])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 859511980D;
-        Tue, 20 Apr 2021 02:02:10 +0000 (UTC)
-Subject: Re: [PATCH] ceph: make the lost+found dir accessible by kernel client
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, pdonnell@redhat.com, ukernel@gmail.com,
-        ceph-devel@vger.kernel.org
-References: <20210419023237.1177430-1-xiubli@redhat.com>
- <02cc34a899aab7169ecfdc9b15bb5dcb3d19edd8.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <294a5c31-f40c-b424-0497-6737c5cd583d@redhat.com>
-Date:   Tue, 20 Apr 2021 10:02:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+        id S231206AbhDTJdJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 20 Apr 2021 05:33:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37190 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229729AbhDTJdI (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 20 Apr 2021 05:33:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 93284B2DD;
+        Tue, 20 Apr 2021 09:32:36 +0000 (UTC)
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 3ec5d8ea;
+        Tue, 20 Apr 2021 09:34:05 +0000 (UTC)
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org
+Subject: Re: [RFC PATCH v6 20/20] ceph: add fscrypt ioctls
+References: <20210413175052.163865-1-jlayton@kernel.org>
+        <20210413175052.163865-21-jlayton@kernel.org> <87lf9emvqv.fsf@suse.de>
+        <f6fa8d02d31099a688ae97450143aa0eed4b73f8.camel@kernel.org>
+        <YH3f6YQ7cxWCVb+b@gmail.com>
+Date:   Tue, 20 Apr 2021 10:34:04 +0100
+In-Reply-To: <YH3f6YQ7cxWCVb+b@gmail.com> (Eric Biggers's message of "Mon, 19
+        Apr 2021 12:54:17 -0700")
+Message-ID: <87wnsxl2pf.fsf@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <02cc34a899aab7169ecfdc9b15bb5dcb3d19edd8.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 2021/4/20 0:09, Jeff Layton wrote:
-> On Mon, 2021-04-19 at 10:32 +0800, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> Inode number 0x4 is reserved for the lost+found dir, and the app
->> or test app need to access it.
->>
->> URL: https://tracker.ceph.com/issues/50216
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>   fs/ceph/super.h              | 3 ++-
->>   include/linux/ceph/ceph_fs.h | 7 ++++---
->>   2 files changed, 6 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
->> index 4808a1458c9b..0f38e6183ff0 100644
->> --- a/fs/ceph/super.h
->> +++ b/fs/ceph/super.h
->> @@ -542,7 +542,8 @@ static inline int ceph_ino_compare(struct inode *inode, void *data)
->>   
->>
->>
->>
->>   static inline bool ceph_vino_is_reserved(const struct ceph_vino vino)
->>   {
->> -	if (vino.ino < CEPH_INO_SYSTEM_BASE && vino.ino != CEPH_INO_ROOT) {
->> +	if (vino.ino < CEPH_INO_SYSTEM_BASE && vino.ino != CEPH_INO_ROOT &&
->> +	    vino.ino != CEPH_INO_LOST_AND_FOUND ) {
->>   		WARN_RATELIMIT(1, "Attempt to access reserved inode number 0x%llx", vino.ino);
->>   		return true;
->>   	}
->> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
->> index e41a811026f6..57e5bd63fb7a 100644
->> --- a/include/linux/ceph/ceph_fs.h
->> +++ b/include/linux/ceph/ceph_fs.h
->> @@ -27,9 +27,10 @@
->>   #define CEPH_MONC_PROTOCOL   15 /* server/client */
->>   
->>
->>
->>
->>   
->>
->>
->>
->> -#define CEPH_INO_ROOT   1
->> -#define CEPH_INO_CEPH   2       /* hidden .ceph dir */
->> -#define CEPH_INO_DOTDOT 3	/* used by ceph fuse for parent (..) */
+Eric Biggers <ebiggers@kernel.org> writes:
 
-Hi Jeff,
-
-Please fix the "CEPH_INO_DOTDOT" when you folding this patch. The inode 
-number 3 is not _DOTDOT any more. This was introduced by an very old 
-commit(dd6f5e105d85e) but I couldn't find the related change about this 
-in ceph code.
-
-It should be:
-
-#define CEPH_INO_GLOBAL_SNAPREALM 3
-
-
->> +#define CEPH_INO_ROOT           1
->> +#define CEPH_INO_CEPH           2 /* hidden .ceph dir */
->> +#define CEPH_INO_DOTDOT         3 /* used by ceph fuse for parent (..) */
->> +#define CEPH_INO_LOST_AND_FOUND 4 /* lost+found dir */
->>   
->>
->>
->>
->>   /* arbitrary limit on max # of monitors (cluster of 3 is typical) */
->>   #define CEPH_MAX_MON   31
-> Thanks Xiubo,
+> On Mon, Apr 19, 2021 at 08:19:59AM -0400, Jeff Layton wrote:
+>> On Mon, 2021-04-19 at 11:09 +0100, Luis Henriques wrote:
+>> > Hi Jeff!
+>> > 
+>> > Jeff Layton <jlayton@kernel.org> writes:
+>> > <...>
+>> > > +
+>> > > +	case FS_IOC_ADD_ENCRYPTION_KEY:
+>> > > +		ret = vet_mds_for_fscrypt(file);
+>> > > +		if (ret)
+>> > > +			return ret;
+>> > > +		atomic_inc(&ci->i_shared_gen);
+>> > 
+>> > After spending some (well... a lot, actually) time looking at the MDS code
+>> > to try to figure out my bug, I'm back at this point in the kernel client
+>> > code.  I understand that this code is trying to invalidate the directory
+>> > dentries here.  However, I just found that the directory we get at this
+>> > point is the filesystem root directory, and not the directory we're trying
+>> > to unlock.
+>> > 
+>> > So, I still don't fully understand the issue I'm seeing, but I believe the
+>> > code above is assuming 'ci' is the inode being unlocked, which isn't
+>> > correct.
+>> > 
+>> > (Note: I haven't checked if there are other ioctls getting the FS root.)
+>> > 
+>> > Cheers,
+>> 
+>> 
+>> Oh, interesting. That was my assumption. I'll have to take a look more
+>> closely at what effect that might have then.
+>> 
 >
-> For some background, apparently cephfs-data-scan can create this
-> directory, and the clients do need access to it. I'll fold this into the
-> original patch that makes these inodes inaccessible (ceph: don't allow
-> access to MDS-private inodes).
+> FS_IOC_ADD_ENCRYPTION_KEY, FS_IOC_REMOVE_ENCRYPTION_KEY,
+> FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS, and FS_IOC_GET_ENCRYPTION_KEY_STATUS can
+> all be executed on any file or directory on the filesystem (but preferably on
+> the root directory) because they are operations on the filesystem, not on any
+> specific file or directory.  They deal with encryption keys, which can protect
+> any number of encrypted directories (even 0 or a large number) and/or even loose
+> encrypted files that got moved into an unencrypted directory.
 >
-> Cheers!
+> Note that this is all described in the documentation
+> (https://www.kernel.org/doc/html/latest/filesystems/fscrypt.html).
+> If the documentation is unclear please suggest improvements to it.
+>
+> Also, there shouldn't be any need for FS_IOC_ADD_ENCRYPTION_KEY to invalidate
+> dentries itself because that is the point of fscrypt_d_revalidate(); the
+> invalidation happens on-demand later.
 
+I think the documentation is very clear regarding these ioctls.  I guess I
+just need to go refresh my memory as I have read that document long time
+ago.  Thanks for reminding me to do that ;-)
 
+Cheers,
+-- 
+Luis
