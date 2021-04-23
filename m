@@ -2,229 +2,376 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E87C9369218
-	for <lists+ceph-devel@lfdr.de>; Fri, 23 Apr 2021 14:28:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F289369310
+	for <lists+ceph-devel@lfdr.de>; Fri, 23 Apr 2021 15:28:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242226AbhDWM2e (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 23 Apr 2021 08:28:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36402 "EHLO
+        id S229931AbhDWN2l (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 23 Apr 2021 09:28:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57002 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230225AbhDWM2Z (ORCPT
+        by vger.kernel.org with ESMTP id S231169AbhDWN2k (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 23 Apr 2021 08:28:25 -0400
+        Fri, 23 Apr 2021 09:28:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619180868;
+        s=mimecast20190719; t=1619184483;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BUCknGaECMccNqkzjD/jT3wcgWhxDpUrsKhzWIREQMQ=;
-        b=G9+eO8r6Xwrrr18o4WImeDBNmImtohBfhH+7HrdpJxpCRJNoAg4pDUQQ5c5XUaTeII7He7
-        mtiCgQIexpK6wuHlPrO78FH2k7SAMLCG03EaBrMeYEKnxB9+Z4kiCUc72ZtpgkR4OWg8nw
-        TfL6lfu3aPxMxmaCdahqbdtiRNntIgk=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-601-Ch5GYo4rMqiijZkOuimH8Q-1; Fri, 23 Apr 2021 08:27:47 -0400
-X-MC-Unique: Ch5GYo4rMqiijZkOuimH8Q-1
-Received: by mail-qk1-f197.google.com with SMTP id g76-20020a379d4f0000b02902e40532d832so8064676qke.20
-        for <ceph-devel@vger.kernel.org>; Fri, 23 Apr 2021 05:27:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=BUCknGaECMccNqkzjD/jT3wcgWhxDpUrsKhzWIREQMQ=;
-        b=GXN4jcoTLFHPwCs0kgZtq1G1FEgwqHCyS0SZ0JOM5fp66MrhUGclRY/XDUYjx3GCx+
-         9kRfSNsaa5pJQast0SrnhyFkM49cQy1n0uRb2bSFuCBQSHONc1OJ3H9ypCb0RgkqZ/bO
-         h5a8gah0I+evJBVtdH0hEXTRYnUt6S7LV9vcBWRCVuoDKv5jDPXMsnPrIIP5uPHeHi/f
-         tKom14OutPV7rXfjtWPE9JQGvVCjEMGUMS9WdzL3bHywvUPU4WCSRxMUgFZdpf/xrPgv
-         /ciJFv0EVmqfKnBgEt4fdTOjTBuXlw2OhYa5czbXiiyLHfqbWXITOzEqpDY8sdsCRJs8
-         pEaw==
-X-Gm-Message-State: AOAM533F18C4191XM75eOK7aFyhnwi3TRnOwFvPDk9tmSnAA/ZOk9Wxm
-        qVKaDuy8H/DT0Z67FqXCmqznuhr0vMwF2Y38RcmEoyt7EzRq8SFIXcjCIxYtt12KmVzw6XY2bvX
-        ENq/tMk3l+xvisnDAFwaq2g==
-X-Received: by 2002:a0c:b38b:: with SMTP id t11mr4126601qve.25.1619180866684;
-        Fri, 23 Apr 2021 05:27:46 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxb6dvqX428pGeq9+NsB7Tvdt+ecKaIwFd/PHbjNh4g4OxphiryWzVxpioNeiobm6v0e+PKKQ==
-X-Received: by 2002:a0c:b38b:: with SMTP id t11mr4126544qve.25.1619180866079;
-        Fri, 23 Apr 2021 05:27:46 -0700 (PDT)
-Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id g4sm4261523qtg.86.2021.04.23.05.27.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Apr 2021 05:27:45 -0700 (PDT)
-Message-ID: <eec1ed73f778a17d4150da9bb001d1457c06ffae.camel@redhat.com>
-Subject: Re: ceph-mds infrastructure for fscrypt
-From:   Jeff Layton <jlayton@redhat.com>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     dev <dev@ceph.io>, ceph-devel@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Xiubo Li <xiubli@redhat.com>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        Douglas Fuller <dfuller@redhat.com>
-Date:   Fri, 23 Apr 2021 08:27:44 -0400
-In-Reply-To: <8735vh8bpt.fsf@suse.de>
-References: <5aac4d2dca148766caf595975570e97ec2241e24.camel@redhat.com>
-         <8735vh8bpt.fsf@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
+         content-transfer-encoding:content-transfer-encoding;
+        bh=fgAQQenobEWYstg9pcJuC//eWI8m5rKdQLYf2IY4wNo=;
+        b=W7CStn2AHDIaiHxsFUakGcYIRPjNo4QLz6wxk+2OzZjLxKkI77N9WdivQl4XoVMcN7+/+m
+        yOmCkD6KuVKwpJzr/bwfJaW56V2Eo747Qd5KAUBArg0M515idW48JPoK0wfQ1MZwZf6W8o
+        akgUTCeYE83Fyo/NLKjwUgBFx7IpWhU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-577-CCOZSrROPfiKIDqDntt_4Q-1; Fri, 23 Apr 2021 09:27:59 -0400
+X-MC-Unique: CCOZSrROPfiKIDqDntt_4Q-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 45E5F88127C;
+        Fri, 23 Apr 2021 13:27:56 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-124.rdu2.redhat.com [10.10.112.124])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 75BC460854;
+        Fri, 23 Apr 2021 13:27:48 +0000 (UTC)
+Subject: [PATCH v7 00/31] Network fs helper library & fscache kiocb API
+From:   David Howells <dhowells@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-cachefs@redhat.com,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        v9fs-developer@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-afs@lists.infradead.org,
+        Dave Wysochanski <dwysocha@redhat.com>, dhowells@redhat.com,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Date:   Fri, 23 Apr 2021 14:27:47 +0100
+Message-ID: <161918446704.3145707.14418606303992174310.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2021-04-23 at 12:46 +0100, Luis Henriques wrote:
-> Jeff Layton <jlayton@redhat.com> writes:
-> 
-> > tl;dr: we need to change the MDS infrastructure for fscrypt (again), and
-> > I want to do it in a way that would clean up some existing mess and more
-> > easily allow for future changes. The design is a bit odd though...
-> 
-> Thanks for summarizing this issue in an email.  It really helps to see the
-> full picture.
-> 
-> > Sorry for the long email here, but I needed communicate this design, and
-> > the rationale for the changes I'm proposing. First, the rationale:
-> > 
-> > I've been (intermittently) working on the fscrypt implementation for
-> > cephfs, and have posted a few different draft proposals for the first
-> > part of it [1], which rely on a couple of changes in the MDS:
-> > 
-> > - the alternate_names feature [2]. This is needed to handle extra-long
-> >   filenames without allowing unprintable characters in the filename.
-> > 
-> > - setting an "fscrypted" flag if the inode has an fscrypt context blob
-> >   in encryption.ctx xattr [3].
-> > 
-> > With the filenames part more or less done, the next steps are to plumb
-> > in content encryption. Because the MDS handles truncates, we have to
-> > teach it to align those on fscrypt block boundaries. Rather than foist
-> > those details onto the MDS, the current idea is to add an opaque blob to
-> > the inode that would get updated along with size changes. The client
-> > would be responsible for filling out that field with the actual i_size,
-> > and would always round the existing size field up to the end of the last
-> > crypto block. That keeps the real size opaque to the MDS and the
-> > existing size handling logic should "just work". Regardless, that means
-> > we need another inode field for the size.
-> > 
-> > Storing the context in an xattr is also proving to be problematic [4].
-> > There are some situations where we can end up with an inode that is
-> > flagged as encrypted but doesn't have the caps to trust its xattrs. We
-> > could just treat "encryption.ctx" as special and not require Xs caps to
-> > read whatever cached value we have, and that might fix that issue, but
-> > I'm not fully convinced that's foolproof. We might end up with no cached
-> > context on a directory that is actually encrypted in some cases and not
-> > have a context.
-> > 
-> > At this point, I'm thinking it might be best to unify all of the 
-> > per-inode info into a single field that the MDS would treat as opaque.
-> > Note that the alternate_names feature would remain more or less
-> > untouched since it's associated more with dentries than inodes.
-> > 
-> > The initial version of this field would look something like this:
-> > 
-> > struct ceph_fscrypt_context {
-> > 	u8				version;	// == 1
-> > 	struct fscrypt_context_v2	fscrypt_ctx;	// 40 bytes
-> > 	__le32				blocksize	// 4k for now
-> > 	__le64				size;		// "real"
-> > i_size
-> > };
-> > 
-> > The MDS would send this along with any size updates (InodeStat, and
-> > MClientCaps replies). The client would need to send this in cap
-> > flushes/updates, and we'd also need to extend the SETATTR op too, so the
-> > client can update this field in truncates (at least).
-> > 
-> > I don't look forward to having to plumb this into all of the different
-> > client ops that can create inodes though. What I'm thinking we might
-> > want to do is expose this field as the "ceph.fscrypt" vxattr.
-> > 
-> > The client can stuff that into the xattr blob when creating a new inode,
-> > and the MDS can scrape it out of that and move the data into the correct
-> > field in the inode. A setxattr on this field would update the new field
-> > too. It's an ugly interface, but shouldn't be too bad to handle and we
-> > have some precedent for this sort of thing.
-> 
-> I don't really have an objection for this, but I'm not sure I understand
-> why we would want to have this as a vxattr if the it will really be stored
-> in the inode.  Will this make things easier on the client side?  Or is
-> that just a matter of having visibility into these fields?
-> 
 
-Mainly because I don't want to have to extend a bunch of MDS calls. We
-need to ship the context along with every create, which means we'd need
-to extend the MClientRequest calls for openc, mkdir, mknod, symlink,
-etc. Since we already send an xattr blob with all of those, we can just
-stuff this into there and avoid having to extend them all.
+Here's a set of patches to do two things:
 
-Being able to fetch the value with getxattr is sort of secondary, but
-it's nice too.
+ (1) Add a helper library to handle the new VM readahead interface.  This
+     is intended to be used unconditionally by the filesystem (whether or
+     not caching is enabled) and provides a common framework for doing
+     caching, transparent huge pages and, in the future, possibly fscrypt
+     and read bandwidth maximisation.  It also allows the netfs and the
+     cache to align, expand and slice up a read request from the VM in
+     various ways; the netfs need only provide a function to read a stretch
+     of data to the pagecache and the helper takes care of the rest.
 
-> The rules for handling the new field in the client would be a bitweird
-> > though. We'll need to allow it to reading the fscrypt_ctx part without
-> > any caps (since that should be static once it's set), but the size
-> 
-> The PIN cap seems to fit here as the ctx can be considered an "immutable"
-> field to some extent.  This means that, if there's a context, it's safe to
-> assume it's valid.
-> 
-> If it's possible to request PIN caps to be revoked (is it?), a client
-> could simply do that when a directory is initially encrypted.  After that,
-> any client getting PIN caps for it will have the new fscrypt_ctx.
-> 
+ (2) Add an alternative fscache/cachfiles I/O API that uses the kiocb
+     facility to do async DIO to transfer data to/from the netfs's pages,
+     rather than using readpage with wait queue snooping on one side and
+     vfs_write() on the other.  It also uses less memory, since it doesn't
+     do buffered I/O on the backing file.
 
-The client doesn't get to request a revocation from another client. It
-can request caps itself (or do a regular MDS request), and the MDS may
-revoke them from another client if they conflict. We'd need this to be
-under some sort of cap with "exclusive" semantics, I think.
+     Note that this uses SEEK_HOLE/SEEK_DATA to locate the data available
+     to be read from the cache.  Whilst this is an improvement from the
+     bmap interface, it still has a problem with regard to a modern
+     extent-based filesystem inserting or removing bridging blocks of
+     zeros.  Fixing that requires a much greater overhaul.
 
-> > handling needs to be under the same caps as the traditional size field
-> > (Is that Fsx? The rules for this are never quite clear to me.)
-> 
->  [ A different question which is maybe a bit OT in this context but that
->    pops up in my mind quite often is how to handle multiple writers to the
->    same file.  It should be OK to have 2 clients doing O_DIRECT as long as
->    they are writing to different encryption blocks but it's still tricky,
->    isn't it?  Can't we end-up with a corrupted file that is completely
->    unrecoverable?  Should O_DIRECT be forbid in encrypted inodes?  Not to
->    mention LAZYIO... ]
-> 
+This is a step towards overhauling the fscache API.  The change is opt-in
+on the part of the network filesystem.  A netfs should not try to mix the
+old and the new API because of conflicting ways of handling pages and the
+PG_fscache page flag and because it would be mixing DIO with buffered I/O.
+Further, the helper library can't be used with the old API.
 
-If the client doesn't have Fb caps and wants to write a partial block,
-then it'll have to do a read/modify/write cycle, and the write will have
-to assert that the object version hasn't changed since read.
+This does not change any of the fscache cookie handling APIs or the way
+invalidation is done.
 
-So basically:
+In the near term, I intend to deprecate and remove the old I/O API
+(fscache_allocate_page{,s}(), fscache_read_or_alloc_page{,s}(),
+fscache_write_page() and fscache_uncache_page()) and eventually replace
+most of fscache/cachefiles with something simpler and easier to follow.
 
-- read the complete block and get the object version
-- decrypt it
-- modify and reencrypt it
-- do a write but preface the OSD write with a version assert that the
-data hasn't changed
+The patchset contains the following parts:
 
-If we hit the version assertion, just do the whole thing all over again.
-Terribly inefficient, but it should be safe.
+ (1) Some helper patches, including provision of an ITER_XARRAY iov
+     iterator and a function to do readahead expansion.
 
-I'll also note that the rados libraries have a way to assert on an
-extent not having changed, so we could potentially do this a bit more
-efficiently if we have multiple writers writing different blocks in the
-same object.
+ (2) Patches to add the netfs helper library.
 
-> > Would it be better to have two different fields here -- fscrypt_auth and
-> > fscrypt_file? Or maybe, fscrypt_static/_dynamic? We don't necessarily
-> > need to keep all of this info together, but it seemed neater that way.
-> > 
-> > Thoughts? Opinions? Is this a horrible idea? What would be better?
-> 
-> I've been looping through this since yesterday and I'm convinced the
-> design will need to be something close to what you just described.  I
-> can't poke holes in it, but the devil is always on the details.
-> 
+ (3) A patch to add the fscache/cachefiles kiocb API.
 
-Indeed. Please do let me know if you see anything. Thanks for the
-thoughts on the matter!
+ (4) Patches to add support in AFS for this.
 
--- 
-Jeff Layton <jlayton@redhat.com>
+Jeff Layton has patches to add support in Ceph for this.
+
+With this, AFS without a cache passes all expected xfstests; with a cache,
+there's an extra failure, but that's also there before these patches.
+Fixing that probably requires a greater overhaul.  Ceph also passes the
+expected tests.
+
+The netfs lib and fscache/cachefiles patches can be found also on:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-lib
+
+The afs patches can be found on:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-netfs-lib
+
+I also have some supplementary patches to tidy up the handling of
+PG_fscache/PG_private_2 and their contribution to page refcounting in the
+core kernel here, but I haven't included them in this set and will route
+them separately:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-lib-mm
+
+
+Changes
+=======
+
+ver #7:
+      Put some missing compound_head() calls in the *_page_private_2()
+      functions[11].
+
+      Included a patch from Matthew Wilcox to make it possible to modify
+      the readahead_control descriptor in a filesystem without occasionally
+      triggering a BUG in the VM core[12].
+
+      Renamed iter_xarray_copy_pages() to iter_xarray_populate_pages() as
+      it doesn't copy the contents of the pages, but rather fills out a
+      list of pages[13].
+
+ver #6:
+      Merged in some fixes and added an additional tracepoint[8], including
+      fixing the amalgamation of contiguous subrequests that are to be
+      written to the cache.
+
+      Added/merged some patches from Matthew Wilcox to make
+      readahead_expand() appropriately adjust the trigger for the next
+      readahead[9].  Also included is a patch to kerneldocify the
+      file_ra_state struct.
+
+      Altered netfs_write_begin() to use DEFINE_READAHEAD()[10].
+
+      Split the afs patches out into their own branch.
+
+ver #5:
+      Fixed some review comments from Matthew Wilcox:
+
+      - Put a comment into netfs_readahead() to indicate why there's a loop
+        that puts, but doesn't unlock, "unconsumed" pages at the end when
+        it could just return said pages to the caller to dispose of[6].
+        (This is because where those pages are marked consumed).
+
+      - Use the page_file_mapping() and page_index() helper functions
+      	rather than accessing the page struct directly[6].
+
+      - Better names for wrangling functions for PG_private_2 and
+        PG_fscache wrangling functions[7].  Came up with
+        {set,end,wait_for}_page_private_2() and aliased these for fscache.
+
+      Moved the taking of/dropping a page ref for the PG_private_2 flag
+      into the set and end functions.
+
+ver #4:
+      Fixed some review comments from Christoph Hellwig, including dropping
+      the export of rw_verify_area()[3] and some minor stuff[4].
+
+      Moved the declaration of readahead_expand() to a better location[5].
+
+      Rebased to v5.12-rc2 and added a bunch of references into individual
+      commits.
+
+      Dropped Ceph support - that will go through the maintainer's tree.
+
+      Added interface documentation for the netfs helper library.
+
+ver #3:
+      Rolled in the bug fixes.
+
+      Adjusted the functions that unlock and wait for PG_fscache according
+      to Linus's suggestion[1].
+
+      Hold a ref on a page when PG_fscache is set as per Linus's
+      suggestion[2].
+
+      Dropped NFS support and added Ceph support.
+
+ver #2:
+      Fixed some bugs and added NFS support.
+
+Link: https://lore.kernel.org/r/CAHk-=wh+2gbF7XEjYc=HV9w_2uVzVf7vs60BPz0gFA=+pUm3ww@mail.gmail.com/ [1]
+Link: https://lore.kernel.org/r/CAHk-=wjgA-74ddehziVk=XAEMTKswPu1Yw4uaro1R3ibs27ztw@mail.gmail.com/ [2]
+Link: https://lore.kernel.org/r/20210216102614.GA27555@lst.de/ [3]
+Link: https://lore.kernel.org/r/20210216084230.GA23669@lst.de/ [4]
+Link: https://lore.kernel.org/r/20210217161358.GM2858050@casper.infradead.org/ [5]
+Link: https://lore.kernel.org/r/20210321014202.GF3420@casper.infradead.org/ [6]
+Link: https://lore.kernel.org/r/20210321105309.GG3420@casper.infradead.org/ [7]
+Link: https://lore.kernel.org/r/161781041339.463527.18139104281901492882.stgit@warthog.procyon.org.uk/ [8]
+Link: https://lore.kernel.org/r/20210407201857.3582797-1-willy@infradead.org/ [9]
+Link: https://lore.kernel.org/r/1234933.1617886271@warthog.procyon.org.uk/ [10]
+Link: https://lore.kernel.org/r/20210408145057.GN2531743@casper.infradead.org/ [11]
+Link: https://lore.kernel.org/r/20210421170923.4005574-1-willy@infradead.org/ [12]
+Link: https://lore.kernel.org/r/27c369a8f42bb8a617672b2dc0126a5c6df5a050.camel@kernel.org [13]
+
+References
+==========
+
+These patches have been published for review before, firstly as part of a
+larger set:
+
+Link: https://lore.kernel.org/r/158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk/
+
+Link: https://lore.kernel.org/r/159465766378.1376105.11619976251039287525.stgit@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/159465784033.1376674.18106463693989811037.stgit@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/159465821598.1377938.2046362270225008168.stgit@warthog.procyon.org.uk/
+
+Link: https://lore.kernel.org/r/160588455242.3465195.3214733858273019178.stgit@warthog.procyon.org.uk/
+
+Then as a cut-down set:
+
+Link: https://lore.kernel.org/r/161118128472.1232039.11746799833066425131.stgit@warthog.procyon.org.uk/ # v1
+
+Link: https://lore.kernel.org/r/161161025063.2537118.2009249444682241405.stgit@warthog.procyon.org.uk/ # v2
+
+Link: https://lore.kernel.org/r/161340385320.1303470.2392622971006879777.stgit@warthog.procyon.org.uk/ # v3
+
+Link: https://lore.kernel.org/r/161539526152.286939.8589700175877370401.stgit@warthog.procyon.org.uk/ # v4
+
+Link: https://lore.kernel.org/r/161653784755.2770958.11820491619308713741.stgit@warthog.procyon.org.uk/ # v5
+
+Link: https://lore.kernel.org/r/161789062190.6155.12711584466338493050.stgit@warthog.procyon.org.uk/ # v6
+
+Proposals/information about the design has been published here:
+
+Link: https://lore.kernel.org/r/24942.1573667720@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/2758811.1610621106@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/1441311.1598547738@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/160655.1611012999@warthog.procyon.org.uk/
+
+And requests for information:
+
+Link: https://lore.kernel.org/r/3326.1579019665@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/4467.1579020509@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/3577430.1579705075@warthog.procyon.org.uk/
+
+I've posted partial patches to try and help 9p and cifs along:
+
+Link: https://lore.kernel.org/r/1514086.1605697347@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/1794123.1605713481@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/241017.1612263863@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/270998.1612265397@warthog.procyon.org.uk/
+
+David
+---
+David Howells (28):
+      iov_iter: Add ITER_XARRAY
+      mm: Add set/end/wait functions for PG_private_2
+      mm: Implement readahead_control pageset expansion
+      netfs: Make a netfs helper module
+      netfs: Documentation for helper library
+      netfs, mm: Move PG_fscache helper funcs to linux/netfs.h
+      netfs, mm: Add set/end/wait_on_page_fscache() aliases
+      netfs: Provide readahead and readpage netfs helpers
+      netfs: Add tracepoints
+      netfs: Gather stats
+      netfs: Add write_begin helper
+      netfs: Define an interface to talk to a cache
+      netfs: Add a tracepoint to log failures that would be otherwise unseen
+      fscache, cachefiles: Add alternate API to use kiocb for read/write to cache
+      afs: Disable use of the fscache I/O routines
+      afs: Pass page into dirty region helpers to provide THP size
+      afs: Print the operation debug_id when logging an unexpected data version
+      afs: Move key to afs_read struct
+      afs: Don't truncate iter during data fetch
+      afs: Log remote unmarshalling errors
+      afs: Set up the iov_iter before calling afs_extract_data()
+      afs: Use ITER_XARRAY for writing
+      afs: Wait on PG_fscache before modifying/releasing a page
+      afs: Extract writeback extension into its own function
+      afs: Prepare for use of THPs
+      afs: Use the fs operation ops to handle FetchData completion
+      afs: Use new netfs lib read helper API
+      afs: Use the netfs_write_begin() helper
+
+Matthew Wilcox (Oracle) (3):
+      mm/filemap: Pass the file_ra_state in the ractl
+      fs: Document file_ra_state
+      mm/readahead: Handle ractl nr_pages being modified
+
+
+ Documentation/filesystems/index.rst         |    1 +
+ Documentation/filesystems/netfs_library.rst |  526 ++++++++
+ fs/Kconfig                                  |    1 +
+ fs/Makefile                                 |    1 +
+ fs/afs/Kconfig                              |    1 +
+ fs/afs/dir.c                                |  225 ++--
+ fs/afs/file.c                               |  483 ++------
+ fs/afs/fs_operation.c                       |    4 +-
+ fs/afs/fsclient.c                           |  108 +-
+ fs/afs/inode.c                              |    7 +-
+ fs/afs/internal.h                           |   59 +-
+ fs/afs/rxrpc.c                              |  150 +--
+ fs/afs/write.c                              |  657 +++++-----
+ fs/afs/yfsclient.c                          |   82 +-
+ fs/cachefiles/Makefile                      |    1 +
+ fs/cachefiles/interface.c                   |    5 +-
+ fs/cachefiles/internal.h                    |    9 +
+ fs/cachefiles/io.c                          |  420 +++++++
+ fs/ext4/verity.c                            |    2 +-
+ fs/f2fs/file.c                              |    2 +-
+ fs/f2fs/verity.c                            |    2 +-
+ fs/fscache/Kconfig                          |    1 +
+ fs/fscache/Makefile                         |    1 +
+ fs/fscache/internal.h                       |    4 +
+ fs/fscache/io.c                             |  116 ++
+ fs/fscache/page.c                           |    2 +-
+ fs/fscache/stats.c                          |    1 +
+ fs/netfs/Kconfig                            |   23 +
+ fs/netfs/Makefile                           |    5 +
+ fs/netfs/internal.h                         |   97 ++
+ fs/netfs/read_helper.c                      | 1185 +++++++++++++++++++
+ fs/netfs/stats.c                            |   59 +
+ include/linux/fs.h                          |   24 +-
+ include/linux/fscache-cache.h               |    4 +
+ include/linux/fscache.h                     |   50 +-
+ include/linux/netfs.h                       |  234 ++++
+ include/linux/pagemap.h                     |   42 +-
+ include/net/af_rxrpc.h                      |    2 +-
+ include/trace/events/afs.h                  |   74 +-
+ include/trace/events/netfs.h                |  261 ++++
+ mm/filemap.c                                |   65 +-
+ mm/internal.h                               |    7 +-
+ mm/readahead.c                              |  101 +-
+ net/rxrpc/recvmsg.c                         |    9 +-
+ 44 files changed, 4003 insertions(+), 1110 deletions(-)
+ create mode 100644 Documentation/filesystems/netfs_library.rst
+ create mode 100644 fs/cachefiles/io.c
+ create mode 100644 fs/fscache/io.c
+ create mode 100644 fs/netfs/Kconfig
+ create mode 100644 fs/netfs/Makefile
+ create mode 100644 fs/netfs/internal.h
+ create mode 100644 fs/netfs/read_helper.c
+ create mode 100644 fs/netfs/stats.c
+ create mode 100644 include/linux/netfs.h
+ create mode 100644 include/trace/events/netfs.h
+
 
