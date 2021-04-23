@@ -2,111 +2,82 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 932D036986A
-	for <lists+ceph-devel@lfdr.de>; Fri, 23 Apr 2021 19:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5904C3699BA
+	for <lists+ceph-devel@lfdr.de>; Fri, 23 Apr 2021 20:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243459AbhDWRbC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 23 Apr 2021 13:31:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43726 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243432AbhDWRa7 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 23 Apr 2021 13:30:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 57F40B1D5;
-        Fri, 23 Apr 2021 17:30:19 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id C01801F2BBB; Fri, 23 Apr 2021 19:30:18 +0200 (CEST)
-From:   Jan Kara <jack@suse.cz>
-To:     <linux-fsdevel@vger.kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
+        id S243462AbhDWScF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 23 Apr 2021 14:32:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39842 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229691AbhDWScE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 23 Apr 2021 14:32:04 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3610EC061574;
+        Fri, 23 Apr 2021 11:31:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=19MC/ECN3OWEttJSfNKYhsEBI3DWNTT+3puFZa754BA=; b=q2fnOVoW6AVeExxSOF8pr+ERGP
+        yfxbQCEhL3SoJ9S4pecr6zRB0GmmsCxrZukyAdiAMif6SHNvdOE1E7U120Ij1sP+Z3+wdrWsoURWi
+        PmYCkHgT1eriQFe7P0ERXjHBCO+9JlTYV8aQVmtgIJjR8lvgL3cyavi3FEjHoHFTxc21WAQ4f2Zz+
+        sV1Z4B6IbOjs6KU46Pmsh7fntCFyTamR96j2R8oTTo7FP6sAhPbe7AQKxieTOEdSvtIYQdjJzcTxN
+        +xIAsRybN9Pq4T5YBkQNFpvPqSZSTBjscy226S2phOUwKGDjVYieWIwk09t7BsYB4/T18YLR5tOTh
+        NjjW6VQg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1la0Zc-002EBZ-Af; Fri, 23 Apr 2021 18:30:48 +0000
+Date:   Fri, 23 Apr 2021 19:30:40 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
         Amir Goldstein <amir73il@gmail.com>,
         Dave Chinner <david@fromorbit.com>, Ted Tso <tytso@mit.edu>,
-        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
-        ceph-devel@vger.kernel.org
-Subject: [PATCH 11/12] ceph: Fix race between hole punch and page fault
-Date:   Fri, 23 Apr 2021 19:29:40 +0200
-Message-Id: <20210423173018.23133-11-jack@suse.cz>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210423171010.12-1-jack@suse.cz>
+        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Thumshirn <jth@kernel.org>,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>
+Subject: Re: [PATCH 02/12] mm: Protect operations adding pages to page cache
+ with invalidate_lock
+Message-ID: <20210423183040.GD235567@casper.infradead.org>
 References: <20210423171010.12-1-jack@suse.cz>
+ <20210423173018.23133-2-jack@suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210423173018.23133-2-jack@suse.cz>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Ceph has a following race between hole punching and page fault:
+On Fri, Apr 23, 2021 at 07:29:31PM +0200, Jan Kara wrote:
+> Currently, serializing operations such as page fault, read, or readahead
+> against hole punching is rather difficult. The basic race scheme is
+> like:
+> 
+> fallocate(FALLOC_FL_PUNCH_HOLE)			read / fault / ..
+>   truncate_inode_pages_range()
+> 						  <create pages in page
+> 						   cache here>
+>   <update fs block mapping and free blocks>
+> 
+> Now the problem is in this way read / page fault / readahead can
+> instantiate pages in page cache with potentially stale data (if blocks
+> get quickly reused). Avoiding this race is not simple - page locks do
+> not work because we want to make sure there are *no* pages in given
+> range.
 
-CPU1                                  CPU2
-ceph_fallocate()
-  ...
-  ceph_zero_pagecache_range()
-                                      ceph_filemap_fault()
-                                        faults in page in the range being
-                                        punched
-  ceph_zero_objects()
+One of the things I've had in mind for a while is moving the DAX locked
+entry concept into the page cache proper.  It would avoid creating the
+new semaphore, at the cost of taking the i_pages lock twice (once to
+insert the entries that cover the range, and once to delete the entries).
 
-And now we have a page in punched range with invalid data. Fix the
-problem by using mapping->invalidate_lock similarly to other
-filesystems. Note that using invalidate_lock also fixes a similar race
-wrt ->readpage().
-
-CC: Jeff Layton <jlayton@kernel.org>
-CC: ceph-devel@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/ceph/addr.c | 9 ++++++---
- fs/ceph/file.c | 2 ++
- 2 files changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 26e66436f005..4f45e9754b5a 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1519,9 +1519,11 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
- 		ret = VM_FAULT_SIGBUS;
- 	} else {
- 		struct address_space *mapping = inode->i_mapping;
--		struct page *page = find_or_create_page(mapping, 0,
--						mapping_gfp_constraint(mapping,
--						~__GFP_FS));
-+		struct page *page;
-+
-+		down_read(&mapping->invalidate_lock);
-+		page = find_or_create_page(mapping, 0,
-+				mapping_gfp_constraint(mapping, ~__GFP_FS));
- 		if (!page) {
- 			ret = VM_FAULT_OOM;
- 			goto out_inline;
-@@ -1542,6 +1544,7 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
- 		vmf->page = page;
- 		ret = VM_FAULT_MAJOR | VM_FAULT_LOCKED;
- out_inline:
-+		up_read(&mapping->invalidate_lock);
- 		dout("filemap_fault %p %llu~%zd read inline data ret %x\n",
- 		     inode, off, (size_t)PAGE_SIZE, ret);
- 	}
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 209535d5b8d3..40fee8ff5cf9 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -2087,6 +2087,7 @@ static long ceph_fallocate(struct file *file, int mode,
- 	if (ret < 0)
- 		goto unlock;
- 
-+	down_write(&inode->i_mapping->invalidate_lock);
- 	ceph_zero_pagecache_range(inode, offset, length);
- 	ret = ceph_zero_objects(inode, offset, length);
- 
-@@ -2099,6 +2100,7 @@ static long ceph_fallocate(struct file *file, int mode,
- 		if (dirty)
- 			__mark_inode_dirty(inode, dirty);
- 	}
-+	up_write(&inode->i_mapping->invalidate_lock);
- 
- 	ceph_put_cap_refs(ci, got);
- unlock:
--- 
-2.26.2
-
+It'd have pretty much the same effect, though -- read/fault/... would
+block until the entry was deleted from the page cache.
