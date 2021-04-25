@@ -2,84 +2,99 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ABE4036A7BE
-	for <lists+ceph-devel@lfdr.de>; Sun, 25 Apr 2021 16:16:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3565536A916
+	for <lists+ceph-devel@lfdr.de>; Sun, 25 Apr 2021 22:05:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230400AbhDYORW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 25 Apr 2021 10:17:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39106 "EHLO
+        id S231287AbhDYUGX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 25 Apr 2021 16:06:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230439AbhDYORR (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 25 Apr 2021 10:17:17 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A935DC06138B;
-        Sun, 25 Apr 2021 07:16:37 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lafYp-008Arj-GM; Sun, 25 Apr 2021 14:16:35 +0000
-Date:   Sun, 25 Apr 2021 14:16:35 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 01/31] iov_iter: Add ITER_XARRAY
-Message-ID: <YIV5wyBWC18/DAoU@zeniv-ca.linux.org.uk>
-References: <YIVrJT8GwLI0Wlgx@zeniv-ca.linux.org.uk>
- <161918446704.3145707.14418606303992174310.stgit@warthog.procyon.org.uk>
- <161918448151.3145707.11541538916600921083.stgit@warthog.procyon.org.uk>
- <3388475.1619359082@warthog.procyon.org.uk>
+        with ESMTP id S231197AbhDYUGX (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 25 Apr 2021 16:06:23 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53089C061574
+        for <ceph-devel@vger.kernel.org>; Sun, 25 Apr 2021 13:05:41 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id g5so74541152ejx.0
+        for <ceph-devel@vger.kernel.org>; Sun, 25 Apr 2021 13:05:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A5ZXSc4RB1Q7uADHp3BzIP31WCzYQ4X/jnLGwWbpzZM=;
+        b=R+5FkgwwpOM3OGlhE3aWPd26n4LxCGEbEJnjq8r0V0dsRodkYkS0LLqUXhkUjZbPnF
+         jey72l4Dhy62v4VzNaVr4iQ0ZqXgrQ9kR4t3kpanG6TNMmfNllOQ7R+DxXi38icJNPxJ
+         sWH1CL8LjH2jl79d7+JAu6XUun+ZxCnDyZgfSu8InTShW+zSMwd9lqxytuwYfiTvLhNB
+         uAYLAyZls+EX4MPYLG1CCDjg9p7oRg6e19PvrqJpdbiHAPDwdNqkIBLIzLqr0/0hWxTP
+         u7CBncMntQK1X1Asol1hWwJstXcB5FmN6rXgVYZXD9NC709mJ8nwqISeGxEFD31URG1t
+         u+Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=A5ZXSc4RB1Q7uADHp3BzIP31WCzYQ4X/jnLGwWbpzZM=;
+        b=PaMYgqNbmcWgQJtpn+eHwXo54Nthe6pIYCOiKvJ8SU2teMreDkWMpAyKMLov12SOJW
+         kakfVP6VudeEqyr6nmAj4PBctZ0jQhxcfF3W1wudIcMbowjY7LwtfYTb563gXgcznNp2
+         eDiChoR97XZeueRRVaTUOG2Uk2Jh1FoFamnLi4E/a506sRja6rraRo/DqrS4txcQh3Fb
+         OlXQP34nqsBEnh5g60iwVEaPmHhVGBocE0zCPJ+j6WlKROQcIeRUqNIf6nPfzGUqxa92
+         YAV5Udg+Xb13Q+PhzrxXn7DVe3ufpmKE4uAyReSkcpFH3E7amYmpwHxuSiblAXAWkvG9
+         RW/A==
+X-Gm-Message-State: AOAM533bUvxgCiTNfPSAxzZ3C/eQKAD4+zmZo864rAhCXlriNQdRuGT6
+        TKqwsZEQ58C5hALY5B4R9Ic2EGE+RokHlQ==
+X-Google-Smtp-Source: ABdhPJy6MsID7yLSznTSdyFG9s/6w9/9fyYQ/o3OxeCMlnK23+mNt/B//mDhkLnIEMvFgD64jrQ65w==
+X-Received: by 2002:a17:906:26c9:: with SMTP id u9mr14939374ejc.520.1619381139034;
+        Sun, 25 Apr 2021 13:05:39 -0700 (PDT)
+Received: from kwango.local (ip-94-112-132-16.net.upcbroadband.cz. [94.112.132.16])
+        by smtp.gmail.com with ESMTPSA id n14sm10003147ejy.90.2021.04.25.13.05.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Apr 2021 13:05:38 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     Sage Weil <sage@redhat.com>
+Subject: [PATCH] libceph: bump CephXAuthenticate encoding version
+Date:   Sun, 25 Apr 2021 22:05:14 +0200
+Message-Id: <20210425200514.26581-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3388475.1619359082@warthog.procyon.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, Apr 25, 2021 at 02:58:02PM +0100, David Howells wrote:
+A dummy v3 encoding (exactly the same as v2) was introduced so that
+the monitors can distinguish broken clients that may not include their
+auth ticket in CEPHX_GET_AUTH_SESSION_KEY request on reconnects, thus
+failing to prove previous possession of their global_id (one part of
+CVE-2021-20288).
 
-> But for the moment, I guess I should just add:
-> 
-> 	i->iov_offset += bytes;
-> 
-> to all three (kvec, bvec and xarray)?
+The kernel client has always included its auth ticket, so it is
+compatible with enforcing mode as is.  However we want to bump the
+encoding version to avoid having to authenticate twice on the initial
+connect -- all legacy (CephXAuthenticate < v3) are now forced do so in
+order to expose insecure global_id reclaim.
 
-No.  First of all, you'd need ->count updated as well; for kvec and bvec you
-*REALLY* don't have to end up with ->iov_offset exceeding the size of current
-kvec or bvec resp.; Bad Shit(tm) happens that way.
+Marking for stable since at least for 5.11 and 5.12 it is trivial
+(v2 -> v3).
 
-> 
-> > > @@ -1246,7 +1349,8 @@ unsigned long iov_iter_alignment(const struct iov_iter *i)
-> > >  	iterate_all_kinds(i, size, v,
-> > >  		(res |= (unsigned long)v.iov_base | v.iov_len, 0),
-> > >  		res |= v.bv_offset | v.bv_len,
-> > > -		res |= (unsigned long)v.iov_base | v.iov_len
-> > > +		res |= (unsigned long)v.iov_base | v.iov_len,
-> > > +		res |= v.bv_offset | v.bv_len
-> > >  	)
-> > >  	return res;
-> > >  }
-> > 
-> > Hmm...  That looks like a really bad overkill - do you need anything beyond
-> > count and iov_offset in that case + perhaps "do we have the very last page"?
-> > IOW, do you need to iterate anything at all here?  What am I missing here?
-> 
-> Good point.  I wonder, even, if the alignment could just be set to 1.  There's
-> no kdoc description on the function that says what the result is meant to
-> represent.
+Cc: stable@vger.kernel.org # 5.11+
+URL: https://tracker.ceph.com/issues/50452
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+---
+ net/ceph/auth_x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Huh?  It's the worst alignment of all segment boundaries, what else?  As in
-if (iov_iter_alignment(i) & 1023)
-	// we have something in there that isn't 1K-aligned.
+diff --git a/net/ceph/auth_x.c b/net/ceph/auth_x.c
+index ca44c327bace..79641c4afee9 100644
+--- a/net/ceph/auth_x.c
++++ b/net/ceph/auth_x.c
+@@ -526,7 +526,7 @@ static int ceph_x_build_request(struct ceph_auth_client *ac,
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		auth->struct_v = 2;  /* nautilus+ */
++		auth->struct_v = 3;  /* nautilus+ */
+ 		auth->key = 0;
+ 		for (u = (u64 *)enc_buf; u + 1 <= (u64 *)(enc_buf + ret); u++)
+ 			auth->key ^= *(__le64 *)u;
+-- 
+2.19.2
 
