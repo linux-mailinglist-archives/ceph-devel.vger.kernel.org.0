@@ -2,161 +2,113 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDC7E36B615
-	for <lists+ceph-devel@lfdr.de>; Mon, 26 Apr 2021 17:46:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2993036B7D9
+	for <lists+ceph-devel@lfdr.de>; Mon, 26 Apr 2021 19:15:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234166AbhDZPrY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 26 Apr 2021 11:47:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38026 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234090AbhDZPrX (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 26 Apr 2021 11:47:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 55725ABB1;
-        Mon, 26 Apr 2021 15:46:40 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id C7AF41E0CB7; Mon, 26 Apr 2021 17:46:39 +0200 (CEST)
-Date:   Mon, 26 Apr 2021 17:46:39 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>, Ted Tso <tytso@mit.edu>,
-        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>
-Subject: Re: [PATCH 02/12] mm: Protect operations adding pages to page cache
- with invalidate_lock
-Message-ID: <20210426154639.GB23895@quack2.suse.cz>
-References: <20210423171010.12-1-jack@suse.cz>
- <20210423173018.23133-2-jack@suse.cz>
- <20210423230449.GC1990290@dread.disaster.area>
+        id S235341AbhDZRPY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 26 Apr 2021 13:15:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56032 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235238AbhDZRPW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 26 Apr 2021 13:15:22 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3677C061574;
+        Mon, 26 Apr 2021 10:14:39 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lb4ob-008SGJ-Lx; Mon, 26 Apr 2021 17:14:33 +0000
+Date:   Mon, 26 Apr 2021 17:14:33 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iov_iter: Four fixes for ITER_XARRAY
+Message-ID: <YIb0+b7VJJrrofCB@zeniv-ca.linux.org.uk>
+References: <161918448151.3145707.11541538916600921083.stgit@warthog.procyon.org.uk>
+ <161918446704.3145707.14418606303992174310.stgit@warthog.procyon.org.uk>
+ <3545034.1619392490@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210423230449.GC1990290@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <3545034.1619392490@warthog.procyon.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sat 24-04-21 09:04:49, Dave Chinner wrote:
-> On Fri, Apr 23, 2021 at 07:29:31PM +0200, Jan Kara wrote:
-> > Currently, serializing operations such as page fault, read, or readahead
-> > against hole punching is rather difficult. The basic race scheme is
-> > like:
-> > 
-> > fallocate(FALLOC_FL_PUNCH_HOLE)			read / fault / ..
-> >   truncate_inode_pages_range()
-> > 						  <create pages in page
-> > 						   cache here>
-> >   <update fs block mapping and free blocks>
-> > 
-> > Now the problem is in this way read / page fault / readahead can
-> > instantiate pages in page cache with potentially stale data (if blocks
-> > get quickly reused). Avoiding this race is not simple - page locks do
-> > not work because we want to make sure there are *no* pages in given
-> > range. inode->i_rwsem does not work because page fault happens under
-> > mmap_sem which ranks below inode->i_rwsem. Also using it for reads makes
-> > the performance for mixed read-write workloads suffer.
-> > 
-> > So create a new rw_semaphore in the address_space - invalidate_lock -
-> > that protects adding of pages to page cache for page faults / reads /
-> > readahead.
-> .....
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index a047ab306f9a..43596dd8b61e 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -191,6 +191,9 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
-> >  	mapping_set_gfp_mask(mapping, GFP_HIGHUSER_MOVABLE);
-> >  	mapping->private_data = NULL;
-> >  	mapping->writeback_index = 0;
-> > +	init_rwsem(&mapping->invalidate_lock);
-> > +	lockdep_set_class(&mapping->invalidate_lock,
-> > +			  &sb->s_type->invalidate_lock_key);
-> >  	inode->i_private = NULL;
-> >  	inode->i_mapping = mapping;
-> >  	INIT_HLIST_HEAD(&inode->i_dentry);	/* buggered by rcu freeing */
+On Mon, Apr 26, 2021 at 12:14:50AM +0100, David Howells wrote:
+> Hi Al,
 > 
-> Oh, lockdep. That might be a problem here.
-> 
-> The XFS_MMAPLOCK has non-trivial lockdep annotations so that it is
-> tracked as nesting properly against the IOLOCK and the ILOCK. When
-> you end up using xfs_ilock(XFS_MMAPLOCK..) to lock this, XFS will
-> add subclass annotations to the lock and they are going to be
-> different to the locking that the VFS does.
-> 
-> We'll see this from xfs_lock_two_inodes() (e.g. in
-> xfs_swap_extents()) and xfs_ilock2_io_mmap() during reflink
-> oper.....
+> I think this patch should include all the fixes necessary.  I could merge
+> it in, but I think it might be better to tag it on the end as an additional
+> patch.
 
-Thanks for the pointer. I was kind of wondering what lockdep nesting games
-XFS plays but then forgot to look into details. Anyway, I've preserved the
-nesting annotations in XFS and fstests run on XFS passed without lockdep
-complaining so there isn't at least an obvious breakage. Also as far as I'm
-checking the code XFS usage in and lock nesting of MMAPLOCK should be
-compatible with the nesting VFS enforces (also see below)...
- 
-> Oooooh. The page cache copy done when breaking a shared extent needs
-> to lock out page faults on both the source and destination, but it
-> still needs to be able to populate the page cache of both the source
-> and destination file.....
-> 
-> .... and vfs_dedupe_file_range_compare() has to be able to read
-> pages from both the source and destination file to determine that
-> the contents are identical and that's done while we hold the
-> XFS_MMAPLOCK exclusively so the compare is atomic w.r.t. all other
-> user data modification operations being run....
+Looks sane, but I wonder if it would've been better to deal with this
 
-So I started wondering why fstests passed when reading this :) The reason
-is that vfs_dedupe_get_page() does not use standard page cache filling path
-(neither readahead API nor filemap_read()), instead it uses
-read_mapping_page() and so gets into page cache filling path below the
-level at which we get invalidate_lock and thus everything works as it
-should. So read_mapping_page() is similar to places like e.g.
-block_truncate_page() or block_write_begin() which may end up filling in
-page cache contents but they rely on upper layers to already hold
-appropriate locks. I'll add a comment to read_mapping_page() about this.
-Once all filesystems are converted to use invalidate_lock, I also want to
-add WARN_ON_ONCE() to various places verifying that invalidate_lock is held
-as it should...
- 
-> I now have many doubts that this "serialise page faults by locking
-> out page cache instantiation" method actually works as a generic
-> mechanism. It's not just page cache invalidation that relies on
-> being able to lock out page faults: copy-on-write and deduplication
-> both require the ability to populate the page cache with source data
-> while page faults are locked out so the data can be compared/copied
-> atomically with the extent level manipulations and so user data
-> modifications cannot occur until the physical extent manipulation
-> operation has completed.
+> @@ -791,6 +791,8 @@ size_t _copy_mc_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
+>  			curr_addr = (unsigned long) from;
+>  			bytes = curr_addr - s_addr - rem;
+>  			rcu_read_unlock();
+> +			i->iov_offset += bytes;
+> +			i->count -= bytes;
+>  			return bytes;
+>  		}
+>  		})
 
-Hum, that is a good point. So there are actually two different things you
-want to block at different places:
+by having your iterator check the return value of X callback and, having
+decremented .bv_len by return value, broke out of the loop.
 
-1) You really want to block page cache instantiation for operations such as
-hole punch as that operation mutates data and thus contents would become
-stale.
+       __label__ __bugger_off;
 
-2) You want to block page cache *modification* for operations such as
-dedupe while keeping page cache in place. This is somewhat different
-requirement but invalidate_lock can, in principle, cover it as well.
-Basically we just need to keep invalidate_lock usage in .page_mkwrite
-helpers. The question remains whether invalidate_lock is still a good name
-with this usage in mind and I probably need to update a documentation to
-reflect this usage.
+       xas_for_each(&xas, head, ULONG_MAX) {                           \
+               if (xas_retry(&xas, head))                              \
+                       continue;                                       \
+               if (WARN_ON(xa_is_value(head)))                         \
+                       break;                                          \
+               if (WARN_ON(PageHuge(head)))                            \
+                       break;                                          \
+               for (j = (head->index < index) ? index - head->index : 0; \
+                    j < thp_nr_pages(head); j++) {                     \
+                       __v.bv_page = head + j;                         \
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+			size_t left;
+
+                       offset = (i->xarray_start + skip) & ~PAGE_MASK; \
+                       seg = PAGE_SIZE - offset;                       \
+                       __v.bv_offset = offset;                         \
+                       __v.bv_len = min(n, seg);                       \
+
+                       left = (STEP);
+		       __v.bv_len -= left;
+
+                       n -= __v.bv_len;                                \
+                       skip += __v.bv_len;                             \
+
+		       if (!n || left)
+				goto __bugger_off;
+
+               }                                                       \
+               if (n == 0)                                             \
+                       break;                                          \
+       }                                                       \
+
+__bugger_off:
+
+
+Then rename iterate_and_advance() to __iterate_and_advance() and have
+#define iterate_and_advance(....., X) __iterate_and_advance(....., ((void)(X),0))
+with iterate_all_kinds() using iterate_xarray(....,((void)(X),0)
+
+Then _copy_mc_to_iter() could use __iterate_and_advance(), getting rid of
+the need of doing anything special in case of short copy.  OTOH, I can do
+that myself in a followup - not a problem.
