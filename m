@@ -2,113 +2,102 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2993036B7D9
-	for <lists+ceph-devel@lfdr.de>; Mon, 26 Apr 2021 19:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF06836B870
+	for <lists+ceph-devel@lfdr.de>; Mon, 26 Apr 2021 19:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235341AbhDZRPY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 26 Apr 2021 13:15:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56032 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235238AbhDZRPW (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 26 Apr 2021 13:15:22 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3677C061574;
-        Mon, 26 Apr 2021 10:14:39 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lb4ob-008SGJ-Lx; Mon, 26 Apr 2021 17:14:33 +0000
-Date:   Mon, 26 Apr 2021 17:14:33 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iov_iter: Four fixes for ITER_XARRAY
-Message-ID: <YIb0+b7VJJrrofCB@zeniv-ca.linux.org.uk>
-References: <161918448151.3145707.11541538916600921083.stgit@warthog.procyon.org.uk>
- <161918446704.3145707.14418606303992174310.stgit@warthog.procyon.org.uk>
- <3545034.1619392490@warthog.procyon.org.uk>
+        id S237708AbhDZR5P (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 26 Apr 2021 13:57:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50586 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237681AbhDZR5K (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 26 Apr 2021 13:57:10 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 133A861007;
+        Mon, 26 Apr 2021 17:56:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619459788;
+        bh=Q38Nx9cl7A4e5m4uQTWXre7HdD9MkHe6YBcW3h9eGZk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=BhTLaafaZauPJkNwP+SQcNw+SneAq8AnLMS6waF/AeTP85dme5ilVHZ8v0sQXXjhx
+         9p3LEj03WX6qE1xPa+dPj9VoiP7VUe50RG0fxil+y3M4mltN4thjt5BRkL5ADdi641
+         ERLAMCSJlf28mB5txDVDz0ZdR8yZWnDuCXz16wG6X7aDDMsLInvTeBSv9Zzs4q9k4g
+         XABzXHXhISxnTCT2F3J6sbxnqXC4p1JRkdzXdrJFh9wcTnvJdbRhplRI/QfQtu7XZ0
+         2ZCWWMHbOcZudlxt24osZvMc/+JUF+U3qWAeutr3Jw47KBVv0kQuk7bFnIjSiAgXWm
+         ksB1ZkPTpM5Ug==
+Message-ID: <7a63b9bd92cf3cd9f05530157fcc5d3d90b31b9e.camel@kernel.org>
+Subject: Re: [PATCH v3] libceph: add osd op counter metric support
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
+Cc:     "Yan, Zheng" <zyan@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Date:   Mon, 26 Apr 2021 13:56:26 -0400
+In-Reply-To: <96d573ba-c82c-a22a-ee9d-bbc2156910ab@redhat.com>
+References: <20201110141937.414301-1-xiubli@redhat.com>
+         <CAOi1vP-tBRNEgkmhvieUyBzOms-n=vge4XpYSpnU6cnq86SRMQ@mail.gmail.com>
+         <96d573ba-c82c-a22a-ee9d-bbc2156910ab@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3545034.1619392490@warthog.procyon.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Apr 26, 2021 at 12:14:50AM +0100, David Howells wrote:
-> Hi Al,
+On Wed, 2020-11-11 at 09:32 +0800, Xiubo Li wrote:
+> On 2020/11/10 23:44, Ilya Dryomov wrote:
+> > On Tue, Nov 10, 2020 at 3:19 PM <xiubli@redhat.com> wrote:
+> > > From: Xiubo Li <xiubli@redhat.com>
+> > > 
+> > > The logic is the same with osdc/Objecter.cc in ceph in user space.
+> > > 
+> > > URL: https://tracker.ceph.com/issues/48053
+> > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > > ---
+> > > 
+> > > V3:
+> > > - typo fixing about oring the _WRITE
+> > > 
+> > >   include/linux/ceph/osd_client.h |  9 ++++++
+> > >   net/ceph/debugfs.c              | 13 ++++++++
+> > >   net/ceph/osd_client.c           | 56 +++++++++++++++++++++++++++++++++
+> > >   3 files changed, 78 insertions(+)
+> > > 
+> > > diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+> > > index 83fa08a06507..24301513b186 100644
+> > > --- a/include/linux/ceph/osd_client.h
+> > > +++ b/include/linux/ceph/osd_client.h
+> > > @@ -339,6 +339,13 @@ struct ceph_osd_backoff {
+> > >          struct ceph_hobject_id *end;
+> > >   };
+> > > 
+> > > +struct ceph_osd_metric {
+> > > +       struct percpu_counter op_ops;
+> > > +       struct percpu_counter op_rmw;
+> > > +       struct percpu_counter op_r;
+> > > +       struct percpu_counter op_w;
+> > > +};
+> > OK, so only reads and writes are really needed.  Why not expose them
+> > through the existing metrics framework in fs/ceph?  Wouldn't "fs top"
+> > want to display them?  Exposing latency information without exposing
+> > overall counts seems rather weird to me anyway.
 > 
-> I think this patch should include all the fixes necessary.  I could merge
-> it in, but I think it might be better to tag it on the end as an additional
-> patch.
+> Okay, I just thought in future this may also be needed by rbd :-)
+> 
+> 
+> > The fundamental problem is that debugfs output format is not stable.
+> > The tracker mentions test_readahead -- updating some teuthology test
+> > cases from time to time is not a big deal, but if a user facing tool
+> > such as "fs top" starts relying on these, it would be bad.
+> 
+> No problem, let me move it to fs existing metric framework.
+> 
 
-Looks sane, but I wonder if it would've been better to deal with this
+Hi Xiubo/Ilya/Patrick :
 
-> @@ -791,6 +791,8 @@ size_t _copy_mc_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
->  			curr_addr = (unsigned long) from;
->  			bytes = curr_addr - s_addr - rem;
->  			rcu_read_unlock();
-> +			i->iov_offset += bytes;
-> +			i->count -= bytes;
->  			return bytes;
->  		}
->  		})
+Mea culpa...I had intended to drop this patch from testing branch after
+this discussion, but got sidetracked and forgot to do so. I've now done
+that though.
 
-by having your iterator check the return value of X callback and, having
-decremented .bv_len by return value, broke out of the loop.
+Cheers,
+Jeff
 
-       __label__ __bugger_off;
-
-       xas_for_each(&xas, head, ULONG_MAX) {                           \
-               if (xas_retry(&xas, head))                              \
-                       continue;                                       \
-               if (WARN_ON(xa_is_value(head)))                         \
-                       break;                                          \
-               if (WARN_ON(PageHuge(head)))                            \
-                       break;                                          \
-               for (j = (head->index < index) ? index - head->index : 0; \
-                    j < thp_nr_pages(head); j++) {                     \
-                       __v.bv_page = head + j;                         \
-
-			size_t left;
-
-                       offset = (i->xarray_start + skip) & ~PAGE_MASK; \
-                       seg = PAGE_SIZE - offset;                       \
-                       __v.bv_offset = offset;                         \
-                       __v.bv_len = min(n, seg);                       \
-
-                       left = (STEP);
-		       __v.bv_len -= left;
-
-                       n -= __v.bv_len;                                \
-                       skip += __v.bv_len;                             \
-
-		       if (!n || left)
-				goto __bugger_off;
-
-               }                                                       \
-               if (n == 0)                                             \
-                       break;                                          \
-       }                                                       \
-
-__bugger_off:
-
-
-Then rename iterate_and_advance() to __iterate_and_advance() and have
-#define iterate_and_advance(....., X) __iterate_and_advance(....., ((void)(X),0))
-with iterate_all_kinds() using iterate_xarray(....,((void)(X),0)
-
-Then _copy_mc_to_iter() could use __iterate_and_advance(), getting rid of
-the need of doing anything special in case of short copy.  OTOH, I can do
-that myself in a followup - not a problem.
