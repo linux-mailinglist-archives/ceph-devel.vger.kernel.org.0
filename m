@@ -2,102 +2,94 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF06836B870
-	for <lists+ceph-devel@lfdr.de>; Mon, 26 Apr 2021 19:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 837D436B96E
+	for <lists+ceph-devel@lfdr.de>; Mon, 26 Apr 2021 20:54:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237708AbhDZR5P (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 26 Apr 2021 13:57:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237681AbhDZR5K (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 26 Apr 2021 13:57:10 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 133A861007;
-        Mon, 26 Apr 2021 17:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619459788;
-        bh=Q38Nx9cl7A4e5m4uQTWXre7HdD9MkHe6YBcW3h9eGZk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=BhTLaafaZauPJkNwP+SQcNw+SneAq8AnLMS6waF/AeTP85dme5ilVHZ8v0sQXXjhx
-         9p3LEj03WX6qE1xPa+dPj9VoiP7VUe50RG0fxil+y3M4mltN4thjt5BRkL5ADdi641
-         ERLAMCSJlf28mB5txDVDz0ZdR8yZWnDuCXz16wG6X7aDDMsLInvTeBSv9Zzs4q9k4g
-         XABzXHXhISxnTCT2F3J6sbxnqXC4p1JRkdzXdrJFh9wcTnvJdbRhplRI/QfQtu7XZ0
-         2ZCWWMHbOcZudlxt24osZvMc/+JUF+U3qWAeutr3Jw47KBVv0kQuk7bFnIjSiAgXWm
-         ksB1ZkPTpM5Ug==
-Message-ID: <7a63b9bd92cf3cd9f05530157fcc5d3d90b31b9e.camel@kernel.org>
-Subject: Re: [PATCH v3] libceph: add osd op counter metric support
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     "Yan, Zheng" <zyan@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Date:   Mon, 26 Apr 2021 13:56:26 -0400
-In-Reply-To: <96d573ba-c82c-a22a-ee9d-bbc2156910ab@redhat.com>
-References: <20201110141937.414301-1-xiubli@redhat.com>
-         <CAOi1vP-tBRNEgkmhvieUyBzOms-n=vge4XpYSpnU6cnq86SRMQ@mail.gmail.com>
-         <96d573ba-c82c-a22a-ee9d-bbc2156910ab@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
+        id S234931AbhDZSze (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 26 Apr 2021 14:55:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50130 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240656AbhDZSy6 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 26 Apr 2021 14:54:58 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7754AC061574;
+        Mon, 26 Apr 2021 11:54:16 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lb6N2-008TLy-M3; Mon, 26 Apr 2021 18:54:12 +0000
+Date:   Mon, 26 Apr 2021 18:54:12 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 01/31] iov_iter: Add ITER_XARRAY
+Message-ID: <YIcMVCkp4xswHolw@zeniv-ca.linux.org.uk>
+References: <161918446704.3145707.14418606303992174310.stgit@warthog.procyon.org.uk>
+ <161918448151.3145707.11541538916600921083.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <161918448151.3145707.11541538916600921083.stgit@warthog.procyon.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2020-11-11 at 09:32 +0800, Xiubo Li wrote:
-> On 2020/11/10 23:44, Ilya Dryomov wrote:
-> > On Tue, Nov 10, 2020 at 3:19 PM <xiubli@redhat.com> wrote:
-> > > From: Xiubo Li <xiubli@redhat.com>
-> > > 
-> > > The logic is the same with osdc/Objecter.cc in ceph in user space.
-> > > 
-> > > URL: https://tracker.ceph.com/issues/48053
-> > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> > > ---
-> > > 
-> > > V3:
-> > > - typo fixing about oring the _WRITE
-> > > 
-> > >   include/linux/ceph/osd_client.h |  9 ++++++
-> > >   net/ceph/debugfs.c              | 13 ++++++++
-> > >   net/ceph/osd_client.c           | 56 +++++++++++++++++++++++++++++++++
-> > >   3 files changed, 78 insertions(+)
-> > > 
-> > > diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> > > index 83fa08a06507..24301513b186 100644
-> > > --- a/include/linux/ceph/osd_client.h
-> > > +++ b/include/linux/ceph/osd_client.h
-> > > @@ -339,6 +339,13 @@ struct ceph_osd_backoff {
-> > >          struct ceph_hobject_id *end;
-> > >   };
-> > > 
-> > > +struct ceph_osd_metric {
-> > > +       struct percpu_counter op_ops;
-> > > +       struct percpu_counter op_rmw;
-> > > +       struct percpu_counter op_r;
-> > > +       struct percpu_counter op_w;
-> > > +};
-> > OK, so only reads and writes are really needed.  Why not expose them
-> > through the existing metrics framework in fs/ceph?  Wouldn't "fs top"
-> > want to display them?  Exposing latency information without exposing
-> > overall counts seems rather weird to me anyway.
-> 
-> Okay, I just thought in future this may also be needed by rbd :-)
-> 
-> 
-> > The fundamental problem is that debugfs output format is not stable.
-> > The tracker mentions test_readahead -- updating some teuthology test
-> > cases from time to time is not a big deal, but if a user facing tool
-> > such as "fs top" starts relying on these, it would be bad.
-> 
-> No problem, let me move it to fs existing metric framework.
-> 
+On Fri, Apr 23, 2021 at 02:28:01PM +0100, David Howells wrote:
+> -#define iterate_all_kinds(i, n, v, I, B, K) {			\
+> +#define iterate_xarray(i, n, __v, skip, STEP) {		\
+> +	struct page *head = NULL;				\
+> +	size_t wanted = n, seg, offset;				\
+> +	loff_t start = i->xarray_start + skip;			\
+> +	pgoff_t index = start >> PAGE_SHIFT;			\
+> +	int j;							\
+> +								\
+> +	XA_STATE(xas, i->xarray, index);			\
+> +								\
+> +	rcu_read_lock();						\
+> +	xas_for_each(&xas, head, ULONG_MAX) {				\
+> +		if (xas_retry(&xas, head))				\
+> +			continue;					\
 
-Hi Xiubo/Ilya/Patrick :
+OK, now I'm really confused; what's to guarantee that restart will not have
+you hit the same entry more than once?  STEP might be e.g.
 
-Mea culpa...I had intended to drop this patch from testing branch after
-this discussion, but got sidetracked and forgot to do so. I've now done
-that though.
+		memcpy_to_page(v.bv_page, v.bv_offset,
+			       (from += v.bv_len) - v.bv_len, v.bv_len)
 
-Cheers,
-Jeff
+which is clearly not idempotent - from gets incremented, after all.
+What am I missing here?
 
+> +		if (WARN_ON(xa_is_value(head)))				\
+> +			break;						\
+> +		if (WARN_ON(PageHuge(head)))				\
+> +			break;						\
+> +		for (j = (head->index < index) ? index - head->index : 0; \
+> +		     j < thp_nr_pages(head); j++) {			\
+> +			__v.bv_page = head + j;				\
+> +			offset = (i->xarray_start + skip) & ~PAGE_MASK;	\
+> +			seg = PAGE_SIZE - offset;			\
+> +			__v.bv_offset = offset;				\
+> +			__v.bv_len = min(n, seg);			\
+> +			(void)(STEP);					\
+> +			n -= __v.bv_len;				\
+> +			skip += __v.bv_len;				\
+> +			if (n == 0)					\
+> +				break;					\
+> +		}							\
+> +		if (n == 0)						\
+> +			break;						\
+> +	}							\
+> +	rcu_read_unlock();					\
+> +	n = wanted - n;						\
+> +}
