@@ -2,163 +2,172 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C1B736C90F
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Apr 2021 18:08:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF66636CB37
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Apr 2021 20:38:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236439AbhD0QI4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 27 Apr 2021 12:08:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49074 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233501AbhD0QIz (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 27 Apr 2021 12:08:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619539692;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=IFEwSHwaj7Sjb744BtoYhwY+XvkkN3GWJzLSul6yy/c=;
-        b=P4tyJw71+o1GE9N7xaj+Dfal8lJg7TFM7y9k8kwe7P617YALvAd9urqJv4YlbqBBDa02IC
-        lvwNREbFlBAuoGGBa4hu+kEY6S3s31SZqIUTKZr41C3fuWYJYfHET/aAKjiKQ6OkvXzCCz
-        o8gqKOCShb0DzPTMCz8r/xecU1xhUEI=
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
- [209.85.166.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-20-H45BJPbEM9-PYKVKj4nUkg-1; Tue, 27 Apr 2021 12:08:10 -0400
-X-MC-Unique: H45BJPbEM9-PYKVKj4nUkg-1
-Received: by mail-il1-f197.google.com with SMTP id l7-20020a9229070000b0290164314f61f5so30621275ilg.10
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Apr 2021 09:08:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IFEwSHwaj7Sjb744BtoYhwY+XvkkN3GWJzLSul6yy/c=;
-        b=fjkf80M9JCXM+ERx73OHgaKHQxLPykRlABuSEcnoggT09HHedRHpIVEkH4V24vg9RH
-         V7FLN8lP490Xrr9WwIl5NrBxqooJ+Y6ZkN0oAeqY3CEsBupQ1C87i2FIMrGhOHzjnBO2
-         yQh259kGoeLSCN+JjpBmZwq8j9T9YSJSIZngkb4Wa+XhZUfI3oG6niWt6j96vqY3Z9IL
-         YFylpPbLE0p7KIe+NRdpoBAj3Qbo0rFz6BHbIukAjcu7dD6LfPQj5TPVocs5/oNkKQwR
-         XHTVOKQNILF4j6rAz1wRxvuvYYMLxC1dJM75yNzmn5Wmu0dLrjVu5j0N9JkZPbd013yw
-         uXkw==
-X-Gm-Message-State: AOAM533WsSy479t+3CVV91QSBAPsHuGjogfBxqc5hVvLCzf6Plv2M/BB
-        gLWlfTCTbV9NmRUaqUVWSMkHImP0t5th1eATuAfURYMV/NI32rIKpa5cYtmPF7sV9Mf1ROB6XXj
-        Y6q70y0AttC7AKEFpxC/acX9vPAa5GO67tiH6WA==
-X-Received: by 2002:a5d:8788:: with SMTP id f8mr20631725ion.7.1619539689466;
-        Tue, 27 Apr 2021 09:08:09 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxSqiEFlSsq4rndMkFwGaPCNHPuKAdClZ52oCXC/H645bYaPNKjVkw/lzFFxfNBiaPYokTNpHB5iAxkYtDW2uU=
-X-Received: by 2002:a5d:8788:: with SMTP id f8mr20631709ion.7.1619539689278;
- Tue, 27 Apr 2021 09:08:09 -0700 (PDT)
+        id S238526AbhD0Sj1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 27 Apr 2021 14:39:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55230 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236773AbhD0Sj0 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 27 Apr 2021 14:39:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D1CAE61029;
+        Tue, 27 Apr 2021 18:38:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619548723;
+        bh=gyiltulwvT9sAYisKAavDovMKnDyGFfPbaHbq9fqh0o=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=oLbGv6j4pK8oR2PacsBukwZ/cqGIcXfVl0ab0+nr00zqLtvfdOnZcD4QzKhIulbQq
+         69G6Qzwdg5Qy12mSEJRhyIFJAIiWGl7dysZdUJ0rGoN4XCp8OvXT9Lz67g3lWYOVCC
+         mfRbHCQHn7UMxZbVl7kxPfUlIGMEy3IdsNn0IMxau6VNVqEe8+LaPB4JZrqtTcXwkL
+         sCBRDYostsBNM15qH3eGYi4lYGexAn40NStOFTe1awCz2feY01YuZerJBXiNv/w9cF
+         jHwHRpfe4cCFVbBDiGHZxBmy3axMSulpTeLEm8Y6R7oqYGwB9ceiL2VyxEosxSpN2C
+         YshqSjTXZ5olg==
+Message-ID: <aff17365129ead70f109d96adcf24484d1b12c46.camel@kernel.org>
+Subject: Re: [PATCH v2 1/2] ceph: update the __update_latency helper
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Tue, 27 Apr 2021 14:38:41 -0400
+In-Reply-To: <20210325032826.1725667-2-xiubli@redhat.com>
+References: <20210325032826.1725667-1-xiubli@redhat.com>
+         <20210325032826.1725667-2-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
 MIME-Version: 1.0
-References: <20210426202759.20130-1-idryomov@gmail.com>
-In-Reply-To: <20210426202759.20130-1-idryomov@gmail.com>
-From:   Sage Weil <sweil@redhat.com>
-Date:   Tue, 27 Apr 2021 11:07:58 -0500
-Message-ID: <CAOQ2QO-DHPDTsAwdFpcpj4O2c8YTW-rqcnG7HcZEZ18x0Tm6Pw@mail.gmail.com>
-Subject: Re: [PATCH] libceph: don't set global_id until we get an auth ticket
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, Sage Weil <sage@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Apr 26, 2021 at 3:27 PM Ilya Dryomov <idryomov@gmail.com> wrote:
->
-> With the introduction of enforcing mode, setting global_id as soon
-> as we get it in the first MAuth reply will result in EACCES if the
-> connection is reset before we get the second MAuth reply containing
-> an auth ticket -- because on retry we would attempt to reclaim that
-> global_id with no auth ticket at hand.
->
-> Neither ceph_auth_client nor ceph_mon_client depend on global_id
-> being set ealy, so just delay the setting until we get and process
-> the second MAuth reply.  While at it, complain if the monitor sends
-> a zero global_id or changes our global_id as the session is likely
-> to fail after that.
->
-> Cc: stable@vger.kernel.org # needs backporting for < 5.11
-> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-
-Reviewed-by: Sage Weil <sage@redhat.com>
-
-
+On Thu, 2021-03-25 at 11:28 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> Let the __update_latency() helper choose the correcsponding members
+> according to the metric_type.
+> 
+> URL: https://tracker.ceph.com/issues/49913
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  net/ceph/auth.c | 36 +++++++++++++++++++++++-------------
->  1 file changed, 23 insertions(+), 13 deletions(-)
->
-> diff --git a/net/ceph/auth.c b/net/ceph/auth.c
-> index eb261aa5fe18..de407e8feb97 100644
-> --- a/net/ceph/auth.c
-> +++ b/net/ceph/auth.c
-> @@ -36,6 +36,20 @@ static int init_protocol(struct ceph_auth_client *ac, int proto)
->         }
+>  fs/ceph/metric.c | 73 ++++++++++++++++++++++++++++++++++--------------
+>  1 file changed, 52 insertions(+), 21 deletions(-)
+> 
+> diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
+> index 28b6b42ad677..f3e68db08760 100644
+> --- a/fs/ceph/metric.c
+> +++ b/fs/ceph/metric.c
+> @@ -285,19 +285,56 @@ void ceph_metric_destroy(struct ceph_client_metric *m)
+>  		ceph_put_mds_session(m->session);
 >  }
->
-> +static void set_global_id(struct ceph_auth_client *ac, u64 global_id)
-> +{
-> +       dout("%s global_id %llu\n", __func__, global_id);
+>  
+> -static inline void __update_latency(ktime_t *totalp, ktime_t *lsump,
+> -				    ktime_t *min, ktime_t *max,
+> -				    ktime_t *sq_sump, ktime_t lat)
+> -{
+> -	ktime_t total, avg, sq, lsum;
+> -
+> -	total = ++(*totalp);
+> -	lsum = (*lsump += lat);
+> +typedef enum {
+> +	CEPH_METRIC_READ,
+> +	CEPH_METRIC_WRITE,
+> +	CEPH_METRIC_METADATA,
+> +} metric_type;
 > +
-> +       if (!global_id)
-> +               pr_err("got zero global_id\n");
-> +
-> +       if (ac->global_id && global_id != ac->global_id)
-> +               pr_err("global_id changed from %llu to %llu\n", ac->global_id,
-> +                      global_id);
-> +
-> +       ac->global_id = global_id;
+> +#define METRIC_UPDATE_MIN_MAX(min, max, new)	\
+> +{						\
+> +	if (unlikely(new < min))		\
+> +		min = new;			\
+> +	if (unlikely(new > max))		\
+> +		max = new;			\
 > +}
+>  
+> -	if (unlikely(lat < *min))
+> -		*min = lat;
+> -	if (unlikely(lat > *max))
+> -		*max = lat;
+> +static inline void __update_latency(struct ceph_client_metric *m,
+> +				    metric_type type, ktime_t lat)
+> +{
+> +	ktime_t total, avg, sq, lsum, *sq_sump;
 > +
->  /*
->   * setup, teardown.
->   */
-> @@ -222,11 +236,6 @@ int ceph_handle_auth_reply(struct ceph_auth_client *ac,
->
->         payload_end = payload + payload_len;
->
-> -       if (global_id && ac->global_id != global_id) {
-> -               dout(" set global_id %lld -> %lld\n", ac->global_id, global_id);
-> -               ac->global_id = global_id;
-> -       }
-> -
->         if (ac->negotiating) {
->                 /* server does not support our protocols? */
->                 if (!protocol && result < 0) {
-> @@ -253,11 +262,16 @@ int ceph_handle_auth_reply(struct ceph_auth_client *ac,
->
->         ret = ac->ops->handle_reply(ac, result, payload, payload_end,
->                                     NULL, NULL, NULL, NULL);
-> -       if (ret == -EAGAIN)
-> +       if (ret == -EAGAIN) {
->                 ret = build_request(ac, true, reply_buf, reply_len);
-> -       else if (ret)
-> +               goto out;
-> +       } else if (ret) {
->                 pr_err("auth protocol '%s' mauth authentication failed: %d\n",
->                        ceph_auth_proto_name(ac->protocol), result);
-> +               goto out;
-> +       }
-> +
-> +       set_global_id(ac, global_id);
->
->  out:
->         mutex_unlock(&ac->mutex);
-> @@ -484,15 +498,11 @@ int ceph_auth_handle_reply_done(struct ceph_auth_client *ac,
->         int ret;
->
->         mutex_lock(&ac->mutex);
-> -       if (global_id && ac->global_id != global_id) {
-> -               dout("%s global_id %llu -> %llu\n", __func__, ac->global_id,
-> -                    global_id);
-> -               ac->global_id = global_id;
-> -       }
-> -
->         ret = ac->ops->handle_reply(ac, 0, reply, reply + reply_len,
->                                     session_key, session_key_len,
->                                     con_secret, con_secret_len);
-> +       if (!ret)
-> +               set_global_id(ac, global_id);
->         mutex_unlock(&ac->mutex);
->         return ret;
+> +	switch (type) {
+> +	case CEPH_METRIC_READ:
+> +		total = ++m->total_reads;
+> +		m->read_latency_sum += lat;
+> +		lsum = m->read_latency_sum;
+> +		METRIC_UPDATE_MIN_MAX(m->read_latency_min,
+> +				      m->read_latency_max,
+> +				      lat);
+> +		sq_sump = &m->read_latency_sq_sum;
+> +		break;
+> +	case CEPH_METRIC_WRITE:
+> +		total = ++m->total_writes;
+> +		m->write_latency_sum += lat;
+> +		lsum = m->write_latency_sum;
+> +		METRIC_UPDATE_MIN_MAX(m->write_latency_min,
+> +				      m->write_latency_max,
+> +				      lat);
+> +		sq_sump = &m->write_latency_sq_sum;
+> +		break;
+> +	case CEPH_METRIC_METADATA:
+> +		total = ++m->total_metadatas;
+> +		m->metadata_latency_sum += lat;
+> +		lsum = m->metadata_latency_sum;
+> +		METRIC_UPDATE_MIN_MAX(m->metadata_latency_min,
+> +				      m->metadata_latency_max,
+> +				      lat);
+> +		sq_sump = &m->metadata_latency_sq_sum;
+> +		break;
+> +	default:
+> +		return;
+> +	}
+>  
+
+I'm not a fan of the above function. __update_latency gets called with
+each of those values only once.
+
+It seems like it'd be better to just open-code the above sections in the
+respective ceph_update_*_metrics functions, and then have a helper
+function for the part of __update_latency below this point. With that,
+you wouldn't need the enum either.
+
+
+>  	if (unlikely(total == 1))
+>  		return;
+> @@ -320,9 +357,7 @@ void ceph_update_read_metrics(struct ceph_client_metric *m,
+>  		return;
+>  
+>  	spin_lock(&m->read_metric_lock);
+> -	__update_latency(&m->total_reads, &m->read_latency_sum,
+> -			 &m->read_latency_min, &m->read_latency_max,
+> -			 &m->read_latency_sq_sum, lat);
+> +	__update_latency(m, CEPH_METRIC_READ, lat);
+>  	spin_unlock(&m->read_metric_lock);
 >  }
-> --
-> 2.19.2
->
+>  
+> @@ -336,9 +371,7 @@ void ceph_update_write_metrics(struct ceph_client_metric *m,
+>  		return;
+>  
+>  	spin_lock(&m->write_metric_lock);
+> -	__update_latency(&m->total_writes, &m->write_latency_sum,
+> -			 &m->write_latency_min, &m->write_latency_max,
+> -			 &m->write_latency_sq_sum, lat);
+> +	__update_latency(m, CEPH_METRIC_WRITE, lat);
+>  	spin_unlock(&m->write_metric_lock);
+>  }
+>  
+> @@ -352,8 +385,6 @@ void ceph_update_metadata_metrics(struct ceph_client_metric *m,
+>  		return;
+>  
+>  	spin_lock(&m->metadata_metric_lock);
+> -	__update_latency(&m->total_metadatas, &m->metadata_latency_sum,
+> -			 &m->metadata_latency_min, &m->metadata_latency_max,
+> -			 &m->metadata_latency_sq_sum, lat);
+> +	__update_latency(m, CEPH_METRIC_METADATA, lat);
+>  	spin_unlock(&m->metadata_metric_lock);
+>  }
+
+-- 
+Jeff Layton <jlayton@kernel.org>
 
