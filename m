@@ -2,36 +2,41 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0702236CB3D
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Apr 2021 20:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09B0036CB3F
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Apr 2021 20:42:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236651AbhD0SmK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 27 Apr 2021 14:42:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56622 "EHLO mail.kernel.org"
+        id S236571AbhD0Sn1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 27 Apr 2021 14:43:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236279AbhD0SmJ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 27 Apr 2021 14:42:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E4074613EF;
-        Tue, 27 Apr 2021 18:41:25 +0000 (UTC)
+        id S236962AbhD0Sn0 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 27 Apr 2021 14:43:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2E23F613F7;
+        Tue, 27 Apr 2021 18:42:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619548886;
-        bh=t3D0yEqnatbZIqn51jKm0ulJVWAc1OOaawYsYQ6Z6yc=;
+        s=k20201202; t=1619548962;
+        bh=II39dOP/yjCaBOU2RIAwuLTq2wGtiptanicm+rKDgRc=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=M18HtDQnK8pUA5z8ILnGpBe6ZTJ0YalHqjfl9fI9cQqJdgDgqEL+MaynoZ6Ztubv0
-         wwIsAgC52BQKWz1brTSDGFt3OTY3VydUOqIbDB6C5czlmsuBxSPsA/BVPGM/P1lTXU
-         wr/2cc8dQaD2v7Afjg80OqLrx7JqIyn+uwNEipR6nTVPowq1mkfzx3dN6YXyHyLlCW
-         CyRXOchD1ddGmD5xoVNJaloqkmsaws74RF1xSMeoJp+4UeR4dqigqnOBCOlNfs6emm
-         GkAvnJVvkl67KvB2d6F4c91jF7lEf2CX6d3fGP0r6etgjvYT+tpj7wC2F4uhEcIeOW
-         9v7Dik2rkY85A==
-Message-ID: <398f8ebf7ca9f29694ec5be3ddc3f04a7c1ee660.camel@kernel.org>
-Subject: Re: [PATCH v2 2/2] ceph: add IO size metrics support
+        b=fEzMf/iHSZMAS9Q9GLwz+ITIGrwdennGuidgeXO7U3qeFBt482GpeAe2HfPGSS8fA
+         w7R65TnGMpE794q3YwiRGLiFhsmLG1IFro0qamBk2nfPtJixv1uVuFnm4NMC64yt9p
+         7r2JC3cBuPcRS2hUsSTQnzQW6X/POHOuahebM7QIztUxOfnH5cpKEFQ7qNrRT08GOv
+         ehOiMIb2H5KPfxfaU1TOQkxyarM+UGeVWLIDL5EEzsFyzEI9JmrYYYF0XrvCNsOwwf
+         Y7VExHIp82Kn7WsbXImLeCWKH80gWupqdNK06KthmoZRv8kYhqDtcQjLw6i25OHJgH
+         13CQW6shGH7aA==
+Message-ID: <9930d9e82776a3a3d314275a2c57d4b1890fa9cc.camel@kernel.org>
+Subject: Re: [PATCH v3] libceph: add osd op counter metric support
 From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Tue, 27 Apr 2021 14:41:24 -0400
-In-Reply-To: <20210325032826.1725667-3-xiubli@redhat.com>
-References: <20210325032826.1725667-1-xiubli@redhat.com>
-         <20210325032826.1725667-3-xiubli@redhat.com>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Xiubo Li <xiubli@redhat.com>, "Yan, Zheng" <zyan@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Date:   Tue, 27 Apr 2021 14:42:41 -0400
+In-Reply-To: <CAOi1vP-RfOtZiCpnBb9jiHWJqepXG0+T7y7O=YjYfE9W5Mx9SA@mail.gmail.com>
+References: <20201110141937.414301-1-xiubli@redhat.com>
+         <CAOi1vP-tBRNEgkmhvieUyBzOms-n=vge4XpYSpnU6cnq86SRMQ@mail.gmail.com>
+         <96d573ba-c82c-a22a-ee9d-bbc2156910ab@redhat.com>
+         <7a63b9bd92cf3cd9f05530157fcc5d3d90b31b9e.camel@kernel.org>
+         <CAOi1vP-RfOtZiCpnBb9jiHWJqepXG0+T7y7O=YjYfE9W5Mx9SA@mail.gmail.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
 MIME-Version: 1.0
@@ -40,384 +45,71 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2021-03-25 at 11:28 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
+On Mon, 2021-04-26 at 22:33 +0200, Ilya Dryomov wrote:
+> On Mon, Apr 26, 2021 at 7:56 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > 
+> > On Wed, 2020-11-11 at 09:32 +0800, Xiubo Li wrote:
+> > > On 2020/11/10 23:44, Ilya Dryomov wrote:
+> > > > On Tue, Nov 10, 2020 at 3:19 PM <xiubli@redhat.com> wrote:
+> > > > > From: Xiubo Li <xiubli@redhat.com>
+> > > > > 
+> > > > > The logic is the same with osdc/Objecter.cc in ceph in user space.
+> > > > > 
+> > > > > URL: https://tracker.ceph.com/issues/48053
+> > > > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > > > > ---
+> > > > > 
+> > > > > V3:
+> > > > > - typo fixing about oring the _WRITE
+> > > > > 
+> > > > >   include/linux/ceph/osd_client.h |  9 ++++++
+> > > > >   net/ceph/debugfs.c              | 13 ++++++++
+> > > > >   net/ceph/osd_client.c           | 56 +++++++++++++++++++++++++++++++++
+> > > > >   3 files changed, 78 insertions(+)
+> > > > > 
+> > > > > diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+> > > > > index 83fa08a06507..24301513b186 100644
+> > > > > --- a/include/linux/ceph/osd_client.h
+> > > > > +++ b/include/linux/ceph/osd_client.h
+> > > > > @@ -339,6 +339,13 @@ struct ceph_osd_backoff {
+> > > > >          struct ceph_hobject_id *end;
+> > > > >   };
+> > > > > 
+> > > > > +struct ceph_osd_metric {
+> > > > > +       struct percpu_counter op_ops;
+> > > > > +       struct percpu_counter op_rmw;
+> > > > > +       struct percpu_counter op_r;
+> > > > > +       struct percpu_counter op_w;
+> > > > > +};
+> > > > OK, so only reads and writes are really needed.  Why not expose them
+> > > > through the existing metrics framework in fs/ceph?  Wouldn't "fs top"
+> > > > want to display them?  Exposing latency information without exposing
+> > > > overall counts seems rather weird to me anyway.
+> > > 
+> > > Okay, I just thought in future this may also be needed by rbd :-)
+> > > 
+> > > 
+> > > > The fundamental problem is that debugfs output format is not stable.
+> > > > The tracker mentions test_readahead -- updating some teuthology test
+> > > > cases from time to time is not a big deal, but if a user facing tool
+> > > > such as "fs top" starts relying on these, it would be bad.
+> > > 
+> > > No problem, let me move it to fs existing metric framework.
+> > > 
+> > 
+> > Hi Xiubo/Ilya/Patrick :
+> > 
+> > Mea culpa...I had intended to drop this patch from testing branch after
+> > this discussion, but got sidetracked and forgot to do so. I've now done
+> > that though.
 > 
-> This will collect IO's total size and then calculate the average
-> size, and also will collect the min/max IO sizes.
+> On the subject of metrics, I think Xiubo's I/O size metrics patches
+> need a look -- he reposted the two that were skipped a while ago.
 > 
-> The debugfs will show the size metrics in byte and will let the
-> userspace applications to switch to what they need.
-> 
-> URL: https://tracker.ceph.com/issues/49913
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/addr.c    | 14 ++++++++------
->  fs/ceph/debugfs.c | 37 +++++++++++++++++++++++++++++++++----
->  fs/ceph/file.c    | 23 +++++++++++------------
->  fs/ceph/metric.c  | 36 ++++++++++++++++++++++++++++++++++--
->  fs/ceph/metric.h  | 10 ++++++++--
->  5 files changed, 94 insertions(+), 26 deletions(-)
-> 
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index d26a88aca014..57c67180ce5c 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -225,7 +225,7 @@ static void finish_netfs_read(struct ceph_osd_request *req)
->  	int err = req->r_result;
->  
->  	ceph_update_read_metrics(&fsc->mdsc->metric, req->r_start_latency,
-> -				 req->r_end_latency, err);
-> +				 req->r_end_latency, osd_data->length, err);
->  
->  	dout("%s: result %d subreq->len=%zu i_size=%lld\n", __func__, req->r_result,
->  	     subreq->len, i_size_read(req->r_inode));
-> @@ -559,7 +559,7 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
->  		err = ceph_osdc_wait_request(osdc, req);
->  
->  	ceph_update_write_metrics(&fsc->mdsc->metric, req->r_start_latency,
-> -				  req->r_end_latency, err);
-> +				  req->r_end_latency, len, err);
->  
->  	ceph_osdc_put_request(req);
->  	if (err == 0)
-> @@ -634,6 +634,7 @@ static void writepages_finish(struct ceph_osd_request *req)
->  	struct ceph_snap_context *snapc = req->r_snapc;
->  	struct address_space *mapping = inode->i_mapping;
->  	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-> +	unsigned int len = 0;
->  	bool remove_page;
->  
->  	dout("writepages_finish %p rc %d\n", inode, rc);
-> @@ -646,9 +647,6 @@ static void writepages_finish(struct ceph_osd_request *req)
->  		ceph_clear_error_write(ci);
->  	}
->  
-> -	ceph_update_write_metrics(&fsc->mdsc->metric, req->r_start_latency,
-> -				  req->r_end_latency, rc);
-> -
->  	/*
->  	 * We lost the cache cap, need to truncate the page before
->  	 * it is unlocked, otherwise we'd truncate it later in the
-> @@ -665,6 +663,7 @@ static void writepages_finish(struct ceph_osd_request *req)
->  
->  		osd_data = osd_req_op_extent_osd_data(req, i);
->  		BUG_ON(osd_data->type != CEPH_OSD_DATA_TYPE_PAGES);
-> +		len += osd_data->length;
->  		num_pages = calc_pages_for((u64)osd_data->alignment,
->  					   (u64)osd_data->length);
->  		total_pages += num_pages;
-> @@ -695,6 +694,9 @@ static void writepages_finish(struct ceph_osd_request *req)
->  		release_pages(osd_data->pages, num_pages);
->  	}
->  
-> +	ceph_update_write_metrics(&fsc->mdsc->metric, req->r_start_latency,
-> +				  req->r_end_latency, len, rc);
-> +
->  	ceph_put_wrbuffer_cap_refs(ci, total_pages, snapc);
->  
->  	osd_data = osd_req_op_extent_osd_data(req, 0);
-> @@ -1716,7 +1718,7 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
->  		err = ceph_osdc_wait_request(&fsc->client->osdc, req);
->  
->  	ceph_update_write_metrics(&fsc->mdsc->metric, req->r_start_latency,
-> -				  req->r_end_latency, err);
-> +				  req->r_end_latency, len, err);
->  
->  out_put:
->  	ceph_osdc_put_request(req);
-> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-> index 425f3356332a..38b78b45811f 100644
-> --- a/fs/ceph/debugfs.c
-> +++ b/fs/ceph/debugfs.c
-> @@ -127,7 +127,7 @@ static int mdsc_show(struct seq_file *s, void *p)
->  	return 0;
->  }
->  
-> -#define CEPH_METRIC_SHOW(name, total, avg, min, max, sq) {		\
-> +#define CEPH_LAT_METRIC_SHOW(name, total, avg, min, max, sq) {		\
->  	s64 _total, _avg, _min, _max, _sq, _st;				\
->  	_avg = ktime_to_us(avg);					\
->  	_min = ktime_to_us(min == KTIME_MAX ? 0 : min);			\
-> @@ -140,6 +140,12 @@ static int mdsc_show(struct seq_file *s, void *p)
->  		   name, total, _avg, _min, _max, _st);			\
->  }
->  
-> +#define CEPH_SZ_METRIC_SHOW(name, total, avg, min, max, sum) {		\
-> +	u64 _min = min == U64_MAX ? 0 : min;				\
-> +	seq_printf(s, "%-14s%-12lld%-16llu%-16llu%-16llu%llu\n",	\
-> +		   name, total, avg, _min, max, sum);			\
-> +}
-> +
->  static int metric_show(struct seq_file *s, void *p)
->  {
->  	struct ceph_fs_client *fsc = s->private;
-> @@ -147,6 +153,7 @@ static int metric_show(struct seq_file *s, void *p)
->  	struct ceph_client_metric *m = &mdsc->metric;
->  	int nr_caps = 0;
->  	s64 total, sum, avg, min, max, sq;
-> +	u64 sum_sz, avg_sz, min_sz, max_sz;
->  
->  	sum = percpu_counter_sum(&m->total_inodes);
->  	seq_printf(s, "item                               total\n");
-> @@ -170,7 +177,7 @@ static int metric_show(struct seq_file *s, void *p)
->  	max = m->read_latency_max;
->  	sq = m->read_latency_sq_sum;
->  	spin_unlock(&m->read_metric_lock);
-> -	CEPH_METRIC_SHOW("read", total, avg, min, max, sq);
-> +	CEPH_LAT_METRIC_SHOW("read", total, avg, min, max, sq);
->  
->  	spin_lock(&m->write_metric_lock);
->  	total = m->total_writes;
-> @@ -180,7 +187,7 @@ static int metric_show(struct seq_file *s, void *p)
->  	max = m->write_latency_max;
->  	sq = m->write_latency_sq_sum;
->  	spin_unlock(&m->write_metric_lock);
-> -	CEPH_METRIC_SHOW("write", total, avg, min, max, sq);
-> +	CEPH_LAT_METRIC_SHOW("write", total, avg, min, max, sq);
->  
->  	spin_lock(&m->metadata_metric_lock);
->  	total = m->total_metadatas;
-> @@ -190,7 +197,29 @@ static int metric_show(struct seq_file *s, void *p)
->  	max = m->metadata_latency_max;
->  	sq = m->metadata_latency_sq_sum;
->  	spin_unlock(&m->metadata_metric_lock);
-> -	CEPH_METRIC_SHOW("metadata", total, avg, min, max, sq);
-> +	CEPH_LAT_METRIC_SHOW("metadata", total, avg, min, max, sq);
-> +
-> +	seq_printf(s, "\n");
-> +	seq_printf(s, "item          total       avg_sz(bytes)   min_sz(bytes)   max_sz(bytes)  total_sz(bytes)\n");
-> +	seq_printf(s, "----------------------------------------------------------------------------------------\n");
-> +
-> +	spin_lock(&m->read_metric_lock);
-> +	total = m->total_reads;
-> +	sum_sz = m->read_size_sum;
-> +	avg_sz = total > 0 ? DIV64_U64_ROUND_CLOSEST(sum_sz, total) : 0;
-> +	min_sz = m->read_size_min;
-> +	max_sz = m->read_size_max;
-> +	spin_unlock(&m->read_metric_lock);
-> +	CEPH_SZ_METRIC_SHOW("read", total, avg_sz, min_sz, max_sz, sum_sz);
-> +
-> +	spin_lock(&m->write_metric_lock);
-> +	total = m->total_writes;
-> +	sum_sz = m->write_size_sum;
-> +	avg_sz = total > 0 ? DIV64_U64_ROUND_CLOSEST(sum_sz, total) : 0;
-> +	min_sz = m->write_size_min;
-> +	max_sz = m->write_size_max;
-> +	spin_unlock(&m->write_metric_lock);
-> +	CEPH_SZ_METRIC_SHOW("write", total, avg_sz, min_sz, max_sz, sum_sz);
->  
->  	seq_printf(s, "\n");
->  	seq_printf(s, "item          total           miss            hit\n");
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 31542eac7e59..db43d2d013b9 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -898,7 +898,7 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
->  		ceph_update_read_metrics(&fsc->mdsc->metric,
->  					 req->r_start_latency,
->  					 req->r_end_latency,
-> -					 ret);
-> +					 len, ret);
->  
->  		ceph_osdc_put_request(req);
->  
-> @@ -1030,12 +1030,12 @@ static void ceph_aio_complete_req(struct ceph_osd_request *req)
->  	struct ceph_aio_request *aio_req = req->r_priv;
->  	struct ceph_osd_data *osd_data = osd_req_op_extent_osd_data(req, 0);
->  	struct ceph_client_metric *metric = &ceph_sb_to_mdsc(inode->i_sb)->metric;
-> +	unsigned int len = osd_data->bvec_pos.iter.bi_size;
->  
->  	BUG_ON(osd_data->type != CEPH_OSD_DATA_TYPE_BVECS);
->  	BUG_ON(!osd_data->num_bvecs);
->  
-> -	dout("ceph_aio_complete_req %p rc %d bytes %u\n",
-> -	     inode, rc, osd_data->bvec_pos.iter.bi_size);
-> +	dout("ceph_aio_complete_req %p rc %d bytes %u\n", inode, rc, len);
->  
->  	if (rc == -EOLDSNAPC) {
->  		struct ceph_aio_work *aio_work;
-> @@ -1053,9 +1053,9 @@ static void ceph_aio_complete_req(struct ceph_osd_request *req)
->  	} else if (!aio_req->write) {
->  		if (rc == -ENOENT)
->  			rc = 0;
-> -		if (rc >= 0 && osd_data->bvec_pos.iter.bi_size > rc) {
-> +		if (rc >= 0 && len > rc) {
->  			struct iov_iter i;
-> -			int zlen = osd_data->bvec_pos.iter.bi_size - rc;
-> +			int zlen = len - rc;
->  
->  			/*
->  			 * If read is satisfied by single OSD request,
-> @@ -1072,8 +1072,7 @@ static void ceph_aio_complete_req(struct ceph_osd_request *req)
->  			}
->  
->  			iov_iter_bvec(&i, READ, osd_data->bvec_pos.bvecs,
-> -				      osd_data->num_bvecs,
-> -				      osd_data->bvec_pos.iter.bi_size);
-> +				      osd_data->num_bvecs, len);
->  			iov_iter_advance(&i, rc);
->  			iov_iter_zero(zlen, &i);
->  		}
-> @@ -1083,10 +1082,10 @@ static void ceph_aio_complete_req(struct ceph_osd_request *req)
->  	if (req->r_start_latency) {
->  		if (aio_req->write)
->  			ceph_update_write_metrics(metric, req->r_start_latency,
-> -						  req->r_end_latency, rc);
-> +						  req->r_end_latency, len, rc);
->  		else
->  			ceph_update_read_metrics(metric, req->r_start_latency,
-> -						 req->r_end_latency, rc);
-> +						 req->r_end_latency, len, rc);
->  	}
->  
->  	put_bvecs(osd_data->bvec_pos.bvecs, osd_data->num_bvecs,
-> @@ -1294,10 +1293,10 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
->  
->  		if (write)
->  			ceph_update_write_metrics(metric, req->r_start_latency,
-> -						  req->r_end_latency, ret);
-> +						  req->r_end_latency, len, ret);
->  		else
->  			ceph_update_read_metrics(metric, req->r_start_latency,
-> -						 req->r_end_latency, ret);
-> +						 req->r_end_latency, len, ret);
->  
->  		size = i_size_read(inode);
->  		if (!write) {
-> @@ -1471,7 +1470,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
->  			ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
->  
->  		ceph_update_write_metrics(&fsc->mdsc->metric, req->r_start_latency,
-> -					  req->r_end_latency, ret);
-> +					  req->r_end_latency, len, ret);
->  out:
->  		ceph_osdc_put_request(req);
->  		if (ret != 0) {
-> diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
-> index f3e68db08760..c1d7fcb61b3c 100644
-> --- a/fs/ceph/metric.c
-> +++ b/fs/ceph/metric.c
-> @@ -225,6 +225,9 @@ int ceph_metric_init(struct ceph_client_metric *m)
->  	m->read_latency_max = 0;
->  	m->total_reads = 0;
->  	m->read_latency_sum = 0;
-> +	m->read_size_min = U64_MAX;
-> +	m->read_size_max = 0;
-> +	m->read_size_sum = 0;
->  
->  	spin_lock_init(&m->write_metric_lock);
->  	m->write_latency_sq_sum = 0;
-> @@ -232,6 +235,9 @@ int ceph_metric_init(struct ceph_client_metric *m)
->  	m->write_latency_max = 0;
->  	m->total_writes = 0;
->  	m->write_latency_sum = 0;
-> +	m->write_size_min = U64_MAX;
-> +	m->write_size_max = 0;
-> +	m->write_size_sum = 0;
->  
->  	spin_lock_init(&m->metadata_metric_lock);
->  	m->metadata_latency_sq_sum = 0;
-> @@ -347,9 +353,33 @@ static inline void __update_latency(struct ceph_client_metric *m,
->  	*sq_sump += sq;
->  }
->  
-> +static inline void __update_size(struct ceph_client_metric *m,
-> +				 metric_type type, unsigned int size)
-> +{
-> +	switch (type) {
-> +	case CEPH_METRIC_READ:
-> +		++m->total_reads;
-> +		m->read_size_sum += size;
-> +		METRIC_UPDATE_MIN_MAX(m->read_size_min,
-> +				      m->read_size_max,
-> +				      size);
-> +		return;
-> +	case CEPH_METRIC_WRITE:
-> +		++m->total_writes;
-> +		m->write_size_sum += size;
-> +		METRIC_UPDATE_MIN_MAX(m->write_size_min,
-> +				      m->write_size_max,
-> +				      size);
-> +		return;
-> +	case CEPH_METRIC_METADATA:
-> +	default:
-> +		return;
-> +	}
-> +}
-> +
 
-Ditto here re: patch 1. This switch adds nothing and just adds in some
-extra branching. I'd just open code these into their (only) callers.
-
->  void ceph_update_read_metrics(struct ceph_client_metric *m,
->  			      ktime_t r_start, ktime_t r_end,
-> -			      int rc)
-> +			      unsigned int size, int rc)
->  {
->  	ktime_t lat = ktime_sub(r_end, r_start);
->  
-> @@ -358,12 +388,13 @@ void ceph_update_read_metrics(struct ceph_client_metric *m,
->  
->  	spin_lock(&m->read_metric_lock);
->  	__update_latency(m, CEPH_METRIC_READ, lat);
-> +	__update_size(m, CEPH_METRIC_READ, size);
->  	spin_unlock(&m->read_metric_lock);
->  }
->  
->  void ceph_update_write_metrics(struct ceph_client_metric *m,
->  			       ktime_t r_start, ktime_t r_end,
-> -			       int rc)
-> +			       unsigned int size, int rc)
->  {
->  	ktime_t lat = ktime_sub(r_end, r_start);
->  
-> @@ -372,6 +403,7 @@ void ceph_update_write_metrics(struct ceph_client_metric *m,
->  
->  	spin_lock(&m->write_metric_lock);
->  	__update_latency(m, CEPH_METRIC_WRITE, lat);
-> +	__update_size(m, CEPH_METRIC_WRITE, size);
->  	spin_unlock(&m->write_metric_lock);
->  }
->  
-> diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
-> index e984eb2bb14b..4bd92689bf12 100644
-> --- a/fs/ceph/metric.h
-> +++ b/fs/ceph/metric.h
-> @@ -152,6 +152,9 @@ struct ceph_client_metric {
->  
->  	spinlock_t read_metric_lock;
->  	u64 total_reads;
-> +	u64 read_size_sum;
-> +	u64 read_size_min;
-> +	u64 read_size_max;
->  	ktime_t read_latency_sum;
->  	ktime_t read_latency_sq_sum;
->  	ktime_t read_latency_min;
-> @@ -159,6 +162,9 @@ struct ceph_client_metric {
->  
->  	spinlock_t write_metric_lock;
->  	u64 total_writes;
-> +	u64 write_size_sum;
-> +	u64 write_size_min;
-> +	u64 write_size_max;
->  	ktime_t write_latency_sum;
->  	ktime_t write_latency_sq_sum;
->  	ktime_t write_latency_min;
-> @@ -206,10 +212,10 @@ static inline void ceph_update_cap_mis(struct ceph_client_metric *m)
->  
->  extern void ceph_update_read_metrics(struct ceph_client_metric *m,
->  				     ktime_t r_start, ktime_t r_end,
-> -				     int rc);
-> +				     unsigned int size, int rc);
->  extern void ceph_update_write_metrics(struct ceph_client_metric *m,
->  				      ktime_t r_start, ktime_t r_end,
-> -				      int rc);
-> +				      unsigned int size, int rc);
->  extern void ceph_update_metadata_metrics(struct ceph_client_metric *m,
->  				         ktime_t r_start, ktime_t r_end,
->  					 int rc);
-
+Thanks for reminding me. I saw that he sent those when I was OOTO, and I
+forgot to revisit them. In the future, if I do that, ping me about them
+and I'll try to get to them sooner.
 -- 
 Jeff Layton <jlayton@kernel.org>
 
