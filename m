@@ -2,242 +2,114 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D18E36BC81
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Apr 2021 02:14:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06B4A36BE86
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Apr 2021 06:38:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234977AbhD0AOw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 26 Apr 2021 20:14:52 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:56046 "EHLO
+        id S229902AbhD0Ei2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 27 Apr 2021 00:38:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:43039 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234084AbhD0AOv (ORCPT
+        by vger.kernel.org with ESMTP id S229535AbhD0Ei2 (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 26 Apr 2021 20:14:51 -0400
+        Tue, 27 Apr 2021 00:38:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619482448;
+        s=mimecast20190719; t=1619498265;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=U3rMIJssX1d2huVmRZulEKHtd5HxdDz+2MIzkHFnJbI=;
-        b=IyRKE8cllfRd3LEFBbfwPJzLmi4wbp8uvi8qL7hs57IJMNRM/vzWg24LvC9wwvVLhGaq3b
-        4I3Mb2pf3EivzGV7GzHVDAf5knbEA6g4ZU0pTjehvgw+w4m94aJuDEWcOhHAVRQOTUReYb
-        i2oxdlAXkjdXy+405Q7DxmnpTu8CuPc=
+        bh=KXHJIyz16VoDRdukZeCItJDOTJgIDW93oKd0AmotTZk=;
+        b=TlIaUeMuxKZz1cJDnXNPukLfStR5J9ky3R8XUrbaWBSp/Az2B9ED0s3prz4STp4/HBo1aO
+        JklWkLBZB0UPraJvN5DDciWosHqJsH/xS+UzY6n0NsqIx+CgZEHk6KJy1DjUHySdvLZvmD
+        uqP7aPin0/+75/8t7lh2AONB2YYqqP4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-337-aGAgAgXLNhO-fNW1VoCbsA-1; Mon, 26 Apr 2021 20:14:04 -0400
-X-MC-Unique: aGAgAgXLNhO-fNW1VoCbsA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-597-eAoTG5VTOi2XW55t-ONeIQ-1; Tue, 27 Apr 2021 00:37:41 -0400
+X-MC-Unique: eAoTG5VTOi2XW55t-ONeIQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E76DF18397A4;
-        Tue, 27 Apr 2021 00:14:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-20.rdu2.redhat.com [10.10.112.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DD9C260C4A;
-        Tue, 27 Apr 2021 00:13:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <3779937.1619478404@warthog.procyon.org.uk>
-References: <3779937.1619478404@warthog.procyon.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Steve French <sfrench@samba.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net
-Subject: [GIT PULL] afs: Preparation for fscache overhaul
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 65F3A1006C80;
+        Tue, 27 Apr 2021 04:37:40 +0000 (UTC)
+Received: from [10.72.13.181] (ovpn-13-181.pek2.redhat.com [10.72.13.181])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D4A58E17D;
+        Tue, 27 Apr 2021 04:37:38 +0000 (UTC)
+Subject: Re: [PATCH v3] libceph: add osd op counter metric support
+To:     Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>
+Cc:     Patrick Donnelly <pdonnell@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+References: <20201110141937.414301-1-xiubli@redhat.com>
+ <CAOi1vP-tBRNEgkmhvieUyBzOms-n=vge4XpYSpnU6cnq86SRMQ@mail.gmail.com>
+ <0ba63df09fe52cb3f650473f4d005a1abe301e3c.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <f4e89e10-70f7-4568-5635-1ac8082f13a9@redhat.com>
+Date:   Tue, 27 Apr 2021 12:37:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3785062.1619482429.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 27 Apr 2021 01:13:49 +0100
-Message-ID: <3785063.1619482429@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <0ba63df09fe52cb3f650473f4d005a1abe301e3c.camel@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
+On 2020/11/11 1:11, Jeff Layton wrote:
+> On Tue, 2020-11-10 at 16:44 +0100, Ilya Dryomov wrote:
+>> On Tue, Nov 10, 2020 at 3:19 PM <xiubli@redhat.com> wrote:
+>>> From: Xiubo Li <xiubli@redhat.com>
+>>>
+>>> The logic is the same with osdc/Objecter.cc in ceph in user space.
+>>>
+>>> URL: https://tracker.ceph.com/issues/48053
+>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>>> ---
+>>>
+>>> V3:
+>>> - typo fixing about oring the _WRITE
+>>>
+>>>   include/linux/ceph/osd_client.h |  9 ++++++
+>>>   net/ceph/debugfs.c              | 13 ++++++++
+>>>   net/ceph/osd_client.c           | 56 +++++++++++++++++++++++++++++++++
+>>>   3 files changed, 78 insertions(+)
+>>>
+>>> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+>>> index 83fa08a06507..24301513b186 100644
+>>> --- a/include/linux/ceph/osd_client.h
+>>> +++ b/include/linux/ceph/osd_client.h
+>>> @@ -339,6 +339,13 @@ struct ceph_osd_backoff {
+>>>          struct ceph_hobject_id *end;
+>>>   };
+>>>
+>>> +struct ceph_osd_metric {
+>>> +       struct percpu_counter op_ops;
+>>> +       struct percpu_counter op_rmw;
+>>> +       struct percpu_counter op_r;
+>>> +       struct percpu_counter op_w;
+>>> +};
+>> OK, so only reads and writes are really needed.  Why not expose them
+>> through the existing metrics framework in fs/ceph?  Wouldn't "fs top"
+>> want to display them?  Exposing latency information without exposing
+>> overall counts seems rather weird to me anyway.
+>>
+>> The fundamental problem is that debugfs output format is not stable.
+>> The tracker mentions test_readahead -- updating some teuthology test
+>> cases from time to time is not a big deal, but if a user facing tool
+>> such as "fs top" starts relying on these, it would be bad.
+>>
+>> Thanks,
+>>
+>>                  Ilya
+> Those are all good points. The tracker is light on details. I had
+> assumed that you'd also be uploading this to the MDS in a later patch.
+> Is that also planned?
 
-Here's a set of patches for the AFS filesystem for 5.13 to begin the
-process of overhauling the use of the fscache API by AFS and the
-introduction of support for features such as Transparent Huge Pages (THPs)=
-.
+Yeah, it is, the next plan is to send these metrics to MDS.
 
- (1) Add some support for THPs, including using core VM helper functions t=
-o
-     find details of pages.
+> I'll also add that it might be nice to keeps stats on copy_from2 as
+> well, since we do have a copy_file_range operation in cephfs.
 
- (2) Use the ITER_XARRAY I/O iterator to mediate access to the pagecache a=
-s
-     this handles THPs and doesn't require allocation of large bvec arrays=
-.
-
- (3) Delegate address_space read/pre-write I/O methods for AFS to the netf=
-s
-     helper library.  A method is provided to the library that allows it t=
-o
-     issue a read against the server.
-
-     This includes a change in use for PG_fscache (it now indicates a DIO
-     write in progress from the marked page), so a number of waits need to
-     be deployed for it.
-
- (4) Split the core AFS writeback function to make it easier to modify in
-     future patches to handle writing to the cache.  [This might feasibly
-     make more sense moved out into my fscache-iter branch].
-
-I've tested these with "xfstests -g quick" against an AFS volume (xfstests
-needs patching to make it work).  With this, AFS without a cache passes al=
-l
-expected xfstests; with a cache, there's an extra failure, but that's also
-there before these patches.  Fixing that probably requires a greater
-overhaul (as can be found on my fscache-iter branch, but that's for a late=
-r
-time).
-
-Thanks should go to Marc Dionne and Jeff Altman of AuriStor for exercising
-the patches in their test farm also.
-
-
-Changes
-=3D=3D=3D=3D=3D=3D=3D
-
-These patches are dependent on the netfs-lib branch and have been posted i=
-n
-association with them.  The changes relevant to these patches are:
-
-ver #6:
-      Split the afs patches out into their own branch.
-
-ver #5:
-      Fixed some review comments from Matthew Wilcox:
-
-      - Better names for wrangling functions for PG_private_2 and
-        PG_fscache wrangling functions[3].  Came up with
-        {set,end,wait_for}_page_private_2() and aliased these for fscache.
-
-      Moved the taking of/dropping a page ref for the PG_private_2 flag
-      into the set and end functions.
-
-ver #4:
-      Rebased to v5.12-rc2 and added a bunch of references into individual
-      commits.
-
-ver #3:
-      Adjusted the functions that unlock and wait for PG_fscache according
-      to Linus's suggestion[1].
-
-      Hold a ref on a page when PG_fscache is set as per Linus's
-      suggestion[2].
-
-Link: https://lore.kernel.org/r/CAHk-=3Dwh+2gbF7XEjYc=3DHV9w_2uVzVf7vs60BP=
-z0gFA=3D+pUm3ww@mail.gmail.com/ [1]
-Link: https://lore.kernel.org/r/CAHk-=3DwjgA-74ddehziVk=3DXAEMTKswPu1Yw4ua=
-ro1R3ibs27ztw@mail.gmail.com/ [2]
-Link: https://lore.kernel.org/r/20210321105309.GG3420@casper.infradead.org=
-/ [3]
-
-References
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-These patches have been published for review before, firstly as part of a
-larger set:
-
-Link: https://lore.kernel.org/r/158861203563.340223.7585359869938129395.st=
-git@warthog.procyon.org.uk/
-
-Link: https://lore.kernel.org/r/159465766378.1376105.11619976251039287525.=
-stgit@warthog.procyon.org.uk/
-Link: https://lore.kernel.org/r/159465784033.1376674.18106463693989811037.=
-stgit@warthog.procyon.org.uk/
-Link: https://lore.kernel.org/r/159465821598.1377938.2046362270225008168.s=
-tgit@warthog.procyon.org.uk/
-
-Link: https://lore.kernel.org/r/160588455242.3465195.3214733858273019178.s=
-tgit@warthog.procyon.org.uk/
-
-Then as a cut-down set:
-
-Link: https://lore.kernel.org/r/161118128472.1232039.11746799833066425131.=
-stgit@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/161161025063.2537118.2009249444682241405.s=
-tgit@warthog.procyon.org.uk/ # v2
-Link: https://lore.kernel.org/r/161340385320.1303470.2392622971006879777.s=
-tgit@warthog.procyon.org.uk/ # v3
-Link: https://lore.kernel.org/r/161539526152.286939.8589700175877370401.st=
-git@warthog.procyon.org.uk/ # v4
-Link: https://lore.kernel.org/r/161653784755.2770958.11820491619308713741.=
-stgit@warthog.procyon.org.uk/ # v5
-Link: https://lore.kernel.org/r/161789062190.6155.12711584466338493050.stg=
-it@warthog.procyon.org.uk/ # v6
-Link: https://lore.kernel.org/r/161918446704.3145707.14418606303992174310.=
-stgit@warthog.procyon.org.uk # v7
-
-David
----
-The following changes since commit 26aaeffcafe6cbb7c3978fa6ed7555122f8c9f8=
-c:
-
-  fscache, cachefiles: Add alternate API to use kiocb for read/write to ca=
-che (2021-04-23 10:14:32 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/afs-netfs-lib-20210426
-
-for you to fetch changes up to 3003bbd0697b659944237f3459489cb596ba196c:
-
-  afs: Use the netfs_write_begin() helper (2021-04-23 10:17:28 +0100)
-
-----------------------------------------------------------------
-AFS: Use the new netfs lib
-
-----------------------------------------------------------------
-David Howells (14):
-      afs: Disable use of the fscache I/O routines
-      afs: Pass page into dirty region helpers to provide THP size
-      afs: Print the operation debug_id when logging an unexpected data ve=
-rsion
-      afs: Move key to afs_read struct
-      afs: Don't truncate iter during data fetch
-      afs: Log remote unmarshalling errors
-      afs: Set up the iov_iter before calling afs_extract_data()
-      afs: Use ITER_XARRAY for writing
-      afs: Wait on PG_fscache before modifying/releasing a page
-      afs: Extract writeback extension into its own function
-      afs: Prepare for use of THPs
-      afs: Use the fs operation ops to handle FetchData completion
-      afs: Use new netfs lib read helper API
-      afs: Use the netfs_write_begin() helper
-
- fs/afs/Kconfig             |   1 +
- fs/afs/dir.c               | 225 +++++++++++-----
- fs/afs/file.c              | 483 +++++++++------------------------
- fs/afs/fs_operation.c      |   4 +-
- fs/afs/fsclient.c          | 108 +++-----
- fs/afs/inode.c             |   7 +-
- fs/afs/internal.h          |  59 ++--
- fs/afs/rxrpc.c             | 150 ++++-------
- fs/afs/write.c             | 657 +++++++++++++++++++++++-----------------=
------
- fs/afs/yfsclient.c         |  82 ++----
- include/net/af_rxrpc.h     |   2 +-
- include/trace/events/afs.h |  74 +++--
- net/rxrpc/recvmsg.c        |   9 +-
- 13 files changed, 805 insertions(+), 1056 deletions(-)
+Okay, will check it.
 
