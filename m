@@ -2,66 +2,70 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CDEE371649
-	for <lists+ceph-devel@lfdr.de>; Mon,  3 May 2021 15:54:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D4543717B8
+	for <lists+ceph-devel@lfdr.de>; Mon,  3 May 2021 17:20:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233815AbhECNzj convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Mon, 3 May 2021 09:55:39 -0400
-Received: from smobe-rbx-k8s190.smobe.fr ([51.210.113.172]:20300 "EHLO
-        zimbra.smobe.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231771AbhECNzc (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 May 2021 09:55:32 -0400
-X-Greylist: delayed 356 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 May 2021 09:55:32 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.smobe.fr (Postfix) with ESMTP id 2FA07318A57;
-        Mon,  3 May 2021 13:48:38 +0000 (UTC)
-Received: from zimbra.smobe.fr ([127.0.0.1])
-        by localhost (zimbra.smobe.fr [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Xa3bx1YLQ8IB; Mon,  3 May 2021 13:48:37 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.smobe.fr (Postfix) with ESMTP id DB3C7318A55;
-        Mon,  3 May 2021 13:48:37 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smobe.fr
-Received: from zimbra.smobe.fr ([127.0.0.1])
-        by localhost (zimbra.smobe.fr [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id HQ87mUjs5U0v; Mon,  3 May 2021 13:48:37 +0000 (UTC)
-Received: from gimli (unknown [10.244.3.0])
-        by zimbra.smobe.fr (Postfix) with ESMTPSA id 7F0BC318A31;
-        Mon,  3 May 2021 13:48:37 +0000 (UTC)
-Message-ID: <d81929d41edfc41c645e49220e8644ed924d6fb0.camel@predical.fr>
-Subject: Re: [ceph-users] [ Ceph MDS MON Config Variables ] Failover Delay
- issue
-From:   Olivier AUDRY <oaudry@predical.fr>
-To:     Lokendra Rathour <lokendrarathour@gmail.com>,
-        ceph-devel@vger.kernel.org, dev@ceph.io, ceph-users@ceph.io
-Date:   Mon, 03 May 2021 15:48:36 +0200
-In-Reply-To: <CAJm6b-741TRptPWOqoqEJG6m00auekTkcWUD+z3sxH1-34THgA@mail.gmail.com>
-References: <CAJm6b-741TRptPWOqoqEJG6m00auekTkcWUD+z3sxH1-34THgA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        id S230316AbhECPVA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 3 May 2021 11:21:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22809 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230122AbhECPU5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 May 2021 11:20:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620055203;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=hqDZnBUhMAQ8HdatrCtwVe4WYzSDRxkHLwIxw/ueq0g=;
+        b=hVqouafhaubgWwhnWOFeDbM9nsOGaafuotZqUPSS+OalgD/HitlpYaGM/4XuZfOTWxAk9P
+        fkqxTMACgycUh/5ZZt20hIM4+TnBKbPpwheexbhlJkc6f3cclhusq3xpIEUPzDjhihUs8H
+        pd2DcHZIKn8V9C95Gyb4QyEgIW9d4/4=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-86-IFPNiyVIOJePc6nru2pu2A-1; Mon, 03 May 2021 11:20:00 -0400
+X-MC-Unique: IFPNiyVIOJePc6nru2pu2A-1
+Received: by mail-ej1-f69.google.com with SMTP id 16-20020a1709063010b029037417ca2d43so2192426ejz.5
+        for <ceph-devel@vger.kernel.org>; Mon, 03 May 2021 08:20:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hqDZnBUhMAQ8HdatrCtwVe4WYzSDRxkHLwIxw/ueq0g=;
+        b=tmzCffAuHNIyOIhcEtpEnPILDInutToRmzUwyTLqcNFa5sUWK/Gsez70n2A4vBDHPP
+         m4nzIJ2arRWPDPpj/vpOABrDrk9rNA6OZ3cz3lCyj6DTyjod9Nj5Nr5NsZmJDhKw7CHS
+         UM7tiYXxfkByxSKS7+Sq1INuGI3vPvJbuL7BL61UbyJHY7fVTFvq77jVcNsNrCkDyVOE
+         /CrUkizR/dYAsn3bL1clEdl/UdHsg71mDBxcuwgF/gaGSLykILD7r0Zva3tPQP78sCIY
+         5xq+1HcUzoAuIB0T94JSWOlWuxsZOn3JV0PBhVnlo0sCNs4Rfjyo7Vxc/9DQdmKrHRUd
+         9v7A==
+X-Gm-Message-State: AOAM533XRWXDNjvYzi/wtztRmL1VqNq4mfAhtsa05sWzMGcMNjIZxG9C
+        O57sWPeszRaCWrGePv0s3aQaR+aXtdtQQI5T3y9xfCK2NLoVHzv88R01duznotoXVcxnQpH7URd
+        BkUb5M6Dx1uOL4EyMbsj2B4XB2jear6/xliXvKA==
+X-Received: by 2002:a17:906:e118:: with SMTP id gj24mr17425324ejb.205.1620055199700;
+        Mon, 03 May 2021 08:19:59 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzcrjq7wM4kAZqQ8UCZc7z8lajzUBq2v0Zwi+n28pjXf8t5M7JXMbUQnqcoK89tD/aPm66T5N/ubXRVQQ98Ovs=
+X-Received: by 2002:a17:906:e118:: with SMTP id gj24mr17425305ejb.205.1620055199575;
+ Mon, 03 May 2021 08:19:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
+References: <CAJm6b-741TRptPWOqoqEJG6m00auekTkcWUD+z3sxH1-34THgA@mail.gmail.com>
+In-Reply-To: <CAJm6b-741TRptPWOqoqEJG6m00auekTkcWUD+z3sxH1-34THgA@mail.gmail.com>
+From:   Patrick Donnelly <pdonnell@redhat.com>
+Date:   Mon, 3 May 2021 08:19:37 -0700
+Message-ID: <CA+2bHPaotXm-SK7Pi0WqL1wb4=MD+xvJr4hQGprk897LHt5qCQ@mail.gmail.com>
+Subject: Re: [ceph-users] [ Ceph MDS MON Config Variables ] Failover Delay issue
+To:     Lokendra Rathour <lokendrarathour@gmail.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>, dev <dev@ceph.io>,
+        ceph-users <ceph-users@ceph.io>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-hello
-
-perhaps you should have more than one MDS active.
-
-mds: cephfs:3 {0=cephfs-d=up:active,1=cephfs-e=up:active,2=cephfs-
-a=up:active} 1 up:standby-replay
-
-I got 3 active mds and one standby.
-
-I'm using rook in kubernetes for this setup.
-
-oau
-
-Le lundi 03 mai 2021 à 19:06 +0530, Lokendra Rathour a écrit :
+On Mon, May 3, 2021 at 6:36 AM Lokendra Rathour
+<lokendrarathour@gmail.com> wrote:
+>
 > Hi Team,
 > I was setting up the ceph cluster with
-> 
+>
 >    - Node Details:3 Mon,2 MDS, 2 Mgr, 2 RGW
 >    - Deployment Type: Active Standby
 >    - Testing Mode: Failover of MDS Node
@@ -71,63 +75,25 @@ Le lundi 03 mai 2021 à 19:06 +0530, Lokendra Rathour a écrit :
 >    - Ram:  128 GB on each Node
 >    - OSD: 2 ( 1 tb each)
 >    - Operation: Normal I/O with mkdir on every 1 second.
-> 
+>
 > T*est Case: Power-off any active MDS Node for failover to happen*
-> 
+>
 > *Observation:*
-> We have observed that whenever an active MDS Node is down it takes
-> around*
+> We have observed that whenever an active MDS Node is down it takes around*
 > 40 seconds* to activate the standby MDS Node.
-> on further checking the logs for the new-handover MDS Node we have
-> seen
+> on further checking the logs for the new-handover MDS Node we have seen
 > delay on the basis of following inputs:
-> 
+>
 >    1. 10 second delay after which Mon calls for new Monitor election
->       1.  [log]  0 log_channel(cluster) log [INF] : mon.cephnode1
-> calling
+>       1.  [log]  0 log_channel(cluster) log [INF] : mon.cephnode1 calling
 >       monitor election
->    2. 5 second delay in which newly elected Monitor is elected
->       1. [log] 0 log_channel(cluster) log [INF] : mon.cephnode1 is
-> new
->       leader, mons cephnode1,cephnode3 in quorum (ranks 0,2)
->       3. the addition beacon grace time for which the system waits
-> before
->    which it enables standby MDS node activation. (approx delay of 19
-> seconds)
->       1. defaults :  sudo ceph config get mon mds_beacon_grace
->       15.000000
->       2. sudo ceph config get mon mds_beacon_interval
->       5.000000
->       3. [log] - 2021-04-30T18:23:10.136+0530 7f4e3925c700  1
->       mon.cephnode2@1(leader).mds e776 no beacon from mds.0.771 (gid:
->       639443 addr: [v2:
->       10.0.4.10:6800/2172152716,v1:10.0.4.10:6801/2172152716] state:
->       up:active)* since 18.7951*
->    4. *in Total it takes around 40 seconds to handover and activate
-> passive
->    standby node. *
-> 
-> *Query:*
-> 
->    1. Can these variables be configured ?  which we have tried,but
-> are not
->    aware of the overall impact on the ceph cluster because of these
-> changes
->       1. By tuning these values we could reach the minimum time of 12
->       seconds in which the active node comes up.
->       2. Values taken to get the said time :
->          1. *mon_election_timeout* (default 5) - configured as 1
->          2. *mon_lease*(default 5)  - configured as 2
->          3.  *mds_beacon_grace* (default 15) - configured as 5
->          4.  *mds_beacon_interval* (default 5) - configured as 1
-> 
-> We need to tune this setup to get the failover duration as low as 5-7
-> seconds.
-> 
-> Please suggest/support and share your inputs, my setup is ready and
-> already
-> we are testing with multiple scenarios so that we are able to achive
-> min
-> failover duration.
-> 
+
+In the process of killing the active MDS, are you also killing a monitor?
+
+-- 
+Patrick Donnelly, Ph.D.
+He / Him / His
+Principal Software Engineer
+Red Hat Sunnyvale, CA
+GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
 
