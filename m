@@ -2,130 +2,132 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E3C3712B0
-	for <lists+ceph-devel@lfdr.de>; Mon,  3 May 2021 10:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CDEE371649
+	for <lists+ceph-devel@lfdr.de>; Mon,  3 May 2021 15:54:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233014AbhECIx2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 3 May 2021 04:53:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58732 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230490AbhECIx1 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 3 May 2021 04:53:27 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id D898DB1B5;
-        Mon,  3 May 2021 08:52:32 +0000 (UTC)
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 0af4dc88;
-        Mon, 3 May 2021 08:54:02 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Nicolas Boichat <drinkcat@chromium.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Olga Kornievskaia <aglo@umich.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <dchinner@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Ian Lance Taylor <iant@google.com>,
-        Luis Lozano <llozano@chromium.org>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Christoph Hellwig <hch@infradead.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>
-Subject: Re: [PATCH v8] vfs: fix copy_file_range regression in cross-fs copies
-References: <20210221195833.23828-1-lhenriques@suse.de>
-        <20210222102456.6692-1-lhenriques@suse.de>
-        <CAN-5tyELMY7b7CKO-+an47ydq8r_4+SOyhuvdH0qE0-JmdZ44Q@mail.gmail.com>
-        <YDYpHccgM7agpdTQ@suse.de>
-        <CANMq1KBgwEXFh8AxpPW2t1SA0NVsyR45m0paLEU4D4w80dc_fA@mail.gmail.com>
-        <CANMq1KDTgnGtNxWj2XxAT3mdsNjc551uUCg6EWnh=Hd0KcVQKQ@mail.gmail.com>
-        <8735vzfugn.fsf@suse.de>
-        <CAOQ4uxjdVZywBi6=D1eRfBhRk+nobTz4N87jcejDtvzBMMMKXQ@mail.gmail.com>
-        <CANMq1KAOwj9dJenwF2NadQ73ytfccuPuahBJE7ak6S7XP6nCjg@mail.gmail.com>
-Date:   Mon, 03 May 2021 09:54:01 +0100
-In-Reply-To: <CANMq1KAOwj9dJenwF2NadQ73ytfccuPuahBJE7ak6S7XP6nCjg@mail.gmail.com>
-        (Nicolas Boichat's message of "Fri, 23 Apr 2021 12:40:44 +0800")
-Message-ID: <8735v4tcye.fsf@suse.de>
+        id S233815AbhECNzj convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Mon, 3 May 2021 09:55:39 -0400
+Received: from smobe-rbx-k8s190.smobe.fr ([51.210.113.172]:20300 "EHLO
+        zimbra.smobe.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231771AbhECNzc (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 May 2021 09:55:32 -0400
+X-Greylist: delayed 356 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 May 2021 09:55:32 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.smobe.fr (Postfix) with ESMTP id 2FA07318A57;
+        Mon,  3 May 2021 13:48:38 +0000 (UTC)
+Received: from zimbra.smobe.fr ([127.0.0.1])
+        by localhost (zimbra.smobe.fr [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Xa3bx1YLQ8IB; Mon,  3 May 2021 13:48:37 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.smobe.fr (Postfix) with ESMTP id DB3C7318A55;
+        Mon,  3 May 2021 13:48:37 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smobe.fr
+Received: from zimbra.smobe.fr ([127.0.0.1])
+        by localhost (zimbra.smobe.fr [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id HQ87mUjs5U0v; Mon,  3 May 2021 13:48:37 +0000 (UTC)
+Received: from gimli (unknown [10.244.3.0])
+        by zimbra.smobe.fr (Postfix) with ESMTPSA id 7F0BC318A31;
+        Mon,  3 May 2021 13:48:37 +0000 (UTC)
+Message-ID: <d81929d41edfc41c645e49220e8644ed924d6fb0.camel@predical.fr>
+Subject: Re: [ceph-users] [ Ceph MDS MON Config Variables ] Failover Delay
+ issue
+From:   Olivier AUDRY <oaudry@predical.fr>
+To:     Lokendra Rathour <lokendrarathour@gmail.com>,
+        ceph-devel@vger.kernel.org, dev@ceph.io, ceph-users@ceph.io
+Date:   Mon, 03 May 2021 15:48:36 +0200
+In-Reply-To: <CAJm6b-741TRptPWOqoqEJG6m00auekTkcWUD+z3sxH1-34THgA@mail.gmail.com>
+References: <CAJm6b-741TRptPWOqoqEJG6m00auekTkcWUD+z3sxH1-34THgA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Nicolas Boichat <drinkcat@chromium.org> writes:
+hello
 
-> On Fri, Apr 9, 2021 at 9:50 PM Amir Goldstein <amir73il@gmail.com> wrote:
->>
->> On Fri, Apr 9, 2021 at 4:39 PM Luis Henriques <lhenriques@suse.de> wrote:
->> >
->> > Nicolas Boichat <drinkcat@chromium.org> writes:
->> >
->> > > On Wed, Feb 24, 2021 at 6:44 PM Nicolas Boichat <drinkcat@chromium.org> wrote:
->> > >>
->> > >> On Wed, Feb 24, 2021 at 6:22 PM Luis Henriques <lhenriques@suse.de> wrote:
->> > >> >
->> > >> > On Tue, Feb 23, 2021 at 08:00:54PM -0500, Olga Kornievskaia wrote:
->> > >> > > On Mon, Feb 22, 2021 at 5:25 AM Luis Henriques <lhenriques@suse.de> wrote:
->> > >> > > >
->> > >> > > > A regression has been reported by Nicolas Boichat, found while using the
->> > >> > > > copy_file_range syscall to copy a tracefs file.  Before commit
->> > >> > > > 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
->> > >> > > > kernel would return -EXDEV to userspace when trying to copy a file across
->> > >> > > > different filesystems.  After this commit, the syscall doesn't fail anymore
->> > >> > > > and instead returns zero (zero bytes copied), as this file's content is
->> > >> > > > generated on-the-fly and thus reports a size of zero.
->> > >> > > >
->> > >> > > > This patch restores some cross-filesystem copy restrictions that existed
->> > >> > > > prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
->> > >> > > > devices").  Filesystems are still allowed to fall-back to the VFS
->> > >> > > > generic_copy_file_range() implementation, but that has now to be done
->> > >> > > > explicitly.
->> > >> > > >
->> > >> > > > nfsd is also modified to fall-back into generic_copy_file_range() in case
->> > >> > > > vfs_copy_file_range() fails with -EOPNOTSUPP or -EXDEV.
->> > >> > > >
->> > >> > > > Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
->> > >> > > > Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drinkcat@chromium.org/
->> > >> > > > Link: https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx+BnvW=ZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/
->> > >> > > > Link: https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cdc3ff707bc1efa17f5366057d60603c45f@changeid/
->> > >> > > > Reported-by: Nicolas Boichat <drinkcat@chromium.org>
->> > >> > > > Signed-off-by: Luis Henriques <lhenriques@suse.de>
->> > >> > >
->> > >> > > I tested v8 and I believe it works for NFS.
->> > >> >
->> > >> > Thanks a lot for the testing.  And to everyone else for reviews,
->> > >> > feedback,... and patience.
->> > >>
->> > >> Thanks so much to you!!!
->> > >>
->> > >> Works here, you can add my
->> > >> Tested-by: Nicolas Boichat <drinkcat@chromium.org>
->> > >
->> > > What happened to this patch? It does not seem to have been picked up
->> > > yet? Any reason why?
->> >
->> > Hmm... good question.  I'm not actually sure who would be picking it.  Al,
->> > maybe...?
->> >
->>
->> Darrick,
->>
->> Would you mind taking this through your tree in case Al doesn't pick it up?
->
-> Err, sorry for yet another ping... but it would be good to move
-> forward with those patches ,-P
+perhaps you should have more than one MDS active.
 
-Yeah, I'm not sure what else to do, or who else to bug regarding this :-/
+mds: cephfs:3 {0=cephfs-d=up:active,1=cephfs-e=up:active,2=cephfs-
+a=up:active} 1 up:standby-replay
 
-Cheers,
--- 
-Luis
+I got 3 active mds and one standby.
+
+I'm using rook in kubernetes for this setup.
+
+oau
+
+Le lundi 03 mai 2021 à 19:06 +0530, Lokendra Rathour a écrit :
+> Hi Team,
+> I was setting up the ceph cluster with
+> 
+>    - Node Details:3 Mon,2 MDS, 2 Mgr, 2 RGW
+>    - Deployment Type: Active Standby
+>    - Testing Mode: Failover of MDS Node
+>    - Setup : Octopus (15.2.7)
+>    - OS: centos 8.3
+>    - hardware: HP
+>    - Ram:  128 GB on each Node
+>    - OSD: 2 ( 1 tb each)
+>    - Operation: Normal I/O with mkdir on every 1 second.
+> 
+> T*est Case: Power-off any active MDS Node for failover to happen*
+> 
+> *Observation:*
+> We have observed that whenever an active MDS Node is down it takes
+> around*
+> 40 seconds* to activate the standby MDS Node.
+> on further checking the logs for the new-handover MDS Node we have
+> seen
+> delay on the basis of following inputs:
+> 
+>    1. 10 second delay after which Mon calls for new Monitor election
+>       1.  [log]  0 log_channel(cluster) log [INF] : mon.cephnode1
+> calling
+>       monitor election
+>    2. 5 second delay in which newly elected Monitor is elected
+>       1. [log] 0 log_channel(cluster) log [INF] : mon.cephnode1 is
+> new
+>       leader, mons cephnode1,cephnode3 in quorum (ranks 0,2)
+>       3. the addition beacon grace time for which the system waits
+> before
+>    which it enables standby MDS node activation. (approx delay of 19
+> seconds)
+>       1. defaults :  sudo ceph config get mon mds_beacon_grace
+>       15.000000
+>       2. sudo ceph config get mon mds_beacon_interval
+>       5.000000
+>       3. [log] - 2021-04-30T18:23:10.136+0530 7f4e3925c700  1
+>       mon.cephnode2@1(leader).mds e776 no beacon from mds.0.771 (gid:
+>       639443 addr: [v2:
+>       10.0.4.10:6800/2172152716,v1:10.0.4.10:6801/2172152716] state:
+>       up:active)* since 18.7951*
+>    4. *in Total it takes around 40 seconds to handover and activate
+> passive
+>    standby node. *
+> 
+> *Query:*
+> 
+>    1. Can these variables be configured ?  which we have tried,but
+> are not
+>    aware of the overall impact on the ceph cluster because of these
+> changes
+>       1. By tuning these values we could reach the minimum time of 12
+>       seconds in which the active node comes up.
+>       2. Values taken to get the said time :
+>          1. *mon_election_timeout* (default 5) - configured as 1
+>          2. *mon_lease*(default 5)  - configured as 2
+>          3.  *mds_beacon_grace* (default 15) - configured as 5
+>          4.  *mds_beacon_interval* (default 5) - configured as 1
+> 
+> We need to tune this setup to get the failover duration as low as 5-7
+> seconds.
+> 
+> Please suggest/support and share your inputs, my setup is ready and
+> already
+> we are testing with multiple scenarios so that we are able to achive
+> min
+> failover duration.
+> 
+
