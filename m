@@ -2,174 +2,225 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88FC2371DC7
-	for <lists+ceph-devel@lfdr.de>; Mon,  3 May 2021 19:10:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F2FF372263
+	for <lists+ceph-devel@lfdr.de>; Mon,  3 May 2021 23:21:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234994AbhECRDO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 3 May 2021 13:03:14 -0400
-Received: from mail-db8eur05on2088.outbound.protection.outlook.com ([40.107.20.88]:45024
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232168AbhECRB2 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 3 May 2021 13:01:28 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dmMcGXbVliO8LBG+m5fWAcZsgvdfxTpgjITKPvstjl79OzCNQH+c0DFcH7gtEmfKLYDidDCkhp2tCd1w2AHznDO0LfNUDqyyTt/dQeFTNCg2fAYAHR4dcyVuEck7fvKudNVIf9bx0+m9mANsDwajqABwE6kgjHfeGjE7mihRAYrRyAHpbexLRy6/ZhCV0zsYaNg4USV+usAMFls+MMyw41NygNq49pXndEyRqry1gACP/7T6UMaa3lbzW1lTCMJ1TzEK7K7n3ocSZlHaY1wbDHioLafvR7l1k12APZzwTBQJmgQZ7RIOwtPolygaUlEQjgfJOfa5fZC0pBJ2KxB5pA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YKaYElrDeZg07qxa2i0n8c1Y0QXJXc2Lm58vTjNon4U=;
- b=JJoCwsaiPcrHBYLHWeVkcQqi+SVtnS9G4x7PH+Qd/7bcE6eLXLWsDORBGI1G/KPLhB8mz82lLjcxxvJL8DobZxI1NsvRGFI9coNWsHkYlhHzPjPCJUcEHjRqwBQdL11rVJ29x0PKznZhjGL/HJhVgu+nBSxkOA23d7fRWZjZI5U4x1GQvJzNnAFgvc0UpcMiaiZ1A0uCrWiP+IvNUS1AEs3aYeZu9HQcttbcWrBOsf6BDRzHCLtj9YbxVAOKYbXgWM5g+a2vNM5rvpfVX6VeyJLw05z5SBI8D2/+unooyXHmZPoqkboXpCpiaXk3FJf0OKOXlQbYR1tN7iszoEep4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.38.82.194) smtp.rcpttodomain=redhat.com smtp.mailfrom=dtu.dk; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=dtu.dk;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dtu.dk; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YKaYElrDeZg07qxa2i0n8c1Y0QXJXc2Lm58vTjNon4U=;
- b=tMhm2rZ9fHdGjCDnLQfKJjK7u2/MEWB5zWUyWhS3L3oB6kKTDhSQ3gHkqgnO7pZCwjKV0FyV5PiFWltqsvtZ8sD2d5xfJwW9swM7O8Wrxmx1zQ7eiMA7BBeHOQ6flBj781DZTUjrRiPBuBOEvufWwoRfRwXfNI+DW9BykAeT/nI=
-Received: from AM6PR05CA0015.eurprd05.prod.outlook.com (2603:10a6:20b:2e::28)
- by PR3P192MB0601.EURP192.PROD.OUTLOOK.COM (2603:10a6:102:44::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4087.35; Mon, 3 May
- 2021 17:00:32 +0000
-Received: from HE1EUR01FT059.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:20b:2e:cafe::b2) by AM6PR05CA0015.outlook.office365.com
- (2603:10a6:20b:2e::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4087.27 via Frontend
- Transport; Mon, 3 May 2021 17:00:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.38.82.194)
- smtp.mailfrom=dtu.dk; redhat.com; dkim=none (message not signed)
- header.d=none;redhat.com; dmarc=pass action=none header.from=dtu.dk;
-Received-SPF: Pass (protection.outlook.com: domain of dtu.dk designates
- 192.38.82.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=192.38.82.194; helo=mail.win.dtu.dk;
-Received: from mail.win.dtu.dk (192.38.82.194) by
- HE1EUR01FT059.mail.protection.outlook.com (10.152.0.241) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.20.4087.27 via Frontend Transport; Mon, 3 May 2021 17:00:31 +0000
-Received: from ait-pexsrv03.win.dtu.dk (192.38.82.196) by
- ait-pexsrv01.win.dtu.dk (192.38.82.194) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Mon, 3 May 2021 19:00:31 +0200
-Received: from ait-pexsrv03.win.dtu.dk (192.38.82.196) by
- ait-pexsrv03.win.dtu.dk (192.38.82.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Mon, 3 May 2021 19:00:31 +0200
-Received: from ait-pexsrv03.win.dtu.dk ([192.38.82.196]) by
- ait-pexsrv03.win.dtu.dk ([192.38.82.196]) with mapi id 15.01.2176.012; Mon, 3
- May 2021 19:00:31 +0200
-From:   Frank Schilder <frans@dtu.dk>
-To:     Patrick Donnelly <pdonnell@redhat.com>,
-        Lokendra Rathour <lokendrarathour@gmail.com>
-CC:     Ceph Development <ceph-devel@vger.kernel.org>, dev <dev@ceph.io>,
-        ceph-users <ceph-users@ceph.io>
-Subject: Re: [ceph-users] Re: [ Ceph MDS MON Config Variables ] Failover Delay
- issue
-Thread-Topic: [ceph-users] Re: [ Ceph MDS MON Config Variables ] Failover
- Delay issue
-Thread-Index: AQHXQDADzLNi6UZYukWYctrBDhTslKrR+PDZ
-Date:   Mon, 3 May 2021 17:00:31 +0000
-Message-ID: <6d07b36589f5493785d036dc4026f214@dtu.dk>
-References: <CAJm6b-741TRptPWOqoqEJG6m00auekTkcWUD+z3sxH1-34THgA@mail.gmail.com>,<CA+2bHPaotXm-SK7Pi0WqL1wb4=MD+xvJr4hQGprk897LHt5qCQ@mail.gmail.com>
-In-Reply-To: <CA+2bHPaotXm-SK7Pi0WqL1wb4=MD+xvJr4hQGprk897LHt5qCQ@mail.gmail.com>
-Accept-Language: en-GB, da-DK, en-US
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [192.38.82.8]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S229590AbhECVWB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 3 May 2021 17:22:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:34683 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229576AbhECVWB (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 May 2021 17:22:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620076867;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=oDct55SJURHoBiX/SyMG6a200F4IdYZIl18+Q7Uq3G0=;
+        b=W/SOLmgVeuntIrdaLwmU0+PUzIMnxzCv9TbdHByvn6ZasuVz7PKFhtn6qrcuo/HYfgIEsP
+        48oZEYuc6FoW6AyGlbclwhlhqOR9iuwKrn7dD8LjjKo+EKZo0Vp67RWe1v2O5C71duWRsI
+        5jxSMORJT+9BVBTGKgLz9B7IwEFKhwU=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-336-mnGCp3upMHWFFdjESbxkvg-1; Mon, 03 May 2021 17:21:00 -0400
+X-MC-Unique: mnGCp3upMHWFFdjESbxkvg-1
+Received: by mail-qv1-f69.google.com with SMTP id b10-20020a0cf04a0000b02901bda1df3afbso5984900qvl.13
+        for <ceph-devel@vger.kernel.org>; Mon, 03 May 2021 14:21:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oDct55SJURHoBiX/SyMG6a200F4IdYZIl18+Q7Uq3G0=;
+        b=X8oRyoAxnNXb1oTZbvU2nw+9O7Zu5A4S7nGbqiaavCRPiBGbRefAgWhaVtCMj5iPHo
+         fuTbTmtt2h3NTWEVZtG7AWqSztkDHh++fc37bFLA0AMZkbdreLB743t68vMvbWHuQIIj
+         tdhkYQMBtcX13qHirsouuoXfR9Me7DWwEjBzK6u5frkR8lmYaxLOsPy2k+e30JC5g2uL
+         XfPg/ZVhWic3G1T1c8u7+bABAJofHia2DNarWA7WGa1J5LF/cbYIPvjM7eKVqi992/Ry
+         SWRadbNliTvvc9oXcmwfwkkMF1BPl0FFU3G+u4jQwujfonEtVapf3cdJeX3GHhaanSan
+         3HVA==
+X-Gm-Message-State: AOAM531TLHnS5ywC9wyUYHIPi7o+rvetSdUntpz/fLIpQDLLUNlh1BN6
+        ub+oXVNUACbSHHk8HnDgowPmRg/NIyszauP8kVIF2cGe+THnRRJup9JycanKrBSB4Jfq/IvwxlT
+        fadlzwZg0oR3HNCBfKSZy56xcRZQl0oQ3YGvzZw==
+X-Received: by 2002:ac8:5508:: with SMTP id j8mr18689048qtq.386.1620076859684;
+        Mon, 03 May 2021 14:20:59 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyR20ReLwvEW0f8yYRKzF4ry1H+j6Cj0PiGcPiN9Q34+8+GbrnBpbE00+ctGqVmoAT1iNW88eDoikrN8MGjInE=
+X-Received: by 2002:ac8:5508:: with SMTP id j8mr18689008qtq.386.1620076859011;
+ Mon, 03 May 2021 14:20:59 -0700 (PDT)
 MIME-Version: 1.0
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1cbef800-3a65-48f4-23ae-08d90e54f611
-X-MS-TrafficTypeDiagnostic: PR3P192MB0601:
-X-Microsoft-Antispam-PRVS: <PR3P192MB06012D81B90C2D6A0F528115D65B9@PR3P192MB0601.EURP192.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: kANcYmCD4OSnc14g1wDh7L86OEwpMqB/gA+6tEIWbcMaOadMn2tgugDpwIoLa38C7iaeqadOwq3W35V7Ks/eT5ZrPp+NnpVR/uGkZHw8vWcm6QCW/oIpVqhFHn/xVRoEyeOcNyY2PqPPX31nw1ij0NKIIfEr+LCJAA5tijNf6y7BS0L9FdpLdjcRsXbNm+MWEzeh+xshVvnpdd8aD2tiUzb1NefZ0ygDuVh4zgxzxDjKC38RiqpbnEg9omFitBKbs0khmoyJV8CDf77XxWvCfHczNTZKkUIyH+doshgLjEjbz9HqvKpvQ1TU81JTpMMWBNSye6uS3iLI52miInh8Bi7MzyDGsk+Yy9YCqbgCw2Cn/BEIzXb2TdxEKgCgXN8VnuKSHwMLpXDm8l9qyJ9k08tCcXWxl9cNAzQvrkljhnYSibcz22N7FYZ34b7+SnyY2IWM4PQKBZKP80tRUwtPWTZj3rrfyg7vkGA0AURm3JOOzYxIS0zmI2ZfDw2g2yk0whaEoMc5XEXxTBs/ueaN1HJK1mfD9Ch41CHM7xQ+9hjzowOSnkD7p3MWf+BkPkbJ9OT8F4Ec5XQzWT+Nd8HQPQvghQf4dZiSCNOSgswN2BA1SsoxSbLM+VoCobB6kT4cuz9RtTPFSyJBvSqopSG2zgpRI911ilL/xjFUiUTM8r8=
-X-Forefront-Antispam-Report: CIP:192.38.82.194;CTRY:DK;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.win.dtu.dk;PTR:ait-pexsrv01.win.dtu.dk;CAT:NONE;SFS:(346002)(136003)(39840400004)(396003)(376002)(36840700001)(46966006)(36860700001)(2616005)(4326008)(426003)(70206006)(956004)(86362001)(7696005)(5660300002)(47076005)(70586007)(786003)(8676002)(8976002)(36756003)(478600001)(108616005)(24736004)(83380400001)(54906003)(26005)(110136005)(186003)(356005)(53546011)(316002)(2906002)(8936002)(336012)(82310400003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: dtu.dk
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2021 17:00:31.7626
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1cbef800-3a65-48f4-23ae-08d90e54f611
-X-MS-Exchange-CrossTenant-Id: f251f123-c9ce-448e-9277-34bb285911d9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f251f123-c9ce-448e-9277-34bb285911d9;Ip=[192.38.82.194];Helo=[mail.win.dtu.dk]
-X-MS-Exchange-CrossTenant-AuthSource: HE1EUR01FT059.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3P192MB0601
+References: <CAKQB+fseyByQ+FsfwAP5-V312bM4YnTbw5GMX6w6fx9UkVnWBQ@mail.gmail.com>
+In-Reply-To: <CAKQB+fseyByQ+FsfwAP5-V312bM4YnTbw5GMX6w6fx9UkVnWBQ@mail.gmail.com>
+From:   Gregory Farnum <gfarnum@redhat.com>
+Date:   Mon, 3 May 2021 14:20:48 -0700
+Message-ID: <CAJ4mKGbVz5gZPFPDx61ZUaCaoxWrWQMSFuzRMOrMx0xnfapaHQ@mail.gmail.com>
+Subject: Re: CephFS kclient gets stuck when getattr() on a certain file
+To:     Jerry Lee <leisurelysw24@gmail.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "Yan, Zheng" <zyan@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Following up on this and other comments, there are 2 different time delays.=
- One (1)  is the time it takes from killing an MDS until a stand-by is made=
- an active rank, and (2) the time it takes for the new active rank to resto=
-re all client sessions. My experience is that (1) takes close to 0 seconds =
-while (2) can take between 20-30 seconds depending on how busy the clients =
-are; the MDS will go through various states before reaching active. We usua=
-lly have ca. 1600 client connections to our FS. With fewer clients, MDS fai=
-l-over is practically instantaneous. We are using latest mimic.
+I haven't looked at the logs, but it's expected that when a client
+disappears and it's holding caps, the MDS will wait through the
+session timeout period before revoking those capabilities. This means
+if all your clients are reading the file, writes will be blocked until
+the session timeout passes. The details of exactly what operations
+will be allowed vary quite a lot depending on the exact system state
+when the client disappeared (if it held write caps, most read
+operations will also be blocked and new clients trying to look at it
+will certainly be blocked).
 
-From what you write, you seem to have a 40 seconds window for (1), which po=
-ints to a problem different to MON config values. This is supported by your=
- description including a MON election (??? this should never happen). Do yo=
-u have have services co-located? Which of the times (1) or (2) are you refe=
-rring to? How many FS clients do you have?
+I don't remember exactly how specific kernel client blocklists are,
+but there may be something going on there that makes things extra hard
+on the rebooted node if it's maintaining the same IP addresses.
 
-Best regards,
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Frank Schilder
-AIT Ris=F8 Campus
-Bygning 109, rum S14
+If you have other monitoring software to detect failures, there are
+ways to evict clients before the session timeout passes (or you could
+have the rebooted node do so) and these are discussed in the docs.
+-Greg
 
-________________________________________
-From: Patrick Donnelly <pdonnell@redhat.com>
-Sent: 03 May 2021 17:19:37
-To: Lokendra Rathour
-Cc: Ceph Development; dev; ceph-users
-Subject: [ceph-users] Re: [ Ceph MDS MON Config Variables ] Failover Delay =
-issue
-
-On Mon, May 3, 2021 at 6:36 AM Lokendra Rathour
-<lokendrarathour@gmail.com> wrote:
+On Tue, Apr 27, 2021 at 9:35 PM Jerry Lee <leisurelysw24@gmail.com> wrote:
 >
-> Hi Team,
-> I was setting up the ceph cluster with
+> Hi,
 >
->    - Node Details:3 Mon,2 MDS, 2 Mgr, 2 RGW
->    - Deployment Type: Active Standby
->    - Testing Mode: Failover of MDS Node
->    - Setup : Octopus (15.2.7)
->    - OS: centos 8.3
->    - hardware: HP
->    - Ram:  128 GB on each Node
->    - OSD: 2 ( 1 tb each)
->    - Operation: Normal I/O with mkdir on every 1 second.
+> I deploy a 3-node Ceph cluster (v15.2.9) and the CephFS is mounted via
+> kclient (linux-4.14.24) on all of the 3 nodes.  All of the kclients
+> try to update (read/write) a certain file periodically in order to
+> know whether the CephFS is alive or not.  After a kclient gets evicted
+> due to abnormal reboot, a new kclient mounts to the CephFS when the
+> node comes back.  However, the newly mounted kclient gets stuck when
+> it tries to getattr on the common file.  Under such conditions, all of
+> the other kclients are affected and they cannot update the common
+> file, too.  From the debugfs entris, a request does get stuck:
+> ------
+> [/sys/kernel/debug/ceph/1bbb7753-85e5-4d33-a860-84419fdcfd7d.client3230166]
+> # cat mdsc
+> 12      mds0    getattr  #100000003ed
 >
-> T*est Case: Power-off any active MDS Node for failover to happen*
+> [/sys/kernel/debug/ceph/1bbb7753-85e5-4d33-a860-84419fdcfd7d.client3230166]
+> # cat osdc
+> REQUESTS 0 homeless 0
+> LINGER REQUESTS
+> BACKOFFS
 >
-> *Observation:*
-> We have observed that whenever an active MDS Node is down it takes around=
-*
-> 40 seconds* to activate the standby MDS Node.
-> on further checking the logs for the new-handover MDS Node we have seen
-> delay on the basis of following inputs:
+> [/sys/kernel/debug/ceph/1bbb7753-85e5-4d33-a860-84419fdcfd7d.client3230166]
+> # ceph -s
+>   cluster:
+>     id:     1bbb7753-85e5-4d33-a860-84419fdcfd7d
+>     health: HEALTH_WARN
+>             1 MDSs report slow requests
 >
->    1. 10 second delay after which Mon calls for new Monitor election
->       1.  [log]  0 log_channel(cluster) log [INF] : mon.cephnode1 calling
->       monitor election
+>   services:
+>     mon: 3 daemons, quorum Jerry-ceph-n2,Jerry-x85-n1,Jerry-x85-n3 (age 23h)
+>     mgr: Jerry-x85-n1(active, since 25h), standbys: Jerry-ceph-n2, Jerry-x85-n3
+>     mds: cephfs:1 {0=qceph-mds-Jerry-ceph-n2=up:active} 1
+> up:standby-replay 1 up:standby
+>     osd: 18 osds: 18 up (since 23h), 18 in (since 23h)
+> ------
+>
+> The MDS logs (debug_mds =20) are provided:
+> https://drive.google.com/file/d/1aj101NOTzCsfDdC-neqVTvKpEPOd3M6Q/view?usp=sharing
+>
+> Some of the logs wrt client.3230166 and ino#100000003ed are shown as below:
+> 2021-04-27T11:57:03.467+0800 7fccbd3be700  4 mds.0.server
+> handle_client_request client_request(client.3230166:12 getattr
+> pAsLsXsFs #0x100000003ed 2021-04-27T11:57:03.469426+0800 caller_uid=0,
+> caller_gid=0{}) v2
+> 2021-04-27T11:57:03.467+0800 7fccbd3be700 20 mds.0.98 get_session have
+> 0x56130c5ce480 client.3230166 v1:192.168.92.89:0/679429733 state open
+> 2021-04-27T11:57:03.467+0800 7fccbd3be700 15 mds.0.server  oldest_client_tid=12
+> 2021-04-27T11:57:03.467+0800 7fccbd3be700  7 mds.0.cache request_start
+> request(client.3230166:12 nref=2 cr=0x56130db96480)
+> 2021-04-27T11:57:03.467+0800 7fccbd3be700  7 mds.0.server
+> dispatch_client_request client_request(client.3230166:12 getattr
+> pAsLsXsFs #0x100000003ed 2021-04-27T11:57:03.469426+0800 caller_uid=0,
+> caller_gid=0{}) v2
+>
+> 2021-04-27T11:57:03.467+0800 7fccbd3be700 10 mds.0.locker
+> acquire_locks request(client.3230166:12 nref=3 cr=0x56130db96480)
+> 2021-04-27T11:57:03.467+0800 7fccbd3be700 10
+> mds.0.cache.ino(0x100000003ed) auth_pin by 0x56130c584ed0 on [inode
+> 0x100000003ed [2,head]
+> /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
+> auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
+> rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
+> w=1) (iversion lock)
+> cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
+> caps={3198501=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@2}
+> | ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=0 authpin=1
+> 0x56130c584a00] now 4
+> 2021-04-27T11:57:03.467+0800 7fccbd3be700 15
+> mds.0.cache.dir(0x100000003eb) adjust_nested_auth_pins 1 on [dir
+> 0x100000003eb /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/
+> [2,head] auth pv=91586 v=91584 cv=0/0 ap=1+4 state=1610874881|complete
+> f(v0 m2021-04-23T15:00:04.377198+0800 6=6+0) n(v3
+> rc2021-04-27T11:57:02.625542+0800 b38005818 6=6+0) hs=6+0,ss=0+0
+> dirty=4 | child=1 dirty=1 waiter=0 authpin=1 0x56130c586a00] by
+> 0x56130c584a00 count now 1/4
+> 2021-04-27T11:57:03.467+0800 7fccbd3be700 10 mds.0
+> RecoveryQueue::prioritize not queued [inode 0x100000003ed [2,head]
+> /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
+> auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
+> rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
+> w=1) (iversion lock)
+> cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
+> caps={3198501=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@2}
+> | ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=0 authpin=1
+> 0x56130c584a00]
+> 2021-04-27T11:57:03.467+0800 7fccbd3be700  7 mds.0.locker rdlock_start
+> waiting on (ifile mix->sync w=1) on [inode 0x100000003ed [2,head]
+> /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
+> auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
+> rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
+> w=1) (iversion lock)
+> cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
+> caps={3198501=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@2}
+> | ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=0 authpin=1
+> 0x56130c584a00]
+> 2021-04-27T11:57:03.467+0800 7fccbd3be700 10
+> mds.0.cache.ino(0x100000003ed) add_waiter tag 2000000040000000
+> 0x56130ea1bbe0 !ambig 1 !frozen 1 !freezing 1
+> 2021-04-27T11:57:03.467+0800 7fccbd3be700 15
+> mds.0.cache.ino(0x100000003ed) taking waiter here
+> 2021-04-27T11:57:03.468+0800 7fccbd3be700 20 mds.0.locker
+> client.3230166 pending pAsLsXsFr allowed pAsLsXsFrl wanted
+> pAsxXsxFsxcrwb
+> 2021-04-27T11:57:03.468+0800 7fccbd3be700  7 mds.0.locker
+> handle_client_caps  on 0x100000003ed tid 0 follows 0 op update flags
+> 0x2
+> 2021-04-27T11:57:03.468+0800 7fccbd3be700 20 mds.0.98 get_session have
+> 0x56130b81f600 client.3198501 v1:192.168.50.108:0/2478094748 state
+> open
+> 2021-04-27T11:57:03.468+0800 7fccbd3be700 10 mds.0.locker  head inode
+> [inode 0x100000003ed [2,head]
+> /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
+> auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
+> rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
+> w=1) (iversion lock)
+> cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
+> caps={3198501=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsxXsxFsxcrwb@2}
+> | ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=1 authpin=1
+> 0x56130c584a00]
+> 2021-04-27T11:57:03.468+0800 7fccbd3be700 10 mds.0.locker  follows 0
+> retains pAsLsXsFr dirty - on [inode 0x100000003ed [2,head]
+> /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
+> auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
+> rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
+> w=1) (iversion lock)
+> cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
+> caps={3198501=pAsLsXsFr/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsxXsxFsxcrwb@2}
+> | ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=1 authpin=1
+> 0x56130c584a00]
+> 2021-04-27T11:57:37.027+0800 7fccbb3ba700  0 log_channel(cluster) log
+> [WRN] : slow request 33.561029 seconds old, received at
+> 2021-04-27T11:57:03.467164+0800: client_request(client.3230166:12
+> getattr pAsLsXsFs #0x100000003ed 2021-04-27T11:57:03.469426+0800
+> caller_uid=0, caller_gid=0{}) currently failed to rdlock, waiting
+>
+> Any idea or insight to help to further investigate the issue are appreciated.
+>
+> - Jerry
+>
 
-In the process of killing the active MDS, are you also killing a monitor?
-
---
-Patrick Donnelly, Ph.D.
-He / Him / His
-Principal Software Engineer
-Red Hat Sunnyvale, CA
-GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
-_______________________________________________
-ceph-users mailing list -- ceph-users@ceph.io
-To unsubscribe send an email to ceph-users-leave@ceph.io
