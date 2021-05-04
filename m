@@ -2,39 +2,35 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 766803729CC
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 May 2021 14:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 377B5372AD8
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 May 2021 15:21:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230197AbhEDMD0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 4 May 2021 08:03:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46336 "EHLO mail.kernel.org"
+        id S230525AbhEDNWL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 4 May 2021 09:22:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230043AbhEDMD0 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 4 May 2021 08:03:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2EDC6611EE;
-        Tue,  4 May 2021 12:02:31 +0000 (UTC)
+        id S230413AbhEDNWK (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 4 May 2021 09:22:10 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1CA57613C6;
+        Tue,  4 May 2021 13:21:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620129751;
-        bh=z6XpCvO6+RZa5aDMf4T1BZnBTH864OzNRq0iCzrx1KI=;
+        s=k20201202; t=1620134475;
+        bh=MripJ7scYEalrEVND/wM+ltVqVvP696Kcq+LIyYqqE8=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=C/IcPv1wzmp7oAhHt0N7REl0aoDbK9VUdLKpjLFsLpog2b35G6PwPYapXUMWemdS+
-         BSLpqdUbX0yBlhkWFgdoGraEBAfAVAJ51S3YR8jqlB/Uu13sFRHtq/3uOyW7TP2sw1
-         7tgbXFLjj3+I5EFP5gAYpmog9aV1dSBF9Js6u5N/RVQ9jGuNAbNSifIVGmCWhj2/jB
-         LT662WvMWLuKcQ/8R537waG3vQezd9dkknofaVurr0xrfkm6TMUo/ypuHfVJ1A+ufY
-         WcVGCBXx3wIObzKJdRQ6SA16vNoidJqI2zNIref+c/Ylc1dxPWoPPrCo7DyHEobACz
-         T3T7B9pAzCRKA==
-Message-ID: <6917f4e83c0c90db684e0a4dfb979fb671162fb2.camel@kernel.org>
-Subject: Re: CephFS kclient gets stuck when getattr() on a certain file
+        b=Cbog64o4fx5nwxXKcpX8qrW5lpYBZ8V+UUtXuSRDiXN6Lxxwf9gA4hbjfULrXzDRy
+         ogbiSlfZ+F7NbIniHCc7Qwv9r1H/DVTFiK+4PiPtax+xY9f5+DYiAwaXxbufVS22q0
+         PpgRyOx5o1n+CiblJ3YaaJ4GE8vtdOcDzRHd3yLjwEB8CXXXebcyvqL3vpHBD4thpi
+         14bQ4L0fy3KHfMDdj9gE1k+GQncNedAm0fIdWPKV9oHLOZAnNDj1CZb6XGZShhCxvL
+         uyU2WKfq7gXWf8zCLJhpQq0Jyn1lgv8Nn0WMju+eft7GSfzG83ysr7VmIXS/9m0VVK
+         hHRFGmTw99A/w==
+Message-ID: <f389505b985f2bad7e56acd8113917cb6f06a4c6.camel@kernel.org>
+Subject: Re: [PATCH] libceph: allow addrvecs with a single NONE/blank address
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Gregory Farnum <gfarnum@redhat.com>,
-        Jerry Lee <leisurelysw24@gmail.com>
-Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        "Yan, Zheng" <zyan@redhat.com>
-Date:   Tue, 04 May 2021 08:02:29 -0400
-In-Reply-To: <CAJ4mKGbVz5gZPFPDx61ZUaCaoxWrWQMSFuzRMOrMx0xnfapaHQ@mail.gmail.com>
-References: <CAKQB+fseyByQ+FsfwAP5-V312bM4YnTbw5GMX6w6fx9UkVnWBQ@mail.gmail.com>
-         <CAJ4mKGbVz5gZPFPDx61ZUaCaoxWrWQMSFuzRMOrMx0xnfapaHQ@mail.gmail.com>
+To:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+Cc:     Magnus Harlander <magnus@harlan.de>
+Date:   Tue, 04 May 2021 09:21:14 -0400
+In-Reply-To: <20210504105408.6035-1-idryomov@gmail.com>
+References: <20210504105408.6035-1-idryomov@gmail.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.40.0 (3.40.0-1.fc34) 
 MIME-Version: 1.0
@@ -43,187 +39,72 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-IIUC, when a client reboots and mounts again, it becomes a new client,
-for all intents and purposes. So if the MDS is still maintaining the
-session from the old (pre-reboot) client, the new client will generally
-need to wait until that session is evicted before it can grab any caps
-that that client previously held. This was one of the reasons we added
-some of the reboot recovery stuff into libcephfs to support the nfs-
-ganesha client use-case.
-
-Assuming that's the case here, we might be able to eventually improve
-that by having kclients set their identity on the session at mount time
-(a'la ceph_set_uuid), and then it could tell the MDS that it was safe to
-release the state that that client previously held. That would mean
-generating a unique per-client ID that was invariant across reboots, but
-we could consider it.
-
--- Jeff
-
-On Mon, 2021-05-03 at 14:20 -0700, Gregory Farnum wrote:
-> I haven't looked at the logs, but it's expected that when a client
-> disappears and it's holding caps, the MDS will wait through the
-> session timeout period before revoking those capabilities. This means
-> if all your clients are reading the file, writes will be blocked until
-> the session timeout passes. The details of exactly what operations
-> will be allowed vary quite a lot depending on the exact system state
-> when the client disappeared (if it held write caps, most read
-> operations will also be blocked and new clients trying to look at it
-> will certainly be blocked).
+On Tue, 2021-05-04 at 12:54 +0200, Ilya Dryomov wrote:
+> Normally, an unused OSD id/slot is represented by an empty addrvec.
+> However, it also appears to be possible to generate an osdmap where
+> an unused OSD id/slot has an addrvec with a single blank address of
+> type NONE.  Allow such addrvecs and make the end result be exactly
+> the same as for the empty addrvec case -- leave addr intact.
 > 
-> I don't remember exactly how specific kernel client blocklists are,
-> but there may be something going on there that makes things extra hard
-> on the rebooted node if it's maintaining the same IP addresses.
+> Cc: stable@vger.kernel.org # 5.11+
+> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+> ---
+>  net/ceph/decode.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
 > 
-> If you have other monitoring software to detect failures, there are
-> ways to evict clients before the session timeout passes (or you could
-> have the rebooted node do so) and these are discussed in the docs.
-> -Greg
-> 
-> On Tue, Apr 27, 2021 at 9:35 PM Jerry Lee <leisurelysw24@gmail.com> wrote:
-> > 
-> > Hi,
-> > 
-> > I deploy a 3-node Ceph cluster (v15.2.9) and the CephFS is mounted via
-> > kclient (linux-4.14.24) on all of the 3 nodes.  All of the kclients
-> > try to update (read/write) a certain file periodically in order to
-> > know whether the CephFS is alive or not.  After a kclient gets evicted
-> > due to abnormal reboot, a new kclient mounts to the CephFS when the
-> > node comes back.  However, the newly mounted kclient gets stuck when
-> > it tries to getattr on the common file.  Under such conditions, all of
-> > the other kclients are affected and they cannot update the common
-> > file, too.  From the debugfs entris, a request does get stuck:
-> > ------
-> > [/sys/kernel/debug/ceph/1bbb7753-85e5-4d33-a860-84419fdcfd7d.client3230166]
-> > # cat mdsc
-> > 12      mds0    getattr  #100000003ed
-> > 
-> > [/sys/kernel/debug/ceph/1bbb7753-85e5-4d33-a860-84419fdcfd7d.client3230166]
-> > # cat osdc
-> > REQUESTS 0 homeless 0
-> > LINGER REQUESTS
-> > BACKOFFS
-> > 
-> > [/sys/kernel/debug/ceph/1bbb7753-85e5-4d33-a860-84419fdcfd7d.client3230166]
-> > # ceph -s
-> >   cluster:
-> >     id:     1bbb7753-85e5-4d33-a860-84419fdcfd7d
-> >     health: HEALTH_WARN
-> >             1 MDSs report slow requests
-> > 
-> >   services:
-> >     mon: 3 daemons, quorum Jerry-ceph-n2,Jerry-x85-n1,Jerry-x85-n3 (age 23h)
-> >     mgr: Jerry-x85-n1(active, since 25h), standbys: Jerry-ceph-n2, Jerry-x85-n3
-> >     mds: cephfs:1 {0=qceph-mds-Jerry-ceph-n2=up:active} 1
-> > up:standby-replay 1 up:standby
-> >     osd: 18 osds: 18 up (since 23h), 18 in (since 23h)
-> > ------
-> > 
-> > The MDS logs (debug_mds =20) are provided:
-> > https://drive.google.com/file/d/1aj101NOTzCsfDdC-neqVTvKpEPOd3M6Q/view?usp=sharing
-> > 
-> > Some of the logs wrt client.3230166 and ino#100000003ed are shown as below:
-> > 2021-04-27T11:57:03.467+0800 7fccbd3be700  4 mds.0.server
-> > handle_client_request client_request(client.3230166:12 getattr
-> > pAsLsXsFs #0x100000003ed 2021-04-27T11:57:03.469426+0800 caller_uid=0,
-> > caller_gid=0{}) v2
-> > 2021-04-27T11:57:03.467+0800 7fccbd3be700 20 mds.0.98 get_session have
-> > 0x56130c5ce480 client.3230166 v1:192.168.92.89:0/679429733 state open
-> > 2021-04-27T11:57:03.467+0800 7fccbd3be700 15 mds.0.server  oldest_client_tid=12
-> > 2021-04-27T11:57:03.467+0800 7fccbd3be700  7 mds.0.cache request_start
-> > request(client.3230166:12 nref=2 cr=0x56130db96480)
-> > 2021-04-27T11:57:03.467+0800 7fccbd3be700  7 mds.0.server
-> > dispatch_client_request client_request(client.3230166:12 getattr
-> > pAsLsXsFs #0x100000003ed 2021-04-27T11:57:03.469426+0800 caller_uid=0,
-> > caller_gid=0{}) v2
-> > 
-> > 2021-04-27T11:57:03.467+0800 7fccbd3be700 10 mds.0.locker
-> > acquire_locks request(client.3230166:12 nref=3 cr=0x56130db96480)
-> > 2021-04-27T11:57:03.467+0800 7fccbd3be700 10
-> > mds.0.cache.ino(0x100000003ed) auth_pin by 0x56130c584ed0 on [inode
-> > 0x100000003ed [2,head]
-> > /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
-> > auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
-> > rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
-> > w=1) (iversion lock)
-> > cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
-> > caps={3198501=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@2}
-> > > ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=0 authpin=1
-> > 0x56130c584a00] now 4
-> > 2021-04-27T11:57:03.467+0800 7fccbd3be700 15
-> > mds.0.cache.dir(0x100000003eb) adjust_nested_auth_pins 1 on [dir
-> > 0x100000003eb /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/
-> > [2,head] auth pv=91586 v=91584 cv=0/0 ap=1+4 state=1610874881|complete
-> > f(v0 m2021-04-23T15:00:04.377198+0800 6=6+0) n(v3
-> > rc2021-04-27T11:57:02.625542+0800 b38005818 6=6+0) hs=6+0,ss=0+0
-> > dirty=4 | child=1 dirty=1 waiter=0 authpin=1 0x56130c586a00] by
-> > 0x56130c584a00 count now 1/4
-> > 2021-04-27T11:57:03.467+0800 7fccbd3be700 10 mds.0
-> > RecoveryQueue::prioritize not queued [inode 0x100000003ed [2,head]
-> > /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
-> > auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
-> > rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
-> > w=1) (iversion lock)
-> > cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
-> > caps={3198501=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@2}
-> > > ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=0 authpin=1
-> > 0x56130c584a00]
-> > 2021-04-27T11:57:03.467+0800 7fccbd3be700  7 mds.0.locker rdlock_start
-> > waiting on (ifile mix->sync w=1) on [inode 0x100000003ed [2,head]
-> > /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
-> > auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
-> > rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
-> > w=1) (iversion lock)
-> > cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
-> > caps={3198501=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@2}
-> > > ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=0 authpin=1
-> > 0x56130c584a00]
-> > 2021-04-27T11:57:03.467+0800 7fccbd3be700 10
-> > mds.0.cache.ino(0x100000003ed) add_waiter tag 2000000040000000
-> > 0x56130ea1bbe0 !ambig 1 !frozen 1 !freezing 1
-> > 2021-04-27T11:57:03.467+0800 7fccbd3be700 15
-> > mds.0.cache.ino(0x100000003ed) taking waiter here
-> > 2021-04-27T11:57:03.468+0800 7fccbd3be700 20 mds.0.locker
-> > client.3230166 pending pAsLsXsFr allowed pAsLsXsFrl wanted
-> > pAsxXsxFsxcrwb
-> > 2021-04-27T11:57:03.468+0800 7fccbd3be700  7 mds.0.locker
-> > handle_client_caps  on 0x100000003ed tid 0 follows 0 op update flags
-> > 0x2
-> > 2021-04-27T11:57:03.468+0800 7fccbd3be700 20 mds.0.98 get_session have
-> > 0x56130b81f600 client.3198501 v1:192.168.50.108:0/2478094748 state
-> > open
-> > 2021-04-27T11:57:03.468+0800 7fccbd3be700 10 mds.0.locker  head inode
-> > [inode 0x100000003ed [2,head]
-> > /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
-> > auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
-> > rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
-> > w=1) (iversion lock)
-> > cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
-> > caps={3198501=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsxXsxFsxcrwb@2}
-> > > ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=1 authpin=1
-> > 0x56130c584a00]
-> > 2021-04-27T11:57:03.468+0800 7fccbd3be700 10 mds.0.locker  follows 0
-> > retains pAsLsXsFr dirty - on [inode 0x100000003ed [2,head]
-> > /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
-> > auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
-> > rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
-> > w=1) (iversion lock)
-> > cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
-> > caps={3198501=pAsLsXsFr/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsxXsxFsxcrwb@2}
-> > > ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=1 authpin=1
-> > 0x56130c584a00]
-> > 2021-04-27T11:57:37.027+0800 7fccbb3ba700  0 log_channel(cluster) log
-> > [WRN] : slow request 33.561029 seconds old, received at
-> > 2021-04-27T11:57:03.467164+0800: client_request(client.3230166:12
-> > getattr pAsLsXsFs #0x100000003ed 2021-04-27T11:57:03.469426+0800
-> > caller_uid=0, caller_gid=0{}) currently failed to rdlock, waiting
-> > 
-> > Any idea or insight to help to further investigate the issue are appreciated.
-> > 
-> > - Jerry
-> > 
-> 
+> diff --git a/net/ceph/decode.c b/net/ceph/decode.c
+> index b44f7651be04..bc109a1a4616 100644
+> --- a/net/ceph/decode.c
+> +++ b/net/ceph/decode.c
+> @@ -4,6 +4,7 @@
+>  #include <linux/inet.h>
+>  
+>  #include <linux/ceph/decode.h>
+> +#include <linux/ceph/messenger.h>  /* for ceph_pr_addr() */
+>  
+>  static int
+>  ceph_decode_entity_addr_versioned(void **p, void *end,
+> @@ -110,6 +111,7 @@ int ceph_decode_entity_addrvec(void **p, void *end, bool msgr2,
+>  	}
+>  
+>  	ceph_decode_32_safe(p, end, addr_cnt, e_inval);
+> +	dout("%s addr_cnt %d\n", __func__, addr_cnt);
+>  
+>  	found = false;
+>  	for (i = 0; i < addr_cnt; i++) {
+> @@ -117,6 +119,7 @@ int ceph_decode_entity_addrvec(void **p, void *end, bool msgr2,
+>  		if (ret)
+>  			return ret;
+>  
+> +		dout("%s i %d addr %s\n", __func__, i, ceph_pr_addr(&tmp_addr));
+>  		if (tmp_addr.type == my_type) {
+>  			if (found) {
+>  				pr_err("another match of type %d in addrvec\n",
+> @@ -128,13 +131,18 @@ int ceph_decode_entity_addrvec(void **p, void *end, bool msgr2,
+>  			found = true;
+>  		}
+>  	}
+> -	if (!found && addr_cnt != 0) {
+> -		pr_err("no match of type %d in addrvec\n",
+> -		       le32_to_cpu(my_type));
+> -		return -ENOENT;
+> -	}
+>  
+> -	return 0;
+> +	if (found)
+> +		return 0;
+> +
+> +	if (!addr_cnt)
+> +		return 0;  /* normal -- e.g. unused OSD id/slot */
+> +
+> +	if (addr_cnt == 1 && !memchr_inv(&tmp_addr, 0, sizeof(tmp_addr)))
+> +		return 0;  /* weird but effectively the same as !addr_cnt */
+> +
+> +	pr_err("no match of type %d in addrvec\n", le32_to_cpu(my_type));
+> +	return -ENOENT;
+>  
+>  e_inval:
+>  	return -EINVAL;
 
--- 
-Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
