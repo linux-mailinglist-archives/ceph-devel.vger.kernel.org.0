@@ -2,103 +2,134 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AAC1378F7C
-	for <lists+ceph-devel@lfdr.de>; Mon, 10 May 2021 15:53:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C94F73793F8
+	for <lists+ceph-devel@lfdr.de>; Mon, 10 May 2021 18:35:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233407AbhEJNrv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 10 May 2021 09:47:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44752 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230477AbhEJNbR (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 10 May 2021 09:31:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620653409;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eUUaS1PEFgooJWN901G6RACHtcUxmowPwMmDUybvyL8=;
-        b=WSux+woYFtAtmlcpmGs7fi3etgKIrHZFqAf79DH3DFdH9wbEZ8zRmeB3wNuzWrpc8Wueka
-        sb5fiZ46EzKRj1tf48/WG/S7CbQkmG3p5hj9trYNOHMRNyRlXKi3YmPjEKBE/+A+CpDX53
-        kCii5aHg384RbvwDF8SFOAQmND24k78=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-594-EVgatifcM9qwaj94bXxE4g-1; Mon, 10 May 2021 09:30:07 -0400
-X-MC-Unique: EVgatifcM9qwaj94bXxE4g-1
-Received: by mail-qv1-f72.google.com with SMTP id c5-20020a0ca9c50000b02901aede9b5061so12533599qvb.14
-        for <ceph-devel@vger.kernel.org>; Mon, 10 May 2021 06:30:07 -0700 (PDT)
+        id S231659AbhEJQgF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 10 May 2021 12:36:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230300AbhEJQgE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 10 May 2021 12:36:04 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74C5EC061574;
+        Mon, 10 May 2021 09:34:59 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id i190so13935662pfc.12;
+        Mon, 10 May 2021 09:34:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vmJAgqGo8Yb+1u88J2HmAoz7FJ9pWULe/PrQ0DmHBWY=;
+        b=leOhu70JThbmOuEZKo0gHEab88Iy3wyzbq8jb1r3ODEm0NlUwn8ZsvJbU+VuY11tVR
+         CpSb0GjlYbBrEjGDUzcvR+GBKrKmpkduLcirfp3ntzrxtF0U7kYZ81t2hIuy9EBHERh0
+         GVWNr4zMg5QZSVhaxX5T4C8ibNjZnDFlOi6L2tcyy3LkDhkDuOiOtB377+My6eXYIfIx
+         T+TZmMjLenbAKG2kMdESs7IH35HA/MiN88ieXD6IKH9osjegEp5m0t93sOoe3E3qA1qt
+         vkvYatLDvB1Doi+Do1gukRWBtqTwclEvvwWlZjlL17K9VF10HTrB6bz8apkgan5GzIl5
+         YSzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=eUUaS1PEFgooJWN901G6RACHtcUxmowPwMmDUybvyL8=;
-        b=t6/8mlBajSlS8Ce9Q8SHVtIB1V44hIxrWfIZOTduwiKKjYJFgfMeSk7RsMeZIsnofp
-         7/mrNVdQ9/E321OM7ChE87uuLLyunLF7wl6ZTAYZI2Bh6xf0HjjCKNloSP9p0gGiRrAJ
-         twR2q2iGqxCbvEElFpWB3LPSiMQigA2NX2mg2OKoOewwuY01FZtHU/EWkqNM7DpEegVS
-         KBoFXjM9gQ8sbjJR3woRjtpkEuEklccQ0V8hFzIyzg8Po58HQr6f8TdmNuFk+ru6lHKK
-         on3TREh3sleO6EUsgTvyPUpp3Wn503mtegPDYlaEPG5cjDAfjrBs7aU9gjJfXRPE7onJ
-         uxxA==
-X-Gm-Message-State: AOAM530FQdCtkRkEHY/Vb9S39vukX19EIDAr2WTpDZT+UfaFAuNd3JOE
-        f2olV7xPdigKgBMhvcFDhehrmc24Zy/ASN87ED/I7csyjGCrLcprlakVRjmxg2VpyY6HbwNMXjA
-        6PBB9PByS3XRUIHpFJJq2+w==
-X-Received: by 2002:a37:9f48:: with SMTP id i69mr23010221qke.28.1620653407411;
-        Mon, 10 May 2021 06:30:07 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwgxm0XLQ0fim+rz2rcFkbMCGU+k6a7NuhRT1L97qN09TMcUQoowZ3glP/4FIb7jhz0UVTdog==
-X-Received: by 2002:a37:9f48:: with SMTP id i69mr23010195qke.28.1620653407180;
-        Mon, 10 May 2021 06:30:07 -0700 (PDT)
-Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id z9sm1021925qtf.10.2021.05.10.06.30.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 May 2021 06:30:06 -0700 (PDT)
-Message-ID: <fbcb28d9bd8d50ef47750931904fabb78f28d182.camel@redhat.com>
-Subject: Re: Ceph Kernel client bad performance for 5.4
-From:   Jeff Layton <jlayton@redhat.com>
-To:     "Norman.Kern" <norman.kern@gmx.com>, ceph-devel@vger.kernel.org
-Date:   Mon, 10 May 2021 09:30:06 -0400
-In-Reply-To: <4badb69d-515f-ec30-5966-d26e145884bd@gmx.com>
-References: <4badb69d-515f-ec30-5966-d26e145884bd@gmx.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.1 (3.40.1-1.fc34) 
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vmJAgqGo8Yb+1u88J2HmAoz7FJ9pWULe/PrQ0DmHBWY=;
+        b=YWVe4+igdk4oQiRnTbBImudjAsxBIurZlkqpXuCpzNb0x9UXQz4WxWzmO1ElYXFzBc
+         5FklEonRCtn4uqnmAOgdJh7iVIbL8AJo1iA/ZWUL3eTFLsOx5oCCKFBCcttcEjkXzMqU
+         7NvHKfTZ8sd4Lw2SL3I8DkAewtbzBNii0R/tUYForKWkVRvFWVmGufkUj2PuXR31R7TR
+         Py9RyG013KIWLqw8Txhrcij8yE690nrKgJIvol+f95qAbg6ajFSKc1kgbOrQUz9s0O//
+         37n3UFuOKae0BnElnCJJOg3UFR34uw/UWbelWWva2Sxq4luuEJ21HA/8CZ8852hA/5Fq
+         go8g==
+X-Gm-Message-State: AOAM533hDbAFfRrARp9NCJTpLLkck6/VejTmLzTcwfU2FzxGpje6J8Zi
+        m9j0H/1iT6IATwG6OjSI/N8=
+X-Google-Smtp-Source: ABdhPJwZnwusCFne+n6sE3jX8qgT+J9y+botJu+l9hBtURzANTER8uyRq8jWGZGxlJHKS+5OyN516A==
+X-Received: by 2002:aa7:8503:0:b029:27d:497f:1da6 with SMTP id v3-20020aa785030000b029027d497f1da6mr26323231pfn.28.1620664499033;
+        Mon, 10 May 2021 09:34:59 -0700 (PDT)
+Received: from [192.168.192.21] (47-72-82-130.dsl.dyn.ihug.co.nz. [47.72.82.130])
+        by smtp.gmail.com with ESMTPSA id n26sm11492820pfq.28.2021.05.10.09.34.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 May 2021 09:34:58 -0700 (PDT)
+Cc:     mtk.manpages@gmail.com, Alejandro Colomar <alx.manpages@gmail.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Luis Henriques <lhenriques@suse.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Ian Lance Taylor <iant@google.com>,
+        Luis Lozano <llozano@chromium.org>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Olga Kornievskaia <aglo@umich.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Walter Harms <wharms@bfs.de>
+Subject: Re: [PATCH] copy_file_range.2: Update cross-filesystem support for
+ 5.12
+To:     Amir Goldstein <amir73il@gmail.com>
+References: <20210509213930.94120-1-alx.manpages@gmail.com>
+ <20210509213930.94120-12-alx.manpages@gmail.com>
+ <a95d7a31-2345-8e1e-78d7-a1a8f7161565@gmail.com>
+ <CAOQ4uxgB+sZ08jB+mFXuPJfTSJUV+Re5XKQ=hN7A4xfYo0dj6A@mail.gmail.com>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <e293694f-7dd9-0212-6b6b-b42096cc1928@gmail.com>
+Date:   Tue, 11 May 2021 04:34:47 +1200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgB+sZ08jB+mFXuPJfTSJUV+Re5XKQ=hN7A4xfYo0dj6A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sat, 2021-05-08 at 10:13 +0800, Norman.Kern wrote:
-> Hi, guys,
+Hi Amir,
+
+On 5/10/21 4:26 PM, Amir Goldstein wrote:
+> On Mon, May 10, 2021 at 3:01 AM Michael Kerrisk (man-pages)
+> <mtk.manpages@gmail.com> wrote:
+>>
+>> Hi Alex,
+>>
+>> On 5/10/21 9:39 AM, Alejandro Colomar wrote:
+>>> Linux 5.12 fixes a regression.
 > 
+> Nope.
+> That never happened:
+> https://lore.kernel.org/linux-fsdevel/8735v4tcye.fsf@suse.de/
 > 
-> I'm using ceph nautilus in my production,  the kernel clients include 5.4 and 4.15, I found a problem in 5.4 sometimes: It's slower than fuse, but when I changed it
-> to 4.15, it's recovered.
-> for 5.4:
-> root@WXRG0432:/mnt/test# rsync -ahHv --progress /root/test test-1
-> sending incremental file list
-> test
->          58.56M   5%    2.82MB/s    0:05:43  ^C
-> for 4.15:
-> root@WXRG0433:/mnt/test# rsync -ahHv --progress /root/test  test-2
-> sending incremental file list
-> test
->           1.05G 100%  316.25MB/s    0:00:03 (xfr#1, to-chk=0/1)
+>>>
+>>> Cross-filesystem (introduced in 5.3) copies were buggy.
+>>>
+>>> Move the statements documenting cross-fs to BUGS.
+>>> Kernels 5.3..5.11 should be patched soon.
+>>>
+>>> State version information for some errors related to this.
+>>
+>> Thanks. Patch applied.
 > 
-> sent 1.05G bytes  received 35 bytes  299.67M bytes/sec
-> Anyone have met the same problems with me?
+> I guess that would need to be reverted...
 
-v5.4 is quite old at this point. It would be good to also test something
-newer if you're able. Something v5.12-ish would be ideal.
+Thanks for catching that. I had not pushed the patch, so 
+I'll just drop it.
 
-It's not clear what, exactly, you're testing here, but it looks like the
-slowdown is in write activity. A slowdown of that magnitude sounds like
-the client has stopped doing buffered I/O, but it's hard to say for
-sure.
+Cheers,
 
-You may want to run both of these under strace, collecting syscall
-timing and see if you can narrow down which syscalls are seeing the
-biggest slowdowns. That may help us narrow down what's happening.
+Michael
 
-Thanks,
+
 -- 
-Jeff Layton <jlayton@redhat.com>
-
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
