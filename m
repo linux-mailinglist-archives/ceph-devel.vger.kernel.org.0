@@ -2,93 +2,66 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD94C37F5E5
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 May 2021 12:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65FFD37F6BE
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 May 2021 13:30:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232079AbhEMKvM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 13 May 2021 06:51:12 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22324 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232085AbhEMKvC (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 13 May 2021 06:51:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620902992;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=ZS4a0+Jk376Mr3TJs35RHyvhDzgETMPw7mZbIknYFVM=;
-        b=PfPUkBR1qvY/fI+mm0phlWPub6ofQ+Afr28BQLkgfyrPiDq2eBQaZjlr/NyNP+hbZ27s5p
-        s94DBe5X6s7NNHis24lFVtVSRCX+6URTt9KNoSEqWoizOH7rSJKZK48B2xJZml0H/EMqes
-        Gh8wigB2xzZ7vXhfsddRPToHQ0Sa6Tk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-582-vHRUTM0TNbSjfnRG3vysog-1; Thu, 13 May 2021 06:49:48 -0400
-X-MC-Unique: vHRUTM0TNbSjfnRG3vysog-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 66DD3100945F;
-        Thu, 13 May 2021 10:49:47 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2374B1B058;
-        Thu, 13 May 2021 10:49:41 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] netfs: Make CONFIG_NETFS_SUPPORT auto-selected rather than
- manual
-From:   David Howells <dhowells@redhat.com>
-To:     geert@linux-m68k.org
-Cc:     linux-mm@kvack.org, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com
-Date:   Thu, 13 May 2021 11:49:41 +0100
-Message-ID: <162090298141.3166007.2971118149366779916.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        id S231695AbhEMLbh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 13 May 2021 07:31:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43750 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231682AbhEMLbc (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 13 May 2021 07:31:32 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8EBB460E0B;
+        Thu, 13 May 2021 11:30:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620905423;
+        bh=4dLYPvg0wej8xxokk50TF2wxoFGoMPQe0mAympc0JTA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=FmLX/W2FDx8IpqjvhkQu+cDmVrHk67iFL62kLfsxthY/8vdXsfEtPfohq1aA2NI2F
+         kzbrOlHGo9p3Q1MbQTCm3eM8MUEvsAkbMCoXKlGwhrX50TpA2Ax+CnupYwNxBLDj5h
+         LsqS70dGqpmHE5A//cYMfI6sQTTAkG/YtDiCeNDFCbD/P7fjPknCC26i4Men8h671y
+         3qTmxaLGpLhikwn3RZqjkjFs1NpqFBRRtUva5r18jt7jtuvBOorc2RnsFyLERG5Ura
+         ZSlGt7BPR9vje88Yr2iwilkx4KCFGzu3Uea4VKyJJEpsojXkvv/BSOeUtZzXoYS6Bt
+         7BChs6jkZ4pOA==
+Message-ID: <89def1a8e65e443ba7aca7c4ff138e6c6041a5df.camel@kernel.org>
+Subject: Re: [PATCH v2 0/2] ceph: send io size metrics to mds daemon
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, pdonnell@redhat.com, ukernel@gmail.com,
+        ceph-devel@vger.kernel.org
+Date:   Thu, 13 May 2021 07:30:21 -0400
+In-Reply-To: <20210513014053.81346-1-xiubli@redhat.com>
+References: <20210513014053.81346-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.1 (3.40.1-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Make the netfs helper library selected automatically by the things that use
-it rather than being manually configured, even though it's required.
+On Thu, 2021-05-13 at 09:40 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> V2:
+> - change the patch order
+> - replace the fixed 10 with sizeof(struct ceph_metric_header)
+> 
+> Xiubo Li (2):
+>   ceph: simplify the metrics struct
+>   ceph: send the read/write io size metrics to mds
+> 
+>  fs/ceph/metric.c | 90 ++++++++++++++++++++++++++++++------------------
+>  fs/ceph/metric.h | 79 +++++++++++++++++-------------------------
+>  2 files changed, 89 insertions(+), 80 deletions(-)
+> 
 
-Fixes: 3a5829fefd3b ("netfs: Make a netfs helper module")
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-mm@kvack.org
-cc: linux-cachefs@redhat.com
-cc: linux-afs@lists.infradead.org
-cc: linux-nfs@vger.kernel.org
-cc: linux-cifs@vger.kernel.org
-cc: ceph-devel@vger.kernel.org
-cc: v9fs-developer@lists.sourceforge.net
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/CAMuHMdXJZ7iNQE964CdBOU=vRKVMFzo=YF_eiwsGgqzuvZ+TuA@mail.gmail.com
----
+Thanks Xiubo,
 
- fs/netfs/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+These look good. I'll do some testing with them and plan to merge these
+into the testing branch later today.
 
-diff --git a/fs/netfs/Kconfig b/fs/netfs/Kconfig
-index 578112713703..b4db21022cb4 100644
---- a/fs/netfs/Kconfig
-+++ b/fs/netfs/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- 
- config NETFS_SUPPORT
--	tristate "Support for network filesystem high-level I/O"
-+	tristate
- 	help
- 	  This option enables support for network filesystems, including
- 	  helpers for high-level buffered I/O, abstracting out read
-
+Cheers,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
