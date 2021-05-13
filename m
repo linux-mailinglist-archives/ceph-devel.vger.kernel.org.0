@@ -2,37 +2,28 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF56037FE59
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 May 2021 21:39:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1646C3800C5
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 May 2021 01:19:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231958AbhEMTkx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 13 May 2021 15:40:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229803AbhEMTkw (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 13 May 2021 15:40:52 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3085C061574;
-        Thu, 13 May 2021 12:39:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=O8VUCTzxVSvxa3wVLPh12tovGUEtpcQQ1uxw15XLCZg=; b=S6oimQ+wSggkHbM04qw7qRcCif
-        KxJ6s1XOGzoOpDq2Ik3+iRiwQfDzyBbe0DuWvzC9OR6jXy0kTrw+5iOA+LaoPKGquDRsAkhwtB1fn
-        RAzftQHw1WIHsSHGyasEKCqK6uNc5md/QTdqO/gAX92LY/xjc3aThySb167Hsk1QbFODw0SI99hZD
-        FJ7grq8hsbbFuQNaq3roe74z070sMG/wQF5s2VcKbYsspDgU3/f5jnSJCnX9ybUtPMZoBzeRLnZAR
-        rt44B26yeOFUgC3PP1bOEdl/6GZRpu188I1tXE0mY9mkIB2XhLxPk/VtnEIL19/rPQgwFkGk1TQkJ
-        GlbkDIiw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lhHAV-009iZc-F6; Thu, 13 May 2021 19:39:06 +0000
-Date:   Thu, 13 May 2021 20:38:47 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org,
+        id S231472AbhEMXVD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 13 May 2021 19:21:03 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:46599 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229544AbhEMXVC (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 13 May 2021 19:21:02 -0400
+Received: from dread.disaster.area (pa49-195-118-180.pa.nsw.optusnet.com.au [49.195.118.180])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id E18F8104486A;
+        Fri, 14 May 2021 09:19:46 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1lhKcL-000g6Q-Tb; Fri, 14 May 2021 09:19:45 +1000
+Date:   Fri, 14 May 2021 09:19:45 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>,
+        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
         Damien Le Moal <damien.lemoal@wdc.com>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
@@ -41,75 +32,111 @@ Cc:     linux-fsdevel@vger.kernel.org,
         linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
         linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>
+        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>
 Subject: Re: [PATCH 03/11] mm: Protect operations adding pages to page cache
  with invalidate_lock
-Message-ID: <YJ2AR0IURFzz+52G@casper.infradead.org>
+Message-ID: <20210513231945.GD2893@dread.disaster.area>
 References: <20210512101639.22278-1-jack@suse.cz>
  <20210512134631.4053-3-jack@suse.cz>
- <YJvo1bGG1tG+gtgC@casper.infradead.org>
- <20210513190114.GJ2734@quack2.suse.cz>
+ <20210512152345.GE8606@magnolia>
+ <20210513174459.GH2734@quack2.suse.cz>
+ <20210513185252.GB9675@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210513190114.GJ2734@quack2.suse.cz>
+In-Reply-To: <20210513185252.GB9675@magnolia>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Tu+Yewfh c=1 sm=1 tr=0
+        a=xcwBwyABtj18PbVNKPPJDQ==:117 a=xcwBwyABtj18PbVNKPPJDQ==:17
+        a=kj9zAlcOel0A:10 a=5FLXtPjwQuUA:10 a=7-415B0cAAAA:8
+        a=mWKqDkno6h2Jm8PBvhwA:9 a=tbcINoE9r3WEgN6G:21 a=dTGQcn7ZmTsWEmKd:21
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, May 13, 2021 at 09:01:14PM +0200, Jan Kara wrote:
-> On Wed 12-05-21 15:40:21, Matthew Wilcox wrote:
-> > Remind me (or, rather, add to the documentation) why we have to hold the
-> > invalidate_lock during the call to readpage / readahead, and we don't just
-> > hold it around the call to add_to_page_cache / add_to_page_cache_locked
-> > / add_to_page_cache_lru ?  I appreciate that ->readpages is still going
-> > to suck, but we're down to just three implementations of ->readpages now
-> > (9p, cifs & nfs).
-> 
-> There's a comment in filemap_create_page() trying to explain this. We need
-> to protect against cases like: Filesystem with 1k blocksize, file F has
-> page at index 0 with uptodate buffer at 0-1k, rest not uptodate. All blocks
-> underlying page are allocated. Now let read at offset 1k race with hole
-> punch at offset 1k, length 1k.
-> 
-> read()					hole punch
-> ...
->   filemap_read()
->     filemap_get_pages()
->       - page found in the page cache but !Uptodate
->       filemap_update_page()
-> 					  locks everything
-> 					  truncate_inode_pages_range()
-> 					    lock_page(page)
-> 					    do_invalidatepage()
-> 					    unlock_page(page)
->         locks page
->           filemap_read_page()
-
-Ah, this is the partial_start case, which means that page->mapping
-is still valid.  But that means that do_invalidatepage() was called
-with (offset 1024, length 1024), immediately after we called
-zero_user_segment().  So isn't this a bug in the fs do_invalidatepage()?
-The range from 1k-2k _is_ uptodate.  It's been zeroed in memory,
-and if we were to run after the "free block" below, we'd get that
-memory zeroed again.
-
->             ->readpage()
->               block underlying offset 1k
-> 	      still allocated -> map buffer
-> 					  free block under offset 1k
-> 	      submit IO -> corrupted data
-> 
-> If you think I should expand it to explain more details, please tell.
-> Or maybe I can put more detailed discussion like above into the changelog?
-
-> > Why not:
+On Thu, May 13, 2021 at 11:52:52AM -0700, Darrick J. Wong wrote:
+> On Thu, May 13, 2021 at 07:44:59PM +0200, Jan Kara wrote:
+> > On Wed 12-05-21 08:23:45, Darrick J. Wong wrote:
+> > > On Wed, May 12, 2021 at 03:46:11PM +0200, Jan Kara wrote:
+> > > > +->fallocate implementation must be really careful to maintain page cache
+> > > > +consistency when punching holes or performing other operations that invalidate
+> > > > +page cache contents. Usually the filesystem needs to call
+> > > > +truncate_inode_pages_range() to invalidate relevant range of the page cache.
+> > > > +However the filesystem usually also needs to update its internal (and on disk)
+> > > > +view of file offset -> disk block mapping. Until this update is finished, the
+> > > > +filesystem needs to block page faults and reads from reloading now-stale page
+> > > > +cache contents from the disk. VFS provides mapping->invalidate_lock for this
+> > > > +and acquires it in shared mode in paths loading pages from disk
+> > > > +(filemap_fault(), filemap_read(), readahead paths). The filesystem is
+> > > > +responsible for taking this lock in its fallocate implementation and generally
+> > > > +whenever the page cache contents needs to be invalidated because a block is
+> > > > +moving from under a page.
+> > > > +
+> > > > +->copy_file_range and ->remap_file_range implementations need to serialize
+> > > > +against modifications of file data while the operation is running. For blocking
+> > > > +changes through write(2) and similar operations inode->i_rwsem can be used. For
+> > > > +blocking changes through memory mapping, the filesystem can use
+> > > > +mapping->invalidate_lock provided it also acquires it in its ->page_mkwrite
+> > > > +implementation.
+> > > 
+> > > Question: What is the locking order when acquiring the invalidate_lock
+> > > of two different files?  Is it the same as i_rwsem (increasing order of
+> > > the struct inode pointer) or is it the same as the XFS MMAPLOCK that is
+> > > being hoisted here (increasing order of i_ino)?
+> > > 
+> > > The reason I ask is that remap_file_range has to do that, but I don't
+> > > see any conversions for the xfs_lock_two_inodes(..., MMAPLOCK_EXCL)
+> > > calls in xfs_ilock2_io_mmap in this series.
 > > 
-> > 	__init_rwsem(&mapping->invalidate_lock, "mapping.invalidate_lock",
-> > 			&sb->s_type->invalidate_lock_key);
+> > Good question. Technically, I don't think there's real need to establish a
+> > single ordering because locks among different filesystems are never going
+> > to be acquired together (effectively each lock type is local per sb and we
+> > are free to define an ordering for each lock type differently). But to
+> > maintain some sanity I guess having the same locking order for doublelock
+> > of i_rwsem and invalidate_lock makes sense. Is there a reason why XFS uses
+> > by-ino ordering? So that we don't have to consider two different orders in
+> > xfs_lock_two_inodes()...
 > 
-> I replicated what we do for i_rwsem but you're right, this is better.
-> Updated.
+> I imagine Dave will chime in on this, but I suspect the reason is
+> hysterical raisins^Wreasons.
 
-Hmm, there's a few places we should use __init_rwsem() ... something
-for my "when bored" pile of work.
+It's the locking rules that XFS has used pretty much forever.
+Locking by inode number always guarantees the same locking order of
+two inodes in the same filesystem, regardless of the specific
+in-memory instances of the two inodes.
+
+e.g. if we lock based on the inode structure address, in one
+instancex, we could get A -> B, then B gets recycled and
+reallocated, then we get B -> A as the locking order for the same
+two inodes.
+
+That, IMNSHO, is utterly crazy because with non-deterministic inode
+lock ordered like this you can't make consistent locking rules for
+locking the physical inode cluster buffers underlying the inodes in
+the situation where they also need to be locked.
+
+We've been down this path before more than a decade ago when the
+powers that be decreed that inode locking order is to be "by
+structure address" rather than inode number, because "inode number
+is not unique across multiple superblocks".
+
+I'm not sure that there is anywhere that locks multiple inodes
+across different superblocks, but here we are again....
+
+> It might simply be time to convert all
+> three XFS inode locks to use the same ordering rules.
+
+Careful, there lie dragons along that path because of things like
+how the inode cluster buffer operations work - they all assume
+ascending inode number traversal within and across inode cluster
+buffers and hence we do have locking order constraints based on
+inode number...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
