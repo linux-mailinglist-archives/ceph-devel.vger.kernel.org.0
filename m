@@ -2,159 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69B7C37F0FB
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 May 2021 03:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3585437F5DC
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 May 2021 12:49:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230330AbhEMBm2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 12 May 2021 21:42:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26075 "EHLO
+        id S231956AbhEMKui (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 13 May 2021 06:50:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:49893 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230034AbhEMBm1 (ORCPT
+        by vger.kernel.org with ESMTP id S232051AbhEMKuf (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 12 May 2021 21:42:27 -0400
+        Thu, 13 May 2021 06:50:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620870078;
+        s=mimecast20190719; t=1620902965;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vFBxeNDE5JeqnZaoAlb8NaIso3BoSSd03dKgYLT5UUc=;
-        b=D/X7tjtcW2U+wr0OZn34MjWUKDK3J6LCtylmvMDycLaEnvG9yVCPO5VtNyNzhiFYfYiYA5
-        r5uLpCPYeN46Z6zl0F1Jnsen2Gp8GbseaqZtwePOLuSepK2UfLKGUOwqpSz/1YRX5jXFrZ
-        Su2q98FiEqqxnB+537jtsoQHaNymAVw=
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=hLTy2FqhYn8UYNDDx5zbQVMO+wFz0eJkwnkoKVTwuLc=;
+        b=LDFJGl8ig44bfSqYsfrNVzW8l7+rRS/daKVBxp8jv0PTiiyPeOha+jKqbHLtdDNA1Cnv5e
+        eJGK/FfjApBx3Zw6Cn+eaDzB6pk+Z71GUu7SsV+s0RGSoBWf1nSvRRt2KSNiONW09ooAVt
+        TiamkzeBtA3lAiy5fNc+aNzQfyDHMwU=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-375-7cHTnMrjMQmm_QCxsj7tCQ-1; Wed, 12 May 2021 21:41:14 -0400
-X-MC-Unique: 7cHTnMrjMQmm_QCxsj7tCQ-1
+ us-mta-451-_zrl2b_yMqSu5EjZ_hHK9w-1; Thu, 13 May 2021 06:49:21 -0400
+X-MC-Unique: _zrl2b_yMqSu5EjZ_hHK9w-1
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 716FF107ACCA;
-        Thu, 13 May 2021 01:41:13 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5FB6E19D9F;
-        Thu, 13 May 2021 01:41:11 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, pdonnell@redhat.com, ukernel@gmail.com,
-        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v2 2/2] ceph: send the read/write io size metrics to mds
-Date:   Thu, 13 May 2021 09:40:53 +0800
-Message-Id: <20210513014053.81346-3-xiubli@redhat.com>
-In-Reply-To: <20210513014053.81346-1-xiubli@redhat.com>
-References: <20210513014053.81346-1-xiubli@redhat.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0822B80DE1E;
+        Thu, 13 May 2021 10:49:20 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9756919D7C;
+        Thu, 13 May 2021 10:49:14 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] netfs: Pass flags through to grab_cache_page_write_begin()
+From:   David Howells <dhowells@redhat.com>
+To:     willy@infradead.org
+Cc:     linux-mm@kvack.org, linux-cachefs@redhat.com,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com
+Date:   Thu, 13 May 2021 11:49:13 +0100
+Message-ID: <162090295383.3165945.13595101698295243662.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+In netfs_write_begin(), pass the AOP flags through to
+grab_cache_page_write_begin() so that a request to use GFP_NOFS is honoured.
 
-URL: https://tracker.ceph.com/issues/49913
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
+Fixes: e1b1240c1ff5 ("netfs: Add write_begin helper")
+Reported-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-mm@kvack.org
+cc: linux-cachefs@redhat.com
+cc: linux-afs@lists.infradead.org
+cc: linux-nfs@vger.kernel.org
+cc: linux-cifs@vger.kernel.org
+cc: ceph-devel@vger.kernel.org
+cc: v9fs-developer@lists.sourceforge.net
+cc: linux-fsdevel@vger.kernel.org
 ---
- fs/ceph/metric.c | 25 ++++++++++++++++++++++++-
- fs/ceph/metric.h | 20 +++++++++++++++++++-
- 2 files changed, 43 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
-index 57f28995c665..9577c71e645d 100644
---- a/fs/ceph/metric.c
-+++ b/fs/ceph/metric.c
-@@ -20,6 +20,8 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
- 	struct ceph_opened_files *files;
- 	struct ceph_pinned_icaps *icaps;
- 	struct ceph_opened_inodes *inodes;
-+	struct ceph_read_io_size *rsize;
-+	struct ceph_write_io_size *wsize;
- 	struct ceph_client_metric *m = &mdsc->metric;
- 	u64 nr_caps = atomic64_read(&m->total_caps);
- 	u32 header_len = sizeof(struct ceph_metric_header);
-@@ -31,7 +33,8 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+ fs/netfs/read_helper.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+index 193841d03de0..725614625ed4 100644
+--- a/fs/netfs/read_helper.c
++++ b/fs/netfs/read_helper.c
+@@ -1068,7 +1068,7 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
+ 	DEFINE_READAHEAD(ractl, file, NULL, mapping, index);
  
- 	len = sizeof(*head) + sizeof(*cap) + sizeof(*read) + sizeof(*write)
- 	      + sizeof(*meta) + sizeof(*dlease) + sizeof(*files)
--	      + sizeof(*icaps) + sizeof(*inodes);
-+	      + sizeof(*icaps) + sizeof(*inodes) + sizeof(*rsize)
-+	      + sizeof(*wsize);
+ retry:
+-	page = grab_cache_page_write_begin(mapping, index, 0);
++	page = grab_cache_page_write_begin(mapping, index, flags);
+ 	if (!page)
+ 		return -ENOMEM;
  
- 	msg = ceph_msg_new(CEPH_MSG_CLIENT_METRICS, len, GFP_NOFS, true);
- 	if (!msg) {
-@@ -132,6 +135,26 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
- 	inodes->total = cpu_to_le64(sum);
- 	items++;
- 
-+	/* encode the read io size metric */
-+	rsize = (struct ceph_read_io_size *)(inodes + 1);
-+	rsize->header.type = cpu_to_le32(CLIENT_METRIC_TYPE_READ_IO_SIZES);
-+	rsize->header.ver = 1;
-+	rsize->header.compat = 1;
-+	rsize->header.data_len = cpu_to_le32(sizeof(*rsize) - header_len);
-+	rsize->total_ops = cpu_to_le64(m->total_reads);
-+	rsize->total_size = cpu_to_le64(m->read_size_sum);
-+	items++;
-+
-+	/* encode the write io size metric */
-+	wsize = (struct ceph_write_io_size *)(rsize + 1);
-+	wsize->header.type = cpu_to_le32(CLIENT_METRIC_TYPE_WRITE_IO_SIZES);
-+	wsize->header.ver = 1;
-+	wsize->header.compat = 1;
-+	wsize->header.data_len = cpu_to_le32(sizeof(*wsize) - header_len);
-+	wsize->total_ops = cpu_to_le64(m->total_writes);
-+	wsize->total_size = cpu_to_le64(m->write_size_sum);
-+	items++;
-+
- 	put_unaligned_le32(items, &head->num);
- 	msg->front.iov_len = len;
- 	msg->hdr.version = cpu_to_le16(1);
-diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
-index 89ce32f1dc50..0133955a3c6a 100644
---- a/fs/ceph/metric.h
-+++ b/fs/ceph/metric.h
-@@ -17,8 +17,10 @@ enum ceph_metric_type {
- 	CLIENT_METRIC_TYPE_OPENED_FILES,
- 	CLIENT_METRIC_TYPE_PINNED_ICAPS,
- 	CLIENT_METRIC_TYPE_OPENED_INODES,
-+	CLIENT_METRIC_TYPE_READ_IO_SIZES,
-+	CLIENT_METRIC_TYPE_WRITE_IO_SIZES,
- 
--	CLIENT_METRIC_TYPE_MAX = CLIENT_METRIC_TYPE_OPENED_INODES,
-+	CLIENT_METRIC_TYPE_MAX = CLIENT_METRIC_TYPE_WRITE_IO_SIZES,
- };
- 
- /*
-@@ -34,6 +36,8 @@ enum ceph_metric_type {
- 	CLIENT_METRIC_TYPE_OPENED_FILES,	\
- 	CLIENT_METRIC_TYPE_PINNED_ICAPS,	\
- 	CLIENT_METRIC_TYPE_OPENED_INODES,	\
-+	CLIENT_METRIC_TYPE_READ_IO_SIZES,	\
-+	CLIENT_METRIC_TYPE_WRITE_IO_SIZES,	\
- 						\
- 	CLIENT_METRIC_TYPE_MAX,			\
- }
-@@ -103,6 +107,20 @@ struct ceph_opened_inodes {
- 	__le64 total;
- } __packed;
- 
-+/* metric read io size header */
-+struct ceph_read_io_size {
-+	struct ceph_metric_header header;
-+	__le64 total_ops;
-+	__le64 total_size;
-+} __packed;
-+
-+/* metric write io size header */
-+struct ceph_write_io_size {
-+	struct ceph_metric_header header;
-+	__le64 total_ops;
-+	__le64 total_size;
-+} __packed;
-+
- struct ceph_metric_head {
- 	__le32 num;	/* the number of metrics that will be sent */
- } __packed;
--- 
-2.27.0
+
 
