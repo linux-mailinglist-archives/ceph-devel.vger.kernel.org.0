@@ -2,98 +2,104 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 546C93805F4
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 May 2021 11:14:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87525380814
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 May 2021 13:07:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231750AbhENJPc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 May 2021 05:15:32 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57269 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231735AbhENJPb (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 14 May 2021 05:15:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620983660;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KMGs/QynIOOiaXrxHQadH1YEi4RJh7qBjDay7+/Jlk0=;
-        b=gaNDhcoASs+hD1SWgDNuA6KPSNkUDJ1ObqcOyEvNNXhYafb6qheD5HZU921K6iZZwhFXBJ
-        TB6xmlP6PncxoBa0ffgkL20mz73MOmn5oyJ0EcfCXSHO4Zc7FT6WnbY0a/4KdAcA0gxAEA
-        KP65BXlJFLQlWCrTzPzximRksp7MR+o=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-285-Bj76slDhO_2jtOPA11Ofzg-1; Fri, 14 May 2021 05:14:17 -0400
-X-MC-Unique: Bj76slDhO_2jtOPA11Ofzg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E4C0019253C5;
-        Fri, 14 May 2021 09:14:15 +0000 (UTC)
-Received: from [10.72.12.181] (ovpn-12-181.pek2.redhat.com [10.72.12.181])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 901985D9CD;
-        Fri, 14 May 2021 09:14:13 +0000 (UTC)
-Subject: Re: [PATCH v2 0/2] ceph: send io size metrics to mds daemon
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        "Yan, Zheng" <ukernel@gmail.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-References: <20210513014053.81346-1-xiubli@redhat.com>
- <89def1a8e65e443ba7aca7c4ff138e6c6041a5df.camel@kernel.org>
- <70554cca-9985-338c-de04-4053a4a04872@redhat.com>
- <CAOi1vP-dpSUO5F_cyhzBycvuCp6N2cRPifJPAZ1Ybws+T=pGcA@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <de9304d8-8428-5634-24ec-fdae07b9ec24@redhat.com>
-Date:   Fri, 14 May 2021 17:14:09 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S231445AbhENLIP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 May 2021 07:08:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40048 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229445AbhENLIP (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 14 May 2021 07:08:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 724A5AF11;
+        Fri, 14 May 2021 11:07:02 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id AB2D71F2B4A; Fri, 14 May 2021 13:07:00 +0200 (CEST)
+Date:   Fri, 14 May 2021 13:07:00 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
+        Chao Yu <yuchao0@huawei.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Thumshirn <jth@kernel.org>,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>
+Subject: Re: [PATCH 03/11] mm: Protect operations adding pages to page cache
+ with invalidate_lock
+Message-ID: <20210514110700.GA27655@quack2.suse.cz>
+References: <20210512101639.22278-1-jack@suse.cz>
+ <20210512134631.4053-3-jack@suse.cz>
+ <YJvo1bGG1tG+gtgC@casper.infradead.org>
+ <20210513190114.GJ2734@quack2.suse.cz>
+ <YJ2AR0IURFzz+52G@casper.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <CAOi1vP-dpSUO5F_cyhzBycvuCp6N2cRPifJPAZ1Ybws+T=pGcA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YJ2AR0IURFzz+52G@casper.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Thu 13-05-21 20:38:47, Matthew Wilcox wrote:
+> On Thu, May 13, 2021 at 09:01:14PM +0200, Jan Kara wrote:
+> > On Wed 12-05-21 15:40:21, Matthew Wilcox wrote:
+> > > Remind me (or, rather, add to the documentation) why we have to hold the
+> > > invalidate_lock during the call to readpage / readahead, and we don't just
+> > > hold it around the call to add_to_page_cache / add_to_page_cache_locked
+> > > / add_to_page_cache_lru ?  I appreciate that ->readpages is still going
+> > > to suck, but we're down to just three implementations of ->readpages now
+> > > (9p, cifs & nfs).
+> > 
+> > There's a comment in filemap_create_page() trying to explain this. We need
+> > to protect against cases like: Filesystem with 1k blocksize, file F has
+> > page at index 0 with uptodate buffer at 0-1k, rest not uptodate. All blocks
+> > underlying page are allocated. Now let read at offset 1k race with hole
+> > punch at offset 1k, length 1k.
+> > 
+> > read()					hole punch
+> > ...
+> >   filemap_read()
+> >     filemap_get_pages()
+> >       - page found in the page cache but !Uptodate
+> >       filemap_update_page()
+> > 					  locks everything
+> > 					  truncate_inode_pages_range()
+> > 					    lock_page(page)
+> > 					    do_invalidatepage()
+> > 					    unlock_page(page)
+> >         locks page
+> >           filemap_read_page()
+> 
+> Ah, this is the partial_start case, which means that page->mapping
+> is still valid.  But that means that do_invalidatepage() was called
+> with (offset 1024, length 1024), immediately after we called
+> zero_user_segment().  So isn't this a bug in the fs do_invalidatepage()?
+> The range from 1k-2k _is_ uptodate.  It's been zeroed in memory,
+> and if we were to run after the "free block" below, we'd get that
+> memory zeroed again.
 
-On 5/14/21 4:57 PM, Ilya Dryomov wrote:
-> On Fri, May 14, 2021 at 2:47 AM Xiubo Li <xiubli@redhat.com> wrote:
->>
->> On 5/13/21 7:30 PM, Jeff Layton wrote:
->>> On Thu, 2021-05-13 at 09:40 +0800, xiubli@redhat.com wrote:
->>>> From: Xiubo Li <xiubli@redhat.com>
->>>>
->>>> V2:
->>>> - change the patch order
->>>> - replace the fixed 10 with sizeof(struct ceph_metric_header)
->>>>
->>>> Xiubo Li (2):
->>>>     ceph: simplify the metrics struct
->>>>     ceph: send the read/write io size metrics to mds
->>>>
->>>>    fs/ceph/metric.c | 90 ++++++++++++++++++++++++++++++------------------
->>>>    fs/ceph/metric.h | 79 +++++++++++++++++-------------------------
->>>>    2 files changed, 89 insertions(+), 80 deletions(-)
->>>>
->>> Thanks Xiubo,
->>>
->>> These look good. I'll do some testing with them and plan to merge these
->>> into the testing branch later today.
->> Sure, take your time.
-> FYI I squashed "ceph: send the read/write io size metrics to mds" into
-> "ceph: add IO size metrics support".
+Well, yes, do_invalidatepage() could mark zeroed region as uptodate. But I
+don't think we want to rely on 'uptodate' not getting spuriously cleared
+(which would reopen the problem). Generally the assumption is that there's
+no problem clearing (or not setting) uptodate flag of a clean buffer
+because the fs can always provide the data again. Similarly, fs is free to
+refetch data into clean & uptodate page, if it thinks it's worth it. Now
+all these would become correctness issues. So IMHO the fragility is not
+worth the shorter lock hold times. That's why I went for the rule that
+read-IO submission is still protected by invalidate_lock to make things
+simple.
 
-Got it.
-
-Thanks
-
-
-> Thanks,
->
->                  Ilya
->
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
