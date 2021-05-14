@@ -2,87 +2,70 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 695D9380149
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 May 2021 02:47:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C03B3803A7
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 May 2021 08:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231827AbhENAtE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 13 May 2021 20:49:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:47954 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231822AbhENAtE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 13 May 2021 20:49:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620953273;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lG+oUrWMidm2T3GUG/jm/U1WqvAE/2ip7RsPaZFo2YI=;
-        b=gk9ozx8It1Q71DzZ/lJk+fFpjI0UlNEAy3YHc38Coa/OdMwJhSoFaGPtP4SPl/pYztkZbm
-        uJS1zqXajCPhdG+gVXs/sN9x1WW85dyCpauK/rAwSsO/da6lpFr+rnUCxkUHq0jHQ0BoG2
-        Gf1DjAhcqFXapHnx4BxcIcn1B7gMB/Y=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-7-3o1JqLJkNNKFAKpzgYmJCQ-1; Thu, 13 May 2021 20:47:51 -0400
-X-MC-Unique: 3o1JqLJkNNKFAKpzgYmJCQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 29927801B14;
-        Fri, 14 May 2021 00:47:50 +0000 (UTC)
-Received: from [10.72.12.181] (ovpn-12-181.pek2.redhat.com [10.72.12.181])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2682110013C1;
-        Fri, 14 May 2021 00:47:47 +0000 (UTC)
-Subject: Re: [PATCH v2 0/2] ceph: send io size metrics to mds daemon
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, pdonnell@redhat.com, ukernel@gmail.com,
-        ceph-devel@vger.kernel.org
-References: <20210513014053.81346-1-xiubli@redhat.com>
- <89def1a8e65e443ba7aca7c4ff138e6c6041a5df.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <70554cca-9985-338c-de04-4053a4a04872@redhat.com>
-Date:   Fri, 14 May 2021 08:47:44 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S232112AbhENGbp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 May 2021 02:31:45 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2595 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230059AbhENGbp (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 May 2021 02:31:45 -0400
+Received: from dggems702-chm.china.huawei.com (unknown [172.30.72.58])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FhJVb3FnZzkWM4;
+        Fri, 14 May 2021 14:27:51 +0800 (CST)
+Received: from dggeml759-chm.china.huawei.com (10.1.199.138) by
+ dggems702-chm.china.huawei.com (10.3.19.179) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2176.2; Fri, 14 May 2021 14:30:32 +0800
+Received: from localhost.localdomain (10.175.102.38) by
+ dggeml759-chm.china.huawei.com (10.1.199.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Fri, 14 May 2021 14:30:32 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+CC:     <ceph-devel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Hulk Robot" <hulkci@huawei.com>
+Subject: [PATCH -next] ceph: make symbol 'ceph_netfs_read_ops' static
+Date:   Fri, 14 May 2021 06:39:53 +0000
+Message-ID: <20210514063953.3242049-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <89def1a8e65e443ba7aca7c4ff138e6c6041a5df.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggeml759-chm.china.huawei.com (10.1.199.138)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+The sparse tool complains as follows:
 
-On 5/13/21 7:30 PM, Jeff Layton wrote:
-> On Thu, 2021-05-13 at 09:40 +0800, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> V2:
->> - change the patch order
->> - replace the fixed 10 with sizeof(struct ceph_metric_header)
->>
->> Xiubo Li (2):
->>    ceph: simplify the metrics struct
->>    ceph: send the read/write io size metrics to mds
->>
->>   fs/ceph/metric.c | 90 ++++++++++++++++++++++++++++++------------------
->>   fs/ceph/metric.h | 79 +++++++++++++++++-------------------------
->>   2 files changed, 89 insertions(+), 80 deletions(-)
->>
-> Thanks Xiubo,
->
-> These look good. I'll do some testing with them and plan to merge these
-> into the testing branch later today.
+fs/ceph/addr.c:316:37: warning:
+ symbol 'ceph_netfs_read_ops' was not declared. Should it be static?
 
-Sure, take your time.
+This symbol is not used outside of addr.c, so marks it static.
 
-BRs
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ fs/ceph/addr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Xiubo
-
-
-> Cheers,
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index c1570fada3d8..5dfd18d84a3b 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -313,7 +313,7 @@ static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
+ 		ceph_put_cap_refs(ci, got);
+ }
+ 
+-const struct netfs_read_request_ops ceph_netfs_read_ops = {
++static const struct netfs_read_request_ops ceph_netfs_read_ops = {
+ 	.init_rreq		= ceph_init_rreq,
+ 	.is_cache_enabled	= ceph_is_cache_enabled,
+ 	.begin_cache_operation	= ceph_begin_cache_operation,
 
