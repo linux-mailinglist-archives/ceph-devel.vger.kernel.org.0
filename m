@@ -2,159 +2,100 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3566380E01
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 May 2021 18:17:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57B23381367
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 May 2021 23:51:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233391AbhENQSn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 May 2021 12:18:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59168 "EHLO mail.kernel.org"
+        id S233202AbhENVwp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 May 2021 17:52:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230018AbhENQSm (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 14 May 2021 12:18:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AE7AB61353;
-        Fri, 14 May 2021 16:17:30 +0000 (UTC)
+        id S230247AbhENVwo (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 14 May 2021 17:52:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 72BDF6145B;
+        Fri, 14 May 2021 21:51:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1621009050;
-        bh=GXTUTxfJmauY3sVW+kCaMHHzIKcRfXTYy0mfZ1awngE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oQ8dmtH4NA+L/+ELxpN7WUZ32+IKoVGAxNNf5Zt7Ofagh6dHPT0TaJ3/dhZ3udTSa
-         Ss/wqVUPPW5cMdEz+C4hQyJma01zgrZ+tDmQID9Jlsk64sp+15NKZU73+6fKkEkcgC
-         XvuSXtxBxWWmdn2PJR00Oj+G52+jT4a3Jwm4qyrvnnPwZZO7YBFRkMz9ZmsrxPdu5J
-         q4F0/QUco4Auws1Zlcox6az1nWwemazilV0J6CiqvqlCi9dMrZ8vCEq6MMIs3fgL5x
-         qVlNE4QqliLqOm7IvgNPw45DD+Jz/B6XeS0w8qkfaKzFc0Gwo3UyBFqq+MTiQmsck/
-         qFCq5EMv5glNw==
-Date:   Fri, 14 May 2021 09:17:30 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        s=k20201202; t=1621029092;
+        bh=UrQTKq6eDOpcEy53oylkG4Jq2Q9f5+I8Yceo4M4Zl+M=;
+        h=Date:From:To:Cc:Subject:From;
+        b=SCqmCHInnTLr81xmiVlFOGuH47epGHjG1lm1r9D1PR+yEk+H/cluUocXu7FzsJqVf
+         GAfNUjLvLYr9GsuZBFCxGkh7ZcksKfP/aH1mn8posKFOd6ENFiGB1o+irdGwDfKGnR
+         3xkSpjquNHLr0LbSsSalxzDbaOIqn4g9CLrbQxQ6SlDOt9CXPROxS9r6/Nb6uEEs5a
+         9J2J6DxFqUoEr1myamupT6HdhQjT38XgsTd57RvnRSsGr0tXF4lkFFpfXov5nYR4Uq
+         nTYKF0F0XYDreFWEMZsvAY3NuWN1gP/YrEMoll8XduxJe/AWugdQOA1M1veLdObnH8
+         DBsE12z8EVbvg==
+Date:   Fri, 14 May 2021 16:52:09 -0500
+From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To:     Ilya Dryomov <idryomov@gmail.com>,
         Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 03/11] mm: Protect operations adding pages to page cache
- with invalidate_lock
-Message-ID: <20210514161730.GL9675@magnolia>
-References: <20210512101639.22278-1-jack@suse.cz>
- <20210512134631.4053-3-jack@suse.cz>
- <20210512152345.GE8606@magnolia>
- <20210513174459.GH2734@quack2.suse.cz>
- <20210513185252.GB9675@magnolia>
- <20210513231945.GD2893@dread.disaster.area>
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        linux-hardening@vger.kernel.org
+Subject: [PATCH][next] ceph: Replace zero-length array with flexible array
+ member
+Message-ID: <20210514215209.GA33310@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210513231945.GD2893@dread.disaster.area>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, May 14, 2021 at 09:19:45AM +1000, Dave Chinner wrote:
-> On Thu, May 13, 2021 at 11:52:52AM -0700, Darrick J. Wong wrote:
-> > On Thu, May 13, 2021 at 07:44:59PM +0200, Jan Kara wrote:
-> > > On Wed 12-05-21 08:23:45, Darrick J. Wong wrote:
-> > > > On Wed, May 12, 2021 at 03:46:11PM +0200, Jan Kara wrote:
-> > > > > +->fallocate implementation must be really careful to maintain page cache
-> > > > > +consistency when punching holes or performing other operations that invalidate
-> > > > > +page cache contents. Usually the filesystem needs to call
-> > > > > +truncate_inode_pages_range() to invalidate relevant range of the page cache.
-> > > > > +However the filesystem usually also needs to update its internal (and on disk)
-> > > > > +view of file offset -> disk block mapping. Until this update is finished, the
-> > > > > +filesystem needs to block page faults and reads from reloading now-stale page
-> > > > > +cache contents from the disk. VFS provides mapping->invalidate_lock for this
-> > > > > +and acquires it in shared mode in paths loading pages from disk
-> > > > > +(filemap_fault(), filemap_read(), readahead paths). The filesystem is
-> > > > > +responsible for taking this lock in its fallocate implementation and generally
-> > > > > +whenever the page cache contents needs to be invalidated because a block is
-> > > > > +moving from under a page.
-> > > > > +
-> > > > > +->copy_file_range and ->remap_file_range implementations need to serialize
-> > > > > +against modifications of file data while the operation is running. For blocking
-> > > > > +changes through write(2) and similar operations inode->i_rwsem can be used. For
-> > > > > +blocking changes through memory mapping, the filesystem can use
-> > > > > +mapping->invalidate_lock provided it also acquires it in its ->page_mkwrite
-> > > > > +implementation.
-> > > > 
-> > > > Question: What is the locking order when acquiring the invalidate_lock
-> > > > of two different files?  Is it the same as i_rwsem (increasing order of
-> > > > the struct inode pointer) or is it the same as the XFS MMAPLOCK that is
-> > > > being hoisted here (increasing order of i_ino)?
-> > > > 
-> > > > The reason I ask is that remap_file_range has to do that, but I don't
-> > > > see any conversions for the xfs_lock_two_inodes(..., MMAPLOCK_EXCL)
-> > > > calls in xfs_ilock2_io_mmap in this series.
-> > > 
-> > > Good question. Technically, I don't think there's real need to establish a
-> > > single ordering because locks among different filesystems are never going
-> > > to be acquired together (effectively each lock type is local per sb and we
-> > > are free to define an ordering for each lock type differently). But to
-> > > maintain some sanity I guess having the same locking order for doublelock
-> > > of i_rwsem and invalidate_lock makes sense. Is there a reason why XFS uses
-> > > by-ino ordering? So that we don't have to consider two different orders in
-> > > xfs_lock_two_inodes()...
-> > 
-> > I imagine Dave will chime in on this, but I suspect the reason is
-> > hysterical raisins^Wreasons.
-> 
-> It's the locking rules that XFS has used pretty much forever.
-> Locking by inode number always guarantees the same locking order of
-> two inodes in the same filesystem, regardless of the specific
-> in-memory instances of the two inodes.
-> 
-> e.g. if we lock based on the inode structure address, in one
-> instancex, we could get A -> B, then B gets recycled and
-> reallocated, then we get B -> A as the locking order for the same
-> two inodes.
-> 
-> That, IMNSHO, is utterly crazy because with non-deterministic inode
-> lock ordered like this you can't make consistent locking rules for
-> locking the physical inode cluster buffers underlying the inodes in
-> the situation where they also need to be locked.
+There is a regular need in the kernel to provide a way to declare
+having a dynamically sized set of trailing elements in a structure.
+Kernel code should always use “flexible array members”[1] for these
+cases. The older style of one-element or zero-length arrays should
+no longer be used[2].
 
-<nod> That's protected by the ILOCK, correct?
+Notice that, in this case, sizeof(au->reply_buf) translates to zero,
+becase in the original code reply_buf is a zero-length array. Now that
+reply_buf is transformed into a flexible array, the mentioned line of
+code is now replaced by a literal 0.
 
-> We've been down this path before more than a decade ago when the
-> powers that be decreed that inode locking order is to be "by
-> structure address" rather than inode number, because "inode number
-> is not unique across multiple superblocks".
-> 
-> I'm not sure that there is anywhere that locks multiple inodes
-> across different superblocks, but here we are again....
+Also, as a safeguard, explicitly assign NULL to
+auth->authorizer_reply_buf, as no heap is allocated for it, therefore
+it should not be accessible.
 
-Hm.  Are there situations where one would want to lock multiple
-/mappings/ across different superblocks?  The remapping code doesn't
-allow cross-super operations, so ... pipes and splice, maybe?  I don't
-remember that code well enough to say for sure.
+[1] https://en.wikipedia.org/wiki/Flexible_array_member
+[2] https://www.kernel.org/doc/html/v5.10/process/deprecated.html#zero-length-and-one-element-arrays
 
-I've been operating under the assumption that as long as one takes all
-the same class of lock at the same time (e.g. all the IOLOCKs, then all
-the MMAPLOCKs, then all the ILOCKs, like reflink does) that the
-incongruency in locking order rules within a class shouldn't be a
-problem.
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ net/ceph/auth_none.c | 4 ++--
+ net/ceph/auth_none.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-> > It might simply be time to convert all
-> > three XFS inode locks to use the same ordering rules.
-> 
-> Careful, there lie dragons along that path because of things like
-> how the inode cluster buffer operations work - they all assume
-> ascending inode number traversal within and across inode cluster
-> buffers and hence we do have locking order constraints based on
-> inode number...
+diff --git a/net/ceph/auth_none.c b/net/ceph/auth_none.c
+index 70e86e462250..10ee16d2cbf0 100644
+--- a/net/ceph/auth_none.c
++++ b/net/ceph/auth_none.c
+@@ -111,8 +111,8 @@ static int ceph_auth_none_create_authorizer(
+ 	auth->authorizer = (struct ceph_authorizer *) au;
+ 	auth->authorizer_buf = au->buf;
+ 	auth->authorizer_buf_len = au->buf_len;
+-	auth->authorizer_reply_buf = au->reply_buf;
+-	auth->authorizer_reply_buf_len = sizeof (au->reply_buf);
++	auth->authorizer_reply_buf_len = 0;
++	auth->authorizer_reply_buf = NULL;
+ 
+ 	return 0;
+ }
+diff --git a/net/ceph/auth_none.h b/net/ceph/auth_none.h
+index 4158f064302e..3c68c0ee3dab 100644
+--- a/net/ceph/auth_none.h
++++ b/net/ceph/auth_none.h
+@@ -16,7 +16,7 @@ struct ceph_none_authorizer {
+ 	struct ceph_authorizer base;
+ 	char buf[128];
+ 	int buf_len;
+-	char reply_buf[0];
++	char reply_buf[];
+ };
+ 
+ struct ceph_auth_none_info {
+-- 
+2.27.0
 
-Fair enough, I'll leave the ILOCK alone. :)
-
---D
-
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
