@@ -2,94 +2,93 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C217380594
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 May 2021 10:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E6A3805AC
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 May 2021 10:57:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231343AbhENIyR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 May 2021 04:54:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33052 "EHLO
+        id S230319AbhENI6X (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 May 2021 04:58:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231278AbhENIyR (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 May 2021 04:54:17 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46E6BC061574;
-        Fri, 14 May 2021 01:53:05 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id r5so25239104ilb.2;
-        Fri, 14 May 2021 01:53:05 -0700 (PDT)
+        with ESMTP id S229544AbhENI6X (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 May 2021 04:58:23 -0400
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8040EC061574
+        for <ceph-devel@vger.kernel.org>; Fri, 14 May 2021 01:57:11 -0700 (PDT)
+Received: by mail-il1-x136.google.com with SMTP id w13so13082705ilv.11
+        for <ceph-devel@vger.kernel.org>; Fri, 14 May 2021 01:57:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qayX7zhi1zPzWfW6+6qw+j9s4Gb6sXImv1cPAAHWTPc=;
-        b=NsOSXd5lSsEgESDlXDj+Nzr2yzyy8QbLdeMrHPW+gesGwaAemQY0NqnbhYlo7SGtp7
-         0p8sRUPBuim+yCrGNklS4DfhQDs4isJqz6m/gzUT07HKYgQl2XO49/+LNotGrFiKwNry
-         0q7burohApTyz/cpNFt2PL1nwLYruGM8sc1XrdSVEwIwiSIDKzEzAqYtZ6qLd+XMIRO1
-         VeU4Iz/Z+KeQufMM7cZmeuE8JDEhHpLQVfmmp0pCtf9YMFXhGtSfrzfZvoUUtyreAe7N
-         NpYiUNcb1aAwxvvU+u/gK4R/FnpX6rHrcqcrejoVhgzFL4VKnm+o9Yx0PKsMhsD5Ygfr
-         tyRg==
+        bh=PPDCcxeZWtIZDWSttvSY1A0fhzXnaOqfgXekaqvC+6g=;
+        b=J1HJ06jMAtiHDu7OuVVZ81CKZ+6naVoUoChUQv4ZYciuOpBAEZLJB47P/mT6NqdSsg
+         XqnfpFvIckbwqrW+KcFvdC8Hm1ofmwjamikRk7SkcNZVgm0QVn3FhG1bgkg2KZdyNyuy
+         4uOyQDcWYPF9mnbtth1V53I7eyjO9TtnXsnczfyLApDvP7UEdM0An62WDQnMPLxOE0Md
+         QWVGaJ0FuuOCAxcbEaJjxpcuhTJgI5zqSW7DVsVF4LTBMeSmF8KNiH5aD/SqdkeFM4hK
+         nkH+OQj9vIA4sJ9fTdjlGAt+FRtgnnU/JMklZNX+rQgY++DyKHPsY37dOwLX0PoHjb+A
+         1xYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qayX7zhi1zPzWfW6+6qw+j9s4Gb6sXImv1cPAAHWTPc=;
-        b=GCdcQ7sR5bP8CLk7plQijXHuz4VkHRH7gaYqY/rkyHIWD85YNxCKzWTFWqLb8MRpGQ
-         INljHQ/huRXq4Kuteq+MDIoM6ZgPygQ/KqtmdwKgGBulWGhdnp5TFbY2ByLbwiHPaQtd
-         iEoYdrTgs6ceyRA4I3S6Q4/n/mpvPiacigGwptsUNkzOIh8rR7UClq5Y7XEcdT+/wJhx
-         CsbaFGUcDVnhWg+mAgjMTeCGs81OxNYCLnQ0gZMNn4kts7mcKzD8ijeiIydBPs4/8rUY
-         FKVLhvCLDwJAJxswr+Lumw1NYbCSPBMhNYiBtCVC1NTLC1oVbEKGLI1ZrjrCWtOAJgdL
-         6stw==
-X-Gm-Message-State: AOAM533JGZXtyK8lG5qVdRYTMVjGVu9VFmOfqaf1w/vC/MFFoRiCmjCW
-        d9hYA0pZdvUwinWGazGSPavD37B3MKC57ffT0JY=
-X-Google-Smtp-Source: ABdhPJynVVQ5BLTIsbnyQ2xjJBlWg+YMqKO2eOLz8o6Rj7suiQMI/hLmQVtqhyULHB4J6nYNfScxLV03hSiACROvdpk=
-X-Received: by 2002:a05:6e02:eac:: with SMTP id u12mr40364277ilj.177.1620982384742;
- Fri, 14 May 2021 01:53:04 -0700 (PDT)
+        bh=PPDCcxeZWtIZDWSttvSY1A0fhzXnaOqfgXekaqvC+6g=;
+        b=EDT1NzjYEkZL2PyqBKRvadvhbmJOWq9xg9ExPVGMhEw3Ym37MlBpcuWMNlpnaB328s
+         cSD1LQVpseG33ILLTMC55stkuVmqivUzaSETMGr44LMSPfX95Ue6h/Kq7qhV72D2xGmb
+         YNy/fW13+i44gO2PTegb1YgK6P9bkO+oAfYoF4Nfbhkevus8eTx9QAbbMy0Nl7QeF7Lv
+         0MSm7w0LKZtnJMp7m/oyGhRZVYa6YMN/oWiQw3oQnP1iA1iAKJA1J15Q8GRa0WBb5YiP
+         Xqz/5E2ORopLvS7D5ZXDl7SpwDWYzQaOOHRpzBi6xgVSr6K1wJ4fa99HBGPx0LU5KmIi
+         bkIg==
+X-Gm-Message-State: AOAM530UoJx5XPo+0FixYDxzJQ6rqCV/1MiQ8m1vZfNdMiTseTVoMNhU
+        /z/eBsXE0P5IC3AaHiebc8dNJGd+AFKBhVtRmRk=
+X-Google-Smtp-Source: ABdhPJw+QSKQGkUp0Qaqw01a0dH/HxCKXsxOyZwJm2XrWfJerdmNCcYwKgn0WGRIhNaa0yuV5q3KqlsGtxuiX3MxTq8=
+X-Received: by 2002:a05:6e02:eac:: with SMTP id u12mr40376450ilj.177.1620982631044;
+ Fri, 14 May 2021 01:57:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210514063953.3242049-1-weiyongjun1@huawei.com>
-In-Reply-To: <20210514063953.3242049-1-weiyongjun1@huawei.com>
+References: <20210513014053.81346-1-xiubli@redhat.com> <89def1a8e65e443ba7aca7c4ff138e6c6041a5df.camel@kernel.org>
+ <70554cca-9985-338c-de04-4053a4a04872@redhat.com>
+In-Reply-To: <70554cca-9985-338c-de04-4053a4a04872@redhat.com>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Fri, 14 May 2021 10:53:14 +0200
-Message-ID: <CAOi1vP9h=VNP1NP=Vb3kjoAKYzAGZOaznBgqn5v1RuKeh7zEOg@mail.gmail.com>
-Subject: Re: [PATCH -next] ceph: make symbol 'ceph_netfs_read_ops' static
-To:     Wei Yongjun <weiyongjun1@huawei.com>
+Date:   Fri, 14 May 2021 10:57:20 +0200
+Message-ID: <CAOi1vP-dpSUO5F_cyhzBycvuCp6N2cRPifJPAZ1Ybws+T=pGcA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] ceph: send io size metrics to mds daemon
+To:     Xiubo Li <xiubli@redhat.com>
 Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+        Patrick Donnelly <pdonnell@redhat.com>,
+        "Yan, Zheng" <ukernel@gmail.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, May 14, 2021 at 8:30 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+On Fri, May 14, 2021 at 2:47 AM Xiubo Li <xiubli@redhat.com> wrote:
 >
-> The sparse tool complains as follows:
 >
-> fs/ceph/addr.c:316:37: warning:
->  symbol 'ceph_netfs_read_ops' was not declared. Should it be static?
+> On 5/13/21 7:30 PM, Jeff Layton wrote:
+> > On Thu, 2021-05-13 at 09:40 +0800, xiubli@redhat.com wrote:
+> >> From: Xiubo Li <xiubli@redhat.com>
+> >>
+> >> V2:
+> >> - change the patch order
+> >> - replace the fixed 10 with sizeof(struct ceph_metric_header)
+> >>
+> >> Xiubo Li (2):
+> >>    ceph: simplify the metrics struct
+> >>    ceph: send the read/write io size metrics to mds
+> >>
+> >>   fs/ceph/metric.c | 90 ++++++++++++++++++++++++++++++------------------
+> >>   fs/ceph/metric.h | 79 +++++++++++++++++-------------------------
+> >>   2 files changed, 89 insertions(+), 80 deletions(-)
+> >>
+> > Thanks Xiubo,
+> >
+> > These look good. I'll do some testing with them and plan to merge these
+> > into the testing branch later today.
 >
-> This symbol is not used outside of addr.c, so marks it static.
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  fs/ceph/addr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index c1570fada3d8..5dfd18d84a3b 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -313,7 +313,7 @@ static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
->                 ceph_put_cap_refs(ci, got);
->  }
->
-> -const struct netfs_read_request_ops ceph_netfs_read_ops = {
-> +static const struct netfs_read_request_ops ceph_netfs_read_ops = {
->         .init_rreq              = ceph_init_rreq,
->         .is_cache_enabled       = ceph_is_cache_enabled,
->         .begin_cache_operation  = ceph_begin_cache_operation,
->
+> Sure, take your time.
 
-Applied.
+FYI I squashed "ceph: send the read/write io size metrics to mds" into
+"ceph: add IO size metrics support".
 
 Thanks,
 
