@@ -2,101 +2,132 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D60EC3817AE
-	for <lists+ceph-devel@lfdr.de>; Sat, 15 May 2021 12:36:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D01E3817B5
+	for <lists+ceph-devel@lfdr.de>; Sat, 15 May 2021 12:41:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231872AbhEOKhZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 15 May 2021 06:37:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35442 "EHLO
+        id S232452AbhEOKnJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 15 May 2021 06:43:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231583AbhEOKhZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 15 May 2021 06:37:25 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43704C061573
-        for <ceph-devel@vger.kernel.org>; Sat, 15 May 2021 03:36:12 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id l7so1362432edb.1
-        for <ceph-devel@vger.kernel.org>; Sat, 15 May 2021 03:36:12 -0700 (PDT)
+        with ESMTP id S231583AbhEOKnI (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 15 May 2021 06:43:08 -0400
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01544C061573;
+        Sat, 15 May 2021 03:41:55 -0700 (PDT)
+Received: by mail-il1-x133.google.com with SMTP id z1so1993758ils.0;
+        Sat, 15 May 2021 03:41:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZOO5ouO4oezt8H6XIc5Z9KBaIYmBYK6PyWezHhUp+rQ=;
-        b=uFZISXC+5xXI9b6wwNIMTf7wDtn8l2fZPyCvT+jJ7KdSuM9hXg+ACPotD38JMxL4eQ
-         +FK67g2erB7VlHaJPefvCSkpDqiqB2aReEkT1OvNIkBXU0IhcPSJrCKkatQ0tQU4cza4
-         DCnjoII1FgmUjl3tbs7aYSrH2FKBA9FXJt97y4rukglPf3kXud44ewClh/qDaMEf+5hw
-         J6Ln3xa315TYxuhYiN/8UPOUPrhYl80b+/nC6D65sWAOpUgeODD228jY/EgvfzBlGwOD
-         Ws08jnnKOznMzRf8Nrxl3wJUg6BPylhO5IQK3AsMTA4bRaNkRZxzU/iQqO6pKc5MSumQ
-         GQaw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=RaZlLKNs1k/HMpA5We9IhXk4g4/XDVWeq+0L5EU74cg=;
+        b=C8WkMUyWxR6BH2y0OFlr1I/AWWIbSb3AhNN1Eh1Q6p+YRF9iwA1aukhoPspqdnPcdi
+         YpWGJb7v4mHLCNiifvrNzocDFuR0Tm3lkFJFMXo7MQYIAGldT8DnblAqZINZQaTvAiL6
+         DTTi09tcUp10J0v/tozx9ed0wiRtjAFm6wER5v55BIgP4xVn7sD2l47sodwNpRxBiTwS
+         lbHWy8w/BHDB8TjL24wCrtiO2EPy/ZicNEQ+r4RFIe28gtyS23ufyUinco3a9pI4YhhO
+         VxStTyBWe4X2otrCar+2e663o5hAfyoPmKb5q6JLSYwNJIPoXxcWMrqX31prS6IXktGi
+         DhEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZOO5ouO4oezt8H6XIc5Z9KBaIYmBYK6PyWezHhUp+rQ=;
-        b=AzERULWQOx6GFgGFTE2X7QDxfWEoXGfhkiXUQHtsBzXAhlBVzlrOoVu4u8B4CvkKLs
-         968LxXh/Y9N3chGqgwAKDmZSwNONo6bXH9cL9WueVHgic9xFobJiTT3Gowxs4AcILk3t
-         9YaGLpUF6ByJj8i41CNDMAU6wyTRJI1iVxYs7zWDPcdhKnxkxmJeKnTUOOTyD6spbpk7
-         8Nwd1nO/tHYTBaToeuOTgOD30oyyWOSNA3bTWS8dsnfrMLD+ms1t4rY+I5ylH2YFSzSd
-         2mP668BdEjrwYyy2IzpATzqZwIupVMHKVG8TSUW1J+u8ULHoeCdQgLFhjiCv+vyt0p1A
-         6Ktw==
-X-Gm-Message-State: AOAM530r9LVJOTzA2vKN3LLvMVtAtrlfIw97tmh027yFjF83MQism98A
-        OqQMH6ail1Ooij1UXKc2hoZTM9zouBuXag==
-X-Google-Smtp-Source: ABdhPJwhdiJ0qBKaV4/tJ6rycCA2syChC3IzLmbE4gTbMYa4bIcbzOP7RtXQkG5IsFRSl4adfu1oQg==
-X-Received: by 2002:a05:6402:1a48:: with SMTP id bf8mr20598275edb.150.1621074970962;
-        Sat, 15 May 2021 03:36:10 -0700 (PDT)
-Received: from kwango.local (ip-94-112-132-16.net.upcbroadband.cz. [94.112.132.16])
-        by smtp.gmail.com with ESMTPSA id ch30sm6441114edb.92.2021.05.15.03.36.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 May 2021 03:36:10 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     ceph-devel@vger.kernel.org
-Cc:     "Gustavo A . R . Silva" <gustavoars@kernel.org>
-Subject: [PATCH] libceph: kill ceph_none_authorizer::reply_buf
-Date:   Sat, 15 May 2021 12:36:18 +0200
-Message-Id: <20210515103618.5789-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=RaZlLKNs1k/HMpA5We9IhXk4g4/XDVWeq+0L5EU74cg=;
+        b=AWtjzqCHNF9df8+NFs3eWmfMrjqtmV8xKc4jr4KbXaMxpZ+NHp9TaEuG5lbkeBxim+
+         +l4Zp7dW6Af4XABdZt8J5ULIZfQSeQ/H8AQnw5JM/gp7sAHxjn1PhvWBokoUUDjCiR8c
+         82CfG5/23Jwd3aT163a8BZjI07jpUuB2ORRS6++4gXrlsohLgpGxSIh6y1mtVbPRbIyD
+         LsJmBoETDAu0l0KF5ROm3yQp+Z19Z1tspCyHNDQySMonYpNSkC/EFixLkdxIVosil3XJ
+         7ifCa1TxOBBISS0HvlVbCRMT1aY9GKa+NG2JWnh6QCYps8O6VL6JCQDejRb51Mh++5Dr
+         FIyQ==
+X-Gm-Message-State: AOAM531s7hsUcJtVI6I2S6JF8Ov1sPCH0Rz9G6Vz5jJMdUUhomdow0uP
+        nV8wjGKTAMbvF2PZe5mfWvSyli+P1zXaOeS2fq4=
+X-Google-Smtp-Source: ABdhPJz6I4Ldn6dLlfSLifizJEnh9QPwXBvl6LaDvSTOV45dlmpqUrjS3SKw2T5oJ6iKiE0FCLjU6mhWWNu/v0+MZNA=
+X-Received: by 2002:a92:ce90:: with SMTP id r16mr45330863ilo.220.1621075314495;
+ Sat, 15 May 2021 03:41:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210514215209.GA33310@embeddedor>
+In-Reply-To: <20210514215209.GA33310@embeddedor>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Sat, 15 May 2021 12:42:03 +0200
+Message-ID: <CAOi1vP8NARpXVsK2AVOZ4_m58gXMKVQSi_okZVcrLsew1nLizg@mail.gmail.com>
+Subject: Re: [PATCH][next] ceph: Replace zero-length array with flexible array member
+To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-We never receive authorizer replies with cephx disabled, so it is
-bogus.  Also, it still uses the old zero-length array style.
+On Fri, May 14, 2021 at 11:51 PM Gustavo A. R. Silva
+<gustavoars@kernel.org> wrote:
+>
+> There is a regular need in the kernel to provide a way to declare
+> having a dynamically sized set of trailing elements in a structure.
+> Kernel code should always use =E2=80=9Cflexible array members=E2=80=9D[1]=
+ for these
+> cases. The older style of one-element or zero-length arrays should
+> no longer be used[2].
+>
+> Notice that, in this case, sizeof(au->reply_buf) translates to zero,
+> becase in the original code reply_buf is a zero-length array. Now that
+> reply_buf is transformed into a flexible array, the mentioned line of
+> code is now replaced by a literal 0.
+>
+> Also, as a safeguard, explicitly assign NULL to
+> auth->authorizer_reply_buf, as no heap is allocated for it, therefore
+> it should not be accessible.
+>
+> [1] https://en.wikipedia.org/wiki/Flexible_array_member
+> [2] https://www.kernel.org/doc/html/v5.10/process/deprecated.html#zero-le=
+ngth-and-one-element-arrays
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>  net/ceph/auth_none.c | 4 ++--
+>  net/ceph/auth_none.h | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/net/ceph/auth_none.c b/net/ceph/auth_none.c
+> index 70e86e462250..10ee16d2cbf0 100644
+> --- a/net/ceph/auth_none.c
+> +++ b/net/ceph/auth_none.c
+> @@ -111,8 +111,8 @@ static int ceph_auth_none_create_authorizer(
+>         auth->authorizer =3D (struct ceph_authorizer *) au;
+>         auth->authorizer_buf =3D au->buf;
+>         auth->authorizer_buf_len =3D au->buf_len;
+> -       auth->authorizer_reply_buf =3D au->reply_buf;
+> -       auth->authorizer_reply_buf_len =3D sizeof (au->reply_buf);
+> +       auth->authorizer_reply_buf_len =3D 0;
+> +       auth->authorizer_reply_buf =3D NULL;
+>
+>         return 0;
+>  }
+> diff --git a/net/ceph/auth_none.h b/net/ceph/auth_none.h
+> index 4158f064302e..3c68c0ee3dab 100644
+> --- a/net/ceph/auth_none.h
+> +++ b/net/ceph/auth_none.h
+> @@ -16,7 +16,7 @@ struct ceph_none_authorizer {
+>         struct ceph_authorizer base;
+>         char buf[128];
+>         int buf_len;
+> -       char reply_buf[0];
+> +       char reply_buf[];
+>  };
+>
+>  struct ceph_auth_none_info {
 
-Reported-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
----
- net/ceph/auth_none.c | 4 ++--
- net/ceph/auth_none.h | 1 -
- 2 files changed, 2 insertions(+), 3 deletions(-)
+Hi Gustavo,
 
-diff --git a/net/ceph/auth_none.c b/net/ceph/auth_none.c
-index 70e86e462250..dbf22df10a85 100644
---- a/net/ceph/auth_none.c
-+++ b/net/ceph/auth_none.c
-@@ -111,8 +111,8 @@ static int ceph_auth_none_create_authorizer(
- 	auth->authorizer = (struct ceph_authorizer *) au;
- 	auth->authorizer_buf = au->buf;
- 	auth->authorizer_buf_len = au->buf_len;
--	auth->authorizer_reply_buf = au->reply_buf;
--	auth->authorizer_reply_buf_len = sizeof (au->reply_buf);
-+	auth->authorizer_reply_buf = NULL;
-+	auth->authorizer_reply_buf_len = 0;
- 
- 	return 0;
- }
-diff --git a/net/ceph/auth_none.h b/net/ceph/auth_none.h
-index 4158f064302e..bb121539e796 100644
---- a/net/ceph/auth_none.h
-+++ b/net/ceph/auth_none.h
-@@ -16,7 +16,6 @@ struct ceph_none_authorizer {
- 	struct ceph_authorizer base;
- 	char buf[128];
- 	int buf_len;
--	char reply_buf[0];
- };
- 
- struct ceph_auth_none_info {
--- 
-2.19.2
+I went ahead and removed reply_buf.  We never receive authorizer
+replies in auth_none mode, so patching it to be a flexible array
+is rather pointless.
 
+Thanks,
+
+                Ilya
