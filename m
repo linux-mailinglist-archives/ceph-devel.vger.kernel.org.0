@@ -2,55 +2,45 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D01E3817B5
-	for <lists+ceph-devel@lfdr.de>; Sat, 15 May 2021 12:41:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 051B5381B33
+	for <lists+ceph-devel@lfdr.de>; Sat, 15 May 2021 23:39:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232452AbhEOKnJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 15 May 2021 06:43:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36684 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231583AbhEOKnI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 15 May 2021 06:43:08 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01544C061573;
-        Sat, 15 May 2021 03:41:55 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id z1so1993758ils.0;
-        Sat, 15 May 2021 03:41:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=RaZlLKNs1k/HMpA5We9IhXk4g4/XDVWeq+0L5EU74cg=;
-        b=C8WkMUyWxR6BH2y0OFlr1I/AWWIbSb3AhNN1Eh1Q6p+YRF9iwA1aukhoPspqdnPcdi
-         YpWGJb7v4mHLCNiifvrNzocDFuR0Tm3lkFJFMXo7MQYIAGldT8DnblAqZINZQaTvAiL6
-         DTTi09tcUp10J0v/tozx9ed0wiRtjAFm6wER5v55BIgP4xVn7sD2l47sodwNpRxBiTwS
-         lbHWy8w/BHDB8TjL24wCrtiO2EPy/ZicNEQ+r4RFIe28gtyS23ufyUinco3a9pI4YhhO
-         VxStTyBWe4X2otrCar+2e663o5hAfyoPmKb5q6JLSYwNJIPoXxcWMrqX31prS6IXktGi
-         DhEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=RaZlLKNs1k/HMpA5We9IhXk4g4/XDVWeq+0L5EU74cg=;
-        b=AWtjzqCHNF9df8+NFs3eWmfMrjqtmV8xKc4jr4KbXaMxpZ+NHp9TaEuG5lbkeBxim+
-         +l4Zp7dW6Af4XABdZt8J5ULIZfQSeQ/H8AQnw5JM/gp7sAHxjn1PhvWBokoUUDjCiR8c
-         82CfG5/23Jwd3aT163a8BZjI07jpUuB2ORRS6++4gXrlsohLgpGxSIh6y1mtVbPRbIyD
-         LsJmBoETDAu0l0KF5ROm3yQp+Z19Z1tspCyHNDQySMonYpNSkC/EFixLkdxIVosil3XJ
-         7ifCa1TxOBBISS0HvlVbCRMT1aY9GKa+NG2JWnh6QCYps8O6VL6JCQDejRb51Mh++5Dr
-         FIyQ==
-X-Gm-Message-State: AOAM531s7hsUcJtVI6I2S6JF8Ov1sPCH0Rz9G6Vz5jJMdUUhomdow0uP
-        nV8wjGKTAMbvF2PZe5mfWvSyli+P1zXaOeS2fq4=
-X-Google-Smtp-Source: ABdhPJz6I4Ldn6dLlfSLifizJEnh9QPwXBvl6LaDvSTOV45dlmpqUrjS3SKw2T5oJ6iKiE0FCLjU6mhWWNu/v0+MZNA=
-X-Received: by 2002:a92:ce90:: with SMTP id r16mr45330863ilo.220.1621075314495;
- Sat, 15 May 2021 03:41:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210514215209.GA33310@embeddedor>
-In-Reply-To: <20210514215209.GA33310@embeddedor>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Sat, 15 May 2021 12:42:03 +0200
-Message-ID: <CAOi1vP8NARpXVsK2AVOZ4_m58gXMKVQSi_okZVcrLsew1nLizg@mail.gmail.com>
-Subject: Re: [PATCH][next] ceph: Replace zero-length array with flexible array member
-To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>
+        id S235137AbhEOVjx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 15 May 2021 17:39:53 -0400
+Received: from gateway31.websitewelcome.com ([192.185.144.219]:36545 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235133AbhEOVjw (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Sat, 15 May 2021 17:39:52 -0400
+X-Greylist: delayed 1499 seconds by postgrey-1.27 at vger.kernel.org; Sat, 15 May 2021 17:39:52 EDT
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 2B3F161296
+        for <ceph-devel@vger.kernel.org>; Sat, 15 May 2021 15:50:39 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id i1F9lLBrm8uM0i1F9ldnWD; Sat, 15 May 2021 15:50:39 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=sDv7533fJ1Jh0SB9Oldb7u8J3ATKjHKiiLr7bcd/BjU=; b=aNK6UN5jnEUebgHmWXzHpHApMK
+        LATBBxaW6BNJof+vibX4Esr+yDsu/EQJTK8XqhOALEoIwNE4FUhHt+RwuvhhzhSsW+fsoUnbb+I3X
+        nKdnM4ces1ohCsIIR8RILuqhDxTrmccUNY5zttUdslURgdFZNAawokwQAa6dKEfKzaHJbj/+Dp6Kq
+        X+ImYvl2WGpQxyMUVBp6go2ZZn8cUt+wXgATik6JmB946foKmOzqIqyCPyZKMUGudk4Cnfysm6ZaU
+        uye3Yg3LNePTromt9hKbn0uq4+MSi8wCLm72qPAQs7bWAojEuI43ZOrV61/VkvZks1RGWSTLsEMA4
+        QhNWP2TQ==;
+Received: from 187-162-31-110.static.axtel.net ([187.162.31.110]:47424 helo=[192.168.15.8])
+        by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1li1F4-0005hh-WA; Sat, 15 May 2021 15:50:35 -0500
+Subject: Re: [PATCH][next] ceph: Replace zero-length array with flexible array
+ member
+To:     Ilya Dryomov <idryomov@gmail.com>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>
 Cc:     Jeff Layton <jlayton@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
@@ -58,76 +48,51 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         netdev <netdev@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20210514215209.GA33310@embeddedor>
+ <CAOi1vP8NARpXVsK2AVOZ4_m58gXMKVQSi_okZVcrLsew1nLizg@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <e1b6364c-e73e-fdc8-1fc0-9f35b181c288@embeddedor.com>
+Date:   Sat, 15 May 2021 15:50:44 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+MIME-Version: 1.0
+In-Reply-To: <CAOi1vP8NARpXVsK2AVOZ4_m58gXMKVQSi_okZVcrLsew1nLizg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.162.31.110
+X-Source-L: No
+X-Exim-ID: 1li1F4-0005hh-WA
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 187-162-31-110.static.axtel.net ([192.168.15.8]) [187.162.31.110]:47424
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, May 14, 2021 at 11:51 PM Gustavo A. R. Silva
-<gustavoars@kernel.org> wrote:
->
-> There is a regular need in the kernel to provide a way to declare
-> having a dynamically sized set of trailing elements in a structure.
-> Kernel code should always use =E2=80=9Cflexible array members=E2=80=9D[1]=
- for these
-> cases. The older style of one-element or zero-length arrays should
-> no longer be used[2].
->
-> Notice that, in this case, sizeof(au->reply_buf) translates to zero,
-> becase in the original code reply_buf is a zero-length array. Now that
-> reply_buf is transformed into a flexible array, the mentioned line of
-> code is now replaced by a literal 0.
->
-> Also, as a safeguard, explicitly assign NULL to
-> auth->authorizer_reply_buf, as no heap is allocated for it, therefore
-> it should not be accessible.
->
-> [1] https://en.wikipedia.org/wiki/Flexible_array_member
-> [2] https://www.kernel.org/doc/html/v5.10/process/deprecated.html#zero-le=
-ngth-and-one-element-arrays
->
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
->  net/ceph/auth_none.c | 4 ++--
->  net/ceph/auth_none.h | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/net/ceph/auth_none.c b/net/ceph/auth_none.c
-> index 70e86e462250..10ee16d2cbf0 100644
-> --- a/net/ceph/auth_none.c
-> +++ b/net/ceph/auth_none.c
-> @@ -111,8 +111,8 @@ static int ceph_auth_none_create_authorizer(
->         auth->authorizer =3D (struct ceph_authorizer *) au;
->         auth->authorizer_buf =3D au->buf;
->         auth->authorizer_buf_len =3D au->buf_len;
-> -       auth->authorizer_reply_buf =3D au->reply_buf;
-> -       auth->authorizer_reply_buf_len =3D sizeof (au->reply_buf);
-> +       auth->authorizer_reply_buf_len =3D 0;
-> +       auth->authorizer_reply_buf =3D NULL;
->
->         return 0;
->  }
-> diff --git a/net/ceph/auth_none.h b/net/ceph/auth_none.h
-> index 4158f064302e..3c68c0ee3dab 100644
-> --- a/net/ceph/auth_none.h
-> +++ b/net/ceph/auth_none.h
-> @@ -16,7 +16,7 @@ struct ceph_none_authorizer {
->         struct ceph_authorizer base;
->         char buf[128];
->         int buf_len;
-> -       char reply_buf[0];
-> +       char reply_buf[];
->  };
->
->  struct ceph_auth_none_info {
 
-Hi Gustavo,
 
-I went ahead and removed reply_buf.  We never receive authorizer
-replies in auth_none mode, so patching it to be a flexible array
-is rather pointless.
+On 5/15/21 05:42, Ilya Dryomov wrote:
+> 
+> Hi Gustavo,
+> 
+> I went ahead and removed reply_buf.  We never receive authorizer
+> replies in auth_none mode, so patching it to be a flexible array
+> is rather pointless.
 
-Thanks,
+Sounds great. :)
 
-                Ilya
+Thanks, Ilya.
+--
+Gustavo
