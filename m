@@ -2,97 +2,99 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 051B5381B33
-	for <lists+ceph-devel@lfdr.de>; Sat, 15 May 2021 23:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97550382ACD
+	for <lists+ceph-devel@lfdr.de>; Mon, 17 May 2021 13:21:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235137AbhEOVjx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 15 May 2021 17:39:53 -0400
-Received: from gateway31.websitewelcome.com ([192.185.144.219]:36545 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235133AbhEOVjw (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Sat, 15 May 2021 17:39:52 -0400
-X-Greylist: delayed 1499 seconds by postgrey-1.27 at vger.kernel.org; Sat, 15 May 2021 17:39:52 EDT
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 2B3F161296
-        for <ceph-devel@vger.kernel.org>; Sat, 15 May 2021 15:50:39 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id i1F9lLBrm8uM0i1F9ldnWD; Sat, 15 May 2021 15:50:39 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=sDv7533fJ1Jh0SB9Oldb7u8J3ATKjHKiiLr7bcd/BjU=; b=aNK6UN5jnEUebgHmWXzHpHApMK
-        LATBBxaW6BNJof+vibX4Esr+yDsu/EQJTK8XqhOALEoIwNE4FUhHt+RwuvhhzhSsW+fsoUnbb+I3X
-        nKdnM4ces1ohCsIIR8RILuqhDxTrmccUNY5zttUdslURgdFZNAawokwQAa6dKEfKzaHJbj/+Dp6Kq
-        X+ImYvl2WGpQxyMUVBp6go2ZZn8cUt+wXgATik6JmB946foKmOzqIqyCPyZKMUGudk4Cnfysm6ZaU
-        uye3Yg3LNePTromt9hKbn0uq4+MSi8wCLm72qPAQs7bWAojEuI43ZOrV61/VkvZks1RGWSTLsEMA4
-        QhNWP2TQ==;
-Received: from 187-162-31-110.static.axtel.net ([187.162.31.110]:47424 helo=[192.168.15.8])
-        by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1li1F4-0005hh-WA; Sat, 15 May 2021 15:50:35 -0500
-Subject: Re: [PATCH][next] ceph: Replace zero-length array with flexible array
- member
-To:     Ilya Dryomov <idryomov@gmail.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-hardening@vger.kernel.org
-References: <20210514215209.GA33310@embeddedor>
- <CAOi1vP8NARpXVsK2AVOZ4_m58gXMKVQSi_okZVcrLsew1nLizg@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <e1b6364c-e73e-fdc8-1fc0-9f35b181c288@embeddedor.com>
-Date:   Sat, 15 May 2021 15:50:44 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S236651AbhEQLWe (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 17 May 2021 07:22:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42102 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236528AbhEQLWd (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 17 May 2021 07:22:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id D7294AED7;
+        Mon, 17 May 2021 11:21:15 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 56F6D1F2CA4; Mon, 17 May 2021 13:21:15 +0200 (CEST)
+Date:   Mon, 17 May 2021 13:21:15 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Thumshirn <jth@kernel.org>,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 03/11] mm: Protect operations adding pages to page cache
+ with invalidate_lock
+Message-ID: <20210517112115.GC31755@quack2.suse.cz>
+References: <20210512101639.22278-1-jack@suse.cz>
+ <20210512134631.4053-3-jack@suse.cz>
+ <20210512152345.GE8606@magnolia>
+ <20210513174459.GH2734@quack2.suse.cz>
+ <20210513185252.GB9675@magnolia>
+ <20210513231945.GD2893@dread.disaster.area>
+ <20210514161730.GL9675@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <CAOi1vP8NARpXVsK2AVOZ4_m58gXMKVQSi_okZVcrLsew1nLizg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.31.110
-X-Source-L: No
-X-Exim-ID: 1li1F4-0005hh-WA
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-31-110.static.axtel.net ([192.168.15.8]) [187.162.31.110]:47424
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210514161730.GL9675@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-
-
-On 5/15/21 05:42, Ilya Dryomov wrote:
+On Fri 14-05-21 09:17:30, Darrick J. Wong wrote:
+> On Fri, May 14, 2021 at 09:19:45AM +1000, Dave Chinner wrote:
+> > We've been down this path before more than a decade ago when the
+> > powers that be decreed that inode locking order is to be "by
+> > structure address" rather than inode number, because "inode number
+> > is not unique across multiple superblocks".
+> > 
+> > I'm not sure that there is anywhere that locks multiple inodes
+> > across different superblocks, but here we are again....
 > 
-> Hi Gustavo,
+> Hm.  Are there situations where one would want to lock multiple
+> /mappings/ across different superblocks?  The remapping code doesn't
+> allow cross-super operations, so ... pipes and splice, maybe?  I don't
+> remember that code well enough to say for sure.
+
+Splice and friends work one file at a time. I.e., first they fill a pipe
+from the file with ->read_iter, then they flush the pipe to the target file
+with ->write_iter. So file locking doesn't get coupled there.
+
+> I've been operating under the assumption that as long as one takes all
+> the same class of lock at the same time (e.g. all the IOLOCKs, then all
+> the MMAPLOCKs, then all the ILOCKs, like reflink does) that the
+> incongruency in locking order rules within a class shouldn't be a
+> problem.
+
+That's my understanding as well.
+
+> > > It might simply be time to convert all
+> > > three XFS inode locks to use the same ordering rules.
+> > 
+> > Careful, there lie dragons along that path because of things like
+> > how the inode cluster buffer operations work - they all assume
+> > ascending inode number traversal within and across inode cluster
+> > buffers and hence we do have locking order constraints based on
+> > inode number...
 > 
-> I went ahead and removed reply_buf.  We never receive authorizer
-> replies in auth_none mode, so patching it to be a flexible array
-> is rather pointless.
+> Fair enough, I'll leave the ILOCK alone. :)
 
-Sounds great. :)
+OK, so should I change the order for invalidate_lock or shall we just leave
+that alone as it is not a practical problem AFAICT.
 
-Thanks, Ilya.
---
-Gustavo
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
