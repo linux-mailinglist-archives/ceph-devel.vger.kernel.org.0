@@ -2,90 +2,153 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12B97388427
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 May 2021 02:53:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC70F388C30
+	for <lists+ceph-devel@lfdr.de>; Wed, 19 May 2021 12:57:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230346AbhESAy1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 18 May 2021 20:54:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:31013 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229597AbhESAyT (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 18 May 2021 20:54:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1621385579;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OIAs12n+GZKfv6uvoTiLrLcguW5RvNasNcmlvuIRRLQ=;
-        b=blWdMlCsJYS23w4xLgj/aRpWl+9YF9Num1Rg/DcvGSjb9P8jA2tKNYhLgIi15NiCKS04+Y
-        5x9NhXkuFa0zLS6Dcrtpm00nwX5nTsgXW9udJCuFuS0ecNzgW5ZLSCzy9TlKXcKVjfaggB
-        kc7YruOMLLrYrElUjjyzjq9vIpwjX6M=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-372-nLEwAQyMP1WMIti2nnRzug-1; Tue, 18 May 2021 20:52:57 -0400
-X-MC-Unique: nLEwAQyMP1WMIti2nnRzug-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1BA8E107ACCA;
-        Wed, 19 May 2021 00:52:57 +0000 (UTC)
-Received: from [10.72.12.181] (ovpn-12-181.pek2.redhat.com [10.72.12.181])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C77835C1A1;
-        Wed, 19 May 2021 00:52:55 +0000 (UTC)
-Subject: Re: [PATCH] ceph: make ceph_queue_cap_snap static
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-References: <20210518213628.119867-1-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <115e9937-bfa1-d498-10e9-4f187e2ad323@redhat.com>
-Date:   Wed, 19 May 2021 08:52:51 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        id S240640AbhESK6h (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 19 May 2021 06:58:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60810 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229720AbhESK6g (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 19 May 2021 06:58:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id B6396AC4B;
+        Wed, 19 May 2021 10:57:15 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 086AA1F2C9C; Wed, 19 May 2021 12:57:14 +0200 (CEST)
+Date:   Wed, 19 May 2021 12:57:14 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Thumshirn <jth@kernel.org>,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 03/11] mm: Protect operations adding pages to page cache
+ with invalidate_lock
+Message-ID: <20210519105713.GA26250@quack2.suse.cz>
+References: <20210512101639.22278-1-jack@suse.cz>
+ <20210512134631.4053-3-jack@suse.cz>
+ <20210512152345.GE8606@magnolia>
+ <20210513174459.GH2734@quack2.suse.cz>
+ <20210513185252.GB9675@magnolia>
+ <20210513231945.GD2893@dread.disaster.area>
+ <20210514161730.GL9675@magnolia>
+ <20210518223637.GJ2893@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <20210518213628.119867-1-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210518223637.GJ2893@dread.disaster.area>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Wed 19-05-21 08:36:37, Dave Chinner wrote:
+> On Fri, May 14, 2021 at 09:17:30AM -0700, Darrick J. Wong wrote:
+> > On Fri, May 14, 2021 at 09:19:45AM +1000, Dave Chinner wrote:
+> > > On Thu, May 13, 2021 at 11:52:52AM -0700, Darrick J. Wong wrote:
+> > > > On Thu, May 13, 2021 at 07:44:59PM +0200, Jan Kara wrote:
+> > > > > On Wed 12-05-21 08:23:45, Darrick J. Wong wrote:
+> > > > > > On Wed, May 12, 2021 at 03:46:11PM +0200, Jan Kara wrote:
+> > > > > > > +->fallocate implementation must be really careful to maintain page cache
+> > > > > > > +consistency when punching holes or performing other operations that invalidate
+> > > > > > > +page cache contents. Usually the filesystem needs to call
+> > > > > > > +truncate_inode_pages_range() to invalidate relevant range of the page cache.
+> > > > > > > +However the filesystem usually also needs to update its internal (and on disk)
+> > > > > > > +view of file offset -> disk block mapping. Until this update is finished, the
+> > > > > > > +filesystem needs to block page faults and reads from reloading now-stale page
+> > > > > > > +cache contents from the disk. VFS provides mapping->invalidate_lock for this
+> > > > > > > +and acquires it in shared mode in paths loading pages from disk
+> > > > > > > +(filemap_fault(), filemap_read(), readahead paths). The filesystem is
+> > > > > > > +responsible for taking this lock in its fallocate implementation and generally
+> > > > > > > +whenever the page cache contents needs to be invalidated because a block is
+> > > > > > > +moving from under a page.
+> > > > > > > +
+> > > > > > > +->copy_file_range and ->remap_file_range implementations need to serialize
+> > > > > > > +against modifications of file data while the operation is running. For blocking
+> > > > > > > +changes through write(2) and similar operations inode->i_rwsem can be used. For
+> > > > > > > +blocking changes through memory mapping, the filesystem can use
+> > > > > > > +mapping->invalidate_lock provided it also acquires it in its ->page_mkwrite
+> > > > > > > +implementation.
+> > > > > > 
+> > > > > > Question: What is the locking order when acquiring the invalidate_lock
+> > > > > > of two different files?  Is it the same as i_rwsem (increasing order of
+> > > > > > the struct inode pointer) or is it the same as the XFS MMAPLOCK that is
+> > > > > > being hoisted here (increasing order of i_ino)?
+> > > > > > 
+> > > > > > The reason I ask is that remap_file_range has to do that, but I don't
+> > > > > > see any conversions for the xfs_lock_two_inodes(..., MMAPLOCK_EXCL)
+> > > > > > calls in xfs_ilock2_io_mmap in this series.
+> > > > > 
+> > > > > Good question. Technically, I don't think there's real need to establish a
+> > > > > single ordering because locks among different filesystems are never going
+> > > > > to be acquired together (effectively each lock type is local per sb and we
+> > > > > are free to define an ordering for each lock type differently). But to
+> > > > > maintain some sanity I guess having the same locking order for doublelock
+> > > > > of i_rwsem and invalidate_lock makes sense. Is there a reason why XFS uses
+> > > > > by-ino ordering? So that we don't have to consider two different orders in
+> > > > > xfs_lock_two_inodes()...
+> > > > 
+> > > > I imagine Dave will chime in on this, but I suspect the reason is
+> > > > hysterical raisins^Wreasons.
+> > > 
+> > > It's the locking rules that XFS has used pretty much forever.
+> > > Locking by inode number always guarantees the same locking order of
+> > > two inodes in the same filesystem, regardless of the specific
+> > > in-memory instances of the two inodes.
+> > > 
+> > > e.g. if we lock based on the inode structure address, in one
+> > > instancex, we could get A -> B, then B gets recycled and
+> > > reallocated, then we get B -> A as the locking order for the same
+> > > two inodes.
+> > > 
+> > > That, IMNSHO, is utterly crazy because with non-deterministic inode
+> > > lock ordered like this you can't make consistent locking rules for
+> > > locking the physical inode cluster buffers underlying the inodes in
+> > > the situation where they also need to be locked.
+> > 
+> > <nod> That's protected by the ILOCK, correct?
+> > 
+> > > We've been down this path before more than a decade ago when the
+> > > powers that be decreed that inode locking order is to be "by
+> > > structure address" rather than inode number, because "inode number
+> > > is not unique across multiple superblocks".
+> > > 
+> > > I'm not sure that there is anywhere that locks multiple inodes
+> > > across different superblocks, but here we are again....
+> > 
+> > Hm.  Are there situations where one would want to lock multiple
+> > /mappings/ across different superblocks?  The remapping code doesn't
+> > allow cross-super operations, so ... pipes and splice, maybe?  I don't
+> > remember that code well enough to say for sure.
+> 
+> Hmmmm. Doing read IO into a buffer that is mmap()d from another
+> file, and we take a page fault on it inside the read IO path? We're
+> copying from a page in one mapping and taking a fault in another
+> mapping and hence taking the invalidate_lock to populate the page
+> cache for the second mapping...
+> 
+> I haven't looked closely enough at where the invalidate_lock is held
+> in the read path to determine if this is an issue, but if it is then
+> it is also a potential deadlock scenario...
 
-On 5/19/21 5:36 AM, Jeff Layton wrote:
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/ceph/snap.c  | 2 +-
->   fs/ceph/super.h | 1 -
->   2 files changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-> index 4ce18055d931..44b380a53727 100644
-> --- a/fs/ceph/snap.c
-> +++ b/fs/ceph/snap.c
-> @@ -460,7 +460,7 @@ static bool has_new_snaps(struct ceph_snap_context *o,
->    * Caller must hold snap_rwsem for read (i.e., the realm topology won't
->    * change).
->    */
-> -void ceph_queue_cap_snap(struct ceph_inode_info *ci)
-> +static void ceph_queue_cap_snap(struct ceph_inode_info *ci)
->   {
->   	struct inode *inode = &ci->vfs_inode;
->   	struct ceph_cap_snap *capsnap;
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index db80d89556b1..12d30153e4ca 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -931,7 +931,6 @@ extern int ceph_update_snap_trace(struct ceph_mds_client *m,
->   extern void ceph_handle_snap(struct ceph_mds_client *mdsc,
->   			     struct ceph_mds_session *session,
->   			     struct ceph_msg *msg);
-> -extern void ceph_queue_cap_snap(struct ceph_inode_info *ci);
->   extern int __ceph_finish_cap_snap(struct ceph_inode_info *ci,
->   				  struct ceph_cap_snap *capsnap);
->   extern void ceph_cleanup_empty_realms(struct ceph_mds_client *mdsc);
+I was careful enough to avoid this problem - we first bring pages into
+pages cache (under invalidate_lock), then drop invalidate lock, just
+keep page refs, and copy page cache content into the buffer (which may grab
+invalidate_lock from another mapping as you say).
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
-
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
