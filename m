@@ -2,153 +2,291 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC70F388C30
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 May 2021 12:57:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32FA938BDB3
+	for <lists+ceph-devel@lfdr.de>; Fri, 21 May 2021 07:00:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240640AbhESK6h (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 19 May 2021 06:58:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60810 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229720AbhESK6g (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 19 May 2021 06:58:36 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B6396AC4B;
-        Wed, 19 May 2021 10:57:15 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 086AA1F2C9C; Wed, 19 May 2021 12:57:14 +0200 (CEST)
-Date:   Wed, 19 May 2021 12:57:14 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        ceph-devel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 03/11] mm: Protect operations adding pages to page cache
- with invalidate_lock
-Message-ID: <20210519105713.GA26250@quack2.suse.cz>
-References: <20210512101639.22278-1-jack@suse.cz>
- <20210512134631.4053-3-jack@suse.cz>
- <20210512152345.GE8606@magnolia>
- <20210513174459.GH2734@quack2.suse.cz>
- <20210513185252.GB9675@magnolia>
- <20210513231945.GD2893@dread.disaster.area>
- <20210514161730.GL9675@magnolia>
- <20210518223637.GJ2893@dread.disaster.area>
+        id S239335AbhEUFB7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 21 May 2021 01:01:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54142 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238873AbhEUFB6 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 21 May 2021 01:01:58 -0400
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42945C061574
+        for <ceph-devel@vger.kernel.org>; Thu, 20 May 2021 22:00:36 -0700 (PDT)
+Received: by mail-yb1-xb33.google.com with SMTP id w1so14535291ybt.1
+        for <ceph-devel@vger.kernel.org>; Thu, 20 May 2021 22:00:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AJEeaVFRIG1m36f/pswBasT3OT0usPqJuLP78HwLkgI=;
+        b=G1D1uT2k3xHD98NUpym4aBSGSWfbATDjU8v5o0BjuBJ9o2MzmyJKPohSxsNQdovf5z
+         KbuSqdffaOAXqTdqARGblHyePit/YcnfbBziInF+F04TpZVtja3o1lE1aEoSEeuCUN4z
+         iYv9Du6Xqzzf3xoBKVf8OKanAPrAeuM2/++D6/1ltIzYqWtuDEInxKyOFcc9GeQo9Tt9
+         2d0qH3ZZI/VfUtbmtPh6ZcorG9U+5Tf3w79b1yq/YkuU/c3eHlPtGtR1iQyIVGg09dzT
+         nvQwdZ5213OLyUI+ih4OIgM73Z5P+68GVEGJnGVfmvuu5S4tIPf4veBaTZKOiGWb3rPJ
+         P1fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AJEeaVFRIG1m36f/pswBasT3OT0usPqJuLP78HwLkgI=;
+        b=lc02ix6Y4W3dLT7AtkYf7ORTQWx0B/fPJ0gESwcyOUZ+i/dN1jFr8aKXf6pcf6a0zF
+         eInv3RT1LH2vgJj4xlU/KoRL74dXVtnMYOg+hiWZ3eNjmuHy8+f6t+IsqoNqtj6QZ4OT
+         6uzNz6xB/Mbh+F0KCciuu9WK2O0EXyR9Aouol3ikl4aJM6GLXAis0V/c7PmcGbSLaPG/
+         0X6sIG6SAKDKvS/2z9S+jxaC+1SNRHI3Mj+Q5HMmbEwEZ4fNi2N06vzv5cNLd9dgFAke
+         edSjf6bUpZIkgw0GVre/RuXIpfzsU8TzEI3dufJ9xwIOatUwfE4/uDks3eDHT9+aTHWs
+         MlIg==
+X-Gm-Message-State: AOAM530Crle55wkyV4lcjG57R2H3GLF9iVfP42blOxH1iKagFJdby2oN
+        yqKIhSfZyO5Az3cCyEThNylijVKjXjF3rINg3+8=
+X-Google-Smtp-Source: ABdhPJxWZ5ZK4y9Ua/d4DbADT2oau9gusr8s8xRyrTmTFwjHdBFPYAbz9tgBa/iOX3p3yr9Rnzg2kIW4jYdqcnNR+Lo=
+X-Received: by 2002:a25:11c6:: with SMTP id 189mr12494163ybr.154.1621573234880;
+ Thu, 20 May 2021 22:00:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210518223637.GJ2893@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAKQB+fseyByQ+FsfwAP5-V312bM4YnTbw5GMX6w6fx9UkVnWBQ@mail.gmail.com>
+ <CAJ4mKGbVz5gZPFPDx61ZUaCaoxWrWQMSFuzRMOrMx0xnfapaHQ@mail.gmail.com>
+ <6917f4e83c0c90db684e0a4dfb979fb671162fb2.camel@kernel.org>
+ <CAKQB+fs5D7PaoJFAZtwJ5gEnV69HFOBZgKQuxQBOTM4k1wyw-g@mail.gmail.com> <CAAM7YA=xB8LcWcE13QKn+Q-ftMV3_ESpy6Mnm6nVdpo5hh7BuA@mail.gmail.com>
+In-Reply-To: <CAAM7YA=xB8LcWcE13QKn+Q-ftMV3_ESpy6Mnm6nVdpo5hh7BuA@mail.gmail.com>
+From:   Jerry Lee <leisurelysw24@gmail.com>
+Date:   Fri, 21 May 2021 13:00:24 +0800
+Message-ID: <CAKQB+fswUemtS_=-iW+Rz+7RAwZ+A=Z659BX8iJrMRuN3AfYHw@mail.gmail.com>
+Subject: Re: CephFS kclient gets stuck when getattr() on a certain file
+To:     "Yan, Zheng" <ukernel@gmail.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Gregory Farnum <gfarnum@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Patrick Donnelly <pdonnell@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed 19-05-21 08:36:37, Dave Chinner wrote:
-> On Fri, May 14, 2021 at 09:17:30AM -0700, Darrick J. Wong wrote:
-> > On Fri, May 14, 2021 at 09:19:45AM +1000, Dave Chinner wrote:
-> > > On Thu, May 13, 2021 at 11:52:52AM -0700, Darrick J. Wong wrote:
-> > > > On Thu, May 13, 2021 at 07:44:59PM +0200, Jan Kara wrote:
-> > > > > On Wed 12-05-21 08:23:45, Darrick J. Wong wrote:
-> > > > > > On Wed, May 12, 2021 at 03:46:11PM +0200, Jan Kara wrote:
-> > > > > > > +->fallocate implementation must be really careful to maintain page cache
-> > > > > > > +consistency when punching holes or performing other operations that invalidate
-> > > > > > > +page cache contents. Usually the filesystem needs to call
-> > > > > > > +truncate_inode_pages_range() to invalidate relevant range of the page cache.
-> > > > > > > +However the filesystem usually also needs to update its internal (and on disk)
-> > > > > > > +view of file offset -> disk block mapping. Until this update is finished, the
-> > > > > > > +filesystem needs to block page faults and reads from reloading now-stale page
-> > > > > > > +cache contents from the disk. VFS provides mapping->invalidate_lock for this
-> > > > > > > +and acquires it in shared mode in paths loading pages from disk
-> > > > > > > +(filemap_fault(), filemap_read(), readahead paths). The filesystem is
-> > > > > > > +responsible for taking this lock in its fallocate implementation and generally
-> > > > > > > +whenever the page cache contents needs to be invalidated because a block is
-> > > > > > > +moving from under a page.
-> > > > > > > +
-> > > > > > > +->copy_file_range and ->remap_file_range implementations need to serialize
-> > > > > > > +against modifications of file data while the operation is running. For blocking
-> > > > > > > +changes through write(2) and similar operations inode->i_rwsem can be used. For
-> > > > > > > +blocking changes through memory mapping, the filesystem can use
-> > > > > > > +mapping->invalidate_lock provided it also acquires it in its ->page_mkwrite
-> > > > > > > +implementation.
-> > > > > > 
-> > > > > > Question: What is the locking order when acquiring the invalidate_lock
-> > > > > > of two different files?  Is it the same as i_rwsem (increasing order of
-> > > > > > the struct inode pointer) or is it the same as the XFS MMAPLOCK that is
-> > > > > > being hoisted here (increasing order of i_ino)?
-> > > > > > 
-> > > > > > The reason I ask is that remap_file_range has to do that, but I don't
-> > > > > > see any conversions for the xfs_lock_two_inodes(..., MMAPLOCK_EXCL)
-> > > > > > calls in xfs_ilock2_io_mmap in this series.
-> > > > > 
-> > > > > Good question. Technically, I don't think there's real need to establish a
-> > > > > single ordering because locks among different filesystems are never going
-> > > > > to be acquired together (effectively each lock type is local per sb and we
-> > > > > are free to define an ordering for each lock type differently). But to
-> > > > > maintain some sanity I guess having the same locking order for doublelock
-> > > > > of i_rwsem and invalidate_lock makes sense. Is there a reason why XFS uses
-> > > > > by-ino ordering? So that we don't have to consider two different orders in
-> > > > > xfs_lock_two_inodes()...
-> > > > 
-> > > > I imagine Dave will chime in on this, but I suspect the reason is
-> > > > hysterical raisins^Wreasons.
-> > > 
-> > > It's the locking rules that XFS has used pretty much forever.
-> > > Locking by inode number always guarantees the same locking order of
-> > > two inodes in the same filesystem, regardless of the specific
-> > > in-memory instances of the two inodes.
-> > > 
-> > > e.g. if we lock based on the inode structure address, in one
-> > > instancex, we could get A -> B, then B gets recycled and
-> > > reallocated, then we get B -> A as the locking order for the same
-> > > two inodes.
-> > > 
-> > > That, IMNSHO, is utterly crazy because with non-deterministic inode
-> > > lock ordered like this you can't make consistent locking rules for
-> > > locking the physical inode cluster buffers underlying the inodes in
-> > > the situation where they also need to be locked.
-> > 
-> > <nod> That's protected by the ILOCK, correct?
-> > 
-> > > We've been down this path before more than a decade ago when the
-> > > powers that be decreed that inode locking order is to be "by
-> > > structure address" rather than inode number, because "inode number
-> > > is not unique across multiple superblocks".
-> > > 
-> > > I'm not sure that there is anywhere that locks multiple inodes
-> > > across different superblocks, but here we are again....
-> > 
-> > Hm.  Are there situations where one would want to lock multiple
-> > /mappings/ across different superblocks?  The remapping code doesn't
-> > allow cross-super operations, so ... pipes and splice, maybe?  I don't
-> > remember that code well enough to say for sure.
-> 
-> Hmmmm. Doing read IO into a buffer that is mmap()d from another
-> file, and we take a page fault on it inside the read IO path? We're
-> copying from a page in one mapping and taking a fault in another
-> mapping and hence taking the invalidate_lock to populate the page
-> cache for the second mapping...
-> 
-> I haven't looked closely enough at where the invalidate_lock is held
-> in the read path to determine if this is an issue, but if it is then
-> it is also a potential deadlock scenario...
+On Wed, 12 May 2021 at 22:42, Yan, Zheng <ukernel@gmail.com> wrote:
+>
+> On Fri, May 7, 2021 at 1:03 PM Jerry Lee <leisurelysw24@gmail.com> wrote:
+> >
+> > Hi,
+> >
+> > First, thanks for all the great information and directions!  Since the
+> > issue can be steadily re-produced in my environment, and it doesn't
+> > occur before I upgraded ceph from v15.2.4 to v15.2.9.  I checked the
+> > changlogs between v15.2.4 and v15.2.9, and reverted some possible PR
+> > related to CephFS and mds.  Luckily, after reverting all the commits
+> > of the "mds: reduce memory usage of open file table prefetch #37382
+> > (pr#37383), https://github.com/ceph/ceph/pull/37383" RP, the issue
+> > never occurs.
+> >
+>
+> should be fixed by following patch
+>
+> diff --git a/src/mds/Locker.cc b/src/mds/Locker.cc
+> index c534fae1b4..c98cb3ea77 100644
+> --- a/src/mds/Locker.cc
+> +++ b/src/mds/Locker.cc
+> @@ -5469,6 +5469,7 @@ void Locker::file_eval(ScatterLock *lock, bool
+> *need_issue)
+>    }
+>    else if (in->state_test(CInode::STATE_NEEDSRECOVER)) {
+>      mds->mdcache->queue_file_recover(in);
+> +    mds->mdcache->do_file_recover();
+>    }
+>  }
+>
 
-I was careful enough to avoid this problem - we first bring pages into
-pages cache (under invalidate_lock), then drop invalidate lock, just
-keep page refs, and copy page cache content into the buffer (which may grab
-invalidate_lock from another mapping as you say).
+With this patch, the issue disappears.  Thanks a lot for your help!
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> > However, those commits are kind of complicated and I'm still looking
+> > into it in order to figure out the root cause.  If there is anything I
+> > can do to locate the bug, please let me know, thanks!
+> >
+> > - Jerry
+> >
+> > On Tue, 4 May 2021 at 20:02, Jeff Layton <jlayton@kernel.org> wrote:
+> > >
+> > > IIUC, when a client reboots and mounts again, it becomes a new client,
+> > > for all intents and purposes. So if the MDS is still maintaining the
+> > > session from the old (pre-reboot) client, the new client will generally
+> > > need to wait until that session is evicted before it can grab any caps
+> > > that that client previously held. This was one of the reasons we added
+> > > some of the reboot recovery stuff into libcephfs to support the nfs-
+> > > ganesha client use-case.
+> > >
+> > > Assuming that's the case here, we might be able to eventually improve
+> > > that by having kclients set their identity on the session at mount time
+> > > (a'la ceph_set_uuid), and then it could tell the MDS that it was safe to
+> > > release the state that that client previously held. That would mean
+> > > generating a unique per-client ID that was invariant across reboots, but
+> > > we could consider it.
+> > >
+> > > -- Jeff
+> > >
+> > > On Mon, 2021-05-03 at 14:20 -0700, Gregory Farnum wrote:
+> > > > I haven't looked at the logs, but it's expected that when a client
+> > > > disappears and it's holding caps, the MDS will wait through the
+> > > > session timeout period before revoking those capabilities. This means
+> > > > if all your clients are reading the file, writes will be blocked until
+> > > > the session timeout passes. The details of exactly what operations
+> > > > will be allowed vary quite a lot depending on the exact system state
+> > > > when the client disappeared (if it held write caps, most read
+> > > > operations will also be blocked and new clients trying to look at it
+> > > > will certainly be blocked).
+> > > >
+> > > > I don't remember exactly how specific kernel client blocklists are,
+> > > > but there may be something going on there that makes things extra hard
+> > > > on the rebooted node if it's maintaining the same IP addresses.
+> > > >
+> > > > If you have other monitoring software to detect failures, there are
+> > > > ways to evict clients before the session timeout passes (or you could
+> > > > have the rebooted node do so) and these are discussed in the docs.
+> > > > -Greg
+> > > >
+> > > > On Tue, Apr 27, 2021 at 9:35 PM Jerry Lee <leisurelysw24@gmail.com> wrote:
+> > > > >
+> > > > > Hi,
+> > > > >
+> > > > > I deploy a 3-node Ceph cluster (v15.2.9) and the CephFS is mounted via
+> > > > > kclient (linux-4.14.24) on all of the 3 nodes.  All of the kclients
+> > > > > try to update (read/write) a certain file periodically in order to
+> > > > > know whether the CephFS is alive or not.  After a kclient gets evicted
+> > > > > due to abnormal reboot, a new kclient mounts to the CephFS when the
+> > > > > node comes back.  However, the newly mounted kclient gets stuck when
+> > > > > it tries to getattr on the common file.  Under such conditions, all of
+> > > > > the other kclients are affected and they cannot update the common
+> > > > > file, too.  From the debugfs entris, a request does get stuck:
+> > > > > ------
+> > > > > [/sys/kernel/debug/ceph/1bbb7753-85e5-4d33-a860-84419fdcfd7d.client3230166]
+> > > > > # cat mdsc
+> > > > > 12      mds0    getattr  #100000003ed
+> > > > >
+> > > > > [/sys/kernel/debug/ceph/1bbb7753-85e5-4d33-a860-84419fdcfd7d.client3230166]
+> > > > > # cat osdc
+> > > > > REQUESTS 0 homeless 0
+> > > > > LINGER REQUESTS
+> > > > > BACKOFFS
+> > > > >
+> > > > > [/sys/kernel/debug/ceph/1bbb7753-85e5-4d33-a860-84419fdcfd7d.client3230166]
+> > > > > # ceph -s
+> > > > >   cluster:
+> > > > >     id:     1bbb7753-85e5-4d33-a860-84419fdcfd7d
+> > > > >     health: HEALTH_WARN
+> > > > >             1 MDSs report slow requests
+> > > > >
+> > > > >   services:
+> > > > >     mon: 3 daemons, quorum Jerry-ceph-n2,Jerry-x85-n1,Jerry-x85-n3 (age 23h)
+> > > > >     mgr: Jerry-x85-n1(active, since 25h), standbys: Jerry-ceph-n2, Jerry-x85-n3
+> > > > >     mds: cephfs:1 {0=qceph-mds-Jerry-ceph-n2=up:active} 1
+> > > > > up:standby-replay 1 up:standby
+> > > > >     osd: 18 osds: 18 up (since 23h), 18 in (since 23h)
+> > > > > ------
+> > > > >
+> > > > > The MDS logs (debug_mds =20) are provided:
+> > > > > https://drive.google.com/file/d/1aj101NOTzCsfDdC-neqVTvKpEPOd3M6Q/view?usp=sharing
+> > > > >
+> > > > > Some of the logs wrt client.3230166 and ino#100000003ed are shown as below:
+> > > > > 2021-04-27T11:57:03.467+0800 7fccbd3be700  4 mds.0.server
+> > > > > handle_client_request client_request(client.3230166:12 getattr
+> > > > > pAsLsXsFs #0x100000003ed 2021-04-27T11:57:03.469426+0800 caller_uid=0,
+> > > > > caller_gid=0{}) v2
+> > > > > 2021-04-27T11:57:03.467+0800 7fccbd3be700 20 mds.0.98 get_session have
+> > > > > 0x56130c5ce480 client.3230166 v1:192.168.92.89:0/679429733 state open
+> > > > > 2021-04-27T11:57:03.467+0800 7fccbd3be700 15 mds.0.server  oldest_client_tid=12
+> > > > > 2021-04-27T11:57:03.467+0800 7fccbd3be700  7 mds.0.cache request_start
+> > > > > request(client.3230166:12 nref=2 cr=0x56130db96480)
+> > > > > 2021-04-27T11:57:03.467+0800 7fccbd3be700  7 mds.0.server
+> > > > > dispatch_client_request client_request(client.3230166:12 getattr
+> > > > > pAsLsXsFs #0x100000003ed 2021-04-27T11:57:03.469426+0800 caller_uid=0,
+> > > > > caller_gid=0{}) v2
+> > > > >
+> > > > > 2021-04-27T11:57:03.467+0800 7fccbd3be700 10 mds.0.locker
+> > > > > acquire_locks request(client.3230166:12 nref=3 cr=0x56130db96480)
+> > > > > 2021-04-27T11:57:03.467+0800 7fccbd3be700 10
+> > > > > mds.0.cache.ino(0x100000003ed) auth_pin by 0x56130c584ed0 on [inode
+> > > > > 0x100000003ed [2,head]
+> > > > > /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
+> > > > > auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
+> > > > > rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
+> > > > > w=1) (iversion lock)
+> > > > > cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
+> > > > > caps={3198501=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@2}
+> > > > > > ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=0 authpin=1
+> > > > > 0x56130c584a00] now 4
+> > > > > 2021-04-27T11:57:03.467+0800 7fccbd3be700 15
+> > > > > mds.0.cache.dir(0x100000003eb) adjust_nested_auth_pins 1 on [dir
+> > > > > 0x100000003eb /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/
+> > > > > [2,head] auth pv=91586 v=91584 cv=0/0 ap=1+4 state=1610874881|complete
+> > > > > f(v0 m2021-04-23T15:00:04.377198+0800 6=6+0) n(v3
+> > > > > rc2021-04-27T11:57:02.625542+0800 b38005818 6=6+0) hs=6+0,ss=0+0
+> > > > > dirty=4 | child=1 dirty=1 waiter=0 authpin=1 0x56130c586a00] by
+> > > > > 0x56130c584a00 count now 1/4
+> > > > > 2021-04-27T11:57:03.467+0800 7fccbd3be700 10 mds.0
+> > > > > RecoveryQueue::prioritize not queued [inode 0x100000003ed [2,head]
+> > > > > /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
+> > > > > auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
+> > > > > rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
+> > > > > w=1) (iversion lock)
+> > > > > cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
+> > > > > caps={3198501=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@2}
+> > > > > > ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=0 authpin=1
+> > > > > 0x56130c584a00]
+> > > > > 2021-04-27T11:57:03.467+0800 7fccbd3be700  7 mds.0.locker rdlock_start
+> > > > > waiting on (ifile mix->sync w=1) on [inode 0x100000003ed [2,head]
+> > > > > /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
+> > > > > auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
+> > > > > rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
+> > > > > w=1) (iversion lock)
+> > > > > cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
+> > > > > caps={3198501=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@2}
+> > > > > > ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=0 authpin=1
+> > > > > 0x56130c584a00]
+> > > > > 2021-04-27T11:57:03.467+0800 7fccbd3be700 10
+> > > > > mds.0.cache.ino(0x100000003ed) add_waiter tag 2000000040000000
+> > > > > 0x56130ea1bbe0 !ambig 1 !frozen 1 !freezing 1
+> > > > > 2021-04-27T11:57:03.467+0800 7fccbd3be700 15
+> > > > > mds.0.cache.ino(0x100000003ed) taking waiter here
+> > > > > 2021-04-27T11:57:03.468+0800 7fccbd3be700 20 mds.0.locker
+> > > > > client.3230166 pending pAsLsXsFr allowed pAsLsXsFrl wanted
+> > > > > pAsxXsxFsxcrwb
+> > > > > 2021-04-27T11:57:03.468+0800 7fccbd3be700  7 mds.0.locker
+> > > > > handle_client_caps  on 0x100000003ed tid 0 follows 0 op update flags
+> > > > > 0x2
+> > > > > 2021-04-27T11:57:03.468+0800 7fccbd3be700 20 mds.0.98 get_session have
+> > > > > 0x56130b81f600 client.3198501 v1:192.168.50.108:0/2478094748 state
+> > > > > open
+> > > > > 2021-04-27T11:57:03.468+0800 7fccbd3be700 10 mds.0.locker  head inode
+> > > > > [inode 0x100000003ed [2,head]
+> > > > > /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
+> > > > > auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
+> > > > > rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
+> > > > > w=1) (iversion lock)
+> > > > > cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
+> > > > > caps={3198501=pAsLsXsFr/pAsLsXsFrw/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsxXsxFsxcrwb@2}
+> > > > > > ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=1 authpin=1
+> > > > > 0x56130c584a00]
+> > > > > 2021-04-27T11:57:03.468+0800 7fccbd3be700 10 mds.0.locker  follows 0
+> > > > > retains pAsLsXsFr dirty - on [inode 0x100000003ed [2,head]
+> > > > > /QTS/VOL_1/.ovirt_data_domain/37065419-e7f3-47ca-97df-8af0c67d30a0/dom_md/ids
+> > > > > auth v91583 pv91585 ap=4 recovering s=1048576 n(v0
+> > > > > rc2021-04-27T11:57:02.625542+0800 b1048576 1=1+0) (ifile mix->sync
+> > > > > w=1) (iversion lock)
+> > > > > cr={3198501=0-4194304@1,3198504=0-4194304@1,3221169=0-4194304@1}
+> > > > > caps={3198501=pAsLsXsFr/pAsxXsxFsxcrwb@17,3198504=pAsLsXsFr/pAsxXsxFsxcrwb@9,3230166=pAsLsXsFr/pAsxXsxFsxcrwb@2}
+> > > > > > ptrwaiter=1 request=1 lock=2 caps=1 dirty=1 waiter=1 authpin=1
+> > > > > 0x56130c584a00]
+> > > > > 2021-04-27T11:57:37.027+0800 7fccbb3ba700  0 log_channel(cluster) log
+> > > > > [WRN] : slow request 33.561029 seconds old, received at
+> > > > > 2021-04-27T11:57:03.467164+0800: client_request(client.3230166:12
+> > > > > getattr pAsLsXsFs #0x100000003ed 2021-04-27T11:57:03.469426+0800
+> > > > > caller_uid=0, caller_gid=0{}) currently failed to rdlock, waiting
+> > > > >
+> > > > > Any idea or insight to help to further investigate the issue are appreciated.
+> > > > >
+> > > > > - Jerry
+> > > > >
+> > > >
+> > >
+> > > --
+> > > Jeff Layton <jlayton@kernel.org>
+> > >
