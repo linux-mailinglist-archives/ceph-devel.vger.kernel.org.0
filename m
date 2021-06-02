@@ -2,31 +2,31 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B5D033981D6
-	for <lists+ceph-devel@lfdr.de>; Wed,  2 Jun 2021 08:55:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52E583981DA
+	for <lists+ceph-devel@lfdr.de>; Wed,  2 Jun 2021 08:55:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231162AbhFBG5Q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 2 Jun 2021 02:57:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47808 "EHLO
+        id S231312AbhFBG5V (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 2 Jun 2021 02:57:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231157AbhFBG4y (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Jun 2021 02:56:54 -0400
+        with ESMTP id S230522AbhFBG5G (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Jun 2021 02:57:06 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 278D6C061763;
-        Tue,  1 Jun 2021 23:55:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 161DBC06138D;
+        Tue,  1 Jun 2021 23:55:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=pV41u4G0u0xaNGxoxDb/eyNeH9eLbF/Aei3AXX+HWdY=; b=xynVkbApPKJ1V6SCFnDhqzTRhk
-        HG0wUR2lljnrg8jjaBi3fB5wReJl4j8YP38RFTuxGHRPiXc3MvRjlT3pljHnX0XyyZXySOVGvD36r
-        Yn+kDsgqGIGCgFW7UzE2sDUrTXFZpZSvReujYSqg/GDnk+jMrGw/l7eQr8EmpYPtyi2dlKoDQZniQ
-        A295rgd6IcGuhT/qNWGyPQm803gvicBX9TIVBVODY+wwREKWrX67HS+VcQ/s9Gl/7xUWi6bQoGvGi
-        xaTI/gKDuismLjMiDlvwEAfqkBTMh3FXwJk3/FqJCq/s8UQ5jthfbUwng9lkO26oujqiNf9SJQcbE
-        JqveapQg==;
+        bh=uZ7id5h0Y8eTodjolim75Nh4xqN5GmxeKJFIibiB+SQ=; b=Y+ZIEpYOA2iHCs2T6tZeqlhwn4
+        2PZNnbXaohXgLYFyDB1Km2Bu2wyT0psxnFom5uMCa1WL63p08XIPFssnnwdwOWXz6S+f1NQhfrJgw
+        DT/OnKnomp1fr4hlxHzl1uRlbcM58luxBJNmSQR1ISWEmb6j+xDelW/EPSueMH5qVJqvrMzGOnsJB
+        1yLmbxBIjZuZM4gaGqkWw/56tktEZ+pXt7zHVQEX0324IpvUKx/kGJ0wdmf5QkCuJQDan3LvZi1gh
+        v7Tu3lvr/4iTt31gmsoCM89vROF9iZm4xBhs773hy5MvLL57mXmlU4k/Fy9BEGPPXaP9XwV6nM+1f
+        cFvfrZKA==;
 Received: from shol69.static.otenet.gr ([83.235.170.67] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1loKmD-0025eq-Jk; Wed, 02 Jun 2021 06:54:54 +0000
+        id 1loKmI-0025hI-AR; Wed, 02 Jun 2021 06:54:58 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -56,9 +56,9 @@ Cc:     Justin Sanders <justin@coraid.com>,
         virtualization@lists.linux-foundation.org,
         xen-devel@lists.xenproject.org, linux-mmc@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
-Subject: [PATCH 13/30] sunvdc: use blk_mq_alloc_disk
-Date:   Wed,  2 Jun 2021 09:53:28 +0300
-Message-Id: <20210602065345.355274-14-hch@lst.de>
+Subject: [PATCH 14/30] gdrom: use blk_mq_alloc_disk
+Date:   Wed,  2 Jun 2021 09:53:29 +0300
+Message-Id: <20210602065345.355274-15-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210602065345.355274-1-hch@lst.de>
 References: <20210602065345.355274-1-hch@lst.de>
@@ -74,93 +74,88 @@ allocation.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/block/sunvdc.c | 47 ++++++++++++------------------------------
- 1 file changed, 13 insertions(+), 34 deletions(-)
+ drivers/cdrom/gdrom.c | 45 ++++++++++++++++++++-----------------------
+ 1 file changed, 21 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
-index 39aeebc6837d..c53b38578bb7 100644
---- a/drivers/block/sunvdc.c
-+++ b/drivers/block/sunvdc.c
-@@ -780,27 +780,6 @@ static const struct blk_mq_ops vdc_mq_ops = {
- 	.queue_rq	= vdc_queue_rq,
- };
- 
--static void cleanup_queue(struct request_queue *q)
--{
--	struct vdc_port *port = q->queuedata;
--
--	blk_cleanup_queue(q);
--	blk_mq_free_tag_set(&port->tag_set);
--}
--
--static struct request_queue *init_queue(struct vdc_port *port)
--{
--	struct request_queue *q;
--
--	q = blk_mq_init_sq_queue(&port->tag_set, &vdc_mq_ops, VDC_TX_RING_SIZE,
--					BLK_MQ_F_SHOULD_MERGE);
--	if (IS_ERR(q))
--		return q;
--
--	q->queuedata = port;
--	return q;
--}
--
- static int probe_disk(struct vdc_port *port)
- {
- 	struct request_queue *q;
-@@ -838,21 +817,21 @@ static int probe_disk(struct vdc_port *port)
- 				    (u64)geom.num_sec);
+diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
+index c6d8c0f59722..8e1fe75af93f 100644
+--- a/drivers/cdrom/gdrom.c
++++ b/drivers/cdrom/gdrom.c
+@@ -772,53 +772,50 @@ static int probe_gdrom(struct platform_device *devptr)
+ 		goto probe_fail_no_mem;
  	}
- 
--	q = init_queue(port);
--	if (IS_ERR(q)) {
--		printk(KERN_ERR PFX "%s: Could not allocate queue.\n",
--		       port->vio.name);
--		return PTR_ERR(q);
--	}
--	g = alloc_disk(1 << PARTITION_SHIFT);
--	if (!g) {
-+	err = blk_mq_alloc_sq_tag_set(&port->tag_set, &vdc_mq_ops,
-+			VDC_TX_RING_SIZE, BLK_MQ_F_SHOULD_MERGE);
-+	if (err)
-+		return err;
+ 	probe_gdrom_setupcd();
+-	gd.disk = alloc_disk(1);
+-	if (!gd.disk) {
+-		err = -ENODEV;
+-		goto probe_fail_no_disk;
 +
-+	g = blk_mq_alloc_disk(&port->tag_set, port);
-+	if (IS_ERR(g)) {
- 		printk(KERN_ERR PFX "%s: Could not allocate gendisk.\n",
- 		       port->vio.name);
--		cleanup_queue(q);
--		return -ENOMEM;
-+		blk_mq_free_tag_set(&port->tag_set);
-+		return PTR_ERR(g);
++	err = blk_mq_alloc_sq_tag_set(&gd.tag_set, &gdrom_mq_ops, 1,
++				BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_BLOCKING);
++	if (err)
++		goto probe_fail_free_cd_info;
++
++	gd.disk = blk_mq_alloc_disk(&gd.tag_set, NULL);
++	if (IS_ERR(gd.disk)) {
++		err = PTR_ERR(gd.disk);
++		goto probe_fail_free_tag_set;
  	}
++	gd.gdrom_rq = gd.disk->queue;
+ 	probe_gdrom_setupdisk();
+ 	if (register_cdrom(gd.disk, gd.cd_info)) {
+ 		err = -ENODEV;
+-		goto probe_fail_cdrom_register;
++		goto probe_fail_cleanup_disk;
+ 	}
+ 	gd.disk->fops = &gdrom_bdops;
+ 	gd.disk->events = DISK_EVENT_MEDIA_CHANGE;
+ 	/* latch on to the interrupt */
+ 	err = gdrom_set_interrupt_handlers();
+ 	if (err)
+-		goto probe_fail_cmdirq_register;
+-
+-	gd.gdrom_rq = blk_mq_init_sq_queue(&gd.tag_set, &gdrom_mq_ops, 1,
+-				BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_BLOCKING);
+-	if (IS_ERR(gd.gdrom_rq)) {
+-		err = PTR_ERR(gd.gdrom_rq);
+-		gd.gdrom_rq = NULL;
+-		goto probe_fail_requestq;
+-	}
++		goto probe_fail_cleanup_disk;
  
- 	port->disk = g;
-+	q = g->queue;
+ 	err = probe_gdrom_setupqueue();
+ 	if (err)
+-		goto probe_fail_toc;
++		goto probe_fail_free_irqs;
  
- 	/* Each segment in a request is up to an aligned page in size. */
- 	blk_queue_segment_boundary(q, PAGE_SIZE - 1);
-@@ -862,6 +841,7 @@ static int probe_disk(struct vdc_port *port)
- 	blk_queue_max_hw_sectors(q, port->max_xfer_size);
- 	g->major = vdc_major;
- 	g->first_minor = port->vio.vdev->dev_no << PARTITION_SHIFT;
-+	g->minors = 1 << PARTITION_SHIFT;
- 	strcpy(g->disk_name, port->disk_name);
+ 	gd.toc = kzalloc(sizeof(struct gdromtoc), GFP_KERNEL);
+ 	if (!gd.toc) {
+ 		err = -ENOMEM;
+-		goto probe_fail_toc;
++		goto probe_fail_free_irqs;
+ 	}
+ 	add_disk(gd.disk);
+ 	return 0;
  
- 	g->fops = &vdc_fops;
-@@ -1083,9 +1063,8 @@ static int vdc_port_remove(struct vio_dev *vdev)
- 		del_timer_sync(&port->vio.timer);
- 
- 		del_gendisk(port->disk);
--		cleanup_queue(port->disk->queue);
--		put_disk(port->disk);
--		port->disk = NULL;
-+		blk_cleanup_disk(port->disk);
-+		blk_mq_free_tag_set(&port->tag_set);
- 
- 		vdc_free_tx_ring(port);
- 		vio_ldc_free(&port->vio);
+-probe_fail_toc:
+-	blk_cleanup_queue(gd.gdrom_rq);
+-	blk_mq_free_tag_set(&gd.tag_set);
+-probe_fail_requestq:
++probe_fail_free_irqs:
+ 	free_irq(HW_EVENT_GDROM_DMA, &gd);
+ 	free_irq(HW_EVENT_GDROM_CMD, &gd);
+-probe_fail_cmdirq_register:
+-probe_fail_cdrom_register:
+-	del_gendisk(gd.disk);
+-probe_fail_no_disk:
++probe_fail_cleanup_disk:
++	blk_cleanup_disk(gd.disk);
++probe_fail_free_tag_set:
++	blk_mq_free_tag_set(&gd.tag_set);
++probe_fail_free_cd_info:
+ 	kfree(gd.cd_info);
+ probe_fail_no_mem:
+ 	unregister_blkdev(gdrom_major, GDROM_DEV_NAME);
 -- 
 2.30.2
 
