@@ -2,31 +2,31 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D58E39820C
-	for <lists+ceph-devel@lfdr.de>; Wed,  2 Jun 2021 08:56:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59634398212
+	for <lists+ceph-devel@lfdr.de>; Wed,  2 Jun 2021 08:56:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231258AbhFBG5d (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 2 Jun 2021 02:57:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47922 "EHLO
+        id S231384AbhFBG5f (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 2 Jun 2021 02:57:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230527AbhFBG5T (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Jun 2021 02:57:19 -0400
+        with ESMTP id S231208AbhFBG5X (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Jun 2021 02:57:23 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C46FCC061347;
-        Tue,  1 Jun 2021 23:55:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF786C061756;
+        Tue,  1 Jun 2021 23:55:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Ay3+BGPlRqdc0EFLNjvSyNAlCXYv7F/E4ZKoFdkW+qs=; b=re781XvQTLqNz+tW0K+eeLN126
-        ZHdsuYJ2Awc6hKt5NXrxWVcF1gLtmPmqrRoYM1HI43jkn7Qf75wWP01UlBu2V2sY61J+OM/Etw42Y
-        +/Y9bV0NZSR7XSiaIB3hoA5FplO+Knn8VPNUx84Za0n+grjUeqHa7Ia2Y6hM5luzozyZJ8Is3hs5t
-        0f1bIF+gL/yS4tMtIJDr7RZZ0gaHP+N8QcEaL1x8gVuo08fsq6poeekNRuls+ivPNI9U2B65ypj48
-        yQjKdXwi7x17Mz91bhzCLHhe29vJAUjBIJ8vYze0d6zCgmUka+cbdrK9DUBsKkhmarGXEPYZxI+5z
-        n/v3EyXw==;
+        bh=+VW3u/9XCdDTbtqEZvujMXwGJbXBwfM20yjCH8e5d3E=; b=GwQP6IERGYi9h/w11aM5Gv7Bak
+        KwC96m3PPXGkoyZYwi/kNvLQSakOJo8KyQC+PaSGnzJZtxZtj+EAf1YdIWxyGh1h3/ItGALtuAyht
+        Zb0UCagxGAtcH3yWBInWzJjMPdgOtlr0aVxDJradU0LlW4CU0UoZ9uFlxXZ9MaFs9QpR6rJJqNKpM
+        Lp+TbCyqXP0eixAsJNjUJ38MR0l0b3AJnHt9CihDHSmpFaOitPKX0HSMzdaVcLJGEB+8v4t2ImMr4
+        1mz3v9UKvRtkqRqwAqZX0MDPtIqhunVVCv1zjkY4f5TbIaxRb9R62pOguo/krhQJ2ETMPxpLnqyY0
+        E1fIMYVA==;
 Received: from shol69.static.otenet.gr ([83.235.170.67] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1loKma-0025sw-BW; Wed, 02 Jun 2021 06:55:17 +0000
+        id 1loKme-0025w6-S0; Wed, 02 Jun 2021 06:55:21 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -56,9 +56,9 @@ Cc:     Justin Sanders <justin@coraid.com>,
         virtualization@lists.linux-foundation.org,
         xen-devel@lists.xenproject.org, linux-mmc@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
-Subject: [PATCH 18/30] loop: use blk_mq_alloc_disk and blk_cleanup_disk
-Date:   Wed,  2 Jun 2021 09:53:33 +0300
-Message-Id: <20210602065345.355274-19-hch@lst.de>
+Subject: [PATCH 19/30] nbd: use blk_mq_alloc_disk and blk_cleanup_disk
+Date:   Wed,  2 Jun 2021 09:53:34 +0300
+Message-Id: <20210602065345.355274-20-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210602065345.355274-1-hch@lst.de>
 References: <20210602065345.355274-1-hch@lst.de>
@@ -74,70 +74,117 @@ request_queue allocation.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/block/loop.c | 19 ++++++-------------
- 1 file changed, 6 insertions(+), 13 deletions(-)
+ drivers/block/nbd.c | 53 ++++++++++++++++++---------------------------
+ 1 file changed, 21 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 95c570f5923f..3f40e673a101 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -2117,12 +2117,12 @@ static int loop_add(struct loop_device **l, int i)
- 	if (err)
- 		goto out_free_idr;
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index 45d2c28c8fc8..614d82e7fae4 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -219,15 +219,11 @@ static const struct device_attribute pid_attr = {
+ static void nbd_dev_remove(struct nbd_device *nbd)
+ {
+ 	struct gendisk *disk = nbd->disk;
+-	struct request_queue *q;
  
--	lo->lo_queue = blk_mq_init_queue(&lo->tag_set);
--	if (IS_ERR(lo->lo_queue)) {
--		err = PTR_ERR(lo->lo_queue);
-+	disk = lo->lo_disk = blk_mq_alloc_disk(&lo->tag_set, lo);
+ 	if (disk) {
+-		q = disk->queue;
+ 		del_gendisk(disk);
+-		blk_cleanup_queue(q);
+ 		blk_mq_free_tag_set(&nbd->tag_set);
+-		disk->private_data = NULL;
+-		put_disk(disk);
++		blk_cleanup_disk(disk);
+ 	}
+ 
+ 	/*
+@@ -1646,15 +1642,24 @@ static int nbd_dev_add(int index)
+ {
+ 	struct nbd_device *nbd;
+ 	struct gendisk *disk;
+-	struct request_queue *q;
+ 	int err = -ENOMEM;
+ 
+ 	nbd = kzalloc(sizeof(struct nbd_device), GFP_KERNEL);
+ 	if (!nbd)
+ 		goto out;
+ 
+-	disk = alloc_disk(1 << part_shift);
+-	if (!disk)
++	nbd->tag_set.ops = &nbd_mq_ops;
++	nbd->tag_set.nr_hw_queues = 1;
++	nbd->tag_set.queue_depth = 128;
++	nbd->tag_set.numa_node = NUMA_NO_NODE;
++	nbd->tag_set.cmd_size = sizeof(struct nbd_cmd);
++	nbd->tag_set.flags = BLK_MQ_F_SHOULD_MERGE |
++		BLK_MQ_F_BLOCKING;
++	nbd->tag_set.driver_data = nbd;
++	nbd->destroy_complete = NULL;
++
++	err = blk_mq_alloc_tag_set(&nbd->tag_set);
++	if (err)
+ 		goto out_free_nbd;
+ 
+ 	if (index >= 0) {
+@@ -1668,30 +1673,15 @@ static int nbd_dev_add(int index)
+ 			index = err;
+ 	}
+ 	if (err < 0)
+-		goto out_free_disk;
+-
++		goto out_free_tags;
+ 	nbd->index = index;
+-	nbd->disk = disk;
+-	nbd->tag_set.ops = &nbd_mq_ops;
+-	nbd->tag_set.nr_hw_queues = 1;
+-	nbd->tag_set.queue_depth = 128;
+-	nbd->tag_set.numa_node = NUMA_NO_NODE;
+-	nbd->tag_set.cmd_size = sizeof(struct nbd_cmd);
+-	nbd->tag_set.flags = BLK_MQ_F_SHOULD_MERGE |
+-		BLK_MQ_F_BLOCKING;
+-	nbd->tag_set.driver_data = nbd;
+-	nbd->destroy_complete = NULL;
+ 
+-	err = blk_mq_alloc_tag_set(&nbd->tag_set);
+-	if (err)
++	disk = blk_mq_alloc_disk(&nbd->tag_set, NULL);
 +	if (IS_ERR(disk)) {
 +		err = PTR_ERR(disk);
- 		goto out_cleanup_tags;
- 	}
--	lo->lo_queue->queuedata = lo;
-+	lo->lo_queue = lo->lo_disk->queue;
- 
- 	blk_queue_max_hw_sectors(lo->lo_queue, BLK_DEF_MAX_SECTORS);
- 
-@@ -2134,11 +2134,6 @@ static int loop_add(struct loop_device **l, int i)
- 	 */
- 	blk_queue_flag_set(QUEUE_FLAG_NOMERGES, lo->lo_queue);
- 
--	err = -ENOMEM;
--	disk = lo->lo_disk = alloc_disk(1 << part_shift);
--	if (!disk)
--		goto out_free_queue;
+ 		goto out_free_idr;
 -
- 	/*
- 	 * Disable partition scanning by default. The in-kernel partition
- 	 * scanning can be requested individually per-device during its
-@@ -2166,6 +2161,7 @@ static int loop_add(struct loop_device **l, int i)
- 	spin_lock_init(&lo->lo_lock);
- 	disk->major		= LOOP_MAJOR;
- 	disk->first_minor	= i << part_shift;
-+	disk->minors		= 1 << part_shift;
- 	disk->fops		= &lo_fops;
- 	disk->private_data	= lo;
- 	disk->queue		= lo->lo_queue;
-@@ -2174,8 +2170,6 @@ static int loop_add(struct loop_device **l, int i)
- 	*l = lo;
- 	return lo->lo_number;
+-	q = blk_mq_init_queue(&nbd->tag_set);
+-	if (IS_ERR(q)) {
+-		err = PTR_ERR(q);
+-		goto out_free_tags;
+ 	}
+-	disk->queue = q;
++	nbd->disk = disk;
  
--out_free_queue:
--	blk_cleanup_queue(lo->lo_queue);
- out_cleanup_tags:
- 	blk_mq_free_tag_set(&lo->tag_set);
+ 	/*
+ 	 * Tell the block layer that we are not a rotational device
+@@ -1712,6 +1702,7 @@ static int nbd_dev_add(int index)
+ 	INIT_LIST_HEAD(&nbd->list);
+ 	disk->major = NBD_MAJOR;
+ 	disk->first_minor = index << part_shift;
++	disk->minors = 1 << part_shift;
+ 	disk->fops = &nbd_fops;
+ 	disk->private_data = nbd;
+ 	sprintf(disk->disk_name, "nbd%d", index);
+@@ -1719,12 +1710,10 @@ static int nbd_dev_add(int index)
+ 	nbd_total_devices++;
+ 	return index;
+ 
+-out_free_tags:
+-	blk_mq_free_tag_set(&nbd->tag_set);
  out_free_idr:
-@@ -2189,9 +2183,8 @@ static int loop_add(struct loop_device **l, int i)
- static void loop_remove(struct loop_device *lo)
- {
- 	del_gendisk(lo->lo_disk);
--	blk_cleanup_queue(lo->lo_queue);
- 	blk_mq_free_tag_set(&lo->tag_set);
--	put_disk(lo->lo_disk);
-+	blk_cleanup_disk(lo->lo_disk);
- 	mutex_destroy(&lo->lo_mutex);
- 	kfree(lo);
- }
+ 	idr_remove(&nbd_index_idr, index);
+-out_free_disk:
+-	put_disk(disk);
++out_free_tags:
++	blk_mq_free_tag_set(&nbd->tag_set);
+ out_free_nbd:
+ 	kfree(nbd);
+ out:
 -- 
 2.30.2
 
