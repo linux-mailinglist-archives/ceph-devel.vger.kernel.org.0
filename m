@@ -2,132 +2,186 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BA9E3983B6
-	for <lists+ceph-devel@lfdr.de>; Wed,  2 Jun 2021 09:58:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D410B3988ED
+	for <lists+ceph-devel@lfdr.de>; Wed,  2 Jun 2021 14:05:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232284AbhFBIAj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 2 Jun 2021 04:00:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34686 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232136AbhFBIAj (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Jun 2021 04:00:39 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 764D5C061574;
-        Wed,  2 Jun 2021 00:58:55 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id q7so1564721iob.4;
-        Wed, 02 Jun 2021 00:58:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qabcrgcfhEwhuxn/j/3+LSWfxN4EJWq76mgUFbPSQfc=;
-        b=OT9pI1cLDfVtJEbjcRrOd63nDT0/5O6el+Z/j0fD2emf6m06YRE71xYgt5DqE1ub97
-         N7kRd/cSxZJ/2Mz6OD3kPnuzof4+lSudMwU5nKWfEhU7fkDwWpCrLVOUQUMjchCEdc2A
-         83tv4Z/IyeqJM3gp44zcBiF2QJlwTzgXC+8YD+0smMxtZg9Ay6xt8rONKGV0/gLNnbcv
-         hGo6IOM64QaN1vV2Ti60Zy2WIXuL+yOQ7x47a7J6TyK5HrFFgjJYKArhAS9r8dFF0PL6
-         Qw+/kAZwePxzJBCIvKbS/Rg4IC6h71q0wTnLJxVwIHhwX4554FgPu23eRm7agH4Lgml+
-         ngGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qabcrgcfhEwhuxn/j/3+LSWfxN4EJWq76mgUFbPSQfc=;
-        b=ijCdTpAOyEKqmv60kU+EwINK/WDibY23ifL1vEhQq+ymPEsG1WVYcYo3laWGcnF6ZV
-         nz9JOW0kmvv4aK0dWaj1LnCdv3Uja+xNQ+XKUXB+S/8Iz3xCjNcVaydSALmGgUu3/F3B
-         4d19xwBxSYksbNJM6DX0h7M1MKqKdEjZAL+QMZntptzV2dMvcCj4AAHaNc2E/rGCt5Ce
-         UqPhdAxHc1XfRS+FBsWeihgClw9vta1gbzdtbrJVC0Wpz823kjTsWU3LqGDwsq1HzoW2
-         ZtoVoZc8m7QJAKn1cpugzP4GsZbBK1yNbYtmJPd9JOX17qOBWpx6twSRQTeE52ebH8tu
-         D/TQ==
-X-Gm-Message-State: AOAM532e/3Spv+KOHWBIiMqC+U6gpRSRllh2U4eQc5ztjq/KaUeYhY2B
-        9Bsdokj332T8bdX9sXMTf3XS5RyoqEIxr02Nov2jwosj3U/aOA==
-X-Google-Smtp-Source: ABdhPJxPmYmfcLfSgGMSYk2vkiJxCMXDTKTmlWHFzeWkXcxGhSG2pycZS4aQblPDVuwAFtckoD3DSwANLPwvKnENa+E=
-X-Received: by 2002:a6b:ef04:: with SMTP id k4mr24866061ioh.182.1622620734797;
- Wed, 02 Jun 2021 00:58:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210602065635.106561-1-zhengyongjun3@huawei.com>
-In-Reply-To: <20210602065635.106561-1-zhengyongjun3@huawei.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 2 Jun 2021 09:58:58 +0200
-Message-ID: <CAOi1vP-QtGyRGT-y2naZPzfMOEvv4MQY_iWDhws5e7hagAQQrQ@mail.gmail.com>
-Subject: Re: [PATCH net-next] libceph: Fix spelling mistakes
-To:     Zheng Yongjun <zhengyongjun3@huawei.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jeff Layton <jlayton@kernel.org>
+        id S229906AbhFBMGk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 2 Jun 2021 08:06:40 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:16118 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229844AbhFBMGi (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Jun 2021 08:06:38 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 152C2cPO189409;
+        Wed, 2 Jun 2021 08:03:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=7wC8Y59HiMIthB9xfz5dL+I0HD65zOwRPB4cvu5JQYY=;
+ b=QRLGyPounpLaRIZgsSUK1LazhFSMWWWVFIpjfvUyvXqdSXI7p94FVQMtSFG3bMtHNL86
+ rLVrJ3SvpT994x2pe7o0yL3iXXDeNBst8Q4A8KEa89vx85ZQSTDkkYsEjLQaMo+eb8VZ
+ +GFr8IfErHwDLNlYl+L0v9/qNIinOxFcyNlMJhpRMjSZcskv/o9bM0Y0jNVwjZETIKG0
+ IXpmjsLB5CkqOhxt84ImzKiTyn/t0QZlZGbbzTco4+M0nPgqtd7mDQbl31t9d+7DOxJc
+ iYhombbX7dZq4eRMaB6F1ITduKcVH4H0X0f5lSV3QvlOH2CDPoe61GoP3QIOjHTOkYh/ DA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 38x7kr3h5n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Jun 2021 08:03:00 -0400
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 152C2cNZ189527;
+        Wed, 2 Jun 2021 08:02:59 -0400
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 38x7kr3h4k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Jun 2021 08:02:59 -0400
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 152BwHfr023191;
+        Wed, 2 Jun 2021 12:02:57 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma05fra.de.ibm.com with ESMTP id 38ud87s9cx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Jun 2021 12:02:56 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 152C2r4H26280248
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 2 Jun 2021 12:02:53 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A0364A405F;
+        Wed,  2 Jun 2021 12:02:53 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 479C3A4040;
+        Wed,  2 Jun 2021 12:02:52 +0000 (GMT)
+Received: from sig-9-145-17-43.uk.ibm.com (unknown [9.145.17.43])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  2 Jun 2021 12:02:52 +0000 (GMT)
+Message-ID: <e4891689c7651611020bdf3b4db9895819da345a.camel@linux.ibm.com>
+Subject: Re: [PATCH 27/30] scm_blk: use blk_mq_alloc_disk and
+ blk_cleanup_disk
+From:   Niklas Schnelle <schnelle@linux.ibm.com>
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     Justin Sanders <justin@coraid.com>,
+        Denis Efremov <efremov@linux.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Tim Waugh <tim@cyberelk.net>,
+        Geoff Levand <geoff@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Roger Pau =?ISO-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Maxim Levitsky <maximlevitsky@gmail.com>,
+        Alex Dubov <oakad@yahoo.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        dm-devel@redhat.com, linux-block@vger.kernel.org,
+        nbd@other.debian.org, linuxppc-dev@lists.ozlabs.org,
+        ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
+Date:   Wed, 02 Jun 2021 14:02:51 +0200
+In-Reply-To: <20210602065345.355274-28-hch@lst.de>
+References: <20210602065345.355274-1-hch@lst.de>
+         <20210602065345.355274-28-hch@lst.de>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 9Pi9MTQ_S8CJ1ewvOnGa4xYgtn5KH1ib
+X-Proofpoint-ORIG-GUID: -LAzjZA1VGIxMM3aVX5RPubiT3GLOjUz
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-06-02_06:2021-06-02,2021-06-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 spamscore=0 clxscore=1011 suspectscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2106020078
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jun 2, 2021 at 8:42 AM Zheng Yongjun <zhengyongjun3@huawei.com> wrote:
->
-> Fix some spelling mistakes in comments:
-> enconding  ==> encoding
-> ambigous  ==> ambiguous
-> orignal  ==> original
-> encyption  ==> encryption
->
-> Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+On Wed, 2021-06-02 at 09:53 +0300, Christoph Hellwig wrote:
+> Use blk_mq_alloc_disk and blk_cleanup_disk to simplify the gendisk and
+> request_queue allocation.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  net/ceph/auth_x_protocol.h | 2 +-
->  net/ceph/mon_client.c      | 2 +-
->  net/ceph/osdmap.c          | 4 ++--
->  3 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/net/ceph/auth_x_protocol.h b/net/ceph/auth_x_protocol.h
-> index 792fcb974dc3..9c60feeb1bcb 100644
-> --- a/net/ceph/auth_x_protocol.h
-> +++ b/net/ceph/auth_x_protocol.h
-> @@ -87,7 +87,7 @@ struct ceph_x_authorize_reply {
->
->
->  /*
-> - * encyption bundle
-> + * encryption bundle
->   */
->  #define CEPHX_ENC_MAGIC 0xff009cad8826aa55ull
->
-> diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
-> index 195ceb8afb06..013cbdb6cfe2 100644
-> --- a/net/ceph/mon_client.c
-> +++ b/net/ceph/mon_client.c
-> @@ -1508,7 +1508,7 @@ static struct ceph_msg *mon_alloc_msg(struct ceph_connection *con,
->                         return get_generic_reply(con, hdr, skip);
->
->                 /*
-> -                * Older OSDs don't set reply tid even if the orignal
-> +                * Older OSDs don't set reply tid even if the original
->                  * request had a non-zero tid.  Work around this weirdness
->                  * by allocating a new message.
->                  */
-> diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-> index c959320c4775..75b738083523 100644
-> --- a/net/ceph/osdmap.c
-> +++ b/net/ceph/osdmap.c
-> @@ -1309,7 +1309,7 @@ static int get_osdmap_client_data_v(void **p, void *end,
->                         return -EINVAL;
->                 }
->
-> -               /* old osdmap enconding */
-> +               /* old osdmap encoding */
->                 struct_v = 0;
->         }
->
-> @@ -3010,7 +3010,7 @@ static bool is_valid_crush_name(const char *name)
->   * parent, returns 0.
->   *
->   * Does a linear search, as there are no parent pointers of any
-> - * kind.  Note that the result is ambigous for items that occur
-> + * kind.  Note that the result is ambiguous for items that occur
->   * multiple times in the map.
->   */
->  static int get_immediate_parent(struct crush_map *c, int id,
+>  drivers/s390/block/scm_blk.c | 21 ++++++---------------
+>  1 file changed, 6 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/s390/block/scm_blk.c b/drivers/s390/block/scm_blk.c
+> index a4f6f2e62b1d..88cba6212ee2 100644
+> --- a/drivers/s390/block/scm_blk.c
+> +++ b/drivers/s390/block/scm_blk.c
+> @@ -462,12 +462,12 @@ int scm_blk_dev_setup(struct scm_blk_dev *bdev, struct scm_device *scmdev)
+>  	if (ret)
+>  		goto out;
+>  
+> -	rq = blk_mq_init_queue(&bdev->tag_set);
+> -	if (IS_ERR(rq)) {
+> -		ret = PTR_ERR(rq);
+> +	bdev->gendisk = blk_mq_alloc_disk(&bdev->tag_set, scmdev);
+> +	if (IS_ERR(bdev->gendisk)) {
+> +		ret = PTR_ERR(bdev->gendisk);
+>  		goto out_tag;
+>  	}
+> -	bdev->rq = rq;
+> +	rq = bdev->rq = bdev->gendisk->queue;
+>  	nr_max_blk = min(scmdev->nr_max_block,
+>  			 (unsigned int) (PAGE_SIZE / sizeof(struct aidaw)));
+>  
+> @@ -477,17 +477,11 @@ int scm_blk_dev_setup(struct scm_blk_dev *bdev, struct scm_device *scmdev)
+>  	blk_queue_flag_set(QUEUE_FLAG_NONROT, rq);
+>  	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, rq);
+>  
+> -	bdev->gendisk = alloc_disk(SCM_NR_PARTS);
+> -	if (!bdev->gendisk) {
+> -		ret = -ENOMEM;
+> -		goto out_queue;
+> -	}
+> -	rq->queuedata = scmdev;
+>  	bdev->gendisk->private_data = scmdev;
+>  	bdev->gendisk->fops = &scm_blk_devops;
+> -	bdev->gendisk->queue = rq;
+>  	bdev->gendisk->major = scm_major;
+>  	bdev->gendisk->first_minor = devindex * SCM_NR_PARTS;
+> +	bdev->gendisk->minors = SCM_NR_PARTS;
+>  
+>  	len = snprintf(bdev->gendisk->disk_name, DISK_NAME_LEN, "scm");
+>  	if (devindex > 25) {
+> @@ -504,8 +498,6 @@ int scm_blk_dev_setup(struct scm_blk_dev *bdev, struct scm_device *scmdev)
+>  	device_add_disk(&scmdev->dev, bdev->gendisk, NULL);
+>  	return 0;
+>  
+> -out_queue:
+> -	blk_cleanup_queue(rq);
+>  out_tag:
+>  	blk_mq_free_tag_set(&bdev->tag_set);
+>  out:
+> @@ -516,9 +508,8 @@ int scm_blk_dev_setup(struct scm_blk_dev *bdev, struct scm_device *scmdev)
+>  void scm_blk_dev_cleanup(struct scm_blk_dev *bdev)
+>  {
+>  	del_gendisk(bdev->gendisk);
+> -	blk_cleanup_queue(bdev->gendisk->queue);
+> +	blk_cleanup_disk(bdev->gendisk);
+>  	blk_mq_free_tag_set(&bdev->tag_set);
+> -	put_disk(bdev->gendisk);
+>  }
+>  
+>  void scm_blk_set_available(struct scm_blk_dev *bdev)
 
-Applied.
+Not an expert on SCM or this code but I gave this a quick test and it
+seems to work fine.
 
-Thanks,
+Tested-by: Niklas Schnelle <schnelle@linux.ibm.com>
 
-                Ilya
+
+
