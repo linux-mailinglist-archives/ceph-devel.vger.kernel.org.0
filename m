@@ -2,117 +2,104 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F06C639823D
-	for <lists+ceph-devel@lfdr.de>; Wed,  2 Jun 2021 08:57:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E912398154
+	for <lists+ceph-devel@lfdr.de>; Wed,  2 Jun 2021 08:43:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230413AbhFBG6f (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 2 Jun 2021 02:58:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47850 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229913AbhFBG6L (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Jun 2021 02:58:11 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B229C061763;
-        Tue,  1 Jun 2021 23:56:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=ZrMEf0Ls9F+Osx12fthB6jYFp7YA2RuOfcMRudkR5eo=; b=RmhbmeEgAua7D4yc0CN6m+daMw
-        ggu55W3yOtqsYbnSz5c1dfLFQJ9ncvb9hc3nNvkXY6f0gcSGMOhLStwUwb0UQrJ1aG7h0ZSUng/WX
-        es/ejunr+apwEHWPUWRQDfPQvgeX1hrHlUl4NOb5oItwm7czJQwirbV+FChfRP7dM0qxLnCRqVmgI
-        bA1/+LYF3tWUOd/53KL9zns/VStS5lpZkIiq55Ah7xS6m/8ryTxd0+2JtSdNyv1ovCOilXcKoWuJr
-        8KfLwtubqhZXD6/OkB2mdwrFmz8NTFBmkmZB+9B1+iGvFIgntGiUljL/AChzeEhq1iCnrHX8J/lkd
-        xKgRqjOg==;
-Received: from shol69.static.otenet.gr ([83.235.170.67] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1loKnR-0026ec-A8; Wed, 02 Jun 2021 06:56:10 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Justin Sanders <justin@coraid.com>,
-        Denis Efremov <efremov@linux.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Tim Waugh <tim@cyberelk.net>,
-        Geoff Levand <geoff@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Maxim Levitsky <maximlevitsky@gmail.com>,
-        Alex Dubov <oakad@yahoo.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        dm-devel@redhat.com, linux-block@vger.kernel.org,
-        nbd@other.debian.org, linuxppc-dev@lists.ozlabs.org,
-        ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
-Subject: [PATCH 30/30] z2ram: use blk_mq_alloc_disk and blk_cleanup_disk
-Date:   Wed,  2 Jun 2021 09:53:45 +0300
-Message-Id: <20210602065345.355274-31-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210602065345.355274-1-hch@lst.de>
-References: <20210602065345.355274-1-hch@lst.de>
+        id S230118AbhFBGom (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 2 Jun 2021 02:44:42 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:2841 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229964AbhFBGol (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Jun 2021 02:44:41 -0400
+Received: from dggeme760-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Fvzqp2VshzWqsg;
+        Wed,  2 Jun 2021 14:38:14 +0800 (CST)
+Received: from localhost.localdomain (10.175.104.82) by
+ dggeme760-chm.china.huawei.com (10.3.19.106) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Wed, 2 Jun 2021 14:42:55 +0800
+From:   Zheng Yongjun <zhengyongjun3@huawei.com>
+To:     <davem@davemloft.net>, <kuba@kernel.org>,
+        <ceph-devel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <idryomov@gmail.com>, <jlayton@kernel.org>,
+        Zheng Yongjun <zhengyongjun3@huawei.com>
+Subject: [PATCH net-next] libceph: Fix spelling mistakes
+Date:   Wed, 2 Jun 2021 14:56:35 +0800
+Message-ID: <20210602065635.106561-1-zhengyongjun3@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.104.82]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggeme760-chm.china.huawei.com (10.3.19.106)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Use blk_mq_alloc_disk and blk_cleanup_disk to simplify the gendisk and
-request_queue allocation.
+Fix some spelling mistakes in comments:
+enconding  ==> encoding
+ambigous  ==> ambiguous
+orignal  ==> original
+encyption  ==> encryption
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
 ---
- drivers/block/z2ram.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ net/ceph/auth_x_protocol.h | 2 +-
+ net/ceph/mon_client.c      | 2 +-
+ net/ceph/osdmap.c          | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/z2ram.c b/drivers/block/z2ram.c
-index c1d20818e649..a8968d9e759b 100644
---- a/drivers/block/z2ram.c
-+++ b/drivers/block/z2ram.c
-@@ -323,27 +323,20 @@ static const struct blk_mq_ops z2_mq_ops = {
+diff --git a/net/ceph/auth_x_protocol.h b/net/ceph/auth_x_protocol.h
+index 792fcb974dc3..9c60feeb1bcb 100644
+--- a/net/ceph/auth_x_protocol.h
++++ b/net/ceph/auth_x_protocol.h
+@@ -87,7 +87,7 @@ struct ceph_x_authorize_reply {
  
- static int z2ram_register_disk(int minor)
- {
--	struct request_queue *q;
- 	struct gendisk *disk;
  
--	disk = alloc_disk(1);
--	if (!disk)
--		return -ENOMEM;
--
--	q = blk_mq_init_queue(&tag_set);
--	if (IS_ERR(q)) {
--		put_disk(disk);
--		return PTR_ERR(q);
--	}
-+	disk = blk_mq_alloc_disk(&tag_set, NULL);
-+	if (IS_ERR(disk))
-+		return PTR_ERR(disk);
+ /*
+- * encyption bundle
++ * encryption bundle
+  */
+ #define CEPHX_ENC_MAGIC 0xff009cad8826aa55ull
  
- 	disk->major = Z2RAM_MAJOR;
- 	disk->first_minor = minor;
-+	disk->minors = 1;
- 	disk->fops = &z2_fops;
- 	if (minor)
- 		sprintf(disk->disk_name, "z2ram%d", minor);
- 	else
- 		sprintf(disk->disk_name, "z2ram");
--	disk->queue = q;
+diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+index 195ceb8afb06..013cbdb6cfe2 100644
+--- a/net/ceph/mon_client.c
++++ b/net/ceph/mon_client.c
+@@ -1508,7 +1508,7 @@ static struct ceph_msg *mon_alloc_msg(struct ceph_connection *con,
+ 			return get_generic_reply(con, hdr, skip);
  
- 	z2ram_gendisk[minor] = disk;
- 	add_disk(disk);
+ 		/*
+-		 * Older OSDs don't set reply tid even if the orignal
++		 * Older OSDs don't set reply tid even if the original
+ 		 * request had a non-zero tid.  Work around this weirdness
+ 		 * by allocating a new message.
+ 		 */
+diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
+index c959320c4775..75b738083523 100644
+--- a/net/ceph/osdmap.c
++++ b/net/ceph/osdmap.c
+@@ -1309,7 +1309,7 @@ static int get_osdmap_client_data_v(void **p, void *end,
+ 			return -EINVAL;
+ 		}
+ 
+-		/* old osdmap enconding */
++		/* old osdmap encoding */
+ 		struct_v = 0;
+ 	}
+ 
+@@ -3010,7 +3010,7 @@ static bool is_valid_crush_name(const char *name)
+  * parent, returns 0.
+  *
+  * Does a linear search, as there are no parent pointers of any
+- * kind.  Note that the result is ambigous for items that occur
++ * kind.  Note that the result is ambiguous for items that occur
+  * multiple times in the map.
+  */
+ static int get_immediate_parent(struct crush_map *c, int id,
 -- 
-2.30.2
+2.25.1
 
