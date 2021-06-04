@@ -2,116 +2,143 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBEE839B1D1
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Jun 2021 07:05:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84DC439B60D
+	for <lists+ceph-devel@lfdr.de>; Fri,  4 Jun 2021 11:35:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230022AbhFDFH1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 4 Jun 2021 01:07:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27817 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229801AbhFDFH1 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Jun 2021 01:07:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1622783141;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+        id S229999AbhFDJhW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 4 Jun 2021 05:37:22 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:47338 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229958AbhFDJhV (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Jun 2021 05:37:21 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 0B9D321A1B;
+        Fri,  4 Jun 2021 09:35:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1622799335; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ACzH0AkzY9kFOE+5ls/yoXa3JG1amoUDFZvgvLzewBY=;
-        b=VWEu0wgqNq6mT5a8nK8YnUVO0nGumHriXYfIFK/efWImXWxTiScdhNxJdo762FWAlFIbQs
-        P6aHeq+BiPQmBIuJrbhvN7mncYiNXF5dOtw3B4YeEiuHe5pmpkMN/3yyb+RlWnrPXH7GcD
-        VYhCGtN1ma1oBt8tsQc/2t/tDeKt81U=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-203-DkyK_swPPbeocMu6GOmgxw-1; Fri, 04 Jun 2021 01:05:40 -0400
-X-MC-Unique: DkyK_swPPbeocMu6GOmgxw-1
-Received: by mail-pj1-f70.google.com with SMTP id f8-20020a17090a9b08b0290153366612f7so4536976pjp.1
-        for <ceph-devel@vger.kernel.org>; Thu, 03 Jun 2021 22:05:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ACzH0AkzY9kFOE+5ls/yoXa3JG1amoUDFZvgvLzewBY=;
-        b=QYVPtYfXgL78lTvgdbmNGtFkj4Og3LiEnpFXIIaoBtmtOGVSJK9lgAtH4Hty7hr0rb
-         m3F3qCoA447iJ/JFK+c/FcpGqvRK5Towv0d3ZR8WF0qJP7TNut1b7G+E2b5L2O19gq4g
-         V4Tdvs3Hm9cOTkq9880hPJNa/udXiHHzyWEQauGmPxj4qnjw9buKKPIr0SOWFdlfLhmF
-         xMWvmgUtLfYm7FX9jCrjBucmAAR2w8z/KOjSam1xNrd9CF3LL/Xoz6/WnJPKFdg4gdg1
-         kdutG2aT/QmKAAMW/R03sYXUMR1AzzgXReoT2+SjNF+wokGkvSW0H1CAZY/YEj6gCv5W
-         Uopg==
-X-Gm-Message-State: AOAM531WD6SnrqS4gSkdgu1ceYtkjzG8n+Mf201Lhdp+KqX+Eq1Uo0us
-        S+APKiE1Nj4mE0mTZA+tcDpswARt0okz1eBElA+5P511xQ0rhzd97v0Cxyuj0U/D5xmCxd8C+3f
-        ShjI9dCfP+3csZAjZKE5sMA==
-X-Received: by 2002:a63:dd4b:: with SMTP id g11mr3024815pgj.300.1622783138711;
-        Thu, 03 Jun 2021 22:05:38 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxyNXn0u7QmghOv5sgw8Jk3t/k+g0vNU8psflYZWzffBdS34t6hCROUIIOuya84N6xL3qXS0g==
-X-Received: by 2002:a63:dd4b:: with SMTP id g11mr3024798pgj.300.1622783138493;
-        Thu, 03 Jun 2021 22:05:38 -0700 (PDT)
-Received: from h3ckers-pride.redhat.com ([49.207.207.151])
-        by smtp.gmail.com with ESMTPSA id s20sm3634897pjn.23.2021.06.03.22.05.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Jun 2021 22:05:38 -0700 (PDT)
-From:   Venky Shankar <vshankar@redhat.com>
-To:     jlayton@kernel.org
-Cc:     ceph-devel@vger.kernel.org, Venky Shankar <vshankar@redhat.com>
-Subject: [PATCH 3/3] doc: document new CephFS mount device syntax
-Date:   Fri,  4 Jun 2021 10:35:12 +0530
-Message-Id: <20210604050512.552649-4-vshankar@redhat.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210604050512.552649-1-vshankar@redhat.com>
-References: <20210604050512.552649-1-vshankar@redhat.com>
+        bh=wefwno0cxl0e2CSg7D+vExpnXUds7rgWaIz+lJCG3s8=;
+        b=MzsVRfn8Gd7ZbvITWJ3UorHWstGccFeZo6uRzQLs7ERahsS5w6KgtLNWK2rpKQFe3/axCB
+        1c+HY1G7zctpv+MR4IerUnZqOhBBQHINKrnYVCE+6CB3HBo/mPpg34eCT3eHJ/Ue7A3ENT
+        bL42/qRwX4HFdgQb+7ETe/q4dH4+iXY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1622799335;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=wefwno0cxl0e2CSg7D+vExpnXUds7rgWaIz+lJCG3s8=;
+        b=KWzEZ3o5hsBCkhn0Inzjqrg2dVUuB3PJkfjow6VY5IbXv6/OAW8WVItiAtYvWkhJ5wrYOW
+        SkhR8RUunhRbAnBg==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id B0C62118DD;
+        Fri,  4 Jun 2021 09:35:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1622799335; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=wefwno0cxl0e2CSg7D+vExpnXUds7rgWaIz+lJCG3s8=;
+        b=MzsVRfn8Gd7ZbvITWJ3UorHWstGccFeZo6uRzQLs7ERahsS5w6KgtLNWK2rpKQFe3/axCB
+        1c+HY1G7zctpv+MR4IerUnZqOhBBQHINKrnYVCE+6CB3HBo/mPpg34eCT3eHJ/Ue7A3ENT
+        bL42/qRwX4HFdgQb+7ETe/q4dH4+iXY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1622799335;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=wefwno0cxl0e2CSg7D+vExpnXUds7rgWaIz+lJCG3s8=;
+        b=KWzEZ3o5hsBCkhn0Inzjqrg2dVUuB3PJkfjow6VY5IbXv6/OAW8WVItiAtYvWkhJ5wrYOW
+        SkhR8RUunhRbAnBg==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id /AclKObzuWCAbwAALh3uQQ
+        (envelope-from <lhenriques@suse.de>); Fri, 04 Jun 2021 09:35:34 +0000
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 57217a94;
+        Fri, 4 Jun 2021 09:35:34 +0000 (UTC)
+Date:   Fri, 4 Jun 2021 10:35:33 +0100
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com
+Subject: Re: [PATCH] ceph: ensure we flush delayed caps when unmounting
+Message-ID: <YLnz5c3xiN/KzRGf@suse.de>
+References: <20210603134812.80276-1-jlayton@kernel.org>
+ <6cd5b19cbcee46474709a97b273c4270088fb241.camel@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <6cd5b19cbcee46474709a97b273c4270088fb241.camel@kernel.org>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Signed-off-by: Venky Shankar <vshankar@redhat.com>
----
- Documentation/filesystems/ceph.rst | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+On Thu, Jun 03, 2021 at 12:57:22PM -0400, Jeff Layton wrote:
+> On Thu, 2021-06-03 at 09:48 -0400, Jeff Layton wrote:
+> > I've seen some warnings when testing recently that indicate that there
+> > are caps still delayed on the delayed list even after we've started
+> > unmounting.
+> > 
+> > When checking delayed caps, process the whole list if we're unmounting,
+> > and check for delayed caps after setting the stopping var and flushing
+> > dirty caps.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/ceph/caps.c       | 3 ++-
+> >  fs/ceph/mds_client.c | 1 +
+> >  2 files changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> > index a5e93b185515..68b4c6dfe4db 100644
+> > --- a/fs/ceph/caps.c
+> > +++ b/fs/ceph/caps.c
+> > @@ -4236,7 +4236,8 @@ void ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
+> >  		ci = list_first_entry(&mdsc->cap_delay_list,
+> >  				      struct ceph_inode_info,
+> >  				      i_cap_delay_list);
+> > -		if ((ci->i_ceph_flags & CEPH_I_FLUSH) == 0 &&
+> > +		if (!mdsc->stopping &&
+> > +		    (ci->i_ceph_flags & CEPH_I_FLUSH) == 0 &&
+> >  		    time_before(jiffies, ci->i_hold_caps_max))
+> >  			break;
+> >  		list_del_init(&ci->i_cap_delay_list);
+> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > index e5af591d3bd4..916af5497829 100644
+> > --- a/fs/ceph/mds_client.c
+> > +++ b/fs/ceph/mds_client.c
+> > @@ -4691,6 +4691,7 @@ void ceph_mdsc_pre_umount(struct ceph_mds_client *mdsc)
+> >  
+> >  	lock_unlock_sessions(mdsc);
+> >  	ceph_flush_dirty_caps(mdsc);
+> > +	ceph_check_delayed_caps(mdsc);
+> >  	wait_requests(mdsc);
+> >  
+> >  	/*
+> 
+> I'm going to self-NAK this patch for now. Initially this looked good in
+> testing, but I think it's just papering over the real problem, which is
+> that ceph_async_iput can queue a job to a workqueue after the point
+> where we've flushed that workqueue on umount.
 
-diff --git a/Documentation/filesystems/ceph.rst b/Documentation/filesystems/ceph.rst
-index 7d2ef4e27273..0e4ccefb7aea 100644
---- a/Documentation/filesystems/ceph.rst
-+++ b/Documentation/filesystems/ceph.rst
-@@ -82,7 +82,7 @@ Mount Syntax
- 
- The basic mount syntax is::
- 
-- # mount -t ceph monip[:port][,monip2[:port]...]:/[subdir] mnt
-+ # mount -t ceph user@fs_name=/[subdir] mnt -o mon_host=monip1[:port][/monip2[:port]]
- 
- You only need to specify a single monitor, as the client will get the
- full list when it connects.  (However, if the monitor you specify
-@@ -90,16 +90,26 @@ happens to be down, the mount won't succeed.)  The port can be left
- off if the monitor is using the default.  So if the monitor is at
- 1.2.3.4::
- 
-- # mount -t ceph 1.2.3.4:/ /mnt/ceph
-+ # mount -t ceph cephuser@cephfs=/ /mnt/ceph -o mon_host=1.2.3.4
- 
- is sufficient.  If /sbin/mount.ceph is installed, a hostname can be
--used instead of an IP address.
-+used instead of an IP address. Multiple monitor addresses can be
-+passed by separating each address with a slash (`/`)::
- 
-+  # mount -t ceph cephuser@cephfs=/ /mnt/ceph -o mon_host=192.168.1.100/192.168.1.101
- 
-+When using the mount helper, monitor address can be read from ceph
-+configuration file if available.
- 
- Mount Options
- =============
- 
-+  mon_host=ip_address[:port][/ip_address[:port]]
-+	Monitor address to the cluster
-+
-+  fsid=cluster-id
-+	FSID of the cluster
-+
-   ip=A.B.C.D[:N]
- 	Specify the IP and/or port the client should bind to locally.
- 	There is normally not much reason to do this.  If the IP is not
--- 
-2.27.0
+Ah, yeah.  I think I saw this a few times with generic/014 (and I believe
+we chatted about it on irc).  I've been on and off trying to figure out
+the way to fix it but it's really tricky.
 
+Cheers,
+--
+Luís
+
+
+> I think the right approach is to look at how to ensure that calling iput
+> doesn't end up taking these coarse-grained locks so we don't need to
+> queue it in so many codepaths.
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
