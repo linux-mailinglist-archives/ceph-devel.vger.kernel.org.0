@@ -2,68 +2,93 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C69F939C8F1
-	for <lists+ceph-devel@lfdr.de>; Sat,  5 Jun 2021 16:03:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C26CC39C9B2
+	for <lists+ceph-devel@lfdr.de>; Sat,  5 Jun 2021 18:00:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229978AbhFEOEv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 5 Jun 2021 10:04:51 -0400
-Received: from verein.lst.de ([213.95.11.211]:40749 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229930AbhFEOEu (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Sat, 5 Jun 2021 10:04:50 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 8575C6736F; Sat,  5 Jun 2021 16:02:57 +0200 (CEST)
-Date:   Sat, 5 Jun 2021 16:02:57 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>, jgross@suse.com,
-        Jens Axboe <axboe@kernel.dk>,
-        Justin Sanders <justin@coraid.com>,
-        Denis Efremov <efremov@linux.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Tim Waugh <tim@cyberelk.net>,
-        Geoff Levand <geoff@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Maxim Levitsky <maximlevitsky@gmail.com>,
-        Alex Dubov <oakad@yahoo.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        dm-devel@redhat.com, linux-block@vger.kernel.org,
-        nbd@other.debian.org, linuxppc-dev@lists.ozlabs.org,
-        ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
-Subject: Re: simplify gendisk and request_queue allocation for blk-mq based
- drivers
-Message-ID: <20210605140257.GA13166@lst.de>
-References: <20210602065345.355274-1-hch@lst.de> <YLpNqiw0LMkYWUyN@0xbeefdead.lan>
+        id S229957AbhFEQCV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 5 Jun 2021 12:02:21 -0400
+Received: from mail-vs1-f41.google.com ([209.85.217.41]:44684 "EHLO
+        mail-vs1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229933AbhFEQCV (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 5 Jun 2021 12:02:21 -0400
+Received: by mail-vs1-f41.google.com with SMTP id h14so123714vsh.11
+        for <ceph-devel@vger.kernel.org>; Sat, 05 Jun 2021 09:00:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=vGrx0gIWo5bbMv4mNoXHs0DjOOH7rbgVIa3NXu8u1zs=;
+        b=kzrG8maxax3n1kLqLn8GWQmBn9aCPDooDY8tDpCsp0xIg9aN2PHE8Udf1d+oFgpR1e
+         lK8EfPodqqaFPqPqjUrZ7ogvM+9cWB2veWpbmKja2AG9cm4XhwShSseC9uX//1N++qzj
+         VQ8acC6XXA3cC6Jl7FBsrhxyQ+jMlEc0pVqITYOtqNl2UuzECxiuIqJZNgWmdGveb6AG
+         rV1fYQr7AdpviPKz4Uo7EuKhtkyascvOtEWUMxQZjOBsJckOzojo4ZLX3FImHixwg1uU
+         wrq52zl6yNIBmpgSpWVQnz8qBs7zud/0EaiFOgZ76in6XvAVeBOYWoENy/jGD8KiThEe
+         SbCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=vGrx0gIWo5bbMv4mNoXHs0DjOOH7rbgVIa3NXu8u1zs=;
+        b=pxzzimYl9VX+3pXcM6NcCtqVkozq7gMm68Me3XsxFnRKi/XcRH6gv+N5/GFtO3p/tZ
+         nHhNydTZ3u2vxBORtscQWTxK0tdzkfVFaLEnTH+45pPqGe6TtyElKnHtDucejSawO87o
+         +lcebETuGOaNVFP6A0RPZM9+eNsSzbObEXGk4GB/udYF//EfRh/Zc8R2cGqRJLSzJJ00
+         aot/CKTiXC3d9Gw+5QAq9O8CN8+o4zQxXLWCA5jJut9PtLs7x1iLvbtW78gC7e3/5SWf
+         LIgOB/KyCIaQmo6TlZTxgV552iuH0dihVbdiZwwz6BKzhrh58W9a1SswptwxG55h7zeQ
+         sw1g==
+X-Gm-Message-State: AOAM532HZQ4V/5lMoitLFktsGfa83TgPM59eaVU+/539IPZGmI/k9zOq
+        16nDra3aH2bRlI6xkNIWcl4RnuyhlmsbM3w/H1g=
+X-Google-Smtp-Source: ABdhPJwRImapVCMnXlTuekID5E4Y7vxvSvyl2eckcXn9ovQyH2sZv2jPGJ6jfasHr5ZdI3arpiRdHFkJDz6ciGo8Tsk=
+X-Received: by 2002:a67:2d49:: with SMTP id t70mr825625vst.14.1622908772595;
+ Sat, 05 Jun 2021 08:59:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YLpNqiw0LMkYWUyN@0xbeefdead.lan>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Received: by 2002:a05:6102:3229:0:0:0:0 with HTTP; Sat, 5 Jun 2021 08:59:31
+ -0700 (PDT)
+Reply-To: Uba-cfs@hotmail.com
+From:   United Bank <abdulwaheed20001@gmail.com>
+Date:   Sat, 5 Jun 2021 08:59:31 -0700
+Message-ID: <CADtE_PA+s69O=sciYhvkcqRgy0SHtYbr8Mcryy_1wvfXo84n6Q@mail.gmail.com>
+Subject: Bank of Holland CREDIT Transaction report among all Scam Victims
+ which your name is included in our file.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Jun 04, 2021 at 11:58:34AM -0400, Konrad Rzeszutek Wilk wrote:
-> On Wed, Jun 02, 2021 at 09:53:15AM +0300, Christoph Hellwig wrote:
-> > Hi all,
-> 
-> Hi!
-> 
-> You wouldn't have a nice git repo to pull so one can test it easily?
+Bank of Holland CREDIT Transaction Notification
+Bank of Holland 12 S Main St,
+Holland NY 14080, United States
+Text me :: .. +15853919391
 
-git://git.infradead.org/users/hch/block.git alloc_disk-part2
+Bank of Holland CREDIT Transaction Notification
+
+This Message is from the Head Office of Bank of Holland 12 S Main St,
+Holland, NY 14080 United States, And am contacting you about your
+funds of $10.7 Million Us Dollars deposited to this Bank by the United
+Bank For Africa Plc to transferred the funds to you as Your
+compensation for Scam Victim because your name and your phone number
+was listed among the Victims that was scammed years ago by West Africa
+Country and now you are to be compensated with the sum of $10.7
+Million Us Dollars, Therefore you have to reconfirm your information
+to me such as follows::
+
+Your Full Name:
+Your Home Address:
+Your Tell Number:
+Occupation:
+
+
+Don't Forget To Reply This Email Only: Uba-cfs@hotmail.com
+
+And after reconfirming your personal information to me you should then
+let me know the best way that you wish to have your funds of $10.7
+Million Us Dollars to you either the funds will be transferred in your
+bank account or the funds will be converted to an ATM MASTER CARD and
+it will be delivered to your home address or the funds will be
+delivered to you in Cash.
+
+If You receive this message in spam, kindly know that it is a network problem.
+
+Best regards:
+Mr. Raymond Max
+Bank of Holland, 12 S Main St, Holland,NY 14080, United States
+URGENTLY REPLY THIS Email Only: Uba-cfs@hotmail.com
