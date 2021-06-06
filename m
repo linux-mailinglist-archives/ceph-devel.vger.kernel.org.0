@@ -2,93 +2,84 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C26CC39C9B2
-	for <lists+ceph-devel@lfdr.de>; Sat,  5 Jun 2021 18:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B1F839CFE8
+	for <lists+ceph-devel@lfdr.de>; Sun,  6 Jun 2021 17:59:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229957AbhFEQCV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 5 Jun 2021 12:02:21 -0400
-Received: from mail-vs1-f41.google.com ([209.85.217.41]:44684 "EHLO
-        mail-vs1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229933AbhFEQCV (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 5 Jun 2021 12:02:21 -0400
-Received: by mail-vs1-f41.google.com with SMTP id h14so123714vsh.11
-        for <ceph-devel@vger.kernel.org>; Sat, 05 Jun 2021 09:00:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=vGrx0gIWo5bbMv4mNoXHs0DjOOH7rbgVIa3NXu8u1zs=;
-        b=kzrG8maxax3n1kLqLn8GWQmBn9aCPDooDY8tDpCsp0xIg9aN2PHE8Udf1d+oFgpR1e
-         lK8EfPodqqaFPqPqjUrZ7ogvM+9cWB2veWpbmKja2AG9cm4XhwShSseC9uX//1N++qzj
-         VQ8acC6XXA3cC6Jl7FBsrhxyQ+jMlEc0pVqITYOtqNl2UuzECxiuIqJZNgWmdGveb6AG
-         rV1fYQr7AdpviPKz4Uo7EuKhtkyascvOtEWUMxQZjOBsJckOzojo4ZLX3FImHixwg1uU
-         wrq52zl6yNIBmpgSpWVQnz8qBs7zud/0EaiFOgZ76in6XvAVeBOYWoENy/jGD8KiThEe
-         SbCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=vGrx0gIWo5bbMv4mNoXHs0DjOOH7rbgVIa3NXu8u1zs=;
-        b=pxzzimYl9VX+3pXcM6NcCtqVkozq7gMm68Me3XsxFnRKi/XcRH6gv+N5/GFtO3p/tZ
-         nHhNydTZ3u2vxBORtscQWTxK0tdzkfVFaLEnTH+45pPqGe6TtyElKnHtDucejSawO87o
-         +lcebETuGOaNVFP6A0RPZM9+eNsSzbObEXGk4GB/udYF//EfRh/Zc8R2cGqRJLSzJJ00
-         aot/CKTiXC3d9Gw+5QAq9O8CN8+o4zQxXLWCA5jJut9PtLs7x1iLvbtW78gC7e3/5SWf
-         LIgOB/KyCIaQmo6TlZTxgV552iuH0dihVbdiZwwz6BKzhrh58W9a1SswptwxG55h7zeQ
-         sw1g==
-X-Gm-Message-State: AOAM532HZQ4V/5lMoitLFktsGfa83TgPM59eaVU+/539IPZGmI/k9zOq
-        16nDra3aH2bRlI6xkNIWcl4RnuyhlmsbM3w/H1g=
-X-Google-Smtp-Source: ABdhPJwRImapVCMnXlTuekID5E4Y7vxvSvyl2eckcXn9ovQyH2sZv2jPGJ6jfasHr5ZdI3arpiRdHFkJDz6ciGo8Tsk=
-X-Received: by 2002:a67:2d49:: with SMTP id t70mr825625vst.14.1622908772595;
- Sat, 05 Jun 2021 08:59:32 -0700 (PDT)
+        id S230173AbhFFQA5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 6 Jun 2021 12:00:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41230 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230090AbhFFQA4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 6 Jun 2021 12:00:56 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0975C061766;
+        Sun,  6 Jun 2021 08:59:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+        :In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=xdRwc0+fblxjQWSVfAPrq01sy/g65/LWQdwS7diPzUY=; b=RvNcIfOg5he7n2s7JHDwQwMsUb
+        CcsUaraj9QikvzUVMg5uaZVxCkfUMNQpaQoSlSwpFt8En2sRCM3NnRZMB+TpNhFzfHmMKG/4QmVWD
+        gCRylCpd2RxMohedFycN/JmPwi64URVSbmxExLKam6OQFwHVi2N5sD9jwXDe8EtAAA/oB8PR9GaaH
+        81bj3Hi0GApRdsWIMvWsT4imii1ALjOAkwG/eKwvQ5JhVh4A9McAwOX5gB0KW+xEHm5Q+zGPNdNaj
+        3+RxDUZtyJrK0//PQYuM0gsnGyORNLu/D139Iz76bmVhQgjZJrrEjMdarouhAZYzFh+UMlCC+cVvz
+        GBTLTYTQ==;
+Received: from [2602:306:c5a2:a380:d04c:9a1:1990:7d22]
+        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lpvAk-0044Sh-0J; Sun, 06 Jun 2021 15:58:53 +0000
+Subject: Re: [PATCH 10/30] ps3disk: use blk_mq_alloc_disk
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     Justin Sanders <justin@coraid.com>,
+        Denis Efremov <efremov@linux.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Tim Waugh <tim@cyberelk.net>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Maxim Levitsky <maximlevitsky@gmail.com>,
+        Alex Dubov <oakad@yahoo.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        dm-devel@redhat.com, linux-block@vger.kernel.org,
+        nbd@other.debian.org, linuxppc-dev@lists.ozlabs.org,
+        ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
+References: <20210602065345.355274-1-hch@lst.de>
+ <20210602065345.355274-11-hch@lst.de>
+From:   Geoff Levand <geoff@infradead.org>
+Message-ID: <c9d63809-a7cc-8907-6065-f14add05a5dc@infradead.org>
+Date:   Sun, 6 Jun 2021 08:58:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Received: by 2002:a05:6102:3229:0:0:0:0 with HTTP; Sat, 5 Jun 2021 08:59:31
- -0700 (PDT)
-Reply-To: Uba-cfs@hotmail.com
-From:   United Bank <abdulwaheed20001@gmail.com>
-Date:   Sat, 5 Jun 2021 08:59:31 -0700
-Message-ID: <CADtE_PA+s69O=sciYhvkcqRgy0SHtYbr8Mcryy_1wvfXo84n6Q@mail.gmail.com>
-Subject: Bank of Holland CREDIT Transaction report among all Scam Victims
- which your name is included in our file.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210602065345.355274-11-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Bank of Holland CREDIT Transaction Notification
-Bank of Holland 12 S Main St,
-Holland NY 14080, United States
-Text me :: .. +15853919391
+Hi Christoph,
 
-Bank of Holland CREDIT Transaction Notification
+On 6/1/21 11:53 PM, Christoph Hellwig wrote:
+> Use the blk_mq_alloc_disk API to simplify the gendisk and request_queue
+> allocation.
+> 
+>  drivers/block/ps3disk.c | 36 ++++++++++++++----------------------
+>  1 file changed, 14 insertions(+), 22 deletions(-)
 
-This Message is from the Head Office of Bank of Holland 12 S Main St,
-Holland, NY 14080 United States, And am contacting you about your
-funds of $10.7 Million Us Dollars deposited to this Bank by the United
-Bank For Africa Plc to transferred the funds to you as Your
-compensation for Scam Victim because your name and your phone number
-was listed among the Victims that was scammed years ago by West Africa
-Country and now you are to be compensated with the sum of $10.7
-Million Us Dollars, Therefore you have to reconfirm your information
-to me such as follows::
+I tested your alloc_disk-part2 branch on PS3, and it seemed to be working OK.
 
-Your Full Name:
-Your Home Address:
-Your Tell Number:
-Occupation:
-
-
-Don't Forget To Reply This Email Only: Uba-cfs@hotmail.com
-
-And after reconfirming your personal information to me you should then
-let me know the best way that you wish to have your funds of $10.7
-Million Us Dollars to you either the funds will be transferred in your
-bank account or the funds will be converted to an ATM MASTER CARD and
-it will be delivered to your home address or the funds will be
-delivered to you in Cash.
-
-If You receive this message in spam, kindly know that it is a network problem.
-
-Best regards:
-Mr. Raymond Max
-Bank of Holland, 12 S Main St, Holland,NY 14080, United States
-URGENTLY REPLY THIS Email Only: Uba-cfs@hotmail.com
+Tested-by: Geoff Levand <geoff@infradead.org>
