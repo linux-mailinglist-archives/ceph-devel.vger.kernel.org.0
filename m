@@ -2,114 +2,113 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BA8DC3A2985
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Jun 2021 12:40:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 698993A2A7F
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Jun 2021 13:41:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbhFJKmr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 10 Jun 2021 06:42:47 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:55992 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229770AbhFJKmq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Jun 2021 06:42:46 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id BB0721FD47;
-        Thu, 10 Jun 2021 10:40:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1623321648; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=e69p7cSpTPxrgycR/WxxaL+1l2Iy0njG9LV0PDer+c4=;
-        b=WNzicnn9I9Uzi3rhrzU3g34rvVnvDxp/dzgOfJ8QelNeJaO+n3iduUNFK/9KFkm8z8EeQW
-        NL1SjEN/b720E7re5xPsC8EubYb6b5KZXIu9/vLgcdL89PUhpyLXDk4QFY4xIwUI5aT9rc
-        RHr+TtYt2pnBErVijdh7TG9nIRAFQQs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1623321648;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=e69p7cSpTPxrgycR/WxxaL+1l2Iy0njG9LV0PDer+c4=;
-        b=ldzR16nIFLY7YSLUeT9j/700yV/caPCby06yFrv/SQbZy/V+JI6iP9FH6mfkFJSIwBuRfv
-        KhEDZH21lxejVFDA==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id 24988A3B8B;
-        Thu, 10 Jun 2021 10:40:48 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id E025A1F2CAB; Thu, 10 Jun 2021 12:40:47 +0200 (CEST)
-Date:   Thu, 10 Jun 2021 12:40:47 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>, Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH 01/14] mm: Fix comments mentioning i_mutex
-Message-ID: <20210610104047.GA23539@quack2.suse.cz>
-References: <20210607144631.8717-1-jack@suse.cz>
- <20210607145236.31852-1-jack@suse.cz>
- <YMHWIcbnLPW5AfiC@T590>
+        id S230215AbhFJLnu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 10 Jun 2021 07:43:50 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:3832 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229895AbhFJLnt (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Jun 2021 07:43:49 -0400
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4G124p1VmtzWtC7;
+        Thu, 10 Jun 2021 19:36:58 +0800 (CST)
+Received: from dggpeml500020.china.huawei.com (7.185.36.88) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 10 Jun 2021 19:41:51 +0800
+Received: from huawei.com (10.175.127.227) by dggpeml500020.china.huawei.com
+ (7.185.36.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Thu, 10 Jun
+ 2021 19:41:51 +0800
+From:   Baokun Li <libaokun1@huawei.com>
+To:     <idryomov@gmail.com>, <jlayton@kernel.org>, <davem@davemloft.net>,
+        <kuba@kernel.org>, <ceph-devel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <weiyongjun1@huawei.com>, <yuehaibing@huawei.com>,
+        <yangjihong1@huawei.com>, <yukuai3@huawei.com>,
+        <libaokun1@huawei.com>
+Subject: [PATCH -next] libceph: fix doc warnings in cls_lock_client.c
+Date:   Thu, 10 Jun 2021 19:50:58 +0800
+Message-ID: <20210610115058.3779341-1-libaokun1@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YMHWIcbnLPW5AfiC@T590>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpeml500020.china.huawei.com (7.185.36.88)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu 10-06-21 17:06:41, Ming Lei wrote:
-> On Mon, Jun 07, 2021 at 04:52:11PM +0200, Jan Kara wrote:
-> > inode->i_mutex has been replaced with inode->i_rwsem long ago. Fix
-> > comments still mentioning i_mutex.
-> > 
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > Acked-by: Hugh Dickins <hughd@google.com>
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> > ---
-> 
-> ...
-> 
-> > diff --git a/mm/rmap.c b/mm/rmap.c
-> > index 693a610e181d..a35cbbbded0d 100644
-> > --- a/mm/rmap.c
-> > +++ b/mm/rmap.c
-> > @@ -20,9 +20,9 @@
-> >  /*
-> >   * Lock ordering in mm:
-> >   *
-> > - * inode->i_mutex	(while writing or truncating, not reading or faulting)
-> > + * inode->i_rwsem	(while writing or truncating, not reading or faulting)
-> >   *   mm->mmap_lock
-> > - *     page->flags PG_locked (lock_page)   * (see huegtlbfs below)
-> > + *     page->flags PG_locked (lock_page)   * (see hugetlbfs below)
-> >   *       hugetlbfs_i_mmap_rwsem_key (in huge_pmd_share)
-> >   *         mapping->i_mmap_rwsem
-> >   *           hugetlb_fault_mutex (hugetlbfs specific page fault mutex)
-> > @@ -41,7 +41,7 @@
-> >   *                             in arch-dependent flush_dcache_mmap_lock,
-> >   *                             within bdi.wb->list_lock in __sync_single_inode)
-> >   *
-> > - * anon_vma->rwsem,mapping->i_mutex      (memory_failure, collect_procs_anon)
-> > + * anon_vma->rwsem,mapping->i_mmap_rwsem   (memory_failure, collect_procs_anon)
-> 
-> This one looks a typo.
+Add description to fixes the following W=1 kernel build warning(s):
 
-Actually it isn't a typo. Memory failure path doesn't touch inode->i_rwsem
-at all. It uses mapping->i_mmap_rwsem in collect_procs_file(). So perhaps
-the functions listed there should be updated to (collect_procs_anon(),
-collect_procs_file()) but the lock name change is IMO correct.
+ net/ceph/cls_lock_client.c:28: warning: Function parameter or
+  member 'osdc' not described in 'ceph_cls_lock'
+ net/ceph/cls_lock_client.c:28: warning: Function parameter or
+  member 'oid' not described in 'ceph_cls_lock'
+ net/ceph/cls_lock_client.c:28: warning: Function parameter or
+  member 'oloc' not described in 'ceph_cls_lock'
 
-								Honza
+ net/ceph/cls_lock_client.c:93: warning: Function parameter or
+  member 'osdc' not described in 'ceph_cls_unlock'
+ net/ceph/cls_lock_client.c:93: warning: Function parameter or
+  member 'oid' not described in 'ceph_cls_unlock'
+ net/ceph/cls_lock_client.c:93: warning: Function parameter or
+  member 'oloc' not described in 'ceph_cls_unlock'
+
+ net/ceph/cls_lock_client.c:143: warning: Function parameter or
+  member 'osdc' not described in 'ceph_cls_break_lock'
+ net/ceph/cls_lock_client.c:143: warning: Function parameter or
+  member 'oid' not described in 'ceph_cls_break_lock'
+ net/ceph/cls_lock_client.c:143: warning: Function parameter or
+  member 'oloc' not described in 'ceph_cls_break_lock'
+
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+---
+ net/ceph/cls_lock_client.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/net/ceph/cls_lock_client.c b/net/ceph/cls_lock_client.c
+index 17447c19d937..82b7f3e3862f 100644
+--- a/net/ceph/cls_lock_client.c
++++ b/net/ceph/cls_lock_client.c
+@@ -10,7 +10,9 @@
+ 
+ /**
+  * ceph_cls_lock - grab rados lock for object
+- * @oid, @oloc: object to lock
++ * @osdc: working on this ceph osd client
++ * @oid: object to lock
++ * @oloc: object to lock
+  * @lock_name: the name of the lock
+  * @type: lock type (CEPH_CLS_LOCK_EXCLUSIVE or CEPH_CLS_LOCK_SHARED)
+  * @cookie: user-defined identifier for this instance of the lock
+@@ -82,7 +84,9 @@ EXPORT_SYMBOL(ceph_cls_lock);
+ 
+ /**
+  * ceph_cls_unlock - release rados lock for object
+- * @oid, @oloc: object to lock
++ * @osdc: working on this ceph osd client
++ * @oid: object to lock
++ * @oloc: object to lock
+  * @lock_name: the name of the lock
+  * @cookie: user-defined identifier for this instance of the lock
+  */
+@@ -130,7 +134,9 @@ EXPORT_SYMBOL(ceph_cls_unlock);
+ 
+ /**
+  * ceph_cls_break_lock - release rados lock for object for specified client
+- * @oid, @oloc: object to lock
++ * @osdc: working on this ceph osd client
++ * @oid: object to lock
++ * @oloc: object to lock
+  * @lock_name: the name of the lock
+  * @cookie: user-defined identifier for this instance of the lock
+  * @locker: current lock owner
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.31.1
+
