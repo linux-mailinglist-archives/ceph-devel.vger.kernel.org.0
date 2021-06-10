@@ -2,104 +2,85 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 70AA63A27C1
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Jun 2021 11:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21E943A28E8
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Jun 2021 12:02:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230242AbhFJJJC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 10 Jun 2021 05:09:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:52961 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230184AbhFJJJB (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 10 Jun 2021 05:09:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623316024;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=361/Mv7Fre9yzH+UkaH8Am6n4w1iJ449u+nGkGfSsgU=;
-        b=ERBgHfqneTUTF/izPs8m4bWArhZ/KsiUfWNCMTkhqaaS7Bm8BUQfFRZR1NCBBOWo2gLm6w
-        oJYrnnamOcm9JZsYXh0kiFRJ4KknRdYmv3A4Z4GsShDN//rGMbX/nL6sb1abG4gT1H0Wb/
-        BgDnq9YJc/OieuX+eC2FQWK+gcPgBHw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-581-5j4c0fCIN22TQ8P_CUs7aw-1; Thu, 10 Jun 2021 05:07:03 -0400
-X-MC-Unique: 5j4c0fCIN22TQ8P_CUs7aw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BFD06185060A;
-        Thu, 10 Jun 2021 09:06:59 +0000 (UTC)
-Received: from T590 (ovpn-13-145.pek2.redhat.com [10.72.13.145])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0092660917;
-        Thu, 10 Jun 2021 09:06:46 +0000 (UTC)
-Date:   Thu, 10 Jun 2021 17:06:41 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>, Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH 01/14] mm: Fix comments mentioning i_mutex
-Message-ID: <YMHWIcbnLPW5AfiC@T590>
-References: <20210607144631.8717-1-jack@suse.cz>
- <20210607145236.31852-1-jack@suse.cz>
+        id S229993AbhFJKD5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 10 Jun 2021 06:03:57 -0400
+Received: from m12-12.163.com ([220.181.12.12]:42655 "EHLO m12-12.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229770AbhFJKDz (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 10 Jun 2021 06:03:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=CJ49G
+        oS0jQHH9sB8vn0lkk7XGybqbG3lEnEVcpP8Yw8=; b=OGg9aZekkcCrBqk6MWl8D
+        hzSjRTI9P8q/l5qQ2thndk8bScD+vH3qYsWs/I/1g8Ac1WlX5GFlepjpCXY5UN8V
+        a0LKbTT2DSIzbsEEm6O9cLp0TFgsju9vm8zEi6cEOKKO1PW2sbVBOB8DBFjyfkKx
+        Xcb19xq6glUwiv3OhEWisA=
+Received: from COOL-20201210PM.ccdomain.com (unknown [218.94.48.178])
+        by smtp8 (Coremail) with SMTP id DMCowADn4Mwa38FgOeJYJA--.53893S2;
+        Thu, 10 Jun 2021 17:45:05 +0800 (CST)
+From:   zuoqilin1@163.com
+To:     idryomov@gmail.com, jlayton@kernel.org, davem@davemloft.net,
+        kuba@kernel.org
+Cc:     ceph-devel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zuoqilin <zuoqilin@yulong.com>
+Subject: [PATCH] net/ceph: Remove unnecessary variables
+Date:   Thu, 10 Jun 2021 17:45:05 +0800
+Message-Id: <20210610094505.1341-1-zuoqilin1@163.com>
+X-Mailer: git-send-email 2.28.0.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210607145236.31852-1-jack@suse.cz>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: DMCowADn4Mwa38FgOeJYJA--.53893S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtF4UAw4UtFWktFykWF45KFg_yoWDCFb_C3
+        yIvF1rWrWUWa40vw47Arn3ArZI9w4UAFySvr17KFWfZ3ZxKrn8Gr1rWr9xAFy7uFyIywnr
+        ur1Du3y7Jr47ujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1hL07UUUUU==
+X-Originating-IP: [218.94.48.178]
+X-CM-SenderInfo: 52xr1xpolqiqqrwthudrp/xtbBRQCtiVPAMW43QAABsb
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Jun 07, 2021 at 04:52:11PM +0200, Jan Kara wrote:
-> inode->i_mutex has been replaced with inode->i_rwsem long ago. Fix
-> comments still mentioning i_mutex.
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Hugh Dickins <hughd@google.com>
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
+From: zuoqilin <zuoqilin@yulong.com>
 
-...
+There is no necessary to define variable assignment,
+just return directly to simplify the steps.
 
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 693a610e181d..a35cbbbded0d 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -20,9 +20,9 @@
->  /*
->   * Lock ordering in mm:
->   *
-> - * inode->i_mutex	(while writing or truncating, not reading or faulting)
-> + * inode->i_rwsem	(while writing or truncating, not reading or faulting)
->   *   mm->mmap_lock
-> - *     page->flags PG_locked (lock_page)   * (see huegtlbfs below)
-> + *     page->flags PG_locked (lock_page)   * (see hugetlbfs below)
->   *       hugetlbfs_i_mmap_rwsem_key (in huge_pmd_share)
->   *         mapping->i_mmap_rwsem
->   *           hugetlb_fault_mutex (hugetlbfs specific page fault mutex)
-> @@ -41,7 +41,7 @@
->   *                             in arch-dependent flush_dcache_mmap_lock,
->   *                             within bdi.wb->list_lock in __sync_single_inode)
->   *
-> - * anon_vma->rwsem,mapping->i_mutex      (memory_failure, collect_procs_anon)
-> + * anon_vma->rwsem,mapping->i_mmap_rwsem   (memory_failure, collect_procs_anon)
+Signed-off-by: zuoqilin <zuoqilin@yulong.com>
+---
+ net/ceph/auth.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-This one looks a typo.
-
+diff --git a/net/ceph/auth.c b/net/ceph/auth.c
+index de407e8..b824a48 100644
+--- a/net/ceph/auth.c
++++ b/net/ceph/auth.c
+@@ -58,12 +58,10 @@ struct ceph_auth_client *ceph_auth_init(const char *name,
+ 					const int *con_modes)
+ {
+ 	struct ceph_auth_client *ac;
+-	int ret;
+ 
+-	ret = -ENOMEM;
+ 	ac = kzalloc(sizeof(*ac), GFP_NOFS);
+ 	if (!ac)
+-		goto out;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	mutex_init(&ac->mutex);
+ 	ac->negotiating = true;
+@@ -78,9 +76,6 @@ struct ceph_auth_client *ceph_auth_init(const char *name,
+ 	dout("%s name '%s' preferred_mode %d fallback_mode %d\n", __func__,
+ 	     ac->name, ac->preferred_mode, ac->fallback_mode);
+ 	return ac;
+-
+-out:
+-	return ERR_PTR(ret);
+ }
+ 
+ void ceph_auth_destroy(struct ceph_auth_client *ac)
 -- 
-Ming
+1.9.1
+
 
