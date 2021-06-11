@@ -2,84 +2,80 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 794A73A4837
-	for <lists+ceph-devel@lfdr.de>; Fri, 11 Jun 2021 19:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74C843A49AD
+	for <lists+ceph-devel@lfdr.de>; Fri, 11 Jun 2021 21:59:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229969AbhFKR7W (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 11 Jun 2021 13:59:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44244 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbhFKR7W (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 11 Jun 2021 13:59:22 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E98CFC061574
-        for <ceph-devel@vger.kernel.org>; Fri, 11 Jun 2021 10:57:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=0LTf2IBkERT6izmxLAnZBQfhT9dMuwZ0+CGqKcpqwKA=; b=qBJZhXbZDMuSkco/9EzrISWIJR
-        ckpjfR5KSoBigK41ud5kIEcINdhsy4sRNA9Qd/vt3FqNbSUGYvTRfTIJvSsJqKkNZxD+Af3Q4WLWw
-        nnKMTK1YB7+GOflaAVAps7RoP01YdiOzKqq9QzkTqj3jd/G+gU1o35kOP/OcpoHjcC+IP/cgo588v
-        YzIDzgh7iR57Bd7UdcScIg730y9yWWGGbeti6esRnf4uzijcI73U1u8qUf60HzwuqEH7n9yFBGxNS
-        TOkhPk+ADMd8wmUxRD8tzpIL7sWA9XaC49x6Um9Nxeodv2fzsOW5fwjCOZQKWM69PTt3OFbld1ora
-        u7LFYbaw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lrlOY-002zx8-Nm; Fri, 11 Jun 2021 17:56:51 +0000
-Date:   Fri, 11 Jun 2021 18:56:38 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Andrew W Elble <aweits@rit.edu>,
-        ceph-devel@vger.kernel.org, pfmeec@rit.edu,
-        linux-cachefs@redhat.com
-Subject: Re: [PATCH 5/5] ceph: fold ceph_update_writeable_page into
- ceph_write_begin
-Message-ID: <YMOj1rjCOb4fQo5Y@casper.infradead.org>
-References: <YMN/PfW2t8e5M58m@casper.infradead.org>
- <a24c3c070c9fc3529a51f00f9ccc3d0abdd0b821.camel@kernel.org>
- <20200916173854.330265-1-jlayton@kernel.org>
- <20200916173854.330265-6-jlayton@kernel.org>
- <7817f98d3b2daafe113bf8290cc8c7adbb86fe99.camel@kernel.org>
- <m2h7i45vzl.fsf@discipline.rit.edu>
- <66264.1623424309@warthog.procyon.org.uk>
- <68477.1623425725@warthog.procyon.org.uk>
+        id S229622AbhFKUBE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 11 Jun 2021 16:01:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56540 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229517AbhFKUBE (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 11 Jun 2021 16:01:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 588DC60E0C;
+        Fri, 11 Jun 2021 19:59:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623441546;
+        bh=zGLh6jjFNwduHrvlKfYX7nEfbowtDvQIo4yr7fHtgfM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=sU3elu28L0bjmBGcO7+SCnRLj6EPjqXtrLVKseGDVl0A/yO7ATrR9/oZ4hP97elQp
+         f+biToqPmuysamBkyCkFosg9WjwCRM4U1GCc4PeG3YgumKNtQx5dpCYgLpdVz1t8ec
+         XlTxTac9LVPf8kLnlCjF4r4ww8fNp50aFEOhq0wRSiP/hP7wOq+YoCw3h+2G8PH453
+         OtczX6SZrBzpnKWXNJmbKvfpgxcGv1HgpgTxA4ZC1smQ3lXrJyKmEdbIM+KhsknRVw
+         HofwM36cndfw/qmFBqGqwYu/A9FmLWTzAAsAU6o5U9tuW5Bz337IDEZtDc2sqgYvTd
+         01TzmIgLUQkew==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     linux-cachefs@redhat.com, pfmeec@rit.edu, willy@infradead.org,
+        dhowells@redhat.com, idryomov@gmail.com, stable@vger.kernel.org,
+        Andrew W Elble <aweits@rit.edu>
+Subject: [PATCH] ceph: fix write_begin optimization when write is beyond EOF
+Date:   Fri, 11 Jun 2021 15:59:04 -0400
+Message-Id: <20210611195904.160416-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68477.1623425725@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Jun 11, 2021 at 04:35:25PM +0100, David Howells wrote:
-> Matthew Wilcox <willy@infradead.org> wrote:
-> 
-> > Yes.  I do that kind of thing in iomap.  What you're doing there looks
-> > a bit like offset_in_folio(), but I don't understand the problem with
-> > just checking pos against i_size directly.
-> 
-> pos can be in the middle of a page.  If i_size is at, say, the same point in
-> the middle of that page and the page isn't currently in the cache, then we'll
-> just clear the entire page and not read the bottom part of it (ie. the bit
-> prior to the EOF).
+It's not sufficient to skip reading when the pos is beyond the EOF.
+There may be data at the head of the page that we need to fill in
+before the write. Only elide the read if the pos is beyond the last page
+in the file.
 
-The comment says that's expected, though.  I think the comment is wrong;
-consider the case where the page size is 4kB, file is 5kB long and
-we do a 1kB write at offset=6kB.  The existing CEPH code (prior to
-netfs) will zero out 4-6KB and 7-8kB, which is wrong.
+Cc: <stable@vger.kernel.org> # v5.10 .. v5.12
+Fixes: 1cc1699070bd ("ceph: fold ceph_update_writeable_page into ceph_write_begin")
+Reported-by: Andrew W Elble <aweits@rit.edu>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/addr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Anyway, looking at netfs_write_begin(), it's wrong too, in a bunch of
-ways.  You don't need to zero out the part of the page you're going to
-copy into.  And the condition is overly complicated which makes it
-hard to know what's going on.  Setting aside the is_cache_enabled part,
-I think you want:
+Note to stable maintainers: This is needed in v5.10.z - v5.12.z. In
+v5.13, we've moved to using the new netfs_read_helper code so this isn't
+necessary there.
 
-	if (offset == 0 && len >= thp_size(page))
-		goto have_page_no_wait;
-	if (page_offset(page) >= size) {
-		zero_user_segments(page, 0, offset,
-				   offset + len, thp_size(page));
-		goto have_page_no_wait;
-	}
-	... read the interesting chunks of page ...
+I also now have a simple testcase for this that I'll submit to xfstests
+early next week.
+
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 26e66436f005..e636fb8275e1 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1353,11 +1353,11 @@ static int ceph_write_begin(struct file *file, struct address_space *mapping,
+ 		/*
+ 		 * In some cases we don't need to read at all:
+ 		 * - full page write
+-		 * - write that lies completely beyond EOF
++		 * - write that lies in a page that is completely beyond EOF
+ 		 * - write that covers the the page from start to EOF or beyond it
+ 		 */
+ 		if ((pos_in_page == 0 && len == PAGE_SIZE) ||
+-		    (pos >= i_size_read(inode)) ||
++		    (index > (i_size_read(inode) / PAGE_SIZE)) ||
+ 		    (pos_in_page == 0 && (pos + len) >= i_size_read(inode))) {
+ 			zero_user_segments(page, 0, pos_in_page,
+ 					   pos_in_page + len, PAGE_SIZE);
+-- 
+2.31.1
 
