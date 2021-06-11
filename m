@@ -2,51 +2,67 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD3BF3A3C52
-	for <lists+ceph-devel@lfdr.de>; Fri, 11 Jun 2021 08:53:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7055B3A43F9
+	for <lists+ceph-devel@lfdr.de>; Fri, 11 Jun 2021 16:21:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231287AbhFKGzk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 11 Jun 2021 02:55:40 -0400
-Received: from verein.lst.de ([213.95.11.211]:35264 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229777AbhFKGzj (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 11 Jun 2021 02:55:39 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 0D2A168AFE; Fri, 11 Jun 2021 08:53:39 +0200 (CEST)
-Date:   Fri, 11 Jun 2021 08:53:38 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Geoff Levand <geoff@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        ceph-devel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        linux-arch@vger.kernel.org
-Subject: Re: [PATCH 09/16] ps3disk: use memcpy_{from,to}_bvec
-Message-ID: <20210611065338.GA31210@lst.de>
-References: <20210608160603.1535935-1-hch@lst.de> <20210608160603.1535935-10-hch@lst.de> <20210609014822.GT3697498@iweiny-DESK2.sc.intel.com>
+        id S231759AbhFKOXS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 11 Jun 2021 10:23:18 -0400
+Received: from discipline.rit.edu ([129.21.6.207]:15486 "HELO
+        discipline.rit.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S231180AbhFKOXR (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 11 Jun 2021 10:23:17 -0400
+X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Fri, 11 Jun 2021 10:23:17 EDT
+Received: (qmail 9929 invoked by uid 501); 11 Jun 2021 14:14:38 -0000
+From:   Andrew W Elble <aweits@rit.edu>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, pfmeec@rit.edu
+Subject: Re: [PATCH 5/5] ceph: fold ceph_update_writeable_page into ceph_write_begin
+References: <20200916173854.330265-1-jlayton@kernel.org>
+        <20200916173854.330265-6-jlayton@kernel.org>
+        <7817f98d3b2daafe113bf8290cc8c7adbb86fe99.camel@kernel.org>
+Date:   Fri, 11 Jun 2021 10:14:38 -0400
+In-Reply-To: <7817f98d3b2daafe113bf8290cc8c7adbb86fe99.camel@kernel.org> (Jeff
+        Layton's message of "Wed, 16 Sep 2020 15:16:19 -0400")
+Message-ID: <m2h7i45vzl.fsf@discipline.rit.edu>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (berkeley-unix)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210609014822.GT3697498@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jun 08, 2021 at 06:48:22PM -0700, Ira Weiny wrote:
-> I'm still not 100% sure that these flushes are needed but the are not no-ops on
-> every arch.  Would it be best to preserve them after the memcpy_to/from_bvec()?
-> 
-> Same thing in patch 11 and 14.
 
-To me it seems kunmap_local should basically always call the equivalent
-of flush_kernel_dcache_page.  parisc does this through
-kunmap_flush_on_unmap, but none of the other architectures with VIVT
-caches or other coherency issues does.
+We're seeing file corruption while running 5.10, bisected to 1cc1699070bd:
 
-Does anyone have a history or other insights here?
+>> +static int ceph_write_begin(struct file *file, struct address_space *mapping,
+>> +			    loff_t pos, unsigned len, unsigned flags,
+>> +			    struct page **pagep, void **fsdata)
+
+<snip>
+
+>> +		/*
+>> +		 * In some cases we don't need to read at all:
+>> +		 * - full page write
+>> +		 * - write that lies completely beyond EOF
+>> +		 * - write that covers the the page from start to EOF or beyond it
+>> +		 */
+>> +		if ((pos_in_page == 0 && len == PAGE_SIZE) ||
+>> +		    (pos >= i_size_read(inode)) ||
+
+Shouldn't this be '((pos & PAGE_MASK) >= i_size_read(inode)) ||' ?
+
+Seems like fs/netfs/read_helper.c currently has the same issue?
+
+>> +		    (pos_in_page == 0 && (pos + len) >= i_size_read(inode))) {
+>> +			zero_user_segments(page, 0, pos_in_page,
+>> +					   pos_in_page + len, PAGE_SIZE);
+>> +			break;
+>> +		}
+
+-- 
+Andrew W. Elble
+Infrastructure Engineer
+Information and Technology Services
+Rochester Institute of Technology
+tel: (585)-475-2411 | aweits@rit.edu
+PGP: BFAD 8461 4CCF DC95 DA2C B0EB 965B 082E 863E C912
