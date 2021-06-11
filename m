@@ -2,76 +2,108 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A69B3A45CF
-	for <lists+ceph-devel@lfdr.de>; Fri, 11 Jun 2021 17:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DF593A4823
+	for <lists+ceph-devel@lfdr.de>; Fri, 11 Jun 2021 19:55:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230298AbhFKQA7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 11 Jun 2021 12:00:59 -0400
-Received: from discipline.rit.edu ([129.21.6.207]:32429 "HELO
-        discipline.rit.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S229935AbhFKQA7 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 11 Jun 2021 12:00:59 -0400
-Received: (qmail 46356 invoked by uid 501); 11 Jun 2021 15:59:00 -0000
-From:   Andrew W Elble <aweits@rit.edu>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        pfmeec@rit.edu, linux-cachefs@redhat.com
-Subject: Re: [PATCH 5/5] ceph: fold ceph_update_writeable_page into ceph_write_begin
-References: <YMN/PfW2t8e5M58m@casper.infradead.org>
-        <a24c3c070c9fc3529a51f00f9ccc3d0abdd0b821.camel@kernel.org>
-        <20200916173854.330265-1-jlayton@kernel.org>
-        <20200916173854.330265-6-jlayton@kernel.org>
-        <7817f98d3b2daafe113bf8290cc8c7adbb86fe99.camel@kernel.org>
-        <m2h7i45vzl.fsf@discipline.rit.edu>
-        <66264.1623424309@warthog.procyon.org.uk>
-        <68477.1623425725@warthog.procyon.org.uk>
-Date:   Fri, 11 Jun 2021 11:59:00 -0400
-In-Reply-To: <68477.1623425725@warthog.procyon.org.uk> (David Howells's
-        message of "Fri, 11 Jun 2021 16:35:25 +0100")
-Message-ID: <m2a6nw5r5n.fsf@discipline.rit.edu>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (berkeley-unix)
+        id S230355AbhFKR5K (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 11 Jun 2021 13:57:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43748 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230184AbhFKR5J (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 11 Jun 2021 13:57:09 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AC3DC0613A2
+        for <ceph-devel@vger.kernel.org>; Fri, 11 Jun 2021 10:55:11 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id g4so6135985pjk.0
+        for <ceph-devel@vger.kernel.org>; Fri, 11 Jun 2021 10:55:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FiCqgV8kjys+3xuqiyCwJtcf1Wj53LQ5ch2SqyLytgY=;
+        b=SD6IZ6g/PQccK+DJj47BNWbjBcu51Hoxg75XX8W0NsqQBg0ABF+hnuOUc/UFnpm8im
+         oNVX3uykvZuuO5Y8ikPd3y+WsvzDFhqLGs4yWHQFnc8RzIYufWCIOXqn3AApkjH4Q2eg
+         xQaVfA+BsocsKdfD6NHf1Rfl2fMGnqoxNR3DdZP0eXDcQ/vjXZbD88x8d17C79EnssGA
+         MaA3XiWo9+AFyaOrA1MdfYif3vi99movLQHJefeIj5rihTG1TSe1D2qp8+37dXVxo+jK
+         juNRW5LpLgfCfOOUxjWz+2zHY1TAZQqD4FUpZkK9KYz4TPA/VoJTiiPZCp8OQM00GFzi
+         g76Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FiCqgV8kjys+3xuqiyCwJtcf1Wj53LQ5ch2SqyLytgY=;
+        b=HbEmD/50aspzyY1vvtF3LRgxl5lEKqHM+GddbfzdUEq+xjlu9rjSh+j91BfGTaRN7w
+         9e6ZQGYjjp22OGWA73KhiNqdC9JS2qFmnnBAOvbfRAW4tahiADb2ZphMpMAvE2khGYF/
+         9zwYwb11Mte1LEzTDR0DCpA/XWesihT74HKZSEs+uvtGKgxiZ9uf8OM0TwacVa5dxAQw
+         BbX/uZ79fCyKDKoxod46ixLt+/IV9SMxUCFk9EFtIPFu2SKC7sfZnbJnt0yv0zSihJzQ
+         mcsxtFE7JEXvFusfL+4mnrNXAienYJb3p76wB+3+mWlEhMyvczNXRXoVPSSZJwea8xNZ
+         Rrsw==
+X-Gm-Message-State: AOAM533MpIKuww/uIn8w/EAemYQCiMiqKh/ab0erZGKjrHG9SeNNYckH
+        XwHjhrgbaCUEf1fF8Czo0kWFvQ==
+X-Google-Smtp-Source: ABdhPJxMGSnZ9kJAsN6p7k0McSncvftPUJip5kVUuOxTF3REguFHe02Lgz4i9/8fJhn7M2nOfjp+aA==
+X-Received: by 2002:a17:90a:9481:: with SMTP id s1mr5656508pjo.48.1623434110978;
+        Fri, 11 Jun 2021 10:55:10 -0700 (PDT)
+Received: from [192.168.4.41] (cpe-72-132-29-68.dc.res.rr.com. [72.132.29.68])
+        by smtp.gmail.com with ESMTPSA id x3sm6384950pgx.8.2021.06.11.10.55.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Jun 2021 10:55:10 -0700 (PDT)
+Subject: Re: simplify gendisk and request_queue allocation for blk-mq based
+ drivers
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Justin Sanders <justin@coraid.com>,
+        Denis Efremov <efremov@linux.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Tim Waugh <tim@cyberelk.net>,
+        Geoff Levand <geoff@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Jack Wang <jinpu.wang@ionos.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Maxim Levitsky <maximlevitsky@gmail.com>,
+        Alex Dubov <oakad@yahoo.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        dm-devel@redhat.com, linux-block@vger.kernel.org,
+        nbd@other.debian.org, linuxppc-dev@lists.ozlabs.org,
+        ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
+References: <20210602065345.355274-1-hch@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <fa9590e3-20eb-5215-d2f7-6489169c232c@kernel.dk>
+Date:   Fri, 11 Jun 2021 11:55:09 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20210602065345.355274-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> writes:
+On 6/2/21 12:53 AM, Christoph Hellwig wrote:
+> Hi all,
+> 
+> this series is the scond part of cleaning up lifetimes and allocation of
+> the gendisk and request_queue structure.  It adds a new interface to
+> allocate the disk and queue together for blk based drivers, and uses that
+> in all drivers that do not have any caveats in their gendisk and
+> request_queue lifetime rules.
 
-> Matthew Wilcox <willy@infradead.org> wrote:
->
->> Yes.  I do that kind of thing in iomap.  What you're doing there looks
->> a bit like offset_in_folio(), but I don't understand the problem with
->> just checking pos against i_size directly.
->
-> pos can be in the middle of a page.  If i_size is at, say, the same point in
-> the middle of that page and the page isn't currently in the cache, then we'll
-> just clear the entire page and not read the bottom part of it (ie. the bit
-> prior to the EOF).
->
-> It's odd, though, that xfstests doesn't catch this.
-
-Some more details/information:
-
-1.) The test is a really simple piece of code that essentially writes
-    a incrementing number to a file on 'node a', while a 'tail -f'
-    is run and exited multiple times on 'node b'. We haven't had much
-    luck in this causing the problem when done on a single node
-2.) ((pos & PAGE_MASK) >= i_size_read(inode)) ||' merely reflects the
-    logic that was in place prior to 1cc1699070bd. Patching
-    fs/ceph/addr.c with this does seem to eliminate the corruption.
-    (We'll test with the patch Jeff posted here shortly)
-3.) After finding all of this, I went upstream to look at fs/ceph/addr.c
-    and discovered the move to leveraging fs/netfs/read_helper.c - we've
-    only just compiled against git master and replicated the corruption
-    there.
-
+Applied, thanks.
 
 -- 
-Andrew W. Elble
-Infrastructure Engineer
-Information and Technology Services
-Rochester Institute of Technology
-tel: (585)-475-2411 | aweits@rit.edu
-PGP: BFAD 8461 4CCF DC95 DA2C B0EB 965B 082E 863E C912
+Jens Axboe
+
