@@ -2,139 +2,70 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50FA03A6CEC
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Jun 2021 19:17:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69EB73A7109
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Jun 2021 23:11:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234839AbhFNRT6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Jun 2021 13:19:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37218 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232994AbhFNRT5 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Jun 2021 13:19:57 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C6BCC061574;
-        Mon, 14 Jun 2021 10:17:54 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id s26so11284850ioe.9;
-        Mon, 14 Jun 2021 10:17:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YxPDELQZv5KQu91nvNkyWlai5VfpWwl2aTEBH7Wb1nc=;
-        b=XDOaJdAnxxwX4agHirquiySlTlcaoMZX64px5SotcIJSUajAYiiT1OKggH78t8C210
-         t0x9VuqpeLUmPJTZ4yt0aD/uemDAQTxAEGDhbSlGR7squXnzFmDhZUeT6WdyPtZk8n8y
-         mz3ewakUYJjsr2KnNUL3d0ioOPo0vI69edcxyyRf8fc654RnC51xN9EGlnvFOwRBu7On
-         xl/BuqD3/jVk9j+fEmFmL8Az47Ow/d4RGTGnq10zxYqXcp5g1ldj5qZrC4M2ssyEeUZ8
-         F2z5gRrwfLWjYn+TIefrWatNy4q7uSTJLfd4nomU9fmYABT+qet1weDZwnGdFT2BhwYP
-         ucBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YxPDELQZv5KQu91nvNkyWlai5VfpWwl2aTEBH7Wb1nc=;
-        b=Td2mBwsyj8DVw9vGYCR3PdhMT+jg+GvKa/FXZQQhILknmfrN0Jzqa0Sm+J6tPwIAjy
-         RMeetoDsGHLXDUzIxH5J7Qy45gNrW2ITpncYqK+mt2MxqgWJ0lwkCui3zgXLiE7e8QKv
-         0DDFzOHlFewKvZ3mvShNGlmwpGZvW3Xy70sAFBRT4bCug+EzQ0MIRpk26vGM6HNbP1F0
-         989hacwObxL5/dDmfFzdDXZhbP84evf8640t/IInF/ytLxpei43OsZOIW91VHRVLDV+1
-         5S1oMEUAeo0F6O7LhjXL/dt2gz4WwApjk6NVTbTH2tu3uJ/orJrlRKULCwEPLerQTWQO
-         NMzA==
-X-Gm-Message-State: AOAM531d4wQi+fe0QUcUJZOrbcTWUWaJMM9LobBfeCp6wpeXJVtpHt1u
-        2HXOSk6/NqSlGvWtsw77JgzOlxf/TXIvndedtOs=
-X-Google-Smtp-Source: ABdhPJy+yWiwE0T4hi6fct+9hbPY7t+9S9Yah7kKj7u+SKnI66SWvlSYDkK7wuVr8Vm/Dt3DFDgda6G5xeewQfye+2s=
-X-Received: by 2002:a6b:287:: with SMTP id 129mr15514482ioc.182.1623691073584;
- Mon, 14 Jun 2021 10:17:53 -0700 (PDT)
+        id S234749AbhFNVNg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Jun 2021 17:13:36 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32284 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234420AbhFNVNf (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 14 Jun 2021 17:13:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623705091;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0Mn8+GlgrQdOA/I1bTqxQYRGsb/yRw3f+Z55lqaAtNs=;
+        b=aI7rarQHEkwR3LlFDC/VfLKp3WR+jVEuN5XsfZFEaS5KQxbHDO54/9Tty+dObtRaHoiKA/
+        5wScdsCwqB618zZADH/gdhy8/IpDdz/fwWahEWZp1SQGD3VkuDR4wKVP7RMszPOs617TXi
+        nNtiXuqJwzPw3Rc6qZ8uYCilhfNTPqc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-33-3bfqkI24OYSv0GZSCObOOQ-1; Mon, 14 Jun 2021 17:11:30 -0400
+X-MC-Unique: 3bfqkI24OYSv0GZSCObOOQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C7B7C1084F42;
+        Mon, 14 Jun 2021 21:11:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8A5445D9CA;
+        Mon, 14 Jun 2021 21:11:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YMd5BqIKucO6rW4R@casper.infradead.org>
+References: <YMd5BqIKucO6rW4R@casper.infradead.org> <YMdpxbYafHnE0F8N@casper.infradead.org> <162367681795.460125.11729955608839747375.stgit@warthog.procyon.org.uk> <162367682522.460125.5652091227576721609.stgit@warthog.procyon.org.uk> <475131.1623685101@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, jlayton@kernel.org,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] afs: Fix afs_write_end() to handle short writes
 MIME-Version: 1.0
-References: <20210610115058.3779341-1-libaokun1@huawei.com>
-In-Reply-To: <20210610115058.3779341-1-libaokun1@huawei.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 14 Jun 2021 19:17:47 +0200
-Message-ID: <CAOi1vP8rH-Ehq+_4zS7upkqvrdSJjiZw_qCMNomii1vmJ9C=Cw@mail.gmail.com>
-Subject: Re: [PATCH -next] libceph: fix doc warnings in cls_lock_client.c
-To:     Baokun Li <libaokun1@huawei.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>, yangjihong1@huawei.com,
-        yukuai3@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <501526.1623705086.1@warthog.procyon.org.uk>
+Date:   Mon, 14 Jun 2021 22:11:26 +0100
+Message-ID: <501527.1623705086@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jun 10, 2021 at 1:41 PM Baokun Li <libaokun1@huawei.com> wrote:
->
-> Add description to fixes the following W=1 kernel build warning(s):
->
->  net/ceph/cls_lock_client.c:28: warning: Function parameter or
->   member 'osdc' not described in 'ceph_cls_lock'
->  net/ceph/cls_lock_client.c:28: warning: Function parameter or
->   member 'oid' not described in 'ceph_cls_lock'
->  net/ceph/cls_lock_client.c:28: warning: Function parameter or
->   member 'oloc' not described in 'ceph_cls_lock'
->
->  net/ceph/cls_lock_client.c:93: warning: Function parameter or
->   member 'osdc' not described in 'ceph_cls_unlock'
->  net/ceph/cls_lock_client.c:93: warning: Function parameter or
->   member 'oid' not described in 'ceph_cls_unlock'
->  net/ceph/cls_lock_client.c:93: warning: Function parameter or
->   member 'oloc' not described in 'ceph_cls_unlock'
->
->  net/ceph/cls_lock_client.c:143: warning: Function parameter or
->   member 'osdc' not described in 'ceph_cls_break_lock'
->  net/ceph/cls_lock_client.c:143: warning: Function parameter or
->   member 'oid' not described in 'ceph_cls_break_lock'
->  net/ceph/cls_lock_client.c:143: warning: Function parameter or
->   member 'oloc' not described in 'ceph_cls_break_lock'
->
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> ---
->  net/ceph/cls_lock_client.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/net/ceph/cls_lock_client.c b/net/ceph/cls_lock_client.c
-> index 17447c19d937..82b7f3e3862f 100644
-> --- a/net/ceph/cls_lock_client.c
-> +++ b/net/ceph/cls_lock_client.c
-> @@ -10,7 +10,9 @@
->
->  /**
->   * ceph_cls_lock - grab rados lock for object
-> - * @oid, @oloc: object to lock
-> + * @osdc: working on this ceph osd client
-> + * @oid: object to lock
-> + * @oloc: object to lock
->   * @lock_name: the name of the lock
->   * @type: lock type (CEPH_CLS_LOCK_EXCLUSIVE or CEPH_CLS_LOCK_SHARED)
->   * @cookie: user-defined identifier for this instance of the lock
-> @@ -82,7 +84,9 @@ EXPORT_SYMBOL(ceph_cls_lock);
->
->  /**
->   * ceph_cls_unlock - release rados lock for object
-> - * @oid, @oloc: object to lock
-> + * @osdc: working on this ceph osd client
-> + * @oid: object to lock
-> + * @oloc: object to lock
->   * @lock_name: the name of the lock
->   * @cookie: user-defined identifier for this instance of the lock
->   */
-> @@ -130,7 +134,9 @@ EXPORT_SYMBOL(ceph_cls_unlock);
->
->  /**
->   * ceph_cls_break_lock - release rados lock for object for specified client
-> - * @oid, @oloc: object to lock
-> + * @osdc: working on this ceph osd client
-> + * @oid: object to lock
-> + * @oloc: object to lock
->   * @lock_name: the name of the lock
->   * @cookie: user-defined identifier for this instance of the lock
->   * @locker: current lock owner
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Applied with a minor tweak.
+> > means you can't get there unless PageUptodate() is true by that point.
+> 
+> Isn't the point of an assertion to check that this is true?
 
-Thanks,
+The assertion was meant to check that that it was true given that the page was
+set uptodate somewhere else before this function was even called.  With this
+patch, however, it's now set in this function if it wasn't already right at
+the top - so the assertion should now be redundant.  I can put it back if you
+really insist.
 
-                Ilya
+David
+
