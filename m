@@ -2,106 +2,138 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F000E3A6CFC
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Jun 2021 19:18:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50FA03A6CEC
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Jun 2021 19:17:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235530AbhFNRUO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Jun 2021 13:20:14 -0400
-Received: from mail-il1-f171.google.com ([209.85.166.171]:38416 "EHLO
-        mail-il1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235509AbhFNRUM (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Jun 2021 13:20:12 -0400
-Received: by mail-il1-f171.google.com with SMTP id d1so12832983ils.5;
-        Mon, 14 Jun 2021 10:18:09 -0700 (PDT)
+        id S234839AbhFNRT6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Jun 2021 13:19:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37218 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232994AbhFNRT5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Jun 2021 13:19:57 -0400
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C6BCC061574;
+        Mon, 14 Jun 2021 10:17:54 -0700 (PDT)
+Received: by mail-io1-xd2b.google.com with SMTP id s26so11284850ioe.9;
+        Mon, 14 Jun 2021 10:17:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qQkiC2Boq1enDbw0Bq2sZY++jJ/micvga8E5sa5r6h8=;
-        b=oaHRSDkeNHn3y88GUfUSl+LoUEKIRn0UkitkMvrlsd0qga4MoiaA592YqccF4da9+R
-         QKW1b+YJSLQCJVdiYSQCpiWWYwf+WVMgl9iOhVL/cgl5wX4hncn7eyNFcYb3+2ZZdsou
-         QSP41fxW6jivabswvcq/rzmls56ys2MZ4CWfNdXRhZwqW2Od9Q30bHZpqwX1Oze65Ww3
-         FidiC8bJBtYrqPNETHTfwtkIMqgNv6LBF7Mo2ijyO+W1VT35nq2Oe6vb8/7Blr/3NeP7
-         bjKnTQh13taBxcswZg5RvHo8Att1FPHoonSYx4GoulUkj4GNUwDZ+EKmo62FY0NlAKGW
-         VhMg==
+        bh=YxPDELQZv5KQu91nvNkyWlai5VfpWwl2aTEBH7Wb1nc=;
+        b=XDOaJdAnxxwX4agHirquiySlTlcaoMZX64px5SotcIJSUajAYiiT1OKggH78t8C210
+         t0x9VuqpeLUmPJTZ4yt0aD/uemDAQTxAEGDhbSlGR7squXnzFmDhZUeT6WdyPtZk8n8y
+         mz3ewakUYJjsr2KnNUL3d0ioOPo0vI69edcxyyRf8fc654RnC51xN9EGlnvFOwRBu7On
+         xl/BuqD3/jVk9j+fEmFmL8Az47Ow/d4RGTGnq10zxYqXcp5g1ldj5qZrC4M2ssyEeUZ8
+         F2z5gRrwfLWjYn+TIefrWatNy4q7uSTJLfd4nomU9fmYABT+qet1weDZwnGdFT2BhwYP
+         ucBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qQkiC2Boq1enDbw0Bq2sZY++jJ/micvga8E5sa5r6h8=;
-        b=kClqWH+ENVbFTSHldYRG8lkQaGCdC0a1sgI2iHUOs68nZwZ2JWMLOYUUFb+e5n5w0K
-         KwyL70qa3Ex658lTcbXTzD+/acbgL/y0coem9JBkgTEnA5EoE2Ek/E79cmaYX+z+DpYr
-         WXYkb94udtqGxcpJKXClmbnhdHzJuMngcF1lrg0hEY68EvvJ6bgC0/RDrFdEKuqMqzOf
-         AuQfr1/mBnrxrcrEZS1zUYfUzjIdZGJReqerFMSIyksJ+JtnBICTUJWb8uRBKlCCanZu
-         WfqWVt+EH8L4HCAixTjMizYh9HLss5oX6QB4ifLbQmL1hUs1od5uPS2MJ3T8J24+h6XG
-         4rRQ==
-X-Gm-Message-State: AOAM5305FEEz/SedTyh9bhr6pugzaXoISbmD4u6gtaKMcCme9zx5F0Qb
-        BUnLeq9Qq8NBqhKjXhlxHDQirQHZomQmtN7zY34=
-X-Google-Smtp-Source: ABdhPJwnFA+kS2s8Pa5xN5D5dTnI6Fj1l6zO+N6DVsd7aS+/13vpCxr6vmcTpiFdlRMsnD1ubpNYc7CmKGkDRdqEZD8=
-X-Received: by 2002:a05:6e02:1a03:: with SMTP id s3mr14899111ild.220.1623691029568;
- Mon, 14 Jun 2021 10:17:09 -0700 (PDT)
+        bh=YxPDELQZv5KQu91nvNkyWlai5VfpWwl2aTEBH7Wb1nc=;
+        b=Td2mBwsyj8DVw9vGYCR3PdhMT+jg+GvKa/FXZQQhILknmfrN0Jzqa0Sm+J6tPwIAjy
+         RMeetoDsGHLXDUzIxH5J7Qy45gNrW2ITpncYqK+mt2MxqgWJ0lwkCui3zgXLiE7e8QKv
+         0DDFzOHlFewKvZ3mvShNGlmwpGZvW3Xy70sAFBRT4bCug+EzQ0MIRpk26vGM6HNbP1F0
+         989hacwObxL5/dDmfFzdDXZhbP84evf8640t/IInF/ytLxpei43OsZOIW91VHRVLDV+1
+         5S1oMEUAeo0F6O7LhjXL/dt2gz4WwApjk6NVTbTH2tu3uJ/orJrlRKULCwEPLerQTWQO
+         NMzA==
+X-Gm-Message-State: AOAM531d4wQi+fe0QUcUJZOrbcTWUWaJMM9LobBfeCp6wpeXJVtpHt1u
+        2HXOSk6/NqSlGvWtsw77JgzOlxf/TXIvndedtOs=
+X-Google-Smtp-Source: ABdhPJy+yWiwE0T4hi6fct+9hbPY7t+9S9Yah7kKj7u+SKnI66SWvlSYDkK7wuVr8Vm/Dt3DFDgda6G5xeewQfye+2s=
+X-Received: by 2002:a6b:287:: with SMTP id 129mr15514482ioc.182.1623691073584;
+ Mon, 14 Jun 2021 10:17:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210610094505.1341-1-zuoqilin1@163.com>
-In-Reply-To: <20210610094505.1341-1-zuoqilin1@163.com>
+References: <20210610115058.3779341-1-libaokun1@huawei.com>
+In-Reply-To: <20210610115058.3779341-1-libaokun1@huawei.com>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 14 Jun 2021 19:17:03 +0200
-Message-ID: <CAOi1vP89H+D_FDoFEjzqC1ff7ryjBhAYEwtH6NC8YhmXWpyQhQ@mail.gmail.com>
-Subject: Re: [PATCH] net/ceph: Remove unnecessary variables
-To:     zuoqilin1@163.com
+Date:   Mon, 14 Jun 2021 19:17:47 +0200
+Message-ID: <CAOi1vP8rH-Ehq+_4zS7upkqvrdSJjiZw_qCMNomii1vmJ9C=Cw@mail.gmail.com>
+Subject: Re: [PATCH -next] libceph: fix doc warnings in cls_lock_client.c
+To:     Baokun Li <libaokun1@huawei.com>
 Cc:     Jeff Layton <jlayton@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
         Ceph Development <ceph-devel@vger.kernel.org>,
         netdev <netdev@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        zuoqilin <zuoqilin@yulong.com>
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>, yangjihong1@huawei.com,
+        yukuai3@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jun 10, 2021 at 12:02 PM <zuoqilin1@163.com> wrote:
+On Thu, Jun 10, 2021 at 1:41 PM Baokun Li <libaokun1@huawei.com> wrote:
 >
-> From: zuoqilin <zuoqilin@yulong.com>
+> Add description to fixes the following W=1 kernel build warning(s):
 >
-> There is no necessary to define variable assignment,
-> just return directly to simplify the steps.
+>  net/ceph/cls_lock_client.c:28: warning: Function parameter or
+>   member 'osdc' not described in 'ceph_cls_lock'
+>  net/ceph/cls_lock_client.c:28: warning: Function parameter or
+>   member 'oid' not described in 'ceph_cls_lock'
+>  net/ceph/cls_lock_client.c:28: warning: Function parameter or
+>   member 'oloc' not described in 'ceph_cls_lock'
 >
-> Signed-off-by: zuoqilin <zuoqilin@yulong.com>
+>  net/ceph/cls_lock_client.c:93: warning: Function parameter or
+>   member 'osdc' not described in 'ceph_cls_unlock'
+>  net/ceph/cls_lock_client.c:93: warning: Function parameter or
+>   member 'oid' not described in 'ceph_cls_unlock'
+>  net/ceph/cls_lock_client.c:93: warning: Function parameter or
+>   member 'oloc' not described in 'ceph_cls_unlock'
+>
+>  net/ceph/cls_lock_client.c:143: warning: Function parameter or
+>   member 'osdc' not described in 'ceph_cls_break_lock'
+>  net/ceph/cls_lock_client.c:143: warning: Function parameter or
+>   member 'oid' not described in 'ceph_cls_break_lock'
+>  net/ceph/cls_lock_client.c:143: warning: Function parameter or
+>   member 'oloc' not described in 'ceph_cls_break_lock'
+>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 > ---
->  net/ceph/auth.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
+>  net/ceph/cls_lock_client.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 >
-> diff --git a/net/ceph/auth.c b/net/ceph/auth.c
-> index de407e8..b824a48 100644
-> --- a/net/ceph/auth.c
-> +++ b/net/ceph/auth.c
-> @@ -58,12 +58,10 @@ struct ceph_auth_client *ceph_auth_init(const char *name,
->                                         const int *con_modes)
->  {
->         struct ceph_auth_client *ac;
-> -       int ret;
+> diff --git a/net/ceph/cls_lock_client.c b/net/ceph/cls_lock_client.c
+> index 17447c19d937..82b7f3e3862f 100644
+> --- a/net/ceph/cls_lock_client.c
+> +++ b/net/ceph/cls_lock_client.c
+> @@ -10,7 +10,9 @@
 >
-> -       ret = -ENOMEM;
->         ac = kzalloc(sizeof(*ac), GFP_NOFS);
->         if (!ac)
-> -               goto out;
-> +               return ERR_PTR(-ENOMEM);
+>  /**
+>   * ceph_cls_lock - grab rados lock for object
+> - * @oid, @oloc: object to lock
+> + * @osdc: working on this ceph osd client
+> + * @oid: object to lock
+> + * @oloc: object to lock
+>   * @lock_name: the name of the lock
+>   * @type: lock type (CEPH_CLS_LOCK_EXCLUSIVE or CEPH_CLS_LOCK_SHARED)
+>   * @cookie: user-defined identifier for this instance of the lock
+> @@ -82,7 +84,9 @@ EXPORT_SYMBOL(ceph_cls_lock);
 >
->         mutex_init(&ac->mutex);
->         ac->negotiating = true;
-> @@ -78,9 +76,6 @@ struct ceph_auth_client *ceph_auth_init(const char *name,
->         dout("%s name '%s' preferred_mode %d fallback_mode %d\n", __func__,
->              ac->name, ac->preferred_mode, ac->fallback_mode);
->         return ac;
-> -
-> -out:
-> -       return ERR_PTR(ret);
->  }
+>  /**
+>   * ceph_cls_unlock - release rados lock for object
+> - * @oid, @oloc: object to lock
+> + * @osdc: working on this ceph osd client
+> + * @oid: object to lock
+> + * @oloc: object to lock
+>   * @lock_name: the name of the lock
+>   * @cookie: user-defined identifier for this instance of the lock
+>   */
+> @@ -130,7 +134,9 @@ EXPORT_SYMBOL(ceph_cls_unlock);
 >
->  void ceph_auth_destroy(struct ceph_auth_client *ac)
+>  /**
+>   * ceph_cls_break_lock - release rados lock for object for specified client
+> - * @oid, @oloc: object to lock
+> + * @osdc: working on this ceph osd client
+> + * @oid: object to lock
+> + * @oloc: object to lock
+>   * @lock_name: the name of the lock
+>   * @cookie: user-defined identifier for this instance of the lock
+>   * @locker: current lock owner
 
-Applied.
+Applied with a minor tweak.
 
 Thanks,
 
