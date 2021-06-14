@@ -2,80 +2,113 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DFD73A5FFD
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Jun 2021 12:24:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E03693A65C7
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Jun 2021 13:43:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232752AbhFNK0C (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Jun 2021 06:26:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:39266 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232819AbhFNK0B (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 14 Jun 2021 06:26:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623666238;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QNRJw6fpIHSzIkfmG4HVcWoOuXXwJCtOUgGXzJ7/bwU=;
-        b=eijPq+1yipN3WjjFuhRPMvuQi0iDTy25WNRdAjX/JmOStInCc+7udvu1cBtXf/74iX3Jsi
-        3St3oNWeYN9y/P/r1TRBN4sAlp1EXbyT9XEmrARrWEngd9Wz3QHWbe25t8VsKmmRBCgzp1
-        JqYA+Ob+Qep9p2Ou3FNXF3BrHl/yB4Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-16-jpaKcnQoP_2qD8T7aIKbbg-1; Mon, 14 Jun 2021 06:23:55 -0400
-X-MC-Unique: jpaKcnQoP_2qD8T7aIKbbg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 83912193411F;
-        Mon, 14 Jun 2021 10:23:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 87E295D9DD;
-        Mon, 14 Jun 2021 10:23:06 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210613233345.113565-1-jlayton@kernel.org>
-References: <20210613233345.113565-1-jlayton@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, idryomov@gmail.com,
-        willy@infradead.org, pfmeec@rit.edu, ceph-devel@vger.kernel.org,
+        id S236097AbhFNLmJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Jun 2021 07:42:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60504 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236562AbhFNLjQ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 14 Jun 2021 07:39:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1AD3061107;
+        Mon, 14 Jun 2021 11:35:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623670536;
+        bh=uH4DPbQdVAUSs6BrBqapJofWHc1yMDoS/5769c80zfI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=fOhurXPaewzNtiRsKZVZyGExZYVCjxdpxWm1mpkYwLkqsnYbcyN7zKuUinLLQbKu4
+         uctPKilelE4k6G1fzRpQ2pXTB42p4b3yUquIO/39tbgJJmcCoKHabnp7J83MxBuaE5
+         5hyYkpKDU+LisWMQrHqIJpDu2vbr+CgdQZGPTVWq8ZwWUqKutNrA9J4j2imA4ewsIn
+         jpSQT2cg3vhu1cbTu/N0O38Cagu515u2/kDNBeDUiOszf8fNQfmK94P7b7q8WXyZMw
+         qrIh3f7cjcBxKrH5rE9VlQraj/crozKv5c/t/qkmUFOnIjoFIEhSx4ti3cmo5PjXQD
+         3ni+PBfnpzXxQ==
+Message-ID: <4d1c9cf43d336b32dceabd2a28e9f68937c2e7a9.camel@kernel.org>
+Subject: Re: [PATCH] netfs: fix test for whether we can skip read when
+ writing beyond EOF
+From:   Jeff Layton <jlayton@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-cachefs@redhat.com, idryomov@gmail.com, willy@infradead.org,
+        pfmeec@rit.edu, ceph-devel@vger.kernel.org,
         Andrew W Elble <aweits@rit.edu>
-Subject: Re: [PATCH] netfs: fix test for whether we can skip read when writing beyond EOF
+Date:   Mon, 14 Jun 2021 07:35:35 -0400
+In-Reply-To: <338981.1623665093@warthog.procyon.org.uk>
+References: <20210613233345.113565-1-jlayton@kernel.org>
+         <338981.1623665093@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <340983.1623666185.1@warthog.procyon.org.uk>
-Date:   Mon, 14 Jun 2021 11:23:05 +0100
-Message-ID: <340984.1623666185@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> wrote:
+On Mon, 2021-06-14 at 11:04 +0100, David Howells wrote:
+> Jeff Layton <jlayton@kernel.org> wrote:
+> 
+> > +/**
+> > + * prep_noread_page - prep a page for writing without reading first
+> 
+> It's a static function, so I'm not sure it needs the kernel doc marker.
+> 
+> It also needs prefixing with "netfs_".
+> 
 
-> +	/* full page write */
-> +	if (offset == 0 && len >= thp_size(page))
-> +		goto zero_out;
+I added the comment since the logic here is somewhat complex. It didn't
+need to be a kerneldoc header, but I figured that didn't hurt anything.
 
-Why not just return?
+> > +	/* pos beyond last page in the file */
+> > +	if (index > ((i_size - 1) / thp_size(page)))
+> > +		goto zero_out;
+> 
+> thp_size() is not a constant, so this gets you a DIV instruction.
+> 
 
-David Howells <dhowells@redhat.com> wrote:
+Ugh, ok.
 
 > Why not:
 > 
 > 	if (page_offset(page) >= i_size)
+> 
 
-And if I switch to this, then:
+That doesn't handle THP's correctly. It's just a PAGE_SIZE shift.
 
-	/* Zero-length file */
-	if (i_size == 0)
-		goto zero_out;
+> or maybe:
+> 
+> 	if (pos - offset >= i_size)
+> 
 
-this is redundant.
+That might work.
 
-David
+> > +	zero_user_segments(page, 0, offset, offset + len, thp_size(page));
+> 
+> If you're going to leave a hole in the file, this will break afs, so this
+> patch needs to deal with that too (basically if copied < len, then the
+> remainder needs clearing, give or take len being trimmed to the end of the
+> page).  I can look at adding that.
+> 
+
+I think we have to contend with that in write_end. Basically if the copy
+is short, then we probably want to pretend it was a zero length copy and
+let generic_perform_write handle it as such. See commit b9de313cf05fe
+where Al fixed some sketchy error handling in ceph_write_end along those
+lines.
+
+> Matthew Wilcox <willy@infradead.org> wrote:
+> 
+> > > +	size_t offset = offset_in_page(pos);
+> > 
+> > offset_in_thp(page, pos);
+> 
+> I can make this change too.
+> 
+
+Thanks.
+
+> (btw, can offset_in_thp() have it's second arg renamed to 'pos', not just 'p'?
+>  'p' is normally used to indicate a pointer of some sort).
+> 
+
+-- 
+Jeff Layton <jlayton@kernel.org>
 
