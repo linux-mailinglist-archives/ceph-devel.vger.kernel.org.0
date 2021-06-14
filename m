@@ -2,74 +2,118 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EC863A6734
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Jun 2021 14:54:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD8753A67A3
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Jun 2021 15:20:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233403AbhFNM4s (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Jun 2021 08:56:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35144 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233218AbhFNM4r (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Jun 2021 08:56:47 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E9B0C061766
-        for <ceph-devel@vger.kernel.org>; Mon, 14 Jun 2021 05:54:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=YiH7i2CX6XKrcqWaZJeYKcShlu0hPOmt1QbvEnDRzVU=; b=Gj3qYEkR3p0pA2QAJ2yE8jmznZ
-        GIJQlVt46TJeeMV1BAWq5psQTiDSMtgijJ+pAclFdztSMmC4RT0X30s3cpbL2miCFB4cqEZJtk8Ya
-        sBIWUWRZN4A4choHtnMCgw0qiWnqHLypXiIhZHowBfw7+ZrFoXlCQME8Y36DCo8os3A5WcK3VE5cc
-        dHN6tcqc9/FEsnXk8enOmGPE/jJXypTRQhzmXSZ+VdtZk4oSdRhqcr1aRAFoySBj5A44PgXWXcvPw
-        UWT61ub47F2Z00ULMdIs3ybGWgACQ8saZfeHU4nJ/lwrveovBON731GmVScFUTFy37Ltx9jPgFAUi
-        JNzp2JvA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lsm6b-005Qyl-6c; Mon, 14 Jun 2021 12:54:20 +0000
-Date:   Mon, 14 Jun 2021 13:54:17 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, linux-cachefs@redhat.com,
-        idryomov@gmail.com, pfmeec@rit.edu, ceph-devel@vger.kernel.org,
-        Andrew W Elble <aweits@rit.edu>
-Subject: Re: [PATCH] netfs: fix test for whether we can skip read when
- writing beyond EOF
-Message-ID: <YMdReUyU60dkNWEb@casper.infradead.org>
-References: <20210613233345.113565-1-jlayton@kernel.org>
- <398005.1623673532@warthog.procyon.org.uk>
+        id S233796AbhFNNWb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Jun 2021 09:22:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25970 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233805AbhFNNWb (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 14 Jun 2021 09:22:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623676828;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=5xj7L/EwGhvToopXR0OONDmVKcDoSh/SbGg3r7noEik=;
+        b=GJInl8RNuvYv0+IGbuIujmh0dTID8KAnkIZK2M3c/TYKqqLmrZQ7Bq0GDxOA3GbAcdGp9G
+        +0KaLbFMAt6pLnvCmjT/4u/XlnD6D6eg51qyXyCklUp5UZwrqRA2Nw07bZtnJgA3LJHa9c
+        /wUVF7e4AHWs7urYA8WOQ9oYrI8Qd3g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-103-1A-oh0Z1P4qcVXxowJTRmg-1; Mon, 14 Jun 2021 09:20:24 -0400
+X-MC-Unique: 1A-oh0Z1P4qcVXxowJTRmg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0603C100CFB9;
+        Mon, 14 Jun 2021 13:20:20 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CA16D19C46;
+        Mon, 14 Jun 2021 13:20:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 1/3] afs: Handle len being extending over page end in
+ write_begin/write_end
+From:   David Howells <dhowells@redhat.com>
+To:     jlayton@kernel.org, willy@infradead.org
+Cc:     linux-afs@lists.infradead.org, dhowells@redhat.com,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 14 Jun 2021 14:20:17 +0100
+Message-ID: <162367681795.460125.11729955608839747375.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <398005.1623673532@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Jun 14, 2021 at 01:25:32PM +0100, David Howells wrote:
-> +	/* Full page write */
-> +	if (offset == 0 && len >= thp_size(page))
-> +		return true;
-> +
-> +	/* pos beyond last page in the file */
-> +	if (pos - offset >= i_size)
-> +		goto zero_out;
-> +
-> +	/* Write that covers from the start of the page  to EOF or beyond */
+With transparent huge pages, in the future, write_begin() and write_end()
+may be passed a length parameter that, in combination with the offset into
+the page, exceeds the length of that page.  This allows
+grab_cache_page_write_begin() to better choose the size of THP to allocate.
 
-spurious double space between page and to.
+Fix afs's functions to handle this by trimming the length as needed after
+the page has been allocated.
 
-> @@ -1090,13 +1119,8 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
->  	 * within the cache granule containing the EOF, in which case we need
->  	 * to preload the granule.
->  	 */
-> -	size = i_size_read(inode);
->  	if (!ops->is_cache_enabled(inode) &&
-> -	    ((pos_in_page == 0 && len == thp_size(page)) ||
-> -	     (pos >= size) ||
-> -	     (pos_in_page == 0 && (pos + len) >= size))) {
-> -		netfs_clear_thp(page);
-> -		SetPageUptodate(page);
-> +	    netfs_prep_noread_page(page, pos, len)) {
+Fixes: e1b1240c1ff5 ("netfs: Add write_begin helper")
+Reported-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-afs@lists.infradead.org
+---
 
-I don't like the name ... netfs_skip_page_read()?
+ fs/afs/write.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index a523bb86915d..f68274c39f47 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -25,7 +25,8 @@ int afs_set_page_dirty(struct page *page)
+ }
+ 
+ /*
+- * prepare to perform part of a write to a page
++ * Prepare to perform part of a write to a page.  Note that len may extend
++ * beyond the end of the page.
+  */
+ int afs_write_begin(struct file *file, struct address_space *mapping,
+ 		    loff_t pos, unsigned len, unsigned flags,
+@@ -52,7 +53,8 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
+ 		return ret;
+ 
+ 	index = page->index;
+-	from = pos - index * PAGE_SIZE;
++	from = offset_in_thp(page, pos);
++	len = min_t(size_t, len, thp_size(page) - from);
+ 	to = from + len;
+ 
+ try_again:
+@@ -103,7 +105,8 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
+ }
+ 
+ /*
+- * finalise part of a write to a page
++ * Finalise part of a write to a page.  Note that len may extend beyond the end
++ * of the page.
+  */
+ int afs_write_end(struct file *file, struct address_space *mapping,
+ 		  loff_t pos, unsigned len, unsigned copied,
+@@ -111,7 +114,7 @@ int afs_write_end(struct file *file, struct address_space *mapping,
+ {
+ 	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
+ 	unsigned long priv;
+-	unsigned int f, from = pos & (thp_size(page) - 1);
++	unsigned int f, from = offset_in_thp(page, pos);
+ 	unsigned int t, to = from + copied;
+ 	loff_t i_size, maybe_i_size;
+ 
+
 
