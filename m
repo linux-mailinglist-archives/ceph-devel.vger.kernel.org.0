@@ -2,70 +2,58 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FCF23A6602
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Jun 2021 13:49:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE7093A660D
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Jun 2021 13:52:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233861AbhFNLuv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Jun 2021 07:50:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:55477 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233212AbhFNLrp (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 14 Jun 2021 07:47:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623671142;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=6NA6ypYR/eYTI4PSfr11OgVNNF0XskP8mfgyTkHWkfM=;
-        b=MU7Z/hCZmyzO8K9cOhBNzEqVzO3KJ6qEuMe6WBWBBwRvfgzqvKMlhDC8M8mYHvKztGXdah
-        QVVz15K8HLoDvsQYvk2HaZfAG4cwZxsAo/VTyIfSpLlAtkPnMmmzO1J3fzsTyaeGqfswLV
-        KxdFoDrdEbdyzcndBKxXk6cf01zv/1M=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-525-QsV0dWywMcmdiDwYI6wGRw-1; Mon, 14 Jun 2021 07:45:41 -0400
-X-MC-Unique: QsV0dWywMcmdiDwYI6wGRw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C39728049D9;
-        Mon, 14 Jun 2021 11:45:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2D35C19C45;
-        Mon, 14 Jun 2021 11:45:35 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <4d1c9cf43d336b32dceabd2a28e9f68937c2e7a9.camel@kernel.org>
-References: <4d1c9cf43d336b32dceabd2a28e9f68937c2e7a9.camel@kernel.org> <20210613233345.113565-1-jlayton@kernel.org> <338981.1623665093@warthog.procyon.org.uk>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, idryomov@gmail.com,
-        willy@infradead.org, pfmeec@rit.edu, ceph-devel@vger.kernel.org,
+        id S233552AbhFNLys (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Jun 2021 07:54:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49100 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235688AbhFNLxl (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Jun 2021 07:53:41 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 482F9C061280
+        for <ceph-devel@vger.kernel.org>; Mon, 14 Jun 2021 04:51:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=BCXMhnSKxHMguYIR4i+AJzAjxh2uRN1YV70g9z2bDIs=; b=OvyjoUTHe5zNqbKbwbb7QEudGA
+        bK6Dy5z3guLG3QbFbdgYH4SKmNQELi2Gebn6Gc3by0TVhjajOS6MmbH17MBK/aJi9R0iisCU/UcQr
+        vdDdffEmk6f1pmvBKnR0/HTGEx9z2doDrtFz8EFqNfgKPXUz0cLyRBcMRcp9JbW1QfVb+k2c40IJH
+        9hZuOxXEwwlq2hCIlIUK0s4EUvXaqf3eKqWrlLjlDvFi3Opy5YwZIcwVIURrsqCNU/wGtz/VmIlZd
+        xk7n8P3EhW9DDlgPqH1nF3JMODkradfCCCT2MkK1TJ2MDg/XDQDWbU5IvjEUaMEaMDG+jd5YQSdF7
+        VuVBlrhA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lsl7R-005NWC-KO; Mon, 14 Jun 2021 11:51:10 +0000
+Date:   Mon, 14 Jun 2021 12:51:05 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, linux-cachefs@redhat.com,
+        idryomov@gmail.com, pfmeec@rit.edu, ceph-devel@vger.kernel.org,
         Andrew W Elble <aweits@rit.edu>
-Subject: Re: [PATCH] netfs: fix test for whether we can skip read when writing beyond EOF
+Subject: Re: [PATCH] netfs: fix test for whether we can skip read when
+ writing beyond EOF
+Message-ID: <YMdCqWtMVpwYKaj2@casper.infradead.org>
+References: <20210613233345.113565-1-jlayton@kernel.org>
+ <338981.1623665093@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <348580.1623671134.1@warthog.procyon.org.uk>
-Date:   Mon, 14 Jun 2021 12:45:34 +0100
-Message-ID: <348581.1623671134@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <338981.1623665093@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> wrote:
+On Mon, Jun 14, 2021 at 11:04:53AM +0100, David Howells wrote:
+> (btw, can offset_in_thp() have it's second arg renamed to 'pos', not just 'p'?
+>  'p' is normally used to indicate a pointer of some sort).
 
-> > Why not:
-> > 
-> > 	if (page_offset(page) >= i_size)
-> > 
-> 
-> That doesn't handle THP's correctly. It's just a PAGE_SIZE shift.
+the argument is sometimes a pointer.  for example:
 
-I asked Willy about that one and he said it will.  Now, granted, the code
-doesn't seem to do that, but possibly he has a patch for it?
+arch/arm64/kernel/mte.c:                offset = offset_in_page(addr);
+fs/jbd2/commit.c:               (void *)(addr + offset_in_page(bh->b_data)), bh->b_size);
 
-David
-
+yes, those are offset_in_page(), not offset_in_thp(), but i'll bet
+you a cadbury's creme egg that we find someone who needs to use
+offset_in_thp() (or offset_in_folio()) on a pointer within three years.
