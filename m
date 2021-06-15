@@ -2,70 +2,87 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69EB73A7109
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Jun 2021 23:11:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB3833A763C
+	for <lists+ceph-devel@lfdr.de>; Tue, 15 Jun 2021 07:04:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234749AbhFNVNg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Jun 2021 17:13:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32284 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234420AbhFNVNf (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 14 Jun 2021 17:13:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623705091;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0Mn8+GlgrQdOA/I1bTqxQYRGsb/yRw3f+Z55lqaAtNs=;
-        b=aI7rarQHEkwR3LlFDC/VfLKp3WR+jVEuN5XsfZFEaS5KQxbHDO54/9Tty+dObtRaHoiKA/
-        5wScdsCwqB618zZADH/gdhy8/IpDdz/fwWahEWZp1SQGD3VkuDR4wKVP7RMszPOs617TXi
-        nNtiXuqJwzPw3Rc6qZ8uYCilhfNTPqc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-33-3bfqkI24OYSv0GZSCObOOQ-1; Mon, 14 Jun 2021 17:11:30 -0400
-X-MC-Unique: 3bfqkI24OYSv0GZSCObOOQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C7B7C1084F42;
-        Mon, 14 Jun 2021 21:11:28 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8A5445D9CA;
-        Mon, 14 Jun 2021 21:11:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <YMd5BqIKucO6rW4R@casper.infradead.org>
-References: <YMd5BqIKucO6rW4R@casper.infradead.org> <YMdpxbYafHnE0F8N@casper.infradead.org> <162367681795.460125.11729955608839747375.stgit@warthog.procyon.org.uk> <162367682522.460125.5652091227576721609.stgit@warthog.procyon.org.uk> <475131.1623685101@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, jlayton@kernel.org,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] afs: Fix afs_write_end() to handle short writes
+        id S230181AbhFOFGX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 15 Jun 2021 01:06:23 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:50656 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229463AbhFOFGW (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 15 Jun 2021 01:06:22 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtp (Exim 4.92 #5 (Debian))
+        id 1lt1Ec-0006cw-4n; Tue, 15 Jun 2021 13:03:34 +0800
+Received: from herbert by gondobar with local (Exim 4.92)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1lt1E3-0001MR-0g; Tue, 15 Jun 2021 13:02:59 +0800
+Date:   Tue, 15 Jun 2021 13:02:59 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Ira Weiny <ira.weiny@intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Geoff Levand <geoff@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        ceph-devel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        linux-arch@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
+        linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+Subject: Re: [PATCH 09/16] ps3disk: use memcpy_{from,to}_bvec
+Message-ID: <20210615050258.GA5208@gondor.apana.org.au>
+References: <20210608160603.1535935-1-hch@lst.de>
+ <20210608160603.1535935-10-hch@lst.de>
+ <20210609014822.GT3697498@iweiny-DESK2.sc.intel.com>
+ <20210611065338.GA31210@lst.de>
+ <20210612040743.GG1600546@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <501526.1623705086.1@warthog.procyon.org.uk>
-Date:   Mon, 14 Jun 2021 22:11:26 +0100
-Message-ID: <501527.1623705086@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210612040743.GG1600546@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
-
-> > means you can't get there unless PageUptodate() is true by that point.
+On Fri, Jun 11, 2021 at 09:07:43PM -0700, Ira Weiny wrote:
+>
+> More recently this was added:
 > 
-> Isn't the point of an assertion to check that this is true?
+> 7e34e0bbc644 crypto: omap-crypto - fix userspace copied buffer access
+> 
+> I'm CC'ing Tero and Herbert to see why they added the SLAB check.
 
-The assertion was meant to check that that it was true given that the page was
-set uptodate somewhere else before this function was even called.  With this
-patch, however, it's now set in this function if it wasn't already right at
-the top - so the assertion should now be redundant.  I can put it back if you
-really insist.
+Probably because the generic Crypto API has the same check.  This
+all goes back to
 
-David
+commit 4f3e797ad07d52d34983354a77b365dfcd48c1b4
+Author: Herbert Xu <herbert@gondor.apana.org.au>
+Date:   Mon Feb 9 14:22:14 2009 +1100
 
+    crypto: scatterwalk - Avoid flush_dcache_page on slab pages
+
+    It's illegal to call flush_dcache_page on slab pages on a number
+    of architectures.  So this patch avoids doing so if PageSlab is
+    true.
+
+    In future we can move the flush_dcache_page call to those page
+    cache users that actually need it.
+
+    Reported-by: David S. Miller <davem@davemloft.net>
+    Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+
+But I can't find any emails discussing this so let me ask Dave
+directly and see if he can tell us what the issue was or might
+have been.
+
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
