@@ -2,101 +2,129 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12A913A8370
+	by mail.lfdr.de (Postfix) with ESMTP id A09343A8371
 	for <lists+ceph-devel@lfdr.de>; Tue, 15 Jun 2021 16:57:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230431AbhFOO7g (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 15 Jun 2021 10:59:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58696 "EHLO mail.kernel.org"
+        id S231272AbhFOO7i (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 15 Jun 2021 10:59:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
         id S230298AbhFOO7g (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
         Tue, 15 Jun 2021 10:59:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4CA8B6145D;
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 04CB761584;
         Tue, 15 Jun 2021 14:57:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623769051;
-        bh=DQ+4ABM2n0lVZJj0FAvRnKc/ypecTPX3Bq++k3Q6Tw0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=O9g/8EnYj/sdkbp1ySQwBLedcScwJ7A6v+YMdUF0cudJUtjmIjHZSqAxttDIOM6xx
-         BGiIrUvz9Jv46usDYU1DRT4o9pvN5Vor1ZEsevFie4iH3xdzj+cyfcuwFdZKBCzr24
-         EGyAxw7ofHStLuarQH4lQoNTnjOoaDM1p/ByfDSfqCwltv3j7VsWk4vfy2jkoUowkg
-         +mmeNYHKYhoiLDx2tG748u7sVBPWKCrCwx3kEWrLQ6kOqSNfm1OK1/hO6aALs+n0M3
-         tc673nPgs3yW2Ra6GN28l9YE0WDiYlOJg1EvdqPNSbSLWoUTvjIbLClzshZpqIqY9E
-         nTAxFd4MEjETw==
+        s=k20201202; t=1623769052;
+        bh=WeGkGoFuxB/K90Y0r5W0csZbjj8cH51PuDrA08JVSY0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=pYPTSUNnwcHBvRH2Q4EiPM73uqvqLRhh6+jSlgxHvXT2rUzeiwuZ+xNn0Q8dyCPUG
+         0dFqPd9E2CJdrxU2erqVDopZ/gjaiXPkmSi+4hwP8oGmurp895VPHfrSryzHJqO36V
+         KrLmyzRmt/4MVQBryXJ9FYM2UT6Xrd3QqkxvcF3CuVtGwdhdlDXFnlNcY6+6V7Fxt9
+         pgg8aVQsHKA757Llwd3XcXpSb6NxauTOcC8nsRyuxoLopiTiONEa2rKPaHlPru6K/s
+         SjR2bD0ZuFFDhaIkJnm9JNXob0uegpnLUlOsFcIxvwFSQHCsh1iqmlpHHNNuG5VZrb
+         tiDH+WRbySXAw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     pdonnell@redhat.com, ukernel@gmail.com, idryomov@gmail.com,
         xiubli@redhat.com
-Subject: [RFC PATCH 0/6] ceph: remove excess mutex locking from cap/snap flushing codepaths
-Date:   Tue, 15 Jun 2021 10:57:24 -0400
-Message-Id: <20210615145730.21952-1-jlayton@kernel.org>
+Subject: [RFC PATCH 1/6] ceph: allow ceph_put_mds_session to take NULL or ERR_PTR
+Date:   Tue, 15 Jun 2021 10:57:25 -0400
+Message-Id: <20210615145730.21952-2-jlayton@kernel.org>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210615145730.21952-1-jlayton@kernel.org>
+References: <20210615145730.21952-1-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-tldr: I'm hoping we can greatly simplify the locking in the cap sending
-codepath, which should clean some some ugliness around iput and
-unmounting.
+...to simplify some error paths.
 
-For a long time, ceph has required the s_mutex and (to a lesser degree)
-the snap_rwsem in the cap sending codepath. At least, it's been
-documentd this way, but what these locks are intended to protect has
-never been made clear.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/dir.c        | 3 +--
+ fs/ceph/inode.c      | 6 ++----
+ fs/ceph/mds_client.c | 6 ++++--
+ fs/ceph/metric.c     | 3 +--
+ 4 files changed, 8 insertions(+), 10 deletions(-)
 
-I posted a query about requiring the s_mutex during cap/snap messages a
-week or so ago, and have spent the last week going over that code. My
-conclusion is that it's not actually necessary and we can just not
-require it in many codepaths.
-
-The problem with them is that we often want to call things like
-ceph_check_caps after releasing references, but we may already hold
-these same mutexes because we're in a reply handler causing a deadlock.
-
-This has prompted things like the lock inversion loops in
-ceph_check_caps and ceph_async_iput, which will queue the final inode
-cleanup to a workqueue. That works reasonably well, but has problems
-when we go to unmount. We can end up queueing these jobs after the point
-where the workqueue is flushed.
-
-I think the better fix for this is to just simplify the locking in these
-codepaths, and make it unnecessary to take these mutexes in the first
-place. The caps themselves are generally protected by the i_ceph_lock,
-and nothing else seems to require that we take and hold these locks.
-
-There _might_ be an argument to be made that we need to hold the
-session->s_state constant when marshalling up the call, but it's hard to
-see why. A mutex is a very heavyweight way to do this, and the s_state
-field isn't consistently protected by it anyway.
-
-I've tested this pretty heavily on my local test rig and it seems to
-have done well. What I'd like to do next is put this into the testing
-kernel and see if any bugs shake out. If any do, we can just revert the
-set and figure out what went wrong.
-
-Thoughts?
-
-Jeff Layton (6):
-  ceph: allow ceph_put_mds_session to take NULL or ERR_PTR
-  ceph: eliminate session->s_gen_ttl_lock
-  ceph: don't take s_mutex or snap_rwsem in ceph_check_caps
-  ceph: don't take s_mutex in try_flush_caps
-  ceph: don't take s_mutex in ceph_flush_snaps
-  ceph: eliminate ceph_async_iput()
-
- fs/ceph/caps.c       | 106 ++++++++-----------------------------------
- fs/ceph/dir.c        |   7 +--
- fs/ceph/inode.c      |  35 +++-----------
- fs/ceph/mds_client.c |  45 +++++++++---------
- fs/ceph/mds_client.h |   6 +--
- fs/ceph/metric.c     |   3 +-
- fs/ceph/quota.c      |   6 +--
- fs/ceph/snap.c       |  14 +++---
- fs/ceph/super.h      |   2 -
- 9 files changed, 61 insertions(+), 163 deletions(-)
-
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index ac431246e0c9..0dc5f8357f58 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1802,8 +1802,7 @@ static void ceph_d_release(struct dentry *dentry)
+ 	dentry->d_fsdata = NULL;
+ 	spin_unlock(&dentry->d_lock);
+ 
+-	if (di->lease_session)
+-		ceph_put_mds_session(di->lease_session);
++	ceph_put_mds_session(di->lease_session);
+ 	kmem_cache_free(ceph_dentry_cachep, di);
+ }
+ 
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index df0c8a724609..6f43542b3344 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1154,8 +1154,7 @@ static inline void update_dentry_lease(struct inode *dir, struct dentry *dentry,
+ 	__update_dentry_lease(dir, dentry, lease, session, from_time,
+ 			      &old_lease_session);
+ 	spin_unlock(&dentry->d_lock);
+-	if (old_lease_session)
+-		ceph_put_mds_session(old_lease_session);
++	ceph_put_mds_session(old_lease_session);
+ }
+ 
+ /*
+@@ -1200,8 +1199,7 @@ static void update_dentry_lease_careful(struct dentry *dentry,
+ 			      from_time, &old_lease_session);
+ out_unlock:
+ 	spin_unlock(&dentry->d_lock);
+-	if (old_lease_session)
+-		ceph_put_mds_session(old_lease_session);
++	ceph_put_mds_session(old_lease_session);
+ }
+ 
+ /*
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index e5af591d3bd4..ec669634c649 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -664,6 +664,9 @@ struct ceph_mds_session *ceph_get_mds_session(struct ceph_mds_session *s)
+ 
+ void ceph_put_mds_session(struct ceph_mds_session *s)
+ {
++	if (IS_ERR_OR_NULL(s))
++		return;
++
+ 	dout("mdsc put_session %p %d -> %d\n", s,
+ 	     refcount_read(&s->s_ref), refcount_read(&s->s_ref)-1);
+ 	if (refcount_dec_and_test(&s->s_ref)) {
+@@ -1438,8 +1441,7 @@ static void __open_export_target_sessions(struct ceph_mds_client *mdsc,
+ 
+ 	for (i = 0; i < mi->num_export_targets; i++) {
+ 		ts = __open_export_target_session(mdsc, mi->export_targets[i]);
+-		if (!IS_ERR(ts))
+-			ceph_put_mds_session(ts);
++		ceph_put_mds_session(ts);
+ 	}
+ }
+ 
+diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
+index 9577c71e645d..5ac151eb0d49 100644
+--- a/fs/ceph/metric.c
++++ b/fs/ceph/metric.c
+@@ -311,8 +311,7 @@ void ceph_metric_destroy(struct ceph_client_metric *m)
+ 
+ 	cancel_delayed_work_sync(&m->delayed_work);
+ 
+-	if (m->session)
+-		ceph_put_mds_session(m->session);
++	ceph_put_mds_session(m->session);
+ }
+ 
+ #define METRIC_UPDATE_MIN_MAX(min, max, new)	\
 -- 
 2.31.1
 
