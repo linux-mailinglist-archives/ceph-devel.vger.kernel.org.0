@@ -2,34 +2,34 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8072E3A8374
+	by mail.lfdr.de (Postfix) with ESMTP id C90313A8375
 	for <lists+ceph-devel@lfdr.de>; Tue, 15 Jun 2021 16:57:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231396AbhFOO7j (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 15 Jun 2021 10:59:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58728 "EHLO mail.kernel.org"
+        id S231482AbhFOO7k (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 15 Jun 2021 10:59:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231346AbhFOO7j (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        id S231389AbhFOO7j (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
         Tue, 15 Jun 2021 10:59:39 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1FCF161585;
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CC83761584;
         Tue, 15 Jun 2021 14:57:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623769054;
-        bh=xl5k40Kqo/vr+9qvaBVVZ5c0vdAds5jebNgpa78KCbg=;
+        s=k20201202; t=1623769055;
+        bh=Jw6Ug6zgXs6K4EVcrCk30dxjE3sccLIEYRwJRtXKBhk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XZY1WZYr4JPDyGS56ipyq6vquhun36ttifar+QLkzBLyYkJphpN+OkPNQAC0uZGDC
-         OYLgnReVhBhqvV4oXEsSZmL+fwWd7zZ56lY7WpR/gbpwT4t6keNQeOUlAKKXJdUpNk
-         lgFZQkQL+XIT3N5uIpblvf+s4et+r5/xFL8xVE9lcN7aM1RgjLTwpjcr//ZFFwB5dm
-         jqBBB/Kp1QLHv35rUyVkbbtzYYZmp1eROSa8JQyBdLctGHQulB2+Zs/5rZUpJmFl4H
-         /+LfHd9/G5qpXiJXkzMsKm6CJSAmVMG13T/wm7brqIAXxUekpzufVRgLw/y7Ik7hGS
-         50IzErlZElZeA==
+        b=kOTGPxzgprVWyHHymRt3TszEwxJqco+Nd6RuNdGLD6TO8DsY3tC3jWY+LAsKrDBys
+         B0T6N56OTFKukeMSt1JU83rA7lzrl3YMfHG8rCvxidP9NFzJ2oPp0HRdUNlxpXBz8j
+         tAzztfK3N86Q4FN11RJA1OyoBECBVuAyJLUY7zeMMV65bU5VDZYXkQHWRqi5xUK0uQ
+         vwB8Hq6O7yfgPRU9eNPph8WIyuI8gUod5CU1VYO5vdotG9ikuPkRl5xWTzWZRoMfAV
+         mUjIm98UzqslnMx+pb30z17vrZjNHO/N+fDXHWf+c+Q/RD1pNDMm55ElWLBi+FwQ+B
+         HRBIGz6bwDHIw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     pdonnell@redhat.com, ukernel@gmail.com, idryomov@gmail.com,
         xiubli@redhat.com
-Subject: [RFC PATCH 4/6] ceph: don't take s_mutex in try_flush_caps
-Date:   Tue, 15 Jun 2021 10:57:28 -0400
-Message-Id: <20210615145730.21952-5-jlayton@kernel.org>
+Subject: [RFC PATCH 5/6] ceph: don't take s_mutex in ceph_flush_snaps
+Date:   Tue, 15 Jun 2021 10:57:29 -0400
+Message-Id: <20210615145730.21952-6-jlayton@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210615145730.21952-1-jlayton@kernel.org>
 References: <20210615145730.21952-1-jlayton@kernel.org>
@@ -39,56 +39,68 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The s_mutex doesn't protect anything in this codepath.
-
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/caps.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+ fs/ceph/caps.c | 8 +-------
+ fs/ceph/snap.c | 4 +---
+ 2 files changed, 2 insertions(+), 10 deletions(-)
 
 diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 825b1e463ad3..d21b1fa36875 100644
+index d21b1fa36875..5864d5088e27 100644
 --- a/fs/ceph/caps.c
 +++ b/fs/ceph/caps.c
-@@ -2149,26 +2149,17 @@ static int try_flush_caps(struct inode *inode, u64 *ptid)
- {
- 	struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
- 	struct ceph_inode_info *ci = ceph_inode(inode);
--	struct ceph_mds_session *session = NULL;
- 	int flushing = 0;
- 	u64 flush_tid = 0, oldest_flush_tid = 0;
- 
--retry:
- 	spin_lock(&ci->i_ceph_lock);
- retry_locked:
- 	if (ci->i_dirty_caps && ci->i_auth_cap) {
- 		struct ceph_cap *cap = ci->i_auth_cap;
- 		struct cap_msg_args arg;
-+		struct ceph_mds_session *session = cap->session;
- 
--		if (session != cap->session) {
--			spin_unlock(&ci->i_ceph_lock);
--			if (session)
--				mutex_unlock(&session->s_mutex);
--			session = cap->session;
--			mutex_lock(&session->s_mutex);
--			goto retry;
--		}
--		if (cap->session->s_state < CEPH_MDS_SESSION_OPEN) {
-+		if (session->s_state < CEPH_MDS_SESSION_OPEN) {
- 			spin_unlock(&ci->i_ceph_lock);
- 			goto out;
- 		}
-@@ -2205,9 +2196,6 @@ static int try_flush_caps(struct inode *inode, u64 *ptid)
- 		spin_unlock(&ci->i_ceph_lock);
- 	}
- out:
--	if (session)
+@@ -1531,7 +1531,7 @@ static inline int __send_flush_snap(struct inode *inode,
+  * asynchronously back to the MDS once sync writes complete and dirty
+  * data is written out.
+  *
+- * Called under i_ceph_lock.  Takes s_mutex as needed.
++ * Called under i_ceph_lock.
+  */
+ static void __ceph_flush_snaps(struct ceph_inode_info *ci,
+ 			       struct ceph_mds_session *session)
+@@ -1653,7 +1653,6 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
+ 	mds = ci->i_auth_cap->session->s_mds;
+ 	if (session && session->s_mds != mds) {
+ 		dout(" oops, wrong session %p mutex\n", session);
 -		mutex_unlock(&session->s_mutex);
--
- 	*ptid = flush_tid;
- 	return flushing;
+ 		ceph_put_mds_session(session);
+ 		session = NULL;
+ 	}
+@@ -1662,10 +1661,6 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
+ 		mutex_lock(&mdsc->mutex);
+ 		session = __ceph_lookup_mds_session(mdsc, mds);
+ 		mutex_unlock(&mdsc->mutex);
+-		if (session) {
+-			dout(" inverting session/ino locks on %p\n", session);
+-			mutex_lock(&session->s_mutex);
+-		}
+ 		goto retry;
+ 	}
+ 
+@@ -1680,7 +1675,6 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
+ 	if (psession) {
+ 		*psession = session;
+ 	} else if (session) {
+-		mutex_unlock(&session->s_mutex);
+ 		ceph_put_mds_session(session);
+ 	}
+ 	/* we flushed them all; remove this inode from the queue */
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index f8cac2abab3f..afc7f4c32364 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -846,10 +846,8 @@ static void flush_snaps(struct ceph_mds_client *mdsc)
+ 	}
+ 	spin_unlock(&mdsc->snap_flush_lock);
+ 
+-	if (session) {
+-		mutex_unlock(&session->s_mutex);
++	if (session)
+ 		ceph_put_mds_session(session);
+-	}
+ 	dout("flush_snaps done\n");
  }
+ 
 -- 
 2.31.1
 
