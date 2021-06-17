@@ -2,182 +2,236 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 806903AAEB7
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Jun 2021 10:24:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF2923AAEE5
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Jun 2021 10:36:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230486AbhFQI0s (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Jun 2021 04:26:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51055 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230463AbhFQI0s (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 17 Jun 2021 04:26:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1623918280;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=oBoiLG20PHadkXP0nta7KsZBfAwpclCVLrQiu4UaB3Y=;
-        b=VgDnuW0IasaEvgqISitDeIFzakYoRo8XqYkpRfw+Q93pTnRA1UfczcFn4+3B9c9RxRhrsZ
-        lKTTYV9SeQ7zidZERJiNJ77k4fJbtmpgCRp/qIUpybUS4gQwMk1SRO1BJN6HRljmF4uL6m
-        SelCectbWa9WuJ8FRFVIVaRx5yw+5vU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-345-CoHpN6cVNNeyz26sBwuBHw-1; Thu, 17 Jun 2021 04:24:34 -0400
-X-MC-Unique: CoHpN6cVNNeyz26sBwuBHw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7661C803621;
-        Thu, 17 Jun 2021 08:24:33 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 697381007623;
-        Thu, 17 Jun 2021 08:24:28 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v2 3/3] netfs: fix test for whether we can skip read when
- writing beyond EOF
-From:   David Howells <dhowells@redhat.com>
-To:     linux-cachefs@redhat.com, linux-afs@lists.infradead.org
-Cc:     Andrew W Elble <aweits@rit.edu>, Jeff Layton <jlayton@kernel.org>,
-        ceph-devel@vger.kernel.org, dhowells@redhat.com,
-        Jeff Layton <jlayton@kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 17 Jun 2021 09:24:27 +0100
-Message-ID: <162391826758.1173366.11794946719301590013.stgit@warthog.procyon.org.uk>
-In-Reply-To: <162391823192.1173366.9740514875196345746.stgit@warthog.procyon.org.uk>
-References: <162391823192.1173366.9740514875196345746.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        id S230038AbhFQIit (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Jun 2021 04:38:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41174 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229712AbhFQIit (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Jun 2021 04:38:49 -0400
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 057A6C061574
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Jun 2021 01:36:42 -0700 (PDT)
+Received: by mail-il1-x131.google.com with SMTP id i12so4666148ila.13
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Jun 2021 01:36:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jBxmHva0H2fmV14ONEemeoIT24LA9Dynq9IGpe13UVc=;
+        b=ScVyppBq9zVd1kn/iopn7FKTGLDc9nleqX56/T0BBWHq/2RqNY5U+mKUY2FtXDGIH7
+         Fg/9dEt//2rgKrtdB9T3DbCoJbOKcHRyj+9EblavGnLBCSQTZhvgDbM35pTIkVddkrJc
+         Mwl3+B1Xdy4Ghk6MoBdPg8IZRkonKM0Gk+8ykjUVGPKPdUHDpC1IUcCbBQZned2C4wgX
+         uJUH3LRZWa76DIjqXU4nOBy/3a4HBxHyJEAhr7Rp3+WrV/CopMyUUmXYXID4uRVly3RF
+         JthTJwFN0p+lSRw/BIdeivZnoVJm+GwZUBPhLjmQgrC41k6dLYfLGfY6GMHgzDekemAQ
+         kEsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jBxmHva0H2fmV14ONEemeoIT24LA9Dynq9IGpe13UVc=;
+        b=QNyVvsIlCaXk3e+u9D22DKmUB+GAs1wR0776CjgiIsWKZlWjpS7cmJAUC3hE9jE4gh
+         zB4bkfDoxJl8ho4V4gqK0gK0Ixd4hqEg2uqIhrVyJBOSgiaB6eU0V6U0F8+qj/cKoFAj
+         2/WB1gNUSSyZZCMiR4H4lDwnpsK+g3ba0O2DFnPveKMj2ynVs158iOugjVgdzF4ftdlO
+         ZUVdBsPl25ucxJGDKuQDQgYh07KV4T8dqUu2fgVQ3LWlGDWe+HZki5JzsWx5N+cTkWWa
+         IBlErJcewJUeNWPcKRdmUnhkstM2KV2aozkLjKfhEt0fjEnOWdW1RpzYLudeWkOCA6gl
+         H1Kw==
+X-Gm-Message-State: AOAM533HkRM1rpng4vw5buTDyM4/z448GbsW2N9rLzNHRb/K+lWEyEEJ
+        xDEnos2fusNqx/wtbUXNM2e8Ab+vgaOOpiEE8wthGoowLEjVjQ==
+X-Google-Smtp-Source: ABdhPJxzyVOiJPx13GuGC1qCx8oiTzVDAEIcmMZhf4EqG0ueiJPXOaXxqSoWlpZI3gXtCrrBTw19+KtEPzm+1yE2I3c=
+X-Received: by 2002:a05:6e02:d51:: with SMTP id h17mr2670005ilj.177.1623919001449;
+ Thu, 17 Jun 2021 01:36:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <47f0a04ce6664116a11cfdb5a458e252@nl.team.blue>
+ <CAOi1vP-moRXtL4gKXQF8+NwbPgE11_LoxfSYqYBbJfYYQ7Sv_g@mail.gmail.com>
+ <8eb12c996e404870803e9a7c77e508d6@nl.team.blue> <CAOi1vP-8i-rKEDd8Emq+MtxCjvK-6VG8KaXdzvQLW89174jUZA@mail.gmail.com>
+ <666938090a8746a7ad8ae40ebf116e1c@nl.team.blue>
+In-Reply-To: <666938090a8746a7ad8ae40ebf116e1c@nl.team.blue>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 17 Jun 2021 10:36:33 +0200
+Message-ID: <CAOi1vP8NHYEN-=J4A7mB1dSkaHHf8Gtha-xqPLboZUS5u442hA@mail.gmail.com>
+Subject: Re: All RBD IO stuck after flapping OSD's
+To:     Robin Geuze <robin.geuze@nl.team.blue>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Jeff Layton <jlayton@kernel.org>
+On Wed, Jun 16, 2021 at 1:56 PM Robin Geuze <robin.geuze@nl.team.blue> wrot=
+e:
+>
+> Hey Ilya,
+>
+> Sorry for the long delay, but we've finally managed to somewhat reliably =
+reproduce this issue and produced a bunch of debug data. Its really big, so=
+ you can find the files here: https://dionbosschieter.stackstorage.com/s/Rh=
+M3FHLD28EcVJJ2
+>
+> We also got some stack traces those are in there as well.
+>
+> The way we reproduce it is that on one of the two ceph machines in the cl=
+uster (its a test cluster) we toggle both the bond NIC ports down, sleep 40=
+ seconds, put them back up, wait another 15 seconds and then put them back =
+down, wait another 40 seconds and  then put them back up.
+>
+> Exact command line I used on the ceph machine:
+> ip l set ens785f1 down; sleep 1 ip l set ens785f0 down; sleep 40; ip l se=
+t ens785f1 up; sleep 5; ip l set ens785f0 up; sleep 15; ip l set ens785f1 d=
+own; sleep 1 ip l set ens785f0 down; sleep 40; ip l set ens785f1 up; sleep =
+5; ip l set ens785f0 up
 
-It's not sufficient to skip reading when the pos is beyond the EOF.
-There may be data at the head of the page that we need to fill in
-before the write.
+Hi Robin,
 
-Add a new helper function that corrects and clarifies the logic of
-when we can skip reads, and have it only zero out the part of the page
-that won't have data copied in for the write.
+This looks very similar to https://tracker.ceph.com/issues/42757.
+I don't see the offending writer thread among stuck threads in
+stuck_kthreads.md though (and syslog_stuck_krbd_shrinked covers only
+a short 13-second period of time so it's not there either because the
+problem, at least the one I'm suspecting, would have occurred before
+13:00:00).
 
-Finally, don't set the page Uptodate after zeroing. It's not up to date
-since the write data won't have been copied in yet.
+If you can reproduce reliably, try again without verbose logging but
+do capture all stack traces -- once the system locks up, let it stew
+for ten minutes and attach "blocked for more than X seconds" splats.
 
-[DH made the following changes:
+Additionally, a "echo w >/proc/sysrq-trigger" dump would be good if
+SysRq is not disabled on your servers.
 
- - Prefixed the new function with "netfs_".
+Thanks,
 
- - Don't call zero_user_segments() for a full-page write.
+                Ilya
 
- - Altered the beyond-last-page check to avoid a DIV instruction and got
-   rid of then-redundant zero-length file check.
-]
-
-Fixes: e1b1240c1ff5f ("netfs: Add write_begin helper")
-Reported-by: Andrew W Elble <aweits@rit.edu>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: ceph-devel@vger.kernel.org
-Link: https://lore.kernel.org/r/20210613233345.113565-1-jlayton@kernel.org/
-Link: https://lore.kernel.org/r/162367683365.460125.4467036947364047314.stgit@warthog.procyon.org.uk/ # v1
----
-
- fs/netfs/read_helper.c |   49 +++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 36 insertions(+), 13 deletions(-)
-
-diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-index 725614625ed4..0b6cd3b8734c 100644
---- a/fs/netfs/read_helper.c
-+++ b/fs/netfs/read_helper.c
-@@ -1011,12 +1011,42 @@ int netfs_readpage(struct file *file,
- }
- EXPORT_SYMBOL(netfs_readpage);
- 
--static void netfs_clear_thp(struct page *page)
-+/**
-+ * netfs_skip_page_read - prep a page for writing without reading first
-+ * @page: page being prepared
-+ * @pos: starting position for the write
-+ * @len: length of write
-+ *
-+ * In some cases, write_begin doesn't need to read at all:
-+ * - full page write
-+ * - write that lies in a page that is completely beyond EOF
-+ * - write that covers the the page from start to EOF or beyond it
-+ *
-+ * If any of these criteria are met, then zero out the unwritten parts
-+ * of the page and return true. Otherwise, return false.
-+ */
-+static bool netfs_skip_page_read(struct page *page, loff_t pos, size_t len)
- {
--	unsigned int i;
-+	struct inode *inode = page->mapping->host;
-+	loff_t i_size = i_size_read(inode);
-+	size_t offset = offset_in_thp(page, pos);
-+
-+	/* Full page write */
-+	if (offset == 0 && len >= thp_size(page))
-+		return true;
-+
-+	/* pos beyond last page in the file */
-+	if (pos - offset >= i_size)
-+		goto zero_out;
-+
-+	/* Write that covers from the start of the page to EOF or beyond */
-+	if (offset == 0 && (pos + len) >= i_size)
-+		goto zero_out;
- 
--	for (i = 0; i < thp_nr_pages(page); i++)
--		clear_highpage(page + i);
-+	return false;
-+zero_out:
-+	zero_user_segments(page, 0, offset, offset + len, thp_size(page));
-+	return true;
- }
- 
- /**
-@@ -1024,7 +1054,7 @@ static void netfs_clear_thp(struct page *page)
-  * @file: The file to read from
-  * @mapping: The mapping to read from
-  * @pos: File position at which the write will begin
-- * @len: The length of the write in this page
-+ * @len: The length of the write (may extend beyond the end of the page chosen)
-  * @flags: AOP_* flags
-  * @_page: Where to put the resultant page
-  * @_fsdata: Place for the netfs to store a cookie
-@@ -1061,8 +1091,6 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
- 	struct inode *inode = file_inode(file);
- 	unsigned int debug_index = 0;
- 	pgoff_t index = pos >> PAGE_SHIFT;
--	int pos_in_page = pos & ~PAGE_MASK;
--	loff_t size;
- 	int ret;
- 
- 	DEFINE_READAHEAD(ractl, file, NULL, mapping, index);
-@@ -1090,13 +1118,8 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
- 	 * within the cache granule containing the EOF, in which case we need
- 	 * to preload the granule.
- 	 */
--	size = i_size_read(inode);
- 	if (!ops->is_cache_enabled(inode) &&
--	    ((pos_in_page == 0 && len == thp_size(page)) ||
--	     (pos >= size) ||
--	     (pos_in_page == 0 && (pos + len) >= size))) {
--		netfs_clear_thp(page);
--		SetPageUptodate(page);
-+	    netfs_skip_page_read(page, pos, len)) {
- 		netfs_stat(&netfs_n_rh_write_zskip);
- 		goto have_page_no_wait;
- 	}
-
-
+>
+> Regards,
+>
+> Robin Geuze
+>
+> From: Ilya Dryomov <idryomov@gmail.com>
+> Sent: 19 April 2021 14:40:00
+> To: Robin Geuze
+> Cc: Ceph Development
+> Subject: Re: All RBD IO stuck after flapping OSD's
+>
+> On Thu, Apr 15, 2021 at 2:21 PM Robin Geuze <robin.geuze@nl.team.blue> wr=
+ote:
+> >
+> > Hey Ilya,
+> >
+> > We had to reboot the machine unfortunately, since we had customers unab=
+le to work with their VM's. We did manage to make a dynamic debugging dump =
+of an earlier occurence, maybe that can help? I've attached it to this emai=
+l.
+>
+> No, I don't see anything to go on there.  Next time, enable logging for
+> both libceph and rbd modules and make sure that at least one instance of
+> the error (i.e. "pre object map update failed: -16") makes it into the
+> attached log.
+>
+> >
+> > Those messages constantly occur, even after we kill the VM using the mo=
+unt, I guess because there is pending IO which cannot be flushed.
+> >
+> > As for how its getting worse, if you try any management operations (eg =
+unmap) on any of the RBD mounts that aren't affected, they hang and more of=
+ten than not the IO for that one also stalls (not always though).
+>
+> One obvious workaround workaround is to unmap, disable object-map and
+> exclusive-lock features with "rbd feature disable", and map back.  You
+> would lose the benefits of object map, but if it is affecting customer
+> workloads it is probably the best course of action until this thing is
+> root caused.
+>
+> Thanks,
+>
+>                 Ilya
+>
+> >
+> > Regards,
+> >
+> > Robin Geuze
+> >
+> > From: Ilya Dryomov <idryomov@gmail.com>
+> > Sent: 14 April 2021 19:00:20
+> > To: Robin Geuze
+> > Cc: Ceph Development
+> > Subject: Re: All RBD IO stuck after flapping OSD's
+> >
+> > On Wed, Apr 14, 2021 at 4:56 PM Robin Geuze <robin.geuze@nl.team.blue> =
+wrote:
+> > >
+> > > Hey,
+> > >
+> > > We've encountered a weird issue when using the kernel RBD module. It =
+starts with a bunch of OSD's flapping (in our case because of a network car=
+d issue which caused the LACP to constantly flap), which is logged in dmesg=
+:
+> > >
+> > > Apr 14 05:45:02 hv1 kernel: [647677.112461] libceph: osd56 down
+> > > Apr 14 05:45:03 hv1 kernel: [647678.114962] libceph: osd54 down
+> > > Apr 14 05:45:05 hv1 kernel: [647680.127329] libceph: osd50 down
+> > > (...)
+> > >
+> > > After a while of that we start getting these errors being spammed in =
+dmesg:
+> > >
+> > > Apr 14 05:47:35 hv1 kernel: [647830.671263] rbd: rbd14: pre object ma=
+p update failed: -16
+> > > Apr 14 05:47:35 hv1 kernel: [647830.671268] rbd: rbd14: write at objn=
+o 192 2564096~2048 result -16
+> > > Apr 14 05:47:35 hv1 kernel: [647830.671271] rbd: rbd14: write result =
+-16
+> > >
+> > > (In this case for two different RBD mounts)
+> > >
+> > > At this point the IO for these two mounts is completely gone, and the=
+ only reason we can still perform IO on the other RBD devices is because we=
+ use noshare. Unfortunately unmounting the other devices is no longer possi=
+ble, which means we cannot migrate  our  VM's to another HV, since to make =
+the messages go away we have to reboot the server.
+> >
+> > Hi Robin,
+> >
+> > Do these messages appear even if no I/O is issued to /dev/rbd14 or only
+> > if you attempt to write?
+> >
+> > >
+> > > All of this wouldn't be such a big issue if it recovered once the clu=
+ster started behaving normally again, but it doesn't, it just keeps being s=
+tuck, and the longer we wait with rebooting this the worse the issue get.
+> >
+> > Please explain how it's getting worse.
+> >
+> > I think the problem is that the object map isn't locked.  What
+> > probably happened is the kernel client lost its watch on the image
+> > and for some reason can't get it back.   The flapping has likely
+> > trigged some edge condition in the watch/notify code.
+> >
+> > To confirm:
+> >
+> > - paste the contents of /sys/bus/rbd/devices/14/client_addr
+> >
+> > - paste the contents of /sys/kernel/debug/ceph/<cluster id>.client<id>/=
+osdc
+> >   for /dev/rbd14.  If you are using noshare, you will have multiple
+> >   client instances with the same cluster id.  The one you need can be
+> >   identified with /sys/bus/rbd/devices/14/client_id.
+> >
+> > - paste the output of "rbd status <rbd14 image>" (image name can be
+> >   identified from "rbd showmapped")
+> >
+> > I'm also curious who actually has the lock on the header object and the
+> > object map object.  Paste the output of
+> >
+> > $ ID=3D$(bin/rbd info --format=3Djson <rbd14 pool>/<rbd14 image> | jq -=
+r .id)
+> > $ rados -p <rbd14 pool> lock info rbd_header.$ID rbd_lock | jq
+> > $ rados -p <rbd14 pool> lock info rbd_object_map.$ID rbd_lock | jq
+> >
+> > Thanks,
+> >
+> >                 Ilya
+> >
+>
