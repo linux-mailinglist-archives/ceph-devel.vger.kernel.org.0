@@ -2,512 +2,357 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 476663AB97B
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Jun 2021 18:22:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FD543AB985
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Jun 2021 18:24:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232382AbhFQQYt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Jun 2021 12:24:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46062 "EHLO mail.kernel.org"
+        id S232486AbhFQQ0p (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Jun 2021 12:26:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229671AbhFQQYs (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 17 Jun 2021 12:24:48 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 78A74610A5;
-        Thu, 17 Jun 2021 16:22:40 +0000 (UTC)
+        id S232483AbhFQQ0p (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 17 Jun 2021 12:26:45 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DA5E4613B9;
+        Thu, 17 Jun 2021 16:24:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623946960;
-        bh=T7EopayARrVb8BdaZUBrOsIjvv4mKgRmS6li5VIBUvQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iCnlMVbSd7D4h8b1GwMZn0c0O5heIYJ4/+wQXQIBNczo+aQXrl2eC1GkXxE00l4sm
-         /YcTO1H6n/plRJZQUK45l06AdQnG61+dmn6Bvqhgn5gq9fsj6azPsf57Q5vulb3ziO
-         eQ86agNMjHrnGDMsPx3ij1mWmBPSZDNrsh9SoeQwHkG6jsKu2nnjObz6SeOXX1egYK
-         Yv8SxCvtf7NzAeXXmx3M2AlaJQRY+2KJdVQfi5dTWJlpYisYiqioKI6eB0XUUb/1vW
-         i5pszIPSqM+CDaHrKW8Tc0526UDWrRzYOcJYK0TUuGpS2akwqG2Ze+6A+4H6Ax/vw0
-         kV0WWWkYJJVgA==
-Date:   Thu, 17 Jun 2021 09:22:40 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jan Kara <jack@suse.cz>, Ted Tso <tytso@mit.edu>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 05/14] ext4: Convert to use mapping->invalidate_lock
-Message-ID: <20210617162240.GP158209@locust>
-References: <20210615090844.6045-1-jack@suse.cz>
- <20210615091814.28626-5-jack@suse.cz>
+        s=k20201202; t=1623947077;
+        bh=P3jnDA0qtBBixRn4ie+U05xTwoHSjft8ZKC4GBSnG64=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=K+72LYDVDJM7uDYVh2i3eV+H3HzNCdJ30zo/hyyFTaiLOFWI0Ro54YGN7CQa2abCO
+         QF7cIK5HOsRDGv+qMbiKpnGOMxuFsif6ycR42kz2MiYMgUc0MVnvpLl+ZKJHKvxjPa
+         M7MiBWrttqeIDilwiDTPSuyEFrbbwvt5XuO/vEwOf1+MtNzvAzKLv1gOwj/aEE8qJb
+         oBrE8mZGRa/bb38Lemgmm5UV1fmFRXf8/OkcmX3fvCIlR+knAA94Vywy5zCbXwF0/v
+         r6EBsYTnFyiBouVk5RUhWCqrbWwWWhWabcgV69Z58EmctlYA8z1EmBJd/QFbLG/7TS
+         xmz9r4JKHSIKA==
+Message-ID: <1d1b99544873ba7d7fb5442db152e739a5234c39.camel@kernel.org>
+Subject: Re: [RFC PATCH 6/6] ceph: eliminate ceph_async_iput()
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     ceph-devel@vger.kernel.org, pdonnell@redhat.com, ukernel@gmail.com,
+        idryomov@gmail.com, xiubli@redhat.com
+Date:   Thu, 17 Jun 2021 12:24:35 -0400
+In-Reply-To: <YMoYE+DYFt+eEAWm@suse.de>
+References: <20210615145730.21952-1-jlayton@kernel.org>
+         <20210615145730.21952-7-jlayton@kernel.org> <YMoYE+DYFt+eEAWm@suse.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210615091814.28626-5-jack@suse.cz>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jun 15, 2021 at 11:17:55AM +0200, Jan Kara wrote:
-> Convert ext4 to use mapping->invalidate_lock instead of its private
-> EXT4_I(inode)->i_mmap_sem. This is mostly search-and-replace. By this
-> conversion we fix a long standing race between hole punching and read(2)
-> / readahead(2) paths that can lead to stale page cache contents.
+On Wed, 2021-06-16 at 16:26 +0100, Luis Henriques wrote:
+> On Tue, Jun 15, 2021 at 10:57:30AM -0400, Jeff Layton wrote:
+> > Now that we don't need to hold session->s_mutex or the snap_rwsem when
+> > calling ceph_check_caps, we can eliminate ceph_async_iput and just use
+> > normal iput calls.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/ceph/caps.c       |  6 +++---
+> >  fs/ceph/inode.c      | 25 +++----------------------
+> >  fs/ceph/mds_client.c | 22 +++++++++++-----------
+> >  fs/ceph/quota.c      |  6 +++---
+> >  fs/ceph/snap.c       | 10 +++++-----
+> >  fs/ceph/super.h      |  2 --
+> >  6 files changed, 25 insertions(+), 46 deletions(-)
+> > 
+> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> > index 5864d5088e27..fd9243e9a1b2 100644
+> > --- a/fs/ceph/caps.c
+> > +++ b/fs/ceph/caps.c
+> > @@ -3147,7 +3147,7 @@ void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int nr,
+> >  		wake_up_all(&ci->i_cap_wq);
+> >  	while (put-- > 0) {
+> >  		/* avoid calling iput_final() in osd dispatch threads */
+> > -		ceph_async_iput(inode);
+> > +		iput(inode);
+> >  	}
+> >  }
+> >  
+> > @@ -4136,7 +4136,7 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+> >  done_unlocked:
+> >  	ceph_put_string(extra_info.pool_ns);
+> >  	/* avoid calling iput_final() in mds dispatch threads */
+> > -	ceph_async_iput(inode);
+> > +	iput(inode);
 > 
-> CC: <linux-ext4@vger.kernel.org>
-> CC: Ted Tso <tytso@mit.edu>
-
-Hmm, still no ACK from Ted?
-
-This looks like a pretty straightforward i_mmap_sem conversion, though
-in general I'd like /some/ kind of response from anyone in the ext4
-community who has been writing code more recently than me...
-
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->  fs/ext4/ext4.h     | 10 ----------
->  fs/ext4/extents.c  | 25 +++++++++++++-----------
->  fs/ext4/file.c     | 13 +++++++------
->  fs/ext4/inode.c    | 47 +++++++++++++++++-----------------------------
->  fs/ext4/ioctl.c    |  4 ++--
->  fs/ext4/super.c    | 13 +++++--------
->  fs/ext4/truncate.h |  8 +++++---
->  7 files changed, 50 insertions(+), 70 deletions(-)
+> To be honest, I'm not really convinced we can blindly substitute
+> ceph_async_iput() by iput().  This case specifically can problematic
+> because we may have called ceph_queue_vmtruncate() above (or
+> handle_cap_grant()).  If we did, we have ci->i_work_mask set and the wq
+> would have invoked __ceph_do_pending_vmtruncate().  Using the iput() here
+> won't have that result.  Am I missing something?
 > 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 37002663d521..ed64b4b217a1 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -1077,15 +1077,6 @@ struct ext4_inode_info {
->  	 * by other means, so we have i_data_sem.
->  	 */
->  	struct rw_semaphore i_data_sem;
-> -	/*
-> -	 * i_mmap_sem is for serializing page faults with truncate / punch hole
-> -	 * operations. We have to make sure that new page cannot be faulted in
-> -	 * a section of the inode that is being punched. We cannot easily use
-> -	 * i_data_sem for this since we need protection for the whole punch
-> -	 * operation and i_data_sem ranks below transaction start so we have
-> -	 * to occasionally drop it.
-> -	 */
-> -	struct rw_semaphore i_mmap_sem;
->  	struct inode vfs_inode;
->  	struct jbd2_inode *jinode;
->  
-> @@ -2962,7 +2953,6 @@ extern int ext4_chunk_trans_blocks(struct inode *, int nrblocks);
->  extern int ext4_zero_partial_blocks(handle_t *handle, struct inode *inode,
->  			     loff_t lstart, loff_t lend);
->  extern vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf);
-> -extern vm_fault_t ext4_filemap_fault(struct vm_fault *vmf);
->  extern qsize_t *ext4_get_reserved_space(struct inode *inode);
->  extern int ext4_get_projid(struct inode *inode, kprojid_t *projid);
->  extern void ext4_da_release_space(struct inode *inode, int to_free);
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index cbf37b2cf871..db5d38af9ba8 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -4470,6 +4470,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  			    loff_t len, int mode)
->  {
->  	struct inode *inode = file_inode(file);
-> +	struct address_space *mapping = file->f_mapping;
->  	handle_t *handle = NULL;
->  	unsigned int max_blocks;
->  	loff_t new_size = 0;
-> @@ -4556,17 +4557,17 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  		 * Prevent page faults from reinstantiating pages we have
->  		 * released from page cache.
->  		 */
-> -		down_write(&EXT4_I(inode)->i_mmap_sem);
-> +		filemap_invalidate_lock(mapping);
->  
->  		ret = ext4_break_layouts(inode);
->  		if (ret) {
-> -			up_write(&EXT4_I(inode)->i_mmap_sem);
-> +			filemap_invalidate_unlock(mapping);
->  			goto out_mutex;
->  		}
->  
->  		ret = ext4_update_disksize_before_punch(inode, offset, len);
->  		if (ret) {
-> -			up_write(&EXT4_I(inode)->i_mmap_sem);
-> +			filemap_invalidate_unlock(mapping);
->  			goto out_mutex;
->  		}
->  		/* Now release the pages and zero block aligned part of pages */
-> @@ -4575,7 +4576,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  
->  		ret = ext4_alloc_file_blocks(file, lblk, max_blocks, new_size,
->  					     flags);
-> -		up_write(&EXT4_I(inode)->i_mmap_sem);
-> +		filemap_invalidate_unlock(mapping);
->  		if (ret)
->  			goto out_mutex;
->  	}
-> @@ -5217,6 +5218,7 @@ ext4_ext_shift_extents(struct inode *inode, handle_t *handle,
->  static int ext4_collapse_range(struct inode *inode, loff_t offset, loff_t len)
->  {
->  	struct super_block *sb = inode->i_sb;
-> +	struct address_space *mapping = inode->i_mapping;
->  	ext4_lblk_t punch_start, punch_stop;
->  	handle_t *handle;
->  	unsigned int credits;
-> @@ -5270,7 +5272,7 @@ static int ext4_collapse_range(struct inode *inode, loff_t offset, loff_t len)
->  	 * Prevent page faults from reinstantiating pages we have released from
->  	 * page cache.
->  	 */
-> -	down_write(&EXT4_I(inode)->i_mmap_sem);
-> +	filemap_invalidate_lock(mapping);
->  
->  	ret = ext4_break_layouts(inode);
->  	if (ret)
-> @@ -5285,15 +5287,15 @@ static int ext4_collapse_range(struct inode *inode, loff_t offset, loff_t len)
->  	 * Write tail of the last page before removed range since it will get
->  	 * removed from the page cache below.
->  	 */
-> -	ret = filemap_write_and_wait_range(inode->i_mapping, ioffset, offset);
-> +	ret = filemap_write_and_wait_range(mapping, ioffset, offset);
->  	if (ret)
->  		goto out_mmap;
->  	/*
->  	 * Write data that will be shifted to preserve them when discarding
->  	 * page cache below. We are also protected from pages becoming dirty
-> -	 * by i_mmap_sem.
-> +	 * by i_rwsem and invalidate_lock.
->  	 */
-> -	ret = filemap_write_and_wait_range(inode->i_mapping, offset + len,
-> +	ret = filemap_write_and_wait_range(mapping, offset + len,
->  					   LLONG_MAX);
->  	if (ret)
->  		goto out_mmap;
-> @@ -5346,7 +5348,7 @@ static int ext4_collapse_range(struct inode *inode, loff_t offset, loff_t len)
->  	ext4_journal_stop(handle);
->  	ext4_fc_stop_ineligible(sb);
->  out_mmap:
-> -	up_write(&EXT4_I(inode)->i_mmap_sem);
-> +	filemap_invalidate_unlock(mapping);
->  out_mutex:
->  	inode_unlock(inode);
->  	return ret;
-> @@ -5363,6 +5365,7 @@ static int ext4_collapse_range(struct inode *inode, loff_t offset, loff_t len)
->  static int ext4_insert_range(struct inode *inode, loff_t offset, loff_t len)
->  {
->  	struct super_block *sb = inode->i_sb;
-> +	struct address_space *mapping = inode->i_mapping;
->  	handle_t *handle;
->  	struct ext4_ext_path *path;
->  	struct ext4_extent *extent;
-> @@ -5421,7 +5424,7 @@ static int ext4_insert_range(struct inode *inode, loff_t offset, loff_t len)
->  	 * Prevent page faults from reinstantiating pages we have released from
->  	 * page cache.
->  	 */
-> -	down_write(&EXT4_I(inode)->i_mmap_sem);
-> +	filemap_invalidate_lock(mapping);
->  
->  	ret = ext4_break_layouts(inode);
->  	if (ret)
-> @@ -5522,7 +5525,7 @@ static int ext4_insert_range(struct inode *inode, loff_t offset, loff_t len)
->  	ext4_journal_stop(handle);
->  	ext4_fc_stop_ineligible(sb);
->  out_mmap:
-> -	up_write(&EXT4_I(inode)->i_mmap_sem);
-> +	filemap_invalidate_unlock(mapping);
->  out_mutex:
->  	inode_unlock(inode);
->  	return ret;
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 816dedcbd541..d3b4ed91aa68 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -704,22 +704,23 @@ static vm_fault_t ext4_dax_huge_fault(struct vm_fault *vmf,
->  	 */
->  	bool write = (vmf->flags & FAULT_FLAG_WRITE) &&
->  		(vmf->vma->vm_flags & VM_SHARED);
-> +	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
->  	pfn_t pfn;
->  
->  	if (write) {
->  		sb_start_pagefault(sb);
->  		file_update_time(vmf->vma->vm_file);
-> -		down_read(&EXT4_I(inode)->i_mmap_sem);
-> +		filemap_invalidate_lock_shared(mapping);
->  retry:
->  		handle = ext4_journal_start_sb(sb, EXT4_HT_WRITE_PAGE,
->  					       EXT4_DATA_TRANS_BLOCKS(sb));
->  		if (IS_ERR(handle)) {
-> -			up_read(&EXT4_I(inode)->i_mmap_sem);
-> +			filemap_invalidate_unlock_shared(mapping);
->  			sb_end_pagefault(sb);
->  			return VM_FAULT_SIGBUS;
->  		}
->  	} else {
-> -		down_read(&EXT4_I(inode)->i_mmap_sem);
-> +		filemap_invalidate_lock_shared(mapping);
->  	}
->  	result = dax_iomap_fault(vmf, pe_size, &pfn, &error, &ext4_iomap_ops);
->  	if (write) {
-> @@ -731,10 +732,10 @@ static vm_fault_t ext4_dax_huge_fault(struct vm_fault *vmf,
->  		/* Handling synchronous page fault? */
->  		if (result & VM_FAULT_NEEDDSYNC)
->  			result = dax_finish_sync_fault(vmf, pe_size, pfn);
-> -		up_read(&EXT4_I(inode)->i_mmap_sem);
-> +		filemap_invalidate_unlock_shared(mapping);
->  		sb_end_pagefault(sb);
->  	} else {
-> -		up_read(&EXT4_I(inode)->i_mmap_sem);
-> +		filemap_invalidate_unlock_shared(mapping);
->  	}
->  
->  	return result;
-> @@ -756,7 +757,7 @@ static const struct vm_operations_struct ext4_dax_vm_ops = {
->  #endif
->  
->  static const struct vm_operations_struct ext4_file_vm_ops = {
-> -	.fault		= ext4_filemap_fault,
-> +	.fault		= filemap_fault,
->  	.map_pages	= filemap_map_pages,
->  	.page_mkwrite   = ext4_page_mkwrite,
->  };
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index fe6045a46599..ee6e69d6f949 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3950,20 +3950,19 @@ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
->  	return ret;
->  }
->  
-> -static void ext4_wait_dax_page(struct ext4_inode_info *ei)
-> +static void ext4_wait_dax_page(struct inode *inode)
->  {
-> -	up_write(&ei->i_mmap_sem);
-> +	filemap_invalidate_unlock(inode->i_mapping);
->  	schedule();
-> -	down_write(&ei->i_mmap_sem);
-> +	filemap_invalidate_lock(inode->i_mapping);
->  }
->  
->  int ext4_break_layouts(struct inode *inode)
->  {
-> -	struct ext4_inode_info *ei = EXT4_I(inode);
->  	struct page *page;
->  	int error;
->  
-> -	if (WARN_ON_ONCE(!rwsem_is_locked(&ei->i_mmap_sem)))
-> +	if (WARN_ON_ONCE(!rwsem_is_locked(&inode->i_mapping->invalidate_lock)))
->  		return -EINVAL;
->  
->  	do {
-> @@ -3974,7 +3973,7 @@ int ext4_break_layouts(struct inode *inode)
->  		error = ___wait_var_event(&page->_refcount,
->  				atomic_read(&page->_refcount) == 1,
->  				TASK_INTERRUPTIBLE, 0, 0,
-> -				ext4_wait_dax_page(ei));
-> +				ext4_wait_dax_page(inode));
->  	} while (error == 0);
->  
->  	return error;
-> @@ -4005,9 +4004,9 @@ int ext4_punch_hole(struct inode *inode, loff_t offset, loff_t length)
->  
->  	ext4_clear_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA);
->  	if (ext4_has_inline_data(inode)) {
-> -		down_write(&EXT4_I(inode)->i_mmap_sem);
-> +		filemap_invalidate_lock(mapping);
->  		ret = ext4_convert_inline_data(inode);
-> -		up_write(&EXT4_I(inode)->i_mmap_sem);
-> +		filemap_invalidate_unlock(mapping);
->  		if (ret)
->  			return ret;
->  	}
-> @@ -4058,7 +4057,7 @@ int ext4_punch_hole(struct inode *inode, loff_t offset, loff_t length)
->  	 * Prevent page faults from reinstantiating pages we have released from
->  	 * page cache.
->  	 */
-> -	down_write(&EXT4_I(inode)->i_mmap_sem);
-> +	filemap_invalidate_lock(mapping);
->  
->  	ret = ext4_break_layouts(inode);
->  	if (ret)
-> @@ -4131,7 +4130,7 @@ int ext4_punch_hole(struct inode *inode, loff_t offset, loff_t length)
->  out_stop:
->  	ext4_journal_stop(handle);
->  out_dio:
-> -	up_write(&EXT4_I(inode)->i_mmap_sem);
-> +	filemap_invalidate_unlock(mapping);
->  out_mutex:
->  	inode_unlock(inode);
->  	return ret;
-> @@ -5426,11 +5425,11 @@ int ext4_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
->  			inode_dio_wait(inode);
->  		}
->  
-> -		down_write(&EXT4_I(inode)->i_mmap_sem);
-> +		filemap_invalidate_lock(inode->i_mapping);
->  
->  		rc = ext4_break_layouts(inode);
->  		if (rc) {
-> -			up_write(&EXT4_I(inode)->i_mmap_sem);
-> +			filemap_invalidate_unlock(inode->i_mapping);
->  			goto err_out;
->  		}
->  
-> @@ -5506,7 +5505,7 @@ int ext4_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
->  				error = rc;
->  		}
->  out_mmap_sem:
-> -		up_write(&EXT4_I(inode)->i_mmap_sem);
-> +		filemap_invalidate_unlock(inode->i_mapping);
->  	}
->  
->  	if (!error) {
-> @@ -5983,10 +5982,10 @@ int ext4_change_inode_journal_flag(struct inode *inode, int val)
->  	 * data (and journalled aops don't know how to handle these cases).
->  	 */
->  	if (val) {
-> -		down_write(&EXT4_I(inode)->i_mmap_sem);
-> +		filemap_invalidate_lock(inode->i_mapping);
->  		err = filemap_write_and_wait(inode->i_mapping);
->  		if (err < 0) {
-> -			up_write(&EXT4_I(inode)->i_mmap_sem);
-> +			filemap_invalidate_unlock(inode->i_mapping);
->  			return err;
->  		}
->  	}
-> @@ -6019,7 +6018,7 @@ int ext4_change_inode_journal_flag(struct inode *inode, int val)
->  	percpu_up_write(&sbi->s_writepages_rwsem);
->  
->  	if (val)
-> -		up_write(&EXT4_I(inode)->i_mmap_sem);
-> +		filemap_invalidate_unlock(inode->i_mapping);
->  
->  	/* Finally we can mark the inode as dirty. */
->  
-> @@ -6063,7 +6062,7 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
->  	sb_start_pagefault(inode->i_sb);
->  	file_update_time(vma->vm_file);
->  
-> -	down_read(&EXT4_I(inode)->i_mmap_sem);
-> +	filemap_invalidate_lock_shared(mapping);
->  
->  	err = ext4_convert_inline_data(inode);
->  	if (err)
-> @@ -6176,7 +6175,7 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
->  out_ret:
->  	ret = block_page_mkwrite_return(err);
->  out:
-> -	up_read(&EXT4_I(inode)->i_mmap_sem);
-> +	filemap_invalidate_unlock_shared(mapping);
->  	sb_end_pagefault(inode->i_sb);
->  	return ret;
->  out_error:
-> @@ -6184,15 +6183,3 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
->  	ext4_journal_stop(handle);
->  	goto out;
->  }
-> -
-> -vm_fault_t ext4_filemap_fault(struct vm_fault *vmf)
-> -{
-> -	struct inode *inode = file_inode(vmf->vma->vm_file);
-> -	vm_fault_t ret;
-> -
-> -	down_read(&EXT4_I(inode)->i_mmap_sem);
-> -	ret = filemap_fault(vmf);
-> -	up_read(&EXT4_I(inode)->i_mmap_sem);
-> -
-> -	return ret;
-> -}
-> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-> index 31627f7dc5cd..c5ed562b4185 100644
-> --- a/fs/ext4/ioctl.c
-> +++ b/fs/ext4/ioctl.c
-> @@ -148,7 +148,7 @@ static long swap_inode_boot_loader(struct super_block *sb,
->  		goto journal_err_out;
->  	}
->  
-> -	down_write(&EXT4_I(inode)->i_mmap_sem);
-> +	filemap_invalidate_lock(inode->i_mapping);
->  	err = filemap_write_and_wait(inode->i_mapping);
->  	if (err)
->  		goto err_out;
-> @@ -256,7 +256,7 @@ static long swap_inode_boot_loader(struct super_block *sb,
->  	ext4_double_up_write_data_sem(inode, inode_bl);
->  
->  err_out:
-> -	up_write(&EXT4_I(inode)->i_mmap_sem);
-> +	filemap_invalidate_unlock(inode->i_mapping);
->  journal_err_out:
->  	unlock_two_nondirectories(inode, inode_bl);
->  	iput(inode_bl);
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index d29f6aa7d96e..c3c3cd8b0966 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -90,12 +90,9 @@ static struct inode *ext4_get_journal_inode(struct super_block *sb,
->  /*
->   * Lock ordering
->   *
-> - * Note the difference between i_mmap_sem (EXT4_I(inode)->i_mmap_sem) and
-> - * i_mmap_rwsem (inode->i_mmap_rwsem)!
-> - *
->   * page fault path:
-> - * mmap_lock -> sb_start_pagefault -> i_mmap_sem (r) -> transaction start ->
-> - *   page lock -> i_data_sem (rw)
-> + * mmap_lock -> sb_start_pagefault -> invalidate_lock (r) -> transaction start
-> + *   -> page lock -> i_data_sem (rw)
->   *
->   * buffered write path:
->   * sb_start_write -> i_mutex -> mmap_lock
-> @@ -103,8 +100,9 @@ static struct inode *ext4_get_journal_inode(struct super_block *sb,
->   *   i_data_sem (rw)
->   *
->   * truncate:
-> - * sb_start_write -> i_mutex -> i_mmap_sem (w) -> i_mmap_rwsem (w) -> page lock
-> - * sb_start_write -> i_mutex -> i_mmap_sem (w) -> transaction start ->
-> + * sb_start_write -> i_mutex -> invalidate_lock (w) -> i_mmap_rwsem (w) ->
-> + *   page lock
-> + * sb_start_write -> i_mutex -> invalidate_lock (w) -> transaction start ->
->   *   i_data_sem (rw)
->   *
->   * direct IO:
-> @@ -1350,7 +1348,6 @@ static void init_once(void *foo)
->  	INIT_LIST_HEAD(&ei->i_orphan);
->  	init_rwsem(&ei->xattr_sem);
->  	init_rwsem(&ei->i_data_sem);
-> -	init_rwsem(&ei->i_mmap_sem);
->  	inode_init_once(&ei->vfs_inode);
->  	ext4_fc_init_inode(&ei->vfs_inode);
->  }
-> diff --git a/fs/ext4/truncate.h b/fs/ext4/truncate.h
-> index bcbe3668c1d4..ce84aa2786c7 100644
-> --- a/fs/ext4/truncate.h
-> +++ b/fs/ext4/truncate.h
-> @@ -11,14 +11,16 @@
->   */
->  static inline void ext4_truncate_failed_write(struct inode *inode)
->  {
-> +	struct address_space *mapping = inode->i_mapping;
-> +
->  	/*
->  	 * We don't need to call ext4_break_layouts() because the blocks we
->  	 * are truncating were never visible to userspace.
->  	 */
-> -	down_write(&EXT4_I(inode)->i_mmap_sem);
-> -	truncate_inode_pages(inode->i_mapping, inode->i_size);
-> +	filemap_invalidate_lock(mapping);
-> +	truncate_inode_pages(mapping, inode->i_size);
->  	ext4_truncate(inode);
-> -	up_write(&EXT4_I(inode)->i_mmap_sem);
-> +	filemap_invalidate_unlock(mapping);
->  }
->  
->  /*
-> -- 
-> 2.26.2
+
+The point of this set is to make iput safe to run even when the s_mutex
+and/or snap_rwsem is held. When we queue up the ci->i_work, we do take a
+reference to the inode and still run iput there. This set just stops
+queueing iputs themselves to the workqueue.
+
+I really don't see a problem with this call site in ceph_handle_caps in
+particular, as it's calling iput after dropping the s_mutex. Probably
+that should not have been converted to use ceph_async_iput in the first
+place.
+
+> Cheers,
+> --
+> Luís
 > 
+> >  	return;
+> >  
+> >  flush_cap_releases:
+> > @@ -4179,7 +4179,7 @@ void ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
+> >  			dout("check_delayed_caps on %p\n", inode);
+> >  			ceph_check_caps(ci, 0, NULL);
+> >  			/* avoid calling iput_final() in tick thread */
+> > -			ceph_async_iput(inode);
+> > +			iput(inode);
+> >  			spin_lock(&mdsc->cap_delay_lock);
+> >  		}
+> >  	}
+> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > index 6034821c9d63..5f1c27caf0b6 100644
+> > --- a/fs/ceph/inode.c
+> > +++ b/fs/ceph/inode.c
+> > @@ -1567,7 +1567,7 @@ static int readdir_prepopulate_inodes_only(struct ceph_mds_request *req,
+> >  		}
+> >  
+> >  		/* avoid calling iput_final() in mds dispatch threads */
+> > -		ceph_async_iput(in);
+> > +		iput(in);
+> >  	}
+> >  
+> >  	return err;
+> > @@ -1770,7 +1770,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+> >  					ihold(in);
+> >  					discard_new_inode(in);
+> >  				}
+> > -				ceph_async_iput(in);
+> > +				iput(in);
+> >  			}
+> >  			d_drop(dn);
+> >  			err = ret;
+> > @@ -1783,7 +1783,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+> >  			if (ceph_security_xattr_deadlock(in)) {
+> >  				dout(" skip splicing dn %p to inode %p"
+> >  				     " (security xattr deadlock)\n", dn, in);
+> > -				ceph_async_iput(in);
+> > +				iput(in);
+> >  				skipped++;
+> >  				goto next_item;
+> >  			}
+> > @@ -1834,25 +1834,6 @@ bool ceph_inode_set_size(struct inode *inode, loff_t size)
+> >  	return ret;
+> >  }
+> >  
+> > -/*
+> > - * Put reference to inode, but avoid calling iput_final() in current thread.
+> > - * iput_final() may wait for reahahead pages. The wait can cause deadlock in
+> > - * some contexts.
+> > - */
+> > -void ceph_async_iput(struct inode *inode)
+> > -{
+> > -	if (!inode)
+> > -		return;
+> > -	for (;;) {
+> > -		if (atomic_add_unless(&inode->i_count, -1, 1))
+> > -			break;
+> > -		if (queue_work(ceph_inode_to_client(inode)->inode_wq,
+> > -			       &ceph_inode(inode)->i_work))
+> > -			break;
+> > -		/* queue work failed, i_count must be at least 2 */
+> > -	}
+> > -}
+> > -
+> >  void ceph_queue_inode_work(struct inode *inode, int work_bit)
+> >  {
+> >  	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > index 87d3be10af25..1f960361b78e 100644
+> > --- a/fs/ceph/mds_client.c
+> > +++ b/fs/ceph/mds_client.c
+> > @@ -825,13 +825,13 @@ void ceph_mdsc_release_request(struct kref *kref)
+> >  	if (req->r_inode) {
+> >  		ceph_put_cap_refs(ceph_inode(req->r_inode), CEPH_CAP_PIN);
+> >  		/* avoid calling iput_final() in mds dispatch threads */
+> > -		ceph_async_iput(req->r_inode);
+> > +		iput(req->r_inode);
+> >  	}
+> >  	if (req->r_parent) {
+> >  		ceph_put_cap_refs(ceph_inode(req->r_parent), CEPH_CAP_PIN);
+> > -		ceph_async_iput(req->r_parent);
+> > +		iput(req->r_parent);
+> >  	}
+> > -	ceph_async_iput(req->r_target_inode);
+> > +	iput(req->r_target_inode);
+> >  	if (req->r_dentry)
+> >  		dput(req->r_dentry);
+> >  	if (req->r_old_dentry)
+> > @@ -845,7 +845,7 @@ void ceph_mdsc_release_request(struct kref *kref)
+> >  		 */
+> >  		ceph_put_cap_refs(ceph_inode(req->r_old_dentry_dir),
+> >  				  CEPH_CAP_PIN);
+> > -		ceph_async_iput(req->r_old_dentry_dir);
+> > +		iput(req->r_old_dentry_dir);
+> >  	}
+> >  	kfree(req->r_path1);
+> >  	kfree(req->r_path2);
+> > @@ -961,7 +961,7 @@ static void __unregister_request(struct ceph_mds_client *mdsc,
+> >  
+> >  	if (req->r_unsafe_dir) {
+> >  		/* avoid calling iput_final() in mds dispatch threads */
+> > -		ceph_async_iput(req->r_unsafe_dir);
+> > +		iput(req->r_unsafe_dir);
+> >  		req->r_unsafe_dir = NULL;
+> >  	}
+> >  
+> > @@ -1132,7 +1132,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
+> >  		cap = rb_entry(rb_first(&ci->i_caps), struct ceph_cap, ci_node);
+> >  	if (!cap) {
+> >  		spin_unlock(&ci->i_ceph_lock);
+> > -		ceph_async_iput(inode);
+> > +		iput(inode);
+> >  		goto random;
+> >  	}
+> >  	mds = cap->session->s_mds;
+> > @@ -1143,7 +1143,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
+> >  out:
+> >  	/* avoid calling iput_final() while holding mdsc->mutex or
+> >  	 * in mds dispatch threads */
+> > -	ceph_async_iput(inode);
+> > +	iput(inode);
+> >  	return mds;
+> >  
+> >  random:
+> > @@ -1548,7 +1548,7 @@ int ceph_iterate_session_caps(struct ceph_mds_session *session,
+> >  		if (last_inode) {
+> >  			/* avoid calling iput_final() while holding
+> >  			 * s_mutex or in mds dispatch threads */
+> > -			ceph_async_iput(last_inode);
+> > +			iput(last_inode);
+> >  			last_inode = NULL;
+> >  		}
+> >  		if (old_cap) {
+> > @@ -1582,7 +1582,7 @@ int ceph_iterate_session_caps(struct ceph_mds_session *session,
+> >  	session->s_cap_iterator = NULL;
+> >  	spin_unlock(&session->s_cap_lock);
+> >  
+> > -	ceph_async_iput(last_inode);
+> > +	iput(last_inode);
+> >  	if (old_cap)
+> >  		ceph_put_cap(session->s_mdsc, old_cap);
+> >  
+> > @@ -1723,7 +1723,7 @@ static void remove_session_caps(struct ceph_mds_session *session)
+> >  
+> >  			inode = ceph_find_inode(sb, vino);
+> >  			 /* avoid calling iput_final() while holding s_mutex */
+> > -			ceph_async_iput(inode);
+> > +			iput(inode);
+> >  
+> >  			spin_lock(&session->s_cap_lock);
+> >  		}
+> > @@ -4370,7 +4370,7 @@ static void handle_lease(struct ceph_mds_client *mdsc,
+> >  out:
+> >  	mutex_unlock(&session->s_mutex);
+> >  	/* avoid calling iput_final() in mds dispatch threads */
+> > -	ceph_async_iput(inode);
+> > +	iput(inode);
+> >  	return;
+> >  
+> >  bad:
+> > diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
+> > index 4e32c9600ecc..988c6e04b327 100644
+> > --- a/fs/ceph/quota.c
+> > +++ b/fs/ceph/quota.c
+> > @@ -75,7 +75,7 @@ void ceph_handle_quota(struct ceph_mds_client *mdsc,
+> >  	spin_unlock(&ci->i_ceph_lock);
+> >  
+> >  	/* avoid calling iput_final() in dispatch thread */
+> > -	ceph_async_iput(inode);
+> > +	iput(inode);
+> >  }
+> >  
+> >  static struct ceph_quotarealm_inode *
+> > @@ -248,7 +248,7 @@ static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
+> >  		ci = ceph_inode(in);
+> >  		has_quota = __ceph_has_any_quota(ci);
+> >  		/* avoid calling iput_final() while holding mdsc->snap_rwsem */
+> > -		ceph_async_iput(in);
+> > +		iput(in);
+> >  
+> >  		next = realm->parent;
+> >  		if (has_quota || !next)
+> > @@ -384,7 +384,7 @@ static bool check_quota_exceeded(struct inode *inode, enum quota_check_op op,
+> >  			exceeded = true; /* Just break the loop */
+> >  		}
+> >  		/* avoid calling iput_final() while holding mdsc->snap_rwsem */
+> > -		ceph_async_iput(in);
+> > +		iput(in);
+> >  
+> >  		next = realm->parent;
+> >  		if (exceeded || !next)
+> > diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> > index afc7f4c32364..f928b02bcd31 100644
+> > --- a/fs/ceph/snap.c
+> > +++ b/fs/ceph/snap.c
+> > @@ -679,13 +679,13 @@ static void queue_realm_cap_snaps(struct ceph_snap_realm *realm)
+> >  		spin_unlock(&realm->inodes_with_caps_lock);
+> >  		/* avoid calling iput_final() while holding
+> >  		 * mdsc->snap_rwsem or in mds dispatch threads */
+> > -		ceph_async_iput(lastinode);
+> > +		iput(lastinode);
+> >  		lastinode = inode;
+> >  		ceph_queue_cap_snap(ci);
+> >  		spin_lock(&realm->inodes_with_caps_lock);
+> >  	}
+> >  	spin_unlock(&realm->inodes_with_caps_lock);
+> > -	ceph_async_iput(lastinode);
+> > +	iput(lastinode);
+> >  
+> >  	dout("queue_realm_cap_snaps %p %llx done\n", realm, realm->ino);
+> >  }
+> > @@ -841,7 +841,7 @@ static void flush_snaps(struct ceph_mds_client *mdsc)
+> >  		ceph_flush_snaps(ci, &session);
+> >  		/* avoid calling iput_final() while holding
+> >  		 * session->s_mutex or in mds dispatch threads */
+> > -		ceph_async_iput(inode);
+> > +		iput(inode);
+> >  		spin_lock(&mdsc->snap_flush_lock);
+> >  	}
+> >  	spin_unlock(&mdsc->snap_flush_lock);
+> > @@ -985,12 +985,12 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+> >  
+> >  			/* avoid calling iput_final() while holding
+> >  			 * mdsc->snap_rwsem or mds in dispatch threads */
+> > -			ceph_async_iput(inode);
+> > +			iput(inode);
+> >  			continue;
+> >  
+> >  skip_inode:
+> >  			spin_unlock(&ci->i_ceph_lock);
+> > -			ceph_async_iput(inode);
+> > +			iput(inode);
+> >  		}
+> >  
+> >  		/* we may have taken some of the old realm's children. */
+> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > index 31f0be9120dd..6b6332a5c113 100644
+> > --- a/fs/ceph/super.h
+> > +++ b/fs/ceph/super.h
+> > @@ -988,8 +988,6 @@ extern int ceph_inode_holds_cap(struct inode *inode, int mask);
+> >  extern bool ceph_inode_set_size(struct inode *inode, loff_t size);
+> >  extern void __ceph_do_pending_vmtruncate(struct inode *inode);
+> >  
+> > -extern void ceph_async_iput(struct inode *inode);
+> > -
+> >  void ceph_queue_inode_work(struct inode *inode, int work_bit);
+> >  
+> >  static inline void ceph_queue_vmtruncate(struct inode *inode)
+> > -- 
+> > 2.31.1
+> > 
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
