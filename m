@@ -2,65 +2,87 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF2923AAEE5
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Jun 2021 10:36:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD3783AAF01
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Jun 2021 10:42:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230038AbhFQIit (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Jun 2021 04:38:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41174 "EHLO
+        id S231168AbhFQIpE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Jun 2021 04:45:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229712AbhFQIit (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Jun 2021 04:38:49 -0400
-Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 057A6C061574
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Jun 2021 01:36:42 -0700 (PDT)
-Received: by mail-il1-x131.google.com with SMTP id i12so4666148ila.13
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Jun 2021 01:36:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jBxmHva0H2fmV14ONEemeoIT24LA9Dynq9IGpe13UVc=;
-        b=ScVyppBq9zVd1kn/iopn7FKTGLDc9nleqX56/T0BBWHq/2RqNY5U+mKUY2FtXDGIH7
-         Fg/9dEt//2rgKrtdB9T3DbCoJbOKcHRyj+9EblavGnLBCSQTZhvgDbM35pTIkVddkrJc
-         Mwl3+B1Xdy4Ghk6MoBdPg8IZRkonKM0Gk+8ykjUVGPKPdUHDpC1IUcCbBQZned2C4wgX
-         uJUH3LRZWa76DIjqXU4nOBy/3a4HBxHyJEAhr7Rp3+WrV/CopMyUUmXYXID4uRVly3RF
-         JthTJwFN0p+lSRw/BIdeivZnoVJm+GwZUBPhLjmQgrC41k6dLYfLGfY6GMHgzDekemAQ
-         kEsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jBxmHva0H2fmV14ONEemeoIT24LA9Dynq9IGpe13UVc=;
-        b=QNyVvsIlCaXk3e+u9D22DKmUB+GAs1wR0776CjgiIsWKZlWjpS7cmJAUC3hE9jE4gh
-         zB4bkfDoxJl8ho4V4gqK0gK0Ixd4hqEg2uqIhrVyJBOSgiaB6eU0V6U0F8+qj/cKoFAj
-         2/WB1gNUSSyZZCMiR4H4lDwnpsK+g3ba0O2DFnPveKMj2ynVs158iOugjVgdzF4ftdlO
-         ZUVdBsPl25ucxJGDKuQDQgYh07KV4T8dqUu2fgVQ3LWlGDWe+HZki5JzsWx5N+cTkWWa
-         IBlErJcewJUeNWPcKRdmUnhkstM2KV2aozkLjKfhEt0fjEnOWdW1RpzYLudeWkOCA6gl
-         H1Kw==
-X-Gm-Message-State: AOAM533HkRM1rpng4vw5buTDyM4/z448GbsW2N9rLzNHRb/K+lWEyEEJ
-        xDEnos2fusNqx/wtbUXNM2e8Ab+vgaOOpiEE8wthGoowLEjVjQ==
-X-Google-Smtp-Source: ABdhPJxzyVOiJPx13GuGC1qCx8oiTzVDAEIcmMZhf4EqG0ueiJPXOaXxqSoWlpZI3gXtCrrBTw19+KtEPzm+1yE2I3c=
-X-Received: by 2002:a05:6e02:d51:: with SMTP id h17mr2670005ilj.177.1623919001449;
- Thu, 17 Jun 2021 01:36:41 -0700 (PDT)
-MIME-Version: 1.0
+        with ESMTP id S231158AbhFQIpD (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Jun 2021 04:45:03 -0400
+Received: from outbound3.mail.transip.nl (outbound3.mail.transip.nl [IPv6:2a01:7c8:7c9:ca11:136:144:136:12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7B52C061574
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Jun 2021 01:42:55 -0700 (PDT)
+Received: from submission5.mail.transip.nl (unknown [10.103.8.156])
+        by outbound3.mail.transip.nl (Postfix) with ESMTP id 4G5Fth4SNBzprR5;
+        Thu, 17 Jun 2021 10:42:52 +0200 (CEST)
+Received: from exchange.transipgroup.nl (unknown [81.4.116.210])
+        by submission5.mail.transip.nl (Postfix) with ESMTPSA id 4G5Ftg28dpz7tDb;
+        Thu, 17 Jun 2021 10:42:51 +0200 (CEST)
+Received: from VM16171.groupdir.nl (10.131.120.71) by VM16171.groupdir.nl
+ (10.131.120.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.15; Thu, 17 Jun
+ 2021 10:42:49 +0200
+Received: from VM16171.groupdir.nl ([81.4.116.210]) by VM16171.groupdir.nl
+ ([81.4.116.210]) with mapi id 15.02.0792.015; Thu, 17 Jun 2021 10:42:49 +0200
+From:   Robin Geuze <robin.geuze@nl.team.blue>
+To:     Ilya Dryomov <idryomov@gmail.com>
+CC:     Ceph Development <ceph-devel@vger.kernel.org>
+Subject: Re: All RBD IO stuck after flapping OSD's
+Thread-Topic: All RBD IO stuck after flapping OSD's
+Thread-Index: AQHXMQs7yqmta0olA0ygBmx0d4s7EKq0G68AgAFka/SABi6BAIBbPDuXgAE5TYCAACJLAg==
+Date:   Thu, 17 Jun 2021 08:42:49 +0000
+Message-ID: <21c4b9e08c4d48d6b477fc61d1fccba3@nl.team.blue>
 References: <47f0a04ce6664116a11cfdb5a458e252@nl.team.blue>
  <CAOi1vP-moRXtL4gKXQF8+NwbPgE11_LoxfSYqYBbJfYYQ7Sv_g@mail.gmail.com>
- <8eb12c996e404870803e9a7c77e508d6@nl.team.blue> <CAOi1vP-8i-rKEDd8Emq+MtxCjvK-6VG8KaXdzvQLW89174jUZA@mail.gmail.com>
- <666938090a8746a7ad8ae40ebf116e1c@nl.team.blue>
-In-Reply-To: <666938090a8746a7ad8ae40ebf116e1c@nl.team.blue>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 17 Jun 2021 10:36:33 +0200
-Message-ID: <CAOi1vP8NHYEN-=J4A7mB1dSkaHHf8Gtha-xqPLboZUS5u442hA@mail.gmail.com>
-Subject: Re: All RBD IO stuck after flapping OSD's
-To:     Robin Geuze <robin.geuze@nl.team.blue>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+ <8eb12c996e404870803e9a7c77e508d6@nl.team.blue>
+ <CAOi1vP-8i-rKEDd8Emq+MtxCjvK-6VG8KaXdzvQLW89174jUZA@mail.gmail.com>
+ <666938090a8746a7ad8ae40ebf116e1c@nl.team.blue>,<CAOi1vP8NHYEN-=J4A7mB1dSkaHHf8Gtha-xqPLboZUS5u442hA@mail.gmail.com>
+In-Reply-To: <CAOi1vP8NHYEN-=J4A7mB1dSkaHHf8Gtha-xqPLboZUS5u442hA@mail.gmail.com>
+Accept-Language: en-GB, nl-NL, en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [81.4.116.242]
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Scanned-By: ClueGetter at submission5.mail.transip.nl
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=transip-a; d=nl.team.blue; t=1623919371; h=from:subject:to:cc:
+ references:in-reply-to:date:mime-version:content-type;
+ bh=5CY9J9rL56JBG8ngwdshD9tI7DtFrQ50LUi+ALEFiCQ=;
+ b=hM68SeulBmOcSKAcqbSLtM0DANPCfayoG2+PEkviPDpyagvCJRjchemZAWB2B0T2OrRiq4
+ p8gTyD8bTX48s1Jx9wi8tEJE+tTw7R1MfP8uLkLb/AJY7DEb5nGSG5NH8yZHK/YorlrV7H
+ ZE5IWueG3lgBoTwe874lY8Reca9p7ClIQpMPvd4iX6U3OV2M4Eh+FuwBwe1BjG8y5R0NOt
+ UO+XV0LgUHSggNpKgJzK0r+DuVl9i1+ZIb+NaRjREmAV+3bP56QYIS8vQwbezBobQH4xxF
+ S+/KNVr75PXNo0jPLM4S/RabiOKbzxNIC4khn6LeY0U116M7bDapCF2f5wVljg==
+X-Report-Abuse-To: abuse@transip.nl
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Hey Ilya,
+
+We triggered the issue at roughly 13:05, so the problem cannot have occurre=
+d before 13:00.
+
+We've also (in the wild, haven't reproduced that exact case yet) seen this =
+occur without any stacktraces or stuck threads. The only "common" factor is=
+ that we see the watch errors, always at least twice within 1 or 2 minutes =
+if its broken.
+
+Regards,
+
+Robin Geuze
+ =20
+From: Ilya Dryomov <idryomov@gmail.com>
+Sent: 17 June 2021 10:36:33
+To: Robin Geuze
+Cc: Ceph Development
+Subject: Re: All RBD IO stuck after flapping OSD's
+=A0  =20
 On Wed, Jun 16, 2021 at 1:56 PM Robin Geuze <robin.geuze@nl.team.blue> wrot=
 e:
 >
@@ -76,7 +98,7 @@ M3FHLD28EcVJJ2
 > The way we reproduce it is that on one of the two ceph machines in the cl=
 uster (its a test cluster) we toggle both the bond NIC ports down, sleep 40=
  seconds, put them back up, wait another 15 seconds and then put them back =
-down, wait another 40 seconds and  then put them back up.
+down, wait another 40 seconds and=A0  then put them back up.
 >
 > Exact command line I used on the ceph machine:
 > ip l set ens785f1 down; sleep 1 ip l set ens785f0 down; sleep 40; ip l se=
@@ -102,7 +124,7 @@ SysRq is not disabled on your servers.
 
 Thanks,
 
-                Ilya
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Ilya
 
 >
 > Regards,
@@ -125,7 +147,7 @@ le to work with their VM's. We did manage to make a dynamic debugging dump =
 of an earlier occurence, maybe that can help? I've attached it to this emai=
 l.
 >
-> No, I don't see anything to go on there.  Next time, enable logging for
+> No, I don't see anything to go on there.=A0 Next time, enable logging for
 > both libceph and rbd modules and make sure that at least one instance of
 > the error (i.e. "pre object map update failed: -16") makes it into the
 > attached log.
@@ -139,14 +161,14 @@ unmap) on any of the RBD mounts that aren't affected, they hang and more of=
 ten than not the IO for that one also stalls (not always though).
 >
 > One obvious workaround workaround is to unmap, disable object-map and
-> exclusive-lock features with "rbd feature disable", and map back.  You
+> exclusive-lock features with "rbd feature disable", and map back.=A0 You
 > would lose the benefits of object map, but if it is affecting customer
 > workloads it is probably the best course of action until this thing is
 > root caused.
 >
 > Thanks,
 >
->                 Ilya
+>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Ilya
 >
 > >
 > > Regards,
@@ -189,8 +211,8 @@ o 192 2564096~2048 result -16
 > > > At this point the IO for these two mounts is completely gone, and the=
  only reason we can still perform IO on the other RBD devices is because we=
  use noshare. Unfortunately unmounting the other devices is no longer possi=
-ble, which means we cannot migrate  our  VM's to another HV, since to make =
-the messages go away we have to reboot the server.
+ble, which means we cannot migrate=A0  our=A0 VM's to another HV, since to =
+make the messages go away we have to reboot the server.
 > >
 > > Hi Robin,
 > >
@@ -204,9 +226,9 @@ tuck, and the longer we wait with rebooting this the worse the issue get.
 > >
 > > Please explain how it's getting worse.
 > >
-> > I think the problem is that the object map isn't locked.  What
+> > I think the problem is that the object map isn't locked.=A0 What
 > > probably happened is the kernel client lost its watch on the image
-> > and for some reason can't get it back.   The flapping has likely
+> > and for some reason can't get it back.=A0=A0 The flapping has likely
 > > trigged some edge condition in the watch/notify code.
 > >
 > > To confirm:
@@ -215,15 +237,17 @@ tuck, and the longer we wait with rebooting this the worse the issue get.
 > >
 > > - paste the contents of /sys/kernel/debug/ceph/<cluster id>.client<id>/=
 osdc
-> >   for /dev/rbd14.  If you are using noshare, you will have multiple
-> >   client instances with the same cluster id.  The one you need can be
-> >   identified with /sys/bus/rbd/devices/14/client_id.
+> >=A0=A0 for /dev/rbd14.=A0 If you are using noshare, you will have multip=
+le
+> >=A0=A0 client instances with the same cluster id.=A0 The one you need ca=
+n be
+> >=A0=A0 identified with /sys/bus/rbd/devices/14/client_id.
 > >
 > > - paste the output of "rbd status <rbd14 image>" (image name can be
-> >   identified from "rbd showmapped")
+> >=A0=A0 identified from "rbd showmapped")
 > >
 > > I'm also curious who actually has the lock on the header object and the
-> > object map object.  Paste the output of
+> > object map object.=A0 Paste the output of
 > >
 > > $ ID=3D$(bin/rbd info --format=3Djson <rbd14 pool>/<rbd14 image> | jq -=
 r .id)
@@ -232,6 +256,7 @@ r .id)
 > >
 > > Thanks,
 > >
-> >                 Ilya
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Ilya
 > >
 >
+    =
