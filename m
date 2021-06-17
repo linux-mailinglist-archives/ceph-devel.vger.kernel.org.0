@@ -2,438 +2,543 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 342BC3AB20F
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Jun 2021 13:12:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E10333AB956
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Jun 2021 18:15:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232421AbhFQLOo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Jun 2021 07:14:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48224 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232409AbhFQLOg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Jun 2021 07:14:36 -0400
-Received: from outbound2.mail.transip.nl (outbound2.mail.transip.nl [IPv6:2a01:7c8:7c8::73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAC50C061574
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Jun 2021 04:12:27 -0700 (PDT)
-Received: from submission14.mail.transip.nl (unknown [10.103.8.165])
-        by outbound2.mail.transip.nl (Postfix) with ESMTP id 4G5KCF53vKzYcng;
-        Thu, 17 Jun 2021 13:12:25 +0200 (CEST)
-Received: from exchange.transipgroup.nl (unknown [81.4.116.210])
-        by submission14.mail.transip.nl (Postfix) with ESMTPSA id 4G5KCF2jr5z2SSMp;
-        Thu, 17 Jun 2021 13:12:25 +0200 (CEST)
-Received: from VM16171.groupdir.nl (10.131.120.71) by VM16171.groupdir.nl
- (10.131.120.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.15; Thu, 17 Jun
- 2021 13:12:24 +0200
-Received: from VM16171.groupdir.nl ([81.4.116.210]) by VM16171.groupdir.nl
- ([81.4.116.210]) with mapi id 15.02.0792.015; Thu, 17 Jun 2021 13:12:24 +0200
-From:   Robin Geuze <robin.geuze@nl.team.blue>
-To:     Ilya Dryomov <idryomov@gmail.com>
-CC:     Ceph Development <ceph-devel@vger.kernel.org>
-Subject: Re: All RBD IO stuck after flapping OSD's
-Thread-Topic: All RBD IO stuck after flapping OSD's
-Thread-Index: AQHXMQs7yqmta0olA0ygBmx0d4s7EKq0G68AgAFka/SABi6BAIBbPDuXgAE5TYCAACJLAv//77AAgAArXHP//+1sAIAAIdhQ
-Date:   Thu, 17 Jun 2021 11:12:23 +0000
-Message-ID: <391efdae70644b71844fe6fa3dceea13@nl.team.blue>
-References: <47f0a04ce6664116a11cfdb5a458e252@nl.team.blue>
- <CAOi1vP-moRXtL4gKXQF8+NwbPgE11_LoxfSYqYBbJfYYQ7Sv_g@mail.gmail.com>
- <8eb12c996e404870803e9a7c77e508d6@nl.team.blue>
- <CAOi1vP-8i-rKEDd8Emq+MtxCjvK-6VG8KaXdzvQLW89174jUZA@mail.gmail.com>
- <666938090a8746a7ad8ae40ebf116e1c@nl.team.blue>
- <CAOi1vP8NHYEN-=J4A7mB1dSkaHHf8Gtha-xqPLboZUS5u442hA@mail.gmail.com>
- <21c4b9e08c4d48d6b477fc61d1fccba3@nl.team.blue>
- <CAOi1vP_fJm5UzSnOmQDKsVHmv-4vebNZTDk7vqLs=bvnf3fwjw@mail.gmail.com>
- <a13af12ab314437bbbffcb23b0513722@nl.team.blue>,<CAOi1vP8kiGNaNPw=by=TVfJEV1_X-BNYZuVpO_Kxx5xtf40_6w@mail.gmail.com>
-In-Reply-To: <CAOi1vP8kiGNaNPw=by=TVfJEV1_X-BNYZuVpO_Kxx5xtf40_6w@mail.gmail.com>
-Accept-Language: en-GB, nl-NL, en-US
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [81.4.116.242]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S231379AbhFQQRt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Jun 2021 12:17:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44266 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229599AbhFQQRs (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 17 Jun 2021 12:17:48 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F0CE613A9;
+        Thu, 17 Jun 2021 16:15:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623946540;
+        bh=aSsnfitnzuNBX881o+0z904ulqyW4SF+Io9+hZBpIEY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gGPCE52zI8VoqVDto5gWqAtiT5KOrcTS8xgFHqQwuiGIOQ99c3qIP7+urXKMFg0E6
+         Ijykjavp3H+GsZv1SzgkRkf00m222kRMhC3BUv3Ifrr8uv2tgApPLosUH/1bfJeNJ2
+         KVdGQum0zwl5QJbx36PldX4HbU69Yh/l99EFiUTYK2jAGaEy5Xbu8hcgNao9qeuaz8
+         fleHH7Lz70aG89d8BxqTAw2MjRyFSxLWhXu3kg+v5qFL5etCL1SAGfvTZnSUOl0K3K
+         HrLIsyDAXSLt9lhuUvuaqoQuWz4iwDVs45KAdyjcRpvukOjEizTbf0vfzWcsNnMHOi
+         HEHaOPH2mNX7Q==
+Date:   Thu, 17 Jun 2021 09:15:40 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
+        Chao Yu <yuchao0@huawei.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Thumshirn <jth@kernel.org>,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>, Ted Tso <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 03/14] mm: Protect operations adding pages to page cache
+ with invalidate_lock
+Message-ID: <20210617161540.GN158209@locust>
+References: <20210615090844.6045-1-jack@suse.cz>
+ <20210615091814.28626-3-jack@suse.cz>
 MIME-Version: 1.0
-X-Scanned-By: ClueGetter at submission14.mail.transip.nl
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=transip-a; d=nl.team.blue; t=1623928345; h=from:subject:to:cc:
- references:in-reply-to:date:mime-version:content-type;
- bh=djvrpv9BhKprZyZPvLGuQcRlsAnG9We4XwTVxvqHTUs=;
- b=mGTO7fP3zIkoXDxTM0sCA9fA4Jzyo77bTWXgIhq1tKWnZ+iNenrET5qqlEPEhSz74beKME
- gGRsFHSlkSxDXgu9VskthnpOe/rZu/cyOGE3AaLrXODQYiCopuueQvy7pMHEbbXl6Tawir
- 7eLvvz3y++asW5ux98T+/pcCvAUF3yfkBqgNCnsZwnQFAPYAFeYu8ZcuEwlFkiQwlznUZL
- A6ws+XiRZOxc6u8/TNuBb1N2HNt1VVfjswCMSkYanWBZPfa5MXQaLTUTZrBbbtVtrdHlOe
- UAFOXn8yRW83D4TsUE29ErOxnjRYmYy05vLSW5QgkrzhKCBMecoZQPiawcWZsA==
-X-Report-Abuse-To: abuse@transip.nl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210615091814.28626-3-jack@suse.cz>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hey Ilya,
+On Tue, Jun 15, 2021 at 11:17:53AM +0200, Jan Kara wrote:
+> Currently, serializing operations such as page fault, read, or readahead
+> against hole punching is rather difficult. The basic race scheme is
+> like:
+> 
+> fallocate(FALLOC_FL_PUNCH_HOLE)			read / fault / ..
+>   truncate_inode_pages_range()
+> 						  <create pages in page
+> 						   cache here>
+>   <update fs block mapping and free blocks>
+> 
+> Now the problem is in this way read / page fault / readahead can
+> instantiate pages in page cache with potentially stale data (if blocks
+> get quickly reused). Avoiding this race is not simple - page locks do
+> not work because we want to make sure there are *no* pages in given
+> range. inode->i_rwsem does not work because page fault happens under
+> mmap_sem which ranks below inode->i_rwsem. Also using it for reads makes
+> the performance for mixed read-write workloads suffer.
+> 
+> So create a new rw_semaphore in the address_space - invalidate_lock -
+> that protects adding of pages to page cache for page faults / reads /
+> readahead.
+> 
+> Signed-off-by: Jan Kara <jack@suse.cz>
 
-Yes we can install a custom kernel, or we can apply a patch to the current =
-5.4 kernel if you prefer (we have a build street for the ubuntu kernel set =
-up, so its not a lot of effort).
+Looks good to me now,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Regards,
+--D
 
-Robin Geuze
-
-From: Ilya Dryomov <idryomov@gmail.com>
-Sent: 17 June 2021 13:09
-To: Robin Geuze
-Cc: Ceph Development
-Subject: Re: All RBD IO stuck after flapping OSD's
-=A0  =20
-On Thu, Jun 17, 2021 at 12:17 PM Robin Geuze <robin.geuze@nl.team.blue> wro=
-te:
->
-> Hey Ilya,
->
-> We've added some extra debug info to the fileshare from before, including=
- the sysrq-trigger output.
-
-Yup, seems to be exactly https://tracker.ceph.com/issues/42757.
-Here are the relevant tasks listed in the same order as in the
-ticket (you have two tasks in ceph_con_workfn() instead of one):
-
-kworker/5:1=A0=A0=A0=A0 D=A0=A0=A0 0 161820=A0=A0=A0=A0=A0 2 0x80004000
-Workqueue: ceph-msgr ceph_con_workfn [libceph]
-Call Trace:
-=A0__schedule+0x2e3/0x740
-=A0schedule+0x42/0xb0
-=A0rwsem_down_read_slowpath+0x16c/0x4a0
-=A0down_read+0x85/0xa0
-=A0rbd_img_handle_request+0x40/0x1a0 [rbd]
-=A0? __rbd_obj_handle_request+0x61/0x2f0 [rbd]
-=A0rbd_obj_handle_request+0x34/0x40 [rbd]
-=A0rbd_osd_req_callback+0x44/0x80 [rbd]
-=A0__complete_request+0x28/0x80 [libceph]
-=A0handle_reply+0x2b6/0x460 [libceph]
-=A0? ceph_crypt+0x1d/0x30 [libceph]
-=A0? calc_signature+0xdf/0x100 [libceph]
-=A0? ceph_x_check_message_signature+0x5e/0xd0 [libceph]
-=A0dispatch+0x34/0xb0 [libceph]
-=A0? dispatch+0x34/0xb0 [libceph]
-=A0try_read+0x566/0x8c0 [libceph]
-=A0ceph_con_workfn+0x130/0x620 [libceph]
-=A0? __queue_delayed_work+0x8a/0x90
-=A0process_one_work+0x1eb/0x3b0
-=A0worker_thread+0x4d/0x400
-=A0kthread+0x104/0x140
-=A0? process_one_work+0x3b0/0x3b0
-=A0? kthread_park+0x90/0x90
-=A0ret_from_fork+0x35/0x40
-kworker/26:1=A0=A0=A0 D=A0=A0=A0 0 226056=A0=A0=A0=A0=A0 2 0x80004000
-Workqueue: ceph-msgr ceph_con_workfn [libceph]
-Call Trace:
-=A0__schedule+0x2e3/0x740
-=A0schedule+0x42/0xb0
-=A0rwsem_down_read_slowpath+0x16c/0x4a0
-=A0down_read+0x85/0xa0
-=A0rbd_img_handle_request+0x40/0x1a0 [rbd]
-=A0? __rbd_obj_handle_request+0x61/0x2f0 [rbd]
-=A0rbd_obj_handle_request+0x34/0x40 [rbd]
-=A0rbd_osd_req_callback+0x44/0x80 [rbd]
-=A0__complete_request+0x28/0x80 [libceph]
-=A0handle_reply+0x2b6/0x460 [libceph]
-=A0? ceph_crypt+0x1d/0x30 [libceph]
-=A0? calc_signature+0xdf/0x100 [libceph]
-=A0? ceph_x_check_message_signature+0x5e/0xd0 [libceph]
-=A0dispatch+0x34/0xb0 [libceph]
-=A0? dispatch+0x34/0xb0 [libceph]
-=A0try_read+0x566/0x8c0 [libceph]
-=A0? __switch_to_asm+0x40/0x70
-=A0? __switch_to_asm+0x34/0x70
-=A0? __switch_to_asm+0x40/0x70
-=A0? __switch_to+0x7f/0x470
-=A0? __switch_to_asm+0x40/0x70
-=A0? __switch_to_asm+0x34/0x70
-=A0ceph_con_workfn+0x130/0x620 [libceph]
-=A0process_one_work+0x1eb/0x3b0
-=A0worker_thread+0x4d/0x400
-=A0kthread+0x104/0x140
-=A0? process_one_work+0x3b0/0x3b0
-=A0? kthread_park+0x90/0x90
-=A0ret_from_fork+0x35/0x40
-
-kworker/u112:2=A0 D=A0=A0=A0 0 277829=A0=A0=A0=A0=A0 2 0x80004000
-Workqueue: rbd3-tasks rbd_reregister_watch [rbd]
-Call Trace:
-=A0__schedule+0x2e3/0x740
-=A0schedule+0x42/0xb0
-=A0schedule_timeout+0x10e/0x160
-=A0? wait_for_completion_interruptible+0xb8/0x160
-=A0wait_for_completion+0xb1/0x120
-=A0? wake_up_q+0x70/0x70
-=A0rbd_quiesce_lock+0xa1/0xe0 [rbd]
-=A0rbd_reregister_watch+0x109/0x1b0 [rbd]
-=A0process_one_work+0x1eb/0x3b0
-=A0worker_thread+0x4d/0x400
-=A0kthread+0x104/0x140
-=A0? process_one_work+0x3b0/0x3b0
-=A0? kthread_park+0x90/0x90
-=A0ret_from_fork+0x35/0x40
-
-kworker/u112:3=A0 D=A0=A0=A0 0 284466=A0=A0=A0=A0=A0 2 0x80004000
-Workqueue: ceph-watch-notify do_watch_error [libceph]
-Call Trace:
-=A0__schedule+0x2e3/0x740
-=A0? wake_up_klogd.part.0+0x34/0x40
-=A0? sched_clock+0x9/0x10
-=A0schedule+0x42/0xb0
-=A0rwsem_down_write_slowpath+0x244/0x4d0
-=A0down_write+0x41/0x50
-=A0rbd_watch_errcb+0x2a/0x92 [rbd]
-=A0do_watch_error+0x41/0xc0 [libceph]
-=A0process_one_work+0x1eb/0x3b0
-=A0worker_thread+0x4d/0x400
-=A0kthread+0x104/0x140
-=A0? process_one_work+0x3b0/0x3b0
-=A0? kthread_park+0x90/0x90
-=A0ret_from_fork+0x35/0x40
-
-Not your original issue but closely related since it revolves around
-exclusive-lock (which object-map depends on) and watches.
-
-Would you be able to install a custom kernel on this node to test the
-fix once I have it?
-
-Thanks,
-
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Ilya
-
->
-> Regards,
->
-> Robin Geuze
->
-> From: Ilya Dryomov <idryomov@gmail.com>
-> Sent: 17 June 2021 11:40:54
-> To: Robin Geuze
-> Cc: Ceph Development
-> Subject: Re: All RBD IO stuck after flapping OSD's
->
-> On Thu, Jun 17, 2021 at 10:42 AM Robin Geuze <robin.geuze@nl.team.blue> w=
-rote:
-> >
-> > Hey Ilya,
-> >
-> > We triggered the issue at roughly 13:05, so the problem cannot have occ=
-urred before 13:00.
-> >
-> > We've also (in the wild, haven't reproduced that exact case yet) seen t=
-his occur without any stacktraces or stuck threads. The only "common" facto=
-r is that we see the watch errors, always at least twice within 1 or 2 minu=
-tes if its broken.
->
-> Ah, I guess I got confused by timestamps in stuck_kthreads.md.
-> I grepped for "pre object map update" errors that you reported
-> initially and didn't see any.
->
-> With any sort of networking issues, watch errors are expected.
->
-> I'll take a deeper look at syslog_stuck_krbd_shrinked.
->
-> Thanks,
->
->=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Ilya
->
-> >
-> > Regards,
-> >
-> > Robin Geuze
-> >
-> > From: Ilya Dryomov <idryomov@gmail.com>
-> > Sent: 17 June 2021 10:36:33
-> > To: Robin Geuze
-> > Cc: Ceph Development
-> > Subject: Re: All RBD IO stuck after flapping OSD's
-> >
-> > On Wed, Jun 16, 2021 at 1:56 PM Robin Geuze <robin.geuze@nl.team.blue> =
-wrote:
-> > >
-> > > Hey Ilya,
-> > >
-> > > Sorry for the long delay, but we've finally managed to somewhat relia=
-bly reproduce this issue and produced a bunch of debug data. Its really big=
-, so you can find the files here: https://dionbosschieter.stackstorage.com/=
-s/RhM3FHLD28EcVJJ2
-> > >
-> > > We also got some stack traces those are in there as well.
-> > >
-> > > The way we reproduce it is that on one of the two ceph machines in th=
-e cluster (its a test cluster) we toggle both the bond NIC ports down, slee=
-p 40 seconds, put them back up, wait another 15 seconds and then put them b=
-ack down, wait another 40 seconds=A0  and=A0=A0 then put them back up.
-> > >
-> > > Exact command line I used on the ceph machine:
-> > > ip l set ens785f1 down; sleep 1 ip l set ens785f0 down; sleep 40; ip =
-l set ens785f1 up; sleep 5; ip l set ens785f0 up; sleep 15; ip l set ens785=
-f1 down; sleep 1 ip l set ens785f0 down; sleep 40; ip l set ens785f1 up; sl=
-eep 5; ip l set ens785f0 up
-> >
-> > Hi Robin,
-> >
-> > This looks very similar to https://tracker.ceph.com/issues/42757.
-> > I don't see the offending writer thread among stuck threads in
-> > stuck_kthreads.md though (and syslog_stuck_krbd_shrinked covers only
-> > a short 13-second period of time so it's not there either because the
-> > problem, at least the one I'm suspecting, would have occurred before
-> > 13:00:00).
-> >
-> > If you can reproduce reliably, try again without verbose logging but
-> > do capture all stack traces -- once the system locks up, let it stew
-> > for ten minutes and attach "blocked for more than X seconds" splats.
-> >
-> > Additionally, a "echo w >/proc/sysrq-trigger" dump would be good if
-> > SysRq is not disabled on your servers.
-> >
-> > Thanks,
-> >
-> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Ilya
-> >
-> > >
-> > > Regards,
-> > >
-> > > Robin Geuze
-> > >
-> > > From: Ilya Dryomov <idryomov@gmail.com>
-> > > Sent: 19 April 2021 14:40:00
-> > > To: Robin Geuze
-> > > Cc: Ceph Development
-> > > Subject: Re: All RBD IO stuck after flapping OSD's
-> > >
-> > > On Thu, Apr 15, 2021 at 2:21 PM Robin Geuze <robin.geuze@nl.team.blue=
-> wrote:
-> > > >
-> > > > Hey Ilya,
-> > > >
-> > > > We had to reboot the machine unfortunately, since we had customers =
-unable to work with their VM's. We did manage to make a dynamic debugging d=
-ump of an earlier occurence, maybe that can help? I've attached it to this =
-email.
-> > >
-> > > No, I don't see anything to go on there.=A0 Next time, enable logging=
- for
-> > > both libceph and rbd modules and make sure that at least one instance=
- of
-> > > the error (i.e. "pre object map update failed: -16") makes it into th=
-e
-> > > attached log.
-> > >
-> > > >
-> > > > Those messages constantly occur, even after we kill the VM using th=
-e mount, I guess because there is pending IO which cannot be flushed.
-> > > >
-> > > > As for how its getting worse, if you try any management operations =
-(eg unmap) on any of the RBD mounts that aren't affected, they hang and mor=
-e often than not the IO for that one also stalls (not always though).
-> > >
-> > > One obvious workaround workaround is to unmap, disable object-map and
-> > > exclusive-lock features with "rbd feature disable", and map back.=A0 =
-You
-> > > would lose the benefits of object map, but if it is affecting custome=
-r
-> > > workloads it is probably the best course of action until this thing i=
-s
-> > > root caused.
-> > >
-> > > Thanks,
-> > >
-> > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Ilya
-> > >
-> > > >
-> > > > Regards,
-> > > >
-> > > > Robin Geuze
-> > > >
-> > > > From: Ilya Dryomov <idryomov@gmail.com>
-> > > > Sent: 14 April 2021 19:00:20
-> > > > To: Robin Geuze
-> > > > Cc: Ceph Development
-> > > > Subject: Re: All RBD IO stuck after flapping OSD's
-> > > >
-> > > > On Wed, Apr 14, 2021 at 4:56 PM Robin Geuze <robin.geuze@nl.team.bl=
-ue> wrote:
-> > > > >
-> > > > > Hey,
-> > > > >
-> > > > > We've encountered a weird issue when using the kernel RBD module.=
- It starts with a bunch of OSD's flapping (in our case because of a network=
- card issue which caused the LACP to constantly flap), which is logged in d=
-mesg:
-> > > > >
-> > > > > Apr 14 05:45:02 hv1 kernel: [647677.112461] libceph: osd56 down
-> > > > > Apr 14 05:45:03 hv1 kernel: [647678.114962] libceph: osd54 down
-> > > > > Apr 14 05:45:05 hv1 kernel: [647680.127329] libceph: osd50 down
-> > > > > (...)
-> > > > >
-> > > > > After a while of that we start getting these errors being spammed=
- in dmesg:
-> > > > >
-> > > > > Apr 14 05:47:35 hv1 kernel: [647830.671263] rbd: rbd14: pre objec=
-t map update failed: -16
-> > > > > Apr 14 05:47:35 hv1 kernel: [647830.671268] rbd: rbd14: write at =
-objno 192 2564096~2048 result -16
-> > > > > Apr 14 05:47:35 hv1 kernel: [647830.671271] rbd: rbd14: write res=
-ult -16
-> > > > >
-> > > > > (In this case for two different RBD mounts)
-> > > > >
-> > > > > At this point the IO for these two mounts is completely gone, and=
- the only reason we can still perform IO on the other RBD devices is becaus=
-e we use noshare. Unfortunately unmounting the other devices is no longer p=
-ossible, which means we cannot migrate=A0=A0=A0  our=A0 VM's to another HV,=
- since to make the messages go away we have to reboot the server.
-> > > >
-> > > > Hi Robin,
-> > > >
-> > > > Do these messages appear even if no I/O is issued to /dev/rbd14 or =
-only
-> > > > if you attempt to write?
-> > > >
-> > > > >
-> > > > > All of this wouldn't be such a big issue if it recovered once the=
- cluster started behaving normally again, but it doesn't, it just keeps bei=
-ng stuck, and the longer we wait with rebooting this the worse the issue ge=
-t.
-> > > >
-> > > > Please explain how it's getting worse.
-> > > >
-> > > > I think the problem is that the object map isn't locked.=A0 What
-> > > > probably happened is the kernel client lost its watch on the image
-> > > > and for some reason can't get it back.=A0=A0 The flapping has likel=
-y
-> > > > trigged some edge condition in the watch/notify code.
-> > > >
-> > > > To confirm:
-> > > >
-> > > > - paste the contents of /sys/bus/rbd/devices/14/client_addr
-> > > >
-> > > > - paste the contents of /sys/kernel/debug/ceph/<cluster id>.client<=
-id>/osdc
-> > > >=A0=A0 for /dev/rbd14.=A0 If you are using noshare, you will have mu=
-ltiple
-> > > >=A0=A0 client instances with the same cluster id.=A0 The one you nee=
-d can be
-> > > >=A0=A0 identified with /sys/bus/rbd/devices/14/client_id.
-> > > >
-> > > > - paste the output of "rbd status <rbd14 image>" (image name can be
-> > > >=A0=A0 identified from "rbd showmapped")
-> > > >
-> > > > I'm also curious who actually has the lock on the header object and=
- the
-> > > > object map object.=A0 Paste the output of
-> > > >
-> > > > $ ID=3D$(bin/rbd info --format=3Djson <rbd14 pool>/<rbd14 image> | =
-jq -r .id)
-> > > > $ rados -p <rbd14 pool> lock info rbd_header.$ID rbd_lock | jq
-> > > > $ rados -p <rbd14 pool> lock info rbd_object_map.$ID rbd_lock | jq
-> > > >
-> > > > Thanks,
-> > > >
-> > > >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Ilya
-> > > >
-> > >
-> >
->
-    =
+> ---
+>  Documentation/filesystems/locking.rst | 62 +++++++++++++++++--------
+>  fs/inode.c                            |  2 +
+>  include/linux/fs.h                    | 33 ++++++++++++++
+>  mm/filemap.c                          | 65 ++++++++++++++++++++++-----
+>  mm/readahead.c                        |  2 +
+>  mm/rmap.c                             | 37 +++++++--------
+>  mm/truncate.c                         |  3 +-
+>  7 files changed, 154 insertions(+), 50 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
+> index 4ed2b22bd0a8..3b27319dd187 100644
+> --- a/Documentation/filesystems/locking.rst
+> +++ b/Documentation/filesystems/locking.rst
+> @@ -271,19 +271,19 @@ prototypes::
+>  locking rules:
+>  	All except set_page_dirty and freepage may block
+>  
+> -======================	======================== =========
+> -ops			PageLocked(page)	 i_rwsem
+> -======================	======================== =========
+> +======================	======================== =========	===============
+> +ops			PageLocked(page)	 i_rwsem	invalidate_lock
+> +======================	======================== =========	===============
+>  writepage:		yes, unlocks (see below)
+> -readpage:		yes, unlocks
+> +readpage:		yes, unlocks				shared
+>  writepages:
+>  set_page_dirty		no
+> -readahead:		yes, unlocks
+> -readpages:		no
+> +readahead:		yes, unlocks				shared
+> +readpages:		no					shared
+>  write_begin:		locks the page		 exclusive
+>  write_end:		yes, unlocks		 exclusive
+>  bmap:
+> -invalidatepage:		yes
+> +invalidatepage:		yes					exclusive
+>  releasepage:		yes
+>  freepage:		yes
+>  direct_IO:
+> @@ -378,7 +378,10 @@ keep it that way and don't breed new callers.
+>  ->invalidatepage() is called when the filesystem must attempt to drop
+>  some or all of the buffers from the page when it is being truncated. It
+>  returns zero on success. If ->invalidatepage is zero, the kernel uses
+> -block_invalidatepage() instead.
+> +block_invalidatepage() instead. The filesystem must exclusively acquire
+> +invalidate_lock before invalidating page cache in truncate / hole punch path
+> +(and thus calling into ->invalidatepage) to block races between page cache
+> +invalidation and page cache filling functions (fault, read, ...).
+>  
+>  ->releasepage() is called when the kernel is about to try to drop the
+>  buffers from the page in preparation for freeing it.  It returns zero to
+> @@ -573,6 +576,25 @@ in sys_read() and friends.
+>  the lease within the individual filesystem to record the result of the
+>  operation
+>  
+> +->fallocate implementation must be really careful to maintain page cache
+> +consistency when punching holes or performing other operations that invalidate
+> +page cache contents. Usually the filesystem needs to call
+> +truncate_inode_pages_range() to invalidate relevant range of the page cache.
+> +However the filesystem usually also needs to update its internal (and on disk)
+> +view of file offset -> disk block mapping. Until this update is finished, the
+> +filesystem needs to block page faults and reads from reloading now-stale page
+> +cache contents from the disk. Since VFS acquires mapping->invalidate_lock in
+> +shared mode when loading pages from disk (filemap_fault(), filemap_read(),
+> +readahead paths), the fallocate implementation must take the invalidate_lock to
+> +prevent reloading.
+> +
+> +->copy_file_range and ->remap_file_range implementations need to serialize
+> +against modifications of file data while the operation is running. For
+> +blocking changes through write(2) and similar operations inode->i_rwsem can be
+> +used. To block changes to file contents via a memory mapping during the
+> +operation, the filesystem must take mapping->invalidate_lock to coordinate
+> +with ->page_mkwrite.
+> +
+>  dquot_operations
+>  ================
+>  
+> @@ -630,11 +652,11 @@ pfn_mkwrite:	yes
+>  access:		yes
+>  =============	=========	===========================
+>  
+> -->fault() is called when a previously not present pte is about
+> -to be faulted in. The filesystem must find and return the page associated
+> -with the passed in "pgoff" in the vm_fault structure. If it is possible that
+> -the page may be truncated and/or invalidated, then the filesystem must lock
+> -the page, then ensure it is not already truncated (the page lock will block
+> +->fault() is called when a previously not present pte is about to be faulted
+> +in. The filesystem must find and return the page associated with the passed in
+> +"pgoff" in the vm_fault structure. If it is possible that the page may be
+> +truncated and/or invalidated, then the filesystem must lock invalidate_lock,
+> +then ensure the page is not already truncated (invalidate_lock will block
+>  subsequent truncate), and then return with VM_FAULT_LOCKED, and the page
+>  locked. The VM will unlock the page.
+>  
+> @@ -647,12 +669,14 @@ page table entry. Pointer to entry associated with the page is passed in
+>  "pte" field in vm_fault structure. Pointers to entries for other offsets
+>  should be calculated relative to "pte".
+>  
+> -->page_mkwrite() is called when a previously read-only pte is
+> -about to become writeable. The filesystem again must ensure that there are
+> -no truncate/invalidate races, and then return with the page locked. If
+> -the page has been truncated, the filesystem should not look up a new page
+> -like the ->fault() handler, but simply return with VM_FAULT_NOPAGE, which
+> -will cause the VM to retry the fault.
+> +->page_mkwrite() is called when a previously read-only pte is about to become
+> +writeable. The filesystem again must ensure that there are no
+> +truncate/invalidate races or races with operations such as ->remap_file_range
+> +or ->copy_file_range, and then return with the page locked. Usually
+> +mapping->invalidate_lock is suitable for proper serialization. If the page has
+> +been truncated, the filesystem should not look up a new page like the ->fault()
+> +handler, but simply return with VM_FAULT_NOPAGE, which will cause the VM to
+> +retry the fault.
+>  
+>  ->pfn_mkwrite() is the same as page_mkwrite but when the pte is
+>  VM_PFNMAP or VM_MIXEDMAP with a page-less entry. Expected return is
+> diff --git a/fs/inode.c b/fs/inode.c
+> index c93500d84264..84c528cd1955 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -190,6 +190,8 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+>  	mapping_set_gfp_mask(mapping, GFP_HIGHUSER_MOVABLE);
+>  	mapping->private_data = NULL;
+>  	mapping->writeback_index = 0;
+> +	__init_rwsem(&mapping->invalidate_lock, "mapping.invalidate_lock",
+> +		     &sb->s_type->invalidate_lock_key);
+>  	inode->i_private = NULL;
+>  	inode->i_mapping = mapping;
+>  	INIT_HLIST_HEAD(&inode->i_dentry);	/* buggered by rcu freeing */
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index c3c88fdb9b2a..d8afbc9661d7 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -436,6 +436,10 @@ int pagecache_write_end(struct file *, struct address_space *mapping,
+>   * struct address_space - Contents of a cacheable, mappable object.
+>   * @host: Owner, either the inode or the block_device.
+>   * @i_pages: Cached pages.
+> + * @invalidate_lock: Guards coherency between page cache contents and
+> + *   file offset->disk block mappings in the filesystem during invalidates.
+> + *   It is also used to block modification of page cache contents through
+> + *   memory mappings.
+>   * @gfp_mask: Memory allocation flags to use for allocating pages.
+>   * @i_mmap_writable: Number of VM_SHARED mappings.
+>   * @nr_thps: Number of THPs in the pagecache (non-shmem only).
+> @@ -453,6 +457,7 @@ int pagecache_write_end(struct file *, struct address_space *mapping,
+>  struct address_space {
+>  	struct inode		*host;
+>  	struct xarray		i_pages;
+> +	struct rw_semaphore	invalidate_lock;
+>  	gfp_t			gfp_mask;
+>  	atomic_t		i_mmap_writable;
+>  #ifdef CONFIG_READ_ONLY_THP_FOR_FS
+> @@ -814,6 +819,33 @@ static inline void inode_lock_shared_nested(struct inode *inode, unsigned subcla
+>  	down_read_nested(&inode->i_rwsem, subclass);
+>  }
+>  
+> +static inline void filemap_invalidate_lock(struct address_space *mapping)
+> +{
+> +	down_write(&mapping->invalidate_lock);
+> +}
+> +
+> +static inline void filemap_invalidate_unlock(struct address_space *mapping)
+> +{
+> +	up_write(&mapping->invalidate_lock);
+> +}
+> +
+> +static inline void filemap_invalidate_lock_shared(struct address_space *mapping)
+> +{
+> +	down_read(&mapping->invalidate_lock);
+> +}
+> +
+> +static inline int filemap_invalidate_trylock_shared(
+> +					struct address_space *mapping)
+> +{
+> +	return down_read_trylock(&mapping->invalidate_lock);
+> +}
+> +
+> +static inline void filemap_invalidate_unlock_shared(
+> +					struct address_space *mapping)
+> +{
+> +	up_read(&mapping->invalidate_lock);
+> +}
+> +
+>  void lock_two_nondirectories(struct inode *, struct inode*);
+>  void unlock_two_nondirectories(struct inode *, struct inode*);
+>  
+> @@ -2488,6 +2520,7 @@ struct file_system_type {
+>  
+>  	struct lock_class_key i_lock_key;
+>  	struct lock_class_key i_mutex_key;
+> +	struct lock_class_key invalidate_lock_key;
+>  	struct lock_class_key i_mutex_dir_key;
+>  };
+>  
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index ba1068a1837f..c8e7e451d81e 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -77,7 +77,8 @@
+>   *        ->i_pages lock
+>   *
+>   *  ->i_rwsem
+> - *    ->i_mmap_rwsem		(truncate->unmap_mapping_range)
+> + *    ->invalidate_lock		(acquired by fs in truncate path)
+> + *      ->i_mmap_rwsem		(truncate->unmap_mapping_range)
+>   *
+>   *  ->mmap_lock
+>   *    ->i_mmap_rwsem
+> @@ -85,7 +86,8 @@
+>   *        ->i_pages lock	(arch-dependent flush_dcache_mmap_lock)
+>   *
+>   *  ->mmap_lock
+> - *    ->lock_page		(access_process_vm)
+> + *    ->invalidate_lock		(filemap_fault)
+> + *      ->lock_page		(filemap_fault, access_process_vm)
+>   *
+>   *  ->i_rwsem			(generic_perform_write)
+>   *    ->mmap_lock		(fault_in_pages_readable->do_page_fault)
+> @@ -2368,20 +2370,30 @@ static int filemap_update_page(struct kiocb *iocb,
+>  {
+>  	int error;
+>  
+> +	if (iocb->ki_flags & IOCB_NOWAIT) {
+> +		if (!filemap_invalidate_trylock_shared(mapping))
+> +			return -EAGAIN;
+> +	} else {
+> +		filemap_invalidate_lock_shared(mapping);
+> +	}
+> +
+>  	if (!trylock_page(page)) {
+> +		error = -EAGAIN;
+>  		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_NOIO))
+> -			return -EAGAIN;
+> +			goto unlock_mapping;
+>  		if (!(iocb->ki_flags & IOCB_WAITQ)) {
+> +			filemap_invalidate_unlock_shared(mapping);
+>  			put_and_wait_on_page_locked(page, TASK_KILLABLE);
+>  			return AOP_TRUNCATED_PAGE;
+>  		}
+>  		error = __lock_page_async(page, iocb->ki_waitq);
+>  		if (error)
+> -			return error;
+> +			goto unlock_mapping;
+>  	}
+>  
+> +	error = AOP_TRUNCATED_PAGE;
+>  	if (!page->mapping)
+> -		goto truncated;
+> +		goto unlock;
+>  
+>  	error = 0;
+>  	if (filemap_range_uptodate(mapping, iocb->ki_pos, iter, page))
+> @@ -2392,15 +2404,13 @@ static int filemap_update_page(struct kiocb *iocb,
+>  		goto unlock;
+>  
+>  	error = filemap_read_page(iocb->ki_filp, mapping, page);
+> -	if (error == AOP_TRUNCATED_PAGE)
+> -		put_page(page);
+> -	return error;
+> -truncated:
+> -	unlock_page(page);
+> -	put_page(page);
+> -	return AOP_TRUNCATED_PAGE;
+> +	goto unlock_mapping;
+>  unlock:
+>  	unlock_page(page);
+> +unlock_mapping:
+> +	filemap_invalidate_unlock_shared(mapping);
+> +	if (error == AOP_TRUNCATED_PAGE)
+> +		put_page(page);
+>  	return error;
+>  }
+>  
+> @@ -2415,6 +2425,19 @@ static int filemap_create_page(struct file *file,
+>  	if (!page)
+>  		return -ENOMEM;
+>  
+> +	/*
+> +	 * Protect against truncate / hole punch. Grabbing invalidate_lock here
+> +	 * assures we cannot instantiate and bring uptodate new pagecache pages
+> +	 * after evicting page cache during truncate and before actually
+> +	 * freeing blocks.  Note that we could release invalidate_lock after
+> +	 * inserting the page into page cache as the locked page would then be
+> +	 * enough to synchronize with hole punching. But there are code paths
+> +	 * such as filemap_update_page() filling in partially uptodate pages or
+> +	 * ->readpages() that need to hold invalidate_lock while mapping blocks
+> +	 * for IO so let's hold the lock here as well to keep locking rules
+> +	 * simple.
+> +	 */
+> +	filemap_invalidate_lock_shared(mapping);
+>  	error = add_to_page_cache_lru(page, mapping, index,
+>  			mapping_gfp_constraint(mapping, GFP_KERNEL));
+>  	if (error == -EEXIST)
+> @@ -2426,9 +2449,11 @@ static int filemap_create_page(struct file *file,
+>  	if (error)
+>  		goto error;
+>  
+> +	filemap_invalidate_unlock_shared(mapping);
+>  	pagevec_add(pvec, page);
+>  	return 0;
+>  error:
+> +	filemap_invalidate_unlock_shared(mapping);
+>  	put_page(page);
+>  	return error;
+>  }
+> @@ -2988,6 +3013,13 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>  		count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
+>  		ret = VM_FAULT_MAJOR;
+>  		fpin = do_sync_mmap_readahead(vmf);
+> +	}
+> +
+> +	/*
+> +	 * See comment in filemap_create_page() why we need invalidate_lock
+> +	 */
+> +	filemap_invalidate_lock_shared(mapping);
+> +	if (!page) {
+>  retry_find:
+>  		page = pagecache_get_page(mapping, offset,
+>  					  FGP_CREAT|FGP_FOR_MMAP,
+> @@ -2995,6 +3027,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>  		if (!page) {
+>  			if (fpin)
+>  				goto out_retry;
+> +			filemap_invalidate_unlock_shared(mapping);
+>  			return VM_FAULT_OOM;
+>  		}
+>  	}
+> @@ -3035,9 +3068,11 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>  	if (unlikely(offset >= max_off)) {
+>  		unlock_page(page);
+>  		put_page(page);
+> +		filemap_invalidate_unlock_shared(mapping);
+>  		return VM_FAULT_SIGBUS;
+>  	}
+>  
+> +	filemap_invalidate_unlock_shared(mapping);
+>  	vmf->page = page;
+>  	return ret | VM_FAULT_LOCKED;
+>  
+> @@ -3056,6 +3091,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>  
+>  	if (!error || error == AOP_TRUNCATED_PAGE)
+>  		goto retry_find;
+> +	filemap_invalidate_unlock_shared(mapping);
+>  
+>  	return VM_FAULT_SIGBUS;
+>  
+> @@ -3067,6 +3103,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>  	 */
+>  	if (page)
+>  		put_page(page);
+> +	filemap_invalidate_unlock_shared(mapping);
+>  	if (fpin)
+>  		fput(fpin);
+>  	return ret | VM_FAULT_RETRY;
+> @@ -3437,6 +3474,8 @@ static struct page *do_read_cache_page(struct address_space *mapping,
+>   *
+>   * If the page does not get brought uptodate, return -EIO.
+>   *
+> + * The function expects mapping->invalidate_lock to be already held.
+> + *
+>   * Return: up to date page on success, ERR_PTR() on failure.
+>   */
+>  struct page *read_cache_page(struct address_space *mapping,
+> @@ -3460,6 +3499,8 @@ EXPORT_SYMBOL(read_cache_page);
+>   *
+>   * If the page does not get brought uptodate, return -EIO.
+>   *
+> + * The function expects mapping->invalidate_lock to be already held.
+> + *
+>   * Return: up to date page on success, ERR_PTR() on failure.
+>   */
+>  struct page *read_cache_page_gfp(struct address_space *mapping,
+> diff --git a/mm/readahead.c b/mm/readahead.c
+> index d589f147f4c2..41b75d76d36e 100644
+> --- a/mm/readahead.c
+> +++ b/mm/readahead.c
+> @@ -192,6 +192,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+>  	 */
+>  	unsigned int nofs = memalloc_nofs_save();
+>  
+> +	filemap_invalidate_lock_shared(mapping);
+>  	/*
+>  	 * Preallocate as many pages as we will need.
+>  	 */
+> @@ -236,6 +237,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+>  	 * will then handle the error.
+>  	 */
+>  	read_pages(ractl, &page_pool, false);
+> +	filemap_invalidate_unlock_shared(mapping);
+>  	memalloc_nofs_restore(nofs);
+>  }
+>  EXPORT_SYMBOL_GPL(page_cache_ra_unbounded);
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index a35cbbbded0d..76d33c3b8ae6 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -22,24 +22,25 @@
+>   *
+>   * inode->i_rwsem	(while writing or truncating, not reading or faulting)
+>   *   mm->mmap_lock
+> - *     page->flags PG_locked (lock_page)   * (see hugetlbfs below)
+> - *       hugetlbfs_i_mmap_rwsem_key (in huge_pmd_share)
+> - *         mapping->i_mmap_rwsem
+> - *           hugetlb_fault_mutex (hugetlbfs specific page fault mutex)
+> - *           anon_vma->rwsem
+> - *             mm->page_table_lock or pte_lock
+> - *               swap_lock (in swap_duplicate, swap_info_get)
+> - *                 mmlist_lock (in mmput, drain_mmlist and others)
+> - *                 mapping->private_lock (in __set_page_dirty_buffers)
+> - *                   lock_page_memcg move_lock (in __set_page_dirty_buffers)
+> - *                     i_pages lock (widely used)
+> - *                       lruvec->lru_lock (in lock_page_lruvec_irq)
+> - *                 inode->i_lock (in set_page_dirty's __mark_inode_dirty)
+> - *                 bdi.wb->list_lock (in set_page_dirty's __mark_inode_dirty)
+> - *                   sb_lock (within inode_lock in fs/fs-writeback.c)
+> - *                   i_pages lock (widely used, in set_page_dirty,
+> - *                             in arch-dependent flush_dcache_mmap_lock,
+> - *                             within bdi.wb->list_lock in __sync_single_inode)
+> + *     mapping->invalidate_lock (in filemap_fault)
+> + *       page->flags PG_locked (lock_page)   * (see hugetlbfs below)
+> + *         hugetlbfs_i_mmap_rwsem_key (in huge_pmd_share)
+> + *           mapping->i_mmap_rwsem
+> + *             hugetlb_fault_mutex (hugetlbfs specific page fault mutex)
+> + *             anon_vma->rwsem
+> + *               mm->page_table_lock or pte_lock
+> + *                 swap_lock (in swap_duplicate, swap_info_get)
+> + *                   mmlist_lock (in mmput, drain_mmlist and others)
+> + *                   mapping->private_lock (in __set_page_dirty_buffers)
+> + *                     lock_page_memcg move_lock (in __set_page_dirty_buffers)
+> + *                       i_pages lock (widely used)
+> + *                         lruvec->lru_lock (in lock_page_lruvec_irq)
+> + *                   inode->i_lock (in set_page_dirty's __mark_inode_dirty)
+> + *                   bdi.wb->list_lock (in set_page_dirty's __mark_inode_dirty)
+> + *                     sb_lock (within inode_lock in fs/fs-writeback.c)
+> + *                     i_pages lock (widely used, in set_page_dirty,
+> + *                               in arch-dependent flush_dcache_mmap_lock,
+> + *                               within bdi.wb->list_lock in __sync_single_inode)
+>   *
+>   * anon_vma->rwsem,mapping->i_mmap_rwsem   (memory_failure, collect_procs_anon)
+>   *   ->tasklist_lock
+> diff --git a/mm/truncate.c b/mm/truncate.c
+> index 57a618c4a0d6..d0cc6588aba2 100644
+> --- a/mm/truncate.c
+> +++ b/mm/truncate.c
+> @@ -415,7 +415,8 @@ EXPORT_SYMBOL(truncate_inode_pages_range);
+>   * @mapping: mapping to truncate
+>   * @lstart: offset from which to truncate
+>   *
+> - * Called under (and serialised by) inode->i_rwsem.
+> + * Called under (and serialised by) inode->i_rwsem and
+> + * mapping->invalidate_lock.
+>   *
+>   * Note: When this function returns, there can be a page in the process of
+>   * deletion (inside __delete_from_page_cache()) in the specified range.  Thus
+> -- 
+> 2.26.2
+> 
