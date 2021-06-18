@@ -2,165 +2,103 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 759233AD159
-	for <lists+ceph-devel@lfdr.de>; Fri, 18 Jun 2021 19:40:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C05EF3AD1DD
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Jun 2021 20:13:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233832AbhFRRmK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 18 Jun 2021 13:42:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41070 "EHLO mail.kernel.org"
+        id S235009AbhFRSPK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 18 Jun 2021 14:15:10 -0400
+Received: from mga01.intel.com ([192.55.52.88]:21508 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231685AbhFRRmK (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 18 Jun 2021 13:42:10 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3FD4161261;
-        Fri, 18 Jun 2021 17:40:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624038000;
-        bh=akmXLvDTqN22m+5SWXns3XhUa6Vqj/swBhSvqQs9a5E=;
-        h=From:To:Cc:Subject:Date:From;
-        b=IFzS7SpBMyNsC1/1f0NvAo0O9du2by5TFEWumK/K4GunmcAzjbcrnqjVLJmbCFx4o
-         wM5D/8N3gRyiNhwJiWuUzetSNdEHl35+LRE3VytxLOdp1cH2ZGmldHqIJ617njUt/2
-         ML3XCafv/E7kWMqSiwPBKjzJyfSMMb5rCmduSZ1KTMMrAAH42sXmnsVxb5005GTBaH
-         4aH9bhaZhYMDBtpMNtZ0chfC6T3Qv8WEv+ke1zS9WsXP93HVSlJpJ7Ra0BvTa5d69L
-         lA9y5j5mFv7zYSSwq+D5i9z36dUlMvDxG0tBqVWnSvoYIXBndAbBt/4rQUzoIJgXj7
-         KMvBYcj96Pjzg==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com
-Subject: [PATCH] ceph: take reference to req->r_parent at point of assignment
-Date:   Fri, 18 Jun 2021 13:39:59 -0400
-Message-Id: <20210618173959.13998-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.31.1
+        id S229816AbhFRSPK (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 18 Jun 2021 14:15:10 -0400
+IronPort-SDR: 4BfT8humAN2ALNjUzCLOCS4uv0cmFaxGAqim28EeRyYYtSF34bEVludBax4VEqIhmX6Z+Y46v5
+ p/PHYgt9Julw==
+X-IronPort-AV: E=McAfee;i="6200,9189,10019"; a="228130352"
+X-IronPort-AV: E=Sophos;i="5.83,284,1616482800"; 
+   d="scan'208";a="228130352"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2021 11:13:00 -0700
+IronPort-SDR: fZjz2UBcjkF09ZLFZzZqWyvwCbkGqlZanM6atUtLAcrBp3dXyferraXT69g8eiZc0puz+dQdsp
+ 3jQAgCFqGSuA==
+X-IronPort-AV: E=Sophos;i="5.83,284,1616482800"; 
+   d="scan'208";a="453226714"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2021 11:12:58 -0700
+Date:   Fri, 18 Jun 2021 11:12:58 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Geoff Levand <geoff@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Mike Snitzer <snitzer@redhat.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        dm-devel@redhat.com, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, ceph-devel@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Christoph Lameter <cl@gentwo.de>
+Subject: Re: [PATCH 01/18] mm: add a kunmap_local_dirty helper
+Message-ID: <20210618181258.GC1905674@iweiny-DESK2.sc.intel.com>
+References: <20210615132456.753241-1-hch@lst.de>
+ <20210615132456.753241-2-hch@lst.de>
+ <20210618030157.GA1905674@iweiny-DESK2.sc.intel.com>
+ <20210618033728.GA16787@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210618033728.GA16787@gondor.apana.org.au>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Currently, we set the r_parent pointer but then don't take a reference
-to it until we submit the request. If we end up freeing the req before
-that point, then we'll do a iput when we shouldn't.
+On Fri, Jun 18, 2021 at 11:37:28AM +0800, Herbert Xu wrote:
+> On Thu, Jun 17, 2021 at 08:01:57PM -0700, Ira Weiny wrote:
+> >
+> > > +		flush_kernel_dcache_page(__page);		\
+> > 
+> > Is this required on 32bit systems?  Why is kunmap_flush_on_unmap() not
+> > sufficient on 64bit systems?  The normal kunmap_local() path does that.
+> > 
+> > I'm sorry but I did not see a conclusion to my query on V1. Herbert implied the
+> > he just copied from the crypto code.[1]  I'm concerned that this _dirty() call
+> > is just going to confuse the users of kmap even more.  So why can't we get to
+> > the bottom of why flush_kernel_dcache_page() needs so much logic around it
+> > before complicating the general kernel users.
+> > 
+> > I would like to see it go away if possible.
+> 
+> This thread may be related:
+> 
+> https://lwn.net/Articles/240249/
 
-Instead, take the inode reference in the callers, so that it's always
-safe to call ceph_mdsc_put_request on the req, even before submission.
+Interesting!  Thanks!
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/dir.c        | 9 +++++++++
- fs/ceph/export.c     | 1 +
- fs/ceph/file.c       | 1 +
- fs/ceph/mds_client.c | 1 -
- 4 files changed, 11 insertions(+), 1 deletion(-)
+Digging around a bit more I found:
 
-Note that this isn't a problem with the existing code, because we never
-put the last reference before submission, but with the coming fscrypt
-patchset, we can end up doing this and this becomes a problem. With ths
-change, a set r_parent field means a reference *was* taken.
+https://lore.kernel.org/patchwork/patch/439637/
 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index bd508b1aeac2..a656c5c00e65 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -788,6 +788,7 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
- 		mask |= CEPH_CAP_XATTR_SHARED;
- 	req->r_args.getattr.mask = cpu_to_le32(mask);
- 
-+	ihold(dir);
- 	req->r_parent = dir;
- 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
- 	err = ceph_mdsc_do_request(mdsc, NULL, req);
-@@ -861,6 +862,7 @@ static int ceph_mknod(struct user_namespace *mnt_userns, struct inode *dir,
- 	req->r_dentry = dget(dentry);
- 	req->r_num_caps = 2;
- 	req->r_parent = dir;
-+	ihold(dir);
- 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
- 	req->r_args.mknod.mode = cpu_to_le32(mode);
- 	req->r_args.mknod.rdev = cpu_to_le32(rdev);
-@@ -922,6 +924,8 @@ static int ceph_symlink(struct user_namespace *mnt_userns, struct inode *dir,
- 		goto out;
- 	}
- 	req->r_parent = dir;
-+	ihold(dir);
-+
- 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
- 	req->r_dentry = dget(dentry);
- 	req->r_num_caps = 2;
-@@ -986,6 +990,7 @@ static int ceph_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
- 	req->r_dentry = dget(dentry);
- 	req->r_num_caps = 2;
- 	req->r_parent = dir;
-+	ihold(dir);
- 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
- 	req->r_args.mkdir.mode = cpu_to_le32(mode);
- 	req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
-@@ -1030,6 +1035,7 @@ static int ceph_link(struct dentry *old_dentry, struct inode *dir,
- 	req->r_num_caps = 2;
- 	req->r_old_dentry = dget(old_dentry);
- 	req->r_parent = dir;
-+	ihold(dir);
- 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
- 	req->r_dentry_drop = CEPH_CAP_FILE_SHARED;
- 	req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
-@@ -1151,6 +1157,7 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
- 	req->r_dentry = dget(dentry);
- 	req->r_num_caps = 2;
- 	req->r_parent = dir;
-+	ihold(dir);
- 	req->r_dentry_drop = CEPH_CAP_FILE_SHARED;
- 	req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
- 	req->r_inode_drop = ceph_drop_caps_for_unlink(inode);
-@@ -1225,6 +1232,7 @@ static int ceph_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 	req->r_old_dentry = dget(old_dentry);
- 	req->r_old_dentry_dir = old_dir;
- 	req->r_parent = new_dir;
-+	ihold(new_dir);
- 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
- 	req->r_old_dentry_drop = CEPH_CAP_FILE_SHARED;
- 	req->r_old_dentry_unless = CEPH_CAP_FILE_EXCL;
-@@ -1721,6 +1729,7 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
- 			req->r_dentry = dget(dentry);
- 			req->r_num_caps = 2;
- 			req->r_parent = dir;
-+			ihold(dir);
- 
- 			mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
- 			if (ceph_security_xattr_wanted(dir))
-diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-index 65540a4429b2..1d65934c1262 100644
---- a/fs/ceph/export.c
-+++ b/fs/ceph/export.c
-@@ -542,6 +542,7 @@ static int ceph_get_name(struct dentry *parent, char *name,
- 	ihold(inode);
- 	req->r_ino2 = ceph_vino(d_inode(parent));
- 	req->r_parent = d_inode(parent);
-+	ihold(req->r_parent);
- 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
- 	req->r_num_caps = 2;
- 	err = ceph_mdsc_do_request(mdsc, NULL, req);
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index d3874c2df4b1..c8fd11cf4510 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -706,6 +706,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 		mask |= CEPH_CAP_XATTR_SHARED;
- 	req->r_args.open.mask = cpu_to_le32(mask);
- 	req->r_parent = dir;
-+	ihold(dir);
- 
- 	if (flags & O_CREAT) {
- 		struct ceph_file_layout lo;
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index c03098c58be3..52ae5373437d 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2983,7 +2983,6 @@ int ceph_mdsc_submit_request(struct ceph_mds_client *mdsc, struct inode *dir,
- 		ceph_take_cap_refs(ci, CEPH_CAP_PIN, false);
- 		__ceph_touch_fmode(ci, mdsc, fmode);
- 		spin_unlock(&ci->i_ceph_lock);
--		ihold(req->r_parent);
- 	}
- 	if (req->r_old_dentry_dir)
- 		ceph_get_cap_refs(ceph_inode(req->r_old_dentry_dir),
--- 
-2.31.1
+Auditing all the flush_dcache_page() arch code reveals that the mapping field
+is either unused, or is checked for NULL.  Furthermore, all the implementations
+call page_mapping_file() which further limits the page to not be a swap page.
 
+All flush_kernel_dcache_page() implementations appears to operate the same way
+in all arch's which define that call.
+
+So I'm confident now that additional !PageSlab(__page) checks are not needed
+and this patch is unnecessary.   Christoph, can we leave this out of the kmap
+API and just fold the flush_kernel_dcache_page() calls back into the bvec code?
+
+Unfortunately, I'm not convinced this can be handled completely by
+kunmap_local() nor the mem*_page() calls because there is a difference between
+flush_dcache_page() and flush_kernel_dcache_page() in most archs...  [parisc
+being an exception which falls back to flush_kernel_dcache_page()]...
+
+It seems like the generic unmap path _should_ be able to determine which call
+to make based on the page but I'd have to look at that more.
+
+Ira
