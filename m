@@ -2,37 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 04F153ACC3F
-	for <lists+ceph-devel@lfdr.de>; Fri, 18 Jun 2021 15:32:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDDFF3ACC53
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Jun 2021 15:35:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233879AbhFRNeQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 18 Jun 2021 09:34:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37054 "EHLO mail.kernel.org"
+        id S233879AbhFRNhg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 18 Jun 2021 09:37:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233592AbhFRNeE (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 18 Jun 2021 09:34:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 730B360FE5;
-        Fri, 18 Jun 2021 13:31:54 +0000 (UTC)
+        id S232253AbhFRNhe (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 18 Jun 2021 09:37:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 13FA86124C;
+        Fri, 18 Jun 2021 13:35:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624023115;
-        bh=4UQ+H4QaunMNCeEDGFa9xPqazcWNNaMM5Stjq5kDaLM=;
+        s=k20201202; t=1624023325;
+        bh=zHPsd+Eio7IEjsccx233mjjWFRRJ8qnaiUPAlfXe4NY=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=WVEx24eDReyrWa0xUiMU/FBdYtxRO4WWFY6ip4+pJfVoYoEat1WuRQCrZP75TW99b
-         B0ACMB8pTJApvTCAl6De+DZHLCiFtjHW/UhT56rin1g3YrKgnxPK2NEqyH6FJnGRhT
-         OK5B2zD2UcIH/wu0Bj1Yvnpda38V2w53QNk+ndbd1BdsuAfFwrTXAHC+N4G7Wn/MJu
-         NrkV/0wu3P1wAoJnW9dCb9RaxHbTnSV/iVrySgC8CKiiP3DkOwZYYXYXg+nspNZt/B
-         06SE/MKqtkZu6o3uFZAJNmCGGzFy4GUYbcG9X5ox8a/HiHGLSjIpGtDns7FEdxMpNF
-         YAzZXpz0a3sXw==
-Message-ID: <7a7b85ddbdee5e15f24dc3a7c7e5cba48d436880.camel@kernel.org>
-Subject: Re: [RFC PATCH 2/6] ceph: eliminate session->s_gen_ttl_lock
+        b=S8wWIMqzIwFhhYLsX/6m/m+DF46vc1sggPwKxxPFbGI3A8n+riMdvtxjZ4aljJ/Y8
+         NdxyDr8duFDEY8jZIJm6A/gktlyM2V1Ocd3lsqLdR7O/7zlQLWI/DSLtdarE4Qmzb4
+         1GZUY1tV1EBvMM62cxXHjsGldbRe67+61vmSnErZC1xoH8iqOD/SE9vyvRg4l5V+JZ
+         rJj/UPcapGloSR0tp1Mlefzba6I+7FGjEMRRDyrCutg5uBP1kZs4qSyoLo6sEYpqGt
+         MJEnGEYWDIisc3ntsOxdSLQkpoqAoOqrZ7QIqZH8CStop2VzGelJ+gOXXRUJrEjXVZ
+         0mRfycosgaTew==
+Message-ID: <4cde6fa2bf2a3490b49309c984bed485a63da48a.camel@kernel.org>
+Subject: Re: [RFC PATCH 3/6] ceph: don't take s_mutex or snap_rwsem in
+ ceph_check_caps
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Luis Henriques <lhenriques@suse.de>
 Cc:     ceph-devel@vger.kernel.org, pdonnell@redhat.com, ukernel@gmail.com,
         idryomov@gmail.com, xiubli@redhat.com
-Date:   Fri, 18 Jun 2021 09:31:53 -0400
-In-Reply-To: <YMoXvi2j1biQ1obq@suse.de>
+Date:   Fri, 18 Jun 2021 09:35:23 -0400
+In-Reply-To: <YMoX2cchyhHSbzhT@suse.de>
 References: <20210615145730.21952-1-jlayton@kernel.org>
-         <20210615145730.21952-3-jlayton@kernel.org> <YMoXvi2j1biQ1obq@suse.de>
+         <20210615145730.21952-4-jlayton@kernel.org> <YMoX2cchyhHSbzhT@suse.de>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
 MIME-Version: 1.0
@@ -41,208 +42,153 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2021-06-16 at 16:24 +0100, Luis Henriques wrote:
-> On Tue, Jun 15, 2021 at 10:57:26AM -0400, Jeff Layton wrote:
-> > Turn s_cap_gen field into an atomic_t, and just rely on the fact that we
-> > hold the s_mutex when changing the s_cap_ttl field.
+On Wed, 2021-06-16 at 16:25 +0100, Luis Henriques wrote:
+> On Tue, Jun 15, 2021 at 10:57:27AM -0400, Jeff Layton wrote:
+> > These locks appear to be completely unnecessary. Almost all of this
+> > function is done under the inode->i_ceph_lock, aside from the actual
+> > sending of the message. Don't take either lock in this function.
 > > 
 > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > > ---
-> >  fs/ceph/caps.c       | 15 ++++++---------
-> >  fs/ceph/dir.c        |  4 +---
-> >  fs/ceph/inode.c      |  4 ++--
-> >  fs/ceph/mds_client.c | 17 ++++++-----------
-> >  fs/ceph/mds_client.h |  6 ++----
-> >  5 files changed, 17 insertions(+), 29 deletions(-)
+> >  fs/ceph/caps.c | 61 ++++++--------------------------------------------
+> >  1 file changed, 7 insertions(+), 54 deletions(-)
 > > 
 > > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > index a5e93b185515..919eada97a1f 100644
+> > index 919eada97a1f..825b1e463ad3 100644
 > > --- a/fs/ceph/caps.c
 > > +++ b/fs/ceph/caps.c
-> > @@ -645,9 +645,7 @@ void ceph_add_cap(struct inode *inode,
-> >  	dout("add_cap %p mds%d cap %llx %s seq %d\n", inode,
-> >  	     session->s_mds, cap_id, ceph_cap_string(issued), seq);
+> > @@ -1912,7 +1912,6 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+> >  	struct ceph_cap *cap;
+> >  	u64 flush_tid, oldest_flush_tid;
+> >  	int file_wanted, used, cap_used;
+> > -	int took_snap_rwsem = 0;             /* true if mdsc->snap_rwsem held */
+> >  	int issued, implemented, want, retain, revoking, flushing = 0;
+> >  	int mds = -1;   /* keep track of how far we've gone through i_caps list
+> >  			   to avoid an infinite loop on retry */
+> > @@ -1920,6 +1919,9 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+> >  	bool queue_invalidate = false;
+> >  	bool tried_invalidate = false;
 > >  
-> > -	spin_lock(&session->s_gen_ttl_lock);
-> > -	gen = session->s_cap_gen;
-> > -	spin_unlock(&session->s_gen_ttl_lock);
-> > +	gen = atomic_read(&session->s_cap_gen);
+> > +	if (session)
+> > +		ceph_get_mds_session(session);
+> > +
+> >  	spin_lock(&ci->i_ceph_lock);
+> >  	if (ci->i_ceph_flags & CEPH_I_FLUSH)
+> >  		flags |= CHECK_CAPS_FLUSH;
+> > @@ -2021,8 +2023,6 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+> >  		    ((flags & CHECK_CAPS_AUTHONLY) && cap != ci->i_auth_cap))
+> >  			continue;
 > >  
-> >  	cap = __get_cap_for_mds(ci, mds);
-> >  	if (!cap) {
-> > @@ -785,10 +783,8 @@ static int __cap_is_valid(struct ceph_cap *cap)
-> >  	unsigned long ttl;
-> >  	u32 gen;
+> > -		/* NOTE: no side-effects allowed, until we take s_mutex */
+> > -
+> >  		/*
+> >  		 * If we have an auth cap, we don't need to consider any
+> >  		 * overlapping caps as used.
+> > @@ -2085,37 +2085,8 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+> >  			continue;     /* nope, all good */
 > >  
-> > -	spin_lock(&cap->session->s_gen_ttl_lock);
-> > -	gen = cap->session->s_cap_gen;
-> > +	gen = atomic_read(&cap->session->s_cap_gen);
-> >  	ttl = cap->session->s_cap_ttl;
-> > -	spin_unlock(&cap->session->s_gen_ttl_lock);
+> >  ack:
+> > -		if (session && session != cap->session) {
+> > -			dout("oops, wrong session %p mutex\n", session);
+> > -			mutex_unlock(&session->s_mutex);
+> > -			session = NULL;
+> > -		}
+> > -		if (!session) {
+> > -			session = cap->session;
+> > -			if (mutex_trylock(&session->s_mutex) == 0) {
+> > -				dout("inverting session/ino locks on %p\n",
+> > -				     session);
+> > -				session = ceph_get_mds_session(session);
+> > -				spin_unlock(&ci->i_ceph_lock);
+> > -				if (took_snap_rwsem) {
+> > -					up_read(&mdsc->snap_rwsem);
+> > -					took_snap_rwsem = 0;
+> > -				}
+> > -				if (session) {
+> > -					mutex_lock(&session->s_mutex);
+> > -					ceph_put_mds_session(session);
+> > -				} else {
+> > -					/*
+> > -					 * Because we take the reference while
+> > -					 * holding the i_ceph_lock, it should
+> > -					 * never be NULL. Throw a warning if it
+> > -					 * ever is.
+> > -					 */
+> > -					WARN_ON_ONCE(true);
+> > -				}
+> > -				goto retry;
+> > -			}
+> > -		}
+> > +		ceph_put_mds_session(session);
+> > +		session = ceph_get_mds_session(cap->session);
 > >  
-> >  	if (cap->cap_gen < gen || time_after_eq(jiffies, ttl)) {
-> >  		dout("__cap_is_valid %p cap %p issued %s "
-> > @@ -1182,7 +1178,8 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
-> >  	 * s_cap_gen while session is in the reconnect state.
-> >  	 */
-> >  	if (queue_release &&
-> > -	    (!session->s_cap_reconnect || cap->cap_gen == session->s_cap_gen)) {
-> > +	    (!session->s_cap_reconnect ||
-> > +	     cap->cap_gen == atomic_read(&session->s_cap_gen))) {
-> >  		cap->queue_release = 1;
-> >  		if (removed) {
-> >  			__ceph_queue_cap_release(session, cap);
-> > @@ -3288,7 +3285,7 @@ static void handle_cap_grant(struct inode *inode,
-> >  	u64 size = le64_to_cpu(grant->size);
-> >  	u64 max_size = le64_to_cpu(grant->max_size);
-> >  	unsigned char check_caps = 0;
-> > -	bool was_stale = cap->cap_gen < session->s_cap_gen;
-> > +	bool was_stale = cap->cap_gen < atomic_read(&session->s_cap_gen);
-> >  	bool wake = false;
-> >  	bool writeback = false;
-> >  	bool queue_trunc = false;
-> > @@ -3340,7 +3337,7 @@ static void handle_cap_grant(struct inode *inode,
-> >  	}
+> >  		/* kick flushing and flush snaps before sending normal
+> >  		 * cap message */
+> > @@ -2130,19 +2101,6 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+> >  			goto retry_locked;
+> >  		}
 > >  
-> >  	/* side effects now are allowed */
-> > -	cap->cap_gen = session->s_cap_gen;
-> > +	cap->cap_gen = atomic_read(&session->s_cap_gen);
-> >  	cap->seq = seq;
+> > -		/* take snap_rwsem after session mutex */
+> > -		if (!took_snap_rwsem) {
+> > -			if (down_read_trylock(&mdsc->snap_rwsem) == 0) {
+> > -				dout("inverting snap/in locks on %p\n",
+> > -				     inode);
+> > -				spin_unlock(&ci->i_ceph_lock);
+> > -				down_read(&mdsc->snap_rwsem);
+> > -				took_snap_rwsem = 1;
+> > -				goto retry;
+> > -			}
+> > -			took_snap_rwsem = 1;
+> > -		}
+> > -
+> >  		if (cap == ci->i_auth_cap && ci->i_dirty_caps) {
+> >  			flushing = ci->i_dirty_caps;
+> >  			flush_tid = __mark_caps_flushing(inode, session, false,
+> > @@ -2179,13 +2137,9 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
 > >  
-> >  	__check_cap_issue(ci, cap, newcaps);
-> > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> > index 0dc5f8357f58..bd508b1aeac2 100644
-> > --- a/fs/ceph/dir.c
-> > +++ b/fs/ceph/dir.c
-> > @@ -1541,10 +1541,8 @@ static bool __dentry_lease_is_valid(struct ceph_dentry_info *di)
-> >  		u32 gen;
-> >  		unsigned long ttl;
+> >  	spin_unlock(&ci->i_ceph_lock);
 > >  
-> > -		spin_lock(&session->s_gen_ttl_lock);
-> > -		gen = session->s_cap_gen;
-> > +		gen = atomic_read(&session->s_cap_gen);
-> >  		ttl = session->s_cap_ttl;
-> > -		spin_unlock(&session->s_gen_ttl_lock);
+> > +	ceph_put_mds_session(session);
+> >  	if (queue_invalidate)
+> >  		ceph_queue_invalidate(inode);
+> > -
+> > -	if (session)
+> > -		mutex_unlock(&session->s_mutex);
+> > -	if (took_snap_rwsem)
+> > -		up_read(&mdsc->snap_rwsem);
+> >  }
 > >  
-> >  		if (di->lease_gen == gen &&
-> >  		    time_before(jiffies, ttl) &&
-> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > index 6f43542b3344..6034821c9d63 100644
-> > --- a/fs/ceph/inode.c
-> > +++ b/fs/ceph/inode.c
-> > @@ -1124,7 +1124,7 @@ static void __update_dentry_lease(struct inode *dir, struct dentry *dentry,
-> >  		return;
-> >  	}
+> >  /*
+> > @@ -3550,13 +3504,12 @@ static void handle_cap_grant(struct inode *inode,
+> >  	if (wake)
+> >  		wake_up_all(&ci->i_cap_wq);
 > >  
-> > -	if (di->lease_gen == session->s_cap_gen &&
-> > +	if (di->lease_gen == atomic_read(&session->s_cap_gen) &&
-> >  	    time_before(ttl, di->time))
-> >  		return;  /* we already have a newer lease. */
+> > +	mutex_unlock(&session->s_mutex);
+> >  	if (check_caps == 1)
+> >  		ceph_check_caps(ci, CHECK_CAPS_AUTHONLY | CHECK_CAPS_NOINVAL,
+> >  				session);
+> >  	else if (check_caps == 2)
+> >  		ceph_check_caps(ci, CHECK_CAPS_NOINVAL, session);
+> > -	else
+> > -		mutex_unlock(&session->s_mutex);
+> >  }
 > >  
-> > @@ -1135,7 +1135,7 @@ static void __update_dentry_lease(struct inode *dir, struct dentry *dentry,
-> >  
-> >  	if (!di->lease_session)
-> >  		di->lease_session = ceph_get_mds_session(session);
-> > -	di->lease_gen = session->s_cap_gen;
-> > +	di->lease_gen = atomic_read(&session->s_cap_gen);
-> >  	di->lease_seq = le32_to_cpu(lease->seq);
-> >  	di->lease_renew_after = half_ttl;
-> >  	di->lease_renew_from = 0;
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index ec669634c649..87d3be10af25 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -749,8 +749,7 @@ static struct ceph_mds_session *register_session(struct ceph_mds_client *mdsc,
-> >  
-> >  	ceph_con_init(&s->s_con, s, &mds_con_ops, &mdsc->fsc->client->msgr);
-> >  
-> > -	spin_lock_init(&s->s_gen_ttl_lock);
-> > -	s->s_cap_gen = 1;
-> > +	atomic_set(&s->s_cap_gen, 1);
-> >  	s->s_cap_ttl = jiffies - 1;
-> >  
-> >  	spin_lock_init(&s->s_cap_lock);
-> > @@ -1763,7 +1762,7 @@ static int wake_up_session_cb(struct inode *inode, struct ceph_cap *cap,
-> >  		ci->i_requested_max_size = 0;
-> >  		spin_unlock(&ci->i_ceph_lock);
-> >  	} else if (ev == RENEWCAPS) {
-> > -		if (cap->cap_gen < cap->session->s_cap_gen) {
-> > +		if (cap->cap_gen < atomic_read(&cap->session->s_cap_gen)) {
-> >  			/* mds did not re-issue stale cap */
-> >  			spin_lock(&ci->i_ceph_lock);
-> >  			cap->issued = cap->implemented = CEPH_CAP_PIN;
-> > @@ -3501,10 +3500,8 @@ static void handle_session(struct ceph_mds_session *session,
-> >  	case CEPH_SESSION_STALE:
-> >  		pr_info("mds%d caps went stale, renewing\n",
-> >  			session->s_mds);
-> > -		spin_lock(&session->s_gen_ttl_lock);
-> > -		session->s_cap_gen++;
-> > +		atomic_inc(&session->s_cap_gen);
-> >  		session->s_cap_ttl = jiffies - 1;
-> > -		spin_unlock(&session->s_gen_ttl_lock);
-> >  		send_renew_caps(mdsc, session);
-> >  		break;
-> >  
-> > @@ -3773,7 +3770,7 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
-> >  	cap->seq = 0;        /* reset cap seq */
-> >  	cap->issue_seq = 0;  /* and issue_seq */
-> >  	cap->mseq = 0;       /* and migrate_seq */
-> > -	cap->cap_gen = cap->session->s_cap_gen;
-> > +	cap->cap_gen = atomic_read(&cap->session->s_cap_gen);
-> >  
-> >  	/* These are lost when the session goes away */
-> >  	if (S_ISDIR(inode->i_mode)) {
-> > @@ -4013,9 +4010,7 @@ static void send_mds_reconnect(struct ceph_mds_client *mdsc,
-> >  	dout("session %p state %s\n", session,
-> >  	     ceph_session_state_name(session->s_state));
-> >  
-> > -	spin_lock(&session->s_gen_ttl_lock);
-> > -	session->s_cap_gen++;
-> > -	spin_unlock(&session->s_gen_ttl_lock);
-> > +	atomic_inc(&session->s_cap_gen);
-> >  
-> >  	spin_lock(&session->s_cap_lock);
-> >  	/* don't know if session is readonly */
-> > @@ -4346,7 +4341,7 @@ static void handle_lease(struct ceph_mds_client *mdsc,
-> >  
-> >  	case CEPH_MDS_LEASE_RENEW:
-> >  		if (di->lease_session == session &&
-> > -		    di->lease_gen == session->s_cap_gen &&
-> > +		    di->lease_gen == atomic_read(&session->s_cap_gen) &&
-> >  		    di->lease_renew_from &&
-> >  		    di->lease_renew_after == 0) {
-> >  			unsigned long duration =
-> > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> > index 15c11a0f2caf..20e42d8b66c6 100644
-> > --- a/fs/ceph/mds_client.h
-> > +++ b/fs/ceph/mds_client.h
-> > @@ -186,10 +186,8 @@ struct ceph_mds_session {
-> >  
-> >  	struct ceph_auth_handshake s_auth;
-> >  
-> > -	/* protected by s_gen_ttl_lock */
-> > -	spinlock_t        s_gen_ttl_lock;
-> > -	u32               s_cap_gen;  /* inc each time we get mds stale msg */
-> > -	unsigned long     s_cap_ttl;  /* when session caps expire */
-> > +	atomic_t          s_cap_gen;  /* inc each time we get mds stale msg */
-> > +	unsigned long     s_cap_ttl;  /* when session caps expire. protected by s_mutex */
-> >  
-> >  	/* protected by s_cap_lock */
-> >  	spinlock_t        s_cap_lock;
+> >  /*
 > > -- 
 > > 2.31.1
 > > 
 > 
+> Ugh, this is a tricky one.  I couldn't find anything wrong but... yeah,
+> here it is:
+> 
 > Reviewed-by: Luis Henriques <lhenriques@suse.de>
 > 
-> (Since we don't have s_mutex when reading s_cap_ttl, would it make sense
-> to make it an atomic_t too?)
+> (Suggestion: remove the 'retry/retry_locked' goto dance and simply lock
+> i_ceph_lock in the only 'goto retry' call.)
 > 
 
-We could, but I don't see a huge need to manage consistency on that
-variable. We only use it to determine how soon to do cap updates or to
-renew dentry leases. If we see problems in that area though, we might
-want to do that. 
+Thanks. Good suggestion. I'll incorporate it before I merge, but I won't
+plan to resend unless there are bigger changes needed.
 -- 
 Jeff Layton <jlayton@kernel.org>
 
