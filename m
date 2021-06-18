@@ -2,39 +2,37 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9089A3ACBAF
-	for <lists+ceph-devel@lfdr.de>; Fri, 18 Jun 2021 15:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04F153ACC3F
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Jun 2021 15:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232571AbhFRNGQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 18 Jun 2021 09:06:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51006 "EHLO mail.kernel.org"
+        id S233879AbhFRNeQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 18 Jun 2021 09:34:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230441AbhFRNGP (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 18 Jun 2021 09:06:15 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EF13A61205;
-        Fri, 18 Jun 2021 13:04:05 +0000 (UTC)
+        id S233592AbhFRNeE (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 18 Jun 2021 09:34:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 730B360FE5;
+        Fri, 18 Jun 2021 13:31:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624021446;
-        bh=5SgV00qTm0nED2wUVTokH63W0spaHGR/Pi1420/q8cc=;
+        s=k20201202; t=1624023115;
+        bh=4UQ+H4QaunMNCeEDGFa9xPqazcWNNaMM5Stjq5kDaLM=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ib+WNayq5Gb+Rll8dx59lkLpEW1rGfIXsBMlCVRZ9CUOcWJHPMhdiKHkINhuHr0Qd
-         XhC/yTb9n+QStXKgG6pBEPIu1TQclAwP0pHrSbqiC4ak8ZuPqc8pHwBIIG5zprKjOr
-         /kFecGp6/9zzHApdhQYv/x1Y6oyYbBLZlszOVDTZHjLOxyX22vDNydEgIgLz9N868R
-         44oxJdEjW8tpYQ7WR/pU3G3bfKc3319HqdZmV/KTeKq0UT9bg0PHWSt4OeBB6W7/fZ
-         KwMqetC0Y9VSeEfqqEgJ6kJTexiV78vC96tC0ATCJQq1vSXlMvwB2uVl558IDKq2dh
-         O8dEV2gosv8+A==
-Message-ID: <edbe17a2339026890983978a96cd66b0edb58e52.camel@kernel.org>
-Subject: Re: [RFC PATCH 6/6] ceph: eliminate ceph_async_iput()
+        b=WVEx24eDReyrWa0xUiMU/FBdYtxRO4WWFY6ip4+pJfVoYoEat1WuRQCrZP75TW99b
+         B0ACMB8pTJApvTCAl6De+DZHLCiFtjHW/UhT56rin1g3YrKgnxPK2NEqyH6FJnGRhT
+         OK5B2zD2UcIH/wu0Bj1Yvnpda38V2w53QNk+ndbd1BdsuAfFwrTXAHC+N4G7Wn/MJu
+         NrkV/0wu3P1wAoJnW9dCb9RaxHbTnSV/iVrySgC8CKiiP3DkOwZYYXYXg+nspNZt/B
+         06SE/MKqtkZu6o3uFZAJNmCGGzFy4GUYbcG9X5ox8a/HiHGLSjIpGtDns7FEdxMpNF
+         YAzZXpz0a3sXw==
+Message-ID: <7a7b85ddbdee5e15f24dc3a7c7e5cba48d436880.camel@kernel.org>
+Subject: Re: [RFC PATCH 2/6] ceph: eliminate session->s_gen_ttl_lock
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Luis Henriques <lhenriques@suse.de>
 Cc:     ceph-devel@vger.kernel.org, pdonnell@redhat.com, ukernel@gmail.com,
         idryomov@gmail.com, xiubli@redhat.com
-Date:   Fri, 18 Jun 2021 09:04:04 -0400
-In-Reply-To: <YMyX/EjKZRV8/liC@suse.de>
+Date:   Fri, 18 Jun 2021 09:31:53 -0400
+In-Reply-To: <YMoXvi2j1biQ1obq@suse.de>
 References: <20210615145730.21952-1-jlayton@kernel.org>
-         <20210615145730.21952-7-jlayton@kernel.org> <YMoYE+DYFt+eEAWm@suse.de>
-         <1d1b99544873ba7d7fb5442db152e739a5234c39.camel@kernel.org>
-         <YMyX/EjKZRV8/liC@suse.de>
+         <20210615145730.21952-3-jlayton@kernel.org> <YMoXvi2j1biQ1obq@suse.de>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
 MIME-Version: 1.0
@@ -43,78 +41,208 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2021-06-18 at 13:56 +0100, Luis Henriques wrote:
-> On Thu, Jun 17, 2021 at 12:24:35PM -0400, Jeff Layton wrote:
-> > On Wed, 2021-06-16 at 16:26 +0100, Luis Henriques wrote:
-> > > On Tue, Jun 15, 2021 at 10:57:30AM -0400, Jeff Layton wrote:
-> > > > Now that we don't need to hold session->s_mutex or the snap_rwsem when
-> > > > calling ceph_check_caps, we can eliminate ceph_async_iput and just use
-> > > > normal iput calls.
-> > > > 
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > ---
-> > > >  fs/ceph/caps.c       |  6 +++---
-> > > >  fs/ceph/inode.c      | 25 +++----------------------
-> > > >  fs/ceph/mds_client.c | 22 +++++++++++-----------
-> > > >  fs/ceph/quota.c      |  6 +++---
-> > > >  fs/ceph/snap.c       | 10 +++++-----
-> > > >  fs/ceph/super.h      |  2 --
-> > > >  6 files changed, 25 insertions(+), 46 deletions(-)
-> > > > 
-> > > > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > > > index 5864d5088e27..fd9243e9a1b2 100644
-> > > > --- a/fs/ceph/caps.c
-> > > > +++ b/fs/ceph/caps.c
-> > > > @@ -3147,7 +3147,7 @@ void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int nr,
-> > > >  		wake_up_all(&ci->i_cap_wq);
-> > > >  	while (put-- > 0) {
-> > > >  		/* avoid calling iput_final() in osd dispatch threads */
-> > > > -		ceph_async_iput(inode);
-> > > > +		iput(inode);
-> > > >  	}
-> > > >  }
-> > > >  
-> > > > @@ -4136,7 +4136,7 @@ void ceph_handle_caps(struct ceph_mds_session *session,
-> > > >  done_unlocked:
-> > > >  	ceph_put_string(extra_info.pool_ns);
-> > > >  	/* avoid calling iput_final() in mds dispatch threads */
-> > > > -	ceph_async_iput(inode);
-> > > > +	iput(inode);
-> > > 
-> > > To be honest, I'm not really convinced we can blindly substitute
-> > > ceph_async_iput() by iput().  This case specifically can problematic
-> > > because we may have called ceph_queue_vmtruncate() above (or
-> > > handle_cap_grant()).  If we did, we have ci->i_work_mask set and the wq
-> > > would have invoked __ceph_do_pending_vmtruncate().  Using the iput() here
-> > > won't have that result.  Am I missing something?
-> > > 
+On Wed, 2021-06-16 at 16:24 +0100, Luis Henriques wrote:
+> On Tue, Jun 15, 2021 at 10:57:26AM -0400, Jeff Layton wrote:
+> > Turn s_cap_gen field into an atomic_t, and just rely on the fact that we
+> > hold the s_mutex when changing the s_cap_ttl field.
 > > 
-> > The point of this set is to make iput safe to run even when the s_mutex
-> > and/or snap_rwsem is held. When we queue up the ci->i_work, we do take a
-> > reference to the inode and still run iput there. This set just stops
-> > queueing iputs themselves to the workqueue.
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/ceph/caps.c       | 15 ++++++---------
+> >  fs/ceph/dir.c        |  4 +---
+> >  fs/ceph/inode.c      |  4 ++--
+> >  fs/ceph/mds_client.c | 17 ++++++-----------
+> >  fs/ceph/mds_client.h |  6 ++----
+> >  5 files changed, 17 insertions(+), 29 deletions(-)
 > > 
-> > I really don't see a problem with this call site in ceph_handle_caps in
-> > particular, as it's calling iput after dropping the s_mutex. Probably
-> > that should not have been converted to use ceph_async_iput in the first
-> > place.
+> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> > index a5e93b185515..919eada97a1f 100644
+> > --- a/fs/ceph/caps.c
+> > +++ b/fs/ceph/caps.c
+> > @@ -645,9 +645,7 @@ void ceph_add_cap(struct inode *inode,
+> >  	dout("add_cap %p mds%d cap %llx %s seq %d\n", inode,
+> >  	     session->s_mds, cap_id, ceph_cap_string(issued), seq);
+> >  
+> > -	spin_lock(&session->s_gen_ttl_lock);
+> > -	gen = session->s_cap_gen;
+> > -	spin_unlock(&session->s_gen_ttl_lock);
+> > +	gen = atomic_read(&session->s_cap_gen);
+> >  
+> >  	cap = __get_cap_for_mds(ci, mds);
+> >  	if (!cap) {
+> > @@ -785,10 +783,8 @@ static int __cap_is_valid(struct ceph_cap *cap)
+> >  	unsigned long ttl;
+> >  	u32 gen;
+> >  
+> > -	spin_lock(&cap->session->s_gen_ttl_lock);
+> > -	gen = cap->session->s_cap_gen;
+> > +	gen = atomic_read(&cap->session->s_cap_gen);
+> >  	ttl = cap->session->s_cap_ttl;
+> > -	spin_unlock(&cap->session->s_gen_ttl_lock);
+> >  
+> >  	if (cap->cap_gen < gen || time_after_eq(jiffies, ttl)) {
+> >  		dout("__cap_is_valid %p cap %p issued %s "
+> > @@ -1182,7 +1178,8 @@ void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release)
+> >  	 * s_cap_gen while session is in the reconnect state.
+> >  	 */
+> >  	if (queue_release &&
+> > -	    (!session->s_cap_reconnect || cap->cap_gen == session->s_cap_gen)) {
+> > +	    (!session->s_cap_reconnect ||
+> > +	     cap->cap_gen == atomic_read(&session->s_cap_gen))) {
+> >  		cap->queue_release = 1;
+> >  		if (removed) {
+> >  			__ceph_queue_cap_release(session, cap);
+> > @@ -3288,7 +3285,7 @@ static void handle_cap_grant(struct inode *inode,
+> >  	u64 size = le64_to_cpu(grant->size);
+> >  	u64 max_size = le64_to_cpu(grant->max_size);
+> >  	unsigned char check_caps = 0;
+> > -	bool was_stale = cap->cap_gen < session->s_cap_gen;
+> > +	bool was_stale = cap->cap_gen < atomic_read(&session->s_cap_gen);
+> >  	bool wake = false;
+> >  	bool writeback = false;
+> >  	bool queue_trunc = false;
+> > @@ -3340,7 +3337,7 @@ static void handle_cap_grant(struct inode *inode,
+> >  	}
+> >  
+> >  	/* side effects now are allowed */
+> > -	cap->cap_gen = session->s_cap_gen;
+> > +	cap->cap_gen = atomic_read(&session->s_cap_gen);
+> >  	cap->seq = seq;
+> >  
+> >  	__check_cap_issue(ci, cap, newcaps);
+> > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> > index 0dc5f8357f58..bd508b1aeac2 100644
+> > --- a/fs/ceph/dir.c
+> > +++ b/fs/ceph/dir.c
+> > @@ -1541,10 +1541,8 @@ static bool __dentry_lease_is_valid(struct ceph_dentry_info *di)
+> >  		u32 gen;
+> >  		unsigned long ttl;
+> >  
+> > -		spin_lock(&session->s_gen_ttl_lock);
+> > -		gen = session->s_cap_gen;
+> > +		gen = atomic_read(&session->s_cap_gen);
+> >  		ttl = session->s_cap_ttl;
+> > -		spin_unlock(&session->s_gen_ttl_lock);
+> >  
+> >  		if (di->lease_gen == gen &&
+> >  		    time_before(jiffies, ttl) &&
+> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > index 6f43542b3344..6034821c9d63 100644
+> > --- a/fs/ceph/inode.c
+> > +++ b/fs/ceph/inode.c
+> > @@ -1124,7 +1124,7 @@ static void __update_dentry_lease(struct inode *dir, struct dentry *dentry,
+> >  		return;
+> >  	}
+> >  
+> > -	if (di->lease_gen == session->s_cap_gen &&
+> > +	if (di->lease_gen == atomic_read(&session->s_cap_gen) &&
+> >  	    time_before(ttl, di->time))
+> >  		return;  /* we already have a newer lease. */
+> >  
+> > @@ -1135,7 +1135,7 @@ static void __update_dentry_lease(struct inode *dir, struct dentry *dentry,
+> >  
+> >  	if (!di->lease_session)
+> >  		di->lease_session = ceph_get_mds_session(session);
+> > -	di->lease_gen = session->s_cap_gen;
+> > +	di->lease_gen = atomic_read(&session->s_cap_gen);
+> >  	di->lease_seq = le32_to_cpu(lease->seq);
+> >  	di->lease_renew_after = half_ttl;
+> >  	di->lease_renew_from = 0;
+> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > index ec669634c649..87d3be10af25 100644
+> > --- a/fs/ceph/mds_client.c
+> > +++ b/fs/ceph/mds_client.c
+> > @@ -749,8 +749,7 @@ static struct ceph_mds_session *register_session(struct ceph_mds_client *mdsc,
+> >  
+> >  	ceph_con_init(&s->s_con, s, &mds_con_ops, &mdsc->fsc->client->msgr);
+> >  
+> > -	spin_lock_init(&s->s_gen_ttl_lock);
+> > -	s->s_cap_gen = 1;
+> > +	atomic_set(&s->s_cap_gen, 1);
+> >  	s->s_cap_ttl = jiffies - 1;
+> >  
+> >  	spin_lock_init(&s->s_cap_lock);
+> > @@ -1763,7 +1762,7 @@ static int wake_up_session_cb(struct inode *inode, struct ceph_cap *cap,
+> >  		ci->i_requested_max_size = 0;
+> >  		spin_unlock(&ci->i_ceph_lock);
+> >  	} else if (ev == RENEWCAPS) {
+> > -		if (cap->cap_gen < cap->session->s_cap_gen) {
+> > +		if (cap->cap_gen < atomic_read(&cap->session->s_cap_gen)) {
+> >  			/* mds did not re-issue stale cap */
+> >  			spin_lock(&ci->i_ceph_lock);
+> >  			cap->issued = cap->implemented = CEPH_CAP_PIN;
+> > @@ -3501,10 +3500,8 @@ static void handle_session(struct ceph_mds_session *session,
+> >  	case CEPH_SESSION_STALE:
+> >  		pr_info("mds%d caps went stale, renewing\n",
+> >  			session->s_mds);
+> > -		spin_lock(&session->s_gen_ttl_lock);
+> > -		session->s_cap_gen++;
+> > +		atomic_inc(&session->s_cap_gen);
+> >  		session->s_cap_ttl = jiffies - 1;
+> > -		spin_unlock(&session->s_gen_ttl_lock);
+> >  		send_renew_caps(mdsc, session);
+> >  		break;
+> >  
+> > @@ -3773,7 +3770,7 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
+> >  	cap->seq = 0;        /* reset cap seq */
+> >  	cap->issue_seq = 0;  /* and issue_seq */
+> >  	cap->mseq = 0;       /* and migrate_seq */
+> > -	cap->cap_gen = cap->session->s_cap_gen;
+> > +	cap->cap_gen = atomic_read(&cap->session->s_cap_gen);
+> >  
+> >  	/* These are lost when the session goes away */
+> >  	if (S_ISDIR(inode->i_mode)) {
+> > @@ -4013,9 +4010,7 @@ static void send_mds_reconnect(struct ceph_mds_client *mdsc,
+> >  	dout("session %p state %s\n", session,
+> >  	     ceph_session_state_name(session->s_state));
+> >  
+> > -	spin_lock(&session->s_gen_ttl_lock);
+> > -	session->s_cap_gen++;
+> > -	spin_unlock(&session->s_gen_ttl_lock);
+> > +	atomic_inc(&session->s_cap_gen);
+> >  
+> >  	spin_lock(&session->s_cap_lock);
+> >  	/* don't know if session is readonly */
+> > @@ -4346,7 +4341,7 @@ static void handle_lease(struct ceph_mds_client *mdsc,
+> >  
+> >  	case CEPH_MDS_LEASE_RENEW:
+> >  		if (di->lease_session == session &&
+> > -		    di->lease_gen == session->s_cap_gen &&
+> > +		    di->lease_gen == atomic_read(&session->s_cap_gen) &&
+> >  		    di->lease_renew_from &&
+> >  		    di->lease_renew_after == 0) {
+> >  			unsigned long duration =
+> > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> > index 15c11a0f2caf..20e42d8b66c6 100644
+> > --- a/fs/ceph/mds_client.h
+> > +++ b/fs/ceph/mds_client.h
+> > @@ -186,10 +186,8 @@ struct ceph_mds_session {
+> >  
+> >  	struct ceph_auth_handshake s_auth;
+> >  
+> > -	/* protected by s_gen_ttl_lock */
+> > -	spinlock_t        s_gen_ttl_lock;
+> > -	u32               s_cap_gen;  /* inc each time we get mds stale msg */
+> > -	unsigned long     s_cap_ttl;  /* when session caps expire */
+> > +	atomic_t          s_cap_gen;  /* inc each time we get mds stale msg */
+> > +	unsigned long     s_cap_ttl;  /* when session caps expire. protected by s_mutex */
+> >  
+> >  	/* protected by s_cap_lock */
+> >  	spinlock_t        s_cap_lock;
+> > -- 
+> > 2.31.1
+> > 
 > 
-> Obviously, you're right.  I don't what I was thinking of when I was
-> reading this code and saw: ci->i_work_mask bits are set in one place (in
-> ceph_queue_vmtruncate(), for ex.) and then the work is queued only in
-> ceph_async_iput().  Which is obviously wrong!
+> Reviewed-by: Luis Henriques <lhenriques@suse.de>
 > 
-> Anyway, sorry for the noise.
-> 
-> (Oh, and BTW: this patch should also remove comments such as "avoid
-> calling iput_final() in mds dispatch threads", and similar that exist in
-> several places before ceph_async_iput() is (or rather *was*) called.)
+> (Since we don't have s_mutex when reading s_cap_ttl, would it make sense
+> to make it an atomic_t too?)
 > 
 
-Thanks. I saw that I missed a few of those sorts of comments. I'll plan
-to remove those before I merge this.
-
-Cheers,
+We could, but I don't see a huge need to manage consistency on that
+variable. We only use it to determine how soon to do cap updates or to
+renew dentry leases. If we see problems in that area though, we might
+want to do that. 
 -- 
 Jeff Layton <jlayton@kernel.org>
 
