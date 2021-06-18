@@ -2,193 +2,139 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDDFF3ACC53
-	for <lists+ceph-devel@lfdr.de>; Fri, 18 Jun 2021 15:35:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D6333ACD81
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Jun 2021 16:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233879AbhFRNhg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 18 Jun 2021 09:37:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38642 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232253AbhFRNhe (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 18 Jun 2021 09:37:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 13FA86124C;
-        Fri, 18 Jun 2021 13:35:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624023325;
-        bh=zHPsd+Eio7IEjsccx233mjjWFRRJ8qnaiUPAlfXe4NY=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=S8wWIMqzIwFhhYLsX/6m/m+DF46vc1sggPwKxxPFbGI3A8n+riMdvtxjZ4aljJ/Y8
-         NdxyDr8duFDEY8jZIJm6A/gktlyM2V1Ocd3lsqLdR7O/7zlQLWI/DSLtdarE4Qmzb4
-         1GZUY1tV1EBvMM62cxXHjsGldbRe67+61vmSnErZC1xoH8iqOD/SE9vyvRg4l5V+JZ
-         rJj/UPcapGloSR0tp1Mlefzba6I+7FGjEMRRDyrCutg5uBP1kZs4qSyoLo6sEYpqGt
-         MJEnGEYWDIisc3ntsOxdSLQkpoqAoOqrZ7QIqZH8CStop2VzGelJ+gOXXRUJrEjXVZ
-         0mRfycosgaTew==
-Message-ID: <4cde6fa2bf2a3490b49309c984bed485a63da48a.camel@kernel.org>
-Subject: Re: [RFC PATCH 3/6] ceph: don't take s_mutex or snap_rwsem in
- ceph_check_caps
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     ceph-devel@vger.kernel.org, pdonnell@redhat.com, ukernel@gmail.com,
-        idryomov@gmail.com, xiubli@redhat.com
-Date:   Fri, 18 Jun 2021 09:35:23 -0400
-In-Reply-To: <YMoX2cchyhHSbzhT@suse.de>
-References: <20210615145730.21952-1-jlayton@kernel.org>
-         <20210615145730.21952-4-jlayton@kernel.org> <YMoX2cchyhHSbzhT@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
+        id S234503AbhFROac (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 18 Jun 2021 10:30:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45172 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233642AbhFROa3 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 18 Jun 2021 10:30:29 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E276C061767;
+        Fri, 18 Jun 2021 07:28:19 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id n12so7932310pgs.13;
+        Fri, 18 Jun 2021 07:28:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tm11RJe8XH3mdKITm6gC95oTddXOFvmbaLmxC4TGSiw=;
+        b=SLa8kVghAr94SqXyOijxmRMN7A0I60AyztWLpKL9hNi7i4MzClExVb2jrdmURI8DeC
+         7xwKnu9uJ+j9423xu73s90wi8ZDsVYVBimQyflBz3JCgAWZaIUVgQJLIc3hVfvdIypb4
+         4tuYpWv+nCElzJ6oA0R5W7RCTxv4QCmrgmtQU+G8fGfW4u34ZRIoz2kdtR04hos9LI0f
+         /Jd7XP6iSGilnHTMEWbslYUufw3u0xx1R0jYElQymvNRxqfwsX6i4Orfr+3prZwCS754
+         UaNqUb35qfiGUSeDQ1qwEM7bcOTwJeK+vW3Zh0bMzqj8CcyZVTa50wFAeZHS/7sQKk5G
+         BOxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tm11RJe8XH3mdKITm6gC95oTddXOFvmbaLmxC4TGSiw=;
+        b=UQi382Jw6/5e/xYfYvyPreFFYoJ8abe1ZfkI1mKSkl/o9WxSnhKItztBlGLjVHLh9q
+         T+9gStmyYfEzLE+9GAtjvVUle2GWVyFjQCqFO0iVzrtpWi36Bzce8Sr48OoUxF8mTnsB
+         WsvFaCEVyGBFXY+F3A7KwYywmtemFHNkiYlG9DPURz80v2GJbOapQAEIlcR54CGi3LSn
+         JV5DN0vVnXyTaloy0yunVh4IGsR5Z6GUlaitsmXikoritFDrb7A7CBuxWeTMGFJzSOqP
+         WTcxyK8rW28+YmiSd5hJj5n/PIxsvFnx9zrdDjc44bsjfBtYbcnTd3zk93MyTai+YhT2
+         unbw==
+X-Gm-Message-State: AOAM530BCr/EdOmVL0D1loqV4LojjUIjRDKrmDvzwdswt/2pAicWZN+h
+        UOWDcJoR3R3M3XYxqwesxWpNMrD1ABAudDIq
+X-Google-Smtp-Source: ABdhPJwV07b5cexacO+EgdFjbtQ8wII+ncZYecQ78YQE8X1FZmJNS+3LBSpHUst4wQLbcTknCW43fg==
+X-Received: by 2002:a63:b645:: with SMTP id v5mr10351740pgt.15.1624026499001;
+        Fri, 18 Jun 2021 07:28:19 -0700 (PDT)
+Received: from localhost.localdomain ([122.10.161.207])
+        by smtp.gmail.com with ESMTPSA id v4sm4658167pjh.54.2021.06.18.07.28.16
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jun 2021 07:28:18 -0700 (PDT)
+From:   Yejune Deng <yejune.deng@gmail.com>
+To:     idryomov@gmail.com, jlayton@kernel.org, davem@davemloft.net,
+        kuba@kernel.org
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yejune Deng <yejune.deng@gmail.com>
+Subject: [PATCH] net: ceph: Use CLOCK_MONOTONIC ktime_get_ts64()
+Date:   Fri, 18 Jun 2021 22:27:40 +0800
+Message-Id: <20210618142740.3345-1-yejune.deng@gmail.com>
+X-Mailer: git-send-email 2.29.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2021-06-16 at 16:25 +0100, Luis Henriques wrote:
-> On Tue, Jun 15, 2021 at 10:57:27AM -0400, Jeff Layton wrote:
-> > These locks appear to be completely unnecessary. Almost all of this
-> > function is done under the inode->i_ceph_lock, aside from the actual
-> > sending of the message. Don't take either lock in this function.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/ceph/caps.c | 61 ++++++--------------------------------------------
-> >  1 file changed, 7 insertions(+), 54 deletions(-)
-> > 
-> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > index 919eada97a1f..825b1e463ad3 100644
-> > --- a/fs/ceph/caps.c
-> > +++ b/fs/ceph/caps.c
-> > @@ -1912,7 +1912,6 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
-> >  	struct ceph_cap *cap;
-> >  	u64 flush_tid, oldest_flush_tid;
-> >  	int file_wanted, used, cap_used;
-> > -	int took_snap_rwsem = 0;             /* true if mdsc->snap_rwsem held */
-> >  	int issued, implemented, want, retain, revoking, flushing = 0;
-> >  	int mds = -1;   /* keep track of how far we've gone through i_caps list
-> >  			   to avoid an infinite loop on retry */
-> > @@ -1920,6 +1919,9 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
-> >  	bool queue_invalidate = false;
-> >  	bool tried_invalidate = false;
-> >  
-> > +	if (session)
-> > +		ceph_get_mds_session(session);
-> > +
-> >  	spin_lock(&ci->i_ceph_lock);
-> >  	if (ci->i_ceph_flags & CEPH_I_FLUSH)
-> >  		flags |= CHECK_CAPS_FLUSH;
-> > @@ -2021,8 +2023,6 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
-> >  		    ((flags & CHECK_CAPS_AUTHONLY) && cap != ci->i_auth_cap))
-> >  			continue;
-> >  
-> > -		/* NOTE: no side-effects allowed, until we take s_mutex */
-> > -
-> >  		/*
-> >  		 * If we have an auth cap, we don't need to consider any
-> >  		 * overlapping caps as used.
-> > @@ -2085,37 +2085,8 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
-> >  			continue;     /* nope, all good */
-> >  
-> >  ack:
-> > -		if (session && session != cap->session) {
-> > -			dout("oops, wrong session %p mutex\n", session);
-> > -			mutex_unlock(&session->s_mutex);
-> > -			session = NULL;
-> > -		}
-> > -		if (!session) {
-> > -			session = cap->session;
-> > -			if (mutex_trylock(&session->s_mutex) == 0) {
-> > -				dout("inverting session/ino locks on %p\n",
-> > -				     session);
-> > -				session = ceph_get_mds_session(session);
-> > -				spin_unlock(&ci->i_ceph_lock);
-> > -				if (took_snap_rwsem) {
-> > -					up_read(&mdsc->snap_rwsem);
-> > -					took_snap_rwsem = 0;
-> > -				}
-> > -				if (session) {
-> > -					mutex_lock(&session->s_mutex);
-> > -					ceph_put_mds_session(session);
-> > -				} else {
-> > -					/*
-> > -					 * Because we take the reference while
-> > -					 * holding the i_ceph_lock, it should
-> > -					 * never be NULL. Throw a warning if it
-> > -					 * ever is.
-> > -					 */
-> > -					WARN_ON_ONCE(true);
-> > -				}
-> > -				goto retry;
-> > -			}
-> > -		}
-> > +		ceph_put_mds_session(session);
-> > +		session = ceph_get_mds_session(cap->session);
-> >  
-> >  		/* kick flushing and flush snaps before sending normal
-> >  		 * cap message */
-> > @@ -2130,19 +2101,6 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
-> >  			goto retry_locked;
-> >  		}
-> >  
-> > -		/* take snap_rwsem after session mutex */
-> > -		if (!took_snap_rwsem) {
-> > -			if (down_read_trylock(&mdsc->snap_rwsem) == 0) {
-> > -				dout("inverting snap/in locks on %p\n",
-> > -				     inode);
-> > -				spin_unlock(&ci->i_ceph_lock);
-> > -				down_read(&mdsc->snap_rwsem);
-> > -				took_snap_rwsem = 1;
-> > -				goto retry;
-> > -			}
-> > -			took_snap_rwsem = 1;
-> > -		}
-> > -
-> >  		if (cap == ci->i_auth_cap && ci->i_dirty_caps) {
-> >  			flushing = ci->i_dirty_caps;
-> >  			flush_tid = __mark_caps_flushing(inode, session, false,
-> > @@ -2179,13 +2137,9 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
-> >  
-> >  	spin_unlock(&ci->i_ceph_lock);
-> >  
-> > +	ceph_put_mds_session(session);
-> >  	if (queue_invalidate)
-> >  		ceph_queue_invalidate(inode);
-> > -
-> > -	if (session)
-> > -		mutex_unlock(&session->s_mutex);
-> > -	if (took_snap_rwsem)
-> > -		up_read(&mdsc->snap_rwsem);
-> >  }
-> >  
-> >  /*
-> > @@ -3550,13 +3504,12 @@ static void handle_cap_grant(struct inode *inode,
-> >  	if (wake)
-> >  		wake_up_all(&ci->i_cap_wq);
-> >  
-> > +	mutex_unlock(&session->s_mutex);
-> >  	if (check_caps == 1)
-> >  		ceph_check_caps(ci, CHECK_CAPS_AUTHONLY | CHECK_CAPS_NOINVAL,
-> >  				session);
-> >  	else if (check_caps == 2)
-> >  		ceph_check_caps(ci, CHECK_CAPS_NOINVAL, session);
-> > -	else
-> > -		mutex_unlock(&session->s_mutex);
-> >  }
-> >  
-> >  /*
-> > -- 
-> > 2.31.1
-> > 
-> 
-> Ugh, this is a tricky one.  I couldn't find anything wrong but... yeah,
-> here it is:
-> 
-> Reviewed-by: Luis Henriques <lhenriques@suse.de>
-> 
-> (Suggestion: remove the 'retry/retry_locked' goto dance and simply lock
-> i_ceph_lock in the only 'goto retry' call.)
-> 
+The Documentation/core-api/timekeeping.rst recommend that we should use
+monotonic time ktime_get_ts64(), to avoid glitches with a concurrent
+settimeofday().
 
-Thanks. Good suggestion. I'll incorporate it before I merge, but I won't
-plan to resend unless there are bigger changes needed.
+Signed-off-by: Yejune Deng <yejune.deng@gmail.com>
+---
+ net/ceph/messenger.c    | 2 +-
+ net/ceph/messenger_v1.c | 2 +-
+ net/ceph/messenger_v2.c | 2 +-
+ net/ceph/osd_client.c   | 4 ++--
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+index 57d043b..2d07ab5 100644
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -1809,7 +1809,7 @@ bool ceph_con_keepalive_expired(struct ceph_connection *con,
+ 	    (con->peer_features & CEPH_FEATURE_MSGR_KEEPALIVE2)) {
+ 		struct timespec64 now;
+ 		struct timespec64 ts;
+-		ktime_get_real_ts64(&now);
++		ktime_get_ts64(&now);
+ 		jiffies_to_timespec64(interval, &ts);
+ 		ts = timespec64_add(con->last_keepalive_ack, ts);
+ 		return timespec64_compare(&now, &ts) >= 0;
+diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
+index 2cb5ffd..2ec7b1d 100644
+--- a/net/ceph/messenger_v1.c
++++ b/net/ceph/messenger_v1.c
+@@ -310,7 +310,7 @@ static void prepare_write_keepalive(struct ceph_connection *con)
+ 	if (con->peer_features & CEPH_FEATURE_MSGR_KEEPALIVE2) {
+ 		struct timespec64 now;
+ 
+-		ktime_get_real_ts64(&now);
++		ktime_get_ts64(&now);
+ 		con_out_kvec_add(con, sizeof(tag_keepalive2), &tag_keepalive2);
+ 		ceph_encode_timespec64(&con->v1.out_temp_keepalive2, &now);
+ 		con_out_kvec_add(con, sizeof(con->v1.out_temp_keepalive2),
+diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+index cc40ce4..2125e77 100644
+--- a/net/ceph/messenger_v2.c
++++ b/net/ceph/messenger_v2.c
+@@ -1439,7 +1439,7 @@ static int prepare_keepalive2(struct ceph_connection *con)
+ 	struct ceph_timespec *ts = CTRL_BODY(con->v2.out_buf);
+ 	struct timespec64 now;
+ 
+-	ktime_get_real_ts64(&now);
++	ktime_get_ts64(&now);
+ 	dout("%s con %p timestamp %lld.%09ld\n", __func__, con, now.tv_sec,
+ 	     now.tv_nsec);
+ 
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index ff8624a..5192a8a 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -4717,7 +4717,7 @@ ceph_osdc_watch(struct ceph_osd_client *osdc,
+ 	ceph_oid_copy(&lreq->t.base_oid, oid);
+ 	ceph_oloc_copy(&lreq->t.base_oloc, oloc);
+ 	lreq->t.flags = CEPH_OSD_FLAG_WRITE;
+-	ktime_get_real_ts64(&lreq->mtime);
++	ktime_get_ts64(&lreq->mtime);
+ 
+ 	lreq->reg_req = alloc_watch_request(lreq, CEPH_OSD_WATCH_OP_WATCH);
+ 	if (!lreq->reg_req) {
+@@ -4767,7 +4767,7 @@ int ceph_osdc_unwatch(struct ceph_osd_client *osdc,
+ 	ceph_oid_copy(&req->r_base_oid, &lreq->t.base_oid);
+ 	ceph_oloc_copy(&req->r_base_oloc, &lreq->t.base_oloc);
+ 	req->r_flags = CEPH_OSD_FLAG_WRITE;
+-	ktime_get_real_ts64(&req->r_mtime);
++	ktime_get_ts64(&req->r_mtime);
+ 	osd_req_op_watch_init(req, 0, lreq->linger_id,
+ 			      CEPH_OSD_WATCH_OP_UNWATCH);
+ 
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.7.4
 
