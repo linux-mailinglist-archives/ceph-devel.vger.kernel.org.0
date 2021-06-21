@@ -2,155 +2,146 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 113113AF69B
-	for <lists+ceph-devel@lfdr.de>; Mon, 21 Jun 2021 22:05:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D09F3AF6E3
+	for <lists+ceph-devel@lfdr.de>; Mon, 21 Jun 2021 22:41:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231717AbhFUUIA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 21 Jun 2021 16:08:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50478 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230347AbhFUUH7 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 21 Jun 2021 16:07:59 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C9C1C061574
-        for <ceph-devel@vger.kernel.org>; Mon, 21 Jun 2021 13:05:45 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id h2so5543704iob.11
-        for <ceph-devel@vger.kernel.org>; Mon, 21 Jun 2021 13:05:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SOSmMtdj9IEH98Vm3+ksLkmS4cvJT3eZpQPnUZILwI0=;
-        b=Qun0RMOWK6xLgWSnnzoR1cKHYnmdXZvI3h/9aIE7dopR1uNRtGNKy4s1QEcXsOhS1O
-         7Q8+BwKIItNd0FgytckLSH0xQD3LtS+PbcVmC3vzgbvKa6FR2G/d2R94ZlIP58Z8l+83
-         zZxGarhFfONE2tdTKUTl27SCtjH52w/rmgRUyNPwQBKyuOQx4mVUYpS8zEYviW74GitW
-         idsFJ8JlRKZzDNBFOuYzx/8rasDn+JvGRbkHmoVMs6u2H4sGA3SRTMCEi55g/xMdxBVq
-         /l2/wqT8XvWy4xVfC8WArwTfNRzssgyC+TRU0pxPFZWD7x8jWbNyc87l1/VIHX4jn9/l
-         2A/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SOSmMtdj9IEH98Vm3+ksLkmS4cvJT3eZpQPnUZILwI0=;
-        b=tPewM/uPaudGWlfRRjpLY2y60bVR5STRj2e2L0IRkPvR2vmB0ZQtIAnYBY+z3yUnu9
-         sN3K0L1G/PYskEGSKTGn8kxSbpEp3/GrsT8xOH71MqzIko2fK2Fug803q6pGKHphcbA/
-         9/BApdwYYAE+paeLe6TxnXKT6ho9jaATVn+jHhWlrFa9rXitJ+FpJJS2Ugee7er3XZEN
-         2Ljf79kkB+2M6ekvcuhL5HFmdbfXhrBvRs7YlnBaPpegtA3F35xKACyTJOGyKS3hyMoG
-         j+I4VnjNsK16X1M4sHaylTdAEeO0QekYltlG4tctliq2ehDS+S1q0RpiRBIFlSJ3kd3H
-         t0Wg==
-X-Gm-Message-State: AOAM533gc2EIT6bsWXmulfn/sC4vu4IeGdWjwvoqa+tDtDc8iVOLkc+u
-        brEekOTUKqjMv9gt6d0Nr5AShXMudIb78oX0wIbMoIDAvtyiwA==
-X-Google-Smtp-Source: ABdhPJzqam3Rfn4QBKGEwXMO94XdslXU429at7QNRgySgf8A/viUHXw3NSHbRD0CPlTdatNvvay/TOu8Iv2kPm1EiNY=
-X-Received: by 2002:a05:6602:21d2:: with SMTP id c18mr30134ioc.7.1624305944788;
- Mon, 21 Jun 2021 13:05:44 -0700 (PDT)
+        id S230290AbhFUUna (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 21 Jun 2021 16:43:30 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32840 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229940AbhFUUn3 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 21 Jun 2021 16:43:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1624308074;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=KYy9riG6O7TpoXICXGlQRZsJx+uJQz3RP31zFvC9R5Y=;
+        b=dP0XPqW66VACdmS40q+YiGCDlk6H80w+Y1Zgv3IUxYThTRJkbbL44rkQ19j4PoyFnlPISu
+        hv/gvWEmdvTi7fb6fba7257JGqKTiQJa5WLrJyS5uBFHo/QY+1YpLmFoajQ8KBMMM8tARX
+        7vfZyoeK20nUZBmUr/POD8baAlaIl/k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-425-CT7d7j36NwqHef497rDiqw-1; Mon, 21 Jun 2021 16:41:13 -0400
+X-MC-Unique: CT7d7j36NwqHef497rDiqw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 619C9362F8;
+        Mon, 21 Jun 2021 20:41:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C9A3610016FE;
+        Mon, 21 Jun 2021 20:41:03 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, Andrew W Elble <aweits@rit.edu>,
+        Jeff Layton <jlayton@kernel.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, ceph-devel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] netfs, afs: Fix write_begin/end
 MIME-Version: 1.0
-References: <20210603165231.110559-1-jlayton@kernel.org> <20210603165231.110559-2-jlayton@kernel.org>
-In-Reply-To: <20210603165231.110559-2-jlayton@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 21 Jun 2021 22:05:32 +0200
-Message-ID: <CAOi1vP9eGNxfS5suHGeBpK5H9jdWphoioutwT25=jKSw8u5UmA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ceph: add some lockdep assertions around snaprealm handling
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2842347.1624308062.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 21 Jun 2021 21:41:02 +0100
+Message-ID: <2842348.1624308062@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jun 3, 2021 at 6:52 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> Turn some comments into lockdep asserts.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/snap.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-> index 2a63fb37778b..bc6c33d485e6 100644
-> --- a/fs/ceph/snap.c
-> +++ b/fs/ceph/snap.c
-> @@ -65,6 +65,8 @@
->  void ceph_get_snap_realm(struct ceph_mds_client *mdsc,
->                          struct ceph_snap_realm *realm)
->  {
-> +       lockdep_assert_held_write(&mdsc->snap_rwsem);
-> +
->         dout("get_realm %p %d -> %d\n", realm,
->              atomic_read(&realm->nref), atomic_read(&realm->nref)+1);
->         /*
-> @@ -113,6 +115,8 @@ static struct ceph_snap_realm *ceph_create_snap_realm(
->  {
->         struct ceph_snap_realm *realm;
->
-> +       lockdep_assert_held_write(&mdsc->snap_rwsem);
-> +
->         realm = kzalloc(sizeof(*realm), GFP_NOFS);
->         if (!realm)
->                 return ERR_PTR(-ENOMEM);
-> @@ -143,6 +147,8 @@ static struct ceph_snap_realm *__lookup_snap_realm(struct ceph_mds_client *mdsc,
->         struct rb_node *n = mdsc->snap_realms.rb_node;
->         struct ceph_snap_realm *r;
->
-> +       lockdep_assert_held_write(&mdsc->snap_rwsem);
-> +
->         while (n) {
->                 r = rb_entry(n, struct ceph_snap_realm, node);
->                 if (ino < r->ino)
-> @@ -176,6 +182,8 @@ static void __put_snap_realm(struct ceph_mds_client *mdsc,
->  static void __destroy_snap_realm(struct ceph_mds_client *mdsc,
->                                  struct ceph_snap_realm *realm)
->  {
-> +       lockdep_assert_held_write(&mdsc->snap_rwsem);
-> +
->         dout("__destroy_snap_realm %p %llx\n", realm, realm->ino);
->
->         rb_erase(&realm->node, &mdsc->snap_realms);
-> @@ -198,6 +206,8 @@ static void __destroy_snap_realm(struct ceph_mds_client *mdsc,
->  static void __put_snap_realm(struct ceph_mds_client *mdsc,
->                              struct ceph_snap_realm *realm)
->  {
-> +       lockdep_assert_held_write(&mdsc->snap_rwsem);
+Hi Linus,
 
-This one appears to be redundant since the only caller is
-__destroy_snap_realm().
+Could you pull this please?  It includes patches to fix netfs_write_begin(=
+)
+and afs_write_end() in the following ways:
 
-> +
->         dout("__put_snap_realm %llx %p %d -> %d\n", realm->ino, realm,
->              atomic_read(&realm->nref), atomic_read(&realm->nref)-1);
->         if (atomic_dec_and_test(&realm->nref))
-> @@ -236,6 +246,8 @@ static void __cleanup_empty_realms(struct ceph_mds_client *mdsc)
->  {
->         struct ceph_snap_realm *realm;
->
-> +       lockdep_assert_held_write(&mdsc->snap_rwsem);
+ (1) In netfs_write_begin(), extract the decision about whether to skip a
+     page out to its own helper and have that clear around the region to b=
+e
+     written, but not clear that region.  This requires the filesystem to
+     patch it up afterwards if the hole doesn't get completely filled.
 
-This too since it boils down to calling __destroy_snap_realm().
+ (2) Use offset_in_thp() in (1) rather than manually calculating the offse=
+t
+     into the page.
 
-> +
->         spin_lock(&mdsc->snap_empty_lock);
->         while (!list_empty(&mdsc->snap_empty)) {
->                 realm = list_first_entry(&mdsc->snap_empty,
-> @@ -269,6 +281,8 @@ static int adjust_snap_realm_parent(struct ceph_mds_client *mdsc,
->  {
->         struct ceph_snap_realm *parent;
->
-> +       lockdep_assert_held_write(&mdsc->snap_rwsem);
+ (3) Due to (1), afs_write_end() now needs to handle short data write into
+     the page by generic_perform_write().  I've adopted an analogous
+     approach to ceph of just returning 0 in this case and letting the
+     caller go round again.
 
-And this since ceph_lookup_snap_realm() is called right away.
-
-> +
->         if (realm->parent_ino == parentino)
->                 return 0;
->
-> @@ -696,6 +710,8 @@ int ceph_update_snap_trace(struct ceph_mds_client *mdsc,
->         int err = -ENOMEM;
->         LIST_HEAD(dirty_realms);
->
-> +       lockdep_assert_held_write(&mdsc->snap_rwsem);
-
-Ditto.
+It also adds a note that (in the future) the len parameter may extend
+beyond the page allocated.  This is because the page allocation is deferre=
+d
+to write_begin() and that gets to decide what size of THP to allocate.
 
 Thanks,
+David
 
-                Ilya
+Link: https://lore.kernel.org/r/20210613233345.113565-1-jlayton@kernel.org=
+/
+Link: https://lore.kernel.org/r/162367681795.460125.11729955608839747375.s=
+tgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/162391823192.1173366.9740514875196345746.s=
+tgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/162429000639.2770648.6368710175435880749.s=
+tgit@warthog.procyon.org.uk/ # v3
+
+Changes
+=3D=3D=3D=3D=3D=3D=3D
+
+ver #3:
+   - Drop the bits that make afs take account of len exceeding the end of
+     the page in afs_write_begin/end().
+
+ver #2:
+   - Removed a var that's no longer used (spotted by the kernel test robot=
+)
+   - Removed a forgotten "noinline".
+
+ver #1:
+   - Prefixed the Jeff's new helper with "netfs_".
+   - Don't call zero_user_segments() for a full-page write.
+   - Altered the beyond-last-page check to avoid a DIV.
+   - Removed redundant zero-length-file check.
+   - Added patches to fix afs.
+
+---
+The following changes since commit 009c9aa5be652675a06d5211e1640e02bbb1c33=
+d:
+
+  Linux 5.13-rc6 (2021-06-13 14:43:10 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
+/netfs-fixes-20210621
+
+for you to fetch changes up to 827a746f405d25f79560c7868474aec5aee174e1:
+
+  netfs: fix test for whether we can skip read when writing beyond EOF (20=
+21-06-21 21:24:07 +0100)
+
+----------------------------------------------------------------
+netfslib fixes
+
+----------------------------------------------------------------
+David Howells (1):
+      afs: Fix afs_write_end() to handle short writes
+
+Jeff Layton (1):
+      netfs: fix test for whether we can skip read when writing beyond EOF
+
+ fs/afs/write.c         | 11 +++++++++--
+ fs/netfs/read_helper.c | 49 ++++++++++++++++++++++++++++++++++++---------=
+----
+ 2 files changed, 45 insertions(+), 15 deletions(-)
+
