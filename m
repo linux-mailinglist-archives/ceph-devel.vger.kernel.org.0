@@ -2,146 +2,127 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D09F3AF6E3
-	for <lists+ceph-devel@lfdr.de>; Mon, 21 Jun 2021 22:41:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC0C93AF6FD
+	for <lists+ceph-devel@lfdr.de>; Mon, 21 Jun 2021 22:48:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230290AbhFUUna (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 21 Jun 2021 16:43:30 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32840 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229940AbhFUUn3 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 21 Jun 2021 16:43:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624308074;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=KYy9riG6O7TpoXICXGlQRZsJx+uJQz3RP31zFvC9R5Y=;
-        b=dP0XPqW66VACdmS40q+YiGCDlk6H80w+Y1Zgv3IUxYThTRJkbbL44rkQ19j4PoyFnlPISu
-        hv/gvWEmdvTi7fb6fba7257JGqKTiQJa5WLrJyS5uBFHo/QY+1YpLmFoajQ8KBMMM8tARX
-        7vfZyoeK20nUZBmUr/POD8baAlaIl/k=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-425-CT7d7j36NwqHef497rDiqw-1; Mon, 21 Jun 2021 16:41:13 -0400
-X-MC-Unique: CT7d7j36NwqHef497rDiqw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 619C9362F8;
-        Mon, 21 Jun 2021 20:41:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-65.rdu2.redhat.com [10.10.118.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C9A3610016FE;
-        Mon, 21 Jun 2021 20:41:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, Andrew W Elble <aweits@rit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, ceph-devel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] netfs, afs: Fix write_begin/end
+        id S230523AbhFUUvI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 21 Jun 2021 16:51:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60016 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230325AbhFUUvG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 21 Jun 2021 16:51:06 -0400
+Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EB32C061756
+        for <ceph-devel@vger.kernel.org>; Mon, 21 Jun 2021 13:48:51 -0700 (PDT)
+Received: by mail-il1-x132.google.com with SMTP id q12so5664000ilv.5
+        for <ceph-devel@vger.kernel.org>; Mon, 21 Jun 2021 13:48:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6n97mR+LTWNTLV9sKPwfq1vMpABCEs3QKfAdDOJMDfo=;
+        b=MDwUA5b+gdbSFgJkpI/UEkGHFweplMfPj34UcPOVSXHLLRN1N6t07grvtpoUtFCE0h
+         SJqpCVWpMZ/BvWQsODO3qYO7oI61yHyPJSnw7G7/voaC3SJYRXYt2EB6hTQzBPrQFR5e
+         mYh61hTT5O2yLK2Vqu+x7ibchnL8CHykOpSr5kEwY+Rrfy3HI4fZXzXM9DlORQpb0TCd
+         MhG2O2wCXQ80+Vg4TbfYeUkYQ6d/uRWJNUXuQR8yOuugrQXwFB0GrfbPeGcgU6i4CR+n
+         s4Ud5FBT5FEnbAj6NpVYT6GjXwiUQAXp7fdJrpaYvKKZETJH06Ovq9Eieijd5mbIfCpu
+         8j5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6n97mR+LTWNTLV9sKPwfq1vMpABCEs3QKfAdDOJMDfo=;
+        b=KkLtR23cL691Cspdee6C0jb3NnIMlWcNPIpEZBP/60QiL2Z0LTLGflHur5bi0i1UmM
+         pRpMFYbX91rxY9MBJH6BVuCsLrkpjwrXAWUngfnTbn0n1YhFI/pDI6aI9/S0i1reT4ux
+         d52wo1ot3/jqT/uLyi9kCnfq4O1Qz+zml0RCBaZWymI51y1R97FWlLgFCngTS1MgloCi
+         3Z3er0FR4a7bhSVkCK+Q1jVdehM5D3JvsNydvYGUyhCkv07Dyt6Qchas011rwKd1wUxc
+         0TyXiQzPllt7GUmWIObpR0Iuvj4g3FRyJUj/bkzwMukcuLsuHZHpsFjIILAsaFHwvNhV
+         xitg==
+X-Gm-Message-State: AOAM531TicCITBxD6EHxyyEnrBwpVRusDi0Lu7lcVo3PpIoUjOdY7F8L
+        f4ZeHzM4WiRfAmOS5bcbUnSx96mzTE8TJUihBc3eA1mHI9O+hg==
+X-Google-Smtp-Source: ABdhPJz7/Lxiwa0akAfuKM5/iyZg933kSmurWwfV2x1yycmWqVbhZh0TwDwW/AasCQbYtkek1qwkCOci7H3xjtvTNhM=
+X-Received: by 2002:a05:6e02:1906:: with SMTP id w6mr69607ilu.281.1624308531033;
+ Mon, 21 Jun 2021 13:48:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2842347.1624308062.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 21 Jun 2021 21:41:02 +0100
-Message-ID: <2842348.1624308062@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <20210603165231.110559-1-jlayton@kernel.org> <20210603165231.110559-3-jlayton@kernel.org>
+In-Reply-To: <20210603165231.110559-3-jlayton@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 21 Jun 2021 22:48:39 +0200
+Message-ID: <CAOi1vP83Za9rW3wK-XvOW8k=UXObczyQeQgTmrQRRXJ0yOmXsw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ceph: clean up locking annotation for
+ ceph_get_snap_realm and __lookup_snap_realm
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
+On Thu, Jun 3, 2021 at 6:52 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> They both say that the snap_rwsem must be held for write, but I don't
+> see any real reason for it, and it's not currently always called that
+> way.
+>
+> The lookup is just walking the rbtree, so holding it for read should be
+> fine there. The "get" is bumping the refcount and (possibly) removing
+> it from the empty list. I see no need to hold the snap_rwsem for write
+> for that.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/snap.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> index bc6c33d485e6..f8cac2abab3f 100644
+> --- a/fs/ceph/snap.c
+> +++ b/fs/ceph/snap.c
+> @@ -60,12 +60,12 @@
+>  /*
+>   * increase ref count for the realm
+>   *
+> - * caller must hold snap_rwsem for write.
+> + * caller must hold snap_rwsem.
+>   */
+>  void ceph_get_snap_realm(struct ceph_mds_client *mdsc,
+>                          struct ceph_snap_realm *realm)
+>  {
+> -       lockdep_assert_held_write(&mdsc->snap_rwsem);
+> +       lockdep_assert_held(&mdsc->snap_rwsem);
+>
+>         dout("get_realm %p %d -> %d\n", realm,
+>              atomic_read(&realm->nref), atomic_read(&realm->nref)+1);
+> @@ -139,7 +139,7 @@ static struct ceph_snap_realm *ceph_create_snap_realm(
+>  /*
+>   * lookup the realm rooted at @ino.
+>   *
+> - * caller must hold snap_rwsem for write.
+> + * caller must hold snap_rwsem.
+>   */
+>  static struct ceph_snap_realm *__lookup_snap_realm(struct ceph_mds_client *mdsc,
+>                                                    u64 ino)
+> @@ -147,7 +147,7 @@ static struct ceph_snap_realm *__lookup_snap_realm(struct ceph_mds_client *mdsc,
+>         struct rb_node *n = mdsc->snap_realms.rb_node;
+>         struct ceph_snap_realm *r;
+>
+> -       lockdep_assert_held_write(&mdsc->snap_rwsem);
+> +       lockdep_assert_held(&mdsc->snap_rwsem);
+>
+>         while (n) {
+>                 r = rb_entry(n, struct ceph_snap_realm, node);
+> --
+> 2.31.1
+>
 
-Could you pull this please?  It includes patches to fix netfs_write_begin(=
-)
-and afs_write_end() in the following ways:
+Ah, since you are relaxing the requirement some of those lockdep
+asserts from the previous patch aren't actually redundant.  This seems
+fine to me: lookup definitely doesn't need the write lock and allowing
+concurrent gets should be OK.  The write lock made some sense back when
+get was an atomic_read followed by atomic_inc but not now.
 
- (1) In netfs_write_begin(), extract the decision about whether to skip a
-     page out to its own helper and have that clear around the region to b=
-e
-     written, but not clear that region.  This requires the filesystem to
-     patch it up afterwards if the hole doesn't get completely filled.
-
- (2) Use offset_in_thp() in (1) rather than manually calculating the offse=
-t
-     into the page.
-
- (3) Due to (1), afs_write_end() now needs to handle short data write into
-     the page by generic_perform_write().  I've adopted an analogous
-     approach to ceph of just returning 0 in this case and letting the
-     caller go round again.
-
-It also adds a note that (in the future) the len parameter may extend
-beyond the page allocated.  This is because the page allocation is deferre=
-d
-to write_begin() and that gets to decide what size of THP to allocate.
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
 
 Thanks,
-David
 
-Link: https://lore.kernel.org/r/20210613233345.113565-1-jlayton@kernel.org=
-/
-Link: https://lore.kernel.org/r/162367681795.460125.11729955608839747375.s=
-tgit@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/162391823192.1173366.9740514875196345746.s=
-tgit@warthog.procyon.org.uk/ # v2
-Link: https://lore.kernel.org/r/162429000639.2770648.6368710175435880749.s=
-tgit@warthog.procyon.org.uk/ # v3
-
-Changes
-=3D=3D=3D=3D=3D=3D=3D
-
-ver #3:
-   - Drop the bits that make afs take account of len exceeding the end of
-     the page in afs_write_begin/end().
-
-ver #2:
-   - Removed a var that's no longer used (spotted by the kernel test robot=
-)
-   - Removed a forgotten "noinline".
-
-ver #1:
-   - Prefixed the Jeff's new helper with "netfs_".
-   - Don't call zero_user_segments() for a full-page write.
-   - Altered the beyond-last-page check to avoid a DIV.
-   - Removed redundant zero-length-file check.
-   - Added patches to fix afs.
-
----
-The following changes since commit 009c9aa5be652675a06d5211e1640e02bbb1c33=
-d:
-
-  Linux 5.13-rc6 (2021-06-13 14:43:10 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/netfs-fixes-20210621
-
-for you to fetch changes up to 827a746f405d25f79560c7868474aec5aee174e1:
-
-  netfs: fix test for whether we can skip read when writing beyond EOF (20=
-21-06-21 21:24:07 +0100)
-
-----------------------------------------------------------------
-netfslib fixes
-
-----------------------------------------------------------------
-David Howells (1):
-      afs: Fix afs_write_end() to handle short writes
-
-Jeff Layton (1):
-      netfs: fix test for whether we can skip read when writing beyond EOF
-
- fs/afs/write.c         | 11 +++++++++--
- fs/netfs/read_helper.c | 49 ++++++++++++++++++++++++++++++++++++---------=
-----
- 2 files changed, 45 insertions(+), 15 deletions(-)
-
+                Ilya
