@@ -2,151 +2,151 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 370343AF6FF
-	for <lists+ceph-devel@lfdr.de>; Mon, 21 Jun 2021 22:51:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBE363AF73A
+	for <lists+ceph-devel@lfdr.de>; Mon, 21 Jun 2021 23:11:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230102AbhFUUxj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 21 Jun 2021 16:53:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35192 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229890AbhFUUxj (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 21 Jun 2021 16:53:39 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D1F4061245;
-        Mon, 21 Jun 2021 20:51:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624308684;
-        bh=sxc3ohlV0y3X2N+PcNktVf8fwzesS9D4bgj7xo7NCiE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=M2ORE1BnQSqREcna1/RZh54TVtYoyQW4qP6UrhYTq0LRrJOgxu5m/DnXJ97yMcdDr
-         FGcmt2RgMfT7isNoiCdDp/gfd8Ti4+gKW8mhWpPwhgV2lEStn4cxctoH9u2ETiKFv1
-         nwFWkcw3L6E5rpjCa8iqVqausSX0c1Mmml6S9b/173PIoN0qvHJQDoTzQFObaK+gFX
-         9s4yggE5Z1cksKxdVO9/731x0c++yxBPoUDRUDzYqQ84s0t1pphE90vqFmZjkK/kln
-         DcXrwGH8xUlJLF/8uLXu1wE20uRV7NYUE8CHGv9DMvTr+OEMwX2LPr9IIvepybE1U9
-         mZsgh/A0No+sQ==
-Message-ID: <4d985178b5b5b95d324054928d291bd65c3f56fe.camel@kernel.org>
-Subject: Re: [PATCH 1/3] ceph: add some lockdep assertions around snaprealm
- handling
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
-Date:   Mon, 21 Jun 2021 16:51:22 -0400
-In-Reply-To: <CAOi1vP9eGNxfS5suHGeBpK5H9jdWphoioutwT25=jKSw8u5UmA@mail.gmail.com>
-References: <20210603165231.110559-1-jlayton@kernel.org>
-         <20210603165231.110559-2-jlayton@kernel.org>
-         <CAOi1vP9eGNxfS5suHGeBpK5H9jdWphoioutwT25=jKSw8u5UmA@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
+        id S231315AbhFUVN7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 21 Jun 2021 17:13:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36904 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230102AbhFUVN7 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 21 Jun 2021 17:13:59 -0400
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B470C061574;
+        Mon, 21 Jun 2021 14:11:44 -0700 (PDT)
+Received: by mail-il1-x135.google.com with SMTP id q9so2913219ilj.3;
+        Mon, 21 Jun 2021 14:11:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DP6PahqRP1MLu8qPFJfznPIBup13mcFnRiC5R3yfCy0=;
+        b=TRZUqpP7ljOMXmH8ZTlAwiTkyiWqtALwCKsL4faQ6tAWFGW9YfOdFkUBosnlYbgVWh
+         zB7KUz9eF85/54XbxY8za+pK/nAdbx/A7YRnckbNS9+uD3Bt7oF9OrMdTwvDenq7F6QE
+         HHRrpx9AHykrVwzWP6u21gHVOtnRaYrf98PeXLYaUBTX6ptliwEYR7/G2hGAKTv1Ih+S
+         G9NSpRrj0/hpvbAiz0WhXOitoUct73olE9NA539jit7QG5g59OBgYJQigzpMovybyAPY
+         dVqSGCdZEWqfMz7cthZ1+mNgw5XDKjKO5ydkiFYocDFBVw1XjMhYPoLphECiQRdV2nnq
+         rsRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DP6PahqRP1MLu8qPFJfznPIBup13mcFnRiC5R3yfCy0=;
+        b=idIhJ6IUoxmNIY6rELf3CzQC769sX6T663j1Yhhy4nCpifGCFNJaSW47avDu6KuUab
+         7iQ7SmgneKzm4oDsFon6XCJZRGQ5/GAU/BQ5u+WS0WdDSF5ly707HPxFKl0Noa801PAM
+         tQNGCDfnLakpsR922j4iEfK7jdxWCN6TMSHRfk0kPshgpgUL6Es/Xg+9iygKZ4QN/B+m
+         L1eb6S+rpyet6BXs6SlQVTjOJE05JxiAXaRieGO1hZavlcWhOuclu+9PUifgvEAgk2LC
+         rQqtysb6gSUds2jEommdvQcIwrMwc1J9jIDgn5/ZAqgGNB8FyUKcxdJltkMQnjCOeXfJ
+         3l3A==
+X-Gm-Message-State: AOAM531LFxCwLCDNiuPzwTJfZvvWXs2al6O2qiEUHPc6p8y74n72FO4M
+        2ws+Y5TWrAoRQpjtvRLE4gb6vG7WrqP7n9gbV+o=
+X-Google-Smtp-Source: ABdhPJxMPgqp2+C3XHoUxEOs/ttJrcNuDkWvZw6G4xn8VnTQOpTiQij3FudC+TAOP9p4GkwWpkfiQ2UCV9o0GK73fgE=
+X-Received: by 2002:a92:cbd0:: with SMTP id s16mr149873ilq.19.1624309904060;
+ Mon, 21 Jun 2021 14:11:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20210618142740.3345-1-yejune.deng@gmail.com> <ca37212d9c848bbb6228cce95ca7f39ef3696437.camel@kernel.org>
+In-Reply-To: <ca37212d9c848bbb6228cce95ca7f39ef3696437.camel@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 21 Jun 2021 23:11:31 +0200
+Message-ID: <CAOi1vP_Dv2uV=jOFGwbsyTOdJeZREvrPE+iK68JowkMCTauVKg@mail.gmail.com>
+Subject: Re: [PATCH] net: ceph: Use CLOCK_MONOTONIC ktime_get_ts64()
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Yejune Deng <yejune.deng@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-06-21 at 22:05 +0200, Ilya Dryomov wrote:
-> On Thu, Jun 3, 2021 at 6:52 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > 
-> > Turn some comments into lockdep asserts.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Sat, Jun 19, 2021 at 12:51 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> On Fri, 2021-06-18 at 22:27 +0800, Yejune Deng wrote:
+> > The Documentation/core-api/timekeeping.rst recommend that we should use
+> > monotonic time ktime_get_ts64(), to avoid glitches with a concurrent
+> > settimeofday().
+> >
+> > Signed-off-by: Yejune Deng <yejune.deng@gmail.com>
 > > ---
-> >  fs/ceph/snap.c | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> > 
-> > diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-> > index 2a63fb37778b..bc6c33d485e6 100644
-> > --- a/fs/ceph/snap.c
-> > +++ b/fs/ceph/snap.c
-> > @@ -65,6 +65,8 @@
-> >  void ceph_get_snap_realm(struct ceph_mds_client *mdsc,
-> >                          struct ceph_snap_realm *realm)
-> >  {
-> > +       lockdep_assert_held_write(&mdsc->snap_rwsem);
-> > +
-> >         dout("get_realm %p %d -> %d\n", realm,
-> >              atomic_read(&realm->nref), atomic_read(&realm->nref)+1);
-> >         /*
-> > @@ -113,6 +115,8 @@ static struct ceph_snap_realm *ceph_create_snap_realm(
-> >  {
-> >         struct ceph_snap_realm *realm;
-> > 
-> > +       lockdep_assert_held_write(&mdsc->snap_rwsem);
-> > +
-> >         realm = kzalloc(sizeof(*realm), GFP_NOFS);
-> >         if (!realm)
-> >                 return ERR_PTR(-ENOMEM);
-> > @@ -143,6 +147,8 @@ static struct ceph_snap_realm *__lookup_snap_realm(struct ceph_mds_client *mdsc,
-> >         struct rb_node *n = mdsc->snap_realms.rb_node;
-> >         struct ceph_snap_realm *r;
-> > 
-> > +       lockdep_assert_held_write(&mdsc->snap_rwsem);
-> > +
-> >         while (n) {
-> >                 r = rb_entry(n, struct ceph_snap_realm, node);
-> >                 if (ino < r->ino)
-> > @@ -176,6 +182,8 @@ static void __put_snap_realm(struct ceph_mds_client *mdsc,
-> >  static void __destroy_snap_realm(struct ceph_mds_client *mdsc,
-> >                                  struct ceph_snap_realm *realm)
-> >  {
-> > +       lockdep_assert_held_write(&mdsc->snap_rwsem);
-> > +
-> >         dout("__destroy_snap_realm %p %llx\n", realm, realm->ino);
-> > 
-> >         rb_erase(&realm->node, &mdsc->snap_realms);
-> > @@ -198,6 +206,8 @@ static void __destroy_snap_realm(struct ceph_mds_client *mdsc,
-> >  static void __put_snap_realm(struct ceph_mds_client *mdsc,
-> >                              struct ceph_snap_realm *realm)
-> >  {
-> > +       lockdep_assert_held_write(&mdsc->snap_rwsem);
-> 
-> This one appears to be redundant since the only caller is
-> __destroy_snap_realm().
-> 
-> > +
-> >         dout("__put_snap_realm %llx %p %d -> %d\n", realm->ino, realm,
-> >              atomic_read(&realm->nref), atomic_read(&realm->nref)-1);
-> >         if (atomic_dec_and_test(&realm->nref))
-> > @@ -236,6 +246,8 @@ static void __cleanup_empty_realms(struct ceph_mds_client *mdsc)
-> >  {
-> >         struct ceph_snap_realm *realm;
-> > 
-> > +       lockdep_assert_held_write(&mdsc->snap_rwsem);
-> 
-> This too since it boils down to calling __destroy_snap_realm().
-> 
-> > +
-> >         spin_lock(&mdsc->snap_empty_lock);
-> >         while (!list_empty(&mdsc->snap_empty)) {
-> >                 realm = list_first_entry(&mdsc->snap_empty,
-> > @@ -269,6 +281,8 @@ static int adjust_snap_realm_parent(struct ceph_mds_client *mdsc,
-> >  {
-> >         struct ceph_snap_realm *parent;
-> > 
-> > +       lockdep_assert_held_write(&mdsc->snap_rwsem);
-> 
-> And this since ceph_lookup_snap_realm() is called right away.
-> 
-> > +
-> >         if (realm->parent_ino == parentino)
-> >                 return 0;
-> > 
-> > @@ -696,6 +710,8 @@ int ceph_update_snap_trace(struct ceph_mds_client *mdsc,
-> >         int err = -ENOMEM;
-> >         LIST_HEAD(dirty_realms);
-> > 
-> > +       lockdep_assert_held_write(&mdsc->snap_rwsem);
-> 
-> Ditto.
-> 
-> Thanks,
-> 
->                 Ilya
+> >  net/ceph/messenger.c    | 2 +-
+> >  net/ceph/messenger_v1.c | 2 +-
+> >  net/ceph/messenger_v2.c | 2 +-
+> >  net/ceph/osd_client.c   | 4 ++--
+> >  4 files changed, 5 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+> > index 57d043b..2d07ab5 100644
+> > --- a/net/ceph/messenger.c
+> > +++ b/net/ceph/messenger.c
+> > @@ -1809,7 +1809,7 @@ bool ceph_con_keepalive_expired(struct ceph_connection *con,
+> >           (con->peer_features & CEPH_FEATURE_MSGR_KEEPALIVE2)) {
+> >               struct timespec64 now;
+> >               struct timespec64 ts;
+> > -             ktime_get_real_ts64(&now);
+> > +             ktime_get_ts64(&now);
+> >               jiffies_to_timespec64(interval, &ts);
+> >               ts = timespec64_add(con->last_keepalive_ack, ts);
+> >               return timespec64_compare(&now, &ts) >= 0;
+> > diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
+> > index 2cb5ffd..2ec7b1d 100644
+> > --- a/net/ceph/messenger_v1.c
+> > +++ b/net/ceph/messenger_v1.c
+> > @@ -310,7 +310,7 @@ static void prepare_write_keepalive(struct ceph_connection *con)
+> >       if (con->peer_features & CEPH_FEATURE_MSGR_KEEPALIVE2) {
+> >               struct timespec64 now;
+> >
+> > -             ktime_get_real_ts64(&now);
+> > +             ktime_get_ts64(&now);
+> >               con_out_kvec_add(con, sizeof(tag_keepalive2), &tag_keepalive2);
+> >               ceph_encode_timespec64(&con->v1.out_temp_keepalive2, &now);
+> >               con_out_kvec_add(con, sizeof(con->v1.out_temp_keepalive2),
+> > diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+> > index cc40ce4..2125e77 100644
+> > --- a/net/ceph/messenger_v2.c
+> > +++ b/net/ceph/messenger_v2.c
+> > @@ -1439,7 +1439,7 @@ static int prepare_keepalive2(struct ceph_connection *con)
+> >       struct ceph_timespec *ts = CTRL_BODY(con->v2.out_buf);
+> >       struct timespec64 now;
+> >
+> > -     ktime_get_real_ts64(&now);
+> > +     ktime_get_ts64(&now);
+> >       dout("%s con %p timestamp %lld.%09ld\n", __func__, con, now.tv_sec,
+> >            now.tv_nsec);
+> >
+> > diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> > index ff8624a..5192a8a 100644
+> > --- a/net/ceph/osd_client.c
+> > +++ b/net/ceph/osd_client.c
+> > @@ -4717,7 +4717,7 @@ ceph_osdc_watch(struct ceph_osd_client *osdc,
+> >       ceph_oid_copy(&lreq->t.base_oid, oid);
+> >       ceph_oloc_copy(&lreq->t.base_oloc, oloc);
+> >       lreq->t.flags = CEPH_OSD_FLAG_WRITE;
+> > -     ktime_get_real_ts64(&lreq->mtime);
+> > +     ktime_get_ts64(&lreq->mtime);
+> >
+> >       lreq->reg_req = alloc_watch_request(lreq, CEPH_OSD_WATCH_OP_WATCH);
+> >       if (!lreq->reg_req) {
+> > @@ -4767,7 +4767,7 @@ int ceph_osdc_unwatch(struct ceph_osd_client *osdc,
+> >       ceph_oid_copy(&req->r_base_oid, &lreq->t.base_oid);
+> >       ceph_oloc_copy(&req->r_base_oloc, &lreq->t.base_oloc);
+> >       req->r_flags = CEPH_OSD_FLAG_WRITE;
+> > -     ktime_get_real_ts64(&req->r_mtime);
+> > +     ktime_get_ts64(&req->r_mtime);
+> >       osd_req_op_watch_init(req, 0, lreq->linger_id,
+> >                             CEPH_OSD_WATCH_OP_UNWATCH);
+> >
+>
+> I think this is OK. Most of these timestamps get marshalled onto the
+> wire to use as identifiers. Those are almost certainly better off with
+> CLOCK_MONOTONIC since you could have a clock jump that caused you to
+> send (e.g.) 2 keepalives with the same timestamp otherwise.
 
-Some of these calls may be redundant, but I'd still like to keep them.
+While I generally agree that for keepalive (i.e. the first free
+instances) using the monotonic clock would be better, in userspace
+CLOCK_REALTIME is used and I don't want to diverge.
 
-The locking in this code is a mess, and this is the most reliable way
-I've found to approach cleaning it up. These all compile out unless
-you're running with lockdep enabled anyway.
+Thanks,
 
--- 
-Jeff Layton <jlayton@kernel.org>
-
+                Ilya
