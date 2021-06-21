@@ -2,187 +2,80 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00B623AE8A1
-	for <lists+ceph-devel@lfdr.de>; Mon, 21 Jun 2021 14:03:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43B253AEBC3
+	for <lists+ceph-devel@lfdr.de>; Mon, 21 Jun 2021 16:51:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229707AbhFUMFh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 21 Jun 2021 08:05:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36510 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229576AbhFUMFg (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 21 Jun 2021 08:05:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6519F61351;
-        Mon, 21 Jun 2021 12:03:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624277002;
-        bh=1rDldfjG6RyJnDLwSFjOxD2+XqvUOY94Ps94KYFEtF0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=g6emB4oSFFIL+22ZXkbU/YAm0e2eCb+vUCzHELpLRZzZEdUXOGdwcPDcu6c2G109d
-         J/H7H6sRrBMjAf0DDB3G+TrTbD1yrTyM39Qa9pptkJ7buzybJ0H66ihsQ2iGBkDVG+
-         CzcKv8E0aCKJFXkuM8xUcRqV1BK2w8LJ14rYSWGFde+kbzSO10lH2sHF5TgygjS0GU
-         E66FtzC/EzrOWdsv0NXI2gMgFyO3dcoByXR7F27HxhI8GGdUdDkcvazSEpny3Jj5nn
-         wC+66SkSyFGcOMbJZ1LQoK//UdBdeon316NaMOuje8XiOHEYoWBMk8aEAExzc5lIdT
-         KxZ7T2NlfOqQQ==
-Message-ID: <5e4b1b0f12dc60a9d41a5eeafc47d371e38291a7.camel@kernel.org>
-Subject: Re: [PATCH] ceph: take reference to req->r_parent at point of
- assignment
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com
-Date:   Mon, 21 Jun 2021 08:03:21 -0400
-In-Reply-To: <YNB9VJTVSkOls1XM@suse.de>
-References: <20210618173959.13998-1-jlayton@kernel.org>
-         <YNB9VJTVSkOls1XM@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
+        id S230146AbhFUOyI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 21 Jun 2021 10:54:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35644 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229790AbhFUOyH (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 21 Jun 2021 10:54:07 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F9DC061574;
+        Mon, 21 Jun 2021 07:51:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=E5UtLj3YvE+3pbwbOhdxSbthFE/nQMzXTvlgUtUaz0A=; b=WrgMDakfQkZ2nkppn4qLsDXgC2
+        ZZ/NiJTOlED2t/bDaix2G/7oeu4m9FKk7SX5nJUgArPJrugNDxSVR6MLOwAWHh7fS73gODhiHIRBF
+        ncxXH1nbOMKvToqdsgvHHQEGUPYiLVXpMAflgPpHZtDtCtQVIQwHmRdfMheZcFRjkW7va7RE9GWWZ
+        yJ3Z9NoqOq6JnJjVq6+dFCQFtjjOpIqPV8Xgdz0RZtC2fWGWSidfKkSQHB4oZRW9dZaLcTOUOTfeJ
+        OO7D0Jt2IQkBLiPGPzLNPW7gG2Wpe/j5J8gPTPzp4Xr0VhIzkv8sbJ69jtwpRqSRYGWvRyjD36VXH
+        /mDIem5A==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1lvLGD-00DCT3-5t; Mon, 21 Jun 2021 14:51:03 +0000
+Date:   Mon, 21 Jun 2021 15:50:49 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        Andrew W Elble <aweits@rit.edu>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] netfs: fix test for whether we can skip read when
+ writing beyond EOF
+Message-ID: <YNCnSQyKWqV8SkRs@casper.infradead.org>
+References: <162391823192.1173366.9740514875196345746.stgit@warthog.procyon.org.uk>
+ <162391826758.1173366.11794946719301590013.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <162391826758.1173366.11794946719301590013.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-06-21 at 12:51 +0100, Luis Henriques wrote:
-> On Fri, Jun 18, 2021 at 01:39:59PM -0400, Jeff Layton wrote:
-> > Currently, we set the r_parent pointer but then don't take a reference
-> > to it until we submit the request. If we end up freeing the req before
-> > that point, then we'll do a iput when we shouldn't.
-> > 
-> > Instead, take the inode reference in the callers, so that it's always
-> > safe to call ceph_mdsc_put_request on the req, even before submission.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/ceph/dir.c        | 9 +++++++++
-> >  fs/ceph/export.c     | 1 +
-> >  fs/ceph/file.c       | 1 +
-> >  fs/ceph/mds_client.c | 1 -
-> >  4 files changed, 11 insertions(+), 1 deletion(-)
-> > 
-> > Note that this isn't a problem with the existing code, because we never
-> > put the last reference before submission, but with the coming fscrypt
-> > patchset, we can end up doing this and this becomes a problem. With ths
-> > change, a set r_parent field means a reference *was* taken.
-> > 
-> > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> > index bd508b1aeac2..a656c5c00e65 100644
-> > --- a/fs/ceph/dir.c
-> > +++ b/fs/ceph/dir.c
-> > @@ -788,6 +788,7 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
-> >  		mask |= CEPH_CAP_XATTR_SHARED;
-> >  	req->r_args.getattr.mask = cpu_to_le32(mask);
-> >  
-> > +	ihold(dir);
-> >  	req->r_parent = dir;
+On Thu, Jun 17, 2021 at 09:24:27AM +0100, David Howells wrote:
+> From: Jeff Layton <jlayton@kernel.org>
 > 
-> Other than my OCD saying that these two statements should be in the
-> reverse order (or maybe all the other should...?), feel free to add my
+> It's not sufficient to skip reading when the pos is beyond the EOF.
+> There may be data at the head of the page that we need to fill in
+> before the write.
 > 
-> Reviewed-by: Luis Henriques <lhenriques@suse.de>
+> Add a new helper function that corrects and clarifies the logic of
+> when we can skip reads, and have it only zero out the part of the page
+> that won't have data copied in for the write.
 > 
-
-Thanks. I sort of wish ihold() returned the inode pointer to make this
-sort of thing more clear, but changing it now would probably be painful.
-
-> >  	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
-> >  	err = ceph_mdsc_do_request(mdsc, NULL, req);
-> > @@ -861,6 +862,7 @@ static int ceph_mknod(struct user_namespace *mnt_userns, struct inode *dir,
-> >  	req->r_dentry = dget(dentry);
-> >  	req->r_num_caps = 2;
-> >  	req->r_parent = dir;
-> > +	ihold(dir);
-> >  	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
-> >  	req->r_args.mknod.mode = cpu_to_le32(mode);
-> >  	req->r_args.mknod.rdev = cpu_to_le32(rdev);
-> > @@ -922,6 +924,8 @@ static int ceph_symlink(struct user_namespace *mnt_userns, struct inode *dir,
-> >  		goto out;
-> >  	}
-> >  	req->r_parent = dir;
-> > +	ihold(dir);
-> > +
-> >  	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
-> >  	req->r_dentry = dget(dentry);
-> >  	req->r_num_caps = 2;
-> > @@ -986,6 +990,7 @@ static int ceph_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
-> >  	req->r_dentry = dget(dentry);
-> >  	req->r_num_caps = 2;
-> >  	req->r_parent = dir;
-> > +	ihold(dir);
-> >  	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
-> >  	req->r_args.mkdir.mode = cpu_to_le32(mode);
-> >  	req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
-> > @@ -1030,6 +1035,7 @@ static int ceph_link(struct dentry *old_dentry, struct inode *dir,
-> >  	req->r_num_caps = 2;
-> >  	req->r_old_dentry = dget(old_dentry);
-> >  	req->r_parent = dir;
-> > +	ihold(dir);
-> >  	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
-> >  	req->r_dentry_drop = CEPH_CAP_FILE_SHARED;
-> >  	req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
-> > @@ -1151,6 +1157,7 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
-> >  	req->r_dentry = dget(dentry);
-> >  	req->r_num_caps = 2;
-> >  	req->r_parent = dir;
-> > +	ihold(dir);
-> >  	req->r_dentry_drop = CEPH_CAP_FILE_SHARED;
-> >  	req->r_dentry_unless = CEPH_CAP_FILE_EXCL;
-> >  	req->r_inode_drop = ceph_drop_caps_for_unlink(inode);
-> > @@ -1225,6 +1232,7 @@ static int ceph_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
-> >  	req->r_old_dentry = dget(old_dentry);
-> >  	req->r_old_dentry_dir = old_dir;
-> >  	req->r_parent = new_dir;
-> > +	ihold(new_dir);
-> >  	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
-> >  	req->r_old_dentry_drop = CEPH_CAP_FILE_SHARED;
-> >  	req->r_old_dentry_unless = CEPH_CAP_FILE_EXCL;
-> > @@ -1721,6 +1729,7 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
-> >  			req->r_dentry = dget(dentry);
-> >  			req->r_num_caps = 2;
-> >  			req->r_parent = dir;
-> > +			ihold(dir);
-> >  
-> >  			mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
-> >  			if (ceph_security_xattr_wanted(dir))
-> > diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-> > index 65540a4429b2..1d65934c1262 100644
-> > --- a/fs/ceph/export.c
-> > +++ b/fs/ceph/export.c
-> > @@ -542,6 +542,7 @@ static int ceph_get_name(struct dentry *parent, char *name,
-> >  	ihold(inode);
-> >  	req->r_ino2 = ceph_vino(d_inode(parent));
-> >  	req->r_parent = d_inode(parent);
-> > +	ihold(req->r_parent);
-> >  	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
-> >  	req->r_num_caps = 2;
-> >  	err = ceph_mdsc_do_request(mdsc, NULL, req);
-> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > index d3874c2df4b1..c8fd11cf4510 100644
-> > --- a/fs/ceph/file.c
-> > +++ b/fs/ceph/file.c
-> > @@ -706,6 +706,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
-> >  		mask |= CEPH_CAP_XATTR_SHARED;
-> >  	req->r_args.open.mask = cpu_to_le32(mask);
-> >  	req->r_parent = dir;
-> > +	ihold(dir);
-> >  
-> >  	if (flags & O_CREAT) {
-> >  		struct ceph_file_layout lo;
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index c03098c58be3..52ae5373437d 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -2983,7 +2983,6 @@ int ceph_mdsc_submit_request(struct ceph_mds_client *mdsc, struct inode *dir,
-> >  		ceph_take_cap_refs(ci, CEPH_CAP_PIN, false);
-> >  		__ceph_touch_fmode(ci, mdsc, fmode);
-> >  		spin_unlock(&ci->i_ceph_lock);
-> > -		ihold(req->r_parent);
-> >  	}
-> >  	if (req->r_old_dentry_dir)
-> >  		ceph_get_cap_refs(ceph_inode(req->r_old_dentry_dir),
-> > -- 
-> > 2.31.1
-> > 
+> Finally, don't set the page Uptodate after zeroing. It's not up to date
+> since the write data won't have been copied in yet.
 > 
+> [DH made the following changes:
+> 
+>  - Prefixed the new function with "netfs_".
+> 
+>  - Don't call zero_user_segments() for a full-page write.
+> 
+>  - Altered the beyond-last-page check to avoid a DIV instruction and got
+>    rid of then-redundant zero-length file check.
+> ]
+> 
+> Fixes: e1b1240c1ff5f ("netfs: Add write_begin helper")
+> Reported-by: Andrew W Elble <aweits@rit.edu>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: ceph-devel@vger.kernel.org
+> Link: https://lore.kernel.org/r/20210613233345.113565-1-jlayton@kernel.org/
+> Link: https://lore.kernel.org/r/162367683365.460125.4467036947364047314.stgit@warthog.procyon.org.uk/ # v1
 
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
