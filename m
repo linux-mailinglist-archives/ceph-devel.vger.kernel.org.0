@@ -2,127 +2,179 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49CB53B00EE
-	for <lists+ceph-devel@lfdr.de>; Tue, 22 Jun 2021 12:05:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D2173B03DA
+	for <lists+ceph-devel@lfdr.de>; Tue, 22 Jun 2021 14:09:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229807AbhFVKHU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 22 Jun 2021 06:07:20 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:40790 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbhFVKHT (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 22 Jun 2021 06:07:19 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 3EDF41FD45;
-        Tue, 22 Jun 2021 10:05:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1624356302; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type;
-        bh=J3kbE7iH7QbzIIxkb82odwgZdE+ENBNes3YiuYmeOBM=;
-        b=dbZaYxuILiRaFr5eNjCKVx6KLWyV30rDu5zcZWDodg8k7DNY7SWjEZsUjnr5AvUkLeoYiS
-        IHYg6a4F9HqAuNfp8iPFhDinfZYOmytz1WvpkmY7MT9VelJIw7Ly1l+rRfeoLeqtKNjjwd
-        fwFvvGTBEW6Ey6AH3SgXEnY/VY7pGY8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1624356302;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type;
-        bh=J3kbE7iH7QbzIIxkb82odwgZdE+ENBNes3YiuYmeOBM=;
-        b=dJM0H9PJ8/7nbIk7JI1om+3Wij9R9egMfTmQEuWbdz7G7HypNCeGEN3y6FauKdmkzHQoxG
-        XKOS4oqruWUet4Bg==
-Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id 308DEA3B8D;
-        Tue, 22 Jun 2021 10:05:02 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 0FC951E1515; Tue, 22 Jun 2021 12:05:02 +0200 (CEST)
-Date:   Tue, 22 Jun 2021 12:05:02 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [GIT PULL] fs: Hole punch fixes
-Message-ID: <20210622100502.GE14261@quack2.suse.cz>
+        id S231319AbhFVML5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 22 Jun 2021 08:11:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41028 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231203AbhFVMLu (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 22 Jun 2021 08:11:50 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA6AAC061574
+        for <ceph-devel@vger.kernel.org>; Tue, 22 Jun 2021 05:09:33 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id k5so4595732ilv.8
+        for <ceph-devel@vger.kernel.org>; Tue, 22 Jun 2021 05:09:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=43kdMMaLaZ3B1g3w3MTjpgZ9hw3dTeIKBmVGnKO/rpc=;
+        b=ETaPwSRbDq+E/WkN1parX1zQbUULsekC/82qkm3uXxeh8kZdEI9rc/oB0K1OzZxDb6
+         2D72e5YqHVQ+AT+UOBy20fPLVZQUhac0V0EvuYeLzhnWY5RXfaTgD7GxqaCNsPWxWm7I
+         JDb4VlzS6Gnt5y7yCe6vVsFAN2WA9SrbWzn3CDJtg3yZlBRb/FLgQ6SnKQCNNTe7ZBMh
+         3wG22CqWAmeaquCcBp7Wln0Chfjx3XUvoX6i30zCwu5cHxW0QGE9u5q9Xj49zR7Ef3p8
+         J5xvqoK4eOXRm5+OxUH7GF+S3/zfFsjF4n4eeynYAn4JuJa5ziJmHWXqC1zpWLqPxFTX
+         VD0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=43kdMMaLaZ3B1g3w3MTjpgZ9hw3dTeIKBmVGnKO/rpc=;
+        b=Uxax/12OVKRGZM4uzT+/RjFr+Hz9BLsYWfZ+GFrbrqXgOgtc/ubFZsUF/wWZEwYUbm
+         b7oKzt7DzGRgiUKUUBHjOW3ji/kng0Y2QcrvY7iNlOyVJzHHsGHDceVlbi3/Od/JVrWk
+         698vteieskO2v29wXr46bnBdPQtITFIfz8D/1SK4pgKgP3wJ/0w2MJvqGsDfa4p1pePz
+         njRTzkz2yM12s1I9GHuCAkbTMndPQC83Vsp4U5RAt7lZgMiTwUC8u3EApJP/kDjBxnNy
+         GmIwnoNyg43xnOyf/2aQdoV37dnJ1GCezr1Tohi5+vqL2dueVebatS0IBdHDrxJRz0Tj
+         IaaA==
+X-Gm-Message-State: AOAM531/v4zw+GmVH/LqQWVSYnHjbHFHxplznDmxUolWEToxQunS2A4H
+        w5A2EK3ntPnl6R7VvoVLjB2l9oNB2shtymsGo5b/EZogShRcow==
+X-Google-Smtp-Source: ABdhPJxgNfjMEY829Q1bXqAOo8wjbQQgZYT4qfp6nOcRUgP80SCwHfQSz0YJziSo6pgoQV8oKheLc2hcDcjUjYQSWeQ=
+X-Received: by 2002:a92:cbd0:: with SMTP id s16mr2434262ilq.19.1624363773353;
+ Tue, 22 Jun 2021 05:09:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210603123850.74421-1-jlayton@kernel.org> <20210621235722.304689-1-jlayton@kernel.org>
+In-Reply-To: <20210621235722.304689-1-jlayton@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 22 Jun 2021 14:09:19 +0200
+Message-ID: <CAOi1vP_VHP9sg=EzKSBf99n8q-y8zNZ9ZLPDJt-yvJr8SeZq7g@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: fix error handling in ceph_atomic_open and ceph_lookup
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-  Hello Darrick,
+On Tue, Jun 22, 2021 at 1:57 AM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> Commit aa60cfc3f7ee broke the error handling in these functions such
+> that they don't handle non-ENOENT errors from ceph_mdsc_do_request
+> properly.
+>
+> Move the checking of -ENOENT out of ceph_handle_snapdir and into the
+> callers, and if we get a different error, return it immediately.
+>
+> Fixes: aa60cfc3f7ee ("ceph: don't use d_add in ceph_handle_snapdir")
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/dir.c   | 22 ++++++++++++----------
+>  fs/ceph/file.c  | 14 ++++++++------
+>  fs/ceph/super.h |  2 +-
+>  3 files changed, 21 insertions(+), 17 deletions(-)
+>
+> This one fixes the bug that Ilya spotted in ceph_atomic_open. Also,
+> there is no need to test IS_ERR(dentry) unless we called
+> ceph_handle_snapdir. Finally, it's probably best not to pass
+> ceph_finish_lookup an ERR_PTR as a dentry. Reinstate the res pointer and
+> only reset the dentry pointer if it's valid.
+>
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index 5624fae7a603..e78da771ec96 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -668,14 +668,13 @@ static loff_t ceph_dir_llseek(struct file *file, loff_t offset, int whence)
+>   * Handle lookups for the hidden .snap directory.
+>   */
+>  struct dentry *ceph_handle_snapdir(struct ceph_mds_request *req,
+> -                                  struct dentry *dentry, int err)
+> +                                  struct dentry *dentry)
+>  {
+>         struct ceph_fs_client *fsc = ceph_sb_to_client(dentry->d_sb);
+>         struct inode *parent = d_inode(dentry->d_parent); /* we hold i_mutex */
+>
+>         /* .snap dir? */
+> -       if (err == -ENOENT &&
+> -           ceph_snap(parent) == CEPH_NOSNAP &&
+> +       if (ceph_snap(parent) == CEPH_NOSNAP &&
+>             strcmp(dentry->d_name.name, fsc->mount_options->snapdir_name) == 0) {
+>                 struct dentry *res;
+>                 struct inode *inode = ceph_get_snapdir(parent);
+> @@ -742,7 +741,6 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
+>         struct ceph_fs_client *fsc = ceph_sb_to_client(dir->i_sb);
+>         struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(dir->i_sb);
+>         struct ceph_mds_request *req;
+> -       struct dentry *res;
+>         int op;
+>         int mask;
+>         int err;
+> @@ -793,12 +791,16 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
+>         req->r_parent = dir;
+>         set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
+>         err = ceph_mdsc_do_request(mdsc, NULL, req);
+> -       res = ceph_handle_snapdir(req, dentry, err);
+> -       if (IS_ERR(res)) {
+> -               err = PTR_ERR(res);
+> -       } else {
+> -               dentry = res;
+> -               err = 0;
+> +       if (err == -ENOENT) {
+> +               struct dentry *res;
+> +
+> +               res  = ceph_handle_snapdir(req, dentry);
 
-  here is a prepared pull request with the hole punch fixes:
+Stray space here, fixed in the branch.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git hole_punch_fixes_for_5.14-rc1
+> +               if (IS_ERR(res)) {
+> +                       err = PTR_ERR(res);
+> +               } else {
+> +                       dentry = res;
+> +                       err = 0;
+> +               }
+>         }
+>         dentry = ceph_finish_lookup(req, dentry, err);
+>         ceph_mdsc_put_request(req);  /* will dput(dentry) */
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 7aa20d50a231..7c08f864694f 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -739,14 +739,16 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>         err = ceph_mdsc_do_request(mdsc,
+>                                    (flags & (O_CREAT|O_TRUNC)) ? dir : NULL,
+>                                    req);
+> -       dentry = ceph_handle_snapdir(req, dentry, err);
+> -       if (IS_ERR(dentry)) {
+> -               err = PTR_ERR(dentry);
+> -               goto out_req;
+> +       if (err == -ENOENT) {
+> +               dentry = ceph_handle_snapdir(req, dentry);
+> +               if (IS_ERR(dentry)) {
+> +                       err = PTR_ERR(dentry);
+> +                       goto out_req;
+> +               }
+> +               err = 0;
+>         }
+> -       err = 0;
+>
+> -       if ((flags & O_CREAT) && !req->r_reply_info.head->is_dentry)
+> +       if (!err && (flags & O_CREAT) && !req->r_reply_info.head->is_dentry)
+>                 err = ceph_handle_notrace_create(dir, dentry);
+>
+>         if (d_in_lookup(dentry)) {
 
-Top of the tree is a68454854cd9. The full shortlog is:
+I must admit that I don't understand the code that follows.  For
+example, if ceph_handle_notrace_create() returns ENOENT, is it supposed
+to be resolved by ceph_finish_lookup()?  Because if it gets resolved,
+err is not reset and we still jump to out_req, possibly leaving some
+dentry references behind.  It appears to be an older bug though.
 
-Jan Kara (13):
-      mm: Fix comments mentioning i_mutex
-      documentation: Sync file_operations members with reality
-      mm: Protect operations adding pages to page cache with invalidate_lock
-      mm: Add functions to lock invalidate_lock for two mappings
-      ext4: Convert to use mapping->invalidate_lock
-      ext2: Convert to using invalidate_lock
-      xfs: Convert to use invalidate_lock
-      xfs: Convert double locking of MMAPLOCK to use VFS helpers
-      zonefs: Convert to using invalidate_lock
-      f2fs: Convert to using invalidate_lock
-      fuse: Convert to using invalidate_lock
-      ceph: Fix race between hole punch and page fault
-      cifs: Fix race between hole punch and page fault
+This fix for dealing with ceph_mdsc_do_request() errors seems correct,
+but I really think this code needs massaging to disentangle handling of
+special cases from actual errors.
 
-Pavel Reichl (1):
-      xfs: Refactor xfs_isilocked()
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
 
-The diffstat is
+Thanks,
 
- Documentation/filesystems/locking.rst |  77 +++++++++++++++-------
- fs/ceph/addr.c                        |   9 ++-
- fs/ceph/file.c                        |   2 +
- fs/cifs/smb2ops.c                     |   2 +
- fs/ext2/ext2.h                        |  11 ----
- fs/ext2/file.c                        |   7 +-
- fs/ext2/inode.c                       |  12 ++--
- fs/ext2/super.c                       |   3 -
- fs/ext4/ext4.h                        |  10 ---
- fs/ext4/extents.c                     |  25 +++----
- fs/ext4/file.c                        |  13 ++--
- fs/ext4/inode.c                       |  47 +++++--------
- fs/ext4/ioctl.c                       |   4 +-
- fs/ext4/super.c                       |  13 ++--
- fs/ext4/truncate.h                    |   8 ++-
- fs/f2fs/data.c                        |   4 +-
- fs/f2fs/f2fs.h                        |   1 -
- fs/f2fs/file.c                        |  62 +++++++++--------
- fs/f2fs/super.c                       |   1 -
- fs/fuse/dax.c                         |  50 +++++++-------
- fs/fuse/dir.c                         |  11 ++--
- fs/fuse/file.c                        |  10 +--
- fs/fuse/fuse_i.h                      |   7 --
- fs/fuse/inode.c                       |   1 -
- fs/inode.c                            |   2 +
- fs/xfs/xfs_bmap_util.c                |  15 +++--
- fs/xfs/xfs_file.c                     |  13 ++--
- fs/xfs/xfs_inode.c                    | 121 ++++++++++++++++++----------------
- fs/xfs/xfs_inode.h                    |   3 +-
- fs/xfs/xfs_super.c                    |   2 -
- fs/zonefs/super.c                     |  23 ++-----
- fs/zonefs/zonefs.h                    |   7 +-
- include/linux/fs.h                    |  39 +++++++++++
- mm/filemap.c                          | 113 ++++++++++++++++++++++++++-----
- mm/madvise.c                          |   2 +-
- mm/memory-failure.c                   |   2 +-
- mm/readahead.c                        |   2 +
- mm/rmap.c                             |  41 ++++++------
- mm/shmem.c                            |  20 +++---
- mm/truncate.c                         |   9 +--
- 40 files changed, 453 insertions(+), 351 deletions(-)
-
-							Thanks
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+                Ilya
