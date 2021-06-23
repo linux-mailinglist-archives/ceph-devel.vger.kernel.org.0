@@ -2,56 +2,66 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD0E43B0B81
-	for <lists+ceph-devel@lfdr.de>; Tue, 22 Jun 2021 19:35:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ED4B3B18C2
+	for <lists+ceph-devel@lfdr.de>; Wed, 23 Jun 2021 13:20:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232267AbhFVRhg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 22 Jun 2021 13:37:36 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:41945 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231549AbhFVRhg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 22 Jun 2021 13:37:36 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 15MHYHST022711
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Jun 2021 13:34:17 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id ECCE915C3CD5; Tue, 22 Jun 2021 13:34:16 -0400 (EDT)
-Date:   Tue, 22 Jun 2021 13:34:16 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Jan Kara <jack@suse.cz>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, ceph-devel@vger.kernel.org,
-        Chao Yu <yuchao0@huawei.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 05/14] ext4: Convert to use mapping->invalidate_lock
-Message-ID: <YNIfGCLym51IYl6Y@mit.edu>
-References: <20210615090844.6045-1-jack@suse.cz>
- <20210615091814.28626-5-jack@suse.cz>
- <20210617162240.GP158209@locust>
- <20210622095412.GD14261@quack2.suse.cz>
+        id S230135AbhFWLWp convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Wed, 23 Jun 2021 07:22:45 -0400
+Received: from [183.90.58.236] ([183.90.58.236]:50498 "EHLO ns1.zackeruz.tk"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230031AbhFWLWp (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 23 Jun 2021 07:22:45 -0400
+Received: from johnlewis.com (unknown [192.168.20.1])
+        by ns1.zackeruz.tk (Postfix) with ESMTPSA id 2D38C842E78
+        for <ceph-devel@vger.kernel.org>; Wed, 23 Jun 2021 19:20:23 +0800 (+08)
+Reply-To: robert_turner@johnlewis-trading.com,
+          pippawicks.sales@johnlewis-trading.com
+From:   John Lewis & Partnersip <robert.turner107@johnlewis.com>
+To:     ceph-devel@vger.kernel.org
+Subject: 6/23/2021 Product Inquiry 
+Date:   23 Jun 2021 11:20:23 +0000
+Message-ID: <20210623094109.8059DACE86A68F3B@johnlewis.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210622095412.GD14261@quack2.suse.cz>
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Sorry, forgot to send it out.
+Dear ceph-devel
 
-Acked-by: Theodore Ts'o <tytso@mit.edu>
+The famous brand John Lewis Partnership, is UK's largest multi-
+channel retailer with over 126 shops and multiple expansion in 
+Africa furnished by European/Asian/American products. We are 
+sourcing new products to attract new customers and also retain 
+our existing ones, create new partnerships with companies dealing 
+with different kinds of goods globally.
 
+Your company's products are of interest to our market as we have 
+an amazing market for your products.
+
+Provide us your current catalog through email to review more. We 
+hope to be able to order with you and start a long-term friendly,
+respectable and solid business partnership. Please we would 
+appreciate it if you could send us your stock availability via 
+email if any.
+
+Our payment terms are 15 days net in Europe, 30 days Net in UK 
+and 30 days net in Asia/USA as we operate with over 5297 
+suppliers around the globe for the past 50 years now. For 
+immediate response Send your reply to robert_turner@johnlewis-
+trading.com for us to be able to 
+treat with care and urgency.
+
+
+Best Regards
+
+Rob Turner
+Head Of Procurement Operations
+John Lewis & Partners.
+robert_turner@johnlewis-trading.com
+Tel: +44-7451-274090
+WhatsApp: +447497483925
+www.johnlewis.com
+REGISTERED OFFICE: 171 VICTORIA STREET, LONDON SW1E 5NN 
