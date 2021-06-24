@@ -2,131 +2,62 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 852053B2C7A
-	for <lists+ceph-devel@lfdr.de>; Thu, 24 Jun 2021 12:33:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF1263B3114
+	for <lists+ceph-devel@lfdr.de>; Thu, 24 Jun 2021 16:14:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232067AbhFXKfZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 24 Jun 2021 06:35:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56070 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231517AbhFXKfY (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 24 Jun 2021 06:35:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B2E8161358;
-        Thu, 24 Jun 2021 10:32:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624530774;
-        bh=5veRctjnSL/jrcMhupA+suH7OAIQylpXsv4ZVHXTaUY=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=lW15ZReRIowI7E/XQoLbVPxbT9ssHWVDkyy8FUEh/bonEGlgW1ifDeWjpCGCUlSlJ
-         hMDuRxa+Sp5y6wfNFZAoCr+EtbzaP8pn+6KYH6t39sNkj62oZ/LGJhdr0R8tL2uTab
-         UVMOo7lEdAQDEZEiFwRaEtp2cz9AVk/TUOrWDFajAKDiSJP8nH2j/spbm7NA9YamQq
-         Haazi0CpuGnWM625TasQsZEmAJbZMSeaj3HEKSqL17keeW3zoWS2GE6rWG8J83r69N
-         7m2Ak0j2zu7qeaxGsc+4C06sWGt6LXWowAs0CKHQEyyYpeM+aGfyB1BTHp6cCFLC1Z
-         4sg3xi7XvAaKQ==
-Message-ID: <1224262b5f6ec7d646b85ed43b55b64063c35ecf.camel@kernel.org>
-Subject: Re: [GIT PULL] netfs, afs: Fix write_begin/end
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org
-Cc:     Andrew W Elble <aweits@rit.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, ceph-devel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 24 Jun 2021 06:32:51 -0400
-In-Reply-To: <2842348.1624308062@warthog.procyon.org.uk>
-References: <2842348.1624308062@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
+        id S230296AbhFXORH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 24 Jun 2021 10:17:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40946 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229878AbhFXORG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Jun 2021 10:17:06 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5001C061574
+        for <ceph-devel@vger.kernel.org>; Thu, 24 Jun 2021 07:14:46 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id r16so7944063ljk.9
+        for <ceph-devel@vger.kernel.org>; Thu, 24 Jun 2021 07:14:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
+         :subject:to;
+        bh=ANhbTggsY3NFhRZExKMwUmb3VzJqye8XLvWVXSvNBkQ=;
+        b=fcSW40DFsIATqFHTtfdP2c0mPv3fbwk0s35UzLJKI9hHfvzUNLfYZq7BKLvzwEeKqa
+         CFXewDqTc9OJjxBosiOTpiXLmNPXX4UU9zKUuozYbH8RZb4Kld9Mrja4y7t0ti67Vaza
+         Xt8XXJrullX249mFzs0dGUvu8CGjTFLYpigvHoO+DI2/xMRyEBffriJR1e9y2xEQ1WDG
+         qK19IxmW0VqhReyM+B3yoLazyc0hNj3KXKdDzNcjjTxbbmRigxGGzRJY//QOrqihrsEX
+         kL5ukxBGJUduYVilYkODtODijpDDdLkqybaUL//POo5QMbm/rI9YmwQ2bCSBlKe055GW
+         vRAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
+         :from:date:message-id:subject:to;
+        bh=ANhbTggsY3NFhRZExKMwUmb3VzJqye8XLvWVXSvNBkQ=;
+        b=SGe6RJjQpUSsBH5jv5W4HI3ngPLT/PlA9vynRwMB7rRlxjvYZ8an1vn7c4srKmjLJ7
+         qRiPVy7Z44g7R2A02H1AFbigQPUSIefOvakmcFpdEDkm0i49HuMB95qOBYqLOB+F9yVH
+         p93ZMRRVmU6DzOw5nmYCokP27kTVpMVmr6eGMpN+G/HSqY5+NMdjqUPOjfInCaRSNlj1
+         qj8IywufkhnJuKUnz7C0t7EbHpGXE/BV+uquOOOjjQg6yt6YsFIoK2ThwrWuRdmEhYDJ
+         CtZhXHsq2NJfMyRz/qaRhNNeT+Va3Mt4RTC6jif4RZhe3841jbG0+7JdEW2zBZETT2R7
+         TX7w==
+X-Gm-Message-State: AOAM532DQnykLefihWnXmEZGa55+Nd/3mP+Avu8/Abe2ncJcspeA0AHC
+        psOh6f8h3o1BPHVO2XtaH1IDUwcqCiCLD+tmcjM=
+X-Google-Smtp-Source: ABdhPJyrVuyFZWmyoM//E0mvqmq84mHHVhnf4vs1hqy3o+Z4MZaxYa0BQtilbLmDDlOfdRezQLMFnKtCq3kAaTpPix8=
+X-Received: by 2002:a2e:6e0b:: with SMTP id j11mr4101497ljc.464.1624544085135;
+ Thu, 24 Jun 2021 07:14:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a05:651c:1a1:0:0:0:0 with HTTP; Thu, 24 Jun 2021 07:14:44
+ -0700 (PDT)
+Reply-To: tutywoolgar021@gmail.com
+In-Reply-To: <CACGGhyQDhNjM7pPW0wTzyn7LBiGmaBAqeP5L66y=E2TL4U9+PQ@mail.gmail.com>
+References: <CACGGhyQDhNjM7pPW0wTzyn7LBiGmaBAqeP5L66y=E2TL4U9+PQ@mail.gmail.com>
+From:   tuty woolgar <assihbernard6@gmail.com>
+Date:   Thu, 24 Jun 2021 14:14:44 +0000
+Message-ID: <CACGGhyTk8d81tBDLh-LOvM3QPEt9+bhHuzuN7rsNzCyJpRO_bg@mail.gmail.com>
+Subject: greetings,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-06-21 at 21:41 +0100, David Howells wrote:
-> Hi Linus,
-> 
-> Could you pull this please?  It includes patches to fix netfs_write_begin()
-> and afs_write_end() in the following ways:
-> 
->  (1) In netfs_write_begin(), extract the decision about whether to skip a
->      page out to its own helper and have that clear around the region to be
->      written, but not clear that region.  This requires the filesystem to
->      patch it up afterwards if the hole doesn't get completely filled.
-> 
->  (2) Use offset_in_thp() in (1) rather than manually calculating the offset
->      into the page.
-> 
->  (3) Due to (1), afs_write_end() now needs to handle short data write into
->      the page by generic_perform_write().  I've adopted an analogous
->      approach to ceph of just returning 0 in this case and letting the
->      caller go round again.
-> 
-> It also adds a note that (in the future) the len parameter may extend
-> beyond the page allocated.  This is because the page allocation is deferred
-> to write_begin() and that gets to decide what size of THP to allocate.
-> 
-> Thanks,
-> David
-> 
-> Link: https://lore.kernel.org/r/20210613233345.113565-1-jlayton@kernel.org/
-> Link: https://lore.kernel.org/r/162367681795.460125.11729955608839747375.stgit@warthog.procyon.org.uk/ # v1
-> Link: https://lore.kernel.org/r/162391823192.1173366.9740514875196345746.stgit@warthog.procyon.org.uk/ # v2
-> Link: https://lore.kernel.org/r/162429000639.2770648.6368710175435880749.stgit@warthog.procyon.org.uk/ # v3
-> 
-> Changes
-> =======
-> 
-> ver #3:
->    - Drop the bits that make afs take account of len exceeding the end of
->      the page in afs_write_begin/end().
-> 
-> ver #2:
->    - Removed a var that's no longer used (spotted by the kernel test robot)
->    - Removed a forgotten "noinline".
-> 
-> ver #1:
->    - Prefixed the Jeff's new helper with "netfs_".
->    - Don't call zero_user_segments() for a full-page write.
->    - Altered the beyond-last-page check to avoid a DIV.
->    - Removed redundant zero-length-file check.
->    - Added patches to fix afs.
-> 
-> ---
-> The following changes since commit 009c9aa5be652675a06d5211e1640e02bbb1c33d:
-> 
->   Linux 5.13-rc6 (2021-06-13 14:43:10 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/netfs-fixes-20210621
-> 
-> for you to fetch changes up to 827a746f405d25f79560c7868474aec5aee174e1:
-> 
->   netfs: fix test for whether we can skip read when writing beyond EOF (2021-06-21 21:24:07 +0100)
-> 
-> ----------------------------------------------------------------
-> netfslib fixes
-> 
-> ----------------------------------------------------------------
-> David Howells (1):
->       afs: Fix afs_write_end() to handle short writes
-> 
-> Jeff Layton (1):
->       netfs: fix test for whether we can skip read when writing beyond EOF
-> 
->  fs/afs/write.c         | 11 +++++++++--
->  fs/netfs/read_helper.c | 49 ++++++++++++++++++++++++++++++++++++-------------
->  2 files changed, 45 insertions(+), 15 deletions(-)
-> 
-
-Hi Linus,
-
-Is there some reason you haven't pulled these fixes? The netfs fix in
-particular fixes a data corruption bug in cephfs, so we're quite keen to
-get that in before v5.13 ships.
-
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+My greetings to you my friend i hope you are fine and good please respond
+back to me thanks,
