@@ -2,129 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 721CC3B479C
-	for <lists+ceph-devel@lfdr.de>; Fri, 25 Jun 2021 18:54:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7A953B4866
+	for <lists+ceph-devel@lfdr.de>; Fri, 25 Jun 2021 19:49:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230056AbhFYQ5H (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 25 Jun 2021 12:57:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36318 "EHLO mail.kernel.org"
+        id S230157AbhFYRvV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 25 Jun 2021 13:51:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230037AbhFYQ5H (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 25 Jun 2021 12:57:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B6F206193F;
-        Fri, 25 Jun 2021 16:54:45 +0000 (UTC)
+        id S229586AbhFYRvU (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 25 Jun 2021 13:51:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 2EBD561954;
+        Fri, 25 Jun 2021 17:48:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624640086;
-        bh=sEkPgxqfk0VrpshYLRmOVtcvJwj/6++q9U6NcXl8Xug=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=VGzSbCsBsKJxTZsiJ6Ug20dJFEb5OndynFvYA0troZL60sa7Uh8DxWK8wYz4roeEK
-         xnW0cQL4YRDaA0va9cJza66CI/kCFHAfhl5cB4eWh7nhi04GCUjSms7/i4mVQULNYH
-         FY/xxZvBUaHVGF3FW1U/fSjaeHrLnc0j2AVjkts5lmTetTmqRXUkcPPjr/v/5Fxrmo
-         ag9fHA44Oy7i2f7QwXjHxjUDqwVsJ9rVT8mPGBGlfExQAkD1i4MxaDEc1dYFffHdNu
-         wbeSMWQz7gp3EvoJ9frBoEfV2WJEjhDNDxckg1HU9wRocr2HSxBQP7HM+peFxVE75+
-         j8XB3NCviidLw==
-Message-ID: <e427c4e5877e0b036c36eedbe40020047b02a85b.camel@kernel.org>
-Subject: Re: [RFC PATCH] ceph: reduce contention in ceph_check_delayed_caps()
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Date:   Fri, 25 Jun 2021 12:54:44 -0400
-In-Reply-To: <20210625154559.8148-1-lhenriques@suse.de>
-References: <20210625154559.8148-1-lhenriques@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        s=k20201202; t=1624643339;
+        bh=3vpWE6f7wjyqq8GeDWYeP+oVg2sBTsxfXZhQW9g3ofA=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=PsFlk1OJok0RNw7P5lTYdOgMPOnX2iir9zqTYcO2qdiHg0YJEaPhHWpKlbxut9trH
+         3YIBj5yzvnzzc6aavouPIjyrjLurfd9zBDLaEHiV8t0qWcBX/CdoJdPUnmyNeSsYzb
+         T207q1b6leRCGbN4f50eN+UoxBubkbbaAEzYFfPSl0sGUef4V8IKJPjLvi4AGcfPqe
+         915IcCmKeAp3NIasFE3GnEVY6UMkz3TSIzF7BImUN0LPMcHMoY/BMI1Tc3ueGt+aaZ
+         2TJNR9ODFIQ098zcxoUyHKGYJTlxyVGewbO45BSbKsbLeQWdGK15z4eguR713j+xSh
+         6VwZu/vAYpyPg==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 2338560A71;
+        Fri, 25 Jun 2021 17:48:59 +0000 (UTC)
+Subject: Re: [GIT PULL] Ceph fixes for 5.13-rc8
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20210625141823.22507-1-idryomov@gmail.com>
+References: <20210625141823.22507-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20210625141823.22507-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-5.13-rc8
+X-PR-Tracked-Commit-Id: 03af4c7bad8ca59143bca488b90b3775d10d7f94
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: edf54d9d0ae0a230199a58e57b46c2d4b37a1462
+Message-Id: <162464333913.2214.12397192524434670483.pr-tracker-bot@kernel.org>
+Date:   Fri, 25 Jun 2021 17:48:59 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2021-06-25 at 16:45 +0100, Luis Henriques wrote:
-> Function ceph_check_delayed_caps() is called from the mdsc->delayed_work
-> workqueue and it can be kept looping for quite some time if caps keep being
-> added back to the mdsc->cap_delay_list.  This may result in the watchdog
-> tainting the kernel with the softlockup flag.
-> 
-> This patch re-arranges the loop through the caps list so that it initially
-> removes all the caps from list, adding them to a temporary list.  And then, with
-> less locking contention, it will eventually call the ceph_check_caps() for each
-> inode.  Any caps added to the list in the meantime will be handled in the next
-> run.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Luis Henriques <lhenriques@suse.de>
-> ---
-> Hi Jeff!
-> 
-> So, I've not based this patch on top of your patchset that gets rid of
-> ceph_async_iput() so that it will make it easier to backport it for stable
-> kernels.  Of course I'm not 100% this classifies as stable material.
-> 
-> Other than that, I've been testing this patch and I couldn't see anything
-> breaking.  Let me know what you think.
-> 
-> (I *think* I've seen a tracker bug for this in the past but I couldn't
-> find it.  I guess it could be added as a 'Link:' tag.)
-> 
-> Cheers,
-> --
-> Luis
-> 
->  fs/ceph/caps.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index a5e93b185515..727e41e3b939 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -4229,6 +4229,7 @@ void ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
->  {
->  	struct inode *inode;
->  	struct ceph_inode_info *ci;
-> +	LIST_HEAD(caps_list);
->  
->  	dout("check_delayed_caps\n");
->  	spin_lock(&mdsc->cap_delay_lock);
-> @@ -4239,19 +4240,23 @@ void ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
->  		if ((ci->i_ceph_flags & CEPH_I_FLUSH) == 0 &&
->  		    time_before(jiffies, ci->i_hold_caps_max))
->  			break;
-> -		list_del_init(&ci->i_cap_delay_list);
-> +		list_move_tail(&ci->i_cap_delay_list, &caps_list);
-> +	}
-> +	spin_unlock(&mdsc->cap_delay_lock);
->  
-> +	while (!list_empty(&caps_list)) {
-> +		ci = list_first_entry(&caps_list,
-> +				      struct ceph_inode_info,
-> +				      i_cap_delay_list);
-> +		list_del_init(&ci->i_cap_delay_list);
->  		inode = igrab(&ci->vfs_inode);
->  		if (inode) {
-> -			spin_unlock(&mdsc->cap_delay_lock);
->  			dout("check_delayed_caps on %p\n", inode);
->  			ceph_check_caps(ci, 0, NULL);
->  			/* avoid calling iput_final() in tick thread */
->  			ceph_async_iput(inode);
-> -			spin_lock(&mdsc->cap_delay_lock);
->  		}
->  	}
-> -	spin_unlock(&mdsc->cap_delay_lock);
->  }
->  
->  /*
+The pull request you sent on Fri, 25 Jun 2021 16:18:23 +0200:
 
-I'm not sure this approach is viable, unfortunately. Once you've dropped
-the cap_delay_lock, then nothing protects the i_cap_delay_list head
-anymore.
+> https://github.com/ceph/ceph-client.git tags/ceph-for-5.13-rc8
 
-So you could detach these objects and put them on the private list, and
-then once you drop the spinlock another task could find one of them and
-(e.g.) call __cap_delay_requeue on it, potentially corrupting your list.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/edf54d9d0ae0a230199a58e57b46c2d4b37a1462
 
-I think we'll need to come up with a different way to do this...
+Thank you!
+
 -- 
-Jeff Layton <jlayton@kernel.org>
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
