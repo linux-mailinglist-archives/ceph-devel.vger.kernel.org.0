@@ -2,168 +2,116 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 362233B3504
-	for <lists+ceph-devel@lfdr.de>; Thu, 24 Jun 2021 19:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 330853B44E7
+	for <lists+ceph-devel@lfdr.de>; Fri, 25 Jun 2021 15:58:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232504AbhFXRvK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 24 Jun 2021 13:51:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33478 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231407AbhFXRvK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Jun 2021 13:51:10 -0400
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F085C061574
-        for <ceph-devel@vger.kernel.org>; Thu, 24 Jun 2021 10:48:51 -0700 (PDT)
-Received: by mail-io1-xd2a.google.com with SMTP id d9so9321247ioo.2
-        for <ceph-devel@vger.kernel.org>; Thu, 24 Jun 2021 10:48:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oJmKNhsQjFNevkCGTwLHKvLbydYbctXbsUcyHWG7SXY=;
-        b=BljWn35aqbvqPqmuLgcITE+J7wuHo7bS72td7CveVEG/8ZUIc+ykwou6bWcDVEcQj/
-         jJ1X1bH4VDtI0grSec7cF5HPcFEOVqbk3kdWyj53hRhzyiHwVbL+U5RNYQiru4rqJnXc
-         BaH7YRvqsGFefWt+eJDDP+6bm3yGiHSbH3FSI1+ZCO5c+TEV0usfXZdyZuVe/pPUmObz
-         ysnOAqYdT9wy2487lRwJ1UtGTGQTnovCePddfIxTd79XwWggeirZJM7SDu/2EBfueiFd
-         qxNBOISoRcnp5EGnDTm7dejdkiGS/wI3sA4caBK8IpJUnMQug6ynr22v3eOhfDJB8XJj
-         dqUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oJmKNhsQjFNevkCGTwLHKvLbydYbctXbsUcyHWG7SXY=;
-        b=paL4r62R+OEcGnHBT4qkk10Li2VFMegradamyBYWa8Tgq1omG7nErWkoGqCNrorToG
-         Rs0uBasYPocB5iapJZdo9I+U421mnxYkVlYuRmz68vWKksrWM+pfi7UvK6Zs4V4j+bUm
-         NTRHCMCy1AcegKKcrXPtMIW20zleS/X80HjDnifY8wYvItX5tEkruxavuCX/1iRyaG2L
-         y1Q1IVNaor8PNXAmbgGJDOABgjQLv7OAUBpYRTZgesQ08qxgRJ3yJFeLfcgQuEJelkkH
-         FdbEbBmgpkmiw6IW7nk83U8T4QH0GXN/0HnOhV9Kzlpo5sRg8cTaySP7WK+Cl2UfDjkg
-         aI2Q==
-X-Gm-Message-State: AOAM532PJNwJbMUOMgmvpSdD4DQEPWFx+KUv+uktF4oe2pyFVmV0ClDa
-        QlheKCiT8ycS+cvoF7bVkvNLtIEnznQm/JtRXcE=
-X-Google-Smtp-Source: ABdhPJwB52P2H+keqQMZWL+mT7dHu35of1DemyeTqqK8+wcpOG3Cuh+yorntkQEHh7WVHGZJbzKTXsPN8OwgqES3J3Q=
-X-Received: by 2002:a6b:4418:: with SMTP id r24mr5010156ioa.123.1624556930467;
- Thu, 24 Jun 2021 10:48:50 -0700 (PDT)
+        id S231158AbhFYOA5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 25 Jun 2021 10:00:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60920 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229573AbhFYOA4 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 25 Jun 2021 10:00:56 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1C1056135A;
+        Fri, 25 Jun 2021 13:58:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1624629515;
+        bh=F1lwLqpvDEkehPKIBaQvRyDNmcvRtgxkBxyITMp/SZ4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ojMsr8sJR9gofEBsVO65y5SqV3ssFqcHRLECWv2HHRIvPP7T8C4voeEBGnUP/6heO
+         6TgmfCqqiUPrw7SgKzHDJ6yBzzH9H3nnVG9nzgDxLLuqLe45LuwdwAggP+ihrTeB2t
+         wmdcpPGcGdMaVAV2/n97akSbWk2L+nqph0hbdm76/wd6CP+VIwVDCDOd9j19Wg4q+G
+         l9tD0eTJc0rx/UfvGbcg01IxrF6CwFMHYcwojCqruG3P4SUvp/hDMCd9Grg1CFhZvI
+         Kr2myqQPI4FNmWpdGauM43acV8BAAUjPJRNe31eE2Hbz37pGuW7CdxK8iDDEmPwAak
+         8D31E0hk1F53Q==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     lhenriques@suse.de, xiubli@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        dhowells@redhat.com
+Subject: [RFC PATCH v7 00/24] ceph+fscrypt: context, filename and symlink support
+Date:   Fri, 25 Jun 2021 09:58:10 -0400
+Message-Id: <20210625135834.12934-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-References: <20210623151352.18840-1-idryomov@gmail.com> <c1528d5100efff0a9ab9f654934127d9b9c3dc65.camel@kernel.org>
- <CAOi1vP8+w9vo3Jg_yTdXKuUERAA_jvPjaF--zqkFfr6YJ15wNA@mail.gmail.com> <298435f7a8248d21c192c79ffc9e361e05058f4f.camel@kernel.org>
-In-Reply-To: <298435f7a8248d21c192c79ffc9e361e05058f4f.camel@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 24 Jun 2021 19:48:36 +0200
-Message-ID: <CAOi1vP9wO6+UJXiX2NmfH4G-=114tJ-7EWviEFA-tvWm=zAmeQ@mail.gmail.com>
-Subject: Re: [PATCH] libceph: set global_id as soon as we get an auth ticket
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        Sage Weil <sage@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jun 24, 2021 at 7:30 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> On Thu, 2021-06-24 at 19:16 +0200, Ilya Dryomov wrote:
-> > On Thu, Jun 24, 2021 at 6:57 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > >
-> > > On Wed, 2021-06-23 at 17:13 +0200, Ilya Dryomov wrote:
-> > > > Commit 61ca49a9105f ("libceph: don't set global_id until we get an
-> > > > auth ticket") delayed the setting of global_id too much.  It is set
-> > > > only after all tickets are received, but in pre-nautilus clusters an
-> > > > auth ticket and the service tickets are obtained in separate steps
-> > > > (for a total of three MAuth replies).  When the service tickets are
-> > > > requested, global_id is used to build an authorizer; if global_id is
-> > > > still 0 we never get them and fail to establish the session.
-> > > >
-> > > > Moving the setting of global_id into protocol implementations.  This
-> > > > way global_id can be set exactly when an auth ticket is received, not
-> > > > sooner nor later.
-> > > >
-> > > > Fixes: 61ca49a9105f ("libceph: don't set global_id until we get an auth ticket")
-> > > > Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-> > > > ---
-> > > >  include/linux/ceph/auth.h |  4 +++-
-> > > >  net/ceph/auth.c           | 13 +++++--------
-> > > >  net/ceph/auth_none.c      |  3 ++-
-> > > >  net/ceph/auth_x.c         | 11 ++++++-----
-> > > >  4 files changed, 16 insertions(+), 15 deletions(-)
-> > > >
-> > > > diff --git a/include/linux/ceph/auth.h b/include/linux/ceph/auth.h
-> > > > index 39425e2f7cb2..6b138fa97db8 100644
-> > > > --- a/include/linux/ceph/auth.h
-> > > > +++ b/include/linux/ceph/auth.h
-> > > > @@ -50,7 +50,7 @@ struct ceph_auth_client_ops {
-> > > >        * another request.
-> > > >        */
-> > > >       int (*build_request)(struct ceph_auth_client *ac, void *buf, void *end);
-> > > > -     int (*handle_reply)(struct ceph_auth_client *ac,
-> > > > +     int (*handle_reply)(struct ceph_auth_client *ac, u64 global_id,
-> > > >                           void *buf, void *end, u8 *session_key,
-> > > >                           int *session_key_len, u8 *con_secret,
-> > > >                           int *con_secret_len);
-> > > > @@ -104,6 +104,8 @@ struct ceph_auth_client {
-> > > >       struct mutex mutex;
-> > > >  };
-> > > >
-> > > > +void ceph_auth_set_global_id(struct ceph_auth_client *ac, u64 global_id);
-> > > > +
-> > > >  struct ceph_auth_client *ceph_auth_init(const char *name,
-> > > >                                       const struct ceph_crypto_key *key,
-> > > >                                       const int *con_modes);
-> > > > diff --git a/net/ceph/auth.c b/net/ceph/auth.c
-> > > > index d07c8cd6cb46..d38c9eadbe2f 100644
-> > > > --- a/net/ceph/auth.c
-> > > > +++ b/net/ceph/auth.c
-> > > > @@ -36,7 +36,7 @@ static int init_protocol(struct ceph_auth_client *ac, int proto)
-> > > >       }
-> > > >  }
-> > > >
-> > > > -static void set_global_id(struct ceph_auth_client *ac, u64 global_id)
-> > > > +void ceph_auth_set_global_id(struct ceph_auth_client *ac, u64 global_id)
-> > > >  {
-> > > >       dout("%s global_id %llu\n", __func__, global_id);
-> > > >
-> > > > @@ -262,7 +262,7 @@ int ceph_handle_auth_reply(struct ceph_auth_client *ac,
-> > > >               goto out;
-> > > >       }
-> > > >
-> > > > -     ret = ac->ops->handle_reply(ac, payload, payload_end,
-> > > > +     ret = ac->ops->handle_reply(ac, global_id, payload, payload_end,
-> > > >                                   NULL, NULL, NULL, NULL);
-> > > >       if (ret == -EAGAIN) {
-> > > >               ret = build_request(ac, true, reply_buf, reply_len);
-> > > > @@ -271,8 +271,6 @@ int ceph_handle_auth_reply(struct ceph_auth_client *ac,
-> > > >               goto out;
-> > > >       }
-> > > >
-> > > > -     set_global_id(ac, global_id);
-> > > > -
-> > > >  out:
-> > > >       mutex_unlock(&ac->mutex);
-> > > >       return ret;
-> > > > @@ -480,7 +478,7 @@ int ceph_auth_handle_reply_more(struct ceph_auth_client *ac, void *reply,
-> > > >       int ret;
-> > > >
-> > > >       mutex_lock(&ac->mutex);
-> > > > -     ret = ac->ops->handle_reply(ac, reply, reply + reply_len,
-> > > > +     ret = ac->ops->handle_reply(ac, 0, reply, reply + reply_len,
-> > > >                                   NULL, NULL, NULL, NULL);
-> > >
-> > > Won't this trigger a KERN_ERR message? The the handle_reply routines
-> > > call ceph_auth_set_global_id unconditionally, which will fire off the
-> > > pr_err message and not do anything in this case.
-> >
-> > No, it won't get to calling ceph_auth_set_global_id() in this case because we
-> > are handling the "more" frame.  An auth ticket is shared in the "done" frame,
-> > anything before that can't end up in handle_auth_session_key().
-> >
->
-> Ok, so ceph_x_handle_reply only calls that in the
-> CEPHX_GET_AUTH_SESSION_KEY case...
->
-> I suppose we can't get any of this in the auth_none case, correct? If
-> so, then I think this looks good:
+This patchset is a fairly substantial rework since the last set. Rather
+than storing the crypto context in an xattr, this one stores it in a new
+field associated with AUTH caps. That ensures that it's always
+available whenever an inode is instantiated, and should prevent the
+deadlock that Luis reported. This means that we need to do a setattr
+request to set the context now, so support for that is also added.
 
-Correct.  In the auth_none case the "done" frame is sent right away.
+The required MDS patches are currently here:
 
-Thanks,
+    https://github.com/ceph/ceph/pull/41284
 
-                Ilya
+...but it's marked as draft for now. I don't want to merge this until
+the content encryption piece is more clearly defined. These patches are
+also available in my git tree under the ceph-fscrypt-fnames-v7 tag:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git/
+
+This seems to be reasonably robust in testing. The next step is content
+encryption. I have a start on some of those patches, but it's still very
+much a WIP.
+
+Jeff Layton (24):
+  vfs: export new_inode_pseudo
+  fscrypt: export fscrypt_base64_encode and fscrypt_base64_decode
+  fscrypt: export fscrypt_fname_encrypt and fscrypt_fname_encrypted_size
+  fscrypt: add fscrypt_context_for_new_inode
+  ceph: preallocate inode for ops that may create one
+  ceph: parse new fscrypt_auth and fscrypt_file fields in inode traces
+  ceph: add fscrypt_* handling to caps.c
+  ceph: add ability to set fscrypt_auth via setattr
+  ceph: crypto context handling for ceph
+  ceph: implement -o test_dummy_encryption mount option
+  ceph: add routine to create fscrypt context prior to RPC
+  ceph: add fscrypt ioctls
+  ceph: decode alternate_name in lease info
+  ceph: make ceph_msdc_build_path use ref-walk
+  ceph: add encrypted fname handling to ceph_mdsc_build_path
+  ceph: send altname in MClientRequest
+  ceph: properly set DCACHE_NOKEY_NAME flag in lookup
+  ceph: make d_revalidate call fscrypt revalidator for encrypted
+    dentries
+  ceph: add helpers for converting names for userland presentation
+  ceph: add fscrypt support to ceph_fill_trace
+  ceph: add support to readdir for encrypted filenames
+  ceph: create symlinks with encrypted and base64-encoded targets
+  ceph: make ceph_get_name decrypt filenames
+  ceph: add a new ceph.fscrypt.auth vxattr
+
+ fs/ceph/Makefile             |   1 +
+ fs/ceph/acl.c                |   4 +-
+ fs/ceph/caps.c               |  62 +++++--
+ fs/ceph/crypto.c             | 206 +++++++++++++++++++++
+ fs/ceph/crypto.h             | 119 ++++++++++++
+ fs/ceph/dir.c                | 198 +++++++++++++++-----
+ fs/ceph/export.c             |  44 +++--
+ fs/ceph/file.c               |  64 ++++---
+ fs/ceph/inode.c              | 302 +++++++++++++++++++++++++++---
+ fs/ceph/ioctl.c              |  83 +++++++++
+ fs/ceph/mds_client.c         | 345 ++++++++++++++++++++++++++++++-----
+ fs/ceph/mds_client.h         |  22 ++-
+ fs/ceph/super.c              |  80 +++++++-
+ fs/ceph/super.h              |  32 +++-
+ fs/ceph/xattr.c              |  20 ++
+ fs/crypto/fname.c            |  53 ++++--
+ fs/crypto/fscrypt_private.h  |   9 +-
+ fs/crypto/hooks.c            |   6 +-
+ fs/crypto/policy.c           |  34 +++-
+ fs/inode.c                   |   1 +
+ include/linux/ceph/ceph_fs.h |  21 ++-
+ include/linux/fscrypt.h      |  10 +
+ 22 files changed, 1498 insertions(+), 218 deletions(-)
+ create mode 100644 fs/ceph/crypto.c
+ create mode 100644 fs/ceph/crypto.h
+
+-- 
+2.31.1
+
