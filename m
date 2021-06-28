@@ -2,178 +2,77 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C3183B616B
-	for <lists+ceph-devel@lfdr.de>; Mon, 28 Jun 2021 16:33:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DA7C3B6474
+	for <lists+ceph-devel@lfdr.de>; Mon, 28 Jun 2021 17:08:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235402AbhF1Of4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 28 Jun 2021 10:35:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36912 "EHLO mail.kernel.org"
+        id S235885AbhF1PI2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 28 Jun 2021 11:08:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234636AbhF1Oct (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 28 Jun 2021 10:32:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BCFF261C89;
-        Mon, 28 Jun 2021 14:27:48 +0000 (UTC)
+        id S234885AbhF1PGr (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 28 Jun 2021 11:06:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E755B61C82;
+        Mon, 28 Jun 2021 14:44:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624890469;
-        bh=4dSHOaEQAwIC7L/z6GDnBLBuNItxIOeL6nJQC2uEptM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VuvH/kBiSEiIE4/IOqYd95uv0Uq2grF+XynbjJpv1MKlc2DTUap4xN1yc1s7jwgA/
-         6vZQHK6xlop7wycUb3PGlbYZME5mFL4xv0C9EX6PRhyi6xWxnmh6YFyINbYcZ2fsG9
-         2fZSws1vH5f8WiQHw9p866AqyKa9ivFDS2wPKmN4ioKWgin4FuKS3DLmALKdjk1dl9
-         8pPB4J2/p4ET07VPGGvN4AuJd4O54EaL7K4IFwwKun7BU7Dcb8GQBsxEsHCoiv+ul2
-         cj3NRklOl9YSTViE4yNLjuA2UTfOgVioPZCuJ0H4mZs5g8IWTuvOGciFBC6dZtl+Lu
-         ndxTZve94CYXg==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeff Layton <jlayton@kernel.org>, Andrew W Elble <aweits@rit.edu>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        ceph-devel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 5.10 095/101] netfs: fix test for whether we can skip read when writing beyond EOF
-Date:   Mon, 28 Jun 2021 10:26:01 -0400
-Message-Id: <20210628142607.32218-96-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210628142607.32218-1-sashal@kernel.org>
-References: <20210628142607.32218-1-sashal@kernel.org>
+        s=k20201202; t=1624891456;
+        bh=l8xIVzscZoiXeJLtkWgfbXmxS5FPm4sqJlwbpgvEvNU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=f6T2RU+XRroYN17GYS5iHJ6ACK46Q/2zjffbEmz+PuebhcrPFv9t6S8ELE0RGQ23s
+         VH6vHJSis7Epu7JeXq/6BzHKhFyfs12jBSaE+uxvs2uRGGSwIlwHpkcB+3qRCPabDE
+         eiFivBPZ3PaItXbfakAsL+4Bkd3ua5E+aLveEgClieeODxw8KwiPQ4LmWLaH5X42as
+         P8iJV6njt3flIsCC95389IrQWpZ2O5RY+3tbGC45aXST6fpvB8JyK5F50Z/qWQo/ZT
+         ScI3aYvyF8krV9axcF5TTayV92ngSAUccvOpy3yj1tcPyqKm/yWd7g7I2zMzN9vfV4
+         rJIu4fr41MKtw==
+Message-ID: <3a993a4f2b302fd4fdb6f778f29f7f81db79adda.camel@kernel.org>
+Subject: Re: [RFC PATCH] ceph: reduce contention in ceph_check_delayed_caps()
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date:   Mon, 28 Jun 2021 10:44:14 -0400
+In-Reply-To: <YNmQiP/Idf92tDDw@suse.de>
+References: <20210625154559.8148-1-lhenriques@suse.de>
+         <e427c4e5877e0b036c36eedbe40020047b02a85b.camel@kernel.org>
+         <YNmQiP/Idf92tDDw@suse.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
 MIME-Version: 1.0
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.47-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.10.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.10.47-rc1
-X-KernelTest-Deadline: 2021-06-30T14:25+00:00
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Jeff Layton <jlayton@kernel.org>
+On Mon, 2021-06-28 at 10:04 +0100, Luis Henriques wrote:
+> On Fri, Jun 25, 2021 at 12:54:44PM -0400, Jeff Layton wrote:
+> <...>
+> > I'm not sure this approach is viable, unfortunately. Once you've dropped
+> > the cap_delay_lock, then nothing protects the i_cap_delay_list head
+> > anymore.
+> > 
+> > So you could detach these objects and put them on the private list, and
+> > then once you drop the spinlock another task could find one of them and
+> > (e.g.) call __cap_delay_requeue on it, potentially corrupting your list.
+> > 
+> > I think we'll need to come up with a different way to do this...
+> 
+> Ugh, yeah I see what you mean.
+> 
+> Another option I can think off is to time-bound this loop, so that it
+> would stop after finding the first ci->i_hold_caps_max timestamp that was
+> set *after* the start of the current run.  I'll see if I can come up with
+> an RFC shortly.
+> 
 
-commit 827a746f405d25f79560c7868474aec5aee174e1 upstream.
+Sounds like a reasonable thing to do.
 
-It's not sufficient to skip reading when the pos is beyond the EOF.
-There may be data at the head of the page that we need to fill in
-before the write.
+The catch there is that those caps may end up being delayed up to 5s
+more than they would have, since schedule_delayed always uses a 5s
+delay. That delay could be made more dynamic if it becomes an issue.
 
-Add a new helper function that corrects and clarifies the logic of
-when we can skip reads, and have it only zero out the part of the page
-that won't have data copied in for the write.
-
-Finally, don't set the page Uptodate after zeroing. It's not up to date
-since the write data won't have been copied in yet.
-
-[DH made the following changes:
-
- - Prefixed the new function with "netfs_".
-
- - Don't call zero_user_segments() for a full-page write.
-
- - Altered the beyond-last-page check to avoid a DIV instruction and got
-   rid of then-redundant zero-length file check.
-]
-
-[ Note: this fix is commit 827a746f405d in mainline kernels. The
-	original bug was in ceph, but got lifted into the fs/netfs
-	library for v5.13. This backport should apply to stable
-	kernels v5.10 though v5.12. ]
-
-Fixes: e1b1240c1ff5f ("netfs: Add write_begin helper")
-Reported-by: Andrew W Elble <aweits@rit.edu>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-cc: ceph-devel@vger.kernel.org
-Link: https://lore.kernel.org/r/20210613233345.113565-1-jlayton@kernel.org/
-Link: https://lore.kernel.org/r/162367683365.460125.4467036947364047314.stgit@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/162391826758.1173366.11794946719301590013.stgit@warthog.procyon.org.uk/ # v2
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/ceph/addr.c | 54 ++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 41 insertions(+), 13 deletions(-)
-
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 35c83f65475b..8b0507f69c15 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1302,6 +1302,45 @@ ceph_find_incompatible(struct page *page)
- 	return NULL;
- }
- 
-+/**
-+ * prep_noread_page - prep a page for writing without reading first
-+ * @page: page being prepared
-+ * @pos: starting position for the write
-+ * @len: length of write
-+ *
-+ * In some cases, write_begin doesn't need to read at all:
-+ * - full page write
-+ * - file is currently zero-length
-+ * - write that lies in a page that is completely beyond EOF
-+ * - write that covers the the page from start to EOF or beyond it
-+ *
-+ * If any of these criteria are met, then zero out the unwritten parts
-+ * of the page and return true. Otherwise, return false.
-+ */
-+static bool skip_page_read(struct page *page, loff_t pos, size_t len)
-+{
-+	struct inode *inode = page->mapping->host;
-+	loff_t i_size = i_size_read(inode);
-+	size_t offset = offset_in_page(pos);
-+
-+	/* Full page write */
-+	if (offset == 0 && len >= PAGE_SIZE)
-+		return true;
-+
-+	/* pos beyond last page in the file */
-+	if (pos - offset >= i_size)
-+		goto zero_out;
-+
-+	/* write that covers the whole page from start to EOF or beyond it */
-+	if (offset == 0 && (pos + len) >= i_size)
-+		goto zero_out;
-+
-+	return false;
-+zero_out:
-+	zero_user_segments(page, 0, offset, offset + len, PAGE_SIZE);
-+	return true;
-+}
-+
- /*
-  * We are only allowed to write into/dirty the page if the page is
-  * clean, or already dirty within the same snap context.
-@@ -1315,7 +1354,6 @@ static int ceph_write_begin(struct file *file, struct address_space *mapping,
- 	struct ceph_snap_context *snapc;
- 	struct page *page = NULL;
- 	pgoff_t index = pos >> PAGE_SHIFT;
--	int pos_in_page = pos & ~PAGE_MASK;
- 	int r = 0;
- 
- 	dout("write_begin file %p inode %p page %p %d~%d\n", file, inode, page, (int)pos, (int)len);
-@@ -1350,19 +1388,9 @@ static int ceph_write_begin(struct file *file, struct address_space *mapping,
- 			break;
- 		}
- 
--		/*
--		 * In some cases we don't need to read at all:
--		 * - full page write
--		 * - write that lies completely beyond EOF
--		 * - write that covers the the page from start to EOF or beyond it
--		 */
--		if ((pos_in_page == 0 && len == PAGE_SIZE) ||
--		    (pos >= i_size_read(inode)) ||
--		    (pos_in_page == 0 && (pos + len) >= i_size_read(inode))) {
--			zero_user_segments(page, 0, pos_in_page,
--					   pos_in_page + len, PAGE_SIZE);
-+		/* No need to read in some cases */
-+		if (skip_page_read(page, pos, len))
- 			break;
--		}
- 
- 		/*
- 		 * We need to read it. If we get back -EINPROGRESS, then the page was
+Maybe have the schedule_delayed callers calculate and pass in a timeout
+and schedule the next run for that point in the future? Then
+delayed_work could schedule the next run to coincide with the timeout of
+the next entry on the list.
 -- 
-2.30.2
+Jeff Layton <jlayton@kernel.org>
 
