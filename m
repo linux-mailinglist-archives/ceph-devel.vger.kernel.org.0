@@ -2,27 +2,27 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D065E3B6076
-	for <lists+ceph-devel@lfdr.de>; Mon, 28 Jun 2021 16:23:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C3183B616B
+	for <lists+ceph-devel@lfdr.de>; Mon, 28 Jun 2021 16:33:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233287AbhF1OZB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 28 Jun 2021 10:25:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55128 "EHLO mail.kernel.org"
+        id S235402AbhF1Of4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 28 Jun 2021 10:35:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233050AbhF1OXi (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 28 Jun 2021 10:23:38 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 96AE161C83;
-        Mon, 28 Jun 2021 14:20:17 +0000 (UTC)
+        id S234636AbhF1Oct (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 28 Jun 2021 10:32:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BCFF261C89;
+        Mon, 28 Jun 2021 14:27:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624890018;
-        bh=QijCrKyhnozrfuGrRc6q4/RO0Eg7RkF09iYWG4/G5Bw=;
+        s=k20201202; t=1624890469;
+        bh=4dSHOaEQAwIC7L/z6GDnBLBuNItxIOeL6nJQC2uEptM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eFo0Bbwxd7CosZD6hMOQTv2qq25v9fbgPz1kb6/1wcnp1z/8SqpH9m/480GkWoxWi
-         R/Aw3XqQn+oyQ3Sf91sGmRmE8Zyq1evFFAEZA6BQXMWp9aXcsdDREWhK7kbGxa9wfT
-         BOgVFEUN84c1jYwSmGWsJLpAzB0KeJHjmCv8xAXFT0ICHqx8WyOHSJPglu9EbZO4xG
-         +w666iHA4M7u5aM/cFsmKLwUM4CKrNlaKnHfJm6zAXnu74qs1cXDrGOEJA/VSTa5MS
-         KfG75Rj4eDMAe+wkfQOHS/3909abRt9zYNRFOsoCe6W1oEzAaGhdWboO2ja8t7Cs+h
-         v/fJKn3Z1ob/w==
+        b=VuvH/kBiSEiIE4/IOqYd95uv0Uq2grF+XynbjJpv1MKlc2DTUap4xN1yc1s7jwgA/
+         6vZQHK6xlop7wycUb3PGlbYZME5mFL4xv0C9EX6PRhyi6xWxnmh6YFyINbYcZ2fsG9
+         2fZSws1vH5f8WiQHw9p866AqyKa9ivFDS2wPKmN4ioKWgin4FuKS3DLmALKdjk1dl9
+         8pPB4J2/p4ET07VPGGvN4AuJd4O54EaL7K4IFwwKun7BU7Dcb8GQBsxEsHCoiv+ul2
+         cj3NRklOl9YSTViE4yNLjuA2UTfOgVioPZCuJ0H4mZs5g8IWTuvOGciFBC6dZtl+Lu
+         ndxTZve94CYXg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jeff Layton <jlayton@kernel.org>, Andrew W Elble <aweits@rit.edu>,
@@ -30,19 +30,19 @@ Cc:     Jeff Layton <jlayton@kernel.org>, Andrew W Elble <aweits@rit.edu>,
         Matthew Wilcox <willy@infradead.org>,
         ceph-devel@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 5.12 103/110] netfs: fix test for whether we can skip read when writing beyond EOF
-Date:   Mon, 28 Jun 2021 10:18:21 -0400
-Message-Id: <20210628141828.31757-104-sashal@kernel.org>
+Subject: [PATCH 5.10 095/101] netfs: fix test for whether we can skip read when writing beyond EOF
+Date:   Mon, 28 Jun 2021 10:26:01 -0400
+Message-Id: <20210628142607.32218-96-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210628141828.31757-1-sashal@kernel.org>
-References: <20210628141828.31757-1-sashal@kernel.org>
+In-Reply-To: <20210628142607.32218-1-sashal@kernel.org>
+References: <20210628142607.32218-1-sashal@kernel.org>
 MIME-Version: 1.0
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.12.14-rc1.gz
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.47-rc1.gz
 X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.12.y
+X-KernelTest-Branch: linux-5.10.y
 X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.12.14-rc1
-X-KernelTest-Deadline: 2021-06-30T14:18+00:00
+X-KernelTest-Version: 5.10.47-rc1
+X-KernelTest-Deadline: 2021-06-30T14:25+00:00
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -95,7 +95,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  1 file changed, 41 insertions(+), 13 deletions(-)
 
 diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 26e66436f005..c000fe338f7e 100644
+index 35c83f65475b..8b0507f69c15 100644
 --- a/fs/ceph/addr.c
 +++ b/fs/ceph/addr.c
 @@ -1302,6 +1302,45 @@ ceph_find_incompatible(struct page *page)
