@@ -2,116 +2,166 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62C3F3B65C2
-	for <lists+ceph-devel@lfdr.de>; Mon, 28 Jun 2021 17:34:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 061BF3B6DB3
+	for <lists+ceph-devel@lfdr.de>; Tue, 29 Jun 2021 06:43:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237118AbhF1Pgj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 28 Jun 2021 11:36:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40781 "EHLO
+        id S231881AbhF2Ep3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 29 Jun 2021 00:45:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50985 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239012AbhF1Peo (ORCPT
+        by vger.kernel.org with ESMTP id S231598AbhF2Ep0 (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 28 Jun 2021 11:34:44 -0400
+        Tue, 29 Jun 2021 00:45:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624894338;
+        s=mimecast20190719; t=1624941779;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=JGKUsxvovIGUEmbsGDeIYzDdTAF6B2nf43EXOEpdWIg=;
-        b=FkUbkjBUeYUjzM31DWwT640jNx867O/GC3wGng0zG33zjM0pyin/2u2GadLQ+iWQiCzUCR
-        jHRH3IWctdYv5AtwPhAlEAY22U9M57EU9ucM/vJ5QOHIbnih0faiWzKtZIiUdRbWMONkI/
-        7Y5qzERnv7iMJrrRyyOK9yH1fodLZEw=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-121-LI8DQa38OE-4rwgSy7vwnA-1; Mon, 28 Jun 2021 11:32:16 -0400
-X-MC-Unique: LI8DQa38OE-4rwgSy7vwnA-1
-Received: by mail-qk1-f199.google.com with SMTP id a2-20020a05620a0662b02903ad3598ec02so11303511qkh.17
-        for <ceph-devel@vger.kernel.org>; Mon, 28 Jun 2021 08:32:16 -0700 (PDT)
+        bh=4cGzdP+uQ/InHx7d/hJO3OSYFexWfSAiw2xa0UY4JHg=;
+        b=ZB6MO6vIqKoN1m6lRfBqHEqJ2JUXbAxe6CM5Vs6Biko7MWRz8cOBTL3tN3ZwD68OhXLuKI
+        3PDhhB0HXTuyZCgNWD34N7PWBfM6i1yT/b287D2hGe4v/7zt9UWvyC8WAc/8zltygyXWeE
+        YabfB0sviqqsGFzz8RvT6ZNUzJof4Mk=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-427-gDHZXG3BOq6zm4OkPjN41g-1; Tue, 29 Jun 2021 00:42:57 -0400
+X-MC-Unique: gDHZXG3BOq6zm4OkPjN41g-1
+Received: by mail-ej1-f70.google.com with SMTP id lt4-20020a170906fa84b0290481535542e3so5267369ejb.18
+        for <ceph-devel@vger.kernel.org>; Mon, 28 Jun 2021 21:42:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=JGKUsxvovIGUEmbsGDeIYzDdTAF6B2nf43EXOEpdWIg=;
-        b=Qi+E9jTkpqL9pURUSMjTXY11GbTtCjZhMTEay9DdJRoe3gObyVDCOD/kD5mdnmxino
-         31l2k3sgkGi9ng71jD6XJD7nXFfIDWvQLO+w4BTWbdwpSv0tEugJx3+9UFdRIhI+zlHz
-         UWR+PU72wmLzeei1+yYGGSkjZI/kLA2UmAEL7ZfD6UIDXPdttinEFYYGUXPAYYbhVtt1
-         aB82tIsYyiLNd7U83pCaaLRx6bNcMt0g/uc2b7beouWnpHl7P3SCz9j4rg5K000TS3FU
-         lDGFrfc7wvJXkkR86UCcDUYcyafMcAF0jYDFZGJt3tsDdDReuTa+TTVJGgvBmj4pX0ud
-         s9gw==
-X-Gm-Message-State: AOAM530dS9pF0yICWu0KlYWsUaE8UjtX7OlqODUV5e3k9swgUmgT4P3C
-        8qWKT6agzh/p9xN658fywvYG0UkUqI4OT6uatzyvayqyVBiSuG42EK8IYfFgFhP4lHk3LuzURQF
-        S8nABnvPEyGXM/RyPWzZhIQ==
-X-Received: by 2002:ac8:5ac3:: with SMTP id d3mr19505791qtd.73.1624894336449;
-        Mon, 28 Jun 2021 08:32:16 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwYh1ZgRGJyJFt4DOcKtaXy/ZN+DhUzptOViyd98VyFkqodGEEhdA+6mczU4SvUWm1H8ZCThg==
-X-Received: by 2002:ac8:5ac3:: with SMTP id d3mr19505774qtd.73.1624894336286;
-        Mon, 28 Jun 2021 08:32:16 -0700 (PDT)
-Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id u127sm10830048qkh.120.2021.06.28.08.32.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jun 2021 08:32:16 -0700 (PDT)
-Message-ID: <e9a13548e835f960f899fe302998c2602c7b1256.camel@redhat.com>
-Subject: Re: [PATCH 0/4] ceph: new mount device syntax
-From:   Jeff Layton <jlayton@redhat.com>
-To:     Venky Shankar <vshankar@redhat.com>, idryomov@gmail.com
-Cc:     ceph-devel@vger.kernel.org
-Date:   Mon, 28 Jun 2021 11:32:15 -0400
-In-Reply-To: <20210628075545.702106-1-vshankar@redhat.com>
-References: <20210628075545.702106-1-vshankar@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4cGzdP+uQ/InHx7d/hJO3OSYFexWfSAiw2xa0UY4JHg=;
+        b=obrPMxpMFrZp16h1RVZ9O4dtgIE6tNcoeBND5tbqRpEKdhgcH5Bz5+wwMDKOzXxK10
+         ps8GUHOqw+0NFZfMiNrD8oUyJJzXPakbP/GG1L2kyarkxxTVxTGMRFMmA+TYDghDz2XA
+         4c91AKNZIv/LVSyFYiS8Uh6HU4VNK0GuznwMRzg7siEdVmif3VNHFZJ7v0FUFaIBuZLo
+         d+l0eSSYoNYum8Qsjxr6qcHb8RoGm1wpxC5wLTPdg3zl+LKtu6L6LkWXt3UFPnKpOqnh
+         B+tZh+2n23+U5KZTKkuDEhWnz3DGhHvLqG9xrIW1/ftXKkdHzjt5virEwR/XWV/hMT/9
+         LCag==
+X-Gm-Message-State: AOAM5308cUl1nw4jz7zJZfgQZ5KpR8yuqpr3W67ZGYTU9B8CLgy4LfY2
+        gEoCLrj7v/ymWWfxgM/yo5JRKtvzywbnh2qVT65uKAnoPEAb0EIUm0fyo6k0wu0Rbs24md8PX4p
+        Djv5yETwRv+YwdoYwya7xOgSp6/oZqPexoAP++A==
+X-Received: by 2002:a17:906:1951:: with SMTP id b17mr28237266eje.468.1624941776297;
+        Mon, 28 Jun 2021 21:42:56 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwi2wMh/VrtPYGnDwMzq3DTWovDaKDiBND4S8+6t1T6NoSxakjdV5z4taMLiRv1oKEhUWQrwxR1t78a20vnFb4=
+X-Received: by 2002:a17:906:1951:: with SMTP id b17mr28237260eje.468.1624941776186;
+ Mon, 28 Jun 2021 21:42:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20210628075545.702106-1-vshankar@redhat.com> <20210628075545.702106-3-vshankar@redhat.com>
+ <77c1bc3093a7f74c92a1deb35c0e80291c4d9b52.camel@redhat.com>
+In-Reply-To: <77c1bc3093a7f74c92a1deb35c0e80291c4d9b52.camel@redhat.com>
+From:   Venky Shankar <vshankar@redhat.com>
+Date:   Tue, 29 Jun 2021 10:12:20 +0530
+Message-ID: <CACPzV1=BmxmQUCwM1P-hLcY0RcZAXLPTxF=Kj8c3Jgn8Xn8kvA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] ceph: validate cluster FSID for new device syntax
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     idryomov@gmail.com, ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-06-28 at 13:25 +0530, Venky Shankar wrote:
-> This series introduces changes Ceph File System mount device string.
-> Old mount device syntax (source) has the following problems:
-> 
-> mounts to the same cluster but with different fsnames
-> and/or creds have identical device string which can
-> confuse xfstests.
-> 
-> Userspace mount helper tool resolves monitor addresses
-> and fill in mon addrs automatically, but that means the
-> device shown in /proc/mounts is different than what was
-> used for mounting.
-> 
-> New device syntax is as follows:
-> 
->   cephuser@fsid.mycephfs2=/path
-> 
-> Note, there is no "monitor address" in the device string.
-> That gets passed in as mount option. This keeps the device
-> string same when monitor addresses change (on remounts).
-> 
-> Also note that the userspace mount helper tool is backward
-> compatible. I.e., the mount helper will fallback to using
-> old syntax after trying to mount with the new syntax.
-> 
-> Venky Shankar (4):
->   ceph: new device mount syntax
->   ceph: validate cluster FSID for new device syntax
->   ceph: record updated mon_addr on remount
->   doc: document new CephFS mount device syntax
-> 
->  Documentation/filesystems/ceph.rst |  23 ++++-
->  fs/ceph/super.c                    | 132 ++++++++++++++++++++++++++---
->  fs/ceph/super.h                    |   4 +
->  include/linux/ceph/libceph.h       |   1 +
->  net/ceph/ceph_common.c             |   3 +-
->  5 files changed, 149 insertions(+), 14 deletions(-)
-> 
+On Mon, Jun 28, 2021 at 8:34 PM Jeff Layton <jlayton@redhat.com> wrote:
+>
+> On Mon, 2021-06-28 at 13:25 +0530, Venky Shankar wrote:
+> > The new device syntax requires the cluster FSID as part
+> > of the device string. Use this FSID to verify if it matches
+> > the cluster FSID we get back from the monitor, failing the
+> > mount on mismatch.
+> >
+> > Signed-off-by: Venky Shankar <vshankar@redhat.com>
+> > ---
+> >  fs/ceph/super.c              | 9 +++++++++
+> >  fs/ceph/super.h              | 1 +
+> >  include/linux/ceph/libceph.h | 1 +
+> >  net/ceph/ceph_common.c       | 3 ++-
+> >  4 files changed, 13 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > index 950a28ad9c59..84bc06e51680 100644
+> > --- a/fs/ceph/super.c
+> > +++ b/fs/ceph/super.c
+> > @@ -266,6 +266,9 @@ static int ceph_parse_new_source(const char *dev_name, const char *dev_name_end,
+> >       if (!fs_name_start)
+> >               return invalfc(fc, "missing file system name");
+> >
+> > +     if (parse_fsid(fsid_start, &fsopt->fsid))
+> > +             return invalfc(fc, "invalid fsid format");
+> > +
+> >       ++fs_name_start; /* start of file system name */
+> >       fsopt->mds_namespace = kstrndup(fs_name_start,
+> >                                       dev_name_end - fs_name_start, GFP_KERNEL);
+> > @@ -748,6 +751,12 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
+> >       }
+> >       opt = NULL; /* fsc->client now owns this */
+> >
+> > +     /* help learn fsid */
+> > +     if (fsopt->new_dev_syntax) {
+> > +             ceph_check_fsid(fsc->client, &fsopt->fsid);
+> > +             fsc->client->have_fsid = true;
+> > +     }
+> > +
+> >       fsc->client->extra_mon_dispatch = extra_mon_dispatch;
+> >       ceph_set_opt(fsc->client, ABORT_ON_FULL);
+> >
+> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > index 557348ff3203..cfd8ec25a9a8 100644
+> > --- a/fs/ceph/super.h
+> > +++ b/fs/ceph/super.h
+> > @@ -100,6 +100,7 @@ struct ceph_mount_options {
+> >       char *server_path;    /* default NULL (means "/") */
+> >       char *fscache_uniq;   /* default NULL */
+> >       char *mon_addr;
+> > +     struct ceph_fsid fsid;
+> >  };
+> >
+> >  struct ceph_fs_client {
+> > diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
+> > index 409d8c29bc4f..24c1f4e9144d 100644
+> > --- a/include/linux/ceph/libceph.h
+> > +++ b/include/linux/ceph/libceph.h
+> > @@ -296,6 +296,7 @@ extern bool libceph_compatible(void *data);
+> >  extern const char *ceph_msg_type_name(int type);
+> >  extern int ceph_check_fsid(struct ceph_client *client, struct ceph_fsid *fsid);
+> >  extern void *ceph_kvmalloc(size_t size, gfp_t flags);
+> > +extern int parse_fsid(const char *str, struct ceph_fsid *fsid);
+> >
+> >  struct fs_parameter;
+> >  struct fc_log;
+> > diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> > index 97d6ea763e32..db21734462a4 100644
+> > --- a/net/ceph/ceph_common.c
+> > +++ b/net/ceph/ceph_common.c
+> > @@ -217,7 +217,7 @@ void *ceph_kvmalloc(size_t size, gfp_t flags)
+> >       return p;
+> >  }
+> >
+> > -static int parse_fsid(const char *str, struct ceph_fsid *fsid)
+> > +int parse_fsid(const char *str, struct ceph_fsid *fsid)
+> >  {
+> >       int i = 0;
+> >       char tmp[3];
+> > @@ -247,6 +247,7 @@ static int parse_fsid(const char *str, struct ceph_fsid *fsid)
+> >       dout("parse_fsid ret %d got fsid %pU\n", err, fsid);
+> >       return err;
+> >  }
+> > +EXPORT_SYMBOL(parse_fsid);
+>
+> This function name is too generic. Maybe rename it to "ceph_parse_fsid"?
 
-Nice work, Venky. It needs a few minor changes, but this looks good
-overall. Unless anyone has objections or other suggestions for changes,
-we ought to aim to get this into the testing branch soon and aim for
-merging it in v5.15.
+Makes sense. ACK.
 
-Thoughts?
+>
+> >
+> >  /*
+> >   * ceph options
+>
+> --
+> Jeff Layton <jlayton@redhat.com>
+>
+
+
 -- 
-Jeff Layton <jlayton@redhat.com>
+Cheers,
+Venky
 
