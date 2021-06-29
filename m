@@ -2,189 +2,200 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 003623B75C6
-	for <lists+ceph-devel@lfdr.de>; Tue, 29 Jun 2021 17:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 576FC3B75CD
+	for <lists+ceph-devel@lfdr.de>; Tue, 29 Jun 2021 17:42:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232864AbhF2Pm0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 29 Jun 2021 11:42:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233460AbhF2PmZ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 29 Jun 2021 11:42:25 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4B53561D5D;
-        Tue, 29 Jun 2021 15:39:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624981197;
-        bh=k7fK7EG5YPnqbm2o8+w9qiuUzF29iqGlFHFqGtqw4Ck=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=nClv1lQD++uQVSfYwGsdLZxcYpLPxdc4zADaoER03QgX56c4DXQolSxgPrnah4Xl7
-         TSBcfnMxlrcoyWL8JpB+gyjcA8nYGmytFlJuQ5DEAzmmRbi+15ou9ykDjAsClZi8Ok
-         xp/4eD2o2crww71DBVGYryGQYSfvoYjsWoIvYS8/HHfCtdZBPsLMTc35uSHHmBvWhq
-         S+gajf2Z0zZxlZrOJoPujgyn/aoqnIaZtoR/feLDSbRAHWwCVwZ9LHbXhvbgnBqXMB
-         Ums7WGQBap/eFI0PSh8INg+KFTHcgcd5zO9R6VnbJ7JLqXBQLoe1tqaP1xOfAkkWYM
-         Vih5Kc1YyczIg==
-Message-ID: <0d114802ce33ec63fa4ef09053e31d410de194d4.camel@kernel.org>
-Subject: Re: [PATCH 2/5] ceph: export iterate_sessions
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Tue, 29 Jun 2021 11:39:56 -0400
-In-Reply-To: <20210629044241.30359-3-xiubli@redhat.com>
-References: <20210629044241.30359-1-xiubli@redhat.com>
-         <20210629044241.30359-3-xiubli@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
+        id S233361AbhF2Poz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 29 Jun 2021 11:44:55 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:47384 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233294AbhF2Poy (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 29 Jun 2021 11:44:54 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 15BCD20402;
+        Tue, 29 Jun 2021 15:42:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624981346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oYuAzs+h2gY6l7LC9c3T3K02mPklt+VGLc6bWyvmOWw=;
+        b=Ib/+PgRlmvOD8X2k7foOLqCa8aF7AXe86CU8QBDarV973oHIC3CgGD8UC2hnxirAZ+cu5D
+        5/++jeYkwaKgcAvbiJYodFpl7otcrYf+yGTwbgt6gDiC0cHxb8obOoLvqJKY/XvUBOk8hD
+        en6uTdZ4jr/9aMIb4hADh9yj7j+AfwM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624981346;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oYuAzs+h2gY6l7LC9c3T3K02mPklt+VGLc6bWyvmOWw=;
+        b=gW+iSX3000E5tyS3vF2RWvPdtWfAztbIgtPSnnAOt9b1uatt+hNVCMh88rYA9Z7vupXT3x
+        9aPlMDT8rYTLmDAA==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id AC30811906;
+        Tue, 29 Jun 2021 15:42:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624981346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oYuAzs+h2gY6l7LC9c3T3K02mPklt+VGLc6bWyvmOWw=;
+        b=Ib/+PgRlmvOD8X2k7foOLqCa8aF7AXe86CU8QBDarV973oHIC3CgGD8UC2hnxirAZ+cu5D
+        5/++jeYkwaKgcAvbiJYodFpl7otcrYf+yGTwbgt6gDiC0cHxb8obOoLvqJKY/XvUBOk8hD
+        en6uTdZ4jr/9aMIb4hADh9yj7j+AfwM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624981346;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oYuAzs+h2gY6l7LC9c3T3K02mPklt+VGLc6bWyvmOWw=;
+        b=gW+iSX3000E5tyS3vF2RWvPdtWfAztbIgtPSnnAOt9b1uatt+hNVCMh88rYA9Z7vupXT3x
+        9aPlMDT8rYTLmDAA==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id pCOAJmE/22BrLgAALh3uQQ
+        (envelope-from <lhenriques@suse.de>); Tue, 29 Jun 2021 15:42:25 +0000
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id adc3a53f;
+        Tue, 29 Jun 2021 15:42:24 +0000 (UTC)
+Date:   Tue, 29 Jun 2021 16:42:24 +0100
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     Venky Shankar <vshankar@redhat.com>, idryomov@gmail.com,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] ceph: new device mount syntax
+Message-ID: <YNs/YDS2BJJj7Hvk@suse.de>
+References: <20210628075545.702106-1-vshankar@redhat.com>
+ <20210628075545.702106-2-vshankar@redhat.com>
+ <YNsEs9IwTEEqOTHj@suse.de>
+ <CACPzV1=KaZU5Y4NL-Sy1J-nfd+WddXydQc3o-kVmoe-pEiXiqA@mail.gmail.com>
+ <e3b6778ed89617efe869a530970f3dfe9d8d9d10.camel@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e3b6778ed89617efe869a530970f3dfe9d8d9d10.camel@redhat.com>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2021-06-29 at 12:42 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
+On Tue, Jun 29, 2021 at 11:10:02AM -0400, Jeff Layton wrote:
+> On Tue, 2021-06-29 at 19:24 +0530, Venky Shankar wrote:
+> > On Tue, Jun 29, 2021 at 5:02 PM Luis Henriques <lhenriques@suse.de> wrote:
+> > > 
+> > > [ As I said, I didn't fully reviewed this patch.  Just sending out a few
+> > >   comments. ]
+> > > 
+> > > On Mon, Jun 28, 2021 at 01:25:42PM +0530, Venky Shankar wrote:
+> > > > Old mount device syntax (source) has the following problems:
+> > > > 
+> > > > - mounts to the same cluster but with different fsnames
+> > > >   and/or creds have identical device string which can
+> > > >   confuse xfstests.
+> > > > 
+> > > > - Userspace mount helper tool resolves monitor addresses
+> > > >   and fill in mon addrs automatically, but that means the
+> > > >   device shown in /proc/mounts is different than what was
+> > > >   used for mounting.
+> > > > 
+> > > > New device syntax is as follows:
+> > > > 
+> > > >   cephuser@fsid.mycephfs2=/path
+> > > > 
+> > > > Note, there is no "monitor address" in the device string.
+> > > > That gets passed in as mount option. This keeps the device
+> > > > string same when monitor addresses change (on remounts).
+> > > > 
+> > > > Also note that the userspace mount helper tool is backward
+> > > > compatible. I.e., the mount helper will fallback to using
+> > > > old syntax after trying to mount with the new syntax.
+> > > > 
+> > > > Signed-off-by: Venky Shankar <vshankar@redhat.com>
+> > > > ---
+> > > >  fs/ceph/super.c | 117 +++++++++++++++++++++++++++++++++++++++++++-----
+> > > >  fs/ceph/super.h |   3 ++
+> > > >  2 files changed, 110 insertions(+), 10 deletions(-)
+> > > > 
+> > > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > > > index 9b1b7f4cfdd4..950a28ad9c59 100644
+> > > > --- a/fs/ceph/super.c
+> > > > +++ b/fs/ceph/super.c
+> > > > @@ -145,6 +145,7 @@ enum {
+> > > >       Opt_mds_namespace,
+> > > >       Opt_recover_session,
+> > > >       Opt_source,
+> > > > +     Opt_mon_addr,
+> > > >       /* string args above */
+> > > >       Opt_dirstat,
+> > > >       Opt_rbytes,
+> > > > @@ -196,6 +197,7 @@ static const struct fs_parameter_spec ceph_mount_parameters[] = {
+> > > >       fsparam_u32     ("rsize",                       Opt_rsize),
+> > > >       fsparam_string  ("snapdirname",                 Opt_snapdirname),
+> > > >       fsparam_string  ("source",                      Opt_source),
+> > > > +     fsparam_string  ("mon_addr",                    Opt_mon_addr),
+> > > >       fsparam_u32     ("wsize",                       Opt_wsize),
+> > > >       fsparam_flag_no ("wsync",                       Opt_wsync),
+> > > >       {}
+> > > > @@ -226,10 +228,68 @@ static void canonicalize_path(char *path)
+> > > >       path[j] = '\0';
+> > > >  }
+> > > > 
+> > > > +static int ceph_parse_old_source(const char *dev_name, const char *dev_name_end,
+> > > > +                              struct fs_context *fc)
+> > > > +{
+> > > > +     int r;
+> > > > +     struct ceph_parse_opts_ctx *pctx = fc->fs_private;
+> > > > +     struct ceph_mount_options *fsopt = pctx->opts;
+> > > > +
+> > > > +     if (*dev_name_end != ':')
+> > > > +             return invalfc(fc, "separator ':' missing in source");
+> > > > +
+> > > > +     r = ceph_parse_mon_ips(dev_name, dev_name_end - dev_name,
+> > > > +                            pctx->copts, fc->log.log);
+> > > > +     if (r)
+> > > > +             return r;
+> > > > +
+> > > > +     fsopt->new_dev_syntax = false;
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +static int ceph_parse_new_source(const char *dev_name, const char *dev_name_end,
+> > > > +                              struct fs_context *fc)
+> > > > +{
+> > > > +     struct ceph_parse_opts_ctx *pctx = fc->fs_private;
+> > > > +     struct ceph_mount_options *fsopt = pctx->opts;
+> > > > +     char *fsid_start, *fs_name_start;
+> > > > +
+> > > > +     if (*dev_name_end != '=')
+> > > > +                return invalfc(fc, "separator '=' missing in source");
+> > > 
+> > > An annoying thing is that we'll always see this error message when falling
+> > > back to the old_source method.
+> > > 
 > 
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/caps.c       | 26 +-----------------------
->  fs/ceph/mds_client.c | 47 +++++++++++++++++++++++++++++---------------
->  fs/ceph/mds_client.h |  3 +++
->  3 files changed, 35 insertions(+), 41 deletions(-)
+> True. I'd rather this fallback be silent.
 > 
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index e712826ea3f1..c6a3352a4d52 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -4280,33 +4280,9 @@ static void flush_dirty_session_caps(struct ceph_mds_session *s)
->  	dout("flush_dirty_caps done\n");
->  }
->  
-> -static void iterate_sessions(struct ceph_mds_client *mdsc,
-> -			     void (*cb)(struct ceph_mds_session *))
-> -{
-> -	int mds;
-> -
-> -	mutex_lock(&mdsc->mutex);
-> -	for (mds = 0; mds < mdsc->max_sessions; ++mds) {
-> -		struct ceph_mds_session *s;
-> -
-> -		if (!mdsc->sessions[mds])
-> -			continue;
-> -
-> -		s = ceph_get_mds_session(mdsc->sessions[mds]);
-> -		if (!s)
-> -			continue;
-> -
-> -		mutex_unlock(&mdsc->mutex);
-> -		cb(s);
-> -		ceph_put_mds_session(s);
-> -		mutex_lock(&mdsc->mutex);
-> -	}
-> -	mutex_unlock(&mdsc->mutex);
-> -}
-> -
->  void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc)
->  {
-> -	iterate_sessions(mdsc, flush_dirty_session_caps);
-> +	ceph_mdsc_iterate_sessions(mdsc, flush_dirty_session_caps, true);
->  }
->  
->  void __ceph_touch_fmode(struct ceph_inode_info *ci,
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index e49d3e230712..96bef289f58f 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -802,6 +802,33 @@ static void put_request_session(struct ceph_mds_request *req)
->  	}
->  }
->  
-> +void ceph_mdsc_iterate_sessions(struct ceph_mds_client *mdsc,
-> +			       void (*cb)(struct ceph_mds_session *),
-> +			       bool check_state)
-> +{
-> +	int mds;
-> +
-> +	mutex_lock(&mdsc->mutex);
-> +	for (mds = 0; mds < mdsc->max_sessions; ++mds) {
-> +		struct ceph_mds_session *s;
-> +
-> +		s = __ceph_lookup_mds_session(mdsc, mds);
-> +		if (!s)
-> +			continue;
-> +
-> +		if (check_state && !check_session_state(s)) {
-> +			ceph_put_mds_session(s);
-> +			continue;
-> +		}
-> +
-> +		mutex_unlock(&mdsc->mutex);
-> +		cb(s);
-> +		ceph_put_mds_session(s);
-> +		mutex_lock(&mdsc->mutex);
-> +	}
-> +	mutex_unlock(&mdsc->mutex);
-> +}
-> +
->  void ceph_mdsc_release_request(struct kref *kref)
->  {
->  	struct ceph_mds_request *req = container_of(kref,
-> @@ -4416,22 +4443,10 @@ void ceph_mdsc_lease_send_msg(struct ceph_mds_session *session,
->  /*
->   * lock unlock sessions, to wait ongoing session activities
->   */
-> -static void lock_unlock_sessions(struct ceph_mds_client *mdsc)
-> +static void lock_unlock_session(struct ceph_mds_session *s)
->  {
-> -	int i;
-> -
-> -	mutex_lock(&mdsc->mutex);
-> -	for (i = 0; i < mdsc->max_sessions; i++) {
-> -		struct ceph_mds_session *s = __ceph_lookup_mds_session(mdsc, i);
-> -		if (!s)
-> -			continue;
-> -		mutex_unlock(&mdsc->mutex);
-> -		mutex_lock(&s->s_mutex);
-> -		mutex_unlock(&s->s_mutex);
-> -		ceph_put_mds_session(s);
-> -		mutex_lock(&mdsc->mutex);
-> -	}
-> -	mutex_unlock(&mdsc->mutex);
-> +	mutex_lock(&s->s_mutex);
-> +	mutex_unlock(&s->s_mutex);
->  }
->  
+> > > (Also, is there a good reason for using '=' instead of ':'?  I probably
+> > > missed this discussion somewhere else already...)
+> > > 
+> 
+> Yes, we needed a way for the kernel to distinguish between the old and
+> new syntax. Old kernels already reject any mount string without ":/" in
+> it, so we needed the new format to _not_ have that to ensure a clean
+> fallback procedure.
+> 
+> It's not as pretty as I would have liked, but it's starting to grow on
+> me. :)
 
-Your patch doesn't materially change this, but it sure would be nice to
-know what purpose this lock/unlock garbage serves. Barf.
+Heh.  And gets even worst with using '/' for separating the mons IPs.  (I
+understand why it can't be ',' and there's probably a reason for not using
+';' either.)  But yeah, that ship has sailed, I'm sure you guys discussed
+all this already ;-)
 
->  static void maybe_recover_session(struct ceph_mds_client *mdsc)
-> @@ -4683,7 +4698,7 @@ void ceph_mdsc_pre_umount(struct ceph_mds_client *mdsc)
->  	dout("pre_umount\n");
->  	mdsc->stopping = 1;
->  
-> -	lock_unlock_sessions(mdsc);
-> +	ceph_mdsc_iterate_sessions(mdsc, lock_unlock_session, false);
->  	ceph_flush_dirty_caps(mdsc);
->  	wait_requests(mdsc);
->  
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index bf2683f0ba43..fca2cf427eaf 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -523,6 +523,9 @@ static inline void ceph_mdsc_put_request(struct ceph_mds_request *req)
->  	kref_put(&req->r_kref, ceph_mdsc_release_request);
->  }
->  
-> +extern void ceph_mdsc_iterate_sessions(struct ceph_mds_client *mdsc,
-> +				       void (*cb)(struct ceph_mds_session *),
-> +				       bool check_state);
->  extern struct ceph_msg *ceph_create_session_msg(u32 op, u64 seq);
->  extern void __ceph_queue_cap_release(struct ceph_mds_session *session,
->  				    struct ceph_cap *cap);
-
-Again, not really exporting this function, so maybe reword the subject
-line?
-
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Cheers,
+--
+Luís
