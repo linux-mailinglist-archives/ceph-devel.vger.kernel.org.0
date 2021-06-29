@@ -2,191 +2,81 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF6D03B704A
-	for <lists+ceph-devel@lfdr.de>; Tue, 29 Jun 2021 11:48:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11C013B7062
+	for <lists+ceph-devel@lfdr.de>; Tue, 29 Jun 2021 12:07:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232981AbhF2JuU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 29 Jun 2021 05:50:20 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:56228 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232673AbhF2JuT (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 29 Jun 2021 05:50:19 -0400
-Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 8192E203C5;
-        Tue, 29 Jun 2021 09:47:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624960071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vPX0Meh0V+vU/WN0+CnpfUFks6WEAxIlKLouk3smEHU=;
-        b=JRk16IAbi/4Y3IWvG62/cNEPrbENe/I3rgwf0EIx+FiIRlUVPVJh5i8QzKlGdBCe+5o22g
-        cuD073h0EYiPy7AaM1AgLY0ovLMiQ3ej3KlVfMJw5A56rfTO+WzaS4+c8VYmN6syiRiBlo
-        N7fgsuDMslCVRDjjHDdIvLuZK4zEnDQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624960071;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vPX0Meh0V+vU/WN0+CnpfUFks6WEAxIlKLouk3smEHU=;
-        b=h2f0iVXPi3yOt1lZtwyNCif1YVAuSjrl+kLEPjLdeqSqsbIVKIiuj/Gu0UHTU982fA9fQw
-        aqL4N8ay9YJXUdBQ==
-Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 1155511906;
-        Tue, 29 Jun 2021 09:47:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624960071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vPX0Meh0V+vU/WN0+CnpfUFks6WEAxIlKLouk3smEHU=;
-        b=JRk16IAbi/4Y3IWvG62/cNEPrbENe/I3rgwf0EIx+FiIRlUVPVJh5i8QzKlGdBCe+5o22g
-        cuD073h0EYiPy7AaM1AgLY0ovLMiQ3ej3KlVfMJw5A56rfTO+WzaS4+c8VYmN6syiRiBlo
-        N7fgsuDMslCVRDjjHDdIvLuZK4zEnDQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624960071;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vPX0Meh0V+vU/WN0+CnpfUFks6WEAxIlKLouk3smEHU=;
-        b=h2f0iVXPi3yOt1lZtwyNCif1YVAuSjrl+kLEPjLdeqSqsbIVKIiuj/Gu0UHTU982fA9fQw
-        aqL4N8ay9YJXUdBQ==
-Received: from director2.suse.de ([192.168.254.72])
-        by imap3-int with ESMTPSA
-        id cJZNAUfs2mBqawAALh3uQQ
-        (envelope-from <lhenriques@suse.de>); Tue, 29 Jun 2021 09:47:51 +0000
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id e3d81f62;
-        Tue, 29 Jun 2021 09:47:49 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.de>, stable@vger.kernel.org
-Subject: [RFC PATCH v2 2/2] ceph: reduce contention in ceph_check_delayed_caps()
-Date:   Tue, 29 Jun 2021 10:47:49 +0100
-Message-Id: <20210629094749.25253-3-lhenriques@suse.de>
-In-Reply-To: <20210629094749.25253-1-lhenriques@suse.de>
-References: <20210629094749.25253-1-lhenriques@suse.de>
+        id S232667AbhF2KJ7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 29 Jun 2021 06:09:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43370 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232420AbhF2KJ7 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 29 Jun 2021 06:09:59 -0400
+Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCF9FC061574
+        for <ceph-devel@vger.kernel.org>; Tue, 29 Jun 2021 03:07:31 -0700 (PDT)
+Received: by mail-il1-x12b.google.com with SMTP id s18so2396436ilt.10
+        for <ceph-devel@vger.kernel.org>; Tue, 29 Jun 2021 03:07:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7TxOb5r1PkTE6sG+uwMCaepk8NMCALXo5Deo4DVqYdg=;
+        b=OdSt2RfQSMKDTGHWF+QLn1VWzT/XUpD7SfPoALTxIKfJpe94FftsnZqjYpmOnO6Ye1
+         TsA3KKZDIBbKx7Bd79Etl9l3gYDNBzE1zp0IBsVfQEqHa5zFPSYqB8jJ52Ymf74aJ4P0
+         iuA3jzocp7/1uT8EIE9gtWqAsrhpYLhfKxVJwjFkEBf1qikwdOWLNaPkk2hqdvlVD73s
+         d5k1MViHwpSEyr9uqdAsCsbtxtnLdsTeFQITVTI5UdPvY2JK7+Y42Cq6fErsivnVBOyY
+         X50AJTxE/L/lgBDnbo8SFTlgTomYnPcP9ScOGsZn+msef67Kf3V7LLN8+vndDFPYZTy+
+         kmgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7TxOb5r1PkTE6sG+uwMCaepk8NMCALXo5Deo4DVqYdg=;
+        b=uSCJq6fvuU3c9AIYKgY/PMwHPcz3FlUiohLD/ycVRcAdsRGkqdOST/imjuZQWbOPSC
+         AgbDM0mGPlpUDanJ6LGh808Vpq6AxetiYE53eBt+QtcuazGk6+BvtSpvsZh67mvZn3IK
+         9vU/atzE3IovfeAV4ZnfcDUVl0s/J5W1anQXRDNukr2o6ANOsVm82jS0cMcDXy0jf4zC
+         NQYWHSxUOAP1i1IqWmC06XR1ut+644+uSB5pyUP/RfgZwXU+tnd9WbGTTDW+TZWISmGh
+         OjyuJB6/fwU0rf/j+zwdmte9jUNj9UA9womq7dRwVQ/ms2KgxVO+KhHzAgk33bYaBaIc
+         uGFQ==
+X-Gm-Message-State: AOAM533fQsCpyMH75BWzn5GDNUi+W9/Y8RmHGMG03no3EbjxHqHxgxA+
+        NXQMsDiibuGo3Ik9aHvI+wRz08BHu1njkz8RRhkxyqW/jj81vg==
+X-Google-Smtp-Source: ABdhPJwUxX45yb222GyI6nNfRADMGkEupIUnbm0ffz4QMbzy7SnW9gi8PEZk/LAnxhax25OYXfwduguis0jhfazeOl4=
+X-Received: by 2002:a92:290f:: with SMTP id l15mr21682836ilg.220.1624961251294;
+ Tue, 29 Jun 2021 03:07:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <47f0a04ce6664116a11cfdb5a458e252@nl.team.blue>
+ <CAOi1vP-moRXtL4gKXQF8+NwbPgE11_LoxfSYqYBbJfYYQ7Sv_g@mail.gmail.com>
+ <8eb12c996e404870803e9a7c77e508d6@nl.team.blue> <CAOi1vP-8i-rKEDd8Emq+MtxCjvK-6VG8KaXdzvQLW89174jUZA@mail.gmail.com>
+ <666938090a8746a7ad8ae40ebf116e1c@nl.team.blue> <CAOi1vP8NHYEN-=J4A7mB1dSkaHHf8Gtha-xqPLboZUS5u442hA@mail.gmail.com>
+ <21c4b9e08c4d48d6b477fc61d1fccba3@nl.team.blue> <CAOi1vP_fJm5UzSnOmQDKsVHmv-4vebNZTDk7vqLs=bvnf3fwjw@mail.gmail.com>
+ <a13af12ab314437bbbffcb23b0513722@nl.team.blue> <CAOi1vP8kiGNaNPw=by=TVfJEV1_X-BNYZuVpO_Kxx5xtf40_6w@mail.gmail.com>
+ <391efdae70644b71844fe6fa3dceea13@nl.team.blue> <2d37c87eb42d4bc2a99184f6bffce8a2@nl.team.blue>
+In-Reply-To: <2d37c87eb42d4bc2a99184f6bffce8a2@nl.team.blue>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 29 Jun 2021 12:07:12 +0200
+Message-ID: <CAOi1vP-dT=1C2SqcMxAR1NWrcHUE1K-F6M1BpBWb7pVCDhS7Og@mail.gmail.com>
+Subject: Re: All RBD IO stuck after flapping OSD's
+To:     Robin Geuze <robin.geuze@nl.team.blue>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Function ceph_check_delayed_caps() is called from the mdsc->delayed_work
-workqueue and it can be kept looping for quite some time if caps keep
-being added back to the mdsc->cap_delay_list.  This may result in the
-watchdog tainting the kernel with the softlockup flag.
+On Tue, Jun 29, 2021 at 10:39 AM Robin Geuze <robin.geuze@nl.team.blue> wrote:
+>
+> Hey Ilya,
+>
+> Do you have any idea on the cause of this bug yet? I tried to dig around a bit myself in the source, but the logic around this locking is very complex, so I couldn't figure out where the problem is.
 
-This patch breaks this loop if the caps have been recently (i.e. during
-the loop execution).  Any new caps added to the list will be handled in
-the next run.
+I do.  The proper fix would indeed be large and not backportable but
+I have a workaround in mind that should be simple enough to backport
+all the way to 5.4.  The trick is making sure that the workaround is
+fine from the exclusive lock protocol POV.
 
-Cc: stable@vger.kernel.org
-Link: https://tracker.ceph.com/issues/46284
-Signed-off-by: Luis Henriques <lhenriques@suse.de>
----
- fs/ceph/caps.c       | 17 ++++++++++++++++-
- fs/ceph/mds_client.c |  7 ++++---
- fs/ceph/super.h      |  2 +-
- 3 files changed, 21 insertions(+), 5 deletions(-)
+I'll try to flesh it out by the end of this week and report back
+early next week.
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index a5e93b185515..c79b8dff25d7 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -4224,11 +4224,19 @@ void ceph_handle_caps(struct ceph_mds_session *session,
- 
- /*
-  * Delayed work handler to process end of delayed cap release LRU list.
-+ *
-+ * If new caps are added to the list while processing it, these won't get
-+ * processed in this run.  In this case, the ci->i_hold_caps_max will be
-+ * returned so that the work can be scheduled accordingly.
-  */
--void ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
-+unsigned long ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
- {
- 	struct inode *inode;
- 	struct ceph_inode_info *ci;
-+	struct ceph_mount_options *opt = mdsc->fsc->mount_options;
-+	unsigned long delay_max = opt->caps_wanted_delay_max * HZ;
-+	unsigned long loop_start = jiffies;
-+	unsigned long delay = 0;
- 
- 	dout("check_delayed_caps\n");
- 	spin_lock(&mdsc->cap_delay_lock);
-@@ -4236,6 +4244,11 @@ void ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
- 		ci = list_first_entry(&mdsc->cap_delay_list,
- 				      struct ceph_inode_info,
- 				      i_cap_delay_list);
-+		if (time_before(loop_start, ci->i_hold_caps_max - delay_max)) {
-+			dout("%s caps added recently.  Exiting loop", __func__);
-+			delay = ci->i_hold_caps_max;
-+			break;
-+		}
- 		if ((ci->i_ceph_flags & CEPH_I_FLUSH) == 0 &&
- 		    time_before(jiffies, ci->i_hold_caps_max))
- 			break;
-@@ -4252,6 +4265,8 @@ void ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
- 		}
- 	}
- 	spin_unlock(&mdsc->cap_delay_lock);
-+
-+	return delay;
- }
- 
- /*
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 08c76bf57fb1..5f1bd7f9dce1 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -4518,11 +4518,12 @@ static void schedule_delayed(struct ceph_mds_client *mdsc, unsigned long delay)
- 
- static void delayed_work(struct work_struct *work)
- {
--	int i;
- 	struct ceph_mds_client *mdsc =
- 		container_of(work, struct ceph_mds_client, delayed_work.work);
-+	unsigned long delay;
- 	int renew_interval;
- 	int renew_caps;
-+	int i;
- 
- 	dout("mdsc delayed_work\n");
- 
-@@ -4562,7 +4563,7 @@ static void delayed_work(struct work_struct *work)
- 	}
- 	mutex_unlock(&mdsc->mutex);
- 
--	ceph_check_delayed_caps(mdsc);
-+	delay = ceph_check_delayed_caps(mdsc);
- 
- 	ceph_queue_cap_reclaim_work(mdsc);
- 
-@@ -4570,7 +4571,7 @@ static void delayed_work(struct work_struct *work)
- 
- 	maybe_recover_session(mdsc);
- 
--	schedule_delayed(mdsc, 0);
-+	schedule_delayed(mdsc, delay);
- }
- 
- int ceph_mdsc_init(struct ceph_fs_client *fsc)
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 839e6b0239ee..3b5207c82767 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1170,7 +1170,7 @@ extern void ceph_flush_snaps(struct ceph_inode_info *ci,
- extern bool __ceph_should_report_size(struct ceph_inode_info *ci);
- extern void ceph_check_caps(struct ceph_inode_info *ci, int flags,
- 			    struct ceph_mds_session *session);
--extern void ceph_check_delayed_caps(struct ceph_mds_client *mdsc);
-+extern unsigned long ceph_check_delayed_caps(struct ceph_mds_client *mdsc);
- extern void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc);
- extern int  ceph_drop_caps_for_unlink(struct inode *inode);
- extern int ceph_encode_inode_release(void **p, struct inode *inode,
+Thanks,
+
+                Ilya
