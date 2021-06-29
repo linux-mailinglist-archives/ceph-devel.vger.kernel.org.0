@@ -2,45 +2,45 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12E353B6DAF
-	for <lists+ceph-devel@lfdr.de>; Tue, 29 Jun 2021 06:43:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20FCD3B6DB0
+	for <lists+ceph-devel@lfdr.de>; Tue, 29 Jun 2021 06:43:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230216AbhF2EpX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 29 Jun 2021 00:45:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58643 "EHLO
+        id S229792AbhF2Ep0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 29 Jun 2021 00:45:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36383 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229792AbhF2EpX (ORCPT
+        by vger.kernel.org with ESMTP id S231448AbhF2EpY (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 29 Jun 2021 00:45:23 -0400
+        Tue, 29 Jun 2021 00:45:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624941776;
+        s=mimecast20190719; t=1624941777;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=86Hy0iwAkoq+jSN8Fi74X61T43Ge8xJ127MRKB6HoHY=;
-        b=UpQhTVaqKtM5wWK+x1fqVjzxrvw6KmCrEbcc+JzDVryK7FwvoqeXN2clKDVJzAAjHr/HSj
-        NBZg082QDA7dbYq0a5OnQE1Hhp+JQX3EY1SStDoAS4jGreExYDRq0Up6jOHxOGIAwMq/CP
-        cD/8yVhlsd4oqkonmMbiPXqtpbB9UTU=
+        bh=H+oi027Xa1iARAZ8UUNvEYHg64a2ffEAe0GUhvw/DLs=;
+        b=HQZ6Q+21yx5ZuSHpAEi32kYDZxKpHEE0LKg5lnHxzkrTw7pgpgViJFf4ZU+PQiXrXDNyfs
+        x/hIin0q5uXb4NcrIdHQOUy4FXfbnzhmsf37OK0PW/1rZoPtW3fEp0hBGgPWzdZUkQMoGq
+        u/LCBBvMDj2aRoPVnLOBYM/CUdzgARU=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-57-939lqvm7Ok-c4iWcY53uQw-1; Tue, 29 Jun 2021 00:42:50 -0400
-X-MC-Unique: 939lqvm7Ok-c4iWcY53uQw-1
+ us-mta-169-3OK_IYV5NfO-1EG9Z0tgDg-1; Tue, 29 Jun 2021 00:42:52 -0400
+X-MC-Unique: 3OK_IYV5NfO-1EG9Z0tgDg-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 33FE7804141;
-        Tue, 29 Jun 2021 04:42:49 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 91350800D55;
+        Tue, 29 Jun 2021 04:42:51 +0000 (UTC)
 Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 54B295D9DC;
-        Tue, 29 Jun 2021 04:42:47 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B21825D9DC;
+        Tue, 29 Jun 2021 04:42:49 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     jlayton@kernel.org
 Cc:     idryomov@gmail.com, pdonnell@redhat.com,
         ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH 1/5] ceph: export ceph_create_session_msg
-Date:   Tue, 29 Jun 2021 12:42:37 +0800
-Message-Id: <20210629044241.30359-2-xiubli@redhat.com>
+Subject: [PATCH 2/5] ceph: export iterate_sessions
+Date:   Tue, 29 Jun 2021 12:42:38 +0800
+Message-Id: <20210629044241.30359-3-xiubli@redhat.com>
 In-Reply-To: <20210629044241.30359-1-xiubli@redhat.com>
 References: <20210629044241.30359-1-xiubli@redhat.com>
 MIME-Version: 1.0
@@ -54,83 +54,137 @@ From: Xiubo Li <xiubli@redhat.com>
 
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/ceph/mds_client.c | 15 ++++++++-------
- fs/ceph/mds_client.h |  1 +
- 2 files changed, 9 insertions(+), 7 deletions(-)
+ fs/ceph/caps.c       | 26 +-----------------------
+ fs/ceph/mds_client.c | 47 +++++++++++++++++++++++++++++---------------
+ fs/ceph/mds_client.h |  3 +++
+ 3 files changed, 35 insertions(+), 41 deletions(-)
 
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index e712826ea3f1..c6a3352a4d52 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -4280,33 +4280,9 @@ static void flush_dirty_session_caps(struct ceph_mds_session *s)
+ 	dout("flush_dirty_caps done\n");
+ }
+ 
+-static void iterate_sessions(struct ceph_mds_client *mdsc,
+-			     void (*cb)(struct ceph_mds_session *))
+-{
+-	int mds;
+-
+-	mutex_lock(&mdsc->mutex);
+-	for (mds = 0; mds < mdsc->max_sessions; ++mds) {
+-		struct ceph_mds_session *s;
+-
+-		if (!mdsc->sessions[mds])
+-			continue;
+-
+-		s = ceph_get_mds_session(mdsc->sessions[mds]);
+-		if (!s)
+-			continue;
+-
+-		mutex_unlock(&mdsc->mutex);
+-		cb(s);
+-		ceph_put_mds_session(s);
+-		mutex_lock(&mdsc->mutex);
+-	}
+-	mutex_unlock(&mdsc->mutex);
+-}
+-
+ void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc)
+ {
+-	iterate_sessions(mdsc, flush_dirty_session_caps);
++	ceph_mdsc_iterate_sessions(mdsc, flush_dirty_session_caps, true);
+ }
+ 
+ void __ceph_touch_fmode(struct ceph_inode_info *ci,
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 2d7dcd295bb9..e49d3e230712 100644
+index e49d3e230712..96bef289f58f 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -1150,7 +1150,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
- /*
-  * session messages
-  */
--static struct ceph_msg *create_session_msg(u32 op, u64 seq)
-+struct ceph_msg *ceph_create_session_msg(u32 op, u64 seq)
+@@ -802,6 +802,33 @@ static void put_request_session(struct ceph_mds_request *req)
+ 	}
+ }
+ 
++void ceph_mdsc_iterate_sessions(struct ceph_mds_client *mdsc,
++			       void (*cb)(struct ceph_mds_session *),
++			       bool check_state)
++{
++	int mds;
++
++	mutex_lock(&mdsc->mutex);
++	for (mds = 0; mds < mdsc->max_sessions; ++mds) {
++		struct ceph_mds_session *s;
++
++		s = __ceph_lookup_mds_session(mdsc, mds);
++		if (!s)
++			continue;
++
++		if (check_state && !check_session_state(s)) {
++			ceph_put_mds_session(s);
++			continue;
++		}
++
++		mutex_unlock(&mdsc->mutex);
++		cb(s);
++		ceph_put_mds_session(s);
++		mutex_lock(&mdsc->mutex);
++	}
++	mutex_unlock(&mdsc->mutex);
++}
++
+ void ceph_mdsc_release_request(struct kref *kref)
  {
- 	struct ceph_msg *msg;
- 	struct ceph_mds_session_head *h;
-@@ -1158,7 +1158,7 @@ static struct ceph_msg *create_session_msg(u32 op, u64 seq)
- 	msg = ceph_msg_new(CEPH_MSG_CLIENT_SESSION, sizeof(*h), GFP_NOFS,
- 			   false);
- 	if (!msg) {
--		pr_err("create_session_msg ENOMEM creating msg\n");
-+		pr_err("ceph_create_session_msg ENOMEM creating msg\n");
- 		return NULL;
- 	}
- 	h = msg->front.iov_base;
-@@ -1289,7 +1289,7 @@ static struct ceph_msg *create_session_open_msg(struct ceph_mds_client *mdsc, u6
- 	msg = ceph_msg_new(CEPH_MSG_CLIENT_SESSION, sizeof(*h) + extra_bytes,
- 			   GFP_NOFS, false);
- 	if (!msg) {
--		pr_err("create_session_msg ENOMEM creating msg\n");
-+		pr_err("ceph_create_session_msg ENOMEM creating msg\n");
- 		return ERR_PTR(-ENOMEM);
- 	}
- 	p = msg->front.iov_base;
-@@ -1801,8 +1801,8 @@ static int send_renew_caps(struct ceph_mds_client *mdsc,
+ 	struct ceph_mds_request *req = container_of(kref,
+@@ -4416,22 +4443,10 @@ void ceph_mdsc_lease_send_msg(struct ceph_mds_session *session,
+ /*
+  * lock unlock sessions, to wait ongoing session activities
+  */
+-static void lock_unlock_sessions(struct ceph_mds_client *mdsc)
++static void lock_unlock_session(struct ceph_mds_session *s)
+ {
+-	int i;
+-
+-	mutex_lock(&mdsc->mutex);
+-	for (i = 0; i < mdsc->max_sessions; i++) {
+-		struct ceph_mds_session *s = __ceph_lookup_mds_session(mdsc, i);
+-		if (!s)
+-			continue;
+-		mutex_unlock(&mdsc->mutex);
+-		mutex_lock(&s->s_mutex);
+-		mutex_unlock(&s->s_mutex);
+-		ceph_put_mds_session(s);
+-		mutex_lock(&mdsc->mutex);
+-	}
+-	mutex_unlock(&mdsc->mutex);
++	mutex_lock(&s->s_mutex);
++	mutex_unlock(&s->s_mutex);
+ }
  
- 	dout("send_renew_caps to mds%d (%s)\n", session->s_mds,
- 		ceph_mds_state_name(state));
--	msg = create_session_msg(CEPH_SESSION_REQUEST_RENEWCAPS,
--				 ++session->s_renew_seq);
-+	msg = ceph_create_session_msg(CEPH_SESSION_REQUEST_RENEWCAPS,
-+				      ++session->s_renew_seq);
- 	if (!msg)
- 		return -ENOMEM;
- 	ceph_con_send(&session->s_con, msg);
-@@ -1816,7 +1816,7 @@ static int send_flushmsg_ack(struct ceph_mds_client *mdsc,
+ static void maybe_recover_session(struct ceph_mds_client *mdsc)
+@@ -4683,7 +4698,7 @@ void ceph_mdsc_pre_umount(struct ceph_mds_client *mdsc)
+ 	dout("pre_umount\n");
+ 	mdsc->stopping = 1;
  
- 	dout("send_flushmsg_ack to mds%d (%s)s seq %lld\n",
- 	     session->s_mds, ceph_session_state_name(session->s_state), seq);
--	msg = create_session_msg(CEPH_SESSION_FLUSHMSG_ACK, seq);
-+	msg = ceph_create_session_msg(CEPH_SESSION_FLUSHMSG_ACK, seq);
- 	if (!msg)
- 		return -ENOMEM;
- 	ceph_con_send(&session->s_con, msg);
-@@ -1868,7 +1868,8 @@ static int request_close_session(struct ceph_mds_session *session)
- 	dout("request_close_session mds%d state %s seq %lld\n",
- 	     session->s_mds, ceph_session_state_name(session->s_state),
- 	     session->s_seq);
--	msg = create_session_msg(CEPH_SESSION_REQUEST_CLOSE, session->s_seq);
-+	msg = ceph_create_session_msg(CEPH_SESSION_REQUEST_CLOSE,
-+				      session->s_seq);
- 	if (!msg)
- 		return -ENOMEM;
- 	ceph_con_send(&session->s_con, msg);
+-	lock_unlock_sessions(mdsc);
++	ceph_mdsc_iterate_sessions(mdsc, lock_unlock_session, false);
+ 	ceph_flush_dirty_caps(mdsc);
+ 	wait_requests(mdsc);
+ 
 diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index bf99c5ba47fc..bf2683f0ba43 100644
+index bf2683f0ba43..fca2cf427eaf 100644
 --- a/fs/ceph/mds_client.h
 +++ b/fs/ceph/mds_client.h
-@@ -523,6 +523,7 @@ static inline void ceph_mdsc_put_request(struct ceph_mds_request *req)
+@@ -523,6 +523,9 @@ static inline void ceph_mdsc_put_request(struct ceph_mds_request *req)
  	kref_put(&req->r_kref, ceph_mdsc_release_request);
  }
  
-+extern struct ceph_msg *ceph_create_session_msg(u32 op, u64 seq);
++extern void ceph_mdsc_iterate_sessions(struct ceph_mds_client *mdsc,
++				       void (*cb)(struct ceph_mds_session *),
++				       bool check_state);
+ extern struct ceph_msg *ceph_create_session_msg(u32 op, u64 seq);
  extern void __ceph_queue_cap_release(struct ceph_mds_session *session,
  				    struct ceph_cap *cap);
- extern void ceph_flush_cap_releases(struct ceph_mds_client *mdsc,
 -- 
 2.27.0
 
