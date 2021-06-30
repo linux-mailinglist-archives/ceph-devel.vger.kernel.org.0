@@ -2,55 +2,54 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B27B3B81E7
-	for <lists+ceph-devel@lfdr.de>; Wed, 30 Jun 2021 14:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B32D3B8249
+	for <lists+ceph-devel@lfdr.de>; Wed, 30 Jun 2021 14:40:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234480AbhF3MUO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 30 Jun 2021 08:20:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53364 "EHLO
+        id S234576AbhF3Mmj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 30 Jun 2021 08:42:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234376AbhF3MUN (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Jun 2021 08:20:13 -0400
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 098B6C061756
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Jun 2021 05:17:44 -0700 (PDT)
-Received: by mail-io1-xd2a.google.com with SMTP id i189so2839628ioa.8
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Jun 2021 05:17:44 -0700 (PDT)
+        with ESMTP id S234455AbhF3Mmi (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Jun 2021 08:42:38 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E95DC061756
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Jun 2021 05:40:10 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id g3so979748iok.12
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Jun 2021 05:40:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+yvqm68fyG+6suj7FOrJ1uvpogiC6djqngWqL6m8Wyw=;
-        b=ZBM0Et6xtKW5IfD6/NzakyX2MRg3Ou7LC4fzmfLMFbhfHiqkW6PRqe3aoJCWDlB8eV
-         rYp6NVfMtySfGMNXFlgHJeaTvselVtQ5olUE0havgzo9F351bPpnr6mhi3K6VF7LzeJJ
-         H/pX2BdkY2UXglxbqlOKDYfo470mE/aKRgp3z+1tUiI/enud7uRjOfDd+wERiNDuBiWE
-         71M1MfbGrQpG65VF9JPApaWDwBMV2ab34q5iEv94Klrfcmjf2IQEDnIxnBf0Mpvaeouk
-         QErEj5jWEpYVj9CezFn3wn7JgqosWZaj8L3gd6D89b1hI82lfO/6PcEgR+yjWTnUR+Ta
-         wAjQ==
+        bh=eFmN3KPPi61wNtsxTcgr9m9VT0JP/Ttm0BK2BzfbskE=;
+        b=Pzo0+yq14AfdIHtPm3wuM1Orb0rV69rmbrYya8duAH83d79K25XVOYRdxr0TCs65+V
+         m+KqJi/l4WBP2DJb0qvRyVFTiuvwGNMTJhoR2R4QIL5JvlUf+fuqx3f3gojvOulqO9a6
+         ww/bflvL4Kxds/zjbqIzVphm6gCp/jAVe7Lw4amMcZdcMFJjK18fDPr6pXkeQL7mBIWY
+         9tT8IlvH/C+dkpVG63sRYocLgqzikb0EGMCXizJULaWzOWfILJbMMmzEwIownpJkH66+
+         liSmGXFp1VJDFTfwtvQ78YpLuQrhjVhzpZBWnLLbP6XIsGWVSkDZyK617QKXyAfbVa09
+         TUgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+yvqm68fyG+6suj7FOrJ1uvpogiC6djqngWqL6m8Wyw=;
-        b=G7uoq7rpWq3fGB0pwCVSbPmm9ze6dPlqbzfQa7PQX9Hjs+sDpPpIJ/MAV9pRFo0l9W
-         7oeOcCsCh+yF9QNTrXHE5SAvn/5g4vlaeJXQ1MIwYV38G8TxgJkXzr06gJ6JKq+wyM6G
-         3KCnYFPqFauznwVRMkbPUKZA/reJAuV1jrUX6/vkGDEts4pnAjec4tsf/qPONIR2+vtu
-         GBMwNUJeAAA/qEMbLke7+5EjWQrmJ0j/65KnLhcznxpH0lOyRGVw2PyOrpfJyic5vGTj
-         yhPlDFpDlQCQvFqfDD4INE+F/FUlJ+zlLJWLI2hUsH5K3Zet6bH3zB2oX2JG+JqKdFul
-         K96w==
-X-Gm-Message-State: AOAM5332feDJown08+OCte4BYrJWxZ5wDOv0TwpdW0BzBUqyH0joEMqk
-        BWDtsPBxG3hwF1Ry2XEKgLvHlxzd8LLCjvwOuHE=
-X-Google-Smtp-Source: ABdhPJxO1KR0lTte76DU5Om3DzikjGPAZsdXFscS8YH5Hnq49R8kw1SnehiTnirp9/ZLa9Mw348zweZv3BMcmJ/V5wk=
-X-Received: by 2002:a02:cb0f:: with SMTP id j15mr1047883jap.11.1625055463493;
- Wed, 30 Jun 2021 05:17:43 -0700 (PDT)
+        bh=eFmN3KPPi61wNtsxTcgr9m9VT0JP/Ttm0BK2BzfbskE=;
+        b=BHQAuL0wazE7MRqsW9ovTMWGh1PTu9N4brTey6xESgiiFqhnh4JEhBLWOnF32pgOM7
+         OJ5yeEllPIM2Cd79dQPyfPi0HqtkMidlroacRhd2+ySBghX2ykLMvOr6gmG+SeZzHxs/
+         t1a69s63xwoNJtD+TstWHS1PL29Qe9EViy7nqQBneZuPWsvXK/O2nTWgoS99/JdrdVKD
+         POn4Hz2obMeoCiErSgmlm0+G894YU+sGj20n5fuRAx8Q5xU1zPSIaFHjeTjpxJZDCt6I
+         Ol2wDweohaJsv10QgA/Rctb4eYVvedWuUG0nR1sL8Z2MEUulY7BVG2qYHgFEoXNr8qGT
+         an5g==
+X-Gm-Message-State: AOAM531BA1L3cp7HSUMSt8Rvt9ai5aeW4eCc7jb3IxaLYgkLr8LRTI+I
+        4cLwDnNFE25/bfucij4Uh7DoBamqiVkh5XyRj4k=
+X-Google-Smtp-Source: ABdhPJzowbZ2F/LIgD106Ak13sRq3MxULftIOlnTjfUUsAcqOYh9G5gZfn1GKw8J8MoF7YlPjQ5MqZWTzZeJDS0zLTM=
+X-Received: by 2002:a5e:8d13:: with SMTP id m19mr7820484ioj.167.1625056809691;
+ Wed, 30 Jun 2021 05:40:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210629044241.30359-1-xiubli@redhat.com> <20210629044241.30359-2-xiubli@redhat.com>
- <88c1bdbf8235b35671a84f0b0d5feca855017940.camel@kernel.org> <8cc0a19a-2c67-f807-5085-46455727e8ab@redhat.com>
-In-Reply-To: <8cc0a19a-2c67-f807-5085-46455727e8ab@redhat.com>
+References: <20210629044241.30359-1-xiubli@redhat.com> <20210629044241.30359-4-xiubli@redhat.com>
+In-Reply-To: <20210629044241.30359-4-xiubli@redhat.com>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 30 Jun 2021 14:17:23 +0200
-Message-ID: <CAOi1vP-+K1OVA5_Fq6pdC1z0Pp4jLfGB_P+AOzJO9i7oL2uvcg@mail.gmail.com>
-Subject: Re: [PATCH 1/5] ceph: export ceph_create_session_msg
+Date:   Wed, 30 Jun 2021 14:39:50 +0200
+Message-ID: <CAOi1vP-g4rChLzvpqr2cPrbe0sRLQwbUxOKPcdaSRcHUpcboUA@mail.gmail.com>
+Subject: Re: [PATCH 3/5] ceph: flush mdlog before umounting
 To:     Xiubo Li <xiubli@redhat.com>
 Cc:     Jeff Layton <jlayton@kernel.org>,
         Patrick Donnelly <pdonnell@redhat.com>,
@@ -60,54 +59,100 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jun 29, 2021 at 3:27 PM Xiubo Li <xiubli@redhat.com> wrote:
+On Tue, Jun 29, 2021 at 6:42 AM <xiubli@redhat.com> wrote:
 >
+> From: Xiubo Li <xiubli@redhat.com>
 >
-> On 6/29/21 9:12 PM, Jeff Layton wrote:
-> > On Tue, 2021-06-29 at 12:42 +0800, xiubli@redhat.com wrote:
-> >> From: Xiubo Li <xiubli@redhat.com>
-> >>
-> > nit: the subject of this patch is not quite right. You aren't exporting
-> > it here, just making it a global symbol (within ceph.ko).
-> >
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/mds_client.c         | 29 +++++++++++++++++++++++++++++
+>  fs/ceph/mds_client.h         |  1 +
+>  include/linux/ceph/ceph_fs.h |  1 +
+>  3 files changed, 31 insertions(+)
 >
-> Yeah, will fix it.
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 96bef289f58f..2db87a5c68d4 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -4689,6 +4689,34 @@ static void wait_requests(struct ceph_mds_client *mdsc)
+>         dout("wait_requests done\n");
+>  }
 >
->
-> >> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> >> ---
-> >>   fs/ceph/mds_client.c | 15 ++++++++-------
-> >>   fs/ceph/mds_client.h |  1 +
-> >>   2 files changed, 9 insertions(+), 7 deletions(-)
-> >>
-> >> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> >> index 2d7dcd295bb9..e49d3e230712 100644
-> >> --- a/fs/ceph/mds_client.c
-> >> +++ b/fs/ceph/mds_client.c
-> >> @@ -1150,7 +1150,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
-> >>   /*
-> >>    * session messages
-> >>    */
-> >> -static struct ceph_msg *create_session_msg(u32 op, u64 seq)
-> >> +struct ceph_msg *ceph_create_session_msg(u32 op, u64 seq)
-> >>   {
-> >>      struct ceph_msg *msg;
-> >>      struct ceph_mds_session_head *h;
-> >> @@ -1158,7 +1158,7 @@ static struct ceph_msg *create_session_msg(u32 op, u64 seq)
-> >>      msg = ceph_msg_new(CEPH_MSG_CLIENT_SESSION, sizeof(*h), GFP_NOFS,
-> >>                         false);
-> >>      if (!msg) {
-> >> -            pr_err("create_session_msg ENOMEM creating msg\n");
-> >> +            pr_err("ceph_create_session_msg ENOMEM creating msg\n");
-> > instead of hardcoding the function names in these error messages, use
-> > __func__ instead? That makes it easier to keep up with code changes.
-> >
-> >       pr_err("%s ENOMEM creating msg\n", __func__);
->
-> Sure, will fix this too.
+> +static void send_flush_mdlog(struct ceph_mds_session *s)
+> +{
+> +       u64 seq = s->s_seq;
+> +       struct ceph_msg *msg;
+> +
+> +       /*
+> +        * For the MDS daemons lower than Luminous will crash when it
+> +        * saw this unknown session request.
 
-I think this can be just "ENOMEM creating session msg" without the
-function name to avoid repetition.
+"Pre-luminous MDS crashes when it sees an unknown session request"
+
+> +        */
+> +       if (!CEPH_HAVE_FEATURE(s->s_con.peer_features, SERVER_LUMINOUS))
+> +               return;
+> +
+> +       dout("send_flush_mdlog to mds%d (%s)s seq %lld\n",
+
+Should (%s)s be just (%s)?
+
+> +            s->s_mds, ceph_session_state_name(s->s_state), seq);
+> +       msg = ceph_create_session_msg(CEPH_SESSION_REQUEST_FLUSH_MDLOG, seq);
+> +       if (!msg) {
+> +               pr_err("failed to send_flush_mdlog to mds%d (%s)s seq %lld\n",
+
+Same here and let's avoid function names in error messages.  Something
+like "failed to request mdlog flush ...".
+
+> +                      s->s_mds, ceph_session_state_name(s->s_state), seq);
+> +       } else {
+> +               ceph_con_send(&s->s_con, msg);
+> +       }
+> +}
+> +
+> +void flush_mdlog(struct ceph_mds_client *mdsc)
+> +{
+> +       ceph_mdsc_iterate_sessions(mdsc, send_flush_mdlog, true);
+> +}
+
+Is this wrapper really needed?
+
+> +
+>  /*
+>   * called before mount is ro, and before dentries are torn down.
+>   * (hmm, does this still race with new lookups?)
+> @@ -4698,6 +4726,7 @@ void ceph_mdsc_pre_umount(struct ceph_mds_client *mdsc)
+>         dout("pre_umount\n");
+>         mdsc->stopping = 1;
+>
+> +       flush_mdlog(mdsc);
+>         ceph_mdsc_iterate_sessions(mdsc, lock_unlock_session, false);
+>         ceph_flush_dirty_caps(mdsc);
+>         wait_requests(mdsc);
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index fca2cf427eaf..79d5b8ed62bf 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -537,6 +537,7 @@ extern int ceph_iterate_session_caps(struct ceph_mds_session *session,
+>                                      int (*cb)(struct inode *,
+>                                                struct ceph_cap *, void *),
+>                                      void *arg);
+> +extern void flush_mdlog(struct ceph_mds_client *mdsc);
+>  extern void ceph_mdsc_pre_umount(struct ceph_mds_client *mdsc);
+>
+>  static inline void ceph_mdsc_free_path(char *path, int len)
+> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+> index 57e5bd63fb7a..ae60696fe40b 100644
+> --- a/include/linux/ceph/ceph_fs.h
+> +++ b/include/linux/ceph/ceph_fs.h
+> @@ -300,6 +300,7 @@ enum {
+>         CEPH_SESSION_FLUSHMSG_ACK,
+>         CEPH_SESSION_FORCE_RO,
+>         CEPH_SESSION_REJECT,
+> +       CEPH_SESSION_REQUEST_FLUSH_MDLOG,
+
+Need to update ceph_session_op_name().
 
 Thanks,
 
