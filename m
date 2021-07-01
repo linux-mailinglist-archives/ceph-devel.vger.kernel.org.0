@@ -2,56 +2,56 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BECCF3B8BA0
-	for <lists+ceph-devel@lfdr.de>; Thu,  1 Jul 2021 03:08:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4325B3B8BA1
+	for <lists+ceph-devel@lfdr.de>; Thu,  1 Jul 2021 03:08:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238317AbhGABKb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 30 Jun 2021 21:10:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25683 "EHLO
+        id S238319AbhGABKq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 30 Jun 2021 21:10:46 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:53849 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238272AbhGABKb (ORCPT
+        by vger.kernel.org with ESMTP id S238272AbhGABKq (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 30 Jun 2021 21:10:31 -0400
+        Wed, 30 Jun 2021 21:10:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625101681;
+        s=mimecast20190719; t=1625101696;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=GhDq4W3xBYwLCUrRP/e7VdBX2omO45apxjZQs3CPmaI=;
-        b=iQGAOtDo8QcYeEB/PxCbGq2qa2SKPucFF5bsNf5imq94eXb97g9coDyZ5HMLvpvALOJYg+
-        FTfXMnYQdAWA0taHPW1fJedlVDaqqyzJ7HITUG5aHGmnOQ7hJirOxzqUplKAWhztT9+4eB
-        7y5s6IFp8Zm1mRoSj93m/B3ke7y1Y6U=
+        bh=o8nyIzE59uwZ72yBOgqKhlf1eCeuO20s7MEI992jZWI=;
+        b=BPWpcEhIzoUOTpKPoUhUMTtEneATV6OKlTldEE5P0p0IvXqdx/Nu7Nwgmpr/ZOVdgS5rIV
+        HpJf+iK7aeS2VteFDW8el8u11RC/kgnx1Rwy26q6/R0SilA0fc5Sdp1nfFRgSO1SCmVwUW
+        J1/eIE3SIXGYkGPvUX54SsVFPKVPgcw=
 Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
  [209.85.215.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-567-G8is-BNKOwSfFJf-XSiLRQ-1; Wed, 30 Jun 2021 21:08:00 -0400
-X-MC-Unique: G8is-BNKOwSfFJf-XSiLRQ-1
-Received: by mail-pg1-f198.google.com with SMTP id k14-20020a63d84e0000b029022216b0ebf2so2898702pgj.15
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Jun 2021 18:07:59 -0700 (PDT)
+ us-mta-344-9kFu-m8qMVu10l04pGiMRQ-1; Wed, 30 Jun 2021 21:08:14 -0400
+X-MC-Unique: 9kFu-m8qMVu10l04pGiMRQ-1
+Received: by mail-pg1-f198.google.com with SMTP id j17-20020a63cf110000b0290226eb0c27acso2907650pgg.23
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Jun 2021 18:08:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=GhDq4W3xBYwLCUrRP/e7VdBX2omO45apxjZQs3CPmaI=;
-        b=Eyk723x4kM+oisYTdtmFowl8PybSxFqVzxeu8kQADS+VBZklTIyNYpRxixMnGDmuDG
-         MvVTijvFDqEw+vGptWjTcjws4hHDA1eOT6AduAxmjUDzFkIiH6X+gN2fAK2cmcKdw4nX
-         f+rkjWK5uX4SRpuV4FTjl4nNYMJeCAZ0/h2B/pdor7DqKXFb/t7Bla+gmDQ4ihix23pI
-         ekyoCqjRECGCjCucxx8NkyMVCKLzLhc5m/H2Owi402xJC60+zBPmUdxj0EMBu6M0rQ9B
-         jWVy0UBxVUnmFNqvlst6XfqGEMHMSCJi/+ZA/AfMZPQAJy10iuQ8PcEXZS/4COjeW4l6
-         LLqQ==
-X-Gm-Message-State: AOAM531QPcJY8arWo9uqTPfbtmUWVsHKBeHfqwDnKr74t9e3W3CZYSX+
-        Q6CMezY0SSSKX8vn66HPjhUqJTp80TA0QaIA/x6sB79rH81hdqxF6secTS9x/+TUcXSUKNCVclR
-        pQ61NbJc/duJTPXW/LFCl3OHrJteTCzQqTeUn9kYI3qdj1rIqsOPsk6Y/AksmgCON1UrGRmU=
-X-Received: by 2002:a17:90a:9511:: with SMTP id t17mr43004822pjo.108.1625101678830;
-        Wed, 30 Jun 2021 18:07:58 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwc3Dd5COE8ku2jWbSrU57Nxqn2oH3+PV6lT2brGv+ILvKmDlnEugiyyHGcRUkeOkDyg5h8hw==
-X-Received: by 2002:a17:90a:9511:: with SMTP id t17mr43004782pjo.108.1625101678410;
-        Wed, 30 Jun 2021 18:07:58 -0700 (PDT)
+        bh=o8nyIzE59uwZ72yBOgqKhlf1eCeuO20s7MEI992jZWI=;
+        b=dyIzvV8383apg9sfH+APUPhyUtsWjdYwjGY6CiCUKxniljWTKGJ4SM3Meq6kqVtrtn
+         OKG9eJsiEsEskgq9yzmM4gykhy+sYCTW1QEEZFgY4Bgt8IhjmNYgnLLb/JQwVJgLtpzo
+         2t+mM69O2HEbgJgHoT6vlj2BU5HWTHj9gsPkxHs38NyAFKzQKc3Wmf1Ak/G9pQOTJh1l
+         pAB+yxKaIYCpm1lVs/oUmc1HFgCdRxAWUX5lUMvin/736v6jCjdZF4fzczK4Kvbn4w+C
+         PRe7xdkYrra+hEOps5FNwjExUvphKT5+jAYRub/pFyA5cioc9SLqGBQDdPSLfD+yYT1Y
+         r5qA==
+X-Gm-Message-State: AOAM530CDORjMjnM3ddOtjchWwvkSRjWiSRKtxj4CRdaNFWJ0JJXa2kZ
+        ueBks3iVLkqHaLzwDPsqHwj9QFOnzpw6eeykmtaEzq5DBnsHVmdoii2YOA5CoO986YSmut2c0li
+        4NnTsJGGcgS/txJDEllS7cpXFqk2dWobvgjl97bxFtjAWMVOTq0B03AxzH2AQHJF/QxCsGWM=
+X-Received: by 2002:a17:90a:ac02:: with SMTP id o2mr27966157pjq.142.1625101692890;
+        Wed, 30 Jun 2021 18:08:12 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzomq+hkFMpld+wEcrhGmc1XNBnEegQFciZgbxA4Q1JtE5h8yfkV4VzLjc0yyVxcZywBhqyKQ==
+X-Received: by 2002:a17:90a:ac02:: with SMTP id o2mr27966136pjq.142.1625101692621;
+        Wed, 30 Jun 2021 18:08:12 -0700 (PDT)
 Received: from [10.72.12.103] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id y13sm23420341pgp.16.2021.06.30.18.07.55
+        by smtp.gmail.com with ESMTPSA id c62sm23457975pfa.12.2021.06.30.18.08.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jun 2021 18:07:57 -0700 (PDT)
+        Wed, 30 Jun 2021 18:08:12 -0700 (PDT)
 Subject: Re: [PATCH 5/5] ceph: fix ceph feature bits
 To:     Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>
 Cc:     Patrick Donnelly <pdonnell@redhat.com>,
@@ -63,8 +63,8 @@ References: <20210629044241.30359-1-xiubli@redhat.com>
  <7d4b7f733b07efff86caa69e290104e5855ba074.camel@kernel.org>
  <CAOi1vP_CR96Nw6J-JTiL7z_zaAXCeYp-hvoqAYb80Av4P1Jhqg@mail.gmail.com>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <55faeb01-3ba6-9c11-cfdc-36e134ac6bb0@redhat.com>
-Date:   Thu, 1 Jul 2021 09:07:52 +0800
+Message-ID: <41cd8797-e8d6-7b68-dea9-a388877659ee@redhat.com>
+Date:   Thu, 1 Jul 2021 09:08:07 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
@@ -130,8 +130,8 @@ On 6/30/21 8:52 PM, Ilya Dryomov wrote:
 >> CEPHFS_FEATURE_NAUTILUS or CEPHFS_FEATURE_OCTOPUS symbols, it's probably
 >> best not to define them at all.
 
-Without add this two symbols, we could just correct the number of them, 
-make sense ?
+Without adding this two symbols, we could just correct the number of 
+them, make sense ?
 
 
 > Not only that but this patch as is would break CEPHFS_FEATURE_DELEG_INO
