@@ -2,115 +2,155 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95C763B8CA0
-	for <lists+ceph-devel@lfdr.de>; Thu,  1 Jul 2021 05:28:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7E363B8CAB
+	for <lists+ceph-devel@lfdr.de>; Thu,  1 Jul 2021 05:35:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232364AbhGADaz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 30 Jun 2021 23:30:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:41087 "EHLO
+        id S232364AbhGADhz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 30 Jun 2021 23:37:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:30816 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229622AbhGADay (ORCPT
+        by vger.kernel.org with ESMTP id S229622AbhGADhy (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 30 Jun 2021 23:30:54 -0400
+        Wed, 30 Jun 2021 23:37:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625110104;
+        s=mimecast20190719; t=1625110524;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PuKgCM+h4SWS2pQQ5C4dYMgzE51APG2Nr5dRJMd4FkE=;
-        b=aeoNSYZgIawlsfcwE1YEh9nbIWCQ5sXU7YwHGWNG6KA6X/Upp1Rprd4UM2kN53VCfCqtXk
-        FWT7MqngoIIvb0IJW2L8bGylQH7FRlrj/UJMSTb6wTCUuA4LftLoZhhPEcTlX4hAKAq3AQ
-        WYHibKWuCSrffIrnmeSMWkMhi/wUdbI=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-329-fvgW25KMPDiLWHqNCQ6N3Q-1; Wed, 30 Jun 2021 23:28:22 -0400
-X-MC-Unique: fvgW25KMPDiLWHqNCQ6N3Q-1
-Received: by mail-io1-f69.google.com with SMTP id z11-20020a05660229cbb029043af67da217so3410124ioq.3
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Jun 2021 20:28:22 -0700 (PDT)
+        bh=/Pnh5lzttKOwORyKAMVtJiVX6k61qy2T0qhsSw5H4PI=;
+        b=GlUAWoW/kzHACAaQtCha18OIyPZBwdbUJ6iz5Vc3TVWlicGztOkphx9EzBIozyPOOuG78E
+        LhhcK6845ADL1Xi6PO9Gpc2iJ/eX8FYc3TMtdooKhW66fLxzAfBRFDr4ezK8GU6KlXKEY1
+        Nh0yE84SwrhVYhNsKxgEJmDyYKYtGz4=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-319-ltyfcX3IOEefyBkyQuTNXg-1; Wed, 30 Jun 2021 23:35:22 -0400
+X-MC-Unique: ltyfcX3IOEefyBkyQuTNXg-1
+Received: by mail-pl1-f198.google.com with SMTP id d1-20020a1709027281b0290112c70b86f1so2037788pll.12
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Jun 2021 20:35:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PuKgCM+h4SWS2pQQ5C4dYMgzE51APG2Nr5dRJMd4FkE=;
-        b=f5f/cbHPuh0DplVa22A0+1YnAnmXSgI7rmKIJ8bZUcCPRjKHIf/RM3L7SAIQFSUo0C
-         WEwyxhyVfik42lDib00pjptUmqv9Ow3OHKp1+q1D7ymGAga1Mf2g6Q6iNh3bh3FTlxAt
-         rq/5dtZ5gQ92PRMi2xw128L4b65lIFgRw2jjc30mOKaIywQPxh+tVQ/2RgAZED+9s+Tq
-         Ll9ttb09Cr11My0hjuzd/FwlyKMgbISXJyjk1lh1gbvovTfWamYwOMzSMDg0wS4FrDn/
-         /xcslZ7AXo+adIvMkE7Ypbl0a/vsGG7OAIyIbdU6zp99w88ZNRtITz5JtRO07Da7IXHG
-         1pvg==
-X-Gm-Message-State: AOAM532q68YSi9bBAneP8aSxMSGf8OXs7ha2Go7cdxTXyh972RjPPk4C
-        3H/lrAJDPaOHn8emMEnaYYuzMm8LQghN3amanC54aua9YGCWicu1w6FbOdveXSHho7A2Rveo6iR
-        Oh58mG1WPcueN+FNXnefyd7U7yQhcmc4J1hDQYw==
-X-Received: by 2002:a92:cd41:: with SMTP id v1mr29338951ilq.180.1625110102090;
-        Wed, 30 Jun 2021 20:28:22 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyQaUjAuDJ8Z3JuVUZDEd4HB9JBg/HPU3doHEMMuvecNFlvM04GW+7L+pJ5Na2i5wxf/8zYNFTm7u+M2CsJlcI=
-X-Received: by 2002:a92:cd41:: with SMTP id v1mr29338944ilq.180.1625110101945;
- Wed, 30 Jun 2021 20:28:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210629044241.30359-1-xiubli@redhat.com> <20210629044241.30359-5-xiubli@redhat.com>
- <b531585184df099e633a4b92e3be23b4b8384253.camel@kernel.org>
- <4f2f6de6-eb1f-1527-de73-2378f262228b@redhat.com> <2e8aabad80e166d7c628fde9d820fc5f403e034f.camel@kernel.org>
- <379d5257-f182-c455-9675-b199aeb8ce1b@redhat.com>
-In-Reply-To: <379d5257-f182-c455-9675-b199aeb8ce1b@redhat.com>
-From:   Patrick Donnelly <pdonnell@redhat.com>
-Date:   Wed, 30 Jun 2021 20:27:55 -0700
-Message-ID: <CA+2bHPZNQU9wZr2W3FjW453KKFVi4q+LwVyicTPQ7kihhoQpQg@mail.gmail.com>
-Subject: Re: [PATCH 4/5] ceph: flush the mdlog before waiting on unsafe reqs
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=/Pnh5lzttKOwORyKAMVtJiVX6k61qy2T0qhsSw5H4PI=;
+        b=W+OUWZEfxyMydMrgL+mFuWpA9xuBkMqQcjzJlxFdkEIundmnMf+2qTQfs/D1L8PbEj
+         W1dzpWqyWR+gYZCNEf1RcCPHhzZvoXDJZxARzlRsZLb82rNa62Vx7upjXdICslOJA0Iu
+         O/ME5dBSCcuPSbxs6Li+p1pHLpEnukpefi0M4k6TdqhpCttSrcqEwxEL9IsoQePCPLB+
+         CwJvS7xDVB0sS0t2SuHmVUt6nLrdoh4Hb7Y5b5a+znktEGfaJf2zey8vQEkAVNzylCsj
+         6MDBefGuEOvu3E9g9rpDnRI+LQ7SljG+l3ZXFTcUmxaMk2SxEWDksKfW4ExNtTVjnAd1
+         qxzg==
+X-Gm-Message-State: AOAM5330stxxxAY5e81xT7/yaAf+NZpN5dK5XZ4JuLGu9/kWMrrQEi5Y
+        O/U7NqhpPYkU8o4yw9Wnhb9/6fJKmzw3BEg64Ys+P0II15WT377s/8tCVn7s+1K2gBy/wd+aByc
+        ho/GwuhBI40u9cHG7+P4NEsRJiUlYiqfBgTsR8wRtDWA9mvrxSzlZ3ab9YvfPGoR/HKZxkCw=
+X-Received: by 2002:a17:902:7c05:b029:11c:1e7d:c633 with SMTP id x5-20020a1709027c05b029011c1e7dc633mr34931979pll.48.1625110521768;
+        Wed, 30 Jun 2021 20:35:21 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJz5BDKw6Aa5MGBZAAAZvOglKQJQAy+ectPYNYx7/DvxNeX0UMk6uNjQYiIneKJvUKBychvg7g==
+X-Received: by 2002:a17:902:7c05:b029:11c:1e7d:c633 with SMTP id x5-20020a1709027c05b029011c1e7dc633mr34931959pll.48.1625110521410;
+        Wed, 30 Jun 2021 20:35:21 -0700 (PDT)
+Received: from [10.72.12.103] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id e29sm11673406pfm.0.2021.06.30.20.35.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jun 2021 20:35:20 -0700 (PDT)
+Subject: Re: [PATCH 5/5] ceph: fix ceph feature bits
+To:     Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>
+Cc:     Patrick Donnelly <pdonnell@redhat.com>,
         Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20210629044241.30359-1-xiubli@redhat.com>
+ <20210629044241.30359-6-xiubli@redhat.com>
+ <d98d4f50cdad747313e6d9a8a42691962fdcd0ae.camel@kernel.org>
+ <d91f6786-24fd-e3a9-4fe8-d55821382940@redhat.com>
+ <7d4b7f733b07efff86caa69e290104e5855ba074.camel@kernel.org>
+ <CAOi1vP_CR96Nw6J-JTiL7z_zaAXCeYp-hvoqAYb80Av4P1Jhqg@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <daa76448-8406-12c8-a95c-da3153a939a4@redhat.com>
+Date:   Thu, 1 Jul 2021 11:35:08 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
+MIME-Version: 1.0
+In-Reply-To: <CAOi1vP_CR96Nw6J-JTiL7z_zaAXCeYp-hvoqAYb80Av4P1Jhqg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Xiubo,
 
-On Wed, Jun 30, 2021 at 6:16 PM Xiubo Li <xiubli@redhat.com> wrote:
-> >> Normally the mdlog submit thread will be triggered per MDS's tick,
-> >> that's 5 seconds. But this is not always true mostly because any other
-> >> client request could trigger the mdlog submit thread to run at any time.
-> >> Since the fsync is not running all the time, so IMO the performance
-> >> impact should be okay.
-> >>
-> >>
-> > I'm not sure I'm convinced.
-> >
-> > Consider a situation where we have a large(ish) ceph cluster with
-> > several MDSs. One client is writing to a file that is on mds.0 and there
-> > is little other activity there. Several other clients are doing heavy
-> > I/O on other inodes (of which mds.1 is auth).
-> >
-> > The first client then calls fsync, and now the other clients stall for a
-> > bit while mds.1 unnecessarily flushes its mdlog. I think we need to take
-> > care to only flush the mdlog for mds's that we care about here.
+On 6/30/21 8:52 PM, Ilya Dryomov wrote:
+> On Wed, Jun 30, 2021 at 2:05 PM Jeff Layton <jlayton@kernel.org> wrote:
+>> On Wed, 2021-06-30 at 08:52 +0800, Xiubo Li wrote:
+>>> On 6/29/21 11:38 PM, Jeff Layton wrote:
+>>>> On Tue, 2021-06-29 at 12:42 +0800, xiubli@redhat.com wrote:
+>>>>> From: Xiubo Li <xiubli@redhat.com>
+>>>>>
+>>>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>>>>> ---
+>>>>>    fs/ceph/mds_client.h | 4 ++++
+>>>>>    1 file changed, 4 insertions(+)
+>>>>>
+>>>>> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+>>>>> index 79d5b8ed62bf..b18eded84ede 100644
+>>>>> --- a/fs/ceph/mds_client.h
+>>>>> +++ b/fs/ceph/mds_client.h
+>>>>> @@ -27,7 +27,9 @@ enum ceph_feature_type {
+>>>>>            CEPHFS_FEATURE_RECLAIM_CLIENT,
+>>>>>            CEPHFS_FEATURE_LAZY_CAP_WANTED,
+>>>>>            CEPHFS_FEATURE_MULTI_RECONNECT,
+>>>>> + CEPHFS_FEATURE_NAUTILUS,
+>>>>>            CEPHFS_FEATURE_DELEG_INO,
+>>>>> + CEPHFS_FEATURE_OCTOPUS,
+>>>>>            CEPHFS_FEATURE_METRIC_COLLECT,
+>>>>>
+>>>>>            CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_METRIC_COLLECT,
+>>>>> @@ -43,7 +45,9 @@ enum ceph_feature_type {
+>>>>>            CEPHFS_FEATURE_REPLY_ENCODING,          \
+>>>>>            CEPHFS_FEATURE_LAZY_CAP_WANTED,         \
+>>>>>            CEPHFS_FEATURE_MULTI_RECONNECT,         \
+>>>>> + CEPHFS_FEATURE_NAUTILUS,                \
+>>>>>            CEPHFS_FEATURE_DELEG_INO,               \
+>>>>> + CEPHFS_FEATURE_OCTOPUS,                 \
+>>>>>            CEPHFS_FEATURE_METRIC_COLLECT,          \
+>>>>>                                                    \
+>>>>>            CEPHFS_FEATURE_MAX,                     \
+>>>> Do we need this? I thought we had decided to deprecate the whole concept
+>>>> of release-based feature flags.
+>>> This was inconsistent with the MDS side, that means if the MDS only
+>>> support CEPHFS_FEATURE_DELEG_INO at most in lower version of ceph
+>>> cluster, then the kclients will try to send the metric messages to
+>>> MDSes, which could crash the MDS daemons.
+>>>
+>>> For the ceph version feature flags they are redundant since we can check
+>>> this from the con's, since pacific the MDS code stopped updating it. I
+>>> assume we should deprecate it since Pacific ?
+>>>
+>> I believe so. Basically the version-based features aren't terribly
+>> useful. Mostly we want to check feature flags for specific features
+>> themselves. Since there are no other occurrences of
+>> CEPHFS_FEATURE_NAUTILUS or CEPHFS_FEATURE_OCTOPUS symbols, it's probably
+>> best not to define them at all.
+> Not only that but this patch as is would break CEPHFS_FEATURE_DELEG_INO
+> and CEPHFS_FEATURE_METRIC_COLLECT checks in the kernel because their bit
+> numbers would change...
+
+Sorry, please ignore this patch.
+
+In the mds side:
+#define CEPHFS_FEATURE_MULTI_RECONNECT  12
+#define CEPHFS_FEATURE_NAUTILUS                 12
+#define CEPHFS_FEATURE_DELEG_INO 13
+#define CEPHFS_FEATURE_OCTOPUS                  13
+#define CEPHFS_FEATURE_METRIC_COLLECT     14
+#define CEPHFS_FEATURE_ALTERNATE_NAME     15
+#define CEPHFS_FEATURE_MAX                          15
+
+So, this fixing makes no sense any more.
+
+BRs
+
+
+> Thanks,
 >
-> Okay, except the above case I mentioned I didn't find any case that
-> could prevent us doing this.
+>                  Ilya
 >
-> Let me test more about it by just flushing the mdlog in auth MDS.
-
-I think Jeff raises a good point. I looked at the history of the
-flush_mdlog session command. It was used to implement syncfs which
-necessarily requires all MDS to flush their journals (at least those
-MDS communicating with the client).
-
-During my testing of the original bug I found that running "stat ."
-prior to fsync caused the hang to go away. This is because the stat
-forced the MDS to flush its log in order to issue new caps to the
-client. I think we need to understand that behavior better: the MDS is
-revoking caps on the client to execute the rename RPC. It is probably
-sufficient to change fsync to getattr appropriate (read/shared) caps
-instead of flush the MDS journal.
-
-Your time on adding flush_mdlog is not wasted; I think a good followup
-patch is to add syncfs support the same way ceph-fuse does.
-
--- 
-Patrick Donnelly, Ph.D.
-He / Him / His
-Principal Software Engineer
-Red Hat Sunnyvale, CA
-GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
 
