@@ -2,59 +2,76 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 814FD3BA2AE
-	for <lists+ceph-devel@lfdr.de>; Fri,  2 Jul 2021 17:15:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F9AC3BA3D2
+	for <lists+ceph-devel@lfdr.de>; Fri,  2 Jul 2021 20:06:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232242AbhGBPSG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 2 Jul 2021 11:18:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232340AbhGBPSF (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 2 Jul 2021 11:18:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7E13861176;
-        Fri,  2 Jul 2021 15:15:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625238933;
-        bh=FG6SuZ/WI0+b6Nhd4/vD9HNwE5kjrwbHVQq+PNMJ01I=;
-        h=From:To:Cc:Subject:Date:From;
-        b=scTjN8RK/YIt+mit44P91yYkzTe6XALKiiPr3alMvUrP/fTL6Mp90IpcAt5KEamaM
-         L9X/5IuHXZAERFYGEKyU7Sl04mqcy1JgfcROrvWiP49EcX96TCxMK8YpsI51MRpeXU
-         OqA1RSci/Cne3nKX6oIx5k823REaNMGCB4639JYhRSSLXV5pfCqwB51TzJUmZhrSsG
-         LB3iwvtm6JjM6MFF8cOdi8tIPoW4s5/3XHlySdX6f5bhL4PCIQqOzwJ5kyJukH1gyB
-         nAdzh6RxN6YxZxTyf1IWDjn+i+fJGaxfZd3U10mbOJnNIl6ULSSxyUHVGDcNtZ7ROo
-         M95k/dsKqQAtQ==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com
-Subject: [PATCH] ceph: fix comment about short copies in ceph_write_end
-Date:   Fri,  2 Jul 2021 11:15:32 -0400
-Message-Id: <20210702151532.94080-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.31.1
+        id S229794AbhGBSIr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 2 Jul 2021 14:08:47 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53219 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229455AbhGBSIr (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 2 Jul 2021 14:08:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625249173;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ooZkD7eTtrGGUaQJ74CSokbPUl7xvYsQW1e5E5FeMnA=;
+        b=hAwDA9wukOxc3tBR4b88jjLqd/oj561j7CyYfHCxxTixNOkdAf+t5fTf2NZALdqCAZwx65
+        kOpivW3Mp0b0LcmvrEvHags9CgU7kdwYF85j3se0F0BQYj3bYYSCYFtTOMaX2ASJW9xdQX
+        9VEjv8QTYVx9LSQWbd5bcbng8dOdoN8=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-497-1VqahMCLPCKBo9bZH3uVzg-1; Fri, 02 Jul 2021 14:06:12 -0400
+X-MC-Unique: 1VqahMCLPCKBo9bZH3uVzg-1
+Received: by mail-io1-f69.google.com with SMTP id z11-20020a05660229cbb029043af67da217so7462256ioq.3
+        for <ceph-devel@vger.kernel.org>; Fri, 02 Jul 2021 11:06:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ooZkD7eTtrGGUaQJ74CSokbPUl7xvYsQW1e5E5FeMnA=;
+        b=lielGjuOscNRJSGNDLjTgMwf837Rw/76Hp/ulZ71AZL5hEmS5vksWRdbACppgVn4Hd
+         Q3muSSVG0IiLf8jQ/1HF4MGlw0zyKg2Sng//TeCM3w4HOOoa2Zw8zge80jua7LjNUOBG
+         og4WE1CzlLsXBSMeVkZTeybSyjYcNarL5sSrtWDAfvAY5aeUvjau7H1iDkmNgjBP9P9A
+         tTQkMOUDKj7iXyu5RYX2YouAjugVoKoPP9vspWs9z6RjQGh0yxBhm2qL01H/4LQe9uG6
+         lXMnSFGBvEka2J/L/FXmRGZUSNAwyTSlsZONNKQJmwulm88NMNY81ky2gYjLmR0wCWDB
+         uDAA==
+X-Gm-Message-State: AOAM530V/lChyspKy3Ef8vjCP13SdGIY+kFx9NNkDzZNxfy4B/PP1zvN
+        l43Te7h3YkfxkpNwh8BwiNkAjh1r+IC5BlWIt7BQYPk9F6MWKk88CPNdlVXwZz7kLJXAYYJnvD1
+        alXiBFH4YMp/m5NKDjGyTeEVRuGwXPIZCuEFhjg==
+X-Received: by 2002:a92:de45:: with SMTP id e5mr808874ilr.157.1625249172221;
+        Fri, 02 Jul 2021 11:06:12 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJx/5vuPXARYpRwd9pT+1ECNWBnMdC9yjp0vRVYME28jk2BPrycFU1RacPaK+IDCU+lzLo039UPPIYTtKlb0wbY=
+X-Received: by 2002:a92:de45:: with SMTP id e5mr808861ilr.157.1625249172057;
+ Fri, 02 Jul 2021 11:06:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210702064821.148063-1-vshankar@redhat.com>
+In-Reply-To: <20210702064821.148063-1-vshankar@redhat.com>
+From:   Patrick Donnelly <pdonnell@redhat.com>
+Date:   Fri, 2 Jul 2021 11:05:46 -0700
+Message-ID: <CA+2bHPbxR94_Bc-C5Ly7HQvwQPsoBr-j+fomGkTcBM5=8aS=0g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] ceph: new mount device syntax
+To:     Venky Shankar <vshankar@redhat.com>
+Cc:     Jeff Layton <jlayton@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>, lhenriques@suse.de,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/addr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Jul 1, 2021 at 11:48 PM Venky Shankar <vshankar@redhat.com> wrote:
+> Also note that the userspace mount helper tool is backward
+> compatible. I.e., the mount helper will fallback to using
+> old syntax after trying to mount with the new syntax.
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index a1e2813731d1..6d3f74d46e5b 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1281,8 +1281,8 @@ static int ceph_write_end(struct file *file, struct address_space *mapping,
- 	dout("write_end file %p inode %p page %p %d~%d (%d)\n", file,
- 	     inode, page, (int)pos, (int)copied, (int)len);
- 
--	/* zero the stale part of the page if we did a short copy */
- 	if (!PageUptodate(page)) {
-+		/* just return that nothing was copied on a short copy */
- 		if (copied < len) {
- 			copied = 0;
- 			goto out;
+The kernel is also backwards compatible too, right?
+
 -- 
-2.31.1
+Patrick Donnelly, Ph.D.
+He / Him / His
+Principal Software Engineer
+Red Hat Sunnyvale, CA
+GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
 
