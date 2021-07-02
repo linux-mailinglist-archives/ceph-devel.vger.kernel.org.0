@@ -2,61 +2,61 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EAD83B9C52
-	for <lists+ceph-devel@lfdr.de>; Fri,  2 Jul 2021 08:48:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B797C3B9C53
+	for <lists+ceph-devel@lfdr.de>; Fri,  2 Jul 2021 08:48:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230061AbhGBGvH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 2 Jul 2021 02:51:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32791 "EHLO
+        id S230087AbhGBGvJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 2 Jul 2021 02:51:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:35178 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230023AbhGBGvH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 2 Jul 2021 02:51:07 -0400
+        by vger.kernel.org with ESMTP id S230064AbhGBGvJ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 2 Jul 2021 02:51:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625208515;
+        s=mimecast20190719; t=1625208517;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=WKNZAU5queF8fQ46T77fEfBottUlScrcMFaauzrSZ/c=;
-        b=NyFa4WgSMzOtEW6LNT2y7zHfudJNXtfy08zVKPmWKR8bHYBVUXmqAFB8LE3ai2Rdpc3D/8
-        Ffx6dgRZ0FTP1d5X8Ur4c/igGr+i0AVKdiECJ3LJSY05rr/MbTtdnu9GPi4zT9J1NxWwQH
-        Pk3uDJHiDk62VEVET6hk/OSRQqaKy9w=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-137-MQ3wxm7jOYiYl5GQsyVszA-1; Fri, 02 Jul 2021 02:48:33 -0400
-X-MC-Unique: MQ3wxm7jOYiYl5GQsyVszA-1
-Received: by mail-pf1-f200.google.com with SMTP id g17-20020a6252110000b029030423e1ef64so5648095pfb.18
-        for <ceph-devel@vger.kernel.org>; Thu, 01 Jul 2021 23:48:33 -0700 (PDT)
+        bh=0pBBfVLTrUAdeKDvmfdX/JCgV0KwE4CE4VePsI1zjs0=;
+        b=h8AFXKHeu9z/FbvnrMDSWX7EcnhbhulVMHmTeJyNJN2aYW1Vh1Dp37wxiLNLqTjfiB6JMT
+        0F8ANQ3Sn/jsRfgL2REvvmrYLRpXz2ztlk0dcZyuJ4iZnIZb90eF5M/np4HQtFgayN8Ib/
+        jChniY1ryKVnYdRi+4DLumRBKIHTks4=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-480-NOSK2IXuN7-sRUnnMGfZnw-1; Fri, 02 Jul 2021 02:48:36 -0400
+X-MC-Unique: NOSK2IXuN7-sRUnnMGfZnw-1
+Received: by mail-pl1-f199.google.com with SMTP id g9-20020a1709029349b0290128bcba6be7so4132785plp.18
+        for <ceph-devel@vger.kernel.org>; Thu, 01 Jul 2021 23:48:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WKNZAU5queF8fQ46T77fEfBottUlScrcMFaauzrSZ/c=;
-        b=P7vBGUsc9dTQvUUPSJRBLf5ZScJ0PKGtZuUh68LZRp1wlIwhuAq0cZHGAgZu4lZKo+
-         8m7NQgOFWm0gmsVBh+IRd9IRbkhF9vzAaxn0u5wJLb8AeWuukoOmfhipaLGHFSIUcm31
-         b08PRJ0H9tf+FQK92FNYjVFs+DxwrGt89ksmzNPgxH+Q6Uh5r6IDoAq4P1qyMcYph5Jl
-         S3LLjw8fyKiPFN62I4dtyjaJn8cnaJkwRJpjTpCAMbjnYd2lqPfTt/dbO8tflcoa4Vlm
-         oaeSj1GZuV2bBf55mHeeHdxdTQy0Fxz9jFaTEY0wBqdqqCGu7U0fzN3iQ2Qq9IbG5p4y
-         mRkQ==
-X-Gm-Message-State: AOAM530cOMM5PZ2O4eWW4uBVxe+BAwCUp1QZKc/m4qkxz6m3bkAPPBnA
-        J25HwIFE1fADBXzNL21+edOaZ1fOb5KFJu2jqLu7pD4Gge416wQ/X3iCl115gRQS5iRntsSds5/
-        dq84RAAPbXVNUVKk5u+2qMw==
-X-Received: by 2002:a17:90a:8407:: with SMTP id j7mr14030598pjn.13.1625208512202;
-        Thu, 01 Jul 2021 23:48:32 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw8BgwFG52D5VVtUy0iBhUuKHQbkH88KzM4YDqw6bi4ZwuIeh6BM+ZkIeOiluNZEQL05fP5VQ==
-X-Received: by 2002:a17:90a:8407:: with SMTP id j7mr14030580pjn.13.1625208511957;
-        Thu, 01 Jul 2021 23:48:31 -0700 (PDT)
+        bh=0pBBfVLTrUAdeKDvmfdX/JCgV0KwE4CE4VePsI1zjs0=;
+        b=W6QO9ftqAtgZSX0lR/c/oAUdVbubGCXN0jT5yIEziiy6LwVFG4oklJGc9MZQY37zJ4
+         UzgufumhfDUvNna6DXyyfvXTpp33/rxOVmWrUE5/CYi6Gr6szM7lj6hkfJWiubRSk4h5
+         BtlGbU8X47ADfzZUeT/iQmPLw4Lq2NwIA85gLGS6yPbooN7c7OY624BUES5Oz+7HmNH2
+         0IDGhQBhl1IEgsXzaxs98qNpQZ1eINuuDPhYzF7pZm6QeCsLs6CdwQLVINfjUddfhAD/
+         P5l7bVqmPcGf0SasiAlpwY/oN3vVfgW6PZycF6wz2cNxr3XCt18GwbpWPOWSGfAfgfwW
+         R2hw==
+X-Gm-Message-State: AOAM532eVkbyrozejEtSP8JUHNqkepjk3L2Gwc+pzCRZphiHoMIURBpO
+        wQWSdv3CGPW/7fTUhZUgnLaVW2uqY4UAKdhzl7j9krxU029dIF1hb9hb94/3c9GLKqzYlCsVFkV
+        OInyPC3rbPLN+CA/cY36/9A==
+X-Received: by 2002:a17:90a:ea8b:: with SMTP id h11mr14228321pjz.122.1625208515109;
+        Thu, 01 Jul 2021 23:48:35 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwEFLoxRDaHfCVkt4BBlaOYTLOaibLMIzpVS1GHrtVBUOdPyn4fkiJb1IBj2EYtewyEVsOyFQ==
+X-Received: by 2002:a17:90a:ea8b:: with SMTP id h11mr14228307pjz.122.1625208514945;
+        Thu, 01 Jul 2021 23:48:34 -0700 (PDT)
 Received: from localhost.localdomain ([49.207.212.118])
-        by smtp.gmail.com with ESMTPSA id o34sm2394364pgm.6.2021.07.01.23.48.29
+        by smtp.gmail.com with ESMTPSA id o34sm2394364pgm.6.2021.07.01.23.48.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jul 2021 23:48:31 -0700 (PDT)
+        Thu, 01 Jul 2021 23:48:34 -0700 (PDT)
 From:   Venky Shankar <vshankar@redhat.com>
 To:     jlayton@redhat.com, idryomov@gmail.com, lhenriques@suse.de
 Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org,
         Venky Shankar <vshankar@redhat.com>
-Subject: [PATCH v2 1/4] ceph: new device mount syntax
-Date:   Fri,  2 Jul 2021 12:18:18 +0530
-Message-Id: <20210702064821.148063-2-vshankar@redhat.com>
+Subject: [PATCH v2 2/4] ceph: validate cluster FSID for new device syntax
+Date:   Fri,  2 Jul 2021 12:18:19 +0530
+Message-Id: <20210702064821.148063-3-vshankar@redhat.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210702064821.148063-1-vshankar@redhat.com>
 References: <20210702064821.148063-1-vshankar@redhat.com>
@@ -66,265 +66,103 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Old mount device syntax (source) has the following problems:
+The new device syntax requires the cluster FSID as part
+of the device string. Use this FSID to verify if it matches
+the cluster FSID we get back from the monitor, failing the
+mount on mismatch.
 
-- mounts to the same cluster but with different fsnames
-  and/or creds have identical device string which can
-  confuse xfstests.
-
-- Userspace mount helper tool resolves monitor addresses
-  and fill in mon addrs automatically, but that means the
-  device shown in /proc/mounts is different than what was
-  used for mounting.
-
-New device syntax is as follows:
-
-  cephuser@fsid.mycephfs2=/path
-
-Note, there is no "monitor address" in the device string.
-That gets passed in as mount option. This keeps the device
-string same when monitor addresses change (on remounts).
-
-Also note that the userspace mount helper tool is backward
-compatible. I.e., the mount helper will fallback to using
-old syntax after trying to mount with the new syntax.
+Also, rename parse_fsid() to ceph_parse_fsid() as it is too
+generic.
 
 Signed-off-by: Venky Shankar <vshankar@redhat.com>
 ---
- fs/ceph/super.c | 122 ++++++++++++++++++++++++++++++++++++++++++++----
- fs/ceph/super.h |   3 ++
- 2 files changed, 115 insertions(+), 10 deletions(-)
+ fs/ceph/super.c              | 9 +++++++++
+ fs/ceph/super.h              | 1 +
+ include/linux/ceph/libceph.h | 1 +
+ net/ceph/ceph_common.c       | 5 +++--
+ 4 files changed, 14 insertions(+), 2 deletions(-)
 
 diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 9b1b7f4cfdd4..0b324e43c9f4 100644
+index 0b324e43c9f4..03e5f4bb2b6f 100644
 --- a/fs/ceph/super.c
 +++ b/fs/ceph/super.c
-@@ -145,6 +145,7 @@ enum {
- 	Opt_mds_namespace,
- 	Opt_recover_session,
- 	Opt_source,
-+	Opt_mon_addr,
- 	/* string args above */
- 	Opt_dirstat,
- 	Opt_rbytes,
-@@ -196,6 +197,7 @@ static const struct fs_parameter_spec ceph_mount_parameters[] = {
- 	fsparam_u32	("rsize",			Opt_rsize),
- 	fsparam_string	("snapdirname",			Opt_snapdirname),
- 	fsparam_string	("source",			Opt_source),
-+	fsparam_string	("mon_addr",			Opt_mon_addr),
- 	fsparam_u32	("wsize",			Opt_wsize),
- 	fsparam_flag_no	("wsync",			Opt_wsync),
- 	{}
-@@ -226,10 +228,70 @@ static void canonicalize_path(char *path)
- 	path[j] = '\0';
- }
+@@ -268,6 +268,9 @@ static int ceph_parse_new_source(const char *dev_name, const char *dev_name_end,
+ 	if (!fs_name_start)
+ 		return invalfc(fc, "missing file system name");
  
-+static int ceph_parse_old_source(const char *dev_name, const char *dev_name_end,
-+				 struct fs_context *fc)
-+{
-+	int r;
-+	struct ceph_parse_opts_ctx *pctx = fc->fs_private;
-+	struct ceph_mount_options *fsopt = pctx->opts;
++	if (ceph_parse_fsid(fsid_start, &fsopt->fsid))
++		return invalfc(fc, "invalid fsid format");
 +
-+	if (*dev_name_end != ':')
-+		return invalfc(fc, "separator ':' missing in source");
-+
-+	r = ceph_parse_mon_ips(dev_name, dev_name_end - dev_name,
-+			       pctx->copts, fc->log.log);
-+	if (r)
-+		return r;
-+
-+	fsopt->new_dev_syntax = false;
-+	return 0;
-+}
-+
-+static int ceph_parse_new_source(const char *dev_name, const char *dev_name_end,
-+				 struct fs_context *fc)
-+{
-+	struct ceph_parse_opts_ctx *pctx = fc->fs_private;
-+	struct ceph_mount_options *fsopt = pctx->opts;
-+	char *fsid_start, *fs_name_start;
-+
-+	if (*dev_name_end != '=') {
-+		dout("separator '=' missing in source");
-+		return -EINVAL;
+ 	++fs_name_start; /* start of file system name */
+ 	fsopt->mds_namespace = kstrndup(fs_name_start,
+ 					dev_name_end - fs_name_start, GFP_KERNEL);
+@@ -750,6 +753,12 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
+ 	}
+ 	opt = NULL; /* fsc->client now owns this */
+ 
++	/* help learn fsid */
++	if (fsopt->new_dev_syntax) {
++		ceph_check_fsid(fsc->client, &fsopt->fsid);
++		fsc->client->have_fsid = true;
 +	}
 +
-+	fsid_start = strchr(dev_name, '@');
-+	if (!fsid_start)
-+		return invalfc(fc, "missing cluster fsid");
-+	++fsid_start; /* start of cluster fsid */
-+
-+	fs_name_start = strchr(fsid_start, '.');
-+	if (!fs_name_start)
-+		return invalfc(fc, "missing file system name");
-+
-+	++fs_name_start; /* start of file system name */
-+	fsopt->mds_namespace = kstrndup(fs_name_start,
-+					dev_name_end - fs_name_start, GFP_KERNEL);
-+	if (!fsopt->mds_namespace)
-+		return -ENOMEM;
-+	dout("file system (mds namespace) '%s'\n", fsopt->mds_namespace);
-+
-+	fsopt->new_dev_syntax = true;
-+	return 0;
-+}
-+
- /*
-- * Parse the source parameter.  Distinguish the server list from the path.
-+ * Parse the source parameter for new device format. Distinguish the device
-+ * spec from the path. Try parsing new device format and fallback to old
-+ * format if needed.
-  *
-- * The source will look like:
-+ * New device syntax will looks like:
-+ *     <device_spec>=/<path>
-+ * where
-+ *     <device_spec> is name@fsid.fsname
-+ *     <path> is optional, but if present must begin with '/'
-+ * (monitor addresses are passed via mount option)
-+ *
-+ * Old device syntax is:
-  *     <server_spec>[,<server_spec>...]:[<path>]
-  * where
-  *     <server_spec> is <ip>[:<port>]
-@@ -262,22 +324,48 @@ static int ceph_parse_source(struct fs_parameter *param, struct fs_context *fc)
- 		dev_name_end = dev_name + strlen(dev_name);
- 	}
+ 	fsc->client->extra_mon_dispatch = extra_mon_dispatch;
+ 	ceph_set_opt(fsc->client, ABORT_ON_FULL);
  
--	dev_name_end--;		/* back up to ':' separator */
--	if (dev_name_end < dev_name || *dev_name_end != ':')
--		return invalfc(fc, "No path or : separator in source");
-+	dev_name_end--;		/* back up to separator */
-+	if (dev_name_end < dev_name)
-+		return invalfc(fc, "path missing in source");
- 
- 	dout("device name '%.*s'\n", (int)(dev_name_end - dev_name), dev_name);
- 	if (fsopt->server_path)
- 		dout("server path '%s'\n", fsopt->server_path);
- 
--	ret = ceph_parse_mon_ips(param->string, dev_name_end - dev_name,
--				 pctx->copts, fc->log.log);
-+	dout("trying new device syntax");
-+	ret = ceph_parse_new_source(dev_name, dev_name_end, fc);
-+	if (ret == 0)
-+		goto done;
-+
-+	dout("trying old device syntax");
-+	ret = ceph_parse_old_source(dev_name, dev_name_end, fc);
- 	if (ret)
--		return ret;
-+		goto out;
- 
-+ done:
- 	fc->source = param->string;
- 	param->string = NULL;
--	return 0;
-+ out:
-+	return ret;
-+}
-+
-+static int ceph_parse_mon_addr(struct fs_parameter *param,
-+			       struct fs_context *fc)
-+{
-+	int r;
-+	struct ceph_parse_opts_ctx *pctx = fc->fs_private;
-+	struct ceph_mount_options *fsopt = pctx->opts;
-+
-+	kfree(fsopt->mon_addr);
-+	fsopt->mon_addr = param->string;
-+	param->string = NULL;
-+
-+	strreplace(fsopt->mon_addr, '/', ',');
-+	r = ceph_parse_mon_ips(fsopt->mon_addr, strlen(fsopt->mon_addr),
-+			       pctx->copts, fc->log.log);
-+        // since its used in ceph_show_options()
-+	strreplace(fsopt->mon_addr, ',', '/');
-+	return r;
- }
- 
- static int ceph_parse_mount_param(struct fs_context *fc,
-@@ -322,6 +410,8 @@ static int ceph_parse_mount_param(struct fs_context *fc,
- 		if (fc->source)
- 			return invalfc(fc, "Multiple sources specified");
- 		return ceph_parse_source(param, fc);
-+	case Opt_mon_addr:
-+		return ceph_parse_mon_addr(param, fc);
- 	case Opt_wsize:
- 		if (result.uint_32 < PAGE_SIZE ||
- 		    result.uint_32 > CEPH_MAX_WRITE_SIZE)
-@@ -473,6 +563,7 @@ static void destroy_mount_options(struct ceph_mount_options *args)
- 	kfree(args->mds_namespace);
- 	kfree(args->server_path);
- 	kfree(args->fscache_uniq);
-+	kfree(args->mon_addr);
- 	kfree(args);
- }
- 
-@@ -516,6 +607,10 @@ static int compare_mount_options(struct ceph_mount_options *new_fsopt,
- 	if (ret)
- 		return ret;
- 
-+	ret = strcmp_null(fsopt1->mon_addr, fsopt2->mon_addr);
-+	if (ret)
-+		return ret;
-+
- 	return ceph_compare_options(new_opt, fsc->client);
- }
- 
-@@ -571,9 +666,13 @@ static int ceph_show_options(struct seq_file *m, struct dentry *root)
- 	if ((fsopt->flags & CEPH_MOUNT_OPT_NOCOPYFROM) == 0)
- 		seq_puts(m, ",copyfrom");
- 
--	if (fsopt->mds_namespace)
-+	/* dump mds_namespace when old device syntax is in use */
-+	if (fsopt->mds_namespace && !fsopt->new_dev_syntax)
- 		seq_show_option(m, "mds_namespace", fsopt->mds_namespace);
- 
-+	if (fsopt->mon_addr)
-+		seq_printf(m, ",mon_addr=%s", fsopt->mon_addr);
-+
- 	if (fsopt->flags & CEPH_MOUNT_OPT_CLEANRECOVER)
- 		seq_show_option(m, "recover_session", "clean");
- 
-@@ -1048,6 +1147,7 @@ static int ceph_setup_bdi(struct super_block *sb, struct ceph_fs_client *fsc)
- static int ceph_get_tree(struct fs_context *fc)
- {
- 	struct ceph_parse_opts_ctx *pctx = fc->fs_private;
-+	struct ceph_mount_options *fsopt = pctx->opts;
- 	struct super_block *sb;
- 	struct ceph_fs_client *fsc;
- 	struct dentry *res;
-@@ -1059,6 +1159,8 @@ static int ceph_get_tree(struct fs_context *fc)
- 
- 	if (!fc->source)
- 		return invalfc(fc, "No source");
-+	if (fsopt->new_dev_syntax && !fsopt->mon_addr)
-+		return invalfc(fc, "No monitor address");
- 
- 	/* create client (which we may/may not use) */
- 	fsc = create_fs_client(pctx->opts, pctx->copts);
 diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index c48bb30c8d70..8f71184b7c85 100644
+index 8f71184b7c85..ce5fb90a01a4 100644
 --- a/fs/ceph/super.h
 +++ b/fs/ceph/super.h
-@@ -87,6 +87,8 @@ struct ceph_mount_options {
- 	unsigned int max_readdir;       /* max readdir result (entries) */
- 	unsigned int max_readdir_bytes; /* max readdir result (bytes) */
- 
-+	bool new_dev_syntax;
-+
- 	/*
- 	 * everything above this point can be memcmp'd; everything below
- 	 * is handled in compare_mount_options()
-@@ -96,6 +98,7 @@ struct ceph_mount_options {
- 	char *mds_namespace;  /* default NULL */
+@@ -99,6 +99,7 @@ struct ceph_mount_options {
  	char *server_path;    /* default NULL (means "/") */
  	char *fscache_uniq;   /* default NULL */
-+	char *mon_addr;
+ 	char *mon_addr;
++	struct ceph_fsid fsid;
  };
  
  struct ceph_fs_client {
+diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
+index 409d8c29bc4f..75d059b79d90 100644
+--- a/include/linux/ceph/libceph.h
++++ b/include/linux/ceph/libceph.h
+@@ -296,6 +296,7 @@ extern bool libceph_compatible(void *data);
+ extern const char *ceph_msg_type_name(int type);
+ extern int ceph_check_fsid(struct ceph_client *client, struct ceph_fsid *fsid);
+ extern void *ceph_kvmalloc(size_t size, gfp_t flags);
++extern int ceph_parse_fsid(const char *str, struct ceph_fsid *fsid);
+ 
+ struct fs_parameter;
+ struct fc_log;
+diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+index 97d6ea763e32..da480757fcca 100644
+--- a/net/ceph/ceph_common.c
++++ b/net/ceph/ceph_common.c
+@@ -217,7 +217,7 @@ void *ceph_kvmalloc(size_t size, gfp_t flags)
+ 	return p;
+ }
+ 
+-static int parse_fsid(const char *str, struct ceph_fsid *fsid)
++int ceph_parse_fsid(const char *str, struct ceph_fsid *fsid)
+ {
+ 	int i = 0;
+ 	char tmp[3];
+@@ -247,6 +247,7 @@ static int parse_fsid(const char *str, struct ceph_fsid *fsid)
+ 	dout("parse_fsid ret %d got fsid %pU\n", err, fsid);
+ 	return err;
+ }
++EXPORT_SYMBOL(ceph_parse_fsid);
+ 
+ /*
+  * ceph options
+@@ -465,7 +466,7 @@ int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
+ 		break;
+ 
+ 	case Opt_fsid:
+-		err = parse_fsid(param->string, &opt->fsid);
++		err = ceph_parse_fsid(param->string, &opt->fsid);
+ 		if (err) {
+ 			error_plog(&log, "Failed to parse fsid: %d", err);
+ 			return err;
 -- 
 2.27.0
 
