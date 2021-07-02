@@ -2,88 +2,111 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C8BBA3B9B1E
-	for <lists+ceph-devel@lfdr.de>; Fri,  2 Jul 2021 05:50:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4B923B9C51
+	for <lists+ceph-devel@lfdr.de>; Fri,  2 Jul 2021 08:48:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234808AbhGBDwi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 1 Jul 2021 23:52:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40898 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234758AbhGBDwi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 1 Jul 2021 23:52:38 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB7FAC061762
-        for <ceph-devel@vger.kernel.org>; Thu,  1 Jul 2021 20:50:06 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id a6so11474006ljq.3
-        for <ceph-devel@vger.kernel.org>; Thu, 01 Jul 2021 20:50:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=BxKAPKE9vhK0W3TsOFbojb5f34O8/iLgDXh7tR6Qexs=;
-        b=F69QBKB9ZUDIs6Xk21RLSGebDUAHz/VzSAv/wOLH/65dWBd8YhEb1GpmHfEcLYGPfs
-         B1v+qu+2LnpxyaBcB2elO+UTrL7cfIDowpEdLf3L8wltEGA5ZchPKBc62bpBm+M6njAN
-         ch2xSNEeHbaDwaOMtQlI2Qj1wTbFxrDhGnLcR2rBHHinAsDbZVGeujzFaZT94uQQxRrf
-         5kq1EjIS/rgUX+KdddC9lA+8J9b/2tCnCLCe00D/ACwW9ePUr4ncs9/rOBsl454+Nzw2
-         b7D5HdoVOOl0qw4muQS9dPb5Czpz8I3iSyY+PbUl86rN2+PjOM/GcOdKG44GiL9Oxm9r
-         oeWQ==
+        id S230001AbhGBGvD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 2 Jul 2021 02:51:03 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22698 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229975AbhGBGvD (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 2 Jul 2021 02:51:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625208511;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=CPT/34s5Ew51AmhkmbZyonEaC5m6KkKnDDhTeD1BRtY=;
+        b=fSniX6g5GWcbIrohcFsNGxm5NjNlWr0FCUzmoGl7Cay7uHJXs7Z+xc0vXogLIEQcINWRk6
+        +fDK3eBH7fcKw4IXWzn6OxrngUlucQSjzZXTdgNnZM7XMDQbY+QyfHhGjd/MblJtawvKz9
+        Ht8RPSu4LujC4l8JlxMepeVbMFu4H+E=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-576-zEysrDJjNyew_BD6BkpLnA-1; Fri, 02 Jul 2021 02:48:30 -0400
+X-MC-Unique: zEysrDJjNyew_BD6BkpLnA-1
+Received: by mail-pf1-f198.google.com with SMTP id t17-20020a62ea110000b029030fd2a30515so5426718pfh.20
+        for <ceph-devel@vger.kernel.org>; Thu, 01 Jul 2021 23:48:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=BxKAPKE9vhK0W3TsOFbojb5f34O8/iLgDXh7tR6Qexs=;
-        b=Y78Tat9l2TVqqiNqDO29NLDzFaUmeBzbwxFEYGu8oaY1+8JKCVNk5vnEvqVnI5WOr8
-         u9+Jggr7ELE0mRlnhcwz+tb1MsIl2wsTFR6MLomRvbikMsjm260T+f+eTNNhR/FkZ07M
-         ShNSgmYkuSGjBNrfIAtF2E5+7PdTR+2xtdfs5i1yRtAxb7KdtyblbvRiLyfTjf8aLFHw
-         X9TLQ/NCCw1orWM0Ygeu5n4vjnbhB3DBZAE7DnoM7vqM2pkk2ee3moxR5rMxSjbWA2sd
-         OlQsF+FqKlTIqoXx9jn6ZANv8NlJmCS6vamBABbK+fReDmJ1FVz6FDGHqktRbvcl0l36
-         3NLA==
-X-Gm-Message-State: AOAM533o1hZaFi7yQWmsWMnQUypEXa5brRQ1BUnK/Q18v7QRG4TAMyEc
-        rGrN/952luq14XMOT59uUgw98GZ4RzllC/hNXdQ=
-X-Google-Smtp-Source: ABdhPJwkeEcvrPACuEkXHiaoAgqmmOIHSL7tOtLj74iOqSYW42i9t5kWgUBxn+JZDhDbozx8FOCgD/tR3S3XlRs9fz4=
-X-Received: by 2002:a2e:6e0b:: with SMTP id j11mr2145070ljc.464.1625197805088;
- Thu, 01 Jul 2021 20:50:05 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CPT/34s5Ew51AmhkmbZyonEaC5m6KkKnDDhTeD1BRtY=;
+        b=ax7GxrP9bISgAYct2VDnKAKBeBubphkYHTf5wPvJh+GES86WHsiG2Q2YW0mLtluIzF
+         m9fdDw9GvX315pfUx/2RP2jB0QoeJ188AJBXTcKhvszmW9TizhNQdAMUJfvBBn0UL6JR
+         OM6ONSMYS2LxowrzOGTI1gWLelhQ934ZEwzSynO+qzfzA7RCobPoX/+H6nNoKro8uWMU
+         WPw4m19mzk4FjAM/QMVlae8bJX+CSTyzEg8q5bGB7XLvc2Y8PTQYYoPHeKqxkVfiFmSl
+         jdi/0GbnpdAG4Oom0m8ht1ubAJrRR/8JkmE+AbWl3pXyKhyAPRHtf3vkrOjhtRRcj0xl
+         GVbg==
+X-Gm-Message-State: AOAM533O183UJC2f8cFx4BnN3gzh7fjLXStST3GJCxX26uZKuKH0mU2M
+        MCpMQYBdrv2+3UEQ3VFDMz/wF0NZQYaREtwQekzTl8pBoHRalB3+cCJgln/zTDrFfR0HmWNtvbo
+        HDQy9ehkSmSuSGR/BvVS6yA==
+X-Received: by 2002:a17:90a:3ccf:: with SMTP id k15mr3518595pjd.226.1625208509322;
+        Thu, 01 Jul 2021 23:48:29 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJysBQYuVrgDzDneJ33vizAVPtIEmNS1LxULql65F5LHU+x/1Qgv91qO6EzesmEPdlB54mj7MA==
+X-Received: by 2002:a17:90a:3ccf:: with SMTP id k15mr3518582pjd.226.1625208509160;
+        Thu, 01 Jul 2021 23:48:29 -0700 (PDT)
+Received: from localhost.localdomain ([49.207.212.118])
+        by smtp.gmail.com with ESMTPSA id o34sm2394364pgm.6.2021.07.01.23.48.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Jul 2021 23:48:28 -0700 (PDT)
+From:   Venky Shankar <vshankar@redhat.com>
+To:     jlayton@redhat.com, idryomov@gmail.com, lhenriques@suse.de
+Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Venky Shankar <vshankar@redhat.com>
+Subject: [PATCH v2 0/4] ceph: new mount device syntax
+Date:   Fri,  2 Jul 2021 12:18:17 +0530
+Message-Id: <20210702064821.148063-1-vshankar@redhat.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Reply-To: salifnaba85@gmail.com
-Sender: sandrindiko06@gmail.com
-Received: by 2002:aa6:c54d:0:b029:f6:5461:50fd with HTTP; Thu, 1 Jul 2021
- 20:50:04 -0700 (PDT)
-From:   "Mr.Salif Naba" <mrsalifnaba5@gmail.com>
-Date:   Thu, 1 Jul 2021 20:50:04 -0700
-X-Google-Sender-Auth: LYgH9_VhGFw62esvkJ_TfZXMP6Q
-Message-ID: <CAHNn=TPXHE1rzENKuGMy-dxwJky=sXOR=QQF--z7t_inZfr2vg@mail.gmail.com>
-Subject: Compliment of the day,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Compliment of the day,
+v2:
+ - doc suggestions/fixes by Jeff
+ - parse_fsid -> ceph_parse_fsid
+ - avoid kstrdup whereever possible, also fixes a memleak
+ - fail mount when mon_addr is unavailable (for new syntax)
+ - use dout() instead of invalfc() during new syntax check
 
-I am Mr. Salif Naba I Have a Business Proposal of $15.5)million For
-You. I am aware of the unsafe nature of the internet, and was
-compelled to use this medium due to the nature of this project.
+This series introduces changes Ceph File System mount device string.
+Old mount device syntax (source) has the following problems:
 
-I have access to very vital information that can be used to transfer
-this huge amount of money, which may culminate into the investment of
-the said funds into your company or any lucrative venture in your
-country.
+mounts to the same cluster but with different fsnames
+and/or creds have identical device string which can
+confuse xfstests.
 
-If you will like to assist me as a partner then indicate your
-interest, after which we shall both discuss the modalities and the
-sharing percentage.
+Userspace mount helper tool resolves monitor addresses
+and fill in mon addrs automatically, but that means the
+device shown in /proc/mounts is different than what was
+used for mounting.
 
-Upon receipt of your reply on your expression of Interest I will give
-you full details,
-on how the business will be executed I am open for negotiation. You
-should forward your reply to this private email id
-(salifnaba85@gmail.com) Thanks for your anticipated cooperation.
+New device syntax is as follows:
 
-Note you might receive this message in your inbox or spam or junk
-folder, depends on your web host or server network.
+  cephuser@fsid.mycephfs2=/path
 
-Thanks=E2=80=99
-Best Regards
-Mr., Salif Naba
+Note, there is no "monitor address" in the device string.
+That gets passed in as mount option. This keeps the device
+string same when monitor addresses change (on remounts).
+
+Also note that the userspace mount helper tool is backward
+compatible. I.e., the mount helper will fallback to using
+old syntax after trying to mount with the new syntax.
+
+Venky Shankar (4):
+  ceph: new device mount syntax
+  ceph: validate cluster FSID for new device syntax
+  ceph: record updated mon_addr on remount
+  doc: document new CephFS mount device syntax
+
+ Documentation/filesystems/ceph.rst |  25 +++++-
+ fs/ceph/super.c                    | 137 ++++++++++++++++++++++++++---
+ fs/ceph/super.h                    |   4 +
+ include/linux/ceph/libceph.h       |   1 +
+ net/ceph/ceph_common.c             |   5 +-
+ 5 files changed, 157 insertions(+), 15 deletions(-)
+
+-- 
+2.27.0
+
