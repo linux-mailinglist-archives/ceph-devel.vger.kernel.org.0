@@ -2,182 +2,231 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A414F3BA118
-	for <lists+ceph-devel@lfdr.de>; Fri,  2 Jul 2021 15:17:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A3323BA1A5
+	for <lists+ceph-devel@lfdr.de>; Fri,  2 Jul 2021 15:50:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232280AbhGBNTz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 2 Jul 2021 09:19:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27316 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231899AbhGBNTy (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 2 Jul 2021 09:19:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625231842;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        id S232829AbhGBNwb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 2 Jul 2021 09:52:31 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:36306 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232754AbhGBNwa (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 2 Jul 2021 09:52:30 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 0C57D200AE;
+        Fri,  2 Jul 2021 13:49:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1625233798; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=suQ2SBJYRyz83Xz9KNESV8RFTLlZTKpeyX89DHt9QDk=;
-        b=IGdYzFKw8gD4WQ76TQHaHEvds52BTKaX8OHIN+RXdT27hv4p9Tqu9Y4x7zMGMO0PwwVdNC
-        BsLbJt8w2JPSDDfhUWAdGI4sppHFX3k3z1UxIaEzxoWHjXTIU0vLb3XagTIrT9TVv0NI1q
-        R0o6135dg9lxHWoJ7MvLWQWbhWeVCPI=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-155-YquHG-MpOmmsQVDBCOP2NA-1; Fri, 02 Jul 2021 09:17:21 -0400
-X-MC-Unique: YquHG-MpOmmsQVDBCOP2NA-1
-Received: by mail-pj1-f70.google.com with SMTP id r17-20020a17090aa091b029016eedf1dd17so6034554pjp.0
-        for <ceph-devel@vger.kernel.org>; Fri, 02 Jul 2021 06:17:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=suQ2SBJYRyz83Xz9KNESV8RFTLlZTKpeyX89DHt9QDk=;
-        b=rpnL2lSyMa6TqT7tI6wK0ZFNO4a7aQoi7M6SXVvtyl0mHCRVAzQV1J8GhuxJeEc2ta
-         ynzVL0oUL3H4gknGVqsdMqjjBaeZ59okJYXPQNO53NaYm+bsJ+MB5p8Zdces3ILxy2gi
-         X8MWQd0RjaWqhN51iwyV2EJT8oaaq//NYu5DcnnYcrgxcBhlIVed9VrYhTcnaVbj4LVM
-         JgSSBINSJF704Dplwp2sDk97ojEMcLW3r1cFCCo6ARpHGAQEGCOF/DmBg42w77DJFqav
-         gI1DNVLHcmR3vqJov1E4eK9D2xXQMeQNgGVhXnSRdAnh60lHVclgxQgLdUKfTrZPfTdU
-         13qA==
-X-Gm-Message-State: AOAM530M77bJCzNj7fuef5dew8W+qYhVbZ8AdfbSALRp8S0O3vQuVFHW
-        2xq01AOlvSDKAjw84Ne2Xcd9eJOnOWdGGNPVWdFEyyBl8Q3XlRsAtlERd6csxAZDbkViIwpqc9E
-        5Yt2dWKRkH3H52T7gTkD7eFyY/XDM1kRMwpYv0qMndfWH4yyRCZog6yvipWRR08xlsiRw3h8=
-X-Received: by 2002:a17:90a:a108:: with SMTP id s8mr15167020pjp.85.1625231839781;
-        Fri, 02 Jul 2021 06:17:19 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyyqSPyUkM/jBq63eeM8++gi6U8oAKGtlN4J+Hjds1I+beQ0xBwchhvwY2AzI9Za25HRK66Fg==
-X-Received: by 2002:a17:90a:a108:: with SMTP id s8mr15166985pjp.85.1625231839370;
-        Fri, 02 Jul 2021 06:17:19 -0700 (PDT)
-Received: from [10.72.12.103] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id a130sm3831008pfa.90.2021.07.02.06.17.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Jul 2021 06:17:19 -0700 (PDT)
-Subject: Re: [PATCH 4/5] ceph: flush the mdlog before waiting on unsafe reqs
-To:     Patrick Donnelly <pdonnell@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-References: <20210629044241.30359-1-xiubli@redhat.com>
- <20210629044241.30359-5-xiubli@redhat.com>
- <b531585184df099e633a4b92e3be23b4b8384253.camel@kernel.org>
- <4f2f6de6-eb1f-1527-de73-2378f262228b@redhat.com>
- <2e8aabad80e166d7c628fde9d820fc5f403e034f.camel@kernel.org>
- <379d5257-f182-c455-9675-b199aeb8ce1b@redhat.com>
- <CA+2bHPZNQU9wZr2W3FjW453KKFVi4q+LwVyicTPQ7kihhoQpQg@mail.gmail.com>
- <e917a3e1-2902-604b-5154-98086c95357f@redhat.com>
- <CA+2bHPY=xyqW48RfuGX8C9Br7vRUArF66AK5yDTOKH4Ewdt8dg@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <838be760-4d61-9fc7-be8c-59deea9d0e98@redhat.com>
-Date:   Fri, 2 Jul 2021 21:17:13 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        bh=POxJM8MU4jx+WLAoDa5TUK0qYjcjLRyKHAQ/hSpRC38=;
+        b=YYufXaPctGHf/8jsgLeUguhW0aDPKj6tQXuROTIvykjZRY01LGAFR3miU9Sgrshp0cpoC4
+        l2ijsN3Gh0Y7ZICXLJHL3OSvZCXXh8bnzhkkLcWa9vTBRUSajq4BdIoSNZfOzxxkALD7nh
+        NpS68BsHOLmGBL7Gve4u8Go8nPOeZpA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1625233798;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=POxJM8MU4jx+WLAoDa5TUK0qYjcjLRyKHAQ/hSpRC38=;
+        b=Mh/4dfZLA45Q7+YJkDL6ZCzhL2pgYPEkmUaXiFk2ZwkSbJ0n9RU669BsiWua5AFAIuJH0a
+        RXrkWTdOExektiBA==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id 991D311C84;
+        Fri,  2 Jul 2021 13:49:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1625233798; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=POxJM8MU4jx+WLAoDa5TUK0qYjcjLRyKHAQ/hSpRC38=;
+        b=YYufXaPctGHf/8jsgLeUguhW0aDPKj6tQXuROTIvykjZRY01LGAFR3miU9Sgrshp0cpoC4
+        l2ijsN3Gh0Y7ZICXLJHL3OSvZCXXh8bnzhkkLcWa9vTBRUSajq4BdIoSNZfOzxxkALD7nh
+        NpS68BsHOLmGBL7Gve4u8Go8nPOeZpA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1625233798;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=POxJM8MU4jx+WLAoDa5TUK0qYjcjLRyKHAQ/hSpRC38=;
+        b=Mh/4dfZLA45Q7+YJkDL6ZCzhL2pgYPEkmUaXiFk2ZwkSbJ0n9RU669BsiWua5AFAIuJH0a
+        RXrkWTdOExektiBA==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id 6bxDIoUZ32DTTQAALh3uQQ
+        (envelope-from <lhenriques@suse.de>); Fri, 02 Jul 2021 13:49:57 +0000
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 6f2c24cd;
+        Fri, 2 Jul 2021 13:49:56 +0000 (UTC)
+Date:   Fri, 2 Jul 2021 14:49:56 +0100
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Venky Shankar <vshankar@redhat.com>
+Cc:     Jeff Layton <jlayton@redhat.com>, idryomov@gmail.com,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/4] ceph: validate cluster FSID for new device syntax
+Message-ID: <YN8ZhNG0jiA2CFln@suse.de>
+References: <20210702064821.148063-1-vshankar@redhat.com>
+ <20210702064821.148063-3-vshankar@redhat.com>
+ <YN7t9TJlDG8YcbqM@suse.de>
+ <CACPzV1=J_7n4kSjny-92OV2_rpWZn3fOK_sdHjJ6nnC9BgEOXw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+2bHPY=xyqW48RfuGX8C9Br7vRUArF66AK5yDTOKH4Ewdt8dg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACPzV1=J_7n4kSjny-92OV2_rpWZn3fOK_sdHjJ6nnC9BgEOXw@mail.gmail.com>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Fri, Jul 02, 2021 at 04:40:18PM +0530, Venky Shankar wrote:
+> On Fri, Jul 2, 2021 at 4:14 PM Luis Henriques <lhenriques@suse.de> wrote:
+> >
+> > On Fri, Jul 02, 2021 at 12:18:19PM +0530, Venky Shankar wrote:
+> > > The new device syntax requires the cluster FSID as part
+> > > of the device string. Use this FSID to verify if it matches
+> > > the cluster FSID we get back from the monitor, failing the
+> > > mount on mismatch.
+> > >
+> > > Also, rename parse_fsid() to ceph_parse_fsid() as it is too
+> > > generic.
+> > >
+> > > Signed-off-by: Venky Shankar <vshankar@redhat.com>
+> > > ---
+> > >  fs/ceph/super.c              | 9 +++++++++
+> > >  fs/ceph/super.h              | 1 +
+> > >  include/linux/ceph/libceph.h | 1 +
+> > >  net/ceph/ceph_common.c       | 5 +++--
+> > >  4 files changed, 14 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > > index 0b324e43c9f4..03e5f4bb2b6f 100644
+> > > --- a/fs/ceph/super.c
+> > > +++ b/fs/ceph/super.c
+> > > @@ -268,6 +268,9 @@ static int ceph_parse_new_source(const char *dev_name, const char *dev_name_end,
+> > >       if (!fs_name_start)
+> > >               return invalfc(fc, "missing file system name");
+> > >
+> > > +     if (ceph_parse_fsid(fsid_start, &fsopt->fsid))
+> > > +             return invalfc(fc, "invalid fsid format");
+> > > +
+> > >       ++fs_name_start; /* start of file system name */
+> > >       fsopt->mds_namespace = kstrndup(fs_name_start,
+> > >                                       dev_name_end - fs_name_start, GFP_KERNEL);
+> > > @@ -750,6 +753,12 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
+> > >       }
+> > >       opt = NULL; /* fsc->client now owns this */
+> > >
+> > > +     /* help learn fsid */
+> > > +     if (fsopt->new_dev_syntax) {
+> > > +             ceph_check_fsid(fsc->client, &fsopt->fsid);
+> >
+> > This call to ceph_check_fsid() made me wonder what would happen if I use
+> > the wrong fsid with the new syntax.  And the result is:
+> >
+> > [   41.882334] libceph: mon0 (1)192.168.155.1:40594 session established
+> > [   41.884537] libceph: bad fsid, had d52783e6-efc2-4dce-ad01-aa3272fa5f66 got 90bdb539-9d95-402e-8f23-b0e26cba8b1b
+> > [   41.885955] libceph: bad fsid, had d52783e6-efc2-4dce-ad01-aa3272fa5f66 got 90bdb539-9d95-402e-8f23-b0e26cba8b1b
+> > [   41.889313] libceph: bad fsid, had d52783e6-efc2-4dce-ad01-aa3272fa5f66 got 90bdb539-9d95-402e-8f23-b0e26cba8b1b
+> > [   41.892578] libceph: osdc handle_map corrupt msg
+> >
+> > ... followed by a msg dump.
+> >
+> > I guess this means that manually setting the fsid requires changes to the
+> > messenger (I've only tested with v1) so that it gracefully handles this
+> > scenario.
+> 
+> Yes, this results in a big dump of messages. I haven't looked at
+> gracefully handling these.
+> 
+> I'm not sure if it needs to be done in these set of patches though.
 
-On 7/2/21 7:46 AM, Patrick Donnelly wrote:
-> On Wed, Jun 30, 2021 at 11:18 PM Xiubo Li <xiubli@redhat.com> wrote:
->> And just now I have run by adding the time stamp:
->>
->>> fd = open("/path")
->>> fopenat(fd, "foo")
->>> renameat(fd, "foo", fd, "bar")
->>> fstat(fd)
->>> fsync(fd)
->> lxb ----- before renameat ---> Current time is Thu Jul  1 13:28:52 2021
->> lxb ----- after renameat ---> Current time is Thu Jul  1 13:28:52 2021
->> lxb ----- before fstat ---> Current time is Thu Jul  1 13:28:52 2021
->> lxb ----- after fstat ---> Current time is Thu Jul  1 13:28:52 2021
->> lxb ----- before fsync ---> Current time is Thu Jul  1 13:28:52 2021
->> lxb ----- after fsync ---> Current time is Thu Jul  1 13:28:56 2021
->>
->> We can see that even after 'fstat(fd)', the 'fsync(fd)' still will wait around 4s.
->>
->> Why your test worked it should be the MDS's tick thread and the 'fstat(fd)' were running almost simultaneously sometimes, I also could see the 'fsync(fd)' finished very fast sometimes:
->>
->> lxb ----- before renameat ---> Current time is Thu Jul  1 13:29:51 2021
->> lxb ----- after renameat ---> Current time is Thu Jul  1 13:29:51 2021
->> lxb ----- before fstat ---> Current time is Thu Jul  1 13:29:51 2021
->> lxb ----- after fstat ---> Current time is Thu Jul  1 13:29:51 2021
->> lxb ----- before fsync ---> Current time is Thu Jul  1 13:29:51 2021
->> lxb ----- after fsync ---> Current time is Thu Jul  1 13:29:51 2021
-> Actually, I did a lot more testing on this. It's a unique behavior of
-> the directory is /. You will see a getattr force a flush of the
-> journal:
->
-> 2021-07-01T23:42:18.095+0000 7fcc7741c700  7 mds.0.server
-> dispatch_client_request client_request(client.4257:74 getattr
-> pAsLsXsFs #0x1 2021-07-01T23:42:18.095884+0000 caller_uid=1147,
-> caller_gid=1147{1000,1147,}) v5
-> ...
-> 2021-07-01T23:42:18.096+0000 7fcc7741c700 10 mds.0.locker nudge_log
-> (ifile mix->sync w=2) on [inode 0x1 [...2,head] / auth v34 pv39 ap=6
-> snaprealm=0x564734479600 DIRTYPARENT f(v0
-> m2021-07-01T23:38:00.418466+0000 3=1+2) n(v6
-> rc2021-07-01T23:38:15.692076+0000 b65536 7=2+5)/n(v0
-> rc2021-07-01T19:31:40.924877+0000 1=0+1) (iauth sync r=1) (isnap sync
-> r=4) (inest mix w=3) (ipolicy sync r=2) (ifile mix->sync w=2)
-> (iversion lock w=3) caps={4257=pAsLsXs/-@32} | dirtyscattered=0
-> request=1 lock=6 dirfrag=1 caps=1 dirtyparent=1 dirty=1 waiter=1
-> authpin=1 0x56473913a580]
->
-> You don't see that getattr for directories other than root. That's
-> probably because the client has been issued more caps than what the
-> MDS is willing to normally hand out for root.
+Ah, sure!  I didn't meant you'd need to change the messenger to handle it
+(as I'm not even sure it's the messenger or the mons client that require
+changes).  But I also don't think that this patchset can be merged without
+making sure we can handle a bad fsid correctly and without all this noise.
 
-For the root dir, when doing the 'rename' the wrlock_start('ifile lock') 
-will change the lock state 'SYNC' --> 'MIX'. Then the inode 0x1 will 
-issue 'pAsLsXs' to clients. So when the client sends a 'getattr' request 
-with caps 'AsXsFs' wanted, the mds will try to switch the 'ifile lock' 
-state back to 'SYNC' to get the 'Fs' cap. Since the rdlock_start('ifile 
-lock') needs to do the lock state transition, it will wait and trigger 
-the 'nudge_log'.
+Cheers,
+--
+Luís
 
-The reason why will wrlock_start('ifile lock') change the lock state 
-'SYNC' --> 'MIX' above is that the inode '0x1' has subtree, if my 
-understanding is correct so for the root dir it should be very probably 
-shared by multiple MDSes and it chooses to switch to MIX.
-
-This is why the root dir will work when we send a 'getattr' request.
-
-
-For the none root directories, it will bump to loner and then the 
-'ifile/iauth/ixattr locks' state switched to EXCL instead, for this lock 
-state it will issue 'pAsxLsXsxFsx' cap. So when doing the 
-'getattr(AsXsFs)' in client, it will do nothing since it's already 
-issued the caps needed. This is why we couldn't see the getattr request 
-was sent out.
-
-Even we 'forced' to call the getattr, it can get the rdlock immediately 
-and no need to gather or do lock state transition, so no 'nudge_log' was 
-called. Since in case if the none directories are in loner mode and the 
-locks will be in 'EXCL' state, so it will allow 'pAsxLsXsxFsxrwb' as 
-default, then even we 'forced' call the getattr('pAsxLsXsxFsxrwb') in 
-fsync, in the MDS side it still won't do the lock states transition.
-
-
->
-> I'm not really sure why there is a difference. I even experimented
-> with redundant getattr ("forced") calls to cause a journal flush on
-> non-root directories but didn't get anywhere. Maybe you can
-> investigate further? It'd be optimal if we could nudge the log just by
-> doing a getattr.
-
-So in the above case, from my tests and reading the Locker code, I 
-didn't figure out how can the getattr could work for this issue yet.
-
-Patrick,
-
-Did I miss something about the Lockers ?
-
-
-BRs
-
-Xiubo
-
-
+> 
+> >
+> > Cheers,
+> > --
+> > Luís
+> >
+> > > +             fsc->client->have_fsid = true;
+> > > +     }
+> > > +
+> > >       fsc->client->extra_mon_dispatch = extra_mon_dispatch;
+> > >       ceph_set_opt(fsc->client, ABORT_ON_FULL);
+> > >
+> > > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > > index 8f71184b7c85..ce5fb90a01a4 100644
+> > > --- a/fs/ceph/super.h
+> > > +++ b/fs/ceph/super.h
+> > > @@ -99,6 +99,7 @@ struct ceph_mount_options {
+> > >       char *server_path;    /* default NULL (means "/") */
+> > >       char *fscache_uniq;   /* default NULL */
+> > >       char *mon_addr;
+> > > +     struct ceph_fsid fsid;
+> > >  };
+> > >
+> > >  struct ceph_fs_client {
+> > > diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
+> > > index 409d8c29bc4f..75d059b79d90 100644
+> > > --- a/include/linux/ceph/libceph.h
+> > > +++ b/include/linux/ceph/libceph.h
+> > > @@ -296,6 +296,7 @@ extern bool libceph_compatible(void *data);
+> > >  extern const char *ceph_msg_type_name(int type);
+> > >  extern int ceph_check_fsid(struct ceph_client *client, struct ceph_fsid *fsid);
+> > >  extern void *ceph_kvmalloc(size_t size, gfp_t flags);
+> > > +extern int ceph_parse_fsid(const char *str, struct ceph_fsid *fsid);
+> > >
+> > >  struct fs_parameter;
+> > >  struct fc_log;
+> > > diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> > > index 97d6ea763e32..da480757fcca 100644
+> > > --- a/net/ceph/ceph_common.c
+> > > +++ b/net/ceph/ceph_common.c
+> > > @@ -217,7 +217,7 @@ void *ceph_kvmalloc(size_t size, gfp_t flags)
+> > >       return p;
+> > >  }
+> > >
+> > > -static int parse_fsid(const char *str, struct ceph_fsid *fsid)
+> > > +int ceph_parse_fsid(const char *str, struct ceph_fsid *fsid)
+> > >  {
+> > >       int i = 0;
+> > >       char tmp[3];
+> > > @@ -247,6 +247,7 @@ static int parse_fsid(const char *str, struct ceph_fsid *fsid)
+> > >       dout("parse_fsid ret %d got fsid %pU\n", err, fsid);
+> > >       return err;
+> > >  }
+> > > +EXPORT_SYMBOL(ceph_parse_fsid);
+> > >
+> > >  /*
+> > >   * ceph options
+> > > @@ -465,7 +466,7 @@ int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
+> > >               break;
+> > >
+> > >       case Opt_fsid:
+> > > -             err = parse_fsid(param->string, &opt->fsid);
+> > > +             err = ceph_parse_fsid(param->string, &opt->fsid);
+> > >               if (err) {
+> > >                       error_plog(&log, "Failed to parse fsid: %d", err);
+> > >                       return err;
+> > > --
+> > > 2.27.0
+> > >
+> >
+> 
+> 
+> -- 
+> Cheers,
+> Venky
+> 
