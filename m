@@ -2,57 +2,57 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 439743BDC00
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Jul 2021 19:13:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 633E93BDC05
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Jul 2021 19:14:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230249AbhGFROy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 6 Jul 2021 13:14:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40438 "EHLO
+        id S230323AbhGFRQH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 6 Jul 2021 13:16:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230178AbhGFROy (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Jul 2021 13:14:54 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 771AEC061574
-        for <ceph-devel@vger.kernel.org>; Tue,  6 Jul 2021 10:12:15 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id j16-20020a05600c1c10b0290204b096b0caso2757373wms.1
-        for <ceph-devel@vger.kernel.org>; Tue, 06 Jul 2021 10:12:15 -0700 (PDT)
+        with ESMTP id S230141AbhGFRQF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Jul 2021 13:16:05 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40CC1C061574
+        for <ceph-devel@vger.kernel.org>; Tue,  6 Jul 2021 10:13:25 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id f17so2340297wrt.6
+        for <ceph-devel@vger.kernel.org>; Tue, 06 Jul 2021 10:13:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=R3EAQm6eG6GvVGYsrzhZhrD9dWR9vxyfdftyH+s48ms=;
-        b=t4aGQhfTBOuoaYTdaSrsmQs1OHAY/fWke0qWbIRW0NWcTmcKrRd7InFIG9zszhHSnc
-         DeRlesTiTgoeqljtg88aV+GJkb6iJjNVvavSzj5MOk49O4IlE+NmfU8zSVL8IEbkellx
-         W3HIiO1v6313MoRYMjwQD0yuunQ/LBHmy+3YCcrDF3tnkrc2LKcy4sSN48NPfioontYP
-         o2uEn8817qQ3SKfw40pKO5KX79ZsubGCuSlTDEnBR9XBRhT6VPR/2tPWtuPCW/AiPN/8
-         GvA594ieOI9INiLJ14FEi6X5gHv4Lh5FKlTBonmGaiSH9MZSSG+YjyNvJWkG2YqK5WaM
-         L/lA==
+        bh=1opqv17eMmDBqaN6I6hUXyUsAfMZexDjNNQ/ZlZyiQ0=;
+        b=i+K7iOPwKhkNTCLFKEor93sbIZMAHqg89utWni/JNhn6P/xrwMVtXKna4tb+iDabwo
+         Z05AR0tPQXX4J5qoYdfgxB/XRnTHczmp6jQeyziFlLJtKVPRv2wFARPIizRVFVCd7Hqw
+         Uo5fnqFI05ALe+E5kxnb/IraW+nelM5nYthwkEcbyNBmcguxUeoUnbsIp87dOQrN/DXk
+         aT7wvcIFTxfPPtOQUUegI7UXJZ2UPEHsWz1+1Go4yeB8P/IC+hF+xDvx/LQQtEgav4SM
+         jlZpD1LPkEEUTQsoMKRiOOzDiLJ1iJCFgphQhT1L2wR3NY8iHwu3WRaOgZS0Zz1Kbici
+         kpAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=R3EAQm6eG6GvVGYsrzhZhrD9dWR9vxyfdftyH+s48ms=;
-        b=nY88VRQpgw0+MYwPeMfRr9zQaAPeQHhjSkfNZATjfgBAs+XT2GEhupwxSdoh6FEDSX
-         xpgYCO+mpBF1pauho3fpWgElqlyNajLp3qoNDDgAiBMxluNiCBPO3br4holReolreNgB
-         awOYFPHakarZaZyX+PHjFNRZyqtpGMiLQw1B9WnywObCCH60t4Zf4990SK4Orz6ewv2g
-         jtBqb+EQYNmBicfMM1NBjnQSRfDub3sDfQNRBz3tGiOxZZjVRhM+T1uEsUMNvPte2C3s
-         ylvQiJs0ze0CthGH1duodVs6Qq3bNdatxWY3Be5aWhVTyCPUVVDZqgQdlwEjdIYrYCJU
-         BOzQ==
-X-Gm-Message-State: AOAM532Shefxhq//Se3fiUZae189QMMGz8tQCEUoufn4p+uoeg1fvoy3
-        /iGYWVPwTU/Y0yaIawPkd8DMgtd2+NRpZg==
-X-Google-Smtp-Source: ABdhPJzUQBawFyhdZ+eAjrTSr/mg1lEjL+uz7M/RQoDOCLMr8R/unsFbc/QTItm5pY/oI2vmaQTHbg==
-X-Received: by 2002:a05:600c:3588:: with SMTP id p8mr19074667wmq.137.1625591533071;
-        Tue, 06 Jul 2021 10:12:13 -0700 (PDT)
+        bh=1opqv17eMmDBqaN6I6hUXyUsAfMZexDjNNQ/ZlZyiQ0=;
+        b=N25aRoTqU5/PwIVwBNpmYs1VfTIzJmnTUW0+yDWYt8W9Pfgz4O9Qi65qi/zjnXNvZq
+         v4pWOPLURhgC8crQrayEVMz9ncYORRRDqA8ppxhQYG4VmdDoNk3frcpqssy6CFW8VZz5
+         yRPSOHEUbePm0J+MJr8S4DZ4NTSbsTF6JlFnVEnbTjMJO9OengFbojYpgW2UvMdHvmNC
+         ggBukksbWB+immiQ2d5At00pfTLna0S1WFadkwbK9BQIafYHgAuCoMSmbv6/UQZLsfwC
+         k7MwEEEegKltxhifHut6zM0rGCygtFdNPp/VFZ74RDim1/WLbsfny4A3N/CjJBl+NLvm
+         Y4Yw==
+X-Gm-Message-State: AOAM5304yNexSMUZOlrA/3znAc3GIY/5ejF2RLOYaCRQyJRE9PCbdikU
+        5QxxwX/DtBe6pHijxfZHN6/UtfdmMtQpWg==
+X-Google-Smtp-Source: ABdhPJytUInFFMS0cHCTz1OjMQVeAyyDMSBWzPS2+iV3xJPCNzUZZjPvCLT5YkmRfQwgS0VYMHq2tA==
+X-Received: by 2002:adf:b60b:: with SMTP id f11mr3634334wre.203.1625591603824;
+        Tue, 06 Jul 2021 10:13:23 -0700 (PDT)
 Received: from kwango.redhat.com (ip-94-112-132-16.net.upcbroadband.cz. [94.112.132.16])
-        by smtp.gmail.com with ESMTPSA id w3sm3474659wmi.24.2021.07.06.10.12.12
+        by smtp.gmail.com with ESMTPSA id y23sm9206733wmi.28.2021.07.06.10.13.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jul 2021 10:12:12 -0700 (PDT)
+        Tue, 06 Jul 2021 10:13:23 -0700 (PDT)
 From:   Ilya Dryomov <idryomov@gmail.com>
 To:     ceph-devel@vger.kernel.org
 Cc:     Robin Geuze <robin.geuze@nl.team.blue>
-Subject: [PATCH] rbd: always kick acquire on "acquired" and "released" notifications
-Date:   Tue,  6 Jul 2021 19:11:37 +0200
-Message-Id: <20210706171137.851-1-idryomov@gmail.com>
+Subject: [PATCH] rbd: don't hold lock_rwsem while running_list is being drained
+Date:   Tue,  6 Jul 2021 19:12:52 +0200
+Message-Id: <20210706171252.1029-1-idryomov@gmail.com>
 X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -60,68 +60,72 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Skipping the "lock has been released" notification if the lock owner
-is not what we expect based on owner_cid can lead to I/O hangs.
-One example is our own notifications: because owner_cid is cleared
-in rbd_unlock(), when we get our own notification it is processed as
-unexpected/duplicate and maybe_kick_acquire() isn't called.  If a peer
-that requested the lock then doesn't go through with acquiring it,
-I/O requests that came in while the lock was being quiesced would
-be stalled until another I/O request is submitted and kicks acquire
-from rbd_img_exclusive_lock().
+Currently rbd_quiesce_lock() holds lock_rwsem for read while blocking
+on releasing_wait completion.  On the I/O completion side, each image
+request also needs to take lock_rwsem for read.  Because rw_semaphore
+implementation doesn't allow new readers after a writer has indicated
+interest in the lock, this can result in a deadlock if something that
+needs to take lock_rwsem for write gets involved.  For example:
 
-This makes the comment in rbd_release_lock() actually true: prior to
-this change the canceled work was being requeued in response to the
-"lock has been acquired" notification from rbd_handle_acquired_lock().
+1. watch error occurs
+2. rbd_watch_errcb() takes lock_rwsem for write, clears owner_cid and
+   releases lock_rwsem
+3. after reestablishing the watch, rbd_reregister_watch() takes
+   lock_rwsem for write and calls rbd_reacquire_lock()
+4. rbd_quiesce_lock() downgrades lock_rwsem to for read and blocks on
+   releasing_wait until running_list becomes empty
+5. another watch error occurs
+6. rbd_watch_errcb() blocks trying to take lock_rwsem for write
+7. no in-flight image request can complete and delete itself from
+   running_list because lock_rwsem won't be granted anymore
+
+A similar scenario can occur with "lock has been acquired" and "lock
+has been released" notification handers which also take lock_rwsem for
+write to update owner_cid.
+
+We don't actually get anything useful from sitting on lock_rwsem in
+rbd_quiesce_lock() -- owner_cid updates certainly don't need to be
+synchronized with.  In fact the whole owner_cid tracking logic could
+probably be removed from the kernel client because we don't support
+proxied maintenance operations.
 
 Cc: stable@vger.kernel.org # 5.3+
+URL: https://tracker.ceph.com/issues/42757
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 ---
- drivers/block/rbd.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+ drivers/block/rbd.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index be033e179299..a3caecae5d6a 100644
+index a3caecae5d6a..8a6b7997fb1e 100644
 --- a/drivers/block/rbd.c
 +++ b/drivers/block/rbd.c
-@@ -4203,15 +4203,11 @@ static void rbd_handle_acquired_lock(struct rbd_device *rbd_dev, u8 struct_v,
- 	if (!rbd_cid_equal(&cid, &rbd_empty_cid)) {
- 		down_write(&rbd_dev->lock_rwsem);
- 		if (rbd_cid_equal(&cid, &rbd_dev->owner_cid)) {
--			/*
--			 * we already know that the remote client is
--			 * the owner
--			 */
--			up_write(&rbd_dev->lock_rwsem);
--			return;
-+			dout("%s rbd_dev %p cid %llu-%llu == owner_cid\n",
-+			     __func__, rbd_dev, cid.gid, cid.handle);
-+		} else {
-+			rbd_set_owner_cid(rbd_dev, &cid);
- 		}
+@@ -4100,8 +4100,6 @@ static void rbd_acquire_lock(struct work_struct *work)
+ 
+ static bool rbd_quiesce_lock(struct rbd_device *rbd_dev)
+ {
+-	bool need_wait;
 -
--		rbd_set_owner_cid(rbd_dev, &cid);
- 		downgrade_write(&rbd_dev->lock_rwsem);
- 	} else {
- 		down_read(&rbd_dev->lock_rwsem);
-@@ -4236,14 +4232,12 @@ static void rbd_handle_released_lock(struct rbd_device *rbd_dev, u8 struct_v,
- 	if (!rbd_cid_equal(&cid, &rbd_empty_cid)) {
- 		down_write(&rbd_dev->lock_rwsem);
- 		if (!rbd_cid_equal(&cid, &rbd_dev->owner_cid)) {
--			dout("%s rbd_dev %p unexpected owner, cid %llu-%llu != owner_cid %llu-%llu\n",
-+			dout("%s rbd_dev %p cid %llu-%llu != owner_cid %llu-%llu\n",
- 			     __func__, rbd_dev, cid.gid, cid.handle,
- 			     rbd_dev->owner_cid.gid, rbd_dev->owner_cid.handle);
--			up_write(&rbd_dev->lock_rwsem);
--			return;
-+		} else {
-+			rbd_set_owner_cid(rbd_dev, &rbd_empty_cid);
- 		}
--
--		rbd_set_owner_cid(rbd_dev, &rbd_empty_cid);
- 		downgrade_write(&rbd_dev->lock_rwsem);
- 	} else {
- 		down_read(&rbd_dev->lock_rwsem);
+ 	dout("%s rbd_dev %p\n", __func__, rbd_dev);
+ 	lockdep_assert_held_write(&rbd_dev->lock_rwsem);
+ 
+@@ -4113,11 +4111,11 @@ static bool rbd_quiesce_lock(struct rbd_device *rbd_dev)
+ 	 */
+ 	rbd_dev->lock_state = RBD_LOCK_STATE_RELEASING;
+ 	rbd_assert(!completion_done(&rbd_dev->releasing_wait));
+-	need_wait = !list_empty(&rbd_dev->running_list);
+-	downgrade_write(&rbd_dev->lock_rwsem);
+-	if (need_wait)
+-		wait_for_completion(&rbd_dev->releasing_wait);
+-	up_read(&rbd_dev->lock_rwsem);
++	if (list_empty(&rbd_dev->running_list))
++		return true;
++
++	up_write(&rbd_dev->lock_rwsem);
++	wait_for_completion(&rbd_dev->releasing_wait);
+ 
+ 	down_write(&rbd_dev->lock_rwsem);
+ 	if (rbd_dev->lock_state != RBD_LOCK_STATE_RELEASING)
 -- 
 2.19.2
 
