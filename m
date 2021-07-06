@@ -2,151 +2,195 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 32FEA3BB678
-	for <lists+ceph-devel@lfdr.de>; Mon,  5 Jul 2021 06:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 137633BD370
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Jul 2021 13:51:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229709AbhGEEmx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 5 Jul 2021 00:42:53 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45708 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229447AbhGEEmx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 5 Jul 2021 00:42:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625460016;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WYBTMFwy5brhQxMw0htpd7rcVz0ukCq/m3j49xLMwxU=;
-        b=icrkUgf/paqcsonmMm9nBdBojZFcEvE6VTLBmxekHlYs4AWNrar7IO3EcAk3+f2J3FOtyz
-        AMEP+NoA9UGCzXKT99xxk72kJL9zXzVwlTTQ64uBEwHdpmkYz582//+/FsnO0SmHeR+5PO
-        odYcBfmYpmQ+f+iLrchpHwk/3cCY74M=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-594-fvcrAXAoMJq6AFZqG6okBQ-1; Mon, 05 Jul 2021 00:40:15 -0400
-X-MC-Unique: fvcrAXAoMJq6AFZqG6okBQ-1
-Received: by mail-ed1-f71.google.com with SMTP id y17-20020a0564023591b02903951740fab5so8479896edc.23
-        for <ceph-devel@vger.kernel.org>; Sun, 04 Jul 2021 21:40:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WYBTMFwy5brhQxMw0htpd7rcVz0ukCq/m3j49xLMwxU=;
-        b=YSKVHYbWLTwbtCIH/zjdN1FZYmZLeLcGqLLDqtyWB91XNk/4pAb6qKWgEk0vmoIr1/
-         vMPWQZY+8CMGWr/6/NnDLG3tA8Wecl4zHHDTaqVbJVO8NpP30w8Cw5vnK2Nu0HRmQgp+
-         i9HOx6HjCZNBFHHm/0CQgqyEHSutYeUhQZO7DaIix3eGGarDV5aKREbxBzBzaIJsjRrN
-         uOVMBcBM8V76OCMF8VAgPPZOVbkhEICmgoekd6CWdS2TfFuUsYMHmE9z+bagRb4sZhcf
-         xla24sXj+0gDgSGl8YNHMhBBL+mJcgyunbnb6m1cBlVLPwHJHu6fWkyhwPvNLGd6VdEh
-         hfyA==
-X-Gm-Message-State: AOAM532yhyYGvjoKlt7bUvISMcYZDycWpyAi37U8qi46Ey9Oq+45Y+Kx
-        6bpsLo+SHVM8Uozc2t9kzrd8EntdWCzdL97AydKzdqAQRDtkBK8FvNc0CwuHlFutWe7VgXBJJ0s
-        eCq7g+4/ceeRDvUKbCk8mD3u1YyQ3oPy6CIjg/w==
-X-Received: by 2002:a17:907:1c0d:: with SMTP id nc13mr2640432ejc.367.1625460014436;
-        Sun, 04 Jul 2021 21:40:14 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxPu/zLTqd9Q/5HovITPwCRmLWw53vnyucT1CrcJC55a3Iyu9syJ+RRQqf0XEnlLlBIrhDKG9NG2QUH8vCn144=
-X-Received: by 2002:a17:907:1c0d:: with SMTP id nc13mr2640418ejc.367.1625460014279;
- Sun, 04 Jul 2021 21:40:14 -0700 (PDT)
+        id S237000AbhGFLxa (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 6 Jul 2021 07:53:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55400 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239859AbhGFLp1 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 6 Jul 2021 07:45:27 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1253161E92;
+        Tue,  6 Jul 2021 11:42:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625571769;
+        bh=q1SAO+ppVfzjhfiBgp+Hloy2kk3TPX462g8OMVyqy9c=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=T5AA0YWiSLI3h0BAhsP13JLKkkqmxlh07laaE/4XBMINd+CLFasB9F2BUj9RO0Jp5
+         pdzOWAKsR4BrDAA3d7Zl13R4y4nV6accbkg0St/wMUe7Aa2gv7dzRa+ABtolQqHh3B
+         sIK/OHg5fDNm1oE9TxVRwCTVy0/qCZR/rJOhOYYIqzfHcPeiMB1ZJe/AB9vgbFrkqu
+         XECxCF6/924HFpljTH4AZstGqUh5ZfRNAcwBbx3ylKb4oTDzrQMF93bztmMKneAJ2v
+         wjGY+rcVflscZo5sWMw1bi1PzFsNORxuscdObuKnAnjNvyCOAFtfA42vqdgRpSBTJu
+         7BZtS4wxlPukQ==
+Message-ID: <60e6a0d99abe921232b6cb4b9ce5e31272a06790.camel@kernel.org>
+Subject: Re: [PATCH v2 4/4] ceph: flush the mdlog before waiting on unsafe
+ reqs
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com, idryomov@gmail.com
+Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Tue, 06 Jul 2021 07:42:47 -0400
+In-Reply-To: <20210705012257.182669-5-xiubli@redhat.com>
+References: <20210705012257.182669-1-xiubli@redhat.com>
+         <20210705012257.182669-5-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
 MIME-Version: 1.0
-References: <20210702064821.148063-1-vshankar@redhat.com> <20210702064821.148063-5-vshankar@redhat.com>
- <CA+2bHPYBetaxkSBUbz-6aNTpbqMYGhHGcCv_ZTiT3GrNZWyLNg@mail.gmail.com>
-In-Reply-To: <CA+2bHPYBetaxkSBUbz-6aNTpbqMYGhHGcCv_ZTiT3GrNZWyLNg@mail.gmail.com>
-From:   Venky Shankar <vshankar@redhat.com>
-Date:   Mon, 5 Jul 2021 10:09:38 +0530
-Message-ID: <CACPzV1ksLhOhu9AMpom4ytu-KpDZRaquOfu1YUHbsGgsCiw_9g@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] doc: document new CephFS mount device syntax
-To:     Patrick Donnelly <pdonnell@redhat.com>
-Cc:     Jeff Layton <jlayton@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Luis Henriques <lhenriques@suse.de>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Jul 2, 2021 at 11:38 PM Patrick Donnelly <pdonnell@redhat.com> wrote:
->
-> On Thu, Jul 1, 2021 at 11:48 PM Venky Shankar <vshankar@redhat.com> wrote:
-> >
-> > Signed-off-by: Venky Shankar <vshankar@redhat.com>
-> > ---
-> >  Documentation/filesystems/ceph.rst | 25 ++++++++++++++++++++++---
-> >  1 file changed, 22 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/Documentation/filesystems/ceph.rst b/Documentation/filesystems/ceph.rst
-> > index 7d2ef4e27273..830ea8969d9d 100644
-> > --- a/Documentation/filesystems/ceph.rst
-> > +++ b/Documentation/filesystems/ceph.rst
-> > @@ -82,7 +82,7 @@ Mount Syntax
-> >
-> >  The basic mount syntax is::
-> >
-> > - # mount -t ceph monip[:port][,monip2[:port]...]:/[subdir] mnt
-> > + # mount -t ceph user@fsid.fs_name=/[subdir] mnt -o mon_addr=monip1[:port][/monip2[:port]]
->
-> Somewhat unrelated question to this patchset: can you specify the mons
-> in the ceph.conf format? i.e. with v2/v1 syntax?
+On Mon, 2021-07-05 at 09:22 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> For the client requests who will have unsafe and safe replies from
+> MDS daemons, in the MDS side the MDS daemons won't flush the mdlog
+> (journal log) immediatelly, because they think it's unnecessary.
+> That's true for most cases but not all, likes the fsync request.
+> The fsync will wait until all the unsafe replied requests to be
+> safely replied.
+> 
+> Normally if there have multiple threads or clients are running, the
+> whole mdlog in MDS daemons could be flushed in time if any request
+> will trigger the mdlog submit thread. So usually we won't experience
+> the normal operations will stuck for a long time. But in case there
+> has only one client with only thread is running, the stuck phenomenon
+> maybe obvious and the worst case it must wait at most 5 seconds to
+> wait the mdlog to be flushed by the MDS's tick thread periodically.
+> 
+> This patch will trigger to flush the mdlog in the relevant and auth
+> MDSes to which the in-flight requests are sent just before waiting
+> the unsafe requests to finish.
+> 
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/caps.c | 78 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 78 insertions(+)
+> 
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index c6a3352a4d52..4b966c29d9b5 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -2286,6 +2286,7 @@ static int caps_are_flushed(struct inode *inode, u64 flush_tid)
+>   */
+>  static int unsafe_request_wait(struct inode *inode)
+>  {
+> +	struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
+>  	struct ceph_mds_request *req1 = NULL, *req2 = NULL;
+>  	int ret, err = 0;
+> @@ -2305,6 +2306,82 @@ static int unsafe_request_wait(struct inode *inode)
+>  	}
+>  	spin_unlock(&ci->i_unsafe_lock);
+>  
+> +	/*
+> +	 * Trigger to flush the journal logs in all the relevant MDSes
+> +	 * manually, or in the worst case we must wait at most 5 seconds
+> +	 * to wait the journal logs to be flushed by the MDSes periodically.
+> +	 */
+> +	if (req1 || req2) {
+> +		struct ceph_mds_session **sessions = NULL;
+> +		struct ceph_mds_session *s;
+> +		struct ceph_mds_request *req;
+> +		unsigned int max;
+> +		int i;
+> +
+> +		/*
+> +		 * The mdsc->max_sessions is unlikely to be changed
+> +		 * mostly, here we will retry it by reallocating the
+> +		 * sessions arrary memory to get rid of the mdsc->mutex
+> +		 * lock.
+> +		 */
+> +retry:
+> +		max = mdsc->max_sessions;
+> +		sessions = krealloc(sessions, max * sizeof(s), __GFP_ZERO);
 
-The problem with that is the delimiter used is comma (",") which
-restricts passing it through the mount option.
+The kerneldoc over krealloc() says:
 
->
-> >  You only need to specify a single monitor, as the client will get the
-> >  full list when it connects.  (However, if the monitor you specify
-> > @@ -90,16 +90,35 @@ happens to be down, the mount won't succeed.)  The port can be left
-> >  off if the monitor is using the default.  So if the monitor is at
-> >  1.2.3.4::
-> >
-> > - # mount -t ceph 1.2.3.4:/ /mnt/ceph
-> > + # mount -t ceph cephuser@07fe3187-00d9-42a3-814b-72a4d5e7d5be.cephfs=/ /mnt/ceph -o mon_addr=1.2.3.4
-> >
-> >  is sufficient.  If /sbin/mount.ceph is installed, a hostname can be
-> > -used instead of an IP address.
-> > +used instead of an IP address and the cluster FSID can be left out
-> > +(as the mount helper will fill it in by reading the ceph configuration
-> > +file)::
-> >
-> > +  # mount -t ceph cephuser@cephfs=/ /mnt/ceph -o mon_addr=mon-addr
-> >
-> > +Multiple monitor addresses can be passed by separating each address with a slash (`/`)::
-> > +
-> > +  # mount -t ceph cephuser@cephfs=/ /mnt/ceph -o mon_addr=192.168.1.100/192.168.1.101
-> > +
-> > +When using the mount helper, monitor address can be read from ceph
-> > +configuration file if available. Note that, the cluster FSID (passed as part
-> > +of the device string) is validated by checking it with the FSID reported by
-> > +the monitor.
-> >
-> >  Mount Options
-> >  =============
-> >
-> > +  mon_addr=ip_address[:port][/ip_address[:port]]
-> > +       Monitor address to the cluster. This is used to bootstrap the
-> > +        connection to the cluster. Once connection is established, the
-> > +        monitor addresses in the monitor map are followed.
-> > +
-> > +  fsid=cluster-id
-> > +       FSID of the cluster
->
-> Let's note it's the output of `ceph fsid`.
->
-> >    ip=A.B.C.D[:N]
-> >         Specify the IP and/or port the client should bind to locally.
-> >         There is normally not much reason to do this.  If the IP is not
-> > --
-> > 2.27.0
-> >
->
->
-> --
-> Patrick Donnelly, Ph.D.
-> He / Him / His
-> Principal Software Engineer
-> Red Hat Sunnyvale, CA
-> GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
->
+ * The contents of the object pointed to are preserved up to the
+ * lesser of the new and old sizes (__GFP_ZERO flag is effectively
+ignored).
+
+This code however relies on krealloc zeroing out the new part of the
+allocation. Do you know for certain that that works?
+
+> +		if (!sessions) {
+> +			err = -ENOMEM;
+> +			goto out;
+> +		}
+> +		spin_lock(&ci->i_unsafe_lock);
+> +		if (req1) {
+> +			list_for_each_entry(req, &ci->i_unsafe_dirops,
+> +					    r_unsafe_dir_item) {
+> +				s = req->r_session;
+> +				if (unlikely(s->s_mds > max)) {
+> +					spin_unlock(&ci->i_unsafe_lock);
+> +					goto retry;
+> +				}
+> +				if (!sessions[s->s_mds]) {
+> +					s = ceph_get_mds_session(s);
+> +					sessions[s->s_mds] = s;
+
+nit: maybe just do:
+
+    sessions[s->s_mds] = ceph_get_mds_session(s);
 
 
+> +				}
+> +			}
+> +		}
+> +		if (req2) {
+> +			list_for_each_entry(req, &ci->i_unsafe_iops,
+> +					    r_unsafe_target_item) {
+> +				s = req->r_session;
+> +				if (unlikely(s->s_mds > max)) {
+> +					spin_unlock(&ci->i_unsafe_lock);
+> +					goto retry;
+> +				}
+> +				if (!sessions[s->s_mds]) {
+> +					s = ceph_get_mds_session(s);
+> +					sessions[s->s_mds] = s;
+> +				}
+> +			}
+> +		}
+> +		spin_unlock(&ci->i_unsafe_lock);
+> +
+> +		/* the auth MDS */
+> +		spin_lock(&ci->i_ceph_lock);
+> +		if (ci->i_auth_cap) {
+> +		      s = ci->i_auth_cap->session;
+> +		      if (!sessions[s->s_mds])
+> +			      sessions[s->s_mds] = ceph_get_mds_session(s);
+> +		}
+> +		spin_unlock(&ci->i_ceph_lock);
+> +
+> +		/* send flush mdlog request to MDSes */
+> +		for (i = 0; i < max; i++) {
+> +			s = sessions[i];
+> +			if (s) {
+> +				send_flush_mdlog(s);
+> +				ceph_put_mds_session(s);
+> +			}
+> +		}
+> +		kfree(sessions);
+> +	}
+> +
+>  	dout("unsafe_request_wait %p wait on tid %llu %llu\n",
+>  	     inode, req1 ? req1->r_tid : 0ULL, req2 ? req2->r_tid : 0ULL);
+>  	if (req1) {
+> @@ -2321,6 +2398,7 @@ static int unsafe_request_wait(struct inode *inode)
+>  			err = -EIO;
+>  		ceph_mdsc_put_request(req2);
+>  	}
+> +out:
+>  	return err;
+>  }
+>  
+
+Otherwise the whole set looks pretty reasonable.
+
+Thanks,
 -- 
-Cheers,
-Venky
+Jeff Layton <jlayton@kernel.org>
 
