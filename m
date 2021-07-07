@@ -2,115 +2,315 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0ECA3BE3B0
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Jul 2021 09:35:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C441E3BE422
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Jul 2021 10:11:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231152AbhGGHiH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 7 Jul 2021 03:38:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60350 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231147AbhGGHiH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Jul 2021 03:38:07 -0400
-Received: from outbound4.mail.transip.nl (outbound4.mail.transip.nl [IPv6:2a01:7c8:7c9:ca11:136:144:136:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0980C061574
-        for <ceph-devel@vger.kernel.org>; Wed,  7 Jul 2021 00:35:25 -0700 (PDT)
-Received: from submission15.mail.transip.nl (unknown [10.103.8.166])
-        by outbound4.mail.transip.nl (Postfix) with ESMTP id 4GKWRb1LXvzHJJ8;
-        Wed,  7 Jul 2021 09:35:23 +0200 (CEST)
-Received: from exchange.transipgroup.nl (unknown [81.4.116.210])
-        by submission15.mail.transip.nl (Postfix) with ESMTPSA id 4GKWRZ6R5Sz3wq2;
-        Wed,  7 Jul 2021 09:35:22 +0200 (CEST)
-Received: from VM16171.groupdir.nl (10.131.120.71) by VM16171.groupdir.nl
- (10.131.120.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.15; Wed, 7 Jul 2021
- 09:35:21 +0200
-Received: from VM16171.groupdir.nl ([81.4.116.210]) by VM16171.groupdir.nl
- ([81.4.116.210]) with mapi id 15.02.0792.015; Wed, 7 Jul 2021 09:35:21 +0200
-From:   Robin Geuze <robin.geuze@nl.team.blue>
-To:     Ilya Dryomov <idryomov@gmail.com>
-CC:     Ceph Development <ceph-devel@vger.kernel.org>
-Subject: Re: All RBD IO stuck after flapping OSD's
-Thread-Topic: All RBD IO stuck after flapping OSD's
-Thread-Index: AQHXMQs7yqmta0olA0ygBmx0d4s7EKq0G68AgAFka/SABi6BAIBbPDuXgAE5TYCAACJLAv//77AAgAArXHP//+1sAIAAIdhQgBKxTeH///dmAAFvNtGAACH5JqY=
-Date:   Wed, 7 Jul 2021 07:35:21 +0000
-Message-ID: <c5830118f2a24ff89b6fcf18e941a120@nl.team.blue>
-References: <47f0a04ce6664116a11cfdb5a458e252@nl.team.blue>
- <CAOi1vP-moRXtL4gKXQF8+NwbPgE11_LoxfSYqYBbJfYYQ7Sv_g@mail.gmail.com>
- <8eb12c996e404870803e9a7c77e508d6@nl.team.blue>
- <CAOi1vP-8i-rKEDd8Emq+MtxCjvK-6VG8KaXdzvQLW89174jUZA@mail.gmail.com>
- <666938090a8746a7ad8ae40ebf116e1c@nl.team.blue>
- <CAOi1vP8NHYEN-=J4A7mB1dSkaHHf8Gtha-xqPLboZUS5u442hA@mail.gmail.com>
- <21c4b9e08c4d48d6b477fc61d1fccba3@nl.team.blue>
- <CAOi1vP_fJm5UzSnOmQDKsVHmv-4vebNZTDk7vqLs=bvnf3fwjw@mail.gmail.com>
- <a13af12ab314437bbbffcb23b0513722@nl.team.blue>
- <CAOi1vP8kiGNaNPw=by=TVfJEV1_X-BNYZuVpO_Kxx5xtf40_6w@mail.gmail.com>
- <391efdae70644b71844fe6fa3dceea13@nl.team.blue>
- <2d37c87eb42d4bc2a99184f6bffce8a2@nl.team.blue>
- <CAOi1vP-dT=1C2SqcMxAR1NWrcHUE1K-F6M1BpBWb7pVCDhS7Og@mail.gmail.com>,<CAOi1vP-5AuH0xuZrd2AWOqRgnzHnEToE-dMQp23iOpY-a+VyLA@mail.gmail.com>
-In-Reply-To: <CAOi1vP-5AuH0xuZrd2AWOqRgnzHnEToE-dMQp23iOpY-a+VyLA@mail.gmail.com>
-Accept-Language: en-GB, nl-NL, en-US
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [81.4.116.242]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S230479AbhGGIOb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 7 Jul 2021 04:14:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:26148 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230441AbhGGIOa (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Jul 2021 04:14:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625645510;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7IxHHhOiV8+sZ6LpLjgjNcv26IJ9eZSvwO6Xt1AmHis=;
+        b=D4GYmICt+waxKAfb+IBiCEAFxDTfORW7jTf8NoHTizE06Vzx35/gRNuZ9MqURtl15GhxMv
+        eewyF0zzfV5saIRwf9rlG+pX7wdyvXDAZz0DVfhyBd8nxa2e++ngpLGipzUxGXXKNVAJsL
+        u0w2QWKUxPdkQ7qWvVTGSdkwbghrHg0=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-202-iWfFO3tON12uOBRocE0Tig-1; Wed, 07 Jul 2021 04:11:47 -0400
+X-MC-Unique: iWfFO3tON12uOBRocE0Tig-1
+Received: by mail-pf1-f200.google.com with SMTP id s5-20020aa78d450000b02902ace63a7e93so1024893pfe.8
+        for <ceph-devel@vger.kernel.org>; Wed, 07 Jul 2021 01:11:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=7IxHHhOiV8+sZ6LpLjgjNcv26IJ9eZSvwO6Xt1AmHis=;
+        b=HcVcJwmLyCxgMn1LcX5HWnSpPJY5RCWrd0SmHmYyzB/E1gQMP17s7Ut5ZQH450aa65
+         J/XBzGqlpkuOrXpuyuhyu7///l9LfiDUEBy+rtVtISui8BC11qMXEBoL1qhVb7buedUb
+         dlAltp3Qn3hMNMNCIhDVIqmbHkWIy1QjQVgm/XktpRuZFBn7YEaP1YD4Xu0cSEq50f5r
+         NOWIXU6T/sutIChVeV5tfyhybB0QQLpJC6KV2ZhmPCaWjkDxwJWDxv6jvyN5fGRKCGyL
+         gVgfrkHrFF4wCRwjKxDGPSKpW3Wq7QOz5sFACqIEuVoICRxEIRQEkdgtE3nGWrqJDXD7
+         PyLA==
+X-Gm-Message-State: AOAM530U0lralc+hmPi4jvFFUch30vvPs5aK4HUIgMCWmPasmUenXukK
+        zgT54eaJgGABOLyYrD+PP5oly+TocRpAG8BAYXwKLMRs8oMhrnZE/JRatRTWXO00guK3wI6BtGe
+        oO1llUfmAy4lCNO/QiLc+7g==
+X-Received: by 2002:a17:90a:c89:: with SMTP id v9mr25474363pja.175.1625645506059;
+        Wed, 07 Jul 2021 01:11:46 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxMNU4SB0teOHT6v93uRcHhLg04FB4deO8vIy0u0Uh1kyBSJ87unh7MGpThF7r/GIoLDW/Mqg==
+X-Received: by 2002:a17:90a:c89:: with SMTP id v9mr25474351pja.175.1625645505799;
+        Wed, 07 Jul 2021 01:11:45 -0700 (PDT)
+Received: from [10.72.12.117] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id r33sm22714853pgk.51.2021.07.07.01.11.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jul 2021 01:11:45 -0700 (PDT)
+Subject: Re: [RFC PATCH v7 08/24] ceph: add ability to set fscrypt_auth via
+ setattr
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     lhenriques@suse.de, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, dhowells@redhat.com
+References: <20210625135834.12934-1-jlayton@kernel.org>
+ <20210625135834.12934-9-jlayton@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <4bb32761-93b5-16fb-b8ab-36897d469a39@redhat.com>
+Date:   Wed, 7 Jul 2021 16:11:34 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-X-Scanned-By: ClueGetter at submission15.mail.transip.nl
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=transip-a; d=nl.team.blue; t=1625643323; h=from:subject:to:cc:
- references:in-reply-to:date:mime-version:content-type;
- bh=hVV4scZvnB+5VUoZI1v/puS7sSYsLheRNVJrQwbPdGw=;
- b=mBqsr0cSulzK1y9az3ge9WNNVYXOU61Gex0ZecFHHvnp0M1LRnxqlokb1Ad8Bc2bnLs0Mg
- WEC14xpVK18Faqj+kl4b8kOju6OXMdcA46AOwVn+h/eLNDAXbJ5uC1sJWZ9tTVzFCYYt5G
- jomr7CsBvRd5vtS4SZPKifBXBqRNXvoZTBjDkGdmGXEuR3FIhsgFfdZAsBGlOk7srJczgB
- nXMRLSG3RBGxH+uG468IKcuxKCDdXPeOriV9hZsBKo2amFHCl/oodZR7EUVGWlTFuIyMQj
- 1veK7Md88RkvZC+q5raZXedLUjtEqHWzAdloH2Rt2DodKDEr7zsutV9CY+n2aw==
-X-Report-Abuse-To: abuse@transip.nl
+In-Reply-To: <20210625135834.12934-9-jlayton@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hey Ilya,
 
-Thanks so much for the patches, we are planning to test them either this af=
-ternoon or tomorrow at the latest, I will let you know the results.
-
-Regards,
-
-Robin Geuze
-
-From: Ilya Dryomov <idryomov@gmail.com>
-Sent: 06 July 2021 19:21
-To: Robin Geuze
-Cc: Ceph Development
-Subject: Re: All RBD IO stuck after flapping OSD's
-=A0  =20
-On Tue, Jun 29, 2021 at 12:07 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+On 6/25/21 9:58 PM, Jeff Layton wrote:
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>   fs/ceph/acl.c                |  4 ++--
+>   fs/ceph/inode.c              | 30 ++++++++++++++++++++++++++++--
+>   fs/ceph/mds_client.c         | 31 ++++++++++++++++++++++++++-----
+>   fs/ceph/mds_client.h         |  3 +++
+>   fs/ceph/super.h              |  7 ++++++-
+>   include/linux/ceph/ceph_fs.h | 21 +++++++++++++--------
+>   6 files changed, 78 insertions(+), 18 deletions(-)
 >
-> On Tue, Jun 29, 2021 at 10:39 AM Robin Geuze <robin.geuze@nl.team.blue> w=
-rote:
-> >
-> > Hey Ilya,
-> >
-> > Do you have any idea on the cause of this bug yet? I tried to dig aroun=
-d a bit myself in the source, but the logic around this locking is very com=
-plex, so I couldn't figure out where the problem is.
->
-> I do.=A0 The proper fix would indeed be large and not backportable but
-> I have a workaround in mind that should be simple enough to backport
-> all the way to 5.4.=A0 The trick is making sure that the workaround is
-> fine from the exclusive lock protocol POV.
->
-> I'll try to flesh it out by the end of this week and report back
-> early next week.
+> diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
+> index 529af59d9fd3..6e716f142022 100644
+> --- a/fs/ceph/acl.c
+> +++ b/fs/ceph/acl.c
+> @@ -136,7 +136,7 @@ int ceph_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
+>   		newattrs.ia_ctime = current_time(inode);
+>   		newattrs.ia_mode = new_mode;
+>   		newattrs.ia_valid = ATTR_MODE | ATTR_CTIME;
+> -		ret = __ceph_setattr(inode, &newattrs);
+> +		ret = __ceph_setattr(inode, &newattrs, NULL);
+>   		if (ret)
+>   			goto out_free;
+>   	}
+> @@ -147,7 +147,7 @@ int ceph_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
+>   			newattrs.ia_ctime = old_ctime;
+>   			newattrs.ia_mode = old_mode;
+>   			newattrs.ia_valid = ATTR_MODE | ATTR_CTIME;
+> -			__ceph_setattr(inode, &newattrs);
+> +			__ceph_setattr(inode, &newattrs, NULL);
+>   		}
+>   		goto out_free;
+>   	}
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index b620281ea65b..7821ba04eef3 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -2086,7 +2086,7 @@ static const struct inode_operations ceph_symlink_iops = {
+>   	.listxattr = ceph_listxattr,
+>   };
+>   
+> -int __ceph_setattr(struct inode *inode, struct iattr *attr)
+> +int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *cia)
+>   {
+>   	struct ceph_inode_info *ci = ceph_inode(inode);
+>   	unsigned int ia_valid = attr->ia_valid;
+> @@ -2127,6 +2127,32 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
+>   
+>   	dout("setattr %p issued %s\n", inode, ceph_cap_string(issued));
+>   
+> +	if (cia && cia->fscrypt_auth) {
+> +		u32 len = offsetof(struct ceph_fscrypt_auth, cfa_blob) +
+> +			  le32_to_cpu(cia->fscrypt_auth->cfa_blob_len);
+> +
+> +		if (len > sizeof(*cia->fscrypt_auth))
+> +			return -EINVAL;
+> +
 
-Hi Robin,
+Possibly we can remove this check here since in the patch followed will 
+make sure the 'cia' is valid.
 
-I CCed you on the patches.=A0 They should apply to 5.4 cleanly.=A0 You
-mentioned you have a build farm set up, please take them for a spin.
 
-Thanks,
 
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Ilya
-    =
+> +		dout("setattr %llx:%llx fscrypt_auth len %u to %u)\n",
+> +			ceph_vinop(inode), ci->fscrypt_auth_len, len);
+> +
+> +		/* It should never be re-set once set */
+> +		WARN_ON_ONCE(ci->fscrypt_auth);
+> +
+> +		if (issued & CEPH_CAP_AUTH_EXCL) {
+> +			dirtied |= CEPH_CAP_AUTH_EXCL;
+> +			kfree(ci->fscrypt_auth);
+> +			ci->fscrypt_auth = (u8 *)cia->fscrypt_auth;
+> +			ci->fscrypt_auth_len = len;
+> +		} else if ((issued & CEPH_CAP_AUTH_SHARED) == 0) {
+> +			req->r_fscrypt_auth = cia->fscrypt_auth;
+> +			mask |= CEPH_SETATTR_FSCRYPT_AUTH;
+> +			release |= CEPH_CAP_AUTH_SHARED;
+> +		}
+> +		cia->fscrypt_auth = NULL;
+> +	}
+> +
+>   	if (ia_valid & ATTR_UID) {
+>   		dout("setattr %p uid %d -> %d\n", inode,
+>   		     from_kuid(&init_user_ns, inode->i_uid),
+> @@ -2324,7 +2350,7 @@ int ceph_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+>   	    ceph_quota_is_max_bytes_exceeded(inode, attr->ia_size))
+>   		return -EDQUOT;
+>   
+> -	err = __ceph_setattr(inode, attr);
+> +	err = __ceph_setattr(inode, attr, NULL);
+>   
+>   	if (err >= 0 && (attr->ia_valid & ATTR_MODE))
+>   		err = posix_acl_chmod(&init_user_ns, inode, attr->ia_mode);
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 9c994effc51d..4aca8ce1c135 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -2529,8 +2529,7 @@ static int set_request_path_attr(struct inode *rinode, struct dentry *rdentry,
+>   	return r;
+>   }
+>   
+> -static void encode_timestamp_and_gids(void **p,
+> -				      const struct ceph_mds_request *req)
+> +static void encode_mclientrequest_tail(void **p, const struct ceph_mds_request *req)
+>   {
+>   	struct ceph_timespec ts;
+>   	int i;
+> @@ -2543,6 +2542,21 @@ static void encode_timestamp_and_gids(void **p,
+>   	for (i = 0; i < req->r_cred->group_info->ngroups; i++)
+>   		ceph_encode_64(p, from_kgid(&init_user_ns,
+>   					    req->r_cred->group_info->gid[i]));
+> +
+> +	/* v5: altname (TODO: skip for now) */
+> +	ceph_encode_32(p, 0);
+> +
+> +	/* v6: fscrypt_auth and fscrypt_file */
+> +	if (req->r_fscrypt_auth) {
+> +		u32 authlen = le32_to_cpu(req->r_fscrypt_auth->cfa_blob_len);
+> +
+> +		authlen += offsetof(struct ceph_fscrypt_auth, cfa_blob);
+
+For the authlen calculating, maybe we could add one helper ? I found 
+there have some other places are also doing this.
+
+
+> +		ceph_encode_32(p, authlen);
+> +		ceph_encode_copy(p, req->r_fscrypt_auth, authlen);
+> +	} else {
+> +		ceph_encode_32(p, 0);
+> +	}
+> +	ceph_encode_32(p, 0); // fscrypt_file for now
+>   }
+>   
+>   /*
+> @@ -2591,6 +2605,13 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   	len += pathlen1 + pathlen2 + 2*(1 + sizeof(u32) + sizeof(u64)) +
+>   		sizeof(struct ceph_timespec);
+>   	len += sizeof(u32) + (sizeof(u64) * req->r_cred->group_info->ngroups);
+> +	len += sizeof(u32); // altname
+> +	len += sizeof(u32); // fscrypt_auth
+> +	if (req->r_fscrypt_auth) {
+> +		len += offsetof(struct ceph_fscrypt_auth, cfa_blob);
+> +		len += le32_to_cpu(req->r_fscrypt_auth->cfa_blob_len);
+> +	}
+> +	len += sizeof(u32); // fscrypt_file
+>   
+>   	/* calculate (max) length for cap releases */
+>   	len += sizeof(struct ceph_mds_request_release) *
+> @@ -2621,7 +2642,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   	} else {
+>   		struct ceph_mds_request_head *new_head = msg->front.iov_base;
+>   
+> -		msg->hdr.version = cpu_to_le16(4);
+> +		msg->hdr.version = cpu_to_le16(6);
+>   		new_head->version = cpu_to_le16(CEPH_MDS_REQUEST_HEAD_VERSION);
+>   		head = (struct ceph_mds_request_head_old *)&new_head->oldest_client_tid;
+>   		p = msg->front.iov_base + sizeof(*new_head);
+> @@ -2672,7 +2693,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   
+>   	head->num_releases = cpu_to_le16(releases);
+>   
+> -	encode_timestamp_and_gids(&p, req);
+> +	encode_mclientrequest_tail(&p, req);
+>   
+>   	if (WARN_ON_ONCE(p > end)) {
+>   		ceph_msg_put(msg);
+> @@ -2781,7 +2802,7 @@ static int __prepare_send_request(struct ceph_mds_session *session,
+>   		rhead->num_releases = 0;
+>   
+>   		p = msg->front.iov_base + req->r_request_release_offset;
+> -		encode_timestamp_and_gids(&p, req);
+> +		encode_mclientrequest_tail(&p, req);
+>   
+>   		msg->front.iov_len = p - msg->front.iov_base;
+>   		msg->hdr.front_len = cpu_to_le32(msg->front.iov_len);
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 0c3cc61fd038..800eed49c2fd 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -278,6 +278,9 @@ struct ceph_mds_request {
+>   	struct mutex r_fill_mutex;
+>   
+>   	union ceph_mds_request_args r_args;
+> +
+> +	struct ceph_fscrypt_auth *r_fscrypt_auth;
+> +
+>   	int r_fmode;        /* file mode, if expecting cap */
+>   	const struct cred *r_cred;
+>   	int r_request_release_offset;
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index e032737fe472..ad62cde30e0b 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -1035,7 +1035,12 @@ static inline int ceph_do_getattr(struct inode *inode, int mask, bool force)
+>   }
+>   extern int ceph_permission(struct user_namespace *mnt_userns,
+>   			   struct inode *inode, int mask);
+> -extern int __ceph_setattr(struct inode *inode, struct iattr *attr);
+> +
+> +struct ceph_iattr {
+> +	struct ceph_fscrypt_auth	*fscrypt_auth;
+> +};
+> +
+> +extern int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *cia);
+>   extern int ceph_setattr(struct user_namespace *mnt_userns,
+>   			struct dentry *dentry, struct iattr *attr);
+>   extern int ceph_getattr(struct user_namespace *mnt_userns,
+> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+> index e41a811026f6..a45a82c7d432 100644
+> --- a/include/linux/ceph/ceph_fs.h
+> +++ b/include/linux/ceph/ceph_fs.h
+> @@ -355,14 +355,19 @@ enum {
+>   
+>   extern const char *ceph_mds_op_name(int op);
+>   
+> -
+> -#define CEPH_SETATTR_MODE   1
+> -#define CEPH_SETATTR_UID    2
+> -#define CEPH_SETATTR_GID    4
+> -#define CEPH_SETATTR_MTIME  8
+> -#define CEPH_SETATTR_ATIME 16
+> -#define CEPH_SETATTR_SIZE  32
+> -#define CEPH_SETATTR_CTIME 64
+> +#define CEPH_SETATTR_MODE              (1 << 0)
+> +#define CEPH_SETATTR_UID               (1 << 1)
+> +#define CEPH_SETATTR_GID               (1 << 2)
+> +#define CEPH_SETATTR_MTIME             (1 << 3)
+> +#define CEPH_SETATTR_ATIME             (1 << 4)
+> +#define CEPH_SETATTR_SIZE              (1 << 5)
+> +#define CEPH_SETATTR_CTIME             (1 << 6)
+> +#define CEPH_SETATTR_MTIME_NOW         (1 << 7)
+> +#define CEPH_SETATTR_ATIME_NOW         (1 << 8)
+> +#define CEPH_SETATTR_BTIME             (1 << 9)
+> +#define CEPH_SETATTR_KILL_SGUID        (1 << 10)
+> +#define CEPH_SETATTR_FSCRYPT_AUTH      (1 << 11)
+> +#define CEPH_SETATTR_FSCRYPT_FILE      (1 << 12)
+>   
+>   /*
+>    * Ceph setxattr request flags.
+
