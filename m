@@ -2,282 +2,242 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 90DFF3BE252
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Jul 2021 07:05:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CB583BE37D
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Jul 2021 09:21:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230139AbhGGFIU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 7 Jul 2021 01:08:20 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:43585 "EHLO
+        id S230349AbhGGHXn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 7 Jul 2021 03:23:43 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:45527 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230108AbhGGFIU (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Jul 2021 01:08:20 -0400
+        by vger.kernel.org with ESMTP id S230340AbhGGHXm (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Jul 2021 03:23:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625634340;
+        s=mimecast20190719; t=1625642462;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=gUe4C8s26yOI6zOx5iacmjpX3gVQRmQL1Gp8bwfm/ds=;
-        b=BpUiORI/t1NlfGN/KZMj1FhouTgtnrm0qZr2ZMFyIa+O/emJubkkB40M6MjEZRJPpY2zpM
-        Vp4hN67ZbuqGJS9ki95PJR7ubMthkaVaqQ65PyBlAR+Ev2M1DpxHlyOCNaOGc5Q/z0aHQO
-        k/e+lCFrdZuS6L/iwAt0t7+7V5Xbnxk=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-517-I_aAfe5bPoGzciSfi7nH0g-1; Wed, 07 Jul 2021 01:05:38 -0400
-X-MC-Unique: I_aAfe5bPoGzciSfi7nH0g-1
-Received: by mail-ej1-f70.google.com with SMTP id k1-20020a17090666c1b029041c273a883dso133368ejp.3
-        for <ceph-devel@vger.kernel.org>; Tue, 06 Jul 2021 22:05:38 -0700 (PDT)
+        bh=JVItEaca5YaB0eGRbcAWbtm7kkQ+4ze3OhCdChVWAKo=;
+        b=GvkWolC1FVrRENPAspwsTIqI87eWZQ/R+j6DLMtz0YPob1Z1M0oCnuFedW0a5lNoGmV73K
+        ojxZ7vWnzx8FR2endnXtrSP8pI030LgxD8n3G5yxs/X1c4U+V/40EpGYCS2AftrvDaV0Wb
+        9KzmdSSW6quYBF+ZZsdY7u7yzhjqEGs=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-547-PfiqiBQdOmugbYSA-Q0LLw-1; Wed, 07 Jul 2021 03:20:59 -0400
+X-MC-Unique: PfiqiBQdOmugbYSA-Q0LLw-1
+Received: by mail-pj1-f71.google.com with SMTP id k92-20020a17090a14e5b02901731af08bd7so998136pja.2
+        for <ceph-devel@vger.kernel.org>; Wed, 07 Jul 2021 00:20:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gUe4C8s26yOI6zOx5iacmjpX3gVQRmQL1Gp8bwfm/ds=;
-        b=dzP5bp1Pbrb9iWZbXzWW1WL1qk4gaT+FI/e4ikAI5BUiEgSra/0FFf2YwJ2YKEBFwy
-         pjrpR1bHxNfguXOvZQzyxyNBMvM5NnLvVoD6NkwnMICpQw8MVJ5+kldrAYv5SQE7Uy83
-         DRKayX9p7MPEgWhSistlbH+uA2VBeg9zkso4W/2bPF0Ocm0FtNldIPPXz+ZIintfRg8o
-         bzM1opF+QuomBtqx3TAFRN6O87BrWYLA5zqQM31B8Sdx8Ig19gn1e4U1e7Qu69zkhSHI
-         RMtAbB08zFVAG9ZgfTmG147FLfoIxzGohcBri92I1ldrxEB+a2AQWXwomd+ZO+aChiAl
-         tnTQ==
-X-Gm-Message-State: AOAM531L5l5ucPT8+1z23dChCa2KVRbKP/VFF9OORbTrskSo1GTQdVMW
-        q9FUdUA/YpyqAyjjFh3a/BGIWmwyj/HePboSd5lf34gPy3aTUb9B4XUDKwTg3EwOR5fnwZ0GfRG
-        V4oOimIdFcBg8lT2/fs9pj8+f5WgluurljZcuzw==
-X-Received: by 2002:a17:906:f0d1:: with SMTP id dk17mr2148831ejb.424.1625634337357;
-        Tue, 06 Jul 2021 22:05:37 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyn2lJcdiGAOiRPz/6L3EoDfHfmHFNELGFjs5zKpx/9f3MuPO+N1xDlhAAgI477KusxKvFJLQn9PF9j9cwc38U=
-X-Received: by 2002:a17:906:f0d1:: with SMTP id dk17mr2148822ejb.424.1625634337181;
- Tue, 06 Jul 2021 22:05:37 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=JVItEaca5YaB0eGRbcAWbtm7kkQ+4ze3OhCdChVWAKo=;
+        b=CDpKPMxfFoxsaAthYOl5fNd670tqfB9d7FdVwX5A1FDPuZcAbK76cv817BckhBilvJ
+         24+AzQ9Bkvza55EEzRDNZonIkHVlDn0buUZwZmU/rNzMCCcSwC461ehqOxBv8WBrKL2y
+         Z8HRqVmaMcGT7V1tgnpQfukOiOxNkCAUFAfTcb3FdxODGUVOxnW5JpXk53coeDlEUE+9
+         lBxgl1EsRCSwMPhjBbXxao8prAvVbThELjABho81Z9xnP+w1D3g3Oj7D03gqNnxEZ9vN
+         3cTCxKmr3luqxaIDNZahOeEufl1nybZJuNVEFuwP3tiYbQdrMPaYiLTJD+9APjX70anJ
+         gxgg==
+X-Gm-Message-State: AOAM532pt8XlaSrGcUWqLO8XSotzJd4Gun4F4UASsHdcKP0k/y5ouom5
+        ZktksxdY1sa5Van/By9A1hZjxJvfuRVE2xe2JKN9dOpx5A50cx96DHfQAEUQtqBS8E5TtdUeTnU
+        T4a1ANWvh1ShJsb32lLVkXA==
+X-Received: by 2002:a63:ed0a:: with SMTP id d10mr25094235pgi.82.1625642457967;
+        Wed, 07 Jul 2021 00:20:57 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJym9qzlVOMlWeGQxXTNPsvP16/7VTMX+07vEjASq04q0/gub3/eK04T09UQp9dw+mBrCmoLWg==
+X-Received: by 2002:a63:ed0a:: with SMTP id d10mr25094214pgi.82.1625642457686;
+        Wed, 07 Jul 2021 00:20:57 -0700 (PDT)
+Received: from [10.72.12.117] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id w123sm19561385pff.152.2021.07.07.00.20.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jul 2021 00:20:57 -0700 (PDT)
+Subject: Re: [RFC PATCH v7 07/24] ceph: add fscrypt_* handling to caps.c
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     lhenriques@suse.de, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, dhowells@redhat.com
+References: <20210625135834.12934-1-jlayton@kernel.org>
+ <20210625135834.12934-8-jlayton@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <f8c7dc0f-49ee-2c25-8e41-e47557db80e4@redhat.com>
+Date:   Wed, 7 Jul 2021 15:20:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-References: <20210702064821.148063-1-vshankar@redhat.com> <20210702064821.148063-3-vshankar@redhat.com>
- <YN7t9TJlDG8YcbqM@suse.de> <CACPzV1=J_7n4kSjny-92OV2_rpWZn3fOK_sdHjJ6nnC9BgEOXw@mail.gmail.com>
- <YN8ZhNG0jiA2CFln@suse.de> <CACPzV1k6Wsym5sxb=3d3h-yMg2biJn=g9Ec-gzfi6CyF1xFJKg@mail.gmail.com>
- <b844de4ab0b086c7d2d824507bb27242c96f64b4.camel@redhat.com>
-In-Reply-To: <b844de4ab0b086c7d2d824507bb27242c96f64b4.camel@redhat.com>
-From:   Venky Shankar <vshankar@redhat.com>
-Date:   Wed, 7 Jul 2021 10:35:01 +0530
-Message-ID: <CACPzV1=vTQvtiQBpGxB4Z3oFM0FZDw--K0=h+X0E=bR+YTAvFQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] ceph: validate cluster FSID for new device syntax
-To:     Jeff Layton <jlayton@redhat.com>
-Cc:     Luis Henriques <lhenriques@suse.de>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210625135834.12934-8-jlayton@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jul 7, 2021 at 12:05 AM Jeff Layton <jlayton@redhat.com> wrote:
->
-> On Fri, 2021-07-02 at 20:27 +0530, Venky Shankar wrote:
-> > On Fri, Jul 2, 2021 at 7:20 PM Luis Henriques <lhenriques@suse.de> wrot=
-e:
-> > >
-> > > On Fri, Jul 02, 2021 at 04:40:18PM +0530, Venky Shankar wrote:
-> > > > On Fri, Jul 2, 2021 at 4:14 PM Luis Henriques <lhenriques@suse.de> =
-wrote:
-> > > > >
-> > > > > On Fri, Jul 02, 2021 at 12:18:19PM +0530, Venky Shankar wrote:
-> > > > > > The new device syntax requires the cluster FSID as part
-> > > > > > of the device string. Use this FSID to verify if it matches
-> > > > > > the cluster FSID we get back from the monitor, failing the
-> > > > > > mount on mismatch.
-> > > > > >
-> > > > > > Also, rename parse_fsid() to ceph_parse_fsid() as it is too
-> > > > > > generic.
-> > > > > >
-> > > > > > Signed-off-by: Venky Shankar <vshankar@redhat.com>
-> > > > > > ---
-> > > > > >  fs/ceph/super.c              | 9 +++++++++
-> > > > > >  fs/ceph/super.h              | 1 +
-> > > > > >  include/linux/ceph/libceph.h | 1 +
-> > > > > >  net/ceph/ceph_common.c       | 5 +++--
-> > > > > >  4 files changed, 14 insertions(+), 2 deletions(-)
-> > > > > >
-> > > > > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> > > > > > index 0b324e43c9f4..03e5f4bb2b6f 100644
-> > > > > > --- a/fs/ceph/super.c
-> > > > > > +++ b/fs/ceph/super.c
-> > > > > > @@ -268,6 +268,9 @@ static int ceph_parse_new_source(const char=
- *dev_name, const char *dev_name_end,
-> > > > > >       if (!fs_name_start)
-> > > > > >               return invalfc(fc, "missing file system name");
-> > > > > >
-> > > > > > +     if (ceph_parse_fsid(fsid_start, &fsopt->fsid))
-> > > > > > +             return invalfc(fc, "invalid fsid format");
-> > > > > > +
-> > > > > >       ++fs_name_start; /* start of file system name */
-> > > > > >       fsopt->mds_namespace =3D kstrndup(fs_name_start,
-> > > > > >                                       dev_name_end - fs_name_st=
-art, GFP_KERNEL);
-> > > > > > @@ -750,6 +753,12 @@ static struct ceph_fs_client *create_fs_cl=
-ient(struct ceph_mount_options *fsopt,
-> > > > > >       }
-> > > > > >       opt =3D NULL; /* fsc->client now owns this */
-> > > > > >
-> > > > > > +     /* help learn fsid */
-> > > > > > +     if (fsopt->new_dev_syntax) {
-> > > > > > +             ceph_check_fsid(fsc->client, &fsopt->fsid);
-> > > > >
-> > > > > This call to ceph_check_fsid() made me wonder what would happen i=
-f I use
-> > > > > the wrong fsid with the new syntax.  And the result is:
-> > > > >
-> > > > > [   41.882334] libceph: mon0 (1)192.168.155.1:40594 session estab=
-lished
-> > > > > [   41.884537] libceph: bad fsid, had d52783e6-efc2-4dce-ad01-aa3=
-272fa5f66 got 90bdb539-9d95-402e-8f23-b0e26cba8b1b
-> > > > > [   41.885955] libceph: bad fsid, had d52783e6-efc2-4dce-ad01-aa3=
-272fa5f66 got 90bdb539-9d95-402e-8f23-b0e26cba8b1b
-> > > > > [   41.889313] libceph: bad fsid, had d52783e6-efc2-4dce-ad01-aa3=
-272fa5f66 got 90bdb539-9d95-402e-8f23-b0e26cba8b1b
-> > > > > [   41.892578] libceph: osdc handle_map corrupt msg
-> > > > >
-> > > > > ... followed by a msg dump.
-> > > > >
-> > > > > I guess this means that manually setting the fsid requires change=
-s to the
-> > > > > messenger (I've only tested with v1) so that it gracefully handle=
-s this
-> > > > > scenario.
-> > > >
-> > > > Yes, this results in a big dump of messages. I haven't looked at
-> > > > gracefully handling these.
-> > > >
-> > > > I'm not sure if it needs to be done in these set of patches though.
-> > >
-> > > Ah, sure!  I didn't meant you'd need to change the messenger to handl=
-e it
-> > > (as I'm not even sure it's the messenger or the mons client that requ=
-ire
-> > > changes).  But I also don't think that this patchset can be merged wi=
-thout
-> > > making sure we can handle a bad fsid correctly and without all this n=
-oise.
-> >
-> > True. However, for most cases users really won't be filling in the
-> > fsid and the mount helper would fill the "correct" one automatically.
-> >
->
-> Yes, but some of them may and I think we do need to handle this
-> gracefully. Let's step back a moment and consider:
->
-> AIUI, the fsid is only here to disambiguate when you have multiple
-> clusters. The kernel doesn't really care about this value at all. All it
-> cares about is whether it's talking to the right mons (as evidenced by
-> the fact that we don't pass the fsid in at mount time today).
->
-> So probably the right thing to do is to just return an error (-EINVAL?)
-> to mount() when there is a mismatch between the fsid and the one in the
-> maps. Is that possible?
+Hi Jeff,
 
-Gracefully handling this is the correct way forward. With these
-changes, a fsid mismatch results in a big splat of message dumps and
-mount failure.
+There has some following patches in your "fscrypt" branch, which is not 
+posted yet, the commit is:
 
-I haven't yet figured where (all) to plumb in the work to handle this,
-but looks doable.
+"3161d2f549db ceph: size handling for encrypted inodes in cap updates"
 
->
-> > >
-> > > Cheers,
-> > > --
-> > > Lu=C3=ADs
-> > >
-> > > >
-> > > > >
-> > > > > Cheers,
-> > > > > --
-> > > > > Lu=C3=ADs
-> > > > >
-> > > > > > +             fsc->client->have_fsid =3D true;
-> > > > > > +     }
-> > > > > > +
-> > > > > >       fsc->client->extra_mon_dispatch =3D extra_mon_dispatch;
-> > > > > >       ceph_set_opt(fsc->client, ABORT_ON_FULL);
-> > > > > >
-> > > > > > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> > > > > > index 8f71184b7c85..ce5fb90a01a4 100644
-> > > > > > --- a/fs/ceph/super.h
-> > > > > > +++ b/fs/ceph/super.h
-> > > > > > @@ -99,6 +99,7 @@ struct ceph_mount_options {
-> > > > > >       char *server_path;    /* default NULL (means "/") */
-> > > > > >       char *fscache_uniq;   /* default NULL */
-> > > > > >       char *mon_addr;
-> > > > > > +     struct ceph_fsid fsid;
-> > > > > >  };
-> > > > > >
-> > > > > >  struct ceph_fs_client {
-> > > > > > diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/=
-libceph.h
-> > > > > > index 409d8c29bc4f..75d059b79d90 100644
-> > > > > > --- a/include/linux/ceph/libceph.h
-> > > > > > +++ b/include/linux/ceph/libceph.h
-> > > > > > @@ -296,6 +296,7 @@ extern bool libceph_compatible(void *data);
-> > > > > >  extern const char *ceph_msg_type_name(int type);
-> > > > > >  extern int ceph_check_fsid(struct ceph_client *client, struct =
-ceph_fsid *fsid);
-> > > > > >  extern void *ceph_kvmalloc(size_t size, gfp_t flags);
-> > > > > > +extern int ceph_parse_fsid(const char *str, struct ceph_fsid *=
-fsid);
-> > > > > >
-> > > > > >  struct fs_parameter;
-> > > > > >  struct fc_log;
-> > > > > > diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-> > > > > > index 97d6ea763e32..da480757fcca 100644
-> > > > > > --- a/net/ceph/ceph_common.c
-> > > > > > +++ b/net/ceph/ceph_common.c
-> > > > > > @@ -217,7 +217,7 @@ void *ceph_kvmalloc(size_t size, gfp_t flag=
-s)
-> > > > > >       return p;
-> > > > > >  }
-> > > > > >
-> > > > > > -static int parse_fsid(const char *str, struct ceph_fsid *fsid)
-> > > > > > +int ceph_parse_fsid(const char *str, struct ceph_fsid *fsid)
-> > > > > >  {
-> > > > > >       int i =3D 0;
-> > > > > >       char tmp[3];
-> > > > > > @@ -247,6 +247,7 @@ static int parse_fsid(const char *str, stru=
-ct ceph_fsid *fsid)
-> > > > > >       dout("parse_fsid ret %d got fsid %pU\n", err, fsid);
-> > > > > >       return err;
-> > > > > >  }
-> > > > > > +EXPORT_SYMBOL(ceph_parse_fsid);
-> > > > > >
-> > > > > >  /*
-> > > > > >   * ceph options
-> > > > > > @@ -465,7 +466,7 @@ int ceph_parse_param(struct fs_parameter *p=
-aram, struct ceph_options *opt,
-> > > > > >               break;
-> > > > > >
-> > > > > >       case Opt_fsid:
-> > > > > > -             err =3D parse_fsid(param->string, &opt->fsid);
-> > > > > > +             err =3D ceph_parse_fsid(param->string, &opt->fsid=
-);
-> > > > > >               if (err) {
-> > > > > >                       error_plog(&log, "Failed to parse fsid: %=
-d", err);
-> > > > > >                       return err;
-> > > > > > --
-> > > > > > 2.27.0
-> > > > > >
-> > > > >
-> > > >
-> > > >
-> > > > --
-> > > > Cheers,
-> > > > Venky
-> > > >
-> > >
-> >
-> >
->
-> --
-> Jeff Layton <jlayton@redhat.com>
->
+It seems buggy.
+
+In the encode_cap_msg() you have removed the 'fscrypt_file_len' and and 
+added a new 8 bytes' data encoding:
+
+         ceph_encode_32(&p, arg->fscrypt_auth_len);
+         ceph_encode_copy(&p, arg->fscrypt_auth, arg->fscrypt_auth_len);
+-       ceph_encode_32(&p, arg->fscrypt_file_len);
+-       ceph_encode_copy(&p, arg->fscrypt_file, arg->fscrypt_file_len);
++       ceph_encode_32(&p, sizeof(__le64));
++       ceph_encode_64(&p, fc->size);
+
+That means no matter the 'arg->encrypted' is true or not, here it will 
+always encode extra 8 bytes' data ?
 
 
---=20
-Cheers,
-Venky
+But in cap_msg_size(), you are making it optional:
+
+
+  static inline int cap_msg_size(struct cap_msg_args *arg)
+  {
+         return CAP_MSG_FIXED_FIELDS + arg->fscrypt_auth_len +
+-                       arg->fscrypt_file_len;
++                       arg->encrypted ? sizeof(__le64) : 0;
+  }
+
+
+Have I missed something important here ?
+
+Thanks
+
+
+On 6/25/21 9:58 PM, Jeff Layton wrote:
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>   fs/ceph/caps.c | 62 +++++++++++++++++++++++++++++++++++++++-----------
+>   1 file changed, 49 insertions(+), 13 deletions(-)
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 038f59cc4250..1be6c5148700 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -13,6 +13,7 @@
+>   #include "super.h"
+>   #include "mds_client.h"
+>   #include "cache.h"
+> +#include "crypto.h"
+>   #include <linux/ceph/decode.h>
+>   #include <linux/ceph/messenger.h>
+>   
+> @@ -1229,15 +1230,12 @@ struct cap_msg_args {
+>   	umode_t			mode;
+>   	bool			inline_data;
+>   	bool			wake;
+> +	u32			fscrypt_auth_len;
+> +	u32			fscrypt_file_len;
+> +	u8			fscrypt_auth[sizeof(struct ceph_fscrypt_auth)]; // for context
+> +	u8			fscrypt_file[sizeof(u64)]; // for size
+>   };
+>   
+> -/*
+> - * cap struct size + flock buffer size + inline version + inline data size +
+> - * osd_epoch_barrier + oldest_flush_tid
+> - */
+> -#define CAP_MSG_SIZE (sizeof(struct ceph_mds_caps) + \
+> -		      4 + 8 + 4 + 4 + 8 + 4 + 4 + 4 + 8 + 8 + 4)
+> -
+>   /* Marshal up the cap msg to the MDS */
+>   static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
+>   {
+> @@ -1253,7 +1251,7 @@ static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
+>   	     arg->size, arg->max_size, arg->xattr_version,
+>   	     arg->xattr_buf ? (int)arg->xattr_buf->vec.iov_len : 0);
+>   
+> -	msg->hdr.version = cpu_to_le16(10);
+> +	msg->hdr.version = cpu_to_le16(12);
+>   	msg->hdr.tid = cpu_to_le64(arg->flush_tid);
+>   
+>   	fc = msg->front.iov_base;
+> @@ -1324,6 +1322,16 @@ static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
+>   
+>   	/* Advisory flags (version 10) */
+>   	ceph_encode_32(&p, arg->flags);
+> +
+> +	/* dirstats (version 11) - these are r/o on the client */
+> +	ceph_encode_64(&p, 0);
+> +	ceph_encode_64(&p, 0);
+> +
+> +	/* fscrypt_auth and fscrypt_file (version 12) */
+> +	ceph_encode_32(&p, arg->fscrypt_auth_len);
+> +	ceph_encode_copy(&p, arg->fscrypt_auth, arg->fscrypt_auth_len);
+> +	ceph_encode_32(&p, arg->fscrypt_file_len);
+> +	ceph_encode_copy(&p, arg->fscrypt_file, arg->fscrypt_file_len);
+>   }
+>   
+>   /*
+> @@ -1445,6 +1453,26 @@ static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
+>   		}
+>   	}
+>   	arg->flags = flags;
+> +	if (ci->fscrypt_auth_len &&
+> +	    WARN_ON_ONCE(ci->fscrypt_auth_len != sizeof(struct ceph_fscrypt_auth))) {
+> +		/* Don't set this if it isn't right size */
+> +		arg->fscrypt_auth_len = 0;
+> +	} else {
+> +		arg->fscrypt_auth_len = ci->fscrypt_auth_len;
+> +		memcpy(arg->fscrypt_auth, ci->fscrypt_auth,
+> +			min_t(size_t, ci->fscrypt_auth_len, sizeof(arg->fscrypt_auth)));
+> +	}
+> +	/* FIXME: use this to track "real" size */
+> +	arg->fscrypt_file_len = 0;
+> +}
+> +
+> +#define CAP_MSG_FIXED_FIELDS (sizeof(struct ceph_mds_caps) + \
+> +		      4 + 8 + 4 + 4 + 8 + 4 + 4 + 4 + 8 + 8 + 4 + 8 + 8 + 4 + 4)
+> +
+> +static inline int cap_msg_size(struct cap_msg_args *arg)
+> +{
+> +	return CAP_MSG_FIXED_FIELDS + arg->fscrypt_auth_len +
+> +			arg->fscrypt_file_len;
+>   }
+>   
+>   /*
+> @@ -1457,7 +1485,7 @@ static void __send_cap(struct cap_msg_args *arg, struct ceph_inode_info *ci)
+>   	struct ceph_msg *msg;
+>   	struct inode *inode = &ci->vfs_inode;
+>   
+> -	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, CAP_MSG_SIZE, GFP_NOFS, false);
+> +	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, cap_msg_size(arg), GFP_NOFS, false);
+>   	if (!msg) {
+>   		pr_err("error allocating cap msg: ino (%llx.%llx) flushing %s tid %llu, requeuing cap.\n",
+>   		       ceph_vinop(inode), ceph_cap_string(arg->dirty),
+> @@ -1483,10 +1511,6 @@ static inline int __send_flush_snap(struct inode *inode,
+>   	struct cap_msg_args	arg;
+>   	struct ceph_msg		*msg;
+>   
+> -	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, CAP_MSG_SIZE, GFP_NOFS, false);
+> -	if (!msg)
+> -		return -ENOMEM;
+> -
+>   	arg.session = session;
+>   	arg.ino = ceph_vino(inode).ino;
+>   	arg.cid = 0;
+> @@ -1524,6 +1548,18 @@ static inline int __send_flush_snap(struct inode *inode,
+>   	arg.flags = 0;
+>   	arg.wake = false;
+>   
+> +	/*
+> +	 * No fscrypt_auth changes from a capsnap. It will need
+> +	 * to update fscrypt_file on size changes (TODO).
+> +	 */
+> +	arg.fscrypt_auth_len = 0;
+> +	arg.fscrypt_file_len = 0;
+> +
+> +	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, cap_msg_size(&arg),
+> +			   GFP_NOFS, false);
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+>   	encode_cap_msg(msg, &arg);
+>   	ceph_con_send(&arg.session->s_con, msg);
+>   	return 0;
 
