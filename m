@@ -2,242 +2,115 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CB583BE37D
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Jul 2021 09:21:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0ECA3BE3B0
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Jul 2021 09:35:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230349AbhGGHXn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 7 Jul 2021 03:23:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:45527 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230340AbhGGHXm (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Jul 2021 03:23:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625642462;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JVItEaca5YaB0eGRbcAWbtm7kkQ+4ze3OhCdChVWAKo=;
-        b=GvkWolC1FVrRENPAspwsTIqI87eWZQ/R+j6DLMtz0YPob1Z1M0oCnuFedW0a5lNoGmV73K
-        ojxZ7vWnzx8FR2endnXtrSP8pI030LgxD8n3G5yxs/X1c4U+V/40EpGYCS2AftrvDaV0Wb
-        9KzmdSSW6quYBF+ZZsdY7u7yzhjqEGs=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-547-PfiqiBQdOmugbYSA-Q0LLw-1; Wed, 07 Jul 2021 03:20:59 -0400
-X-MC-Unique: PfiqiBQdOmugbYSA-Q0LLw-1
-Received: by mail-pj1-f71.google.com with SMTP id k92-20020a17090a14e5b02901731af08bd7so998136pja.2
-        for <ceph-devel@vger.kernel.org>; Wed, 07 Jul 2021 00:20:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=JVItEaca5YaB0eGRbcAWbtm7kkQ+4ze3OhCdChVWAKo=;
-        b=CDpKPMxfFoxsaAthYOl5fNd670tqfB9d7FdVwX5A1FDPuZcAbK76cv817BckhBilvJ
-         24+AzQ9Bkvza55EEzRDNZonIkHVlDn0buUZwZmU/rNzMCCcSwC461ehqOxBv8WBrKL2y
-         Z8HRqVmaMcGT7V1tgnpQfukOiOxNkCAUFAfTcb3FdxODGUVOxnW5JpXk53coeDlEUE+9
-         lBxgl1EsRCSwMPhjBbXxao8prAvVbThELjABho81Z9xnP+w1D3g3Oj7D03gqNnxEZ9vN
-         3cTCxKmr3luqxaIDNZahOeEufl1nybZJuNVEFuwP3tiYbQdrMPaYiLTJD+9APjX70anJ
-         gxgg==
-X-Gm-Message-State: AOAM532pt8XlaSrGcUWqLO8XSotzJd4Gun4F4UASsHdcKP0k/y5ouom5
-        ZktksxdY1sa5Van/By9A1hZjxJvfuRVE2xe2JKN9dOpx5A50cx96DHfQAEUQtqBS8E5TtdUeTnU
-        T4a1ANWvh1ShJsb32lLVkXA==
-X-Received: by 2002:a63:ed0a:: with SMTP id d10mr25094235pgi.82.1625642457967;
-        Wed, 07 Jul 2021 00:20:57 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJym9qzlVOMlWeGQxXTNPsvP16/7VTMX+07vEjASq04q0/gub3/eK04T09UQp9dw+mBrCmoLWg==
-X-Received: by 2002:a63:ed0a:: with SMTP id d10mr25094214pgi.82.1625642457686;
-        Wed, 07 Jul 2021 00:20:57 -0700 (PDT)
-Received: from [10.72.12.117] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id w123sm19561385pff.152.2021.07.07.00.20.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jul 2021 00:20:57 -0700 (PDT)
-Subject: Re: [RFC PATCH v7 07/24] ceph: add fscrypt_* handling to caps.c
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     lhenriques@suse.de, linux-fsdevel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, dhowells@redhat.com
-References: <20210625135834.12934-1-jlayton@kernel.org>
- <20210625135834.12934-8-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <f8c7dc0f-49ee-2c25-8e41-e47557db80e4@redhat.com>
-Date:   Wed, 7 Jul 2021 15:20:38 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        id S231152AbhGGHiH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 7 Jul 2021 03:38:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60350 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231147AbhGGHiH (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Jul 2021 03:38:07 -0400
+Received: from outbound4.mail.transip.nl (outbound4.mail.transip.nl [IPv6:2a01:7c8:7c9:ca11:136:144:136:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0980C061574
+        for <ceph-devel@vger.kernel.org>; Wed,  7 Jul 2021 00:35:25 -0700 (PDT)
+Received: from submission15.mail.transip.nl (unknown [10.103.8.166])
+        by outbound4.mail.transip.nl (Postfix) with ESMTP id 4GKWRb1LXvzHJJ8;
+        Wed,  7 Jul 2021 09:35:23 +0200 (CEST)
+Received: from exchange.transipgroup.nl (unknown [81.4.116.210])
+        by submission15.mail.transip.nl (Postfix) with ESMTPSA id 4GKWRZ6R5Sz3wq2;
+        Wed,  7 Jul 2021 09:35:22 +0200 (CEST)
+Received: from VM16171.groupdir.nl (10.131.120.71) by VM16171.groupdir.nl
+ (10.131.120.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.15; Wed, 7 Jul 2021
+ 09:35:21 +0200
+Received: from VM16171.groupdir.nl ([81.4.116.210]) by VM16171.groupdir.nl
+ ([81.4.116.210]) with mapi id 15.02.0792.015; Wed, 7 Jul 2021 09:35:21 +0200
+From:   Robin Geuze <robin.geuze@nl.team.blue>
+To:     Ilya Dryomov <idryomov@gmail.com>
+CC:     Ceph Development <ceph-devel@vger.kernel.org>
+Subject: Re: All RBD IO stuck after flapping OSD's
+Thread-Topic: All RBD IO stuck after flapping OSD's
+Thread-Index: AQHXMQs7yqmta0olA0ygBmx0d4s7EKq0G68AgAFka/SABi6BAIBbPDuXgAE5TYCAACJLAv//77AAgAArXHP//+1sAIAAIdhQgBKxTeH///dmAAFvNtGAACH5JqY=
+Date:   Wed, 7 Jul 2021 07:35:21 +0000
+Message-ID: <c5830118f2a24ff89b6fcf18e941a120@nl.team.blue>
+References: <47f0a04ce6664116a11cfdb5a458e252@nl.team.blue>
+ <CAOi1vP-moRXtL4gKXQF8+NwbPgE11_LoxfSYqYBbJfYYQ7Sv_g@mail.gmail.com>
+ <8eb12c996e404870803e9a7c77e508d6@nl.team.blue>
+ <CAOi1vP-8i-rKEDd8Emq+MtxCjvK-6VG8KaXdzvQLW89174jUZA@mail.gmail.com>
+ <666938090a8746a7ad8ae40ebf116e1c@nl.team.blue>
+ <CAOi1vP8NHYEN-=J4A7mB1dSkaHHf8Gtha-xqPLboZUS5u442hA@mail.gmail.com>
+ <21c4b9e08c4d48d6b477fc61d1fccba3@nl.team.blue>
+ <CAOi1vP_fJm5UzSnOmQDKsVHmv-4vebNZTDk7vqLs=bvnf3fwjw@mail.gmail.com>
+ <a13af12ab314437bbbffcb23b0513722@nl.team.blue>
+ <CAOi1vP8kiGNaNPw=by=TVfJEV1_X-BNYZuVpO_Kxx5xtf40_6w@mail.gmail.com>
+ <391efdae70644b71844fe6fa3dceea13@nl.team.blue>
+ <2d37c87eb42d4bc2a99184f6bffce8a2@nl.team.blue>
+ <CAOi1vP-dT=1C2SqcMxAR1NWrcHUE1K-F6M1BpBWb7pVCDhS7Og@mail.gmail.com>,<CAOi1vP-5AuH0xuZrd2AWOqRgnzHnEToE-dMQp23iOpY-a+VyLA@mail.gmail.com>
+In-Reply-To: <CAOi1vP-5AuH0xuZrd2AWOqRgnzHnEToE-dMQp23iOpY-a+VyLA@mail.gmail.com>
+Accept-Language: en-GB, nl-NL, en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [81.4.116.242]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20210625135834.12934-8-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+X-Scanned-By: ClueGetter at submission15.mail.transip.nl
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=transip-a; d=nl.team.blue; t=1625643323; h=from:subject:to:cc:
+ references:in-reply-to:date:mime-version:content-type;
+ bh=hVV4scZvnB+5VUoZI1v/puS7sSYsLheRNVJrQwbPdGw=;
+ b=mBqsr0cSulzK1y9az3ge9WNNVYXOU61Gex0ZecFHHvnp0M1LRnxqlokb1Ad8Bc2bnLs0Mg
+ WEC14xpVK18Faqj+kl4b8kOju6OXMdcA46AOwVn+h/eLNDAXbJ5uC1sJWZ9tTVzFCYYt5G
+ jomr7CsBvRd5vtS4SZPKifBXBqRNXvoZTBjDkGdmGXEuR3FIhsgFfdZAsBGlOk7srJczgB
+ nXMRLSG3RBGxH+uG468IKcuxKCDdXPeOriV9hZsBKo2amFHCl/oodZR7EUVGWlTFuIyMQj
+ 1veK7Md88RkvZC+q5raZXedLUjtEqHWzAdloH2Rt2DodKDEr7zsutV9CY+n2aw==
+X-Report-Abuse-To: abuse@transip.nl
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Jeff,
+Hey Ilya,
 
-There has some following patches in your "fscrypt" branch, which is not 
-posted yet, the commit is:
+Thanks so much for the patches, we are planning to test them either this af=
+ternoon or tomorrow at the latest, I will let you know the results.
 
-"3161d2f549db ceph: size handling for encrypted inodes in cap updates"
+Regards,
 
-It seems buggy.
+Robin Geuze
 
-In the encode_cap_msg() you have removed the 'fscrypt_file_len' and and 
-added a new 8 bytes' data encoding:
-
-         ceph_encode_32(&p, arg->fscrypt_auth_len);
-         ceph_encode_copy(&p, arg->fscrypt_auth, arg->fscrypt_auth_len);
--       ceph_encode_32(&p, arg->fscrypt_file_len);
--       ceph_encode_copy(&p, arg->fscrypt_file, arg->fscrypt_file_len);
-+       ceph_encode_32(&p, sizeof(__le64));
-+       ceph_encode_64(&p, fc->size);
-
-That means no matter the 'arg->encrypted' is true or not, here it will 
-always encode extra 8 bytes' data ?
-
-
-But in cap_msg_size(), you are making it optional:
-
-
-  static inline int cap_msg_size(struct cap_msg_args *arg)
-  {
-         return CAP_MSG_FIXED_FIELDS + arg->fscrypt_auth_len +
--                       arg->fscrypt_file_len;
-+                       arg->encrypted ? sizeof(__le64) : 0;
-  }
-
-
-Have I missed something important here ?
-
-Thanks
-
-
-On 6/25/21 9:58 PM, Jeff Layton wrote:
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/ceph/caps.c | 62 +++++++++++++++++++++++++++++++++++++++-----------
->   1 file changed, 49 insertions(+), 13 deletions(-)
+From: Ilya Dryomov <idryomov@gmail.com>
+Sent: 06 July 2021 19:21
+To: Robin Geuze
+Cc: Ceph Development
+Subject: Re: All RBD IO stuck after flapping OSD's
+=A0  =20
+On Tue, Jun 29, 2021 at 12:07 PM Ilya Dryomov <idryomov@gmail.com> wrote:
 >
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index 038f59cc4250..1be6c5148700 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -13,6 +13,7 @@
->   #include "super.h"
->   #include "mds_client.h"
->   #include "cache.h"
-> +#include "crypto.h"
->   #include <linux/ceph/decode.h>
->   #include <linux/ceph/messenger.h>
->   
-> @@ -1229,15 +1230,12 @@ struct cap_msg_args {
->   	umode_t			mode;
->   	bool			inline_data;
->   	bool			wake;
-> +	u32			fscrypt_auth_len;
-> +	u32			fscrypt_file_len;
-> +	u8			fscrypt_auth[sizeof(struct ceph_fscrypt_auth)]; // for context
-> +	u8			fscrypt_file[sizeof(u64)]; // for size
->   };
->   
-> -/*
-> - * cap struct size + flock buffer size + inline version + inline data size +
-> - * osd_epoch_barrier + oldest_flush_tid
-> - */
-> -#define CAP_MSG_SIZE (sizeof(struct ceph_mds_caps) + \
-> -		      4 + 8 + 4 + 4 + 8 + 4 + 4 + 4 + 8 + 8 + 4)
-> -
->   /* Marshal up the cap msg to the MDS */
->   static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
->   {
-> @@ -1253,7 +1251,7 @@ static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
->   	     arg->size, arg->max_size, arg->xattr_version,
->   	     arg->xattr_buf ? (int)arg->xattr_buf->vec.iov_len : 0);
->   
-> -	msg->hdr.version = cpu_to_le16(10);
-> +	msg->hdr.version = cpu_to_le16(12);
->   	msg->hdr.tid = cpu_to_le64(arg->flush_tid);
->   
->   	fc = msg->front.iov_base;
-> @@ -1324,6 +1322,16 @@ static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
->   
->   	/* Advisory flags (version 10) */
->   	ceph_encode_32(&p, arg->flags);
-> +
-> +	/* dirstats (version 11) - these are r/o on the client */
-> +	ceph_encode_64(&p, 0);
-> +	ceph_encode_64(&p, 0);
-> +
-> +	/* fscrypt_auth and fscrypt_file (version 12) */
-> +	ceph_encode_32(&p, arg->fscrypt_auth_len);
-> +	ceph_encode_copy(&p, arg->fscrypt_auth, arg->fscrypt_auth_len);
-> +	ceph_encode_32(&p, arg->fscrypt_file_len);
-> +	ceph_encode_copy(&p, arg->fscrypt_file, arg->fscrypt_file_len);
->   }
->   
->   /*
-> @@ -1445,6 +1453,26 @@ static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
->   		}
->   	}
->   	arg->flags = flags;
-> +	if (ci->fscrypt_auth_len &&
-> +	    WARN_ON_ONCE(ci->fscrypt_auth_len != sizeof(struct ceph_fscrypt_auth))) {
-> +		/* Don't set this if it isn't right size */
-> +		arg->fscrypt_auth_len = 0;
-> +	} else {
-> +		arg->fscrypt_auth_len = ci->fscrypt_auth_len;
-> +		memcpy(arg->fscrypt_auth, ci->fscrypt_auth,
-> +			min_t(size_t, ci->fscrypt_auth_len, sizeof(arg->fscrypt_auth)));
-> +	}
-> +	/* FIXME: use this to track "real" size */
-> +	arg->fscrypt_file_len = 0;
-> +}
-> +
-> +#define CAP_MSG_FIXED_FIELDS (sizeof(struct ceph_mds_caps) + \
-> +		      4 + 8 + 4 + 4 + 8 + 4 + 4 + 4 + 8 + 8 + 4 + 8 + 8 + 4 + 4)
-> +
-> +static inline int cap_msg_size(struct cap_msg_args *arg)
-> +{
-> +	return CAP_MSG_FIXED_FIELDS + arg->fscrypt_auth_len +
-> +			arg->fscrypt_file_len;
->   }
->   
->   /*
-> @@ -1457,7 +1485,7 @@ static void __send_cap(struct cap_msg_args *arg, struct ceph_inode_info *ci)
->   	struct ceph_msg *msg;
->   	struct inode *inode = &ci->vfs_inode;
->   
-> -	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, CAP_MSG_SIZE, GFP_NOFS, false);
-> +	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, cap_msg_size(arg), GFP_NOFS, false);
->   	if (!msg) {
->   		pr_err("error allocating cap msg: ino (%llx.%llx) flushing %s tid %llu, requeuing cap.\n",
->   		       ceph_vinop(inode), ceph_cap_string(arg->dirty),
-> @@ -1483,10 +1511,6 @@ static inline int __send_flush_snap(struct inode *inode,
->   	struct cap_msg_args	arg;
->   	struct ceph_msg		*msg;
->   
-> -	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, CAP_MSG_SIZE, GFP_NOFS, false);
-> -	if (!msg)
-> -		return -ENOMEM;
-> -
->   	arg.session = session;
->   	arg.ino = ceph_vino(inode).ino;
->   	arg.cid = 0;
-> @@ -1524,6 +1548,18 @@ static inline int __send_flush_snap(struct inode *inode,
->   	arg.flags = 0;
->   	arg.wake = false;
->   
-> +	/*
-> +	 * No fscrypt_auth changes from a capsnap. It will need
-> +	 * to update fscrypt_file on size changes (TODO).
-> +	 */
-> +	arg.fscrypt_auth_len = 0;
-> +	arg.fscrypt_file_len = 0;
-> +
-> +	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, cap_msg_size(&arg),
-> +			   GFP_NOFS, false);
-> +	if (!msg)
-> +		return -ENOMEM;
-> +
->   	encode_cap_msg(msg, &arg);
->   	ceph_con_send(&arg.session->s_con, msg);
->   	return 0;
+> On Tue, Jun 29, 2021 at 10:39 AM Robin Geuze <robin.geuze@nl.team.blue> w=
+rote:
+> >
+> > Hey Ilya,
+> >
+> > Do you have any idea on the cause of this bug yet? I tried to dig aroun=
+d a bit myself in the source, but the logic around this locking is very com=
+plex, so I couldn't figure out where the problem is.
+>
+> I do.=A0 The proper fix would indeed be large and not backportable but
+> I have a workaround in mind that should be simple enough to backport
+> all the way to 5.4.=A0 The trick is making sure that the workaround is
+> fine from the exclusive lock protocol POV.
+>
+> I'll try to flesh it out by the end of this week and report back
+> early next week.
 
+Hi Robin,
+
+I CCed you on the patches.=A0 They should apply to 5.4 cleanly.=A0 You
+mentioned you have a build farm set up, please take them for a spin.
+
+Thanks,
+
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Ilya
+    =
