@@ -2,33 +2,33 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EF973BECF5
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Jul 2021 19:19:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB52D3BECFB
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Jul 2021 19:23:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbhGGRWY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 7 Jul 2021 13:22:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42296 "EHLO mail.kernel.org"
+        id S229992AbhGGR0a (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 7 Jul 2021 13:26:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230082AbhGGRWY (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 7 Jul 2021 13:22:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 52A7F61C93;
-        Wed,  7 Jul 2021 17:19:43 +0000 (UTC)
+        id S229949AbhGGR0a (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 7 Jul 2021 13:26:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 67BEA61C9A;
+        Wed,  7 Jul 2021 17:23:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625678383;
-        bh=y35S4/rHpdNzwA5tll3j0RuT3jZaM/a7R1nr6acYBAU=;
+        s=k20201202; t=1625678629;
+        bh=kKASO9gEv9DBUtIrpnleVt/rO1uZBQ/CW94hA7BwEww=;
         h=From:To:Cc:Subject:Date:From;
-        b=aoXHIUmiOMjtJ0pwbdNdDTTOg80ra9Zz1lkYT7BRFDmXAjxEYNHDyP0qdNns40nvK
-         0xv67edVVC3w2eLAb8VpgOZIbodDwFcTVuDYaLVgQjjr5xOOspL3XaIz57ZXQPzi7t
-         Jit7c3CHv+ow8aagennskWtUvWupYYb019ZmgC+gAq8gB4h+zLXoXMeCOY0qFsfEsy
-         F5NVF5F3kjTzaqh4bK/pk5PF33ZjT7lH5PjWSNlvkgBfzeHyDFSlL/BInohG1x24I8
-         Kh78jTQYo+Vi9qKKa54nPIgOeWeZrb5Ut5TDliregMdIsI/KdTldZjylAP0bQFotTV
-         /0q5p4NA5rqZA==
+        b=lFgDxlHzMHyIds6X6vTjZpRhUQJBhNG/pkL8DwfQ841yvZLQMsnrW8sbSa7QHjpUM
+         0D2eRA0nA62GJnDw3sEfiGM4O7+orCZChUi36e4ONdYkrKZrCjfB1vK6Mb8xDh7HFw
+         JAyBK7zX6ESmixmEqSC7jPqBLCmRwHUiVlm8De3M2jhAtFaMMwKIp07gB/AMX/ED8U
+         WUyQB/LW1DGE1rhlkxNMzP5n5VowVFOqlaw0eLZwBlMeyzjbcKEp5mrPqUReT76adH
+         uI8UOURAGrftqWDY5dsimFWPLSCoanZUH58b5MjIFzohiNl6XS6M/UNGsA08Fgql/m
+         hTXcULtzZFbzQ==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, Patrick Donnelly <pdonnell@redhat.com>
-Subject: [PATCH] ceph: dump info about cap flushes when we're waiting too long for them
-Date:   Wed,  7 Jul 2021 13:19:42 -0400
-Message-Id: <20210707171942.38428-1-jlayton@kernel.org>
+Cc:     idryomov@gmail.com, Steve French <smfrench@gmail.com>
+Subject: [PATCH] ceph: remove some defunct forward declarations
+Date:   Wed,  7 Jul 2021 13:23:48 -0400
+Message-Id: <20210707172348.38635-1-jlayton@kernel.org>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -36,73 +36,31 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-We've had some cases of hung umounts in teuthology testing. It looks
-like client is waiting for cap flushes to complete, but they aren't.
+We missed these in the recent fscache rework.
 
-Change wait_caps_flush to wait 60s, and then dump info about the
-condition of the list after that point.
-
-Reported-by: Patrick Donnelly <pdonnell@redhat.com>
-URL: https://tracker.ceph.com/issues/51279
+Reported-by: Steve French <smfrench@gmail.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/mds_client.c | 30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+ fs/ceph/cache.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
-I'm planning to drop this into the testing kernel to help us track down
-the cause. I'm not sure if we'll want to keep it long term so I'll plan
-to add a [DO NOT MERGE] tag when I do.
-
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 7fc9432feece..b0fe5df7ef17 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2064,6 +2064,23 @@ static int check_caps_flush(struct ceph_mds_client *mdsc,
- 	return ret;
- }
+diff --git a/fs/ceph/cache.h b/fs/ceph/cache.h
+index 1409d6149281..058ea2a04376 100644
+--- a/fs/ceph/cache.h
++++ b/fs/ceph/cache.h
+@@ -26,12 +26,6 @@ void ceph_fscache_unregister_inode_cookie(struct ceph_inode_info* ci);
+ void ceph_fscache_file_set_cookie(struct inode *inode, struct file *filp);
+ void ceph_fscache_revalidate_cookie(struct ceph_inode_info *ci);
  
-+static void dump_cap_flushes(struct ceph_mds_client *mdsc, u64 want_tid)
-+{
-+	int index = 0;
-+	struct ceph_cap_flush *cf;
-+
-+	pr_info("%s: still waiting for cap flushes through %llu\n:\n",
-+		__func__, want_tid);
-+	spin_lock(&mdsc->cap_dirty_lock);
-+	list_for_each_entry(cf, &mdsc->cap_flush_list, g_list) {
-+		if (cf->tid > want_tid)
-+			break;
-+		pr_info("%d: %llu %s %d\n", index++, cf->tid,
-+			ceph_cap_string(cf->caps), cf->wake);
-+	}
-+	spin_unlock(&mdsc->cap_dirty_lock);
-+}
-+
- /*
-  * flush all dirty inode data to disk.
-  *
-@@ -2072,10 +2089,19 @@ static int check_caps_flush(struct ceph_mds_client *mdsc,
- static void wait_caps_flush(struct ceph_mds_client *mdsc,
- 			    u64 want_flush_tid)
+-int ceph_readpage_from_fscache(struct inode *inode, struct page *page);
+-int ceph_readpages_from_fscache(struct inode *inode,
+-				struct address_space *mapping,
+-				struct list_head *pages,
+-				unsigned *nr_pages);
+-
+ static inline void ceph_fscache_inode_init(struct ceph_inode_info *ci)
  {
-+	long ret;
-+
- 	dout("check_caps_flush want %llu\n", want_flush_tid);
- 
--	wait_event(mdsc->cap_flushing_wq,
--		   check_caps_flush(mdsc, want_flush_tid));
-+	do {
-+		ret = wait_event_timeout(mdsc->cap_flushing_wq,
-+			   check_caps_flush(mdsc, want_flush_tid), 60 * HZ);
-+		if (ret == 0)
-+			dump_cap_flushes(mdsc, want_flush_tid);
-+		else if (ret == 1)
-+			pr_info("%s: condition evaluated to true after timeout!\n",
-+				  __func__);
-+	} while (ret == 0);
- 
- 	dout("check_caps_flush ok, flushed thru %llu\n", want_flush_tid);
- }
+ 	ci->fscache = NULL;
 -- 
 2.31.1
 
