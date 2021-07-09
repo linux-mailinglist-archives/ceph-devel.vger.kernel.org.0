@@ -2,66 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E5463C2599
-	for <lists+ceph-devel@lfdr.de>; Fri,  9 Jul 2021 16:11:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 063FE3C2895
+	for <lists+ceph-devel@lfdr.de>; Fri,  9 Jul 2021 19:41:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232026AbhGIOOS convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Fri, 9 Jul 2021 10:14:18 -0400
-Received: from ps11.myhostcenter.com ([64.6.248.4]:46229 "EHLO
-        ps11.myhostcenter.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232042AbhGIOOS (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Jul 2021 10:14:18 -0400
-X-Greylist: delayed 8061 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Jul 2021 10:14:18 EDT
-Received: (qmail 728 invoked from network); 9 Jul 2021 06:58:32 -0400
-Received: from 66.42.97.134.vultr.com (HELO johnlewis.com) (66.42.97.134)
-  by s115.n248.n6.n64.static.myhostcenter.net with (DHE-RSA-AES256-SHA encrypted) SMTP; 9 Jul 2021 06:58:32 -0400
-Reply-To: robert_turner@johnlewis-trades.com,
-          pippawicks.sales@johnlewis-trades.com
-From:   John Lewis & Partners <robert.turner11@johnlewis.com>
-To:     ceph-devel@vger.kernel.org
-Subject: Order Inquiry (JL) 7/09/21
-Date:   09 Jul 2021 10:58:42 +0000
-Message-ID: <20210709103358.A1F54CE44AB08CB0@johnlewis.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+        id S230080AbhGIRoU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 9 Jul 2021 13:44:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41242 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229990AbhGIRoT (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 9 Jul 2021 13:44:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 0B37E61355;
+        Fri,  9 Jul 2021 17:41:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625852496;
+        bh=HMqOvaYLTou3mTCIRv6S+zTU+I/qP7tcTRfW1HQbnug=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=YcyYhJUKApQrmVJ0k3w8mA/WU9bS8suQYsJOwHRrGCUaR9KJd70LOQydOm/4jzK4S
+         F8RI3O/6VR3k7+oKSzNu9wYIlkXidlrtgMrMgBsj44mZBpd03FmT1i0oh2KvF8vvGO
+         FYCwV8HOe7MfGh4GP1puAeVqLEDhF0NhxAZ6xyHnpcitEoz58svr3eN9ng2aHrrLdW
+         JfGXfVNOjf7hJKUeKyH+Xf0CvVddNOAjWn3FhzZfqidPKPeqrF8UhT5dIyuG1a2BwQ
+         yGuX0x8LI1F/cxbibmZE+7ylYfqchtKHTjg3GU7xTsk4bc3b6syZ2DNfw4RIQCfCSO
+         QRK9EWuE+foCw==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 013B5609F6;
+        Fri,  9 Jul 2021 17:41:36 +0000 (UTC)
+Subject: Re: [GIT PULL] Ceph updates for 5.14-rc1
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20210708195458.14317-1-idryomov@gmail.com>
+References: <20210708195458.14317-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20210708195458.14317-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-5.14-rc1
+X-PR-Tracked-Commit-Id: 4c18347238ab5a4ee0e71ca765460d84c75a26b5
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 47a7ce62889a52841bcc8cec98dd3bf45af3b4f0
+Message-Id: <162585249599.25269.4950112226626666845.pr-tracker-bot@kernel.org>
+Date:   Fri, 09 Jul 2021 17:41:35 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dear ceph-devel
+The pull request you sent on Thu,  8 Jul 2021 21:54:58 +0200:
 
-The famous brand John Lewis Partnership, is UK's largest multi-
-channel retailer with over 126 shops and multiple expansion in 
-Africa furnished by European/Asian/American products. We are
-sourcing new products to attract new customers and also retain 
-our existing ones, create new partnerships with companies dealing 
-with different kinds of goods globally.
+> https://github.com/ceph/ceph-client.git tags/ceph-for-5.14-rc1
 
-Your company's products are of interest to our market as we have 
-an amazing market for your products.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/47a7ce62889a52841bcc8cec98dd3bf45af3b4f0
 
-Provide us your current catalog through email to review more. We 
-hope to be able to order with you and start a long-term friendly, 
-respectable and solid business partnership. Please we would
-appreciate it if you could send us your stock availability via 
-email if any.
+Thank you!
 
-Our payment terms are 15 days net in Europe, 30 days Net in UK 
-and 30 days net in Asia/USA as we operate with over 5297 
-suppliers around the globe for the past 50 years now. For
-immediate response Send your reply to "robert_turner@johnlewis-
-trades.com" for us to be able to treat with care and urgency.
-
-
-Best Regards
-
-Rob Turner
-Head Of Procurement Operations
-John Lewis & Partners.
-robert_turner@johnlewis-trades.com
-Tel: +44-7451-274090
-WhatsApp: +447497483925
-www.johnlewis.com
-REGISTERED OFFICE: 171 VICTORIA STREET, LONDON SW1E 5NN 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
