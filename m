@@ -2,39 +2,39 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DE0283C38E9
-	for <lists+ceph-devel@lfdr.de>; Sun, 11 Jul 2021 01:54:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B47C03C3929
+	for <lists+ceph-devel@lfdr.de>; Sun, 11 Jul 2021 01:55:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234162AbhGJX4l (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 10 Jul 2021 19:56:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41406 "EHLO mail.kernel.org"
+        id S233823AbhGJX5x (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 10 Jul 2021 19:57:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233782AbhGJXzn (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Sat, 10 Jul 2021 19:55:43 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 33FA1613E0;
-        Sat, 10 Jul 2021 23:52:00 +0000 (UTC)
+        id S233824AbhGJX4q (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Sat, 10 Jul 2021 19:56:46 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B159D6140F;
+        Sat, 10 Jul 2021 23:52:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625961121;
-        bh=HzeovM7VAqG9IHKAhS7VZd/73DqujE/7DQQFHvPr5ms=;
+        s=k20201202; t=1625961148;
+        bh=29/d8iHVTKTqMfAj+ImN5vbWDiKq9zh5EN7smpYH6Ys=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rzwUI9RvGNjRZtwSOBkP6DF1GvYE17gYAvzBr1ZXt7EwVacoy0poQEIS07IkWEyOJ
-         3PyiaCB9M/CCr5II+opHZPvkTSLPocpgQwc8lM3fmfeeDwOmUFtp8Ard6m9PkMjiEL
-         fje8vtXFzRk+4xCANoVQ+3Rqqkt1wfys2SSFFZtBOKFXUBfvRNnhScnc6QTBDRyEAo
-         tBmzBQPF6un0qBK9wfTxNZZe3G6EwNcoHMSZXov0K9K1lXJuY8RoWeB9mUP4YrXnOH
-         haZoLqoxSkZL5r79QiKmZ6Qt6x1K7cIR417AvAI6FoKfiWS4GAFwoRTRT8IhA8rNRg
-         5tMmOP3bNJckA==
+        b=VKIYb1sc/BHj8tcZ4qjcTn458D74g7nX4FyG3f/Uh+hLFpspFrj7vbiY6MHfqXPmf
+         1UltA2mTNdCDqM98xz5nTjVZVAu0ixLVfDziQ3NTg56/XXLK5aEoThieHx1LeL/H/7
+         PvjirlRmWflNai7/QuDsWr0aqQwelew3OKZs//JMlhDd5uYt8LhNvHRdwudhkTSg3T
+         2nAdhw48L/1BzsxfyCouNu5lz60OorvPvI3v5YW6la2gUyFOZYjx7CaF//9c/g2maY
+         8vVv3KFrp90m59drs6qGMA2n7YoyWDgioK1JIXQHS+dZQxsc3/N0YPk5Omf7je5VE8
+         96aSbZj2VfJyQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jeff Layton <jlayton@kernel.org>,
         Matthew Wilcox <willy@infradead.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 13/22] ceph: remove bogus checks and WARN_ONs from ceph_set_page_dirty
-Date:   Sat, 10 Jul 2021 19:51:34 -0400
-Message-Id: <20210710235143.3222129-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 12/21] ceph: remove bogus checks and WARN_ONs from ceph_set_page_dirty
+Date:   Sat, 10 Jul 2021 19:52:03 -0400
+Message-Id: <20210710235212.3222375-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710235143.3222129-1-sashal@kernel.org>
-References: <20210710235143.3222129-1-sashal@kernel.org>
+In-Reply-To: <20210710235212.3222375-1-sashal@kernel.org>
+References: <20210710235212.3222375-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -64,10 +64,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 9 deletions(-)
 
 diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index e59b2f53a81f..de10899da837 100644
+index ae1435c12d2b..1dba2b95fe8e 100644
 --- a/fs/ceph/addr.c
 +++ b/fs/ceph/addr.c
-@@ -75,10 +75,6 @@ static int ceph_set_page_dirty(struct page *page)
+@@ -74,10 +74,6 @@ static int ceph_set_page_dirty(struct page *page)
  	struct inode *inode;
  	struct ceph_inode_info *ci;
  	struct ceph_snap_context *snapc;
@@ -78,7 +78,7 @@ index e59b2f53a81f..de10899da837 100644
  
  	if (PageDirty(page)) {
  		dout("%p set_page_dirty %p idx %lu -- already dirty\n",
-@@ -124,11 +120,7 @@ static int ceph_set_page_dirty(struct page *page)
+@@ -123,11 +119,7 @@ static int ceph_set_page_dirty(struct page *page)
  	page->private = (unsigned long)snapc;
  	SetPagePrivate(page);
  
