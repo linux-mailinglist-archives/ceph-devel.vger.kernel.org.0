@@ -2,39 +2,39 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D13383C3968
-	for <lists+ceph-devel@lfdr.de>; Sun, 11 Jul 2021 01:57:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D55B53C398C
+	for <lists+ceph-devel@lfdr.de>; Sun, 11 Jul 2021 01:58:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232930AbhGJX7k (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 10 Jul 2021 19:59:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41406 "EHLO mail.kernel.org"
+        id S233004AbhGKAA4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 10 Jul 2021 20:00:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234357AbhGJX5u (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Sat, 10 Jul 2021 19:57:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 85A0C61429;
-        Sat, 10 Jul 2021 23:52:53 +0000 (UTC)
+        id S233499AbhGJX6e (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Sat, 10 Jul 2021 19:58:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4B7AE61420;
+        Sat, 10 Jul 2021 23:53:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625961174;
-        bh=UI8arizcMZt0jWWuWkWK+1dPrCxJSzyeFbsb5TRcol0=;
+        s=k20201202; t=1625961194;
+        bh=K/um/lfJ9Ws0nA0pA/xXEP7knKZgHoSKQ7OfxnKKJuY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=irBmwLtkx0h3rOyib1mrhxgT8RyQPxoQ1xy9WxW6V+cD+vdsTRt/b5rO7qVssrDvP
-         kOeuoi+dNpwi2BczSLeabf0TIdJctiKf9HUqHZgpbY3Cy9GKTRVRP13hatZNfeSb7n
-         Ogyq8tCtfpJeY3rSrhwZtZjRLvQqviBTz4cjCZtniiTEblkdDeTRlzxHvP4lmQgx9e
-         PJoK9SgQxXECmbezOq61UAY4jH4h3IHvwyY2qdfQR4FsvjkPqYVUkRq+IWpwMqAsq/
-         w8NrnFPdqQuKqgFvx1XL1EBx4zD9cHqFtVjtcOhY7YsseTP/j8yF7ggk9lGk+9jIwP
-         f+EeiiXgubZ2w==
+        b=mTxwcceT+Q5IBhr+njBNIt8E8u8UaDntX2U9/ic77HVvI/e/QHJvVTCAM/DMfmAC6
+         MVTkHlTvPfdvoh73TTd+vQEpCBQvqfs4uNLzSfM6iSK7FQp8w6NN+XZxImgUtLqX+3
+         kV5yWJqL+xElsbzaHv0V8zuesePj/mO8YRCPKK9AEuCTZg0s4Ot39XRRkJOPMv0u62
+         rbyFjU2K1VKkwSf2ghtKqY2+OhH4yOnczabNmIEAuu7hOq2zhS8AfKFk6Sb+oT0uTj
+         uPifzVx22XjKbXFTCYoyAFb8Eea7iyqlbnBFRTJluiNvFhwkVvxXrF4w39DzB2tTZC
+         cOZsCSR0bLJLw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jeff Layton <jlayton@kernel.org>,
         Matthew Wilcox <willy@infradead.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 10/16] ceph: remove bogus checks and WARN_ONs from ceph_set_page_dirty
-Date:   Sat, 10 Jul 2021 19:52:34 -0400
-Message-Id: <20210710235240.3222618-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 08/12] ceph: remove bogus checks and WARN_ONs from ceph_set_page_dirty
+Date:   Sat, 10 Jul 2021 19:52:58 -0400
+Message-Id: <20210710235302.3222809-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710235240.3222618-1-sashal@kernel.org>
-References: <20210710235240.3222618-1-sashal@kernel.org>
+In-Reply-To: <20210710235302.3222809-1-sashal@kernel.org>
+References: <20210710235302.3222809-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -64,7 +64,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 9 deletions(-)
 
 diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 36aa6d8cdff7..9791de2dc773 100644
+index fbf383048409..26de74684c17 100644
 --- a/fs/ceph/addr.c
 +++ b/fs/ceph/addr.c
 @@ -72,10 +72,6 @@ static int ceph_set_page_dirty(struct page *page)
