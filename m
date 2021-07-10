@@ -2,65 +2,95 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DFC13C2C3D
-	for <lists+ceph-devel@lfdr.de>; Sat, 10 Jul 2021 03:03:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF9973C37BD
+	for <lists+ceph-devel@lfdr.de>; Sun, 11 Jul 2021 01:50:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230519AbhGJBGL convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Fri, 9 Jul 2021 21:06:11 -0400
-Received: from ps11.myhostcenter.com ([64.6.248.4]:41605 "EHLO
-        ps11.myhostcenter.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229931AbhGJBGL (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 9 Jul 2021 21:06:11 -0400
-Received: (qmail 9442 invoked from network); 9 Jul 2021 18:46:57 -0400
-Received: from 66.42.97.134.vultr.com (HELO johnlewis.com) (66.42.97.134)
-  by s115.n248.n6.n64.static.myhostcenter.net with (DHE-RSA-AES256-SHA encrypted) SMTP; 9 Jul 2021 18:46:56 -0400
-Reply-To: robert_turner@johnlewis-trades.com,
-          pippawicks.sales@johnlewis-trades.com
-From:   John Lewis & Partners <robert.turner11@johnlewis.com>
-To:     ceph-devel@vger.kernel.org
-Subject: Order Inquiry (JL) 7/09/21
-Date:   09 Jul 2021 22:47:07 +0000
-Message-ID: <20210709202244.54F62B6BDCDD73D9@johnlewis.com>
+        id S232981AbhGJXw4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 10 Jul 2021 19:52:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39816 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232478AbhGJXwh (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Sat, 10 Jul 2021 19:52:37 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9B08361369;
+        Sat, 10 Jul 2021 23:49:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625960991;
+        bh=PisIxenSRs/4tKpO8gET1MYJfXCfcgqgPRZaeMD+0ik=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YL/Y8NDgyOn+wIz8TOQqLixN/N7QNF5QkZmkneSjyL1EhOwjPO3qIPK5cYWiwrFqe
+         nSXxpKRNN3JIUzZAuqrOnydZVNGwH95YmuemJp3dW8mcAtkRUx8ICgrVDCleileZbZ
+         lZU8R1jO/uoFFyiAq5fYyt67LsqCp06ezbcqadxi6nwxIn0PZ9gR8ZY6n6L2AOzVtE
+         qcpURjxc0FjgpAr1Y6bxkKg//T4H2P//8eN464dWNL5lY5uHVC7DDyKtR3foGcjvxX
+         C/+8OP5nogyC5AuuBwSZE1CZdN6EM0qruhhq6WMNu7pVllbglBLiqIRGZEA6lopEAl
+         4TKkyFSderfgg==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.12 24/43] ceph: remove bogus checks and WARN_ONs from ceph_set_page_dirty
+Date:   Sat, 10 Jul 2021 19:48:56 -0400
+Message-Id: <20210710234915.3220342-24-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210710234915.3220342-1-sashal@kernel.org>
+References: <20210710234915.3220342-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dear ceph-devel
+From: Jeff Layton <jlayton@kernel.org>
 
-The famous brand John Lewis Partnership, is UK's largest multi-
-channel retailer with over 126 shops and multiple expansion in 
-Africa furnished by European/Asian/American products. We are
-sourcing new products to attract new customers and also retain 
-our existing ones, create new partnerships with companies dealing 
-with different kinds of goods globally.
+[ Upstream commit 22d41cdcd3cfd467a4af074165357fcbea1c37f5 ]
 
-Your company's products are of interest to our market as we have 
-an amazing market for your products.
+The checks for page->mapping are odd, as set_page_dirty is an
+address_space operation, and I don't see where it would be called on a
+non-pagecache page.
 
-Provide us your current catalog through email to review more. We 
-hope to be able to order with you and start a long-term friendly, 
-respectable and solid business partnership. Please we would
-appreciate it if you could send us your stock availability via 
-email if any.
+The warning about the page lock also seems bogus.  The comment over
+set_page_dirty() says that it can be called without the page lock in
+some rare cases. I don't think we want to warn if that's the case.
 
-Our payment terms are 15 days net in Europe, 30 days Net in UK 
-and 30 days net in Asia/USA as we operate with over 5297 
-suppliers around the globe for the past 50 years now. For
-immediate response Send your reply to "robert_turner@johnlewis-
-trades.com" for us to be able to treat with care and urgency.
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/ceph/addr.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index c000fe338f7e..c54317c10f58 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -78,10 +78,6 @@ static int ceph_set_page_dirty(struct page *page)
+ 	struct inode *inode;
+ 	struct ceph_inode_info *ci;
+ 	struct ceph_snap_context *snapc;
+-	int ret;
+-
+-	if (unlikely(!mapping))
+-		return !TestSetPageDirty(page);
+ 
+ 	if (PageDirty(page)) {
+ 		dout("%p set_page_dirty %p idx %lu -- already dirty\n",
+@@ -127,11 +123,7 @@ static int ceph_set_page_dirty(struct page *page)
+ 	page->private = (unsigned long)snapc;
+ 	SetPagePrivate(page);
+ 
+-	ret = __set_page_dirty_nobuffers(page);
+-	WARN_ON(!PageLocked(page));
+-	WARN_ON(!page->mapping);
+-
+-	return ret;
++	return __set_page_dirty_nobuffers(page);
+ }
+ 
+ /*
+-- 
+2.30.2
 
-Best Regards
-
-Rob Turner
-Head Of Procurement Operations
-John Lewis & Partners.
-robert_turner@johnlewis-trades.com
-Tel: +44-7451-274090
-WhatsApp: +447497483925
-www.johnlewis.com
-REGISTERED OFFICE: 171 VICTORIA STREET, LONDON SW1E 5NN 
