@@ -2,95 +2,56 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D55B53C398C
-	for <lists+ceph-devel@lfdr.de>; Sun, 11 Jul 2021 01:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91AAD3C3CCD
+	for <lists+ceph-devel@lfdr.de>; Sun, 11 Jul 2021 15:22:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233004AbhGKAA4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 10 Jul 2021 20:00:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48530 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233499AbhGJX6e (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Sat, 10 Jul 2021 19:58:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4B7AE61420;
-        Sat, 10 Jul 2021 23:53:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1625961194;
-        bh=K/um/lfJ9Ws0nA0pA/xXEP7knKZgHoSKQ7OfxnKKJuY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mTxwcceT+Q5IBhr+njBNIt8E8u8UaDntX2U9/ic77HVvI/e/QHJvVTCAM/DMfmAC6
-         MVTkHlTvPfdvoh73TTd+vQEpCBQvqfs4uNLzSfM6iSK7FQp8w6NN+XZxImgUtLqX+3
-         kV5yWJqL+xElsbzaHv0V8zuesePj/mO8YRCPKK9AEuCTZg0s4Ot39XRRkJOPMv0u62
-         rbyFjU2K1VKkwSf2ghtKqY2+OhH4yOnczabNmIEAuu7hOq2zhS8AfKFk6Sb+oT0uTj
-         uPifzVx22XjKbXFTCYoyAFb8Eea7iyqlbnBFRTJluiNvFhwkVvxXrF4w39DzB2tTZC
-         cOZsCSR0bLJLw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 08/12] ceph: remove bogus checks and WARN_ONs from ceph_set_page_dirty
-Date:   Sat, 10 Jul 2021 19:52:58 -0400
-Message-Id: <20210710235302.3222809-8-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710235302.3222809-1-sashal@kernel.org>
-References: <20210710235302.3222809-1-sashal@kernel.org>
+        id S232918AbhGKNXi convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Sun, 11 Jul 2021 09:23:38 -0400
+Received: from mail.07d05.mspz7.gob.ec ([186.46.59.139]:33928 "EHLO
+        mail.07d05.mspz7.gob.ec" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232868AbhGKNXh (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 11 Jul 2021 09:23:37 -0400
+X-Greylist: delayed 1701 seconds by postgrey-1.27 at vger.kernel.org; Sun, 11 Jul 2021 09:23:37 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.07d05.mspz7.gob.ec (Postfix) with ESMTP id 55EDE1844D72;
+        Sun, 11 Jul 2021 07:40:21 -0500 (-05)
+Received: from mail.07d05.mspz7.gob.ec ([127.0.0.1])
+        by localhost (mail.07d05.mspz7.gob.ec [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 9n_41MqmAxRn; Sun, 11 Jul 2021 07:40:21 -0500 (-05)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.07d05.mspz7.gob.ec (Postfix) with ESMTP id 1C1ED1844D80;
+        Sun, 11 Jul 2021 07:40:21 -0500 (-05)
+X-Virus-Scanned: amavisd-new at 07d05.mspz7.gob.ec
+Received: from mail.07d05.mspz7.gob.ec ([127.0.0.1])
+        by localhost (mail.07d05.mspz7.gob.ec [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id szZTfQZGAprO; Sun, 11 Jul 2021 07:40:21 -0500 (-05)
+Received: from cris-PC.wifi (unknown [105.9.79.139])
+        by mail.07d05.mspz7.gob.ec (Postfix) with ESMTPSA id A9BE61844D63;
+        Sun, 11 Jul 2021 07:40:12 -0500 (-05)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: spende von 2,000,000 euro
+To:     Recipients <maria.coronel@07d05.mspz7.gob.ec>
+From:   ''Tayeb souami'' <maria.coronel@07d05.mspz7.gob.ec>
+Date:   Sun, 11 Jul 2021 14:39:57 +0200
+Reply-To: Tayebsouam.spende@gmail.com
+Message-Id: <20210711124012.A9BE61844D63@mail.07d05.mspz7.gob.ec>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Jeff Layton <jlayton@kernel.org>
+Hallo mein lieber Freund
+Mein Name ist Tayeb Souami aus New Jersey in Amerika und ich habe den America Lottery Jackpot von 315 Millionen Euro gewonnen. Ich habe mich entschlossen, die Summe von 2.000.000 Euro an fünf glückliche Personen zu spenden, und Sie wurden als einer der Begünstigten ausgewählt. Bitte klicken Sie auf diesen Link, um mehr über meinen Gewinn zu erfahren.
 
-[ Upstream commit 22d41cdcd3cfd467a4af074165357fcbea1c37f5 ]
 
-The checks for page->mapping are odd, as set_page_dirty is an
-address_space operation, and I don't see where it would be called on a
-non-pagecache page.
+UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
 
-The warning about the page lock also seems bogus.  The comment over
-set_page_dirty() says that it can be called without the page lock in
-some rare cases. I don't think we want to warn if that's the case.
+Bitte kontaktieren Sie mich über diese E-Mail:Tayebsouam.spende@gmail.com
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ceph/addr.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index fbf383048409..26de74684c17 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -72,10 +72,6 @@ static int ceph_set_page_dirty(struct page *page)
- 	struct inode *inode;
- 	struct ceph_inode_info *ci;
- 	struct ceph_snap_context *snapc;
--	int ret;
--
--	if (unlikely(!mapping))
--		return !TestSetPageDirty(page);
- 
- 	if (PageDirty(page)) {
- 		dout("%p set_page_dirty %p idx %lu -- already dirty\n",
-@@ -121,11 +117,7 @@ static int ceph_set_page_dirty(struct page *page)
- 	page->private = (unsigned long)snapc;
- 	SetPagePrivate(page);
- 
--	ret = __set_page_dirty_nobuffers(page);
--	WARN_ON(!PageLocked(page));
--	WARN_ON(!page->mapping);
--
--	return ret;
-+	return __set_page_dirty_nobuffers(page);
- }
- 
- /*
--- 
-2.30.2
+Ich hoffe, Sie und Ihre Familie glücklich zu machen.
 
+Grüße
+Herr Tayeb Souami
