@@ -2,120 +2,102 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E98A3C5BCC
-	for <lists+ceph-devel@lfdr.de>; Mon, 12 Jul 2021 14:21:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCC0B3C5C1A
+	for <lists+ceph-devel@lfdr.de>; Mon, 12 Jul 2021 14:29:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231898AbhGLL62 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 12 Jul 2021 07:58:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32834 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230457AbhGLL61 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 12 Jul 2021 07:58:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D359F610E6;
-        Mon, 12 Jul 2021 11:55:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626090939;
-        bh=agbXnkI+d1pZleZ1eNq+cwaIbUmy13yPymXoqaO/PXc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Am9xiyRURyzgvn5W9WwkMZoaPwFb29Qhxa7mPCu9OWKimRdSFBVs2jc5ovBYBsV0H
-         tN7natS3Ln5yhPQDkstDHOb/SM+7sflTqebeNxRnSf7VhXW8KEJKdQuYiKfulAtTR5
-         KnuCNvAh4uoBvloqF+n/9/m8HDliwVGSgr25RlKULVt6yL8MfXIDOvn6+Y9+S0BSPI
-         m42R6wkJpBQ/4XYaR/UrFaLVBW84hJbQLFYHVieqJQEqaq7Rt2Mo2OxwKiZrbTwdep
-         piCGCjqzk2KJsjn5EU9iD9I6vc3Uten+6s/zmhw5QobxCXTWjhk0ZvLB4ivaIOyQj6
-         //cek6y4Hx8pg==
-Message-ID: <6b701c8dfc9e16964718f2b4c1e52fda954ed26b.camel@kernel.org>
-Subject: Re: [RFC PATCH v7 02/24] fscrypt: export fscrypt_base64_encode and
- fscrypt_base64_decode
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, lhenriques@suse.de, xiubli@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        dhowells@redhat.com
-Date:   Mon, 12 Jul 2021 07:55:37 -0400
-In-Reply-To: <YOstFfnzitZrAlLZ@quark.localdomain>
-References: <20210625135834.12934-1-jlayton@kernel.org>
-         <20210625135834.12934-3-jlayton@kernel.org>
-         <YOstFfnzitZrAlLZ@quark.localdomain>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.2 (3.40.2-1.fc34) 
+        id S231373AbhGLM3c (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 12 Jul 2021 08:29:32 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24742 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231433AbhGLM3c (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 12 Jul 2021 08:29:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626092803;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=O6lYKGVmT3g543VONT88b8IryJyesxNt34iiJehqsRE=;
+        b=OGGOGAm+R7WPzOBy2ofipIBSPJaPXIGF7HPd9qZVA80Wi4T2BeFwFrsKb8A70dA7PI7CBe
+        HKdtphxZ7MBzUK5gJ3+OQrjOzNU0PQFntM91tfsQvdaOGihP+ow0wo/KO0ND1VP43avz6m
+        3OB0Y4+4jVt88s94WksRJu7pnDbcQ44=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-250-_PSiDqXvPhySbsJ2IgNOxw-1; Mon, 12 Jul 2021 08:26:42 -0400
+X-MC-Unique: _PSiDqXvPhySbsJ2IgNOxw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3E28C802C88;
+        Mon, 12 Jul 2021 12:26:40 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-19.rdu2.redhat.com [10.10.118.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1D2E260875;
+        Mon, 12 Jul 2021 12:26:33 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] netfs: Add MAINTAINERS record
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, linux-cachefs@redhat.com,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 12 Jul 2021 13:26:32 +0100
+Message-ID: <162609279295.3129635.5721010331369998019.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, 2021-07-11 at 12:40 -0500, Eric Biggers wrote:
-> Some nits about comments:
-> 
-> On Fri, Jun 25, 2021 at 09:58:12AM -0400, Jeff Layton wrote:
-> > diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-> > index 6ca7d16593ff..32b1f50433ba 100644
-> > --- a/fs/crypto/fname.c
-> > +++ b/fs/crypto/fname.c
-> > @@ -178,10 +178,8 @@ static int fname_decrypt(const struct inode *inode,
-> >  static const char lookup_table[65] =
-> >  	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
-> >  
-> > -#define BASE64_CHARS(nbytes)	DIV_ROUND_UP((nbytes) * 4, 3)
-> > -
-> >  /**
-> > - * base64_encode() - base64-encode some bytes
-> > + * fscrypt_base64_encode() - base64-encode some bytes
-> >   * @src: the bytes to encode
-> >   * @len: number of bytes to encode
-> >   * @dst: (output) the base64-encoded string.  Not NUL-terminated.
-> >   *
-> >   * Encodes the input string using characters from the set [A-Za-z0-9+,].
-> >   * The encoded string is roughly 4/3 times the size of the input string.
-> >   *
-> >   * Return: length of the encoded string
-> >   */
-> > -static int base64_encode(const u8 *src, int len, char *dst)
-> > +int fscrypt_base64_encode(const u8 *src, int len, char *dst)
-> 
-> As this function will be used more widely, this comment should be fixed to be
-> more precise.  "Roughly 4/3" isn't precise; it's actually exactly
-> FSCRYPT_BASE64_CHARS(len), right?  The following would be better:
-> 
->  * Encode the input bytes using characters from the set [A-Za-z0-9+,].
->  *
->  * Return: length of the encoded string.  This will be equal to
->  *         FSCRYPT_BASE64_CHARS(len).
-> 
+Add a MAINTAINERS record for the new netfs helper library.
 
-I'm not certain, but I thought that FSCRYPT_BASE64_CHARS gave you a
-worst-case estimate of the inflation. This returns the actual length of
-the resulting encoded string, which may be less than
-FSCRYPT_BASE64_CHARS(len).
+Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: Jeff Layton <jlayton@kernel.org>
+cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+cc: linux-mm@kvack.org
+cc: linux-cachefs@redhat.com
+cc: linux-afs@lists.infradead.org
+cc: linux-nfs@vger.kernel.org
+cc: linux-cifs@vger.kernel.org
+cc: ceph-devel@vger.kernel.org
+cc: v9fs-developer@lists.sourceforge.net
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/162377165897.729347.292567369593752239.stgit@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/162377519404.734878.4912821418522385423.stgit@warthog.procyon.org.uk/ # v1
+---
 
-> > +/**
-> > + * fscrypt_base64_decode() - base64-decode some bytes
-> > + * @src: the bytes to decode
-> > + * @len: number of bytes to decode
-> > + * @dst: (output) decoded binary data
-> 
-> It's a bit confusing to talk about decoding "bytes"; it's really a string.
-> How about:
-> 
->  * fscrypt_base64_decode() - base64-decode a string
->  * @src: the string to decode
->  * @len: length of the source string, in bytes
->  * @dst: (output) decoded binary data
->  *
->  * Decode a string that was previously encoded using fscrypt_base64_encode().
->  * The string doesn't need to be NUL-terminated.
-> 
-> > + * Return: length of the decoded binary data
-> 
-> Also the error return values should be documented, e.g.:
-> 
->  * Return: length of the decoded binary data, or a negative number if the source
->  *         string isn't a valid base64-encoded string.
-> 
+ MAINTAINERS |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-That update looks reasonable.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a61f4f3b78a9..2fd13803cd06 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13050,6 +13050,15 @@ NETWORKING [WIRELESS]
+ L:	linux-wireless@vger.kernel.org
+ Q:	http://patchwork.kernel.org/project/linux-wireless/list/
+ 
++NETWORK FILESYSTEM HELPER LIBRARY
++M:	David Howells <dhowells@redhat.com>
++M:	Jeff Layton <jlayton@kernel.org>
++L:	linux-cachefs@redhat.com (moderated for non-subscribers)
++S:	Supported
++F:	Documentation/filesystems/netfs_library.rst
++F:	fs/netfs/
++F:	include/linux/netfs.h
++
+ NETXEN (1/10) GbE SUPPORT
+ M:	Manish Chopra <manishc@marvell.com>
+ M:	Rahul Verma <rahulv@marvell.com>
 
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
 
