@@ -2,127 +2,100 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 235EE3C826B
-	for <lists+ceph-devel@lfdr.de>; Wed, 14 Jul 2021 12:07:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 996D43C87C1
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 Jul 2021 17:34:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239013AbhGNKJU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 14 Jul 2021 06:09:20 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40289 "EHLO
+        id S239891AbhGNPgx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 14 Jul 2021 11:36:53 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31779 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239072AbhGNKJR (ORCPT
+        by vger.kernel.org with ESMTP id S239903AbhGNPgY (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 14 Jul 2021 06:09:17 -0400
+        Wed, 14 Jul 2021 11:36:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626257186;
+        s=mimecast20190719; t=1626276811;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5z87lSglp1R+XOAVM/WPJyePD3cVLLHAqajJ2nmRuNY=;
-        b=BtAzoPurZ0XheYkrmd4lLLeCsvCS/eGJrvveqd8GF2ucXBLpucv+IsMyWjs1Uql9QLSFt9
-        9vGlxcVkQRxHGIIdmFB+dIaWrl0+GfwayMIWCZcl8CylP7Hdpu0OtVyu+Mg/vXSPLFjTaf
-        DCa6ZTBlyUIHhet6JNT58PHdm4RCLCs=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-247-8Dri5kxRNzSkjBbay6SgVQ-1; Wed, 14 Jul 2021 06:06:25 -0400
-X-MC-Unique: 8Dri5kxRNzSkjBbay6SgVQ-1
-Received: by mail-pj1-f72.google.com with SMTP id c10-20020a17090a558ab029017019f7ec8fso972587pji.8
-        for <ceph-devel@vger.kernel.org>; Wed, 14 Jul 2021 03:06:25 -0700 (PDT)
+        bh=/Ab5U/WlVUgm0vqczzQ38hsMpgL40iLsNZEAMDHTT60=;
+        b=MZ+QnF5k9GOkCagB+JGUIGkC8+rRhVKUkOPE2//7SQ7FEv6cPRcg4FA8R1N29i7m4//vQz
+        ecCaha/kciNwdb0wvUjcKpQKS5VGT7zoQwp1SrYqm4rHIxoew3uXZWk8H6FnSKx8LOArM2
+        jofbyYX3SVRbgtk+xgplkIzJP7VEWTk=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-395-E1UKn_uMPiGvriBbweZuvg-1; Wed, 14 Jul 2021 11:33:29 -0400
+X-MC-Unique: E1UKn_uMPiGvriBbweZuvg-1
+Received: by mail-qv1-f69.google.com with SMTP id u40-20020a0cb9280000b0290290c3a9f6f1so1958718qvf.0
+        for <ceph-devel@vger.kernel.org>; Wed, 14 Jul 2021 08:33:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5z87lSglp1R+XOAVM/WPJyePD3cVLLHAqajJ2nmRuNY=;
-        b=lt+d9jFfnaBT3JIuk8g7vgcpcEJxuErOyHxtgg7jgcFQy9FA/zBaY0gyCm8sURkEPv
-         GrFtGtQEEXUcnC2xZQ+l6Sb5nA1zv5Lw9VWF77VzUp3/V0sohf0wHGd0L+oN7jknalNA
-         kNPEmt2iharMC4GNGrPe+S6UZgz2UDBhCcqRv6eWPSpFlrVgCFhkR4LpJH+jCEFd2JXH
-         ZvEXHXzNbkAt8u7Fcz+SrN6FDYYzNOTt3X6VPDtPU82dqfsGmLbpINW6VkzqTjJWdqSL
-         V5lHnBPio9DuMEnlPPdS7CC5gspgwiev/Xuv+3kWAtdXO6JQnAXnOKvfJQC8069e3LBw
-         /5oQ==
-X-Gm-Message-State: AOAM533zVbCDTX/Jhq9g93GjBLQPcMGDmljbdan13Su4oig3nRkmyAwU
-        84EZ11LgF+4kQX+3J+vnkW9KW2aVTA87vKnYCUor3kfJaSnqr73yCtWfZT1Hftry/zY3vNuk6Mh
-        +tdg4NTD6CxGyC68vWHAtDg==
-X-Received: by 2002:a05:6a00:21c6:b029:2ff:e9:94f0 with SMTP id t6-20020a056a0021c6b02902ff00e994f0mr9358633pfj.73.1626257183676;
-        Wed, 14 Jul 2021 03:06:23 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz6BH1KDkaDglMcsb1sHfAdf31lDRnWrfXVfrHBr6CWmn26IX5/bsCm08R0+f8SkbhC2prdFg==
-X-Received: by 2002:a05:6a00:21c6:b029:2ff:e9:94f0 with SMTP id t6-20020a056a0021c6b02902ff00e994f0mr9358614pfj.73.1626257183488;
-        Wed, 14 Jul 2021 03:06:23 -0700 (PDT)
-Received: from h3ckers-pride.redhat.com ([49.207.217.185])
-        by smtp.gmail.com with ESMTPSA id 125sm2227030pfg.52.2021.07.14.03.06.19
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=/Ab5U/WlVUgm0vqczzQ38hsMpgL40iLsNZEAMDHTT60=;
+        b=MWMMDuYXC9En3cGzK6rdD6YQKxEJDYoXsP7RyXIJv4lG5r+D4AE9Bl1lJkLV82naTV
+         N6FaIGOLJFnKTLr2XINUmGj47E+sJ0xVk0IwPIrq5ypZ5t6/gXsgHGgY6q5/XL4dzvom
+         nePGo520z8mrzDxDWp5PLt03gBk33QSq/OjTLO9CwvJY5cdzEYujsi/pTooPjhUwwR6g
+         w0NH99XvEgeCshp0xqJsXL4Z2yaoTTZSpCQSCAVGCJ1YH4r0ScnbjR00w3osz5ozCkvB
+         eqB8ttNtMmpS6JOofS03LKQqgE/qrf1I+mKHtKZA6jq5h9+J1D+TGBDluE8j3E93D983
+         pa+A==
+X-Gm-Message-State: AOAM532GrkT+UjfFKlKlLaAaeNG3eBm8DXc7JIUBFsAjrmv2TQfX31/f
+        DsKg9PccRaCo3kFD2dYuxA6dTMxIBUbPiPDWfw9/GNKvVYMi+vnyrqznomx3UAVFmCk6PRSeZxq
+        b/RMOMZ7NLClc874TBJdTVg==
+X-Received: by 2002:a05:620a:1a08:: with SMTP id bk8mr10656665qkb.158.1626276808902;
+        Wed, 14 Jul 2021 08:33:28 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw/mRkmJv77mW34VLmoMQ4f5WcDzTfSOnDnFQ9Vzzjq1Tr995fweM5Lm3X54M/9EyM++TTYyw==
+X-Received: by 2002:a05:620a:1a08:: with SMTP id bk8mr10656651qkb.158.1626276808752;
+        Wed, 14 Jul 2021 08:33:28 -0700 (PDT)
+Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id 5sm1199557qkr.100.2021.07.14.08.33.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jul 2021 03:06:21 -0700 (PDT)
-From:   Venky Shankar <vshankar@redhat.com>
-To:     jlayton@redhat.com, idryomov@gmail.com, lhenriques@suse.de
-Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org,
-        Venky Shankar <vshankar@redhat.com>
-Subject: [PATCH v4 5/5] doc: document new CephFS mount device syntax
-Date:   Wed, 14 Jul 2021 15:35:54 +0530
-Message-Id: <20210714100554.85978-6-vshankar@redhat.com>
-X-Mailer: git-send-email 2.31.1
+        Wed, 14 Jul 2021 08:33:28 -0700 (PDT)
+Message-ID: <2ac2ddfa2cc8d52800c150ed567779df935430bd.camel@redhat.com>
+Subject: Re: [PATCH v4 0/5] ceph: new mount device syntax
+From:   Jeff Layton <jlayton@redhat.com>
+To:     Venky Shankar <vshankar@redhat.com>, idryomov@gmail.com,
+        lhenriques@suse.de
+Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Wed, 14 Jul 2021 11:33:26 -0400
 In-Reply-To: <20210714100554.85978-1-vshankar@redhat.com>
 References: <20210714100554.85978-1-vshankar@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Signed-off-by: Venky Shankar <vshankar@redhat.com>
----
- Documentation/filesystems/ceph.rst | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+On Wed, 2021-07-14 at 15:35 +0530, Venky Shankar wrote:
+> v4:
+>   - fix delimiter check in ceph_parse_ips()
+>   - use __func__ in ceph_parse_ips() instead of hardcoded function name
+>   - KERN_NOTICE that mon_addr is recorded but not reconnected
+> 
+> Venky Shankar (5):
+>   ceph: generalize addr/ip parsing based on delimiter
+>   ceph: rename parse_fsid() to ceph_parse_fsid() and export
+>   ceph: new device mount syntax
+>   ceph: record updated mon_addr on remount
+>   doc: document new CephFS mount device syntax
+> 
+>  Documentation/filesystems/ceph.rst |  25 ++++-
+>  drivers/block/rbd.c                |   3 +-
+>  fs/ceph/super.c                    | 151 +++++++++++++++++++++++++++--
+>  fs/ceph/super.h                    |   3 +
+>  include/linux/ceph/libceph.h       |   5 +-
+>  include/linux/ceph/messenger.h     |   2 +-
+>  net/ceph/ceph_common.c             |  17 ++--
+>  net/ceph/messenger.c               |   8 +-
+>  8 files changed, 186 insertions(+), 28 deletions(-)
+> 
 
-diff --git a/Documentation/filesystems/ceph.rst b/Documentation/filesystems/ceph.rst
-index 7d2ef4e27273..4942e018db85 100644
---- a/Documentation/filesystems/ceph.rst
-+++ b/Documentation/filesystems/ceph.rst
-@@ -82,7 +82,7 @@ Mount Syntax
- 
- The basic mount syntax is::
- 
-- # mount -t ceph monip[:port][,monip2[:port]...]:/[subdir] mnt
-+ # mount -t ceph user@fsid.fs_name=/[subdir] mnt -o mon_addr=monip1[:port][/monip2[:port]]
- 
- You only need to specify a single monitor, as the client will get the
- full list when it connects.  (However, if the monitor you specify
-@@ -90,16 +90,35 @@ happens to be down, the mount won't succeed.)  The port can be left
- off if the monitor is using the default.  So if the monitor is at
- 1.2.3.4::
- 
-- # mount -t ceph 1.2.3.4:/ /mnt/ceph
-+ # mount -t ceph cephuser@07fe3187-00d9-42a3-814b-72a4d5e7d5be.cephfs=/ /mnt/ceph -o mon_addr=1.2.3.4
- 
- is sufficient.  If /sbin/mount.ceph is installed, a hostname can be
--used instead of an IP address.
-+used instead of an IP address and the cluster FSID can be left out
-+(as the mount helper will fill it in by reading the ceph configuration
-+file)::
- 
-+  # mount -t ceph cephuser@cephfs=/ /mnt/ceph -o mon_addr=mon-addr
- 
-+Multiple monitor addresses can be passed by separating each address with a slash (`/`)::
-+
-+  # mount -t ceph cephuser@cephfs=/ /mnt/ceph -o mon_addr=192.168.1.100/192.168.1.101
-+
-+When using the mount helper, monitor address can be read from ceph
-+configuration file if available. Note that, the cluster FSID (passed as part
-+of the device string) is validated by checking it with the FSID reported by
-+the monitor.
- 
- Mount Options
- =============
- 
-+  mon_addr=ip_address[:port][/ip_address[:port]]
-+	Monitor address to the cluster. This is used to bootstrap the
-+        connection to the cluster. Once connection is established, the
-+        monitor addresses in the monitor map are followed.
-+
-+  fsid=cluster-id
-+	FSID of the cluster (from `ceph fsid` command).
-+
-   ip=A.B.C.D[:N]
- 	Specify the IP and/or port the client should bind to locally.
- 	There is normally not much reason to do this.  If the IP is not
+This looks good, Venky. Nice work!
+
+I'm doing a bit of testing with this now, and will plan to merge it into
+the testing branch later today.
 -- 
-2.27.0
+Jeff Layton <jlayton@redhat.com>
 
