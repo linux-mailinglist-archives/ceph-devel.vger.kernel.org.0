@@ -2,100 +2,171 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F563C9DD5
-	for <lists+ceph-devel@lfdr.de>; Thu, 15 Jul 2021 13:36:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97A473C9DE7
+	for <lists+ceph-devel@lfdr.de>; Thu, 15 Jul 2021 13:42:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230270AbhGOLjT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 15 Jul 2021 07:39:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41462 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbhGOLjT (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 15 Jul 2021 07:39:19 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96C57C06175F
-        for <ceph-devel@vger.kernel.org>; Thu, 15 Jul 2021 04:36:25 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id b5-20020a17090a9905b029016fc06f6c5bso3905849pjp.5
-        for <ceph-devel@vger.kernel.org>; Thu, 15 Jul 2021 04:36:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=9eGeYXp/UXXoFJuDLlKUa9wRvKjdU3VoCh+M6LYoqXY=;
-        b=Li6kxl9gOe5OX52jY7Z0gah0aA83Rg9iRw++dymlLOgrcaMlWNaWfLFaufLWN3qSLu
-         5LAH/TMGa54RyMx6KKi/LF1YG9bLNW1auWL3fSBNvUlPwjQGwVpUH9GhoLDU1yxmG0Mo
-         UE9qejIsB+OznmS7odp7OYyde2nzCgAxEmj56wAb2xqiAJs1aDJldLQJob7UI6aPQkTx
-         /GdGbtvASl29o132XA7BwDNvWbbZ/4iutXUs1d4+L/BkflfnBEotDhqoXhte4OQ9M9sk
-         qio5KDGuro9sammxf6qs1Zfo3O760giCDI22Kvr7+GMhvsYbkdhm4LciNwVcNU6pQ9Cc
-         n1EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=9eGeYXp/UXXoFJuDLlKUa9wRvKjdU3VoCh+M6LYoqXY=;
-        b=UkhTbWhgeQdlLf+4Dqv5sserXWYykQ/6EuDmpWLjFXe3shms4dt5MWpS4LU/QbuCEs
-         97XfWms+eRckl+PqXMtJ0vjipHERXyURwFkrkr2kFc/Tdfmbl5Qp3E6Kv5TevORAD9rh
-         1Xp97cyw2RghFYu9P4haQrVmHKOHJdW0gnEuklOqNYHwvzi6Tt3eloFTmD2s2Fm62aYz
-         4kDcHFGGLw9fJMfav2cQ1bd0j0im5kt2y3Ztow3bEAUI6ZJjumSSlBTAi1LMks+mz9cm
-         BA5rvjonuwtnBqXf2//ADfB/vfVmpxfp100TnVqx4CyxJMV6QTfevnaP9olMuIq43IDv
-         JkNw==
-X-Gm-Message-State: AOAM530EESg7U/ObJYB7SAeRGoWtlxsYWDuLENbHUZ+dxTjY61fYmGOz
-        kZ0uCL9kmvgIJj1jBPI10VJyhzDmg4/eF9ZW9tmf3sAlWoGQ6Q==
-X-Google-Smtp-Source: ABdhPJy1EUJZHMpgRSNmCRWLza5cA3ZUQqUns1nk/vs2B6kA9HQ3zjY/sxX5MlLEtoS7u4J8UUnSo53HkETpfhtobUA=
-X-Received: by 2002:a17:90a:fd14:: with SMTP id cv20mr3867810pjb.98.1626348984654;
- Thu, 15 Jul 2021 04:36:24 -0700 (PDT)
+        id S229637AbhGOLpB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 15 Jul 2021 07:45:01 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:57514 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229553AbhGOLpA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 15 Jul 2021 07:45:00 -0400
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 8FB201FE14;
+        Thu, 15 Jul 2021 11:42:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1626349326; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3hAmPRhMJ+RTybgNPqzcZqAlp8PBzekHw7e2a95Yenc=;
+        b=Iu9CfXeBuiJIua+wvlTt2OiznYw/sLeIh/hfMsmNHwubjoURPVLXOoLzTE1VaPqHgVq7OX
+        ymGrWSSqPgLtOr/3mnyPKrdZBNIY8PX3lhHzXbkYEte07YX4hjFNRWJbbhBEHmQ0TdTzPx
+        0pBXSy7E/gZ7GELYh52AzKfDFF0buGw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1626349326;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3hAmPRhMJ+RTybgNPqzcZqAlp8PBzekHw7e2a95Yenc=;
+        b=P9wIqJEFtH9lDgoPf9yHmHujFXWPP6nEC0tBAjj8hQApYL2TIl1c/glRksKjIwldhdsxcz
+        bVfi9CU10VzRs3DA==
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 0882713D89;
+        Thu, 15 Jul 2021 11:42:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap1.suse-dmz.suse.de with ESMTPSA
+        id TPP3OQ0f8GCzMAAAGKfGzw
+        (envelope-from <lhenriques@suse.de>); Thu, 15 Jul 2021 11:42:05 +0000
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id bd73403a;
+        Thu, 15 Jul 2021 11:42:05 +0000 (UTC)
+Date:   Thu, 15 Jul 2021 12:42:04 +0100
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     Venky Shankar <vshankar@redhat.com>, idryomov@gmail.com,
+        Xiubo Li <xiubli@redhat.com>, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org
+Subject: Re: [PATCH v4 4/5] ceph: record updated mon_addr on remount
+Message-ID: <YPAfDOanWnNb/UWv@suse.de>
+References: <20210714100554.85978-1-vshankar@redhat.com>
+ <20210714100554.85978-5-vshankar@redhat.com>
+ <848d919c6a791ab9b7c61d7cb89f759b55195c18.camel@redhat.com>
+ <YO8SZ+Q3LaCt3K+V@suse.de>
+ <eefa9ad5fa2b8a1e20a2031d622024151240ba70.camel@redhat.com>
 MIME-Version: 1.0
-From:   star fan <jfanix@gmail.com>
-Date:   Thu, 15 Jul 2021 19:36:13 +0800
-Message-ID: <CAOdVJi3EQ=-3PeX6LvxMVqhpFZVE4TPiPu+H1HoAmiTpEwvh=A@mail.gmail.com>
-Subject: the issue of rgw sync concurrency
-To:     Ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <eefa9ad5fa2b8a1e20a2031d622024151240ba70.camel@redhat.com>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-We found some unnormal status of sync status when running multiple
-rgw(15.2.14) multisize sync, then I dig into the codes about rgw sync.
-I think there is a issues of rgw sync concurrency implementation if I
-understand correctly.
-The implementation of  the critical process which we want it run once,
-which steps are as below:
-1. read shared status object
-2. check status
-3. lock status
-4. critical process
-5. store status
-6. unlock
+On Wed, Jul 14, 2021 at 02:15:50PM -0400, Jeff Layton wrote:
+> On Wed, 2021-07-14 at 17:35 +0100, Luis Henriques wrote:
+> > On Wed, Jul 14, 2021 at 12:17:33PM -0400, Jeff Layton wrote:
+> > > On Wed, 2021-07-14 at 15:35 +0530, Venky Shankar wrote:
+> > > > Note that the new monitors are just shown in /proc/mounts.
+> > > > Ceph does not (re)connect to new monitors yet.
+> > > > 
+> > > > Signed-off-by: Venky Shankar <vshankar@redhat.com>
+> > > > ---
+> > > >  fs/ceph/super.c | 7 +++++++
+> > > >  1 file changed, 7 insertions(+)
+> > > > 
+> > > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > > > index d8c6168b7fcd..d3a5a3729c5b 100644
+> > > > --- a/fs/ceph/super.c
+> > > > +++ b/fs/ceph/super.c
+> > > > @@ -1268,6 +1268,13 @@ static int ceph_reconfigure_fc(struct fs_context *fc)
+> > > >  	else
+> > > >  		ceph_clear_mount_opt(fsc, ASYNC_DIROPS);
+> > > >  
+> > > > +	if (strcmp(fsc->mount_options->mon_addr, fsopt->mon_addr)) {
+> > > > +		kfree(fsc->mount_options->mon_addr);
+> > > > +		fsc->mount_options->mon_addr = fsopt->mon_addr;
+> > > > +		fsopt->mon_addr = NULL;
+> > > > +		printk(KERN_NOTICE "ceph: monitor addresses recorded, but not used for reconnection");
+> > > 
+> > > It's currently more in-vogue to use pr_notice() for this. I'll plan to
+> > > make that (minor) change before I merge. No need to resend.
+> > 
+> > Yeah, this was the only comment I had too.  I saw some issues in the
+> > previous revision but the changes to ceph_parse_source() seem to fix it in
+> > this revision.
+> > 
+> > The other annoying thing I found isn't related with this patchset but with
+> > a change that's been done some time ago by Xiubo (added to CC): it looks
+> > like that if we have an invalid parameter (for example, wrong secret)
+> > we'll always get -EHOSTUNREACH.
+> > 
+> > See below a possible fix (although I'm not entirely sure that's the correct
+> > one).
+> > 
+> > Cheers,
+> > --
+> > Luís
+> > 
+> > From a988d24d8e72fc4933459f3dd5d303cbc9a566ed Mon Sep 17 00:00:00 2001
+> > From: Luis Henriques <lhenriques@suse.de>
+> > Date: Wed, 14 Jul 2021 16:56:36 +0100
+> > Subject: [PATCH] ceph: don't hide error code if we don't have mdsmap
+> > 
+> > Since commit 97820058fb28 ("ceph: check availability of mds cluster on mount
+> > after wait timeout") we're returning -EHOSTUNREACH, even if the error isn't
+> > related with the MDSs availability.  For example, we'll get it even if we're
+> > trying to mounting a filesystem with an invalid username or secret.
+> > 
+> > Only return this error if we get -EIO.
+> > 
+> > Fixes: 97820058fb28 ("ceph: check availability of mds cluster on mount after wait timeout")
+> > Signed-off-by: Luis Henriques <lhenriques@suse.de>
+> > ---
+> >  fs/ceph/super.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > index 086a1ceec9d8..67d70059ce9f 100644
+> > --- a/fs/ceph/super.c
+> > +++ b/fs/ceph/super.c
+> > @@ -1230,7 +1230,8 @@ static int ceph_get_tree(struct fs_context *fc)
+> >  	return 0;
+> >  
+> >  out_splat:
+> > -	if (!ceph_mdsmap_is_cluster_available(fsc->mdsc->mdsmap)) {
+> > +	if ((err == -EIO) &&
+> > +	    !ceph_mdsmap_is_cluster_available(fsc->mdsc->mdsmap)) {
+> >  		pr_info("No mds server is up or the cluster is laggy\n");
+> >  		err = -EHOSTUNREACH;
+> >  	}
+> 
+> Yeah, I've noticed that message pop up under all sorts of circumstances
+> and it is an annoyance. I'm happy to consider such a patch if you send
+> it separately.
+> 
+> That said, I'm honestly not sure this message is really helpful, and
+> overriding errors like this at a high level seems sort of sketchy. Maybe
+> we should just drop that message, or figure out a way to limit it to
+> _just_ that situation.
 
-It is a problem in concurrent case that  the critical process would
-run multiple times because it uses old status, thus it makes no sense.
-The steps should be as below
-1. read shared status object
-2. check status
-3. lock status
-4. read and check status again
-5. critical process
-6. store status
-7. unlock
+I agree that the message isn't really useful but the -EHOSTUNREACH is a
+bit more confusing if we get it in the mount command when we simply have a
+typo in the parameters.
 
-one example as below
-do {
-r =3D run(new RGWReadSyncStatusCoroutine(&sync_env, &sync_status));
-if (r < 0 && r !=3D -ENOENT) {
-tn->log(0, SSTR("ERROR: failed to fetch sync status r=3D" << r));
-return r;
-}
+Anyway, after looking closer, I couldn't find a way to reach this code
+and have -EHOSTUNREACH to make sense.  When the MDSs are down/unreachable
+we have already err set to this error code.  This would mean that the
+correct fix would be to simply drop this 'if' statement.  Xiubo, do you
+remember how would this be possible?
 
-switch ((rgw_meta_sync_info::SyncState)sync_status.sync_info.state) {
-case rgw_meta_sync_info::StateBuildingFullSyncMaps:
-tn->log(20, "building full sync maps");
-r =3D run(new RGWFetchAllMetaCR(&sync_env, num_shards,
-sync_status.sync_markers, tn));
-
-And there is no deletion of omapkeys after finishing sync entry in
-full_sync process, thus full_sync would run multiple times in
-concurrent case.
-
-It has  no importance impact on data sync because bucket syncing is
-idempotence=EF=BC=8Cbut no metadata sync
+Cheers,
+--
+Luís
