@@ -2,111 +2,100 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A54D93C9894
-	for <lists+ceph-devel@lfdr.de>; Thu, 15 Jul 2021 07:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03F563C9DD5
+	for <lists+ceph-devel@lfdr.de>; Thu, 15 Jul 2021 13:36:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240161AbhGOFzk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 15 Jul 2021 01:55:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29594 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240121AbhGOFzj (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 15 Jul 2021 01:55:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626328366;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=h+8maYeedewDZahRWhUrQb0Q17qgvl2uH1JlBhOIeow=;
-        b=RH0fvFMI1ssUjXC2PXG7Zx+7lJDfzxMlyNgx3Av/V9F58RBsrsIupZerNkMcQHJ7rdQPQL
-        EJrA23M+JsidlUmUbupzhAhE+c10Nc0/XZVM/W2mOXEaLbMlsUHLup6n2oCAijIMAd5Rqn
-        khg2kx5wNJhZWqigCCk1U9xwMUaFyoA=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-393-hYsOg5vuOvCN-ni6EjFLaA-1; Thu, 15 Jul 2021 01:52:43 -0400
-X-MC-Unique: hYsOg5vuOvCN-ni6EjFLaA-1
-Received: by mail-ed1-f71.google.com with SMTP id o8-20020aa7dd480000b02903954c05c938so2535775edw.3
-        for <ceph-devel@vger.kernel.org>; Wed, 14 Jul 2021 22:52:42 -0700 (PDT)
+        id S230270AbhGOLjT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 15 Jul 2021 07:39:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41462 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229518AbhGOLjT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 15 Jul 2021 07:39:19 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96C57C06175F
+        for <ceph-devel@vger.kernel.org>; Thu, 15 Jul 2021 04:36:25 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id b5-20020a17090a9905b029016fc06f6c5bso3905849pjp.5
+        for <ceph-devel@vger.kernel.org>; Thu, 15 Jul 2021 04:36:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=9eGeYXp/UXXoFJuDLlKUa9wRvKjdU3VoCh+M6LYoqXY=;
+        b=Li6kxl9gOe5OX52jY7Z0gah0aA83Rg9iRw++dymlLOgrcaMlWNaWfLFaufLWN3qSLu
+         5LAH/TMGa54RyMx6KKi/LF1YG9bLNW1auWL3fSBNvUlPwjQGwVpUH9GhoLDU1yxmG0Mo
+         UE9qejIsB+OznmS7odp7OYyde2nzCgAxEmj56wAb2xqiAJs1aDJldLQJob7UI6aPQkTx
+         /GdGbtvASl29o132XA7BwDNvWbbZ/4iutXUs1d4+L/BkflfnBEotDhqoXhte4OQ9M9sk
+         qio5KDGuro9sammxf6qs1Zfo3O760giCDI22Kvr7+GMhvsYbkdhm4LciNwVcNU6pQ9Cc
+         n1EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h+8maYeedewDZahRWhUrQb0Q17qgvl2uH1JlBhOIeow=;
-        b=B4VIjt3lXhIUKiet+61QVxiYvCjJRmKrJtgQOMpjLSqed39Ln5anqTGRsMLTkL/lY9
-         6GOHTHJnOnCmrrQoAsN4B36TGixWCxBc2WWkNbT7ZoNFVKrhDqIL+6PFqxsDIbnP6asJ
-         7TDVA79/FnT94jjmWkSTJF74IVyI+wWWgL0ULzVRDikH7VhDlZutszzu6z7o2QtB+8mT
-         NsVcAzCdZRGK4fft85gGLiqUX0FyTl4jqdbXmUHi4Mv2WoO+znNcUAr9BZDpEFxodBr/
-         Xz7jZRNmkCV++arI5Fuh8cGtHMLZXMnsqiaQGX60HHN7XH+TIezXM/Fq1JGlM7T07KZJ
-         WL2Q==
-X-Gm-Message-State: AOAM530IknxGMOOT2Do7BvDgvbErPLdFirNJjIpFrO0rywTVyIRdB/HJ
-        vignHtqajw8utU8sARNFqmDEJysEMfVLjERwgw7jWGPiGyCMFVOd7WK4JEfWHNvTU5corNtUvju
-        PZ+RASgimZYIeGC4nXVw53Xg4WFqRGyuYGqq+2A==
-X-Received: by 2002:a17:906:f0d1:: with SMTP id dk17mr3234050ejb.424.1626328361994;
-        Wed, 14 Jul 2021 22:52:41 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzu025AUEl/I/cop0qeKzhNtMkHNWL20nwhywNiemRHAeRtfJwvpmtRzlqiGXx/+9okaVOQA34fs9w8MCfB1jM=
-X-Received: by 2002:a17:906:f0d1:: with SMTP id dk17mr3234034ejb.424.1626328361861;
- Wed, 14 Jul 2021 22:52:41 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=9eGeYXp/UXXoFJuDLlKUa9wRvKjdU3VoCh+M6LYoqXY=;
+        b=UkhTbWhgeQdlLf+4Dqv5sserXWYykQ/6EuDmpWLjFXe3shms4dt5MWpS4LU/QbuCEs
+         97XfWms+eRckl+PqXMtJ0vjipHERXyURwFkrkr2kFc/Tdfmbl5Qp3E6Kv5TevORAD9rh
+         1Xp97cyw2RghFYu9P4haQrVmHKOHJdW0gnEuklOqNYHwvzi6Tt3eloFTmD2s2Fm62aYz
+         4kDcHFGGLw9fJMfav2cQ1bd0j0im5kt2y3Ztow3bEAUI6ZJjumSSlBTAi1LMks+mz9cm
+         BA5rvjonuwtnBqXf2//ADfB/vfVmpxfp100TnVqx4CyxJMV6QTfevnaP9olMuIq43IDv
+         JkNw==
+X-Gm-Message-State: AOAM530EESg7U/ObJYB7SAeRGoWtlxsYWDuLENbHUZ+dxTjY61fYmGOz
+        kZ0uCL9kmvgIJj1jBPI10VJyhzDmg4/eF9ZW9tmf3sAlWoGQ6Q==
+X-Google-Smtp-Source: ABdhPJy1EUJZHMpgRSNmCRWLza5cA3ZUQqUns1nk/vs2B6kA9HQ3zjY/sxX5MlLEtoS7u4J8UUnSo53HkETpfhtobUA=
+X-Received: by 2002:a17:90a:fd14:: with SMTP id cv20mr3867810pjb.98.1626348984654;
+ Thu, 15 Jul 2021 04:36:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210714100554.85978-1-vshankar@redhat.com> <20210714100554.85978-5-vshankar@redhat.com>
- <848d919c6a791ab9b7c61d7cb89f759b55195c18.camel@redhat.com>
-In-Reply-To: <848d919c6a791ab9b7c61d7cb89f759b55195c18.camel@redhat.com>
-From:   Venky Shankar <vshankar@redhat.com>
-Date:   Thu, 15 Jul 2021 11:22:05 +0530
-Message-ID: <CACPzV1npESD7-LFb-3gCmuydF-VTuuTtVJFicQ7r9w20GLcvUA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] ceph: record updated mon_addr on remount
-To:     Jeff Layton <jlayton@redhat.com>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        Luis Henriques <lhenriques@suse.de>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
+From:   star fan <jfanix@gmail.com>
+Date:   Thu, 15 Jul 2021 19:36:13 +0800
+Message-ID: <CAOdVJi3EQ=-3PeX6LvxMVqhpFZVE4TPiPu+H1HoAmiTpEwvh=A@mail.gmail.com>
+Subject: the issue of rgw sync concurrency
+To:     Ceph-devel <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jul 14, 2021 at 9:47 PM Jeff Layton <jlayton@redhat.com> wrote:
->
-> On Wed, 2021-07-14 at 15:35 +0530, Venky Shankar wrote:
-> > Note that the new monitors are just shown in /proc/mounts.
-> > Ceph does not (re)connect to new monitors yet.
-> >
-> > Signed-off-by: Venky Shankar <vshankar@redhat.com>
-> > ---
-> >  fs/ceph/super.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> > index d8c6168b7fcd..d3a5a3729c5b 100644
-> > --- a/fs/ceph/super.c
-> > +++ b/fs/ceph/super.c
-> > @@ -1268,6 +1268,13 @@ static int ceph_reconfigure_fc(struct fs_context *fc)
-> >       else
-> >               ceph_clear_mount_opt(fsc, ASYNC_DIROPS);
-> >
-> > +     if (strcmp(fsc->mount_options->mon_addr, fsopt->mon_addr)) {
-> > +             kfree(fsc->mount_options->mon_addr);
-> > +             fsc->mount_options->mon_addr = fsopt->mon_addr;
-> > +             fsopt->mon_addr = NULL;
-> > +             printk(KERN_NOTICE "ceph: monitor addresses recorded, but not used for reconnection");
->
-> It's currently more in-vogue to use pr_notice() for this. I'll plan to
-> make that (minor) change before I merge. No need to resend.
+We found some unnormal status of sync status when running multiple
+rgw(15.2.14) multisize sync, then I dig into the codes about rgw sync.
+I think there is a issues of rgw sync concurrency implementation if I
+understand correctly.
+The implementation of  the critical process which we want it run once,
+which steps are as below:
+1. read shared status object
+2. check status
+3. lock status
+4. critical process
+5. store status
+6. unlock
 
-Got it. ACK.
+It is a problem in concurrent case that  the critical process would
+run multiple times because it uses old status, thus it makes no sense.
+The steps should be as below
+1. read shared status object
+2. check status
+3. lock status
+4. read and check status again
+5. critical process
+6. store status
+7. unlock
 
->
-> > +     }
-> > +
-> >       sync_filesystem(fc->root->d_sb);
-> >       return 0;
-> >  }
->
-> --
-> Jeff Layton <jlayton@redhat.com>
->
+one example as below
+do {
+r =3D run(new RGWReadSyncStatusCoroutine(&sync_env, &sync_status));
+if (r < 0 && r !=3D -ENOENT) {
+tn->log(0, SSTR("ERROR: failed to fetch sync status r=3D" << r));
+return r;
+}
 
+switch ((rgw_meta_sync_info::SyncState)sync_status.sync_info.state) {
+case rgw_meta_sync_info::StateBuildingFullSyncMaps:
+tn->log(20, "building full sync maps");
+r =3D run(new RGWFetchAllMetaCR(&sync_env, num_shards,
+sync_status.sync_markers, tn));
 
--- 
-Cheers,
-Venky
+And there is no deletion of omapkeys after finishing sync entry in
+full_sync process, thus full_sync would run multiple times in
+concurrent case.
 
+It has  no importance impact on data sync because bucket syncing is
+idempotence=EF=BC=8Cbut no metadata sync
