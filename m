@@ -2,123 +2,133 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ABC863CE97C
-	for <lists+ceph-devel@lfdr.de>; Mon, 19 Jul 2021 19:53:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66C2B3CF950
+	for <lists+ceph-devel@lfdr.de>; Tue, 20 Jul 2021 14:05:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351703AbhGSQ44 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 19 Jul 2021 12:56:56 -0400
-Received: from relay-us1.mymailcheap.com ([51.81.35.219]:49032 "EHLO
-        relay-us1.mymailcheap.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357644AbhGSQwL (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 19 Jul 2021 12:52:11 -0400
-X-Greylist: delayed 472 seconds by postgrey-1.27 at vger.kernel.org; Mon, 19 Jul 2021 12:52:11 EDT
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
-        by relay-us1.mymailcheap.com (Postfix) with ESMTPS id C6F8520763
-        for <ceph-devel@vger.kernel.org>; Mon, 19 Jul 2021 17:24:55 +0000 (UTC)
-Received: from relay1.mymailcheap.com (relay1.mymailcheap.com [144.217.248.100])
-        by relay5.mymailcheap.com (Postfix) with ESMTPS id 137A0260EB
-        for <ceph-devel@vger.kernel.org>; Mon, 19 Jul 2021 17:24:53 +0000 (UTC)
-Received: from filter1.mymailcheap.com (filter1.mymailcheap.com [149.56.130.247])
-        by relay1.mymailcheap.com (Postfix) with ESMTPS id 613263F203
-        for <ceph-devel@vger.kernel.org>; Mon, 19 Jul 2021 17:24:47 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by filter1.mymailcheap.com (Postfix) with ESMTP id 4A6032A351
-        for <ceph-devel@vger.kernel.org>; Mon, 19 Jul 2021 13:24:47 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mymailcheap.com;
-        s=default; t=1626715487;
-        bh=KPxL3izNhQ9kKzo4uqH8SB4w/lxUHsI2qvYMz4NTUBQ=;
-        h=From:To:Subject:Date:From;
-        b=MvJXGEw4nu8bT9OfBU6EwpMym1z6et6kqrebyzTYoy49rBkaGEqiOVnhexD8Fs4gq
-         fnEv5UwfX5doGQAnqO2iwL5C2apukh553Hw9Vc/NoaGNRgpKFzIhwcq0oc3Rj9h2Xq
-         W/1wQ6+GNWJZ1GEjLJ7yiTIYcPaJYB9GxEdsa7OM=
-X-Virus-Scanned: Debian amavisd-new at filter1.mymailcheap.com
-Received: from filter1.mymailcheap.com ([127.0.0.1])
-        by localhost (filter1.mymailcheap.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id D_EFFgNZTNgS for <ceph-devel@vger.kernel.org>;
-        Mon, 19 Jul 2021 13:24:46 -0400 (EDT)
-Received: from mail10.mymailcheap.com (mail10.mymailcheap.com [51.68.115.196])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by filter1.mymailcheap.com (Postfix) with ESMTPS
-        for <ceph-devel@vger.kernel.org>; Mon, 19 Jul 2021 13:24:46 -0400 (EDT)
-Received: from [148.251.23.173] (ml.mymailcheap.com [148.251.23.173])
-        by mail10.mymailcheap.com (Postfix) with ESMTP id 4B811200A6
-        for <ceph-devel@vger.kernel.org>; Mon, 19 Jul 2021 17:24:45 +0000 (UTC)
-Authentication-Results: mail10.mymailcheap.com;
-        dkim=temperror (0-bit key; unprotected) header.d=beststartup.us header.i=@beststartup.us header.b="z8GWZrXP";
-        dkim-atps=neutral
-AI-Spam-Status: Not processed
-Received: from core04.farm.integromat.com (core04.farm.integromat.com [82.208.14.113])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail10.mymailcheap.com (Postfix) with ESMTPSA id 444CD200A6
-        for <ceph-devel@vger.kernel.org>; Mon, 19 Jul 2021 17:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=beststartup.us;
-        s=default; t=1626715480;
-        bh=KPxL3izNhQ9kKzo4uqH8SB4w/lxUHsI2qvYMz4NTUBQ=;
-        h=From:To:Subject:Date:From;
-        b=z8GWZrXPGvRFHwE2SO6Or+MrPyNSFq7NxyTcseUgGbcOzp55Zh0n/sFfNhJtiizO9
-         +9RKGaK+8bvrZGnsOpBpvsCFfuAV0Sj/5790LU+Wls3CkzKxmwPs6sM0aY9vgYQ+F0
-         Ew0Vz7jQzU5Z0HIz9J162vQX6TxZTWRDHajjsZZY=
-Content-Type: text/plain; charset=utf-8
-From:   Mark <outreach@beststartup.us>
-To:     ceph-devel@vger.kernel.org
-Subject: Article featuring your company...
-Message-ID: <4fc666e3-052f-bacf-ef20-cb322be5a8c5@beststartup.us>
+        id S235407AbhGTLYh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 20 Jul 2021 07:24:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38152 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237034AbhGTLYb (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 20 Jul 2021 07:24:31 -0400
+Received: from outbound3.mail.transip.nl (outbound3.mail.transip.nl [IPv6:2a01:7c8:7c9:ca11:136:144:136:12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 960C1C061574
+        for <ceph-devel@vger.kernel.org>; Tue, 20 Jul 2021 05:05:06 -0700 (PDT)
+Received: from submission4.mail.transip.nl (unknown [10.103.8.155])
+        by outbound3.mail.transip.nl (Postfix) with ESMTP id 4GTcpm56mvzsvyV;
+        Tue, 20 Jul 2021 14:05:04 +0200 (CEST)
+Received: from exchange.transipgroup.nl (unknown [81.4.116.210])
+        by submission4.mail.transip.nl (Postfix) with ESMTPSA id 4GTcpl4YWRznTms;
+        Tue, 20 Jul 2021 14:04:59 +0200 (CEST)
+Received: from VM16171.groupdir.nl (10.131.120.71) by VM16171.groupdir.nl
+ (10.131.120.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.15; Tue, 20 Jul
+ 2021 14:04:58 +0200
+Received: from VM16171.groupdir.nl ([81.4.116.210]) by VM16171.groupdir.nl
+ ([81.4.116.210]) with mapi id 15.02.0792.015; Tue, 20 Jul 2021 14:04:58 +0200
+From:   Robin Geuze <robin.geuze@nl.team.blue>
+To:     Ilya Dryomov <idryomov@gmail.com>
+CC:     Ceph Development <ceph-devel@vger.kernel.org>
+Subject: Re: All RBD IO stuck after flapping OSD's
+Thread-Topic: All RBD IO stuck after flapping OSD's
+Thread-Index: AQHXMQs7yqmta0olA0ygBmx0d4s7EKq0G68AgAFka/SABi6BAIBbPDuXgAE5TYCAACJLAv//77AAgAArXHP//+1sAIAAIdhQgBKxTeH///dmAAFvNtGAACH5JqYClzo29Q==
+Date:   Tue, 20 Jul 2021 12:04:58 +0000
+Message-ID: <8b1a8409de3448699fe606c7c704f232@nl.team.blue>
+References: <47f0a04ce6664116a11cfdb5a458e252@nl.team.blue>
+ <CAOi1vP-moRXtL4gKXQF8+NwbPgE11_LoxfSYqYBbJfYYQ7Sv_g@mail.gmail.com>
+ <8eb12c996e404870803e9a7c77e508d6@nl.team.blue>
+ <CAOi1vP-8i-rKEDd8Emq+MtxCjvK-6VG8KaXdzvQLW89174jUZA@mail.gmail.com>
+ <666938090a8746a7ad8ae40ebf116e1c@nl.team.blue>
+ <CAOi1vP8NHYEN-=J4A7mB1dSkaHHf8Gtha-xqPLboZUS5u442hA@mail.gmail.com>
+ <21c4b9e08c4d48d6b477fc61d1fccba3@nl.team.blue>
+ <CAOi1vP_fJm5UzSnOmQDKsVHmv-4vebNZTDk7vqLs=bvnf3fwjw@mail.gmail.com>
+ <a13af12ab314437bbbffcb23b0513722@nl.team.blue>
+ <CAOi1vP8kiGNaNPw=by=TVfJEV1_X-BNYZuVpO_Kxx5xtf40_6w@mail.gmail.com>
+ <391efdae70644b71844fe6fa3dceea13@nl.team.blue>
+ <2d37c87eb42d4bc2a99184f6bffce8a2@nl.team.blue>
+ <CAOi1vP-dT=1C2SqcMxAR1NWrcHUE1K-F6M1BpBWb7pVCDhS7Og@mail.gmail.com>,<CAOi1vP-5AuH0xuZrd2AWOqRgnzHnEToE-dMQp23iOpY-a+VyLA@mail.gmail.com>,<c5830118f2a24ff89b6fcf18e941a120@nl.team.blue>
+In-Reply-To: <c5830118f2a24ff89b6fcf18e941a120@nl.team.blue>
+Accept-Language: en-GB, nl-NL, en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [81.4.116.242]
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 19 Jul 2021 17:24:39 +0000
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: 4B811200A6
-X-Rspamd-Server: mail10.mymailcheap.com
-X-Spamd-Result: default: False [-0.10 / 10.00];
-         RCVD_VIA_SMTP_AUTH(0.00)[];
-         R_SPF_FAIL(0.00)[-all];
-         R_DKIM_ALLOW(0.00)[beststartup.us:s=default];
-         ARC_NA(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         TO_DN_NONE(0.00)[];
-         PREVIOUSLY_DELIVERED(0.00)[ceph-devel@vger.kernel.org];
-         RCPT_COUNT_ONE(0.00)[1];
-         DMARC_NA(0.00)[beststartup.us];
-         ML_SERVERS(-3.10)[148.251.23.173];
-         DKIM_TRACE(0.00)[beststartup.us:+];
-         RCVD_NO_TLS_LAST(0.10)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         ASN(0.00)[asn:24940, ipnet:148.251.0.0/16, country:DE];
-         RCVD_COUNT_TWO(0.00)[2];
-         MID_RHS_MATCH_FROM(0.00)[];
-         HFILTER_HELO_BAREIP(3.00)[148.251.23.173,1]
+X-Scanned-By: ClueGetter at submission4.mail.transip.nl
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=transip-a; d=nl.team.blue; t=1626782704; h=from:subject:to:cc:
+ references:in-reply-to:date:mime-version:content-type;
+ bh=yiGNbG5XBb+eE3PXqbgfNwLyHvNuihG0oe8lQYJ8sPg=;
+ b=Jt93LR4fdMosL4G+aVCU0/XAjPnjKECgEdJGRecn+MFJJ859QQp1JbdxS+C70zZwWpXazO
+ igvDEgZYNTvYMrxXgRftui5CETCxvAN+Y9A3gbnTRjtCfJwNAPDzhLptKxXMv7B+NePyy5
+ JTBHE5KKhd/dZsGnhrMnyXPFSpBHcGKu/sl90DiupbTjKp5km+A4oNVXOAwCfhw90wASXo
+ Z2JbdIWQhpSePDtSipzQONGRoCtV4bwWMIi2z8SKjTBn1vbVJ0uc28MElZhjjQ+GSamNYb
+ teYypQ+7q89PatC9u0+uOgxWRw8qHzOKmvRuoP8wWQnQc8LE8/FY7zek8PXcEA==
+X-Report-Abuse-To: abuse@transip.nl
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dear Ceph Storage,
+Hey Ilya,
 
-I hope your business is prospering.=C2=A0
+Took a bit longer than expected, but we finally got around to testing the p=
+atches. They seem to do the trick. We did have one stuck rbd dev, however a=
+fter the 60 second hung task timeout expired that one also continued workin=
+g. Great work. We ended up testing it on a the Ubuntu 20.04 hwe 5.8 based k=
+ernel btw, not 5.4.
 
-I=E2=80=99m just reaching out to let you know we mentioned Ceph Storage in =
-our article about Enterprise Software companies in Los Angeles (LA).=C2=A0
+Regards,
 
-The article can be found here: https://beststartup.us/?p=3D6871. I hope it =
-drives some sales to your company. Any shares on the article would be =
-greatly appreciated.=C2=A0
+Robin Geuze
 
-If you want to get some broader promotion from =
-our network you can write and publish an article on your blog/website =
-titled something like =E2=80=9CWe Were Nominated as a Top Enterprise =
-Software Company in Los Angeles (LA) by BestStartup.us=E2=80=9D. If you =
-send us a link to that post we will share it across our network and tweet =
-it out.=C2=A0
+From: Robin Geuze
+Sent: 07 July 2021 09:35
+To: Ilya Dryomov
+Cc: Ceph Development
+Subject: Re: All RBD IO stuck after flapping OSD's
+=A0  =20
+Hey Ilya,
 
-If you want to check out our media pack, it can be found =
-here: https://beststartup.us/media-pack/=C2=A0
+Thanks so much for the patches, we are planning to test them either this af=
+ternoon or tomorrow at the latest, I will let you know the results.
+
+Regards,
+
+Robin Geuze
+
+From: Ilya Dryomov <idryomov@gmail.com>
+Sent: 06 July 2021 19:21
+To: Robin Geuze
+Cc: Ceph Development
+Subject: Re: All RBD IO stuck after flapping OSD's
+=A0=A0=A0=20
+On Tue, Jun 29, 2021 at 12:07 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+>
+> On Tue, Jun 29, 2021 at 10:39 AM Robin Geuze <robin.geuze@nl.team.blue> w=
+rote:
+> >
+> > Hey Ilya,
+> >
+> > Do you have any idea on the cause of this bug yet? I tried to dig aroun=
+d a bit myself in the source, but the logic around this locking is very com=
+plex, so I couldn't figure out where the problem is.
+>
+> I do.=A0 The proper fix would indeed be large and not backportable but
+> I have a workaround in mind that should be simple enough to backport
+> all the way to 5.4.=A0 The trick is making sure that the workaround is
+> fine from the exclusive lock protocol POV.
+>
+> I'll try to flesh it out by the end of this week and report back
+> early next week.
+
+Hi Robin,
+
+I CCed you on the patches.=A0 They should apply to 5.4 cleanly.=A0 You
+mentioned you have a build farm set up, please take them for a spin.
 
 Thanks,
-Mark
 
-BestStartup.us is a subsidiary of Fupping Ltd, a UK (London) based media =
-company. P.S. Feel to follow us on: Linkedin: Search "BestStartup.us".
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Ilya
+=A0=A0=A0     =
