@@ -2,133 +2,87 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 66C2B3CF950
-	for <lists+ceph-devel@lfdr.de>; Tue, 20 Jul 2021 14:05:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0C1D3CFFBB
+	for <lists+ceph-devel@lfdr.de>; Tue, 20 Jul 2021 18:45:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235407AbhGTLYh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 20 Jul 2021 07:24:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38152 "EHLO
+        id S231445AbhGTQDp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 20 Jul 2021 12:03:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237034AbhGTLYb (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 20 Jul 2021 07:24:31 -0400
-Received: from outbound3.mail.transip.nl (outbound3.mail.transip.nl [IPv6:2a01:7c8:7c9:ca11:136:144:136:12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 960C1C061574
-        for <ceph-devel@vger.kernel.org>; Tue, 20 Jul 2021 05:05:06 -0700 (PDT)
-Received: from submission4.mail.transip.nl (unknown [10.103.8.155])
-        by outbound3.mail.transip.nl (Postfix) with ESMTP id 4GTcpm56mvzsvyV;
-        Tue, 20 Jul 2021 14:05:04 +0200 (CEST)
-Received: from exchange.transipgroup.nl (unknown [81.4.116.210])
-        by submission4.mail.transip.nl (Postfix) with ESMTPSA id 4GTcpl4YWRznTms;
-        Tue, 20 Jul 2021 14:04:59 +0200 (CEST)
-Received: from VM16171.groupdir.nl (10.131.120.71) by VM16171.groupdir.nl
- (10.131.120.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.15; Tue, 20 Jul
- 2021 14:04:58 +0200
-Received: from VM16171.groupdir.nl ([81.4.116.210]) by VM16171.groupdir.nl
- ([81.4.116.210]) with mapi id 15.02.0792.015; Tue, 20 Jul 2021 14:04:58 +0200
-From:   Robin Geuze <robin.geuze@nl.team.blue>
-To:     Ilya Dryomov <idryomov@gmail.com>
-CC:     Ceph Development <ceph-devel@vger.kernel.org>
-Subject: Re: All RBD IO stuck after flapping OSD's
-Thread-Topic: All RBD IO stuck after flapping OSD's
-Thread-Index: AQHXMQs7yqmta0olA0ygBmx0d4s7EKq0G68AgAFka/SABi6BAIBbPDuXgAE5TYCAACJLAv//77AAgAArXHP//+1sAIAAIdhQgBKxTeH///dmAAFvNtGAACH5JqYClzo29Q==
-Date:   Tue, 20 Jul 2021 12:04:58 +0000
-Message-ID: <8b1a8409de3448699fe606c7c704f232@nl.team.blue>
+        with ESMTP id S229675AbhGTQDF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 20 Jul 2021 12:03:05 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99268C061766
+        for <ceph-devel@vger.kernel.org>; Tue, 20 Jul 2021 09:43:26 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id v26so24676364iom.11
+        for <ceph-devel@vger.kernel.org>; Tue, 20 Jul 2021 09:43:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ED5qQc25ISarOIZ2uUdJsrNkOL0b8KbbPDH32B3bJ7A=;
+        b=JVllmSbJfpMAzoBK4KyFM+p2xQLlLOLIjnDFjJmlxDnwbPEYjDqiRv75t8LE+R8+GF
+         fRuH0ENv6E2ngue6eKqtnhbnsPUlHU6LvR6cUmJsLLMtVF2VfitKEByRHmS5tydT9yP0
+         DXW97xMjxBYUNvRyAC1bqfQ68x99zaUHfJEM8K32XjRVABHQEsxfTF0/VKdEeFqT4QSS
+         Nqo+w94pssNsNeIGYfLtrOSKDNLRINwa2MMFqWCwhUW0KyNTCcUtJ038mGb0BX4BuQEq
+         ORjSzirRXDvw0Qo90qhuy4Vq9ZU6tiRvVY2sLk1izw7/uSHbGBGytIchDLf4eQrnHW0I
+         KuLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ED5qQc25ISarOIZ2uUdJsrNkOL0b8KbbPDH32B3bJ7A=;
+        b=DhDzGPCtNkGRx9kK9Z2RIgMV+dtZ9OGdKo/3UUFIxB6PhV5K9H1vXhWmcLHnJdvqY5
+         UPEErK9dOOvuC8p3DfNfIhyF0LtwIlPAoZpp/1hZMiDszK1hn9UssC/wJ1o+c3NAbMHP
+         +FtmSvryke5dugtov4+7f2qLAyTtFiYns0vi3TiGD4DsB1l5IzkBl9yDONe3+ADu4pmN
+         D6Yi1uRZjO+spT1xiX3hkaAfVBOWHcBa/AJOcSEParBw25iwRxqacY1hpv4zKfkhp7zP
+         c4KtwFF6mzB1FGeb+CTkkB1LVZ0t43WFT/Dv0pbLUSluGaXBoKc/tGOd8ThRrTgy8dBE
+         s2UA==
+X-Gm-Message-State: AOAM533MHbWkyUlcvXO4B/P0/9ZEpFTfyjbCymU4VopU5xY9Y5F+Dc5h
+        axKKXcD6uKtVAm7Js67jUNzvbLwDY9rutBvu86HJtigAKsofUw==
+X-Google-Smtp-Source: ABdhPJwOx/EjtkfW29h9vlLPQx8yitGjjQ11VYLMmBFM111mKQasATDVNUPFpMvfMstmFfuGOQYPsbmDTXKLJ+2YZ8o=
+X-Received: by 2002:a5d:984d:: with SMTP id p13mr19199171ios.182.1626799406057;
+ Tue, 20 Jul 2021 09:43:26 -0700 (PDT)
+MIME-Version: 1.0
 References: <47f0a04ce6664116a11cfdb5a458e252@nl.team.blue>
  <CAOi1vP-moRXtL4gKXQF8+NwbPgE11_LoxfSYqYBbJfYYQ7Sv_g@mail.gmail.com>
- <8eb12c996e404870803e9a7c77e508d6@nl.team.blue>
- <CAOi1vP-8i-rKEDd8Emq+MtxCjvK-6VG8KaXdzvQLW89174jUZA@mail.gmail.com>
- <666938090a8746a7ad8ae40ebf116e1c@nl.team.blue>
- <CAOi1vP8NHYEN-=J4A7mB1dSkaHHf8Gtha-xqPLboZUS5u442hA@mail.gmail.com>
- <21c4b9e08c4d48d6b477fc61d1fccba3@nl.team.blue>
- <CAOi1vP_fJm5UzSnOmQDKsVHmv-4vebNZTDk7vqLs=bvnf3fwjw@mail.gmail.com>
- <a13af12ab314437bbbffcb23b0513722@nl.team.blue>
- <CAOi1vP8kiGNaNPw=by=TVfJEV1_X-BNYZuVpO_Kxx5xtf40_6w@mail.gmail.com>
- <391efdae70644b71844fe6fa3dceea13@nl.team.blue>
- <2d37c87eb42d4bc2a99184f6bffce8a2@nl.team.blue>
- <CAOi1vP-dT=1C2SqcMxAR1NWrcHUE1K-F6M1BpBWb7pVCDhS7Og@mail.gmail.com>,<CAOi1vP-5AuH0xuZrd2AWOqRgnzHnEToE-dMQp23iOpY-a+VyLA@mail.gmail.com>,<c5830118f2a24ff89b6fcf18e941a120@nl.team.blue>
-In-Reply-To: <c5830118f2a24ff89b6fcf18e941a120@nl.team.blue>
-Accept-Language: en-GB, nl-NL, en-US
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [81.4.116.242]
-Content-Type: text/plain; charset="iso-8859-1"
+ <8eb12c996e404870803e9a7c77e508d6@nl.team.blue> <CAOi1vP-8i-rKEDd8Emq+MtxCjvK-6VG8KaXdzvQLW89174jUZA@mail.gmail.com>
+ <666938090a8746a7ad8ae40ebf116e1c@nl.team.blue> <CAOi1vP8NHYEN-=J4A7mB1dSkaHHf8Gtha-xqPLboZUS5u442hA@mail.gmail.com>
+ <21c4b9e08c4d48d6b477fc61d1fccba3@nl.team.blue> <CAOi1vP_fJm5UzSnOmQDKsVHmv-4vebNZTDk7vqLs=bvnf3fwjw@mail.gmail.com>
+ <a13af12ab314437bbbffcb23b0513722@nl.team.blue> <CAOi1vP8kiGNaNPw=by=TVfJEV1_X-BNYZuVpO_Kxx5xtf40_6w@mail.gmail.com>
+ <391efdae70644b71844fe6fa3dceea13@nl.team.blue> <2d37c87eb42d4bc2a99184f6bffce8a2@nl.team.blue>
+ <CAOi1vP-dT=1C2SqcMxAR1NWrcHUE1K-F6M1BpBWb7pVCDhS7Og@mail.gmail.com>
+ <CAOi1vP-5AuH0xuZrd2AWOqRgnzHnEToE-dMQp23iOpY-a+VyLA@mail.gmail.com>
+ <c5830118f2a24ff89b6fcf18e941a120@nl.team.blue> <8b1a8409de3448699fe606c7c704f232@nl.team.blue>
+In-Reply-To: <8b1a8409de3448699fe606c7c704f232@nl.team.blue>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 20 Jul 2021 18:42:49 +0200
+Message-ID: <CAOi1vP_Bf+TSTtoqSPNof_QW3i0JiYqcrTCdizitvxT+a3nWYg@mail.gmail.com>
+Subject: Re: All RBD IO stuck after flapping OSD's
+To:     Robin Geuze <robin.geuze@nl.team.blue>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-Scanned-By: ClueGetter at submission4.mail.transip.nl
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=transip-a; d=nl.team.blue; t=1626782704; h=from:subject:to:cc:
- references:in-reply-to:date:mime-version:content-type;
- bh=yiGNbG5XBb+eE3PXqbgfNwLyHvNuihG0oe8lQYJ8sPg=;
- b=Jt93LR4fdMosL4G+aVCU0/XAjPnjKECgEdJGRecn+MFJJ859QQp1JbdxS+C70zZwWpXazO
- igvDEgZYNTvYMrxXgRftui5CETCxvAN+Y9A3gbnTRjtCfJwNAPDzhLptKxXMv7B+NePyy5
- JTBHE5KKhd/dZsGnhrMnyXPFSpBHcGKu/sl90DiupbTjKp5km+A4oNVXOAwCfhw90wASXo
- Z2JbdIWQhpSePDtSipzQONGRoCtV4bwWMIi2z8SKjTBn1vbVJ0uc28MElZhjjQ+GSamNYb
- teYypQ+7q89PatC9u0+uOgxWRw8qHzOKmvRuoP8wWQnQc8LE8/FY7zek8PXcEA==
-X-Report-Abuse-To: abuse@transip.nl
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hey Ilya,
-
-Took a bit longer than expected, but we finally got around to testing the p=
-atches. They seem to do the trick. We did have one stuck rbd dev, however a=
-fter the 60 second hung task timeout expired that one also continued workin=
-g. Great work. We ended up testing it on a the Ubuntu 20.04 hwe 5.8 based k=
-ernel btw, not 5.4.
-
-Regards,
-
-Robin Geuze
-
-From: Robin Geuze
-Sent: 07 July 2021 09:35
-To: Ilya Dryomov
-Cc: Ceph Development
-Subject: Re: All RBD IO stuck after flapping OSD's
-=A0  =20
-Hey Ilya,
-
-Thanks so much for the patches, we are planning to test them either this af=
-ternoon or tomorrow at the latest, I will let you know the results.
-
-Regards,
-
-Robin Geuze
-
-From: Ilya Dryomov <idryomov@gmail.com>
-Sent: 06 July 2021 19:21
-To: Robin Geuze
-Cc: Ceph Development
-Subject: Re: All RBD IO stuck after flapping OSD's
-=A0=A0=A0=20
-On Tue, Jun 29, 2021 at 12:07 PM Ilya Dryomov <idryomov@gmail.com> wrote:
+On Tue, Jul 20, 2021 at 2:05 PM Robin Geuze <robin.geuze@nl.team.blue> wrot=
+e:
 >
-> On Tue, Jun 29, 2021 at 10:39 AM Robin Geuze <robin.geuze@nl.team.blue> w=
-rote:
-> >
-> > Hey Ilya,
-> >
-> > Do you have any idea on the cause of this bug yet? I tried to dig aroun=
-d a bit myself in the source, but the logic around this locking is very com=
-plex, so I couldn't figure out where the problem is.
+> Hey Ilya,
 >
-> I do.=A0 The proper fix would indeed be large and not backportable but
-> I have a workaround in mind that should be simple enough to backport
-> all the way to 5.4.=A0 The trick is making sure that the workaround is
-> fine from the exclusive lock protocol POV.
->
-> I'll try to flesh it out by the end of this week and report back
-> early next week.
+> Took a bit longer than expected, but we finally got around to testing the=
+ patches. They seem to do the trick. We did have one stuck rbd dev, however=
+ after the 60 second hung task timeout expired that one also continued work=
+ing. Great work. We ended up testing it on a the Ubuntu 20.04 hwe 5.8 based=
+ kernel btw, not 5.4.
 
 Hi Robin,
 
-I CCed you on the patches.=A0 They should apply to 5.4 cleanly.=A0 You
-mentioned you have a build farm set up, please take them for a spin.
+Thanks for testing!  I'll get these patches into 5.14-rc3 and have them
+backported from there.
 
 Thanks,
 
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Ilya
-=A0=A0=A0     =
+                Ilya
