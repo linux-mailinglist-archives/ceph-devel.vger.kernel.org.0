@@ -2,87 +2,171 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E0C1D3CFFBB
-	for <lists+ceph-devel@lfdr.de>; Tue, 20 Jul 2021 18:45:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 933123D0A9E
+	for <lists+ceph-devel@lfdr.de>; Wed, 21 Jul 2021 10:32:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231445AbhGTQDp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 20 Jul 2021 12:03:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44902 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229675AbhGTQDF (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 20 Jul 2021 12:03:05 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99268C061766
-        for <ceph-devel@vger.kernel.org>; Tue, 20 Jul 2021 09:43:26 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id v26so24676364iom.11
-        for <ceph-devel@vger.kernel.org>; Tue, 20 Jul 2021 09:43:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ED5qQc25ISarOIZ2uUdJsrNkOL0b8KbbPDH32B3bJ7A=;
-        b=JVllmSbJfpMAzoBK4KyFM+p2xQLlLOLIjnDFjJmlxDnwbPEYjDqiRv75t8LE+R8+GF
-         fRuH0ENv6E2ngue6eKqtnhbnsPUlHU6LvR6cUmJsLLMtVF2VfitKEByRHmS5tydT9yP0
-         DXW97xMjxBYUNvRyAC1bqfQ68x99zaUHfJEM8K32XjRVABHQEsxfTF0/VKdEeFqT4QSS
-         Nqo+w94pssNsNeIGYfLtrOSKDNLRINwa2MMFqWCwhUW0KyNTCcUtJ038mGb0BX4BuQEq
-         ORjSzirRXDvw0Qo90qhuy4Vq9ZU6tiRvVY2sLk1izw7/uSHbGBGytIchDLf4eQrnHW0I
-         KuLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ED5qQc25ISarOIZ2uUdJsrNkOL0b8KbbPDH32B3bJ7A=;
-        b=DhDzGPCtNkGRx9kK9Z2RIgMV+dtZ9OGdKo/3UUFIxB6PhV5K9H1vXhWmcLHnJdvqY5
-         UPEErK9dOOvuC8p3DfNfIhyF0LtwIlPAoZpp/1hZMiDszK1hn9UssC/wJ1o+c3NAbMHP
-         +FtmSvryke5dugtov4+7f2qLAyTtFiYns0vi3TiGD4DsB1l5IzkBl9yDONe3+ADu4pmN
-         D6Yi1uRZjO+spT1xiX3hkaAfVBOWHcBa/AJOcSEParBw25iwRxqacY1hpv4zKfkhp7zP
-         c4KtwFF6mzB1FGeb+CTkkB1LVZ0t43WFT/Dv0pbLUSluGaXBoKc/tGOd8ThRrTgy8dBE
-         s2UA==
-X-Gm-Message-State: AOAM533MHbWkyUlcvXO4B/P0/9ZEpFTfyjbCymU4VopU5xY9Y5F+Dc5h
-        axKKXcD6uKtVAm7Js67jUNzvbLwDY9rutBvu86HJtigAKsofUw==
-X-Google-Smtp-Source: ABdhPJwOx/EjtkfW29h9vlLPQx8yitGjjQ11VYLMmBFM111mKQasATDVNUPFpMvfMstmFfuGOQYPsbmDTXKLJ+2YZ8o=
-X-Received: by 2002:a5d:984d:: with SMTP id p13mr19199171ios.182.1626799406057;
- Tue, 20 Jul 2021 09:43:26 -0700 (PDT)
+        id S235967AbhGUHss (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 21 Jul 2021 03:48:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36689 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235945AbhGUHrR (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 21 Jul 2021 03:47:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626856074;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=4wHsODV3aPV+70T9+Ft7epkH8xaG/LhdbBbvmkWbuVk=;
+        b=DHiK7oOBtPx/+aPdpIDEFYGDJz85FGteVWq+EX+aUMSrBIGj5w7SOJq3c4E3gFwU+xF5S3
+        8mzZ8PNLVV/GC46XH16MjuqjvuAB4qSCpz35yPiS9/3mfrRlROgzJEyL0GKrJqVRHtOFjt
+        u0rZsNn/p5iNz1PiGIh/4q7pBhisZk0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-82-JbOVW6zbNs6j2WAokPDKPw-1; Wed, 21 Jul 2021 04:27:52 -0400
+X-MC-Unique: JbOVW6zbNs6j2WAokPDKPw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B0314190B2BF;
+        Wed, 21 Jul 2021 08:27:30 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B8E2A60BF1;
+        Wed, 21 Jul 2021 08:27:28 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org, idryomov@gmail.com
+Cc:     pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH RFC] ceph: flush the delayed caps in time
+Date:   Wed, 21 Jul 2021 16:27:20 +0800
+Message-Id: <20210721082720.110202-1-xiubli@redhat.com>
 MIME-Version: 1.0
-References: <47f0a04ce6664116a11cfdb5a458e252@nl.team.blue>
- <CAOi1vP-moRXtL4gKXQF8+NwbPgE11_LoxfSYqYBbJfYYQ7Sv_g@mail.gmail.com>
- <8eb12c996e404870803e9a7c77e508d6@nl.team.blue> <CAOi1vP-8i-rKEDd8Emq+MtxCjvK-6VG8KaXdzvQLW89174jUZA@mail.gmail.com>
- <666938090a8746a7ad8ae40ebf116e1c@nl.team.blue> <CAOi1vP8NHYEN-=J4A7mB1dSkaHHf8Gtha-xqPLboZUS5u442hA@mail.gmail.com>
- <21c4b9e08c4d48d6b477fc61d1fccba3@nl.team.blue> <CAOi1vP_fJm5UzSnOmQDKsVHmv-4vebNZTDk7vqLs=bvnf3fwjw@mail.gmail.com>
- <a13af12ab314437bbbffcb23b0513722@nl.team.blue> <CAOi1vP8kiGNaNPw=by=TVfJEV1_X-BNYZuVpO_Kxx5xtf40_6w@mail.gmail.com>
- <391efdae70644b71844fe6fa3dceea13@nl.team.blue> <2d37c87eb42d4bc2a99184f6bffce8a2@nl.team.blue>
- <CAOi1vP-dT=1C2SqcMxAR1NWrcHUE1K-F6M1BpBWb7pVCDhS7Og@mail.gmail.com>
- <CAOi1vP-5AuH0xuZrd2AWOqRgnzHnEToE-dMQp23iOpY-a+VyLA@mail.gmail.com>
- <c5830118f2a24ff89b6fcf18e941a120@nl.team.blue> <8b1a8409de3448699fe606c7c704f232@nl.team.blue>
-In-Reply-To: <8b1a8409de3448699fe606c7c704f232@nl.team.blue>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 20 Jul 2021 18:42:49 +0200
-Message-ID: <CAOi1vP_Bf+TSTtoqSPNof_QW3i0JiYqcrTCdizitvxT+a3nWYg@mail.gmail.com>
-Subject: Re: All RBD IO stuck after flapping OSD's
-To:     Robin Geuze <robin.geuze@nl.team.blue>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jul 20, 2021 at 2:05 PM Robin Geuze <robin.geuze@nl.team.blue> wrot=
-e:
->
-> Hey Ilya,
->
-> Took a bit longer than expected, but we finally got around to testing the=
- patches. They seem to do the trick. We did have one stuck rbd dev, however=
- after the 60 second hung task timeout expired that one also continued work=
-ing. Great work. We ended up testing it on a the Ubuntu 20.04 hwe 5.8 based=
- kernel btw, not 5.4.
+From: Xiubo Li <xiubli@redhat.com>
 
-Hi Robin,
+The delayed_work will be executed per 5 seconds, during this time
+the cap_delay_list may accumulate thounsands of caps need to flush,
+this will make the MDS's dispatch queue be full and need a very long
+time to handle them. And if there has some other operations, likes
+a rmdir request, it will be add in the tail of dispath queue and
+need to wait for several or tens of seconds.
 
-Thanks for testing!  I'll get these patches into 5.14-rc3 and have them
-backported from there.
+In client side we shouldn't queue to many of the cap requests and
+flush them if there has more than 100 items.
 
-Thanks,
+URL: https://tracker.ceph.com/issues/51734
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/caps.c       | 21 ++++++++++++++++++++-
+ fs/ceph/mds_client.c |  3 ++-
+ fs/ceph/mds_client.h |  3 +++
+ 3 files changed, 25 insertions(+), 2 deletions(-)
 
-                Ilya
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 4b966c29d9b5..064865761d2b 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -507,6 +507,8 @@ static void __cap_set_timeouts(struct ceph_mds_client *mdsc,
+ static void __cap_delay_requeue(struct ceph_mds_client *mdsc,
+ 				struct ceph_inode_info *ci)
+ {
++	int num = 0;
++
+ 	dout("__cap_delay_requeue %p flags 0x%lx at %lu\n", &ci->vfs_inode,
+ 	     ci->i_ceph_flags, ci->i_hold_caps_max);
+ 	if (!mdsc->stopping) {
+@@ -515,12 +517,19 @@ static void __cap_delay_requeue(struct ceph_mds_client *mdsc,
+ 			if (ci->i_ceph_flags & CEPH_I_FLUSH)
+ 				goto no_change;
+ 			list_del_init(&ci->i_cap_delay_list);
++			mdsc->num_cap_delay--;
+ 		}
+ 		__cap_set_timeouts(mdsc, ci);
+ 		list_add_tail(&ci->i_cap_delay_list, &mdsc->cap_delay_list);
++		num = ++mdsc->num_cap_delay;
+ no_change:
+ 		spin_unlock(&mdsc->cap_delay_lock);
+ 	}
++
++	if (num > 100) {
++		flush_delayed_work(&mdsc->delayed_work);
++		schedule_delayed(mdsc);
++	}
+ }
+ 
+ /*
+@@ -531,13 +540,23 @@ static void __cap_delay_requeue(struct ceph_mds_client *mdsc,
+ static void __cap_delay_requeue_front(struct ceph_mds_client *mdsc,
+ 				      struct ceph_inode_info *ci)
+ {
++	int num;
++
+ 	dout("__cap_delay_requeue_front %p\n", &ci->vfs_inode);
+ 	spin_lock(&mdsc->cap_delay_lock);
+ 	ci->i_ceph_flags |= CEPH_I_FLUSH;
+-	if (!list_empty(&ci->i_cap_delay_list))
++	if (!list_empty(&ci->i_cap_delay_list)) {
+ 		list_del_init(&ci->i_cap_delay_list);
++		mdsc->num_cap_delay--;
++	}
+ 	list_add(&ci->i_cap_delay_list, &mdsc->cap_delay_list);
++	num = ++mdsc->num_cap_delay;
+ 	spin_unlock(&mdsc->cap_delay_lock);
++
++	if (num > 100) {
++		flush_delayed_work(&mdsc->delayed_work);
++		schedule_delayed(mdsc);
++	}
+ }
+ 
+ /*
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 79aa4ce3a388..14e44de05812 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -4514,7 +4514,7 @@ void inc_session_sequence(struct ceph_mds_session *s)
+ /*
+  * delayed work -- periodically trim expired leases, renew caps with mds
+  */
+-static void schedule_delayed(struct ceph_mds_client *mdsc)
++void schedule_delayed(struct ceph_mds_client *mdsc)
+ {
+ 	int delay = 5;
+ 	unsigned hz = round_jiffies_relative(HZ * delay);
+@@ -4616,6 +4616,7 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
+ 	mdsc->request_tree = RB_ROOT;
+ 	INIT_DELAYED_WORK(&mdsc->delayed_work, delayed_work);
+ 	mdsc->last_renew_caps = jiffies;
++	mdsc->num_cap_delay = 0;
+ 	INIT_LIST_HEAD(&mdsc->cap_delay_list);
+ 	INIT_LIST_HEAD(&mdsc->cap_wait_list);
+ 	spin_lock_init(&mdsc->cap_delay_lock);
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index a7af09257382..b4289b8d23ec 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -423,6 +423,7 @@ struct ceph_mds_client {
+ 	struct rb_root         request_tree;  /* pending mds requests */
+ 	struct delayed_work    delayed_work;  /* delayed work */
+ 	unsigned long    last_renew_caps;  /* last time we renewed our caps */
++	unsigned long    num_cap_delay;    /* caps in the cap_delay_list */
+ 	struct list_head cap_delay_list;   /* caps with delayed release */
+ 	spinlock_t       cap_delay_lock;   /* protects cap_delay_list */
+ 	struct list_head snap_flush_list;  /* cap_snaps ready to flush */
+@@ -568,6 +569,8 @@ extern int ceph_trim_caps(struct ceph_mds_client *mdsc,
+ 			  struct ceph_mds_session *session,
+ 			  int max_caps);
+ 
++extern void schedule_delayed(struct ceph_mds_client *mdsc);
++
+ static inline int ceph_wait_on_async_create(struct inode *inode)
+ {
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+-- 
+2.27.0
+
