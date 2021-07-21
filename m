@@ -2,170 +2,87 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E73A3D0F2D
-	for <lists+ceph-devel@lfdr.de>; Wed, 21 Jul 2021 15:07:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 843573D0F42
+	for <lists+ceph-devel@lfdr.de>; Wed, 21 Jul 2021 15:10:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235751AbhGUM0B (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 21 Jul 2021 08:26:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59624 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234331AbhGUMZ6 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 21 Jul 2021 08:25:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5764F61029;
-        Wed, 21 Jul 2021 13:06:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626872791;
-        bh=2Kzp8AYy0aJjR41MjIa9HUoN2VBdL8wpsVdzc1dRlmA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aNaQipPLzf706u1kWC0SB8ycYU+Q2uf0RWT1aEpbzg/eAU3vrWc240XvqQ8Xn9cjU
-         VfUJUwc4JRrhlUwyllPg3c2ycKang+47OoPRqpGQHxAYD98o9zONix8DcM29nQe9sV
-         h+oIsUjxibq/8SfrKlozMt1Uem98hK3zdqvfV+MABJ8Op6yqL7hq11ZtIAfTeEaqIu
-         1r2/7Sul4FJrDuu38jusClZZVeFOROdOmzarlgQyzVHf3ExOsGLV25u8g+Is9ehKjj
-         4/XKWDxHKu419q4+VA0mKrc2UGjCaes8DPCx6G3lNwFf2PYoAGI/AfdY6s4aSz5/3o
-         87YJ/JO89aiSg==
-From:   Jeff Layton <jlayton@kernel.org>
+        id S237204AbhGUM3s (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 21 Jul 2021 08:29:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37454 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236534AbhGUM3s (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 21 Jul 2021 08:29:48 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 983BEC061574
+        for <ceph-devel@vger.kernel.org>; Wed, 21 Jul 2021 06:10:24 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id d12so2103765wre.13
+        for <ceph-devel@vger.kernel.org>; Wed, 21 Jul 2021 06:10:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6Kwdnv/sSDYgvkWyPDJbDpCrFrENTOmlS/NiN7rSN9o=;
+        b=XLOk0r5m/WCOQOs2AZV7fuXsl7MVUxBOjZMZgIkQGWDb78wRtxcvC4WKXcibWEM63O
+         Asn2ZCLu3moK5NJ1V5/MOIst9BdJIuRB+H7ezx3vAJPwEbCVn7bdsObwGpCyRQX0LA1T
+         1oOJ9//sz0dFW9mH427tGB6fVaJeENPzW7y0M5xtaga8K+cJsiAI/zmBsW+yzLKhWZJr
+         +1Kmsa0Xz/4jwGfPpru9b4hLzjCvwavCll/HOs3pVv9U9I0kfaMtYJ8vHyPEiGjiE59w
+         mEMXEa5e7w7ZB7nxBU+RxYmqx8LcDc/2xmm/wQ9PrRP621AuGzpKZtWgQPznf6nLDsjz
+         tS2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6Kwdnv/sSDYgvkWyPDJbDpCrFrENTOmlS/NiN7rSN9o=;
+        b=doaA1kcStUomUW5BVlX0XU8bG/OZvQp8wR9e23PcZ721eyeriDl2rqg/tOtrx50c5M
+         42+Hu9G+0iXiCA2X/7jhMX11a23PvFE+QVb+RB+tw4tSZaZdsBd55wxiAvl46GSIHUd5
+         iLz2/wziT6M937QB5VEgNREg1E1puIJ4VAeAtHUSc+JEOS7VD/bJotIOcAXxz0ScjbNg
+         7yuUIJEFpBywVT6/oOBRXIunCvW1nD2lJ7sE7XXQ8J1x9eYA+KhGXbqpBQAwFuD1nAhx
+         po6M4pyHnbZM9dxERyl+eYWPdElLY0uKMPQno4N/Hbm70UaqtjhGDmw8e77dN3b8Relf
+         XXUg==
+X-Gm-Message-State: AOAM532O12hm/5sq34HnvXZGFFeb5oUsbvJX6zW9zqRa/BTkhzQBuUpF
+        yqzKHwIjiV36O0uhSK9QnZQbTG9bz/0hVw==
+X-Google-Smtp-Source: ABdhPJx34vrtiE1ZMnt/19WhgHVo3AW1Lcs1AsiftA/zNPGvFmNEklcrnMdxF+up0cmPqoAqUc3eSQ==
+X-Received: by 2002:adf:efc6:: with SMTP id i6mr42240655wrp.213.1626873023263;
+        Wed, 21 Jul 2021 06:10:23 -0700 (PDT)
+Received: from kwango.redhat.com (ip-94-112-137-87.net.upcbroadband.cz. [94.112.137.87])
+        by smtp.gmail.com with ESMTPSA id b6sm5081170wmj.34.2021.07.21.06.10.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jul 2021 06:10:22 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
 To:     ceph-devel@vger.kernel.org
-Cc:     pdonnell@redhat.com
-Subject: [PATCH v2] ceph: dump info about cap flushes when we're waiting too long for them
-Date:   Wed, 21 Jul 2021 09:06:30 -0400
-Message-Id: <20210721130630.11390-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210707171942.38428-1-jlayton@kernel.org>
-References: <20210707171942.38428-1-jlayton@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Subject: [PATCH] rbd: resurrect setting of disk->private_data in rbd_init_disk()
+Date:   Wed, 21 Jul 2021 15:09:50 +0200
+Message-Id: <20210721130950.3359-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-We've had some cases of hung umounts in teuthology testing. It looks
-like client is waiting for cap flushes to complete, but they aren't.
+rbd_open() and rbd_release() expect that disk->private_data is set to
+rbd_dev.  Otherwise we hit a NULL pointer dereference when mapping the
+image.
 
-Add a field to the inode to track the highest cap flush tid seen for
-that inode. Also, add a backpointer to the inode to the ceph_cap_flush
-struct.
-
-Change wait_caps_flush to wait 60s, and then dump info about the
-condition of the list.
-
-Reported-by: Patrick Donnelly <pdonnell@redhat.com>
-URL: https://tracker.ceph.com/issues/51279
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Fixes: 195b1956b85b ("rbd: use blk_mq_alloc_disk and blk_cleanup_disk")
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 ---
- fs/ceph/caps.c       |  5 +++++
- fs/ceph/inode.c      |  1 +
- fs/ceph/mds_client.c | 30 ++++++++++++++++++++++++++++--
- fs/ceph/super.h      |  2 ++
- 4 files changed, 36 insertions(+), 2 deletions(-)
+ drivers/block/rbd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I revised this patch a bit to gather some more info. Again, I'll put
-this into the testing kernel with a [DO NOT MERGE] tag.
-
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 7ae83d06d48c..6c24b2eb865c 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -1829,6 +1829,7 @@ static u64 __mark_caps_flushing(struct inode *inode,
- 	swap(cf, ci->i_prealloc_cap_flush);
- 	cf->caps = flushing;
- 	cf->wake = wake;
-+	cf->ci = ci;
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 48c485d7efa1..9384395670b2 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -4943,6 +4943,7 @@ static int rbd_init_disk(struct rbd_device *rbd_dev)
+ 		disk->minors = RBD_MINORS_PER_MAJOR;
+ 	}
+ 	disk->fops = &rbd_bd_ops;
++	disk->private_data = rbd_dev;
  
- 	spin_lock(&mdsc->cap_dirty_lock);
- 	list_del_init(&ci->i_dirty_item);
-@@ -3588,6 +3589,10 @@ static void handle_cap_flush_ack(struct inode *inode, u64 flush_tid,
- 	bool wake_ci = false;
- 	bool wake_mdsc = false;
- 
-+	/* track latest cap flush ack seen for this inode */
-+	if (flush_tid > ci->i_last_cap_flush_ack)
-+		ci->i_last_cap_flush_ack = flush_tid;
-+
- 	list_for_each_entry_safe(cf, tmp_cf, &ci->i_cap_flush_list, i_list) {
- 		/* Is this the one that was flushed? */
- 		if (cf->tid == flush_tid)
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 1bd2cc015913..84e4f112fc45 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -499,6 +499,7 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
- 	INIT_LIST_HEAD(&ci->i_cap_snaps);
- 	ci->i_head_snapc = NULL;
- 	ci->i_snap_caps = 0;
-+	ci->i_last_cap_flush_ack = 0;
- 
- 	ci->i_last_rd = ci->i_last_wr = jiffies - 3600 * HZ;
- 	for (i = 0; i < CEPH_FILE_MODE_BITS; i++)
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index c3fa0c0e4f6c..c43091a30ba8 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2064,6 +2064,23 @@ static int check_caps_flush(struct ceph_mds_client *mdsc,
- 	return ret;
- }
- 
-+static void dump_cap_flushes(struct ceph_mds_client *mdsc, u64 want_tid)
-+{
-+	struct ceph_cap_flush *cf;
-+
-+	pr_info("%s: still waiting for cap flushes through %llu\n:\n",
-+		__func__, want_tid);
-+	spin_lock(&mdsc->cap_dirty_lock);
-+	list_for_each_entry(cf, &mdsc->cap_flush_list, g_list) {
-+		if (cf->tid > want_tid)
-+			break;
-+		pr_info("0x%llx %s %llu %llu %d\n", cf->ci->i_vino.ino,
-+			ceph_cap_string(cf->caps), cf->tid,
-+			cf->ci->i_last_cap_flush_ack, cf->wake);
-+	}
-+	spin_unlock(&mdsc->cap_dirty_lock);
-+}
-+
- /*
-  * flush all dirty inode data to disk.
-  *
-@@ -2072,10 +2089,19 @@ static int check_caps_flush(struct ceph_mds_client *mdsc,
- static void wait_caps_flush(struct ceph_mds_client *mdsc,
- 			    u64 want_flush_tid)
- {
-+	long ret;
-+
- 	dout("check_caps_flush want %llu\n", want_flush_tid);
- 
--	wait_event(mdsc->cap_flushing_wq,
--		   check_caps_flush(mdsc, want_flush_tid));
-+	do {
-+		ret = wait_event_timeout(mdsc->cap_flushing_wq,
-+			   check_caps_flush(mdsc, want_flush_tid), 60 * HZ);
-+		if (ret == 0)
-+			dump_cap_flushes(mdsc, want_flush_tid);
-+		else if (ret == 1)
-+			pr_info("%s: condition evaluated to true after timeout!\n",
-+				  __func__);
-+	} while (ret == 0);
- 
- 	dout("check_caps_flush ok, flushed thru %llu\n", want_flush_tid);
- }
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 07eb542efa1d..d51d42a00f33 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -189,6 +189,7 @@ struct ceph_cap_flush {
- 	bool wake; /* wake up flush waiters when finish ? */
- 	struct list_head g_list; // global
- 	struct list_head i_list; // per inode
-+	struct ceph_inode_info *ci;
- };
- 
- /*
-@@ -388,6 +389,7 @@ struct ceph_inode_info {
- 	struct ceph_snap_context *i_head_snapc;  /* set if wr_buffer_head > 0 or
- 						    dirty|flushing caps */
- 	unsigned i_snap_caps;           /* cap bits for snapped files */
-+	u64 i_last_cap_flush_ack;		/* latest cap flush_ack tid for this inode */
- 
- 	unsigned long i_last_rd;
- 	unsigned long i_last_wr;
+ 	blk_queue_flag_set(QUEUE_FLAG_NONROT, q);
+ 	/* QUEUE_FLAG_ADD_RANDOM is off by default for blk-mq */
 -- 
-2.31.1
+2.19.2
 
