@@ -2,59 +2,89 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F4343D408D
-	for <lists+ceph-devel@lfdr.de>; Fri, 23 Jul 2021 21:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B7C3D56C6
+	for <lists+ceph-devel@lfdr.de>; Mon, 26 Jul 2021 11:44:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230124AbhGWSaF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 23 Jul 2021 14:30:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40976 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229971AbhGWSaE (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 23 Jul 2021 14:30:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id C3E7860F21;
-        Fri, 23 Jul 2021 19:10:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627067437;
-        bh=OeeQjJ9vfrB0DfdGJyJy4kZAmknJ8pVTaYu9u8YeRcY=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=aXAhxnu0s6dsfbvHF6SyY6A9xwb8vT1cIpy/FHTxvgxcbeHrKo29pZXQI1IYqrJct
-         d0EMxiG/bA56glL9X3dw+aqhBuaB90zPSTmXWqD58k6xUmBU2G7LsQlE0ZAt4BC4OE
-         jI1vRu6I1rKmx0v1O490MMAaYRDxv7a/AbmFLOXTFoFxI5qamZXmgBjE1rYofAdjdw
-         aEuW74K6DsUec5k/FU9FmtiPXhTu0NNseMzpeCrGue9TuBCq7pGXZ/50+SD8Q9Fumx
-         puml9GwnOU2LeiT41FKh3Lv5UPjRaDZoqMijkBHx5wJgM2/2eUmgnLzejIxglpTkmM
-         Ryv6TACtQtnGA==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id BD9C360721;
-        Fri, 23 Jul 2021 19:10:37 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph fixes for 5.14-rc3
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20210723163211.8436-1-idryomov@gmail.com>
-References: <20210723163211.8436-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20210723163211.8436-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-5.14-rc3
-X-PR-Tracked-Commit-Id: 0077a50082729c3f9ea2836f59e35d9b7dacfb12
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 704f4cba43d4ed31ef4beb422313f1263d87bc55
-Message-Id: <162706743777.23984.652162798367127498.pr-tracker-bot@kernel.org>
-Date:   Fri, 23 Jul 2021 19:10:37 +0000
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S232792AbhGZJEU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 26 Jul 2021 05:04:20 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25921 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232156AbhGZJET (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 26 Jul 2021 05:04:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1627292688;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kBC7/7n7ieIR+PQocFWGsdEhjsiqMRhY14cESzBGes0=;
+        b=Wbg1ZZ/nBVA5QPydlyjv+cODt5GnjnN6p4kgEeGgESCTM3tpidvwr/oROn5GPcccnY6Urm
+        W/bP/eyk0ilHQ2u27baIttOq/8jNCESFgc/lVSgzgcmq8eo+Mj3vqS0sZYAkNXqU2I3NEd
+        PmghVWglsw5HuK1qaCK0Jxg70ACE3iw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-454-brLp6B6MMoKsBE9RNfYfwA-1; Mon, 26 Jul 2021 05:44:47 -0400
+X-MC-Unique: brLp6B6MMoKsBE9RNfYfwA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A966F8799EF;
+        Mon, 26 Jul 2021 09:44:44 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.22.16.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 61BB85C1D1;
+        Mon, 26 Jul 2021 09:44:36 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <35ecb577315f486f1636b2316c2051ad004f6f7b.camel@redhat.com>
+References: <35ecb577315f486f1636b2316c2051ad004f6f7b.camel@redhat.com> <162687506932.276387.14456718890524355509.stgit@warthog.procyon.org.uk> <162687508008.276387.6418924257569297305.stgit@warthog.procyon.org.uk>
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        devel@lists.orangefs.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 01/12] afs: Sort out symlink reading
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <812199.1627292675.1@warthog.procyon.org.uk>
+Date:   Mon, 26 Jul 2021 10:44:35 +0100
+Message-ID: <812200.1627292675@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The pull request you sent on Fri, 23 Jul 2021 18:32:11 +0200:
+Jeff Layton <jlayton@redhat.com> wrote:
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-5.14-rc3
+> > -static int afs_symlink_readpage(struct page *page)
+> > +static int afs_symlink_readpage(struct file *file, struct page *page)
+> >  {
+> >  	struct afs_vnode *vnode = AFS_FS_I(page->mapping->host);
+> >  	struct afs_read *fsreq;
+> 
+> 
+> I wonder...would you be better served here by not using page_readlink
+> for symlinks and instead use simple_get_link and roll your own readlink
+> operation. It seems a bit more direct, and AFS seems to be the only
+> caller of page_readlink.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/704f4cba43d4ed31ef4beb422313f1263d87bc55
+Maybe.  At some point it will need to go through netfs_readpage() so that it
+will get cached and maybe encrypted.  Possibly there should be a
+netfs_readlink().  AFS directories too will at some point need to go through
+netfs_readahead() or similar.
 
-Thank you!
+David
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
