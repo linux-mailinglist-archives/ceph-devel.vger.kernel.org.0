@@ -2,96 +2,84 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AAD6A3D6F66
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jul 2021 08:25:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D2EE3D7468
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jul 2021 13:35:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235502AbhG0GZO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 27 Jul 2021 02:25:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50334 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233553AbhG0GZN (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jul 2021 02:25:13 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27DF5C061757;
-        Mon, 26 Jul 2021 23:25:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=jFuNMKcRbcVnR+JgRWAcFH4S0wPCM0LhDW7OHMhdenM=; b=ZlPtXIOVwXE0aeEVhqPQ0pLddO
-        rr5EooQEZ6+S9JLHdS21sBPJ1zXlGbUobbMssMsOIoajU/cNBcLZJUaVK4Cq1Vob1y9rvjIvfaLP2
-        jLpBaotC3LPfh4M8MsZaVgWQopzUxvAs4oPgX7/CsaH6Tg3bzUa+ZnsFVTsnGZ8SKQM2ObR5Ktt06
-        WsUeEtBSIekhebyDfQ2PaCHHjj4MGhZDYWrXqhTPqVBQoOEXwnJPZUVITViJeIx9mu07++3CnzVuD
-        /ZSLyXN29uMKgcHN4h+6S9tjvi3olbm75aJXSRMnpdhi9hwLYuajBpxC0wX2qwNMJvHPzgYD+vaqb
-        7LUmYtkA==;
-Received: from [2001:4bb8:184:87c5:b7fb:1299:a9e5:ff56] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1m8GRw-00Ejpq-EQ; Tue, 27 Jul 2021 06:20:46 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>, Thomas Gleixner <tglx@linutronix.de>
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Geoff Levand <geoff@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        Mike Snitzer <snitzer@redhat.com>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Ira Weiny <ira.weiny@intel.com>, dm-devel@redhat.com,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        ceph-devel@vger.kernel.org, linux-arch@vger.kernel.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 15/15] block: use bvec_kmap_local in bio_integrity_process
-Date:   Tue, 27 Jul 2021 07:56:46 +0200
-Message-Id: <20210727055646.118787-16-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210727055646.118787-1-hch@lst.de>
-References: <20210727055646.118787-1-hch@lst.de>
+        id S236498AbhG0LfM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 27 Jul 2021 07:35:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45546 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231781AbhG0LfL (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 27 Jul 2021 07:35:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DB62661A03;
+        Tue, 27 Jul 2021 11:35:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627385712;
+        bh=HZXHvh4hZpuq2IxEUPmZRLSj6Oq91iYrE6mAowKZEQc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=anMifJIAfSK7v/PbrjfN6OCGebBxDzG/cBW6eXTIs159DDdaWn0Rtk4p+zDF5TmAb
+         j16vNioHOwZvq53LhTn5HeE2vSI07zl5bpGjl4X5cXDbadzDXHZMBHsUqrgCLuP6Ww
+         FS4Sx9lCA+DLyLX3m1r9X3tfS2UvwiyvXBZ8Y8Pb4ya7cHx9DP4RY9+G1W4npQdmyl
+         weNV07CGA+yBlBIrFg1PQlX87fN6k4ykSRPqdaKFF/cJ+dJj2YpUB0haGfHhtI8FDg
+         fYeNZae8FkjgndaRsafKXJ9TQcgI9mJnFZSEdoWA/yMqKpX9hZmQzNq1FOqtgyu02W
+         1iaDje7T/Hxbw==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com
+Subject: [PATCH] ceph: add a new vxattr to return auth mds for an inode
+Date:   Tue, 27 Jul 2021 07:35:09 -0400
+Message-Id: <20210727113509.7714-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Using local kmaps slightly reduces the chances to stray writes, and
-the bvec interface cleans up the code a little bit.
+Add a new vxattr that shows what MDS is authoritative for an inode (if
+we happen to have auth caps). If we don't have an auth cap for the inode
+then just return -1.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+URL: https://tracker.ceph.com/issues/1276
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- block/bio-integrity.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ fs/ceph/xattr.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/block/bio-integrity.c b/block/bio-integrity.c
-index 4b4eb8964a6f..8f54d49dc500 100644
---- a/block/bio-integrity.c
-+++ b/block/bio-integrity.c
-@@ -172,18 +172,16 @@ static blk_status_t bio_integrity_process(struct bio *bio,
- 	iter.prot_buf = prot_buf;
- 
- 	__bio_for_each_segment(bv, bio, bviter, *proc_iter) {
--		void *kaddr = kmap_atomic(bv.bv_page);
-+		void *kaddr = bvec_kmap_local(&bv);
- 
--		iter.data_buf = kaddr + bv.bv_offset;
-+		iter.data_buf = kaddr;
- 		iter.data_size = bv.bv_len;
--
- 		ret = proc_fn(&iter);
--		if (ret) {
--			kunmap_atomic(kaddr);
--			return ret;
--		}
-+		kunmap_local(kaddr);
-+
-+		if (ret)
-+			break;
- 
--		kunmap_atomic(kaddr);
- 	}
- 	return ret;
+diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+index 1242db8d3444..70664a19b8dc 100644
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -340,6 +340,15 @@ static ssize_t ceph_vxattrcb_caps(struct ceph_inode_info *ci, char *val,
+ 			      ceph_cap_string(issued), issued);
  }
+ 
++static ssize_t ceph_vxattrcb_auth_mds(struct ceph_inode_info *ci,
++				       char *val, size_t size)
++{
++	/* return -1 if we don't have auth caps (and thus can't tell) */
++	if (!ci->i_auth_cap)
++		return ceph_fmt_xattr(val, size, "-1");
++	return ceph_fmt_xattr(val, size, "%d", ci->i_auth_cap->session->s_mds);
++}
++
+ #define CEPH_XATTR_NAME(_type, _name)	XATTR_CEPH_PREFIX #_type "." #_name
+ #define CEPH_XATTR_NAME2(_type, _name, _name2)	\
+ 	XATTR_CEPH_PREFIX #_type "." #_name "." #_name2
+@@ -473,6 +482,13 @@ static struct ceph_vxattr ceph_common_vxattrs[] = {
+ 		.exists_cb = NULL,
+ 		.flags = VXATTR_FLAG_READONLY,
+ 	},
++	{
++		.name = "ceph.auth_mds",
++		.name_size = sizeof("ceph.auth_mds"),
++		.getxattr_cb = ceph_vxattrcb_auth_mds,
++		.exists_cb = NULL,
++		.flags = VXATTR_FLAG_READONLY,
++	},
+ 	{ .name = NULL, 0 }	/* Required table terminator */
+ };
+ 
 -- 
-2.30.2
+2.31.1
 
