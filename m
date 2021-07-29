@@ -2,137 +2,202 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 414623DA356
-	for <lists+ceph-devel@lfdr.de>; Thu, 29 Jul 2021 14:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC27B3DAAA6
+	for <lists+ceph-devel@lfdr.de>; Thu, 29 Jul 2021 20:04:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237185AbhG2Mrq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 29 Jul 2021 08:47:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:42072 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236888AbhG2Mro (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 29 Jul 2021 08:47:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1627562860;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0DrisB00xqVxEzopdeiLS7xNpIkCJ+vAmmRWiPIm3tM=;
-        b=bEao/mZNTWhz4wuwrR+CCTnoKbdwZyYdqrLqkgh81nUAkiIQyn0Bc3LuI7yUJTUUkLgrNp
-        AGjb7rIQhfKj93QDmSfEDhXcWLw70tLcLkwh8ZoD8zbXBkbANcg1JID0XoDB3ZlePM7VLT
-        oOp2mA6iD1dJi43fWdWr+6B4UlvpOK0=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-318-0dulereGN46qDxSqSQyeCA-1; Thu, 29 Jul 2021 08:47:39 -0400
-X-MC-Unique: 0dulereGN46qDxSqSQyeCA-1
-Received: by mail-pl1-f199.google.com with SMTP id s3-20020a1709029883b029012b41197000so4911564plp.16
-        for <ceph-devel@vger.kernel.org>; Thu, 29 Jul 2021 05:47:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=0DrisB00xqVxEzopdeiLS7xNpIkCJ+vAmmRWiPIm3tM=;
-        b=UHFBGxD7HEEOGPMpOUqtTFIEvLRbP6/E7Urqpk6/H+c8NoeuwARMT/j2ovHGr3c5AR
-         6GCSfDp3O4bahKZ+Zs2R61zELFxprq95aaCCKHKAW/d0hfObD6T50dr4/K2zCn86ee0J
-         YlJhVfZSufhmLfxkqQHMbIULs7m1WsXVcLgTVW20E2ESU8BH3QDzydHLEXYZsQKSOiU5
-         JYjenfgypBK7gdGaCXTAEntSDIvubwjDHC1VhprBXHJxsfIyG060GgsVwyQhQ0NZP/XR
-         ML+op3EY3OBiur9cbFU/j7GbyKru78TnkpR9XaUCbo7SN5033yQEy3VwsFCG0FJwRplh
-         B42w==
-X-Gm-Message-State: AOAM532q2RxPqxEw6ohQNRedU4iNQ3k8I2f+FA/Yis72LC8oFCacwQFL
-        oCrf7gz3yPiRhP2eIWCizyvMNpRvw0now+mL4uftmVvNUzGFUP5BthpYhIrcCMIkrHext82DQl5
-        hOvWqWZ5ECKjcDNuf+h/esA==
-X-Received: by 2002:a17:90a:bd98:: with SMTP id z24mr14815889pjr.99.1627562858235;
-        Thu, 29 Jul 2021 05:47:38 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyHYZqgqqKpM9k453jeG1VmTobteJukf0gQpl6xDSJsv/wpgrhd1CH7ZroOzDcEaTx/2F0weQ==
-X-Received: by 2002:a17:90a:bd98:: with SMTP id z24mr14815872pjr.99.1627562857970;
-        Thu, 29 Jul 2021 05:47:37 -0700 (PDT)
-Received: from [10.72.12.111] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id u16sm3959530pgh.53.2021.07.29.05.47.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Jul 2021 05:47:37 -0700 (PDT)
-Subject: Re: [PATCH v2] ceph: cancel delayed work instead of flushing on mdsc
- teardown
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com
-References: <20210729123821.100086-1-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <f1cf16b3-ec49-aeb2-aced-760dd7402f8a@redhat.com>
-Date:   Thu, 29 Jul 2021 20:47:32 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        id S229906AbhG2SEr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 29 Jul 2021 14:04:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58576 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229731AbhG2SEr (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 29 Jul 2021 14:04:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 581D360F48;
+        Thu, 29 Jul 2021 18:04:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627581883;
+        bh=svDqoy4I4UEPoVjXyx5yc4e8EwnyP0te/OIdBTiyi6A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=vNzqdCak0XlbYrCqXWF4P/xKasTLg0IzbybL3oKSLfgQKz3r4GUj4GaKLnV/5jTaW
+         lcVpCPHHu7A4f3M8loEirrOr1AYfoJxjhVdEcykOAVtcsUoM4Bt46/Z/xk36uL1qAt
+         ikEhQWJydB/YVVRTkV7TnSRy3qN2jt3kXLKbQr06cPf4jsaLMRDNfqUi2y+yriaRK5
+         iWJAZJSViykNKbHltQO0agIWV1nbxdA60WERczBOFxfJBysP/sPBSdCzQRv7MJlzZe
+         +Wlfei6vPdd8WKsz4ylsDGaGiK2B+5Nk2N/u5KLrO6WiQj7UKBByno75rX7u544O9C
+         kiyCnbSEnWLGQ==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     pdonnell@redhat.com, idryomov@gmail.com
+Subject: [PATCH v3] ceph: dump info about cap flushes when we're waiting too long for them
+Date:   Thu, 29 Jul 2021 14:04:42 -0400
+Message-Id: <20210729180442.177399-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <20210729123821.100086-1-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+We've had some cases of hung umounts in teuthology testing. It looks
+like client is waiting for cap flushes to complete, but they aren't.
 
-On 7/29/21 8:38 PM, Jeff Layton wrote:
-> The first thing metric_delayed_work does is check mdsc->stopping,
-> and then return immediately if it's set. That's good since we would
-> have already torn down the metric structures at this point, otherwise,
-> but there is no locking around mdsc->stopping.
->
-> It's possible that the ceph_metric_destroy call could race with the
-> delayed_work, in which case we could end up with the delayed_work
-> accessing destroyed percpu variables.
->
-> At this point in the mdsc teardown, the "stopping" flag has already been
-> set, so there's no benefit to flushing the work. Move the work
-> cancellation in ceph_metric_destroy ahead of the percpu variable
-> destruction, and eliminate the flush_delayed_work call in
-> ceph_mdsc_destroy.
->
-> Cc: Xiubo Li <xiubli@redhat.com>
-> Fixes: 18f473b384a6 ("ceph: periodically send perf metrics to MDSes")
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/ceph/mds_client.c | 1 -
->   fs/ceph/metric.c     | 4 ++--
->   2 files changed, 2 insertions(+), 3 deletions(-)
->
-> v2: just drop the flush call altogether and move the cancel before the
->      percpu variables are destroyed (per Xiubo's suggestion).
->
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index c43091a30ba8..34124fb1605e 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -4979,7 +4979,6 @@ void ceph_mdsc_destroy(struct ceph_fs_client *fsc)
->   
->   	ceph_metric_destroy(&mdsc->metric);
->   
-> -	flush_delayed_work(&mdsc->metric.delayed_work);
->   	fsc->mdsc = NULL;
->   	kfree(mdsc);
->   	dout("mdsc_destroy %p done\n", mdsc);
-> diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
-> index 5ac151eb0d49..04d5df29bbbf 100644
-> --- a/fs/ceph/metric.c
-> +++ b/fs/ceph/metric.c
-> @@ -302,6 +302,8 @@ void ceph_metric_destroy(struct ceph_client_metric *m)
->   	if (!m)
->   		return;
->   
-> +	cancel_delayed_work_sync(&m->delayed_work);
-> +
->   	percpu_counter_destroy(&m->total_inodes);
->   	percpu_counter_destroy(&m->opened_inodes);
->   	percpu_counter_destroy(&m->i_caps_mis);
-> @@ -309,8 +311,6 @@ void ceph_metric_destroy(struct ceph_client_metric *m)
->   	percpu_counter_destroy(&m->d_lease_mis);
->   	percpu_counter_destroy(&m->d_lease_hit);
->   
-> -	cancel_delayed_work_sync(&m->delayed_work);
-> -
->   	ceph_put_mds_session(m->session);
->   }
->   
+Add a field to the inode to track the highest cap flush tid seen for
+that inode. Also, add a backpointer to the inode to the ceph_cap_flush
+struct.
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+Change wait_caps_flush to wait 60s, and then dump info about the
+condition of the list.
+
+Also, print pr_info messages if we end up dropping a FLUSH_ACK for an
+inode onto the floor.
+
+Reported-by: Patrick Donnelly <pdonnell@redhat.com>
+URL: https://tracker.ceph.com/issues/51279
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/caps.c       | 17 +++++++++++++++--
+ fs/ceph/inode.c      |  1 +
+ fs/ceph/mds_client.c | 31 +++++++++++++++++++++++++++++--
+ fs/ceph/super.h      |  2 ++
+ 4 files changed, 47 insertions(+), 4 deletions(-)
+
+v3: more debugging has shown the client waiting on FLUSH_ACK messages
+    that seem to never have come. Add some new printks if we end up
+    dropping a FLUSH_ACK onto the floor.
+
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 7ae83d06d48c..cb551c9e5867 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -1829,6 +1829,7 @@ static u64 __mark_caps_flushing(struct inode *inode,
+ 	swap(cf, ci->i_prealloc_cap_flush);
+ 	cf->caps = flushing;
+ 	cf->wake = wake;
++	cf->ci = ci;
+ 
+ 	spin_lock(&mdsc->cap_dirty_lock);
+ 	list_del_init(&ci->i_dirty_item);
+@@ -3588,6 +3589,10 @@ static void handle_cap_flush_ack(struct inode *inode, u64 flush_tid,
+ 	bool wake_ci = false;
+ 	bool wake_mdsc = false;
+ 
++	/* track latest cap flush ack seen for this inode */
++	if (flush_tid > ci->i_last_cap_flush_ack)
++		ci->i_last_cap_flush_ack = flush_tid;
++
+ 	list_for_each_entry_safe(cf, tmp_cf, &ci->i_cap_flush_list, i_list) {
+ 		/* Is this the one that was flushed? */
+ 		if (cf->tid == flush_tid)
+@@ -4116,7 +4121,11 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ 	     (unsigned)seq);
+ 
+ 	if (!inode) {
+-		dout(" i don't have ino %llx\n", vino.ino);
++		if (op == CEPH_CAP_OP_FLUSH_ACK)
++			pr_info("%s: can't find ino %llx:%llx for flush_ack!\n",
++				__func__, vino.snap, vino.ino);
++		else
++			dout(" i don't have ino %llx\n", vino.ino);
+ 
+ 		if (op == CEPH_CAP_OP_IMPORT) {
+ 			cap = ceph_get_cap(mdsc, NULL);
+@@ -4169,10 +4178,14 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ 	spin_lock(&ci->i_ceph_lock);
+ 	cap = __get_cap_for_mds(ceph_inode(inode), session->s_mds);
+ 	if (!cap) {
+-		dout(" no cap on %p ino %llx.%llx from mds%d\n",
++		dout(" no cap on %p ino %llx:%llx from mds%d\n",
+ 		     inode, ceph_ino(inode), ceph_snap(inode),
+ 		     session->s_mds);
+ 		spin_unlock(&ci->i_ceph_lock);
++		if (op == CEPH_CAP_OP_FLUSH_ACK)
++			pr_info("%s: no cap on %p ino %llx:%llx from mds%d for flush_ack!\n",
++				__func__, inode, ceph_ino(inode),
++				ceph_snap(inode), session->s_mds);
+ 		goto flush_cap_releases;
+ 	}
+ 
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 1bd2cc015913..84e4f112fc45 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -499,6 +499,7 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
+ 	INIT_LIST_HEAD(&ci->i_cap_snaps);
+ 	ci->i_head_snapc = NULL;
+ 	ci->i_snap_caps = 0;
++	ci->i_last_cap_flush_ack = 0;
+ 
+ 	ci->i_last_rd = ci->i_last_wr = jiffies - 3600 * HZ;
+ 	for (i = 0; i < CEPH_FILE_MODE_BITS; i++)
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index c3fa0c0e4f6c..fc26527b8059 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2064,6 +2064,24 @@ static int check_caps_flush(struct ceph_mds_client *mdsc,
+ 	return ret;
+ }
+ 
++static void dump_cap_flushes(struct ceph_mds_client *mdsc, u64 want_tid)
++{
++	struct ceph_cap_flush *cf;
++
++	pr_info("%s: still waiting for cap flushes through %llu\n:\n",
++		__func__, want_tid);
++	spin_lock(&mdsc->cap_dirty_lock);
++	list_for_each_entry(cf, &mdsc->cap_flush_list, g_list) {
++		if (cf->tid > want_tid)
++			break;
++		pr_info("%llx:%llx %s %llu %llu %d\n",
++			ceph_vinop(&cf->ci->vfs_inode),
++			ceph_cap_string(cf->caps), cf->tid,
++			cf->ci->i_last_cap_flush_ack, cf->wake);
++	}
++	spin_unlock(&mdsc->cap_dirty_lock);
++}
++
+ /*
+  * flush all dirty inode data to disk.
+  *
+@@ -2072,10 +2090,19 @@ static int check_caps_flush(struct ceph_mds_client *mdsc,
+ static void wait_caps_flush(struct ceph_mds_client *mdsc,
+ 			    u64 want_flush_tid)
+ {
++	long ret;
++
+ 	dout("check_caps_flush want %llu\n", want_flush_tid);
+ 
+-	wait_event(mdsc->cap_flushing_wq,
+-		   check_caps_flush(mdsc, want_flush_tid));
++	do {
++		ret = wait_event_timeout(mdsc->cap_flushing_wq,
++			   check_caps_flush(mdsc, want_flush_tid), 60 * HZ);
++		if (ret == 0)
++			dump_cap_flushes(mdsc, want_flush_tid);
++		else if (ret == 1)
++			pr_info("%s: condition evaluated to true after timeout!\n",
++				  __func__);
++	} while (ret == 0);
+ 
+ 	dout("check_caps_flush ok, flushed thru %llu\n", want_flush_tid);
+ }
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 07eb542efa1d..d51d42a00f33 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -189,6 +189,7 @@ struct ceph_cap_flush {
+ 	bool wake; /* wake up flush waiters when finish ? */
+ 	struct list_head g_list; // global
+ 	struct list_head i_list; // per inode
++	struct ceph_inode_info *ci;
+ };
+ 
+ /*
+@@ -388,6 +389,7 @@ struct ceph_inode_info {
+ 	struct ceph_snap_context *i_head_snapc;  /* set if wr_buffer_head > 0 or
+ 						    dirty|flushing caps */
+ 	unsigned i_snap_caps;           /* cap bits for snapped files */
++	u64 i_last_cap_flush_ack;		/* latest cap flush_ack tid for this inode */
+ 
+ 	unsigned long i_last_rd;
+ 	unsigned long i_last_wr;
+-- 
+2.31.1
 
