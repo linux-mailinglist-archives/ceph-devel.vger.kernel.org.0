@@ -2,94 +2,100 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAD4E3DA237
-	for <lists+ceph-devel@lfdr.de>; Thu, 29 Jul 2021 13:34:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D35B03DA341
+	for <lists+ceph-devel@lfdr.de>; Thu, 29 Jul 2021 14:38:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231674AbhG2Lei (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 29 Jul 2021 07:34:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56668 "EHLO mail.kernel.org"
+        id S236976AbhG2Mi0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 29 Jul 2021 08:38:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231576AbhG2Leh (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 29 Jul 2021 07:34:37 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1677360F23;
-        Thu, 29 Jul 2021 11:34:34 +0000 (UTC)
+        id S234459AbhG2MiZ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 29 Jul 2021 08:38:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 32A7D60F12;
+        Thu, 29 Jul 2021 12:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627558474;
-        bh=UN46I5PKTeBSf/bTsh0J8eIGMKZ5gfswm+p6t8CbgIo=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=IltNk4oXWm8oACS0v90M8BqMVI1EjKiPZCr/HESYvrGtatB3OxkoKkaYYY6C3ydoi
-         MeqxbWSSiIebOedTNL1J6mbKTNKfSFZ14KFzHom8vlrkFwuUMOrfpq1RObu3PAY9k6
-         0EuIHowTvTGSJBrYIekGDql51Fq6lfvwK5rPLsM/61n+WRnlFhd1iSVXPoG6fuPcgO
-         HTHnR+LLvA02Sb3VTN5Ic9Ga8BZl1cmDJI9RdMo6W8cRMQnsNf1Q5IppRpCYCzRInU
-         YclxSXOOZLWg1DFSMgMWfDlnlXS0SgkclbJJ2PIqDG6pPLgO3Gm0MpK0/YPRsu/eiM
-         2QidFBB3zC+zQ==
-Message-ID: <10e669ce9cfc2cda22e4762ba62b34fbaecb5102.camel@kernel.org>
-Subject: Re: [PATCH] ceph: cancel delayed work instead of flushing on mdsc
- teardown
+        s=k20201202; t=1627562302;
+        bh=vfuS3bxTIxzEpJezHgFBzDO0lgYY5VSG8HI2HfXHmoc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=snkSsBf8HKOTb5d+Rj5uj7lRs7T5bBzz+QRPrqnaUIe5xgHntOzMDkDWsAhm4ft3J
+         OF8HIGgGIdIZHRr0bFNXTbvvgD4MITf+o4h3kfAbo0jxgO+ZHnmA8yZT4UtnrDN00C
+         ijFbn6+JYwJr34rRSvcNQYeBXX4ZUn4eP59w2q3jnk4qi9Iq1Es12JvkXyNzwe+nvb
+         Eets4gw+0AJLjpIqYteIOKM86nifKigd9Cz/ymvE3+kmhK85nOtThUglun7lYUVGMN
+         qyPlelLjo+TLgCxRpEQllCN8tUxYVZePmA9xr5bcYWqlFUQD5+orhOBzaBDIIGngIG
+         lXhd8V9qpVyxQ==
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com
-Date:   Thu, 29 Jul 2021 07:34:32 -0400
-In-Reply-To: <0c57b1e2-90a6-3580-3ca4-aa95cd1c7126@redhat.com>
-References: <20210727201230.178286-1-jlayton@kernel.org>
-         <0c57b1e2-90a6-3580-3ca4-aa95cd1c7126@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v2] ceph: cancel delayed work instead of flushing on mdsc teardown
+Date:   Thu, 29 Jul 2021 08:38:21 -0400
+Message-Id: <20210729123821.100086-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2021-07-29 at 10:56 +0800, Xiubo Li wrote:
-> On 7/28/21 4:12 AM, Jeff Layton wrote:
-> > The first thing metric_delayed_work does is check mdsc->stopping,
-> > and then return immediately if it's set...which is good since we would
-> > have already torn down the metric structures at this point, otherwise.
-> > 
-> > Worse yet, it's possible that the ceph_metric_destroy call could race
-> > with the delayed_work, in which case we could end up a end up accessing
-> > destroyed percpu variables.
-> > 
-> > At this point in the mdsc teardown, the "stopping" flag has already been
-> > set, so there's no benefit to flushing the work. Just cancel it instead,
-> > and do so before we tear down the metrics structures.
-> > 
-> > Cc: Xiubo Li <xiubli@redhat.com>
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >   fs/ceph/mds_client.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index c43091a30ba8..d3f2baf3c352 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -4977,9 +4977,9 @@ void ceph_mdsc_destroy(struct ceph_fs_client *fsc)
-> >   
-> >   	ceph_mdsc_stop(mdsc);
-> >   
-> > +	cancel_delayed_work_sync(&mdsc->metric.delayed_work);
-> >   	ceph_metric_destroy(&mdsc->metric);
-> >   
-> 
-> In the "ceph_metric_destroy()" it will also do 
-> "cancel_delayed_work_sync(&mdsc->metric.delayed_work)".
-> 
-> We can just move the it to the front of the _destory().
-> 
-> 
+The first thing metric_delayed_work does is check mdsc->stopping,
+and then return immediately if it's set. That's good since we would
+have already torn down the metric structures at this point, otherwise,
+but there is no locking around mdsc->stopping.
 
-Good point! I'll send a v2 after I test it out.
+It's possible that the ceph_metric_destroy call could race with the
+delayed_work, in which case we could end up with the delayed_work
+accessing destroyed percpu variables.
 
-> 
-> > -	flush_delayed_work(&mdsc->metric.delayed_work);
-> >   	fsc->mdsc = NULL;
-> >   	kfree(mdsc);
-> >   	dout("mdsc_destroy %p done\n", mdsc);
-> 
+At this point in the mdsc teardown, the "stopping" flag has already been
+set, so there's no benefit to flushing the work. Move the work
+cancellation in ceph_metric_destroy ahead of the percpu variable
+destruction, and eliminate the flush_delayed_work call in
+ceph_mdsc_destroy.
 
-Thanks,
+Cc: Xiubo Li <xiubli@redhat.com>
+Fixes: 18f473b384a6 ("ceph: periodically send perf metrics to MDSes")
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/mds_client.c | 1 -
+ fs/ceph/metric.c     | 4 ++--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+v2: just drop the flush call altogether and move the cancel before the
+    percpu variables are destroyed (per Xiubo's suggestion).
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index c43091a30ba8..34124fb1605e 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -4979,7 +4979,6 @@ void ceph_mdsc_destroy(struct ceph_fs_client *fsc)
+ 
+ 	ceph_metric_destroy(&mdsc->metric);
+ 
+-	flush_delayed_work(&mdsc->metric.delayed_work);
+ 	fsc->mdsc = NULL;
+ 	kfree(mdsc);
+ 	dout("mdsc_destroy %p done\n", mdsc);
+diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
+index 5ac151eb0d49..04d5df29bbbf 100644
+--- a/fs/ceph/metric.c
++++ b/fs/ceph/metric.c
+@@ -302,6 +302,8 @@ void ceph_metric_destroy(struct ceph_client_metric *m)
+ 	if (!m)
+ 		return;
+ 
++	cancel_delayed_work_sync(&m->delayed_work);
++
+ 	percpu_counter_destroy(&m->total_inodes);
+ 	percpu_counter_destroy(&m->opened_inodes);
+ 	percpu_counter_destroy(&m->i_caps_mis);
+@@ -309,8 +311,6 @@ void ceph_metric_destroy(struct ceph_client_metric *m)
+ 	percpu_counter_destroy(&m->d_lease_mis);
+ 	percpu_counter_destroy(&m->d_lease_hit);
+ 
+-	cancel_delayed_work_sync(&m->delayed_work);
+-
+ 	ceph_put_mds_session(m->session);
+ }
+ 
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.31.1
 
