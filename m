@@ -2,90 +2,72 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5116D3DB95C
-	for <lists+ceph-devel@lfdr.de>; Fri, 30 Jul 2021 15:32:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CD013DCF15
+	for <lists+ceph-devel@lfdr.de>; Mon,  2 Aug 2021 06:03:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238952AbhG3Nc6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 30 Jul 2021 09:32:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238981AbhG3Nc5 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 30 Jul 2021 09:32:57 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B831160F94;
-        Fri, 30 Jul 2021 13:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627651966;
-        bh=ZpxUS4AVT9B7A+pRNCkFB1vOzuByS/dH8yO8JdtNab4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=DCnJN1B80CBhnsOmQsuDxER1nK9w1LqQN0kxSqb2wTYu4y3KKNL/QRMzwUybiafuE
-         bQQzAQjDTYZVmBqPPGhCy0y8J2aLh+0HMpngf7d01rTP8dvGhKy5k3Ae8nDABjQ9dc
-         TsS48/XkZDFxCigvkbuHm2RAaL2MERgNz8dC5xOtSV0lVa2YVPnsuoikp8wOQ1VeXu
-         s1pVzcoRj3ruQVjEep4OmdJYt0gVN30eF51+eWuTE9DiasnavRYZOE5As79cb1L5Oa
-         7q7dBK0j3d2HbqbkbDfroC6vGwyP5DKUx346EvrHHG2dczJ4VuV7/g6wDLOmU2BidJ
-         qAV+AYi/PdocQ==
-Message-ID: <8d91e032b65b06807c2ef07fee2590e5a0adad4d.camel@kernel.org>
-Subject: Re: [PATCH v3] ceph: dump info about cap flushes when we're waiting
- too long for them
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     ceph-devel@vger.kernel.org, pdonnell@redhat.com, idryomov@gmail.com
-Date:   Fri, 30 Jul 2021 09:32:44 -0400
-In-Reply-To: <87zgu4m7un.fsf@suse.de>
-References: <20210729180442.177399-1-jlayton@kernel.org>
-         <87zgu4m7un.fsf@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
+        id S229624AbhHBEEG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 2 Aug 2021 00:04:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39008 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229500AbhHBEEF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 2 Aug 2021 00:04:05 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FA5CC06175F
+        for <ceph-devel@vger.kernel.org>; Sun,  1 Aug 2021 21:03:54 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id r18so18845168iot.4
+        for <ceph-devel@vger.kernel.org>; Sun, 01 Aug 2021 21:03:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=GvSEm2IhMBJ052xe9DI9VvCgaL6z88P134FZp7B8Jpk=;
+        b=M6RKAgxfxgT1T+X9OveeckodA2HrcdZW+I6iCWtWAs1Ut2OfhX1ghl9BVJwA6n5h1o
+         puZt+YBtdWdhijGrfuedl/3PmVocQZ0a57C3MKaskzwqVEFTWC9wkVkzil1C5QAGkSHU
+         6qYl5HvHuGLn3URowqE1lzId3C3gT7p0ODU1nEs5kpqlFt6ltCRT+pPArPQDQc8DEmNq
+         Xj2yvKeSXSgrDe2tPVoaIkYpV77Lt1z+ONknvZt5v7nfM37nGyXPaIi0ybG0zsb3zMeb
+         Wx6WOGd8cZwpSDcLnOiT2EyOSoxcLF4rvIl7wGnJwM2k/s8lIqwTv6gqruYDGuzyy9md
+         Eqvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=GvSEm2IhMBJ052xe9DI9VvCgaL6z88P134FZp7B8Jpk=;
+        b=K2a4mvjUU1knTZVSg097cdAd9jb2u9N852TUEAwLUCejpEVDQfB0+DRxVUGWMJF8Xq
+         RHPNTBGlYYGrDFANNaHWLLE7Xyp7fwFzjrBe7y/XbO7bagpsyUfKaa6ue7rwivm+/70l
+         ky1A/1zuY3o3+IcUCxUMaCGgSSMg6YhSVJS6mhpkZcdyO/mMBXr6ysbm5PIHtsyAIb9W
+         OoS2Ps4OIdroY+65DknBbpldKKazTyNGYCV3sbyFOgtWAsji27TNKmTRXkxjL+GoqRLo
+         UCJF06psTk5iOk6aQ4QC2Cc8FHIpXL5fiDtCCLQdZN9nLegNgB/jRlF5tKxN9bBFE31z
+         x6Gw==
+X-Gm-Message-State: AOAM5326XlYD5yzBNaifsJdb9kFbnDSz8+ms8LWTLI32C3h04DL5QBi2
+        Q/c/xuvfNXlEmU6LjJiLoMt3L61R8NVDTPRsPnM=
+X-Google-Smtp-Source: ABdhPJxVu0ia0Zs5G1AuLK80az5ml5VjwHsB8RJwS5h2Z24465+jyEVjxISC+QzvoA7WEv2g1wmbaGudmGNBQaXJpOc=
+X-Received: by 2002:a02:a797:: with SMTP id e23mr13154420jaj.121.1627877033665;
+ Sun, 01 Aug 2021 21:03:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a02:b157:0:0:0:0:0 with HTTP; Sun, 1 Aug 2021 21:03:53 -0700 (PDT)
+Reply-To: ablahikazabl67@gmail.com
+From:   Abdoulahi Kazim <aishagaddafi.lpw.ag@gmail.com>
+Date:   Mon, 2 Aug 2021 05:03:53 +0100
+Message-ID: <CAEax+HEN3oYXcRYFNEQDAaiQ1UEr1yziQEB=rcXdVnX0eDEirg@mail.gmail.com>
+Subject: More Authentic Information
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2021-07-30 at 11:09 +0100, Luis Henriques wrote:
-> Jeff Layton <jlayton@kernel.org> writes:
-> 
-> > We've had some cases of hung umounts in teuthology testing. It looks
-> > like client is waiting for cap flushes to complete, but they aren't.
-> > 
-> > Add a field to the inode to track the highest cap flush tid seen for
-> > that inode. Also, add a backpointer to the inode to the ceph_cap_flush
-> > struct.
-> > 
-> > Change wait_caps_flush to wait 60s, and then dump info about the
-> > condition of the list.
-> > 
-> > Also, print pr_info messages if we end up dropping a FLUSH_ACK for an
-> > inode onto the floor.
-> > 
-> > Reported-by: Patrick Donnelly <pdonnell@redhat.com>
-> > URL: https://tracker.ceph.com/issues/51279
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/ceph/caps.c       | 17 +++++++++++++++--
-> >  fs/ceph/inode.c      |  1 +
-> >  fs/ceph/mds_client.c | 31 +++++++++++++++++++++++++++++--
-> >  fs/ceph/super.h      |  2 ++
-> >  4 files changed, 47 insertions(+), 4 deletions(-)
-> > 
-> > v3: more debugging has shown the client waiting on FLUSH_ACK messages
-> >     that seem to never have come. Add some new printks if we end up
-> >     dropping a FLUSH_ACK onto the floor.
-> 
-> Since you're adding debug printks, would it be worth to also add one in
-> mds_dispatch(), when __verify_registered_session(mdsc, s) < 0?
-> 
-> It's a wild guess, but the FLUSH_ACK could be dropped in that case too.
-> Not that I could spot any issue there, but since this seems to be
-> happening during umount...
-> 
-> Cheers,
-
-Good point. I had looked at that case and had sort of dismissed it in
-this situation, but you're probably right. I've added a similar pr_info
-for that case and pushed it to the repo after a little testing here. I
-won't bother re-posting it though since the change is trivial.
-
-Thanks,
 -- 
-Jeff Layton <jlayton@kernel.org>
+Dear Partner,
 
+I am soliciting your partnership to relocate $12.5 Million to your
+country for investment on my behalf and you will be entitled to 30% of
+the sum once the transaction is successful made.
+
+ Please indicate your genuine interest if you are capable so that i
+will send you the authentic details and documents of the transaction
+in awareness with some of my fellow Directors in the bank.
+If you are interested, here is my private Email address: (
+ablahikazabl67@gmail.com )
+For more authentic and legit information.
+
+
+Regards : Abdoulahi Kazim
