@@ -2,87 +2,142 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBEBD3E04E8
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Aug 2021 17:52:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1E223E0502
+	for <lists+ceph-devel@lfdr.de>; Wed,  4 Aug 2021 17:55:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239517AbhHDPxB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 4 Aug 2021 11:53:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55788 "EHLO mail.kernel.org"
+        id S239507AbhHDPza (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 4 Aug 2021 11:55:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239206AbhHDPxB (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 4 Aug 2021 11:53:01 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1DEF060F25;
-        Wed,  4 Aug 2021 15:52:48 +0000 (UTC)
+        id S239206AbhHDPza (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 4 Aug 2021 11:55:30 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E7D3260F25;
+        Wed,  4 Aug 2021 15:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628092368;
-        bh=y2K70y5ON2gciIK11tOs4PeOiKpsBaGaEf50u+gW4Hw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=NBegZvTMP7uNDbx7CHoU/WMe7lEg96WP1fBO4QD1jt/YmqnyoHcMrDpBNrGCfAXNI
-         ysuu6kDRyv/1RKdMZXrBRauEryGlG8oGbBHFFHYYONw0Wq971ZJku/z9RAEbb7yUmh
-         LPKP9Q4Q03ktBlGA6uPp1d2EVAPJkD0lfomGNM7GtGsvw1GU9suP3sEKsTS6BX8u+L
-         +H7PUWMqFJ8BoLZ9ZgVIvDXrpYPfX8NEqP4hzoDm64PVW51G8knBmdWKjc7WGLjQt4
-         qQtQ5sZLAfh3EmYn9qWY6T2rUpWBHxCrB3892NNYkzhoWHzdj2j0nXY6eHoNRefrgo
-         nR+4F4GaclIPQ==
-Message-ID: <c4d437beb2ccecc776ee6cd8e5b345c8d87080f8.camel@kernel.org>
-Subject: Re: [PATCH v3 0/2] ceph_check_delayed_caps() softlockup
+        s=k20201202; t=1628092517;
+        bh=D083IeO3lQ5g7w3ZqIGt8aolYBUHX153E4ctel28vwA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=opLai/dH2H2McExjZUPgrEebfMvGFqukiKhEz0iotLyCDYctz6rzSjnN/P7yLZPHd
+         k8z06zU8ASaXQmx/GnYLn5tPgJqCke3VfrgqTrgfVQJZqHEbZEjIouLZ/cJseDLenY
+         ySqajSYnTrgU/7l5rEhCwj5w7G0ygcH0vSTabSyBcb5vfJ+co/TOj0s9wt76EcE6Bj
+         8fAbm182CXwTuCxfW0exmfJBw/CBcV8bzUvdncJGI7iSlG1hjh5vcbrprIexjE+5v9
+         rwKR2jAd15XJsok7zjDfn2HqdrgD3L/7F8S/ocsvVn5dEWUXqgtlU4SjrVzlAIDjIa
+         oQJfzW+wkzMvQ==
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 04 Aug 2021 11:52:47 -0400
-In-Reply-To: <20210706135242.9978-1-lhenriques@suse.de>
-References: <20210706135242.9978-1-lhenriques@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, lhenriques@suse.de, stable@vger.kernel.org,
+        Sage Weil <sage@redhat.com>, Mark Nelson <mnelson@redhat.com>
+Subject: [PATCH v2] ceph: ensure we take snap_empty_lock atomically with snaprealm refcount change
+Date:   Wed,  4 Aug 2021 11:55:15 -0400
+Message-Id: <20210804155515.28984-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2021-07-06 at 14:52 +0100, Luis Henriques wrote:
-> * changes since v3:
->   - always round the delay with round_jiffies_relative() in function
->     schedule_delayed() (patch 0001)
-> 
-> This is an attempt to fix the softlock on the delayed_work workqueue.  As
-> stated in 0002 patch:
-> 
->   Function ceph_check_delayed_caps() is called from the mdsc->delayed_work
->   workqueue and it can be kept looping for quite some time if caps keep being
->   added back to the mdsc->cap_delay_list.  This may result in the watchdog
->   tainting the kernel with the softlockup flag.
-> 
-> v2 of this fix modifies the approach by time-bounding the loop in this
-> function, so that any caps added to the list *after* the loop starts will
-> be postponed to the next wq run.
-> 
-> An extra change in 0001 (suggested by Jeff) allows scheduling runs for
-> periods smaller than the default (5 secs) period.  This way,
-> delayed_work() can have the next run scheduled for the next list element
-> ci->i_hold_caps_max instead of 5 secs.
-> 
-> This patchset should fix the issue reported here [1], although a quick
-> search for "ceph_check_delayed_caps" in the tracker returns a few more
-> bugs, possibly duplicates.
-> 
-> [1] https://tracker.ceph.com/issues/46284
-> 
-> Luis Henriques (2):
->   ceph: allow schedule_delayed() callers to set delay for workqueue
->   ceph: reduce contention in ceph_check_delayed_caps()
-> 
->  fs/ceph/caps.c       | 17 ++++++++++++++++-
->  fs/ceph/mds_client.c | 25 ++++++++++++++++---------
->  fs/ceph/super.h      |  2 +-
->  3 files changed, 33 insertions(+), 11 deletions(-)
-> 
+There is a race in ceph_put_snap_realm. The change to the nref and the
+spinlock acquisition are not done atomically, so you could decrement nref,
+and before you take the spinlock, the nref is incremented again. At that
+point, you end up putting it on the empty list when it shouldn't be
+there. Eventually __cleanup_empty_realms runs and frees it when it's
+still in-use.
 
-FWIW, we've had some more reports of this, so I think we should get this
-into mainline and stable soon. I'm going to squash these two patches
-together as it should (hopefully) make it simpler for stable backports.
+Fix this by protecting the 1->0 transition with atomic_dec_and_lock, and
+just drop the spinlock if we can get the rwsem.
 
-Thanks,
+Because these objects can also undergo a 0->1 refcount transition, we
+must protect that change as well with the spinlock. Increment locklessly
+unless the value is at 0, in which case we take the spinlock, increment
+and then take it off the empty list if it did the 0->1 transition.
+
+With these changes, I'm removing the dout() messages from these
+functions, as well as in __put_snap_realm. They've always been racy, and
+it's better to not print values that may be misleading.
+
+Cc: stable@vger.kernel.org
+Cc: Sage Weil <sage@redhat.com>
+Reported-by: Mark Nelson <mnelson@redhat.com>
+URL: https://tracker.ceph.com/issues/46419
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/snap.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
+
+v2: No functional changes, but I cleaned up the comments a bit and
+    added another in __put_snap_realm.
+
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index 9dbc92cfda38..158c11e96fb7 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -67,19 +67,19 @@ void ceph_get_snap_realm(struct ceph_mds_client *mdsc,
+ {
+ 	lockdep_assert_held(&mdsc->snap_rwsem);
+ 
+-	dout("get_realm %p %d -> %d\n", realm,
+-	     atomic_read(&realm->nref), atomic_read(&realm->nref)+1);
+ 	/*
+-	 * since we _only_ increment realm refs or empty the empty
+-	 * list with snap_rwsem held, adjusting the empty list here is
+-	 * safe.  we do need to protect against concurrent empty list
+-	 * additions, however.
++	 * The 0->1 and 1->0 transitions must take the snap_empty_lock
++	 * atomically with the refcount change. Go ahead and bump the
++	 * nref here, unless it's 0, in which case we take the spinlock
++	 * and then do the increment and remove it from the list.
+ 	 */
+-	if (atomic_inc_return(&realm->nref) == 1) {
+-		spin_lock(&mdsc->snap_empty_lock);
++	if (atomic_add_unless(&realm->nref, 1, 0))
++		return;
++
++	spin_lock(&mdsc->snap_empty_lock);
++	if (atomic_inc_return(&realm->nref) == 1)
+ 		list_del_init(&realm->empty_item);
+-		spin_unlock(&mdsc->snap_empty_lock);
+-	}
++	spin_unlock(&mdsc->snap_empty_lock);
+ }
+ 
+ static void __insert_snap_realm(struct rb_root *root,
+@@ -208,28 +208,28 @@ static void __put_snap_realm(struct ceph_mds_client *mdsc,
+ {
+ 	lockdep_assert_held_write(&mdsc->snap_rwsem);
+ 
+-	dout("__put_snap_realm %llx %p %d -> %d\n", realm->ino, realm,
+-	     atomic_read(&realm->nref), atomic_read(&realm->nref)-1);
++	/*
++	 * We do not require the snap_empty_lock here, as any caller that
++	 * increments the value must hold the snap_rwsem.
++	 */
+ 	if (atomic_dec_and_test(&realm->nref))
+ 		__destroy_snap_realm(mdsc, realm);
+ }
+ 
+ /*
+- * caller needn't hold any locks
++ * See comments in ceph_get_snap_realm. Caller needn't hold any locks.
+  */
+ void ceph_put_snap_realm(struct ceph_mds_client *mdsc,
+ 			 struct ceph_snap_realm *realm)
+ {
+-	dout("put_snap_realm %llx %p %d -> %d\n", realm->ino, realm,
+-	     atomic_read(&realm->nref), atomic_read(&realm->nref)-1);
+-	if (!atomic_dec_and_test(&realm->nref))
++	if (!atomic_dec_and_lock(&realm->nref, &mdsc->snap_empty_lock))
+ 		return;
+ 
+ 	if (down_write_trylock(&mdsc->snap_rwsem)) {
++		spin_unlock(&mdsc->snap_empty_lock);
+ 		__destroy_snap_realm(mdsc, realm);
+ 		up_write(&mdsc->snap_rwsem);
+ 	} else {
+-		spin_lock(&mdsc->snap_empty_lock);
+ 		list_add(&realm->empty_item, &mdsc->snap_empty);
+ 		spin_unlock(&mdsc->snap_empty_lock);
+ 	}
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.31.1
 
