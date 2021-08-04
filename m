@@ -2,87 +2,87 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A2673E035C
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Aug 2021 16:33:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBEBD3E04E8
+	for <lists+ceph-devel@lfdr.de>; Wed,  4 Aug 2021 17:52:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238772AbhHDOdv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 4 Aug 2021 10:33:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38844 "EHLO mail.kernel.org"
+        id S239517AbhHDPxB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 4 Aug 2021 11:53:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238703AbhHDOd3 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 4 Aug 2021 10:33:29 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AA66960F58;
-        Wed,  4 Aug 2021 14:33:14 +0000 (UTC)
+        id S239206AbhHDPxB (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 4 Aug 2021 11:53:01 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1DEF060F25;
+        Wed,  4 Aug 2021 15:52:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628087596;
-        bh=C00JtgOcAHMho4HSW46amt4u1PEDLgE0FCLDRj9vJyE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r5GGuOVFvQsum4XAR7C7YBvKDsK/mFn7OHK1uuaLXRstSUvJF6WN5SAcMH42cka84
-         XNI6JmV4ddzVk3D3J2YlbCsl6RVftxgl1k5Vs3nz5huKGNFgnQBY2iei65nSAundBj
-         gr1MQgM6nEcpjWrclG+PO2XuVtuhgDLnuVCxLN/ur1yVfnHV1jME0OH5CUcgso0JH9
-         OkCnqulR6QQPlr+/+sWhnm9w3GZI3LrX0Du7/iC3FQiuwUJ/6hK/4Zm/l13ruiwaM0
-         PswWW1T0VxSiyJLTXtgN/AKJ1p4nBl2lAi+w/iFwSNC7dXt6aRCMFqvyz/tryXYCNL
-         6UR6ytS23PJoQ==
-Date:   Wed, 4 Aug 2021 07:33:12 -0700
-From:   Keith Busch <kbusch@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Geoff Levand <geoff@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Song Liu <song@kernel.org>, Mike Snitzer <snitzer@redhat.com>,
-        Coly Li <colyli@suse.de>, Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH 15/15] nvme: use bvec_virt
-Message-ID: <20210804143312.GA2296276@dhcp-10-100-145-180.wdc.com>
-References: <20210804095634.460779-1-hch@lst.de>
- <20210804095634.460779-16-hch@lst.de>
+        s=k20201202; t=1628092368;
+        bh=y2K70y5ON2gciIK11tOs4PeOiKpsBaGaEf50u+gW4Hw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=NBegZvTMP7uNDbx7CHoU/WMe7lEg96WP1fBO4QD1jt/YmqnyoHcMrDpBNrGCfAXNI
+         ysuu6kDRyv/1RKdMZXrBRauEryGlG8oGbBHFFHYYONw0Wq971ZJku/z9RAEbb7yUmh
+         LPKP9Q4Q03ktBlGA6uPp1d2EVAPJkD0lfomGNM7GtGsvw1GU9suP3sEKsTS6BX8u+L
+         +H7PUWMqFJ8BoLZ9ZgVIvDXrpYPfX8NEqP4hzoDm64PVW51G8knBmdWKjc7WGLjQt4
+         qQtQ5sZLAfh3EmYn9qWY6T2rUpWBHxCrB3892NNYkzhoWHzdj2j0nXY6eHoNRefrgo
+         nR+4F4GaclIPQ==
+Message-ID: <c4d437beb2ccecc776ee6cd8e5b345c8d87080f8.camel@kernel.org>
+Subject: Re: [PATCH v3 0/2] ceph_check_delayed_caps() softlockup
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.de>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 04 Aug 2021 11:52:47 -0400
+In-Reply-To: <20210706135242.9978-1-lhenriques@suse.de>
+References: <20210706135242.9978-1-lhenriques@suse.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210804095634.460779-16-hch@lst.de>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Aug 04, 2021 at 11:56:34AM +0200, Christoph Hellwig wrote:
-> Use bvec_virt instead of open coding it.
+On Tue, 2021-07-06 at 14:52 +0100, Luis Henriques wrote:
+> * changes since v3:
+>   - always round the delay with round_jiffies_relative() in function
+>     schedule_delayed() (patch 0001)
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/nvme/host/core.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+> This is an attempt to fix the softlock on the delayed_work workqueue.  As
+> stated in 0002 patch:
 > 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index dfd9dec0c1f6..02ce94b2906b 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -968,12 +968,11 @@ void nvme_cleanup_cmd(struct request *req)
->  {
->  	if (req->rq_flags & RQF_SPECIAL_PAYLOAD) {
->  		struct nvme_ctrl *ctrl = nvme_req(req)->ctrl;
-> -		struct page *page = req->special_vec.bv_page;
->  
-> -		if (page == ctrl->discard_page)
-> +		if (req->special_vec.bv_page == ctrl->discard_page)
->  			clear_bit_unlock(0, &ctrl->discard_page_busy);
->  		else
-> -			kfree(page_address(page) + req->special_vec.bv_offset);
-> +			kfree(bvec_virt(&req->special_vec));
->  	}
->  }
->  EXPORT_SYMBOL_GPL(nvme_cleanup_cmd);
+>   Function ceph_check_delayed_caps() is called from the mdsc->delayed_work
+>   workqueue and it can be kept looping for quite some time if caps keep being
+>   added back to the mdsc->cap_delay_list.  This may result in the watchdog
+>   tainting the kernel with the softlockup flag.
+> 
+> v2 of this fix modifies the approach by time-bounding the loop in this
+> function, so that any caps added to the list *after* the loop starts will
+> be postponed to the next wq run.
+> 
+> An extra change in 0001 (suggested by Jeff) allows scheduling runs for
+> periods smaller than the default (5 secs) period.  This way,
+> delayed_work() can have the next run scheduled for the next list element
+> ci->i_hold_caps_max instead of 5 secs.
+> 
+> This patchset should fix the issue reported here [1], although a quick
+> search for "ceph_check_delayed_caps" in the tracker returns a few more
+> bugs, possibly duplicates.
+> 
+> [1] https://tracker.ceph.com/issues/46284
+> 
+> Luis Henriques (2):
+>   ceph: allow schedule_delayed() callers to set delay for workqueue
+>   ceph: reduce contention in ceph_check_delayed_caps()
+> 
+>  fs/ceph/caps.c       | 17 ++++++++++++++++-
+>  fs/ceph/mds_client.c | 25 ++++++++++++++++---------
+>  fs/ceph/super.h      |  2 +-
+>  3 files changed, 33 insertions(+), 11 deletions(-)
+> 
 
-Looks good.
+FWIW, we've had some more reports of this, so I think we should get this
+into mainline and stable soon. I'm going to squash these two patches
+together as it should (hopefully) make it simpler for stable backports.
 
-Reviewed-by: Keith Busch <kbusch@kernel.org>
+Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
