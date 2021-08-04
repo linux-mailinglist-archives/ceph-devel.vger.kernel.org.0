@@ -2,117 +2,114 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 675A03E05FE
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Aug 2021 18:32:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96CF03E064E
+	for <lists+ceph-devel@lfdr.de>; Wed,  4 Aug 2021 19:05:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238177AbhHDQdJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 4 Aug 2021 12:33:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52658 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229743AbhHDQdJ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 4 Aug 2021 12:33:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CEB6060F0F;
-        Wed,  4 Aug 2021 16:32:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628094776;
-        bh=3n8u08rVXzR9o8j6IL8MF4txcxND9WHMAjGdli+PYQo=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=WKk2lGdm7CK0WLvFKUTG41vXfNlf164xmHd1PN4/LItxHmtG6uLErcx9wQCiKXpcT
-         UT5hgN27OFeNgRg88NzgB2ncP4z5TAuq1AiFJPKeuKU2p5x1b3OTcFQ7moMXx05kGa
-         0yfy3JZlWHQKFB6Ov33o/8prWRuJE6DJC+eNoFgwwLN1kG3CVaN3rwR5FRnflg1hFt
-         8sPJmKAPePH4t4JKmQguWKsC9HPqXEibRgO6inDdPt78m9NIxttkRltuZK+v/CzJ9T
-         g4EuQLiyDpDgnAhKCIil8OlNsrZK1pbJF/r7Kk1F1XgI10z1pX71ud7IyMb79Gb/kY
-         +bRGGd9F0SxGA==
-Message-ID: <a7566b1207ab66f4bdbeef8b653e97d5849a177f.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: ensure we take snap_empty_lock atomically with
- snaprealm refcount change
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Luis Henriques <lhenriques@suse.de>
-Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com,
-        stable@vger.kernel.org, Sage Weil <sage@redhat.com>,
-        Mark Nelson <mnelson@redhat.com>
-Date:   Wed, 04 Aug 2021 12:32:54 -0400
-In-Reply-To: <87o8adi3bo.fsf@suse.de>
-References: <20210804155515.28984-1-jlayton@kernel.org>
-         <87o8adi3bo.fsf@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
+        id S239773AbhHDRFd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 4 Aug 2021 13:05:33 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:56770 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239695AbhHDRFc (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 Aug 2021 13:05:32 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 87CC22226C;
+        Wed,  4 Aug 2021 17:05:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1628096717; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LZP5mbUaD4tLAM/AkhQwADJlhMUwxJoQ/fOe4VFqGiM=;
+        b=T28M0ZzaVol9YE3Im9Ef1mW1D7DzmcvFlTfm+U3I6h9FX8vh3AkbVlkZFRYSdqJtek/+0x
+        dI3DWubXqGVFB7wCjGMMp3YpUY0PLxtnKXLrO4UFOKWVXWoEisnr9ymd2Q+ibiGfXn7xYW
+        yN1YDv9rZpfydqtAGq/FdJrpbfRlczY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1628096717;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LZP5mbUaD4tLAM/AkhQwADJlhMUwxJoQ/fOe4VFqGiM=;
+        b=t/keDuDOz4izQ9+Pevp8W+FaYqjWV9O9Grio2dEGxQV6iGJHmdZQ208YpuRM80KcNSr8MP
+        me7eM4q47pic8fDg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6E66913D1F;
+        Wed,  4 Aug 2021 17:05:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id +P54DsjICmHSHgAAMHmgww
+        (envelope-from <colyli@suse.de>); Wed, 04 Aug 2021 17:05:12 +0000
+Subject: Re: [PATCH 09/15] bcache: use bvec_virt
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Geoff Levand <geoff@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Song Liu <song@kernel.org>, Mike Snitzer <snitzer@redhat.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        linux-block@vger.kernel.org, dm-devel@redhat.com,
+        linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+References: <20210804095634.460779-1-hch@lst.de>
+ <20210804095634.460779-10-hch@lst.de>
+From:   Coly Li <colyli@suse.de>
+Message-ID: <13eb9def-5db4-d776-2b5a-0096a0a2a681@suse.de>
+Date:   Thu, 5 Aug 2021 01:05:10 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.12.0
 MIME-Version: 1.0
+In-Reply-To: <20210804095634.460779-10-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2021-08-04 at 17:26 +0100, Luis Henriques wrote:
-> Jeff Layton <jlayton@kernel.org> writes:
-> 
-> > There is a race in ceph_put_snap_realm. The change to the nref and the
-> > spinlock acquisition are not done atomically, so you could decrement nref,
-> > and before you take the spinlock, the nref is incremented again. At that
-> > point, you end up putting it on the empty list when it shouldn't be
-> > there. Eventually __cleanup_empty_realms runs and frees it when it's
-> > still in-use.
-> > 
-> > Fix this by protecting the 1->0 transition with atomic_dec_and_lock, and
-> > just drop the spinlock if we can get the rwsem.
-> > 
-> > Because these objects can also undergo a 0->1 refcount transition, we
-> > must protect that change as well with the spinlock. Increment locklessly
-> > unless the value is at 0, in which case we take the spinlock, increment
-> > and then take it off the empty list if it did the 0->1 transition.
-> > 
-> > With these changes, I'm removing the dout() messages from these
-> > functions, as well as in __put_snap_realm. They've always been racy, and
-> > it's better to not print values that may be misleading.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Cc: Sage Weil <sage@redhat.com>
-> > Reported-by: Mark Nelson <mnelson@redhat.com>
-> > URL: https://tracker.ceph.com/issues/46419
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/ceph/snap.c | 34 +++++++++++++++++-----------------
-> >  1 file changed, 17 insertions(+), 17 deletions(-)
-> > 
-> > v2: No functional changes, but I cleaned up the comments a bit and
-> >     added another in __put_snap_realm.
-> > 
-> > diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-> > index 9dbc92cfda38..158c11e96fb7 100644
-> > --- a/fs/ceph/snap.c
-> > +++ b/fs/ceph/snap.c
-> > @@ -67,19 +67,19 @@ void ceph_get_snap_realm(struct ceph_mds_client *mdsc,
-> >  {
-> >  	lockdep_assert_held(&mdsc->snap_rwsem);
-> >  
-> > -	dout("get_realm %p %d -> %d\n", realm,
-> > -	     atomic_read(&realm->nref), atomic_read(&realm->nref)+1);
-> >  	/*
-> > -	 * since we _only_ increment realm refs or empty the empty
-> > -	 * list with snap_rwsem held, adjusting the empty list here is
-> > -	 * safe.  we do need to protect against concurrent empty list
-> > -	 * additions, however.
-> > +	 * The 0->1 and 1->0 transitions must take the snap_empty_lock
-> > +	 * atomically with the refcount change. Go ahead and bump the
-> > +	 * nref here, unless it's 0, in which case we take the spinlock
-> > +	 * and then do the increment and remove it from the list.
-> >  	 */
-> > -	if (atomic_inc_return(&realm->nref) == 1) {
-> > -		spin_lock(&mdsc->snap_empty_lock);
-> > +	if (atomic_add_unless(&realm->nref, 1, 0))
-> 
-> Here you could probably use atomic_inc_not_zero() instead.  But other
-> than that it looks good.  Thanks a lot for solving yet another locking
-> puzzle!
-> 
-> Reviewed-by: Luis Henriques <lhenriques@suse.de>
-> 
-> Cheers,
+On 8/4/21 5:56 PM, Christoph Hellwig wrote:
+> Use bvec_virt instead of open coding it.  Note that the existing code is
+> fine despite ignoring bv_offset as the bio is known to contain exactly
+> one page from the page allocator per bio_vec.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Good point! That is a little clearer. I'll incorporate that change and
-merge it.
+Looks good to me.
 
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Coly Li <colyli@suse.de>
+
+Thanks.
+
+Coly Li
+
+> ---
+>  drivers/md/bcache/btree.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+> index 183a58c89377..0595559de174 100644
+> --- a/drivers/md/bcache/btree.c
+> +++ b/drivers/md/bcache/btree.c
+> @@ -378,7 +378,7 @@ static void do_btree_node_write(struct btree *b)
+>  		struct bvec_iter_all iter_all;
+>  
+>  		bio_for_each_segment_all(bv, b->bio, iter_all) {
+> -			memcpy(page_address(bv->bv_page), addr, PAGE_SIZE);
+> +			memcpy(bvec_virt(bv), addr, PAGE_SIZE);
+>  			addr += PAGE_SIZE;
+>  		}
+>  
 
