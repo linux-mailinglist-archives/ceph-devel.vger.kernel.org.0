@@ -2,81 +2,120 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA2053E14F6
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Aug 2021 14:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39DC43E1519
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Aug 2021 14:53:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240539AbhHEMoZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 5 Aug 2021 08:44:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46206 "EHLO
+        id S241530AbhHEMxT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 5 Aug 2021 08:53:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240237AbhHEMoZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Aug 2021 08:44:25 -0400
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F90C061765
-        for <ceph-devel@vger.kernel.org>; Thu,  5 Aug 2021 05:44:11 -0700 (PDT)
-Received: by mail-qk1-x72d.google.com with SMTP id t3so4763620qkg.11
-        for <ceph-devel@vger.kernel.org>; Thu, 05 Aug 2021 05:44:11 -0700 (PDT)
+        with ESMTP id S241535AbhHEMxQ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Aug 2021 08:53:16 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89531C06179B;
+        Thu,  5 Aug 2021 05:53:01 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id pj14-20020a17090b4f4eb029017786cf98f9so9153081pjb.2;
+        Thu, 05 Aug 2021 05:53:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tDpytBce8X6C8fP1uEC9pHgDL2v8EYhgecw9OyVA0OQ=;
-        b=Ca7xpM0Ts/Dj4t9+FgSGgHhneoeyvFvSo1fjWx6AKYgg2sYc3PaXBcSXrdppiSp7US
-         0AZ1PWf6smzBTRbWjR4Z+hW8SWwiW0rrqnP2eS68JMQsNUxqw+BYMZ30a99K+udi/7pp
-         W/OALMXEvPXPnBMXhRPZyEX0Z68unLS+0i84e8cvb2CDvaXuc8pD/bce17qgLzii4b5E
-         hIK3515ffm5qHHFOhH8PIgVL9FhHqKP5xcYUdF4qPVgy7j7+NwpAMczIqoXUnxN5HBOo
-         Cp9fEdYZ6HPHo87d8hHSMYNqX/Z1CZ13gihzZMLZA+dckOlq15apMVDs9P2FNEzdt604
-         MABw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=BU77sf7xzIvRwh5goFFmMNFMuNqmBOnkMiEiz3vg3H8=;
+        b=lPu8QbrCC0GfZOFqovmt2ITkMV4/39Mn3HuQdnvfqMJ0/7ePozTMm45XiQU8R7bZYg
+         wUgt9DgxjVuwrMXwvgtoL6eR8UFX3B4a5rONheat0OJnfUedXZKQ/kQesp7UYYbMNde5
+         +hD9Nx/U6mVO4uG00X0xNLzwmSDuoEaQWVupk/XqESszul8IpNMIy5h7IKQmlk9Dpvnv
+         yxMVlk/x4JTVM6Zr/gmIq9LJ3l2wnQChJ/STI64CL2IA5LYzi8pwgtRJQH9f0OXv6D3I
+         fiyQWEAEqM4Ugw3kLe6j2ojLNItBuUU3p1E1NUicBh7s4ZPL3pTkwcTBYqhEgQ8gcwAt
+         Qy4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tDpytBce8X6C8fP1uEC9pHgDL2v8EYhgecw9OyVA0OQ=;
-        b=Y5ScmPo7eKJuq5CLR6XxzQFgHdWc6HLM0OqAaZbgonjqQvRGVqnHFrA1onCgQfVfpo
-         CKjQgtDk8wAG864kg9/kFvS2MhGjm1vvCPKG3L5QAgFVDJMdZDJm0X6VEfuyIQNnzbU4
-         X/JpGLtN7bJCNFpnAXAPrPFkOGFIOX1kY5UOP0UyVCacF/djuhnD+j5wPPFNz0ZX1yl3
-         KSxirEQysI3CH39+nkC2c6NnXQBDNDkTjNzS1XFaLdlTyAIEbb1f9oxXAk7/eqGAPUO3
-         kBycY0Mi/zSizj7tCYY+Z1xsBZ+aVMo9ZMitK7uviMR/D6z5booJEIOMpHxRCsAwdnYn
-         K6Fw==
-X-Gm-Message-State: AOAM532fJkqPwKGwueZqw4XK7pP1vIx2lNkGPasHmYsEV5jwrxu6Ivzc
-        iWlah13u4ZZA/g5rPT+FprkcSU1BnNaQZn5AvNk=
-X-Google-Smtp-Source: ABdhPJxcCLSW+bknG+TZvV70BHS/bOJnSActVnUO+s6nPANSI0l70bPpbm+T1+RpmTpTiDmj6sCujjNntaC+1P+dung=
-X-Received: by 2002:a05:620a:2099:: with SMTP id e25mr4741413qka.448.1628167450472;
- Thu, 05 Aug 2021 05:44:10 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=BU77sf7xzIvRwh5goFFmMNFMuNqmBOnkMiEiz3vg3H8=;
+        b=LXSl9IGc2BwaE25O5mYABbvxgsNtfjLINmp5aMfd7ksoKVTfF766UPiBVvt36ma8DY
+         Vu9slHwceliXcaqBiFUq4DbciUn7+ggbdf7CMXF35IN+1bYwdkKlXjPYzVPFAG4tdAC3
+         Hd0wPF5nd0vHjHbe8qaf5K3Kd9MvjcOMeTrK94j6A+rXd+yiksNib9g77wN9vvYd0B3k
+         1c4+MblFLswNbNs2s8Jips59tjDAAR2E4cSS3JCXya19lc6YoFGfReWsZzJWllQvdZrN
+         g4gHeNEbh3BtQ64sdF8Yfya7wwpL1oUaz0CtogMXjFOPL0aSRRwekQYXt1JkLeYG4dHm
+         EkXQ==
+X-Gm-Message-State: AOAM533iRDIgUVpJ0vIStGF8hn37Y1qGag7wVUcUQE0RJJ5f+9WaZkvc
+        ytPMlsRCgwIo7E/59D7vldI=
+X-Google-Smtp-Source: ABdhPJx7XRXisDhFAh4H/NwSHWH3YPmbdTyG/ODnMuWBcjqqHE1b+fjmlVXUmh7eLSqw67+7C1v/ug==
+X-Received: by 2002:a17:90a:f002:: with SMTP id bt2mr4795630pjb.142.1628167981168;
+        Thu, 05 Aug 2021 05:53:01 -0700 (PDT)
+Received: from [10.114.0.66] ([45.135.186.81])
+        by smtp.gmail.com with ESMTPSA id g6sm6789881pfh.111.2021.08.05.05.52.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Aug 2021 05:53:00 -0700 (PDT)
+Subject: Re: [PATCH] ceph: fix possible null-pointer dereference in
+ ceph_mdsmap_decode()
+To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        baijiaju1990@gmail.com, TOTE Robot <oslab@tsinghua.edu.cn>
+References: <20210805122015.129824-1-islituo@gmail.com>
+ <ea6c827bcef4a0e424641f5eae2e17b2d0d8ebbe.camel@kernel.org>
+From:   Tuo Li <islituo@gmail.com>
+Message-ID: <2f3266d3-cf95-ca8c-2b61-8a906e21bc38@gmail.com>
+Date:   Thu, 5 Aug 2021 20:52:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-References: <20210729071851.1244874-1-satoru.takeuchi@gmail.com> <CAOi1vP8Bbo9bNOOShB2DdjfOG7u0vVqJjUkz5YXb2CBm9JEqOA@mail.gmail.com>
-In-Reply-To: <CAOi1vP8Bbo9bNOOShB2DdjfOG7u0vVqJjUkz5YXb2CBm9JEqOA@mail.gmail.com>
-From:   Satoru Takeuchi <satoru.takeuchi@gmail.com>
-Date:   Thu, 5 Aug 2021 21:43:59 +0900
-Message-ID: <CAMym5wvnH=dSd2n+jAKJbSVRVnpzw8e=P9=EePLRfwudj6t8wg@mail.gmail.com>
-Subject: Re: [PATCH] ceph: print fsid with mon id and osd id
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ea6c827bcef4a0e424641f5eae2e17b2d0d8ebbe.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Ilya,
+Thanks for your feedback. It sounds good to put an "if (m->m_info)" around
+the for loop to fix this bug, as well as avoid other potential bugs 
+caused by calling
+ceph_mdsmap_destroy(). I think we can prepare a V2 patch according to 
+your advice.
 
-> While adding fsid would help with disambiguation of messages from libceph
-> instances for different clusters, it wouldn't help in the case of multiple
-> libceph instances for the same cluster (i.e. see noshare mapping option).
 
-I didn't know the multi-libceph case. Thank you for letting me know.
-
-> For a full disambiguation we need a (cluster fsid, client gid) pair.  For
-> example, something like:
+On 2021/8/5 20:29, Jeff Layton wrote:
+> On Thu, 2021-08-05 at 05:20 -0700, Tuo Li wrote:
+>> kcalloc() is called to allocate memory for m->m_info, and if it fails,
+>> ceph_mdsmap_destroy() behind the label out_err will be called:
+>>    ceph_mdsmap_destroy(m);
+>>
+>> In ceph_mdsmap_destroy(), m->m_info is dereferenced through:
+>>    kfree(m->m_info[i].export_targets);
+>>
+>> To fix this possible null-pointer dereference, if memory allocation
+>> for m->m_info fails, free m and return -ENOMEM.
+>>
+>> Reported-by: TOTE Robot <oslab@tsinghua.edu.cn>
+>> Signed-off-by: Tuo Li <islituo@gmail.com>
+>> ---
+>>   fs/ceph/mdsmap.c | 6 ++++--
+>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+>> index abd9af7727ad..7d73e4b64b12 100644
+>> --- a/fs/ceph/mdsmap.c
+>> +++ b/fs/ceph/mdsmap.c
+>> @@ -166,8 +166,10 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end, bool msgr2)
+>>   	m->possible_max_rank = max(m->m_num_active_mds, m->m_max_mds);
+>>   
+>>   	m->m_info = kcalloc(m->possible_max_rank, sizeof(*m->m_info), GFP_NOFS);
+>> -	if (!m->m_info)
+>> -		goto nomem;
+>> +	if (!m->m_info) {
+>> +		kfree(m);
+>> +		return ERR_PTR(-ENOMEM);
+>> +	}
+>>   
+>>   	/* pick out active nodes from mds_info (state > 0) */
+>>   	for (i = 0; i < n; i++) {
+> Good catch. This function is already pretty complex. How about we
+> instead fix this in ceph_mdsmap_destroy and make it safe to call that
+> with the mdsmap in this state?
 >
->   libceph (<fsid> <gid>): <message>
+> Basically, just put an "if (m->m_info)" around the for loop in that
+> function. Sound ok?
 >
->   libceph (ef1ab157-688c-483b-a94d-0aeec9ca44e0 4181): osd10 down
->
-> One concern is it might be too verbose to be included in every message,
-> but OTOH it would make each message truly stand on its own.
 
-I'd like to embed gid to messages since these messages are shown not too often.
-I'll revise my patch later.
-
-Thanks,
-Satoru
