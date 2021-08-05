@@ -2,120 +2,99 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39DC43E1519
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Aug 2021 14:53:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B06A3E16C9
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Aug 2021 16:18:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241530AbhHEMxT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 5 Aug 2021 08:53:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48246 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241535AbhHEMxQ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Aug 2021 08:53:16 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89531C06179B;
-        Thu,  5 Aug 2021 05:53:01 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id pj14-20020a17090b4f4eb029017786cf98f9so9153081pjb.2;
-        Thu, 05 Aug 2021 05:53:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=BU77sf7xzIvRwh5goFFmMNFMuNqmBOnkMiEiz3vg3H8=;
-        b=lPu8QbrCC0GfZOFqovmt2ITkMV4/39Mn3HuQdnvfqMJ0/7ePozTMm45XiQU8R7bZYg
-         wUgt9DgxjVuwrMXwvgtoL6eR8UFX3B4a5rONheat0OJnfUedXZKQ/kQesp7UYYbMNde5
-         +hD9Nx/U6mVO4uG00X0xNLzwmSDuoEaQWVupk/XqESszul8IpNMIy5h7IKQmlk9Dpvnv
-         yxMVlk/x4JTVM6Zr/gmIq9LJ3l2wnQChJ/STI64CL2IA5LYzi8pwgtRJQH9f0OXv6D3I
-         fiyQWEAEqM4Ugw3kLe6j2ojLNItBuUU3p1E1NUicBh7s4ZPL3pTkwcTBYqhEgQ8gcwAt
-         Qy4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=BU77sf7xzIvRwh5goFFmMNFMuNqmBOnkMiEiz3vg3H8=;
-        b=LXSl9IGc2BwaE25O5mYABbvxgsNtfjLINmp5aMfd7ksoKVTfF766UPiBVvt36ma8DY
-         Vu9slHwceliXcaqBiFUq4DbciUn7+ggbdf7CMXF35IN+1bYwdkKlXjPYzVPFAG4tdAC3
-         Hd0wPF5nd0vHjHbe8qaf5K3Kd9MvjcOMeTrK94j6A+rXd+yiksNib9g77wN9vvYd0B3k
-         1c4+MblFLswNbNs2s8Jips59tjDAAR2E4cSS3JCXya19lc6YoFGfReWsZzJWllQvdZrN
-         g4gHeNEbh3BtQ64sdF8Yfya7wwpL1oUaz0CtogMXjFOPL0aSRRwekQYXt1JkLeYG4dHm
-         EkXQ==
-X-Gm-Message-State: AOAM533iRDIgUVpJ0vIStGF8hn37Y1qGag7wVUcUQE0RJJ5f+9WaZkvc
-        ytPMlsRCgwIo7E/59D7vldI=
-X-Google-Smtp-Source: ABdhPJx7XRXisDhFAh4H/NwSHWH3YPmbdTyG/ODnMuWBcjqqHE1b+fjmlVXUmh7eLSqw67+7C1v/ug==
-X-Received: by 2002:a17:90a:f002:: with SMTP id bt2mr4795630pjb.142.1628167981168;
-        Thu, 05 Aug 2021 05:53:01 -0700 (PDT)
-Received: from [10.114.0.66] ([45.135.186.81])
-        by smtp.gmail.com with ESMTPSA id g6sm6789881pfh.111.2021.08.05.05.52.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Aug 2021 05:53:00 -0700 (PDT)
-Subject: Re: [PATCH] ceph: fix possible null-pointer dereference in
- ceph_mdsmap_decode()
-To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        baijiaju1990@gmail.com, TOTE Robot <oslab@tsinghua.edu.cn>
-References: <20210805122015.129824-1-islituo@gmail.com>
- <ea6c827bcef4a0e424641f5eae2e17b2d0d8ebbe.camel@kernel.org>
-From:   Tuo Li <islituo@gmail.com>
-Message-ID: <2f3266d3-cf95-ca8c-2b61-8a906e21bc38@gmail.com>
-Date:   Thu, 5 Aug 2021 20:52:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S240722AbhHEOSX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 5 Aug 2021 10:18:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20520 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240231AbhHEOSW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Aug 2021 10:18:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628173087;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CgTtaO9aoRpCiTYl9JW5StPBedgaEjV6BwrhWwCNWbE=;
+        b=ObCrZoAvBCWnS3OzXauXmGkt+Oo00XSKI2oLhf1Q9LRbimBCoDlSKVxyfpb94hULet9Pv0
+        mU0ur1DGFgYfXwrGsnWn+AcwnYPntH4y+dFvZlx3orYymGpCIg/Czp3mTc997W5O8QuLeV
+        W8AXdLp69E01NjbSNNOULAf/DXngilA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-121-c6z6JEHGMJe0DH8ARyr-fg-1; Thu, 05 Aug 2021 10:18:04 -0400
+X-MC-Unique: c6z6JEHGMJe0DH8ARyr-fg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F369693925;
+        Thu,  5 Aug 2021 14:18:00 +0000 (UTC)
+Received: from localhost (unknown [10.39.193.135])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A98375D6A1;
+        Thu,  5 Aug 2021 14:17:52 +0000 (UTC)
+Date:   Thu, 5 Aug 2021 15:17:51 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Geoff Levand <geoff@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Song Liu <song@kernel.org>, Mike Snitzer <snitzer@redhat.com>,
+        Coly Li <colyli@suse.de>, Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        linux-block@vger.kernel.org, dm-devel@redhat.com,
+        linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+Subject: Re: [PATCH 08/15] virtio_blk: use bvec_virt
+Message-ID: <YQvzD4FlF7+AgrSw@stefanha-x1.localdomain>
+References: <20210804095634.460779-1-hch@lst.de>
+ <20210804095634.460779-9-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <ea6c827bcef4a0e424641f5eae2e17b2d0d8ebbe.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ZDhkEMoj7rmqL+Fh"
+Content-Disposition: inline
+In-Reply-To: <20210804095634.460779-9-hch@lst.de>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Thanks for your feedback. It sounds good to put an "if (m->m_info)" around
-the for loop to fix this bug, as well as avoid other potential bugs 
-caused by calling
-ceph_mdsmap_destroy(). I think we can prepare a V2 patch according to 
-your advice.
 
+--ZDhkEMoj7rmqL+Fh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2021/8/5 20:29, Jeff Layton wrote:
-> On Thu, 2021-08-05 at 05:20 -0700, Tuo Li wrote:
->> kcalloc() is called to allocate memory for m->m_info, and if it fails,
->> ceph_mdsmap_destroy() behind the label out_err will be called:
->>    ceph_mdsmap_destroy(m);
->>
->> In ceph_mdsmap_destroy(), m->m_info is dereferenced through:
->>    kfree(m->m_info[i].export_targets);
->>
->> To fix this possible null-pointer dereference, if memory allocation
->> for m->m_info fails, free m and return -ENOMEM.
->>
->> Reported-by: TOTE Robot <oslab@tsinghua.edu.cn>
->> Signed-off-by: Tuo Li <islituo@gmail.com>
->> ---
->>   fs/ceph/mdsmap.c | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
->> index abd9af7727ad..7d73e4b64b12 100644
->> --- a/fs/ceph/mdsmap.c
->> +++ b/fs/ceph/mdsmap.c
->> @@ -166,8 +166,10 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end, bool msgr2)
->>   	m->possible_max_rank = max(m->m_num_active_mds, m->m_max_mds);
->>   
->>   	m->m_info = kcalloc(m->possible_max_rank, sizeof(*m->m_info), GFP_NOFS);
->> -	if (!m->m_info)
->> -		goto nomem;
->> +	if (!m->m_info) {
->> +		kfree(m);
->> +		return ERR_PTR(-ENOMEM);
->> +	}
->>   
->>   	/* pick out active nodes from mds_info (state > 0) */
->>   	for (i = 0; i < n; i++) {
-> Good catch. This function is already pretty complex. How about we
-> instead fix this in ceph_mdsmap_destroy and make it safe to call that
-> with the mdsmap in this state?
->
-> Basically, just put an "if (m->m_info)" around the for loop in that
-> function. Sound ok?
->
+On Wed, Aug 04, 2021 at 11:56:27AM +0200, Christoph Hellwig wrote:
+> Use bvec_virt instead of open coding it.
+>=20
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/block/virtio_blk.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+--ZDhkEMoj7rmqL+Fh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmEL8w8ACgkQnKSrs4Gr
+c8jPdgf+PcMouWs94g0uS6wpaN9fVvtvzsyRrLa0a4jPqggbtSulcjUYQzYZ9BGX
+1xnrp3ABDt4KhYhX+iAsAxc4LmWEAYUruE6WxqsxaPKE19XcFuwM/tpwcv5U8/x+
+2GvsXderla2RbbwTzdCFUf1m538Dw+eqH8+6Dt0Q6QjCC4EAX3ubWU+pX0K5rLNX
+d7M7JCyOzOdU/VJYYVQDs1Vkpu/2AFtQT+hnq7veWzgQD+iFkLNZUEBVFm4jRbkC
+5cfC+IUVtDkCjhD2offyhX+djtvDy5IZAnHEMv/ulIMmCzc0o1VgEy/5zNiKnjgg
+5CdxbrfAKcA734P4gNIy/UD+hGlM6g==
+=Cztj
+-----END PGP SIGNATURE-----
+
+--ZDhkEMoj7rmqL+Fh--
 
