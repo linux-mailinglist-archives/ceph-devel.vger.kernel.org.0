@@ -2,106 +2,144 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DDE5D3E1995
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Aug 2021 18:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E230E3E19A4
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Aug 2021 18:36:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235453AbhHEQb5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 5 Aug 2021 12:31:57 -0400
-Received: from mail-pj1-f44.google.com ([209.85.216.44]:56138 "EHLO
-        mail-pj1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235024AbhHEQb0 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Aug 2021 12:31:26 -0400
-Received: by mail-pj1-f44.google.com with SMTP id ca5so10130954pjb.5;
-        Thu, 05 Aug 2021 09:31:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hHUTsKDnxap0EiJI1vbHiNIpoH+R0H2TboThtqpCWSc=;
-        b=lhkCxai7p7X3kxlL+3aFu4AkkT/AuEAkn4qjbZ5qp7nA2Ve4sA9kaHiXjwKbegxXxl
-         bdDFiS35OADff4FyLBYrr+MIJOFxvC/z7uIma/WqUWN1gR75oE51jG8z+0DV9FY9iVtA
-         AhaUsltZUkl0UcQPG3YZUVQf2mtUqZ1BQQZOQ7AgxpNXQ2dIFZA+stbDCUHxi0jyB8r1
-         YtF5f/F0OSHgERAttAZpWuSdVMauY8O/qRqs0YXTBkaF6kSCTIebS9eQC6VAu2cNynsK
-         r1vGbFMBECcXVlYtH9t72lBoIqfxq2qqw/4YyJZMQR5E2j5SaGAHtoDExfDtYwSi/Pn/
-         7NIw==
-X-Gm-Message-State: AOAM532NVQvi01jv+RTHcRVQQEM2540eDDCJlxLSDDFCCq3csShDM8I/
-        3CXxi/n2nx1Fkt/eca0RHO8=
-X-Google-Smtp-Source: ABdhPJyCuisk5RzZy6da7AsZoR/DaZLZHn4oZn9ITXuwK2Rjv1pBKXahTV8aXSruiOZbF6hVQSA8vQ==
-X-Received: by 2002:a17:90a:9f91:: with SMTP id o17mr15924247pjp.29.1628181071870;
-        Thu, 05 Aug 2021 09:31:11 -0700 (PDT)
-Received: from bvanassche-linux.mtv.corp.google.com ([2620:15c:211:1:93c2:eaf5:530d:627d])
-        by smtp.gmail.com with ESMTPSA id r4sm6334361pjo.46.2021.08.05.09.31.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Aug 2021 09:31:10 -0700 (PDT)
-Subject: Re: [dm-devel] [PATCH 10/15] sd: use bvec_virt
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Cc:     Jan Hoeppner <hoeppner@linux.ibm.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        linux-nvme@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        Song Liu <song@kernel.org>, dm-devel@redhat.com,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Richard Weinberger <richard@nod.at>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        linux-um@lists.infradead.org, Coly Li <colyli@suse.de>,
-        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        ceph-devel@vger.kernel.org, linux-block@vger.kernel.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Geoff Levand <geoff@infradead.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>
-References: <20210804095634.460779-1-hch@lst.de>
- <20210804095634.460779-11-hch@lst.de>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <8b487c0f-71be-19d6-249c-9cd1ba228548@acm.org>
-Date:   Thu, 5 Aug 2021 09:31:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        id S232554AbhHEQgN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 5 Aug 2021 12:36:13 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:34485 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232409AbhHEQgM (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Aug 2021 12:36:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628181357;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         references:references; bh=cqiBhFIK0kAqQNHfo/GucN8GfiLKs6hRFMJo5oTIZHg=;
+        b=HXRfYAiteoIhSGOOdI6G5F9CkVaTe4eiZ+YgtWllrydzGO8Ts08glJhrUywlWREKJKTsmL
+        466mcB54Rosn2D5E8dthiIly8/NADo6lIvDcB0edk9CtCKfVKv97lGGHVGlgFxFBdoTj+l
+        qeSkemg84REb/Bk69/z2hnjx0tetvjU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-420-OwRpS98qMZeNyIhOZrpXfg-1; Thu, 05 Aug 2021 12:35:47 -0400
+X-MC-Unique: OwRpS98qMZeNyIhOZrpXfg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C19FFCC623;
+        Thu,  5 Aug 2021 16:35:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1A1BA5C1A1;
+        Thu,  5 Aug 2021 16:35:33 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     Anna Schumaker <anna.schumaker@netapp.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     dhowells@redhat.com,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        devel@lists.orangefs.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Canvassing for network filesystem write size vs page size
+References: <YQv+iwmhhZJ+/ndc@casper.infradead.org>
+ <YQvpDP/tdkG4MMGs@casper.infradead.org>
+ <YQvbiCubotHz6cN7@casper.infradead.org>
+ <1017390.1628158757@warthog.procyon.org.uk>
+ <1170464.1628168823@warthog.procyon.org.uk>
+ <1186271.1628174281@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20210804095634.460779-11-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1219712.1628181333.1@warthog.procyon.org.uk>
+Date:   Thu, 05 Aug 2021 17:35:33 +0100
+Message-ID: <1219713.1628181333@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 8/4/21 2:56 AM, Christoph Hellwig wrote:
-> Use bvec_virt instead of open coding it.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   drivers/scsi/sd.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-> index b8d55af763f9..5b5b8266e142 100644
-> --- a/drivers/scsi/sd.c
-> +++ b/drivers/scsi/sd.c
-> @@ -886,7 +886,7 @@ static blk_status_t sd_setup_unmap_cmnd(struct scsi_cmnd *cmd)
->   	cmd->cmnd[0] = UNMAP;
->   	cmd->cmnd[8] = 24;
->   
-> -	buf = page_address(rq->special_vec.bv_page);
-> +	buf = bvec_virt(&rq->special_vec);
->   	put_unaligned_be16(6 + 16, &buf[0]);
->   	put_unaligned_be16(16, &buf[2]);
->   	put_unaligned_be64(lba, &buf[8]);
+With Willy's upcoming folio changes, from a filesystem point of view, we're
+going to be looking at folios instead of pages, where:
 
-The patch description is not correct. The above patch involves a 
-functional change while the patch description suggests that no 
-functionality has been changed.
+ - a folio is a contiguous collection of pages;
 
-Although the above patch looks fine to me, why has page_address() been 
-changed into bvec_virt() in the sd driver? My understanding is that the 
-sd driver always sets bv_offset to zero.
+ - each page in the folio might be standard PAGE_SIZE page (4K or 64K, say) or
+   a huge pages (say 2M each);
+
+ - a folio has one dirty flag and one writeback flag that applies to all
+   constituent pages;
+
+ - a complete folio currently is limited to PMD_SIZE or order 8, but could
+   theoretically go up to about 2GiB before various integer fields have to be
+   modified (not to mention the memory allocator).
+
+Willy is arguing that network filesystems should, except in certain very
+special situations (eg. O_SYNC), only write whole folios (limited to EOF).
+
+Some network filesystems, however, currently keep track of which byte ranges
+are modified within a dirty page (AFS does; NFS seems to also) and only write
+out the modified data.
+
+Also, there are limits to the maximum RPC payload sizes, so writing back large
+pages may necessitate multiple writes, possibly to multiple servers.
+
+What I'm trying to do is collate each network filesystem's properties (I'm
+including FUSE in that).
+
+So we have the following filesystems:
+
+ Plan9
+ - Doesn't track bytes
+ - Only writes single pages
+
+ AFS
+ - Max RPC payload theoretically ~5.5 TiB (OpenAFS), ~16EiB (Auristor/kAFS)
+ - kAFS (Linux kernel)
+   - Tracks bytes, only writes back what changed
+   - Writes from up to 65535 contiguous pages.
+ - OpenAFS/Auristor (UNIX/Linux)
+   - Deal with cache-sized blocks (configurable, but something from 8K to 2M),
+     reads and writes in these blocks
+ - OpenAFS/Auristor (Windows)
+   - Track bytes, write back only what changed
+
+ Ceph
+ - File divided into objects (typically 2MiB in size), which may be scattered
+   over multiple servers.
+ - Max RPC size is therefore object size.
+ - Doesn't track bytes.
+
+ CIFS/SMB
+ - Writes back just changed bytes immediately under some circumstances
+ - Doesn't track bytes and writes back whole pages otherwise.
+ - SMB3 has a max RPC size of 16MiB, with a default of 4MiB
+
+ FUSE
+ - Doesn't track bytes.
+ - Max 'RPC' size of 256 pages (I think).
+
+ NFS
+ - Tracks modified bytes within a page.
+ - Max RPC size of 1MiB.
+ - Files may be constructed of objects scattered over different servers.
+
+ OrangeFS
+ - Doesn't track bytes.
+ - Multipage writes possible.
+
+If you could help me fill in the gaps, that would be great.
 
 Thanks,
-
-Bart.
-
+David
 
