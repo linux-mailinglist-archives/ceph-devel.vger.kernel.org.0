@@ -2,99 +2,106 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B06A3E16C9
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Aug 2021 16:18:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EAFE3E17B1
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Aug 2021 17:15:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240722AbhHEOSX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 5 Aug 2021 10:18:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20520 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240231AbhHEOSW (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Aug 2021 10:18:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628173087;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CgTtaO9aoRpCiTYl9JW5StPBedgaEjV6BwrhWwCNWbE=;
-        b=ObCrZoAvBCWnS3OzXauXmGkt+Oo00XSKI2oLhf1Q9LRbimBCoDlSKVxyfpb94hULet9Pv0
-        mU0ur1DGFgYfXwrGsnWn+AcwnYPntH4y+dFvZlx3orYymGpCIg/Czp3mTc997W5O8QuLeV
-        W8AXdLp69E01NjbSNNOULAf/DXngilA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-121-c6z6JEHGMJe0DH8ARyr-fg-1; Thu, 05 Aug 2021 10:18:04 -0400
-X-MC-Unique: c6z6JEHGMJe0DH8ARyr-fg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F369693925;
-        Thu,  5 Aug 2021 14:18:00 +0000 (UTC)
-Received: from localhost (unknown [10.39.193.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A98375D6A1;
-        Thu,  5 Aug 2021 14:17:52 +0000 (UTC)
-Date:   Thu, 5 Aug 2021 15:17:51 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Geoff Levand <geoff@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Song Liu <song@kernel.org>, Mike Snitzer <snitzer@redhat.com>,
-        Coly Li <colyli@suse.de>, Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH 08/15] virtio_blk: use bvec_virt
-Message-ID: <YQvzD4FlF7+AgrSw@stefanha-x1.localdomain>
-References: <20210804095634.460779-1-hch@lst.de>
- <20210804095634.460779-9-hch@lst.de>
+        id S241817AbhHEPP7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 5 Aug 2021 11:15:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52890 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233196AbhHEPP6 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Aug 2021 11:15:58 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54190C061765;
+        Thu,  5 Aug 2021 08:15:42 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id dw2-20020a17090b0942b0290177cb475142so15585804pjb.2;
+        Thu, 05 Aug 2021 08:15:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=m1E0Vz2zYUe2a6xBjsmkpxdjVocPM+t+MvTQpXM4T2Q=;
+        b=CDZnwnqv/iklGJI//xgOAGalDkpOK/1OZ/Y5yBaKyBTuDTg+T/VGL+OW0vXKSec+If
+         ZZlZFEU2e5K9eTIObjdOe+2N68+iFCqQUiBwiKdp2iyIEE9sjQDobIxHmB4YkTycI0tM
+         XXtJrD+7XdI78OyAYbWDa3dOU+aHWGq0lZzKtEoSh0FVsFYJnWWXymgDvwgOGWTZt7D/
+         G1KYm7LJ5nwRJpW2ILxUoAU6bPiQg0scDbLZTC+MJe8mZuIqH7U8c4Dkbs8odLp8TOb9
+         1G/PF6RP4kVXbLftKxLXRaNdzics/pxl0w3svq4wbJx/sKb5hEMo7MIuhZEZDDQsYyHz
+         8uCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=m1E0Vz2zYUe2a6xBjsmkpxdjVocPM+t+MvTQpXM4T2Q=;
+        b=F4VtdMjdk26PCfkvjKvENhY55epUd+WGRq5OXPcXyb5F0/ArRlRdziHVNf4KaRHMnt
+         DQENVv/PBRGLbtDNLEyc/hzNESegOGa4+K8ZUgemjPRD7DlZT+8oLVaxRhKB0qg/m3RH
+         SHLtZpFw+PJ8ZP8QXTOBPAKtLnDRQlfVY/8VAk1Aj8Yt2ijlJcJb5CNM8v0DDIY7KFHA
+         +urj5wswIcI4Qqn3Ou4qBrulQLrYVgjcciykFpJCWWpI9WiioatYCAaiMlSFWRgCl2fn
+         XknOpyNJPO5YnBuTH5JRe3c5R4TXytvrYmKwYLDFwh0b9Jj+4Gg9OzYot77Lk0UfRs91
+         W1ew==
+X-Gm-Message-State: AOAM533I6rUcYkYBBopm1YpHXyC3KRfDkgezT1LVglx9QtNSmexe5tyd
+        ZQw9BuvqB7V9YL6LqGyiNlc=
+X-Google-Smtp-Source: ABdhPJzgEng28x3Rp+fU+Mr/Qm+y+cJxzZMjBx4q+nTTy4Wiecivn5MHgqDhEgSsbFqh1bk1b/e0Mg==
+X-Received: by 2002:a63:5606:: with SMTP id k6mr934510pgb.21.1628176541912;
+        Thu, 05 Aug 2021 08:15:41 -0700 (PDT)
+Received: from localhost.localdomain ([45.135.186.81])
+        by smtp.gmail.com with ESMTPSA id h5sm7074138pfv.145.2021.08.05.08.15.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Aug 2021 08:15:41 -0700 (PDT)
+From:   Tuo Li <islituo@gmail.com>
+To:     jlayton@kernel.org, idryomov@gmail.com
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        baijiaju1990@gmail.com, Tuo Li <islituo@gmail.com>,
+        TOTE Robot <oslab@tsinghua.edu.cn>
+Subject: [PATCH v2] ceph: fix possible null-pointer dereference in ceph_mdsmap_decode()
+Date:   Thu,  5 Aug 2021 08:14:34 -0700
+Message-Id: <20210805151434.142619-1-islituo@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZDhkEMoj7rmqL+Fh"
-Content-Disposition: inline
-In-Reply-To: <20210804095634.460779-9-hch@lst.de>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+kcalloc() is called to allocate memory for m->m_info, and if it fails,
+ceph_mdsmap_destroy() behind the label out_err will be called:
+  ceph_mdsmap_destroy(m);
 
---ZDhkEMoj7rmqL+Fh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In ceph_mdsmap_destroy(), m->m_info is dereferenced through:
+  kfree(m->m_info[i].export_targets);
 
-On Wed, Aug 04, 2021 at 11:56:27AM +0200, Christoph Hellwig wrote:
-> Use bvec_virt instead of open coding it.
->=20
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/block/virtio_blk.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+To fix this possible null-pointer dereference, check m->m_info before the 
+for loop to free m->m_info[i].export_targets.
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Reported-by: TOTE Robot <oslab@tsinghua.edu.cn>
+Signed-off-by: Tuo Li <islituo@gmail.com>
+---
+v2:
+* Put an "if (m->m_info)" around the for loop in ceph_mdsmap_destroy()
+instead of freeing m and returning -ENOMEM in ceph_mdsmap_decode().
+  Thank Jeff Layton for helpful advice.
+---
+ fs/ceph/mdsmap.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---ZDhkEMoj7rmqL+Fh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmEL8w8ACgkQnKSrs4Gr
-c8jPdgf+PcMouWs94g0uS6wpaN9fVvtvzsyRrLa0a4jPqggbtSulcjUYQzYZ9BGX
-1xnrp3ABDt4KhYhX+iAsAxc4LmWEAYUruE6WxqsxaPKE19XcFuwM/tpwcv5U8/x+
-2GvsXderla2RbbwTzdCFUf1m538Dw+eqH8+6Dt0Q6QjCC4EAX3ubWU+pX0K5rLNX
-d7M7JCyOzOdU/VJYYVQDs1Vkpu/2AFtQT+hnq7veWzgQD+iFkLNZUEBVFm4jRbkC
-5cfC+IUVtDkCjhD2offyhX+djtvDy5IZAnHEMv/ulIMmCzc0o1VgEy/5zNiKnjgg
-5CdxbrfAKcA734P4gNIy/UD+hGlM6g==
-=Cztj
------END PGP SIGNATURE-----
-
---ZDhkEMoj7rmqL+Fh--
+diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+index abd9af7727ad..26d6fa049b44 100644
+--- a/fs/ceph/mdsmap.c
++++ b/fs/ceph/mdsmap.c
+@@ -393,9 +393,11 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end, bool msgr2)
+ void ceph_mdsmap_destroy(struct ceph_mdsmap *m)
+ {
+ 	int i;
+-
+-	for (i = 0; i < m->possible_max_rank; i++)
+-		kfree(m->m_info[i].export_targets);
++	
++	if (m->m_info) {
++		for (i = 0; i < m->possible_max_rank; i++)
++			kfree(m->m_info[i].export_targets);
++	}
+ 	kfree(m->m_info);
+ 	kfree(m->m_data_pg_pools);
+ 	kfree(m);
+-- 
+2.25.1
 
