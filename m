@@ -2,71 +2,184 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 174D03E2875
-	for <lists+ceph-devel@lfdr.de>; Fri,  6 Aug 2021 12:19:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFB2A3E2BBF
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Aug 2021 15:43:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245043AbhHFKTI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 6 Aug 2021 06:19:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57358 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245032AbhHFKTE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 6 Aug 2021 06:19:04 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9219AC061798
-        for <ceph-devel@vger.kernel.org>; Fri,  6 Aug 2021 03:18:48 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id u13-20020a17090abb0db0290177e1d9b3f7so22049394pjr.1
-        for <ceph-devel@vger.kernel.org>; Fri, 06 Aug 2021 03:18:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=+oHuXO9/SrgYmkGMX07ZJ2TpeHf3LrcOdeJmyOngO5o=;
-        b=KxSmpRuWMoO5fRZwMXbgyDNofP+qW+srGiXlmqbyz9zvJcq+d4Oj7gyPsePZR65G/N
-         v4nWipWkD1Q5THXGuztCvN9JiGuPivx37QXEvbeduf7ANotWmI2Vq8k60USeS7/HMNM5
-         BfSVwRuw21XGGv0dXCouohTzajHBvnUDFSpp0UZF5UdE1odUFxnOPybZ2/ARzckt8IjA
-         YpOyVXCwfU4skfzheKPJa0ItpgRMRBSjKmX4mNTKZyvMc7FlNXc3snw7npsLMqxpomuD
-         kn1JK1dSYLdELC76CYoUrH/nXGLBTy65V/+N58hJaHiTF0DAhGxKPuHLzmnNqAVnwFIx
-         Oe9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=+oHuXO9/SrgYmkGMX07ZJ2TpeHf3LrcOdeJmyOngO5o=;
-        b=sF6yWe6xO2QCZ8QT/YYglbgohY9k13Q+rnLEv3WuLYSZaLYFIrJ75oGxY2VM+5mfzW
-         iGnV2Yl/HLj5itZNTcwO/1qCwiCNKCqGb6PcERwaVSO4urkqLCM0nzlx7Rxhg4bw4EBR
-         25WDyWM3tEXPeCayd7lnLNgtZQgv5he4SEppYXbq/ifN2LqhfNQ9Yuh6tBmAkbMtNfMG
-         URqRuwStFBvrqgdZJo9XMBNiwePeizH0dr9SDiTRmhWiIePUjVsZDodlxUkO0Q9ydNbv
-         7eBtyBCOeB3KHwhU6SAVYILvUxARWqdKgK/2m7QEkjgIUC8kAjinV3Hl0qOlYEjjw9Fh
-         zigA==
-X-Gm-Message-State: AOAM5323gcdTZJw2RbNMFBHPYuQgynOYLcF+UQlgI+lAZFzgovted0B+
-        7cRIAnK/iZI82VQrc0Ggd7w0ODd/wWpLJcZJDEuKKqH6jaI=
-X-Google-Smtp-Source: ABdhPJyKScJR+n7uG0zejvd7Xg1+op96Adk0SwKI3E/VAaGyUtxfS55wVSk7+XzJuAHlaAWslTNgC2rvt2OSciqyA/M=
-X-Received: by 2002:a65:63c1:: with SMTP id n1mr975215pgv.398.1628245128009;
- Fri, 06 Aug 2021 03:18:48 -0700 (PDT)
+        id S1344360AbhHFNnG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 6 Aug 2021 09:43:06 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37055 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1344295AbhHFNnF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 6 Aug 2021 09:43:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628257369;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7thEIdn3uQfSfpiv9JfERg3aXycT77hyEyLdlaCx5tA=;
+        b=dIm+eD+WvIe04AAFnfFhjF5tJ52suPTywCX+yUTfyq2aGvHdflqoNBYQuitdjQXKmfSGvt
+        i9RMfWO0CGV+4tI8KFYYoD9N/Z2yBWMqcw9tuc8Kbl+STIUPD1KQ5kI8d7t/87zJQKCXS7
+        EB1kVqi+VyRBh2ZMmh0KT4NvI2zMO78=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-132-BiOv2USdOOOPtwWmafxTSQ-1; Fri, 06 Aug 2021 09:42:48 -0400
+X-MC-Unique: BiOv2USdOOOPtwWmafxTSQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C9B688B5D61;
+        Fri,  6 Aug 2021 13:42:45 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 15ACD5C1B4;
+        Fri,  6 Aug 2021 13:42:37 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YQxh/G0xGl3GtC8y@casper.infradead.org>
+References: <YQxh/G0xGl3GtC8y@casper.infradead.org> <YQv+iwmhhZJ+/ndc@casper.infradead.org> <YQvpDP/tdkG4MMGs@casper.infradead.org> <YQvbiCubotHz6cN7@casper.infradead.org> <1017390.1628158757@warthog.procyon.org.uk> <1170464.1628168823@warthog.procyon.org.uk> <1186271.1628174281@warthog.procyon.org.uk> <1219713.1628181333@warthog.procyon.org.uk> <CAHk-=wjyEk9EuYgE3nBnRCRd_AmRYVOGACEjt0X33QnORd5-ig@mail.gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, devel@lists.orangefs.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Canvassing for network filesystem write size vs page size
 MIME-Version: 1.0
-From:   WeiGuo Ren <rwg1335252904@gmail.com>
-Date:   Fri, 6 Aug 2021 18:18:24 +0800
-Message-ID: <CAPy+zYUwvOap_yFY93PF+xvri-f1MwDRO2bZM=yyx21yedvegg@mail.gmail.com>
-Subject: s3test: In ceph-nautilus branch , some fails_strict_rfc2616 test
- failed, Is this normal?
-To:     Ceph Development <ceph-devel@vger.kernel.org>, ceph-users@ceph.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1302670.1628257357.1@warthog.procyon.org.uk>
+Date:   Fri, 06 Aug 2021 14:42:37 +0100
+Message-ID: <1302671.1628257357@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-I want to test  test_object_create_bad_md5_unreadable. but rgw send
-400(e.status),rather than 403.I dont understand it. The code is.
-@tag('auth_common')
-@attr(resource='object')
-@attr(method='put')
-@attr(operation='create w/non-graphics in MD5')
-@attr(assertion='fails 403')
-@attr('fails_strict_rfc2616')
-@nose.with_setup(teardown=_clear_custom_headers)
-def test_object_create_bad_md5_unreadable():
-    key = _setup_bad_object({'Content-MD5': '\x07'})
+Matthew Wilcox <willy@infradead.org> wrote:
 
-    e = assert_raises(boto.exception.S3ResponseError,
-key.set_contents_from_string, 'bar')
-    eq(e.status, 403)
-    eq(e.reason, 'Forbidden')
-    assert e.error_code in ('AccessDenied', 'SignatureDoesNotMatch')
+> > It's fairly important to be able to do streaming writes without having
+> > to read the old contents for some loads. And read-modify-write cycles
+> > are death for performance, so you really want to coalesce writes until
+> > you have the whole page.
+> 
+> I completely agree with you.  The context you're missing is that Dave
+> wants to do RMW twice.  He doesn't do the delaying SetPageUptodate dance.
+
+Actually, I do the delaying of SetPageUptodate in the new write helpers that
+I'm working on - at least to some extent.  For a write of any particular size
+(which may be more than a page), I only read the first and last pages affected
+if they're not completely changed by the write.  Note that I have my own
+version of generic_perform_write() that allows me to eliminate write_begin and
+write_end for any filesystem using it.
+
+Keeping track of which regions are dirty allows merging of contiguous dirty
+regions.
+
+It has occurred to me that I don't actually need the pages to be uptodate and
+completely filled out.  I'm tracking which bits are dirty - I could defer
+reading the missing bits till someone wants to read or mmap.
+
+But that kind of screws with local caching.  The local cache might need to
+track the missing bits, and we are likely to be using blocks larger than a
+page.
+
+Basically, there are a lot of scenarios where not having fully populated pages
+sucks.  And for streaming writes, wouldn't it be better if you used DIO
+writes?
+
+> If the write is less than the whole page, AFS, Ceph and anybody else
+> using netfs_write_begin() will first read the entire page in and mark
+> it Uptodate.
+
+Indeed - but that function is set to be replaced.  What you're missing is that
+if someone then tries to read the partially modified page, you may have to do
+two reads from the server.
+
+> Then he wants to track which parts of the page are dirty (at byte
+> granularity) and send only those bytes to the server in a write request.
+
+Yes.  Because other constraints may apply, for example the handling of
+conflicting third-party writes.  The question here is how much we care about
+that - and that's why I'm trying to write back only what's changed where
+possible.
+
+That said, if content encryption is thrown into the mix, the minimum we can
+write back is whatever the size of the blocks on which encryption is
+performed, so maybe we shouldn't care.
+
+Add disconnected operation reconnection resolution, where it might be handy to
+have a list of what changed on a file.
+
+> So it's worst of both worlds; first the client does an RMW, then the
+> server does an RMW (assuming the client's data is no longer in the
+> server's cache.
+
+Actually, it's not necessarily what you make out.  You have to compare the
+server-side RMW with cost of setting up a read or a write operation.
+
+And then there's this scenario:  Imagine I'm going to modify the middle of a
+page which doesn't yet exist.  I read the bit at the beginning and the bit at
+the end and then try to fill the middle, but now get an EFAULT error.  I'm
+going to have to do *three* reads if someone wants to read the page.
+
+> The NFS code moves the RMW from the client to the server, and that makes
+> a load of sense.
+
+No, it very much depends.  It might suck if you have the folio partly cached
+locally in fscache, and it doesn't work if you have content encryption and
+would suck if you're doing disconnected operation.
+
+I presume you're advocating that the change is immediately written to the
+server, and then you read it back from the server?
+
+> > That said, I suspect it's also *very* filesystem-specific, to the
+> > point where it might not be worth trying to do in some generic manner.
+> 
+> It certainly doesn't make sense for block filesystems.  Since they
+> can only do I/O on block boundaries, a sub-block write has to read in
+> the surrounding block, and once you're doing that, you might as well
+> read in the whole page.
+
+I'm not trying to do this for block filesystems!  However, a block filesystem
+- or even a blockdev - might be involved in terms of the local cache.
+
+> Tracking sub-page dirty bits still makes sense.  It's on my to-do
+> list for iomap.
+
+/me blinks
+
+"bits" as in parts of a page or "bits" as in the PG_dirty bits on the pages
+contributing to a folio?
+
+> > [ goes off and looks. See "nfs_write_begin()" and friends in
+> > fs/nfs/file.c for some of the examples of these things, althjough it
+> > looks like the code is less aggressive about avoding the
+> > read-modify-write case than I thought I remembered, and only does it
+> > for write-only opens ]
+> 
+> NFS is missing one trick; it could implement aops->is_partially_uptodate
+> and then it would be able to read back bytes that have already been
+> written by this client without writing back the dirty ranges and fetching
+> the page from the server.
+
+As mentioned above, I have been considering the possibility of keeping track
+of partially dirty non-uptodate pages.  Jeff and I have been discussing that
+we might want support for explicit RMW anyway for various reasons (e.g. doing
+DIO that's not crypto-block aligned,
+remote-invalidation/reconnection-resolution handling).
+
+David
+
