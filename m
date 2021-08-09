@@ -2,92 +2,84 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC95D3E3091
-	for <lists+ceph-devel@lfdr.de>; Fri,  6 Aug 2021 22:53:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85FB13E4A27
+	for <lists+ceph-devel@lfdr.de>; Mon,  9 Aug 2021 18:44:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235979AbhHFUxA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 6 Aug 2021 16:53:00 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:41682 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235545AbhHFUxA (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 6 Aug 2021 16:53:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628283163;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=HdaUst02FPsv5xlmIC0uf1PB5BpGZLe3Eu/Nic4jX4s=;
-        b=DG/JV2bXVyn9fFVKSH5yQxo/+L3UJ7nLjsxQBxJ4KBj62hEz98bChulMiRpdzPPsqwfyUq
-        6XI6wsFkYtcijAzgi7FL3yUA/0qCLIEFw8VwZp2b398TEcNDKQOHl+0pS0JfqxY3TMYyRe
-        YtdI8Vziy7AHNqFrYivum+BuWkfoEjI=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-106-6Vdgq1JhNwKqKG8GdvaUag-1; Fri, 06 Aug 2021 16:52:42 -0400
-X-MC-Unique: 6Vdgq1JhNwKqKG8GdvaUag-1
-Received: by mail-wr1-f69.google.com with SMTP id p2-20020a5d48c20000b0290150e4a5e7e0so3463233wrs.13
-        for <ceph-devel@vger.kernel.org>; Fri, 06 Aug 2021 13:52:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HdaUst02FPsv5xlmIC0uf1PB5BpGZLe3Eu/Nic4jX4s=;
-        b=YoYiIsZCwomF7F0Xd7ohHTVPAt/1bsaSt3DRrDnXBRb+XUo9a60czLQI8jLQQYa2Ey
-         Ss9hRajJPIw+IEM6aUAXAQBGC4lxdcgG7ao/IXAXMWcI/jd/jpSSnHRy2Wu/oChWrfz3
-         eYzyjBdGGsDikuWJKwbtmgg1/g6ducA95yK66FBFanPIuxW7l3kEu4dmO1JTVkeZhofK
-         9ZIH6zFqKfJ+GKM4sTROSEsa26KxSG9VJpwrIgQyM7/aBvcvwQ07ZORqTRxXfFBOOHHk
-         EhEbUCSPaJhLZH5eEyDAiLXZbiXisyzzxi/zD895zX7k8Glf2VH/Yi2ToBmlSfaNPOWn
-         uxpA==
-X-Gm-Message-State: AOAM530UCtLaNaAemGWHFkA2DvzHs4Ay29YLjPgNSDYfm1+xtAh78T+0
-        mumPOwsFiJd+wKeB6WvSmDaFYg3T1NezqvVqSn3HBLmpMzB9Ty6zDo7ugPtcs/uwyFiCFWt3o5l
-        Lfpzcn0FRhnubCweRzA6BdKYfkreoTbnURe9VMA==
-X-Received: by 2002:a7b:c779:: with SMTP id x25mr21626489wmk.88.1628283160888;
-        Fri, 06 Aug 2021 13:52:40 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxSViseFK3+bQGQbU+dH8evhHeoQWmtNR+QkkpJi3M0V6x+7AT3rdrpwu7cQVsoMWTC+o7S3OLC/JDPObFDkBM=
-X-Received: by 2002:a7b:c779:: with SMTP id x25mr21626478wmk.88.1628283160751;
- Fri, 06 Aug 2021 13:52:40 -0700 (PDT)
+        id S230394AbhHIQod (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 9 Aug 2021 12:44:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43334 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229456AbhHIQod (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 9 Aug 2021 12:44:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 221CF60F35;
+        Mon,  9 Aug 2021 16:44:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628527452;
+        bh=zDRTU84UIQdfBCy4ZKMyNF+WQ86KUiaAMKkdOYmz0VA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=e9j4xKENH315UK4S0u+QRZANg3As+QCerly9ydthSQdgIRAJKdhGFuePmvnAVw3Hl
+         q5aUg15PxqMlyhmT1rcKtOy8TF/JdlWb2BmSxhbu0XKx8KzTi9k5OZh6RACsmj8Mvz
+         DuBj/KslKVPL6oOQaAotPCLNXyfdiBMOFgi3HKBTa3Z2nEJ1mcOTIj9XWdAGTPa3cZ
+         +ulzK+e7adqTY1lE/3M4qHYI4AyD74kfUi4doa13NjV5wwvGjVpRrXDeMn0y5ZCT/x
+         R4gCTJAQb42rk9+DzqVyikKL77PTo3M9LZWcYL/Iki+N5uhqwqVsgv96/AN/GBH+1W
+         /lPlwOl4JF3bQ==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, Patrick Donnelly <pdonnell@redhat.com>
+Subject: [PATCH] ceph: enable async dirops by default
+Date:   Mon,  9 Aug 2021 12:44:10 -0400
+Message-Id: <20210809164410.27750-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-References: <CAPy+zYUwvOap_yFY93PF+xvri-f1MwDRO2bZM=yyx21yedvegg@mail.gmail.com>
-In-Reply-To: <CAPy+zYUwvOap_yFY93PF+xvri-f1MwDRO2bZM=yyx21yedvegg@mail.gmail.com>
-From:   Casey Bodley <cbodley@redhat.com>
-Date:   Fri, 6 Aug 2021 16:52:28 -0400
-Message-ID: <CAF-p1-LQRr=D_Ds0_tX+WHJWxM23+pZXBBgf90GorX6b5NaZVQ@mail.gmail.com>
-Subject: Re: s3test: In ceph-nautilus branch , some fails_strict_rfc2616 test
- failed, Is this normal?
-To:     WeiGuo Ren <rwg1335252904@gmail.com>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>, ceph-users@ceph.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Aug 6, 2021 at 6:20 AM WeiGuo Ren <rwg1335252904@gmail.com> wrote:
->
-> I want to test  test_object_create_bad_md5_unreadable. but rgw send
-> 400(e.status),rather than 403.I dont understand it. The code is.
-> @tag('auth_common')
-> @attr(resource='object')
-> @attr(method='put')
-> @attr(operation='create w/non-graphics in MD5')
-> @attr(assertion='fails 403')
-> @attr('fails_strict_rfc2616')
-> @nose.with_setup(teardown=_clear_custom_headers)
-> def test_object_create_bad_md5_unreadable():
->     key = _setup_bad_object({'Content-MD5': '\x07'})
->
->     e = assert_raises(boto.exception.S3ResponseError,
-> key.set_contents_from_string, 'bar')
->     eq(e.status, 403)
->     eq(e.reason, 'Forbidden')
->     assert e.error_code in ('AccessDenied', 'SignatureDoesNotMatch')
->
+Async dirops have been supported in mainline kernels for quite some time
+now, and we've recently (as of June) started doing regular testing in
+teuthology with '-o nowsync'. So far, that hasn't uncovered any issues,
+so I think the time is right to flip the default for this option.
 
-yes, that's expected. that test generates an invalid http request. as
-of the nautilus release, both the civetweb and beast frontends of
-radosgw reject that header during parsing, so return a 400 Bad Request
-error instead of failing later in auth
+Enable async dirops by default, and change /proc/mounts to show "wsync"
+when they are disabled rather than "nowsync" when they are enabled.
 
-that test_object_create_bad_md5_unreadable test case no longer exists
-as of the ceph-octopus branch, where we switched to boto3 which
-doesn't even let you send such a request. the remaining
-'fails_strict_rfc2616' tests accept both 400 and 403 responses
+Cc: Patrick Donnelly <pdonnell@redhat.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/super.c | 4 ++--
+ fs/ceph/super.h | 3 ++-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 609ffc8c2d78..f517ad9eeb26 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -698,8 +698,8 @@ static int ceph_show_options(struct seq_file *m, struct dentry *root)
+ 	if (fsopt->flags & CEPH_MOUNT_OPT_CLEANRECOVER)
+ 		seq_show_option(m, "recover_session", "clean");
+ 
+-	if (fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS)
+-		seq_puts(m, ",nowsync");
++	if (!(fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS))
++		seq_puts(m, ",wsync");
+ 
+ 	if (fsopt->wsize != CEPH_MAX_WRITE_SIZE)
+ 		seq_printf(m, ",wsize=%u", fsopt->wsize);
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 389b45ac291b..0bc36cf4c683 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -48,7 +48,8 @@
+ 
+ #define CEPH_MOUNT_OPT_DEFAULT			\
+ 	(CEPH_MOUNT_OPT_DCACHE |		\
+-	 CEPH_MOUNT_OPT_NOCOPYFROM)
++	 CEPH_MOUNT_OPT_NOCOPYFROM |		\
++	 CEPH_MOUNT_OPT_ASYNC_DIROPS)
+ 
+ #define ceph_set_mount_opt(fsc, opt) \
+ 	(fsc)->mount_options->flags |= CEPH_MOUNT_OPT_##opt
+-- 
+2.31.1
 
