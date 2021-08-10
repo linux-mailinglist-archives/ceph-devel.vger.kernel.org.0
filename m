@@ -2,68 +2,69 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C8CD13E5C5F
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Aug 2021 15:57:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 350A63E7F40
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Aug 2021 19:41:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238215AbhHJN51 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 10 Aug 2021 09:57:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56708 "EHLO
+        id S234035AbhHJRjJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Aug 2021 13:39:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240350AbhHJN5H (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Aug 2021 09:57:07 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 476C0C061798
-        for <ceph-devel@vger.kernel.org>; Tue, 10 Aug 2021 06:56:20 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id mq2-20020a17090b3802b0290178911d298bso5533726pjb.1
-        for <ceph-devel@vger.kernel.org>; Tue, 10 Aug 2021 06:56:20 -0700 (PDT)
+        with ESMTP id S233701AbhHJRhG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Aug 2021 13:37:06 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9E7DC0619DF
+        for <ceph-devel@vger.kernel.org>; Tue, 10 Aug 2021 10:33:36 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id h17so18972049ljh.13
+        for <ceph-devel@vger.kernel.org>; Tue, 10 Aug 2021 10:33:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=h3aZTrCb62DNYhpJGTvZ4Kku5N7BEorxuPyN/PlVL+8=;
-        b=a0JlewvCCcVHYkAJl3a+VbdMOodMUZOqmI75JJAFnVtHtWchCapSUVAi3h7HWtHEc+
-         t/oJKvVZy0IQ34QZU125y5lltj7VYnrS2fNX6j2sU5R+e+axGZ73GSB6wM5QI7lJtkWj
-         DDQSQLT0TpqckGN9cYh0f6rCRAMN5V+85gaW8nxaimzFksCHJ0oHSjH56O+9ikqygIbK
-         48afCb7+cuUjO5hU7VtNGENXo8KR81oiH2EBcWr8kGhG+Bdr9qIB1h/hW5r64x33yuEY
-         Q8R0H1e3LkKLZHMerpD/PIhtElsLfamgvw5ojnA2Cln2YUumYVcndd2cUYuVOX8DJ7WC
-         GurA==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=y3BZ+wT7TMDVjM2/WQcyPOhYkG/NWjvDbJIsMqFI2RA=;
+        b=BggyEzSIpVznrhWTl8MIRAYEe15KlTxcMGseAQSFa7RDeDzVHxU4eSoETbmExnaLIE
+         zuq8OYsbcAC4TRTZpDVHuqOpZQ9IWzoDnFG9KE9Hgoh5GHNRpLrX7GaTa2Rlpi17Sa+7
+         wynv7o5vGtXcABH0YLjEMHBgYbVN4gwCCmMbmqM96vylTsH+XuSJQxB2T0aZ0px1WpyQ
+         RfAqEbEJWHwau3sZBSpHTPqcKq0lEWF+TZfP6Hoo/gEZtnmpQsbvRYpoOVsYPdrPzr7x
+         t3j+1ErMjanfyKX6UgQnU/AAqtfTm/Qksyzzn7HfgMwEBK6s4oZtKRsuVtciK72GKLQ3
+         6YUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=h3aZTrCb62DNYhpJGTvZ4Kku5N7BEorxuPyN/PlVL+8=;
-        b=nVFOrMEiIzHr2FUxl+q8gblUev4U+btab3D47mIxGQYydBJBGjuB45DEDspDPrPXjf
-         X9RPdDKWWq+ny/HdQUqXIZXNRjEmPB5gjl5ebgYcqK3RqQYDWYZrtA0i3Yfb0QR4dJBy
-         NxB/IfqPKe7KQoT0dQr0gMno4j6OLs1EfurNec9w+JxKV8s/7qMZdXbj+ArXdzv5qisu
-         4pjPXn1poODbVhqqmkIn4Z16CB14eLFQH/bg2tEY58oQAk0CEl15Ly5o7C4wJTrif08P
-         5qoQjB6sHjlZhO6lddby2W3yYmw0lTLQuKBH4lxONaqERVqlUYDoxonnqH9XnNu61URB
-         8qwQ==
-X-Gm-Message-State: AOAM533gkLH0Ww+hVa0RBD76txUg/XT39zbyrEs5r5VmafUtKt0zWGxE
-        uE0XbUwJJIcbhE4fvGWnx7UWq3utp8jKV+TreF4=
-X-Google-Smtp-Source: ABdhPJx8vgagkADVqWfuB5eKOStMbwawdMlgIfTSdOjHE4enkX1dqlSgja1EFMffaJMib58Zw396TqVPsmR8UOj6Jh4=
-X-Received: by 2002:a17:90a:3f8e:: with SMTP id m14mr5230186pjc.227.1628603779850;
- Tue, 10 Aug 2021 06:56:19 -0700 (PDT)
+         :subject:to;
+        bh=y3BZ+wT7TMDVjM2/WQcyPOhYkG/NWjvDbJIsMqFI2RA=;
+        b=uPdxbbFK0Mge7byGUzs1yzZ7Ek2dvGlfk03vSv8nb2OGUvdxKRuHtcoPO3T1RSNFpH
+         awqEeSiOVvZ1Ny9ZsdvUiq0gIDYwFGaZ3Hstr3sRpZPxWO5CYWM1ZEscxh7ECnXjXFYh
+         O0qnI7t+Ar3ZlMBlTKPuJdlLZmEGlxjXkDLWTHjXcVabmwe8y/ZQefovRqlf8nLxyIEI
+         L4weyIWqZO09AmUagLwrMPPiSn53m1T7riGAoVWwNrX2ICUKCwZ3towwoRWn4M44m9ny
+         bgnG4UUzKee0skcRbS4hW0xDlg4IF5jfGCJlsvkbb0xR2zkxbnxPlgL/1G+21DLi5fIx
+         k88A==
+X-Gm-Message-State: AOAM5312R/HVCkCIs5A8MVYDveVcELYzmNcWnuczkcTg17LirD3mpUl1
+        XOratkWPYy2w0zjX74Hbp9cVtSf/IsBqQ31E1II=
+X-Google-Smtp-Source: ABdhPJxJzT1Kb5atT5yD66iaERNxaunOV6XJPdXL1z2OXUo9BKjwXZsRFKaZJQfJZWzQJ7vPYlv2A2MhcLNWOaJIEsQ=
+X-Received: by 2002:a2e:b61c:: with SMTP id r28mr13615658ljn.274.1628616814996;
+ Tue, 10 Aug 2021 10:33:34 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a05:6a20:12cc:b029:30:571c:5926 with HTTP; Tue, 10 Aug 2021
- 06:56:19 -0700 (PDT)
-Reply-To: manuelfranco4love@gmail.com
-From:   Moses music <mosesdafom@gmail.com>
-Date:   Tue, 10 Aug 2021 06:56:19 -0700
-Message-ID: <CAEnNBfjeL6pUt=52-uaNZ_YNC_FcE-PgXUzr0Asgw9O0RuxAJg@mail.gmail.com>
-Subject: Der Betrag von 500.000,00 Euro wurde Ihnen gespendet. Kontakt: manuelfranco4love@gmail.com
+Received: by 2002:ac2:5d2e:0:0:0:0:0 with HTTP; Tue, 10 Aug 2021 10:33:33
+ -0700 (PDT)
+Reply-To: majidmuzaffar8@gmail.com
+From:   Majid Muzaffar <ing.abdullabin.rishid.me@gmail.com>
+Date:   Tue, 10 Aug 2021 20:33:33 +0300
+Message-ID: <CAFsu49W_3bbJbgEKV5RQo3TBRgLduTA-4EwS7hHkwcfSHSRrcg@mail.gmail.com>
+Subject: Proposal
 To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Ich bin Manuel Franco und habe am 5th. June 2021 den Power Ball
-Jackpot im Wert von 758,7 Millionen Dollar gewonnen. Ich gew=C3=A4hre 5
-Personen jeweils 500.000,00 Euro und Sie geh=C3=B6ren zu den 5 gl=C3=BCckli=
-chen
-Gewinnern, die ausgew=C3=A4hlt wurden, um meine Spende von 500.000,00 Euro
-zu erhalten.
+Salam alaikum,
 
-Kontaktieren Sie mich f=C3=BCr weitere Informationen unter:
-manuelfranco4love@gmail.com
+I am the investment officer of UAE based investment company who are
+ready to fund projects outside UAE, in the form of debt finance. We
+grant loan to both Corporate and private entities at a low interest
+rate of 3% ROI per annum. The terms are very flexible and interesting.
+Kindly revert back if you have projects that needs funding for further
+discussion and negotiation.
+
+Thanks
+
+investment officer
