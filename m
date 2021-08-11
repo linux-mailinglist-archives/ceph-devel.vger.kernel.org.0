@@ -2,104 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F4453E93C1
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Aug 2021 16:37:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DAC33E93DF
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Aug 2021 16:44:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232506AbhHKOhb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 11 Aug 2021 10:37:31 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:58244 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232347AbhHKOha (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 Aug 2021 10:37:30 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 0E3EB221A8;
-        Wed, 11 Aug 2021 14:37:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1628692626; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VJ9FwzPl6LjiyU9HMmGoePtQc8/l9vB1VNujMGB0xCM=;
-        b=KRFsfihblE+FaaqQOD6F3xBRayr/CUWBiCe/zmd69uDu1fr4qMKtcbfaLCR+J7jooRUoyo
-        QOMqBh7xn2iuVZDMOCvN7+fkJ/I7IXxpKnqYgYVV4Eye5lqnlNdLOCvCXnwaHb9Fl/wnpp
-        wmX5HP45yg4LYfu3nzdj0rIgZRTS+s8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1628692626;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VJ9FwzPl6LjiyU9HMmGoePtQc8/l9vB1VNujMGB0xCM=;
-        b=xJo1LkGdi4EDA9QqwkhAH84BZdNZL+VFxoIuTR00pFIRHtMbAjJWh+PkRDo+fgksvHGoBC
-        Pceygn7spHrkF3AA==
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id C061913969;
-        Wed, 11 Aug 2021 14:37:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id coD8K5HgE2FHTgAAGKfGzw
-        (envelope-from <lhenriques@suse.de>); Wed, 11 Aug 2021 14:37:05 +0000
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 6bc7c716;
-        Wed, 11 Aug 2021 14:37:05 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com
+        id S232569AbhHKOo7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 11 Aug 2021 10:44:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35508 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232704AbhHKOox (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 11 Aug 2021 10:44:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9081D60C40;
+        Wed, 11 Aug 2021 14:44:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628693069;
+        bh=3WcQIY1Tldw+FnGk13T77mMfYCNCQ3e3KZ22Er7jjZc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=dJrJpnPDs4s2BAuAsKuM0rhtBvWG3kCOgJ/mLXzx7tc/RoxDSwvgiBZ030s1mpL7F
+         LvSMu5im5SGmZXY4woKhggcgU8/aO65De39+OUFiJNMSA6vCV60PwaEzRxPTk4vZBH
+         yeJJJ6wNOne/L6PIttfcj3JvthYKT64QkcH2d1SeTC7GtSJDjH4BC4ZtStu22g5zqv
+         aR7/RhXXYWiKJaamcvPf1JJLBbf0kuqruqYhMEr1N+JwTa64nf4JAQNlff/XasAkoS
+         BoKxXeda2r/s3NFWhwnhzR1U772t+BdKnzimW5HHv3i9yUP/OW/vWchL40iz/EYNc9
+         OOkZ228TwfsOw==
+Message-ID: <5b8b45707e019c16852b2aa8c9b8928fbdc60008.camel@kernel.org>
 Subject: Re: [PATCH] ceph: remove dead code in ceph_sync_write
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com
+Date:   Wed, 11 Aug 2021 10:44:28 -0400
+In-Reply-To: <87o8a4qc8f.fsf@suse.de>
 References: <20210811111927.8417-1-jlayton@kernel.org>
-Date:   Wed, 11 Aug 2021 15:37:04 +0100
-In-Reply-To: <20210811111927.8417-1-jlayton@kernel.org> (Jeff Layton's message
-        of "Wed, 11 Aug 2021 07:19:27 -0400")
-Message-ID: <87o8a4qc8f.fsf@suse.de>
+         <87o8a4qc8f.fsf@suse.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> writes:
+On Wed, 2021-08-11 at 15:37 +0100, Luis Henriques wrote:
+> Jeff Layton <jlayton@kernel.org> writes:
+> 
+> > We've already checked these flags near the top of the function and
+> > bailed out if either were set.
+> 
+> The flags being checked at the top of the function are CEPH_OSDMAP_FULL
+> and CEPH_POOL_FLAG_FULL; here we're checking the *_NEARFULL flags.
+> Right?  (I had to look a few times to make sure my eyes were not lying.)
+> 
+> Cheers,
 
-> We've already checked these flags near the top of the function and
-> bailed out if either were set.
+Oof. You're totally right. Dropping this patch!
 
-The flags being checked at the top of the function are CEPH_OSDMAP_FULL
-and CEPH_POOL_FLAG_FULL; here we're checking the *_NEARFULL flags.
-Right?  (I had to look a few times to make sure my eyes were not lying.)
-
-Cheers,
+Thanks,
 -- 
-Luis
+Jeff Layton <jlayton@kernel.org>
 
-
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/file.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
->
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index d1755ac1d964..f55ca2c4c7de 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1834,12 +1834,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  		goto retry_snap;
->  	}
->  
-> -	if (written >= 0) {
-> -		if ((map_flags & CEPH_OSDMAP_NEARFULL) ||
-> -		    (pool_flags & CEPH_POOL_FLAG_NEARFULL))
-> -			iocb->ki_flags |= IOCB_DSYNC;
-> +	if (written >= 0)
->  		written = generic_write_sync(iocb, written);
-> -	}
->  
->  	goto out_unlocked;
->  out:
-> -- 
->
-> 2.31.1
->
