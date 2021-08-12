@@ -2,92 +2,142 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBA4B3EAA6D
-	for <lists+ceph-devel@lfdr.de>; Thu, 12 Aug 2021 20:46:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEC043EAC13
+	for <lists+ceph-devel@lfdr.de>; Thu, 12 Aug 2021 22:48:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234537AbhHLSp2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 12 Aug 2021 14:45:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229554AbhHLSp1 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 12 Aug 2021 14:45:27 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3683FC061756;
-        Thu, 12 Aug 2021 11:45:02 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id f10so2096674wml.2;
-        Thu, 12 Aug 2021 11:45:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pBEXe/K5UkvKT1TccgP9MD9aIiSJbue62tXHdLCwf6E=;
-        b=Pi6JW94Wo+EwHZJvNM3ppBAa8EPQCwMtGA6II43jyUc+9dgG7IZ/Xsj4GN6jL5BpqG
-         Kdr8po53vNXhOhq5nLzP8X4UDMbzm6WdOl/wot+iDKmy/92dilQewUMaUKf2WoF2dxMM
-         6ZHVJWQwGJ460AsGGv0XrJfUXJQs44PSaU2hu3N+0RkMH2egTANKJ4DBajZNW1IYUnnX
-         xge9SKWTN+3eYp3/SdkRIpGSiS3ExMTzBBmy8yvUTARy1lwGwbO5UYohjR0s7tlGYpJW
-         Gtp6DA80Np4mbBGtU8aZgbACszcLN4Okxk9a7plwGcGoj1Mg//lImZMOeqVSKQhlaNa/
-         1Vqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pBEXe/K5UkvKT1TccgP9MD9aIiSJbue62tXHdLCwf6E=;
-        b=BT4+QL4/hNYX9uqDGxh1bleJkQtg3jYpafOoF8Grrdm4LRIDB9sHkKp0Gg8uJaeHJz
-         sGoxITg/WLppDaEIrDcx7gApvBDHGKtIk2kyg1lWOvJRPVXOqTz85wBhwgpfhjW0NJa4
-         JT5pcuSCnHgam2bZ7Q6hvE4OyQQ6GMtj7PmYr76Juti0mExDGNx+vXW0VmkDA7AW9ml+
-         /uSxzo6a9/YpgKvCcIWqL0hkDZFZGbGZePJcleZmSJDC1b3PnsVYnsZ03FMAmEPSp3w0
-         mA+rb3EQ8h/pWvqmT3oJJWwlRgpmB2Jef7TfeMdZEFJ/oknRE2qhfcSrUQZAjIdyChMo
-         bIeQ==
-X-Gm-Message-State: AOAM533Tp5mNI8Mer8FWVJ3PvokhS6LTG/B1JBgd1kXXXQydt+WjOeDc
-        CY/pjyuUuZ+A0jLAnXi1v58=
-X-Google-Smtp-Source: ABdhPJw7xVJKUmTOaTrxub33Bv++1Pwvti6IPqc4cFZIVhSzQy6pmB3ziSl/ohdAYM+VtjYm5U8J1Q==
-X-Received: by 2002:a1c:141:: with SMTP id 62mr8241wmb.27.1628793900846;
-        Thu, 12 Aug 2021 11:45:00 -0700 (PDT)
-Received: from kwango.redhat.com (ip-94-112-171-183.net.upcbroadband.cz. [94.112.171.183])
-        by smtp.gmail.com with ESMTPSA id t16sm3912931wmi.13.2021.08.12.11.44.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Aug 2021 11:45:00 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 5.14-rc6
-Date:   Thu, 12 Aug 2021 20:44:09 +0200
-Message-Id: <20210812184409.8832-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
+        id S232960AbhHLUs3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 12 Aug 2021 16:48:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24892 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230110AbhHLUs3 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 12 Aug 2021 16:48:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628801283;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XaXJ+kisbU7RF44zBuHYJFOtJx6fm37DGb251FmYx3Q=;
+        b=NgzWg6t2j6NdfAt2wll6K4u94LPjP03Ik7bmcK1ZMdrTXt01gzRc+j/Q1DV4pJHGd3wIKG
+        cpC2M6rDiY4KsuNpdxmHL3+wXO68RKZCskaf2kMgZnhu58TSJmQ3NsRFvE0DQP0+5QLJxm
+        P0d7Cm4/ZgAYEsg28U3dXVH1p9NqLds=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-188-vrcMW8cdOh2glB2SgLT-hA-1; Thu, 12 Aug 2021 16:48:02 -0400
+X-MC-Unique: vrcMW8cdOh2glB2SgLT-hA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7D3A487D541;
+        Thu, 12 Aug 2021 20:48:00 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 158125D9D5;
+        Thu, 12 Aug 2021 20:47:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YRVHLu3OAwylCONm@casper.infradead.org>
+References: <YRVHLu3OAwylCONm@casper.infradead.org> <2408234.1628687271@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC][PATCH] netfs, afs, ceph: Use folios
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3308342.1628801274.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 12 Aug 2021 21:47:54 +0100
+Message-ID: <3308343.1628801274@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
+Matthew Wilcox <willy@infradead.org> wrote:
 
-The following changes since commit c500bee1c5b2f1d59b1081ac879d73268ab0ff17:
+> >  (*) Can page_endio() be split into two separate functions, one for re=
+ad
+> >      and one for write?  If seems a waste of time to conditionally swi=
+tch
+> >      between two different branches.
+> =
 
-  Linux 5.14-rc4 (2021-08-01 17:04:17 -0700)
+> At this point I'm thinking ...
+> =
 
-are available in the Git repository at:
+> static inline void folio_end_read(struct folio *folio, int err)
+> {
+> 	if (!err)
+> 		folio_set_uptodate(folio);
+> 	folio_unlock(folio);
+> }
+> =
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-5.14-rc6
+> Clearly the page isn't uptodate at this point, or ->readpage wouldn't've
+> been called.  So there's no need to clear it.  And PageError is
+> completely useless.
 
-for you to fetch changes up to 8434ffe71c874b9c4e184b88d25de98c2bf5fe3f:
+Seems reasonable.
 
-  ceph: take snap_empty_lock atomically with snaprealm refcount change (2021-08-04 19:20:29 +0200)
+> > -	*_page =3D page;
+> > +	*_page =3D &folio->page;
+> =
 
-----------------------------------------------------------------
-A patch to avoid a soft lockup in ceph_check_delayed_caps() from Luis
-and a reference handling fix from Jeff that should address some memory
-corruption reports in the snaprealm area.  Both marked for stable.
+> Can't do anything about this one; the write_begin API needs to be fixed.
 
-----------------------------------------------------------------
-Jeff Layton (1):
-      ceph: take snap_empty_lock atomically with snaprealm refcount change
+That's fine.  I expected things like this at this stage.
 
-Luis Henriques (1):
-      ceph: reduce contention in ceph_check_delayed_caps()
+> > @@ -174,40 +175,32 @@ static void afs_kill_pages(struct address_space =
+*mapping,
+> [...]
+> > +		folio_clear_uptodate(folio);
+> > +		folio_end_writeback(folio);
+> > +		folio_lock(folio);
+> > +		generic_error_remove_page(mapping, &folio->page);
+> > +		folio_unlock(folio);
+> > +		folio_put(folio);
+> =
 
- fs/ceph/caps.c       | 17 ++++++++++++++++-
- fs/ceph/mds_client.c | 25 ++++++++++++++++---------
- fs/ceph/snap.c       | 34 +++++++++++++++++-----------------
- fs/ceph/super.h      |  2 +-
- 4 files changed, 50 insertions(+), 28 deletions(-)
+> This one I'm entirely missing.  It's awkward.  I'll work on it.
+
+afs_kill_pages() is just a utility to end writeback, clear uptodate and do
+generic_error_remove_page() over a range of pages and afs_redirty_pages() =
+is a
+utility that to end writeback and redirty a range of pages - hence why I w=
+as
+thinking it might make sense to put them into common code.
+
+> > -			index +=3D thp_nr_pages(page);
+> > -			if (!pagevec_add(&pvec, page))
+> > +			index +=3D folio_nr_pages(folio);
+> > +			if (!pagevec_add(&pvec, &folio->page))
+> =
+
+> Pagevecs are also awkward.  I haven't quite figured out how to
+> transition them to folios.
+
+Maybe provide pagevec_add_folio(struct pagevec *, struct folio *)?
+
+> >  zero_out:
+> > -	zero_user_segments(page, 0, offset, offset + len, thp_size(page));
+> > +	zero_user_segments(&folio->page, 0, offset, offset + len, folio_size=
+(folio));
+> =
+
+> Yeah, that's ugly.
+
+Maybe:
+
+	folio_clear_around(folio, keep_from, keep_to);
+
+clearing the bits of the folio outside the specified section?
+
+David
+
