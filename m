@@ -2,126 +2,95 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B89783EB5ED
-	for <lists+ceph-devel@lfdr.de>; Fri, 13 Aug 2021 15:03:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EF083EB6FB
+	for <lists+ceph-devel@lfdr.de>; Fri, 13 Aug 2021 16:47:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240158AbhHMNDd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 13 Aug 2021 09:03:33 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:59900 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239515AbhHMNDd (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 13 Aug 2021 09:03:33 -0400
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 79E942232A;
-        Fri, 13 Aug 2021 13:03:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1628859785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        id S240875AbhHMOrz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 13 Aug 2021 10:47:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49153 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240865AbhHMOry (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 13 Aug 2021 10:47:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628866046;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding;
-        bh=0RpkuLKebk6EffdzQFe8t2/+G3/0hy/tufBIMMJPcCc=;
-        b=uLbXROHJXvBIRn8N6wOxyJuWtaUscIi8GdDZQfbDFQE9u03QwF4AqlXxMnrmdVNV81iggW
-        HLFHAnj/VWOAci190PBaxGjU2csM7wVX7xbl7sYyKqO+QCpx8/dhC+Ol/hNhiMwfZP6raT
-        9/2hS0IX6hPuPUCeWq+mE3X2i61dy+g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1628859785;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=0RpkuLKebk6EffdzQFe8t2/+G3/0hy/tufBIMMJPcCc=;
-        b=E96NVvDZpMgYBf1Q+z2rklIodRZBMPkMdBK83Ct9aVol0BM8PdLPtz858SWJO5injNVQDy
-        wdptOwUmWsKUqUDA==
-Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        bh=+F5e/QJCQvTQyfdm+mXX5RdrWpejQYPMUGSZ/zRGUYg=;
+        b=CKMdo5YDu7cPqnCz1ASWqonbejvQ36sM6+iwSHnyZrTmOX254+6KT5rOMJ/++9b7XrkeAs
+        rJTpDBCN6Xoe54e9mlueJkptLfHRMs3j6+6lBuR5fUj8qYOtxhUe+BAUVZaaQV8HLp0C9e
+        4B2s++AZcTwbBnRVRirx0IisIW/hpHQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-524-lV9q3wEuNu2HaooDE1H1AA-1; Fri, 13 Aug 2021 10:47:23 -0400
+X-MC-Unique: lV9q3wEuNu2HaooDE1H1AA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 36960137DE;
-        Fri, 13 Aug 2021 13:03:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap1.suse-dmz.suse.de with ESMTPSA
-        id WaZHColtFmFhegAAGKfGzw
-        (envelope-from <lhenriques@suse.de>); Fri, 13 Aug 2021 13:03:05 +0000
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 577537d7;
-        Fri, 13 Aug 2021 13:03:04 +0000 (UTC)
-Date:   Fri, 13 Aug 2021 14:03:04 +0100
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [fscrypt][RFC PATCH] ceph: don't allow changing layout on encrypted
- files/directories
-Message-ID: <YRZtiL+qo95vK0Nf@suse.de>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A77DC1008061;
+        Fri, 13 Aug 2021 14:47:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B9DC060853;
+        Fri, 13 Aug 2021 14:47:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] netfs: Fix READ/WRITE confusion when calling
+ iov_iter_xarray()
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     Jeff Layton <jlayton@kernel.org>, linux-cachefs@redhat.com,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        dhowells@redhat.com, linux-kernel@vger.kernel.org
+Date:   Fri, 13 Aug 2021 15:47:14 +0100
+Message-ID: <162886603464.3940407.3790841170414793899.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Encryption is currently only supported on files/directories with layouts
-where stripe_count=1.  Forbid changing layouts when encryption is involved.
+Fix netfs_clear_unread() to pass READ to iov_iter_xarray() instead of WRITE
+(the flag is about the operation accessing the buffer, not what sort of
+access it is doing to the buffer).
 
-Signed-off-by: Luis Henriques <lhenriques@suse.de>
+Fixes: 3d3c95046742 ("netfs: Provide readahead and readpage netfs helpers")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+cc: linux-cachefs@redhat.com
+cc: linux-afs@lists.infradead.org
+cc: ceph-devel@vger.kernel.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-nfs@vger.kernel.org
+cc: v9fs-developer@lists.sourceforge.net
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
+Link: https://lore.kernel.org/r/162729351325.813557.9242842205308443901.stgit@warthog.procyon.org.uk/
 ---
-Hi!
 
-While continuing looking into fscrypt, I realized we're not yet forbidding
-different layouts on encrypted files.  This patch tries to do just that.
+ fs/netfs/read_helper.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regarding the setxattr, I've also made a change [1] to the MDS code so that it
-also prevents layouts to be changed.  This should make the changes to
-ceph_sync_setxattr() redundant, but in practice it doesn't because if we encrypt
-a directory and immediately after that we change that directory layout, the MDS
-wouldn't yet have received the fscrypt_auth for that inode.  So... yeah, an
-alternative would be to propagate the fscrypt context immediately after
-encrypting a directory.
-
-[1] https://github.com/luis-henrix/ceph/commit/601488ae798ecfa5ec81677d1ced02f7dd42aa10
-
-Cheers,
---
-Luis
-
- fs/ceph/ioctl.c | 4 ++++
- fs/ceph/xattr.c | 6 ++++++
- 2 files changed, 10 insertions(+)
-
-diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
-index 477ecc667aee..42abfc564301 100644
---- a/fs/ceph/ioctl.c
-+++ b/fs/ceph/ioctl.c
-@@ -294,6 +294,10 @@ static long ceph_set_encryption_policy(struct file *file, unsigned long arg)
- 	struct inode *inode = file_inode(file);
- 	struct ceph_inode_info *ci = ceph_inode(inode);
+diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+index 2ad91f9e2a45..9320a42dfaf9 100644
+--- a/fs/netfs/read_helper.c
++++ b/fs/netfs/read_helper.c
+@@ -150,7 +150,7 @@ static void netfs_clear_unread(struct netfs_read_subrequest *subreq)
+ {
+ 	struct iov_iter iter;
  
-+	/* encrypted directories can't have striped layout */
-+	if (ci->i_layout.stripe_count > 1)
-+		return -EOPNOTSUPP;
-+
- 	ret = vet_mds_for_fscrypt(file);
- 	if (ret)
- 		return ret;
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index b175b3029dc0..7921cb34900c 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -1051,6 +1051,12 @@ static int ceph_sync_setxattr(struct inode *inode, const char *name,
- 	int op = CEPH_MDS_OP_SETXATTR;
- 	int err;
- 
-+	/* encrypted directories/files can't have their layout changed */
-+	if (IS_ENCRYPTED(inode) &&
-+	    (!strncmp(name, "ceph.file.layout", 16) ||
-+	     !strncmp(name, "ceph.dir.layout", 15)))
-+		return -EOPNOTSUPP;
-+
- 	if (size > 0) {
- 		/* copy value into pagelist */
- 		pagelist = ceph_pagelist_alloc(GFP_NOFS);
+-	iov_iter_xarray(&iter, WRITE, &subreq->rreq->mapping->i_pages,
++	iov_iter_xarray(&iter, READ, &subreq->rreq->mapping->i_pages,
+ 			subreq->start + subreq->transferred,
+ 			subreq->len   - subreq->transferred);
+ 	iov_iter_zero(iov_iter_count(&iter), &iter);
 
-Cheers,
---
-Luís
+
