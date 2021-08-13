@@ -2,34 +2,46 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4663D3EB103
-	for <lists+ceph-devel@lfdr.de>; Fri, 13 Aug 2021 09:02:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 979293EB276
+	for <lists+ceph-devel@lfdr.de>; Fri, 13 Aug 2021 10:17:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239065AbhHMHCY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 13 Aug 2021 03:02:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46850 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238750AbhHMHCX (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 13 Aug 2021 03:02:23 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86A3DC061756;
-        Fri, 13 Aug 2021 00:01:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=onKtoiz9ihWGwge0kQ+Ja7KXdN4ndzIdwSWxHzXriMk=; b=WlJYfTlr2mBSve0pr1f8L9Px2X
-        h9ovcQELktRmcgcGPXPW6HdsvdabSAcqCDWWLLHYjSiezpT3caLaHOx+8Zh9xdjtWS8JD5RrCY3TD
-        V55SQEtcAk2svYDD85ptBtrucbdiRvUiZSeWPChx5aVBvpwBtXiLvuPS1BFvkUUtmlCb2vI1IfOeQ
-        4HLvrseYu1O9U4tivU3D34JRp/vie80XXJlnXxxDuatuyn/+tQqBY0tJJNsidgH70oAOpiyV4RE+A
-        1zT2ZEnyhYfXtg1qCHYDnFc5yKTT85C70GVuP9/+IFNw4YoR0J6vYpuBTNLgNj/iI9ulbcofv4Kmj
-        AOSycLbQ==;
-Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mER4k-00FQ2P-O5; Fri, 13 Aug 2021 06:54:29 +0000
-Date:   Fri, 13 Aug 2021 07:53:54 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     David Howells <dhowells@redhat.com>,
+        id S239809AbhHMISH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 13 Aug 2021 04:18:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:34793 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239805AbhHMISG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 13 Aug 2021 04:18:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1628842660;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sqXqJy/S48z48l2Ks/2UHAgqYhB0LstlNS9q6S5x3T4=;
+        b=EcWEYppFlWhlqurpLllOc1EAgABk5NNDXTxu042m6NpyruxxxeIT7sSIXTPV7VXGRLUNp9
+        rdLmE0/4baqVA9UbUVfH01/+qzoAXioCD3p5SSux/WGUO+jGwbsSKsXDxaSZXY8tFBLLNa
+        GoEcCZne7G2hZG74Pulwv3e4LzkcKDQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-178-SIO_k7EWOEKloWx3m5ZmWw-1; Fri, 13 Aug 2021 04:17:36 -0400
+X-MC-Unique: SIO_k7EWOEKloWx3m5ZmWw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4F7761008061;
+        Fri, 13 Aug 2021 08:17:35 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 51BD95C3E0;
+        Fri, 13 Aug 2021 08:17:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YRYXAii0zZ0SzDt+@infradead.org>
+References: <YRYXAii0zZ0SzDt+@infradead.org> <2408234.1628687271@warthog.procyon.org.uk> <YRVHLu3OAwylCONm@casper.infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
         Jeff Layton <jlayton@kernel.org>,
         Marc Dionne <marc.dionne@auristor.com>,
         Ilya Dryomov <idryomov@gmail.com>,
@@ -37,49 +49,25 @@ Cc:     David Howells <dhowells@redhat.com>,
         linux-cachefs@redhat.com, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
 Subject: Re: [RFC][PATCH] netfs, afs, ceph: Use folios
-Message-ID: <YRYXAii0zZ0SzDt+@infradead.org>
-References: <2408234.1628687271@warthog.procyon.org.uk>
- <YRVHLu3OAwylCONm@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YRVHLu3OAwylCONm@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3449253.1628842648.1@warthog.procyon.org.uk>
+Date:   Fri, 13 Aug 2021 09:17:28 +0100
+Message-ID: <3449254.1628842648@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Aug 12, 2021 at 05:07:10PM +0100, Matthew Wilcox wrote:
-> On Wed, Aug 11, 2021 at 02:07:51PM +0100, David Howells wrote:
-> >  (*) Can page_endio() be split into two separate functions, one for read
-> >      and one for write?  If seems a waste of time to conditionally switch
-> >      between two different branches.
-> 
-> At this point I'm thinking ...
-> 
-> static inline void folio_end_read(struct folio *folio, int err)
-> {
-> 	if (!err)
-> 		folio_set_uptodate(folio);
-> 	folio_unlock(folio);
-> }
-> 
-> Clearly the page isn't uptodate at this point, or ->readpage wouldn't've
-> been called.  So there's no need to clear it.  And PageError is
-> completely useless.
+Christoph Hellwig <hch@infradead.org> wrote:
 
-Just opencoding the above makes a lot more sense.  No need to turn err
-into some acceptable form, and trivial to follow.  Not all little
-convenience helpers are good.
+> It actually needs to go away.  There's not real good use for that level
+> of API. netfs should just open code the releavant parts of
+> generic_perform_write, similar to iomap.
 
-> >  	}
-> >  
-> > -	*_page = page;
-> > +	*_page = &folio->page;
-> 
-> Can't do anything about this one; the write_begin API needs to be fixed.
+I'm working on doing that in netfs lib, with the intent of sharing it between
+at least afs, ceph, cifs and 9p.  It reduces the cost of accessing fscache
+for large writes that span multiple pages.
 
-It actually needs to go away.  There's not real good use for that level
-of API. netfs should just open code the releavant parts of
-generic_perform_write, similar to iomap.
+David
 
