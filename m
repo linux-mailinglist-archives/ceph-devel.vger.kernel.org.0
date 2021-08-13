@@ -2,95 +2,67 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EF083EB6FB
-	for <lists+ceph-devel@lfdr.de>; Fri, 13 Aug 2021 16:47:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F0BA3EBE99
+	for <lists+ceph-devel@lfdr.de>; Sat, 14 Aug 2021 01:15:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240875AbhHMOrz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 13 Aug 2021 10:47:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49153 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240865AbhHMOry (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 13 Aug 2021 10:47:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1628866046;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=+F5e/QJCQvTQyfdm+mXX5RdrWpejQYPMUGSZ/zRGUYg=;
-        b=CKMdo5YDu7cPqnCz1ASWqonbejvQ36sM6+iwSHnyZrTmOX254+6KT5rOMJ/++9b7XrkeAs
-        rJTpDBCN6Xoe54e9mlueJkptLfHRMs3j6+6lBuR5fUj8qYOtxhUe+BAUVZaaQV8HLp0C9e
-        4B2s++AZcTwbBnRVRirx0IisIW/hpHQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-524-lV9q3wEuNu2HaooDE1H1AA-1; Fri, 13 Aug 2021 10:47:23 -0400
-X-MC-Unique: lV9q3wEuNu2HaooDE1H1AA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A77DC1008061;
-        Fri, 13 Aug 2021 14:47:21 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.22.32.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B9DC060853;
-        Fri, 13 Aug 2021 14:47:15 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] netfs: Fix READ/WRITE confusion when calling
- iov_iter_xarray()
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     Jeff Layton <jlayton@kernel.org>, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        dhowells@redhat.com, linux-kernel@vger.kernel.org
-Date:   Fri, 13 Aug 2021 15:47:14 +0100
-Message-ID: <162886603464.3940407.3790841170414793899.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        id S235425AbhHMXQF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 13 Aug 2021 19:16:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44822 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235029AbhHMXQE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 13 Aug 2021 19:16:04 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39093C061756;
+        Fri, 13 Aug 2021 16:15:37 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id h13so15344653wrp.1;
+        Fri, 13 Aug 2021 16:15:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:from:mime-version:content-transfer-encoding
+         :content-description:subject:to:date:reply-to;
+        bh=5NTJSky9UX3JbuB9riY3wCYfXDpCwy2c7hzO0kF4AHA=;
+        b=m3kaznv5RSK1BWuewGhPniRCVZRVtmLhiMQc82NPgV1lbpig4IpWDqLHfRFQWep4uV
+         u9USJqn0i117kVuZbpQRiaKoPduf5vBv+5n2XCJ1Zi/PiOCPtxBqSNRCAQP5kaQ2mAsU
+         Y5bZ9l/Ywh28JmGvLJoxqM6Ul1ffDV3u/hGNUkAkuLBi6/5lvfo3cx5uV4E7YqFcrVoD
+         P473X5jZVfA8ng+UmAQBhFJnNm0tghQFe9GY6EPJCAtfH7J6uWDWXNiLZGtU9MevCUW5
+         DRowXfKzl2fu1GqCIZqK9osnArGXXSweMNTjsEvEIs/LZ9N5qS/xKejKJQ4am+tM4765
+         6D3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:from:mime-version
+         :content-transfer-encoding:content-description:subject:to:date
+         :reply-to;
+        bh=5NTJSky9UX3JbuB9riY3wCYfXDpCwy2c7hzO0kF4AHA=;
+        b=kY2WU6JKkqW14/hBfsBCO7KzhB6k0DCzrPgFmhWabjMHMoS/ln/38s8LS3Mdv8KAuy
+         kzWZOK1ARLp6s5mstu+MsdF9HlSqkhthDUBjLpmH67OIjnBrMPiyKW5xawtISRBhgZEB
+         pMZzDP/6QFuOpd/MeuLg6QCUCqcCsGRdTh2K9eqgm0Ii+U1TnmkgYN36leSoWdOEsGCz
+         SD7gBL3LFRPdgtrx5BsxErDq4uAt1ywl5PF5jlVRoCVo9Xh9EWVdxiY7jA/TDizkO53y
+         jTxBxjQt27OeiODaL9uhzzIZwE+YNmAMUFp0gMzxjte/OYqzCZ7w/leIEHdi2pFL0vwC
+         CxPQ==
+X-Gm-Message-State: AOAM531e/pX1DNTNWQnXBiHUtkds4/4E7wKbDpuVn+KyVouNLjCyJymD
+        2nvav++5bEmW+kzUx6qnx84=
+X-Google-Smtp-Source: ABdhPJzo+/68/RbgwmMkWN69xSAJ9ge9jJs+Ht3ETckBqMN9U4gb0ZjAmsERXteo+OUcF7kI6kbhSQ==
+X-Received: by 2002:a5d:45c2:: with SMTP id b2mr5463075wrs.188.1628896535899;
+        Fri, 13 Aug 2021 16:15:35 -0700 (PDT)
+Received: from [192.168.1.70] ([102.64.163.193])
+        by smtp.gmail.com with ESMTPSA id a18sm2566962wmg.43.2021.08.13.16.15.31
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Fri, 13 Aug 2021 16:15:35 -0700 (PDT)
+Message-ID: <6116fd17.1c69fb81.4edbd.f5df@mx.google.com>
+From:   Vanina curth <akoelekouevidjin95@gmail.com>
+X-Google-Original-From: Vanina  curth
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: Dear
+To:     Recipients <Vanina@vger.kernel.org>
+Date:   Fri, 13 Aug 2021 23:15:10 +0000
+Reply-To: curtisvani9008@gmail.com
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Fix netfs_clear_unread() to pass READ to iov_iter_xarray() instead of WRITE
-(the flag is about the operation accessing the buffer, not what sort of
-access it is doing to the buffer).
-
-Fixes: 3d3c95046742 ("netfs: Provide readahead and readpage netfs helpers")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-cc: linux-cachefs@redhat.com
-cc: linux-afs@lists.infradead.org
-cc: ceph-devel@vger.kernel.org
-cc: linux-cifs@vger.kernel.org
-cc: linux-nfs@vger.kernel.org
-cc: v9fs-developer@lists.sourceforge.net
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-mm@kvack.org
-Link: https://lore.kernel.org/r/162729351325.813557.9242842205308443901.stgit@warthog.procyon.org.uk/
----
-
- fs/netfs/read_helper.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-index 2ad91f9e2a45..9320a42dfaf9 100644
---- a/fs/netfs/read_helper.c
-+++ b/fs/netfs/read_helper.c
-@@ -150,7 +150,7 @@ static void netfs_clear_unread(struct netfs_read_subrequest *subreq)
- {
- 	struct iov_iter iter;
- 
--	iov_iter_xarray(&iter, WRITE, &subreq->rreq->mapping->i_pages,
-+	iov_iter_xarray(&iter, READ, &subreq->rreq->mapping->i_pages,
- 			subreq->start + subreq->transferred,
- 			subreq->len   - subreq->transferred);
- 	iov_iter_zero(iov_iter_count(&iter), &iter);
-
-
+How are you? I'm Vanina. I'm interested to know you and I would like to kno=
+w more about you and establish relationship with you. i will wait for your =
+response. thank you.
