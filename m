@@ -2,86 +2,126 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33B6A3EB5CB
-	for <lists+ceph-devel@lfdr.de>; Fri, 13 Aug 2021 14:53:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B89783EB5ED
+	for <lists+ceph-devel@lfdr.de>; Fri, 13 Aug 2021 15:03:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240458AbhHMMyK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 13 Aug 2021 08:54:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33688 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233416AbhHMMyJ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 13 Aug 2021 08:54:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 210C560F91;
-        Fri, 13 Aug 2021 12:53:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628859223;
-        bh=xpS807ZsmUqY4wbbSw6MbqCagTEFVPHlwkp24KlCBRw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=L4OKBlfk2A+1+BR3+zqIganxq6pQ7QNQEY+R8SyOMmwSQOciazevmv1RnQDKHCZTZ
-         IODAYTRzF0UxGu6wAbhD0TvzN8IWvSh/Y2Mwczfu85PxU1qn2vMPwEG3pLrCdfhEqk
-         CfHaIp15QLs20Gt4BFGXqhfRw6SArSp+EmjBj1FkvMjodFVxmS7ZQ5exbtt591JNc5
-         Su1hnJ97Dx+LYUOarYiH4ocoKxLxBVD/T4x7mdeBd8gX4ZmSp340dDk0PcChyd6LPG
-         JvFuDfvJrq8c+DxYXmE83b4xf/3D9H7MroKFkp793q8lfyqc7cX0Q5wD8MeLPNAaW4
-         2j7Idwp4gNBEQ==
-Message-ID: <a786d17996459d1ed5530d7f193013c04d183e8c.camel@kernel.org>
-Subject: Re: [PATCH] netfs: Fix READ/WRITE confusion when calling
- iov_iter_xarray()
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
-Cc:     linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 13 Aug 2021 08:53:41 -0400
-In-Reply-To: <162729351325.813557.9242842205308443901.stgit@warthog.procyon.org.uk>
-References: <162729351325.813557.9242842205308443901.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
+        id S240158AbhHMNDd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 13 Aug 2021 09:03:33 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:59900 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239515AbhHMNDd (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 13 Aug 2021 09:03:33 -0400
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 79E942232A;
+        Fri, 13 Aug 2021 13:03:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1628859785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=0RpkuLKebk6EffdzQFe8t2/+G3/0hy/tufBIMMJPcCc=;
+        b=uLbXROHJXvBIRn8N6wOxyJuWtaUscIi8GdDZQfbDFQE9u03QwF4AqlXxMnrmdVNV81iggW
+        HLFHAnj/VWOAci190PBaxGjU2csM7wVX7xbl7sYyKqO+QCpx8/dhC+Ol/hNhiMwfZP6raT
+        9/2hS0IX6hPuPUCeWq+mE3X2i61dy+g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1628859785;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=0RpkuLKebk6EffdzQFe8t2/+G3/0hy/tufBIMMJPcCc=;
+        b=E96NVvDZpMgYBf1Q+z2rklIodRZBMPkMdBK83Ct9aVol0BM8PdLPtz858SWJO5injNVQDy
+        wdptOwUmWsKUqUDA==
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 36960137DE;
+        Fri, 13 Aug 2021 13:03:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap1.suse-dmz.suse.de with ESMTPSA
+        id WaZHColtFmFhegAAGKfGzw
+        (envelope-from <lhenriques@suse.de>); Fri, 13 Aug 2021 13:03:05 +0000
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 577537d7;
+        Fri, 13 Aug 2021 13:03:04 +0000 (UTC)
+Date:   Fri, 13 Aug 2021 14:03:04 +0100
+From:   Luis Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [fscrypt][RFC PATCH] ceph: don't allow changing layout on encrypted
+ files/directories
+Message-ID: <YRZtiL+qo95vK0Nf@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-07-26 at 10:58 +0100, David Howells wrote:
-> Fix netfs_clear_unread() to pass READ to iov_iter_xarray() instead of WRITE
-> (the flag is about the operation accessing the buffer, not what sort of
-> access it is doing to the buffer).
-> 
-> Fixes: 3d3c95046742 ("netfs: Provide readahead and readpage netfs helpers")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-cachefs@redhat.com
-> cc: linux-afs@lists.infradead.org
-> cc: ceph-devel@vger.kernel.org
-> cc: linux-cifs@vger.kernel.org
-> cc: linux-nfs@vger.kernel.org
-> cc: v9fs-developer@lists.sourceforge.net
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-mm@kvack.org
-> ---
-> 
->  fs/netfs/read_helper.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-> index 0b6cd3b8734c..994ec22d4040 100644
-> --- a/fs/netfs/read_helper.c
-> +++ b/fs/netfs/read_helper.c
-> @@ -150,7 +150,7 @@ static void netfs_clear_unread(struct netfs_read_subrequest *subreq)
->  {
->  	struct iov_iter iter;
->  
-> -	iov_iter_xarray(&iter, WRITE, &subreq->rreq->mapping->i_pages,
-> +	iov_iter_xarray(&iter, READ, &subreq->rreq->mapping->i_pages,
->  			subreq->start + subreq->transferred,
->  			subreq->len   - subreq->transferred);
->  	iov_iter_zero(iov_iter_count(&iter), &iter);
-> 
-> 
+Encryption is currently only supported on files/directories with layouts
+where stripe_count=1.  Forbid changing layouts when encryption is involved.
 
-That's better!
+Signed-off-by: Luis Henriques <lhenriques@suse.de>
+---
+Hi!
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+While continuing looking into fscrypt, I realized we're not yet forbidding
+different layouts on encrypted files.  This patch tries to do just that.
 
+Regarding the setxattr, I've also made a change [1] to the MDS code so that it
+also prevents layouts to be changed.  This should make the changes to
+ceph_sync_setxattr() redundant, but in practice it doesn't because if we encrypt
+a directory and immediately after that we change that directory layout, the MDS
+wouldn't yet have received the fscrypt_auth for that inode.  So... yeah, an
+alternative would be to propagate the fscrypt context immediately after
+encrypting a directory.
+
+[1] https://github.com/luis-henrix/ceph/commit/601488ae798ecfa5ec81677d1ced02f7dd42aa10
+
+Cheers,
+--
+Luis
+
+ fs/ceph/ioctl.c | 4 ++++
+ fs/ceph/xattr.c | 6 ++++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+index 477ecc667aee..42abfc564301 100644
+--- a/fs/ceph/ioctl.c
++++ b/fs/ceph/ioctl.c
+@@ -294,6 +294,10 @@ static long ceph_set_encryption_policy(struct file *file, unsigned long arg)
+ 	struct inode *inode = file_inode(file);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 
++	/* encrypted directories can't have striped layout */
++	if (ci->i_layout.stripe_count > 1)
++		return -EOPNOTSUPP;
++
+ 	ret = vet_mds_for_fscrypt(file);
+ 	if (ret)
+ 		return ret;
+diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+index b175b3029dc0..7921cb34900c 100644
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -1051,6 +1051,12 @@ static int ceph_sync_setxattr(struct inode *inode, const char *name,
+ 	int op = CEPH_MDS_OP_SETXATTR;
+ 	int err;
+ 
++	/* encrypted directories/files can't have their layout changed */
++	if (IS_ENCRYPTED(inode) &&
++	    (!strncmp(name, "ceph.file.layout", 16) ||
++	     !strncmp(name, "ceph.dir.layout", 15)))
++		return -EOPNOTSUPP;
++
+ 	if (size > 0) {
+ 		/* copy value into pagelist */
+ 		pagelist = ceph_pagelist_alloc(GFP_NOFS);
+
+Cheers,
+--
+Luís
