@@ -2,97 +2,178 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FF143EDB44
-	for <lists+ceph-devel@lfdr.de>; Mon, 16 Aug 2021 18:51:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 372203EDCA1
+	for <lists+ceph-devel@lfdr.de>; Mon, 16 Aug 2021 19:52:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230225AbhHPQvu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 16 Aug 2021 12:51:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41700 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230286AbhHPQvt (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 Aug 2021 12:51:49 -0400
-Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35F72C0617AF
-        for <ceph-devel@vger.kernel.org>; Mon, 16 Aug 2021 09:51:16 -0700 (PDT)
-Received: by mail-oi1-x232.google.com with SMTP id n27so2967335oij.0
-        for <ceph-devel@vger.kernel.org>; Mon, 16 Aug 2021 09:51:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lkHKKxx6E91blWpox1bXj/LIePIAFS6deUe/aal8ts0=;
-        b=2M7PsQmoW0m68H0tIVJvrAROv1UoWp/uy48nnzobRrc03mo4J/lqcPLEQEF1kpJUHw
-         HQBa4gX5fuTsQap76AZD/5O7VV8iT7vusfHhUAUKN78fP0BZSnTbz5bFFrpuEHica0IG
-         vNOnPFWucI7QTNpQA0kxldWWTEaok+vCXtpMF9OBhganoAYTPaU0jWc3pk2ipYfiP3qw
-         KJv7dYM9ZKsD48MEvHmMnjHIhntqyqYB/aLy5wa1Nk3VqVwfnK6sD7DQ+glML2iy7RW5
-         8bKOFtNVZE+7XBNUsAmXKRXSN7yXiZDUd4eqzd5A6g+KiYc52tKP/BJj3qVXfxUmmZ/Y
-         b/Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lkHKKxx6E91blWpox1bXj/LIePIAFS6deUe/aal8ts0=;
-        b=LijtEE5KL7P5468lgc1oLVzUJ+67j0T0d4ZVRaYnT4So/oPCFDjvjr9Xc6BsNPE0O/
-         4FjK02jVg/wfoXj8zAHTaGkm1fTz6iWsk5DHoCQZXKm3IHS5ijT7wmU7qULua8FY6W5k
-         6LQbCEgNB+b1ytyGwPxNTUggYQnIgJ9Jn6fG3hMDbxezoKzfVP5tMa/pJUNuK1yexJTO
-         UXeTtYWD27NE+aMvWXtSaYVIBuP3cvb3NM2dLUiIPRYYMe5lAqXI78k5C1NIHGRGNsft
-         sxxNA99VsRHJLYEzwUlNV+88TSDcXWmoqioApRf10+ZA2Dm+v/Jw5wgSgQ54Yp6qm0rj
-         4Clw==
-X-Gm-Message-State: AOAM530XzjBg/L5mRNJY2z4v0RRWSfMP4jh2KQZ99f5ZDHNXwoopziEO
-        MFDJ2l7xioAmoAcONAfNtK7Vcg==
-X-Google-Smtp-Source: ABdhPJwPiJZucbHV+gTb5R7I/kfPLblHKKXb+EIub7hcvBOP41sFKxi/Q6epHu0YRXyVvO62JSl/PA==
-X-Received: by 2002:a54:4619:: with SMTP id p25mr42850oip.5.1629132675579;
-        Mon, 16 Aug 2021 09:51:15 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id u18sm2018498ooi.40.2021.08.16.09.51.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Aug 2021 09:51:15 -0700 (PDT)
-Subject: Re: add a bvec_virt helper
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Geoff Levand <geoff@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Song Liu <song@kernel.org>, Mike Snitzer <snitzer@redhat.com>,
-        Coly Li <colyli@suse.de>, Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-References: <20210804095634.460779-1-hch@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <4e321dab-188d-ca0a-a98c-4a587e7b5f27@kernel.dk>
-Date:   Mon, 16 Aug 2021 10:51:13 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S232183AbhHPRx0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 16 Aug 2021 13:53:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33146 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229590AbhHPRx0 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 16 Aug 2021 13:53:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1A9DC60E52;
+        Mon, 16 Aug 2021 17:52:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629136374;
+        bh=jR6WhEAjfImq2CbCdzAwitEJSHS3ATOzNZYG0gC2HsM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=RYD1B/6Qwg6Awm+buWVdysbMX5DaFiURFwmL5rrGVh7mLir7H8mIi4XuZMkOd3WL1
+         pm/MBCJ9/eQ0XRnmS2byGxXkxf1H6VeW/S8W6NzENAzsv194TyvUzcdfHFUK8uOEhr
+         pXVqfHpjvi/IqyPfdzB8CJt96/JGBvebsV5KTq0ivsv5qh4Nu3XLsJxSchysukvlpI
+         GbHrwgDX3PHb3sjMmA/shLwXpEpaPMVRDXq1akZVEcTw6SHX9bsjW3yDuvvcDMZxdl
+         T7flJ3cF46AdtLS2s2HSGMt5yOIV/7XWxm6M1Vk7BX79g7riAUEamICFfMRfwSnWEz
+         FkM3zGufx69Yg==
+Message-ID: <62cb9a37a4a28b8a68504534f7b4bdedbca819eb.camel@kernel.org>
+Subject: Re: [fscrypt][RFC PATCH] ceph: don't allow changing layout on
+ encrypted files/directories
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luis Henriques <lhenriques@suse.de>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 16 Aug 2021 13:52:53 -0400
+In-Reply-To: <87lf51tm0l.fsf@suse.de>
+References: <YRZtiL+qo95vK0Nf@suse.de>
+         <e07e5f52bf73c0a9ef1441295f5ff42753d3e29a.camel@kernel.org>
+         <87pmudtsho.fsf@suse.de>
+         <1b55600eb096ac806ccd43c93aa0230a8cc46283.camel@kernel.org>
+         <87lf51tm0l.fsf@suse.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
 MIME-Version: 1.0
-In-Reply-To: <20210804095634.460779-1-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 8/4/21 3:56 AM, Christoph Hellwig wrote:
-> Hi Jens,
+On Mon, 2021-08-16 at 17:03 +0100, Luis Henriques wrote:
+> Jeff Layton <jlayton@kernel.org> writes:
 > 
-> this series adds a bvec_virt helper to return the virtual address of the
-> data in bvec to replace the open coded calculation, and as a reminder
-> that generall bio/bvec data can be in high memory unless it is caller
-> controller or in an architecture specific driver where highmem is
-> impossible.
+> > On Mon, 2021-08-16 at 14:43 +0100, Luis Henriques wrote:
+> > > Jeff Layton <jlayton@kernel.org> writes:
+> > > 
+> > > > On Fri, 2021-08-13 at 14:03 +0100, Luis Henriques wrote:
+> > > > > Encryption is currently only supported on files/directories with layouts
+> > > > > where stripe_count=1.  Forbid changing layouts when encryption is involved.
+> > > > > 
+> > > > > Signed-off-by: Luis Henriques <lhenriques@suse.de>
+> > > > > ---
+> > > > > Hi!
+> > > > > 
+> > > > > While continuing looking into fscrypt, I realized we're not yet forbidding
+> > > > > different layouts on encrypted files.  This patch tries to do just that.
+> > > > > 
+> > > > > Regarding the setxattr, I've also made a change [1] to the MDS code so that it
+> > > > > also prevents layouts to be changed.  This should make the changes to
+> > > > > ceph_sync_setxattr() redundant, but in practice it doesn't because if we encrypt
+> > > > > a directory and immediately after that we change that directory layout, the MDS
+> > > > > wouldn't yet have received the fscrypt_auth for that inode.  So... yeah, an
+> > > > > alternative would be to propagate the fscrypt context immediately after
+> > > > > encrypting a directory.
+> > > > > 
+> > > > > [1] https://github.com/luis-henrix/ceph/commit/601488ae798ecfa5ec81677d1ced02f7dd42aa10
+> > > > > 
+> > > > > Cheers,
+> > > > > --
+> > > > > Luis
+> > > > > 
+> > > > >  fs/ceph/ioctl.c | 4 ++++
+> > > > >  fs/ceph/xattr.c | 6 ++++++
+> > > > >  2 files changed, 10 insertions(+)
+> > > > > 
+> > > > > diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+> > > > > index 477ecc667aee..42abfc564301 100644
+> > > > > --- a/fs/ceph/ioctl.c
+> > > > > +++ b/fs/ceph/ioctl.c
+> > > > > @@ -294,6 +294,10 @@ static long ceph_set_encryption_policy(struct file *file, unsigned long arg)
+> > > > >  	struct inode *inode = file_inode(file);
+> > > > >  	struct ceph_inode_info *ci = ceph_inode(inode);
+> > > > >  
+> > > > > +	/* encrypted directories can't have striped layout */
+> > > > > +	if (ci->i_layout.stripe_count > 1)
+> > > > > +		return -EOPNOTSUPP;
+> > > > > +
+> > > > 
+> > > > Yes, I've been needing to add that for a while. I'm not sure EOPNOTSUPP
+> > > > is the right error code though. Maybe EINVAL instead?
+> > > > 
+> > > 
+> > > Right, I had that initially and changed it after a long indecision.  But
+> > > yeah, I've no strong opinion either way.
+> > > 
+> > 
+> > It's a judgement call, really...
+> > 
+> > > > 
+> > > > >  	ret = vet_mds_for_fscrypt(file);
+> > > > >  	if (ret)
+> > > > >  		return ret;
+> > > > > diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> > > > > index b175b3029dc0..7921cb34900c 100644
+> > > > > --- a/fs/ceph/xattr.c
+> > > > > +++ b/fs/ceph/xattr.c
+> > > > > @@ -1051,6 +1051,12 @@ static int ceph_sync_setxattr(struct inode *inode, const char *name,
+> > > > >  	int op = CEPH_MDS_OP_SETXATTR;
+> > > > >  	int err;
+> > > > >  
+> > > > > +	/* encrypted directories/files can't have their layout changed */
+> > > > > +	if (IS_ENCRYPTED(inode) &&
+> > > > > +	    (!strncmp(name, "ceph.file.layout", 16) ||
+> > > > > +	     !strncmp(name, "ceph.dir.layout", 15)))
+> > > > > +		return -EOPNOTSUPP;
+> > > > > +
+> > > > 
+> > > > Yuck.
+> > > 
+> > > Agreed!
+> > > 
+> > > > What might be nicer is to just make ceph_vxattrcb_layout* return an
+> > > > error when the inode is encrypted? You can return negative error codes
+> > > > from the ->getxattr_cb ops, and that's probably the better place to
+> > > > check for this.
+> > > 
+> > > I'm not sure I understand your suggestion.  This is on the SETXATTR path,
+> > > so we'll need to block attempts to send this operation to the MDS.
+> > > 
+> > 
+> > Doh! You're correct -- I was thinking about getxattr, but setxattr
+> > doesn't have the same ops vectors. We could add a new option to vet
+> > setxattr requests locally, but that might not be sufficient actually...
+> > 
+> > > An alternative would be to do this (return an error) on the MDS side, but
+> > > this would mean that we should also send the fscrypt fields to the MDS
+> > > because it may may not know yet that the inode is encrypted.  Which could
+> > > be the correct thing to do BTW.  Although I don't think client B could
+> > > concurrently change the layout of a directory that client A just set as
+> > > encrypted without client A sending that information to the MDS first...
+> > > 
+> > 
+> > Now that I think about it some more, we probably need to let the MDS vet
+> > these requests.
+> 
+> Sure, and that's what I tried to do with the MDS patch in [1].  I'm not
+> confident that's safe enough, although I _think_ the case you describe:
+> 
+>  client A                             client B
+>                                       mkdir XYZ
+>  lookup inode XYZ
+>  setxattr (set layout)                encrypt XYZ
+> 
+> should be protected with the right caps + MDS locks.  But I'll go look
+> closer because I *know* I am still missing something.
+> 
+> [1] https://github.com/luis-henrix/ceph/commit/601488ae798ecfa5ec81677d1ced02f7dd42aa10
+> 
+> Cheers,
 
-Applied, thanks.
+Yep, that's basically what I was thinking.
 
+As I look again, I think we have a similar ToC/ToU race in the
+ceph_set_encryption_policy part of the patch too. That layout check is
+done without any locking or caps held. I think we could end up with a
+similar race there too, where another task or client changes the layout
+just after we've checked it.
+
+It's not clear to me what caps we need to hold to ensure that the layout
+remains stable. I guess I need to go stare at the MDS code some more...
 -- 
-Jens Axboe
+Jeff Layton <jlayton@kernel.org>
 
