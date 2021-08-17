@@ -2,126 +2,216 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 654743EEEF2
-	for <lists+ceph-devel@lfdr.de>; Tue, 17 Aug 2021 17:09:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 169363EF010
+	for <lists+ceph-devel@lfdr.de>; Tue, 17 Aug 2021 18:18:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238131AbhHQPKH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 17 Aug 2021 11:10:07 -0400
-Received: from llsc497-a17.servidoresdns.net ([82.223.190.48]:42188 "EHLO
-        llsc497-a17.servidoresdns.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237052AbhHQPKH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 17 Aug 2021 11:10:07 -0400
-X-Greylist: delayed 472 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Aug 2021 11:10:07 EDT
-Received: from [192.168.43.50] (unknown [2.140.11.83])
-        by llsc497-a17.servidoresdns.net (Postfix) with ESMTPA id 4GpvPZ3p6Dz2t6r;
-        Tue, 17 Aug 2021 17:01:38 +0200 (CEST)
-From:   =?UTF-8?Q?Ignacio_Garc=c3=ada?= <igarcia@livemed-spain.com>
-To:     ceph-devel@vger.kernel.org, ceph-users@lists.ceph.com
-Subject: hard disk failure monitor issue: ceph down, please help
-Message-ID: <79c7cf51-64fb-d94e-9950-53c5c1580e53@livemed-spain.com>
-Date:   Tue, 17 Aug 2021 17:01:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S229721AbhHQQTV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 17 Aug 2021 12:19:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38966 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229518AbhHQQTV (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 17 Aug 2021 12:19:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9C7A760FBF;
+        Tue, 17 Aug 2021 16:18:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629217128;
+        bh=T6BUWZPJNbGb8CuALS6nGvEArvcpomHIpIRF5kgIHf4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=MAp9RK1ZPTZE4WxRpAORll2ebxLDxNAV6gptMnKns7JJP+8dL3UVKsAm/nwFvEugT
+         cp//dOYhi3TBaQXIL6OF/RU8pxMrp/uRIt3Plo3Q0F9fLFaRvOPCu7/RPpgfJeTvQa
+         dxsTCqGqHlyhLu9huyCTuPPFg7gPbyTmOEanc3rL1OWDBPST2h1cQc1VVtRmOPe6Pi
+         4PwBhR+CM5dO6dK4s6yVVcoDubv6ygOptvSiE1gcUekRBQYuuAMZrBHpWTfZfmmXsF
+         FvuTT3QeVaYVWxdE4sc6DmWsYduinK7/cvrf6JUUfoFq+rbiuo3Mz5cGPTe4psTuTG
+         m/2b18a2Q+QrA==
+Message-ID: <35529e08cdad0bca25be41658bdc4b5b1ab81d28.camel@kernel.org>
+Subject: Re: [PATCH v2] ceph: try to reconnect to the export targets
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Tue, 17 Aug 2021 12:18:46 -0400
+In-Reply-To: <20210817034445.405663-1-xiubli@redhat.com>
+References: <20210817034445.405663-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: es-ES
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi friends, we are a SME company that mounted a ceph storage system 
-several months ago as a proof of concept, then, as we liked it, started 
-to use it in production applications and as a corporative filesystem, 
-postponing taking the adequate measures to have a well deployed ceph 
-system (3 servers instead of 2, 3 object replica instead of 2, 3 
-monitors instead of 1...). The disaster has happened before than that 
-and we are desperately asking for your help in order to know whether we 
-can recover the system or at least the data.
+On Tue, 2021-08-17 at 11:44 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> In case the export MDS is crashed just after the EImportStart journal
+> is flushed, so when a standby MDS takes over it and when replaying
+> the EImportStart journal the MDS will wait the client to reconnect,
+> but the client may never register/open the sessions yet.
+> 
+> We will try to reconnect that MDSes if they're in the export targets
+> and in RECONNECT state.
+> 
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+> 
+> - check the export target rank when decoding the mdsmap instead of
+> BUG_ON
+> - fix issue that the sessions have been opened during the mutex's
+> unlock/lock gap
+> 
+> 
+>  fs/ceph/mds_client.c | 63 +++++++++++++++++++++++++++++++++++++++++++-
+>  fs/ceph/mdsmap.c     | 10 ++++---
+>  2 files changed, 69 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index e49dbeb6c06f..1e013fb09d73 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -4197,13 +4197,22 @@ static void check_new_map(struct ceph_mds_client *mdsc,
+>  			  struct ceph_mdsmap *newmap,
+>  			  struct ceph_mdsmap *oldmap)
+>  {
+> -	int i;
+> +	int i, err;
+> +	int *export_targets;
+>  	int oldstate, newstate;
+>  	struct ceph_mds_session *s;
+> +	struct ceph_mds_info *m_info;
+>  
+>  	dout("check_new_map new %u old %u\n",
+>  	     newmap->m_epoch, oldmap->m_epoch);
+>  
+> +	m_info = newmap->m_info;
+> +	export_targets = kcalloc(newmap->possible_max_rank, sizeof(int), GFP_NOFS);
 
-In short, the boot disk of the server where the only monitor was running 
-has failed, containing as well the deamon monitor data (monitor map...). 
-We will appreciate any help you can offer us before we break anything 
-that could be recoverable trying non expert solutions.
+This allocation could fail under low-memory conditions, particularly
+since it's GFP_NOFS. One idea would be to make this function return int
+so you can just return -ENOMEM if the allocation fails.
 
-Following are the details, thank you very much in advance:
+Is there a hard max to possible_max_rank? If so and it's not that big,
+then another possibility would be to just declare this array on the
+stack.
 
+Also, since this is just used as a flag, making an array of bools would
+reduce the size of the allocation by a factor of 4.
 
-* system overview:
+> +	if (export_targets && m_info) {
+> +		for (i = 0; i < m_info->num_export_targets; i++)
+> +			export_targets[m_info->export_targets[i]] = 1;
+> +	}
+> +
 
+If you reverse the sense of the flags then you wouldn't need to
+initialize the array at all (assuming you still use kcalloc).
 
-2 commodity servers, 4 HD each, 6 HDs for ceph osds
+>  	for (i = 0; i < oldmap->possible_max_rank && i < mdsc->max_sessions; i++) {
+>  		if (!mdsc->sessions[i])
+>  			continue;
+> @@ -4257,6 +4266,8 @@ static void check_new_map(struct ceph_mds_client *mdsc,
+>  		if (s->s_state == CEPH_MDS_SESSION_RESTARTING &&
+>  		    newstate >= CEPH_MDS_STATE_RECONNECT) {
+>  			mutex_unlock(&mdsc->mutex);
+> +			if (export_targets)
+> +				export_targets[i] = 0;
+>  			send_mds_reconnect(mdsc, s);
+>  			mutex_lock(&mdsc->mutex);
+>  		}
+> @@ -4279,6 +4290,54 @@ static void check_new_map(struct ceph_mds_client *mdsc,
+>  		}
+>  	}
+>  
+> +	/*
+> +	 * Only open and reconnect sessions that don't exist yet.
+> +	 */
+> +	for (i = 0; i < newmap->possible_max_rank; i++) {
+> +		if (unlikely(!export_targets))
+> +			break;
+> +
+> +		/*
+> +		 * In case the import MDS is crashed just after
+> +		 * the EImportStart journal is flushed, so when
+> +		 * a standby MDS takes over it and is replaying
+> +		 * the EImportStart journal the new MDS daemon
+> +		 * will wait the client to reconnect it, but the
+> +		 * client may never register/open the session yet.
+> +		 *
+> +		 * Will try to reconnect that MDS daemon if the
+> +		 * rank number is in the export_targets array and
+> +		 * is the up:reconnect state.
+> +		 */
+> +		newstate = ceph_mdsmap_get_state(newmap, i);
+> +		if (!export_targets[i] || newstate != CEPH_MDS_STATE_RECONNECT)
+> +			continue;
+> +
+> +		/*
+> +		 * The session maybe registered and opened by some
+> +		 * requests which were choosing random MDSes during
+> +		 * the mdsc->mutex's unlock/lock gap below in rare
+> +		 * case. But the related MDS daemon will just queue
+> +		 * that requests and be still waiting for the client's
+> +		 * reconnection request in up:reconnect state.
+> +		 */
+> +		s = __ceph_lookup_mds_session(mdsc, i);
+> +		if (likely(!s)) {
+> +			s = __open_export_target_session(mdsc, i);
+> +			if (IS_ERR(s)) {
+> +				err = PTR_ERR(s);
+> +				pr_err("failed to open export target session, err %d\n",
+> +				       err);
+> +				continue;
+> +			}
+> +		}
+> +		dout("send reconnect to export target mds.%d\n", i);
+> +		mutex_unlock(&mdsc->mutex);
+> +		send_mds_reconnect(mdsc, s);
+> +		mutex_lock(&mdsc->mutex);
+> +		ceph_put_mds_session(s);
 
-2 replica; 1 only monitor
+You can put the mds session before you re-take the mutex.
 
-server 1: 1 mon, 1 mgr, 1 mds, 3 osds
+> +	}
+> +
+>  	for (i = 0; i < newmap->possible_max_rank && i < mdsc->max_sessions; i++) {
+>  		s = mdsc->sessions[i];
+>  		if (!s)
+> @@ -4293,6 +4352,8 @@ static void check_new_map(struct ceph_mds_client *mdsc,
+>  			__open_export_target_sessions(mdsc, s);
+>  		}
+>  	}
+> +
+> +	kfree(export_targets);
+>  }
+>  
+>  
+> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+> index 3c444b9cb17b..d995cb02d30c 100644
+> --- a/fs/ceph/mdsmap.c
+> +++ b/fs/ceph/mdsmap.c
+> @@ -122,6 +122,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end, bool msgr2)
+>  	int err;
+>  	u8 mdsmap_v;
+>  	u16 mdsmap_ev;
+> +	u32 target;
+>  
+>  	m = kzalloc(sizeof(*m), GFP_NOFS);
+>  	if (!m)
+> @@ -260,9 +261,12 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end, bool msgr2)
+>  						       sizeof(u32), GFP_NOFS);
+>  			if (!info->export_targets)
+>  				goto nomem;
+> -			for (j = 0; j < num_export_targets; j++)
+> -				info->export_targets[j] =
+> -				       ceph_decode_32(&pexport_targets);
+> +			for (j = 0; j < num_export_targets; j++) {
+> +				target = ceph_decode_32(&pexport_targets);
+> +				if (target >= m->possible_max_rank)
+> +					goto corrupt;
+> +				info->export_targets[j] = target;
+> +			}
+>  		} else {
+>  			info->export_targets = NULL;
+>  		}
 
-server 2: 1 mgr, 1 mds, 3 osds
-
-ceph octopus 15.2.11 containerized docker deamons; cephadm deployed
-
-used for libvirt VMs rbd images, and 1 cephfs
-
-
-* the problems:
-
-
---> HD 1.i failed, then server 1 is down: no monitors, server 2 osds 
-unable to start, ceph down
-
---> client.admin keyring lost
-
-
-* hard disk structure details:
-
-
-- server 1:            MODEL    SERIAL    WWN
-
-1.i)    /dev/sda    1.8T  WDC_WD2002FYPS-0     WD-WCAVY7030179 
-0x50014ee205e40c09
-
---> server 1 boot disk, root, and ceph deamons data (/var/lib/ceph, etc) 
---> FAILED
-
-1.ii)    /dev/sdc    7.3T  WDC_WD80EFAX-68L    7HKG3MEF 0x5000cca257f0b152
-
---> Osd.2
-
-1.iii)    /dev/sdb    7.3T WDC_WD80EFAX-68L    7HKG6H3F 0x5000cca257f0bc0f
-
---> Osd.1
-
-1.iv)    /dev/sdd    1.8T WDC_WD2002FYPS-0     WD-WCAVY6926130 
-0x50014ee25b180bf3
-
---> Osd.0
-
-
-
-- server 2            MODEL    SERIAL    WWN
-
-2.i)    /dev/sda    223,6G  INTEL_SSDSC2KB24 BTYF90350ENF240AGN    
-0x55cd2e4150390704
-
---> server 2 boot disk, root, and ceph deamons data (/var/lib/ceph, etc)
-
-2.ii)    /dev/sdb    7,3T  HGST_HUS728T8TAL    VAGUR01L 0x5000cca099cbafde
-
---> Osd.3
-
-2.iii)    /dev/sdc    7,3T  HGST_HUS728T8TAL    VGG2G7LG 0x5000cca0bec11e37
-
-->  Osd.4
-
-2.iv)    /dev/sdd    1,8T  WDC_WD2002FYPS-0    WD-WCAVY7261411 
-0x50014ee2064414f2
-
--->  Osd.5
-
-
-Ignacio G,
-
-Live-Med Iberia
-
+-- 
+Jeff Layton <jlayton@kernel.org>
 
