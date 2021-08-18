@@ -2,148 +2,202 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 36A153F048B
-	for <lists+ceph-devel@lfdr.de>; Wed, 18 Aug 2021 15:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5A163F04F5
+	for <lists+ceph-devel@lfdr.de>; Wed, 18 Aug 2021 15:38:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236852AbhHRNXq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 18 Aug 2021 09:23:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:58312 "EHLO
+        id S236932AbhHRNj0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 18 Aug 2021 09:39:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:46835 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236629AbhHRNXp (ORCPT
+        by vger.kernel.org with ESMTP id S236270AbhHRNjZ (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 18 Aug 2021 09:23:45 -0400
+        Wed, 18 Aug 2021 09:39:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629292990;
+        s=mimecast20190719; t=1629293930;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6Px62/SpxW9aMMk3v+6hNRQ6Mx3XVHNoTlGnFuHiwI8=;
-        b=HVpHZnKqzXvGqnQRK2pORTK8AjRh38AvMfJJB3zPlK5I3oJJ9hw217JwQ/P6neTzqVfQM9
-        TPp8Dp9hXmM9x7CqfoA+QcqUBXW184s5rJW944RWyZ/dgX9CUoFvdMgH042lOyhJFKZ2Pb
-        0Ri65iVNeMUrh27Ob8P9E1RPodhNU2w=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-300-dG6laDKbP0KZtG7-iurPwA-1; Wed, 18 Aug 2021 09:23:08 -0400
-X-MC-Unique: dG6laDKbP0KZtG7-iurPwA-1
-Received: by mail-qv1-f71.google.com with SMTP id u8-20020a0cec880000b029035825559ec4so2115090qvo.22
-        for <ceph-devel@vger.kernel.org>; Wed, 18 Aug 2021 06:23:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=6Px62/SpxW9aMMk3v+6hNRQ6Mx3XVHNoTlGnFuHiwI8=;
-        b=PtgGvYligTvRwVdSGPahdG4+Bw0sUTCSlS/4Kzy1T8wpCXuxd/Wl85oiE2FfhyiZdV
-         14WHBIjUtabEl09LzsN03ZiPILjZfnXEEic4Vv+GUV0ieOh87JaesyYIbAYYcxwncqP3
-         gFO4XDsSZtXk8f3K3vHsZqAMOMDEOwu5r4Df5VPqbZg5mugkfJHWV/+GnwV0chJE3p6L
-         NdsTlRaJXaMiYkmPwCMHl35zBUVgGNhUNJQV2quJOaY0yKI28cRehyZSQahbZcUhp1+/
-         x+MWu1Uzy6MMht42fPBuxG3ZYYfyF+OgkyxyUD5pvIACfXo/VAcxQ1qLupvDt+SgOVtP
-         1n0w==
-X-Gm-Message-State: AOAM530Acornh01JMItHDEvLM/SR9ZNmNSeoALHHjXL3aqwo279vmMeo
-        1nm9UYkTSRsaNoUYEDN7ZvpYtfXzpTkR024o9cJSdZf8NjJ+c5ZkgHOJXpNlMfquuInDu0//gLT
-        u7bhoPeOMs8KnzFuyXevOPA==
-X-Received: by 2002:a37:d2c6:: with SMTP id f189mr7137117qkj.275.1629292988361;
-        Wed, 18 Aug 2021 06:23:08 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJy6AHFTx3g5cUuWIF9FyKbj13zIPNyq9yoVV2vRaZmiZxvbRD1YjEAFNCEHT1l94ke0Cqc+nQ==
-X-Received: by 2002:a37:d2c6:: with SMTP id f189mr7137067qkj.275.1629292987783;
-        Wed, 18 Aug 2021 06:23:07 -0700 (PDT)
-Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id h2sm3729661qkf.106.2021.08.18.06.23.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Aug 2021 06:23:07 -0700 (PDT)
-Message-ID: <49aa1afd9effe8e5cb69ff5927550a49dcf9d240.camel@redhat.com>
-Subject: Re: [RFC 0/2] ceph: add debugfs entries signifying new mount syntax
- support
-From:   Jeff Layton <jlayton@redhat.com>
-To:     Venky Shankar <vshankar@redhat.com>
-Cc:     Patrick Donnelly <pdonnell@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-Date:   Wed, 18 Aug 2021 09:23:06 -0400
-In-Reply-To: <CACPzV1niGaDtZfmVi8C4uQex1UhSkyc7GGEj0Q6Ln1qRufRGdg@mail.gmail.com>
-References: <20210818060134.208546-1-vshankar@redhat.com>
-         <68e7fb33b9ed652847a95af49f38654780fdbe20.camel@redhat.com>
-         <CACPzV1niGaDtZfmVi8C4uQex1UhSkyc7GGEj0Q6Ln1qRufRGdg@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Ci08CMgNcNfjSXqQW7CbL/aaukxqUsr4Rgfn/AzWIQU=;
+        b=Czu3a7Kpk5Xn5ymNGVmKEsI3X7gH1/AmgotE6guRdLEdsRy0huRTw3paMfMMEd4cpL+P7h
+        N1V+CSnYhA3yb9niNQSLdAUGkA6KZYHDYdVT1eI4ch08M8jVd2QUIlaboeICwlbngYwvHj
+        /lbgEfzYIj3lZmbu7VWZIJ+uZ00K2FQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-400-EPYeuNcFOqqr3olxjL1P5A-1; Wed, 18 Aug 2021 09:38:49 -0400
+X-MC-Unique: EPYeuNcFOqqr3olxjL1P5A-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1B7E2190B2A0;
+        Wed, 18 Aug 2021 13:38:48 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2453510013D7;
+        Wed, 18 Aug 2021 13:38:45 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v4] ceph: correctly release memory from capsnap
+Date:   Wed, 18 Aug 2021 21:38:42 +0800
+Message-Id: <20210818133842.15993-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2021-08-18 at 18:47 +0530, Venky Shankar wrote:
-> On Wed, Aug 18, 2021 at 6:39 PM Jeff Layton <jlayton@redhat.com> wrote:
-> > 
-> > On Wed, 2021-08-18 at 11:31 +0530, Venky Shankar wrote:
-> > > [This is based on top of new mount syntax series]
-> > > 
-> > > Patrick proposed the idea of having debugfs entries to signify if
-> > > kernel supports the new (v2) mount syntax. The primary use of this
-> > > information is to catch any bugs in the new syntax implementation.
-> > > 
-> > > This would be done as follows::
-> > > 
-> > > The userspace mount helper tries to mount using the new mount syntax
-> > > and fallsback to using old syntax if the mount using new syntax fails.
-> > > However, a bug in the new mount syntax implementation can silently
-> > > result in the mount helper switching to old syntax.
-> > > 
-> > 
-> > Is this a known bug you're talking about or are you just speculating
-> > about the potential for bugs there?
-> 
-> Potential bugs.
-> 
-> > 
-> > > So, the debugfs entries can be relied upon by the mount helper to
-> > > check if the kernel supports the new mount syntax. Cases when the
-> > > mount using the new syntax fails, but the kernel does support the
-> > > new mount syntax, the mount helper could probably log before switching
-> > > to the old syntax (or fail the mount altogether when run in test mode).
-> > > 
-> > > Debugfs entries are as follows::
-> > > 
-> > >     /sys/kernel/debug/ceph/
-> > >     ....
-> > >     ....
-> > >     /sys/kernel/debug/ceph/dev_support
-> > >     /sys/kernel/debug/ceph/dev_support/v2
-> > >     ....
-> > >     ....
-> > > 
-> > > Note that there is no entry signifying v1 mount syntax. That's because
-> > > the kernel still supports mounting with old syntax and older kernels do
-> > > not have debug entries for the same.
-> > > 
-> > > Venky Shankar (2):
-> > >   ceph: add helpers to create/cleanup debugfs sub-directories under
-> > >     "ceph" directory
-> > >   ceph: add debugfs entries for v2 (new) mount syntax support
-> > > 
-> > >  fs/ceph/debugfs.c            | 28 ++++++++++++++++++++++++++++
-> > >  fs/ceph/super.c              |  3 +++
-> > >  fs/ceph/super.h              |  2 ++
-> > >  include/linux/ceph/debugfs.h |  3 +++
-> > >  net/ceph/debugfs.c           | 26 ++++++++++++++++++++++++--
-> > >  5 files changed, 60 insertions(+), 2 deletions(-)
-> > > 
-> > 
-> > I'm not a huge fan of this approach overall as it requires that you have
-> > access to debugfs, and that's not guaranteed to be available everywhere.
-> > If you want to add this for debugging purposes, that's fine, but I don't
-> > think you want the mount helper to rely on this infrastructure.
-> 
-> Right. The use-case here is probably to rely on it during teuthology
-> tests where the mount fails (and the tests) when using the new syntax
-> but the kernel has v2 syntax support.
-> 
-> I recall the discussion on having some sort of `--no-fallback` option
-> to not fall-back to old syntax, but since we have the debugfs entries,
-> we may as well rely on those (at least for testing).
-> 
+From: Xiubo Li <xiubli@redhat.com>
 
-Ok, I think that sounds reasonable.
+When force umounting, it will try to remove all the session caps.
+If there has any capsnap is in the flushing list, the remove session
+caps callback will try to release the capsnap->flush_cap memory to
+"ceph_cap_flush_cachep" slab cache, while which is allocated from
+kmalloc-256 slab cache.
 
+At the same time switch to list_del_init() because just in case the
+force umount has removed it from the lists and the
+handle_cap_flushsnap_ack() comes then the seconds list_del_init()
+won't crash the kernel.
+
+URL: https://tracker.ceph.com/issues/52283
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+
+Changed in V4:
+- add a new is_capsnap field in ceph_cap_flush struct.
+
+
+ fs/ceph/caps.c       | 19 ++++++++++++-------
+ fs/ceph/mds_client.c |  7 ++++---
+ fs/ceph/snap.c       |  1 +
+ fs/ceph/super.h      |  3 ++-
+ 4 files changed, 19 insertions(+), 11 deletions(-)
+
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 4663ab830614..52c7026fd0d1 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -1712,7 +1712,11 @@ int __ceph_mark_dirty_caps(struct ceph_inode_info *ci, int mask,
+ 
+ struct ceph_cap_flush *ceph_alloc_cap_flush(void)
+ {
+-	return kmem_cache_alloc(ceph_cap_flush_cachep, GFP_KERNEL);
++	struct ceph_cap_flush *cf;
++
++	cf = kmem_cache_alloc(ceph_cap_flush_cachep, GFP_KERNEL);
++	cf->is_capsnap = false;
++	return cf;
+ }
+ 
+ void ceph_free_cap_flush(struct ceph_cap_flush *cf)
+@@ -1747,7 +1751,7 @@ static bool __detach_cap_flush_from_mdsc(struct ceph_mds_client *mdsc,
+ 		prev->wake = true;
+ 		wake = false;
+ 	}
+-	list_del(&cf->g_list);
++	list_del_init(&cf->g_list);
+ 	return wake;
+ }
+ 
+@@ -1762,7 +1766,7 @@ static bool __detach_cap_flush_from_ci(struct ceph_inode_info *ci,
+ 		prev->wake = true;
+ 		wake = false;
+ 	}
+-	list_del(&cf->i_list);
++	list_del_init(&cf->i_list);
+ 	return wake;
+ }
+ 
+@@ -2400,7 +2404,7 @@ static void __kick_flushing_caps(struct ceph_mds_client *mdsc,
+ 	ci->i_ceph_flags &= ~CEPH_I_KICK_FLUSH;
+ 
+ 	list_for_each_entry_reverse(cf, &ci->i_cap_flush_list, i_list) {
+-		if (!cf->caps) {
++		if (cf->is_capsnap) {
+ 			last_snap_flush = cf->tid;
+ 			break;
+ 		}
+@@ -2419,7 +2423,7 @@ static void __kick_flushing_caps(struct ceph_mds_client *mdsc,
+ 
+ 		first_tid = cf->tid + 1;
+ 
+-		if (cf->caps) {
++		if (!cf->is_capsnap) {
+ 			struct cap_msg_args arg;
+ 
+ 			dout("kick_flushing_caps %p cap %p tid %llu %s\n",
+@@ -3568,7 +3572,7 @@ static void handle_cap_flush_ack(struct inode *inode, u64 flush_tid,
+ 			cleaned = cf->caps;
+ 
+ 		/* Is this a capsnap? */
+-		if (cf->caps == 0)
++		if (cf->is_capsnap)
+ 			continue;
+ 
+ 		if (cf->tid <= flush_tid) {
+@@ -3642,7 +3646,8 @@ static void handle_cap_flush_ack(struct inode *inode, u64 flush_tid,
+ 		cf = list_first_entry(&to_remove,
+ 				      struct ceph_cap_flush, i_list);
+ 		list_del(&cf->i_list);
+-		ceph_free_cap_flush(cf);
++		if (!cf->is_capsnap)
++			ceph_free_cap_flush(cf);
+ 	}
+ 
+ 	if (wake_ci)
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index dcb5f34a084b..b9e6a69cc058 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -1656,7 +1656,7 @@ static int remove_session_caps_cb(struct inode *inode, struct ceph_cap *cap,
+ 		spin_lock(&mdsc->cap_dirty_lock);
+ 
+ 		list_for_each_entry(cf, &to_remove, i_list)
+-			list_del(&cf->g_list);
++			list_del_init(&cf->g_list);
+ 
+ 		if (!list_empty(&ci->i_dirty_item)) {
+ 			pr_warn_ratelimited(
+@@ -1710,8 +1710,9 @@ static int remove_session_caps_cb(struct inode *inode, struct ceph_cap *cap,
+ 		struct ceph_cap_flush *cf;
+ 		cf = list_first_entry(&to_remove,
+ 				      struct ceph_cap_flush, i_list);
+-		list_del(&cf->i_list);
+-		ceph_free_cap_flush(cf);
++		list_del_init(&cf->i_list);
++		if (!cf->is_capsnap)
++			ceph_free_cap_flush(cf);
+ 	}
+ 
+ 	wake_up_all(&ci->i_cap_wq);
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index af502a8245f0..62fab59bbf96 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -487,6 +487,7 @@ static void ceph_queue_cap_snap(struct ceph_inode_info *ci)
+ 		pr_err("ENOMEM allocating ceph_cap_snap on %p\n", inode);
+ 		return;
+ 	}
++	capsnap->cap_flush.is_capsnap = true;
+ 
+ 	spin_lock(&ci->i_ceph_lock);
+ 	used = __ceph_caps_used(ci);
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 106ddfd1ce92..336350861791 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -186,8 +186,9 @@ struct ceph_cap {
+ 
+ struct ceph_cap_flush {
+ 	u64 tid;
+-	int caps; /* 0 means capsnap */
++	int caps;
+ 	bool wake; /* wake up flush waiters when finish ? */
++	bool is_capsnap; /* true means capsnap */
+ 	struct list_head g_list; // global
+ 	struct list_head i_list; // per inode
+ 	struct ceph_inode_info *ci;
 -- 
-Jeff Layton <jlayton@redhat.com>
+2.27.0
 
