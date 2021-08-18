@@ -2,184 +2,194 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AE9C3EF783
-	for <lists+ceph-devel@lfdr.de>; Wed, 18 Aug 2021 03:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 904943EF78B
+	for <lists+ceph-devel@lfdr.de>; Wed, 18 Aug 2021 03:31:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234882AbhHRB3a (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 17 Aug 2021 21:29:30 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32499 "EHLO
+        id S235253AbhHRBcB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 17 Aug 2021 21:32:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:39314 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233027AbhHRB3a (ORCPT
+        by vger.kernel.org with ESMTP id S233027AbhHRBcA (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 17 Aug 2021 21:29:30 -0400
+        Tue, 17 Aug 2021 21:32:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629250135;
+        s=mimecast20190719; t=1629250286;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7zuifkLWAxvryOnEVB1K7jCWdbzhmuENiDgkRwZqhKU=;
-        b=H8VSBLazZcb2tS8q+4lJ1uUsOgw3nWYCCeKilhUuc5YPRYMoFpfeI3L/2AGlYdGaVO6aF0
-        89L+50CkTFCP0ixe6ZRPWcVtOjHs4U97m04lXF4hMpWMkCGlMPaOQqPeY6qPAONLRFHZDv
-        aGO0FaVOGHrkVhAQtnwZKz4P67Rpdfg=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-83-tLoU4dy_MTqZIsV3a65aUw-1; Tue, 17 Aug 2021 21:28:54 -0400
-X-MC-Unique: tLoU4dy_MTqZIsV3a65aUw-1
-Received: by mail-pl1-f198.google.com with SMTP id h3-20020a170902f54300b0012e31e334c0so356992plf.4
-        for <ceph-devel@vger.kernel.org>; Tue, 17 Aug 2021 18:28:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=7zuifkLWAxvryOnEVB1K7jCWdbzhmuENiDgkRwZqhKU=;
-        b=M4zwd2tWVIi+yn8ZAcswBWAnOzZhLbR89hmege7s3+HNY+LFfqqdN7sBjOwK1hRSNY
-         Mr4ahtsSh07345prgQ+WN7cKah02XoioHe21xjzs5A7cgHIxMFwT1+yFeImtw+L86WRn
-         CULwzenei/4N8UDc+VhkbZj7cLVBVjFFh88+QKNFWepqREeH5iCKYr3/7xCxf2q47IMH
-         IetzYkZo1A8j7QE1cvl1R9FJWNNfwmqYaHLwCbiBY6oEvgWR5AOA0+G4EDuqdQQALIg+
-         KZ1NIP/phR644YI3+x9KBwTf8UBgUBbUJx7N33CQBwfKaWW+i0DM7hEDzeF07rfvD+L7
-         MEdQ==
-X-Gm-Message-State: AOAM530grk9xnquC5cn2aqoW4DqWjRvRYgfFFn7EAWKdaAYIUfXbxd45
-        +8Rac1V8yJ4d6cLVeaAjPVIQIIJDf/FFvPuIQD941lstUnfHTduJSGHDYSs4yaILyF6du07f78a
-        xrTQbtTDCsnqGcgHbcnG0dO4BzSzAC643xy8acfdyg0PSN07t3d2NhlWoqU7dp5CiVE5QLjE=
-X-Received: by 2002:a63:fd12:: with SMTP id d18mr6270027pgh.129.1629250133517;
-        Tue, 17 Aug 2021 18:28:53 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJy/XIdNE5RYb0a+A+VfCDG4xvhv6YD/psZh6EPJ2MSHsYcStXyExsSKFi5h55EHdgFYcGVYFw==
-X-Received: by 2002:a63:fd12:: with SMTP id d18mr6269999pgh.129.1629250133238;
-        Tue, 17 Aug 2021 18:28:53 -0700 (PDT)
-Received: from [10.72.12.44] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id 11sm3648153pfl.41.2021.08.17.18.28.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Aug 2021 18:28:52 -0700 (PDT)
-Subject: Re: [PATCH v2] ceph: correctly release memory from capsnap
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-References: <20210817123517.15764-1-xiubli@redhat.com>
- <25dd85fdb777f9b260392ceeda41fc5e62018ddd.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <a45660db-0125-ffa7-6c94-345ecafab075@redhat.com>
-Date:   Wed, 18 Aug 2021 09:28:48 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=BnsovWDUzTA6dI/8EGNxtI4m/GNXj+4Xk4I8UO9T3ss=;
+        b=jRw9UosvAuEd+bOK+ddJFCZoWhzuCnriLhk7k4j6TiRkfMPuxfT+Bx1ahHd+ZDFhBhoRsc
+        L+C6ERNth1YhZ2obG8LeIWoGd5vZ9UZ4fcMYHrDME5rkKQWCwenge9K2Ji6lZ5e0kMZ1yW
+        inegstwuis+JGwv1owYvyfavRHKblH4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-484-Qd22mPMnPDiQoLIni2S70A-1; Tue, 17 Aug 2021 21:31:25 -0400
+X-MC-Unique: Qd22mPMnPDiQoLIni2S70A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 253F1801AC0;
+        Wed, 18 Aug 2021 01:31:24 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2F3F160916;
+        Wed, 18 Aug 2021 01:31:21 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v3] ceph: try to reconnect to the export targets
+Date:   Wed, 18 Aug 2021 09:31:19 +0800
+Message-Id: <20210818013119.76694-1-xiubli@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <25dd85fdb777f9b260392ceeda41fc5e62018ddd.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+From: Xiubo Li <xiubli@redhat.com>
 
-On 8/17/21 10:03 PM, Jeff Layton wrote:
-> On Tue, 2021-08-17 at 20:35 +0800, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> When force umounting, it will try to remove all the session caps.
->> If there has any capsnap is in the flushing list, the remove session
->> caps callback will try to release the capsnap->flush_cap memory to
->> "ceph_cap_flush_cachep" slab cache, while which is allocated from
->> kmalloc-256 slab cache.
->>
->> At the same time switch to list_del_init() because just in case the
->> force umount has removed it from the lists and the
->> handle_cap_flushsnap_ack() comes then the seconds list_del_init()
->> won't crash the kernel.
->>
->> URL: https://tracker.ceph.com/issues/52283
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>
->> - Only to resolve the crash issue.
->> - s/list_del/list_del_init/
->>
->>
->>   fs/ceph/caps.c       | 18 ++++++++++++++----
->>   fs/ceph/mds_client.c |  7 ++++---
->>   2 files changed, 18 insertions(+), 7 deletions(-)
->>
->> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
->> index 990258cbd836..4ee0ef87130a 100644
->> --- a/fs/ceph/caps.c
->> +++ b/fs/ceph/caps.c
->> @@ -1667,7 +1667,16 @@ int __ceph_mark_dirty_caps(struct ceph_inode_info *ci, int mask,
->>   
->>   struct ceph_cap_flush *ceph_alloc_cap_flush(void)
->>   {
->> -	return kmem_cache_alloc(ceph_cap_flush_cachep, GFP_KERNEL);
->> +	struct ceph_cap_flush *cf;
->> +
->> +	cf = kmem_cache_alloc(ceph_cap_flush_cachep, GFP_KERNEL);
->> +	/*
->> +	 * caps == 0 always means for the capsnap
->> +	 * caps > 0 means dirty caps being flushed
->> +	 * caps == -1 means preallocated, not used yet
->> +	 */
->> +	cf->caps = -1;
->> +	return cf;
->>   }
->>   
->>   void ceph_free_cap_flush(struct ceph_cap_flush *cf)
->> @@ -1704,14 +1713,14 @@ static bool __finish_cap_flush(struct ceph_mds_client *mdsc,
->>   			prev->wake = true;
->>   			wake = false;
->>   		}
->> -		list_del(&cf->g_list);
->> +		list_del_init(&cf->g_list);
->>   	} else if (ci) {
->>   		if (wake && cf->i_list.prev != &ci->i_cap_flush_list) {
->>   			prev = list_prev_entry(cf, i_list);
->>   			prev->wake = true;
->>   			wake = false;
->>   		}
->> -		list_del(&cf->i_list);
->> +		list_del_init(&cf->i_list);
->>   	} else {
->>   		BUG_ON(1);
->>   	}
->> @@ -3398,7 +3407,8 @@ static void handle_cap_flush_ack(struct inode *inode, u64 flush_tid,
->>   		cf = list_first_entry(&to_remove,
->>   				      struct ceph_cap_flush, i_list);
->>   		list_del(&cf->i_list);
->> -		ceph_free_cap_flush(cf);
->> +		if (cf->caps)
->> +			ceph_free_cap_flush(cf);
->>   	}
->>   
->>   	if (wake_ci)
->> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
->> index 2c3d762c7973..dc30f56115fa 100644
->> --- a/fs/ceph/mds_client.c
->> +++ b/fs/ceph/mds_client.c
->> @@ -1226,7 +1226,7 @@ static int remove_session_caps_cb(struct inode *inode, struct ceph_cap *cap,
->>   		spin_lock(&mdsc->cap_dirty_lock);
->>   
->>   		list_for_each_entry(cf, &to_remove, i_list)
->> -			list_del(&cf->g_list);
->> +			list_del_init(&cf->g_list);
->>   
->>   		if (!list_empty(&ci->i_dirty_item)) {
->>   			pr_warn_ratelimited(
->> @@ -1266,8 +1266,9 @@ static int remove_session_caps_cb(struct inode *inode, struct ceph_cap *cap,
->>   		struct ceph_cap_flush *cf;
->>   		cf = list_first_entry(&to_remove,
->>   				      struct ceph_cap_flush, i_list);
->> -		list_del(&cf->i_list);
->> -		ceph_free_cap_flush(cf);
->> +		list_del_init(&cf->i_list);
->> +		if (cf->caps)
->> +			ceph_free_cap_flush(cf);
->>   	}
->>   
->>   	wake_up_all(&ci->i_cap_wq);
-> This patch doesn't seem to apply to the current testing branch. Is it
-> against an older tree?
+In case the export MDS is crashed just after the EImportStart journal
+is flushed, so when a standby MDS takes over it and when replaying
+the EImportStart journal the MDS will wait the client to reconnect,
+but the client may never register/open the sessions yet.
 
-I was trying to test the old tags and forgot to switch it back.
+We will try to reconnect that MDSes if they're in the export targets
+and in RECONNECT state.
 
-Have send out the V3 to fix it.
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
 
-Thanks
+V3:
+- switch to bitmap and on the stack
+- put the ceph_put_mds_session() out of the mdsc->mutex lock scope
 
+
+ fs/ceph/mds_client.c | 55 +++++++++++++++++++++++++++++++++++++++++++-
+ fs/ceph/mdsmap.c     | 10 +++++---
+ 2 files changed, 61 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index e49dbeb6c06f..c2fca06b09a0 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -11,6 +11,7 @@
+ #include <linux/ratelimit.h>
+ #include <linux/bits.h>
+ #include <linux/ktime.h>
++#include <linux/bitmap.h>
+ 
+ #include "super.h"
+ #include "mds_client.h"
+@@ -4197,13 +4198,19 @@ static void check_new_map(struct ceph_mds_client *mdsc,
+ 			  struct ceph_mdsmap *newmap,
+ 			  struct ceph_mdsmap *oldmap)
+ {
+-	int i;
++	int i, err;
+ 	int oldstate, newstate;
+ 	struct ceph_mds_session *s;
++	unsigned long targets[DIV_ROUND_UP(CEPH_MAX_MDS, sizeof(unsigned long))] = {0};
+ 
+ 	dout("check_new_map new %u old %u\n",
+ 	     newmap->m_epoch, oldmap->m_epoch);
+ 
++	if (newmap->m_info) {
++		for (i = 0; i < newmap->m_info->num_export_targets; i++)
++			set_bit(newmap->m_info->export_targets[i], targets);
++	}
++
+ 	for (i = 0; i < oldmap->possible_max_rank && i < mdsc->max_sessions; i++) {
+ 		if (!mdsc->sessions[i])
+ 			continue;
+@@ -4257,6 +4264,7 @@ static void check_new_map(struct ceph_mds_client *mdsc,
+ 		if (s->s_state == CEPH_MDS_SESSION_RESTARTING &&
+ 		    newstate >= CEPH_MDS_STATE_RECONNECT) {
+ 			mutex_unlock(&mdsc->mutex);
++			clear_bit(i, targets);
+ 			send_mds_reconnect(mdsc, s);
+ 			mutex_lock(&mdsc->mutex);
+ 		}
+@@ -4279,6 +4287,51 @@ static void check_new_map(struct ceph_mds_client *mdsc,
+ 		}
+ 	}
+ 
++	/*
++	 * Only open and reconnect sessions that don't exist yet.
++	 */
++	for (i = 0; i < newmap->possible_max_rank; i++) {
++		/*
++		 * In case the import MDS is crashed just after
++		 * the EImportStart journal is flushed, so when
++		 * a standby MDS takes over it and is replaying
++		 * the EImportStart journal the new MDS daemon
++		 * will wait the client to reconnect it, but the
++		 * client may never register/open the session yet.
++		 *
++		 * Will try to reconnect that MDS daemon if the
++		 * rank number is in the export targets array and
++		 * is the up:reconnect state.
++		 */
++		newstate = ceph_mdsmap_get_state(newmap, i);
++		if (!test_bit(i, targets) || newstate != CEPH_MDS_STATE_RECONNECT)
++			continue;
++
++		/*
++		 * The session maybe registered and opened by some
++		 * requests which were choosing random MDSes during
++		 * the mdsc->mutex's unlock/lock gap below in rare
++		 * case. But the related MDS daemon will just queue
++		 * that requests and be still waiting for the client's
++		 * reconnection request in up:reconnect state.
++		 */
++		s = __ceph_lookup_mds_session(mdsc, i);
++		if (likely(!s)) {
++			s = __open_export_target_session(mdsc, i);
++			if (IS_ERR(s)) {
++				err = PTR_ERR(s);
++				pr_err("failed to open export target session, err %d\n",
++				       err);
++				continue;
++			}
++		}
++		dout("send reconnect to export target mds.%d\n", i);
++		mutex_unlock(&mdsc->mutex);
++		send_mds_reconnect(mdsc, s);
++		ceph_put_mds_session(s);
++		mutex_lock(&mdsc->mutex);
++	}
++
+ 	for (i = 0; i < newmap->possible_max_rank && i < mdsc->max_sessions; i++) {
+ 		s = mdsc->sessions[i];
+ 		if (!s)
+diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+index 3c444b9cb17b..d995cb02d30c 100644
+--- a/fs/ceph/mdsmap.c
++++ b/fs/ceph/mdsmap.c
+@@ -122,6 +122,7 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end, bool msgr2)
+ 	int err;
+ 	u8 mdsmap_v;
+ 	u16 mdsmap_ev;
++	u32 target;
+ 
+ 	m = kzalloc(sizeof(*m), GFP_NOFS);
+ 	if (!m)
+@@ -260,9 +261,12 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end, bool msgr2)
+ 						       sizeof(u32), GFP_NOFS);
+ 			if (!info->export_targets)
+ 				goto nomem;
+-			for (j = 0; j < num_export_targets; j++)
+-				info->export_targets[j] =
+-				       ceph_decode_32(&pexport_targets);
++			for (j = 0; j < num_export_targets; j++) {
++				target = ceph_decode_32(&pexport_targets);
++				if (target >= m->possible_max_rank)
++					goto corrupt;
++				info->export_targets[j] = target;
++			}
+ 		} else {
+ 			info->export_targets = NULL;
+ 		}
+-- 
+2.27.0
 
