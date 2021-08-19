@@ -2,162 +2,216 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D7093F1314
-	for <lists+ceph-devel@lfdr.de>; Thu, 19 Aug 2021 08:07:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D8903F179A
+	for <lists+ceph-devel@lfdr.de>; Thu, 19 Aug 2021 12:59:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230310AbhHSGH4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 19 Aug 2021 02:07:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:35601 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230396AbhHSGHx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 19 Aug 2021 02:07:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629353236;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XcnZULfvRaZaSxsgM256TjfSITYnqvCQsiXUNryFrYk=;
-        b=cBn2xmP886TogvzqLYdMU3WxQRoVDBdr5D2nEg7Oc9ZcGNdA3P+4yuqBOWaXJI4y/ZIPbK
-        RhCsxtpLYUSyWRiNktpLNlmQ/qS/kK7gWC2FHGepLySkkxiH1EuUrqZmPvVOtoBdiPRbWb
-        njhU5Xy9N7/09KoNR1L4fZB4kT8SvrU=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-48-KYnlDkfKNSmQ50tEYEbbgg-1; Thu, 19 Aug 2021 02:07:14 -0400
-X-MC-Unique: KYnlDkfKNSmQ50tEYEbbgg-1
-Received: by mail-pl1-f197.google.com with SMTP id y3-20020a17090322c3b029012d433951c9so1253205plg.1
-        for <ceph-devel@vger.kernel.org>; Wed, 18 Aug 2021 23:07:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XcnZULfvRaZaSxsgM256TjfSITYnqvCQsiXUNryFrYk=;
-        b=HXcfmayiwcdherxcxpAIsPHHMG6xLV2ad8vonT8kOALbpHX4zzBQilHZD5sAXjp4ZX
-         dkqpuW3YF0TiDzllgOB+pfGipFr/9S3VOCCZQcXs5XxQPYtk3kizc87xhX989R29XoDr
-         qA7BExYb9zGyeiGSjssVpG68uCBobodzmw56/f19fbgXUlDrdnWdNgs8OR04lLHkAa5X
-         e32zU3+OQANoh2z5Oxo7I4wmrZ7c/si224wANUqTz61lD53SwK4o23fLjfwxcK+mY4tu
-         iJG1T59hedjns5Fk30M3mLId/avn5pc9qR+z+LmBWQUQ+EFnYyA/bAx65ywPyupenuux
-         /loA==
-X-Gm-Message-State: AOAM532vynIY7/HgKXA7gUyb0yUFQwAz9eXq1zhyTYlx2PZYgNZ2nx9c
-        RijyzjY4nukVkyQek0oVMJAbVKhpIRPgDY0Xa0INirJ08YWjV0Q07K1PLOqooGnh7nBw4bLSAUf
-        14ORjgHb+Zz+tk3cTj0/K5Q==
-X-Received: by 2002:a17:90a:fa89:: with SMTP id cu9mr12638523pjb.5.1629353233725;
-        Wed, 18 Aug 2021 23:07:13 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwYiIDS6FDAEjlSKrUHFUJocLc3rI/E1Ef7PDZQtUSWTz4I7RhPUdo9dRcSHrFDtDFz66BiYQ==
-X-Received: by 2002:a17:90a:fa89:: with SMTP id cu9mr12638507pjb.5.1629353233513;
-        Wed, 18 Aug 2021 23:07:13 -0700 (PDT)
-Received: from localhost.localdomain ([49.207.198.118])
-        by smtp.gmail.com with ESMTPSA id o24sm1663100pjs.49.2021.08.18.23.07.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Aug 2021 23:07:12 -0700 (PDT)
-From:   Venky Shankar <vshankar@redhat.com>
-To:     jlayton@redhat.com, pdonnell@redhat.com
-Cc:     ceph-devel@vger.kernel.org, Venky Shankar <vshankar@redhat.com>
-Subject: [PATCH 2/2] ceph: add debugfs entries for v2 (new) mount syntax support
-Date:   Thu, 19 Aug 2021 11:37:01 +0530
-Message-Id: <20210819060701.25486-3-vshankar@redhat.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210819060701.25486-1-vshankar@redhat.com>
-References: <20210819060701.25486-1-vshankar@redhat.com>
+        id S238422AbhHSLAM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 19 Aug 2021 07:00:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47060 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238433AbhHSLAJ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 19 Aug 2021 07:00:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 64C0861152;
+        Thu, 19 Aug 2021 10:59:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629370773;
+        bh=YWSW8qBHpX1zfE6x+cdgLlvrK1XVqvJgNYLAPMo5fqo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=s/RDTnU3QSrQnVdXG8+h+q/qdg7jA73XAtFZ1+H5ro+K7bqmd/hyJl5WFz2DCiwqY
+         rw0sZF7QHM17eQ1//XpSpPhbBqwInBAQ630njIjn2kHyIS3NcSbDxjRVkQOj/FuNwL
+         ic4Vj+zKM8tb+BX83jtHnz8S90zhNfrwkDtHYoFuB9neq8ONiPrAZr3HMAKbNR+UTz
+         ZMP478AhIhox9jZ4LTpcRaFwcRXjd/U0ZWbWySM2Xl8sbjLr7BiwZK+LWcro0sXD5t
+         3YoVePe3AeTnq3JrAgG/0GzURFs9kvWd5Cl6f0GqSg4naC0apsAvyfhbHLp/9UGt9H
+         0rgtokTFzbcSA==
+Message-ID: <e290f32319721d894b1d44c4be37b5b617a18780.camel@kernel.org>
+Subject: Re: [PATCH v4] ceph: correctly release memory from capsnap
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
+Date:   Thu, 19 Aug 2021 06:59:32 -0400
+In-Reply-To: <f2bf8537-41a5-c406-ec11-c11a40d79a42@redhat.com>
+References: <20210818133842.15993-1-xiubli@redhat.com>
+         <007becbddbb928e7cb52feb5ffafb4f254dd5ba0.camel@kernel.org>
+         <f2bf8537-41a5-c406-ec11-c11a40d79a42@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Signed-off-by: Venky Shankar <vshankar@redhat.com>
----
- fs/ceph/debugfs.c | 28 ++++++++++++++++++++++++++++
- fs/ceph/super.c   |  3 +++
- fs/ceph/super.h   |  2 ++
- 3 files changed, 33 insertions(+)
+On Thu, 2021-08-19 at 07:43 +0800, Xiubo Li wrote:
+> On 8/19/21 12:06 AM, Jeff Layton wrote:
+> > On Wed, 2021-08-18 at 21:38 +0800, xiubli@redhat.com wrote:
+> > > From: Xiubo Li <xiubli@redhat.com>
+> > > 
+> > > When force umounting, it will try to remove all the session caps.
+> > > If there has any capsnap is in the flushing list, the remove session
+> > > caps callback will try to release the capsnap->flush_cap memory to
+> > > "ceph_cap_flush_cachep" slab cache, while which is allocated from
+> > > kmalloc-256 slab cache.
+> > > 
+> > > At the same time switch to list_del_init() because just in case the
+> > > force umount has removed it from the lists and the
+> > > handle_cap_flushsnap_ack() comes then the seconds list_del_init()
+> > > won't crash the kernel.
+> > > 
+> > > URL: https://tracker.ceph.com/issues/52283
+> > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > > ---
+> > > 
+> > > Changed in V4:
+> > > - add a new is_capsnap field in ceph_cap_flush struct.
+> > > 
+> > > 
+> > >   fs/ceph/caps.c       | 19 ++++++++++++-------
+> > >   fs/ceph/mds_client.c |  7 ++++---
+> > >   fs/ceph/snap.c       |  1 +
+> > >   fs/ceph/super.h      |  3 ++-
+> > >   4 files changed, 19 insertions(+), 11 deletions(-)
+> > > 
+> > > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> > > index 4663ab830614..52c7026fd0d1 100644
+> > > --- a/fs/ceph/caps.c
+> > > +++ b/fs/ceph/caps.c
+> > > @@ -1712,7 +1712,11 @@ int __ceph_mark_dirty_caps(struct ceph_inode_info *ci, int mask,
+> > >   
+> > >   struct ceph_cap_flush *ceph_alloc_cap_flush(void)
+> > >   {
+> > > -	return kmem_cache_alloc(ceph_cap_flush_cachep, GFP_KERNEL);
+> > > +	struct ceph_cap_flush *cf;
+> > > +
+> > > +	cf = kmem_cache_alloc(ceph_cap_flush_cachep, GFP_KERNEL);
+> > > +	cf->is_capsnap = false;
+> > > +	return cf;
+> > >   }
+> > >   
+> > >   void ceph_free_cap_flush(struct ceph_cap_flush *cf)
+> > > @@ -1747,7 +1751,7 @@ static bool __detach_cap_flush_from_mdsc(struct ceph_mds_client *mdsc,
+> > >   		prev->wake = true;
+> > >   		wake = false;
+> > >   	}
+> > > -	list_del(&cf->g_list);
+> > > +	list_del_init(&cf->g_list);
+> > >   	return wake;
+> > >   }
+> > >   
+> > > @@ -1762,7 +1766,7 @@ static bool __detach_cap_flush_from_ci(struct ceph_inode_info *ci,
+> > >   		prev->wake = true;
+> > >   		wake = false;
+> > >   	}
+> > > -	list_del(&cf->i_list);
+> > > +	list_del_init(&cf->i_list);
+> > >   	return wake;
+> > >   }
+> > >   
+> > > @@ -2400,7 +2404,7 @@ static void __kick_flushing_caps(struct ceph_mds_client *mdsc,
+> > >   	ci->i_ceph_flags &= ~CEPH_I_KICK_FLUSH;
+> > >   
+> > >   	list_for_each_entry_reverse(cf, &ci->i_cap_flush_list, i_list) {
+> > > -		if (!cf->caps) {
+> > > +		if (cf->is_capsnap) {
+> > >   			last_snap_flush = cf->tid;
+> > >   			break;
+> > >   		}
+> > > @@ -2419,7 +2423,7 @@ static void __kick_flushing_caps(struct ceph_mds_client *mdsc,
+> > >   
+> > >   		first_tid = cf->tid + 1;
+> > >   
+> > > -		if (cf->caps) {
+> > > +		if (!cf->is_capsnap) {
+> > >   			struct cap_msg_args arg;
+> > >   
+> > >   			dout("kick_flushing_caps %p cap %p tid %llu %s\n",
+> > > @@ -3568,7 +3572,7 @@ static void handle_cap_flush_ack(struct inode *inode, u64 flush_tid,
+> > >   			cleaned = cf->caps;
+> > >   
+> > >   		/* Is this a capsnap? */
+> > > -		if (cf->caps == 0)
+> > > +		if (cf->is_capsnap)
+> > >   			continue;
+> > >   
+> > >   		if (cf->tid <= flush_tid) {
+> > > @@ -3642,7 +3646,8 @@ static void handle_cap_flush_ack(struct inode *inode, u64 flush_tid,
+> > >   		cf = list_first_entry(&to_remove,
+> > >   				      struct ceph_cap_flush, i_list);
+> > >   		list_del(&cf->i_list);
+> > > -		ceph_free_cap_flush(cf);
+> > > +		if (!cf->is_capsnap)
+> > > +			ceph_free_cap_flush(cf);
+> > >   	}
+> > >   
+> > >   	if (wake_ci)
+> > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > > index dcb5f34a084b..b9e6a69cc058 100644
+> > > --- a/fs/ceph/mds_client.c
+> > > +++ b/fs/ceph/mds_client.c
+> > > @@ -1656,7 +1656,7 @@ static int remove_session_caps_cb(struct inode *inode, struct ceph_cap *cap,
+> > >   		spin_lock(&mdsc->cap_dirty_lock);
+> > >   
+> > >   		list_for_each_entry(cf, &to_remove, i_list)
+> > > -			list_del(&cf->g_list);
+> > > +			list_del_init(&cf->g_list);
+> > >   
+> > >   		if (!list_empty(&ci->i_dirty_item)) {
+> > >   			pr_warn_ratelimited(
+> > > @@ -1710,8 +1710,9 @@ static int remove_session_caps_cb(struct inode *inode, struct ceph_cap *cap,
+> > >   		struct ceph_cap_flush *cf;
+> > >   		cf = list_first_entry(&to_remove,
+> > >   				      struct ceph_cap_flush, i_list);
+> > > -		list_del(&cf->i_list);
+> > > -		ceph_free_cap_flush(cf);
+> > > +		list_del_init(&cf->i_list);
+> > > +		if (!cf->is_capsnap)
+> > > +			ceph_free_cap_flush(cf);
+> > >   	}
+> > >   
+> > >   	wake_up_all(&ci->i_cap_wq);
+> > > diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> > > index af502a8245f0..62fab59bbf96 100644
+> > > --- a/fs/ceph/snap.c
+> > > +++ b/fs/ceph/snap.c
+> > > @@ -487,6 +487,7 @@ static void ceph_queue_cap_snap(struct ceph_inode_info *ci)
+> > >   		pr_err("ENOMEM allocating ceph_cap_snap on %p\n", inode);
+> > >   		return;
+> > >   	}
+> > > +	capsnap->cap_flush.is_capsnap = true;
+> > >   
+> > >   	spin_lock(&ci->i_ceph_lock);
+> > >   	used = __ceph_caps_used(ci);
+> > > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > > index 106ddfd1ce92..336350861791 100644
+> > > --- a/fs/ceph/super.h
+> > > +++ b/fs/ceph/super.h
+> > > @@ -186,8 +186,9 @@ struct ceph_cap {
+> > >   
+> > >   struct ceph_cap_flush {
+> > >   	u64 tid;
+> > > -	int caps; /* 0 means capsnap */
+> > > +	int caps;
+> > >   	bool wake; /* wake up flush waiters when finish ? */
+> > > +	bool is_capsnap; /* true means capsnap */
+> > >   	struct list_head g_list; // global
+> > >   	struct list_head i_list; // per inode
+> > >   	struct ceph_inode_info *ci;
+> > Looks good, Xiubo. I'll merge into testing after a bit of local testing
+> > on my part.
+> > 
+> > I'll plan to mark this one for stable too, but I'll need to look at the
+> > prerequisites as there may be merge conflicts with earlier kernels.
+> 
+> I tried it but not all, for some old kernels it may conflict with the 
+> code only in `__detach_cap_flush_from_mdsc()` and 
+> `__detach_cap_flush_from_ci()`, which will fold these two funcs into 
+> __finish_cap_flush().
+> 
 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 66989c880adb..d19f15ace781 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -22,6 +22,12 @@
- #include "mds_client.h"
- #include "metric.h"
- 
-+#define MNT_DEV_SUPPORT_DIR   "dev_support"
-+#define MNT_DEV_V2_FILE  "v2"
-+
-+static struct dentry *ceph_mnt_dev_support_dir;
-+static struct dentry *ceph_mnt_dev_v2_file;
-+
- static int mdsmap_show(struct seq_file *s, void *p)
- {
- 	int i;
-@@ -416,6 +422,20 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
- 						  &status_fops);
- }
- 
-+void ceph_fs_debugfs_mnt_dev_init(void)
-+{
-+	ceph_mnt_dev_support_dir = ceph_debugfs_create_subdir(MNT_DEV_SUPPORT_DIR);
-+	ceph_mnt_dev_v2_file = debugfs_create_file(MNT_DEV_V2_FILE,
-+						   0400,
-+						   ceph_mnt_dev_support_dir,
-+						   NULL, NULL);
-+}
-+
-+void ceph_fs_debugfs_mnt_dev_cleanup(void)
-+{
-+	debugfs_remove(ceph_mnt_dev_v2_file);
-+	ceph_debugfs_cleanup_subdir(ceph_mnt_dev_support_dir);
-+}
- 
- #else  /* CONFIG_DEBUG_FS */
- 
-@@ -427,4 +447,12 @@ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
- {
- }
- 
-+void ceph_fs_debugfs_mnt_dev_init(void)
-+{
-+}
-+
-+void ceph_fs_debugfs_mnt_dev_cleanup(void)
-+{
-+}
-+
- #endif  /* CONFIG_DEBUG_FS */
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 609ffc8c2d78..21e4a8249afd 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -1404,6 +1404,8 @@ static int __init init_ceph(void)
- 	if (ret)
- 		goto out_caches;
- 
-+	ceph_fs_debugfs_mnt_dev_init();
-+
- 	pr_info("loaded (mds proto %d)\n", CEPH_MDSC_PROTOCOL);
- 
- 	return 0;
-@@ -1417,6 +1419,7 @@ static int __init init_ceph(void)
- static void __exit exit_ceph(void)
- {
- 	dout("exit_ceph\n");
-+	ceph_fs_debugfs_mnt_dev_cleanup();
- 	unregister_filesystem(&ceph_fs_type);
- 	destroy_caches();
- }
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 8f71184b7c85..3c63c1adcfaa 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1231,6 +1231,8 @@ extern int ceph_locks_to_pagelist(struct ceph_filelock *flocks,
- /* debugfs.c */
- extern void ceph_fs_debugfs_init(struct ceph_fs_client *client);
- extern void ceph_fs_debugfs_cleanup(struct ceph_fs_client *client);
-+extern void ceph_fs_debugfs_mnt_dev_init(void);
-+extern void ceph_fs_debugfs_mnt_dev_cleanup(void);
- 
- /* quota.c */
- static inline bool __ceph_has_any_quota(struct ceph_inode_info *ci)
+Yeah, there are quite a few merge conflicts on older kernels and pulling
+in earlier patches to eliminate them just brings in more conflicts. We
+may have to do a custom backport on this one for some of the older
+stable kernels.
+
 -- 
-2.27.0
+Jeff Layton <jlayton@kernel.org>
 
