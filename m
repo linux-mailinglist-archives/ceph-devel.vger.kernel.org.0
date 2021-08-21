@@ -2,139 +2,85 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 095363F2FA5
-	for <lists+ceph-devel@lfdr.de>; Fri, 20 Aug 2021 17:39:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ECE93F37F6
+	for <lists+ceph-devel@lfdr.de>; Sat, 21 Aug 2021 03:53:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241067AbhHTPkY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 20 Aug 2021 11:40:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33016 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240966AbhHTPkW (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 20 Aug 2021 11:40:22 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D0F9560BD3;
-        Fri, 20 Aug 2021 15:39:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629473984;
-        bh=PoFhyVoh1v6aOUOay7iJWpTvvCYW5KcLVq09vZnzI2c=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Wm/JpO0spBfHJTH1d9WzB5iEumMmYg4FAPsaRGPomUhi71DO0WOzMGq3SkgWZH26h
-         kqzrYaFYnGv5JaHNx5OgxvgGt/gHXEi17C64T5KiC1v0noWpBBaLvDuh2W+XlZZ3F7
-         c40a7nAcF2TIgnZIfAeOEW2MBoCj9szRJO1b5d99oz3UA7WmULILAA5XF99JXwPDgb
-         GwK6gXkkVBE/hSJUCwBGRR7JlW3NP/panWYWXy9TlDzt04CG0TcC6m0bMv8gCvL37m
-         DVWDwO7NBIYal8lFSIZJ4sLTexdALlMWnKQ+n08zidpf1x1EIz5zxCl/6d+xzTcuD2
-         a7pxb1wfLYlrw==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, "Yan, Zheng" <ukernel@gmail.com>,
-        Luis Henriques <lhenriques@suse.de>,
-        Xiubo Li <xiubli@redhat.com>,
-        =?UTF-8?q?Jozef=20Kov=C3=A1=C4=8D?= <kovac@firma.zoznam.sk>
-Subject: [PATCH v3] ceph: request Fw caps before updating the mtime in ceph_write_iter
-Date:   Fri, 20 Aug 2021 11:39:42 -0400
-Message-Id: <20210820153942.235516-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.31.1
+        id S232458AbhHUByB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 20 Aug 2021 21:54:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:38033 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230172AbhHUByA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 20 Aug 2021 21:54:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1629510801;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jExsKTkbgZ9THe3gvXb04/xzUylKYW//0jOKCF2Ka0w=;
+        b=G0vT0arAHzMe7hO5BLmE9SkTIovLh9N0j0bM3PPA4IzW/D+7EraCyj7lBCQ0f8guoL8XyX
+        RTyAcrQYpGz6/8Mpc1ohkQE/fq3tJKxd35Y0W2nGNGQJ3aCoTTcVW4Qycma9HF3lwbDbIv
+        j8WIujSEIw681GH59y2SHxKDhTqLWv8=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-38-OxQAi_lUNG2OT0tcGhS_uw-1; Fri, 20 Aug 2021 21:53:19 -0400
+X-MC-Unique: OxQAi_lUNG2OT0tcGhS_uw-1
+Received: by mail-io1-f71.google.com with SMTP id f10-20020a6b620a0000b02904e5ab8bdc6cso6491068iog.22
+        for <ceph-devel@vger.kernel.org>; Fri, 20 Aug 2021 18:53:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jExsKTkbgZ9THe3gvXb04/xzUylKYW//0jOKCF2Ka0w=;
+        b=IzzTaX0FYCr/HNSRug/w1O0xlAgmJ4c7IwtHHDycFGQQPNoSOtkcRaZmPPjs4K8uT2
+         6fx8XxEZLsNf9j0Q+h1MNgyw8V9pbRJTsoENDpIgM2Hb5u6+qWmcQmByi67cIL+PDEI+
+         il+zrvAuw7p80BM3tIVlx3IYHlh/tFyNhIE66IlX8Vnpa5Krq7XADJPqkN7Tzhlt85sT
+         cBJ8ukt+8wAciGwH6Bys8X+oUwEH7vaE9+sruYxN6/Jb4efLAAZtsho6pIHsSxlHLMVw
+         jmyYTYkFhFdekp6I4dZ2clqzzyQo7YQOaLmiMGC3Om/70owlYdcEGo5Lo1wFwGG9LKxg
+         6GmQ==
+X-Gm-Message-State: AOAM530ZV4796WpHIqUvp2i2Bd5vbSAXH+zGgGzm2k8lFwmUfPgf19j6
+        jlOvkRoqnyEZiQ9x8cvB7AoSYLlbp6IVHzxC0QY3MyClRY0fseS5nmmnHKw9w2LS0TJdKHyGuXA
+        n+yoOzC6ySADPrYCPeAYEaYUK9J2e/+1SLMI+Ow==
+X-Received: by 2002:a5e:d80e:: with SMTP id l14mr18465276iok.79.1629510799162;
+        Fri, 20 Aug 2021 18:53:19 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxuTPUuCMRo/Cac6U+GHzTG88mk6T/61oPkHlK87mThixxfx6MXSdCRzgrygXpKn4Yey0p65P+UxnsAf42QK2c=
+X-Received: by 2002:a5e:d80e:: with SMTP id l14mr18465265iok.79.1629510799009;
+ Fri, 20 Aug 2021 18:53:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20210818060134.208546-1-vshankar@redhat.com> <20210818060134.208546-3-vshankar@redhat.com>
+In-Reply-To: <20210818060134.208546-3-vshankar@redhat.com>
+From:   Patrick Donnelly <pdonnell@redhat.com>
+Date:   Fri, 20 Aug 2021 21:52:53 -0400
+Message-ID: <CA+2bHPbs0EvoVjJazb1mLpZfX0euNratkhfzkWwP=_gHQAEvOQ@mail.gmail.com>
+Subject: Re: [RFC 2/2] ceph: add debugfs entries for v2 (new) mount syntax support
+To:     Venky Shankar <vshankar@redhat.com>
+Cc:     Jeff Layton <jlayton@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The current code will update the mtime and then try to get caps to
-handle the write. If we end up having to request caps from the MDS, then
-the mtime in the cap grant will clobber the updated mtime and it'll be
-lost.
+On Wed, Aug 18, 2021 at 2:01 AM Venky Shankar <vshankar@redhat.com> wrote:
+>
+> [...]
 
-This is most noticable when two clients are alternately writing to the
-same file. Fw caps are continually being granted and revoked, and the
-mtime ends up stuck because the updated mtimes are always being
-overwritten with the old one.
+Is "debugfs" the right place for this? I do wonder if that can be
+dropped/disabled via some obscure kernel config?
 
-Fix this by changing the order of operations in ceph_write_iter to get
-the caps before updating the times. Also, make sure we check the pool
-full conditions before even getting any caps or uninlining.
+Also "debugX" doesn't sound like the proper place for a feature flag
+of the kernel. I just did a quick check on my system and I do see:
 
-URL: https://tracker.ceph.com/issues/46574
-Cc: "Yan, Zheng" <ukernel@gmail.com>
-Cc: Luis Henriques <lhenriques@suse.de>
-Cc: Xiubo Li <xiubli@redhat.com>
-Reported-by: Jozef Kováč <kovac@firma.zoznam.sk>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/file.c | 32 +++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+$ ls /sys/fs/ext4/features
+batched_discard  casefold  encryption  fast_commit  lazy_itable_init
+meta_bg_resize  metadata_csum_seed  test_dummy_encryption_v2  verity
 
-v3: remove privs before getting caps. That can generate a SETATTR
-    request, which could deadlock with us holding Fw caps
+Perhaps we need something similar for fs/ceph?
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index d1755ac1d964..3daebfaec8c6 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1722,32 +1722,26 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		goto out;
- 	}
- 
--	err = file_remove_privs(file);
--	if (err)
-+	down_read(&osdc->lock);
-+	map_flags = osdc->osdmap->flags;
-+	pool_flags = ceph_pg_pool_flags(osdc->osdmap, ci->i_layout.pool_id);
-+	up_read(&osdc->lock);
-+	if ((map_flags & CEPH_OSDMAP_FULL) ||
-+	    (pool_flags & CEPH_POOL_FLAG_FULL)) {
-+		err = -ENOSPC;
- 		goto out;
-+	}
- 
--	err = file_update_time(file);
-+	err = file_remove_privs(file);
- 	if (err)
- 		goto out;
- 
--	inode_inc_iversion_raw(inode);
--
- 	if (ci->i_inline_version != CEPH_INLINE_NONE) {
- 		err = ceph_uninline_data(file, NULL);
- 		if (err < 0)
- 			goto out;
- 	}
- 
--	down_read(&osdc->lock);
--	map_flags = osdc->osdmap->flags;
--	pool_flags = ceph_pg_pool_flags(osdc->osdmap, ci->i_layout.pool_id);
--	up_read(&osdc->lock);
--	if ((map_flags & CEPH_OSDMAP_FULL) ||
--	    (pool_flags & CEPH_POOL_FLAG_FULL)) {
--		err = -ENOSPC;
--		goto out;
--	}
--
- 	dout("aio_write %p %llx.%llx %llu~%zd getting caps. i_size %llu\n",
- 	     inode, ceph_vinop(inode), pos, count, i_size_read(inode));
- 	if (fi->fmode & CEPH_FILE_MODE_LAZY)
-@@ -1759,6 +1753,12 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	if (err < 0)
- 		goto out;
- 
-+	err = file_update_time(file);
-+	if (err)
-+		goto out_caps;
-+
-+	inode_inc_iversion_raw(inode);
-+
- 	dout("aio_write %p %llx.%llx %llu~%zd got cap refs on %s\n",
- 	     inode, ceph_vinop(inode), pos, count, ceph_cap_string(got));
- 
-@@ -1842,6 +1842,8 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	}
- 
- 	goto out_unlocked;
-+out_caps:
-+	ceph_put_cap_refs(ci, got);
- out:
- 	if (direct_lock)
- 		ceph_end_io_direct(inode);
 -- 
-2.31.1
+Patrick Donnelly, Ph.D.
+He / Him / His
+Principal Software Engineer
+Red Hat Sunnyvale, CA
+GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
 
