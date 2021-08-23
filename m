@@ -2,68 +2,69 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FB043F48AD
-	for <lists+ceph-devel@lfdr.de>; Mon, 23 Aug 2021 12:30:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 621533F48B2
+	for <lists+ceph-devel@lfdr.de>; Mon, 23 Aug 2021 12:32:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236213AbhHWKbU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 23 Aug 2021 06:31:20 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22877 "EHLO
+        id S234188AbhHWKdT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 23 Aug 2021 06:33:19 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:51065 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236058AbhHWKbT (ORCPT
+        by vger.kernel.org with ESMTP id S233118AbhHWKdS (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 23 Aug 2021 06:31:19 -0400
+        Mon, 23 Aug 2021 06:33:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629714636;
+        s=mimecast20190719; t=1629714756;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=kbIkElSjQRcJexp3JKzOKPNUENCLNVCT/BF0z19m4Ws=;
-        b=OAWuU9WwG/6Psh5tg3NtP8lEcjNRZOBqvFjJ85OXMEI6pVxcIXOcLy5U/qtJp1xIO3cMpP
-        KQ4AjVaDLC6BRpPlh2r66Z/FdNJkOBspgY7GYlOQgPxyp/myH1WmJt6vmP5qdWTNqzV2ad
-        ZNQWwHLEM26I8bbFAKIzWo9Nu+l/ens=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-527-21HXeOgrMvKANDd_ydbO2A-1; Mon, 23 Aug 2021 06:30:35 -0400
-X-MC-Unique: 21HXeOgrMvKANDd_ydbO2A-1
-Received: by mail-qk1-f198.google.com with SMTP id p23-20020a05620a22f700b003d5ac11ac5cso11541120qki.15
-        for <ceph-devel@vger.kernel.org>; Mon, 23 Aug 2021 03:30:34 -0700 (PDT)
+        bh=UFJxRqkvl4sOwwD9aSBiqWrtAt/8FlGk/IpSe9/TKw4=;
+        b=PQoZ0WZ7aMhCnR064Agrg2S0FdVJHdjFuI/j23eyuLZPLIKQje52VqRKvIt0vvMoJoqapI
+        5xUvdWA8n9Ml3UkvKVcFN+o0wupV/mK08ClNy6SbttRc4MLQt64CPZvqqtX+QHRe9nha/p
+        a+hGFXiivC2elg5j49wjExcRYOx9S+s=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-454-qgkcfHweMLOu1TrX-ouIUA-1; Mon, 23 Aug 2021 06:32:35 -0400
+X-MC-Unique: qgkcfHweMLOu1TrX-ouIUA-1
+Received: by mail-qk1-f197.google.com with SMTP id h135-20020a379e8d000000b003f64b0f4865so5965345qke.12
+        for <ceph-devel@vger.kernel.org>; Mon, 23 Aug 2021 03:32:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=kbIkElSjQRcJexp3JKzOKPNUENCLNVCT/BF0z19m4Ws=;
-        b=UaJhi2tJO7CL2jwEzXBHTqt3mVIb5saW5aA7ZDFskyyTvKDTkP8UkRgLrof/MhC7pT
-         GQwCpdzdWC8YMZQrfjsPx0jT24aUl8LO6N0kKiWemkRNs6moxJsileELnr1xINnc8xp+
-         yQ8R82yAYSOpWiJv+JapvAJ3hKnnVyHGXAI749Dpf3aUM72EEOAplVJ+r/aZi6jfmV4Y
-         kLGMcmtCcKOQTUQ3b1DDlFtLg7sx2a6i1Vx/+ZjIUfwVNg/5k79VC4OmfjrQrB6GqCnE
-         CIWtF/E5M/MHi9Z2OSIXz1HyPdxrPAm7ijfGiRpR6t3Zhgr9vcN9bEpSm41pdTYmO0YJ
-         A1Ug==
-X-Gm-Message-State: AOAM533ZxdHX4/fPMBQADI/v0VRxR2cE4OYFc0fzrR3hOa6noc9OoHSf
-        u7xZm0JbvemnyNU7bHQkniE0MDiKVViDuibFeMEDAKe9nw5JqwFs/ksT27SDQ1jZ50EM28L3IDc
-        q5u4FZRHxbgx8O9BgIOeqrQ==
-X-Received: by 2002:ac8:5745:: with SMTP id 5mr28810646qtx.347.1629714634609;
-        Mon, 23 Aug 2021 03:30:34 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwiM6KAB6sO3Efk67fJvOOJ7B5IrY7elv+WzHWL2Bg4O0i11gY7PiyIFcDDwWE6p0I01ZmJfw==
-X-Received: by 2002:ac8:5745:: with SMTP id 5mr28810634qtx.347.1629714634466;
-        Mon, 23 Aug 2021 03:30:34 -0700 (PDT)
+        bh=UFJxRqkvl4sOwwD9aSBiqWrtAt/8FlGk/IpSe9/TKw4=;
+        b=ZDc0UdrslwKZGEv88iTwPNb3EWJ18rwz9Ojek547lZqERThzF7GRDNttj8PLznSN9T
+         6QFK20KvT89n9xY47O2nxyCdxsG5vmQPYuzh1sZaEp6k7omN67Fo0NBi/jKmiProf74c
+         yA/IOT+i/TEIHbg5UZQVguQ62VzJi5Zw+IFK37rGaT2bnUZ1g9W9y6Ep3wY7NWCi6QcU
+         qInnkUj2UcTvk3hReh57PJMI6kimhXYd5BMtgTkhb+U/kQFS+cgmtytlufuAi5Pi/YLd
+         oM/m5HebF/sPgrhWxRmIjY2K3FfBAPsFpGW11Sa5D4TfWVJxCEUwhhy0VQThQabzfm+d
+         0PBg==
+X-Gm-Message-State: AOAM531XYsFM5o7cN4LprNFKmeULUidrIjl0hvTAkqerXkXHDCKrQL2y
+        5IpRyWowKbRGBBLDS3XRF53TtZIyUJVA9trsSgPOQ6ulIbrfweBPnBpZtsldHqIEovcxOrsM32u
+        jhSoSRVobWvbO5Pi2T8WJew==
+X-Received: by 2002:ac8:4b43:: with SMTP id e3mr29007894qts.312.1629714754643;
+        Mon, 23 Aug 2021 03:32:34 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxxsjhTWW1T9MReVJXwbdo8ShdZhAJcRPq46PfdzMHwqS45Wnfxd0VWTpFUaU7lEed0t+dXhg==
+X-Received: by 2002:ac8:4b43:: with SMTP id e3mr29007884qts.312.1629714754494;
+        Mon, 23 Aug 2021 03:32:34 -0700 (PDT)
 Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id b19sm8383059qkc.7.2021.08.23.03.30.33
+        by smtp.gmail.com with ESMTPSA id l11sm6271878qtv.88.2021.08.23.03.32.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Aug 2021 03:30:34 -0700 (PDT)
-Message-ID: <9637f0f2ad85d63f7188c4587e89709f129ce5e3.camel@redhat.com>
-Subject: Re: [PATCH 1/2] ceph: add helpers to create/cleanup debugfs
- sub-directories under "ceph" directory
+        Mon, 23 Aug 2021 03:32:34 -0700 (PDT)
+Message-ID: <6deefa227ca4f58719d574f213464dd2d510dd35.camel@redhat.com>
+Subject: Re: [RFC 2/2] ceph: add debugfs entries for v2 (new) mount syntax
+ support
 From:   Jeff Layton <jlayton@redhat.com>
-To:     Venky Shankar <vshankar@redhat.com>
-Cc:     Patrick Donnelly <pdonnell@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-Date:   Mon, 23 Aug 2021 06:30:33 -0400
-In-Reply-To: <CACPzV1nDJq46_rai7wYpZqXB2UDmcxo9tfjwfrVPio6ZU0uWYw@mail.gmail.com>
-References: <20210819060701.25486-1-vshankar@redhat.com>
-         <20210819060701.25486-2-vshankar@redhat.com>
-         <9891128997ecdd7a2b9c88b3a7271936f5d66fd7.camel@redhat.com>
-         <CACPzV1nDJq46_rai7wYpZqXB2UDmcxo9tfjwfrVPio6ZU0uWYw@mail.gmail.com>
+To:     Venky Shankar <vshankar@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
+Date:   Mon, 23 Aug 2021 06:32:33 -0400
+In-Reply-To: <CACPzV1nJQzqmLxMEfaGobVCT9u61kqyQ7yCG++dzUK4eLmM1AA@mail.gmail.com>
+References: <20210818060134.208546-1-vshankar@redhat.com>
+         <20210818060134.208546-3-vshankar@redhat.com>
+         <CA+2bHPbs0EvoVjJazb1mLpZfX0euNratkhfzkWwP=_gHQAEvOQ@mail.gmail.com>
+         <CACPzV1mPkwRmC-dA7oWNQ3=RsDPfw=tMJgw8sX_-CARy1UWH9w@mail.gmail.com>
+         <CACPzV1nJQzqmLxMEfaGobVCT9u61kqyQ7yCG++dzUK4eLmM1AA@mail.gmail.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
 MIME-Version: 1.0
@@ -72,107 +73,62 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-08-23 at 10:25 +0530, Venky Shankar wrote:
-> On Thu, Aug 19, 2021 at 10:46 PM Jeff Layton <jlayton@redhat.com> wrote:
+On Mon, 2021-08-23 at 11:01 +0530, Venky Shankar wrote:
+> On Mon, Aug 23, 2021 at 10:15 AM Venky Shankar <vshankar@redhat.com> wrote:
 > > 
-> > On Thu, 2021-08-19 at 11:37 +0530, Venky Shankar wrote:
-> > > Callers can use this helper to create a subdirectory under
-> > > "ceph" directory in debugfs to place custom files for exporting
-> > > information to userspace.
+> > On Sat, Aug 21, 2021 at 7:23 AM Patrick Donnelly <pdonnell@redhat.com> wrote:
 > > > 
-> > > Signed-off-by: Venky Shankar <vshankar@redhat.com>
-> > > ---
-> > >  include/linux/ceph/debugfs.h |  3 +++
-> > >  net/ceph/debugfs.c           | 27 +++++++++++++++++++++++++--
-> > >  2 files changed, 28 insertions(+), 2 deletions(-)
+> > > On Wed, Aug 18, 2021 at 2:01 AM Venky Shankar <vshankar@redhat.com> wrote:
+> > > > 
+> > > > [...]
 > > > 
-> > > diff --git a/include/linux/ceph/debugfs.h b/include/linux/ceph/debugfs.h
-> > > index 8b3a1a7a953a..c372e6cb8aae 100644
-> > > --- a/include/linux/ceph/debugfs.h
-> > > +++ b/include/linux/ceph/debugfs.h
-> > > @@ -10,5 +10,8 @@ extern void ceph_debugfs_cleanup(void);
-> > >  extern void ceph_debugfs_client_init(struct ceph_client *client);
-> > >  extern void ceph_debugfs_client_cleanup(struct ceph_client *client);
-> > > 
-> > > +extern struct dentry *ceph_debugfs_create_subdir(const char *subdir);
-> > > +extern void ceph_debugfs_cleanup_subdir(struct dentry *subdir_dentry);
-> > > +
-> > >  #endif
-> > > 
-> > > diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
-> > > index 2110439f8a24..cd6f69dd97fa 100644
-> > > --- a/net/ceph/debugfs.c
-> > > +++ b/net/ceph/debugfs.c
-> > > @@ -404,6 +404,18 @@ void ceph_debugfs_cleanup(void)
-> > >       debugfs_remove(ceph_debugfs_dir);
-> > >  }
-> > > 
-> > > +struct dentry *ceph_debugfs_create_subdir(const char *subdir)
-> > > +{
-> > > +     return debugfs_create_dir(subdir, ceph_debugfs_dir);
-> > > +}
-> > > +EXPORT_SYMBOL(ceph_debugfs_create_subdir);
-> > > +
-> > > +void ceph_debugfs_cleanup_subdir(struct dentry *subdir_dentry)
-> > > +{
-> > > +     debugfs_remove(subdir_dentry);
-> > > +}
-> > > +EXPORT_SYMBOL(ceph_debugfs_cleanup_subdir);
-> > > +
+> > > Is "debugfs" the right place for this? I do wonder if that can be
+> > > dropped/disabled via some obscure kernel config?
 > > 
-> > Rather than these specialized helpers, I think it'd be cleaner/more
-> > evident to just export the ceph_debugfs_dir symbol and then use normal
-> > debugfs commands in ceph.ko.
+> > The primary use for this (v2 syntax entry) is for catching bugs in v2
+> > mount syntax implementation which sounds more like a form of
+> > "debugging". Sysfs represents the whole device model as seen from the
+> > kernel.
 > 
-> I had initially thought of doing that, but was concerned about putting
-> ceph_debugfs_dir to abuse once exported.
+> So, Jeff in another thread suggested that we make these debugfs
+> entries generic (client_features). In that case, I'm ok with having
+> these in sysfs.
 > 
 
-I wouldn't worry about that. The only external user of this symbol will
-be in ceph.ko and we'll vet any code that goes in there.
+I think debugfs is fine for this. This is mainly for teuthology, and in
+that case we'll have debugfs available.
+
+One of the reasons to use debugfs here is that stuff in there is
+specifically _not_ considered part of the kernel's ABI, so we can more
+easily make changes to it in the future w/o worrying as much about
+backward compatibility.
 
 > > 
-> > >  void ceph_debugfs_client_init(struct ceph_client *client)
-> > >  {
-> > >       char name[80];
-> > > @@ -413,7 +425,7 @@ void ceph_debugfs_client_init(struct ceph_client *client)
+> > And, sysfs is optional too (CONFIG_SYSFS).
+> > 
 > > > 
-> > >       dout("ceph_debugfs_client_init %p %s\n", client, name);
+> > > Also "debugX" doesn't sound like the proper place for a feature flag
+> > > of the kernel. I just did a quick check on my system and I do see:
 > > > 
-> > > -     client->debugfs_dir = debugfs_create_dir(name, ceph_debugfs_dir);
-> > > +     client->debugfs_dir = ceph_debugfs_create_subdir(name);
+> > > $ ls /sys/fs/ext4/features
+> > > batched_discard  casefold  encryption  fast_commit  lazy_itable_init
+> > > meta_bg_resize  metadata_csum_seed  test_dummy_encryption_v2  verity
 > > > 
-> > >       client->monc.debugfs_file = debugfs_create_file("monc",
-> > >                                                     0400,
-> > > @@ -454,7 +466,7 @@ void ceph_debugfs_client_cleanup(struct ceph_client *client)
-> > >       debugfs_remove(client->debugfs_monmap);
-> > >       debugfs_remove(client->osdc.debugfs_file);
-> > >       debugfs_remove(client->monc.debugfs_file);
-> > > -     debugfs_remove(client->debugfs_dir);
-> > > +     ceph_debugfs_cleanup_subdir(client->debugfs_dir);
-> > >  }
+> > > Perhaps we need something similar for fs/ceph?
 > > > 
-> > >  #else  /* CONFIG_DEBUG_FS */
-> > > @@ -475,4 +487,15 @@ void ceph_debugfs_client_cleanup(struct ceph_client *client)
-> > >  {
-> > >  }
+> > > --
+> > > Patrick Donnelly, Ph.D.
+> > > He / Him / His
+> > > Principal Software Engineer
+> > > Red Hat Sunnyvale, CA
+> > > GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
 > > > 
-> > > +struct dentry *ceph_debugfs_create_subdir(const char *subdir)
-> > > +{
-> > > +     return NULL;
-> > > +}
-> > > +EXPORT_SYMBOL(ceph_debugfs_create_subdir);
-> > > +
-> > > +void ceph_debugfs_cleanup_subdir(struct dentry *subdir_dentry)
-> > > +{
-> > > +}
-> > > +EXPORT_SYMBOL(ceph_debugfs_cleanup_subdir);
-> > > +
-> > >  #endif  /* CONFIG_DEBUG_FS */
+> > 
 > > 
 > > --
-> > Jeff Layton <jlayton@redhat.com>
-> > 
+> > Cheers,
+> > Venky
+> 
 > 
 > 
 
