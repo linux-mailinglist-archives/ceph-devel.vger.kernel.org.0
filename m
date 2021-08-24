@@ -2,58 +2,57 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D4673F6036
-	for <lists+ceph-devel@lfdr.de>; Tue, 24 Aug 2021 16:24:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF52A3F6041
+	for <lists+ceph-devel@lfdr.de>; Tue, 24 Aug 2021 16:25:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237692AbhHXOYw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 24 Aug 2021 10:24:52 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37017 "EHLO
+        id S237755AbhHXO0J (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 24 Aug 2021 10:26:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31335 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237745AbhHXOYv (ORCPT
+        by vger.kernel.org with ESMTP id S237731AbhHXO0I (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 24 Aug 2021 10:24:51 -0400
+        Tue, 24 Aug 2021 10:26:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629815047;
+        s=mimecast20190719; t=1629815123;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=rXM+IBI3cANg1BoBFaXjt+OJ0V+p5mrya6klP9WdYlA=;
-        b=blgt5QHXN/+r0Gs60xHNTw07lsppJhxUMHtAuTHPRo0dFyWuev2QX8zEOIr/sT7KPIkoX7
-        ChaYocHJqiX5rUpr93oZdeUcIRKj1/89PiyfG2aNSVGOmLpxmZiWZ6WmMXXtjKbH3vD4is
-        r8ymLnghpL8QCkhILdjWGg8bMvPBEWA=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-4-LHXit_6lPj-QTrs_3MTaGA-1; Tue, 24 Aug 2021 10:24:06 -0400
-X-MC-Unique: LHXit_6lPj-QTrs_3MTaGA-1
-Received: by mail-qt1-f200.google.com with SMTP id k6-20020ac84786000000b0029d8b7a6d1eso2765142qtq.4
-        for <ceph-devel@vger.kernel.org>; Tue, 24 Aug 2021 07:24:06 -0700 (PDT)
+        bh=jS4DMiYMJEvLKBLFhfVXQbwK/7O32UF1dBTczqvLw1Y=;
+        b=BlaFjdHzjk9Eerzt1bRAubbkSEHUstJp9RWZzfMtvLjEHqLlt/LQbAgnVXgBXaqup+dls+
+        hUffbufSCi7yr4+nzrVF/kO4kRbJdHzLPPGwkcs2Gi5xbZW7DA9AQK+gS/mZpqYk5d+3ct
+        2N3RgowYBcc4TUNlq4OqBqs0WKMs/+A=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-357-jVFi6A7jPA6Chi3CakM5jQ-1; Tue, 24 Aug 2021 10:25:22 -0400
+X-MC-Unique: jVFi6A7jPA6Chi3CakM5jQ-1
+Received: by mail-qk1-f199.google.com with SMTP id c27-20020a05620a165b00b003d3817c7c23so14324904qko.16
+        for <ceph-devel@vger.kernel.org>; Tue, 24 Aug 2021 07:25:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=rXM+IBI3cANg1BoBFaXjt+OJ0V+p5mrya6klP9WdYlA=;
-        b=HhRktR/VWRCIHwj/rhsSrMTG0ganDWGYfOkil5cPMoXn3p7ZC8ZhJmk9wYWFbTjsix
-         go6gbjeAHJ41tlitAuE0uw8LHzwhYpqwONjBy/Eo/5PHTcEUZM3YTTHMwWvJj7K0702B
-         b8xJf9O5e0uWisFpr3RhD3kVzB2L9kuhKvzCPfyp0xPW2aNaeMFRbjIt/WG8CsYv0EuN
-         pJSDavc1EqMzspgpotj8WAswf7uW67oncox/YzfVxfNfxxAo6m35vv4alu+qW+Novpmr
-         KSSqbcCzXFoLd7hXExeuPTcJyyFaAqfp5Z+euyd2YyCHsXC0jHLNoFQ+TBqEZgty9JKS
-         ASTg==
-X-Gm-Message-State: AOAM532u6e2fbVOFmKDD9691ILsQIczngi/cdNKU5D275eNz2blGzF+G
-        0ooWc6mWouSTjRrwnBhcZ95/oq0gmHoXKVneheNsK7XRVV+0cws5o/jFLD7w6vsLymqFXy+8B8K
-        jA6FP3lG6VcZca8+n/wiPcg==
-X-Received: by 2002:ae9:ea19:: with SMTP id f25mr8455947qkg.341.1629815045875;
-        Tue, 24 Aug 2021 07:24:05 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz0k36wj5zNWxDPPKfaTblHo9ascSv6RZDAgZIszilZOADFHpaoZorFodsGnWRqf0RVmvNYxA==
-X-Received: by 2002:ae9:ea19:: with SMTP id f25mr8455927qkg.341.1629815045702;
-        Tue, 24 Aug 2021 07:24:05 -0700 (PDT)
+        bh=jS4DMiYMJEvLKBLFhfVXQbwK/7O32UF1dBTczqvLw1Y=;
+        b=m+yVcQE1R4StYduvw1EDqIAlt05T0mrBaoKgsxBrwp3AbWeiFIsMwcXROpgyeb7t0s
+         fScgItVRauQ1U5PbPu+BVUj8rcCs1tLO8iy32bGLOwQ/aiQeDPFXDMQ8fVAZyYViZviC
+         r3MaLU/qcMrF0fRP+0ZHA3/fUKUmkRjMWoUi6/f2d1lIOHfkZSNj4tsnkEnk6PMJazjP
+         uR3qNrIlxoCzSLDG1+E1KrfQdglVE/BVYZMnrObgQeO77INu2GW+14lCeCvmjD4qTuaE
+         tyIssEXQhy7f9ZrHIvHgq4Omhi0Ww0neeOaWICnaGRmzDlWTVatFawzP108eu+15csbn
+         R18Q==
+X-Gm-Message-State: AOAM530afOV/ksUaA1btcyp4XbT0BNMnuvVs3QyrQml4hA64Cb/EDy77
+        lJX2vYkfU9zVZnkX+xsbRfTSGm+rqGL8n/nTMT7xGG49WY7b/mPc2pbDG8F6kxwlHVJlg+fDb9g
+        fEkOa/5v+A/rqLEUC1CApmQ==
+X-Received: by 2002:a05:620a:4050:: with SMTP id i16mr25621272qko.90.1629815121783;
+        Tue, 24 Aug 2021 07:25:21 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyw/vN4HfM869zB70GdhFgvXTyrDBhnvRbUsGuCtjTO3eGJIomB0OdYM13LOc5okIw+BG25bQ==
+X-Received: by 2002:a05:620a:4050:: with SMTP id i16mr25621249qko.90.1629815121635;
+        Tue, 24 Aug 2021 07:25:21 -0700 (PDT)
 Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id f29sm273492qtv.34.2021.08.24.07.24.04
+        by smtp.gmail.com with ESMTPSA id w20sm10217864qkj.116.2021.08.24.07.25.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Aug 2021 07:24:05 -0700 (PDT)
-Message-ID: <6370d0a74c3ceb79c53305a64ba7a982d16d34b4.camel@redhat.com>
-Subject: Re: [PATCH 11/12] fscache: Fix fscache_cookie_put() to not deref
- after dec
+        Tue, 24 Aug 2021 07:25:21 -0700 (PDT)
+Message-ID: <01c442d2b3aff85e0e95bfefb44ac6e77eb3373f.camel@redhat.com>
+Subject: Re: [PATCH 00/12] fscache: Some prep work for fscache rewrite
 From:   Jeff Layton <jlayton@redhat.com>
 To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
 Cc:     Anna Schumaker <anna.schumaker@netapp.com>,
@@ -64,10 +63,9 @@ Cc:     Anna Schumaker <anna.schumaker@netapp.com>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 24 Aug 2021 10:24:04 -0400
-In-Reply-To: <162431203107.2908479.3259582550347000088.stgit@warthog.procyon.org.uk>
+Date:   Tue, 24 Aug 2021 10:25:20 -0400
+In-Reply-To: <162431188431.2908479.14031376932042135080.stgit@warthog.procyon.org.uk>
 References: <162431188431.2908479.14031376932042135080.stgit@warthog.procyon.org.uk>
-         <162431203107.2908479.3259582550347000088.stgit@warthog.procyon.org.uk>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
 MIME-Version: 1.0
@@ -76,144 +74,97 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-06-21 at 22:47 +0100, David Howells wrote:
-> fscache_cookie_put() accesses the cookie it has just put inside the
-> tracepoint that monitors the change - but this is something it's not
-> allowed to do if we didn't reduce the count to zero.
-
-Do you mean "if the count went to zero." ?
-
+On Mon, 2021-06-21 at 22:44 +0100, David Howells wrote:
+> Here are some patches that perform some preparatory work for the fscache
+> rewrite that's being worked on.  These include:
 > 
-> Fix this by dropping most of those values from the tracepoint and grabbing
-> the cookie debug ID before doing the dec.
+>  (1) Always select netfs stats when enabling fscache stats since they're
+>      displayed through the same procfile.
 > 
-> Also take the opportunity to switch over the usage and where arguments on
-> the tracepoint to put the reason last.
+>  (2) Add a cookie debug ID that can be used in tracepoints instead of a
+>      pointer and cache it in the netfs_cache_resources struct rather than
+>      in the netfs_read_request struct to make it more available.
 > 
-> Signed-off-by: David Howells <dhowells@redhat.com>
+>  (3) Use file_inode() in cachefiles rather than dereferencing file->f_inode
+>      directly.
+> 
+>  (4) Provide a procfile to display fscache cookies.
+> 
+>  (5) Remove the fscache and cachefiles histogram procfiles.
+> 
+>  (6) Remove the fscache object list procfile.
+> 
+>  (7) Avoid using %p in fscache and cachefiles as the value is hashed and
+>      not comparable to the register dump in an oops trace.
+> 
+>  (8) Fix the cookie hash function to actually achieve useful dispersion.
+> 
+>  (9) Fix fscache_cookie_put() so that it doesn't dereference the cookie
+>      pointer in the tracepoint after the refcount has been decremented
+>      (we're only allowed to do that if we decremented it to zero).
+> 
+> (10) Use refcount_t rather than atomic_t for the fscache_cookie refcount.
+> 
+> The patches can be found on this branch:
+> 
+> 	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-next
+> 
+> David
 > ---
+> David Howells (12):
+>       fscache: Select netfs stats if fscache stats are enabled
+>       netfs: Move cookie debug ID to struct netfs_cache_resources
+>       cachefiles: Use file_inode() rather than accessing ->f_inode
+>       fscache: Add a cookie debug ID and use that in traces
+>       fscache: Procfile to display cookies
+>       fscache, cachefiles: Remove the histogram stuff
+>       fscache: Remove the object list procfile
+>       fscache: Change %p in format strings to something else
+>       cachefiles: Change %p in format strings to something else
+>       fscache: Fix cookie key hashing
+>       fscache: Fix fscache_cookie_put() to not deref after dec
+>       fscache: Use refcount_t for the cookie refcount instead of atomic_t
 > 
->  fs/fscache/cookie.c            |   10 ++++++----
->  fs/fscache/internal.h          |    2 +-
->  fs/fscache/netfs.c             |    2 +-
->  include/trace/events/fscache.h |   24 +++++++-----------------
->  4 files changed, 15 insertions(+), 23 deletions(-)
 > 
-> diff --git a/fs/fscache/cookie.c b/fs/fscache/cookie.c
-> index 2558814193e9..6df3732cf1b4 100644
-> --- a/fs/fscache/cookie.c
-> +++ b/fs/fscache/cookie.c
-> @@ -225,8 +225,8 @@ struct fscache_cookie *fscache_hash_cookie(struct fscache_cookie *candidate)
->  
->  collision:
->  	if (test_and_set_bit(FSCACHE_COOKIE_ACQUIRED, &cursor->flags)) {
-> -		trace_fscache_cookie(cursor, fscache_cookie_collision,
-> -				     atomic_read(&cursor->usage));
-> +		trace_fscache_cookie(cursor->debug_id, atomic_read(&cursor->usage),
-> +				     fscache_cookie_collision);
->  		pr_err("Duplicate cookie detected\n");
->  		fscache_print_cookie(cursor, 'O');
->  		fscache_print_cookie(candidate, 'N');
-> @@ -305,7 +305,8 @@ struct fscache_cookie *__fscache_acquire_cookie(
->  
->  	cookie = fscache_hash_cookie(candidate);
->  	if (!cookie) {
-> -		trace_fscache_cookie(candidate, fscache_cookie_discard, 1);
-> +		trace_fscache_cookie(candidate->debug_id, 1,
-> +				     fscache_cookie_discard);
->  		goto out;
->  	}
->  
-> @@ -866,8 +867,9 @@ void fscache_cookie_put(struct fscache_cookie *cookie,
->  	_enter("%x", cookie->debug_id);
->  
->  	do {
-> +		unsigned int cookie_debug_id = cookie->debug_id;
->  		usage = atomic_dec_return(&cookie->usage);
-> -		trace_fscache_cookie(cookie, where, usage);
-> +		trace_fscache_cookie(cookie_debug_id, usage, where);
->  
->  		if (usage > 0)
->  			return;
-> diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
-> index a49136c63e4b..345105dbbfd1 100644
-> --- a/fs/fscache/internal.h
-> +++ b/fs/fscache/internal.h
-> @@ -291,7 +291,7 @@ static inline void fscache_cookie_get(struct fscache_cookie *cookie,
->  {
->  	int usage = atomic_inc_return(&cookie->usage);
->  
-> -	trace_fscache_cookie(cookie, where, usage);
-> +	trace_fscache_cookie(cookie->debug_id, usage, where);
->  }
->  
->  /*
-> diff --git a/fs/fscache/netfs.c b/fs/fscache/netfs.c
-> index cce92216fa28..d6bdb7b5e723 100644
-> --- a/fs/fscache/netfs.c
-> +++ b/fs/fscache/netfs.c
-> @@ -37,7 +37,7 @@ int __fscache_register_netfs(struct fscache_netfs *netfs)
->  	if (!cookie)
->  		goto already_registered;
->  	if (cookie != candidate) {
-> -		trace_fscache_cookie(candidate, fscache_cookie_discard, 1);
-> +		trace_fscache_cookie(candidate->debug_id, 1, fscache_cookie_discard);
->  		fscache_free_cookie(candidate);
->  	}
->  
-> diff --git a/include/trace/events/fscache.h b/include/trace/events/fscache.h
-> index 0b9e058aba4d..55b8802740fa 100644
-> --- a/include/trace/events/fscache.h
-> +++ b/include/trace/events/fscache.h
-> @@ -160,37 +160,27 @@ fscache_cookie_traces;
->  
->  
->  TRACE_EVENT(fscache_cookie,
-> -	    TP_PROTO(struct fscache_cookie *cookie,
-> -		     enum fscache_cookie_trace where,
-> -		     int usage),
-> +	    TP_PROTO(unsigned int cookie_debug_id,
-> +		     int usage,
-> +		     enum fscache_cookie_trace where),
->  
-> -	    TP_ARGS(cookie, where, usage),
-> +	    TP_ARGS(cookie_debug_id, usage, where),
->  
->  	    TP_STRUCT__entry(
->  		    __field(unsigned int,		cookie		)
-> -		    __field(unsigned int,		parent		)
->  		    __field(enum fscache_cookie_trace,	where		)
->  		    __field(int,			usage		)
-> -		    __field(int,			n_children	)
-> -		    __field(int,			n_active	)
-> -		    __field(u8,				flags		)
->  			     ),
->  
->  	    TP_fast_assign(
-> -		    __entry->cookie	= cookie->debug_id;
-> -		    __entry->parent	= cookie->parent ? cookie->parent->debug_id : 0;
-> +		    __entry->cookie	= cookie_debug_id;
->  		    __entry->where	= where;
->  		    __entry->usage	= usage;
-> -		    __entry->n_children	= atomic_read(&cookie->n_children);
-> -		    __entry->n_active	= atomic_read(&cookie->n_active);
-> -		    __entry->flags	= cookie->flags;
->  			   ),
->  
-> -	    TP_printk("%s c=%08x u=%d p=%08x Nc=%d Na=%d f=%02x",
-> +	    TP_printk("%s c=%08x u=%d",
->  		      __print_symbolic(__entry->where, fscache_cookie_traces),
-> -		      __entry->cookie, __entry->usage,
-> -		      __entry->parent, __entry->n_children, __entry->n_active,
-> -		      __entry->flags)
-> +		      __entry->cookie, __entry->usage)
->  	    );
->  
->  TRACE_EVENT(fscache_netfs,
+>  fs/cachefiles/Kconfig             |  19 --
+>  fs/cachefiles/Makefile            |   2 -
+>  fs/cachefiles/bind.c              |   2 -
+>  fs/cachefiles/interface.c         |   6 +-
+>  fs/cachefiles/internal.h          |  25 --
+>  fs/cachefiles/io.c                |   6 +-
+>  fs/cachefiles/key.c               |   2 +-
+>  fs/cachefiles/main.c              |   7 -
+>  fs/cachefiles/namei.c             |  61 ++---
+>  fs/cachefiles/proc.c              | 114 --------
+>  fs/cachefiles/xattr.c             |   4 +-
+>  fs/fscache/Kconfig                |  24 --
+>  fs/fscache/Makefile               |   2 -
+>  fs/fscache/cache.c                |  11 +-
+>  fs/fscache/cookie.c               | 201 +++++++++++----
+>  fs/fscache/fsdef.c                |   3 +-
+>  fs/fscache/histogram.c            |  87 -------
+>  fs/fscache/internal.h             |  57 +---
+>  fs/fscache/main.c                 |  39 +++
+>  fs/fscache/netfs.c                |   2 +-
+>  fs/fscache/object-list.c          | 414 ------------------------------
+>  fs/fscache/object.c               |   8 -
+>  fs/fscache/operation.c            |   3 -
+>  fs/fscache/page.c                 |   6 -
+>  fs/fscache/proc.c                 |  20 +-
+>  include/linux/fscache-cache.h     |   4 -
+>  include/linux/fscache.h           |   4 +-
+>  include/linux/netfs.h             |   2 +-
+>  include/trace/events/cachefiles.h |  68 ++---
+>  include/trace/events/fscache.h    | 160 ++++++------
+>  include/trace/events/netfs.h      |   2 +-
+>  31 files changed, 367 insertions(+), 998 deletions(-)
+>  delete mode 100644 fs/cachefiles/proc.c
+>  delete mode 100644 fs/fscache/histogram.c
+>  delete mode 100644 fs/fscache/object-list.c
 > 
 > 
 
-Patch itself looks fine though.
--- 
-Jeff Layton <jlayton@redhat.com>
+This all looks good (modulo a nitpicky changelog comment). You can add:
+
+Reviewed-by: Jeff Layton <jlayton@redhat.com>
 
