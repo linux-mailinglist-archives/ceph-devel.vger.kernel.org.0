@@ -2,69 +2,69 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BFC9E3F554D
-	for <lists+ceph-devel@lfdr.de>; Tue, 24 Aug 2021 03:05:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73D483F555E
+	for <lists+ceph-devel@lfdr.de>; Tue, 24 Aug 2021 03:07:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233620AbhHXBGd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 23 Aug 2021 21:06:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29737 "EHLO
+        id S233695AbhHXBH6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 23 Aug 2021 21:07:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25670 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234116AbhHXBGW (ORCPT
+        by vger.kernel.org with ESMTP id S233616AbhHXBH5 (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 23 Aug 2021 21:06:22 -0400
+        Mon, 23 Aug 2021 21:07:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629767138;
+        s=mimecast20190719; t=1629767233;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=9st6w9NvqY6kol76KpVziBDBNVECjsJU3w0jr6Fx8bE=;
-        b=LbAWwtXF1H1ibGn78Uca6BDTKXTpB44Ydn7ekhp+yjx5NAquM9pATeGsy32ZNMcX3R8CG0
-        6t0LBRxQdglXjo1i8rCBpsHeS8wgF5GpGT8FYCNiLHb7YcWzsYS7ZfAw2JroILyopiYSJ9
-        9ARhGUvFRGANzccHCGqpAInx/3hRz7Y=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-45-OLF2fXAJO4qBdmkdy150XQ-1; Mon, 23 Aug 2021 21:05:37 -0400
-X-MC-Unique: OLF2fXAJO4qBdmkdy150XQ-1
-Received: by mail-pl1-f198.google.com with SMTP id u12-20020a170902e80c00b0012da2362222so4908342plg.8
-        for <ceph-devel@vger.kernel.org>; Mon, 23 Aug 2021 18:05:37 -0700 (PDT)
+        bh=7QRfXM5efbQSwehoTaqgWpU5SA6JznvKxvueXK1pq9k=;
+        b=RzaetkU1xRIreUCgB2cIJ6Aha6m716SLJllrMuPUxNvl9QEim2ZE4HnRJdvbWw6lqKikfg
+        aRhEbFmOLoXQUDP/gz2dvHrYSU53bjm7NcGvibpp3nf96yS0HzvY55Jd43WRkgqVh1Wjnz
+        NdSLWBreZ/OULShRxxXQjm4FmeLBNkg=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-523-u0JLyw4JOAGdYoxFbPzzwQ-1; Mon, 23 Aug 2021 21:07:12 -0400
+X-MC-Unique: u0JLyw4JOAGdYoxFbPzzwQ-1
+Received: by mail-pg1-f199.google.com with SMTP id t28-20020a63461c000000b00252078b83e4so11165030pga.15
+        for <ceph-devel@vger.kernel.org>; Mon, 23 Aug 2021 18:07:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=9st6w9NvqY6kol76KpVziBDBNVECjsJU3w0jr6Fx8bE=;
-        b=jLXZfeO/8RSsdx3ugU7ARq0BvfR4MBjCJbANpTiSLMLcDOYfVhi59r8GKXet5t3hRQ
-         xys1QRsGQbkFo1k3o9ADCzNHnHpuqPRNnFCqawdMeg4hP0UyZHIEJFf/CAxLJsak5TEP
-         x2++rkBI/WHSsf8bwPMc9yzdcKrpDjmuh82qhu2+Qyjah1iRDcDudIwCIDxcU9Necw5J
-         gg0RjDozIaRj9LX9z4cVlfDzNlKSVVg5DXRuW57g3AsL6BnG0pLBcBNBfbdDjzEqpZAs
-         3rfMIqhPCBMj2OZiasSOhu+32IvnslYE3BMgDta18BVt2EN2+zaAEG+fZh0CL1qSxav0
-         5GlA==
-X-Gm-Message-State: AOAM533VXEP9G1Uc6RWqXeP0YYJ7WLMhWc5ddRY0S658aTL1WZjIGpxU
-        XSX5eAxZXbVbWiiI+OLCPcQuXAvkrL1Xfzow3v0WTMWFyJE6fcgFvKVcIo/9YP7A4YEc2a4osb6
-        3fgitMkAGHRcLLyRRR90Ty39HZMY3wAFgwyufa5FsCpyt6NUQ+iaZd0PU/ZlRsjE3zAV4XO0=
-X-Received: by 2002:a62:8491:0:b029:3dd:a29a:a1e4 with SMTP id k139-20020a6284910000b02903dda29aa1e4mr36220429pfd.13.1629767136358;
-        Mon, 23 Aug 2021 18:05:36 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzpKphnrhBEeDGXLA21tFgXio0qZIF5PZ2mXKcSZqhpfLMoGvgSSlJHDk27TtrC/8lCEzgMZg==
-X-Received: by 2002:a62:8491:0:b029:3dd:a29a:a1e4 with SMTP id k139-20020a6284910000b02903dda29aa1e4mr36220405pfd.13.1629767136096;
-        Mon, 23 Aug 2021 18:05:36 -0700 (PDT)
+        bh=7QRfXM5efbQSwehoTaqgWpU5SA6JznvKxvueXK1pq9k=;
+        b=CrX1pj2xfqq3eZDcg3iAmn3o6bulvqdLyn7Xes59vlmDTu/xXSG/h4r4qYF8RSffkd
+         aX21hxG12kXbkrc+aAuw5lVpYy/zXwjorgQmig54rAN3Qa4m93pUHwFKCZKwRUuvrnow
+         U0MLP3NazBtnVob9at5fnyplesFT5oLfOGpRgYyVl477mMiLrHKgPThY9mlFpTyi5WTA
+         9cphpRp+br99tkFXEkkkWgjla1dlQ2/NVz1UUYNt2r8c9tmu3j2yWwhLk9i2Sa+2CLSF
+         uVh2W7J6Sk8DngqWKNPCmdc6yzc+yqT0EMzMcoucU4E5DxiAG0GyTX5KroMNBgJkLlH3
+         1MSg==
+X-Gm-Message-State: AOAM533WFHGZFQXff66zGKXuq8pO8dVPSItqSqfCs4xNR//ZaC5Tv72c
+        Nvk4mjFDOLePkn7VOCBXvh0fVnjuYyP6Uv+KHDGneIO25JfGu4KcSwPWwvwHc8pQu/Je5phlNTW
+        COenvDTHBHKc2yOS3rlV8/UdgUqWmj8BvIqB2GtlgEHFMZsvDej+7+F4/OCriqcUCdeZ4J7I=
+X-Received: by 2002:a17:90b:613:: with SMTP id gb19mr1400175pjb.77.1629767231195;
+        Mon, 23 Aug 2021 18:07:11 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJz+dDzq8+fkMUOZdRTTPBOJTPFBUqs5ETEO1Tx862wJLRQ+FvUw+MndV5NwpHoSFIqZF9KhEw==
+X-Received: by 2002:a17:90b:613:: with SMTP id gb19mr1400153pjb.77.1629767230911;
+        Mon, 23 Aug 2021 18:07:10 -0700 (PDT)
 Received: from [10.72.12.33] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id u16sm20171327pgh.53.2021.08.23.18.05.34
+        by smtp.gmail.com with ESMTPSA id c15sm397957pjr.22.2021.08.23.18.07.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Aug 2021 18:05:35 -0700 (PDT)
-Subject: Re: [PATCH 1/3] ceph: remove the capsnaps when removing the caps
+        Mon, 23 Aug 2021 18:07:10 -0700 (PDT)
+Subject: Re: [PATCH 2/3] ceph: don't WARN if we're force umounting
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
 References: <20210818080603.195722-1-xiubli@redhat.com>
- <20210818080603.195722-2-xiubli@redhat.com>
- <be0e28cf34dfcf65b1772e621557ecc276d46b95.camel@kernel.org>
+ <20210818080603.195722-3-xiubli@redhat.com>
+ <7bf49c80528b31f6350d7f3ee2a5a69da42aaa69.camel@kernel.org>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <0917a4a5-03d3-d887-d769-6968bdeada26@redhat.com>
-Date:   Tue, 24 Aug 2021 09:05:32 +0800
+Message-ID: <f6950e48-62cd-9dc0-0bd4-f7a492ca4311@redhat.com>
+Date:   Tue, 24 Aug 2021 09:07:07 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <be0e28cf34dfcf65b1772e621557ecc276d46b95.camel@kernel.org>
+In-Reply-To: <7bf49c80528b31f6350d7f3ee2a5a69da42aaa69.camel@kernel.org>
 Content-Type: text/plain; charset=iso-8859-15; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -73,49 +73,55 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 8/23/21 10:58 PM, Jeff Layton wrote:
+On 8/23/21 9:49 PM, Jeff Layton wrote:
 > On Wed, 2021-08-18 at 16:06 +0800, xiubli@redhat.com wrote:
 >> From: Xiubo Li <xiubli@redhat.com>
 >>
->> The capsnaps will ihold the inodes when queuing to flush, so when
->> force umounting it will close the sessions first and if the MDSes
->> respond very fast and the session connections are closed just
->> before killing the superblock, which will flush the msgr queue,
->> then the flush capsnap callback won't ever be called, which will
->> lead the memory leak bug for the ceph_inode_info.
+>> Force umount will try to close the sessions by setting the session
+>> state to _CLOSING, so in ceph_kill_sb after that it will warn on it.
 >>
 >> URL: https://tracker.ceph.com/issues/52295
 >> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 >> ---
->>   fs/ceph/caps.c       | 47 +++++++++++++++++++++++++++++---------------
->>   fs/ceph/mds_client.c | 23 +++++++++++++++++++++-
->>   fs/ceph/super.h      |  3 +++
->>   3 files changed, 56 insertions(+), 17 deletions(-)
+>>   fs/ceph/mds_client.c | 9 +++++++--
+>>   1 file changed, 7 insertions(+), 2 deletions(-)
 >>
->> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
->> index e239f06babbc..7def99fbdca6 100644
->> --- a/fs/ceph/caps.c
->> +++ b/fs/ceph/caps.c
->> @@ -3663,6 +3663,34 @@ static void handle_cap_flush_ack(struct inode *inode, u64 flush_tid,
->>   		iput(inode);
->>   }
+>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+>> index a632e1c7cef2..0302af53e079 100644
+>> --- a/fs/ceph/mds_client.c
+>> +++ b/fs/ceph/mds_client.c
+>> @@ -4558,6 +4558,8 @@ static void maybe_recover_session(struct ceph_mds_client *mdsc)
 >>   
->> +/*
->> + * Caller hold s_mutex and i_ceph_lock.
->> + */
->> +void ceph_remove_capsnap(struct inode *inode, struct ceph_cap_snap *capsnap,
->> +			 bool *wake_ci, bool *wake_mdsc)
->> +{
->> +	struct ceph_inode_info *ci = ceph_inode(inode);
->> +	struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
->> +	bool ret;
+>>   bool check_session_state(struct ceph_mds_session *s)
+>>   {
+>> +	struct ceph_fs_client *fsc = s->s_mdsc->fsc;
 >> +
->> +	dout("removing capsnap %p, inode %p ci %p\n", capsnap, inode, ci);
->> +
->> +	WARN_ON(capsnap->dirty_pages || capsnap->writing);
-> Can we make this a WARN_ON_ONCE too?
+>>   	switch (s->s_state) {
+>>   	case CEPH_MDS_SESSION_OPEN:
+>>   		if (s->s_ttl && time_after(jiffies, s->s_ttl)) {
+>> @@ -4566,8 +4568,11 @@ bool check_session_state(struct ceph_mds_session *s)
+>>   		}
+>>   		break;
+>>   	case CEPH_MDS_SESSION_CLOSING:
+>> -		/* Should never reach this when we're unmounting */
+>> -		WARN_ON_ONCE(s->s_ttl);
+>> +		/*
+>> +		 * Should never reach this when none force unmounting
+>> +		 */
+>> +		if (READ_ONCE(fsc->mount_state) != CEPH_MOUNT_SHUTDOWN)
+>> +			WARN_ON_ONCE(s->s_ttl);
+> How about something like this instead?
+>
+>      WARN_ON_ONCE(s->s_ttl && READ_ONCE(fsc->mount_state) != CEPH_MOUNT_SHUTDOWN);
 
-Yeah, will fix it.
+
+This looks good to me too. Will fix it.
 
 Thanks
+
+
+>
+>>   		fallthrough;
+>>   	case CEPH_MDS_SESSION_NEW:
+>>   	case CEPH_MDS_SESSION_RESTARTING:
 
