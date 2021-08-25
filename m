@@ -2,170 +2,243 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64CE23F6EFE
-	for <lists+ceph-devel@lfdr.de>; Wed, 25 Aug 2021 07:51:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5C753F6F85
+	for <lists+ceph-devel@lfdr.de>; Wed, 25 Aug 2021 08:33:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233581AbhHYFvo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 25 Aug 2021 01:51:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:35893 "EHLO
+        id S238753AbhHYGdo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 25 Aug 2021 02:33:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:21353 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234606AbhHYFvn (ORCPT
+        by vger.kernel.org with ESMTP id S237102AbhHYGdo (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 25 Aug 2021 01:51:43 -0400
+        Wed, 25 Aug 2021 02:33:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629870657;
+        s=mimecast20190719; t=1629873177;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=cRbBAW///ySXACHT5hNwP0nJzYbbqyY1XHHqBrEY5dY=;
-        b=Gxy06HxZNCy0M9mOyp969JvdmTlGw6f7Nw3SuNjHj95trYuZLOBSllHeNX1ppSOUpNGPFV
-        BRK7nuSGJqW3nkAeUAvG++voqgrzXEJE6Y62srNG7x9RgkOHFV6QcVx+5dKQO37C6sxPFg
-        3uT/jVYwuu1HShbATUsnbBa6TiRUcTM=
+        bh=q0DWLBxTtM4lOOFalLK3LTPkJn+QEHLzsRUaOMwYcuU=;
+        b=Lrs5nDhNsXJNOvAEY/st151mLjw9RxSrBpoo/7honcx625tQREHU3eY7uRPXWZK/xXFrte
+        vN1WF14lCkhYfQqm+9n6C0OfifzQ40gTmWraT3v7THMQYOOdtrdcYzUPqROjcqbs1Bh5XV
+        M4hxvcK7RszwenXUwZYS9d7RYKiHqik=
 Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
  [209.85.216.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-350-DnOqSh1EPcKKOKlPO-Pyng-1; Wed, 25 Aug 2021 01:50:54 -0400
-X-MC-Unique: DnOqSh1EPcKKOKlPO-Pyng-1
-Received: by mail-pj1-f71.google.com with SMTP id mm23-20020a17090b359700b00185945eae0eso3883949pjb.3
-        for <ceph-devel@vger.kernel.org>; Tue, 24 Aug 2021 22:50:53 -0700 (PDT)
+ us-mta-300-V5IC8BgGM1i9BMMZmDpZtw-1; Wed, 25 Aug 2021 02:32:56 -0400
+X-MC-Unique: V5IC8BgGM1i9BMMZmDpZtw-1
+Received: by mail-pj1-f71.google.com with SMTP id 11-20020a17090a198b00b001822e08fc1bso4673136pji.0
+        for <ceph-devel@vger.kernel.org>; Tue, 24 Aug 2021 23:32:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cRbBAW///ySXACHT5hNwP0nJzYbbqyY1XHHqBrEY5dY=;
-        b=pEiVf6cCX7/as4eAipTf9fkV4pLue62E4gp/FhtWG3gDq+doLewWXqFx+ZviS1a7Vn
-         7VLA6xDQQ6/Mznc4U2ej1qXvNdB2foWac2+93WhmBmnzgHDCP+zsUnfuo4YGkO7/+KC5
-         UfNpDQVzS83jGek1U45HiLFA3KC+xPluCOrFbHX2w7Z2+/OmlXXXcpBwcilFB9urhaSl
-         0oNvQgbFNcz/hAM00lg3AkoykvRr/eJMl0OP9xO6bUXvmE6KRkYXGnanP3yhzwz3jhLa
-         WYgI1hGY+Sq0E1E7BSIo4ooG6hFEr8v8hjWzLoYG5euyrm8EIzwPLEES0mly0EGBG286
-         0p5g==
-X-Gm-Message-State: AOAM530MnSc4v2laqPvThs65G3QGcc/yUpSP4LN3lWsUO3MDlPjRcQHo
-        eygy1B369UysFX7s/pB46QIoIdzjIMToda1kpjjy0wsllGWfOPiI2yV3DuhIrDl5+MKcKtonIiu
-        yMJyWPClt4pap9C7x8MqtjA==
-X-Received: by 2002:a05:6a00:cc2:b0:3ee:20e0:1f20 with SMTP id b2-20020a056a000cc200b003ee20e01f20mr6400609pfv.7.1629870653057;
-        Tue, 24 Aug 2021 22:50:53 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwvHYsOY3t6sEtr0Xy1HJYwMhfVw/QT43cbQcLSRgQzU7VCCtCIW7a4UaSRH/hdLLy3N/dOWQ==
-X-Received: by 2002:a05:6a00:cc2:b0:3ee:20e0:1f20 with SMTP id b2-20020a056a000cc200b003ee20e01f20mr6400598pfv.7.1629870652769;
-        Tue, 24 Aug 2021 22:50:52 -0700 (PDT)
-Received: from localhost.localdomain ([49.207.198.118])
-        by smtp.gmail.com with ESMTPSA id w4sm960362pjj.15.2021.08.24.22.50.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Aug 2021 22:50:52 -0700 (PDT)
-From:   Venky Shankar <vshankar@redhat.com>
-To:     jlayton@redhat.com, pdonnell@redhat.com
-Cc:     ceph-devel@vger.kernel.org, Venky Shankar <vshankar@redhat.com>
-Subject: [PATCH v2 2/2] ceph: add debugfs entries for mount syntax support
-Date:   Wed, 25 Aug 2021 11:20:35 +0530
-Message-Id: <20210825055035.306043-3-vshankar@redhat.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210825055035.306043-1-vshankar@redhat.com>
-References: <20210825055035.306043-1-vshankar@redhat.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=q0DWLBxTtM4lOOFalLK3LTPkJn+QEHLzsRUaOMwYcuU=;
+        b=rldEqSlImOdXnFWk5IcopmjcivhEIcpmTzeryeetMmR7nVshKNmUsbnEo5pzm/eskD
+         7jHPboEpfOVGExvSwKv6v1QnG+z5M5wgjbsn1ITyavi7xWNMstFF5dVGLrK4axAVrG/v
+         axUYTNxEFN6JPzkcr3UNbfk9ZGjerL1Vs9coFYWrc0ZF7Xfmf8o9zlXndt/hWks7Og5Y
+         Keoq6+FUHcDjJD8uMxc9iWFSS9Wpf1yN3COxUnTbDp7kds23HeHTsPUR7yn3fg2uEuGg
+         81LZb1CiIoZZFgPFPugsUa52fKcglyRVXMOq7jvN++3JnKm2lIT6i4rOFyo2qsX3hB6t
+         n5Hw==
+X-Gm-Message-State: AOAM532APd+d9fxoi7RsetGhT01YFHJRETdxMonbQZjWWybWP/0C50nV
+        5w1igwkW/4lbPb82LMXozHk8CAkV3CO7/B3YDU/tJWUFIwRwEKLqMXO2kFa1YTPg0pboU7SQnku
+        GlBdlePCMmEKd3BdpBYq1KoAwfKrTla2CtsYDouY8hYfiM915nMZP8mZR7I2uAGRFbCcS38g=
+X-Received: by 2002:a17:90a:a0a:: with SMTP id o10mr8971518pjo.231.1629873174805;
+        Tue, 24 Aug 2021 23:32:54 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwyYTbd1SRB/ynA3bGIUZmOb+T7ciGO269ipWYgKsoMY3mRaM93r5An74Und63IiAxXupAtoA==
+X-Received: by 2002:a17:90a:a0a:: with SMTP id o10mr8971494pjo.231.1629873174553;
+        Tue, 24 Aug 2021 23:32:54 -0700 (PDT)
+Received: from [10.72.12.116] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id 17sm4463776pjd.3.2021.08.24.23.32.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Aug 2021 23:32:54 -0700 (PDT)
+Subject: Re: [PATCH v2 1/3] ceph: remove the capsnaps when removing the caps
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, ukernel@gmail.com, pdonnell@redhat.com,
+        ceph-devel@vger.kernel.org
+References: <20210825051355.5820-1-xiubli@redhat.com>
+ <20210825051355.5820-2-xiubli@redhat.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <3932b0b5-50cc-3d1e-c508-80ee655a2c38@redhat.com>
+Date:   Wed, 25 Aug 2021 14:32:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210825051355.5820-2-xiubli@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Signed-off-by: Venky Shankar <vshankar@redhat.com>
----
- fs/ceph/debugfs.c | 36 ++++++++++++++++++++++++++++++++++++
- fs/ceph/super.c   |  3 +++
- fs/ceph/super.h   |  2 ++
- 3 files changed, 41 insertions(+)
+There still has one bug, I am looking at it.
 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 66989c880adb..f9ff70704423 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -22,6 +22,14 @@
- #include "mds_client.h"
- #include "metric.h"
- 
-+#define CLIENT_FEATURES_DIR_NAME   "client_features"
-+#define MOUNT_DEVICE_V1_SUPPORT_FILE_NAME "v1_mount_syntax"
-+#define MOUNT_DEVICE_V2_SUPPORT_FILE_NAME "v2_mount_syntax"
-+
-+static struct dentry *ceph_client_features_dir;
-+static struct dentry *ceph_mount_device_v1_support;
-+static struct dentry *ceph_mount_device_v2_support;
-+
- static int mdsmap_show(struct seq_file *s, void *p)
- {
- 	int i;
-@@ -416,6 +424,26 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
- 						  &status_fops);
- }
- 
-+void ceph_fs_debugfs_client_features_init(void)
-+{
-+	ceph_client_features_dir = debugfs_create_dir(CLIENT_FEATURES_DIR_NAME,
-+						      ceph_debugfs_dir);
-+	ceph_mount_device_v1_support = debugfs_create_file(MOUNT_DEVICE_V1_SUPPORT_FILE_NAME,
-+							   0400,
-+							   ceph_client_features_dir,
-+							   NULL, NULL);
-+	ceph_mount_device_v2_support = debugfs_create_file(MOUNT_DEVICE_V2_SUPPORT_FILE_NAME,
-+							   0400,
-+							   ceph_client_features_dir,
-+							   NULL, NULL);
-+}
-+
-+void ceph_fs_debugfs_client_features_cleanup(void)
-+{
-+	debugfs_remove(ceph_mount_device_v1_support);
-+	debugfs_remove(ceph_mount_device_v2_support);
-+	debugfs_remove(ceph_client_features_dir);
-+}
- 
- #else  /* CONFIG_DEBUG_FS */
- 
-@@ -427,4 +455,12 @@ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
- {
- }
- 
-+void ceph_fs_debugfs_client_features_init(void)
-+{
-+}
-+
-+void ceph_fs_debugfs_client_features_cleanup(void)
-+{
-+}
-+
- #endif  /* CONFIG_DEBUG_FS */
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 609ffc8c2d78..21d59deb042d 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -1404,6 +1404,8 @@ static int __init init_ceph(void)
- 	if (ret)
- 		goto out_caches;
- 
-+	ceph_fs_debugfs_client_features_init();
-+
- 	pr_info("loaded (mds proto %d)\n", CEPH_MDSC_PROTOCOL);
- 
- 	return 0;
-@@ -1417,6 +1419,7 @@ static int __init init_ceph(void)
- static void __exit exit_ceph(void)
- {
- 	dout("exit_ceph\n");
-+	ceph_fs_debugfs_client_features_cleanup();
- 	unregister_filesystem(&ceph_fs_type);
- 	destroy_caches();
- }
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 8f71184b7c85..7e7b140cab5d 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1231,6 +1231,8 @@ extern int ceph_locks_to_pagelist(struct ceph_filelock *flocks,
- /* debugfs.c */
- extern void ceph_fs_debugfs_init(struct ceph_fs_client *client);
- extern void ceph_fs_debugfs_cleanup(struct ceph_fs_client *client);
-+extern void ceph_fs_debugfs_client_features_init(void);
-+extern void ceph_fs_debugfs_client_features_cleanup(void);
- 
- /* quota.c */
- static inline bool __ceph_has_any_quota(struct ceph_inode_info *ci)
--- 
-2.27.0
+Thanks
+
+
+On 8/25/21 1:13 PM, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> The capsnaps will ihold the inodes when queuing to flush, so when
+> force umounting it will close the sessions first and if the MDSes
+> respond very fast and the session connections are closed just
+> before killing the superblock, which will flush the msgr queue,
+> then the flush capsnap callback won't ever be called, which will
+> lead the memory leak bug for the ceph_inode_info.
+>
+> URL: https://tracker.ceph.com/issues/52295
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>   fs/ceph/caps.c       | 56 +++++++++++++++++++++++++++++++-------------
+>   fs/ceph/mds_client.c | 25 +++++++++++++++++++-
+>   fs/ceph/super.h      |  6 +++++
+>   3 files changed, 70 insertions(+), 17 deletions(-)
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index ddd86106e6d0..557c610289fb 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -3658,6 +3658,43 @@ static void handle_cap_flush_ack(struct inode *inode, u64 flush_tid,
+>   		iput(inode);
+>   }
+>   
+> +void __ceph_remove_capsnap(struct inode *inode, struct ceph_cap_snap *capsnap,
+> +			   bool *wake_ci, bool *wake_mdsc)
+> +{
+> +	struct ceph_inode_info *ci = ceph_inode(inode);
+> +	struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
+> +	bool ret;
+> +
+> +	lockdep_assert_held(&ci->i_ceph_lock);
+> +
+> +	dout("removing capsnap %p, inode %p ci %p\n", capsnap, inode, ci);
+> +
+> +	list_del_init(&capsnap->ci_item);
+> +	ret = __detach_cap_flush_from_ci(ci, &capsnap->cap_flush);
+> +	if (wake_ci)
+> +		*wake_ci = ret;
+> +
+> +	spin_lock(&mdsc->cap_dirty_lock);
+> +	if (list_empty(&ci->i_cap_flush_list))
+> +		list_del_init(&ci->i_flushing_item);
+> +
+> +	ret = __detach_cap_flush_from_mdsc(mdsc, &capsnap->cap_flush);
+> +	if (wake_mdsc)
+> +		*wake_mdsc = ret;
+> +	spin_unlock(&mdsc->cap_dirty_lock);
+> +}
+> +
+> +void ceph_remove_capsnap(struct inode *inode, struct ceph_cap_snap *capsnap,
+> +			 bool *wake_ci, bool *wake_mdsc)
+> +{
+> +	struct ceph_inode_info *ci = ceph_inode(inode);
+> +
+> +	lockdep_assert_held(&ci->i_ceph_lock);
+> +
+> +	WARN_ON_ONCE(capsnap->dirty_pages || capsnap->writing);
+> +	__ceph_remove_capsnap(inode, capsnap, wake_ci, wake_mdsc);
+> +}
+> +
+>   /*
+>    * Handle FLUSHSNAP_ACK.  MDS has flushed snap data to disk and we can
+>    * throw away our cap_snap.
+> @@ -3695,23 +3732,10 @@ static void handle_cap_flushsnap_ack(struct inode *inode, u64 flush_tid,
+>   			     capsnap, capsnap->follows);
+>   		}
+>   	}
+> -	if (flushed) {
+> -		WARN_ON(capsnap->dirty_pages || capsnap->writing);
+> -		dout(" removing %p cap_snap %p follows %lld\n",
+> -		     inode, capsnap, follows);
+> -		list_del(&capsnap->ci_item);
+> -		wake_ci |= __detach_cap_flush_from_ci(ci, &capsnap->cap_flush);
+> -
+> -		spin_lock(&mdsc->cap_dirty_lock);
+> -
+> -		if (list_empty(&ci->i_cap_flush_list))
+> -			list_del_init(&ci->i_flushing_item);
+> -
+> -		wake_mdsc |= __detach_cap_flush_from_mdsc(mdsc,
+> -							  &capsnap->cap_flush);
+> -		spin_unlock(&mdsc->cap_dirty_lock);
+> -	}
+> +	if (flushed)
+> +		ceph_remove_capsnap(inode, capsnap, &wake_ci, &wake_mdsc);
+>   	spin_unlock(&ci->i_ceph_lock);
+> +
+>   	if (flushed) {
+>   		ceph_put_snap_context(capsnap->context);
+>   		ceph_put_cap_snap(capsnap);
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index df3a735f7837..df10f9b33660 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -1604,10 +1604,32 @@ int ceph_iterate_session_caps(struct ceph_mds_session *session,
+>   	return ret;
+>   }
+>   
+> +static void remove_capsnaps(struct ceph_mds_client *mdsc, struct inode *inode)
+> +{
+> +	struct ceph_inode_info *ci = ceph_inode(inode);
+> +	struct ceph_cap_snap *capsnap;
+> +
+> +	lockdep_assert_held(&ci->i_ceph_lock);
+> +
+> +	dout("removing capsnaps, ci is %p, inode is %p\n", ci, inode);
+> +
+> +	while (!list_empty(&ci->i_cap_snaps)) {
+> +		capsnap = list_first_entry(&ci->i_cap_snaps,
+> +					   struct ceph_cap_snap, ci_item);
+> +		__ceph_remove_capsnap(inode, capsnap, NULL, NULL);
+> +		ceph_put_snap_context(capsnap->context);
+> +		ceph_put_cap_snap(capsnap);
+> +		iput(inode);
+> +	}
+> +	wake_up_all(&ci->i_cap_wq);
+> +	wake_up_all(&mdsc->cap_flushing_wq);
+> +}
+> +
+>   static int remove_session_caps_cb(struct inode *inode, struct ceph_cap *cap,
+>   				  void *arg)
+>   {
+>   	struct ceph_fs_client *fsc = (struct ceph_fs_client *)arg;
+> +	struct ceph_mds_client *mdsc = fsc->mdsc;
+>   	struct ceph_inode_info *ci = ceph_inode(inode);
+>   	LIST_HEAD(to_remove);
+>   	bool dirty_dropped = false;
+> @@ -1619,7 +1641,6 @@ static int remove_session_caps_cb(struct inode *inode, struct ceph_cap *cap,
+>   	__ceph_remove_cap(cap, false);
+>   	if (!ci->i_auth_cap) {
+>   		struct ceph_cap_flush *cf;
+> -		struct ceph_mds_client *mdsc = fsc->mdsc;
+>   
+>   		if (READ_ONCE(fsc->mount_state) >= CEPH_MOUNT_SHUTDOWN) {
+>   			if (inode->i_data.nrpages > 0)
+> @@ -1684,6 +1705,8 @@ static int remove_session_caps_cb(struct inode *inode, struct ceph_cap *cap,
+>   			ci->i_prealloc_cap_flush = NULL;
+>   		}
+>   	}
+> +	if (!list_empty(&ci->i_cap_snaps))
+> +		remove_capsnaps(mdsc, inode);
+>   	spin_unlock(&ci->i_ceph_lock);
+>   	while (!list_empty(&to_remove)) {
+>   		struct ceph_cap_flush *cf;
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 8f4f2747be65..445d13d760d1 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -1169,6 +1169,12 @@ extern void ceph_put_cap_refs_no_check_caps(struct ceph_inode_info *ci,
+>   					    int had);
+>   extern void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int nr,
+>   				       struct ceph_snap_context *snapc);
+> +extern void __ceph_remove_capsnap(struct inode *inode,
+> +				  struct ceph_cap_snap *capsnap,
+> +				  bool *wake_ci, bool *wake_mdsc);
+> +extern void ceph_remove_capsnap(struct inode *inode,
+> +				struct ceph_cap_snap *capsnap,
+> +				bool *wake_ci, bool *wake_mdsc);
+>   extern void ceph_flush_snaps(struct ceph_inode_info *ci,
+>   			     struct ceph_mds_session **psession);
+>   extern bool __ceph_should_report_size(struct ceph_inode_info *ci);
 
