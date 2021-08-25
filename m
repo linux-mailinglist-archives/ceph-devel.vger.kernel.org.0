@@ -2,207 +2,95 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC6403F6272
-	for <lists+ceph-devel@lfdr.de>; Tue, 24 Aug 2021 18:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83E7B3F6CA5
+	for <lists+ceph-devel@lfdr.de>; Wed, 25 Aug 2021 02:34:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232110AbhHXQMR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 24 Aug 2021 12:12:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:60827 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229467AbhHXQMP (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 24 Aug 2021 12:12:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629821491;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zztC89NUsnI49tBFDzJHfqMcg0PYYsKWW693C6SIn40=;
-        b=ROP2AlunAim0vB18DNyFNZufoU3UtiTE8Q6zHhDVrQpv4lZjPoJT9qhGjgWaCIdhr1xaS7
-        26uVvrc7J07XNPuAzBlX0bnu89b1PDQeGiV5sL2F09lfntDnguq/gqEnnHMRRm92E8UGka
-        19ZySxyawzvV0Np7bxU8ZooiBLhzOZI=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-28-SvYVDK13Praci1BJmqEnVQ-1; Tue, 24 Aug 2021 12:11:29 -0400
-X-MC-Unique: SvYVDK13Praci1BJmqEnVQ-1
-Received: by mail-qk1-f198.google.com with SMTP id w2-20020a3794020000b02903b54f40b442so14668268qkd.0
-        for <ceph-devel@vger.kernel.org>; Tue, 24 Aug 2021 09:11:29 -0700 (PDT)
+        id S234330AbhHYAfK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 24 Aug 2021 20:35:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47740 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231552AbhHYAfK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 24 Aug 2021 20:35:10 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 741F7C061757
+        for <ceph-devel@vger.kernel.org>; Tue, 24 Aug 2021 17:34:25 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id j4-20020a17090a734400b0018f6dd1ec97so3561272pjs.3
+        for <ceph-devel@vger.kernel.org>; Tue, 24 Aug 2021 17:34:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=YgKwPyA6p36Qho6zRZdfB9C13LcWagQDxbFTpSuYDjo=;
+        b=GAeh7QbFnXVfm9FQSw1EyAklLRMMmCCd4GvGKwqCG8KMfNaYulHwcepuI1MquhoOg4
+         7ox9uCoQyN3rRFR1IAM3oQaiJ0fEnHP6Xn/SacsVa28aKB/GOiG/AMS0Jb5AaDO5wOC+
+         tnCyfINUDzJyYlSORSQINmI1XtkoYuSJuYjO4JoIEfZnf/vfOm0JWRafXhoAy0eOaWNr
+         HDPJWj7LzLRZDeteCnLXDItpm5MzEyxjOCfhbCsIVneG4eTSeJ6Pdn9Gw6AaA8UDHrCn
+         5CVrBuxTSdc+SLxJVokhzGE+CBDFcZuwDCWJKFnmROcsIiLP7jURHjBAfoJgOeDHAF1y
+         y4fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=zztC89NUsnI49tBFDzJHfqMcg0PYYsKWW693C6SIn40=;
-        b=SikPgqqNuuzSCmZjepqh3cShflFo/2pqmRDbMKzMpEZA4cB3DlPnN+VH/ogeLvd4Cf
-         Xgv5+K0xY6CVYILMX+3438FXicup021rzZda47dBDJQDaxC4xd5m1JjK3acuKLeyuwcJ
-         M+VOJzCloKa9jW3ECWykgE2n34EXISuM/UxZwcgC4gbPxbHqRIuYiqv+qMcAQYTREAiE
-         T6UftsP8lnhckgo+jlJhCe5LUlpOsSwoXCEjSgRg1X96OLB81SBUsqZkqlGoEGMr240I
-         kTkZeMMkyargk+SZYJElY0n5xcFWreaiQgXd3bvv+EhUxEayyaiILL1HRAERNfiw8M3s
-         g7mA==
-X-Gm-Message-State: AOAM531jlup9DwJuIDlF8pdg3epIldjyLIQ+N4AgiQ096csj4bBQjzxw
-        LG+ngZdjzffE+NiJBDa59NY6dOFtE2C2RITTjJxcuFNrGV287WUdiu6XNllmmZyYnv6fW7KqYKr
-        n2uxg5+0kEvPNV2+GPL4lIg==
-X-Received: by 2002:ac8:58ce:: with SMTP id u14mr1640607qta.99.1629821489397;
-        Tue, 24 Aug 2021 09:11:29 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyCKqllfX/tvqrWatVeQf20ul8F8guKIBuisU0F+aEkBMrzdmA5+I16yDHMCyu87N39B0rdPQ==
-X-Received: by 2002:ac8:58ce:: with SMTP id u14mr1640586qta.99.1629821489175;
-        Tue, 24 Aug 2021 09:11:29 -0700 (PDT)
-Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id l13sm11361132qkp.97.2021.08.24.09.11.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Aug 2021 09:11:28 -0700 (PDT)
-Message-ID: <3d98729b59c2afcad1299a7742211bcdf1598623.camel@redhat.com>
-Subject: Re: [PATCH 10/12] fscache: Fix cookie key hashing
-From:   Jeff Layton <jlayton@redhat.com>
-To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
-Cc:     Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        David Wysochanski <dwysocha@redhat.com>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 24 Aug 2021 12:11:27 -0400
-In-Reply-To: <162431201844.2908479.8293647220901514696.stgit@warthog.procyon.org.uk>
-References: <162431188431.2908479.14031376932042135080.stgit@warthog.procyon.org.uk>
-         <162431201844.2908479.8293647220901514696.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=YgKwPyA6p36Qho6zRZdfB9C13LcWagQDxbFTpSuYDjo=;
+        b=FiljAIPMDj6+YY6Xd6MNE7sYKJXOkA7R1DGhkNNYigmjMHo7n0/rUhTqGeSZwfCb3L
+         JACL3H6i0l/CSCHvXFeHS7LtF0RUVVxedfMvVQg7V+l1nY4LaIxJKr+GEj/rHI2jI6rs
+         yQXx7zDTzO9W14tPgNIYaGGtBrMsShwFYvHXoLFH+4PSSvRPAA19R1Q7PdofwQeF/c2p
+         weY4mfVFAdowcJXGRrxEgnK9PMGAZpixJUig2k/QJvbnOLNYJugEbyufESlRG6LB4Zea
+         kKW6Q57uJHizBi08u9uloAYBWXc3i4s6WTSLLaeJAIu64BY9e6X7/d3fN5KygG7yFkc7
+         /D+A==
+X-Gm-Message-State: AOAM5331aK2zfwHPZuLI79O2D+wC2w1caOvxM2pMBFVhppjjxvcpmTlT
+        zrIL14b+4Ycsv6Qkb0hj92ULB3idAI7Ok+crcS4=
+X-Google-Smtp-Source: ABdhPJzjsIeXZagIJL+S6TDSq+OLU0Rmo9BoKC7bm9i3OWSAnhD742Z1d9o3tkjRBgl2DsTc3haTjvkchJRPawguSqo=
+X-Received: by 2002:a17:90a:a0a:: with SMTP id o10mr7499040pjo.231.1629851664602;
+ Tue, 24 Aug 2021 17:34:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a05:6a20:6049:b0:53:1687:3016 with HTTP; Tue, 24 Aug 2021
+ 17:34:24 -0700 (PDT)
+Reply-To: compaorekone34@gmail.com
+From:   Kone Compaore <abbttnb001@gmail.com>
+Date:   Tue, 24 Aug 2021 17:34:24 -0700
+Message-ID: <CA+d4EbPx-GrhL61LjL0nR=QZOHHzDzXdPkg9aANAE-WcuDUGRQ@mail.gmail.com>
+Subject: Greetings from Kone
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-06-21 at 22:46 +0100, David Howells wrote:
-> The current hash algorithm used for hashing cookie keys is really bad,
-> producing almost no dispersion (after a test kernel build, ~30000 files
-> were split over just 18 out of the 32768 hash buckets).
-> 
-> Borrow the full_name_hash() hash function into fscache to do the hashing
-> for cookie keys and, in the future, volume keys.
-> 
-> I don't want to use full_name_hash() as-is because I want the hash value to
-> be consistent across arches and over time as the hash value produced may
-> get used on disk.
-> 
-> I can also optimise parts of it away as the key will always be a padded
-> array of aligned 32-bit words.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
-> 
-
-What happens when this patch encounters a cache that was built before
-it? Do you need to couple this with some sort of global cache
-invalidation or rehashing event?
-
->  fs/fscache/cookie.c   |   14 +-------------
->  fs/fscache/internal.h |    2 ++
->  fs/fscache/main.c     |   39 +++++++++++++++++++++++++++++++++++++++
->  3 files changed, 42 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/fscache/cookie.c b/fs/fscache/cookie.c
-> index ec9bce33085f..2558814193e9 100644
-> --- a/fs/fscache/cookie.c
-> +++ b/fs/fscache/cookie.c
-> @@ -87,10 +87,8 @@ void fscache_free_cookie(struct fscache_cookie *cookie)
->  static int fscache_set_key(struct fscache_cookie *cookie,
->  			   const void *index_key, size_t index_key_len)
->  {
-> -	unsigned long long h;
->  	u32 *buf;
->  	int bufs;
-> -	int i;
->  
->  	bufs = DIV_ROUND_UP(index_key_len, sizeof(*buf));
->  
-> @@ -104,17 +102,7 @@ static int fscache_set_key(struct fscache_cookie *cookie,
->  	}
->  
->  	memcpy(buf, index_key, index_key_len);
-> -
-> -	/* Calculate a hash and combine this with the length in the first word
-> -	 * or first half word
-> -	 */
-> -	h = (unsigned long)cookie->parent;
-> -	h += index_key_len + cookie->type;
-> -
-> -	for (i = 0; i < bufs; i++)
-> -		h += buf[i];
-> -
-> -	cookie->key_hash = h ^ (h >> 32);
-> +	cookie->key_hash = fscache_hash(0, buf, bufs);
->  	return 0;
->  }
->  
-> diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
-> index 200082cafdda..a49136c63e4b 100644
-> --- a/fs/fscache/internal.h
-> +++ b/fs/fscache/internal.h
-> @@ -74,6 +74,8 @@ extern struct workqueue_struct *fscache_object_wq;
->  extern struct workqueue_struct *fscache_op_wq;
->  DECLARE_PER_CPU(wait_queue_head_t, fscache_object_cong_wait);
->  
-> +extern unsigned int fscache_hash(unsigned int salt, unsigned int *data, unsigned int n);
-> +
->  static inline bool fscache_object_congested(void)
->  {
->  	return workqueue_congested(WORK_CPU_UNBOUND, fscache_object_wq);
-> diff --git a/fs/fscache/main.c b/fs/fscache/main.c
-> index c1e6cc9091aa..4207f98e405f 100644
-> --- a/fs/fscache/main.c
-> +++ b/fs/fscache/main.c
-> @@ -93,6 +93,45 @@ static struct ctl_table fscache_sysctls_root[] = {
->  };
->  #endif
->  
-> +/*
-> + * Mixing scores (in bits) for (7,20):
-> + * Input delta: 1-bit      2-bit
-> + * 1 round:     330.3     9201.6
-> + * 2 rounds:   1246.4    25475.4
-> + * 3 rounds:   1907.1    31295.1
-> + * 4 rounds:   2042.3    31718.6
-> + * Perfect:    2048      31744
-> + *            (32*64)   (32*31/2 * 64)
-> + */
-> +#define HASH_MIX(x, y, a)	\
-> +	(	x ^= (a),	\
-> +	y ^= x,	x = rol32(x, 7),\
-> +	x += y,	y = rol32(y,20),\
-> +	y *= 9			)
-> +
-> +static inline unsigned int fold_hash(unsigned long x, unsigned long y)
-> +{
-> +	/* Use arch-optimized multiply if one exists */
-> +	return __hash_32(y ^ __hash_32(x));
-> +}
-> +
-> +/*
-> + * Generate a hash.  This is derived from full_name_hash(), but we want to be
-> + * sure it is arch independent and that it doesn't change as bits of the
-> + * computed hash value might appear on disk.  The caller also guarantees that
-> + * the hashed data will be a series of aligned 32-bit words.
-> + */
-> +unsigned int fscache_hash(unsigned int salt, unsigned int *data, unsigned int n)
-> +{
-> +	unsigned int a, x = 0, y = salt;
-> +
-> +	for (; n; n--) {
-> +		a = *data++;
-> +		HASH_MIX(x, y, a);
-> +	}
-> +	return fold_hash(x, y);
-> +}
-> +
->  /*
->   * initialise the fs caching module
->   */
-> 
-> 
-
 -- 
-Jeff Layton <jlayton@redhat.com>
+Greetings to you and your family.
 
+My name is Mr. Kone Compaore, the auditing general with the bank,
+Africa Develop bank (ADB) Ouagadougou, Burkina Faso, in West Africa. I
+am contacting you to seek our honesty and sincere cooperation in
+confidential manner to transfer the sum of 10.5 (Ten million five
+hundred thousand Dollars) to your existing or new bank account.
+
+This money belongs to one of our bank client, a Libyan oil exporter
+who was working with the former Libyan government; I learn t that he
+was killed by the revolutionary forces since October 2011. Our bank is
+planning to transfer this entire fund into the government public
+treasury as unclaimed fund if nobody comes to claim the money from our
+bank after four years without account activities .
+
+We did not know each other before, but due to the fact that the
+deceased is a foreigner, the bank will welcome any claim from a
+foreigner without any suspect, that is why I decided to look for
+someone whim I can trust to come and claim the fund from our bank.
+
+I will endorse your name in the deceased client file here in my office
+which will indicate to that the deceased is your legal joint account
+business partner or family member next of kin to the deceased and
+officially the bank will transfer the fund to your bank account within
+seven working days in accordance to our banking inheritance rules and
+fund claim regulation.
+
+I will share 40% for you and 60% for me after the fund is transferred
+to your bank account, we need to act fast to complete this transaction
+within seven days. I will come to your country to collect my share
+after the fund is transferred to your bank account in your country. I
+hope that you will not disappoint me after the fund is transferred to
+your bank account in your country.
+
+Waiting for your urgent response today
+Yours sincerely
+Kone Compaore
