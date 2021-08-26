@@ -2,122 +2,156 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F3D93F7FFF
-	for <lists+ceph-devel@lfdr.de>; Thu, 26 Aug 2021 03:39:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD75D3F88A1
+	for <lists+ceph-devel@lfdr.de>; Thu, 26 Aug 2021 15:18:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235792AbhHZBkV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 25 Aug 2021 21:40:21 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:47231 "EHLO
+        id S230385AbhHZNTV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 26 Aug 2021 09:19:21 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24081 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235172AbhHZBkV (ORCPT
+        by vger.kernel.org with ESMTP id S232909AbhHZNTL (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 25 Aug 2021 21:40:21 -0400
+        Thu, 26 Aug 2021 09:19:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629941973;
+        s=mimecast20190719; t=1629983903;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=rkEHRR7wNXQQaCMAQeyvBqsvfIXDmrVYIaFSm54b/Ac=;
-        b=HguSSWPK549jtbHksntZ0V/EjXsqA5+OTRqV/BCZiLCa0yge4FdRZk6GWZCXhqi5JPZwAH
-        gu3KhGbnmYpc6ZZ/OG0Euax4qTJepccoj0kK8VuAuvFTqGlUqPSTOf4kAZlnMMLhcaW9lL
-        Eb3tLrxniCkZ5mqbF0/WmntRtkhk2jc=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-370-IUZcbsgRNCqbYj556e1a-g-1; Wed, 25 Aug 2021 21:39:31 -0400
-X-MC-Unique: IUZcbsgRNCqbYj556e1a-g-1
-Received: by mail-pj1-f70.google.com with SMTP id co10-20020a17090afe8a00b00195640ed21bso349243pjb.3
-        for <ceph-devel@vger.kernel.org>; Wed, 25 Aug 2021 18:39:31 -0700 (PDT)
+        bh=y0mGOq7UUJH69rcbuoEbcj1O/gAvjxf2/OfFz7IuKBo=;
+        b=fzntmacY9Fa9RS5RHzjLUXzqf/h15+A3Dhn/CtSJeQZA5nYvhZzjo8h/YLDcmGrWUJUH25
+        CB217UkM9ULAQKXedEZGmKB0/4HEgEZNJOO4DmC1lWzAust65VgQyoVUk7Z5uLPfi0+OLq
+        h8/7S/BPEMwQtKUGvaKpx1xW1C+sktE=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-535-atWhRhg1M1ehJeOlx0FWgg-1; Thu, 26 Aug 2021 09:18:22 -0400
+X-MC-Unique: atWhRhg1M1ehJeOlx0FWgg-1
+Received: by mail-ed1-f70.google.com with SMTP id b6-20020aa7c6c6000000b003c2b5b2ddf8so1536579eds.0
+        for <ceph-devel@vger.kernel.org>; Thu, 26 Aug 2021 06:18:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=rkEHRR7wNXQQaCMAQeyvBqsvfIXDmrVYIaFSm54b/Ac=;
-        b=rbLzNow0D8r7jYk9m2qUCP7G+8AtTKvdMNGtePBEzKQhmFBDAI9kuCGeXBqwupxFEh
-         H0xeQcDnmESVhnB0c2SXcaBMZQI+6mfbhtMbiT2PnqK56wiWuANvtCiMomq+zvHt/T+4
-         sIqMpgpNzE1BgkiV5YF41VcJSXQi7G+swgGmcCPazDzvPJT0tdnjcbKlpbV9mQM7V+RF
-         fJ4nmyjzfwmV2eNHaH1zr4MmpKYoFWwGbHfngTXSQecsc/ClvzThqUexP4tkNZJfKS3O
-         LHb49LS7lrtotvK3ua7bHcBcatVi0KMMHvsKetnQFByLzGMK92F0oiemjFNIRG/T+V8M
-         kUeg==
-X-Gm-Message-State: AOAM530/dfz0Elv3I9Qy5iVb3sKSJ/S0jImXylOZn62ATDahhBdsXKw1
-        6Cp2KOyYsdN5JDWAnCRPlrrdKapcswMbvJ5swHoyPIwkoyZL36Xx1vXb1l8l7WD7cZG9sqgDu4O
-        VlNoK0GmxZuvtq82LDrw1EppmA5BWw9+fn1LzPR4LfodoKWuUHWB/pCSNUNRFt4XJrwSRo/4=
-X-Received: by 2002:a17:902:a710:b029:12b:9b9f:c461 with SMTP id w16-20020a170902a710b029012b9b9fc461mr1244284plq.59.1629941970466;
-        Wed, 25 Aug 2021 18:39:30 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyec9FQCu9gxbd0bP9eDiOVWPSXyFRLKCMaw8xP+t4SzRszh7iSM2V6TskMAxaQJmisQ7EJVw==
-X-Received: by 2002:a17:902:a710:b029:12b:9b9f:c461 with SMTP id w16-20020a170902a710b029012b9b9fc461mr1244257plq.59.1629941970074;
-        Wed, 25 Aug 2021 18:39:30 -0700 (PDT)
-Received: from [10.72.12.157] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id x4sm888617pff.126.2021.08.25.18.39.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Aug 2021 18:39:29 -0700 (PDT)
-Subject: Re: [PATCH v3 0/3] ceph: remove the capsnaps when removing the caps
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, ukernel@gmail.com, pdonnell@redhat.com,
-        ceph-devel@vger.kernel.org
-References: <20210825134545.117521-1-xiubli@redhat.com>
- <b8e8fb45f9a34dc24b3db66dc26dd55dfb70efd4.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <0700a3b1-475e-489d-85f7-b389934b2b57@redhat.com>
-Date:   Thu, 26 Aug 2021 09:39:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y0mGOq7UUJH69rcbuoEbcj1O/gAvjxf2/OfFz7IuKBo=;
+        b=i1uNS9gcTJ3ZYetI+rrOI16xQG7oN96JnrnbC3sB2OQIuYjIigLiIFtylh2FQjJnxD
+         i5fcjf58yzMHBEnDFTAWG4YfoXImvaoafr9DQRPCqVv9ekEKz6qPripvYQoW8lHSvE90
+         dXK3wGI2JcGPNGBFYGst5p9z99fSAQp62esGPyrRCCgMcL5i39/DHfNARnYMjuXgx/pt
+         +t7yfLEU78BmZUnrRxsfQbbNtD4UPXoNZaswL3yW/BDZPOIWwuehMIOLoLAjO/ZlYlLc
+         PPl0mCQ6LT7XG+PlNw3/YOnzS3qKDyJIa/LDQKr9fEIwB7NarwdzSOd2YHrSKODhRSnQ
+         K4DA==
+X-Gm-Message-State: AOAM530vjF3TW/FsFR79hySmX1CT4AcYoyEsCdvDnMrFJISmg8dtDKfp
+        4VOaAYvuApwmXxXqm9gz1hAYD8VvBIRVO27e1lJObrdHrotlLp0Kv7FN6cxxu3jAnE1nRnoQc/Q
+        jk9WwTAijo33rCwNLS27oaGI38XK1E2MEv7GvSw==
+X-Received: by 2002:a17:906:3a98:: with SMTP id y24mr4201839ejd.198.1629983901199;
+        Thu, 26 Aug 2021 06:18:21 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxaO3gxVrpzUzLlV1LINx4yIpWCzxpzVajNgctT9wrwaFmAw/vTm1VO8daL19oVidGUI9fv1bIa4uCMYFtCHTU=
+X-Received: by 2002:a17:906:3a98:: with SMTP id y24mr4201810ejd.198.1629983900942;
+ Thu, 26 Aug 2021 06:18:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <b8e8fb45f9a34dc24b3db66dc26dd55dfb70efd4.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20210825055035.306043-1-vshankar@redhat.com> <7081867582ee2fbda9da80fa1611f890f0e61372.camel@redhat.com>
+In-Reply-To: <7081867582ee2fbda9da80fa1611f890f0e61372.camel@redhat.com>
+From:   Venky Shankar <vshankar@redhat.com>
+Date:   Thu, 26 Aug 2021 18:47:44 +0530
+Message-ID: <CACPzV1nNes8KxA6fVXMbZqOGaQG2qUSB0ARRfucgNRrRKtsdYw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] ceph: add debugfs entries signifying new mount
+ syntax support
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     Patrick Donnelly <pdonnell@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Wed, Aug 25, 2021 at 10:57 PM Jeff Layton <jlayton@redhat.com> wrote:
+>
+> On Wed, 2021-08-25 at 11:20 +0530, Venky Shankar wrote:
+> > v2:
+> >  - export ceph_debugfs_dir
+> >  - include v1 mount support debugfs entry
+> >  - create debugfs entries under /<>/ceph/client_features dir
+> >
+> > [This is based on top of new mount syntax series]
+> >
+> > Patrick proposed the idea of having debugfs entries to signify if
+> > kernel supports the new (v2) mount syntax. The primary use of this
+> > information is to catch any bugs in the new syntax implementation.
+> >
+> > This would be done as follows::
+> >
+> > The userspace mount helper tries to mount using the new mount syntax
+> > and fallsback to using old syntax if the mount using new syntax fails.
+> > However, a bug in the new mount syntax implementation can silently
+> > result in the mount helper switching to old syntax.
+> >
+> > So, the debugfs entries can be relied upon by the mount helper to
+> > check if the kernel supports the new mount syntax. Cases when the
+> > mount using the new syntax fails, but the kernel does support the
+> > new mount syntax, the mount helper could probably log before switching
+> > to the old syntax (or fail the mount altogether when run in test mode).
+> >
+> > Debugfs entries are as follows::
+> >
+> >     /sys/kernel/debug/ceph/
+> >     ....
+> >     ....
+> >     /sys/kernel/debug/ceph/client_features
+> >     /sys/kernel/debug/ceph/client_features/v2_mount_syntax
+> >     /sys/kernel/debug/ceph/client_features/v1_mount_syntax
+> >     ....
+> >     ....
+> >
+>
+> There are at least some scripts in teuthology that iterate over all of
+> the directories under /sys/kernel/debug/ceph/. Once you add this, some
+> of them may become confused.
+>
+> I think we might want a more generic top-level directory for this sort
+> of thing, so that we only need to deal with the fallout once if we want
+> to put other generic info in there.
 
-On 8/26/21 1:16 AM, Jeff Layton wrote:
-> On Wed, 2021-08-25 at 21:45 +0800, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> V3:
->> - fix one crash bug in the first patch.
->>
->> V2:
->> - minor fixes to clean up the code from Jeff's comments, thanks
->> - swith to use lockdep_assert_held().
->>
->>
->>
->> Test this for around 5 hours and this patch series worked well for me, my test script is:
->>
->> $ while [ 1 ]; do date; for d in A B C; do (for i in {1..3}; do ./bin/mount.ceph :/ /mnt/kcephfs.$d -o noshare; rm -rf /mnt/kcephfs.$d/file$i.txt; rmdir /mnt/kcephfs.$d/.snap/snap$i; dd if=/dev/zero of=/mnt/kcephfs.$d/file$i.txt bs=1M count=8; mkdir -p /mnt/kcephfs.$d/.snap/snap$i; umount -fl /mnt/kcephfs.$d; done ) & done; wait; date; done
->>
->>
->>
->> Xiubo Li (3):
->>    ceph: remove the capsnaps when removing the caps
->>    ceph: don't WARN if we're force umounting
->>    ceph: don't WARN if we're iterate removing the session caps
->>
->>   fs/ceph/caps.c       | 106 ++++++++++++++++++++++++++++++++-----------
->>   fs/ceph/mds_client.c |  40 ++++++++++++++--
->>   fs/ceph/super.h      |   7 +++
->>   3 files changed, 123 insertions(+), 30 deletions(-)
->>
-> This looks good overall. I made a small change to the first patch to
-> turn the old BUG_ON into a WARN_ON_ONCE. I didn't see the need to crash
-> the box in that case.
-
-That looks good to me.
-
+Hmm, makes sense.
 
 >
-> Also, I revised the changelogs and a couple of comments. Let me know if
-> you see any issues with the changes I merged into "testing".
+> Maybe something like this?
+>
+>     /sys/kernel/debug/ceph/meta/
+>     /sys/kernel/debug/ceph/meta/client_features
+>
+> I'd be open to different names for "meta" too.
 
-This LGTM too.
+meta, misc, info, ...
 
-Thanks Jeff.
-
+I do not have a strong opinion on the naming.
 
 >
-> Thanks!
+> Also, do we really want to present this info via directories? I would
+> have thought something more like a "meta/mount_syntax" file there that
+> just prints "v1 v2" when read.
+>
+> What's easier for scripting?
+
+One reason I kept these as files was to not do parsing stuff and just
+rely on stat().
+
+>
+> > Venky Shankar (2):
+> >   libceph: export ceph_debugfs_dir for use in ceph.ko
+> >   ceph: add debugfs entries for mount syntax support
+> >
+> >  fs/ceph/debugfs.c            | 36 ++++++++++++++++++++++++++++++++++++
+> >  fs/ceph/super.c              |  3 +++
+> >  fs/ceph/super.h              |  2 ++
+> >  include/linux/ceph/debugfs.h |  2 ++
+> >  net/ceph/debugfs.c           |  3 ++-
+> >  5 files changed, 45 insertions(+), 1 deletion(-)
+> >
+>
+> --
+> Jeff Layton <jlayton@redhat.com>
+>
+
+
+-- 
+Cheers,
+Venky
 
