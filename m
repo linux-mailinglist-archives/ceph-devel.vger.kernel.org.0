@@ -2,67 +2,213 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 229F93FB8D1
-	for <lists+ceph-devel@lfdr.de>; Mon, 30 Aug 2021 17:11:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 041033FBF9F
+	for <lists+ceph-devel@lfdr.de>; Tue, 31 Aug 2021 01:59:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237182AbhH3PKZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 30 Aug 2021 11:10:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58440 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233162AbhH3PKZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 30 Aug 2021 11:10:25 -0400
-Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F35DC061575
-        for <ceph-devel@vger.kernel.org>; Mon, 30 Aug 2021 08:09:31 -0700 (PDT)
-Received: by mail-ot1-x32d.google.com with SMTP id m7-20020a9d4c87000000b0051875f56b95so18755219otf.6
-        for <ceph-devel@vger.kernel.org>; Mon, 30 Aug 2021 08:09:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=My+KW4wMsggXXB2SdRlw/CFgMo/CDeI8+GV22ZFWOwY=;
-        b=F7DKfhX8hpsk31V3GL6tjTZZo9fcxeCEXQSud0/xrAF0eUHyi117/Awu2LJC4m4knj
-         s2MvmMJEh+jq4yPvO+FPsee6xLtOCuUEtIRkR/+6z3+TqWGzYtANk3eGRP4z4RUrj1S/
-         mUm/DppMp88kC8Sy/HFbCGqntsnuvvBt7UBbRaRuaExpm2hudXwN4d3SQMEUMqLzhw9s
-         2pTV70zY6j6cn7tmDeH5607eOMe8alCtz+3whV4tYzjYDPrEMt6zYyx16I3N0q9uAwMq
-         Cw10Rp+KjrSXlj3vMt9z60707PyGslyihpQP04/foxaVyDiFX9KVUmWHA/2mfzLuwcpa
-         RACw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=My+KW4wMsggXXB2SdRlw/CFgMo/CDeI8+GV22ZFWOwY=;
-        b=qI7WC+p2eDyIuY12SwUVqapNOeQ4cxXHuv+Nd4TnpXqH2LNxPRShL1gbjh+hIFRzTk
-         ob3ebDyuJoy+XD1JOFGflJSKUbafqogFg+PQZb7xT/PKj4UGbITZPGky+cHnkwx6Hsx+
-         Yu2v8zpFYMWxgQsu3pteBSo3G/ENJlKtXt7IrfT8zmim3fDE2cXhqY2coCLBYT/0KkhM
-         8B81t06Ci/JqCVMCaa0tQ0ELJ3GfxUv3hNse3J/XX7CbUp0v4rsdFF6oPwgkIWj4VW/I
-         ZnAykNYxvDCpkXP4zZD7C+mXe2iwBjfBhKWDm+BjriNZTuTXPN2VkHFB7qXDWkeHERvy
-         U2mw==
-X-Gm-Message-State: AOAM530Cmig8V9djOLJyn9PFQKMuYkiImq5UT9tbKGsiMizonUx+3RIv
-        Xqor7Dfk/sBmWxE5kLf+z4v9ANugXsvUBfRnvpSnGzacYwU=
-X-Google-Smtp-Source: ABdhPJwthGTDK7Mm7CFwcUOKbOdXAe9So48JNYAFw4mvphdFmrDbFR2FvPe4HJsfTtqRakBAJff3IyTF7LbLcqFxOQg=
-X-Received: by 2002:a9d:7dd4:: with SMTP id k20mr19635216otn.68.1630336170742;
- Mon, 30 Aug 2021 08:09:30 -0700 (PDT)
-MIME-Version: 1.0
-From:   John Spray <jcspray@gmail.com>
-Date:   Mon, 30 Aug 2021 16:09:20 +0100
-Message-ID: <CAJP3sOU0kuu5XbrqTv_L3QHTe6eywwxtr1xLw8sxdEYvXdTTjQ@mail.gmail.com>
-Subject: Rust async bindings for rados
+        id S239019AbhH3Xzk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 30 Aug 2021 19:55:40 -0400
+Received: from smtp1.onthe.net.au ([203.22.196.249]:50585 "EHLO
+        smtp1.onthe.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238914AbhH3Xzi (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 30 Aug 2021 19:55:38 -0400
+X-Greylist: delayed 310 seconds by postgrey-1.27 at vger.kernel.org; Mon, 30 Aug 2021 19:55:37 EDT
+Received: from localhost (smtp2.private.onthe.net.au [10.200.63.13])
+        by smtp1.onthe.net.au (Postfix) with ESMTP id 5279C61C50
+        for <ceph-devel@vger.kernel.org>; Tue, 31 Aug 2021 09:49:30 +1000 (EST)
+Received: from smtp1.onthe.net.au ([10.200.63.11])
+        by localhost (smtp.onthe.net.au [10.200.63.13]) (amavisd-new, port 10028)
+        with ESMTP id KjupOUILNQMF for <ceph-devel@vger.kernel.org>;
+        Tue, 31 Aug 2021 09:49:30 +1000 (AEST)
+Received: from athena.private.onthe.net.au (chris-gw2-vpn.private.onthe.net.au [10.9.3.2])
+        by smtp1.onthe.net.au (Postfix) with ESMTP id 1F78561C2A
+        for <ceph-devel@vger.kernel.org>; Tue, 31 Aug 2021 09:49:30 +1000 (EST)
+Received: by athena.private.onthe.net.au (Postfix, from userid 1026)
+        id 07CB0680468; Tue, 31 Aug 2021 09:49:30 +1000 (AEST)
+Date:   Tue, 31 Aug 2021 09:49:29 +1000
+From:   Chris Dunlop <chris@onthe.net.au>
 To:     ceph-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: New pacific mon won't join with octopus mons
+Message-ID: <20210830234929.GA3817015@onthe.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi all,
+Hi,
 
-Earlier in the year I was having fun learning Rust, and one of the
-things I did was to extend the existing ceph-rust crate with
-async+streams support.  Rust's async stream support is very nice, and
-makes writing small+fast gateway-like things quite low effort.
+Apologies if this isn't the correct mailing list for this, I've 
+already tried getting help for this over on ceph-users but haven't 
+received any response:
 
-I'm not actively working on this any more but I've parked it in a PR
-here for anyone who's interested
-https://github.com/ceph/ceph-rust/pull/79 -- I thought I'd drop a note
-to the list just in case it's of interest.
+https://lists.ceph.io/hyperkitty/list/ceph-users@ceph.io/thread/YHTXK22C7CMBWCWKUCSL4U32GLQGBSJG/
 
-All the best,
-John
+I'm not sure, but I suspect this is a bug...
+
+I'm stuck, mid upgrade from octopus to pacific using cephadm, at the 
+point of upgrading the mons.
+
+As background, this cluster started life 10 years ago with whatever was 
+current at the time, and has been progressively upgraded with each new 
+release. It's never had a cephfs on it and I ran into:
+
+https://tracker.ceph.com/issues/51673
+
+I created the temporary cephfs per the ticket and then ran into this 
+next problem...
+
+I have 3 mons still on octopus and in quorum. When I try to bring up a 
+new pacific mon it stays permanently (over 10 minutes) in "probing" 
+state with the pacific ceph-mon chewing up >300% CPU on it's host, and 
+causing the octopus ceph-mons on the other hosts to chew up >100% CPU. 
+I've left it for 10 minutes in that state and it hasn't progressed 
+past "probing".
+
+First up, I'm assuming a pacific mon is supposed to be able to join a 
+quorum with octopus mons, otherwise how is an upgrade supposed to 
+work?
+
+The pacific mon, "b5", is v16.2.5 running under podman:
+
+docker.io/ceph/ceph@sha256:829ebf54704f2d827de00913b171e5da741aad9b53c1f35ad59251524790eceb
+
+The octopus mons are all v15.2.14. The lead octopus mon ("k2") is 
+running under podman:
+
+quay.io/ceph/ceph:v15
+
+The other 2 octopus mons ("b2" and "b4") are standalone 
+15.2.14-1~bpo10+1.  These are manually started due to the cephadm 
+upgrade failing at the point of upgrading the mons and leaving me with 
+only one cephadm mon running.
+
+On start up of the pacific mon with debug_mon=20, over a 30 second 
+period I see 765 "handle_probe_reply" sequences by the pacific mon, 
+with the lead mon replying 200 times and the other two mons replying 
+279 times each.
+
+In the very first "handle_probe_reply" sequence we see an expected (I 
+assume) "bootstrap" as the starting up mon doesn't yet have a monmap 
+("got newer/committed monmap epoch 35, mine was 0"):
+
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e0 handle_probe mon_probe(reply c6618970-0ce0-4cb2-bc9a-dd5f29b62e24 name b4 quorum 0,1,2 leader 0 paxos( fc 365132587 lc 365133304 ) mon_release octopus) v7
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e0 handle_probe_reply mon.2 v2:10.200.63.132:3300/0 mon_probe(reply c6618970-0ce0-4cb2-bc9a-dd5f29b62e24 name b4 quorum 0,1,2 leader 0 paxos( fc 365132587 lc 365133304 ) mon_release octopus) v7
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e0  monmap is e0: 3 mons at {noname-a=[v2:10.200.63.130:3300/0,v1:10.200.63.130:6789/0],noname-b=[v2:10.200.63.132:3300/0,v1:10.200.63.132:6789/0],noname-c=[v2:192.168.254.251:3300/0,v1:192.168.254.251:6789/0]}
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e0  got newer/committed monmap epoch 35, mine was 0
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 bootstrap
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 sync_reset_requester
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 unregister_cluster_logger - not registered
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 cancel_probe_timeout 0x5646293a0a20
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 monmap e35: 3 mons at {b2=[v2:10.200.63.130:3300/0,v1:10.200.63.130:6789/0],b4=[v2:10.200.63.132:3300/0,v1:10.200.63.132:6789/0],k2=[v2:192.168.254.251:3300/0,v1:192.168.254.251:6789/0]}
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 _reset
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing).auth v0 _set_mon_num_rank num 0 rank 0
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 cancel_probe_timeout (none scheduled)
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 timecheck_finish
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 15 mon.b5@-1(probing) e35 health_tick_stop
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 15 mon.b5@-1(probing) e35 health_interval_stop
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 scrub_event_cancel
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 scrub_reset
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 cancel_probe_timeout (none scheduled)
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 reset_probe_timeout 0x5646293a0a20 after 10 seconds
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 probing other monitors
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 _ms_dispatch new session 0x5646293aafc0 MonSession(mon.1 [v2:10.200.63.130:3300/0,v1:10.200.63.130:6789/0] is open , features 0x3f01cfb8ffedffff (luminous)) features 0x3f01cfb8ffedffff
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700  5 mon.b5@-1(probing) e35 _ms_dispatch setting monitor caps on this connection
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20 mon.b5@-1(probing) e35  entity_name  global_id 0 (none) caps allow *
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20 is_capable service=mon command= read addr v2:10.200.63.130:3300/0 on cap allow *
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20  allow so far , doing grant allow *
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20  allow all
+
+However every single "handle_probe_reply" sequence after that also 
+does a "bootstrap", even though the mon at this point has a monmap 
+which the same epoch ("got newer/committed monmap epoch 35, mine was 
+35"), e.g.:
+
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 handle_probe mon_probe(reply c6618970-0ce0-4cb2-bc9a-dd5f29b62e24 name b4 quorum 0,1,2 leader 0 paxos( fc 365132587 lc 365133304 ) mon_release octopus) v7
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 handle_probe_reply mon.2 v2:10.200.63.132:3300/0 mon_probe(reply c6618970-0ce0-4cb2-bc9a-dd5f29b62e24 name b4 quorum 0,1,2 leader 0 paxos( fc 365132587 lc 365133304 ) mon_release octopus) v7
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35  monmap is e35: 3 mons at {b2=[v2:10.200.63.130:3300/0,v1:10.200.63.130:6789/0],b4=[v2:10.200.63.132:3300/0,v1:10.200.63.132:6789/0],k2=[v2:192.168.254.251:3300/0,v1:192.168.254.251:6789/0]}
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35  got newer/committed monmap epoch 35, mine was 35
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 bootstrap
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 sync_reset_requester
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 unregister_cluster_logger - not registered
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 cancel_probe_timeout 0x5646293a0a20
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 monmap e35: 3 mons at {b2=[v2:10.200.63.130:3300/0,v1:10.200.63.130:6789/0],b4=[v2:10.200.63.132:3300/0,v1:10.200.63.132:6789/0],k2=[v2:192.168.254.251:3300/0,v1:192.168.254.251:6789/0]}
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 _reset
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing).auth v0 _set_mon_num_rank num 0 rank 0
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 cancel_probe_timeout (none scheduled)
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 timecheck_finish
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 15 mon.b5@-1(probing) e35 health_tick_stop
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 15 mon.b5@-1(probing) e35 health_interval_stop
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 scrub_event_cancel
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 scrub_reset
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 cancel_probe_timeout (none scheduled)
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 reset_probe_timeout 0x5646293a0a20 after 10 seconds
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 probing other monitors
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20 mon.b5@-1(probing) e35 _ms_dispatch existing session 0x5646293aafc0 for mon.1
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20 mon.b5@-1(probing) e35  entity_name  global_id 0 (none) caps allow *
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20 is_capable service=mon command= read addr v2:10.200.63.130:3300/0 on cap allow *
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20  allow so far , doing grant allow *
+Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20  allow all
+
+That same sequence keeps repeating, just with the "name" changing 
+between the octopus mons, i.e. "name b4", "name b2" and "name k2".
+
+Referencing Monitor::handle_probe_reply() in src/mon/Monitor.cc (see 
+also below), if we ever get past the bootstrap() we should get a 
+message mentioning "peer", but we never see one.
+
+That implies "mybl.contents_equal(m->monmap_bl)" is never true, and 
+"has_ever_joined" is never true.
+
+What's going on here?
+
+Cheers,
+
+Chris
+
+----------------------------------------------------------------------
+void Monitor::handle_probe_reply(MonOpRequestRef op)
+{
+...
+   // newer map, or they've joined a quorum and we haven't?
+   bufferlist mybl;
+   monmap->encode(mybl, m->get_connection()->get_features());
+   // make sure it's actually different; the checks below err toward
+   // taking the other guy's map, which could cause us to loop.
+   if (!mybl.contents_equal(m->monmap_bl)) {
+     MonMap *newmap = new MonMap;
+     newmap->decode(m->monmap_bl);
+     if (m->has_ever_joined && (newmap->get_epoch() > monmap->get_epoch() ||
+                                !has_ever_joined)) {
+       dout(10) << " got newer/committed monmap epoch " << newmap->get_epoch()
+                << ", mine was " << monmap->get_epoch() << dendl;
+       delete newmap;
+       monmap->decode(m->monmap_bl);
+       notify_new_monmap(false);
+
+       bootstrap();
+       return;
+     }
+     delete newmap;
+   }
+   
+   // rename peer?
+   string peer_name = monmap->get_name(m->get_source_addr());
+   if (monmap->get_epoch() == 0 && peer_name.compare(0, 7, "noname-") == 0) {
+     dout(10) << " renaming peer " << m->get_source_addr() << " "
+              << peer_name << " -> " << m->name << " in my monmap"
+              << dendl;
+     monmap->rename(peer_name, m->name);
+
+     if (is_electing()) {
+       bootstrap();
+       return;
+     }
+   } else if (peer_name.size()) { 
+     dout(10) << " peer name is " << peer_name << dendl;
+   } else {
+     dout(10) << " peer " << m->get_source_addr() << " not in map" << dendl;
+   }
+...
+}
+----------------------------------------------------------------------
