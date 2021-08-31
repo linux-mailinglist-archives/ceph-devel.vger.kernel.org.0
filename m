@@ -2,213 +2,398 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 041033FBF9F
-	for <lists+ceph-devel@lfdr.de>; Tue, 31 Aug 2021 01:59:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F5443FC20F
+	for <lists+ceph-devel@lfdr.de>; Tue, 31 Aug 2021 07:10:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239019AbhH3Xzk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 30 Aug 2021 19:55:40 -0400
-Received: from smtp1.onthe.net.au ([203.22.196.249]:50585 "EHLO
-        smtp1.onthe.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238914AbhH3Xzi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 30 Aug 2021 19:55:38 -0400
-X-Greylist: delayed 310 seconds by postgrey-1.27 at vger.kernel.org; Mon, 30 Aug 2021 19:55:37 EDT
-Received: from localhost (smtp2.private.onthe.net.au [10.200.63.13])
-        by smtp1.onthe.net.au (Postfix) with ESMTP id 5279C61C50
-        for <ceph-devel@vger.kernel.org>; Tue, 31 Aug 2021 09:49:30 +1000 (EST)
-Received: from smtp1.onthe.net.au ([10.200.63.11])
-        by localhost (smtp.onthe.net.au [10.200.63.13]) (amavisd-new, port 10028)
-        with ESMTP id KjupOUILNQMF for <ceph-devel@vger.kernel.org>;
-        Tue, 31 Aug 2021 09:49:30 +1000 (AEST)
-Received: from athena.private.onthe.net.au (chris-gw2-vpn.private.onthe.net.au [10.9.3.2])
-        by smtp1.onthe.net.au (Postfix) with ESMTP id 1F78561C2A
-        for <ceph-devel@vger.kernel.org>; Tue, 31 Aug 2021 09:49:30 +1000 (EST)
-Received: by athena.private.onthe.net.au (Postfix, from userid 1026)
-        id 07CB0680468; Tue, 31 Aug 2021 09:49:30 +1000 (AEST)
-Date:   Tue, 31 Aug 2021 09:49:29 +1000
-From:   Chris Dunlop <chris@onthe.net.au>
-To:     ceph-devel@vger.kernel.org
-Subject: New pacific mon won't join with octopus mons
-Message-ID: <20210830234929.GA3817015@onthe.net.au>
+        id S231537AbhHaFIB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 31 Aug 2021 01:08:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53373 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231671AbhHaFIB (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 31 Aug 2021 01:08:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630386425;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=z53hHE4MJVaMmZ2WYtgkUWx43esfqOv+4RMCZIaA9+Q=;
+        b=D4GjGDOLIgVE29VSc+JyG5887/MBGA1wdCPHOikYDuXW5PDDQ24yWWJ62T8bmKyE6CXcGv
+        GNb2lu5G2odK4tgvnL8hNA0XbqSH6gD7fFdNWVROQ09zG9tlJVGPDgCdji0zBBxsH5A+s8
+        spsiT6mSQitNy62YA3nWIW877DDIjDA=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-537-5YWM_oCqOBG7wDAsRqEDcQ-1; Tue, 31 Aug 2021 01:07:03 -0400
+X-MC-Unique: 5YWM_oCqOBG7wDAsRqEDcQ-1
+Received: by mail-pg1-f199.google.com with SMTP id q23-20020a6562570000b029023cbfb4fd73so35260pgv.14
+        for <ceph-devel@vger.kernel.org>; Mon, 30 Aug 2021 22:07:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=z53hHE4MJVaMmZ2WYtgkUWx43esfqOv+4RMCZIaA9+Q=;
+        b=HtZV/Gr8/7TH6/Mw69/AOh4ueXNeF1Ls+2imcpWxb+17pumynNEIkv/XlQ3RQO+tUi
+         biYBCYkbWs88hTr6oAtN6I8MrPmev8bevdKywEmTV1vMfh5h7+h3adRWGdQj/+7odkX9
+         93kQxkoDWLRmcyMAg93bpv0vICYMmDrwGM2HrLmRKXFvbK2LLCnZIiIozDTCO35EyU9x
+         /IYJDH5JFUSGxagBWF7gLUThG7EDDiRnbv/ulCfDJ0GklndBNkfumQQe0N5x1RNGvF9P
+         rPSTN4a2wkTktISVZ/SFNQ7AR//IX8UQ/TzbkN4XZrZ8xkds3lMXj0UjpbxDV907pYIz
+         9OKg==
+X-Gm-Message-State: AOAM533YXRPFg6gblG1VVJC/IIpXm+Ik+YsX60xleRh0fg4n9rfetorL
+        SSu4iPsw6/I+i3+SEhgQg2k7D/XQdB85K6HFebqIYbnTeJrN52xkiz/ZMVLeRAnwaeJ5P2CVoXK
+        ExImNql+nyDBHFbxLcEPi2A==
+X-Received: by 2002:a17:90a:428e:: with SMTP id p14mr3171221pjg.92.1630386422625;
+        Mon, 30 Aug 2021 22:07:02 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwDIUsPgoGYpDASEcQRBcW7EbfSDlk5lFJO6CUKY5lKTrrNbNww/z2uibmpNySO1j7ChYcfjg==
+X-Received: by 2002:a17:90a:428e:: with SMTP id p14mr3171185pjg.92.1630386422200;
+        Mon, 30 Aug 2021 22:07:02 -0700 (PDT)
+Received: from [10.72.12.157] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id k20sm17266646pfu.133.2021.08.30.22.06.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Aug 2021 22:07:01 -0700 (PDT)
+Subject: Re: [RFC PATCH v8 09/24] ceph: add ability to set fscrypt_auth via
+ setattr
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        dhowells@redhat.com, lhenriques@suse.de, khiremat@redhat.com,
+        ebiggers@kernel.org
+References: <20210826162014.73464-1-jlayton@kernel.org>
+ <20210826162014.73464-10-jlayton@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <27f6a038-94a6-ec58-c7a5-0fafc2c9d779@redhat.com>
+Date:   Tue, 31 Aug 2021 13:06:55 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
+In-Reply-To: <20210826162014.73464-10-jlayton@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi,
 
-Apologies if this isn't the correct mailing list for this, I've 
-already tried getting help for this over on ceph-users but haven't 
-received any response:
+On 8/27/21 12:19 AM, Jeff Layton wrote:
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>   fs/ceph/acl.c                |  4 +--
+>   fs/ceph/crypto.h             |  9 +++++-
+>   fs/ceph/inode.c              | 33 ++++++++++++++++++++--
+>   fs/ceph/mds_client.c         | 54 ++++++++++++++++++++++++++++++------
+>   fs/ceph/mds_client.h         |  3 ++
+>   fs/ceph/super.h              |  7 ++++-
+>   include/linux/ceph/ceph_fs.h | 21 ++++++++------
+>   7 files changed, 108 insertions(+), 23 deletions(-)
+>
+> diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
+> index 529af59d9fd3..6e716f142022 100644
+> --- a/fs/ceph/acl.c
+> +++ b/fs/ceph/acl.c
+> @@ -136,7 +136,7 @@ int ceph_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
+>   		newattrs.ia_ctime = current_time(inode);
+>   		newattrs.ia_mode = new_mode;
+>   		newattrs.ia_valid = ATTR_MODE | ATTR_CTIME;
+> -		ret = __ceph_setattr(inode, &newattrs);
+> +		ret = __ceph_setattr(inode, &newattrs, NULL);
+>   		if (ret)
+>   			goto out_free;
+>   	}
+> @@ -147,7 +147,7 @@ int ceph_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
+>   			newattrs.ia_ctime = old_ctime;
+>   			newattrs.ia_mode = old_mode;
+>   			newattrs.ia_valid = ATTR_MODE | ATTR_CTIME;
+> -			__ceph_setattr(inode, &newattrs);
+> +			__ceph_setattr(inode, &newattrs, NULL);
+>   		}
+>   		goto out_free;
+>   	}
+> diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
+> index 6c3831c57c8d..6dca674f79b8 100644
+> --- a/fs/ceph/crypto.h
+> +++ b/fs/ceph/crypto.h
+> @@ -14,8 +14,15 @@ struct ceph_fscrypt_auth {
+>   	u8	cfa_blob[FSCRYPT_SET_CONTEXT_MAX_SIZE];
+>   } __packed;
+>   
+> -#ifdef CONFIG_FS_ENCRYPTION
+>   #define CEPH_FSCRYPT_AUTH_VERSION	1
+> +static inline u32 ceph_fscrypt_auth_len(struct ceph_fscrypt_auth *fa)
+> +{
+> +	u32 ctxsize = le32_to_cpu(fa->cfa_blob_len);
+> +
+> +	return offsetof(struct ceph_fscrypt_auth, cfa_blob) + ctxsize;
+> +}
+> +
+> +#ifdef CONFIG_FS_ENCRYPTION
+>   void ceph_fscrypt_set_ops(struct super_block *sb);
+>   
+>   #else /* CONFIG_FS_ENCRYPTION */
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index a541f5e9c5ed..ae800372e42d 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -2083,7 +2083,7 @@ static const struct inode_operations ceph_symlink_iops = {
+>   	.listxattr = ceph_listxattr,
+>   };
+>   
+> -int __ceph_setattr(struct inode *inode, struct iattr *attr)
+> +int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *cia)
+>   {
+>   	struct ceph_inode_info *ci = ceph_inode(inode);
+>   	unsigned int ia_valid = attr->ia_valid;
+> @@ -2124,6 +2124,34 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
+>   
+>   	dout("setattr %p issued %s\n", inode, ceph_cap_string(issued));
+>   
+> +	if (cia && cia->fscrypt_auth) {
+> +		u32 len = ceph_fscrypt_auth_len(cia->fscrypt_auth);
+> +
+> +		if (len > sizeof(*cia->fscrypt_auth)) {
+> +			err = -EINVAL;
+> +			spin_unlock(&ci->i_ceph_lock);
+> +			goto out;
+> +		}
+> +
+> +		dout("setattr %llx:%llx fscrypt_auth len %u to %u)\n",
+> +			ceph_vinop(inode), ci->fscrypt_auth_len, len);
+> +
+> +		/* It should never be re-set once set */
+> +		WARN_ON_ONCE(ci->fscrypt_auth);
+> +
 
-https://lists.ceph.io/hyperkitty/list/ceph-users@ceph.io/thread/YHTXK22C7CMBWCWKUCSL4U32GLQGBSJG/
+Maybe this should return -EEXIST if already set ?
 
-I'm not sure, but I suspect this is a bug...
 
-I'm stuck, mid upgrade from octopus to pacific using cephadm, at the 
-point of upgrading the mons.
+> +		if (issued & CEPH_CAP_AUTH_EXCL) {
+> +			dirtied |= CEPH_CAP_AUTH_EXCL;
+> +			kfree(ci->fscrypt_auth);
+> +			ci->fscrypt_auth = (u8 *)cia->fscrypt_auth;
+> +			ci->fscrypt_auth_len = len;
+> +		} else if ((issued & CEPH_CAP_AUTH_SHARED) == 0) {
 
-As background, this cluster started life 10 years ago with whatever was 
-current at the time, and has been progressively upgraded with each new 
-release. It's never had a cephfs on it and I ran into:
+For this, shouldn't we always set the req->r_fscrypt_auth even the 
+"CEPH_CAP_AUTH_SHARED" cap is issued ?
 
-https://tracker.ceph.com/issues/51673
+Maybe this should be:
 
-I created the temporary cephfs per the ticket and then ran into this 
-next problem...
+} else if ((issued & CEPH_CAP_AUTH_SHARED) == 0 || !ci->fscrypt_auth) {
 
-I have 3 mons still on octopus and in quorum. When I try to bring up a 
-new pacific mon it stays permanently (over 10 minutes) in "probing" 
-state with the pacific ceph-mon chewing up >300% CPU on it's host, and 
-causing the octopus ceph-mons on the other hosts to chew up >100% CPU. 
-I've left it for 10 minutes in that state and it hasn't progressed 
-past "probing".
+??
 
-First up, I'm assuming a pacific mon is supposed to be able to join a 
-quorum with octopus mons, otherwise how is an upgrade supposed to 
-work?
+> +			req->r_fscrypt_auth = cia->fscrypt_auth;
+> +			mask |= CEPH_SETATTR_FSCRYPT_AUTH;
+> +			release |= CEPH_CAP_AUTH_SHARED;
+> +		}
+> +		cia->fscrypt_auth = NULL;
+> +	}
+> +
+>   	if (ia_valid & ATTR_UID) {
+>   		dout("setattr %p uid %d -> %d\n", inode,
+>   		     from_kuid(&init_user_ns, inode->i_uid),
+> @@ -2284,6 +2312,7 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
+>   		req->r_stamp = attr->ia_ctime;
+>   		err = ceph_mdsc_do_request(mdsc, NULL, req);
+>   	}
+> +out:
+>   	dout("setattr %p result=%d (%s locally, %d remote)\n", inode, err,
+>   	     ceph_cap_string(dirtied), mask);
+>   
+> @@ -2321,7 +2350,7 @@ int ceph_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+>   	    ceph_quota_is_max_bytes_exceeded(inode, attr->ia_size))
+>   		return -EDQUOT;
+>   
+> -	err = __ceph_setattr(inode, attr);
+> +	err = __ceph_setattr(inode, attr, NULL);
+>   
+>   	if (err >= 0 && (attr->ia_valid & ATTR_MODE))
+>   		err = posix_acl_chmod(&init_user_ns, inode, attr->ia_mode);
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 240b53d58dda..449b4e78366e 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -15,6 +15,7 @@
+>   
+>   #include "super.h"
+>   #include "mds_client.h"
+> +#include "crypto.h"
+>   
+>   #include <linux/ceph/ceph_features.h>
+>   #include <linux/ceph/messenger.h>
+> @@ -927,6 +928,7 @@ void ceph_mdsc_release_request(struct kref *kref)
+>   	put_cred(req->r_cred);
+>   	if (req->r_pagelist)
+>   		ceph_pagelist_release(req->r_pagelist);
+> +	kfree(req->r_fscrypt_auth);
+>   	put_request_session(req);
+>   	ceph_unreserve_caps(req->r_mdsc, &req->r_caps_reservation);
+>   	WARN_ON_ONCE(!list_empty(&req->r_wait));
+> @@ -2618,8 +2620,7 @@ static int set_request_path_attr(struct inode *rinode, struct dentry *rdentry,
+>   	return r;
+>   }
+>   
+> -static void encode_timestamp_and_gids(void **p,
+> -				      const struct ceph_mds_request *req)
+> +static void encode_mclientrequest_tail(void **p, const struct ceph_mds_request *req)
+>   {
+>   	struct ceph_timespec ts;
+>   	int i;
+> @@ -2632,6 +2633,20 @@ static void encode_timestamp_and_gids(void **p,
+>   	for (i = 0; i < req->r_cred->group_info->ngroups; i++)
+>   		ceph_encode_64(p, from_kgid(&init_user_ns,
+>   					    req->r_cred->group_info->gid[i]));
+> +
+> +	/* v5: altname (TODO: skip for now) */
+> +	ceph_encode_32(p, 0);
+> +
+> +	/* v6: fscrypt_auth and fscrypt_file */
+> +	if (req->r_fscrypt_auth) {
+> +		u32 authlen = ceph_fscrypt_auth_len(req->r_fscrypt_auth);
+> +
+> +		ceph_encode_32(p, authlen);
+> +		ceph_encode_copy(p, req->r_fscrypt_auth, authlen);
+> +	} else {
+> +		ceph_encode_32(p, 0);
+> +	}
+> +	ceph_encode_32(p, 0); // fscrypt_file for now
+>   }
+>   
+>   /*
+> @@ -2676,12 +2691,14 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   		goto out_free1;
+>   	}
+>   
+> +	/* head */
+>   	len = legacy ? sizeof(*head) : sizeof(struct ceph_mds_request_head);
+> -	len += pathlen1 + pathlen2 + 2*(1 + sizeof(u32) + sizeof(u64)) +
+> -		sizeof(struct ceph_timespec);
+> -	len += sizeof(u32) + (sizeof(u64) * req->r_cred->group_info->ngroups);
+>   
+> -	/* calculate (max) length for cap releases */
+> +	/* filepaths */
+> +	len += 2 * (1 + sizeof(u32) + sizeof(u64));
+> +	len += pathlen1 + pathlen2;
+> +
+> +	/* cap releases */
+>   	len += sizeof(struct ceph_mds_request_release) *
+>   		(!!req->r_inode_drop + !!req->r_dentry_drop +
+>   		 !!req->r_old_inode_drop + !!req->r_old_dentry_drop);
+> @@ -2691,6 +2708,25 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   	if (req->r_old_dentry_drop)
+>   		len += pathlen2;
+>   
+> +	/* MClientRequest tail */
+> +
+> +	/* req->r_stamp */
+> +	len += sizeof(struct ceph_timespec);
+> +
+> +	/* gid list */
+> +	len += sizeof(u32) + (sizeof(u64) * req->r_cred->group_info->ngroups);
+> +
+> +	/* alternate name */
+> +	len += sizeof(u32);	// TODO
+> +
+> +	/* fscrypt_auth */
+> +	len += sizeof(u32); // fscrypt_auth
+> +	if (req->r_fscrypt_auth)
+> +		len += ceph_fscrypt_auth_len(req->r_fscrypt_auth);
+> +
+> +	/* fscrypt_file */
+> +	len += sizeof(u32);
+> +
+>   	msg = ceph_msg_new2(CEPH_MSG_CLIENT_REQUEST, len, 1, GFP_NOFS, false);
+>   	if (!msg) {
+>   		msg = ERR_PTR(-ENOMEM);
+> @@ -2710,7 +2746,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   	} else {
+>   		struct ceph_mds_request_head *new_head = msg->front.iov_base;
+>   
+> -		msg->hdr.version = cpu_to_le16(4);
+> +		msg->hdr.version = cpu_to_le16(6);
+>   		new_head->version = cpu_to_le16(CEPH_MDS_REQUEST_HEAD_VERSION);
+>   		head = (struct ceph_mds_request_head_old *)&new_head->oldest_client_tid;
+>   		p = msg->front.iov_base + sizeof(*new_head);
+> @@ -2761,7 +2797,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   
+>   	head->num_releases = cpu_to_le16(releases);
+>   
+> -	encode_timestamp_and_gids(&p, req);
+> +	encode_mclientrequest_tail(&p, req);
+>   
+>   	if (WARN_ONCE(p > end, "p=%p end=%p len=%d\n", p, end, len)) {
+>   		ceph_msg_put(msg);
+> @@ -2870,7 +2906,7 @@ static int __prepare_send_request(struct ceph_mds_session *session,
+>   		rhead->num_releases = 0;
+>   
+>   		p = msg->front.iov_base + req->r_request_release_offset;
+> -		encode_timestamp_and_gids(&p, req);
+> +		encode_mclientrequest_tail(&p, req);
+>   
+>   		msg->front.iov_len = p - msg->front.iov_base;
+>   		msg->hdr.front_len = cpu_to_le32(msg->front.iov_len);
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 98a8710807d1..e7d2c8a1b9c1 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -278,6 +278,9 @@ struct ceph_mds_request {
+>   	struct mutex r_fill_mutex;
+>   
+>   	union ceph_mds_request_args r_args;
+> +
+> +	struct ceph_fscrypt_auth *r_fscrypt_auth;
+> +
+>   	int r_fmode;        /* file mode, if expecting cap */
+>   	const struct cred *r_cred;
+>   	int r_request_release_offset;
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 6bb6f9f9d79a..bc74c0b19c4f 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -1040,7 +1040,12 @@ static inline int ceph_do_getattr(struct inode *inode, int mask, bool force)
+>   }
+>   extern int ceph_permission(struct user_namespace *mnt_userns,
+>   			   struct inode *inode, int mask);
+> -extern int __ceph_setattr(struct inode *inode, struct iattr *attr);
+> +
+> +struct ceph_iattr {
+> +	struct ceph_fscrypt_auth	*fscrypt_auth;
+> +};
+> +
+> +extern int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *cia);
+>   extern int ceph_setattr(struct user_namespace *mnt_userns,
+>   			struct dentry *dentry, struct iattr *attr);
+>   extern int ceph_getattr(struct user_namespace *mnt_userns,
+> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+> index bc2699feddbe..a7d801a6ac88 100644
+> --- a/include/linux/ceph/ceph_fs.h
+> +++ b/include/linux/ceph/ceph_fs.h
+> @@ -356,14 +356,19 @@ enum {
+>   
+>   extern const char *ceph_mds_op_name(int op);
+>   
+> -
+> -#define CEPH_SETATTR_MODE   1
+> -#define CEPH_SETATTR_UID    2
+> -#define CEPH_SETATTR_GID    4
+> -#define CEPH_SETATTR_MTIME  8
+> -#define CEPH_SETATTR_ATIME 16
+> -#define CEPH_SETATTR_SIZE  32
+> -#define CEPH_SETATTR_CTIME 64
+> +#define CEPH_SETATTR_MODE              (1 << 0)
+> +#define CEPH_SETATTR_UID               (1 << 1)
+> +#define CEPH_SETATTR_GID               (1 << 2)
+> +#define CEPH_SETATTR_MTIME             (1 << 3)
+> +#define CEPH_SETATTR_ATIME             (1 << 4)
+> +#define CEPH_SETATTR_SIZE              (1 << 5)
+> +#define CEPH_SETATTR_CTIME             (1 << 6)
+> +#define CEPH_SETATTR_MTIME_NOW         (1 << 7)
+> +#define CEPH_SETATTR_ATIME_NOW         (1 << 8)
+> +#define CEPH_SETATTR_BTIME             (1 << 9)
+> +#define CEPH_SETATTR_KILL_SGUID        (1 << 10)
+> +#define CEPH_SETATTR_FSCRYPT_AUTH      (1 << 11)
+> +#define CEPH_SETATTR_FSCRYPT_FILE      (1 << 12)
+>   
+>   /*
+>    * Ceph setxattr request flags.
 
-The pacific mon, "b5", is v16.2.5 running under podman:
-
-docker.io/ceph/ceph@sha256:829ebf54704f2d827de00913b171e5da741aad9b53c1f35ad59251524790eceb
-
-The octopus mons are all v15.2.14. The lead octopus mon ("k2") is 
-running under podman:
-
-quay.io/ceph/ceph:v15
-
-The other 2 octopus mons ("b2" and "b4") are standalone 
-15.2.14-1~bpo10+1.  These are manually started due to the cephadm 
-upgrade failing at the point of upgrading the mons and leaving me with 
-only one cephadm mon running.
-
-On start up of the pacific mon with debug_mon=20, over a 30 second 
-period I see 765 "handle_probe_reply" sequences by the pacific mon, 
-with the lead mon replying 200 times and the other two mons replying 
-279 times each.
-
-In the very first "handle_probe_reply" sequence we see an expected (I 
-assume) "bootstrap" as the starting up mon doesn't yet have a monmap 
-("got newer/committed monmap epoch 35, mine was 0"):
-
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e0 handle_probe mon_probe(reply c6618970-0ce0-4cb2-bc9a-dd5f29b62e24 name b4 quorum 0,1,2 leader 0 paxos( fc 365132587 lc 365133304 ) mon_release octopus) v7
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e0 handle_probe_reply mon.2 v2:10.200.63.132:3300/0 mon_probe(reply c6618970-0ce0-4cb2-bc9a-dd5f29b62e24 name b4 quorum 0,1,2 leader 0 paxos( fc 365132587 lc 365133304 ) mon_release octopus) v7
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e0  monmap is e0: 3 mons at {noname-a=[v2:10.200.63.130:3300/0,v1:10.200.63.130:6789/0],noname-b=[v2:10.200.63.132:3300/0,v1:10.200.63.132:6789/0],noname-c=[v2:192.168.254.251:3300/0,v1:192.168.254.251:6789/0]}
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e0  got newer/committed monmap epoch 35, mine was 0
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 bootstrap
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 sync_reset_requester
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 unregister_cluster_logger - not registered
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 cancel_probe_timeout 0x5646293a0a20
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 monmap e35: 3 mons at {b2=[v2:10.200.63.130:3300/0,v1:10.200.63.130:6789/0],b4=[v2:10.200.63.132:3300/0,v1:10.200.63.132:6789/0],k2=[v2:192.168.254.251:3300/0,v1:192.168.254.251:6789/0]}
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 _reset
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing).auth v0 _set_mon_num_rank num 0 rank 0
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 cancel_probe_timeout (none scheduled)
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 timecheck_finish
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 15 mon.b5@-1(probing) e35 health_tick_stop
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 15 mon.b5@-1(probing) e35 health_interval_stop
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 scrub_event_cancel
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 scrub_reset
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 cancel_probe_timeout (none scheduled)
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 reset_probe_timeout 0x5646293a0a20 after 10 seconds
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 probing other monitors
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 _ms_dispatch new session 0x5646293aafc0 MonSession(mon.1 [v2:10.200.63.130:3300/0,v1:10.200.63.130:6789/0] is open , features 0x3f01cfb8ffedffff (luminous)) features 0x3f01cfb8ffedffff
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700  5 mon.b5@-1(probing) e35 _ms_dispatch setting monitor caps on this connection
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20 mon.b5@-1(probing) e35  entity_name  global_id 0 (none) caps allow *
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20 is_capable service=mon command= read addr v2:10.200.63.130:3300/0 on cap allow *
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20  allow so far , doing grant allow *
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20  allow all
-
-However every single "handle_probe_reply" sequence after that also 
-does a "bootstrap", even though the mon at this point has a monmap 
-which the same epoch ("got newer/committed monmap epoch 35, mine was 
-35"), e.g.:
-
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 handle_probe mon_probe(reply c6618970-0ce0-4cb2-bc9a-dd5f29b62e24 name b4 quorum 0,1,2 leader 0 paxos( fc 365132587 lc 365133304 ) mon_release octopus) v7
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 handle_probe_reply mon.2 v2:10.200.63.132:3300/0 mon_probe(reply c6618970-0ce0-4cb2-bc9a-dd5f29b62e24 name b4 quorum 0,1,2 leader 0 paxos( fc 365132587 lc 365133304 ) mon_release octopus) v7
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35  monmap is e35: 3 mons at {b2=[v2:10.200.63.130:3300/0,v1:10.200.63.130:6789/0],b4=[v2:10.200.63.132:3300/0,v1:10.200.63.132:6789/0],k2=[v2:192.168.254.251:3300/0,v1:192.168.254.251:6789/0]}
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35  got newer/committed monmap epoch 35, mine was 35
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 bootstrap
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 sync_reset_requester
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 unregister_cluster_logger - not registered
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 cancel_probe_timeout 0x5646293a0a20
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 monmap e35: 3 mons at {b2=[v2:10.200.63.130:3300/0,v1:10.200.63.130:6789/0],b4=[v2:10.200.63.132:3300/0,v1:10.200.63.132:6789/0],k2=[v2:192.168.254.251:3300/0,v1:192.168.254.251:6789/0]}
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 _reset
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing).auth v0 _set_mon_num_rank num 0 rank 0
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 cancel_probe_timeout (none scheduled)
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 timecheck_finish
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 15 mon.b5@-1(probing) e35 health_tick_stop
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 15 mon.b5@-1(probing) e35 health_interval_stop
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 scrub_event_cancel
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 scrub_reset
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 cancel_probe_timeout (none scheduled)
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 reset_probe_timeout 0x5646293a0a20 after 10 seconds
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 10 mon.b5@-1(probing) e35 probing other monitors
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20 mon.b5@-1(probing) e35 _ms_dispatch existing session 0x5646293aafc0 for mon.1
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20 mon.b5@-1(probing) e35  entity_name  global_id 0 (none) caps allow *
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20 is_capable service=mon command= read addr v2:10.200.63.130:3300/0 on cap allow *
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20  allow so far , doing grant allow *
-Aug 31 07:05:01 b5 conmon[3496814]: debug 2021-08-30T21:05:01.377+0000 7f43ead11700 20  allow all
-
-That same sequence keeps repeating, just with the "name" changing 
-between the octopus mons, i.e. "name b4", "name b2" and "name k2".
-
-Referencing Monitor::handle_probe_reply() in src/mon/Monitor.cc (see 
-also below), if we ever get past the bootstrap() we should get a 
-message mentioning "peer", but we never see one.
-
-That implies "mybl.contents_equal(m->monmap_bl)" is never true, and 
-"has_ever_joined" is never true.
-
-What's going on here?
-
-Cheers,
-
-Chris
-
-----------------------------------------------------------------------
-void Monitor::handle_probe_reply(MonOpRequestRef op)
-{
-...
-   // newer map, or they've joined a quorum and we haven't?
-   bufferlist mybl;
-   monmap->encode(mybl, m->get_connection()->get_features());
-   // make sure it's actually different; the checks below err toward
-   // taking the other guy's map, which could cause us to loop.
-   if (!mybl.contents_equal(m->monmap_bl)) {
-     MonMap *newmap = new MonMap;
-     newmap->decode(m->monmap_bl);
-     if (m->has_ever_joined && (newmap->get_epoch() > monmap->get_epoch() ||
-                                !has_ever_joined)) {
-       dout(10) << " got newer/committed monmap epoch " << newmap->get_epoch()
-                << ", mine was " << monmap->get_epoch() << dendl;
-       delete newmap;
-       monmap->decode(m->monmap_bl);
-       notify_new_monmap(false);
-
-       bootstrap();
-       return;
-     }
-     delete newmap;
-   }
-   
-   // rename peer?
-   string peer_name = monmap->get_name(m->get_source_addr());
-   if (monmap->get_epoch() == 0 && peer_name.compare(0, 7, "noname-") == 0) {
-     dout(10) << " renaming peer " << m->get_source_addr() << " "
-              << peer_name << " -> " << m->name << " in my monmap"
-              << dendl;
-     monmap->rename(peer_name, m->name);
-
-     if (is_electing()) {
-       bootstrap();
-       return;
-     }
-   } else if (peer_name.size()) { 
-     dout(10) << " peer name is " << peer_name << dendl;
-   } else {
-     dout(10) << " peer " << m->get_source_addr() << " not in map" << dendl;
-   }
-...
-}
-----------------------------------------------------------------------
