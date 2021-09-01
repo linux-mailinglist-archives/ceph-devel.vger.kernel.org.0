@@ -2,183 +2,118 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B204E3FCF3B
-	for <lists+ceph-devel@lfdr.de>; Tue, 31 Aug 2021 23:38:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70C573FD080
+	for <lists+ceph-devel@lfdr.de>; Wed,  1 Sep 2021 02:54:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232580AbhHaVjm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 31 Aug 2021 17:39:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:39915 "EHLO
+        id S241513AbhIAAzA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 31 Aug 2021 20:55:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:38255 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241369AbhHaVjk (ORCPT
+        by vger.kernel.org with ESMTP id S241514AbhIAAy7 (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 31 Aug 2021 17:39:40 -0400
+        Tue, 31 Aug 2021 20:54:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630445925;
+        s=mimecast20190719; t=1630457642;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=jF9rwEM7cmKziqpDUf57DgLJOh4uDfmAVb6WTLHCRQc=;
-        b=ii945TxNSMLPUT/tzKaTVTuV4h5KyaGuwcTbN24EP1ItLpkAbbGpsWRUwD9WO7lgm7kv19
-        e3c6R/YT9KeUIJmZTa5Au2idzV6wtIIdSkD0GpL1N5kEftHBszQHfMC3qu8USI78YhQUY0
-        TT9wodvv7oYQrLEdgzS3ElG09B16GQY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-584-etE7GrocP62B622SZDpz4g-1; Tue, 31 Aug 2021 17:38:43 -0400
-X-MC-Unique: etE7GrocP62B622SZDpz4g-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1928D8CC784;
-        Tue, 31 Aug 2021 21:38:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6CB1D60843;
-        Tue, 31 Aug 2021 21:38:35 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] fscache: Fixes and rewrite preparation
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/KDS3MmqRp7iUJtrLFXQI3iPGCRnyo2zicC0/TFY91s=;
+        b=VFT5VLuu4Gt2JmBXYWfLK4btap9mTYMergBXt8jD8phBHNiAfZkVwhubvzpgv4fDL3GpK8
+        m2rp5hkeUrSHO6moKw60vHVDtVnglBVwlAkOGKa8X1Uw6WDFiMhCO33ljzLvJMTPWf9k2Q
+        GRbBqDLgDXB//mjKAozaV6n00DNN7vk=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-232-ZF2FT0AjP5ajNd6LK3LROg-1; Tue, 31 Aug 2021 20:54:01 -0400
+X-MC-Unique: ZF2FT0AjP5ajNd6LK3LROg-1
+Received: by mail-pf1-f200.google.com with SMTP id g17-20020aa781910000b0290360a5312e3eso508737pfi.7
+        for <ceph-devel@vger.kernel.org>; Tue, 31 Aug 2021 17:54:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=/KDS3MmqRp7iUJtrLFXQI3iPGCRnyo2zicC0/TFY91s=;
+        b=K+W9s6CjmthznIu5paxc6zrsyuOwfPSEooFBUvo7FTxc+VxswpYnPg1Tk1/wO44zKJ
+         y9pxyLOSzdgbPnVG0E6+YyU6vY1CB5oWkT8TMnZtlvJrSKBZKoxJNF/MD/P7wGln2GyW
+         Mzyyd8xvfvRWBgTWtbrDtO6jiW6GtsG6PuMf5n+B+2NFjY1PVXbWsjvaAg2VBz8k78QS
+         zgLG4qLrfczZdIcj90OHfYadB85wzr5FSa6f6a5pm218zlI0ZKUX25TXGw8WixByv2tH
+         4t6rUG6JPX2r3t7GgqXlxRBQT0BUS2GMx8xmh9Jo+Q60aB7hlSkblvWWmRIcBAA7BVvk
+         DJ5g==
+X-Gm-Message-State: AOAM530nKr8jRt9vQ1AWHc7GB/+4duWBzp7u5qdLv2lCFmmOLSpjtImv
+        ZZNrsz2u3coEE3QJmMl/6NcS6eyXczjGDxLAUdLasJgr3GB7G7vdslAtH2Zzau0xBwRDeX1khao
+        +IqQKqa6UwG5c1hLq8IeVAw==
+X-Received: by 2002:a17:90a:8b8d:: with SMTP id z13mr8541265pjn.1.1630457640250;
+        Tue, 31 Aug 2021 17:54:00 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzS5trT2YZS8nyXzMcVEsTAyvQzVnxPq2aM6lBpZp+y8GsHgkjBT2yyrXZYpp/K8yryie5HCQ==
+X-Received: by 2002:a17:90a:8b8d:: with SMTP id z13mr8541244pjn.1.1630457639932;
+        Tue, 31 Aug 2021 17:53:59 -0700 (PDT)
+Received: from [10.72.12.157] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id v20sm22108951pgi.39.2021.08.31.17.53.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Aug 2021 17:53:59 -0700 (PDT)
+Subject: Re: [RFC PATCH v8 09/24] ceph: add ability to set fscrypt_auth via
+ setattr
+To:     Eric Biggers <ebiggers@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, dhowells@redhat.com,
+        lhenriques@suse.de, khiremat@redhat.com
+References: <20210826162014.73464-1-jlayton@kernel.org>
+ <20210826162014.73464-10-jlayton@kernel.org>
+ <27f6a038-94a6-ec58-c7a5-0fafc2c9d779@redhat.com>
+ <e92545e2d652179dd5d72f953ef58398c41a4abf.camel@kernel.org>
+ <60291569-aace-cc83-88de-3de24cefb750@redhat.com>
+ <7f231e95bd397394eba44c3e346524bac44a069b.camel@kernel.org>
+ <YS5s5mYZtc3r+K/E@sol.localdomain>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <fca1da91-07aa-61ab-8d43-17a15a72691b@redhat.com>
+Date:   Wed, 1 Sep 2021 08:53:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3282507.1630445914.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 31 Aug 2021 22:38:34 +0100
-Message-ID: <3282508.1630445914@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <YS5s5mYZtc3r+K/E@sol.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
 
-Can you pull these changes please?  They perform some preparatory work for=
- the
-fscache rewrite that's being worked on and fix some bugs.  These include:
+On 9/1/21 1:54 AM, Eric Biggers wrote:
+> On Tue, Aug 31, 2021 at 09:50:32AM -0400, Jeff Layton wrote:
+>>>>>> +		/* It should never be re-set once set */
+>>>>>> +		WARN_ON_ONCE(ci->fscrypt_auth);
+>>>>>> +
+>>>>> Maybe this should return -EEXIST if already set ?
+>>>>>
+>>>> I don't know. In general, once the context is set on an inode, we
+>>>> shouldn't ever reset it. That said, I think we might need to allow
+>>>> admins to override an existing context if it's corrupted.
+>>>>
+>>>> So, that's the rationale for the WARN_ON_ONCE. The admins should never
+>>>> do this under normal circumstances but they do have the ability to
+>>>> change it if needed (and we'll see a warning in the logs in that case).
+>>> I may miss some code in the fs/crypto/ layer.
+>>>
+>>> I readed that once the directory/file has set the policy context, it
+>>> will just return 0 if the new one matches the existence, if not match it
+>>> will return -EEXIST, or will try to call ceph layer to set it.
+>>>
+>>> So once this is set, my understanding is that it shouldn't be here ?
+>>>
+>> Where did you read that? If we have documented semantics we need to
+>> follow here, then we should change it to comply with them.
+>>
+> That is how FS_IOC_SET_ENCRYPTION_POLICY behaves, but the check for an existing
+> policy already happens in fscrypt_ioctl_set_policy(), so ->set_context doesn't
+> need to worry about it.
 
- (1) Always select netfs stats when enabling fscache stats since they're
-     displayed through the same procfile.
+Yeah, the FS_IOC_SET_ENCRYPTION_POLICY section in 
+"Documentation/filesystems/fscrypt.rst".
 
- (2) Add a cookie debug ID that can be used in tracepoints instead of a
-     pointer and cache it in the netfs_cache_resources struct rather than
-     in the netfs_read_request struct to make it more available.
 
- (3) Use file_inode() in cachefiles rather than dereferencing file->f_inod=
-e
-     directly.
-
- (4) Provide a procfile to display fscache cookies.
-
- (5) Remove the fscache and cachefiles histogram procfiles.
-
- (6) Remove the fscache object list procfile.
-
- (7) Avoid using %p in fscache and cachefiles as the value is hashed and
-     not comparable to the register dump in an oops trace.
-
- (8) Fix the cookie hash function to actually achieve useful dispersion.
-
- (9) Fix fscache_cookie_put() so that it doesn't dereference the cookie
-     pointer in the tracepoint after the refcount has been decremented
-     (we're only allowed to do that if we decremented it to zero).
-
-(10) Use refcount_t rather than atomic_t for the fscache_cookie refcount.
-
-Some of these patches have been posted before as part of a larger patchset
-that effected almost the whole rewrite[1].
-
-Changes
-=3D=3D=3D=3D=3D=3D=3D
-ver #2:
- - Fix a NULL pointer ref in a tracepoint (that patch reposted here [2]).
-
-David
-
-Link: https://lore.kernel.org/r/162431188431.2908479.14031376932042135080.=
-stgit@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/160588455242.3465195.3214733858273019178.s=
-tgit@warthog.procyon.org.uk/ [1]
-Link: https://lore.kernel.org/r/2512396.1630067489@warthog.procyon.org.uk/=
- [2]
-
----
-The following changes since commit e73f0f0ee7541171d89f2e2491130c7771ba58d=
-3:
-
-  Linux 5.14-rc1 (2021-07-11 15:07:40 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/fscache-next-20210829
-
-for you to fetch changes up to 20ec197bfa13c5b799fc9527790ea7b5374fc8f2:
-
-  fscache: Use refcount_t for the cookie refcount instead of atomic_t (202=
-1-08-27 13:34:03 +0100)
-
-----------------------------------------------------------------
-fscache changes and fixes
-
-----------------------------------------------------------------
-David Howells (12):
-      fscache: Select netfs stats if fscache stats are enabled
-      netfs: Move cookie debug ID to struct netfs_cache_resources
-      cachefiles: Use file_inode() rather than accessing ->f_inode
-      fscache: Add a cookie debug ID and use that in traces
-      fscache: Procfile to display cookies
-      fscache, cachefiles: Remove the histogram stuff
-      fscache: Remove the object list procfile
-      fscache: Change %p in format strings to something else
-      cachefiles: Change %p in format strings to something else
-      fscache: Fix cookie key hashing
-      fscache: Fix fscache_cookie_put() to not deref after dec
-      fscache: Use refcount_t for the cookie refcount instead of atomic_t
-
- fs/cachefiles/Kconfig             |  19 --
- fs/cachefiles/Makefile            |   2 -
- fs/cachefiles/bind.c              |   2 -
- fs/cachefiles/interface.c         |   6 +-
- fs/cachefiles/internal.h          |  25 ---
- fs/cachefiles/io.c                |   6 +-
- fs/cachefiles/key.c               |   2 +-
- fs/cachefiles/main.c              |   7 -
- fs/cachefiles/namei.c             |  61 ++----
- fs/cachefiles/proc.c              | 114 -----------
- fs/cachefiles/xattr.c             |   4 +-
- fs/fscache/Kconfig                |  25 +--
- fs/fscache/Makefile               |   2 -
- fs/fscache/cache.c                |  11 +-
- fs/fscache/cookie.c               | 201 +++++++++++++-----
- fs/fscache/fsdef.c                |   3 +-
- fs/fscache/histogram.c            |  87 --------
- fs/fscache/internal.h             |  57 ++----
- fs/fscache/main.c                 |  39 ++++
- fs/fscache/netfs.c                |   2 +-
- fs/fscache/object-list.c          | 414 ---------------------------------=
------
- fs/fscache/object.c               |   8 -
- fs/fscache/operation.c            |   3 -
- fs/fscache/page.c                 |   6 -
- fs/fscache/proc.c                 |  20 +-
- include/linux/fscache-cache.h     |   4 -
- include/linux/fscache.h           |   4 +-
- include/linux/netfs.h             |   2 +-
- include/trace/events/cachefiles.h |  68 +++----
- include/trace/events/fscache.h    | 160 +++++++--------
- include/trace/events/netfs.h      |   2 +-
- 31 files changed, 368 insertions(+), 998 deletions(-)
- delete mode 100644 fs/cachefiles/proc.c
- delete mode 100644 fs/fscache/histogram.c
- delete mode 100644 fs/fscache/object-list.c
+> - Eric
+>
 
