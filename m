@@ -2,59 +2,77 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB3123FF3E4
-	for <lists+ceph-devel@lfdr.de>; Thu,  2 Sep 2021 21:11:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65DB43FF3E9
+	for <lists+ceph-devel@lfdr.de>; Thu,  2 Sep 2021 21:13:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347277AbhIBTKZ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Thu, 2 Sep 2021 15:10:25 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:50395 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347140AbhIBTKY (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 2 Sep 2021 15:10:24 -0400
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id B207D1BF206;
-        Thu,  2 Sep 2021 19:09:18 +0000 (UTC)
-Date:   Thu, 2 Sep 2021 21:09:17 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     axboe@kernel.dk, gregkh@linuxfoundation.org,
-        chaitanya.kulkarni@wdc.com, atulgopinathan@gmail.com, hare@suse.de,
-        maximlevitsky@gmail.com, oakad@yahoo.com, ulf.hansson@linaro.org,
-        colin.king@canonical.com, shubhankarvk@gmail.com,
-        baijiaju1990@gmail.com, trix@redhat.com,
-        dongsheng.yang@easystack.cn, ceph-devel@vger.kernel.org,
-        richard@nod.at, vigneshr@ti.com, sth@linux.ibm.com,
-        hoeppner@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, oberpar@linux.ibm.com, tj@kernel.org,
-        linux-s390@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/9] mtd: add add_disk() error handling
-Message-ID: <20210902210917.54eb6e26@xps13>
-In-Reply-To: <20210902174105.2418771-6-mcgrof@kernel.org>
-References: <20210902174105.2418771-1-mcgrof@kernel.org>
-        <20210902174105.2418771-6-mcgrof@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S243515AbhIBTOW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 2 Sep 2021 15:14:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57692 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1347294AbhIBTOT (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 2 Sep 2021 15:14:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 827FC610CF;
+        Thu,  2 Sep 2021 19:13:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630610000;
+        bh=X0EpprjCgVTbJnj25ysZWuzuDlt+CWao1B2tFFuR7mc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=WP4UtzKkafxHYKOgT+zGAHDY81K4xnOlHFsZSn972bq0PW8EiYP/TC2PK9ggoqw0F
+         P1BvJDk5D0qHFPQQ+tx+rUKIPRVYXHMi9GBdvksppxXUTet3ih8WZj4xyv9Dfn2e2K
+         D9HMUJGQ4hH7L166nP5YBVtDP1qaoaCOoraiycJWUGYVKER+2+HiueDeifGYsnHKuK
+         FjqOpcZuvOGFBK9XyqVdyPwsk0+teoo2/ltCQBnWccv1n8dqXMs7Tse/UCrUl5tVMB
+         /AHATXJ2RderSUu0AUHFArzSeH+8m/HNqqUetOmWhxRjKoTsvkg+i1Jl0g3deIErb5
+         FsUkbYIv9Dmqg==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com
+Subject: [PATCH] ceph: drop the mdsc_get_session/put_session dout() messages
+Date:   Thu,  2 Sep 2021 15:13:19 -0400
+Message-Id: <20210902191319.47145-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Luis,
+These are very chatty, racy, and not terribly useful. Just remove them.
 
-Luis Chamberlain <mcgrof@kernel.org> wrote on Thu,  2 Sep 2021 10:41:01
--0700:
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/mds_client.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-> We never checked for errors on add_disk() as this function
-> returned void. Now that this is fixed, use the shiny new
-> error handling.
-> 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 8d5bffb4e84f..9ff3c7ade509 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -653,14 +653,9 @@ const char *ceph_session_state_name(int s)
+ 
+ struct ceph_mds_session *ceph_get_mds_session(struct ceph_mds_session *s)
+ {
+-	if (refcount_inc_not_zero(&s->s_ref)) {
+-		dout("mdsc get_session %p %d -> %d\n", s,
+-		     refcount_read(&s->s_ref)-1, refcount_read(&s->s_ref));
++	if (refcount_inc_not_zero(&s->s_ref))
+ 		return s;
+-	} else {
+-		dout("mdsc get_session %p 0 -- FAIL\n", s);
+-		return NULL;
+-	}
++	return NULL;
+ }
+ 
+ void ceph_put_mds_session(struct ceph_mds_session *s)
+@@ -668,8 +663,6 @@ void ceph_put_mds_session(struct ceph_mds_session *s)
+ 	if (IS_ERR_OR_NULL(s))
+ 		return;
+ 
+-	dout("mdsc put_session %p %d -> %d\n", s,
+-	     refcount_read(&s->s_ref), refcount_read(&s->s_ref)-1);
+ 	if (refcount_dec_and_test(&s->s_ref)) {
+ 		if (s->s_auth.authorizer)
+ 			ceph_auth_destroy_authorizer(s->s_auth.authorizer);
+-- 
+2.31.1
 
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Thanks,
-Miquèl
