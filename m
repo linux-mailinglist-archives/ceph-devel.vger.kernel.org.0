@@ -2,124 +2,102 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AE5E401F0D
-	for <lists+ceph-devel@lfdr.de>; Mon,  6 Sep 2021 19:11:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8673401F6A
+	for <lists+ceph-devel@lfdr.de>; Mon,  6 Sep 2021 20:04:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243999AbhIFRMN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 6 Sep 2021 13:12:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41470 "EHLO
+        id S244379AbhIFSE6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 6 Sep 2021 14:04:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243725AbhIFRML (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 6 Sep 2021 13:12:11 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00718C0617A8
-        for <ceph-devel@vger.kernel.org>; Mon,  6 Sep 2021 10:11:05 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id y34so14514153lfa.8
-        for <ceph-devel@vger.kernel.org>; Mon, 06 Sep 2021 10:11:05 -0700 (PDT)
+        with ESMTP id S244371AbhIFSE5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 6 Sep 2021 14:04:57 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F374DC061757;
+        Mon,  6 Sep 2021 11:03:51 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id f6so9692218iox.0;
+        Mon, 06 Sep 2021 11:03:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Cu2xJTqozk4xsbaxL8H9BoFzyGhonAhAaycqLOW0ec8=;
-        b=OlLhUgbAfIRcaQBkm3ucc7CkjQAA3BY3foo15moLBOuI3bnD2Kus4MNZyf0QsYgIYo
-         nYbwNGvkReFol2qerrmiIPhJwlB8yfL4VS7xERe6PQW1ZAkPROcukdDIAppf1FTAiEtW
-         y+1oyCqSnc3RJ5wKu+lHo6J8Hhxb89KqfMf2R86r38NWDbRsmOlMpqbHkNHi7bCFiSqW
-         cl3lahlfSxznPdky39hR5eu7x7LzmxY6PmVuGHoR2GG6KV3mnQh2ksxW1J/2m2kjXAZA
-         AXoTX3K6GFv1heJQ79c2pUmD74HsC98NaYlHdj2R9LB8Mw6mkN6Kj8B5D6ZJn7udld5B
-         OXKg==
+        bh=4H8KJdOpjjzwiqRcJLFHWd3PQAAxrT81eJ9GkExltUo=;
+        b=iEGT4+Q+JXOHwwU9fdZ+0nJsvP0CY1sRAqY4AFrmrfTKeOdLZZCHsVgD3Uys1crhEg
+         3x0b0Iqgr73vQVlkCj6GahFd5q4Hsjic20HUbUbWUMxRU00/EerPViKlkf1gcZUv350H
+         R9gtbgehmuzA52W4+CXODfoFb2PG2YH9gP9kHd8GPSf1m+OzHMh/eYSY4vpyy5mi+F4T
+         mwqMVYAbI0a90fdDqKw1PfdNo9nGrdVqMOQZuKO9CgQGcUPHT9YG9sC2rvuBKDQbdNkw
+         eTiCyFe0COBiW3jk2szaFZLRE3ED+6mehauI0LshOZeb4NztEwKGI1P04w9ZDad3owtj
+         lyXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Cu2xJTqozk4xsbaxL8H9BoFzyGhonAhAaycqLOW0ec8=;
-        b=Vya/YbObu7SjmK+ef6yWiIQ60i4cB1UeIRVWw39XFELIKvg6a3g2LLwWw3ccn/DN4G
-         uaU4L/D16YDNm14OnXITkhXFdPYW1JJzfsETG29N/AbtkzuajL/xCabKFJUOuXdgHRcs
-         IwW206C9veHXLwZd+w7tJgXfjUR6CaGeku4yGZSMMrn5VpLl9JOAS+k8xT2sOhXEo5yf
-         tlDlSYStVwV9eeynyLlq4Y3BgIJ1v5oBKww/FtwopgN2Qj38SrckpbVJ5Y/TG58u5JiX
-         sAMugTbowlexvivjVEaXriz0Fb1/LvyEYNf7T7yrX4JgU62JGfE7lYwudgRPw4mPQ4+g
-         sRyw==
-X-Gm-Message-State: AOAM5331tIf85UCj4adMW5bWWxIkD92Ip9JlxHGZrlX8fQ7L6QJv7V/R
-        2aZXa+9OtsV1Df6XULaVqYLllP8mfH4TwtThyT4Kgw==
-X-Google-Smtp-Source: ABdhPJySjVy/4t45uf+nwvNhsrs7H6NHiflWPlp7zgQ9bQXGTclgeFZjH9Q4gk7PApD5uzg0A1VOJOtWwiyVL3oaHNk=
-X-Received: by 2002:a05:6512:1043:: with SMTP id c3mr9631426lfb.358.1630948263963;
- Mon, 06 Sep 2021 10:11:03 -0700 (PDT)
+        bh=4H8KJdOpjjzwiqRcJLFHWd3PQAAxrT81eJ9GkExltUo=;
+        b=pc+a219J7Jg4O0XgY0IgDIkygrmqp4cDj1kjcjcBWMFx54CFULLviAPH6tNOfJTF7k
+         gxw4xMtEoswqKniQ06ZNG9CMwDgHYDbeSAlKVFdRH1mXweVzC7+RA6hPShid8OdbgMEM
+         MGTuKy3r72+fMb9/feIOjEhXhjiacVytkNUX56g0UZbXZdcltREaPi7jzLbu4OUR8Eif
+         HnCu+GysDRI6ksixzFmV7a62xGPYxn/JLU8yFNHp+tFEkJpNkdQTK0RDjVBFMc9VIXYn
+         5l1HJIMh0YwdNYrEDOLaWycwO0MLnnTV6xAXzw73x+faPLoMurCSgJWYsNSy2jRmcg29
+         TM2Q==
+X-Gm-Message-State: AOAM5304OIkb4XcTQmcgytlUaD5O6FvhLGDjC1NtO0eX8S4PYm4rnrk5
+        oYGwVVrZx+/K3O/ZXtCOqmeoHIbKwb1qqn+6ZRo=
+X-Google-Smtp-Source: ABdhPJw783yUnhBinIrQN1PoywcVAxvPqJZP2rGxk3d0PWxbTSrFU4j1s/qRM2lWQnoTCcr8MUgHRd1KAvAW0m0+2TE=
+X-Received: by 2002:a05:6638:2257:: with SMTP id m23mr12049282jas.137.1630951431431;
+ Mon, 06 Sep 2021 11:03:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210902174105.2418771-1-mcgrof@kernel.org> <20210902174105.2418771-4-mcgrof@kernel.org>
-In-Reply-To: <20210902174105.2418771-4-mcgrof@kernel.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 6 Sep 2021 19:10:27 +0200
-Message-ID: <CAPDyKFrwjJyLXfr48+Jujfp7VvxPu5JCGJAhZJn3-GzDb1Kh5A@mail.gmail.com>
-Subject: Re: [PATCH 3/9] mspro_block: add error handling support for add_disk()
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        chaitanya.kulkarni@wdc.com, atulgopinathan@gmail.com,
-        Hannes Reinecke <hare@suse.de>,
-        Maxim Levitsky <maximlevitsky@gmail.com>,
-        Alex Dubov <oakad@yahoo.com>,
-        Colin King <colin.king@canonical.com>,
-        Shubhankar Kuranagatti <shubhankarvk@gmail.com>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>, Tom Rix <trix@redhat.com>,
-        dongsheng.yang@easystack.cn, ceph-devel@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh R <vigneshr@ti.com>, sth@linux.ibm.com,
-        hoeppner@linux.ibm.com, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        oberpar@linux.ibm.com, Tejun Heo <tj@kernel.org>,
-        linux-s390@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20210906094301.GB10957@kili>
+In-Reply-To: <20210906094301.GB10957@kili>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 6 Sep 2021 20:03:24 +0200
+Message-ID: <CAOi1vP9bbs++zmcSJ=hb+PfR5-=QQbicHNNDu0uzcD_7XRG44g@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix off by one bugs in unsafe_request_wait()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, Xiubo Li <xiubli@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2 Sept 2021 at 19:41, Luis Chamberlain <mcgrof@kernel.org> wrote:
+On Mon, Sep 6, 2021 at 11:43 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 >
-> We never checked for errors on add_disk() as this function
-> returned void. Now that this is fixed, use the shiny new
-> error handling.
+> The "> max" tests should be ">= max" to prevent an out of bounds access
+> on the next lines.
 >
-> Contrary to the typical removal which delays the put_disk()
-> until later, since we are failing on a probe we immediately
-> put the disk on failure from add_disk by using
-> blk_cleanup_disk().
->
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-
-Queued for v5.16 on the temporary devel branch, thanks!
-
-Kind regards
-Uffe
-
-
+> Fixes: e1a4541ec0b9 ("ceph: flush the mdlog before waiting on unsafe reqs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/memstick/core/mspro_block.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+>  fs/ceph/caps.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/memstick/core/mspro_block.c b/drivers/memstick/core/mspro_block.c
-> index 22778d0e24f5..c0450397b673 100644
-> --- a/drivers/memstick/core/mspro_block.c
-> +++ b/drivers/memstick/core/mspro_block.c
-> @@ -1239,10 +1239,14 @@ static int mspro_block_init_disk(struct memstick_dev *card)
->         set_capacity(msb->disk, capacity);
->         dev_dbg(&card->dev, "capacity set %ld\n", capacity);
->
-> -       device_add_disk(&card->dev, msb->disk, NULL);
-> +       rc = device_add_disk(&card->dev, msb->disk, NULL);
-> +       if (rc)
-> +               goto out_cleanup_disk;
->         msb->active = 1;
->         return 0;
->
-> +out_cleanup_disk:
-> +       blk_cleanup_disk(msb->disk);
->  out_free_tag_set:
->         blk_mq_free_tag_set(&msb->tag_set);
->  out_release_id:
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 26c5029629a4..ebbad9080422 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -2260,7 +2260,7 @@ static int unsafe_request_wait(struct inode *inode)
+>                         list_for_each_entry(req, &ci->i_unsafe_dirops,
+>                                             r_unsafe_dir_item) {
+>                                 s = req->r_session;
+> -                               if (unlikely(s->s_mds > max)) {
+> +                               if (unlikely(s->s_mds >= max)) {
+>                                         spin_unlock(&ci->i_unsafe_lock);
+>                                         goto retry;
+>                                 }
+> @@ -2274,7 +2274,7 @@ static int unsafe_request_wait(struct inode *inode)
+>                         list_for_each_entry(req, &ci->i_unsafe_iops,
+>                                             r_unsafe_target_item) {
+>                                 s = req->r_session;
+> -                               if (unlikely(s->s_mds > max)) {
+> +                               if (unlikely(s->s_mds >= max)) {
+>                                         spin_unlock(&ci->i_unsafe_lock);
+>                                         goto retry;
+>                                 }
 > --
-> 2.30.2
+> 2.20.1
 >
+
+Applied.
+
+Thanks,
+
+                Ilya
