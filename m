@@ -2,152 +2,138 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DC30403009
-	for <lists+ceph-devel@lfdr.de>; Tue,  7 Sep 2021 22:58:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B667540301B
+	for <lists+ceph-devel@lfdr.de>; Tue,  7 Sep 2021 23:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346228AbhIGVAB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 7 Sep 2021 17:00:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235160AbhIGVAA (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 7 Sep 2021 17:00:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9E108604E9;
-        Tue,  7 Sep 2021 20:58:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631048334;
-        bh=dqr2I7xqw83eP9VRnS+/xcOugbJ30JsSTF2gpVO+9s0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=I8vWVOoAH078N3B5nVARB4Cu4zILOp3J/qXQ9zIVUM9IM+QcewuUSrOeAfkmYx7LD
-         XPuxJGb29gamru/YHYV/sPpTbbZKavrvxYQMvGE8O/EeEUTKYBF84HFef4hNKf696y
-         f9R9jHt749CoiaIKt4WSz7C0QiuRnHbsP4Rv0FGjoF1C3oop+AIvg8Tsy+Gvj8VdhI
-         rUWPmdICO4o1+QOlILj6jogag3DFhxl2I+BoxtBO6Y27RUDVDGPL3jxHFCL2/3fgmC
-         tNg46LpykjH3qTqEgXkKMAC0QQG/GMM3PqwbRA51uhjS410q6pELnuIXR2g/UUfyR6
-         4qSF3KS1jdnoQ==
-Message-ID: <68728d2700e98382aabdf298ac0ae7fad6615a2e.camel@kernel.org>
-Subject: Re: [PATCH RFC 0/2] ceph: size handling for the fscrypt
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     idryomov@gmail.com, ukernel@gmail.com, pdonnell@redhat.com,
-        ceph-devel@vger.kernel.org
-Date:   Tue, 07 Sep 2021 16:58:52 -0400
-In-Reply-To: <71db1836-4f1e-1c3d-077a-018bff32f60d@redhat.com>
-References: <20210903081510.982827-1-xiubli@redhat.com>
-         <02f2f77423ec1e6e5b23b452716b21c36a5b67da.camel@kernel.org>
-         <71db1836-4f1e-1c3d-077a-018bff32f60d@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
+        id S1346927AbhIGVI4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 7 Sep 2021 17:08:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:55902 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1344670AbhIGVI4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Sep 2021 17:08:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1631048869;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5chk1sLlqhKkI3Ke66l3ngGqVdBKhHw9HpZJAob0RiU=;
+        b=XY0zqCe30PgHcb5YFfHGZJWZQM07KlXkVBZYuGlevExVHyM6jc+DuSGklcXx7tzVtxd2sk
+        aHC/ATMHSidHQB3Osa4qXXCJk79j5bjfZfxesfeFPQtmVixJ+59mJ6TKiaaCMnCIEqa6+W
+        gvXKDeUZs+76bXLFUaVhxlZ7XcAotUY=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-399-EyJja_0JMr-kPkiabPn1-Q-1; Tue, 07 Sep 2021 17:07:48 -0400
+X-MC-Unique: EyJja_0JMr-kPkiabPn1-Q-1
+Received: by mail-il1-f197.google.com with SMTP id a6-20020a92d346000000b0022b61ba0872so2287ilh.20
+        for <ceph-devel@vger.kernel.org>; Tue, 07 Sep 2021 14:07:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5chk1sLlqhKkI3Ke66l3ngGqVdBKhHw9HpZJAob0RiU=;
+        b=pzD8m3egeL1QSmifRccRy9eE+8TfGfaXTRgVzz8U1m427tWJDRIie+3sBz/63frCr7
+         eN9j18N03i3QN5fOODm08W8CausN6GYkZdNLpgynSGZmQ3rOaf9soYtCyWo/B9ic+dOv
+         TQ32rfZo1zg8+ZAwraTfSC6L9ovd7f7b41yWn5If0XMos7mrJCh46pui0WaX82P61E25
+         a06vVogu4VBQTauec2dOVlPfFDRKkgsy0eghx5WTQysFuW8NA1tIRtA9x/BcvLdck8a9
+         lmrAl7gIQhke5YTYme54QgLGe5KNfn8cNyhl/VrJKyTK7cp/e2AjPrq2OKj51N5nGHPE
+         kTgg==
+X-Gm-Message-State: AOAM532RtoWLRBYhPOTmLF8KxHFGcIjfuug8AOhqn7ebQlRtV9j2PoX4
+        gP65P9pR2La7rGzV1Uj+VnE3/KLAamxTCec4rj0SYSd6u8ZtnZzPDtRYz1WLxa2l63jlYz/6fub
+        iZtVCQPou3WY8UONG+9CvGm/QL3zu4v7Mwn7N6Q==
+X-Received: by 2002:a92:ca0a:: with SMTP id j10mr177264ils.192.1631048867711;
+        Tue, 07 Sep 2021 14:07:47 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxXSYiWPmDCTrge6I0oIiu8xXY2Zw0cvvpL2+nbF0UDwwcHvWfDJt1xFqBt0dleEyBlRjciNsc8VuAW9MmxgAk=
+X-Received: by 2002:a92:ca0a:: with SMTP id j10mr177248ils.192.1631048867488;
+ Tue, 07 Sep 2021 14:07:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20210809164410.27750-1-jlayton@kernel.org> <6aeae1ddabffc701e1b039e99464c116c682a3fa.camel@kernel.org>
+In-Reply-To: <6aeae1ddabffc701e1b039e99464c116c682a3fa.camel@kernel.org>
+From:   Patrick Donnelly <pdonnell@redhat.com>
+Date:   Tue, 7 Sep 2021 17:07:21 -0400
+Message-ID: <CA+2bHPbJArs_n-WWMHg7s2A9Yejod7iqeyv6ijOz_HFWGSt_gw@mail.gmail.com>
+Subject: Re: [PATCH] ceph: enable async dirops by default
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2021-09-07 at 21:19 +0800, Xiubo Li wrote:
-> On 9/7/21 8:35 PM, Jeff Layton wrote:
-> > On Fri, 2021-09-03 at 16:15 +0800, xiubli@redhat.com wrote:
-> > > From: Xiubo Li <xiubli@redhat.com>
-> > > 
-> > > This patch series is based Jeff's ceph-fscrypt-size-experimental
-> > > branch in https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git.
-> > > 
-> > > This is just a draft patch and need to rebase or recode after Jeff
-> > > finished his huge patch set.
-> > > 
-> > > Post the patch out for advices and ideas. Thanks.
-> > > 
-> > I'll take a look. Going forward though, it'd probably be best for you to
-> > just take over development of the entire ceph-fscrypt-size series
-> > instead of trying to develop on top of my branch.
-> > 
-> > That branch is _very_ rough anyway. Just clone the branch into your tree
-> > and then you can drop or change patches in it as you see fit.
-> 
-> Sure.
-> 
-> 
-> > > ====
-> > > 
-> > > This approach will not do the rmw immediately after the file is
-> > > truncated. If the truncate size is aligned to the BLOCK SIZE, so
-> > > there no need to do the rmw and only in unaligned case will the
-> > > rmw is needed.
-> > > 
-> > > And the 'fscrypt_file' field will be cleared after the rmw is done.
-> > > If the 'fscrypt_file' is none zero that means after the kclient
-> > > reading that block to local buffer or pagecache it needs to do the
-> > > zeroing of that block in range of [fscrypt_file, round_up(fscrypt_file,
-> > > BLOCK SIZE)).
-> > > 
-> > > Once any kclient has dirty that block and write it back to ceph, the
-> > > 'fscrypt_file' field will be cleared and set to 0. More detail please
-> > > see the commit comments in the second patch.
-> > > 
-> > That sounds odd. How do you know where the file ends once you zero out
-> > fscrypt_file?
-> > 
-> > /me goes to look at the patches...
-> 
-> The code in the ceph_fill_inode() is not handling well for multiple 
-> ftruncates case, need to be fixed.
-> 
+On Wed, Sep 1, 2021 at 12:54 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> On Mon, 2021-08-09 at 12:44 -0400, Jeff Layton wrote:
+> > Async dirops have been supported in mainline kernels for quite some time
+> > now, and we've recently (as of June) started doing regular testing in
+> > teuthology with '-o nowsync'. So far, that hasn't uncovered any issues,
+> > so I think the time is right to flip the default for this option.
+> >
+> > Enable async dirops by default, and change /proc/mounts to show "wsync"
+> > when they are disabled rather than "nowsync" when they are enabled.
+> >
+> > Cc: Patrick Donnelly <pdonnell@redhat.com>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/ceph/super.c | 4 ++--
+> >  fs/ceph/super.h | 3 ++-
+> >  2 files changed, 4 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > index 609ffc8c2d78..f517ad9eeb26 100644
+> > --- a/fs/ceph/super.c
+> > +++ b/fs/ceph/super.c
+> > @@ -698,8 +698,8 @@ static int ceph_show_options(struct seq_file *m, struct dentry *root)
+> >       if (fsopt->flags & CEPH_MOUNT_OPT_CLEANRECOVER)
+> >               seq_show_option(m, "recover_session", "clean");
+> >
+> > -     if (fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS)
+> > -             seq_puts(m, ",nowsync");
+> > +     if (!(fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS))
+> > +             seq_puts(m, ",wsync");
+> >
+> >       if (fsopt->wsize != CEPH_MAX_WRITE_SIZE)
+> >               seq_printf(m, ",wsize=%u", fsopt->wsize);
+> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > index 389b45ac291b..0bc36cf4c683 100644
+> > --- a/fs/ceph/super.h
+> > +++ b/fs/ceph/super.h
+> > @@ -48,7 +48,8 @@
+> >
+> >  #define CEPH_MOUNT_OPT_DEFAULT                       \
+> >       (CEPH_MOUNT_OPT_DCACHE |                \
+> > -      CEPH_MOUNT_OPT_NOCOPYFROM)
+> > +      CEPH_MOUNT_OPT_NOCOPYFROM |            \
+> > +      CEPH_MOUNT_OPT_ASYNC_DIROPS)
+> >
+> >  #define ceph_set_mount_opt(fsc, opt) \
+> >       (fsc)->mount_options->flags |= CEPH_MOUNT_OPT_##opt
+>
+> I think we ought to wait to merge this into mainline just yet, but I'd
+> like to leave it in the "testing" branch for now.
+>
+> I've been working this bug with Patrick for the last month or two:
+>
+>     https://tracker.ceph.com/issues/51279
+>
+> In at least one case, the problem seems to be that the MDS failed an
+> async create with an ENOSPC error. The kclient's error handling around
+> this is pretty non-existent right now, so it caused an unmount to hang.
+>
+> It's a pity we still don't have revoke()...
+>
+> I've started working on a series to clean this up, but in the meantime I
+> think we ought to wait until that's in place before we make nowsync the
+> default.
+>
+> Sound ok?
 
-Ok. It'd probably be best to do that fix first in a separate patch and
-do the fscrypt work on top.
+Sounds good to me.
 
-FWIW, I'd really like to see the existing truncate code simplified (or
-at least, better documented). I'm very leery of adding yet more fields
-to the inode to handle truncate/size. So far, we have all of this:
-
-        struct mutex i_truncate_mutex;
-        u32 i_truncate_seq;        /* last truncate to smaller size */
-        u64 i_truncate_size;       /*  and the size we last truncated down to */
-        int i_truncate_pending;    /*  still need to call vmtruncate */
-
-        u64 i_max_size;            /* max file size authorized by mds */
-        u64 i_reported_size; /* (max_)size reported to or requested of mds */
-        u64 i_wanted_max_size;     /* offset we'd like to write too */
-        u64 i_requested_max_size;  /* max_size we've requested */
-
-Your patchset adds yet another new field with its own logic. I think we
-need to aim to simplify this code rather than just piling more logic on
-top.
-
-> Maybe we need to change the 'fscrypt_file' field's logic and make it 
-> opaqueness for MDS, then the MDS will use it to do the truncate instead 
-> as I mentioned in the previous reply in your patch set.
-> 
-> Then we can do the defer rmw in any kclient when necessary as this patch 
-> does.
-> 
-
-I think you can't defer the rmw unless you have Fb caps. In that case,
-you'd probably want to just truncate it in the pagecache, dirty the last
-page in the inode, and issue the truncate to the MDS.
-
-In the case where you don't have Fb caps, then I think you don't want to
-defer anything, as you can't guarantee another client won't get in there
-to read the object. On a truncate, you'll want to issue the truncate to
-the MDS and do the RMW on the last page. I'm not sure what order you'd
-want to do that in though. Maybe you can issue them simultaneously?
-
-> > 
-> > > There also need on small work in Jeff's MDS PR in cap flushing code
-> > > to clear the 'fscrypt_file'.
-> > > 
-> > > 
-> > > Xiubo Li (2):
-> > >    Revert "ceph: make client zero partial trailing block on truncate"
-> > >    ceph: truncate the file contents when needed when file scrypted
-> > > 
-> > >   fs/ceph/addr.c  | 19 ++++++++++++++-
-> > >   fs/ceph/caps.c  | 24 ++++++++++++++++++
-> > >   fs/ceph/file.c  | 65 ++++++++++++++++++++++++++++++++++++++++++++++---
-> > >   fs/ceph/inode.c | 48 +++++++++++++++++++-----------------
-> > >   fs/ceph/super.h | 13 +++++++---
-> > >   5 files changed, 138 insertions(+), 31 deletions(-)
-> > > 
-> 
 
 -- 
-Jeff Layton <jlayton@kernel.org>
+Patrick Donnelly, Ph.D.
+He / Him / His
+Principal Software Engineer
+Red Hat Sunnyvale, CA
+GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
 
