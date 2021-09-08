@@ -2,134 +2,102 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05508403E13
-	for <lists+ceph-devel@lfdr.de>; Wed,  8 Sep 2021 19:03:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7198403F07
+	for <lists+ceph-devel@lfdr.de>; Wed,  8 Sep 2021 20:24:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352361AbhIHREb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 8 Sep 2021 13:04:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38928 "EHLO
+        id S1347196AbhIHSZJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 8 Sep 2021 14:25:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235666AbhIHREa (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 8 Sep 2021 13:04:30 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A797BC061575;
-        Wed,  8 Sep 2021 10:03:22 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id me10so5543565ejb.11;
-        Wed, 08 Sep 2021 10:03:22 -0700 (PDT)
+        with ESMTP id S233514AbhIHSZI (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 8 Sep 2021 14:25:08 -0400
+Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCC36C061757
+        for <ceph-devel@vger.kernel.org>; Wed,  8 Sep 2021 11:24:00 -0700 (PDT)
+Received: by mail-ua1-x92c.google.com with SMTP id m39so1864896uad.9
+        for <ceph-devel@vger.kernel.org>; Wed, 08 Sep 2021 11:24:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
+        h=mime-version:reply-to:from:date:message-id:subject:to
          :content-transfer-encoding;
-        bh=pFZQZP6SBUQcSO4Xl8lHY2eIg5EWdq+cWHjbXAwPeek=;
-        b=K9Nt38iL9uqIB/blizmHJoFPGhRn6fduNNr0fKn3SJPJLtTc15CaVCN/mMV+bCJsr8
-         2UhhujJO7g/jIPFyE/ksVBtnF64pT3jkjL6cL8dQF0BLTdA4LqUfm+mx0DUNRtHAUm3/
-         8uD7D+As9Ls0CTCXmZ3qbJHa7SF+TClTScI/2DZFwudjMKjTpfyvZ7b7J+9i+e0dKG2O
-         XGfAPn+o/cMnMnPVbiEaq/juYKX9MSIL52w22DJgSul9sEtUWM9q9NByVIjtTMDD56+2
-         a/YeO549Dv/TLXvAZoPgSL7Q/omvHtkuBPOo88RXqWZLKB/l0bWWu8CwCwCBX4ejKbvP
-         UN2A==
+        bh=zg9SIKBAn9y4QkDFQZM1xH/JoxGqKi4pT4YDjZN4Piw=;
+        b=WQHbb84JlgXKfwH7sQnR/aoGf+ckXaxjTIaYQAmnQ5z7Y64cl9FZW/DFRdfEYCBsGo
+         suFOE4K2mf+U07/PW69LCfJFPhyssMoNPq5r2BXz9EshpsukG9UFHHI9pcnbSmjob64H
+         Gcp++yDBKbWL8wQC84oAMxjLIug6TS+50xk+vr0EThU2X70YBrdNyyuRPptO75h2hwR/
+         QmIYMheZvOllbkRQtgPdKVcPeSMcIIH3OhR54GyePZcuUtP03u2y4eaJL175ItfwHa55
+         nStsqxAjH/1kpPsI7vBjod4Gm6X3nfd5f1ZULOLC6HiK9QCNo/jaVZa48yLJM4AH4PNx
+         h9TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pFZQZP6SBUQcSO4Xl8lHY2eIg5EWdq+cWHjbXAwPeek=;
-        b=tLlu8UZBg5i4X8mTF3KwhzUjBiaRMHL33bqzRW0ehAO59H8rWvOwlhHKeIB/oiG8Q9
-         oiUuqeIoLyBVJYtbwr588oIXpxmmf6i9rPUPXXbSKVwkIHgV7PXOlXS8dTb+g/xtQbuI
-         pJ2GqKSGu1Iaaed1Osy18mZfcGnXeDGdewchS56T7M7tWR9emctdvZMUUst70KAX/2LL
-         TsOjxXfd+EVJkMcs9Rz4sZY6fqR7+WD5XJKhbNWQS11H+hrhWUG+A0l9GlK1mCVL/ntl
-         zFIvsjdFySVedA+h15zWyLVtyhlnw76S1rpOe0ZGg2+QV0X8g31wuukXkwRzeoQ1e0yJ
-         rXCA==
-X-Gm-Message-State: AOAM532FXNyBLAT9qcGR8hivzCWLz1PoTyry67Zv95x7HfStQifZUTM7
-        rGUdtll2JnbQY+0j6l6M7yw=
-X-Google-Smtp-Source: ABdhPJzN2N4LNWd+P/4FKysGkFbBUKYeltUmWMptS3lVHukXEHx4CFZZCMbH6h0UaEDXposS6YzK9w==
-X-Received: by 2002:a17:906:c416:: with SMTP id u22mr843426ejz.543.1631120601141;
-        Wed, 08 Sep 2021 10:03:21 -0700 (PDT)
-Received: from kwango.redhat.com (ip-94-112-171-183.net.upcbroadband.cz. [94.112.171.183])
-        by smtp.gmail.com with ESMTPSA id w9sm1034950edr.20.2021.09.08.10.03.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Sep 2021 10:03:20 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph updates for 5.15-rc1
-Date:   Wed,  8 Sep 2021 19:02:57 +0200
-Message-Id: <20210908170257.18646-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=zg9SIKBAn9y4QkDFQZM1xH/JoxGqKi4pT4YDjZN4Piw=;
+        b=tVXMq2EEYpFT4OH6EGi1g3B2yiZXarxu2PoRb436TrEJsSWf79JTiBupNsFcAQxHbC
+         XZNUQQTBGbXKKfOA68AzzVNqPQleQXTeHeoLDjQkunej9i9YonK0RMV2oPC9RWJq3+kT
+         3a4lol3idwFuHuOzADjy9BHIVAY77CrlEVXO9nCZo26OcAEtKMDl6A2GaBjQX06if5a3
+         uAhJ69I0+YU1fQwcbbYc7K5Z53xz7/2GqtblhluV+g3OO1Lu5HDms22NbUnjXOwtXODi
+         nwB4vkHndbdGP9/yzHKM8Ai4yQ5Mv5jxbkb+H+9ccoJVcdtZIofcMJcS3w8y7xqqHi8s
+         +hMA==
+X-Gm-Message-State: AOAM530eVQYOrKRvDt2o3B/rNvcyJsAAq9+18E5l4XNCwz237mg3VlB0
+        IOHobQso/nv8iFwkFZBZnvVQP0FCsRzYdtVgEgM=
+X-Google-Smtp-Source: ABdhPJyYdu6j4++txPRpFbBpuTODtEoxyqjt1ACaJFnBM2kkdvQtIwnc5JgNTy+n9Nu+7pYeb6tfISD90M1MjhGQUWI=
+X-Received: by 2002:a9f:3210:: with SMTP id x16mr3316782uad.135.1631125439676;
+ Wed, 08 Sep 2021 11:23:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a1f:a797:0:0:0:0:0 with HTTP; Wed, 8 Sep 2021 11:23:58 -0700 (PDT)
+Reply-To: uchennailobitenone@gmail.com
+From:   uchenna <okeyyoyopa7@gmail.com>
+Date:   Wed, 8 Sep 2021 11:23:58 -0700
+Message-ID: <CAH8nkva=_KNihbTayuQ7EehHt6UnanYrxtNX=BndrmbxFn7ZsA@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
-
-The following changes since commit 7d2a07b769330c34b4deabeed939325c77a7ec2f:
-
-  Linux 5.14 (2021-08-29 15:04:50 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/ceph/ceph-client.git tags/ceph-for-5.15-rc1
-
-for you to fetch changes up to 05a444d3f90a3c3e6362e88a1bf13e1a60f8cace:
-
-  ceph: fix dereference of null pointer cf (2021-09-03 10:55:51 +0200)
-
-----------------------------------------------------------------
-We have:
-
-- a set of patches to address fsync stalls caused by depending on
-  periodic rather than triggered MDS journal flushes in some cases
-  (Xiubo Li)
-
-- a fix for mtime effectively not getting updated in case of competing
-  writers (Jeff Layton)
-
-- a couple of fixes for inode reference leaks and various WARNs after
-  "umount -f" (Xiubo Li)
-
-- a new ceph.auth_mds extended attribute (Jeff Layton)
-
-- a smattering of fixups and cleanups from Jeff, Xiubo and Colin.
-
-----------------------------------------------------------------
-Colin Ian King (1):
-      ceph: fix dereference of null pointer cf
-
-Jeff Layton (11):
-      ceph: fix memory leak on decode error in ceph_handle_caps
-      ceph: fix comment about short copies in ceph_write_end
-      ceph: remove some defunct forward declarations
-      ceph: add a new vxattr to return auth mds for an inode
-      ceph: cancel delayed work instead of flushing on mdsc teardown
-      ceph: remove redundant initializations from mdsc and session
-      ceph: add ceph_change_snap_realm() helper
-      ceph: print more information when we can't find snaprealm
-      ceph: request Fw caps before updating the mtime in ceph_write_iter
-      ceph: lockdep annotations for try_nonblocking_invalidate
-      ceph: drop the mdsc_get_session/put_session dout messages
-
-Xiubo Li (8):
-      ceph: make ceph_create_session_msg a global symbol
-      ceph: make iterate_sessions a global symbol
-      ceph: flush mdlog before umounting
-      ceph: flush the mdlog before waiting on unsafe reqs
-      ceph: reconnect to the export targets on new mdsmaps
-      ceph: remove the capsnaps when removing caps
-      ceph: don't WARN if we're force umounting
-      ceph: don't WARN if we're forcibly removing the session caps
-
- fs/ceph/addr.c               |   2 +-
- fs/ceph/cache.h              |   6 -
- fs/ceph/caps.c               | 266 ++++++++++++++++++++++++++++---------------
- fs/ceph/file.c               |  32 +++---
- fs/ceph/inode.c              |  11 +-
- fs/ceph/mds_client.c         | 218 +++++++++++++++++++++++++----------
- fs/ceph/mds_client.h         |   5 +
- fs/ceph/mdsmap.c             |  12 +-
- fs/ceph/metric.c             |   4 +-
- fs/ceph/snap.c               |  59 ++++++----
- fs/ceph/strings.c            |   1 +
- fs/ceph/super.h              |   9 +-
- fs/ceph/xattr.c              |  19 ++++
- include/linux/ceph/ceph_fs.h |   1 +
- 14 files changed, 438 insertions(+), 207 deletions(-)
+0JLQvdC40LzQsNC90LjQtSwg0L/QvtC20LDQu9GD0LnRgdGC0LAsDQoNCtCvINCR0LDRgC4gdWNo
+ZW5uYSBpbG9iaSwg0LrQsNC6INC00LXQu9CwLCDQvdCw0LTQtdGO0YHRjCDRgyDRgtC10LHRjyDQ
+stGB0LUg0YXQvtGA0L7RiNC+INC4INC30LTQvtGA0L7QstCwPw0K0KHQvtC+0LHRidCw0LXQvCDQ
+stCw0LwsINGH0YLQviDRjyDRg9GB0L/QtdGI0L3QviDQt9Cw0LLQtdGA0YjQuNC7INGC0YDQsNC9
+0LfQsNC60YbQuNGOINGBINC/0L7QvNC+0YnRjNGOINC90L7QstC+0LPQvg0K0L/QsNGA0YLQvdC1
+0YDQsCDQuNC3INCS0LXQvdC10YHRg9GN0LvRiywg0Lgg0YLQtdC/0LXRgNGMINGB0YDQtdC00YHR
+gtCy0LAg0LHRi9C70Lgg0L/QtdGA0LXQstC10LTQtdC90Ysg0LIg0JLQtdC90LXRgdGD0Y3Qu9GD
+DQrQvdCwINCx0LDQvdC60L7QstGB0LrQuNC5INGB0YfQtdGCINC90L7QstC+0LPQviDQv9Cw0YDR
+gtC90LXRgNCwLg0KDQrQotC10Lwg0LLRgNC10LzQtdC90LXQvCDRjyDRgNC10YjQuNC7INC60L7Q
+vNC/0LXQvdGB0LjRgNC+0LLQsNGC0Ywg0LLQsNC8INGB0YPQvNC80YMg0LIgMzUwIDAwMCDQtNC+
+0LvQu9Cw0YDQvtCyINCh0KjQkA0KKNGC0YDQuCDRgdC+0YLQvdC4INC/0Y/RgtGM0LTQtdGB0Y/R
+giDRgtGL0YHRj9GHINC00L7Qu9C70LDRgNC+0LIg0KHQqNCQKSDQuNC3LdC30LAg0LLQsNGI0LjR
+hSDQv9GA0L7RiNC70YvRhSDRg9GB0LjQu9C40LksDQrRhdC+0YLRjyDQstGLINC80LXQvdGPINGA
+0LDQt9C+0YfQsNGA0L7QstCw0LvQuC4g0J3Qviwg0YLQtdC8INC90LUg0LzQtdC90LXQtSwg0Y8g
+0L7Rh9C10L3RjCDRgNCw0LQg0YPRgdC/0LXRiNC90L7QvNGDDQrQt9Cw0LLQtdGA0YjQtdC90LjR
+jiDRgtGA0LDQvdC30LDQutGG0LjQuCDQsdC10Lcg0LrQsNC60LjRhS3Qu9C40LHQviDQv9GA0L7Q
+sdC70LXQvCwg0Lgg0L/QvtGN0YLQvtC80YMg0Y8g0YDQtdGI0LjQuw0K0LrQvtC80L/QtdC90YHQ
+uNGA0L7QstCw0YLRjCDQstCw0Lwg0YHRg9C80LzRgyDQsiDRgNCw0LfQvNC10YDQtSAzNTAgMDAw
+LDAwINC00L7Qu9C70LDRgNC+0LIg0KHQqNCQLCDRh9GC0L7QsdGLINCy0YsNCtGA0LDQt9C00LXQ
+u9C40LvQuCDRgdC+INC80L3QvtC5INGA0LDQtNC+0YHRgtGMLg0KDQrQryDRgdC+0LLQtdGC0YPR
+jiDQstCw0Lwg0L7QsdGA0LDRgtC40YLRjNGB0Y8g0Log0LzQvtC10LzRgyDRgdC10LrRgNC10YLQ
+sNGA0Y4g0LfQsCDQsdCw0L3QutC+0LzQsNGC0L3QvtC5INC60LDRgNGC0L7QuSDQvdCwDQozNTAg
+MDAwINC00L7Qu9C70LDRgNC+0LIg0KHQqNCQLCDQutC+0YLQvtGA0YPRjiDRjyDQvtGB0YLQsNCy
+0LjQuyDQtNC70Y8g0LLQsNGBLiDQodCy0Y/QttC40YLQtdGB0Ywg0YEg0L3QuNC8DQrRgdC10LnR
+h9Cw0YEg0LHQtdC3INC/0YDQvtC80LXQtNC70LXQvdC40Y8uDQoNCtCd0LDQt9Cy0LDQvdC40LU6
+INCx0YDQtdC90LTQuCDRgdC+0LvQvtC80L7QvQ0KDQrQn9C+0YfRgtCwOiBzb2xvbW9uYnJhbmR5
+Zml2ZW9uZUBnbWFpbC5jb20NCg0K0KPQsdC10LTQuNGC0LXQu9GM0L3QviDQv9C+0LTRgtCy0LXR
+gNC00LjRgtC1INC10LzRgyDRgdC70LXQtNGD0Y7RidGD0Y4g0LjQvdGE0L7RgNC80LDRhtC40Y46
+DQoNCtCS0LDRiNC1INC/0L7Qu9C90L7QtSDQuNC80Y9fX19fX19fX19fX19fX19fX19fX19fX19f
+DQrQktCw0Ygg0LDQtNGA0LXRgdGBX19fX19fX19fX19fX19fX19fX19fX19fX18NCtCi0LLQvtGP
+INGB0YLRgNCw0L3QsF9fX19fX19fX19fX19fX19fX19fX19fX19fXw0K0KLQstC+0Lkg0LLQvtC3
+0YDQsNGB0YJfX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCtCS0LDRiCDRgNC+0LQg0LfQ
+sNC90Y/RgtC40LlfX19fX19fX19fX19fX19fX19fX19fX18NCtCS0LDRiCDQvdC+0LzQtdGAINC8
+0L7QsdC40LvRjNC90L7Qs9C+INGC0LXQu9C10YTQvtC90LAgX19fX19fX19fX19fX19fX19fX19f
+Xw0KDQrQntCx0YDQsNGC0LjRgtC1INCy0L3QuNC80LDQvdC40LU6INC10YHQu9C4INCy0Ysg0L3Q
+tSDQvtGC0L/RgNCw0LLQuNC70Lgg0LXQvNGDINC/0L7Qu9C90YPRjiDQuNC90YTQvtGA0LzQsNGG
+0LjRjiwg0L7QvSDQvdC1DQrQstGL0LTQsNGB0YIg0LLQsNC8INC60LDRgNGC0YMg0LHQsNC90LrQ
+vtC80LDRgtCwLCDQv9C+0YLQvtC80YMg0YfRgtC+INC+0L0g0LTQvtC70LbQtdC9INCx0YvRgtGM
+INGD0LLQtdGA0LXQvSwg0YfRgtC+INGN0YLQvg0K0LLRiy4g0J/QvtC/0YDQvtGB0LjRgtC1INC1
+0LPQviDQstGL0YHQu9Cw0YLRjCDQstCw0Lwg0LrQsNGA0YLRgyDQsdCw0L3QutC+0LzQsNGC0LAg
+0L3QsCDQvtCx0YnRg9GOINGB0YPQvNC80YMgKDM1MCAwMDANCtC00L7Qu9C70LDRgNC+0LIg0KHQ
+qNCQKSwg0LrQvtGC0L7RgNGD0Y4g0Y8g0L7RgdGC0LDQstC40Lsg0LTQu9GPINCy0LDRgS4NCg0K
+0KEg0L3QsNC40LvRg9GH0YjQuNC80Lgg0L/QvtC20LXQu9Cw0L3QuNGP0LzQuCwNCg0K0JMt0L0g
+0YPRh9C10L3QvdCwINC40LvQvtCx0LgNCg==
