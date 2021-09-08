@@ -2,55 +2,56 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 462BD403896
-	for <lists+ceph-devel@lfdr.de>; Wed,  8 Sep 2021 13:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1403403899
+	for <lists+ceph-devel@lfdr.de>; Wed,  8 Sep 2021 13:17:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234898AbhIHLRc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 8 Sep 2021 07:17:32 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45628 "EHLO
+        id S1346418AbhIHLSY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 8 Sep 2021 07:18:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:38339 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232630AbhIHLR3 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 8 Sep 2021 07:17:29 -0400
+        by vger.kernel.org with ESMTP id S235044AbhIHLSX (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 8 Sep 2021 07:18:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631099781;
+        s=mimecast20190719; t=1631099835;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=odxQhSKVx65kh/assoEMCEyTBbMigyCWI5weMQLoULY=;
-        b=fqHiJBxMj+iBz2nbUS8Edvqz/PPTHA02yRdaK0/b3iOmkPkDLfdnN/kzRXAphf4DMETFEl
-        WWhoZRXuCpIZkyErZGvWStZXCMruPnJSwPwgrItQa7FD5/cI+5nWgfK/v1Mpo/LNDZ16Pd
-        RmyTDLxY3At8JKkG4SRE/EMoLzJtH4Y=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-490-wNUioIRUO4a0q6FNclWV4Q-1; Wed, 08 Sep 2021 07:16:20 -0400
-X-MC-Unique: wNUioIRUO4a0q6FNclWV4Q-1
-Received: by mail-pl1-f197.google.com with SMTP id o6-20020a170902bcc600b00138a9a5bc42so777859pls.17
-        for <ceph-devel@vger.kernel.org>; Wed, 08 Sep 2021 04:16:20 -0700 (PDT)
+        bh=yYxiEks6q4W2DFURJCWhIPLPD/0L2/o+kLnH+xcZQbk=;
+        b=hjh5JkLQQuYuWdDklosNGU7kzsLYsjRJuDsdp2zHBYd4H3XnLvN8C6CLxLwiEZzNkFST6i
+        dAcFcGCdhFOS3mLQHQKVgGPln0Mw67y7gbtTH9HYGRbV+tN1JViTRO+qANQTYzJ8OrsTfO
+        copEwmfx0UStaFejWrBJgjACqJG5tHI=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-548-hlrd_-0ONHyl9VNOgpyGtg-1; Wed, 08 Sep 2021 07:17:14 -0400
+X-MC-Unique: hlrd_-0ONHyl9VNOgpyGtg-1
+Received: by mail-pj1-f71.google.com with SMTP id g21-20020a17090adb1500b001976416d36bso799904pjv.0
+        for <ceph-devel@vger.kernel.org>; Wed, 08 Sep 2021 04:17:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=odxQhSKVx65kh/assoEMCEyTBbMigyCWI5weMQLoULY=;
-        b=vyAS6O3THz1novzjBaT3uiOzFPBb0GfHxqFTPSegbs6zjHXcNliQ1W3AjFkVE9XQjC
-         Tt0dJVBV19AUlmIt8hua/uRkwzQaiBM7zEshDBx80/5WI5gpeiDz3koim2WA0lJeEeAs
-         luXRhMivIG+AxTGMj3myQi5xJrUb0H1mToc8bSYmJqrULZ6cHYA6XtJ9AFirxVSPKOO9
-         4HWJe7MnCLksjBTHj/oJV1ZkcbmdJHclVdbt+kQvg8vr30BpY6ZWJyAcRm6yYD2D1ZFW
-         hq8vwpDLs0+4rOLGVeyWBPiyDPHiuOJ0YTReKuxrJ1IW9FKP9CB8yq0OPE6YCqGahbta
-         6zaA==
-X-Gm-Message-State: AOAM531JGYXURZ8fJdf2kookWIuOIT4P6sQBmvenUu/3XRkwxwXD1DPT
-        140VrxEzaRR0Y0Fg+H4fZmXnc28xADezqp+7vOD3HyfnweR0J525Ks1fePijflE1lBkz9FAgdd1
-        suN6zy6eQQ2NKQ5aiRBOpI2qNZdOjBfsCh6gE6B06OprTK/BJqDMd5x47XFzKvBCeltcPGGA=
-X-Received: by 2002:a63:4917:: with SMTP id w23mr3167791pga.344.1631099778551;
-        Wed, 08 Sep 2021 04:16:18 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyyRsWKSpwD5OiFsACqDqstlPdEFuVG0y+cXGuFoIKTSdF/p3omVlqjHupRBq/1ZPFgzAlLig==
-X-Received: by 2002:a63:4917:: with SMTP id w23mr3167751pga.344.1631099778071;
-        Wed, 08 Sep 2021 04:16:18 -0700 (PDT)
+        bh=yYxiEks6q4W2DFURJCWhIPLPD/0L2/o+kLnH+xcZQbk=;
+        b=kLmt4M9RI4fNCA3YSR6tkLIsy0e7rhwbpqDckoVDIFvukTPVV0XfRrUyUxtMJqK5jd
+         LbGBaSdMFf2W7BNSvB+aRy6ufnld8tI/XODMssRKXeHoFQSnG6kw1UsvZ63QW6On81Dt
+         9I2zPdNucK1Wej1ig4WUHEEINPlgfbNRJaRHdur5aRo2jjwZEClzxgqyzxDJCgTyxsDy
+         KCvRA/62QUGbfM9XSBg536zWMCWIZB9aTs7wUeupXAUV/iOE54FsiY7hPRmegVFfC/4E
+         ElYwB35xrrxF+IK3gQOczn+Dwx6YWDdFY3ao5SYWjDT/joCiXNmUV5t6Bd4hUnzz6mi6
+         /9sQ==
+X-Gm-Message-State: AOAM533lWwo0DV61C95aU0UAPLcLr0RhAqu4TBBZsUwGYQ2jmEM/MIHM
+        jzvTcoPhZPORZiLDsGW495QE4IYI870LudshiVOFWoC/IKnPKTQjk8DInThWR77rl9ohWnEunJu
+        0vK8CE8AAb9mEgTRPOyK9XFkjrFYbF6dmwpMSlLovJgLmSxQnpWpgu9x8VXGQk1Y5VeTa2BA=
+X-Received: by 2002:a17:902:edd0:b0:135:b351:bd5a with SMTP id q16-20020a170902edd000b00135b351bd5amr2566767plk.52.1631099832688;
+        Wed, 08 Sep 2021 04:17:12 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw0Jp07Bz8U+V2YoZlr+4rhPl/BK3vov9yi80fNWPRh0kP748gpprxNweoRZun45tjml8VwsA==
+X-Received: by 2002:a17:902:edd0:b0:135:b351:bd5a with SMTP id q16-20020a170902edd000b00135b351bd5amr2566745plk.52.1631099832262;
+        Wed, 08 Sep 2021 04:17:12 -0700 (PDT)
 Received: from [10.72.12.125] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id mv1sm1938145pjb.29.2021.09.08.04.16.14
+        by smtp.gmail.com with ESMTPSA id g18sm2936943pge.33.2021.09.08.04.17.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Sep 2021 04:16:17 -0700 (PDT)
+        Wed, 08 Sep 2021 04:17:11 -0700 (PDT)
+From:   Xiubo Li <xiubli@redhat.com>
 Subject: Re: [PATCH RFC 0/2] ceph: size handling for the fscrypt
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     idryomov@gmail.com, ukernel@gmail.com, pdonnell@redhat.com,
@@ -59,9 +60,8 @@ References: <20210903081510.982827-1-xiubli@redhat.com>
  <02f2f77423ec1e6e5b23b452716b21c36a5b67da.camel@kernel.org>
  <71db1836-4f1e-1c3d-077a-018bff32f60d@redhat.com>
  <68728d2700e98382aabdf298ac0ae7fad6615a2e.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <e815c6da-9660-a149-f2ff-bcb480d1bb6f@redhat.com>
-Date:   Wed, 8 Sep 2021 19:16:11 +0800
+Message-ID: <bb3f6f69-cde7-99f7-3c01-59688c8a26de@redhat.com>
+Date:   Wed, 8 Sep 2021 19:17:05 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
@@ -77,11 +77,11 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 On 9/8/21 4:58 AM, Jeff Layton wrote:
 > On Tue, 2021-09-07 at 21:19 +0800, Xiubo Li wrote:
 >> On 9/7/21 8:35 PM, Jeff Layton wrote:
->>> On Fri, 2021-09-03 at 16:15 +0800, xiubli@redhat.com wrote:
->>>> From: Xiubo Li <xiubli@redhat.com>
+>>> On Fri, 2021-09-03 at 16:15 +0800,xiubli@redhat.com  wrote:
+>>>> From: Xiubo Li<xiubli@redhat.com>
 >>>>
 >>>> This patch series is based Jeff's ceph-fscrypt-size-experimental
->>>> branch in https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git.
+>>>> branch inhttps://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git.
 >>>>
 >>>> This is just a draft patch and need to rebase or recode after Jeff
 >>>> finished his huge patch set.
@@ -145,7 +145,6 @@ On 9/8/21 4:58 AM, Jeff Layton wrote:
 Yeah, makes sense.
 
 
->
 >> Maybe we need to change the 'fscrypt_file' field's logic and make it
 >> opaqueness for MDS, then the MDS will use it to do the truncate instead
 >> as I mentioned in the previous reply in your patch set.
@@ -184,8 +183,8 @@ Then we can reset the fscrypt_file value in MDS, and at the same time we
 need to hold the Fx too. That means if encryption is enabled, when 
 writing it should always get the Fx caps.
 
-If one kclient have held the Fb caps, will MDS allow any other kclient 
-to hold the Fr caps ?
+If one kclient have holds the Fb caps, will allow any other kclient to 
+hold Fr ?
 
 
 For the Fb cap did I miss something ?
