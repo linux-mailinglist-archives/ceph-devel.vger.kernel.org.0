@@ -2,33 +2,33 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDCDB403A3D
-	for <lists+ceph-devel@lfdr.de>; Wed,  8 Sep 2021 15:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07FDD403A3E
+	for <lists+ceph-devel@lfdr.de>; Wed,  8 Sep 2021 15:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238011AbhIHNEy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 8 Sep 2021 09:04:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42338 "EHLO mail.kernel.org"
+        id S238860AbhIHNE6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 8 Sep 2021 09:04:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233891AbhIHNEt (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        id S234530AbhIHNEt (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
         Wed, 8 Sep 2021 09:04:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6C3426115C;
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0673C6115B;
         Wed,  8 Sep 2021 13:03:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631106218;
-        bh=sC3gWkv8KG1mjSBvksXtHYgor4eR3VJ6E7kfjJx5elE=;
+        s=k20201202; t=1631106219;
+        bh=d96ZmnTw2j0tNdd9LwhacrzX2FZsWIOGyAgxiNkjwI0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mrOaQJwAOkS4hz6N2Ez8QARBEhjWBaLs6jYJtWzUxPR0mSX7VXUK4LOtQjT2ZG80g
-         uBoS5nJdzLTGrGK/JZiSduxuqyGQqBq03ZgjZBnHM+9SSd1VprQjp/QwxaAIdNW/yK
-         4I4KiSR+oW4V8R3ZuIOpKh3eA46g6qR2pgObJyZfd43sBENP7Aej6ZZ4V/H1/UrVpL
-         C4atGBb4UIWo+6IbVIq+RP5eUaEYobGaUEOH9Qgt2v85QBXUI9T6OmlDPnVjThzugd
-         qBgg7xv20+QUlRUFdMLZShAslrtSfYCYFn/GuXYT66xIlpNlqVcFAufiPHtNairkhp
-         01z764F+jxgZw==
+        b=h9yOyrKQkbYNqQY6klZo50NM9NWq9vU4vUtfPBTw4NsmRHHdk5C1HlcutnF6FI3SN
+         ew57nm5m9I07ZktkhzqUjFl237Wr574wj//Eyw7UUaQwzuIV5IgD9bcFqp0Om3X514
+         hECxHs6P0mKdNz4d3K7Wow0c796VHL7N+0dujBW3vTGsKsKBYAPGAdxhq8uiyoslMb
+         ur1wOIoXeJMtXXbaEmxXphu6fLj0925pKd1ZTO4XeCGFQIebHoOhwxFCjy1IJvTS4T
+         T6rsP9ns6Eq7GszG+sxEUpjxLIisi7n0dZMzjysRoPtCfrWGa9ffaiwMqidF62jhb+
+         l8LCRqd14GzXA==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     idryomov@gmail.com, pdonnell@redhat.com
-Subject: [PATCH 1/6] ceph: print inode numbers instead of pointer values
-Date:   Wed,  8 Sep 2021 09:03:31 -0400
-Message-Id: <20210908130336.56668-2-jlayton@kernel.org>
+Subject: [PATCH 2/6] ceph: don't use -ESTALE as special return code in try_get_cap_refs
+Date:   Wed,  8 Sep 2021 09:03:32 -0400
+Message-Id: <20210908130336.56668-3-jlayton@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210908130336.56668-1-jlayton@kernel.org>
 References: <20210908130336.56668-1-jlayton@kernel.org>
@@ -38,87 +38,77 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-We have a lot of log messages that print inode pointer values. This is
-of dubious utility. Switch a random assortment of the ones I've found
-most useful to use ceph_vinop to print the snap:inum tuple instead.
+In some cases, we may want to return -ESTALE if it ends up that we're
+dealing with an inode that no longer exists. Switch to using -EUCLEAN as
+the "special" error return.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/caps.c  | 8 ++++----
- fs/ceph/file.c  | 2 +-
- fs/ceph/inode.c | 6 +++---
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ fs/ceph/caps.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 26be19d23ed6..b89c23a0b440 100644
+index b89c23a0b440..f8307d70674b 100644
 --- a/fs/ceph/caps.c
 +++ b/fs/ceph/caps.c
-@@ -1969,8 +1969,8 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+@@ -2636,9 +2636,9 @@ void ceph_take_cap_refs(struct ceph_inode_info *ci, int got,
+  *
+  * Returns 0 if caps were not able to be acquired (yet), 1 if succeed,
+  * or a negative error code. There are 3 speical error codes:
+- *  -EAGAIN: need to sleep but non-blocking is specified
+- *  -EFBIG:  ask caller to call check_max_size() and try again.
+- *  -ESTALE: ask caller to call ceph_renew_caps() and try again.
++ *  -EAGAIN:  need to sleep but non-blocking is specified
++ *  -EFBIG:   ask caller to call check_max_size() and try again.
++ *  -EUCLEAN: ask caller to call ceph_renew_caps() and try again.
+  */
+ enum {
+ 	/* first 8 bits are reserved for CEPH_FILE_MODE_FOO */
+@@ -2686,7 +2686,7 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
+ 			dout("get_cap_refs %p endoff %llu > maxsize %llu\n",
+ 			     inode, endoff, ci->i_max_size);
+ 			if (endoff > ci->i_requested_max_size)
+-				ret = ci->i_auth_cap ? -EFBIG : -ESTALE;
++				ret = ci->i_auth_cap ? -EFBIG : -EUCLEAN;
+ 			goto out_unlock;
  		}
- 	}
- 
--	dout("check_caps %p file_want %s used %s dirty %s flushing %s"
--	     " issued %s revoking %s retain %s %s%s\n", inode,
-+	dout("check_caps %llx:%llx file_want %s used %s dirty %s flushing %s"
-+	     " issued %s revoking %s retain %s %s%s\n", ceph_vinop(inode),
- 	     ceph_cap_string(file_wanted),
- 	     ceph_cap_string(used), ceph_cap_string(ci->i_dirty_caps),
- 	     ceph_cap_string(ci->i_flushing_caps),
-@@ -1991,7 +1991,7 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
- 	    (revoking & (CEPH_CAP_FILE_CACHE|
- 			 CEPH_CAP_FILE_LAZYIO)) && /*  or revoking cache */
- 	    !tried_invalidate) {
--		dout("check_caps trying to invalidate on %p\n", inode);
-+		dout("check_caps trying to invalidate on %llx:%llx\n", ceph_vinop(inode));
- 		if (try_nonblocking_invalidate(inode) < 0) {
- 			dout("check_caps queuing invalidate\n");
- 			queue_invalidate = true;
-@@ -4334,7 +4334,7 @@ static void flush_dirty_session_caps(struct ceph_mds_session *s)
- 				      i_dirty_item);
- 		inode = &ci->vfs_inode;
- 		ihold(inode);
--		dout("flush_dirty_caps %p\n", inode);
-+		dout("flush_dirty_caps %llx:%llx\n", ceph_vinop(inode));
- 		spin_unlock(&mdsc->cap_dirty_lock);
- 		ceph_check_caps(ci, CHECK_CAPS_FLUSH, NULL);
- 		iput(inode);
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 3daebfaec8c6..175366eede23 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -557,7 +557,7 @@ static void ceph_async_create_cb(struct ceph_mds_client *mdsc,
+ 		/*
+@@ -2766,7 +2766,7 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
+ 			dout("get_cap_refs %p need %s > mds_wanted %s\n",
+ 			     inode, ceph_cap_string(need),
+ 			     ceph_cap_string(mds_wanted));
+-			ret = -ESTALE;
++			ret = -EUCLEAN;
+ 			goto out_unlock;
  		}
- 		ceph_kick_flushing_inode_caps(req->r_session, ci);
- 		spin_unlock(&ci->i_ceph_lock);
--	} else {
-+	} else if (!result) {
- 		pr_warn("%s: no req->r_target_inode for 0x%llx\n", __func__,
- 			req->r_deleg_ino);
- 	}
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 61ecf81ed875..43c02c4b2631 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1851,8 +1851,8 @@ static void ceph_do_invalidate_pages(struct inode *inode)
- 	mutex_lock(&ci->i_truncate_mutex);
  
- 	if (READ_ONCE(fsc->mount_state) >= CEPH_MOUNT_SHUTDOWN) {
--		pr_warn_ratelimited("invalidate_pages %p %lld forced umount\n",
--				    inode, ceph_ino(inode));
-+		pr_warn_ratelimited("%s: inode %llx:%llx is shut down\n",
-+				    __func__, ceph_vinop(inode));
- 		mapping_set_error(inode->i_mapping, -EIO);
- 		truncate_pagecache(inode, 0);
- 		mutex_unlock(&ci->i_truncate_mutex);
-@@ -1874,7 +1874,7 @@ static void ceph_do_invalidate_pages(struct inode *inode)
+@@ -2850,7 +2850,7 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
  
- 	ceph_fscache_invalidate(inode);
- 	if (invalidate_inode_pages2(inode->i_mapping) < 0) {
--		pr_err("invalidate_pages %p fails\n", inode);
-+		pr_err("invalidate_pages %llx:%llx failed\n", ceph_vinop(inode));
- 	}
+ 	ret = try_get_cap_refs(inode, need, want, 0, flags, got);
+ 	/* three special error codes */
+-	if (ret == -EAGAIN || ret == -EFBIG || ret == -ESTALE)
++	if (ret == -EAGAIN || ret == -EFBIG || ret == -EUCLEAN)
+ 		ret = 0;
+ 	return ret;
+ }
+@@ -2933,7 +2933,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+ 		}
  
- 	spin_lock(&ci->i_ceph_lock);
+ 		if (ret < 0) {
+-			if (ret == -EFBIG || ret == -ESTALE) {
++			if (ret == -EFBIG || ret == -EUCLEAN) {
+ 				int ret2 = ceph_wait_on_async_create(inode);
+ 				if (ret2 < 0)
+ 					return ret2;
+@@ -2942,7 +2942,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+ 				check_max_size(inode, endoff);
+ 				continue;
+ 			}
+-			if (ret == -ESTALE) {
++			if (ret == -EUCLEAN) {
+ 				/* session was killed, try renew caps */
+ 				ret = ceph_renew_caps(inode, flags);
+ 				if (ret == 0)
 -- 
 2.31.1
 
