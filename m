@@ -2,236 +2,271 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 374A54046CF
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Sep 2021 10:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 752944056CD
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 Sep 2021 15:38:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231189AbhIIIOH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 Sep 2021 04:14:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:53337 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230521AbhIIIOH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Sep 2021 04:14:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631175177;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Arl5jppNioXmbRZGdZV2o39SfgUnXUjiyFZfRnG3lKE=;
-        b=ZXf2RHmM2xYeMhT6OonIzdcGmyOPOjGB6mo8hHe1/o8zf6NOedAQMEoNE95bLbNh7Djl1g
-        et3GPqVULY5B+mzOu8eB8hw+qmvd5+klMOf3Bcz/SqSFGySOB7ALUYVc6gRXjNFbsm+r4V
-        jcLJZneqaAe0vsV6bn7NRFUZUJxam/A=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-200-GDInJWg5MYuhc5cBM1JU_Q-1; Thu, 09 Sep 2021 04:12:56 -0400
-X-MC-Unique: GDInJWg5MYuhc5cBM1JU_Q-1
-Received: by mail-pg1-f199.google.com with SMTP id z127-20020a633385000000b002618d24cfacso727067pgz.16
-        for <ceph-devel@vger.kernel.org>; Thu, 09 Sep 2021 01:12:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Arl5jppNioXmbRZGdZV2o39SfgUnXUjiyFZfRnG3lKE=;
-        b=EBMjbkbp0RM+qMWiJSddbHKyCV4dIwL8k/4YeyrZScXfcC4OZ2YDkMroHGoneeNLkb
-         xDSawb5ggjF2EE/U/FYwc7PP6ME8Vkb7ZeL7Os8lb+JmoktadD4VZKiAIVpTgiyYgRw0
-         U4nmdr0aNOkzWzXF3dxxIOQ+BnQj9W6rV22t+I7L8LZeh2tPsR7JJFxNxIkwa38+rWDR
-         UsUJRyCRPx9FJ4dOkxM+t58z8D52Op5NnEvO8gvPH+GXkt8T7izRW3b/0ZS3xAA6h2FS
-         SKhAqxWMlZx8juAgWP/Yzg5DZv7pb+7v4YIESAxzTVbz0I8pFV2moyJPscB8ICuzX5T0
-         xvfQ==
-X-Gm-Message-State: AOAM532q9bPCf0DtSTSnW3NrUp6hNydN/MpTDtjnsXf4mr0FW8xDL6LU
-        PhJn3VHjQdl+6k6em7ghJv2tLWRXEJKjWxzlRYMHGP7DUc1Ev2l2Kh1sML3uEWI6kRZaVz5WCPl
-        HXNCD76lCV4Qrh29GwLAPzXxyfAKVPPU29ABSVbk+I/gWzqI8QSzYVdjff1IXc9XOHggaHo4=
-X-Received: by 2002:a17:902:d4cb:b0:132:91aa:343 with SMTP id o11-20020a170902d4cb00b0013291aa0343mr1794942plg.3.1631175174590;
-        Thu, 09 Sep 2021 01:12:54 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJx0hI+EeLaG63F5TkVkaOiscRslz3HYxFO9dbNrzAOFCAAtfGTvT+yH2+ZfSRPc+9aKZhPL5A==
-X-Received: by 2002:a17:902:d4cb:b0:132:91aa:343 with SMTP id o11-20020a170902d4cb00b0013291aa0343mr1794912plg.3.1631175174126;
-        Thu, 09 Sep 2021 01:12:54 -0700 (PDT)
-Received: from [10.72.12.89] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id a10sm1295514pfo.75.2021.09.09.01.12.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Sep 2021 01:12:53 -0700 (PDT)
-Subject: Re: [PATCH RFC 0/2] ceph: size handling for the fscrypt
-To:     Jeff Layton <jlayton@kernel.org>
+        id S1357089AbhIINXY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 9 Sep 2021 09:23:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35404 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1357678AbhIINPZ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 9 Sep 2021 09:15:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3612761059;
+        Thu,  9 Sep 2021 12:48:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631191706;
+        bh=fIfRVt3wTIUSFg6Typ6oBa7jwPjGIfxXXeUcg2iHqYU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Mubhze886eOsy8+AIxvY7i8uKvr7D9ZrY8vAvV/QhEjU3b86nN9KPBK/DmuGIsikS
+         Nsz5lcWj5vVAS1AwRNU3opHD0VGp+qfc65CYtQhGVEQnl6PenECjHM6SDASqeScwyz
+         gEl5G7ObhF/It6LniJfHs3Tado4ERar2Izd3NU3Bf1HNvQmGpjLGA3WfNvVpfjbzU1
+         qA935Sc0Vxs468lobeAoTPXwpdZTLX9Y5NhVT4PbUINmzQKRcud66+fIbWHlqq/Cl4
+         FK3qryr9waGp3nnPYuHWAj5s31jg0cESyk1tKU54kaxfaTs96rTjfsx5/3mzYNSEkZ
+         TwdM2pzmiYbjQ==
+Message-ID: <64c8d4daf2bfd9d20dd55ea1b29af7b7f690407d.camel@kernel.org>
+Subject: Re: [PATCH RFC 2/2] ceph: truncate the file contents when needed
+ when file scrypted
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>
 Cc:     idryomov@gmail.com, ukernel@gmail.com, pdonnell@redhat.com,
         ceph-devel@vger.kernel.org
+Date:   Thu, 09 Sep 2021 08:48:25 -0400
+In-Reply-To: <fabbaeae-d63e-a2e2-0717-47afea66f82f@redhat.com>
 References: <20210903081510.982827-1-xiubli@redhat.com>
- <02f2f77423ec1e6e5b23b452716b21c36a5b67da.camel@kernel.org>
- <71db1836-4f1e-1c3d-077a-018bff32f60d@redhat.com>
- <68728d2700e98382aabdf298ac0ae7fad6615a2e.camel@kernel.org>
- <e815c6da-9660-a149-f2ff-bcb480d1bb6f@redhat.com>
- <87d643da3e1c3bdd7fc24c697b01f42519c12dd5.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <701c4074-404d-42a4-d2e3-1999b7ffbea6@redhat.com>
-Date:   Thu, 9 Sep 2021 16:12:47 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+         <20210903081510.982827-3-xiubli@redhat.com>
+         <34538b56f366596fa96a8da8bf1a60f1c1257367.camel@kernel.org>
+         <19fac1bf-804c-1577-7aa8-9dcfa52418f9@redhat.com>
+         <e97616fc4f8f090f73a39f56de2ece7ed26fbd65.camel@kernel.org>
+         <fabbaeae-d63e-a2e2-0717-47afea66f82f@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
 MIME-Version: 1.0
-In-Reply-To: <87d643da3e1c3bdd7fc24c697b01f42519c12dd5.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Thu, 2021-09-09 at 11:38 +0800, Xiubo Li wrote:
+> On 9/8/21 9:57 PM, Jeff Layton wrote:
+> > On Wed, 2021-09-08 at 17:37 +0800, Xiubo Li wrote:
+> > > On 9/8/21 12:26 AM, Jeff Layton wrote:
+> > > > On Fri, 2021-09-03 at 16:15 +0800, xiubli@redhat.com wrote:
+> > > > > From: Xiubo Li <xiubli@redhat.com>
+> > > > > 
+> > > > > When truncating the file, it will leave the MDS to handle that,
+> > > > > but the MDS won't update the file contents. So when the fscrypt
+> > > > > is enabled, if the truncate size is not aligned to the block size,
+> > > > > the kclient will round up the truancate size to the block size and
+> > > > > leave the the last block untouched.
+> > > > > 
+> > > > > The opaque fscrypt_file field will be used to tricker whether the
+> > > > > last block need to do the rmw to truncate the a specified block's
+> > > > > contents, we can get which block needs to do the rmw by round down
+> > > > > the fscrypt_file.
+> > > > > 
+> > > > > In kclient side, there is not need to do the rmw immediately after
+> > > > > the file is truncated. We can defer doing that whenever the kclient
+> > > > > will update that block in late future. And before that any kclient
+> > > > > will check the fscrypt_file field when reading that block, if the
+> > > > > fscrypt_file field is none zero that means the related block needs
+> > > > > to be zeroed in range of [fscrypt_file, round_up(fscrypt_file + PAGE_SIZE))
+> > > > > in pagecache or readed data buffer.
+> > > > > 
+> > > > s/PAGE_SIZE/CEPH_FSCRYPT_BLOCK_SIZE/
+> > > > 
+> > > > Yes, on x86_64 they are equal, but that's not the case on all arches.
+> > > > Also, we are moving toward a pagecache that may hold larger pages on
+> > > > x86_64 too.
+> > > >    
+> > > Okay.
+> > > > > Once the that block contents are updated and writeback
+> > > > > kclient will reset the fscrypt_file field in MDS side, then 0 means
+> > > > > no need to care about the truncate stuff any more.
+> > > > > 
+> > > > I'm a little unclear on what the fscrypt_file actually represents here.
+> > > > 
+> > > > I had proposed that we just make the fscrypt_file field hold the
+> > > > "actual" i_size and we'd make the old size field always be a rounded-
+> > > > up version of the size. The MDS would treat that as an opaque value
+> > > > under Fw caps, and the client could use that field to determine i_size.
+> > > > That has a side benefit too -- if the client doesn't support fscrypt,
+> > > > it'll see the rounded-up sizes which are close enough and don't violate
+> > > > any POSIX rules.
+> > > > 
+> > > > In your version, fscrypt_file also holds the actual size of the inode,
+> > > > but sometimes you're zeroing it out, and I don't understand why:
+> > > I think I forgot to fix this after I adapt to multiple ftruncates case,
+> > > this patch is not correctly handling the "actual" file size.
+> > > 
+> > > I just want the fscrypt_file field always to hold the offset from which
+> > > the contents needed to be zeroed, and the range should be [fscrypt_file,
+> > > round_up(fscrypt_file +CEPH_FSCRYPT_BLOCK_SIZE)).
+> > > 
+> > > In single ftruncate case the fscrypt_file should equal to the "actual"
+> > > file size. Then the "req->r_args.setattr.size = attr->ia_size" and
+> > > "req->r_args.setattr.old_size = isize", no need to round up in
+> > > __ceph_setattr() in kclient side, and leave the MDS to do that, but we
+> > > need to pass the CEPH_FSCRYPT_BLOCK_SIZE at the same time.
+> > > 
+> > I'm really not a fan of pushing this logic into the MDS. Why does it
+> > need to know anything about the CEPH_FSCRYPT_BLOCK_SIZE at all?
+> 
+>  From your current patch set, you are rounding up the 
+> "req->r_args.setattr.size" and "req->r_args.setattr.old_size" to the 
+> BLOCK end in __ceph_setattr().
+> 
+> Without considering keep the file scryption logic in kclient only, I 
+> need the "req->r_args.setattr.size" to keep the file's real size.
+> 
+> Since the MDS will do the truncate stuff. And if we won't round the 
+> "req->r_args.setattr.size" up to the BLOCK end any more, then the MDS 
+> needs to know whether and how to round up the file size to the block end 
+> when truncating the file. Because the fscrypt_file won't record the 
+> file's real size any more, it maybe zero, more detail please see the 
+> example below.
+> 
+> Yeah, but as you mentioned bellow if we will keep the file scryption 
+> logic in kclient only, I need one extra field to do the defer rmw:
+> 
+> struct fscrypt_file {
+> 
+>      u64 file_real_size;         // always keep the file's real size and 
+> the "req->r_args.setattr.size = round_up(file_real_size, BLOCK_SIZE)" as 
+> you do in your current patch set.
+> 
+>      u64 file_truncate_offset;  // this will always record in which 
+> BLOCK we need to do the rmw, this maybe 0 or located in the file's LAST 
+> block and maybe not, more detail please the example below.
+> 
+> }
+> 
+> The "file_truncate_offset" member will be what I need to do the defer rmw.
+> 
+> 
+> > > But in multiple ftruncates case if the second ftruncate has a larger
+> > > size, the fscrypt_file won't be changed and the ceph backend will help
+> > > zero the extended part, but we still need to zero the contents in the
+> > > first ftruncate. If the second ftruncate has a smaller size, the
+> > > fscrypt_file need to be updated and always keeps the smaller size.
+> > > 
+> > I don't get it. Maybe you can walk me through a concrete example of how
+> > racing ftruncates are a problem?
+> 
+> Sorry for confusing.
+> 
+> For example:
+> 
+> 1), if there has a file named "bar", and currently the size is 100K 
+> bytes, the CEPH_FSCRYPT_BLOCK_SIZE size equals to 4K.
+> 
+> 2), first ftruncate("bar", 7K) comes, then both the file real size and 
+> "file_truncate_offset" will be set to 7K, then in MDS it will truncate 
+> the file from 8K, and the last block's [7K, 8K) contents need to be 
+> zeroed anyway later.
+> 
+> 3), immediately a second ftruncate("bar", 16K) comes, from the ftruncate 
+> man page it says the new extended [7K, 16K) should be zeroed when 
+> truncating the file. That means the OSD should help zero the [8K, 16K), 
+> but won't touch the block [4K, 8K), in which the [7K, 8K) contents still 
+> needs to be zeroed. So in this case the "file_truncate_offset" won't be 
+> changed and still be 7K. Then the "file_truncate_offset" won't be 
+> located in the last block of the file any more.
+> 
 
-On 9/8/21 10:12 PM, Jeff Layton wrote:
-> On Wed, 2021-09-08 at 19:16 +0800, Xiubo Li wrote:
->> On 9/8/21 4:58 AM, Jeff Layton wrote:
->>> On Tue, 2021-09-07 at 21:19 +0800, Xiubo Li wrote:
->>>> On 9/7/21 8:35 PM, Jeff Layton wrote:
->>>>> On Fri, 2021-09-03 at 16:15 +0800, xiubli@redhat.com wrote:
->>>>>> From: Xiubo Li <xiubli@redhat.com>
->>>>>>
->>>>>> This patch series is based Jeff's ceph-fscrypt-size-experimental
->>>>>> branch in https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git.
->>>>>>
->>>>>> This is just a draft patch and need to rebase or recode after Jeff
->>>>>> finished his huge patch set.
->>>>>>
->>>>>> Post the patch out for advices and ideas. Thanks.
->>>>>>
->>>>> I'll take a look. Going forward though, it'd probably be best for you to
->>>>> just take over development of the entire ceph-fscrypt-size series
->>>>> instead of trying to develop on top of my branch.
->>>>>
->>>>> That branch is _very_ rough anyway. Just clone the branch into your tree
->>>>> and then you can drop or change patches in it as you see fit.
->>>> Sure.
->>>>
->>>>
->>>>>> ====
->>>>>>
->>>>>> This approach will not do the rmw immediately after the file is
->>>>>> truncated. If the truncate size is aligned to the BLOCK SIZE, so
->>>>>> there no need to do the rmw and only in unaligned case will the
->>>>>> rmw is needed.
->>>>>>
->>>>>> And the 'fscrypt_file' field will be cleared after the rmw is done.
->>>>>> If the 'fscrypt_file' is none zero that means after the kclient
->>>>>> reading that block to local buffer or pagecache it needs to do the
->>>>>> zeroing of that block in range of [fscrypt_file, round_up(fscrypt_file,
->>>>>> BLOCK SIZE)).
->>>>>>
->>>>>> Once any kclient has dirty that block and write it back to ceph, the
->>>>>> 'fscrypt_file' field will be cleared and set to 0. More detail please
->>>>>> see the commit comments in the second patch.
->>>>>>
->>>>> That sounds odd. How do you know where the file ends once you zero out
->>>>> fscrypt_file?
->>>>>
->>>>> /me goes to look at the patches...
->>>> The code in the ceph_fill_inode() is not handling well for multiple
->>>> ftruncates case, need to be fixed.
->>>>
->>> Ok. It'd probably be best to do that fix first in a separate patch and
->>> do the fscrypt work on top.
->>>
->>> FWIW, I'd really like to see the existing truncate code simplified (or
->>> at least, better documented). I'm very leery of adding yet more fields
->>> to the inode to handle truncate/size. So far, we have all of this:
->>>
->>>           struct mutex i_truncate_mutex;
->>>           u32 i_truncate_seq;        /* last truncate to smaller size */
->>>           u64 i_truncate_size;       /*  and the size we last truncated down to */
->>>           int i_truncate_pending;    /*  still need to call vmtruncate */
->>>
->>>           u64 i_max_size;            /* max file size authorized by mds */
->>>           u64 i_reported_size; /* (max_)size reported to or requested of mds */
->>>           u64 i_wanted_max_size;     /* offset we'd like to write too */
->>>           u64 i_requested_max_size;  /* max_size we've requested */
->>>
->>> Your patchset adds yet another new field with its own logic. I think we
->>> need to aim to simplify this code rather than just piling more logic on
->>> top.
->> Yeah, makes sense.
->>
->>
->>>> Maybe we need to change the 'fscrypt_file' field's logic and make it
->>>> opaqueness for MDS, then the MDS will use it to do the truncate instead
->>>> as I mentioned in the previous reply in your patch set.
->>>>
->>>> Then we can do the defer rmw in any kclient when necessary as this patch
->>>> does.
->>>>
->>> I think you can't defer the rmw unless you have Fb caps. In that case,
->>> you'd probably want to just truncate it in the pagecache, dirty the last
->>> page in the inode, and issue the truncate to the MDS.
->>> In the case where you don't have Fb caps, then I think you don't want to
->>> defer anything, as you can't guarantee another client won't get in there
->>> to read the object. On a truncate, you'll want to issue the truncate to
->>> the MDS and do the RMW on the last page. I'm not sure what order you'd
->>> want to do that in though. Maybe you can issue them simultaneously?
->> I am not sure I correctly understand this. If my understanding is correct:
->>
->> If one kclient will ftruncate a file, the fscrypt_file will be recorded
->> in the metadata. So after that this kclient could just release the Fwb
->> caps if it has. And later for any kclient it should first get the
->> fscrypt_file, so when:
->>
->> A), reading, it should be granted the Fr caps, then we it always zero
->> that specified block, which the contents needs to be truncated, just
->> after the readed data dencrypted by using the fscrypt_file.
->>
-> Yes. Also, the end of the block beyond the offset in fscrypt_file should
-> already contain all zeroes after it has been decrypted.
->
->> B), writing, if kclient wants to write data back to a file, it should
->> always do the read-modify-write, right ? It will read the data to the
->> local page buffers first by zeroing that specified block. Since it can
->> buffer the data it should already have been granted the Fb caps. If that
->> specified block will be updated, then it should update that whole block
->> contents, and that whole block has already been truncated and modified.
->> Then we can reset the fscrypt_file value in MDS, and at the same time we
->> need to hold the Fx too. That means if encryption is enabled, when
->> writing it should always get the Fx caps.
->>
-> Yes.
->
-> When we are operating with Fb caps, the client is already doing page-
-> aligned I/Os. Note that we already do a rmw in the case where we have Fb
-> caps. See ceph_write_begin().
->
-> The first thing it does before writing the new data to the pagecache is
-> update the parts of the page that are not being overwritten (if
-> necessary).  So it does a read to fill the unwritten parts of the page,
-> writes the data to the page, and eventually it gets flushed back out to
-> the OSD during writeback.
->
->> If one kclient have held the Fb caps, will MDS allow any other kclient
->> to hold the Fr caps ?
->>
-> It should not, but I don't have the firmest grasp of the MDS locks.c
-> logic.
->
-> AIUI, if the MDS hands out Fb caps, then it needs to ensure that no
-> other clients are doing reads at the same time and it does that by
-> withholding Fr from other clients. Only once Fb caps have been returned
-> to the MDS should it hand out Fr to another client.
+Woah, why didn't the file_truncate_offset get changed when you truncated
+up to 16k?
 
-Yeah, this is also what I understand the cephfs caps.
+When you issue the truncate SETATTR to the MDS, you're changing the size
+field in the inode. The fscrypt_file field _must_ be updated at the same
+time. I think that means that we need to extend SETATTR to also update
+fscrypt_file.
 
-Thanks.
+> 4), if the second ftruncate in step 3) the new size is 3K, then the MDS 
+> will truncate the file from 4K and [7K, 8K) contents will be discard 
+> anyway, so we need to update the "file_truncate_offset" to 3K, that 
+> means a new BLOCK [0K, 4K) needs to do the rmw, by zeroing the [3K, 4K).
+> 
+> 5), if the new truncate in step 3) the new size is 4K, since the 4K < 7K 
+> and 4K is aligned to the BLOCK size, so no need to rmw any block any 
+> more, then we can just clear the "file_truncate_offset" field.
+> 
+> 
+> For defer RMW logic please see the following example:
+> 
+> 
 
->
->> For the Fb cap did I miss something ?
->>
->>
->>
->>>>>> There also need on small work in Jeff's MDS PR in cap flushing code
->>>>>> to clear the 'fscrypt_file'.
->>>>>>
->>>>>>
->>>>>> Xiubo Li (2):
->>>>>>      Revert "ceph: make client zero partial trailing block on truncate"
->>>>>>      ceph: truncate the file contents when needed when file scrypted
->>>>>>
->>>>>>     fs/ceph/addr.c  | 19 ++++++++++++++-
->>>>>>     fs/ceph/caps.c  | 24 ++++++++++++++++++
->>>>>>     fs/ceph/file.c  | 65 ++++++++++++++++++++++++++++++++++++++++++++++---
->>>>>>     fs/ceph/inode.c | 48 +++++++++++++++++++-----------------
->>>>>>     fs/ceph/super.h | 13 +++++++---
->>>>>>     5 files changed, 138 insertions(+), 31 deletions(-)
->>>>>>
+Ok, thanks. I think I understand now how racing truncates are a problem.
+Really, it comes down to the fact that we don't have a good way to
+mediate the last-block RMW operation when competing clients are issuing
+truncates.
+
+I'm not sure adding this file_truncate_offset field really does all that
+much good though. You don't really have a way to ensure that a
+truncating client will see the changes to that field before it issues
+its RMW op.
+
+> 
+> > Suppose we have a file and client1 truncates it down from a large size
+> > to 7k. client1 then sends the MDS a SETATTR to truncate it at 8k, and
+> > does a RMW on the last (4k) block. client2 comes along at the same time
+> > and truncates it up to 13k. client2 issues a SETATTR to extend the file
+> > to 16k and does a RMW on the last block too (which would presumably
+> > already be all zeroes anyway).
+> 
+> I think you meant in the none defer RMW case, this is not what my defer 
+> RMW approach will do.
+> 
+> After the client1 truncated the file, it won't do the RMW if it won't 
+> write any data to that file, and then we assume the client1 is unmounted 
+> immediately.
+> 
+> And when the client1 is truncating the file, it will update the 
+> "file_truncate_offset" to 7K, which means the [7K, 8K) in the LAST block 
+> needs to be zeroed.
+> 
+> Then the client2 reads that the file size is 7K and the 
+> "file_truncate_offset" is 7K too, and the client2 wants to truncate the 
+> file up to 13K. Since the OSD should help us zero the extended part [8K, 
+> 13K] when truncating, but won't touch the block [4K, 8K), for which it 
+> still needs to do the RMW. Then the client2 is unmounted too before 
+> writing any data to the file. After this the "file_truncate_offset" 
+> won't be located in the file's LAST block any more.
+> 
+> After that if the client3 will update the whole file's contents, it will 
+> read all the file 13K bytes contents to local page buffers, since the 
+> "file_truncate_offset" is 7K and then in the page buffer the range [7K, 
+> 8K) will be zeroed just after the contents are dencrypted inplace. Then 
+> if the client3 successfully flushes that dirty data back and then the 
+> deferred RMW for block [4K, 8K) should be done at the same time, and the 
+> "file_truncate_offset" should be cleared too.
+> 
+> While if the client3 won't update the block [4K, 8K), the 
+> "file_truncate_offset" will be kept all the time until the above RMW is 
+> done in future.
+> 
+> 
+
+Ok, I think I finally understand what you're saying.
+
+You want to rely on the next client to do a write to handle the zeroing
+at the end. You basically just want to keep track of whether and where
+it should zero up to the end of the next crypto block, and defer that
+until a client is writing.
+
+I'll have to think about whether that's still racy. Part of the problem
+is that once the client doesn't have caps, it doesn't have a way to
+ensure that fscrypt_file (whatever it holds) doesn't change while it's
+doing that zeroing.
+
+Really, it comes down to the fact that truncates are supposed to be an
+atomic operation, but we need to perform actions in two different
+places.
+
+Hmmm...it's worse than that even -- if the truncate changes it so that
+the last block is in an entirely different object, then there are 3
+places that will need to coordinate access. 
+
+Tricky.
+-- 
+Jeff Layton <jlayton@kernel.org>
 
