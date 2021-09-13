@@ -2,38 +2,38 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B29C40A0C2
-	for <lists+ceph-devel@lfdr.de>; Tue, 14 Sep 2021 00:40:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FAC540A0ED
+	for <lists+ceph-devel@lfdr.de>; Tue, 14 Sep 2021 00:41:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349610AbhIMWlb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 13 Sep 2021 18:41:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51262 "EHLO mail.kernel.org"
+        id S1344564AbhIMWmu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 13 Sep 2021 18:42:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1349401AbhIMWj3 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 13 Sep 2021 18:39:29 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id BF97861359;
-        Mon, 13 Sep 2021 22:35:52 +0000 (UTC)
+        id S1344834AbhIMWkz (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 13 Sep 2021 18:40:55 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 233F861372;
+        Mon, 13 Sep 2021 22:36:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631572553;
-        bh=wONYPr1iARhFTkx5Qms6LfW3HU9ee554V1WrHB3zeRs=;
+        s=k20201202; t=1631572564;
+        bh=VMuY59nRMHXM9oxHOBCuhkMtxetplSSkJKf7WghjCD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tf3JH2UHBd/7fXi2rKEhERd8wZTC6Liv1IEFBCZfOg8dvU8CMj9ivXCaiR6jdhmB6
-         JzH8y/Coc1Vww/nVBDKmAeyALmMoN4hJdhZyiaGsclVMRRMN3Wu9gtwsFbIFvLffnk
-         lQHO9k3Zy7i7ZVlS+cqjv5xgBT2DhbR9Bjox25gut+7ulzOL7atNB4ERVmUZIxWKYa
-         0e49AGP+olgUlXJXrlRIkacTZjcvOebebMIBXt1i3W9p2u9ixSW9usALPzBYlxxui7
-         lKf55Gem3Pe0DSopyvRsgIk/kJ/SOq5tywHTE8+qNM/Eg7NLwfSoJX9g65R9HRIuuH
-         TVFtchs6SwoUQ==
+        b=X3C9jfwDVV3ee6AWIG8skt2+w0GCHsEzdKjquj5eMpeHl0VrAfFyH5Y/nhe5hOvbu
+         1Np+XkJg6Bwk1zydtfYJW8EHNHoZ7oG3Gjzh2I9IUmrHtredVe+iUxg3G0UwbSdMnE
+         D5HpT9InjpC6XmVwqP06VWkfuusD1byJXgnK1Vk1xN7OhAQok6Mi8H55wyFj9y3tO1
+         7IRj10WDFYh96K66ecVg3E1eZN5WuAFKI/+L0sx2kOwNqioWexOdkNECwBZkQDwP/k
+         Zy+0J+RZtCz80ce6yJmV1IZEBJ3MGN0BiqzLTMf5MwibR/KaKK25QbOFrPenSgRtJ/
+         9o2gCf82s5HRw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 3/9] ceph: lockdep annotations for try_nonblocking_invalidate
-Date:   Mon, 13 Sep 2021 18:35:43 -0400
-Message-Id: <20210913223549.436541-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 2/8] ceph: lockdep annotations for try_nonblocking_invalidate
+Date:   Mon, 13 Sep 2021 18:35:55 -0400
+Message-Id: <20210913223601.436675-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210913223549.436541-1-sashal@kernel.org>
-References: <20210913223549.436541-1-sashal@kernel.org>
+In-Reply-To: <20210913223601.436675-1-sashal@kernel.org>
+References: <20210913223601.436675-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -55,10 +55,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 0eb2ada032c7..839bccbcc9d6 100644
+index 9d74cd37b395..154c47282a34 100644
 --- a/fs/ceph/caps.c
 +++ b/fs/ceph/caps.c
-@@ -1572,6 +1572,8 @@ static int __mark_caps_flushing(struct inode *inode,
+@@ -1545,6 +1545,8 @@ static int __mark_caps_flushing(struct inode *inode,
   * try to invalidate mapping pages without blocking.
   */
  static int try_nonblocking_invalidate(struct inode *inode)
