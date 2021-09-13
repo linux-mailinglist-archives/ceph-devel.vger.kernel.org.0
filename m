@@ -2,124 +2,135 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF5944097A6
-	for <lists+ceph-devel@lfdr.de>; Mon, 13 Sep 2021 17:42:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFE27409A02
+	for <lists+ceph-devel@lfdr.de>; Mon, 13 Sep 2021 18:51:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240645AbhIMPni (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 13 Sep 2021 11:43:38 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:58820 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241248AbhIMPn2 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 13 Sep 2021 11:43:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631547732;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7HxuHcVmkMZ+aq/OLOtmtM2XtbgwuEMNTZ7dqHupMtc=;
-        b=ZmJ1D38XUGmh7gB+R0EBFUq9Zn9HkfLZjIIvfQArKMRqpVGYoNi1MqTXW31UmjUhjiMyiL
-        xDgXOU050w7JcLuq21uwZNrx/UJmE4a89meGT+Byg6EaSqTjb1TnpFlP+93AxRlroZbtZI
-        UtI1VhXk3IjKItIGNqzcAsJcmZBK0Zk=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-558-DDRS2YBsNSGBGES7SKPdBA-1; Mon, 13 Sep 2021 11:42:10 -0400
-X-MC-Unique: DDRS2YBsNSGBGES7SKPdBA-1
-Received: by mail-ej1-f69.google.com with SMTP id bi9-20020a170906a24900b005c74b30ff24so3864880ejb.5
-        for <ceph-devel@vger.kernel.org>; Mon, 13 Sep 2021 08:42:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7HxuHcVmkMZ+aq/OLOtmtM2XtbgwuEMNTZ7dqHupMtc=;
-        b=6OC/Nf3+w5SiFpPjLX1r7ZwFN8TXkC2HkL8mu5ks1L4WWz2LPvUPXdbyHH/Tbh9WXv
-         l2Ev7/hnUxU1FL3DBR8x215IrPiaZzIKZ9jae030uxYmTaAo4noODWOSZlyBZ/cZy2It
-         1FCV/ELhjnAQ6RKJMch9NCrM+nbB1VjgozjChIbw49hFxw+7kU/4/arFgoGosLuJhdEb
-         we+HwB6D9fGmymleMsA+6c6NSrj2UrpGN7y4I9qnjcMaFDHmXMo9ZcVv8E0YBadrrzUY
-         oD4hWLetyQ8ZLsAarFVzC6/JSgGBy0SNAU+1VFvEQXQA8hw3KTC/8mbd6Aa5ud52CpBQ
-         gJxw==
-X-Gm-Message-State: AOAM533EqwJKRzN86fkR96ooPqKDJiyycab3ZUOV+PsFNZ/ozQS68NlS
-        LS9HeVc1EcU0nqsqv6Y1Qku/dsePTiGoDmboJ7AUNNRMtmyNeGoU92JK99UC+JWe0M3l9cf70zT
-        d46iIKfL91nKkQwzL6hnkTipIdBP321V4S5l8ug==
-X-Received: by 2002:aa7:c04e:: with SMTP id k14mr13724004edo.101.1631547729674;
-        Mon, 13 Sep 2021 08:42:09 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwG1nm/wF0fGEvlNGb5iw6CkyjmWCLFdkz+vIv0YK+ZvnD/fd/LSxH+O/EMbW8fIkn6Hs1lKoiR0yZsy2bdJrU=
-X-Received: by 2002:aa7:c04e:: with SMTP id k14mr13723984edo.101.1631547729472;
- Mon, 13 Sep 2021 08:42:09 -0700 (PDT)
+        id S240385AbhIMQxE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 13 Sep 2021 12:53:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50742 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239727AbhIMQxD (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 13 Sep 2021 12:53:03 -0400
+Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11D13C061762;
+        Mon, 13 Sep 2021 09:51:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+        bh=xmhLMwi2AJDri4EtwlhDWcoIQUb7BB+muDOVcMR8vy0=; b=FtdyiSy0lblJ22JSsFNFEN1L0b
+        Kwt5G/wmNlKaP8YypWTFbbQicWo49V0vpXWicsZU+tWZz2vY0q2BcJVNAB77Ex20OVrhlaanqGrsv
+        GXmtK2DhdSHr43DUQ2GdkwFPcdZ3UMig7PIfr87L3rql+Xrxw0Pt3NVBdU3FvLJ9uWvOAgNcFURoT
+        A5ymKEx6LOVi/hyhmccIOlZuueJDhGIajglMLQIMM1wZAQH53m/c9qN0AMXxRdQIRJ41U/IPBE47Z
+        yLIk/KO0G0x9DLGCFPVaqR0PyVvc0OHPpVsKgjwrJUI6L798WFcddLaqIYM25nP2HjngygBfrQQHO
+        cQM30FJg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mPpBC-002WDJ-53; Mon, 13 Sep 2021 16:51:38 +0000
+Date:   Mon, 13 Sep 2021 09:51:38 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Jan =?iso-8859-1?Q?H=F6ppner?= <hoeppner@linux.ibm.com>
+Cc:     axboe@kernel.dk, gregkh@linuxfoundation.org,
+        chaitanya.kulkarni@wdc.com, atulgopinathan@gmail.com, hare@suse.de,
+        maximlevitsky@gmail.com, oakad@yahoo.com, ulf.hansson@linaro.org,
+        colin.king@canonical.com, shubhankarvk@gmail.com,
+        baijiaju1990@gmail.com, trix@redhat.com,
+        dongsheng.yang@easystack.cn, ceph-devel@vger.kernel.org,
+        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+        sth@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, oberpar@linux.ibm.com, tj@kernel.org,
+        linux-s390@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/9] s390/block/dasd_genhd: add error handling support
+ for add_disk()
+Message-ID: <YT+Bmvv3yXbuBddi@bombadil.infradead.org>
+References: <20210902174105.2418771-1-mcgrof@kernel.org>
+ <20210902174105.2418771-7-mcgrof@kernel.org>
+ <d6140e40-a472-e732-9893-99e1839b717e@linux.ibm.com>
+ <f24da7d5-0b67-fa24-862f-0b27a2ab502c@linux.ibm.com>
 MIME-Version: 1.0
-References: <20210913131311.1347903-1-vshankar@redhat.com> <22e110d00df3d02157222754f01fc6143cb40764.camel@redhat.com>
- <a79f35e47a105bb24baa666bca8c7cfe956d5076.camel@redhat.com>
-In-Reply-To: <a79f35e47a105bb24baa666bca8c7cfe956d5076.camel@redhat.com>
-From:   Venky Shankar <vshankar@redhat.com>
-Date:   Mon, 13 Sep 2021 21:11:32 +0530
-Message-ID: <CACPzV1=SnZhLo7qq2CQ8U9UHVf1ENsPf=EkqDF2qwQsrF9YNkw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/4] ceph: forward average read/write/metadata latency
-To:     Jeff Layton <jlayton@redhat.com>
-Cc:     Patrick Donnelly <pdonnell@redhat.com>,
-        Xiubo Li <xiubli@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f24da7d5-0b67-fa24-862f-0b27a2ab502c@linux.ibm.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Sep 13, 2021 at 8:51 PM Jeff Layton <jlayton@redhat.com> wrote:
->
-> On Mon, 2021-09-13 at 11:13 -0400, Jeff Layton wrote:
-> > On Mon, 2021-09-13 at 18:43 +0530, Venky Shankar wrote:
-> > > Right now, cumulative read/write/metadata latencies are tracked
-> > > and are periodically forwarded to the MDS. These meterics are not
-> > > particularly useful. A much more useful metric is the average latency
-> > > and standard deviation (stdev) which is what this series of patches
-> > > aims to do.
-> > >
-> > > The userspace (libcephfs+tool) changes are here::
-> > >
-> > >           https://github.com/ceph/ceph/pull/41397
-> > >
-> > > The math involved in keeping track of the average latency and stdev
-> > > seems incorrect, so, this series fixes that up too (closely mimics
-> > > how its done in userspace with some restrictions obviously) as per::
-> > >
-> > >           NEW_AVG = OLD_AVG + ((latency - OLD_AVG) / total_ops)
-> > >           NEW_STDEV = SQRT(((OLD_STDEV + (latency - OLD_AVG)*(latency - NEW_AVG)) / (total_ops - 1)))
-> > >
-> > > Note that the cumulative latencies are still forwarded to the MDS but
-> > > the tool (cephfs-top) ignores it altogether.
-> > >
-> > > Venky Shankar (4):
-> > >   ceph: use "struct ceph_timespec" for r/w/m latencies
-> > >   ceph: track average/stdev r/w/m latency
-> > >   ceph: include average/stddev r/w/m latency in mds metrics
-> > >   ceph: use tracked average r/w/m latencies to display metrics in
-> > >     debugfs
-> > >
-> > >  fs/ceph/debugfs.c | 12 +++----
-> > >  fs/ceph/metric.c  | 81 +++++++++++++++++++++++++----------------------
-> > >  fs/ceph/metric.h  | 64 +++++++++++++++++++++++--------------
-> > >  3 files changed, 90 insertions(+), 67 deletions(-)
-> > >
-> >
-> > This looks reasonably sane. I'll plan to go ahead and pull this into the
-> > testing kernels and do some testing with them. If anyone has objections
-> > (Xiubo?) let me know and I can take them out.
-> >
-> > Thanks,
->
-> Hmm...I take it back. There are some non-trivial merge conflicts in this
-> series vs. the current testing branch. Venky can you rebase this onto
-> the ceph-client/testing branch and resubmit?
+On Mon, Sep 13, 2021 at 02:19:38PM +0200, Jan Höppner wrote:
+> On 13/09/2021 10:17, Jan Höppner wrote:
+> > On 02/09/2021 19:41, Luis Chamberlain wrote:
+> >> We never checked for errors on add_disk() as this function
+> >> returned void. Now that this is fixed, use the shiny new
+> >> error handling.
+> >>
+> >> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> >> ---
+> >>  drivers/s390/block/dasd_genhd.c | 8 ++++++--
+> >>  1 file changed, 6 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/s390/block/dasd_genhd.c b/drivers/s390/block/dasd_genhd.c
+> >> index fa966e0db6ca..ba07022283bc 100644
+> >> --- a/drivers/s390/block/dasd_genhd.c
+> >> +++ b/drivers/s390/block/dasd_genhd.c
+> >> @@ -33,7 +33,7 @@ int dasd_gendisk_alloc(struct dasd_block *block)
+> >>  {
+> >>  	struct gendisk *gdp;
+> >>  	struct dasd_device *base;
+> >> -	int len;
+> >> +	int len, rc;
+> >>  
+> >>  	/* Make sure the minor for this device exists. */
+> >>  	base = block->base;
+> >> @@ -79,7 +79,11 @@ int dasd_gendisk_alloc(struct dasd_block *block)
+> >>  	dasd_add_link_to_gendisk(gdp, base);
+> >>  	block->gdp = gdp;
+> >>  	set_capacity(block->gdp, 0);
+> >> -	device_add_disk(&base->cdev->dev, block->gdp, NULL);
+> >> +
+> >> +	rc = device_add_disk(&base->cdev->dev, block->gdp, NULL);
+> >> +	if (rc)
+> >> +		return rc;
+> >> +
+> > 
+> > I think, just like with some of the other changes, there is some
+> > cleanup required before returning. I'll prepare a patch and
+> > come back to you.
+> > 
+> 
+> It's actually just one call that is required. The patch should
+> look like this:
+> 
+> diff --git a/drivers/s390/block/dasd_genhd.c b/drivers/s390/block/dasd_genhd.c
+> index fa966e0db6ca..80673dbfb1f9 100644
+> --- a/drivers/s390/block/dasd_genhd.c
+> +++ b/drivers/s390/block/dasd_genhd.c
+> @@ -33,7 +33,7 @@ int dasd_gendisk_alloc(struct dasd_block *block)
+>  {
+>         struct gendisk *gdp;
+>         struct dasd_device *base;
+> -       int len;
+> +       int len, rc;
+>  
+>         /* Make sure the minor for this device exists. */
+>         base = block->base;
+> @@ -79,7 +79,13 @@ int dasd_gendisk_alloc(struct dasd_block *block)
+>         dasd_add_link_to_gendisk(gdp, base);
+>         block->gdp = gdp;
+>         set_capacity(block->gdp, 0);
+> -       device_add_disk(&base->cdev->dev, block->gdp, NULL);
+> +
+> +       rc = device_add_disk(&base->cdev->dev, block->gdp, NULL);
+> +       if (rc) {
+> +               dasd_gendisk_free(block);
+> +               return rc;
+> +       }
+> +
 
-Sure, will do.
+Thanks!
 
->
-> Thanks,
-> --
-> Jeff Layton <jlayton@redhat.com>
->
+Would you like to to fold this fix into my patch and resend eventually?
+Or will you send a replacement?
 
-
--- 
-Cheers,
-Venky
-
+  Luis
