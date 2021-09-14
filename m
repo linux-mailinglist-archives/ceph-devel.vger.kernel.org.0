@@ -2,88 +2,99 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F28C140B759
-	for <lists+ceph-devel@lfdr.de>; Tue, 14 Sep 2021 20:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70D9040BABE
+	for <lists+ceph-devel@lfdr.de>; Tue, 14 Sep 2021 23:52:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232322AbhINTAg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 14 Sep 2021 15:00:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:51175 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231210AbhINTAf (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 14 Sep 2021 15:00:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631645957;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3OUaDnOxKNbvKbqhxE7IAvlc8abcRFpZR5Sv/ym/5Ys=;
-        b=TuoNLdAVxHonvf8be3WaeK6OOoNJg85imVPHsK+l/BBuv27VZ0zZQZ7tS6rsxxnqGj+0J/
-        bWD2MK4UQWGnlWdH9VWmTayAHsuDjLp9kvigLr/E4v8z9cYlRirEb4EHNVQLvMBpVZ4Cbf
-        Ycjz5cyJ+rkwdhJksFFxZEltkcLtS5U=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-434-DTeW0HMUPTu9bfacEsuHNg-1; Tue, 14 Sep 2021 14:59:14 -0400
-X-MC-Unique: DTeW0HMUPTu9bfacEsuHNg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DCC78100CC84;
-        Tue, 14 Sep 2021 18:59:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 26FAE7A8D2;
-        Tue, 14 Sep 2021 18:59:05 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wgR_unCDRZ+8iTb5gBO6bgRkuS4JYBpi25v12Yp6TzWVA@mail.gmail.com>
-References: <CAHk-=wgR_unCDRZ+8iTb5gBO6bgRkuS4JYBpi25v12Yp6TzWVA@mail.gmail.com> <163162767601.438332.9017034724960075707.stgit@warthog.procyon.org.uk> <CAHk-=wiVK+1CyEjW8u71zVPK8msea=qPpznX35gnX+s8sXnJTg@mail.gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
+        id S234786AbhINVxS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 14 Sep 2021 17:53:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58390 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232891AbhINVxR (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 14 Sep 2021 17:53:17 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CE80C061574;
+        Tue, 14 Sep 2021 14:51:59 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 38514C021; Tue, 14 Sep 2021 23:51:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1631656311; bh=TnXdIO/oF8kdpia/r491f3TADt5GhanlBg8g1B7rlOo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=3+TN1nUPD7E0ikf3ybTrtRRFeG+ZMypqS6RWcqbQpq7MMOrh5csDJQKtgqhdPa8n6
+         yQ6/e4rc16wk3fryGfNrabWRor0YgKassUSnJloJ0aK9Xua47cuX2WcW1gfymYpmer
+         h3T2j9l9nSAmypkP1neoOVqUiQ3hbuZ02xo8nBOGfYvk+CTcISWMWSgxjFTWg3Fs16
+         +9SgklmDuWSf/lG3giknSANUSNZrHAmjA2Wue3FYU7YlStIPZWTR9v0HKjLNAMo5Pu
+         cKl31Fl4aA5fNcfn3uxq33js627akWaBlvGEhoL0+5lg0tfNWyApTSuhYKC7F+Wlgy
+         03L6LZr6z4m4A==
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on nautica.notk.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.0 required=5.0 tests=UNPARSEABLE_RELAY
+        autolearn=unavailable version=3.3.2
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id CE81AC009;
+        Tue, 14 Sep 2021 23:51:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1631656310; bh=TnXdIO/oF8kdpia/r491f3TADt5GhanlBg8g1B7rlOo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qJuDIZ0KNIBIsCWAwJIBTUKARF062cKhG8Izjmu7Vgs0kdCzVFNrGl8EvKgCQPjB7
+         NvbztZkdPdABmARgGCtq1uReBl0X7UZMmJLdrkk8VjVqC5aVczXUKKkgxJU7PdAWYf
+         ULl/9B6rNX3MRoUof3MWTxtYOgFPLQwcJnm7D3jRxyApqXxQcvd9Iq8wo8t4yAxjrg
+         LUuKVU+b/s1whApaf173AslTEtux+yflsS8J316d88Di/dauNTnmAbgcgcDnXT53fu
+         3ZrhkPyYmVMzI2CBmzrELf0E8g9UZmmU1UWOEiLWn9YDp3D1ELsl6wLk4+Yj+E4/dV
+         QDr4PSOlME2JQ==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 7519297c;
+        Tue, 14 Sep 2021 21:51:41 +0000 (UTC)
+Date:   Wed, 15 Sep 2021 06:51:26 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jeff Layton <jlayton@redhat.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        linux-cachefs@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Jeff Layton <jlayton@redhat.com>,
+        v9fs-developer@lists.sourceforge.net, linux-cachefs@redhat.com,
         Matthew Wilcox <willy@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/8] fscache: Replace and remove old I/O API
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] 9p: (untested) Convert to using the netfs helper lib
+ to do reads and caching
+Message-ID: <YUEZXktGOCUWfvnU@codewreck.org>
+References: <6274f0922aecd9b40dd7ff1ef007442ed996aed7.camel@redhat.com>
+ <163162767601.438332.9017034724960075707.stgit@warthog.procyon.org.uk>
+ <163162772646.438332.16323773205855053535.stgit@warthog.procyon.org.uk>
+ <439558.1631628579@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <738325.1631645944.1@warthog.procyon.org.uk>
-Date:   Tue, 14 Sep 2021 19:59:04 +0100
-Message-ID: <738326.1631645944@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <439558.1631628579@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Hi folks,
 
-> > Call it "fallback" or "simple" or something that shows the intent, but
-> > no, I'm not taking patches that introduce a _new_ interface and call
-> > it "deprecated".
+David Howells wrote on Tue, Sep 14, 2021 at 03:09:39PM +0100:
+> > Does this change require any of the earlier patches in the series? If
+> > not, then it may be good to go ahead and merge this conversion
+> > separately, ahead of the rest of the series.
+> 
+> There's a conflict with patch 1 - you can see the same changes made to afs and
+> ceph there, but apart from that, no.  However, I can't do patch 6 without it
+> being applied first.  If Dominique or one of the other 9p people can get Linus
+> to apply it now, that would be great, but I think that unlikely since the
+> merge window has passed.
 
-Yeah, I'll change it to "fallback" - I started talking about it like that in
-the docs anyway.
+Agreed with the merge window passed it'll be for next one -- but I'd
+like this to sit in -next for as long as possible, so I'd appreciate
+either being able to carry the patch in my tree (difficult as then
+you'll need to base yourself on mine) or you putting it in there somehow
+after I've got the most basic tests verified again (do you have a branch
+pulled for linux-next?)
 
-> Put another way: to call something "deprecated", you have to already
-> have the replacement all ready to go.
-
-We're not far off.  There's a fair distance (in number of patches) between
-this patchset and the completion, hence why I marked them as deprecated here,
-intending to remove them at the end.  Between myself, Jeff and Dave we have
-fscache, cachefiles, afs, ceph and nfs (almost) covered.  I have patches for
-9p and I've given a partial patch for cifs to Steve and Shyam.
-
-David
-
+I'll try to get tests done in the next few days and check my notes for
+things that were missing in the earlier version you gave me in the
+past.. Sorry for not doing it myself, you're of great help.
+-- 
+Dominique
