@@ -2,233 +2,363 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 897C440AF9D
-	for <lists+ceph-devel@lfdr.de>; Tue, 14 Sep 2021 15:52:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D85840AFB1
+	for <lists+ceph-devel@lfdr.de>; Tue, 14 Sep 2021 15:54:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233095AbhINNx3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 14 Sep 2021 09:53:29 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:34785 "EHLO
+        id S233372AbhINNzj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 14 Sep 2021 09:55:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:23225 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232420AbhINNx2 (ORCPT
+        by vger.kernel.org with ESMTP id S233373AbhINNzi (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 14 Sep 2021 09:53:28 -0400
+        Tue, 14 Sep 2021 09:55:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631627530;
+        s=mimecast20190719; t=1631627660;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=OLinPNxMCqoupKziFTg4vT4jzZ0M/h2QV3SwVEfhmCE=;
-        b=FMWFq5UKE4+FCi8LjwgMGXHZUH2HVj5KYYG02ehN8J/zwq3Ph2qfrbnrYvwW17oQZPCcq5
-        Jnvw9d0Rc9+CgLEy1hzRK19872fdUVqhpheRp4ELwZibl4EXGtJu1gADAbYvzqsY2731B+
-        zhOEkM6fDsbNTjftdpxgZjArHnRwIt8=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-330-Ai6vhUsRN9ekEUBwE7F39A-1; Tue, 14 Sep 2021 09:52:09 -0400
-X-MC-Unique: Ai6vhUsRN9ekEUBwE7F39A-1
-Received: by mail-pl1-f199.google.com with SMTP id m5-20020a170902bb8500b0013a2b785187so4588426pls.11
-        for <ceph-devel@vger.kernel.org>; Tue, 14 Sep 2021 06:52:09 -0700 (PDT)
+        bh=0vXhZvY913x2yu23H1PVvlmf6ZGOpOzkDGqBegdHXDo=;
+        b=RC7LlXuqH1wCuZx/2nfohoaVFzSWTF1jLOAyusWgsHFtVdOdvGb89ZWRs1ilHlI3hNPWAk
+        UFjTM78cM0tiI/nUaS5jK+Yj9iPK/jeYsBhcoIToltMYaZP8SjyNPgCAmUKGGyXonDxDea
+        xk6PsQskwrz/lHBzaN6L+sFaQE1Mpwo=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-130-Kc9pWZJTPlKm5KEsSOl3mQ-1; Tue, 14 Sep 2021 09:54:19 -0400
+X-MC-Unique: Kc9pWZJTPlKm5KEsSOl3mQ-1
+Received: by mail-ed1-f70.google.com with SMTP id y10-20020a056402270a00b003c8adc4d40cso6807463edd.15
+        for <ceph-devel@vger.kernel.org>; Tue, 14 Sep 2021 06:54:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=OLinPNxMCqoupKziFTg4vT4jzZ0M/h2QV3SwVEfhmCE=;
-        b=3f0shqd5d7Ct9P33qlpINFuDod1kZatcYSGHxlpKwKi3t3IVJZQgU6s3xyB7Cks3du
-         1V6z7q0a9IFb6kYUENAznURRaiTAyKoOY1bkaePnkxZ/qn15uWU6rWpcR3h/oIu6cc72
-         Q7NT62qNuS5F2U0RVxouBEmTMh1ovezoag9tmazsW6ZnAFjL63/TNUIk3D+UCJ3LaCsL
-         lI+lcLg6p5icrmFEhPc69y8YJ/V1GWG8Bu06r8+vjkjGvY3Fb1TOG8rAtLZjBben+uQ/
-         ygREignIG2EicuxSJMt3KN+rZPO3O1zVDomqAjiJ+32kpanwIdrsikLChQwHRaeaXNGm
-         VzKQ==
-X-Gm-Message-State: AOAM533+9vMY+w/Dcsw8eCX3fa81lywUSDtrgds4+UuBOIdbe+WA3mHx
-        1XEvvvPzF11KwriU5fCIepZ+LsjDTBGVFM08UUAfiVAkSrnoWRo6JvJ347bebR3zpZsiZNYN/pW
-        d3U0hHl0YT4o/Jg/jVW2uFkmmlUhlXOcHmX7Lu9dwMKblpPwtvKZDeTBjZFGb84HZmZIIVWE=
-X-Received: by 2002:a17:90b:3909:: with SMTP id ob9mr2217779pjb.75.1631627528239;
-        Tue, 14 Sep 2021 06:52:08 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwKoBdJJyOz3aJj07f9ReHNBVMPkWW0MnktwAi8picUarmHemTheBv8GCHSF8PpC7PTB2wlTA==
-X-Received: by 2002:a17:90b:3909:: with SMTP id ob9mr2217731pjb.75.1631627527751;
-        Tue, 14 Sep 2021 06:52:07 -0700 (PDT)
-Received: from [10.72.12.89] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id fr17sm1859203pjb.17.2021.09.14.06.52.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Sep 2021 06:52:07 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0vXhZvY913x2yu23H1PVvlmf6ZGOpOzkDGqBegdHXDo=;
+        b=ldP3dEqc7akTal043D2O8+XfM3AQcsin1sM9NBjxlmdwptjDVyBJsCx05hmvbzaJas
+         aAtmNU1FBc7ITSjdSy8q4pfKc2Sj8z8MEcAg8E5/kDUOnS9NgQBvm1M+3l1VDC4AGUs1
+         AUkJ9MkBSwhfThshBPVsadPdCROz0JxldeX5PWaRhEWtGEfOBu8bxTa+zPmAB3MQ6ak/
+         /rLtfLyHvN/Q5xWwDVC3GFozZ+PE+Ne3FK/0z84WXJzqTjG2i3SeBSHUskJ36tp8ATTG
+         8vL+mrRnn/ldOWttk4nMsAVVNbh1PUXwa6LeUg0ejdmuxFp4Bj6RuhvcDSSWHdnsjl2C
+         Ofcg==
+X-Gm-Message-State: AOAM532Uyoz1rS2GosjKmjom/pY23agCDKhdJt07MQCWQJEW/WQ+HOHA
+        wcQj4ULmGAZZBYX5mWXdGZqdfAGEEG+jCZmBzV1YykAZJg4ULbAKuXqLGZ88fbZLTIjYFpoi/pX
+        /EvPIKBKH7Xq5EArhoStfoEtHgCzdGzjRwm/O6w==
+X-Received: by 2002:a17:906:e216:: with SMTP id gf22mr18844735ejb.357.1631627658042;
+        Tue, 14 Sep 2021 06:54:18 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwhiLfuGDDiszKCrZPd/cwr5rZbmhfTih4E9wk7Rvx53rm5J9U+wiaQNTyirJ3U7NBKLH/g6mWlJ/gr9uF+Bp4=
+X-Received: by 2002:a17:906:e216:: with SMTP id gf22mr18844714ejb.357.1631627657787;
+ Tue, 14 Sep 2021 06:54:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210914084902.1618064-1-vshankar@redhat.com> <20210914084902.1618064-3-vshankar@redhat.com>
+ <15cd06ae-fe96-c376-854d-738d4a2e70bf@redhat.com> <CACPzV1=A4CYvvrkBM1KKMrzYHJFyrMshQ_Qg9F=tXGQdfERK7g@mail.gmail.com>
+ <537fc647-249b-d4e8-2139-90cda31b634c@redhat.com>
+In-Reply-To: <537fc647-249b-d4e8-2139-90cda31b634c@redhat.com>
+From:   Venky Shankar <vshankar@redhat.com>
+Date:   Tue, 14 Sep 2021 19:23:40 +0530
+Message-ID: <CACPzV1mKmmFttb8X05ePa5WyQN-EFWoH-n9XfEwY5fraush8+A@mail.gmail.com>
 Subject: Re: [PATCH v2 2/4] ceph: track average/stdev r/w/m latency
-From:   Xiubo Li <xiubli@redhat.com>
-To:     Venky Shankar <vshankar@redhat.com>
+To:     Xiubo Li <xiubli@redhat.com>
 Cc:     Jeff Layton <jlayton@redhat.com>,
         Patrick Donnelly <pdonnell@redhat.com>,
         ceph-devel <ceph-devel@vger.kernel.org>
-References: <20210914084902.1618064-1-vshankar@redhat.com>
- <20210914084902.1618064-3-vshankar@redhat.com>
- <15cd06ae-fe96-c376-854d-738d4a2e70bf@redhat.com>
- <CACPzV1=A4CYvvrkBM1KKMrzYHJFyrMshQ_Qg9F=tXGQdfERK7g@mail.gmail.com>
- <537fc647-249b-d4e8-2139-90cda31b634c@redhat.com>
-Message-ID: <02fe4258-a0c5-0d79-7331-b61a7266b5fd@redhat.com>
-Date:   Tue, 14 Sep 2021 21:52:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
-MIME-Version: 1.0
-In-Reply-To: <537fc647-249b-d4e8-2139-90cda31b634c@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-
-On 9/14/21 9:45 PM, Xiubo Li wrote:
+On Tue, Sep 14, 2021 at 7:16 PM Xiubo Li <xiubli@redhat.com> wrote:
+>
 >
 > On 9/14/21 9:30 PM, Venky Shankar wrote:
->> On Tue, Sep 14, 2021 at 6:39 PM Xiubo Li <xiubli@redhat.com> wrote:
->>>
->>> On 9/14/21 4:49 PM, Venky Shankar wrote:
-[...]
-> In user space this is very easy to do, but not in kernel space, 
+> > On Tue, Sep 14, 2021 at 6:39 PM Xiubo Li <xiubli@redhat.com> wrote:
+> >>
+> >> On 9/14/21 4:49 PM, Venky Shankar wrote:
+> >>> The math involved in tracking average and standard deviation
+> >>> for r/w/m latencies looks incorrect. Fix that up. Also, change
+> >>> the variable name that tracks standard deviation (*_sq_sum) to
+> >>> *_stdev.
+> >>>
+> >>> Signed-off-by: Venky Shankar <vshankar@redhat.com>
+> >>> ---
+> >>>    fs/ceph/debugfs.c | 14 +++++-----
+> >>>    fs/ceph/metric.c  | 70 ++++++++++++++++++++++-------------------------
+> >>>    fs/ceph/metric.h  |  9 ++++--
+> >>>    3 files changed, 45 insertions(+), 48 deletions(-)
+> >>>
+> >>> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+> >>> index 38b78b45811f..3abfa7ae8220 100644
+> >>> --- a/fs/ceph/debugfs.c
+> >>> +++ b/fs/ceph/debugfs.c
+> >>> @@ -152,7 +152,7 @@ static int metric_show(struct seq_file *s, void *p)
+> >>>        struct ceph_mds_client *mdsc = fsc->mdsc;
+> >>>        struct ceph_client_metric *m = &mdsc->metric;
+> >>>        int nr_caps = 0;
+> >>> -     s64 total, sum, avg, min, max, sq;
+> >>> +     s64 total, sum, avg, min, max, stdev;
+> >>>        u64 sum_sz, avg_sz, min_sz, max_sz;
+> >>>
+> >>>        sum = percpu_counter_sum(&m->total_inodes);
+> >>> @@ -175,9 +175,9 @@ static int metric_show(struct seq_file *s, void *p)
+> >>>        avg = total > 0 ? DIV64_U64_ROUND_CLOSEST(sum, total) : 0;
+> >>>        min = m->read_latency_min;
+> >>>        max = m->read_latency_max;
+> >>> -     sq = m->read_latency_sq_sum;
+> >>> +     stdev = m->read_latency_stdev;
+> >>>        spin_unlock(&m->read_metric_lock);
+> >>> -     CEPH_LAT_METRIC_SHOW("read", total, avg, min, max, sq);
+> >>> +     CEPH_LAT_METRIC_SHOW("read", total, avg, min, max, stdev);
+> >>>
+> >>>        spin_lock(&m->write_metric_lock);
+> >>>        total = m->total_writes;
+> >>> @@ -185,9 +185,9 @@ static int metric_show(struct seq_file *s, void *p)
+> >>>        avg = total > 0 ? DIV64_U64_ROUND_CLOSEST(sum, total) : 0;
+> >>>        min = m->write_latency_min;
+> >>>        max = m->write_latency_max;
+> >>> -     sq = m->write_latency_sq_sum;
+> >>> +     stdev = m->write_latency_stdev;
+> >>>        spin_unlock(&m->write_metric_lock);
+> >>> -     CEPH_LAT_METRIC_SHOW("write", total, avg, min, max, sq);
+> >>> +     CEPH_LAT_METRIC_SHOW("write", total, avg, min, max, stdev);
+> >>>
+> >>>        spin_lock(&m->metadata_metric_lock);
+> >>>        total = m->total_metadatas;
+> >>> @@ -195,9 +195,9 @@ static int metric_show(struct seq_file *s, void *p)
+> >>>        avg = total > 0 ? DIV64_U64_ROUND_CLOSEST(sum, total) : 0;
+> >>>        min = m->metadata_latency_min;
+> >>>        max = m->metadata_latency_max;
+> >>> -     sq = m->metadata_latency_sq_sum;
+> >>> +     stdev = m->metadata_latency_stdev;
+> >>>        spin_unlock(&m->metadata_metric_lock);
+> >>> -     CEPH_LAT_METRIC_SHOW("metadata", total, avg, min, max, sq);
+> >>> +     CEPH_LAT_METRIC_SHOW("metadata", total, avg, min, max, stdev);
+> >>>
+> >>>        seq_printf(s, "\n");
+> >>>        seq_printf(s, "item          total       avg_sz(bytes)   min_sz(bytes)   max_sz(bytes)  total_sz(bytes)\n");
+> >>> diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
+> >>> index 226dc38e2909..6b774b1a88ce 100644
+> >>> --- a/fs/ceph/metric.c
+> >>> +++ b/fs/ceph/metric.c
+> >>> @@ -244,7 +244,8 @@ int ceph_metric_init(struct ceph_client_metric *m)
+> >>>                goto err_i_caps_mis;
+> >>>
+> >>>        spin_lock_init(&m->read_metric_lock);
+> >>> -     m->read_latency_sq_sum = 0;
+> >>> +     m->read_latency_stdev = 0;
+> >>> +     m->avg_read_latency = 0;
+> >>>        m->read_latency_min = KTIME_MAX;
+> >>>        m->read_latency_max = 0;
+> >>>        m->total_reads = 0;
+> >>> @@ -254,7 +255,8 @@ int ceph_metric_init(struct ceph_client_metric *m)
+> >>>        m->read_size_sum = 0;
+> >>>
+> >>>        spin_lock_init(&m->write_metric_lock);
+> >>> -     m->write_latency_sq_sum = 0;
+> >>> +     m->write_latency_stdev = 0;
+> >>> +     m->avg_write_latency = 0;
+> >>>        m->write_latency_min = KTIME_MAX;
+> >>>        m->write_latency_max = 0;
+> >>>        m->total_writes = 0;
+> >>> @@ -264,7 +266,8 @@ int ceph_metric_init(struct ceph_client_metric *m)
+> >>>        m->write_size_sum = 0;
+> >>>
+> >>>        spin_lock_init(&m->metadata_metric_lock);
+> >>> -     m->metadata_latency_sq_sum = 0;
+> >>> +     m->metadata_latency_stdev = 0;
+> >>> +     m->avg_metadata_latency = 0;
+> >>>        m->metadata_latency_min = KTIME_MAX;
+> >>>        m->metadata_latency_max = 0;
+> >>>        m->total_metadatas = 0;
+> >>> @@ -322,20 +325,26 @@ void ceph_metric_destroy(struct ceph_client_metric *m)
+> >>>                max = new;                      \
+> >>>    }
+> >>>
+> >>> -static inline void __update_stdev(ktime_t total, ktime_t lsum,
+> >>> -                               ktime_t *sq_sump, ktime_t lat)
+> >>> +static inline void __update_latency(ktime_t *ctotal, ktime_t *lsum,
+> >>> +                                 ktime_t *lavg, ktime_t *min, ktime_t *max,
+> >>> +                                 ktime_t *lstdev, ktime_t lat)
+> >>>    {
+> >>> -     ktime_t avg, sq;
+> >>> +     ktime_t total, avg, stdev;
+> >>>
+> >>> -     if (unlikely(total == 1))
+> >>> -             return;
+> >>> +     total = ++(*ctotal);
+> >>> +     *lsum += lat;
+> >>> +
+> >>> +     METRIC_UPDATE_MIN_MAX(*min, *max, lat);
+> >>>
+> >>> -     /* the sq is (lat - old_avg) * (lat - new_avg) */
+> >>> -     avg = DIV64_U64_ROUND_CLOSEST((lsum - lat), (total - 1));
+> >>> -     sq = lat - avg;
+> >>> -     avg = DIV64_U64_ROUND_CLOSEST(lsum, total);
+> >>> -     sq = sq * (lat - avg);
+> >>> -     *sq_sump += sq;
+> >>> +     if (unlikely(total == 1)) {
+> >>> +             *lavg = lat;
+> >>> +             *lstdev = 0;
+> >>> +     } else {
+> >>> +             avg = *lavg + div64_s64(lat - *lavg, total);
+> >>> +             stdev = *lstdev + (lat - *lavg)*(lat - avg);
+> >>> +             *lstdev = int_sqrt(div64_u64(stdev, total - 1));
+> >>> +             *lavg = avg;
+> >>> +     }
+> >> IMO, this is incorrect, the math formula please see:
+> >>
+> >> https://www.investopedia.com/ask/answers/042415/what-difference-between-standard-error-means-and-standard-deviation.asp
+> >>
+> >> The most accurate result should be:
+> >>
+> >> stdev = int_sqrt(sum((X(n) - avg)^2, (X(n-1) - avg)^2, ..., (X(1) -
+> >> avg)^2) / (n - 1)).
+> >>
+> >> While you are computing it:
+> >>
+> >> stdev_n = int_sqrt(stdev_(n-1) + (X(n-1) - avg)^2)
+> > Hmm. The int_sqrt() is probably not needed at this point and can be
+> > done when sending the metric. That would avoid some cycles.
+> >
+> > Also, the way avg is calculated not totally incorrect, however, I
+> > would like to keep it similar to how its done is libcephfs.
+>
+> In user space this is very easy to do, but not in kernel space,
 > especially there has no float computing.
 >
-As I remembered this is main reason why I was planing to send the raw 
-metrics to MDS and let the MDS do the computing.
-
-So if possible why not just send the raw data to MDS and let the MDS to 
-do the stdev computing ?
-
-
 > Currently the kclient is doing the avg computing by:
 >
-> avg(n) = (avg(n-1) + latency(n)) / (n), IMO this should be closer to 
-> the real avg(n) = sum(latency(n), latency(n-1), ..., latency(1)) / n.
+> avg(n) = (avg(n-1) + latency(n)) / (n), IMO this should be closer to the
+> real avg(n) = sum(latency(n), latency(n-1), ..., latency(1)) / n.
+
+That's how is done in libcephfs too.
+
 >
-> Because it's hard to record all the latency values, this is also many 
+> Because it's hard to record all the latency values, this is also many
 > other user space tools doing to count the avg.
 >
 >
->>> Though current stdev computing method is not exactly the same the math
->>> formula does, but it's closer to it, because the kernel couldn't record
->>> all the latency value and do it whenever needed, which will occupy a
->>> large amount of memories and cpu resources.
->> The approach is to calculate the running variance, I.e., compute the
->> variance as  data (latency) arrive one at a time.
->>
->>>
->>>>    }
->>>>
->>>>    void ceph_update_read_metrics(struct ceph_client_metric *m,
->>>> @@ -343,23 +352,18 @@ void ceph_update_read_metrics(struct 
->>>> ceph_client_metric *m,
->>>>                              unsigned int size, int rc)
->>>>    {
->>>>        ktime_t lat = ktime_sub(r_end, r_start);
->>>> -     ktime_t total;
->>>>
->>>>        if (unlikely(rc < 0 && rc != -ENOENT && rc != -ETIMEDOUT))
->>>>                return;
->>>>
->>>>        spin_lock(&m->read_metric_lock);
->>>> -     total = ++m->total_reads;
->>>>        m->read_size_sum += size;
->>>> -     m->read_latency_sum += lat;
->>>>        METRIC_UPDATE_MIN_MAX(m->read_size_min,
->>>>                              m->read_size_max,
->>>>                              size);
->>>> -     METRIC_UPDATE_MIN_MAX(m->read_latency_min,
->>>> -                           m->read_latency_max,
->>>> -                           lat);
->>>> -     __update_stdev(total, m->read_latency_sum,
->>>> -                    &m->read_latency_sq_sum, lat);
->>>> +     __update_latency(&m->total_reads, &m->read_latency_sum,
->>>> +                      &m->avg_read_latency, &m->read_latency_min,
->>>> +                      &m->read_latency_max, 
->>>> &m->read_latency_stdev, lat);
->>>>        spin_unlock(&m->read_metric_lock);
->>>>    }
->>>>
->>>> @@ -368,23 +372,18 @@ void ceph_update_write_metrics(struct 
->>>> ceph_client_metric *m,
->>>>                               unsigned int size, int rc)
->>>>    {
->>>>        ktime_t lat = ktime_sub(r_end, r_start);
->>>> -     ktime_t total;
->>>>
->>>>        if (unlikely(rc && rc != -ETIMEDOUT))
->>>>                return;
->>>>
->>>>        spin_lock(&m->write_metric_lock);
->>>> -     total = ++m->total_writes;
->>>>        m->write_size_sum += size;
->>>> -     m->write_latency_sum += lat;
->>>>        METRIC_UPDATE_MIN_MAX(m->write_size_min,
->>>>                              m->write_size_max,
->>>>                              size);
->>>> -     METRIC_UPDATE_MIN_MAX(m->write_latency_min,
->>>> -                           m->write_latency_max,
->>>> -                           lat);
->>>> -     __update_stdev(total, m->write_latency_sum,
->>>> -                    &m->write_latency_sq_sum, lat);
->>>> +     __update_latency(&m->total_writes, &m->write_latency_sum,
->>>> +                      &m->avg_write_latency, &m->write_latency_min,
->>>> +                      &m->write_latency_max, 
->>>> &m->write_latency_stdev, lat);
->>>>        spin_unlock(&m->write_metric_lock);
->>>>    }
->>>>
->>>> @@ -393,18 +392,13 @@ void ceph_update_metadata_metrics(struct 
->>>> ceph_client_metric *m,
->>>>                                  int rc)
->>>>    {
->>>>        ktime_t lat = ktime_sub(r_end, r_start);
->>>> -     ktime_t total;
->>>>
->>>>        if (unlikely(rc && rc != -ENOENT))
->>>>                return;
->>>>
->>>>        spin_lock(&m->metadata_metric_lock);
->>>> -     total = ++m->total_metadatas;
->>>> -     m->metadata_latency_sum += lat;
->>>> -     METRIC_UPDATE_MIN_MAX(m->metadata_latency_min,
->>>> -                           m->metadata_latency_max,
->>>> -                           lat);
->>>> -     __update_stdev(total, m->metadata_latency_sum,
->>>> -                    &m->metadata_latency_sq_sum, lat);
->>>> +     __update_latency(&m->total_metadatas, &m->metadata_latency_sum,
->>>> +                      &m->avg_metadata_latency, 
->>>> &m->metadata_latency_min,
->>>> +                      &m->metadata_latency_max, 
->>>> &m->metadata_latency_stdev, lat);
->>>>        spin_unlock(&m->metadata_metric_lock);
->>>>    }
->>>> diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
->>>> index 103ed736f9d2..a5da21b8f8ed 100644
->>>> --- a/fs/ceph/metric.h
->>>> +++ b/fs/ceph/metric.h
->>>> @@ -138,7 +138,8 @@ struct ceph_client_metric {
->>>>        u64 read_size_min;
->>>>        u64 read_size_max;
->>>>        ktime_t read_latency_sum;
->>>> -     ktime_t read_latency_sq_sum;
->>>> +     ktime_t avg_read_latency;
->>>> +     ktime_t read_latency_stdev;
->>>>        ktime_t read_latency_min;
->>>>        ktime_t read_latency_max;
->>>>
->>>> @@ -148,14 +149,16 @@ struct ceph_client_metric {
->>>>        u64 write_size_min;
->>>>        u64 write_size_max;
->>>>        ktime_t write_latency_sum;
->>>> -     ktime_t write_latency_sq_sum;
->>>> +     ktime_t avg_write_latency;
->>>> +     ktime_t write_latency_stdev;
->>>>        ktime_t write_latency_min;
->>>>        ktime_t write_latency_max;
->>>>
->>>>        spinlock_t metadata_metric_lock;
->>>>        u64 total_metadatas;
->>>>        ktime_t metadata_latency_sum;
->>>> -     ktime_t metadata_latency_sq_sum;
->>>> +     ktime_t avg_metadata_latency;
->>>> +     ktime_t metadata_latency_stdev;
->>>>        ktime_t metadata_latency_min;
->>>>        ktime_t metadata_latency_max;
->>>>
->>
+> >> Though current stdev computing method is not exactly the same the math
+> >> formula does, but it's closer to it, because the kernel couldn't record
+> >> all the latency value and do it whenever needed, which will occupy a
+> >> large amount of memories and cpu resources.
+> > The approach is to calculate the running variance, I.e., compute the
+> > variance as  data (latency) arrive one at a time.
+> >
+> >>
+> >>>    }
+> >>>
+> >>>    void ceph_update_read_metrics(struct ceph_client_metric *m,
+> >>> @@ -343,23 +352,18 @@ void ceph_update_read_metrics(struct ceph_client_metric *m,
+> >>>                              unsigned int size, int rc)
+> >>>    {
+> >>>        ktime_t lat = ktime_sub(r_end, r_start);
+> >>> -     ktime_t total;
+> >>>
+> >>>        if (unlikely(rc < 0 && rc != -ENOENT && rc != -ETIMEDOUT))
+> >>>                return;
+> >>>
+> >>>        spin_lock(&m->read_metric_lock);
+> >>> -     total = ++m->total_reads;
+> >>>        m->read_size_sum += size;
+> >>> -     m->read_latency_sum += lat;
+> >>>        METRIC_UPDATE_MIN_MAX(m->read_size_min,
+> >>>                              m->read_size_max,
+> >>>                              size);
+> >>> -     METRIC_UPDATE_MIN_MAX(m->read_latency_min,
+> >>> -                           m->read_latency_max,
+> >>> -                           lat);
+> >>> -     __update_stdev(total, m->read_latency_sum,
+> >>> -                    &m->read_latency_sq_sum, lat);
+> >>> +     __update_latency(&m->total_reads, &m->read_latency_sum,
+> >>> +                      &m->avg_read_latency, &m->read_latency_min,
+> >>> +                      &m->read_latency_max, &m->read_latency_stdev, lat);
+> >>>        spin_unlock(&m->read_metric_lock);
+> >>>    }
+> >>>
+> >>> @@ -368,23 +372,18 @@ void ceph_update_write_metrics(struct ceph_client_metric *m,
+> >>>                               unsigned int size, int rc)
+> >>>    {
+> >>>        ktime_t lat = ktime_sub(r_end, r_start);
+> >>> -     ktime_t total;
+> >>>
+> >>>        if (unlikely(rc && rc != -ETIMEDOUT))
+> >>>                return;
+> >>>
+> >>>        spin_lock(&m->write_metric_lock);
+> >>> -     total = ++m->total_writes;
+> >>>        m->write_size_sum += size;
+> >>> -     m->write_latency_sum += lat;
+> >>>        METRIC_UPDATE_MIN_MAX(m->write_size_min,
+> >>>                              m->write_size_max,
+> >>>                              size);
+> >>> -     METRIC_UPDATE_MIN_MAX(m->write_latency_min,
+> >>> -                           m->write_latency_max,
+> >>> -                           lat);
+> >>> -     __update_stdev(total, m->write_latency_sum,
+> >>> -                    &m->write_latency_sq_sum, lat);
+> >>> +     __update_latency(&m->total_writes, &m->write_latency_sum,
+> >>> +                      &m->avg_write_latency, &m->write_latency_min,
+> >>> +                      &m->write_latency_max, &m->write_latency_stdev, lat);
+> >>>        spin_unlock(&m->write_metric_lock);
+> >>>    }
+> >>>
+> >>> @@ -393,18 +392,13 @@ void ceph_update_metadata_metrics(struct ceph_client_metric *m,
+> >>>                                  int rc)
+> >>>    {
+> >>>        ktime_t lat = ktime_sub(r_end, r_start);
+> >>> -     ktime_t total;
+> >>>
+> >>>        if (unlikely(rc && rc != -ENOENT))
+> >>>                return;
+> >>>
+> >>>        spin_lock(&m->metadata_metric_lock);
+> >>> -     total = ++m->total_metadatas;
+> >>> -     m->metadata_latency_sum += lat;
+> >>> -     METRIC_UPDATE_MIN_MAX(m->metadata_latency_min,
+> >>> -                           m->metadata_latency_max,
+> >>> -                           lat);
+> >>> -     __update_stdev(total, m->metadata_latency_sum,
+> >>> -                    &m->metadata_latency_sq_sum, lat);
+> >>> +     __update_latency(&m->total_metadatas, &m->metadata_latency_sum,
+> >>> +                      &m->avg_metadata_latency, &m->metadata_latency_min,
+> >>> +                      &m->metadata_latency_max, &m->metadata_latency_stdev, lat);
+> >>>        spin_unlock(&m->metadata_metric_lock);
+> >>>    }
+> >>> diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
+> >>> index 103ed736f9d2..a5da21b8f8ed 100644
+> >>> --- a/fs/ceph/metric.h
+> >>> +++ b/fs/ceph/metric.h
+> >>> @@ -138,7 +138,8 @@ struct ceph_client_metric {
+> >>>        u64 read_size_min;
+> >>>        u64 read_size_max;
+> >>>        ktime_t read_latency_sum;
+> >>> -     ktime_t read_latency_sq_sum;
+> >>> +     ktime_t avg_read_latency;
+> >>> +     ktime_t read_latency_stdev;
+> >>>        ktime_t read_latency_min;
+> >>>        ktime_t read_latency_max;
+> >>>
+> >>> @@ -148,14 +149,16 @@ struct ceph_client_metric {
+> >>>        u64 write_size_min;
+> >>>        u64 write_size_max;
+> >>>        ktime_t write_latency_sum;
+> >>> -     ktime_t write_latency_sq_sum;
+> >>> +     ktime_t avg_write_latency;
+> >>> +     ktime_t write_latency_stdev;
+> >>>        ktime_t write_latency_min;
+> >>>        ktime_t write_latency_max;
+> >>>
+> >>>        spinlock_t metadata_metric_lock;
+> >>>        u64 total_metadatas;
+> >>>        ktime_t metadata_latency_sum;
+> >>> -     ktime_t metadata_latency_sq_sum;
+> >>> +     ktime_t avg_metadata_latency;
+> >>> +     ktime_t metadata_latency_stdev;
+> >>>        ktime_t metadata_latency_min;
+> >>>        ktime_t metadata_latency_max;
+> >>>
+> >
+>
+
+
+-- 
+Cheers,
+Venky
 
