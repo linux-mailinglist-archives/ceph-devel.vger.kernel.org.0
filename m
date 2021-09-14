@@ -2,61 +2,61 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 716BA40A997
-	for <lists+ceph-devel@lfdr.de>; Tue, 14 Sep 2021 10:49:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6589840A998
+	for <lists+ceph-devel@lfdr.de>; Tue, 14 Sep 2021 10:49:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230416AbhINIuf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 14 Sep 2021 04:50:35 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:21920 "EHLO
+        id S229975AbhINIui (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 14 Sep 2021 04:50:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:58889 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229975AbhINIuf (ORCPT
+        by vger.kernel.org with ESMTP id S230392AbhINIuh (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 14 Sep 2021 04:50:35 -0400
+        Tue, 14 Sep 2021 04:50:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631609357;
+        s=mimecast20190719; t=1631609360;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8hyh99eGG99De2bMq9NDd3b3J6KyeGnSZ5PbazrQAAw=;
-        b=eM5ox/lvLt2gnOJ8x6Kt8FtqqNnHacSGCwH0MM16xT4YvxtIVcXaQUX95ImaAD7ZLV/58R
-        TlTKgng48Yy8uG+FNo9falrrWTWk+1leAEgCOrP30/DT29zJ3D0GRYHgFO0F2p8VdyzyC5
-        cqMKDqQ07jf/ZKhEZ6DPi0W/mGn3yJ8=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-427-ePp4hgslOUGw4DSLSDxhig-1; Tue, 14 Sep 2021 04:49:16 -0400
-X-MC-Unique: ePp4hgslOUGw4DSLSDxhig-1
-Received: by mail-pf1-f198.google.com with SMTP id r1-20020a62e401000000b003f27c6ae031so7852469pfh.20
-        for <ceph-devel@vger.kernel.org>; Tue, 14 Sep 2021 01:49:16 -0700 (PDT)
+        bh=O7l0DlyvqaJcVRbFQZfQ0Y20r5URg+k3c+gYrzZdUN4=;
+        b=MmEM2UtB67JacIfAIXkzIn26MigdlRJhB2W68VNMieRxyfwahSNK384mICccB9Ub2ra6VT
+        TGFCbEp3PlbOnP1Ngvmsig+O7wgTOWiJxpyqDQH5zVVi6npHZfzqNXj+w3uOLEBgwzOHZf
+        n0BSfoYaX9O6euJdDWO4Zg4unvoe2N0=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-360-H7OMo8L2PRCQJgaoIUsmiQ-1; Tue, 14 Sep 2021 04:49:19 -0400
+X-MC-Unique: H7OMo8L2PRCQJgaoIUsmiQ-1
+Received: by mail-pj1-f70.google.com with SMTP id g21-20020a17090adb1500b001976416d36bso1310976pjv.0
+        for <ceph-devel@vger.kernel.org>; Tue, 14 Sep 2021 01:49:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8hyh99eGG99De2bMq9NDd3b3J6KyeGnSZ5PbazrQAAw=;
-        b=axotPPGvUNIoxq71oNIu41oF5hWTXr+bbycU2a67VykDS9zeDlDuxeOoSf6M9ahlw3
-         rx+W3q/BksnNlXjkaEgBag8da1Q8zUaytpL66vYnULDSrBzI9sYTRwYq11gSjMNPlwmk
-         zmmDJOqbXnTRbvTQBRjMxFYXPpUSdkRGm8XfJzpyfoocXfQnKHmnlJGYbFOy4H6Z6mpT
-         KAnKIsOmfZMp/TtXY6sMyDmcEb6hFyZfGplNspgU57VcQ0yzh96UlJCXbNzlX7sbrVbF
-         5m2N4o+6PKnIzeJvkfUfDZxM+yZL9gplE+2oH+YOJOUB8aMHyNv8nbFPe7Wy6R974LGm
-         kSVA==
-X-Gm-Message-State: AOAM530IxSovWtfALGk4me3i8yEiK+ciSvyeQHPKQlOrtfozwpxHTIsh
-        qfEMnk/SBqFzjtGn8JQfzNPUHONNz/r+dUm4qRYpUBDLst6U+WN0BbfWbGl9M6VJ1CyGEEHI+Ud
-        0HvwKT6yXf4uNT2fS+cr2JA==
-X-Received: by 2002:a17:90b:1d02:: with SMTP id on2mr835979pjb.21.1631609355395;
-        Tue, 14 Sep 2021 01:49:15 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyLGO82ocSBX5nLZxGzycMfAMoZdyvFQwBl0YMMVTqFJS9EIEwvSUKsCqm1d4W+mpfAMTgRUQ==
-X-Received: by 2002:a17:90b:1d02:: with SMTP id on2mr835960pjb.21.1631609355169;
-        Tue, 14 Sep 2021 01:49:15 -0700 (PDT)
+        bh=O7l0DlyvqaJcVRbFQZfQ0Y20r5URg+k3c+gYrzZdUN4=;
+        b=I1r0xkZ/g9ZlrNWAehlF1APOUKG0K3MVpcnTRUdOc9UYAkU0EKcn5Y9nrsoHyyYgrB
+         T4YccRn1QQhbL7NEJPzNXj6TXN0l3EMYNUOcKgq2CLGUGfj6XlS9NhUOr440brpKfstV
+         5zCiY3YNWwc6E1zEHp3CEf1NSItSQOZoKbTn5FO5Vf47N2eDf/Y5H1QYZDzwYeMF2nIP
+         Xtu3pMYDdgO6rIcweRS8v+8DSOE97Oq9O7tXKYy4GITkHV5gBUhUovkpnHjJm/WWRixl
+         Ll3HVK3LF/et0QouNDPkVN1yiQ5d+TI2RsyY8nlX7RDBKPuD3QPyxLbRngfZsw4FBB0y
+         Tafw==
+X-Gm-Message-State: AOAM533JDC0OcNBA2GE/SEPRc4ipBM5M0pDWDjYszfDAAiAxEO9N/gr1
+        qrFhBQy2lsGe7h66jKgo1W+FxX+wJEgriGbCEo8Krn3Pn9kqcLweXgA2wLxdWsoxqW8EQtTbSPg
+        H/YtXFFy968YF90BR2gDBqw==
+X-Received: by 2002:a63:1e5c:: with SMTP id p28mr14613646pgm.89.1631609358270;
+        Tue, 14 Sep 2021 01:49:18 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxpDNRZJVLWLJcd/INFQCbrMpsLop4C53Rtqh1L7lTxH/ekZygTmN8rQRX2yJ/ybyhO/Z6Bog==
+X-Received: by 2002:a63:1e5c:: with SMTP id p28mr14613629pgm.89.1631609357995;
+        Tue, 14 Sep 2021 01:49:17 -0700 (PDT)
 Received: from h3ckers-pride.redhat.com ([49.207.198.118])
-        by smtp.gmail.com with ESMTPSA id b12sm10006219pff.63.2021.09.14.01.49.12
+        by smtp.gmail.com with ESMTPSA id b12sm10006219pff.63.2021.09.14.01.49.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Sep 2021 01:49:14 -0700 (PDT)
+        Tue, 14 Sep 2021 01:49:17 -0700 (PDT)
 From:   Venky Shankar <vshankar@redhat.com>
 To:     jlayton@redhat.com, pdonnell@redhat.com, xiubli@redhat.com
 Cc:     ceph-devel@vger.kernel.org, Venky Shankar <vshankar@redhat.com>
-Subject: [PATCH v2 2/4] ceph: track average/stdev r/w/m latency
-Date:   Tue, 14 Sep 2021 14:19:00 +0530
-Message-Id: <20210914084902.1618064-3-vshankar@redhat.com>
+Subject: [PATCH v2 3/4] ceph: include average/stddev r/w/m latency in mds metrics
+Date:   Tue, 14 Sep 2021 14:19:01 +0530
+Message-Id: <20210914084902.1618064-4-vshankar@redhat.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210914084902.1618064-1-vshankar@redhat.com>
 References: <20210914084902.1618064-1-vshankar@redhat.com>
@@ -66,248 +66,175 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The math involved in tracking average and standard deviation
-for r/w/m latencies looks incorrect. Fix that up. Also, change
-the variable name that tracks standard deviation (*_sq_sum) to
-*_stdev.
+The use of `jiffies_to_timespec64()` seems incorrect too, switch
+that to `ktime_to_timespec64()`.
 
 Signed-off-by: Venky Shankar <vshankar@redhat.com>
 ---
- fs/ceph/debugfs.c | 14 +++++-----
- fs/ceph/metric.c  | 70 ++++++++++++++++++++++-------------------------
- fs/ceph/metric.h  |  9 ++++--
- 3 files changed, 45 insertions(+), 48 deletions(-)
+ fs/ceph/metric.c | 35 +++++++++++++++++++----------------
+ fs/ceph/metric.h | 48 +++++++++++++++++++++++++++++++++---------------
+ 2 files changed, 52 insertions(+), 31 deletions(-)
 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 38b78b45811f..3abfa7ae8220 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -152,7 +152,7 @@ static int metric_show(struct seq_file *s, void *p)
- 	struct ceph_mds_client *mdsc = fsc->mdsc;
- 	struct ceph_client_metric *m = &mdsc->metric;
- 	int nr_caps = 0;
--	s64 total, sum, avg, min, max, sq;
-+	s64 total, sum, avg, min, max, stdev;
- 	u64 sum_sz, avg_sz, min_sz, max_sz;
- 
- 	sum = percpu_counter_sum(&m->total_inodes);
-@@ -175,9 +175,9 @@ static int metric_show(struct seq_file *s, void *p)
- 	avg = total > 0 ? DIV64_U64_ROUND_CLOSEST(sum, total) : 0;
- 	min = m->read_latency_min;
- 	max = m->read_latency_max;
--	sq = m->read_latency_sq_sum;
-+	stdev = m->read_latency_stdev;
- 	spin_unlock(&m->read_metric_lock);
--	CEPH_LAT_METRIC_SHOW("read", total, avg, min, max, sq);
-+	CEPH_LAT_METRIC_SHOW("read", total, avg, min, max, stdev);
- 
- 	spin_lock(&m->write_metric_lock);
- 	total = m->total_writes;
-@@ -185,9 +185,9 @@ static int metric_show(struct seq_file *s, void *p)
- 	avg = total > 0 ? DIV64_U64_ROUND_CLOSEST(sum, total) : 0;
- 	min = m->write_latency_min;
- 	max = m->write_latency_max;
--	sq = m->write_latency_sq_sum;
-+	stdev = m->write_latency_stdev;
- 	spin_unlock(&m->write_metric_lock);
--	CEPH_LAT_METRIC_SHOW("write", total, avg, min, max, sq);
-+	CEPH_LAT_METRIC_SHOW("write", total, avg, min, max, stdev);
- 
- 	spin_lock(&m->metadata_metric_lock);
- 	total = m->total_metadatas;
-@@ -195,9 +195,9 @@ static int metric_show(struct seq_file *s, void *p)
- 	avg = total > 0 ? DIV64_U64_ROUND_CLOSEST(sum, total) : 0;
- 	min = m->metadata_latency_min;
- 	max = m->metadata_latency_max;
--	sq = m->metadata_latency_sq_sum;
-+	stdev = m->metadata_latency_stdev;
- 	spin_unlock(&m->metadata_metric_lock);
--	CEPH_LAT_METRIC_SHOW("metadata", total, avg, min, max, sq);
-+	CEPH_LAT_METRIC_SHOW("metadata", total, avg, min, max, stdev);
- 
- 	seq_printf(s, "\n");
- 	seq_printf(s, "item          total       avg_sz(bytes)   min_sz(bytes)   max_sz(bytes)  total_sz(bytes)\n");
 diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
-index 226dc38e2909..6b774b1a88ce 100644
+index 6b774b1a88ce..78a50bb7bd0f 100644
 --- a/fs/ceph/metric.c
 +++ b/fs/ceph/metric.c
-@@ -244,7 +244,8 @@ int ceph_metric_init(struct ceph_client_metric *m)
- 		goto err_i_caps_mis;
+@@ -8,6 +8,13 @@
+ #include "metric.h"
+ #include "mds_client.h"
  
- 	spin_lock_init(&m->read_metric_lock);
--	m->read_latency_sq_sum = 0;
-+	m->read_latency_stdev = 0;
-+	m->avg_read_latency = 0;
- 	m->read_latency_min = KTIME_MAX;
- 	m->read_latency_max = 0;
- 	m->total_reads = 0;
-@@ -254,7 +255,8 @@ int ceph_metric_init(struct ceph_client_metric *m)
- 	m->read_size_sum = 0;
- 
- 	spin_lock_init(&m->write_metric_lock);
--	m->write_latency_sq_sum = 0;
-+	m->write_latency_stdev = 0;
-+	m->avg_write_latency = 0;
- 	m->write_latency_min = KTIME_MAX;
- 	m->write_latency_max = 0;
- 	m->total_writes = 0;
-@@ -264,7 +266,8 @@ int ceph_metric_init(struct ceph_client_metric *m)
- 	m->write_size_sum = 0;
- 
- 	spin_lock_init(&m->metadata_metric_lock);
--	m->metadata_latency_sq_sum = 0;
-+	m->metadata_latency_stdev = 0;
-+	m->avg_metadata_latency = 0;
- 	m->metadata_latency_min = KTIME_MAX;
- 	m->metadata_latency_max = 0;
- 	m->total_metadatas = 0;
-@@ -322,20 +325,26 @@ void ceph_metric_destroy(struct ceph_client_metric *m)
- 		max = new;			\
- }
- 
--static inline void __update_stdev(ktime_t total, ktime_t lsum,
--				  ktime_t *sq_sump, ktime_t lat)
-+static inline void __update_latency(ktime_t *ctotal, ktime_t *lsum,
-+				    ktime_t *lavg, ktime_t *min, ktime_t *max,
-+				    ktime_t *lstdev, ktime_t lat)
- {
--	ktime_t avg, sq;
-+	ktime_t total, avg, stdev;
- 
--	if (unlikely(total == 1))
--		return;
-+	total = ++(*ctotal);
-+	*lsum += lat;
++static void to_ceph_timespec(struct ceph_timespec *ts, ktime_t val)
++{
++	struct timespec64 t = ktime_to_timespec64(val);
++	ts->tv_sec = cpu_to_le32(t.tv_sec);
++	ts->tv_nsec = cpu_to_le32(t.tv_nsec);
++}
 +
-+	METRIC_UPDATE_MIN_MAX(*min, *max, lat);
- 
--	/* the sq is (lat - old_avg) * (lat - new_avg) */
--	avg = DIV64_U64_ROUND_CLOSEST((lsum - lat), (total - 1));
--	sq = lat - avg;
--	avg = DIV64_U64_ROUND_CLOSEST(lsum, total);
--	sq = sq * (lat - avg);
--	*sq_sump += sq;
-+	if (unlikely(total == 1)) {
-+		*lavg = lat;
-+		*lstdev = 0;
-+	} else {
-+		avg = *lavg + div64_s64(lat - *lavg, total);
-+		stdev = *lstdev + (lat - *lavg)*(lat - avg);
-+		*lstdev = int_sqrt(div64_u64(stdev, total - 1));
-+		*lavg = avg;
-+	}
- }
- 
- void ceph_update_read_metrics(struct ceph_client_metric *m,
-@@ -343,23 +352,18 @@ void ceph_update_read_metrics(struct ceph_client_metric *m,
- 			      unsigned int size, int rc)
+ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+ 				   struct ceph_mds_session *s)
  {
- 	ktime_t lat = ktime_sub(r_end, r_start);
--	ktime_t total;
+@@ -26,7 +33,6 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+ 	u64 nr_caps = atomic64_read(&m->total_caps);
+ 	u32 header_len = sizeof(struct ceph_metric_header);
+ 	struct ceph_msg *msg;
+-	struct timespec64 ts;
+ 	s64 sum;
+ 	s32 items = 0;
+ 	s32 len;
+@@ -59,37 +65,34 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+ 	/* encode the read latency metric */
+ 	read = (struct ceph_metric_read_latency *)(cap + 1);
+ 	read->header.type = cpu_to_le32(CLIENT_METRIC_TYPE_READ_LATENCY);
+-	read->header.ver = 1;
++	read->header.ver = 2;
+ 	read->header.compat = 1;
+ 	read->header.data_len = cpu_to_le32(sizeof(*read) - header_len);
+-	sum = m->read_latency_sum;
+-	jiffies_to_timespec64(sum, &ts);
+-	read->lat.tv_sec = cpu_to_le32(ts.tv_sec);
+-	read->lat.tv_nsec = cpu_to_le32(ts.tv_nsec);
++	to_ceph_timespec(&read->lat, m->read_latency_sum);
++	to_ceph_timespec(&read->avg, m->avg_read_latency);
++	to_ceph_timespec(&read->stdev, m->read_latency_stdev);
+ 	items++;
  
- 	if (unlikely(rc < 0 && rc != -ENOENT && rc != -ETIMEDOUT))
- 		return;
+ 	/* encode the write latency metric */
+ 	write = (struct ceph_metric_write_latency *)(read + 1);
+ 	write->header.type = cpu_to_le32(CLIENT_METRIC_TYPE_WRITE_LATENCY);
+-	write->header.ver = 1;
++	write->header.ver = 2;
+ 	write->header.compat = 1;
+ 	write->header.data_len = cpu_to_le32(sizeof(*write) - header_len);
+-	sum = m->write_latency_sum;
+-	jiffies_to_timespec64(sum, &ts);
+-	write->lat.tv_sec = cpu_to_le32(ts.tv_sec);
+-	write->lat.tv_nsec = cpu_to_le32(ts.tv_nsec);
++	to_ceph_timespec(&write->lat, m->write_latency_sum);
++	to_ceph_timespec(&write->avg, m->avg_write_latency);
++	to_ceph_timespec(&write->stdev, m->write_latency_stdev);
+ 	items++;
  
- 	spin_lock(&m->read_metric_lock);
--	total = ++m->total_reads;
- 	m->read_size_sum += size;
--	m->read_latency_sum += lat;
- 	METRIC_UPDATE_MIN_MAX(m->read_size_min,
- 			      m->read_size_max,
- 			      size);
--	METRIC_UPDATE_MIN_MAX(m->read_latency_min,
--			      m->read_latency_max,
--			      lat);
--	__update_stdev(total, m->read_latency_sum,
--		       &m->read_latency_sq_sum, lat);
-+	__update_latency(&m->total_reads, &m->read_latency_sum,
-+			 &m->avg_read_latency, &m->read_latency_min,
-+			 &m->read_latency_max, &m->read_latency_stdev, lat);
- 	spin_unlock(&m->read_metric_lock);
- }
+ 	/* encode the metadata latency metric */
+ 	meta = (struct ceph_metric_metadata_latency *)(write + 1);
+ 	meta->header.type = cpu_to_le32(CLIENT_METRIC_TYPE_METADATA_LATENCY);
+-	meta->header.ver = 1;
++	meta->header.ver = 2;
+ 	meta->header.compat = 1;
+ 	meta->header.data_len = cpu_to_le32(sizeof(*meta) - header_len);
+-	sum = m->metadata_latency_sum;
+-	jiffies_to_timespec64(sum, &ts);
+-	meta->lat.tv_sec = cpu_to_le32(ts.tv_sec);
+-	meta->lat.tv_nsec = cpu_to_le32(ts.tv_nsec);
++	to_ceph_timespec(&meta->lat, m->metadata_latency_sum);
++	to_ceph_timespec(&meta->avg, m->avg_metadata_latency);
++	to_ceph_timespec(&meta->stdev, m->metadata_latency_stdev);
+ 	items++;
  
-@@ -368,23 +372,18 @@ void ceph_update_write_metrics(struct ceph_client_metric *m,
- 			       unsigned int size, int rc)
- {
- 	ktime_t lat = ktime_sub(r_end, r_start);
--	ktime_t total;
- 
- 	if (unlikely(rc && rc != -ETIMEDOUT))
- 		return;
- 
- 	spin_lock(&m->write_metric_lock);
--	total = ++m->total_writes;
- 	m->write_size_sum += size;
--	m->write_latency_sum += lat;
- 	METRIC_UPDATE_MIN_MAX(m->write_size_min,
- 			      m->write_size_max,
- 			      size);
--	METRIC_UPDATE_MIN_MAX(m->write_latency_min,
--			      m->write_latency_max,
--			      lat);
--	__update_stdev(total, m->write_latency_sum,
--		       &m->write_latency_sq_sum, lat);
-+	__update_latency(&m->total_writes, &m->write_latency_sum,
-+			 &m->avg_write_latency, &m->write_latency_min,
-+			 &m->write_latency_max, &m->write_latency_stdev, lat);
- 	spin_unlock(&m->write_metric_lock);
- }
- 
-@@ -393,18 +392,13 @@ void ceph_update_metadata_metrics(struct ceph_client_metric *m,
- 				  int rc)
- {
- 	ktime_t lat = ktime_sub(r_end, r_start);
--	ktime_t total;
- 
- 	if (unlikely(rc && rc != -ENOENT))
- 		return;
- 
- 	spin_lock(&m->metadata_metric_lock);
--	total = ++m->total_metadatas;
--	m->metadata_latency_sum += lat;
--	METRIC_UPDATE_MIN_MAX(m->metadata_latency_min,
--			      m->metadata_latency_max,
--			      lat);
--	__update_stdev(total, m->metadata_latency_sum,
--		       &m->metadata_latency_sq_sum, lat);
-+	__update_latency(&m->total_metadatas, &m->metadata_latency_sum,
-+			 &m->avg_metadata_latency, &m->metadata_latency_min,
-+			 &m->metadata_latency_max, &m->metadata_latency_stdev, lat);
- 	spin_unlock(&m->metadata_metric_lock);
- }
+ 	/* encode the dentry lease metric */
 diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
-index 103ed736f9d2..a5da21b8f8ed 100644
+index a5da21b8f8ed..2dd506dedebf 100644
 --- a/fs/ceph/metric.h
 +++ b/fs/ceph/metric.h
-@@ -138,7 +138,8 @@ struct ceph_client_metric {
- 	u64 read_size_min;
- 	u64 read_size_max;
- 	ktime_t read_latency_sum;
--	ktime_t read_latency_sq_sum;
-+	ktime_t avg_read_latency;
-+	ktime_t read_latency_stdev;
- 	ktime_t read_latency_min;
- 	ktime_t read_latency_max;
+@@ -19,27 +19,39 @@ enum ceph_metric_type {
+ 	CLIENT_METRIC_TYPE_OPENED_INODES,
+ 	CLIENT_METRIC_TYPE_READ_IO_SIZES,
+ 	CLIENT_METRIC_TYPE_WRITE_IO_SIZES,
+-
+-	CLIENT_METRIC_TYPE_MAX = CLIENT_METRIC_TYPE_WRITE_IO_SIZES,
++	CLIENT_METRIC_TYPE_AVG_READ_LATENCY,
++	CLIENT_METRIC_TYPE_STDEV_READ_LATENCY,
++	CLIENT_METRIC_TYPE_AVG_WRITE_LATENCY,
++	CLIENT_METRIC_TYPE_STDEV_WRITE_LATENCY,
++	CLIENT_METRIC_TYPE_AVG_METADATA_LATENCY,
++	CLIENT_METRIC_TYPE_STDEV_METADATA_LATENCY,
++
++	CLIENT_METRIC_TYPE_MAX = CLIENT_METRIC_TYPE_STDEV_METADATA_LATENCY,
+ };
  
-@@ -148,14 +149,16 @@ struct ceph_client_metric {
- 	u64 write_size_min;
- 	u64 write_size_max;
- 	ktime_t write_latency_sum;
--	ktime_t write_latency_sq_sum;
-+	ktime_t avg_write_latency;
-+	ktime_t write_latency_stdev;
- 	ktime_t write_latency_min;
- 	ktime_t write_latency_max;
+ /*
+  * This will always have the highest metric bit value
+  * as the last element of the array.
+  */
+-#define CEPHFS_METRIC_SPEC_CLIENT_SUPPORTED {	\
+-	CLIENT_METRIC_TYPE_CAP_INFO,		\
+-	CLIENT_METRIC_TYPE_READ_LATENCY,	\
+-	CLIENT_METRIC_TYPE_WRITE_LATENCY,	\
+-	CLIENT_METRIC_TYPE_METADATA_LATENCY,	\
+-	CLIENT_METRIC_TYPE_DENTRY_LEASE,	\
+-	CLIENT_METRIC_TYPE_OPENED_FILES,	\
+-	CLIENT_METRIC_TYPE_PINNED_ICAPS,	\
+-	CLIENT_METRIC_TYPE_OPENED_INODES,	\
+-	CLIENT_METRIC_TYPE_READ_IO_SIZES,	\
+-	CLIENT_METRIC_TYPE_WRITE_IO_SIZES,	\
+-						\
+-	CLIENT_METRIC_TYPE_MAX,			\
++#define CEPHFS_METRIC_SPEC_CLIENT_SUPPORTED {	    \
++	CLIENT_METRIC_TYPE_CAP_INFO,		    \
++	CLIENT_METRIC_TYPE_READ_LATENCY,	    \
++	CLIENT_METRIC_TYPE_WRITE_LATENCY,	    \
++	CLIENT_METRIC_TYPE_METADATA_LATENCY,	    \
++	CLIENT_METRIC_TYPE_DENTRY_LEASE,	    \
++	CLIENT_METRIC_TYPE_OPENED_FILES,	    \
++	CLIENT_METRIC_TYPE_PINNED_ICAPS,	    \
++	CLIENT_METRIC_TYPE_OPENED_INODES,	    \
++	CLIENT_METRIC_TYPE_READ_IO_SIZES,	    \
++	CLIENT_METRIC_TYPE_WRITE_IO_SIZES,	    \
++	CLIENT_METRIC_TYPE_AVG_READ_LATENCY,	    \
++	CLIENT_METRIC_TYPE_STDEV_READ_LATENCY,	    \
++	CLIENT_METRIC_TYPE_AVG_WRITE_LATENCY,	    \
++	CLIENT_METRIC_TYPE_STDEV_WRITE_LATENCY,	    \
++	CLIENT_METRIC_TYPE_AVG_METADATA_LATENCY,    \
++	CLIENT_METRIC_TYPE_STDEV_METADATA_LATENCY,  \
++						    \
++	CLIENT_METRIC_TYPE_MAX,			    \
+ }
  
- 	spinlock_t metadata_metric_lock;
- 	u64 total_metadatas;
- 	ktime_t metadata_latency_sum;
--	ktime_t metadata_latency_sq_sum;
-+	ktime_t avg_metadata_latency;
-+	ktime_t metadata_latency_stdev;
- 	ktime_t metadata_latency_min;
- 	ktime_t metadata_latency_max;
+ struct ceph_metric_header {
+@@ -61,18 +73,24 @@ struct ceph_metric_cap {
+ struct ceph_metric_read_latency {
+ 	struct ceph_metric_header header;
+ 	struct ceph_timespec lat;
++	struct ceph_timespec avg;
++	struct ceph_timespec stdev;
+ } __packed;
  
+ /* metric write latency header */
+ struct ceph_metric_write_latency {
+ 	struct ceph_metric_header header;
+ 	struct ceph_timespec lat;
++	struct ceph_timespec avg;
++	struct ceph_timespec stdev;
+ } __packed;
+ 
+ /* metric metadata latency header */
+ struct ceph_metric_metadata_latency {
+ 	struct ceph_metric_header header;
+ 	struct ceph_timespec lat;
++	struct ceph_timespec avg;
++	struct ceph_timespec stdev;
+ } __packed;
+ 
+ /* metric dentry lease header */
 -- 
 2.31.1
 
