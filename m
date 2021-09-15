@@ -2,51 +2,52 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 390E140C061
-	for <lists+ceph-devel@lfdr.de>; Wed, 15 Sep 2021 09:21:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C99C40C076
+	for <lists+ceph-devel@lfdr.de>; Wed, 15 Sep 2021 09:25:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236611AbhIOHW5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 15 Sep 2021 03:22:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45482 "EHLO
+        id S231357AbhIOH1C (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 15 Sep 2021 03:27:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236634AbhIOHWz (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 Sep 2021 03:22:55 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CBAFC061574
-        for <ceph-devel@vger.kernel.org>; Wed, 15 Sep 2021 00:21:36 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id h9so4072091ejs.4
-        for <ceph-devel@vger.kernel.org>; Wed, 15 Sep 2021 00:21:36 -0700 (PDT)
+        with ESMTP id S230240AbhIOH1B (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 Sep 2021 03:27:01 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B98B6C061574
+        for <ceph-devel@vger.kernel.org>; Wed, 15 Sep 2021 00:25:42 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id jg16so4136590ejc.1
+        for <ceph-devel@vger.kernel.org>; Wed, 15 Sep 2021 00:25:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:from:date:message-id:subject:to;
         bh=g1PcXUqejyZX+Nf8ZsiYkJ1LV449dfc/Wl/QD/0vsC8=;
-        b=jXOEuzRBIvW9trJEixRSd8c/nOVLCX1u63ZDKLE8vTnAeu/Ghy/TaGkdbTPQHy4Thz
-         84UjF0eQ4j0NnF3hRU206BuxeRs8l+3d69P+KOjQl7oHCqYBzTvgGSOF6gHzDOh4I7+R
-         3XFo6isqsl1NqSnKCw0KH8YUXdRze4YuHY4qoUBu230y7Wwkuj387H+SFKkf5eDqOWDk
-         h5B0OLsTWCK4KHW3qgYs9lW78UfwsrAmZaRuEg/SIJKg1vVxVUtave4/41KyOzCvME4q
-         rwSeeIw/6i3T1jF3KOPYmA3eCNAhhS0Gu8/IwFQvhGuXOkvx/L2VZ+pm8KzjjPCgDQgB
-         vCXA==
+        b=ZtvF0JXk779dhalyl4nfVz0+KUeI++YOtiWNeQHmxIXXNA/AxjGSMdPu0UizGoQ+t9
+         Mb1QvvYvibyySTWZNdKGFv2kVwWgDuutyd2X/falswS4E2MQ9xfnh17+xzLYfBbr2DFE
+         6kqg0p4jbAvNptgisXUpcO6wt4Mg3K4Gk40rGEbE/2gE29dgaDZP76F390Xo6mM3AjgP
+         ks7Xz+uOYsTs4GH8+WDaen3O+vXgxBarJhNjr78iQL7y6Kfm8nBDOQgwWZuVn0B8JXZV
+         vp6L1hkJadXkxtk7/8enPw88oPpY7G/pMJ2xk+3lq8x3kn5iCdfEK4IkIySjmlEup1lX
+         /3lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
         bh=g1PcXUqejyZX+Nf8ZsiYkJ1LV449dfc/Wl/QD/0vsC8=;
-        b=fetMlMU2hSt56i1iPWcajnzDX0dXnJeZC6CqyxEVgDg2M1CNfLI2CxeDG6n/jCkP8Q
-         YtrvAMBKmy3hz5T73NshYdK92YYLQlVy/Juzd9Nch99UQ5y56e3oBi8l+YS3Og/dPghv
-         xZaShYVcUrSGAAW9ws1AQeYc3Ecgua3mmbtbqs1BlG3f38BdAGzD2ME5eik5I1uzceLH
-         W6giTEj/cjVdBgrbxEiLE9jWFjsIIM2xT4nwsG4GGxX45Xlo2OuCMVLtDIo+Vq7KxDxV
-         XHZo1LxfWJp0gqmRagMdVBlhU4Sne78hxPqO5dFdDxTdQZfVMAWU1slVFDP9jKzv1qpN
-         vVmA==
-X-Gm-Message-State: AOAM530BuIdfRmCtJ9kCDdHn9a9vpJwv5ZvDPCm8eVYXUem+HCe+G13h
-        DMUYf0s0Dvr4MpwWJiVzFKee5oUd5YSp8bAMq8ofIbaGqaU=
-X-Google-Smtp-Source: ABdhPJxRv82B+Z1TnK99wlgOqibExKdeOi3KcHYmqL+HFwaLhSzM+zt6v4BJ0EzyF4uXwwCvsgc+GRH5krC4vK87OhM=
-X-Received: by 2002:a17:906:76cf:: with SMTP id q15mr17130494ejn.141.1631690494667;
- Wed, 15 Sep 2021 00:21:34 -0700 (PDT)
+        b=UKr5JzAi1nMOREqnU8Ff0M63EI+OJL6PNFpMxLGNFxqM8Jx2PDjJ0I7ZtxALgEqLP+
+         JSPXGSeBaGwIG9htstcgTtEVkB3C7e9BWGJcV7XbZ8SsP3T9x+gPzomzzozIwyz4FJDc
+         OJJUN9ff1ITVehcYRkr/lO1YOtNFmv9x7Ds7eqjjDQWrg60B+06o88wHGCobjm0Bu0SB
+         38aZ8p/iFRObZ6qx55kPDhoe6QDSuzSviEfI3CcDBMAJPE1lfSuwYzCh32TV9BoF/4+O
+         mXLiD7ZKXA/RcI4qj9YerSxvuS+A1wPaPh7OrKaILC8WTvGmRdP7TbWZPkT/0J3OVYa3
+         tXmw==
+X-Gm-Message-State: AOAM531e/My3Ecl+luYwTdKj1nAJQNRLOPs0j46oRPUvlBO0EW2HskX6
+        ExO3RkFA3/KnKeKghpugFA7DH9i0ayEEMU5anL0X2yXoGsDGeA==
+X-Google-Smtp-Source: ABdhPJzV/CbzYkqm/r7gwG490FXEwPAQ3PFCPGAswJi2ycEMBMOwRCkfuIafJcMfkxttFvepOtiFsUa7GjiNQyWP4BY=
+X-Received: by 2002:a17:906:700f:: with SMTP id n15mr23407647ejj.319.1631690741343;
+ Wed, 15 Sep 2021 00:25:41 -0700 (PDT)
 MIME-Version: 1.0
 From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Wed, 15 Sep 2021 15:21:23 +0800
-Message-ID: <CAAM7YAkJxr8+g=kbtk8uU4BV4TAqriQ-_FqWfzJWzbpHkx+oLw@mail.gmail.com>
+Date:   Wed, 15 Sep 2021 15:25:29 +0800
+Message-ID: <CAAM7YA=ARpUBEB8SRJB4ixqtsoyDF8DyDeAWqWSK4e=JTybrPg@mail.gmail.com>
 Subject: CephFS optimizated for machine learning workload
-To:     ceph-devel <ceph-devel@vger.kernel.org>
+To:     dev <dev@ceph.io>, ceph-users <ceph-users@ceph.io>,
+        ceph-devel <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
