@@ -2,262 +2,186 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C81E40C664
-	for <lists+ceph-devel@lfdr.de>; Wed, 15 Sep 2021 15:27:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB29C40C7C6
+	for <lists+ceph-devel@lfdr.de>; Wed, 15 Sep 2021 16:58:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233737AbhION2T (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 15 Sep 2021 09:28:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37274 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233612AbhION2S (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 15 Sep 2021 09:28:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3904C61247;
-        Wed, 15 Sep 2021 13:26:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631712419;
-        bh=JqinzSvxFEOcqMrRbSmB935l22a2vBjFqpWuWEHBfWw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SgycvFKIXgsl2qm1pAxlbBVH6/RhS8mf/L48zkH7uuP4eW/RWR/4XjCwLVpICrEm8
-         NDEZTFBPs7vZkecTarZPLJjARNpLYmqXsp6+13umlVQrSWPQVcFsz0z/dnCmaBzqC/
-         Yj4gyhUvfhXi0qzb52Qa/iOhjBb3RJZCRi5yfGxv+XYubYsMmjD2e/WKX5A2UAUmSl
-         HwXor+Dt/vHLI3Q8/8tqtZlVJDYNYW6YnbhbrWb6yI0ekVYxpKXz32zq9HSpmPcyya
-         1ZFYL11PVhg0K3/sDcBZySHNrVxUzMbKKVJ3DgNsnATGutip5z1Aw9bU5Dx8+zZ25X
-         J3wXuyOrE/voA==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, mnelson@redhat.com
-Subject: [RFC PATCH 2/2] libceph: allow tasks to submit messages without taking con->mutex
-Date:   Wed, 15 Sep 2021 09:26:56 -0400
-Message-Id: <20210915132656.30347-3-jlayton@kernel.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210915132656.30347-1-jlayton@kernel.org>
-References: <20210915132656.30347-1-jlayton@kernel.org>
+        id S237783AbhIOO7m (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 15 Sep 2021 10:59:42 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33414 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232242AbhIOO7l (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 15 Sep 2021 10:59:41 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.0.43) with SMTP id 18FEUr3n028559;
+        Wed, 15 Sep 2021 10:57:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=XZCB86uPKuV/GzpbaX8+VV3hy7G2w+54Yd25UoQjYiA=;
+ b=p0hUCf/0qQPWDba9bizX/010a1RbKLZmp7dMoG7zsai0bIliEwc+zkgdLGOeV/5721JT
+ tZjWfCp0cgVzr2CxY9Ca3vzq6tDiuo2x9/gRQ/N+Jg625dNmKwXzhX+2em0gf3S0nRvi
+ /rkG2qsBFbyuYlCPWyWa1VMAgVFh6PaSPQik1D0qiS4sxkVECz/9gDB53mgW/5CdRPF7
+ GfBEiuvdp/zKvNOzQngxOvA1HH7h5EYwZE8ya7sYmaHzzPGqA12GJJBncZlSF+YzftOS
+ oyEoHdjXsJlbB9SWqwmnh3FYwYAqXnkU3wOw69hIcMZk3JWdcq9GGHDQO1T9iBOaiuqv kw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3b3jnc8t77-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Sep 2021 10:57:56 -0400
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 18FEVhPI002814;
+        Wed, 15 Sep 2021 10:57:55 -0400
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3b3jnc8t6c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Sep 2021 10:57:55 -0400
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 18FEqw1j024866;
+        Wed, 15 Sep 2021 14:57:53 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma04fra.de.ibm.com with ESMTP id 3b0m3a72ns-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Sep 2021 14:57:53 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 18FEvnm248824578
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Sep 2021 14:57:49 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AA8ECA405C;
+        Wed, 15 Sep 2021 14:57:49 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B0BD8A4054;
+        Wed, 15 Sep 2021 14:57:48 +0000 (GMT)
+Received: from [9.145.14.74] (unknown [9.145.14.74])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 15 Sep 2021 14:57:48 +0000 (GMT)
+Subject: Re: [PATCH 6/9] s390/block/dasd_genhd: add error handling support for
+ add_disk()
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     axboe@kernel.dk, gregkh@linuxfoundation.org,
+        chaitanya.kulkarni@wdc.com, atulgopinathan@gmail.com, hare@suse.de,
+        maximlevitsky@gmail.com, oakad@yahoo.com, ulf.hansson@linaro.org,
+        colin.king@canonical.com, shubhankarvk@gmail.com,
+        baijiaju1990@gmail.com, trix@redhat.com,
+        dongsheng.yang@easystack.cn, ceph-devel@vger.kernel.org,
+        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+        sth@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, oberpar@linux.ibm.com, tj@kernel.org,
+        linux-s390@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-mmc@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20210902174105.2418771-1-mcgrof@kernel.org>
+ <20210902174105.2418771-7-mcgrof@kernel.org>
+ <d6140e40-a472-e732-9893-99e1839b717e@linux.ibm.com>
+ <f24da7d5-0b67-fa24-862f-0b27a2ab502c@linux.ibm.com>
+ <YT+Bmvv3yXbuBddi@bombadil.infradead.org>
+From:   =?UTF-8?Q?Jan_H=c3=b6ppner?= <hoeppner@linux.ibm.com>
+Message-ID: <417cf368-6821-442b-0a14-006b27690591@linux.ibm.com>
+Date:   Wed, 15 Sep 2021 16:57:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
+In-Reply-To: <YT+Bmvv3yXbuBddi@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 9TnzlmD7Tr-lHTTUHflItAjPnDnMN64G
+X-Proofpoint-GUID: ehalCfQDBnMyMC6p5nCgsPYP3FossWSO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
+ definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ mlxlogscore=999 mlxscore=0 suspectscore=0 malwarescore=0 impostorscore=0
+ clxscore=1015 phishscore=0 bulkscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2109030001 definitions=main-2109150090
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Currently, the out_queue is protected by the con->mutex. ceph_con_send
-takes the mutex but just does some in-memory operations, followed by
-kicking the workqueue job to do the actual send. This means that while
-the workqueue job is operating, any task that wants to send a new
-message will end up blocked.
+On 13/09/2021 18:51, Luis Chamberlain wrote:
+> On Mon, Sep 13, 2021 at 02:19:38PM +0200, Jan Höppner wrote:
+>> On 13/09/2021 10:17, Jan Höppner wrote:
+>>> On 02/09/2021 19:41, Luis Chamberlain wrote:
+>>>> We never checked for errors on add_disk() as this function
+>>>> returned void. Now that this is fixed, use the shiny new
+>>>> error handling.
+>>>>
+>>>> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+>>>> ---
+>>>>  drivers/s390/block/dasd_genhd.c | 8 ++++++--
+>>>>  1 file changed, 6 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/s390/block/dasd_genhd.c b/drivers/s390/block/dasd_genhd.c
+>>>> index fa966e0db6ca..ba07022283bc 100644
+>>>> --- a/drivers/s390/block/dasd_genhd.c
+>>>> +++ b/drivers/s390/block/dasd_genhd.c
+>>>> @@ -33,7 +33,7 @@ int dasd_gendisk_alloc(struct dasd_block *block)
+>>>>  {
+>>>>  	struct gendisk *gdp;
+>>>>  	struct dasd_device *base;
+>>>> -	int len;
+>>>> +	int len, rc;
+>>>>  
+>>>>  	/* Make sure the minor for this device exists. */
+>>>>  	base = block->base;
+>>>> @@ -79,7 +79,11 @@ int dasd_gendisk_alloc(struct dasd_block *block)
+>>>>  	dasd_add_link_to_gendisk(gdp, base);
+>>>>  	block->gdp = gdp;
+>>>>  	set_capacity(block->gdp, 0);
+>>>> -	device_add_disk(&base->cdev->dev, block->gdp, NULL);
+>>>> +
+>>>> +	rc = device_add_disk(&base->cdev->dev, block->gdp, NULL);
+>>>> +	if (rc)
+>>>> +		return rc;
+>>>> +
+>>>
+>>> I think, just like with some of the other changes, there is some
+>>> cleanup required before returning. I'll prepare a patch and
+>>> come back to you.
+>>>
+>>
+>> It's actually just one call that is required. The patch should
+>> look like this:
+>>
+>> diff --git a/drivers/s390/block/dasd_genhd.c b/drivers/s390/block/dasd_genhd.c
+>> index fa966e0db6ca..80673dbfb1f9 100644
+>> --- a/drivers/s390/block/dasd_genhd.c
+>> +++ b/drivers/s390/block/dasd_genhd.c
+>> @@ -33,7 +33,7 @@ int dasd_gendisk_alloc(struct dasd_block *block)
+>>  {
+>>         struct gendisk *gdp;
+>>         struct dasd_device *base;
+>> -       int len;
+>> +       int len, rc;
+>>  
+>>         /* Make sure the minor for this device exists. */
+>>         base = block->base;
+>> @@ -79,7 +79,13 @@ int dasd_gendisk_alloc(struct dasd_block *block)
+>>         dasd_add_link_to_gendisk(gdp, base);
+>>         block->gdp = gdp;
+>>         set_capacity(block->gdp, 0);
+>> -       device_add_disk(&base->cdev->dev, block->gdp, NULL);
+>> +
+>> +       rc = device_add_disk(&base->cdev->dev, block->gdp, NULL);
+>> +       if (rc) {
+>> +               dasd_gendisk_free(block);
+>> +               return rc;
+>> +       }
+>> +
+> 
+> Thanks!
+> 
+> Would you like to to fold this fix into my patch and resend eventually?
+> Or will you send a replacement?
+> 
+>   Luis
+> 
 
-Given that none of ceph_con_send's operations aside from the mutex
-acquisition will block, we should be able to allow tasks to submit new
-messages under a spinlock rather than taking the mutex, which should
-reduce this contention and (hopefully) improve throughput for both
-cephfs and rbd in highly contended situations.
+I'd be fine with you just taking the changes for your patchset.
+Once you've resent the whole patchset I'll review it and send
+the usual ack or r-b.
 
-Add a new spinlock to protect the out_queue, and ensure we take it while
-holding the con->mutex when accessing the out_queue. Stop taking the
-con->mutex in ceph_con_send, and instead just take the spinlock around
-the list_add to the out_queue.
-
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- include/linux/ceph/messenger.h |  1 +
- net/ceph/messenger.c           | 16 +++++++++++-----
- net/ceph/messenger_v1.c        | 35 +++++++++++++++++-----------------
- net/ceph/messenger_v2.c        |  5 +++++
- 4 files changed, 35 insertions(+), 22 deletions(-)
-
-diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenger.h
-index 0a455b05f17e..155dd8a8e8ce 100644
---- a/include/linux/ceph/messenger.h
-+++ b/include/linux/ceph/messenger.h
-@@ -448,6 +448,7 @@ struct ceph_connection {
- 	struct mutex mutex;
- 
- 	/* out queue */
-+	spinlock_t out_queue_lock; /* protects out_queue */
- 	struct list_head out_queue;
- 	struct list_head out_sent;   /* sending or sent but unacked */
- 	u64 out_seq;		     /* last message queued for send */
-diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-index d14ff578cace..b539d3359ef4 100644
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -633,6 +633,7 @@ void ceph_con_init(struct ceph_connection *con, void *private,
- 	con_sock_state_init(con);
- 
- 	mutex_init(&con->mutex);
-+	spin_lock_init(&con->out_queue_lock);
- 	INIT_LIST_HEAD(&con->out_queue);
- 	INIT_LIST_HEAD(&con->out_sent);
- 	INIT_DELAYED_WORK(&con->work, ceph_con_workfn);
-@@ -691,6 +692,7 @@ void ceph_con_discard_requeued(struct ceph_connection *con, u64 reconnect_seq)
- 	u64 seq;
- 
- 	dout("%s con %p reconnect_seq %llu\n", __func__, con, reconnect_seq);
-+	spin_lock(&con->out_queue_lock);
- 	while (!list_empty(&con->out_queue)) {
- 		msg = list_first_entry(&con->out_queue, struct ceph_msg,
- 				       list_head);
-@@ -704,6 +706,7 @@ void ceph_con_discard_requeued(struct ceph_connection *con, u64 reconnect_seq)
- 		     msg, seq);
- 		ceph_msg_remove(msg);
- 	}
-+	spin_unlock(&con->out_queue_lock);
- }
- 
- #ifdef CONFIG_BLOCK
-@@ -1601,16 +1604,19 @@ static void con_fault(struct ceph_connection *con)
- 	}
- 
- 	/* Requeue anything that hasn't been acked */
-+	spin_lock(&con->out_queue_lock);
- 	list_splice_init(&con->out_sent, &con->out_queue);
- 
- 	/* If there are no messages queued or keepalive pending, place
- 	 * the connection in a STANDBY state */
- 	if (list_empty(&con->out_queue) &&
- 	    !ceph_con_flag_test(con, CEPH_CON_F_KEEPALIVE_PENDING)) {
-+		spin_unlock(&con->out_queue_lock);
- 		dout("fault %p setting STANDBY clearing WRITE_PENDING\n", con);
- 		ceph_con_flag_clear(con, CEPH_CON_F_WRITE_PENDING);
- 		con->state = CEPH_CON_S_STANDBY;
- 	} else {
-+		spin_unlock(&con->out_queue_lock);
- 		/* retry after a delay. */
- 		con->state = CEPH_CON_S_PREOPEN;
- 		if (!con->delay) {
-@@ -1691,19 +1697,18 @@ void ceph_con_send(struct ceph_connection *con, struct ceph_msg *msg)
- 	BUG_ON(msg->front.iov_len != le32_to_cpu(msg->hdr.front_len));
- 	msg->needs_out_seq = true;
- 
--	mutex_lock(&con->mutex);
--
--	if (con->state == CEPH_CON_S_CLOSED) {
-+	if (READ_ONCE(con->state) == CEPH_CON_S_CLOSED) {
- 		dout("con_send %p closed, dropping %p\n", con, msg);
- 		ceph_msg_put(msg);
--		mutex_unlock(&con->mutex);
- 		return;
- 	}
- 
- 	msg_con_set(msg, con);
- 
- 	BUG_ON(!list_empty(&msg->list_head));
-+	spin_lock(&con->out_queue_lock);
- 	list_add_tail(&msg->list_head, &con->out_queue);
-+	spin_unlock(&con->out_queue_lock);
- 	dout("----- %p to %s%lld %d=%s len %d+%d+%d -----\n", msg,
- 	     ENTITY_NAME(con->peer_name), le16_to_cpu(msg->hdr.type),
- 	     ceph_msg_type_name(le16_to_cpu(msg->hdr.type)),
-@@ -1712,7 +1717,6 @@ void ceph_con_send(struct ceph_connection *con, struct ceph_msg *msg)
- 	     le32_to_cpu(msg->hdr.data_len));
- 
- 	ceph_con_flag_set(con, CEPH_CON_F_CLEAR_STANDBY);
--	mutex_unlock(&con->mutex);
- 
- 	/* if there wasn't anything waiting to send before, queue
- 	 * new work */
-@@ -2058,6 +2062,8 @@ void ceph_con_get_out_msg(struct ceph_connection *con)
- {
- 	struct ceph_msg *msg;
- 
-+	lockdep_assert_held(&con->out_queue_lock);
-+
- 	BUG_ON(list_empty(&con->out_queue));
- 	msg = list_first_entry(&con->out_queue, struct ceph_msg, list_head);
- 	WARN_ON(msg->con != con);
-diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
-index 2cb5ffdf071a..db864be73b60 100644
---- a/net/ceph/messenger_v1.c
-+++ b/net/ceph/messenger_v1.c
-@@ -194,25 +194,9 @@ static void prepare_write_message_footer(struct ceph_connection *con)
-  */
- static void prepare_write_message(struct ceph_connection *con)
- {
--	struct ceph_msg *m;
-+	struct ceph_msg *m = con->out_msg;
- 	u32 crc;
- 
--	con_out_kvec_reset(con);
--	con->v1.out_msg_done = false;
--
--	/* Sneak an ack in there first?  If we can get it into the same
--	 * TCP packet that's a good thing. */
--	if (con->in_seq > con->in_seq_acked) {
--		con->in_seq_acked = con->in_seq;
--		con_out_kvec_add(con, sizeof (tag_ack), &tag_ack);
--		con->v1.out_temp_ack = cpu_to_le64(con->in_seq_acked);
--		con_out_kvec_add(con, sizeof(con->v1.out_temp_ack),
--			&con->v1.out_temp_ack);
--	}
--
--	ceph_con_get_out_msg(con);
--	m = con->out_msg;
--
- 	dout("prepare_write_message %p seq %lld type %d len %d+%d+%zd\n",
- 	     m, con->out_seq, le16_to_cpu(m->hdr.type),
- 	     le32_to_cpu(m->hdr.front_len), le32_to_cpu(m->hdr.middle_len),
-@@ -1427,10 +1411,27 @@ int ceph_con_v1_try_write(struct ceph_connection *con)
- 			goto more;
- 		}
- 		/* is anything else pending? */
-+		spin_lock(&con->out_queue_lock);
- 		if (!list_empty(&con->out_queue)) {
-+			con_out_kvec_reset(con);
-+			con->v1.out_msg_done = false;
-+
-+			/* Sneak an ack in there first?  If we can get it into the same
-+			 * TCP packet that's a good thing. */
-+			if (con->in_seq > con->in_seq_acked) {
-+				con->in_seq_acked = con->in_seq;
-+				con_out_kvec_add(con, sizeof (tag_ack), &tag_ack);
-+				con->v1.out_temp_ack = cpu_to_le64(con->in_seq_acked);
-+				con_out_kvec_add(con, sizeof(con->v1.out_temp_ack),
-+						 &con->v1.out_temp_ack);
-+			}
-+
-+			ceph_con_get_out_msg(con);
-+			spin_unlock(&con->out_queue_lock);
- 			prepare_write_message(con);
- 			goto more;
- 		}
-+		spin_unlock(&con->out_queue_lock);
- 		if (con->in_seq > con->in_seq_acked) {
- 			prepare_write_ack(con);
- 			goto more;
-diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-index cc40ce4e02fb..1a1c2c282120 100644
---- a/net/ceph/messenger_v2.c
-+++ b/net/ceph/messenger_v2.c
-@@ -3001,7 +3001,9 @@ static int populate_out_iter(struct ceph_connection *con)
- 	}
- 
- 	WARN_ON(con->v2.out_state != OUT_S_GET_NEXT);
-+	spin_lock(&con->out_queue_lock);
- 	if (ceph_con_flag_test_and_clear(con, CEPH_CON_F_KEEPALIVE_PENDING)) {
-+		spin_unlock(&con->out_queue_lock);
- 		ret = prepare_keepalive2(con);
- 		if (ret) {
- 			pr_err("prepare_keepalive2 failed: %d\n", ret);
-@@ -3009,18 +3011,21 @@ static int populate_out_iter(struct ceph_connection *con)
- 		}
- 	} else if (!list_empty(&con->out_queue)) {
- 		ceph_con_get_out_msg(con);
-+		spin_unlock(&con->out_queue_lock);
- 		ret = prepare_message(con);
- 		if (ret) {
- 			pr_err("prepare_message failed: %d\n", ret);
- 			return ret;
- 		}
- 	} else if (con->in_seq > con->in_seq_acked) {
-+		spin_unlock(&con->out_queue_lock);
- 		ret = prepare_ack(con);
- 		if (ret) {
- 			pr_err("prepare_ack failed: %d\n", ret);
- 			return ret;
- 		}
- 	} else {
-+		spin_unlock(&con->out_queue_lock);
- 		goto nothing_pending;
- 	}
- 
--- 
-2.31.1
-
+regards,
+Jan
