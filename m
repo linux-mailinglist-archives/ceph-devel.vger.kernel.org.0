@@ -2,186 +2,127 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB29C40C7C6
-	for <lists+ceph-devel@lfdr.de>; Wed, 15 Sep 2021 16:58:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6C6E40D235
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Sep 2021 06:06:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237783AbhIOO7m (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 15 Sep 2021 10:59:42 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33414 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232242AbhIOO7l (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 15 Sep 2021 10:59:41 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.0.43) with SMTP id 18FEUr3n028559;
-        Wed, 15 Sep 2021 10:57:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=XZCB86uPKuV/GzpbaX8+VV3hy7G2w+54Yd25UoQjYiA=;
- b=p0hUCf/0qQPWDba9bizX/010a1RbKLZmp7dMoG7zsai0bIliEwc+zkgdLGOeV/5721JT
- tZjWfCp0cgVzr2CxY9Ca3vzq6tDiuo2x9/gRQ/N+Jg625dNmKwXzhX+2em0gf3S0nRvi
- /rkG2qsBFbyuYlCPWyWa1VMAgVFh6PaSPQik1D0qiS4sxkVECz/9gDB53mgW/5CdRPF7
- GfBEiuvdp/zKvNOzQngxOvA1HH7h5EYwZE8ya7sYmaHzzPGqA12GJJBncZlSF+YzftOS
- oyEoHdjXsJlbB9SWqwmnh3FYwYAqXnkU3wOw69hIcMZk3JWdcq9GGHDQO1T9iBOaiuqv kw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3b3jnc8t77-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Sep 2021 10:57:56 -0400
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 18FEVhPI002814;
-        Wed, 15 Sep 2021 10:57:55 -0400
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3b3jnc8t6c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Sep 2021 10:57:55 -0400
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 18FEqw1j024866;
-        Wed, 15 Sep 2021 14:57:53 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma04fra.de.ibm.com with ESMTP id 3b0m3a72ns-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Sep 2021 14:57:53 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 18FEvnm248824578
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Sep 2021 14:57:49 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AA8ECA405C;
-        Wed, 15 Sep 2021 14:57:49 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B0BD8A4054;
-        Wed, 15 Sep 2021 14:57:48 +0000 (GMT)
-Received: from [9.145.14.74] (unknown [9.145.14.74])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 15 Sep 2021 14:57:48 +0000 (GMT)
-Subject: Re: [PATCH 6/9] s390/block/dasd_genhd: add error handling support for
- add_disk()
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     axboe@kernel.dk, gregkh@linuxfoundation.org,
-        chaitanya.kulkarni@wdc.com, atulgopinathan@gmail.com, hare@suse.de,
-        maximlevitsky@gmail.com, oakad@yahoo.com, ulf.hansson@linaro.org,
-        colin.king@canonical.com, shubhankarvk@gmail.com,
-        baijiaju1990@gmail.com, trix@redhat.com,
-        dongsheng.yang@easystack.cn, ceph-devel@vger.kernel.org,
-        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-        sth@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, oberpar@linux.ibm.com, tj@kernel.org,
-        linux-s390@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210902174105.2418771-1-mcgrof@kernel.org>
- <20210902174105.2418771-7-mcgrof@kernel.org>
- <d6140e40-a472-e732-9893-99e1839b717e@linux.ibm.com>
- <f24da7d5-0b67-fa24-862f-0b27a2ab502c@linux.ibm.com>
- <YT+Bmvv3yXbuBddi@bombadil.infradead.org>
-From:   =?UTF-8?Q?Jan_H=c3=b6ppner?= <hoeppner@linux.ibm.com>
-Message-ID: <417cf368-6821-442b-0a14-006b27690591@linux.ibm.com>
-Date:   Wed, 15 Sep 2021 16:57:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S229534AbhIPEHU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 16 Sep 2021 00:07:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46982 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229463AbhIPEHT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 Sep 2021 00:07:19 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8E15C061574
+        for <ceph-devel@vger.kernel.org>; Wed, 15 Sep 2021 21:05:59 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id h17so11541566edj.6
+        for <ceph-devel@vger.kernel.org>; Wed, 15 Sep 2021 21:05:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I2xJBJ5g4qxKJdadex4VrdcZ5Beao/K8rxEnlk1EEPU=;
+        b=M39WfhKUOXBGOBNiu7zxsA3fcaNQyS5chfaaptblA4LOmbYyFHUgVMplZ7fVcsO9+X
+         vc2KCjZGMXjmMLM2OT+io8OXj3Sf9Nr455ckzmt5dq15PAd7jKhBk37l7Q+g4a03vxv3
+         T3nnXYkHJQaCS/VNfcfN1jWNxtByDD4HFMudc5xNN5xNPZ9/6AW7tJPmQkFrn6s7tQW7
+         jSXIIqhHZURHD4yBtoyTUcJnLePTARdERFWdgxCVG2OlBQEBYzurjPSGLceI4+06z+eb
+         93cirA3tszyofsnHBEgRpHhTdiSWwDgxBnpqp14YL0Ho6xSgNjK18+xrkDCMDQ6BGEL5
+         6e6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I2xJBJ5g4qxKJdadex4VrdcZ5Beao/K8rxEnlk1EEPU=;
+        b=z7r7flxVik0k+C8nXDdmV8v4wQdBZ8Sk0Xi/P8AwxebNnYeBET85u05KGDwz+QBrfR
+         5mr9gaPjFALXYa9W0lVO6p6Y+4fBpekAVWEAnUpgRW4Moqqr4E5Od75Hreq5/U3YN2st
+         LeorZ66dhdCxLNNy4BmNFwm28vYyDLnUmeq2z+xhM4WrbrFhFmS982A9P8a8KoOYfTH+
+         pb1pu8GQj5HeApFQYjre+OoBV1qCuvIwu5ItbfRWc4LKckGnrWRdC7W8llNj7qNVUSSW
+         rtCSG0+K3FIy6JiIi29Pr9wtRG6qRvcpoIx/n5VUWzpBlX9TF4xcthIivxqxk/TGqce6
+         u67Q==
+X-Gm-Message-State: AOAM533Q1KHANpbZ/GnjvjWMwXk4eYUdKUsKmKOwuJzWPSQMNTrsEgRT
+        cqIz/BMGDaP2PNIHNvvmgOOpTsgxnWrGzEc4Euqc6/pTgqkXuQ==
+X-Google-Smtp-Source: ABdhPJyruLTW/XwQsroDFhNU/GFnG1ixfC/PMR3NgZJaoBMfhaOLHWuQ0Uow+dBcyozSYre/9tMfEmdTvGmbAe7uh3E=
+X-Received: by 2002:a05:6402:646:: with SMTP id u6mr3946053edx.127.1631765158188;
+ Wed, 15 Sep 2021 21:05:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YT+Bmvv3yXbuBddi@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 9TnzlmD7Tr-lHTTUHflItAjPnDnMN64G
-X-Proofpoint-GUID: ehalCfQDBnMyMC6p5nCgsPYP3FossWSO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
- definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- mlxlogscore=999 mlxscore=0 suspectscore=0 malwarescore=0 impostorscore=0
- clxscore=1015 phishscore=0 bulkscore=0 lowpriorityscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109030001 definitions=main-2109150090
+References: <CAAM7YAkJxr8+g=kbtk8uU4BV4TAqriQ-_FqWfzJWzbpHkx+oLw@mail.gmail.com>
+ <95d4b624-2114-832f-ed80-f7f0e7d35a3c@redhat.com>
+In-Reply-To: <95d4b624-2114-832f-ed80-f7f0e7d35a3c@redhat.com>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Thu, 16 Sep 2021 12:05:44 +0800
+Message-ID: <CAAM7YAm9DLgu0mCD=tFkQkDfmcm9bkdV7Dp_V8g_UZz19TPCXA@mail.gmail.com>
+Subject: Re: CephFS optimizated for machine learning workload
+To:     Mark Nelson <mnelson@redhat.com>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 13/09/2021 18:51, Luis Chamberlain wrote:
-> On Mon, Sep 13, 2021 at 02:19:38PM +0200, Jan Höppner wrote:
->> On 13/09/2021 10:17, Jan Höppner wrote:
->>> On 02/09/2021 19:41, Luis Chamberlain wrote:
->>>> We never checked for errors on add_disk() as this function
->>>> returned void. Now that this is fixed, use the shiny new
->>>> error handling.
->>>>
->>>> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
->>>> ---
->>>>  drivers/s390/block/dasd_genhd.c | 8 ++++++--
->>>>  1 file changed, 6 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/s390/block/dasd_genhd.c b/drivers/s390/block/dasd_genhd.c
->>>> index fa966e0db6ca..ba07022283bc 100644
->>>> --- a/drivers/s390/block/dasd_genhd.c
->>>> +++ b/drivers/s390/block/dasd_genhd.c
->>>> @@ -33,7 +33,7 @@ int dasd_gendisk_alloc(struct dasd_block *block)
->>>>  {
->>>>  	struct gendisk *gdp;
->>>>  	struct dasd_device *base;
->>>> -	int len;
->>>> +	int len, rc;
->>>>  
->>>>  	/* Make sure the minor for this device exists. */
->>>>  	base = block->base;
->>>> @@ -79,7 +79,11 @@ int dasd_gendisk_alloc(struct dasd_block *block)
->>>>  	dasd_add_link_to_gendisk(gdp, base);
->>>>  	block->gdp = gdp;
->>>>  	set_capacity(block->gdp, 0);
->>>> -	device_add_disk(&base->cdev->dev, block->gdp, NULL);
->>>> +
->>>> +	rc = device_add_disk(&base->cdev->dev, block->gdp, NULL);
->>>> +	if (rc)
->>>> +		return rc;
->>>> +
->>>
->>> I think, just like with some of the other changes, there is some
->>> cleanup required before returning. I'll prepare a patch and
->>> come back to you.
->>>
->>
->> It's actually just one call that is required. The patch should
->> look like this:
->>
->> diff --git a/drivers/s390/block/dasd_genhd.c b/drivers/s390/block/dasd_genhd.c
->> index fa966e0db6ca..80673dbfb1f9 100644
->> --- a/drivers/s390/block/dasd_genhd.c
->> +++ b/drivers/s390/block/dasd_genhd.c
->> @@ -33,7 +33,7 @@ int dasd_gendisk_alloc(struct dasd_block *block)
->>  {
->>         struct gendisk *gdp;
->>         struct dasd_device *base;
->> -       int len;
->> +       int len, rc;
->>  
->>         /* Make sure the minor for this device exists. */
->>         base = block->base;
->> @@ -79,7 +79,13 @@ int dasd_gendisk_alloc(struct dasd_block *block)
->>         dasd_add_link_to_gendisk(gdp, base);
->>         block->gdp = gdp;
->>         set_capacity(block->gdp, 0);
->> -       device_add_disk(&base->cdev->dev, block->gdp, NULL);
->> +
->> +       rc = device_add_disk(&base->cdev->dev, block->gdp, NULL);
->> +       if (rc) {
->> +               dasd_gendisk_free(block);
->> +               return rc;
->> +       }
->> +
-> 
-> Thanks!
-> 
-> Would you like to to fold this fix into my patch and resend eventually?
-> Or will you send a replacement?
-> 
->   Luis
-> 
+On Wed, Sep 15, 2021 at 8:36 PM Mark Nelson <mnelson@redhat.com> wrote:
+>
+> Hi Zheng,
+>
+>
+> This looks great!  Have you noticed any slow performance during
+> directory splitting?  One of the things I was playing around with last
+> year was pre-fragmenting directories based on a user supplied hint that
+> the directory would be big (falling back to normal behavior if it grows
+> beyond the hint size).  That way you can create the dirfrags upfront and
+> do the migration before they ever have any associated files.  Do you
+> think that might be worth trying again given your PRs below?
+>
 
-I'd be fine with you just taking the changes for your patchset.
-Once you've resent the whole patchset I'll review it and send
-the usual ack or r-b.
+These PRs do not change directory splitting logic. It's unlikely they
+will improve performance number of mdtest hard test.  But these PRs
+remove overhead of journaling  subtreemap and distribute metadata more
+evenly.  They should improve performance number of mdtest easy test.
+So I think it's worth a retest.
 
-regards,
-Jan
+Yan, Zheng
+
+>
+> Mark
+>
+>
+> On 9/15/21 2:21 AM, Yan, Zheng wrote:
+> > Following PRs are optimization we (Kuaishou) made for machine learning
+> > workloads (randomly read billions of small files) .
+> >
+> > [1] https://github.com/ceph/ceph/pull/39315
+> > [2] https://github.com/ceph/ceph/pull/43126
+> > [3] https://github.com/ceph/ceph/pull/43125
+> >
+> > The first PR adds an option that disables dirfrag prefetch. When files
+> > are accessed randomly, dirfrag prefetch adds lots of useless files to
+> > cache and causes cache thrash. Performance of MDS can be dropped below
+> > 100 RPS. When dirfrag prefetch is disabled, MDS sends a getomapval
+> > request to rados for cache missed lookup.  Single mds can handle about
+> > 6k cache missed lookup requests per second (all ssd metadata pool).
+> >
+> > The second PR optimizes MDS performance for a large number of clients
+> > and a large number of read-only opened files. It also can greatly
+> > reduce mds recovery time for read-mostly wordload.
+> >
+> > The third PR makes MDS cluster randomly distribute all dirfrags.  MDS
+> > uses consistent hash to calculate target rank for each dirfrag.
+> > Compared to dynamic balancer and subtree pin, metadata can be
+> > distributed among MDSs more evenly. Besides, MDS only migrates single
+> > dirfrag (instead of big subtree) for load balancing. So MDS has
+> > shorter pause when doing metadata migration.  The drawbacks of this
+> > change are:  stat(2) directory can be slow; rename(2) file to
+> > different directory can be slow. The reason is, with random dirfrag
+> > distribution, these operations likely involve multiple MDS.
+> >
+> > Above three PRs are all merged into an integration branch
+> > https://github.com/ukernel/ceph/tree/wip-mds-integration.
+> >
+> > We (Kuaishou) have run these codes for months, 16 active MDS cluster
+> > serve billions of small files. In file random read test, single MDS
+> > can handle about 6k ops,  performance increases linearly with the
+> > number of active MDS.  In file creation test (mpirun -np 160 -host
+> > xxx:160 mdtest -F -L -w 4096 -z 2 -b 10 -I 200 -u -d ...), 16 active
+> > MDS can serve over 100k file creation per second.
+> >
+> > Yan, Zheng
+> >
+>
