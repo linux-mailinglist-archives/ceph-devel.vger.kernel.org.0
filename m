@@ -2,207 +2,282 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 47BA9411513
-	for <lists+ceph-devel@lfdr.de>; Mon, 20 Sep 2021 14:55:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D09AB41171B
+	for <lists+ceph-devel@lfdr.de>; Mon, 20 Sep 2021 16:32:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236325AbhITM5G (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 20 Sep 2021 08:57:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:30450 "EHLO
+        id S237073AbhITOds (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 20 Sep 2021 10:33:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:26953 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238755AbhITM5F (ORCPT
+        by vger.kernel.org with ESMTP id S237218AbhITOdq (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 20 Sep 2021 08:57:05 -0400
+        Mon, 20 Sep 2021 10:33:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1632142534;
+        s=mimecast20190719; t=1632148339;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=2pfCQSUTEHtxvGUE7L+msEadtTL5UoS3j8kSdpaAr2M=;
-        b=O2B5G1kr+d860mSLzxlNOSKoR6jyNQwdJRl4aMKW3seW+CN08TJdpib03rF3qSSiPYQqxr
-        KtAIwlwSaxSwHHmpY5EAeyCAwlxAtt02GesSdf3p370vNuhqiUJNPn+rArczHsifOEbWZa
-        Gr0idIlv78hX4CqOTlIqBUZEqR31qZo=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-46--vHR_4xmOOiC_Nt3vFpMqQ-1; Mon, 20 Sep 2021 08:55:33 -0400
-X-MC-Unique: -vHR_4xmOOiC_Nt3vFpMqQ-1
-Received: by mail-ed1-f71.google.com with SMTP id h24-20020a50cdd8000000b003d8005fe2f8so11451408edj.6
-        for <ceph-devel@vger.kernel.org>; Mon, 20 Sep 2021 05:55:33 -0700 (PDT)
+        bh=F52ubOrJkCN8PcDbKeG4EQevmrLAxr+H9gLlwkWJld0=;
+        b=HHEsDTgSuRKG94U/c2BKaRKUSY/rXqPyy1saJ1p5xyg0aVwIvvj/4D/NIdtVosEmjuuiaX
+        tvXAZQTQYzPViqUSFsJwid3Sb69l5LgLU2zmZIJjOU1pC8h6SQGRmgnpgZ/3PyEPudEAL/
+        tTZfldF8dLEAZz+j3Xq6POh4pZ38cWQ=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-504-mcqX6M6nPaadrYhHZSle6w-1; Mon, 20 Sep 2021 10:32:18 -0400
+X-MC-Unique: mcqX6M6nPaadrYhHZSle6w-1
+Received: by mail-pf1-f198.google.com with SMTP id v206-20020a627ad7000000b0043e010e5392so13187600pfc.1
+        for <ceph-devel@vger.kernel.org>; Mon, 20 Sep 2021 07:32:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2pfCQSUTEHtxvGUE7L+msEadtTL5UoS3j8kSdpaAr2M=;
-        b=yUqZELOMARyjl/d36tC51WID0swlHfDCeGThrgT7IEMoD1w8DZWclDbOYy7Ox3gsSL
-         c+W52EtY164MbU/2r/Z0kMmpZhpGSSvaP3oUsvU+KGtHhHE14eUJ6FqQnHJNY0FGims5
-         7Bkb1bzjvlSFddTbPxfSlX55ff+lJmhHQvInjuEyw3CKuf1Ncj6CXqN0CcLnOKhOxu4j
-         wCufVtSh9Z0IZPwuxgR7fuVxEGZ9bVpABcvGgnCBIkVpN4mgU6u9+m/35AdJVJ4knzrQ
-         CxPVRyoaIMdLZDRy0Q/sO+rgmhVfliCUd5cVA+YhKzL0zbkDVeTAqt4OYmR7rMOSwHsR
-         a82A==
-X-Gm-Message-State: AOAM531uiLlQh0GzWSL2i+HE0sqLCRSy5ldDc/L622CGYyCKGHlbkh87
-        IJiYFQjtGm8C+G618rJQyWMMYpNggIzAyubcv3pj5xgu7Mvj5ItBTVrly1DrxPKRbJPvxacLxK0
-        oq9zs9Glm/AKagciDyS3gQyhxyrfK2xxi46vVDQ==
-X-Received: by 2002:a05:6402:897:: with SMTP id e23mr29275320edy.366.1632142532341;
-        Mon, 20 Sep 2021 05:55:32 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzlDFvRn78rkRZA594LdXUAWQmcz2jxyF/fehBHkaHwnv53x2WQ0in/WyUSP9JJllei7jnYtq334xLMF93TdIE=
-X-Received: by 2002:a05:6402:897:: with SMTP id e23mr29275298edy.366.1632142532147;
- Mon, 20 Sep 2021 05:55:32 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=F52ubOrJkCN8PcDbKeG4EQevmrLAxr+H9gLlwkWJld0=;
+        b=3UWNXylBP+00MAoTOOgrTeHMA/NVuT68uFTzSXvEnYil5xgnWB30lSvF2uhIOAfMKi
+         OOGOGHV7H7PKYCGdRcPPitBWQgyiI2JCa5JjKm/JT0QOPlMdySZuZCHlXbCcKws4zUOx
+         6U9vjslHLwdFFkCujukb4jqY2qeLbFenKIM6fhIkD6ah1JgUBQ8LKNeqJIJMtlbD5a/6
+         nYNjCvE5aa1jLxOWCVMIevARliO4PDaISdVAOY4PKFJ/K0hyEIXcFJ0k90VqqzCrC6ae
+         YA4ppzhFPHBD3rh5/V11nghT1mNxpnR+gGPcZpN3vpgnBTjI8zfz1pKICM5/O7VX2HOf
+         5dZg==
+X-Gm-Message-State: AOAM530whI5HTt3W+lyjr9imk2MwtfftXCahfGxwXXoYL2KN5jhbUS2p
+        eEC68UUax/UMcO/KdLu6uyl1DuiSEAVKMoWuBGqz92lFUPk9DYBIs4WSrSufwRyJEH8D4DYcjdS
+        JmWTF5yfNUYcfsiNcaWr9RQ3OTooOYoA5T8vdlBf2P/l/D2BWndm9ILCuw1329rgNUlF8IgQ=
+X-Received: by 2002:a17:90a:19d2:: with SMTP id 18mr20206294pjj.27.1632148336846;
+        Mon, 20 Sep 2021 07:32:16 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJymzogVcWcI792jtzxYXcUrWuqS1PtbgAOBGyukkF9OzEt8wdu6Jb+C5V4GQL7oLjky8UJb8A==
+X-Received: by 2002:a17:90a:19d2:: with SMTP id 18mr20206235pjj.27.1632148336269;
+        Mon, 20 Sep 2021 07:32:16 -0700 (PDT)
+Received: from [10.72.13.171] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id d3sm16135478pga.7.2021.09.20.07.32.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Sep 2021 07:32:15 -0700 (PDT)
+Subject: Re: [PATCH RFC 2/2] ceph: truncate the file contents when needed when
+ file scrypted
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     idryomov@gmail.com, ukernel@gmail.com, pdonnell@redhat.com,
+        "open list:CEPH DISTRIBUTED..." <ceph-devel@vger.kernel.org>
+References: <20210903081510.982827-1-xiubli@redhat.com>
+ <20210903081510.982827-3-xiubli@redhat.com>
+ <34538b56f366596fa96a8da8bf1a60f1c1257367.camel@kernel.org>
+ <19fac1bf-804c-1577-7aa8-9dcfa52418f9@redhat.com>
+ <e97616fc4f8f090f73a39f56de2ece7ed26fbd65.camel@kernel.org>
+ <fabbaeae-d63e-a2e2-0717-47afea66f82f@redhat.com>
+ <64c8d4daf2bfd9d20dd55ea1b29af7b7f690407d.camel@kernel.org>
+ <cadc9f02-d52e-b1fc-1752-20dd6eb1d1c4@redhat.com>
+ <90b25a04fb50b42559f1e153dd4b96df54a58c03.camel@kernel.org>
+ <5f33583a-8060-1f0f-d200-abfbd1705ba1@redhat.com>
+ <7eb2a71e54cb246a8ce1bea642bbdbd2581122f8.camel@kernel.org>
+ <747cf4f4-0048-df9d-c38f-2ab284851320@redhat.com>
+ <27b119711a065a2441337298fada3d941c30932a.camel@kernel.org>
+ <3b2878f8-9655-b4a0-c6bd-3cf61eaffb13@redhat.com>
+ <092f6a9ab8396b53f1f9e7af51e40563a2ea06d2.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <6d84f34d-28d4-1b82-3c70-1209bea37ddf@redhat.com>
+Date:   Mon, 20 Sep 2021 22:32:08 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-References: <163162767601.438332.9017034724960075707.stgit@warthog.procyon.org.uk>
- <CALF+zO=VHPzcp0A0KxpYW-0WnyxvM5gW5HmorzrMJ_arxxBchA@mail.gmail.com>
-In-Reply-To: <CALF+zO=VHPzcp0A0KxpYW-0WnyxvM5gW5HmorzrMJ_arxxBchA@mail.gmail.com>
-From:   David Wysochanski <dwysocha@redhat.com>
-Date:   Mon, 20 Sep 2021 08:54:56 -0400
-Message-ID: <CALF+zOkz8M_uwJRK_q=TVANrF=0=W2WAbL2Y-JBDrq2ZuRpcDg@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/8] fscache: Replace and remove old I/O API
-To:     David Howells <dhowells@redhat.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        linux-cachefs <linux-cachefs@redhat.com>,
-        linux-cifs <linux-cifs@vger.kernel.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <092f6a9ab8396b53f1f9e7af51e40563a2ea06d2.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Sep 14, 2021 at 11:30 AM David Wysochanski <dwysocha@redhat.com> wrote:
+
+On 9/18/21 1:19 AM, Jeff Layton wrote:
+> On Thu, 2021-09-16 at 18:02 +0800, Xiubo Li wrote:
+>> On 9/14/21 10:24 PM, Jeff Layton wrote:
+>>> On Tue, 2021-09-14 at 13:40 +0800, Xiubo Li wrote:
+>>>> On 9/14/21 3:34 AM, Jeff Layton wrote:
+>>>>
+>>>> [...]
+>>>>
+>>>>> I'll have to think about whether that's still racy. Part of the problem
+>>>>>>>>> is that once the client doesn't have caps, it doesn't have a way to
+>>>>>>>>> ensure that fscrypt_file (whatever it holds) doesn't change while it's
+>>>>>>>>> doing that zeroing.
+>>>>>>>> As my understanding, if clientA want to read a file, it will open it
+>>>>>>>> with RD mode, then it will get the fscrypt_file meta and "Fr" caps, then
+>>>>>>>> it can safely read the file contents and do the zeroing for that block.
+>>>>>>> Ok, so in this case, the client is just zeroing out the appropriate
+>>>>>>> region in the resulting read data, and not on the OSD. That should be
+>>>>>>> ok.
+>>>>>>>
+>>>>>>>> Then the opened file shouldn't worry whether the fscrypt_file will be
+>>>>>>>> changed by others during it still holding the Fr caps, because if the
+>>>>>>>> clientB wants to update the fscrypt_file it must acquire the Fw caps
+>>>>>>>> first, before that the Fr caps must be revoked from clientA and at the
+>>>>>>>> same time the read pagecache in clientA will be invalidated.
+>>>>>>>>
+>>>>>>> Are you certain that Fw caps is enough to ensure that no other client
+>>>>>>> holds Fr caps?
+>>>>>> I spent hours and went through the mds Locker related code on the weekends.
+>>>>>>
+>>>>>>     From the mds/lock.cc code, for mds filelock for example in the LOCK_MIX
+>>>>>> state and some interim transition states to LOCK_MIX it will allow
+>>>>>> different clients could hold any of Fw or Fr caps. But the Fb/Fc will be
+>>>>>> disabled. Checked the mds/Locker.cc code, found that the mds filelock
+>>>>>> could to switch LOCK_MIX state in some cases when there has one client
+>>>>>> wants Fw and another client wants any of Fr and Fw.
+>>>>>>
+>>>>>> In this case I think the Linux advisory or mandatory locks are necessary
+>>>>>> to keep the file contents concurrency. In multiple processes' concurrent
+>>>>>> read/write or write/write cases without the Linux advisory/mandatory
+>>>>>> locks the file contents' concurrency won't be guaranteed, so the logic
+>>>>>> is the same here ?
+>>>>>>
+>>>>>> If so, couldn't we just assume the Fw vs Fw and Fr vs Fw caps should be
+>>>>>> exclusive in correct use case ? For example, just after the mds filelock
+>>>>>> state switches to LOCK_MIX, if clientA gets the advisory file lock and
+>>>>>> the Fw caps, and even another clientB could be successfully issued the
+>>>>>> Fr caps, the clientB won't do any read because it should be still stuck
+>>>>>> and be waiting for the advisory file lock.
+>>>>>>
+>>>>> I'm not sure I like that idea. Basically, that would change the meaning
+>>>>> of the what Frw caps represent, in a way that is not really consistent
+>>>>> with how they have been used before.
+>>>>>
+>>>>> We could gate that new behavior on the new feature flags, but it sounds
+>>>>> pretty tough.
+>>>>>
+>>>>> I think we have a couple of options:
+>>>>>
+>>>>> 1) we could just make the clients request and wait on Fx caps when they
+>>>>> do a truncate. They might stall for a bit if there is contention, but it
+>>>>> would ensure consistency and the client could be completely in charge of
+>>>>> the truncate. [a]
+>>>> Yeah, for my defer RMW approach we need to held the Fx caps every time
+>>>> when writing/truncating files, and the Fs caps every time when reading.
+>>>>
+>>>> While currently almost all the read/write code have ignored them because
+>>>> read/write do not need them in most cases.
+>>>>
+>>> Note that we already cache truncate operations when we have Fx.
+>> Yeah, only when we have Fx and the attr.ia_size > isize will it cache
+>> the truncate operation.
+>>
+>> For this I am a little curious why couldn't we cache truncate operations
+>> when attr.ia_size >= isize ?
+>>
+> It seems to me that if attr.ia_size == i_size, then there is nothing to
+> change. We can just optimize that case away, assuming the client has
+> caps that ensure the size is correct.
+
+ From MDS side I didn't find any limitation why couldn't we optimize it.
+
+
 >
-> On Tue, Sep 14, 2021 at 9:55 AM David Howells <dhowells@redhat.com> wrote:
-> >
-> >
-> > Here's a set of patches that removes the old fscache I/O API by the following
-> > means:
-> >
-> >  (1) A simple fallback API is added that can read or write a single page
-> >      synchronously.  The functions for this have "deprecated" in their names
-> >      as they have to be removed at some point.
-> >
-> >  (2) An implementation of this is provided in cachefiles.  It creates a kiocb
-> >      to use DIO to the backing file rather than calling readpage on the
-> >      backing filesystem page and then snooping the page wait queue.
-> >
-> >  (3) NFS is switched to use the fallback API.
-> >
-> >  (4) CIFS is switched to use the fallback API also for the moment.
-> >
-> >  (5) 9P is switched to using netfslib.
-> >
-> >  (6) The old I/O API is removed from fscache and the page snooping
-> >      implementation is removed from cachefiles.
-> >
-> > The reasons for doing this are:
-> >
-> >  (A) Using a kiocb to do asynchronous DIO from/to the pages of the backing
-> >      file is now a possibility that didn't exist when cachefiles was created.
-> >      This is much simpler than the snooping mechanism with a proper callback
-> >      path and it also requires fewer copies and less memory.
-> >
-> >  (B) We have to stop using bmap() or SEEK_DATA/SEEK_HOLE to work out what
-> >      blocks are present in the backing file is dangerous and can lead to data
-> >      corruption if the backing filesystem can insert or remove blocks of zeros
-> >      arbitrarily in order to optimise its extent list[1].
-> >
-> >      Whilst this patchset doesn't fix that yet, it does simplify the code and
-> >      the fix for that can be made in a subsequent patchset.
-> >
-> >  (C) In order to fix (B), the cache will need to keep track itself of what
-> >      data is present.  To make this easier to manage, the intention is to
-> >      increase the cache block granularity to, say, 256KiB - importantly, a
-> >      size that will span multiple pages - which means the single-page
-> >      interface will have to go away.  netfslib is designed to deal with
-> >      that on behalf of a filesystem, though a filesystem could use raw
-> >      cache calls instead and manage things itself.
-> >
-> > These patches can be found also on:
-> >
-> >         https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-iter-3
-> >
-> > David
-> >
-> > Link: https://lore.kernel.org/r/YO17ZNOcq+9PajfQ@mit.edu [1]
-> > ---
-> > David Howells (8):
-> >       fscache: Generalise the ->begin_read_operation method
-> >       fscache: Implement an alternate I/O interface to replace the old API
-> >       nfs: Move to using the alternate (deprecated) fscache I/O API
-> >       9p: (untested) Convert to using the netfs helper lib to do reads and caching
-> >       cifs: (untested) Move to using the alternate (deprecated) fscache I/O API
-> >       fscache: Remove the old I/O API
-> >       fscache: Remove stats that are no longer used
-> >       fscache: Update the documentation to reflect I/O API changes
-> >
-> >
-> >  .../filesystems/caching/backend-api.rst       |  138 +--
-> >  .../filesystems/caching/netfs-api.rst         |  386 +-----
-> >  fs/9p/Kconfig                                 |    1 +
-> >  fs/9p/cache.c                                 |  137 ---
-> >  fs/9p/cache.h                                 |   98 +-
-> >  fs/9p/v9fs.h                                  |    9 +
-> >  fs/9p/vfs_addr.c                              |  174 ++-
-> >  fs/9p/vfs_file.c                              |   21 +-
-> >  fs/cachefiles/Makefile                        |    1 -
-> >  fs/cachefiles/interface.c                     |   15 -
-> >  fs/cachefiles/internal.h                      |   38 -
-> >  fs/cachefiles/io.c                            |   28 +-
-> >  fs/cachefiles/main.c                          |    1 -
-> >  fs/cachefiles/rdwr.c                          |  972 ---------------
-> >  fs/cifs/file.c                                |   64 +-
-> >  fs/cifs/fscache.c                             |  105 +-
-> >  fs/cifs/fscache.h                             |   74 +-
-> >  fs/fscache/cache.c                            |    6 -
-> >  fs/fscache/cookie.c                           |   10 -
-> >  fs/fscache/internal.h                         |   58 +-
-> >  fs/fscache/io.c                               |  140 ++-
-> >  fs/fscache/object.c                           |    2 -
-> >  fs/fscache/page.c                             | 1066 -----------------
-> >  fs/fscache/stats.c                            |   73 +-
-> >  fs/nfs/file.c                                 |   14 +-
-> >  fs/nfs/fscache-index.c                        |   26 -
-> >  fs/nfs/fscache.c                              |  161 +--
-> >  fs/nfs/fscache.h                              |   84 +-
-> >  fs/nfs/read.c                                 |   25 +-
-> >  fs/nfs/write.c                                |    7 +-
-> >  include/linux/fscache-cache.h                 |  131 --
-> >  include/linux/fscache.h                       |  418 ++-----
-> >  include/linux/netfs.h                         |   17 +-
-> >  33 files changed, 508 insertions(+), 3992 deletions(-)
-> >  delete mode 100644 fs/cachefiles/rdwr.c
-> >
-> >
->
-> I tested an earlier version of these with NFS, which identified a
-> couple issues which you fixed.  Last I checked my unit tests and
-> xfstests were looking good. I'll do some testing on this latest branch
-> / patches and report back.
+> Based on the kclient code, for size changes after a write that extends a
+> file, it seems like Fw is sufficient to allow the client to buffer these
+> things.
 
-For the series, you can add
-Tested-by: Dave Wysochanski <dwysocha@redhat.com>
+Since the MDS will only allow us to increase the file size, just like 
+the mtime/ctime/atime, so even the write size has exceed current file 
+size, the Fw is sufficient.
 
-Testing was limited to NFS enabled code paths.  I ran custom unit
-tests, as well as a series of xfstest generic runs with various NFS
-versions, both fscache enabled and not enabled, as well as various NFS
-servers, comparing 5.15.0-rc1 runs vs runs with these patches.  I did
-not see any failures with these new patches that were not already
-present with 5.15.0-rc1.
 
-Here are the list of xfstest generic runs:
-1. Hammerspace (pNFS flexfiles) version 4.6.3-166: vers=4.1,fsc
-2. Hammerspace (pNFS flexfiles) version 4.6.3-166: vers=4.2
-3. Netapp (pNFS filelayout) version 9.5RC1: vers=4.1
-4. Netapp (pNFS filelayout) version 9.5RC1: vers=4.1,fsc
-5. Red Hat version 8.2 (kernel-4.18.0-193.el8): vers=4.2,fsc
-6. Red Hat version 8.2 (kernel-4.18.0-193.el8): vers=4.0,fsc
-7. Red Hat version 8.2 (kernel-4.18.0-193.el8): vers=3,fsc
+>   For a truncate (aka setattr) operation, we apparently need Fx.
+
+In case one client is truncating the file, if the new size is larger 
+than or equal to current size, this should be okay and will behave just 
+like normal write case above.
+
+If the new size is smaller, the MDS will handle this in a different way. 
+When the MDS received the truncate request, it will first xlock the 
+filelock, which will switch the filelock state and in all these possible 
+interim or stable states, the Fw caps will be revoked from all the 
+clients, but the clients still could cache/buffer the file contents, 
+that means no client is allowed to change the size during the truncate 
+operation is on the way. After the truncate succeeds the MDS Locker will 
+issue_truncate() to all the clients and the clients will truncate the 
+caches/buffers, etc.
+
+And also the truncate operations will always be queued sequentially.
+
+
+> It sort of makes sense, but the more I look over the existing code, the
+> less sure I am about how this is intended to work. I think before we
+> make any changes for fscrypt, we need to make sure we understand what's
+> there now.
+
+So if my understanding is correct, the Fx is not a must for the truncate 
+operation.
+
+I will check more about this later.
+
+BRs
+
+-- Xiubo
+
+>>>    See
+>>> __ceph_setattr. Do we even need to change the read path here, or is the
+>>> existing code just wrong?
+>>>
+>>> This is info I've been trying to get a handle on since I started working
+>>> on cephfs. The rules for FILE caps are still extremely unclear.
+>> I am still check this logic from MDS side. Still not very clear.
+>>
+>>
+>> [...]
+>>>>> 2) we could rev the protocol, and have the client send along the last
+>>>>> block to be written along with the SETATTR request. Maybe we even
+>>>>> consider just adding a new TRUNCATE call independent of SETATTR. The MDS
+>>>>> would remain in complete control of it at that point.
+>>>> This approach seems much better, since the last block size will always
+>>>> less than or equal to 4K(CEPH_FSCRYPT_BLOCK_SIZE) and the truncate
+>>>> should be rare in normal use cases (?), with extra ~4K data in the
+>>>> SETATTR should be okay when truncating the file.
+>>>>
+>>>> So when truncating a file, in kclient it should read that block, which
+>>>> needs to do the RMW, first, and then do the truncate locally and encrypt
+>>>> it again, and then together with SETATTR request send it to MDS. And the
+>>>> MDS will update that block just before truncating the file.
+>>>>
+>>>> This approach could also keep the fscrypt logic being opaque for the MDS.
+>>>>
+>>>>
+>>> Note that you'll need to guard against races on the RMW. For instance,
+>>> another client could issue a write to that last block just after we do
+>>> the read for the rmw.
+>>>
+>>> If you do this, then you'll probably need to send along the object
+>>> version that you got from the read and have the MDS validate that before
+>>> it does the truncate and writes out the updated crypto block.
+>>>
+>>> If something changed in the interim, the MDS can just return -EAGAIN or
+>>> whatever to the client and it can re-do the whole thing. It's a mess,
+>>> but it should be consistent.
+>>>
+>>> I think we probably want a new call for this too instead of overloading
+>>> SETATTR (which is already extremely messy).
+>> Okay, I will check this more carefully.
+>>
+>>
+>>>>> The other ideas I've considered seem more complex and don't offer any
+>>>>> significant advantages that I can see.
+>>>>>
+>>>>> [a]: Side question: why does buffering a truncate require Fx and not Fb?
+>>>>> How do Fx and Fb interact?
+>>>> For my defer RMW approach we need the Fx caps every time when writing
+>>>> the file, and the Fw caps is the 'need' caps for write, while the Fb is
+>>>> the 'want' caps. If the Fb caps is not allowed or issued by the MDS, it
+>>>> will write-through data to the osd, after that the Fxw could be safely
+>>>> released. If the client gets the Fb caps, the client must also hold the
+>>>> Fx caps until the buffer has been writen back.
+>>>>
+>>> The problem there is that will effectively serialize all writers of a
+>>> file -- even ones that are writing to completely different backend
+>>> objects.
+>>>
+>>> That will almost certainly regress performance. I think we want to try
+>>> to avoid that. I'd rather that truncate be extremely slow and expensive
+>>> than slow down writes.
+>> Agree.
+>>
+>> Thanks.
+>>
+>>
 
