@@ -2,158 +2,103 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B4F6413252
-	for <lists+ceph-devel@lfdr.de>; Tue, 21 Sep 2021 13:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B8DD4133C0
+	for <lists+ceph-devel@lfdr.de>; Tue, 21 Sep 2021 15:08:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232343AbhIULRN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 21 Sep 2021 07:17:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48060 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231956AbhIULRN (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 21 Sep 2021 07:17:13 -0400
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68BA4C061574;
-        Tue, 21 Sep 2021 04:15:44 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id B3B01C020; Tue, 21 Sep 2021 13:15:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1632222942; bh=YyXbeloQrhrw5B3tSpqOK4BxPhPDbk/o6nxun6d3Bl0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=txM5knXUmgdiPvtTmpw4zO4tPHpwpgHZMKnHUXxi7T6YBuyrhRUjwj+BsqeNX0y9t
-         bxnz5dh6OTQF3uGj6dWcZ9O6MspbfiT3+Nia+wMxoOBcskqTbuPo+mlm09cePXZaIO
-         Qm9ozDUoPjS/c/dUiDULM1Bc9aOAVscCmqmfafjF4plG7GHmZymFb4JijP1GteZpn4
-         +u9r/jl5rbMBXzenZ2HboIqAwH1fqVo2iiDCh6EXyuDFN32VMVnYDoBe2FZpgfG7oM
-         6wk2/FatqZ+nDLNcf16iH0IDa2O2KzSSq1bJ7omYkqP6yDOU2/zXsSCPwWhGy//vdc
-         d46+jdfXPcBUA==
-X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on nautica.notk.org
-X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=5.0 tests=UNPARSEABLE_RELAY
-        autolearn=unavailable version=3.3.2
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id 337E1C009;
-        Tue, 21 Sep 2021 13:15:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1632222941; bh=YyXbeloQrhrw5B3tSpqOK4BxPhPDbk/o6nxun6d3Bl0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T77mTADz4tV4QYfANvTTm3k3xcptdXeQ9WoFltTUHTVtiveOQgR0TNOjfApkMQOiW
-         PzoR3lc2uu9+nijFJTBlxpFfm+MtGhjw+QFajAu4oqJMuh597ho5MuYpXmXtF6jqWS
-         +0MvIdqojrxKULuD9y0ZVVh9m8kSYK/AwfZrTd99qheKVPrjKx9h8igsv7bwNPN2aD
-         0i+uPHyeyDkAEQGA2mRN1l1HHpviFwZtYe7f50vDtWmHOcSkhq0pETPizQvXorMrUl
-         1iM+0ONtA2cZ4k9F/UU/PLNEZQzr5zt1FAeiHgADd9w9v4wd/0OED+QAa811ItQyv2
-         uIu/GYrwN5z0g==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id a7c0d52c;
-        Tue, 21 Sep 2021 11:15:33 +0000 (UTC)
-Date:   Tue, 21 Sep 2021 20:15:18 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        v9fs-developer@lists.sourceforge.net, linux-cachefs@redhat.com,
-        Jeff Layton <jlayton@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/8] 9p: (untested) Convert to using the netfs helper lib
- to do reads and caching
-Message-ID: <YUm+xucHxED+1MJp@codewreck.org>
-References: <163162767601.438332.9017034724960075707.stgit@warthog.procyon.org.uk>
- <163162772646.438332.16323773205855053535.stgit@warthog.procyon.org.uk>
+        id S232667AbhIUNJ1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 21 Sep 2021 09:09:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36321 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232344AbhIUNJ1 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 21 Sep 2021 09:09:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1632229678;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=p7KrSjRZ5jlkbSYeeKoptT6y+0YS3k5niGA9k1lTCic=;
+        b=GDoTqetTXV57YRXXXswTQBJnt3OKVowz6NloqOTAfiEI7uk9INfl50efJ0gMw0w7bVTZMf
+        IqWAS8dCsx4DC9OERtm3JKDtY4sNFcagj40M8ApsPT89CZlHH6SxglHULdM8lwD1lx0wzS
+        HpnPr/cTH8zuK45pV9x2paolBEg5b2k=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-288-CnzjsLmAPLuOWevMPSDLoQ-1; Tue, 21 Sep 2021 09:07:57 -0400
+X-MC-Unique: CnzjsLmAPLuOWevMPSDLoQ-1
+Received: by mail-pf1-f199.google.com with SMTP id g2-20020a62f9420000b029035df5443c2eso15964505pfm.14
+        for <ceph-devel@vger.kernel.org>; Tue, 21 Sep 2021 06:07:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p7KrSjRZ5jlkbSYeeKoptT6y+0YS3k5niGA9k1lTCic=;
+        b=JRixu1HeA7rizO+furp67MT50gFFtz0FigVqKZXEWU/34muXGswyk2VcbrY7BC/baX
+         fehz10E/2c6+Wo7Mh/uvauxkWNEdHLj4SAvWh29yhbStDOm4mLKfHWP8s8eB0Zc3yEEq
+         lPDkYmt9Szo3xWJ9JVpR2G+jjuRkYiiXp+SkmvvlugrdMpdnBHsBeZpIMeZVDh0Vu+k0
+         WgGuvhP5ZC2NlxEzzX6M9ilWKLBQ91/+Yxb8NqzWUr73HnGaE+ZuldVW0q6pTRXXsMRe
+         qwb9Jo8/iVqbPIU/qW4Ll4+yKZ0N4c6UwdBwQecJXMgnCVXVYsuVmxkMjAGP8VAdHvz7
+         +0ww==
+X-Gm-Message-State: AOAM532NsjeDhVQXFkFHUecP2dChj2p1IZVlqLVihD5vgZrOpnyl+I/b
+        JiO3PRefBsepPVXwjsidoaYrmMUliKpmofo9mF3eo4jSaiXQxRHETd8lzDDaT+Uw9XqP0JembYr
+        IgY7FPyeryMWZlSA65z3EUA==
+X-Received: by 2002:a17:90b:1b0f:: with SMTP id nu15mr5208763pjb.181.1632229676277;
+        Tue, 21 Sep 2021 06:07:56 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJz4HuxqdvVky5Zbqp08JBMbTRQ5HbqtsebCH/QQLc3NlNE4XsPwZVhZi1oLZqujU9r5VudqHg==
+X-Received: by 2002:a17:90b:1b0f:: with SMTP id nu15mr5208739pjb.181.1632229676040;
+        Tue, 21 Sep 2021 06:07:56 -0700 (PDT)
+Received: from h3ckers-pride.redhat.com ([49.207.212.118])
+        by smtp.gmail.com with ESMTPSA id w5sm18473890pgp.79.2021.09.21.06.07.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Sep 2021 06:07:55 -0700 (PDT)
+From:   Venky Shankar <vshankar@redhat.com>
+To:     jlayton@redhat.com, pdonnell@redhat.com, xiubli@redhat.com
+Cc:     ceph-devel@vger.kernel.org, Venky Shankar <vshankar@redhat.com>
+Subject: [PATCH v3 0/4] ceph: forward average read/write/metadata latency
+Date:   Tue, 21 Sep 2021 18:37:46 +0530
+Message-Id: <20210921130750.31820-1-vshankar@redhat.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <163162772646.438332.16323773205855053535.stgit@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-David Howells wrote on Tue, Sep 14, 2021 at 02:55:26PM +0100:
-> 9p: (untested) Convert to using the netfs helper lib to do reads and caching
+v3:
+  - rework average/stdev handling by maintaining sum of squares
+    and calculating standard deviation when sending metrics
 
-Finally tested to some extent: let's remove that (untested) tag.
+Right now, cumulative read/write/metadata latencies are tracked
+and are periodically forwarded to the MDS. These meterics are not
+particularly useful. A much more useful metric is the average latency
+and standard deviation (stdev) which is what this series of patches
+aims to do.
 
+The userspace (libcephfs+tool) changes are here::
 
-> Convert the 9p filesystem to use the netfs helper lib to handle readpage,
-> readahead and write_begin, converting those into a common issue_op for the
-> filesystem itself to handle.  The netfs helper lib also handles reading
-> from fscache if a cache is available, and interleaving reads from both
-> sources.
-> 
-> This change also switches from the old fscache I/O API to the new one,
-> meaning that fscache no longer keeps track of netfs pages and instead does
-> async DIO between the backing files and the 9p file pagecache.  As a part
-> of this change, the handling of PG_fscache changes.  It now just means that
-> the cache has a write I/O operation in progress on a page (PG_locked
-> is used for a read I/O op).
-> 
-> Note that this is a cut-down version of the fscache rewrite and does not
-> change any of the cookie and cache coherency handling.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Dominique Martinet <asmadeus@codewreck.org>
+          https://github.com/ceph/ceph/pull/41397
 
-can add either my sob or a reviewed-by tag from me instead.
-I'm honestly not familiar enough with some of the changes (parts
-checking PAGE_SIZE or similar) but I didn't spot any obvious error
-except the few ifdefs I commented on below, and will keep running a few
-more tests until next merge window.
+The math involved in keeping track of the average latency and stdev
+are adjusted to closely mimic how its done in user space ceph (with
+some restrictions obviously) as per::
 
-> cc: v9fs-developer@lists.sourceforge.net
-> cc: linux-cachefs@redhat.com
-> ---
-> 
->  fs/9p/Kconfig    |    1 
->  fs/9p/cache.c    |  137 -------------------------------------------
->  fs/9p/cache.h    |   99 +------------------------------
->  fs/9p/v9fs.h     |    9 +++
->  fs/9p/vfs_addr.c |  174 ++++++++++++++++++++++++------------------------------
->  fs/9p/vfs_file.c |   21 +++++--
->  6 files changed, 108 insertions(+), 333 deletions(-)
-> 
-> diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-> index cce9ace651a2..a7e080916826 100644
-> --- a/fs/9p/vfs_addr.c
-> +++ b/fs/9p/vfs_addr.c
-> @@ -124,7 +117,14 @@ static int v9fs_release_page(struct page *page, gfp_t gfp)
->  {
->  	if (PagePrivate(page))
->  		return 0;
-> -	return v9fs_fscache_release_page(page, gfp);
-> +#ifdef CONFIG_AFS_FSCACHE
+          NEW_AVG = OLD_AVG + ((latency - OLD_AVG) / total_ops)
+          NEW_STDEV = SQRT(SQ_SUM / (total_ops - 1))
 
-s/AFS/9P/
+Note that the cumulative latencies are still forwarded to the MDS but
+the tool (cephfs-top) ignores it altogether.
 
-> +	if (PageFsCache(page)) {
-> +		if (!(gfp & __GFP_DIRECT_RECLAIM) || !(gfp & __GFP_FS))
-> +			return 0;
-> +		wait_on_page_fscache(page);
-> +	}
-> +#endif
-> +	return 1;
->  }
->  
->  /**
-> diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-> index aab5e6538660..4b617d10cf28 100644
-> --- a/fs/9p/vfs_file.c
-> +++ b/fs/9p/vfs_file.c
-> @@ -542,14 +542,27 @@ v9fs_vm_page_mkwrite(struct vm_fault *vmf)
->  	p9_debug(P9_DEBUG_VFS, "page %p fid %lx\n",
->  		 page, (unsigned long)filp->private_data);
->  
-> +	v9inode = V9FS_I(inode);
-> +
-> +	/* Wait for the page to be written to the cache before we allow it to
-> +	 * be modified.  We then assume the entire page will need writing back.
-> +	 */
-> +#ifdef CONFIG_V9FS_FSCACHE
+Venky Shankar (4):
+  ceph: use "struct ceph_timespec" for r/w/m latencies
+  ceph: track average/stdev r/w/m latency
+  ceph: include average/stddev r/w/m latency in mds metrics
+  ceph: use tracked average r/w/m latencies to display metrics in
+    debugfs
 
-s/V9FS/9P/
-
+ fs/ceph/debugfs.c |   6 +--
+ fs/ceph/metric.c  | 109 ++++++++++++++++++++++++----------------------
+ fs/ceph/metric.h  |  62 ++++++++++++++++----------
+ 3 files changed, 101 insertions(+), 76 deletions(-)
 
 -- 
-Dominique
+2.31.1
+
