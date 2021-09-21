@@ -2,135 +2,158 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 92F2E4126DF
-	for <lists+ceph-devel@lfdr.de>; Mon, 20 Sep 2021 21:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B4F6413252
+	for <lists+ceph-devel@lfdr.de>; Tue, 21 Sep 2021 13:15:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345737AbhITT2V (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 20 Sep 2021 15:28:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41206 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S245515AbhITT0T (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 20 Sep 2021 15:26:19 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5843F610A0;
-        Mon, 20 Sep 2021 19:24:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632165892;
-        bh=9IHZ0lXSSqpdszFrG9Py9MvibFyJb6XKCQRZ2gDc7rQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=q+V5RuQOvwiZa5EzsaSXTXTlowOFwiL4qTqOVIaekAKsDTdAfmyadjJLZZLC6K3HG
-         plbvRomu89BLSEbLafE7eXHW8RmTdnqKi+bTZ2+zSlGMBKXqCT8Bp39sZ/DCwPFtRU
-         /BgoGNwl84N5NyxC/FthRL3zaPVKu7NgP2kNmvnlTZ4Q986n72/aqS76Ex5KVxQxWI
-         kmMv4GoX0KfrmGDHtz3YwLIdO7JFqY0cCjHCO+aShk6a24WlqjYo9P8HUYHUf4Lt0Q
-         XuetwfOEpsSzKeYi5bh6yU0Uia7+ZbYspng6hUu72kA7KjNUhd7cn0/ZlctnM7NvHg
-         vjTagqFA7hE9w==
-Message-ID: <20c3630d2ac2e2e7c4a708fdeb7409077f36d8f0.camel@kernel.org>
-Subject: Re: [PATCH RFC 2/2] ceph: truncate the file contents when needed
- when file scrypted
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     idryomov@gmail.com, ukernel@gmail.com, pdonnell@redhat.com,
-        "open list:CEPH DISTRIBUTED..." <ceph-devel@vger.kernel.org>
-Date:   Mon, 20 Sep 2021 15:24:49 -0400
-In-Reply-To: <6d84f34d-28d4-1b82-3c70-1209bea37ddf@redhat.com>
-References: <20210903081510.982827-1-xiubli@redhat.com>
-         <20210903081510.982827-3-xiubli@redhat.com>
-         <34538b56f366596fa96a8da8bf1a60f1c1257367.camel@kernel.org>
-         <19fac1bf-804c-1577-7aa8-9dcfa52418f9@redhat.com>
-         <e97616fc4f8f090f73a39f56de2ece7ed26fbd65.camel@kernel.org>
-         <fabbaeae-d63e-a2e2-0717-47afea66f82f@redhat.com>
-         <64c8d4daf2bfd9d20dd55ea1b29af7b7f690407d.camel@kernel.org>
-         <cadc9f02-d52e-b1fc-1752-20dd6eb1d1c4@redhat.com>
-         <90b25a04fb50b42559f1e153dd4b96df54a58c03.camel@kernel.org>
-         <5f33583a-8060-1f0f-d200-abfbd1705ba1@redhat.com>
-         <7eb2a71e54cb246a8ce1bea642bbdbd2581122f8.camel@kernel.org>
-         <747cf4f4-0048-df9d-c38f-2ab284851320@redhat.com>
-         <27b119711a065a2441337298fada3d941c30932a.camel@kernel.org>
-         <3b2878f8-9655-b4a0-c6bd-3cf61eaffb13@redhat.com>
-         <092f6a9ab8396b53f1f9e7af51e40563a2ea06d2.camel@kernel.org>
-         <6d84f34d-28d4-1b82-3c70-1209bea37ddf@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
+        id S232343AbhIULRN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 21 Sep 2021 07:17:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48060 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231956AbhIULRN (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 21 Sep 2021 07:17:13 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68BA4C061574;
+        Tue, 21 Sep 2021 04:15:44 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id B3B01C020; Tue, 21 Sep 2021 13:15:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1632222942; bh=YyXbeloQrhrw5B3tSpqOK4BxPhPDbk/o6nxun6d3Bl0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=txM5knXUmgdiPvtTmpw4zO4tPHpwpgHZMKnHUXxi7T6YBuyrhRUjwj+BsqeNX0y9t
+         bxnz5dh6OTQF3uGj6dWcZ9O6MspbfiT3+Nia+wMxoOBcskqTbuPo+mlm09cePXZaIO
+         Qm9ozDUoPjS/c/dUiDULM1Bc9aOAVscCmqmfafjF4plG7GHmZymFb4JijP1GteZpn4
+         +u9r/jl5rbMBXzenZ2HboIqAwH1fqVo2iiDCh6EXyuDFN32VMVnYDoBe2FZpgfG7oM
+         6wk2/FatqZ+nDLNcf16iH0IDa2O2KzSSq1bJ7omYkqP6yDOU2/zXsSCPwWhGy//vdc
+         d46+jdfXPcBUA==
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on nautica.notk.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.0 required=5.0 tests=UNPARSEABLE_RELAY
+        autolearn=unavailable version=3.3.2
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 337E1C009;
+        Tue, 21 Sep 2021 13:15:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1632222941; bh=YyXbeloQrhrw5B3tSpqOK4BxPhPDbk/o6nxun6d3Bl0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T77mTADz4tV4QYfANvTTm3k3xcptdXeQ9WoFltTUHTVtiveOQgR0TNOjfApkMQOiW
+         PzoR3lc2uu9+nijFJTBlxpFfm+MtGhjw+QFajAu4oqJMuh597ho5MuYpXmXtF6jqWS
+         +0MvIdqojrxKULuD9y0ZVVh9m8kSYK/AwfZrTd99qheKVPrjKx9h8igsv7bwNPN2aD
+         0i+uPHyeyDkAEQGA2mRN1l1HHpviFwZtYe7f50vDtWmHOcSkhq0pETPizQvXorMrUl
+         1iM+0ONtA2cZ4k9F/UU/PLNEZQzr5zt1FAeiHgADd9w9v4wd/0OED+QAa811ItQyv2
+         uIu/GYrwN5z0g==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id a7c0d52c;
+        Tue, 21 Sep 2021 11:15:33 +0000 (UTC)
+Date:   Tue, 21 Sep 2021 20:15:18 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        v9fs-developer@lists.sourceforge.net, linux-cachefs@redhat.com,
+        Jeff Layton <jlayton@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] 9p: (untested) Convert to using the netfs helper lib
+ to do reads and caching
+Message-ID: <YUm+xucHxED+1MJp@codewreck.org>
+References: <163162767601.438332.9017034724960075707.stgit@warthog.procyon.org.uk>
+ <163162772646.438332.16323773205855053535.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <163162772646.438332.16323773205855053535.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-09-20 at 22:32 +0800, Xiubo Li wrote:
-> On 9/18/21 1:19 AM, Jeff Layton wrote:
-> > On Thu, 2021-09-16 at 18:02 +0800, Xiubo Li wrote:
-> > > 
-> > > For this I am a little curious why couldn't we cache truncate operations
-> > > when attr.ia_size >= isize ?
-> > > 
-> > It seems to me that if attr.ia_size == i_size, then there is nothing to
-> > change. We can just optimize that case away, assuming the client has
-> > caps that ensure the size is correct.
-> 
->  From MDS side I didn't find any limitation why couldn't we optimize it.
-> 
-> 
+David Howells wrote on Tue, Sep 14, 2021 at 02:55:26PM +0100:
+> 9p: (untested) Convert to using the netfs helper lib to do reads and caching
 
-Well...I think we do still need to change the mtime in that case. We
-probably do still need to do a setattr or something that makes the MDS
-set it to its current local time, even if the size doesn't change.
+Finally tested to some extent: let's remove that (untested) tag.
 
-> > 
-> > Based on the kclient code, for size changes after a write that extends a
-> > file, it seems like Fw is sufficient to allow the client to buffer these
-> > things.
-> 
-> Since the MDS will only allow us to increase the file size, just like 
-> the mtime/ctime/atime, so even the write size has exceed current file 
-> size, the Fw is sufficient.
-> 
 
-Good.
+> Convert the 9p filesystem to use the netfs helper lib to handle readpage,
+> readahead and write_begin, converting those into a common issue_op for the
+> filesystem itself to handle.  The netfs helper lib also handles reading
+> from fscache if a cache is available, and interleaving reads from both
+> sources.
+> 
+> This change also switches from the old fscache I/O API to the new one,
+> meaning that fscache no longer keeps track of netfs pages and instead does
+> async DIO between the backing files and the 9p file pagecache.  As a part
+> of this change, the handling of PG_fscache changes.  It now just means that
+> the cache has a write I/O operation in progress on a page (PG_locked
+> is used for a read I/O op).
+> 
+> Note that this is a cut-down version of the fscache rewrite and does not
+> change any of the cookie and cache coherency handling.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Dominique Martinet <asmadeus@codewreck.org>
 
-> 
-> >   For a truncate (aka setattr) operation, we apparently need Fx.
-> 
-> In case one client is truncating the file, if the new size is larger 
-> than or equal to current size, this should be okay and will behave just 
-> like normal write case above.
-> 
-> If the new size is smaller, the MDS will handle this in a different way. 
-> When the MDS received the truncate request, it will first xlock the 
-> filelock, which will switch the filelock state and in all these possible 
-> interim or stable states, the Fw caps will be revoked from all the 
-> clients, but the clients still could cache/buffer the file contents, 
-> that means no client is allowed to change the size during the truncate 
-> operation is on the way. After the truncate succeeds the MDS Locker will 
-> issue_truncate() to all the clients and the clients will truncate the 
-> caches/buffers, etc.
-> 
-> And also the truncate operations will always be queued sequentially.
-> 
-> 
-> > It sort of makes sense, but the more I look over the existing code, the
-> > less sure I am about how this is intended to work. I think before we
-> > make any changes for fscrypt, we need to make sure we understand what's
-> > there now.
-> 
-> So if my understanding is correct, the Fx is not a must for the truncate 
-> operation.
-> 
+can add either my sob or a reviewed-by tag from me instead.
+I'm honestly not familiar enough with some of the changes (parts
+checking PAGE_SIZE or similar) but I didn't spot any obvious error
+except the few ifdefs I commented on below, and will keep running a few
+more tests until next merge window.
 
-Basically, when a truncate up or down comes in, we have to make a
-determination of whether we can buffer that change, or whether we need
-to do it synchronously.
+> cc: v9fs-developer@lists.sourceforge.net
+> cc: linux-cachefs@redhat.com
+> ---
+> 
+>  fs/9p/Kconfig    |    1 
+>  fs/9p/cache.c    |  137 -------------------------------------------
+>  fs/9p/cache.h    |   99 +------------------------------
+>  fs/9p/v9fs.h     |    9 +++
+>  fs/9p/vfs_addr.c |  174 ++++++++++++++++++++++++------------------------------
+>  fs/9p/vfs_file.c |   21 +++++--
+>  6 files changed, 108 insertions(+), 333 deletions(-)
+> 
+> diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+> index cce9ace651a2..a7e080916826 100644
+> --- a/fs/9p/vfs_addr.c
+> +++ b/fs/9p/vfs_addr.c
+> @@ -124,7 +117,14 @@ static int v9fs_release_page(struct page *page, gfp_t gfp)
+>  {
+>  	if (PagePrivate(page))
+>  		return 0;
+> -	return v9fs_fscache_release_page(page, gfp);
+> +#ifdef CONFIG_AFS_FSCACHE
 
-The current kclient code bases that on whether it has Fx. I suspect
-that ensures that no other client has Frw, which sounds like what we
-probably want. We need to prevent anyone from doing writes that might
-extend the file at that time _and_ need to ensure that stat/statx for
-the file size blocks until it's complete. ceph_getattr will issue a
-GETATTR to the MDS if it doesn't have Fs in that case, so that should
-be fine.
+s/AFS/9P/
 
-I assume that the MDS will never give out Fx caps to one client and Fs
-to another. What about Fw, though? Do Fx caps conflict with Frw the
-same way as they do with Fs?
+> +	if (PageFsCache(page)) {
+> +		if (!(gfp & __GFP_DIRECT_RECLAIM) || !(gfp & __GFP_FS))
+> +			return 0;
+> +		wait_on_page_fscache(page);
+> +	}
+> +#endif
+> +	return 1;
+>  }
+>  
+>  /**
+> diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+> index aab5e6538660..4b617d10cf28 100644
+> --- a/fs/9p/vfs_file.c
+> +++ b/fs/9p/vfs_file.c
+> @@ -542,14 +542,27 @@ v9fs_vm_page_mkwrite(struct vm_fault *vmf)
+>  	p9_debug(P9_DEBUG_VFS, "page %p fid %lx\n",
+>  		 page, (unsigned long)filp->private_data);
+>  
+> +	v9inode = V9FS_I(inode);
+> +
+> +	/* Wait for the page to be written to the cache before we allow it to
+> +	 * be modified.  We then assume the entire page will need writing back.
+> +	 */
+> +#ifdef CONFIG_V9FS_FSCACHE
+
+s/V9FS/9P/
+
+
 -- 
-Jeff Layton <jlayton@kernel.org>
-
+Dominique
