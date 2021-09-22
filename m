@@ -2,463 +2,198 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 235E8413D6B
-	for <lists+ceph-devel@lfdr.de>; Wed, 22 Sep 2021 00:16:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25755413F5D
+	for <lists+ceph-devel@lfdr.de>; Wed, 22 Sep 2021 04:23:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233245AbhIUWSG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 21 Sep 2021 18:18:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60542 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233239AbhIUWSE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 21 Sep 2021 18:18:04 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FD5AC061574
-        for <ceph-devel@vger.kernel.org>; Tue, 21 Sep 2021 15:16:33 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id t8so1043729wrq.4
-        for <ceph-devel@vger.kernel.org>; Tue, 21 Sep 2021 15:16:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=d48bxDkG21lkv4Wo6eq/EBpa1pS2t7r/yOKWtHife4Q=;
-        b=UTIYkxn3QYPmkqjCiNjT4gunQFZJ7glkkspR2GR7R8gSqPqF2YEYQZpy27rJsHgQe3
-         30eXMtnGOP98O7ALtKUeVwcx/IAEnPfroYDPw4TK3kBW94TP/Ktlk/815zuxNGQU7rMC
-         J+M1C87gfGWAIF238jBLGSJXSRdFfPdxG6kD4S+vTBHh1zKI+JAzFwjIvYDLZe6Tqj3Y
-         OkmcUvXnP3cx1pxpcbo4sa+bpgyJewRjoieg4Z14tmaxm1lTAI/HWjo0u1EFctakmsQt
-         dmEdT5NN06553G+8kXoQmKzEWbAK5pYXmZu+fhkKNW/lwWKv1edpdDqW3pKMu7iZ6ntb
-         MTnA==
+        id S229640AbhIVCZK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 21 Sep 2021 22:25:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44749 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229505AbhIVCZK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 21 Sep 2021 22:25:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1632277420;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EpsqktvUqF/Q7esfgYDrhW3/tzWa1y25ATDVk1MLJxI=;
+        b=KXTX0Ah2BLCgUqQc1OZQKNC4U8QuRU9+XCWxgKr/yI95UazG/KBvwUvkfbffr+EfajHdml
+        CP96+elcbY9WhJPrkfwdcBiUffflVEUUgbTt+O9MT4hi/6IhXgC8N+Ggnq8iOPOXuYEaXx
+        n7JMJ6zItE50RhKYoTJ8fETSNRIWvOg=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-570-Pr8hjXaPN2OPwXu6yXwjQg-1; Tue, 21 Sep 2021 22:23:39 -0400
+X-MC-Unique: Pr8hjXaPN2OPwXu6yXwjQg-1
+Received: by mail-pl1-f198.google.com with SMTP id i2-20020a1709026ac200b0013a0caa0cebso216544plt.23
+        for <ceph-devel@vger.kernel.org>; Tue, 21 Sep 2021 19:23:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=d48bxDkG21lkv4Wo6eq/EBpa1pS2t7r/yOKWtHife4Q=;
-        b=eGHJeh+znuKdKcEKebTgmMNvscCNdXVzlLBon6z20pRqBDLEjaATZ82/5YKvi1ZoKV
-         9JvSuXjbkdfQNgo+sHUv7cAHLX7kUQtLr2yIPDcppAKnQ51pUsUGkbunajMiO9wCL8DQ
-         8b61JYdFH8HYJFcI0Cs1VvuTPN2IUlK+xiVl5GCpVGdWCZjxUsogBHv+VYtmquyWpLDf
-         p6NwqqYXdY/1UjnJ/ztxWujB+YKaBzGXD74II1yEKw41ID4vlmxdncQAIj+BW+T3WJBd
-         9DvlRbZzW37AfGf42ldpZdO1ShDrI7AneRQ9DHg9TqEq4SFA3WV9H74UjRzipVXRDgmP
-         HEhQ==
-X-Gm-Message-State: AOAM530uSWnAXBNMh8qUIuxIf1ThTFDuX7OwcDIDbbWqMOiAHPCbovzP
-        hL/oRmkgGbBtqRmKngcMRRUTEpo40gasNfc9mFA=
-X-Google-Smtp-Source: ABdhPJzJ0bp3rT7CdtdSfwQG+bvRKAV1TFYYvfbFdRzYjfixn1O1QkvgnWMWbIhmQUiokfBBcoU0agyPnbZmk7rPWQM=
-X-Received: by 2002:a05:600c:3506:: with SMTP id h6mr7149526wmq.62.1632262591486;
- Tue, 21 Sep 2021 15:16:31 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=EpsqktvUqF/Q7esfgYDrhW3/tzWa1y25ATDVk1MLJxI=;
+        b=rbi8xh8MXajxqI/OxukYUh4D/m4Hk1qd7Ii6uR/ZCueuOXt2GPjZaVXksKlWpMEJ2e
+         RYM0t80G8AdDiKbDuNEXkXJmLQOrZ5SMIBf4PaDRrJCcrsRZL0ymv+nUyuVfKvrWlIcD
+         RQ6yq00DRJ2gevabnK56i1v+/gU8V8x8etc+/Nxk0dw4W4+07DGyJtXb1TTfR4H0NW2n
+         xXy9EdSd2zlYNGjDv3kFOvU9ApFk/7A0Q4Fp21nPph/DWHEA+eTyQmez+vq37Um7+Inn
+         H/bqwgsId8lz+XPKRCcmPNxyjbbh/xTu/LjD62xCEGfhWUQylSUG+GqH4cwFM6KF5aAh
+         FbkQ==
+X-Gm-Message-State: AOAM533nMjuEfVCLZmJdAQHtWk1q9UPH6BCs1kFPQEsHYrigxu2xZLfc
+        QSy78AzFqSvOtviR4Yz0z4k4ZJ7sM43xKau2JFRanrBU07+o2newjmOG5Sj4zTJgFBKtIWl2GKT
+        TRQiPyr8ejIgnYEnTYdG+qgiLxvdIxp++vaajgiMeLwN4a/swTnkPaZP4wbgD1+E5HGwWMEI=
+X-Received: by 2002:a17:90a:b907:: with SMTP id p7mr8724638pjr.142.1632277417603;
+        Tue, 21 Sep 2021 19:23:37 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJx3McCByvJ+NGcalCn/kTdfWws0gG+spNiUDgTtq6hK1TuENX9um/iUyWiZnwGK4+UUmx3ZUQ==
+X-Received: by 2002:a17:90a:b907:: with SMTP id p7mr8724601pjr.142.1632277417118;
+        Tue, 21 Sep 2021 19:23:37 -0700 (PDT)
+Received: from [10.72.13.171] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id l14sm3932319pjq.13.2021.09.21.19.23.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Sep 2021 19:23:36 -0700 (PDT)
+Subject: Re: [PATCH RFC 2/2] ceph: truncate the file contents when needed when
+ file scrypted
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     idryomov@gmail.com, ukernel@gmail.com, pdonnell@redhat.com,
+        "open list:CEPH DISTRIBUTED..." <ceph-devel@vger.kernel.org>
+References: <20210903081510.982827-1-xiubli@redhat.com>
+ <20210903081510.982827-3-xiubli@redhat.com>
+ <34538b56f366596fa96a8da8bf1a60f1c1257367.camel@kernel.org>
+ <19fac1bf-804c-1577-7aa8-9dcfa52418f9@redhat.com>
+ <e97616fc4f8f090f73a39f56de2ece7ed26fbd65.camel@kernel.org>
+ <fabbaeae-d63e-a2e2-0717-47afea66f82f@redhat.com>
+ <64c8d4daf2bfd9d20dd55ea1b29af7b7f690407d.camel@kernel.org>
+ <cadc9f02-d52e-b1fc-1752-20dd6eb1d1c4@redhat.com>
+ <90b25a04fb50b42559f1e153dd4b96df54a58c03.camel@kernel.org>
+ <5f33583a-8060-1f0f-d200-abfbd1705ba1@redhat.com>
+ <7eb2a71e54cb246a8ce1bea642bbdbd2581122f8.camel@kernel.org>
+ <747cf4f4-0048-df9d-c38f-2ab284851320@redhat.com>
+ <27b119711a065a2441337298fada3d941c30932a.camel@kernel.org>
+ <3b2878f8-9655-b4a0-c6bd-3cf61eaffb13@redhat.com>
+ <092f6a9ab8396b53f1f9e7af51e40563a2ea06d2.camel@kernel.org>
+ <6d84f34d-28d4-1b82-3c70-1209bea37ddf@redhat.com>
+ <20c3630d2ac2e2e7c4a708fdeb7409077f36d8f0.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <5cf666a9-3b33-ad54-3878-a975505c872e@redhat.com>
+Date:   Wed, 22 Sep 2021 10:23:17 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-References: <D7D3F091-929F-4A02-99D8-ABB9C3995C38@agoda.com>
- <CAE_BDM+Xh-VZMjLwumwQbBin4sm7928oQTSGktM1O-RG7hn=yw@mail.gmail.com> <9B12DE49-31DC-4F20-97EB-240BEE36243E@agoda.com>
-In-Reply-To: <9B12DE49-31DC-4F20-97EB-240BEE36243E@agoda.com>
-From:   Christian Wuerdig <christian.wuerdig@gmail.com>
-Date:   Wed, 22 Sep 2021 10:16:19 +1200
-Message-ID: <CAE_BDMJkyacYn2MckaFZ4P9YuDcaH_L-XxG2+Q6ULehwn2Vz+w@mail.gmail.com>
-Subject: Re: [ceph-users] Re: RocksDB options for HDD, SSD, NVME Mixed productions
-To:     "Szabo, Istvan (Agoda)" <Istvan.Szabo@agoda.com>
-Cc:     mhnx <morphinwithyou@gmail.com>, Ceph Users <ceph-users@ceph.io>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20c3630d2ac2e2e7c4a708fdeb7409077f36d8f0.camel@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 22 Sept 2021 at 07:07, Szabo, Istvan (Agoda)
-<Istvan.Szabo@agoda.com> wrote:
->
-> Increasing day by day, this is the current situation: (1 server has 6x 15=
-.3TB SAS ssds, 3x ssds are using 1x 1.92TB nvme for db+wal.
->
-> WRN] BLUEFS_SPILLOVER: 13 OSD(s) experiencing BlueFS spillover
->      osd.1 spilled over 56 GiB metadata from 'db' device (318 GiB used of=
- 596 GiB) to slow device
->      osd.5 spilled over 34 GiB metadata from 'db' device (316 GiB used of=
- 596 GiB) to slow device
->      osd.6 spilled over 37 GiB metadata from 'db' device (314 GiB used of=
- 596 GiB) to slow device
->      osd.8 spilled over 121 MiB metadata from 'db' device (317 GiB used o=
-f 596 GiB) to slow device
->      osd.9 spilled over 53 GiB metadata from 'db' device (316 GiB used of=
- 596 GiB) to slow device
->      osd.10 spilled over 114 GiB metadata from 'db' device (307 GiB used =
-of 596 GiB) to slow device
->      osd.11 spilled over 68 GiB metadata from 'db' device (315 GiB used o=
-f 596 GiB) to slow device
->      osd.13 spilled over 30 GiB metadata from 'db' device (315 GiB used o=
-f 596 GiB) to slow device
->      osd.15 spilled over 65 GiB metadata from 'db' device (313 GiB used o=
-f 596 GiB) to slow device
->      osd.21 spilled over 6.8 GiB metadata from 'db' device (298 GiB used =
-of 596 GiB) to slow device
->      osd.22 spilled over 23 GiB metadata from 'db' device (317 GiB used o=
-f 596 GiB) to slow device
->      osd.27 spilled over 228 GiB metadata from 'db' device (292 GiB used =
-of 596 GiB) to slow device
->      osd.34 spilled over 9.8 GiB metadata from 'db' device (316 GiB used =
-of 596 GiB) to slow device
->
-> I guess it=E2=80=99s not an issue because it spilled over to an ssd from =
-an nvme which is running on 100% unfortunately. It would have effect I gues=
-s more if spillover to hdd. Or can I scare anything with spillover?
 
-Spillover is normal but it may slow things down obviously. If you have
-decent SSDs then the impact may not be as bad as if you had HDD
-backing storage
-Looks like your setup is pretty decent - you could benefit from a
-level base of 400 or 500MiB I guess - so you could set that and try to
-make it stick - still not clear to me what you have to do to make it
-change, maybe try offline compaction of and OSD: ceph-kvstore-tool
-bluestore-kv ${osd_path} compact and the restart it
+On 9/21/21 3:24 AM, Jeff Layton wrote:
+> On Mon, 2021-09-20 at 22:32 +0800, Xiubo Li wrote:
+>> On 9/18/21 1:19 AM, Jeff Layton wrote:
+>>> On Thu, 2021-09-16 at 18:02 +0800, Xiubo Li wrote:
+>>>> For this I am a little curious why couldn't we cache truncate operations
+>>>> when attr.ia_size >= isize ?
+>>>>
+>>> It seems to me that if attr.ia_size == i_size, then there is nothing to
+>>> change. We can just optimize that case away, assuming the client has
+>>> caps that ensure the size is correct.
+>>   From MDS side I didn't find any limitation why couldn't we optimize it.
+>>
+>>
+> Well...I think we do still need to change the mtime in that case. We
+> probably do still need to do a setattr or something that makes the MDS
+> set it to its current local time, even if the size doesn't change.
+
+Since there hasn't any change for the file data, will change the 'mtime' 
+make sense here ? If so, then why in case the current client has the Fr 
+caps and sizes are the same it won't.
+
+In this case I found in the MDS side, it will also update the 'ctime' 
+always even it will change nothing.
+
+>>> Based on the kclient code, for size changes after a write that extends a
+>>> file, it seems like Fw is sufficient to allow the client to buffer these
+>>> things.
+>> Since the MDS will only allow us to increase the file size, just like
+>> the mtime/ctime/atime, so even the write size has exceed current file
+>> size, the Fw is sufficient.
+>>
+> Good.
+>
+>>>    For a truncate (aka setattr) operation, we apparently need Fx.
+>> In case one client is truncating the file, if the new size is larger
+>> than or equal to current size, this should be okay and will behave just
+>> like normal write case above.
+>>
+>> If the new size is smaller, the MDS will handle this in a different way.
+>> When the MDS received the truncate request, it will first xlock the
+>> filelock, which will switch the filelock state and in all these possible
+>> interim or stable states, the Fw caps will be revoked from all the
+>> clients, but the clients still could cache/buffer the file contents,
+>> that means no client is allowed to change the size during the truncate
+>> operation is on the way. After the truncate succeeds the MDS Locker will
+>> issue_truncate() to all the clients and the clients will truncate the
+>> caches/buffers, etc.
+>>
+>> And also the truncate operations will always be queued sequentially.
+>>
+>>
+>>> It sort of makes sense, but the more I look over the existing code, the
+>>> less sure I am about how this is intended to work. I think before we
+>>> make any changes for fscrypt, we need to make sure we understand what's
+>>> there now.
+>> So if my understanding is correct, the Fx is not a must for the truncate
+>> operation.
+>>
+> Basically, when a truncate up or down comes in, we have to make a
+> determination of whether we can buffer that change, or whether we need
+> to do it synchronously.
+>
+> The current kclient code bases that on whether it has Fx. I suspect
+> that ensures that no other client has Frw, which sounds like what we
+> probably want.
+
+The Fx caps is only for the loner client and once the client has the Fx 
+caps it will always have the Fsrwcb at the same time. From the 
+mds/locker.cc I didn't find it'll allow that.
+
+If current client has the Fx caps, so when there has another client is 
+trying to truncate the same file at the same time, the MDS will have to 
+revoke the Fx caps first and during which the buffered truncate will be 
+flushed and be finished first too. So when Fx caps is issued and new 
+size equals to the current size, why couldn't we buffer it ?
 
 
->
-> I have 6 nodes with this setup, I can=E2=80=99t believe that 30k read and=
- 10-15k write iops less than 1GB throughput can max out this cluster with e=
-c 4:2 :((
->
-> Istvan Szabo
-> Senior Infrastructure Engineer
-> ---------------------------------------------------
-> Agoda Services Co., Ltd.
-> e: istvan.szabo@agoda.com
-> ---------------------------------------------------
->
-> On 2021. Sep 21., at 20:21, Christian Wuerdig <christian.wuerdig@gmail.co=
-m> wrote:
->
-> =EF=BB=BFEmail received from the internet. If in doubt, don't click any l=
-ink nor open any attachment !
-> ________________________________
->
-> On Wed, 22 Sept 2021 at 05:54, Szabo, Istvan (Agoda)
-> <Istvan.Szabo@agoda.com> wrote:
->
->
-> =EF=BB=BFSorry to steal it, so if I have 500GB and 700GB mixed wal+rocksd=
-b on nvme the number should be the level base 5000000000 and 7000000000? Or=
- needs to be power of 2?
->
->
-> Generally the sum of all levels (up to the max of your metadata) needs
-> to fit into the db partition for each OSD. If you have a 500 or 700 GB
-> WAL+DB partition per OSD then the default settings should carry you to
-> L3 (~333GB required free space). Do you have more than 300GB metadata
-> per OSD?
-> All examples I've ever seen show the level base size at a power of 2
-> but I don't know if there are any side effects not doing that
-> 5/7GB level base is an order of magnitude higher than the default and
-> it's unclear what performance effect this has.
->
-> I would not advise tinkering with the defaults unless you have a lot
-> of time and energy to burn on testing and are willing to accept
-> potential future performance issues on upgrade because you run a setup
-> that nobody ever tests for.
->
-> What's the size of your OSDs, how much db space per OSD do you
-> actually have and what do the spillover warnings say?
->
->
-> Istvan Szabo
->
-> Senior Infrastructure Engineer
->
-> ---------------------------------------------------
->
-> Agoda Services Co., Ltd.
->
-> e: istvan.szabo@agoda.com
->
-> ---------------------------------------------------
->
->
-> On 2021. Sep 21., at 9:19, Christian Wuerdig <christian.wuerdig@gmail.com=
-> wrote:
->
->
-> =EF=BB=BFEmail received from the internet. If in doubt, don't click any l=
-ink nor open any attachment !
->
-> ________________________________
->
->
-> It's been discussed a few times on the list but RocksDB levels essentiall=
-y
->
-> grow by a factor of 10 (max_bytes_for_level_multiplier) by default and yo=
-u
->
-> need (level-1)*10 space for the next level on your drive to avoid spill o=
-ver
->
-> So the sequence (by default) is 256MB -> 2.56GB -> 25.6GB -> 256GB GB and
->
-> since 50GB < 286 (sum of all levels) you get spill-over going from L2 to
->
-> L3. See also
->
-> https://docs.ceph.com/en/latest/rados/configuration/bluestore-config-ref/=
-#sizing
->
->
-> Interestingly your level base seems to be 512MB instead of the default
->
-> 256MB - did you change that? In your case the sequence I would have
->
-> expected is 0.5 -> 5 -> 50 - and you should have already seen spillover a=
-t
->
-> 5GB (since you only have 50GB partitions but you need 55.5GB at least)
->
-> Not sure what's up with that. I think you need to re-create OSDs after
->
-> changing these RocksDB params
->
->
-> Overall since Pacific this no longer holds entirely true since RocksDB
->
-> sharding was added (
->
-> https://docs.ceph.com/en/latest/rados/configuration/bluestore-config-ref/=
-#bluestore-rocksdb-sharding)
->
-> - it was broken in 16.2.4 but looks like it's fixed in 16.2.6
->
->
->  1. Upgrade to Pacific
->
->  2. Get rid of the NVME raid
->
->  3. Make 160GB DB partitions
->
->  4. Activate RocksDB sharding
->
->  5. Don't worry about RocksDB params
->
->
-> If you don't feel like upgrading to Pacific any time soon but want to mak=
-e
->
-> more efficient use of the NVME and don't mind going out on a limp I'd sti=
-ll
->
-> do 2+3 plus study
->
-> https://github-wiki-see.page/m/facebook/rocksdb/wiki/Leveled-Compaction
->
-> carefully and make adjustments based on that.
->
-> With 160GB partitions a multiplier of 7 might work well with a base size =
-of
->
-> 350MB 0.35 -> 2.45 -> 17.15 -> 120.05 (total 140GB out of 160GB)
->
->
-> You could also try to switch to a 9x multiplier and re-create one of the
->
-> OSDs to see how it pans out prior to dissolving the raid1 setup (given yo=
-ur
->
-> settings that should result in 0.5 -> 4.5 -> 40.5 GB usage)
->
->
-> On Tue, 21 Sept 2021 at 13:19, mhnx <morphinwithyou@gmail.com> wrote:
->
->
-> Hello everyone!
->
->
-> I want to understand the concept and tune my rocksDB options on nautilus
->
->
-> 14.2.16.
->
->
->
->    osd.178 spilled over 102 GiB metadata from 'db' device (24 GiB used of
->
->
-> 50 GiB) to slow device
->
->
->    osd.180 spilled over 91 GiB metadata from 'db' device (33 GiB used of
->
->
-> 50 GiB) to slow device
->
->
->
-> The problem is, I have the spill over warnings like the rest of the
->
->
-> community.
->
->
-> I tuned RocksDB Options with the settings below but the problem still
->
->
-> exists and I wonder if I did anything wrong. I still have the Spill Overs
->
->
-> and also some times index SSD's are getting down due to compaction proble=
-ms
->
->
-> and can not start them until I do offline compaction.
->
->
->
-> Let me tell you about my hardware right?
->
->
-> Every server in my system has:
->
->
-> HDD -   19 x TOSHIBA  MG08SCA16TEY   16.0TB for EC pool.
->
->
-> SSD -    3 x SAMSUNG  MZILS960HEHP/007 GXL0 960GB
->
->
-> NVME - 2 x PM1725b 1.6TB
->
->
->
-> I'm using Raid 1 Nvme for Bluestore DB. I dont have WAL.
->
->
-> 19*50GB =3D 950GB total usage on NVME. (I was thinking use the rest but
->
->
-> regret it now)
->
->
->
-> So! Finally let's check my RocksDB Options:
->
->
-> [osd]
->
->
-> bluefs_buffered_io =3D true
->
->
-> bluestore_rocksdb_options =3D
->
->
->
-> compression=3DkNoCompression,max_write_buffer_number=3D32,min_write_buffe=
-r_number_to_merge=3D2,recycle_log_file_num=3D32,compaction_style=3DkCompact=
-ionStyleLevel,write_buffer_size=3D67108864,target_file_size_base=3D67108864=
-,max_background_compactions=3D31,level0_file_num_compaction_trigger=3D8,lev=
-el0_slowdown_writes_trigger=3D32,level0_stop_writes_trigger=3D64,flusher_th=
-reads=3D8,compaction_readahead_size=3D2MB,compaction_threads=3D16,
->
->
-> *max_bytes_for_level_base=3D536870912*,
->
->
-> *max_bytes_for_level_multiplier=3D10*
->
->
->
-> *"ceph osd df tree"  *to see ssd and hdd usage, omap and meta.
->
->
->
-> ID  CLASS WEIGHT     REWEIGHT SIZE    RAW USE DATA    OMAP    META
->
->
-> AVAIL   %USE  VAR  PGS STATUS TYPE NAME
->
->
-> -28        280.04810        - 280 TiB 169 TiB 166 TiB 688 GiB 2.4 TiB 111
->
->
-> TiB 60.40 1.00   -            host MHNX1
->
->
-> 178   hdd   14.60149  1.00000  15 TiB 8.6 TiB 8.5 TiB  44 KiB 126 GiB 6.0
->
->
-> TiB 59.21 0.98 174     up         osd.178
->
->
-> 179   ssd    0.87329  1.00000 894 GiB 415 GiB  89 GiB 321 GiB 5.4 GiB 479
->
->
-> GiB 46.46 0.77 104     up         osd.179
->
->
->
->
-> I know the size of NVME is not suitable for 16TB HDD's. I should have mor=
-e
->
->
-> but the expense is cutting us pieces. Because of that I think I'll see th=
-e
->
->
-> spill overs no matter what I do. But maybe I will make it better
->
->
-> with your help!
->
->
->
-> *My questions are:*
->
->
-> 1- What is the meaning of (33 GiB used of 50 GiB)
->
->
-> 2- Why it's not 50GiB / 50GiB ?
->
->
-> 3- Do I have 17GiB unused area on the DB partition?
->
->
-> 4- Is there anything wrong with my Rocksdb options?
->
->
-> 5- How can I be sure and find the good Rocksdb Options for Ceph?
->
->
-> 6- How can I measure the change and test it?
->
->
-> 7- Do I need different RocksDB options for HDD's and SSD's ?
->
->
-> 8- If I stop using Nvme Raid1 to gain x2 size and resize the DB's  to
->
->
-> 160GiB. Is it worth to take Nvme faulty? Because I will lose 10HDD at the
->
->
-> same time but I have 10 Node and that's only %5 of the EC data . I use m=
-=3D8
->
->
-> k=3D2.
->
->
->
-> P.S: There are so many people asking and searching around this. I hope it
->
->
-> will work this time.
->
->
-> _______________________________________________
->
->
-> ceph-users mailing list -- ceph-users@ceph.io
->
->
-> To unsubscribe send an email to ceph-users-leave@ceph.io
->
->
->
-> _______________________________________________
->
-> ceph-users mailing list -- ceph-users@ceph.io
->
-> To unsubscribe send an email to ceph-users-leave@ceph.io
+>   We need to prevent anyone from doing writes that might
+> extend the file at that time
+
+Yeah, since the Fx is only for loner client, and all other clients will 
+have zero file caps. so it won't happen.
+
+
+>   _and_ need to ensure that stat/statx for
+> the file size blocks until it's complete. ceph_getattr will issue a
+> GETATTR to the MDS if it doesn't have Fs in that case, so that should
+> be fine.
+>
+> I assume that the MDS will never give out Fx caps to one client and Fs
+> to another.
+Yeah, It won't happen.
+
+
+>   What about Fw, though?
+
+While for the Fw caps, it will allow it. If the filelock is in LOCK_MIX 
+state, the filelock maybe in this state if there at least one client 
+wants the Fw caps and some others want any of Fr and Fw caps.
+
+
+>   Do Fx caps conflict with Frw the
+> same way as they do with Fs?
+
+Yeah, it will be the same with Fs.
+
+Thanks.
+
