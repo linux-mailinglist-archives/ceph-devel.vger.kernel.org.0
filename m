@@ -2,30 +2,30 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E63C241A259
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 Sep 2021 00:05:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E47441A26B
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 Sep 2021 00:05:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238185AbhI0WFw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 27 Sep 2021 18:05:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50810 "EHLO
+        id S238324AbhI0WGK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 27 Sep 2021 18:06:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237700AbhI0WF3 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 27 Sep 2021 18:05:29 -0400
+        with ESMTP id S237998AbhI0WFd (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 27 Sep 2021 18:05:33 -0400
 Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E873C061237;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1E19C0611C0;
         Mon, 27 Sep 2021 15:02:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=1bxbk0s3lfDVOxUu9YL+DFpJGCsQmsW80G59PebYRqE=; b=JOIVwBerggyzrPmtHFxFn58ywH
-        /AViPyNwCH3ThT1G85Hhg7E6By7AakeNVzBatgzAFyaXitKHn6L9JxZuguE5/fjWU8eKUoMjSDEGu
-        i1fmqXlzw5xdqu/4EBS3X7DkjarTLked8IRqeDKpc4iIsahClMiV/QUkOYBQEzg0EwUaTtb4ndN7N
-        or+EEDY4U3RfKdrWrZ0l/fe05F0DOuLUvKoKXD7/ouvhqdC9NrreSf8uf4m3zyUwweZmSMZ9CeB9K
-        Ye+CQPia/s1sv5kknNr9S0+/K3w2B/NNglBPpnX4uJexsoFm7WdjSMbcxQJScV7ulYU3z5/Ed43UU
-        lBaywaYQ==;
+        bh=+OAfxCoaVOuKuOjWZKvBW/L6IB8523Q0h7o1ENcxwyY=; b=0OtugzOoZWoPNTHgHokvNhlzny
+        LVtyiNlqwmw6UskbWe87APtWwkxhfaTd657hK8Nxf64/0n7+qjsV7SqOENx+Nu2qDlxckAxUmF+Ny
+        AewzZsDualM8Exf0Z4MyhUf6wg4FoGv02lM2+G39XUuNmRy7q4DQjVJAvxnTsLM7wBNG7zW9xiMdt
+        0lGQg/MrOx1MZn++Eo7oAEvY+pQprH6S4mmf137SY8aFgyvffLFv8NL/59vgPhPeBEU9w/iiqI1Oz
+        bp7ic6YX1SV/0CLLDl0CKA8z9XRctV9hZQCOJcirvX+5F2ZSxVAPF0H+0JF5bVRvhnR1IuntUYRrS
+        H5tYNCSA==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mUyhl-004Utw-O2; Mon, 27 Sep 2021 22:02:33 +0000
+        id 1mUyhl-004Utz-PR; Mon, 27 Sep 2021 22:02:33 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     axboe@kernel.dk, gregkh@linuxfoundation.org,
         chaitanya.kulkarni@wdc.com, atulgopinathan@gmail.com, hare@suse.de,
@@ -40,9 +40,9 @@ To:     axboe@kernel.dk, gregkh@linuxfoundation.org,
 Cc:     linux-s390@vger.kernel.org, linux-mtd@lists.infradead.org,
         linux-mmc@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH v2 3/6] mtd: add add_disk() error handling
-Date:   Mon, 27 Sep 2021 15:02:29 -0700
-Message-Id: <20210927220232.1071926-4-mcgrof@kernel.org>
+Subject: [PATCH v2 4/6] s390/block/dasd_genhd: add error handling support for add_disk()
+Date:   Mon, 27 Sep 2021 15:02:30 -0700
+Message-Id: <20210927220232.1071926-5-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210927220232.1071926-1-mcgrof@kernel.org>
 References: <20210927220232.1071926-1-mcgrof@kernel.org>
@@ -57,36 +57,41 @@ We never checked for errors on add_disk() as this function
 returned void. Now that this is fixed, use the shiny new
 error handling.
 
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Be sure to call dasd_gendisk_free() on error.
+
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- drivers/mtd/mtd_blkdevs.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/s390/block/dasd_genhd.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/mtd_blkdevs.c b/drivers/mtd/mtd_blkdevs.c
-index b8ae1ec14e17..4eaba6f4ec68 100644
---- a/drivers/mtd/mtd_blkdevs.c
-+++ b/drivers/mtd/mtd_blkdevs.c
-@@ -384,7 +384,9 @@ int add_mtd_blktrans_dev(struct mtd_blktrans_dev *new)
- 	if (new->readonly)
- 		set_disk_ro(gd, 1);
+diff --git a/drivers/s390/block/dasd_genhd.c b/drivers/s390/block/dasd_genhd.c
+index fa966e0db6ca..80673dbfb1f9 100644
+--- a/drivers/s390/block/dasd_genhd.c
++++ b/drivers/s390/block/dasd_genhd.c
+@@ -33,7 +33,7 @@ int dasd_gendisk_alloc(struct dasd_block *block)
+ {
+ 	struct gendisk *gdp;
+ 	struct dasd_device *base;
+-	int len;
++	int len, rc;
  
--	device_add_disk(&new->mtd->dev, gd, NULL);
-+	ret = device_add_disk(&new->mtd->dev, gd, NULL);
-+	if (ret)
-+		goto out_cleanup_disk;
- 
- 	if (new->disk_attributes) {
- 		ret = sysfs_create_group(&disk_to_dev(gd)->kobj,
-@@ -393,6 +395,8 @@ int add_mtd_blktrans_dev(struct mtd_blktrans_dev *new)
- 	}
+ 	/* Make sure the minor for this device exists. */
+ 	base = block->base;
+@@ -79,7 +79,13 @@ int dasd_gendisk_alloc(struct dasd_block *block)
+ 	dasd_add_link_to_gendisk(gdp, base);
+ 	block->gdp = gdp;
+ 	set_capacity(block->gdp, 0);
+-	device_add_disk(&base->cdev->dev, block->gdp, NULL);
++
++	rc = device_add_disk(&base->cdev->dev, block->gdp, NULL);
++	if (rc) {
++		dasd_gendisk_free(block);
++		return rc;
++	}
++
  	return 0;
+ }
  
-+out_cleanup_disk:
-+	blk_cleanup_disk(new->disk);
- out_free_tag_set:
- 	blk_mq_free_tag_set(new->tag_set);
- out_kfree_tag_set:
 -- 
 2.30.2
 
