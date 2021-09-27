@@ -2,30 +2,30 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD8441A268
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 Sep 2021 00:05:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBCB441A265
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 Sep 2021 00:05:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238287AbhI0WGF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 27 Sep 2021 18:06:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50850 "EHLO
+        id S237700AbhI0WGD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 27 Sep 2021 18:06:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238009AbhI0WFd (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 27 Sep 2021 18:05:33 -0400
+        with ESMTP id S237755AbhI0WFc (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 27 Sep 2021 18:05:32 -0400
 Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7091C0611C5;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90DA3C061216;
         Mon, 27 Sep 2021 15:02:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=9WAQqGmCnBZBIvZV5P2hlA8WSQ4fd7LqTPumJ23Kn/w=; b=vRqehUSL/G0aRLcaRqeiOvgww5
-        +2zju1bjtX3i4Oh0bkiE5PVSrqWDvWGGaPNhqQbFuCDbJUtOAzi+3v9pwHn07GPFPzYAW4aJyMAbf
-        qxr8/lBUQs37sjh9vhfq4ndDqzpy8oizRJAst6XKx5Auvtk4xR7OZoV66MWI4GaqK3bCCBHnhOviq
-        xdB0cQRoO7en2gAuiIcJNBxDLNqeOaHo1hhtqdMBOjAtoVGjBEwN5Nz99LfmH1gbLggxi+Sj0gLkw
-        GaOSwE1mJYVAXebsd1HEEnt6J2Y5IRZ6a6GJsOGliqfk7dJ4XDjFXJxQZEo2W90pATXQttGsc+dac
-        rGuquvog==;
+        bh=oUFeaFydBf47btSaJQAujL5lgV684wb9PUaVfH8cFxU=; b=47V3Gdi7DvixiWWgwtAB6qlwSN
+        6hNbS/0rreghOppevBAuRNYL8a6SKfLWyQznEhqLzvct+Zb5xa2Zcs05j2iGt0zctbZPw2UIHdKzC
+        3zEz99XNqX/icNepfJNNjzCPJfLM5Ku5uLoUVG0bSP+2npOSV4RwbtCtmke6Fo0MfHqVO0GDQ+Vjh
+        5LZbeuPZde+TR9drRDD5ktu/bmPFPmVnnsKhcgXB2uneFMa+/xFUriPoRoNRVF8nh8PxjtIvsCq5P
+        pcoihkPSZbjkdHQ0EvlfWqCruD4qsGl4dce5mBj/WnyMp3uhOEGr5OFG8kB3XPcJYN1GJsYfw1/u0
+        LQPiCx+g==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mUyhl-004Utq-KJ; Mon, 27 Sep 2021 22:02:33 +0000
+        id 1mUyhl-004Uts-MT; Mon, 27 Sep 2021 22:02:33 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     axboe@kernel.dk, gregkh@linuxfoundation.org,
         chaitanya.kulkarni@wdc.com, atulgopinathan@gmail.com, hare@suse.de,
@@ -40,9 +40,9 @@ To:     axboe@kernel.dk, gregkh@linuxfoundation.org,
 Cc:     linux-s390@vger.kernel.org, linux-mtd@lists.infradead.org,
         linux-mmc@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH v2 1/6] cdrom/gdrom: add error handling support for add_disk()
-Date:   Mon, 27 Sep 2021 15:02:27 -0700
-Message-Id: <20210927220232.1071926-2-mcgrof@kernel.org>
+Subject: [PATCH v2 2/6] rbd: add add_disk() error handling
+Date:   Mon, 27 Sep 2021 15:02:28 -0700
+Message-Id: <20210927220232.1071926-3-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210927220232.1071926-1-mcgrof@kernel.org>
 References: <20210927220232.1071926-1-mcgrof@kernel.org>
@@ -59,29 +59,33 @@ error handling.
 
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- drivers/cdrom/gdrom.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/block/rbd.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
-index 8e1fe75af93f..d50cc1fd34d5 100644
---- a/drivers/cdrom/gdrom.c
-+++ b/drivers/cdrom/gdrom.c
-@@ -805,9 +805,14 @@ static int probe_gdrom(struct platform_device *devptr)
- 		err = -ENOMEM;
- 		goto probe_fail_free_irqs;
- 	}
--	add_disk(gd.disk);
-+	err = add_disk(gd.disk);
-+	if (err)
-+		goto probe_fail_add_disk;
-+
- 	return 0;
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index e65c9d706f6f..341e5da6d029 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -7054,7 +7054,9 @@ static ssize_t do_rbd_add(struct bus_type *bus,
+ 	if (rc)
+ 		goto err_out_image_lock;
  
-+probe_fail_add_disk:
-+	kfree(gd.toc);
- probe_fail_free_irqs:
- 	free_irq(HW_EVENT_GDROM_DMA, &gd);
- 	free_irq(HW_EVENT_GDROM_CMD, &gd);
+-	device_add_disk(&rbd_dev->dev, rbd_dev->disk, NULL);
++	rc = device_add_disk(&rbd_dev->dev, rbd_dev->disk, NULL);
++	if (rc)
++		goto err_out_cleanup_disk;
+ 
+ 	spin_lock(&rbd_dev_list_lock);
+ 	list_add_tail(&rbd_dev->node, &rbd_dev_list);
+@@ -7068,6 +7070,8 @@ static ssize_t do_rbd_add(struct bus_type *bus,
+ 	module_put(THIS_MODULE);
+ 	return rc;
+ 
++err_out_cleanup_disk:
++	rbd_free_disk(rbd_dev);
+ err_out_image_lock:
+ 	rbd_dev_image_unlock(rbd_dev);
+ 	rbd_dev_device_release(rbd_dev);
 -- 
 2.30.2
 
