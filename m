@@ -2,125 +2,129 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39FE64198B3
-	for <lists+ceph-devel@lfdr.de>; Mon, 27 Sep 2021 18:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E508419FC8
+	for <lists+ceph-devel@lfdr.de>; Mon, 27 Sep 2021 22:07:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235341AbhI0QQg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 27 Sep 2021 12:16:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37076 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235337AbhI0QQg (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 27 Sep 2021 12:16:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 67E0B60F9B;
-        Mon, 27 Sep 2021 16:14:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632759298;
-        bh=ehEEyjeiOSVjq56hTyueijmMxuSx9FYBYZ1k3J27zB8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=dg9LuwTOKtrmKxRipX9H7UJstikDbmu3FXhnsc6vV/BWIhAwXxF0vuokCgXNo8ptt
-         lTVjnksPBxFuBGciQNXXLsFpxMJyEiNCRlhVsp63hNCaspE8Koy5oUSc2nuN4EpDP8
-         sPM2WzXfnh6k8Hhq6oRuUCko+2r8iuQ5vz8YLjyVOuyom+Ub7SzCDsVdybIRNYLdJb
-         eOqBYT4J4UStfIHMH6iujuEku2l/7wZTRydLxe9qOubo6mobMoirmWSm9D5ygxYeq/
-         CLskNC0ZwvIHuXdDzNv2ZJcfa4HAVmSs4aDdLgxe3ea/Gf7wN8uIqHH88PMqrOES8B
-         JvzMYj7qXfzlw==
-Message-ID: <ac394a47a2a6bb7ee55a4fad3fdc279b73164196.camel@kernel.org>
-Subject: Re: [PATCH v1] ceph: don't rely on error_string to validate
- blocklisted session.
-From:   Jeff Layton <jlayton@kernel.org>
-To:     khiremat@redhat.com
-Cc:     idryomov@gmail.com, pdonnell@redhat.com, vshankar@redhat.com,
-        xiubli@redhat.com, ceph-devel@vger.kernel.org
-Date:   Mon, 27 Sep 2021 12:14:56 -0400
-In-Reply-To: <20210927135227.290145-1-khiremat@redhat.com>
-References: <20210927135227.290145-1-khiremat@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
+        id S236783AbhI0UJJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 27 Sep 2021 16:09:09 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:39998 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236733AbhI0UJG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 27 Sep 2021 16:09:06 -0400
+Received: from relay1.suse.de (relay1.suse.de [149.44.160.133])
+        by smtp-out2.suse.de (Postfix) with ESMTP id AE35B1FF7C;
+        Mon, 27 Sep 2021 20:07:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1632773245;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kxAIhH1YVtxRZIYXNVbyWMpsZD18tjPURBL8yhlODKY=;
+        b=rqCL/ZfaKLBBJ11Lvyjkmko7G0IT9x86WIcCx9OduTjm1NgsLZkg1W4/Fe1cCG/Qk9Yn8S
+        4UptkV/P2rPm+amFEtaKPN0FQNf0vfitqRtoMdyT/aUQpEjjB27ybGR9tRkeTK0IWi6EvT
+        6Aqpa+pvsMRplJz18xNNO1ZRkBSH1D8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1632773245;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kxAIhH1YVtxRZIYXNVbyWMpsZD18tjPURBL8yhlODKY=;
+        b=QEbbg8qe4mXGT8/Upe6yCLvS822wAxZpuHOGT5K9AL53fjW4hFZgMNlgvVQ4RqvbLrzxR0
+        6bmSu51+HcRz6eCA==
+Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
+        by relay1.suse.de (Postfix) with ESMTP id 389D425D42;
+        Mon, 27 Sep 2021 20:07:24 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 862D3DA799; Mon, 27 Sep 2021 22:07:08 +0200 (CEST)
+Date:   Mon, 27 Sep 2021 22:07:08 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     David Howells <dhowells@redhat.com>
+Cc:     willy@infradead.org, hch@lst.de, trond.myklebust@primarydata.com,
+        Theodore Ts'o <tytso@mit.edu>, linux-block@vger.kernel.org,
+        ceph-devel@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Anna Schumaker <anna.schumaker@netapp.com>, linux-mm@kvack.org,
+        Bob Liu <bob.liu@oracle.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Seth Jennings <sjenning@linux.vnet.ibm.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-cifs@vger.kernel.org, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Steve French <sfrench@samba.org>, NeilBrown <neilb@suse.de>,
+        Dan Magenheimer <dan.magenheimer@oracle.com>,
+        linux-nfs@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        linux-btrfs@vger.kernel.org, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH v3 0/9] mm: Use DIO for swap and fix NFS swapfiles
+Message-ID: <20210927200708.GI9286@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, David Howells <dhowells@redhat.com>,
+        willy@infradead.org, hch@lst.de, trond.myklebust@primarydata.com,
+        Theodore Ts'o <tytso@mit.edu>, linux-block@vger.kernel.org,
+        ceph-devel@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Anna Schumaker <anna.schumaker@netapp.com>, linux-mm@kvack.org,
+        Bob Liu <bob.liu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Seth Jennings <sjenning@linux.vnet.ibm.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-cifs@vger.kernel.org, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>, Minchan Kim <minchan@kernel.org>,
+        Steve French <sfrench@samba.org>, NeilBrown <neilb@suse.de>,
+        Dan Magenheimer <dan.magenheimer@oracle.com>,
+        linux-nfs@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        linux-btrfs@vger.kernel.org, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
+References: <163250387273.2330363.13240781819520072222.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <163250387273.2330363.13240781819520072222.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-09-27 at 19:22 +0530, khiremat@redhat.com wrote:
-> From: Kotresh HR <khiremat@redhat.com>
+On Fri, Sep 24, 2021 at 06:17:52PM +0100, David Howells wrote:
 > 
-
-This looks good. For future reference, I'd have probably marked this as
-[PATCH v2]. One minor style nit below, but you don't need to resend for
-that. I'll fix it up when I merge it if you're OK with it.
-
-> The "error_string" in the metadata of MClientSession is being
-> parsed by kclient to validate whether the session is blocklisted.
-> The "error_string" is for humans and shouldn't be relied on it.
-> Hence added the flag to MClientsession to indicate the session
-> is blocklisted.
+> Hi Willy, Trond, Christoph,
 > 
-> URL: https://tracker.ceph.com/issues/47450
-> Signed-off-by: Kotresh HR <khiremat@redhat.com>
-> ---
->  fs/ceph/mds_client.c         | 24 +++++++++++++++++++++---
->  include/linux/ceph/ceph_fs.h |  2 ++
->  2 files changed, 23 insertions(+), 3 deletions(-)
+> Here's v3 of a change to make reads and writes from the swapfile use async
+> DIO, adding a new ->swap_rw() address_space method, rather than readpage()
+> or direct_IO(), as requested by Willy.  This allows NFS to bypass the write
+> checks that prevent swapfiles from working, plus a bunch of other checks
+> that may or may not be necessary.
 > 
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 44bc780b2b0e..cc1137468b29 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -3396,9 +3396,15 @@ static void handle_session(struct ceph_mds_session *session,
->  
->  	if (msg_version >= 3) {
->  		u32 len;
-> -		/* version >= 2, metadata */
-> -		if (__decode_session_metadata(&p, end, &blocklisted) < 0)
-> -			goto bad;
-> +		/* version >= 2 and < 5, decode metadata, skip otherwise
-> +		 * as it's handled via flags.
-> +		 */
-> +		if (msg_version >= 5) {
-> +			ceph_decode_skip_map(&p, end, string, string, bad);
-> +		} else {
-> +			if (__decode_session_metadata(&p, end, &blocklisted) < 0)
+> Whilst trying to make this work, I found that NFS's support for swapfiles
+> seems to have been non-functional since Aug 2019 (I think), so the first
+> patch fixes that.  Question is: do we actually *want* to keep this
+> functionality, given that it seems that no one's tested it with an upstream
+> kernel in the last couple of years?
+> 
+> There are additional patches to get rid of noop_direct_IO and replace it
+> with a feature bitmask, to make btrfs, ext4, xfs and raw blockdevs use the
+> new ->swap_rw method and thence remove the direct BIO submission paths from
+> swap.
+> 
+> I kept the IOCB_SWAP flag, using it to enable REQ_SWAP.  I'm not sure if
+> that's necessary, but it seems accounting related.
+> 
+> The synchronous DIO I/O code on NFS, raw blockdev, ext4 swapfile and xfs
+> swapfile all seem to work fine.  Btrfs refuses to swapon because the file
+> might be CoW'd.  I've tried doing "chattr +C", but that didn't help.
 
-We can use an "else if" here and remove a level of indentation. Also,
-the braces aren't necessary since both just cover a single-line
-statements.
-
-> +				goto bad;
-> +		}
->  		/* version >= 3, feature bits */
->  		ceph_decode_32_safe(&p, end, len, bad);
->  		if (len) {
-> @@ -3407,6 +3413,18 @@ static void handle_session(struct ceph_mds_session *session,
->  		}
->  	}
->  
-> +	if (msg_version >= 5) {
-> +		u32 flags;
-> +		/* version >= 4, struct_v, struct_cv, len, metric_spec */
-> +	        ceph_decode_skip_n(&p, end, 2 + sizeof(u32) * 2, bad);
-> +		/* version >= 5, flags   */
-> +                ceph_decode_32_safe(&p, end, flags, bad);
-> +		if (flags & CEPH_SESSION_BLOCKLISTED) {
-> +		        pr_warn("mds%d session blocklisted\n", session->s_mds);
-> +			blocklisted = true;
-> +		}
-> +	}
-> +
->  	mutex_lock(&mdsc->mutex);
->  	if (op == CEPH_SESSION_CLOSE) {
->  		ceph_get_mds_session(session);
-> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-> index bc2699feddbe..7ad6c3d0db7d 100644
-> --- a/include/linux/ceph/ceph_fs.h
-> +++ b/include/linux/ceph/ceph_fs.h
-> @@ -302,6 +302,8 @@ enum {
->  	CEPH_SESSION_REQUEST_FLUSH_MDLOG,
->  };
->  
-> +#define CEPH_SESSION_BLOCKLISTED	(1 << 0)  /* session blocklisted */
-> +
->  extern const char *ceph_session_op_name(int op);
->  
->  struct ceph_mds_session_head {
-
-
+There was probably some step missing. The file must not have holes, so
+either do 'dd' to the right size or use fallocate (which is recommended
+in manual page btrfs(5) SWAPFILE SUPPORT). There are some fstests
+exercising swapfile (grep -l _format_swapfile tests/generic/*) so you
+could try that without having to set up the swapfile manually.
