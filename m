@@ -2,89 +2,96 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57ABE41A306
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 Sep 2021 00:32:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62A4741A5E6
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 Sep 2021 05:11:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237887AbhI0WeD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 27 Sep 2021 18:34:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57970 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237847AbhI0WeC (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 27 Sep 2021 18:34:02 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FB82C061740
-        for <ceph-devel@vger.kernel.org>; Mon, 27 Sep 2021 15:32:21 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id y197so24765407iof.11
-        for <ceph-devel@vger.kernel.org>; Mon, 27 Sep 2021 15:32:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+UmxU11hST5wQMMsZTOdrPPgQ47TLPa20pybe++XQYM=;
-        b=DYK0QeVSPErU0fdUHY9fTGU4W7LYS3OpstW7jKN2zQIGz6Fg75r2GHQ3mNhW9RIn1l
-         +/XX+0IaT+QuP2WnY1RDSSQe/LzU370EV/dACbM1CoHg6kWxfp4JKYe9NsSJNOZspcJv
-         79kSmVRSpqY6HusQwOsl5Cca71RoZZnxCQ7faeNT+onSgNJoOacMUCqYfldqMMFZnJn1
-         op2n2nb0dzUlxGLwnR76PnSZAQEAPJSGaPxLjQP0iN7EFQdPXw6p08Wye3gAirxio6qw
-         Ay8cPI17oe8ngWi6HmVYmshTvXlSdR08xlvJOMOinmATWt5vmC9kQdW4ky3oHMIbMIRb
-         tKgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+UmxU11hST5wQMMsZTOdrPPgQ47TLPa20pybe++XQYM=;
-        b=TLl6AAMw4rzrDEK3Yt9lBJk9l8sm6Ajo8+l36pKKoAIIZMYk5RuOz1/yR8jtvKOzBo
-         i8Bc0GazD3ymwc3DRkx8FV1Fs/2YhfbCPz9vKPj+9xQ3y4keZft3GvuJXFHdcYYc8U85
-         GT40g62Ij9UxuGnGN0Y5/wlaBk8d+zFl/AMt+ognNZcyuza60xgpTrNi6hDM9ydW7aSa
-         MRVGiHX9nqbi18p9ZTmZ7USRwaFpg/yWRyoi8wPontgVvAvYVTbD0PFclSRrFkyLG606
-         qXfNXFOcJMSE7VyPe+ffl19uVt6oyMBfwZYXPaokFp8okbY+qgfC+SzsmMJTKScARYfw
-         1A2g==
-X-Gm-Message-State: AOAM5316elmJCSeEiJhRrJnx3Rw4GcWNaXKVINPjcXa8QeG/UGI9qk7q
-        E6cQbx6g9oi0xfsi7ds3alTKRQ==
-X-Google-Smtp-Source: ABdhPJzCRspGfuZEaibKYg9STMBXwDX6ihxLpFk5STZ/wJRDMFJCRfEhMCvkyfG9LlSO8u6kMpd4Fg==
-X-Received: by 2002:a02:3f4f:: with SMTP id c15mr1841581jaf.1.1632781940669;
-        Mon, 27 Sep 2021 15:32:20 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id p4sm9291645ilj.26.2021.09.27.15.32.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Sep 2021 15:32:19 -0700 (PDT)
-Subject: Re: [PATCH v2 0/6] block: 5th batch of add_disk() error handling
- conversions
-To:     Luis Chamberlain <mcgrof@kernel.org>, gregkh@linuxfoundation.org,
-        chaitanya.kulkarni@wdc.com, atulgopinathan@gmail.com, hare@suse.de,
-        maximlevitsky@gmail.com, oakad@yahoo.com, ulf.hansson@linaro.org,
-        colin.king@canonical.com, shubhankarvk@gmail.com,
-        baijiaju1990@gmail.com, trix@redhat.com,
-        dongsheng.yang@easystack.cn, ceph-devel@vger.kernel.org,
-        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-        sth@linux.ibm.com, hoeppner@linux.ibm.com, hca@linux.ibm.com,
-        gor@linux.ibm.com, borntraeger@de.ibm.com, oberpar@linux.ibm.com,
-        tj@kernel.org
-Cc:     linux-s390@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210927220232.1071926-1-mcgrof@kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <25afa23b-52af-9b79-8bd8-5e31da62c291@kernel.dk>
-Date:   Mon, 27 Sep 2021 16:32:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20210927220232.1071926-1-mcgrof@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S238809AbhI1DNY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 27 Sep 2021 23:13:24 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:35268 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238748AbhI1DNX (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 27 Sep 2021 23:13:23 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 95E6C222DF;
+        Tue, 28 Sep 2021 03:11:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1632798701; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=k1irZcE6GgE63UfMaZ69q7wFQxdxy8PkJV1UDRuOwDA=;
+        b=Af8PPYiGG/KoV03reINXBzNVPccmiyHVMrwNt2UIFxlU1jhXBp5nI2Gka9opvfla6EYXOa
+        u9dubE+5BF4AwBJlVzPfA+nwLlAQkhckDkag+FkKT+kBsnwd6qmqqlWA/pOjn0C1Ffe5V9
+        HYSxfFfncwL3S6Y8kijKplmMugjgsEE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1632798701;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=k1irZcE6GgE63UfMaZ69q7wFQxdxy8PkJV1UDRuOwDA=;
+        b=rvEM/v30W6HdMnLZksiPaBfoRjZ8iPYI6P23HeASJG7DpSxpqPRoywlWfOvhpMFCEARX9U
+        W3t0wcFCENMdaDDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C1463132D4;
+        Tue, 28 Sep 2021 03:11:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id HD3CH+SHUmHafwAAMHmgww
+        (envelope-from <neilb@suse.de>); Tue, 28 Sep 2021 03:11:32 +0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+From:   "NeilBrown" <neilb@suse.de>
+To:     "David Howells" <dhowells@redhat.com>
+Cc:     willy@infradead.org, hch@lst.de, trond.myklebust@primarydata.com,
+        "Theodore Ts'o" <tytso@mit.edu>, linux-block@vger.kernel.org,
+        ceph-devel@vger.kernel.org,
+        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Jeff Layton" <jlayton@kernel.org>,
+        "Andreas Dilger" <adilger.kernel@dilger.ca>,
+        "Anna Schumaker" <anna.schumaker@netapp.com>, linux-mm@kvack.org,
+        "Bob Liu" <bob.liu@oracle.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        "Josef Bacik" <josef@toxicpanda.com>,
+        "Seth Jennings" <sjenning@linux.vnet.ibm.com>,
+        "Jens Axboe" <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-cifs@vger.kernel.org, "Chris Mason" <clm@fb.com>,
+        "David Sterba" <dsterba@suse.com>,
+        "Minchan Kim" <minchan@kernel.org>,
+        "Steve French" <sfrench@samba.org>,
+        "Dan Magenheimer" <dan.magenheimer@oracle.com>,
+        linux-nfs@vger.kernel.org, "Ilya Dryomov" <idryomov@gmail.com>,
+        linux-btrfs@vger.kernel.org, dhowells@redhat.com,
+        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH v3 0/9] mm: Use DIO for swap and fix NFS swapfiles
+In-reply-to: <163250387273.2330363.13240781819520072222.stgit@warthog.procyon.org.uk>
+References: <163250387273.2330363.13240781819520072222.stgit@warthog.procyon.org.uk>
+Date:   Tue, 28 Sep 2021 13:11:29 +1000
+Message-id: <163279868982.18792.10448745714922373194@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 9/27/21 4:02 PM, Luis Chamberlain wrote:
-> This is the 5th series of driver conversions for add_disk() error
-> handling. This set along with the entire 7th set of patches can be
-> found on my 20210927-for-axboe-add-disk-error-handling branch [0].
+On Sat, 25 Sep 2021, David Howells wrote:
+> Whilst trying to make this work, I found that NFS's support for swapfiles
+> seems to have been non-functional since Aug 2019 (I think), so the first
+> patch fixes that.  Question is: do we actually *want* to keep this
+> functionality, given that it seems that no one's tested it with an upstream
+> kernel in the last couple of years?
 
-Applied 1-2.
+SUSE definitely want to keep this functionality.  We have customers
+using it.
+I agree it would be good if it was being tested somewhere....
 
--- 
-Jens Axboe
-
+Thanks,
+NeilBrown
