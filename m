@@ -2,82 +2,93 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8062741B14F
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 Sep 2021 15:55:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22B8A41C8AC
+	for <lists+ceph-devel@lfdr.de>; Wed, 29 Sep 2021 17:45:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241008AbhI1N5d (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 28 Sep 2021 09:57:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44594 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240972AbhI1N5c (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 28 Sep 2021 09:57:32 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA585C06161C
-        for <ceph-devel@vger.kernel.org>; Tue, 28 Sep 2021 06:55:52 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id 145so18995194pfz.11
-        for <ceph-devel@vger.kernel.org>; Tue, 28 Sep 2021 06:55:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=xQrYULKok+hL+AIRGJuG9CojAZcnV9Xr+it7yxQJVlY=;
-        b=Cy4Y/+g5tCbYEb9WqZePRmk1ezpEJqU6O8B+E5+6py3l5zFEFfZKKJM4kKqUGFryBw
-         vs2SIwFfnn+NRiU0bkYs/FXLcP3hiSpiouNgSvnhOpJoE2lchLu8ChQHd3c+jDJReMcZ
-         EmZ0eNoeE16jn8aFkV59Ios6T3r5dEkiqFo6mOrr4jmBVO/ZP0+alft/Lk+UA2kiNwm+
-         rwFw04RxQROXjwtFBEVEJtdOFEuijnpj3q/knuaRS9b6AeFyH8b5gULDLdlHsLU2J4Cg
-         meAeRzMGN1EqJGkEvpxlCHwV4CrRmS8uhtJQ/o7xLWm+YdxeXuirNjQ7YSj/eJUzi8MA
-         ZvVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=xQrYULKok+hL+AIRGJuG9CojAZcnV9Xr+it7yxQJVlY=;
-        b=2MeGK5PpKA7vPfUt1y1aTHAT+x0Tf/D2JL3pNSBIv3cldXLpqBVqjJ2HOtl227LOaW
-         CKiz00lSnpQ268VZhT9b6vRJkcFYtOUVLfGtSKuV/zd3z3IWcfASQJ3Q2Hq0Dv5eq5AF
-         pBh6QyaMpkrsOADGkuriF1lHMaidZXqHgwtlqETmZq7LtQg/HTz/55JJnY7HzDEej8kU
-         p+WPLbW0Wm0Vaz40bOBpv9yhImsBX8JgbkVV0HcgP1xlj4SgI+0yaLPfvdAzJxizQ55G
-         ENKOoL+Bv7Z9WiRLDTr9iyEyIHpj9qiv3KO2C0Wb+ru8h0SudavzycFfexFoxk8Hb/OY
-         CPEg==
-X-Gm-Message-State: AOAM531O2k+ochg8KIER7iUoHu1W4EaJy+Y339ltuXQrwd0K7HsJOO9B
-        B205gNamfCu5fd9HThzQwoxESJhwuNh+1+B55q4=
-X-Google-Smtp-Source: ABdhPJw/QjtMFMG+ZW+s+iztBEsAhZFIwwBAwZxtWXTjPH7FedmEMXVvElgutrrGgXw+qV1I3B8qsoyQvw3hWsE5HOg=
-X-Received: by 2002:a63:4084:: with SMTP id n126mr3618817pga.386.1632837352213;
- Tue, 28 Sep 2021 06:55:52 -0700 (PDT)
+        id S245658AbhI2PrD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 29 Sep 2021 11:47:03 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54884 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S245655AbhI2Pqw (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 29 Sep 2021 11:46:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1632930311;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YD/JzDwhuk7rGKkEzFS8gH/oiqrA2eu324rL5fdp0h4=;
+        b=eBe9ic/ps1hUa9PzYySPAOhdqRShPXZZNxXsUSzkHNm4QKBCIxhVU8ISXORMW3y2RarC7N
+        m0EzNL1OW0LqMfwODsHZ7XBfjZXJ0t6xQKPTg8kpLonvnhouU8oNoSDOa15AxuY8taOigL
+        XfeH0C10wvZGadq6+LdLkN90kh788x0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-169-RydRWjxQMwK58uTqWu6Ekw-1; Wed, 29 Sep 2021 11:45:08 -0400
+X-MC-Unique: RydRWjxQMwK58uTqWu6Ekw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 00CAB1006AA3;
+        Wed, 29 Sep 2021 15:45:06 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 51DD86A900;
+        Wed, 29 Sep 2021 15:45:03 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20210927200708.GI9286@twin.jikos.cz>
+References: <20210927200708.GI9286@twin.jikos.cz> <163250387273.2330363.13240781819520072222.stgit@warthog.procyon.org.uk>
+To:     dsterba@suse.cz
+Cc:     dhowells@redhat.com
+Cc:     willy@infradead.org, Chris Mason <clm@fb.com>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        Ilya Dryomov <idryomov@gmail.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH v3 0/9] mm: Use DIO for swap and fix NFS swapfiles
 MIME-Version: 1.0
-Received: by 2002:a05:6a10:fa90:0:0:0:0 with HTTP; Tue, 28 Sep 2021 06:55:51
- -0700 (PDT)
-Reply-To: mrsaishag45@gmail.com
-From:   Mrs Aisha Al-Qaddafi <gaddafimrsaisha68@gmail.com>
-Date:   Tue, 28 Sep 2021 06:55:51 -0700
-Message-ID: <CAKKV1NyjzGok4aJdgh+mqmm=yFrxDyOFVt=90Uc=-3r6AqBGeA@mail.gmail.com>
-Subject: Dear Friend,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4005661.1632930302.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 29 Sep 2021 16:45:02 +0100
+Message-ID: <4005662.1632930302@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dear Friend,
+David Sterba <dsterba@suse.cz> wrote:
 
-I came across your e-mail contact prior to a private search while in
-need of your assistance. I am Aisha Al-Qaddafi, the only biological
-Daughter of Former President of Libya Col. Muammar Al-Qaddafi. Am a
-single Mother and a Widow with three Children.
+> > There are additional patches to get rid of noop_direct_IO and replace =
+it
+> > with a feature bitmask, to make btrfs, ext4, xfs and raw blockdevs use=
+ the
+> > new ->swap_rw method and thence remove the direct BIO submission paths=
+ from
+> > swap.
+> > =
 
-I have investment funds worth Twenty Seven Million Five Hundred
-Thousand United State Dollar ($27.500.000.00 ) and i need a trusted
-investment Manager/Partner because of my current refugee status,
-however, I am interested in you for investment project assistance in
-your country, may be from there, we can build business relationship in
-the nearest future.
+> > I kept the IOCB_SWAP flag, using it to enable REQ_SWAP.  I'm not sure =
+if
+> > that's necessary, but it seems accounting related.
+>
+> There was probably some step missing. The file must not have holes, so
+> either do 'dd' to the right size or use fallocate (which is recommended
+> in manual page btrfs(5) SWAPFILE SUPPORT). There are some fstests
+> exercising swapfile (grep -l _format_swapfile tests/generic/*) so you
+> could try that without having to set up the swapfile manually.
 
-I am willing to negotiate an investment/business profit sharing ratio
-with you based on the future investment earning profits.
+Yeah.  As advised elsewhere, I removed the file and recreated it, doing th=
+e
+chattr before extending the file.  At that point swapon worked.  It didn't
+work though, and various userspace programs started dying.  I'm guessing m=
+y
+btrfs_swap_rw() is wrong somehow.
 
-If you are willing to handle this project on my behalf kindly reply
-urgently to enable me to provide you more information about the
-investment funds.
+David
 
-Your Urgent Reply Will Be Appreciated
-
-Best Regards
-Mrs Aisha Al-Qaddafi
