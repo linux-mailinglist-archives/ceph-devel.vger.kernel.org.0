@@ -2,75 +2,113 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AF4941DB1B
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 Sep 2021 15:31:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BFFA41DE1A
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 Sep 2021 17:54:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351483AbhI3NcK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 30 Sep 2021 09:32:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43216 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1350416AbhI3NcE (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 30 Sep 2021 09:32:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 12647615A2;
-        Thu, 30 Sep 2021 13:30:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633008621;
-        bh=gfsvZESXrlqebdpSYju0L9uDAc6xk6K0GXnkVl3h5KQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=pX2M1+o8aNmcbZOHiX780IYeY5OTz1Z1PEyzn/Oaw1aquXzM9/2rh16dK6Ue6JYvt
-         w9/VYsIArfejDU4/WbEwMSI6LHRDBfIIjzAQqrDcO/fq/+OiXKjtEdzfIqk+q2wm/0
-         Z2BXNkJoWg1HjEJ0FRne0vQXE/Gjk85kM+eQfx80mR00efJpn1xfPdBBc6Z9WJN499
-         YrHwthmfQx1tc6+xGUeMbeO8Hp9v0SP4OLNVlyV4ANC1E8qGhZ7BsDCslXmehB47Yd
-         Yr1FtbDegSpRL9C/j4ib4DbsiOEKx1Bi5TvtPBSGM2l4in7btkDoKcM0onm2X2JeDm
-         ISNECF66IV6Gw==
-Message-ID: <550e38fbacfb539f55aa66bb9241c7825c8fc446.camel@kernel.org>
-Subject: Re: [PATCH] ceph: buffer the truncate when size won't change with
- Fx caps issued
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Thu, 30 Sep 2021 09:30:19 -0400
-In-Reply-To: <20210925085149.429710-1-xiubli@redhat.com>
-References: <20210925085149.429710-1-xiubli@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
+        id S1346912AbhI3P43 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 30 Sep 2021 11:56:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56282 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346577AbhI3P42 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 Sep 2021 11:56:28 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0C0AC06176A;
+        Thu, 30 Sep 2021 08:54:45 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id i4so27713049lfv.4;
+        Thu, 30 Sep 2021 08:54:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8LuCj9+8GFiHaMYgM8A65UudQg+qoOQQ2QUvcQ4XJ6s=;
+        b=PXKNBxqcRYxhwIV2v2X64yZJayzFfGuPEaFJcRpO4WCNqMpCZwI1df/zPBhLNhmRG9
+         7YWtoaofqurtGMdx0tYBEI6UfndHKtDaw4PBX49q9qi3J9QTKWYVNSDazJnLhCwGhWpW
+         sQyH53wtu7PQHWXKpw0IKJFLkzoLewsXUWMxyWUFA0GoZc/geWBr365BCc9DFKmEuqTx
+         QD1UXjg8vOB88FTGI55O4xvrqxi80eDmibsD2swnwubvtT8jN+7r24raClw1eWxICIMn
+         Xqc+xF7xzZT7TnBUA1RA5nmOrLjD64wC+WGfBcYeYx3rm7565L5ZdR6xyKgYS9WfGChU
+         NdlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8LuCj9+8GFiHaMYgM8A65UudQg+qoOQQ2QUvcQ4XJ6s=;
+        b=XbBmZKylOYkv9SoXviPKr9BWXkZnTMEhN/fJ51HYr7LvZ50SCBNVHrOfV5SWpjYM2r
+         Y2qiC9CZ/lZsMRA6GQqL2/yNfuvwmt01k+raQ/914z/0iuApGZgUMbKUALfvCbUniGRI
+         gSalxO6Z+kngZPgLhCAU9cS1ehUiZTvEswwuJASnjNdOIUR0Z+riW4QpL82Pr+TXguTS
+         2fDK3wKyn6cI/dVyVPlz5oC6323Y0CaVOJqjzh8gwILnBViU/sGrMjSLtCdVqkbFx6bt
+         8hDoqhoj9aXS9t5aF9sa3JGdoOav5Q8f/6EcjMIWu/mSG6lZ8XF7xAHIVtuMFICV5S9y
+         uQUg==
+X-Gm-Message-State: AOAM530xbUXEPedn3z2RSBSh4SRFgiu7yX3y79mfdsl/iauHJLStOASh
+        TzYK5mmp8+9+DBjHeQ/cTbqVveEdVpYvTtbgkUjRp9WQ
+X-Google-Smtp-Source: ABdhPJyOHnVmMylaeGdsSDUQCs/a7NstziQ8gAm3Iq6Rldf9w/4qe7wGWECjl3a+7RS3TZsUTx6/zgFOVy33MH5VI2M=
+X-Received: by 2002:a05:6512:32c5:: with SMTP id f5mr7091563lfg.234.1633017283958;
+ Thu, 30 Sep 2021 08:54:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <163250387273.2330363.13240781819520072222.stgit@warthog.procyon.org.uk>
+ <163279868982.18792.10448745714922373194@noble.neil.brown.name>
+In-Reply-To: <163279868982.18792.10448745714922373194@noble.neil.brown.name>
+From:   Steve French <smfrench@gmail.com>
+Date:   Thu, 30 Sep 2021 10:54:32 -0500
+Message-ID: <CAH2r5msHO9HTQGeO6MoR2_U76B9kLeoFS=FRbMuiNsh=YeFdWg@mail.gmail.com>
+Subject: Re: [RFC][PATCH v3 0/9] mm: Use DIO for swap and fix NFS swapfiles
+To:     NeilBrown <neilb@suse.de>
+Cc:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, linux-block@vger.kernel.org,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-mm <linux-mm@kvack.org>, Bob Liu <bob.liu@oracle.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Seth Jennings <sjenning@linux.vnet.ibm.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Dan Magenheimer <dan.magenheimer@oracle.com>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sat, 2021-09-25 at 16:51 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> If the new size is the same with current size, the MDS will do nothing
-> except changing the mtime/atime. We can just buffer the truncate in
-> this case.
-> 
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 03530793c969..14989b961431 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -2370,7 +2370,7 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
->  		loff_t isize = i_size_read(inode);
->  
->  		dout("setattr %p size %lld -> %lld\n", inode, isize, attr->ia_size);
-> -		if ((issued & CEPH_CAP_FILE_EXCL) && attr->ia_size > isize) {
-> +		if ((issued & CEPH_CAP_FILE_EXCL) && attr->ia_size >= isize) {
->  			i_size_write(inode, attr->ia_size);
->  			inode->i_blocks = calc_inode_blocks(attr->ia_size);
->  			ci->i_reported_size = attr->ia_size;
+On Mon, Sep 27, 2021 at 10:12 PM NeilBrown <neilb@suse.de> wrote:
+>
+> On Sat, 25 Sep 2021, David Howells wrote:
+> > Whilst trying to make this work, I found that NFS's support for swapfiles
+> > seems to have been non-functional since Aug 2019 (I think), so the first
+> > patch fixes that.  Question is: do we actually *want* to keep this
+> > functionality, given that it seems that no one's tested it with an upstream
+> > kernel in the last couple of years?
+>
+> SUSE definitely want to keep this functionality.  We have customers
+> using it.
+> I agree it would be good if it was being tested somewhere....
+>
 
-I wonder if we ought to just ignore the attr->ia_size == isize case
-altogether instead? Truncating to the same size should be a no-op, so we
-shouldn't even need to dirty caps or anything.
+I am trying to work through the testing of swap over SMB3 mounts
+since there are use cases where you need to expand the swap
+space to remote storage and so this requirement comes up.  The main difficulty
+I run into is forgetting to mount with the mount options (to store mode bits)
+(so swap file has the right permissions) and debugging some of the
+xfstests relating to swap can be a little confusing.
 
-Thoughts?
 -- 
-Jeff Layton <jlayton@kernel.org>
+Thanks,
 
+Steve
