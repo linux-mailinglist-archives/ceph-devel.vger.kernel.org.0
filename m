@@ -2,174 +2,112 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D557841E704
-	for <lists+ceph-devel@lfdr.de>; Fri,  1 Oct 2021 07:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 171B941E92B
+	for <lists+ceph-devel@lfdr.de>; Fri,  1 Oct 2021 10:41:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351928AbhJAFCj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 1 Oct 2021 01:02:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:41102 "EHLO
+        id S1352839AbhJAInA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 1 Oct 2021 04:43:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:30617 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230397AbhJAFCi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 1 Oct 2021 01:02:38 -0400
+        by vger.kernel.org with ESMTP id S229683AbhJAInA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 1 Oct 2021 04:43:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633064454;
+        s=mimecast20190719; t=1633077676;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=yIv0dHQYBDLB+/l/xSVTr/5PzjLi1sZMuJjAXldYU2c=;
-        b=A6/7oivDmIVmCpVPqwg01EtuAN+a4hKwleaTLtJGtyyi0/rE7GRFNtMA9RrYTpPFW73Eon
-        WQPGM5XGc07P4e+wijG1H8cnSU0989IzeGInfO7MSGZUQdFnbmsQUHLTRWVZy6YSdnwZEs
-        ENx9JyXI4Zk4QczDBEdyv80K1keOsgQ=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-139-qoCsplZSPPCNtinohx35Fg-1; Fri, 01 Oct 2021 01:00:53 -0400
-X-MC-Unique: qoCsplZSPPCNtinohx35Fg-1
-Received: by mail-pj1-f70.google.com with SMTP id v10-20020a17090abb8a00b0019f1a066f81so5505022pjr.9
-        for <ceph-devel@vger.kernel.org>; Thu, 30 Sep 2021 22:00:53 -0700 (PDT)
+        bh=dhNIePRei7bZdcHXZbKSNX6qZ3ejOKhtUEFXAfOo+jU=;
+        b=bnojhW5qVaXV0smAM6NTqw6MMzQg1kUOf0H0sVnUhk7jwi8g7/C6uID/BwSevAHVW0/r0w
+        qFE82X04oCB0Bp3sVRQvjLIbF90eQTqSnR1CPcUkE3W5FMSSI+yrx7VlcBUmuEIQsNq00M
+        3uEZYxxpQOv18/C2YJwZy5uNsb/fb7A=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-247-yokotSejMzmMrBJ6xUT7bQ-1; Fri, 01 Oct 2021 04:41:15 -0400
+X-MC-Unique: yokotSejMzmMrBJ6xUT7bQ-1
+Received: by mail-pf1-f198.google.com with SMTP id w6-20020a62dd06000000b0044bb97ced47so5638895pff.3
+        for <ceph-devel@vger.kernel.org>; Fri, 01 Oct 2021 01:41:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yIv0dHQYBDLB+/l/xSVTr/5PzjLi1sZMuJjAXldYU2c=;
-        b=DuvVbLZ2rILLSreQWA8/OkYw/AF7IJcfloksS4FWfLY9zwZB/m8aUQRiYmmrwReyK+
-         hnCKwagoKuF/9Tb0XHTMPduCPFyXNPYu9KCAPe7I5ID6Am6F2yzf55W4u/pKzEyYlUAs
-         wslZOxMJKkUiOVyr1yVa0ha7cC2s2uHlzLuHs55Po0SGZTodgrMBUCdApIaq/ErjA2Zl
-         YtuV4yPRt0FDppn8y2OP43dTErcnTPNC6BfW04yshsurubqCNwN9kHhQvbVEf5cPZbYo
-         YiOak4fDuGbViDegaKchbfrQNljBA3lMmCljzd8RKnEyI+ZZbM9lBRNaiosvqKWsAdJp
-         67IQ==
-X-Gm-Message-State: AOAM5303qBQVXyJlmq/RJDCiK5M/U+ot/AeSXx+YDkPmjhsg2MjpGmW1
-        K1x07EXGs+59idssLmFF6TWhxJNoRjAZPS1munYPTkn7zY0RLhr/kS9d/XAZVrKrYFXuaBuUUW3
-        VHx6YDFCyV761y0d3h6nh1g==
-X-Received: by 2002:a17:90a:bd04:: with SMTP id y4mr10929188pjr.9.1633064452182;
-        Thu, 30 Sep 2021 22:00:52 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzYYrkLdXRXhRkDFD6dHxyCEJo4umhl98AOrzMByGEHXiQxkYoQ6SgTiGib2NUN7CzaOANYzw==
-X-Received: by 2002:a17:90a:bd04:: with SMTP id y4mr10929165pjr.9.1633064451954;
-        Thu, 30 Sep 2021 22:00:51 -0700 (PDT)
-Received: from localhost.localdomain ([49.207.221.217])
-        by smtp.gmail.com with ESMTPSA id s3sm6377485pjr.1.2021.09.30.22.00.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Sep 2021 22:00:51 -0700 (PDT)
-From:   Venky Shankar <vshankar@redhat.com>
-To:     jlayton@redhat.com, pdonnell@redhat.com
-Cc:     ceph-devel@vger.kernel.org, Venky Shankar <vshankar@redhat.com>
-Subject: [PATCH v4 2/2] ceph: add debugfs entries for mount syntax support
-Date:   Fri,  1 Oct 2021 10:30:37 +0530
-Message-Id: <20211001050037.497199-3-vshankar@redhat.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211001050037.497199-1-vshankar@redhat.com>
-References: <20211001050037.497199-1-vshankar@redhat.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=dhNIePRei7bZdcHXZbKSNX6qZ3ejOKhtUEFXAfOo+jU=;
+        b=xwYdUs3nd9KTseqihC7QYRKdjTsqvW6vhwpovYQzM6y+gYoOY7pdIHvrzSuvUaY3Z5
+         KeFQa1MyYRvIZFwpZxDUpBvGaWnUcfQSpI63rZ2aXLvUjg68hBqDy20tViHL/BG//Pu/
+         X0HWCb7lH1l2RBrM/n1v3YXw5Yuo8LyYVZFt8BUZNf+wb3BqLVIWGah5Q/UvPxKAE2oR
+         zFmfA9TkMPCpg/k8woud7Ztq3lHHGSnKp6VS620uKS5PYfBEzt++opjVP0ELFvf18Zks
+         9Q29s29/0m/H7/UowHMweBnS4GPjIKmkFgp2SCyM8EZG9bjL0sv5dE/jcaHHlZDMv1tK
+         7aeA==
+X-Gm-Message-State: AOAM533hox0+XWvH5ObSL1K2FcuT0fXv7s3cvMt7u/WVDR4nVKHWvcpy
+        QyzW7djWLeFHILk6xwnCvoYQ/8oTeNRRaT5z48Q9uGILPQkkj4I96pRJWwQofFyj4FkWf/qDxkz
+        ArXFO5hQUfAzews3XYNEVuagasbYR+URnBD9fy/48eBXq4mMxdgOHwX1dDL5MRXzvo8ScMUc=
+X-Received: by 2002:a17:90a:7d11:: with SMTP id g17mr12103680pjl.150.1633077673747;
+        Fri, 01 Oct 2021 01:41:13 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzCsCfcl8LCk5MrL4xlW+svRhe8YVZzkNWEMRKazkHCsAyWtRHQzOXA/wjMUWdjtU95kd+fcQ==
+X-Received: by 2002:a17:90a:7d11:: with SMTP id g17mr12103650pjl.150.1633077673356;
+        Fri, 01 Oct 2021 01:41:13 -0700 (PDT)
+Received: from [10.72.12.53] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id i24sm4807172pjl.8.2021.10.01.01.41.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Oct 2021 01:41:12 -0700 (PDT)
+Subject: Re: [PATCH] ceph: buffer the truncate when size won't change with Fx
+ caps issued
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
+References: <20210925085149.429710-1-xiubli@redhat.com>
+ <550e38fbacfb539f55aa66bb9241c7825c8fc446.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <d8b2757d-f5c5-e745-22fc-349b991f4f80@redhat.com>
+Date:   Fri, 1 Oct 2021 16:41:07 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <550e38fbacfb539f55aa66bb9241c7825c8fc446.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Signed-off-by: Venky Shankar <vshankar@redhat.com>
----
- fs/ceph/debugfs.c | 41 +++++++++++++++++++++++++++++++++++++++++
- fs/ceph/super.c   |  3 +++
- fs/ceph/super.h   |  2 ++
- 3 files changed, 46 insertions(+)
 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 66989c880adb..d1610393c213 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -22,6 +22,16 @@
- #include "mds_client.h"
- #include "metric.h"
- 
-+#define META_INFO_DIR_NAME         "meta"
-+#define CLIENT_FEATURES_DIR_NAME   "client_features"
-+#define MOUNT_DEVICE_V1_SUPPORT_FILE_NAME "mount_syntax_v1"
-+#define MOUNT_DEVICE_V2_SUPPORT_FILE_NAME "mount_syntax_v2"
-+
-+static struct dentry *ceph_client_meta_dir;
-+static struct dentry *ceph_client_features_dir;
-+static struct dentry *ceph_mount_device_v1_support;
-+static struct dentry *ceph_mount_device_v2_support;
-+
- static int mdsmap_show(struct seq_file *s, void *p)
- {
- 	int i;
-@@ -416,6 +426,29 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
- 						  &status_fops);
- }
- 
-+void ceph_fs_debugfs_client_features_init(void)
-+{
-+	ceph_client_meta_dir = debugfs_create_dir(META_INFO_DIR_NAME,
-+						  ceph_debugfs_dir);
-+	ceph_client_features_dir = debugfs_create_dir(CLIENT_FEATURES_DIR_NAME,
-+						      ceph_client_meta_dir);
-+	ceph_mount_device_v1_support = debugfs_create_file(MOUNT_DEVICE_V1_SUPPORT_FILE_NAME,
-+							   0400,
-+							   ceph_client_features_dir,
-+							   NULL, NULL);
-+	ceph_mount_device_v2_support = debugfs_create_file(MOUNT_DEVICE_V2_SUPPORT_FILE_NAME,
-+							   0400,
-+							   ceph_client_features_dir,
-+							   NULL, NULL);
-+}
-+
-+void ceph_fs_debugfs_client_features_cleanup(void)
-+{
-+	debugfs_remove(ceph_mount_device_v1_support);
-+	debugfs_remove(ceph_mount_device_v2_support);
-+	debugfs_remove(ceph_client_features_dir);
-+	debugfs_remove(ceph_client_meta_dir);
-+}
- 
- #else  /* CONFIG_DEBUG_FS */
- 
-@@ -427,4 +460,12 @@ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
- {
- }
- 
-+void ceph_fs_debugfs_client_features_init(void)
-+{
-+}
-+
-+void ceph_fs_debugfs_client_features_cleanup(void)
-+{
-+}
-+
- #endif  /* CONFIG_DEBUG_FS */
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 609ffc8c2d78..21d59deb042d 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -1404,6 +1404,8 @@ static int __init init_ceph(void)
- 	if (ret)
- 		goto out_caches;
- 
-+	ceph_fs_debugfs_client_features_init();
-+
- 	pr_info("loaded (mds proto %d)\n", CEPH_MDSC_PROTOCOL);
- 
- 	return 0;
-@@ -1417,6 +1419,7 @@ static int __init init_ceph(void)
- static void __exit exit_ceph(void)
- {
- 	dout("exit_ceph\n");
-+	ceph_fs_debugfs_client_features_cleanup();
- 	unregister_filesystem(&ceph_fs_type);
- 	destroy_caches();
- }
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 8f71184b7c85..7e7b140cab5d 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1231,6 +1231,8 @@ extern int ceph_locks_to_pagelist(struct ceph_filelock *flocks,
- /* debugfs.c */
- extern void ceph_fs_debugfs_init(struct ceph_fs_client *client);
- extern void ceph_fs_debugfs_cleanup(struct ceph_fs_client *client);
-+extern void ceph_fs_debugfs_client_features_init(void);
-+extern void ceph_fs_debugfs_client_features_cleanup(void);
- 
- /* quota.c */
- static inline bool __ceph_has_any_quota(struct ceph_inode_info *ci)
--- 
-2.27.0
+On 9/30/21 9:30 PM, Jeff Layton wrote:
+> On Sat, 2021-09-25 at 16:51 +0800, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> If the new size is the same with current size, the MDS will do nothing
+>> except changing the mtime/atime. We can just buffer the truncate in
+>> this case.
+>>
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/ceph/inode.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+>> index 03530793c969..14989b961431 100644
+>> --- a/fs/ceph/inode.c
+>> +++ b/fs/ceph/inode.c
+>> @@ -2370,7 +2370,7 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
+>>   		loff_t isize = i_size_read(inode);
+>>   
+>>   		dout("setattr %p size %lld -> %lld\n", inode, isize, attr->ia_size);
+>> -		if ((issued & CEPH_CAP_FILE_EXCL) && attr->ia_size > isize) {
+>> +		if ((issued & CEPH_CAP_FILE_EXCL) && attr->ia_size >= isize) {
+>>   			i_size_write(inode, attr->ia_size);
+>>   			inode->i_blocks = calc_inode_blocks(attr->ia_size);
+>>   			ci->i_reported_size = attr->ia_size;
+> I wonder if we ought to just ignore the attr->ia_size == isize case
+> altogether instead? Truncating to the same size should be a no-op, so we
+> shouldn't even need to dirty caps or anything.
+>
+> Thoughts?
+
+I agree with it. Really it's doing nothing except updating the 
+atime/mtime. Currently this patch will just delay doing that.
+
+In some filesystems they will ignore it by doing nothing in this case. 
+And some others may will try to release the preallocated blocks in the 
+lower layer in this case, this makes no sense for ceph.
 
