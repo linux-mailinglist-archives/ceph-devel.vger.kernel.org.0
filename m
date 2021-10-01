@@ -2,71 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 512C441EC55
-	for <lists+ceph-devel@lfdr.de>; Fri,  1 Oct 2021 13:37:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E12641F1EF
+	for <lists+ceph-devel@lfdr.de>; Fri,  1 Oct 2021 18:14:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354011AbhJALjX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 1 Oct 2021 07:39:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41906 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353941AbhJALjV (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 1 Oct 2021 07:39:21 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90F2DC061775
-        for <ceph-devel@vger.kernel.org>; Fri,  1 Oct 2021 04:37:37 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id s17so33017981edd.8
-        for <ceph-devel@vger.kernel.org>; Fri, 01 Oct 2021 04:37:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=5L/E4eErsLvrvRSyjenHMn1XgR3BfAibYkaUBTxnmho=;
-        b=LfLK0HZsCvlZ4Eba2w0siY0+OnqGeH5nIRTdcWkcm3Yz71WSvjtKn4tprDyoOVSQn5
-         l7l6Rk0DN+qXnhdZ90rDStfqt/bAdB6VTVuOWS6fqUcVSoI4rHHdoEhCKs3H9IOPE+eF
-         aKYGmDz8S00p5mQmH8YNywpHQocV1KFQs9rY+4ezR254bxRGWAtJe8cxvgy3R3IofwiY
-         g/JJNvaPhwwq8owIFtfD7FOHUSEogUaTFNkYsVMAXTThBlvB2i+A34Vkge7goroVsI/X
-         JFP1JNm/VVhXJqCyc5jur0Civ+hZhSWAjW7xeUY/ONP/M87ozYa/ODGOhxGwhenosFDV
-         0dfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=5L/E4eErsLvrvRSyjenHMn1XgR3BfAibYkaUBTxnmho=;
-        b=EDTjuIyGbq/HXxZmsQY0UbsLjGrmR55WnbZGv8/exFomTdTIDmjmDJ2pCGrH9Q+03Z
-         Qq4/U3SHxx02DYfjOSY0l9VZ/SxV9GDp6S+Ci6wvepPYbNbnX9hPkxszSsyrMJGc/nJX
-         6ai5RwHUbTNp/csaKVrVPoKvChH2yQLgPtmlCY8B1D47igiAn8LAwWtVLPl7PFwtiayF
-         gSUMaCmMeU77NiqH+tVw+Uwj71RqJwIcEYR8qZpL1XoyplPvqOBn0byaIdV7uVOnZ0UJ
-         V3tS15pg753C5S+eQfZmT8dp5ZKeXCXcjpppoZ8j6Y/0sCbOduPvAC2d/+djXec+eWXe
-         rvyg==
-X-Gm-Message-State: AOAM532WVNRTyb315VhXfGSNoOvKylrO3V0Djrj8f1Oju2NSTM6l9jTT
-        C7cFxnGCq3nS4yxM/8Z00POm+tmT+2mvNcUoVJA=
-X-Google-Smtp-Source: ABdhPJyop7KndFhzSc9B7h+xVuQbQ1O6i22EM2nIaKFfuOCxZjEWnLbVxA5LiByEQnXHJoqnf8MEw9p5L/K82blEDfs=
-X-Received: by 2002:a17:906:a408:: with SMTP id l8mr5750873ejz.489.1633088255974;
- Fri, 01 Oct 2021 04:37:35 -0700 (PDT)
+        id S1354559AbhJAQPt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 1 Oct 2021 12:15:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54294 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232020AbhJAQPt (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Fri, 1 Oct 2021 12:15:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5A6EE61881;
+        Fri,  1 Oct 2021 16:14:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633104844;
+        bh=aqrGWxaGpOQLTIjFfvFbSKaLirprcdL5GMryGqzwt/M=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=G/xh25mrJen3/J1O7cMRc1Ji/8pJm2OzEB6Xy0gY0ORSQ4c6P3kw4aUxB5IxvAm+L
+         ym7fh52VjHOwweS13B86hpCGsXfDOQrqLX3zCpIeCwL7rLFtUXSeb5xVvO2RrASUfy
+         Uxvp936bBQtg0l4L177Relt1sw+eUMX4KcgrJagSJd5QJiRCkhcKjmNHPD8v4A4irV
+         hp8g6+NEjDImUMUWR7MejowkK0044rh4+q2jei8F4qfQBK77MYUBnzF2ZYxuF9YsGP
+         cAbgUrVWp660bQRbAtsl1WkvAuZQPKqRr3Z6W26HD44pfIzfxwQGh3NxG6+TqbgNWr
+         2Ea2FzGddZNcA==
+Message-ID: <8ee5ac3412f8ef58a61d33d178365b2daeb84598.camel@kernel.org>
+Subject: Re: [PATCH v1] ceph: don't rely on error_string to validate
+ blocklisted session.
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Kotresh Hiremath Ravishankar <khiremat@redhat.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Venky Shankar <vshankar@redhat.com>,
+        Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
+Date:   Fri, 01 Oct 2021 12:14:03 -0400
+In-Reply-To: <CAPgWtC6Y_Bh5TeL_JN8KJ6ftKa=A=6aZmdNtj1Tb=OO_An+tpA@mail.gmail.com>
+References: <20210927135227.290145-1-khiremat@redhat.com>
+         <ac394a47a2a6bb7ee55a4fad3fdc279b73164196.camel@kernel.org>
+         <CAPgWtC6Y_Bh5TeL_JN8KJ6ftKa=A=6aZmdNtj1Tb=OO_An+tpA@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
 MIME-Version: 1.0
-Received: by 2002:a17:906:724a:0:0:0:0 with HTTP; Fri, 1 Oct 2021 04:37:35
- -0700 (PDT)
-Reply-To: joymat52@gmail.com
-From:   Joyce Thomas <tjoyc1234@gmail.com>
-Date:   Fri, 1 Oct 2021 04:37:35 -0700
-Message-ID: <CAF-RpUj0xX19V-Ybib6njmwCrzsh0K1M8oTb_TQGbsDo8FB+Hw@mail.gmail.com>
-Subject: ATTN:
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hello Dear
-My Name is Mr. Joyce Thomas. Contact me for more information on the
-transfer of ($7.9 million dollars) left by my late client from your
-Country. I want to present you as a business partner and next of kin
-of the fund. I will give you the details of this transaction, as soon
-as I hear from you. I need the information below:
-Full Name:
-Address:
-Occupation:
-Age:
-Personal Email:
-Personal Telephone:
-Best Regards,
-Mr.Joyce  Thomas
+On Mon, 2021-09-27 at 22:12 +0530, Kotresh Hiremath Ravishankar wrote:
+> 
+> 
+> On Mon, Sep 27, 2021 at 9:45 PM Jeff Layton <jlayton@kernel.org>
+> wrote:
+> > 
+> > On Mon, 2021-09-27 at 19:22 +0530, khiremat@redhat.com wrote:
+> > > From: Kotresh HR <khiremat@redhat.com>
+> > > 
+> > 
+> > This looks good. For future reference, I'd have probably marked this
+> > as
+> > [PATCH v2]. One minor style nit below, but you don't need to resend
+> > for
+> > that. I'll fix it up when I merge it if you're OK with it.
+> 
+> I did format it with [PATCH v2], not sure why 'git send-email' didn't
+> pick it up.
+> Sure, No problem. Thanks Jeff!
+> 
+
+Merged. Please take a look when you have time and let me know if you see
+anything wrong with the final result.
+
+Thanks,
+Jeff
+-- 
+Jeff Layton <jlayton@kernel.org>
+
