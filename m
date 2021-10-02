@@ -2,83 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBCC041FB4A
-	for <lists+ceph-devel@lfdr.de>; Sat,  2 Oct 2021 13:59:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDF2141FD9F
+	for <lists+ceph-devel@lfdr.de>; Sat,  2 Oct 2021 20:13:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232938AbhJBMAy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 2 Oct 2021 08:00:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59806 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232925AbhJBMAv (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 2 Oct 2021 08:00:51 -0400
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78F4AC0613EC
-        for <ceph-devel@vger.kernel.org>; Sat,  2 Oct 2021 04:59:05 -0700 (PDT)
-Received: by mail-il1-x130.google.com with SMTP id j2so890178ilo.10
-        for <ceph-devel@vger.kernel.org>; Sat, 02 Oct 2021 04:59:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=nsZbpm1YBoHMpWTnzHLuE/zYZ0yg4jBiKD5Q7oCTPBE=;
-        b=UMcJW0fAQ7gTisaYLI8AckvYa/fSsMtmqFBzJBLmAgNSnmcOVIbjq/6pHlowPr+e/g
-         pB/4VsEQPoU3bz+G6//dg8Ny+eFZGwvt4ObXxcMafcjsoK82NhEcylXpmWo2r+V3hRpj
-         zemI25YM792FQuD8eh+T1be8GXEOedCUnwP9b3/GmnBB9RwL68yOhhQKNKopapWkDYq1
-         6hIQdYPp2GIWR42hyGd1Nm/ubo6xKwEseRqdfkTSoCo1P1Ubklk6c7/R2YiqVgQo18+Y
-         8Evsr1ekExsmW2cL7SNRiUdgTVNl6W/xsDKaKMzxGPbK3CQnk/xvASlMQqIp44Xn7C9D
-         D//Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=nsZbpm1YBoHMpWTnzHLuE/zYZ0yg4jBiKD5Q7oCTPBE=;
-        b=ThmSvfmTmecSCGKCl2yhY8zG92vbRVoUsC3723lpSGNxxhfHhg/U1tkD4Gc7CukT7Y
-         XGIWoBoPx48bWqqwfawPFurrwB4i1Tl0hbEJz6tQ+eyxuoRSMaj65wT3Y6Qidvtu7B38
-         RD9gDlTQ9cPDiZSI5wnNinNMJC0xMuGZ/y9M3sGHGCwMFMgqiDZ2f2ethuWrtb6BraKZ
-         Q+IDWPsz6+KICscn1thItZRDUb4o85hZMms9A8Mkg+Oqozlsa6jlkhrf/XSdhz5o6Ub8
-         55KCrYVzaKAcndMl06J88ExoeVGvibCfTSAzfKjFsr1+Jsr45QT05C6sBrcFDzML9KGD
-         Id5w==
-X-Gm-Message-State: AOAM531xNGLtbllvPz5WIWObKAUYI+iS2oydRVZk/FC9htKWZvAjXn+3
-        jVuuCML0mCw/bTH/CKCbRw1kfp9w/PE+RFzg9BQ=
-X-Google-Smtp-Source: ABdhPJyahlkHA+3aVTPCxx+t7r2z9rk36ZKEqmFq1pcJwH6CaH7pl7p/Rq/UQiztZWPIiaBC3SV3WJU2YMk4Jmp0G3A=
-X-Received: by 2002:a05:6e02:2144:: with SMTP id d4mr2471426ilv.316.1633175944946;
- Sat, 02 Oct 2021 04:59:04 -0700 (PDT)
+        id S233799AbhJBSOy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 2 Oct 2021 14:14:54 -0400
+Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:35446 "EHLO
+        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233721AbhJBSOy (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 2 Oct 2021 14:14:54 -0400
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mWjTJ-009FeH-J2; Sat, 02 Oct 2021 18:10:53 +0000
+Date:   Sat, 2 Oct 2021 18:10:53 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        casey@schaufler-ca.com, Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel J Walsh <dwalsh@redhat.com>, jlayton@kernel.org,
+        idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, bfields@fieldses.org,
+        chuck.lever@oracle.com, stephen.smalley.work@gmail.com
+Subject: Re: [PATCH] security: Return xattr name from
+ security_dentry_init_security()
+Message-ID: <YVigrS1Bc8J8bO1Y@zeniv-ca.linux.org.uk>
+References: <YVYI/p1ipDFiQ5OR@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:f90d:0:0:0:0:0 with HTTP; Sat, 2 Oct 2021 04:59:04 -0700 (PDT)
-Reply-To: unitednnation0@gmail.com
-From:   "U.n" <wadebaye33@gmail.com>
-Date:   Fri, 1 Oct 2021 23:59:04 -1200
-Message-ID: <CACE0T5XuTLR43h+shXv_fqEPsKkMRB3xAfFWObFOmzeEd9AZAg@mail.gmail.com>
-Subject: Attention
-To:     unitednnation0@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YVYI/p1ipDFiQ5OR@redhat.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
---=20
+On Thu, Sep 30, 2021 at 02:59:10PM -0400, Vivek Goyal wrote:
+> Right now security_dentry_init_security() only supports single security
+> label and is used by SELinux only. There are two users of of this hook,
+> namely ceph and nfs.
+> 
+> NFS does not care about xattr name. Ceph hardcodes the xattr name to
+> security.selinux (XATTR_NAME_SELINUX).
+> 
+> I am making changes to fuse/virtiofs to send security label to virtiofsd
+> and I need to send xattr name as well. I also hardcoded the name of
+> xattr to security.selinux.
+> 
+> Stephen Smalley suggested that it probably is a good idea to modify
+> security_dentry_init_security() to also return name of xattr so that
+> we can avoid this hardcoding in the callers.
+> 
+> This patch adds a new parameter "const char **xattr_name" to
+> security_dentry_init_security() and LSM puts the name of xattr
+> too if caller asked for it (xattr_name != NULL).
 
-
-Attention Sir/Madam
-This is the United Nation (UN). We the United Nations (UN) Globally
-has approved (US$2.500,000)( two Million Five hundred thousand
-dollars) compensation as part of our responsibilities for humanitarian
-Aid for fighting against CoronaVirus and you are among the lucky ones.
-
-
-This compensation is for the most affected countries, communities and
-families across the global. Your funds were deposited with Bank in USA
-to transfer your funds to you via Internet Banking. You have to send
-your full details as state below:with this email Address
-  ( unitednnation0@gmail.com )
-Your full names:
-Address:
-Telephone:
-Occupation:
-
-
-
-Yours Sincerely
-Mr. Ant=C3=B3nio Guterres
-United Nations (UN).
+Umm...  Why not return the damn thing on success and ERR_PTR(-E...)
+on failure, instead of breeding extra arguments?
