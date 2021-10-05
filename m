@@ -2,116 +2,124 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 90E1F421F01
-	for <lists+ceph-devel@lfdr.de>; Tue,  5 Oct 2021 08:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53B70422010
+	for <lists+ceph-devel@lfdr.de>; Tue,  5 Oct 2021 10:03:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232108AbhJEGrZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 5 Oct 2021 02:47:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:21092 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232460AbhJEGrY (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 5 Oct 2021 02:47:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633416333;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Tzl3XwKAEYW7NJWFaQy5Ponspx/fYmlKOSpu823JLss=;
-        b=fnCb3ifaXifCicdq+rDc5IEXpQvnZYRzAm7zMguz5pxXc9TvwCVBl//OIu4lqzafNy7EHc
-        /7fyrmI3pDCv9rfH4UiPmbptZj1nAZWhxUxcdr0bUcKENitSPlhpOzHW3cCoZqGh84OlIU
-        di+Shu4KRl6YM1nsRHjDZ2q7uK0pJg8=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-45-aq-hwtmmMWu7TALjbLyiCQ-1; Tue, 05 Oct 2021 02:45:33 -0400
-X-MC-Unique: aq-hwtmmMWu7TALjbLyiCQ-1
-Received: by mail-ed1-f72.google.com with SMTP id i7-20020a50d747000000b003db0225d219so2477425edj.0
-        for <ceph-devel@vger.kernel.org>; Mon, 04 Oct 2021 23:45:32 -0700 (PDT)
+        id S232723AbhJEIF0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 5 Oct 2021 04:05:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37562 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232880AbhJEIDP (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 5 Oct 2021 04:03:15 -0400
+Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24461C061745
+        for <ceph-devel@vger.kernel.org>; Tue,  5 Oct 2021 01:01:09 -0700 (PDT)
+Received: by mail-vs1-xe2a.google.com with SMTP id y28so8838467vsd.3
+        for <ceph-devel@vger.kernel.org>; Tue, 05 Oct 2021 01:01:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O9ql0BZkN2CmiZTSTJAblWux1k4NlPXl+R3h2gU2pXI=;
+        b=JykTyBmyfQBIAoq83lOFnQyauiALlTua9tPJbBdN1Atl4L9qlwfC5B+wi29SwFJg6D
+         QIXAu6b6i9pNxqcn2fPyUbNV+rdnlMLmwDFnRWzOx8k535dfVAKioOSlImpbHFj46dAM
+         zm30yR6vhjCfzuAvixJWW7SoQ7ehoejlPvuH0sDopkfJGoZYdnD1TKTHpwwvoj70TKFz
+         UJfvgciGwQBSDTxcXfW+2ReKlavSos253PdIF5LOWnRF9OQWYqluUao15BnYYu8BTq1A
+         ILKi3NQZmVL+c9wzpSzexmU4naUDRkivaMVpy6v3Q4eak1ihOCy2j9ssCmO/Xu3EYBnx
+         E1mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Tzl3XwKAEYW7NJWFaQy5Ponspx/fYmlKOSpu823JLss=;
-        b=ihpgtLJu9+a9HIoNhosMKZkVtRlpBP18baGS8GqqPj0s079rqrSMtppvlGlkBT9bjW
-         /9MMJRAdoCynSiIsBhbLoqe969Yu3wrZW69UsE4vQv7/A78L+Vybyylx9BJF2GNPSBjH
-         i64uCmLeXKTQqMSVblhl7RvLpEw0kTBb/NiRK8YwEJ5Cy0u+DAjtbCjkSiLNI7N2P99h
-         vepPUVYTNgkoo6TprzwY4jaXIs/7EISzolzbmqSyQ3WTROoxvt1qc/9UXyQxzgb8IDCJ
-         VlmbJqsXOyfOZB4zBIOPF/X+xaUJpAksxdDGKOvWJt9SshY0z8xpxUQjEmqCJQIlPSkK
-         pVtg==
-X-Gm-Message-State: AOAM5325oBfTyh6sjzz7/DBhaVJZ+Ty+bzUIOCextOBr7oQI2Hmweclr
-        hw6dPiu8Shhye+5O2ncC7hU9O2kI4EAW41ja7yZoyf4GnPap27DqyqScD72K5+kr+eAvADAIxy3
-        5EjxcwnVnFg+J6/F2TkoVcFpHLVACKJhZ4sf66w==
-X-Received: by 2002:a17:907:767a:: with SMTP id kk26mr22180810ejc.134.1633416331515;
-        Mon, 04 Oct 2021 23:45:31 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzsy4L/A7DMct1jFw8jjZ5Fa7RdmdrOLK6Qlk3vwc1/vSEBb1vW6J525sLkQgyIl9lj3BrdBzlag1G2V10AdOo=
-X-Received: by 2002:a17:907:767a:: with SMTP id kk26mr22180799ejc.134.1633416331374;
- Mon, 04 Oct 2021 23:45:31 -0700 (PDT)
+        bh=O9ql0BZkN2CmiZTSTJAblWux1k4NlPXl+R3h2gU2pXI=;
+        b=PCS3OdLM4Isp3rdkSBYUIHk/rvEJUazQ2Z0qJ97y3HcDKyYDuBfxHHKJB3XnF056Oe
+         TQ+YzQ/bcnLEMPe6m2NPDydaBZvxfbGdO9t6IbzbhgQjR2oWq8tRFY83omk1ImbCXIPH
+         C7a8kMT823l3M8MnM8SKwVtIvQ6PiPAewyWdbNGc49Dakzubn03gXFb30qa9mhY7iB2L
+         5YBpg1LQ1jrpSlUriym3eXh3VqzihO9vFkJJNyhlGs17427WAd/sa0H0emQyD8TS+v54
+         9nhDfwtC6DnJmmL3VLD+vMM8TodrrHgLoLG/O3RMvEEFvfTPJZIyDZe9BvfeB2SCIIvi
+         Y2CQ==
+X-Gm-Message-State: AOAM532RodGs9DJzARp7bDChGxSSpjIANO6FNe6tc/BXMNgbrLD1TKfI
+        9aw6efCQu92UrSPhsRAg8t5OlaoM85KUkB870fs=
+X-Google-Smtp-Source: ABdhPJydTMTk+oaPXqaAn/3zvQSSLy+wSacVg25BgTCISL9acu+W01/1PIGjtYiW1Za5GFAck4OJvUDi9f9r/M/pm4g=
+X-Received: by 2002:a67:c107:: with SMTP id d7mr10982419vsj.44.1633420868328;
+ Tue, 05 Oct 2021 01:01:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211001050037.497199-1-vshankar@redhat.com> <e0f529e2e17cb886bd6a906541fb978be45e0e4e.camel@redhat.com>
- <CA+2bHPYGr4rpJhHb_aX3j-7iYa-tQMfjOmNL6T7R_+26HrUY3A@mail.gmail.com> <32e55634cc84b93ae70598f538b4a74f92c6907f.camel@redhat.com>
-In-Reply-To: <32e55634cc84b93ae70598f538b4a74f92c6907f.camel@redhat.com>
-From:   Venky Shankar <vshankar@redhat.com>
-Date:   Tue, 5 Oct 2021 12:14:55 +0530
-Message-ID: <CACPzV1nQSmznxNduN1jhcpVj+_DFO+RgdG_0=wthvP4X_eRr8A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] ceph: add debugfs entries signifying new mount
- syntax support
-To:     Jeff Layton <jlayton@redhat.com>
-Cc:     Patrick Donnelly <pdonnell@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
+References: <20210930170302.74924-1-jlayton@kernel.org>
+In-Reply-To: <20210930170302.74924-1-jlayton@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 5 Oct 2021 10:00:37 +0200
+Message-ID: <CAOi1vP9YBcxMAMe1yE4v-E6gmK0GbYMKX5yODAYQOXvRd39FFg@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: skip existing superblocks that are blocklisted
+ when mounting
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Niels de Vos <ndevos@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sat, Oct 2, 2021 at 1:54 AM Jeff Layton <jlayton@redhat.com> wrote:
+On Thu, Sep 30, 2021 at 7:03 PM Jeff Layton <jlayton@kernel.org> wrote:
 >
-> On Fri, 2021-10-01 at 16:18 -0400, Patrick Donnelly wrote:
-> > On Fri, Oct 1, 2021 at 12:24 PM Jeff Layton <jlayton@redhat.com> wrote:
-> > > Note that there is a non-zero chance that this will break teuthology in
-> > > some wa. In particular, looking at qa/tasks/cephfs/kernel_mount.py, it
-> > > does this in _get_global_id:
-> > >
-> > >             pyscript = dedent("""
-> > >                 import glob
-> > >                 import os
-> > >                 import json
-> > >
-> > >                 def get_id_to_dir():
-> > >                     result = {}
-> > >                     for dir in glob.glob("/sys/kernel/debug/ceph/*"):
-> > >                         mds_sessions_lines = open(os.path.join(dir, "mds_sessions")).readlines()
-> > >                         global_id = mds_sessions_lines[0].split()[1].strip('"')
-> > >                         client_id = mds_sessions_lines[1].split()[1].strip('"')
-> > >                         result[client_id] = global_id
-> > >                     return result
-> > >                 print(json.dumps(get_id_to_dir()))
-> > >             """)
-> > >
-> > >
-> > > What happens when this hits the "meta" directory? Is that a problem?
-> > >
-> > > We may need to fix up some places like this. Maybe the open there needs
-> > > some error handling? Or we could just skip directories called "meta".
-
-That seems to be the only place where dir entries are fetched.
-Skipping the meta dir should suffice.
-
-I'll push a change for this fix.
-
-> >
-> > Yes, this will likely break all the kernel tests. It must be fixed
-> > before this can be merged into testing.
-> >
+> Currently when mounting, we may end up finding an existing superblock
+> that corresponds to a blocklisted MDS client. This means that the new
+> mount ends up being unusable.
 >
-> Ok, I'll drop these patches for now. Let me know when it's clear to
-> merge them again, and I'll do so.
+> If we've found an existing superblock with a client that is already
+> blocklisted, and the client is not configured to recover on its own,
+> fail the match.
 >
-> Thanks,
-> --
-> Jeff Layton <jlayton@redhat.com>
+> While we're in here, also rename "other" to the more conventional "fsc".
 >
+> Cc: Patrick Donnelly <pdonnell@redhat.com>
+> Cc: Niels de Vos <ndevos@redhat.com>
+> URL: https://bugzilla.redhat.com/show_bug.cgi?id=1901499
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/super.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index f517ad9eeb26..a7f1b66a91a7 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -1123,16 +1123,16 @@ static int ceph_compare_super(struct super_block *sb, struct fs_context *fc)
+>         struct ceph_fs_client *new = fc->s_fs_info;
+>         struct ceph_mount_options *fsopt = new->mount_options;
+>         struct ceph_options *opt = new->client->options;
+> -       struct ceph_fs_client *other = ceph_sb_to_client(sb);
+> +       struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
+>
+>         dout("ceph_compare_super %p\n", sb);
+>
+> -       if (compare_mount_options(fsopt, opt, other)) {
+> +       if (compare_mount_options(fsopt, opt, fsc)) {
+>                 dout("monitor(s)/mount options don't match\n");
+>                 return 0;
+>         }
+>         if ((opt->flags & CEPH_OPT_FSID) &&
+> -           ceph_fsid_compare(&opt->fsid, &other->client->fsid)) {
+> +           ceph_fsid_compare(&opt->fsid, &fsc->client->fsid)) {
+>                 dout("fsid doesn't match\n");
+>                 return 0;
+>         }
+> @@ -1140,6 +1140,11 @@ static int ceph_compare_super(struct super_block *sb, struct fs_context *fc)
+>                 dout("flags differ\n");
+>                 return 0;
+>         }
+> +       /* Exclude any blocklisted superblocks */
+> +       if (fsc->blocklisted && !(fsopt->flags & CEPH_MOUNT_OPT_CLEANRECOVER)) {
 
+Hi Jeff,
 
--- 
-Cheers,
-Venky
+Nit: This looks a bit weird because fsc is the existing client while
+fsopt is the new set of mount options.  They are guaranteed to match at
+that point because of compare_mount_options() but it feels better to
+stick to probing the existing client, e.g.
 
+   if (fsc->blocklisted && !ceph_test_mount_opt(fsc, CLEANRECOVER))
+
+Thanks,
+
+                Ilya
