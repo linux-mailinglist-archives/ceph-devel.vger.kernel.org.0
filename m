@@ -2,65 +2,136 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 501174239FA
-	for <lists+ceph-devel@lfdr.de>; Wed,  6 Oct 2021 10:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 948D64257CF
+	for <lists+ceph-devel@lfdr.de>; Thu,  7 Oct 2021 18:22:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237620AbhJFIup (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 6 Oct 2021 04:50:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43060 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237593AbhJFIuo (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 6 Oct 2021 04:50:44 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75376C061749
-        for <ceph-devel@vger.kernel.org>; Wed,  6 Oct 2021 01:48:52 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id i4so7377364lfv.4
-        for <ceph-devel@vger.kernel.org>; Wed, 06 Oct 2021 01:48:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=D0D/n5gxZdptcGm/I1QArI0jHQPGBbyNvIiy6WHQjw0=;
-        b=b+HgL5vvhRrxrod+2t2GFBz/QIyMYLMQfeKCPyjPdRWbPIIhRmh+HfZiZhuQf4wzTv
-         VClgCqSL1nEkYONu0JKN7PjOtetxVKZQ9HQRh9zzRYGhzZFYNPX4ii9qCyFdW1XuC/+P
-         mylF4ug6JEmaRYEmO4W+oRqdx8xcnb+zCJL5mr/Ku5ca6mNsDYB3xZFxcROYc+eenamk
-         bNugt4yB2KHUKWZBCDJIBIeCsCEKFJtC7zFXZ5DcLestJG6IwWk/r+aSopGYWHEQ/LU/
-         Tuc5hmYJvsEoSPLdf0wGOYCOGWOWwhZ+WNTU+c9p3Zt+9s9mfgluY4JK8Nxm5px4dqKT
-         ai2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=D0D/n5gxZdptcGm/I1QArI0jHQPGBbyNvIiy6WHQjw0=;
-        b=Vf9G5yZWCLKULBVjK8i/Y+irJvtp3D0v7EpB0iNCvg/LBLTWRGfRRDXxCBf3CrDjPC
-         kTOkpPeM4C5S4Ve2wfn2h1g2OyXc/+ibw+HtmSKeIfMMKsVjjAXUKK9pAnYmX3EK3Cc4
-         q2CnqWnQ4nQep8wK9yKaKLn9WpXbnSLc9k2gQjKf6ctIoc7BqWPDgTpOZ1OhiGiNGHzk
-         8SCAr8LrwTMmqiC3aqYIAGrhK87PSHtdWJmRiLPrX8c4X5eXFH2yguEgz3SGDuXYO1ZI
-         lA/5ErZBgAI1g4UVHLd7i2exN8VyNuARKZ5J+EHiaht5Yh327zlPe/YoofSoJcENg9Gv
-         yPdw==
-X-Gm-Message-State: AOAM531u+TXEQJ80uYbGG0QPoso9EgGlI7YL4fDTlzpA3dW1den//sqz
-        iZgtWRrSxPKHEzVAzVLi1oGZ1QUm57StlQ9waNY=
-X-Google-Smtp-Source: ABdhPJxgB56aC/NpaWjgIXIi8kgmVwC8mJ4rOQKet596M9YbkVGvFx4HuntJx6yUvDR6wCBAYkcI8XSQp83Mo6lbNrY=
-X-Received: by 2002:a05:6512:3d07:: with SMTP id d7mr9037505lfv.35.1633510130475;
- Wed, 06 Oct 2021 01:48:50 -0700 (PDT)
+        id S241749AbhJGQYl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 7 Oct 2021 12:24:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:21038 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233590AbhJGQYl (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Oct 2021 12:24:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1633623767;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=YlCCMepVWxlDt+ZxOI3nKL7iXR5cvBw/XyYjKdfC9HI=;
+        b=WrlemT10fLZTpI5FuqNcpd/a9y5Al/IxXjvzEIDfuuxcbY4SD+zbQPSpglExkDeDc/qczk
+        2EC8N+uJObLrrKI4EyT9XMG0x97wz+XXukVijEZ0koR2+lRLo6mfFMYdXB/y/GQowSQQZy
+        pFrNUAmokpBUuRUU6oDzKRIrdrx/h1Y=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-38-niXwdHv8Pz2BQVcuslP5yQ-1; Thu, 07 Oct 2021 12:22:45 -0400
+X-MC-Unique: niXwdHv8Pz2BQVcuslP5yQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7D97614242DB;
+        Thu,  7 Oct 2021 15:53:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ABDA8D1F28;
+        Thu,  7 Oct 2021 15:53:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, Dave Wysochanski <dwysocha@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Jeffrey Altman <jaltman@auristor.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@kvack.org
+Subject: [GIT PULL] netfs, cachefiles, afs: Collected fixes
 MIME-Version: 1.0
-Received: by 2002:a2e:85d7:0:0:0:0:0 with HTTP; Wed, 6 Oct 2021 01:48:49 -0700 (PDT)
-Reply-To: williampppp21@gmail.com
-From:   William Phillip <kofidometi@gmail.com>
-Date:   Wed, 6 Oct 2021 10:48:49 +0200
-Message-ID: <CAH+FSGKBBsDCdrKaWo0GMnm-WLbgRGgfZ_OLQ8KUU-eo5+RTnQ@mail.gmail.com>
-Subject: be
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1961631.1633621984.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 07 Oct 2021 16:53:04 +0100
+Message-ID: <1961632.1633621984@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Good day dearest,
+Hi Linus,
 
-My name is Barr. William Phillip, I am still waiting for your reply
-regarding your late relative fund/assets over here in the bank. I am
-his  personal attorney on financial matters prior to his death. Upon
-your positive response, I will give you more details about the fund.
+Can you pull this set of collected fixes please?  There are three:
 
-Regards.
-Barr. William Phillip
+ (1) Fix another couple of oopses in cachefiles tracing stemming from the
+     possibility of passing in a NULL object pointer[1].
+
+ (2) Fix netfs_clear_unread() to set READ on the iov_iter so that source i=
+t
+     is passed to doesn't do the wrong thing (some drivers look at the fla=
+g
+     on iov_iter rather than other available information to determine the
+     direction)[2].
+
+ (3) Fix afs_launder_page() to write back at the correct file position on
+     the server so as not to corrupt data[3].
+
+David
+
+Link: https://lore.kernel.org/r/162729351325.813557.9242842205308443901.st=
+git@warthog.procyon.org.uk/ [1]
+Link: https://lore.kernel.org/r/162886603464.3940407.3790841170414793899.s=
+tgit@warthog.procyon.org.uk [1]
+Link: https://lore.kernel.org/r/163239074602.1243337.14154704004485867017.=
+stgit@warthog.procyon.org.uk [1]
+Link: https://lore.kernel.org/r/162729351325.813557.9242842205308443901.st=
+git@warthog.procyon.org.uk/ [2]
+Link: https://lore.kernel.org/r/162886603464.3940407.3790841170414793899.s=
+tgit@warthog.procyon.org.uk [2]
+Link: https://lore.kernel.org/r/163239074602.1243337.14154704004485867017.=
+stgit@warthog.procyon.org.uk [2]
+Link: https://lore.kernel.org/r/162880783179.3421678.7795105718190440134.s=
+tgit@warthog.procyon.org.uk/ [3]
+Link: https://lore.kernel.org/r/162937512409.1449272.18441473411207824084.=
+stgit@warthog.procyon.org.uk/ [3]
+Link: https://lore.kernel.org/r/162981148752.1901565.3663780601682206026.s=
+tgit@warthog.procyon.org.uk/ [3]
+Link: https://lore.kernel.org/r/163005741670.2472992.2073548908229887941.s=
+tgit@warthog.procyon.org.uk/ [3]
+Link: https://lore.kernel.org/r/163221839087.3143591.14278359695763025231.=
+stgit@warthog.procyon.org.uk/ [3]
+Link: https://lore.kernel.org/r/163292980654.4004896.7134735179887998551.s=
+tgit@warthog.procyon.org.uk/ [3]
+
+---
+The following changes since commit 9e1ff307c779ce1f0f810c7ecce3d95bbae4089=
+6:
+
+  Linux 5.15-rc4 (2021-10-03 14:08:47 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
+/misc-fixes-20211007
+
+for you to fetch changes up to 5c0522484eb54b90f2e46a5db8d7a4ff3ff86e5d:
+
+  afs: Fix afs_launder_page() to set correct start file position (2021-10-=
+05 11:22:06 +0100)
+
+----------------------------------------------------------------
+netfslib, cachefiles and afs fixes
+
+----------------------------------------------------------------
+Dave Wysochanski (1):
+      cachefiles: Fix oops with cachefiles_cull() due to NULL object
+
+David Howells (2):
+      netfs: Fix READ/WRITE confusion when calling iov_iter_xarray()
+      afs: Fix afs_launder_page() to set correct start file position
+
+ fs/afs/write.c                    | 3 +--
+ fs/netfs/read_helper.c            | 2 +-
+ include/trace/events/cachefiles.h | 4 ++--
+ 3 files changed, 4 insertions(+), 5 deletions(-)
+
