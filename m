@@ -2,43 +2,46 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 948D64257CF
-	for <lists+ceph-devel@lfdr.de>; Thu,  7 Oct 2021 18:22:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B84C6425AB5
+	for <lists+ceph-devel@lfdr.de>; Thu,  7 Oct 2021 20:26:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241749AbhJGQYl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 7 Oct 2021 12:24:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:21038 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233590AbhJGQYl (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Oct 2021 12:24:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633623767;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=YlCCMepVWxlDt+ZxOI3nKL7iXR5cvBw/XyYjKdfC9HI=;
-        b=WrlemT10fLZTpI5FuqNcpd/a9y5Al/IxXjvzEIDfuuxcbY4SD+zbQPSpglExkDeDc/qczk
-        2EC8N+uJObLrrKI4EyT9XMG0x97wz+XXukVijEZ0koR2+lRLo6mfFMYdXB/y/GQowSQQZy
-        pFrNUAmokpBUuRUU6oDzKRIrdrx/h1Y=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-38-niXwdHv8Pz2BQVcuslP5yQ-1; Thu, 07 Oct 2021 12:22:45 -0400
-X-MC-Unique: niXwdHv8Pz2BQVcuslP5yQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7D97614242DB;
-        Thu,  7 Oct 2021 15:53:13 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ABDA8D1F28;
-        Thu,  7 Oct 2021 15:53:05 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, Dave Wysochanski <dwysocha@redhat.com>,
+        id S243663AbhJGS2Q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 7 Oct 2021 14:28:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53888 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S243695AbhJGS2N (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 7 Oct 2021 14:28:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 51B0E60F4C;
+        Thu,  7 Oct 2021 18:26:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633631179;
+        bh=MpEug++mWGWLlEBYAtKQLQwrCkI0Qw0K1mH2W1igvEk=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=QIrX/iUlhGhm3L+YdDjUVzbblGHfZGzh54QgHB2sDCGELLSFbwYyiivwJAXrYw/tS
+         9b5MbhPofsrfBh9Fy9KTJLTkaDFvmkmXWUHUbNCMiFCfsoC3r5+epgbwVvxKpH6Cri
+         F4l6vYDk61jzradWGoanD5rXiPpIAfnwBKHwwEom9/2cMIh/0nfP+QhiVP+ZawG3/1
+         G7lYnu/OtpP3UWS9EU4qdgYKZa33AG3VC1IIqVcxIBLkMGf/1c92GKVTFXaqkNwvA3
+         KJKrkngQtJP0Sf5OSDxs8XY5KahJwEcRSdzloE4ibTUt6vq4ZjRoVrHUQEWo3uIeoV
+         gPGO5dFmt0s3Q==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 3FB7E60A23;
+        Thu,  7 Oct 2021 18:26:19 +0000 (UTC)
+Subject: Re: [GIT PULL] netfs, cachefiles, afs: Collected fixes
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <1961632.1633621984@warthog.procyon.org.uk>
+References: <1961632.1633621984@warthog.procyon.org.uk>
+X-PR-Tracked-List-Id: <linux-mm.kvack.org>
+X-PR-Tracked-Message-Id: <1961632.1633621984@warthog.procyon.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/misc-fixes-20211007
+X-PR-Tracked-Commit-Id: 5c0522484eb54b90f2e46a5db8d7a4ff3ff86e5d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 7041503d3a5c869e4b4934df57112ef90ce7e307
+Message-Id: <163363117920.25708.8076103177394410914.pr-tracker-bot@kernel.org>
+Date:   Thu, 07 Oct 2021 18:26:19 +0000
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
+        Dave Wysochanski <dwysocha@redhat.com>,
         Jeff Layton <jlayton@kernel.org>,
         Jeffrey Altman <jaltman@auristor.com>,
         Marc Dionne <marc.dionne@auristor.com>,
@@ -47,91 +50,19 @@ cc:     dhowells@redhat.com, Dave Wysochanski <dwysocha@redhat.com>,
         linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@kvack.org
-Subject: [GIT PULL] netfs, cachefiles, afs: Collected fixes
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1961631.1633621984.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 07 Oct 2021 16:53:04 +0100
-Message-ID: <1961632.1633621984@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Thu, 07 Oct 2021 16:53:04 +0100:
 
-Can you pull this set of collected fixes please?  There are three:
+> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/misc-fixes-20211007
 
- (1) Fix another couple of oopses in cachefiles tracing stemming from the
-     possibility of passing in a NULL object pointer[1].
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/7041503d3a5c869e4b4934df57112ef90ce7e307
 
- (2) Fix netfs_clear_unread() to set READ on the iov_iter so that source i=
-t
-     is passed to doesn't do the wrong thing (some drivers look at the fla=
-g
-     on iov_iter rather than other available information to determine the
-     direction)[2].
+Thank you!
 
- (3) Fix afs_launder_page() to write back at the correct file position on
-     the server so as not to corrupt data[3].
-
-David
-
-Link: https://lore.kernel.org/r/162729351325.813557.9242842205308443901.st=
-git@warthog.procyon.org.uk/ [1]
-Link: https://lore.kernel.org/r/162886603464.3940407.3790841170414793899.s=
-tgit@warthog.procyon.org.uk [1]
-Link: https://lore.kernel.org/r/163239074602.1243337.14154704004485867017.=
-stgit@warthog.procyon.org.uk [1]
-Link: https://lore.kernel.org/r/162729351325.813557.9242842205308443901.st=
-git@warthog.procyon.org.uk/ [2]
-Link: https://lore.kernel.org/r/162886603464.3940407.3790841170414793899.s=
-tgit@warthog.procyon.org.uk [2]
-Link: https://lore.kernel.org/r/163239074602.1243337.14154704004485867017.=
-stgit@warthog.procyon.org.uk [2]
-Link: https://lore.kernel.org/r/162880783179.3421678.7795105718190440134.s=
-tgit@warthog.procyon.org.uk/ [3]
-Link: https://lore.kernel.org/r/162937512409.1449272.18441473411207824084.=
-stgit@warthog.procyon.org.uk/ [3]
-Link: https://lore.kernel.org/r/162981148752.1901565.3663780601682206026.s=
-tgit@warthog.procyon.org.uk/ [3]
-Link: https://lore.kernel.org/r/163005741670.2472992.2073548908229887941.s=
-tgit@warthog.procyon.org.uk/ [3]
-Link: https://lore.kernel.org/r/163221839087.3143591.14278359695763025231.=
-stgit@warthog.procyon.org.uk/ [3]
-Link: https://lore.kernel.org/r/163292980654.4004896.7134735179887998551.s=
-tgit@warthog.procyon.org.uk/ [3]
-
----
-The following changes since commit 9e1ff307c779ce1f0f810c7ecce3d95bbae4089=
-6:
-
-  Linux 5.15-rc4 (2021-10-03 14:08:47 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/misc-fixes-20211007
-
-for you to fetch changes up to 5c0522484eb54b90f2e46a5db8d7a4ff3ff86e5d:
-
-  afs: Fix afs_launder_page() to set correct start file position (2021-10-=
-05 11:22:06 +0100)
-
-----------------------------------------------------------------
-netfslib, cachefiles and afs fixes
-
-----------------------------------------------------------------
-Dave Wysochanski (1):
-      cachefiles: Fix oops with cachefiles_cull() due to NULL object
-
-David Howells (2):
-      netfs: Fix READ/WRITE confusion when calling iov_iter_xarray()
-      afs: Fix afs_launder_page() to set correct start file position
-
- fs/afs/write.c                    | 3 +--
- fs/netfs/read_helper.c            | 2 +-
- include/trace/events/cachefiles.h | 4 ++--
- 3 files changed, 4 insertions(+), 5 deletions(-)
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
