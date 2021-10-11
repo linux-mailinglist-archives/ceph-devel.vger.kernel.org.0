@@ -2,165 +2,80 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1312A428B06
-	for <lists+ceph-devel@lfdr.de>; Mon, 11 Oct 2021 12:48:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AB6A428B43
+	for <lists+ceph-devel@lfdr.de>; Mon, 11 Oct 2021 12:54:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235981AbhJKKuJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 11 Oct 2021 06:50:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43594 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235970AbhJKKuI (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 11 Oct 2021 06:50:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CD4D960E53;
-        Mon, 11 Oct 2021 10:48:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633949288;
-        bh=HsJHmola6Ex8Jyfgo6yBjZspiuXkoKWk7C24cpJt0Sw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=WjgqL2P0BLcvvq3eglqXjH99FXc8iQnBWmZy50EP7zk5cPkUuRWDQwPKl43ZguuaU
-         EZG7uBnQXRwXpB0hWqcVNj/wuuV/8MQ1J3LKIBU07Zey4Tn56d1TGRpUG1J69KN19T
-         yyOGEE1NYAP+Othx93pMKEgh3Oimj8oFuDrrk4DfawolQPhbjjQ7h4TlILeBuGmsvZ
-         8YIlOwr/gXq1GucNPL9RlKl8gsDEhXxQLtY94pwgq1t2onijqjKBa/kj6Qj3R8lf17
-         WcgMHy2L1fJ2U9vI4oPWXtmDHJU+5P8UHrIvHcCOGmraXc+BBA9AreVAUmjaIWp4MX
-         w5hokQ0P1/LSg==
-Message-ID: <24064c5d0298580ba7dbaab78a168d442246bb28.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: skip existing superblocks that are blocklisted
- when mounting
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "Yan, Zheng" <ukernel@gmail.com>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Niels de Vos <ndevos@redhat.com>
-Date:   Mon, 11 Oct 2021 06:48:06 -0400
-In-Reply-To: <CAAM7YA=eFt5HVc5r=5o6A_0iuzKxNf=M3k_7Ctx0eg-DsO6CxA@mail.gmail.com>
-References: <20210930170302.74924-1-jlayton@kernel.org>
-         <CAOi1vP9YBcxMAMe1yE4v-E6gmK0GbYMKX5yODAYQOXvRd39FFg@mail.gmail.com>
-         <cb422013534ef465e906b45a085e5c79dcd1b201.camel@kernel.org>
-         <CAAM7YA=eFt5HVc5r=5o6A_0iuzKxNf=M3k_7Ctx0eg-DsO6CxA@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
+        id S235990AbhJKK4L (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 11 Oct 2021 06:56:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51006 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235933AbhJKK4K (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 11 Oct 2021 06:56:10 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A345AC06161C
+        for <ceph-devel@vger.kernel.org>; Mon, 11 Oct 2021 03:54:10 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id k7so54652859wrd.13
+        for <ceph-devel@vger.kernel.org>; Mon, 11 Oct 2021 03:54:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=DOxN63QWnl4dBNWQl+LufsBrewR+8VuPJnGph7ijSeE=;
+        b=Rmnfeyren4oVPh//M5LrkGiuTpbKg55JHUPRDiYK57KMNB2Mjrl5P7ERihHS5Wbo6C
+         09AkCGuI8Q23pVM1YWsxgC9G7ac95tExoJCavT+3lxLC3EusLby9iU9bNvfDa6zYZF6Q
+         FI5JDr3IXRBbZ65X6WAv9/BHOVykeWNcWqNkOQNUmpg4WU9FKm4OyQZLM/H+/D8djSbR
+         OH37tn1YqVLy1qYLknxScG2O0FQShGBgGyBVGlF8Lws4c3XOJOOB65fMVpXbSaD6u+aV
+         90rAfqw1uZa2JRHOaR8ct9Fo0J8GBhmeXq0uZQwAtTcJFR3RL5aYB3JM95WKVXvbTs8a
+         u5PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=DOxN63QWnl4dBNWQl+LufsBrewR+8VuPJnGph7ijSeE=;
+        b=NPSn45VCmCaLJFT+VGhIcEKHJ3cslY2+TOqthxhcEup0T8rHTQ/k4AqoIaUpfZUfkK
+         rK3yDfu0/Dv5/r+SplWkm4guKwajL1cMQlS1xc9z7gln3GLHkjK1OfsQlBL9rL2bBgsn
+         lxqee3NwQnT7dh55UcYmDWiT5GHri0H7aA4tqwmvnJKeQXtCcxVQ9Gg/OG92Ata3xW5M
+         8Zt7x1Fz1PU7STEOjn9exiSYWyueZzPU6eruLREsCPyOnRJpboRifeF6UX8NY40GVgbe
+         YJx54qGV96h0gIhyDJZTHDgy9ByrCy4WBelnt2AdPBN/IQDu2tgmDBlxIDbkVW7B23EC
+         I+6A==
+X-Gm-Message-State: AOAM53307i5Z/dyWa1O+x7cuIAjfpSYVq29hPf3iML8RnkkVioJ/TkS0
+        74iQ3nF3qME1VsRuaGNwJDBLaGN44SzJebGTWN0=
+X-Google-Smtp-Source: ABdhPJyDvzxOmBo4m3G7I+0tI0Y+giQ8voS4x9m94iUEvQK60qSV5245otSnQKb38z7GX8EYvioo3BBhgSWgjeaJm2o=
+X-Received: by 2002:a1c:e906:: with SMTP id q6mr20809680wmc.126.1633949649021;
+ Mon, 11 Oct 2021 03:54:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:adf:dd8c:0:0:0:0:0 with HTTP; Mon, 11 Oct 2021 03:54:08
+ -0700 (PDT)
+Reply-To: ramcharan9910@outlook.com
+From:   "Cr.David Ramcharan" <convy0101@gmail.com>
+Date:   Mon, 11 Oct 2021 03:54:08 -0700
+Message-ID: <CADDRs95ZcV8RiDv4tBWTO02+eXF=6i==kt9dht8OLiGH9Ttx-w@mail.gmail.com>
+Subject: Thank You
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-10-11 at 11:37 +0800, Yan, Zheng wrote:
-> 
-> 
-> On Tue, Oct 5, 2021 at 6:17 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > On Tue, 2021-10-05 at 10:00 +0200, Ilya Dryomov wrote:
-> > > On Thu, Sep 30, 2021 at 7:03 PM Jeff Layton <jlayton@kernel.org>
-> > wrote:
-> > > > 
-> > > > Currently when mounting, we may end up finding an existing
-> > superblock
-> > > > that corresponds to a blocklisted MDS client. This means that
-> > > > the
-> > new
-> > > > mount ends up being unusable.
-> > > > 
-> > > > If we've found an existing superblock with a client that is
-> > already
-> > > > blocklisted, and the client is not configured to recover on its
-> > own,
-> > > > fail the match.
-> > > > 
-> > > > While we're in here, also rename "other" to the more
-> > > > conventional
-> > "fsc".
-> > > > 
-> > 
-> 
-> 
-> Note: we have similar issue for forced umounted superblock 
->  
+Please I am writing to notify you again on my intention to list your
+name as a beneficiary to the total sum of GBP6.350 million (Six
+million, Three hundred and fifty thousand British Pounds Sterlings) in
+the intent of the deceased (name now withheld since this is my second
+letter to you).
 
-True...
+I contacted you because you bear the surname identity and therefore
+can present you as the beneficiary to inherit the account proceeds of
+the deceased since there is no written "WILL" or trace to the deceased
+family relatives. My aim is to present you to my Bank Authorities as
+the Next of Kin to our deceased client. I will guide you all through
+the Claim procedure by providing all relevant Information and guiding
+you in your decisions and response to the Bank Management. All the
+papers will be processed after your acceptance.
 
-There is a small window of time between when ->umount_begin runs and
-generic_shutdown_super happens. Between that period, you could match a
-superblock that's been forcibly umounted and is on the way to being
-detached from the tree.
+In your acceptance of this deal, I request that you kindly forward to
+me your letter of acceptance; your current telephone and fax numbers
+,age, occupational status and a forwarding address to enable me submit
+to the Bank Management the details as the Next of Kin to their
+deceased customer. Reply strictly through: ramcharancrdavid@gmail.com
 
-I'm a little less concerned about that because the time window should be
-pretty short, and someone would need to try to make a new mount while
-"umount -f" is still running. I don't think we can fully prevent that
-anyway, as there is some raciness involved (your mount might match the
-thing just before umount_begin runs).
-
-I'm inclined not to worry about that case, unless we have some reports
-of people hitting that problem.
-
-Thoughts?
-
-
-> >  
-> > > > Cc: Patrick Donnelly <pdonnell@redhat.com>
-> > > > Cc: Niels de Vos <ndevos@redhat.com>
-> > > > URL: https://bugzilla.redhat.com/show_bug.cgi?id=1901499
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > ---
-> > > >   fs/ceph/super.c | 11 ++++++++---
-> > > >   1 file changed, 8 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> > > > index f517ad9eeb26..a7f1b66a91a7 100644
-> > > > --- a/fs/ceph/super.c
-> > > > +++ b/fs/ceph/super.c
-> > > > @@ -1123,16 +1123,16 @@ static int ceph_compare_super(struct
-> > super_block *sb, struct fs_context *fc)
-> > > >          struct ceph_fs_client *new = fc->s_fs_info;
-> > > >          struct ceph_mount_options *fsopt = new->mount_options;
-> > > >          struct ceph_options *opt = new->client->options;
-> > > > -       struct ceph_fs_client *other = ceph_sb_to_client(sb);
-> > > > +       struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
-> > > > 
-> > > >          dout("ceph_compare_super %p\n", sb);
-> > > > 
-> > > > -       if (compare_mount_options(fsopt, opt, other)) {
-> > > > +       if (compare_mount_options(fsopt, opt, fsc)) {
-> > > >                  dout("monitor(s)/mount options don't match\n");
-> > > >                  return 0;
-> > > >          }
-> > > >          if ((opt->flags & CEPH_OPT_FSID) &&
-> > > > -           ceph_fsid_compare(&opt->fsid, &other->client->fsid))
-> > > > {
-> > > > +           ceph_fsid_compare(&opt->fsid, &fsc->client->fsid)) {
-> > > >                  dout("fsid doesn't match\n");
-> > > >                  return 0;
-> > > >          }
-> > > > @@ -1140,6 +1140,11 @@ static int ceph_compare_super(struct
-> > super_block *sb, struct fs_context *fc)
-> > > >                  dout("flags differ\n");
-> > > >                  return 0;
-> > > >          }
-> > > > +       /* Exclude any blocklisted superblocks */
-> > > > +       if (fsc->blocklisted && !(fsopt->flags &
-> > CEPH_MOUNT_OPT_CLEANRECOVER)) {
-> > > 
-> > > Hi Jeff,
-> > > 
-> > > Nit: This looks a bit weird because fsc is the existing client
-> > > while
-> > > fsopt is the new set of mount options.  They are guaranteed to
-> > > match
-> > at
-> > > that point because of compare_mount_options() but it feels better
-> > > to
-> > > stick to probing the existing client, e.g.
-> > > 
-> > >     if (fsc->blocklisted && !ceph_test_mount_opt(fsc,
-> > > CLEANRECOVER))
-> > > 
-> > 
-> > Yeah, that does look cleaner. I went ahead and made that change in
-> > the
-> > testing branch patch, but I'll skip re-posting it.
-> > 
-> > Thanks,
-
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Yours faithfully,
+Cr.David Ramcharan
