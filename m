@@ -2,80 +2,102 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AB6A428B43
-	for <lists+ceph-devel@lfdr.de>; Mon, 11 Oct 2021 12:54:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EBD0428C16
+	for <lists+ceph-devel@lfdr.de>; Mon, 11 Oct 2021 13:32:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235990AbhJKK4L (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 11 Oct 2021 06:56:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51006 "EHLO
+        id S233148AbhJKLeX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 11 Oct 2021 07:34:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235933AbhJKK4K (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 11 Oct 2021 06:56:10 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A345AC06161C
-        for <ceph-devel@vger.kernel.org>; Mon, 11 Oct 2021 03:54:10 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id k7so54652859wrd.13
-        for <ceph-devel@vger.kernel.org>; Mon, 11 Oct 2021 03:54:10 -0700 (PDT)
+        with ESMTP id S229824AbhJKLeX (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 11 Oct 2021 07:34:23 -0400
+Received: from mail-vk1-xa29.google.com (mail-vk1-xa29.google.com [IPv6:2607:f8b0:4864:20::a29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86CCFC061570;
+        Mon, 11 Oct 2021 04:32:23 -0700 (PDT)
+Received: by mail-vk1-xa29.google.com with SMTP id h132so7314309vke.8;
+        Mon, 11 Oct 2021 04:32:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=DOxN63QWnl4dBNWQl+LufsBrewR+8VuPJnGph7ijSeE=;
-        b=Rmnfeyren4oVPh//M5LrkGiuTpbKg55JHUPRDiYK57KMNB2Mjrl5P7ERihHS5Wbo6C
-         09AkCGuI8Q23pVM1YWsxgC9G7ac95tExoJCavT+3lxLC3EusLby9iU9bNvfDa6zYZF6Q
-         FI5JDr3IXRBbZ65X6WAv9/BHOVykeWNcWqNkOQNUmpg4WU9FKm4OyQZLM/H+/D8djSbR
-         OH37tn1YqVLy1qYLknxScG2O0FQShGBgGyBVGlF8Lws4c3XOJOOB65fMVpXbSaD6u+aV
-         90rAfqw1uZa2JRHOaR8ct9Fo0J8GBhmeXq0uZQwAtTcJFR3RL5aYB3JM95WKVXvbTs8a
-         u5PA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=eNa93UMI1KiLker/dCP3o2bqpfQeSaV3eWLJOG/vVio=;
+        b=Rzena0a7V5vrmnlo5hrGRIdiwOk4le7r8evuBSiprGeSp1tonpZL+pOKEZbcKiBv4I
+         cM+V8IxE53CwxcUXAgXRz/6BVMSg3FakemkeBhqIM5JqXEuEPr7psABbP9MEI9pApuZz
+         cb2c97BX+/tez9QVRZzcw6a43fHfLX7gaCO08nLNQ//vymLn13VEJD+DKd88XlShGMf8
+         dwZOQYXPbmSZR5FXUHFbL/YyKhLPJs7Mfvpyon6OAS/Wi3dOs0TJ2sBrt++2ZIpKRfTE
+         WMucrZCpRf8Pk/Ou8zhHDxnxT2nLikZtezAlULxHmKop3+VlizUk72Tm9lbe7RKpETDU
+         8I4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=DOxN63QWnl4dBNWQl+LufsBrewR+8VuPJnGph7ijSeE=;
-        b=NPSn45VCmCaLJFT+VGhIcEKHJ3cslY2+TOqthxhcEup0T8rHTQ/k4AqoIaUpfZUfkK
-         rK3yDfu0/Dv5/r+SplWkm4guKwajL1cMQlS1xc9z7gln3GLHkjK1OfsQlBL9rL2bBgsn
-         lxqee3NwQnT7dh55UcYmDWiT5GHri0H7aA4tqwmvnJKeQXtCcxVQ9Gg/OG92Ata3xW5M
-         8Zt7x1Fz1PU7STEOjn9exiSYWyueZzPU6eruLREsCPyOnRJpboRifeF6UX8NY40GVgbe
-         YJx54qGV96h0gIhyDJZTHDgy9ByrCy4WBelnt2AdPBN/IQDu2tgmDBlxIDbkVW7B23EC
-         I+6A==
-X-Gm-Message-State: AOAM53307i5Z/dyWa1O+x7cuIAjfpSYVq29hPf3iML8RnkkVioJ/TkS0
-        74iQ3nF3qME1VsRuaGNwJDBLaGN44SzJebGTWN0=
-X-Google-Smtp-Source: ABdhPJyDvzxOmBo4m3G7I+0tI0Y+giQ8voS4x9m94iUEvQK60qSV5245otSnQKb38z7GX8EYvioo3BBhgSWgjeaJm2o=
-X-Received: by 2002:a1c:e906:: with SMTP id q6mr20809680wmc.126.1633949649021;
- Mon, 11 Oct 2021 03:54:09 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=eNa93UMI1KiLker/dCP3o2bqpfQeSaV3eWLJOG/vVio=;
+        b=Pa30HDxeift4vVngOnmRGvYfgTZ+qd9JXA7u9peEiaQJ7ecCDKpI8VH/EqOwfHxoZq
+         7SZ2S1ucbbYR04Q7E3VJ9wTyGms8d5gDNzHLi+mnHUumc9isqRz5cJJvpo+XD2CDHift
+         Br3TxBw8dm97OkAXGaL2IFGCOoc4F+g85BFd2BjVmNu79dU7XuaKCRjSJwpxe8KrYDBr
+         Ffklo1Kb1x+Ooh6o8nCTL3Vs5rLEYKRFOAvMbAu7jzmdT3NeKq5kk7IlNr9HEset2HGs
+         3GagSQx6/MO+UTxbZQcYOkwFg5PspiUy4rZ0+38efQTuDhtkmM5zmYsitQ1XDoxhm4Rn
+         1Cag==
+X-Gm-Message-State: AOAM533xAJRSj8I6JR6gHe1Oi4SD+ZOalBw9QD1h9VCQajkuhI5jhcYC
+        3NKybgKHE2gu0WgvLUcjFqtZKvDgWUmSNyueR3I+1vw2xL5T4Q==
+X-Google-Smtp-Source: ABdhPJyIMDsIEZYlK6aJkJqPNpkAlQ027vBCK30OJJFpbXI47dhL9jHszMc5chT9H+l/tMDsLwshj3qs4eRHix8apgA=
+X-Received: by 2002:a1f:ab8f:: with SMTP id u137mr19235637vke.17.1633951942715;
+ Mon, 11 Oct 2021 04:32:22 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:adf:dd8c:0:0:0:0:0 with HTTP; Mon, 11 Oct 2021 03:54:08
- -0700 (PDT)
-Reply-To: ramcharan9910@outlook.com
-From:   "Cr.David Ramcharan" <convy0101@gmail.com>
-Date:   Mon, 11 Oct 2021 03:54:08 -0700
-Message-ID: <CADDRs95ZcV8RiDv4tBWTO02+eXF=6i==kt9dht8OLiGH9Ttx-w@mail.gmail.com>
-Subject: Thank You
-To:     undisclosed-recipients:;
+References: <20211011064524.20003-1-sakiwit@gmail.com>
+In-Reply-To: <20211011064524.20003-1-sakiwit@gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 11 Oct 2021 13:31:50 +0200
+Message-ID: <CAOi1vP98SM3Z7zr9vZS8C_4-mPHgbSNHiOwkKmfVKXu6xRf0+w@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: ceph: fix ->monmap and err initialization
+To:     =?UTF-8?B?Ss61YW4gU2FjcmVu?= <sakiwit@gmail.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Please I am writing to notify you again on my intention to list your
-name as a beneficiary to the total sum of GBP6.350 million (Six
-million, Three hundred and fifty thousand British Pounds Sterlings) in
-the intent of the deceased (name now withheld since this is my second
-letter to you).
+On Mon, Oct 11, 2021 at 8:45 AM J=CE=B5an Sacren <sakiwit@gmail.com> wrote:
+>
+> From: Jean Sacren <sakiwit@gmail.com>
+>
+> Call to build_initial_monmap() is one stone two birds.  Explicitly it
+> initializes err variable. Implicitly it initializes ->monmap via call to
+> kzalloc().  We should only declare err and ->monmap is taken care of by
+> ceph_monc_init() prototype.
+>
+> Signed-off-by: Jean Sacren <sakiwit@gmail.com>
+> ---
+>  net/ceph/mon_client.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+> index 013cbdb6cfe2..6a6898ee4049 100644
+> --- a/net/ceph/mon_client.c
+> +++ b/net/ceph/mon_client.c
+> @@ -1153,12 +1153,11 @@ static int build_initial_monmap(struct ceph_mon_c=
+lient *monc)
+>
+>  int ceph_monc_init(struct ceph_mon_client *monc, struct ceph_client *cl)
+>  {
+> -       int err =3D 0;
+> +       int err;
+>
+>         dout("init\n");
+>         memset(monc, 0, sizeof(*monc));
+>         monc->client =3D cl;
+> -       monc->monmap =3D NULL;
+>         mutex_init(&monc->mutex);
+>
+>         err =3D build_initial_monmap(monc);
 
-I contacted you because you bear the surname identity and therefore
-can present you as the beneficiary to inherit the account proceeds of
-the deceased since there is no written "WILL" or trace to the deceased
-family relatives. My aim is to present you to my Bank Authorities as
-the Next of Kin to our deceased client. I will guide you all through
-the Claim procedure by providing all relevant Information and guiding
-you in your decisions and response to the Bank Management. All the
-papers will be processed after your acceptance.
+Applied.
 
-In your acceptance of this deal, I request that you kindly forward to
-me your letter of acceptance; your current telephone and fax numbers
-,age, occupational status and a forwarding address to enable me submit
-to the Bank Management the details as the Next of Kin to their
-deceased customer. Reply strictly through: ramcharancrdavid@gmail.com
+Thanks,
 
-Yours faithfully,
-Cr.David Ramcharan
+                Ilya
