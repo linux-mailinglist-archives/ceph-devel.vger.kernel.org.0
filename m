@@ -2,84 +2,92 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EAF9426818
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 Oct 2021 12:42:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 151854286FA
+	for <lists+ceph-devel@lfdr.de>; Mon, 11 Oct 2021 08:45:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239897AbhJHKoL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 8 Oct 2021 06:44:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38434 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240019AbhJHKoC (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 8 Oct 2021 06:44:02 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1CEE160F4A;
-        Fri,  8 Oct 2021 10:42:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633689727;
-        bh=bqdgFMEFkncGHtDEtFpC8t7oHibYPVZH4EeQ1goO/J0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=fo2Tzh6ufD3ym8HO+ZOQgW4TSPXzhMOLOabsDyq44pdOc158XHKVx4wEajH6KmxZL
-         zxlVnnlDjXePsf6RVY5z6S7l1W8tl0uf8EsC8yTIInBIy4zKjNcN0W5H6D88fYUdHb
-         HlekKRfKAD5u0sSlaOXzD/e38kSv8/4BuIHORwtAZ3UtQd/yK6hVAEcd3CGb5psEBY
-         iZ362FS2hUByUv5Tp6NAuF7k6HTrhHJRH+ul2FSKQxKi9NFWqiiqYzuRm+ubbEeOUG
-         1g1YjZjmnkg/GNtcgEFv9+44/ftTx5ejr+iTsyq0sZxHfYOPNPO/dBpWuzMuJZBM5Z
-         U5ivIS2qfg+LQ==
-Message-ID: <354c7279c15bc9fd037d6ab29a51387d2cf12a28.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: ignore the truncate when size won't change
- with Fx caps ssued
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Fri, 08 Oct 2021 06:42:06 -0400
-In-Reply-To: <20211008082358.679074-1-xiubli@redhat.com>
-References: <20211008082358.679074-1-xiubli@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
+        id S234287AbhJKGrj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 11 Oct 2021 02:47:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49852 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229797AbhJKGri (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 11 Oct 2021 02:47:38 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EFE7C061570;
+        Sun, 10 Oct 2021 23:45:39 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id pf6-20020a17090b1d8600b0019fa884ab85so13989203pjb.5;
+        Sun, 10 Oct 2021 23:45:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Z8Zu9yAyyO2bTaOv8lpg2v+LXFs7I8Nz3uHcl5OufP4=;
+        b=EOXtYcSC45TdU1OvJs49IrRMdt6dgSLYoz1x01tMtXEjHNmckRRy7QBXbZ8lYM0nhV
+         EtLTMEoOS/uIrd3F9YhKW34+7FCdA1rGkz+bSLni22btJd3lTl+mXKL/dH5dxlKRd2yv
+         6IEKHPTzdT+pb0vFDcnKwQd+aBMFQm1neIdNkKWPqDhNNU9PglHEzQwvWz/8FCO4llZ0
+         tM9+dqBwVdqD8qj6eay5nadrhzj0L8lfptloeqbEjdCJ3px2r5Q3xG+5zbJWFoLPoXOw
+         /OIOooTIgyis7ScyxMomecgP+VcD6lTZN/Ctx+SfG3HTOrXrkKVL9fPSVOLk9SecNHGs
+         4jHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Z8Zu9yAyyO2bTaOv8lpg2v+LXFs7I8Nz3uHcl5OufP4=;
+        b=peY9PSZqVrehY/bNGVBfiEGoc/IGDpV0bOMKtgrqgDhyeXbCJ5rSDRvMyJccCVHOFM
+         Xy+LnIr/NB2YsTkTVT7O3SnzJGsW5XI/vYRAY0wtTM8rCAqhUWgPYQuWh8dSBDtzI3dm
+         9vH6lEgPq3SylukMmUdTDCDNepvXWX2mkGF9MrxaJB1IYmQjbixA5S7P8U+ygjiq13kb
+         fRrFGwvdszhjvWZYJRwtuZu+g2tmha/vS7X/Hm8bzpMIoo2rEqjruSAk1v6Biz9GQsvp
+         EcdGAt4OHT4HBVJoTh4NkoSjLYrzdv1NOcTogCNuRZ5BKBq2fRCzhY0FT88CCNDGBrbu
+         6hIw==
+X-Gm-Message-State: AOAM530j5yoG05/CQEiDFDc4The7ZlfFx692ciX/fC4+XkpIObzOm7ri
+        xga3nBXn5mWHlPdyny0YZlp/JdVEjKursA==
+X-Google-Smtp-Source: ABdhPJy/WYf2E+ei4xSNFrSM0hFYlIPFebU3HE7DU4fHc0l1z03kp9TImjp8EXu8rclzv2ONrfGTLg==
+X-Received: by 2002:a17:90b:1646:: with SMTP id il6mr27447129pjb.129.1633934738644;
+        Sun, 10 Oct 2021 23:45:38 -0700 (PDT)
+Received: from localhost ([23.129.64.212])
+        by smtp.gmail.com with ESMTPSA id q10sm7017806pgn.31.2021.10.10.23.45.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Oct 2021 23:45:38 -0700 (PDT)
+From:   =?UTF-8?q?J=CE=B5an=20Sacren?= <sakiwit@gmail.com>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     jlayton@kernel.org, davem@davemloft.net, kuba@kernel.org,
+        ceph-devel@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH net-next] net: ceph: fix ->monmap and err initialization
+Date:   Mon, 11 Oct 2021 00:45:24 -0600
+Message-Id: <20211011064524.20003-1-sakiwit@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2021-10-08 at 16:23 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> If the new size is the same with current size, the MDS will do nothing
-> except changing the mtime/atime. The posix doesn't mandate that the
-> filesystems must update them. So just ignore it.
-> 
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/inode.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 23b5a0867e3a..81a7b342fae7 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -2105,12 +2105,14 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
->  		loff_t isize = i_size_read(inode);
->  
->  		dout("setattr %p size %lld -> %lld\n", inode, isize, attr->ia_size);
-> -		if ((issued & CEPH_CAP_FILE_EXCL) && attr->ia_size > isize) {
-> -			i_size_write(inode, attr->ia_size);
-> -			inode->i_blocks = calc_inode_blocks(attr->ia_size);
-> -			ci->i_reported_size = attr->ia_size;
-> -			dirtied |= CEPH_CAP_FILE_EXCL;
-> -			ia_valid |= ATTR_MTIME;
-> +		if ((issued & CEPH_CAP_FILE_EXCL) && attr->ia_size >= isize) {
-> +			if (attr->ia_size > isize) {
-> +				i_size_write(inode, attr->ia_size);
-> +				inode->i_blocks = calc_inode_blocks(attr->ia_size);
-> +				ci->i_reported_size = attr->ia_size;
-> +				dirtied |= CEPH_CAP_FILE_EXCL;
-> +				ia_valid |= ATTR_MTIME;
-> +			}
->  		} else if ((issued & CEPH_CAP_FILE_SHARED) == 0 ||
->  			   attr->ia_size != isize) {
->  			req->r_args.setattr.size = cpu_to_le64(attr->ia_size);
+From: Jean Sacren <sakiwit@gmail.com>
 
-Thanks Xiubo, looks good. Merged into testing.
+Call to build_initial_monmap() is one stone two birds.  Explicitly it
+initializes err variable. Implicitly it initializes ->monmap via call to
+kzalloc().  We should only declare err and ->monmap is taken care of by
+ceph_monc_init() prototype.
 
--- 
-Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Jean Sacren <sakiwit@gmail.com>
+---
+ net/ceph/mon_client.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+index 013cbdb6cfe2..6a6898ee4049 100644
+--- a/net/ceph/mon_client.c
++++ b/net/ceph/mon_client.c
+@@ -1153,12 +1153,11 @@ static int build_initial_monmap(struct ceph_mon_client *monc)
+ 
+ int ceph_monc_init(struct ceph_mon_client *monc, struct ceph_client *cl)
+ {
+-	int err = 0;
++	int err;
+ 
+ 	dout("init\n");
+ 	memset(monc, 0, sizeof(*monc));
+ 	monc->client = cl;
+-	monc->monmap = NULL;
+ 	mutex_init(&monc->mutex);
+ 
+ 	err = build_initial_monmap(monc);
