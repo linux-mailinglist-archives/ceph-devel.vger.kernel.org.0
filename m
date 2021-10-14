@@ -2,94 +2,109 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 739AE42B5D3
-	for <lists+ceph-devel@lfdr.de>; Wed, 13 Oct 2021 07:42:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27F8042DFA8
+	for <lists+ceph-devel@lfdr.de>; Thu, 14 Oct 2021 18:50:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237844AbhJMFoY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 13 Oct 2021 01:44:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40196 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237720AbhJMFoV (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Oct 2021 01:44:21 -0400
-Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C93C061570
-        for <ceph-devel@vger.kernel.org>; Tue, 12 Oct 2021 22:42:18 -0700 (PDT)
-Received: by mail-oi1-x244.google.com with SMTP id n63so2332815oif.7
-        for <ceph-devel@vger.kernel.org>; Tue, 12 Oct 2021 22:42:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=/jfyDf2uGQ0G4PkhWSUViq4lngXtqzf19oHYgswwn6Y=;
-        b=Eao41mS0X+SQCkL7FTlU/dlRvFLSNwXb38NuRtFr6f4RU6f4MVMuwGnpERusxei/SX
-         ddwMyale+8EiqLuMqjIDBcRaqQHL5/o0ykL4UDpy4s4F5+jX/WAS8Spp2E3hUxdwzLxA
-         7IZBn9FHiQ3L+W/kqmd5FL/UsxmoYEb4XWQE2hRyVz2uyJvsThbWx8qDf4iLF8w0V+f1
-         Xxbpa4EO75EDjGYLsnc8D/I8tCIxuKxMZraqsw83UdNIXfcq5B64p6zeR8yOTzeLxJeR
-         mz9/HzsxI5sZgjrj5JR2TdqIY9HC3itf0fxV51HgFZeeeH8/Y4nSTuLKR+TyB4Ox5o6J
-         2bUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=/jfyDf2uGQ0G4PkhWSUViq4lngXtqzf19oHYgswwn6Y=;
-        b=D65EXwzmqj/il8nujpctiqO4MD2BFSZToC70vh+5wH6DMaJumHNUaOdEBnhiLOmbb0
-         4KnmQXLfKICmLq8GyAj0+YMsRQkcC5oJPPcCABKAqd79JT96ws4Z4hVPS51sGHUDnYmz
-         K692OTVEZKer4WRJ+WZmWBtBTWpd/tSzYz2AQAzeaZUWsXMHeicS57cE8qWCshJ6dYkA
-         BjDk93nlDUlUVEhofKzi6V/RgLWxBOET7QxTHkamGO5EJlG22aQBqNFK1XIjG/pREDJL
-         8VqnmrKm2mjGEJWQelvkSVx623MdgaSg6djdFrjEr0euSN7x/PjyhGD+MpIcEZE91RQn
-         vYXQ==
-X-Gm-Message-State: AOAM530vEI72kdVychFu39XPFXCmAG0KrplJk6ap5He49ktXmoIw1fDJ
-        baEJPyDIGS7Bger88EufV2jTR2MGQLrDWes65Ks=
-X-Google-Smtp-Source: ABdhPJxRBJd7VV04N/V98H5qkM7s6dWXJdt0QcYoKYM5PE/7mWr72IoU9oTCCKIX+MSIuSjheGi8BDNxSOQLswM6YeQ=
-X-Received: by 2002:aca:c28b:: with SMTP id s133mr6719270oif.17.1634103737458;
- Tue, 12 Oct 2021 22:42:17 -0700 (PDT)
+        id S232377AbhJNQwL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 14 Oct 2021 12:52:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38016 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231129AbhJNQwJ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 14 Oct 2021 12:52:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 18BB06109E;
+        Thu, 14 Oct 2021 16:50:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634230204;
+        bh=rguS+p9ReWy9ScN7XVZPgG/sPYxmove/17TmuJNjH5g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=l8D7VERUwvpPcDKfxTbntK6vH4drT6zSZl7t+ozFWybV3wVCFFyRsevcFFVuBAZfn
+         vpBcUVheZsabtvP/o6dQHyIVCZsXGgAKNxnuRkpDCzxONT4d2CJrx4LY1tU+dCkTxI
+         g18Vlafinckb8UpeOWMvC8QNqwA8akjATVLciOKushnoBQDjWByjqgvOdkWyKa1sBP
+         VF/dany3f8cHyVfWRTLr38NUYGgJ6wx0GuRZ0Gt1rjVjmmDTPXKkyZAI3/tXuq5mlb
+         Xbk0jwJiw3bnIQD80r96gnhKc9P39G0XVNMUBsFDhF7zVCT/wap2j0teeKOcZh9Ut5
+         6MDnnRGN9mDEQ==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, Greg Farnum <gfarnum@redhat.com>
+Subject: [PATCH] ceph: shut down mount on bad mdsmap or fsmap decode
+Date:   Thu, 14 Oct 2021 12:50:02 -0400
+Message-Id: <20211014165002.92052-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Received: by 2002:a4a:88c4:0:0:0:0:0 with HTTP; Tue, 12 Oct 2021 22:42:16
- -0700 (PDT)
-Reply-To: shawnhayden424@gmail.com
-From:   Shawn Hayden <alexaziz900@gmail.com>
-Date:   Wed, 13 Oct 2021 06:42:16 +0100
-Message-ID: <CA+ZonYFyqkX4m-jU5wLirM950aSDXHfNC2oFQG7WKK3JFxJQhA@mail.gmail.com>
-Subject: OUR PORTFOLIO
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dear Sir,
+As Greg pointed out, if we get a mangled mdsmap or fsmap, then something
+has gone very wrong, and we should avoid doing any activity on the
+filesystem.
 
-Aseel Islamic finance PJSC is private joint stock company that was
-established in 2006 and has built a leading market position for itself
-in the UAE's Islamic finance market which specializes in loan finance
-and investment activities in real estate, hospitality, industrial &
-sustainable technologies, strategic financial investments, specialized
-education, healthcare services, agriculture, manufacturing,
-mining,energy and additional environmentally sustainable projects.
+When this occurs, shut down the mount the same way we would with a
+forced umount by calling ceph_umount_begin when decoding fails on either
+map. This causes most operations done against the filesystem to return
+an error. Any dirty data or caps in the cache will be dropped as well.
 
-My name is Mr. Ibn Ahmad Mustafa . Do you have projects that require
-funding? We have finance available for your projects with over 2
-trillion private and corporate investment portfolios.  Aseel Islamic
-finance PJSC is looking for equity partners, entrepreneur, fund
-raisers and portfolio managers who will pay up to 4.5% interest and/or
-part equity position with a 5 to 10 year hold. In 2030, we plan on
-acquiring up to 2 trillion in high-quality, low risk assets and
-investments to capitalize on the current market cycle.
+The effect is not reversible, so the only remedy is to umount.
 
-Aseel Islamic finance PJSC is acting as a lender and the fund will be
-disbursed on a clear interest rate of 3.5% annually to the equity
-partners and entrepreneurs for their investment projects. We also give
-a 2% commission to brokers, who bring project owners for finance or
-other opportunities.
+URL: https://tracker.ceph.com/issues/52303
+Cc: Greg Farnum <gfarnum@redhat.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/mds_client.c | 6 ++++--
+ fs/ceph/super.c      | 2 +-
+ fs/ceph/super.h      | 1 +
+ 3 files changed, 6 insertions(+), 3 deletions(-)
 
-For further details, kindly send us your business plans or project summary.
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 598425ccd020..5490f3422ae2 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -5011,7 +5011,8 @@ void ceph_mdsc_handle_fsmap(struct ceph_mds_client *mdsc, struct ceph_msg *msg)
+ 	return;
+ 
+ bad:
+-	pr_err("error decoding fsmap\n");
++	pr_err("error decoding fsmap. Shutting down mount.\n");
++	ceph_umount_begin(mdsc->fsc->sb);
+ err_out:
+ 	mutex_lock(&mdsc->mutex);
+ 	mdsc->mdsmap_err = err;
+@@ -5078,7 +5079,8 @@ void ceph_mdsc_handle_mdsmap(struct ceph_mds_client *mdsc, struct ceph_msg *msg)
+ bad_unlock:
+ 	mutex_unlock(&mdsc->mutex);
+ bad:
+-	pr_err("error decoding mdsmap %d\n", err);
++	pr_err("error decoding mdsmap %d. Shutting down mount.\n", err);
++	ceph_umount_begin(mdsc->fsc->sb);
+ 	return;
+ }
+ 
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 580dad2c832e..fea6e69b94a0 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -969,7 +969,7 @@ static void __ceph_umount_begin(struct ceph_fs_client *fsc)
+  * ceph_umount_begin - initiate forced umount.  Tear down the
+  * mount, skipping steps that may hang while waiting for server(s).
+  */
+-static void ceph_umount_begin(struct super_block *sb)
++void ceph_umount_begin(struct super_block *sb)
+ {
+ 	struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
+ 
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 49ca2106f853..7c3990cd3c3b 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -947,6 +947,7 @@ extern void ceph_put_snapid_map(struct ceph_mds_client* mdsc,
+ 				struct ceph_snapid_map *sm);
+ extern void ceph_trim_snapid_map(struct ceph_mds_client *mdsc);
+ extern void ceph_cleanup_snapid_map(struct ceph_mds_client *mdsc);
++void ceph_umount_begin(struct super_block *sb);
+ 
+ 
+ /*
+-- 
+2.31.1
 
-Regards,
-
-
-Mr. Ibn Ahmad Mustafa
-International Business Coordinator
-Aseel Islamic Finance PJSC
-Al Mankhool, Dubai C2 Tower,
-Ground floor,P.O 94669 Dubai, UAE
-Abu Dhabi - United Arab Emirates
-Email : ahmadmustafa.7800@gmail.com
