@@ -2,245 +2,371 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 609F043193E
-	for <lists+ceph-devel@lfdr.de>; Mon, 18 Oct 2021 14:36:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 920FB432030
+	for <lists+ceph-devel@lfdr.de>; Mon, 18 Oct 2021 16:50:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230346AbhJRMib (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 18 Oct 2021 08:38:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22115 "EHLO
+        id S232320AbhJROwv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 18 Oct 2021 10:52:51 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:59025 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231180AbhJRMia (ORCPT
+        by vger.kernel.org with ESMTP id S232120AbhJROwp (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 18 Oct 2021 08:38:30 -0400
+        Mon, 18 Oct 2021 10:52:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634560578;
+        s=mimecast20190719; t=1634568633;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5Jv3rNXTm7ES8GL61uhJSQXotnqqkJ8OFeNdlH1Vozk=;
-        b=RU1JdHIyJ6AhQp/Ky/uQDgPYaz+oMKuyutP5/J4onEtwWrKLOeXVB9c3rHudR5AILAObtj
-        B8sP16ohVNHJ0yAACdpuDZR8njRUcg58/byp/3aZ598cf0chIbwbAVlo9Rt4zgCj4EQvUS
-        1jzIVFi5RI0+RBbQromzoXaTq7Oi9Eo=
+         content-transfer-encoding:content-transfer-encoding;
+        bh=fTrNJzajY75aEFgr0IJAERmH1kp8ApEHhoqq1c9QWjk=;
+        b=UYpZaopmYh19JAu37oVYkwn5gA+sFFKXX5we660/o/UQpc0F4/TDLz6y2R6Qxhv6m3t0xo
+        r3Wjml2vcXOWxv96MzHia7A+EqIMcec6YAKIL4a6dEyWTdzuVeU/zFhy5HCK7TFmG1GjH4
+        YU0xRoGzwqbZ66VJK1b4i1/YMh2Eejg=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-246-utP4HSasPUSFGE-MIPnLFQ-1; Mon, 18 Oct 2021 08:36:15 -0400
-X-MC-Unique: utP4HSasPUSFGE-MIPnLFQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-494-PW9s4UWuPtah2KXKgvmwwA-1; Mon, 18 Oct 2021 10:50:30 -0400
+X-MC-Unique: PW9s4UWuPtah2KXKgvmwwA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CF6C51966320;
-        Mon, 18 Oct 2021 12:36:11 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.33.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B949BB8551;
-        Mon, 18 Oct 2021 12:35:49 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id D710922045E; Mon, 18 Oct 2021 08:35:48 -0400 (EDT)
-Date:   Mon, 18 Oct 2021 08:35:48 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     jmorris@namei.org
-Cc:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        Miklos Szeredi <miklos@szeredi.hu>, dwalsh@redhat.com,
-        jlayton@kernel.org, idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, bfields@fieldses.org,
-        chuck.lever@oracle.com, anna.schumaker@netapp.com,
-        trond.myklebust@hammerspace.com, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, Ondrej Mosnacek <omosnace@redhat.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        serge@hallyn.com
-Subject: Re: [PATCH v2] security: Return xattr name from
- security_dentry_init_security()
-Message-ID: <YW1qJKLHYHWia2Nd@redhat.com>
-References: <YWWMO/ZDrvDZ5X4c@redhat.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E5D1180A5C4;
+        Mon, 18 Oct 2021 14:50:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A7E005F4F5;
+        Mon, 18 Oct 2021 14:50:16 +0000 (UTC)
+Subject: [PATCH 00/67] fscache: Rewrite index API and management system
+From:   David Howells <dhowells@redhat.com>
+To:     linux-cachefs@redhat.com
+Cc:     ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-nfs@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        v9fs-developer@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Jeff Layton <jlayton@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>, dhowells@redhat.com,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 18 Oct 2021 15:50:15 +0100
+Message-ID: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YWWMO/ZDrvDZ5X4c@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi James,
 
-I am assuming this patch will need to be routed through security tree.
-Can you please consider it for inclusion.
+Here's a set of patches that rewrites and simplifies the fscache index API
+to remove the complex operation scheduling and object state machine in
+favour of something much smaller and simpler.  It is built on top of the
+set of patches that removes the old API[1].
 
-Thanks
-Vivek
+The operation scheduling API was intended to handle sequencing of cache
+operations, which were all required (where possible) to run asynchronously
+in parallel with the operations being done by the network filesystem, while
+allowing the cache to be brought online and offline and interrupt service
+with invalidation.
 
-On Tue, Oct 12, 2021 at 09:23:07AM -0400, Vivek Goyal wrote:
-> Right now security_dentry_init_security() only supports single security
-> label and is used by SELinux only. There are two users of of this hook,
-> namely ceph and nfs.
-> 
-> NFS does not care about xattr name. Ceph hardcodes the xattr name to
-> security.selinux (XATTR_NAME_SELINUX).
-> 
-> I am making changes to fuse/virtiofs to send security label to virtiofsd
-> and I need to send xattr name as well. I also hardcoded the name of
-> xattr to security.selinux.
-> 
-> Stephen Smalley suggested that it probably is a good idea to modify
-> security_dentry_init_security() to also return name of xattr so that
-> we can avoid this hardcoding in the callers.
-> 
-> This patch adds a new parameter "const char **xattr_name" to
-> security_dentry_init_security() and LSM puts the name of xattr
-> too if caller asked for it (xattr_name != NULL).
-> 
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> ---
-> 
-> Changes since v1:
-> - Updated comment to make it clear caller does not have to free the
->   xattr_name. (Jeff Layton).
-> - Captured Jeff's Reviewed-by ack.
-> 
-> I have tested this patch with virtiofs and compile tested for ceph and nfs.
-> 
-> NFS changes are trivial. Looking for an ack from NFS maintainers.
-> 
-> ---
->  fs/ceph/xattr.c               |    3 +--
->  fs/nfs/nfs4proc.c             |    3 ++-
->  include/linux/lsm_hook_defs.h |    3 ++-
->  include/linux/lsm_hooks.h     |    3 +++
->  include/linux/security.h      |    6 ++++--
->  security/security.c           |    7 ++++---
->  security/selinux/hooks.c      |    6 +++++-
->  7 files changed, 21 insertions(+), 10 deletions(-)
-> 
-> Index: redhat-linux/security/selinux/hooks.c
-> ===================================================================
-> --- redhat-linux.orig/security/selinux/hooks.c	2021-10-04 15:40:28.978453324 -0400
-> +++ redhat-linux/security/selinux/hooks.c	2021-10-06 15:20:57.745247170 -0400
-> @@ -2948,7 +2948,8 @@ static void selinux_inode_free_security(
->  }
->  
->  static int selinux_dentry_init_security(struct dentry *dentry, int mode,
-> -					const struct qstr *name, void **ctx,
-> +					const struct qstr *name,
-> +					const char **xattr_name, void **ctx,
->  					u32 *ctxlen)
->  {
->  	u32 newsid;
-> @@ -2961,6 +2962,9 @@ static int selinux_dentry_init_security(
->  	if (rc)
->  		return rc;
->  
-> +	if (xattr_name)
-> +		*xattr_name = XATTR_NAME_SELINUX;
-> +
->  	return security_sid_to_context(&selinux_state, newsid, (char **)ctx,
->  				       ctxlen);
->  }
-> Index: redhat-linux/security/security.c
-> ===================================================================
-> --- redhat-linux.orig/security/security.c	2021-10-04 15:40:28.978453324 -0400
-> +++ redhat-linux/security/security.c	2021-10-06 15:20:57.749247170 -0400
-> @@ -1052,11 +1052,12 @@ void security_inode_free(struct inode *i
->  }
->  
->  int security_dentry_init_security(struct dentry *dentry, int mode,
-> -					const struct qstr *name, void **ctx,
-> -					u32 *ctxlen)
-> +				  const struct qstr *name,
-> +				  const char **xattr_name, void **ctx,
-> +				  u32 *ctxlen)
->  {
->  	return call_int_hook(dentry_init_security, -EOPNOTSUPP, dentry, mode,
-> -				name, ctx, ctxlen);
-> +				name, xattr_name, ctx, ctxlen);
->  }
->  EXPORT_SYMBOL(security_dentry_init_security);
->  
-> Index: redhat-linux/include/linux/lsm_hooks.h
-> ===================================================================
-> --- redhat-linux.orig/include/linux/lsm_hooks.h	2021-10-04 15:40:28.978453324 -0400
-> +++ redhat-linux/include/linux/lsm_hooks.h	2021-10-12 09:05:00.830399245 -0400
-> @@ -196,6 +196,9 @@
->   *	@dentry dentry to use in calculating the context.
->   *	@mode mode used to determine resource type.
->   *	@name name of the last path component used to create file
-> + *	@xattr_name pointer to place the pointer to security xattr name.
-> + *		    Caller does not have to free the resulting pointer. Its
-> + *		    a pointer to static string.
->   *	@ctx pointer to place the pointer to the resulting context in.
->   *	@ctxlen point to place the length of the resulting context.
->   * @dentry_create_files_as:
-> Index: redhat-linux/include/linux/security.h
-> ===================================================================
-> --- redhat-linux.orig/include/linux/security.h	2021-10-04 15:40:28.978453324 -0400
-> +++ redhat-linux/include/linux/security.h	2021-10-06 15:20:57.751247170 -0400
-> @@ -317,8 +317,9 @@ int security_add_mnt_opt(const char *opt
->  				int len, void **mnt_opts);
->  int security_move_mount(const struct path *from_path, const struct path *to_path);
->  int security_dentry_init_security(struct dentry *dentry, int mode,
-> -					const struct qstr *name, void **ctx,
-> -					u32 *ctxlen);
-> +				  const struct qstr *name,
-> +				  const char **xattr_name, void **ctx,
-> +				  u32 *ctxlen);
->  int security_dentry_create_files_as(struct dentry *dentry, int mode,
->  					struct qstr *name,
->  					const struct cred *old,
-> @@ -739,6 +740,7 @@ static inline void security_inode_free(s
->  static inline int security_dentry_init_security(struct dentry *dentry,
->  						 int mode,
->  						 const struct qstr *name,
-> +						 const char **xattr_name,
->  						 void **ctx,
->  						 u32 *ctxlen)
->  {
-> Index: redhat-linux/include/linux/lsm_hook_defs.h
-> ===================================================================
-> --- redhat-linux.orig/include/linux/lsm_hook_defs.h	2021-10-04 15:40:28.978453324 -0400
-> +++ redhat-linux/include/linux/lsm_hook_defs.h	2021-10-06 15:20:57.752247170 -0400
-> @@ -83,7 +83,8 @@ LSM_HOOK(int, 0, sb_add_mnt_opt, const c
->  LSM_HOOK(int, 0, move_mount, const struct path *from_path,
->  	 const struct path *to_path)
->  LSM_HOOK(int, 0, dentry_init_security, struct dentry *dentry,
-> -	 int mode, const struct qstr *name, void **ctx, u32 *ctxlen)
-> +	 int mode, const struct qstr *name, const char **xattr_name,
-> +	 void **ctx, u32 *ctxlen)
->  LSM_HOOK(int, 0, dentry_create_files_as, struct dentry *dentry, int mode,
->  	 struct qstr *name, const struct cred *old, struct cred *new)
->  
-> Index: redhat-linux/fs/nfs/nfs4proc.c
-> ===================================================================
-> --- redhat-linux.orig/fs/nfs/nfs4proc.c	2021-10-04 15:40:28.978453324 -0400
-> +++ redhat-linux/fs/nfs/nfs4proc.c	2021-10-06 15:20:57.754247170 -0400
-> @@ -127,7 +127,8 @@ nfs4_label_init_security(struct inode *d
->  		return NULL;
->  
->  	err = security_dentry_init_security(dentry, sattr->ia_mode,
-> -				&dentry->d_name, (void **)&label->label, &label->len);
-> +				&dentry->d_name, NULL,
-> +				(void **)&label->label, &label->len);
->  	if (err == 0)
->  		return label;
->  
-> Index: redhat-linux/fs/ceph/xattr.c
-> ===================================================================
-> --- redhat-linux.orig/fs/ceph/xattr.c	2021-10-04 15:40:28.978453324 -0400
-> +++ redhat-linux/fs/ceph/xattr.c	2021-10-06 15:20:57.756247170 -0400
-> @@ -1311,7 +1311,7 @@ int ceph_security_init_secctx(struct den
->  	int err;
->  
->  	err = security_dentry_init_security(dentry, mode, &dentry->d_name,
-> -					    &as_ctx->sec_ctx,
-> +					    &name, &as_ctx->sec_ctx,
->  					    &as_ctx->sec_ctxlen);
->  	if (err < 0) {
->  		WARN_ON_ONCE(err != -EOPNOTSUPP);
-> @@ -1335,7 +1335,6 @@ int ceph_security_init_secctx(struct den
->  	 * It only supports single security module and only selinux has
->  	 * dentry_init_security hook.
->  	 */
-> -	name = XATTR_NAME_SELINUX;
->  	name_len = strlen(name);
->  	err = ceph_pagelist_reserve(pagelist,
->  				    4 * 2 + name_len + as_ctx->sec_ctxlen);
-> 
+However, with the advent of the tmpfile capacity in the VFS, an opportunity
+arises to do invalidation much more easily, without having to wait for I/O
+that's actually in progress: Cachefiles can simply cut over its file
+pointer for the backing object attached to a cookie and abandon the
+in-progress I/O, dismissing it upon completion.
+
+Future work there would involve using Omar Sandoval's vfs_link() with
+AT_LINK_REPLACE[2] to allow an extant file to be displaced by a new hard
+link from a tmpfile as currently I have to unlink the old file first.
+
+These patches can also simplify the object state handling as I/O operations
+to the cache don't all have to be brought to a stop in order to invalidate
+a file.  To that end, and with an eye on to writing a new backing cache
+model in the future, I've taken the opportunity to simplify the indexing
+structure.
+
+I've separated the index cookie concept from the file cookie concept by
+type now.  The former is now called a "volume cookie" (struct
+fscache_volume) and there is a container of file cookies.  There are then
+just the two levels.  All the index cookieage is collapsed into a single
+volume cookie, and this has a single printable string as a key.  For
+instance, an AFS volume would have a key of something like
+"afs,example.com,1000555", combining the filesystem name, cell name and
+volume ID.  This is freeform, but must not have '/' chars in it.
+
+I've also eliminated all pointers back from fscache into the network
+filesystem.  This required the duplication of a little bit of data in the
+cookie (cookie key, coherency data and file size), but it's not actually
+that much.  This gets rid of problems with making sure we keep netfs data
+structures around so that the cache can access them.
+
+I have changed afs throughout the patch series, but I also have patches for
+9p, nfs and cifs.  Jeff Layton is handling ceph support.
+
+
+BITS THAT MAY BE CONTROVERSIAL
+==============================
+
+There are some bits I've added that may be controversial:
+
+ (1) I've provided a flag, S_KERNEL_FILE, that cachefiles uses to check if
+     a files is already being used by some other kernel service (e.g. a
+     duplicate cachefiles cache in the same directory) and reject it if it
+     is.  This isn't entirely necessary, but it helps prevent accidental
+     data corruption.
+
+     I don't want to use S_SWAPFILE as that has other effects, but quite
+     possibly swapon() should set S_KERNEL_FILE too.
+
+     Note that it doesn't prevent userspace from interfering, though
+     perhaps it should.
+
+ (2) Cachefiles wants to keep the backing file for a cookie open whilst we
+     might need to write to it from network filesystem writeback.  The
+     problem is that the network filesystem unuses its cookie when its file
+     is closed, and so we have nothing pinning the cachefiles file open and
+     it will get closed automatically after a short time to avoid
+     EMFILE/ENFILE problems.
+
+     Reopening the cache file, however, is a problem if this is being done
+     due to writeback triggered by exit().  Some filesystems will oops if
+     we try to open a file in that context because they want to access
+     current->fs or suchlike.
+
+     To get around this, I added the following:
+
+     (A) An inode flag, I_PINNING_FSCACHE_WB, to be set on a network
+     	 filesystem inode to indicate that we have a usage count on the
+     	 cookie caching that inode.
+
+     (B) A flag in struct writeback_control, unpinned_fscache_wb, that is
+     	 set when __writeback_single_inode() clears the last dirty page
+     	 from i_pages - at which point it clears I_PINNING_FSCACHE_WB and
+     	 sets this flag.
+
+	 This has to be done here so that clearing I_PINNING_FSCACHE_WB can
+	 be done atomically with the check of PAGECACHE_TAG_DIRTY that
+	 clears I_DIRTY_PAGES.
+
+     (C) A function, fscache_set_page_dirty(), which if it is not set, sets
+     	 I_PINNING_FSCACHE_WB and calls fscache_use_cookie() to pin the
+     	 cache resources.
+
+     (D) A function, fscache_unpin_writeback(), to be called by
+     	 ->write_inode() to unuse the cookie.
+
+     (E) A function, fscache_clear_inode_writeback(), to be called when the
+     	 inode is evicted, before clear_inode() is called.  This cleans up
+     	 any lingering I_PINNING_FSCACHE_WB.
+
+     The network filesystem can then use these tools to make sure that
+     fscache_write_to_cache() can write locally modified data to the cache
+     as well as to the server.
+
+     For the future, I'm working on write helpers for netfs lib that should
+     allow this facility to be removed by keeping track of the dirty
+     regions separately - but that's incomplete at the moment and is also
+     going to be affected by folios, one way or another, since it deals
+     with pages.
+
+
+These patches can be found also on:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-rewrite-indexing
+
+David
+
+Link: https://lore.kernel.org/r/163363935000.1980952.15279841414072653108.stgit@warthog.procyon.org.uk [1]
+Link: https://lore.kernel.org/r/cover.1580251857.git.osandov@fb.com/ [2]
+
+---
+Dave Wysochanski (3):
+      NFS: Convert fscache_acquire_cookie and fscache_relinquish_cookie
+      NFS: Convert fscache_enable_cookie and fscache_disable_cookie
+      NFS: Convert fscache invalidation and update aux_data and i_size
+
+David Howells (63):
+      mm: Stop filemap_read() from grabbing a superfluous page
+      vfs: Provide S_KERNEL_FILE inode flag
+      vfs, fscache: Force ->write_inode() to occur if cookie pinned for writeback
+      afs: Handle len being extending over page end in write_begin/write_end
+      afs: Fix afs_write_end() to handle len > page size
+      nfs, cifs, ceph, 9p: Disable use of fscache prior to its rewrite
+      fscache: Remove the netfs data from the cookie
+      fscache: Remove struct fscache_cookie_def
+      fscache: Remove store_limit* from struct fscache_object
+      fscache: Remove fscache_check_consistency()
+      fscache: Remove fscache_attr_changed()
+      fscache: Remove obsolete stats
+      fscache: Remove old I/O tracepoints
+      fscache: Temporarily disable fscache_invalidate()
+      fscache: Disable fscache_begin_operation()
+      fscache: Remove the I/O operation manager
+      fscache: Rename fscache_cookie_{get,put,see}()
+      cachefiles: Remove tree of active files and use S_CACHE_FILE inode flag
+      cachefiles: Don't set an xattr on the root of the cache
+      cachefiles: Remove some redundant checks on unsigned values
+      cachefiles: Prevent inode from going away when burying a dentry
+      cachefiles: Simplify the pathwalk and save the filename for an object
+      cachefiles: trace: Improve the lookup tracepoint
+      cachefiles: Remove separate backer dentry from cachefiles_object
+      cachefiles: Fold fscache_object into cachefiles_object
+      cachefiles: Change to storing file* rather than dentry*
+      cachefiles: trace: Log coherency checks
+      cachefiles: Trace truncations
+      cachefiles: Trace read and write operations
+      cachefiles: Round the cachefile size up to DIO block size
+      cachefiles: Don't use XATTR_ flags with vfs_setxattr()
+      fscache: Replace the object management state machine
+      cachefiles: Trace decisions in cachefiles_prepare_read()
+      cachefiles: Make cachefiles_write_prepare() check for space
+      fscache: Automatically close a file that's been unused for a while
+      fscache: Add stats for the cookie commit LRU
+      fscache: Move fscache_update_cookie() complete inline
+      fscache: Remove more obsolete stats
+      fscache: Note the object size during invalidation
+      vfs, fscache: Force ->write_inode() to occur if cookie pinned for writeback
+      afs: Render cache cookie key as big endian
+      cachefiles: Use tmpfile/link
+      fscache: Rewrite invalidation
+      cachefiles: Simplify the file lookup/creation/check code
+      fscache: Provide resize operation
+      cachefiles: Put more information in the xattr attached to the cache file
+      fscache: Implement "will_modify" parameter on fscache_use_cookie()
+      fscache: Add support for writing to the cache
+      fscache: Make fscache_clear_page_bits() conditional on cookie
+      fscache: Make fscache_write_to_cache() conditional on cookie
+      afs: Copy local writes to the cache when writing to the server
+      afs: Invoke fscache_resize_cookie() when handling ATTR_SIZE for setattr
+      afs: Add O_DIRECT read support
+      afs: Skip truncation on the server of data we haven't written yet
+      afs: Make afs_write_begin() return the THP subpage
+      cachefiles, afs: Drive FSCACHE_COOKIE_NO_DATA_TO_READ
+      nfs: Convert to new fscache volume/cookie API
+      9p: Use fscache indexing rewrite and reenable caching
+      9p: Copy local writes to the cache when writing to the server
+      netfs: Display the netfs inode number in the netfs_read tracepoint
+      cachefiles: Add tracepoints to log errors from ops on the backing fs
+      cachefiles: Add error injection support
+      cifs: Support fscache indexing rewrite (untested)
+
+Jeff Layton (1):
+      fscache: disable cookie when doing an invalidation for DIO write
+
+
+ fs/9p/cache.c                     |  184 +----
+ fs/9p/cache.h                     |   23 +-
+ fs/9p/v9fs.c                      |   14 +-
+ fs/9p/v9fs.h                      |   13 +-
+ fs/9p/vfs_addr.c                  |   55 +-
+ fs/9p/vfs_dir.c                   |   13 +-
+ fs/9p/vfs_file.c                  |    7 +-
+ fs/9p/vfs_inode.c                 |   24 +-
+ fs/9p/vfs_inode_dotl.c            |    3 +-
+ fs/9p/vfs_super.c                 |    3 +
+ fs/afs/Makefile                   |    3 -
+ fs/afs/cache.c                    |   68 --
+ fs/afs/cell.c                     |   12 -
+ fs/afs/file.c                     |   83 +-
+ fs/afs/fsclient.c                 |   18 +-
+ fs/afs/inode.c                    |  101 ++-
+ fs/afs/internal.h                 |   36 +-
+ fs/afs/main.c                     |   14 -
+ fs/afs/super.c                    |    1 +
+ fs/afs/volume.c                   |   15 +-
+ fs/afs/write.c                    |  170 +++-
+ fs/afs/yfsclient.c                |   12 +-
+ fs/cachefiles/Kconfig             |    8 +
+ fs/cachefiles/Makefile            |    3 +
+ fs/cachefiles/bind.c              |  186 +++--
+ fs/cachefiles/daemon.c            |   20 +-
+ fs/cachefiles/error_inject.c      |   46 ++
+ fs/cachefiles/interface.c         |  660 +++++++--------
+ fs/cachefiles/internal.h          |  191 +++--
+ fs/cachefiles/io.c                |  310 +++++--
+ fs/cachefiles/key.c               |  203 +++--
+ fs/cachefiles/main.c              |   20 +-
+ fs/cachefiles/namei.c             |  978 ++++++++++------------
+ fs/cachefiles/volume.c            |  128 +++
+ fs/cachefiles/xattr.c             |  367 +++------
+ fs/ceph/Kconfig                   |    2 +-
+ fs/cifs/Makefile                  |    2 +-
+ fs/cifs/cache.c                   |  105 ---
+ fs/cifs/cifsfs.c                  |   11 +-
+ fs/cifs/cifsglob.h                |    5 +-
+ fs/cifs/connect.c                 |    3 -
+ fs/cifs/file.c                    |   37 +-
+ fs/cifs/fscache.c                 |  201 ++---
+ fs/cifs/fscache.h                 |   51 +-
+ fs/cifs/inode.c                   |   18 +-
+ fs/fs-writeback.c                 |    8 +
+ fs/fscache/Kconfig                |    4 +
+ fs/fscache/Makefile               |    6 +-
+ fs/fscache/cache.c                |  541 ++++++-------
+ fs/fscache/cookie.c               | 1262 ++++++++++++++---------------
+ fs/fscache/fsdef.c                |   98 ---
+ fs/fscache/internal.h             |  213 +----
+ fs/fscache/io.c                   |  405 ++++++---
+ fs/fscache/main.c                 |  134 +--
+ fs/fscache/netfs.c                |   74 --
+ fs/fscache/object.c               | 1123 -------------------------
+ fs/fscache/operation.c            |  633 ---------------
+ fs/fscache/page.c                 |   84 --
+ fs/fscache/proc.c                 |   43 +-
+ fs/fscache/stats.c                |  202 ++---
+ fs/fscache/volume.c               |  449 ++++++++++
+ fs/netfs/read_helper.c            |    2 +-
+ fs/nfs/Makefile                   |    2 +-
+ fs/nfs/client.c                   |    4 -
+ fs/nfs/direct.c                   |    2 +
+ fs/nfs/file.c                     |    7 +-
+ fs/nfs/fscache-index.c            |  114 ---
+ fs/nfs/fscache.c                  |  264 ++----
+ fs/nfs/fscache.h                  |   89 +-
+ fs/nfs/inode.c                    |   11 +-
+ fs/nfs/super.c                    |    7 +-
+ fs/nfs/write.c                    |    1 +
+ include/linux/fs.h                |    4 +
+ include/linux/fscache-cache.h     |  463 +++--------
+ include/linux/fscache.h           |  626 +++++++-------
+ include/linux/netfs.h             |    4 +-
+ include/linux/nfs_fs_sb.h         |    9 +-
+ include/linux/writeback.h         |    1 +
+ include/trace/events/cachefiles.h |  483 ++++++++---
+ include/trace/events/fscache.h    |  631 +++++++--------
+ include/trace/events/netfs.h      |    5 +-
+ 81 files changed, 5140 insertions(+), 7295 deletions(-)
+ delete mode 100644 fs/afs/cache.c
+ create mode 100644 fs/cachefiles/error_inject.c
+ create mode 100644 fs/cachefiles/volume.c
+ delete mode 100644 fs/cifs/cache.c
+ delete mode 100644 fs/fscache/fsdef.c
+ delete mode 100644 fs/fscache/netfs.c
+ delete mode 100644 fs/fscache/object.c
+ delete mode 100644 fs/fscache/operation.c
+ create mode 100644 fs/fscache/volume.c
+ delete mode 100644 fs/nfs/fscache-index.c
+
 
