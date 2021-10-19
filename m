@@ -2,116 +2,134 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35FDE43367F
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Oct 2021 14:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3403F433735
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Oct 2021 15:37:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235788AbhJSNBm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 19 Oct 2021 09:01:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46464 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235689AbhJSNBk (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 19 Oct 2021 09:01:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D5C5861074;
-        Tue, 19 Oct 2021 12:59:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634648367;
-        bh=MUUFxegcCpv2s3PCGe0oVUAbfzfl5CUl3N5emTK6q1o=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=PhF3f5rrAsokIt9b2leZ0E8MMxPrfuQAkE5koH5itJ6KtLBaVlvXQhExX9QRPCEzX
-         QIizOHHNMmeEQhcwkLq/zOVJ6OIXolK6WnHcbVaory5IlJ5r5v8aupMqh1IUMyGRR+
-         76+i1uqU/4NCe5zljTDFSrOZj2DrfvfOyfFUY1irvYBRnTQcYAXjDXI9DhBoclqxo+
-         s8+0eJu4m9Hw+Ax7jVGE0w/stedjxx2tszz10ODbuErJHljU6YMUM5YitV+t/zdqBe
-         TvRpfIiWNz91KVUIFdonkZ6cyZk6Rf6+KCCr0psLuLVuhXKiVvQAXNreMX3ZyKjTyJ
-         rxyUMEOeqRFFA==
-Message-ID: <23269de451786354f33adc8a8f59a48c89748ddd.camel@kernel.org>
-Subject: Re: [PATCH] ceph: return the real size readed when hit EOF
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, khiremat@redhat.com, pdonnell@redhat.com,
-        ceph-devel@vger.kernel.org
-Date:   Tue, 19 Oct 2021 08:59:25 -0400
-In-Reply-To: <20211019115138.414187-1-xiubli@redhat.com>
-References: <20211019115138.414187-1-xiubli@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
+        id S235906AbhJSNjG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 19 Oct 2021 09:39:06 -0400
+Received: from mail-ed1-f46.google.com ([209.85.208.46]:35684 "EHLO
+        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231564AbhJSNjF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 19 Oct 2021 09:39:05 -0400
+Received: by mail-ed1-f46.google.com with SMTP id w19so13045253edd.2;
+        Tue, 19 Oct 2021 06:36:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=l2fMMxDDiXx3vgfR9XbtY8zVEKvNNXiKJ69kmRp4vQM=;
+        b=mCb8jqED0k1GQlElRY/RIaU6/LQcw05GMBYf6vFWLA9vc2DtSanoKswatoZlHXmZeR
+         jxKfUU+m0/uml1+TeZGYzomvq95udLj57/03xWpDUy/P3CqOGD6bCnJBKzlJhShKAqml
+         /NKIpkfkZR8E2C7pWzzyhCN5C7avmhImOUJcNWv522iNnmtPum3Z+C+OmlJmshhiBUyL
+         SdLZ8QfUOh7MIizH83K0nYPshlDdQZHO7fd1jUfNRs1B4rxvOHJw7OsfEgz3GTvdSxC+
+         5+Phg0IXOWQG1NpFvAhdllnkeefXi/zeTMN6v0r7AhGwLpcrlWXIv5TsgHvwW4w7BrEA
+         RMaw==
+X-Gm-Message-State: AOAM532VakqfLcy3QyLtmd9sevati6qN53VSuelDeibLn6VbcZs5ks0t
+        Yi/RFhQVYplSzk6iuYQ5rktFFhBLOee3Zwv7
+X-Google-Smtp-Source: ABdhPJxK5E41qyWGhA8m0/y1a2EmpcFIwcooZQ3yYlMpxn0gc32jmtmTmaGNK+k9ZR0AdgnAjoTadQ==
+X-Received: by 2002:a05:6402:1e8c:: with SMTP id f12mr52173095edf.71.1634650576792;
+        Tue, 19 Oct 2021 06:36:16 -0700 (PDT)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
+        by smtp.gmail.com with ESMTPSA id b2sm11215570edv.73.2021.10.19.06.36.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Oct 2021 06:36:16 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id g39so7785125wmp.3;
+        Tue, 19 Oct 2021 06:36:16 -0700 (PDT)
+X-Received: by 2002:a1c:a443:: with SMTP id n64mr6116840wme.32.1634650175559;
+ Tue, 19 Oct 2021 06:29:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
+In-Reply-To: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
+From:   Marc Dionne <marc.dionne@auristor.com>
+Date:   Tue, 19 Oct 2021 10:29:24 -0300
+X-Gmail-Original-Message-ID: <CAB9dFdumxi0U_339S3PfC4TL83Srqn+qGz2AAbJ995NiLhbxnw@mail.gmail.com>
+Message-ID: <CAB9dFdumxi0U_339S3PfC4TL83Srqn+qGz2AAbJ995NiLhbxnw@mail.gmail.com>
+Subject: Re: [Linux-cachefs] [PATCH 00/67] fscache: Rewrite index API and
+ management system
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-cachefs@redhat.com, Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        linux-mm@kvack.org, linux-afs@lists.infradead.org,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        linux-cifs@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        v9fs-developer@lists.sourceforge.net,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        ceph-devel@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Steve French <sfrench@samba.org>,
+        linux-fsdevel@vger.kernel.org, Omar Sandoval <osandov@osandov.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2021-10-19 at 19:51 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> At the same time set the ki_pos to the file size.
-> 
+On Mon, Oct 18, 2021 at 11:50 AM David Howells <dhowells@redhat.com> wrote:
+>
+>
+> Here's a set of patches that rewrites and simplifies the fscache index API
+> to remove the complex operation scheduling and object state machine in
+> favour of something much smaller and simpler.  It is built on top of the
+> set of patches that removes the old API[1].
 
-It would be good to put the comments in your follow up email into the
-patch description here, so that it explains what you're fixing and why.
+Testing this series in our afs test framework, saw the oops pasted below.
 
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/file.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 91173d3aa161..1abc3b591740 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -847,6 +847,7 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
->  	ssize_t ret;
->  	u64 off = iocb->ki_pos;
->  	u64 len = iov_iter_count(to);
-> +	u64 i_size = i_size_read(inode);
->  
+cachefiles_begin_operation+0x2d maps to cachefiles/io.c:565, where
+object is probably NULL (object->file is at offset 0x28).
 
-Was there a reason to change where the i_size is fetched, or did you
-just not see the point in fetching it on each loop? I wonder if we can
-hit any races vs. truncates with this?
-
-Oh well, all of this non-buffered I/O seems somewhat racy anyway. ;)
-
->  	dout("sync_read on file %p %llu~%u %s\n", file, off, (unsigned)len,
->  	     (file->f_flags & O_DIRECT) ? "O_DIRECT" : "");
-> @@ -870,7 +871,6 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
->  		struct page **pages;
->  		int num_pages;
->  		size_t page_off;
-> -		u64 i_size;
->  		bool more;
->  		int idx;
->  		size_t left;
-> @@ -909,7 +909,6 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
->  
->  		ceph_osdc_put_request(req);
->  
-> -		i_size = i_size_read(inode);
->  		dout("sync_read %llu~%llu got %zd i_size %llu%s\n",
->  		     off, len, ret, i_size, (more ? " MORE" : ""));
->  
-> @@ -954,10 +953,15 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
->  
->  	if (off > iocb->ki_pos) {
->  		if (ret >= 0 &&
-
-Do we need to check ret here? I think that if ret < 0, then "off" must
-be smaller than "i_size", no?
-
-> -		    iov_iter_count(to) > 0 && off >= i_size_read(inode))
-> +		    iov_iter_count(to) > 0 &&
-> +		    off >= i_size_read(inode)) {
->  			*retry_op = CHECK_EOF;
-> -		ret = off - iocb->ki_pos;
-> -		iocb->ki_pos = off;
-> +			ret = i_size - iocb->ki_pos;
-> +			iocb->ki_pos = i_size;
-> +		} else {
-> +			ret = off - iocb->ki_pos;
-> +			iocb->ki_pos = off;
-> +		}
->  	}
->  
->  	dout("sync_read result %zd retry_op %d\n", ret, *retry_op);
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Marc
+===
+BUG: kernel NULL pointer dereference, address: 0000000000000028
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 0 P4D 0
+Oops: 0000 [#1] SMP NOPTI
+CPU: 5 PID: 16607 Comm: ar Tainted: G            E
+5.15.0-rc5.kafs_testing+ #37
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.14.0-2.fc34 04/01/2014
+RIP: 0010:cachefiles_begin_operation+0x2d/0x80 [cachefiles]
+Code: 00 00 55 53 48 83 ec 08 48 8b 47 08 48 83 7f 10 00 48 8b 68 20
+74 0c b8 01 00 00 00 48 83 c4 08 5b 5d c3 48 c7 07 a0 12 1b a0 <48> 8b
+45 28 48 89 fb 48 85 c0 74 20 48 8d 7d 04 89 74 24 04 e8 3a
+RSP: 0018:ffffc90000d33b48 EFLAGS: 00010246
+RAX: ffff888014991420 RBX: ffff888100ae9cf0 RCX: 0000000000000000
+RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffff888100ae9cf0
+RBP: 0000000000000000 R08: 00000000000006b8 R09: ffff88810e98e000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff888014991434
+R13: 0000000000000002 R14: ffff888014991420 R15: 0000000000000002
+FS:  00007f72d0486b80(0000) GS:ffff888139940000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000028 CR3: 000000007bac8004 CR4: 0000000000770ee0
+PKRU: 55555554
+Call Trace:
+ fscache_begin_operation.part.0+0x1e3/0x210 [fscache]
+ netfs_write_begin+0x3fb/0x800 [netfs]
+ ? __fscache_use_cookie+0x120/0x200 [fscache]
+ afs_write_begin+0x58/0x2c0 [kafs]
+ ? __vfs_getxattr+0x2a/0x70
+ generic_perform_write+0xb1/0x1b0
+ ? file_update_time+0xcf/0x120
+ __generic_file_write_iter+0x14c/0x1d0
+ generic_file_write_iter+0x5d/0xb0
+ afs_file_write+0x73/0xa0 [kafs]
+ new_sync_write+0x105/0x180
+ vfs_write+0x1cb/0x260
+ ksys_write+0x4f/0xc0
+ do_syscall_64+0x35/0x80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7f72d059a7a7
+Code: 0d 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f3 0f
+1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d
+00 f0 ff ff 77 51 c3 48 83 ec 28 48 89 54 24 18 48 89 74 24
+RSP: 002b:00007fffc31942b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f72d059a7a7
+RDX: 0000000000000008 RSI: 000055fe42367730 RDI: 0000000000000003
+RBP: 000055fe42367730 R08: 0000000000000000 R09: 00007f72d066ca00
+R10: 000000000000007c R11: 0000000000000246 R12: 0000000000000008
