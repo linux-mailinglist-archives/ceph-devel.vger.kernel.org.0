@@ -2,226 +2,120 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F33F432D4E
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Oct 2021 07:36:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70CDC43311B
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Oct 2021 10:32:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229755AbhJSFjC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 19 Oct 2021 01:39:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:38379 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229649AbhJSFjB (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 19 Oct 2021 01:39:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634621808;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1UhRR9o7nZXmjjRDsqDRTXcfGFKtBUQ/aEdls9m5oIQ=;
-        b=BtsyXzaFh65k9/lszCnbGstetaPdtUKkwUg28aLMDjth8TKx19SZAN/7zw2GiLG+o1RC3a
-        YHHWKAsYSyMjw5/6lV1KacNHIW4wys12mifpcxnhMlOqLGOh17eNCk+pgU0yMkHW8bbmCp
-        0LrBh4BafB6/5U8+iymBL9lPFjlbpI0=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-551-qNIq7YDdOh2jhgFQNuSEEQ-1; Tue, 19 Oct 2021 01:36:47 -0400
-X-MC-Unique: qNIq7YDdOh2jhgFQNuSEEQ-1
-Received: by mail-pj1-f70.google.com with SMTP id oo5-20020a17090b1c8500b0019e585e8f6fso901939pjb.9
-        for <ceph-devel@vger.kernel.org>; Mon, 18 Oct 2021 22:36:47 -0700 (PDT)
+        id S234727AbhJSIeh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 19 Oct 2021 04:34:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38632 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234558AbhJSIeg (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 19 Oct 2021 04:34:36 -0400
+Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898B3C06161C
+        for <ceph-devel@vger.kernel.org>; Tue, 19 Oct 2021 01:32:24 -0700 (PDT)
+Received: by mail-ua1-x92d.google.com with SMTP id e10so11077875uab.3
+        for <ceph-devel@vger.kernel.org>; Tue, 19 Oct 2021 01:32:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NqTZBpdsqFVZPcRKtCj3pgMjoqlIfaYy9D7h6XZWz7Q=;
+        b=P75oAlWQzhsZVFRwLdvExytfdq4rdDXTM4LFYQSzn5O1pUytr65jpsfQi9+ba2e6pa
+         gMZobClEmn0aHEs+OL/a+mzIDvsrwHaY3JcIjgv1ufwixHVbFcGfX+xQrXLw0mK0hpvr
+         iJpH1h/2VE/mYaWmRy4pRpjMnGn777eG7nFJ1R5MTMilANQwH6S7/r1O3cHCJaUVcjtu
+         /Tpv+bsD0dzGQC9oaKG9caeAc00nqrcDGW92ou8fCHFFog5et9yomVNhu8AIZFrIpA+Z
+         yMwc2uBhas8DmE+7jOO8k8aq5WaKTCtHXoV/qbBtFhvBh1Q4tnCiiKQx1Q2vTIRuGJOP
+         2FDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=1UhRR9o7nZXmjjRDsqDRTXcfGFKtBUQ/aEdls9m5oIQ=;
-        b=KXmLROVecJjDNG02LIJHvkI2NNYxRSKspzGvnYzwOaGqLpNg2imurAiz7AUsEGW2hM
-         IIw/zblglv2gLXkVMkPsK9u/tMahdJtm9C7IaDQfry+CHIZAW2p4OgdptYjflw+2Ngla
-         PvaFUs7fEIHoMHTD1OGHB5DxXWvFjHgHAOGfGJ38Rx+vyQzsI+1DKMunhcjCxFbK9RCg
-         ZBRm9ndhdlQQHuLuJhznqELsYgzI/UxMmFns91e7h7g3uEBCWqduNT+BjpVUbdwfEuV3
-         wbkeSHJkl8QdjefR9ytkFeazLaaWCeUV0F9S8TDdu76ybqbpdP3CoMspLsSvWmUItGWv
-         w54Q==
-X-Gm-Message-State: AOAM5339hRZJj6WiL75AJ0gFygrG8LsWys9+ZezKe8ZM2hbgt2WGASsj
-        sa5O/LujytBjbBZqnozCI20gmv4Mosy91k7zx0Sl7wWgDrR3KSLrd0RvpmerQ+supg1F+d89Z5K
-        iruIYUPf7jrfRKDWcf7BTHQ==
-X-Received: by 2002:aa7:90d2:0:b0:44c:e078:d6fb with SMTP id k18-20020aa790d2000000b0044ce078d6fbmr32776552pfk.7.1634621806122;
-        Mon, 18 Oct 2021 22:36:46 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz8KY0xFoNbD+ySvwra0nJ8fSqUVdI0vwYPDnrbNRM9AJccNjaIRIA8Y4dfjqHUN1SkvnqdYw==
-X-Received: by 2002:aa7:90d2:0:b0:44c:e078:d6fb with SMTP id k18-20020aa790d2000000b0044ce078d6fbmr32776531pfk.7.1634621805736;
-        Mon, 18 Oct 2021 22:36:45 -0700 (PDT)
-Received: from [10.72.12.135] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id w185sm14584519pfb.38.2021.10.18.22.36.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Oct 2021 22:36:45 -0700 (PDT)
-Subject: Re: [PATCH] ceph: fix handling of "meta" errors on ceph
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, Patrick Donnelly <pdonnell@redhat.com>
-References: <20211007185907.122326-1-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <138a6f46-0942-4acf-1a6b-872420b801bd@redhat.com>
-Date:   Tue, 19 Oct 2021 13:36:35 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NqTZBpdsqFVZPcRKtCj3pgMjoqlIfaYy9D7h6XZWz7Q=;
+        b=HINv0Wmcn4DAnsYrcSqE6/SxXDPmLD5xu2HnJPvdHHKkN+jO0m5X0pbK15Dci2+lYI
+         r8mRpNDec3RbIic5VKOyzGGcD7BZTbCEpBVkty37Opqy75LP4QriQ7tBNb9UgA6JqsU0
+         qkkzxVuUEnv2kkc8Aaz1IX4M2DYUAakBnbydXdGgjQBdnZ10ehk9vMpqo/E7U4i86WbC
+         +Po1tc92Wrx1pi4kqtvlSuO7eUySfoWHgjhe6ofuWepSb/caJRXj93biRtnzkynZZ4NJ
+         X8BSh/MNsUOWxHqjitvGW3aLIrJC3xxTLmHEN0AYanSK4unn3EVF7iI/13nEjcChdB9n
+         n3Uw==
+X-Gm-Message-State: AOAM533TpKWsh5kLB+9clR5zIgcjde4OeUpRBmr8xS37KNv1N5VsG9Kw
+        VSgT5zZFQ4ULXjSxN0y+Ey+1gixWOfF5gd/JYHI=
+X-Google-Smtp-Source: ABdhPJzGIQQ+GQ8PpYrPuQo8F8oZWtgRXqcEaz4sdWEsHdvdUQNfeo+2tNAQkOJeqJQFzL7eh90N+pZ3VJgL7WH6WdQ=
+X-Received: by 2002:a67:e159:: with SMTP id o25mr33504260vsl.44.1634632343360;
+ Tue, 19 Oct 2021 01:32:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20211007185907.122326-1-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20211001050037.497199-1-vshankar@redhat.com>
+In-Reply-To: <20211001050037.497199-1-vshankar@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 19 Oct 2021 10:31:51 +0200
+Message-ID: <CAOi1vP_ePRvs4fPRxXq2onbcxvCarXvE6O6vzc3de2W2=jV57Q@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] ceph: add debugfs entries signifying new mount
+ syntax support
+To:     Venky Shankar <vshankar@redhat.com>
+Cc:     Jeff Layton <jlayton@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-
-On 10/8/21 2:59 AM, Jeff Layton wrote:
-> Currently, we check the wb_err too early for directories, before all of
-> the unsafe child requests have been waited on. In order to fix that we
-> need to check the mapping->wb_err later nearer to the end of ceph_fsync.
+On Fri, Oct 1, 2021 at 7:05 AM Venky Shankar <vshankar@redhat.com> wrote:
 >
-> We also have an overly-complex method for tracking errors after
-> blocklisting. The errors recorded in cleanup_session_requests go to a
-> completely separate field in the inode, but we end up reporting them the
-> same way we would for any other error (in fsync).
+> v4:
+>   - use mount_syntax_v1,.. as file names
 >
-> There's no real benefit to tracking these errors in two different
-> places, since the only reporting mechanism for them is in fsync, and
-> we'd need to advance them both every time.
+> [This is based on top of new mount syntax series]
 >
-> Given that, we can just remove i_meta_err, and convert the places that
-> used it to instead just use mapping->wb_err instead. That also fixes
-> the original problem by ensuring that we do a check_and_advance of the
-> wb_err at the end of the fsync op.
+> Patrick proposed the idea of having debugfs entries to signify if
+> kernel supports the new (v2) mount syntax. The primary use of this
+> information is to catch any bugs in the new syntax implementation.
 >
-> URL: https://tracker.ceph.com/issues/52864
-> Reported-by: Patrick Donnelly <pdonnell@redhat.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/ceph/caps.c       | 14 ++++----------
->   fs/ceph/file.c       |  1 -
->   fs/ceph/inode.c      |  2 --
->   fs/ceph/mds_client.c | 15 ++++-----------
->   fs/ceph/super.h      |  3 ---
->   5 files changed, 8 insertions(+), 27 deletions(-)
+> This would be done as follows::
 >
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index cdeb5b2d7920..21268d2c6e56 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -2331,7 +2331,6 @@ static int unsafe_request_wait(struct inode *inode)
->   
->   int ceph_fsync(struct file *file, loff_t start, loff_t end, int datasync)
->   {
-> -	struct ceph_file_info *fi = file->private_data;
->   	struct inode *inode = file->f_mapping->host;
->   	struct ceph_inode_info *ci = ceph_inode(inode);
->   	u64 flush_tid;
-> @@ -2366,14 +2365,9 @@ int ceph_fsync(struct file *file, loff_t start, loff_t end, int datasync)
->   	if (err < 0)
->   		ret = err;
->   
-> -	if (errseq_check(&ci->i_meta_err, READ_ONCE(fi->meta_err))) {
-> -		spin_lock(&file->f_lock);
-> -		err = errseq_check_and_advance(&ci->i_meta_err,
-> -					       &fi->meta_err);
-> -		spin_unlock(&file->f_lock);
-> -		if (err < 0)
-> -			ret = err;
-> -	}
-> +	err = file_check_and_advance_wb_err(file);
-> +	if (err < 0)
-> +		ret = err;
->   out:
->   	dout("fsync %p%s result=%d\n", inode, datasync ? " datasync" : "", ret);
->   	return ret;
-> @@ -4663,7 +4657,7 @@ int ceph_purge_inode_cap(struct inode *inode, struct ceph_cap *cap, bool *invali
->   		spin_unlock(&mdsc->cap_dirty_lock);
->   
->   		if (dirty_dropped) {
-> -			errseq_set(&ci->i_meta_err, -EIO);
-> +			mapping_set_error(inode->i_mapping, -EIO);
->   
->   			if (ci->i_wrbuffer_ref_head == 0 &&
->   			    ci->i_wr_ref == 0 &&
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index d20785285d26..91173d3aa161 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -233,7 +233,6 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
->   
->   	spin_lock_init(&fi->rw_contexts_lock);
->   	INIT_LIST_HEAD(&fi->rw_contexts);
-> -	fi->meta_err = errseq_sample(&ci->i_meta_err);
->   	fi->filp_gen = READ_ONCE(ceph_inode_to_client(inode)->filp_gen);
->   
->   	return 0;
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 23b5a0867e3a..00c73242c4bf 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -542,8 +542,6 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
->   
->   	ceph_fscache_inode_init(ci);
->   
-> -	ci->i_meta_err = 0;
-> -
->   	return &ci->vfs_inode;
->   }
->   
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 279462482416..598425ccd020 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -1493,7 +1493,6 @@ static void cleanup_session_requests(struct ceph_mds_client *mdsc,
->   {
->   	struct ceph_mds_request *req;
->   	struct rb_node *p;
-> -	struct ceph_inode_info *ci;
->   
->   	dout("cleanup_session_requests mds%d\n", session->s_mds);
->   	mutex_lock(&mdsc->mutex);
-> @@ -1502,16 +1501,10 @@ static void cleanup_session_requests(struct ceph_mds_client *mdsc,
->   				       struct ceph_mds_request, r_unsafe_item);
->   		pr_warn_ratelimited(" dropping unsafe request %llu\n",
->   				    req->r_tid);
-> -		if (req->r_target_inode) {
-> -			/* dropping unsafe change of inode's attributes */
-> -			ci = ceph_inode(req->r_target_inode);
-> -			errseq_set(&ci->i_meta_err, -EIO);
-> -		}
-> -		if (req->r_unsafe_dir) {
-> -			/* dropping unsafe directory operation */
-> -			ci = ceph_inode(req->r_unsafe_dir);
-> -			errseq_set(&ci->i_meta_err, -EIO);
-> -		}
-> +		if (req->r_target_inode)
-> +			mapping_set_error(req->r_target_inode->i_mapping, -EIO);
-> +		if (req->r_unsafe_dir)
-> +			mapping_set_error(req->r_unsafe_dir->i_mapping, -EIO);
->   		__unregister_request(mdsc, req);
->   	}
->   	/* zero r_attempts, so kick_requests() will re-send requests */
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 8aa39bab2d72..d730e508159f 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -435,8 +435,6 @@ struct ceph_inode_info {
->   #ifdef CONFIG_CEPH_FSCACHE
->   	struct fscache_cookie *fscache;
->   #endif
-> -	errseq_t i_meta_err;
-> -
->   	struct inode vfs_inode; /* at end */
->   };
->   
-> @@ -781,7 +779,6 @@ struct ceph_file_info {
->   	spinlock_t rw_contexts_lock;
->   	struct list_head rw_contexts;
->   
-> -	errseq_t meta_err;
->   	u32 filp_gen;
->   	atomic_t num_locks;
->   };
+> The userspace mount helper tries to mount using the new mount syntax
+> and fallsback to using old syntax if the mount using new syntax fails.
+> However, a bug in the new mount syntax implementation can silently
+> result in the mount helper switching to old syntax.
+>
+> So, the debugfs entries can be relied upon by the mount helper to
+> check if the kernel supports the new mount syntax. Cases when the
+> mount using the new syntax fails, but the kernel does support the
+> new mount syntax, the mount helper could probably log before switching
+> to the old syntax (or fail the mount altogether when run in test mode).
+>
+> Debugfs entries are as follows::
+>
+>     /sys/kernel/debug/ceph/
+>     ....
+>     ....
+>     /sys/kernel/debug/ceph/meta
+>     /sys/kernel/debug/ceph/meta/client_features
+>     /sys/kernel/debug/ceph/meta/client_features/mount_syntax_v2
+>     /sys/kernel/debug/ceph/meta/client_features/mount_syntax_v1
+>     ....
+>     ....
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+Hi Venky, Jeff,
 
+If this is supposed to be used in the wild and not just in teuthology,
+I would be wary of going with debugfs.  debugfs isn't always available
+(it is actually compiled out in some configurations, it may or may not
+be mounted, etc).  With the new mount syntax feature it is not a big
+deal because the mount helper should do just fine without it but with
+other features we may find ourselves in a situation where the mount
+helper (or something else) just *has* to know whether the feature is
+supported or not and falling back to "no" if debugfs is not available
+is undesirable or too much work.
 
+I don't have a great suggestion though.  When I needed to do this in
+the past for RADOS feature bits, I went with a read-only kernel module
+parameter [1].  They are exported via sysfs which is guaranteed to be
+available.  Perhaps we should do the same for mount_syntax -- have it
+be either 1 or 2, allowing it to be revved in the future?
 
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d6a3408a77807037872892c2a2034180fcc08d12
 
+Thanks,
+
+                Ilya
