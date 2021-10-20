@@ -2,131 +2,170 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 09742434F1B
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 Oct 2021 17:32:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B93D435021
+	for <lists+ceph-devel@lfdr.de>; Wed, 20 Oct 2021 18:27:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230345AbhJTPfF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 Oct 2021 11:35:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53580 "EHLO mail.kernel.org"
+        id S230073AbhJTQ3k (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 Oct 2021 12:29:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229570AbhJTPfE (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 20 Oct 2021 11:35:04 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DCB9961373;
-        Wed, 20 Oct 2021 15:32:49 +0000 (UTC)
+        id S229952AbhJTQ3h (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 20 Oct 2021 12:29:37 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D6A8E60FDA;
+        Wed, 20 Oct 2021 16:27:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634743970;
-        bh=Psve+KgjKnBmpIkuWguUrhAPad5kecxUZMASDCPSKmY=;
+        s=k20201202; t=1634747243;
+        bh=YBeL0lPAbkXQhqQ3xEo0ywMPIIlxzOAvkCGj1zR1GzM=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=G5SqeBU1NOMCtDkrkCoKMpCxGxlbsd5q7vOFLmnVexruonU0oRjQ7hiYOHUF4uOOW
-         3VMhryKIs7p1631CZv//yEV5mELswrooaOXeHrpEWsVazXaj03nwxXp04sNGXwAn9/
-         wOhg960DghJOSP6UKiMKRbVabuT2247F7ajdAqyHbZLgAHCJI5ILmoC1SpEBcoEDWj
-         APBw5thJrPcH/mvbmjLCiD8uUsCU5sv4tzzwk2taedEty2LYkup8Azws//wZx3MmSS
-         ycNWlT6oGS15j7OgEK2H6tdLplQ0ff4Js+c3Z0Z7fvExz1yVMkuRplmkHvfj510keY
-         N7V4vrffZlSYA==
-Message-ID: <d88365035eb11560425e67aa34444086c80c628f.camel@kernel.org>
-Subject: Re: [PATCH v2 0/4] ceph: size handling for the fscrypt
+        b=Izrt9YlLLg+90sOgux3lBuAjF8KS289ei33d/O5VyLAePpkOf/fPRiF8tHK146vZA
+         I2zqegVF1BFcFt6pv3r4YhfoSW+Fi9OPs+3lHisba/lX8pQlaPmlLSwc6OqDm9CdBb
+         Vqvw/22YspwiMMu96zzF6e0nYMN94kYfXlW0A8D53nw2mtBaYLukD7fFtdyDis0nKB
+         qRgL8wkZql9U1C0s2KnyE2stQxx85Is1WOrA5TdcrCn7TP60qhrJSfHrsguaONIcjN
+         LBrol0RzsrjBJ69eHoC4p/cXSsGY9jdHRseucMB4aORSjldVMX7UpA6m4i4vH31BPc
+         FvBNAMfNHsu2Q==
+Message-ID: <34e379f9dec1cbdf09fffd8207f6ef7f4e1a6841.camel@kernel.org>
+Subject: Re: [RFC PATCH] ceph: add remote object copy counter to fs client
 From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, vshankar@redhat.com, khiremat@redhat.com,
-        pdonnell@redhat.com, ceph-devel@vger.kernel.org
-Date:   Wed, 20 Oct 2021 11:32:48 -0400
-In-Reply-To: <20211020132813.543695-1-xiubli@redhat.com>
-References: <20211020132813.543695-1-xiubli@redhat.com>
+To:     =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Patrick Donnelly <pdonnell@redhat.com>
+Date:   Wed, 20 Oct 2021 12:27:21 -0400
+In-Reply-To: <20211020143708.14728-1-lhenriques@suse.de>
+References: <20211020143708.14728-1-lhenriques@suse.de>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2021-10-20 at 21:28 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
+On Wed, 2021-10-20 at 15:37 +0100, Luís Henriques wrote:
+> This counter will keep track of the number of remote object copies done on
+> copy_file_range syscalls.  This counter will be filesystem per-client, and
+> can be accessed from the client debugfs directory.
 > 
-> This patch series is based on the fscrypt_size_handling branch in
-> https://github.com/lxbsz/linux.git, which is based Jeff's
-> ceph-fscrypt-content-experimental branch in
-> https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git,
-> has reverted one useless commit and added some upstream commits.
+> Cc: Patrick Donnelly <pdonnell@redhat.com>
+> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> ---
+> This is an RFC to reply to Patrick's request in [0].  Note that I'm not
+> 100% sure about the usefulness of this patch, or if this is the best way
+> to provide the functionality Patrick requested.  Anyway, this is just to
+> get some feedback, hence the RFC.
 > 
-> I will keep this patch set as simple as possible to review since
-> this is still one framework code. It works and still in developing
-> and need some feedbacks and suggestions for two corner cases below.
+> Cheers,
+> --
+> Luís
 > 
-> ====
-> 
-> This approach is based on the discussion from V1, which will pass
-> the encrypted last block contents to MDS along with the truncate
-> request.
-> 
-> This will send the encrypted last block contents to MDS along with
-> the truncate request when truncating to a smaller size and at the
-> same time new size does not align to BLOCK SIZE.
-> 
-> The MDS side patch is raised in PR
-> https://github.com/ceph/ceph/pull/43588, which is also based Jeff's
-> previous great work in PR https://github.com/ceph/ceph/pull/41284.
-> 
-> The MDS will use the filer.write_trunc(), which could update and
-> truncate the file in one shot, instead of filer.truncate().
-> 
-> I have removed the inline data related code since we are remove
-> this feature, more detail please see:
-> https://tracker.ceph.com/issues/52916
-> 
-> 
-> Note: There still has two CORNER cases we need to deal with:
-> 
-> 1), If a truncate request with the last block is sent to the MDS and
-> just before the MDS has acquired the xlock for FILE lock, if another
-> client has updated that last block content, we will over write the
-> last block with old data.
-> 
-> For this case we could send the old encrypted last block data along
-> with the truncate request and in MDS side read it and then do compare
-> just before updating it, if the comparasion fails, then fail the
-> truncate and let the kclient retry it.
-
-Right -- this is the tricky bit. We're doing a truncate with a read-
-modify-write cycle for the last block rolled in. We _must_ gate the
-truncate+write vs. intervening changes to that extent.
-
-You may be able to use the object version instead of comparing the old
-block. The ceph-fscrypt-content branch has a patch that adds support for
-CEPH_OSD_OP_ASSERT_VER, but I seem to recall that the OSD supports a way
-to assert that an extent hasn't changed.
-
-So, basically my thinking was something like:
-
-client reads the data from the object and fetches the object version
-send the object version along with the last block, and then the MDS's
-write+truncate operation could assert on that version.
-
-The catch here is that tracking those object versions is sort of nasty.
-Having it do comparisons of the extent contents might be simpler.
-
-> 2), If another client has buffered the last block, we should flush
-> it first. I am still thinking how to do this ? Any idea is welcome.
+> [0] https://github.com/ceph/ceph/pull/42720
 > 
 
-I think by asserting on the contents of the last block or the object
-version, this problem is also solved.
+I think this would be better integrated into the stats infrastructure.
 
-> Thanks.
+Maybe you could add a new set of "copy" stats to struct
+ceph_client_metric that tracks the total copy operations done, their
+size and latency (similar to read and write ops)?
+
+
+>  fs/ceph/debugfs.c | 17 ++++++++++++++++-
+>  fs/ceph/file.c    |  1 +
+>  fs/ceph/super.c   |  1 +
+>  fs/ceph/super.h   |  2 ++
+>  4 files changed, 20 insertions(+), 1 deletion(-)
 > 
-> 
-> Xiubo Li (4):
->   ceph: add __ceph_get_caps helper support
->   ceph: add __ceph_sync_read helper support
->   ceph: return the real size readed when hit EOF
->   ceph: add truncate size handling support for fscrypt
-> 
->  fs/ceph/caps.c  |  28 ++++---
->  fs/ceph/file.c  |  41 ++++++----
->  fs/ceph/inode.c | 210 ++++++++++++++++++++++++++++++++++++++++++------
->  fs/ceph/super.h |   4 +
->  4 files changed, 234 insertions(+), 49 deletions(-)
-> 
+> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+> index 38b78b45811f..09f4c04ade0e 100644
+> --- a/fs/ceph/debugfs.c
+> +++ b/fs/ceph/debugfs.c
+> @@ -346,13 +346,22 @@ static int status_show(struct seq_file *s, void *p)
+>  	return 0;
+>  }
+>  
+> +static int copyfrom_show(struct seq_file *s, void *p)
+> +{
+> +	struct ceph_fs_client *fsc = s->private;
+> +
+> +	seq_printf(s, "%llu\n", atomic64_read(&fsc->copyfrom_count));
+> +
+> +	return 0;
+> +}
+> +
+>  DEFINE_SHOW_ATTRIBUTE(mdsmap);
+>  DEFINE_SHOW_ATTRIBUTE(mdsc);
+>  DEFINE_SHOW_ATTRIBUTE(caps);
+>  DEFINE_SHOW_ATTRIBUTE(mds_sessions);
+>  DEFINE_SHOW_ATTRIBUTE(metric);
+>  DEFINE_SHOW_ATTRIBUTE(status);
+> -
+> +DEFINE_SHOW_ATTRIBUTE(copyfrom);
+>  
+>  /*
+>   * debugfs
+> @@ -387,6 +396,7 @@ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
+>  	debugfs_remove(fsc->debugfs_caps);
+>  	debugfs_remove(fsc->debugfs_metric);
+>  	debugfs_remove(fsc->debugfs_mdsc);
+> +	debugfs_remove(fsc->debugfs_copyfrom);
+>  }
+>  
+>  void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
+> @@ -443,6 +453,11 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
+>  						  fsc->client->debugfs_dir,
+>  						  fsc,
+>  						  &status_fops);
+> +	fsc->debugfs_copyfrom = debugfs_create_file("copyfrom",
+> +						    0400,
+> +						    fsc->client->debugfs_dir,
+> +						    fsc,
+> +						    &copyfrom_fops);
+>  }
+>  
+>  
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index d16fd2d5fd42..bbeb437ca4bf 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -2254,6 +2254,7 @@ static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off
+>  				bytes = ret;
+>  			goto out;
+>  		}
+> +		atomic64_inc(&fsc->copyfrom_count);
+>  		len -= object_size;
+>  		bytes += object_size;
+>  		*src_off += object_size;
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index 9b1b7f4cfdd4..4972554185e3 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -670,6 +670,7 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
+>  	fsc->have_copy_from2 = true;
+>  
+>  	atomic_long_set(&fsc->writeback_count, 0);
+> +	atomic64_set(&fsc->copyfrom_count, 0);
+>  
+>  	err = -ENOMEM;
+>  	/*
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index a40eb14c282a..65846beca418 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -119,6 +119,7 @@ struct ceph_fs_client {
+>  	struct ceph_mds_client *mdsc;
+>  
+>  	atomic_long_t writeback_count;
+> +	atomic64_t copyfrom_count;
+>  
+>  	struct workqueue_struct *inode_wq;
+>  	struct workqueue_struct *cap_wq;
+> @@ -131,6 +132,7 @@ struct ceph_fs_client {
+>  	struct dentry *debugfs_metric;
+>  	struct dentry *debugfs_status;
+>  	struct dentry *debugfs_mds_sessions;
+> +	struct dentry *debugfs_copyfrom;
+>  #endif
+>  
+>  #ifdef CONFIG_CEPH_FSCACHE
 
 -- 
 Jeff Layton <jlayton@kernel.org>
