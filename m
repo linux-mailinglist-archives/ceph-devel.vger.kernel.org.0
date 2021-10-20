@@ -2,165 +2,116 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B4F5434B93
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 Oct 2021 14:51:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0DED434C0E
+	for <lists+ceph-devel@lfdr.de>; Wed, 20 Oct 2021 15:28:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230072AbhJTMxS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 Oct 2021 08:53:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:40036 "EHLO
+        id S230049AbhJTNam (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 Oct 2021 09:30:42 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:27293 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229702AbhJTMxR (ORCPT
+        by vger.kernel.org with ESMTP id S230024AbhJTNam (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 20 Oct 2021 08:53:17 -0400
+        Wed, 20 Oct 2021 09:30:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634734262;
+        s=mimecast20190719; t=1634736507;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dlyrpO8r7aq0Nx/3hTRbTkSbRnKpEzHyrXnD+L2iHfg=;
-        b=WKrQQm814OPJswIKxvN0e2+BJVpscRvK1GIlaK+jReDOQNwoGI63sghzfrVIeT7cwUT3lx
-        dwOmF9YeoGFRfBLKuif8/X9dFCgBWs0/b8Zqd5QDfIu7rdy6kZKY/ZF1e6vO7ZK6CgdPQd
-        VC5sQCiJw8gMlqXehtcwp69FyxX683M=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-52-MNif07IiPwGBdfuz1QsCvw-1; Wed, 20 Oct 2021 08:51:01 -0400
-X-MC-Unique: MNif07IiPwGBdfuz1QsCvw-1
-Received: by mail-ed1-f71.google.com with SMTP id v9-20020a50d849000000b003dcb31eabaaso3194442edj.13
-        for <ceph-devel@vger.kernel.org>; Wed, 20 Oct 2021 05:51:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dlyrpO8r7aq0Nx/3hTRbTkSbRnKpEzHyrXnD+L2iHfg=;
-        b=veXxu4jvyHJyVwACnpXNsje5FOf8tQlIDqMnFagWDvihNSX7pPYIFA68bIe0zjmEIB
-         f3XgZiMX+SKDmGkhjxujnRiVuRHGrW0QgNb1sUAd0AMrPHBU5HmJOWxwjok/npS5pu8B
-         Rf7VTPKKC4g9gFPYfXN3QYii4QEZK66VAZNI4BfzLePu/nMhtMRECafyn68zC9e1W7jC
-         1O1i2UqHucvT1YjFoyeI6vkU08hycKrXDRA5u8jkoHX5BkCOvc6Lm5yzDMS8fkbFbXra
-         qj2kaG6JqNte9Z95VnBo40CofiOzw/XQQpFDiI3OS7HEYQUzKZ63srEZqrZunNFkbjwY
-         wBJw==
-X-Gm-Message-State: AOAM531DC2oD5SNNfn/dQjGw7/NNITExm72pxzE85CZbwMMrbBAjQC6J
-        KZUoN1BPSCXN6ARcL+3WZubysP3BYtqnu/mcL9yJjuTvQtx1947q634lBXkZjlDtaNKbLSLzFSN
-        ySkHbI0rPzAShGDOvHWlSyURyzVOP3bjIYZRzpA==
-X-Received: by 2002:a05:6402:5112:: with SMTP id m18mr61375814edd.101.1634734260063;
-        Wed, 20 Oct 2021 05:51:00 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyRbSa5I8RD7ADYC1d52YbGJCDyvm6mHFv0+RV6zIGpJLMpBbO0oJYpzdjVBZaqlfwQFwvKwENnWwqieTmOtXk=
-X-Received: by 2002:a05:6402:5112:: with SMTP id m18mr61375790edd.101.1634734259826;
- Wed, 20 Oct 2021 05:50:59 -0700 (PDT)
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=1tGIOGRuWBnpTf1oLH2oPNfMSQimS0BwhMnoesMahR4=;
+        b=aD8UvbDNwKbWkBGXOJ3S1dPt4Rxzt4rrTOjhAaGhKEUzggCYU1pzauO0u9iWA/yzeoYaAi
+        9jtU9EXg+lbkoY1r98FaZwkA4i3XfOyvnb40KvVEqli8ejBNpbqaqxlPN2G/Ajsel4Qkcu
+        pY4d/4Gy2oU1jU6o5jdh+7Btp7CwlQA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-384-zHJQfC9jPWen2jbiw5xxwg-1; Wed, 20 Oct 2021 09:28:24 -0400
+X-MC-Unique: zHJQfC9jPWen2jbiw5xxwg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1A378101F7A1;
+        Wed, 20 Oct 2021 13:28:23 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9BA4A1042AEE;
+        Wed, 20 Oct 2021 13:28:20 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, vshankar@redhat.com, khiremat@redhat.com,
+        pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v2 0/4] ceph: size handling for the fscrypt
+Date:   Wed, 20 Oct 2021 21:28:09 +0800
+Message-Id: <20211020132813.543695-1-xiubli@redhat.com>
 MIME-Version: 1.0
-References: <20211001050037.497199-1-vshankar@redhat.com> <CAOi1vP_ePRvs4fPRxXq2onbcxvCarXvE6O6vzc3de2W2=jV57Q@mail.gmail.com>
- <CACPzV1ng=JLW1qnPvRcXB1See6Ek6DGtic8o+Ewr2=19uJd2aw@mail.gmail.com> <cad196d13a58dea238a53df9d979e0c8177b5d0c.camel@redhat.com>
-In-Reply-To: <cad196d13a58dea238a53df9d979e0c8177b5d0c.camel@redhat.com>
-From:   Venky Shankar <vshankar@redhat.com>
-Date:   Wed, 20 Oct 2021 18:20:23 +0530
-Message-ID: <CACPzV1kqaZUBhTBqzD9F5Kx9RC+X8K=07oYJu6Hz6kgXLDFSfw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] ceph: add debugfs entries signifying new mount
- syntax support
-To:     Jeff Layton <jlayton@redhat.com>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Oct 20, 2021 at 6:13 PM Jeff Layton <jlayton@redhat.com> wrote:
->
-> On Wed, 2021-10-20 at 18:04 +0530, Venky Shankar wrote:
-> > On Tue, Oct 19, 2021 at 2:02 PM Ilya Dryomov <idryomov@gmail.com> wrote:
-> > >
-> > > On Fri, Oct 1, 2021 at 7:05 AM Venky Shankar <vshankar@redhat.com> wrote:
-> > > >
-> > > > v4:
-> > > >   - use mount_syntax_v1,.. as file names
-> > > >
-> > > > [This is based on top of new mount syntax series]
-> > > >
-> > > > Patrick proposed the idea of having debugfs entries to signify if
-> > > > kernel supports the new (v2) mount syntax. The primary use of this
-> > > > information is to catch any bugs in the new syntax implementation.
-> > > >
-> > > > This would be done as follows::
-> > > >
-> > > > The userspace mount helper tries to mount using the new mount syntax
-> > > > and fallsback to using old syntax if the mount using new syntax fails.
-> > > > However, a bug in the new mount syntax implementation can silently
-> > > > result in the mount helper switching to old syntax.
-> > > >
-> > > > So, the debugfs entries can be relied upon by the mount helper to
-> > > > check if the kernel supports the new mount syntax. Cases when the
-> > > > mount using the new syntax fails, but the kernel does support the
-> > > > new mount syntax, the mount helper could probably log before switching
-> > > > to the old syntax (or fail the mount altogether when run in test mode).
-> > > >
-> > > > Debugfs entries are as follows::
-> > > >
-> > > >     /sys/kernel/debug/ceph/
-> > > >     ....
-> > > >     ....
-> > > >     /sys/kernel/debug/ceph/meta
-> > > >     /sys/kernel/debug/ceph/meta/client_features
-> > > >     /sys/kernel/debug/ceph/meta/client_features/mount_syntax_v2
-> > > >     /sys/kernel/debug/ceph/meta/client_features/mount_syntax_v1
-> > > >     ....
-> > > >     ....
-> > >
-> > > Hi Venky, Jeff,
-> > >
-> > > If this is supposed to be used in the wild and not just in teuthology,
-> > > I would be wary of going with debugfs.  debugfs isn't always available
-> > > (it is actually compiled out in some configurations, it may or may not
-> > > be mounted, etc).  With the new mount syntax feature it is not a big
-> > > deal because the mount helper should do just fine without it but with
-> > > other features we may find ourselves in a situation where the mount
-> > > helper (or something else) just *has* to know whether the feature is
-> > > supported or not and falling back to "no" if debugfs is not available
-> > > is undesirable or too much work.
-> > >
-> > > I don't have a great suggestion though.  When I needed to do this in
-> > > the past for RADOS feature bits, I went with a read-only kernel module
-> > > parameter [1].  They are exported via sysfs which is guaranteed to be
-> > > available.  Perhaps we should do the same for mount_syntax -- have it
-> > > be either 1 or 2, allowing it to be revved in the future?
-> >
-> > I'm ok with exporting via sysfs (since it's guaranteed). My only ask
-> > here would be to have the mount support information present itself as
-> > files rather than file contents to avoid writing parsing stuff in
-> > userspace, which is ok, however, relying on stat() is nicer.
-> >
->
-> You should be able to do that by just making a read-only parameter
-> called "mount_syntax_v2", and then you can test for it by doing
-> something like:
->
->     # stat /sys/module/ceph/parameters/mount_syntax_v2
->
-> The contents of the file can be blank (or just return Y or something).
+From: Xiubo Li <xiubli@redhat.com>
 
-Yep. That's fine.
+This patch series is based on the fscrypt_size_handling branch in
+https://github.com/lxbsz/linux.git, which is based Jeff's
+ceph-fscrypt-content-experimental branch in
+https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git,
+has reverted one useless commit and added some upstream commits.
 
-So, we no longer have these entries in subdirectories
-(meta/client_features/...) and those end up under parameters?
+I will keep this patch set as simple as possible to review since
+this is still one framework code. It works and still in developing
+and need some feedbacks and suggestions for two corner cases below.
 
-I do see subdirectories under other modules, so it's probably doable with sysfs.
+====
 
->
-> > >
-> > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d6a3408a77807037872892c2a2034180fcc08d12
-> > >
-> > > Thanks,
-> > >
-> > >                 Ilya
-> > >
-> >
-> >
->
-> --
-> Jeff Layton <jlayton@redhat.com>
->
+This approach is based on the discussion from V1, which will pass
+the encrypted last block contents to MDS along with the truncate
+request.
 
+This will send the encrypted last block contents to MDS along with
+the truncate request when truncating to a smaller size and at the
+same time new size does not align to BLOCK SIZE.
+
+The MDS side patch is raised in PR
+https://github.com/ceph/ceph/pull/43588, which is also based Jeff's
+previous great work in PR https://github.com/ceph/ceph/pull/41284.
+
+The MDS will use the filer.write_trunc(), which could update and
+truncate the file in one shot, instead of filer.truncate().
+
+I have removed the inline data related code since we are remove
+this feature, more detail please see:
+https://tracker.ceph.com/issues/52916
+
+
+Note: There still has two CORNER cases we need to deal with:
+
+1), If a truncate request with the last block is sent to the MDS and
+just before the MDS has acquired the xlock for FILE lock, if another
+client has updated that last block content, we will over write the
+last block with old data.
+
+For this case we could send the old encrypted last block data along
+with the truncate request and in MDS side read it and then do compare
+just before updating it, if the comparasion fails, then fail the
+truncate and let the kclient retry it.
+
+2), If another client has buffered the last block, we should flush
+it first. I am still thinking how to do this ? Any idea is welcome.
+
+Thanks.
+
+
+Xiubo Li (4):
+  ceph: add __ceph_get_caps helper support
+  ceph: add __ceph_sync_read helper support
+  ceph: return the real size readed when hit EOF
+  ceph: add truncate size handling support for fscrypt
+
+ fs/ceph/caps.c  |  28 ++++---
+ fs/ceph/file.c  |  41 ++++++----
+ fs/ceph/inode.c | 210 ++++++++++++++++++++++++++++++++++++++++++------
+ fs/ceph/super.h |   4 +
+ 4 files changed, 234 insertions(+), 49 deletions(-)
 
 -- 
-Cheers,
-Venky
+2.27.0
 
