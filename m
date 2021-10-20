@@ -2,45 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0DED434C0E
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 Oct 2021 15:28:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36A57434C10
+	for <lists+ceph-devel@lfdr.de>; Wed, 20 Oct 2021 15:28:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230049AbhJTNam (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 Oct 2021 09:30:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:27293 "EHLO
+        id S230160AbhJTNay (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 Oct 2021 09:30:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:21030 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230024AbhJTNam (ORCPT
+        by vger.kernel.org with ESMTP id S230017AbhJTNay (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 20 Oct 2021 09:30:42 -0400
+        Wed, 20 Oct 2021 09:30:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634736507;
+        s=mimecast20190719; t=1634736519;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=1tGIOGRuWBnpTf1oLH2oPNfMSQimS0BwhMnoesMahR4=;
-        b=aD8UvbDNwKbWkBGXOJ3S1dPt4Rxzt4rrTOjhAaGhKEUzggCYU1pzauO0u9iWA/yzeoYaAi
-        9jtU9EXg+lbkoY1r98FaZwkA4i3XfOyvnb40KvVEqli8ejBNpbqaqxlPN2G/Ajsel4Qkcu
-        pY4d/4Gy2oU1jU6o5jdh+7Btp7CwlQA=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=uzof8A1qRInCZYX4ONpNJOEu4IY+psyAJr3vrozCMe8=;
+        b=HjRBVfJN6TJu/fckYIMAw1eVA34S+gedCPnROLUNxX2PsO525gsSxRPrMQVZaE88LpSQX3
+        edp43kQqcqhrT5p8Kh877bOz82eqD9m6q9wudJMXIcifnrdGDwAP67KXFJafPUm9nbtl6I
+        p5b/SFz8ban5iYPX9Qxg0kgKuxxWt5U=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-384-zHJQfC9jPWen2jbiw5xxwg-1; Wed, 20 Oct 2021 09:28:24 -0400
-X-MC-Unique: zHJQfC9jPWen2jbiw5xxwg-1
+ us-mta-276-bipRuJ4GPv-mp97OazLkjQ-1; Wed, 20 Oct 2021 09:28:31 -0400
+X-MC-Unique: bipRuJ4GPv-mp97OazLkjQ-1
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1A378101F7A1;
-        Wed, 20 Oct 2021 13:28:23 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 34B0010144E8;
+        Wed, 20 Oct 2021 13:28:30 +0000 (UTC)
 Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9BA4A1042AEE;
-        Wed, 20 Oct 2021 13:28:20 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9809D1042B7E;
+        Wed, 20 Oct 2021 13:28:23 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     jlayton@kernel.org
 Cc:     idryomov@gmail.com, vshankar@redhat.com, khiremat@redhat.com,
         pdonnell@redhat.com, ceph-devel@vger.kernel.org,
         Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v2 0/4] ceph: size handling for the fscrypt
-Date:   Wed, 20 Oct 2021 21:28:09 +0800
-Message-Id: <20211020132813.543695-1-xiubli@redhat.com>
+Subject: [PATCH v2 1/4] ceph: add __ceph_get_caps helper support
+Date:   Wed, 20 Oct 2021 21:28:10 +0800
+Message-Id: <20211020132813.543695-2-xiubli@redhat.com>
+In-Reply-To: <20211020132813.543695-1-xiubli@redhat.com>
+References: <20211020132813.543695-1-xiubli@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
@@ -50,68 +53,84 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Xiubo Li <xiubli@redhat.com>
 
-This patch series is based on the fscrypt_size_handling branch in
-https://github.com/lxbsz/linux.git, which is based Jeff's
-ceph-fscrypt-content-experimental branch in
-https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git,
-has reverted one useless commit and added some upstream commits.
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/caps.c  | 19 +++++++++++++------
+ fs/ceph/super.h |  2 ++
+ 2 files changed, 15 insertions(+), 6 deletions(-)
 
-I will keep this patch set as simple as possible to review since
-this is still one framework code. It works and still in developing
-and need some feedbacks and suggestions for two corner cases below.
-
-====
-
-This approach is based on the discussion from V1, which will pass
-the encrypted last block contents to MDS along with the truncate
-request.
-
-This will send the encrypted last block contents to MDS along with
-the truncate request when truncating to a smaller size and at the
-same time new size does not align to BLOCK SIZE.
-
-The MDS side patch is raised in PR
-https://github.com/ceph/ceph/pull/43588, which is also based Jeff's
-previous great work in PR https://github.com/ceph/ceph/pull/41284.
-
-The MDS will use the filer.write_trunc(), which could update and
-truncate the file in one shot, instead of filer.truncate().
-
-I have removed the inline data related code since we are remove
-this feature, more detail please see:
-https://tracker.ceph.com/issues/52916
-
-
-Note: There still has two CORNER cases we need to deal with:
-
-1), If a truncate request with the last block is sent to the MDS and
-just before the MDS has acquired the xlock for FILE lock, if another
-client has updated that last block content, we will over write the
-last block with old data.
-
-For this case we could send the old encrypted last block data along
-with the truncate request and in MDS side read it and then do compare
-just before updating it, if the comparasion fails, then fail the
-truncate and let the kclient retry it.
-
-2), If another client has buffered the last block, we should flush
-it first. I am still thinking how to do this ? Any idea is welcome.
-
-Thanks.
-
-
-Xiubo Li (4):
-  ceph: add __ceph_get_caps helper support
-  ceph: add __ceph_sync_read helper support
-  ceph: return the real size readed when hit EOF
-  ceph: add truncate size handling support for fscrypt
-
- fs/ceph/caps.c  |  28 ++++---
- fs/ceph/file.c  |  41 ++++++----
- fs/ceph/inode.c | 210 ++++++++++++++++++++++++++++++++++++++++++------
- fs/ceph/super.h |   4 +
- 4 files changed, 234 insertions(+), 49 deletions(-)
-
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index d628dcdbf869..4e2a588465c5 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -2876,10 +2876,9 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
+  * due to a small max_size, make sure we check_max_size (and possibly
+  * ask the mds) so we don't get hung up indefinitely.
+  */
+-int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got)
++int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi, int need,
++		    int want, loff_t endoff, int *got)
+ {
+-	struct ceph_file_info *fi = filp->private_data;
+-	struct inode *inode = file_inode(filp);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+ 	int ret, _got, flags;
+@@ -2888,7 +2887,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	if ((fi->fmode & CEPH_FILE_MODE_WR) &&
++	if (fi && (fi->fmode & CEPH_FILE_MODE_WR) &&
+ 	    fi->filp_gen != READ_ONCE(fsc->filp_gen))
+ 		return -EBADF;
+ 
+@@ -2896,7 +2895,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+ 
+ 	while (true) {
+ 		flags &= CEPH_FILE_MODE_MASK;
+-		if (atomic_read(&fi->num_locks))
++		if (fi && atomic_read(&fi->num_locks))
+ 			flags |= CHECK_FILELOCK;
+ 		_got = 0;
+ 		ret = try_get_cap_refs(inode, need, want, endoff,
+@@ -2941,7 +2940,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+ 				continue;
+ 		}
+ 
+-		if ((fi->fmode & CEPH_FILE_MODE_WR) &&
++		if (fi && (fi->fmode & CEPH_FILE_MODE_WR) &&
+ 		    fi->filp_gen != READ_ONCE(fsc->filp_gen)) {
+ 			if (ret >= 0 && _got)
+ 				ceph_put_cap_refs(ci, _got);
+@@ -3004,6 +3003,14 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+ 	return 0;
+ }
+ 
++int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got)
++{
++	struct ceph_file_info *fi = filp->private_data;
++	struct inode *inode = file_inode(filp);
++
++	return __ceph_get_caps(inode, fi, need, want, endoff, got);
++}
++
+ /*
+  * Take cap refs.  Caller must already know we hold at least one ref
+  * on the caps in question or we don't know this is safe.
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 7f3976b3319d..027d5f579ba0 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -1208,6 +1208,8 @@ extern int ceph_encode_dentry_release(void **p, struct dentry *dn,
+ 				      struct inode *dir,
+ 				      int mds, int drop, int unless);
+ 
++extern int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi,
++			   int need, int want, loff_t endoff, int *got);
+ extern int ceph_get_caps(struct file *filp, int need, int want,
+ 			 loff_t endoff, int *got);
+ extern int ceph_try_get_caps(struct inode *inode,
 -- 
 2.27.0
 
