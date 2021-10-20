@@ -2,341 +2,178 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 72D13434C12
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 Oct 2021 15:28:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9E63434DF2
+	for <lists+ceph-devel@lfdr.de>; Wed, 20 Oct 2021 16:37:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230200AbhJTNa6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 Oct 2021 09:30:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20685 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230017AbhJTNa5 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 20 Oct 2021 09:30:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634736522;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Z5kqTX6yX49N3ZOBXU8aLJ5y7pB8bHPB8pTUt5g3L40=;
-        b=fYJor4tdtul0QfPzDbzVNQKd/AThHWB/k73Wjdc8GEBs5LTK2DGFGLGmfpB4BsK0wtbf5b
-        wDyVpVjS37JZJ8BgJC/mf35lIi3sfHkyt6NR8CLMnsO4+ugQNgwXH1c8CJn1mXmMLhLdbT
-        p15ykkF7v7g7aBQHqJW6tJ6AV/hKELU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-507-hKNpR4Y9MCKEHpFxN4biUA-1; Wed, 20 Oct 2021 09:28:41 -0400
-X-MC-Unique: hKNpR4Y9MCKEHpFxN4biUA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S230269AbhJTOjl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 Oct 2021 10:39:41 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:54548 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229570AbhJTOjc (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 20 Oct 2021 10:39:32 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E5F6010144FF;
-        Wed, 20 Oct 2021 13:28:39 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 86DE51042AAF;
-        Wed, 20 Oct 2021 13:28:37 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, vshankar@redhat.com, khiremat@redhat.com,
-        pdonnell@redhat.com, ceph-devel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v2 4/4] ceph: add truncate size handling support for fscrypt
-Date:   Wed, 20 Oct 2021 21:28:13 +0800
-Message-Id: <20211020132813.543695-5-xiubli@redhat.com>
-In-Reply-To: <20211020132813.543695-1-xiubli@redhat.com>
-References: <20211020132813.543695-1-xiubli@redhat.com>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id F31A61FD39;
+        Wed, 20 Oct 2021 14:37:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1634740637; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=9A5/odsFjxH56Gwb5bFX+qM0MdWrRBEmSqTq/22RS1c=;
+        b=gAxt3hZz61oH1cNHXnsShL9RP6eBBZhzEcvXEb5wzleUTdT0SWzyrlGQKY63frJdN3j9kN
+        zLFvgkQDDJ1dYNtl2xixE7zcucfuF+TEBnibghDfQs87tmbQB4jYdIxfjo0nEhfY7h682Z
+        iLQsR/rU6n3sDLTBFsHevjCGgPemtYE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1634740637;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=9A5/odsFjxH56Gwb5bFX+qM0MdWrRBEmSqTq/22RS1c=;
+        b=klDWENLHRvM7mFGgMoSVSzFqjMDjm81vlJ3ikMQdaia6ci3wb6rHsAe/bF9VsrpJ/YQ1/r
+        2Yohx/c7yJh57eCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7392613B55;
+        Wed, 20 Oct 2021 14:37:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id GAT5GJwpcGFjIAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Wed, 20 Oct 2021 14:37:16 +0000
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id c5fe2302;
+        Wed, 20 Oct 2021 14:37:15 +0000 (UTC)
+From:   =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>,
+        Patrick Donnelly <pdonnell@redhat.com>
+Subject: [RFC PATCH] ceph: add remote object copy counter to fs client
+Date:   Wed, 20 Oct 2021 15:37:08 +0100
+Message-Id: <20211020143708.14728-1-lhenriques@suse.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+This counter will keep track of the number of remote object copies done on
+copy_file_range syscalls.  This counter will be filesystem per-client, and
+can be accessed from the client debugfs directory.
 
-This will transfer the encrypted last block contents to the MDS
-along with the truncate request only when new size is smaller and
-not aligned to the fscrypt BLOCK size.
-
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
+Cc: Patrick Donnelly <pdonnell@redhat.com>
+Signed-off-by: Luís Henriques <lhenriques@suse.de>
 ---
- fs/ceph/caps.c  |   9 +--
- fs/ceph/inode.c | 210 ++++++++++++++++++++++++++++++++++++++++++------
- 2 files changed, 190 insertions(+), 29 deletions(-)
+This is an RFC to reply to Patrick's request in [0].  Note that I'm not
+100% sure about the usefulness of this patch, or if this is the best way
+to provide the functionality Patrick requested.  Anyway, this is just to
+get some feedback, hence the RFC.
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 4e2a588465c5..1a36f0870d89 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -1296,16 +1296,13 @@ static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
- 	/*
- 	 * fscrypt_auth and fscrypt_file (version 12)
- 	 *
--	 * fscrypt_auth holds the crypto context (if any). fscrypt_file
--	 * tracks the real i_size as an __le64 field (and we use a rounded-up
--	 * i_size in * the traditional size field).
--	 *
--	 * FIXME: should we encrypt fscrypt_file field?
-+	 * fscrypt_auth holds the crypto context (if any). fscrypt_file will
-+	 * always be zero here.
- 	 */
- 	ceph_encode_32(&p, arg->fscrypt_auth_len);
- 	ceph_encode_copy(&p, arg->fscrypt_auth, arg->fscrypt_auth_len);
- 	ceph_encode_32(&p, sizeof(__le64));
--	ceph_encode_64(&p, arg->size);
-+	ceph_encode_64(&p, 0);
+Cheers,
+--
+Luís
+
+[0] https://github.com/ceph/ceph/pull/42720
+
+ fs/ceph/debugfs.c | 17 ++++++++++++++++-
+ fs/ceph/file.c    |  1 +
+ fs/ceph/super.c   |  1 +
+ fs/ceph/super.h   |  2 ++
+ 4 files changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index 38b78b45811f..09f4c04ade0e 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -346,13 +346,22 @@ static int status_show(struct seq_file *s, void *p)
+ 	return 0;
  }
  
- /*
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 9b798690fdc9..924a69bc074d 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1035,9 +1035,13 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
- 
- 		if (IS_ENCRYPTED(inode) && size &&
- 		    (iinfo->fscrypt_file_len == sizeof(__le64))) {
--			size = __le64_to_cpu(*(__le64 *)iinfo->fscrypt_file);
--			if (info->size != round_up(size, CEPH_FSCRYPT_BLOCK_SIZE))
--				pr_warn("size=%llu fscrypt_file=%llu\n", info->size, size);
-+			u64 fsize = __le64_to_cpu(*(__le64 *)iinfo->fscrypt_file);
-+			if (fsize) {
-+				size = fsize;
-+				if (info->size != round_up(size, CEPH_FSCRYPT_BLOCK_SIZE))
-+					pr_warn("size=%llu fscrypt_file=%llu\n",
-+						info->size, size);
-+			}
- 		}
- 
- 		queue_trunc = ceph_fill_file_size(inode, issued,
-@@ -2229,6 +2233,157 @@ static const struct inode_operations ceph_encrypted_symlink_iops = {
- 	.listxattr = ceph_listxattr,
- };
- 
-+struct ceph_fscrypt_header {
-+	__u8  ver;
-+	__u8  compat;
-+	__le32 data_len; /* length of sizeof(file_offset + block_size + BLOCK SIZE) */
-+	__le64 file_offset;
-+	__le64 block_size;
-+} __packed;
-+
-+/*
-+ * Transfer the encrypted last block to the MDS and the MDS
-+ * will update the file when truncating a smaller size.
-+ */
-+static int fill_request_for_fscrypt(struct inode *inode,
-+				    struct ceph_mds_request *req,
-+				    struct iattr *attr)
++static int copyfrom_show(struct seq_file *s, void *p)
 +{
-+	struct ceph_inode_info *ci = ceph_inode(inode);
-+	int boff = attr->ia_size % CEPH_FSCRYPT_BLOCK_SIZE;
-+	loff_t pos, orig_pos = round_down(attr->ia_size, CEPH_FSCRYPT_BLOCK_SIZE);
-+	size_t blen = min_t(size_t, CEPH_FSCRYPT_BLOCK_SIZE, PAGE_SIZE);
-+	struct ceph_pagelist *pagelist = NULL;
-+	struct kvec *iovs = NULL;
-+	struct iov_iter iter;
-+	struct page **pages = NULL;
-+	struct ceph_fscrypt_header header;
-+	int num_pages = 0;
-+	int retry_op = 0;
-+	int iov_off, iov_idx, len = 0;
-+	loff_t i_size = i_size_read(inode);
-+	bool fill_header_only = false;
-+	int ret, i;
-+	int got;
++	struct ceph_fs_client *fsc = s->private;
 +
-+	/*
-+	 * Do not support the inline data case, which will be
-+	 * removed soon
-+	 */
-+	if (ci->i_inline_version != CEPH_INLINE_NONE)
-+		return -EINVAL;
++	seq_printf(s, "%llu\n", atomic64_read(&fsc->copyfrom_count));
 +
-+	ret = __ceph_get_caps(inode, NULL, CEPH_CAP_FILE_RD, 0, -1, &got);
-+	if (ret < 0)
-+		return ret;
-+
-+	dout("%s size %lld -> %lld got cap refs on %s\n", __func__,
-+	     i_size, attr->ia_size, ceph_cap_string(got));
-+
-+	/* Should we consider the tiny page in 1K case ? */
-+	num_pages = (CEPH_FSCRYPT_BLOCK_SIZE + PAGE_SIZE -1) / PAGE_SIZE;
-+	pages = ceph_alloc_page_vector(num_pages, GFP_NOFS);
-+	if (IS_ERR(pages)) {
-+		ret = PTR_ERR(pages);
-+		goto out;
-+	}
-+
-+	iovs = kcalloc(num_pages, sizeof(struct kvec), GFP_NOFS);
-+	if (!iovs) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+	for (i = 0; i < num_pages; i++) {
-+		iovs[i].iov_base = kmap_local_page(pages[i]);
-+		iovs[i].iov_len = PAGE_SIZE;
-+		len += iovs[i].iov_len;
-+	}
-+	iov_iter_kvec(&iter, READ, iovs, num_pages, len);
-+
-+	pos = orig_pos;
-+	ret = __ceph_sync_read(inode, &pos, &iter, &retry_op);
-+
-+	/*
-+	 * If we hit a hole here, we should just skip filling
-+	 * the fscrypt for the request, because once the fscrypt
-+	 * is enabled, the file will be split into many blocks
-+	 * with the size of CEPH_FSCRYPT_BLOCK_SIZE, if there
-+	 * has a hole, the hole size should be multiple of block
-+	 * size.
-+	 */
-+	if (pos < i_size && ret < len) {
-+		dout("%s hit hole, ppos %lld < size %lld\n",
-+		     __func__, pos, i_size);
-+
-+		ret = 0;
-+		fill_header_only = true;
-+		goto fill_last_block;
-+	}
-+
-+	/* truncate and zero out the extra contents for the last block */
-+	iov_idx = boff / PAGE_SIZE;
-+	iov_off = boff % PAGE_SIZE;
-+	memset(iovs[iov_idx].iov_base + iov_off, 0, PAGE_SIZE - iov_off);
-+
-+	/* encrypt the last block */
-+	for (i = 0; i < num_pages; i++) {
-+		u32 shift = CEPH_FSCRYPT_BLOCK_SIZE > PAGE_SIZE ?
-+			    PAGE_SHIFT : CEPH_FSCRYPT_BLOCK_SHIFT;
-+		u64 block = orig_pos >> shift;
-+
-+		ret = fscrypt_encrypt_block_inplace(inode, pages[i],
-+						    blen, 0, block,
-+						    GFP_KERNEL);
-+		if (ret)
-+			goto out;
-+	}
-+
-+fill_last_block:
-+	pagelist = ceph_pagelist_alloc(GFP_KERNEL);
-+	if (!pagelist)
-+		return -ENOMEM;
-+
-+	/* Insert the header first */
-+	header.ver = 1;
-+	header.compat = 1;
-+	/* sizeof(file_offset) + sizeof(block_size) + blen */
-+	header.data_len = cpu_to_le32(8 + 8 + CEPH_FSCRYPT_BLOCK_SIZE);
-+	header.file_offset = cpu_to_le64(orig_pos);
-+	if (fill_header_only) {
-+		header.file_offset = cpu_to_le64(0);
-+		header.block_size = cpu_to_le64(0);
-+	} else {
-+		header.file_offset = cpu_to_le64(orig_pos);
-+		header.block_size = cpu_to_le64(CEPH_FSCRYPT_BLOCK_SIZE);
-+	}
-+	ret = ceph_pagelist_append(pagelist, &header, sizeof(header));
-+	if (ret)
-+		goto out;
-+
-+	if (!fill_header_only) {
-+		/* Append the last block contents to pagelist */
-+		for (i = 0; i < num_pages; i++) {
-+			ret = ceph_pagelist_append(pagelist, iovs[i].iov_base,
-+						   blen);
-+			if (ret)
-+				goto out;
-+		}
-+	}
-+	req->r_pagelist = pagelist;
-+out:
-+	dout("%s %p size dropping cap refs on %s\n", __func__,
-+	     inode, ceph_cap_string(got));
-+	for (i = 0; iovs && i < num_pages; i++)
-+		kunmap_local(iovs[i].iov_base);
-+	kfree(iovs);
-+	if (pages)
-+		ceph_release_page_vector(pages, num_pages);
-+	if (ret && pagelist)
-+		ceph_pagelist_release(pagelist);
-+	ceph_put_cap_refs(ci, got);
-+	return ret;
++	return 0;
 +}
 +
- int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *cia)
- {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
-@@ -2236,6 +2391,7 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
- 	struct ceph_mds_request *req;
- 	struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
- 	struct ceph_cap_flush *prealloc_cf;
-+	loff_t isize = i_size_read(inode);
- 	int issued;
- 	int release = 0, dirtied = 0;
- 	int mask = 0;
-@@ -2367,10 +2523,31 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
- 		}
- 	}
- 	if (ia_valid & ATTR_SIZE) {
--		loff_t isize = i_size_read(inode);
+ DEFINE_SHOW_ATTRIBUTE(mdsmap);
+ DEFINE_SHOW_ATTRIBUTE(mdsc);
+ DEFINE_SHOW_ATTRIBUTE(caps);
+ DEFINE_SHOW_ATTRIBUTE(mds_sessions);
+ DEFINE_SHOW_ATTRIBUTE(metric);
+ DEFINE_SHOW_ATTRIBUTE(status);
 -
- 		dout("setattr %p size %lld -> %lld\n", inode, isize, attr->ia_size);
--		if ((issued & CEPH_CAP_FILE_EXCL) && attr->ia_size >= isize) {
-+		/*
-+		 * Only when the new size is smaller and not aligned to
-+		 * CEPH_FSCRYPT_BLOCK_SIZE will the RMW is needed.
-+		 */
-+		if (IS_ENCRYPTED(inode) && attr->ia_size < isize &&
-+		    (attr->ia_size % CEPH_FSCRYPT_BLOCK_SIZE)) {
-+			mask |= CEPH_SETATTR_SIZE;
-+			release |= CEPH_CAP_FILE_SHARED | CEPH_CAP_FILE_EXCL |
-+				   CEPH_CAP_FILE_RD | CEPH_CAP_FILE_WR;
-+			set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
-+			mask |= CEPH_SETATTR_FSCRYPT_FILE;
-+			req->r_args.setattr.size =
-+				cpu_to_le64(round_up(attr->ia_size,
-+						     CEPH_FSCRYPT_BLOCK_SIZE));
-+			req->r_args.setattr.old_size =
-+				cpu_to_le64(round_up(isize,
-+						     CEPH_FSCRYPT_BLOCK_SIZE));
-+			req->r_fscrypt_file = attr->ia_size;
-+			spin_unlock(&ci->i_ceph_lock);
-+			err = fill_request_for_fscrypt(inode, req, attr);
-+			spin_lock(&ci->i_ceph_lock);
-+			if (err)
-+				goto out;
-+		} else if ((issued & CEPH_CAP_FILE_EXCL) && attr->ia_size >= isize) {
- 			if (attr->ia_size > isize) {
- 				i_size_write(inode, attr->ia_size);
- 				inode->i_blocks = calc_inode_blocks(attr->ia_size);
-@@ -2382,23 +2559,10 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
- 			   attr->ia_size != isize) {
- 			mask |= CEPH_SETATTR_SIZE;
- 			release |= CEPH_CAP_FILE_SHARED | CEPH_CAP_FILE_EXCL |
--				   CEPH_CAP_FILE_RD | CEPH_CAP_FILE_WR;
--			if (IS_ENCRYPTED(inode)) {
--				set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
--				mask |= CEPH_SETATTR_FSCRYPT_FILE;
--				req->r_args.setattr.size =
--					cpu_to_le64(round_up(attr->ia_size,
--							     CEPH_FSCRYPT_BLOCK_SIZE));
--				req->r_args.setattr.old_size =
--					cpu_to_le64(round_up(isize,
--							     CEPH_FSCRYPT_BLOCK_SIZE));
--				req->r_fscrypt_file = attr->ia_size;
--				/* FIXME: client must zero out any partial blocks! */
--			} else {
--				req->r_args.setattr.size = cpu_to_le64(attr->ia_size);
--				req->r_args.setattr.old_size = cpu_to_le64(isize);
--				req->r_fscrypt_file = 0;
--			}
-+			           CEPH_CAP_FILE_RD | CEPH_CAP_FILE_WR;
-+			req->r_args.setattr.size = cpu_to_le64(attr->ia_size);
-+			req->r_args.setattr.old_size = cpu_to_le64(isize);
-+			req->r_fscrypt_file = 0;
++DEFINE_SHOW_ATTRIBUTE(copyfrom);
+ 
+ /*
+  * debugfs
+@@ -387,6 +396,7 @@ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
+ 	debugfs_remove(fsc->debugfs_caps);
+ 	debugfs_remove(fsc->debugfs_metric);
+ 	debugfs_remove(fsc->debugfs_mdsc);
++	debugfs_remove(fsc->debugfs_copyfrom);
+ }
+ 
+ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
+@@ -443,6 +453,11 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
+ 						  fsc->client->debugfs_dir,
+ 						  fsc,
+ 						  &status_fops);
++	fsc->debugfs_copyfrom = debugfs_create_file("copyfrom",
++						    0400,
++						    fsc->client->debugfs_dir,
++						    fsc,
++						    &copyfrom_fops);
+ }
+ 
+ 
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index d16fd2d5fd42..bbeb437ca4bf 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -2254,6 +2254,7 @@ static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off
+ 				bytes = ret;
+ 			goto out;
  		}
- 	}
- 	if (ia_valid & ATTR_MTIME) {
--- 
-2.27.0
-
++		atomic64_inc(&fsc->copyfrom_count);
+ 		len -= object_size;
+ 		bytes += object_size;
+ 		*src_off += object_size;
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 9b1b7f4cfdd4..4972554185e3 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -670,6 +670,7 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
+ 	fsc->have_copy_from2 = true;
+ 
+ 	atomic_long_set(&fsc->writeback_count, 0);
++	atomic64_set(&fsc->copyfrom_count, 0);
+ 
+ 	err = -ENOMEM;
+ 	/*
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index a40eb14c282a..65846beca418 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -119,6 +119,7 @@ struct ceph_fs_client {
+ 	struct ceph_mds_client *mdsc;
+ 
+ 	atomic_long_t writeback_count;
++	atomic64_t copyfrom_count;
+ 
+ 	struct workqueue_struct *inode_wq;
+ 	struct workqueue_struct *cap_wq;
+@@ -131,6 +132,7 @@ struct ceph_fs_client {
+ 	struct dentry *debugfs_metric;
+ 	struct dentry *debugfs_status;
+ 	struct dentry *debugfs_mds_sessions;
++	struct dentry *debugfs_copyfrom;
+ #endif
+ 
+ #ifdef CONFIG_CEPH_FSCACHE
