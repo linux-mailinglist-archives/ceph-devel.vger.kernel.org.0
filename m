@@ -2,149 +2,113 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B71A43691A
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 Oct 2021 19:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D55EF436D5B
+	for <lists+ceph-devel@lfdr.de>; Fri, 22 Oct 2021 00:20:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232057AbhJURfk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 21 Oct 2021 13:35:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38642 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231441AbhJURfg (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 21 Oct 2021 13:35:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 96A18619E0;
-        Thu, 21 Oct 2021 17:33:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634837600;
-        bh=0mi5BRB2iEJx/azT/2b/IU0aHCxCgVOW4BkeyKDBK+4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ZKPXTwVYlFc7+FyUKZjxMWGxFgOzAt2/ZqjVl/OvBNsQEhfDukY5lxc24ij0dcFBh
-         6JLSOYJpr5jp3GQlLKUs5dSoethZEbInhrBEQLjhkqExwjD9XXPz8PR7Un58BH2rgp
-         5FYfpuZlVtAMnMJfrmoS/eg+qIrbT5aVKWdNg3xKWw5/aNkLScpP+sfcmlGB2uAlmr
-         y+JVaU4U4Y775/uu68NxdhunJ1jESEltY5a77kAAzslK+iEUpG4KdTeryZY3+Rv+Al
-         IfVGZmRmz9wiBn2v5tDlGB5ECj/OpvrAlJGJTDrh7DoGE9YLFNx5yR7+zZxyoG2tF+
-         pVtJaSFgBfsjw==
-Message-ID: <e49d6160752caf5855dfe5e122cb74cf30cd1b49.camel@kernel.org>
-Subject: Re: [RFC PATCH] ceph: add remote object copy counter to fs client
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Patrick Donnelly <pdonnell@redhat.com>
-Cc:     =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>,
+        id S232154AbhJUWW6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 21 Oct 2021 18:22:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35038 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231309AbhJUWW5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 21 Oct 2021 18:22:57 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21021C061243
+        for <ceph-devel@vger.kernel.org>; Thu, 21 Oct 2021 15:20:41 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id na16-20020a17090b4c1000b0019f5bb661f9so1645726pjb.0
+        for <ceph-devel@vger.kernel.org>; Thu, 21 Oct 2021 15:20:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=tSebnyNuofgB+vH+7uyEvZ4tUVxD1t6yZgP5DdCdt6U=;
+        b=F7yvuj7nSVzEl2W8Oqbp8atFxmQ6r9Dbqs8V0fbJgxGY00MyLd4k7jqKWORSw8mHY3
+         IxDvRVo4cDtbcTi+/kKA0Egwg6fwcXP4oiOtpnrGNLmO/C442vDZiAmDs7CTs8KbHnL0
+         kCfPRr95kbaIPqVIEMaFt3kyXUmXLF1FErwp9s/A5nE3+S3NMzLTtwdHdwqBgOjYLvX6
+         WYBTP6OervOJQWbY/Vx42YzjOvR/cqpxNWYc3dmwBm4LRWFBE/nHVqb6lPrrGCjmZ/nt
+         d5x2bQUiW2+vfgaGS/ipy/W+4F2BD7/kMrpChjIWchBsBRmebimx5o7b+OPOqd72o4oe
+         ThBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=tSebnyNuofgB+vH+7uyEvZ4tUVxD1t6yZgP5DdCdt6U=;
+        b=Y2rSVBtccB+c5Gl/R0Ce1qRRVjYHufkNeu/FZmrpTGFEWG6ufCullXcYmoLqE7oQVn
+         fWJEKwdCHROuhratWil/uAdW8zavEvvoTZRCy9xboHaaRUHLX01NOJ8+lkRm+NamLcOH
+         aSwpbEKYLa/JHV/UCEHN1MN7irKzn4R9qKoF0kE5UmsKzCXeKg5OaDm0gj0V71UJCAIo
+         CjWnHyqvcbaFMoDoLVNd0WwA+VqHBOmwFNLrEapqsk3qQHemHiAaUh/gL1zuQtl4kViF
+         hcGiwybwHTSDCLzXa2x0Bn0485uiuguAaWSaqRJAAnxKtz8x9UdAIQBgdojJ6RQLwJ1P
+         UMKg==
+X-Gm-Message-State: AOAM530KVhZIJxCkl6WdAcK+hUBfmm00rHK1OG8m+yNoK25sXo+eyZ5U
+        XZVusoaytbaLSL++XdZBB5OGKw==
+X-Google-Smtp-Source: ABdhPJwPCYMB5mXDn/964xDyH1fZwMCe0wUF+PkkOcGHAMNid1VUJ2pJtdpAOgiix5LMUW5jc9KZFg==
+X-Received: by 2002:a17:90b:1041:: with SMTP id gq1mr9693769pjb.31.1634854840491;
+        Thu, 21 Oct 2021 15:20:40 -0700 (PDT)
+Received: from relinquished.localdomain ([2620:10d:c090:400::5:69a9])
+        by smtp.gmail.com with ESMTPSA id n22sm6962317pjv.22.2021.10.21.15.20.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Oct 2021 15:20:40 -0700 (PDT)
+Date:   Thu, 21 Oct 2021 15:20:36 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-cachefs@redhat.com, ceph-devel@vger.kernel.org,
+        linux-afs@lists.infradead.org,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-nfs@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        v9fs-developer@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Jeff Layton <jlayton@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dominique Martinet <asmadeus@codewreck.org>,
         Ilya Dryomov <idryomov@gmail.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org
-Date:   Thu, 21 Oct 2021 13:33:18 -0400
-In-Reply-To: <CA+2bHPYacg5yjO9otP5wUVxgwxw+d4hroVQod5VeFUTJNosQ9w@mail.gmail.com>
-References: <20211020143708.14728-1-lhenriques@suse.de>
-         <34e379f9dec1cbdf09fffd8207f6ef7f4e1a6841.camel@kernel.org>
-         <CA+2bHPbqeH_rmmxcnQ9gq0K8gqtE4q69a8cFnherSJCxSwXV5Q@mail.gmail.com>
-         <99209198dd9d8634245f153a90e4091851635a16.camel@kernel.org>
-         <CA+2bHPZTazVGtZygdbthQ-AWiC3AN_hsYouhVVs=PDo5iowgTw@mail.gmail.com>
-         <e5627f7d9eb9cf2b753136e1187d5d6ff7789389.camel@kernel.org>
-         <CA+2bHPYacg5yjO9otP5wUVxgwxw+d4hroVQod5VeFUTJNosQ9w@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
+Subject: Re: [PATCH 00/67] fscache: Rewrite index API and management system
+Message-ID: <YXHntB2O0ACr0pbz@relinquished.localdomain>
+References: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2021-10-21 at 13:30 -0400, Patrick Donnelly wrote:
-> On Thu, Oct 21, 2021 at 12:35 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > 
-> > On Thu, 2021-10-21 at 12:18 -0400, Patrick Donnelly wrote:
-> > > On Thu, Oct 21, 2021 at 11:44 AM Jeff Layton <jlayton@kernel.org> wrote:
-> > > > 
-> > > > On Thu, 2021-10-21 at 09:52 -0400, Patrick Donnelly wrote:
-> > > > > On Wed, Oct 20, 2021 at 12:27 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > > > > 
-> > > > > > On Wed, 2021-10-20 at 15:37 +0100, Luís Henriques wrote:
-> > > > > > > This counter will keep track of the number of remote object copies done on
-> > > > > > > copy_file_range syscalls.  This counter will be filesystem per-client, and
-> > > > > > > can be accessed from the client debugfs directory.
-> > > > > > > 
-> > > > > > > Cc: Patrick Donnelly <pdonnell@redhat.com>
-> > > > > > > Signed-off-by: Luís Henriques <lhenriques@suse.de>
-> > > > > > > ---
-> > > > > > > This is an RFC to reply to Patrick's request in [0].  Note that I'm not
-> > > > > > > 100% sure about the usefulness of this patch, or if this is the best way
-> > > > > > > to provide the functionality Patrick requested.  Anyway, this is just to
-> > > > > > > get some feedback, hence the RFC.
-> > > > > > > 
-> > > > > > > Cheers,
-> > > > > > > --
-> > > > > > > Luís
-> > > > > > > 
-> > > > > > > [0] https://github.com/ceph/ceph/pull/42720
-> > > > > > > 
-> > > > > > 
-> > > > > > I think this would be better integrated into the stats infrastructure.
-> > > > > > 
-> > > > > > Maybe you could add a new set of "copy" stats to struct
-> > > > > > ceph_client_metric that tracks the total copy operations done, their
-> > > > > > size and latency (similar to read and write ops)?
-> > > > > 
-> > > > > I think it's a good idea to integrate this into "stats" but I think a
-> > > > > local debugfs file for some counters is still useful. The "stats"
-> > > > > module is immature at this time and I'd rather not build any qa tests
-> > > > > (yet) that rely on it.
-> > > > > 
-> > > > > Can we generalize this patch-set to a file named "op_counters" or
-> > > > > similar and additionally add other OSD ops performed by the kclient?
-> > > > > 
-> > > > 
-> > > > 
-> > > > Tracking this sort of thing is the main purpose of the stats code. I'm
-> > > > really not keen on adding a whole separate set of files for reporting
-> > > > this.
-> > > 
-> > > Maybe I'm confused. Is there some "file" which is already used for
-> > > this type of debugging information? Or do you mean the code for
-> > > sending stats to the MDS to support cephfs-top?
-> > > 
-> > > > What's the specific problem with relying on the data in debugfs
-> > > > "metrics" file?
-> > > 
-> > > Maybe no problem? I wasn't aware of a "metrics" file.
-> > > 
-> > 
-> > Yes. For instance:
-> > 
-> > # cat /sys/kernel/debug/ceph/*/metrics
-> > item                               total
-> > ------------------------------------------
-> > opened files  / total inodes       0 / 4
-> > pinned i_caps / total inodes       5 / 4
-> > opened inodes / total inodes       0 / 4
-> > 
-> > item          total       avg_lat(us)     min_lat(us)     max_lat(us)     stdev(us)
-> > -----------------------------------------------------------------------------------
-> > read          0           0               0               0               0
-> > write         5           914013          824797          1092343         103476
-> > metadata      79          12856           1572            114572          13262
-> > 
-> > item          total       avg_sz(bytes)   min_sz(bytes)   max_sz(bytes)  total_sz(bytes)
-> > ----------------------------------------------------------------------------------------
-> > read          0           0               0               0               0
-> > write         5           4194304         4194304         4194304         20971520
-> > 
-> > item          total           miss            hit
-> > -------------------------------------------------
-> > d_lease       11              0               29
-> > caps          5               68              10702
-> > 
-> > 
-> > I'm proposing that Luis add new lines for "copy" to go along with the
-> > "read" and "write" ones. The "total" counter should give you a count of
-> > the number of operations.
+On Mon, Oct 18, 2021 at 03:50:15PM +0100, David Howells wrote:
 > 
-> Okay that makes more sense!
+> Here's a set of patches that rewrites and simplifies the fscache index API
+> to remove the complex operation scheduling and object state machine in
+> favour of something much smaller and simpler.  It is built on top of the
+> set of patches that removes the old API[1].
 > 
-> Side note: I am a bit horrified by how computer-unfriendly that
-> table-formatted data is.
+> The operation scheduling API was intended to handle sequencing of cache
+> operations, which were all required (where possible) to run asynchronously
+> in parallel with the operations being done by the network filesystem, while
+> allowing the cache to be brought online and offline and interrupt service
+> with invalidation.
 > 
+> However, with the advent of the tmpfile capacity in the VFS, an opportunity
+> arises to do invalidation much more easily, without having to wait for I/O
+> that's actually in progress: Cachefiles can simply cut over its file
+> pointer for the backing object attached to a cookie and abandon the
+> in-progress I/O, dismissing it upon completion.
+> 
+> Future work there would involve using Omar Sandoval's vfs_link() with
+> AT_LINK_REPLACE[2] to allow an extant file to be displaced by a new hard
+> link from a tmpfile as currently I have to unlink the old file first.
 
-Not going to disagree with you there. I'm happy to consider patches to
-reformat that to be more machine-readable.
--- 
-Jeff Layton <jlayton@kernel.org>
+I had forgotten about that. It'd be great to finish that someday, but
+given the dead-end of the last discussion [1], we might need to hash it
+out the next time we can convene in person.
 
+1:https://lore.kernel.org/linux-fsdevel/364531.1579265357@warthog.procyon.org.uk/ 
