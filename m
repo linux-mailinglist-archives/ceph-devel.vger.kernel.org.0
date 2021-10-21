@@ -2,59 +2,66 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 753EE4354BD
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 Oct 2021 22:46:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B8934358AE
+	for <lists+ceph-devel@lfdr.de>; Thu, 21 Oct 2021 04:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231234AbhJTUsO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 Oct 2021 16:48:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230343AbhJTUsN (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 20 Oct 2021 16:48:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 29ADD611CC;
-        Wed, 20 Oct 2021 20:45:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634762759;
-        bh=2sIjICmeBt7p6F2VH/35FGrOu045IvITF5KjL8yPs4E=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=BIyaqxlc1sdPma2v0j8VueQZOEfpDrOl5sCqJCxfT6waPJ+8zq+cGR9CyNtwg4glL
-         gFrAxQag0m3H2HiNHPJUvSHwkXsMAaYsZ8VTY0CsQHJnCTqnF5DXp26TXmO7w6QT8Q
-         GmmFiw/ldXRydn8CUwaEjMPHfooSkGlSoDa0Kl/bvDHgJVwzKHpKBdTFWdu/tUDMTy
-         eNRBOgutuB8XxNDYZc3HFWAvWgq+po9YF4AyKDOchr3rM0C7slMPNV+KwulJ1QGdZo
-         8KPSJvCdCetb2BuwnAGtkfW7/CS64N2ImylPBVPX2Xai4XTxlM8eB+1be5Z7xznp0h
-         /sOmNwHul8nAQ==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 1DC9960A47;
-        Wed, 20 Oct 2021 20:45:59 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph fixes for 5.15-rc7
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20211020181210.31975-1-idryomov@gmail.com>
-References: <20211020181210.31975-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20211020181210.31975-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-5.15-rc7
-X-PR-Tracked-Commit-Id: 1bd85aa65d0e7b5e4d09240f492f37c569fdd431
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2f111a6fd5b5297b4e92f53798ca086f7c7d33a4
-Message-Id: <163476275911.17864.5549789792838274874.pr-tracker-bot@kernel.org>
-Date:   Wed, 20 Oct 2021 20:45:59 +0000
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S230299AbhJUCgl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 Oct 2021 22:36:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46504 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230272AbhJUCgj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 20 Oct 2021 22:36:39 -0400
+Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56846C06161C
+        for <ceph-devel@vger.kernel.org>; Wed, 20 Oct 2021 19:34:24 -0700 (PDT)
+Received: by mail-oi1-x243.google.com with SMTP id u69so12060517oie.3
+        for <ceph-devel@vger.kernel.org>; Wed, 20 Oct 2021 19:34:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=SVeKjWN/3UviN8FugMdhzgLlScJdYaklUb+Fav7AQL0=;
+        b=EZmN8EjOBPCkQ4EWl6gukLF0K0LKlpJPy8lcIFOL8j905Ydgt0koWXMxeGaj2cDEpE
+         tQEJc/KyeJHVccvFZF9DxQcthl+cI9WUbaI1AZ3k10TiotqBGIgXA7Kq0Nfsdw0JARil
+         UFjHlHNe7u5k6JPCKzPDUzhbmwvwC1vx2BsrZohvkfPcSLVp9fm07Nx0ZpOhL8Xn/VBl
+         1e2HEu7Np6Bb7TI5CbemaT3+qDjdA0FSFYA5ZRDtdNoQnkuBT2JagMt5QbcqZH390Jyh
+         262orEWLIr0IC7sJYU30SVY/jCZsNZdYyS+t3wklaRdFalZ4IR6W4tPqoiqxPC6QuCmC
+         wMPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=SVeKjWN/3UviN8FugMdhzgLlScJdYaklUb+Fav7AQL0=;
+        b=bFHTgFLyaOonFGJH/j89LLj+0ghUuyKQnMiYrU9ve/6bkh5Ny06XjaglSKEHy6vW4p
+         5ZhTCR8OTNqp8/jSbTzF/O3JittQi2+CAFkh66AbOWmkjm8GWBHCGyMZLxUxmNEiFWux
+         ArQSrSJ33GTByuhg5Khc3ajtTucItJPb7ccIpAJKsK6zH8ekby+kUGt83S5vC6/3wqty
+         /bsoQD7NLZPTRQjOTzpKxg9nJ8caIBJRefmeLtz7ska33d5JINQ06qm+EUC3DIvOeeiY
+         2aa8wbmYkcvXIlCoeGD3vLNDNKjJ95jFpXygSrfUkH/v0j/e4+Lhwr932cZMJu/FXK6m
+         99Tg==
+X-Gm-Message-State: AOAM5339DEYTEXbIz1llBuGpKOUpDNIaQBChoqku1X2TxHC16qi4JRkI
+        xVP83wpQ8zNqWTpoMglovId/EbZaV1a6sC2u1Vkh9EEXHTvazw==
+X-Google-Smtp-Source: ABdhPJzKcuRQP3jCXCTfQg5qY7gtErF2dqpI9tirz9Y6lj2pKbFW9FHHg+zilsbHP0RTvw0YlYSdvcsm5fJBe4rLlsw=
+X-Received: by 2002:a17:90a:1657:: with SMTP id x23mr3057320pje.148.1634781919477;
+ Wed, 20 Oct 2021 19:05:19 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a05:6a10:8a4b:0:0:0:0 with HTTP; Wed, 20 Oct 2021 19:05:19
+ -0700 (PDT)
+Reply-To: michlihn22@gmail.com
+From:   Michael Lihong <shafiusalihuadam2020@gmail.com>
+Date:   Thu, 21 Oct 2021 03:05:19 +0100
+Message-ID: <CALabmCYdy_feCBUckiZ5OGEXTjsNRmnchpC-RnOpeKRWBOVjog@mail.gmail.com>
+Subject: Your Inheritance
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The pull request you sent on Wed, 20 Oct 2021 20:12:10 +0200:
-
-> https://github.com/ceph/ceph-client.git tags/ceph-for-5.15-rc7
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2f111a6fd5b5297b4e92f53798ca086f7c7d33a4
-
-Thank you!
-
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+You are expected to urgently get in contact with Mr Lioa Ming via is
+email ( lialumi1@gmail.com ) for a huge inheritance claim, because you
+have same last name with his late Clint
+
+Please contact him now for more details.
+
+Micheal L.
+Personal Assistance.
