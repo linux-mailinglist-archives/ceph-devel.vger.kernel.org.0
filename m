@@ -2,99 +2,89 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E3518436E79
-	for <lists+ceph-devel@lfdr.de>; Fri, 22 Oct 2021 01:43:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8592437705
+	for <lists+ceph-devel@lfdr.de>; Fri, 22 Oct 2021 14:22:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232190AbhJUXpv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 21 Oct 2021 19:45:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229512AbhJUXpu (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 21 Oct 2021 19:45:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D7B706120C;
-        Thu, 21 Oct 2021 23:43:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634859814;
-        bh=LE+sfzEXJlFl8jCsBBJvLQfsmo8JPatvzUNz5xSZVrk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=TgMVshk590paFQtbeK7zsyr4l/2uZp8+iGE+Is7GOaqOs2fjIWdb1db0zUOZCD1D/
-         qSIki3hnjNZxvH7hMUKP6OCN5hbiVGAv2XjSk4Vu4n2Brz1rBVrshn8bHukAQnfRRv
-         anWSmxVujkZB4+3Vgc3zvaFf1bGC7CzMWQKe6CW34pKn5QSZJPQUjgeysNPUEJswMd
-         t7htnv6dWAlApcY9+r9kUWKJKLIl3BAtQDDX9NUsRBx84qp+9TOpGx1yTzQZkj0kpU
-         RPr0UXaSlLtDfKfBNDv1hq7rgvpN1ibPs6YRxvIs06BNymtP6Gi5hn9pZzMvTMTSzN
-         l5WRtdh7ClJ1A==
-Message-ID: <d70b28fb4392ac1aafb1b21d1b8da061be16104c.camel@kernel.org>
-Subject: Re: [PATCH 00/67] fscache: Rewrite index API and management system
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Steve French <smfrench@gmail.com>,
-        Omar Sandoval <osandov@osandov.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-afs@lists.infradead.org,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-mm <linux-mm@kvack.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        v9fs-developer@lists.sourceforge.net,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Steve French <sfrench@samba.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Thu, 21 Oct 2021 19:43:30 -0400
-In-Reply-To: <CAH2r5msO7-QCXv6JQj2Tado9ZoWAHRkgq6-En18PeKSXFDdBLw@mail.gmail.com>
-References: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
-         <YXHntB2O0ACr0pbz@relinquished.localdomain>
-         <CAH2r5msO7-QCXv6JQj2Tado9ZoWAHRkgq6-En18PeKSXFDdBLw@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
+        id S232123AbhJVMY4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 22 Oct 2021 08:24:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53846 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230462AbhJVMYz (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 22 Oct 2021 08:24:55 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B38B3C061764
+        for <ceph-devel@vger.kernel.org>; Fri, 22 Oct 2021 05:22:37 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id ec8so1016775edb.6
+        for <ceph-devel@vger.kernel.org>; Fri, 22 Oct 2021 05:22:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=EabbjzyBCsHP1Pqryzjhoy0dM3xlyxLmmpO8ACgMTo8=;
+        b=l8vptWc5Ky7l4svCrZmA1/+YOu9Rj5NS1qveu0gC14BaYR6sQ6UBUDLTzIww4Mz3Nm
+         UZbQmCVF/qA5QJxDvSXZug8OALKet3OLBmsJqC6K+B6nt+ntU9sWIgPF52q2ApsflQOH
+         k7fInxIpy7a9VY8xIm2JbuWbQrt2fzFgiDgP+bKUWSunxzK54475wcUo9LXD/QxjBm/T
+         mnaZVRPTTXlbU08lNiMKbkeJHfQRP9IxF65fE5Q8oNP+EeFFAI3BsHHpDDP59Bijete/
+         fX6VoWEOaxqacPGxb8cq1GhtCAOK2bzVcZZR6R0u9ehPAvg8XL8wj8F6PKVvzfjJHB0T
+         9XJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=EabbjzyBCsHP1Pqryzjhoy0dM3xlyxLmmpO8ACgMTo8=;
+        b=klf1D0b/J9N4jc6d1s7m2wd2V4UY+8WnzL/bxYtbEzEJWtMoeM43eIavb/kDDugfmE
+         dqG3zarMEYkGMWTvJtmI8ccOHPqPXakHlEb/GswgGiHzgWIqbJg9g+LmgLkWfGOswMJ6
+         eFUz8ar8Ot546+7X4gmSH0NlR4zJtcezeclknenssJvmc33xU64itSpNoPbdrVfYdjXC
+         EZCHHDZnloAZXXFhw06C1q1P/599ypLZRmxnkEaRvn97E0dZQLvJOfqH44cmdPYKBejo
+         8LtQAUj6lqI9O4+0r4vQsgB3CD+PBB5pryNqK35VVNBslq2e8gjtPYr5dQ/W0Qc8JD9F
+         WgrA==
+X-Gm-Message-State: AOAM530A/LHo+Sqv5ZaqcnEV7FBMg0Oq8c+5wdr0zXUla11mgTczdmsF
+        AWf9vcWtgYPQ/a9Sf0cfTzk+i7x4pDpUobPumeU=
+X-Google-Smtp-Source: ABdhPJxw0kPE8queRl/OJCi4xEWWGOytEkRqO9Hcg0haH9BQfIQtcEMMc/8+PBh8nITOCeRz8AWf6oYWRvkYTkaOfMU=
+X-Received: by 2002:a17:906:d937:: with SMTP id rn23mr15018849ejb.101.1634905355963;
+ Fri, 22 Oct 2021 05:22:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a17:907:7fa7:0:0:0:0 with HTTP; Fri, 22 Oct 2021 05:22:34
+ -0700 (PDT)
+Reply-To: bahadur.rayanby@gmail.com
+From:   Ryan Bahadur <dr.philposman7@gmail.com>
+Date:   Fri, 22 Oct 2021 05:22:34 -0700
+Message-ID: <CAMOT=VSU-bb0=2v+L06Sjpm-ujHqg5uCTAMGEiCzL2X7fohH1w@mail.gmail.com>
+Subject: CAN I TRUST YOU
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2021-10-21 at 18:15 -0500, Steve French wrote:
-> On Thu, Oct 21, 2021 at 5:21 PM Omar Sandoval <osandov@osandov.com> wrote:
-> > 
-> > On Mon, Oct 18, 2021 at 03:50:15PM +0100, David Howells wrote:
-> > However, with the advent of the tmpfile capacity in the VFS, an opportunity
-> > arises to do invalidation much more easily, without having to wait for I/O
-> > that's actually in progress: Cachefiles can simply cut over its file
-> > pointer for the backing object attached to a cookie and abandon the
-> > in-progress I/O, dismissing it upon completion.
-> 
-> Have changes been made to O_TMPFILE?  It is problematic for network filesystems
-> because it is not an atomic operation, and would be great if it were possible
-> to create a tmpfile and open it atomically (at the file system level).
-> 
-> Currently it results in creating a tmpfile (which results in
-> opencreate then close)
-> immediately followed by reopening the tmpfile which is somewhat counter to
-> the whole idea of a tmpfile (ie that it is deleted when closed) since
-> the syscall results
-> in two opens ie open(create)/close/open/close
-> 
-> 
-
-In this case, O_TMPFILE is being used on the cachefiles backing store,
-and that usually isn't deployed on a netfs. That said, Steve does have a
-good point...
-
-What happens if you do end up without O_TMPFILE support on the backing
-store? Probably just opting to not cache in that case is fine. Does
-cachefiles just shut down in that situation?
 -- 
-Jeff Layton <jlayton@kernel.org>
+Greetings,
 
+Firstly, I apologize for encroaching into your privacy in this manner
+as it may seem unethical though it is a matter of great importance.
+
+I am Mr.Ryan Bahadur, I work with Cayman National Bank (Cayman Islands).
+
+I am contacting you because my status would not permit me to do this
+alone as it is concerning our customer and an investment placed under
+our bank's management over 5 years ago.
+
+I have a proposal I would love to discuss with you which will be very
+beneficial to both of us. It's regarding my late client who has a huge
+deposit with my bank.
+
+He is from your country and shares the same last name with you.
+
+I want to seek your consent to present you as the next of kin to my
+late client who died and left a huge deposit with my bank.
+
+I would respectfully request that you keep the contents of this mail
+confidential and respect the integrity of the information you come by
+as a result of this mail.
+
+Please kindly get back to me for more details if I can TRUST YOU.{
+bahadur.rayanby@gmail.com}
+
+Regards
+Mr.Ryan Bahadur
+Treasury and Deposit Management,
+Cayman National Bank Cayman Islands.
