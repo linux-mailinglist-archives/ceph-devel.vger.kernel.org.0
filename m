@@ -2,190 +2,145 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A5E0C43AA97
-	for <lists+ceph-devel@lfdr.de>; Tue, 26 Oct 2021 05:06:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7A0C43AAA0
+	for <lists+ceph-devel@lfdr.de>; Tue, 26 Oct 2021 05:12:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234547AbhJZDIj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 25 Oct 2021 23:08:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44455 "EHLO
+        id S233617AbhJZDOm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 25 Oct 2021 23:14:42 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49355 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231445AbhJZDIi (ORCPT
+        by vger.kernel.org with ESMTP id S233243AbhJZDOl (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 25 Oct 2021 23:08:38 -0400
+        Mon, 25 Oct 2021 23:14:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635217575;
+        s=mimecast20190719; t=1635217938;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=bgZfLWj7RPfnAn/W2uAQwfMYaCeUPV0KjyENL3A9vM8=;
-        b=araYu+wjuDcLJG2jgecBFjTrM8jswB3bIV/1CdIm2fhGHpE7H3PXX3Hxg+eiEFLyQsqY8b
-        4qPdTRY7eXMpOVefT90QwWChwz/ucFhwPF2dvLWHMzynZQdH1D6P21WqIFRaWSHfEsyQGe
-        fEpz0MkOWH/Wk+cLwuKxn5N3x8OMzMo=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-575-P1k-VeioNQOvXx5V1rPS8w-1; Mon, 25 Oct 2021 23:06:09 -0400
-X-MC-Unique: P1k-VeioNQOvXx5V1rPS8w-1
-Received: by mail-pf1-f198.google.com with SMTP id w196-20020a627bcd000000b0047c07de537aso1184740pfc.6
-        for <ceph-devel@vger.kernel.org>; Mon, 25 Oct 2021 20:06:09 -0700 (PDT)
+        bh=2B2M0hCUNoaQnu0yoM5MSDN4b3T09yKt6+F+5sdNuSs=;
+        b=YFD3oqi/XK6rHgsXv15CsuX75f0JsVYqXYrG0pUUuQEhzdeZn6FeGekeQ/+XTJzVJrtjE3
+        9i+9/DiX+y7bFHxPz9P5czSUqjpENPwu8P129wHEjxuOmzFgvzYVsBrzAJyRtkzTuclZ51
+        CCQPJngLmVSJRs79X+CaTiTstn0eBjQ=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-462-w9DeS6wCMaSxvZ3OmUy8Ww-1; Mon, 25 Oct 2021 23:12:16 -0400
+X-MC-Unique: w9DeS6wCMaSxvZ3OmUy8Ww-1
+Received: by mail-pj1-f69.google.com with SMTP id 13-20020a17090a098d00b001a277f92695so659391pjo.7
+        for <ceph-devel@vger.kernel.org>; Mon, 25 Oct 2021 20:12:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=bgZfLWj7RPfnAn/W2uAQwfMYaCeUPV0KjyENL3A9vM8=;
-        b=3dQpY3fg9eHG3gFb2oEM//v3gEy0deIHa0QV+iqOUf51VCVQTrXGZcJiG/ZPoTdQ48
-         mVF4/PVCUHAqVwIuFwW1+BeupzoOsJigIGuTmEPNzWzew21lDPu9BRbmNoTvby9vE2jp
-         7CSyuOC1+WYNO9KxOgB9BvjVGK+yMfdugVYKaMzAYLXZpBcRaexWq7vMhvCfjKnLa2OZ
-         2STIClZ1hrB6ftAtRdxB+bfga3GeGm5ZnuXuk0zegv58TSI9n50Jk9YdA+5v9PJjHweA
-         o0M/cfEsALuSYWVwcHGdrU8+B9KgS3WLrb1nuWNbM2C2uHFfLjMoEFfzbbqdygIIxCM1
-         p5vA==
-X-Gm-Message-State: AOAM530XbHOXfrvHPusn/tSZCYZ9DaccRMjza9qU1IzutjsvmUkbu6Hz
-        DiuTJ9Rpo2fM2/bcGgRjr5k12bpcbnBFngi5s+Sg6cOIdJ2+aeIP255fNCQG/IwlCZZ4Z8ETRSe
-        xAYDzpgpMnwvcK8dPx8tysg==
-X-Received: by 2002:a62:7c0b:0:b0:47b:df8d:816 with SMTP id x11-20020a627c0b000000b0047bdf8d0816mr17489641pfc.11.1635217567963;
-        Mon, 25 Oct 2021 20:06:07 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxWh1eQlGkKFSiSnyZ955TOkEvRh94YZpScVe05hDhVwUuLUubdbFrXIblKI+fZosICPRUWnQ==
-X-Received: by 2002:a62:7c0b:0:b0:47b:df8d:816 with SMTP id x11-20020a627c0b000000b0047bdf8d0816mr17489613pfc.11.1635217567561;
-        Mon, 25 Oct 2021 20:06:07 -0700 (PDT)
+        bh=2B2M0hCUNoaQnu0yoM5MSDN4b3T09yKt6+F+5sdNuSs=;
+        b=ntvZKQEDApuSPjH4Y41iZ+NQElOGML0Iltv+2YQRdqzeYjSev2Oajn9rw1fPFIVcRs
+         SVymyU1/PwQ4qOh1k/a86nx+fnsBGwhN7rmVDAaN32nEaCVYHXoWvQTW0s848r9mrjU3
+         ln8MCriqmhBym2zurCZUAegbkb1vN9LEPNvFvNRZobMz7AmxPnoER9wteYFoThyd8FIq
+         A2nwx0Oaz1l32A8KD2v9hJsxd/lah5JX/kAU060nPJijlEkX84ePncJjSmVxPBcvLQfU
+         uB30ykh00Xt5UbPX6kyp0UHPp1znBPLDdHqoSv884+BQMYbpMxYRr7zydoFHCz9tyAEN
+         rPGQ==
+X-Gm-Message-State: AOAM531Rim2E2M/daqM+cMOGzRAnyTcLSdTLlPAI6KXs/i5l0PfMjuuV
+        3dEEXczRLeRL+DMbLxVX8P+emBNylJe1RAinQHPWrG9nbZULtfhJPg5x8eRjqGFRX+LwOGI7ZKt
+        ZFXDj8H7AIyuYv4j3sHu78ehdi7xhJkhfTx/JKQDmV9orqOzri8y4zR6gYukqIn8MF+ZtNJQ=
+X-Received: by 2002:a17:90b:4c88:: with SMTP id my8mr25217560pjb.49.1635217935559;
+        Mon, 25 Oct 2021 20:12:15 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxYif2ilFJIALOMRbfFXkFaVIQ0UOMMdvij9+VM+WF92AcmgmP5XmS4Rf9t2KFU4F1phaKnYg==
+X-Received: by 2002:a17:90b:4c88:: with SMTP id my8mr25217517pjb.49.1635217935137;
+        Mon, 25 Oct 2021 20:12:15 -0700 (PDT)
 Received: from [10.72.12.93] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id c4sm23523143pfv.144.2021.10.25.20.06.03
+        by smtp.gmail.com with ESMTPSA id v1sm7065024pfu.213.2021.10.25.20.12.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Oct 2021 20:06:06 -0700 (PDT)
-Subject: Re: [RFC PATCH] ceph: add remote object copy counter to fs client
-To:     Patrick Donnelly <pdonnell@redhat.com>,
-        Jeff Layton <jlayton@kernel.org>
-Cc:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <20211020143708.14728-1-lhenriques@suse.de>
- <34e379f9dec1cbdf09fffd8207f6ef7f4e1a6841.camel@kernel.org>
- <CA+2bHPbqeH_rmmxcnQ9gq0K8gqtE4q69a8cFnherSJCxSwXV5Q@mail.gmail.com>
- <99209198dd9d8634245f153a90e4091851635a16.camel@kernel.org>
- <CA+2bHPZTazVGtZygdbthQ-AWiC3AN_hsYouhVVs=PDo5iowgTw@mail.gmail.com>
- <e5627f7d9eb9cf2b753136e1187d5d6ff7789389.camel@kernel.org>
- <CA+2bHPYacg5yjO9otP5wUVxgwxw+d4hroVQod5VeFUTJNosQ9w@mail.gmail.com>
+        Mon, 25 Oct 2021 20:12:14 -0700 (PDT)
+Subject: Re: [PATCH v2 3/4] ceph: return the real size readed when hit EOF
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     idryomov@gmail.com, vshankar@redhat.com, khiremat@redhat.com,
+        pdonnell@redhat.com, ceph-devel@vger.kernel.org
+References: <20211020132813.543695-1-xiubli@redhat.com>
+ <20211020132813.543695-4-xiubli@redhat.com>
+ <77d0ebff15e86a05d4068982830222e1aed97a6b.camel@kernel.org>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <785d1435-4a2c-95aa-0573-2de54b4e7b6b@redhat.com>
-Date:   Tue, 26 Oct 2021 11:05:58 +0800
+Message-ID: <a1646896-e8b3-212b-3123-3d0cf8fc1e91@redhat.com>
+Date:   Tue, 26 Oct 2021 11:12:06 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <CA+2bHPYacg5yjO9otP5wUVxgwxw+d4hroVQod5VeFUTJNosQ9w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <77d0ebff15e86a05d4068982830222e1aed97a6b.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 10/22/21 1:30 AM, Patrick Donnelly wrote:
-> On Thu, Oct 21, 2021 at 12:35 PM Jeff Layton <jlayton@kernel.org> wrote:
->> On Thu, 2021-10-21 at 12:18 -0400, Patrick Donnelly wrote:
->>> On Thu, Oct 21, 2021 at 11:44 AM Jeff Layton <jlayton@kernel.org> wrote:
->>>> On Thu, 2021-10-21 at 09:52 -0400, Patrick Donnelly wrote:
->>>>> On Wed, Oct 20, 2021 at 12:27 PM Jeff Layton <jlayton@kernel.org> wrote:
->>>>>> On Wed, 2021-10-20 at 15:37 +0100, Luís Henriques wrote:
->>>>>>> This counter will keep track of the number of remote object copies done on
->>>>>>> copy_file_range syscalls.  This counter will be filesystem per-client, and
->>>>>>> can be accessed from the client debugfs directory.
->>>>>>>
->>>>>>> Cc: Patrick Donnelly <pdonnell@redhat.com>
->>>>>>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
->>>>>>> ---
->>>>>>> This is an RFC to reply to Patrick's request in [0].  Note that I'm not
->>>>>>> 100% sure about the usefulness of this patch, or if this is the best way
->>>>>>> to provide the functionality Patrick requested.  Anyway, this is just to
->>>>>>> get some feedback, hence the RFC.
->>>>>>>
->>>>>>> Cheers,
->>>>>>> --
->>>>>>> Luís
->>>>>>>
->>>>>>> [0] https://github.com/ceph/ceph/pull/42720
->>>>>>>
->>>>>> I think this would be better integrated into the stats infrastructure.
->>>>>>
->>>>>> Maybe you could add a new set of "copy" stats to struct
->>>>>> ceph_client_metric that tracks the total copy operations done, their
->>>>>> size and latency (similar to read and write ops)?
->>>>> I think it's a good idea to integrate this into "stats" but I think a
->>>>> local debugfs file for some counters is still useful. The "stats"
->>>>> module is immature at this time and I'd rather not build any qa tests
->>>>> (yet) that rely on it.
->>>>>
->>>>> Can we generalize this patch-set to a file named "op_counters" or
->>>>> similar and additionally add other OSD ops performed by the kclient?
->>>>>
->>>>
->>>> Tracking this sort of thing is the main purpose of the stats code. I'm
->>>> really not keen on adding a whole separate set of files for reporting
->>>> this.
->>> Maybe I'm confused. Is there some "file" which is already used for
->>> this type of debugging information? Or do you mean the code for
->>> sending stats to the MDS to support cephfs-top?
->>>
->>>> What's the specific problem with relying on the data in debugfs
->>>> "metrics" file?
->>> Maybe no problem? I wasn't aware of a "metrics" file.
->>>
->> Yes. For instance:
+On 10/26/21 3:05 AM, Jeff Layton wrote:
+> On Wed, 2021-10-20 at 21:28 +0800, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
 >>
->> # cat /sys/kernel/debug/ceph/*/metrics
->> item                               total
->> ------------------------------------------
->> opened files  / total inodes       0 / 4
->> pinned i_caps / total inodes       5 / 4
->> opened inodes / total inodes       0 / 4
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/ceph/file.c | 14 ++++++++------
+>>   1 file changed, 8 insertions(+), 6 deletions(-)
 >>
->> item          total       avg_lat(us)     min_lat(us)     max_lat(us)     stdev(us)
->> -----------------------------------------------------------------------------------
->> read          0           0               0               0               0
->> write         5           914013          824797          1092343         103476
->> metadata      79          12856           1572            114572          13262
->>
->> item          total       avg_sz(bytes)   min_sz(bytes)   max_sz(bytes)  total_sz(bytes)
->> ----------------------------------------------------------------------------------------
->> read          0           0               0               0               0
->> write         5           4194304         4194304         4194304         20971520
->>
->> item          total           miss            hit
->> -------------------------------------------------
->> d_lease       11              0               29
->> caps          5               68              10702
->>
->>
->> I'm proposing that Luis add new lines for "copy" to go along with the
->> "read" and "write" ones. The "total" counter should give you a count of
->> the number of operations.
-> Okay that makes more sense!
->
-> Side note: I am a bit horrified by how computer-unfriendly that
-> table-formatted data is.
+>> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>> index 74db403a4c35..1988e75ad4a2 100644
+>> --- a/fs/ceph/file.c
+>> +++ b/fs/ceph/file.c
+>> @@ -910,6 +910,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+>>   	ssize_t ret;
+>>   	u64 off = *ki_pos;
+>>   	u64 len = iov_iter_count(to);
+>> +	u64 i_size = i_size_read(inode);
+>>   
+>>   	dout("sync_read on inode %p %llu~%u\n", inode, *ki_pos, (unsigned)len);
+>>   
+>> @@ -933,7 +934,6 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+>>   		struct page **pages;
+>>   		int num_pages;
+>>   		size_t page_off;
+>> -		u64 i_size;
+>>   		bool more;
+>>   		int idx;
+>>   		size_t left;
+>> @@ -980,7 +980,6 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+>>   
+>>   		ceph_osdc_put_request(req);
+>>   
+>> -		i_size = i_size_read(inode);
+>>   		dout("sync_read %llu~%llu got %zd i_size %llu%s\n",
+>>   		     off, len, ret, i_size, (more ? " MORE" : ""));
+>>   
+>> @@ -1056,11 +1055,14 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+>>   	}
+>>   
+>>   	if (off > *ki_pos) {
+>> -		if (ret >= 0 &&
+>> -		    iov_iter_count(to) > 0 && off >= i_size_read(inode))
+>> +		if (off >= i_size) {
+>>   			*retry_op = CHECK_EOF;
+>> -		ret = off - *ki_pos;
+>> -		*ki_pos = off;
+>> +			ret = i_size - *ki_pos;
+>> +			*ki_pos = i_size;
+>> +		} else {
+>> +			ret = off - *ki_pos;
+>> +			*ki_pos = off;
+>> +		}
+>>   	}
+>>   out:
+>>   	dout("sync_read result %zd retry_op %d\n", ret, *retry_op);
+> I'm guessing this is fixing a bug? Did you hit this in testing or did
+> you just notice by inspection? Should we merge this in advance of the
+> rest of the set?
 
-Any suggestion to improve this ?
+This is one bug, when testing the fscrypt feature and I can reproduce it 
+every time, in theory this bug should be seen in none fscrypt case.
 
-How about just make the "metric" file writable like a switch ? And as 
-default it will show the data as above and if tools want the 
-computer-friendly format, just write none-zero to it, then show raw data 
-just like:
+I just send the V2 here in this series to show in which use case I hit 
+this bug.
 
-# cat /sys/kernel/debug/ceph/*/metrics
-opened_files:0
-pinned_i_caps:5
-opened_inodes:0
-total_inodes:4
-
-read_latency:0,0,0,0,0
-write_latency:5,914013,824797,1092343,103476
-metadata_latency:79,12856,1572,114572,13262
-
-read_size:0,0,0,0,0
-write_size:5,4194304,4194304,4194304,20971520
-
-d_lease:11,0,29
-caps:5,68,10702
+If it looks good I will post the V3 based the upstream code and add more 
+comments on it.
 
 
