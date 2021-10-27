@@ -2,260 +2,150 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A69D643C919
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 Oct 2021 14:00:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7A8743C96A
+	for <lists+ceph-devel@lfdr.de>; Wed, 27 Oct 2021 14:17:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237454AbhJ0MDB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 27 Oct 2021 08:03:01 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:32465 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233751AbhJ0MDA (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 27 Oct 2021 08:03:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635336033;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3O47PaZqThUT0SxV62zMQ4NcbQLtYN5EqCax7qGe9+c=;
-        b=NAugH6pkZv14JesZPMmKs6Yl0rDbERO4qoIYreSJ+pGvMglEf1DuM74bplXE2r5r7Eguvs
-        2HYIBwkZ3yTGkaCF5v7Z30u6suXDt0I2umW4dmCvVW9xlrQyMG8IWM1ljBn7zM5plmHn6k
-        rF74Mlw5BnpU87BXxcsMjFvhMII4V80=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-270-CbouWtMdP_20RDFX3fCsbw-1; Wed, 27 Oct 2021 08:00:31 -0400
-X-MC-Unique: CbouWtMdP_20RDFX3fCsbw-1
-Received: by mail-pg1-f199.google.com with SMTP id r25-20020a63a019000000b002a20656994dso1501236pge.3
-        for <ceph-devel@vger.kernel.org>; Wed, 27 Oct 2021 05:00:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=3O47PaZqThUT0SxV62zMQ4NcbQLtYN5EqCax7qGe9+c=;
-        b=39yppkh0IUR7vV3rA89McQHjEjBzj4f27T1V7YybjyInLL7IWbFPxMf45Rmhm3eeqq
-         raCz7aYsjl9hh5pi0F0hyJ6uiAJCV/FVhFu1hALAicFYoMJRuO+4G4TqCMohz13LAI16
-         xSmQLM72l+JlzrHu/+HdBUOksFGkVoRO7e8mXs9j0BSoFTmLobtfQZc6BST1t2ZpJw4O
-         QncozrQnBZ1HG2BffMNidfwZ+WTpf57U3GdsR76R59VYE1pZ/fs5UXvZ9GPw0vry61+y
-         +Bi5QOu9m33+2ygziofb9niO5OscqASZ8GE3z1RXfgysHgqK68epQipvwbOhtOW3q4Ik
-         c4Sw==
-X-Gm-Message-State: AOAM530Cq9stWtmmtrjPSOlBIK2sHwZ6TeQ3Q07XZyalDNa33GSQ8wvR
-        hV7N1JvyprNGVhbBuz/QDjHg3tNLjFFEpw8IV/YISxM8tsFSo7F6uTp/nmPOSSIJ+wc4Gc0K+H5
-        HYR631G0iURy4pWS7ZUBewg==
-X-Received: by 2002:a63:8f02:: with SMTP id n2mr23578670pgd.270.1635336030349;
-        Wed, 27 Oct 2021 05:00:30 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxOtqMaeoBbvchWH6gJbv+gfPIZXo5Dk9mPEUP/xy4R4exsjh5v/D8SGwkOGteViuhGnk4LpQ==
-X-Received: by 2002:a63:8f02:: with SMTP id n2mr23578638pgd.270.1635336030026;
-        Wed, 27 Oct 2021 05:00:30 -0700 (PDT)
-Received: from [10.72.12.93] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id h1sm28283462pfi.168.2021.10.27.05.00.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Oct 2021 05:00:29 -0700 (PDT)
-Subject: Re: [PATCH] ceph: split 'metric' debugfs file into several files
-To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Patrick Donnelly <pdonnell@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1ac925e3-5596-dcf4-317e-1408c764350f@redhat.com>
- <20211027100130.15227-1-lhenriques@suse.de>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <19b30242-15ed-876c-02cb-7d0e2d18ad8d@redhat.com>
-Date:   Wed, 27 Oct 2021 20:00:24 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        id S239999AbhJ0MUX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 27 Oct 2021 08:20:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39654 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230420AbhJ0MUX (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 27 Oct 2021 08:20:23 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2ABD860F5A;
+        Wed, 27 Oct 2021 12:17:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1635337077;
+        bh=RbjTkFLDAIrdc5JuiJcBvAG4QHFa3XhBGDD+dzY/X/M=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=UYIBGQYyRHmVmm8spSTUp5YHbTCR76vnDtFt1ps/DGNZxdohkq+2hjFX+80ie/rVu
+         dR34BEgu7jgdbhXexYTJhNikXFmaM2wEm8I+4vNDaB56nu+b/GqD60UnQU6ecnALX7
+         DA4W9XGs8tkyViRO/s3XKEb9uwGzD2F/e/cqHeVU3R2RYFPc1tDOwhegamcmj8OhYt
+         RntXVa+lLgvELSw/LT3gx9weuI0AwPzncZuoqCGEoNp7N1Hd0GaBrkNle0f1NOcbUH
+         YLSvP0wOsqavlrJnNWYC/bhlpyrl5ZDB3J4CfXKHFxsdhvFfDxqxgnSr+cZB/V3SEO
+         pSvLakVR2TAKA==
+Message-ID: <cb4ddb7a862dbb0b5f44c4c4a131adfc8c3f008c.camel@kernel.org>
+Subject: Re: [PATCH v2 4/4] ceph: add truncate size handling support for
+ fscrypt
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     idryomov@gmail.com, vshankar@redhat.com, khiremat@redhat.com,
+        pdonnell@redhat.com, ceph-devel@vger.kernel.org,
+        Luis Henriques <lhenriques@suse.com>
+Date:   Wed, 27 Oct 2021 08:17:55 -0400
+In-Reply-To: <3a9971c2-916a-1d90-1f77-4bb5bd3befb2@redhat.com>
+References: <20211020132813.543695-1-xiubli@redhat.com>
+         <20211020132813.543695-5-xiubli@redhat.com>
+         <d3ffc19d0b3f20a56d49428a486acfd9d6b22001.camel@kernel.org>
+         <3a9971c2-916a-1d90-1f77-4bb5bd3befb2@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
 MIME-Version: 1.0
-In-Reply-To: <20211027100130.15227-1-lhenriques@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Wed, 2021-10-27 at 13:12 +0800, Xiubo Li wrote:
+> On 10/26/21 4:01 AM, Jeff Layton wrote:
+> > On Wed, 2021-10-20 at 21:28 +0800, xiubli@redhat.com wrote:
+> > > From: Xiubo Li <xiubli@redhat.com>
+> > > 
+> > > This will transfer the encrypted last block contents to the MDS
+> > > along with the truncate request only when new size is smaller and
+> > > not aligned to the fscrypt BLOCK size.
+> > > 
+> > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > > ---
+> > >   fs/ceph/caps.c  |   9 +--
+> > >   fs/ceph/inode.c | 210 ++++++++++++++++++++++++++++++++++++++++++------
+> > >   2 files changed, 190 insertions(+), 29 deletions(-)
+> > > 
+> > > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> > > index 4e2a588465c5..1a36f0870d89 100644
+> > > --- a/fs/ceph/caps.c
+> > > +++ b/fs/ceph/caps.c
+> ...
+> > > +fill_last_block:
+> > > +	pagelist = ceph_pagelist_alloc(GFP_KERNEL);
+> > > +	if (!pagelist)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	/* Insert the header first */
+> > > +	header.ver = 1;
+> > > +	header.compat = 1;
+> > > +	/* sizeof(file_offset) + sizeof(block_size) + blen */
+> > > +	header.data_len = cpu_to_le32(8 + 8 + CEPH_FSCRYPT_BLOCK_SIZE);
+> > > +	header.file_offset = cpu_to_le64(orig_pos);
+> > > +	if (fill_header_only) {
+> > > +		header.file_offset = cpu_to_le64(0);
+> > > +		header.block_size = cpu_to_le64(0);
+> > > +	} else {
+> > > +		header.file_offset = cpu_to_le64(orig_pos);
+> > > +		header.block_size = cpu_to_le64(CEPH_FSCRYPT_BLOCK_SIZE);
+> > > +	}
+> > > +	ret = ceph_pagelist_append(pagelist, &header, sizeof(header));
+> > > +	if (ret)
+> > > +		goto out;
+> > > 
+> > > 
+> > Note that you're doing a read/modify/write cycle, and you must ensure
+> > that the object remains consistent between the read and write or you may
+> > end up with data corruption. This means that you probably need to
+> > transmit an object version as part of the write. See this patch in the
+> > stack:
+> > 
+> >      libceph: add CEPH_OSD_OP_ASSERT_VER support
+> > 
+> > That op tells the OSD to stop processing the request if the version is
+> > wrong.
+> > 
+> > You'll want to grab the "ver" from the __ceph_sync_read call, and then
+> > send that along with the updated last block. Then, when the MDS is
+> > truncating, it can use a CEPH_OSD_OP_ASSERT_VER op with that version to
+> > ensure that the object hasn't changed when doing it. If the assertion
+> > trips, then the MDS should send back EAGAIN or something similar to the
+> > client to tell it to retry.
+> > 
+> > It's also possible (though I've never used it) to make an OSD request
+> > assert that the contents of an extent haven't changed, so you could
+> > instead send along the old contents along with the new ones, etc.
+> > 
+> > That may end up being more efficient if the object is getting hammered
+> > with I/O in other fscrypt blocks within the same object. It may be worth
+> > exploring that avenue as well.
+> 
+> Hi Jeff,
+> 
+> One questions about this:
+> 
+> Should we consider that the FSCRYPT BLOCK will cross two different Rados 
+> objects ? As default the Rados object size is 4MB.
+> 
+> In case the FSCRYPT BLOCK size is 4K, when the object size is 3K or 5K ?
+> 
+> Or the object size should always be multiple of FSCRYPT BLOCK size ?
+> 
 
-On 10/27/21 6:01 PM, Luís Henriques wrote:
-> Currently, all the metrics are grouped together in a single file, making
-> it difficult to process this file from scripts.  Furthermore, as new
-> metrics are added, processing this file will become even more challenging.
->
-> This patch turns the 'metric' file into a directory that will contain
-> several files, one for each metric.
->
-> Signed-off-by: Luís Henriques <lhenriques@suse.de>
-> ---
-> Here's a patch that does just what I proposed.  It simply turns the metric
-> file into a directory.  Not sure this is the best option, but here it is
-> for discussion.
->
-> Cheers,
-> --
-> Luís
->
->   fs/ceph/debugfs.c | 81 ++++++++++++++++++++++++++++++++---------------
->   fs/ceph/super.h   |  2 +-
->   2 files changed, 57 insertions(+), 26 deletions(-)
->
-> diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-> index 38b78b45811f..55426514491b 100644
-> --- a/fs/ceph/debugfs.c
-> +++ b/fs/ceph/debugfs.c
-> @@ -146,26 +146,30 @@ static int mdsc_show(struct seq_file *s, void *p)
->   		   name, total, avg, _min, max, sum);			\
->   }
->   
-> -static int metric_show(struct seq_file *s, void *p)
-> +static int metrics_file_show(struct seq_file *s, void *p)
->   {
->   	struct ceph_fs_client *fsc = s->private;
-> -	struct ceph_mds_client *mdsc = fsc->mdsc;
-> -	struct ceph_client_metric *m = &mdsc->metric;
-> -	int nr_caps = 0;
-> -	s64 total, sum, avg, min, max, sq;
-> -	u64 sum_sz, avg_sz, min_sz, max_sz;
-> +	struct ceph_client_metric *m = &fsc->mdsc->metric;
->   
-> -	sum = percpu_counter_sum(&m->total_inodes);
->   	seq_printf(s, "item                               total\n");
->   	seq_printf(s, "------------------------------------------\n");
-> -	seq_printf(s, "%-35s%lld / %lld\n", "opened files  / total inodes",
-> -		   atomic64_read(&m->opened_files), sum);
-> -	seq_printf(s, "%-35s%lld / %lld\n", "pinned i_caps / total inodes",
-> -		   atomic64_read(&m->total_caps), sum);
-> -	seq_printf(s, "%-35s%lld / %lld\n", "opened inodes / total inodes",
-> -		   percpu_counter_sum(&m->opened_inodes), sum);
-> -
-> -	seq_printf(s, "\n");
-> +	seq_printf(s, "%-35s%lld\n", "total inodes",
-> +		   percpu_counter_sum(&m->total_inodes));
-> +	seq_printf(s, "%-35s%lld\n", "opened files",
-> +		   atomic64_read(&m->opened_files));
-> +	seq_printf(s, "%-35s%lld\n", "pinned i_caps",
-> +		   atomic64_read(&m->total_caps));
-> +	seq_printf(s, "%-35s%lld\n", "opened inodes",
-> +		   percpu_counter_sum(&m->opened_inodes));
-> +	return 0;
-> +}
-> +
-> +static int metrics_latency_show(struct seq_file *s, void *p)
-> +{
-> +	struct ceph_fs_client *fsc = s->private;
-> +	struct ceph_client_metric *m = &fsc->mdsc->metric;
-> +	s64 total, sum, avg, min, max, sq;
-> +
->   	seq_printf(s, "item          total       avg_lat(us)     min_lat(us)     max_lat(us)     stdev(us)\n");
->   	seq_printf(s, "-----------------------------------------------------------------------------------\n");
->   
-> @@ -199,7 +203,16 @@ static int metric_show(struct seq_file *s, void *p)
->   	spin_unlock(&m->metadata_metric_lock);
->   	CEPH_LAT_METRIC_SHOW("metadata", total, avg, min, max, sq);
->   
-> -	seq_printf(s, "\n");
-> +	return 0;
-> +}
-> +
-> +static int metrics_size_show(struct seq_file *s, void *p)
-> +{
-> +	struct ceph_fs_client *fsc = s->private;
-> +	struct ceph_client_metric *m = &fsc->mdsc->metric;
-> +	s64 total;
-> +	u64 sum_sz, avg_sz, min_sz, max_sz;
-> +
->   	seq_printf(s, "item          total       avg_sz(bytes)   min_sz(bytes)   max_sz(bytes)  total_sz(bytes)\n");
->   	seq_printf(s, "----------------------------------------------------------------------------------------\n");
->   
-> @@ -221,7 +234,15 @@ static int metric_show(struct seq_file *s, void *p)
->   	spin_unlock(&m->write_metric_lock);
->   	CEPH_SZ_METRIC_SHOW("write", total, avg_sz, min_sz, max_sz, sum_sz);
->   
-> -	seq_printf(s, "\n");
-> +	return 0;
-> +}
-> +
-> +static int metrics_caps_show(struct seq_file *s, void *p)
-> +{
-> +	struct ceph_fs_client *fsc = s->private;
-> +	struct ceph_client_metric *m = &fsc->mdsc->metric;
-> +	int nr_caps = 0;
-> +
->   	seq_printf(s, "item          total           miss            hit\n");
->   	seq_printf(s, "-------------------------------------------------\n");
->   
-> @@ -350,8 +371,11 @@ DEFINE_SHOW_ATTRIBUTE(mdsmap);
->   DEFINE_SHOW_ATTRIBUTE(mdsc);
->   DEFINE_SHOW_ATTRIBUTE(caps);
->   DEFINE_SHOW_ATTRIBUTE(mds_sessions);
-> -DEFINE_SHOW_ATTRIBUTE(metric);
->   DEFINE_SHOW_ATTRIBUTE(status);
-> +DEFINE_SHOW_ATTRIBUTE(metrics_file);
-> +DEFINE_SHOW_ATTRIBUTE(metrics_latency);
-> +DEFINE_SHOW_ATTRIBUTE(metrics_size);
-> +DEFINE_SHOW_ATTRIBUTE(metrics_caps);
->   
->   
->   /*
-> @@ -385,8 +409,9 @@ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
->   	debugfs_remove(fsc->debugfs_mdsmap);
->   	debugfs_remove(fsc->debugfs_mds_sessions);
->   	debugfs_remove(fsc->debugfs_caps);
-> -	debugfs_remove(fsc->debugfs_metric);
-> +	debugfs_remove(fsc->debugfs_status);
->   	debugfs_remove(fsc->debugfs_mdsc);
-> +	debugfs_remove_recursive(fsc->debugfs_metrics_dir);
->   }
->   
->   void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
-> @@ -426,12 +451,6 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
->   						fsc,
->   						&mdsc_fops);
->   
-> -	fsc->debugfs_metric = debugfs_create_file("metrics",
-> -						  0400,
-> -						  fsc->client->debugfs_dir,
-> -						  fsc,
-> -						  &metric_fops);
-> -
->   	fsc->debugfs_caps = debugfs_create_file("caps",
->   						0400,
->   						fsc->client->debugfs_dir,
-> @@ -443,6 +462,18 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
->   						  fsc->client->debugfs_dir,
->   						  fsc,
->   						  &status_fops);
-> +
-> +	fsc->debugfs_metrics_dir = debugfs_create_dir("metrics",
-> +						      fsc->client->debugfs_dir);
-> +
-> +	debugfs_create_file("file", 0400, fsc->debugfs_metrics_dir, fsc,
-> +			    &metrics_file_fops);
-> +	debugfs_create_file("latency", 0400, fsc->debugfs_metrics_dir, fsc,
-> +			    &metrics_latency_fops);
-> +	debugfs_create_file("size", 0400, fsc->debugfs_metrics_dir, fsc,
-> +			    &metrics_size_fops);
-> +	debugfs_create_file("caps", 0400, fsc->debugfs_metrics_dir, fsc,
-> +			    &metrics_caps_fops);
->   }
->   
->   
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 14f951cd5b61..795b077143d6 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -128,9 +128,9 @@ struct ceph_fs_client {
->   	struct dentry *debugfs_congestion_kb;
->   	struct dentry *debugfs_bdi;
->   	struct dentry *debugfs_mdsc, *debugfs_mdsmap;
-> -	struct dentry *debugfs_metric;
->   	struct dentry *debugfs_status;
->   	struct dentry *debugfs_mds_sessions;
-> +	struct dentry *debugfs_metrics_dir;
->   #endif
->   
->   #ifdef CONFIG_CEPH_FSCACHE
->
-LGTM.
+The danger here is that it's very hard to ensure atomicity in RADOS
+across two different objects. If your crypto blocks can span objects,
+then you can end up with torn writes, and a torn write on a crypto block
+turns it into garbage.
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+So, I think we want to forbid:
 
+1/ custom file layouts on encrypted files, to ensure that we don't end
+up with weird object sizes. Luis' patch from August does this, but I
+think we might want the MDS to also vet this.
+
+2/ block sizes larger than the object size
+
+3/ non-power-of-two crypto block sizes (so no 3k or 5k blocks, but you
+could do 1k, 2k, 4k, 8k, etc...)
+
+...with that we should be able to ensure that they never span objects.
+Eventually we may be able to relax some of these constraints, but I
+don't think most users will have a problem with these constraints.
+
+-- 
+Jeff Layton <jlayton@kernel.org>
 
