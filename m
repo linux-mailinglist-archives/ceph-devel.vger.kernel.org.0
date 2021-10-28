@@ -2,106 +2,167 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 213A743DDA4
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Oct 2021 11:21:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DA4843DDAC
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Oct 2021 11:24:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229877AbhJ1JYP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 28 Oct 2021 05:24:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:29255 "EHLO
+        id S229835AbhJ1J0e (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 28 Oct 2021 05:26:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51264 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229835AbhJ1JYO (ORCPT
+        by vger.kernel.org with ESMTP id S229626AbhJ1J0d (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 28 Oct 2021 05:24:14 -0400
+        Thu, 28 Oct 2021 05:26:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635412907;
+        s=mimecast20190719; t=1635413046;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=sa5A8Rg612mKs9FiBwuYX1h1euL/1tiidCsVTOeDTc4=;
-        b=g0NQ4+8EEhrYuRcvI+DegCZkgTfnKO3QUL/y3+glzt4bhwRoSM4IhmtWx/8s/AJ4WhWZNk
-        xb2Vdl/NCx+DLO5n1gNfObfRtkzhuTvvhLvi9ryjXi6G8StZ5X9BmPbCR4sXEYpoBLnyqk
-        nojaDQtq23whNZKCYD/sp6iV5TOJTZQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-216-eFvOmIUyPX6JvajMSf7ALQ-1; Thu, 28 Oct 2021 05:21:44 -0400
-X-MC-Unique: eFvOmIUyPX6JvajMSf7ALQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8F305802B7A;
-        Thu, 28 Oct 2021 09:21:43 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3F3B660CC4;
-        Thu, 28 Oct 2021 09:21:36 +0000 (UTC)
-From:   xiubli@redhat.com
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6wxxLnlktQ5gLLh5qEf/D4R3X3Ds5X1OxCWmUWS8e50=;
+        b=PTs5gz94wUGYkhl+8fbBSOQLUkfPfrR27/kl1E3m/jQf8lJQGejBGufiMr1YMTJ9XRJqNc
+        AaDaGUXg8CaO+ikEL53I594zAjSgtLK3VabhrVo51WskueYK9zG05enmoGfgTnLv6D7CtY
+        d9VD0CIQIZsUMiZn7TmQ3KAhzoOiI4M=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-269-j81Wv4afNASE_vJMB2ttQA-1; Thu, 28 Oct 2021 05:24:05 -0400
+X-MC-Unique: j81Wv4afNASE_vJMB2ttQA-1
+Received: by mail-pl1-f199.google.com with SMTP id 12-20020a170902c10c00b0014167ea00cbso2483751pli.9
+        for <ceph-devel@vger.kernel.org>; Thu, 28 Oct 2021 02:24:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=6wxxLnlktQ5gLLh5qEf/D4R3X3Ds5X1OxCWmUWS8e50=;
+        b=eIhm75FzAwaRGCw34VBMLTnaz7HiY81UDRgB/oxuFBDriwsUrdQZxhEuIKnofeRNM7
+         rD4yMJJaHpSk+I/Vh0+sSRKu23rfgIzeXMj25A6+8kMsQjBR6wARiAKRfLyfJeVnM4gC
+         LAYVgYrkgBtVZwDdiOmHFzLiRlK7qTNsDcTWrtTGt0gj7Ub7CmBCer7TK1kkF34NRryA
+         +DtnFjaSHd7BYYa4AkV3Q0GROsv7P/3eHWjvoWMg2ZyaBYn1qNEpfcyZvVZqIsE8c3np
+         Dy0v/pVVFtveaoFam+5uCoErlz679Of7sH9BaJDVl+yiwx6jIQzi+Dp8JuUf0ei2NO+l
+         FMqw==
+X-Gm-Message-State: AOAM5317fqu+nu2/6nTg3C/rYFZyLdnhcCkbsudBzJSZUW84WIlhA2nZ
+        OK6UjkiPyAaD4iO6cX9IX+nUr9X+IoRF0on+D8W13oXJrE0W574vA6eJidGeu/mO5ehDi50HbzN
+        PAz/ZhPPVjsS7l1zTQ7g8IsZ0s3RD6izRdzUNxWGHdjFjQu1Ek6gxI9R4QZvRiH0LXWAK0nc=
+X-Received: by 2002:a63:3845:: with SMTP id h5mr2298948pgn.362.1635413044239;
+        Thu, 28 Oct 2021 02:24:04 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxsnx2q4VZbuIuLC4KgGLHWKxJGQZjecwN8VsmWeN59faTH6S8P3sh3XVgnWL7OQtLYiAWHQA==
+X-Received: by 2002:a63:3845:: with SMTP id h5mr2298923pgn.362.1635413043886;
+        Thu, 28 Oct 2021 02:24:03 -0700 (PDT)
+Received: from [10.72.12.20] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id kk3sm2481721pjb.57.2021.10.28.02.24.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Oct 2021 02:24:03 -0700 (PDT)
+Subject: Re: [PATCH v3 1/4] ceph: add __ceph_get_caps helper support
 To:     jlayton@kernel.org
 Cc:     idryomov@gmail.com, vshankar@redhat.com, pdonnell@redhat.com,
-        khiremat@redhat.com, ceph-devel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v3 0/4] ceph: size handling for the fscrypt
-Date:   Thu, 28 Oct 2021 17:21:35 +0800
-Message-Id: <20211028092135.21668-1-xiubli@redhat.com>
+        khiremat@redhat.com, ceph-devel@vger.kernel.org
+References: <20211028091438.21402-1-xiubli@redhat.com>
+ <20211028091438.21402-2-xiubli@redhat.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <c9255017-333d-68dd-880a-96952e08ca08@redhat.com>
+Date:   Thu, 28 Oct 2021 17:23:57 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <20211028091438.21402-2-xiubli@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+Hi Jeff,
 
-This patch series is based on the fscrypt_size_handling branch in
-https://github.com/lxbsz/linux.git, which is based Jeff's
-ceph-fscrypt-content-experimental branch in
-https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git,
-has reverted one useless commit and added some upstream commits.
+Not sure why the cover-letter is not displayed in both the mail list and 
+ceph patchwork, locally it was successfully sent out.
 
-I will keep this patch set as simple as possible to review since
-this is still one framework code. It works and still in developing
-and need some feedbacks and suggestions for two corner cases below.
+Any idea ?
 
-====
+Thanks
 
-This approach is based on the discussion from V1 and V2, which will
-pass the encrypted last block contents to MDS along with the truncate
-request.
+-- Xiubo
 
-This will send the encrypted last block contents to MDS along with
-the truncate request when truncating to a smaller size and at the
-same time new size does not align to BLOCK SIZE.
 
-The MDS side patch is raised in PR
-https://github.com/ceph/ceph/pull/43588, which is also based Jeff's
-previous great work in PR https://github.com/ceph/ceph/pull/41284.
-
-The MDS will use the filer.write_trunc(), which could update and
-truncate the file in one shot, instead of filer.truncate().
-
-This just assume kclient won't support the inline data feature, which
-will be remove soon, more detail please see:
-https://tracker.ceph.com/issues/52916
-
-Changed in V3:
-- Fix possibly corrupting the file just before the MDS acquires the
-  xlock for FILE lock, another client has updated it.
-- Flush the pagecache buffer before reading the last block for the
-  when filling the truncate request.
-- Some other minore fixes.
-
-Xiubo Li (4):
-  ceph: add __ceph_get_caps helper support
-  ceph: add __ceph_sync_read helper support
-  ceph: return the real size readed when hit EOF
-  ceph: add truncate size handling support for fscrypt
-
- fs/ceph/caps.c              |  21 +++--
- fs/ceph/file.c              |  47 +++++++---
- fs/ceph/inode.c             | 182 ++++++++++++++++++++++++++++++++++--
- fs/ceph/super.h             |   5 +
- include/linux/ceph/crypto.h |  23 +++++
- 5 files changed, 247 insertions(+), 31 deletions(-)
- create mode 100644 include/linux/ceph/crypto.h
-
--- 
-2.27.0
+On 10/28/21 5:14 PM, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>   fs/ceph/caps.c  | 19 +++++++++++++------
+>   fs/ceph/super.h |  2 ++
+>   2 files changed, 15 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index d628dcdbf869..4e2a588465c5 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -2876,10 +2876,9 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
+>    * due to a small max_size, make sure we check_max_size (and possibly
+>    * ask the mds) so we don't get hung up indefinitely.
+>    */
+> -int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got)
+> +int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi, int need,
+> +		    int want, loff_t endoff, int *got)
+>   {
+> -	struct ceph_file_info *fi = filp->private_data;
+> -	struct inode *inode = file_inode(filp);
+>   	struct ceph_inode_info *ci = ceph_inode(inode);
+>   	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+>   	int ret, _got, flags;
+> @@ -2888,7 +2887,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+>   	if (ret < 0)
+>   		return ret;
+>   
+> -	if ((fi->fmode & CEPH_FILE_MODE_WR) &&
+> +	if (fi && (fi->fmode & CEPH_FILE_MODE_WR) &&
+>   	    fi->filp_gen != READ_ONCE(fsc->filp_gen))
+>   		return -EBADF;
+>   
+> @@ -2896,7 +2895,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+>   
+>   	while (true) {
+>   		flags &= CEPH_FILE_MODE_MASK;
+> -		if (atomic_read(&fi->num_locks))
+> +		if (fi && atomic_read(&fi->num_locks))
+>   			flags |= CHECK_FILELOCK;
+>   		_got = 0;
+>   		ret = try_get_cap_refs(inode, need, want, endoff,
+> @@ -2941,7 +2940,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+>   				continue;
+>   		}
+>   
+> -		if ((fi->fmode & CEPH_FILE_MODE_WR) &&
+> +		if (fi && (fi->fmode & CEPH_FILE_MODE_WR) &&
+>   		    fi->filp_gen != READ_ONCE(fsc->filp_gen)) {
+>   			if (ret >= 0 && _got)
+>   				ceph_put_cap_refs(ci, _got);
+> @@ -3004,6 +3003,14 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+>   	return 0;
+>   }
+>   
+> +int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got)
+> +{
+> +	struct ceph_file_info *fi = filp->private_data;
+> +	struct inode *inode = file_inode(filp);
+> +
+> +	return __ceph_get_caps(inode, fi, need, want, endoff, got);
+> +}
+> +
+>   /*
+>    * Take cap refs.  Caller must already know we hold at least one ref
+>    * on the caps in question or we don't know this is safe.
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 7f3976b3319d..027d5f579ba0 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -1208,6 +1208,8 @@ extern int ceph_encode_dentry_release(void **p, struct dentry *dn,
+>   				      struct inode *dir,
+>   				      int mds, int drop, int unless);
+>   
+> +extern int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi,
+> +			   int need, int want, loff_t endoff, int *got);
+>   extern int ceph_get_caps(struct file *filp, int need, int want,
+>   			 loff_t endoff, int *got);
+>   extern int ceph_try_get_caps(struct inode *inode,
 
