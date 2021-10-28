@@ -2,150 +2,286 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 425D243DF27
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Oct 2021 12:44:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 300F943E03A
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Oct 2021 13:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229850AbhJ1KrP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 28 Oct 2021 06:47:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45746 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229775AbhJ1KrO (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 28 Oct 2021 06:47:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8443560EBD;
-        Thu, 28 Oct 2021 10:44:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635417888;
-        bh=zUbqylPyFA/VkO9M4iz3Ht9E3mdUIm/eIZC9g0OIhmI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Ga4yYe2vvfXKF11cvqZ744C3fTGgFSFLqlAs8M810j64+yo5yL/U+gGBEWrK5Xzzh
-         5d9sifAM9+zlD6U14EE0oFYYmxO8/Pxb86E+1RYcxc11ckotUwGZFthmsXyjOkNrA2
-         OkY1EVSIs3bbfXWpJFjcfCpE3IuSUvvdoOMUi1b/DPyLdKeUDS5qWhrr/6a20rKTS7
-         pzucgNMAcfvaia49PzQWYBdvJIxov/IZmMXS1701CfT2+k1Gzl4sX3xmB72PG8bD6Z
-         F2/R81Q3Nk9i+4CFCJYWN4+nvOtchiyTSx/LXHa9DnG++z0LlNUDgmXau7ftIR9qPz
-         mV83wa5hgXkoQ==
-Message-ID: <03058ef4a3a783b1a879c5e4059aac72d475f9c4.camel@kernel.org>
-Subject: Re: [PATCH v3 1/4] ceph: add __ceph_get_caps helper support
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     idryomov@gmail.com, vshankar@redhat.com, pdonnell@redhat.com,
-        khiremat@redhat.com, ceph-devel@vger.kernel.org
-Date:   Thu, 28 Oct 2021 06:44:46 -0400
-In-Reply-To: <c9255017-333d-68dd-880a-96952e08ca08@redhat.com>
-References: <20211028091438.21402-1-xiubli@redhat.com>
-         <20211028091438.21402-2-xiubli@redhat.com>
-         <c9255017-333d-68dd-880a-96952e08ca08@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
+        id S230162AbhJ1Lu6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 28 Oct 2021 07:50:58 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:57046 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229578AbhJ1Lu6 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 28 Oct 2021 07:50:58 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 4614C2196E;
+        Thu, 28 Oct 2021 11:48:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1635421710; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=wx62y0sSCwgO8J1OME/h2XU+M/3QqZZOJexyStk3S9I=;
+        b=1++FsmijpKkQhORBeQVWGcAxqepeSHsmUHcN3S1satLqwr/yT0yKkjdFAouonDppxCloLJ
+        EWL7tGAIFq9PtRUpqiv0kObw6GQrewoBqaIhHMK86G8xzMvvycNtJtKd/PLu1fnKQ6xL6n
+        2Ly2BuuxYlx0ZpQnCwBcc+VVLR2Zrvk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1635421710;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=wx62y0sSCwgO8J1OME/h2XU+M/3QqZZOJexyStk3S9I=;
+        b=YV/gT2dpwY+yrvwDYZtxVkpPQOJ5yX8Sk/PXhYkhhLWtHr0n2TLbWUfIzd0cAa4udtiWaO
+        pUzbLtF/MLrIZyDQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C437313B88;
+        Thu, 28 Oct 2021 11:48:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id hG3tLA2OemHUTwAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Thu, 28 Oct 2021 11:48:29 +0000
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 44eb804b;
+        Thu, 28 Oct 2021 11:48:29 +0000 (UTC)
+From:   =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>,
+        Patrick Donnelly <pdonnell@redhat.com>
+Subject: [RFC PATCH v3] ceph: ceph: add remote object copies to fs client metrics
+Date:   Thu, 28 Oct 2021 12:48:26 +0100
+Message-Id: <20211028114826.27192-1-lhenriques@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-I see your cover letter for this series on the list. You may just be
-running across how gmail's (infuriating) labeling works? I don't think
-they ever show up in patchwork though (since they don't have patches in
-them).
+This patch adds latency and size metrics for remote object copies
+operations ("copyfrom").  For now, these metrics will be available on the
+client only, they won't be sent to the MDS.
 
--- Jeff
+Cc: Patrick Donnelly <pdonnell@redhat.com>
+Signed-off-by: Luís Henriques <lhenriques@suse.de>
+---
+This patch is still an RFC because it is... ugly.  Although it now
+provides nice values (latency and size) using the metrics infrastructure,
+it actually needs to extend the ceph_osdc_copy_from() function to add 2
+extra args!  That's because we need to get the timestamps stored in
+ceph_osd_request, which is handled within that function.
 
+The alternative is to ignore those timestamps and collect new ones in
+ceph_do_objects_copy():
 
-On Thu, 2021-10-28 at 17:23 +0800, Xiubo Li wrote:
-> Hi Jeff,
-> 
-> Not sure why the cover-letter is not displayed in both the mail list and 
-> ceph patchwork, locally it was successfully sent out.
-> 
-> Any idea ?
-> 
-> Thanks
-> 
-> -- Xiubo
-> 
-> 
-> On 10/28/21 5:14 PM, xiubli@redhat.com wrote:
-> > From: Xiubo Li <xiubli@redhat.com>
-> > 
-> > Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> > ---
-> >   fs/ceph/caps.c  | 19 +++++++++++++------
-> >   fs/ceph/super.h |  2 ++
-> >   2 files changed, 15 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > index d628dcdbf869..4e2a588465c5 100644
-> > --- a/fs/ceph/caps.c
-> > +++ b/fs/ceph/caps.c
-> > @@ -2876,10 +2876,9 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
-> >    * due to a small max_size, make sure we check_max_size (and possibly
-> >    * ask the mds) so we don't get hung up indefinitely.
-> >    */
-> > -int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got)
-> > +int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi, int need,
-> > +		    int want, loff_t endoff, int *got)
-> >   {
-> > -	struct ceph_file_info *fi = filp->private_data;
-> > -	struct inode *inode = file_inode(filp);
-> >   	struct ceph_inode_info *ci = ceph_inode(inode);
-> >   	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-> >   	int ret, _got, flags;
-> > @@ -2888,7 +2887,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
-> >   	if (ret < 0)
-> >   		return ret;
-> >   
-> > -	if ((fi->fmode & CEPH_FILE_MODE_WR) &&
-> > +	if (fi && (fi->fmode & CEPH_FILE_MODE_WR) &&
-> >   	    fi->filp_gen != READ_ONCE(fsc->filp_gen))
-> >   		return -EBADF;
-> >   
-> > @@ -2896,7 +2895,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
-> >   
-> >   	while (true) {
-> >   		flags &= CEPH_FILE_MODE_MASK;
-> > -		if (atomic_read(&fi->num_locks))
-> > +		if (fi && atomic_read(&fi->num_locks))
-> >   			flags |= CHECK_FILELOCK;
-> >   		_got = 0;
-> >   		ret = try_get_cap_refs(inode, need, want, endoff,
-> > @@ -2941,7 +2940,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
-> >   				continue;
-> >   		}
-> >   
-> > -		if ((fi->fmode & CEPH_FILE_MODE_WR) &&
-> > +		if (fi && (fi->fmode & CEPH_FILE_MODE_WR) &&
-> >   		    fi->filp_gen != READ_ONCE(fsc->filp_gen)) {
-> >   			if (ret >= 0 && _got)
-> >   				ceph_put_cap_refs(ci, _got);
-> > @@ -3004,6 +3003,14 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
-> >   	return 0;
-> >   }
-> >   
-> > +int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got)
-> > +{
-> > +	struct ceph_file_info *fi = filp->private_data;
-> > +	struct inode *inode = file_inode(filp);
-> > +
-> > +	return __ceph_get_caps(inode, fi, need, want, endoff, got);
-> > +}
-> > +
-> >   /*
-> >    * Take cap refs.  Caller must already know we hold at least one ref
-> >    * on the caps in question or we don't know this is safe.
-> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> > index 7f3976b3319d..027d5f579ba0 100644
-> > --- a/fs/ceph/super.h
-> > +++ b/fs/ceph/super.h
-> > @@ -1208,6 +1208,8 @@ extern int ceph_encode_dentry_release(void **p, struct dentry *dn,
-> >   				      struct inode *dir,
-> >   				      int mds, int drop, int unless);
-> >   
-> > +extern int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi,
-> > +			   int need, int want, loff_t endoff, int *got);
-> >   extern int ceph_get_caps(struct file *filp, int need, int want,
-> >   			 loff_t endoff, int *got);
-> >   extern int ceph_try_get_caps(struct inode *inode,
-> 
+	start_req = ktime_get();
+	ceph_osdc_copy_from(...);
+	end_req = ktime_get();
 
+These would be more coarse-grained, of course.  Any other suggestions?
+
+Cheers,
 -- 
-Jeff Layton <jlayton@kernel.org>
+Luís
 
+ fs/ceph/debugfs.c               | 19 ++++++++++++++++++
+ fs/ceph/file.c                  |  7 ++++++-
+ fs/ceph/metric.c                | 35 +++++++++++++++++++++++++++++++++
+ fs/ceph/metric.h                | 14 +++++++++++++
+ include/linux/ceph/osd_client.h |  3 ++-
+ net/ceph/osd_client.c           |  8 ++++++--
+ 6 files changed, 82 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index 55426514491b..b657170d6bc3 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -203,6 +203,16 @@ static int metrics_latency_show(struct seq_file *s, void *p)
+ 	spin_unlock(&m->metadata_metric_lock);
+ 	CEPH_LAT_METRIC_SHOW("metadata", total, avg, min, max, sq);
+ 
++	spin_lock(&m->copyfrom_metric_lock);
++	total = m->total_copyfrom;
++	sum = m->copyfrom_latency_sum;
++	avg = total > 0 ? DIV64_U64_ROUND_CLOSEST(sum, total) : 0;
++	min = m->copyfrom_latency_min;
++	max = m->copyfrom_latency_max;
++	sq = m->copyfrom_latency_sq_sum;
++	spin_unlock(&m->copyfrom_metric_lock);
++	CEPH_LAT_METRIC_SHOW("copyfrom", total, avg, min, max, sq);
++
+ 	return 0;
+ }
+ 
+@@ -234,6 +244,15 @@ static int metrics_size_show(struct seq_file *s, void *p)
+ 	spin_unlock(&m->write_metric_lock);
+ 	CEPH_SZ_METRIC_SHOW("write", total, avg_sz, min_sz, max_sz, sum_sz);
+ 
++	spin_lock(&m->copyfrom_metric_lock);
++	total = m->total_copyfrom;
++	sum_sz = m->copyfrom_size_sum;
++	avg_sz = total > 0 ? DIV64_U64_ROUND_CLOSEST(sum_sz, total) : 0;
++	min_sz = m->copyfrom_size_min;
++	max_sz = m->copyfrom_size_max;
++	spin_unlock(&m->copyfrom_metric_lock);
++	CEPH_SZ_METRIC_SHOW("copyfrom", total, avg_sz, min_sz, max_sz, sum_sz);
++
+ 	return 0;
+ }
+ 
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index e61018d9764e..d1139bbcd58d 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -2208,6 +2208,7 @@ static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off
+ 	struct ceph_object_locator src_oloc, dst_oloc;
+ 	struct ceph_object_id src_oid, dst_oid;
+ 	size_t bytes = 0;
++	ktime_t start_req, end_req;
+ 	u64 src_objnum, src_objoff, dst_objnum, dst_objoff;
+ 	u32 src_objlen, dst_objlen;
+ 	u32 object_size = src_ci->i_layout.object_size;
+@@ -2242,7 +2243,11 @@ static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off
+ 					  CEPH_OSD_OP_FLAG_FADVISE_DONTNEED,
+ 					  dst_ci->i_truncate_seq,
+ 					  dst_ci->i_truncate_size,
+-					  CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
++					  CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ,
++					  &start_req, &end_req);
++		ceph_update_copyfrom_metrics(&fsc->mdsc->metric,
++					     start_req, end_req,
++					     object_size, ret);
+ 		if (ret) {
+ 			if (ret == -EOPNOTSUPP) {
+ 				fsc->have_copy_from2 = false;
+diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
+index 04d5df29bbbf..94e7f8fd34d6 100644
+--- a/fs/ceph/metric.c
++++ b/fs/ceph/metric.c
+@@ -270,6 +270,16 @@ int ceph_metric_init(struct ceph_client_metric *m)
+ 	m->total_metadatas = 0;
+ 	m->metadata_latency_sum = 0;
+ 
++	spin_lock_init(&m->copyfrom_metric_lock);
++	m->copyfrom_latency_sq_sum = 0;
++	m->copyfrom_latency_min = KTIME_MAX;
++	m->copyfrom_latency_max = 0;
++	m->total_copyfrom = 0;
++	m->copyfrom_latency_sum = 0;
++	m->copyfrom_size_min = U64_MAX;
++	m->copyfrom_size_max = 0;
++	m->copyfrom_size_sum = 0;
++
+ 	atomic64_set(&m->opened_files, 0);
+ 	ret = percpu_counter_init(&m->opened_inodes, 0, GFP_KERNEL);
+ 	if (ret)
+@@ -408,3 +418,28 @@ void ceph_update_metadata_metrics(struct ceph_client_metric *m,
+ 		       &m->metadata_latency_sq_sum, lat);
+ 	spin_unlock(&m->metadata_metric_lock);
+ }
++
++void ceph_update_copyfrom_metrics(struct ceph_client_metric *m,
++				  ktime_t r_start, ktime_t r_end,
++				  unsigned int size, int rc)
++{
++	ktime_t lat = ktime_sub(r_end, r_start);
++	ktime_t total;
++
++	if (unlikely(rc && rc != -ETIMEDOUT))
++		return;
++
++	spin_lock(&m->copyfrom_metric_lock);
++	total = ++m->total_copyfrom;
++	m->copyfrom_size_sum += size;
++	m->copyfrom_latency_sum += lat;
++	METRIC_UPDATE_MIN_MAX(m->copyfrom_size_min,
++			      m->copyfrom_size_max,
++			      size);
++	METRIC_UPDATE_MIN_MAX(m->copyfrom_latency_min,
++			      m->copyfrom_latency_max,
++			      lat);
++	__update_stdev(total, m->copyfrom_latency_sum,
++		       &m->copyfrom_latency_sq_sum, lat);
++	spin_unlock(&m->copyfrom_metric_lock);
++}
+diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
+index 0133955a3c6a..c95517c7c77b 100644
+--- a/fs/ceph/metric.h
++++ b/fs/ceph/metric.h
+@@ -162,6 +162,16 @@ struct ceph_client_metric {
+ 	ktime_t metadata_latency_min;
+ 	ktime_t metadata_latency_max;
+ 
++	spinlock_t copyfrom_metric_lock;
++	u64 total_copyfrom;
++	u64 copyfrom_size_sum;
++	u64 copyfrom_size_min;
++	u64 copyfrom_size_max;
++	ktime_t copyfrom_latency_sum;
++	ktime_t copyfrom_latency_sq_sum;
++	ktime_t copyfrom_latency_min;
++	ktime_t copyfrom_latency_max;
++
+ 	/* The total number of directories and files that are opened */
+ 	atomic64_t opened_files;
+ 
+@@ -204,4 +214,8 @@ extern void ceph_update_write_metrics(struct ceph_client_metric *m,
+ extern void ceph_update_metadata_metrics(struct ceph_client_metric *m,
+ 				         ktime_t r_start, ktime_t r_end,
+ 					 int rc);
++extern void ceph_update_copyfrom_metrics(struct ceph_client_metric *m,
++					 ktime_t r_start, ktime_t r_end,
++					 unsigned int size, int rc);
++
+ #endif /* _FS_CEPH_MDS_METRIC_H */
+diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+index 83fa08a06507..d282c7531a3f 100644
+--- a/include/linux/ceph/osd_client.h
++++ b/include/linux/ceph/osd_client.h
+@@ -524,7 +524,8 @@ int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+ 			struct ceph_object_locator *dst_oloc,
+ 			u32 dst_fadvise_flags,
+ 			u32 truncate_seq, u64 truncate_size,
+-			u8 copy_from_flags);
++			u8 copy_from_flags,
++			ktime_t *start_req, ktime_t *end_req);
+ 
+ /* watch/notify */
+ struct ceph_osd_linger_request *
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index ff8624a7c964..74ffe6240b07 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -5356,7 +5356,8 @@ int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+ 			struct ceph_object_locator *dst_oloc,
+ 			u32 dst_fadvise_flags,
+ 			u32 truncate_seq, u64 truncate_size,
+-			u8 copy_from_flags)
++			u8 copy_from_flags,
++			ktime_t *start_req, ktime_t *end_req)
+ {
+ 	struct ceph_osd_request *req;
+ 	int ret;
+@@ -5364,6 +5365,8 @@ int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+ 	req = ceph_osdc_alloc_request(osdc, NULL, 1, false, GFP_KERNEL);
+ 	if (!req)
+ 		return -ENOMEM;
++	*start_req = 0;
++	*end_req = 0;
+ 
+ 	req->r_flags = CEPH_OSD_FLAG_WRITE;
+ 
+@@ -5383,7 +5386,8 @@ int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+ 
+ 	ceph_osdc_start_request(osdc, req, false);
+ 	ret = ceph_osdc_wait_request(osdc, req);
+-
++	*start_req = req->r_start_latency;
++	*end_req = req->r_end_latency;
+ out:
+ 	ceph_osdc_put_request(req);
+ 	return ret;
