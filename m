@@ -2,81 +2,122 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE224414BE
-	for <lists+ceph-devel@lfdr.de>; Mon,  1 Nov 2021 09:05:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02DC84419D2
+	for <lists+ceph-devel@lfdr.de>; Mon,  1 Nov 2021 11:27:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231384AbhKAIIQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 1 Nov 2021 04:08:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53934 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231433AbhKAIIP (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 1 Nov 2021 04:08:15 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF19EC061764
-        for <ceph-devel@vger.kernel.org>; Mon,  1 Nov 2021 01:05:41 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id e2so28045048ljg.13
-        for <ceph-devel@vger.kernel.org>; Mon, 01 Nov 2021 01:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=J/sLAHxRh6EjJh2rcjPDJLzA40VXjb4DP54UXQAr8IU=;
-        b=V/IbKY0g2EmPf9Psw8/L5H/ix/AU0zvu2OUN3f6n4Fv6NgmpLlFSkK+umz4tcLa+rQ
-         KPHS/U/tha1vFbqZfuKiI6zDNVPEppLWjyRMC297y8Re0TE1J6EAlHSS5afwmMs11biY
-         h6h9pozx9oemeYr42hloFFZRds8Ya+2AP507sW/DcWz6BjqKrxv4hcir1uA1OXS1hEyB
-         w9XZ2qfq7a1kiIG9xUCGZ5ig/Y+IKbMB2fFHseYh6GvlAWlR1PaalxFQ2QVnq2fOdjHW
-         Eb6a7nGCdEyfObn3JBdFXKk3sCBeQVUP9+skggjMAA78OwbRWXloeHcIXoEQjELtBjiU
-         mUaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=J/sLAHxRh6EjJh2rcjPDJLzA40VXjb4DP54UXQAr8IU=;
-        b=ANGM+qmQp3+tiPNUrg8tyJPOr5ajbaaGNNEWvQDuB9hdYnF0NCJviWJ22SP2cZTZlK
-         nMlNLN/dKU2gLDa4v6RvXu6qGDk5ByZWtoazh3bvKX5BV6V0ytUeVNwR9o788r93vamQ
-         oOVq3RinlHlBJTOLue8EB1Vo1hRvyN470d7qZK1LRizbfHCAW7YzUqcAueJd/f4DjxTO
-         H2GItkmS2zjs1hAsuk+tlVv++OTHyK6ULOtIueDkGnQxnQsVZL/VjD2qtjdTvw1VjH3o
-         A47Nbj0UYRMVDE0Zjrc0m7nrri0mzPRdzVR70mvTWFiGYKvHWFem+gYHFgtIQ2dIlXvg
-         8Nnw==
-X-Gm-Message-State: AOAM532fdWkfkmtNfw3+TXl3J/iFk628uSNiJdg+iEAUqyX5hO1uBwlP
-        04o9u+muQ10EAo7Fe9SzRtF0qcqF0grwQuDWs9E=
-X-Google-Smtp-Source: ABdhPJxb2IUIUXhKKURBVeICoPrhviYGICVFrEZcryYbGqEFChPtB2pihWtXvX9AOYCQUaOuAHH1W7L8fo+ujk/IU2k=
-X-Received: by 2002:a05:651c:893:: with SMTP id d19mr30641059ljq.236.1635753940302;
- Mon, 01 Nov 2021 01:05:40 -0700 (PDT)
+        id S231987AbhKAK3x (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 1 Nov 2021 06:29:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35406 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231841AbhKAK3x (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 1 Nov 2021 06:29:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 50249610A2;
+        Mon,  1 Nov 2021 10:27:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1635762439;
+        bh=vtcLqYX6hRLydWRtiOha9+t+PluqhRxj1c2pU17ZtTw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=RWnEI1QUMycKnWFvRe1z4sCavVqxiF5eBnnGudCy5vX9sU5/kZTYLKLS+8GTlWoUs
+         dXapiuERyVVLcn2dDgV3HjYAwMDN64Ulmn9s+315HOepu8S+iW5bbYQiCQ+G37zhuq
+         CeZCB0q+kTmsHq9tIlv3xBgJ/kQIgr33ZNnIjqJ7VaNZQMHEZAJinPH/5PqI/enpG5
+         OQ3SWqfZzCEE8AsuXHv4ohqGl07Tg9zpT+Z4D3yLOzBsNVUgcBU6lnhw3ZC9mZ0Q/t
+         uUEJBRi+aGLwvSUUz7K2gALgepKdofcEOD8YaLisryX723dak1oHSXYIiag2tpt8lb
+         Cuamm8RXuRKVg==
+Message-ID: <5c5d98f06c0a70271b324d9f144f44f8dddd91e5.camel@kernel.org>
+Subject: Re: [PATCH v4 0/4] ceph: size handling for the fscrypt
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, vshankar@redhat.com, pdonnell@redhat.com,
+        khiremat@redhat.com, ceph-devel@vger.kernel.org
+Date:   Mon, 01 Nov 2021 06:27:18 -0400
+In-Reply-To: <20211101020447.75872-1-xiubli@redhat.com>
+References: <20211101020447.75872-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
 MIME-Version: 1.0
-Received: by 2002:a05:6512:304b:0:0:0:0 with HTTP; Mon, 1 Nov 2021 01:05:39
- -0700 (PDT)
-Reply-To: aisha.7d@yahoo.com
-From:   Aisha AG <rbx17058@gmail.com>
-Date:   Mon, 1 Nov 2021 00:05:39 -0800
-Message-ID: <CA+KbyydC86ZoU6svaPH_F8XsYFEfUDwRRCtAR6OV3qd_NN0kFw@mail.gmail.com>
-Subject: Hello Dear,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Mon, 2021-11-01 at 10:04 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> This patch series is based on the "fscrypt_size_handling" branch in
+> https://github.com/lxbsz/linux.git, which is based Jeff's
+> "ceph-fscrypt-content-experimental" branch in
+> https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git
+> and added two upstream commits, which should be merged already.
+> 
+> These two upstream commits should be removed after Jeff rebase
+> his "ceph-fscrypt-content-experimental" branch to upstream code.
+> 
+
+I don't think I was clear last time. I'd like for you to post the
+_entire_ stack of patches that is based on top of
+ceph-client/wip-fscrypt-fnames. wip-fscrypt-fnames is pretty stable at
+this point, so I think it's a reasonable place for you to base your
+work. That way you're not beginning with a revert.
+
+Again, feel free to cherry-pick any of the patches in any of my other
+branches for your series, but I'd like to see a complete series of
+patches.
+
+Thanks,
+Jeff
+
+
+> ====
+> 
+> This approach is based on the discussion from V1 and V2, which will
+> pass the encrypted last block contents to MDS along with the truncate
+> request.
+> 
+> This will send the encrypted last block contents to MDS along with
+> the truncate request when truncating to a smaller size and at the
+> same time new size does not align to BLOCK SIZE.
+> 
+> The MDS side patch is raised in PR
+> https://github.com/ceph/ceph/pull/43588, which is also based Jeff's
+> previous great work in PR https://github.com/ceph/ceph/pull/41284.
+> 
+> The MDS will use the filer.write_trunc(), which could update and
+> truncate the file in one shot, instead of filer.truncate().
+> 
+> This just assume kclient won't support the inline data feature, which
+> will be remove soon, more detail please see:
+> https://tracker.ceph.com/issues/52916
+> 
+> Changed in V4:
+> - Retry the truncate request by 20 times before fail it with -EAGAIN.
+> - Remove the "fill_last_block" label and move the code to else branch.
+> - Remove the #3 patch, which has already been sent out separately, in
+>   V3 series.
+> - Improve some comments in the code.
+> 
+> 
+> Changed in V3:
+> - Fix possibly corrupting the file just before the MDS acquires the
+>   xlock for FILE lock, another client has updated it.
+> - Flush the pagecache buffer before reading the last block for the
+>   when filling the truncate request.
+> - Some other minore fixes.
+> 
+> Xiubo Li (4):
+>   Revert "ceph: make client zero partial trailing block on truncate"
+>   ceph: add __ceph_get_caps helper support
+>   ceph: add __ceph_sync_read helper support
+>   ceph: add truncate size handling support for fscrypt
+> 
+>  fs/ceph/caps.c              |  21 ++--
+>  fs/ceph/file.c              |  44 +++++---
+>  fs/ceph/inode.c             | 203 ++++++++++++++++++++++++++++++------
+>  fs/ceph/super.h             |   6 +-
+>  include/linux/ceph/crypto.h |  28 +++++
+>  5 files changed, 251 insertions(+), 51 deletions(-)
+>  create mode 100644 include/linux/ceph/crypto.h
+> 
+
 -- 
+Jeff Layton <jlayton@kernel.org>
 
-Hello Dear,
-
-I came across your e-mail contact prior to a private search while in
-need of your assistance. I am Aisha Al-Qaddafi, the only biological
-Daughter of Former President of Libya Col.Muammar Al-Qaddafi.
-Am a Widow and a single Mother with three Children.
-
-I have investment funds worth Twenty Seven Million Five Hundred
-Thousand United State Dollar $27.500.000.00, and i need a trusted
-investment Manager/Partner because of my current refugee status,
-however, I am interested in you for investment project assistance in
-your country,may be from there,we can build business relationship
-in the nearest future.
-
-I am willing to negotiate an investment/business profit sharing ratio
-with you based on the future investment earning profits.
-
-If you are willing to handle this project on my behalf kindly reply
-urgently to enable me to provide you more information about the
-investment funds.
-Best Regards
-Mrs Aisha Al-Qaddafi.
