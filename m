@@ -2,145 +2,137 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 73329441EFC
-	for <lists+ceph-devel@lfdr.de>; Mon,  1 Nov 2021 18:07:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 970924424F7
+	for <lists+ceph-devel@lfdr.de>; Tue,  2 Nov 2021 02:00:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbhKARKX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 1 Nov 2021 13:10:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38758 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231303AbhKARKW (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 1 Nov 2021 13:10:22 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8C5DE60E52;
-        Mon,  1 Nov 2021 17:07:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635786469;
-        bh=BLJ8A9OjeiQ5lUSA9+yNIs1FFQrq0+bEDoj4+wBDScc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=pi7SqAf+trqlPA/NOcGUflqv2DtqNE0G4BLl01uOsUMyPP/wzYQoRey3jJzTFBm46
-         C2APIZXKqZgL2gAhKl3JM3xIwYzayd0sKEDhVLVACEcgMPZ5PklhWwCWqqn9krzzmH
-         dUmJPTtFtnjK+nl+/j6qOlXH+dlMaZk4jYrS23aTAHODxXhMEnbJVOzynPCF5FfG+6
-         +TKO/TmDnmRzDZTPzQpab7CHHNx6mrAexqkJJjY+yYXzbnBzupUKsScX8SsjRHeOJB
-         fhwGsH/NEl7rjAhMWJgaxNCw9KsOFucuMZFbUZ6jQtF4DLMpsefltj9JJ1EgYyHHnm
-         NVMXU98oINtSw==
-Message-ID: <b4db9a2377711857118d1fbd5835b7b8d7c9019c.camel@kernel.org>
-Subject: Re: [PATCH v4 0/4] ceph: size handling for the fscrypt
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
+        id S230234AbhKBBCz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 1 Nov 2021 21:02:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57853 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229479AbhKBBCz (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 1 Nov 2021 21:02:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635814820;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RNUx0+dqMlXMoYUd6I5hCx/Th8lTboqaJvCBqrQ/3w4=;
+        b=JjhzomUhJ7ZapaDyUVf91VxE3vDKFABngou6pJ+9FYSCGHNQ6+tgBgVeXU0H6mB387O7dB
+        RjY99spABkUrYwatOhDZ1g/oorAkUlBE+c+5d3Y62jnVAuz/ClglGFRPG44VDT1GXl8MNZ
+        t0OfEkKaSUN9YpKYzK/mQoNmVh+/74g=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-583-kUjYXbs0NAmNax3gtIwqjQ-1; Mon, 01 Nov 2021 21:00:19 -0400
+X-MC-Unique: kUjYXbs0NAmNax3gtIwqjQ-1
+Received: by mail-pl1-f199.google.com with SMTP id e10-20020a17090301ca00b00141fbe2569dso1419973plh.14
+        for <ceph-devel@vger.kernel.org>; Mon, 01 Nov 2021 18:00:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=RNUx0+dqMlXMoYUd6I5hCx/Th8lTboqaJvCBqrQ/3w4=;
+        b=huYrs0COb8wHEH+tceJeHvUQLSMuB4K5G1t7TLdqD1DeR3IlL1Ot5dfqCgQZ9ZRTRX
+         BM201N1JcgS+fHaiEaCQ46/sQ+9610df3BVCbHEuO0Xdl1dpc7f2/YRut4raAE3YwhN/
+         AZZPm2qHbIg+hvbWmLhhGGW8CtCBuqNGhsLUKban5azXnbUbGOugkwJOQ7EEQNYq539P
+         Li6aj6xyfwZ4Zna1Go2Q0ej8cO7YVCT3RWS6g1wJ2oRevMdbaXy7hWxtzPeY9mbf55xz
+         ziHj40+c0nKFBQGdb6E126rso3dOkZRn2xQLYJps6akDkeSu035O8eBYP6muFXLt89Qo
+         JzRw==
+X-Gm-Message-State: AOAM532kaxmxyGY2+Lp1As1enSrvO0QyIFruVCXzSH6Rlj8fxK9uKcsj
+        iqroXGEmSHSOPUDwhXlsrF4n/njiODZ8Z86zdgTaeB1Hv/3NBN6g0KMEbEQ8/VzSYazh/GGei9g
+        chrWV9XX6zwq99uwlr/CXID6a2kW1kDCPQ+3mEiTQIG2rtAKsOuOyHvkh6IAhRN7XW9zCMfo=
+X-Received: by 2002:a05:6a00:1787:b0:481:1503:e631 with SMTP id s7-20020a056a00178700b004811503e631mr7460410pfg.6.1635814817624;
+        Mon, 01 Nov 2021 18:00:17 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzD7PnHVKMz7h9Z0UpYUE8xMGzEYA8Lczl6K/7vmadppf2eOVuhLMPCE3YXIuvK/dKSafMPew==
+X-Received: by 2002:a05:6a00:1787:b0:481:1503:e631 with SMTP id s7-20020a056a00178700b004811503e631mr7460340pfg.6.1635814817123;
+        Mon, 01 Nov 2021 18:00:17 -0700 (PDT)
+Received: from [10.72.12.190] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id z2sm17688591pfh.135.2021.11.01.18.00.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Nov 2021 18:00:16 -0700 (PDT)
+Subject: Re: [PATCH v4] ceph: return the real size read when we it hits EOF
+To:     Jeff Layton <jlayton@kernel.org>
 Cc:     idryomov@gmail.com, vshankar@redhat.com, pdonnell@redhat.com,
         khiremat@redhat.com, ceph-devel@vger.kernel.org
-Date:   Mon, 01 Nov 2021 13:07:47 -0400
-In-Reply-To: <5c5d98f06c0a70271b324d9f144f44f8dddd91e5.camel@kernel.org>
-References: <20211101020447.75872-1-xiubli@redhat.com>
-         <5c5d98f06c0a70271b324d9f144f44f8dddd91e5.camel@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
+References: <20211030051640.2402573-1-xiubli@redhat.com>
+ <d33fc96c42be28d8e1aa330b6624c6dbc6ba788b.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <c0e18da7-95df-bede-48f7-f24eac5bff3f@redhat.com>
+Date:   Tue, 2 Nov 2021 09:00:10 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
+In-Reply-To: <d33fc96c42be28d8e1aa330b6624c6dbc6ba788b.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2021-11-01 at 06:27 -0400, Jeff Layton wrote:
-> On Mon, 2021-11-01 at 10:04 +0800, xiubli@redhat.com wrote:
-> > From: Xiubo Li <xiubli@redhat.com>
-> > 
-> > This patch series is based on the "fscrypt_size_handling" branch in
-> > https://github.com/lxbsz/linux.git, which is based Jeff's
-> > "ceph-fscrypt-content-experimental" branch in
-> > https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git
-> > and added two upstream commits, which should be merged already.
-> > 
-> > These two upstream commits should be removed after Jeff rebase
-> > his "ceph-fscrypt-content-experimental" branch to upstream code.
-> > 
-> 
-> I don't think I was clear last time. I'd like for you to post the
-> _entire_ stack of patches that is based on top of
-> ceph-client/wip-fscrypt-fnames. wip-fscrypt-fnames is pretty stable at
-> this point, so I think it's a reasonable place for you to base your
-> work. That way you're not beginning with a revert.
-> 
-> Again, feel free to cherry-pick any of the patches in any of my other
-> branches for your series, but I'd like to see a complete series of
-> patches.
-> 
-> 
 
-To be even more clear:
+On 11/1/21 7:58 PM, Jeff Layton wrote:
+> On Sat, 2021-10-30 at 13:16 +0800, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> Currently, if we end up reading more from the last object in the file
+>> than the i_size indicates then we'll end up returning the wrong length.
+>> Ensure that we cap the returned length and pos at the EOF.
+>>
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>
+>> Changed in V4:
+>> - move the i_size_read() into the while loop and use the lastest i_size
+>>    read to do the check at the end of ceph_sync_read().
+>>
+>>
+>>   fs/ceph/file.c | 13 ++++++++-----
+>>   1 file changed, 8 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>> index 91173d3aa161..6005b430f6f7 100644
+>> --- a/fs/ceph/file.c
+>> +++ b/fs/ceph/file.c
+>> @@ -847,6 +847,7 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
+>>   	ssize_t ret;
+>>   	u64 off = iocb->ki_pos;
+>>   	u64 len = iov_iter_count(to);
+>> +	u64 i_size;
+>>   
+>>   	dout("sync_read on file %p %llu~%u %s\n", file, off, (unsigned)len,
+>>   	     (file->f_flags & O_DIRECT) ? "O_DIRECT" : "");
+>> @@ -870,7 +871,6 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
+>>   		struct page **pages;
+>>   		int num_pages;
+>>   		size_t page_off;
+>> -		u64 i_size;
+>>   		bool more;
+>>   		int idx;
+>>   		size_t left;
+>> @@ -953,11 +953,14 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
+>>   	}
+>>   
+>>   	if (off > iocb->ki_pos) {
+>> -		if (ret >= 0 &&
+>> -		    iov_iter_count(to) > 0 && off >= i_size_read(inode))
+>> +		if (off >= i_size) {
+>>   			*retry_op = CHECK_EOF;
+>> -		ret = off - iocb->ki_pos;
+>> -		iocb->ki_pos = off;
+>> +			ret = i_size - iocb->ki_pos;
+>> +			iocb->ki_pos = i_size;
+>> +		} else {
+>> +			ret = off - iocb->ki_pos;
+>> +			iocb->ki_pos = off;
+>> +		}
+>>   	}
+>>   
+>>   	dout("sync_read result %zd retry_op %d\n", ret, *retry_op);
+> Thanks, looks good. I dropped the two patches I had merged for this on
+> Friday and merged this one instead.
 
-The main reason this patchset is not helpful is that the
-ceph-fscrypt-content-experimental branch in my tree has bitrotted in the
-face of other changes that have gone into the testing branch since it
-was cut. Also, that branch had several patches that added in actual
-encryption of the content, which we don't want to do at this point.
+Cool, thanks.
 
-For the work you're doing, what I'd like to see is a patchset based on
-top of the ceph-client/wip-fscrypt-fnames branch. That patchset should
-make it so what when encryption is enabled, the size handling for the
-inode is changed to use the new scheme we've added, but don't do any
-actual content encryption yet. Feel free to pick any of the patches in
-my trees that you need to do this, but it needs to be the whole series.
-
-What we need to be able to do in this phase is validate that the size
-handling is correct in both the encrypted and non-encrypted cases, but
-without encrypting the data. Once that piece is working, then we should
-be able to add in content encryption.
-
-
-> 
-> > ====
-> > 
-> > This approach is based on the discussion from V1 and V2, which will
-> > pass the encrypted last block contents to MDS along with the truncate
-> > request.
-> > 
-> > This will send the encrypted last block contents to MDS along with
-> > the truncate request when truncating to a smaller size and at the
-> > same time new size does not align to BLOCK SIZE.
-> > 
-> > The MDS side patch is raised in PR
-> > https://github.com/ceph/ceph/pull/43588, which is also based Jeff's
-> > previous great work in PR https://github.com/ceph/ceph/pull/41284.
-> > 
-> > The MDS will use the filer.write_trunc(), which could update and
-> > truncate the file in one shot, instead of filer.truncate().
-> > 
-> > This just assume kclient won't support the inline data feature, which
-> > will be remove soon, more detail please see:
-> > https://tracker.ceph.com/issues/52916
-> > 
-> > Changed in V4:
-> > - Retry the truncate request by 20 times before fail it with -EAGAIN.
-> > - Remove the "fill_last_block" label and move the code to else branch.
-> > - Remove the #3 patch, which has already been sent out separately, in
-> >   V3 series.
-> > - Improve some comments in the code.
-> > 
-> > 
-> > Changed in V3:
-> > - Fix possibly corrupting the file just before the MDS acquires the
-> >   xlock for FILE lock, another client has updated it.
-> > - Flush the pagecache buffer before reading the last block for the
-> >   when filling the truncate request.
-> > - Some other minore fixes.
-> > 
-> > Xiubo Li (4):
-> >   Revert "ceph: make client zero partial trailing block on truncate"
-> >   ceph: add __ceph_get_caps helper support
-> >   ceph: add __ceph_sync_read helper support
-> >   ceph: add truncate size handling support for fscrypt
-> > 
-> >  fs/ceph/caps.c              |  21 ++--
-> >  fs/ceph/file.c              |  44 +++++---
-> >  fs/ceph/inode.c             | 203 ++++++++++++++++++++++++++++++------
-> >  fs/ceph/super.h             |   6 +-
-> >  include/linux/ceph/crypto.h |  28 +++++
-> >  5 files changed, 251 insertions(+), 51 deletions(-)
-> >  create mode 100644 include/linux/ceph/crypto.h
-> > 
-> 
-
--- 
-Jeff Layton <jlayton@kernel.org>
 
