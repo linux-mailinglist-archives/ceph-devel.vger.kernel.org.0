@@ -2,110 +2,141 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ECD544436B
-	for <lists+ceph-devel@lfdr.de>; Wed,  3 Nov 2021 15:25:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1646F4443A2
+	for <lists+ceph-devel@lfdr.de>; Wed,  3 Nov 2021 15:32:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231594AbhKCO2N (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 3 Nov 2021 10:28:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57388 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230527AbhKCO2M (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 3 Nov 2021 10:28:12 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AF57C061714;
-        Wed,  3 Nov 2021 07:25:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MHA8/5DT9+P3H8EQ2DoH0Mu3SBzybKb1RrICo62RwQ4=; b=t9eJNkfzrgV+QiZqspfhcfToYC
-        3Ec3SF3Q9ZLFQr4jT4+hVBAtuUAKgl1oeoJE6scE4G7P3IEjD2W/m5e99yCHLHHqSDI4E6rXc3JMg
-        w4hmwDJRapYDTm+u3lLY6FNZbczw88eT0WhKs9l37aOExnpxsFT0/MIanKBtIqeteHjLCUNpHkY3t
-        6V8IAR1xpI1GYombL4N7TBPf8hVo3yBjiDFh6Q6ZiaTO73ciucIzhdBOKDW+BOs+2QBbEDNk1eJ27
-        55B12uY/pzWiNJcJpqjIYYeUkBZkGAu0Sd3MqWEnqhWN6VDdSlaDtEesmkfjbJgM/JJGlieavLNzj
-        4sxQUXrw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1miH8f-005FeW-AM; Wed, 03 Nov 2021 14:21:52 +0000
-Date:   Wed, 3 Nov 2021 14:21:17 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        devel@lists.orangefs.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] netfs, 9p, afs, ceph: Use folios
-Message-ID: <YYKa3bfQZxK5/wDN@casper.infradead.org>
-References: <163584174921.4023316.8927114426959755223.stgit@warthog.procyon.org.uk>
- <163584187452.4023316.500389675405550116.stgit@warthog.procyon.org.uk>
+        id S231925AbhKCOfP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 3 Nov 2021 10:35:15 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:52924 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231551AbhKCOfJ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 3 Nov 2021 10:35:09 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id EA5401F782;
+        Wed,  3 Nov 2021 14:32:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1635949952; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7PAwFld5AMTtIqqJ8gCcKM0Tly40cjofB0Vk5ZWjYCg=;
+        b=X39agvfWyCB3jR1Jz3VaE0gegdlXKp2uoVYRFtKxq4EXo5BG4TghnJ947E/O1fC9yf7wto
+        wLmP73MVpVf21aGPAWnboRvDsrDrOIWEOfYopysCAPXY+lCR8yiwAr2BJZhcRfLdvg3mVp
+        fCobFsgwgPcVNyAe+tCElVyAboJtW98=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1635949952;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7PAwFld5AMTtIqqJ8gCcKM0Tly40cjofB0Vk5ZWjYCg=;
+        b=YjTxjzOSdmzgJuDOpx6jZS3UaBGEE4OXyo0RVIuG0KhDV9V5ZIRtakkHgEiN4nz6DQBRNH
+        kC0lpa4ipcGujiCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8943B13E03;
+        Wed,  3 Nov 2021 14:32:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id hMF+Hn+dgmHcGAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Wed, 03 Nov 2021 14:32:31 +0000
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id 0859eae5;
+        Wed, 3 Nov 2021 14:32:30 +0000 (UTC)
+Date:   Wed, 3 Nov 2021 14:32:30 +0000
+From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] libceph: have ceph_osdc_copy_from() return the osd
+ request
+Message-ID: <YYKdfvmeqP98Tjno@suse.de>
+References: <20211103112405.8733-1-lhenriques@suse.de>
+ <20211103112405.8733-2-lhenriques@suse.de>
+ <597ab2ed71c04327d22e80ef3e630d6f0515c7b7.camel@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <163584187452.4023316.500389675405550116.stgit@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <597ab2ed71c04327d22e80ef3e630d6f0515c7b7.camel@kernel.org>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Nov 02, 2021 at 08:31:14AM +0000, David Howells wrote:
-> -static int v9fs_vfs_writepage_locked(struct page *page)
-> +static int v9fs_vfs_write_folio_locked(struct folio *folio)
->  {
-> -	struct inode *inode = page->mapping->host;
-> +	struct inode *inode = folio_inode(folio);
->  	struct v9fs_inode *v9inode = V9FS_I(inode);
-> -	loff_t start = page_offset(page);
-> +	loff_t start = folio_pos(folio);
->  	loff_t size = i_size_read(inode);
->  	struct iov_iter from;
-> -	int err, len;
-> +	size_t gran = folio_size(folio), len;
-> +	int err;
->  
-> -	if (page->index == size >> PAGE_SHIFT)
-> -		len = size & ~PAGE_MASK;
-> -	else
-> -		len = PAGE_SIZE;
-> +	len = (size >= start + gran) ? gran : size - start;
+On Wed, Nov 03, 2021 at 09:06:31AM -0400, Jeff Layton wrote:
+<...>
+> > diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> > index ff8624a7c964..78384b431748 100644
+> > --- a/net/ceph/osd_client.c
+> > +++ b/net/ceph/osd_client.c
+> > @@ -5347,23 +5347,24 @@ static int osd_req_op_copy_from_init(struct ceph_osd_request *req,
+> >  	return 0;
+> >  }
+> >  
+> > -int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+> > -			u64 src_snapid, u64 src_version,
+> > -			struct ceph_object_id *src_oid,
+> > -			struct ceph_object_locator *src_oloc,
+> > -			u32 src_fadvise_flags,
+> > -			struct ceph_object_id *dst_oid,
+> > -			struct ceph_object_locator *dst_oloc,
+> > -			u32 dst_fadvise_flags,
+> > -			u32 truncate_seq, u64 truncate_size,
+> > -			u8 copy_from_flags)
+> > +struct ceph_osd_request *
+> > +ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+> > +		    u64 src_snapid, u64 src_version,
+> > +		    struct ceph_object_id *src_oid,
+> > +		    struct ceph_object_locator *src_oloc,
+> > +		    u32 src_fadvise_flags,
+> > +		    struct ceph_object_id *dst_oid,
+> > +		    struct ceph_object_locator *dst_oloc,
+> > +		    u32 dst_fadvise_flags,
+> > +		    u32 truncate_seq, u64 truncate_size,
+> > +		    u8 copy_from_flags)
+> >  {
+> >  	struct ceph_osd_request *req;
+> >  	int ret;
+> >  
+> >  	req = ceph_osdc_alloc_request(osdc, NULL, 1, false, GFP_KERNEL);
+> >  	if (!req)
+> > -		return -ENOMEM;
+> > +		return ERR_PTR(-ENOMEM);
+> >  
+> >  	req->r_flags = CEPH_OSD_FLAG_WRITE;
+> >  
+> > @@ -5382,11 +5383,11 @@ int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+> >  		goto out;
+> >  
+> >  	ceph_osdc_start_request(osdc, req, false);
+> > -	ret = ceph_osdc_wait_request(osdc, req);
+> > +	return req;
+> >  
+> 
+> I don't really understand why this function is part of net/ceph. It's
+> odd in that it basically allocates, initializes and starts the request
+> and then passes back the pointer to it. That doesn't really follow the
+> pattern of the other OSD READ/WRITE ops, where we basically set them up
+> and start them more directly from the fs/ceph code.
+> 
+> I think it'd make more sense to just get rid of ceph_osdc_copy_from
+> altogether, export the osd_req_op_copy_from_init symbol and open-code
+> the whole thing in ceph_do_objects_copy. This isn't otherwise called
+> from rbd or anything else so I don't see the benefit of keeping this
+> function as part of libceph.
 
-This seems like the most complicated way to write this ... how about:
+At the time ceph_osdc_copy_from() was implemented, it looked like
+something that would make sense to keep on the osd client code, and
+eventually useful for rbd too.  But since that didn't happen, this patch
+shows that it makes sense to just move the code.  So, yeah, sure.  I'll do
+that.  Thanks.
 
-        size_t len = min_t(loff_t, isize - start, folio_size(folio));
-
-> @@ -322,23 +322,24 @@ static void afs_req_issue_op(struct netfs_read_subrequest *subreq)
->  
->  static int afs_symlink_readpage(struct file *file, struct page *page)
->  {
-> -	struct afs_vnode *vnode = AFS_FS_I(page->mapping->host);
-> +	struct afs_vnode *vnode = AFS_FS_I(page_mapping(page)->host);
-
-How does swap end up calling readpage on a symlink?
-
->  	ret = afs_fetch_data(fsreq->vnode, fsreq);
-> -	page_endio(page, false, ret);
-> +	page_endio(&folio->page, false, ret);
-
-We need a folio_endio() ...
-
->  int afs_write_end(struct file *file, struct address_space *mapping,
->  		  loff_t pos, unsigned len, unsigned copied,
-> -		  struct page *page, void *fsdata)
-> +		  struct page *subpage, void *fsdata)
->  {
-> +	struct folio *folio = page_folio(subpage);
->  	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
->  	unsigned long priv;
-> -	unsigned int f, from = pos & (thp_size(page) - 1);
-> +	unsigned int f, from = pos & (folio_size(folio) - 1);
-
-Isn't that:
-
-	size_t from = offset_in_folio(folio, pos);
-
-(not that i think we're getting folios larger than 4GB any time soon,
-but it'd be nice to be prepared for it)
-
+Cheers,
+--
+Luís
