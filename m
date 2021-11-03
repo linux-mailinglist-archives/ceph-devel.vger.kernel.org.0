@@ -2,152 +2,193 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EA914441F8
-	for <lists+ceph-devel@lfdr.de>; Wed,  3 Nov 2021 13:56:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EFAF44422B
+	for <lists+ceph-devel@lfdr.de>; Wed,  3 Nov 2021 14:06:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230282AbhKCM6m (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 3 Nov 2021 08:58:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37084 "EHLO mail.kernel.org"
+        id S231716AbhKCNJK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 3 Nov 2021 09:09:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230152AbhKCM6l (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 3 Nov 2021 08:58:41 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D31F961076;
-        Wed,  3 Nov 2021 12:56:04 +0000 (UTC)
+        id S231521AbhKCNJJ (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Wed, 3 Nov 2021 09:09:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A19DE60F56;
+        Wed,  3 Nov 2021 13:06:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635944165;
-        bh=+35WDhFj0uBSpj41hq1Ok0Exv7I7I7j8uadQsxJdKCI=;
+        s=k20201202; t=1635944793;
+        bh=Gfe12cSe/Zgx7ZcCvRx+H/uwr4YEGVisOB5q3qgsmcY=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=HqM6Ma888udck7Nydkf8WgtFJiQc47ObvZi010fgXzNZsvsj8WcWF70K/oa4tvuCX
-         YnWtu8d9OBwnbSHNEQH3WIPTofZY0nZRyVvHntZUOHVy4v7roykIOmT/Fn39ZOtLV2
-         PDrdCE7YBDvAzrJjGj2p+X3k1MnuuCsMXyK47fAM1yXwwLqiF/TwjOl+blMTpiOEyU
-         Q6LZnBVt3ZQ4T99MkTj1DUhUCwE9ynQ9ggemopZx0+50ZlLwNvAd2Qc0Znp3dPdqaq
-         puCqsA+fcCG4z8fmAkBL1hQJCn5EiznpB6CH+1Blz483mOwJKEkNZmQ/bTAtn8oCGe
-         bwKviTGOmlAJA==
-Message-ID: <cedf7aeb9bca77c0e31ceef0d3044f474674d0b6.camel@kernel.org>
-Subject: Re: [PATCH v5 0/8] ceph: size handling for the fscrypt
+        b=ViYH6quwbICnKS/w1eSUs/gJNKyop9oRy3bjxGpq2YlU9tGwjfd5yeiDBDJtV+fog
+         IAF/a45gqstjAreibSjK7FTCWzum7AZpnz8Pq388kyZj1qCI7tBOJ2IWQlTCgph+QK
+         RnodrHyAKwfnsNslVBT3EzzZtpspuSx3M9PvSlTBpv1/p65Bir1xrUqIYLSLyKf8Zd
+         itzktQA/bfLIyDB8qnkcbjYw/8SnBf+Y9W6vL2zai6TZZ2ODUfduexc4zhLOGds29b
+         I8RzAgUPyczzsyofq8rvmor3sUhnVsEyBEu7/QvpgvPToOn8WcRjFKm4pKabnSu5hJ
+         sFWz70Y/D4dFQ==
+Message-ID: <597ab2ed71c04327d22e80ef3e630d6f0515c7b7.camel@kernel.org>
+Subject: Re: [PATCH 1/2] libceph: have ceph_osdc_copy_from() return the osd
+ request
 From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, vshankar@redhat.com, pdonnell@redhat.com,
-        khiremat@redhat.com, ceph-devel@vger.kernel.org
-Date:   Wed, 03 Nov 2021 08:56:03 -0400
-In-Reply-To: <20211103012232.14488-1-xiubli@redhat.com>
-References: <20211103012232.14488-1-xiubli@redhat.com>
+To:     =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>,
+        Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>
+Cc:     Patrick Donnelly <pdonnell@redhat.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 03 Nov 2021 09:06:31 -0400
+In-Reply-To: <20211103112405.8733-2-lhenriques@suse.de>
+References: <20211103112405.8733-1-lhenriques@suse.de>
+         <20211103112405.8733-2-lhenriques@suse.de>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.42.0 (3.42.0-1.fc35) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2021-11-03 at 09:22 +0800, xiubli@redhat.com wrote:
-> From: Jeff Layton <jlayton@kernel.org>
+On Wed, 2021-11-03 at 11:24 +0000, Luís Henriques wrote:
+> This patch modifies the behaviour of ceph_osdc_copy_from() function so
+> that it will create the osd request and send it but won't block waiting
+> for the result.  It is now the responsibility of the callers (currently
+> only ceph_do_objects_copy()) to do the wait and release the request.
 > 
-> This patch series is based on the "wip-fscrypt-fnames" branch in
-> repo https://github.com/ceph/ceph-client.git.
+> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> ---
+>  fs/ceph/file.c                  |  9 ++++++++-
+>  include/linux/ceph/osd_client.h | 21 +++++++++++----------
+>  net/ceph/osd_client.c           | 27 ++++++++++++++-------------
+>  3 files changed, 33 insertions(+), 24 deletions(-)
 > 
-> And I have picked up 5 patches from the "ceph-fscrypt-size-experimental"
-> branch in repo
-> https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git.
-> 
-> ====
-> 
-> This approach is based on the discussion from V1 and V2, which will
-> pass the encrypted last block contents to MDS along with the truncate
-> request.
-> 
-> This will send the encrypted last block contents to MDS along with
-> the truncate request when truncating to a smaller size and at the
-> same time new size does not align to BLOCK SIZE.
-> 
-> The MDS side patch is raised in PR
-> https://github.com/ceph/ceph/pull/43588, which is also based Jeff's
-> previous great work in PR https://github.com/ceph/ceph/pull/41284.
-> 
-> The MDS will use the filer.write_trunc(), which could update and
-> truncate the file in one shot, instead of filer.truncate().
-> 
-> This just assume kclient won't support the inline data feature, which
-> will be remove soon, more detail please see:
-> https://tracker.ceph.com/issues/52916
-> 
-> Changed in V5:
-> - Rebase to "wip-fscrypt-fnames" branch in ceph-client.git repo.
-> - Pick up 5 patches from Jeff's "ceph-fscrypt-size-experimental" branch
->   in linux.git repo.
-> - Add "i_truncate_pagecache_size" member support in ceph_inode_info
->   struct, this will be used to truncate the pagecache only in kclient
->   side, because the "i_truncate_size" will always be aligned to BLOCK
->   SIZE. In fscrypt case we need to use the real size to truncate the
->   pagecache.
-> 
-> 
-> Changed in V4:
-> - Retry the truncate request by 20 times before fail it with -EAGAIN.
-> - Remove the "fill_last_block" label and move the code to else branch.
-> - Remove the #3 patch, which has already been sent out separately, in
->   V3 series.
-> - Improve some comments in the code.
-> 
-> Changed in V3:
-> - Fix possibly corrupting the file just before the MDS acquires the
->   xlock for FILE lock, another client has updated it.
-> - Flush the pagecache buffer before reading the last block for the
->   when filling the truncate request.
-> - Some other minore fixes.
-> 
-> 
-> 
-> Jeff Layton (5):
->   libceph: add CEPH_OSD_OP_ASSERT_VER support
->   ceph: size handling for encrypted inodes in cap updates
->   ceph: fscrypt_file field handling in MClientRequest messages
->   ceph: get file size from fscrypt_file when present in inode traces
->   ceph: handle fscrypt fields in cap messages from MDS
-> 
-> Xiubo Li (3):
->   ceph: add __ceph_get_caps helper support
->   ceph: add __ceph_sync_read helper support
->   ceph: add truncate size handling support for fscrypt
-> 
->  fs/ceph/caps.c                  | 136 ++++++++++++++----
->  fs/ceph/crypto.h                |   4 +
->  fs/ceph/dir.c                   |   3 +
->  fs/ceph/file.c                  |  43 ++++--
->  fs/ceph/inode.c                 | 236 +++++++++++++++++++++++++++++---
->  fs/ceph/mds_client.c            |   9 +-
->  fs/ceph/mds_client.h            |   2 +
->  fs/ceph/super.h                 |  10 ++
->  include/linux/ceph/crypto.h     |  28 ++++
->  include/linux/ceph/osd_client.h |   6 +-
->  include/linux/ceph/rados.h      |   4 +
->  net/ceph/osd_client.c           |   5 +
->  12 files changed, 427 insertions(+), 59 deletions(-)
->  create mode 100644 include/linux/ceph/crypto.h
-> 
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 6005b430f6f7..a39703b8ef99 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -2218,6 +2218,7 @@ static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off
+>  {
+>  	struct ceph_object_locator src_oloc, dst_oloc;
+>  	struct ceph_object_id src_oid, dst_oid;
+> +	struct ceph_osd_request *req;
+>  	size_t bytes = 0;
+>  	u64 src_objnum, src_objoff, dst_objnum, dst_objoff;
+>  	u32 src_objlen, dst_objlen;
+> @@ -2243,7 +2244,7 @@ static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off
+>  		ceph_oid_printf(&dst_oid, "%llx.%08llx",
+>  				dst_ci->i_vino.ino, dst_objnum);
+>  		/* Do an object remote copy */
+> -		ret = ceph_osdc_copy_from(&fsc->client->osdc,
+> +		req = ceph_osdc_copy_from(&fsc->client->osdc,
+>  					  src_ci->i_vino.snap, 0,
+>  					  &src_oid, &src_oloc,
+>  					  CEPH_OSD_OP_FLAG_FADVISE_SEQUENTIAL |
+> @@ -2254,6 +2255,12 @@ static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off
+>  					  dst_ci->i_truncate_seq,
+>  					  dst_ci->i_truncate_size,
+>  					  CEPH_OSD_COPY_FROM_FLAG_TRUNCATE_SEQ);
+> +		if (IS_ERR(req))
+> +			ret = PTR_ERR(req);
+> +		else {
+> +			ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
+> +			ceph_osdc_put_request(req);
+> +		}
+>  		if (ret) {
+>  			if (ret == -EOPNOTSUPP) {
+>  				fsc->have_copy_from2 = false;
+> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+> index 83fa08a06507..74d590cd29c9 100644
+> --- a/include/linux/ceph/osd_client.h
+> +++ b/include/linux/ceph/osd_client.h
+> @@ -515,16 +515,17 @@ int ceph_osdc_call(struct ceph_osd_client *osdc,
+>  		   struct page *req_page, size_t req_len,
+>  		   struct page **resp_pages, size_t *resp_len);
+>  
+> -int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+> -			u64 src_snapid, u64 src_version,
+> -			struct ceph_object_id *src_oid,
+> -			struct ceph_object_locator *src_oloc,
+> -			u32 src_fadvise_flags,
+> -			struct ceph_object_id *dst_oid,
+> -			struct ceph_object_locator *dst_oloc,
+> -			u32 dst_fadvise_flags,
+> -			u32 truncate_seq, u64 truncate_size,
+> -			u8 copy_from_flags);
+> +struct ceph_osd_request *
+> +ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+> +		    u64 src_snapid, u64 src_version,
+> +		    struct ceph_object_id *src_oid,
+> +		    struct ceph_object_locator *src_oloc,
+> +		    u32 src_fadvise_flags,
+> +		    struct ceph_object_id *dst_oid,
+> +		    struct ceph_object_locator *dst_oloc,
+> +		    u32 dst_fadvise_flags,
+> +		    u32 truncate_seq, u64 truncate_size,
+> +		    u8 copy_from_flags);
+>  
+>  /* watch/notify */
+>  struct ceph_osd_linger_request *
+> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> index ff8624a7c964..78384b431748 100644
+> --- a/net/ceph/osd_client.c
+> +++ b/net/ceph/osd_client.c
+> @@ -5347,23 +5347,24 @@ static int osd_req_op_copy_from_init(struct ceph_osd_request *req,
+>  	return 0;
+>  }
+>  
+> -int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+> -			u64 src_snapid, u64 src_version,
+> -			struct ceph_object_id *src_oid,
+> -			struct ceph_object_locator *src_oloc,
+> -			u32 src_fadvise_flags,
+> -			struct ceph_object_id *dst_oid,
+> -			struct ceph_object_locator *dst_oloc,
+> -			u32 dst_fadvise_flags,
+> -			u32 truncate_seq, u64 truncate_size,
+> -			u8 copy_from_flags)
+> +struct ceph_osd_request *
+> +ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+> +		    u64 src_snapid, u64 src_version,
+> +		    struct ceph_object_id *src_oid,
+> +		    struct ceph_object_locator *src_oloc,
+> +		    u32 src_fadvise_flags,
+> +		    struct ceph_object_id *dst_oid,
+> +		    struct ceph_object_locator *dst_oloc,
+> +		    u32 dst_fadvise_flags,
+> +		    u32 truncate_seq, u64 truncate_size,
+> +		    u8 copy_from_flags)
+>  {
+>  	struct ceph_osd_request *req;
+>  	int ret;
+>  
+>  	req = ceph_osdc_alloc_request(osdc, NULL, 1, false, GFP_KERNEL);
+>  	if (!req)
+> -		return -ENOMEM;
+> +		return ERR_PTR(-ENOMEM);
+>  
+>  	req->r_flags = CEPH_OSD_FLAG_WRITE;
+>  
+> @@ -5382,11 +5383,11 @@ int ceph_osdc_copy_from(struct ceph_osd_client *osdc,
+>  		goto out;
+>  
+>  	ceph_osdc_start_request(osdc, req, false);
+> -	ret = ceph_osdc_wait_request(osdc, req);
+> +	return req;
+>  
 
-Thanks Xiubo,
+I don't really understand why this function is part of net/ceph. It's
+odd in that it basically allocates, initializes and starts the request
+and then passes back the pointer to it. That doesn't really follow the
+pattern of the other OSD READ/WRITE ops, where we basically set them up
+and start them more directly from the fs/ceph code.
 
-This looks like a great start. I set up an environment vs. a cephadm
-cluster with your fscrypt changes, and started running xfstests against
-it with test_dummy_encryption enabled. It got to generic/014 and the
-test hung waiting on a SETATTR call to come back:
+I think it'd make more sense to just get rid of ceph_osdc_copy_from
+altogether, export the osd_req_op_copy_from_init symbol and open-code
+the whole thing in ceph_do_objects_copy. This isn't otherwise called
+from rbd or anything else so I don't see the benefit of keeping this
+function as part of libceph.
 
-[root@client1 f3cf8b7a-38ec-11ec-a0e4-52540031ba78.client74208]# cat mdsc
-89447	mds0	setattr	 #1000003b19c
+>  out:
+>  	ceph_osdc_put_request(req);
+> -	return ret;
+> +	return ERR_PTR(ret);
+>  }
+>  EXPORT_SYMBOL(ceph_osdc_copy_from);
+>  
 
-Looking at the MDS that it was talking to, I see:
-
-Nov 03 08:25:09 cephadm2 ceph-mds[3133]: log_channel(cluster) log [WRN] : 1 slow requests, 1 included below; oldest blocked for > 31.627241 secs
-Nov 03 08:25:09 cephadm2 ceph-mds[3133]: log_channel(cluster) log [WRN] : slow request 31.627240 seconds old, received at 2021-11-03T12:24:37.911553+0000: client_request(client.74208:89447 setattr size=102498304 #0x1000003b19c 2021-11-03T12:24:37.895292+0000 caller_uid=0, caller_gid=0{0,}) currently acquired locks
-Nov 03 08:25:14 cephadm2 ceph-mds[3133]: log_channel(cluster) log [WRN] : 1 slow requests, 0 included below; oldest blocked for > 36.627323 secs
-Nov 03 08:25:19 cephadm2 ceph-mds[3133]: log_channel(cluster) log [WRN] : 1 slow requests, 0 included below; oldest blocked for > 41.627389 secs
-
-...and it still hasn't resolved.
-
-I'll keep looking around a bit more, but I think there are still some
-bugs in here. Let me know if you have thoughts as to what the issue is.
-
-Thanks,
 -- 
 Jeff Layton <jlayton@kernel.org>
