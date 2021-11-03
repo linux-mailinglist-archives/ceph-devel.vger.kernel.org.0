@@ -2,37 +2,64 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9869A443FEF
-	for <lists+ceph-devel@lfdr.de>; Wed,  3 Nov 2021 11:24:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 83C70444009
+	for <lists+ceph-devel@lfdr.de>; Wed,  3 Nov 2021 11:33:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231911AbhKCK1V (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 3 Nov 2021 06:27:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37630 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231278AbhKCK1V (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 3 Nov 2021 06:27:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5EE3D60EBB;
-        Wed,  3 Nov 2021 10:24:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635935084;
-        bh=XfoGM2ZMKLelTHY48hfvr9rhIfvKVz6MAhNQernrwn8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Hg1xHANKTUprfItrCZS5msB3MLjIGpXk9AfiWtCSaJwQb2QOdvNVd+ssBw5i4Cznl
-         LLLSG/SiP9dJdT123CD3jLkUsMyZ6N5rsQti/v2WDOsywaxIdXhPXCtqOo1jNRXLNd
-         MLvBmfPGds1Do1REJ2mTAUH0s7QvxgA+1uTHFu270GNPBStkCMYDv98eUNqu4Mq9/5
-         EBUpDZ78wlzpZtCU/9/Z9IoBLAM/4f7x73MW6f3Dr79lrkHuYn9L1lhnYb2SxFIZsv
-         e69j48L8D9Y3gG+DO2SEcnFP38zQNWiZ2UHd5nRp8H5c0bfX+hlTz9uJD90K8z5IYi
-         wF2Iz7htF5Hdw==
-Message-ID: <ad0c7708441440665dfa22fc84e978caee03ed65.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: properly handle statfs on multifs setups
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org,
+        id S231344AbhKCKge (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 3 Nov 2021 06:36:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36543 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231278AbhKCKgd (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 3 Nov 2021 06:36:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635935636;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+corCrLYJVPhYk6IeS+pnaIDwbUrdRPdDBN9srlqsy4=;
+        b=XWyvlH6nC13QmC4NLrMggAZv44PMUZ8DP2zj866U3TGsaJONmi4O7X1R8tyvwkopPRvMPM
+        WmBGfqhZ6Rv+svFxN+FEgxNb00jyfa5IrleHsWHlLImfQEKkWk4G2jx/490Jmw1FtoLnjh
+        OtEXm2fgGBDZxeR9UmPjlf452uTPBgs=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-507-HD9HQNj6NDGC2bdjjLb2Fg-1; Wed, 03 Nov 2021 06:33:55 -0400
+X-MC-Unique: HD9HQNj6NDGC2bdjjLb2Fg-1
+Received: by mail-qt1-f198.google.com with SMTP id w12-20020ac80ecc000000b002a7a4cd22faso368249qti.4
+        for <ceph-devel@vger.kernel.org>; Wed, 03 Nov 2021 03:33:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=+corCrLYJVPhYk6IeS+pnaIDwbUrdRPdDBN9srlqsy4=;
+        b=t2gpQxT9D9BswL+YQxFGZpsAvJO9xeDVU+lslSDiKFHlW7cTsDYFY1db9m3sCpd1Na
+         ZkRGfua+Rje0zNXIF9uOJ/D81NHKNilTreulplmhNMbJb1CcSeVFtqxhpPBZ//ebmmkL
+         TptETN/0ZQ2O+IbbHPMzpLszTEnUIyUguMVRWj86urZsPyiz9TU8UIIrniPEHzFjx5/K
+         L7YwkALDU41s5CqrPc33f9gb5oN6J/wVK4WAapdnLfTX6bMSiglYhhzdCmVTc95I6V5p
+         8BE3S6KhaAF1vfVVyoU3jfh5jkujG3SvX55KYXwmGhGDypbRKDCk8c994BFVqCvH4aBF
+         7NRA==
+X-Gm-Message-State: AOAM531sL1zK2/Z/Hzv4jsznByUP3HRC5rq4xLUC31cA335eyDwjRYFY
+        sS4mGHgWXq3+P8ZLwJFyn87+Lr0Bpsu4p6iq0+/By99uORjaYvVNZSifCwOqt4U6NuCOrqRrzEn
+        c9E8Ato5DDrFRacCyDjHsNQ==
+X-Received: by 2002:a05:622a:54a:: with SMTP id m10mr38910572qtx.239.1635935634995;
+        Wed, 03 Nov 2021 03:33:54 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwgEov9Tl8qh6MP2nfo/JZLsD0HBzJmVRUJHe0SxXo9MBmtccfhMPoNzu0zKxZRpfR1Pn+GJg==
+X-Received: by 2002:a05:622a:54a:: with SMTP id m10mr38910557qtx.239.1635935634830;
+        Wed, 03 Nov 2021 03:33:54 -0700 (PDT)
+Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id w9sm1219275qko.19.2021.11.03.03.33.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Nov 2021 03:33:54 -0700 (PDT)
+Message-ID: <370d927cb6108a0242be90fedfb59df2831bca9b.camel@redhat.com>
+Subject: Re: [PATCH v5 1/1] ceph: mount syntax module parameter
+From:   Jeff Layton <jlayton@redhat.com>
+To:     Venky Shankar <vshankar@redhat.com>, pdonnell@redhat.com,
         idryomov@gmail.com
-Cc:     Sachin Prabhu <sprabhu@redhat.com>
-Date:   Wed, 03 Nov 2021 06:24:43 -0400
-In-Reply-To: <fcdeaedc-ab5d-6c0c-d6b2-a59e302975ef@redhat.com>
-References: <20211102204547.253710-1-jlayton@kernel.org>
-         <fcdeaedc-ab5d-6c0c-d6b2-a59e302975ef@redhat.com>
+Cc:     ceph-devel@vger.kernel.org
+Date:   Wed, 03 Nov 2021 06:33:53 -0400
+In-Reply-To: <20211103050039.371277-2-vshankar@redhat.com>
+References: <20211103050039.371277-1-vshankar@redhat.com>
+         <20211103050039.371277-2-vshankar@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.42.0 (3.42.0-1.fc35) 
 MIME-Version: 1.0
@@ -41,78 +68,41 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2021-11-03 at 14:56 +0800, Xiubo Li wrote:
-> On 11/3/21 4:45 AM, Jeff Layton wrote:
-> > ceph_statfs currently stuffs the cluster fsid into the f_fsid field.
-> > This was fine when we only had a single filesystem per cluster, but now
-> > that we have multiples we need to use something that will vary between
-> > them.
-> > 
-> > Change ceph_statfs to xor each 32-bit chunk of the fsid (aka cluster id)
-> > into the lower bits of the statfs->f_fsid. Change the lower bits to hold
-> > the fscid (filesystem ID within the cluster).
-> > 
-> > That should give us a value that is guaranteed to be unique between
-> > filesystems within a cluster, and should minimize the chance of
-> > collisions between mounts of different clusters.
-> > 
-> > URL: https://tracker.ceph.com/issues/52812
-> > Reported-by: Sachin Prabhu <sprabhu@redhat.com>
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >   fs/ceph/super.c | 11 ++++++-----
-> >   1 file changed, 6 insertions(+), 5 deletions(-)
-> > 
-> > While looking at making an equivalent change to the userland libraries,
-> > it occurred to me that the earlier patch's method for computing this
-> > was overly-complex. This makes it a bit simpler, and avoids the
-> > intermediate step of setting up a u64.
-> > 
-> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> > index 9bb88423417e..e7b839aa08f6 100644
-> > --- a/fs/ceph/super.c
-> > +++ b/fs/ceph/super.c
-> > @@ -52,8 +52,7 @@ static int ceph_statfs(struct dentry *dentry, struct kstatfs *buf)
-> >   	struct ceph_fs_client *fsc = ceph_inode_to_client(d_inode(dentry));
-> >   	struct ceph_mon_client *monc = &fsc->client->monc;
-> >   	struct ceph_statfs st;
-> > -	u64 fsid;
-> > -	int err;
-> > +	int i, err;
-> >   	u64 data_pool;
-> >   
-> >   	if (fsc->mdsc->mdsmap->m_num_data_pg_pools == 1) {
-> > @@ -99,12 +98,14 @@ static int ceph_statfs(struct dentry *dentry, struct kstatfs *buf)
-> >   	buf->f_namelen = NAME_MAX;
-> >   
-> >   	/* Must convert the fsid, for consistent values across arches */
-> > +	buf->f_fsid.val[0] = 0;
-> >   	mutex_lock(&monc->mutex);
-> > -	fsid = le64_to_cpu(*(__le64 *)(&monc->monmap->fsid)) ^
-> > -	       le64_to_cpu(*((__le64 *)&monc->monmap->fsid + 1));
-> > +	for (i = 0; i < 4; ++i)
-> > +		buf->f_fsid.val[0] ^= le32_to_cpu(((__le32 *)&monc->monmap->fsid)[i]);
-> >   	mutex_unlock(&monc->mutex);
-> >   
-> > -	buf->f_fsid = u64_to_fsid(fsid);
-> > +	/* fold the fs_cluster_id into the upper bits */
-> > +	buf->f_fsid.val[1] = monc->fs_cluster_id;
-> >   
-> >   	return 0;
-> >   }
+On Wed, 2021-11-03 at 10:30 +0530, Venky Shankar wrote:
+> Add read-only paramaters for supported mount syntaxes. Primary
+> user is the user-space mount helper for catching v2 syntax bugs
+> during testing by cross verifying if the kernel supports v2 syntax
+> on mount failure.
 > 
-> This version looks better.
+> Signed-off-by: Venky Shankar <vshankar@redhat.com>
+> ---
+>  fs/ceph/super.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> Reviewed-by: Xiubo Li <xiubli@redhat.com>
-> 
-> 
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index 609ffc8c2d78..32e5240e33a0 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -1452,6 +1452,14 @@ bool disable_send_metrics = false;
+>  module_param_cb(disable_send_metrics, &param_ops_metrics, &disable_send_metrics, 0644);
+>  MODULE_PARM_DESC(disable_send_metrics, "Enable sending perf metrics to ceph cluster (default: on)");
+>  
+> +/* for both v1 and v2 syntax */
+> +bool mount_support = true;
+> +static const struct kernel_param_ops param_ops_mount_syntax = {
+> +	.get = param_get_bool,
+> +};
+> +module_param_cb(mount_syntax_v1, &param_ops_mount_syntax, &mount_support, 0444);
+> +module_param_cb(mount_syntax_v2, &param_ops_mount_syntax, &mount_support, 0444);
+> +
+>  module_init(init_ceph);
+>  module_exit(exit_ceph);
+>  
 
-Thanks. I think I'm going to make one more small change in there and
-express the loop conditional as:
+Thanks Venky. This looks good. Merged into testing.
 
-    i < sizeof(monc->monmap->fsid) / sizeof(__le32)
-
-That should work out to be '4', but should be safer in case the size of
-fsid ever changes. I'm not going to bother to re-post for that though.
+Note that these new parameters are not visible via modinfo, but they do
+show up in /sys/module/ceph/parameters.
 -- 
-Jeff Layton <jlayton@kernel.org>
+Jeff Layton <jlayton@redhat.com>
+
