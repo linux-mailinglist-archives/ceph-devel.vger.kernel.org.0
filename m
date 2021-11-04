@@ -2,148 +2,143 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 89D0E444E68
-	for <lists+ceph-devel@lfdr.de>; Thu,  4 Nov 2021 06:36:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B51F0444E7A
+	for <lists+ceph-devel@lfdr.de>; Thu,  4 Nov 2021 06:53:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229912AbhKDFis (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 4 Nov 2021 01:38:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:21033 "EHLO
+        id S230229AbhKDFz5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 4 Nov 2021 01:55:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:33769 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229866AbhKDFis (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 4 Nov 2021 01:38:48 -0400
+        by vger.kernel.org with ESMTP id S230011AbhKDFz5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 4 Nov 2021 01:55:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636004170;
+        s=mimecast20190719; t=1636005199;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0lYD2OCP0KmHw7EXifBG8hpomvJcKMGXwgek20Bx0kA=;
-        b=Tj/hfskI+Rw4mYfrJIXmhp0yXLWODJbw7lX3PUov4MLaaIOn3t3HP7JVIE+cHFfHo5Nkbr
-        r7mC/RiFpgW+Hcv/aetsT9s5eBMaU6DP+F38UdckQ8SfD+auyhgQVsHWWJvk/A2MHMDxtF
-        2vorUYrjBzkhzmdH4c91tV++QLdOl0M=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-146-Ac7T8I7LMY6bw_lmvHNEcA-1; Thu, 04 Nov 2021 01:36:07 -0400
-X-MC-Unique: Ac7T8I7LMY6bw_lmvHNEcA-1
-Received: by mail-pg1-f199.google.com with SMTP id w5-20020a654105000000b002692534afceso2906758pgp.8
-        for <ceph-devel@vger.kernel.org>; Wed, 03 Nov 2021 22:36:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=0lYD2OCP0KmHw7EXifBG8hpomvJcKMGXwgek20Bx0kA=;
-        b=gtuuA4r88uFIPyu64rsPAW1UASlPbaXYBka1DTSgxzXEPalu9B5IIYuWVRinoN6V8F
-         JSiZ7J4Eiot7JxFWjagMD7Ri2LtDa3bUOnte8YLMSXMkygyItHWxztTlFaySIH+pnTUm
-         lyQ15YU1EzywNY4SR/E55ecSjoLfDc3AxfTuTsX5bjjRh4Gnu5M3o+tceZwnmxHf2v91
-         fYHMsLR8xicGs0keIQXZJT4bxvmT/f6+I5keDROF7GAi5KR/vLPm4vhfPMF3ycrGglZ0
-         n5q8C9MXxhol3r97DLuoQg6WznPaVHVa/xHlMvQz4B7zAwhXujPnmukJ5OZh092FI4Uq
-         hiWQ==
-X-Gm-Message-State: AOAM532qJ/sYw225WQPCg1o9xvov7CUM3YjPjCgtUMi2sG/weFfMtdOH
-        LvxWVwhi6ZUXh2rgZPc7nJZaesKdUI6ihg5R42xLMjSeOeQppSNzFKsamqzw56bIwiAwS594pWZ
-        R2IsxWXb1HWLisqn5eXGwiw==
-X-Received: by 2002:a63:7c42:: with SMTP id l2mr36952300pgn.90.1636004165123;
-        Wed, 03 Nov 2021 22:36:05 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxOv7f4tW5bdU2wssoRGCgSkG7E+3CG92TZ/8Vmby/MXMIHU5KsYDwbHCeKYaEmythmryVR8g==
-X-Received: by 2002:a63:7c42:: with SMTP id l2mr36952284pgn.90.1636004164890;
-        Wed, 03 Nov 2021 22:36:04 -0700 (PDT)
-Received: from [10.72.12.174] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id p9sm3851186pfn.7.2021.11.03.22.36.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Nov 2021 22:36:04 -0700 (PDT)
-Subject: Re: [PATCH v2] ceph: properly handle statfs on multifs setups
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        idryomov@gmail.com
-Cc:     Sachin Prabhu <sprabhu@redhat.com>
-References: <20211102204547.253710-1-jlayton@kernel.org>
- <fcdeaedc-ab5d-6c0c-d6b2-a59e302975ef@redhat.com>
- <ad0c7708441440665dfa22fc84e978caee03ed65.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <aa091edd-f41c-b4c2-6836-72274bb2fd32@redhat.com>
-Date:   Thu, 4 Nov 2021 13:35:59 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=vELb+JEAY9cEzSy2zTXSaJvHORPjV8CbKmqNyInETgY=;
+        b=cPngqEYZrioJv/iw4ivgaFe5dYJct5lUbPDvvW5WfqE5VX3R8eZ1gCuOuSz/cBEVhxD/Pe
+        ZKaTUES2TvVtGyMhdRqW4RGuYQSLsK8gld0O7dCayQeMt/vGQs5hdztCaEdQZFGa4Ggexz
+        bYp+eQtM1kfTss2gdAROkCmfH6k0erA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-13-L3lwaH6zPSuRbZZdk8AMZg-1; Thu, 04 Nov 2021 01:53:15 -0400
+X-MC-Unique: L3lwaH6zPSuRbZZdk8AMZg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9CCFC19200C2;
+        Thu,  4 Nov 2021 05:53:14 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6FFCB2B399;
+        Thu,  4 Nov 2021 05:53:06 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, vshankar@redhat.com, pdonnell@redhat.com,
+        khiremat@redhat.com, ceph-devel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v6 0/9] ceph: size handling for the fscrypt
+Date:   Thu,  4 Nov 2021 13:52:39 +0800
+Message-Id: <20211104055248.190987-1-xiubli@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <ad0c7708441440665dfa22fc84e978caee03ed65.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+From: Xiubo Li <xiubli@redhat.com>
 
-On 11/3/21 6:24 PM, Jeff Layton wrote:
-> On Wed, 2021-11-03 at 14:56 +0800, Xiubo Li wrote:
->> On 11/3/21 4:45 AM, Jeff Layton wrote:
->>> ceph_statfs currently stuffs the cluster fsid into the f_fsid field.
->>> This was fine when we only had a single filesystem per cluster, but now
->>> that we have multiples we need to use something that will vary between
->>> them.
->>>
->>> Change ceph_statfs to xor each 32-bit chunk of the fsid (aka cluster id)
->>> into the lower bits of the statfs->f_fsid. Change the lower bits to hold
->>> the fscid (filesystem ID within the cluster).
->>>
->>> That should give us a value that is guaranteed to be unique between
->>> filesystems within a cluster, and should minimize the chance of
->>> collisions between mounts of different clusters.
->>>
->>> URL: https://tracker.ceph.com/issues/52812
->>> Reported-by: Sachin Prabhu <sprabhu@redhat.com>
->>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
->>> ---
->>>    fs/ceph/super.c | 11 ++++++-----
->>>    1 file changed, 6 insertions(+), 5 deletions(-)
->>>
->>> While looking at making an equivalent change to the userland libraries,
->>> it occurred to me that the earlier patch's method for computing this
->>> was overly-complex. This makes it a bit simpler, and avoids the
->>> intermediate step of setting up a u64.
->>>
->>> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
->>> index 9bb88423417e..e7b839aa08f6 100644
->>> --- a/fs/ceph/super.c
->>> +++ b/fs/ceph/super.c
->>> @@ -52,8 +52,7 @@ static int ceph_statfs(struct dentry *dentry, struct kstatfs *buf)
->>>    	struct ceph_fs_client *fsc = ceph_inode_to_client(d_inode(dentry));
->>>    	struct ceph_mon_client *monc = &fsc->client->monc;
->>>    	struct ceph_statfs st;
->>> -	u64 fsid;
->>> -	int err;
->>> +	int i, err;
->>>    	u64 data_pool;
->>>    
->>>    	if (fsc->mdsc->mdsmap->m_num_data_pg_pools == 1) {
->>> @@ -99,12 +98,14 @@ static int ceph_statfs(struct dentry *dentry, struct kstatfs *buf)
->>>    	buf->f_namelen = NAME_MAX;
->>>    
->>>    	/* Must convert the fsid, for consistent values across arches */
->>> +	buf->f_fsid.val[0] = 0;
->>>    	mutex_lock(&monc->mutex);
->>> -	fsid = le64_to_cpu(*(__le64 *)(&monc->monmap->fsid)) ^
->>> -	       le64_to_cpu(*((__le64 *)&monc->monmap->fsid + 1));
->>> +	for (i = 0; i < 4; ++i)
->>> +		buf->f_fsid.val[0] ^= le32_to_cpu(((__le32 *)&monc->monmap->fsid)[i]);
->>>    	mutex_unlock(&monc->mutex);
->>>    
->>> -	buf->f_fsid = u64_to_fsid(fsid);
->>> +	/* fold the fs_cluster_id into the upper bits */
->>> +	buf->f_fsid.val[1] = monc->fs_cluster_id;
->>>    
->>>    	return 0;
->>>    }
->> This version looks better.
->>
->> Reviewed-by: Xiubo Li <xiubli@redhat.com>
->>
->>
-> Thanks. I think I'm going to make one more small change in there and
-> express the loop conditional as:
->
->      i < sizeof(monc->monmap->fsid) / sizeof(__le32)
->
-> That should work out to be '4', but should be safer in case the size of
-> fsid ever changes. I'm not going to bother to re-post for that though.
-Yeah, make sense.
+This patch series is based on the "wip-fscrypt-fnames" branch in
+repo https://github.com/ceph/ceph-client.git.
+
+And I have picked up 5 patches from the "ceph-fscrypt-size-experimental"
+branch in repo
+https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git.
+
+====
+
+This approach is based on the discussion from V1 and V2, which will
+pass the encrypted last block contents to MDS along with the truncate
+request.
+
+This will send the encrypted last block contents to MDS along with
+the truncate request when truncating to a smaller size and at the
+same time new size does not align to BLOCK SIZE.
+
+The MDS side patch is raised in PR
+https://github.com/ceph/ceph/pull/43588, which is also based Jeff's
+previous great work in PR https://github.com/ceph/ceph/pull/41284.
+
+The MDS will use the filer.write_trunc(), which could update and
+truncate the file in one shot, instead of filer.truncate().
+
+This just assume kclient won't support the inline data feature, which
+will be remove soon, more detail please see:
+https://tracker.ceph.com/issues/52916
+
+
+Changed in V6:
+- Fixed the file hole bug, also have updated the MDS side PR.
+- Add add object version support for sync read in #8.
+
+
+Changed in V5:
+- Rebase to "wip-fscrypt-fnames" branch in ceph-client.git repo.
+- Pick up 5 patches from Jeff's "ceph-fscrypt-size-experimental" branch
+  in linux.git repo.
+- Add "i_truncate_pagecache_size" member support in ceph_inode_info
+  struct, this will be used to truncate the pagecache only in kclient
+  side, because the "i_truncate_size" will always be aligned to BLOCK
+  SIZE. In fscrypt case we need to use the real size to truncate the
+  pagecache.
+
+
+Changed in V4:
+- Retry the truncate request by 20 times before fail it with -EAGAIN.
+- Remove the "fill_last_block" label and move the code to else branch.
+- Remove the #3 patch, which has already been sent out separately, in
+  V3 series.
+- Improve some comments in the code.
+
+
+Changed in V3:
+- Fix possibly corrupting the file just before the MDS acquires the
+  xlock for FILE lock, another client has updated it.
+- Flush the pagecache buffer before reading the last block for the
+  when filling the truncate request.
+- Some other minore fixes.
+
+
+
+Jeff Layton (5):
+  libceph: add CEPH_OSD_OP_ASSERT_VER support
+  ceph: size handling for encrypted inodes in cap updates
+  ceph: fscrypt_file field handling in MClientRequest messages
+  ceph: get file size from fscrypt_file when present in inode traces
+  ceph: handle fscrypt fields in cap messages from MDS
+
+Xiubo Li (4):
+  ceph: add __ceph_get_caps helper support
+  ceph: add __ceph_sync_read helper support
+  ceph: add object version support for sync read
+  ceph: add truncate size handling support for fscrypt
+
+ fs/ceph/caps.c                  | 136 ++++++++++++++----
+ fs/ceph/crypto.h                |   4 +
+ fs/ceph/dir.c                   |   3 +
+ fs/ceph/file.c                  |  76 ++++++++--
+ fs/ceph/inode.c                 | 243 +++++++++++++++++++++++++++++---
+ fs/ceph/mds_client.c            |   9 +-
+ fs/ceph/mds_client.h            |   2 +
+ fs/ceph/super.h                 |  25 ++++
+ include/linux/ceph/crypto.h     |  28 ++++
+ include/linux/ceph/osd_client.h |   6 +-
+ include/linux/ceph/rados.h      |   4 +
+ net/ceph/osd_client.c           |   5 +
+ 12 files changed, 482 insertions(+), 59 deletions(-)
+ create mode 100644 include/linux/ceph/crypto.h
+
+-- 
+2.27.0
 
