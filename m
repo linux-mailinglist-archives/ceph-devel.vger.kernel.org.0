@@ -2,104 +2,136 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A6D4D44566C
-	for <lists+ceph-devel@lfdr.de>; Thu,  4 Nov 2021 16:37:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B56B445CF1
+	for <lists+ceph-devel@lfdr.de>; Fri,  5 Nov 2021 01:13:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231458AbhKDPj4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 4 Nov 2021 11:39:56 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:33566 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229770AbhKDPjy (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 4 Nov 2021 11:39:54 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id BCE3D212BB;
-        Thu,  4 Nov 2021 15:37:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1636040235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uHXKCb2m4aN3DGGo3TS/BoeovESLndRU28nc5R+Ezi4=;
-        b=q74JbwjnA8QAd8JclRaVWkB8KdUJB9SAHd64vcm2cn3kViB0IvoPBuT6usdLrE6kDFZQ48
-        gcJJZMecREa3Ov2rF5QuZLBGB6gvNe9VkHbQe65z56xbgYrl6Dgpzwohit6Z1i5d9eUoZW
-        fDRqUTksVVVyGBukIPKVE1vB5HvT284=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1636040235;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uHXKCb2m4aN3DGGo3TS/BoeovESLndRU28nc5R+Ezi4=;
-        b=ZBnnY/Sj6shJlRHAq13K4UblSQPcZWW/v96CVCvg40A/Q1QwU1G862FWhF5+GUOroeMJX0
-        T21cXxBLmFDAy7CQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5947C13BD4;
-        Thu,  4 Nov 2021 15:37:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 20THEiv+g2HScgAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Thu, 04 Nov 2021 15:37:15 +0000
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 9e2b5671;
-        Thu, 4 Nov 2021 15:37:14 +0000 (UTC)
-Date:   Thu, 4 Nov 2021 15:37:14 +0000
-From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] ceph: metrics for remote object copies
-Message-ID: <YYP+KrFWyLmfKY9v@suse.de>
-References: <20211104123147.1632-1-lhenriques@suse.de>
- <b2fcd4ff9dd84ceb90650d24b56bd704985c85b8.camel@kernel.org>
+        id S232487AbhKEAQV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 4 Nov 2021 20:16:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53282 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232410AbhKEAQU (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 4 Nov 2021 20:16:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2F02861213;
+        Fri,  5 Nov 2021 00:13:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1636071221;
+        bh=8zR4lAPgGtk5Oh6VLrOR3teaFWPK63OWG49xP0Kq+eE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=ocjfbSSfJR6oHMkhMMjcuaEQfvlCWcX6T801mOU2yFS0QIp5zLHGhEumTNXAg61hq
+         sVAF4lovTboLNu/LpJOFLXJMVHzFf9cGfRWmNE2OAXmZzGWm1fKAuvhA107BH7cADE
+         soDSTsaTUx9BzecjzV9//K5Lne3LE5adFtBy3Q7q/Ewgpc1oiDU2dvGcplTOX2UEjC
+         olchSPhriZSsnRFgpJsZGOlmCzyqnFTD/xAUUCVnzbTYDAt+bPKWa/HbF5UhViER9S
+         KjLTM+eqA4P8DDLqBE+8FOwK5xCoyvCP8eOV7tyf6LakzZtpRIBXhv4GgRBV9Nh8xv
+         bV5Dc/krOO0wA==
+Message-ID: <f4b219eb57b373f99b755c6398be6e6c9562deee.camel@kernel.org>
+Subject: Re: [PATCH v5 0/8] ceph: size handling for the fscrypt
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, vshankar@redhat.com, pdonnell@redhat.com,
+        khiremat@redhat.com, ceph-devel@vger.kernel.org
+Date:   Thu, 04 Nov 2021 20:13:40 -0400
+In-Reply-To: <20211103012232.14488-1-xiubli@redhat.com>
+References: <20211103012232.14488-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.0 (3.42.0-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b2fcd4ff9dd84ceb90650d24b56bd704985c85b8.camel@kernel.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Nov 04, 2021 at 11:09:32AM -0400, Jeff Layton wrote:
-> On Thu, 2021-11-04 at 12:31 +0000, Luís Henriques wrote:
-> > Hi!
-> > 
-> > Here's v2 of this patchset.  The differences from v1:
-> > 
-> >   * Instead of changing ceph_osdc_copy_from() in libceph.ko to return an
-> >     osd request, move that function into the cephfs code instead.
-> > 
-> > Other than that, the 2nd patch is quite similar to the one from v1: it
-> > effectively hooks the 'copyfrom' metrics infrastructure.
-> > 
-> > Luís Henriques (2):
-> >   ceph: libceph: move ceph_osdc_copy_from() into cephfs code
-> >   ceph: add a new metric to keep track of remote object copies
-> > 
-> >  fs/ceph/debugfs.c               |  3 +-
-> >  fs/ceph/file.c                  | 78 ++++++++++++++++++++++++++++-----
-> >  fs/ceph/metric.h                |  8 ++++
-> >  include/linux/ceph/osd_client.h | 19 ++++----
-> >  net/ceph/osd_client.c           | 60 ++++---------------------
-> >  5 files changed, 94 insertions(+), 74 deletions(-)
-> > 
+On Wed, 2021-11-03 at 09:22 +0800, xiubli@redhat.com wrote:
+> From: Jeff Layton <jlayton@kernel.org>
 > 
-> Looks good. Thanks, Luis. Merged into testing branch.
+> This patch series is based on the "wip-fscrypt-fnames" branch in
+> repo https://github.com/ceph/ceph-client.git.
+> 
+> And I have picked up 5 patches from the "ceph-fscrypt-size-experimental"
+> branch in repo
+> https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git.
+> 
+> ====
+> 
+> This approach is based on the discussion from V1 and V2, which will
+> pass the encrypted last block contents to MDS along with the truncate
+> request.
+> 
+> This will send the encrypted last block contents to MDS along with
+> the truncate request when truncating to a smaller size and at the
+> same time new size does not align to BLOCK SIZE.
+> 
+> The MDS side patch is raised in PR
+> https://github.com/ceph/ceph/pull/43588, which is also based Jeff's
+> previous great work in PR https://github.com/ceph/ceph/pull/41284.
+> 
+> The MDS will use the filer.write_trunc(), which could update and
+> truncate the file in one shot, instead of filer.truncate().
+> 
+> This just assume kclient won't support the inline data feature, which
+> will be remove soon, more detail please see:
+> https://tracker.ceph.com/issues/52916
+> 
+> Changed in V5:
+> - Rebase to "wip-fscrypt-fnames" branch in ceph-client.git repo.
+> - Pick up 5 patches from Jeff's "ceph-fscrypt-size-experimental" branch
+>   in linux.git repo.
+> - Add "i_truncate_pagecache_size" member support in ceph_inode_info
+>   struct, this will be used to truncate the pagecache only in kclient
+>   side, because the "i_truncate_size" will always be aligned to BLOCK
+>   SIZE. In fscrypt case we need to use the real size to truncate the
+>   pagecache.
+> 
+> 
+> Changed in V4:
+> - Retry the truncate request by 20 times before fail it with -EAGAIN.
+> - Remove the "fill_last_block" label and move the code to else branch.
+> - Remove the #3 patch, which has already been sent out separately, in
+>   V3 series.
+> - Improve some comments in the code.
+> 
+> Changed in V3:
+> - Fix possibly corrupting the file just before the MDS acquires the
+>   xlock for FILE lock, another client has updated it.
+> - Flush the pagecache buffer before reading the last block for the
+>   when filling the truncate request.
+> - Some other minore fixes.
+> 
+> 
+> 
+> Jeff Layton (5):
+>   libceph: add CEPH_OSD_OP_ASSERT_VER support
+>   ceph: size handling for encrypted inodes in cap updates
+>   ceph: fscrypt_file field handling in MClientRequest messages
+>   ceph: get file size from fscrypt_file when present in inode traces
+>   ceph: handle fscrypt fields in cap messages from MDS
+> 
+> Xiubo Li (3):
+>   ceph: add __ceph_get_caps helper support
+>   ceph: add __ceph_sync_read helper support
+>   ceph: add truncate size handling support for fscrypt
+> 
+>  fs/ceph/caps.c                  | 136 ++++++++++++++----
+>  fs/ceph/crypto.h                |   4 +
+>  fs/ceph/dir.c                   |   3 +
+>  fs/ceph/file.c                  |  43 ++++--
+>  fs/ceph/inode.c                 | 236 +++++++++++++++++++++++++++++---
+>  fs/ceph/mds_client.c            |   9 +-
+>  fs/ceph/mds_client.h            |   2 +
+>  fs/ceph/super.h                 |  10 ++
+>  include/linux/ceph/crypto.h     |  28 ++++
+>  include/linux/ceph/osd_client.h |   6 +-
+>  include/linux/ceph/rados.h      |   4 +
+>  net/ceph/osd_client.c           |   5 +
+>  12 files changed, 427 insertions(+), 59 deletions(-)
+>  create mode 100644 include/linux/ceph/crypto.h
+> 
 
-Awesome, thanks.  I'll wait until this is merged into mainline (which will
-take a while, of course) before I push changes to the fstests.  Adding
-further checks to the tests that use remote copies was the drive for these
-new metrics, and I've already some patches for doing that.  They'll need
-some cleanup but it doesn't make sense to push them before this is
-available upstream.
+Nice work, Xiubo. This looks good.
 
-Cheers,
---
-Luís
+I've been testing it some today and it seems to work fine so far. I've
+got a bit more testing that I want to do tomorrow, but this should
+hopefully clear the way for us to finish the content encryption piece!
+
+Many thanks!
+-- 
+Jeff Layton <jlayton@kernel.org>
