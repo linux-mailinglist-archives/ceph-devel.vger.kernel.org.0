@@ -2,55 +2,55 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF8B9447F11
-	for <lists+ceph-devel@lfdr.de>; Mon,  8 Nov 2021 12:42:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 507E6447FD1
+	for <lists+ceph-devel@lfdr.de>; Mon,  8 Nov 2021 13:50:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239302AbhKHLpO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 8 Nov 2021 06:45:14 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:38707 "EHLO
+        id S236993AbhKHMwx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 8 Nov 2021 07:52:53 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31815 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239303AbhKHLpN (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 Nov 2021 06:45:13 -0500
+        by vger.kernel.org with ESMTP id S236140AbhKHMww (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 Nov 2021 07:52:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636371749;
+        s=mimecast20190719; t=1636375808;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=tIfkfSRXJsMvwVYRQzoY1Y1abk8v0mm6do2zZDEY2Mw=;
-        b=EUU2LkCpSJBZqPoAybOMUcfPQjx78r7jzWDmbqELrgYS+nCWzx1FqLXWlEW6NnCUBEn1fR
-        1Grkp057A4ahWcCJczf+wyIm/vyFIPkRkOb/Uh5//seUcsM02T9ddrQkaDSZc8+1wUpzAe
-        W0mzIJx5Yx5ivah02JLngEV5x+GmPXA=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-369-vXOkXUQFNamOh4IuBwvgGA-1; Mon, 08 Nov 2021 06:42:28 -0500
-X-MC-Unique: vXOkXUQFNamOh4IuBwvgGA-1
-Received: by mail-pg1-f197.google.com with SMTP id x14-20020a63cc0e000000b002a5bc462947so9879523pgf.20
-        for <ceph-devel@vger.kernel.org>; Mon, 08 Nov 2021 03:42:28 -0800 (PST)
+        bh=I4l9eGK7C4uXW0YqwCTMbOI3mYBaA7sWpG/2YA2NvEA=;
+        b=G8CFj/KdRNmrstPiL+YlMbhypOURMaM9Oas6VKn7KmtnjjoRMWCi/r2UXJox6VaVFPwubN
+        ea27JqfXpdtEDvc7+OfSG3JV5MjvjaGgqcrFDZWmvtqhHLnCsxDmg7R1g00WXimDZQ+4ES
+        kCGro11i26uV9tE43ruGdb51SeuejvE=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-519-CrKDLNmhOXi0MXNxZxQnng-1; Mon, 08 Nov 2021 07:50:06 -0500
+X-MC-Unique: CrKDLNmhOXi0MXNxZxQnng-1
+Received: by mail-pl1-f199.google.com with SMTP id x5-20020a1709028ec500b0013a347b89e4so6509737plo.3
+        for <ceph-devel@vger.kernel.org>; Mon, 08 Nov 2021 04:50:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=tIfkfSRXJsMvwVYRQzoY1Y1abk8v0mm6do2zZDEY2Mw=;
-        b=T7wgPAmOJ94jxgPf1MS21d14zXJrODv9pjrfud92na89Lm1WWuLf+WAdBQIGn9lABv
-         lxFd8gwjjuw8yGUNuYuQtwIoX504xA6mLcgHMYxhdfaLpNYnA+ymVKw1ADBnZQNe1p6V
-         sv2dli3olJ+VqPY9hB3AdhdHcekKm/mofscB03HgfOSlsOsZXbNPxnNLrBp3jRoWwLUq
-         YR6XL0NtmLw10KGxdt4eI5SXv3/ULry5QHvKdWgszDV7FPHgLmb73/dFIV9QBqChXsnW
-         /VOYZl0D9KmgPczGSVO/1UkGkgJzP3UGO46zI/CEox29tyOsgpGsXS2pwrJW5DMydTqI
-         CY8Q==
-X-Gm-Message-State: AOAM533IgS11hl9Ehvyu9JgUwowBSN+9QFwb6f1W+IwiTzdXjJU/X3q6
-        a3bPTcTpSpObwRa2apva7cUajCBQCYImK6Vc9DXwZXLywLWFZNmWX9wXUWo08qhhqejWn+SWTyb
-        jyjXHFNa6sWE9gA7DJjAMOpvRtXE1K4BwbOgrL/jsNuf74Vez74xzQX0PLOH6uDUdQBQiDn0=
-X-Received: by 2002:a17:903:1111:b0:13f:d1d7:fb67 with SMTP id n17-20020a170903111100b0013fd1d7fb67mr68856800plh.85.1636371746639;
-        Mon, 08 Nov 2021 03:42:26 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzyJLoBJfMHYLgZEA9RMOmQqvRcAEe7/mBvqx8WjXqn4hEVANw6cYLQFj/BGsv4gFiJgI06kg==
-X-Received: by 2002:a17:903:1111:b0:13f:d1d7:fb67 with SMTP id n17-20020a170903111100b0013fd1d7fb67mr68856756plh.85.1636371746113;
-        Mon, 08 Nov 2021 03:42:26 -0800 (PST)
+        bh=I4l9eGK7C4uXW0YqwCTMbOI3mYBaA7sWpG/2YA2NvEA=;
+        b=VEEHkr4YDcS8o7CPU9iWFL+NUb4/nQjfH+NeRQjpdqiDIzR+12vRqjXbwhLb/DqMES
+         0yeiK/AYv7hX539kPooBK+5tTgjm6Lwho2ckFWuLmEXwEGl1dF4Jv5BUztIKBtQjXze+
+         JzlcbBoe6Bh9tjm0DfKyzfnESARLTTn99vhYvPB8Xyuttxwhm+X+MPZLs8UIdTb6e49y
+         OecePPn97CSLjCnFDcoorXn11czjFVPnW2pA2y1B2/oqvJ+fcsjkxCdcDcQ72CWvGlD+
+         NKXHnj++Yt4+nnK9qL4XNAPTOeOvK3+K9aeHANr7WkjUS9OE9swBpJUYQvDH82jtH6XB
+         DSFw==
+X-Gm-Message-State: AOAM531EejR989ymbgADHz2sX65oxtZLASzK2lXTcV/oVNAslqvE0bCs
+        /lEcR7uqmsGXcoxkFcDrOnbQSkSbU8W60p9FhYPXglkvtYLeLbCAbTzb9aW5Ppc14whwHaC9NLR
+        md+OBI5oSfPYHXX4zbT4ScXlzNvnHwVfxCWOaAVChW+NrJhaxRthF5uWoiGpC1KP/zXSAVno=
+X-Received: by 2002:a05:6a00:1783:b0:49f:c134:c6e2 with SMTP id s3-20020a056a00178300b0049fc134c6e2mr12324497pfg.0.1636375805237;
+        Mon, 08 Nov 2021 04:50:05 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyzsF5kRWr/SPF0o6MNL/ns7uRYaPCT8+cG3g4Llxwe9Kb4VC91kGb2EEz8BVjMgXRWtnqMAg==
+X-Received: by 2002:a05:6a00:1783:b0:49f:c134:c6e2 with SMTP id s3-20020a056a00178300b0049fc134c6e2mr12324427pfg.0.1636375804743;
+        Mon, 08 Nov 2021 04:50:04 -0800 (PST)
 Received: from [10.72.12.80] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id p7sm12178688pgn.52.2021.11.08.03.42.22
+        by smtp.gmail.com with ESMTPSA id y9sm16854070pjt.27.2021.11.08.04.50.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Nov 2021 03:42:25 -0800 (PST)
+        Mon, 08 Nov 2021 04:50:04 -0800 (PST)
 Subject: Re: [PATCH v7 9/9] ceph: add truncate size handling support for
  fscrypt
 To:     jlayton@kernel.org
@@ -59,8 +59,8 @@ Cc:     idryomov@gmail.com, vshankar@redhat.com, pdonnell@redhat.com,
 References: <20211105142215.345566-1-xiubli@redhat.com>
  <20211105142215.345566-10-xiubli@redhat.com>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <59a4720b-5e3f-4319-85c7-b2f62479854e@redhat.com>
-Date:   Mon, 8 Nov 2021 19:42:20 +0800
+Message-ID: <f871b847-5c19-d358-6ca6-994558e38e0b@redhat.com>
+Date:   Mon, 8 Nov 2021 20:49:58 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
@@ -249,6 +249,13 @@ On 11/5/21 10:22 PM, xiubli@redhat.com wrote:
 > +	/* Try to writeback the dirty pagecaches */
 > +	if (issued & (CEPH_CAP_FILE_BUFFER))
 > +		filemap_fdatawrite(&inode->i_data);
+
+We may need to wait here, to make sure the dirty pages are all wrote 
+back to OSD before we are do the RMW, or if there have too many data 
+need to write back, it may finished just after the truncate. The dirty 
+data will be lost ?
+
+
 > +
 > +	page = __page_cache_alloc(GFP_KERNEL);
 > +	if (page == NULL) {
@@ -440,10 +447,6 @@ On 11/5/21 10:22 PM, xiubli@redhat.com wrote:
 > +			dout("setattr %p result=%d (%s locally, %d remote), retry it!\n",
 > +			     inode, err, ceph_cap_string(dirtied), mask);
 > +			goto retry;
-
-Here before retry we should put the request and release 'prealloc_cf'.
-
-
 > +		}
 >   	}
 >   out:
