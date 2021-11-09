@@ -2,71 +2,46 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE6B344AFAE
-	for <lists+ceph-devel@lfdr.de>; Tue,  9 Nov 2021 15:43:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F16244B1A9
+	for <lists+ceph-devel@lfdr.de>; Tue,  9 Nov 2021 18:02:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238856AbhKIOp6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 9 Nov 2021 09:45:58 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:59900 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230212AbhKIOp5 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 9 Nov 2021 09:45:57 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 41B6621B16;
-        Tue,  9 Nov 2021 14:43:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1636468991; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=goioAniynbIiw0lUXSVIq3T8CoHhRVTIJahregzr+NY=;
-        b=t+borbzAZgLVwDox3AulExgAEeANV+RPJ4S2GacW55kssM2iRWJHt1hyhnuzuCb5MBN68g
-        2TqrjHyQVauNerMoVT+8sccGwrnawyoNZAiFqejzk0Txzez1UrxN4iTlWC5LX1iXOOanBu
-        qpuZRTpx6ElangJx8OwX9eT0PKuaq6A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1636468991;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=goioAniynbIiw0lUXSVIq3T8CoHhRVTIJahregzr+NY=;
-        b=EdZ2J3P+2fibBKZO/9GsXbSLDCahIqJZjPxb5xMxg2zzNky5cWFo8dZxKXqyUfRN+Gm2PN
-        q7qdoAfgqmE2kiCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BFCD613A6A;
-        Tue,  9 Nov 2021 14:43:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id qqmuK/6IimFcfQAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Tue, 09 Nov 2021 14:43:10 +0000
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 9f0d5704;
-        Tue, 9 Nov 2021 14:43:10 +0000 (UTC)
-Date:   Tue, 9 Nov 2021 14:43:09 +0000
-From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
-To:     khiremat@redhat.com
-Cc:     jlayton@kernel.org, idryomov@gmail.com, pdonnell@redhat.com,
-        vshankar@redhat.com, xiubli@redhat.com, ceph-devel@vger.kernel.org
+        id S239414AbhKIRFB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 9 Nov 2021 12:05:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38636 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238128AbhKIRFA (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 9 Nov 2021 12:05:00 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CDED860F90;
+        Tue,  9 Nov 2021 17:02:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1636477334;
+        bh=m4weViyZmHS/WUlVjsiwDEGTHtdcBMYQ8Nadf++PTU0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Bz+V2IVhCmAcJj8RElsTWfn4oCIPtVNWibosue8Vhm+cTJ9teFWK15s/q3bJT0T6t
+         TCs+EINZY4hEBnc1LHGcJukQlLNxx1PvlXMLOQlpwXt5IPK9Mpf7kcNKRVAvYwwocx
+         as/P2lgqW+PlQfVsCSlVUDYB5MoedrK2XkpSvebxmMZSYry7Y/aQV2NbKCrQVhAYYH
+         Fb1oJzDL3mgjRHmz4nadjqVA/TyIhsdY14OrgG5VP/Y4qzE3zo+bOVtYDnrFwbjpXt
+         B/UnnQCBXt9dv+nWNyFwcbdK0U8rVeLmCCf5dUbTedUMIAiTGh0o6Nw9S1JwKFwZaF
+         tTkjovsADRx8A==
+Message-ID: <930ef6492acab416c5a4fd43ada6b16daec4048e.camel@kernel.org>
 Subject: Re: [PATCH v1 1/1] ceph: Fix incorrect statfs report for small quota
-Message-ID: <YYqI/b0LgH5f8idv@suse.de>
-References: <20211109091041.121750-1-khiremat@redhat.com>
- <20211109091041.121750-2-khiremat@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+From:   Jeff Layton <jlayton@kernel.org>
+To:     khiremat@redhat.com
+Cc:     idryomov@gmail.com, pdonnell@redhat.com, vshankar@redhat.com,
+        xiubli@redhat.com, ceph-devel@vger.kernel.org
+Date:   Tue, 09 Nov 2021 12:02:12 -0500
 In-Reply-To: <20211109091041.121750-2-khiremat@redhat.com>
+References: <20211109091041.121750-1-khiremat@redhat.com>
+         <20211109091041.121750-2-khiremat@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.1 (3.42.1-1.fc35) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Nov 09, 2021 at 02:40:41PM +0530, khiremat@redhat.com wrote:
+On Tue, 2021-11-09 at 14:40 +0530, khiremat@redhat.com wrote:
 > From: Kotresh HR <khiremat@redhat.com>
 > 
 > Problem:
@@ -79,11 +54,7 @@ On Tue, Nov 09, 2021 at 02:40:41PM +0530, khiremat@redhat.com wrote:
 > For quota size less than CEPH_BLOCK size, report
 > the total=used=CEPH_BLOCK,free=0 when quota is
 > full and total=free=CEPH_BLOCK, used=0 otherwise.
-
-This sounds good to me, although it's still not really accurate, as it
-will always use the block size granularity.  However, using these small
-values for quotas isn't probably quite common anyway, so meh.
-
+> 
 > Signed-off-by: Kotresh HR <khiremat@redhat.com>
 > ---
 >  fs/ceph/quota.c | 16 ++++++++++++++++
@@ -116,28 +87,18 @@ values for quotas isn't probably quite common anyway, so meh.
 >  		}
 >  		iput(in);
 >  	}
-> -- 
-> 2.31.1
-> 
 
-I think it would be more correct to move this logic into the spinlock
-protected code.  Which would even make the code simpler, something like:
+Technically this is (sort of) correct, but the lack of granularity makes
+this reporting somewhat useless.
 
-	spin_lock(&ci->i_ceph_lock);
-	if (ci->i_max_bytes) {
-		total = ci->i_max_bytes >> CEPH_BLOCK_SHIFT;
-		if (total) {
-			/* ... */
-		} else {
-			total = 1;
-			free = ci->i_max_bytes > ci->i_rbytes ? 1 : 0;
-		}
-	}
-	spin_unlock(&ci->i_ceph_lock);
+Honestly, I'd rather see this switch to reporting a smaller blocksize
+when you get down to <4M max_bytes. If people are setting quotas that
+are that small, then they probably would like to be able to look at "df"
+and see if they're approaching their quota. This doesn't give them that
+capability.
 
-I guess the 'if (total)' condition (and the 'is_updated' variable) can
-also be removed.
-
-Cheers,
---
-Luís
+Instead, could we just switch to reporting a 4k blocksize when
+i_max_bytes is that small? Then you can multiply the other values by 1k
+and it should all be correct.
+-- 
+Jeff Layton <jlayton@kernel.org>
