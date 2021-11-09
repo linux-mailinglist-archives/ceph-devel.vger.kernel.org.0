@@ -2,181 +2,137 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E2E4644B2AC
-	for <lists+ceph-devel@lfdr.de>; Tue,  9 Nov 2021 19:21:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6684844B4A4
+	for <lists+ceph-devel@lfdr.de>; Tue,  9 Nov 2021 22:27:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242305AbhKISYI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 9 Nov 2021 13:24:08 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:49550 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242269AbhKISYH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 9 Nov 2021 13:24:07 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        id S245098AbhKIVaK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 9 Nov 2021 16:30:10 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:51120 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236380AbhKIVaK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 9 Nov 2021 16:30:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1636493243;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=7KsArju8ppySIcA4To0LdNtm7ws2ZxZFgR4knlX4mWQ=;
+        b=VpY+LxIwxZFkg8d07t49LHOo2vzqpjUmPTyzlMWPWRXveMtnoQZLt5Cnteka0Fx5UanYm4
+        cRZ6R76sNVd4Aj5rfZSHpGFfDo3pjgHSzU0zh8VZ2N/c/c/oo3o0q4ylFvPtTC5R6Fm48I
+        Le7eseYOBVr8thveP7v4FeBYm8V1oGI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-590--XC-8eGxM_298xtEp9_5EA-1; Tue, 09 Nov 2021 16:27:20 -0500
+X-MC-Unique: -XC-8eGxM_298xtEp9_5EA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 7AD991FD5A;
-        Tue,  9 Nov 2021 18:21:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1636482080; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/xtxqiSB66//Ah1hf75JwXTklQJr2FJ6+y1XWuD6QLg=;
-        b=DFUDN/t7Y+FospIpTXuqFF+DLcVUFw1AyzyMRoIeHXCUWRAx4Luv2gF/qDfxF8CB6geyyW
-        JFq80TCaq1/i4mXjb9dbijVDNQ62U6A/c53TCAkqejOVZdtydc4deCdeIAlBqVA2Xu9gWk
-        ClTJSWzHa/o2Z6YcDkVfQFoYLj8MT8g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1636482080;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/xtxqiSB66//Ah1hf75JwXTklQJr2FJ6+y1XWuD6QLg=;
-        b=Ycw2B1UZfdckO1Uk+TI57hu3DlGavVMd13CjyJyzIpgfGbo+c5sLDaqp0RsacAoRiFFWy6
-        dKzk4D0fmNRL5BDg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3F85413B2F;
-        Tue,  9 Nov 2021 18:21:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 89VUDCC8imG8agAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Tue, 09 Nov 2021 18:21:20 +0000
-Received: from localhost (brahms [local])
-        by brahms (OpenSMTPD) with ESMTPA id 1b1a75b1;
-        Tue, 9 Nov 2021 18:21:19 +0000 (UTC)
-Date:   Tue, 9 Nov 2021 18:21:19 +0000
-From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com
-Subject: Re: [PATCH] ceph: don't check for quotas on MDS stray dirs
-Message-ID: <YYq8HztUGzMWknfr@suse.de>
-References: <20211109171011.39571-1-jlayton@kernel.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0266F1808329;
+        Tue,  9 Nov 2021 21:27:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.37.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F0D7110016F4;
+        Tue,  9 Nov 2021 21:27:14 +0000 (UTC)
+Subject: [PATCH v4 0/5] netfs, 9p, afs, ceph: Support folios,
+ at least partially
+From:   David Howells <dhowells@redhat.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     kafs-testing@auristor.com, Ilya Dryomov <idryomov@gmail.com>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        ceph-devel@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        v9fs-developer@lists.sourceforge.net, dhowells@redhat.com,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        devel@lists.orangefs.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 09 Nov 2021 21:27:14 +0000
+Message-ID: <163649323416.309189.4637503793406396694.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211109171011.39571-1-jlayton@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Nov 09, 2021 at 12:10:11PM -0500, Jeff Layton wrote:
-> 玮文 胡 reported seeing the WARN_RATELIMITED pop when writing to an
-> inode that had been transplanted into the stray dir. The client was
-> trying to look up the quotarealm info from the parent and that tripped
-> the warning.
-> 
-> Change the ceph_vino_is_reserved helper to not throw a warning and
-> add a new ceph_vino_warn_reserved() helper that does. Change all of the
-> existing callsites to call the "warn" variant, and have
-> ceph_has_realms_with_quotas check return false when the vino is
-> reserved.
-> 
-> URL: https://tracker.ceph.com/issues/53180
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/export.c |  4 ++--
->  fs/ceph/inode.c  |  2 +-
->  fs/ceph/quota.c  |  3 +++
->  fs/ceph/super.h  | 17 ++++++++++-------
->  4 files changed, 16 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-> index e0fa66ac8b9f..a75cf07d668f 100644
-> --- a/fs/ceph/export.c
-> +++ b/fs/ceph/export.c
-> @@ -130,7 +130,7 @@ static struct inode *__lookup_inode(struct super_block *sb, u64 ino)
->  	vino.ino = ino;
->  	vino.snap = CEPH_NOSNAP;
->  
-> -	if (ceph_vino_is_reserved(vino))
-> +	if (ceph_vino_warn_reserved(vino))
->  		return ERR_PTR(-ESTALE);
->  
->  	inode = ceph_find_inode(sb, vino);
-> @@ -224,7 +224,7 @@ static struct dentry *__snapfh_to_dentry(struct super_block *sb,
->  		vino.snap = sfh->snapid;
->  	}
->  
-> -	if (ceph_vino_is_reserved(vino))
-> +	if (ceph_vino_warn_reserved(vino))
->  		return ERR_PTR(-ESTALE);
->  
->  	inode = ceph_find_inode(sb, vino);
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index e8eb8612ddd6..a685fab56772 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -56,7 +56,7 @@ struct inode *ceph_get_inode(struct super_block *sb, struct ceph_vino vino)
->  {
->  	struct inode *inode;
->  
-> -	if (ceph_vino_is_reserved(vino))
-> +	if (ceph_vino_warn_reserved(vino))
->  		return ERR_PTR(-EREMOTEIO);
->  
->  	inode = iget5_locked(sb, (unsigned long)vino.ino, ceph_ino_compare,
-> diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-> index 620c691af40e..d1158c40bb0c 100644
-> --- a/fs/ceph/quota.c
-> +++ b/fs/ceph/quota.c
-> @@ -30,6 +30,9 @@ static inline bool ceph_has_realms_with_quotas(struct inode *inode)
->  	/* if root is the real CephFS root, we don't have quota realms */
->  	if (root && ceph_ino(root) == CEPH_INO_ROOT)
->  		return false;
-> +	/* MDS stray dirs have no quota realms */
-> +	if (ceph_vino_is_reserved(ceph_inode(inode)->i_vino))
-> +		return false;
->  	/* otherwise, we can't know for sure */
->  	return true;
->  }
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index ed51e04739c4..c232ed8e8a37 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -547,18 +547,21 @@ static inline int ceph_ino_compare(struct inode *inode, void *data)
->  
->  static inline bool ceph_vino_is_reserved(const struct ceph_vino vino)
->  {
-> -	if (vino.ino < CEPH_INO_SYSTEM_BASE &&
-> -	    vino.ino >= CEPH_MDS_INO_MDSDIR_OFFSET) {
-> -		WARN_RATELIMIT(1, "Attempt to access reserved inode number 0x%llx", vino.ino);
-> -		return true;
-> -	}
-> -	return false;
-> +	return vino.ino < CEPH_INO_SYSTEM_BASE &&
-> +	       vino.ino >= CEPH_MDS_INO_MDSDIR_OFFSET;
-> +}
-> +
-> +static inline bool ceph_vino_warn_reserved(const struct ceph_vino vino)
-> +{
-> +	return WARN_RATELIMIT(ceph_vino_is_reserved(vino),
-> +				"Attempt to access reserved inode number 0x%llx",
-> +				vino.ino);
->  }
->  
->  static inline struct inode *ceph_find_inode(struct super_block *sb,
->  					    struct ceph_vino vino)
->  {
-> -	if (ceph_vino_is_reserved(vino))
-> +	if (ceph_vino_warn_reserved(vino))
->  		return NULL;
->  
->  	/*
-> -- 
-> 2.33.1
-> 
 
-This looks reasonable.  I would probably keep the old function name and
-simply name the new one ceph_vino_is_reserved_no_warn().  But that's just
-because I'm lazy :-)
+Here's a set of patches to convert netfs, 9p and afs to use folios and to
+provide sufficient conversion for ceph that it can continue to use the
+netfs library.  Jeff Layton is working on fully converting ceph.
 
-Reviewed-by: Luis Henriques <lhenriques@suse.de>
+This has been rebased on to the 9p merge in Linus's tree[5] so that it has
+access to both the 9p conversion to fscache and folios.
 
-Cheers,
---
-Luís
+Changes
+=======
+ver #4:
+ - Detached and sent the afs symlink split patch separately.
+ - Handed the 9p netfslibisation patch off to Dominique Martinet.
+ - Added a patch to foliate page_endio().
+ - Fixed a bug in afs_redirty_page() whereby it didn't set the next page
+   index in the loop and returned too early.
+ - Simplified a check in v9fs_vfs_write_folio_locked()[4].
+ - Undid a change to afs_symlink_readpage()[4].
+ - Used offset_in_folio() in afs_write_end()[4].
+ - Rebased on 9p-folio merge upstream[5].
+
+ver #3:
+ - Rebased on upstream as folios have been pulled.
+ - Imported a patch to convert 9p to netfslib from my
+   fscache-remove-old-api branch[3].
+ - Foliated netfslib.
+
+ver #2:
+ - Reorder the patches to put both non-folio afs patches to the front.
+ - Use page_offset() rather than manual calculation[1].
+ - Fix folio_inode() to directly access the inode[2].
+
+David
+
+Link: https://lore.kernel.org/r/YST/0e92OdSH0zjg@casper.infradead.org/ [1]
+Link: https://lore.kernel.org/r/YST8OcVNy02Rivbm@casper.infradead.org/ [2]
+Link: https://lore.kernel.org/r/163551653404.1877519.12363794970541005441.stgit@warthog.procyon.org.uk/ [3]
+Link: https://lore.kernel.org/r/YYKa3bfQZxK5/wDN@casper.infradead.org/ [4]
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f89ce84bc33330607a782e47a8b19406ed109b15 [5]
+Link: https://lore.kernel.org/r/2408234.1628687271@warthog.procyon.org.uk/ # v0
+Link: https://lore.kernel.org/r/162981147473.1901565.1455657509200944265.stgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/163005740700.2472992.12365214290752300378.stgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/163584174921.4023316.8927114426959755223.stgit@warthog.procyon.org.uk>/ # v3
+---
+David Howells (5):
+      folio: Add a function to change the private data attached to a folio
+      folio: Add a function to get the host inode for a folio
+      folio: Add replacements for page_endio()
+      netfs, 9p, afs, ceph: Use folios
+      afs: Use folios in directory handling
+
+
+ fs/9p/vfs_addr.c           |  83 +++++----
+ fs/9p/vfs_file.c           |  20 +--
+ fs/afs/dir.c               | 229 ++++++++++--------------
+ fs/afs/dir_edit.c          | 154 ++++++++--------
+ fs/afs/file.c              |  68 ++++----
+ fs/afs/internal.h          |  46 ++---
+ fs/afs/write.c             | 347 ++++++++++++++++++-------------------
+ fs/ceph/addr.c             |  80 +++++----
+ fs/netfs/read_helper.c     | 165 +++++++++---------
+ include/linux/netfs.h      |  12 +-
+ include/linux/pagemap.h    |  23 ++-
+ include/trace/events/afs.h |  21 +--
+ mm/filemap.c               |  64 ++++---
+ mm/page-writeback.c        |   2 +-
+ 14 files changed, 666 insertions(+), 648 deletions(-)
+
+
+
+Tested-by: Jeff Layton <jlayton@kernel.org>
+Tested-by: Dominique Martinet <asmadeus@codewreck.org>
+Tested-by: kafs-testing@auristor.com
+
