@@ -2,134 +2,127 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 864A444E56B
-	for <lists+ceph-devel@lfdr.de>; Fri, 12 Nov 2021 12:11:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DF2644F222
+	for <lists+ceph-devel@lfdr.de>; Sat, 13 Nov 2021 09:18:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234771AbhKLLOp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 12 Nov 2021 06:14:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52516 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233994AbhKLLOo (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 12 Nov 2021 06:14:44 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDDD1C061766;
-        Fri, 12 Nov 2021 03:11:53 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id z21so36185927edb.5;
-        Fri, 12 Nov 2021 03:11:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=l3NPsGFLqQUScYZh7+OYppIcBfeqQMA5edW6/FbKnxc=;
-        b=pHbjIGtgDPFkVhAGw2y320K83wi1O4Pcrlrgppe1mALLIeYh/2TcWrfWGJocd75UGC
-         JztFl7oHN0iHm0APLPRh/tdmOCY/haDOgATQPW+9rSFaCjckPDxZT0ra2g15acFW7Vji
-         6YYPLSK3b082xC8WkCtAdJ9Q+WV8CPZDndgE+PN/x6KWfx5lT4t68DkiMVhLT2TJ/7PD
-         B+g8raoFdU9GPPZQLCpAn6fVU8V67O7qVFFTWLuzugVbU24BFNlTdk8yS7SR10sMdxol
-         +xtxHsJ7fKtEKi12mpGXcqR+LLHO19sXW7K+t1nlXOQd536Wr09W9o/46lx3lNkYGdrV
-         SmSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=l3NPsGFLqQUScYZh7+OYppIcBfeqQMA5edW6/FbKnxc=;
-        b=LvlzEwNmnYY1SmzqXr++k+1brcEsDkuWZ0ckYXUsRccesOJHtlvNr4WTxRar9qVT62
-         5AVetQqOZ8mtevbujBBQj658IJdDkIQlPi8fntlySkNG0ehQozzdPT2JU2R4c8YsRHW7
-         2X2F2n3IrMtMRgN25emtDRvCRJaLYEZ0iYLO3pNqrhRrsig4ZweFUIYcTORqCp5HTt0b
-         3V/yWyyf7/k3Dv5Xk/CVl8sg/qPOBILaEP1trykZXrGNqdwwSDS80I0VVQjhC/o+X+ec
-         ZTiQG3yEhQVReiZw/SIflhPtrkRBEjl+JdBj+6vCUZyzpma1o60ft43q4C+cdBlzb+rV
-         imwQ==
-X-Gm-Message-State: AOAM533GVaLkc2woI3GaFyYa0O4yG3ugslM9/YOvxPqzi0TZn+mlEw67
-        rV3nwD9kV2eCci0x7PJJIGWFRU3m70j1oyu/
-X-Google-Smtp-Source: ABdhPJypFIY5XoytavaqD6i79i8paD+ScsRGRunwgo8kYoEuJQaVrAtqBviTFOUFOqyXCwqg+mcXHQ==
-X-Received: by 2002:a17:906:4bcf:: with SMTP id x15mr18463739ejv.273.1636715512438;
-        Fri, 12 Nov 2021 03:11:52 -0800 (PST)
-Received: from kwango.redhat.com ([109.110.91.205])
-        by smtp.gmail.com with ESMTPSA id dk5sm2833212edb.20.2021.11.12.03.11.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 03:11:52 -0800 (PST)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph updates for 5.16-rc1
-Date:   Fri, 12 Nov 2021 12:11:32 +0100
-Message-Id: <20211112111132.27316-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
+        id S232003AbhKMIVD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 13 Nov 2021 03:21:03 -0500
+Received: from mail-psaapc01on2096.outbound.protection.outlook.com ([40.107.255.96]:33441
+        "EHLO APC01-PSA-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230095AbhKMIVC (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Sat, 13 Nov 2021 03:21:02 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IzV2sADezXnaz42pYTwpjHVIg1bRjAguaAAfYCo8wqyqQbmxhW9hTeJJbZQkyFs0OVWp4w1jjxsyEuYkSzpz3Tcv+vzaeKtcUBkBrfX79hLAy0/xM5pbCVOm/MJBj76bmiyUK0NCcfmhOBZ3lBUOdct3pbPEg12xXvPXxHTdS+Oem+lNUpgr3eyk5VgjN8kcKytqHVgLK1FDkQWRaIdkd9+2w4pyFN5l1XY+ZwkGEfn4vk014AfvhPo+mmmLsQtLgPBfzE15N5kTvKosoHbuzJwsa//FhB6uJc4b7dht81pUF1CYhGoufhAJPeZMxi+z7MEge0ICWN++tzMIY2zUog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OK2ZMnCOYnPnS54wVo2JXZGgFfl7pjC2gSp+IoVqAg8=;
+ b=Sh3Y4jJjlMM5fxOSGvdA8Hip6EF2rEr2CaVJkCIw+Va+/UODPN/2/VZHhrL6M6b+AhxbP9cNdJ/O47Pn8W2pnHah6AZbwqVaFWDWD5Sp33O2VW0MYkF9bIJhoFM60UagSOZd6ATj+7BpIITRLho7BKmGpeZ0BGjdyB9j0ZyVlaFjE0RyVO+zuF2uOfAT091oKA/tT8QLk7KFmxLD3Xerb70tS8kKgmu+/0oZAkxbV7vo04sMbNCEPsCxSVjuGc0Ogs4XOs76XcA552cYqerIzUy2nvV80kFJ22Njv4e6g8ydhEfjcFkFW40C67lEplmY1Bb6DjX0QbQ7b140HuuXRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=u.nus.edu; dmarc=pass action=none header.from=u.nus.edu;
+ dkim=pass header.d=u.nus.edu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nusu.onmicrosoft.com;
+ s=selector1-nusu-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OK2ZMnCOYnPnS54wVo2JXZGgFfl7pjC2gSp+IoVqAg8=;
+ b=jRxY2rL77z86IXNMYCYRwiTM2A6opJDjPgZaQ7nScbeVESgo+D1u48uwpVC2okDx7rcmir8tOhiCzajTCiHKzys7nknBUq6T4WcMox4ZF4WPckrMPj1hPh6MDOcsty1K44/OCDAGxQrF2BP0sVWdTlyYlDLfLUJczI1FdCzfMvA=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=u.nus.edu;
+Received: from TY2PR06MB3056.apcprd06.prod.outlook.com (2603:1096:404:a0::20)
+ by TY2PR06MB3007.apcprd06.prod.outlook.com (2603:1096:404:9d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.13; Sat, 13 Nov
+ 2021 08:17:48 +0000
+Received: from TY2PR06MB3056.apcprd06.prod.outlook.com
+ ([fe80::d867:20cb:7dab:ab1c]) by TY2PR06MB3056.apcprd06.prod.outlook.com
+ ([fe80::d867:20cb:7dab:ab1c%5]) with mapi id 15.20.4669.015; Sat, 13 Nov 2021
+ 08:17:48 +0000
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+From:   Deng Kaisheng <kaisheng.deng@u.nus.edu>
+Date:   Sat, 13 Nov 2021 16:17:45 +0800
+Subject: Anything I can contribute?
+Message-Id: <F6563AD9-DE29-4174-9863-BF9B9D32052C@u.nus.edu>
+To:     ceph-devel@vger.kernel.org
+X-Mailer: iPhone Mail (18F72)
+X-ClientProxiedBy: SG2PR04CA0204.apcprd04.prod.outlook.com
+ (2603:1096:4:187::16) To TY2PR06MB3056.apcprd06.prod.outlook.com
+ (2603:1096:404:a0::20)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: from smtpclient.apple (2401:7400:6004:e7db:d8c3:f270:6738:18b2) by SG2PR04CA0204.apcprd04.prod.outlook.com (2603:1096:4:187::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.15 via Frontend Transport; Sat, 13 Nov 2021 08:17:48 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e181f60a-b608-415d-201f-08d9a67e1412
+X-MS-TrafficTypeDiagnostic: TY2PR06MB3007:
+X-Microsoft-Antispam-PRVS: <TY2PR06MB3007D23AE0809FB01F5288B2A1969@TY2PR06MB3007.apcprd06.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: AKxTrVD9KWtrWbatdMMSpXEtMivtHCHwkSurinmC6Y0yxsmUkcrN+QO4dVCepjG1SDfGg4L9uwTtVJDpCC+1oDbVx9l48gNLAr6z5PaJAK066Ra5SBL1mftBmTkUFnDBLcxIf6Ff/ReHNubPWeEXxW6XBCSOswCKqQ3R4MoVRGQs2aFu04E0tygrJ+uKGOJ2FmEMqcEvVUI8Z5TyGp38zSP7qng3gZjreLhAwfgC3LFIsgjpCZf9GxtkGmK5eNmgMPZvKFFKpoFJTDGNjHdmOSqzJ4UqNNJ5xDE7cgyf0iID+/Nd+ow9Zr8xp1bM6esuMd42egN4W8oEC4+yAo0SDOVKOvjibHLsFjp+927iZOPHogLRdguOFxWDT0LFRuLhj32tIPtpGiUTrk8bBrv00kICPjKBDHzNEogYd0Pl9l5n+gUrrOu3s3rOrEsWTA7V3HE7c5wLgkdEzjSvxlLgGj0yO+Vjtzw0wLt2hNVktyaQvl9a+jRAQR/FBIL5E2xeANvWOYNmVFcJw7APNgz4VUGMSZsGcQFTaJ56S4DUwnVJBA7u+TZlnOhVHPwfL2yZgFilmbglHY0uQkJk3KIw/ygTg6f/4xvIzWd86casuf+eA4CYRFQfYXcvDNBUQnxljCJniNepFPoPVXxs4SW1/SbDBaZwvxIzxXw6z57MpKRCvv2+OPRO62M8B5vs9IAp8gAYfM+/z8qsDCLJztLQ/Oc68LxSKlOoCf9GkCOFdCc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR06MB3056.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(86362001)(316002)(786003)(6506007)(2616005)(4744005)(52116002)(33656002)(6666004)(5660300002)(186003)(3480700007)(508600001)(6486002)(6512007)(2906002)(6916009)(8676002)(66556008)(8936002)(66946007)(75432002)(66476007)(38100700002)(45980500001)(36394004);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?arVjVdZfIQ0cdsnAKlP/WOvmIaiT7ph8pCjv8OZsPAjiFgQRKPbD2Tos0gD9?=
+ =?us-ascii?Q?jbpnPlkVHQQ5elU1iJNC5fp7v+munixaVutqW343UjHmlJE5RcXnFwcq1Dcg?=
+ =?us-ascii?Q?W/mAldU18wMWLlKipX+ZWImW2Lk3dtiQhSp2xFt/KpMNIRLiKH1xGU4zVk7g?=
+ =?us-ascii?Q?qdHvPsBGDvm3dM/grTYMOWZa/Ei64EPxBhI6l97LfybA+lXuJYzswQ1ftRKc?=
+ =?us-ascii?Q?CHYFx8U6VIZ/7DY1zuHeA64OImDx3cQhZyuOqtjiTs0JYEOynJyVVo4H380o?=
+ =?us-ascii?Q?Z/GJ2YO0p/Dg+UvZ88UFQUnccJgbVvzZ8Tx69gD3PD9q2yZZNWjpoRZF7Ffv?=
+ =?us-ascii?Q?YWbG4RKSbkacoLqImTNmcNG4SbphN7+dejIY5kqO2wpGz18CKggTJN4C37Kv?=
+ =?us-ascii?Q?+uvxIE6gRqUgaksmK+Sk7jRoFMwjUEY9WRjFI5XMF89A3HXv1/GdWaKS+j/I?=
+ =?us-ascii?Q?HmhE5Y/BZrh9tm6vJ33ITcFh5Jxn12+zEX8tpWk0BmRoqtLm23nWhCvb9Cry?=
+ =?us-ascii?Q?dvWipSrzuOF2X0nL0omQlCwJbTMKScnM/186bDiZVHVGp0x+w41DB0orVi2B?=
+ =?us-ascii?Q?phs8GA8/kfFE7QKu8AtZpXIXioInEvReajU5lACGQaPcqZ7iWQUKDYS3rBCv?=
+ =?us-ascii?Q?SkinkAofHX06wbRpoiLqrec0WWEYQj/Hd+qMO8IgwR6Bl1EZbUFW1ZLEQGgF?=
+ =?us-ascii?Q?87EUlAJYqQWbNyYPNyidLJnCgmdHrl85ZLlFOXsBdWdE5b7Bqz9Qheotxouo?=
+ =?us-ascii?Q?GRjIW5NY4aT6KilX1rlnIKD+C/rMupQNzqcRxawLvoqMpqkwYMMDxqRf42k/?=
+ =?us-ascii?Q?fhNJMhCbnuWvdiRzSgvCQHk9S7FYO61gGlJJ8rpIWFS27h5578exfp+dM0Ja?=
+ =?us-ascii?Q?hvGOkpdmngJGiPPsK8cKGhq6J197+AWCOyY1cdBte1aU94Ox8JRMouJ4RIVZ?=
+ =?us-ascii?Q?eG4G2nbCWRYumMT4BXkUi7QCKaHg9yVZRyGuvXr54xCM22/VaMKLam9C3Ob8?=
+ =?us-ascii?Q?NpQvSVPzqql/abIVokh6DBP+rL0Le8x3/a6SWyqBLa0/8oFfIjpRDgnRLMOC?=
+ =?us-ascii?Q?KPoadvKKyFXG+nqKsrc/ZLqO5kYIGPMBrdPqOox+hDPAGZgUNaOP7+cp58hS?=
+ =?us-ascii?Q?BCNAtcHP+UYuSHGGkTeDjbraY2TFW39Si1V2JlM19wAZ+N+d2PkAWmGLOnTl?=
+ =?us-ascii?Q?bm1gALCsscJE3jBH9beDrCN3h8h62R4xk+/ZQ+6gPyq+aJJlm1eDDD664/np?=
+ =?us-ascii?Q?pX+KaDV8kD8XHhsOi0oKTGvL8Epvkn0gQWOLvnTq3+Vkjq2Al8s5QUW2MHSI?=
+ =?us-ascii?Q?xo2RFl9iS8vIE28/kQGBzEldA+dxgBnA2T+E8MReILyiW7VwlQBBRf+Env3r?=
+ =?us-ascii?Q?5/n44VglUJfFvzjxH+1wTWBFueQAZYv+74slGDXhfwMijuUoATfiG+GMLzA9?=
+ =?us-ascii?Q?1OmRSctZrVzOeUbjK289oyped4CNb/mIdMQ2jowztF61ddPrpTXnsGm9JDVU?=
+ =?us-ascii?Q?7igB19LRtonebWOX95am+MmzBu6H0/McS2uMgItGsM10ETPXaLMMkDkv/yQM?=
+ =?us-ascii?Q?+WFygfYPmmT7mOBXzr6dvRkbIpt1rL0tFb930Q1n6bbR5EnRyLSFA/mTOtCG?=
+ =?us-ascii?Q?sVKTRW9KHx/4ZnVYsXSzwXgiRkz2MJ5wZzxAoVyELlGskH50GrCwzMhVycyf?=
+ =?us-ascii?Q?Yb2hL2FLtkvPi6aV2I6y/WO6BqA=3D?=
+X-OriginatorOrg: u.nus.edu
+X-MS-Exchange-CrossTenant-Network-Message-Id: e181f60a-b608-415d-201f-08d9a67e1412
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR06MB3056.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2021 08:17:48.3407
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5ba5ef5e-3109-4e77-85bd-cfeb0d347e82
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: b71BSZSbLX7tBOuwNxEZ7qc0rr2b7iMXfmvj7rwBhG6UPO/R7lcsfDx3E8qSmlrQrTF6EbanpQosdEkF9vBKcg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR06MB3007
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-The following changes since commit 8bb7eca972ad531c9b149c0a51ab43a417385813:
+My name is Deng Kaisheng, a graduate student in National University of Sina=
+pore (NUS) now major in computer science. I've read the introduction of you=
+r organization and I'm quite interested in what you're doing.
 
-  Linux 5.15 (2021-10-31 13:53:10 -0700)
+I want to do something and contribute to the community, and I wonder if the=
+re is something I can do. I major in computer science since undergraduate w=
+ith a solid foundation in CS, and I'm also confident in my fast-learning sk=
+ills. I have programming skills in C++, Python, Java, Objective-C, etc., an=
+d database skills in MySQL and Cassandra.=20
 
-are available in the Git repository at:
+I wonder if your organization is going to take part in the GSoC 2022, if po=
+ssible, I would like to contribute to your project in GSOC 2022.
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-5.16-rc1
+I am looking forward to your reply!
 
-for you to fetch changes up to c02cb7bdc4501debc3e71a4d2daf7286c48e1d38:
+Best regards,
 
-  ceph: add a new metric to keep track of remote object copies (2021-11-08 03:29:52 +0100)
-
-----------------------------------------------------------------
-One notable change here is that async creates and unlinks introduced
-in 5.7 are now enabled by default.  This should greatly speed up things
-like rm, tar and rsync.  To opt out, wsync mount option can be used.
-
-Other than that we have a pile of bug fixes all across the filesystem
-from Jeff, Xiubo and Kotresh and a metrics infrastructure rework from
-Luis.
-
-----------------------------------------------------------------
-Jean Sacren (1):
-      libceph: drop ->monmap and err initialization
-
-Jeff Layton (11):
-      ceph: convert to noop_direct_IO
-      ceph: enable async dirops by default
-      ceph: print inode numbers instead of pointer values
-      ceph: don't use -ESTALE as special return code in try_get_cap_refs
-      ceph: drop private list from remove_session_caps_cb
-      ceph: fix auth cap handling logic in remove_session_caps_cb
-      ceph: refactor remove_session_caps_cb
-      ceph: shut down access to inode when async create fails
-      ceph: just use ci->i_version for fscache aux info
-      ceph: shut down mount on bad mdsmap or fsmap decode
-      ceph: properly handle statfs on multifs setups
-
-Kotresh HR (1):
-      ceph: don't rely on error_string to validate blocklisted session.
-
-Luis Henriques (4):
-      ceph: split 'metric' debugfs file into several files
-      ceph: clean-up metrics data structures to reduce code duplication
-      libceph, ceph: move ceph_osdc_copy_from() into cephfs code
-      ceph: add a new metric to keep track of remote object copies
-
-Xiubo Li (3):
-      ceph: ignore the truncate when size won't change with Fx caps issued
-      ceph: fix mdsmap decode when there are MDS's beyond max_mds
-      ceph: return the real size read when it hits EOF
-
- fs/ceph/addr.c                  |  29 +++----
- fs/ceph/cache.c                 |  23 +-----
- fs/ceph/caps.c                  | 151 ++++++++++++++++++++++++++++++++----
- fs/ceph/debugfs.c               | 167 ++++++++++++++++++++++------------------
- fs/ceph/export.c                |  12 ++-
- fs/ceph/file.c                  | 103 ++++++++++++++++++++-----
- fs/ceph/inode.c                 |  54 ++++++++++---
- fs/ceph/locks.c                 |   6 ++
- fs/ceph/mds_client.c            | 139 +++++++--------------------------
- fs/ceph/mdsmap.c                |   4 -
- fs/ceph/metric.c                | 128 ++++++++----------------------
- fs/ceph/metric.h                |  88 ++++++++++++---------
- fs/ceph/super.c                 |  17 ++--
- fs/ceph/super.h                 |  18 ++++-
- include/linux/ceph/ceph_fs.h    |   2 +
- include/linux/ceph/osd_client.h |  19 ++---
- net/ceph/mon_client.c           |   3 +-
- net/ceph/osd_client.c           |  60 +++------------
- 18 files changed, 544 insertions(+), 479 deletions(-)
+Kaisheng=
