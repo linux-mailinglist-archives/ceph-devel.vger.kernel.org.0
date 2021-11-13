@@ -2,66 +2,56 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E534344F4FD
-	for <lists+ceph-devel@lfdr.de>; Sat, 13 Nov 2021 20:44:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE1FE44F505
+	for <lists+ceph-devel@lfdr.de>; Sat, 13 Nov 2021 20:44:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236009AbhKMTrI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 13 Nov 2021 14:47:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59786 "EHLO mail.kernel.org"
+        id S236075AbhKMTrN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 13 Nov 2021 14:47:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233898AbhKMTrH (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Sat, 13 Nov 2021 14:47:07 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id B66F760EB4;
-        Sat, 13 Nov 2021 19:44:14 +0000 (UTC)
+        id S236057AbhKMTrK (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Sat, 13 Nov 2021 14:47:10 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 0439A61215;
+        Sat, 13 Nov 2021 19:44:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636832654;
-        bh=EGUOMj5xc5vntvFCMogfm6YhCFkW3/nioe88e+Sf3Lg=;
+        s=k20201202; t=1636832658;
+        bh=SVyeWuTfSD5QrriiasD8VNT+BHbUyOlzTZKcqTmWZMg=;
         h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=HNvHEV+3TpQjdLRtANHMHAbpN9MwhyLoqb6iskMnnJuSCutayMYsXaBuc22n6n3YH
-         8Wd9vv1nlYWZEFFkjGpTSMuY5S7ICPUcBtoPGD52KKonENhRIqZrpEUhdrby4D/b16
-         2Zn45uI2242w6O6IX+/5EZqNSWGeP2gbUs+4eqaG97148Ywp0vNMgS/F0l8V86kjN9
-         QOKH8or52nYGsiFgkOsKgcNkM9h4VUICsBR9y9CUmiJb4tYCoFg1OZtoTt1T6lCPq+
-         gR8TosRnoxxJmHAGyNVovfZMNHXJdenDaMndNAolntiGw9MC/j3/ehqLKdJFdkLmFy
-         OYpRYuy3G3u4Q==
+        b=iksKJqVF5fQAN7ye8iNr9081RcFHCL8qWAk2JeywjTsD2h6IqVvYmdfboSnlizmFu
+         HONzYWWumVUWkdGs6L9thxdLCoqtZEMHEkJZj25zjpeCOOt+sDCs3Aj+qjZES+utCz
+         NkQfEdQkM72FrBdQ377IHEIPsgmDfuLQuS9zyFncF6C+TJXsDJQylLEH6DEa/oqbqg
+         q5J62eecBqPUYrJoY1UD/VC9LcLzt37MXuVlpsmgdC4D03aZwnb8BAlT1di5dx32Fo
+         Uw611QUQOxiCYZ3Po6PlKM56JrfEQNNtBp0ueAuiPMwq2Vc0z5YJk0oaX6xDZqicho
+         qXb1innjV2k6Q==
 Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 9F4F660721;
-        Sat, 13 Nov 2021 19:44:14 +0000 (UTC)
-Subject: Re: [GIT PULL] netfs, 9p, afs, ceph: Use folios
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id ECC6A60987;
+        Sat, 13 Nov 2021 19:44:17 +0000 (UTC)
+Subject: Re: [GIT PULL] Ceph updates for 5.16-rc1
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1134871.1636647952@warthog.procyon.org.uk>
-References: <1134871.1636647952@warthog.procyon.org.uk>
-X-PR-Tracked-List-Id: <linux-nfs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1134871.1636647952@warthog.procyon.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/netfs-folio-20211111
-X-PR-Tracked-Commit-Id: 255ed63638da190e2485d32c0f696cd04d34fbc0
+In-Reply-To: <20211112111132.27316-1-idryomov@gmail.com>
+References: <20211112111132.27316-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20211112111132.27316-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-5.16-rc1
+X-PR-Tracked-Commit-Id: c02cb7bdc4501debc3e71a4d2daf7286c48e1d38
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0f7ddea6225b9b001966bc9665924f1f8b9ac535
-Message-Id: <163683265459.24678.13171467044016264147.pr-tracker-bot@kernel.org>
-Date:   Sat, 13 Nov 2021 19:44:14 +0000
-To:     David Howells <dhowells@redhat.com>
-Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Jeffrey E Altman <jaltman@auristor.com>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, linux-cachefs@redhat.com,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+X-PR-Merge-Commit-Id: 0ecca62beb12eeb13965ed602905c8bf53ac93d0
+Message-Id: <163683265796.24678.17555720309336887682.pr-tracker-bot@kernel.org>
+Date:   Sat, 13 Nov 2021 19:44:17 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The pull request you sent on Thu, 11 Nov 2021 16:25:52 +0000:
+The pull request you sent on Fri, 12 Nov 2021 12:11:32 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/netfs-folio-20211111
+> https://github.com/ceph/ceph-client.git tags/ceph-for-5.16-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0f7ddea6225b9b001966bc9665924f1f8b9ac535
+https://git.kernel.org/torvalds/c/0ecca62beb12eeb13965ed602905c8bf53ac93d0
 
 Thank you!
 
