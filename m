@@ -2,147 +2,181 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3529B44FD47
-	for <lists+ceph-devel@lfdr.de>; Mon, 15 Nov 2021 03:54:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D09D544FD4A
+	for <lists+ceph-devel@lfdr.de>; Mon, 15 Nov 2021 03:56:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229909AbhKOC5V (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 14 Nov 2021 21:57:21 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44552 "EHLO
+        id S229723AbhKOC7w (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 14 Nov 2021 21:59:52 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:41285 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229588AbhKOC5R (ORCPT
+        by vger.kernel.org with ESMTP id S229568AbhKOC7j (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Sun, 14 Nov 2021 21:57:17 -0500
+        Sun, 14 Nov 2021 21:59:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636944861;
+        s=mimecast20190719; t=1636945004;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=jl5/NtO9ElL5IL5PR8hsbteYLA/rmFJOAG/ZAbvQVFs=;
-        b=K5kmmHqdt3FlQMm4MKdhHWVBWcPeb3v8MJ3hRt6YybFVQlvMoVeFNzv5NmPKjb+vPA59YM
-        SiKTDRRRIKZHjWUKu06VZdbG786eX9pZ1wqunqUxa4Y8xEGOUUE+FZc1v2QdZYSGAJXLM/
-        uITgJ1hez0FhYDUvRF59otsZ2lujo2U=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-134-6ogHmA15Pd-B0X6Ujjd1rw-1; Sun, 14 Nov 2021 21:54:20 -0500
-X-MC-Unique: 6ogHmA15Pd-B0X6Ujjd1rw-1
-Received: by mail-pg1-f197.google.com with SMTP id j18-20020a63fc12000000b002dd2237eb1cso8471426pgi.5
-        for <ceph-devel@vger.kernel.org>; Sun, 14 Nov 2021 18:54:20 -0800 (PST)
+        bh=8fEy9up/M+0PBrQO4A1PKgHkl5KAwX/RYMk7/9/S6j4=;
+        b=ifMZQhaFvcb5MR80AWMmExvQnrqjl26vcJMNRDqNvHa+WWRsw0KBVB+Q7M3LScf1nbsHzp
+        EMJlO9i5OLG+5eQYtSxsZSec+kPprTXccxafQhHeqinZ7Tj5PK7rbCh6YgOYUZPiYQ+kMX
+        otR2LOYvGH1lxhPjssohoO56ZJMauNM=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-242-D6x0ic2YMuuOriCTBSMyZw-1; Sun, 14 Nov 2021 21:56:38 -0500
+X-MC-Unique: D6x0ic2YMuuOriCTBSMyZw-1
+Received: by mail-pj1-f71.google.com with SMTP id gx17-20020a17090b125100b001a6f72e2dbdso4619671pjb.7
+        for <ceph-devel@vger.kernel.org>; Sun, 14 Nov 2021 18:56:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=jl5/NtO9ElL5IL5PR8hsbteYLA/rmFJOAG/ZAbvQVFs=;
-        b=FHv7W39T+nsJ62gzakOd6kgzbIZ1zx9zbbFZQL3/WoptTOB4gJ9hgxo0oHyTV6dP87
-         fwqwniTb/rQuTlPJBcsKW/HnYSDXBpG0YQsyt2Ili0U3V0SRiUWqgwatC4+YWy3xRVMS
-         dx1jYVDrpp0FZ6G6pc3ceOQ61GUks7ejH6MrUeFLuVuRDpBgu7UsbBrgE2rTckzNWROt
-         B0lNNOb9PARkzRTMKTlcOEEAtF1X5MBNrTTojcf99OXYKfiPjNoMnk9XnZKBC9d/rKaG
-         Xyl2hKQAN2oLH6PWncLOYQZz8jJ9PU23LKUv/pvUAUNaMPESSuTNDIFx4X5mVBQ3N4Ks
-         rZ9g==
-X-Gm-Message-State: AOAM530tSnK62dDNoLtjyfpaxIS4kzGXXSoApUhXXTnxLRESZNtckQzE
-        6jyytWMWjGhRqnyhj2TLQ/t432k/8SDk2ty0zNdnH3tjhsvd7CFMQ9xn7MuaVhoupI9+tdaTUdu
-        iVBxzUQijFVGEFcPe+l/FEAoVYT7o45H9wvTk3gGkS/LLB4Y/PmmiMV7DnVvKPCCH6FWsZEU=
-X-Received: by 2002:a63:5222:: with SMTP id g34mr21747292pgb.236.1636944859366;
-        Sun, 14 Nov 2021 18:54:19 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxj4EYfXqEKwwOtZTopVhrHkCrVVwU6gZgckzCDgGFOZoM1SDDUX+eJhcsBCDtA37UtQZ2JxA==
-X-Received: by 2002:a63:5222:: with SMTP id g34mr21747268pgb.236.1636944859056;
-        Sun, 14 Nov 2021 18:54:19 -0800 (PST)
+        bh=8fEy9up/M+0PBrQO4A1PKgHkl5KAwX/RYMk7/9/S6j4=;
+        b=T6SFoJ5iYXVDP5KluE3SglU+fAoY7wcnkMT/ebiVgLP16B6hgF08iNb6oY0S6ODHeF
+         htnBpJFbp6RVozIXi5hdZroSAJP8cxdBH0L4r2WduXBDtNWdnZWxd4VQDJONVcV2W4Ro
+         fiZNcNWp+Uiulz/sPBc+MyU9kjon63BhX/qhkadCSf2gIqegfFJUInkjuDMD5NKMr1JW
+         mRyokn/fYyD8x6+N+T0301Suz6D8nDKWR2AuFILnqeGOG3hL9Pjnb3brj61qpaZ/AwbI
+         ida9GUNjfona4p45WnH/X4BFsY5gbVPMVAIpxvbU2fyLtZZwG9d6FYgBzdNziyWq1i7R
+         dYXw==
+X-Gm-Message-State: AOAM530DXn7IMnAnnGAsNG73ko8KguFjRwEiTWRBD2BhY6qJhCJSL14T
+        xX0302p1qPG/5I5xXT9h6/fQF4Dz/rdd6wJjOZtTxK9EMrtrCKWUj112RWEcMgqeAf6xa2fDsME
+        hYxo2jzFxcjgzcOckizCZrg==
+X-Received: by 2002:a63:54f:: with SMTP id 76mr22479149pgf.26.1636944997816;
+        Sun, 14 Nov 2021 18:56:37 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyxdWM4nKcuGQqMlcnHCg4WoC8kkYtHDXihnLI0dbsDbyD2NSiydQWuMQu9k9VtLq8lK8+FRA==
+X-Received: by 2002:a63:54f:: with SMTP id 76mr22479129pgf.26.1636944997574;
+        Sun, 14 Nov 2021 18:56:37 -0800 (PST)
 Received: from [10.72.12.80] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id fw21sm16307041pjb.25.2021.11.14.18.54.15
+        by smtp.gmail.com with ESMTPSA id mi18sm11409245pjb.13.2021.11.14.18.56.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Nov 2021 18:54:18 -0800 (PST)
-Subject: Re: [PATCH v2 1/1] ceph: Fix incorrect statfs report for small quota
-To:     khiremat@redhat.com, jlayton@redhat.com
-Cc:     pdonnell@redhat.com, idryomov@gmail.com, vshankar@redhat.com,
-        ceph-devel@vger.kernel.org
-References: <20211110180021.20876-1-khiremat@redhat.com>
- <20211110180021.20876-2-khiremat@redhat.com>
+        Sun, 14 Nov 2021 18:56:37 -0800 (PST)
+Subject: Re: [PATCH] ceph: don't check for quotas on MDS stray dirs
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, lhenriques@suse.de
+References: <20211109171011.39571-1-jlayton@kernel.org>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <2bbf6340-0814-bbfa-0d35-2e1d1fff23de@redhat.com>
-Date:   Mon, 15 Nov 2021 10:53:59 +0800
+Message-ID: <90f6ac4c-5b7c-9769-2fb1-a2880f30ab54@redhat.com>
+Date:   Mon, 15 Nov 2021 10:56:32 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <20211110180021.20876-2-khiremat@redhat.com>
+In-Reply-To: <20211109171011.39571-1-jlayton@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 11/11/21 2:00 AM, khiremat@redhat.com wrote:
-> From: Kotresh HR <khiremat@redhat.com>
+On 11/10/21 1:10 AM, Jeff Layton wrote:
+> 玮文 胡 reported seeing the WARN_RATELIMITED pop when writing to an
+> inode that had been transplanted into the stray dir. The client was
+> trying to look up the quotarealm info from the parent and that tripped
+> the warning.
 >
-> Problem:
-> The statfs reports incorrect free/available space
-> for quota less then CEPH_BLOCK size (4M).
-
-s/then/than/
-
-
-> Solution:
-> For quota less than CEPH_BLOCK size, smaller block
-> size of 4K is used. But if quota is less than 4K,
-> it is decided to go with binary use/free of 4K
-> block. For quota size less than 4K size, report the
-> total=used=4K,free=0 when quota is full and
-> total=free=4K,used=0 otherwise.
+> Change the ceph_vino_is_reserved helper to not throw a warning and
+> add a new ceph_vino_warn_reserved() helper that does. Change all of the
+> existing callsites to call the "warn" variant, and have
+> ceph_has_realms_with_quotas check return false when the vino is
+> reserved.
 >
-> Signed-off-by: Kotresh HR <khiremat@redhat.com>
+> URL: https://tracker.ceph.com/issues/53180
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->   fs/ceph/quota.c | 14 ++++++++++++++
->   fs/ceph/super.h |  1 +
->   2 files changed, 15 insertions(+)
+>   fs/ceph/export.c |  4 ++--
+>   fs/ceph/inode.c  |  2 +-
+>   fs/ceph/quota.c  |  3 +++
+>   fs/ceph/super.h  | 17 ++++++++++-------
+>   4 files changed, 16 insertions(+), 10 deletions(-)
 >
+> diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+> index e0fa66ac8b9f..a75cf07d668f 100644
+> --- a/fs/ceph/export.c
+> +++ b/fs/ceph/export.c
+> @@ -130,7 +130,7 @@ static struct inode *__lookup_inode(struct super_block *sb, u64 ino)
+>   	vino.ino = ino;
+>   	vino.snap = CEPH_NOSNAP;
+>   
+> -	if (ceph_vino_is_reserved(vino))
+> +	if (ceph_vino_warn_reserved(vino))
+>   		return ERR_PTR(-ESTALE);
+>   
+>   	inode = ceph_find_inode(sb, vino);
+> @@ -224,7 +224,7 @@ static struct dentry *__snapfh_to_dentry(struct super_block *sb,
+>   		vino.snap = sfh->snapid;
+>   	}
+>   
+> -	if (ceph_vino_is_reserved(vino))
+> +	if (ceph_vino_warn_reserved(vino))
+>   		return ERR_PTR(-ESTALE);
+>   
+>   	inode = ceph_find_inode(sb, vino);
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index e8eb8612ddd6..a685fab56772 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -56,7 +56,7 @@ struct inode *ceph_get_inode(struct super_block *sb, struct ceph_vino vino)
+>   {
+>   	struct inode *inode;
+>   
+> -	if (ceph_vino_is_reserved(vino))
+> +	if (ceph_vino_warn_reserved(vino))
+>   		return ERR_PTR(-EREMOTEIO);
+>   
+>   	inode = iget5_locked(sb, (unsigned long)vino.ino, ceph_ino_compare,
 > diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-> index 620c691af40e..24ae13ea2241 100644
+> index 620c691af40e..d1158c40bb0c 100644
 > --- a/fs/ceph/quota.c
 > +++ b/fs/ceph/quota.c
-> @@ -494,10 +494,24 @@ bool ceph_quota_update_statfs(struct ceph_fs_client *fsc, struct kstatfs *buf)
->   		if (ci->i_max_bytes) {
->   			total = ci->i_max_bytes >> CEPH_BLOCK_SHIFT;
->   			used = ci->i_rbytes >> CEPH_BLOCK_SHIFT;
-> +			/* For quota size less than 4MB, use 4KB block size */
-> +			if (!total) {
-> +				total = ci->i_max_bytes >> CEPH_4K_BLOCK_SHIFT;
-> +				used = ci->i_rbytes >> CEPH_4K_BLOCK_SHIFT;
-> +	                        buf->f_frsize = 1 << CEPH_4K_BLOCK_SHIFT;
-> +			}
->   			/* It is possible for a quota to be exceeded.
->   			 * Report 'zero' in that case
->   			 */
->   			free = total > used ? total - used : 0;
-> +			/* For quota size less than 4KB, report the
-> +			 * total=used=4KB,free=0 when quota is full
-> +			 * and total=free=4KB, used=0 otherwise */
-> +			if (!total) {
-> +				total = 1;
-> +				free = ci->i_max_bytes > ci->i_rbytes ? 1 : 0;
-> +	                        buf->f_frsize = 1 << CEPH_4K_BLOCK_SHIFT;
-
-The 'buf->f_frsize' has already been assigned above, this could be removed.
-
-Thanks
-
--- Xiubo
-
-> +			}
->   		}
->   		spin_unlock(&ci->i_ceph_lock);
->   		if (total) {
+> @@ -30,6 +30,9 @@ static inline bool ceph_has_realms_with_quotas(struct inode *inode)
+>   	/* if root is the real CephFS root, we don't have quota realms */
+>   	if (root && ceph_ino(root) == CEPH_INO_ROOT)
+>   		return false;
+> +	/* MDS stray dirs have no quota realms */
+> +	if (ceph_vino_is_reserved(ceph_inode(inode)->i_vino))
+> +		return false;
+>   	/* otherwise, we can't know for sure */
+>   	return true;
+>   }
 > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index ed51e04739c4..387ee33894db 100644
+> index ed51e04739c4..c232ed8e8a37 100644
 > --- a/fs/ceph/super.h
 > +++ b/fs/ceph/super.h
-> @@ -32,6 +32,7 @@
->    * large volume sizes on 32-bit machines. */
->   #define CEPH_BLOCK_SHIFT   22  /* 4 MB */
->   #define CEPH_BLOCK         (1 << CEPH_BLOCK_SHIFT)
-> +#define CEPH_4K_BLOCK_SHIFT 12  /* 4 KB */
+> @@ -547,18 +547,21 @@ static inline int ceph_ino_compare(struct inode *inode, void *data)
 >   
->   #define CEPH_MOUNT_OPT_CLEANRECOVER    (1<<1) /* auto reonnect (clean mode) after blocklisted */
->   #define CEPH_MOUNT_OPT_DIRSTAT         (1<<4) /* `cat dirname` for stats */
+>   static inline bool ceph_vino_is_reserved(const struct ceph_vino vino)
+>   {
+> -	if (vino.ino < CEPH_INO_SYSTEM_BASE &&
+> -	    vino.ino >= CEPH_MDS_INO_MDSDIR_OFFSET) {
+> -		WARN_RATELIMIT(1, "Attempt to access reserved inode number 0x%llx", vino.ino);
+> -		return true;
+> -	}
+> -	return false;
+> +	return vino.ino < CEPH_INO_SYSTEM_BASE &&
+> +	       vino.ino >= CEPH_MDS_INO_MDSDIR_OFFSET;
+> +}
+> +
+> +static inline bool ceph_vino_warn_reserved(const struct ceph_vino vino)
+> +{
+> +	return WARN_RATELIMIT(ceph_vino_is_reserved(vino),
+> +				"Attempt to access reserved inode number 0x%llx",
+> +				vino.ino);
+>   }
+>   
+>   static inline struct inode *ceph_find_inode(struct super_block *sb,
+>   					    struct ceph_vino vino)
+>   {
+> -	if (ceph_vino_is_reserved(vino))
+> +	if (ceph_vino_warn_reserved(vino))
+>   		return NULL;
+>   
+>   	/*
+
+LGTM.
+
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
+
 
