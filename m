@@ -2,68 +2,147 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E837944F99F
-	for <lists+ceph-devel@lfdr.de>; Sun, 14 Nov 2021 18:10:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3529B44FD47
+	for <lists+ceph-devel@lfdr.de>; Mon, 15 Nov 2021 03:54:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236449AbhKNRNK convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Sun, 14 Nov 2021 12:13:10 -0500
-Received: from mx2.dreamhost.com ([64.90.62.164]:51270 "EHLO
-        pdx1-sub0-mail-mx204.dreamhost.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S236604AbhKNRLi (ORCPT
-        <rfc822;ceph-devel@ceph.com>); Sun, 14 Nov 2021 12:11:38 -0500
-Received: from mail.rsjlawang.id (mail.rsjlawang.id [103.126.57.42])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by pdx1-sub0-mail-mx204.dreamhost.com (Postfix) with ESMTPS id 4Hsf1621fwz4YCX;
-        Sun, 14 Nov 2021 09:08:42 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.rsjlawang.id (Postfix) with ESMTP id E5C3A3E764D;
-        Sun, 14 Nov 2021 22:10:58 +0700 (WIB)
-Received: from mail.rsjlawang.id ([127.0.0.1])
-        by localhost (mail.rsjlawang.id [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id dgwhXoTrlTEe; Sun, 14 Nov 2021 22:10:58 +0700 (WIB)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.rsjlawang.id (Postfix) with ESMTP id 6802E3E7BC7;
-        Sun, 14 Nov 2021 21:59:42 +0700 (WIB)
-X-Virus-Scanned: amavisd-new at rsjlawang.id
-Received: from mail.rsjlawang.id ([127.0.0.1])
-        by localhost (mail.rsjlawang.id [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id f3FY5sgkJeZd; Sun, 14 Nov 2021 21:59:35 +0700 (WIB)
-Received: from [85.62.55.37] (unknown [85.62.55.37])
-        by mail.rsjlawang.id (Postfix) with ESMTPSA id 0714C3E713B;
-        Sun, 14 Nov 2021 21:51:18 +0700 (WIB)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S229909AbhKOC5V (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 14 Nov 2021 21:57:21 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44552 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229588AbhKOC5R (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Sun, 14 Nov 2021 21:57:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1636944861;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jl5/NtO9ElL5IL5PR8hsbteYLA/rmFJOAG/ZAbvQVFs=;
+        b=K5kmmHqdt3FlQMm4MKdhHWVBWcPeb3v8MJ3hRt6YybFVQlvMoVeFNzv5NmPKjb+vPA59YM
+        SiKTDRRRIKZHjWUKu06VZdbG786eX9pZ1wqunqUxa4Y8xEGOUUE+FZc1v2QdZYSGAJXLM/
+        uITgJ1hez0FhYDUvRF59otsZ2lujo2U=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-134-6ogHmA15Pd-B0X6Ujjd1rw-1; Sun, 14 Nov 2021 21:54:20 -0500
+X-MC-Unique: 6ogHmA15Pd-B0X6Ujjd1rw-1
+Received: by mail-pg1-f197.google.com with SMTP id j18-20020a63fc12000000b002dd2237eb1cso8471426pgi.5
+        for <ceph-devel@vger.kernel.org>; Sun, 14 Nov 2021 18:54:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=jl5/NtO9ElL5IL5PR8hsbteYLA/rmFJOAG/ZAbvQVFs=;
+        b=FHv7W39T+nsJ62gzakOd6kgzbIZ1zx9zbbFZQL3/WoptTOB4gJ9hgxo0oHyTV6dP87
+         fwqwniTb/rQuTlPJBcsKW/HnYSDXBpG0YQsyt2Ili0U3V0SRiUWqgwatC4+YWy3xRVMS
+         dx1jYVDrpp0FZ6G6pc3ceOQ61GUks7ejH6MrUeFLuVuRDpBgu7UsbBrgE2rTckzNWROt
+         B0lNNOb9PARkzRTMKTlcOEEAtF1X5MBNrTTojcf99OXYKfiPjNoMnk9XnZKBC9d/rKaG
+         Xyl2hKQAN2oLH6PWncLOYQZz8jJ9PU23LKUv/pvUAUNaMPESSuTNDIFx4X5mVBQ3N4Ks
+         rZ9g==
+X-Gm-Message-State: AOAM530tSnK62dDNoLtjyfpaxIS4kzGXXSoApUhXXTnxLRESZNtckQzE
+        6jyytWMWjGhRqnyhj2TLQ/t432k/8SDk2ty0zNdnH3tjhsvd7CFMQ9xn7MuaVhoupI9+tdaTUdu
+        iVBxzUQijFVGEFcPe+l/FEAoVYT7o45H9wvTk3gGkS/LLB4Y/PmmiMV7DnVvKPCCH6FWsZEU=
+X-Received: by 2002:a63:5222:: with SMTP id g34mr21747292pgb.236.1636944859366;
+        Sun, 14 Nov 2021 18:54:19 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxj4EYfXqEKwwOtZTopVhrHkCrVVwU6gZgckzCDgGFOZoM1SDDUX+eJhcsBCDtA37UtQZ2JxA==
+X-Received: by 2002:a63:5222:: with SMTP id g34mr21747268pgb.236.1636944859056;
+        Sun, 14 Nov 2021 18:54:19 -0800 (PST)
+Received: from [10.72.12.80] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id fw21sm16307041pjb.25.2021.11.14.18.54.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 14 Nov 2021 18:54:18 -0800 (PST)
+Subject: Re: [PATCH v2 1/1] ceph: Fix incorrect statfs report for small quota
+To:     khiremat@redhat.com, jlayton@redhat.com
+Cc:     pdonnell@redhat.com, idryomov@gmail.com, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org
+References: <20211110180021.20876-1-khiremat@redhat.com>
+ <20211110180021.20876-2-khiremat@redhat.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <2bbf6340-0814-bbfa-0d35-2e1d1fff23de@redhat.com>
+Date:   Mon, 15 Nov 2021 10:53:59 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: NOTIFICATION OF PAYMENT..
-To:     Recipients <spi@rsjlawang.id>
-From:   "Mr. BENJAMIN TARIQ" <spi@rsjlawang.id>
-Date:   Sun, 14 Nov 2021 15:51:14 +0100
-Reply-To: lentmelvin@gmail.com
-Message-Id: <20211114145119.0714C3E713B@mail.rsjlawang.id>
+In-Reply-To: <20211110180021.20876-2-khiremat@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-FEDERAL RESERVE BANK OF NEW YORK
-33 LIBERTY ST, NEW YORK
-NY 10045, UNITED STATES
 
-ATTENTION FUND OWNER:
+On 11/11/21 2:00 AM, khiremat@redhat.com wrote:
+> From: Kotresh HR <khiremat@redhat.com>
+>
+> Problem:
+> The statfs reports incorrect free/available space
+> for quota less then CEPH_BLOCK size (4M).
 
-THE FEDERAL RESERVE BANK OF NEW YORK WRITES TO INFORM YOU THAT SOME FUND HAS BEEN APPROVED BY THE WORLD BANK ORGANIZATION AND PRESIDENCY UNION TO BE RECEIVED BY YOU AS A FORM OF COMPENSATION FOR BEING A SCAM VICTIM IN THE PAST YEARS OR THE WORLD PANDEMIC AFFECTED.
+s/then/than/
 
-NOTE: YOU ARE REQUESTED TO CONFIRM YOUR VALID INFORMATION SO AS TO ENABLE THE BANK TO REACH OUT TO  YOU AND BE SURE WE ARE DEALING WITH THE AFFECTED PERSON OR THE FAMILY.
 
-CONFIRM THE BELOW INFORMATION;
+> Solution:
+> For quota less than CEPH_BLOCK size, smaller block
+> size of 4K is used. But if quota is less than 4K,
+> it is decided to go with binary use/free of 4K
+> block. For quota size less than 4K size, report the
+> total=used=4K,free=0 when quota is full and
+> total=free=4K,used=0 otherwise.
+>
+> Signed-off-by: Kotresh HR <khiremat@redhat.com>
+> ---
+>   fs/ceph/quota.c | 14 ++++++++++++++
+>   fs/ceph/super.h |  1 +
+>   2 files changed, 15 insertions(+)
+>
+> diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
+> index 620c691af40e..24ae13ea2241 100644
+> --- a/fs/ceph/quota.c
+> +++ b/fs/ceph/quota.c
+> @@ -494,10 +494,24 @@ bool ceph_quota_update_statfs(struct ceph_fs_client *fsc, struct kstatfs *buf)
+>   		if (ci->i_max_bytes) {
+>   			total = ci->i_max_bytes >> CEPH_BLOCK_SHIFT;
+>   			used = ci->i_rbytes >> CEPH_BLOCK_SHIFT;
+> +			/* For quota size less than 4MB, use 4KB block size */
+> +			if (!total) {
+> +				total = ci->i_max_bytes >> CEPH_4K_BLOCK_SHIFT;
+> +				used = ci->i_rbytes >> CEPH_4K_BLOCK_SHIFT;
+> +	                        buf->f_frsize = 1 << CEPH_4K_BLOCK_SHIFT;
+> +			}
+>   			/* It is possible for a quota to be exceeded.
+>   			 * Report 'zero' in that case
+>   			 */
+>   			free = total > used ? total - used : 0;
+> +			/* For quota size less than 4KB, report the
+> +			 * total=used=4KB,free=0 when quota is full
+> +			 * and total=free=4KB, used=0 otherwise */
+> +			if (!total) {
+> +				total = 1;
+> +				free = ci->i_max_bytes > ci->i_rbytes ? 1 : 0;
+> +	                        buf->f_frsize = 1 << CEPH_4K_BLOCK_SHIFT;
 
-1) COMPLETE NAME AS STATED ON YOUR ID CARD:
-2) PHONE NUMBER:
-3) ADDRESS:
-4) ID CARD FOR VERIFICATION :
+The 'buf->f_frsize' has already been assigned above, this could be removed.
 
-YOUR URGENT RESPONSE IS WELCOMED AS WE ARE OPEN TO RECEIVE ANY QUESTION THAT MAY DISTURB YOU.
+Thanks
 
-REGARDS
-BENJAMIN TARIQ
+-- Xiubo
+
+> +			}
+>   		}
+>   		spin_unlock(&ci->i_ceph_lock);
+>   		if (total) {
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index ed51e04739c4..387ee33894db 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -32,6 +32,7 @@
+>    * large volume sizes on 32-bit machines. */
+>   #define CEPH_BLOCK_SHIFT   22  /* 4 MB */
+>   #define CEPH_BLOCK         (1 << CEPH_BLOCK_SHIFT)
+> +#define CEPH_4K_BLOCK_SHIFT 12  /* 4 KB */
+>   
+>   #define CEPH_MOUNT_OPT_CLEANRECOVER    (1<<1) /* auto reonnect (clean mode) after blocklisted */
+>   #define CEPH_MOUNT_OPT_DIRSTAT         (1<<4) /* `cat dirname` for stats */
+
