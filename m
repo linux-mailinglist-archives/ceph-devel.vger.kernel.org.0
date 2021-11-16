@@ -2,59 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C17E45294C
-	for <lists+ceph-devel@lfdr.de>; Tue, 16 Nov 2021 05:56:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09AD3452A64
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Nov 2021 07:14:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237361AbhKPE7u (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 15 Nov 2021 23:59:50 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:23727 "EHLO
+        id S232197AbhKPGRk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 16 Nov 2021 01:17:40 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:29302 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232972AbhKPE7s (ORCPT
+        by vger.kernel.org with ESMTP id S231922AbhKPGRj (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 15 Nov 2021 23:59:48 -0500
+        Tue, 16 Nov 2021 01:17:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637038611;
+        s=mimecast20190719; t=1637043282;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=DFFkVBReW9/cFy15bK2kiplDHjEnlvVxpxggjEtm6FQ=;
-        b=GJgRjXuhbFn0K9WuPZ/uh/yw0rhNCMQ5ttWPu7wMApw12RotNQnmnIjXth99Bs/aFe8SC3
-        +zA64+2XR9P/WATCKwJU+wLxC91fgkrTSaSuCjxD3mqfpx0wHchQpC4rWTEkW0kdoysAJr
-        ZybmXnckJ+WOtuzuVxJ+xC7qmykKEPk=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-3-e1V0c_GmPxaPqIy0h1bKXA-1; Mon, 15 Nov 2021 23:56:50 -0500
-X-MC-Unique: e1V0c_GmPxaPqIy0h1bKXA-1
-Received: by mail-pg1-f198.google.com with SMTP id i25-20020a631319000000b002cce0a43e94so10191234pgl.0
-        for <ceph-devel@vger.kernel.org>; Mon, 15 Nov 2021 20:56:49 -0800 (PST)
+        bh=v/wOh3dIYqvp3VTJgtjYJS8hQaiOO0T/VpjwGy3T/O8=;
+        b=T7uX3QId9FTIGA5qVk2FlZHag3PKnAbjD/kpC6SU7Adz6KvE+RphZ9YkRSfbPzEfbIkyNJ
+        /rqo5dY3woNbCrz8Odw6zpGuj5Ad4+HOtET1fIFLuUpjvHlaNyeGkqcEug0nbLh8WYKIWq
+        XMQJW7kmp7G1wSLnKkrmgib2eCWKWIg=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-560-dwKWixxQOPSnSWS3d9K-rw-1; Tue, 16 Nov 2021 01:14:40 -0500
+X-MC-Unique: dwKWixxQOPSnSWS3d9K-rw-1
+Received: by mail-pj1-f71.google.com with SMTP id d3-20020a17090a6a4300b001a70e45f34cso1123662pjm.0
+        for <ceph-devel@vger.kernel.org>; Mon, 15 Nov 2021 22:14:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=DFFkVBReW9/cFy15bK2kiplDHjEnlvVxpxggjEtm6FQ=;
-        b=cNiCZdBPFAxC2pNODgFmyRgyA1ooqhpplspAAYFlz3K+9BS060ZUpEdWBqo68OGbmU
-         BtPgjwbuHhJVvRQ1zpykmdrOpb3/bFxeIqjQ64xYj5J6ndvPJYYyg/P7lq1xKuJZmCAV
-         8lUn1Np4IZqv/lxzCZsANzGjngamzoRwKkSRQSDd6iBxsCWLxnWu4x6Ar/4hqD+pSKnJ
-         r78gpN0uuk0IaCCkMbTJTA7lwn7VhND0++CCEfnSsTSopAIHS4Z+RUv5f+1IvN3gcD+u
-         zff87EQvtrThhVniEWZ/pAsnIsmplVisb62yp945IiDZ4yl1iS+5Oz8WuQaDQEliS0pu
-         8g3g==
-X-Gm-Message-State: AOAM532H+snjmzBUv4wW3+AM7lRWBPYRMtDQBTo2xsuJT99n/UYrV5dQ
-        chEdS3IP6Cw7VvKKutsNAyZLnXKK2wapUced6waMcqBJ+2G6n2RjIRUiTY/9nLVdJx5XelcDUU1
-        ljY/qhc8youTe6wXsyseKpIB2BOWwbF6gOKxGw9QiNVTsY3PElFetEXxiQ4qJPUeaIXGs30k=
-X-Received: by 2002:aa7:8dc6:0:b0:49f:c66e:2d55 with SMTP id j6-20020aa78dc6000000b0049fc66e2d55mr38115996pfr.81.1637038608432;
-        Mon, 15 Nov 2021 20:56:48 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJz8cEO/sc00+1P40zFO9fZTp9VIisOA5BQEk3AEdPo6gWtNn7hUJjCkNu/wKpgynTdzyzrf1Q==
-X-Received: by 2002:aa7:8dc6:0:b0:49f:c66e:2d55 with SMTP id j6-20020aa78dc6000000b0049fc66e2d55mr38115962pfr.81.1637038608000;
-        Mon, 15 Nov 2021 20:56:48 -0800 (PST)
+        bh=v/wOh3dIYqvp3VTJgtjYJS8hQaiOO0T/VpjwGy3T/O8=;
+        b=EnEwqDK8WtzQTmXzlXxLyCbxJ2fAHDSKbg6bzYYTu6q4GFjiwMWP+GGuFdXHAZYzw5
+         kDJ2D0FLvbEcSJN7J/xAJ0aFEDZW6WvS2Bxm/JDCMlCBMP+7RipljoGCWD1GHvHsjzIi
+         fh6rTEeONdv9wJu0QPbbskY+H4fxE2AUnHeKtpqTkrLZchJ3iLx2m8a7GGGk8+qZDOWh
+         +G3VXnZqWymz8jtDXd3LedpWwRlkrcqeTsrXnlN2KRZzB8M2ghOTECcm4kJx3bZ4WUPl
+         mIXMyZQEg0iPNQQ8wVJE9/6qWE6SABGgxxoeAqlAfvwpQuQ9r7KEOCD32a4ziz7IP+4+
+         Vezg==
+X-Gm-Message-State: AOAM531TkIqVv8D21ZDt3FXiDmGcVKc2UHdOjWAsom9scZ6xIPR2cnO/
+        /lY05JEZowDhgm1Xag/O6lt5qncm83urB6EAe8hDKlXL8s0oOqUQS+i/5t4zhyiz3fYmDB94bqW
+        PdkVPn/99EmApRftX6EXO6qcxvtGjyCSCZO8x9TuzOI6Um3Sf69ZNiVgm40Xl3ryMHu5yHrA=
+X-Received: by 2002:a05:6a00:1681:b0:46f:6fc0:e515 with SMTP id k1-20020a056a00168100b0046f6fc0e515mr38339511pfc.11.1637043278610;
+        Mon, 15 Nov 2021 22:14:38 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJz4I9geGR1NHughBvlFRsm1+zbsx+d/aMiIFytdrOALIMuQsLK7X0pO4qfOU/RAFpx/HiLdcQ==
+X-Received: by 2002:a05:6a00:1681:b0:46f:6fc0:e515 with SMTP id k1-20020a056a00168100b0046f6fc0e515mr38339480pfc.11.1637043278295;
+        Mon, 15 Nov 2021 22:14:38 -0800 (PST)
 Received: from [10.72.12.80] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id f15sm18872002pfe.171.2021.11.15.20.56.44
+        by smtp.gmail.com with ESMTPSA id l6sm19372313pfc.126.2021.11.15.22.14.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Nov 2021 20:56:47 -0800 (PST)
+        Mon, 15 Nov 2021 22:14:37 -0800 (PST)
 Subject: Re: [PATCH 0/2] ceph: misc fixes for the fscrypt truncate size
  handling
+From:   Xiubo Li <xiubli@redhat.com>
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     idryomov@gmail.com, vshankar@redhat.com, khiremat@redhat.com,
         ceph-devel@vger.kernel.org
@@ -63,123 +63,65 @@ References: <20211108135012.79941-1-xiubli@redhat.com>
  <ec7b0b1e-85de-6a4a-a772-5e00dd787d69@redhat.com>
  <f2ecc2760733b0cdde950b6a21bbbb8e9fb15f29.camel@kernel.org>
  <ff4343cc402371813e40695cd556203df753bea0.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <a0a9f6f4-5c49-b072-8161-5d085ab97b89@redhat.com>
-Date:   Tue, 16 Nov 2021 12:56:41 +0800
+ <a0a9f6f4-5c49-b072-8161-5d085ab97b89@redhat.com>
+Message-ID: <fb590d29-2e63-f62d-1681-caac83b92194@redhat.com>
+Date:   Tue, 16 Nov 2021 14:14:32 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <ff4343cc402371813e40695cd556203df753bea0.camel@kernel.org>
+In-Reply-To: <a0a9f6f4-5c49-b072-8161-5d085ab97b89@redhat.com>
 Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 11/9/21 8:33 PM, Jeff Layton wrote:
-> On Mon, 2021-11-08 at 20:57 -0500, Jeff Layton wrote:
->> On Tue, 2021-11-09 at 08:21 +0800, Xiubo Li wrote:
->>> On 11/9/21 2:36 AM, Jeff Layton wrote:
->>>> On Mon, 2021-11-08 at 21:50 +0800, xiubli@redhat.com wrote:
->>>>> From: Xiubo Li <xiubli@redhat.com>
->>>>>
->>>>> Hi Jeff,
->>>>>
->>>>> The #1 could be squashed to the previous "ceph: add truncate size handling support for fscrypt" commit.
->>>>> The #2 could be squashed to the previous "ceph: fscrypt_file field handling in MClientRequest messages" commit.
->>>>>
->>>>> Thanks.
->>>>>
->>>>> Xiubo Li (2):
->>>>>     ceph: fix possible crash and data corrupt bugs
->>>>>     ceph: there is no need to round up the sizes when new size is 0
->>>>>
->>>>>    fs/ceph/inode.c | 8 +++++---
->>>>>    1 file changed, 5 insertions(+), 3 deletions(-)
->>>>>
->>>> I'm running xfstests today with the current state of wip-fscrypt-size
->>>> (including the two patches above) with test_dummy_encryption enabled.
->>>> generic/030 failed. The expected output of this part of the test was:
->>>>
->>>> wrote 5136912/5136912 bytes at offset 0
->>>> XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
->>>> ==== Pre-Remount ===
->>>> 00000000  58 58 58 58 58 58 58 58  58 58 58 58 58 58 58 58
->>>>> XXXXXXXXXXXXXXXX|
->>>> *
->>>> 004e6210  59 59 59 59 59 59 59 59  59 59 59 59 59 59 59 59
->>>>> YYYYYYYYYYYYYYYY|
->>>> *
->>>> 004e6d00  59 59 59 59 59 59 59 59  00 00 00 00 00 00 00 00
->>>>> YYYYYYYY........|
->>>> 004e6d10  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
->>>>> ................|
->>>> *
->>>> 004e7000
->>>> ==== Post-Remount ==
->>>> 00000000  58 58 58 58 58 58 58 58  58 58 58 58 58 58 58 58
->>>>> XXXXXXXXXXXXXXXX|
->>>> *
->>>> 004e6210  59 59 59 59 59 59 59 59  59 59 59 59 59 59 59 59
->>>>> YYYYYYYYYYYYYYYY|
->>>> *
->>>> 004e6d00  59 59 59 59 59 59 59 59  00 00 00 00 00 00 00 00
->>>>> YYYYYYYY........|
->>>> 004e6d10  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
->>>>> ................|
->>>> *
->>>> 004e7000
->>>>
->>>> ...but I got this instead:
->>>>
->>>> wrote 5136912/5136912 bytes at offset 0
->>>> XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
->>>> ==== Pre-Remount ===
->>>> 00000000  58 58 58 58 58 58 58 58  58 58 58 58 58 58 58 58
->>>>> XXXXXXXXXXXXXXXX|
->>>> *
->>>> 00400000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
->>>>> ................|
->>>> *
->>>> 004e7000
->>>> ==== Post-Remount ==
->>>> 00000000  58 58 58 58 58 58 58 58  58 58 58 58 58 58 58 58
->>>>> XXXXXXXXXXXXXXXX|
->>>> *
->>>> 00400000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
->>>>> ................|
->>>> *
->>>> 004e7000
->>>>
->>>>
->>>> ...I suspect this is related to the 075 failures, but I don't see it on
->>>> every attempt, which makes me think "race condition". I'll keep hunting.
->>> Yeah, seems the same issue.
->>>
->> I wonder if we're hitting the same problem that this patch was intended
->> to fix:
->>
->>      057ba5b24532 ceph: Fix race between hole punch and page fault
->>
->> It seems like the problem is very similar. It may be worth testing a
->> patch that takes the filemap_invalidate_lock across the on the wire
->> truncate and the vmtruncate.
+On 11/16/21 12:56 PM, Xiubo Li wrote:
 >
-> Nope. I tried a draft patch that make setattr hold this lock over the
-> MDS call and the vmtruncate and it didn't help.
+> On 11/9/21 8:33 PM, Jeff Layton wrote:
+>> On Mon, 2021-11-08 at 20:57 -0500, Jeff Layton wrote:
+>>>
+[...]
+>>>>> ...I suspect this is related to the 075 failures, but I don't see 
+>>>>> it on
+>>>>> every attempt, which makes me think "race condition". I'll keep 
+>>>>> hunting.
+>>>> Yeah, seems the same issue.
+>>>>
+>>> I wonder if we're hitting the same problem that this patch was intended
+>>> to fix:
+>>>
+>>>      057ba5b24532 ceph: Fix race between hole punch and page fault
+>>>
+>>> It seems like the problem is very similar. It may be worth testing a
+>>> patch that takes the filemap_invalidate_lock across the on the wire
+>>> truncate and the vmtruncate.
+>>
+>> Nope. I tried a draft patch that make setattr hold this lock over the
+>> MDS call and the vmtruncate and it didn't help.
+>
+> It's buggy by using the `filer.write_trunc()` caller in MDS side, it 
+> works well in case the truncate_from - truncate_size < 4MB, or it will 
+> keep the stale file contents without trimming or zeroing them.
+>
+> I will push the MDS side PR to fix it.
+>
+Have updated the MDS side PR.
 
-It's buggy by using the `filer.write_trunc()` caller in MDS side, it 
-works well in case the truncate_from - truncate_size < 4MB, or it will 
-keep the stale file contents without trimming or zeroing them.
+Both the generic/030 and generic/075 tests passed, and I am still 
+testing others.
 
-I will push the MDS side PR to fix it.
-
-Thanks
+BRs
 
 -- Xiubo
 
 
-> Cheers,
+> Thanks
+>
+> -- Xiubo
+>
+>
+>> Cheers,
 
