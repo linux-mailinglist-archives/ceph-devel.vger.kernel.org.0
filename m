@@ -2,178 +2,83 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF95345587A
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 Nov 2021 11:00:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBFB9455A74
+	for <lists+ceph-devel@lfdr.de>; Thu, 18 Nov 2021 12:32:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245433AbhKRKC4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 18 Nov 2021 05:02:56 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:55525 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245301AbhKRKCk (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 18 Nov 2021 05:02:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637229578;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jEbNFwcEE1NGqsh8xaT9ebrNYGASk8g4vfRKcdSWoCc=;
-        b=HsVPqloujj0iHyWyU51wYce+yGAhW/LVlZUGyxuDkNHI6M6UireeBEjpaZqvMNTe9AaGRx
-        aYdlHgZ7vr4qnFoHdes73c//xsrKmIF7nFSZHevaGVxXbODotXF/R3EoQqVPuhRQTWxbrS
-        VspmraF2J7YFc/uptWEGkrsjccpcs1A=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-585-JOU6eiUbMY2ZoO_2WnZ5pg-1; Thu, 18 Nov 2021 04:59:37 -0500
-X-MC-Unique: JOU6eiUbMY2ZoO_2WnZ5pg-1
-Received: by mail-pg1-f200.google.com with SMTP id p30-20020a63951e000000b002fc109f1c72so1387432pgd.3
-        for <ceph-devel@vger.kernel.org>; Thu, 18 Nov 2021 01:59:37 -0800 (PST)
+        id S1343894AbhKRLfs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 18 Nov 2021 06:35:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58688 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344061AbhKRLfJ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 18 Nov 2021 06:35:09 -0500
+Received: from mail-oo1-xc41.google.com (mail-oo1-xc41.google.com [IPv6:2607:f8b0:4864:20::c41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BAAFC061764
+        for <ceph-devel@vger.kernel.org>; Thu, 18 Nov 2021 03:31:03 -0800 (PST)
+Received: by mail-oo1-xc41.google.com with SMTP id r18-20020a4a7252000000b002c5f52d1834so2328166ooe.0
+        for <ceph-devel@vger.kernel.org>; Thu, 18 Nov 2021 03:31:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=N10Ik8i4pTfkLCjtwdmN2M7JDIIsmzYmpfVJ+R96Yo4=;
+        b=kOVMZ1RYV6rY6Hl3+rcgGnafqs0QmlCQMGvPHk4mjvF30Wd25o3qMOZ0GG2rOWvYn9
+         lj3pHcXUY7KVa5n4PFmNMN8+sZHlhJ8c/rg4vR9RLVtkIm+Tul+T+NT1TIq9+XMqZCmg
+         bG8BZc16rWW0EoIAQ7saPDHTUG7FSROJQY9UGv/qSY+m5F9VEXzjvml8idLSj6NQHeB3
+         EHaIiTuUumjA4MMUsoP++sKJgcNMANZna4zBI/Q1aYKZnR4UmZiPNDY0xzFlrFF6aVrk
+         vCZCnmy0/KrHnVDmYERW6Vh8vYOOgstyt90SjxCncjyiewETKKWVJ1i0yUUQIRsYe0Ei
+         BAZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=jEbNFwcEE1NGqsh8xaT9ebrNYGASk8g4vfRKcdSWoCc=;
-        b=WR5z6lILbZNSO198UpSghXzgYaXrjbwEnjpwxr8Ym7+CNgxFhlI8s8IgDTkDOysgiJ
-         k9o/Pa1mF26S5CUdWytPKoHXS/Jo/mchO11Dw7pD4vpXefa0Vt+6RA5kzlEu9/P+ZXmu
-         54EYK2FH59jIzDQq3Pd6hMhDDLqw8IRKC36qzGRExQ+OaYTkUvh3cX68/vQ19C2pyYqC
-         WfXnoFurBYnQf4Fsl3s7deZI1DKM0ncn1Q/c58JSRxCry0jPlehwWPtx/GCFdrgwqwUO
-         A2bp2N7O2wtEDOpHj+DXihgTJ7YZGkS3aawZ7A3gzd4b+znScGryBETKa+oqULlAlvEc
-         dyiQ==
-X-Gm-Message-State: AOAM530dcOKKDSulaI/YndSyAXJRPeKJOagDzLqSk8u6DVLqlKtvcg44
-        LGohIhX2CRPfHexcsSySNQ9HB4Hu0F6cArhLeF/NvEroFjt2n2ON8tmrJMwi9Oyzx9oVeKgrlfK
-        gK8TcELO1H11SGli421fv+C+hSxw5Ods2K/0iUP6/8he6MGJQZSWTGid1RwcIOlspU5rKLMQ=
-X-Received: by 2002:a17:90b:4a89:: with SMTP id lp9mr9103289pjb.6.1637229575771;
-        Thu, 18 Nov 2021 01:59:35 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxTmGxGh/XM2kyfEZccfWZNx1gn+YwLUuBtRvzeXzQmxNd4P1HeCFDkAZWjCFt6nSydKCI3Dg==
-X-Received: by 2002:a17:90b:4a89:: with SMTP id lp9mr9103256pjb.6.1637229575452;
-        Thu, 18 Nov 2021 01:59:35 -0800 (PST)
-Received: from [10.72.12.80] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id lj15sm2171395pjb.12.2021.11.18.01.59.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Nov 2021 01:59:34 -0800 (PST)
-Subject: Re: [PATCH] ceph: do not truncate pagecache if truncate size doesn't
- change
-From:   Xiubo Li <xiubli@redhat.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
-References: <20211116092002.99439-1-xiubli@redhat.com>
- <e1e4365e92281675aad8cd9617e9111d7903564f.camel@kernel.org>
- <2d8dd70e-4f71-9dd8-3ec0-f8e0a5115449@redhat.com>
-Message-ID: <4a8aa249-74f3-fd7c-e88b-c02518d8b931@redhat.com>
-Date:   Thu, 18 Nov 2021 17:59:31 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=N10Ik8i4pTfkLCjtwdmN2M7JDIIsmzYmpfVJ+R96Yo4=;
+        b=zCUJ0/la6vO+rNDz2GYkoqI6Vx1BkFRINo/uTG+zwXYxO/A8xlEamSCoKM5BfqX4pg
+         LUhcn7o+pEVRqjifngcwYzaz+Hsz9FwfYpyekXZRzhBOnux/tkHDI+QuYOcvSteZrV/o
+         5BpV+tkKhBuVWlBTEcquBUHzSFhzeQbp+p5qH/vGXQozifVlhSL1y/ZnWfLr1LwH16Gv
+         2Ac7wQl8sK04y9q/3IoGonFNwXGANOs4gQ9NuwBYT5esMIzldaQAOmREz+tfMw20xkCp
+         FO4X5aTruUpKAVqX2ZGVA1beYkX1dtPQ68TfgYDTNFFFuxba6zNyXzW7fsQ2/oByE/rr
+         WNkQ==
+X-Gm-Message-State: AOAM532LClNFJEtHira44/cAvDLr/ybLZuBod2H9wceUWvdpAp6YxoDb
+        RY619aKOAIMX0gwyuRB6xqFuYb6txWrXXOfkWGw=
+X-Google-Smtp-Source: ABdhPJyNGYTJuUK8g+6LNmUlf300F0dNRWWm7mKViH77hSrKx3zp+EeTCnCjkuDb1AYMcKB/JLZl3P922CM0abTMRgg=
+X-Received: by 2002:a05:6820:445:: with SMTP id p5mr12782948oou.9.1637235062433;
+ Thu, 18 Nov 2021 03:31:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <2d8dd70e-4f71-9dd8-3ec0-f8e0a5115449@redhat.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Received: by 2002:a4a:ab85:0:0:0:0:0 with HTTP; Thu, 18 Nov 2021 03:31:02
+ -0800 (PST)
+Reply-To: UNCC-CH@outlook.com
+From:   United Nations Compensation Commission <alicebunmi14@gmail.com>
+Date:   Thu, 18 Nov 2021 03:31:02 -0800
+Message-ID: <CAP48xSbb6OM85ugW-TzO+-ppEVcdBHk3PRcDEFzHZELonmOv2A@mail.gmail.com>
+Subject: =?UTF-8?Q?Beg=C3=BCnstigter?=
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+--=20
+Achtung: Beg=C3=BCnstigter,
 
-On 11/18/21 12:46 PM, Xiubo Li wrote:
->
-> On 11/18/21 5:10 AM, Jeff Layton wrote:
->> On Tue, 2021-11-16 at 17:20 +0800, xiubli@redhat.com wrote:
->>> From: Xiubo Li <xiubli@redhat.com>
->>>
->>> In case truncating a file to a smaller sizeA, the sizeA will be kept
->>> in truncate_size. And if truncate the file to a bigger sizeB, the
->>> MDS will only increase the truncate_seq, but still using the sizeA as
->>> the truncate_size.
->>>
->>> So when filling the inode it will truncate the pagecache by using
->>> truncate_sizeA again, which makes no sense and will trim the inocent
->>> pages.
->>>
->>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>> ---
->>>   fs/ceph/inode.c | 5 +++--
->>>   1 file changed, 3 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
->>> index 1b4ce453d397..b4f784684e64 100644
->>> --- a/fs/ceph/inode.c
->>> +++ b/fs/ceph/inode.c
->>> @@ -738,10 +738,11 @@ int ceph_fill_file_size(struct inode *inode, 
->>> int issued,
->>>                * don't hold those caps, then we need to check whether
->>>                * the file is either opened or mmaped
->>>                */
->>> -            if ((issued & (CEPH_CAP_FILE_CACHE|
->>> +            if (ci->i_truncate_size != truncate_size &&
->>> +                ((issued & (CEPH_CAP_FILE_CACHE|
->>>                          CEPH_CAP_FILE_BUFFER)) ||
->>>                   mapping_mapped(inode->i_mapping) ||
->>> -                __ceph_is_file_opened(ci)) {
->>> +                __ceph_is_file_opened(ci))) {
->>>                   ci->i_truncate_pending++;
->>>                   queue_trunc = 1;
->>>               }
->>
->> This patch causes xfstest generic/129 to hang at umount time, when
->> applied on top of the testing branch, and run (w/o fscrypt being
->> enabled). The call stack looks like this:
->>
->>          [<0>] wb_wait_for_completion+0xc3/0x120
->>          [<0>] __writeback_inodes_sb_nr+0x151/0x190
->>          [<0>] sync_filesystem+0x59/0x100
->>          [<0>] generic_shutdown_super+0x44/0x1d0
->>          [<0>] kill_anon_super+0x1e/0x40
->>          [<0>] ceph_kill_sb+0x5f/0xc0 [ceph]
->>          [<0>] deactivate_locked_super+0x5d/0xd0
->>          [<0>] cleanup_mnt+0x1f4/0x260
->>          [<0>] task_work_run+0x8b/0xc0
->>          [<0>] exit_to_user_mode_prepare+0x267/0x270
->>          [<0>] syscall_exit_to_user_mode+0x16/0x50
->>          [<0>] do_syscall_64+0x48/0x90
->>          [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
->>
->> I suspect this is causing dirty data to get stuck in the cache somehow,
->> but I haven't tracked down the cause in detail.
->
-> BTW, could you reproduce this every time ?
->
-> I have tried this based the "ceph-client/wip-fscrypt-size" branch by 
-> both enabling and disabling the "test_dummy_encryption" for many 
-> times, all worked well for me.
->
-> And I also tried to test this patch based "testing" branch without 
-> fscrypt being enabled for many times, it also worked well for me:
->
-> [root@lxbceph1 xfstests]# date; ./check generic/129; date
-> Thu Nov 18 12:22:25 CST 2021
-> FSTYP         -- ceph
-> PLATFORM      -- Linux/x86_64 lxbceph1 5.15.0+
-> MKFS_OPTIONS  -- 10.72.7.17:40543:/testB
-> MOUNT_OPTIONS -- -o 
-> name=admin,secret=AQDS3IFhEtxvORAAxn1d4FVN2bRUsc/TZMpQvQ== -o 
-> context=system_u:object_r:root_t:s0 10.72.47.117:40543:/testB 
-> /mnt/kcephfs/testD
->
-> generic/129 648s ... 603s
-> Ran: generic/129
-> Passed all 1 tests
->
-> Thu Nov 18 12:32:33 CST 2021
->
->
-Have run this for several hours, till now no stuck happens locally:
+Bereits zum zweiten Mal informieren wir Sie =C3=BCber die H=C3=B6he Ihres
+Ausgleichsfonds in H=C3=B6he von 5.500.000,00 =E2=82=AC (f=C3=BCnf Millione=
+n
+f=C3=BCnfhunderttausend Euro). Beachten Sie, dass wir von der
+Entsch=C3=A4digungskommission der Vereinten Nationen (UNCC) autorisiert
+wurden, Ihnen Ihre Entsch=C3=A4digungsgelder in H=C3=B6he von 5.500.000,00 =
+=E2=82=AC per
+Bank=C3=BCberweisung freizugeben.
 
-   $ while [ 1 ]; do date; ./check generic/129; date; done
+Webseite
+https://uncc.ch/home
 
-Is it possible that you were still using the old binaries you built ?
+F=C3=BCr Ihre Geldforderung kontaktieren Sie die folgenden Informationen
 
+Regisseur
+Herr Hartmut Wenner
+E-MAIL: UNCC-CH@outlook.com
+Entsch=C3=A4digungskommission der Vereinten Nationen
 
-Thanks
-
-BRs
-
--- Xiubo
-
-
-
+Mit freundlichen Gr=C3=BC=C3=9Fen
+Frau Susan Borowoski.
