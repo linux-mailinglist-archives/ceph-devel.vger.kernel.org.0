@@ -2,109 +2,104 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C5F59459067
-	for <lists+ceph-devel@lfdr.de>; Mon, 22 Nov 2021 15:41:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B36CE459411
+	for <lists+ceph-devel@lfdr.de>; Mon, 22 Nov 2021 18:39:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239772AbhKVOob (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 22 Nov 2021 09:44:31 -0500
-Received: from aliyun-cloud.icoremail.net ([47.90.88.91]:44935 "HELO
-        aliyun-sdnproxy-2.icoremail.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with SMTP id S239770AbhKVOoa (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 22 Nov 2021 09:44:30 -0500
-X-Greylist: delayed 718 seconds by postgrey-1.27 at vger.kernel.org; Mon, 22 Nov 2021 09:44:30 EST
-Received: from DESKTOP-L6QKPAF.scut-smil.cn (unknown [222.201.139.83])
-        by main (Coremail) with SMTP id AQAAfwD31+B6p5thgWzhAQ--.49788S2;
-        Mon, 22 Nov 2021 22:21:47 +0800 (CST)
-From:   Hu Weiwen <sehuww@mail.scut.edu.cn>
-To:     ceph-devel@vger.kernel.org
-Cc:     Xiubo Li <xiubli@redhat.com>, Hu Weiwen <sehuww@mail.scut.edu.cn>
-Subject: [PATCH] ceph: fix duplicate increment of opened_inodes metric
-Date:   Mon, 22 Nov 2021 22:22:12 +0800
-Message-Id: <20211122142212.1621-1-sehuww@mail.scut.edu.cn>
-X-Mailer: git-send-email 2.25.1
+        id S239950AbhKVRmP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 22 Nov 2021 12:42:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37032 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232963AbhKVRmO (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 22 Nov 2021 12:42:14 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 24C7C60524;
+        Mon, 22 Nov 2021 17:39:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637602747;
+        bh=OKvrL4n/OgHtigPMUDOHWznYAqh6RZMP/efGeJRGAU0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=n7FSEQPLi2+WSCcoGYa0Iecw6YOJUOSuVG8Dlx5lat69pP9qv7PKXXClfPv701DCa
+         XLh1a/gTfLzYYpsuQz4C5cYK2VujobQ7z5nxrCC/kc6QIMzKQwogvKTzNmKrsQUABj
+         VdiTu1j//oOx9lYffuhdDdZbLAGyCT/66R3xhyihwQURcwOG2prfBfNPK9D0eNLUqa
+         s2Xy3z6BXKRfalIzmVj5r8KVZXclZ90r61LdtVwB6p8STSS637xTsdLCon+COuc7z+
+         3f8PpMmNGAVwCiKtcCWVzcDk0TJ0fVeXxShTsnngMGOkmCE6KBdnrbUazjzZiSWGbc
+         VmXDxiH77mdWA==
+Message-ID: <9ad536c494ab2663e0087d739f7ebdc49786401b.camel@kernel.org>
+Subject: Re: [PATCH] ceph: fix duplicate increment of opened_inodes metric
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Hu Weiwen <sehuww@mail.scut.edu.cn>, ceph-devel@vger.kernel.org
+Cc:     Xiubo Li <xiubli@redhat.com>
+Date:   Mon, 22 Nov 2021 12:39:06 -0500
+In-Reply-To: <20211122142212.1621-1-sehuww@mail.scut.edu.cn>
+References: <20211122142212.1621-1-sehuww@mail.scut.edu.cn>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.1 (3.42.1-1.fc35) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAfwD31+B6p5thgWzhAQ--.49788S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFWrKFy3Xr4xCF1fWF4Durg_yoW8Ww4rpF
-        4fGa4FgF4rJFZ7WF40yw15u3sakF1fCFZrCrZ3tryakFn5Wr1agry09345Xry7Cr4fZw1j
-        gF1qqw47ZF4fGwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkG14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
-        6r4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-        7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
-        1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_
-        Xryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
-        WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI
-        7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-        1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8
-        JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JU6WlgUUU
-        UU=
-X-CM-SenderInfo: qsqrljqqwxllyrt6zt1loo2ulxwovvfxof0/1tbiAQAIBlepTBr7SQAss5
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-opened_inodes is incremented twice when the same inode is opened twice
-with O_RDONLY and O_WRONLY respectively.
+On Mon, 2021-11-22 at 22:22 +0800, Hu Weiwen wrote:
+> opened_inodes is incremented twice when the same inode is opened twice
+> with O_RDONLY and O_WRONLY respectively.
+> 
+> To reproduce, run this python script, then check the metrics:
+> 
+> import os
+> for _ in range(10000):
+>     fd_r = os.open('a', os.O_RDONLY)
+>     fd_w = os.open('a', os.O_WRONLY)
+>     os.close(fd_r)
+>     os.close(fd_w)
+> 
+> Fixes: 1dd8d4708136 ("ceph: metrics for opened files, pinned caps and opened inodes")
+> Signed-off-by: Hu Weiwen <sehuww@mail.scut.edu.cn>
+> ---
+>  fs/ceph/caps.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index b9460b6fb76f..c447fa2e2d1f 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -4350,7 +4350,7 @@ void ceph_get_fmode(struct ceph_inode_info *ci, int fmode, int count)
+>  {
+>  	struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(ci->vfs_inode.i_sb);
+>  	int bits = (fmode << 1) | 1;
+> -	bool is_opened = false;
+> +	bool already_opened = false;
+>  	int i;
+>  
+>  	if (count == 1)
+> @@ -4358,19 +4358,19 @@ void ceph_get_fmode(struct ceph_inode_info *ci, int fmode, int count)
+>  
+>  	spin_lock(&ci->i_ceph_lock);
+>  	for (i = 0; i < CEPH_FILE_MODE_BITS; i++) {
+> -		if (bits & (1 << i))
+> -			ci->i_nr_by_mode[i] += count;
+> -
+>  		/*
+> -		 * If any of the mode ref is larger than 1,
+> +		 * If any of the mode ref is larger than 0,
+>  		 * that means it has been already opened by
+>  		 * others. Just skip checking the PIN ref.
+>  		 */
+> -		if (i && ci->i_nr_by_mode[i] > 1)
+> -			is_opened = true;
+> +		if (i && ci->i_nr_by_mode[i])
+> +			already_opened = true;
+> +
+> +		if (bits & (1 << i))
+> +			ci->i_nr_by_mode[i] += count;
+>  	}
+>  
+> -	if (!is_opened)
+> +	if (!already_opened)
+>  		percpu_counter_inc(&mdsc->metric.opened_inodes);
+>  	spin_unlock(&ci->i_ceph_lock);
+>  }
 
-To reproduce, run this python script, then check the metrics:
-
-import os
-for _ in range(10000):
-    fd_r = os.open('a', os.O_RDONLY)
-    fd_w = os.open('a', os.O_WRONLY)
-    os.close(fd_r)
-    os.close(fd_w)
-
-Fixes: 1dd8d4708136 ("ceph: metrics for opened files, pinned caps and opened inodes")
-Signed-off-by: Hu Weiwen <sehuww@mail.scut.edu.cn>
----
- fs/ceph/caps.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index b9460b6fb76f..c447fa2e2d1f 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -4350,7 +4350,7 @@ void ceph_get_fmode(struct ceph_inode_info *ci, int fmode, int count)
- {
- 	struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(ci->vfs_inode.i_sb);
- 	int bits = (fmode << 1) | 1;
--	bool is_opened = false;
-+	bool already_opened = false;
- 	int i;
- 
- 	if (count == 1)
-@@ -4358,19 +4358,19 @@ void ceph_get_fmode(struct ceph_inode_info *ci, int fmode, int count)
- 
- 	spin_lock(&ci->i_ceph_lock);
- 	for (i = 0; i < CEPH_FILE_MODE_BITS; i++) {
--		if (bits & (1 << i))
--			ci->i_nr_by_mode[i] += count;
--
- 		/*
--		 * If any of the mode ref is larger than 1,
-+		 * If any of the mode ref is larger than 0,
- 		 * that means it has been already opened by
- 		 * others. Just skip checking the PIN ref.
- 		 */
--		if (i && ci->i_nr_by_mode[i] > 1)
--			is_opened = true;
-+		if (i && ci->i_nr_by_mode[i])
-+			already_opened = true;
-+
-+		if (bits & (1 << i))
-+			ci->i_nr_by_mode[i] += count;
- 	}
- 
--	if (!is_opened)
-+	if (!already_opened)
- 		percpu_counter_inc(&mdsc->metric.opened_inodes);
- 	spin_unlock(&ci->i_ceph_lock);
- }
+Thanks for the patch. I think it's correct, but I'd like Xiubo to
+confirm before we merge this.
 -- 
-2.25.1
-
+Jeff Layton <jlayton@kernel.org>
