@@ -2,144 +2,118 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F475459D78
-	for <lists+ceph-devel@lfdr.de>; Tue, 23 Nov 2021 09:07:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FA8345A000
+	for <lists+ceph-devel@lfdr.de>; Tue, 23 Nov 2021 11:20:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234694AbhKWIKS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 23 Nov 2021 03:10:18 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:52899 "EHLO
+        id S235134AbhKWKX3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 23 Nov 2021 05:23:29 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:54520 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234199AbhKWIKR (ORCPT
+        by vger.kernel.org with ESMTP id S231221AbhKWKX2 (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 23 Nov 2021 03:10:17 -0500
+        Tue, 23 Nov 2021 05:23:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637654829;
+        s=mimecast20190719; t=1637662820;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=IP8IFfd6uHk5JjGco//e91lqfuJOlcSCE1K+RKB3iPw=;
-        b=b4rUuJ0W7FC5yepJXWXHfcP0b5tM7l81VBo06+D7k9E1Z7q7gfPj7X9qDNbUU2v+8JRaig
-        kUhg5dUWmxJQoXF04fxllEGTt2p18+f7/lJUsSFUBQBDFt0M8cXhJvNraVKr3D/M76NKNy
-        80XFLGjdl4czsOb8EzmPRwVcwGtLdHc=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=+/ajp+78DKNzF4w+MssKWcU4vZcPICLEnBhn5xFzKrQ=;
+        b=OhGdhDbFStLt67wPRW90qQYhgSt7HW/RqNBgihFbRCz9GMnP3laE+r7U8JFjYhL5z9LNxm
+        vSVDnkfMLwnvll5+aALL9Kc2tmh1skk/vs57PUKqaYYbRXnQVBOfIN93jnTQoogo0GBsHg
+        dcpkCVIbGl5bsHPUez4QEO7y1l3yuVg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-420-3Mo7ReMlOYyxSI8ua3m30g-1; Tue, 23 Nov 2021 03:06:37 -0500
-X-MC-Unique: 3Mo7ReMlOYyxSI8ua3m30g-1
-Received: by mail-pf1-f199.google.com with SMTP id c21-20020a62e815000000b004a29ebf0aa7so11321653pfi.2
-        for <ceph-devel@vger.kernel.org>; Tue, 23 Nov 2021 00:06:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=IP8IFfd6uHk5JjGco//e91lqfuJOlcSCE1K+RKB3iPw=;
-        b=dySTly8+NZzsHfVPy8cYnb6Iko0UUbtcDoJ3pfFTN8jC0dEUNfFS9wSfPn/n3o8Rkw
-         BalWFGcZ7T1Vp7KHhG1RYOv1tGq0KJ8E64+uJOLWHQId2JpRJJJDusQBqtnapZH+TDMx
-         GXF3EoTtrcA7Z31AwBePVJiIZcQXy8TnrGUC5RplhMVmeah4Aeg+xZ4vcvDsyN8xTR9E
-         GJl1S86/QW2QQBI6KdM6I9HEF1F1qoj+d1RWX7T96PdIGOX+IYG30CEzgHY6f01xPdvQ
-         cTJkBAPsRTmlo4ceg69qBHFkbyPZX/LO4XRnI5lYXI2mPzpUtcPV77QIi5q5dq7b9JlU
-         bvBA==
-X-Gm-Message-State: AOAM5328r8UKLkXAlfzCSuWPYkAqFNaVs+fUVRgYzC/x37UXoN9Opf74
-        w7B8Xl3P7Q0lb+4S8bAg/QcqzwVeRsnW3z2xUAKTwD1qIbeVGt4Z5aXj5eSDZvTbVfaw/yNSWBs
-        jejk5R2Vau8+v+ZRGLYQsbMs47YFavoWkXdul6UsLs5Oijwe09Dux77cUFqDd8loVLAJawUA=
-X-Received: by 2002:a63:bf4a:: with SMTP id i10mr2518688pgo.196.1637654795702;
-        Tue, 23 Nov 2021 00:06:35 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzjZXnTcY56h8HSUyBtrFc2CdmjAt28XflgC7HD/8Q/+8TdhGC/UuUufSYBzTb38K6A51w4ng==
-X-Received: by 2002:a63:bf4a:: with SMTP id i10mr2518649pgo.196.1637654795238;
-        Tue, 23 Nov 2021 00:06:35 -0800 (PST)
-Received: from [10.72.12.80] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id v19sm353509pju.32.2021.11.23.00.06.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Nov 2021 00:06:34 -0800 (PST)
-Subject: Re: [PATCH] ceph: do not truncate pagecache if truncate size doesn't
- change
-From:   Xiubo Li <xiubli@redhat.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
-References: <20211116092002.99439-1-xiubli@redhat.com>
- <09babbaf077a76ace4793f2e6ae6127d2e7d6411.camel@kernel.org>
- <1a6b7a20-ba30-0b57-3927-2b61ad64be28@redhat.com>
- <119f590bf2c576fff3ecf44295c7e7bbfcfeb3d8.camel@kernel.org>
- <fe9ce707-3118-a388-bbd4-50d80e957a89@redhat.com>
- <1fedf47381473c01c58cc7ea56e81e176ac7bd73.camel@kernel.org>
- <bfd6b13b-efdc-6362-de9d-92a243f5b166@redhat.com>
-Message-ID: <3e08e0d6-5ab8-d6b1-7ee8-86b14dec7c89@redhat.com>
-Date:   Tue, 23 Nov 2021 16:06:13 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+ us-mta-269-7NF0jxmDPBW7_ZFfZZ8GGg-1; Tue, 23 Nov 2021 05:20:16 -0500
+X-MC-Unique: 7NF0jxmDPBW7_ZFfZZ8GGg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A690481CBDB;
+        Tue, 23 Nov 2021 10:20:15 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 89DF579448;
+        Tue, 23 Nov 2021 10:20:13 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, vshankar@redhat.com, khiremat@redhat.com,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: fscrypt always set the header.block_size to CEPH_FSCRYPT_BLOCK_SIZE
+Date:   Tue, 23 Nov 2021 18:20:04 +0800
+Message-Id: <20211123102004.40149-1-xiubli@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <bfd6b13b-efdc-6362-de9d-92a243f5b166@redhat.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+From: Xiubo Li <xiubli@redhat.com>
 
-On 11/23/21 9:00 AM, Xiubo Li wrote:
->
-> On 11/23/21 3:10 AM, Jeff Layton wrote:
-[...]
->> One thing I'm finding today is that this patch reliably makes
->> generic/445 hang at umount time with -o test_dummy_encryption
->> enabled...which is a bit strange as the test doesn't actually run:
->>
->>      [jlayton@client1 xfstests-dev]$ sudo ./tests/generic/445
->>      QA output created by 445
->>      445 not run: xfs_io falloc  failed (old kernel/wrong fs?)
->>      [jlayton@client1 xfstests-dev]$ sudo umount /mnt/test
->>
->> ...and the umount hangs waiting for writeback to complete. When I back
->> this patch out, the problem goes away. Are you able to reproduce this?
->>
->> There are no mds or osd calls in flight, and no caps (according to
->> debugfs). This is using -o test_dummy_encryption to force encryption.
->
-> I have hit a same issue without the "test_dummy_encryption", and it 
-> got stuck but I didn't see any call to ceph. But not the 445, I 
-> couldn't remember which one, I thought it was something wrong with my 
-> OS, I just rebooted my VM.
->
-> # ps -aux | grep generic
->
-> root      564385  0.0  0.0  11804  4700 pts/1    S+   09:41 0:00 
-> /bin/bash ./tests/generic/318
->
-> # cat /proc/564385/stack
->
-> [<0>] do_wait+0x2cc/0x4e0
-> [<0>] kernel_wait4+0xec/0x1b0
-> [<0>] __do_sys_wait4+0xe0/0xf0
-> [<0>] do_syscall_64+0x37/0x80
-> [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
->
-I have hit this again today, I found that the MDS daemon crashed, and 
-when the standby MDSes were replaying the journal log they crashed too.
+When hit a file hole, will keep the header.assert_ver as 0, and
+in MDS side it will check it to decide whether should it do a
+RMW.
 
-I think this should be the reason why they stuck. I will check it.
+And always set the header.block_size to CEPH_FSCRYPT_BLOCK_SIZE,
+because even in the hole case, the MDS will need to use this to
+do the filer.truncate().
 
--- Xiubo
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
 
 
-> I ran the ceph.exlude tests for two days, I just saw this one time.
->
-> I have attached the test results, does it the same with yours ? There 
-> have many test cases didn't run.
->
-> There have 4 failures and for the generic/020 it will be reproducable 
-> by 30%. All the other 3 failures are every time, but they all seems 
-> not relevant to fscrypt.
->
->
->> I narrowed it down to the call to _require_seek_data_hole. That calls
->> the seek_sanity_test binary and after that point, umounting the fs
->> hangs. I've not yet been successful at reproducing this while running
->> the binary by hand, so there may be some other preliminary ops that are
->> a factor too.
->>
->> In any case, this looks like a regression, so I'm going to drop this
->> patch for now. I'll keep poking at the problem too however.
+Hi Jeff, 
+
+Please squash this patch to the previous "ceph: add truncate size handling support for fscrypt" commit in ceph-client/wip-fscrypt-size branch.
+
+And also please sync the ceph PR, I have updated it too.
+
+
+
+
+
+ fs/ceph/inode.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 53b8e2ff3678..b4f7a4b4f15c 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -2312,6 +2312,12 @@ static int fill_fscrypt_truncate(struct inode *inode,
+ 	header.ver = 1;
+ 	header.compat = 1;
+ 
++	/*
++	 * Always set the block_size to CEPH_FSCRYPT_BLOCK_SIZE,
++	 * because in MDS it may need this to do the truncate.
++	 */
++	header.block_size = cpu_to_le32(CEPH_FSCRYPT_BLOCK_SIZE);
++
+ 	/*
+ 	 * If we hit a hole here, we should just skip filling
+ 	 * the fscrypt for the request, because once the fscrypt
+@@ -2327,15 +2333,19 @@ static int fill_fscrypt_truncate(struct inode *inode,
+ 		     pos, i_size);
+ 
+ 		header.data_len = cpu_to_le32(8 + 8 + 4);
++
++		/*
++		 * If the "assert_ver" is 0 means hitting a hole, and
++		 * the MDS will use the it to check whether hitting a
++		 * hole or not.
++		 */
+ 		header.assert_ver = 0;
+ 		header.file_offset = 0;
+-		header.block_size = 0;
+ 		ret = 0;
+ 	} else {
+ 		header.data_len = cpu_to_le32(8 + 8 + 4 + CEPH_FSCRYPT_BLOCK_SIZE);
+ 		header.assert_ver = cpu_to_le64(objvers.objvers[0].objver);
+ 		header.file_offset = cpu_to_le64(orig_pos);
+-		header.block_size = cpu_to_le32(CEPH_FSCRYPT_BLOCK_SIZE);
+ 
+ 		/* truncate and zero out the extra contents for the last block */
+ 		memset(iov.iov_base + boff, 0, PAGE_SIZE - boff);
+-- 
+2.27.0
 
