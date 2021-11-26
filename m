@@ -2,27 +2,27 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC4B145E4A3
-	for <lists+ceph-devel@lfdr.de>; Fri, 26 Nov 2021 03:33:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF8E845E4AB
+	for <lists+ceph-devel@lfdr.de>; Fri, 26 Nov 2021 03:33:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357710AbhKZCfq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 25 Nov 2021 21:35:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47878 "EHLO mail.kernel.org"
+        id S1357822AbhKZCgL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 25 Nov 2021 21:36:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1357711AbhKZCdo (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 25 Nov 2021 21:33:44 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9D8CD61156;
-        Fri, 26 Nov 2021 02:30:31 +0000 (UTC)
+        id S1357609AbhKZCeK (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 25 Nov 2021 21:34:10 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 900E261165;
+        Fri, 26 Nov 2021 02:30:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637893832;
-        bh=VxFlGMY1AF1Ci7KMB+BcjGhAZ8n6HWvrxLtzP0CF9XA=;
+        s=k20201202; t=1637893838;
+        bh=3C/rKkiptL+Jw3Rga40jDqWCcCfnE9hvLpo2X7VYOwI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=owBSUpLNkXrf81ltibWOnEvhgCNJBYxD1vN+p5G/N/HGdHHIqLO0s4PnjfM4BXDUE
-         XP0lm+Jnm+oyAjdngYslvO+90d/b1zAOtdJSNFjxLOvCjcNFi85oYXXm3K6wGZoEsB
-         mj/AD+ZkWO/lbP3/wxjei276gx337v32WqlL+n29dTogmoV/YD0g9Nr+S7XS9IxNRH
-         gqMD3TCxa72UZ1l5q0Kxaj8QAFKGSwDGO2M6ohINQY9lBIbfO41yWEQqGW692axm3k
-         4/8CMjNdKNCkGKrsszih3Q2qeYr0pObdIe2ynbfjmIsaPcPGkD9SaCW6X0Kmqa/vpD
-         sedTuMUPwbcMA==
+        b=oL5wl1cRml8DtGUaN0mKaoZ5GTLCVIceRxY1UHoPm3rLs5qrT1JXl+Afxps6ft0U7
+         5lJ49oSZLEfPCnqSzsKFOTqdKRI25ka5U07+pZA6rECie0xj1Di1RpWUtHk0jiCW/L
+         rilQuOqBR5ECW4hpxErJr2rGz7DOw57pyBQITVgjM8l9jJMyvsmE8wDyADuT1pGMKa
+         f6yxDfeAAcj/KZgi9UpzIqB9Sy3oMj8JiFTP3lbxDGRGDqnrkETXUqG7tK5U9o21lf
+         tjmZX66TE77i3xu7siSDe66bncnEB/RcmhZl58Iq1QiodNAFB/BaRvR7KXTFxD62Cg
+         9WgZVB2ULK8CQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jeff Layton <jlayton@kernel.org>,
@@ -30,12 +30,12 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         Xiubo Li <xiubli@redhat.com>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 6/7] ceph: properly handle statfs on multifs setups
-Date:   Thu, 25 Nov 2021 21:30:05 -0500
-Message-Id: <20211126023006.440839-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 2/4] ceph: properly handle statfs on multifs setups
+Date:   Thu, 25 Nov 2021 21:30:32 -0500
+Message-Id: <20211126023034.440961-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211126023006.440839-1-sashal@kernel.org>
-References: <20211126023006.440839-1-sashal@kernel.org>
+In-Reply-To: <20211126023034.440961-1-sashal@kernel.org>
+References: <20211126023034.440961-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -72,7 +72,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index fd8742bae8471..202ddde3d62ad 100644
+index f33bfb255db8f..08c8d34c98091 100644
 --- a/fs/ceph/super.c
 +++ b/fs/ceph/super.c
 @@ -52,8 +52,7 @@ static int ceph_statfs(struct dentry *dentry, struct kstatfs *buf)
