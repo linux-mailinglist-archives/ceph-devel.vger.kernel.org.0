@@ -2,55 +2,90 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E30A44622FD
-	for <lists+ceph-devel@lfdr.de>; Mon, 29 Nov 2021 22:10:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 214DA46238E
+	for <lists+ceph-devel@lfdr.de>; Mon, 29 Nov 2021 22:43:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229549AbhK2VNZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 29 Nov 2021 16:13:25 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:37570 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230146AbhK2VLY (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 29 Nov 2021 16:11:24 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S231641AbhK2VqY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 29 Nov 2021 16:46:24 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:23962 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232270AbhK2VoX (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 29 Nov 2021 16:44:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1638222065;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=QCFD7Ah5IiTcd1a6Gpk3m6ibgmYONE5XP5yWvVfmZ5A=;
+        b=TXKNmZYrDvsEW6w3v4r1Sj8VIyxdqWthtfC2vQlArxV9yrcs1AmJv8zdUYzu1JT/grOa4a
+        yPolPjSbU1mwY/OmTbfCud6UPNwdFkecDpIIcyjloePoeclwq9is+LYpZMzAxnAGMUYVPO
+        IrzCgLdAAN641tk/X1LOHjAWhLOtORA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-115-5Dz_xYvhN12pm6HYXYz0Bg-1; Mon, 29 Nov 2021 16:41:02 -0500
+X-MC-Unique: 5Dz_xYvhN12pm6HYXYz0Bg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 309BACE13E1
-        for <ceph-devel@vger.kernel.org>; Mon, 29 Nov 2021 21:08:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1C99C53FAD;
-        Mon, 29 Nov 2021 21:08:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638220083;
-        bh=DK47Wf33UF0qzoXghMPn74HsMKyn2TnbZzsZzSfhdbs=;
-        h=Subject:From:To:Cc:Date:From;
-        b=egOuElKrNg7pVANc5sBJ8CiyG/hvSXXJGubJDoQSxLSmvXS/rQo0u0WVyxg66WFbl
-         eZPugJS/cis30g7Fpyip98fpL3g9Pd59xDbcrdgo5fFZAF03J+qvvsr7TZvvcpBqEl
-         oGf7H4mazNnSsGM78GWGA2d72wzOTKWb4BGS037iIQNFh2Du8B4BgtEyutC+2c/LLx
-         mknR/Bzm/0RUR1fORxw8BQToAWJaAqN0XGg4r3vEcNBZ2ic5ik5r6L2i3mgdzsV8nT
-         en4AixZRqgIUFaj4x+3hYT1UoBoMgLoiNOZYhk0TOzRqclPcofgulNjHndp5uhHGNX
-         DK6hkQSXE0wHw==
-Message-ID: <7e6c95bbb274b701e66432e56617ee9f91ce5012.camel@kernel.org>
-Subject: Testing the Linux Kernel CephFS Client with xfstests
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel <ceph-devel@vger.kernel.org>
-Cc:     ymane <ymane@redhat.com>, David Howells <dhowells@redhat.com>
-Date:   Mon, 29 Nov 2021 16:08:01 -0500
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.1 (3.42.1-1.fc35) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 83E5C1927807;
+        Mon, 29 Nov 2021 21:40:59 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 21F1160BF4;
+        Mon, 29 Nov 2021 21:40:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <163819627469.215744.3603633690679962985.stgit@warthog.procyon.org.uk>
+References: <163819627469.215744.3603633690679962985.stgit@warthog.procyon.org.uk> <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk>
+To:     linux-cachefs@redhat.com
+Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 35/64] cachefiles: Add security derivation
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <302430.1638222055.1@warthog.procyon.org.uk>
+Date:   Mon, 29 Nov 2021 21:40:55 +0000
+Message-ID: <302431.1638222055@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-I had a few people ask me about how I do my testing with xfstests. This
-blog post should cover the basics of how my test environment is
-configured:
+I missed out the patch description:
 
-    https://jtlayton.wordpress.com/2021/11/29/testing-the-linux-kernel-cephfs-client-with-xfstests/
+    cachefiles: Add security derivation
+    
+    Implement code to derive a new set of creds for the cachefiles to use when
+    making VFS or I/O calls and to change the auditing info since the
+    application interacting with the network filesystem is not accessing the
+    cache directly.  Cachefiles uses override_creds() to change the effective
+    creds temporarily.
+    
+    set_security_override_from_ctx() is called to derive the LSM 'label' that
+    the cachefiles driver will act with.  set_create_files_as() is called to
+    determine the LSM 'label' that will be applied to files and directories
+    created in the cache.  These functions alter the new creds.
+    
+    Also implement a couple of functions to wrap the calls to begin/end cred
+    overriding.
+    
+    Signed-off-by: David Howells <dhowells@redhat.com>
+    cc: linux-cachefs@redhat.com
 
-Questions and corrections are welcome. I'll also plan to update the blog
-post if anything in there is wrong.
+David
 
-Cheers!
--- 
-Jeff Layton <jlayton@kernel.org>
