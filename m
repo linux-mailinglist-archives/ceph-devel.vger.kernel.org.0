@@ -2,39 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E31AD463B79
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 Nov 2021 17:15:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B0D463FA3
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Nov 2021 22:06:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238341AbhK3QSk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 30 Nov 2021 11:18:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52998 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238219AbhK3QSg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 30 Nov 2021 11:18:36 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91B5CC061746;
-        Tue, 30 Nov 2021 08:15:16 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1343845AbhK3VJe (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 30 Nov 2021 16:09:34 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:47806 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235624AbhK3VJc (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Tue, 30 Nov 2021 16:09:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1638306372;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ovfGlfFYOBiNEdFFUCvznobAjXbygpnoFNwMXB/Sg+Q=;
+        b=Mojq/3f57P3vL35aj0nv84JsD8o1gdi/mvMS4s3oIAKQNqVI1DKWLUjsPCF4fEvU4+q9B0
+        p59jxUNYO/y5c78ctC9Gp5RIB8W0pOINOvXsCan3498p6r8ady8nmZMKsE7RDeswDeuwRT
+        AfcN6HALZ+h75ElLBwp2+1xzPZqx3/Y=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-503-ojpTxzvvOhGXgffSsKK03g-1; Tue, 30 Nov 2021 16:06:08 -0500
+X-MC-Unique: ojpTxzvvOhGXgffSsKK03g-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3E095B81A55;
-        Tue, 30 Nov 2021 16:15:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB047C53FC1;
-        Tue, 30 Nov 2021 16:15:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638288913;
-        bh=P8o3xJoZ9GulqCm3by9ySAYZOhiX00eAxdialhufxvY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OetwOYtBIbikZ7LhnB77SBsvM18Jm92Lg+sWp1Bvq5NVYWIn707PetzCzKVQF1gBH
-         hNp2rvzS0GtDyA/Bx2OpdVp0YnKbr+LEQ2zKIXjGaHGVfTHD1CNhgpEYU5J9PMG+00
-         IhCpzigsWUjK+JLVGt8LYCrs8x0B/a3b9CCnAQG4P6L7x38XQJ+PGJ+UkP6cuKfFtQ
-         +w7m1GQzxL2JB1Iyi/KFgpyMccj7+60rXdqdDGz77eXCn910146xaAcM4AoJcraRc7
-         1HbdNXcgXI29uQxAK6lwOENIPqHsaiCEzKVtpoMFZ7seIi08nc1OU1mWsQlaTVmu5o
-         8Enk0P0netdMA==
-Date:   Tue, 30 Nov 2021 09:15:06 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-cachefs@redhat.com,
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 712C91853026;
+        Tue, 30 Nov 2021 21:06:05 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BABF910013D7;
+        Tue, 30 Nov 2021 21:05:49 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YaZOCk9zxApPattb@archlinux-ax161>
+References: <YaZOCk9zxApPattb@archlinux-ax161> <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk> <163819647945.215744.17827962047487125939.stgit@warthog.procyon.org.uk>
+To:     Nathan Chancellor <nathan@kernel.org>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
         Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <sfrench@samba.org>,
@@ -50,64 +59,50 @@ Cc:     linux-cachefs@redhat.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         llvm@lists.linux.dev
 Subject: Re: [PATCH 51/64] cachefiles: Implement the I/O routines
-Message-ID: <YaZOCk9zxApPattb@archlinux-ax161>
-References: <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk>
- <163819647945.215744.17827962047487125939.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <163819647945.215744.17827962047487125939.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <503521.1638306348.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 30 Nov 2021 21:05:48 +0000
+Message-ID: <503522.1638306348@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Nov 29, 2021 at 02:34:39PM +0000, David Howells wrote:
-> Implement the I/O routines for cachefiles.  There are two sets of routines
-> here: preparation and actual I/O.
-> 
-> Preparation for read involves looking to see whether there is data present,
-> and how much.  Netfslib tells us what it wants us to do and we have the
-> option of adjusting shrinking and telling it whether to read from the
-> cache, download from the server or simply clear a region.
-> 
-> Preparation for write involves checking for space and defending against
-> possibly running short of space, if necessary punching out a hole in the
-> file so that we don't leave old data in the cache if we update the
-> coherency information.
-> 
-> Then there's a read routine and a write routine.  They wait for the cookie
-> state to move to something appropriate and then start a potentially
-> asynchronous direct I/O operation upon it.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: linux-cachefs@redhat.com
+Nathan Chancellor <nathan@kernel.org> wrote:
 
-This patch as commit 0443b01eccbb ("cachefiles: Implement the I/O
-routines") in -next causes the following clang warning/error:
+> This patch as commit 0443b01eccbb ("cachefiles: Implement the I/O
+> routines") in -next causes the following clang warning/error:
+> =
 
-fs/cachefiles/io.c:489:6: error: variable 'ret' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
-        if (pos == 0)
-            ^~~~~~~~
-fs/cachefiles/io.c:492:6: note: uninitialized use occurs here
-        if (ret < 0) {
-            ^~~
-fs/cachefiles/io.c:489:2: note: remove the 'if' if its condition is always true
-        if (pos == 0)
-        ^~~~~~~~~~~~~
-fs/cachefiles/io.c:440:9: note: initialize the variable 'ret' to silence this warning
-        int ret;
-               ^
-                = 0
-1 error generated.
+> fs/cachefiles/io.c:489:6: error: variable 'ret' is used uninitialized wh=
+enever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
+>         if (pos =3D=3D 0)
+>             ^~~~~~~~
+> fs/cachefiles/io.c:492:6: note: uninitialized use occurs here
+>         if (ret < 0) {
+>             ^~~
+> fs/cachefiles/io.c:489:2: note: remove the 'if' if its condition is alwa=
+ys true
+>         if (pos =3D=3D 0)
+>         ^~~~~~~~~~~~~
+> fs/cachefiles/io.c:440:9: note: initialize the variable 'ret' to silence=
+ this warning
+>         int ret;
+>                ^
+>                 =3D 0
+> 1 error generated.
 
-It is the same one that has been reported two other times over the past
-two months:
+	pos =3D cachefiles_inject_remove_error();
+	if (pos =3D=3D 0)
+		ret =3D vfs_fallocate(file, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
 
-https://lore.kernel.org/r/202110150048.HPNa2Mn7-lkp@intel.com/
-https://lore.kernel.org/r/202111070451.bsfAyznx-lkp@intel.com/
+That should be:
 
-Should ret just be initialized to zero or does it need to be set to
-something else if pos is not equal to zero at the end?
+	ret =3D cachefiles_inject_remove_error();
+	if (ret =3D=3D 0)
+		ret =3D vfs_fallocate(file, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
 
-Cheers,
-Nathan
+David
+
