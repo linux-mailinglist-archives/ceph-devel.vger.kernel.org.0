@@ -2,90 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 214DA46238E
-	for <lists+ceph-devel@lfdr.de>; Mon, 29 Nov 2021 22:43:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0564F462CEC
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Nov 2021 07:41:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231641AbhK2VqY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 29 Nov 2021 16:46:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:23962 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232270AbhK2VoX (ORCPT
+        id S238707AbhK3Gou (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 30 Nov 2021 01:44:50 -0500
+Received: from smtprelay0194.hostedemail.com ([216.40.44.194]:51204 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S233768AbhK3Goq (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 29 Nov 2021 16:44:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638222065;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QCFD7Ah5IiTcd1a6Gpk3m6ibgmYONE5XP5yWvVfmZ5A=;
-        b=TXKNmZYrDvsEW6w3v4r1Sj8VIyxdqWthtfC2vQlArxV9yrcs1AmJv8zdUYzu1JT/grOa4a
-        yPolPjSbU1mwY/OmTbfCud6UPNwdFkecDpIIcyjloePoeclwq9is+LYpZMzAxnAGMUYVPO
-        IrzCgLdAAN641tk/X1LOHjAWhLOtORA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-115-5Dz_xYvhN12pm6HYXYz0Bg-1; Mon, 29 Nov 2021 16:41:02 -0500
-X-MC-Unique: 5Dz_xYvhN12pm6HYXYz0Bg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 83E5C1927807;
-        Mon, 29 Nov 2021 21:40:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 21F1160BF4;
-        Mon, 29 Nov 2021 21:40:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <163819627469.215744.3603633690679962985.stgit@warthog.procyon.org.uk>
-References: <163819627469.215744.3603633690679962985.stgit@warthog.procyon.org.uk> <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk>
-To:     linux-cachefs@redhat.com
-Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 35/64] cachefiles: Add security derivation
+        Tue, 30 Nov 2021 01:44:46 -0500
+X-Greylist: delayed 480 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Nov 2021 01:44:45 EST
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave08.hostedemail.com (Postfix) with ESMTP id 2CE871818BAF7;
+        Tue, 30 Nov 2021 06:33:27 +0000 (UTC)
+Received: from omf15.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 7A750181D2099;
+        Tue, 30 Nov 2021 06:33:25 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf15.hostedemail.com (Postfix) with ESMTPA id BEDDD2000519;
+        Tue, 30 Nov 2021 06:33:19 +0000 (UTC)
+Message-ID: <9bfe2c52eca40102f5175a1421cf3059195d7663.camel@perches.com>
+Subject: Re: [PATCH] rbd: make const pointer speaces a static const array
+From:   Joe Perches <joe@perches.com>
+To:     Colin Ian King <colin.i.king@googlemail.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Jens Axboe <axboe@kernel.dk>, ceph-devel@vger.kernel.org,
+        linux-block@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 29 Nov 2021 22:33:21 -0800
+In-Reply-To: <20211127172104.102994-1-colin.i.king@gmail.com>
+References: <20211127172104.102994-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.4-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <302430.1638222055.1@warthog.procyon.org.uk>
-Date:   Mon, 29 Nov 2021 21:40:55 +0000
-Message-ID: <302431.1638222055@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=1.60
+X-Stat-Signature: kdsg4eq11duh3qrz1rhf38ujomrs3txq
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: BEDDD2000519
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1+vuhErIXIx59F83OJWNIrsJEqGE9rFvJI=
+X-HE-Tag: 1638253999-796699
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-I missed out the patch description:
+On Sat, 2021-11-27 at 17:21 +0000, Colin Ian King wrote:
+> Don't populate the const array spaces on the stack but make it static
+> const and make the pointer an array to remove a dereference. Shrinks
+> object code a little too.  Also clean up intent, currently it is spaces
+> and should be a tab.
+[]
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+[]
+> @@ -6189,7 +6189,7 @@ static inline size_t next_token(const char **buf)
+>          * These are the characters that produce nonzero for
+>          * isspace() in the "C" and "POSIX" locales.
+>          */
+> -        const char *spaces = " \f\n\r\t\v";
+> +	static const char spaces[] = " \f\n\r\t\v";
+>  
+>          *buf += strspn(*buf, spaces);	/* Find start of token */
+>  
 
-    cachefiles: Add security derivation
-    
-    Implement code to derive a new set of creds for the cachefiles to use when
-    making VFS or I/O calls and to change the auditing info since the
-    application interacting with the network filesystem is not accessing the
-    cache directly.  Cachefiles uses override_creds() to change the effective
-    creds temporarily.
-    
-    set_security_override_from_ctx() is called to derive the LSM 'label' that
-    the cachefiles driver will act with.  set_create_files_as() is called to
-    determine the LSM 'label' that will be applied to files and directories
-    created in the cache.  These functions alter the new creds.
-    
-    Also implement a couple of functions to wrap the calls to begin/end cred
-    overriding.
-    
-    Signed-off-by: David Howells <dhowells@redhat.com>
-    cc: linux-cachefs@redhat.com
+perhaps
 
-David
+	while (isspace(**buf))
+		(*buf)++;
+
+and not have or use spaces at all.
+
 
