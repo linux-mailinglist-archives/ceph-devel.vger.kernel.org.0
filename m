@@ -2,49 +2,28 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 70B0D463FA3
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 Nov 2021 22:06:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A6854646D3
+	for <lists+ceph-devel@lfdr.de>; Wed,  1 Dec 2021 06:46:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343845AbhK3VJe (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 30 Nov 2021 16:09:34 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:47806 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235624AbhK3VJc (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 30 Nov 2021 16:09:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638306372;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ovfGlfFYOBiNEdFFUCvznobAjXbygpnoFNwMXB/Sg+Q=;
-        b=Mojq/3f57P3vL35aj0nv84JsD8o1gdi/mvMS4s3oIAKQNqVI1DKWLUjsPCF4fEvU4+q9B0
-        p59jxUNYO/y5c78ctC9Gp5RIB8W0pOINOvXsCan3498p6r8ady8nmZMKsE7RDeswDeuwRT
-        AfcN6HALZ+h75ElLBwp2+1xzPZqx3/Y=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-503-ojpTxzvvOhGXgffSsKK03g-1; Tue, 30 Nov 2021 16:06:08 -0500
-X-MC-Unique: ojpTxzvvOhGXgffSsKK03g-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 712C91853026;
-        Tue, 30 Nov 2021 21:06:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BABF910013D7;
-        Tue, 30 Nov 2021 21:05:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <YaZOCk9zxApPattb@archlinux-ax161>
-References: <YaZOCk9zxApPattb@archlinux-ax161> <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk> <163819647945.215744.17827962047487125939.stgit@warthog.procyon.org.uk>
-To:     Nathan Chancellor <nathan@kernel.org>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
-        Trond Myklebust <trondmy@hammerspace.com>,
+        id S1346771AbhLAFt3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 1 Dec 2021 00:49:29 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:37247 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230497AbhLAFt2 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Dec 2021 00:49:28 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0UywY0em_1638337562;
+Received: from 30.225.24.24(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UywY0em_1638337562)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 01 Dec 2021 13:46:04 +0800
+Message-ID: <bcefb8f2-576a-b3fc-cc29-89808ebfd7c1@linux.alibaba.com>
+Date:   Wed, 1 Dec 2021 13:46:02 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.3.0
+Subject: Re: [PATCH 44/64] cachefiles: Implement key to filename encoding
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <sfrench@samba.org>,
         Dominique Martinet <asmadeus@codewreck.org>,
@@ -56,53 +35,140 @@ Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
         linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: Re: [PATCH 51/64] cachefiles: Implement the I/O routines
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <503521.1638306348.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 30 Nov 2021 21:05:48 +0000
-Message-ID: <503522.1638306348@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk>
+ <163819640393.215744.15212364106412961104.stgit@warthog.procyon.org.uk>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+In-Reply-To: <163819640393.215744.15212364106412961104.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Nathan Chancellor <nathan@kernel.org> wrote:
 
-> This patch as commit 0443b01eccbb ("cachefiles: Implement the I/O
-> routines") in -next causes the following clang warning/error:
-> =
 
-> fs/cachefiles/io.c:489:6: error: variable 'ret' is used uninitialized wh=
-enever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
->         if (pos =3D=3D 0)
->             ^~~~~~~~
-> fs/cachefiles/io.c:492:6: note: uninitialized use occurs here
->         if (ret < 0) {
->             ^~~
-> fs/cachefiles/io.c:489:2: note: remove the 'if' if its condition is alwa=
-ys true
->         if (pos =3D=3D 0)
->         ^~~~~~~~~~~~~
-> fs/cachefiles/io.c:440:9: note: initialize the variable 'ret' to silence=
- this warning
->         int ret;
->                ^
->                 =3D 0
-> 1 error generated.
+On 11/29/21 10:33 PM, David Howells wrote:
 
-	pos =3D cachefiles_inject_remove_error();
-	if (pos =3D=3D 0)
-		ret =3D vfs_fallocate(file, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
+> +/*
+> + * turn the raw key into something cooked
+> + * - the key may be up to NAME_MAX in length (including the length word)
+> + *   - "base64" encode the strange keys, mapping 3 bytes of raw to four of
+> + *     cooked
+> + *   - need to cut the cooked key into 252 char lengths (189 raw bytes)
+> + */
+> +bool cachefiles_cook_key(struct cachefiles_object *object)
+> +{
+> +	const u8 *key = fscache_get_key(object->cookie), *kend;
+> +	unsigned char ch;
+> +	unsigned int acc, i, n, nle, nbe, keylen = object->cookie->key_len;
+> +	unsigned int b64len, len, print, pad;
+> +	char *name, sep;
+> +
+> +	_enter(",%u,%*phN", keylen, keylen, key);
+> +
+> +	BUG_ON(keylen > NAME_MAX - 3);
+> +
+> +	print = 1;
+> +	for (i = 0; i < keylen; i++) {
+> +		ch = key[i];
+> +		print &= cachefiles_filecharmap[ch];
+> +	}
+> +
+> +	/* If the path is usable ASCII, then we render it directly */
+> +	if (print) {
+> +		len = 1 + keylen + 1;
+> +		name = kmalloc(len, GFP_KERNEL);
+> +		if (!name)
+> +			return false;
+> +
+> +		name[0] = 'D'; /* Data object type, string encoding */
+> +		name[1 + keylen] = 0;
+> +		memcpy(name + 1, key, keylen);
+> +		goto success;
+			^
+If we goto success from here,
 
-That should be:
+> +	}
+> +
+> +	/* See if it makes sense to encode it as "hex,hex,hex" for each 32-bit
+> +	 * chunk.  We rely on the key having been padded out to a whole number
+> +	 * of 32-bit words.
+> +	 */
+> +	n = round_up(keylen, 4);
+> +	nbe = nle = 0;
+> +	for (i = 0; i < n; i += 4) {
+> +		u32 be = be32_to_cpu(*(__be32 *)(key + i));
+> +		u32 le = le32_to_cpu(*(__le32 *)(key + i));
+> +
+> +		nbe += 1 + how_many_hex_digits(be);
+> +		nle += 1 + how_many_hex_digits(le);
+> +	}
+> +
+> +	b64len = DIV_ROUND_UP(keylen, 3);
+> +	pad = b64len * 3 - keylen;
+> +	b64len = 2 + b64len * 4; /* Length if we base64-encode it */
+> +	_debug("len=%u nbe=%u nle=%u b64=%u", keylen, nbe, nle, b64len);
+> +	if (nbe < b64len || nle < b64len) {
+> +		unsigned int nlen = min(nbe, nle) + 1;
+> +		name = kmalloc(nlen, GFP_KERNEL);
+> +		if (!name)
+> +			return false;
+> +		sep = (nbe <= nle) ? 'S' : 'T'; /* Encoding indicator */
+> +		len = 0;
+> +		for (i = 0; i < n; i += 4) {
+> +			u32 x;
+> +			if (nbe <= nle)
+> +				x = be32_to_cpu(*(__be32 *)(key + i));
+> +			else
+> +				x = le32_to_cpu(*(__le32 *)(key + i));
+> +			name[len++] = sep;
+> +			if (x != 0)
+> +				len += snprintf(name + len, nlen - len, "%x", x);
+> +			sep = ',';
+> +		}
+> +		goto success;
+> +	}
+> +
+> +	/* We need to base64-encode it */
+> +	name = kmalloc(b64len + 1, GFP_KERNEL);
+> +	if (!name)
+> +		return false;
+> +
+> +	name[0] = 'E';
+> +	name[1] = '0' + pad;
+> +	len = 2;
+> +	kend = key + keylen;
+> +	do {
+> +		acc  = *key++;
+> +		if (key < kend) {
+> +			acc |= *key++ << 8;
+> +			if (key < kend)
+> +				acc |= *key++ << 16;
+> +		}
+> +
+> +		name[len++] = cachefiles_charmap[acc & 63];
+> +		acc >>= 6;
+> +		name[len++] = cachefiles_charmap[acc & 63];
+> +		acc >>= 6;
+> +		name[len++] = cachefiles_charmap[acc & 63];
+> +		acc >>= 6;
+> +		name[len++] = cachefiles_charmap[acc & 63];
+> +	} while (key < kend);
+> +
+> +success:
+> +	name[len] = 0;
+	     ^
+then it seems that this will cause an out-of-boundary access.
 
-	ret =3D cachefiles_inject_remove_error();
-	if (ret =3D=3D 0)
-		ret =3D vfs_fallocate(file, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
 
-David
+> +	object->d_name = name;
+> +	object->d_name_len = len;
+> +	_leave(" = %s", object->d_name);
+> +	return true;
+> +}
+> 
 
+-- 
+Thanks,
+Jeffle
