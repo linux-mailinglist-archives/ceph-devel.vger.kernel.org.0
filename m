@@ -2,102 +2,68 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BC3F4649A9
-	for <lists+ceph-devel@lfdr.de>; Wed,  1 Dec 2021 09:29:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50E5A464C9B
+	for <lists+ceph-devel@lfdr.de>; Wed,  1 Dec 2021 12:32:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347977AbhLAIc6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 1 Dec 2021 03:32:58 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:32407 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1347967AbhLAIc6 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Dec 2021 03:32:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638347377;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4tUl7G8alL78nfbRo0WLNZl+gkt+X3mS2JKYOztBaCw=;
-        b=Q9HTm2UK5n3YyPaocpbkGIT5GvvKs130tSBFOthRPS0We8O5q0q0Gtc4w75CTKqDgE3WFO
-        XuiW0kuCl7iVjNlOLHIFV88qNNb/vS9d4TEqc7XK5Qct8yo1YZZqEMGiBh0QBVcXI8iuwp
-        //esibe6Ljr4T6St26rp7mdaj0s+muY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-521-AnOULJD2MFCLO_7J_kL0gQ-1; Wed, 01 Dec 2021 03:29:34 -0500
-X-MC-Unique: AnOULJD2MFCLO_7J_kL0gQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S237345AbhLALfO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 1 Dec 2021 06:35:14 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:43030 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241452AbhLALed (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Dec 2021 06:34:33 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B2A42190B2A1;
-        Wed,  1 Dec 2021 08:29:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A14EB4D73A;
-        Wed,  1 Dec 2021 08:29:26 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <bcefb8f2-576a-b3fc-cc29-89808ebfd7c1@linux.alibaba.com>
-References: <bcefb8f2-576a-b3fc-cc29-89808ebfd7c1@linux.alibaba.com> <163819575444.215744.318477214576928110.stgit@warthog.procyon.org.uk> <163819640393.215744.15212364106412961104.stgit@warthog.procyon.org.uk>
-To:     JeffleXu <jefflexu@linux.alibaba.com>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 44/64] cachefiles: Implement key to filename encoding
+        by sin.source.kernel.org (Postfix) with ESMTPS id 38CB7CE1DCD;
+        Wed,  1 Dec 2021 11:31:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7C9DC53FAD;
+        Wed,  1 Dec 2021 11:31:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638358262;
+        bh=SFJv5JYjSLjoGYc7k8E7Eesrid3Zjiv3lcuqMttziv0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=PXj7WXvPyaF0snbP/z9+WG3XAn5AcWXfVNXu/busVobCyJqG3MKzKnroF2q53e0Lq
+         rjcm6TtAD97jNoVaYUUnR5LkjuseHfenVIALYu817q76ZOqaTFNm7FKUukw9Don7x4
+         XgVF0Y07i+laSmAnmSptjdG4/YsdvNuq38arpHGBYQEL338D3FGufXO6lSYEbm3B+O
+         LMOJw8oEGh57iFL/JqwPjm9621d65iDmOiPADJswS8hECqnsK8gJjxf9mmWwbmI7bw
+         d4NO3ZxJNb8XnT84SWjnDbCgRc9b5C+ClS8aJs+HJTrLF0jX1iKx8zI2G/tGvSfcfs
+         y+CUzUOPdipOQ==
+Message-ID: <06e4f9955ee9e964724ecc2047fef6e4c9606b14.camel@kernel.org>
+Subject: Re: [PATCH 1/2] ceph: conversion to new fscache API
+From:   Jeff Layton <jlayton@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 01 Dec 2021 06:31:00 -0500
+In-Reply-To: <278917.1638204396@warthog.procyon.org.uk>
+References: <20211129162907.149445-2-jlayton@kernel.org>
+         <20211129162907.149445-1-jlayton@kernel.org>
+         <278917.1638204396@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.1 (3.42.1-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <571667.1638347365.1@warthog.procyon.org.uk>
-Date:   Wed, 01 Dec 2021 08:29:25 +0000
-Message-ID: <571668.1638347365@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-JeffleXu <jefflexu@linux.alibaba.com> wrote:
-
-> > +	/* If the path is usable ASCII, then we render it directly */
-> > +	if (print) {
-> > +		len = 1 + keylen + 1;
-> > +		name = kmalloc(len, GFP_KERNEL);
-> > +		if (!name)
-> > +			return false;
+On Mon, 2021-11-29 at 16:46 +0000, David Howells wrote:
+> Jeff Layton <jlayton@kernel.org> wrote:
+> 
+> > +void ceph_fscache_unregister_inode_cookie(struct ceph_inode_info* ci)
+> >  {
+> > -	return fscache_register_netfs(&ceph_cache_netfs);
+> > +	struct fscache_cookie* cookie = xchg(&ci->fscache, NULL);
 > > +
-> > +		name[0] = 'D'; /* Data object type, string encoding */
-> > +		name[1 + keylen] = 0;
-> > +		memcpy(name + 1, key, keylen);
-> > +		goto success;
-> 			^
-> If we goto success from here,
-> ...
-> > +
-> > +success:
-> > +	name[len] = 0;
-> 	     ^
-> then it seems that this will cause an out-of-boundary access.
+> > +	fscache_relinquish_cookie(cookie, false);
+> >  }
+> 
+> xchg() should be excessive there.  This is only called from
+> ceph_evict_inode().  Also, if you're going to reset the pointer, it might be
+> worth poisoning it rather than nulling it.
+> 
 
-You're right.  I'll change that to:
-
-		len = 1 + keylen;
-		name = kmalloc(len + 1, GFP_KERNEL);
-
-and I shouldn't need:
-
-		name[1 + keylen] = 0;
-
-as that's also done after the success label.
-
-David
-
+Ok, makes sense. I'll make that change soon.
+-- 
+Jeff Layton <jlayton@kernel.org>
