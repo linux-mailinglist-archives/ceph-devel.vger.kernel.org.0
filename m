@@ -2,77 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B948464CA4
-	for <lists+ceph-devel@lfdr.de>; Wed,  1 Dec 2021 12:32:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A22946573C
+	for <lists+ceph-devel@lfdr.de>; Wed,  1 Dec 2021 21:38:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348997AbhLALgL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 1 Dec 2021 06:36:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33094 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348987AbhLALgI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Dec 2021 06:36:08 -0500
-Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71D27C061761
-        for <ceph-devel@vger.kernel.org>; Wed,  1 Dec 2021 03:32:17 -0800 (PST)
-Received: by mail-ua1-x92c.google.com with SMTP id ay21so48160918uab.12
-        for <ceph-devel@vger.kernel.org>; Wed, 01 Dec 2021 03:32:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=l4J9Z+m4hmgZbWtQHlC70w1zjUmiI7wjClCwm6dHAnY=;
-        b=UWjAGpq/MSurlJ3SK+74j9tgZPkXXchDAgJDi1HXhdMf5jBDeCLtCP4/rvQHohxoKq
-         U99QXn23qfxD9rqULDadOGx5kx+RzKNMA2wPey+jbyYIzCRHIajnYpT335CDxLVEhHu1
-         LGRUMJvn6IkQtW7H7nPAVrtM9w9DRyMPhaYRfAgTjxqWtVjqbvmX/EelSrgn/652tfuy
-         pm9J9JPCiDibgJ4mleat9kswE+GfUlqYZLbdNDYFp0JLZAT/sQWe9WTyJSpQXFL7y/t0
-         iGdx2RIdvWdBI34fOHHocwgZ9/qsu8aKSATfMRyFi81x8ajrUwomqDP83Np0pc8VGdDv
-         q+LQ==
+        id S1352955AbhLAUlx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 1 Dec 2021 15:41:53 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:40290 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1352909AbhLAUjq (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Dec 2021 15:39:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1638390984;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=327TNWql3wWdeatc5tbAId7z+H1nubHHchgbDAGGAu0=;
+        b=PZ8m5I3GiVOF0LkYRjiqU35tPknndzU1OlLhGVPf10UCt6qG9p/e/7N6Bol5KTSc99JtSY
+        3yIZBGwaxbt3tjiUedJPFifa4o0Z8ZESbQLPh1p+fdVAJe++veP4v/H0mAai9XyjzoOoED
+        nr6PRhMKSmcnVi/AWNsIzzYQeWCSXg4=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-204-6d45Y_6GOk-jCdLScdfs4Q-1; Wed, 01 Dec 2021 15:36:23 -0500
+X-MC-Unique: 6d45Y_6GOk-jCdLScdfs4Q-1
+Received: by mail-pj1-f71.google.com with SMTP id p8-20020a17090a748800b001a6cceee8afso9376655pjk.4
+        for <ceph-devel@vger.kernel.org>; Wed, 01 Dec 2021 12:36:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=l4J9Z+m4hmgZbWtQHlC70w1zjUmiI7wjClCwm6dHAnY=;
-        b=lMnlbRGcxeLOoro4DxsoTK9LUPJjISTgmtOlv+3eVH4d5gmtqtvrJ7NrDrdEHqLVln
-         Akq0XgObG4vjysONkn+cfUiLhCiHyymiIKLCXpw1IVgGv1h/X9Q0wQQ8sLvTuZy/5iRp
-         U9Kndfk1C5XZff9jApNO9Pn44FfypdIvtKT9gpAsOQotaPERva/eQrmlv0dL4esW7pvi
-         QonEQvnrlVZU2Ct4Ea9s1EOFL4BWaNd8utCP8aCjbCwcfhn/+jnk/CTCWkZYzWqI1gF3
-         z//VQBCa89V/tooEkWJc7cAJ5IQutMw00b3D2Wlffbyxlp6xDMtm3JQ72UeMXyJWXWpX
-         S+UQ==
-X-Gm-Message-State: AOAM532gspJgxqaGhVgqfhYt4JdtrjRCvJyIvpoXb4AIb22N1qLaKPMI
-        YXrF54R5A4JgNzIb82OBvYpPmkAzMW0x6IXvmtA=
-X-Google-Smtp-Source: ABdhPJyIrT+gLYI7vI2yo5nImYfuC4XO6inlIh1+VDTRjT5xh/14YyIJlJHFfUpmwvLtMqJKBgvtRElak7GB9wadYB0=
-X-Received: by 2002:a05:6102:c10:: with SMTP id x16mr6623085vss.38.1638358336213;
- Wed, 01 Dec 2021 03:32:16 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=327TNWql3wWdeatc5tbAId7z+H1nubHHchgbDAGGAu0=;
+        b=ztcFbiynUzE/Ws3ZdGdshIjbcDMqHEGNYlMLTpVBYSVHjpQ4OaPJD9gcMO25uEMjIq
+         4N3sVg15a3x7ZiiPHVNAkvHR17NN057+5nRYkuO8CtWwHGDNUPYJHezoKrnq8P+VW8Pg
+         LOlIRBIyv+GkV8W3BXrVyRc559MWfQSWluvjEhC4ivIG8atyT+IOADPDOIlM1wmwr+pP
+         VBLdnEqHBGxne7yUlQpl5CN0S+Vh0UnLKc92+9BY7nDK8hJrqnQo3hS8DWU9XTv326TA
+         Y0zwsdOi+pD3ehXKF/7TL7E4Hg2sQaR4MJ20WKwZqkRZRwuUScs2YPF4mfgRmdk5JskK
+         0NlQ==
+X-Gm-Message-State: AOAM530ZAQ4WcMMKgO8mvVkH78Sefkgk9E4foU2T7vKEGeIswOpkRFMw
+        TEFP/Y+bjA9Mz0f1dFuKwKJYxwaEHF/n6Y46Jrt2nOPDyCT2cgAD5tsEE0n/+UbO7PJyRU6VQge
+        7/TDhyyv4ReG9LXt11KCoMnGA5jKRbcvcQDPbPg==
+X-Received: by 2002:a17:90a:cb98:: with SMTP id a24mr640460pju.69.1638390982431;
+        Wed, 01 Dec 2021 12:36:22 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzFjbR3XIUyohTmLZlx7NKJFJvOwqh7rv3HTHa/KwBg7it8TqmOzXITJ0dMvZWcyX8j3fh0EExljghMKZMHoiU=
+X-Received: by 2002:a17:90a:cb98:: with SMTP id a24mr640418pju.69.1638390982021;
+ Wed, 01 Dec 2021 12:36:22 -0800 (PST)
 MIME-Version: 1.0
-Sender: unitednationawardwinner@gmail.com
-Received: by 2002:ab0:6c55:0:0:0:0:0 with HTTP; Wed, 1 Dec 2021 03:32:15 -0800 (PST)
-From:   "Mrs. Orgil Baatar" <mrs.orgilbaatar21@gmail.com>
-Date:   Wed, 1 Dec 2021 03:32:15 -0800
-X-Google-Sender-Auth: qP2A7nB7U1wMBPqdbggSD6towAU
-Message-ID: <CAJ4dHaSEYNO+EbJZ67rO1VL+rmFiTtM8ayW+P7WZvo77RuY8Rg@mail.gmail.com>
-Subject: Your long awaited part payment of $2.5.000.00Usd
-To:     undisclosed-recipients:;
+References: <CAFFUGJdht8P0K+vFLFbuGOYeW2SAUuPbHMw3OZ5vgqETZBPVfg@mail.gmail.com>
+In-Reply-To: <CAFFUGJdht8P0K+vFLFbuGOYeW2SAUuPbHMw3OZ5vgqETZBPVfg@mail.gmail.com>
+From:   Mike Perez <thingee@redhat.com>
+Date:   Wed, 1 Dec 2021 12:35:55 -0800
+Message-ID: <CAFFUGJf72qg3UgRc-efxzFY+zF8jPbo5osnAptvU_pkU7wv3DQ@mail.gmail.com>
+Subject: Re: Cephalocon 2022 is official!
+To:     Ceph Development <ceph-devel@vger.kernel.org>,
+        ceph-users <ceph-users@ceph.io>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Attention: Beneficiary, Your long awaited part payment of
-$2.5.000.00Usd (TWO MILLION FIVE Hundred Thousand United State
-Dollars) is ready for immediate release to you, and it was
-electronically credited into an ATM Visa Card for easy delivery.
+Hi everyone,
 
-Your new Payment Reference No.- 6363836,
-Pin Code No: 1787
-Your Certificate of Merit Payment No: 05872,
+We're near the deadline of December 10th for the Cephalocon CFP. So
+don't miss your chance to speak at this event either in-person or
+virtually.
 
-Your Names: |
-Address: |
+https://ceph.io/en/community/events/2022/cephalocon-portland/
 
-Person to Contact:MR KELLY HALL the Director of the International
-Audit unit ATM Payment Center,
+If you're interested in sponsoring Cephalocon, the sponsorship
+prospectus is now available:
 
-Email: uba-bf@e-ubabf.com
-TELEPHONE: +226 64865611 You can whatsApp the bank
+https://ceph.io/assets/pdfs/cephalocon-2022-sponsorship-prospectus.pdf
 
-Regards.
-Mrs ORGIL BAATAR
+On Fri, Nov 5, 2021 at 10:06 AM Mike Perez <thingee@redhat.com> wrote:
+>
+> Hello everyone!
+>
+> I'm pleased to announce Cephalocon 2022 will be taking place April 5-7
+> in Portland, Oregon + Virtually!
+>
+> The CFP is now open until December 10th, so don't delay! Registration
+> and sponsorship details will be available soon!
+>
+> I am looking forward to seeing you all in person again soon!
+>
+> https://ceph.io/en/community/events/2022/cephalocon-portland/
+>
+> --
+> Mike Perez
+
