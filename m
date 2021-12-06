@@ -2,75 +2,94 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62B55466161
-	for <lists+ceph-devel@lfdr.de>; Thu,  2 Dec 2021 11:24:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AACB946930E
+	for <lists+ceph-devel@lfdr.de>; Mon,  6 Dec 2021 10:57:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242697AbhLBK1Y (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 2 Dec 2021 05:27:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36278 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232098AbhLBK1X (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 2 Dec 2021 05:27:23 -0500
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B1DBC06174A
-        for <ceph-devel@vger.kernel.org>; Thu,  2 Dec 2021 02:24:01 -0800 (PST)
-Received: by mail-yb1-xb29.google.com with SMTP id y68so71940439ybe.1
-        for <ceph-devel@vger.kernel.org>; Thu, 02 Dec 2021 02:24:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=X78vxUuV4lKulLzaM3PqVha+lm8A5ScxaEctfEr046M=;
-        b=G5EjxHiR4cz8qYunl9II5yCFJZIn7koGB5Xh+auFYPm6TzqOUCMJhR4eD+1gS0o5GJ
-         2TZa9pV7BA0BkEUWB+JBL+QC6HOeCOKcMlevw2/ezTWXmkL2E1cI03JmkeWd4XrFmeRU
-         JKV4E2drBXLNrl8/67CyCBNwYb+0kWF+aDoZtgHg3nFdtkSrBjLiqtnIZ02/LlJmXRdW
-         TxG0w1CKiiIj0AspAalX1Wnm58/mWNxAWdd/gvlKyAf4LbgGvyNwui9oSZZwf9HMebSZ
-         8Jo2QHyWHMKRSeFgUOM0elIajSXEm4jWY95DnLVAH7ewM5lVf74yr8ErieffANasS+7m
-         DZyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=X78vxUuV4lKulLzaM3PqVha+lm8A5ScxaEctfEr046M=;
-        b=KOequahSnvzCRXLItTNH5QbbHMsx0xpuD/GG89Q2S5qu6DpV/PA+WvhRK+nLahz9Es
-         KdzgUd7Zyl6UOftYvMrlPux4yw61B5cIsh5zACaVHEYfuI7LjNNXhsq2+Hq5k4PCRAxN
-         JX2brG8PVZgHGkIJlBRoBiGl9O2q/SvTKxsDNKg8akQDMd4VKSUvnoUvE8N5xxFD1lUo
-         xhnoGaNKMUqRMdqlGfB5w62PITeGGXCKs5e4NoL9j6Uy7/aL6sU9baCK2rjgs1ocxCM2
-         hDPUW8RGhBt3sJzhtRz8L08WE/tWr5/bBNCXsTBop8g1bJFtx+Z9XJboEawV2ArZHOAL
-         dDkg==
-X-Gm-Message-State: AOAM530Lu5+PDDbniNYojCg457Wnha1XskwUxTwD9UisTb/ceHkr9SEQ
-        Q5Ae99U3aXRRuIbrWqmwfuVil7Uvvje47iZLwDw=
-X-Google-Smtp-Source: ABdhPJz3js+YPxDBFcgQe5IG5veZOBydZqRDJgN4yit9t/nyxEuFnMFY4aCQSjn7Y7SCivWqocFkHtooRYlA2U+FSAQ=
-X-Received: by 2002:a25:d895:: with SMTP id p143mr13533346ybg.513.1638440640416;
- Thu, 02 Dec 2021 02:24:00 -0800 (PST)
+        id S241615AbhLFKBK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 6 Dec 2021 05:01:10 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:58686 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241535AbhLFKBJ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 6 Dec 2021 05:01:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1638784660;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=PnvAnVPJKE7LfWzQLfAFgVcDbTSvkeVJoOpSZgUcg5U=;
+        b=SXq8IQcRWflRy/wMNzwYIuo+nvH6ZmKjyieMAZfbEg5/3sc17MNuZ4+W05pn9dpAs3pKZS
+        SaOz1FkBn/6rxwg9uOW2AyA3SEdizCBO5gPXrdyRMKIDPjme5AFqwPIgfbI02tuf4QXsrh
+        8o+pUt1PKEdsxF0vjCV8njnddnaiS+c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-498-wzW486haOTS23zgk5ChRgQ-1; Mon, 06 Dec 2021 04:57:39 -0500
+X-MC-Unique: wzW486haOTS23zgk5ChRgQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 68DC010144ED;
+        Mon,  6 Dec 2021 09:57:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3429F60BF1;
+        Mon,  6 Dec 2021 09:57:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20211129162907.149445-2-jlayton@kernel.org>
+References: <20211129162907.149445-2-jlayton@kernel.org> <20211129162907.149445-1-jlayton@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     dhowells@redhat.com, ceph-devel@vger.kernel.org,
+        idryomov@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ceph: conversion to new fscache API
 MIME-Version: 1.0
-Received: by 2002:a05:7010:1788:b0:1df:7cbc:45f9 with HTTP; Thu, 2 Dec 2021
- 02:23:59 -0800 (PST)
-Reply-To: nistelvaraj@gmail.com
-From:   Anitha Selvaraj <marjohn595@gmail.com>
-Date:   Thu, 2 Dec 2021 11:23:59 +0100
-Message-ID: <CAC5Z0D=mb4GXdjS+_YYRx2+PfakNJK8k57F1=946hshnHQiLvg@mail.gmail.com>
-Subject: From Mrs Anitha Selvaraj
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1219680.1638784646.1@warthog.procyon.org.uk>
+Date:   Mon, 06 Dec 2021 09:57:26 +0000
+Message-ID: <1219681.1638784646@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
--- 
-Dearest one in Christ,
+Jeff Layton <jlayton@kernel.org> wrote:
 
-I am Mrs Anitha Selvaraj, I married Mr.Francis Selvaraj, for 19 years
-without a child  and my husband died in 2007. I'm contacting you so that
-you will know my desire to donate the sum of ( 6,500,000 Dollars ) that I
-inherited from my late husband to charity, currently the fund is still in
-the bank. Recently, my doctor told me that I have serious sickness which is
-cancer problem and I will not last for the next 2 months.
+>  		if (!(gfp & __GFP_DIRECT_RECLAIM) || !(gfp & __GFP_FS))
 
-I want a person  that will use this fund for orphanages, schools, churches,
-widows, propagating the word of God in his country.
-Reply me for more information's,
+There's a function for the first part of this:
 
-Remain blessed
+		if (!gfpflags_allow_blocking(gfp) || !(gfp & __GFP_FS))
 
-Your sister in christ
-Mrs. Anitha Selvaraj
+> +	fsc->fscache = fscache_acquire_volume(name, NULL, 0);
+>  
+>  	if (fsc->fscache) {
+>  		ent->fscache = fsc->fscache;
+>  		list_add_tail(&ent->list, &ceph_fscache_list);
+
+It shouldn't really be necessary to have ceph_fscache_list since
+fscache_acquire_volume() will do it's own duplicate check.  I wonder if I
+should make fscache_acquire_volume() return -EEXIST or -EBUSY rather than NULL
+in such a case and not print an error, but rather leave that to the filesystem
+to display.
+
+That would allow you to get rid of the ceph_fscache_entry struct also, I
+think.
+
+> +#define FSCACHE_USE_NEW_IO_API
+
+That doesn't exist anymore.
+
+> +		/*
+> +		 * If we're truncating up, then we should be able to just update
+> +		 * the existing cookie.
+> +		 */
+> +		if (size > isize)
+> +			ceph_fscache_update(inode);
+
+Might look better to say "expanding" rather than "truncating up".
+
+David
+
