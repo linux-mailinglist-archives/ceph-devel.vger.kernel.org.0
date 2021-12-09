@@ -2,64 +2,47 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F5E646F240
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Dec 2021 18:40:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7905A46F649
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 Dec 2021 22:57:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243131AbhLIRnd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 Dec 2021 12:43:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53144 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234299AbhLIRn1 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Dec 2021 12:43:27 -0500
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71073C061746
-        for <ceph-devel@vger.kernel.org>; Thu,  9 Dec 2021 09:39:53 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id u22so10117813lju.7
-        for <ceph-devel@vger.kernel.org>; Thu, 09 Dec 2021 09:39:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0Ief/4lrcrFC9yHQblzF1a8RET0HNi3QQm3divo4aI0=;
-        b=AdnCyXT6TPlVVq0JLA/VEVV0O33H285eATNlyLPRaIFmtxnqr6S23nXl2J32guXc1O
-         plkuA6YLaLfLkkkWTPqQOSOG7bZY0JEwSmKNFIrfpMXr3oq7FfmHctvECgg0O0gJcn+c
-         hrPmI2kNvz5VH+5qzZSG7wTmayKDH0Ub3btDA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0Ief/4lrcrFC9yHQblzF1a8RET0HNi3QQm3divo4aI0=;
-        b=G8AvoUxck170Xi2iXBBWICncWMoaLCLIh5c1LHOFGEiOgLprGkufvRUz6oQzZhRE1Q
-         DcuC8uRUdyb+j0rC8CZ9eAq39L34KsTQCwyAiA0o+RaJmZvWDAD/mWofbhX58eNCxg+B
-         oxM1wJO/RGEqc7KH5Uu3PvNHZ0ymI1Av0UlVAok1v9O6C9J9pOQVdXvy5sf6lij+mAQc
-         2BRBOQFo1OdNOe6lzbl0QYgQajFuGpuNSwxZ6A0P3UG8qvVYY7Tqm9Et2Xk9VoR2f1NA
-         PLDgFZiyvp/1iwBUhRXk4SX8Am17Ciut8qpW5/q7aF4lv9J6zW3YOvW+audKd9FAOJLT
-         Ws/Q==
-X-Gm-Message-State: AOAM533s19Ud3fCtgw5oztTjTsI2f6VXq6uKQX8du0eBYBjs88hWvn4E
-        ydJge1RhEOrnnA5JkUckrhi2gv1jWMZyQydaMy4=
-X-Google-Smtp-Source: ABdhPJxAcoS/1bUOp3FOT2p4L5wLGhaBw9NHA95eYKLNh3C6C34xJLPaVjvlRHytZx0ADIcMkQcCew==
-X-Received: by 2002:a2e:95cb:: with SMTP id y11mr7838021ljh.431.1639071591271;
-        Thu, 09 Dec 2021 09:39:51 -0800 (PST)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id o22sm44517lfu.274.2021.12.09.09.39.50
-        for <ceph-devel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Dec 2021 09:39:51 -0800 (PST)
-Received: by mail-lf1-f52.google.com with SMTP id b40so13380273lfv.10
-        for <ceph-devel@vger.kernel.org>; Thu, 09 Dec 2021 09:39:50 -0800 (PST)
-X-Received: by 2002:a05:6000:1c2:: with SMTP id t2mr7703596wrx.378.1639071170949;
- Thu, 09 Dec 2021 09:32:50 -0800 (PST)
-MIME-Version: 1.0
-References: <163906878733.143852.5604115678965006622.stgit@warthog.procyon.org.uk>
- <163906890630.143852.13972180614535611154.stgit@warthog.procyon.org.uk>
-In-Reply-To: <163906890630.143852.13972180614535611154.stgit@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 9 Dec 2021 09:32:34 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg35xyf-HgOLcKdWVxm11vNomLVe44b1FsxvV6jDqw2CA@mail.gmail.com>
-Message-ID: <CAHk-=wg35xyf-HgOLcKdWVxm11vNomLVe44b1FsxvV6jDqw2CA@mail.gmail.com>
-Subject: Re: [PATCH v2 09/67] fscache: Implement volume registration
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-cachefs@redhat.com,
+        id S231868AbhLIWBU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 9 Dec 2021 17:01:20 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:29866 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232985AbhLIWBT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Dec 2021 17:01:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1639087065;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Nq1sf+kzjWsZVde2j+/s8Puw8BjH1Oy3rw3I3uvxMHo=;
+        b=KIpH8bqufDGwARWWONckb30XpM0WL+UW8Vw/minAEGe+ZNuDi4n/+zEfnKEG2OQbmGVbHH
+        AeXEhTgYFXNY9pL+ms+r3aPKABum2ek3pt+24iGGkZc7FxKWLWw3Fuww3nKu1Hl5qYJqjc
+        8LQz1pru+92mgbRA3RvGlunWVeNKHnU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-562-goLxjqsmOXuXZtknWwaRCA-1; Thu, 09 Dec 2021 16:57:42 -0500
+X-MC-Unique: goLxjqsmOXuXZtknWwaRCA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0A8D3760C0;
+        Thu,  9 Dec 2021 21:57:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.122])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DB9EB1017E27;
+        Thu,  9 Dec 2021 21:57:33 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wiTquFUu-b5ME=rbGEF8r2Vh1TXGfaZZuXyOutVrgRzfw@mail.gmail.com>
+References: <CAHk-=wiTquFUu-b5ME=rbGEF8r2Vh1TXGfaZZuXyOutVrgRzfw@mail.gmail.com> <163906878733.143852.5604115678965006622.stgit@warthog.procyon.org.uk> <163906888735.143852.10944614318596881429.stgit@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
         Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <sfrench@samba.org>,
@@ -75,62 +58,69 @@ Cc:     linux-cachefs@redhat.com,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 07/67] fscache: Implement a hash function
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <159179.1639087053.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 09 Dec 2021 21:57:33 +0000
+Message-ID: <159180.1639087053@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Dec 9, 2021 at 8:55 AM David Howells <dhowells@redhat.com> wrote:
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> > Implement a function to generate hashes.  It needs to be stable over t=
+ime
+> > and endianness-independent as the hashes will appear on disk in future
+> > patches.
+> =
+
+> I'm not actually seeing this being endianness-independent.
+> =
+
+> Is the input just regular 32-bit data in native word order? Because
+> then it's not endianness-independent, it's purely that there *is* no
+> endianness to the data at all and it is purely native data.
 >
-> +static long fscache_compare_volume(const struct fscache_volume *a,
-> +                                  const struct fscache_volume *b)
-> +{
-> +       size_t klen;
-> +
-> +       if (a->key_hash != b->key_hash)
-> +               return (long)a->key_hash - (long)b->key_hash;
-> +       if (a->cache != b->cache)
-> +               return (long)a->cache    - (long)b->cache;
-> +       if (a->key[0] != b->key[0])
-> +               return (long)a->key[0]   - (long)b->key[0];
-> +
-> +       klen = round_up(a->key[0] + 1, sizeof(unsigned int));
-> +       return memcmp(a->key, b->key, klen);
+> So the code may be correct, but the explanation is confusing. There is
+> absolutely nothing here that is about endianness.
 
-None of this is endianness-independent except for the final memcmp()
-(and that one assumes the data is just a "stream of bytes")
+What I'm trying to get at is that the hash needs to be consistent, no matt=
+er
+the endianness of the cpu, for any particular input blob.  The hashing
+function shouldn't need to know the structure of the input blob.  In the c=
+ase
+of the volume key, it's a padded printable string; in the case of the cook=
+ie
+key, it's probably some sort of structured blob, quite possibly an actual
+array of be32.
 
-In fact, even if everybody is little-endian, the above gives different
-results on 32-bit and 64-bit architectures, since you're doing math in
-(possibly) 64 bits but using a 32-bit "key_hash". So sign bits will
-differ, afaik.
+The reason it needs to be consistent is that people seem to like seeding t=
+he
+cache by tarring up the cache from one machine and untarring it on another=
+.
 
-And once again, that key_hash isn't actually endianness-independent anyway:
+And looking again at my code:
 
-> +       volume->key_hash = fscache_hash(0, (unsigned int *)key,
-> +                                       hlen / sizeof(unsigned int));
+unsigned int fscache_hash(unsigned int salt, unsigned int *data, unsigned =
+int n)
+{
+	unsigned int a, x =3D 0, y =3D salt;
 
-Yeah, for the same key data, this will give entirely different results
-on LE vs BE, unless you've made sure to always convert whatever keys
-from soem on-disk fixed-32-bit-endianness format to a in-memory host
-endianness.
+	for (; n; n--) {
+		a =3D *data++;   <<<<<<<
+		HASH_MIX(x, y, a);
+	}
+	return fold_hash(x, y);
+}
 
-Which is a fundamental design mistake in itself. That kind of "one
-endianness on disk, another in memory" is garbage.
+The marked line should probably use something like le/be32_to_cpu().
 
-I'm not sure any of these matter - maybe all these hashes are entirely
-for in-memory stuff and never haev any longer lifetimes, so the fact
-that they get calculated and compared differently depending on
-endianness and depending on word size may not matter at all. You may
-only care about "stable on the native architecture".
+I also need to fix 9p to canonicalise its cookie key.
 
-But then you shouldn't have your own hash function that you claim is
-somehow endianness-safe.
+Thanks for catching that,
+David
 
-If you really want to be endianness safe, *ALL* the data you work on
-needs to be a proper fixed endianness format. All throught the code.
-Make all key pointers always be "__le32 *", and never randomly cast
-the pointer from some other data like I see in every use I actually
-looked at.
-
-                  Linus
