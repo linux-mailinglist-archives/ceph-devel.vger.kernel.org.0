@@ -2,74 +2,162 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ECB046E105
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Dec 2021 03:51:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39F2346E739
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 Dec 2021 12:05:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230473AbhLICye (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 8 Dec 2021 21:54:34 -0500
-Received: from smtp23.cstnet.cn ([159.226.251.23]:39870 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230401AbhLICyd (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 8 Dec 2021 21:54:33 -0500
-Received: from localhost.localdomain (unknown [124.16.138.128])
-        by APP-03 (Coremail) with SMTP id rQCowADHlpEAb7FhZk63AQ--.18135S2;
-        Thu, 09 Dec 2021 10:50:41 +0800 (CST)
-From:   Jiasheng Jiang <jiasheng@iscas.ac.cn>
-To:     idryomov@gmail.com, jlayton@kernel.org, davem@davemloft.net,
-        kuba@kernel.org
-Cc:     ceph-devel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jiasheng Jiang <jiasheng@iscas.ac.cn>
-Subject: [PATCH] libceph, ceph: potential dereference of null pointer
-Date:   Thu,  9 Dec 2021 10:50:38 +0800
-Message-Id: <20211209025038.2028112-1-jiasheng@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+        id S236315AbhLILIj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 9 Dec 2021 06:08:39 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:37320 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232838AbhLILIj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Dec 2021 06:08:39 -0500
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 5E59E1F37D;
+        Thu,  9 Dec 2021 11:05:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1639047905; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=siGuJxYs3u+U19GW8OW4NBqWHjpw8TCmMhhVxQCwKak=;
+        b=vaxCJEu2puMakhMHQrVEXIEBXdQ04EN6Ss5oAjxd7fkxfHYt5jpGPBSdUSDhtuUrfZ88Aw
+        HOI4oc9Ou3GYaNXNPKWZtSfbW0BagjNMfU/x9S1p8RwPCY7TJ4Rc3ywwSHFa1xoYhHSnM5
+        ZcB1+WLYKIyQjZCbLnMsUjHlT1ORAHM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1639047905;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=siGuJxYs3u+U19GW8OW4NBqWHjpw8TCmMhhVxQCwKak=;
+        b=iYPQBirhzDUTs7r05q6daEtALsDDYIHkFrCNF2XNVjfXxvXwsEfQUSfuewlbuTKi5tAWJ2
+        ysdWJnuXE6EJ1SBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DDCA413343;
+        Thu,  9 Dec 2021 11:05:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id A7JOM+DisWHkPAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Thu, 09 Dec 2021 11:05:04 +0000
+Received: from localhost (brahms [local])
+        by brahms (OpenSMTPD) with ESMTPA id eca42638;
+        Thu, 9 Dec 2021 11:05:04 +0000 (UTC)
+Date:   Thu, 9 Dec 2021 11:05:03 +0000
+From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com,
+        Hu Weiwen <sehuww@mail.scut.edu.cn>,
+        Xiubo Li <xiubli@redhat.com>
+Subject: Re: [PATCH v2] ceph: don't check for quotas on MDS stray dirs
+Message-ID: <YbHi34FXfng9VOfk@suse.de>
+References: <20211207152705.167010-1-jlayton@kernel.org>
+ <e666ba1d2db25a90de7e2582c31c36a6fb9854ab.camel@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowADHlpEAb7FhZk63AQ--.18135S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtw4xtrW8Cw18uw4DCF43GFg_yoW3Arg_Ca
-        n2vrnIvr13ZF10kanrurWrWrZ2v347Wr4rZw13KF93Cr9ruFn8Aa4xX345AF13uFyxCFyD
-        CrZ8Cry3JwnFkjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb4kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-        Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-        7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
-        1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_
-        Gr1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
-        WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
-        7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-        1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8
-        JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUO_MaUU
-        UUU
-X-Originating-IP: [124.16.138.128]
-X-CM-SenderInfo: pmld2xxhqjqxpvfd2hldfou0/
+In-Reply-To: <e666ba1d2db25a90de7e2582c31c36a6fb9854ab.camel@kernel.org>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The return value of kzalloc() needs to be checked.
-To avoid use of null pointer in case of the failure of alloc.
+On Tue, Dec 07, 2021 at 10:29:28AM -0500, Jeff Layton wrote:
+> On Tue, 2021-12-07 at 10:27 -0500, Jeff Layton wrote:
+> > 玮文 胡 reported seeing the WARN_RATELIMIT pop when writing to an
+> > inode that had been transplanted into the stray dir. The client was
+> > trying to look up the quotarealm info from the parent and that tripped
+> > the warning.
+> > 
+> > Change the ceph_vino_is_reserved helper to not throw a warning for
+> > MDS stray directories (0x100 - 0x1ff), only for reserved dirs that
+> > are not in that range.
+> > 
+> > Also, fix ceph_has_realms_with_quotas to return false when encountering
+> > a reserved inode.
+> > 
+> > URL: https://tracker.ceph.com/issues/53180
+> > Reported-by: Hu Weiwen <sehuww@mail.scut.edu.cn>
+> > Reviewed-by: Luis Henriques <lhenriques@suse.de>
+> > Reviewed-by: Xiubo Li <xiubli@redhat.com>
+> 
+> Oops, I forgot to remote the Reviewed-by: lines before sending since
+> this patch is different. The one in the testing branch has them removed.
+> Reviews of this patch would still be welcome.
 
-Fixes: 3d14c5d2b6e1 ("ceph: factor out libceph from Ceph file system")
-Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
----
- net/ceph/osd_client.c | 2 ++
- 1 file changed, 2 insertions(+)
+Feel free to add my Reviewed-by: back, the patch looks OK to me.  Thanks!
 
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index ff8624a7c964..3203e8a34370 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -1234,6 +1234,8 @@ static struct ceph_osd *create_osd(struct ceph_osd_client *osdc, int onum)
- 	WARN_ON(onum == CEPH_HOMELESS_OSD);
- 
- 	osd = kzalloc(sizeof(*osd), GFP_NOIO | __GFP_NOFAIL);
-+	if (!osd)
-+		return NULL;
- 	osd_init(osd);
- 	osd->o_osdc = osdc;
- 	osd->o_osd = onum;
--- 
-2.25.1
+Cheers,
+--
+Luís
 
+> 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/ceph/quota.c |  3 +++
+> >  fs/ceph/super.h | 20 ++++++++++++--------
+> >  2 files changed, 15 insertions(+), 8 deletions(-)
+> > 
+> > I was still seeing some warnings even with the earlier patch, so I
+> > decided to rework it to just never warn on MDS stray dirs. This should
+> > also silence the warnings on MDS stray dirs (and also alleviate Luis'
+> > concern about the function renaming in the earlier patch).
+> > 
+> > diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
+> > index 24ae13ea2241..a338a3ec0dc4 100644
+> > --- a/fs/ceph/quota.c
+> > +++ b/fs/ceph/quota.c
+> > @@ -30,6 +30,9 @@ static inline bool ceph_has_realms_with_quotas(struct inode *inode)
+> >  	/* if root is the real CephFS root, we don't have quota realms */
+> >  	if (root && ceph_ino(root) == CEPH_INO_ROOT)
+> >  		return false;
+> > +	/* MDS stray dirs have no quota realms */
+> > +	if (ceph_vino_is_reserved(ceph_inode(inode)->i_vino))
+> > +		return false;
+> >  	/* otherwise, we can't know for sure */
+> >  	return true;
+> >  }
+> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > index 387ee33894db..f9b1bbf26c1b 100644
+> > --- a/fs/ceph/super.h
+> > +++ b/fs/ceph/super.h
+> > @@ -541,19 +541,23 @@ static inline int ceph_ino_compare(struct inode *inode, void *data)
+> >   *
+> >   * These come from src/mds/mdstypes.h in the ceph sources.
+> >   */
+> > -#define CEPH_MAX_MDS		0x100
+> > -#define CEPH_NUM_STRAY		10
+> > +#define CEPH_MAX_MDS			0x100
+> > +#define CEPH_NUM_STRAY			10
+> >  #define CEPH_MDS_INO_MDSDIR_OFFSET	(1 * CEPH_MAX_MDS)
+> > +#define CEPH_MDS_INO_LOG_OFFSET		(2 * CEPH_MAX_MDS)
+> >  #define CEPH_INO_SYSTEM_BASE		((6*CEPH_MAX_MDS) + (CEPH_MAX_MDS * CEPH_NUM_STRAY))
+> >  
+> >  static inline bool ceph_vino_is_reserved(const struct ceph_vino vino)
+> >  {
+> > -	if (vino.ino < CEPH_INO_SYSTEM_BASE &&
+> > -	    vino.ino >= CEPH_MDS_INO_MDSDIR_OFFSET) {
+> > -		WARN_RATELIMIT(1, "Attempt to access reserved inode number 0x%llx", vino.ino);
+> > -		return true;
+> > -	}
+> > -	return false;
+> > +	if (vino.ino >= CEPH_INO_SYSTEM_BASE ||
+> > +	    vino.ino < CEPH_MDS_INO_MDSDIR_OFFSET)
+> > +		return false;
+> > +
+> > +	/* Don't warn on mdsdirs */
+> > +	WARN_RATELIMIT(vino.ino >= CEPH_MDS_INO_LOG_OFFSET,
+> > +			"Attempt to access reserved inode number 0x%llx",
+> > +			vino.ino);
+> > +	return true;
+> >  }
+> >  
+> >  static inline struct inode *ceph_find_inode(struct super_block *sb,
+> 
+> -- 
+> Jeff Layton <jlayton@kernel.org>
