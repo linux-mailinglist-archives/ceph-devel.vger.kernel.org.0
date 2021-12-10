@@ -2,173 +2,74 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBD3D46F954
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 Dec 2021 03:47:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11E0346FD10
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 Dec 2021 09:55:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236140AbhLJCuv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 Dec 2021 21:50:51 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37595 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231175AbhLJCuu (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Dec 2021 21:50:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639104436;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RDm182yzFAowpD6q2G/7EZAzbuAuDW5mdyX19r8/gMM=;
-        b=h77LQSK4NyUuQv+B75x/OGdHpTSG5cY7/qmTdglSzgfeOunghDoDMtv43rIK4wC+sjonEz
-        NKfrgLuCkwpB4Nlf/rS2+9PMEq9kCAIxNOEWZQQPbePMqeJAYdsZ1qR8bT0kW2jDwQNCzb
-        rgSZDPKMirSVw7eNMsOhjXkYxgjBIDg=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-108-a93DIqweNpSBLWJsEsquNg-1; Thu, 09 Dec 2021 21:47:15 -0500
-X-MC-Unique: a93DIqweNpSBLWJsEsquNg-1
-Received: by mail-pj1-f71.google.com with SMTP id h15-20020a17090a648f00b001a96c2c97abso4789209pjj.9
-        for <ceph-devel@vger.kernel.org>; Thu, 09 Dec 2021 18:47:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=RDm182yzFAowpD6q2G/7EZAzbuAuDW5mdyX19r8/gMM=;
-        b=4LnONBbCS7iW7hhYkiVQWCmpgK+sMIWE2ixBfeu/1n9ft3MgWB+NR9mrOVIEhacni6
-         3A+ae788TtoxccDIqwJSOgX0ve5AenXHqZ1iBVXcWSU3mBg7V3hMq+UGwdHcbXfOuy/m
-         2bt0puwnQOE97Z+oB75iPti4FuGOLC8z7kNFbNYGPwMRjLbVOZ+DzStkwq0CcqvtK77I
-         LPUEnGihz4GT+ofKKJxQWGLe4Uy9ANh9STZ3lfS+Q9Ce2fDqK6XDe8fUdA7oSvjUehlm
-         HKezWly7QqHqFOflsizxkX1GDukBVZ0Qa2qqBXKrhXRzgmG4UNlyHV+n1wl8Yn3/y6W2
-         oclA==
-X-Gm-Message-State: AOAM5322OyF3yNHpgDrwYSbRQixh7jkQf9/9kQ9otWeQ2knpqneqAx/c
-        aAQ+XXltPOiZrV5ijdy22sg2GrFtBU8U4mPrbkihdlcKAbS7Avxc4rzvzu1tzlwHf9ujTX3krQI
-        nLOSEeb791oHKGLX3y0gVHg==
-X-Received: by 2002:a05:6a00:198c:b0:4a4:e75f:75cb with SMTP id d12-20020a056a00198c00b004a4e75f75cbmr15618768pfl.38.1639104433917;
-        Thu, 09 Dec 2021 18:47:13 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwpnkhqww19Tpc25FVHBxUWJf656rgeAQdK4L58xNriGevdZKOt+HYqZaRBDAUpzaz55t0Dyg==
-X-Received: by 2002:a05:6a00:198c:b0:4a4:e75f:75cb with SMTP id d12-20020a056a00198c00b004a4e75f75cbmr15618757pfl.38.1639104433686;
-        Thu, 09 Dec 2021 18:47:13 -0800 (PST)
-Received: from [10.72.12.129] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id t186sm1029523pfc.122.2021.12.09.18.47.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Dec 2021 18:47:12 -0800 (PST)
-Subject: Re: [PATCH 00/36] ceph+fscrypt: context, filename, symlink and size
- handling support
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20211209153647.58953-1-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <c5947b29-e209-e98e-ec21-875ff8592bfb@redhat.com>
-Date:   Fri, 10 Dec 2021 10:47:06 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        id S238774AbhLJI7L (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 10 Dec 2021 03:59:11 -0500
+Received: from mail.webdeluxgroup.com ([51.195.117.175]:53772 "EHLO
+        mail.webdeluxgroup.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231728AbhLJI7K (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 10 Dec 2021 03:59:10 -0500
+X-Greylist: delayed 564 seconds by postgrey-1.27 at vger.kernel.org; Fri, 10 Dec 2021 03:59:10 EST
+Received: by mail.webdeluxgroup.com (Postfix, from userid 1002)
+        id E1E53A268E; Fri, 10 Dec 2021 08:46:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=webdeluxgroup.com;
+        s=mail; t=1639125969;
+        bh=Ikssx+VmDQhoHuLzKgesrzZ3VGIyKr0VUFS/Kpp5X4A=;
+        h=Date:From:To:Subject:From;
+        b=RH2/F9+k7BtevK6Tx72spZhFTq3tdvPrm4+MrXbpKn3bjg9P/4Kv8Dqk14ZjjG8fL
+         9+zTz+3W2b92A4EZK6oO/ocjWyWX/MDjhUYDSKJWM7HMEpd9+ALnBF4UGBD7yJttPH
+         /pH2ERSxjG0HwVEkGiDJkZltuJnpyW9ZpoaxTEJ4xJPoOna/tZj3YsKmSbjFoHFOtp
+         x67U/f/Oo+vn4uUgiRAyR/yStaT5g58QPxxyRxbed4ttpU/edepFNr1W6dujy4+FxC
+         2IB2dvIFWJq93/L0wS7FZLqfEklzIN/qZqwQYnkxoPysW7Y+tUY0/lYt+yir4GmrGX
+         Yke08pk8Wgueg==
+Received: by mail.webdeluxgroup.com for <ceph-devel@vger.kernel.org>; Fri, 10 Dec 2021 08:45:59 GMT
+Message-ID: <20211210074500-0.1.3p.al9x.0.q5id67l28m@webdeluxgroup.com>
+Date:   Fri, 10 Dec 2021 08:45:59 GMT
+From:   =?UTF-8?Q? "Ji=C5=99=C3=AD_Novotn=C3=BD" ?= 
+        <jiri.novotny@webdeluxgroup.com>
+To:     <ceph-devel@vger.kernel.org>
+Subject: =?UTF-8?Q?=C3=9Asp=C4=9Bch_kampan=C4=9B?=
+X-Mailer: mail.webdeluxgroup.com
 MIME-Version: 1.0
-In-Reply-To: <20211209153647.58953-1-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Dobr=C3=BD den,
 
-On 12/9/21 11:36 PM, Jeff Layton wrote:
-> I've not posted this in a while, so I figured it was a good time to do
-> so. This patchset is a pile of the mostly settled parts of the fscrypt
-> integration series. With this, pretty much everything but the actual
-> content encryption in files now works.
->
-> This series is also in the wip-fscrypt-size branch of the ceph-client
-> tree:
->
->      https://github.com/ceph/ceph-client/tree/wip-fscrypt-size
->
-> It would also be nice to have an ack from Al Viro on patch #1, and from
-> Eric Biggers on #2-5. Those touch code outside of the ceph parts. If
-> they aren't acceptable for some reason, I'll need to find other ways to
-> handle them.
->
-> Jeff Layton (31):
->    vfs: export new_inode_pseudo
->    fscrypt: export fscrypt_base64url_encode and fscrypt_base64url_decode
->    fscrypt: export fscrypt_fname_encrypt and fscrypt_fname_encrypted_size
->    fscrypt: add fscrypt_context_for_new_inode
->    fscrypt: uninline and export fscrypt_require_key
->    ceph: preallocate inode for ops that may create one
->    ceph: crypto context handling for ceph
->    ceph: parse new fscrypt_auth and fscrypt_file fields in inode traces
->    ceph: add fscrypt_* handling to caps.c
->    ceph: add ability to set fscrypt_auth via setattr
->    ceph: implement -o test_dummy_encryption mount option
->    ceph: decode alternate_name in lease info
->    ceph: add fscrypt ioctls
->    ceph: make ceph_msdc_build_path use ref-walk
->    ceph: add encrypted fname handling to ceph_mdsc_build_path
->    ceph: send altname in MClientRequest
->    ceph: encode encrypted name in dentry release
->    ceph: properly set DCACHE_NOKEY_NAME flag in lookup
->    ceph: make d_revalidate call fscrypt revalidator for encrypted
->      dentries
->    ceph: add helpers for converting names for userland presentation
->    ceph: add fscrypt support to ceph_fill_trace
->    ceph: add support to readdir for encrypted filenames
->    ceph: create symlinks with encrypted and base64-encoded targets
->    ceph: make ceph_get_name decrypt filenames
->    ceph: add a new ceph.fscrypt.auth vxattr
->    ceph: add some fscrypt guardrails
->    libceph: add CEPH_OSD_OP_ASSERT_VER support
->    ceph: size handling for encrypted inodes in cap updates
->    ceph: fscrypt_file field handling in MClientRequest messages
->    ceph: get file size from fscrypt_file when present in inode traces
->    ceph: handle fscrypt fields in cap messages from MDS
->
-> Luis Henriques (1):
->    ceph: don't allow changing layout on encrypted files/directories
->
-> Xiubo Li (4):
->    ceph: add __ceph_get_caps helper support
->    ceph: add __ceph_sync_read helper support
->    ceph: add object version support for sync read
->    ceph: add truncate size handling support for fscrypt
->
->   fs/ceph/Makefile                |   1 +
->   fs/ceph/acl.c                   |   4 +-
->   fs/ceph/caps.c                  | 211 ++++++++++--
->   fs/ceph/crypto.c                | 253 ++++++++++++++
->   fs/ceph/crypto.h                | 154 +++++++++
->   fs/ceph/dir.c                   | 209 +++++++++---
->   fs/ceph/export.c                |  44 ++-
->   fs/ceph/file.c                  | 125 ++++---
->   fs/ceph/inode.c                 | 566 +++++++++++++++++++++++++++++---
->   fs/ceph/ioctl.c                 |  87 +++++
->   fs/ceph/mds_client.c            | 349 +++++++++++++++++---
->   fs/ceph/mds_client.h            |  24 +-
->   fs/ceph/super.c                 |  82 ++++-
->   fs/ceph/super.h                 |  42 ++-
->   fs/ceph/xattr.c                 |  29 ++
->   fs/crypto/fname.c               |  40 ++-
->   fs/crypto/fscrypt_private.h     |  35 +-
->   fs/crypto/hooks.c               |   6 +-
->   fs/crypto/keysetup.c            |  27 ++
->   fs/crypto/policy.c              |  34 +-
->   fs/inode.c                      |   1 +
->   include/linux/ceph/ceph_fs.h    |  21 +-
->   include/linux/ceph/osd_client.h |   6 +-
->   include/linux/ceph/rados.h      |   4 +
->   include/linux/fscrypt.h         |  15 +
->   net/ceph/osd_client.c           |   5 +
->   26 files changed, 2087 insertions(+), 287 deletions(-)
->   create mode 100644 fs/ceph/crypto.c
->   create mode 100644 fs/ceph/crypto.h
->
-I have test this series together with ceph side PR#1 and worked well for 
-me. LGTM.
+Prod=C3=A1v=C3=A1te sv=C3=A9 v=C3=BDrobky p=C5=99=C3=ADmo spot=C5=99ebite=
+l=C5=AFm prost=C5=99ednictv=C3=ADm kan=C3=A1lu E-Commerce?=20
 
-1), https://github.com/ceph/ceph/pull/43588
+Pokud ano, r=C3=A1d bych v=C3=A1m p=C5=99edstavil mo=C5=BEnosti a p=C5=99=
+=C3=ADklady, jak zv=C3=BD=C5=A1it v=C3=BDnosy z tohoto kan=C3=A1lu.=20
+
+P=C5=99ed =C4=8Dasem se n=C3=A1m ozvala spole=C4=8Dnost, kter=C3=A1 cht=C4=
+=9Bla v=C3=BDrazn=C4=9B zlep=C5=A1it v=C3=BDsledky ve v=C5=A1ech kan=C3=A1=
+lech, jejich=C5=BE prost=C5=99ednictv=C3=ADm oslovuje z=C3=A1kazn=C3=ADky=
+=2E
+
+C=C3=ADlem bylo dos=C3=A1hnout stabiln=C3=ADch, m=C4=9B=C5=99iteln=C3=BDc=
+h v=C3=BDnos=C5=AF a tak=C3=A9 roz=C5=A1=C3=AD=C5=99it p=C5=AFsobnost na =
+mezin=C3=A1rodn=C3=AD trhy.=20
+
+Zjednodu=C5=A1ili jsme strukturu kampan=C3=AD, zlep=C5=A1ili rozmanitost =
+reklam a komunikace a tak=C3=A9 jsme vytvo=C5=99ili nestandardn=C3=AD kat=
+alog v=C3=BDrobk=C5=AF. Implementovali jsme =C5=99e=C5=A1en=C3=AD, kter=C3=
+=A1 vedla k lep=C5=A1=C3=ADmu v=C3=BDsledku CPC, zv=C3=BD=C5=A1en=C3=AD C=
+TR a zlep=C5=A1en=C3=AD konverze potenci=C3=A1ln=C3=ADch z=C3=A1kazn=C3=AD=
+k=C5=AF na nakupuj=C3=ADc=C3=AD z=C3=A1kazn=C3=ADky.=20
+
+D=C3=ADky na=C5=A1im komplexn=C3=ADm aktivit=C3=A1m se v=C3=BDrazn=C4=9B =
+zv=C3=BD=C5=A1il ROI index a v=C3=BDnosy a=C5=BE o 95 %. Stoj=C3=AD za to=
+ probrat, jak to ve Va=C5=A1=C3=AD spole=C4=8Dnosti vypad=C3=A1 a co v=C3=
+=A1m m=C5=AF=C5=BEeme nab=C3=ADdnout. Pokud m=C3=A1te z=C3=A1jem o kr=C3=A1=
+tk=C3=BD rozhovor, dejte mi v=C4=9Bd=C4=9Bt. N=C3=A1=C5=A1 anglicky mluv=C3=
+=ADc=C3=AD z=C3=A1stupce V=C3=A1s bude okam=C5=BEit=C4=9B kontaktovat.
 
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
-
-BRs
-
-
+S p=C5=99=C3=A1telsk=C3=BDm pozdravem
+Ji=C5=99=C3=AD Novotn=C3=BD
