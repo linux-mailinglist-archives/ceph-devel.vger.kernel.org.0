@@ -2,110 +2,86 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 38CAD471408
-	for <lists+ceph-devel@lfdr.de>; Sat, 11 Dec 2021 14:38:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB4E1471CD3
+	for <lists+ceph-devel@lfdr.de>; Sun, 12 Dec 2021 20:56:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231135AbhLKNiA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 11 Dec 2021 08:38:00 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:24953 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231138AbhLKNh7 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Sat, 11 Dec 2021 08:37:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639229878;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/Z8c8lX7Q347Z+4ORdcMYBofXUvb1OCWCHdF//k2AV4=;
-        b=DNli0noFqJ8lUPi7jbfZT67rQaCSs+19MVIEc5UYfulLowkQdCev5HwDr6eJIFkRHy9hYF
-        ZpWFKUtDA6F+7Kzi9kJN5D0FtLeZa0oTeqopJBiU8l0IGOAvAWzX3rQQKZKcy+A58EgHov
-        IC2SZCBaLsn21IEsrGTdpr5Q+J6+oLY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-557-qp91NnnxO2W56AfTygDTXQ-1; Sat, 11 Dec 2021 08:37:55 -0500
-X-MC-Unique: qp91NnnxO2W56AfTygDTXQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S230333AbhLLT4b (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 12 Dec 2021 14:56:31 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:53576 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230073AbhLLT4a (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 12 Dec 2021 14:56:30 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1F5FF801AAB;
-        Sat, 11 Dec 2021 13:37:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.122])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7BBF188F7;
-        Sat, 11 Dec 2021 13:37:45 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CALF+zOknSu_qkb9N0i4LY8tUtXmXirSsU7gGZsUOtLu8c88ieg@mail.gmail.com>
-References: <CALF+zOknSu_qkb9N0i4LY8tUtXmXirSsU7gGZsUOtLu8c88ieg@mail.gmail.com> <163906878733.143852.5604115678965006622.stgit@warthog.procyon.org.uk> <163906979003.143852.2601189243864854724.stgit@warthog.procyon.org.uk>
-To:     David Wysochanski <dwysocha@redhat.com>
-Cc:     dhowells@redhat.com, linux-cachefs <linux-cachefs@redhat.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org,
-        linux-cifs <linux-cifs@vger.kernel.org>,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 62/67] nfs: Convert to new fscache volume/cookie API
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7AEC6B80CEB;
+        Sun, 12 Dec 2021 19:56:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22C3AC341C6;
+        Sun, 12 Dec 2021 19:56:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639338988;
+        bh=KOGGsx4RyQodW8+IldIXBrgZnYwoVo+AduzdGZRTPBY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SvQc2t5AcQmbyPKFybvGu6Q8fhChr6cq9XVUi+FD3YnrAq6FBRYQYX72tCyskF1LQ
+         RbIUPx26ToPFe6WQsPJPELA71QqxEOvC6EUM+EoKiXRuYxL/LcHqnWMHiGXLhULdtC
+         +FnEjZbNg8HJQSmmFbIx0/QchKy0IjBgkJz25+55ix+21dPUgJMeKfxJlUZbrnHRmv
+         6X5iif4ZgmZBbLCrWi5RksYEQ6MVhNZ6NiwefP5pYR74c7/DaNP0KUYeRbJMKSgEj0
+         i8XkcY6xI5HT9s8VUMZDMMaJDxWyIDRvzeIPumA859HI4G42wz/cKD7d8Mp3pZQof3
+         sK8AfFgnp40Bg==
+Date:   Sun, 12 Dec 2021 11:56:26 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 05/36] fscrypt: uninline and export fscrypt_require_key
+Message-ID: <YbZT6kXlrVO5doMT@sol.localdomain>
+References: <20211209153647.58953-1-jlayton@kernel.org>
+ <20211209153647.58953-6-jlayton@kernel.org>
+ <YbOuhUalMBuTGAGI@sol.localdomain>
+ <8c90912c5fd01a713688b1d2523ffe47df747513.camel@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <353627.1639229864.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Sat, 11 Dec 2021 13:37:44 +0000
-Message-ID: <353628.1639229864@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8c90912c5fd01a713688b1d2523ffe47df747513.camel@kernel.org>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-David Wysochanski <dwysocha@redhat.com> wrote:
+On Fri, Dec 10, 2021 at 03:40:20PM -0500, Jeff Layton wrote:
+> On Fri, 2021-12-10 at 11:46 -0800, Eric Biggers wrote:
+> > On Thu, Dec 09, 2021 at 10:36:16AM -0500, Jeff Layton wrote:
+> > > ceph_atomic_open needs to be able to call this.
+> > > 
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/crypto/fscrypt_private.h | 26 --------------------------
+> > >  fs/crypto/keysetup.c        | 27 +++++++++++++++++++++++++++
+> > >  include/linux/fscrypt.h     |  5 +++++
+> > >  3 files changed, 32 insertions(+), 26 deletions(-)
+> > 
+> > What is the use case for this, more precisely?  I've been trying to keep
+> > filesystems using helper functions like fscrypt_prepare_*() and
+> > fscrypt_file_open() rather than setting up encryption keys directly, which is a
+> > bit too low-level to be doing outside of fs/crypto/.
+> > 
+> > Perhaps fscrypt_file_open() is what you're looking for here?
+> 
+> That doesn't really help because we don't have the inode for the file
+> yet at the point where we need the key.
+> 
+> atomic_open basically does a lookup+open. You give it a directory inode
+> and a dentry, and it issues an open request by filename. If it gets back
+> ENOENT then we know that the thing is a negative dentry.
+> 
+> In the lookup path, I used __fscrypt_prepare_readdir. This situation is
+> a bit similar so I might be able to use that instead. OTOH, that doesn't
+> fail when you don't have the key, and if you don't, there's not a lot of
+> point in going any further here.
 
-> >  (4) fscache_enable/disable_cookie() have been removed.
-> >
-> >      Call fscache_use_cookie() and fscache_unuse_cookie() when a file =
-is
-> >      opened or closed to prevent a cache file from being culled and to=
- keep
-> >      resources to hand that are needed to do I/O.
-> >
-> >      Unuse the cookie when a file is opened for writing.  This is gate=
-d by
-> >      the NFS_INO_FSCACHE flag on the nfs_inode.
-> >
-> >      A better way might be to invalidate it with FSCACHE_INVAL_DIO_WRI=
-TE
-> >      which will keep it unused until all open files are closed.
-> >
-> =
+So you're requiring the key on a directory to do a lookup in that directory?
+Normally that's not required, as files can be looked up by no-key name.  Why is
+the atomic_open case different?  The file inode's key is needed to open it, of
+course, but the directory inode's key shouldn't be needed.  In practice you'll
+tend to have the key for both or neither inode, but that's not guaranteed.
 
-> It looks like the comment doesn't match what was actually done inside
-> nfs_fscache_open_file().  Is the code right and the comment just out of =
-date?
-
-The comment is out of date.  NFS_INO_FSCACHE isn't used now.
-
-> I'm getting that kasan UAF firing periodically in this code path, and so=
- it
-> looks related to this change,though I don't have great info on it so far=
- and
-> it's hard to reproduce.
-
-Can you copy the kasan UAF text into a reply?
-
-David
-
+- Eric
