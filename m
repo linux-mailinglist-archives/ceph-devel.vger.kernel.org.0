@@ -2,96 +2,64 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1BDF475913
-	for <lists+ceph-devel@lfdr.de>; Wed, 15 Dec 2021 13:46:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12EEF476163
+	for <lists+ceph-devel@lfdr.de>; Wed, 15 Dec 2021 20:16:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242586AbhLOMqh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 15 Dec 2021 07:46:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54744 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbhLOMqh (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 Dec 2021 07:46:37 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2EDCC061574;
-        Wed, 15 Dec 2021 04:46:36 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id e5so4573735wrc.5;
-        Wed, 15 Dec 2021 04:46:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5tpiEuZ7gXKMamSCO+G0Ixm7VxMr0AHOOGqhkcPxp1o=;
-        b=EraqNVst4NkAmlxMzrfqEJp/thqPMlVXk3aHyWar0q0+b6MDKWdd8SMsWnKgJrVqtJ
-         3yrCWLKboZw5eeWteDU0g1kkbrZfNbxoR8ccVWNN8xUHETsDvkELcDji8oxJmBwI5M4p
-         3i82gHgAKYXQwE3PSDtAv3WEkn4WXyxC505CDaomgkvZn2KGB+ASMI5TIikgbMAZPiqi
-         DVcEExmHDKDPlXNUgnBa66o3tJUViY21YFAya0jHYdWVNbAib/EaujHW8zcw4nRE5+xJ
-         rHAHylF1UFgBd30nIzWdl5DwDu8T3md/+JEV3K5nBJU2RDHVUv/svt7XYLYIVjlook76
-         XF7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5tpiEuZ7gXKMamSCO+G0Ixm7VxMr0AHOOGqhkcPxp1o=;
-        b=W4XXi7Df/LPzVC5x1dZczOWayWEwzbNVrtgMNseOlN9jfTS9hrMPq6dG+aIU3b6FGI
-         9V0/AA2fOs4vE9DTJGvzTF9i9jam90Z6vzzpvqWdIDsrDnzwxNxpNpTR7FTd4EcEqias
-         yhvQMeRu9WSNeMdfjMC2areQqKMYnZB4q7/o6cQ1608/HZM6HLHA7APNNeCW/00qdwqX
-         fIxd05kgO6MDvwpfUUMNUy0ku1KiMsYa+S68xgw5F6c/nztMKc6xoMl1mnz7q1GdM05v
-         IsXzISjSgjnfBMMN7H8KnieI4XqXXI8pXPCbEmGLfLsKw1Ins079rW2SMWG2tBe+AEBO
-         Bm9Q==
-X-Gm-Message-State: AOAM53051Ye9P9vwK/LYcw140fkpIyxNa+tWVoM/WyQkOE+F51F8jRYi
-        GwSuyYQsxcD8B2j71EPIg7c=
-X-Google-Smtp-Source: ABdhPJzu22hEyHAo2WLXYVE7RqNmEzRk7g2hP1cuVrqFUYqGHNYwy8La8VujjtvaCChrOgKi0mFeTA==
-X-Received: by 2002:a05:6000:181b:: with SMTP id m27mr2038755wrh.43.1639572395322;
-        Wed, 15 Dec 2021 04:46:35 -0800 (PST)
-Received: from kwango.redhat.com (ip-89-102-68-162.net.upcbroadband.cz. [89.102.68.162])
-        by smtp.gmail.com with ESMTPSA id k13sm1926734wri.6.2021.12.15.04.46.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Dec 2021 04:46:34 -0800 (PST)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 5.16-rc6
-Date:   Wed, 15 Dec 2021 13:46:25 +0100
-Message-Id: <20211215124625.32575-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1344127AbhLOTPS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 15 Dec 2021 14:15:18 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:59452 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344115AbhLOTPQ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 Dec 2021 14:15:16 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 13229B8205D;
+        Wed, 15 Dec 2021 19:15:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D4EBFC36AE3;
+        Wed, 15 Dec 2021 19:15:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639595713;
+        bh=R/wEC/fi0K+cxq7MlkXIaJr0RFPuM4dAhPJlP7I7/R8=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=pKFBElKsZtyHpK+qWy4ekRivHGnXz6kaaRzKQezmZwqgtKL8bYKpdSmWATXqB51Zx
+         oU46Zw1hSd5AjjTbG+HtXYaw7T+eZ3Z+0AKSE+z9UoVj7Qifyjzz/H1pJTH8Uf7vAq
+         Zjvz18luE9FHC3PiydYPOTtNLQi2t90hy6LRDK123MV1kUBlzQaSij65L97PmxKhZ5
+         5z4mIyrSMsKtMQjvNXth2WNvKbeJqgSHjG9oYLN9s3aOI1DWFqQOJs24i83gJIKQ2l
+         kw8cbELSPkxolV8M62vStftBN92Hdp4pSPfmfSuaQB/u47VY5DfYtvrlfKmpmBAkmh
+         DqvzjKSaDVixg==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id AA4D960984;
+        Wed, 15 Dec 2021 19:15:13 +0000 (UTC)
+Subject: Re: [GIT PULL] Ceph fixes for 5.16-rc6
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20211215124625.32575-1-idryomov@gmail.com>
+References: <20211215124625.32575-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20211215124625.32575-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-5.16-rc6
+X-PR-Tracked-Commit-Id: fd84bfdddd169c219c3a637889a8b87f70a072c2
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2b14864acbaaf03d9c01982e243a84632524c3ac
+Message-Id: <163959571363.3685.2546987175943161417.pr-tracker-bot@kernel.org>
+Date:   Wed, 15 Dec 2021 19:15:13 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Wed, 15 Dec 2021 13:46:25 +0100:
 
-The following changes since commit d58071a8a76d779eedab38033ae4c821c30295a5:
+> https://github.com/ceph/ceph-client.git tags/ceph-for-5.16-rc6
 
-  Linux 5.16-rc3 (2021-11-28 14:09:19 -0800)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2b14864acbaaf03d9c01982e243a84632524c3ac
 
-are available in the Git repository at:
+Thank you!
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-5.16-rc6
-
-for you to fetch changes up to fd84bfdddd169c219c3a637889a8b87f70a072c2:
-
-  ceph: fix up non-directory creation in SGID directories (2021-12-01 17:08:27 +0100)
-
-----------------------------------------------------------------
-An SGID directory handling fix (marked for stable), a metrics
-accounting fix and two fixups to appease static checkers.
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      ceph: fix up non-directory creation in SGID directories
-
-Hu Weiwen (1):
-      ceph: fix duplicate increment of opened_inodes metric
-
-Jeff Layton (1):
-      ceph: initialize i_size variable in ceph_sync_read
-
-Xiubo Li (1):
-      ceph: initialize pathlen variable in reconnect_caps_cb
-
- fs/ceph/caps.c       | 16 ++++++++--------
- fs/ceph/file.c       | 20 ++++++++++++++++----
- fs/ceph/mds_client.c |  3 +--
- 3 files changed, 25 insertions(+), 14 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
