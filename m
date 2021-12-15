@@ -2,114 +2,96 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 388A0475875
-	for <lists+ceph-devel@lfdr.de>; Wed, 15 Dec 2021 13:11:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1BDF475913
+	for <lists+ceph-devel@lfdr.de>; Wed, 15 Dec 2021 13:46:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242321AbhLOMLB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 15 Dec 2021 07:11:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46526 "EHLO
+        id S242586AbhLOMqh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 15 Dec 2021 07:46:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237070AbhLOMLA (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 Dec 2021 07:11:00 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39569C061574;
-        Wed, 15 Dec 2021 04:11:00 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 05EC2B81ED1;
-        Wed, 15 Dec 2021 12:10:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B6CFC34605;
-        Wed, 15 Dec 2021 12:10:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639570256;
-        bh=RUr2R2zU0BWumOqZBbhXVTmdCKIDr4qHf3j10+W3QmM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=OqFHBZyEoazb+Gv7D4V1YwgVXhuE7g9cxLd6bp4b9z3JflMjMuQOtFU+2b5KZzb6G
-         3ioeinBgK35Dj8t4772vh3ndr367x2vVM3iqpPT2oAinYW05jJvyzm3EMYimqq3Ys8
-         olo4a24SI6jxvkcemZMDA3Fr/ydl0NjfVhxcCIFnC5uf6gDvrQ5ogGvf6CUgXMbJ5J
-         oBrAYYowXwSl8Ve8v9k4V8vobWw1bETOGz+Fzl8CCLU+gTYUNDSsEKVlQsiNfcHEdx
-         kOzlE8b2/sYt5VI8FiCWDAIz76SXZxIY2TI7wdtAicmtkznE95qlmlKOnYsiFUou98
-         ugpuqqyq2HEWw==
-Message-ID: <5603ce7c61d9c741cc7c5188424505539cc8ba65.camel@kernel.org>
-Subject: Re: [PATCH 05/36] fscrypt: uninline and export fscrypt_require_key
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Wed, 15 Dec 2021 07:10:55 -0500
-In-Reply-To: <YbZjn0Gla+ugIEk0@sol.localdomain>
-References: <20211209153647.58953-1-jlayton@kernel.org>
-         <20211209153647.58953-6-jlayton@kernel.org>
-         <YbOuhUalMBuTGAGI@sol.localdomain>
-         <8c90912c5fd01a713688b1d2523ffe47df747513.camel@kernel.org>
-         <YbZT6kXlrVO5doMT@sol.localdomain>
-         <cd3ce02be39e073f4a6d0846d2da1ee312e118e0.camel@kernel.org>
-         <YbZjn0Gla+ugIEk0@sol.localdomain>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.2 (3.42.2-1.fc35) 
+        with ESMTP id S229445AbhLOMqh (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 Dec 2021 07:46:37 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2EDCC061574;
+        Wed, 15 Dec 2021 04:46:36 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id e5so4573735wrc.5;
+        Wed, 15 Dec 2021 04:46:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5tpiEuZ7gXKMamSCO+G0Ixm7VxMr0AHOOGqhkcPxp1o=;
+        b=EraqNVst4NkAmlxMzrfqEJp/thqPMlVXk3aHyWar0q0+b6MDKWdd8SMsWnKgJrVqtJ
+         3yrCWLKboZw5eeWteDU0g1kkbrZfNbxoR8ccVWNN8xUHETsDvkELcDji8oxJmBwI5M4p
+         3i82gHgAKYXQwE3PSDtAv3WEkn4WXyxC505CDaomgkvZn2KGB+ASMI5TIikgbMAZPiqi
+         DVcEExmHDKDPlXNUgnBa66o3tJUViY21YFAya0jHYdWVNbAib/EaujHW8zcw4nRE5+xJ
+         rHAHylF1UFgBd30nIzWdl5DwDu8T3md/+JEV3K5nBJU2RDHVUv/svt7XYLYIVjlook76
+         XF7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5tpiEuZ7gXKMamSCO+G0Ixm7VxMr0AHOOGqhkcPxp1o=;
+        b=W4XXi7Df/LPzVC5x1dZczOWayWEwzbNVrtgMNseOlN9jfTS9hrMPq6dG+aIU3b6FGI
+         9V0/AA2fOs4vE9DTJGvzTF9i9jam90Z6vzzpvqWdIDsrDnzwxNxpNpTR7FTd4EcEqias
+         yhvQMeRu9WSNeMdfjMC2areQqKMYnZB4q7/o6cQ1608/HZM6HLHA7APNNeCW/00qdwqX
+         fIxd05kgO6MDvwpfUUMNUy0ku1KiMsYa+S68xgw5F6c/nztMKc6xoMl1mnz7q1GdM05v
+         IsXzISjSgjnfBMMN7H8KnieI4XqXXI8pXPCbEmGLfLsKw1Ins079rW2SMWG2tBe+AEBO
+         Bm9Q==
+X-Gm-Message-State: AOAM53051Ye9P9vwK/LYcw140fkpIyxNa+tWVoM/WyQkOE+F51F8jRYi
+        GwSuyYQsxcD8B2j71EPIg7c=
+X-Google-Smtp-Source: ABdhPJzu22hEyHAo2WLXYVE7RqNmEzRk7g2hP1cuVrqFUYqGHNYwy8La8VujjtvaCChrOgKi0mFeTA==
+X-Received: by 2002:a05:6000:181b:: with SMTP id m27mr2038755wrh.43.1639572395322;
+        Wed, 15 Dec 2021 04:46:35 -0800 (PST)
+Received: from kwango.redhat.com (ip-89-102-68-162.net.upcbroadband.cz. [89.102.68.162])
+        by smtp.gmail.com with ESMTPSA id k13sm1926734wri.6.2021.12.15.04.46.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Dec 2021 04:46:34 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 5.16-rc6
+Date:   Wed, 15 Dec 2021 13:46:25 +0100
+Message-Id: <20211215124625.32575-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, 2021-12-12 at 13:03 -0800, Eric Biggers wrote:
-> On Sun, Dec 12, 2021 at 03:38:29PM -0500, Jeff Layton wrote:
-> > On Sun, 2021-12-12 at 11:56 -0800, Eric Biggers wrote:
-> > > On Fri, Dec 10, 2021 at 03:40:20PM -0500, Jeff Layton wrote:
-> > > > On Fri, 2021-12-10 at 11:46 -0800, Eric Biggers wrote:
-> > > > > On Thu, Dec 09, 2021 at 10:36:16AM -0500, Jeff Layton wrote:
-> > > > > > ceph_atomic_open needs to be able to call this.
-> > > > > > 
-> > > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > > > ---
-> > > > > >  fs/crypto/fscrypt_private.h | 26 --------------------------
-> > > > > >  fs/crypto/keysetup.c        | 27 +++++++++++++++++++++++++++
-> > > > > >  include/linux/fscrypt.h     |  5 +++++
-> > > > > >  3 files changed, 32 insertions(+), 26 deletions(-)
-> > > > > 
-> > > > > What is the use case for this, more precisely?  I've been trying to keep
-> > > > > filesystems using helper functions like fscrypt_prepare_*() and
-> > > > > fscrypt_file_open() rather than setting up encryption keys directly, which is a
-> > > > > bit too low-level to be doing outside of fs/crypto/.
-> > > > > 
-> > > > > Perhaps fscrypt_file_open() is what you're looking for here?
-> > > > 
-> > > > That doesn't really help because we don't have the inode for the file
-> > > > yet at the point where we need the key.
-> > > > 
-> > > > atomic_open basically does a lookup+open. You give it a directory inode
-> > > > and a dentry, and it issues an open request by filename. If it gets back
-> > > > ENOENT then we know that the thing is a negative dentry.
-> > > > 
-> > > > In the lookup path, I used __fscrypt_prepare_readdir. This situation is
-> > > > a bit similar so I might be able to use that instead. OTOH, that doesn't
-> > > > fail when you don't have the key, and if you don't, there's not a lot of
-> > > > point in going any further here.
-> > > 
-> > > So you're requiring the key on a directory to do a lookup in that directory?
-> > > Normally that's not required, as files can be looked up by no-key name.  Why is
-> > > the atomic_open case different? 
-> > > 
-> > > The file inode's key is needed to open it, of
-> > > course, but the directory inode's key shouldn't be needed.  In practice you'll
-> > > tend to have the key for both or neither inode, but that's not guaranteed.
-> > > 
-> > 
-> > We're issuing an open request to the server without looking up the inode
-> > first. In order to do that open request, we need to encode a filename
-> > into the request, and to do that we need the encryption key.
-> 
-> But how is it different from a regular lookup?  Those try to set up the
-> directory's key, but if it's unavailable, the name being looked up is treated as
-> a no-key name.  Take a look at fscrypt_prepare_lookup().
-> 
+Hi Linus,
 
-Ok. After looking at this some more, I think you're right. I don't
-really need this call in atomic_open at all. I'll plan to just drop this
-patch from the series.
+The following changes since commit d58071a8a76d779eedab38033ae4c821c30295a5:
 
-Thanks!
--- 
-Jeff Layton <jlayton@kernel.org>
+  Linux 5.16-rc3 (2021-11-28 14:09:19 -0800)
+
+are available in the Git repository at:
+
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.16-rc6
+
+for you to fetch changes up to fd84bfdddd169c219c3a637889a8b87f70a072c2:
+
+  ceph: fix up non-directory creation in SGID directories (2021-12-01 17:08:27 +0100)
+
+----------------------------------------------------------------
+An SGID directory handling fix (marked for stable), a metrics
+accounting fix and two fixups to appease static checkers.
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      ceph: fix up non-directory creation in SGID directories
+
+Hu Weiwen (1):
+      ceph: fix duplicate increment of opened_inodes metric
+
+Jeff Layton (1):
+      ceph: initialize i_size variable in ceph_sync_read
+
+Xiubo Li (1):
+      ceph: initialize pathlen variable in reconnect_caps_cb
+
+ fs/ceph/caps.c       | 16 ++++++++--------
+ fs/ceph/file.c       | 20 ++++++++++++++++----
+ fs/ceph/mds_client.c |  3 +--
+ 3 files changed, 25 insertions(+), 14 deletions(-)
