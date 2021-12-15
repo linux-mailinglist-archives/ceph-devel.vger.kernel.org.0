@@ -2,79 +2,114 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 60FF8474C58
-	for <lists+ceph-devel@lfdr.de>; Tue, 14 Dec 2021 20:57:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 388A0475875
+	for <lists+ceph-devel@lfdr.de>; Wed, 15 Dec 2021 13:11:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229992AbhLNT5q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 14 Dec 2021 14:57:46 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:40272 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229863AbhLNT5p (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 14 Dec 2021 14:57:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639511865;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lWNXdC7c4/QvF14/ly2qEacx83h1zt3femW1UptwI/g=;
-        b=PfOe/WQQn1HBqd+q4LOARqZhT63xQARnAqFS/qgiGuPFwU4gdSjWndv9Xfm3zQqN9yjMRj
-        7ewS/Nn+mLin+UexT3TqNoRyaLG07ivOBB5srJnd5Ue9XFE7QDQMk0qEKNe+YRQlTpwuXl
-        hd0+xOpfHIVgpUp4CAI+XGS3LRFkCqI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-93-LJ_2iVCRNWO_4MGxCIm4rg-1; Tue, 14 Dec 2021 14:57:39 -0500
-X-MC-Unique: LJ_2iVCRNWO_4MGxCIm4rg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S242321AbhLOMLB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 15 Dec 2021 07:11:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46526 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237070AbhLOMLA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 Dec 2021 07:11:00 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39569C061574;
+        Wed, 15 Dec 2021 04:11:00 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C884F1926DA0;
-        Tue, 14 Dec 2021 19:57:36 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.122])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1D3C41017E27;
-        Tue, 14 Dec 2021 19:57:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <87e6960c660eaa883d6ee81c25449cf6fa3c9c19.camel@kernel.org>
-References: <87e6960c660eaa883d6ee81c25449cf6fa3c9c19.camel@kernel.org> <163906878733.143852.5604115678965006622.stgit@warthog.procyon.org.uk> <163906890630.143852.13972180614535611154.stgit@warthog.procyon.org.uk>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 09/67] fscache: Implement volume registration
+        by ams.source.kernel.org (Postfix) with ESMTPS id 05EC2B81ED1;
+        Wed, 15 Dec 2021 12:10:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B6CFC34605;
+        Wed, 15 Dec 2021 12:10:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639570256;
+        bh=RUr2R2zU0BWumOqZBbhXVTmdCKIDr4qHf3j10+W3QmM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=OqFHBZyEoazb+Gv7D4V1YwgVXhuE7g9cxLd6bp4b9z3JflMjMuQOtFU+2b5KZzb6G
+         3ioeinBgK35Dj8t4772vh3ndr367x2vVM3iqpPT2oAinYW05jJvyzm3EMYimqq3Ys8
+         olo4a24SI6jxvkcemZMDA3Fr/ydl0NjfVhxcCIFnC5uf6gDvrQ5ogGvf6CUgXMbJ5J
+         oBrAYYowXwSl8Ve8v9k4V8vobWw1bETOGz+Fzl8CCLU+gTYUNDSsEKVlQsiNfcHEdx
+         kOzlE8b2/sYt5VI8FiCWDAIz76SXZxIY2TI7wdtAicmtkznE95qlmlKOnYsiFUou98
+         ugpuqqyq2HEWw==
+Message-ID: <5603ce7c61d9c741cc7c5188424505539cc8ba65.camel@kernel.org>
+Subject: Re: [PATCH 05/36] fscrypt: uninline and export fscrypt_require_key
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Date:   Wed, 15 Dec 2021 07:10:55 -0500
+In-Reply-To: <YbZjn0Gla+ugIEk0@sol.localdomain>
+References: <20211209153647.58953-1-jlayton@kernel.org>
+         <20211209153647.58953-6-jlayton@kernel.org>
+         <YbOuhUalMBuTGAGI@sol.localdomain>
+         <8c90912c5fd01a713688b1d2523ffe47df747513.camel@kernel.org>
+         <YbZT6kXlrVO5doMT@sol.localdomain>
+         <cd3ce02be39e073f4a6d0846d2da1ee312e118e0.camel@kernel.org>
+         <YbZjn0Gla+ugIEk0@sol.localdomain>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.2 (3.42.2-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1082028.1639511847.1@warthog.procyon.org.uk>
-Date:   Tue, 14 Dec 2021 19:57:27 +0000
-Message-ID: <1082029.1639511847@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> wrote:
-
+On Sun, 2021-12-12 at 13:03 -0800, Eric Biggers wrote:
+> On Sun, Dec 12, 2021 at 03:38:29PM -0500, Jeff Layton wrote:
+> > On Sun, 2021-12-12 at 11:56 -0800, Eric Biggers wrote:
+> > > On Fri, Dec 10, 2021 at 03:40:20PM -0500, Jeff Layton wrote:
+> > > > On Fri, 2021-12-10 at 11:46 -0800, Eric Biggers wrote:
+> > > > > On Thu, Dec 09, 2021 at 10:36:16AM -0500, Jeff Layton wrote:
+> > > > > > ceph_atomic_open needs to be able to call this.
+> > > > > > 
+> > > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > > > ---
+> > > > > >  fs/crypto/fscrypt_private.h | 26 --------------------------
+> > > > > >  fs/crypto/keysetup.c        | 27 +++++++++++++++++++++++++++
+> > > > > >  include/linux/fscrypt.h     |  5 +++++
+> > > > > >  3 files changed, 32 insertions(+), 26 deletions(-)
+> > > > > 
+> > > > > What is the use case for this, more precisely?  I've been trying to keep
+> > > > > filesystems using helper functions like fscrypt_prepare_*() and
+> > > > > fscrypt_file_open() rather than setting up encryption keys directly, which is a
+> > > > > bit too low-level to be doing outside of fs/crypto/.
+> > > > > 
+> > > > > Perhaps fscrypt_file_open() is what you're looking for here?
+> > > > 
+> > > > That doesn't really help because we don't have the inode for the file
+> > > > yet at the point where we need the key.
+> > > > 
+> > > > atomic_open basically does a lookup+open. You give it a directory inode
+> > > > and a dentry, and it issues an open request by filename. If it gets back
+> > > > ENOENT then we know that the thing is a negative dentry.
+> > > > 
+> > > > In the lookup path, I used __fscrypt_prepare_readdir. This situation is
+> > > > a bit similar so I might be able to use that instead. OTOH, that doesn't
+> > > > fail when you don't have the key, and if you don't, there's not a lot of
+> > > > point in going any further here.
+> > > 
+> > > So you're requiring the key on a directory to do a lookup in that directory?
+> > > Normally that's not required, as files can be looked up by no-key name.  Why is
+> > > the atomic_open case different? 
+> > > 
+> > > The file inode's key is needed to open it, of
+> > > course, but the directory inode's key shouldn't be needed.  In practice you'll
+> > > tend to have the key for both or neither inode, but that's not guaranteed.
+> > > 
+> > 
+> > We're issuing an open request to the server without looking up the inode
+> > first. In order to do that open request, we need to encode a filename
+> > into the request, and to do that we need the encryption key.
 > 
-> Do we need the last two parameters to fscache_acquire_volume? I'll note
-> that all of the callers in the current set just pass "NULL, 0" for them.
+> But how is it different from a regular lookup?  Those try to set up the
+> directory's key, but if it's unavailable, the name being looked up is treated as
+> a no-key name.  Take a look at fscrypt_prepare_lookup().
+> 
 
-cifs wants to set it.  I have a patch to make cachefiles store this.  afs
-should use it also.
+Ok. After looking at this some more, I think you're right. I don't
+really need this call in atomic_open at all. I'll plan to just drop this
+patch from the series.
 
-David
-
+Thanks!
+-- 
+Jeff Layton <jlayton@kernel.org>
