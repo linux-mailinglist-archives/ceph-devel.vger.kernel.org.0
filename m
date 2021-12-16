@@ -2,64 +2,33 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20CF3477CD7
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Dec 2021 20:52:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B397D477D59
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Dec 2021 21:21:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241088AbhLPTwg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 16 Dec 2021 14:52:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36324 "EHLO
+        id S241313AbhLPUVH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 16 Dec 2021 15:21:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241122AbhLPTwg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 Dec 2021 14:52:36 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 771C0C061574
-        for <ceph-devel@vger.kernel.org>; Thu, 16 Dec 2021 11:52:35 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id m12so40184455ljj.6
-        for <ceph-devel@vger.kernel.org>; Thu, 16 Dec 2021 11:52:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1YEg3xCizKQigIIVaj+7NPGS0vV5YzouOWDo8EKHI8Y=;
-        b=dGLplsJKLLH7R55fT9CGKpQ+QAOXByetGDAZO4Qe5hOY96iYDADZXPv6IaRTnkyzZU
-         YI08eiKnx/i5FnO61PQJoSbspOCrTKasx1Wska9nu2oEvPHzOmLFcQpapSbFWwnZ/gZJ
-         a5Drpm7Pl4iYA3ZnJI1TCTMw/SmbnFNAdcPBg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1YEg3xCizKQigIIVaj+7NPGS0vV5YzouOWDo8EKHI8Y=;
-        b=V/++3d5IA/ZN/+Zz1Bx0c7Bcz0KBhB9czSLTiI5UALX9Hwpooo0AILVlJTP9F/zpXF
-         1PteOL43fQMHoLVq2gcdK6NdMw/PDd54iV+k8scGaDiVCPbo+6cftMFZ1Pe5KGIthE5O
-         P5Ya51IE/wLA0l0fkD7hrGhVpTphp831TXugUdYf49IX6WXRrYPiPzPx0lQuSjSuO2Sg
-         w+v3B/Vik9X+PlAYn2DcOWjJe6DW2yV0QX7D8pxd9DD9KqOSJeSnxrKKg9VNlSf0E+bl
-         yavvyFP2qOIwqqtjch4dSFufKIYwm8Zm+9FN1SIcVhDrkFjPDKI3jU0k/U+MTDzXRzlX
-         3Ceg==
-X-Gm-Message-State: AOAM532WKSroE99tOs73+5n1M1NrmL6LxBAJVfolMDhZfONFgEI5gn4S
-        mIihlCRRyTJMXmXk8OPRvG6rp/PMbos6nuQiJyo=
-X-Google-Smtp-Source: ABdhPJy5cOiV7A7d7DJNw8Xgfs4oix/lnY3oRi1Y79O4YKdpk2N0IzY0Z9XaApisMQhPZhPxpJzqiQ==
-X-Received: by 2002:a05:651c:1036:: with SMTP id w22mr16019579ljm.356.1639684353536;
-        Thu, 16 Dec 2021 11:52:33 -0800 (PST)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id d10sm1018257lfe.106.2021.12.16.11.52.33
-        for <ceph-devel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Dec 2021 11:52:33 -0800 (PST)
-Received: by mail-lj1-f181.google.com with SMTP id 207so40135715ljf.10
-        for <ceph-devel@vger.kernel.org>; Thu, 16 Dec 2021 11:52:33 -0800 (PST)
-X-Received: by 2002:a5d:4575:: with SMTP id a21mr10519052wrc.193.1639683994422;
- Thu, 16 Dec 2021 11:46:34 -0800 (PST)
-MIME-Version: 1.0
-References: <163967073889.1823006.12237147297060239168.stgit@warthog.procyon.org.uk>
- <163967169723.1823006.2868573008412053995.stgit@warthog.procyon.org.uk>
- <CAHk-=wi0H5vmka1_iWe0+Yc6bwtgWn_bEEHCMYsPHYtNJKZHCQ@mail.gmail.com> <YbuTaRbNUAJx5xOA@casper.infradead.org>
-In-Reply-To: <YbuTaRbNUAJx5xOA@casper.infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 16 Dec 2021 11:46:18 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh2dr=NgVSVj0sw-gSuzhxhLRV5FymfPS146zGgF4kBjA@mail.gmail.com>
-Message-ID: <CAHk-=wh2dr=NgVSVj0sw-gSuzhxhLRV5FymfPS146zGgF4kBjA@mail.gmail.com>
-Subject: Re: [PATCH v3 56/68] afs: Handle len being extending over page end in write_begin/write_end
-To:     Matthew Wilcox <willy@infradead.org>
+        with ESMTP id S232814AbhLPUVE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 Dec 2021 15:21:04 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59047C061574;
+        Thu, 16 Dec 2021 12:21:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=XqnUXa9RW7uRpASlJT6RfFyTUcif6Eix1YgAPYLKeT8=; b=MX6WDKLG1OL6cTeGQdGY+wgibY
+        Ll9mC56eOlFh37FPX41YNMduoufYqbHvKzG37ydlx6UrCUQlo3fsxYKXTB8XSfeJih3eLvh2ulurZ
+        UAq+weJj9S1y75jcgGgTlW+pZlugSZvh0gdBNPYCHZomHQ88c5LVGSUc5ZdP8W4wArLoqs4ITVUxK
+        sQ/pssRK0WSdbasQQD8ktK/KjuTBnt0Yp8Vq5EwJX78mf6XlTgI4EsJsZ++2N1rSxRmKV2sguuD4g
+        XN2WFfsDXEyr3sGDX+3E0wEj1hINEP9R8QYGpzjbfP3vM/db1mMd2vQa8eUB/JcEkQh9ZW77Y1ApP
+        JLe01syQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mxxEx-00FvEE-Bh; Thu, 16 Dec 2021 20:20:35 +0000
+Date:   Thu, 16 Dec 2021 20:20:35 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com,
         Jeff Layton <jlayton@kernel.org>,
         Marc Dionne <marc.dionne@auristor.com>,
@@ -76,43 +45,82 @@ Cc:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v3 56/68] afs: Handle len being extending over page end
+ in write_begin/write_end
+Message-ID: <YbufkzMCoxssd6Vi@casper.infradead.org>
+References: <163967073889.1823006.12237147297060239168.stgit@warthog.procyon.org.uk>
+ <163967169723.1823006.2868573008412053995.stgit@warthog.procyon.org.uk>
+ <CAHk-=wi0H5vmka1_iWe0+Yc6bwtgWn_bEEHCMYsPHYtNJKZHCQ@mail.gmail.com>
+ <YbuTaRbNUAJx5xOA@casper.infradead.org>
+ <CAHk-=wh2dr=NgVSVj0sw-gSuzhxhLRV5FymfPS146zGgF4kBjA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh2dr=NgVSVj0sw-gSuzhxhLRV5FymfPS146zGgF4kBjA@mail.gmail.com>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Dec 16, 2021 at 11:28 AM Matthew Wilcox <willy@infradead.org> wrote:
->
-> Since ->write_begin is the place where we actually create folios, it
-> needs to know what size folio to create.  Unless you'd rather we do
-> something to actually create the folio before calling ->write_begin?
+On Thu, Dec 16, 2021 at 11:46:18AM -0800, Linus Torvalds wrote:
+> On Thu, Dec 16, 2021 at 11:28 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > Since ->write_begin is the place where we actually create folios, it
+> > needs to know what size folio to create.  Unless you'd rather we do
+> > something to actually create the folio before calling ->write_begin?
+> 
+> I don't think we can create a folio before that, because the
+> filesystem may not even want a folio (think persistent memory or
+> whatever).
+> 
+> Honestly, I think you need to describe more what you actually want to
+> happen. Because generic_perform_write() has already decided to use a
+> PAGE_SIZE by the time write_begin() is called,
+> 
+> Right now the world order is "we chunk things by PAGE_SIZE", and
+> that's just how it is.
 
-I don't think we can create a folio before that, because the
-filesystem may not even want a folio (think persistent memory or
-whatever).
+Right.  And we could leave it like that.  There's a huge amount of win
+that comes from just creating large folios as part of readahead, and
+anything we do for writes is going to be a smaller win.
 
-Honestly, I think you need to describe more what you actually want to
-happen. Because generic_perform_write() has already decided to use a
-PAGE_SIZE by the time write_begin() is called,
+That said, I would like it if a program which does:
 
-Right now the world order is "we chunk things by PAGE_SIZE", and
-that's just how it is.
+fd = creat("foo", 0644);
+write(fd, buf, 64 * 1024);
+close(fd);
 
-I can see other options - like the filesystem passing in the chunk
-size when it calls generic_perform_write().
+uses a single 64k page.
 
-Or we make the rule be that ->write_begin() simply always is given the
-whole area, and the filesystem can decide how it wants to chunk things
-up, and return the size of the write chunk in the status (rather than
-the current "success or error").
+> I can see other options - like the filesystem passing in the chunk
+> size when it calls generic_perform_write().
 
-But at no point will this *EVER* be a "afs will limit the size to the
-folio size" issue. Nothing like that will ever make sense. Allowing
-bigger chunks will not be about any fscache issues, it will be about
-every single filesystem that uses generic_perform_write().
+I'm hoping to avoid that.  Ideally filesystems don't know what the
+"chunk size" is that's being used; they'll see a mixture of sizes
+being used for any given file (potentially).  Depends on access
+patterns, availability of higher-order memory, etc.
 
-So I will NAK these patches by David, because they are fundamentally
-wrong, whichever way we turn. Any "write in bigger chunks" patch will
-be something else entirely.
+> Or we make the rule be that ->write_begin() simply always is given the
+> whole area, and the filesystem can decide how it wants to chunk things
+> up, and return the size of the write chunk in the status (rather than
+> the current "success or error").
 
-                 Linus
+We do need to be slightly more limiting than "always gets the whole
+area", because we do that fault_in_iov_iter_readable() call first,
+and if the user has been mean and asked to write() 2GB of memory on
+a (virtual) machine with 256MB, I'd prefer it if we didn't swap our way
+through 2GB of address space before calling into ->write_begin.
+
+> But at no point will this *EVER* be a "afs will limit the size to the
+> folio size" issue. Nothing like that will ever make sense. Allowing
+> bigger chunks will not be about any fscache issues, it will be about
+> every single filesystem that uses generic_perform_write().
+
+I agree that there should be nothing here that is specific to fscache.
+David has in the past tried to convince me that he should always get
+256kB folios, and I've done my best to explain that the MM just isn't
+going to make that guarantee.
+
+That said, this patch seems to be doing the right thing; it passes
+the entire length into netfs_write_begin(), and is then truncating
+the length to stop at the end of the folio that it got back.
+
