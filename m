@@ -2,61 +2,86 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FBB6479153
-	for <lists+ceph-devel@lfdr.de>; Fri, 17 Dec 2021 17:20:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA2664792A9
+	for <lists+ceph-devel@lfdr.de>; Fri, 17 Dec 2021 18:18:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235885AbhLQQUK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 17 Dec 2021 11:20:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41646 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235272AbhLQQUI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 17 Dec 2021 11:20:08 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CB89C061574;
-        Fri, 17 Dec 2021 08:20:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=yHF3VWnW4rZABeXM9Y5F9Xrqzvs0hWQXlFpZX+lD3a0=; b=bCn9oKruVGSB4B0ftB2r6ZYU2S
-        UOiZf5f01purfvE9yOBa3q8d9i7kko98pta+KraPAF89P0pm1BAPgIy03HNijmT5nHz6teIeF74vf
-        +pAS9cxh2HNpvifLlTxMej6FAH57Fxi3/uB5jBBW2EEExnSQfjXhjE2iuY7ZBp37gm5fBypUY97Qp
-        /ocmsyYKmLKzuMhjm6koBYHSAk7R4uhLNNe6EpZHFnuFUIK4PgDFf19RvBj9YZ8WFESlg1a66SmPz
-        M+nEL1y/3H7Oa23oWBjFYwii+/KegM1/m8SCCsQ2TTYAppyBcNeSK4HFtRzLCaEIffS6/yNY0Dzdo
-        uqiupEkA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1myFxg-00GrtW-H7; Fri, 17 Dec 2021 16:20:00 +0000
-Date:   Fri, 17 Dec 2021 16:20:00 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     jlayton@kernel.org, ceph-devel@vger.kernel.org, idryomov@gmail.com,
-        linux-fsdevel@vger.kernel.org
+        id S239784AbhLQRSJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 17 Dec 2021 12:18:09 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:50672 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236241AbhLQRSI (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 17 Dec 2021 12:18:08 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id ABADBB829B2;
+        Fri, 17 Dec 2021 17:18:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00632C36AE1;
+        Fri, 17 Dec 2021 17:18:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639761486;
+        bh=gvUpKwlu6PEF7ySh0jU8vlsHpMimt4HRUxuFGsDwOJg=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=hKqB8qmKXvqFruzb0x1f2NkRdQrH+46NvzRkFUxeNma2eh00vG5EM9XBnQr+iMZNG
+         ZTT3K3ARanOu/AIItiaTKaugZ9Ttg7vsxbtCdOsLOxo4GzVtj4bKeOX+X52tCXVQwD
+         xKVlB4pH95vAnPN/V30IEb6VidiyMoBEyxOB+hOcfbmzOaCs4xjPq/pNOsQQF93dqS
+         aldECva+pHD1l2lyMEYZFmMadT0tGYWson542ped+Uuu1kfis0UVoscLG6tgLxPSeU
+         bmp911cgQrJ3iCnxRXwtxhMQQLUltHkN+J0w7HAP5nmhxbCF6hkGr/sQ1FrDhskVvE
+         asxWfOpJKEIKg==
+Message-ID: <e2fcdecb9288dc112d0051e917da5bb48bf72388.camel@kernel.org>
 Subject: Re: [PATCH v2 1/2] ceph: Uninline the data on a file opened for
  writing
-Message-ID: <Yby4sKDALDXHAbdT@casper.infradead.org>
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com,
+        linux-fsdevel@vger.kernel.org
+Date:   Fri, 17 Dec 2021 12:18:04 -0500
+In-Reply-To: <Yby4sKDALDXHAbdT@casper.infradead.org>
 References: <163975498535.2021751.13839139728966985077.stgit@warthog.procyon.org.uk>
+         <Yby4sKDALDXHAbdT@casper.infradead.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.2 (3.42.2-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <163975498535.2021751.13839139728966985077.stgit@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Dec 17, 2021 at 03:29:45PM +0000, David Howells wrote:
-> If a ceph file is made up of inline data, uninline that in the ceph_open()
-> rather than in ceph_page_mkwrite(), ceph_write_iter(), ceph_fallocate() or
-> ceph_write_begin().
+On Fri, 2021-12-17 at 16:20 +0000, Matthew Wilcox wrote:
+> On Fri, Dec 17, 2021 at 03:29:45PM +0000, David Howells wrote:
+> > If a ceph file is made up of inline data, uninline that in the ceph_open()
+> > rather than in ceph_page_mkwrite(), ceph_write_iter(), ceph_fallocate() or
+> > ceph_write_begin().
+> 
+> I don't think this is the right approach.  Just opening a file with
+> O_RDWR shouldn't take it out of inline mode; an actual write (or fault)
+> should be required to uninline it.
+> 
 
-I don't think this is the right approach.  Just opening a file with
-O_RDWR shouldn't take it out of inline mode; an actual write (or fault)
-should be required to uninline it.
+This feature is being deprecated in ceph altogether, so more
+aggressively uninlining of files is fine. The kernel cephfs client never
+supported writes to it anyway so this feature was really only used by a
+few brave souls.
 
-> This makes it easier to convert to using the netfs library for VM write
-> hooks.
+We're hoping to have it formally removed by the time the Ceph Quincy
+release ships (~April-May timeframe). Unfortunately, we need to keep
+support for it around for a bit longer since some still-supported ceph
+releases don't have this deprecated.
 
-I don't understand.  You're talking about the fault path?  Surely
-the filesystem gets called with the vm_fault parameter only, then
-calls into the netfs code, passing vmf and the operations struct?
-And ceph could uninline there.
+> > This makes it easier to convert to using the netfs library for VM write
+> > hooks.
+> 
+> I don't understand.  You're talking about the fault path?  Surely
+> the filesystem gets called with the vm_fault parameter only, then
+> calls into the netfs code, passing vmf and the operations struct?
+> And ceph could uninline there.
+> 
 
+Taking the uninlining out of the write codepaths is a _good_ thing, IMO.
+If we were planning to keep this feature around, then I might disagree
+with doing this, but it fits with the current plans for inline data just
+fine for now.
+
+-- 
+Jeff Layton <jlayton@kernel.org>
