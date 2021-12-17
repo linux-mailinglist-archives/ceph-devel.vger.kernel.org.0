@@ -2,78 +2,130 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7807E478EF4
-	for <lists+ceph-devel@lfdr.de>; Fri, 17 Dec 2021 16:04:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41EB9478FA5
+	for <lists+ceph-devel@lfdr.de>; Fri, 17 Dec 2021 16:29:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237821AbhLQPEo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 17 Dec 2021 10:04:44 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:20374 "EHLO
+        id S238186AbhLQP3w (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 17 Dec 2021 10:29:52 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:55607 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237816AbhLQPEn (ORCPT
+        by vger.kernel.org with ESMTP id S238010AbhLQP3u (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 17 Dec 2021 10:04:43 -0500
+        Fri, 17 Dec 2021 10:29:50 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639753483;
+        s=mimecast20190719; t=1639754989;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding;
-        bh=k9xcqiNnhTjzn2fwr0M1ZTkGaqs6PIqW/lJHwIqnnWc=;
-        b=TaCv2MUUQCx4uAz5hrtSj3+nn5JjI5ukwV1uJqHD3VRy/UwpIrrjz6PacGraPFePNavc8N
-        IOscS/epD+ibatpbvapfuM3wfh4exAWJZZPMMX9dRXs8sJm8HMTcS32tY8PxW5ERJVo+qe
-        rBCdz89159/tJ5WOECWbQFMrvAMxNxQ=
+        bh=kP7tgoq2E1OEw/43QFMfLkIYFIRTPywxGD3onWWiYes=;
+        b=PAHd72sLGhrXo1+adEhNKtDGUu8E2sTXUdSOMYtOQDZ20WIu4DfTXrPIfjfkQxCvLFqKAw
+        ZecvM70F1IksHIkMwTVGL8Wo/3UEzG3f+d2/g3NbzERT7+09zFRUbrbLgGQnDML89Dyo80
+        UEiuvCiNOk/wxDxfFoQ4JnYUsF7kv4g=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-63-DvWHLaHuNkivacyvYWc37Q-1; Fri, 17 Dec 2021 10:04:40 -0500
-X-MC-Unique: DvWHLaHuNkivacyvYWc37Q-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-68-GIJ4L6RvMFqb7Pz-xXyBEA-1; Fri, 17 Dec 2021 10:29:48 -0500
+X-MC-Unique: GIJ4L6RvMFqb7Pz-xXyBEA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DE04C94EF0;
-        Fri, 17 Dec 2021 15:04:38 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 70BBC81CCB6;
+        Fri, 17 Dec 2021 15:29:47 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.122])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BBD3B78DFB;
-        Fri, 17 Dec 2021 15:04:29 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4B4BA5BD24;
+        Fri, 17 Dec 2021 15:29:46 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] ceph: Uninline the data on a file opened for writing
+Subject: [PATCH v2 1/2] ceph: Uninline the data on a file opened for writing
 From:   David Howells <dhowells@redhat.com>
 To:     jlayton@kernel.org
 Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com,
         dhowells@redhat.com, linux-fsdevel@vger.kernel.org
-Date:   Fri, 17 Dec 2021 15:04:29 +0000
-Message-ID: <163975346937.2001835.1323687821705230415.stgit@warthog.procyon.org.uk>
+Date:   Fri, 17 Dec 2021 15:29:45 +0000
+Message-ID: <163975498535.2021751.13839139728966985077.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 If a ceph file is made up of inline data, uninline that in the ceph_open()
-rather than in ceph_page_mkwrite(), ceph_write_iter() or ceph_fallocate().
+rather than in ceph_page_mkwrite(), ceph_write_iter(), ceph_fallocate() or
+ceph_write_begin().
 
 This makes it easier to convert to using the netfs library for VM write
 hooks.
+
+Changes
+=======
+ver #2:
+ - Removed the uninline-handling code from ceph_write_begin() also.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: ceph-devel@vger.kernel.org
 ---
 
- fs/ceph/addr.c  |   63 ++++++++++++++++++++-----------------------------------
- fs/ceph/file.c  |   28 ++++++++++++++----------
- fs/ceph/super.h |    2 +-
- 3 files changed, 40 insertions(+), 53 deletions(-)
+ fs/ceph/addr.c  |   97 +++++++++++++------------------------------------------
+ fs/ceph/file.c  |   28 +++++++++-------
+ fs/ceph/super.h |    2 +
+ 3 files changed, 40 insertions(+), 87 deletions(-)
 
 diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index e836f8f1d4f8..46f1cc6c91e4 100644
+index e836f8f1d4f8..6e1b15cc87cf 100644
 --- a/fs/ceph/addr.c
 +++ b/fs/ceph/addr.c
-@@ -1512,19 +1512,6 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+@@ -1278,45 +1278,11 @@ static int ceph_write_begin(struct file *file, struct address_space *mapping,
+ 			    struct page **pagep, void **fsdata)
+ {
+ 	struct inode *inode = file_inode(file);
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct folio *folio = NULL;
+-	pgoff_t index = pos >> PAGE_SHIFT;
+ 	int r;
+ 
+-	/*
+-	 * Uninlining should have already been done and everything updated, EXCEPT
+-	 * for inline_version sent to the MDS.
+-	 */
+-	if (ci->i_inline_version != CEPH_INLINE_NONE) {
+-		unsigned int fgp_flags = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE;
+-		if (aop_flags & AOP_FLAG_NOFS)
+-			fgp_flags |= FGP_NOFS;
+-		folio = __filemap_get_folio(mapping, index, fgp_flags,
+-					    mapping_gfp_mask(mapping));
+-		if (!folio)
+-			return -ENOMEM;
+-
+-		/*
+-		 * The inline_version on a new inode is set to 1. If that's the
+-		 * case, then the folio is brand new and isn't yet Uptodate.
+-		 */
+-		r = 0;
+-		if (index == 0 && ci->i_inline_version != 1) {
+-			if (!folio_test_uptodate(folio)) {
+-				WARN_ONCE(1, "ceph: write_begin called on still-inlined inode (inline_version %llu)!\n",
+-					  ci->i_inline_version);
+-				r = -EINVAL;
+-			}
+-			goto out;
+-		}
+-		zero_user_segment(&folio->page, 0, folio_size(folio));
+-		folio_mark_uptodate(folio);
+-		goto out;
+-	}
+-
+ 	r = netfs_write_begin(file, inode->i_mapping, pos, len, 0, &folio, NULL,
+ 			      &ceph_netfs_read_ops, NULL);
+-out:
+ 	if (r == 0)
+ 		folio_wait_fscache(folio);
+ 	if (r < 0) {
+@@ -1512,19 +1478,6 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
  	sb_start_pagefault(inode->i_sb);
  	ceph_block_sigs(&oldset);
  
@@ -93,7 +145,7 @@ index e836f8f1d4f8..46f1cc6c91e4 100644
  	if (off + thp_size(page) <= size)
  		len = thp_size(page);
  	else
-@@ -1649,13 +1636,14 @@ void ceph_fill_inline_data(struct inode *inode, struct page *locked_page,
+@@ -1649,13 +1602,14 @@ void ceph_fill_inline_data(struct inode *inode, struct page *locked_page,
  	}
  }
  
@@ -111,7 +163,7 @@ index e836f8f1d4f8..46f1cc6c91e4 100644
  	u64 len, inline_version;
  	int err = 0;
  	bool from_pagecache = false;
-@@ -1671,34 +1659,30 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+@@ -1671,34 +1625,30 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
  	    inline_version == CEPH_INLINE_NONE)
  		goto out;
  
@@ -159,7 +211,7 @@ index e836f8f1d4f8..46f1cc6c91e4 100644
  					CEPH_STAT_CAP_INLINE_DATA, true);
  		if (err < 0) {
  			/* no inline data */
-@@ -1736,7 +1720,8 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+@@ -1736,7 +1686,8 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
  		goto out;
  	}
  
@@ -169,7 +221,7 @@ index e836f8f1d4f8..46f1cc6c91e4 100644
  
  	{
  		__le64 xattr_buf = cpu_to_le64(inline_version);
-@@ -1773,12 +1758,10 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+@@ -1773,12 +1724,10 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
  	if (err == -ECANCELED)
  		err = 0;
  out:
