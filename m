@@ -2,88 +2,98 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BC724795AE
-	for <lists+ceph-devel@lfdr.de>; Fri, 17 Dec 2021 21:44:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EF5147C19D
+	for <lists+ceph-devel@lfdr.de>; Tue, 21 Dec 2021 15:36:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237119AbhLQUoG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 17 Dec 2021 15:44:06 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:39291 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237091AbhLQUoE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Fri, 17 Dec 2021 15:44:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639773844;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=HhXCW/gkgebaf8J387KILDsdSIH5KpfDKz809CKCWyo=;
-        b=gy+3u8CQtAjbOCVfY50l4tYe75uOxJHOfr1pLgdajVT8QrenTmqwDLrxLud77xepIMy8yC
-        e7ttQ7O9GSwLKCX2psw9sF3E94lusrxDRnRlHgGeALBXn74Vydv+9hAPybROYpSU4ZyEcg
-        uk/O8CZAWA9bOdtVBciHYe/Y2krhIyk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-473-r3psBnitNDePrXJsjLMkbA-1; Fri, 17 Dec 2021 15:44:02 -0500
-X-MC-Unique: r3psBnitNDePrXJsjLMkbA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 64B781006AA2;
-        Fri, 17 Dec 2021 20:43:58 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.122])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 97E16610AE;
-        Fri, 17 Dec 2021 20:43:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <310b791fc8afde2a108af4eb06bbe678f4141fac.camel@kernel.org>
-References: <310b791fc8afde2a108af4eb06bbe678f4141fac.camel@kernel.org> <163967073889.1823006.12237147297060239168.stgit@warthog.procyon.org.uk> <163967106467.1823006.6790864931048582667.stgit@warthog.procyon.org.uk>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 18/68] fscache: Implement cookie user counting and resource pinning
+        id S238533AbhLUOgV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 21 Dec 2021 09:36:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47290 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238526AbhLUOgV (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 21 Dec 2021 09:36:21 -0500
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16DF3C06173F;
+        Tue, 21 Dec 2021 06:36:21 -0800 (PST)
+Received: by mail-qk1-x730.google.com with SMTP id de30so12752988qkb.0;
+        Tue, 21 Dec 2021 06:36:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=a4jATogAI/X/Ike2rZf+Yx9DRJFuDNaLWBLR/iU1PYg=;
+        b=isPNMdg1x+7jQ6kJvjFOGC1jmsQGsRxBai79shTWIoUJpy7B5MAb9HwOwPa13fG+y/
+         yCOJlIV0bukQ5NX1jafceyXqpxKTg5zHTldwdyeoEkdwAuO2db/SSLIf2x4Sh/29EBCu
+         R1RW71rjBH2XiRdAMuKwDXv+8I7MXtCDq0iY5Lw4c0ooz3QmLaGWyqNNwsCQVODO+gg2
+         R+hmFGwsYCFjfeHh7t6rvhNdum3egmHEZfZ6dGH4W7bGjdww7PGX8fi57ZVkQmlvEK+i
+         rVZm/r5GA/4yHX9FxsXgGK16Jyv+1m5yMJdkfGc1M07EzhR1lgO9B+NiiNavJpQlRcmN
+         UL5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=a4jATogAI/X/Ike2rZf+Yx9DRJFuDNaLWBLR/iU1PYg=;
+        b=Pu3CHnxGQkoJaFkp4VQMS4pTcYQL+6+HyPi2sW+gYmE5DIBMGB8AEdTjA1U2MqxJue
+         heTgo3JLnrxeGxHuJj0Vv1nFRScPkxchc63rU9kKsjXkjsWcAkzPBuDb9DYbDO73ixtn
+         xT08K4DmfaQyKQXdzULxsvlplraPXNFSad3G+CalBXU5or3pPmlMnib99qT1T4z0cGNp
+         6Z3r+1hJF+t2BfzIweixj5mrTrL4HUMc1Sx4QU6tiB4/PL+k6iENocxfgc54MsLdx6YU
+         ncSUQ+H5v59UZuV2HGuxeHiicXsc40hrntq5Fs+xIUUc08cF0npseTLWC4D5o+OU7wIU
+         0z6Q==
+X-Gm-Message-State: AOAM5319uudJRmz7i6iKEGnqqBJ4Wti/AiioEeHFaiqpcZwWgLCED5T5
+        tM0x1gQT9tNZVq1v8IVA4CCGUHuma9k=
+X-Google-Smtp-Source: ABdhPJxiZSUF3StAEgxIAHWnZdRI8ppfUx3rQSlT/4DKU3VFMKiHsWGo6KDEgTyGtc+OIMIj2vWmKg==
+X-Received: by 2002:a05:620a:2989:: with SMTP id r9mr2134129qkp.630.1640097380278;
+        Tue, 21 Dec 2021 06:36:20 -0800 (PST)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id t15sm18246031qta.45.2021.12.21.06.36.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Dec 2021 06:36:19 -0800 (PST)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: deng.changcheng@zte.com.cn
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Changcheng Deng <deng.changcheng@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>
+Subject: [PATCH] ceph: replace DEFINE_SIMPLE_ATTRIBUTE with DEFINE_DEBUGFS_ATTRIBUTE
+Date:   Tue, 21 Dec 2021 14:36:14 +0000
+Message-Id: <20211221143614.480385-1-deng.changcheng@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2084363.1639773828.1@warthog.procyon.org.uk>
-Date:   Fri, 17 Dec 2021 20:43:48 +0000
-Message-ID: <2084364.1639773828@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> wrote:
+From: Changcheng Deng <deng.changcheng@zte.com.cn>
 
-> > +unsigned int fscache_lru_cookie_timeout = 10 * HZ;
-> >  
-> 
-> Looks like it only pops after 10s? That's a bit more than the "couple of
-> seconds" mentioned in the changelog. In fact, that seems like quite a
-> long time.
-> 
-> Did you arrive at this value empirically somehow?
+Fix the following coccicheck warning:
+./fs/ceph/debugfs.c: 390: 0-23: WARNING: congestion_kb_fops should be
+defined with DEFINE_DEBUGFS_ATTRIBUTE
 
-It was 2s originally, but I upped for some reason I don't remember.  I've left
-it as it seems to work, but it is arbitrary.  I should make this configurable
-perhaps and/or maybe make it based on the number of cookies on the LRU since
-the number of open files is what matters.
+Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE for
+debugfs files.
 
-I don't have a good heuristic, so I'll just fix the commit message for now.
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: Changcheng Deng <deng.changcheng@zte.com.cn>
+---
+ fs/ceph/debugfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-David
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index 3cf7c9c1085b..64c4158c17c8 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -387,8 +387,8 @@ static int congestion_kb_get(void *data, u64 *val)
+ 	return 0;
+ }
+ 
+-DEFINE_SIMPLE_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
+-			congestion_kb_set, "%llu\n");
++DEFINE_DEBUGFS_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
++			 congestion_kb_set, "%llu\n");
+ 
+ 
+ void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
+-- 
+2.25.1
 
