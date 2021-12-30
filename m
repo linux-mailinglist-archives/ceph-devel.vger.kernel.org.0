@@ -2,88 +2,66 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64FA148092D
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 Dec 2021 13:44:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58985481A7A
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 Dec 2021 08:46:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231464AbhL1MoW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 28 Dec 2021 07:44:22 -0500
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:50238 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231316AbhL1MoV (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 28 Dec 2021 07:44:21 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R901e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0V06qPtI_1640695459;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V06qPtI_1640695459)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 28 Dec 2021 20:44:20 +0800
-From:   Jeffle Xu <jefflexu@linux.alibaba.com>
-To:     jlayton@kernel.org, idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        dhowells@redhat.com, linux-cachefs@redhat.com
-Subject: [PATCH] netfs: make ops->init_rreq() optional
-Date:   Tue, 28 Dec 2021 20:44:19 +0800
-Message-Id: <20211228124419.103020-1-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.27.0
+        id S236918AbhL3HqD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 30 Dec 2021 02:46:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35350 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231688AbhL3HqC (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 Dec 2021 02:46:02 -0500
+Received: from mail-ua1-x930.google.com (mail-ua1-x930.google.com [IPv6:2607:f8b0:4864:20::930])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A752C061574
+        for <ceph-devel@vger.kernel.org>; Wed, 29 Dec 2021 23:46:02 -0800 (PST)
+Received: by mail-ua1-x930.google.com with SMTP id u6so33872564uaq.0
+        for <ceph-devel@vger.kernel.org>; Wed, 29 Dec 2021 23:46:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=brCgIhGGKVXQcLqAxb8doE9ODkOYUkIpf7n+K48ncdk=;
+        b=aUPgoTpj+Yvz1jpd9SXGFlbiCwNODOAfoBzwBKCCLFfsiwAhmc3niRtRVV6DUyU0UE
+         eN01Cc91mf9EO+5fE7aZ97SjVpNXkeiOYgu0J54S4egq0kXxFg7ah6MbHmu7oZR2C0cJ
+         Fja3L/XeMDkkh8HfLS5n2N9nqTKma8nSDGYUegq0fSolTdSy/RpH+FRYPWOnaP61TyK3
+         38MbOoV9JZNWAvyz/BWUM8HeF9kdLJcE+glMdW6hev0RytOh5Tg0ApDB3Q3vw8kLT8Fe
+         s3bF/MMm0P+V+TUphPILz594WJtVeLzy1Qo95tZSI8Os6qrFvzOvfSWMkf8njpCZLLm5
+         nnzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=brCgIhGGKVXQcLqAxb8doE9ODkOYUkIpf7n+K48ncdk=;
+        b=JTtxrdIoUveC0BYBJIb369HCpYDRuf7PMRZY+d6Aeo2RsEOJ/yI+BXTnyrsed9Hmwt
+         5aOQgSvb8A+GufqOgrSLY4Btf4OEHDuquo5o6wzkcKUvYqSHqEy00VZWpJyWA5n9+6oy
+         qYajpYvPg0xDqIjp1+3ysSme6mYh+QrvYDf1NoHNQaHerU+v6yCqAlChXV1hwgkZAuFX
+         ivxpjNxLHfSCY/uh2GnrP1Tr5JDAaQXZSGimvWR6CqT7bPTrVsUO1AOMNQPljiWDxMVX
+         sheq+45BZClk1O9n1DtMqN/voXTfF0BLk6MpHtr+3IKq2PWEDUB0Kt3vyRgRegRvjJqT
+         a+sQ==
+X-Gm-Message-State: AOAM533xxxBLJc6VJO7yULt1mYWOxizQ54TnQGCg23goa8IX3Ych3Kwl
+        W66+Mjhpo0xIS2ekDGLmLIUOwFQokoVxixAMQWGemWYYw6o=
+X-Google-Smtp-Source: ABdhPJxjglMWgL6BUzUJDCqy2/di0lC65PexO1MA/2y5mAlVj1hr1laTC79fTV2CcBHfr0wxFG2jlwTXhIFiU6BBwpg=
+X-Received: by 2002:a67:efd3:: with SMTP id s19mr9229914vsp.36.1640850361553;
+ Wed, 29 Dec 2021 23:46:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   WeiGuo Ren <rwg1335252904@gmail.com>
+Date:   Thu, 30 Dec 2021 15:45:51 +0800
+Message-ID: <CAPy+zYX5QYk__J7hO3U6V9ut7_LzjX6pz6Xg-79ZS_TpgPSOYQ@mail.gmail.com>
+Subject: s3test: In teuthology , test_bucket_list_return_data_versioning is failed?
+To:     Ceph Development <ceph-devel@vger.kernel.org>, ceph-users@ceph.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi, recently I'm developing erofs over fscache for implementing
-on-demand read, and erofs also implements an empty .init_rreq()
-callback[1].
-
-[1] https://lkml.org/lkml/2021/12/27/224
-
-If folks don't like this cleanup and prefer empty callback in upper fs,
-I'm also fine with that.
----
-There's already upper fs implementing empty .init_rreq() callback, and
-thus make it optional.
-
-Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
----
- fs/ceph/addr.c         | 5 -----
- fs/netfs/read_helper.c | 3 ++-
- 2 files changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index e53c8541f5b2..c3537dfd8c04 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -291,10 +291,6 @@ static void ceph_netfs_issue_op(struct netfs_read_subrequest *subreq)
- 	dout("%s: result %d\n", __func__, err);
- }
- 
--static void ceph_init_rreq(struct netfs_read_request *rreq, struct file *file)
--{
--}
--
- static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
- {
- 	struct inode *inode = mapping->host;
-@@ -306,7 +302,6 @@ static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
- }
- 
- static const struct netfs_read_request_ops ceph_netfs_read_ops = {
--	.init_rreq		= ceph_init_rreq,
- 	.is_cache_enabled	= ceph_is_cache_enabled,
- 	.begin_cache_operation	= ceph_begin_cache_operation,
- 	.issue_op		= ceph_netfs_issue_op,
-diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-index 75c76cbb27cc..0befb0747c59 100644
---- a/fs/netfs/read_helper.c
-+++ b/fs/netfs/read_helper.c
-@@ -55,7 +55,8 @@ static struct netfs_read_request *netfs_alloc_read_request(
- 		INIT_WORK(&rreq->work, netfs_rreq_work);
- 		refcount_set(&rreq->usage, 1);
- 		__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
--		ops->init_rreq(rreq, file);
-+		if (ops->init_rreq)
-+			ops->init_rreq(rreq, file);
- 		netfs_stat(&netfs_n_rh_rreq);
- 	}
- 
--- 
-2.27.0
-
+Hi, cepher:
+when test s3tests_boto3.functional.test_s3.test_bucket_list_return_data_versioning
+case ,It reported an error.
+it saied:
+AttributeError: 'list' object has no attribute 'replace' .
+packeages:
+PyYAML-6.0 boto-2.49.0 boto3-1.20.26 botocore-1.23.26
+certifi-2021.10.8 charset-normalizer-2.0.9 gevent-21.12.0
+greenlet-1.1.2 httplib2-0.20.2 idna-3.3 isodate-0.6.1 jmespath-0.10.0
+lxml-4.7.1 munch-2.5.0 nose-1.3.7 pyparsing-3.0.6
+python-dateutil-2.8.2 pytz-2021.3 requests-2.26.0 s3transfer-0.5.0
+six-1.16.0 urllib3-1.26.7 zope.event-4.5.0 zope.interface-5.4.0
+Have you encountered the same problem again? Can anyone help me?
