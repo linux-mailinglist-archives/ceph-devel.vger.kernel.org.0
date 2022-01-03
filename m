@@ -2,69 +2,69 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E347B483765
-	for <lists+ceph-devel@lfdr.de>; Mon,  3 Jan 2022 20:10:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BB02483823
+	for <lists+ceph-devel@lfdr.de>; Mon,  3 Jan 2022 21:59:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236030AbiACTKR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 3 Jan 2022 14:10:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47872 "EHLO
+        id S229654AbiACU7L (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 3 Jan 2022 15:59:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235986AbiACTKR (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 Jan 2022 14:10:17 -0500
-X-Greylist: delayed 1244 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 03 Jan 2022 11:10:16 PST
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2E83C061761;
-        Mon,  3 Jan 2022 11:10:16 -0800 (PST)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n4SNN-00Gymw-Sf; Mon, 03 Jan 2022 18:48:10 +0000
-Date:   Mon, 3 Jan 2022 18:48:09 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Walt Drummond <walt@drummond.us>
-Cc:     aacraid@microsemi.com, anna.schumaker@netapp.com, arnd@arndb.de,
-        bsegall@google.com, bp@alien8.de, chuck.lever@oracle.com,
-        bristot@redhat.com, dave.hansen@linux.intel.com,
-        dwmw2@infradead.org, dietmar.eggemann@arm.com, dinguyen@kernel.org,
-        geert@linux-m68k.org, gregkh@linuxfoundation.org, hpa@zytor.com,
-        idryomov@gmail.com, mingo@redhat.com, yzaikin@google.com,
-        ink@jurassic.park.msu.ru, jejb@linux.ibm.com, jmorris@namei.org,
-        bfields@fieldses.org, jlayton@kernel.org, jirislaby@kernel.org,
-        john.johansen@canonical.com, juri.lelli@redhat.com,
-        keescook@chromium.org, mcgrof@kernel.org,
-        martin.petersen@oracle.com, mattst88@gmail.com, mgorman@suse.de,
-        oleg@redhat.com, pbonzini@redhat.com, peterz@infradead.org,
-        rth@twiddle.net, richard@nod.at, serge@hallyn.com,
-        rostedt@goodmis.org, tglx@linutronix.de,
-        trond.myklebust@hammerspace.com, vincent.guittot@linaro.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 0/8] signals: Support more than 64 signals
-Message-ID: <YdNE6UXRT02135Pd@zeniv-ca.linux.org.uk>
-References: <20220103181956.983342-1-walt@drummond.us>
+        with ESMTP id S229504AbiACU7K (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 Jan 2022 15:59:10 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CB42C061761
+        for <ceph-devel@vger.kernel.org>; Mon,  3 Jan 2022 12:59:10 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id b13so140293750edd.8
+        for <ceph-devel@vger.kernel.org>; Mon, 03 Jan 2022 12:59:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:from:mime-version:content-transfer-encoding
+         :content-description:subject:to:date:reply-to;
+        bh=g8Z10qgIS0EarfPNyU/0T6kl3UEk/EndXdl7judHSI4=;
+        b=nFi7UOsgSGmByZou/eZCOm0B5LUIfEIl77IlreUB4NzY7bDdqTCRdqIaUqK4/vMR6I
+         Dx5Lz0L8dzE4e70myg1Lxsy1MFiGYtAnX7oclXxhw0Ahyrmf2BlbT8yRmfXyBE9d9GdJ
+         30kz2sbf4dga6HpUAT6hBMGCzVXUfWK+HoMiNiWfZz1ad9g6H+C0/jjeNLcZ6HxCFsZ0
+         Zfktau3NUvXOzpis69rRp37uCxMcsvV1xalpJFdQaLx+X2treBNntgcIO+sBleLRVDDB
+         zYSYmS/M+DYJ/lrpP7xmqgGlI5R3dE/dXGpbDCSoWoRWZaR3HOT4FqKe4HlFuLJWO6FP
+         3H8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:from:mime-version
+         :content-transfer-encoding:content-description:subject:to:date
+         :reply-to;
+        bh=g8Z10qgIS0EarfPNyU/0T6kl3UEk/EndXdl7judHSI4=;
+        b=Rc1vSc22P0n9uO3z8/emTPxoNC3ivPZ3ktQOrtu6AWCv4fOOFaPNKih+rseF4x2AS6
+         tZfQo93B4j/hVIdDNGLMp//WkyuRIEuiR4CBxeaMcFgrjdgCiaz4YBoKoudEfC0fOFO6
+         zVWGdlOmJYUswJhf+GR/O2ABuDWDeO/5LKv31pmUOd21972buPFLckeg3Ix0hCvke/MO
+         ZECqLIuAcOSEle+0VIxWEnamzafqjX/RXre23B+JvgSPt1IwMDsweMLV8ndLInOSTjyp
+         dJF9SRVp8gHTRXXHCbWwnZT29Csztdb4z0dog6PSgSZzWvU1u/2g9n+XVRak+m6DeeKl
+         3ZXA==
+X-Gm-Message-State: AOAM531mIHHGYOLl3ErvLJMcLO3NGI8ZvUv4aEd/wAsX3F1gWaf0PAxl
+        geg+3pFAcl39InsRwkZAbk6MBOwC7j3TBQ==
+X-Google-Smtp-Source: ABdhPJzpTIGI/2jmkWECSdcHw+cRh+Rl9MaKgqADeEsqRFdYemUFvhv79oxcA+MpmRE+3Fc63zIhlg==
+X-Received: by 2002:aa7:c6c8:: with SMTP id b8mr44960744eds.164.1641243548934;
+        Mon, 03 Jan 2022 12:59:08 -0800 (PST)
+Received: from [192.168.9.102] ([197.211.59.105])
+        by smtp.gmail.com with ESMTPSA id 13sm10907702ejh.225.2022.01.03.12.59.04
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Mon, 03 Jan 2022 12:59:08 -0800 (PST)
+Message-ID: <61d3639c.1c69fb81.f8991.0c93@mx.google.com>
+From:   Margaret Leung KO May-yeee <barjmk79@gmail.com>
+X-Google-Original-From: Margaret Leung KO May-yeee
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220103181956.983342-1-walt@drummond.us>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: =?utf-8?q?Gesch=C3=A4ftsvorschlag?=
+To:     Recipients <Margaret@vger.kernel.org>
+Date:   Mon, 03 Jan 2022 21:59:00 +0100
+Reply-To: la67737777@gmail.com
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Jan 03, 2022 at 10:19:48AM -0800, Walt Drummond wrote:
-> This patch set expands the number of signals in Linux beyond the
-> current cap of 64.  It sets a new cap at the somewhat arbitrary limit
-> of 1024 signals, both because it’s what GLibc and MUSL support and
-> because many architectures pad sigset_t or ucontext_t in the kernel to
-> this cap.  This limit is not fixed and can be further expanded within
-> reason.
+Am Mrs. Margaret Leung I have a business proposal for you reach at: la67737=
+777@gmail.com
 
-Could you explain the point of the entire exercise?  Why do we need more
-rt signals in the first place?
-
-glibc has quite a bit of utterly pointless future-proofing.  So "they
-allow more" is not a good reason - not without a plausible use-case,
-at least.
+Margaret Leung
+Managing Director of Chong Hing Bank
