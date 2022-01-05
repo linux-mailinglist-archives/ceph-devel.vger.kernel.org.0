@@ -2,131 +2,213 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06341484ABE
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Jan 2022 23:32:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C23248538C
+	for <lists+ceph-devel@lfdr.de>; Wed,  5 Jan 2022 14:26:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235451AbiADWcB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 4 Jan 2022 17:32:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53148 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235509AbiADWb6 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 4 Jan 2022 17:31:58 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2B0BC0617A1
-        for <ceph-devel@vger.kernel.org>; Tue,  4 Jan 2022 14:31:57 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id o12so84944231lfk.1
-        for <ceph-devel@vger.kernel.org>; Tue, 04 Jan 2022 14:31:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=drummond.us; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WCROm2fnDVp3gJHoFF4FSh0CLwqqTwPGgd5WC3cykAE=;
-        b=SpNAIy18+a+BDF8ohbOhhPTgn+rzzWGPHdpXue1Z95/qQvcACFPfls+EhsBOb9bJ5I
-         J4obAOpt6rzp6Cc6ysV/HzbOKr1fr3e+TeLO6bRMnYdo3Gyh9nb1rzv1ICxH2cvlIvP1
-         O7zLwOaJVfjhHVFevNE78XtRHOJLnOt4OvZNOrtO4+Qth9yQuKO3Y0zMqJxHhe1sPN68
-         AsVbfWMCG2xnfSZ0gRMgCWFuQi9faGM0w08EmIWjCfBZLojXQfuuYl5i08TleIW/7b/n
-         nzMZzBq9PSmCXV2xi+HfGLAjucKoCMHpfD9Bcb6PeCRSN1t/e4GZt0e33JDtOpwXUI3r
-         +ijA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WCROm2fnDVp3gJHoFF4FSh0CLwqqTwPGgd5WC3cykAE=;
-        b=t1PalAtvH7GAVjHVua48zGRPs9ycYuW+4YOoA1UZT47maVY3ERaTUpsW53/5S0EyTy
-         f8BoWihtKrfnt+HrNo3ATWiAzqAqQnIHLxmcUCo9G9NWzrQPLYWMFUSycGuqiPCbXnh+
-         mrQUcOogpVFO+Fz4aJ42/prIdjhR51KAO2gWK8IySc1+QRYQ+OOj37ttGLH6bqucGA6J
-         E9ZCgHXDIg7tqNzttrnjzSW3b3+QI/VueMt8C+D/RtmqEs/rbrqlepd7YSOBbGh+RMPb
-         0mdaYvKyKWcxDs4eqUGvDz5N6kyDPG49y/saxWZij0c9Z7DsWdlRpo7Wq98e9RQ32gYS
-         19OA==
-X-Gm-Message-State: AOAM533815g1uhI2s1E7cwVwADri9JFzyUCiHd3FVhLsvMKAmUtHFsF4
-        0CKEwoKdFkGprSJaVYIR+XvX95+Be/qL8uq3DI56HA==
-X-Google-Smtp-Source: ABdhPJx1kX6sFLTseOkg2YWGeBhi1W6ClRmDNwQ/+U2YIr6vghHpml3Y6bKghVPjgaFOMW5MDitHq9bLobHNxLYmId8=
-X-Received: by 2002:a05:6512:ba9:: with SMTP id b41mr43938123lfv.529.1641335515666;
- Tue, 04 Jan 2022 14:31:55 -0800 (PST)
+        id S240345AbiAEN0w (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 5 Jan 2022 08:26:52 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:42308 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236846AbiAEN0t (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 5 Jan 2022 08:26:49 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9A443B81AA9
+        for <ceph-devel@vger.kernel.org>; Wed,  5 Jan 2022 13:26:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0152DC36AE0;
+        Wed,  5 Jan 2022 13:26:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641389207;
+        bh=3VrPmtUKxZoUuQhEpO5951inbuA0927G0nuskdZqz/c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CCKQHJZkRw7uE3xICF3R4SWMON5h656J4SzYNwIzEkFKK29RDAupQHbveIYa9U2S2
+         9UYSMjvYhy4X0rQwoRaHJsjXQsxB9gp9j3lH48xENdFvFcXiXnPGFnnpWUq3HtiWow
+         WJ75yzOZTAa+LSLsNzkEWmgfCexM7M35kZm7+hklsXtAAwldLYJzUKsZhPU4aVkXHK
+         AzWuF9tRBb74sc4UOlcf3Y+lAaUohLD9F9fr3fGocIKfYFgsUhGaTZFulyuXJmpNyn
+         CG5vh5+eJlc5Y1h7AkfBlqoFFzmrOjMiev5f7cT18eLRnFHHvcgwH+vcWyHYnPKI5M
+         NG+E0GhExZTiQ==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, majianpeng <majianpeng@gmail.com>
+Subject: [RFC PATCH] ceph: add new "nopagecache" option
+Date:   Wed,  5 Jan 2022 08:26:45 -0500
+Message-Id: <20220105132645.72282-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-References: <20220103181956.983342-1-walt@drummond.us> <87iluzidod.fsf@email.froward.int.ebiederm.org>
- <YdSzjPbVDVGKT4km@mit.edu> <87pmp79mxl.fsf@email.froward.int.ebiederm.org> <YdTI16ZxFFNco7rH@mit.edu>
-In-Reply-To: <YdTI16ZxFFNco7rH@mit.edu>
-From:   Walt Drummond <walt@drummond.us>
-Date:   Tue, 4 Jan 2022 14:31:44 -0800
-Message-ID: <CADCN6nzT-Dw-AabtwWrfVRDd5HzMS3EOy8WkeomicJF07nQyoA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/8] signals: Support more than 64 signals
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>, aacraid@microsemi.com,
-        viro@zeniv.linux.org.uk, anna.schumaker@netapp.com, arnd@arndb.de,
-        bsegall@google.com, bp@alien8.de, chuck.lever@oracle.com,
-        bristot@redhat.com, dave.hansen@linux.intel.com,
-        dwmw2@infradead.org, dietmar.eggemann@arm.com, dinguyen@kernel.org,
-        geert@linux-m68k.org, gregkh@linuxfoundation.org, hpa@zytor.com,
-        idryomov@gmail.com, mingo@redhat.com, yzaikin@google.com,
-        ink@jurassic.park.msu.ru, jejb@linux.ibm.com, jmorris@namei.org,
-        bfields@fieldses.org, jlayton@kernel.org, jirislaby@kernel.org,
-        john.johansen@canonical.com, juri.lelli@redhat.com,
-        keescook@chromium.org, mcgrof@kernel.org,
-        martin.petersen@oracle.com, mattst88@gmail.com, mgorman@suse.de,
-        oleg@redhat.com, pbonzini@redhat.com, peterz@infradead.org,
-        rth@twiddle.net, richard@nod.at, serge@hallyn.com,
-        rostedt@goodmis.org, tglx@linutronix.de,
-        trond.myklebust@hammerspace.com, vincent.guittot@linaro.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The only standard tools that support SIGINFO are sleep, dd and ping,
-(and kill, for obvious reasons) so it's not like there's a vast hole
-in the tooling or something, nor is there a large legacy software base
-just waiting for SIGINFO to appear.   So while I very much enjoyed
-figuring out how to make SIGINFO work ...
+CephFS is a bit unlike most other filesystems in that it only
+conditionally does buffered I/O based on the caps that it gets from the
+MDS. In most cases, unless there is contended access for an inode the
+MDS does give Fbc caps to the client, so the unbuffered codepaths are
+only infrequently traveled and are difficult to test.
 
-I'll have the VSTATUS patch out in a little bit.
+At one time, the "-o sync" mount option would give you this behavior,
+but that was removed in commit 7ab9b3807097 ("ceph: Don't use
+ceph-sync-mode for synchronous-fs.").
 
-I also think there might be some merit in consolidating the 10
-'sigsetsize != sizeof(sigset_t)' checks in a macro and adding comments
-that wave people off on trying to do what I did.  If that would be
-useful, happy to provide the patch.
+Add a new mount option to tell the client to ignore Fbc caps when doing
+I/O, and to use the synchronous codepaths exclusively, even on
+non-O_DIRECT file descriptors. We already have an ioctl that forces this
+behavior on a per-inode basis, so we can just always set the CEPH_F_SYNC
+flag on such mounts.
 
-On Tue, Jan 4, 2022 at 2:23 PM Theodore Ts'o <tytso@mit.edu> wrote:
->
-> On Tue, Jan 04, 2022 at 04:05:26PM -0600, Eric W. Biederman wrote:
-> >
-> > That is all as expected, and does not demonstrate a regression would
-> > happen if SIGPWR were to treat SIG_DFL as SIG_IGN, as SIGWINCH, SIGCONT,
-> > SIGCHLD, SIGURG do.  It does show there is the possibility of problems.
-> >
-> > The practical question is does anything send SIGPWR to anything besides
-> > init, and expect the process to handle SIGPWR or terminate?
->
-> So if I *cared* about SIGINFO, what I'd do is ask the systemd
-> developers and users list if there are any users of the sigpwr.target
-> feature that they know of.  And I'd also download all of the open
-> source UPS monitoring applications (and perhaps documentation of
-> closed-source UPS applications, such as for example APC's program) and
-> see if any of them are trying to send the SIGPWR signal.
->
-> I don't personally think it's worth the effort to do that research,
-> but maybe other people care enough to do the work.
->
-> > > I claim, though, that we could implement VSTATUS without implenting
-> > > the SIGINFO part of the feature.
-> >
-> > I agree that is the place to start.  And if we aren't going to use
-> > SIGINFO perhaps we could have an equally good notification method
-> > if anyone wants one.  Say call an ioctl and get an fd that can
-> > be read when a VSTATUS request comes in.
-> >
-> > SIGINFO vs SIGCONT vs a fd vs something else is something we can sort
-> > out when people get interested in modifying userspace.
->
->
-> Once VSTATUS support lands in the kernel, we can wait and see if there
-> is anyone who shows up wanting the SIGINFO functionality.  Certainly
-> we have no shortage of userspace notification interfaces in Linux.  :-)
->
->                                               - Ted
+Additionally, this patch also changes the client to not request Fbc when
+doing direct I/O. We aren't using the cache with O_DIRECT so we don't
+have any need for those caps.
+
+Cc: majianpeng <majianpeng@gmail.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/file.c  | 24 +++++++++++++++---------
+ fs/ceph/super.c | 11 +++++++++++
+ fs/ceph/super.h |  1 +
+ 3 files changed, 27 insertions(+), 9 deletions(-)
+
+I've been working with this patch in order to test the synchronous
+codepaths for content encryption. I think though that this might make
+sense to take into mainline, as it could be helpful for troubleshooting,
+and ensuring that these codepaths are regularly tested.
+
+Either way, I think the cap handling changes probably make sense on
+their own. I can split that out if we don't want to take the mount
+option in as well.
+
+Thoughts?
+
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index c138e8126286..7de5db51c3d0 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -204,6 +204,8 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
+ 					int fmode, bool isdir)
+ {
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
++	struct ceph_mount_options *opt =
++		ceph_inode_to_client(&ci->vfs_inode)->mount_options;
+ 	struct ceph_file_info *fi;
+ 
+ 	dout("%s %p %p 0%o (%s)\n", __func__, inode, file,
+@@ -225,6 +227,9 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
+ 		if (!fi)
+ 			return -ENOMEM;
+ 
++		if (opt->flags & CEPH_MOUNT_OPT_NOPAGECACHE)
++			fi->flags |= CEPH_F_SYNC;
++
+ 		file->private_data = fi;
+ 	}
+ 
+@@ -1536,7 +1541,7 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	bool direct_lock = iocb->ki_flags & IOCB_DIRECT;
+ 	ssize_t ret;
+-	int want, got = 0;
++	int want = 0, got = 0;
+ 	int retry_op = 0, read = 0;
+ 
+ again:
+@@ -1551,13 +1556,14 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	else
+ 		ceph_start_io_read(inode);
+ 
++	if (!(fi->flags & CEPH_F_SYNC) && !direct_lock)
++		want |= CEPH_CAP_FILE_CACHE;
+ 	if (fi->fmode & CEPH_FILE_MODE_LAZY)
+-		want = CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO;
+-	else
+-		want = CEPH_CAP_FILE_CACHE;
++		want |= CEPH_CAP_FILE_LAZYIO;
++
+ 	ret = ceph_get_caps(filp, CEPH_CAP_FILE_RD, want, -1, &got);
+ 	if (ret < 0) {
+-		if (iocb->ki_flags & IOCB_DIRECT)
++		if (direct_lock)
+ 			ceph_end_io_direct(inode);
+ 		else
+ 			ceph_end_io_read(inode);
+@@ -1691,7 +1697,7 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	struct ceph_osd_client *osdc = &fsc->client->osdc;
+ 	struct ceph_cap_flush *prealloc_cf;
+ 	ssize_t count, written = 0;
+-	int err, want, got;
++	int err, want = 0, got;
+ 	bool direct_lock = false;
+ 	u32 map_flags;
+ 	u64 pool_flags;
+@@ -1766,10 +1772,10 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 	dout("aio_write %p %llx.%llx %llu~%zd getting caps. i_size %llu\n",
+ 	     inode, ceph_vinop(inode), pos, count, i_size_read(inode));
++	if (!(fi->flags & CEPH_F_SYNC) && !direct_lock)
++		want |= CEPH_CAP_FILE_BUFFER;
+ 	if (fi->fmode & CEPH_FILE_MODE_LAZY)
+-		want = CEPH_CAP_FILE_BUFFER | CEPH_CAP_FILE_LAZYIO;
+-	else
+-		want = CEPH_CAP_FILE_BUFFER;
++		want |= CEPH_CAP_FILE_LAZYIO;
+ 	got = 0;
+ 	err = ceph_get_caps(file, CEPH_CAP_FILE_WR, want, pos + count, &got);
+ 	if (err < 0)
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 8d6daea351f6..d7e604a56fd9 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -160,6 +160,7 @@ enum {
+ 	Opt_quotadf,
+ 	Opt_copyfrom,
+ 	Opt_wsync,
++	Opt_pagecache,
+ };
+ 
+ enum ceph_recover_session_mode {
+@@ -201,6 +202,7 @@ static const struct fs_parameter_spec ceph_mount_parameters[] = {
+ 	fsparam_string	("mon_addr",			Opt_mon_addr),
+ 	fsparam_u32	("wsize",			Opt_wsize),
+ 	fsparam_flag_no	("wsync",			Opt_wsync),
++	fsparam_flag_no	("pagecache",			Opt_pagecache),
+ 	{}
+ };
+ 
+@@ -567,6 +569,12 @@ static int ceph_parse_mount_param(struct fs_context *fc,
+ 		else
+ 			fsopt->flags |= CEPH_MOUNT_OPT_ASYNC_DIROPS;
+ 		break;
++	case Opt_pagecache:
++		if (result.negated)
++			fsopt->flags |= CEPH_MOUNT_OPT_NOPAGECACHE;
++		else
++			fsopt->flags &= ~CEPH_MOUNT_OPT_NOPAGECACHE;
++		break;
+ 	default:
+ 		BUG();
+ 	}
+@@ -702,6 +710,9 @@ static int ceph_show_options(struct seq_file *m, struct dentry *root)
+ 	if (!(fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS))
+ 		seq_puts(m, ",wsync");
+ 
++	if (fsopt->flags & CEPH_MOUNT_OPT_NOPAGECACHE)
++		seq_puts(m, ",nopagecache");
++
+ 	if (fsopt->wsize != CEPH_MAX_WRITE_SIZE)
+ 		seq_printf(m, ",wsize=%u", fsopt->wsize);
+ 	if (fsopt->rsize != CEPH_MAX_READ_SIZE)
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index f9b1bbf26c1b..5c6d9384b7be 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -46,6 +46,7 @@
+ #define CEPH_MOUNT_OPT_NOQUOTADF       (1<<13) /* no root dir quota in statfs */
+ #define CEPH_MOUNT_OPT_NOCOPYFROM      (1<<14) /* don't use RADOS 'copy-from' op */
+ #define CEPH_MOUNT_OPT_ASYNC_DIROPS    (1<<15) /* allow async directory ops */
++#define CEPH_MOUNT_OPT_NOPAGECACHE     (1<<16) /* bypass pagecache altogether */
+ 
+ #define CEPH_MOUNT_OPT_DEFAULT			\
+ 	(CEPH_MOUNT_OPT_DCACHE |		\
+-- 
+2.33.1
+
