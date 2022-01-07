@@ -2,107 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C08B486CB1
-	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jan 2022 22:49:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E05E487169
+	for <lists+ceph-devel@lfdr.de>; Fri,  7 Jan 2022 04:47:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231896AbiAFVtc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 6 Jan 2022 16:49:32 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:51366 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244463AbiAFVtb (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 6 Jan 2022 16:49:31 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 476F7B8244F
-        for <ceph-devel@vger.kernel.org>; Thu,  6 Jan 2022 21:49:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 660ECC36AE3;
-        Thu,  6 Jan 2022 21:49:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641505769;
-        bh=UInTysDQ5jhlLJfjKYkNzM1z5Mn/UhXDU7G6bbDupT4=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=g0iATXc889ednrEyvKuxIBV3Ch2BVMWwHC2zl+SODRqu62j/p8Z5xJlcAd1gNVFoO
-         XZIiJNp6oApQAJ5QVASr6p/Dazy0J2hlJf1+/orGz9YGKNZpApYsUTC9hl6OztPKil
-         XIpUb50HAK0koU8dKoRBgOBRJiraBdthe/Ci7CF56Cmuv1XOXiy4reu9X5j5ohixHL
-         KSQa2/ny7TyOGICLuwCck67W7DYyPF61OZqOfvQzokUUx7a55NrlMtBQJFLEOle0/1
-         TfhloY492hMLywhHJYiZZF/g9Zge0hzn0D3F+NckiclbfH5GRVb2CZdOULPeATQzgt
-         Rw55j4k01zgIg==
-Message-ID: <693ab77bab10b38b1ddab373211c24722e79fee2.camel@kernel.org>
-Subject: Re: [PATCH] netfs: make ops->init_rreq() optional
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Jeffle Xu <jefflexu@linux.alibaba.com>, idryomov@gmail.com,
-        ceph-devel@vger.kernel.org, dhowells@redhat.com,
-        linux-cachefs@redhat.com
-Date:   Thu, 06 Jan 2022 16:49:27 -0500
-In-Reply-To: <20211228124419.103020-1-jefflexu@linux.alibaba.com>
-References: <20211228124419.103020-1-jefflexu@linux.alibaba.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.2 (3.42.2-1.fc35) 
+        id S229821AbiAGDrW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 6 Jan 2022 22:47:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41702 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229504AbiAGDrW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 6 Jan 2022 22:47:22 -0500
+Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D4CDC061245
+        for <ceph-devel@vger.kernel.org>; Thu,  6 Jan 2022 19:47:22 -0800 (PST)
+Received: by mail-qv1-xf2f.google.com with SMTP id hu2so4336754qvb.8
+        for <ceph-devel@vger.kernel.org>; Thu, 06 Jan 2022 19:47:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=5F8lMBmC+Nok/5F2Ab8lEIhaSUPAGb450L+uK4sWz2A=;
+        b=p6xt6ZESiP7fhI082FRtQDjG+IYG6QkiqSLE9SaK5lwNb4BsF7xmJGIaK9+ZFKCz/r
+         wXtJ8QpYok6Ju7PDxAwlWMQG+wVmwf4zg3cAQX+DB2IUPv4fValkweq2izjpLHtoqXZF
+         9Dqli3Of9OMUmt0hX1NQv8fwT/G3hzs5m1whnPihc/JrGUVbui1xR561/vbTLXnRNL7q
+         jila7xLOoF596IkrnacZl7/mtLFbsOEcxa6DsYvJ/Y7q3q88kKCOCXk6Sb1++W65pytv
+         8VBVxNq6vYpiauZWkuFeNZgtUI4AU8vnByqqEOaE87R+cutEZsPoKtplq0gdUHA2czBK
+         5kVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=5F8lMBmC+Nok/5F2Ab8lEIhaSUPAGb450L+uK4sWz2A=;
+        b=KQLnvQdndwS7utolBpS2majoA1Um9WDsLCIX+HhgCaGm7gR0AuR9L0rr5/tq+M6wES
+         BOPiMfJCug4/71xOjUz1VX+mVfbH7Me0Jd80cyEGqmzFKB7qtTCieyzBrJV4Ye3SUAQJ
+         pIJP/K2gd7gczzYlnYN92L1dnfo99EJBoIuDxS6uE802FtegGve11jfWmB/OkTn/iAcu
+         yeryzB9Srn0nPo9glYDyPDw09x7SMcHWzdDmrNS7cZWGjRhFux+DrYFZR/bWtpRByn8t
+         De31PF6PwJYU8Bn5fduPyOq5YTbVozKKICZfemtW2Nm2e6WSmFMCm6BWAoICa6q9ReIV
+         MsoA==
+X-Gm-Message-State: AOAM5334sQrW6O+SNmG2YhzXMF8jbkZG93fJYMuAM6AnfmQMopQ1n4VQ
+        8nF57gQ3bm5A0QNo2xKtPdMAuRxMLzRv/nYefJQ=
+X-Google-Smtp-Source: ABdhPJxbCKW4fTpVnX2CQvf9RgErNXW1jwP4z7SknLbQ8Cc9Yo+wV5VNXoMrHTDT6nrY6l5JMWZVPP3ed7loEUw8xy4=
+X-Received: by 2002:a05:6214:4118:: with SMTP id kc24mr55862932qvb.118.1641527241158;
+ Thu, 06 Jan 2022 19:47:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a05:622a:1113:0:0:0:0 with HTTP; Thu, 6 Jan 2022 19:47:20
+ -0800 (PST)
+Reply-To: ericopokueric3@gmail.com
+From:   Eric Opokue <egojohn32@gmail.com>
+Date:   Fri, 7 Jan 2022 05:47:20 +0200
+Message-ID: <CAGacM92fW7+Mf+VfO=vaZ2ZEKj7Lff8hRDzpxfc_daQqO1wT0w@mail.gmail.com>
+Subject: Happy new mornth
+To:     ericopokueric3@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2021-12-28 at 20:44 +0800, Jeffle Xu wrote:
-> Hi, recently I'm developing erofs over fscache for implementing
-> on-demand read, and erofs also implements an empty .init_rreq()
-> callback[1].
-> 
-> [1] https://lkml.org/lkml/2021/12/27/224
-> 
-> If folks don't like this cleanup and prefer empty callback in upper fs,
-> I'm also fine with that.
-> ---
-> There's already upper fs implementing empty .init_rreq() callback, and
-> thus make it optional.
-> 
-> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-> ---
->  fs/ceph/addr.c         | 5 -----
->  fs/netfs/read_helper.c | 3 ++-
->  2 files changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index e53c8541f5b2..c3537dfd8c04 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -291,10 +291,6 @@ static void ceph_netfs_issue_op(struct netfs_read_subrequest *subreq)
->  	dout("%s: result %d\n", __func__, err);
->  }
->  
-> -static void ceph_init_rreq(struct netfs_read_request *rreq, struct file *file)
-> -{
-> -}
-> -
->  static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
->  {
->  	struct inode *inode = mapping->host;
-> @@ -306,7 +302,6 @@ static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
->  }
->  
->  static const struct netfs_read_request_ops ceph_netfs_read_ops = {
-> -	.init_rreq		= ceph_init_rreq,
->  	.is_cache_enabled	= ceph_is_cache_enabled,
->  	.begin_cache_operation	= ceph_begin_cache_operation,
->  	.issue_op		= ceph_netfs_issue_op,
-> diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-> index 75c76cbb27cc..0befb0747c59 100644
-> --- a/fs/netfs/read_helper.c
-> +++ b/fs/netfs/read_helper.c
-> @@ -55,7 +55,8 @@ static struct netfs_read_request *netfs_alloc_read_request(
->  		INIT_WORK(&rreq->work, netfs_rreq_work);
->  		refcount_set(&rreq->usage, 1);
->  		__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
-> -		ops->init_rreq(rreq, file);
-> +		if (ops->init_rreq)
-> +			ops->init_rreq(rreq, file);
->  		netfs_stat(&netfs_n_rh_rreq);
->  	}
->  
-
-This looks reasonable to me, since ceph doesn't need anything here
-anyway.
-
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Hello dear, my name is Mr. Eric Opoku, I have a business proposal can
+i trust you?
