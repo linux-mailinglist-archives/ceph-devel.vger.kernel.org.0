@@ -2,81 +2,139 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BC4248977F
-	for <lists+ceph-devel@lfdr.de>; Mon, 10 Jan 2022 12:32:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC74A48993F
+	for <lists+ceph-devel@lfdr.de>; Mon, 10 Jan 2022 14:08:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244784AbiAJLc3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 10 Jan 2022 06:32:29 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25649 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244751AbiAJLcN (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Mon, 10 Jan 2022 06:32:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1641814332;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hrEu87EnXQ6Fg7UvjXggUKw0Jcqes+nBaSmxrmpEEwU=;
-        b=Na8Keg6S0hqNWI8biY0r3XqJygy1yo4X8MajVtNkrjYZ7JkaXEna/RStvL72BrXpcu7NDE
-        XahOiI33eyfF1WIjMQZJ9ZlpcYoRcS8vofZumTqYfCqx7D2HeAtseCkpg848WsjfAVtRto
-        sktfokk7YYiNjV5SS9r2udAHrSKZgjA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-54-MsPtVj76MgWGNWERMB4MZg-1; Mon, 10 Jan 2022 06:32:09 -0500
-X-MC-Unique: MsPtVj76MgWGNWERMB4MZg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4E8BB1898292;
-        Mon, 10 Jan 2022 11:32:06 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1F9507B6C9;
-        Mon, 10 Jan 2022 11:31:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <Ydvl8Dk8z0mF0KFl@infradead.org>
-References: <Ydvl8Dk8z0mF0KFl@infradead.org> <164021479106.640689.17404516570194656552.stgit@warthog.procyon.org.uk> <164021541207.640689.564689725898537127.stgit@warthog.procyon.org.uk> <CAOQ4uxjEcvffv=rNXS-r+NLz+=6yk4abRuX_AMq9v-M4nf_PtA@mail.gmail.com> <Ydk6jWmFH6TZLPZq@casper.infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>, linux-cachefs@redhat.com,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 38/68] vfs, cachefiles: Mark a backing file in use with an inode flag
+        id S231443AbiAJNIi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 10 Jan 2022 08:08:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43506 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230038AbiAJNIh (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 10 Jan 2022 08:08:37 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E43ECC061751
+        for <ceph-devel@vger.kernel.org>; Mon, 10 Jan 2022 05:08:36 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id d3so17773028lfv.13
+        for <ceph-devel@vger.kernel.org>; Mon, 10 Jan 2022 05:08:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=STst/NZz7XpLuhkw/fjT1YooCLQUEgoChj9j28RAYfs=;
+        b=KieoU8JMzvNa4iM20Zcmbr8TKgyxNEuzTnORQGzXorDZDAGBgMZlQ8cL0BJTsNiI3i
+         thIhi+SOVZ5d8sDYD8bddACctk4r5fYANawyflSuP8IVBoLEqXV2j8Ij0KN8ukpGbeRl
+         69Pj33kJtqloz39AWIWRzTKVNFD0VCCUcWTQ1l7Gq+vl1BjS2mtrUviZCjNrlwCF0kaQ
+         dLP38aanGqNMzZiAJGk//Nk48BLyL8oh43WTclWJ1cFMyYQmCcp50ZebDNeKMGcDno1E
+         OmxOpX9Tv50mkzH6aP9t1PSvSBthYL/3Dqa2kigKHxLpNCAbOVBEJZIgl1Mwz26KwGGW
+         HYrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=STst/NZz7XpLuhkw/fjT1YooCLQUEgoChj9j28RAYfs=;
+        b=sl1/HRFqUnbmYHOKh3M32l4ICUbwrWf0S4LVPiER9kOhOQbXeYsdYFFw6APwLvnDlP
+         +cgVLVFL8CS/VBjswsoXf8bzkzgpZ1OjfxEvifc3x2U9kMlgZgJ/ijL4rtriGt3O2toX
+         kiU+6tqij1y0BVhSRB1sb7Ooe1T1Rhy9sqdTWWzjY+UJ/XOmX3O4igVHve3PMli/5SMB
+         mwN8XEAvkzZcro28NwQKm33VIBEMmKLyRFuV6hIZPKhYYrtrwMio3zMUX/fZAeQp88Y1
+         qG3uIGI7UBAnDy3tYBr7e7gHvk5XP4666v0/9UKz4Ez8GVT7601XeBzJBOSoxgbtnrS2
+         C2eg==
+X-Gm-Message-State: AOAM531Hh7M2m1hOtIUzeJgHurcmuAvPUqa2ZIwV/UWDxezrBxAdC+A1
+        A7JJNUTHO2Bn2nQwdyiI63v6s8ofU14ESMMhDVM=
+X-Google-Smtp-Source: ABdhPJwPGcHixhBsQsDXTAYwfLMEZz/I8fMqd9/pBErGY3vVsj4jT/lXw3cg4quhLGfkRLnGWkQYhcBLD+LcmkG8bc0=
+X-Received: by 2002:a05:6512:b1d:: with SMTP id w29mr63959761lfu.219.1641820114530;
+ Mon, 10 Jan 2022 05:08:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3735738.1641814315.1@warthog.procyon.org.uk>
-Date:   Mon, 10 Jan 2022 11:31:55 +0000
-Message-ID: <3735739.1641814315@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Received: by 2002:a05:6504:15d1:0:0:0:0 with HTTP; Mon, 10 Jan 2022 05:08:33
+ -0800 (PST)
+Reply-To: gtbank107@yahoo.com
+From:   Barr Robert Richter <westernunion.benin982@gmail.com>
+Date:   Mon, 10 Jan 2022 14:08:33 +0100
+Message-ID: <CAP=nHBLL9ymOrr7yC0hXNhPv=yf0vxYCkxsqGeLJk8NqmXA75w@mail.gmail.com>
+Subject: Contact GT Bank-Benin to receive your transfer amount of $18.5m US Dollars.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> wrote:
+Attn,Dear
+I need you to know that the fear of the LORD is
+the beginning of wisdom, and knowledge of the Holy One is
+understanding. As power of God Most High. And This is the confidence
+we have in approaching God, that if we ask anything according to his
+will, he hears us. I will make you know that Slow and steady wins the race.
+It is your turn to receive your overdue compensation funds total
+amount $18.5Milion  USD.
+I actualized that you will receive your transfer today without any more delay
+No More fee OK, Believe me , I am your Attorney standing here on your favor.
+I just concluded conversation with the Gt Bank Director, Mrs Mary Gate
+And She told me that your transfer is ready today
 
-> So let's name it that way.  We have plenty of files in kernel use using
-> filp_open and this flag very obviously means something else.
+So the Bank Asked you to contact them immediately by re-confirming
+your Bank details asap.
+Because this is the Only thing holding this transfer
+If you did not trust me and Mrs Mary Gate,Who Else will you Trust?
+For we are the ones trying to protect your funds here
+and make sure that your funds is secure.
+So Promisingly, I am here to assure you, that Grate Miracle is coming on
+your way, and this funds total amount of $18.500,000 is your
+compensation, entitlement inheritance overdue funds on your name.
+Which you cannot let anything delay you from receiving your funds now,
 
-S_KERNEL_LOCK?
+Finally i advised you to try your possible best and contact Gt Bank Benin
+once you get this message to receive your transfer $18.5 USD today.
+I know that a journey of thousand miles begins with a single step.
+Always put your best foot forward
+Try as hard as you can, God give you best.
+take my advice and follow the due process of your payment, the
+transfer will be released to
+you smoothly without any hitches or hindrance.
 
-David
+Contact DR.MRS MARY GATE, Director Gt bank-Benin to receive your
+transfer amount of $18.5m US Dollars
+It was deposited and registered to your name this morning.
+Contact the Bank now to know when they will transfer to your
+country today
 
+Email id: gtbank107@yahoo.com
+Tel/mobile, +229 99069872
+Contact person, Mrs Mary Gate,Director Gt bank-Benin.
+Among the blind the one-eyed man is king
+
+As you sow, so you shall reap, i want you to receive your funds
+Best things in life are free
+Send to her your Bank Details as i listed here.
+
+Your account name-------------
+Your Bank Name----------------
+Account Number----------
+your Bank address----------
+Country-----------
+Your private phone number---------
+Routing Numbers-------------
+Swift Code-----------
+
+Note, Your funds is %100 Percent ready for
+transfer.
+Everything you do remember that Good things come to those who wait.
+I have done this work for you with my personally effort, Honesty is
+the best policy.
+now your transfer is currently deposited with paying bank this morning.
+It is by the grace of God that I received Christ, having known the truth.
+I had no choice than to do what is lawful and justice in the
+sight of God for eternal life and in the sight of man for witness of
+God & His Mercies and glory upon my life.
+
+send this needed bank details to the bank today, so that you receive
+your transfer today as
+it is available for your confirmation today.
+Please do your best as a serious person and send the fee urgent, Note
+that this transfer of $18.500.000 M USD is a Gift from God to Bless
+you.
+
+If you did not contact the bank urgent, finally the Bank will release
+your transfer of $18.500.000M USD to  Mr. David Bollen as your
+representative.
+So not allow another to claim your Money.
+Thanks For your Understanding.
+
+Barr Robert Richter, UN Attorney At Law Court-Benin
