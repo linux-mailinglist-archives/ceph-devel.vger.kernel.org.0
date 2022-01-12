@@ -2,188 +2,157 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A83A48BDDF
-	for <lists+ceph-devel@lfdr.de>; Wed, 12 Jan 2022 05:29:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 611BC48BEF2
+	for <lists+ceph-devel@lfdr.de>; Wed, 12 Jan 2022 08:21:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350695AbiALE3T (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 11 Jan 2022 23:29:19 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:47592 "EHLO
+        id S1351184AbiALHU6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 12 Jan 2022 02:20:58 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45273 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231799AbiALE3S (ORCPT
+        by vger.kernel.org with ESMTP id S1351173AbiALHUy (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Tue, 11 Jan 2022 23:29:18 -0500
+        Wed, 12 Jan 2022 02:20:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1641961757;
+        s=mimecast20190719; t=1641972054;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=i4oNaLzVFZJz612kIu4HzMBn4l/zssbMXysVEH5dcMI=;
-        b=M+YSIRbZB/OBOsg3k1NadvgX2F3UOcm81LyElnuQx3zyhj8WHXMAQu8IugPlkz6aw04ji2
-        7JaqmlGMWFq1zsSCvkMgoyXkPMZN3gWqJGMHCgWHXOyMtTDn5jBhvosups9PZxSi26fg6C
-        CavUERqew7nDLLbBwX6Z0/1cy52gBpc=
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FtIbmDuJfaFcyPVq4lejO1YQT8JqBoet7CpPdE4P+Vs=;
+        b=IXafCJIzO5ETuapzspmbW7eCTFLED2jMHQYLrrL5fVUTSD3b0+OuR+HQD1cKWLU1MrVjQc
+        re6Qcz7KnTqx2dmaiyO19a0hM/73gYAwzOzWK29725Dqvad799ZkgGZvtXdWcCIrP3JGAY
+        doKF6sxwm+baPmA5cuGQNgSpJRVaCq8=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-317-1Ddu3zIVOfSMOUKMqiq-lQ-1; Tue, 11 Jan 2022 23:29:14 -0500
-X-MC-Unique: 1Ddu3zIVOfSMOUKMqiq-lQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-664-iG6Fe2TPNT6yCUhnGs8TxA-1; Wed, 12 Jan 2022 02:20:50 -0500
+X-MC-Unique: iG6Fe2TPNT6yCUhnGs8TxA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9F8DD10151E0;
-        Wed, 12 Jan 2022 04:29:13 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 79C401037F44;
-        Wed, 12 Jan 2022 04:29:11 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, vshankar@redhat.com,
-        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: put the requests/sessions when it fails to alloc memory
-Date:   Wed, 12 Jan 2022 12:29:04 +0800
-Message-Id: <20220112042904.8557-1-xiubli@redhat.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 158141023F50;
+        Wed, 12 Jan 2022 07:20:48 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 914407B9D2;
+        Wed, 12 Jan 2022 07:20:41 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <3462849.1641593783@warthog.procyon.org.uk>
+References: <3462849.1641593783@warthog.procyon.org.uk> <164021579335.640689.2681324337038770579.stgit@warthog.procyon.org.uk> <164021479106.640689.17404516570194656552.stgit@warthog.procyon.org.uk>
+To:     Steve French <smfrench@gmail.com>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        linux-cifs@vger.kernel.org,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        JeffleXu <jefflexu@linux.alibaba.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 63/68] cifs: Support fscache indexing rewrite
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <534839.1641972040.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 12 Jan 2022 07:20:40 +0000
+Message-ID: <534840.1641972040@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+Hi Steve,
 
-When failing to allocate the sessions memory we should make sure
-the req1 and req2 and the sessions get put. And also in case the
-max_sessions decreased so when kreallocate the new memory some
-sessions maybe missed being put.
+I think this needs the further changes below, which I will fold in.  The
+issues are:
 
-And if the max_sessions is 0 krealloc will return ZERO_SIZE_PTR,
-which will lead to a distinct access fault.
+ (1) One of the error paths in cifs_atomic_open() uses the cookie when it
+     should jump around that.
 
-URL: https://tracker.ceph.com/issues/53819
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
-Fixes: e1a4541ec0b9 ("ceph: flush the mdlog before waiting on unsafe reqs")
+ (2) There's an additional successful return from the middle of cifs_open(=
+)
+     that I mistook for an error path, but does need to use the cookie on
+     the way out.
+
+David
 ---
- fs/ceph/caps.c | 55 +++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 37 insertions(+), 18 deletions(-)
+diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
+index 6186824b366e..bf3b4c9901b9 100644
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@ -508,6 +508,7 @@ cifs_atomic_open(struct inode *inode, struct dentry *d=
+irentry,
+ 			server->ops->close(xid, tcon, &fid);
+ 		cifs_del_pending_open(&open);
+ 		rc =3D -ENOMEM;
++		goto out;
+ 	}
+ =
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 944b18b4e217..5c2719f66f62 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -2276,6 +2276,7 @@ static int unsafe_request_wait(struct inode *inode)
- 	struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_mds_request *req1 = NULL, *req2 = NULL;
-+	unsigned int max_sessions;
- 	int ret, err = 0;
- 
- 	spin_lock(&ci->i_unsafe_lock);
-@@ -2293,37 +2294,45 @@ static int unsafe_request_wait(struct inode *inode)
+ 	fscache_use_cookie(cifs_inode_cookie(file_inode(file)),
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 44da7646f789..47333730c963 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -568,7 +568,7 @@ int cifs_open(struct inode *inode, struct file *file)
+ 			spin_lock(&CIFS_I(inode)->deferred_lock);
+ 			cifs_del_deferred_close(cfile);
+ 			spin_unlock(&CIFS_I(inode)->deferred_lock);
+-			goto out;
++			goto use_cache;
+ 		} else {
+ 			_cifsFileInfo_put(cfile, true, false);
+ 		}
+@@ -630,19 +630,6 @@ int cifs_open(struct inode *inode, struct file *file)
+ 		goto out;
  	}
- 	spin_unlock(&ci->i_unsafe_lock);
- 
-+	/*
-+	 * The mdsc->max_sessions is unlikely to be changed
-+	 * mostly, here we will retry it by reallocating the
-+	 * sessions arrary memory to get rid of the mdsc->mutex
-+	 * lock.
-+	 */
-+retry:
-+	max_sessions = mdsc->max_sessions;
+ =
+
+-
+-	fscache_use_cookie(cifs_inode_cookie(file_inode(file)),
+-			   file->f_mode & FMODE_WRITE);
+-	if (file->f_flags & O_DIRECT &&
+-	    (!((file->f_flags & O_ACCMODE) !=3D O_RDONLY) ||
+-	     file->f_flags & O_APPEND)) {
+-		struct cifs_fscache_inode_coherency_data cd;
+-		cifs_fscache_fill_coherency(file_inode(file), &cd);
+-		fscache_invalidate(cifs_inode_cookie(file_inode(file)),
+-				   &cd, i_size_read(file_inode(file)),
+-				   FSCACHE_INVAL_DIO_WRITE);
+-	}
+-
+ 	if ((oplock & CIFS_CREATE_ACTION) && !posix_open_ok && tcon->unix_ext) {
+ 		/*
+ 		 * Time to set mode which we can not set earlier due to
+@@ -661,6 +648,19 @@ int cifs_open(struct inode *inode, struct file *file)
+ 				       cfile->pid);
+ 	}
+ =
+
++use_cache:
++	fscache_use_cookie(cifs_inode_cookie(file_inode(file)),
++			   file->f_mode & FMODE_WRITE);
++	if (file->f_flags & O_DIRECT &&
++	    (!((file->f_flags & O_ACCMODE) !=3D O_RDONLY) ||
++	     file->f_flags & O_APPEND)) {
++		struct cifs_fscache_inode_coherency_data cd;
++		cifs_fscache_fill_coherency(file_inode(file), &cd);
++		fscache_invalidate(cifs_inode_cookie(file_inode(file)),
++				   &cd, i_size_read(file_inode(file)),
++				   FSCACHE_INVAL_DIO_WRITE);
++	}
 +
- 	/*
- 	 * Trigger to flush the journal logs in all the relevant MDSes
- 	 * manually, or in the worst case we must wait at most 5 seconds
- 	 * to wait the journal logs to be flushed by the MDSes periodically.
- 	 */
--	if (req1 || req2) {
-+	if ((req1 || req2) && likely(max_sessions)) {
- 		struct ceph_mds_session **sessions = NULL;
- 		struct ceph_mds_session *s;
- 		struct ceph_mds_request *req;
--		unsigned int max;
- 		int i;
- 
--		/*
--		 * The mdsc->max_sessions is unlikely to be changed
--		 * mostly, here we will retry it by reallocating the
--		 * sessions arrary memory to get rid of the mdsc->mutex
--		 * lock.
--		 */
--retry:
--		max = mdsc->max_sessions;
--		sessions = krealloc(sessions, max * sizeof(s), __GFP_ZERO);
--		if (!sessions)
--			return -ENOMEM;
-+		sessions = kzalloc(max_sessions * sizeof(s), GFP_KERNEL);
-+		if (!sessions) {
-+			err = -ENOMEM;
-+			goto out;
-+		}
- 
- 		spin_lock(&ci->i_unsafe_lock);
- 		if (req1) {
- 			list_for_each_entry(req, &ci->i_unsafe_dirops,
- 					    r_unsafe_dir_item) {
- 				s = req->r_session;
--				if (unlikely(s->s_mds >= max)) {
-+				if (unlikely(s->s_mds >= max_sessions)) {
- 					spin_unlock(&ci->i_unsafe_lock);
-+					for (i = 0; i < max_sessions; i++) {
-+						s = sessions[i];
-+						if (s)
-+							ceph_put_mds_session(s);
-+					}
-+					kfree(sessions);
- 					goto retry;
- 				}
- 				if (!sessions[s->s_mds]) {
-@@ -2336,8 +2345,14 @@ static int unsafe_request_wait(struct inode *inode)
- 			list_for_each_entry(req, &ci->i_unsafe_iops,
- 					    r_unsafe_target_item) {
- 				s = req->r_session;
--				if (unlikely(s->s_mds >= max)) {
-+				if (unlikely(s->s_mds >= max_sessions)) {
- 					spin_unlock(&ci->i_unsafe_lock);
-+					for (i = 0; i < max_sessions; i++) {
-+						s = sessions[i];
-+						if (s)
-+							ceph_put_mds_session(s);
-+					}
-+					kfree(sessions);
- 					goto retry;
- 				}
- 				if (!sessions[s->s_mds]) {
-@@ -2358,7 +2373,7 @@ static int unsafe_request_wait(struct inode *inode)
- 		spin_unlock(&ci->i_ceph_lock);
- 
- 		/* send flush mdlog request to MDSes */
--		for (i = 0; i < max; i++) {
-+		for (i = 0; i < max_sessions; i++) {
- 			s = sessions[i];
- 			if (s) {
- 				send_flush_mdlog(s);
-@@ -2375,15 +2390,19 @@ static int unsafe_request_wait(struct inode *inode)
- 					ceph_timeout_jiffies(req1->r_timeout));
- 		if (ret)
- 			err = -EIO;
--		ceph_mdsc_put_request(req1);
- 	}
- 	if (req2) {
- 		ret = !wait_for_completion_timeout(&req2->r_safe_completion,
- 					ceph_timeout_jiffies(req2->r_timeout));
- 		if (ret)
- 			err = -EIO;
--		ceph_mdsc_put_request(req2);
- 	}
-+
-+out:
-+	if (req1)
-+		ceph_mdsc_put_request(req1);
-+	if (req2)
-+		ceph_mdsc_put_request(req2);
- 	return err;
- }
- 
--- 
-2.27.0
+ out:
+ 	free_dentry_path(page);
+ 	free_xid(xid);
 
