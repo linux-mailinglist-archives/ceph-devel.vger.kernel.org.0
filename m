@@ -2,157 +2,135 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 611BC48BEF2
-	for <lists+ceph-devel@lfdr.de>; Wed, 12 Jan 2022 08:21:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7041E48BF4E
+	for <lists+ceph-devel@lfdr.de>; Wed, 12 Jan 2022 08:55:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351184AbiALHU6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 12 Jan 2022 02:20:58 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45273 "EHLO
+        id S1351275AbiALHzB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 12 Jan 2022 02:55:01 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:52889 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1351173AbiALHUy (ORCPT
+        by vger.kernel.org with ESMTP id S1351267AbiALHzA (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 12 Jan 2022 02:20:54 -0500
+        Wed, 12 Jan 2022 02:55:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1641972054;
+        s=mimecast20190719; t=1641974100;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FtIbmDuJfaFcyPVq4lejO1YQT8JqBoet7CpPdE4P+Vs=;
-        b=IXafCJIzO5ETuapzspmbW7eCTFLED2jMHQYLrrL5fVUTSD3b0+OuR+HQD1cKWLU1MrVjQc
-        re6Qcz7KnTqx2dmaiyO19a0hM/73gYAwzOzWK29725Dqvad799ZkgGZvtXdWcCIrP3JGAY
-        doKF6sxwm+baPmA5cuGQNgSpJRVaCq8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=mS1dC/gi/R0fGoIf1VDIJL51oaPMvxjHUGRK4zYNGvw=;
+        b=fw4Ib0VwIM+5ZVD6nrzi0Rjnb6Z6+yDxMwiH3NJ9pEAMpC58z4UgoOxXCvpTBSky60e8tE
+        5Wr4hO2EHjohI/aL1ToeffNSoN7R3XDGKIgasoN1BRxNXwESu4XVzF9DxC7sAIw7gs2pG8
+        wisG7X/H41MlBNmV/VQHHZMqT71LQIA=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-664-iG6Fe2TPNT6yCUhnGs8TxA-1; Wed, 12 Jan 2022 02:20:50 -0500
-X-MC-Unique: iG6Fe2TPNT6yCUhnGs8TxA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 158141023F50;
-        Wed, 12 Jan 2022 07:20:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 914407B9D2;
-        Wed, 12 Jan 2022 07:20:41 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <3462849.1641593783@warthog.procyon.org.uk>
-References: <3462849.1641593783@warthog.procyon.org.uk> <164021579335.640689.2681324337038770579.stgit@warthog.procyon.org.uk> <164021479106.640689.17404516570194656552.stgit@warthog.procyon.org.uk>
-To:     Steve French <smfrench@gmail.com>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        linux-cifs@vger.kernel.org,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 63/68] cifs: Support fscache indexing rewrite
+ us-mta-225-wrmOnNsIOVGqsMAzEeSMqg-1; Wed, 12 Jan 2022 02:54:59 -0500
+X-MC-Unique: wrmOnNsIOVGqsMAzEeSMqg-1
+Received: by mail-ed1-f70.google.com with SMTP id j10-20020a05640211ca00b003ff0e234fdfso1571749edw.0
+        for <ceph-devel@vger.kernel.org>; Tue, 11 Jan 2022 23:54:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=mS1dC/gi/R0fGoIf1VDIJL51oaPMvxjHUGRK4zYNGvw=;
+        b=0RlkzPyrH7asFspMV86Yi2Pz2YVSMCRsQmLuKSEe1kBCnfLKAXNV+W5mMkZ+f5SwC6
+         Rv06Ku/pLnS2OutPV1DfGf4hmcEbP+up0T5KpfMBHuQ08wdLFuFE32fWKAeo0kYPLghR
+         Hb17/gQNCoUhjsLqlw80y/4RSz85CWLPwUiVXj3DO+WXEOjWrqaxwMIAswynmppoyr39
+         mIlLRe5hEkTh+JTRqbt5WWHfeRbesWOpGMKr/+t8rG7jaJgOERzB7+IoT8pIphBrcIbc
+         foo7N2NkwUAProLeot6byPaq4F+je3isFcGoFW5HxBCNGKjvjPokPsJxXyr7TsSNTv3W
+         Dsog==
+X-Gm-Message-State: AOAM53107J20pUwH2ycm+7PLa+BJpqrUcWJCnoY2ZryLENw5Keu+J48g
+        O/bCdDx0pPOzMxSWGIsxGK7W3YB071htwv2LHqHAISyU+lV8zAAfByWZpqLtH1f7x6+PwYpvBIt
+        6N+M3PoprCeFZ4tWmZ8KTMJkIwMD6QMK5Q/u/vA==
+X-Received: by 2002:a50:ed95:: with SMTP id h21mr219489edr.208.1641974097427;
+        Tue, 11 Jan 2022 23:54:57 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJw9V/OZ0SPazv8oExyWW7Fh2dH95pEK13ePOqfX6CA9HPaIbGHCU2UWxAIhp5xjF0PAHJA5DayTXM69FvnIDi4=
+X-Received: by 2002:a50:ed95:: with SMTP id h21mr219479edr.208.1641974097213;
+ Tue, 11 Jan 2022 23:54:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <534839.1641972040.1@warthog.procyon.org.uk>
+References: <787e011c.337c.17e400efdc7.Coremail.sehuww@mail.scut.edu.cn>
+In-Reply-To: <787e011c.337c.17e400efdc7.Coremail.sehuww@mail.scut.edu.cn>
+From:   Venky Shankar <vshankar@redhat.com>
+Date:   Wed, 12 Jan 2022 13:24:20 +0530
+Message-ID: <CACPzV1n3bRtd_87Yuh2ukHnNWZBFrXPnQ_EMtDc7oipjOEe6xA@mail.gmail.com>
+Subject: Re: dmesg: mdsc_handle_reply got x on session mds1 not mds0
+To:     =?UTF-8?B?6IOh546u5paH?= <sehuww@mail.scut.edu.cn>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>, dev <dev@ceph.io>,
+        Gregory Farnum <gfarnum@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 12 Jan 2022 07:20:40 +0000
-Message-ID: <534840.1641972040@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Steve,
++Greg
 
-I think this needs the further changes below, which I will fold in.  The
-issues are:
+On Mon, Jan 10, 2022 at 12:08 AM =E8=83=A1=E7=8E=AE=E6=96=87 <sehuww@mail.s=
+cut.edu.cn> wrote:
+>
+> Hi ceph developers,
+>
+> Today we got one of our OSD hosts hang on OOM. Some OSDs were flapping an=
+d eventually went down and out. The recovery caused one OSD to go full, whi=
+ch is used in both cephfs metadata and data pools.
+>
+> The strange thing is:
+> * Many of our users report unexpected =E2=80=9CPermission denied=E2=80=9D=
+ error when creating new files
 
- (1) One of the error paths in cifs_atomic_open() uses the cookie when it
-     should jump around that.
+That's weird. I would expect the operation to block in the worst case.
 
- (2) There's an additional successful return from the middle of cifs_open(=
-)
-     that I mistook for an error path, but does need to use the cookie on
-     the way out.
+> * dmesg has some strange error (see examples below). During that time, no=
+ special logs on both active MDSes.
+> * The above two strange things happens BEFORE the OSD got full.
+>
+> Jan 09 01:27:13 gpu027 kernel: libceph: osd9 up
+> Jan 09 01:27:13 gpu027 kernel: libceph: osd10 up
+> Jan 09 01:28:55 gpu027 kernel: libceph: osd9 down
+> Jan 09 01:28:55 gpu027 kernel: libceph: osd10 down
+> Jan 09 01:32:35 gpu027 kernel: libceph: osd6 weight 0x0 (out)
+> Jan 09 01:32:35 gpu027 kernel: libceph: osd16 weight 0x0 (out)
+> Jan 09 01:34:18 gpu027 kernel: libceph: osd1 weight 0x0 (out)
+> Jan 09 01:39:20 gpu027 kernel: libceph: osd9 weight 0x0 (out)
+> Jan 09 01:39:20 gpu027 kernel: libceph: osd10 weight 0x0 (out)
+> Jan 09 01:53:07 gpu027 kernel: ceph: mdsc_handle_reply got 30408991 on se=
+ssion mds1 not mds0
+> Jan 09 01:53:14 gpu027 kernel: ceph: mdsc_handle_reply got 30409829 on se=
+ssion mds1 not mds0
+> Jan 09 01:53:15 gpu027 kernel: ceph: mdsc_handle_reply got 30409925 on se=
+ssion mds1 not mds0
+> Jan 09 01:53:28 gpu027 kernel: ceph: mdsc_handle_reply got 30411416 on se=
+ssion mds1 not mds0
+> Jan 09 02:05:07 gpu027 kernel: ceph: mdsc_handle_reply got 30417742 on se=
+ssion mds0 not mds1
+> Jan 09 02:48:52 gpu027 kernel: ceph: mdsc_handle_reply got 30449177 on se=
+ssion mds1 not mds0
+> Jan 09 02:49:17 gpu027 kernel: ceph: mdsc_handle_reply got 30452750 on se=
+ssion mds1 not mds0
+>
+> After reading the code, the replies are unexpected and just dropped. Any =
+ideas about how this could happen? And is there anything I need to worry ab=
+out? (The cluster is now recovered and looks good)
 
-David
----
-diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
-index 6186824b366e..bf3b4c9901b9 100644
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -508,6 +508,7 @@ cifs_atomic_open(struct inode *inode, struct dentry *d=
-irentry,
- 			server->ops->close(xid, tcon, &fid);
- 		cifs_del_pending_open(&open);
- 		rc =3D -ENOMEM;
-+		goto out;
- 	}
- =
+The MDS should ask the client to "forward" the operation to another
+MDS if it is not the auth for an inode.
 
- 	fscache_use_cookie(cifs_inode_cookie(file_inode(file)),
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index 44da7646f789..47333730c963 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -568,7 +568,7 @@ int cifs_open(struct inode *inode, struct file *file)
- 			spin_lock(&CIFS_I(inode)->deferred_lock);
- 			cifs_del_deferred_close(cfile);
- 			spin_unlock(&CIFS_I(inode)->deferred_lock);
--			goto out;
-+			goto use_cache;
- 		} else {
- 			_cifsFileInfo_put(cfile, true, false);
- 		}
-@@ -630,19 +630,6 @@ int cifs_open(struct inode *inode, struct file *file)
- 		goto out;
- 	}
- =
+It would be interesting to see what "mds1" was doing around the
+"01:53:07" timestamp. Could you gather that from the mds log?
 
--
--	fscache_use_cookie(cifs_inode_cookie(file_inode(file)),
--			   file->f_mode & FMODE_WRITE);
--	if (file->f_flags & O_DIRECT &&
--	    (!((file->f_flags & O_ACCMODE) !=3D O_RDONLY) ||
--	     file->f_flags & O_APPEND)) {
--		struct cifs_fscache_inode_coherency_data cd;
--		cifs_fscache_fill_coherency(file_inode(file), &cd);
--		fscache_invalidate(cifs_inode_cookie(file_inode(file)),
--				   &cd, i_size_read(file_inode(file)),
--				   FSCACHE_INVAL_DIO_WRITE);
--	}
--
- 	if ((oplock & CIFS_CREATE_ACTION) && !posix_open_ok && tcon->unix_ext) {
- 		/*
- 		 * Time to set mode which we can not set earlier due to
-@@ -661,6 +648,19 @@ int cifs_open(struct inode *inode, struct file *file)
- 				       cfile->pid);
- 	}
- =
+>
+> The clients are Ubuntu 20.04 with kernel 5.11.0-43-generic. Ceph version =
+is 16.2.7. No active MDS restarts during that time. Standby-replay MDSes di=
+d restart, which should be fixed by my PR https://github.com/ceph/ceph/pull=
+/44501 . But I don=E2=80=99t know if it is related to the issue here.
+>
+> Regards,
+> Weiwen Hu
 
-+use_cache:
-+	fscache_use_cookie(cifs_inode_cookie(file_inode(file)),
-+			   file->f_mode & FMODE_WRITE);
-+	if (file->f_flags & O_DIRECT &&
-+	    (!((file->f_flags & O_ACCMODE) !=3D O_RDONLY) ||
-+	     file->f_flags & O_APPEND)) {
-+		struct cifs_fscache_inode_coherency_data cd;
-+		cifs_fscache_fill_coherency(file_inode(file), &cd);
-+		fscache_invalidate(cifs_inode_cookie(file_inode(file)),
-+				   &cd, i_size_read(file_inode(file)),
-+				   FSCACHE_INVAL_DIO_WRITE);
-+	}
-+
- out:
- 	free_dentry_path(page);
- 	free_xid(xid);
+
+
+--=20
+Cheers,
+Venky
 
