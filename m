@@ -2,57 +2,57 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 79E9948D066
+	by mail.lfdr.de (Postfix) with ESMTP id C40F848D067
 	for <lists+ceph-devel@lfdr.de>; Thu, 13 Jan 2022 03:19:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231635AbiAMCSp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 12 Jan 2022 21:18:45 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:56426 "EHLO
+        id S231688AbiAMCTD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 12 Jan 2022 21:19:03 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:21392 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231593AbiAMCSn (ORCPT
+        by vger.kernel.org with ESMTP id S231634AbiAMCS5 (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 12 Jan 2022 21:18:43 -0500
+        Wed, 12 Jan 2022 21:18:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1642040322;
+        s=mimecast20190719; t=1642040335;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
         bh=uIhJzoKJpntmLV9bnodQNulswiXzDKfPmixlWQFR4VU=;
-        b=iNJs898ajoqOMyekTp77hHtmLVDAaRPn5OifMrjOhdI/r0VKRqrZSoiwykXVHMsw9pIisM
-        b0XML6m1xwfxnSRDQAccxLp3+c2LjYKweDH/eSzCeqA/767cCz3DZN9TgWDhQssa+PmrEK
-        C+O31cBd7C/o8y3GIKRmJEyEUzfSSKI=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+        b=HA4oqbGKy0coXglo3oMGzOAJrrOr0vs2rQlP505yoX1fTqFxn6m0ZXG13QNt9pfIe9gVPw
+        Lh77ldBs0AAsvQUWn41Mq3ti6iQIOQhJccEqLDextzKr31ODfZ9tDczPCd2xZ4vJMpXi+G
+        0BZQIbxf9kYseQ/K22pMYVGUwvPhxbQ=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-272-m0GlqeGFM-KnPAh6Jzsv-A-1; Wed, 12 Jan 2022 21:18:41 -0500
-X-MC-Unique: m0GlqeGFM-KnPAh6Jzsv-A-1
-Received: by mail-pl1-f198.google.com with SMTP id w4-20020a170902d70400b0014a0068b558so4501648ply.13
-        for <ceph-devel@vger.kernel.org>; Wed, 12 Jan 2022 18:18:41 -0800 (PST)
+ us-mta-417-MdigOqK2NIOefr-Q1rncZg-1; Wed, 12 Jan 2022 21:18:54 -0500
+X-MC-Unique: MdigOqK2NIOefr-Q1rncZg-1
+Received: by mail-pj1-f69.google.com with SMTP id o7-20020a17090a3d4700b001b4243e9ea2so627678pjf.6
+        for <ceph-devel@vger.kernel.org>; Wed, 12 Jan 2022 18:18:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
         bh=uIhJzoKJpntmLV9bnodQNulswiXzDKfPmixlWQFR4VU=;
-        b=lXt3SBBCghOPGR4lwMRdDnzbh4F1l1BT7xJ8zfSDvEFGvvtlbeIf+ipH59/nOhed7p
-         jtkuycMwj1AyRJLFpDoP5uQKs9CKp30GZaM/1trEA1nt7v26zhJirPbAO2GSobpjxrFM
-         7jiUOPcEext28nsjL3/shXgxzU7Ohuy3tUTQISJ348EDCPdD5AOcnK0hWWCw4wS5cQSL
-         iAfsJxyNopg3GypmIjyV7+XBXPB8SRlJxtYh0la0lAeIoGmVKPGOOLA0zdJKg7Gspcud
-         HBDYLMYs95ZUo7oohFi+YL4YMCjtqBBOq55v2xMEMzxnAIMnGEOAr0YB7RIewtdcbWV3
-         Bb0w==
-X-Gm-Message-State: AOAM532k2SMR4pFzC9r43w/1Jldjgezf9jhaFljkS7vynnCD17xidkAx
-        vIfaaeeKkDNVejs5DFC2m/j/mMa0MDWwiTZl7qL9IkpKx4UEe89SamXD7o97x9JHDaqHCuS0mt8
-        8bHP5IiSyt26tD55URgyuiA==
-X-Received: by 2002:a17:90a:c296:: with SMTP id f22mr2774987pjt.212.1642040320392;
-        Wed, 12 Jan 2022 18:18:40 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJz5VABVGttxbEWpG/GSq9ctbgeAN+1Eh0IsbLkelfPgDkcoaRf4bBbW/FZ2hnl6h80Z6zi/VA==
-X-Received: by 2002:a17:90a:c296:: with SMTP id f22mr2774975pjt.212.1642040320095;
-        Wed, 12 Jan 2022 18:18:40 -0800 (PST)
+        b=4TZP+WgFZyKY5nWjco0hCIoU+Z26uBrdcpEu1BHoHYjDP0QZRFKvcY0gGZ6DRgy2+3
+         9eGFcS0sm3zwi6f7qGB5xCUBoYXsB8BZasSPSP8NGix3l/T1t7UvCHzK5Zjqxfije5oD
+         xiRcekxknRCq7jd1tLvcw8c4a9IJD9IlcstRbSByOJMsw9B6+4f+lBYH7aLrMt5Jymv7
+         6rH3dqQ6Kfc2sc9di5MABbHcnq22ntKM88A5FMdOE54e2+s2NvOFawhTbfEVApbiAP1q
+         e5iawUPGFRoDuJTC8nSkjT55kkmevWofiMapU50li/n00KnIpcuDBljPgYRHrjTXUALY
+         z7Kg==
+X-Gm-Message-State: AOAM533tZqio+3RVi9bdbT2MajeAj+IyoMSlR19tNOdGArRZLsnfcc4U
+        Gag4pqB3BiIbyheZThlPW0lK18BssOh4KrXVTMpb7hM/GO+KiWW87xOFkNUU8TrzpBGjKDAqSru
+        ujs48C7itwiLsLNJs3NLlPA==
+X-Received: by 2002:a17:903:244e:b0:14a:537b:db0b with SMTP id l14-20020a170903244e00b0014a537bdb0bmr2310730pls.28.1642040332532;
+        Wed, 12 Jan 2022 18:18:52 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJz40DdDOVd/F1VZmXI8DURF4UILOlapg/oJ0FheAHsJjrY3Xq7AA0wcEQs5216fSYXtD9ERsg==
+X-Received: by 2002:a17:903:244e:b0:14a:537b:db0b with SMTP id l14-20020a170903244e00b0014a537bdb0bmr2310717pls.28.1642040332258;
+        Wed, 12 Jan 2022 18:18:52 -0800 (PST)
 Received: from [10.72.12.99] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id u64sm809833pfb.208.2022.01.12.18.18.37
+        by smtp.gmail.com with ESMTPSA id d1sm758776pge.62.2022.01.12.18.18.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jan 2022 18:18:39 -0800 (PST)
+        Wed, 12 Jan 2022 18:18:51 -0800 (PST)
 Subject: Re: dmesg: mdsc_handle_reply got x on session mds1 not mds0
 To:     Gregory Farnum <gfarnum@redhat.com>,
         Venky Shankar <vshankar@redhat.com>
@@ -62,8 +62,8 @@ References: <787e011c.337c.17e400efdc7.Coremail.sehuww@mail.scut.edu.cn>
  <CACPzV1n3bRtd_87Yuh2ukHnNWZBFrXPnQ_EMtDc7oipjOEe6xA@mail.gmail.com>
  <CAJ4mKGY_Vr6OEe+aO9sXS6tAk9mVgtZga=eFbtsG3QY58KPHqQ@mail.gmail.com>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <02b6123e-b2f1-2419-1025-1eca89ca05ab@redhat.com>
-Date:   Thu, 13 Jan 2022 10:18:34 +0800
+Message-ID: <0a88e924-97d4-c62a-e8de-cfb3e10e9009@redhat.com>
+Date:   Thu, 13 Jan 2022 10:18:45 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
