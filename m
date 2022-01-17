@@ -2,375 +2,315 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E8074906EC
-	for <lists+ceph-devel@lfdr.de>; Mon, 17 Jan 2022 12:08:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7260E4908ED
+	for <lists+ceph-devel@lfdr.de>; Mon, 17 Jan 2022 13:45:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236467AbiAQLIU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 17 Jan 2022 06:08:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48684 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239059AbiAQLIC (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 17 Jan 2022 06:08:02 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE8B0C061755
-        for <ceph-devel@vger.kernel.org>; Mon, 17 Jan 2022 03:08:01 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id m4so63864582edb.10
-        for <ceph-devel@vger.kernel.org>; Mon, 17 Jan 2022 03:08:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N7a+4My0wWFqI6ffRK1zKt0GIDdhp14b5eKLBwL2f0E=;
-        b=eOA6xwF0fEzw+bCdM2V5oomZ35xjuN6aPOmMwJu63ix0ZS0q4PIXTmFIvr8ud7IDpq
-         2TxIVNB3U/pfJksMnsLRRS6DImltWFtjWua5/wFJfQF1fh/4YKd8XwvzWhb/XVxGRrHT
-         etOke1o7TS6mCqEqN+bJxG2na05TsfKg8dTDqgKCYvgondUNbY/osNX8CmuCUsRlurlZ
-         y4M0obioSsVf03zs/9ZmWHSV6nd3fQIkmSKhTagjoBYt4Yr2QLTvnFt2kDFeySwPMaHV
-         dc8IfM5OugFry+iOVAUfcXXKCPHcLkUdWuKG9uwC/YVGXFVbW6h+V5z1a7GBx2Y1TPz0
-         Roiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N7a+4My0wWFqI6ffRK1zKt0GIDdhp14b5eKLBwL2f0E=;
-        b=Szp5HgwdDTpjLYa7a8htXhCqIuEcHh5o2baANoTqbekd12Hi4UXkQExzA/d73AigXu
-         38yNX5VKhQwlZA9ihoRh/C7+AF4U7FnG8SM+UQYlC7LYaYby/3sArsvEj8Q57A0WsjOO
-         sqflReiuAOeQEDcLGjaVKsdWEtiSry+R80fbhSO1ADvJKWMA8C9/lnUU5gjd+4+dIRIr
-         KM0TjlV0cGTuE2yl6tVL4lc+VoFQrzwIsFpDFbMcvq+y/M2lCbqKlrv02wTjna4bP9Wo
-         pdrquaHmtesurDdPYuvoMo9DvAq3l0SBkdkxFPzAJJ5N0VuSXw8GJv/3RrZB+dHzZvDO
-         lpWA==
-X-Gm-Message-State: AOAM530XgIXlEkXvX4qlhUZPm8TSN//IdVeXjvR+Mw2D5HDVDbzmlxLp
-        7ekEoknvsRXcWkKDMK5B7OV6S8vAhMhMm79UW4KdxBl8EQJ0Nw==
-X-Google-Smtp-Source: ABdhPJxms62G0rCht6+Rz67g0+Bgm8o4IQieHD4zqTezspttDUZvNhDL0Hv+jGABciiF4Zdd0fkN8A0OslkMZByXaKE=
-X-Received: by 2002:a17:906:7306:: with SMTP id di6mr153358ejc.93.1642417680348;
- Mon, 17 Jan 2022 03:08:00 -0800 (PST)
+        id S240004AbiAQMoj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 17 Jan 2022 07:44:39 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:48471 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229851AbiAQMoi (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 17 Jan 2022 07:44:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1642423477;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=T1UxL9Zg2q78u9ZHYzHPLE2ac00lwtbL9Q5nV0sro3E=;
+        b=KD+tw04PQPxwA8CLBRZ2mxcHsmm361W1IpUZwbQab+oaRbm2Qvlc+kZxTPGa+sdSaQNr7Q
+        GxfzK8XEf1fDY3YHfVJ4wqsE+IMJGIQiTMLa28I8C0kTmC7K2UfI3zVDQEeeSwV4ibnV49
+        N6teRx1b31EVckLV/L8PUmAi0wdSdv4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-413-YcF3z38jPPKuyr2s6--JIw-1; Mon, 17 Jan 2022 07:44:36 -0500
+X-MC-Unique: YcF3z38jPPKuyr2s6--JIw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4EAAC8EE4A;
+        Mon, 17 Jan 2022 12:44:35 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2A1BA4E2D1;
+        Mon, 17 Jan 2022 12:44:34 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 1/3] ceph: Uninline the data on a file opened for writing
+From:   David Howells <dhowells@redhat.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     dhowells@redhat.com, jlayton@kernel.org,
+        linux-fsdevel@vger.kernel.org
+Date:   Mon, 17 Jan 2022 12:44:33 +0000
+Message-ID: <164242347319.2763588.2514920080375140879.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <20220117085142.23638-1-mchangir@redhat.com> <20220117085142.23638-2-mchangir@redhat.com>
- <e1a40f8003fb861facbbf0c915b6631141c282ad.camel@kernel.org>
-In-Reply-To: <e1a40f8003fb861facbbf0c915b6631141c282ad.camel@kernel.org>
-From:   Milind Changire <milindchangire@gmail.com>
-Date:   Mon, 17 Jan 2022 16:37:48 +0530
-Message-ID: <CANmksPT=vM653QZthXb7tgwekNBAeaLV67pZ0TiOmgusj8bhmQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] ceph: add getvxattr op
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
-        Milind Changire <mchangir@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Jan 17, 2022 at 4:23 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> On Mon, 2022-01-17 at 08:51 +0000, Milind Changire wrote:
-> > Problem:
-> > Directory vxattrs like ceph.dir.pin* and ceph.dir.layout* may not be
-> > propagated to the client as frequently to keep them updated. This
-> > creates vxattr availability problems.
-> >
-> > Solution:
-> > Adds new getvxattr op to fetch ceph.dir.pin*, ceph.dir.layout* and
-> > ceph.file.layout* vxattrs.
-> > If the entire layout for a dir or a file is being set, then it is
-> > expected that the layout be set in standard JSON format. Individual
-> > field value retrieval is not wrapped in JSON. The JSON format also
-> > applies while setting the vxattr if the entire layout is being set in
-> > one go.
-> > As a temporary measure, setting a vxattr can also be done in the old
-> > format. The old format will be deprecated in the future.
-> >
-> > URL: https://tracker.ceph.com/issues/51062
-> > Signed-off-by: Milind Changire <mchangir@redhat.com>
-> > ---
-> >  fs/ceph/inode.c              | 51 ++++++++++++++++++++++++++++++++++++
-> >  fs/ceph/mds_client.c         | 27 ++++++++++++++++++-
-> >  fs/ceph/mds_client.h         | 12 ++++++++-
-> >  fs/ceph/strings.c            |  1 +
-> >  fs/ceph/super.h              |  1 +
-> >  fs/ceph/xattr.c              | 34 ++++++++++++++++++++++++
-> >  include/linux/ceph/ceph_fs.h |  1 +
-> >  7 files changed, 125 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > index e3322fcb2e8d..efdce049b7f0 100644
-> > --- a/fs/ceph/inode.c
-> > +++ b/fs/ceph/inode.c
-> > @@ -2291,6 +2291,57 @@ int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
-> >       return err;
-> >  }
-> >
-> > +int ceph_do_getvxattr(struct inode *inode, const char *name, void *value,
-> > +                   size_t size)
-> > +{
-> > +     struct ceph_fs_client *fsc = ceph_sb_to_client(inode->i_sb);
-> > +     struct ceph_mds_client *mdsc = fsc->mdsc;
-> > +     struct ceph_mds_request *req;
-> > +     int mode = USE_AUTH_MDS;
-> > +     int err;
-> > +     char *xattr_value;
-> > +     size_t xattr_value_len;
-> > +
-> > +     req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETVXATTR, mode);
-> > +     if (IS_ERR(req)) {
-> > +             err = -ENOMEM;
-> > +             goto out;
-> > +     }
-> > +
-> > +     req->r_path2 = kstrdup(name, GFP_NOFS);
-> > +     if (!req->r_path2) {
-> > +             err = -ENOMEM;
-> > +             goto put;
-> > +     }
-> > +
-> > +     ihold(inode);
-> > +     req->r_inode = inode;
-> > +     err = ceph_mdsc_do_request(mdsc, NULL, req);
-> > +     if (err < 0)
-> > +             goto put;
-> > +
-> > +     xattr_value = req->r_reply_info.xattr_info.xattr_value;
-> > +     xattr_value_len = req->r_reply_info.xattr_info.xattr_value_len;
-> > +
-> > +     dout("do_getvxattr xattr_value_len:%zu, size:%zu\n", xattr_value_len, size);
-> > +
-> > +     err = (int)xattr_value_len;
-> > +     if (size == 0)
-> > +             goto put;
-> > +
-> > +     if (xattr_value_len > size) {
-> > +             err = -ERANGE;
-> > +             goto put;
-> > +     }
-> > +
-> > +     memcpy(value, xattr_value, xattr_value_len);
-> > +put:
-> > +     ceph_mdsc_put_request(req);
-> > +out:
-> > +     dout("do_getvxattr result=%d\n", err);
-> > +     return err;
-> > +}
-> > +
-> >
-> >  /*
-> >   * Check inode permissions.  We verify we have a valid value for
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index c30eefc0ac19..a5eafc71d976 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -555,6 +555,29 @@ static int parse_reply_info_create(void **p, void *end,
-> >       return -EIO;
-> >  }
-> >
-> > +static int parse_reply_info_getvxattr(void **p, void *end,
-> > +                                   struct ceph_mds_reply_info_parsed *info,
-> > +                                   u64 features)
-> > +{
-> > +     u8 struct_v, struct_compat;
-> > +     u32 struct_len;
-> > +     u32 value_len;
-> > +
-> > +     ceph_decode_8_safe(p, end, struct_v, bad);
-> > +     ceph_decode_8_safe(p, end, struct_compat, bad);
-> > +     ceph_decode_32_safe(p, end, struct_len, bad);
-> > +     ceph_decode_32_safe(p, end, value_len, bad);
-> > +
-> > +     if (value_len == end - *p) {
-> > +       info->xattr_info.xattr_value = *p;
-> > +       info->xattr_info.xattr_value_len = end - *p;
-> > +       *p = end;
-> > +       return info->xattr_info.xattr_value_len;
-> > +     }
-> > +bad:
-> > +     return -EIO;
-> > +}
-> > +
-> >  /*
-> >   * parse extra results
-> >   */
-> > @@ -570,6 +593,8 @@ static int parse_reply_info_extra(void **p, void *end,
-> >               return parse_reply_info_readdir(p, end, info, features);
-> >       else if (op == CEPH_MDS_OP_CREATE)
-> >               return parse_reply_info_create(p, end, info, features, s);
-> > +     else if (op == CEPH_MDS_OP_GETVXATTR)
-> > +             return parse_reply_info_getvxattr(p, end, info, features);
-> >       else
-> >               return -EIO;
-> >  }
-> > @@ -615,7 +640,7 @@ static int parse_reply_info(struct ceph_mds_session *s, struct ceph_msg *msg,
-> >
-> >       if (p != end)
-> >               goto bad;
-> > -     return 0;
-> > +     return err;
-> >
-> >  bad:
-> >       err = -EIO;
-> > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> > index 97c7f7bfa55f..f2a8e5af3c2e 100644
-> > --- a/fs/ceph/mds_client.h
-> > +++ b/fs/ceph/mds_client.h
-> > @@ -29,8 +29,10 @@ enum ceph_feature_type {
-> >       CEPHFS_FEATURE_MULTI_RECONNECT,
-> >       CEPHFS_FEATURE_DELEG_INO,
-> >       CEPHFS_FEATURE_METRIC_COLLECT,
-> > +     CEPHFS_FEATURE_ALTERNATE_NAME,
-> > +     CEPHFS_FEATURE_GETVXATTR,
-> >
-> > -     CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_METRIC_COLLECT,
-> > +     CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_GETVXATTR,
-> >  };
-> >
-> >  /*
-> > @@ -45,6 +47,8 @@ enum ceph_feature_type {
-> >       CEPHFS_FEATURE_MULTI_RECONNECT,         \
-> >       CEPHFS_FEATURE_DELEG_INO,               \
-> >       CEPHFS_FEATURE_METRIC_COLLECT,          \
-> > +     CEPHFS_FEATURE_ALTERNATE_NAME,          \
-> > +     CEPHFS_FEATURE_GETVXATTR,               \
-> >                                               \
-> >       CEPHFS_FEATURE_MAX,                     \
-> >  }
-> > @@ -100,6 +104,11 @@ struct ceph_mds_reply_dir_entry {
-> >       loff_t                        offset;
-> >  };
-> >
-> > +struct ceph_mds_reply_xattr {
-> > +     char *xattr_value;
-> > +     size_t xattr_value_len;
-> > +};
-> > +
-> >  /*
-> >   * parsed info about an mds reply, including information about
-> >   * either: 1) the target inode and/or its parent directory and dentry,
-> > @@ -115,6 +124,7 @@ struct ceph_mds_reply_info_parsed {
-> >       char                          *dname;
-> >       u32                           dname_len;
-> >       struct ceph_mds_reply_lease   *dlease;
-> > +     struct ceph_mds_reply_xattr   xattr_info;
-> >
-> >       /* extra */
-> >       union {
-> > diff --git a/fs/ceph/strings.c b/fs/ceph/strings.c
-> > index 573bb9556fb5..e36e8948e728 100644
-> > --- a/fs/ceph/strings.c
-> > +++ b/fs/ceph/strings.c
-> > @@ -60,6 +60,7 @@ const char *ceph_mds_op_name(int op)
-> >       case CEPH_MDS_OP_LOOKUPINO:  return "lookupino";
-> >       case CEPH_MDS_OP_LOOKUPNAME:  return "lookupname";
-> >       case CEPH_MDS_OP_GETATTR:  return "getattr";
-> > +     case CEPH_MDS_OP_GETVXATTR:  return "getvxattr";
-> >       case CEPH_MDS_OP_SETXATTR: return "setxattr";
-> >       case CEPH_MDS_OP_SETATTR: return "setattr";
-> >       case CEPH_MDS_OP_RMXATTR: return "rmxattr";
-> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> > index ac331aa07cfa..a627fa69668e 100644
-> > --- a/fs/ceph/super.h
-> > +++ b/fs/ceph/super.h
-> > @@ -1043,6 +1043,7 @@ static inline bool ceph_inode_is_shutdown(struct inode *inode)
-> >
-> >  /* xattr.c */
-> >  int __ceph_setxattr(struct inode *, const char *, const void *, size_t, int);
-> > +int ceph_do_getvxattr(struct inode *inode, const char *name, void *value, size_t size);
-> >  ssize_t __ceph_getxattr(struct inode *, const char *, void *, size_t);
-> >  extern ssize_t ceph_listxattr(struct dentry *, char *, size_t);
-> >  extern struct ceph_buffer *__ceph_build_xattrs_blob(struct ceph_inode_info *ci);
-> > diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> > index fcf7dfdecf96..dc32876a541a 100644
-> > --- a/fs/ceph/xattr.c
-> > +++ b/fs/ceph/xattr.c
-> > @@ -918,6 +918,30 @@ static inline int __get_request_mask(struct inode *in) {
-> >       return mask;
-> >  }
-> >
-> > +/* check if the entire cluster supports the given feature */
-> > +static inline bool ceph_cluster_has_feature(struct inode *inode, int feature_bit)
-> > +{
-> > +     int64_t i;
-> > +     struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-> > +     struct ceph_mds_session **sessions = fsc->mdsc->sessions;
-> > +     int64_t num_sessions = atomic_read(&fsc->mdsc->num_sessions);
-> > +
-> > +     if (fsc->mdsc->stopping)
-> > +             return false;
-> > +
-> > +     if (!sessions)
-> > +             return false;
-> > +
-> > +     for (i = 0; i < num_sessions; i++) {
-> > +             struct ceph_mds_session *session = sessions[i];
-> > +             if (!session)
-> > +                     return false;
-> > +             if (!test_bit(feature_bit, &session->s_features))
-> > +                     return false;
->
-> What guarantee do you have that "session" will still be a valid pointer
-> by the time you get to dereferencing it here?
->
-> I think this loop needs some locking (as Xiubo pointed out in his
-> earlier review).
+If a ceph file is made up of inline data, uninline that in the ceph_open()
+rather than in ceph_page_mkwrite(), ceph_write_iter(), ceph_fallocate() or
+ceph_write_begin().
 
-yeah, thanks for pointing that out
-I'm trying to wrap the entire processing of this function inside a
-mutex_unlock(&mdsc->mutex) ... but the mount command fails
-to mount if done so. If code is not wrapped in mutex lock...unlock
-then the mount is successful.
-It's a surprise that the code doesn't deadlock under the mutex
-lock...unlock and gracefully fails with a message.
-Any hints on what I could be missing.
+This makes it easier to convert to using the netfs library for VM write
+hooks.
 
->
-> > +     }
-> > +     return true;
-> > +}
-> > +
-> >  ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
-> >                     size_t size)
-> >  {
-> > @@ -927,6 +951,16 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
-> >       int req_mask;
-> >       ssize_t err;
-> >
-> > +     if (!strncmp(name, XATTR_CEPH_PREFIX, XATTR_CEPH_PREFIX_LEN) &&
-> > +         ceph_cluster_has_feature(inode, CEPHFS_FEATURE_GETVXATTR)) {
-> > +             err = ceph_do_getvxattr(inode, name, value, size);
-> > +             /* if cluster doesn't support xattr, we try to service it
-> > +              * locally
-> > +              */
-> > +             if (err >= 0)
-> > +                     return err;
-> > +     }
-> > +
->
-> What is this? Why not always service this locally?
+Changes
+=======
+ver #2:
+ - Removed the uninline-handling code from ceph_write_begin() also.
 
-vxattr handling is planned to be moved to the MDS side.
-As I've pointed out to Xiubo, there's a few new things that have been done for
-layout vxattr management. Also, as per your original tracker, ceph.dir.pin*
-can't be handled locally.
-getvxattr() currently handles:
-1. ceph.dir.layout*
-2. ceph.file.layout*
-3. ceph.dir.pin*
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: ceph-devel@vger.kernel.org
+---
 
-If kclient is new and the cluster is old, then layout vxattr will be
-handled the old
-way, i.e. locally. ceph.dir.pin* will remain inaccessible.
+ fs/ceph/addr.c  |   97 +++++++++++++------------------------------------------
+ fs/ceph/file.c  |   28 +++++++++-------
+ fs/ceph/super.h |    2 +
+ 3 files changed, 40 insertions(+), 87 deletions(-)
 
->
-> >       /* let's see if a virtual xattr was requested */
-> >       vxattr = ceph_match_vxattr(inode, name);
-> >       if (vxattr) {
-> > diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-> > index 7ad6c3d0db7d..66db21ac5f0c 100644
-> > --- a/include/linux/ceph/ceph_fs.h
-> > +++ b/include/linux/ceph/ceph_fs.h
-> > @@ -328,6 +328,7 @@ enum {
-> >       CEPH_MDS_OP_LOOKUPPARENT = 0x00103,
-> >       CEPH_MDS_OP_LOOKUPINO  = 0x00104,
-> >       CEPH_MDS_OP_LOOKUPNAME = 0x00105,
-> > +     CEPH_MDS_OP_GETVXATTR  = 0x00106,
-> >
-> >       CEPH_MDS_OP_SETXATTR   = 0x01105,
-> >       CEPH_MDS_OP_RMXATTR    = 0x01106,
->
-> --
-> Jeff Layton <jlayton@kernel.org>
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index c98e5238a1b6..ef1caa43b521 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1274,45 +1274,11 @@ static int ceph_write_begin(struct file *file, struct address_space *mapping,
+ 			    struct page **pagep, void **fsdata)
+ {
+ 	struct inode *inode = file_inode(file);
+-	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct folio *folio = NULL;
+-	pgoff_t index = pos >> PAGE_SHIFT;
+ 	int r;
+ 
+-	/*
+-	 * Uninlining should have already been done and everything updated, EXCEPT
+-	 * for inline_version sent to the MDS.
+-	 */
+-	if (ci->i_inline_version != CEPH_INLINE_NONE) {
+-		unsigned int fgp_flags = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE;
+-		if (aop_flags & AOP_FLAG_NOFS)
+-			fgp_flags |= FGP_NOFS;
+-		folio = __filemap_get_folio(mapping, index, fgp_flags,
+-					    mapping_gfp_mask(mapping));
+-		if (!folio)
+-			return -ENOMEM;
+-
+-		/*
+-		 * The inline_version on a new inode is set to 1. If that's the
+-		 * case, then the folio is brand new and isn't yet Uptodate.
+-		 */
+-		r = 0;
+-		if (index == 0 && ci->i_inline_version != 1) {
+-			if (!folio_test_uptodate(folio)) {
+-				WARN_ONCE(1, "ceph: write_begin called on still-inlined inode (inline_version %llu)!\n",
+-					  ci->i_inline_version);
+-				r = -EINVAL;
+-			}
+-			goto out;
+-		}
+-		zero_user_segment(&folio->page, 0, folio_size(folio));
+-		folio_mark_uptodate(folio);
+-		goto out;
+-	}
+-
+ 	r = netfs_write_begin(file, inode->i_mapping, pos, len, 0, &folio, NULL,
+ 			      &ceph_netfs_read_ops, NULL);
+-out:
+ 	if (r == 0)
+ 		folio_wait_fscache(folio);
+ 	if (r < 0) {
+@@ -1508,19 +1474,6 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+ 	sb_start_pagefault(inode->i_sb);
+ 	ceph_block_sigs(&oldset);
+ 
+-	if (ci->i_inline_version != CEPH_INLINE_NONE) {
+-		struct page *locked_page = NULL;
+-		if (off == 0) {
+-			lock_page(page);
+-			locked_page = page;
+-		}
+-		err = ceph_uninline_data(vma->vm_file, locked_page);
+-		if (locked_page)
+-			unlock_page(locked_page);
+-		if (err < 0)
+-			goto out_free;
+-	}
+-
+ 	if (off + thp_size(page) <= size)
+ 		len = thp_size(page);
+ 	else
+@@ -1645,13 +1598,14 @@ void ceph_fill_inline_data(struct inode *inode, struct page *locked_page,
+ 	}
+ }
+ 
+-int ceph_uninline_data(struct file *filp, struct page *locked_page)
++int ceph_uninline_data(struct file *file)
+ {
+-	struct inode *inode = file_inode(filp);
++	struct inode *inode = file_inode(file);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+ 	struct ceph_osd_request *req;
+-	struct page *page = NULL;
++	struct folio *folio = NULL;
++	struct page *pages[1];
+ 	u64 len, inline_version;
+ 	int err = 0;
+ 	bool from_pagecache = false;
+@@ -1667,34 +1621,30 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+ 	    inline_version == CEPH_INLINE_NONE)
+ 		goto out;
+ 
+-	if (locked_page) {
+-		page = locked_page;
+-		WARN_ON(!PageUptodate(page));
+-	} else if (ceph_caps_issued(ci) &
+-		   (CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO)) {
+-		page = find_get_page(inode->i_mapping, 0);
+-		if (page) {
+-			if (PageUptodate(page)) {
++	if (ceph_caps_issued(ci) & (CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO)) {
++		folio = filemap_get_folio(inode->i_mapping, 0);
++		if (folio) {
++			if (folio_test_uptodate(folio)) {
+ 				from_pagecache = true;
+-				lock_page(page);
++				folio_lock(folio);
+ 			} else {
+-				put_page(page);
+-				page = NULL;
++				folio_put(folio);
++				folio = NULL;
+ 			}
+ 		}
+ 	}
+ 
+-	if (page) {
++	if (folio) {
+ 		len = i_size_read(inode);
+-		if (len > PAGE_SIZE)
+-			len = PAGE_SIZE;
++		if (len >  folio_size(folio))
++			len = folio_size(folio);
+ 	} else {
+-		page = __page_cache_alloc(GFP_NOFS);
+-		if (!page) {
++		folio = filemap_alloc_folio(GFP_NOFS, 0);
++		if (!folio) {
+ 			err = -ENOMEM;
+ 			goto out;
+ 		}
+-		err = __ceph_do_getattr(inode, page,
++		err = __ceph_do_getattr(inode, folio_page(folio, 0),
+ 					CEPH_STAT_CAP_INLINE_DATA, true);
+ 		if (err < 0) {
+ 			/* no inline data */
+@@ -1732,7 +1682,8 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+ 		goto out;
+ 	}
+ 
+-	osd_req_op_extent_osd_data_pages(req, 1, &page, len, 0, false, false);
++	pages[0] = folio_page(folio, 0);
++	osd_req_op_extent_osd_data_pages(req, 1, pages, len, 0, false, false);
+ 
+ 	{
+ 		__le64 xattr_buf = cpu_to_le64(inline_version);
+@@ -1769,12 +1720,10 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+ 	if (err == -ECANCELED)
+ 		err = 0;
+ out:
+-	if (page && page != locked_page) {
+-		if (from_pagecache) {
+-			unlock_page(page);
+-			put_page(page);
+-		} else
+-			__free_pages(page, 0);
++	if (folio) {
++		if (from_pagecache)
++			folio_unlock(folio);
++		folio_put(folio);
+ 	}
+ 
+ 	dout("uninline_data %p %llx.%llx inline_version %llu = %d\n",
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 9d9304e712d9..d1d28220f691 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -205,6 +205,7 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
+ {
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_file_info *fi;
++	int ret;
+ 
+ 	dout("%s %p %p 0%o (%s)\n", __func__, inode, file,
+ 			inode->i_mode, isdir ? "dir" : "regular");
+@@ -235,7 +236,22 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
+ 	INIT_LIST_HEAD(&fi->rw_contexts);
+ 	fi->filp_gen = READ_ONCE(ceph_inode_to_client(inode)->filp_gen);
+ 
++	if ((file->f_mode & FMODE_WRITE) &&
++	    ci->i_inline_version != CEPH_INLINE_NONE) {
++		ret = ceph_uninline_data(file);
++		if (ret < 0)
++			goto error;
++	}
++
+ 	return 0;
++
++error:
++	ceph_fscache_unuse_cookie(inode, file->f_mode & FMODE_WRITE);
++	ceph_put_fmode(ci, fi->fmode, 1);
++	kmem_cache_free(ceph_file_cachep, fi);
++	/* wake up anyone waiting for caps on this inode */
++	wake_up_all(&ci->i_cap_wq);
++	return ret;
+ }
+ 
+ /*
+@@ -1763,12 +1779,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (err)
+ 		goto out;
+ 
+-	if (ci->i_inline_version != CEPH_INLINE_NONE) {
+-		err = ceph_uninline_data(file, NULL);
+-		if (err < 0)
+-			goto out;
+-	}
+-
+ 	dout("aio_write %p %llx.%llx %llu~%zd getting caps. i_size %llu\n",
+ 	     inode, ceph_vinop(inode), pos, count, i_size_read(inode));
+ 	if (fi->fmode & CEPH_FILE_MODE_LAZY)
+@@ -2094,12 +2104,6 @@ static long ceph_fallocate(struct file *file, int mode,
+ 		goto unlock;
+ 	}
+ 
+-	if (ci->i_inline_version != CEPH_INLINE_NONE) {
+-		ret = ceph_uninline_data(file, NULL);
+-		if (ret < 0)
+-			goto unlock;
+-	}
+-
+ 	size = i_size_read(inode);
+ 
+ 	/* Are we punching a hole beyond EOF? */
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index d0142cc5c41b..f1cec05e4eb8 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -1207,7 +1207,7 @@ extern void __ceph_touch_fmode(struct ceph_inode_info *ci,
+ /* addr.c */
+ extern const struct address_space_operations ceph_aops;
+ extern int ceph_mmap(struct file *file, struct vm_area_struct *vma);
+-extern int ceph_uninline_data(struct file *filp, struct page *locked_page);
++extern int ceph_uninline_data(struct file *file);
+ extern int ceph_pool_perm_check(struct inode *inode, int need);
+ extern void ceph_pool_perm_destroy(struct ceph_mds_client* mdsc);
+ int ceph_purge_inode_cap(struct inode *inode, struct ceph_cap *cap, bool *invalidate);
+
+
