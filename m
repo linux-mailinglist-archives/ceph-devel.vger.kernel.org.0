@@ -2,80 +2,66 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD9C6490BB3
-	for <lists+ceph-devel@lfdr.de>; Mon, 17 Jan 2022 16:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 827C9490BF2
+	for <lists+ceph-devel@lfdr.de>; Mon, 17 Jan 2022 16:57:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240472AbiAQPpI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 17 Jan 2022 10:45:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55728 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237294AbiAQPpH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 17 Jan 2022 10:45:07 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FCDBC061574;
-        Mon, 17 Jan 2022 07:45:07 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S235236AbiAQP5z (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 17 Jan 2022 10:57:55 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:46368 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235153AbiAQP5z (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>);
+        Mon, 17 Jan 2022 10:57:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1642435074;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GlW7wziCR/iSWHom9gifGt8Wr9zVXy1LW82p3EUsHAw=;
+        b=CsaGSOq409yGID3CA/BV5SY2LVCO+Mg8pPwYzWmYaYtcRgajnVxdzDsNMIQFpzisBO1RUu
+        ZTaz5doRKrfnxiyZNXyzsvA32f/Ekqvsxj9biPbfWpU4dcXLuZbnnJ9bcKj0stXIgEaVmt
+        /+la6tZpuyeBI5zQPoiunNsx0IlUYFY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-100-ZVuekCvMPoSkuz0VL21--Q-1; Mon, 17 Jan 2022 10:57:49 -0500
+X-MC-Unique: ZVuekCvMPoSkuz0VL21--Q-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F183560FE6;
-        Mon, 17 Jan 2022 15:45:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D570BC36AE3;
-        Mon, 17 Jan 2022 15:45:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642434306;
-        bh=9pS77Ri4doiZRhZlhU/7ZE+74d7wP8KT6W7H2Zwu2vM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=UrFDJYhG9TuIwXcPfsT9tCNBOKeCZAgUCBsrJfiZXFBYr68rdsG/bmg2fn3H765NM
-         Fnw29RTjnjTJe7jNP96v9THDT56w2gNlX0aBg0mPziU64/+dDfVLsfRoR/NOZW0KUy
-         XOyPZLg0EBoWHEDixi9YVdtAXe2q6LGLKgBm5ircBLIzemsmk+S8FvxeljEsKQ1F0y
-         9hlxAXBUKBO4rOgz2mbW8nBx6wx6/E2bq+EU/ff4v3O4B/ydPln5Ls0UVv89nqOQH3
-         kYVdeZOtieYbnhy/9cNs7Rqz5/evg89pVNGGLA8QaW9gDMNCDjd30HwV7b5Oz01fnz
-         s1TPAgp/4pUAA==
-Message-ID: <9c1fac5b5a11b5960b291f44f2c6baf56965b301.camel@kernel.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 440F0100E337;
+        Mon, 17 Jan 2022 15:57:43 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 45B687BB67;
+        Mon, 17 Jan 2022 15:57:42 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YeVzZZLcsX5Krcjh@casper.infradead.org>
+References: <YeVzZZLcsX5Krcjh@casper.infradead.org> <164242347319.2763588.2514920080375140879.stgit@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, ceph-devel@vger.kernel.org,
+        jlayton@kernel.org, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH 1/3] ceph: Uninline the data on a file opened for writing
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Mon, 17 Jan 2022 10:45:04 -0500
-In-Reply-To: <2807617.1642433067@warthog.procyon.org.uk>
-References: <240e60443076a84c0599ccd838bd09c97f4cc5f9.camel@kernel.org>
-         <164242347319.2763588.2514920080375140879.stgit@warthog.procyon.org.uk>
-         <YeVzZZLcsX5Krcjh@casper.infradead.org>
-         <2807617.1642433067@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.2 (3.42.2-1.fc35) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2811245.1642435061.1@warthog.procyon.org.uk>
+Date:   Mon, 17 Jan 2022 15:57:41 +0000
+Message-ID: <2811246.1642435061@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2022-01-17 at 15:24 +0000, David Howells wrote:
-> Jeff Layton <jlayton@kernel.org> wrote:
-> 
-> > On Mon, 2022-01-17 at 13:47 +0000, Matthew Wilcox wrote:
-> > > This all falls very much under "doing it the hard way", and quite
-> > > possibly under the "actively buggy with races" category.
-> > > 
-> > > read_mapping_folio() does what you want, as long as you pass 'filp'
-> > > as your 'void *data'.  I should fix that type ...
-> 
-> 
-> How much do we care about the case where we don't have either the
-> CEPH_CAP_FILE_CACHE or the CEPH_CAP_FILE_LAZYIO caps?  Is it possible just to
-> shove the page into the pagecache whatever we do?  At the moment there are two
-> threads, both of which get a page - one attached to the page cache, one not.
-> The rest is then common because from that point on, it doesn't matter where
-> the folio resides.
-> 
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Well, the protocol says that if you don't have CEPH_CAP_FILE_CACHE (Fc)
-then you're not allowed to do reads from the cache. I wouldn't care if
-we stuffed the page into the mapping anyway, but that could potentially
-affect mmap readers at the same time.
+> read_mapping_folio() does what you want, as long as you pass 'filp'
+> as your 'void *data'.  I should fix that type ...
 
-OTOH, mmap reads when we don't have Fc is somewhat racy anyway. Maybe it
-doesn't matter... 
--- 
-Jeff Layton <jlayton@kernel.org>
+Ah, but *can* I pass file in at that point?  It's true that I have a file* -
+but that's in the process of being set up.
+
+David
+
