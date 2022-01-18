@@ -2,69 +2,77 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CAFC49125E
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Jan 2022 00:30:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7C0F49202E
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Jan 2022 08:26:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235990AbiAQXad (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 17 Jan 2022 18:30:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47628 "EHLO
+        id S232868AbiARH0I (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 18 Jan 2022 02:26:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235399AbiAQXac (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 17 Jan 2022 18:30:32 -0500
-Received: from mail-oo1-xc2e.google.com (mail-oo1-xc2e.google.com [IPv6:2607:f8b0:4864:20::c2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 767D0C061574
-        for <ceph-devel@vger.kernel.org>; Mon, 17 Jan 2022 15:30:28 -0800 (PST)
-Received: by mail-oo1-xc2e.google.com with SMTP id l7-20020a4a2707000000b002dde197c749so5323320oof.10
-        for <ceph-devel@vger.kernel.org>; Mon, 17 Jan 2022 15:30:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=z7S+WoAeewe+evENxRmugDyi2UMRp34iK32ErxvL3wo=;
-        b=D3KlrePmrOEI1iNCdY23rb+3N2kJJI5/L2mB70XykVaRd25PR3fT5mWNq8wonDgg6q
-         ECVxWcoDiwMHw72l0Ko3U507EIcwq4I2x/f4BljRcFlzPbddELCuXi2h3c1jxsW3+7LL
-         SjkPP3YQLNdVQev/z57jwBcnzubCvGOO735xAQb65dNUY+UJ0z48ooJaLMXUyzZAC/cA
-         4ushwOgnSZ3lZi7CuYxm/6QXTxkj5Fv7sGPUxEU6NQThVBisZHjDWM87oqKs2E6bY43h
-         Gyj64toeKlo/vMYHY/D8BUnQstwMNBewXj+5jTxrOEd6DDx7nSMgLYzxoDbLX88FoKFK
-         U42A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=z7S+WoAeewe+evENxRmugDyi2UMRp34iK32ErxvL3wo=;
-        b=tJGJG2FDBbuocAF7LQgPQraVb8lpUe+mKic/EjeoNhv2Tb6DG3NUri/Fv3IaTlKBP4
-         fevFscNWs6iZwhg9hRSnD1vDNkwjwXeaVItmxvVLtdZ2ulhVpRWahzw6rMHzHoL7/RMe
-         xg522RjVbkDpyBueOjGkfcUtVvC6PViiIN7iGUiYsbbISgtMaN7TTSGTqKGHkbPmVihR
-         vnzrOUyXIQE9R1slX2aGbau+gJyg5aNoCjP4QQ635n9ZPmWsi+8BnEFKiSLsgUcu7s6+
-         gBGM0jmrSX36RAyiyg8SBiCAWOruxUufUe4eUeYLerWk8QsnP2MizkJlIW3RCGBnO6Q6
-         8uCA==
-X-Gm-Message-State: AOAM53050QI4FMDocWbTHZtcj3/+B6y1ru0ezVTT5kSlSjFmITuABniE
-        zzCDaCookJCdPz506+fTmNJBUAwkLEPPeqVhN2g=
-X-Google-Smtp-Source: ABdhPJw0J2sRsWUyMPFRomy1m+A9q632oELXoRXouEqs9anGxSLthLiwxWdJY1wGZoKscZ/MmCYQbmf1HtXA+faxdZQ=
-X-Received: by 2002:a4a:db96:: with SMTP id s22mr14565179oou.66.1642462227656;
- Mon, 17 Jan 2022 15:30:27 -0800 (PST)
+        with ESMTP id S229541AbiARH0I (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 18 Jan 2022 02:26:08 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2244C061574;
+        Mon, 17 Jan 2022 23:26:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=+dhYCXllEHNKm5Sc731XzwwsjVqJhcW4C4oj7NGz3M4=; b=TGajYPjm2XkqLBdJOhVzBzTwlB
+        boJ4d295sjI9UUInwlPKhDyuNoTCqGg0FQw18iEAahbV/VVb81mYPWPf2+b0qiATEyluQn27qsXLu
+        5EVgEHA+7ijXmvn4H9WVCyKxYjU5n2iMLOTjwqsd83+4PS4pEhBcGzUeq1dUTDUkcbQTongiSpChY
+        fMZaj3W15A+CXTQEIRuyROppX7fq6If8tvRdRgQkFWIaI+wN8ZUno+UKphp83Uu8eTqHUPFrbKJbF
+        AjzrmA/xEfJMnw5y3y5YjNzCJMWjtRHB0WCK6aAmH9OhkBqR/9ABbA+LAF3arRARXloUVo1Ubox1R
+        7bgznWDQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1n9iri-000afR-VI; Tue, 18 Jan 2022 07:25:14 +0000
+Date:   Mon, 17 Jan 2022 23:25:14 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cachefs@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        v9fs-developer@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Out of order read() completion and buffer filling beyond
+ returned amount
+Message-ID: <YeZrWoQY/3dKZHfT@infradead.org>
+References: <2752208.1642413437@warthog.procyon.org.uk>
+ <CAHk-=wjQG5HnwQD98z8de1EvRzDnebZxh=gQUVTKCn0DOp7PQw@mail.gmail.com>
+ <YeVvXToTxCsMzHZv@casper.infradead.org>
 MIME-Version: 1.0
-Received: by 2002:ac9:67d4:0:0:0:0:0 with HTTP; Mon, 17 Jan 2022 15:30:27
- -0800 (PST)
-Reply-To: salemchantal@mail.ee
-From:   MRS Salem Chantal Lawrence <mrs.minaabrune08@gmail.com>
-Date:   Mon, 17 Jan 2022 15:30:27 -0800
-Message-ID: <CACLMMrYyau2Y0WQDGyNz0e+5FQeC1ihv8xi23-8LrxiddbHbrg@mail.gmail.com>
-Subject: Dear Friend
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YeVvXToTxCsMzHZv@casper.infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Attention
+On Mon, Jan 17, 2022 at 01:30:05PM +0000, Matthew Wilcox wrote:
+> I think for DIO, you're sacrificing the entire buffer with any filesystem.
+> If the underlying file is split across multiple drives, or is even
+> just fragmented on a single drive, we'll submit multiple BIOs which
+> will complete independently (even for SCSI which writes sequentially;
+> never mind NVMe which can DMA blocks asynchronously).  It might be
+> more apparent in a networking situation where errors are more common,
+> but it's always been a possibility since Linux introduced DIO.
 
-
-You have Been Compensated with the sum of 4.6 million dollars in this
-United Nation the Payment will be issue into Atm Visa Card and send to you
-
-from the Santander Bank of Spain we need your address, Passport and your
-Whatsapp Number.
-
-
-THANKS
-MRS Salem Chantal Lawrence
+Yes.  Probably because of that we also never allow short reads or writes
+due to I/O errrors but always fail the whole I/O.
