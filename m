@@ -2,145 +2,459 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 01FBC49370F
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 Jan 2022 10:19:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12E2E493939
+	for <lists+ceph-devel@lfdr.de>; Wed, 19 Jan 2022 12:07:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352981AbiASJS0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 19 Jan 2022 04:18:26 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:32231 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1352968AbiASJSY (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Wed, 19 Jan 2022 04:18:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1642583904;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qsHFjR3VZGRzuJsXGrmQKYKJ/CFlVyV1IKZ/8UEEbWk=;
-        b=WAZrkR1vqYajbJ+FeM2Lw2xG44cOsqVwo9+BAkOzyrxWFaWOOnoOLBpqsHZ2ChYakDDYjZ
-        r4uB79PeIipNTxw/c3KCmcKqYMu8ShFEATyhJgZpJXRxUylb9wzP09QwCyelvS5G2pxuSa
-        H4z3xvGp6FgRkPfRZi+67EJijdoMU9o=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-315-GmWhYa85PziqVu9-iauLvg-1; Wed, 19 Jan 2022 04:18:20 -0500
-X-MC-Unique: GmWhYa85PziqVu9-iauLvg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1354017AbiASLHE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 19 Jan 2022 06:07:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55336 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1354020AbiASLG5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 19 Jan 2022 06:06:57 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51683C06173E;
+        Wed, 19 Jan 2022 03:06:57 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1B820814249;
-        Wed, 19 Jan 2022 09:18:18 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.165])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 163D27B9D6;
-        Wed, 19 Jan 2022 09:18:05 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <YeefizLOGt1Qf35o@infradead.org>
-References: <YeefizLOGt1Qf35o@infradead.org> <YebpktrcUZOlBHkZ@infradead.org> <164251396932.3435901.344517748027321142.stgit@warthog.procyon.org.uk> <164251409447.3435901.10092442643336534999.stgit@warthog.procyon.org.uk> <3613681.1642527614@warthog.procyon.org.uk>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
-        Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <smfrench@gmail.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        JeffleXu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/11] vfs, fscache: Add an IS_KERNEL_FILE() macro for the S_KERNEL_FILE flag
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D544661585;
+        Wed, 19 Jan 2022 11:06:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6516C004E1;
+        Wed, 19 Jan 2022 11:06:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642590416;
+        bh=+MGMJGjTC4l7GqQu8FamsDgxt/+lMgzDIYhR185T0tc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=AjOcw3r8KC8QR5pi1R5qyDWeyS2kkKDDwPog0BjgyvcrLQl09Ny67iRPNzD5c2gzb
+         crQ2SEqx1XLAcB4vtwOjUYBvCr6is+TMGkKQUu6e1qbu9tDwNg5m7frZj3NE8TJHJ+
+         nBXIaJIXCOliIZrG9DKtPiG4leATmDU7Vhqu3098u2kOQLm/BNvoFPOdEa8RhWMrLQ
+         8DG5hi4J9TRW8Z49f9k90t1xws7yTZ/EWUhcOJxLxBRa6W8RfEfmeF8n0569sKtSrn
+         BOdqkCh+iAtai3ouU3aR2y05X5hZC9rhqz9trMczuQuSyQ6eg4S2MS2/OYGAPXj318
+         qfIZ62xFMp0lg==
+Message-ID: <cd8a7a425d0ca09e817d7c480ce5dcfde55ebcef.camel@kernel.org>
+Subject: Re: [RFC PATCH v10 43/48] ceph: add read/modify/write to
+ ceph_sync_write
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, idryomov@gmail.com
+Date:   Wed, 19 Jan 2022 06:06:54 -0500
+In-Reply-To: <bc1b83ca-7979-2b5b-3f45-f0b2d969bfa6@redhat.com>
+References: <20220111191608.88762-1-jlayton@kernel.org>
+         <20220111191608.88762-44-jlayton@kernel.org>
+         <0992447d-3522-c5d5-5d4b-1875e9d3128f@redhat.com>
+         <bc1b83ca-7979-2b5b-3f45-f0b2d969bfa6@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.2 (3.42.2-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3765723.1642583885.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 19 Jan 2022 09:18:05 +0000
-Message-ID: <3765724.1642583885@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> wrote:
+On Wed, 2022-01-19 at 13:08 +0800, Xiubo Li wrote:
+> On 1/19/22 11:21 AM, Xiubo Li wrote:
+> > 
+> > On 1/12/22 3:16 AM, Jeff Layton wrote:
+> > > When doing a synchronous write on an encrypted inode, we have no
+> > > guarantee that the caller is writing crypto block-aligned data. When
+> > > that happens, we must do a read/modify/write cycle.
+> > > 
+> > > First, expand the range to cover complete blocks. If we had to change
+> > > the original pos or length, issue a read to fill the first and/or last
+> > > pages, and fetch the version of the object from the result.
+> > > 
+> > > We then copy data into the pages as usual, encrypt the result and issue
+> > > a write prefixed by an assertion that the version hasn't changed. If 
+> > > it has
+> > > changed then we restart the whole thing again.
+> > > 
+> > > If there is no object at that position in the file (-ENOENT), we prefix
+> > > the write on an exclusive create of the object instead.
+> > > 
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >   fs/ceph/file.c | 260 +++++++++++++++++++++++++++++++++++++++++++------
+> > >   1 file changed, 228 insertions(+), 32 deletions(-)
+> > > 
+> > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > > index a6305ad5519b..41766b2012e9 100644
+> > > --- a/fs/ceph/file.c
+> > > +++ b/fs/ceph/file.c
+> > > @@ -1468,18 +1468,16 @@ ceph_sync_write(struct kiocb *iocb, struct 
+> > > iov_iter *from, loff_t pos,
+> > >       struct inode *inode = file_inode(file);
+> > >       struct ceph_inode_info *ci = ceph_inode(inode);
+> > >       struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+> > > -    struct ceph_vino vino;
+> > > +    struct ceph_osd_client *osdc = &fsc->client->osdc;
+> > >       struct ceph_osd_request *req;
+> > >       struct page **pages;
+> > >       u64 len;
+> > >       int num_pages;
+> > >       int written = 0;
+> > > -    int flags;
+> > >       int ret;
+> > >       bool check_caps = false;
+> > >       struct timespec64 mtime = current_time(inode);
+> > >       size_t count = iov_iter_count(from);
+> > > -    size_t off;
+> > >         if (ceph_snap(file_inode(file)) != CEPH_NOSNAP)
+> > >           return -EROFS;
+> > > @@ -1499,70 +1497,267 @@ ceph_sync_write(struct kiocb *iocb, struct 
+> > > iov_iter *from, loff_t pos,
+> > >       if (ret < 0)
+> > >           dout("invalidate_inode_pages2_range returned %d\n", ret);
+> > >   -    flags = /* CEPH_OSD_FLAG_ORDERSNAP | */ CEPH_OSD_FLAG_WRITE;
+> > > -
+> > >       while ((len = iov_iter_count(from)) > 0) {
+> > >           size_t left;
+> > >           int n;
+> > > +        u64 write_pos = pos;
+> > > +        u64 write_len = len;
+> > > +        u64 objnum, objoff;
+> > > +        u32 xlen;
+> > > +        u64 assert_ver;
+> > > +        bool rmw;
+> > > +        bool first, last;
+> > > +        struct iov_iter saved_iter = *from;
+> > > +        size_t off;
+> > > +
+> > > +        fscrypt_adjust_off_and_len(inode, &write_pos, &write_len);
+> > > +
+> > > +        /* clamp the length to the end of first object */
+> > > +        ceph_calc_file_object_mapping(&ci->i_layout, write_pos,
+> > > +                        write_len, &objnum, &objoff,
+> > > +                        &xlen);
+> > > +        write_len = xlen;
+> > > +
+> > > +        /* adjust len downward if it goes beyond current object */
+> > > +        if (pos + len > write_pos + write_len)
+> > > +            len = write_pos + write_len - pos;
+> > >   -        vino = ceph_vino(inode);
+> > > -        req = ceph_osdc_new_request(&fsc->client->osdc, &ci->i_layout,
+> > > -                        vino, pos, &len, 0, 1,
+> > > -                        CEPH_OSD_OP_WRITE, flags, snapc,
+> > > -                        ci->i_truncate_seq,
+> > > -                        ci->i_truncate_size,
+> > > -                        false);
+> > > -        if (IS_ERR(req)) {
+> > > -            ret = PTR_ERR(req);
+> > > -            break;
+> > > -        }
+> > > +        /*
+> > > +         * If we had to adjust the length or position to align with a
+> > > +         * crypto block, then we must do a read/modify/write cycle. We
+> > > +         * use a version assertion to redrive the thing if something
+> > > +         * changes in between.
+> > > +         */
+> > > +        first = pos != write_pos;
+> > > +        last = (pos + len) != (write_pos + write_len);
+> > > +        rmw = first || last;
+> > >   -        /* FIXME: express in FSCRYPT_BLOCK_SIZE units */
+> > > -        num_pages = calc_pages_for(pos, len);
+> > > +        /*
+> > > +         * The data is emplaced into the page as it would be if it 
+> > > were in
+> > > +         * an array of pagecache pages.
+> > > +         */
+> > > +        num_pages = calc_pages_for(write_pos, write_len);
+> > >           pages = ceph_alloc_page_vector(num_pages, GFP_KERNEL);
+> > >           if (IS_ERR(pages)) {
+> > >               ret = PTR_ERR(pages);
+> > > -            goto out;
+> > > +            break;
+> > > +        }
+> > > +
+> > > +        /* Do we need to preload the pages? */
+> > > +        if (rmw) {
+> > > +            u64 first_pos = write_pos;
+> > > +            u64 last_pos = (write_pos + write_len) - 
+> > > CEPH_FSCRYPT_BLOCK_SIZE;
+> > > +            u64 read_len = CEPH_FSCRYPT_BLOCK_SIZE;
+> > > +
+> > > +            /* We should only need to do this for encrypted inodes */
+> > > +            WARN_ON_ONCE(!IS_ENCRYPTED(inode));
+> > > +
+> > > +            /* No need to do two reads if first and last blocks are 
+> > > same */
+> > > +            if (first && last_pos == first_pos)
+> > > +                last = false;
+> > > +
+> > > +            /*
+> > > +             * Allocate a read request for one or two extents, 
+> > > depending
+> > > +             * on how the request was aligned.
+> > > +             */
+> > > +            req = ceph_osdc_new_request(osdc, &ci->i_layout,
+> > > +                    ci->i_vino, first ? first_pos : last_pos,
+> > > +                    &read_len, 0, (first && last) ? 2 : 1,
+> > > +                    CEPH_OSD_OP_READ, CEPH_OSD_FLAG_READ,
+> > > +                    NULL, ci->i_truncate_seq,
+> > > +                    ci->i_truncate_size, false);
+> > > +            if (IS_ERR(req)) {
+> > > +                ceph_release_page_vector(pages, num_pages);
+> > > +                ret = PTR_ERR(req);
+> > > +                break;
+> > > +            }
+> > > +
+> > > +            /* Something is misaligned! */
+> > > +            if (read_len != CEPH_FSCRYPT_BLOCK_SIZE) {
+> > > +                ret = -EIO;
+> > > +                break;
+> > > +            }
+> > 
+> > Do we need to call "ceph_release_page_vector()" here ?
+> > 
+> > 
+> > 
+> > > +
+> > > +            /* Add extent for first block? */
+> > > +            if (first)
+> > > +                osd_req_op_extent_osd_data_pages(req, 0, pages,
+> > > +                             CEPH_FSCRYPT_BLOCK_SIZE,
+> > > +                             offset_in_page(first_pos),
+> > > +                             false, false);
+> > > +
+> > > +            /* Add extent for last block */
+> > > +            if (last) {
+> > > +                /* Init the other extent if first extent has been 
+> > > used */
+> > > +                if (first) {
+> > > +                    osd_req_op_extent_init(req, 1, CEPH_OSD_OP_READ,
+> > > +                            last_pos, CEPH_FSCRYPT_BLOCK_SIZE,
+> > > +                            ci->i_truncate_size,
+> > > +                            ci->i_truncate_seq);
+> > > +                }
+> > > +
+> > > +                osd_req_op_extent_osd_data_pages(req, first ? 1 : 0,
+> > > +                            &pages[num_pages - 1],
+> > > +                            CEPH_FSCRYPT_BLOCK_SIZE,
+> > > +                            offset_in_page(last_pos),
+> > > +                            false, false);
+> > > +            }
+> > > +
+> > > +            ret = ceph_osdc_start_request(osdc, req, false);
+> > > +            if (!ret)
+> > > +                ret = ceph_osdc_wait_request(osdc, req);
+> > > +
+> > > +            /* FIXME: length field is wrong if there are 2 extents */
+> > > + ceph_update_read_metrics(&fsc->mdsc->metric,
+> > > +                         req->r_start_latency,
+> > > +                         req->r_end_latency,
+> > > +                         read_len, ret);
+> > > +
+> > > +            /* Ok if object is not already present */
+> > > +            if (ret == -ENOENT) {
+> > > +                /*
+> > > +                 * If there is no object, then we can't assert
+> > > +                 * on its version. Set it to 0, and we'll use an
+> > > +                 * exclusive create instead.
+> > > +                 */
+> > > +                ceph_osdc_put_request(req);
+> > > +                assert_ver = 0;
+> > > +                ret = 0;
+> > > +
+> > > +                /*
+> > > +                 * zero out the soon-to-be uncopied parts of the
+> > > +                 * first and last pages.
+> > > +                 */
+> > > +                if (first)
+> > > +                    zero_user_segment(pages[0], 0,
+> > 
+> > The pages should already be released in "ceph_osdc_put_request()" ?
+> > 
+> > 
+> > > + offset_in_page(first_pos));
+> > > +                if (last)
+> > > +                    zero_user_segment(pages[num_pages - 1],
+> > > +                              offset_in_page(last_pos),
+> > > +                              PAGE_SIZE);
+> > > +            } else {
+> > > +                /* Grab assert version. It must be non-zero. */
+> > > +                assert_ver = req->r_version;
+> > > +                WARN_ON_ONCE(ret > 0 && assert_ver == 0);
+> > > +
+> > > +                ceph_osdc_put_request(req);
+> > > +                if (ret < 0) {
+> > > +                    ceph_release_page_vector(pages, num_pages);
+> > 
+> > Shouldn't the pages are already released in "ceph_osdc_put_request()" ?
+> > 
+> > IMO you should put the request when you are breaking the while loop 
+> > and just before the next "ceph_osdc_new_request()" below.
+> > 
+> > 
+> Okay, I missed the "own_page" parameter, the caller is responsible to 
+> release it.
+> 
+> But you need to call the "ceph_release_page_vector()" when 
+> "ceph_fscrypt_decrypt_block_inplace()" fails below.
+> 
+> 
 
-> On Tue, Jan 18, 2022 at 05:40:14PM +0000, David Howells wrote:
-> > Christoph Hellwig <hch@infradead.org> wrote:
-> > =
 
-> > > On Tue, Jan 18, 2022 at 01:54:54PM +0000, David Howells wrote:
-> > > > Add an IS_KERNEL_FILE() macro to test the S_KERNEL_FILE inode flag=
- as is
-> > > > common practice for the other inode flags[1].
-> > > =
+Well spotted!
 
-> > > Please fix the flag to have a sensible name first, as the naming of =
-the
-> > > flag and this new helper is utterly wrong as we already discussed.
-> > =
+Yeah, own_pages is not set here because we need to continue working with
+the pages after the read completes. We do set it for the write, however,
+so we don't need to set it after that.
 
-> > And I suggested a new name, which you didn't comment on.
-> =
+I've fixed up the places you noted (and a couple of others) in my tree.
+I'll plan to re-push wip-fscrypt after I do some testing.
 
-> Again, look at the semantics of the flag:  The only thing it does in the
-> VFS is to prevent a rmdir.  So you might want to name it after that.
-> =
+Thanks!
 
-> Or in fact drop the flag entirely.  We don't have that kind of
-> protection for other in-kernel file use or important userspace daemons
-> either.  I can't see why cachefiles is the magic snowflake here that
-> suddenly needs semantics no one else has.
+> > 
+> > > +                    break;
+> > > +                }
+> > > +
+> > > +                if (first) {
+> > > +                    ret = ceph_fscrypt_decrypt_block_inplace(inode,
+> > > +                            pages[0],
+> > > +                            CEPH_FSCRYPT_BLOCK_SIZE,
+> > > +                            offset_in_page(first_pos),
+> > > +                            first_pos >> CEPH_FSCRYPT_BLOCK_SHIFT);
+> > > +                    if (ret < 0)
+> > > +                        break;
+> > > +                }
+> > > +                if (last) {
+> > > +                    ret = ceph_fscrypt_decrypt_block_inplace(inode,
+> > > +                            pages[num_pages - 1],
+> > > +                            CEPH_FSCRYPT_BLOCK_SIZE,
+> > > +                            offset_in_page(last_pos),
+> > > +                            last_pos >> CEPH_FSCRYPT_BLOCK_SHIFT);
+> > > +                    if (ret < 0)
+> > > +                        break;
+> > > +                }
+> > > +            }
+> > >           }
+> > >             left = len;
+> > > -        off = pos & ~CEPH_FSCRYPT_BLOCK_MASK;
+> > > +        off = offset_in_page(pos);
+> > >           for (n = 0; n < num_pages; n++) {
+> > > -            size_t plen = min_t(size_t, left, 
+> > > CEPH_FSCRYPT_BLOCK_SIZE - off);
+> > > +            size_t plen = min_t(size_t, left, PAGE_SIZE - off);
+> > > +
+> > > +            /* copy the data */
+> > >               ret = copy_page_from_iter(pages[n], off, plen, from);
+> > > -            off = 0;
+> > >               if (ret != plen) {
+> > >                   ret = -EFAULT;
+> > >                   break;
+> > >               }
+> > > +            off = 0;
+> > >               left -= ret;
+> > >           }
+> > > -
+> > >           if (ret < 0) {
+> > > +            dout("sync_write write failed with %d\n", ret);
+> > >               ceph_release_page_vector(pages, num_pages);
+> > > -            goto out;
+> > > +            break;
+> > >           }
+> > >   -        req->r_inode = inode;
+> > > +        if (IS_ENCRYPTED(inode)) {
+> > > +            ret = ceph_fscrypt_encrypt_pages(inode, pages,
+> > > +                             write_pos, write_len,
+> > > +                             GFP_KERNEL);
+> > > +            if (ret < 0) {
+> > > +                dout("encryption failed with %d\n", ret);
+> 
+> And here ?
+> 
+> 
+> > > +                break;
+> > > +            }
+> > > +        }
+> > >   -        osd_req_op_extent_osd_data_pages(req, 0, pages, len,
+> > > -                         pos & ~CEPH_FSCRYPT_BLOCK_MASK,
+> > > -                         false, true);
+> > 
+> > The pages have already been released, you need to allocate new pages 
+> > again here.
+> > 
+> > > +        req = ceph_osdc_new_request(osdc, &ci->i_layout,
+> > > +                        ci->i_vino, write_pos, &write_len,
+> > > +                        rmw ? 1 : 0, rmw ? 2 : 1,
+> > > +                        CEPH_OSD_OP_WRITE,
+> > > +                        CEPH_OSD_FLAG_WRITE,
+> > > +                        snapc, ci->i_truncate_seq,
+> > > +                        ci->i_truncate_size, false);
+> > > +        if (IS_ERR(req)) {
+> > > +            ret = PTR_ERR(req);
+> > > +            ceph_release_page_vector(pages, num_pages);
+> > > +            break;
+> > > +        }
+> > >   +        dout("sync_write write op %lld~%llu\n", write_pos, 
+> > > write_len);
+> > > +        osd_req_op_extent_osd_data_pages(req, rmw ? 1 : 0, pages, 
+> > > write_len,
+> > > +                         offset_in_page(write_pos), false,
+> > > +                         true);
+> > > +        req->r_inode = inode;
+> > >           req->r_mtime = mtime;
+> > > -        ret = ceph_osdc_start_request(&fsc->client->osdc, req, false);
+> > > +
+> > > +        /* Set up the assertion */
+> > > +        if (rmw) {
+> > > +            /*
+> > > +             * Set up the assertion. If we don't have a version number,
+> > > +             * then the object doesn't exist yet. Use an exclusive 
+> > > create
+> > > +             * instead of a version assertion in that case.
+> > > +             */
+> > > +            if (assert_ver) {
+> > > +                osd_req_op_init(req, 0, CEPH_OSD_OP_ASSERT_VER, 0);
+> > > +                req->r_ops[0].assert_ver.ver = assert_ver;
+> > > +            } else {
+> > > +                osd_req_op_init(req, 0, CEPH_OSD_OP_CREATE,
+> > > +                        CEPH_OSD_OP_FLAG_EXCL);
+> > > +            }
+> > > +        }
+> > > +
+> > > +        ret = ceph_osdc_start_request(osdc, req, false);
+> > >           if (!ret)
+> > > -            ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
+> > > +            ret = ceph_osdc_wait_request(osdc, req);
+> > > ceph_update_write_metrics(&fsc->mdsc->metric, req->r_start_latency,
+> > >                         req->r_end_latency, len, ret);
+> > > -out:
+> > >           ceph_osdc_put_request(req);
+> > >           if (ret != 0) {
+> > > +            dout("sync_write osd write returned %d\n", ret);
+> > > +            /* Version changed! Must re-do the rmw cycle */
+> > > +            if ((assert_ver && (ret == -ERANGE || ret == 
+> > > -EOVERFLOW)) ||
+> > > +                 (!assert_ver && ret == -EEXIST)) {
+> > > +                /* We should only ever see this on a rmw */
+> > > +                WARN_ON_ONCE(!rmw);
+> > > +
+> > > +                /* The version should never go backward */
+> > > +                WARN_ON_ONCE(ret == -EOVERFLOW);
+> > > +
+> > > +                *from = saved_iter;
+> > > +
+> > > +                /* FIXME: limit number of times we loop? */
+> > > +                continue;
+> > > +            }
+> > >               ceph_set_error_write(ci);
+> > >               break;
+> > >           }
+> > > -
+> > >           ceph_clear_error_write(ci);
+> > >           pos += len;
+> > >           written += len;
+> > > @@ -1580,6 +1775,7 @@ ceph_sync_write(struct kiocb *iocb, struct 
+> > > iov_iter *from, loff_t pos,
+> > >           ret = written;
+> > >           iocb->ki_pos = pos;
+> > >       }
+> > > +    dout("sync_write returning %d\n", ret);
+> > >       return ret;
+> > >   }
+> 
 
-The flag cannot just be dropped - it's an important part of the interactio=
-n
-with cachefilesd with regard to culling.  Culling to free up space is
-offloaded to userspace rather than being done within the kernel.
-
-Previously, cachefiles, the kernel module, had to maintain a huge tree of
-records of every backing inode that it was currently using so that it coul=
-d
-forbid cachefilesd to cull one when cachefilesd asked.  I've reduced that =
-to a
-single bit flag on the inode struct, thereby saving both memory and time. =
- You
-can argue whether it's worth sacrificing an inode flag bit for that, but t=
-he
-flag can be reused for any other kernel service that wants to similarly ma=
-rk
-an inode in use.
-
-Further, it's used as a mark to prevent cachefiles accidentally using an i=
-node
-twice - say someone misconfigures a second cache overlapping the first - a=
-nd,
-again, this works if some other kernel driver wants to mark inode it is us=
-ing
-in use.  Cachefiles will refuse to use them if it ever sees them, so no
-problem there.
-
-And it's not true that we don't have that kind of protection for other
-in-kernel file use.  See S_SWAPFILE.  I did consider using that, but that =
-has
-other side effects.  I mentioned that perhaps I should make swapon set
-S_KERNEL_FILE also.  Also blockdevs have some exclusion also, I think.
-
-The rmdir thing should really apply to rename and unlink also.  That's to
-prevent someone, cachefilesd included, causing cachefiles to malfunction b=
-y
-removing the directories it created.  Possibly this should be a separate b=
-it
-to S_KERNEL_FILE, maybe S_NO_DELETE.
-
-So I could change S_KERNEL_FILE to S_KERNEL_LOCK, say, or maybe S_EXCLUSIV=
-E.
-
-David
-
+-- 
+Jeff Layton <jlayton@kernel.org>
