@@ -2,64 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ABF4C494D85
-	for <lists+ceph-devel@lfdr.de>; Thu, 20 Jan 2022 13:00:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E50B8495E31
+	for <lists+ceph-devel@lfdr.de>; Fri, 21 Jan 2022 12:09:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232600AbiATL73 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 20 Jan 2022 06:59:29 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:37856 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232505AbiATL7O (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 20 Jan 2022 06:59:14 -0500
+        id S1380089AbiAULJw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 21 Jan 2022 06:09:52 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:34890 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1380091AbiAULJZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 21 Jan 2022 06:09:25 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A5F72B81D51;
-        Thu, 20 Jan 2022 11:59:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 54E3CC340E2;
-        Thu, 20 Jan 2022 11:59:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2A6C461A27;
+        Fri, 21 Jan 2022 11:09:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D39C340E1;
+        Fri, 21 Jan 2022 11:09:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642679952;
-        bh=3a6xqGs3N8evBYWEOoEaV+LmETZi3PsZIZoYMvUG1oc=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=LxiBHTKHf0iqyN0x3eljwldWvH/jvuY4sJcVEPcpg9sFuCPK2cS1lNMPp4zXU2lwZ
-         jATpMr892kbxGgNnHNELwBQKUt7uLmEMCJOLH8LU0XB3CISzKffnDhSR1N+KEEs0GI
-         jsfhEQ1BM0+lDmHSlBf1lyTH1QI2X8ptCHzXCmiEMZql6n0CLEddxVn5P2J0b3A2IV
-         hEu090nwATCjNBncG0hCYpYGqJLEyIzrLK905qx9tayybwtxh4XpYZqd8afl+ludZQ
-         glgzNr8LfvSJkH8iDPTsg92rxeDgZhCWwoKvl9pWm9r2slgkGJqn7SOwwcBS83J2v+
-         lZU/p5Bs878WA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 444EFF6079A;
-        Thu, 20 Jan 2022 11:59:12 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph updates for 5.17-rc1
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220120113748.26602-1-idryomov@gmail.com>
-References: <20220120113748.26602-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220120113748.26602-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-5.17-rc1
-X-PR-Tracked-Commit-Id: a0b3a15eab6bc2e90008460b646d53e7d9dcdbbb
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 64f29d8856a9e0d1fcdc5344f76e70c364b941cb
-Message-Id: <164267995227.31408.2363209478237733534.pr-tracker-bot@kernel.org>
-Date:   Thu, 20 Jan 2022 11:59:12 +0000
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+        s=k20201202; t=1642763364;
+        bh=V4yrtIZgsqs0WlCeHnDvpWADei1ftXx0D93HzFs1TeE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Ya147kKlKxdnovsF2UwX6JG6zUdeR8jBsqvCaJt65ir2ypFpa2QyGXlhBimN6qnuI
+         RrWi/1U0aXj0+rP4CTDIm7ijzGB3c9fGjejbsAd6JjlGUvRE9Vwp4JHO+YrpM9AKHR
+         vlJR8yRzE5PEbb1cDOvrupBsMPn8jECTSC7UvlVYYXweW4JiL117tzwJgTIftPfsMr
+         QKT81eO5olDojn0UoKokGbUrmaAOHU1CdJ4BIJGxArOPoZUmJR9in/NI2uAECynvm7
+         UV4LOZcj/5Df6dZZw3d6ZMwAUMyQnGVXQjTOb42+P/kWLNQEDg6LTzztVmdfx2qujv
+         PSSyU5Qr9YEQQ==
+Message-ID: <b65ee653c451a485d85d0207322e650e7535c22d.camel@kernel.org>
+Subject: Re: [PATCH 2/3] ceph: Uninline the data on a file opened for writing
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Date:   Fri, 21 Jan 2022 06:09:22 -0500
+In-Reply-To: <YeWdlR7nsBG8fYO2@casper.infradead.org>
+References: <164243678893.2863669.12713835397467153827.stgit@warthog.procyon.org.uk>
+         <164243679615.2863669.15715941907688580296.stgit@warthog.procyon.org.uk>
+         <YeWdlR7nsBG8fYO2@casper.infradead.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The pull request you sent on Thu, 20 Jan 2022 12:37:48 +0100:
+On Mon, 2022-01-17 at 16:47 +0000, Matthew Wilcox wrote:
+> On Mon, Jan 17, 2022 at 04:26:36PM +0000, David Howells wrote:
+> > +	folio = read_mapping_folio(inode->i_mapping, 0, file);
+> > +	if (IS_ERR(folio))
+> > +		goto out;
+> 
+> ... you need to set 'err' here, right?
+> 
+> > +	if (folio_test_uptodate(folio))
+> > +		goto out_put_folio;
+> 
+> Er ... if (!folio_test_uptodate(folio)), perhaps?  And is it even
+> worth testing if read_mapping_folio() returned success?  I feel like
+> we should take ->readpage()'s word for it that success means the
+> folio is now uptodate.
+> 
+> > +	err = folio_lock_killable(folio);
+> > +	if (err < 0)
+> > +		goto out_put_folio;
+> > +
+> > +	if (inline_version == 1 || /* initial version, no data */
+> > +	    inline_version == CEPH_INLINE_NONE)
+> > +		goto out_unlock;
+> > +
+> > +	len = i_size_read(inode);
+> > +	if (len >  folio_size(folio))
+> 
+> extra space.  Plus, you're hardcoding 4096 below, but using folio_size()
+> here which is a bit weird to me.
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-5.17-rc1
+The client actually decides how big a region to inline when it does
+this. The default is 4k, but someone could inline up to 64k (and
+potentially larger, if they tweak settings the right way).
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/64f29d8856a9e0d1fcdc5344f76e70c364b941cb
+I'd suggest not capping the length in this function at all. If you find
+more than 4k, just assume that some other client stashed more data than
+expected, and uninline whatever is there.
 
-Thank you!
-
+You might also consider throwing in a pr_warn or something in that case,
+since finding more than 4k uninlined would be unexpected (though not
+necessarily broken).
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jeff Layton <jlayton@kernel.org>
