@@ -2,32 +2,35 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11F43496EB1
-	for <lists+ceph-devel@lfdr.de>; Sun, 23 Jan 2022 01:13:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88511496EFB
+	for <lists+ceph-devel@lfdr.de>; Sun, 23 Jan 2022 01:16:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235411AbiAWANo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 22 Jan 2022 19:13:44 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:45850 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235421AbiAWAMm (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 22 Jan 2022 19:12:42 -0500
+        id S235587AbiAWAPo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 22 Jan 2022 19:15:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36708 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235446AbiAWAO1 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 22 Jan 2022 19:14:27 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0394C06178A;
+        Sat, 22 Jan 2022 16:13:12 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id B747ACE0AC0;
-        Sun, 23 Jan 2022 00:12:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44FE4C004E1;
-        Sun, 23 Jan 2022 00:12:38 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B29AA60F9D;
+        Sun, 23 Jan 2022 00:13:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31604C004E1;
+        Sun, 23 Jan 2022 00:13:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642896759;
-        bh=HE1auXPAvotomIohwNjYUGvmFKANDR1XNJmuKVBzXmM=;
+        s=k20201202; t=1642896792;
+        bh=0TaR6yxU7ZGAIpNqu/1Lxicmzl5NcBqTlvT/MSQA+xQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WpRqLKvU2DdquQVHkO0JoqX9qGYI2W8gCkkv4HzBF0jFabB4If3wtSiZBZhhb23/o
-         frI/syBhaHXSOEPpAb0ne0v2VD5ZnlMmoInqqsbtogWaV31UPfv3n4lTCw+4iPB9rx
-         qlDz60ByOOtaaZO+wqJv55X3BVPespIGqgtyFcfLiY85Tv8IxHAtoIFP4QkQig2dzL
-         k/itCQw8XijUE+WqxfUH/+yAZFMVT9FZ8PTghGZbpROuLvuLK9cVpfKBfJLB85TxDZ
-         GzET8ljSypQ1HoVAz2IuRPBG1hWu1ahH75lFcgiOSTcnXSSb4GdBX9dkQI2i26R1fW
-         UFCi+hdJocqmA==
+        b=swP0QvBCnBwwnGsMuxGw0e9tHrDy0dEPTt+TXnrUvUH1Njb3edgHH8qex3HVhphkx
+         Z01KjMLUoqLbFSV6IT8YUTBhbMNFlb46Np7jSskZq59tHvpBg2OVCI3Sc8xRvNu8FF
+         G1nb6z3m7uSjyWb8QpgQ9mIoS0mve+uT2/jzDARlHexvSfvtM5/20dGA/dx3Jc9wEk
+         BnDOuaF/1ZKjPbTyKe5nP3md6bIiDIYV3CRKL44DQpfiCapHLozdJPbFO5u1smCBYM
+         oB43x+aIg36CShqok56zhLQj5Yx7NzXEDuwgYKqzNNEzhvDGXf0YC25g5Ml3mi3vnn
+         MakNNrTKY9fbQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jeff Layton <jlayton@kernel.org>,
@@ -36,12 +39,12 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         Xiubo Li <xiubli@redhat.com>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 08/16] ceph: don't check for quotas on MDS stray dirs
-Date:   Sat, 22 Jan 2022 19:12:07 -0500
-Message-Id: <20220123001216.2460383-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 4/9] ceph: don't check for quotas on MDS stray dirs
+Date:   Sat, 22 Jan 2022 19:12:53 -0500
+Message-Id: <20220123001258.2460594-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220123001216.2460383-1-sashal@kernel.org>
-References: <20220123001216.2460383-1-sashal@kernel.org>
+In-Reply-To: <20220123001258.2460594-1-sashal@kernel.org>
+References: <20220123001258.2460594-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
@@ -80,7 +83,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 15 insertions(+), 8 deletions(-)
 
 diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-index 620c691af40e7..d1158c40bb0c6 100644
+index 9b785f11e95ac..8df3686bad9b9 100644
 --- a/fs/ceph/quota.c
 +++ b/fs/ceph/quota.c
 @@ -30,6 +30,9 @@ static inline bool ceph_has_realms_with_quotas(struct inode *inode)
@@ -94,10 +97,10 @@ index 620c691af40e7..d1158c40bb0c6 100644
  	return true;
  }
 diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 14f951cd5b61b..8cf4323d729cd 100644
+index 4db305fd2a02a..995ac1ba37a6e 100644
 --- a/fs/ceph/super.h
 +++ b/fs/ceph/super.h
-@@ -534,19 +534,23 @@ static inline int ceph_ino_compare(struct inode *inode, void *data)
+@@ -535,19 +535,23 @@ static inline int ceph_ino_compare(struct inode *inode, void *data)
   *
   * These come from src/mds/mdstypes.h in the ceph sources.
   */
