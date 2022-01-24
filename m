@@ -2,136 +2,86 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88511496EFB
-	for <lists+ceph-devel@lfdr.de>; Sun, 23 Jan 2022 01:16:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC1FA497ADF
+	for <lists+ceph-devel@lfdr.de>; Mon, 24 Jan 2022 10:01:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235587AbiAWAPo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 22 Jan 2022 19:15:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36708 "EHLO
+        id S242559AbiAXJAv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 24 Jan 2022 04:00:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235446AbiAWAO1 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 22 Jan 2022 19:14:27 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0394C06178A;
-        Sat, 22 Jan 2022 16:13:12 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B29AA60F9D;
-        Sun, 23 Jan 2022 00:13:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31604C004E1;
-        Sun, 23 Jan 2022 00:13:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642896792;
-        bh=0TaR6yxU7ZGAIpNqu/1Lxicmzl5NcBqTlvT/MSQA+xQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=swP0QvBCnBwwnGsMuxGw0e9tHrDy0dEPTt+TXnrUvUH1Njb3edgHH8qex3HVhphkx
-         Z01KjMLUoqLbFSV6IT8YUTBhbMNFlb46Np7jSskZq59tHvpBg2OVCI3Sc8xRvNu8FF
-         G1nb6z3m7uSjyWb8QpgQ9mIoS0mve+uT2/jzDARlHexvSfvtM5/20dGA/dx3Jc9wEk
-         BnDOuaF/1ZKjPbTyKe5nP3md6bIiDIYV3CRKL44DQpfiCapHLozdJPbFO5u1smCBYM
-         oB43x+aIg36CShqok56zhLQj5Yx7NzXEDuwgYKqzNNEzhvDGXf0YC25g5Ml3mi3vnn
-         MakNNrTKY9fbQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Hu Weiwen <sehuww@mail.scut.edu.cn>,
-        Luis Henriques <lhenriques@suse.de>,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 4/9] ceph: don't check for quotas on MDS stray dirs
-Date:   Sat, 22 Jan 2022 19:12:53 -0500
-Message-Id: <20220123001258.2460594-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220123001258.2460594-1-sashal@kernel.org>
-References: <20220123001258.2460594-1-sashal@kernel.org>
+        with ESMTP id S242563AbiAXJAr (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 24 Jan 2022 04:00:47 -0500
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13389C061744
+        for <ceph-devel@vger.kernel.org>; Mon, 24 Jan 2022 01:00:47 -0800 (PST)
+Received: by mail-qt1-x831.google.com with SMTP id w6so18832098qtk.4
+        for <ceph-devel@vger.kernel.org>; Mon, 24 Jan 2022 01:00:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3oCgt8t6AqdT1t91XIpWZvI+R0X7Aa4qGVAyOiAmySo=;
+        b=l1nUEFR4DFpAk8YKwHdma8lHJCE/boo7S0CYf9YtdSmVG7NvOYyoZvs1BuNVoq3mHk
+         Rn/YyJN6+IXoFxrkBOCzOv/XwAgIm+PeQM9eFBj8uR08wXlOedGjJ0dSR9e7D2U8DK3G
+         81ahyvd9Q6yt20KkWP6c35HlUf0pdYL7OeHn2COTR290JX6spzk0aMxHU+S95cFgv+VV
+         vwgapdH1NlKt+1UlGN1VdR7hGiOVceokOjPjYpPyZ5k+62S7IczmeeANsjcUqyis0/kp
+         L7Ugz7dddNyx9j01ZwxZF4WakGIm6M2VcJdlvlCaXJ0Mml2EmJ2Ayt601FYDH7AufJHK
+         I3Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3oCgt8t6AqdT1t91XIpWZvI+R0X7Aa4qGVAyOiAmySo=;
+        b=iQHOUYoSkWZ8bjbRfn640eNZWsIBLa5Ylfx1neNc9AbM0Ubh6+Q9WH9nfRGTIVvpBb
+         fcL9jvgilVOyBwmo4pNVWndxTJkaV7fPIIe5AkTOcFCkUWrKPwGH/qiCurQB4mhAMMel
+         I6aiOAH4GMlDh9T46jHZeOgtxTAcfFzsw4wAai+B4euZxxdHwShd/TMIyURGtMt70KRX
+         t7MpAhVJddZaCcfSEPQwXV6V2VKVBs0LlZECD1/+HFKY/XCOWHZfkukJmqRuRkwPxhGk
+         A5B/l7RfLnHeBPwUnxhb63f1F/HRzCLZXAlYEKNSXKDL3BBcicff2Rp4B58u5ZPS4OWt
+         rVlw==
+X-Gm-Message-State: AOAM533ixRWZKLyqOpOU1OENlvg3EoZQ+BfrqzN8c22S2uddguqZuf0s
+        +XtTbK3SantpqD1sKoswEMQtoOhxopIMjA==
+X-Google-Smtp-Source: ABdhPJypwLNwASOFm0YwAnnF88/2ff1awjP2M17DhdD63PP0F/4PktlTYhW0IGoYTGYvxjA0GE9W5A==
+X-Received: by 2002:a05:622a:152:: with SMTP id v18mr11624925qtw.610.1643014846175;
+        Mon, 24 Jan 2022 01:00:46 -0800 (PST)
+Received: from vossi01.front.sepia.ceph.com ([8.43.84.3])
+        by smtp.gmail.com with ESMTPSA id a9sm7124653qtb.50.2022.01.24.01.00.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jan 2022 01:00:45 -0800 (PST)
+From:   Milind Changire <milindchangire@gmail.com>
+X-Google-Original-From: Milind Changire <mchangir@redhat.com>
+To:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+Cc:     Milind Changire <mchangir@redhat.com>
+Subject: [PATCH v5 0/1] add getvxattr op
+Date:   Mon, 24 Jan 2022 09:00:24 +0000
+Message-Id: <20220124090025.70417-1-mchangir@redhat.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Jeff Layton <jlayton@kernel.org>
+changes in v5:
+* ceph.(dir|file).layout.(json|pool_name|pool_id)
+are new xattrs added to the list.
+These xattrs are now fetched from the MDS.
 
-[ Upstream commit 0078ea3b0566e3da09ae8e1e4fbfd708702f2876 ]
+pool_name and pool_id are added as separate xattrs to disambiguate
+the situation where a digit sequence is used by users to name a pool.
 
-玮文 胡 reported seeing the WARN_RATELIMIT pop when writing to an
-inode that had been transplanted into the stray dir. The client was
-trying to look up the quotarealm info from the parent and that tripped
-the warning.
+Milind Changire (1):
+  ceph: add getvxattr op
 
-Change the ceph_vino_is_reserved helper to not throw a warning for
-MDS stray directories (0x100 - 0x1ff), only for reserved dirs that
-are not in that range.
+ fs/ceph/inode.c              | 51 ++++++++++++++++++++++++++++++++++++
+ fs/ceph/mds_client.c         | 27 ++++++++++++++++++-
+ fs/ceph/mds_client.h         | 12 ++++++++-
+ fs/ceph/strings.c            |  1 +
+ fs/ceph/super.h              |  1 +
+ fs/ceph/xattr.c              | 41 ++++++++++++++++++++++++++++-
+ include/linux/ceph/ceph_fs.h |  1 +
+ 7 files changed, 131 insertions(+), 3 deletions(-)
 
-Also, fix ceph_has_realms_with_quotas to return false when encountering
-a reserved inode.
-
-URL: https://tracker.ceph.com/issues/53180
-Reported-by: Hu Weiwen <sehuww@mail.scut.edu.cn>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Reviewed-by: Luis Henriques <lhenriques@suse.de>
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ceph/quota.c |  3 +++
- fs/ceph/super.h | 20 ++++++++++++--------
- 2 files changed, 15 insertions(+), 8 deletions(-)
-
-diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-index 9b785f11e95ac..8df3686bad9b9 100644
---- a/fs/ceph/quota.c
-+++ b/fs/ceph/quota.c
-@@ -30,6 +30,9 @@ static inline bool ceph_has_realms_with_quotas(struct inode *inode)
- 	/* if root is the real CephFS root, we don't have quota realms */
- 	if (root && ceph_ino(root) == CEPH_INO_ROOT)
- 		return false;
-+	/* MDS stray dirs have no quota realms */
-+	if (ceph_vino_is_reserved(ceph_inode(inode)->i_vino))
-+		return false;
- 	/* otherwise, we can't know for sure */
- 	return true;
- }
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 4db305fd2a02a..995ac1ba37a6e 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -535,19 +535,23 @@ static inline int ceph_ino_compare(struct inode *inode, void *data)
-  *
-  * These come from src/mds/mdstypes.h in the ceph sources.
-  */
--#define CEPH_MAX_MDS		0x100
--#define CEPH_NUM_STRAY		10
-+#define CEPH_MAX_MDS			0x100
-+#define CEPH_NUM_STRAY			10
- #define CEPH_MDS_INO_MDSDIR_OFFSET	(1 * CEPH_MAX_MDS)
-+#define CEPH_MDS_INO_LOG_OFFSET		(2 * CEPH_MAX_MDS)
- #define CEPH_INO_SYSTEM_BASE		((6*CEPH_MAX_MDS) + (CEPH_MAX_MDS * CEPH_NUM_STRAY))
- 
- static inline bool ceph_vino_is_reserved(const struct ceph_vino vino)
- {
--	if (vino.ino < CEPH_INO_SYSTEM_BASE &&
--	    vino.ino >= CEPH_MDS_INO_MDSDIR_OFFSET) {
--		WARN_RATELIMIT(1, "Attempt to access reserved inode number 0x%llx", vino.ino);
--		return true;
--	}
--	return false;
-+	if (vino.ino >= CEPH_INO_SYSTEM_BASE ||
-+	    vino.ino < CEPH_MDS_INO_MDSDIR_OFFSET)
-+		return false;
-+
-+	/* Don't warn on mdsdirs */
-+	WARN_RATELIMIT(vino.ino >= CEPH_MDS_INO_LOG_OFFSET,
-+			"Attempt to access reserved inode number 0x%llx",
-+			vino.ino);
-+	return true;
- }
- 
- static inline struct inode *ceph_find_inode(struct super_block *sb,
 -- 
-2.34.1
+2.31.1
 
