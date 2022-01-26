@@ -2,116 +2,106 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 876AA49CFF0
-	for <lists+ceph-devel@lfdr.de>; Wed, 26 Jan 2022 17:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 216E949CFF8
+	for <lists+ceph-devel@lfdr.de>; Wed, 26 Jan 2022 17:48:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243242AbiAZQq2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 26 Jan 2022 11:46:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34952 "EHLO
+        id S243278AbiAZQrt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 26 Jan 2022 11:47:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236669AbiAZQq0 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 26 Jan 2022 11:46:26 -0500
-Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42DF2C06161C
-        for <ceph-devel@vger.kernel.org>; Wed, 26 Jan 2022 08:46:26 -0800 (PST)
-Received: by mail-ua1-x933.google.com with SMTP id b16so43933755uaq.4
-        for <ceph-devel@vger.kernel.org>; Wed, 26 Jan 2022 08:46:26 -0800 (PST)
+        with ESMTP id S243231AbiAZQrr (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 26 Jan 2022 11:47:47 -0500
+Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 369F5C06161C
+        for <ceph-devel@vger.kernel.org>; Wed, 26 Jan 2022 08:47:47 -0800 (PST)
+Received: by mail-ua1-x92e.google.com with SMTP id e17so5103747uad.9
+        for <ceph-devel@vger.kernel.org>; Wed, 26 Jan 2022 08:47:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=r6yV64GSkRKUOiGI9vVTf1LEBEgmtsIiXrWasYNlIVk=;
-        b=SdcmEgoK3u8KKNNKn+U08/WXhtHR6ompSkyABbHX/iFssC4T+uQ9YuZwhywMpb3T4C
-         Mor5vsrz0LVA4q0dS4yL3VX+bQ0m/TmNON5QPI7NJwNX2Qu6GxmdoBpgm7pIcWK5YEBQ
-         z05PhRh/6niI+/VKqFFxKoYpMK3qIK9a+gAw8oRWae936/REVNy2raqhyxXZbb4A74nq
-         syT3AxpAxu+KaarRd3Uz+l6CJh4mpKzs8Rlxj0kmZJz+c+K8WrGfxZ32saUDAe0O0YXO
-         r1w+1tMpS1HqTblSfVc+Ly357zrw5puy1DPTyL0GYeYoJ0cT42rPSck2mjRmVVbr9QGR
-         jBKg==
+        bh=q26c38Dv9iOVKeh+Y5RxXhJixncp+pZfXURkksHkiJU=;
+        b=lxAiklQIa0NNx951i9WYbAyTzS4ffIHsm/koewJlR6Q0ehnpuRV6hyTkFArfTkM0dp
+         UdQiXtVvkD99UkHPoDQHIOelaNvJJiXzgsoNz+04eEaExXu/4904BMyT2GqUa3qdqr0Z
+         n6LIp3eqCMI6yLnOadJYkkfi6uFa2q/U6tyZQsLl68lwcpO3piM5PhVFjfHlfkfFQLph
+         NGOjALw36FVIYktxx8VHjIWTF5k36deqjBKR9Y0y4yLjHZ+ZWNjj1YNEih4mKY5HQINd
+         LjmTkSx7vkgd2EYLxRPB6ttBdMufwzLld+057qZuQrn9LCQwfAuTeAAtOvsJSgU00Zwe
+         C8bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=r6yV64GSkRKUOiGI9vVTf1LEBEgmtsIiXrWasYNlIVk=;
-        b=SMrt1+SWMK5A4qV+Lk9qx8ramk3Q1qMaX42xUgf5gFFbb6SN5344zI7Zzkb17HTK9b
-         MSAqHNNzry2pflD+i7zMsPaxfk7rILWH/411NWp6cqH1JQMjHHFoTAIQrHMFv9RVzk7m
-         HArSaOK21EfUa3qMCPe4TeKgMRoMuI01CF+W6oHFKVIdgXvAWjfgHTCOazSaVA3voF/d
-         uqqIUuxO5PILxz28BMbRyo/euuA6oSeiWjV8bQvtOIb2Ee1EzHjGuYBYJhhFX5NbInaQ
-         /1lNJHfSNb4JEvepMqw3Q/kygL91EwLvWu81WWWtdMI/M1dr8NfWqAN6qB5vYOazTfGB
-         nlDg==
-X-Gm-Message-State: AOAM5331Yxvcd1SpHaYn5bUkPXKnHDm7NwSNS08EL2kohFUysTq2cQXY
-        Ps/JGn+KJFu0nqgKVL+g3rr0S/L5rQ8fI4Z3CgjGWhjkuMY=
-X-Google-Smtp-Source: ABdhPJyjoPgM+d9vuFFWHiXb5/G2U8g6yqmh1LrogK53a5N4gh1gu8vpuZhDQzXNJJ3KuAt5e6uR1hPE0q6g8NyMCuw=
-X-Received: by 2002:a67:fad4:: with SMTP id g20mr10169239vsq.65.1643215585440;
- Wed, 26 Jan 2022 08:46:25 -0800 (PST)
+        bh=q26c38Dv9iOVKeh+Y5RxXhJixncp+pZfXURkksHkiJU=;
+        b=3zqXkQrU653gctRZF12Qrhn1AY5kVVO6Bic6F+n7Ey2zeJIvN3hG6iLBoxQ1MEmP5z
+         NetDdfhkhOcrOTW0Rb+9XmF6juEgAimny4sZedrACl2EhHyIqMBBEV3V4LEJyB8KBh3D
+         69+c3P89DhBG/8hVfGt+zXHG5u6PLXwYEeogGd5IoQvxGp0cOo8rh7KuWnmNobIbni4C
+         dVQbqeSEIMz+ZOn5tTKBKWOY5bJTPKNiSrcFMk+u1LJFapr9CnZStYhQ16+xvC5y/hMe
+         xQtLxd9y4x+rRPX2kSc5/Z+E9SfjY2QA57BHL754VZDsRmfGsnMYeJSWuQTKJWuuzFEd
+         xgeQ==
+X-Gm-Message-State: AOAM531D3ZKjaqww1q/JMyrjQtaR6Wj6UM8u3P6aNKLCI3wwe51jeipH
+        aE7GGPtr/nK8/3skc9Qe/ReFdGWSHDkIs29bDIE=
+X-Google-Smtp-Source: ABdhPJwgScICo/chdEw8GTXqiGyfg1z/905ltk+ApKxKr+LxfFmV0MYyoXVTYDi+O1nWyqgwQ6T97j3weYncP4IeJfo=
+X-Received: by 2002:a67:fc47:: with SMTP id p7mr4474656vsq.14.1643215666359;
+ Wed, 26 Jan 2022 08:47:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20220125211022.114286-1-jlayton@kernel.org> <CAOi1vP-W=k=dAmMoXCfQ4McyyP-boRYCdUF6HthCNyfgbOzNWw@mail.gmail.com>
- <eb79dcdabcc2b90ffbcf3b0b3cce29ed6fdd7480.camel@kernel.org>
-In-Reply-To: <eb79dcdabcc2b90ffbcf3b0b3cce29ed6fdd7480.camel@kernel.org>
+References: <20220125210842.114067-1-jlayton@kernel.org> <CAOi1vP8zhO4omTv2eVb43KbsqL4iqxi9FW55K7cXi8ue-NuUKQ@mail.gmail.com>
+ <b886282e58dfcda09e4d9336c60b2732c4c9764c.camel@kernel.org>
+In-Reply-To: <b886282e58dfcda09e4d9336c60b2732c4c9764c.camel@kernel.org>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 26 Jan 2022 17:46:34 +0100
-Message-ID: <CAOi1vP_crgq=KXBt2oaptzE8=vBi58J3jm_AYEXihBW_jv_Dig@mail.gmail.com>
-Subject: Re: [PATCH] ceph: set pool_ns in new inode layout for async creates
+Date:   Wed, 26 Jan 2022 17:47:55 +0100
+Message-ID: <CAOi1vP_ga=gwP5W1__6+cBMOgSNJU5o+8Z9sY0Z5Dmfs_DzU-A@mail.gmail.com>
+Subject: Re: [PATCH] ceph: properly put ceph_string reference after async
+ create attempt
 To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        Dan van der Ster <dan@vanderster.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jan 26, 2022 at 5:34 PM Jeff Layton <jlayton@kernel.org> wrote:
+On Wed, Jan 26, 2022 at 5:25 PM Jeff Layton <jlayton@kernel.org> wrote:
 >
-> On Wed, 2022-01-26 at 17:23 +0100, Ilya Dryomov wrote:
-> > On Tue, Jan 25, 2022 at 10:10 PM Jeff Layton <jlayton@kernel.org> wrote:
+> On Wed, 2022-01-26 at 17:22 +0100, Ilya Dryomov wrote:
+> > On Tue, Jan 25, 2022 at 10:08 PM Jeff Layton <jlayton@kernel.org> wrote:
 > > >
-> > > Dan reported that he was unable to write to files that had been
-> > > asynchronously created when the client's OSD caps are restricted to a
-> > > particular namespace.
+> > > The reference acquired by try_prep_async_create is currently leaked.
+> > > Ensure we put it.
 > > >
-> > > The issue is that the layout for the new inode is only partially being
-> > > filled. Ensure that we populate the pool_ns_data and pool_ns_len in the
-> > > iinfo before calling ceph_fill_inode.
-> > >
-> > > Reported-by: Dan van der Ster <dan@vanderster.com>
 > > > Fixes: 9a8d03ca2e2c ("ceph: attempt to do async create when possible")
 > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > > > ---
-> > >  fs/ceph/file.c | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
+> > >  fs/ceph/file.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
 > > >
 > > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > > index cbe4d5a5cde5..efea321ff643 100644
+> > > index ea1e9ac6c465..cbe4d5a5cde5 100644
 > > > --- a/fs/ceph/file.c
 > > > +++ b/fs/ceph/file.c
-> > > @@ -599,6 +599,7 @@ static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
-> > >         struct ceph_inode_info *ci = ceph_inode(dir);
-> > >         struct inode *inode;
-> > >         struct timespec64 now;
-> > > +       struct ceph_string *pool_ns;
-> > >         struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(dir->i_sb);
-> > >         struct ceph_vino vino = { .ino = req->r_deleg_ino,
-> > >                                   .snap = CEPH_NOSNAP };
-> > > @@ -648,11 +649,17 @@ static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
-> > >         in.max_size = cpu_to_le64(lo->stripe_unit);
+> > > @@ -766,8 +766,10 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+> > >                                 restore_deleg_ino(dir, req->r_deleg_ino);
+> > >                                 ceph_mdsc_put_request(req);
+> > >                                 try_async = false;
+> > > +                               ceph_put_string(rcu_dereference_raw(lo.pool_ns));
+> > >                                 goto retry;
+> > >                         }
+> > > +                       ceph_put_string(rcu_dereference_raw(lo.pool_ns));
+> > >                         goto out_req;
+> > >                 }
+> > >         }
+> > > --
+> > > 2.34.1
 > > >
-> > >         ceph_file_layout_to_legacy(lo, &in.layout);
-> > > +       pool_ns = ceph_try_get_string(lo->pool_ns);
-> > > +       if (pool_ns) {
-> > > +               iinfo.pool_ns_len = pool_ns->len;
-> > > +               iinfo.pool_ns_data = pool_ns->str;
-> > > +       }
 > >
-> > Considering that we have a reference from try_prep_async_create(), do
-> > we actually need to bother with ceph_try_get_string() here?
+> > Hi Jeff,
+> >
+> > Where is the try_prep_async_create() reference put in case of success?
+> > It doesn't look like ceph_finish_async_create() actually consumes it.
 > >
 >
-> Technically, no. We could just do a rcu_dereference_protected there
-> since we know that lo is private and can't change. Want me to send a v2?
+> The second call above puts it in the case of success, or in the case of
+> any error that isn't -EJUKEBOX.
 
-Yeah, let's not do the reference dance when it isn't needed.
-
-I'd probably use rcu_dereference_raw() to avoid having to think about
-omitted READ_ONCE (even if the reasoning is trivial), but up to you.
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
 
 Thanks,
 
