@@ -2,66 +2,79 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C7E049D459
-	for <lists+ceph-devel@lfdr.de>; Wed, 26 Jan 2022 22:15:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFC9A49D5F6
+	for <lists+ceph-devel@lfdr.de>; Thu, 27 Jan 2022 00:12:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232134AbiAZVPm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 26 Jan 2022 16:15:42 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:33396 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231972AbiAZVPm (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 26 Jan 2022 16:15:42 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E3C6D618F7;
-        Wed, 26 Jan 2022 21:15:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 735EFC340E3;
-        Wed, 26 Jan 2022 21:15:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643231741;
-        bh=+oLnZtSI8dddOBQjaBwc8Q/h+jSV2Nk8fuLnk0XsSTI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=nPL2z4riCty70L9CcXtXNPiwRqzMIbiTtaqCqVvQRb5vgfrmnHizwzZiGBq679OqV
-         Dhy391sF8irk9+TH1CJVbNM2FfgFLD9kQYRT4U8TAQOl6hYegoohzYk8FNYUoB7Gs+
-         hGKWy89kXTV5SgERhTer0cqieKLGvfZMddoFEr21N9kikGVk/JayEcmMyDcXrcXRk0
-         DLM6y0/iepOTa5CQH8a1bGS55HVpALNhGLCuF/MCzbncH3dEfRlGmVk5ieeNhG5nZg
-         /BOVem9bUtJBRe8PCPnQaT7aVFOu7TlCgZPem+DXhQZeN4kV5e7JAQkqRyxINQV/s3
-         kaDuw4EP3SNXA==
-Message-ID: <a75a4ece0cf5be7fc8000943f43eb82613c98b6e.camel@kernel.org>
-Subject: Re: [PATCH] security, lsm: dentry_init_security() Handle multi LSM
- registration
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Vivek Goyal <vgoyal@redhat.com>,
-        linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, ceph-devel@vger.kernel.org
-Cc:     Paul Moore <paul@paul-moore.com>,
+        id S232474AbiAZXMn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 26 Jan 2022 18:12:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39554 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232544AbiAZXMj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 26 Jan 2022 18:12:39 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27B76C06174E
+        for <ceph-devel@vger.kernel.org>; Wed, 26 Jan 2022 15:12:39 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id u24so1192033eds.11
+        for <ceph-devel@vger.kernel.org>; Wed, 26 Jan 2022 15:12:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=skxNWSw4qMDs36v/OC+NXFbUqe9KBpL8K2ambS/Ai7o=;
+        b=VFSBrg6hQe2y2/NXUMR8+uK4YZ40V5HHbzwmGe2Az89s+d01D4NAYmUWoZmnFFRgeU
+         K6RGqgr9Fuu4BIYy3bQ0yAdhZqNiBH1wafXxCQP+e1/NL9EMa7NCosuZif/AjWJ0VBnd
+         p8qceKEyUJ7j8MWZtta6QsrXq/m9g7IkR8h3mI4QqYYr68Am75ojEH6o+yTwPTJ8S5HN
+         A47FI7iDSKrE+tHyr7HDTT8mlaTD8hLkdIa8P0Pc3cXd6sg/F8AxZCjidl/cNQyhCOfg
+         ARKjxucVwPkQlWNmeA+fhyYe/FJEJ6qxL/8yKrjwPiVOx8XEpFgE88JBigHJ620a/NZn
+         pHjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=skxNWSw4qMDs36v/OC+NXFbUqe9KBpL8K2ambS/Ai7o=;
+        b=Rp1XiRefcuVAPArw6Sf+lLcMSrKb5GJs8BofrZ7GxJHuKu92WZU6XMjBCNrTFoCs5L
+         VpKuq45QBEBEdO2XfVXCeoAl3SMs0ZSEgXj6TBo6udVSWWRq5botYd0GUowwJt3rpS8J
+         wfdJzGCS3sniVwHOlSK8olqIoUhpEB3iPm7euIW3k2+XfHa2mKrfiKqNmNbYnzy5O2cc
+         66ICSpmkNiKPcpai2/6/QHgO/IsQtK7w1a1YNSmjdvZD8retfydm9BlBANIk5kCY2H5q
+         cLNdK0qCW90AYpgIibleZPhCTLDLN55dW91qpS1UValWnl729N8PFcmufTzzx2NJeDQ1
+         r08g==
+X-Gm-Message-State: AOAM531oXZS+gC06Ybh+3rk6Zms9M5kvZ4mQ0ZIWTLZBDW2ge3wIWVjt
+        3RHWuHEE/Bp4vyfzbOcU9D3h6e3IzXewhfzz7Nv2
+X-Google-Smtp-Source: ABdhPJzS1eFcTV1+fJaYoQiwUEgiDGhUoNK/qqLzKGMFBUSrmTfiIoPwNwzlq8Tha3ylFkCsqIoWDL80c5Y/P0A7eg8=
+X-Received: by 2002:a05:6402:270f:: with SMTP id y15mr1093080edd.409.1643238757607;
+ Wed, 26 Jan 2022 15:12:37 -0800 (PST)
+MIME-Version: 1.0
+References: <YfGwggaTu8imJ0uc@redhat.com>
+In-Reply-To: <YfGwggaTu8imJ0uc@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 26 Jan 2022 18:12:26 -0500
+Message-ID: <CAHC9VhSd9PMyN9K3EWGjd=nkSeRtEpEZ6Kg9v4LzgWr9gpeWOA@mail.gmail.com>
+Subject: Re: [PATCH] security, lsm: dentry_init_security() Handle multi LSM registration
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, ceph-devel@vger.kernel.org,
         Casey Schaufler <casey@schaufler-ca.com>,
+        Jeff Layton <jlayton@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
         Stephen Muth <smuth4@gmail.com>,
         "Serge E. Hallyn" <serge@hallyn.com>
-Date:   Wed, 26 Jan 2022 16:15:39 -0500
-In-Reply-To: <YfGwggaTu8imJ0uc@redhat.com>
-References: <YfGwggaTu8imJ0uc@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2022-01-26 at 15:35 -0500, Vivek Goyal wrote:
+On Wed, Jan 26, 2022 at 3:35 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
 > A ceph user has reported that ceph is crashing with kernel NULL pointer
 > dereference. Following is the backtrace.
-> 
+>
 > /proc/version: Linux version 5.16.2-arch1-1 (linux@archlinux) (gcc (GCC)
 > 11.1.0, GNU ld (GNU Binutils) 2.36.1) #1 SMP PREEMPT Thu, 20 Jan 2022
 > 16:18:29 +0000
 > distro / arch: Arch Linux / x86_64
 > SELinux is not enabled
 > ceph cluster version: 16.2.7 (dd0603118f56ab514f133c8d2e3adfc983942503)
-> 
+>
 > relevant dmesg output:
 > [   30.947129] BUG: kernel NULL pointer dereference, address:
 > 0000000000000000
@@ -113,39 +126,39 @@ On Wed, 2022-01-26 at 15:35 -0500, Vivek Goyal wrote:
 > 00 00 85 c0 75 67 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 0
 > 0 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 91 00 00 00 48 8b 54 24 28 64 48 2b 14
 > 25
-> 
+>
 > Core of the problem is that ceph checks for return code from
 > security_dentry_init_security() and if return code is 0, it assumes
 > everything is fine and continues to call strlen(name), which crashes.
-> 
+>
 > Typically SELinux LSM returns 0 and sets name to "security.selinux" and
 > it is not a problem. Or if selinux is not compiled in or disabled, it
 > returns -EOPNOTSUP and ceph deals with it.
-> 
+>
 > But somehow in this configuration, 0 is being returned and "name" is
 > not being initialized and that's creating the problem.
-> 
+>
 > Our suspicion is that BPF LSM is registering a hook for
 > dentry_init_security() and returns hook default of 0.
-> 
+>
 > LSM_HOOK(int, 0, dentry_init_security, struct dentry *dentry,...)
-> 
+>
 > I have not been able to reproduce it just by doing CONFIG_BPF_LSM=y.
 > Stephen has tested the patch though and confirms it solves the problem
 > for him.
-> 
+>
 > dentry_init_security() is written in such a way that it expects only one
 > LSM to register the hook. Atleast that's the expectation with current code.
-> 
+>
 > If another LSM returns a hook and returns default, it will simply return
-> 0 as of now and that will break ceph. 
-> 
+> 0 as of now and that will break ceph.
+>
 > Hence, suggestion is that change semantics of this hook a bit. If there
 > are no LSMs or no LSM is taking ownership and initializing security context,
 > then return -EOPNOTSUP. Also allow at max one LSM to initialize security
 > context. This hook can't deal with multiple LSMs trying to init security
 > context. This patch implements this new behavior.
-> 
+>
 > Reported-by: Stephen Muth <smuth4@gmail.com>
 > Tested-by: Stephen Muth <smuth4@gmail.com>
 > Suggested-by: Casey Schaufler <casey@schaufler-ca.com>
@@ -160,46 +173,49 @@ On Wed, 2022-01-26 at 15:35 -0500, Vivek Goyal wrote:
 >  include/linux/lsm_hook_defs.h |    2 +-
 >  security/security.c           |   15 +++++++++++++--
 >  2 files changed, 14 insertions(+), 3 deletions(-)
-> 
+
+Thanks for putting this patch together Vivek.
+
+Acked-by: Paul Moore <paul@paul-moore.com>
+
 > Index: redhat-linux/include/linux/lsm_hook_defs.h
 > ===================================================================
-> --- redhat-linux.orig/include/linux/lsm_hook_defs.h	2022-01-24 14:56:14.338030140 -0500
-> +++ redhat-linux/include/linux/lsm_hook_defs.h	2022-01-25 18:48:46.917496696 -0500
+> --- redhat-linux.orig/include/linux/lsm_hook_defs.h     2022-01-24 14:56:14.338030140 -0500
+> +++ redhat-linux/include/linux/lsm_hook_defs.h  2022-01-25 18:48:46.917496696 -0500
 > @@ -80,7 +80,7 @@ LSM_HOOK(int, 0, sb_clone_mnt_opts, cons
->  	 unsigned long *set_kern_flags)
+>          unsigned long *set_kern_flags)
 >  LSM_HOOK(int, 0, move_mount, const struct path *from_path,
->  	 const struct path *to_path)
+>          const struct path *to_path)
 > -LSM_HOOK(int, 0, dentry_init_security, struct dentry *dentry,
 > +LSM_HOOK(int, -EOPNOTSUPP, dentry_init_security, struct dentry *dentry,
->  	 int mode, const struct qstr *name, const char **xattr_name,
->  	 void **ctx, u32 *ctxlen)
+>          int mode, const struct qstr *name, const char **xattr_name,
+>          void **ctx, u32 *ctxlen)
 >  LSM_HOOK(int, 0, dentry_create_files_as, struct dentry *dentry, int mode,
 > Index: redhat-linux/security/security.c
 > ===================================================================
-> --- redhat-linux.orig/security/security.c	2022-01-25 18:46:59.166496696 -0500
-> +++ redhat-linux/security/security.c	2022-01-26 14:31:43.454568468 -0500
+> --- redhat-linux.orig/security/security.c       2022-01-25 18:46:59.166496696 -0500
+> +++ redhat-linux/security/security.c    2022-01-26 14:31:43.454568468 -0500
 > @@ -1048,8 +1048,19 @@ int security_dentry_init_security(struct
->  				  const char **xattr_name, void **ctx,
->  				  u32 *ctxlen)
+>                                   const char **xattr_name, void **ctx,
+>                                   u32 *ctxlen)
 >  {
-> -	return call_int_hook(dentry_init_security, -EOPNOTSUPP, dentry, mode,
-> -				name, xattr_name, ctx, ctxlen);
-> +	struct security_hook_list *hp;
-> +	int rc;
+> -       return call_int_hook(dentry_init_security, -EOPNOTSUPP, dentry, mode,
+> -                               name, xattr_name, ctx, ctxlen);
+> +       struct security_hook_list *hp;
+> +       int rc;
 > +
-> +	/*
-> +	 * Only one module will provide a security context.
-> +	 */
-> +	hlist_for_each_entry(hp, &security_hook_heads.dentry_init_security, list) {
-> +		rc = hp->hook.dentry_init_security(dentry, mode, name,
-> +						   xattr_name, ctx, ctxlen);
-> +		if (rc != LSM_RET_DEFAULT(dentry_init_security))
-> +			return rc;
-> +	}
-> +	return LSM_RET_DEFAULT(dentry_init_security);
+> +       /*
+> +        * Only one module will provide a security context.
+> +        */
+> +       hlist_for_each_entry(hp, &security_hook_heads.dentry_init_security, list) {
+> +               rc = hp->hook.dentry_init_security(dentry, mode, name,
+> +                                                  xattr_name, ctx, ctxlen);
+> +               if (rc != LSM_RET_DEFAULT(dentry_init_security))
+> +                       return rc;
+> +       }
+> +       return LSM_RET_DEFAULT(dentry_init_security);
 >  }
 >  EXPORT_SYMBOL(security_dentry_init_security);
->  
-> 
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+-- 
+paul-moore.com
