@@ -2,123 +2,104 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 22C1149ED6D
-	for <lists+ceph-devel@lfdr.de>; Thu, 27 Jan 2022 22:32:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BAEA49EDF6
+	for <lists+ceph-devel@lfdr.de>; Thu, 27 Jan 2022 23:10:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344360AbiA0VcQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 27 Jan 2022 16:32:16 -0500
-Received: from [195.114.216.239] ([195.114.216.239]:58685 "EHLO
-        bonificablesfoesco.net" rhost-flags-FAIL-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S234277AbiA0VcP (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 27 Jan 2022 16:32:15 -0500
-X-Greylist: delayed 822 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Jan 2022 16:32:15 EST
-Received: from 42.91-116-32.dynamic.clientes.euskaltel.es (unknown [91.116.32.42])
-        by bonificablesfoesco.net (Postfix) with ESMTPSA id 6AE1220D114
-        for <ceph-devel@vger.kernel.org>; Thu, 27 Jan 2022 22:12:58 +0100 (CET)
+        id S233573AbiA0WK0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 27 Jan 2022 17:10:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44968 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229507AbiA0WKZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 27 Jan 2022 17:10:25 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E0EDC061714;
+        Thu, 27 Jan 2022 14:10:25 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id b14so6432113ljb.0;
+        Thu, 27 Jan 2022 14:10:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bonificablesfoesco.com; s=default; t=1643317978;
-        bh=JaL3vgEQf4BsgBGuJmwHprWCLwPukQyLjCTSewL3BZA=; h=From:To:Subject;
-        b=ZFJ7r9/kb0S2J0O4Ei3kLCReWqoTv2EQZ5VIvDSfoEv7CtJPgwypl6ht2SyDm2i17
-         9kN+16X8U4oClF303XXSuPwCemkVSOizoW2czBI9d5TdWabgR0b/ZJ+pQn1HdNLx4J
-         7lphm5m2IIsxL+zrqnRM6YlMTiXymS8Xt3if7EQo=
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pkUjSb/fdfaa3FAu68ePw4JIYSvRfOC6qyjCilb3MLA=;
+        b=RZypLcBcYIUdWY9vV42TppO4LaQPblBv+kCbhi7sSIeity0kCuHxjxBkOW+017vQfl
+         mGJzLUkiIibnMnTTVFBLt50VetVg1KzsVDl5jUao0XF5T7oAmS+N8pzAB7j2FNpZGYiq
+         xbHy2XvQvsScldzehtVeFOoApJ3rHFqpSLvhJxxrFdkCY4SBOyNaqvrt+GIQFpxxuFFh
+         CmyJh/SQOY6vLReOapEDPt77zxgz4JT8F/AZF2zWXE0KCoQ1ChkpEBN24khQj5g1i9qq
+         aguCWoq8pgm51d0p5z0SrS13R+0j/TGLyIS5NFK+7PHw2xgpowySjWS1of9EUGPSq6jn
+         /AOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pkUjSb/fdfaa3FAu68ePw4JIYSvRfOC6qyjCilb3MLA=;
+        b=tfMmVXe40SSgzi1gp75b3U8T5saZ6sZiNg6gAv2dC0KikkIBgFISBUuR2tThVGspTw
+         aravKdUXGq3zPkeylhkxfFugDTTrTL9ovBFHJLqlb8fMIAdVxzWnSPEdQS0Qorlj+E4F
+         Ja+j24Fsky1MVRHsiUPpT5ZHbtv3ukeE3lqaEc6HyQ6TIgrNcu9eE7nlGWLNHXEiu5Tk
+         sErDd5tW7ug4rKwW6CNTObgMD4y7GmuXnbUJLG0uCMMkNrWQUoN+50B5RSAfy6ZCY5Nf
+         +5iovHwdqhSShoYvqEc4tNqacTehQMnkPclg2xrwupMRELVCN8LXcoYM+AUVBXZ3dUpR
+         09vQ==
+X-Gm-Message-State: AOAM530D/tqL6MhFDKXFf5sG2IzJRcf+9Bzs1m3Acmw814enhXbrSQDO
+        3v5uoIek5bVj0cso6gM9x41dbZxlExK4LW4hSGw=
+X-Google-Smtp-Source: ABdhPJy9dJl6L/bnRQi8tK1Am+5DPjPBZvatcTyLSMpbpD4vy19hTtp8mGF/Cl1TBx2f3Cw7TL+lgScx4mlljQ4behg=
+X-Received: by 2002:a2e:5d3:: with SMTP id 202mr3981304ljf.330.1643321423317;
+ Thu, 27 Jan 2022 14:10:23 -0800 (PST)
 MIME-Version: 1.0
-From:   "Foesco" <admon26@bonificablesfoesco.com>
-Reply-To: admon26@bonificablesfoesco.com
-To:     ceph-devel@vger.kernel.org
-Subject: Respuesta FOESCO
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Smart_Send_3_1_6
-Date:   Thu, 27 Jan 2022 22:13:01 +0100
-Message-ID: <2264388895576964515064@DESKTOP-V14TI72>
-X-Priority: 1
-X-MSMail-Priority: High
+References: <164325106958.29787.4865219843242892726.stgit@noble.brown> <164325158955.29787.4769373293473421057.stgit@noble.brown>
+In-Reply-To: <164325158955.29787.4769373293473421057.stgit@noble.brown>
+From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date:   Fri, 28 Jan 2022 07:10:11 +0900
+Message-ID: <CAKFNMom4Z76ti4fp69UeKYf0d4x635OR7Q_CjVnBj+vQSuhESg@mail.gmail.com>
+Subject: Re: [PATCH 2/9] Remove bdi_congested() and wb_congested() and related functions
+To:     NeilBrown <neilb@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, Linux MM <linux-mm@kvack.org>,
+        linux-nilfs <linux-nilfs@vger.kernel.org>,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Buenos d=EDas
+On Thu, Jan 27, 2022 at 11:47 AM NeilBrown <neilb@suse.de> wrote:
+>
+> These functions are no longer useful as the only bdis that report
+> congestion are in ceph, fuse, and nfs.  None of those bdis can be the
+> target of the calls in drbd, ext2, nilfs2, or xfs.
+>
+> Removing the test on bdi_write_contested() in current_may_throttle()
+> could cause a small change in behaviour, but only when PF_LOCAL_THROTTLE
+> is set.
+>
+> So replace the calls by 'false' and simplify the code - and remove the
+> functions.
+>
+> Signed-off-by: NeilBrown <neilb@suse.de>
+> ---
+>  drivers/block/drbd/drbd_int.h |    3 ---
+>  drivers/block/drbd/drbd_req.c |    3 +--
+>  fs/ext2/ialloc.c              |    2 --
+>  fs/nilfs2/segbuf.c            |   11 -----------
+>  fs/xfs/xfs_buf.c              |    3 ---
+>  include/linux/backing-dev.h   |   26 --------------------------
+>  mm/vmscan.c                   |    4 +---
+>  7 files changed, 2 insertions(+), 50 deletions(-)
 
+for nilfs2 bits,
 
+Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
 
-Adjuntamos en PDF el listado de Cursos Bonificables E-learning disponibles =
-para la convocatoria FEBRERO 2022.
-
-Todos los cursos impartidos son 100% Bonificables con cargo al Cr=E9dito de=
- Formaci=F3n 2022 y van dirigidos a empleados, no aut=F3nomos.
-
-Para poder consultar a FUNDAE vuestro cr=E9dito de formaci=F3n disponible s=
-e ha de cumplimentar y firmar el documento adjunto CONTRATO DE ENCOMIENDA y=
- mandarlo a esta misma direcci=F3n de correo electr=F3nico.
-
-
-INSTRUCCIONES DE SOLICITUD:
-
-Se han de cumplimentar =FAnicamente los siguientes datos de la FICHA DE INS=
-CRIPCI=D3N adjunta (1 impreso por curso) y se ha de mandar escaneado o en f=
-otograf=EDa a esta misma direcci=F3n de correo electr=F3nico.
-
--  Curso a realizar
--  Nombre completo y DNI del alumno
--  N=FAmero de afiliaci=F3n a la Seguridad Social del alumno (Dato indicado=
- en las n=F3minas)
--  Tel=E9fono y e-mail del alumno
--  Nombre y CIF de la empresa
--  Direcci=F3n de la empresa
--  Tel=E9fono y e-mail de la empresa
--  Tel=E9fono y e-mail del gestor de la empresa
--  Cta. Cotizaci=F3n a la seguridad social de la empresa (Dato indicado en =
-las n=F3minas)
--  A=F1o de creaci=F3n de la empresa
--  Nombre completo y DNI de un representante legal de la empresa
--  Firma del representante legal de la empresa.
--  Sello de la empresa.
--  Firma del alumno.
-
-
-Seg=FAn el Real Decreto 18/2021 referente a los ERTES, necesitaremos adem=
-=E1s vuestra respuesta a las siguientes cuestiones:
-
--  N=FAmero de empleados en activo en la empresa:
--  N=FAmero de empleados en situaci=F3n de ERTE en la empresa:
--  Indique si su empresa ha renovado ERTE a partir del 1 de noviembre de 20=
-21 hasta el 28 de febrero 2022:
-
-
-Quedamos a la espera de vuestra respuesta.
-
-
-Un cordial saludo.
-
-
-Departamento de Formaci=F3n Bonificable
-FOESCO Formaci=F3n Estatal Continua.
-Empresa inscrita en el Registro de empresas de Formaci=F3n.
-
-www.foesco.com
-e-mail:     cursos@foesco.net
-Tel:          910 323 794
-
-(Horario de 9h a 15h y de 17h a 20h de Lunes a Viernes)
-
-FOESCO ofrece formaci=F3n a empresas y trabajadores en activo a trav=E9s de=
- cursos bonificados por la Fundaci=F3n Estatal para la Formaci=F3n en el Em=
-pleo (antiguo FORCEM) que gestiona las acciones formativas de FORMACI=D3N C=
-ONTINUA para trabajadores y se rige por la ley 30/2015 de 9 de Septiembre.
-
-Antes de imprimir este e-mail piense bien si es necesario hacerlo. La infor=
-maci=F3n transmitida en este mensaje est=E1 dirigida solamente a las person=
-as o entidades que figuran en el encabezamiento y contiene informaci=F3n co=
-nfidencial, por lo que, si usted lo recibiera por error, por favor destr=FA=
-yalo sin copiarlo, usarlo ni distribuirlo, comunic=E1ndolo inmediatamente a=
-l emisor del mensaje. De conformidad con lo dispuesto en el Reglamento Euro=
-peo del 2016/679, del 27 de Abril de 2016, FOESCO le informa que los datos =
-por usted suministrados ser=E1n tratados con las medidas de seguridad confo=
-rmes a la normativa vigente que se requiere. Dichos datos ser=E1n empleados=
- con fines de gesti=F3n. Para el ejercicio de sus derechos de transparencia=
-, informaci=F3n, acceso, rectificaci=F3n, supresi=F3n o derecho al olvido, =
-limitaci=F3n del tratamiento , portabilidad de datos y oposici=F3n de sus d=
-atos de car=E1cter personal deber=E1 dirigirse a la direcci=F3n del Respons=
-able del tratamiento a C/ LAGUNA DEL MARQUESADO N=BA10, 28021, MADRID, "PUL=
-SANDO AQUI" <mailto:bajas@foesco.com=3FSubject=3DBAJA%20CORREOS> y "ENVIAR".
+Thanks,
+Ryusuke Konishi
