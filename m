@@ -2,326 +2,163 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CF3349DC88
-	for <lists+ceph-devel@lfdr.de>; Thu, 27 Jan 2022 09:28:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80A6B49DD9B
+	for <lists+ceph-devel@lfdr.de>; Thu, 27 Jan 2022 10:15:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237754AbiA0I0s (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 27 Jan 2022 03:26:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48212 "EHLO
+        id S229836AbiA0JPZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 27 Jan 2022 04:15:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229683AbiA0I0o (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 27 Jan 2022 03:26:44 -0500
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D94F4C061714
-        for <ceph-devel@vger.kernel.org>; Thu, 27 Jan 2022 00:26:43 -0800 (PST)
-Received: by mail-qv1-xf2b.google.com with SMTP id b12so2187030qvz.5
-        for <ceph-devel@vger.kernel.org>; Thu, 27 Jan 2022 00:26:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vkYZxkaAHZFPc7EFpfZ3h+ns7I9q9fNGHAYn3OCZilU=;
-        b=Cy11lU2FVVj10AHeUpX2NjhIQ/fDRczi3hFs5/9TV0AkTGV7tz1o/3PFtWoSVpMkKo
-         0mV684cjDrLEoyPPxHs/OSsy9xUIRWf/ycgOoNOEnys+bDImXSYwBQgfXXBiUb0MW38b
-         4RjkdQZ3A+9NvH/lOLo3NOvxsc+mVGcmuFPxXEZagDt99LXQxj0WbztRocc3tl8FFCpt
-         awN/9pRsvGNMt29/x3BZvmGK+TLaTgBEC/+D8X29XFbmTbkuSN4nm/4w6wMPq3EhIG4X
-         mhd9mIAAH0zXUNek8pzUC6W/pJVzFps3I/v4xx7T1GrLQzpjaQLW9MYW+F1GQ0O1Oedp
-         MLjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vkYZxkaAHZFPc7EFpfZ3h+ns7I9q9fNGHAYn3OCZilU=;
-        b=0aXDqBoMnvKb7xZZXeeRy9Bdz8xGYBJJyFzMFebNChKdvvKG/qxLzL1/6iQjtO6nUb
-         zTTFiJnYVGwk7grVcJKwZWsLMYIFDsEW/WpcBJFZ84pFf0BZiWnlMxfjxcDAgyG0/+Xv
-         QdF3ThCmnJi6tslbRpuI5PJ3tr4fheNNG7mPIhhQBcb43Gq8yWpkzgWRM7gFcFvn1Jmf
-         eiQc101bDzKgOYyLA3cR/woJI3/qwWHMJy7dxCk4oDA/ZMHnzuZyGzgoanJ+WIvzS3Fk
-         2D0XXNd+695HGkuP/ij++zInjaXcujxpNBzoK86/HJvYlg4ztcdRt6dENV3PHLFu3S3e
-         vRbg==
-X-Gm-Message-State: AOAM533kICjaWWq9MiRHLRyF2qcMsQVH6slRC6c0BfcS4/9JIbQu8N2z
-        dedPJ4GQS3JZMD4zuaf1Ck4=
-X-Google-Smtp-Source: ABdhPJxObCESLcCtCdAfb53L5sbeMSOzntJKIGFLvLXrmkjR85aDCMOeHZ8jK3vS/Y/GXRbbYeVeGw==
-X-Received: by 2002:ad4:5ca4:: with SMTP id q4mr2209543qvh.64.1643272003043;
-        Thu, 27 Jan 2022 00:26:43 -0800 (PST)
-Received: from vossi01.front.sepia.ceph.com ([8.43.84.3])
-        by smtp.gmail.com with ESMTPSA id g1sm952953qtk.21.2022.01.27.00.26.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jan 2022 00:26:42 -0800 (PST)
-From:   Milind Changire <milindchangire@gmail.com>
-X-Google-Original-From: Milind Changire <mchangir@redhat.com>
-To:     Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-Cc:     Milind Changire <mchangir@redhat.com>
-Subject: [PATCH v6 1/1] ceph: add getvxattr op
-Date:   Thu, 27 Jan 2022 08:26:19 +0000
-Message-Id: <20220127082619.85379-2-mchangir@redhat.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220127082619.85379-1-mchangir@redhat.com>
-References: <20220127082619.85379-1-mchangir@redhat.com>
+        with ESMTP id S230114AbiA0JPX (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 27 Jan 2022 04:15:23 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 360E7C061714;
+        Thu, 27 Jan 2022 01:15:23 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E89E0B821D9;
+        Thu, 27 Jan 2022 09:15:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82F54C340E6;
+        Thu, 27 Jan 2022 09:15:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643274920;
+        bh=XS5eCtRZIfkaQG81jQt15bmePTaj86heLJ2g51gfckA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gmF1SETvdMgltVWYA2aw/JoTMLEpzre8xKEBXgEKV/AfZLWltSiaypnxj31Cks8Xp
+         rFR5YVYD4SYnP69xRA6GZYKrWvJGWEZpNAQnoc2emsbYajaAtcDdW+s/jgZbc/qW0l
+         KqFxvCkHcpBAT+V5AhdyyJaNPkxpy7uAALFkOB07NazyYsK2qQOQNPMv3zR/fU6BG8
+         IApp8N6FZ+D/z0zNV4Glar2zu8vpVQCAeOyBlMGvwGh/3hIiytilSwAeTNKNCqCArO
+         nBrbGsvS9OLIg7tK0i5FgR9B2rfMY60dm4RYehLVnBCNSNoG1pjBjBI7i6DQuAM2T4
+         amsQ6aCxktGFA==
+Date:   Thu, 27 Jan 2022 10:15:15 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, ceph-devel@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Stephen Muth <smuth4@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH] security, lsm: dentry_init_security() Handle multi LSM
+ registration
+Message-ID: <20220127091515.u2igbljwa4ozpgua@wittgenstein>
+References: <YfGwggaTu8imJ0uc@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YfGwggaTu8imJ0uc@redhat.com>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Problem:
-Directory vxattrs like ceph.dir.pin* and ceph.dir.layout* may not be
-propagated to the client as frequently to keep them updated. This
-creates vxattr availability problems.
+On Wed, Jan 26, 2022 at 03:35:14PM -0500, Vivek Goyal wrote:
+> A ceph user has reported that ceph is crashing with kernel NULL pointer
+> dereference. Following is the backtrace.
+> 
+> /proc/version: Linux version 5.16.2-arch1-1 (linux@archlinux) (gcc (GCC)
+> 11.1.0, GNU ld (GNU Binutils) 2.36.1) #1 SMP PREEMPT Thu, 20 Jan 2022
+> 16:18:29 +0000
+> distro / arch: Arch Linux / x86_64
+> SELinux is not enabled
+> ceph cluster version: 16.2.7 (dd0603118f56ab514f133c8d2e3adfc983942503)
+> 
+> relevant dmesg output:
+> [   30.947129] BUG: kernel NULL pointer dereference, address:
+> 0000000000000000
+> [   30.947206] #PF: supervisor read access in kernel mode
+> [   30.947258] #PF: error_code(0x0000) - not-present page
+> [   30.947310] PGD 0 P4D 0
+> [   30.947342] Oops: 0000 [#1] PREEMPT SMP PTI
+> [   30.947388] CPU: 5 PID: 778 Comm: touch Not tainted 5.16.2-arch1-1 #1
+> 86fbf2c313cc37a553d65deb81d98e9dcc2a3659
+> [   30.947486] Hardware name: Gigabyte Technology Co., Ltd. B365M
+> DS3H/B365M DS3H, BIOS F5 08/13/2019
+> [   30.947569] RIP: 0010:strlen+0x0/0x20
+> [   30.947616] Code: b6 07 38 d0 74 16 48 83 c7 01 84 c0 74 05 48 39 f7 75
+> ec 31 c0 31 d2 89 d6 89 d7 c3 48 89 f8 31 d2 89 d6 89 d7 c3 0
+> f 1f 40 00 <80> 3f 00 74 12 48 89 f8 48 83 c0 01 80 38 00 75 f7 48 29 f8 31
+> ff
+> [   30.947782] RSP: 0018:ffffa4ed80ffbbb8 EFLAGS: 00010246
+> [   30.947836] RAX: 0000000000000000 RBX: ffffa4ed80ffbc60 RCX:
+> 0000000000000000
+> [   30.947904] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
+> 0000000000000000
+> [   30.947971] RBP: ffff94b0d15c0ae0 R08: 0000000000000000 R09:
+> 0000000000000000
+> [   30.948040] R10: 0000000000000000 R11: 0000000000000000 R12:
+> 0000000000000000
+> [   30.948106] R13: 0000000000000001 R14: ffffa4ed80ffbc60 R15:
+> 0000000000000000
+> [   30.948174] FS:  00007fc7520f0740(0000) GS:ffff94b7ced40000(0000)
+> knlGS:0000000000000000
+> [   30.948252] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   30.948308] CR2: 0000000000000000 CR3: 0000000104a40001 CR4:
+> 00000000003706e0
+> [   30.948376] Call Trace:
+> [   30.948404]  <TASK>
+> [   30.948431]  ceph_security_init_secctx+0x7b/0x240 [ceph
+> 49f9c4b9bf5be8760f19f1747e26da33920bce4b]
+> [   30.948582]  ceph_atomic_open+0x51e/0x8a0 [ceph
+> 49f9c4b9bf5be8760f19f1747e26da33920bce4b]
+> [   30.948708]  ? get_cached_acl+0x4d/0xa0
+> [   30.948759]  path_openat+0x60d/0x1030
+> [   30.948809]  do_filp_open+0xa5/0x150
+> [   30.948859]  do_sys_openat2+0xc4/0x190
+> [   30.948904]  __x64_sys_openat+0x53/0xa0
+> [   30.948948]  do_syscall_64+0x5c/0x90
+> [   30.948989]  ? exc_page_fault+0x72/0x180
+> [   30.949034]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> [   30.949091] RIP: 0033:0x7fc7521e25bb
+> [   30.950849] Code: 25 00 00 41 00 3d 00 00 41 00 74 4b 64 8b 04 25 18 00
+> 00 00 85 c0 75 67 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 0
+> 0 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 91 00 00 00 48 8b 54 24 28 64 48 2b 14
+> 25
+> 
+> Core of the problem is that ceph checks for return code from
+> security_dentry_init_security() and if return code is 0, it assumes
+> everything is fine and continues to call strlen(name), which crashes.
+> 
+> Typically SELinux LSM returns 0 and sets name to "security.selinux" and
+> it is not a problem. Or if selinux is not compiled in or disabled, it
+> returns -EOPNOTSUP and ceph deals with it.
+> 
+> But somehow in this configuration, 0 is being returned and "name" is
+> not being initialized and that's creating the problem.
+> 
+> Our suspicion is that BPF LSM is registering a hook for
+> dentry_init_security() and returns hook default of 0.
+> 
+> LSM_HOOK(int, 0, dentry_init_security, struct dentry *dentry,...)
+> 
+> I have not been able to reproduce it just by doing CONFIG_BPF_LSM=y.
+> Stephen has tested the patch though and confirms it solves the problem
+> for him.
+> 
+> dentry_init_security() is written in such a way that it expects only one
+> LSM to register the hook. Atleast that's the expectation with current code.
+> 
+> If another LSM returns a hook and returns default, it will simply return
+> 0 as of now and that will break ceph. 
+> 
+> Hence, suggestion is that change semantics of this hook a bit. If there
+> are no LSMs or no LSM is taking ownership and initializing security context,
+> then return -EOPNOTSUP. Also allow at max one LSM to initialize security
+> context. This hook can't deal with multiple LSMs trying to init security
+> context. This patch implements this new behavior.
+> 
+> Reported-by: Stephen Muth <smuth4@gmail.com>
+> Tested-by: Stephen Muth <smuth4@gmail.com>
+> Suggested-by: Casey Schaufler <casey@schaufler-ca.com>
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: <stable@vger.kernel.org> # 5.16.0
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
 
-Solution:
-Adds new getvxattr op to fetch ceph.dir.pin*, ceph.dir.layout* and
-ceph.file.layout* vxattrs.
-If the entire layout for a dir or a file is being set, then it is
-expected that the layout be set in standard JSON format. Individual
-field value retrieval is not wrapped in JSON. The JSON format also
-applies while setting the vxattr if the entire layout is being set in
-one go.
-As a temporary measure, setting a vxattr can also be done in the old
-format. The old format will be deprecated in the future.
-
-URL: https://tracker.ceph.com/issues/51062
-Signed-off-by: Milind Changire <mchangir@redhat.com>
----
- fs/ceph/inode.c              | 51 ++++++++++++++++++++++++++++++++++++
- fs/ceph/mds_client.c         | 27 ++++++++++++++++++-
- fs/ceph/mds_client.h         | 12 ++++++++-
- fs/ceph/strings.c            |  1 +
- fs/ceph/super.h              |  1 +
- fs/ceph/xattr.c              | 17 ++++++++++++
- include/linux/ceph/ceph_fs.h |  1 +
- 7 files changed, 108 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index e3322fcb2e8d..efdce049b7f0 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -2291,6 +2291,57 @@ int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
- 	return err;
- }
- 
-+int ceph_do_getvxattr(struct inode *inode, const char *name, void *value,
-+		      size_t size)
-+{
-+	struct ceph_fs_client *fsc = ceph_sb_to_client(inode->i_sb);
-+	struct ceph_mds_client *mdsc = fsc->mdsc;
-+	struct ceph_mds_request *req;
-+	int mode = USE_AUTH_MDS;
-+	int err;
-+	char *xattr_value;
-+	size_t xattr_value_len;
-+
-+	req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETVXATTR, mode);
-+	if (IS_ERR(req)) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	req->r_path2 = kstrdup(name, GFP_NOFS);
-+	if (!req->r_path2) {
-+		err = -ENOMEM;
-+		goto put;
-+	}
-+
-+	ihold(inode);
-+	req->r_inode = inode;
-+	err = ceph_mdsc_do_request(mdsc, NULL, req);
-+	if (err < 0)
-+		goto put;
-+
-+	xattr_value = req->r_reply_info.xattr_info.xattr_value;
-+	xattr_value_len = req->r_reply_info.xattr_info.xattr_value_len;
-+
-+	dout("do_getvxattr xattr_value_len:%zu, size:%zu\n", xattr_value_len, size);
-+
-+	err = (int)xattr_value_len;
-+	if (size == 0)
-+		goto put;
-+
-+	if (xattr_value_len > size) {
-+		err = -ERANGE;
-+		goto put;
-+	}
-+
-+	memcpy(value, xattr_value, xattr_value_len);
-+put:
-+	ceph_mdsc_put_request(req);
-+out:
-+	dout("do_getvxattr result=%d\n", err);
-+	return err;
-+}
-+
- 
- /*
-  * Check inode permissions.  We verify we have a valid value for
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index c30eefc0ac19..a5eafc71d976 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -555,6 +555,29 @@ static int parse_reply_info_create(void **p, void *end,
- 	return -EIO;
- }
- 
-+static int parse_reply_info_getvxattr(void **p, void *end,
-+				      struct ceph_mds_reply_info_parsed *info,
-+				      u64 features)
-+{
-+	u8 struct_v, struct_compat;
-+	u32 struct_len;
-+	u32 value_len;
-+
-+	ceph_decode_8_safe(p, end, struct_v, bad);
-+	ceph_decode_8_safe(p, end, struct_compat, bad);
-+	ceph_decode_32_safe(p, end, struct_len, bad);
-+	ceph_decode_32_safe(p, end, value_len, bad);
-+
-+	if (value_len == end - *p) {
-+	  info->xattr_info.xattr_value = *p;
-+	  info->xattr_info.xattr_value_len = end - *p;
-+	  *p = end;
-+	  return info->xattr_info.xattr_value_len;
-+	}
-+bad:
-+	return -EIO;
-+}
-+
- /*
-  * parse extra results
-  */
-@@ -570,6 +593,8 @@ static int parse_reply_info_extra(void **p, void *end,
- 		return parse_reply_info_readdir(p, end, info, features);
- 	else if (op == CEPH_MDS_OP_CREATE)
- 		return parse_reply_info_create(p, end, info, features, s);
-+	else if (op == CEPH_MDS_OP_GETVXATTR)
-+		return parse_reply_info_getvxattr(p, end, info, features);
- 	else
- 		return -EIO;
- }
-@@ -615,7 +640,7 @@ static int parse_reply_info(struct ceph_mds_session *s, struct ceph_msg *msg,
- 
- 	if (p != end)
- 		goto bad;
--	return 0;
-+	return err;
- 
- bad:
- 	err = -EIO;
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 97c7f7bfa55f..f2a8e5af3c2e 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -29,8 +29,10 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_MULTI_RECONNECT,
- 	CEPHFS_FEATURE_DELEG_INO,
- 	CEPHFS_FEATURE_METRIC_COLLECT,
-+	CEPHFS_FEATURE_ALTERNATE_NAME,
-+	CEPHFS_FEATURE_GETVXATTR,
- 
--	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_METRIC_COLLECT,
-+	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_GETVXATTR,
- };
- 
- /*
-@@ -45,6 +47,8 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_MULTI_RECONNECT,		\
- 	CEPHFS_FEATURE_DELEG_INO,		\
- 	CEPHFS_FEATURE_METRIC_COLLECT,		\
-+	CEPHFS_FEATURE_ALTERNATE_NAME,		\
-+	CEPHFS_FEATURE_GETVXATTR,		\
- 						\
- 	CEPHFS_FEATURE_MAX,			\
- }
-@@ -100,6 +104,11 @@ struct ceph_mds_reply_dir_entry {
- 	loff_t			      offset;
- };
- 
-+struct ceph_mds_reply_xattr {
-+	char *xattr_value;
-+	size_t xattr_value_len;
-+};
-+
- /*
-  * parsed info about an mds reply, including information about
-  * either: 1) the target inode and/or its parent directory and dentry,
-@@ -115,6 +124,7 @@ struct ceph_mds_reply_info_parsed {
- 	char                          *dname;
- 	u32                           dname_len;
- 	struct ceph_mds_reply_lease   *dlease;
-+	struct ceph_mds_reply_xattr   xattr_info;
- 
- 	/* extra */
- 	union {
-diff --git a/fs/ceph/strings.c b/fs/ceph/strings.c
-index 573bb9556fb5..e36e8948e728 100644
---- a/fs/ceph/strings.c
-+++ b/fs/ceph/strings.c
-@@ -60,6 +60,7 @@ const char *ceph_mds_op_name(int op)
- 	case CEPH_MDS_OP_LOOKUPINO:  return "lookupino";
- 	case CEPH_MDS_OP_LOOKUPNAME:  return "lookupname";
- 	case CEPH_MDS_OP_GETATTR:  return "getattr";
-+	case CEPH_MDS_OP_GETVXATTR:  return "getvxattr";
- 	case CEPH_MDS_OP_SETXATTR: return "setxattr";
- 	case CEPH_MDS_OP_SETATTR: return "setattr";
- 	case CEPH_MDS_OP_RMXATTR: return "rmxattr";
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index ac331aa07cfa..a627fa69668e 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1043,6 +1043,7 @@ static inline bool ceph_inode_is_shutdown(struct inode *inode)
- 
- /* xattr.c */
- int __ceph_setxattr(struct inode *, const char *, const void *, size_t, int);
-+int ceph_do_getvxattr(struct inode *inode, const char *name, void *value, size_t size);
- ssize_t __ceph_getxattr(struct inode *, const char *, void *, size_t);
- extern ssize_t ceph_listxattr(struct dentry *, char *, size_t);
- extern struct ceph_buffer *__ceph_build_xattrs_blob(struct ceph_inode_info *ci);
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index fcf7dfdecf96..9a4fbe48963f 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -924,6 +924,7 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_inode_xattr *xattr;
- 	struct ceph_vxattr *vxattr = NULL;
-+	struct ceph_mds_session *session = NULL;
- 	int req_mask;
- 	ssize_t err;
- 
-@@ -945,6 +946,22 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
- 				err = -ERANGE;
- 		}
- 		return err;
-+	} else {
-+		err = -ENODATA;
-+		spin_lock(&ci->i_ceph_lock);
-+		if (strncmp(name, XATTR_CEPH_PREFIX, XATTR_CEPH_PREFIX_LEN))
-+			goto out;
-+		/* check if the auth mds supports the getvxattr feature */
-+		session = ci->i_auth_cap->session;
-+		if (!session)
-+			goto out;
-+
-+		if (test_bit(CEPHFS_FEATURE_GETVXATTR, &session->s_features)) {
-+			spin_unlock(&ci->i_ceph_lock);
-+			err = ceph_do_getvxattr(inode, name, value, size);
-+			spin_lock(&ci->i_ceph_lock);
-+		}
-+		goto out;
- 	}
- 
- 	req_mask = __get_request_mask(inode);
-diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-index 7ad6c3d0db7d..66db21ac5f0c 100644
---- a/include/linux/ceph/ceph_fs.h
-+++ b/include/linux/ceph/ceph_fs.h
-@@ -328,6 +328,7 @@ enum {
- 	CEPH_MDS_OP_LOOKUPPARENT = 0x00103,
- 	CEPH_MDS_OP_LOOKUPINO  = 0x00104,
- 	CEPH_MDS_OP_LOOKUPNAME = 0x00105,
-+	CEPH_MDS_OP_GETVXATTR  = 0x00106,
- 
- 	CEPH_MDS_OP_SETXATTR   = 0x01105,
- 	CEPH_MDS_OP_RMXATTR    = 0x01106,
--- 
-2.31.1
-
+Looks good,
+Acked-by: Christian Brauner <brauner@kernel.org>
