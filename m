@@ -2,101 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1527449F67F
-	for <lists+ceph-devel@lfdr.de>; Fri, 28 Jan 2022 10:38:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B04A049FDA0
+	for <lists+ceph-devel@lfdr.de>; Fri, 28 Jan 2022 17:08:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347663AbiA1JiN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 28 Jan 2022 04:38:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59472 "EHLO
+        id S245587AbiA1QIB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 28 Jan 2022 11:08:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347665AbiA1JiI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 28 Jan 2022 04:38:08 -0500
-Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38C7DC061748
-        for <ceph-devel@vger.kernel.org>; Fri, 28 Jan 2022 01:38:08 -0800 (PST)
-Received: by mail-vs1-xe2c.google.com with SMTP id x13so2272971vsl.10
-        for <ceph-devel@vger.kernel.org>; Fri, 28 Jan 2022 01:38:08 -0800 (PST)
+        with ESMTP id S234788AbiA1QIA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 28 Jan 2022 11:08:00 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC7B7C061714;
+        Fri, 28 Jan 2022 08:07:59 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id w25so9908508edt.7;
+        Fri, 28 Jan 2022 08:07:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E/VIyc5JpK2Sy5loT9a2HcHWg2TrorJJxRaogeKP25w=;
-        b=EibPllimp8WZIwxJdUGUIFAlIuZdyznPvrXJ7caP5EDkiBNUVM4ihiUoIfNxC6TVSx
-         YE207qfvpl7N/VHWz1SefuMcAFD5mqGieRSegzXNyYGWfyIdkPkwWByrIvqWimbKQ8Un
-         /lbUGxvPlDX06Jf/32nPUu5Q90vZSrQ0/ovfo=
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=H+lHTLlCRlUm1Db0jAwMxGUYnRNC9a/ghBV9Pq129fk=;
+        b=FilC8zHHgdaE0ekoOrYBkoraOrMc7OHWabxb0ZhY8PsaAJ2wgt4pt8bd8pRDG5LTsr
+         3N66G+VRmMd1gx/G5pUWvWof3TGwW/RmzREPIIP66diRKOtpW36bFkLXH7zpxUIAhRTl
+         gHyzLxdbj2cA3yCjC921PkLaryv4BIOP51msYxDj/QAiWH89vvKAlV0e2TS6zlQqE+kL
+         +OJcVG77D9nEQyIr70wKv3Y+p059ew7dmcFtmZJj2vh4bxjoYvaES5jZA/uDobaEvmi0
+         G8ZSwC9WCrWz30pTu3sTJLIOmXGNpigF22plWEAwDPG+spAJLH965XKYelx8PkLTpSat
+         5qoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E/VIyc5JpK2Sy5loT9a2HcHWg2TrorJJxRaogeKP25w=;
-        b=mWTfq+Lo5R4fJ6iG980eRuFUsCksEFgGl3dsSpp4bIIsAt/C9MFcRj3j5+LPmw/quR
-         npXvoUHsD+ATzdxCUyiCm1vZn85gd7vbefXrnK37iST1QIXXZBjFVE3+BfoC+UiCfOCb
-         Md9hHi4HEP/bckkISbYCRF9QvbmHljOsq9Orqm7Svz6lsIt/JEEjrhk5Po6kf2nAnoKM
-         5a69QDzOyJSzfIieptRSMOnumE4tjMC63TvjZhwtQXC3JG/lqTBcby4+VXRs/IN2smfY
-         IW6oz9bVyAo1PSAXHQLjy+ZaWL7TAHJKR3B6XddJZ1lXHqgYgmqTfMkS2dM34j+BoV/t
-         pPnA==
-X-Gm-Message-State: AOAM5316X5HmGZ86OsyffAdDhX77RMe1zVuE7O24YYISHVKz5K3Uy7ct
-        JAyxW0/jvOEFQoejZ6D2EeMhnTfdzFP+RU/0WhZmSw==
-X-Google-Smtp-Source: ABdhPJwGf3F8vVWMx/hAPOM/tzuC6mlnTkkNvV3zFtYKADK7sTRpnxjvKNE9DMzHauL+NEVwnl4j38I6/K9jRDhQk7E=
-X-Received: by 2002:a67:c390:: with SMTP id s16mr3769368vsj.61.1643362687362;
- Fri, 28 Jan 2022 01:38:07 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=H+lHTLlCRlUm1Db0jAwMxGUYnRNC9a/ghBV9Pq129fk=;
+        b=pJ1B3C0NRCZPXmuQbf2kJVRwJDkEbM3FHcwAKVxlhvMjRRobPqz/IXdlgWGwM1ijka
+         Uq4THKofHAt9TxMtEt5NST8agMnSGfO8RPeMvfcI0Ayu1c1QnqOm9KROX3Wb1bUSII3q
+         B5GsdbWLpYrMoAL3jRRbRq1OYuHGLLKacHYKYWEdOtkldcsSkCS636KNnax9mJLe2eqt
+         bLKqxXqaD3tzwiAYj9xl41YiOg34og2n2oZg0APfsR+WxXOvNT1fU6csr0O06w8U4rmU
+         2r6g74A8BeZ4wqexoW8bI+vTa+QxlCbJ6gAprFU/K/Au4LK41m+be6iji+8Xg5lu77Z9
+         DglQ==
+X-Gm-Message-State: AOAM530dJiezYVJ5tkozBRFH4QANpDrkovWP2eW72AhkGqXWbWJFUwrF
+        5svgOu/LK1TPuiWjBFEJruE=
+X-Google-Smtp-Source: ABdhPJyiRiLKianxknedMfGo3TQ9nW/xNFQ9AjiFwILFeDoDV1NbWM9rghAOc/9igx07gawFigKDvQ==
+X-Received: by 2002:a05:6402:2071:: with SMTP id bd17mr8957867edb.330.1643386078206;
+        Fri, 28 Jan 2022 08:07:58 -0800 (PST)
+Received: from kwango.redhat.com (ip-89-102-68-162.net.upcbroadband.cz. [89.102.68.162])
+        by smtp.gmail.com with ESMTPSA id u17sm10136089ejj.130.2022.01.28.08.07.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jan 2022 08:07:57 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 5.17-rc2
+Date:   Fri, 28 Jan 2022 17:08:05 +0100
+Message-Id: <20220128160805.15166-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <164325106958.29787.4865219843242892726.stgit@noble.brown> <164325158954.29787.7856652136298668100.stgit@noble.brown>
-In-Reply-To: <164325158954.29787.7856652136298668100.stgit@noble.brown>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 28 Jan 2022 10:37:56 +0100
-Message-ID: <CAJfpegt-igF8HqsDUcMzfU0jYv8WpofLy0Uv0YnXLzsfx=tkGg@mail.gmail.com>
-Subject: Re: [PATCH 1/9] Remove inode_congested()
-To:     NeilBrown <neilb@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-mm <linux-mm@kvack.org>,
-        linux-nilfs@vger.kernel.org,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Ext4 <linux-ext4@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 27 Jan 2022 at 03:47, NeilBrown <neilb@suse.de> wrote:
->
-> inode_congested() reports if the backing-device for the inode is
-> congested.  Few bdi report congestion any more, only ceph, fuse, and
-> nfs.  Having support just for those is unlikely to be useful.
->
-> The places which test inode_congested() or it variants like
-> inode_write_congested(), avoid initiating IO if congestion is present.
-> We now have to rely on other places in the stack to back off, or abort
-> requests - we already do for everything except these 3 filesystems.
->
-> So remove inode_congested() and related functions, and remove the call
-> sites, assuming that inode_congested() always returns 'false'.
+Hi Linus,
 
-Looks to me this is going to "break" fuse; e.g. readahead path will go
-ahead and try to submit more requests, even if the queue is getting
-congested.   In this case the readahead submission will eventually
-block, which is counterproductive.
+The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac07:
 
-I think we should *first* make sure all call sites are substituted
-with appropriate mechanisms in the affected filesystems and as a last
-step remove the superfluous bdi congestion mechanism.
+  Linux 5.17-rc1 (2022-01-23 10:12:53 +0200)
 
-You are saying that all fs except these three already have such
-mechanisms in place, right?  Can you elaborate on that?
+are available in the Git repository at:
 
-Thanks,
-Miklos
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.17-rc2
+
+for you to fetch changes up to 4584a768f22b7669cdebabc911543621ac661341:
+
+  ceph: set pool_ns in new inode layout for async creates (2022-01-26 20:17:50 +0100)
+
+----------------------------------------------------------------
+A ZERO_SIZE_PTR dereference fix from Xiubo and two fixes for async
+creates interacting with pool namespace-constrained OSD permissions
+from Jeff (marked for stable).
+
+----------------------------------------------------------------
+Jeff Layton (2):
+      ceph: properly put ceph_string reference after async create attempt
+      ceph: set pool_ns in new inode layout for async creates
+
+Xiubo Li (1):
+      ceph: put the requests/sessions when it fails to alloc memory
+
+ fs/ceph/caps.c | 55 +++++++++++++++++++++++++++++++++++++------------------
+ fs/ceph/file.c |  9 +++++++++
+ 2 files changed, 46 insertions(+), 18 deletions(-)
