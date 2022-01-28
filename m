@@ -2,36 +2,56 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A5F6649EE34
-	for <lists+ceph-devel@lfdr.de>; Thu, 27 Jan 2022 23:42:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D105049F03C
+	for <lists+ceph-devel@lfdr.de>; Fri, 28 Jan 2022 01:59:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238413AbiA0Wmg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 27 Jan 2022 17:42:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52076 "EHLO
+        id S241577AbiA1A7A (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 27 Jan 2022 19:59:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231520AbiA0Wmg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 27 Jan 2022 17:42:36 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B954CC061714;
-        Thu, 27 Jan 2022 14:42:35 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BF2ADB818E6;
-        Thu, 27 Jan 2022 22:42:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93342C340E4;
-        Thu, 27 Jan 2022 22:42:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1643323352;
-        bh=ybh+vNa1e2zVCBIHmgIav4rSBCIa4tEXBrjj/Zvd9DM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=lD8DNYdSP5VgdUVvLTzLs87NT6X2RUv/tVO0wVWZV57Mo8tiF+Cy9CVqnSr4Mr28N
-         /4z/vln9zP3ZnibjoeX42f/bT+EANd4Y6/PvlZ8IiaLj4IayJe8a69r3sno42DD5jQ
-         fiofeE7oSvVhmRsxcbaFoTER4oAWLDgl8zvqXutM=
-Date:   Thu, 27 Jan 2022 14:42:29 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        with ESMTP id S229565AbiA1A67 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 27 Jan 2022 19:58:59 -0500
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00A9DC061714
+        for <ceph-devel@vger.kernel.org>; Thu, 27 Jan 2022 16:58:59 -0800 (PST)
+Received: by mail-io1-xd32.google.com with SMTP id e79so5823640iof.13
+        for <ceph-devel@vger.kernel.org>; Thu, 27 Jan 2022 16:58:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OnqrK1B7nE7jhPSJbx7uJGsFsnzMH0p8PmdMrmsnx7c=;
+        b=eiqFDzffYRJHxrlhdAhplyWNbDu7+9XCywnSXd70CEjIhMS+QILhU1gn2PxLfmnCZT
+         bNJ9Uu6Wc0dwdvneqYk7j+Gx1rRovjfECn7zCQ0xWiL4H6hvX9A8b5oKYyqce02E7DCW
+         NTzQ49F7FCqba9EG78FvWG2FJ0q8GVrQIyWy2fIDxxDCLv3njcQzyLih4s1aXLOz0i+/
+         5sSTGgzeA0gu4w3dPuF1jSpGKYFT3eqFqlPbp/g33aBBagrayGA8ak+IubpG+AiehtbE
+         3dsYzg7w2/MbCg9ctg4WDF1ndwIhh6gr6Vd+Zl57wcQBRUaLrzVSaK25RiFiy+diDvja
+         JVRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OnqrK1B7nE7jhPSJbx7uJGsFsnzMH0p8PmdMrmsnx7c=;
+        b=ATu9MMlh+18CLAvHf6lQv6I3URNwz3mEO4/EWdLoUeGr2Gl3//SEYBjYr9nZYq1Lv4
+         kiQ7C6b7yivREIOq2ZJhWrfADuWBpPuJZ1rP0esu5zVfv89VcpBaz6odYUBmNSuGNHrn
+         BIjNhxtQOg9Pgm4oNHN6GMWl3MbLdKE2wTHZs3thiLvo6q5g3dnBiQrFdORLIuMLaCJH
+         rKOlKtV2s2DPQrBtCPILqEnEjBXTn16BtUwS1BoX48XUOV/wzTY0yOudhPEql1RTNqbC
+         +EGuOOVNXrjdauhCCt70xTdM50VhFcuaY/kfWR4AeAJ1LQUAiB5f9FrZ7SbH321auV0S
+         l/1Q==
+X-Gm-Message-State: AOAM5308DN+nHCAX2Agg44e44NMhlm2qt8aHp2QUh6/U7loHGrzUqWNB
+        r/MtV94Yp7yWxY1S1pMl6B9dBg==
+X-Google-Smtp-Source: ABdhPJwV/AEHiSXVQGFEZXPZwOlZ61Jpa3Td0l0CjC3IrFA3/SuJ9toHc9iJFAxn2WQdRiu2+bdIdQ==
+X-Received: by 2002:a02:84ef:: with SMTP id f102mr3301483jai.25.1643331538286;
+        Thu, 27 Jan 2022 16:58:58 -0800 (PST)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id m4sm12789023iln.48.2022.01.27.16.58.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jan 2022 16:58:57 -0800 (PST)
+Subject: Re: [PATCH 0/9] Remove remaining parts of congestions tracking code.
+To:     NeilBrown <neilb@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
         Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Miklos Szeredi <miklos@szeredi.hu>,
@@ -41,28 +61,28 @@ Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
         "Darrick J. Wong" <djwong@kernel.org>,
         Philipp Reisner <philipp.reisner@linbit.com>,
         Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
-        linux-nilfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
+        Paolo Valente <paolo.valente@linaro.org>
+Cc:     linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
         ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
         linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 0/9] Remove remaining parts of congestions tracking
- code.
-Message-Id: <20220127144229.a7109a508521db5e8ddda09c@linux-foundation.org>
-In-Reply-To: <164325106958.29787.4865219843242892726.stgit@noble.brown>
 References: <164325106958.29787.4865219843242892726.stgit@noble.brown>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <2e721a70-bc57-0894-9d76-34a9d58c0cb7@kernel.dk>
+Date:   Thu, 27 Jan 2022 17:58:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <164325106958.29787.4865219843242892726.stgit@noble.brown>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 27 Jan 2022 13:46:29 +1100 NeilBrown <neilb@suse.de> wrote:
-
+On 1/26/22 7:46 PM, NeilBrown wrote:
 > Congestion hasn't been reliably tracked for quite some time.
 > Most MM uses of it for guiding writeback decisions were removed in 5.16.
 > Some other uses were removed in 17-rc1.
@@ -79,6 +99,10 @@ On Thu, 27 Jan 2022 13:46:29 +1100 NeilBrown <neilb@suse.de> wrote:
 > all do - so maybe it should be held for 5.18-rc2 if all the rest lands
 > by 5.18-rc1.
 
-Plan B: I'll just take everything.  While collecting tested-bys and
-acked-bys from filesystem maintainers (please).
+For the series:
+
+Acked-by: Jens Axboe <axboe@kernel.dk>
+
+-- 
+Jens Axboe
 
