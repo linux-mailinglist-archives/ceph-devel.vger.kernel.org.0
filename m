@@ -2,126 +2,129 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6452A4A02EF
-	for <lists+ceph-devel@lfdr.de>; Fri, 28 Jan 2022 22:36:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 631F74A2B62
+	for <lists+ceph-devel@lfdr.de>; Sat, 29 Jan 2022 04:15:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351416AbiA1VgT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 28 Jan 2022 16:36:19 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:32826 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351431AbiA1VgS (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 28 Jan 2022 16:36:18 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id E19E31F385;
-        Fri, 28 Jan 2022 21:36:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1643405774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NLILDfYIewMcTAbJZc9mPjKMlBqDlqhTsKM2N1uM+Vw=;
-        b=taayjmIQ/dw3pRt7LXMXgV+h3N2iGR9k6iWV1POVgUTfQy7v0b53WKl6W7epBEuQeWPNId
-        2nS5W8Zz+JDvOI2H2O325FIcHt7vLtCdfAuhacvrf751M2nGilH84Y1DtEW6P5pWfmkFXk
-        3R+tAum3D39BD7myqsYNPl0uf7Iudaw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1643405774;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NLILDfYIewMcTAbJZc9mPjKMlBqDlqhTsKM2N1uM+Vw=;
-        b=24PK3VAQmVA51Rx99IGbDGj51tJod8UX27xeq8Emd3IiwsHonr+XB9p01yVh4lqGGFRKKK
-        qudbZz9CfGjnNuAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1BAB613AA1;
-        Fri, 28 Jan 2022 21:36:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id fu7bMcdh9GHRawAAMHmgww
-        (envelope-from <neilb@suse.de>); Fri, 28 Jan 2022 21:36:07 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1352272AbiA2DPH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 28 Jan 2022 22:15:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46898 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240864AbiA2DPG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 28 Jan 2022 22:15:06 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CC5BC061714
+        for <ceph-devel@vger.kernel.org>; Fri, 28 Jan 2022 19:15:06 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id c24so13920895edy.4
+        for <ceph-devel@vger.kernel.org>; Fri, 28 Jan 2022 19:15:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NnX0x/h+nmNoPZpjQbz5FGe+ohHqiu7sK9y9yHHBTAs=;
+        b=Wf1nWrmwh524AHZtwOXbdSIueTVamvXu9+acFuoWT1g1sZ6cGx2AJA3dvdErDfcuSZ
+         DRmDentl0baWDXOOIn98HO+BbZiROS+ASrn4kh3Sjey6KlhUejI4ldud7p4xoYrLh+JM
+         b/rihZEFglRtwURKz8eipoF9v/0jy3Xm3ypGYfakFRlfw6QJqV7c/aCgfDPWoEUOOipP
+         hw2qwWGqelJFFGhknmZ+7ID2KX4jnDSjEVJrfTGY5+s1bhaz8B5dbnPhPBKQBk81Bd+A
+         tVyHhMZPT6ybsgRqcwSBrEL0m+0nwiGIADUExQpevCKOj2+G5lrL8BNAr2AntJVwjIOg
+         jsyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NnX0x/h+nmNoPZpjQbz5FGe+ohHqiu7sK9y9yHHBTAs=;
+        b=JDpscXMJU6/F6WHnbpqNIlT16mo3jMXcIi+McQ9OIRn1jzvwyK+zxIv1s4QFSWInao
+         EovTgGk9BGKtC8SXT0BGm/TcWY0rl5Dn96iPKRDTScMnYSrQ6zqIKU9XPaygyzyEOVyw
+         6I2vMc1JqfrTtJzqcCqDkrRadoMeGvPIM0+tRANtGnARJNT7WA3bxXY8BivnmMLoH4Vn
+         Iky5VpX+u3ZbqwdsYlXLqsw6Zrvl8ornzPV9XPRE/IgkBEHPbbx5DU+2RQeps8w7NEyO
+         byJx4xmVEzair+N/5Sxx5iAoVQe6DNUk1Q3cLV03+DCpN7cQj6tKieutJWPMH3h/1/1S
+         PWAg==
+X-Gm-Message-State: AOAM533Ni8riiEL/8EoTWAO+dRviAAb3mGOXWNsk75ZJOZaI0ZiUYp5d
+        EEvrFk2DTR3xFB9c51q+GSJMEQ9oZzEXVtr9l4A=
+X-Google-Smtp-Source: ABdhPJw0d9kBj/5PVlXUj2lLKV4BDx6OVTeaTkK6dHjfFdZqCWtDbEhs5iBuDSTJLAk3zyYAoVg6JmoYwxe+L0tQEMA=
+X-Received: by 2002:aa7:cd0b:: with SMTP id b11mr10845972edw.412.1643426104606;
+ Fri, 28 Jan 2022 19:15:04 -0800 (PST)
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Miklos Szeredi" <miklos@szeredi.hu>
-Cc:     "Andrew Morton" <akpm@linux-foundation.org>,
-        "Jaegeuk Kim" <jaegeuk@kernel.org>, "Chao Yu" <chao@kernel.org>,
-        "Jeff Layton" <jlayton@kernel.org>,
-        "Ilya Dryomov" <idryomov@gmail.com>,
-        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
-        "Anna Schumaker" <anna.schumaker@netapp.com>,
-        "Ryusuke Konishi" <konishi.ryusuke@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        "Philipp Reisner" <philipp.reisner@linbit.com>,
-        "Lars Ellenberg" <lars.ellenberg@linbit.com>,
-        "Paolo Valente" <paolo.valente@linaro.org>,
-        "Jens Axboe" <axboe@kernel.dk>, "linux-mm" <linux-mm@kvack.org>,
-        linux-nilfs@vger.kernel.org,
-        "Linux NFS list" <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        "Ext4" <linux-ext4@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH 1/9] Remove inode_congested()
-In-reply-to: <CAJfpegt-igF8HqsDUcMzfU0jYv8WpofLy0Uv0YnXLzsfx=tkGg@mail.gmail.com>
-References: <164325106958.29787.4865219843242892726.stgit@noble.brown>,
- <164325158954.29787.7856652136298668100.stgit@noble.brown>,
- <CAJfpegt-igF8HqsDUcMzfU0jYv8WpofLy0Uv0YnXLzsfx=tkGg@mail.gmail.com>
-Date:   Sat, 29 Jan 2022 08:36:02 +1100
-Message-id: <164340576289.5493.5784848964540459557@noble.neil.brown.name>
+References: <20220127200849.96580-1-jlayton@kernel.org>
+In-Reply-To: <20220127200849.96580-1-jlayton@kernel.org>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Sat, 29 Jan 2022 11:14:53 +0800
+Message-ID: <CAAM7YAmcj4JQ64EHWRTAVnEGnhfSN1OSUCSuOoi2PhOT8s_cHg@mail.gmail.com>
+Subject: Re: [PATCH] ceph: wake waiters on any IMPORT that grants new caps
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 28 Jan 2022, Miklos Szeredi wrote:
-> On Thu, 27 Jan 2022 at 03:47, NeilBrown <neilb@suse.de> wrote:
-> >
-> > inode_congested() reports if the backing-device for the inode is
-> > congested.  Few bdi report congestion any more, only ceph, fuse, and
-> > nfs.  Having support just for those is unlikely to be useful.
-> >
-> > The places which test inode_congested() or it variants like
-> > inode_write_congested(), avoid initiating IO if congestion is present.
-> > We now have to rely on other places in the stack to back off, or abort
-> > requests - we already do for everything except these 3 filesystems.
-> >
-> > So remove inode_congested() and related functions, and remove the call
-> > sites, assuming that inode_congested() always returns 'false'.
-> 
-> Looks to me this is going to "break" fuse; e.g. readahead path will go
-> ahead and try to submit more requests, even if the queue is getting
-> congested.   In this case the readahead submission will eventually
-> block, which is counterproductive.
-> 
-> I think we should *first* make sure all call sites are substituted
-> with appropriate mechanisms in the affected filesystems and as a last
-> step remove the superfluous bdi congestion mechanism.
-> 
-> You are saying that all fs except these three already have such
-> mechanisms in place, right?  Can you elaborate on that?
+On Sat, Jan 29, 2022 at 2:32 AM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> I've noticed an intermittent hang waiting for caps in some testing. What
+> I see is that the client will try to get caps for an operation (e.g. a
+> read), and ends up waiting on the waitqueue forever. The caps debugfs
+> file however shows that the caps it's waiting on have already been
+> granted.
+>
+> The current grant handling code will wake the waitqueue when it sees
+> that there are newly-granted caps in the issued set. On an import
+> however, we'll end up adding a new cap first, which fools the logic into
+> thinking that nothing has changed. A later hack in the code works around
+> this, but only for auth caps.
 
-Not much.  I haven't looked into how other filesystems cope, I just know
-that they must because no other filesystem ever has a congested bdi
-(with one or two minor exceptions, like filesystems over drbd).
+not right. handle_cap_import() saves old issued to extra_info->issued.
 
-Surely read-ahead should never block.  If it hits congestion, the
-read-ahead request should simply fail.  block-based filesystems seem to
-set REQ_RAHEAD which might get mapped to REQ_FAILFAST_MASK, though I
-don't know how that is ultimately used.
-
-Maybe fuse and others should continue to track 'congestion' and reject
-read-ahead requests when congested.
-Maybe also skip WB_SYNC_NONE writes..
-
-Or maybe this doesn't really matter in practice...  I wonder if we can
-measure the usefulness of congestion.
-
-Thanks,
-NeilBrown
+>
+> Ensure we wake the waiters whenever we get an IMPORT that grants new
+> caps for the inode.
+>
+> URL: https://tracker.ceph.com/issues/54044
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/caps.c | 23 ++++++++++++-----------
+>  1 file changed, 12 insertions(+), 11 deletions(-)
+>
+> I'm still testing this patch, but I think this may be the cause of some
+> mysterious hangs I've hit in testing.
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index e668cdb9c99e..06b65a68e920 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -3541,21 +3541,22 @@ static void handle_cap_grant(struct inode *inode,
+>                         fill_inline = true;
+>         }
+>
+> -       if (ci->i_auth_cap == cap &&
+> -           le32_to_cpu(grant->op) == CEPH_CAP_OP_IMPORT) {
+> +       if (le32_to_cpu(grant->op) == CEPH_CAP_OP_IMPORT) {
+>                 if (newcaps & ~extra_info->issued)
+>                         wake = true;
+>
+> -               if (ci->i_requested_max_size > max_size ||
+> -                   !(le32_to_cpu(grant->wanted) & CEPH_CAP_ANY_FILE_WR)) {
+> -                       /* re-request max_size if necessary */
+> -                       ci->i_requested_max_size = 0;
+> -                       wake = true;
+> -               }
+> +               if (ci->i_auth_cap == cap) {
+> +                       if (ci->i_requested_max_size > max_size ||
+> +                           !(le32_to_cpu(grant->wanted) & CEPH_CAP_ANY_FILE_WR)) {
+> +                               /* re-request max_size if necessary */
+> +                               ci->i_requested_max_size = 0;
+> +                               wake = true;
+> +                       }
+>
+> -               ceph_kick_flushing_inode_caps(session, ci);
+> -               spin_unlock(&ci->i_ceph_lock);
+> -               up_read(&session->s_mdsc->snap_rwsem);
+> +                       ceph_kick_flushing_inode_caps(session, ci);
+> +                       spin_unlock(&ci->i_ceph_lock);
+> +                       up_read(&session->s_mdsc->snap_rwsem);
+> +               }
+>         } else {
+>                 spin_unlock(&ci->i_ceph_lock);
+>         }
+> --
+> 2.34.1
+>
