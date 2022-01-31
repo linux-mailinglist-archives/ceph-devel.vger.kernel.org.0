@@ -2,100 +2,79 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B3A684A4007
-	for <lists+ceph-devel@lfdr.de>; Mon, 31 Jan 2022 11:21:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E01B84A40FF
+	for <lists+ceph-devel@lfdr.de>; Mon, 31 Jan 2022 12:01:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358094AbiAaKVg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 31 Jan 2022 05:21:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34044 "EHLO
+        id S1358811AbiAaLBj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 31 Jan 2022 06:01:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348432AbiAaKVf (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 31 Jan 2022 05:21:35 -0500
-Received: from mail-vk1-xa2d.google.com (mail-vk1-xa2d.google.com [IPv6:2607:f8b0:4864:20::a2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F17CC061714
-        for <ceph-devel@vger.kernel.org>; Mon, 31 Jan 2022 02:21:35 -0800 (PST)
-Received: by mail-vk1-xa2d.google.com with SMTP id l14so6687861vko.12
-        for <ceph-devel@vger.kernel.org>; Mon, 31 Jan 2022 02:21:35 -0800 (PST)
+        with ESMTP id S1358510AbiAaLAe (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 31 Jan 2022 06:00:34 -0500
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE293C0613F0
+        for <ceph-devel@vger.kernel.org>; Mon, 31 Jan 2022 02:59:46 -0800 (PST)
+Received: by mail-io1-xd42.google.com with SMTP id y84so16423276iof.0
+        for <ceph-devel@vger.kernel.org>; Mon, 31 Jan 2022 02:59:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3Lm3cgz6DtmL9tpisEfrfuo7Wj8QCaI1ocVGLYB2Y2U=;
-        b=Lind02/Njzrr7eWAupL32iIHm4GhlbxdTkXaEnTW2OV0dgNWX/rudjG6+pcPbPpIFq
-         C69XJIFu0uAQHgKg9yzKqDEaKe2dTryF/XVS7u5Fs51eNy1ypgdGDsx2HWFQUKmKA/Qj
-         gsFWvFnWm3m6cKgmcrNeOadSQiHcKT9p9vJ3c=
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=FANIUiWvB3mdY3zLX2DODg2pUIL5eGT5wlydl6jYk40=;
+        b=OjUeAkMVzEddLMMo5PnTCjKyhCs1ageGmC5+cFdXpsSEtg6JbUDTvXCRmwfTUCSofJ
+         slj36zZmhn3J4uwPw0DJBjnv3hUS5m+nEauuYDUNcCWjc1f+d0I+yOjKIUc0Pgz+j5Ue
+         rRdRGfWkjcSXGfwT+M+UDneKFOQe0c6aLr+5TauC2FupNgb1qyGc5yiIkJ8k0NAmHZhf
+         anrjd59/OgrastnWs4ZkrvFaIDjw5pd3eh107tNZ/TuMjnW3micCxNZKM2MDkg13GKwm
+         O5Q6tfm8j18o2CLpoCl1kG865M+uxrSOQqgPJI+OJu79ECke4sTf94bEwDsB5fZLVwuG
+         tdrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3Lm3cgz6DtmL9tpisEfrfuo7Wj8QCaI1ocVGLYB2Y2U=;
-        b=ccXF4wZ7o8Qym777hz/kt4Rwd85ARDJi2qfxWQtTLOnCHGVnZ3K3gkQwHocCy3snvv
-         xbxgQ24vM69j92DKTZvC2nUfYfQuLTFoywl5iXobyke7f8ZcdFXTPCh2NFye9+Fva/EO
-         40mJvKQje7QOKiKDUeWhb2JFVE8sgkWDgw3i0NlazmR2h4DqT4IojW/JAq4DuBAG1XiK
-         HxWzakTMpi7IWGZwmxOzvzGJ7iQI4hN9Ri0hjCNco1oqG8YDzYS0X/l9CKo5tuO4P4WA
-         Do54LmCzES8U/SswL25WjPUJnxFgOa885NCzA9PXGZgs33pN8FPDXMciPsOtuSo3qJFD
-         RHMQ==
-X-Gm-Message-State: AOAM533TeoumneRfY3j3ljxI08V51UhiURSHHhpfxb4gcLIoPWRNA0AQ
-        mXq5+ZBTXs3bfPzhTgXO2CzW5aZiYU7H/3Q3iIPmYA==
-X-Google-Smtp-Source: ABdhPJwOQtCABzU+9UXwt+UwQamDQBcR3aBXOuhKxfwoBl2Am0C/bqSbVLQ7zPuyDB0UYMDY2raQ+Hlv8DNEyXB5kK8=
-X-Received: by 2002:a1f:a753:: with SMTP id q80mr8215440vke.1.1643624494313;
- Mon, 31 Jan 2022 02:21:34 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=FANIUiWvB3mdY3zLX2DODg2pUIL5eGT5wlydl6jYk40=;
+        b=MtiNkfIAwZJgsffIWuymwkwd3q9NFbA2u6TXLQ7TRUi9/HHPUiuht0at0GKydgvEHc
+         5cpJ6U5BVZCrLtbpir6QKFkK5cPXp8Xp3vS5xQxVc9t2t1wpsSWaXhePMMKOnWhe8Ryj
+         1KJzFlNEZH9oguMNtIwl7Jc3S8zT261tVHZBByTmF2y/0/+cfHmUkpTj/6SSDQxU52xW
+         0cviG5HR5exbG0efLyxT5PrBfSWT481V0bQenbWj7hbGjB+p/cOudn+omMKEfTKjGKWW
+         nLnmeXJH4Q4sJ40TAkRk3S15Wl98Yc6FgkGPJMoiaBP/Bjp6mIw9Rf6I0Ikat1zySOAy
+         Nosg==
+X-Gm-Message-State: AOAM533UntDRCvwjRqIQqB5RsGX6Q2jvALnTfgf1m7ftCgEhxtKcDuU5
+        +kxXwe2GC+r2Jn5Z2txe/df7UArspkCq727cr/s=
+X-Google-Smtp-Source: ABdhPJx07OLMUPeEc0ImjaiJBKF2Mcc3ZmsWTIoSvX2FNfz03c1HE0RFqesREnjvPqYHKyL/ALkhu5ugV57XI3T5t/k=
+X-Received: by 2002:a6b:441a:: with SMTP id r26mr10856124ioa.211.1643626786286;
+ Mon, 31 Jan 2022 02:59:46 -0800 (PST)
 MIME-Version: 1.0
-References: <164360127045.4233.2606812444285122570.stgit@noble.brown>
- <164360183348.4233.761031466326833349.stgit@noble.brown> <YfdlbxezYSOSYmJf@casper.infradead.org>
- <164360446180.18996.6767388833611575467@noble.neil.brown.name>
-In-Reply-To: <164360446180.18996.6767388833611575467@noble.neil.brown.name>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 31 Jan 2022 11:21:23 +0100
-Message-ID: <CAJfpeguPJLpJcyC2_FU3pVNk0FhiKJvVuMdQR_wZAgY0Wnsqzg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] fuse: remove reliance on bdi congestion
-To:     NeilBrown <neilb@suse.de>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Reply-To: daniellakyle60@gmail.com
+Sender: drdanielmorris11111@gmail.com
+Received: by 2002:a05:6638:1248:0:0:0:0 with HTTP; Mon, 31 Jan 2022 02:59:45
+ -0800 (PST)
+From:   Mrs daniell akyle <daniellakyle60@gmail.com>
+Date:   Mon, 31 Jan 2022 11:59:45 +0100
+X-Google-Sender-Auth: xE_x512-NJSetLeK1z_d90RC9Q0
+Message-ID: <CAKFcj-P8h0HeDMtZZnog7Sh8cFMKV7095BN2fQnUMpCGPgmhFg@mail.gmail.com>
+Subject: Ahoj
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 31 Jan 2022 at 05:47, NeilBrown <neilb@suse.de> wrote:
-
-> > > +++ b/fs/fuse/file.c
-> > > @@ -958,6 +958,8 @@ static void fuse_readahead(struct readahead_control *rac)
-> > >
-> > >     if (fuse_is_bad(inode))
-> > >             return;
-> > > +   if (fc->num_background >= fc->congestion_threshold)
-> > > +           return;
-> >
-> > This seems like a bad idea to me.  If we don't even start reads on
-> > readahead pages, they'll get ->readpage called on them one at a time
-> > and the reading thread will block.  It's going to lead to some nasty
-> > performance problems, exactly when you don't want them.  Better to
-> > queue the reads internally and wait for congestion to ease before
-> > submitting the read.
-> >
->
-> Isn't that exactly what happens now? page_cache_async_ra() sees that
-> inode_read_congested() returns true, so it doesn't start readahead.
-> ???
-
-I agree.
-
-Fuse throttles async requests even before allocating them, which
-precludes placing them on any queue.  I guess it was done to limit the
-amount of kernel memory pinned by a task (sync requests allow just one
-request per task).
-
-This has worked well, and I haven't heard complaints about performance
-loss due to readahead throttling.
-
-Thanks,
-Miklos
+Pozdravy
+Jmenuji se pan=C3=AD Daniella Kyleov=C3=A1, je mi 58 let
+Filip=C3=ADny. V sou=C4=8Dasn=C3=A9 dob=C4=9B jsem hospitalizov=C3=A1n na F=
+ilip=C3=ADn=C3=A1ch, kde jsem
+podstupuje l=C3=A9=C4=8Dbu akutn=C3=ADho karcinomu j=C3=ADcnu. jsem um=C3=
+=ADraj=C3=ADc=C3=AD,
+vdova, kter=C3=A1 se rozhodla darovat =C4=8D=C3=A1st sv=C3=A9ho majetku spo=
+lehliv=C3=A9 osob=C4=9B
+kter=C3=A1 tyto pen=C3=ADze pou=C5=BEije na pomoc chud=C3=BDm a m=C3=A9n=C4=
+=9B privilegovan=C3=BDm. Chci
+poskytnout dar ve v=C3=BD=C5=A1i 3 700 000 =C2=A3 na sirotky nebo charitati=
+vn=C3=AD organizace
+ve va=C5=A1=C3=AD oblasti. Zvl=C3=A1dne=C5=A1 to? Pokud jste ochotni tuto n=
+ab=C3=ADdku p=C5=99ijmout
+a ud=C4=9Blejte p=C5=99esn=C4=9B tak, jak v=C3=A1m =C5=99=C3=ADk=C3=A1m, pa=
+k se mi vra=C5=A5te pro dal=C5=A1=C3=AD vysv=C4=9Btlen=C3=AD.
+pozdravy
+Pan=C3=AD Daniella Kyleov=C3=A1
